@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gtk_subwin.h,v 1.2 2008/05/29 12:13:36 hito Exp $
  */
 
 #ifndef _GTK_SUBWIN_HEADER
@@ -22,8 +22,8 @@ struct subwin_popup_list {
 GtkWidget *text_sub_window_create(struct SubWin *d, char *title, char **xpm);
 GtkWidget *list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, char **xpm);
 GtkWidget *tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, char **xpm);
-void sub_window_minimize(struct SubWin *d);
-void sub_window_restore_state(struct SubWin *d);
+void sub_window_minimize(void *d);
+void sub_window_restore_state(void *d);
 
 gboolean list_sub_window_must_rebuild(struct SubWin *d);
 void list_sub_window_build(struct SubWin *d, list_sub_window_set_val_func func);

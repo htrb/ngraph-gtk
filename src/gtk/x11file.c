@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11file.c,v 1.2 2008/05/29 12:13:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2859,7 +2859,7 @@ FileDialogClose(GtkWidget *w, void *data)
 }
 
 void
-FileDialog(struct DialogType *data, struct objlist *obj, int id, int candel)
+FileDialog(void *data, struct objlist *obj, int id, int candel)
 {
   struct FileDialog *d;
 
@@ -2953,7 +2953,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
     if ((name = (char *) memalloc(len + 1)) != NULL) {
       strcpy(name, data[fil]);
       putobj(obj, "file", id, name);
-      FileDialog((struct DialogType *) &DlgFile, obj, id, 0);
+      FileDialog(&DlgFile, obj, id, 0);
       ret = DialogExecute(TopLevel, &DlgFile);
       if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	FitDel(obj, id);
@@ -2992,7 +2992,7 @@ CmFileNew(void)
       changefilename(name);
       AddDataFileList(name);
       putobj(obj, "file", id, name);
-      FileDialog((struct DialogType *) &DlgFile, obj, id, 0);
+      FileDialog(&DlgFile, obj, id, 0);
       ret = DialogExecute(TopLevel, &DlgFile);
       if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	FitDel(obj, id);
@@ -3064,7 +3064,7 @@ CmFileOpen(void)
 	FitCopy(obj, id, id0);
 	id++;
       } else {
-	FileDialog((struct DialogType *)&DlgFile, obj, id, 0);
+	FileDialog(&DlgFile, obj, id, 0);
 	ret = DialogExecute(TopLevel, &DlgFile);
 	if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	  FitDel(obj, id);
@@ -3157,7 +3157,7 @@ CmFileUpdate(void)
 	}
 	FitCopy(obj, array[i], array[id0]);
       } else {
-	FileDialog((struct DialogType *) &DlgFile, obj, array[i], 0);
+	FileDialog(&DlgFile, obj, array[i], 0);
 	ret = DialogExecute(TopLevel, &DlgFile);
 	if (ret == IDDELETE) {
 	  FitDel(obj, array[i]);
@@ -3990,7 +3990,7 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
 
     d->update = FileWinUpdate;
     d->setup_dialog = FileDialog;
-    d->dialog = (struct DialogType *) &DlgFile;
+    d->dialog = &DlgFile;
     d->ev_key = ev_key_down;
 
     dlg = list_sub_window_create(d, "File Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm);

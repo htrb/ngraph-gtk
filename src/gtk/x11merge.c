@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11merge.c,v 1.2 2008/05/29 12:13:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -190,7 +190,7 @@ MergeDialogClose(GtkWidget *w, void *data)
 }
 
 void
-MergeDialog(struct DialogType *data, struct objlist *obj, int id, int sub_id)
+MergeDialog(void *data, struct objlist *obj, int id, int sub_id)
 {
   struct MergeDialog *d;
 
@@ -221,7 +221,7 @@ CmMergeOpen(void)
   if (id >= 0) {
     changefilename(name);
     putobj(obj, "file", id, name);
-    MergeDialog((struct DialogType *)&DlgMerge, obj, id, -1);
+    MergeDialog(&DlgMerge, obj, id, -1);
     ret = DialogExecute(TopLevel, &DlgMerge);
     if ((ret == IDDELETE) || (ret == IDCANCEL)) {
       delobj(obj, id);
@@ -280,7 +280,7 @@ CmMergeUpdate(void)
     num = arraynum(&farray);
     array = (int *) arraydata(&farray);
     for (i = 0; i < num; i++) {
-      MergeDialog((struct DialogType *)&DlgMerge, obj, array[i], -1);
+      MergeDialog(&DlgMerge, obj, array[i], -1);
       if ((ret = DialogExecute(TopLevel, &DlgMerge)) == IDDELETE) {
 	delobj(obj, array[i]);
 	for (j = i + 1; j < num; j++)
@@ -436,7 +436,7 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
 
     d->update = MergeWinUpdate;
     d->setup_dialog = MergeDialog;
-    d->dialog = (struct DialogType *) &DlgMerge;
+    d->dialog = &DlgMerge;
 
     dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm);
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11lgnd.c,v 1.2 2008/05/29 12:13:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1868,7 +1868,7 @@ CmOptionTextDef(void)
 }
 
 static void
-LegendWinLegendUpdate(struct DialogType *data, struct objlist *obj, int id, int sub_id)
+LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
 {
   int num;
   int update, ret;

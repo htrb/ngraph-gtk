@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gtk_subwin.c,v 1.2 2008/05/29 12:13:36 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -60,6 +60,12 @@ get_geometry(struct SubWin *d, int *x, int *y, int *w, int *h)
     *h = Menulocal.coordheight;
     *x = Menulocal.coordx;
     *y = Menulocal.coordy;
+    break;
+  default:
+    *w = CW_USEDEFAULT;
+    *h = CW_USEDEFAULT;
+    *x = CW_USEDEFAULT;
+    *y = CW_USEDEFAULT;
     break;
   }
 }
@@ -788,8 +794,12 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 void
-sub_window_minimize(struct SubWin *d)
+sub_window_minimize(void *ptr)
 {
+  struct SubWin *d;
+
+  d = (struct SubWin *) ptr;
+
   if (d->Win == NULL)
     return;
 
@@ -798,8 +808,12 @@ sub_window_minimize(struct SubWin *d)
 }
 
 void
-sub_window_restore_state(struct SubWin *d)
+sub_window_restore_state(void *ptr)
 {
+  struct SubWin *d;
+
+  d = (struct SubWin *) ptr;
+
   if (d->Win == NULL)
     return;
 

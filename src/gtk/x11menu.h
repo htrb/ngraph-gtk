@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.2 2008/05/29 10:42:48 hito Exp $
+ * $Id: x11menu.h,v 1.3 2008/05/29 12:13:37 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -116,8 +116,8 @@ struct SubWin
   GObject *text;
   int select, num;
   void (* update)(int);
-  void (* setup_dialog)(struct DialogType *data, struct objlist *obj, int id, int sub_id);
-  struct DialogType *dialog;
+  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
+  void *dialog;
   struct objlist *obj;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
@@ -134,8 +134,8 @@ struct LegendWin
   GObject *text;
   int select, num;
   void (* update)(int);
-  void (* setup_dialog)(struct DialogType *data, struct objlist *obj, int id, int sub_id);
-  struct DialogType *dialog;
+  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
+  void *dialog;
   struct objlist *obj[LEGENDNUM];
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
@@ -152,8 +152,8 @@ struct InfoWin
   GObject *text;
   int select, num;
   void (* update)(int);
-  void (* setup_dialog)(struct DialogType *data, struct objlist *obj, int id, int sub_id);
-  struct DialogType *dialog;
+  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
+  void *dialog;
   struct objlist *obj;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
@@ -169,23 +169,14 @@ struct CoordWin
   GObject *text;
   int select, num;
   void (* update)(int);
-  void (* setup_dialog)(struct DialogType *data, struct objlist *obj, int id, int sub_id);
-  struct DialogType *dialog;
+  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
+  void *dialog;
   struct objlist *obj;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
   /* Private member */
   char *str;
 };
-
-union SubWindow
-{
-  struct SubWin subwin;
-  struct LegendWin legend;
-  struct InfoWin info;
-  struct CoordWin coord;
-};
-
 
 #define MARK_TYPE_NUM 90
 #define MENU_HISTORY_NUM 10
@@ -232,7 +223,6 @@ struct NgraphApp
   struct SubWin MergeWin;
   struct CoordWin CoordWin;
   struct InfoWin InfoWin;
-  //  union SubWindow FileWin, AxisWin, LegendWin, MergeWin, CoordWin, InfoWin;
 };
 
 extern struct NgraphApp NgraphApp;

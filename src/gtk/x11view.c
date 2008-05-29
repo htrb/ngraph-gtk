@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11view.c,v 1.2 2008/05/29 12:13:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -214,7 +214,7 @@ data_dropped(char **filenames, int num)
       }
       FitCopy(obj, id, id0);
     } else {
-      FileDialog((struct DialogType *) &DlgFile, obj, id, 0);
+      FileDialog(&DlgFile, obj, id, 0);
       ret = DialogExecute(TopLevel, &DlgFile);
       if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	FitDel(obj, id);
@@ -674,7 +674,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 
     for (i = 0; i < dnum; i++) {
       id = ddata[i];
-      FileDialog((struct DialogType *)&DlgFile, fileobj, id, 0);
+      FileDialog(&DlgFile, fileobj, id, 0);
       ret2 = DialogExecute(TopLevel, &DlgFile);
       if (ret2 == IDDELETE) {
 	FitDel(fileobj, id);
@@ -2582,7 +2582,7 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
 	    _putobj(obj, "length", inst, &lenx);
 	    _putobj(obj, "direction", inst, &dir);
 
-	    AxisDialog((struct DialogType *) &DlgAxis, obj, id, TRUE);
+	    AxisDialog(&DlgAxis, obj, id, TRUE);
 	    ret = DialogExecute(TopLevel, &DlgAxis);
 
 	    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
@@ -4296,7 +4296,7 @@ ViewUpdate(void)
 	      NgraphApp.Changed = TRUE;
 	  }
 	} else {
-	  AxisDialog((struct DialogType *) &DlgAxis, obj, id, TRUE);
+	  AxisDialog(&DlgAxis, obj, id, TRUE);
 	  ret = DialogExecute(TopLevel, &DlgAxis);
 
 	  if (ret == IDDELETE) {
@@ -4332,7 +4332,7 @@ ViewUpdate(void)
 	  LegendTextDialog(&DlgLegendText, obj, id);
 	  ret = DialogExecute(TopLevel, &DlgLegendText);
 	} else if (obj == chkobject("merge")) {
-	  MergeDialog((struct DialogType *)&DlgMerge, obj, id, 0);
+	  MergeDialog(&DlgMerge, obj, id, 0);
 	  ret = DialogExecute(TopLevel, &DlgMerge);
 	}
 

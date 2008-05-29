@@ -26,4 +26,4 @@ dir_defs.h: dir_defs.h.in
 
 libngraph_la_LDFLAGS = -static
 
-libngraph_la_CFLAGS = $(GTK_CFLAGS) -I.. -fno-strict-aliasing
+libngraph_la_CFLAGS = $(GTK_CFLAGS) -I..

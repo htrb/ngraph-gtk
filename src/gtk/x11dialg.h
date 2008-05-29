@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11dialg.h,v 1.2 2008/05/29 12:13:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -118,7 +118,7 @@ struct FileDialog
   int R, G, B, R2, G2, B2;
 };
 
-void FileDialog(struct DialogType *data, struct objlist *obj, int id, int candel);
+void FileDialog(void *data, struct objlist *obj, int id, int candel);
 
 struct EvalDialog
 {
@@ -337,8 +337,7 @@ struct AxisDialog
   int CanDel;
 };
 
-void AxisDialog(struct DialogType *data,
-		struct objlist *obj, int id, int candel);
+void AxisDialog(void *data, struct objlist *obj, int id, int candel);
 
 struct AxisBaseDialog
 {
@@ -468,7 +467,7 @@ struct MergeDialog
   struct objlist *Obj;
   int Id;
 };
-void MergeDialog(struct DialogType *data, struct objlist *obj, int id, int Sub_id);
+void MergeDialog(void *data, struct objlist *obj, int id, int Sub_id);
 
 struct LegendDialog
 {

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11axis.c,v 1.2 2008/05/29 12:13:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -431,7 +431,7 @@ SectionDialogAxisX(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (d->IDX >= 0) {
-    AxisDialog((struct DialogType *)&DlgAxis, d->Obj, d->IDX, FALSE);
+    AxisDialog(&DlgAxis, d->Obj, d->IDX, FALSE);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -443,7 +443,7 @@ SectionDialogAxisY(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (d->IDY >= 0) {
-    AxisDialog((struct DialogType *)&DlgAxis, d->Obj, d->IDY, FALSE);
+    AxisDialog(&DlgAxis, d->Obj, d->IDY, FALSE);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -455,7 +455,7 @@ SectionDialogAxisU(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (d->IDU >= 0) {
-    AxisDialog((struct DialogType *)&DlgAxis, d->Obj, d->IDU, FALSE);
+    AxisDialog(&DlgAxis, d->Obj, d->IDU, FALSE);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -467,7 +467,7 @@ SectionDialogAxisR(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (d->IDR >= 0) {
-    AxisDialog((struct DialogType *)&DlgAxis, d->Obj, d->IDR, FALSE);
+    AxisDialog(&DlgAxis, d->Obj, d->IDR, FALSE);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -745,7 +745,7 @@ CrossDialogAxisX(GtkWidget *w, gpointer client_data)
 
   d = (struct CrossDialog *) client_data;
   if (d->IDX >= 0) {
-    AxisDialog((struct DialogType *)&DlgAxis, d->Obj, d->IDX, FALSE);
+    AxisDialog(&DlgAxis, d->Obj, d->IDX, FALSE);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -757,7 +757,7 @@ CrossDialogAxisY(GtkWidget *w, gpointer client_data)
 
   d = (struct CrossDialog *) client_data;
   if (d->IDY >= 0) {
-    AxisDialog((struct DialogType *)&DlgAxis, d->Obj, d->IDY, FALSE);
+    AxisDialog(&DlgAxis, d->Obj, d->IDY, FALSE);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -2344,7 +2344,7 @@ AxisDialogClose(GtkWidget *w, void *data)
 }
 
 void
-AxisDialog(struct DialogType *data, struct objlist *obj, int id, int candel)
+AxisDialog(void *data, struct objlist *obj, int id, int candel)
 {
   struct AxisDialog *d;
 
@@ -2530,7 +2530,7 @@ CmAxisNewSingle(void)
   if ((obj = chkobject("axis")) == NULL)
     return;
   if ((id = newobj(obj)) >= 0) {
-    AxisDialog((struct DialogType *) &DlgAxis, obj, id, TRUE);
+    AxisDialog(&DlgAxis, obj, id, TRUE);
     ret = DialogExecute(TopLevel, &DlgAxis);
     if ((ret == IDDELETE) || (ret == IDCANCEL)) {
       delobj(obj, id);
@@ -2602,7 +2602,7 @@ CmAxisUpdate(void)
       return;
   } else
     return;
-  AxisDialog((struct DialogType *)&DlgAxis, obj, i, TRUE);
+  AxisDialog(&DlgAxis, obj, i, TRUE);
   if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
     AxisDel(i);
   }
@@ -3007,7 +3007,7 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
 
     d->update = AxisWinUpdate;
     d->setup_dialog = AxisDialog;
-    d->dialog = (struct DialogType *) &DlgAxis;
+    d->dialog = &DlgAxis;
     d->ev_key = ev_key_down;
 
     dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm);

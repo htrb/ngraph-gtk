@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11menu.c,v 1.2 2008/05/29 12:13:37 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1359,19 +1359,19 @@ static gboolean
 change_window_state_cb(GtkWidget *widget, GdkEventWindowState *event, gpointer user_data)
 {
   if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) {
-    sub_window_minimize((struct SubWin *) &NgraphApp.FileWin);
-    sub_window_minimize((struct SubWin *) &NgraphApp.AxisWin);
-    sub_window_minimize((struct SubWin *) &NgraphApp.LegendWin);
-    sub_window_minimize((struct SubWin *) &NgraphApp.MergeWin);
-    sub_window_minimize((struct SubWin *) &NgraphApp.InfoWin);
-    sub_window_minimize((struct SubWin *) &NgraphApp.CoordWin);
+    sub_window_minimize(&NgraphApp.FileWin);
+    sub_window_minimize(&NgraphApp.AxisWin);
+    sub_window_minimize(&NgraphApp.LegendWin);
+    sub_window_minimize(&NgraphApp.MergeWin);
+    sub_window_minimize(&NgraphApp.InfoWin);
+    sub_window_minimize(&NgraphApp.CoordWin);
   } else if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
-    sub_window_restore_state((struct SubWin *) &NgraphApp.FileWin);
-    sub_window_restore_state((struct SubWin *) &NgraphApp.AxisWin);
-    sub_window_restore_state((struct SubWin *) &NgraphApp.LegendWin);
-    sub_window_restore_state((struct SubWin *) &NgraphApp.MergeWin);
-    sub_window_restore_state((struct SubWin *) &NgraphApp.InfoWin);
-    sub_window_restore_state((struct SubWin *) &NgraphApp.CoordWin);
+    sub_window_restore_state(&NgraphApp.FileWin);
+    sub_window_restore_state(&NgraphApp.AxisWin);
+    sub_window_restore_state(&NgraphApp.LegendWin);
+    sub_window_restore_state(&NgraphApp.MergeWin);
+    sub_window_restore_state(&NgraphApp.InfoWin);
+    sub_window_restore_state(&NgraphApp.CoordWin);
   }
   return FALSE;
 }
