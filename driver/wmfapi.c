@@ -1,6 +1,6 @@
 /**
  *
- * $Id: wmfapi.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: wmfapi.c,v 1.1.1.1 2008/05/29 09:37:33 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -11,8 +11,8 @@
 /**
  *
  * $Log: wmfapi.c,v $
- * Revision 1.1  2008/05/29 09:37:33  hito
- * Initial revision
+ * Revision 1.1.1.1  2008/05/29 09:37:33  hito
+ * inital version.
  *
  * Revision 1.1.1.1  2008-05-29 08:47:24  hito
  * initial version.

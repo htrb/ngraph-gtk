@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gtk_liststore.h,v 1.1.1.1 2008/05/29 09:37:33 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
