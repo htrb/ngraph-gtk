@@ -1,0 +1,57 @@
+/* 
+ * $Id: x11commn.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * 
+ * This file is part of "Ngraph for X11".
+ * 
+ * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
+ * 
+ * "Ngraph for X11" is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * "Ngraph for X11" is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ */
+
+void OpenGRA();
+void CloseGRA();
+void ChangeGRA();
+void CheckPage();
+void SetPageSettingsToGRA();
+void GetPageSettingsFromGRA();
+void AxisDel(int id);
+void AxisMove(int id1, int id2);
+void AdjustAxis();
+void FitCopy(struct objlist *obj, int did, int sid);
+void FitDel(struct objlist *obj, int id);
+void FitClear();
+void LoadPrmFile(char *File);
+void LoadNgpFile(char *File, int ignorepath, int expand,
+		 char *exdir, int console, char *option);
+int SaveDrawrable(char *name, int storedata, int storemerge);
+int GraphSave(int overwrite);
+void DeleteDrawable();
+void FileAutoScale();
+int CheckSave();
+void AddMathList(char *math);
+void AddNgpFileList(char *file);
+void AddDataFileList(char *file);
+void SetFileName(char *name);
+int CheckIniFile();
+void SaveHistory();
+int AllocConsole();
+void FreeConsole(int allocnow);
+char *FileCB(struct objlist *obj, int id);
+int SetFileHidden();
+void ExtTextOut(GdkDisplay *disp, GtkWindow *win, GdkGC gc,
+		int x, int y, GdkRectangle *rect, char *buf, int len);
+GtkWidget *item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand);
+GtkWidget *create_text_entry(int set_default_size, int set_default_action);

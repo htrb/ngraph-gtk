@@ -1,0 +1,1233 @@
+/* 
+ * $Id: main.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * 
+ * This file is part of "Ngraph for X11".
+ * 
+ * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
+ * 
+ * "Ngraph for X11" is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * "Ngraph for X11" is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ */
+
+#include "gtk_common.h"
+
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdarg.h>
+#include <locale.h>
+
+#include "dir_defs.h"
+#include "ngraph.h"
+#include "object.h"
+#include "ioutil.h"
+#include "nstring.h"
+#include "nconfig.h"
+
+#ifdef HAVE_LIBREADLINE
+#include <readline/readline.h>
+#include <readline/history.h>
+#include "shell.h"
+#include "ox11menu.h"
+#include "ogra2x11.h"
+#include <assert.h>
+static char **attempt_shell_completion(char *text, int start, int end);
+#define HIST_SIZE 100
+#define HIST_FILE "shell_history"
+#endif
+
+#define SYSCONF "[Ngraph]"
+#ifndef DATADIR
+#define DATADIR "/usr/local/lib/Ngraph"
+#endif
+
+int consolecol = 80;
+int consolerow = 25;
+
+
+char **mainenviron;
+char *systemname;
+int consolefdout;
+int consolefdin;
+int consoleac = FALSE;
+
+void *addobjectroot(void);
+void *addint(void);
+void *adddouble(void);
+void *addstring(void);
+void *addiarray(void);
+void *adddarray(void);
+void *addsarray(void);
+void *addsystem(void);
+void *addshell(void);
+void *adddraw(void);
+void *addfile(void);
+void *addmath(void);
+void *addfit(void);
+void *addgra(void);
+void *addgra2(void);
+void *addgra2null(void);
+void *addgra2file(void);
+void *addgra2prn(void);
+void *addmerge(void);
+void *addlegend(void);
+void *addline(void);
+void *addcurve(void);
+void *addrectangle(void);
+void *addarc(void);
+void *addpolygon(void);
+void *addmark(void);
+void *addtext(void);
+void *addaxis(void);
+void *addagrid(void);
+void *addprm(void);
+
+void *addgra2gtk(void);
+void *addmenu(void);
+void *adddialog(void);
+
+void resizeconsole(int col, int row);
+
+// XtAppContext Application=NULL;
+GdkDisplay *Disp = NULL;
+char *AppName = "Ngraph", *AppClass = "Ngraph", *Home;
+char *License = "\
+This program is free software; you can redistribute it and/or modify\
+it under the terms of the GNU General Public License as published by\
+the Free Software Foundation; either version 2 of the License, or\
+(at your option) any later version.\n\
+\n\
+This program is distributed in the hope that it will be useful,\
+but WITHOUT ANY WARRANTY; without even the implied warranty of\
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\
+GNU General Public License for more details.\n\
+\n\
+You should have received a copy of the GNU General Public License\
+along with this program; if not, write to the Free Software\
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\
+";
+
+char *Auther[] = {
+  "Satoshi ISHIZAKA",
+  "Ito Hiroyuki",
+  NULL
+};
+
+char *Translator = 
+  "Satoshi ISHIZAKA\n" \
+  "Ito Hiroyuki" \
+  ;
+
+char *Documenter[] = {
+  "Satoshi ISHIZAKA",
+  NULL
+};
+
+extern GtkWidget *TopLevel;
+
+static int *Argc;
+static char ***Argv;
+
+int
+OpenApplication(void)
+{
+  int argc;
+  char arg0[] = "Ngraph", arg1[] = "--scan";
+  char *argv[] = {arg0, arg1, NULL};
+  static int is_open = 0;
+
+  if (is_open)
+    return TRUE;
+
+  is_open = 1;
+
+  argc = sizeof(argv) / sizeof(*argv) - 1;
+  argc = 1;
+  gtk_set_locale();
+
+  return gtk_init_check(Argc, Argv);
+}
+
+int
+putconsole(char *s)
+{
+  int len;
+
+  len = strlen(s);
+  write(consolefdout, s, len);
+  write(consolefdout, "\n", 1);
+  return len + 1;
+}
+
+int
+printfconsole(char *fmt, ...)
+{
+  int len;
+  char buf[1024];
+  va_list ap;
+
+  va_start(ap, fmt);
+  len = vsnprintf(buf, sizeof(buf),  fmt, ap);
+  va_end(ap);
+  write(consolefdout, buf, len);
+  return len;
+}
+
+int
+interruptconsole(void)
+{
+  return FALSE;
+}
+
+int
+inputynconsole(char *mes)
+{
+  int len;
+  char buf[10];
+
+  len = strlen(mes);
+  write(consolefdout, mes, len);
+  do {
+    read(consolefdin, buf, 1);
+  }
+  while ((buf[0] != 'y') && (buf[0] != 'Y') && (buf[0] != 'n')
+	 && (buf[0] != 'N'));
+  if ((buf[0] == 'y') || (buf[0] == 'Y'))
+    return TRUE;
+  return FALSE;
+}
+
+void
+displaydialogconsole(char *str)
+{
+  putconsole(str);
+}
+
+void
+displaystatusconsole(char *str)
+{
+}
+
+char *terminal = NULL;
+struct savedstdio consolesave;
+int consolefd[3];
+int pipefd = -1;
+pid_t consolepid = -1;
+
+void
+resizeconsole(int col, int row)
+{
+}
+
+int
+nallocconsole()
+{
+  int fd[3], fdi[2], fdo[2], len, i;
+  pid_t pid;
+  char buf[256], ttyname[256];
+  char *s, *s2;
+  char **argv;
+  struct objlist *sys;
+  char *sysname;
+  char *version;
+
+  if (consoleac)
+    return FALSE;
+  if (terminal == NULL)
+    return FALSE;
+  if (pipe(fdi) == -1)
+    return FALSE;
+  if (pipe(fdo) == -1) {
+    close(fdi[0]);
+    close(fdi[1]);
+    return FALSE;
+  }
+  if ((pid = fork()) == -1) {
+    close(fdi[0]);
+    close(fdi[1]);
+    close(fdo[0]);
+    close(fdo[1]);
+    return FALSE;
+  } else if (pid == 0) {
+    snprintf(buf, sizeof(buf), "%s %d %d %d %d", terminal, fdi[0], fdi[1], fdo[0], fdo[1]);
+    argv = NULL;
+    s = buf;
+    while ((s2 = getitok2(&s, &len, " \t")) != NULL) {
+      arg_add(&argv, s2);
+    }
+    execvp(argv[0], argv);
+    exit(1);
+  }
+  close(fdi[1]);
+  close(fdo[0]);
+  sys = chkobject("system");
+  getobj(sys, "name", 0, 0, NULL, &sysname);
+  getobj(sys, "version", 0, 0, NULL, &version);
+  snprintf(buf, sizeof(buf), "%c]2;Ngraph shell%c%s version %s. Script interpreter.\n",
+	  0x1b, 0x07, sysname, version);
+  write(fdo[1], buf, strlen(buf) + 1);
+  pipefd = fdo[1];
+  consolepid = pid;
+  i = 0;
+  while ((read(fdi[0], buf, 1) == 1) && (buf[0] != '\0')) {
+    ttyname[i] = buf[0];
+    i++;
+  }
+  ttyname[i] = '\0';
+  close(fdi[0]);
+  if (i == 0)
+    return FALSE;
+  fd[0] = open(ttyname, O_RDONLY);
+  fd[1] = open(ttyname, O_WRONLY);
+  fd[2] = open(ttyname, O_WRONLY);
+  consolefd[0] = dup(0);
+  close(0);
+  dup2(fd[0], 0);
+  consolefd[1] = dup(1);
+  close(1);
+  dup2(fd[1], 1);
+  consolefd[2] = dup(2);
+  close(2);
+  dup2(fd[2], 2);
+  close(fd[0]);
+  close(fd[1]);
+  close(fd[2]);
+  consolefdin = dup(0);
+  consolefdout = dup(2);
+  consoleac = TRUE;
+  savestdio(&consolesave);
+  putstderr = putconsole;
+  printfstderr = printfconsole;
+  ninterrupt = interruptconsole;
+  inputyn = inputynconsole;
+  ndisplaydialog = displaydialogconsole;
+  ndisplaystatus = displaystatusconsole;
+  return TRUE;
+}
+
+void
+nfreeconsole()
+{
+  char buf[1];
+
+  if (consoleac) {
+    close(0);
+    if (consolefd[0] != -1) {
+      dup2(consolefd[0], 0);
+      close(consolefd[0]);
+    }
+    close(1);
+    if (consolefd[1] != -1) {
+      dup2(consolefd[1], 1);
+      close(consolefd[1]);
+    }
+    close(2);
+    if (consolefd[2] != -1) {
+      dup2(consolefd[2], 2);
+      close(consolefd[2]);
+    }
+    buf[0] = '\0';
+    write(pipefd, buf, 1);
+    close(pipefd);
+    pipefd = -1;
+    consolepid = -1;
+    close(consolefdin);
+    close(consolefdout);
+    consolefdin = 0;
+    consolefdout = 2;
+    consoleac = FALSE;
+    loadstdio(&consolesave);
+  }
+}
+
+void
+nforegroundconsole()
+{
+}
+
+int
+main(int argc, char **argv, char **environ)
+{
+  char *homedir, *libdir, *home, *inifile, *loginshell;
+  char *inst;
+  struct objlist *sys, *obj, *lobj;
+  int i, id;
+  char *sarg[2];
+  struct narray sarray;
+  FILE *fp;
+  char *tok, *str, *s2;
+  char *f1, *endptr;
+  int len, val;
+  int allocnow, allocconsole = FALSE;
+  struct narray iarray;
+  char *arg;
+#ifdef HAVE_LIBREADLINE
+  int history_size = HIST_SIZE;
+  char *history_file;
+#endif
+
+  mainenviron = environ;
+
+  ignorestdio(NULL);
+  inputyn = vinputyn;
+  ninterrupt = vinterrupt;
+  printfstderr = seprintf;
+  putstderr = seputs;
+  consolefdin = 0;
+  consolefdout = 2;
+
+#ifdef HAVE_GETTEXT
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  bind_textdomain_codeset(PACKAGE, "UTF-8");
+  textdomain(PACKAGE);
+#endif
+
+#if 0
+  if ((lib = getenv("NGRAPHLIB")) != NULL) {
+    if ((libdir = (char *) memalloc(strlen(lib) + 1)) == NULL)
+      exit(1);
+    strcpy(libdir, lib);
+  } else {
+    if ((libdir = (char *) memalloc(strlen(DATADIR) + 1)) == NULL)
+      exit(1);
+    strcpy(libdir, DATADIR);
+  }
+#else
+  libdir = nstrdup(DATADIR);
+  if (libdir == NULL)
+    exit(1);
+#endif
+
+  /*
+  if ((home = getenv("NGRAPHHOME")) != NULL) {
+    if ((homedir = (char *) memalloc(strlen(home) + 1)) == NULL)
+      exit(1);
+    strcpy(homedir, home);
+  } else 
+  */
+  if ((home = getenv("HOME")) != NULL) {
+    len = strlen(home) + strlen(HOME_DIR) + 2;
+    if ((homedir = (char *) memalloc(len)) == NULL)
+      exit(1);
+    snprintf(homedir, len, "%s/%s", home, HOME_DIR);
+  } else {
+    if ((homedir = (char *) memalloc(strlen(libdir) + 1)) == NULL)
+      exit(1);
+    strcpy(homedir, libdir);
+  }
+
+  if (addobjectroot() == NULL)
+    exit(1);
+  if (addsystem() == NULL)
+    exit(1);
+
+  newobj(getobject("system"));
+  if ((sys = getobject("system")) == NULL)
+    exit(1);
+  inst = chkobjinst(sys, 0);
+  if (_putobj(sys, "lib_dir", inst, libdir))
+    exit(1);
+  if (_putobj(sys, "home_dir", inst, homedir))
+    exit(1);
+  if (_getobj(sys, "lib_dir", inst, &libdir) == -1)
+    exit(1);
+  if (_getobj(sys, "home_dir", inst, &homedir) == -1)
+    exit(1);
+  if (_getobj(sys, "name", inst, &systemname) == -1)
+    exit(1);
+
+  if (addshell() == NULL)
+    exit(1);
+
+  if (addgra() == NULL)
+    exit(1);
+  if (addgra2() == NULL)
+    exit(1);
+  if (addgra2null() == NULL)
+    exit(1);
+  if (addgra2file() == NULL)
+    exit(1);
+  if (addgra2prn() == NULL)
+    exit(1);
+
+  if (addgra2gtk() == NULL)
+    exit(1);
+
+  if (addint() == NULL)
+    exit(1);
+  if (adddouble() == NULL)
+    exit(1);
+  if (addstring() == NULL)
+    exit(1);
+  if (addiarray() == NULL)
+    exit(1);
+  if (adddarray() == NULL)
+    exit(1);
+  if (addsarray() == NULL)
+    exit(1);
+  if (addmath() == NULL)
+    exit(1);
+  if (addfit() == NULL)
+    exit(1);
+  if (addprm() == NULL)
+    exit(1);
+
+  if (adddraw() == NULL)
+    exit(1);
+  if (addagrid() == NULL)
+    exit(1);
+  if (addaxis() == NULL)
+    exit(1);
+  if (addfile() == NULL)
+    exit(1);
+  if (addmerge() == NULL)
+    exit(1);
+  if (addlegend() == NULL)
+    exit(1);
+  if (addrectangle() == NULL)
+    exit(1);
+  if (addline() == NULL)
+    exit(1);
+  if (addcurve() == NULL)
+    exit(1);
+  if (addarc() == NULL)
+    exit(1);
+  if (addpolygon() == NULL)
+    exit(1);
+  if (addmark() == NULL)
+    exit(1);
+  if (addtext() == NULL)
+    exit(1);
+
+  if (addmenu() == NULL)
+    exit(1);
+  if (adddialog() == NULL)
+    exit(1);
+
+  loginshell = NULL;
+  if ((fp = openconfig(SYSCONF)) != NULL) {
+    while ((tok = getconfig(fp, &str)) != NULL) {
+      s2 = str;
+      if (strcmp(tok, "login_shell") == 0) {
+	f1 = getitok2(&s2, &len, " \t,");
+	if (_putobj(sys, "login_shell", inst, f1))
+	  exit(1);
+      } else if (strcmp(tok, "create_object") == 0) {
+	while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
+	  newobj(getobject(f1));
+	  memfree(f1);
+	}
+      } else if (strcmp(tok, "alloc_console") == 0) {
+	f1 = getitok2(&s2, &len, " \t,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0') {
+	  if (val == 0)
+	    allocconsole = FALSE;
+	  else
+	    allocconsole = TRUE;
+	}
+	memfree(f1);
+      } else if (strcmp(tok, "console_size") == 0) {
+	f1 = getitok2(&s2, &len, " \x09,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  consolecol = val;
+	memfree(f1);
+	f1 = getitok2(&s2, &len, " \x09,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  consolerow = val;
+	memfree(f1);
+#ifdef HAVE_LIBREADLINE
+      } else if (strcmp(tok, "history_size") == 0) {
+	f1 = getitok2(&s2, &len, " \t,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0' && val > 0) {
+	  history_size = val;
+	}
+	memfree(f1);
+#endif
+      } else if (strcmp(tok, "terminal") == 0) {
+	terminal = getitok2(&s2, &len, "");
+      }
+      memfree(tok);
+      memfree(str);
+    }
+    closeconfig(fp);
+  }
+#ifdef HAVE_LIBREADLINE
+  rl_readline_name = "ngraph";
+  rl_completer_word_break_characters = " \t\n\"'@><;|&({}`";
+  rl_attempted_completion_function = (CPPFunction *) attempt_shell_completion;
+  rl_completion_entry_function = NULL;
+  len = sizeof(char) * (strlen(homedir) + strlen(HIST_FILE) + 2);
+  history_file = malloc(len);
+  if (history_file != NULL) {
+    snprintf(history_file, len, "%s/%s", homedir, HIST_FILE);
+    read_history(history_file);
+  }
+  using_history();
+  stifle_history(history_size);
+#endif
+
+  putstderr = putconsole;
+  printfstderr = printfconsole;
+  inputyn = inputynconsole;
+  ndisplaydialog = displaydialogconsole;
+  ndisplaystatus = displaystatusconsole;
+
+  if (allocconsole) {
+    nallocconsole();
+  }
+
+  if (isatty(0) && isatty(1) && isatty(2)) {
+    consoleac = TRUE;
+    if (!allocconsole) {
+      consolefdin = dup(0);
+      consolefdout = dup(2);
+    }
+  } else {
+    consoleac = FALSE;
+  }
+
+  inifile = NULL;
+  id = newobj((obj = getobject("shell")));
+  for (i = 1; i < argc; i++) {
+    if (argv[i][0] != '-' || argv[i][1] != 'i' || i >= argc - 1) {
+      break;
+    }
+    i++;
+    if ((inifile = (char *) memalloc(strlen(argv[i]) + 1)) == NULL) {
+      exit(1);
+    }
+    strcpy(inifile, argv[i]);
+    changefilename(inifile);
+  }
+  if (inifile == NULL) {
+    if (findfilename(homedir, CONFTOP, systemname))
+      inifile = getfilename(homedir, CONFTOP, systemname);
+    else if (findfilename(libdir, CONFTOP, systemname))
+      inifile = getfilename(libdir, CONFTOP, systemname);
+  }
+  if (inifile != NULL) {
+    arrayinit(&sarray, sizeof(char *));
+    if (arrayadd(&sarray, &inifile) == NULL)
+      exit(1);
+    for (; i < argc; i++)
+      if (arrayadd(&sarray, &(argv[i])) == NULL)
+	exit(1);
+    sarg[0] = (char *) &sarray;
+    sarg[1] = NULL;
+    exeobj(obj, "shell", id, 1, sarg);
+    arraydel(&sarray);
+    memfree(inifile);
+  }
+  if (getobj(sys, "login_shell", 0, 0, NULL, &loginshell))
+    exit(1);
+  do {
+    if (_putobj(sys, "login_shell", inst, NULL))
+      exit(1);
+    if (loginshell == NULL) {
+      allocnow = nallocconsole();
+      exeobj(obj, "shell", id, 0, NULL);
+      if (allocnow)
+	nfreeconsole();
+    } else {
+      arrayinit(&iarray, sizeof(int));
+      arg = loginshell;
+      if (getobjilist2(&arg, &lobj, &iarray, TRUE)) {
+	return -1;
+      }
+      arraydel(&iarray);
+      if (lobj == obj) {
+	allocnow = nallocconsole();
+      } else {
+	allocnow = FALSE;
+      }
+      sexeobj(loginshell);
+      if (allocnow) {
+	nfreeconsole();
+      }
+    }
+    memfree(loginshell);
+    if (getobj(sys, "login_shell", 0, 0, NULL, &loginshell)) {
+      exit(1);
+    }
+  } while (loginshell != NULL);
+#ifdef HAVE_LIBREADLINE
+  if (history_file != NULL) {
+    write_history(history_file);
+  }
+#endif
+  if (consoleac && (consolepid != -1))
+    nfreeconsole();
+  memfree(terminal);
+  delobj(getobject("system"), 0);
+  return 0;
+}
+
+#ifdef HAVE_LIBREADLINE
+struct mylist
+{
+  struct mylist *next;
+  int len;
+  char str[1];
+};
+
+static char **obj_name_matching(const char *text);
+static char *obj_member_completion_function(const char *text, int state);
+static char *obj_name_completion_function(const char *text, int state);
+static char *my_completion_function(const char *text, int state,
+				    char **func(const char *));
+static char *command_word_completion_function(const char *hint_text, int state);
+static char **cmd_name_matching(const char *text);
+static char **get_obj_member_list(struct objlist *objcur, char *member);
+static char **get_obj_enum_list(struct objlist *objcur, char *member,
+				char *val);
+static char **get_obj_bool_list(struct objlist *objcur, char *member,
+				char *val);
+static char **get_obj_font_list(struct objlist *objcur, char *member,
+				char *val);
+static int get_obj_num(void);
+static struct mylist *mylist_add(struct mylist *parent, const char *text);
+static struct mylist *mylist_cat(struct mylist *list_top,
+				 struct mylist *list);
+static void mylist_free(struct mylist *list);
+static int mylist_num(const struct mylist *list);
+static struct mylist *get_file_list(const char *path, int type, int mode);
+static struct mylist *get_exec_file_list(void);
+static int my_sprintf(char **str, char *format, ...);
+
+static char **
+attempt_shell_completion(char *text, int start, int end)
+{
+  char **matches = NULL;
+  int in_command_position, ti;
+  char *command_separator_chars = ";|(`";
+
+  ti = start - 1;
+  while ((ti > -1) && (whitespace(rl_line_buffer[ti])))
+    ti--;
+
+  in_command_position = 0;
+  if (ti < 0) {
+    in_command_position++;
+  } else if (strchr(command_separator_chars, rl_line_buffer[ti])) {
+    in_command_position++;
+  }
+
+  if (!matches && in_command_position)
+    matches = rl_completion_matches(text, command_word_completion_function);
+
+  if (!matches)
+    matches = rl_completion_matches(text, obj_name_completion_function);
+
+  if (!matches)
+    matches = rl_completion_matches(text, obj_member_completion_function);
+
+  return matches;
+}
+
+static char *
+obj_member_completion_function(const char *text, int state)
+{
+  static char **list = (char **) NULL;
+  static int list_index = 0, first_char_loc;
+  struct objlist *objcur;
+
+  /* If we don't have any state, make some. */
+  if (!state) {
+    static char *obj, *instances, *member, *val;
+
+    if (list)
+      free(list);
+
+    list = (char **) NULL;
+
+    first_char_loc = 0;
+
+    if ((obj = strdup(text)) == NULL)
+      return NULL;
+
+    if ((instances = strchr(obj, ':'))
+	&& (member = strchr(instances + 1, ':'))) {
+      *instances = *member = '\0';
+      instances++;
+      member++;
+    } else {
+      free(obj);
+      return NULL;
+    }
+
+    objcur = getobject(obj);
+    if (objcur == NULL) {
+      free(obj);
+      return NULL;
+    }
+
+    if ((val = strchr(member, '=')) != NULL) {
+      *val = '\0';
+      val++;
+      first_char_loc = val - obj;
+      list = get_obj_enum_list(objcur, member, val);
+
+      if (list == NULL)
+	list = get_obj_bool_list(objcur, member, val);
+
+      if (list == NULL)
+	list = get_obj_font_list(objcur, member, val);
+    } else {
+      first_char_loc = member - obj;
+      list = get_obj_member_list(objcur, member);
+    }
+
+    list_index = 0;
+    free(obj);
+  }
+
+  if (list && list[list_index]) {
+    char *t;
+    int len;
+
+    len = first_char_loc + strlen(list[list_index]) + 1;
+    t = malloc(len);
+    if (t == NULL)
+      return NULL;
+
+    snprintf(t, len, "%.*s%s", first_char_loc, text, list[list_index]);
+    list_index++;
+    return (t);
+  } else {
+    return ((char *) NULL);
+  }
+}
+
+static char **
+get_obj_member_list(struct objlist *objcur, char *member)
+{
+  char **list = (char **) NULL;
+  int i, j, len;
+
+  if ((list = malloc(sizeof(*list) * (chkobjfieldnum(objcur) + 1))) == NULL)
+    return NULL;
+
+  len = strlen(member);
+  j = 0;
+  for (i = 0; i < chkobjfieldnum(objcur); i++) {
+    if (strncmp(chkobjfieldname(objcur, i), member, len) == 0) {
+      list[j++] = chkobjfieldname(objcur, i);
+    }
+  }
+  list[j] = NULL;
+  return list;
+}
+
+static char **
+get_obj_enum_list(struct objlist *objcur, char *member, char *val)
+{
+  char **list = (char **) NULL, **enumlist;
+  int i, j, len;
+
+  if (chkobjfieldtype(objcur, member) != NENUM)
+    return NULL;
+
+  enumlist = (char **) chkobjarglist(objcur, member);
+  for (i = 0; enumlist[i] != NULL; i++);
+
+  if ((list = malloc((sizeof(*list)) * (i + 1))) == NULL)
+    return NULL;
+
+  len = strlen(val);
+  j = 0;
+  for (i = 0; enumlist[i] != NULL; i++) {
+    if (strncmp(enumlist[i], val, len) == 0) {
+      list[j++] = enumlist[i];
+    }
+  }
+  list[j] = NULL;
+
+  return list;
+}
+
+static char **
+get_obj_bool_list(struct objlist *objcur, char *member, char *val)
+{
+  char **list = (char **) NULL;
+  static char *boollist[] = { "true", "false", NULL };
+  int i, j, len;
+
+  if (chkobjfieldtype(objcur, member) != NBOOL)
+    return NULL;
+
+  if ((list = malloc(sizeof(boollist))) == NULL)
+    return NULL;
+
+  len = strlen(val);
+  j = 0;
+  for (i = 0; boollist[i] != NULL; i++) {
+    if (strncmp(boollist[i], val, len) == 0) {
+      list[j++] = boollist[i];
+    }
+  }
+  list[j] = NULL;
+
+  return list;
+}
+
+static char **
+get_obj_font_list(struct objlist *objcur, char *member, char *val)
+{
+  char **list = (char **) NULL;
+  struct fontmap *fontmap;
+  int i, j, len, twobyte;
+
+  if (Mxlocal == NULL)
+    return NULL;
+
+  if (Mxlocal->fontmaproot == NULL)
+    return NULL;
+
+  if (chkobjfieldtype(objcur, member) != NSTR)
+    return NULL;
+
+  if (strstr(member, "font") == NULL)
+    return NULL;
+
+  for (i = 0, fontmap = Mxlocal->fontmaproot; fontmap != NULL;
+       fontmap = fontmap->next, i++);
+
+  if ((list = malloc((sizeof(*list)) * (i + 1))) == NULL)
+    return NULL;
+
+  if (strstr(member, "jfont") != NULL)
+    twobyte = TRUE;
+  else
+    twobyte = FALSE;
+
+  len = strlen(val);
+  j = 0;
+  for (fontmap = Mxlocal->fontmaproot; fontmap != NULL;
+       fontmap = fontmap->next) {
+    if ((fontmap->twobyte == twobyte)
+	&& (strncmp(fontmap->fontalias, val, len) == 0)) {
+      list[j++] = fontmap->fontalias;
+    }
+  }
+  list[j] = NULL;
+  return list;
+}
+
+static char *
+command_word_completion_function(const char *text, int state)
+{
+  return my_completion_function(text, state, cmd_name_matching);
+}
+
+static char *
+obj_name_completion_function(const char *text, int state)
+{
+  return my_completion_function(text, state, obj_name_matching);
+}
+
+static char *
+my_completion_function(const char *text, int state, char **func(const char *))
+{
+  static char **list = (char **) NULL;
+  static int list_index = 0;
+  static int first_char_loc;
+
+  /* If we don't have any state, make some. */
+  if (!state) {
+    if (list)
+      free(list);
+
+    list = (char **) NULL;
+
+    first_char_loc = 0;
+
+    list = func(&text[first_char_loc]);
+    list_index = 0;
+  }
+
+  if (list && list[list_index]) {
+    char *t = strdup(list[list_index]);
+    if (t == NULL)
+      return NULL;
+
+    list_index++;
+    return t;
+  } else
+    return NULL;
+}
+
+static int
+get_obj_num(void)
+{
+  static int num = 0;
+  if (num == 0) {
+    struct objlist *objcur;
+    for (objcur = chkobjroot(); objcur != NULL; objcur = objcur->next)
+      num++;
+  }
+
+  return num;
+}
+
+static char **
+obj_name_matching(const char *text)
+{
+  int j, text_len;
+  struct objlist *objcur;
+  char **list;
+
+  list = malloc((get_obj_num() + 1) * sizeof(*list));
+
+  if (list == NULL)
+    return NULL;
+
+  text_len = strlen(text);
+  j = 0;
+
+  for (objcur = chkobjroot(); objcur != NULL; objcur = objcur->next) {
+    if (strncmp(objcur->name, text, text_len) == 0)
+      list[j++] = objcur->name;
+  }
+
+  if (j == 0) {
+    free(list);
+    list = NULL;
+  } else {
+    list[j] = NULL;
+  }
+
+  assert(j < get_obj_num() + 1);
+  return list;
+}
+
+static char **
+cmd_name_matching(const char *text)
+{
+  int i, j, text_len, file_len;
+  struct objlist *objcur;
+  char **list;
+  struct mylist *file_list = NULL, *file_list_cur = NULL;
+
+  file_list = get_exec_file_list();
+  file_len = mylist_num(file_list);
+
+  list =
+    malloc((CMDNUM + CPCMDNUM + get_obj_num() + file_len +
+	    1) * sizeof(*list));
+
+  if (list == NULL)
+    return NULL;
+
+  text_len = strlen(text);
+  j = 0;
+
+  for (file_list_cur = file_list; file_list_cur != NULL;
+       file_list_cur = file_list_cur->next) {
+    if (strncmp(file_list_cur->str, text, text_len) == 0) {
+      list[j++] = file_list_cur->str;
+    }
+  }
+
+  for (i = 0; i < CMDNUM; i++) {
+    if (strncmp(cmdtable[i].name, text, text_len) == 0) {
+      list[j++] = cmdtable[i].name;
+    }
+  }
+
+  for (i = 0; i < CPCMDNUM; i++) {
+    if (strncmp(cpcmdtable[i], text, text_len) == 0) {
+      list[j++] = cpcmdtable[i];
+    }
+  }
+
+  for (objcur = chkobjroot(); objcur != NULL; objcur = objcur->next) {
+    if (strncmp(objcur->name, text, text_len) == 0)
+      list[j++] = objcur->name;
+  }
+
+  if (j == 0) {
+    free(list);
+    list = NULL;
+  } else {
+    list[j] = NULL;
+  }
+
+  assert(j < CMDNUM + CPCMDNUM + get_obj_num() + file_len + 1);
+  return list;
+}
+
+struct mylist *
+get_exec_file_list(void)
+{
+  char *path, *path_env, *next_ptr, *path_ptr;
+  static struct mylist *list = NULL, *list_next = NULL;
+
+  if (list != NULL) {
+    return list;
+    /*
+       mylist_free(list);
+       list = NULL;
+     */
+  }
+
+  if ((path_env = getenv("PATH")) == NULL)
+    return NULL;
+
+  if ((path = path_ptr = strdup(path_env)) == NULL)
+    return NULL;
+
+  while ((next_ptr = strchr(path_ptr, ':')) != NULL) {
+    *next_ptr = '\0';
+    next_ptr++;
+
+    list_next = get_file_list(path_ptr, S_IFREG, S_IXUSR);
+    list = mylist_cat(list, list_next);
+    path_ptr = next_ptr;
+  }
+  free(path);
+  return list;
+}
+
+static struct mylist *
+get_file_list(const char *path, int type, int mode)
+{
+  DIR *dir;
+  struct dirent *ent;
+  struct stat statbuf;
+  struct mylist *list = NULL, *list_next = list;
+  char *full_path_name;
+
+  if ((dir = opendir(path)) == NULL) {
+    return NULL;
+  }
+  while ((ent = readdir(dir)) != NULL) {
+    if (my_sprintf(&full_path_name, "%s/%s", path, ent->d_name) < 0) {
+      if (list != NULL)
+	mylist_free(list);
+      list = NULL;
+      break;
+    }
+    stat(full_path_name, &statbuf);
+    if ((statbuf.st_mode & type) && (statbuf.st_mode & mode)) {
+      list_next = mylist_add(list_next, ent->d_name);
+      if (list == NULL)
+	list = list_next;
+    }
+  }
+
+  closedir(dir);
+
+  return list;
+}
+
+#define BUF_UNIT   256
+
+static int
+my_sprintf(char **str, char *format, ...)
+{
+  va_list arg;
+  static int buf_size = BUF_UNIT;
+  static char *buf = NULL;
+  int len;
+
+  if (buf == NULL && (buf = malloc(buf_size)) == NULL) {
+    return -1;
+  }
+
+  va_start(arg, format);
+  len = vsnprintf(buf, buf_size, format, arg) + 1;
+  va_end(arg);
+  if (len > buf_size) {
+    char *tmp;
+    buf_size = (len / BUF_UNIT + 1) * BUF_UNIT;
+    if ((tmp = realloc(buf, buf_size)) == NULL) {
+      return -1;
+    }
+    buf = tmp;
+    va_start(arg, format);
+    len = vsnprintf(buf, buf_size, format, arg) + 1;
+    va_end(arg);
+  }
+  *str = buf;
+  return len;
+}
+
+static struct mylist *
+mylist_add(struct mylist *parent, const char *text)
+{
+  struct mylist *list;
+  int len;
+
+  len = strlen(text) + 1;
+  if ((list = malloc(sizeof(struct mylist) + len)) == NULL)
+    return NULL;
+
+  memcpy(list->str, text, len);
+  list->next = NULL;
+  list->len = len;
+  if (parent != NULL)
+    parent->next = list;
+
+  return list;
+}
+
+static void
+mylist_free(struct mylist *list)
+{
+  struct mylist *tmp;
+  while (list != NULL) {
+    tmp = list->next;
+    free(list);
+    list = tmp;
+  }
+}
+
+static int
+mylist_num(const struct mylist *list)
+{
+  int num = 0;
+  while (list != NULL) {
+    num++;
+    list = list->next;
+  }
+  return num;
+}
+
+static struct mylist *
+mylist_cat(struct mylist *list_top, struct mylist *list)
+{
+  struct mylist *list_ptr;
+
+  if (list_top == NULL)
+    return list;
+
+  list_ptr = list_top;
+  while (list_ptr->next != NULL)
+    list_ptr = list_ptr->next;
+
+  list_ptr->next = list;
+  return list_top;
+}
+
+#endif

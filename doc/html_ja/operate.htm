@@ -1,0 +1,162 @@
+<HTML>
+<HEAD>
+<TITLE>Operation</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#0000FF" VLINK="#0000FF">
+<A NAME="TOP">&nbsp;</A>
+<A HREF="./ngraph.htm"><B>操作方法</B></A>
+<UL>
+<LI><A HREF="#WINDOW">ウィンドウ</A>
+<LI><A HREF="#CONTROL_BUTTON">コントロールボタン</A>
+<LI><A HREF="#MOUSE">マウス</A>
+<LI><A HREF="#PARAMETER">数値パラメタ</A>
+</UL>
+
+<BR>
+<HR SIZE="5">
+<BR>
+
+<A NAME="WINDOW">&nbsp;</A>
+<A HREF="#TOP"><B>ウィンドウ</B></A>
+<BR>
+<BLOCKQUOTE>
+Ngraph で使用するウィンドウを説明します。<BR>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>Viewer Window</TD><TD>グラフが表示されているウィンドウです。マウスによる各種設定ができます</TD></TR>
+<TR><TD>Data Window</TD><TD><IMG SRC="./img/windata.gif" WIDTH="20" HEIGHT="20" ALT="">を押すと開かれるウィンドウです。データファイルのパラメタを一覧表示します</TD></TR>
+<TR><TD>Axis Window</TD><TD><IMG SRC="./img/winaxis.gif" WIDTH="20" HEIGHT="20" ALT="">を押すと開かれるウィンドウです。軸のパラメタを一覧表示します</TD></TR>
+<TR><TD>Legend Window</TD><TD><IMG SRC="./img/winlgnd.gif" WIDTH="20" HEIGHT="20" ALT="">を押すと開かれるウィンドウです。凡例のパラメタを一覧表示します</TD></TR>
+<TR><TD>Merge Window</TD><TD><IMG SRC="./img/winmerge.gif" WIDTH="20" HEIGHT="20" ALT="">を押すと開かれるウィンドウです。マージするファイルのパラメタを一覧表示します</TD></TR>
+<TR><TD>Coordinate Window</TD><TD><IMG SRC="./img/wincoord.gif" WIDTH="20" HEIGHT="20" ALT="">を押すと開かれるウィンドウです。Viewer Window 上のマウスカーソル位置の0.01mm単位での座標値を表示します。軸が設定されていれば対応する数値を表示します</TD></TR>
+<TR><TD>Information Window</TD><TD><IMG SRC="./img/wininfo.gif" WIDTH="20" HEIGHT="20" ALT="">を押すと開かれるウィンドウです。フィッティングの途中結果を表示します</TD></TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="CONTROL_BUTTON">&nbsp;</A>
+<A HREF="#TOP"><B>コントロールボタン</B></A>
+<BR>
+<BLOCKQUOTE>
+メニューの下のコントロールボタンを使って, より効果的にグラフを作成できます。
+コントロールボタンではLegend位置のマウスによる入力や評価機能など，メニューにはない機能も割り当てられています。
+<BR>
+<BR>
+
+<TABLE BORDER=1>
+<TR><TD><IMG SRC="./img/windata.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>Data Window を開きます</TD></TR>
+<TR><TD><IMG SRC="./img/winaxis.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>Axis Window を開きます</TD></TR>
+<TR><TD><IMG SRC="./img/winlgnd.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>Legend Window を開きます</TD></TR>
+<TR><TD><IMG SRC="./img/winmerge.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>Merge Window を開きます</TD></TR>
+<TR><TD><IMG SRC="./img/wincoord.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>Coodinate Window を開きます</TD></TR>
+<TR><TD><IMG SRC="./img/wininfo.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>Information Window を開きます</TD></TR>
+</TABLE>
+<BR>
+
+<TABLE BORDER=1>
+<TR><TD><IMG SRC="./img/bdataopn.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>データファイルを開きます。メニューの[Data]-[Open]と同じです</TD></TR>
+<TR><TD><IMG SRC="./img/bload.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>グラフの開いて読み込みます。メニューの[Graph]-[Load graph]と同じです</TD></TR>
+<TR><TD><IMG SRC="./img/bsave.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>グラフを保存します。メニューの[Graph]-[Save graph]と同じです</TD></TR>
+<TR><TD><IMG SRC="./img/bscale.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>軸の設定をクリアします。メニューの[Axis]-[Scale clear]と同じです</TD></TR>
+<TR><TD><IMG SRC="./img/bdraw.gif" WIDTH="40" HEIGHT="20" ALT=""></TD><TD>Viewer Window を消去し, 新たにグラフの描画を行います。その際, ファイルの選択を行わずに, 全設定データファイルの描画を行います</TD></TR>
+<TR><TD><IMG SRC="./img/bclear.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>Viewer Window を消去します。メニューの[ビューア]-[描画]と同じです</TD></TR>
+<TR><TD><IMG SRC="./img/bprint.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>グラフを印刷します。メニューの[グラフ]-[印刷]と同じです</TD></TR>
+<TR><TD><IMG SRC="./img/bpreview.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>グラフをプレビューします</TD></TR>
+<TR><TD><IMG SRC="./img/bmath.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>変換数式を複数のデータファイルにまたがって入力します</TD></TR>
+<TR><TD><IMG SRC="./img/bscundo.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>各軸の min, max, inc の設定を自動的に保存されている履歴に従って元に戻します</TD></TR>
+<TR><TD><IMG SRC="./img/bstop.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>グラフ描画やユーザ定義関数によるフィット処理等を中断します</TD></TR>
+</TABLE>
+<BR>
+
+Viewer Windowで使用可能なコントロールボタン<BR>
+<BR>
+
+次のボタンは Viewer Window でのマウス操作モードを設定します。<BR>
+<BR>
+
+<TABLE BORDER=1>
+<TR><TD><IMG SRC="./img/bpoint.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>軸と凡例の選択, 移動, パラメタの変更をします</TD></TR>
+<TR><TD><IMG SRC="./img/blgndpo.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>凡例の選択, 移動, パラメタの変更をします。軸を選択することはできません</TD></TR>
+<TR><TD><IMG SRC="./img/bline.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>直線・矢印を作成します。</TD></TR>
+<TR><TD><IMG SRC="./img/bcurve.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>曲線を作成します。</TD></TR>
+<TR><TD><IMG SRC="./img/bpolygon.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>閉多角形を作成します。</TD></TR>
+<TR><TD><IMG SRC="./img/brect.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>矩形を作成します。</TD></TR>
+<TR><TD><IMG SRC="./img/barc.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>円・楕円を作成します。</TD></TR>
+<TR><TD><IMG SRC="./img/bmark.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>データプロット形式 "mark"に対応するマークを作成します。</TD></TR>
+<TR><TD><IMG SRC="./img/btext.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>テキストを作成します。</TD></TR>
+<TR><TD><IMG SRC="./img/bgauss.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>ガウス関数, ローレンツ関数, 放物線, 正弦曲線を作成します。作成した曲線はただちにレジェンド-曲線に展開されるので, 一度作成すると関数としての変更はできません。</TD></TR>
+<TR><TD><IMG SRC="./img/baxispo.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>軸の選択, 移動, パラメタの変更をします。凡例の選択をすることはできません</TD></TR>
+<TR><TD><IMG SRC="./img/btrim.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>指定した範囲に軸の最大・最小をトリミングします</TD></TR>
+<TR><TD><IMG SRC="./img/bframe.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>フレームグラフを作成します</TD></TR>
+<TR><TD><IMG SRC="./img/bsection.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>方眼グラフを作成します</TD></TR>
+<TR><TD><IMG SRC="./img/bcross.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>交差グラフを作成します</TD></TR>
+<TR><TD><IMG SRC="./img/bsingle.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>単独の軸を作成します</TD></TR>
+<TR><TD><IMG SRC="./img/bdatapo.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>データ点をクリックして、プロットパラメタを変更します</TD></TR>
+<TR><TD><IMG SRC="./img/beval.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>マウスで指定した範囲内のデータ点の値を表示します。値の表示後, それらデータ点をマスクすることもできます</TD></TR>
+<TR><TD><IMG SRC="./img/bzoom.gif" WIDTH="20" HEIGHT="20" ALT=""></TD><TD>グラフの表示を拡大縮小します。マウス左ボタンで拡大、右ボタンで縮小します。SHIFTキーを押しながらマウスボタンを押すと、センタリングツールになります</TD></TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="MOUSE">&nbsp;</A>
+<A HREF="#TOP"><B>マウスによる操作</B></A>
+<BR>
+<BLOCKQUOTE>
+Data Window, Axis Window, Legend Window, Merge Window のパラメタ一覧ウィンドウでは...
+<UL>
+<LI>左ボタンクリックでフォーカスします。
+<LI>左ボタンのダブルクリックでダイアログボックスをオープンします。
+<LI>右ボタンでポップアップメニューが現れ、各種操作が行えます。
+</UL>
+<BR>
+グリッド： Viewer Windowでは，凡例や軸の新規作成, 移動はグリッドに沿って行われます。
+<UL>
+<LI>グリッドの大きさは [設定]-[ビューア] で行います。
+<LI>SHIFTキー押下中はグリッドが解除されます。
+</UL>
+<BR>
+オブジェクトの選択
+<UL>
+<LI>Viewer WindowでLegendや軸の選択を行うときには選択したいグラフィックスオブジェクトに有ったマウスモードを選び(コントロールボタン<IMG SRC="./img/bpoint.gif" WIDTH="20" HEIGHT="20" ALT=""> <IMG SRC="./img/blgndpo.gif" WIDTH="20" HEIGHT="20" ALT=""> <IMG SRC="./img/baxispo.gif" WIDTH="20" HEIGHT="20" ALT="">のいずれかを選びます)、
+マウスでクリックするか、囲むようにして選択します。
+<LI>Viewer WindowでLegendや軸の選択を行うときに、それらが込み合っていてマウスでの個別選択が困難な時には、Legend Window、Axis Windowで選択したいオブジェクトを選び[Space]を押します(あるいはポップアップメニューを出して"Focus"メニューを選びま
+す)。すると、対応するグラフィックスオブジェクトがViewer Window上で選択状態になります
+</UL>
+<BR>
+複数点からなる凡例の作成
+<UL>
+<LI>レジェンドの line, curve, polygon の作成： 複数の点をマウスで指定します。
+<LI>作成を終了： 左ボタンをダブルクリックします。
+<LI>ひとつ前の点の入力に戻る： 右ボタンをクリックします。
+</UL>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+<A NAME="PARAMETER">&nbsp;</A>
+<A HREF="#TOP"><B>数値パラメタ</B></A>
+<BR>
+<BLOCKQUOTE>
+各種ダイアログボックスで座標値, 軸の方向,テキストの描画方向など殆どすべての値は,100倍した整数値で(すなわち0.01mm あるいは 0.01度単位で）入力します。<BR>
+例えばレジェンドのテキストを垂直方向(90°)に描画するには「方向」に 9000 を入力します。<BR>
+<BR>
+多くのダイアログボックスの数値入力で数式を用いることができます。<BR>
+例えば軸ダイアログボックスの「増分」に PIを入力すれば 3.141592653589793e+00 が入力されます。<BR>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+</BODY></HTML>

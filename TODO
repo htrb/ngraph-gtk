@@ -1,0 +1,18 @@
+* コードの整理
+* yelp 対応
+* Color selection dialog のパレット対応
+* ショートカットキー設定の保存、読み込み
+
+
+* Symbol font 対応の強化
+* Interrupt 対応の強化
+* File Window, Merge Window の DnD 対応
+
+
+future plan
+
+* 高速化
+* 内部コードに utf-8 を採用した簡易的な国際化
+* 描画 backend に cairo ライブラリを使用
+* GtkPrintUnixDialog の利用
+* Ruby interpreter 組み込み

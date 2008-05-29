@@ -1,0 +1,227 @@
+/* 
+ * $Id: oshell.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * 
+ * This file is part of "Ngraph for X11".
+ * 
+ * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
+ * 
+ * "Ngraph for X11" is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * "Ngraph for X11" is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <string.h>
+#ifndef WINDOWS
+#else
+#include <windows.h>
+#endif
+#include "ngraph.h"
+#include "object.h"
+#include "ioutil.h"
+#include "shell.h"
+
+#define NAME "shell"
+#define PARENT "object"
+#define OVERSION   "1.00.00"
+#define MAXCLINE 256
+#define TRUE  1
+#define FALSE 0
+
+#define ERRRUN 100
+#define ERRNOCL 101
+#define ERRFILEFIND 102
+
+#define ERRNUM 3
+
+char *sherrorlist[ERRNUM]={
+  "already running.",
+  "no command string is specified.",
+  "no such file",
+};
+
+struct shlocal {
+  int lock;
+  struct nshell *nshell;
+};
+
+int cmdinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct shlocal *shlocal;
+  struct nshell *nshell;
+
+  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+  if ((shlocal=memalloc(sizeof(struct shlocal)))==NULL) return 1;
+  if (_putobj(obj,"_local",inst,shlocal)) {
+    memfree(shlocal);
+    return 1;
+  }
+  if ((nshell=newshell())==NULL) return 1;
+  ngraphenvironment(nshell);
+  shlocal->lock=0;
+  shlocal->nshell=nshell;
+  return 0;
+}
+
+int cmddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct shlocal *shlocal;
+
+  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+  _getobj(obj,"_local",inst,&shlocal);
+  delshell(shlocal->nshell);
+  return 0;
+}
+
+int cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct shlocal *shlocal;
+  struct nshell *nshell;
+  struct narray *sarray;
+  char **sdata;
+  int i,snum;
+  int err;
+  char *filename,*filename2;
+  HANDLE fd;
+  int rcode;
+  char **argv2;
+  int argc2;
+  char *s;
+
+  _getobj(obj,"_local",inst,&shlocal);
+
+  if (shlocal->lock) {
+    error(obj,ERRRUN);
+    return 1;
+  }
+  shlocal->lock=1;
+  nshell=shlocal->nshell;
+
+  shellsavestdio(nshell);
+
+  err=1;
+  filename=NULL;
+
+  sarray=(struct narray *)argv[2];
+  snum=arraynum(sarray);
+  sdata=arraydata(sarray);
+  for (i=0;i<snum;i++) {
+    s=sdata[i];
+    if ((s!=NULL) && ((s[0]=='-') || (s[0]=='+'))) {
+      if (s[1]=='-') {
+        i++;
+        break;
+      }
+      switch (s[1]) {
+      default:
+        if (setshelloption(nshell,s)==-1) goto errexit;
+        break;
+      }
+    } else break;
+  }
+  if (i!=snum) {
+    filename=sdata[i];
+    i++;
+  }
+
+  argv2=NULL;
+  if ((s=memalloc(strlen(((char **)argv)[1])+1))==NULL) goto errexit;
+  strcpy(s,((char **)argv)[1]);
+  if (arg_add(&argv2,s)==NULL) {
+    memfree(s);
+    arg_del(argv2);
+    goto errexit;
+  }
+
+  for (;i<snum;i++) {
+    if (sdata[i]!=NULL) {
+      if ((s=memalloc(strlen(sdata[i])+1))==NULL) goto errexit;
+      strcpy(s,sdata[i]);
+      if (arg_add(&argv2,s)==NULL) {
+        memfree(s);
+        arg_del(argv2);
+        goto errexit;
+      }
+    }
+  }
+
+  argc2=getargc(argv2);
+
+  setshellargument(nshell,argc2,argv2);
+
+  fd=NOHANDLE;
+  if (filename!=NULL) {
+    filename2=nsearchpath(getval(nshell,"PATH"),filename,TRUE);
+    if (filename2!=NULL) {
+      if ((fd=nopen(filename2,O_RDONLY,NFMODE))==NOHANDLE) {
+        memfree(filename2);
+        error2(obj,ERRFILEFIND,filename);
+        goto errexit;
+      }
+      memfree(filename2);
+      setshhandle(nshell,fd);
+    } else {
+      error2(obj,ERRFILEFIND,filename);
+      goto errexit;
+    }
+  } else setshhandle(nshell,stdinfd());
+  do {
+    rcode=cmdexecute(nshell,NULL);
+  } while (nisatty(getshhandle(nshell)) && (rcode!=0));
+
+  if (fd!=NOHANDLE) {
+    nclose(fd);
+    setshhandle(nshell,stdinfd());
+    if (!getshelloption(nshell,'s')) {
+      do {
+        rcode=cmdexecute(nshell,NULL);
+      } while (nisatty(getshhandle(nshell)) && (rcode!=0));
+    }
+  }
+  err=0;
+
+errexit:
+  shellrestorestdio(nshell);
+  shlocal->lock=0;
+  return err;
+}
+
+int cmdsecurity(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  security=*(int *)argv[2];
+  return 0;
+}
+
+#define TBLNUM 6
+
+struct objtable shell[TBLNUM] = {
+  {"init",NVFUNC,NEXEC,cmdinit,NULL,0},
+  {"done",NVFUNC,NEXEC,cmddone,NULL,0},
+  {"next",NPOINTER,0,NULL,NULL,0},
+  {"shell",NVFUNC,NREAD|NEXEC,cmdshell,"sa",0},
+  {"security",NVFUNC,0,cmdsecurity,"b",0},
+  {"_local",NPOINTER,0,NULL,NULL,0}};
+
+void *addshell()
+{
+  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,shell,ERRNUM,sherrorlist,NULL,NULL);
+}
+

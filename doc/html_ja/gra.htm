@@ -1,0 +1,326 @@
+<HTML>
+<HEAD>
+<TITLE>GRA</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#0000FF" VLINK="#0000FF">
+<A NAME="TOP">&nbsp;</A>
+<A HREF="./ngraph.htm"><B>GRAファイル</B></A>
+<UL>
+<LI><A HREF="#GRAFILE">概要</A>
+<LI><A HREF="#GRAFILESTRUCTURE">GRAファイルの構造</A>
+<LI><A HREF="#GRACOMMAND">GRAファイルのグラフィックスコマンド</A>
+</UL>
+
+<BR>
+<HR SIZE="5">
+<BR>
+
+
+<A NAME="GRAFILE">&nbsp;</A>
+<A HREF="#TOP"><B>概要</B></A>
+<BR>
+<BLOCKQUOTE>
+GRAファイルは, 直線, 円などのグラフィックス命令を記述した, グラフのマージ等に使われるNgraph独自のファイル形式です。<BR>
+<BR>
+また、External driverへグラフィックス命令を送るのにも使われます。<BR>
+<BR>
+DOS版NgraphとのGRAファイルの互換性<BR>
+<UL>
+<LI>Ngraph version 6.x のGRAファイルは, DOS版Ngraph(version 5.x)のGRAファイルと僅かに異なるため,互換性はありません。
+<LI>ただしNgraph version 6.x でDOS版Ngraph(version 5.x)のGRAファイルをマージすることは可能です。
+<LI>DOS版NgraphのGRAファイルの構造およびコマンドについてはDOS版Ngraphに添付されているマニュアルを参照してください。
+</UL>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="GRAFILESTRUCTURE">&nbsp;</A>
+<A HREF="#TOP"><B>GRAファイルの構造</B></A>
+<BR>
+<BLOCKQUOTE>
+下にGRAファイルの例を示します。<BR>
+<BLOCKQUOTE>
+%Ngraph GRAF<BR>
+%Creator: Ngraph ver 6.00.01<BR>
+I,5,0,0,21000,29700,10000<BR>
+V,5,0,0,21000,29700,1<BR>
+G,3,0,0,0<BR>
+A,5,0,40,2,0,1000<BR>
+L,4,3500,22000,17500,22000<BR>
+L,4,3500,22000,3500,8000<BR>
+L,4,3500,8000,17500,8000<BR>
+L,4,17500,22000,17500,8000<BR>
+E,0<BR>
+</BLOCKQUOTE>
+<BR>
+GRAファイルの第一行はGRAファイルの識別子である
+<UL>%Ngraph GRAF</UL>
+でなければなりません。<BR>
+<BR>
+第2行以降は1行に1つずつグラフィックスコマンドが記述されます。グラフィックスコマンドの形式を示します。<BR>
+<UL>
+command, n, arg1, arg2, ..., argn<BR>
+<BR>
+<LI>commandはグラフィックスコマンドを指定するアルファベット一文字でI, E, V, A, G, M, N, L, T, C, B, P, R, D, Hのいずれかです。
+<LI>nは引数の数(整数)を現します。
+<LI>arg1, ..., argnはグラフィックスコマンドの引数(整数)です。
+</UL>
+コマンドの区切りにはスペース, タブ, コンマが使えます。<BR>
+ただしcommandが%, F, S, Kの場合には
+<UL>Sthis is a string</UL>
+のようにコマンド直後に文字列の引数(上の例ではthis is a string)を記述します。
+この場合, 文字列引数の中のスペース・タブ・コンマは通常の文字として扱われます。<BR>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="GRACOMMAND">&nbsp;</A>
+<A HREF="#TOP"><B>GRAファイルのグラフィックコマンド</B></A>
+<BR>
+<BLOCKQUOTE>
+グラフィックコマンドの引数は特に指定のない限り単位は0.01mmです。
+X座標増加方向は右, Y座標増加方向は下です。
+数値引数はすべて整数値でなければなりません。
+<BR>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>I</TD><TD>初期化命令</TD><TD>I,5,arg1,arg2,arg3,arg4,arg5</TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 左マ−ジン<BR>
+arg2 上マ−ジン<BR>
+arg3 出力用紙幅<BR>
+arg4 出力用紙高<BR>
+arg5 拡大率(0.01%単位)<BR>
+</BLOCKQUOTE>
+<UL>
+<LI>出力デバイスの初期化を行う。1回の描画で初めに一度だけ呼ばれる。<BR>
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>E</TD><TD>終了命令</TD><TD>E,0</TD></TR>
+</TABLE>
+<UL>
+<LI>一回の描画で最後に一度だけ呼ばれる。出力デバイスの後処理を行う。<BR>
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>%</TD><TD>コメント</TD><TD>%comment</TD></TR>
+</TABLE>
+<UL>
+<LI>文字列引数(コメント)
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>V</TD><TD>クリッピング領域, 原点移動命令</TD><TD>V,5,arg1,arg2,arg3,arg4,arg5</TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 左上X座標, 新しいX座標原点<BR>
+arg2 左上Y座標, 新しいY座標原点<BR>
+arg3 右下X座標<BR>
+arg4 右下Y座標<BR>
+arg5 0:クリッピングオフ   1:クリッピングオン<BR>
+</BLOCKQUOTE>
+<UL>
+<LI>この命令以降, V命令を除くすべての命令は原点をクリッピング領域左上としたものになる。
+<LI>パラメタは A4用紙左上を原点とする0.01mm単位で指定します。
+<LI>クリッピング処理は基本的にNgraph内部で行っているので必ずしも必要ではないが, クリッピングするのが望ましい(原点移動は必須)。
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>A</TD><TD>線属性指定命令</TD><TD>A,n,arg1,arg2,.... </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+n: 点線要素の数+5<BR>
+arg1 0:実線   >1:点線要素の数<BR>
+arg2 線幅<BR>
+arg3 線端形状   0:Butt   1:Round    2:Projecting<BR>
+arg4 線交差形状   0:Miter   1:Round   2:Bevel<BR>
+arg5 Miter limit<BR>
+arg(i)-arg(i+5) i=1-arg1 点線要素<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>G</TD><TD>カラ−指定命令</TD><TD>G,3,arg1,arg2,arg3 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 R(8bit)<BR>
+arg2 G(8bit)<BR>
+arg3 B(8bit)<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>M</TD><TD>カレントポイント移動命令</TD><TD>M,2,arg1,arg2 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 X座標<BR>
+arg2 Y座標<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>N</TD><TD>カレントポイント相対移動命令</TD><TD>N,2,arg1,arg2 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 X方向移動量<BR>
+arg2 Y方向移動量<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>L</TD><TD>線描画命令</TD><TD>L,4,arg1,arg2,arg3,arg4 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 始点X座標<BR>
+arg2 始点Y座標<BR>
+arg3 終点X座標<BR>
+arg4 終点Y座標<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>T</TD><TD>カレントポイント相対・線描画命令</TD><TD>T,2,arg1,arg2 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 終点X座標, 新しいカレントポイントX座標<BR>
+arg2 終点Y座標, 新しいカレントポイントY座標<BR>
+</BLOCKQUOTE>
+<UL>
+<LI>本命令実行後, カレントポイントは終点に移動する。
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>C</TD><TD>楕円描画命令</TD><TD>C,7,arg1,arg2,arg3,arg4,arg5,arg6,arg7 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 中心のX座標<BR>
+arg2 中心のY座標<BR>
+arg3 X方向半径<BR>
+arg4 Y方向半径<BR>
+arg5 楕円弧開始角度, 0.01度単位(0-36000)<BR>
+arg6 楕円弧角度, 0.01度単位(0-36000)<BR>
+arg7 	0:円の輪郭（内部は塗りつぶさない）
+     	1:扇形内部を塗りつぶす
+     	2:円弧内部を塗りつぶす<BR>
+</BLOCKQUOTE>
+<UL>
+<LI>arg5から開始してarg6の角度だけ反時計回りに楕円弧を描く。
+<LI>角度は, 楕円 (x/a)^2+(y/b)^2=1 を x=a*cosθ, y=b*sinθ と媒介変数表示した時のθ。
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>B</TD><TD>四角形描画命令</TD><TD>B,5,arg1,arg2,arg3,arg4,arg5 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 X座標<BR>
+arg2 Y座標<BR>
+arg3 対角のX座標<BR>
+arg4 対角のY座標<BR>
+arg5 0:四角形の輪郭（内部は塗りつぶさない）1:内部を塗りつぶす<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>P</TD><TD>点描画命令</TD><TD>P,2,arg1,arg2 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 X座標<BR>
+arg2 Y座標<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>R</TD><TD>多角形描画命令</TD><TD>R,n,arg1,arg2,... </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+n  座標点の数*2+1<BR>
+arg1 座標点の数<BR>
+arg(i*2+0) i=1-arg1 X座標<BR>
+arg(i*2+1) i=1-arg1 Y座標<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>D</TD><TD>閉多角形描画命令</TD><TD>D,n,arg1,arg2,... </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+ n  座標点の数*2+2<BR>
+arg1 座標点の数<BR>
+arg2 	0:多角形の輪郭（内部は塗りつぶさない）
+     	1:内部を塗りつぶす(EvenOddRule)
+     	2:内部を塗りつぶす(WindingRule)<BR>
+arg(i*2+1) i=1-arg1 X座標<BR>
+arg(i*2+2) i=1-arg1 Y座標<BR>
+</BLOCKQUOTE>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>F</TD><TD>フォント選択命令</TD><TD>Ffont</TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+文字列引数(font フォントエイリアス名)<BR>
+</BLOCKQUOTE>
+<UL>
+<LI>実際のフォントへのマッピングはドライバに依存
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>H</TD><TD>フォントメトリック指定命令</TD><TD>H,3,arg1,arg2,arg3 </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+arg1 文字のポイントサイズ, 0.01pt単位（1pt=1/72inch）<BR>
+arg2 文字スペーシング・ポイント量, 0.01pt単位<BR>
+arg3 描画方向, X軸から反時計回りに0.01度単位<BR>
+</BLOCKQUOTE>
+<UL>
+<LI>文字は全てスケーラブルでなければなりません。
+<LI>漢字出力命令の前には必ず漢字フォントの, 英数字出力命令の前には必ず英数字フォントの選択命令を発行しなければなりません。
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>S</TD><TD>英数字描画命令</TD><TD>Sstring </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+文字列引数 (string 英数字文字列)
+</BLOCKQUOTE>
+<UL>
+<LI> \x?? は ?? を16進コードとする文字, \\は\
+</UL>
+<BR>
+<TABLE BORDER=1>
+<TR><TD>コマンド</TD><TD>機能</TD><TD>書式</TD></TR>
+<TR><TD>K</TD><TD>漢字描画命令</TD><TD>Kstring </TD></TR>
+</TABLE>
+<BLOCKQUOTE>
+文字列引数(string 漢字文字列)<BR>
+</BLOCKQUOTE>
+<UL>
+<LI>漢字コードはSHIFT JIS
+</UL>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+</BODY></HTML>
+

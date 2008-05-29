@@ -1,0 +1,130 @@
+<HTML>
+<HEAD>
+<TITLE>Introduction</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#0000FF" VLINK="#0000FF">
+<A NAME="TOP">&nbsp;</A>
+<A HREF="./ngraph.htm"><B>Ngraphの概要</B></A>
+<UL>
+<LI><A HREF="#ABSTRACT">Ngraphとは？</A>
+<LI><A HREF="#USAGE">使用・配布規定</A>
+<LI><A HREF="#INSTALL">環境設定</A>
+</UL>
+
+<BR>
+<HR SIZE="5">
+<BR>
+
+
+<A NAME="ABSTRACT">&nbsp;</A>
+<A HREF="#TOP"><B>Ngraphとは？</B></A>
+<BR>
+<UL>
+<LI><B>Ngraph</B> は理工系学生、研究者、技術者のために作られた２次元グラフ作成プ
+ログラムです。
+<LI>汎用性のあるテキストファイルから数値デ−タを読み込みグラフにプロットすること
+ができます。
+<LI>プレゼンテ−ション用、論文用グラフの作成ができます。
+<LI>簡単なデ−タ解析をアシストします。
+</UL>
+
+<BR>
+<HR>
+<BR>
+
+
+<A NAME="USAGE">&nbsp;</A>
+<A HREF="#TOP"><B>使用規定・配布等</B></A>
+<BR>
+<BLOCKQUOTE>
+<PRE>
+Ngraph, Ngraph for X11 の著作権は石坂智（いしざかさとし）が保有しています。
+
+Copyright (C) 2002, Satoshi ISHIZAKA.
+
+このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェ
+ア財団によって発行された GNU一般公衆利用許諾契約書(バージョン2か、希望
+によってはそれ以降のバージョンのうちどれか)の定める条件の下で再頒布ま
+たは改変することができます。
+
+このプログラムは有用であることを願って頒布されますが、*全くの無保証* 
+です。商業可能性の保証や特定の目的への適合性は、言外に示されたものも含
+め全く存在しません。詳しくはGNU一般公衆利用許諾契約書をご覧ください。
+
+あなたはこのプログラムと共に、GNU一般公衆利用許諾契約書の複製物を一部
+受け取ったはずです。もし受け取っていなければ、フリーソフトウェア財団ま
+で請求してください(宛先は the Free Software Foundation, Inc., 59
+Temple Place, Suite 330, Boston, MA 02111-1307 USA)。
+</PRE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+<A NAME="INSTALL">&nbsp;</A>
+<A HREF="#TOP"><B>環境設定</B></A>
+<BR>
+<BLOCKQUOTE>
+Ngraph 環境設定は環境変数 NGRAPHLIB, NGRAPHHOME で行います。Ngraphを正しく動作させる為に以下の設定を行ってください。<BR>
+<UL>
+<LI>Ngraph を /usr/local/lib/Ngraph 以外のディレクトリにインストールした際には環境変数 NGRAPHLIB にインストールディレクトリを設定してください。<BR>
+<LI>HOMEディレクトリ以外に初期化ファイル(後述)を作成するようにするには NGRAPHHOME に適当なディレクトリを設定してください。
+<LI>Ngraphをバージョンアップした際には、HOME ディレクトリあるいは NGRAPHHOME に作成された Ngraph.ini を削除するのを忘れないで下さい。そうしないと Ngraph.ini の構成が変更されたとしても古い Ngraph.ini がロードされてしまいます。
+</UL>
+<BR>
+以下に、Ngraph が使用するファイルのディレクトリ検索順を記述します。<BR>
+<BR>
+(1) 初期化ファイルの読み込み<BR>
+<BR>
+<UL>
+Ngraphは2つの初期化ファイルを必要とします。<BR>
+<BR>
+<DL>
+<DT> .Ngraph
+<DD>
+デフォルトのグラフスタイルの読み込みやコマンドラインオプションの解析を行うスクリプトファイル。このスクリプトファイルは更に .Ngraph.ngp を読み込みます。
+<DT> Ngraph.ini
+<DD>
+Ngraphの設定初期値を列挙したファイル
+</DL>
+<BR>
+これらのファイル読み込みの検索順は以下の通りです。
+<OL>
+<LI>ホーム(HOME)ディレクトリ。ただし環境変数 NGRAPHHOME で変更可能。<BR>
+<LI>インストールディレクトリ。デフォルトで /usr/local/lib/Ngraph。ただし環境変数 NGRAPHLIB で変更可能。
+</OL>
+</UL>
+<BR>
+(2) 初期化ファイルの書き込み<BR>
+<BR>
+<UL>
+Ngraph 終了時には Ngraph.ini を作成します。また、[Graph]-[save as default(Graph)] メニューでは .Ngraph.ngp を作成します。これらファイルの作成ディレクトリの優先順は以下の通りです。
+<OL>
+<LI>ホーム(HOME)ディレクトリ。ただし環境変数 NGRAPHHOME で変更可能。<BR>
+<LI>インストールディレクトリ。デフォルトで /usr/local/lib/Ngraph。ただし環境変数 NGRAPHLIB で変更可能。
+</OL>
+</UL>
+<BR>
+(3) プリンタドライバ、アドインスクリプトの実行<BR>
+<BR>
+<UL>
+プリンタドライバやアドインスクリプトなどの外部プログラムの検索順は以下の通りです。
+<OL>
+<LI>インストールディレクトリ。デフォルトで /usr/local/lib/Ngraph。ただし環境変数 NGRAPHLIB で変更可能。
+<LI> 環境変数 PATH
+</OL>
+</UL>
+</BLOCKQUOTE>
+<BR>
+
+<BR>
+<HR>
+<BR>
+
+</BODY></HTML>
+
+
+
+

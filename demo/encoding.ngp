@@ -1,0 +1,65 @@
+new dialog
+FONT=${dialog::input:'font name'}
+del dialog
+
+for i in -1 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+do
+  new line
+  line::points="3000 6000+1000*$i+200 19000 6000+1000*$i+200"
+done
+for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+do
+  new line
+  line::points="3000+1000*$i 5200 3000+1000*$i 21200"
+done
+
+new text
+text::pt=2000
+text::font="Courier"
+text::text="Encoding table ($FONT)"
+text::x=3000
+text::y=3000
+
+X=3250
+Y=5000
+for j in 0 1 2 3 4 5 6 7 8 9 A B C D E F
+do
+  new text
+  text::pt=1200
+  text::font="Courier"
+  text::text="0${j}"
+  text::x=$X
+  text::y=$Y
+  X=`iexpr $X + 1000`
+done
+
+X=2250
+Y=5850
+for j in 0 1 2 3 4 5 6 7 8 9 A B C D E F
+do
+  new text
+  text::pt=1200
+  text::font="Courier"
+  text::text="${j}0"
+  text::x=$X
+  text::y=$Y
+  Y=`iexpr $Y + 1000`
+done
+
+
+Y=6000
+for j in 0 1 2 3 4 5 6 7 8 9 A B C D E F
+do
+  X=3250
+  for i in 0 1 2 3 4 5 6 7 8 9 A B C D E F
+  do
+    new text
+    text::pt=2000
+    text::font="$FONT"
+    text::text="\\x${j}${i}"
+    text::x=$X
+    text::y=$Y
+    X=`iexpr $X + 1000`
+  done
+  Y=`iexpr $Y + 1000`
+done

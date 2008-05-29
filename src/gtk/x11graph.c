@@ -1,0 +1,1193 @@
+/* 
+ * $Id: x11graph.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * 
+ * This file is part of "Ngraph for X11".
+ * 
+ * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
+ * 
+ * "Ngraph for X11" is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * "Ngraph for X11" is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ */
+
+#include "gtk_common.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "ngraph.h"
+#include "object.h"
+#include "ioutil.h"
+#include "shell.h"
+#include "nstring.h"
+#include "odraw.h"
+
+#include "gtk_liststore.h"
+#include "gtk_combo.h"
+
+#include "main.h"
+#include "x11dialg.h"
+#include "ox11menu.h"
+#include "x11menu.h"
+#include "x11gui.h"
+#include "x11graph.h"
+#include "x11view.h"
+#include "x11axis.h"
+#include "x11print.h"
+#include "x11commn.h"
+#include "x11scrip.h"
+#include "x11info.h"
+
+struct pagelisttype
+{
+  char *paper;
+  int width;
+  int height;
+};
+
+static struct pagelisttype pagelist[] = {
+  {"A3 P (29700x42000)", 29700, 42000},
+  {"A4 P (21000x29700)", 21000, 29700},
+  {"A4 L (29700x21000)", 29700, 21000},
+  {"A5 P (14800x21000)", 14800, 21000},
+  {"A5 L (21000x14800)", 21000, 14800},
+  {"B4 P (25700x36400)", 25700, 36400},
+  {"B5 P (18200x25700)", 18200, 25700},
+  {"B5 L (25700x18200)", 25700, 18200},
+  {"Letter P (21590x27940)", 21590, 27940},
+  {"Letter L (27940x21590)", 27940, 21590},
+  {"Legal  P (21590x35560)", 21590, 35560},
+  {"Legal  L (35560x35560)", 35560, 21590},
+};
+
+#define PAGELISTNUM (sizeof(pagelist) / sizeof(*pagelist))
+#define DEFAULT_PAPER_SIZE 1
+
+static void
+PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
+{
+  int j;
+  char buf[256];
+
+  snprintf(buf, sizeof(buf), "%d", Menulocal.LeftMargin);
+  gtk_entry_set_text(GTK_ENTRY(d->leftmargin), buf);
+
+  snprintf(buf, sizeof(buf), "%d", Menulocal.TopMargin);
+  gtk_entry_set_text(GTK_ENTRY(d->topmargin), buf);
+
+  snprintf(buf, sizeof(buf), "%d", Menulocal.PaperWidth);
+  gtk_entry_set_text(GTK_ENTRY(d->paperwidth), buf);
+
+  snprintf(buf, sizeof(buf), "%d", Menulocal.PaperHeight);
+  gtk_entry_set_text(GTK_ENTRY(d->paperheight), buf);
+
+  snprintf(buf, sizeof(buf), "%d", Menulocal.PaperZoom);
+  gtk_entry_set_text(GTK_ENTRY(d->paperzoom), buf);
+
+  for (j = 0; j < PAGELISTNUM; j++) {
+    if ((Menulocal.PaperWidth == pagelist[j].width)
+	&& (Menulocal.PaperHeight == pagelist[j].height))
+      break;
+  }
+
+  if (j == PAGELISTNUM) {
+    j = DEFAULT_PAPER_SIZE;
+  }
+  combo_box_set_active(d->paper, j);
+}
+
+static void
+PageDialogPage(GtkWidget *w, gpointer client_data)
+{
+  struct PageDialog *d;
+  int a;
+  char buf[256];
+
+  d = (struct PageDialog *) client_data;
+
+  a = combo_box_get_active(d->paper);
+
+  if (a < 0)
+    return;
+
+  snprintf(buf, sizeof(buf), "%d", pagelist[a].width);
+  gtk_entry_set_text(GTK_ENTRY(d->paperwidth), buf);
+
+  snprintf(buf, sizeof(buf), "%d", pagelist[a].height);
+  gtk_entry_set_text(GTK_ENTRY(d->paperheight), buf);
+}
+
+static void
+PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GtkWidget *w, *hbox, *vbox;
+  int j;
+  struct PageDialog *d;
+
+  d = (struct PageDialog *) data;
+
+  if (makewidget) {
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(hbox, w, _("paper _Width:"), TRUE);
+    d->paperwidth = w;
+
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(hbox, w, _("paper _Height:"), TRUE);
+    d->paperheight = w;
+
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = combo_box_create();
+    item_setup(hbox, w, _("_Paper:"), FALSE);
+    d->paper = w;
+    g_signal_connect(w, "changed", G_CALLBACK(PageDialogPage), d);
+
+    for (j = 0; j < PAGELISTNUM; j++) {
+      combo_box_append_text(d->paper, pagelist[j].paper);
+    }
+
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(hbox, w, _("_Left margin:"), TRUE);
+    d->leftmargin = w;
+
+
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(hbox, w, _("_Top margin:"), TRUE);
+    d->topmargin = w;
+
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(hbox, w, _("paper _Zoom:"), TRUE);
+    d->paperzoom = w;
+
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+  }
+  PageDialogSetupItem(w, d);
+}
+
+static void
+PageDialogClose(GtkWidget *w, void *data)
+{
+  struct PageDialog *d;
+  const char *buf;
+  char *endptr;
+  int a;
+
+  d = (struct PageDialog *) data;
+  if (d->ret != IDOK)
+    return;
+  buf = gtk_entry_get_text(GTK_ENTRY(d->leftmargin));
+  a = strtol(buf, &endptr, 10);
+  if (endptr[0] == '\0')
+    Menulocal.LeftMargin = a;
+
+  buf = gtk_entry_get_text(GTK_ENTRY(d->topmargin));
+  a = strtol(buf, &endptr, 10);
+  if (endptr[0] == '\0')
+    Menulocal.TopMargin = a;
+
+  buf = gtk_entry_get_text(GTK_ENTRY(d->paperwidth));
+  a = strtol(buf, &endptr, 10);
+  if (endptr[0] == '\0')
+    Menulocal.PaperWidth = a;
+
+  buf = gtk_entry_get_text(GTK_ENTRY(d->paperheight));
+  a = strtol(buf, &endptr, 10);
+  if (endptr[0] == '\0')
+    Menulocal.PaperHeight = a;
+
+  buf = gtk_entry_get_text(GTK_ENTRY(d->paperzoom));
+  a = strtol(buf, &endptr, 10);
+  if (endptr[0] == '\0')
+    Menulocal.PaperZoom = a;
+}
+
+void
+PageDialog(struct PageDialog *data)
+{
+  data->SetupWindow = PageDialogSetup;
+  data->CloseWindow = PageDialogClose;
+}
+
+static void
+SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
+{
+  int j, num;
+  char **buf;
+  GtkTreeIter iter;
+
+  list_store_clear(d->drawlist);
+  num = arraynum(&(d->idrawrable));
+  for (j = 0; j < num; j++) {
+    buf = (char **) arraynget(&(d->drawrable),
+			      *(int *) arraynget(&(d->idrawrable), j));
+    list_store_append(d->drawlist, &iter);
+    list_store_set_string(d->drawlist, &iter, 0, *buf);
+  }
+}
+
+static void
+SwitchDialogAdd(GtkWidget *w, gpointer client_data)
+{
+  struct SwitchDialog *d;
+  GtkTreeSelection *selected;
+  GList *list, *ptr;
+  int duplicate, num, *data, i;
+
+  d = (struct SwitchDialog *) client_data;
+
+  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->objlist));
+  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+
+  data = (int *) arraydata(&(d->idrawrable));
+  num = arraynum(&(d->idrawrable));
+
+  for (ptr = list; ptr; ptr = ptr->next) {
+    int *ary, a;
+
+    duplicate = FALSE;
+    ary = gtk_tree_path_get_indices((GtkTreePath *)(ptr->data));
+    a = ary[0];
+    for (i = 0; i < num; i++) {
+      if (data[i] == a) {
+	duplicate = TRUE;
+	break;
+      }
+    }
+    if ( !duplicate) {
+      arrayadd(&(d->idrawrable), &a);
+    }
+  }
+
+  if (list) {
+    g_list_foreach(list, free_tree_path_cb, NULL);
+    g_list_free(list);
+  }
+
+  SwitchDialogSetupItem(d->widget, d);
+}
+
+static void
+SwitchDialogInsert(GtkWidget *w, gpointer client_data)
+{
+  struct SwitchDialog *d;
+  int i, a, pos, num2;
+  int *data;
+  GtkTreeSelection *selected;
+  GList *list, *last;
+
+  d = (struct SwitchDialog *) client_data;
+
+  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
+  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+  pos = 0;
+  if (list) {
+    last = g_list_last(list);
+    if (last) {
+      int *ptr;
+      ptr = gtk_tree_path_get_indices((GtkTreePath *)(last->data));
+      pos = ptr[0];
+    }
+    g_list_foreach(list, free_tree_path_cb, NULL);
+    g_list_free(list);
+  }
+
+  data = (int *) arraydata(&(d->idrawrable));
+
+  num2 = arraynum(&(d->idrawrable));
+  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->objlist));
+  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+
+  for (last = list; last; last = last->next) {
+    int *ptr;
+    ptr = gtk_tree_path_get_indices((GtkTreePath *)(last->data));
+    a = ptr[0];
+    for (i = 0; i < num2; i++) {
+      if (data[i] == a) {
+	break;
+      }
+    }
+    if (i == num2) {
+      arrayins(&(d->idrawrable), &a, pos);
+    }
+  }
+  
+  if (list) {
+    g_list_foreach(list, free_tree_path_cb, NULL);
+    g_list_free(list);
+  }
+
+  SwitchDialogSetupItem(d->widget, d);
+}
+
+static void
+switch_dialog_top_cb(gpointer data, gpointer user_data)
+{
+  GtkTreePath *path;
+  int *ary, i, k;
+  struct SwitchDialog *d;
+
+  path = (GtkTreePath *) data;
+  d = (struct SwitchDialog *) user_data;
+
+  ary = gtk_tree_path_get_indices(path);
+
+  if (! ary)
+    return;
+
+  i = ary[0];
+  k = *(int *) arraynget(&(d->idrawrable), i);
+  arrayndel(&(d->idrawrable), i);
+  arrayins(&(d->idrawrable), &k, 0);
+}
+
+static void
+switch_dialog_last_cb(gpointer data, gpointer user_data)
+{
+  GtkTreePath *path;
+  int *ary, i, k;
+  struct SwitchDialog *d;
+
+  path = (GtkTreePath *) data;
+  d = (struct SwitchDialog *) user_data;
+
+  ary = gtk_tree_path_get_indices(path);
+
+  if (! ary)
+    return;
+
+  i = ary[0];
+  k = *(int *) arraynget(&(d->idrawrable), i);
+  arrayndel(&(d->idrawrable), i);
+  arrayadd(&(d->idrawrable), &k);
+}
+
+static void
+SwitchDialogTop(GtkWidget *w, gpointer client_data)
+{
+  GtkTreeSelection *selected;
+  GList *list;
+  struct SwitchDialog *d;
+
+  d = (struct SwitchDialog *) client_data;
+  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
+  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+
+  if (list) {
+    g_list_foreach(list, switch_dialog_top_cb, d);
+    g_list_foreach(list, free_tree_path_cb, NULL);
+    g_list_free(list);
+  }
+  SwitchDialogSetupItem(d->widget, d);
+}
+
+static void
+SwitchDialogLast(GtkWidget *w, gpointer client_data)
+{
+  struct SwitchDialog *d;
+  GtkTreeSelection *selected;
+  GList *list;
+
+  d = (struct SwitchDialog *) client_data;
+  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
+  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+  
+  if (list) {
+    list = g_list_reverse(list);
+    g_list_foreach(list, switch_dialog_last_cb, d);
+    g_list_foreach(list, free_tree_path_cb, NULL);
+    g_list_free (list);
+  }
+  SwitchDialogSetupItem(d->widget, d);
+}
+
+static void
+switch_dialog_remove_cb(gpointer data, gpointer user_data)
+{
+  GtkTreePath *path;
+  int *ary;
+  struct SwitchDialog *d;
+
+  path = (GtkTreePath *) data;
+  d = (struct SwitchDialog *) user_data;
+
+  ary = gtk_tree_path_get_indices(path);
+
+  if (! ary)
+    return;
+
+  arrayndel(&(d->idrawrable), ary[0]);
+}
+
+static void
+SwitchDialogRemove(GtkWidget *w, gpointer client_data)
+{
+  struct SwitchDialog *d;
+  GtkTreeSelection *selected;
+  GList *list;
+
+  d = (struct SwitchDialog *) client_data;
+  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
+  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+  
+  if (list) {
+    list = g_list_reverse(list);
+    g_list_foreach(list, switch_dialog_remove_cb, d);
+    g_list_foreach(list, free_tree_path_cb, NULL);
+    g_list_free (list);
+  }
+  SwitchDialogSetupItem(d->widget, d);
+}
+
+static void
+SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GtkWidget *w, *hbox, *vbox, *label, *frame;
+  GtkTreeIter iter;
+  struct SwitchDialog *d;
+  int num2, num1, j, k;
+  char **buf;
+  static n_list_store list[] = {
+    {N_("Object"), G_TYPE_STRING, TRUE, FALSE, NULL},
+  };
+
+  d = (struct SwitchDialog *) data;
+
+  if (makewidget) {
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    label = gtk_label_new_with_mnemonic(_("_Draw Order"));
+    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
+
+    w = list_store_create(sizeof(list) / sizeof(*list), list);
+    list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+    d->drawlist = w;
+    gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), w);
+
+    gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
+
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
+
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+    g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogAdd), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_with_mnemonic(_("_Insert"));
+    g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogInsert), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GOTO_TOP);
+    g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogTop), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GOTO_BOTTOM);
+    g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogLast), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+    g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogRemove), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
+
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    label = gtk_label_new_with_mnemonic(_("_Objects"));
+    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
+
+    w = list_store_create(sizeof(list) / sizeof(*list), list);
+    list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+    d->objlist = w;
+    gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), w);
+
+    gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
+
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+  }
+
+  menuadddrawrable(chkobject("draw"), &(d->drawrable));
+  list_store_clear(d->objlist);
+  num2 = arraynum(&(d->drawrable));
+  for (j = 0; j < num2; j++) {
+    buf = (char **) arraynget(&(d->drawrable), j);
+    list_store_append(d->objlist, &iter);
+    list_store_set_string(d->objlist, &iter, 0, *buf);
+  }
+  num1 = arraynum(&(Menulocal.drawrable));
+  for (j = 0; j < num1; j++) {
+    buf = (char **) arraynget(&(Menulocal.drawrable), j);
+    for (k = 0; k < num2; k++) {
+      if (strcmp0(*(char **) arraynget(&(d->drawrable), k), *buf) == 0) {
+	break;
+      }
+    }
+    if (k != num2) {
+      arrayadd(&(d->idrawrable), &k);
+    }
+  }
+  SwitchDialogSetupItem(wi, d);
+}
+
+static void
+SwitchDialogClose(GtkWidget *w, void *data)
+{
+  struct SwitchDialog *d;
+  int j, num;
+  char **buf;
+
+  d = (struct SwitchDialog *) data;
+  if (d->ret == IDOK) {
+    arraydel2(&(Menulocal.drawrable));
+    num = arraynum(&(d->idrawrable));
+    for (j = 0; j < num; j++) {
+      buf = (char **) arraynget(&(d->drawrable),
+				*(int *) arraynget(&(d->idrawrable), j));
+      if ((*buf) != NULL)
+	arrayadd2(&(Menulocal.drawrable), buf);
+    }
+  }
+  arraydel2(&(d->drawrable));
+  arraydel(&(d->idrawrable));
+}
+
+void
+SwitchDialog(struct SwitchDialog *data)
+{
+  data->SetupWindow = SwitchDialogSetup;
+  data->CloseWindow = SwitchDialogClose;
+  arrayinit(&(data->drawrable), sizeof(char *));
+  arrayinit(&(data->idrawrable), sizeof(int));
+}
+
+static void
+DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GtkWidget *w, *hbox;
+  struct DirectoryDialog *d;
+  char *cwd;
+
+  d = (struct DirectoryDialog *) data;
+  if (makewidget) {
+    hbox = gtk_hbox_new(FALSE, 4);
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(GTK_WIDGET(hbox), w, _("_Dir:"), TRUE);
+    d->dir = w;
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+  }
+
+  cwd = ngetcwd();
+  if (cwd) {
+    gtk_entry_set_text(GTK_ENTRY(d->dir), cwd);
+    memfree(cwd);
+  }
+}
+
+static void
+DirectoryDialogClose(GtkWidget *w, void *data)
+{
+  struct DirectoryDialog *d;
+  const char *s;
+
+  d = (struct DirectoryDialog *) data;
+  if (d->ret == IDCANCEL)
+    return;
+
+  s = gtk_entry_get_text(GTK_ENTRY(d->dir));
+
+  if (s && strlen(s) > 0)
+    chdir(s);
+}
+
+void
+DirectoryDialog(struct DirectoryDialog *data)
+{
+  data->SetupWindow = DirectoryDialogSetup;
+  data->CloseWindow = DirectoryDialogClose;
+}
+
+static void
+LoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GtkWidget *w, *vbox;
+  struct LoadDialog *d;
+
+  d = (struct LoadDialog *) data;
+  if (makewidget) {
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Expand included file"));
+    d->expand_file = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(vbox, w, _("_Dir:"), FALSE);
+    d->dir = w;
+
+    w = gtk_check_button_new_with_mnemonic(_("_Ignore file path"));
+    d->ignore_path = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+  }
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand_file), d->expand);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ignore_path), d->ignorepath);
+  gtk_entry_set_text(GTK_ENTRY(d->dir), d->exdir);
+}
+
+static void
+LoadDialogClose(GtkWidget *w, void *data)
+{
+  struct LoadDialog *d;
+  const char *s;
+
+  d = (struct LoadDialog *) data;
+  if (d->ret == IDCANCEL)
+    return;
+  d->expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->expand_file));
+  s = gtk_entry_get_text(GTK_ENTRY(d->dir));
+  memfree(d->exdir);
+  d->exdir = nstrdup(s);
+  d->ignorepath = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignore_path));
+}
+
+void
+LoadDialog(struct LoadDialog *data)
+{
+  data->SetupWindow = LoadDialogSetup;
+  data->CloseWindow = LoadDialogClose;
+  data->expand = Menulocal.expand;
+  data->exdir = nstrdup(Menulocal.expanddir);
+  data->ignorepath = Menulocal.ignorepath;
+}
+
+static void
+PrmDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GtkWidget *w, *vbox;
+  struct PrmDialog *d;
+  int a;
+
+  d = (struct PrmDialog *) data;
+  if (makewidget) {
+    vbox = gtk_vbox_new(FALSE, 4);
+    w = gtk_check_button_new_with_mnemonic(_("_Ignore file path"));
+    d->ignore_path = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Greek Symbol"));
+    d->greek_symbol = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+  }
+  getobj(d->Obj, "ignore_path", d->Id, 0, NULL, &a);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ignore_path), a);
+
+  getobj(d->Obj, "symbol_greek", d->Id, 0, NULL, &a);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->greek_symbol), a);
+}
+
+static void
+PrmDialogClose(GtkWidget *w, void *data)
+{
+  int a;
+  struct PrmDialog *d;
+
+  d = (struct PrmDialog *) data;
+  if (d->ret == IDCANCEL)
+    return;
+
+  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignore_path));
+  if (putobj(d->Obj, "ignore_path", d->Id, &a) == -1) {
+    d->ret = IDLOOP;
+    return;
+  }
+
+  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->greek_symbol));
+  if (putobj(d->Obj, "symbol_greek", d->Id, &a) == -1) {
+    d->ret = IDLOOP;
+    return;
+  }
+}
+
+void
+PrmDialog(struct PrmDialog *data, struct objlist *obj, int id)
+{
+  data->SetupWindow = PrmDialogSetup;
+  data->CloseWindow = PrmDialogClose;
+  data->Obj = obj;
+  data->Id = id;
+}
+
+static void
+SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GtkWidget *w, *vbox, *hbox;
+  int j;
+  struct SaveDialog *d;
+
+  d = (struct SaveDialog *) data;
+  if (makewidget) {
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = combo_box_create();
+    item_setup(vbox, w, _("_Path:"), FALSE);
+    d->path = w;
+
+    w = gtk_check_button_new_with_mnemonic(_("_Include data file"));
+    d->include_data = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Include merge file"));
+    d->include_merge = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+
+    for (j = 0; pathchar[j] != NULL; j++)
+      combo_box_append_text(d->path, pathchar[j]);
+
+  }
+  combo_box_set_active(d->path, Menulocal.savepath);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_data), Menulocal.savewithdata);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_merge), Menulocal.savewithmerge);
+}
+
+static void
+SaveDialogClose(GtkWidget *w, void *data)
+{
+  int num;
+  struct SaveDialog *d;
+
+  d = (struct SaveDialog *) data;
+  if (d->ret == IDCANCEL)
+    return;
+
+  num = combo_box_get_active(d->path);
+  if (num >= 0) {
+    d->Path = num;
+  }
+  *(d->SaveData) = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->include_data));
+  *(d->SaveMerge) = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->include_merge));
+}
+
+void
+SaveDialog(struct SaveDialog *data, int *sdata, int *smerge)
+{
+  data->SetupWindow = SaveDialogSetup;
+  data->CloseWindow = SaveDialogClose;
+  data->SaveData = sdata;
+  data->SaveMerge = smerge;
+}
+
+void
+CmGraphNewFrame(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  if (!CheckSave())
+    return;
+  DeleteDrawable();
+  CmAxisNewFrame();
+  UpdateAll();
+  CmViewerDraw();
+  InfoWinClear();
+}
+
+void
+CmGraphNewSection(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  if (!CheckSave())
+    return;
+  DeleteDrawable();
+  CmAxisNewSection();
+  UpdateAll();
+  CmViewerDraw();
+  InfoWinClear();
+}
+
+void
+CmGraphNewCross(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  if (!CheckSave())
+    return;
+  DeleteDrawable();
+  CmAxisNewCross();
+  UpdateAll();
+  CmViewerDraw();
+  InfoWinClear();
+}
+
+void
+CmGraphAllClear(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  if (!CheckSave())
+    return;
+  DeleteDrawable();
+  UpdateAll();
+  CmViewerDraw();
+  InfoWinClear();
+}
+
+void
+CmGraphNewMenu(GtkWidget *w, gpointer client_data)
+{
+  int sel;
+
+  sel = (int) client_data;
+  switch (sel) {
+  case 0:
+    CmGraphNewFrame();
+    break;
+  case 1:
+    CmGraphNewSection();
+    break;
+  case 2:
+    CmGraphNewCross();
+    break;
+  case 3:
+    CmGraphAllClear();
+    break;
+  default:
+    break;
+  }
+}
+
+static void
+CmGraphLoad(void)
+{
+  char *ext, *file;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  if (!CheckSave())
+    return;
+
+  if (nGetOpenFileName(TopLevel,
+		       _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
+		       NULL, &file, "*.ngp", TRUE,
+		       Menulocal.changedirectory) == IDOK) {
+
+    ext = getextention(file);
+    if (ext && ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0))) {
+      LoadPrmFile(file);
+      NgraphApp.Changed = FALSE;
+    } else {
+      LoadDialog(&DlgLoad);
+      if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
+	LoadNgpFile(file, DlgLoad.ignorepath, DlgLoad.expand,
+		    DlgLoad.exdir, Menulocal.scriptconsole, "-f");
+	NgraphApp.Changed = FALSE;
+      }
+      memfree(DlgLoad.exdir);
+    }
+    free(file);
+  }
+}
+
+void
+CmGraphSave(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  GraphSave(FALSE);
+}
+
+void
+CmGraphOverWrite(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  GraphSave(TRUE);
+}
+
+void
+CmGraphSwitch(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  SwitchDialog(&DlgSwitch);
+  if (DialogExecute(TopLevel, &DlgSwitch) == IDOK) {
+    NgraphApp.Changed = TRUE;
+    ChangePage();
+  }
+}
+
+void
+CmGraphPage(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  PageDialog(&DlgPage);
+  if (DialogExecute(TopLevel, &DlgPage) == IDOK) {
+    SetPageSettingsToGRA();
+    ChangePage();
+    GetPageSettingsFromGRA();
+    NgraphApp.Changed = TRUE;
+  }
+}
+
+void
+CmGraphDirectory(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  DirectoryDialog(&DlgDirectory);
+  DialogExecute(TopLevel, &DlgDirectory);
+}
+
+void
+CmGraphShell(void)
+{
+  struct objlist *obj, *robj, *shell;
+  char *inst;
+  int idn, allocnow;
+
+  if (Menulock || GlobalLock)
+    return;
+  Menulock = TRUE;
+  obj = Menulocal.obj;
+  inst = Menulocal.inst;
+  idn = getobjtblpos(obj, "_evloop", &robj);
+  registerevloop(chkobjectname(obj), "_evloop", robj, idn, inst, NULL);
+  if ((shell = chkobject("shell")) != NULL) {
+    allocnow = AllocConsole();
+    exeobj(shell, "shell", 0, 0, NULL);
+    FreeConsole(allocnow);
+  }
+  unregisterevloop(robj, idn, inst);
+  Menulock = FALSE;
+  UpdateAll();
+}
+
+void
+CmGraphQuit(void)
+{
+  int quit = 0;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  quit = CheckSave();
+
+  if (quit) {
+    SaveHistory();
+    QuitGUI();
+  }
+}
+
+void
+CmGraphHistory(GtkWidget *w, gpointer client_data)
+{
+  int fil, num, num2;
+  char **data, **data2;
+  struct narray *ngpfilelist, *ngpdirlist;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  fil = (int) client_data;
+  ngpfilelist = Menulocal.ngpfilelist;
+  ngpdirlist = Menulocal.ngpdirlist;
+  num = arraynum(ngpfilelist);
+  data = (char **) arraydata(ngpfilelist);
+  num2 = arraynum(ngpdirlist);
+  data2 = (char **) arraydata(ngpdirlist);
+
+  if ((fil < 0) || (fil >= num) || (data[fil] == NULL))
+    return;
+
+  if (!CheckSave())
+    return;
+
+  if ((fil >= 0) && (fil < num2) && data2[fil] && (data2[0] != '\0'))
+    chdir(data2[fil]);
+
+  LoadDialog(&DlgLoad);
+
+  if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
+    LoadNgpFile(data[fil], DlgLoad.ignorepath, DlgLoad.expand,
+		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
+
+    NgraphApp.Changed = FALSE;
+  }
+  memfree(DlgLoad.exdir);
+}
+
+void
+CmGraphLoadB(GtkWidget *w, gpointer client_data)
+{
+  CmGraphLoad();
+}
+
+void
+CmGraphSaveB(GtkWidget *w, gpointer client_data)
+{
+  CmGraphSave();
+}
+
+void
+CmGraphMenu(GtkWidget *w, gpointer client_data)
+{
+  int sel;
+
+  sel = (int) client_data;
+  switch (sel) {
+  case MenuIdGraphLoad:
+    CmGraphLoad();
+    break;
+  case MenuIdGraphSave:
+    CmGraphSave();
+    break;
+  case MenuIdGraphOverWrite:
+    CmGraphOverWrite();
+    break;
+  case MenuIdGraphPage:
+    CmGraphPage();
+    break;
+  case MenuIdGraphSwitch:
+    CmGraphSwitch();
+    break;
+  case MenuIdOutputDriver:
+    CmOutputDriver(TRUE);
+    break;
+  case MenuIdGraphDirectory:
+    CmGraphDirectory();
+    break;
+  case MenuIdScriptExec:
+    CmScriptExec();
+    break;
+  case MenuIdGraphShell:
+    CmGraphShell();
+    break;
+  case MenuIdGraphQuit:
+    CmGraphQuit();
+    break;
+  default:
+    break;
+  }
+}
+
+void
+AboutGPL(GtkWidget *w, gpointer client_data)
+{
+  pid_t pid;
+
+  if (Menulocal.gpl == NULL)
+    return;
+  if ((pid = fork()) < 0)
+    return;
+  if (pid == 0) {
+    system(Menulocal.gpl);
+    exit(0);
+  }
+}
+
+void
+CmHelpAbout(void)
+{
+  struct objlist *obj;
+  char *version, *email, *web, *copyright;
+
+  if ((obj = chkobject("system")) == NULL)
+    return;
+
+  getobj(obj, "version", 0, 0, NULL, &version);
+  getobj(obj, "copyright", 0, 0, NULL, &copyright);
+  getobj(obj, "e-mail", 0, 0, NULL, &email);
+  getobj(obj, "web", 0, 0, NULL, &web);
+
+  gtk_show_about_dialog(GTK_WINDOW(TopLevel),
+			"program-name", PACKAGE,
+			"copyright", copyright,
+			"version", VERSION,
+			"website", web,
+			"website-label", web,
+			"license", License,
+			"wrap-license", TRUE,
+			"authors", Auther,
+			"translator-credits", Translator, 
+			"documenters", Documenter,
+			"comments", _("Ngraph is the program creating scientific 2-dimensinal graphs for the researcher and engineer."),
+			NULL);
+}
+
+void
+CmHelpHelp(void)
+{
+  pid_t pid;
+
+  if (Menulocal.browser == NULL)
+    return;
+  if ((pid = fork()) < 0)
+    return;
+  if (pid == 0) {
+    system(Menulocal.browser);
+    exit(0);
+  }
+}
+
+void
+CmHelpMenu(GtkWidget *w, gpointer client_data)
+{
+  switch ((int) client_data) {
+  case MenuIdHelpAbout:
+    CmHelpAbout();
+    break;
+  case MenuIdHelpHelp:
+    CmHelpHelp();
+    break;
+  }
+}

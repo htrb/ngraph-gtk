@@ -1,0 +1,400 @@
+<HTML>
+<HEAD>
+<TITLE>Math</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#0000FF" VLINK="#0000FF">
+<A NAME="TOP">&nbsp;</A>
+<A HREF="./ngraph.htm"><B>データの加工</B></A>
+<UL>
+<LI><A HREF="#TRANSFORM">概要</A>
+<LI><A HREF="#FORMULA_CONST">数式変換の定数</A>
+<LI><A HREF="#FORMULA_VAR">数式変換の変数</A>
+<LI><A HREF="#FORMULA_OP">数式変換の演算子</A>
+<LI><A HREF="#FORMULA_FUNC">数式変換の関数</A>
+<LI><A HREF="#OP_PRECEDENCE">数式変換の関数・演算子の優先順位</A>
+<LI><A HREF="#OP_EXAMPLE">数式変換の使用例</A>
+</UL>
+
+<BR>
+<HR SIZE="5">
+<BR>
+
+
+<A NAME="TRANSFORM">&nbsp;</A>
+<A HREF="#TOP"><B>概要</B></A>
+<BR>
+<BLOCKQUOTE>
+描画は隣接平均, 数式変換などデ−タの加工を行った後に行われます。
+グラフを作成する際その処理手順を意識することが重要な場合があります。
+以下にデ−タの流れを示します。<BR>
+<BR>
+<CENTER>
+データファイル<BR>
+↓<BR>
+数式変換<BR>
+↓<BR>
+マスクされたデ−タを削除<BR>
+↓<BR>
+移動されたデ−タを移動<BR>
+↓<BR>
+隣接平均<BR>
+↓<BR>
+[曲線の補間係数, 最小二乗フィットの係数を求める]<BR>
+↓<BR>
+出力(グラフ描画)<BR>
+</CENTER>
+<BR>
+ロググラフを作成する場合, 曲線の補間はデ−タを対数変換した後に行われるので通常の線形グラフとロググラフでは結果が異なります。
+最小二乗法に関してはロググラフでも通常の線形グラフと同じ係数を求めます。<BR>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+<A NAME="FORMULA_CONST">&nbsp;</A>
+<A HREF="#TOP"><B>数式変換で使用できる定数</B></A>
+<BR>
+<BLOCKQUOTE>
+<TABLE BORDER=1>
+<TR><TD>数値</TD><TD>数値定数(1, 2.0, 3.0E10等)</TD></TR>
+<TR><TD>PI</TD><TD>円周率</TD></TR>
+<TR><TD>E</TD><TD>自然対数の底</TD></TR>
+<TR><TD>EULER</TD><TD>オイラ−の定数</TD></TR>
+<TR><TD>NAN</TD><TD>欠損デ−タ エラー表示</TD></TR>
+<TR><TD>UNDEF</TD><TD>欠損デ−タ エラー非表示</TD></TR>
+<TR><TD>CONT</TD><TD>欠損データ (データ線は結合)</TD></TR>
+<TR><TD>BREAK</TD><TD>欠損データ (データ線は分断)</TD></TR>
+<TR><TD>NUM</TD><TD>デ−タの個数</TD></TR>
+<TR><TD>MINX</TD><TD>(X) column の生デ−タの最小値</TD></TR>
+<TR><TD>MAXX</TD><TD>(X) column の生デ−タの最大値</TD></TR>
+<TR><TD>MINY</TD><TD>(Y) column の生デ−タの最小値</TD></TR>
+<TR><TD>MAXY</TD><TD>(Y) column の生デ−タの最大値</TD></TR>
+<TR><TD>SUMX</TD><TD>(X) column の生デ−タの和</TD></TR>
+<TR><TD>SUMY</TD><TD>(Y) column の生デ−タの和</TD></TR>
+<TR><TD>SUMXX</TD><TD>(X) column の生デ−タの二乗和</TD></TR>
+<TR><TD>SUMYY</TD><TD>(Y) column の生デ−タの二乗和</TD></TR>
+<TR><TD>SUMXY</TD><TD>(X) column, (Y) column の生デ−タの積和</TD></TR>
+<TR><TD>AVX</TD><TD>(X) column の生デ−タの平均</TD></TR>
+<TR><TD>AVY</TD><TD>(Y) column の生デ−タの平均</TD></TR>
+<TR><TD>SGX</TD><TD>(X) column の生デ−タの標準偏差</TD></TR>
+<TR><TD>SGY</TD><TD>(Y) column の生デ−タの標準偏差</TD></TR>
+<TR><TD>FIRST</TD><TD>diagonal, errorbar など一行のデータで2回の変換が行われる場合、1回目の呼出しで真(=1)、2回目の呼出しで偽(=0)</TD></TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="FORMULA_VAR">&nbsp;</A>
+<A HREF="#TOP"><B>数式変換で使用できる変数</B></A>
+<BR>
+<BLOCKQUOTE>
+<TABLE BORDER=1>
+<TR><TD>X</TD><TD>(X)column の生のデ−タ</TD></TR>
+<TR><TD>Y</TD><TD>(Y)column の生のデ−タ</TD></TR>
+<TR><TD>%0</TD><TD>デ−タを読み込んだ順番に1から番号をつけたときの値</TD></TR>
+<TR><TD>%1〜%999</TD><TD>同一行中 1〜999 カラムの生デ−タ</TD></TR>
+<TR><TD>%D</TD><TD>データファイルの番号</TD></TR>
+<TR><TD>%Fxx1〜%Fxx999</TD><TD>データファイル xx の同じ行の 1〜999 カラムの生デ−タ</TD></TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="FORMULA_OP">&nbsp;</A>
+<A HREF="#TOP"><B>数式変換で使用できる演算子</B></A>
+<BR>
+<BLOCKQUOTE>
+<TABLE BORDER=1>
+<TR><TD>-</TD><TD>負の数値</TD></TR>
+<TR><TD>+ - * /</TD><TD>四則演算</TD></TR>
+<TR><TD>\</TD><TD>実数乗算の乗余</TD></TR>
+<TR><TD>^</TD><TD>ベキ乗</TD></TR>
+<TR><TD>!</TD><TD>階乗(引数は167 以下の正の整数)</TD></TR>
+<TR><TD>( )</TD><TD>括弧(20 重まで)</TD></TR>
+<TR><TD>=</TD><TD>式の終端(省略可能) 別の式を後に続けることが可能</TD></TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="FORMULA_FUNC">&nbsp;</A>
+<A HREF="#TOP"><B>数式変換で使用できる関数</B></A>
+<BR>
+<BLOCKQUOTE>
+<B>変換関数</B>
+<TABLE BORDER=1>
+<TR><TD>ABS(x)</TD><TD>絶対値</TD></TR>
+<TR><TD>SIGN(x)</TD><TD>正負の符号</TD></TR>
+<TR><TD>INT(x)</TD><TD>0に向かって切捨てた整数部</TD></TR>
+<TR><TD>GAUSS(x)</TD><TD>ガウスの記号[ ] ([n]はnを越えない最大の整数)</TD></TR>
+<TR><TD>FRAC(x)</TD><TD>小数部</TD></TR>
+<TR><TD>ROUND(x)</TD><TD>四捨五入した整数部</TD></TR>
+<TR><TD>MIN(x,y)</TD><TD>x, y の小さい方</TD></TR>
+<TR><TD>MAX(x,y)</TD><TD>x, y の大きい方</TD></TR>
+</TABLE>
+<BR>
+<B>初等関数</B>
+<TABLE BORDER=1>
+<TR><TD>SQR(x)</TD><TD>二乗</TD></TR>
+<TR><TD>SQRT(x)</TD><TD>平方根</TD></TR>
+<TR><TD>EXP(x)</TD><TD>指数(x≦690)</TD></TR>
+<TR><TD>LN(x)</TD><TD>自然対数</TD></TR>
+<TR><TD>LOG(x)</TD><TD>常用対数</TD></TR>
+<TR><TD>SIN(x)</TD><TD>サイン</TD></TR>
+<TR><TD>COS(x)</TD><TD>コサイン</TD></TR>
+<TR><TD>TAN(x)</TD><TD>タンジェント</TD></TR>
+<TR><TD>ASIN(x)</TD><TD>逆サイン</TD></TR>
+<TR><TD>ACOS(x)</TD><TD>逆コサイン</TD></TR>
+<TR><TD>ATAN(x)</TD><TD>逆タンジェント</TD></TR>
+<TR><TD>SINH(x)</TD><TD>ハイパボリックサイン</TD></TR>
+<TR><TD>COSH(x)</TD><TD>ハイパボリックコサイン</TD></TR>
+<TR><TD>TANH(x)</TD><TD>ハイパボリックタンジェント</TD></TR>
+<TR><TD>ASINH(x)</TD><TD>逆ハイパボリックサイン</TD></TR>
+<TR><TD>ACOSH(x)</TD><TD>逆ハイパボリックコサイン</TD></TR>
+<TR><TD>ATANH(x)</TD><TD>逆ハイパボリックタンジェント</TD></TR>
+</TABLE>
+<BR>
+<B>特殊関数</B>
+<TABLE BORDER=1>
+<TR><TD>RAND(x)</TD><TD>0≦RAND(x)＜x (x＞0のとき)の乱数</TD></TR>
+<TR><TD>THETA(x)</TD><TD>階段関数(x≧0 のとき 1,  それ以外は 0 )</TD></TR>
+<TR><TD>DELTA(x)</TD><TD>クロネッカ−のδ(x=0 のとき 1, それ以外は 0)</TD></TR>
+<TR><TD>GAMMA(x)</TD><TD>ガンマ関数 Γ(x)</TD></TR>
+<TR><TD>ICGAM(m,x)</TD><TD>不完全ガンマ関数 Γ(μ,x)</TD></TR>
+<TR><TD>ERFC(x)</TD><TD>誤差関数 Erfc(x)</TD></TR>
+<TR><TD>QINV(x)</TD><TD>誤差関数 Erfc(x) の逆関数</TD></TR>
+<TR><TD>EI(x)</TD><TD>積分指数関数 Ei(x)</TD></TR>
+<TR><TD>BETA(x,y)</TD><TD>ベ−タ関数 B(p,q)</TD></TR>
+<TR><TD>JN(n,x)</TD><TD>第1種n次ベッセル関数</TD></TR>
+<TR><TD>YN(n,x)</TD><TD>第2種n次ベッセル関数</TD></TR>
+<TR><TD>PN(n,x)</TD><TD>ルジャンドル多項式</TD></TR>
+<TR><TD>LGN(n,a,x)</TD><TD>ラゲ−ル倍多項式</TD></TR>
+<TR><TD>HN(n,x)</TD><TD>エルミ−ト多項式</TD></TR>
+<TR><TD>TN(n,x)</TD><TD>チェビシフ多項式</TD></TR>
+<TR><TD>MJD(year,month,day)</TD><TD>修正ユリウス日(year, month, day はグレゴリオ暦)</TD></TR>
+</TABLE>
+<BR>
+<B>論理関数  0を偽, それ以外を真とする。</B>
+<TABLE BORDER=1>
+<TR><TD>EQ(x,y)</TD><TD>x＝y のとき真(=1)</TD></TR>
+<TR><TD>NEQ(x,y)</TD><TD>x≠y のとき真(=1)</TD></TR>
+<TR><TD>GE(x,y)</TD><TD>x≧y のとき真(=1)</TD></TR>
+<TR><TD>GT(x,y)</TD><TD>x＞y のとき真(=1)</TD></TR>
+<TR><TD>LE(x,y)</TD><TD>x≦y のとき真(=1)</TD></TR>
+<TR><TD>LT(x,y)</TD><TD>x＜y のとき真(=1)</TD></TR>
+<TR><TD>NOT(x)</TD><TD>x＝0 のとき真(=1)</TD></TR>
+<TR><TD>OR(x,y)</TD><TD>(x≠0) or (y≠0) のとき真(=1)</TD></TR>
+<TR><TD>AND(x,y)</TD><TD>(x≠0) and (y≠0) のとき真(=1)</TD></TR>
+<TR><TD>XOR(x,y)</TD><TD>(x≠0) xor (y≠0) のとき真(=1)</TD></TR>
+</TABLE>
+<BR>
+<B>その他の関数</B>
+<TABLE BORDER=1>
+<TR><TD>SUM(x)</TD><TD>積算(一つの数式で 10 個まで)</TD></TR>
+<TR><TD>DIF(x)</TD><TD>差分(一つの数式で 10 個まで)</TD></TR>
+<TR><TD>M(n,x)</TD><TD>引数を第nメモリ−に代入する(n=0〜19)</TD></TR>
+<TR><TD>RM(n)</TD><TD>現在の第nメモリ−の値(n=0〜19)</TD></TR>
+<TR><TD>F(x,y,z)</TD><TD>ユーザ定義関数</TD></TR>
+<TR><TD>G(x,y,z)</TD><TD>ユーザ定義関数</TD></TR>
+<TR><TD>H(x,y,z)</TD><TD>ユーザ定義関数</TD></TR>
+<TR><TD>COLOR(0,x)</TD><TD>R値を X (0≦X＜256)に設定</TD></TR>
+<TR><TD>COLOR(1,x)</TD><TD>G値を X (0≦X＜256)に設定</TD></TR>
+<TR><TD>COLOR(2,x)</TD><TD>B値を X (0≦X＜256)に設定</TD></TR>
+<TR><TD>COLOR(3,x)</TD><TD>RGB値を X (0≦X＜256)に設定</TD></TR>
+<TR><TD>RGB(r,g,b)</TD><TD>色のRGB値をそれぞれ r, g, b (0≦r,g,b≦1)に設定</TD></TR>
+<TR><TD>HSB(h,s,b)</TD><TD>色のHSB値をそれぞれ h, s, b (0≦h,s,b≦1)に設定</TD></TR>
+<TR><TD>MARKSIZE(x)</TD><TD>マークのサイズをXに設定</TD></TR>
+<TR><TD>MARKTYPE(x)</TD><TD>マークの種類をXに設定</TD></TR>
+<TR><TD>IF(x,ex1,ex2)</TD><TD>X≠0のときex1, x=0のときex2 (ネストは20まで)</TD></TR>
+<TR><TD>FOR(m,begin,end,step,ex)</TD><TD>第mメモリの値がbeginからendになるまでstepでexを繰り返す</TD></TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+<A NAME="OP_PRECEDENCE">&nbsp;</A>
+<A HREF="#TOP"><B>関数・演算子の優先順位</B></A>
+<BR>
+<BLOCKQUOTE>
+<TABLE BORDER=1>
+<TR><TD>高</TD><TD>E (指数表記)</TD></TR>
+<TR><TD>↑</TD><TD>() (括弧)</TD></TR>
+<TR><TD>  </TD><TD>- (負の符号)</TD></TR>
+<TR><TD>  </TD><TD>関数</TD></TR>
+<TR><TD>  </TD><TD>^ !</TD></TR>
+<TR><TD>  </TD><TD>* / \</TD></TR>
+<TR><TD>↓</TD><TD>+ - </TD></TR>
+<TR><TD>低</TD><TD>= </TD></TR>
+</TABLE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+<A NAME="OP_EXAMPLE">&nbsp;</A>
+<A HREF="#TOP"><B>数式変換の使用例</B></A>
+<BR>
+<UL>
+<LI><B>= 使用例</B>
+<BR>
+<BR>
+=  は式の終端を示しますが、さらに続けて別の式を書くことができます。
+式の値は一番最後の式の値になります。
+例えば、長い式が何度も現れるときメモリ関数と組み合わせて
+<BLOCKQUOTE>
+M(0,...式...)= ... RM(0) .... =
+</BLOCKQUOTE>
+のようにすれば同じ式は１度書くだけですみます。また式最後の = は省略できます。
+<BR>
+<BR>
+
+<LI><B>メモリ関数 M(), RM() 使用例</B>
+<BR>
+<BR>
+M() はメモリへの代入、RM() は読みだしです。
+またメモリはデ−タファイル先頭から最後まで有効です(ただし，X, Yの変換式で独立)。
+例えば
+<BLOCKQUOTE>
+M(0,RM(0)+Y)=
+</BLOCKQUOTE>
+とすることで Y の積算グラフを描画することができます。
+<BR>
+<BR>
+
+<LI><B>関数 DIF() 使用例</B>
+<BR>
+<BR>
+関数 DIF() は微分でなく差分を返す関数です。
+現在のデ−タがデ−タファイル中 n 番目としそれを Y(n) で表すとすると
+<BLOCKQUOTE>
+DIF(Y)=Y(n) - Y(n-1)
+</BLOCKQUOTE>
+です。これを用い簡単に微分近似値を求めるには
+<BLOCKQUOTE>
+DIF(Y)/DIF(X)
+</BLOCKQUOTE>
+とします。
+<BLOCKQUOTE>
+DIF(Y)/DIF(X)は {Y(n)-Y(n-1)} / {X(n)-X(n-1)} になります。
+</BLOCKQUOTE>
+この時、Xの変換数式を
+<BLOCKQUOTE>
+X-DIF(X)*0.5
+</BLOCKQUOTE>
+としてXを"現在のデ−タと一つ前のデ−タの中間値"としておいた方がより真に近いグラフが得られると思われます。
+<BLOCKQUOTE>
+X変換式: X-DIF(X)*0.5 (これは { X(n-1)+X(n) }*0.5 になります)<BR>
+Y変換式: DIF(Y)/DIF(X) (これは { Y(n)-Y(n-1) } / { X(n)-X(n-1) } になります)
+</BLOCKQUOTE>
+<BLOCKQUOTE>
+DIF()  は現在のデ−タと一つ前のデ−タとの差分を返しますから、Y-DIF(Y) とすることで一つ前のデ−タを取り出すことができます。
+同様に Y-DIF(Y)-DIF(Y-DIF(Y)) で2つ前のデ−タを取り出すことができます。
+ Y-DIF(Y)-DIF(Y-DIF(Y))-DIF(Y-DIF(Y)-DIF(Y-DIF(Y)))は3つ前のデ−タです．
+</BLOCKQUOTE>
+<BLOCKQUOTE>
+一番初めの DIF() の戻り値は"不定"です．このため，式全体の値も"不定"となり、結果としてデ−タの個数は1つ減ります(一番初めのデ−タに差分は存在しない)。
+また DIF() をいくつも含む式では、全ての DIF() が初期化されるまで式全体の値は"不定"です。
+例えば DIF() をネストして DIF(DIF()) のように使った場合、一番初めのデ−タでは内側の DIF() が初期化されその戻り値は不定の為、外側の DIF() の初期化は行われません。
+外側の DIF() が初期化されるのは 2番目のデ−タの時です。
+従ってデ−タの個数は2つ減ることになります。
+</BLOCKQUOTE>
+<BR>
+<BR>
+
+<LI><B>関数 SUM() 使用例</B>
+<BR>
+<BR>
+関数 SUM() は積算を返す関数です。
+現在のデ−タが n 番目としそれを Y(n) で表すとすると
+<BLOCKQUOTE>
+SUM(Y)=Σ Y(n) (n=1..n)
+</BLOCKQUOTE>
+これを用い簡単に積分近似値を求めるには
+<BLOCKQUOTE>
+SUM(Y*DIF(X))
+</BLOCKQUOTE>
+とします。
+<BLOCKQUOTE>
+SUM(Y*DIF(X)) は Σ Y(n)*{ X(n)-X(n-1) } (n=1..n) になります。
+</BLOCKQUOTE>
+また、台形公式を用いて積分近似値を評価したい場合
+<BLOCKQUOTE>
+SUM(0.5*(2*Y-DIF(Y))*DIF(X))
+</BLOCKQUOTE>
+とします。
+<BLOCKQUOTE>
+SUM(0.5*(2*Y-DIF(Y))*DIF(X)) は Σ(Y(n-1)+Y(n))/2*{X(n)-X(n-1)} (n=1..n) になります。
+</BLOCKQUOTE>
+さらに積分の上限(b)、下限(a)を指定したい場合は階段関数 THETA() を用い
+<BLOCKQUOTE>
+SUM(0.5*(2*Y-DIF(Y))*DIF(X)*THETA(X-a)*THETA(b-X))
+</BLOCKQUOTE>
+とします。IF() を使って
+<BLOCKQUOTE>
+IF(AND(GE(x,a),LE(x,b)),INTEG(0.5*(2*Y-DIF(Y))*DIF(X)),0)
+</BLOCKQUOTE>
+としても可能です。
+<BR>
+<BR>
+
+<LI><B>関数 IF() 使用例</B>
+<BR>
+<BR>
+IF(x,ex1,ex2)  は x が真(<>0)のとき ex1 を，偽(=0)のとき ex2 を返す関数です。
+x には論理関数を使うと便利です。例えば次の式
+<BLOCKQUOTE>
+IF( LT(x,0), 0, SQRT(x) )
+</BLOCKQUOTE>
+は x<0 のとき 0、x>=0 のとき��x を返す関数になります。また必ず  ex1, ex2 どちらか一方しか評価されません。
+例えば
+<BLOCKQUOTE>
+IF( EQ(%00,1), M(0,値), ...式... )
+</BLOCKQUOTE>
+のような使い方をしたとき  M(0,値) は EQ(%00,1) が真のとき(すなわちデ−タの最初)だけ実行されるので、メモリ関数の初期化に使えます。
+<BR>
+<BR>
+
+<LI><B>関数 MARKSIZE(), COLOR() 使用例</B>
+<BR>
+<BR>
+MARKSIZE()、COLOR()関数は数学関数では無く、それぞれプロットされたマークのサイズ、色を指定する関数です。
+例えば、(x,y,z) の 3 カラムから成るデータファイルがあり、マークのサイズを z の値で変更したいような場合には
+<BLOCKQUOTE>
+MARKSIZE(%03)
+</BLOCKQUOTE>
+とします。ただこれですと、プロットされるデータも %03 となりますので、前述の = を使って
+<BLOCKQUOTE>
+MARKSIZE(%03)=Y
+</BLOCKQUOTE>
+とするのが正しい使い方です。
+COLOR()関数も同様で
+<BLOCKQUOTE>
+COLOR(3,%03)=Y
+</BLOCKQUOTE>
+のように使います。
+<BR>
+</UL>
+
+<BR>
+<HR>
+<BR>
+
+</BODY></HTML>

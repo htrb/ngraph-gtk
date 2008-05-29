@@ -1,0 +1,34 @@
+# legend.nsc written by S. ISHIZAKA. 1997/12
+#
+# This script generates a legend box. 
+# 
+# Please edit the following X, Y, and WIDTH variables as you like.
+#
+X=5000      # top-left of the legend to be inserted.
+Y=5000      # top-left of the legend to be inserted.
+WIDTH=2000  # width of "type" field.
+
+if [ `object file -instance` != 0 ]
+then
+	DATALIST=${system:0:temp_file}
+	object file -instance > "$DATALIST"
+        get file:0-! -id -field file x y type mark_type mark_size line_width line_style R G B R2 G2 B2 math_x math_y >> "$DATALIST"
+        SCRIPT=${system:0:temp_file}
+        wish ${NGRAPHLIB}/legend.tcl -x ${X} -y ${Y} -w ${WIDTH} "$DATALIST" "$SCRIPT"
+	if [ -f "$SCRIPT" ];
+	then
+		new shell
+		shell::shell "$SCRIPT"
+		del shell
+	fi
+        system:0:unlink_temp_file "$DATALIST"
+        system:0:unlink_temp_file "$SCRIPT"
+        gra::clear
+	gra::draw
+	gra::flush
+else
+	new dialog
+	dialog::beep
+	dialog::message "No data file."
+	del dialog
+fi

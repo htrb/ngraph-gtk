@@ -1,0 +1,687 @@
+/* 
+ * $Id: gtk_liststore.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ */
+
+#include <stdlib.h>
+
+#include "gtk_common.h"
+
+#include "gtk_liststore.h"
+
+static GtkCellRenderer *
+create_renderer(GType type)
+{
+  GtkCellRenderer *renderer;
+  gfloat val;
+
+  switch (type) {
+  case G_TYPE_BOOLEAN:
+    renderer = gtk_cell_renderer_toggle_new();
+    break;
+  case G_TYPE_INT:
+  case G_TYPE_UINT:
+  case G_TYPE_LONG:
+  case G_TYPE_ULONG:
+  case G_TYPE_INT64:
+  case G_TYPE_UINT64:
+  case G_TYPE_FLOAT:
+  case G_TYPE_DOUBLE:
+    renderer = gtk_cell_renderer_text_new();
+    val = 0.0;
+    g_object_set_data((GObject *) renderer, "xalign", &val);
+    break;
+  case G_TYPE_OBJECT:
+    renderer = gtk_cell_renderer_pixbuf_new();
+    break;
+  case G_TYPE_STRING:
+  default:
+    renderer = gtk_cell_renderer_text_new();
+    val = 1.0;
+    g_object_set_data((GObject *) renderer, "xalign", &val);
+  }
+  return renderer;
+}
+
+static void
+toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
+{
+  printf("toggled");
+}
+
+
+static GtkWidget *
+create_tree_view(int n, n_list_store *list, int tree)
+{
+  GType *tarray;
+  GtkTreeModel *lstore;
+  GtkCellRenderer *renderer;
+  GtkWidget *tview;
+  GtkTreeViewColumn *col;
+  GtkTreeSelection *sel;
+  int i, j, cnum = 0;
+
+  if (n < 1 || list == NULL)
+    return NULL;
+
+  for (i = 0; i < n; i++) {
+    if (list[i].color) {
+      cnum++;
+    }
+  }
+
+  tarray = malloc(sizeof(*tarray) * n + cnum);
+  if (tarray == NULL)
+    return NULL;
+
+  for (i = 0; i < n; i++) {
+    tarray[i] = list[i].type;
+  }
+
+  for (i = 0; i < cnum; i++) {
+    tarray[i + n] = G_TYPE_STRING;
+  }
+
+  if (tree) {
+    lstore = GTK_TREE_MODEL(gtk_tree_store_newv(n + cnum, tarray));
+  } else {
+    lstore = GTK_TREE_MODEL(gtk_list_store_newv(n + cnum, tarray));
+  }
+  free(tarray);
+
+  tview = gtk_tree_view_new_with_model(lstore);
+  gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tview));
+  gtk_tree_selection_set_mode(sel, GTK_SELECTION_SINGLE);
+
+  j = 0;
+  for (i = 0; i < n; i++) {
+    renderer = create_renderer(list[i].type);
+    if (list[i].type == G_TYPE_BOOLEAN) {
+      col = gtk_tree_view_column_new_with_attributes(list[i].title, renderer,
+						     "active", i, NULL);
+      //      if (list[i].editable) {
+      //        g_signal_connect(renderer, "toggled", G_CALLBACK(toggle_cb), NULL);
+      //      }
+    } else if (list[i].type == G_TYPE_OBJECT) {
+      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						     "pixbuf", i, NULL);
+    } else if (list[i].color){
+      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						     "text", i,
+						     "foreground", j + n,
+						     NULL);
+      j++;
+    } else {
+      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						     "text", i, NULL);
+    }
+    gtk_tree_view_column_set_visible(col, list[i].visible);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
+  }
+
+  for (i = 0; i < cnum; i++) {
+    renderer = create_renderer(G_TYPE_STRING);
+    col = gtk_tree_view_column_new_with_attributes("color", renderer,
+						   "text", i + n,
+						   NULL);
+    gtk_tree_view_column_set_visible(col, FALSE);
+
+    gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
+  }
+
+  return tview;
+}
+
+GtkWidget *
+list_store_create(int n, n_list_store *list)
+{
+  return create_tree_view(n, list, FALSE);
+}
+
+GtkWidget *
+tree_store_create(int n, n_list_store *list)
+{
+  return create_tree_view(n, list, TRUE);
+}
+
+int 
+list_store_get_int(GtkWidget *w, GtkTreeIter *iter, int col)
+{
+  GtkTreeModel *model;
+  int v = 0;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_model_get(model, iter, col, &v, -1);
+
+  return v;
+}
+
+void 
+list_store_set_int(GtkWidget *w, GtkTreeIter *iter, int col, int v)
+{
+  GtkListStore *list;
+
+  list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(w)));
+  gtk_list_store_set(list, iter, col, v, -1);
+}
+
+void 
+tree_store_set_int(GtkWidget *w, GtkTreeIter *iter, int col, int v)
+{
+  GtkTreeStore *list;
+
+  list = GTK_TREE_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(w)));
+  gtk_tree_store_set(list, iter, col, v, -1);
+}
+
+
+double
+list_store_get_double(GtkWidget *w, GtkTreeIter *iter, int col)
+{
+  GtkTreeModel *model;
+  double v;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_model_get(model, iter, col, &v, -1);
+
+  return v;
+}
+
+void 
+list_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v)
+{
+  GtkListStore *list;
+
+  list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(w)));
+  gtk_list_store_set(list, iter, col, v, -1);
+}
+
+gboolean 
+list_store_get_boolean(GtkWidget *w, GtkTreeIter *iter, int col)
+{
+  GtkTreeModel *model;
+  gboolean v;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_model_get(model, iter, col, &v, -1);
+
+  return v;
+}
+
+void 
+list_store_set_boolean(GtkWidget *w, GtkTreeIter *iter, int col, gboolean v)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_list_store_set(GTK_LIST_STORE(model), iter, col, v, -1);
+}
+
+void 
+tree_store_set_boolean(GtkWidget *w, GtkTreeIter *iter, int col, gboolean v)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_store_set(GTK_TREE_STORE(model), iter, col, v, -1);
+}
+
+char *
+list_store_get_string(GtkWidget *w, GtkTreeIter *iter, int col)
+{
+  GtkTreeModel *model;
+  char *v;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_model_get(model, iter, col, &v, -1);
+
+  return v;
+}
+
+char * 
+list_store_path_get_string(GtkWidget *w, GtkTreePath *path, int col)
+{
+  GtkTreeModel *model;
+  gboolean found;
+  GtkTreeIter iter;
+  char *v;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  found = gtk_tree_model_get_iter(model, &iter, path);
+
+  if (! found)
+    return NULL;
+
+  gtk_tree_model_get(model, &iter, col, &v, -1);
+
+  return v;
+}
+
+void 
+list_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, char *v)
+{
+  GtkListStore *list;
+
+  list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(w)));
+  gtk_list_store_set(list, iter, col, v, -1);
+}
+
+void 
+list_store_path_set_string(GtkWidget *w, GtkTreePath *path, int col, char *v)
+{
+  GtkListStore *list;
+  gboolean found;
+  GtkTreeIter iter;
+
+  list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(w)));
+  found = gtk_tree_model_get_iter(GTK_TREE_MODEL(list), &iter, path);
+
+  if (! found)
+    return;
+
+  gtk_list_store_set(list, &iter, col, v, -1);
+}
+
+void 
+tree_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, char *v)
+{
+  GtkTreeStore *list;
+
+  list = GTK_TREE_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(w)));
+  gtk_tree_store_set(list, iter, col, v, -1);
+}
+
+void 
+list_store_set_pixbuf(GtkWidget *w, GtkTreeIter *iter, int col, GdkPixbuf *v)
+{
+  GtkListStore *list;
+
+  list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(w)));
+  gtk_list_store_set(list, iter, col, v, -1);
+}
+
+GdkPixbuf *
+list_store_get_pixbuf(GtkWidget *w, GtkTreeIter *iter, int col)
+{
+  GtkTreeModel *model;
+  GObject *v;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_model_get(model, iter, col, &v, -1);
+
+  return  GDK_PIXBUF(v);
+}
+
+void 
+list_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, void *ptr)
+{
+  int v;
+  gboolean b;
+  char *s;
+
+  switch (type) {
+  case G_TYPE_BOOLEAN:
+    b = *((int *)ptr);
+    list_store_set_boolean(w, iter, col, b);
+    break;
+  case G_TYPE_INT:
+    v = *((int *)ptr);
+    list_store_set_int(w, iter, col, v);
+    break;
+  case G_TYPE_STRING:
+    s = (char *)ptr;
+    list_store_set_string(w, iter, col, s);
+    break;
+  }
+}
+
+void 
+tree_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, void *ptr)
+{
+  int v;
+  gboolean b;
+  char *s;
+
+  switch (type) {
+  case G_TYPE_BOOLEAN:
+    b = *((int *)ptr);
+    tree_store_set_boolean(w, iter, col, b);
+    break;
+  case G_TYPE_INT:
+    v = *((int *)ptr);
+    tree_store_set_int(w, iter, col, v);
+    break;
+  case G_TYPE_STRING:
+    s = (char *)ptr;
+    tree_store_set_string(w, iter, col, s);
+    break;
+  }
+}
+
+void 
+list_store_clear(GtkWidget *w)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_list_store_clear(GTK_LIST_STORE(model));
+}
+
+void 
+tree_store_clear(GtkWidget *w)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_store_clear(GTK_TREE_STORE(model));
+}
+
+void
+list_store_append(GtkWidget *w, GtkTreeIter *iter)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_list_store_append(GTK_LIST_STORE(model), iter);
+}
+
+void
+tree_store_append(GtkWidget *w, GtkTreeIter *iter, GtkTreeIter *parent)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_store_append(GTK_TREE_STORE(model), iter, parent);
+}
+
+gboolean
+list_store_get_iter_first(GtkWidget *w, GtkTreeIter *iter)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  return gtk_tree_model_get_iter_first(model, iter);
+}
+
+gboolean
+list_store_iter_next(GtkWidget *w, GtkTreeIter *iter)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  return gtk_tree_model_iter_next(GTK_TREE_MODEL(model), iter);
+}
+
+gboolean
+tree_store_get_iter_children(GtkWidget *w, GtkTreeIter *child, GtkTreeIter *iter)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  return gtk_tree_model_iter_children(model, child, iter);
+}
+
+gboolean
+list_store_get_selected_iter(GtkWidget *w, GtkTreeIter *iter)
+{
+  GtkTreeSelection *sel;
+  GtkTreeModel *model;
+
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
+  return gtk_tree_selection_get_selected(sel, &model, iter);
+}
+
+int 
+list_store_get_selected_int(GtkWidget *w, int col)
+{
+  GtkTreeIter iter;
+
+  if (! list_store_get_selected_iter(w, &iter))
+    return -1;
+ 
+  return list_store_get_int(w, &iter, col);
+}
+
+char *
+list_store_get_selected_string(GtkWidget *w, int col)
+{
+  GtkTreeIter iter;
+
+  if (! list_store_get_selected_iter(w, &iter))
+    return NULL;
+ 
+  return list_store_get_string(w, &iter, col);
+}
+
+gboolean 
+tree_store_get_selected_nth(GtkWidget *w, int *n, int *m)
+{
+  GtkTreeSelection *sel;
+  GtkTreeIter iter;
+  GtkTreeModel *model;
+  GtkTreePath* path;
+  int depth, *ary;
+  gboolean state;
+  
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
+  state = gtk_tree_selection_get_selected(sel, &model, &iter);
+
+  if (! state)
+    return FALSE;
+
+  path = gtk_tree_model_get_path(model, &iter);
+
+  depth = gtk_tree_path_get_depth(path);
+  ary = gtk_tree_path_get_indices(path);
+
+  *n = ary[0];
+  if (depth < 2) {
+    *m = -1;
+  } else {
+    *m = ary[1];
+  }
+
+  gtk_tree_path_free(path);
+  return TRUE;
+}
+
+int
+list_store_get_selected_index(GtkWidget *w)
+{
+  int m, n;
+  gboolean state;
+
+  state = tree_store_get_selected_nth(w, &n, &m);
+  if (state)
+    return n;
+
+  return -1;
+}
+
+gboolean 
+list_store_get_selected_nth(GtkWidget *w, int *n)
+{
+  int m;
+
+  return tree_store_get_selected_nth(w, n, &m);
+}
+
+void 
+list_store_select_all(GtkWidget *w)
+{
+  GtkTreeSelection *sel;
+
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
+  gtk_tree_selection_select_all(sel);
+}
+
+void 
+list_store_select_iter(GtkWidget *w, GtkTreeIter *iter)
+{
+  GtkTreeModel *model;
+  GtkTreeSelection *sel;
+  GtkTreePath *path;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
+
+  gtk_tree_selection_select_iter(sel, iter);
+
+  path = gtk_tree_model_get_path(model, iter);
+
+  gtk_tree_view_set_cursor(GTK_TREE_VIEW(w), path, NULL, FALSE);
+
+  gtk_tree_path_free(path);
+}
+
+void 
+list_store_select_int(GtkWidget *w, int col, int id)
+{
+  GtkTreeIter iter;
+  GtkTreeModel *model;
+  gboolean state;
+  int val;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  state = gtk_tree_model_get_iter_first(model, &iter);
+  while (state) {
+    val = list_store_get_int(w, &iter, col);
+    if (val == id) {
+      list_store_select_iter(w, &iter);
+      break;
+    }
+    state = gtk_tree_model_iter_next(model, &iter);
+  }
+}
+
+static void
+select_path_str(GtkWidget *w, char *str)
+{
+  GtkTreePath *path;
+  GtkTreeSelection *sel;
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
+
+  path = gtk_tree_path_new_from_string(str);
+  if (! path)
+    return;
+
+  gtk_tree_selection_select_path(sel, path);
+
+  gtk_tree_view_set_cursor(GTK_TREE_VIEW(w), path, NULL, FALSE);
+
+  gtk_tree_path_free(path);
+}
+
+static void
+select_range_path_str(GtkWidget *w, char *from, char *to)
+{
+  GtkTreePath *path1, *path2;
+  GtkTreeSelection *sel;
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
+
+  path1 = gtk_tree_path_new_from_string(from);
+  if (! path1)
+    return;
+
+  path2 = gtk_tree_path_new_from_string(to);
+  if (! path2) {
+    gtk_tree_path_free(path1);
+    return;
+  }
+
+  gtk_tree_selection_select_range(sel, path1, path2);
+
+  gtk_tree_path_free(path2);
+  gtk_tree_path_free(path1);
+}
+
+void 
+list_store_select_nth(GtkWidget *w, int n)
+{
+  char buf[1024];
+
+  snprintf(buf, sizeof(buf), "%d", n);
+  select_path_str(w, buf);
+}
+
+void
+tree_store_select_nth(GtkWidget *w, int n, int m)
+{
+  char buf[1024];
+
+  snprintf(buf, sizeof(buf), "%d:%d", n, m);
+  select_path_str(w, buf);
+}
+
+void
+list_store_multi_select_nth(GtkWidget *w, int n, int m)
+{
+  char buf1[1024], buf2[1024];
+
+  snprintf(buf1, sizeof(buf1), "%d", n);
+  snprintf(buf2, sizeof(buf2), "%d", m);
+  select_range_path_str(w, buf1, buf2);
+}
+
+int
+list_store_get_num(GtkWidget *w)
+{
+  return tree_store_get_child_num(w, NULL);
+}
+
+int
+tree_store_get_child_num(GtkWidget *w, GtkTreeIter *iter)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  return gtk_tree_model_iter_n_children(model, iter);
+}
+
+void 
+list_store_set_selection_mode(GtkWidget *w, GtkSelectionMode mode)
+{
+  GtkTreeSelection *gsel;
+
+  gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
+  gtk_tree_selection_set_mode(gsel, mode);
+}
+
+void
+list_store_select_all_cb(GtkButton *w, gpointer client_data)
+{
+  list_store_select_all(GTK_WIDGET(client_data));
+}
+
+void
+list_store_remove_selected_cb(GtkWidget *w, gpointer client_data)
+{
+  GtkTreeSelection *sel;
+  GList *selected, *data;
+  GtkTreeModel *model;
+  gboolean found;
+  GtkTreeIter iter;
+
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(client_data));
+  selected = gtk_tree_selection_get_selected_rows(sel, &model);
+
+  if (selected == NULL)
+    return;
+
+  for (data = g_list_last(selected); data; data = data->prev) {
+    found = gtk_tree_model_get_iter(model, &iter, data->data);
+    if (found)
+      gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+  }
+
+  g_list_foreach(selected, free_tree_path_cb, NULL);
+  g_list_free(selected);
+}
+
+void
+free_tree_path_cb(gpointer data, gpointer user_data)
+{
+  gtk_tree_path_free(data);
+}
+
+
