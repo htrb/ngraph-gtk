@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.2 2008/05/30 08:51:07 hito Exp $
+ * $Id: main.c,v 1.3 2008/05/30 09:15:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -141,8 +141,41 @@ char *Documenter[] = {
 
 extern GtkWidget *TopLevel;
 
-static int *Argc, OpenDisplay = FALSE;
-static char ***Argv;
+static int OpenDisplay = FALSE;
+
+static void * (* obj_add_func_ary[]) (void) = {
+  addshell,
+  addgra,
+  addgra2,
+  addgra2null,
+  addgra2file,
+  addgra2prn,
+  addgra2gtk,
+  addint,
+  adddouble,
+  addstring,
+  addiarray,
+  adddarray,
+  addsarray,
+  addmath,
+  addfit,
+  addprm,
+  adddraw,
+  addagrid,
+  addaxis,
+  addfile,
+  addmerge,
+  addlegend,
+  addrectangle,
+  addline,
+  addcurve,
+  addarc,
+  addpolygon,
+  addmark,
+  addtext,
+  addmenu,
+  adddialog,
+};
 
 int
 OpenApplication(void)
@@ -442,73 +475,10 @@ main(int argc, char **argv, char **environ)
   if (_getobj(sys, "name", inst, &systemname) == -1)
     exit(1);
 
-  if (addshell() == NULL)
-    exit(1);
-
-  if (addgra() == NULL)
-    exit(1);
-  if (addgra2() == NULL)
-    exit(1);
-  if (addgra2null() == NULL)
-    exit(1);
-  if (addgra2file() == NULL)
-    exit(1);
-  if (addgra2prn() == NULL)
-    exit(1);
-
-  if (addgra2gtk() == NULL)
-    exit(1);
-
-  if (addint() == NULL)
-    exit(1);
-  if (adddouble() == NULL)
-    exit(1);
-  if (addstring() == NULL)
-    exit(1);
-  if (addiarray() == NULL)
-    exit(1);
-  if (adddarray() == NULL)
-    exit(1);
-  if (addsarray() == NULL)
-    exit(1);
-  if (addmath() == NULL)
-    exit(1);
-  if (addfit() == NULL)
-    exit(1);
-  if (addprm() == NULL)
-    exit(1);
-
-  if (adddraw() == NULL)
-    exit(1);
-  if (addagrid() == NULL)
-    exit(1);
-  if (addaxis() == NULL)
-    exit(1);
-  if (addfile() == NULL)
-    exit(1);
-  if (addmerge() == NULL)
-    exit(1);
-  if (addlegend() == NULL)
-    exit(1);
-  if (addrectangle() == NULL)
-    exit(1);
-  if (addline() == NULL)
-    exit(1);
-  if (addcurve() == NULL)
-    exit(1);
-  if (addarc() == NULL)
-    exit(1);
-  if (addpolygon() == NULL)
-    exit(1);
-  if (addmark() == NULL)
-    exit(1);
-  if (addtext() == NULL)
-    exit(1);
-
-  if (addmenu() == NULL)
-    exit(1);
-  if (adddialog() == NULL)
-    exit(1);
+  for (i = 0; i < sizeof(obj_add_func_ary) / sizeof(*obj_add_func_ary); i++) {
+    if (obj_add_func_ary[i]() == NULL)
+      exit(1);
+  }
 
   loginshell = NULL;
   if ((fp = openconfig(SYSCONF)) != NULL) {
