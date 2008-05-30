@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11lgndx.c,v 1.2 2008/05/30 05:51:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -317,7 +317,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *button, *hbox, *hbox2, *vbox;
   GSList *func_list, *dir_list;
   struct LegendGaussDialog *d;
-  char title[60];
+  char title[256];
 
   d = (struct LegendGaussDialog *) data;
   snprintf(title, sizeof(title), _("Legend Gaussian/Lorentzian/Parabola/Sin %d"), d->Id);
@@ -330,19 +330,19 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     button = NULL;
 
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_Sin");
+    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Sin"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
     gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
 
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_Parabola");
+    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Parabola"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
     gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
 
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_Lorentz");
+    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Lorentz"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
     gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
 
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_Gauss");
+    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Gauss"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
     gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
 

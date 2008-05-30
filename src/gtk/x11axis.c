@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.2 2008/05/29 12:13:37 hito Exp $
+ * $Id: x11axis.c,v 1.3 2008/05/30 05:51:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1507,13 +1507,16 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
+
     hbox = gtk_hbox_new(FALSE, 4);
 
+    w = gtk_check_button_new_with_mnemonic(_("_Log power"));
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    d->log_power = w;
 
-    gtk_check_button_new_with_mnemonic(_("_Log power"));
-
-    gtk_check_button_new_with_mnemonic(_("no _Zero"));
-
+    w = gtk_check_button_new_with_mnemonic(_("no _Zero"));
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    d->no_zero = w;
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 

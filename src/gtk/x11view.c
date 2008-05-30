@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.3 2008/05/30 02:37:01 hito Exp $
+ * $Id: x11view.c,v 1.4 2008/05/30 05:51:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2585,12 +2585,12 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
 	    AxisDialog(&DlgAxis, obj, id, TRUE);
 	    ret = DialogExecute(TopLevel, &DlgAxis);
 
-	    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+	    if (ret == IDDELETE || ret == IDCANCEL) {
 	      delobj(obj, id);
 	    } else {
+	      AddList(obj, inst);
 	      NgraphApp.Changed = TRUE;
 	    }
-	    AddList(obj, inst);
 	  }
 	}
       }
