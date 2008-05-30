@@ -67,11 +67,8 @@ Temple Place, Suite 330, Boston, MA 02111-1307 USA)。
 <A HREF="#TOP"><B>環境設定</B></A>
 <BR>
 <BLOCKQUOTE>
-Ngraph 環境設定は環境変数 NGRAPHLIB, NGRAPHHOME で行います。Ngraphを正しく動作させる為に以下の設定を行ってください。<BR>
 <UL>
-<LI>Ngraph を /usr/local/lib/Ngraph 以外のディレクトリにインストールした際には環境変数 NGRAPHLIB にインストールディレクトリを設定してください。<BR>
-<LI>HOMEディレクトリ以外に初期化ファイル(後述)を作成するようにするには NGRAPHHOME に適当なディレクトリを設定してください。
-<LI>Ngraphをバージョンアップした際には、HOME ディレクトリあるいは NGRAPHHOME に作成された Ngraph.ini を削除するのを忘れないで下さい。そうしないと Ngraph.ini の構成が変更されたとしても古い Ngraph.ini がロードされてしまいます。
+<LI>Ngraphをバージョンアップした際には、~/.Ngraph/ に作成された Ngraph.ini を削除するのを忘れないで下さい。そうしないと Ngraph.ini の構成が変更されたとしても古い Ngraph.ini がロードされてしまいます。
 </UL>
 <BR>
 以下に、Ngraph が使用するファイルのディレクトリ検索順を記述します。<BR>
@@ -92,18 +89,18 @@ Ngraphの設定初期値を列挙したファイル
 <BR>
 これらのファイル読み込みの検索順は以下の通りです。
 <OL>
-<LI>ホーム(HOME)ディレクトリ。ただし環境変数 NGRAPHHOME で変更可能。<BR>
-<LI>インストールディレクトリ。デフォルトで /usr/local/lib/Ngraph。ただし環境変数 NGRAPHLIB で変更可能。
+<LI>ホーム(HOME)ディレクトリ。<BR>
+<LI>インストールディレクトリ。
 </OL>
 </UL>
 <BR>
 (2) 初期化ファイルの書き込み<BR>
 <BR>
 <UL>
-Ngraph 終了時には Ngraph.ini を作成します。また、[Graph]-[save as default(Graph)] メニューでは .Ngraph.ngp を作成します。これらファイルの作成ディレクトリの優先順は以下の通りです。
+Ngraph 終了時には ~/.Ngraph/ に Ngraph.ini を作成します。また、[Graph]-[save as default(Graph)] メニューでは .Ngraph.ngp を作成します。これらファイルの作成ディレクトリの優先順は以下の通りです。
 <OL>
-<LI>ホーム(HOME)ディレクトリ。ただし環境変数 NGRAPHHOME で変更可能。<BR>
-<LI>インストールディレクトリ。デフォルトで /usr/local/lib/Ngraph。ただし環境変数 NGRAPHLIB で変更可能。
+<LI>ホーム(HOME)ディレクトリ。<BR>
+<LI>インストールディレクトリ。
 </OL>
 </UL>
 <BR>
@@ -112,7 +109,7 @@ Ngraph 終了時には Ngraph.ini を作成します。また、[Graph]-[save as default(Graph)
 <UL>
 プリンタドライバやアドインスクリプトなどの外部プログラムの検索順は以下の通りです。
 <OL>
-<LI>インストールディレクトリ。デフォルトで /usr/local/lib/Ngraph。ただし環境変数 NGRAPHLIB で変更可能。
+<LI>インストールディレクトリ。
 <LI> 環境変数 PATH
 </OL>
 </UL>
