@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.3 2008/05/30 02:37:01 hito Exp $
+ * $Id: gtk_subwin.c,v 1.4 2008/05/30 06:25:46 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -20,6 +20,8 @@
 #include "gtk_subwin.h"
 
 #define COL_ID 1
+
+static int SaveWindowState = FALSE;
 
 static void
 get_geometry(struct SubWin *d, int *x, int *y, int *w, int *h)
@@ -805,10 +807,11 @@ sub_window_minimize(void *ptr)
     return;
 
   window_state = gdk_window_get_state(d->Win->window);
-  if (window_state | GDK_WINDOW_STATE_ICONIFIED) {
-    d->window_state = 0;
-  } else {
+  d->window_state = window_state;
+
+  if (! (window_state & GDK_WINDOW_STATE_ICONIFIED)) {
     gtk_widget_hide_all(d->Win);
+    SaveWindowState = TRUE;
   }
 }
 
@@ -820,6 +823,9 @@ sub_window_restore_state(void *ptr)
   d = (struct SubWin *) ptr;
 
   if (d->Win == NULL)
+    return;
+
+  if (! SaveWindowState)
     return;
 
   if (d->window_state & (GDK_WINDOW_STATE_WITHDRAWN | GDK_WINDOW_STATE_ICONIFIED))
