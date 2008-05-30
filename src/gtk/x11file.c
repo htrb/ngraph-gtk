@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.2 2008/05/29 12:13:37 hito Exp $
+ * $Id: x11file.c,v 1.3 2008/05/30 06:42:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2528,25 +2528,25 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-  item_setup(vbox2, w, _("_Style:"), FALSE);
+  item_setup(vbox2, w, _("_Style:"), TRUE);
   d->style = w;
 
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-  item_setup(vbox2, w, _("_Width:"), FALSE);
+  item_setup(vbox2, w, _("_Width:"), TRUE);
   d->width = w;
 
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-  item_setup(vbox2, w, _("_Size:"), FALSE);
+  item_setup(vbox2, w, _("_Size:"), TRUE);
   d->size = w;
 
   w = create_text_entry(TRUE, TRUE);
-  item_setup(vbox2, w, _("_Miter:"), FALSE);
+  item_setup(vbox2, w, _("_Miter:"), TRUE);
   d->miter = w;
 
   w = combo_box_create();
-  item_setup(vbox2, w, _("_Join:"), FALSE);
+  item_setup(vbox2, w, _("_Join:"), TRUE);
   d->join = w;
 
   gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);

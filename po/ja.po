@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2008-05-29 18:27+0900\n"
-"PO-Revision-Date: 2008-05-30 14:36+0900\n"
+"PO-Revision-Date: 2008-05-30 15:39+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -244,11 +244,11 @@ msgstr "位置(_G):"
 
 #: src/gtk/x11axis.c:1827 src/gtk/x11axis.c:2201 src/gtk/x11file.c:1041
 msgid "_Min:"
-msgstr "範囲最小(_M):"
+msgstr "最小値(_M):"
 
 #: src/gtk/x11axis.c:1831 src/gtk/x11axis.c:2205 src/gtk/x11file.c:1045
 msgid "_Max:"
-msgstr "範囲最大(_M):"
+msgstr "最大値(_M):"
 
 #: src/gtk/x11axis.c:1860
 #, c-format

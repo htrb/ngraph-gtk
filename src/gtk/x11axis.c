@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.3 2008/05/30 05:51:13 hito Exp $
+ * $Id: x11axis.c,v 1.4 2008/05/30 06:42:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2194,26 +2194,34 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
 			   NULL);
 
     frame = gtk_frame_new(NULL);
-    hbox = gtk_hbox_new(FALSE, 4);
     vbox = gtk_vbox_new(FALSE, 4);
 
+    hbox = gtk_hbox_new(FALSE, 4);
     w = combo_box_entry_create();
-    item_setup(vbox, w, _("_Min:"), FALSE);
+    item_setup(hbox, w, _("_Min:"), TRUE);
     d->min = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
+    hbox = gtk_hbox_new(FALSE, 4);
     w = combo_box_entry_create();
-    item_setup(vbox, w, _("_Max:"), FALSE);
+    item_setup(hbox, w, _("_Max:"), TRUE);
     d->max = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
+    hbox = gtk_hbox_new(FALSE, 4);
     w = combo_box_entry_create();
-    item_setup(vbox, w, _("_Inc:"), FALSE);
+    item_setup(hbox, w, _("_Inc:"), TRUE);
     d->inc = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
+    hbox = gtk_hbox_new(FALSE, 4);
     w = combo_box_entry_create();
-    item_setup(vbox, w, _("_Scale:"), FALSE);
+    item_setup(hbox, w, _("_Scale:"), TRUE);
     d->scale = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
+    hbox = gtk_hbox_new(FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
 
     vbox = gtk_vbox_new(FALSE, 4);
@@ -2267,7 +2275,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
