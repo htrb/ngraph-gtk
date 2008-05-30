@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.2 2008/05/29 12:13:37 hito Exp $
+ * $Id: x11menu.c,v 1.3 2008/05/30 14:17:48 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1385,6 +1385,57 @@ escape_drawing_cb(GtkWidget *w, GdkEventKey *e, gpointer data)
   return FALSE;
 }
 
+static void
+init_ngraph_app_struct(void)
+{
+  NgraphApp.Viewer.Win = NULL;
+  NgraphApp.Viewer.popup = NULL;
+
+  NgraphApp.FileWin.Win = NULL;
+  NgraphApp.FileWin.popup = NULL;
+  NgraphApp.FileWin.popup_item = NULL;
+  NgraphApp.FileWin.ev_key = NULL;
+  NgraphApp.FileWin.ev_button = NULL;
+  NgraphApp.FileWin.window_state = 0;
+
+  NgraphApp.AxisWin.Win = NULL;
+  NgraphApp.AxisWin.popup = NULL;
+  NgraphApp.AxisWin.popup_item = NULL;
+  NgraphApp.AxisWin.ev_key = NULL;
+  NgraphApp.AxisWin.ev_button = NULL;
+  NgraphApp.AxisWin.window_state = 0;
+
+  NgraphApp.LegendWin.Win = NULL;
+  NgraphApp.LegendWin.popup = NULL;
+  NgraphApp.LegendWin.popup_item = NULL;
+  NgraphApp.LegendWin.ev_key = NULL;
+  NgraphApp.LegendWin.ev_button = NULL;
+  NgraphApp.LegendWin.window_state = 0;
+
+  NgraphApp.MergeWin.Win = NULL;
+  NgraphApp.MergeWin.popup = NULL;
+  NgraphApp.MergeWin.popup_item = NULL;
+  NgraphApp.MergeWin.ev_key = NULL;
+  NgraphApp.MergeWin.ev_button = NULL;
+  NgraphApp.MergeWin.window_state = 0;
+
+  NgraphApp.InfoWin.Win = NULL;
+  NgraphApp.InfoWin.popup = NULL;
+  NgraphApp.InfoWin.popup_item = NULL;
+  NgraphApp.InfoWin.str = NULL;
+  NgraphApp.InfoWin.ev_key = NULL;
+  NgraphApp.InfoWin.ev_button = NULL;
+  NgraphApp.InfoWin.window_state = 0;
+
+  NgraphApp.CoordWin.Win = NULL;
+  NgraphApp.CoordWin.popup = NULL;
+  NgraphApp.CoordWin.popup_item = NULL;
+  NgraphApp.CoordWin.str = NULL;
+  NgraphApp.CoordWin.ev_key = NULL;
+  NgraphApp.CoordWin.ev_button = NULL;
+  NgraphApp.CoordWin.window_state = 0;
+}
+
 void
 application(char *file)
 {
@@ -1450,52 +1501,7 @@ application(char *file)
     createpixmap1(TopLevel);
     createpixmap2(TopLevel);
 
-    NgraphApp.Viewer.Win = NULL;
-    NgraphApp.Viewer.popup = NULL;
-
-    NgraphApp.FileWin.Win = NULL;
-    NgraphApp.FileWin.popup = NULL;
-    NgraphApp.FileWin.popup_item = NULL;
-    NgraphApp.FileWin.ev_key = NULL;
-    NgraphApp.FileWin.ev_button = NULL;
-    NgraphApp.FileWin.window_state = 0;
-
-    NgraphApp.AxisWin.Win = NULL;
-    NgraphApp.AxisWin.popup = NULL;
-    NgraphApp.AxisWin.popup_item = NULL;
-    NgraphApp.AxisWin.ev_key = NULL;
-    NgraphApp.AxisWin.ev_button = NULL;
-    NgraphApp.AxisWin.window_state = 0;
-
-    NgraphApp.LegendWin.Win = NULL;
-    NgraphApp.LegendWin.popup = NULL;
-    NgraphApp.LegendWin.popup_item = NULL;
-    NgraphApp.LegendWin.ev_key = NULL;
-    NgraphApp.LegendWin.ev_button = NULL;
-    NgraphApp.LegendWin.window_state = 0;
-
-    NgraphApp.MergeWin.Win = NULL;
-    NgraphApp.MergeWin.popup = NULL;
-    NgraphApp.MergeWin.popup_item = NULL;
-    NgraphApp.MergeWin.ev_key = NULL;
-    NgraphApp.MergeWin.ev_button = NULL;
-    NgraphApp.MergeWin.window_state = 0;
-
-    NgraphApp.InfoWin.Win = NULL;
-    NgraphApp.InfoWin.popup = NULL;
-    NgraphApp.InfoWin.popup_item = NULL;
-    NgraphApp.InfoWin.str = NULL;
-    NgraphApp.InfoWin.ev_key = NULL;
-    NgraphApp.InfoWin.ev_button = NULL;
-    NgraphApp.InfoWin.window_state = 0;
-
-    NgraphApp.CoordWin.Win = NULL;
-    NgraphApp.CoordWin.popup = NULL;
-    NgraphApp.CoordWin.popup_item = NULL;
-    NgraphApp.CoordWin.str = NULL;
-    NgraphApp.CoordWin.ev_key = NULL;
-    NgraphApp.CoordWin.ev_button = NULL;
-    NgraphApp.CoordWin.window_state = 0;
+    init_ngraph_app_struct();
 
     initdialog();
     setupwindow();

@@ -2,7 +2,6 @@
 * yelp 対応
 * Color selection dialog のパレット対応
 * ショートカットキー設定の保存、読み込み
-* 構造体キャストの代わりに共用体を使う
 
 * Symbol font 対応の強化
 * Interrupt 対応の強化
