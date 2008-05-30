@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: main.c,v 1.2 2008/05/30 08:51:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -141,27 +141,13 @@ char *Documenter[] = {
 
 extern GtkWidget *TopLevel;
 
-static int *Argc;
+static int *Argc, OpenDisplay = FALSE;
 static char ***Argv;
 
 int
 OpenApplication(void)
 {
-  int argc;
-  char arg0[] = "Ngraph", arg1[] = "--scan";
-  char *argv[] = {arg0, arg1, NULL};
-  static int is_open = 0;
-
-  if (is_open)
-    return TRUE;
-
-  is_open = 1;
-
-  argc = sizeof(argv) / sizeof(*argv) - 1;
-  argc = 1;
-  gtk_set_locale();
-
-  return gtk_init_check(Argc, Argv);
+  return OpenDisplay;
 }
 
 int
@@ -381,6 +367,9 @@ main(int argc, char **argv, char **environ)
   int history_size = HIST_SIZE;
   char *history_file;
 #endif
+
+  gtk_set_locale();
+  OpenDisplay = gtk_init_check(&argc, &argv);
 
   mainenviron = environ;
 

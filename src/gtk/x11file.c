@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.3 2008/05/30 06:42:31 hito Exp $
+ * $Id: x11file.c,v 1.4 2008/05/30 08:51:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -381,7 +381,10 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(swin), w);
-    gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 4);
+
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
     w = NULL;
     for (i = 0; i < MATH_FNC_NUM; i++) {
@@ -1297,6 +1300,7 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->list = w;
     gtk_container_add(GTK_CONTAINER(swin), w);
 
+
     vbox = gtk_vbox_new(FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1336,12 +1340,14 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
 
-    gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
   }
 
-  FileMoveDialogSetupItem(w, d, d->Id);
+  FileMoveDialogSetupItem(wi, d, d->Id);
 
   if (makewidget)
     d->widget = NULL;
@@ -1526,12 +1532,14 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
 
-    gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
   }
 
-  FileMaskDialogSetupItem(w, d, d->Id);
+  FileMaskDialogSetupItem(wi, d, d->Id);
 }
 
 static void
@@ -2612,7 +2620,10 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
     d->comment = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
     gtk_container_add(GTK_CONTAINER(swin), view);
-    gtk_box_pack_start(GTK_BOX(d->comment_box), swin, TRUE, TRUE, 4);
+
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 4);
 
 
     hbox = gtk_hbox_new(FALSE, 4);

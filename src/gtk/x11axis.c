@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.4 2008/05/30 06:42:30 hito Exp $
+ * $Id: x11axis.c,v 1.5 2008/05/30 08:51:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -833,7 +833,7 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
   }
-  CrossDialogSetupItem(w, d);
+  CrossDialogSetupItem(wi, d);
 }
 
 static void
@@ -947,7 +947,7 @@ ZoomDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->zoom_entry = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
-  ZoomDialogSetupItem(w, d);
+  ZoomDialogSetupItem(wi, d);
 }
 
 static void

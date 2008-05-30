@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11opt.c,v 1.2 2008/05/30 08:51:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -514,7 +514,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
   }
-  SetScriptDialogSetupItem(w, d);
+  SetScriptDialogSetupItem(wi, d);
 }
 
 static void
@@ -725,7 +725,10 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->list, "button-press-event", G_CALLBACK(script_list_defailt_cb), d);
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(script_list_defailt_cb), d);
     gtk_container_add(GTK_CONTAINER(swin), w);
-    gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
+
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
     vbox = gtk_vbox_new(FALSE, 4);
 
@@ -749,7 +752,7 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
   }
-  PrefScriptDialogSetupItem(w, d);
+  PrefScriptDialogSetupItem(wi, d);
 }
 
 static void
@@ -837,7 +840,7 @@ SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ext = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
   }
-  SetDriverDialogSetupItem(w, d);
+  SetDriverDialogSetupItem(wi, d);
 }
 
 static void
@@ -1059,7 +1062,10 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->list, "button-press-event", G_CALLBACK(driver_list_defailt_cb), d);
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(driver_list_defailt_cb), d);
     gtk_container_add(GTK_CONTAINER(swin), w);
-    gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
+
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
     vbox = gtk_vbox_new(FALSE, 4);
 
@@ -1082,7 +1088,7 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
   }
-  PrefDriverDialogSetupItem(w, d);
+  PrefDriverDialogSetupItem(wi, d);
 }
 
 static void
@@ -1242,7 +1248,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
   }
-  MiscDialogSetupItem(w, d);
+  MiscDialogSetupItem(wi, d);
 }
 
 static void
@@ -1384,7 +1390,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
-  ExViewerDialogSetupItem(w, d);
+  ExViewerDialogSetupItem(wi, d);
 }
 
 static void
@@ -1484,7 +1490,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
-  ViewerDialogSetupItem(w, d);
+  ViewerDialogSetupItem(wi, d);
 }
 
 static void

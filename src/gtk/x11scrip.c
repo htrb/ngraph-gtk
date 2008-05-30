@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11scrip.c,v 1.2 2008/05/30 08:51:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -96,15 +96,16 @@ ScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct ScriptDialog *) data;
   if (makewidget) {
     w = list_store_create(sizeof(clist) / sizeof(*clist), clist);
+    d->list = w;
     g_signal_connect(w, "button-press-event", G_CALLBACK(script_list_default_cb), d);
     g_signal_connect(w, "key-press-event", G_CALLBACK(script_list_default_cb), d);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(swin), w);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), swin, TRUE, TRUE, 4);
-
-    d->list = w;
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
@@ -115,7 +116,7 @@ ScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 200, 400);
   }
-  ScriptDialogSetupItem(w, d);
+  ScriptDialogSetupItem(wi, d);
 }
 
 static void

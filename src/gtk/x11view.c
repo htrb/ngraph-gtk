@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.4 2008/05/30 05:51:13 hito Exp $
+ * $Id: x11view.c,v 1.5 2008/05/30 08:51:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -426,7 +426,10 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
     d->list = w;
     gtk_container_add(GTK_CONTAINER(swin), w);
-    gtk_box_pack_start(GTK_BOX(d->vbox), swin, TRUE, TRUE, 4);
+
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
@@ -438,7 +441,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
   }
-  EvalDialogSetupItem(w, d);
+  EvalDialogSetupItem(wi, d);
 }
 
 static void 

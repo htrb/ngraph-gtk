@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11dialg.c,v 1.2 2008/05/30 08:51:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -274,12 +274,12 @@ multi_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 }
 
 static void
-SelectDialogSetup(GtkWidget *w, void *data, int makewidget)
+SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   char *s;
   struct SelectDialog *d;
   int i, *seldata, selnum;
-  GtkWidget *swin, *b, *hbox;
+  GtkWidget *swin, *w, *hbox;
   GtkTreeIter iter;
   n_list_store list[] = {
     {N_("multi select"), G_TYPE_STRING, TRUE, FALSE, NULL},
@@ -296,17 +296,19 @@ SelectDialogSetup(GtkWidget *w, void *data, int makewidget)
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(swin), d->list);
 
-    gtk_dialog_add_button(GTK_DIALOG(w), "_All", IDSALL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_All"), IDSALL);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), swin, TRUE, TRUE, 4);
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    b = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
-    g_signal_connect(b, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
-    gtk_box_pack_start(GTK_BOX(hbox), b, FALSE, FALSE, 4);
+    w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
+    g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
-    gtk_window_set_default_size(GTK_WINDOW(w), -1, 300);
+    gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
   }
 
   list_store_clear(d->list);
@@ -409,12 +411,12 @@ single_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 }
 
 static void
-CopyDialogSetup(GtkWidget *w, void *data, int makewidget)
+CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   char *s;
   struct CopyDialog *d;
   int i;
-  GtkWidget *swin;
+  GtkWidget *swin, *w;
   GtkTreeIter iter;
   n_list_store copy_list[] = {
     {N_("single select"), G_TYPE_STRING, TRUE, FALSE, NULL},
@@ -430,8 +432,11 @@ CopyDialogSetup(GtkWidget *w, void *data, int makewidget)
 
     g_signal_connect(d->list, "button-press-event", G_CALLBACK(single_list_default_cb), d);
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(single_list_default_cb), d);
-    gtk_container_add(GTK_CONTAINER (GTK_DIALOG(w)->vbox), swin);
-    gtk_window_set_default_size(GTK_WINDOW(w), -1, 300);
+
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 0);
+    gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
   }
 
   list_store_clear(d->list);

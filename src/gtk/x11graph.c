@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11graph.c,v 1.2 2008/05/30 08:51:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -192,7 +192,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
-  PageDialogSetupItem(w, d);
+  PageDialogSetupItem(wi, d);
 }
 
 static void
@@ -1139,14 +1139,12 @@ void
 CmHelpAbout(void)
 {
   struct objlist *obj;
-  char *version, *email, *web, *copyright;
+  char *web, *copyright;
 
   if ((obj = chkobject("system")) == NULL)
     return;
 
-  getobj(obj, "version", 0, 0, NULL, &version);
   getobj(obj, "copyright", 0, 0, NULL, &copyright);
-  getobj(obj, "e-mail", 0, 0, NULL, &email);
   getobj(obj, "web", 0, 0, NULL, &web);
 
   gtk_show_about_dialog(GTK_WINDOW(TopLevel),
@@ -1154,7 +1152,6 @@ CmHelpAbout(void)
 			"copyright", copyright,
 			"version", VERSION,
 			"website", web,
-			"website-label", web,
 			"license", License,
 			"wrap-license", TRUE,
 			"authors", Auther,
