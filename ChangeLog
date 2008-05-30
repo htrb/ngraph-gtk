@@ -1,3 +1,16 @@
+2008-05-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (CloseGC): fix conditional
+	expression ("Mxlocal->font[i].fontalias != NULL" to
+	"Mxlocal->font[i].fontalias != NULL").
+
+	* src/gtk/ox11menu.c (menudone): free Mxlocal->font[i].fontalias
+	and Mxlocal->font[i].font only when Mxlocal->font[i].fontalias is
+	not NULL.
+
+	* src/gtk/gtk_subwin.c (sub_window_minimize): do nothing when a
+	sub window is already iconified.
+
 2008-05-27  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.am (SUBDIRS): Add po, m4.

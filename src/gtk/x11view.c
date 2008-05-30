@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.2 2008/05/29 12:13:37 hito Exp $
+ * $Id: x11view.c,v 1.3 2008/05/30 02:37:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3278,39 +3278,6 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_BackSpace:
     ViewCross();
     return TRUE;
-  case GDK_P:
-  case GDK_p:
-    /*
-    if (e->state & ControlMask) {
-      if (!(d->MoveData) && !(d->Capture) && (d->MouseMode == MOUSENONE)) {
-	XmMenuPosition(d->popup, (XButtonPressedEvent *) event);
-	XtManageChild(d->popup);
-	XtSetSensitive(XtNameToWidget(d->popup, "button_0"), False);
-	XtSetSensitive(XtNameToWidget(d->popup, "button_1"), False);
-	XtSetSensitive(XtNameToWidget(d->popup, "button_2"), False);
-	XtSetSensitive(XtNameToWidget(d->popup, "button_3"), False);
-	XtSetSensitive(XtNameToWidget(d->popup, "button_4"), False);
-	if ((d->Mode == PointB) || (d->Mode == LegendB)
-	    || (d->Mode == AxisB)) {
-	  num = arraynum(d->focusobj);
-	  if (num > 0) {
-	    XtSetSensitive(XtNameToWidget(d->popup, "button_0"), True);
-	    XtSetSensitive(XtNameToWidget(d->popup, "button_1"), True);
-	    XtSetSensitive(XtNameToWidget(d->popup, "button_2"), True);
-	  }
-	  if (num == 1) {
-	    focus = *(struct focuslist **) arraynget(d->focusobj, 0);
-	    obj = focus->obj;
-	    if (chkobjchild(chkobject("legend"), obj)) {
-	      XtSetSensitive(XtNameToWidget(d->popup, "button_3"), True);
-	      XtSetSensitive(XtNameToWidget(d->popup, "button_4"), True);
-	    }
-	  }
-	}
-      }
-    }
-    */
-    return TRUE;
   default:
     break;
   }
@@ -3942,9 +3909,9 @@ CloseGC(void)
 
   memfree(Mxlocal->fontalias);
   for (i = 0; i < GTKFONTCASH; i++) {
-    if ((Mxlocal->font[i]).fontalias == NULL) {
-      memfree((Mxlocal->font[i]).fontalias);
-      pango_font_description_free((Mxlocal->font[i]).font);
+    if (Mxlocal->font[i].fontalias != NULL) {
+      memfree(Mxlocal->font[i].fontalias);
+      pango_font_description_free(Mxlocal->font[i].font);
       Mxlocal->font[i].fontalias = NULL;
       Mxlocal->font[i].font = NULL;
     }

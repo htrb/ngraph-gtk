@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.2 2008/05/29 12:13:36 hito Exp $
+ * $Id: gtk_subwin.c,v 1.3 2008/05/30 02:37:01 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -797,14 +797,19 @@ void
 sub_window_minimize(void *ptr)
 {
   struct SubWin *d;
+  GdkWindowState window_state;
 
   d = (struct SubWin *) ptr;
 
   if (d->Win == NULL)
     return;
 
-  d->window_state = gdk_window_get_state(d->Win->window);
-  gtk_widget_hide_all(d->Win);
+  window_state = gdk_window_get_state(d->Win->window);
+  if (window_state | GDK_WINDOW_STATE_ICONIFIED) {
+    d->window_state = 0;
+  } else {
+    gtk_widget_hide_all(d->Win);
+  }
 }
 
 void
@@ -845,8 +850,8 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, char **xpm)
   gtk_window_group_add_window(group, GTK_WINDOW(dlg));
   //  gtk_widget_set_parent_window(GTK_WIDGET(dlg), TopLevel);
   //  gtk_window_set_destroy_with_parent(GTK_WINDOW(dlg), TRUE);
-  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_UTILITY);
-  //  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+  //  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_UTILITY);
+  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_container_add(GTK_CONTAINER(swin), text);

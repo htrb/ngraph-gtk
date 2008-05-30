@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ox11menu.c,v 1.2 2008/05/30 02:37:01 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1222,10 +1222,12 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   for (i = 0; i < Mxlocal->loadfont; i++) {
-    memfree(Mxlocal->font[i].fontalias);
-    pango_font_description_free(Mxlocal->font[i].font);
-    Mxlocal->font[i].fontalias = NULL;
-    Mxlocal->font[i].font = NULL;
+    if (Mxlocal->font[i].fontalias != NULL) {
+      memfree(Mxlocal->font[i].fontalias);
+      pango_font_description_free(Mxlocal->font[i].font);
+      Mxlocal->font[i].fontalias = NULL;
+      Mxlocal->font[i].font = NULL;
+    }
   }
   Mxlocal->loadfont = 0;
 
