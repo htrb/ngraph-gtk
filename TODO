@@ -7,11 +7,6 @@
 * Interrupt 対応の強化
 * File Window, Merge Window の DnD 対応
 
-
-future plan
-
-* 高速化
-* 内部コードに utf-8 を採用した簡易的な国際化
 * 描画 backend に cairo ライブラリを使用
 * GtkPrintUnixDialog の利用
-* Ruby interpreter 組み込み
+* 内部コードに utf-8 を採用した簡易的な国際化
