@@ -61,7 +61,7 @@ AM_GNU_GETTEXT([external])
 AC_DEFUN([AC_NGRAPH_ENABLE_JAPANESE], [
 AC_MSG_CHECKING(if japanese text support is enabled)
 AC_ARG_ENABLE(japanese,
-[  --enable-japanese	enable japanese text support],
+[  --enable-japanese	  enable japanese text support],
 [enable_japanese=yes],
 [enable_japanese=no])
 test x"$enable_japanese" = xyes && AC_DEFINE([JAPANESE], 1, [japanese text support])

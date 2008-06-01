@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.2 2008/05/30 02:37:01 hito Exp $
+ * $Id: ox11menu.c,v 1.3 2008/06/01 03:52:12 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -2062,8 +2062,7 @@ mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     break;
   case 'F':
     memfree(Mxlocal->fontalias);
-    if ((Mxlocal->fontalias=memalloc(strlen(cstr)+1))==NULL) break;
-    strcpy(Mxlocal->fontalias,cstr);
+    Mxlocal->fontalias = nstrdup(cstr);
     break;
   case 'H':
     fontspace = cpar[2] / 72.0 * 25.4;

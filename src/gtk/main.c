@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.3 2008/05/30 09:15:18 hito Exp $
+ * $Id: main.c,v 1.4 2008/06/01 03:52:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -423,19 +423,15 @@ main(int argc, char **argv, char **environ)
 
 #if 0
   if ((lib = getenv("NGRAPHLIB")) != NULL) {
-    if ((libdir = (char *) memalloc(strlen(lib) + 1)) == NULL)
-      exit(1);
-    strcpy(libdir, lib);
+    libdir = nstrdup(lib);
   } else {
-    if ((libdir = (char *) memalloc(strlen(DATADIR) + 1)) == NULL)
-      exit(1);
-    strcpy(libdir, DATADIR);
+    libdir = nstrdup(DATADIR);
   }
 #else
   libdir = nstrdup(DATADIR);
+#endif
   if (libdir == NULL)
     exit(1);
-#endif
 
   /*
   if ((home = getenv("NGRAPHHOME")) != NULL) {
@@ -446,13 +442,14 @@ main(int argc, char **argv, char **environ)
   */
   if ((home = getenv("HOME")) != NULL) {
     len = strlen(home) + strlen(HOME_DIR) + 2;
-    if ((homedir = (char *) memalloc(len)) == NULL)
+    homedir = memalloc(len);
+    if (homedir == NULL)
       exit(1);
     snprintf(homedir, len, "%s/%s", home, HOME_DIR);
   } else {
-    if ((homedir = (char *) memalloc(strlen(libdir) + 1)) == NULL)
+    homedir = nstrdup(libdir);
+    if (homedir == NULL)
       exit(1);
-    strcpy(homedir, libdir);
   }
 
   if (addobjectroot() == NULL)
@@ -573,10 +570,10 @@ main(int argc, char **argv, char **environ)
       break;
     }
     i++;
-    if ((inifile = (char *) memalloc(strlen(argv[i]) + 1)) == NULL) {
+    inifile = strdup(argv[i]);
+    if (inifile == NULL) {
       exit(1);
     }
-    strcpy(inifile, argv[i]);
     changefilename(inifile);
   }
   if (inifile == NULL) {

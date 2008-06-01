@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11commn.c,v 1.2 2008/06/01 03:52:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1093,11 +1093,11 @@ LoadPrmFile(char *File)
   if ((obj = chkobject("prm")) == NULL)
     return;
   if ((id = newobj(obj)) >= 0) {
-    if ((name = (char *) memalloc(strlen(File) + 1)) == NULL) {
+    name = nstrdup(File);
+    if (name == NULL) {
       delobj(obj, id);
       return;
     }
-    strcpy(name, File);
     SetFileName(name);
     changefilename(name);
     putobj(obj, "file", id, name);
