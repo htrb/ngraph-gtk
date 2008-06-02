@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.6 2008/06/02 07:06:52 hito Exp $
+ * $Id: x11view.c,v 1.7 2008/06/02 08:57:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -51,6 +51,7 @@
 #include "x11commn.h"
 
 #define ID_BUF_SIZE 16
+#define SCROLL_INC 20
 
 struct focuslist
 {
@@ -513,6 +514,37 @@ create_popup_menu(struct Viewer *d)
   return menu;
 }
 
+static gboolean
+scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
+{
+  struct Viewer *d;
+  double val;
+
+  d = &(NgraphApp.Viewer);
+
+  switch (e->direction) {
+  case GDK_SCROLL_UP:
+  case GDK_SCROLL_LEFT:
+    val = gtk_range_get_value(GTK_RANGE(w));
+    val -= SCROLL_INC;
+    gtk_range_set_value(GTK_RANGE(w), val);
+    break;
+  case GDK_SCROLL_DOWN:
+  case GDK_SCROLL_RIGHT:
+    val = gtk_range_get_value(GTK_RANGE(w));
+    val += SCROLL_INC;
+    gtk_range_set_value(GTK_RANGE(w), val);
+    break;
+  }
+
+  if (client_data) {
+    ViewerEvHScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+  } else {
+    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+  }
+  return TRUE;
+}
+
 void
 ViewerWinSetup(void)
 {
@@ -562,6 +594,8 @@ ViewerWinSetup(void)
 
   g_signal_connect(d->HScroll, "change-value", G_CALLBACK(ViewerEvHScroll), NULL);
   g_signal_connect(d->VScroll, "change-value", G_CALLBACK(ViewerEvVScroll), NULL);
+  g_signal_connect(d->HScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), GINT_TO_POINTER(1));
+  g_signal_connect(d->VScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), NULL);
 
   gtk_widget_add_events(d->Win,
 			GDK_POINTER_MOTION_MASK |
@@ -3094,7 +3128,6 @@ ViewerEvPopupMenu(GtkWidget *w, gpointer client_data)
 guint32 ViewerTime = 0;
 TPoint ViewerPoint;
 
-#define SCROLL_INC 20
 static gboolean
 ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
