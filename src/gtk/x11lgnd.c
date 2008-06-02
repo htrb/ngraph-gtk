@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.3 2008/06/02 09:53:37 hito Exp $
+ * $Id: x11lgnd.c,v 1.4 2008/06/02 10:01:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -334,7 +334,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     char *buf;
     sgetobjfield(d->Obj,id,"text",NULL,&buf,FALSE,FALSE,FALSE);
 #ifdef JAPANESE
-    /* SJIS ---> EUC */
+    /* SJIS ---> UTF-8 */
     {
       char *tmp;
       tmp = sjis_to_utf8(buf);
@@ -518,7 +518,7 @@ legend_dialog_close(GtkWidget *w, void *data)
 
     if (ptr) {
 #ifdef JAPANESE
-/* EUC ---> SJIS */
+/* UTF-8 ---> SJIS */
       char *tmp;
       tmp = utf8_to_sjis(ptr);
       if (tmp) {
@@ -2061,7 +2061,7 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	strncpy(buf, text, 25);
 	buf[25] = '\0';
 #ifdef JAPANESE
-/* SJIS ---> EUC */
+/* SJIS ---> UTF-8 */
 	{
 	  char *tmp;
 	  tmp = sjis_to_utf8(buf);
