@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.2 2008/05/30 08:51:07 hito Exp $
+ * $Id: x11graph.c,v 1.3 2008/06/02 07:23:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -887,16 +887,16 @@ CmGraphNewMenu(GtkWidget *w, gpointer client_data)
 
   sel = (int) client_data;
   switch (sel) {
-  case 0:
+  case MenuIdGraphNewFrame:
     CmGraphNewFrame();
     break;
-  case 1:
+  case MenuIdGraphNewSection:
     CmGraphNewSection();
     break;
-  case 2:
+  case MenuIdGraphNewCross:
     CmGraphNewCross();
     break;
-  case 3:
+  case MenuIdGraphAllClear:
     CmGraphAllClear();
     break;
   default:
