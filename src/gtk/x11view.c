@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.5 2008/05/30 08:51:07 hito Exp $
+ * $Id: x11view.c,v 1.6 2008/06/02 07:06:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3554,11 +3554,11 @@ MakeRuler(GdkGC *gc)
   gdk_gc_set_function(gc, GDK_COPY);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
-  x1 = mxd2px(0) - Mxlocal->scrollx;
-  y1 = mxd2py(0) - Mxlocal->scrolly;
+  x1 = mxd2p(0) - Mxlocal->scrollx;
+  y1 = mxd2p(0) - Mxlocal->scrolly;
 
-  x2 = mxd2px(Width) - 1 - Mxlocal->scrollx;
-  y2 = mxd2py(Height) - 1 - Mxlocal->scrolly;
+  x2 = mxd2p(Width) - 1 - Mxlocal->scrollx;
+  y2 = mxd2p(Height) - 1 - Mxlocal->scrolly;
 
   minx = (x1 < x2) ? x1 : x2;
   miny = (y1 < y2) ? y1 : y2;
@@ -3584,7 +3584,7 @@ MakeRuler(GdkGC *gc)
 	len = 75;
       }
 
-      px = mxd2px(x) - Mxlocal->scrollx;
+      px = mxd2p(x) - Mxlocal->scrollx;
       plen = mxd2p(len);
 
       gdk_draw_line(d->win, gc, px, y1, px, y1 + plen);
@@ -3607,7 +3607,7 @@ MakeRuler(GdkGC *gc)
 	len = 75;
       }
 
-      py = mxd2py(y) - Mxlocal->scrolly;
+      py = mxd2p(y) - Mxlocal->scrolly;
       plen = mxd2p(len);
 
       gdk_draw_line(d->win, gc, x1, py, x1 + plen, py);

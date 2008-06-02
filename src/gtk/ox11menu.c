@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.4 2008/06/02 04:52:39 hito Exp $
+ * $Id: ox11menu.c,v 1.5 2008/06/02 07:06:52 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1870,31 +1870,31 @@ mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     gdk_display_flush(Disp);
     break;
   case 'V':
-    Mxlocal->offsetx=mxd2p(cpar[1]);
-    Mxlocal->offsety=mxd2p(cpar[2]);
-    Mxlocal->cpx=0;
-    Mxlocal->cpy=0;
+    Mxlocal->offsetx = mxd2p(cpar[1]);
+    Mxlocal->offsety = mxd2p(cpar[2]);
+    Mxlocal->cpx = 0;
+    Mxlocal->cpy = 0;
     if (cpar[5]) {
-      rect.x=mxd2p(cpar[1])-Mxlocal->scrollx;
-      rect.y=mxd2p(cpar[2])-Mxlocal->scrolly;
-      rect.width=mxd2p(cpar[3])-Mxlocal->scrollx-rect.x;
-      rect.height=mxd2p(cpar[4])-Mxlocal->scrolly-rect.y;
+      rect.x = mxd2p(cpar[1]);
+      rect.y = mxd2p(cpar[2]);
+      rect.width = mxd2p(cpar[3]) - rect.x;
+      rect.height = mxd2p(cpar[4]) - rect.y;
 
       region = gdk_region_new();
       gdk_region_union_with_rect(region, &rect);
       if (Mxlocal->region) {
         gdk_region_intersect(region, Mxlocal->region);
       }
-      gdk_gc_set_clip_region(Mxlocal->gc, Mxlocal->region);
+      gdk_gc_set_clip_region(Mxlocal->gc, region);
       gdk_region_destroy(region);
     } else {
       if (Mxlocal->region) {
 	gdk_gc_set_clip_region(Mxlocal->gc, Mxlocal->region);
       } else {
-	rect.x=0;
-	rect.y=0;
-	rect.width=SHRT_MAX;
-	rect.height=SHRT_MAX;
+	rect.x = 0;
+	rect.y = 0;
+	rect.width = SHRT_MAX;
+	rect.height = SHRT_MAX;
 	gdk_gc_set_clip_rectangle(Mxlocal->gc, &rect);
       }
     }
@@ -1919,7 +1919,7 @@ mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
     if (cpar[3] == 2) {
       cap = CapProjecting;
-    } else if (cpar[3]==1) {
+    } else if (cpar[3] == 1) {
       cap = CapRound;
     } else {
       cap=CapButt;
@@ -1946,17 +1946,17 @@ mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     gdk_gc_set_rgb_fg_color(Mxlocal->gc, gtkRGB(Mxlocal, cpar[1], cpar[2], cpar[3]));
     break;
   case 'M':
-    Mxlocal->cpx=cpar[1];
-    Mxlocal->cpy=cpar[2];
+    Mxlocal->cpx = cpar[1];
+    Mxlocal->cpy = cpar[2];
     break;
   case 'N':
-    Mxlocal->cpx+=cpar[1];
-    Mxlocal->cpy+=cpar[2];
+    Mxlocal->cpx += cpar[1];
+    Mxlocal->cpy += cpar[2];
     break;
   case 'L':
     gdk_draw_line(Mxlocal->pix, Mxlocal->gc,
-              mxd2px(cpar[1]),mxd2px(cpar[2]),
-              mxd2py(cpar[3]),mxd2py(cpar[4]));
+              mxd2px(cpar[1]), mxd2py(cpar[2]),
+              mxd2px(cpar[3]), mxd2py(cpar[4]));
     break;
   case 'T':
     x = mxd2px(cpar[1]);
@@ -1969,53 +1969,56 @@ mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     Mxlocal->points[Mxlocal->linetonum].x = x;
     Mxlocal->points[Mxlocal->linetonum].y = y;
     Mxlocal->linetonum++;
-    Mxlocal->cpx=cpar[1];
-    Mxlocal->cpy=cpar[2];
+    Mxlocal->cpx = cpar[1];
+    Mxlocal->cpy = cpar[2];
     break;
   case 'C':
     if (cpar[7]==0) {
       gdk_draw_arc(Mxlocal->pix, Mxlocal->gc,
 		   FALSE,
-		   mxd2px(cpar[1]-cpar[3]),
-		   mxd2py(cpar[2]-cpar[4]),
-		   mxd2p(2*cpar[3]),
-		   mxd2p(2*cpar[4]),
+		   mxd2px(cpar[1] - cpar[3]),
+		   mxd2py(cpar[2] - cpar[4]),
+		   mxd2p(2 * cpar[3]),
+		   mxd2p(2 * cpar[4]),
 		   (int) cpar[5] * 64 / 100, (int) cpar[6] * 64 / 100);
     } else {
       if ((mxd2p(cpar[3]) < 2) && (mxd2p(cpar[4]) < 2)) {
 	gdk_draw_point(Mxlocal->pix, Mxlocal->gc,
-                   mxd2px(cpar[1]),mxd2py(cpar[2]));
+                   mxd2px(cpar[1]), mxd2py(cpar[2]));
       } else {
-        if (cpar[7]==1) arcmode=ArcPieSlice;
-        else arcmode=ArcChord;
+        if (cpar[7] == 1) {
+	  arcmode = ArcPieSlice;
+	} else {
+	  arcmode = ArcChord;
+	}
 	gdkgc_set_arc_mode(Mxlocal->gc, arcmode);
 	gdk_draw_arc(Mxlocal->pix, Mxlocal->gc,
 		     TRUE,
-		     mxd2px(cpar[1]-cpar[3]),
-		     mxd2py(cpar[2]-cpar[4]),
-		     mxd2p(2*cpar[3]),mxd2p(2*cpar[4]),
+		     mxd2px(cpar[1] - cpar[3]),
+		     mxd2py(cpar[2] - cpar[4]),
+		     mxd2p(2 * cpar[3]), mxd2p(2 * cpar[4]),
 		     (int) cpar[5] * 64 / 100, (int) cpar[6] * 64 / 100);
       }
     }
     break;
   case 'B':
-    if (cpar[1]<=cpar[3]) {
-      x1=mxd2px(cpar[1]);
-      x2=mxd2p(cpar[3]-cpar[1]);
+    if (cpar[1] <= cpar[3]) {
+      x1 = mxd2px(cpar[1]);
+      x2 = mxd2p(cpar[3] - cpar[1]);
     } else {
-      x1=mxd2px(cpar[3]);
-      x2=mxd2p(cpar[1]-cpar[3]);
+      x1 = mxd2px(cpar[3]);
+      x2 = mxd2p(cpar[1] - cpar[3]);
     }
-    if (cpar[2]<=cpar[4]) {
-      y1=mxd2py(cpar[2]);
-      y2=mxd2p(cpar[4]-cpar[2]);
+    if (cpar[2] <= cpar[4]) {
+      y1 = mxd2py(cpar[2]);
+      y2 = mxd2p(cpar[4] - cpar[2]);
     } else {
-      y1=mxd2py(cpar[4]);
-      y2=mxd2p(cpar[2]-cpar[4]);
+      y1 = mxd2py(cpar[4]);
+      y2 = mxd2p(cpar[2] - cpar[4]);
     }
-    if (cpar[5]==0) {
+    if (cpar[5] == 0) {
       gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, FALSE, 
-			 x1,y1,x2+1,y2+1);
+			 x1, y1, x2 + 1, y2 + 1);
     } else {
       gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, x1, y1, x2 + 1, y2 + 1);
     }
@@ -2025,21 +2028,21 @@ mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 		   mxd2px(cpar[1]), mxd2py(cpar[2]));
     break;
   case 'R': 
-    if (cpar[1]==0) break;
-    if ((xpoint=memalloc(sizeof(*xpoint)*cpar[1]))==NULL) break;
-    for (i=0;i<cpar[1];i++) {
-      xpoint[i].x=mxd2px(cpar[i*2+2]);
-      xpoint[i].y=mxd2py(cpar[i*2+3]);
+    if (cpar[1] == 0) break;
+    if ((xpoint = memalloc(sizeof(*xpoint) *cpar[1])) == NULL) break;
+    for (i = 0; i < cpar[1]; i++) {
+      xpoint[i].x = mxd2px(cpar[i * 2 + 2]);
+      xpoint[i].y = mxd2py(cpar[i * 2 + 3]);
     }
     gdk_draw_polygon(Mxlocal->pix, Mxlocal->gc, FALSE, xpoint, cpar[1]);
     memfree(xpoint);
     break;
   case 'D': 
-    if (cpar[1]==0) break;
-    if ((xpoint=memalloc(sizeof(*xpoint)*cpar[1]))==NULL) break;
-    for (i=0;i<cpar[1];i++) {
-      xpoint[i].x=mxd2px(cpar[i*2+3]);
-      xpoint[i].y=mxd2py(cpar[i*2+4]);
+    if (cpar[1] == 0) break;
+    if ((xpoint = memalloc(sizeof(*xpoint) *cpar[1])) == NULL) break;
+    for (i = 0; i < cpar[1]; i++) {
+      xpoint[i].x = mxd2px(cpar[i * 2 + 3]);
+      xpoint[i].y = mxd2py(cpar[i * 2 + 4]);
     }
     if (cpar[2] == 1) {
       gdkgc_set_fill_rule(Mxlocal->gc, EvenOddRule);

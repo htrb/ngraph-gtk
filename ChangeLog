@@ -1,3 +1,12 @@
+2008-06-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_output): in the case 'V': remove
+	Mxlocal->scrollx and Mxlocal->scrolly.
+	(mx_output): in the case 'V': second argument must be mxd2py and
+	third argument must be mxd2px.
+
+	* src/gtk/x11view.c (MakeRuler): use mxd2p() instead of mxd2px() and mxd2y().
+
 2008-05-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (CloseGC): fix conditional
