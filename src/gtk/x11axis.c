@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.5 2008/05/30 08:51:07 hito Exp $
+ * $Id: x11axis.c,v 1.6 2008/06/02 04:52:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1180,6 +1180,7 @@ AxisPosDialogSetupItem(GtkWidget *w, struct AxisPosDialog *d, int id)
   SetTextFromObjField(GTK_BIN(d->direction)->child, d->Obj, id, "direction");
 
   lastinst = chkobjlastinst(d->Obj);
+  combo_box_clear(d->adjust);
   for (j = 0; j <= lastinst; j++) {
     getobj(d->Obj, "group", j, 0, NULL, &name);
     if (name == NULL)

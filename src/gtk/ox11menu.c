@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.3 2008/06/01 03:52:12 hito Exp $
+ * $Id: ox11menu.c,v 1.4 2008/06/02 04:52:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -101,11 +101,11 @@ mgtkloadconfig(void)
   pcur = Menulocal.extprinterroot;
   pcur2 = Menulocal.prnprinterroot;
   scur = Menulocal.scriptroot;
-  while ((tok = getconfig(fp, &str)) != NULL) {
+  while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (strcmp(tok, "script_console") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.scriptconsole = val;
@@ -113,7 +113,7 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "addin_console") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.addinconsole = val;
@@ -121,7 +121,7 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "change_directory") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.changedirectory = val;
@@ -129,7 +129,7 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "save_history") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.savehistory = val;
@@ -137,13 +137,13 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "expand_dir") == 0) {
       f1 = getitok2(&s2, &len, "");
-      if (f1 != NULL) {
+      if (f1) {
 	memfree(Menulocal.expanddir);
 	Menulocal.expanddir = f1;
       }
     } else if (strcmp(tok, "expand") == 0) {
       f1 = getitok2(&s2, &len, " \x09, ");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.expand = val;
@@ -151,7 +151,7 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "ignore_path") == 0) {
       f1 = getitok2(&s2, &len, " \x09, ");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.ignorepath = val;
@@ -159,7 +159,7 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "save_path") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.savepath = val;
@@ -167,7 +167,7 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "save_with_data") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.savewithdata = val;
@@ -175,26 +175,26 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "save_with_merge") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.savewithmerge = val;
       }
       memfree(f1);
     } else if (strcmp(tok, "ngp_history") == 0) {
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0]) != NULL); s2++);
+      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
       f1 = getitok2(&s2, &len, "");
-      if (f1 != NULL)
+      if (f1)
 	arrayadd(Menulocal.ngpfilelist, &f1);
     } else if (strcmp(tok, "ngp_dir_history") == 0) {
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0]) != NULL); s2++);
+      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
       f1 = getitok2(&s2, &len, "");
-      if (f1 != NULL)
+      if (f1)
 	arrayadd(Menulocal.ngpdirlist, &f1);
     } else if (strcmp(tok, "data_history") == 0) {
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0]) != NULL); s2++);
+      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
       f1 = getitok2(&s2, &len, "");
-      if (f1 != NULL)
+      if (f1)
 	arrayadd(Menulocal.datafilelist, &f1);
     } else if (strcmp(tok, "framex") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
@@ -211,7 +211,7 @@ mgtkloadconfig(void)
       f2 = getitok2(&s2, &len, " \t,");
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)) {
+      if (f1 && f2 && f3 && f4) {
 	val = strtol(f1, &endptr, 10);
 	if ((endptr[0] == '\0') && (val != 0))
 	  Menulocal.menux = val;
@@ -235,8 +235,7 @@ mgtkloadconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.filex = val;
@@ -264,8 +263,7 @@ mgtkloadconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.axisx = val;
@@ -293,8 +291,7 @@ mgtkloadconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.legendx = val;
@@ -322,8 +319,7 @@ mgtkloadconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.mergex = val;
@@ -351,8 +347,7 @@ mgtkloadconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.dialogx = val;
@@ -380,8 +375,7 @@ mgtkloadconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.coordx = val;
@@ -405,7 +399,7 @@ mgtkloadconfig(void)
       memfree(f5);
     } else if (strcmp(tok, "status_bar") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.statusb = val;
@@ -413,7 +407,7 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "show_tip") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.showtip = val;
@@ -421,7 +415,7 @@ mgtkloadconfig(void)
       memfree(f1);
     } else if (strcmp(tok, "move_child_window") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      if (f1 != NULL) {
+      if (f1) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.movechild = val;
@@ -467,9 +461,9 @@ mgtkloadconfig(void)
 	f3 = NULL;
       else
 	f3 = getitok2(&s2, &len, ",");
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0]) != NULL); s2++);
+      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
       f4 = getitok2(&s2, &len, "");
-      if ((f1 != NULL) && (f2 != NULL)) {
+      if (f1 && f2) {
 	pnew = (struct extprinter *) memalloc(sizeof(struct extprinter));
 	if (pnew == NULL) {
 	  memfree(tok);
@@ -500,9 +494,9 @@ mgtkloadconfig(void)
       f1 = getitok2(&s2, &len, ",");
       f2 = getitok2(&s2, &len, ",");
       f3 = getitok2(&s2, &len, ",");
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0]) != NULL); s2++);
+      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
       f4 = getitok2(&s2, &len, "");
-      if ((f1 != NULL) && (f2 != NULL)) {
+      if (f1 && f2) {
 	if ((pnew2 = (struct prnprinter *)
 	     memalloc(sizeof(struct prnprinter))) == NULL) {
 	  memfree(tok);
@@ -532,9 +526,9 @@ mgtkloadconfig(void)
     } else if (strcmp(tok, "script") == 0) {
       f1 = getitok2(&s2, &len, ",");
       f2 = getitok2(&s2, &len, ",");
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0]) != NULL); s2++);
+      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
       f3 = getitok2(&s2, &len, "");
-      if ((f1 != NULL) && (f2 != NULL)) {
+      if (f1 && f2) {
 	if ((snew =
 	     (struct script *) memalloc(sizeof(struct script))) == NULL) {
 	  memfree(tok);
@@ -562,9 +556,9 @@ mgtkloadconfig(void)
       f1 = getitok2(&s2, &len, " \t,");
       f2 = getitok2(&s2, &len, " \t,");
       f3 = getitok2(&s2, &len, " \t,");
-      for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0]) != NULL); s2++);
+      for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
       f4 = getitok2(&s2, &len, "");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)) {
+      if (f1 && f2 && f3 && f4) {
 	if ((fnew = memalloc(sizeof(struct fontmap))) == NULL) {
 	  memfree(tok);
 	  memfree(f1);
@@ -720,7 +714,7 @@ mgtkwindowconfig(void)
 
   if ((fp = openconfig(MGTKCONF)) == NULL)
     return 0;
-  while ((tok = getconfig(fp, &str)) != NULL) {
+  while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (strcmp(tok, "file_win") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
@@ -728,8 +722,7 @@ mgtkwindowconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.filex = val;
@@ -757,8 +750,7 @@ mgtkwindowconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.axisx = val;
@@ -786,8 +778,7 @@ mgtkwindowconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.legendx = val;
@@ -815,8 +806,7 @@ mgtkwindowconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.mergex = val;
@@ -844,8 +834,7 @@ mgtkwindowconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.dialogx = val;
@@ -873,8 +862,7 @@ mgtkwindowconfig(void)
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
       f5 = getitok2(&s2, &len, " \t,");
-      if ((f1 != NULL) && (f2 != NULL) && (f3 != NULL) && (f4 != NULL)
-	  && (f5 != NULL)) {
+      if (f1 && f2 && f3 && f4 && f5) {
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.coordx = val;
@@ -914,9 +902,11 @@ exwinloadconfig(void)
   char *endptr;
   int len;
 
-  if ((fp = openconfig(G2WINCONF)) == NULL)
+  fp = openconfig(G2WINCONF);
+  if (fp == NULL)
     return 0;
-  while ((tok = getconfig(fp, &str)) != NULL) {
+
+  while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (strcmp(tok, "win_dpi") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
@@ -957,7 +947,7 @@ menuadddrawrable(struct objlist *parent, struct narray *drawrable)
   char *name;
 
   ocur = chkobjroot();
-  while (ocur != NULL) {
+  while (ocur) {
     if (chkobjparent(ocur) == parent) {
       name = chkobjectname(ocur);
       arrayadd2(drawrable, &name);
@@ -1117,7 +1107,7 @@ errexit:
   memfree(Menulocal.browser);
   memfree(Menulocal.gpl);
   pcur = Menulocal.extprinterroot;
-  while (pcur != NULL) {
+  while (pcur) {
     pdel = pcur;
     pcur = pcur->next;
     memfree(pdel->name);
@@ -1127,7 +1117,7 @@ errexit:
     memfree(pdel);
   }
   pcur2 = Menulocal.prnprinterroot;
-  while (pcur2 != NULL) {
+  while (pcur2) {
     pdel2 = pcur2;
     pcur2 = pcur2->next;
     memfree(pdel2->name);
@@ -1137,7 +1127,7 @@ errexit:
     memfree(pdel2);
   }
   scur = Menulocal.scriptroot;
-  while (scur != NULL) {
+  while (scur) {
     sdel = scur;
     scur = scur->next;
     memfree(sdel->name);
@@ -1146,7 +1136,7 @@ errexit:
     memfree(sdel);
   }
   fcur = Mxlocal->fontmaproot;
-  while (fcur != NULL) {
+  while (fcur) {
     fdel = fcur;
     fcur = fcur->next;
     memfree(fdel->fontalias);
@@ -1184,7 +1174,7 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   free(Menulocal.graphloaddir);
   memfree(Menulocal.expanddir);
   pcur = Menulocal.extprinterroot;
-  while (pcur != NULL) {
+  while (pcur) {
     pdel = pcur;
     pcur = pcur->next;
     memfree(pdel->name);
@@ -1194,7 +1184,7 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     memfree(pdel);
   }
   pcur2 = Menulocal.prnprinterroot;
-  while (pcur2 != NULL) {
+  while (pcur2) {
     pdel2 = pcur2;
     pcur2 = pcur2->next;
     memfree(pdel2->name);
@@ -1204,7 +1194,7 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     memfree(pdel2);
   }
   scur = Menulocal.scriptroot;
-  while (scur != NULL) {
+  while (scur) {
     sdel = scur;
     scur = scur->next;
     memfree(sdel->name);
@@ -1213,7 +1203,7 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     memfree(sdel);
   }
   fcur = Mxlocal->fontmaproot;
-  while (fcur != NULL) {
+  while (fcur) {
     fdel = fcur;
     fcur = fcur->next;
     memfree(fdel->fontname);
@@ -1222,7 +1212,7 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   for (i = 0; i < Mxlocal->loadfont; i++) {
-    if (Mxlocal->font[i].fontalias != NULL) {
+    if (Mxlocal->font[i].fontalias) {
       memfree(Mxlocal->font[i].fontalias);
       pango_font_description_free(Mxlocal->font[i].font);
       Mxlocal->font[i].fontalias = NULL;
@@ -1410,13 +1400,13 @@ static int
 mxflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   if (Mxlocal->linetonum != 0) {
-    if (Disp != NULL) {
+    if (Disp) {
       gdk_draw_lines(Mxlocal->pix, Mxlocal->gc,
 		     Mxlocal->points, Mxlocal->linetonum);
       Mxlocal->linetonum = 0;
     }
   }
-  if (Disp != NULL)
+  if (Disp)
     gdk_display_flush(Disp);
   return 0;
 }
@@ -1508,7 +1498,7 @@ mxrestoreGC(struct mxlocal *mxsave)
   struct fontlocal font[GTKFONTCASH];
 
   if (Mxlocal->linetonum != 0) {
-    if (Disp != NULL) {
+    if (Disp) {
       gdk_draw_lines(Mxlocal->pix, Mxlocal->gc,
 		     Mxlocal->points, Mxlocal->linetonum);
       Mxlocal->linetonum = 0;
@@ -1691,7 +1681,7 @@ mxloadfont(char *fontalias, int top)
   }
 
   Mxlocal->font[store].fontalias = nstrdup(fontalias);
-  if ((Mxlocal->font[store]).fontalias == NULL) {
+  if (Mxlocal->font[store].fontalias == NULL) {
     pango_font_description_free(pfont);
     Mxlocal->font[store].font = NULL;
     return -1;
@@ -1992,7 +1982,7 @@ mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 		   mxd2p(2*cpar[4]),
 		   (int) cpar[5] * 64 / 100, (int) cpar[6] * 64 / 100);
     } else {
-      if ((mxd2p(cpar[3])<2) && (mxd2p(cpar[4])<2)) {
+      if ((mxd2p(cpar[3]) < 2) && (mxd2p(cpar[4]) < 2)) {
 	gdk_draw_point(Mxlocal->pix, Mxlocal->gc,
                    mxd2px(cpar[1]),mxd2py(cpar[2]));
       } else {
