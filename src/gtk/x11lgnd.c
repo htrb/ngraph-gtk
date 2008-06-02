@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.2 2008/05/29 12:13:37 hito Exp $
+ * $Id: x11lgnd.c,v 1.3 2008/06/02 09:53:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -454,6 +454,9 @@ legend_dialog_close(GtkWidget *w, void *data)
     return;
 
   if (SetObjFieldFromList(d->arrow, d->Obj, d->Id, "arrow"))
+    return;
+
+  if (SetObjFieldFromToggle(d->pieslice, d->Obj, d->Id, "pieslice"))
     return;
 
   if (d->arrow_length) {
