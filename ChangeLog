@@ -1,5 +1,7 @@
 2008-06-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11axis.c (AxisPosDialogSetupItem): add combo_box_clear(d->adjust).
+
 	* src/gtk/ox11menu.c (mx_output): in the case 'V': remove
 	Mxlocal->scrollx and Mxlocal->scrolly.
 	(mx_output): in the case 'V': second argument must be mxd2py and
