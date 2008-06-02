@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ogra2x11.c,v 1.2 2008/06/02 08:21:47 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -298,6 +298,7 @@ static gboolean
 gtkevpaint(GtkWidget * w, GdkEventExpose * e, gpointer user_data)
 {
   struct gtklocal *gtklocal;
+  GdkRectangle rect;
 
   gtklocal = (struct gtklocal *) user_data;
 
@@ -312,6 +313,12 @@ gtkevpaint(GtkWidget * w, GdkEventExpose * e, gpointer user_data)
     gtklocal->redraw = FALSE;
     gtkMakeRuler(gtklocal);
   }
+
+  rect.x = 0;
+  rect.y = 0;
+  rect.width = SHRT_MAX;
+  rect.height = SHRT_MAX;
+  gdk_gc_set_clip_rectangle(gtklocal->gc, &rect);
   gdk_draw_drawable(gtklocal->window, gtklocal->gc, gtklocal->win, 0, 0, 0, 0, -1, -1);
 
   return FALSE;
@@ -861,10 +868,8 @@ gtkMakeRuler(struct gtklocal *gtklocal)
   col1 = gtkRGB(gtklocal, 127, 127, 127);
   gdk_gc_set_rgb_fg_color(gc, col1);
   gdk_draw_rectangle(win, gc, FALSE,
-		     dot2pixelx(gtklocal, 0) - gtklocal->offsetx,
-		     dot2pixely(gtklocal, 0) - gtklocal->offsety,
-		     dot2pixelx(gtklocal, width) - dot2pixelx(gtklocal, 0) - gtklocal->offsetx - 1,
-		     dot2pixely(gtklocal, height) - dot2pixely(gtklocal, 0) - gtklocal->offsety - 1);
+		     0, 0,
+		     dot2pixel(gtklocal, width) - 1, dot2pixel(gtklocal, height) - 1);
   gdk_gc_set_function(gc, GDK_COPY);
   g_object_unref(gc);
 }
