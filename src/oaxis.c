@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oaxis.c,v 1.2 2008/06/03 07:18:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1201,7 +1201,7 @@ int axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 int axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int x,y,len,refx,refy;
+  int x,y,len,refx,refy,preserve_width;
   double zoom;
   struct narray *array;
   int pt,space,wid1,wid2,wid3,len1,len2,len3,wid,wlen,wwid;
@@ -1212,6 +1212,7 @@ int axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   zoom=(*(int *)argv[2])/10000.0;
   refx=(*(int *)argv[3]);
   refy=(*(int *)argv[4]);
+  preserve_width = (*(int *)argv[5]);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"length",inst,&len);
@@ -1233,21 +1234,23 @@ int axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   gsnum=arraynum(gstyle);
   gsdata=arraydata(gstyle);
   wlen*=zoom;
-  wwid*=zoom;
   len1*=zoom;
-  wid1*=zoom;
   len2*=zoom;
-  wid2*=zoom;
   len3*=zoom;
-  wid3*=zoom;
   x=(x-refx)*zoom+refx;
   y=(y-refy)*zoom+refy;
   len*=zoom;
-  wid*=zoom;
   pt*=zoom;
   space*=zoom;
-  for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
-  for (i=0;i<gsnum;i++) gsdata[i]=gsdata[i]*zoom;
+  if (! preserve_width) {
+    wid*=zoom;
+    wid1*=zoom;
+    wid2*=zoom;
+    wid3*=zoom;
+    wwid*=zoom;
+    for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
+    for (i=0;i<gsnum;i++) gsdata[i]=gsdata[i]*zoom;
+  }
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"length",inst,&len)) return 1;
@@ -2953,7 +2956,7 @@ struct objtable axis[TBLNUM] = {
   {"bbox",NIAFUNC,NREAD|NEXEC,axisbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,axismove,"ii",0},
   {"change",NVFUNC,NREAD|NEXEC,axischange,"iii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,axiszoom,"iii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,axiszoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,axismatch,"iiiii",0},
   {"coordinate",NDFUNC,NREAD|NEXEC,axiscoordinate,"ii",0},
   {"tight",NVFUNC,NREAD|NEXEC,axistight,NULL,0},

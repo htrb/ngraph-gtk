@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oarc.c,v 1.2 2008/06/03 07:18:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -225,7 +225,7 @@ int arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 int arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i,snum,*sdata,rx,ry,x,y,refx,refy,width;
+  int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
   double zoom;
   struct narray *array,*style;
 
@@ -233,6 +233,7 @@ int arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   zoom=(*(int *)argv[2])/10000.0;
   refx=(*(int *)argv[3]);
   refy=(*(int *)argv[4]);
+  preserve_width = (*(int *)argv[5]);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"rx",inst,&rx);
@@ -245,8 +246,10 @@ int arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y=(y-refy)*zoom+refy;
   rx=rx*zoom;
   ry=ry*zoom;
-  width=width*zoom;
-  for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
+  if (! preserve_width) {
+    width=width*zoom;
+    for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
+  }
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"rx",inst,&rx)) return 1;
@@ -314,7 +317,7 @@ struct objtable arc[TBLNUM] = {
   {"draw",NVFUNC,NREAD|NEXEC,arcdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,arcbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},
 };
 

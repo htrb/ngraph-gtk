@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ox11menu.h,v 1.2 2008/06/03 07:18:31 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -154,7 +154,7 @@ struct menulocal
   int mouseclick;
   int statusb;
   int showtip;
-  int movechild;
+  int movechild, preserve_width;
   int hist_size, info_size, bg_r, bg_g, bg_b;
 };
 

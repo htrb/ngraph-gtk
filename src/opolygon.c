@@ -1,5 +1,5 @@
 /* 
- * $Id: opolygon.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: opolygon.c,v 1.2 2008/06/03 07:18:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -210,7 +210,7 @@ struct objtable opoly[TBLNUM] = {
   {"bbox",NIAFUNC,NREAD|NEXEC,legendbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,legendmove,"ii",0},
   {"change",NVFUNC,NREAD|NEXEC,legendchange,"iii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,legendzoom,"iii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,legendzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,polymatch,"iiiii",0},
 };
 

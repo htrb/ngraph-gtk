@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: olegend.c,v 1.2 2008/06/03 07:18:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -223,7 +223,7 @@ int legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 int legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *points,*array,*style;
-  int i,num,width,snum,*pdata,*sdata;
+  int i,num,width,snum,*pdata,*sdata,preserve_width;
   int refx,refy;
   double zoom;
 
@@ -231,6 +231,7 @@ int legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   zoom=(*(int *)argv[2])/10000.0;
   refx=(*(int *)argv[3]);
   refy=(*(int *)argv[4]);
+  preserve_width = (*(int *)argv[5]);
   _getobj(obj,"points",inst,&points);
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
@@ -243,8 +244,10 @@ int legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (i%2==0) pdata[i]=(pdata[i]-refx)*zoom+refx;
     else pdata[i]=(pdata[i]-refy)*zoom+refy;
   }
-  width=width*zoom;
-  for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
+  if (! preserve_width) {
+    width=width*zoom;
+    for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
+  }
   if (_putobj(obj,"width",inst,&width)) return 1;
   _getobj(obj,"bbox",inst,&array);
   arrayfree(array);
@@ -259,7 +262,7 @@ struct objtable legend[TBLNUM] = {
   {"done",NVFUNC,0,legenddone,NULL,0},
   {"bbox",NIAFUNC,NREAD|NEXEC,NULL,"",0},
   {"move",NVFUNC,NREAD|NEXEC,NULL,"ii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,NULL,"iii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,NULL,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,NULL,"iiiii",0},
 };
 

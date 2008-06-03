@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.8 2008/06/02 09:07:15 hito Exp $
+ * $Id: x11view.c,v 1.9 2008/06/03 07:18:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -535,6 +535,8 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
     val += SCROLL_INC;
     gtk_range_set_value(GTK_RANGE(w), val);
     break;
+  default:
+    return FALSE;
   }
 
   if (client_data) {
@@ -2014,7 +2016,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
   struct focuslist *focus;
   struct objlist *obj;
   char *inst;
-  char *argv[4];
+  char *argv[5];
   struct pointslist *po;
   int vx1, vx2, vy1, vy2;
   double cc, nn, zoom, zoom2;
@@ -2122,7 +2124,8 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
 	argv[0] = (char *) &zm;
 	argv[1] = (char *) &(d->RefX1);
 	argv[2] = (char *) &(d->RefY1);
-	argv[3] = NULL;
+	argv[3] = (char *) &Menulocal.preserve_width;
+	argv[4] = NULL;
 
 	num = arraynum(d->focusobj);
 	PaintLock = TRUE;
@@ -2136,7 +2139,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
 
 	  if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
 	    AddInvalidateRect(obj, inst);
-	    _exeobj(obj, "zooming", inst, 3, argv);
+	    _exeobj(obj, "zooming", inst, 4, argv);
 	    NgraphApp.Changed = TRUE;
 	    AddInvalidateRect(obj, inst);
 	  }

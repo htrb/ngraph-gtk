@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: otext.c,v 1.2 2008/06/03 07:18:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -578,7 +578,7 @@ struct objtable text[TBLNUM] = {
   {"printf",NSFUNC,NREAD|NEXEC,textprintf,"sa",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,textbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,textmove,"ii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,textzoom,"iii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,textzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,textmatch,"iiiii",0},
   {"save_config",NVFUNC,NREAD|NEXEC,textsaveconfig,NULL,0},
 };

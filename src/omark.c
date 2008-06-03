@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: omark.c,v 1.2 2008/06/03 07:18:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -153,7 +153,7 @@ int markmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 int markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i,x,y,size,refx,refy,width,snum,*sdata;
+  int i,x,y,size,refx,refy,width,snum,*sdata,preserve_width;
   double zoom;
   struct narray *array,*style;
 
@@ -161,6 +161,7 @@ int markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   zoom=(*(int *)argv[2])/10000.0;
   refx=(*(int *)argv[3]);
   refy=(*(int *)argv[4]);
+  preserve_width = (*(int *)argv[5]);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"size",inst,&size);
@@ -171,8 +172,10 @@ int markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   x=(x-refx)*zoom+refx;
   y=(y-refy)*zoom+refy;
   size=size*zoom;
-  width=width*zoom;
-  for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
+  if (! preserve_width) {
+    width=width*zoom;
+    for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
+  }
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"size",inst,&size)) return 1;
@@ -259,7 +262,7 @@ struct objtable mark[TBLNUM] = {
 
   {"bbox",NIAFUNC,NREAD|NEXEC,markbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,markmove,"ii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,markzoom,"iii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,markzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,markmatch,"iiiii",0},
 };
 

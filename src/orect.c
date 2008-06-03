@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: orect.c,v 1.2 2008/06/03 07:18:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -229,7 +229,7 @@ int rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 int rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i,snum,*sdata,refx,refy,x1,y1,x2,y2,width;
+  int i,snum,*sdata,refx,refy,x1,y1,x2,y2,width,preserve_width;
   double zoom;
   struct narray *array,*style;
 
@@ -237,6 +237,7 @@ int rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   zoom=(*(int *)argv[2])/10000.0;
   refx=(*(int *)argv[3]);
   refy=(*(int *)argv[4]);
+  preserve_width = (*(int *)argv[5]);
   _getobj(obj,"x1",inst,&x1);
   _getobj(obj,"y1",inst,&y1);
   _getobj(obj,"x2",inst,&x2);
@@ -249,8 +250,10 @@ int rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y1=(y1-refy)*zoom+refy;
   x2=(x2-refx)*zoom+refx;
   y2=(y2-refy)*zoom+refy;
-  width=width*zoom;
-  for (i=0;i<snum;i++) sdata[i]=sdata[i];
+  if (! preserve_width) {
+    width = width * zoom;
+    for (i=0;i<snum;i++) sdata[i] *= zoom;
+  }
   if (_putobj(obj,"x1",inst,&x1)) return 1;
   if (_putobj(obj,"y1",inst,&y1)) return 1;
   if (_putobj(obj,"x2",inst,&x2)) return 1;
@@ -346,7 +349,7 @@ struct objtable rect[TBLNUM] = {
   {"bbox",NIAFUNC,NREAD|NEXEC,rectbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,rectmove,"ii",0},
   {"change",NVFUNC,NREAD|NEXEC,rectchange,"iii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,rectmatch,"iiiii",0},
 };
 

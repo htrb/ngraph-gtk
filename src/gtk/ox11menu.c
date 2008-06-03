@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.5 2008/06/02 07:06:52 hito Exp $
+ * $Id: ox11menu.c,v 1.6 2008/06/03 07:18:31 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -117,6 +117,14 @@ mgtkloadconfig(void)
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.addinconsole = val;
+      }
+      memfree(f1);
+    } else if (strcmp(tok, "preserve_width") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      if (f1) {
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  Menulocal.preserve_width = val;
       }
       memfree(f1);
     } else if (strcmp(tok, "change_directory") == 0) {

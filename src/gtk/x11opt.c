@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.2 2008/05/30 08:51:07 hito Exp $
+ * $Id: x11opt.c,v 1.3 2008/06/03 07:18:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -385,6 +385,10 @@ DefaultDialogClose(GtkWidget *win, void *data)
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
       snprintf(buf, BUF_SIZE, "history_size=%d", Menulocal.hist_size);
+      arrayadd(&conf, &buf);
+    }
+    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+      snprintf(buf, BUF_SIZE, "preserve_width=%d", Menulocal.preserve_width);
       arrayadd(&conf, &buf);
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
@@ -1124,6 +1128,8 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->expand)), Menulocal.expand);
 
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->preserve_width)), Menulocal.preserve_width);
+
   if (Menulocal.expanddir != NULL)
     gtk_entry_set_text(GTK_ENTRY(d->expanddir), Menulocal.expanddir);
 
@@ -1220,9 +1226,18 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
 
     frame = gtk_frame_new(NULL);
-
     hbox = gtk_hbox_new(FALSE, 4);
+    w = gtk_check_button_new_with_mnemonic(_("_Preserve line width and style"));
+    d->preserve_width = w;
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    d->bgcol = w;
 
+    gtk_container_add(GTK_CONTAINER(frame), hbox);
+    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+
+
+    frame = gtk_frame_new(NULL);
+    hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_color_button_new();
     item_setup(hbox, w, _("_Background Color:"), FALSE);
     d->bgcol = w;
@@ -1232,7 +1247,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(NULL);
-
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = create_text_entry(FALSE, TRUE);
@@ -1312,6 +1326,8 @@ MiscDialogClose(GtkWidget *w, void *data)
   Menulocal.ignorepath =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignorepath));
 
+  Menulocal.preserve_width =
+    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->hist_size));
   a = strtol(buf, &endptr, 10);

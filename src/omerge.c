@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: omerge.c,v 1.2 2008/06/03 07:18:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -603,7 +603,7 @@ struct objtable merge[TBLNUM] = {
 
   {"bbox",NIAFUNC,NREAD|NEXEC,mergebbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,mergemove,"ii",0},
-  {"zooming",NVFUNC,NREAD|NEXEC,mergezoom,"iii",0},
+  {"zooming",NVFUNC,NREAD|NEXEC,mergezoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,mergematch,"iiiii",0},
 
   {"_local",NPOINTER,0,NULL,NULL,0}
