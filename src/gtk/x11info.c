@@ -1,5 +1,5 @@
 /* 
- * $Id: x11info.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11info.c,v 1.2 2008/06/03 02:53:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,7 +34,16 @@
 #include "x11menu.h"
 #include "x11info.h"
 
-#define MAX_LENGTH 512
+static GtkWidget *
+create_win(void)
+{
+  struct InfoWin *d;
+
+  d = &(NgraphApp.InfoWin);
+  d ->type = TypeInfoWin;
+
+  return text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm);
+}
 
 void
 InfoWinDrawInfoText(const char *str)
@@ -44,11 +53,16 @@ InfoWinDrawInfoText(const char *str)
   gint len;
   GtkTextMark *mark;
 
-  if (NgraphApp.InfoWin.text == NULL)
-    return;
-
   if (str == NULL)
     return;
+
+  if (NgraphApp.InfoWin.Win == NULL) {
+    create_win();
+  }
+
+  if (NgraphApp.InfoWin.text == NULL) {
+    return;
+  }
 
   buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(NgraphApp.InfoWin.text));
 
@@ -120,7 +134,6 @@ CmInformationWindow(GtkWidget *w, gpointer data)
   struct InfoWin *d;
 
   d = &(NgraphApp.InfoWin);
-  d ->type = TypeInfoWin;
 
   if (d->Win) {
     if (GTK_WIDGET_VISIBLE(d->Win)) { 
@@ -131,7 +144,7 @@ CmInformationWindow(GtkWidget *w, gpointer data)
   } else {
     GtkWidget *dlg;
 
-    dlg = text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm);
+    dlg = create_win();
     gtk_widget_show_all(dlg);
   }
 }
