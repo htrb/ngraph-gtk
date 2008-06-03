@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gtk_liststore.c,v 1.2 2008/06/03 02:31:48 hito Exp $
  */
 
 #include <stdlib.h>
@@ -8,15 +8,17 @@
 
 #include "gtk_liststore.h"
 
-static GtkCellRenderer *
-create_renderer(GType type)
+static GtkTreeViewColumn *
+create_column(n_list_store *list, int i, int j)
 {
   GtkCellRenderer *renderer;
-  gfloat val;
+  GtkTreeViewColumn *col;
 
-  switch (type) {
+  switch (list[i].type) {
   case G_TYPE_BOOLEAN:
     renderer = gtk_cell_renderer_toggle_new();
+    col = gtk_tree_view_column_new_with_attributes(list[i].title, renderer,
+						   "active", i, NULL);
     break;
   case G_TYPE_INT:
   case G_TYPE_UINT:
@@ -27,27 +29,32 @@ create_renderer(GType type)
   case G_TYPE_FLOAT:
   case G_TYPE_DOUBLE:
     renderer = gtk_cell_renderer_text_new();
-    val = 0.0;
-    g_object_set_data((GObject *) renderer, "xalign", &val);
+    col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						   "text", i, NULL);
+    gtk_tree_view_column_set_resizable(col, TRUE);
+    g_object_set((GObject *) renderer, "xalign", (gfloat) 1.0, NULL);
     break;
   case G_TYPE_OBJECT:
     renderer = gtk_cell_renderer_pixbuf_new();
+    col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						     "pixbuf", i, NULL);
     break;
   case G_TYPE_STRING:
   default:
     renderer = gtk_cell_renderer_text_new();
-    val = 1.0;
-    g_object_set_data((GObject *) renderer, "xalign", &val);
+    if (list[i].color){
+      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						     "text", i,
+						     "foreground", j,
+						     NULL);
+    } else {
+      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						     "text", i, NULL);
+    }
+    gtk_tree_view_column_set_resizable(col, TRUE);
   }
-  return renderer;
+  return col;
 }
-
-static void
-toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
-{
-  printf("toggled");
-}
-
 
 static GtkWidget *
 create_tree_view(int n, n_list_store *list, int tree)
@@ -95,37 +102,20 @@ create_tree_view(int n, n_list_store *list, int tree)
 
   j = 0;
   for (i = 0; i < n; i++) {
-    renderer = create_renderer(list[i].type);
-    if (list[i].type == G_TYPE_BOOLEAN) {
-      col = gtk_tree_view_column_new_with_attributes(list[i].title, renderer,
-						     "active", i, NULL);
-      //      if (list[i].editable) {
-      //        g_signal_connect(renderer, "toggled", G_CALLBACK(toggle_cb), NULL);
-      //      }
-    } else if (list[i].type == G_TYPE_OBJECT) {
-      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
-						     "pixbuf", i, NULL);
-    } else if (list[i].color){
-      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
-						     "text", i,
-						     "foreground", j + n,
-						     NULL);
+    col = create_column(list, i, j + n);
+    if (list[i].color){
       j++;
-    } else {
-      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
-						     "text", i, NULL);
     }
     gtk_tree_view_column_set_visible(col, list[i].visible);
     gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
   }
 
   for (i = 0; i < cnum; i++) {
-    renderer = create_renderer(G_TYPE_STRING);
+    renderer = gtk_cell_renderer_text_new();
     col = gtk_tree_view_column_new_with_attributes("color", renderer,
 						   "text", i + n,
 						   NULL);
     gtk_tree_view_column_set_visible(col, FALSE);
-
     gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
   }
 

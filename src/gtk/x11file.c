@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.4 2008/05/30 08:51:07 hito Exp $
+ * $Id: x11file.c,v 1.5 2008/06/03 02:31:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2656,8 +2656,17 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   argv[0] = (char *) &line;
   argv[1] = NULL;
   rcode = getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
-  if (s)
-    gtk_text_buffer_set_text(d->comment, s, -1);
+  if (s) {
+    gboolean valid;
+    const gchar *ptr;
+
+    valid = g_utf8_validate(s, -1, &ptr);
+    if (valid) {
+      gtk_text_buffer_set_text(d->comment, s, -1);
+    } else {
+      gtk_text_buffer_set_text(d->comment, _("This file contain invalid UTF-8 strings."), -1);
+    }
+  }
   FileDialogSetupItem(wi, d, TRUE, d->Id);
 
   /*

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.4 2008/06/02 10:01:35 hito Exp $
+ * $Id: x11lgnd.c,v 1.5 2008/06/03 02:31:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2058,19 +2058,21 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y", row, 0, NULL, &y0);
 	getobj(d->obj[type], "text", row, 0, NULL, &text);
-	strncpy(buf, text, 25);
-	buf[25] = '\0';
-#ifdef JAPANESE
-/* SJIS ---> UTF-8 */
 	{
 	  char *tmp;
-	  tmp = sjis_to_utf8(buf);
+#ifdef JAPANESE
+/* SJIS ---> UTF-8 */
+	  tmp = sjis_to_utf8(text);
 	  if (tmp) {
-	    strncpy(buf, tmp, 25);
+	    g_utf8_strncpy(buf, tmp, 25);
 	    free(tmp);
 	  }
-	}
+#else
+	  g_utf8_strncpy(buf, text, 25);
 #endif
+	  tmp = g_utf8_offset_to_pointer(buf, 25);
+	  *tmp = '\0';
+	}
 	break;
       }
       tree_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
