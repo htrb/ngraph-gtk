@@ -1,5 +1,25 @@
 2008-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (DefaultDialogClose): add preserve_width.
+	(MiscDialogSetupItem): add preserve_width.
+	(MiscDialogSetup): add preserve_width.
+	(MiscDialogClose): add preserve_width.
+	(MiscDialogClose): add preserve_width.
+
+	* src/gtk/ox11menu.c (mgtkloadconfig): add preserve_width.
+
+	* src/gtk/x11view.c (ViewerEvLButtonUp): add preserve_width.
+
+	* src/orect.c (rectzoom): add preserve_width.
+
+	* src/omark.c (markzoom): add preserve_width.
+
+	* src/olegend.c (legendzoom): add preserve_width.
+
+	* src/oaxis.c (axiszoom2): add preserve_width.
+
+	* src/oarc.c (arczoom): add preserve_width.
+
 	* src/gtk/gtk_liststore.c (create_tree_view): add gtk_tree_view_column_set_resizable();
 
 	* src/gtk/x11file.c (FileDialogSetup): check string by g_utf8_validate();
