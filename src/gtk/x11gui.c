@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11gui.c,v 1.2 2008/06/03 04:44:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -378,7 +378,7 @@ fsok(GtkWidget *dlg)
 }
 
 static int
-FileSelectionDialog(GtkWidget * parent, int type)
+FileSelectionDialog(GtkWidget * parent, int type, char *stock)
 {
   struct nGetOpenFileData *data;
   GtkWidget *dlg, *rc;
@@ -391,7 +391,7 @@ FileSelectionDialog(GtkWidget * parent, int type)
 				    GTK_WINDOW(parent),
 				    type,
 				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				    stock, GTK_RESPONSE_ACCEPT,
 				    NULL);
   rc = gtk_check_button_new_with_label(_("_Change current directory"));
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dlg)->vbox), rc, FALSE, FALSE, 5);
@@ -461,7 +461,7 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   FileSelection.mustexist = TRUE;
   FileSelection.multi = TRUE;
   FileSelection.changedir = TRUE;
-  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN);
+  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OPEN);
   if (ret == IDOK) {
     *file = FileSelection.file;
     if (FileSelection.chdir && initdir) chdir(*initdir);
@@ -486,10 +486,14 @@ nGetOpenFileName(GtkWidget * parent,
   FileSelection.file = NULL;
   FileSelection.chdir = chd;
   FileSelection.ext = defext;
-  FileSelection.mustexist = TRUE;
-  FileSelection.multi = TRUE;
+  FileSelection.mustexist = exist;
+  FileSelection.multi = FALSE;
   FileSelection.changedir = TRUE;
-  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN);
+  ret = FileSelectionDialog(parent,
+			    (exist) ?
+			    GTK_FILE_CHOOSER_ACTION_OPEN :
+			    GTK_FILE_CHOOSER_ACTION_SAVE,
+			    GTK_STOCK_OPEN);
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     free(FileSelection.file);
@@ -519,7 +523,7 @@ nGetSaveFileName(GtkWidget * parent,
   FileSelection.mustexist = FALSE;
   FileSelection.multi = FALSE;
   FileSelection.changedir = TRUE;
-  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_SAVE);
+  ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_SAVE);
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     free(FileSelection.file);
