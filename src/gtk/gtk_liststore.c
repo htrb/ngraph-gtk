@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.2 2008/06/03 02:31:48 hito Exp $
+ * $Id: gtk_liststore.c,v 1.3 2008/06/03 10:25:59 hito Exp $
  */
 
 #include <stdlib.h>
@@ -415,10 +415,9 @@ gboolean
 list_store_get_selected_iter(GtkWidget *w, GtkTreeIter *iter)
 {
   GtkTreeSelection *sel;
-  GtkTreeModel *model;
 
   sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
-  return gtk_tree_selection_get_selected(sel, &model, iter);
+  return gtk_tree_selection_get_selected(sel, NULL, iter);
 }
 
 int 
@@ -675,3 +674,22 @@ free_tree_path_cb(gpointer data, gpointer user_data)
 }
 
 
+void
+tree_store_selected_toggle_expand(GtkWidget *w)
+{
+  GtkTreeIter iter;
+  GtkTreePath *path;
+  GtkTreeModel *model;
+
+  if (! list_store_get_selected_iter(w, &iter))
+    return;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  path = gtk_tree_model_get_path(model, &iter);
+
+  if (gtk_tree_view_row_expanded(GTK_TREE_VIEW(w), path)) {
+    gtk_tree_view_collapse_row(GTK_TREE_VIEW(w), path);
+  } else {
+    gtk_tree_view_expand_row(GTK_TREE_VIEW(w), path, FALSE);
+  }
+}

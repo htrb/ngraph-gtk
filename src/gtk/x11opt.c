@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.3 2008/06/03 07:18:31 hito Exp $
+ * $Id: x11opt.c,v 1.4 2008/06/03 10:25:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1226,23 +1226,22 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
 
     frame = gtk_frame_new(NULL);
+    vbox = gtk_vbox_new(FALSE, 4);
+
     hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_check_button_new_with_mnemonic(_("_Preserve line width and style"));
     d->preserve_width = w;
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->bgcol = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
-
-
-    frame = gtk_frame_new(NULL);
     hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_color_button_new();
     item_setup(hbox, w, _("_Background Color:"), FALSE);
     d->bgcol = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
 

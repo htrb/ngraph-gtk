@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.4 2008/05/30 06:25:46 hito Exp $
+ * $Id: gtk_subwin.c,v 1.5 2008/06/03 10:25:59 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -678,7 +678,9 @@ tree_focus(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  if (m < 0) {
+    tree_store_selected_toggle_expand(GTK_WIDGET(d->text));
+  } else if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
     Focus(d->obj[n], m);
   }
 }
@@ -789,6 +791,8 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
   case GDK_BackSpace:
     tree_hidden(d);
     break;
+  case GDK_space:
+    tree_focus(d);
   default:
     return FALSE;
   }

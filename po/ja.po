@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-03 15:48+0900\n"
-"PO-Revision-Date: 2008-06-03 15:49+0900\n"
+"POT-Creation-Date: 2008-06-03 19:13+0900\n"
+"PO-Revision-Date: 2008-06-03 19:17+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -72,7 +72,7 @@ msgstr "色(_C):"
 msgid "_Background"
 msgstr "背景色(_B) "
 
-#: src/gtk/x11axis.c:289 src/gtk/x11opt.c:1242
+#: src/gtk/x11axis.c:289 src/gtk/x11opt.c:1240
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
@@ -1623,47 +1623,47 @@ msgstr "データファイルの展開(_E)"
 msgid "_Expand directory:"
 msgstr "展開ディレクトリ(_E):"
 
-#: src/gtk/x11opt.c:1230
+#: src/gtk/x11opt.c:1232
 msgid "_Preserve line width and style"
-msgstr "線の幅とスタイルを保存する(_S) "
+msgstr "線幅と線種を保持する(_S) "
 
-#: src/gtk/x11opt.c:1253
+#: src/gtk/x11opt.c:1252
 msgid "_Size of completion history:"
 msgstr "補完履歴のサイズ(_S):"
 
-#: src/gtk/x11opt.c:1257
+#: src/gtk/x11opt.c:1256
 msgid "_Length of information window:"
 msgstr "Information Window の行数(_L):"
 
-#: src/gtk/x11opt.c:1397
+#: src/gtk/x11opt.c:1396
 msgid "Window _Width:"
 msgstr "幅(_W):"
 
-#: src/gtk/x11opt.c:1403
+#: src/gtk/x11opt.c:1402
 msgid "Window _Height:"
 msgstr "高さ(_H):"
 
-#: src/gtk/x11opt.c:1486
+#: src/gtk/x11opt.c:1485
 msgid "_DPI:"
 msgstr "_DPI:"
 
-#: src/gtk/x11opt.c:1491
+#: src/gtk/x11opt.c:1490
 msgid "_Grid:"
 msgstr "グリッド(_G):"
 
-#: src/gtk/x11opt.c:1495
+#: src/gtk/x11opt.c:1494
 msgid "_Show ruler"
 msgstr "ルーラー表示(_R)"
 
-#: src/gtk/x11opt.c:1499
+#: src/gtk/x11opt.c:1498
 msgid "_Auto redraw"
 msgstr "自動再描画(_A)"
 
-#: src/gtk/x11opt.c:1503
+#: src/gtk/x11opt.c:1502
 msgid "_Load files on redraw"
 msgstr "再描画時にデータファイル読み込み(_L)"
 
-#: src/gtk/x11opt.c:1600 src/gtk/x11print.c:219 src/gtk/x11print.c:590
+#: src/gtk/x11opt.c:1599 src/gtk/x11print.c:219 src/gtk/x11print.c:590
 #: src/gtk/x11print.c:678
 #, c-format
 msgid ""
@@ -1674,11 +1674,11 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11opt.c:1601
+#: src/gtk/x11opt.c:1600
 msgid "Save as .Ngraph.ngp"
 msgstr ".Ngraph.ngp として保存"
 
-#: src/gtk/x11opt.c:1606
+#: src/gtk/x11opt.c:1605
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."

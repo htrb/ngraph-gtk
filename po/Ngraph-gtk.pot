@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-03 15:48+0900\n"
+"POT-Creation-Date: 2008-06-03 19:13+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,7 +74,7 @@ msgstr ""
 msgid "_Background"
 msgstr ""
 
-#: src/gtk/x11axis.c:289 src/gtk/x11opt.c:1242
+#: src/gtk/x11axis.c:289 src/gtk/x11opt.c:1240
 msgid "_Background Color:"
 msgstr ""
 
@@ -1619,47 +1619,47 @@ msgstr ""
 msgid "_Expand directory:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1230
+#: src/gtk/x11opt.c:1232
 msgid "_Preserve line width and style"
 msgstr ""
 
-#: src/gtk/x11opt.c:1253
+#: src/gtk/x11opt.c:1252
 msgid "_Size of completion history:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1257
+#: src/gtk/x11opt.c:1256
 msgid "_Length of information window:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1397
+#: src/gtk/x11opt.c:1396
 msgid "Window _Width:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1403
+#: src/gtk/x11opt.c:1402
 msgid "Window _Height:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1486
+#: src/gtk/x11opt.c:1485
 msgid "_DPI:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1491
+#: src/gtk/x11opt.c:1490
 msgid "_Grid:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1495
+#: src/gtk/x11opt.c:1494
 msgid "_Show ruler"
 msgstr ""
 
-#: src/gtk/x11opt.c:1499
+#: src/gtk/x11opt.c:1498
 msgid "_Auto redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1503
+#: src/gtk/x11opt.c:1502
 msgid "_Load files on redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1600 src/gtk/x11print.c:219 src/gtk/x11print.c:590
+#: src/gtk/x11opt.c:1599 src/gtk/x11print.c:219 src/gtk/x11print.c:590
 #: src/gtk/x11print.c:678
 #, c-format
 msgid ""
@@ -1668,11 +1668,11 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11opt.c:1601
+#: src/gtk/x11opt.c:1600
 msgid "Save as .Ngraph.ngp"
 msgstr ""
 
-#: src/gtk/x11opt.c:1606
+#: src/gtk/x11opt.c:1605
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""

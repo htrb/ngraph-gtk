@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.6 2008/06/03 02:53:07 hito Exp $
+ * $Id: x11lgnd.c,v 1.7 2008/06/03 10:25:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2198,29 +2198,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 }
 
-static gboolean
-ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  struct SubWin *d;
-  GdkEventKey *e;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  if (Menulock || GlobalLock)
-    return TRUE;
-
-  d = (struct SubWin *) user_data;
-  e = (GdkEventKey *)event;
-
-  if (e->keyval == GDK_space) {
-    tree_sub_window_focus(NULL, d);
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
 void
 CmLegendWindow(GtkWidget *w, gpointer client_data)
 {
@@ -2247,7 +2224,7 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
     d->update = LegendWinUpdate;
     d->dialog = NULL;
     d->setup_dialog = LegendWinLegendUpdate;
-    d->ev_key = ev_key_down;
+    d->ev_key = NULL;
 
     dlg = tree_sub_window_create(d, "Legend Window", LEGEND_WIN_COL_NUM, Llist, Legendwin_xpm);
 

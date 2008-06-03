@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gtk_liststore.h,v 1.2 2008/06/03 10:25:59 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
@@ -61,6 +61,8 @@ void tree_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, vo
 void list_store_select_all_cb(GtkButton *w, gpointer client_data);
 void list_store_remove_selected_cb(GtkWidget *w, gpointer client_data);
 void free_tree_path_cb(gpointer data, gpointer user_data);
+
+void tree_store_selected_toggle_expand(GtkWidget *w);
 
 #define tree_store_get_int list_store_get_int
 #define tree_store_get_boolean list_store_get_boolean
