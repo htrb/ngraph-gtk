@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2008-06-04 09:53+0900\n"
-"PO-Revision-Date: 2008-06-04 10:24+0900\n"
+"PO-Revision-Date: 2008-06-04 10:32+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -349,7 +349,7 @@ msgstr "Ngraph.ini をコピーできませんでした."
 
 #: src/gtk/x11dialg.c:50
 msgid "solid"
-msgstr "直線"
+msgstr "実線"
 
 #: src/gtk/x11dialg.c:51
 msgid "dot"
