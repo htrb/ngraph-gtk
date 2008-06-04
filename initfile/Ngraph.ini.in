@@ -1,6 +1,7 @@
 [Ngraph]
 terminal=xterm -e nterminal
 alloc_console=0
+history_size=1000
 
 [x11menu]
 script_console=0
@@ -12,7 +13,6 @@ status_bar=1
 show_tip=1
 backing_store=1
 browser=firefox DOCDIRDEF/html_ja/ngraph.htm
-gpl=mozilla DOCDIRDEF/gpl.txt
 mouse_click=300
 color_depth=4
 viewer_dpi=70

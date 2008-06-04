@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.6 2008/06/03 07:18:31 hito Exp $
+ * $Id: ox11menu.c,v 1.7 2008/06/04 12:00:56 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -458,10 +458,6 @@ mgtkloadconfig(void)
       memfree(Menulocal.browser);
       f1 = getitok2(&s2, &len, "");
       Menulocal.browser = f1;
-    } else if (strcmp(tok, "gpl") == 0) {
-      memfree(Menulocal.gpl);
-      f1 = getitok2(&s2, &len, "");
-      Menulocal.gpl = f1;
     } else if (strcmp(tok, "ext_driver") == 0) {
       f1 = getitok2(&s2, &len, ",");
       f2 = getitok2(&s2, &len, ",");
@@ -996,7 +992,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.changedirectory = 1;
   Menulocal.editor = NULL;
   Menulocal.browser = NULL;
-  Menulocal.gpl = NULL;
   Menulocal.PaperWidth = 21000;
   Menulocal.PaperHeight = 29700;
   Menulocal.LeftMargin = 0;
@@ -1113,7 +1108,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 errexit:
   memfree(Menulocal.editor);
   memfree(Menulocal.browser);
-  memfree(Menulocal.gpl);
   pcur = Menulocal.extprinterroot;
   while (pcur) {
     pdel = pcur;
@@ -1177,7 +1171,6 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   arrayfree2(Menulocal.datafilelist);
   memfree(Menulocal.editor);
   memfree(Menulocal.browser);
-  memfree(Menulocal.gpl);
   free(Menulocal.fileopendir);
   free(Menulocal.graphloaddir);
   memfree(Menulocal.expanddir);

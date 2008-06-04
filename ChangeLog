@@ -1,5 +1,7 @@
 2008-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/shell.c (ngraphenvironment): add $NGRAPHHOME to PATH.
+
 	* src/ofile.c (f2dsettings): ignore remark character placed at the top of the line.
 
 2008-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>

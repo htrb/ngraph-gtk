@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: shell.c,v 1.2 2008/06/04 12:00:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3520,7 +3520,7 @@ void ngraphenvironment(struct nshell *nshell)
   if (getval(nshell,"PS2")==NULL) addval(nshell,"PS2",">");
   if (getval(nshell,"IFS")==NULL) addval(nshell,"IFS"," \t\n");
   if (getval(nshell,"IGNOREEOF")==NULL) addval(nshell,"IGNOREEOF","10");
-  pathset="PATH=$NGRAPHLIB\\"PATHSEP".\\"PATHSEP"$PATH";
+  pathset="PATH=$NGRAPHLIB\\"PATHSEP"$NGRAPHHOME\\"PATHSEP".\\"PATHSEP"$PATH";
   cmdexecute(nshell,pathset);
 }
 

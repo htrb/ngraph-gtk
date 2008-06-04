@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.5 2008/06/03 10:25:59 hito Exp $
+ * $Id: gtk_subwin.c,v 1.6 2008/06/04 12:00:56 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -815,6 +815,7 @@ sub_window_minimize(void *ptr)
 
   if (! (window_state & GDK_WINDOW_STATE_ICONIFIED)) {
     gtk_widget_hide_all(d->Win);
+    //    gtk_window_iconify(GTK_WINDOW(d->Win));
     SaveWindowState = TRUE;
   }
 }
@@ -835,6 +836,7 @@ sub_window_restore_state(void *ptr)
   if (d->window_state & (GDK_WINDOW_STATE_WITHDRAWN | GDK_WINDOW_STATE_ICONIFIED))
     return;
 
+  //  gtk_window_deiconify(GTK_WINDOW(d->Win));
   gtk_widget_show_all(d->Win);
 }
 
@@ -862,6 +864,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, char **xpm)
   //  gtk_window_set_destroy_with_parent(GTK_WINDOW(dlg), TRUE);
   //  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_UTILITY);
   gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_window_set_urgency_hint(GTK_WINDOW(dlg), FALSE);
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_container_add(GTK_CONTAINER(swin), text);
