@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-03 19:13+0900\n"
-"PO-Revision-Date: 2008-06-03 19:17+0900\n"
+"POT-Creation-Date: 2008-06-04 09:53+0900\n"
+"PO-Revision-Date: 2008-06-04 10:24+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -347,6 +347,38 @@ msgstr "~/%s に 'Ngraph.ini' をインストールしますか?"
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
+#: src/gtk/x11dialg.c:50
+msgid "solid"
+msgstr "直線"
+
+#: src/gtk/x11dialg.c:51
+msgid "dot"
+msgstr "点線"
+
+#: src/gtk/x11dialg.c:52
+msgid "short dash"
+msgstr "短鎖線"
+
+#: src/gtk/x11dialg.c:53
+msgid "dash"
+msgstr "鎖線"
+
+#: src/gtk/x11dialg.c:54
+msgid "dot dash"
+msgstr "一点鎖線"
+
+#: src/gtk/x11dialg.c:55
+msgid "2-dot dash"
+msgstr "二点鎖線"
+
+#: src/gtk/x11dialg.c:56
+msgid "dot 2-dash"
+msgstr "一点二鎖線"
+
+#: src/gtk/x11dialg.c:61
+msgid "auto"
+msgstr "自動"
+
 #: src/gtk/x11dialg.c:136
 msgid "data"
 msgstr "データ"
@@ -371,7 +403,7 @@ msgstr "変換数式"
 msgid "math text"
 msgstr "数式入力"
 
-#: src/gtk/x11dialg.c:150
+#: src/gtk/x11dialg.c:150 src/ofile.c:129
 msgid "fit"
 msgstr "フィット"
 
@@ -653,7 +685,7 @@ msgid "_Result"
 msgstr "フィット結果(_R)"
 
 #: src/gtk/x11file.c:1289 src/gtk/x11file.c:1500
-msgid "line"
+msgid "Line No."
 msgstr "行"
 
 #: src/gtk/x11file.c:1309 src/gtk/x11file.c:1512
@@ -865,11 +897,11 @@ msgstr "データファイルを含める(_I)"
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:919 src/gtk/x11menu.c:144
+#: src/gtk/x11graph.c:918 src/gtk/x11menu.c:144
 msgid "Load NGP file"
 msgstr "NGP ファイルを開く"
 
-#: src/gtk/x11graph.c:1160
+#: src/gtk/x11graph.c:1159
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for the "
 "researcher and engineer."
@@ -1742,8 +1774,197 @@ msgstr "データ検索中"
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#~ msgid "about"
-#~ msgstr "情報"
+#: src/odraw.c:54
+msgid "unchange"
+msgstr "変更しない"
+
+#: src/odraw.c:55
+msgid "full"
+msgstr "フルパス"
+
+#: src/odraw.c:56
+msgid "relative"
+msgstr "相対パス"
+
+#: src/odraw.c:57
+msgid "base"
+msgstr "ファイル名のみ"
+
+#: src/odraw.c:69
+msgid "miter"
+msgstr "角結合"
+
+#: src/odraw.c:70
+msgid "round"
+msgstr "丸結合"
+
+#: src/odraw.c:71
+msgid "bevel"
+msgstr "斜結合"
+
+#: src/odraw.c:99 src/oaxis.c:77 src/oaxis.c:85
+msgid "none"
+msgstr "なし"
+
+#: src/odraw.c:100
+msgid "end"
+msgstr "終点"
+
+#: src/odraw.c:101
+msgid "begin"
+msgstr "始点"
+
+#: src/odraw.c:102 src/oaxis.c:78
+msgid "both"
+msgstr "両方"
+
+#: src/odraw.c:107
+msgid "spline"
+msgstr "スプライン"
+
+#: src/odraw.c:108
+msgid "spline_close"
+msgstr "閉スプライン"
+
+#: src/odraw.c:109
+msgid "bspline"
+msgstr "Bスプライン"
+
+#: src/odraw.c:110
+msgid "bspline_close"
+msgstr "閉Bスプライン"
+
+#: src/oaxis.c:70
+msgid "linear"
+msgstr "線形"
+
+#: src/oaxis.c:71 src/ofit.c:81
+msgid "log"
+msgstr "対数"
+
+#: src/oaxis.c:72
+msgid "inverse"
+msgstr "逆数"
+
+#: src/oaxis.c:79 src/oaxis.c:86 src/oaxis.c:93
+msgid "left"
+msgstr "左"
+
+#: src/oaxis.c:80 src/oaxis.c:87 src/oaxis.c:94
+msgid "right"
+msgstr "右"
+
+#: src/oaxis.c:92
+msgid "center"
+msgstr "中央"
+
+#: src/oaxis.c:95
+msgid "point"
+msgstr "小数点"
+
+#: src/oaxis.c:100
+msgid "normal"
+msgstr "水平"
+
+#: src/oaxis.c:101
+msgid "parallel"
+msgstr "軸と平行"
+
+#: src/oaxis.c:102
+msgid "parallel2"
+msgstr "軸と平行2"
+
+#: src/ofit.c:78
+msgid "poly"
+msgstr "多項式"
+
+#: src/ofit.c:79
+msgid "pow"
+msgstr "べき関数"
+
+#: src/ofit.c:80
+msgid "exp"
+msgstr "指数関数"
+
+#: src/ofit.c:82
+msgid "user"
+msgstr "ユーザ定義"
+
+#: src/ofile.c:110
+msgid "mark"
+msgstr "マーク"
+
+#: src/ofile.c:111
+msgid "line"
+msgstr "直線"
+
+#: src/ofile.c:112
+msgid "polygon"
+msgstr "多角形"
+
+#: src/ofile.c:113
+msgid "curve"
+msgstr "曲線"
+
+#: src/ofile.c:114
+msgid "diagonal"
+msgstr "対角線"
+
+#: src/ofile.c:115
+msgid "arrow"
+msgstr "矢印"
+
+#: src/ofile.c:116
+msgid "rectangle"
+msgstr "矩形"
+
+#: src/ofile.c:117
+msgid "rectangle_fill"
+msgstr "塗りつぶし矩形"
+
+#: src/ofile.c:118
+msgid "rectangle_solid_fill"
+msgstr "実矩形"
+
+#: src/ofile.c:119
+msgid "errorbar_x"
+msgstr "X 誤差棒"
+
+#: src/ofile.c:120
+msgid "errorbar_y"
+msgstr "Y 誤差棒"
+
+#: src/ofile.c:121
+msgid "staircase_x"
+msgstr "X 階段"
+
+#: src/ofile.c:122
+msgid "staircase_y"
+msgstr "Y 階段"
+
+#: src/ofile.c:123
+msgid "bar_x"
+msgstr "X 棒"
+
+#: src/ofile.c:124
+msgid "bar_y"
+msgstr "Y 棒"
+
+#: src/ofile.c:125
+msgid "bar_fill_x"
+msgstr "塗りつぶし横棒"
+
+#: src/ofile.c:126
+msgid "bar_fill_y"
+msgstr "塗りつぶし縦棒"
+
+#: src/ofile.c:127
+msgid "bar_solid_fill_x"
+msgstr "実横棒"
+
+#: src/ofile.c:128
+msgid "bar_solid_fill_y"
+msgstr "実縦棒"
 
 #~ msgid "_Height:"
 #~ msgstr "高さ(_H):"

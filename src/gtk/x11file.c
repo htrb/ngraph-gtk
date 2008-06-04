@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.5 2008/06/03 02:31:48 hito Exp $
+ * $Id: x11file.c,v 1.6 2008/06/04 01:25:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1110,7 +1110,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     enumlist = (char **) chkobjarglist(d->Obj, "type");
     for (i = 0; enumlist[i] != NULL; i++) {
-      combo_box_append_text(d->type, enumlist[i]);
+      combo_box_append_text(d->type, _(enumlist[i]));
     }
 
     for (i = 0; i < FIT_PARM_NUM; i++) {
@@ -1286,7 +1286,7 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *hbox, *vbox, *swin;
   struct FileMoveDialog *d;
   n_list_store list[] = {
-    {N_("line"), G_TYPE_INT,    TRUE, FALSE, NULL},
+    {N_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL},
     {"X",        G_TYPE_DOUBLE, TRUE, FALSE, NULL},
     {"Y",        G_TYPE_DOUBLE, TRUE, FALSE, NULL},
   };
@@ -1497,7 +1497,7 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *swin, *hbox, *vbox;
   struct FileMaskDialog *d;
   n_list_store list[] = {
-    {_("line"), G_TYPE_INT, TRUE, FALSE, NULL},
+    {_("Line No."), G_TYPE_INT, TRUE, FALSE, NULL},
   };
 
   d = (struct FileMaskDialog *) data;

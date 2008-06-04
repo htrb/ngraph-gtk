@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-03 19:13+0900\n"
+"POT-Creation-Date: 2008-06-04 09:53+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -345,6 +345,38 @@ msgstr ""
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
+#: src/gtk/x11dialg.c:50
+msgid "solid"
+msgstr ""
+
+#: src/gtk/x11dialg.c:51
+msgid "dot"
+msgstr ""
+
+#: src/gtk/x11dialg.c:52
+msgid "short dash"
+msgstr ""
+
+#: src/gtk/x11dialg.c:53
+msgid "dash"
+msgstr ""
+
+#: src/gtk/x11dialg.c:54
+msgid "dot dash"
+msgstr ""
+
+#: src/gtk/x11dialg.c:55
+msgid "2-dot dash"
+msgstr ""
+
+#: src/gtk/x11dialg.c:56
+msgid "dot 2-dash"
+msgstr ""
+
+#: src/gtk/x11dialg.c:61
+msgid "auto"
+msgstr ""
+
 #: src/gtk/x11dialg.c:136
 msgid "data"
 msgstr ""
@@ -369,7 +401,7 @@ msgstr ""
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:150
+#: src/gtk/x11dialg.c:150 src/ofile.c:129
 msgid "fit"
 msgstr ""
 
@@ -651,7 +683,7 @@ msgid "_Result"
 msgstr ""
 
 #: src/gtk/x11file.c:1289 src/gtk/x11file.c:1500
-msgid "line"
+msgid "Line No."
 msgstr ""
 
 #: src/gtk/x11file.c:1309 src/gtk/x11file.c:1512
@@ -863,11 +895,11 @@ msgstr ""
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:919 src/gtk/x11menu.c:144
+#: src/gtk/x11graph.c:918 src/gtk/x11menu.c:144
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1160
+#: src/gtk/x11graph.c:1159
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for the "
 "researcher and engineer."
@@ -1734,4 +1766,196 @@ msgstr ""
 #: src/gtk/x11view.c:781
 #, c-format
 msgid "Evaluating."
+msgstr ""
+
+#: src/odraw.c:54
+msgid "unchange"
+msgstr ""
+
+#: src/odraw.c:55
+msgid "full"
+msgstr ""
+
+#: src/odraw.c:56
+msgid "relative"
+msgstr ""
+
+#: src/odraw.c:57
+msgid "base"
+msgstr ""
+
+#: src/odraw.c:69
+msgid "miter"
+msgstr ""
+
+#: src/odraw.c:70
+msgid "round"
+msgstr ""
+
+#: src/odraw.c:71
+msgid "bevel"
+msgstr ""
+
+#: src/odraw.c:99 src/oaxis.c:77 src/oaxis.c:85
+msgid "none"
+msgstr ""
+
+#: src/odraw.c:100
+msgid "end"
+msgstr ""
+
+#: src/odraw.c:101
+msgid "begin"
+msgstr ""
+
+#: src/odraw.c:102 src/oaxis.c:78
+msgid "both"
+msgstr ""
+
+#: src/odraw.c:107
+msgid "spline"
+msgstr ""
+
+#: src/odraw.c:108
+msgid "spline_close"
+msgstr ""
+
+#: src/odraw.c:109
+msgid "bspline"
+msgstr ""
+
+#: src/odraw.c:110
+msgid "bspline_close"
+msgstr ""
+
+#: src/oaxis.c:70
+msgid "linear"
+msgstr ""
+
+#: src/oaxis.c:71 src/ofit.c:81
+msgid "log"
+msgstr ""
+
+#: src/oaxis.c:72
+msgid "inverse"
+msgstr ""
+
+#: src/oaxis.c:79 src/oaxis.c:86 src/oaxis.c:93
+msgid "left"
+msgstr ""
+
+#: src/oaxis.c:80 src/oaxis.c:87 src/oaxis.c:94
+msgid "right"
+msgstr ""
+
+#: src/oaxis.c:92
+msgid "center"
+msgstr ""
+
+#: src/oaxis.c:95
+msgid "point"
+msgstr ""
+
+#: src/oaxis.c:100
+msgid "normal"
+msgstr ""
+
+#: src/oaxis.c:101
+msgid "parallel"
+msgstr ""
+
+#: src/oaxis.c:102
+msgid "parallel2"
+msgstr ""
+
+#: src/ofit.c:78
+msgid "poly"
+msgstr ""
+
+#: src/ofit.c:79
+msgid "pow"
+msgstr ""
+
+#: src/ofit.c:80
+msgid "exp"
+msgstr ""
+
+#: src/ofit.c:82
+msgid "user"
+msgstr ""
+
+#: src/ofile.c:110
+msgid "mark"
+msgstr ""
+
+#: src/ofile.c:111
+msgid "line"
+msgstr ""
+
+#: src/ofile.c:112
+msgid "polygon"
+msgstr ""
+
+#: src/ofile.c:113
+msgid "curve"
+msgstr ""
+
+#: src/ofile.c:114
+msgid "diagonal"
+msgstr ""
+
+#: src/ofile.c:115
+msgid "arrow"
+msgstr ""
+
+#: src/ofile.c:116
+msgid "rectangle"
+msgstr ""
+
+#: src/ofile.c:117
+msgid "rectangle_fill"
+msgstr ""
+
+#: src/ofile.c:118
+msgid "rectangle_solid_fill"
+msgstr ""
+
+#: src/ofile.c:119
+msgid "errorbar_x"
+msgstr ""
+
+#: src/ofile.c:120
+msgid "errorbar_y"
+msgstr ""
+
+#: src/ofile.c:121
+msgid "staircase_x"
+msgstr ""
+
+#: src/ofile.c:122
+msgid "staircase_y"
+msgstr ""
+
+#: src/ofile.c:123
+msgid "bar_x"
+msgstr ""
+
+#: src/ofile.c:124
+msgid "bar_y"
+msgstr ""
+
+#: src/ofile.c:125
+msgid "bar_fill_x"
+msgstr ""
+
+#: src/ofile.c:126
+msgid "bar_fill_y"
+msgstr ""
+
+#: src/ofile.c:127
+msgid "bar_solid_fill_x"
+msgstr ""
+
+#: src/ofile.c:128
+msgid "bar_solid_fill_y"
 msgstr ""

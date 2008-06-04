@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.6 2008/06/02 04:52:39 hito Exp $
+ * $Id: x11axis.c,v 1.7 2008/06/04 01:25:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1366,7 +1366,7 @@ NumDialogSetupItem(GtkWidget *w, struct NumDialog *d, int id)
 
   combo_box_clear(d->fraction);
   for (j = 0; j < FwNumStyleNum; j++) {
-    combo_box_append_text(d->fraction, FwNumStyle[j]);
+    combo_box_append_text(d->fraction, _(FwNumStyle[j]));
   }
 
   getobj(d->Obj, "num_format", id, 0, NULL, &format);
@@ -2862,7 +2862,7 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
     } else if (strcmp(Alist[i].name, "type") == 0) {
       char *valstr;
       sgetobjfield(d->obj, row, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-      list_store_set_string(GTK_WIDGET(d->text), iter, i, valstr);
+      list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
       memfree(valstr);
     } else if (strcmp(Alist[i].name, "inc") == 0) {
       getobj(d->obj, "inc", row, 0, NULL, &inc);

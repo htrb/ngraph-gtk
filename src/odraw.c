@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: odraw.c,v 1.2 2008/06/04 01:25:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,7 @@
  * 
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -53,10 +51,10 @@ char *drawerrorlist[ERRNUM]={
 };
 
 char *pathchar[5]={
-  "unchange",
-  "full",
-  "relative",
-  "base",
+  N_("unchange"),
+  N_("full"),
+  N_("relative"),
+  N_("base"),
   NULL,
 };
 
@@ -68,9 +66,9 @@ char *capchar[4]={
 };
 
 char *joinchar[4]={
-  "miter",
-  "round",
-  "bevel",
+  N_("miter"),
+  N_("round"),
+  N_("bevel"),
   NULL
 };
 
@@ -98,18 +96,18 @@ char *jfontchar[3]={
 };
 
 char *arrowchar[5]={
-  "none",
-  "end",
-  "begin",
-  "both",
+  N_("none"),
+  N_("end"),
+  N_("begin"),
+  N_("both"),
   NULL
 };
 
 char *intpchar[5]={
-  "spline",
-  "spline_close",
-  "bspline",
-  "bspline_close",
+  N_("spline"),
+  N_("spline_close"),
+  N_("bspline"),
+  N_("bspline_close"),
   NULL
 };
 

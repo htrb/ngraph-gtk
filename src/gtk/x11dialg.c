@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.2 2008/05/30 08:51:07 hito Exp $
+ * $Id: x11dialg.c,v 1.3 2008/06/04 01:25:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -47,18 +47,18 @@
 void ResetEvent();
 
 struct line_style FwLineStyle[] = {
-  {"solid",      "",                        0},
-  {"dot",        "100 100",                 2},
-  {"short dash", "150 150",                 2},
-  {"dash",       "450 150",                 2},
-  {"dot dash",   "450 150 150 150",         4},
-  {"2-dot dash", "450 150 150 150 150 150", 6},
-  {"dot 2-dash", "450 150 450 150 150 150", 6},
+  {N_("solid"),      "",                        0},
+  {N_("dot"),        "100 100",                 2},
+  {N_("short dash"), "150 150",                 2},
+  {N_("dash"),       "450 150",                 2},
+  {N_("dot dash"),   "450 150 150 150",         4},
+  {N_("2-dot dash"), "450 150 150 150 150 150", 6},
+  {N_("dot 2-dash"), "450 150 450 150 150 150", 6},
 };
 #define CLINESTYLE (sizeof(FwLineStyle) / sizeof(*FwLineStyle))
 
 char *FwNumStyle[] =
-  { "auto", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+  {N_("auto"), "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 int FwNumStyleNum = sizeof(FwNumStyle) / sizeof(*FwNumStyle);
 
 char *CbLineWidth[] = { "10", "20", "40", "80", "120" };
@@ -599,7 +599,8 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
 
   for (j = 0; j < CLINESTYLE; j++) {
-    if (strcmp(ptr, FwLineStyle[j].name) == 0) {
+    if (strcmp(ptr, FwLineStyle[j].name) == 0 || 
+	strcmp(ptr, _(FwLineStyle[j].name)) == 0) {
       if (sputobjfield(Obj, Id, field, FwLineStyle[j].list) != 0) {
 	return -1;
       }
@@ -640,7 +641,7 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   count = combo_box_get_num(w);
   if (count == 0) {
     for (j = 0; j < CLINESTYLE; j++) {
-      combo_box_append_text(w, FwLineStyle[j].name);
+      combo_box_append_text(w, _(FwLineStyle[j].name));
     }
   }
 
@@ -663,7 +664,7 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return;
 
 match:
-  gtk_entry_set_text(entry, FwLineStyle[j].name);
+  gtk_entry_set_text(entry, _(FwLineStyle[j].name));
 }
 
 int 
@@ -714,7 +715,7 @@ SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   if (count == 0) {
     enumlist = (char **) chkobjarglist(Obj, field);
     for (j = 0; enumlist[j] != NULL; j++) {
-      combo_box_append_text(w, enumlist[j]);
+      combo_box_append_text(w, _(enumlist[j]));
     }
   }
   getobj(Obj, field, Id, 0, NULL, &a);

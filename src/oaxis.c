@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.2 2008/06/03 07:18:28 hito Exp $
+ * $Id: oaxis.c,v 1.3 2008/06/04 01:25:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,9 +28,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include "ngraph.h"
 #include "object.h"
@@ -69,39 +67,39 @@ char *axiserrorlist[ERRNUM]={
 };
 
 char *axistypechar[4]={
-  "linear",
-  "log",
-  "inverse",
+  N_("linear"),
+  N_("log"),
+  N_("inverse"),
   NULL
 };
 
 char *axisgaugechar[5]={
-  "none",
-  "both",
-  "left",
-  "right",
+  N_("none"),
+  N_("both"),
+  N_("left"),
+  N_("right"),
   NULL
 };
 
 char *axisnumchar[4]={
-  "none",
-  "left",
-  "right",
+  N_("none"),
+  N_("left"),
+  N_("right"),
   NULL
 };
 
 char *anumalignchar[5]={
-  "center",
-  "left",
-  "right",
-  "point",
+  N_("center"),
+  N_("left"),
+  N_("right"),
+  N_("point"),
   NULL
 };
 
 char *anumdirchar[4]={
-  "normal",
-  "parallel",
-  "parallel2",
+  N_("normal"),
+  N_("parallel"),
+  N_("parallel2"),
   NULL
 };
 

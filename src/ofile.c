@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ofile.c,v 1.2 2008/06/04 01:25:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,9 +36,7 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include "ngraph.h"
 #include "object.h"
@@ -108,27 +106,27 @@ char *f2derrorlist[ERRNUM]={
   "negative value in LOG-axis ---> ABS()",
 };
 
-char *f2dtypechar[21]={
-  "mark",
-  "line",
-  "polygon",
-  "curve",
-  "diagonal",
-  "arrow",
-  "rectangle",
-  "rectangle_fill",
-  "rectangle_solid_fill",
-  "errorbar_x",
-  "errorbar_y",
-  "staircase_x",
-  "staircase_y",
-  "bar_x",
-  "bar_y",
-  "bar_fill_x",
-  "bar_fill_y",
-  "bar_solid_fill_x",
-  "bar_solid_fill_y",
-  "fit",
+char *f2dtypechar[]={
+  N_("mark"),
+  N_("line"),
+  N_("polygon"),
+  N_("curve"),
+  N_("diagonal"),
+  N_("arrow"),
+  N_("rectangle"),
+  N_("rectangle_fill"),
+  N_("rectangle_solid_fill"),
+  N_("errorbar_x"),
+  N_("errorbar_y"),
+  N_("staircase_x"),
+  N_("staircase_y"),
+  N_("bar_x"),
+  N_("bar_y"),
+  N_("bar_fill_x"),
+  N_("bar_fill_y"),
+  N_("bar_solid_fill_x"),
+  N_("bar_solid_fill_y"),
+  N_("fit"),
   NULL
 };
 

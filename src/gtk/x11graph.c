@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.3 2008/06/02 07:23:38 hito Exp $
+ * $Id: x11graph.c,v 1.5 2008/06/04 01:29:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -790,12 +790,12 @@ SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
 
     for (j = 0; pathchar[j] != NULL; j++)
-      combo_box_append_text(d->path, pathchar[j]);
-
+      combo_box_append_text(d->path, _(pathchar[j]));
   }
   combo_box_set_active(d->path, Menulocal.savepath);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_data), Menulocal.savewithdata);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->include_merge), Menulocal.savewithmerge);
+  gtk_widget_grab_focus(d->include_data);
 }
 
 static void

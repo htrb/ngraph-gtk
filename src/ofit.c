@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ofit.c,v 1.2 2008/06/04 01:25:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,7 @@
  * 
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,11 +75,11 @@ char *fiterrorlist[ERRNUM]={
 };
 
 char *fittypechar[6]={
-  "poly",
-  "pow",
-  "exp",
-  "log",
-  "user",
+  N_("poly"),
+  N_("pow"),
+  N_("exp"),
+  N_("log"),
+  N_("user"),
   NULL
 };
 

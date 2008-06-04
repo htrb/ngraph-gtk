@@ -16,7 +16,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h \
 	osarray.c oshell.c ostring.c osystem.c \
 	otext.c shell.c shell.h shellcm.c shellcm.h \
 	shellux.c shellux.h spline.c spline.h \
-	gettext.h
+	gettext.h common.h
 
 nterminal_SOURCES = terminal.c
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.4 2008/06/03 10:25:59 hito Exp $
+ * $Id: x11opt.c,v 1.5 2008/06/04 01:25:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1222,7 +1222,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
     for (j = 0; pathchar[j] != NULL; j++) {
-      combo_box_append_text(d->path, pathchar[j]);
+      combo_box_append_text(d->path, _(pathchar[j]));
     }
 
     frame = gtk_frame_new(NULL);
