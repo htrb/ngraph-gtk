@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.2 2008/06/04 01:25:00 hito Exp $
+ * $Id: ofile.c,v 1.3 2008/06/04 02:38:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4334,7 +4334,7 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *file;
   FILE *fd;
   int err;
-  char *buf;
+  char *buf, *rem;
   char *po,*endptr;
   int d1,d2,d3;
   double f1,f2,f3;
@@ -4355,6 +4355,12 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   fclose(fd);
   po=buf;
   err=FALSE;
+
+  sgetobjfield(obj, id, "remark", NULL, &rem, FALSE, FALSE, FALSE);
+  if (rem && strchr(rem, po[0]))
+    po++;
+  memfree(rem);
+
   while (po[0]!='\0') {
     for (;(po[0]!='\0') && (strchr(" \t",po[0])!=NULL);po++);
     if (po[0]=='-') {

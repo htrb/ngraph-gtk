@@ -1,3 +1,7 @@
+2008-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2dsettings): ignore remark character placed at the top of the line.
+
 2008-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (DefaultDialogClose): add preserve_width.
