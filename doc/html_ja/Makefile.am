@@ -1,6 +1,6 @@
-EXTRA_DIST = addin.htm copyrigh.htm data.htm gra.htm intro.htm math.htm \
-	ngraph.htm object.htm operate.htm refer.htm script.htm \
-	text.htm tutorial.htm 
+EXTRA_DIST = addin.html copyrigh.html data.html gra.html intro.html math.html \
+	ngraph.html object.html operate.html refer.html script.html \
+	text.html tutorial.html 
 
 htmljadir = $(docdir)/html_ja
 

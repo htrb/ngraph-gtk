@@ -1,0 +1,115 @@
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Ngraph User's Manual</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#0000FF" VLINK="#0000FF">
+<CENTER>
+<H2><I>Ngraph for GTK+ User's Manual</I></H2>
+<A HREF="http://www2e.biglobe.ne.jp/~isizaka/"><IMG SRC="./img/iconl.gif" width="64" height="64" ALT="" BORDER="0"></A><BR>
+<FONT SIZE=2>Copyright (C) 2002, Satoshi ISHIZAKA.</FONT><BR>
+</CENTER>
+<BR>
+<OL>
+<LI><A HREF="./intro.html"><B>Ngraphの概要</B></A>
+<UL>
+<LI><A HREF="./intro.html#ABSTRACT">Ngraphとは？</A>
+<LI><A HREF="./intro.html#USAGE">使用・配布規定</A>
+<LI><A HREF="./intro.html#INSTALL">環境設定</A>
+</UL>
+<LI><A HREF="./tutorial.html"><B>チュートリアル</B></A>
+<UL>
+<LI><A HREF="./tutorial.html#VIEW">外観</A>
+<LI><A HREF="./tutorial.html#GRAPH">グラフ作成の概略</A>
+<LI><A HREF="./tutorial.html#SCALE">軸のスケール</A>
+<LI><A HREF="./tutorial.html#PLOT">プロット方法</A>
+<LI><A HREF="./tutorial.html#LEGEND">グラフを飾りづける</A>
+<LI><A HREF="./tutorial.html#OUTPUT">グラフの印刷、ファイルへの出力、保存、読み込み</A>
+<LI><A HREF="./tutorial.html#FIT">フィッティング</A>
+<LI><A HREF="./tutorial.html#MATH">数式変換機能を使う</A>
+<LI><A HREF="./tutorial.html#MULTI">複数のグラフ</A>
+</UL>
+<LI><A HREF="./operate.html"><B>操作方法</B></A>
+<UL>
+<LI><A HREF="./operate.html#WINDOW">ウィンドウ</A>
+<LI><A HREF="./operate.html#CONTROL_BUTTON">コントロールボタン</A>
+<LI><A HREF="./operate.html#MOUSE">マウス</A>
+<LI><A HREF="./operate.html#PARAMETER">数値パラメタ</A>
+</UL>
+<LI><A HREF="./refer.html"><B>リファレンス</B></A>
+<UL>
+<LI><A HREF="./refer.html#GRAPH_MENU">[グラフ]メニュー</A>
+<LI><A HREF="./refer.html#DATA_MENU">[データ]メニュー</A>
+<LI><A HREF="./refer.html#AXIS_MENU">[軸]メニュー</A>
+<LI><A HREF="./refer.html#LEGEND_MENU">[レジェンド]メニュー</A>
+<LI><A HREF="./refer.html#MERGE_MENU">[合成]メニュー</A>
+<LI><A HREF="./refer.html#OUTPUT_MENU">[出力]メニュー</A>
+<LI><A HREF="./refer.html#PREF_MENU">[設定]メニュー</A>
+<LI><A HREF="./refer.html#WINDOW_MENU">[ウィンドウ]メニュー</A>
+<LI><A HREF="./refer.html#HELP_MENU">[ヘルプ]メニュー</A>
+<LI><A HREF="./refer.html#DATA_DIALOG">データ・ダイアログボックス</A>
+<LI><A HREF="./refer.html#FIT_DIALOG">フィット・ダイアログボックス</A>
+<LI><A HREF="./refer.html#AXIS_DIALOG">軸・ダイアログボックス</A>
+<LI><A HREF="./refer.html#GRID_DIALOG">グリッド・ダイアログボックス</A>
+<LI><A HREF="./refer.html#LEGEND_DIALOG">レジェンド(凡例)・ダイアログボックス</A>
+<LI><A HREF="./refer.html#MERGE_DIALOG">合成ファイル・ダイアログボックス</A>
+<LI><A HREF="./refer.html#LOADSAVE_DIALOG">グラフの読込、保存・ダイアログボックス</A>
+<LI><A HREF="./refer.html#SWITCH_DIALOG">描画順・ダイアログボックス</A>
+<LI><A HREF="./refer.html#PREFMISC_DIALOG">その他設定・ダイアログボックス</A>
+</UL>
+<LI><A HREF="./data.html"><B>データファイル</B></A>
+<UL>
+<LI><A HREF="./data.html#DATAFILE">データファイルの形式</A>
+<LI><A HREF="./data.html#DATAFILE_EMPTY">欠損データを含むデータファイル</A>
+<LI><A HREF="./data.html#DATAFILE_DIAGONAL">データプロット形式 diagonal, rectangle のデータファイル</A>
+<LI><A HREF="./data.html#DATAFILE_ERRBARX">データプロット形式 error_bar_x のデータファイル</A>
+<LI><A HREF="./data.html#DATAFILE_ERRBARY">データプロット形式 error_bar_y のデータファイル</A>
+<LI><A HREF="./data.html#DATAFILEOPTION">データファイル埋め込みオプション</A>
+</UL>
+<LI><A HREF="./math.html"><B>データの加工</B></A>
+<UL>
+<LI><A HREF="./math.html#TRANSFORM">概要</A>
+<LI><A HREF="./math.html#MATH">数式変換</A>
+<LI><A HREF="./math.html#FORMULA_CONST">数式変換の定数</A>
+<LI><A HREF="./math.html#FORMULA_VAR">数式変換の変数</A>
+<LI><A HREF="./math.html#FORMULA_OP">数式変換の演算子</A>
+<LI><A HREF="./math.html#FORMULA_FUNC">数式変換の関数</A>
+<LI><A HREF="./math.html#OP_PRECEDENCE">数式変換の関数・演算子の優先順位</A>
+<LI><A HREF="./math.html#OP_EXAMPLE">数式変換の使用例</A>
+</UL>
+<LI><A HREF="./text.html"><B>フォント/テキスト</B></A>
+<UL>
+<LI><A HREF="./text.html#FONT">フォントの扱い</A>
+<LI><A HREF="./text.html#TEXT">テキスト描画の制御文字</A>
+</UL>
+<LI><A HREF="./gra.html"><B>GRAファイル</B></A>
+<UL>
+<LI><A HREF="./gra.html#GRAFILE">概要</A>
+<LI><A HREF="./gra.html#GRAFILESTRUCTURE">GRAファイルの構造</A>
+<LI><A HREF="./gra.html#GRACOMMAND">GRAファイルのグラフィックスコマンド</A>
+</UL>
+<LI><A HREF="./script.html"><B>Ngraphスクリプト</B></A>
+<UL>
+<LI><A HREF="./script.html#SCRIPT">概要</A>
+<LI><A HREF="./script.html#SCRIPT_SYNTAX">スクリプトの文法</A>
+<LI><A HREF="./script.html#SCRIPT_STARTUP">スタートアップスクリプト</A>
+<LI><A HREF="./script.html#COMMANDLINE">コマンドラインオプション</A>
+</UL>
+<LI><A HREF="./object.html"><B>Ngraphオブジェクト</B></A>
+<UL>
+<LI><A HREF="./object.html#OBJECT">概要</A>
+<LI><A HREF="./object.html#OBJECTLIST">Ngraphオブジェクト一覧</A>
+</UL>
+<LI><A HREF="./addin.html"><B>アドイン</B></A>
+<UL>
+<LI><A HREF="./addin.html#ADDIN">概要</A>
+<LI><A HREF="./addin.html#LEGEND_NSC">legend.nscの動作</A>
+<LI><A HREF="./addin.html#STRUCTURE">アドインスクリプトの形式</A>
+<LI><A HREF="./addin.html#DATA">データを扱うアドインスクリプト</A>
+</UL>
+<LI><A HREF="./copyrigh.html"><B>その他</B></A>
+<UL>
+<LI><A HREF="./copyrigh.html#COPYRIGHT">著作権・連絡先・謝辞</A>
+</UL>
+</OL>
+</BODY></HTML>
