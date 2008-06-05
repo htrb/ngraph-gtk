@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.2 2008/06/03 04:44:45 hito Exp $
+ * $Id: x11gui.c,v 1.3 2008/06/05 02:45:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,6 +60,27 @@ dialog_destroyed_cb(GtkWidget *w, gpointer user_data)
   ((struct DialogType *) user_data)->widget = NULL;
 }
 
+static gboolean
+dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
+{
+  GdkEventKey *e;
+
+  g_return_val_if_fail(w != NULL, FALSE);
+  g_return_val_if_fail(event != NULL, FALSE);
+
+  e = (GdkEventKey *)event;
+
+
+  switch (e->keyval) {
+  case GDK_w:
+    if (e->state & GDK_CONTROL_MASK) 
+      gtk_dialog_response(GTK_DIALOG(w), GTK_RESPONSE_CANCEL);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+
 int
 DialogExecute(GtkWidget *parent, void *dialog)
 {
@@ -89,6 +110,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     gtk_window_set_destroy_with_parent(GTK_WINDOW(dlg), TRUE);
 
     g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
+    g_signal_connect(dlg, "key-press-event", G_CALLBACK(dialog_key_down_cb), NULL);
     // gtk_widget_destroyed(dlg, &(data->widget));
     /* it seems that gtk_widget_destroyed() is not work well. */
 

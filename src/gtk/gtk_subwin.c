@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.6 2008/06/04 12:00:56 hito Exp $
+ * $Id: gtk_subwin.c,v 1.7 2008/06/05 02:45:03 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -840,6 +840,26 @@ sub_window_restore_state(void *ptr)
   gtk_widget_show_all(d->Win);
 }
 
+static gboolean
+ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
+{
+  GdkEventKey *e;
+
+  g_return_val_if_fail(w != NULL, FALSE);
+  g_return_val_if_fail(event != NULL, FALSE);
+
+  e = (GdkEventKey *)event;
+
+
+  switch (e->keyval) {
+  case GDK_w:
+    if (e->state & GDK_CONTROL_MASK) 
+      gtk_widget_hide_all(w);
+    return TRUE;
+  }
+  return FALSE;
+}
+
 static GtkWidget *
 sub_window_create(struct SubWin *d, char *title, GtkWidget *text, char **xpm)
 {
@@ -876,6 +896,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, char **xpm)
   //  g_signal_connect(dlg, "hide", G_CALLBACK(cb_hide), d);
   g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
   g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
+  g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), NULL);
 
   cb_show(dlg, d);
   return dlg;
