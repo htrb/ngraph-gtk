@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.4 2008/06/05 01:18:37 hito Exp $
+ * $Id: x11menu.c,v 1.5 2008/06/05 01:35:19 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1578,7 +1578,9 @@ application(char *file)
   arrayinit(&ChildList, sizeof(pid_t));
   signaltrap = TRUE;
   signal(SIGCHLD, childhandler);
-  gtk_widget_grab_focus(TopLevel);
+
+  ResetEvent();
+  gtk_window_present(GTK_WINDOW(TopLevel));
 
   snooper_id = gtk_key_snooper_install(escape_drawing_cb, NULL);
   AppMainLoop();
