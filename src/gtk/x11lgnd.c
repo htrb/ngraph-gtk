@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.7 2008/06/03 10:25:59 hito Exp $
+ * $Id: x11lgnd.c,v 1.8 2008/06/05 04:34:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -658,7 +658,7 @@ LegendCurveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     item_setup(hbox, w, _("_Interpolation:"), FALSE);
     d->interpolation = w;
-    
+
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
 
 
@@ -718,6 +718,9 @@ LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 5);
     style_setup(d, hbox);
     width_setup(d,  hbox);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
+
+    hbox = gtk_hbox_new(FALSE, 5);
     miter_setup(d, hbox);
     join_setup(d, hbox);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);

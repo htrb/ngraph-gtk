@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.10 2008/06/05 01:18:37 hito Exp $
+ * $Id: x11view.c,v 1.11 2008/06/05 04:34:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -409,7 +409,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct EvalDialog *d;
   n_list_store list[] = {
     {"#",       G_TYPE_INT,    TRUE, FALSE, NULL},
-    {_("Line"), G_TYPE_INT,    TRUE, FALSE, NULL},
+    {_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL},
     {"X",       G_TYPE_DOUBLE, TRUE, FALSE, NULL},
     {"Y",       G_TYPE_DOUBLE, TRUE, FALSE, NULL},
   };
@@ -440,7 +440,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->show_cancel = FALSE;
 
-    gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
+    gtk_window_set_default_size(GTK_WINDOW(wi), 300, 400);
   }
   EvalDialogSetupItem(wi, d);
 }

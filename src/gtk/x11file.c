@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.6 2008/06/04 01:25:02 hito Exp $
+ * $Id: x11file.c,v 1.7 2008/06/05 04:34:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1345,6 +1345,8 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+
+    gtk_window_set_default_size(GTK_WINDOW(wi), 400, 400);
   }
 
   FileMoveDialogSetupItem(wi, d, d->Id);
@@ -1537,6 +1539,8 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+
+    gtk_window_set_default_size(GTK_WINDOW(wi), 300, 400);
   }
 
   FileMaskDialogSetupItem(wi, d, d->Id);
