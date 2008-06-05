@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.8 2008/06/05 04:34:20 hito Exp $
+ * $Id: x11lgnd.c,v 1.9 2008/06/05 06:22:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -609,7 +609,7 @@ color_setup(struct LegendDialog *d, GtkWidget *box)
 {
   GtkWidget *w;
 
-  w = gtk_color_button_new();
+  w = create_color_button();
   d->color = w;
   item_setup(box, w, _("_Color:"), FALSE);
 }
@@ -619,7 +619,7 @@ color2_setup(struct LegendDialog *d, GtkWidget *box)
 {
   GtkWidget *w;
 
-  w = gtk_color_button_new();
+  w = create_color_button();
   d->color2 = w;
   item_setup(box, w, _("_Color2:"), FALSE);
 }

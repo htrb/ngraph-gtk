@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.7 2008/06/05 04:34:20 hito Exp $
+ * $Id: x11file.c,v 1.8 2008/06/05 06:22:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2518,11 +2518,11 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
   hbox = gtk_hbox_new(FALSE, 4);
-  w = gtk_color_button_new();
+  w = create_color_button();
   item_setup(hbox, w, _("_Color 1:"), FALSE);
   d->col1 = w;
 
-  w = gtk_color_button_new();
+  w = create_color_button();
   item_setup(hbox, w, _("_Color 2:"), FALSE);
   d->col2 = w;
 

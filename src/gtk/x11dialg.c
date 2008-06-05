@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.3 2008/06/04 01:25:02 hito Exp $
+ * $Id: x11dialg.c,v 1.4 2008/06/05 06:22:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -822,9 +822,9 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
   snprintf(buf, sizeof(buf), "%sB%s", (prefix)? prefix: "", (postfix)? postfix: "");
   getobj(obj, buf, id, 0, NULL, &b);
 
-  color.red = r * 256;
-  color.green = g * 256;
-  color.blue = b * 256;
+  color.red = r << 8;
+  color.green = g << 8;
+  color.blue = b << 8;
 
   gtk_color_button_set_color(GTK_COLOR_BUTTON(w), &color);
 }
@@ -849,9 +849,9 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
   char buf[64];
 
   gtk_color_button_get_color(GTK_COLOR_BUTTON(w), &color);
-  r = color.red / 256;
-  g = color.green / 256;
-  b = color.blue / 256;
+  r = (color.red >> 8);
+  g = (color.green >> 8);
+  b = (color.blue >> 8);
 
   snprintf(buf, sizeof(buf), "%sR%s", (prefix)? prefix: "", (postfix)? postfix: "");
   if (putobj(obj, buf, id, &r) == -1)
@@ -880,3 +880,42 @@ putobj_color2(GtkWidget *w, struct objlist *obj, int id)
   return _putobj_color(w, obj, id, NULL, "2");
 }
 
+static gboolean
+show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
+{
+  GtkWidget *dlg;
+  GtkColorSelection *sel;
+  GdkColor col;
+  GtkColorButton *button;
+  gboolean r;
+
+  button = GTK_COLOR_BUTTON(w);
+
+  gtk_color_button_get_color(button, &col);
+
+  dlg = gtk_color_selection_dialog_new(_("Pick a Clolor"));
+  sel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg)->colorsel);
+
+  gtk_color_selection_set_has_palette(sel, TRUE);
+  gtk_color_selection_set_has_opacity_control(sel, FALSE);
+  gtk_color_selection_set_current_color(sel, &col);
+
+  r = gtk_dialog_run(GTK_DIALOG(dlg));
+  gtk_color_selection_get_current_color(sel, &col);
+  gtk_widget_destroy(dlg);
+
+  if (r == GTK_RESPONSE_OK)
+    gtk_color_button_set_color(button, &col);
+
+  return TRUE;
+}
+
+GtkWidget *
+create_color_button(void)
+{
+  GtkWidget *w;
+
+  w = gtk_color_button_new();
+  g_signal_connect(w, "button-release-event", G_CALLBACK(show_color_sel), w);
+  return w;
+}
