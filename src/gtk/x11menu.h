@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.3 2008/05/29 12:13:37 hito Exp $
+ * $Id: x11menu.h,v 1.4 2008/06/05 01:18:37 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -203,6 +203,8 @@ enum PointerType {
   ZoomB,
 };
 
+#define CURSOR_TYPE_NUM 11
+
 struct NgraphApp
 {
   int Interrupt;
@@ -215,7 +217,7 @@ struct NgraphApp
   GtkToolItem *interrupt, *viewb[19];
   GdkPixmap *markpix[MARK_TYPE_NUM];
   GList *iconpix;
-  GdkCursor *cursor[11];
+  GdkCursor *cursor[CURSOR_TYPE_NUM];
   struct Viewer Viewer;
   struct SubWin FileWin;
   struct SubWin AxisWin;
@@ -224,6 +226,7 @@ struct NgraphApp
   struct CoordWin CoordWin;
   struct InfoWin InfoWin;
 };
+
 
 extern struct NgraphApp NgraphApp;
 extern int FWidth, FHeight;

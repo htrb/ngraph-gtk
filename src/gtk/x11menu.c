@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.3 2008/05/30 14:17:48 hito Exp $
+ * $Id: x11menu.c,v 1.4 2008/06/05 01:18:37 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -942,9 +942,8 @@ createpixmap(GtkWidget *win, int n, struct command_data *data)
 {
   GdkPixmap *pixmap;
   GdkBitmap *bitmap;
-  int i, j;
+  int i;
 
-  j = 0;
   for (i = 0; i < n; i++) {
     if (data[i].label == NULL)
       continue;
@@ -956,25 +955,19 @@ createpixmap(GtkWidget *win, int n, struct command_data *data)
 					  data[i].xpm);
     data[i].img = gtk_image_new_from_pixmap(pixmap, bitmap);
     g_object_unref(bitmap);
-    j++;
   }
 }
 
 static void
-createpixmap1(GtkWidget *win)
+create_toolbar_pixmap(GtkWidget *win)
 {
   createpixmap(win, COMMAND1_NUM, Command1_data);
-}
-
-static void
-createpixmap2(GtkWidget *win)
-{
   createpixmap(win, COMMAND2_NUM, Command2_data);
 }
 
 #define MARK_PIX_SIZE 24
 static void
-createmarkpixmap(GtkWidget *win)
+create_markpixmap(GtkWidget *win)
 {
   GdkPixmap *pix;
   int dpi, gra;
@@ -1014,6 +1007,17 @@ createmarkpixmap(GtkWidget *win)
   g_object_unref(G_OBJECT(gc));
 }
 
+static void
+free_markpixmap(void)
+{
+  int i;
+
+  for (i = 0; i < MARK_TYPE_NUM; i++) {
+    g_object_unref(NgraphApp.markpix[i]);
+    NgraphApp.markpix[i] = NULL;
+  }
+}
+
 GdkPixbuf *
 create_pixbuf_from_xpm(GtkWidget *win, char **xpm)
 {
@@ -1043,21 +1047,38 @@ createicon(GtkWidget *win)
 }
 
 static void
-createcursor(void)
+create_cursor(void)
 {
-  NgraphApp.cursor[0] = gdk_cursor_new_for_display(Disp, GDK_LEFT_PTR);
-  NgraphApp.cursor[1] = gdk_cursor_new_for_display(Disp, GDK_XTERM);
-  NgraphApp.cursor[2] = gdk_cursor_new_for_display(Disp, GDK_CROSSHAIR);
-  NgraphApp.cursor[3] = gdk_cursor_new_for_display(Disp, GDK_TOP_LEFT_CORNER);
-  NgraphApp.cursor[4] = gdk_cursor_new_for_display(Disp, GDK_TOP_RIGHT_CORNER);
-  NgraphApp.cursor[5] = gdk_cursor_new_for_display(Disp, GDK_BOTTOM_RIGHT_CORNER);
-  NgraphApp.cursor[6] = gdk_cursor_new_for_display(Disp, GDK_BOTTOM_LEFT_CORNER);
-  NgraphApp.cursor[7] = gdk_cursor_new_for_display(Disp, GDK_TARGET);
-  NgraphApp.cursor[8] = gdk_cursor_new_for_display(Disp, GDK_SIZING);
-  NgraphApp.cursor[9] = gdk_cursor_new_for_display(Disp, GDK_SIZING);
-  NgraphApp.cursor[10] = gdk_cursor_new_for_display(Disp, GDK_WATCH);
+  GdkCursorType cursor[] = {
+    GDK_LEFT_PTR,
+    GDK_XTERM,
+    GDK_CROSSHAIR,
+    GDK_TOP_LEFT_CORNER,
+    GDK_TOP_RIGHT_CORNER,
+    GDK_BOTTOM_RIGHT_CORNER,
+    GDK_BOTTOM_LEFT_CORNER,
+    GDK_TARGET,
+    GDK_SIZING,
+    GDK_SIZING,
+    GDK_WATCH,
+  };
+  int i;
+
+  for (i = 0; i < CURSOR_TYPE_NUM; i++) {
+    NgraphApp.cursor[i] = gdk_cursor_new_for_display(Disp, cursor[i]);
+  }
 }
 
+static void
+free_cursor(void)
+{
+  int i;
+
+  for (i = 0; i < CURSOR_TYPE_NUM; i++) {
+    gdk_cursor_unref(NgraphApp.cursor[i]);
+    NgraphApp.cursor[i] = NULL;
+  }
+}
 static void
 do_interrupt(GtkWidget *w, gpointer data)
 {
@@ -1194,14 +1215,6 @@ setupwindow(void)
 		   0, 0);
 
   gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
-  /*
-  vbox2 = gtk_vbox_new(FALSE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox2), NgraphApp.Viewer.Win, TRUE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox2), NgraphApp.Viewer.HScroll, FALSE, FALSE, 0);
-
-  gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(hbox), NgraphApp.Viewer.VScroll, FALSE, FALSE, 0);
-  */
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
   NgraphApp.Message = gtk_statusbar_new();
@@ -1212,16 +1225,6 @@ setupwindow(void)
 
   createcommand1(GTK_TOOLBAR(command1));
   createcommand2(GTK_TOOLBAR(command2));
-
-  /*
-  if (Menulocal.movechild)
-    XmToggleButtonSetState(XtNameToGtkWidget
-			   (TopLevel, "*windowmenu.button_7"), True, False);
-  else
-    XmToggleButtonSetState(XtNameToGtkWidget
-			   (TopLevel, "*windowmenu.button_7"), False, False);
-
-  */
 
   gtk_container_add(GTK_CONTAINER(TopLevel), vbox);
 }
@@ -1444,69 +1447,68 @@ application(char *file)
   int x, y, width, height, w, h, snooper_id;
   GdkScreen *screen;
 
-  if (TopLevel == NULL) {
-    screen = gdk_screen_get_default();
-    w = gdk_screen_get_width(screen);
-    h = gdk_screen_get_height(screen);
+  if (TopLevel)
+    return;
 
-    if (Menulocal.menux == CW_USEDEFAULT)
-      Menulocal.menux = w * 3 / 8;
+  screen = gdk_screen_get_default();
+  w = gdk_screen_get_width(screen);
+  h = gdk_screen_get_height(screen);
 
-    if (Menulocal.menuy == CW_USEDEFAULT)
-      Menulocal.menuy = h / 8;
+  if (Menulocal.menux == CW_USEDEFAULT)
+    Menulocal.menux = w * 3 / 8;
 
-    if (Menulocal.menuwidth == CW_USEDEFAULT)
-      Menulocal.menuwidth = w / 2;
+  if (Menulocal.menuy == CW_USEDEFAULT)
+    Menulocal.menuy = h / 8;
 
-    if (Menulocal.menuheight == CW_USEDEFAULT)
-      Menulocal.menuheight = w * 1.2 / 2;
+  if (Menulocal.menuwidth == CW_USEDEFAULT)
+    Menulocal.menuwidth = w / 2;
 
-    x = Menulocal.menux;
-    y = Menulocal.menuy;
-    width = Menulocal.menuwidth;
-    height = Menulocal.menuheight;
+  if (Menulocal.menuheight == CW_USEDEFAULT)
+    Menulocal.menuheight = w * 1.2 / 2;
 
-    NgraphApp.legend_text_list = entry_completion_create();
-    NgraphApp.x_math_list = entry_completion_create();
-    NgraphApp.y_math_list = entry_completion_create();
-    NgraphApp.func_list = entry_completion_create();
+  x = Menulocal.menux;
+  y = Menulocal.menuy;
+  width = Menulocal.menuwidth;
+  height = Menulocal.menuheight;
 
-    load_hist();
+  NgraphApp.legend_text_list = entry_completion_create();
+  NgraphApp.x_math_list = entry_completion_create();
+  NgraphApp.y_math_list = entry_completion_create();
+  NgraphApp.func_list = entry_completion_create();
 
-    TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
-    g_set_application_name(AppName);
+  load_hist();
 
-    gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
-    gtk_window_move(GTK_WINDOW(TopLevel), x, y);
+  TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
+  g_set_application_name(AppName);
 
-    gtk_widget_show_all(GTK_WIDGET(TopLevel));
-    ResetEvent();
+  gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
+  gtk_window_move(GTK_WINDOW(TopLevel), x, y);
 
-    g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
-    g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
-    g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
-    //    NgraphClose = gdk_atom_intern_static_string(CloseMessage);
+  gtk_widget_show_all(GTK_WIDGET(TopLevel));
+  ResetEvent();
 
-    set_gdk_color(&black, 0,     0,   0);
-    set_gdk_color(&white, 255, 255, 255);
-    set_gdk_color(&gray,  127, 127, 127);
-    set_gdk_color(&red,   255,   0,   0);
-    set_gdk_color(&blue,    0,   0, 255);
+  //    g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
+  g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
+  g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
+  //    NgraphClose = gdk_atom_intern_static_string(CloseMessage);
 
-    createicon(TopLevel);
-    gtk_window_set_default_icon_list(NgraphApp.iconpix);
-    gtk_window_set_icon_list(GTK_WINDOW(TopLevel), NgraphApp.iconpix);
+  set_gdk_color(&black, 0,     0,   0);
+  set_gdk_color(&white, 255, 255, 255);
+  set_gdk_color(&gray,  127, 127, 127);
+  set_gdk_color(&red,   255,   0,   0);
+  set_gdk_color(&blue,    0,   0, 255);
 
-    createpixmap1(TopLevel);
-    createpixmap2(TopLevel);
+  createicon(TopLevel);
+  gtk_window_set_default_icon_list(NgraphApp.iconpix);
+  gtk_window_set_icon_list(GTK_WINDOW(TopLevel), NgraphApp.iconpix);
 
-    init_ngraph_app_struct();
+  create_toolbar_pixmap(TopLevel);
 
-    initdialog();
-    setupwindow();
+  init_ngraph_app_struct();
 
-  }
+  initdialog();
+  setupwindow();
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
 
@@ -1517,9 +1519,9 @@ application(char *file)
 
   ViewerWinSetup();
 
-  createmarkpixmap(TopLevel);
+  create_markpixmap(TopLevel);
 
-  createcursor();
+  create_cursor();
   SetCaption(NULL);
   SetCursor(GDK_LEFT_PTR);
 
@@ -1618,6 +1620,9 @@ application(char *file)
 
   gtk_widget_destroy(TopLevel);
   TopLevel = NULL;
+
+  free_markpixmap();
+  free_cursor();
 
   ResetEvent();
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.9 2008/06/03 07:18:32 hito Exp $
+ * $Id: x11view.c,v 1.10 2008/06/05 01:18:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -629,9 +629,7 @@ ViewerWinClose(void)
   CloseGRA();
   arrayfree2(d->focusobj);
   arrayfree2(d->points);
-  /*
-  XUndefineCursor(XtDisplay(d->Win), XtWindow(d->Win));
-  */
+  //  XUndefineCursor(XtDisplay(d->Win), XtWindow(d->Win));
   if (region) {
     gdk_region_destroy(region);
     region = NULL;
