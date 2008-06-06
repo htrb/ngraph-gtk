@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.3 2008/06/04 12:00:56 hito Exp $
+ * $Id: ox11menu.h,v 1.4 2008/06/06 09:48:52 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -112,7 +112,7 @@ struct mxlocal
 struct menulocal
 {
   char *editor;
-  char *browser;
+  char *browser, *help_browser;
   struct objlist *obj;
   char *inst;
   struct objlist *outputobj;

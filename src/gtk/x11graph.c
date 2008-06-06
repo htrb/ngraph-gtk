@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.6 2008/06/04 12:00:56 hito Exp $
+ * $Id: x11graph.c,v 1.7 2008/06/06 09:48:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1120,6 +1120,24 @@ CmGraphMenu(GtkWidget *w, gpointer client_data)
   }
 }
 
+static void
+about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
+{
+  pid_t pid;
+
+  if (Menulocal.browser == NULL)
+    return;
+  if ((pid = fork()) < 0)
+    return;
+  if (pid == 0) {
+    char buf[4096];
+    snprintf(buf, sizeof(buf), "%s %s", Menulocal.browser, link);
+    system(buf);
+    exit(0);
+  }
+}
+
+
 void
 CmHelpAbout(void)
 {
@@ -1132,6 +1150,7 @@ CmHelpAbout(void)
   getobj(obj, "copyright", 0, 0, NULL, &copyright);
   getobj(obj, "web", 0, 0, NULL, &web);
 
+  gtk_about_dialog_set_url_hook(about_link_activated_cb, NULL, NULL);
   gtk_show_about_dialog(GTK_WINDOW(TopLevel),
 			"program-name", PACKAGE,
 			"copyright", copyright,
@@ -1151,12 +1170,12 @@ CmHelpHelp(void)
 {
   pid_t pid;
 
-  if (Menulocal.browser == NULL)
+  if (Menulocal.help_browser == NULL)
     return;
   if ((pid = fork()) < 0)
     return;
   if (pid == 0) {
-    system(Menulocal.browser);
+    system(Menulocal.help_browser);
     exit(0);
   }
 }
