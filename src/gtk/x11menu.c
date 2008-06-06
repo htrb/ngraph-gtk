@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.6 2008/06/06 04:30:58 hito Exp $
+ * $Id: x11menu.c,v 1.7 2008/06/06 05:10:17 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -96,14 +96,16 @@ static struct command_data Command1_data[] = {
     "Axis Window",
     N_("Activate Axis Window"), 
     Axiswin_xpm,
-    Axiswin_bits},
+    Axiswin_bits
+  },
   {
     CmLegendWindow,
     N_("Legend"),
     "Legend Window",
     N_("Activate Legend Window"), 
     Legendwin_xpm,
-    Legendwin_bits},
+    Legendwin_bits
+  },
   {
     CmMergeWindow,
     N_("Merge"),
