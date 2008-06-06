@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.2 2008/06/01 03:52:12 hito Exp $
+ * $Id: x11commn.c,v 1.3 2008/06/06 06:34:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -950,7 +950,7 @@ GraphSave(int overwrite)
 	  return IDCANCEL;
 	}
       }
-      snprintf(mes, sizeof(mes), "Saving `%.128s'.", file);
+      snprintf(mes, sizeof(mes), _("Saving `%.128s'."), file);
       SetStatusBar(mes);
       error = !SaveDrawrable(file, sdata, smerge);
       changefilename(file);

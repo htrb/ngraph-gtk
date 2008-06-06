@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.11 2008/06/05 04:34:20 hito Exp $
+ * $Id: x11view.c,v 1.12 2008/06/06 06:34:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4004,7 +4004,7 @@ Draw(int SelectFile)
   FileAutoScale();
   AdjustAxis();
 
-  SetStatusBar("Drawing.");
+  SetStatusBar(_("Drawing."));
 
   gc = gdk_gc_new(d->win);
 
