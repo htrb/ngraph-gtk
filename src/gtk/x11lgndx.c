@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.3 2008/06/05 06:22:40 hito Exp $
+ * $Id: x11lgndx.c,v 1.4 2008/06/06 04:30:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -380,7 +380,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->join = w;
 
     hbox2 = gtk_hbox_new(FALSE, 4);
-    w = create_color_button();
+    w = create_color_button(wi);
     item_setup(hbox2, w, _("_Color:"), FALSE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
     d->color = w;

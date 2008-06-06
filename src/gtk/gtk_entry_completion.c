@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_entry_completion.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gtk_entry_completion.c,v 1.2 2008/06/06 04:30:58 hito Exp $
  */
 
 #include <stdio.h>
@@ -11,24 +11,6 @@
 #include "ioutil.h"
 
 static int HistSize;
-
-static gboolean
-match_func(GtkEntryCompletion *comp, const gchar *key, GtkTreeIter *iter, gpointer user_data)
-{
-  GtkTreeModel *model;
-  int r = 0;
-  char *v;
-
-  model = gtk_entry_completion_get_model(comp);
-  gtk_tree_model_get(model, iter, 0, &v, -1);
-
-  if (v) {
-    r = ! strncasecmp(v, key, strlen(key));
-    g_free(v);
-  }
-
-  return r;
-}
 
 GtkEntryCompletion *
 entry_completion_create(void)
@@ -44,7 +26,6 @@ entry_completion_create(void)
   gtk_entry_completion_set_popup_set_width(comp, TRUE);
   gtk_entry_completion_set_text_column(comp, 0);
 
-  gtk_entry_completion_set_match_func(comp, match_func, NULL, NULL);
   return comp;
 }
 

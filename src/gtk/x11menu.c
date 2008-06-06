@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.5 2008/06/05 01:35:19 hito Exp $
+ * $Id: x11menu.c,v 1.6 2008/06/06 04:30:58 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1295,6 +1295,11 @@ load_hist(void)
   char *inst, *home, *filename;
   int len;
 
+  NgraphApp.legend_text_list = entry_completion_create();
+  NgraphApp.x_math_list = entry_completion_create();
+  NgraphApp.y_math_list = entry_completion_create();
+  NgraphApp.func_list = entry_completion_create();
+
   sysobj = chkobject("system");
   inst = chkobjinst(sysobj, 0);
   _getobj(sysobj, "home_dir", inst, &home);
@@ -1334,28 +1339,34 @@ save_hist(void)
   inst = chkobjinst(sysobj, 0);
   _getobj(sysobj, "home_dir", inst, &home);
 
-  if (home == NULL)
-    return;
+  if (home) {
+    len = strlen(home) + 64;
+    filename = malloc(len);
 
-  len = strlen(home) + 64;
-  filename = malloc(len);
+    if (filename) {
+      return;
 
-  if (filename == NULL)
-    return;
+      snprintf(filename, len, "%s/%s", home, TEXT_HISTORY);
+      entry_completion_save(NgraphApp.legend_text_list, filename, Menulocal.hist_size);
 
-  snprintf(filename, len, "%s/%s", home, TEXT_HISTORY);
-  entry_completion_save(NgraphApp.legend_text_list, filename, Menulocal.hist_size);
+      snprintf(filename, len, "%s/%s", home, MATH_X_HISTORY);
+      entry_completion_save(NgraphApp.x_math_list, filename, Menulocal.hist_size);
 
-  snprintf(filename, len, "%s/%s", home, MATH_X_HISTORY);
-  entry_completion_save(NgraphApp.x_math_list, filename, Menulocal.hist_size);
+      snprintf(filename, len, "%s/%s", home, MATH_Y_HISTORY);
+      entry_completion_save(NgraphApp.y_math_list, filename, Menulocal.hist_size);
 
-  snprintf(filename, len, "%s/%s", home, MATH_Y_HISTORY);
-  entry_completion_save(NgraphApp.y_math_list, filename, Menulocal.hist_size);
+      snprintf(filename, len, "%s/%s", home, FUNCTION_HISTORY);
+      entry_completion_save(NgraphApp.func_list, filename, Menulocal.hist_size);
 
-  snprintf(filename, len, "%s/%s", home, FUNCTION_HISTORY);
-  entry_completion_save(NgraphApp.func_list, filename, Menulocal.hist_size);
+      free(filename);
+    }
+  }
 
-  free(filename);
+  g_object_unref(NgraphApp.legend_text_list);
+  g_object_unref(NgraphApp.x_math_list);
+  g_object_unref(NgraphApp.y_math_list);
+  g_object_unref(NgraphApp.func_list);
+
 }
 
 static gboolean 
@@ -1437,6 +1448,11 @@ init_ngraph_app_struct(void)
   NgraphApp.CoordWin.ev_key = NULL;
   NgraphApp.CoordWin.ev_button = NULL;
   NgraphApp.CoordWin.window_state = 0;
+
+  NgraphApp.legend_text_list = NULL;
+  NgraphApp.x_math_list = NULL;
+  NgraphApp.y_math_list = NULL;
+  NgraphApp.func_list = NULL;
 }
 
 void
@@ -1449,6 +1465,8 @@ application(char *file)
 
   if (TopLevel)
     return;
+
+  init_ngraph_app_struct();
 
   screen = gdk_screen_get_default();
   w = gdk_screen_get_width(screen);
@@ -1470,11 +1488,6 @@ application(char *file)
   y = Menulocal.menuy;
   width = Menulocal.menuwidth;
   height = Menulocal.menuheight;
-
-  NgraphApp.legend_text_list = entry_completion_create();
-  NgraphApp.x_math_list = entry_completion_create();
-  NgraphApp.y_math_list = entry_completion_create();
-  NgraphApp.func_list = entry_completion_create();
 
   load_hist();
 
@@ -1504,8 +1517,6 @@ application(char *file)
   gtk_window_set_icon_list(GTK_WINDOW(TopLevel), NgraphApp.iconpix);
 
   create_toolbar_pixmap(TopLevel);
-
-  init_ngraph_app_struct();
 
   initdialog();
   setupwindow();

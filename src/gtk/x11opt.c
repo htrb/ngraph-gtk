@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.6 2008/06/05 06:22:40 hito Exp $
+ * $Id: x11opt.c,v 1.7 2008/06/06 04:30:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1236,7 +1236,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_color_button();
+    w = create_color_button(wi);
     item_setup(hbox, w, _("_Background Color:"), FALSE);
     d->bgcol = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);

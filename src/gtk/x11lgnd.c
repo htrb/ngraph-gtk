@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.9 2008/06/05 06:22:40 hito Exp $
+ * $Id: x11lgnd.c,v 1.10 2008/06/06 04:30:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -513,6 +513,7 @@ legend_dialog_close(GtkWidget *w, void *data)
       return;
 
     entry_completion_append(NgraphApp.legend_text_list, str);
+    gtk_entry_set_completion(GTK_ENTRY(d->text), NULL);
 
     ptr = strdup(str);
 
@@ -609,7 +610,7 @@ color_setup(struct LegendDialog *d, GtkWidget *box)
 {
   GtkWidget *w;
 
-  w = create_color_button();
+  w = create_color_button(d->widget);
   d->color = w;
   item_setup(box, w, _("_Color:"), FALSE);
 }
@@ -619,7 +620,7 @@ color2_setup(struct LegendDialog *d, GtkWidget *box)
 {
   GtkWidget *w;
 
-  w = create_color_button();
+  w = create_color_button(d->widget);
   d->color2 = w;
   item_setup(box, w, _("_Color2:"), FALSE);
 }
@@ -1284,7 +1285,6 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_text_entry(FALSE, TRUE);
-    gtk_entry_set_completion(GTK_ENTRY(w), NgraphApp.legend_text_list);
     item_setup(hbox, w, _("_Text:"), TRUE);
     d->text = w;
 
@@ -1297,6 +1297,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->prop_cb = LegendTextCB;
   }
   legend_dialog_setup_item(wi, d, d->Id);
+  gtk_entry_set_completion(GTK_ENTRY(d->text), NgraphApp.legend_text_list);
   gtk_widget_grab_focus(d->text);
 }
 

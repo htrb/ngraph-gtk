@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.8 2008/06/05 06:22:40 hito Exp $
+ * $Id: x11axis.c,v 1.9 2008/06/06 04:30:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -277,7 +277,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_color_button();
+    w = create_color_button(wi);
     item_setup(hbox, w, _("_Color:"), FALSE);
     d->color = w;
 
@@ -285,7 +285,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->background = w;
 
-    w = create_color_button();
+    w = create_color_button(wi);
     item_setup(hbox, w, _("_Background Color:"), FALSE);
     d->bcolor = w;
 
@@ -1052,7 +1052,7 @@ AxisBaseDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Width:"), TRUE);
     d->width = w;
 
-    w = create_color_button();
+    w = create_color_button(wi);
     item_setup(hbox, w, _("_Color:"), FALSE);
     d->color = w;
 
@@ -1705,7 +1705,7 @@ AxisFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
     
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_color_button();
+    w = create_color_button(wi);
     item_setup(hbox, w, _("_Color:"), FALSE);
     d->color = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -1844,7 +1844,7 @@ GaugeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Style:"), TRUE);
     d->style = w;
 
-    w = create_color_button();
+    w = create_color_button(wi);
     item_setup(hbox, w, _("_Color:"), FALSE);
     d->color = w;
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: osystem.c,v 1.2 2008/06/06 04:30:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,11 +46,11 @@
 #define SYSNAME  "Ngraph"
 #define TEMPN    "NGP"
 #define COPYRIGHT "Copyright (C) 2003, Satoshi ISHIZAKA."
-#define EMAIL "isizaka@msa.biglobe.ne.jp"
+#define EMAIL "ZXB01226@nifty.com"
 #ifndef WINDOWS
-#define WEB "http://www2e.biglobe.ne.jp/~isizaka/"
+#define WEB "http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html"
 #else
-#define WEB "http:\/\/www2e.biglobe.ne.jp\/~isizaka\/"
+#define WEB "http:\/\/homepage3.nifty.com\/slokar\/ngraph\/ngraph-gtk.html"
 #endif
 #define TRUE  1
 #define FALSE 0

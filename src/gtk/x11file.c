@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.8 2008/06/05 06:22:40 hito Exp $
+ * $Id: x11file.c,v 1.9 2008/06/06 04:30:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -175,6 +175,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
     entry_completion_append(NgraphApp.func_list, p);
     break;
   }
+  gtk_entry_set_completion(GTK_ENTRY(d->list), NULL);
 }
 
 void
@@ -1822,13 +1823,11 @@ FileMathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_text_entry(TRUE, TRUE);
-
     item_setup(hbox, w, _("_X smooth:"), FALSE);
     d->xsmooth = w;
 
     w = create_text_entry(TRUE, TRUE);
     item_setup(hbox, w, _("_X math:"), TRUE);
-    gtk_entry_set_completion(GTK_ENTRY(w), NgraphApp.x_math_list);
     d->xmath = w;
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -1837,13 +1836,11 @@ FileMathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_text_entry(TRUE, TRUE);
-
     item_setup(hbox, w, _("_Y smooth:"), FALSE);
     d->ysmooth = w;
 
     w = create_text_entry(TRUE, TRUE);
     item_setup(hbox, w, _("_Y math:"), TRUE);
-    gtk_entry_set_completion(GTK_ENTRY(w), NgraphApp.y_math_list);
     d->ymath = w;
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -1874,6 +1871,9 @@ FileMathDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   FileMathDialogSetupItem(wi, d, d->Id);
+
+  gtk_entry_set_completion(GTK_ENTRY(d->xmath), NgraphApp.x_math_list);
+  gtk_entry_set_completion(GTK_ENTRY(d->ymath), NgraphApp.y_math_list);
 }
 
 static void
@@ -1934,6 +1934,12 @@ FileMathDialogClose(GtkWidget *w, void *data)
 
   if (SetObjFieldFromText(d->hmath, d->Obj, d->Id, "func_h"))
     return;
+
+  gtk_entry_set_completion(GTK_ENTRY(d->ymath), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->xmath), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->fmath), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->gmath), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->hmath), NULL);
 
   d->ret = ret;
 }
@@ -2518,11 +2524,11 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
   hbox = gtk_hbox_new(FALSE, 4);
-  w = create_color_button();
+  w = create_color_button(wi);
   item_setup(hbox, w, _("_Color 1:"), FALSE);
   d->col1 = w;
 
-  w = create_color_button();
+  w = create_color_button(wi);
   item_setup(hbox, w, _("_Color 2:"), FALSE);
   d->col2 = w;
 

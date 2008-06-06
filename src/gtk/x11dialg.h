@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.4 2008/06/05 06:22:40 hito Exp $
+ * $Id: x11dialg.h,v 1.5 2008/06/06 04:30:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -74,7 +74,7 @@ void set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix);
 void set_color2(GtkWidget *w, struct objlist *obj, int id);
 int putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix);
 int putobj_color2(GtkWidget *w, struct objlist *obj, int id);
-GtkWidget *create_color_button(void);
+GtkWidget *create_color_button(GtkWidget *win);
 
 struct DialogType
 {
