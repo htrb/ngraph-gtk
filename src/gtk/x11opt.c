@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.7 2008/06/06 04:30:59 hito Exp $
+ * $Id: x11opt.c,v 1.8 2008/06/06 07:59:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1141,9 +1141,9 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   snprintf(buf, sizeof(buf), "%d", Menulocal.info_size);
   gtk_entry_set_text(GTK_ENTRY(d->info_size), buf);
 
-  color.red = Menulocal.bg_r * 256;
-  color.green = Menulocal.bg_g * 256;
-  color.blue = Menulocal.bg_b * 256;
+  color.red = Menulocal.bg_r * 257;
+  color.green = Menulocal.bg_g * 257;
+  color.blue = Menulocal.bg_b * 257;
   gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
 }
 
