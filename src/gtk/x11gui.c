@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.3 2008/06/05 02:45:03 hito Exp $
+ * $Id: x11gui.c,v 1.4 2008/06/06 10:37:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -81,6 +81,12 @@ dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 
+static void 
+dialog_delete_cb(GtkWidget *w, GdkEvent *e, gpointer user_data)
+{
+  return TRUE;
+}
+
 int
 DialogExecute(GtkWidget *parent, void *dialog)
 {
@@ -109,6 +115,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     gtk_window_set_resizable(GTK_WINDOW(dlg), TRUE);
     gtk_window_set_destroy_with_parent(GTK_WINDOW(dlg), TRUE);
 
+    g_signal_connect(dlg, "delete-event", G_CALLBACK(dialog_delete_cb), data);
     g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
     g_signal_connect(dlg, "key-press-event", G_CALLBACK(dialog_key_down_cb), NULL);
     // gtk_widget_destroyed(dlg, &(data->widget));

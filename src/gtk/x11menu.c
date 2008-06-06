@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.7 2008/06/06 05:10:17 hito Exp $
+ * $Id: x11menu.c,v 1.8 2008/06/06 10:37:00 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1395,7 +1395,7 @@ change_window_state_cb(GtkWidget *widget, GdkEventWindowState *event, gpointer u
 static gint
 escape_drawing_cb(GtkWidget *w, GdkEventKey *e, gpointer data)
 {
-  if (e->keyval == GDK_Escape)
+  if (e->keyval == GDK_Escape && w == data)
     do_interrupt(w, data);
 
   return FALSE;
@@ -1595,7 +1595,7 @@ application(char *file)
   ResetEvent();
   gtk_window_present(GTK_WINDOW(TopLevel));
 
-  snooper_id = gtk_key_snooper_install(escape_drawing_cb, NULL);
+  snooper_id = gtk_key_snooper_install(escape_drawing_cb, TopLevel);
   AppMainLoop();
   gtk_key_snooper_remove(snooper_id);
 
