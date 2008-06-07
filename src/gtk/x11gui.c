@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.4 2008/06/06 10:37:00 hito Exp $
+ * $Id: x11gui.c,v 1.5 2008/06/07 05:43:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -466,8 +466,8 @@ FileSelectionDialog(GtkWidget * parent, int type, char *stock)
     fsok(dlg);
   }
 
-  ResetEvent();
   gtk_widget_destroy(dlg);
+  ResetEvent();
   data->widget = NULL;
 
   return data->ret;

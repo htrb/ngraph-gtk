@@ -1,3 +1,11 @@
+2008-06-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.c (main): add g_set_application_name().
+
+	* src/gtk/x11menu.c (application): remove g_set_application_name().
+
+	* src/gtk/x11gui.c (FileSelectionDialog): do ResetEvent() after gtk_widget_destroy().
+
 2008-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (ngraphenvironment): add $NGRAPHHOME to PATH.

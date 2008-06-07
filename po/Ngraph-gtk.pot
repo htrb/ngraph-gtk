@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-06 15:27+0900\n"
+"POT-Creation-Date: 2008-06-06 22:14+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -908,21 +908,21 @@ msgstr ""
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1145
+#: src/gtk/x11graph.c:1164
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for the "
 "researcher and engineer."
 msgstr ""
 
-#: src/gtk/x11gui.c:418
+#: src/gtk/x11gui.c:425
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:433
+#: src/gtk/x11gui.c:440
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:569
+#: src/gtk/x11gui.c:576
 msgid "Color selection"
 msgstr ""
 

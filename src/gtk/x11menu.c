@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.8 2008/06/06 10:37:00 hito Exp $
+ * $Id: x11menu.c,v 1.9 2008/06/07 05:43:36 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1495,7 +1495,6 @@ application(char *file)
 
   TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
-  g_set_application_name(AppName);
 
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);

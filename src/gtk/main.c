@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.4 2008/06/01 03:52:11 hito Exp $
+ * $Id: main.c,v 1.5 2008/06/07 05:43:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -403,6 +403,7 @@ main(int argc, char **argv, char **environ)
 
   gtk_set_locale();
   OpenDisplay = gtk_init_check(&argc, &argv);
+  g_set_application_name(AppName);
 
   mainenviron = environ;
 
