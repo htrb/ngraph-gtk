@@ -4,7 +4,7 @@
 
 	* src/gtk/x11menu.c (application): remove g_set_application_name().
 
-	* src/gtk/x11gui.c (FileSelectionDialog): do ResetEvent() after gtk_widget_destroy().
+	* src/gtk/x11gui.c (FileSelectionDialog): call ResetEvent() after gtk_widget_destroy().
 
 2008-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
