@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.9 2008/06/06 04:30:58 hito Exp $
+ * $Id: x11file.c,v 1.10 2008/06/07 14:08:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3516,10 +3516,13 @@ FileWinFileDraw(struct SubWin *d)
 	hidden = TRUE;
       putobj(d->obj, "hidden", i, &hidden);
     }
+    d->select = sel;
   } else {
     hidden = FALSE;
-    for (i = 0; i <= d->num; i++)
+    for (i = 0; i <= d->num; i++) {
       putobj(d->obj, "hidden", i, &hidden);
+    }
+    d->select = -1;
   }
   CmViewerDrawB(NULL, NULL);
   FileWinUpdate(FALSE);
