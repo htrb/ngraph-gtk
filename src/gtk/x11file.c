@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.10 2008/06/07 14:08:36 hito Exp $
+ * $Id: x11file.c,v 1.11 2008/06/08 03:01:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2604,7 +2604,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_buttons(GTK_DIALOG(wi),
 			   _("_Apply all"), IDFAPPLY,
-			   GTK_STOCK_CLOSE, IDCLOSE,
+			   GTK_STOCK_CLOSE, IDDELETE,
 			   GTK_STOCK_COPY, IDCOPY,
 			   _("_Copy all"), IDCOPYALL,
 			   NULL);
