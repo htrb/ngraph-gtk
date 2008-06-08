@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.12 2008/06/06 06:34:22 hito Exp $
+ * $Id: x11view.c,v 1.13 2008/06/08 02:30:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -716,9 +716,10 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
       if (ret2 == IDDELETE) {
 	FitDel(fileobj, id);
 	delobj(fileobj, id);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < dnum; j++) {
-	  if (ddata[i] > id) {
-	    ddata[i] = ddata[i] - 1;
+	  if (ddata[j] > id) {
+	    ddata[j] = ddata[j] - 1;
 	  }
 	}
       } else if (ret2 != IDCANCEL) {
@@ -1947,7 +1948,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
       } else if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &vdpi) != -1) {
 	if (state & GDK_CONTROL_MASK) {
 	  if ((int) (vdpi / sqrt(2)) >= 20) {
-	    vdpi = (int) (vdpi / sqrt(2));
+	    vdpi = nround(vdpi / sqrt(2));
 
 	    if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
 	      d->hscroll -= (d->cx - point->x);
@@ -1961,7 +1962,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 	  }
 	} else {
 	  if ((int) (vdpi * sqrt(2)) <= 620) {
-	    vdpi = (int) (vdpi * sqrt(2));
+	    vdpi = nround(vdpi * sqrt(2));
 	    if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
 	    d->hscroll -= (d->cx - point->x);
 	    d->vscroll -= (d->cy - point->y);
@@ -2845,7 +2846,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
       } else if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &vdpi) != -1) {
 	if (state & GDK_CONTROL_MASK) {
 	  if ((int) (vdpi * sqrt(2)) <= 620) {
-	    vdpi = (int) (vdpi * sqrt(2));
+	    vdpi = nround(vdpi * sqrt(2));
 	    if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
 	      d->hscroll -= (d->cx - point->x);
 	      d->vscroll -= (d->cy - point->y);
@@ -2856,7 +2857,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 	    MessageBeep(TopLevel);
 	} else {
 	  if ((int) (vdpi / sqrt(2)) >= 20) {
-	    vdpi = (int) (vdpi / sqrt(2));
+	    vdpi = nround(vdpi / sqrt(2));
 	    if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
 	      d->hscroll -= (d->cx - point->x);
 	      d->vscroll -= (d->cy - point->y);
