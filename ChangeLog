@@ -3,6 +3,7 @@
 	* src/gtk/x11view.c (ViewerWinFileUpdate): fix bug reported at
 	http://www2e.biglobe.ne.jp/~isizaka/bbs_old/light.cgi [802]-[805].
 	(ViewerEvLButtonDown, ViewerEvRButtonDown): use nround() when change dpi.
+	(ViewerEvScroll): fix bug d->VScroll to d->HScroll.
 
 2008-06-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

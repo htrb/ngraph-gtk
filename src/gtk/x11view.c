@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.13 2008/06/08 02:30:59 hito Exp $
+ * $Id: x11view.c,v 1.14 2008/06/08 10:50:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3154,13 +3154,13 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   case GDK_SCROLL_LEFT:
     val = gtk_range_get_value(GTK_RANGE(d->HScroll));
     val -= SCROLL_INC;
-    gtk_range_set_value(GTK_RANGE(d->VScroll), val);
+    gtk_range_set_value(GTK_RANGE(d->HScroll), val);
     ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
     return TRUE;
   case GDK_SCROLL_RIGHT:
     val = gtk_range_get_value(GTK_RANGE(d->HScroll));
     val += SCROLL_INC;
-    gtk_range_set_value(GTK_RANGE(d->VScroll), val);
+    gtk_range_set_value(GTK_RANGE(d->HScroll), val);
     ViewerEvHScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
     return TRUE;
   }
