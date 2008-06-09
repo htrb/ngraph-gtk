@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-08 11:35+0900\n"
+"POT-Creation-Date: 2008-06-09 17:58+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -691,7 +691,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1290 src/gtk/x11file.c:1503 src/gtk/x11view.c:412
+#: src/gtk/x11file.c:1290 src/gtk/x11file.c:1503 src/gtk/x11view.c:416
 msgid "Line No."
 msgstr ""
 
@@ -812,11 +812,11 @@ msgstr ""
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:2652 src/gtk/x11view.c:421
+#: src/gtk/x11file.c:2652 src/gtk/x11view.c:425
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:2656 src/gtk/x11view.c:422
+#: src/gtk/x11file.c:2656 src/gtk/x11view.c:426
 msgid "_Move"
 msgstr ""
 
@@ -1762,17 +1762,21 @@ msgstr ""
 msgid "Executing `%.128s'."
 msgstr ""
 
-#: src/gtk/x11view.c:681
+#: src/gtk/x11view.c:685
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:780
+#: src/gtk/x11view.c:784
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:4008
+#: src/gtk/x11view.c:4024
+msgid "Drawing"
+msgstr ""
+
+#: src/gtk/x11view.c:4066
 msgid "Drawing."
 msgstr ""
 

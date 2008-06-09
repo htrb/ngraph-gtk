@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-08 11:35+0900\n"
-"PO-Revision-Date: 2008-06-06 15:16+0900\n"
+"POT-Creation-Date: 2008-06-09 17:58+0900\n"
+"PO-Revision-Date: 2008-06-09 17:58+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -693,7 +693,7 @@ msgstr "微分式指定(_D)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1290 src/gtk/x11file.c:1503 src/gtk/x11view.c:412
+#: src/gtk/x11file.c:1290 src/gtk/x11file.c:1503 src/gtk/x11view.c:416
 msgid "Line No."
 msgstr "行"
 
@@ -814,11 +814,11 @@ msgstr "ファイル名(_F):"
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:2652 src/gtk/x11view.c:421
+#: src/gtk/x11file.c:2652 src/gtk/x11view.c:425
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:2656 src/gtk/x11view.c:422
+#: src/gtk/x11file.c:2656 src/gtk/x11view.c:426
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -1768,17 +1768,21 @@ msgstr "アドイン"
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
 
-#: src/gtk/x11view.c:681
+#: src/gtk/x11view.c:685
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:780
+#: src/gtk/x11view.c:784
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:4008
+#: src/gtk/x11view.c:4024
+msgid "Drawing"
+msgstr "描画中"
+
+#: src/gtk/x11view.c:4066
 msgid "Drawing."
 msgstr "描画中"
 

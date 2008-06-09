@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: object.c,v 1.2 2008/06/09 09:21:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -879,6 +879,7 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->doneproc=doneproc;
   if (parent==NULL) offset=0;
   else offset=parent->size;
+  if (offset%8 != 0) offset=offset+(8-offset%8);
   for (i=0;i<tblnum;i++) {
     table[i].offset=offset;
     switch (table[i].type) {
@@ -898,6 +899,7 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
     default:
       offset+=sizeof(void *);
     }
+    if (offset%8 != 0) offset=offset+(8-offset%8);
     if (table[i].attrib & NEXEC) table[i].attrib&=~NWRITE;
   }
   objnew->size=offset;

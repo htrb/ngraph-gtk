@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ioutil.c,v 1.2 2008/06/09 09:21:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,6 +48,8 @@
 
 #define TRUE  1
 #define FALSE 0
+
+static void (* ShowProgressFunc)(char *, double) = NULL;
 
 #ifndef WINDOWS
 void changefilename(char *name)
@@ -931,4 +933,17 @@ HANDLE stderrfd(void)
 }
 
 #endif
+
+void
+set_progress_func(void (* func)(char *, double))
+{
+  ShowProgressFunc = func;
+}
+
+void
+set_progress(char *msg, double fraction)
+{
+  if (ShowProgressFunc)
+    ShowProgressFunc(msg, fraction);
+}
 

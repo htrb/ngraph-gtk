@@ -1,3 +1,21 @@
+2008-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ioutil.c ShowProgressFunc, add set_progress_func() and set_progress().
+
+	* src/ofile.c (getdata): check interrupt and call set_progress.
+
+	* src/gtk/x11menu.c (Command1_data): remove do_interrupt.
+	(application): remove snooper_id, gtk_key_snooper_remove() and
+	gtk_key_snooper_install()
+
+
+	* src/gtk/x11view.c (show_progress, create_progress_dialog, cb_del): add.
+	(Draw): call create_progress_dialog(), set_progress_func(show_progress),
+	set_progress_func() and  gtk_widget_destroy().
+	* add global variables ProgressBar and ProgressDiaog.
+
+	* src/object.c (addobject): add alignment for 64bit architecture.
+
 2008-06-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerWinFileUpdate): fix bug reported at

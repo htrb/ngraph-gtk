@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.3 2008/06/04 02:38:47 hito Exp $
+ * $Id: ofile.c,v 1.4 2008/06/09 09:21:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1527,6 +1527,7 @@ int getdata(struct f2ddata *fp)
   char *inst1;
   double *gdata;
   char *gstat;
+  double frac;
 
   if (((gdata=(double *)memalloc(sizeof(double)*(MAXCOL+1)))==NULL)
   || ((gstat=(char *)memalloc(sizeof(char)*(MAXCOL+1)))==NULL)) {
@@ -1567,7 +1568,21 @@ int getdata(struct f2ddata *fp)
   datay=arraydata(&filedatay);
   staty=arraydata(&filestaty);
   while (!fp->eof && (fp->bufnum<DXBUFSIZE)) {
-    //    if (ninterrupt()) return -1;
+    static char msgbuf[256];
+    if ((fp->line & 0x3fff) == 0) {
+      if (fp->final < 1) {
+	frac = -1;
+      } else {
+	frac = 1.0 * fp->line / fp->final;
+      }
+      snprintf(msgbuf, sizeof(msgbuf), "%d: %s (%d)", fp->id, fp->file, fp->line);
+      set_progress(msgbuf, frac);
+      if (ninterrupt()) {
+	fp->eof=TRUE;
+	break;
+      }
+    }
+
     if ((fp->final>=0) && (fp->line>=fp->final)) {
       fp->eof=TRUE;
       break;

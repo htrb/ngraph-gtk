@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.9 2008/06/07 05:43:36 hito Exp $
+ * $Id: x11menu.c,v 1.10 2008/06/09 09:21:56 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -211,14 +211,6 @@ static struct command_data Command1_data[] = {
     N_("Undo Scale Settings"), 
     Scaleundo_xpm,
     Scaleundo_bits
-  },
-  {
-    do_interrupt,
-    N_("Interrupt"),
-    N_("Interrupt"),
-    N_("Interrupt Drawing, etc."), 
-    Interrupt_xpm,
-    Interrupt_bits
   },
 }; 
 
@@ -1129,7 +1121,6 @@ createcommand1(GtkToolbar *parent)
     }
     gtk_toolbar_insert(parent, GTK_TOOL_ITEM(b), -1);
   }
-  NgraphApp.interrupt = b;
 }
 
 static void
@@ -1462,7 +1453,7 @@ application(char *file)
 {
   int i;
   struct objlist *aobj;
-  int x, y, width, height, w, h, snooper_id;
+  int x, y, width, height, w, h;
   GdkScreen *screen;
 
   if (TopLevel)
@@ -1594,9 +1585,7 @@ application(char *file)
   ResetEvent();
   gtk_window_present(GTK_WINDOW(TopLevel));
 
-  snooper_id = gtk_key_snooper_install(escape_drawing_cb, TopLevel);
   AppMainLoop();
-  gtk_key_snooper_remove(snooper_id);
 
   save_hist();
 
@@ -1825,7 +1814,7 @@ PutStderr(char *s)
 int
 ChkInterrupt(void)
 {
-#if 1
+#if 0
   GdkEvent *e;
   GtkWidget *w;
 
