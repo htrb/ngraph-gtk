@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.10 2008/06/09 09:21:56 hito Exp $
+ * $Id: x11menu.c,v 1.11 2008/06/09 09:42:21 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -70,7 +70,6 @@ static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
 
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
-static void do_interrupt(GtkWidget *w, gpointer data);
 
 struct command_data {
   void (*func)(GtkWidget *, gpointer);
@@ -1073,11 +1072,6 @@ free_cursor(void)
     NgraphApp.cursor[i] = NULL;
   }
 }
-static void
-do_interrupt(GtkWidget *w, gpointer data)
-{
-  NgraphApp.Interrupt = TRUE;
-}
 
 static gboolean
 tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
@@ -1380,15 +1374,6 @@ change_window_state_cb(GtkWidget *widget, GdkEventWindowState *event, gpointer u
     sub_window_restore_state(&NgraphApp.InfoWin);
     sub_window_restore_state(&NgraphApp.CoordWin);
   }
-  return FALSE;
-}
-
-static gint
-escape_drawing_cb(GtkWidget *w, GdkEventKey *e, gpointer data)
-{
-  if (e->keyval == GDK_Escape && w == data)
-    do_interrupt(w, data);
-
   return FALSE;
 }
 

@@ -1,5 +1,7 @@
 2008-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofit.c (fituser): call set_progress() instead of ndisplaystatus().
+
 	* src/ioutil.c ShowProgressFunc, add set_progress_func() and set_progress().
 
 	* src/ofile.c (getdata): check interrupt and call set_progress.

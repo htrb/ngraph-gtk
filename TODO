@@ -1,7 +1,6 @@
 * コードの整理
 
 * Symbol font 対応の強化
-* Interrupt 対応の強化
 * File Window, Merge Window の DnD 対応
 
 * 描画 backend に cairo ライブラリを使用
