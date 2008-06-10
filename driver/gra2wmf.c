@@ -1,20 +1,11 @@
 /**
  *
- * $Id: gra2wmf.c,v 1.2 2008/06/10 11:31:10 hito Exp $
+ * $Id: gra2wmf.c,v 1.3 2008/06/10 13:41:40 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
  * Original author: Satoshi ISHIZAKA
  *                  isizaka@msa.biglobe.ne.jp
- **/
-
-/**
- *
- *
- * Revision 1.1  2003/08/15 12:56:18  isizaka
- * Initial revision
- *
- *
  **/
 
 

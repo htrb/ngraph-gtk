@@ -1,60 +1,11 @@
 /**
  *
- * $Id: gra2ps.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gra2ps.c,v 1.2 2008/06/10 13:41:40 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
  * Original author: Satoshi ISHIZAKA
  *                  isizaka@msa.biglobe.ne.jp
- **/
-
-/**
- *
- * $Log: gra2ps.c,v $
- * Revision 1.1  2008/05/29 09:37:33  hito
- * Initial revision
- *
- * Revision 1.1.1.1  2008-05-29 08:47:24  hito
- * initial version.
- *
- * Revision 1.1.1.1  2008-05-26 06:03:45  hito
- * initial version
- *
- * Revision 1.15  2003/08/15 12:04:26  isizaka
- * 2.03.17
- *
- * Revision 1.13  2000/10/17 14:43:28  isizaka
- * add '-r', '-p', '-l' option
- *
- * Revision 1.12  2000/10/16 13:41:03  isizaka
- * bug fix about undefined current point.
- *
- * Revision 1.11  1999/10/15 15:31:11  isizaka
- * Encoding is changed to ISOLatin1.
- *
- * Revision 1.10  1999/08/26 14:30:39  isizaka
- * charwidth is changed
- *
- *
- * Revision 1.6  1999/04/15 12:16:39  isizaka
- * 99/04/15
- *
- * Revision 1.5  1999/04/11 06:10:15  isizaka
- * *** empty log message ***
- *
- * Revision 1.4  1999/03/22 05:33:59  isizaka
- * check time stamp for 'Ngraph.ini'
- *
- * Revision 1.3  1999/03/21 16:11:11  isizaka
- * hyphen for Windows and X11
- *
- * Revision 1.2  1999/03/18 11:31:50  isizaka
- * add 'setcp' flag to avoid "nocurrentpoint" error.
- *
- * Revision 1.1  1999/03/17 13:36:29  isizaka
- * Initial revision
- *
- *
  **/
 
 #include <sys/stat.h>

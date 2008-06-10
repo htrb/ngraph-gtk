@@ -1,6 +1,6 @@
 /**
  *
- * $Id: wmfapi.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: wmfapi.c,v 1.2 2008/06/10 13:41:41 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -8,23 +8,6 @@
  *                  isizaka@msa.biglobe.ne.jp
  **/
 
-/**
- *
- * $Log: wmfapi.c,v $
- * Revision 1.1  2008/05/29 09:37:33  hito
- * Initial revision
- *
- * Revision 1.1.1.1  2008-05-29 08:47:24  hito
- * initial version.
- *
- * Revision 1.1.1.1  2008-05-26 06:03:45  hito
- * initial version
- *
- * Revision 1.1  2003/08/15 12:57:56  isizaka
- * Initial revision
- *
- *
- **/
 
 #include <sys/types.h>
 #include <sys/stat.h>

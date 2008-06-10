@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-10 16:10+0900\n"
+"POT-Creation-Date: 2008-06-10 21:54+0900\n"
 "PO-Revision-Date: 2008-06-10 16:11+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -335,20 +335,20 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1441
+#: src/gtk/x11commn.c:1442
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1444
+#: src/gtk/x11commn.c:1445
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1449
+#: src/gtk/x11commn.c:1450
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr "~/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1452
+#: src/gtk/x11commn.c:1453
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
@@ -592,7 +592,7 @@ msgstr "ビューア"
 msgid "multi select"
 msgstr "複数選択"
 
-#: src/gtk/x11dialg.c:244 src/gtk/x11dialg.c:422
+#: src/gtk/x11dialg.c:244 src/gtk/x11dialg.c:424
 msgid "single select"
 msgstr "単一選択"
 
@@ -600,7 +600,7 @@ msgstr "単一選択"
 msgid "_All"
 msgstr "全て(_A)"
 
-#: src/gtk/x11dialg.c:896
+#: src/gtk/x11dialg.c:900
 msgid "Pick a Clolor"
 msgstr "色の選択"
 
@@ -693,7 +693,7 @@ msgstr "微分式指定(_D)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1290 src/gtk/x11file.c:1503 src/gtk/x11view.c:412
+#: src/gtk/x11file.c:1290 src/gtk/x11file.c:1503 src/gtk/x11view.c:405
 msgid "Line No."
 msgstr "行"
 
@@ -814,11 +814,11 @@ msgstr "ファイル名(_F):"
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:2652 src/gtk/x11view.c:421
+#: src/gtk/x11file.c:2652 src/gtk/x11view.c:414
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:2656 src/gtk/x11view.c:422
+#: src/gtk/x11file.c:2656 src/gtk/x11view.c:415
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -1538,11 +1538,11 @@ msgstr "ステータスバー(_S)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:1799
+#: src/gtk/x11menu.c:1797
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:1849
+#: src/gtk/x11menu.c:1847
 msgid "Question"
 msgstr "質問:"
 
@@ -1701,7 +1701,7 @@ msgid "_Maximum number of data on redraw:"
 msgstr "再描画時の最大データ数(_M):"
 
 #: src/gtk/x11opt.c:1619 src/gtk/x11print.c:219 src/gtk/x11print.c:595
-#: src/gtk/x11print.c:685
+#: src/gtk/x11print.c:689
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1763,15 +1763,15 @@ msgstr "合成ファイル作成中"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:682 src/gtk/x11print.c:686
+#: src/gtk/x11print.c:686 src/gtk/x11print.c:690
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11print.c:691
+#: src/gtk/x11print.c:695
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11print.c:692
+#: src/gtk/x11print.c:696
 msgid "Making data file."
 msgstr "データファイル作成中"
 
@@ -1784,29 +1784,29 @@ msgstr "アドイン"
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
 
-#: src/gtk/x11view.c:681
+#: src/gtk/x11view.c:675
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:780
+#: src/gtk/x11view.c:774
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:789
+#: src/gtk/x11view.c:783
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:4007
+#: src/gtk/x11view.c:4009
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:4013
+#: src/gtk/x11view.c:4015
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11view.c:4014
+#: src/gtk/x11view.c:4016
 msgid "Drawing"
 msgstr "描画中"
 
