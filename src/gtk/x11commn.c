@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.6 2008/06/10 04:21:36 hito Exp $
+ * $Id: x11commn.c,v 1.7 2008/06/10 12:45:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1371,6 +1371,7 @@ FreeConsole(int allocnow)
   inputyn = mgtkinputyn;
   ndisplaydialog = mgtkdisplaydialog;
   ndisplaystatus = mgtkdisplaystatus;
+  ninterrupt = mgtkinterrupt;
 }
 
 char *

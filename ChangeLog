@@ -1,5 +1,7 @@
 2008-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (FreeConsole): restore ninterrupt.
+
 	* driver/gra2wmf.c (draw, getboundingbox): fix bug reported at
 	http://www2e.biglobe.ne.jp/~isizaka/bbs_old/light.cgi [670].
 
