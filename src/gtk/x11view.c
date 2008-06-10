@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.18 2008/06/10 04:21:37 hito Exp $
+ * $Id: x11view.c,v 1.19 2008/06/10 08:25:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -676,7 +676,8 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   argv[5] = (char *) &limit;
   argv[6] = NULL;
 
-  if ((fileobj = chkobject("file")) != NULL) {
+  fileobj = chkobject("file");
+  if (fileobj) {
     arrayinit(&dfile, sizeof(int));
     snprintf(mes, sizeof(mes), _("Searching for data."));
     SetStatusBar(mes);
@@ -979,6 +980,8 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
   struct savedstdio save;
   struct Viewer *d;
 
+  set_draw_lock(DrawLockExpose);
+
   d = &(NgraphApp.Viewer);
 
   ignorestdio(&save);
@@ -1025,6 +1028,8 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
     }
   }
   restorestdio(&save);
+
+  set_draw_lock(DrawLockNone);
 }
 
 static void
@@ -1135,6 +1140,8 @@ AddInvalidateRect(struct objlist *obj, char *inst)
   struct Viewer *d;
   GdkRectangle rect;
 
+  set_draw_lock(DrawLockExpose);
+
   d = &(NgraphApp.Viewer);
   _exeobj(obj, "bbox", inst, 0, NULL);
   _getobj(obj, "bbox", inst, &abbox);
@@ -1153,6 +1160,8 @@ AddInvalidateRect(struct objlist *obj, char *inst)
 
     gdk_region_union_with_rect(region, &rect);
   }
+
+  set_draw_lock(DrawLockNone);
 }
 
 

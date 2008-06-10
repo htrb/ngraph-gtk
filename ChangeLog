@@ -1,5 +1,10 @@
 2008-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (Match, AddInvalidateRect): add
+	set_draw_lock().
+
+	* src/gtk/x11menu.c (save_hist): fix bug: remove redundant return.
+
 	* src/gtk/x11opt.c (ViewerDialogSetupItem, ViewerDialogSetup)
 	(ViewerDialogClose): add settings for "redraw_num".
 

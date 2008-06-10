@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.12 2008/06/10 04:21:36 hito Exp $
+ * $Id: x11menu.c,v 1.13 2008/06/10 08:25:42 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1337,8 +1337,6 @@ save_hist(void)
     filename = malloc(len);
 
     if (filename) {
-      return;
-
       snprintf(filename, len, "%s/%s", home, TEXT_HISTORY);
       entry_completion_save(NgraphApp.legend_text_list, filename, Menulocal.hist_size);
 
