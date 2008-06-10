@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gra.c,v 1.2 2008/06/10 07:12:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -443,8 +443,10 @@ void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redrawf,
     if ((dobj=getobjlist(sdata[i],&did,&dfield,NULL))!=NULL) {
       if ((dinst=chkobjinstoid(dobj,did))!=NULL) {
         if (setredrawf) {
+	  int t = TRUE;
           _getobj(dobj,"redraw_flag",dinst,&redrawfsave);
-          _putobj(dobj,"redraw_flag",dinst,&redrawf);
+          _putobj(dobj,"redraw_flag",dinst, &t);
+          _putobj(dobj,"redraw_num",dinst, &redrawf);
         }
         _exeobj(dobj,dfield,dinst,1,dargv);
         if (setredrawf) {

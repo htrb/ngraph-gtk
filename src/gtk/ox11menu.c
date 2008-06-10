@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.9 2008/06/10 04:21:36 hito Exp $
+ * $Id: ox11menu.c,v 1.10 2008/06/10 07:12:15 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -639,6 +639,13 @@ mgtkloadconfig(void)
 	  Mxlocal->redrawf = TRUE;
       }
       memfree(f1);
+    } else if (strcmp(tok, "viewer_load_file_data_number") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0') {
+	Mxlocal->redrawf_num = val;
+      }
+      memfree(f1);
     } else if (strcmp(tok, "viewer_show_ruler") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
@@ -1036,6 +1043,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Mxlocal->windpi = DEFAULT_DPI;
   Mxlocal->autoredraw = TRUE;
   Mxlocal->redrawf = TRUE;
+  Mxlocal->redrawf_num = 0xff;
   Mxlocal->ruler = TRUE;
   Mxlocal->grid = 200;
   Mxlocal->cdepth = GTKCOLORDEPTH;
@@ -1087,6 +1095,9 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     goto errexit;
 
   if (_putobj(obj, "redraw_flag", inst, &(Mxlocal->redrawf)))
+    goto errexit;
+
+  if (_putobj(obj, "redraw_num", inst, &(Mxlocal->redrawf_num)))
     goto errexit;
 
   if (!chkobjfield(obj, "_output")) {
@@ -1339,15 +1350,31 @@ mxredrawflag(struct objlist *obj, char *inst, char *rval, int argc,
   return 0;
 }
 
+static int
+mxredraw_num(struct objlist *obj, char *inst, char *rval, int argc,
+	     char **argv)
+{
+  Mxlocal->redrawf_num = *(int *) argv[2];
+  return 0;
+}
+
 void
 mx_redraw(struct objlist *obj, char *inst)
 {
+  int n;
   set_draw_lock(DrawLockExpose);
 
   if (Mxlocal->region) {
     mx_clear(Mxlocal->region);
   }
-  GRAredraw(obj, inst, TRUE, Mxlocal->redrawf);
+
+  if (Mxlocal->redrawf) {
+    n = Mxlocal->redrawf_num;
+  } else {
+    n = 0;
+  }
+
+  GRAredraw(obj, inst, TRUE, n);
   mxflush(obj, inst, NULL, 0, NULL);
 
   set_draw_lock(DrawLockNone);
@@ -2311,6 +2338,7 @@ static struct objtable gtkmenu[] = {
   {"dpi", NINT, NREAD | NWRITE, mxdpi, NULL, 0},
   {"auto_redraw", NBOOL, NREAD | NWRITE, mxautoredraw, NULL, 0},
   {"redraw_flag", NBOOL, NREAD | NWRITE, mxredrawflag, NULL, 0},
+  {"redraw_num", NBOOL, NREAD | NWRITE, mxredraw_num, NULL, 0},
   {"redraw", NVFUNC, NREAD | NEXEC, mxredraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},

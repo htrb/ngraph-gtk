@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.6 2008/06/10 04:21:33 hito Exp $
+ * $Id: ofile.c,v 1.7 2008/06/10 07:12:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4233,12 +4233,16 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 int f2dredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int redrawf;
+  int redrawf, num, dmax;
   int GC;
+  struct objlist parent;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"redraw_flag",inst,&redrawf);
-  if (redrawf) f2ddraw(obj,inst,rval,argc,argv);
+  _getobj(obj,"data_num",inst,&num);
+  _getobj(obj,"redraw_num",inst,&dmax);
+
+  if (num > 0 && num <= dmax && redrawf) f2ddraw(obj,inst,rval,argc,argv);
   else {
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;

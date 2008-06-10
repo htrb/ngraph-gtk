@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.8 2008/06/06 07:59:56 hito Exp $
+ * $Id: x11opt.c,v 1.9 2008/06/10 07:12:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -290,6 +290,10 @@ DefaultDialogClose(GtkWidget *win, void *data)
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
       snprintf(buf, BUF_SIZE, "viewer_load_file_on_redraw=%d", Mxlocal->redrawf);
+      arrayadd(&conf, &buf);
+    }
+    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+      snprintf(buf, BUF_SIZE, "viewer_load_file_data_number=%d", Mxlocal->redrawf_num);
       arrayadd(&conf, &buf);
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
@@ -1465,6 +1469,10 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   getobj(d->Obj, "redraw_flag", d->Id, 0, NULL, &a);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->loadfile)), a);
 
+  getobj(d->Obj, "redraw_num", d->Id, 0, NULL, &a);
+  snprintf(buf, sizeof(buf), "%d", Mxlocal->redrawf_num);
+  gtk_entry_set_text(GTK_ENTRY(d->data_num), buf);
+
   snprintf(buf, sizeof(buf), "%d", Mxlocal->grid);
   gtk_entry_set_text(GTK_ENTRY(d->grid), buf);
 }
@@ -1502,6 +1510,12 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_check_button_new_with_mnemonic(_("_Load files on redraw"));
     d->loadfile = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = create_text_entry(TRUE, TRUE);
+    item_setup(vbox, w, _("_Maximum number of data on redraw:"), FALSE);
+    d->data_num = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
@@ -1550,6 +1564,12 @@ ViewerDialogClose(GtkWidget *w, void *data)
   if (putobj(d->Obj, "redraw_flag", d->Id, &a) == -1)
     return;
   Mxlocal->redrawf = a;
+
+  buf = gtk_entry_get_text(GTK_ENTRY(d->data_num));
+  a = strtol(buf, &endptr, 10);
+  if (endptr[0] == '\0') {
+    Mxlocal->redrawf_num = a;
+  }
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->grid));
   a = strtol(buf, &endptr, 10);

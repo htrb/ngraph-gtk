@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.2 2008/06/04 01:25:00 hito Exp $
+ * $Id: odraw.c,v 1.3 2008/06/10 07:12:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -216,9 +216,7 @@ errexit:
   return 1;
 }
 
-#define TBLNUM 11
-
-struct objtable draw[TBLNUM] = {
+struct objtable draw[] = {
   {"init",NVFUNC,0,drawinit,NULL,0},
   {"done",NVFUNC,0,drawdone,NULL,0},
   {"GC",NINT,0,NULL,NULL,0},
@@ -230,7 +228,10 @@ struct objtable draw[TBLNUM] = {
   {"B",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"clip",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"redraw_flag",NBOOL,NREAD|NWRITE,NULL,NULL,0},
+  {"redraw_num",NINT,NREAD|NWRITE,NULL,NULL,0},
 };
+
+#define TBLNUM (sizeof(draw) / sizeof(*draw))
 
 void *adddraw()
 /* adddraw() returns NULL on error */

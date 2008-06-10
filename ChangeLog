@@ -1,5 +1,21 @@
 2008-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (ViewerDialogSetupItem, ViewerDialogSetup)
+	(ViewerDialogClose): add settings for "redraw_num".
+
+	* src/gtk/ox11menu.c (menuinit): set "redraw_num".
+	(mxredraw_num): add.
+	(mx_redraw): check Mxlocal->redrawf_num.
+	(mgtkloadconfig): get Mxlocal->redrawf_num from init file.
+	(menuinit): initialize Mxlocal->redrawf_num.
+	(gtkmenu): add "redraw_num"
+
+	* src/odraw.c (draw): add "redraw_num".
+
+	* src/gra.c (_GRAredraw): set "redraw_num".
+
+	* src/ofile.c (f2dredraw): check "redraw_num".
+
 	* src/gtk/x11commn.c (ProgressDialogFinalize)
 	(ProgressDialogCreate): call set_draw_lock().
 
