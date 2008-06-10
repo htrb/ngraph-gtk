@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11view.h,v 1.2 2008/06/10 11:31:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -20,6 +20,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
+
+struct focuslist
+{
+  struct objlist *obj;
+  int oid;
+  int ofsx, ofsy;
+};
 
 void ViewerWinSetup(void);
 void ViewerWinClose(void);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.6 2008/06/06 07:59:56 hito Exp $
+ * $Id: x11dialg.c,v 1.7 2008/06/10 11:31:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -328,7 +328,9 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
   */
 
-  if (d->isel != NULL) {
+  if (chkobjlastinst(d->Obj) == 0) {
+    list_store_select_nth(d->list, 0);
+  } else if (d->isel != NULL) {
     seldata = arraydata(d->isel);
     selnum = arraynum(d->isel);
 
@@ -415,7 +417,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   char *s;
   struct CopyDialog *d;
-  int i;
+  int i, n;
   GtkWidget *swin, *w;
   GtkTreeIter iter;
   n_list_store copy_list[] = {
@@ -448,7 +450,9 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     memfree(s);
   }
 
-  if (d->Id >= 0) {
+  if (chkobjlastinst(d->Obj) == 0) {
+    list_store_select_nth(d->list, 0);
+  } else if (d->Id >= 0) {
     list_store_select_nth(d->list, d->Id);
   }
   /*

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2wmf.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gra2wmf.c,v 1.2 2008/06/10 11:31:10 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -10,15 +10,6 @@
 
 /**
  *
- * $Log: gra2wmf.c,v $
- * Revision 1.1  2008/05/29 09:37:33  hito
- * Initial revision
- *
- * Revision 1.1.1.1  2008-05-29 08:47:24  hito
- * initial version.
- *
- * Revision 1.1.1.1  2008-05-26 06:03:45  hito
- * initial version
  *
  * Revision 1.1  2003/08/15 12:56:18  isizaka
  * Initial revision
@@ -785,9 +776,9 @@ void getboundingbox(char code,int *cpar,char *cstr)
     i=0;
     while (i<strlen(cstr)) {
       if (niskanji((unsigned char)cstr[i]) && (cstr[i+1]!='\0')) {
-        i+=2;
         w=charwidth((((unsigned char)cstr[i+1])<<8)+(unsigned char)cstr[i],
                        bfontalias,bpt);
+        i+=2;
         h=charheight(bfontalias,bpt);
         d=chardescent(bfontalias,bpt);
         x=0;
@@ -1229,7 +1220,7 @@ void draw(char code,int *cpar,char *cstr)
     TextOut(DC,dot2pixelx(nround(x0)),
                dot2pixely(nround(y0)),cstr,strlen(cstr));
     fontwidth=0;
-    for (i=0;i<strlen(s);i+=2) {
+    for (i=0;i<strlen(cstr);i+=2) {
       fontwidth+=charwidth((((unsigned char)cstr[i+1])<<8)+(unsigned char)cstr[i],
                            fontalias,fontsize/25.4*72);
       fontwidth+=fontspace;

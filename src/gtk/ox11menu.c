@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.10 2008/06/10 07:12:15 hito Exp $
+ * $Id: ox11menu.c,v 1.11 2008/06/10 11:31:11 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -52,6 +52,7 @@
 #include "ox11menu.h"
 #include "x11menu.h"
 #include "x11gui.h"
+#include "x11view.h"
 
 #define NAME "menu"
 #define ALIAS "winmenu:gtkmenu"
@@ -2329,6 +2330,47 @@ mxfullpathngp(struct objlist *obj, char *inst, char *rval, int argc,
   return 0;
 }
 
+static int
+mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int num, i, id;
+  char buf[256], *name, *ptr;
+  struct narray *oarray;
+  struct Viewer *d;
+  struct focuslist **focus;
+  
+
+  memfree(*(struct narray **)rval);
+  *(char **)rval = NULL;
+
+  d = &(NgraphApp.Viewer);
+
+  num = arraynum(d->focusobj);
+  focus = (struct focuslist **) arraydata(d->focusobj);
+
+  if (num < 1)
+    return 1;
+
+  oarray = arraynew(sizeof(char *));
+  for (i = 0; i < num; i++) {
+    inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
+    if (inst) {
+      _getobj(focus[i]->obj, "id", inst, &id);
+      name = chkobjectname(focus[i]->obj);
+      snprintf(buf, sizeof(buf), "%s:%d", name, id);
+      ptr = nstrdup(buf);
+      if (ptr) {
+	arrayadd(oarray, &ptr);
+      }
+    }
+  }
+
+  *(struct narray **)rval = oarray;
+
+  return 0;
+
+}
+
 static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
   {"done", NVFUNC, NEXEC, menudone, NULL, 0},
@@ -2342,6 +2384,7 @@ static struct objtable gtkmenu[] = {
   {"redraw", NVFUNC, NREAD | NEXEC, mxredraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
+  {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
   {"_output", NVFUNC, 0, mx_output, NULL, 0},
   {"_charwidth", NIFUNC, 0, mx_charwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, mx_charheight, NULL, 0},

@@ -1,5 +1,14 @@
 2008-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* driver/gra2wmf.c (draw, getboundingbox): fix bug reported at
+	http://www2e.biglobe.ne.jp/~isizaka/bbs_old/light.cgi [670].
+
+	* src/gtk/ox11menu.c (mx_get_focused): add.
+	(gtkmenu): add "focused".
+
+	* src/gtk/x11dialg.c (CopyDialogSetup, SelectDialogSetup): select
+	if there is only one instance.
+
 	* src/gtk/x11view.c (Match, AddInvalidateRect): add
 	set_draw_lock().
 

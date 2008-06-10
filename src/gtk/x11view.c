@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.19 2008/06/10 08:25:42 hito Exp $
+ * $Id: x11view.c,v 1.20 2008/06/10 11:31:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -53,13 +53,6 @@
 
 #define ID_BUF_SIZE 16
 #define SCROLL_INC 20
-
-struct focuslist
-{
-  struct objlist *obj;
-  int oid;
-  int ofsx, ofsy;
-};
 
 struct pointslist
 {

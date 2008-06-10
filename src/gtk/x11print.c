@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.2 2008/06/10 01:34:29 hito Exp $
+ * $Id: x11print.c,v 1.3 2008/06/10 11:31:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -663,10 +663,14 @@ CmPrintDataFile(void)
 
   if (Menulock || GlobalLock)
     return;
-  if ((obj = chkobject("file")) == NULL)
+
+  obj = chkobject("file");
+  if (obj == NULL)
     return;
+
   if (chkobjlastinst(obj) == -1)
     return;
+
   CopyDialog(&DlgCopy, obj, -1, FileCB);
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
     id = DlgCopy.sel;
