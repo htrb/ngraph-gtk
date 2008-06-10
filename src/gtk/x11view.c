@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.16 2008/06/10 01:34:29 hito Exp $
+ * $Id: x11view.c,v 1.17 2008/06/10 01:43:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4004,7 +4004,7 @@ Draw(int SelectFile)
   if (SelectFile && !SetFileHidden())
     return;
 
-  ProgressDialogCreate("Scaling");
+  ProgressDialogCreate(_("Scaling"));
 
   FitClear();
   FileAutoScale();

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.4 2008/06/10 01:34:28 hito Exp $
+ * $Id: x11commn.c,v 1.5 2008/06/10 01:43:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1621,6 +1621,7 @@ ProgressDialogCreate(char *title)
   vbox = gtk_vbox_new(FALSE, 4);
 
   ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
+  gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
 
   hbox = gtk_hbox_new(FALSE, 4);
