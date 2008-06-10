@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11print.c,v 1.2 2008/06/10 01:34:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -469,6 +469,7 @@ CmOutputDriver(int print)
 	ret = DialogExecute(TopLevel, &DlgDriver);
       }
       if (ret == IDOK) {
+	ProgressDialogCreate(_("Spawning external driver"));
 	SetStatusBar(_("Spawning external driver."));
 	g2winst = chkobjinst(g2wobj, g2wid);
 	_getobj(g2wobj, "oid", g2winst, &g2woid);
@@ -490,6 +491,7 @@ CmOutputDriver(int print)
 	device = (char *) memalloc(DEVICE_BUF_SIZE);
 	snprintf(device, DEVICE_BUF_SIZE, "gra2prn:^%d", g2woid);
 	putobj(graobj, "device", id, device);
+	ProgressDialogCreate(_("Printing"));
 	SetStatusBar(_("Printing."));
 	ignorestdio(&stdio);
 	getobj(graobj, "open", id, 0, NULL, &GC);
@@ -498,6 +500,7 @@ CmOutputDriver(int print)
 	exeobj(graobj, "close", id, 0, NULL);
 	restorestdio(&stdio);
 	delobj(graobj, id);
+	ProgressDialogFinalize();
 	ResetStatusBar();
       }
       delobj(g2wobj, g2wid);
@@ -528,6 +531,7 @@ CmOutputViewer(void)
     if ((g2wobj = chkobject("gra2gtk")) == NULL)
       return;
 
+    ProgressDialogCreate(_("Spawning external viewer"));
     SetStatusBar(_("Spawning external viewer."));
     g2wid = newobj(g2wobj);
 
@@ -565,6 +569,7 @@ CmOutputViewer(void)
       delgra = TRUE;
       _putobj(g2wobj, "delete_gra", g2winst, &delgra);
     }
+    ProgressDialogFinalize();
     ResetStatusBar();
   }
 }
@@ -611,6 +616,7 @@ CmPrintGRAFile(void)
       }
       g2wid = newobj(g2wobj);
       if (g2wid >= 0) {
+	ProgressDialogCreate(_("Making GRA file"));
 	SetStatusBar(_("Making GRA file."));
 	g2winst = chkobjinst(g2wobj, g2wid);
 	_getobj(g2wobj, "oid", g2winst, &g2woid);
@@ -639,6 +645,7 @@ CmPrintGRAFile(void)
 	exeobj(graobj, "close", id, 0, NULL);
 	delobj(graobj, id);
 	delobj(g2wobj, g2wid);
+	ProgressDialogFinalize();
 	ResetStatusBar();
       }
     }
@@ -681,11 +688,13 @@ CmPrintDataFile(void)
 	    return;
 	  }
 	}
+	ProgressDialogCreate(_("Making data file"));
 	SetStatusBar(_("Making data file."));
 	argv[0] = (char *) file;
 	argv[1] = (char *) &div;
 	argv[2] = NULL;
 	exeobj(obj, "output_file", id, 2, argv);
+	ProgressDialogFinalize();
 	ResetStatusBar();
       }
       free(file);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.5 2008/06/07 05:43:36 hito Exp $
+ * $Id: x11gui.c,v 1.6 2008/06/10 01:34:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -81,7 +81,7 @@ dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 
-static void 
+static gboolean 
 dialog_delete_cb(GtkWidget *w, GdkEvent *e, gpointer user_data)
 {
   return TRUE;

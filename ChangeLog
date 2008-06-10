@@ -1,43 +1,62 @@
+2008-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (CmOutputDriver, CmOutputViewer)
+	(CmPrintGRAFile, CmPrintDataFile): call ProgressDialogCreate() and
+	ProgressDialogFinalize().
+
+
 2008-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofit.c (fituser): call set_progress() instead of ndisplaystatus().
+	* src/ofit.c (fituser): call set_progress() instead of
+	ndisplaystatus().
 
-	* src/ioutil.c ShowProgressFunc, add set_progress_func() and set_progress().
+	* src/ioutil.c add ShowProgressFunc, set_progress_func() and
+	set_progress().
 
-	* src/ofile.c (getdata): check interrupt and call set_progress.
+	* src/ofile.c add set_data_progress().
+	(getdata): call set_data_progress().
 
 	* src/gtk/x11menu.c (Command1_data): remove do_interrupt.
 	(application): remove snooper_id, gtk_key_snooper_remove() and
 	gtk_key_snooper_install()
 
+	* src/gtk/x11commn.c add global variables ProgressBar and
+	ProgressDiaog.  add ProgressDialogCreate(),
+	ProgressDialogFinalize() and ProgressDialogSetTitle().
 
-	* src/gtk/x11view.c (show_progress, create_progress_dialog, cb_del): add.
-	(Draw): call create_progress_dialog(), set_progress_func(show_progress),
-	set_progress_func() and  gtk_widget_destroy().
-	* add global variables ProgressBar and ProgressDiaog.
+	* src/gtk/x11view.c (Draw): call ProgressDialogCreate(),
+	ProgressDialogFinalize() and ProgressDialogSetTitle().
 
 	* src/object.c (addobject): add alignment for 64bit architecture.
+
 
 2008-06-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerWinFileUpdate): fix bug reported at
 	http://www2e.biglobe.ne.jp/~isizaka/bbs_old/light.cgi [802]-[805].
-	(ViewerEvLButtonDown, ViewerEvRButtonDown): use nround() when change dpi.
+	(ViewerEvLButtonDown, ViewerEvRButtonDown): use nround() when
+	change dpi.
 	(ViewerEvScroll): fix bug d->VScroll to d->HScroll.
+
 
 2008-06-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.c (main): add g_set_application_name().
 
-	* src/gtk/x11menu.c (application): remove g_set_application_name().
+	* src/gtk/x11menu.c (application): remove
+	g_set_application_name().
 
-	* src/gtk/x11gui.c (FileSelectionDialog): call ResetEvent() after gtk_widget_destroy().
+	* src/gtk/x11gui.c (FileSelectionDialog): call ResetEvent() after
+	gtk_widget_destroy().
+
 
 2008-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (ngraphenvironment): add $NGRAPHHOME to PATH.
 
-	* src/ofile.c (f2dsettings): ignore remark character placed at the top of the line.
+	* src/ofile.c (f2dsettings): ignore remark character placed at the
+	top of the line.
+
 
 2008-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -61,22 +80,27 @@
 
 	* src/oarc.c (arczoom): add preserve_width.
 
-	* src/gtk/gtk_liststore.c (create_tree_view): add gtk_tree_view_column_set_resizable();
+	* src/gtk/gtk_liststore.c (create_tree_view): add
+	gtk_tree_view_column_set_resizable();
 
-	* src/gtk/x11file.c (FileDialogSetup): check string by g_utf8_validate();
+	* src/gtk/x11file.c (FileDialogSetup): check string by
+	g_utf8_validate();
 
-	* src/gtk/x11lgnd.c (legend_list_set_val): use g_utf8_strncpy() instead of strncpy().
+	* src/gtk/x11lgnd.c (legend_list_set_val): use g_utf8_strncpy()
+	instead of strncpy().
 
 2008-06-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11axis.c (AxisPosDialogSetupItem): add combo_box_clear(d->adjust).
+	* src/gtk/x11axis.c (AxisPosDialogSetupItem): add
+	combo_box_clear(d->adjust).
 
 	* src/gtk/ox11menu.c (mx_output): in the case 'V': remove
 	Mxlocal->scrollx and Mxlocal->scrolly.
 	(mx_output): in the case 'V': second argument must be mxd2py and
 	third argument must be mxd2px.
 
-	* src/gtk/x11view.c (MakeRuler): use mxd2p() instead of mxd2px() and mxd2y().
+	* src/gtk/x11view.c (MakeRuler): use mxd2p() instead of mxd2px()
+	and mxd2y().
 
 2008-05-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -96,5 +120,6 @@
 	* Makefile.am (SUBDIRS): Add po, m4.
 	(ACLOCAL_AMFLAGS): New variable.
 	(EXTRA_DIST): Add config.rpath.
+
 	* configure.in (AC_CONFIG_FILES): Add po/Makefile.in, m4/Makefile.
 

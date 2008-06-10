@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.3 2008/06/09 09:42:18 hito Exp $
+ * $Id: ofit.c,v 1.4 2008/06/10 01:34:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -499,7 +499,7 @@ int fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
       ndisplaydialog(buf);
     }
     */
-    if (count & 0x0f) {
+    if (count & 0x3f) {
       sprintf(buf,"fit:^%d Iteration = %d", fitlocal->oid, count);
       set_progress(buf, -1);
     }

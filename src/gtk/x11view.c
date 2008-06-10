@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.15 2008/06/09 09:21:56 hito Exp $
+ * $Id: x11view.c,v 1.16 2008/06/10 01:34:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -104,8 +104,6 @@ static int PaintLock = FALSE, ZoomLock = FALSE;
 static struct evaltype EvalList[EVAL_NUM_MAX];
 static struct narray SelList;
 // static char evbuf[256];
-static GtkWidget *ProgressDiaog = NULL;
-static GtkProgressBar *ProgressBar;
 
 #define IDEVMASK        101
 #define IDEVMOVE        102
@@ -137,7 +135,6 @@ static void ViewLast(void);
 static void ViewCopy(void);
 static void ViewCross(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
-
 
 static int
 graph_dropped(char *fname)
@@ -789,6 +786,8 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
     if ((snum = arraynum(sarray)) == 0)
       return;
 
+    ProgressDialogCreate(_("Evaluating"));
+
     sdata = (char **) arraydata(sarray);
     tot = 0;
 
@@ -817,6 +816,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
       }
     }
 
+    ProgressDialogFinalize();
     ResetStatusBar();
 
     if (tot > 0) {
@@ -3992,85 +3992,26 @@ ReopenGC(void)
   Mxlocal->region = NULL;
 }
 
-static void 
-stop_btn_clicked(GtkButton *button, gpointer user_data)
-{
-  NgraphApp.Interrupt = TRUE;
-}
-
-static void
-show_progress(char *msg, double fraction)
-{
-  if (fraction <= 0) {
-    gtk_progress_bar_pulse(ProgressBar);
-  } else {
-    gtk_progress_bar_set_fraction(ProgressBar, fraction);
-  }
-
-  gtk_progress_bar_set_text(ProgressBar, msg);
-}
-
-static gboolean
-cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  return TRUE;
-}
-
-static void
-create_progress_dialog(void)
-{
-  GtkWidget *btn, *vbox, *hbox;
-
-  if (ProgressDiaog)
-    gtk_widget_destroy(ProgressDiaog);
-
-  ProgressDiaog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title(GTK_WINDOW(ProgressDiaog), _("Drawing"));
-  g_signal_connect(ProgressDiaog, "delete-event", G_CALLBACK(cb_del), NULL);
-
-  gtk_window_set_transient_for(GTK_WINDOW(ProgressDiaog), GTK_WINDOW(TopLevel));
-  gtk_window_set_modal(GTK_WINDOW(ProgressDiaog), TRUE);
-  gtk_window_set_position(GTK_WINDOW(ProgressDiaog), GTK_WIN_POS_CENTER);
-  gtk_window_set_type_hint(GTK_WINDOW(ProgressDiaog), GDK_WINDOW_TYPE_HINT_DIALOG);
-
-  vbox = gtk_vbox_new(FALSE, 4);
-
-  ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
-  gtk_box_pack_start(GTK_BOX(vbox), ProgressBar, FALSE, FALSE, 4);
-
-  hbox = gtk_hbox_new(FALSE, 4);
-  btn = gtk_button_new_from_stock(GTK_STOCK_STOP);
-  g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
-  g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
-
-  gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
-
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-  gtk_container_add(GTK_CONTAINER(ProgressDiaog), vbox);
-
-  gtk_window_set_default_size(GTK_WINDOW(ProgressDiaog), 400, -1);
-  gtk_widget_show_all(ProgressDiaog);
-}
-
 void
 Draw(int SelectFile)
 {
   int SShowFrame, SShowLine, SShowRect, SShowCross;
   GdkGC *gc;
   struct Viewer *d;
-  GError *error = NULL;
-  int r;
 
   d = &(NgraphApp.Viewer);
 
   if (SelectFile && !SetFileHidden())
     return;
 
+  ProgressDialogCreate("Scaling");
+
   FitClear();
   FileAutoScale();
   AdjustAxis();
 
   SetStatusBar(_("Drawing."));
+  ProgressDialogSetTitle(_("Drawing"));
 
   gc = gdk_gc_new(d->win);
 
@@ -4100,8 +4041,6 @@ Draw(int SelectFile)
 
   region = NULL;
 
-  create_progress_dialog();
-  set_progress_func(show_progress);
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
     _exeobj(Menulocal.GRAobj, "clear", Menulocal.GRAinst, 0, NULL);
     d->ignoreredraw = TRUE;
@@ -4110,9 +4049,7 @@ Draw(int SelectFile)
     _exeobj(Menulocal.GRAobj, "draw", Menulocal.GRAinst, 0, NULL);
     _exeobj(Menulocal.GRAobj, "flush", Menulocal.GRAinst, 0, NULL);
   }
-  set_progress_func(NULL);
-  gtk_widget_destroy(ProgressDiaog);
-  ProgressDiaog = NULL;
+  ProgressDialogFinalize();
 
   d->ShowFrame = SShowFrame;
   d->ShowLine = SShowLine;

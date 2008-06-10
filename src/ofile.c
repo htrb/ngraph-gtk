@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.4 2008/06/09 09:21:55 hito Exp $
+ * $Id: ofile.c,v 1.5 2008/06/10 01:34:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -166,7 +166,7 @@ struct f2ddata {
   int maxdim;
   int need2pass;
   double minx,maxx,miny,maxy,sumx,sumy,sumxx,sumyy,sumxy;
-  int num,datanum;
+  int num,datanum,prev_datanum;
   char minxstat,maxxstat,minystat,maxystat;
   double memoryx[MEMORYNUM];
   char memorystatx[MEMORYNUM];
@@ -253,7 +253,7 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   int axtype,aytype,axposx,axposy,ayposx,ayposy,axlen,aylen,dirx,diry;
   char *inst1;
   int marksize,marktype;
-  int num,num2;
+  int num,num2,prev_datanum;
   int *data,*data2;
   char *raxis;
   double ip1,ip2;
@@ -284,6 +284,7 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   _getobj(obj,"mark_size",inst,&marksize);
   _getobj(obj,"mark_type",inst,&marktype);
   _getobj(obj,"data_clip",inst,&dataclip);
+  _getobj(obj,"data_num",inst,&prev_datanum);
 
   if (file==NULL) {
     error(obj,ERRFILE);
@@ -447,6 +448,7 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   fp->marktypebuf=NULL;
   fp->dxstatbuf=fp->dystatbuf=fp->d2statbuf=fp->d3statbuf=NULL;
   fp->linebuf=NULL;
+  fp->prev_datanum = prev_datanum;
   if (((fp->dxbuf=memalloc(sizeof(double)*DXBUFSIZE))==NULL)
    || ((fp->dybuf=memalloc(sizeof(double)*DXBUFSIZE))==NULL)
    || ((fp->d2buf=memalloc(sizeof(double)*DXBUFSIZE))==NULL)
@@ -1492,6 +1494,32 @@ int hskipdata(struct f2ddata *fp)
   return 0;
 }
 
+static int
+set_data_progress(struct f2ddata *fp)
+{
+  static char msgbuf[256];
+  double frac;
+
+  if (fp->final > 0) {
+    frac = 1.0 * fp->line / fp->final;
+  } else if (fp->prev_datanum > 0) {
+    if (fp->datanum <= fp->prev_datanum) {
+      frac = 1.0 * fp->datanum / fp->prev_datanum;
+    } else {
+      frac = -1;
+    }
+  } else {
+    frac = -1;
+  }
+  snprintf(msgbuf, sizeof(msgbuf), "%d: %s (%d)", fp->id, fp->file, fp->line);
+  set_progress(msgbuf, frac);
+  if (ninterrupt()) {
+    fp->eof=TRUE;
+    return TRUE;
+  }
+  return FALSE;
+}
+
 int getdata(struct f2ddata *fp)
 /*
   return -1: fatal error
@@ -1527,7 +1555,6 @@ int getdata(struct f2ddata *fp)
   char *inst1;
   double *gdata;
   char *gstat;
-  double frac;
 
   if (((gdata=(double *)memalloc(sizeof(double)*(MAXCOL+1)))==NULL)
   || ((gstat=(char *)memalloc(sizeof(char)*(MAXCOL+1)))==NULL)) {
@@ -1568,34 +1595,26 @@ int getdata(struct f2ddata *fp)
   datay=arraydata(&filedatay);
   staty=arraydata(&filestaty);
   while (!fp->eof && (fp->bufnum<DXBUFSIZE)) {
-    static char msgbuf[256];
-    if ((fp->line & 0x3fff) == 0) {
-      if (fp->final < 1) {
-	frac = -1;
-      } else {
-	frac = 1.0 * fp->line / fp->final;
-      }
-      snprintf(msgbuf, sizeof(msgbuf), "%d: %s (%d)", fp->id, fp->file, fp->line);
-      set_progress(msgbuf, frac);
-      if (ninterrupt()) {
-	fp->eof=TRUE;
-	break;
-      }
+    if ((fp->line & 0x3fff) == 0 && set_data_progress(fp)) {
+      break;
     }
 
     if ((fp->final>=0) && (fp->line>=fp->final)) {
       fp->eof=TRUE;
       break;
     }
+
     if ((rcode=fgetline(fp->fd,&buf))==1) {
       fp->eof=TRUE;
       break;
     }
+
     if (rcode==-1) {
       memfree(gdata);
       memfree(gstat);
       return -1;
     }
+
     fp->line++;
     for (i=0;(buf[i]!='\0') && (strchr(fp->ifs,buf[i])!=NULL);i++);
     if ((buf[i]!='\0')

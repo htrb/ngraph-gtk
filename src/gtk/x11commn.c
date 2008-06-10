@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.3 2008/06/06 06:34:22 hito Exp $
+ * $Id: x11commn.c,v 1.4 2008/06/10 01:34:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -52,6 +52,9 @@
 
 #define COMMENT_BUF_SIZE 1024
 #define CB_BUF_SIZE 128
+
+static GtkWidget *ProgressDiaog = NULL;
+static GtkProgressBar *ProgressBar;
 
 void
 OpenGRA(void)
@@ -1563,3 +1566,84 @@ create_text_entry(int set_default_size, int set_default_action)
   return w;
 }
 
+
+void
+ProgressDialogSetTitle(char *title)
+{
+  if (ProgressDiaog)
+    gtk_window_set_title(GTK_WINDOW(ProgressDiaog), title);
+}
+
+static void
+show_progress(char *msg, double fraction)
+{
+  if (! ProgressDiaog)
+    return;
+
+  if (fraction <= 0) {
+    gtk_progress_bar_pulse(ProgressBar);
+  } else {
+    gtk_progress_bar_set_fraction(ProgressBar, fraction);
+  }
+
+  gtk_progress_bar_set_text(ProgressBar, msg);
+}
+
+static gboolean
+cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
+{
+  return TRUE;
+}
+
+static void 
+stop_btn_clicked(GtkButton *button, gpointer user_data)
+{
+  NgraphApp.Interrupt = TRUE;
+}
+
+void
+ProgressDialogCreate(char *title)
+{
+  GtkWidget *btn, *vbox, *hbox;
+
+  if (ProgressDiaog)
+    gtk_widget_destroy(ProgressDiaog);
+
+  ProgressDiaog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  g_signal_connect(ProgressDiaog, "delete-event", G_CALLBACK(cb_del), NULL);
+  gtk_window_set_title(GTK_WINDOW(ProgressDiaog), title);
+
+  gtk_window_set_transient_for(GTK_WINDOW(ProgressDiaog), GTK_WINDOW(TopLevel));
+  gtk_window_set_modal(GTK_WINDOW(ProgressDiaog), TRUE);
+  gtk_window_set_position(GTK_WINDOW(ProgressDiaog), GTK_WIN_POS_CENTER);
+  gtk_window_set_type_hint(GTK_WINDOW(ProgressDiaog), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+  vbox = gtk_vbox_new(FALSE, 4);
+
+  ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
+  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
+
+  hbox = gtk_hbox_new(FALSE, 4);
+  btn = gtk_button_new_from_stock(GTK_STOCK_STOP);
+  g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
+  g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
+
+  gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
+
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+  gtk_container_add(GTK_CONTAINER(ProgressDiaog), vbox);
+
+  gtk_window_set_default_size(GTK_WINDOW(ProgressDiaog), 400, -1);
+  gtk_widget_show_all(ProgressDiaog);
+
+  set_progress_func(show_progress);
+}
+
+void
+ProgressDialogFinalize(void)
+{
+  set_progress_func(NULL);
+  gtk_widget_destroy(ProgressDiaog);
+  ProgressDiaog = NULL;
+  ProgressBar = NULL;
+}
