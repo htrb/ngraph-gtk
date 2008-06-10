@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.3 2008/06/04 01:25:00 hito Exp $
+ * $Id: oaxis.c,v 1.4 2008/06/10 04:21:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2222,9 +2222,9 @@ int axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,
   int fnum;
   int *fdata;
   struct narray iarray;
-  double min,max,min1,max1;
+  double min,max,min1,max1, frac;
   int i,id,set;
-  char buf[20];
+  char buf[20], msgbuf[64];
   char *argv2[4];
   struct narray *minmax;
 
@@ -2238,6 +2238,9 @@ int axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,
   argv2[1]=NULL;
   set=FALSE;
   for (i=0;i<fnum;i++) {
+    frac = 1.0 * i / fnum;
+    snprintf(msgbuf, sizeof(msgbuf), "%s (%.1f%%)", buf, frac * 100);
+    set_progress(1, msgbuf, frac);
     minmax=NULL;
     getobj(fobj,"bounding",fdata[i],1,argv2,&minmax);
     if (arraynum(minmax)>=2) {

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-10 10:35+0900\n"
-"PO-Revision-Date: 2008-06-10 10:36+0900\n"
+"POT-Creation-Date: 2008-06-10 11:39+0900\n"
+"PO-Revision-Date: 2008-06-10 11:40+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1997,6 +1997,11 @@ msgstr "¼Â²£ËÀ"
 #: src/ofile.c:128
 msgid "bar_solid_fill_y"
 msgstr "¼Â½ÄËÀ"
+
+#: src/ogra.c:372
+#, c-format
+msgid "drawing %s (%.1f%%)"
+msgstr "%s ÉÁ²èÃæ (%.1f%%)"
 
 #~ msgid "Interrupt"
 #~ msgstr "Ãæ»ß"

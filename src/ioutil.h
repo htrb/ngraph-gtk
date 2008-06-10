@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.h,v 1.2 2008/06/09 09:21:55 hito Exp $
+ * $Id: ioutil.h,v 1.3 2008/06/10 04:21:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -70,5 +70,5 @@ int nwrite(HANDLE fd,char *buf,unsigned len);
 HANDLE stdinfd(void);
 HANDLE stdoutfd(void);
 HANDLE stderrfd(void);
-void set_progress_func(void (* func)(char *, double));
-void set_progress(char *msg, double fraction);
+void set_progress_func(void (* func)(int, char *, double));
+void set_progress(int pos, char *msg, double fraction);

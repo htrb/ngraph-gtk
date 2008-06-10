@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.4 2008/06/05 01:18:37 hito Exp $
+ * $Id: x11menu.h,v 1.5 2008/06/10 04:21:37 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -79,6 +79,8 @@ enum MenuID {
   MenuIdHelpAbout,
   MenuIdHelpHelp,
 };
+
+enum DrawLockVal {DrawLockNone, DrawLockDraw, DrawLockExpose};
 
 #define VIEWER_POPUP_ITEM_NUM 6
 struct Viewer
@@ -260,5 +262,6 @@ int ChkInterrupt();
 int InputYN(char *mes);
 GdkPixbuf *create_pixbuf_from_xpm(GtkWidget *win, char **xpm);
 void QuitGUI(void);
+void set_draw_lock(int lock);
 
 #endif

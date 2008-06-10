@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.5 2008/06/10 01:43:40 hito Exp $
+ * $Id: x11commn.c,v 1.6 2008/06/10 04:21:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -54,7 +54,7 @@
 #define CB_BUF_SIZE 128
 
 static GtkWidget *ProgressDiaog = NULL;
-static GtkProgressBar *ProgressBar;
+static GtkProgressBar *ProgressBar, *ProgressBar2;
 
 void
 OpenGRA(void)
@@ -1575,18 +1575,26 @@ ProgressDialogSetTitle(char *title)
 }
 
 static void
-show_progress(char *msg, double fraction)
+show_progress(int pos, char *msg, double fraction)
 {
+  GtkProgressBar *bar;
+
   if (! ProgressDiaog)
     return;
 
-  if (fraction <= 0) {
-    gtk_progress_bar_pulse(ProgressBar);
+  if (pos) {
+    bar = ProgressBar2;
   } else {
-    gtk_progress_bar_set_fraction(ProgressBar, fraction);
+    bar = ProgressBar;
   }
 
-  gtk_progress_bar_set_text(ProgressBar, msg);
+  if (fraction < 0) {
+    gtk_progress_bar_pulse(bar);
+  } else {
+    gtk_progress_bar_set_fraction(bar, fraction);
+  }
+
+  gtk_progress_bar_set_text(bar, msg);
 }
 
 static gboolean
@@ -1609,6 +1617,8 @@ ProgressDialogCreate(char *title)
   if (ProgressDiaog)
     gtk_widget_destroy(ProgressDiaog);
 
+  set_draw_lock(DrawLockDraw);
+
   ProgressDiaog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   g_signal_connect(ProgressDiaog, "delete-event", G_CALLBACK(cb_del), NULL);
   gtk_window_set_title(GTK_WINDOW(ProgressDiaog), title);
@@ -1623,6 +1633,10 @@ ProgressDialogCreate(char *title)
   ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
+
+  ProgressBar2 = GTK_PROGRESS_BAR(gtk_progress_bar_new());
+  gtk_progress_bar_set_ellipsize(ProgressBar2, PANGO_ELLIPSIZE_MIDDLE);
+  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
 
   hbox = gtk_hbox_new(FALSE, 4);
   btn = gtk_button_new_from_stock(GTK_STOCK_STOP);
@@ -1647,4 +1661,5 @@ ProgressDialogFinalize(void)
   gtk_widget_destroy(ProgressDiaog);
   ProgressDiaog = NULL;
   ProgressBar = NULL;
+  set_draw_lock(DrawLockNone);
 }

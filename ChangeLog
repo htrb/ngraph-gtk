@@ -1,5 +1,18 @@
 2008-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (ProgressDialogFinalize)
+	(ProgressDialogCreate): call set_draw_lock().
+
+	* src/gtk/x11menu.c (ChkInterrupt): chack DrawLock.
+	(set_draw_lock): add.
+	add DrawLock.
+
+	* src/gtk/ox11menu.c (mx_redraw): call set_draw_lock().
+
+	* src/gtk/x11commn.c: add ProgressBar2.
+
+	* src/ogra.c (oGRAdraw): call set_progress().
+
 	* src/gtk/x11print.c (CmOutputDriver, CmOutputViewer)
 	(CmPrintGRAFile, CmPrintDataFile): call ProgressDialogCreate() and
 	ProgressDialogFinalize().
@@ -18,7 +31,7 @@
 
 	* src/gtk/x11menu.c (Command1_data): remove do_interrupt.
 	(application): remove snooper_id, gtk_key_snooper_remove() and
-	gtk_key_snooper_install()
+	gtk_key_snooper_install().
 
 	* src/gtk/x11commn.c add global variables ProgressBar and
 	ProgressDiaog.  add ProgressDialogCreate(),

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.5 2008/06/10 01:34:27 hito Exp $
+ * $Id: ofile.c,v 1.6 2008/06/10 04:21:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1512,7 +1512,7 @@ set_data_progress(struct f2ddata *fp)
     frac = -1;
   }
   snprintf(msgbuf, sizeof(msgbuf), "%d: %s (%d)", fp->id, fp->file, fp->line);
-  set_progress(msgbuf, frac);
+  set_progress(0, msgbuf, frac);
   if (ninterrupt()) {
     fp->eof=TRUE;
     return TRUE;

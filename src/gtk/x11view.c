@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.17 2008/06/10 01:43:40 hito Exp $
+ * $Id: x11view.c,v 1.18 2008/06/10 04:21:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4049,7 +4049,6 @@ Draw(int SelectFile)
     _exeobj(Menulocal.GRAobj, "draw", Menulocal.GRAinst, 0, NULL);
     _exeobj(Menulocal.GRAobj, "flush", Menulocal.GRAinst, 0, NULL);
   }
-  ProgressDialogFinalize();
 
   d->ShowFrame = SShowFrame;
   d->ShowLine = SShowLine;
@@ -4073,6 +4072,7 @@ Draw(int SelectFile)
   g_object_unref(G_OBJECT(gc));
   ResetStatusBar();
 
+  ProgressDialogFinalize();
 
   gdk_window_invalidate_rect(d->win, NULL, TRUE);
 }

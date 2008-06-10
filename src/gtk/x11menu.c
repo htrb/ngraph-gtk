@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.11 2008/06/09 09:42:21 hito Exp $
+ * $Id: x11menu.c,v 1.12 2008/06/10 04:21:36 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -63,7 +63,7 @@ GtkWidget *TopLevel = NULL;
 // int RegisterWorkProc;
 // XtWorkProcId WorkProcId;
 
-static int Hide_window = FALSE, Toggle_cb_disable = FALSE;
+static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL,
   *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL;
@@ -397,6 +397,12 @@ struct narray ChildList;
 int signaltrap = FALSE;
 
 GdkColor black, white, gray, red, blue;
+
+void 
+set_draw_lock(int lock)
+{
+  DrawLock = lock;
+}
 
 void
 childhandler(int sig)
@@ -1820,6 +1826,9 @@ ChkInterrupt(void)
     return TRUE;
   }
 #else
+  if (DrawLock == DrawLockExpose)
+    return FALSE;
+
   while (gtk_events_pending()) {
     gtk_main_iteration_do(FALSE);
     if (NgraphApp.Interrupt) {

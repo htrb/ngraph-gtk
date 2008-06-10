@@ -18,3 +18,4 @@ src/odraw.c
 src/oaxis.c
 src/ofit.c
 src/ofile.c
+src/ogra.c

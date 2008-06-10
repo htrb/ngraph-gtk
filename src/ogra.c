@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ogra.c,v 1.2 2008/06/10 04:21:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,7 @@
  * 
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <limits.h>
 #include <stdlib.h>
@@ -340,8 +338,10 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int GC;
   struct objlist *draw;
   struct narray *array;
-  char **drawrable;
+  char **drawrable, *objname;
   int j,i,anum,instnum;
+  char msgbuf[1024];
+  double frac;
 
   _getobj(obj,"GC",inst,&GC);
   if (GC==-1) {
@@ -358,12 +358,22 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     anum=arraynum(array);
     drawrable=arraydata(array);
     for (j=0;j<anum;j++) {
-      if ((draw=getobject(drawrable[j]))!=NULL) {
-        if ((instnum=chkobjlastinst(draw))!=-1)
-          for (i=0;i<=instnum;i++) {
-            if (ninterrupt()) return 0;
-            exeobj(draw,"draw",i,1,oGRAargv);
-          }
+      draw=getobject(drawrable[j]);
+      if (draw == NULL)
+	continue;
+
+      instnum = chkobjlastinst(draw);
+      if (instnum < 0)
+	continue;
+
+      objname = chkobjectname(draw);
+      for (i=0;i<=instnum;i++) {
+	frac = 1.0 * i / (instnum + 1);
+	sprintf(msgbuf, _("drawing %s (%.1f%%)"), objname, frac * 100);
+	set_progress(1, msgbuf, frac);
+
+	if (ninterrupt()) return 0;
+	exeobj(draw,"draw",i,1,oGRAargv);
       }
     }
   }
