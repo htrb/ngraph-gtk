@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.11 2008/06/10 11:31:11 hito Exp $
+ * $Id: ox11menu.c,v 1.12 2008/06/12 07:11:45 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1363,7 +1363,6 @@ void
 mx_redraw(struct objlist *obj, char *inst)
 {
   int n;
-  set_draw_lock(DrawLockExpose);
 
   if (Mxlocal->region) {
     mx_clear(Mxlocal->region);
@@ -1377,8 +1376,6 @@ mx_redraw(struct objlist *obj, char *inst)
 
   GRAredraw(obj, inst, TRUE, n);
   mxflush(obj, inst, NULL, 0, NULL);
-
-  set_draw_lock(DrawLockNone);
 }
 
 void
@@ -2108,6 +2105,9 @@ mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     fontsin = sin(fontdir);
     fontcos = cos(fontdir);
     Mxlocal->fontdir = (cpar[3] % 36000) / 100.0;
+    if (Mxlocal->fontdir < 0) {
+      Mxlocal->fontdir += 360;
+    }
     Mxlocal->fontsin = fontsin;
     Mxlocal->fontcos = fontcos;
 

@@ -4,7 +4,7 @@
 
 	* src/gtk/x11view.c (AddInvalidateRect, Match): remove set_draw_lock().
 
-	* src/gtk/x11menu.c (ChkInterrupt): do gtk_main_iteration() only
+	* src/gtk/x11menu.c (ChkInterrupt): do gtk_main_iteration_do() only
 	when DrawLock == DrawLockDraw.
 
 	* src/gtk/ox11menu.c (mx_output): bug fix add 360 to
@@ -25,7 +25,7 @@
 	(gtkmenu): add "focused".
 
 	* src/gtk/x11dialg.c (CopyDialogSetup, SelectDialogSetup): select
-	if there is only one instance.
+	item if there is only one item.
 
 	* src/gtk/x11view.c (Match, AddInvalidateRect): add
 	set_draw_lock().

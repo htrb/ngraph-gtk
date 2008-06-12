@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.20 2008/06/10 11:31:11 hito Exp $
+ * $Id: x11view.c,v 1.21 2008/06/12 07:11:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -973,8 +973,6 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
   struct savedstdio save;
   struct Viewer *d;
 
-  set_draw_lock(DrawLockExpose);
-
   d = &(NgraphApp.Viewer);
 
   ignorestdio(&save);
@@ -1021,8 +1019,6 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
     }
   }
   restorestdio(&save);
-
-  set_draw_lock(DrawLockNone);
 }
 
 static void
@@ -1133,8 +1129,6 @@ AddInvalidateRect(struct objlist *obj, char *inst)
   struct Viewer *d;
   GdkRectangle rect;
 
-  set_draw_lock(DrawLockExpose);
-
   d = &(NgraphApp.Viewer);
   _exeobj(obj, "bbox", inst, 0, NULL);
   _getobj(obj, "bbox", inst, &abbox);
@@ -1153,8 +1147,6 @@ AddInvalidateRect(struct objlist *obj, char *inst)
 
     gdk_region_union_with_rect(region, &rect);
   }
-
-  set_draw_lock(DrawLockNone);
 }
 
 

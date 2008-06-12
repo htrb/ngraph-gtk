@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.13 2008/06/10 08:25:42 hito Exp $
+ * $Id: x11menu.c,v 1.14 2008/06/12 07:11:45 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1824,7 +1824,7 @@ ChkInterrupt(void)
     return TRUE;
   }
 #else
-  if (DrawLock == DrawLockExpose)
+  if (DrawLock != DrawLockDraw)
     return FALSE;
 
   while (gtk_events_pending()) {
