@@ -25,7 +25,7 @@
 	(gtkmenu): add "focused".
 
 	* src/gtk/x11dialg.c (CopyDialogSetup, SelectDialogSetup): select
-	item if there is only one item.
+	if there is only one instance.
 
 	* src/gtk/x11view.c (Match, AddInvalidateRect): add
 	set_draw_lock().
