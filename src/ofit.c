@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.5 2008/06/10 04:21:33 hito Exp $
+ * $Id: ofit.c,v 1.6 2008/06/12 09:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <math.h>
 #include "ngraph.h"
+#include "ioutil.h"
 #include "object.h"
 #include "mathcode.h"
 #include "mathfn.h"

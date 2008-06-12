@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.2 2008/06/10 07:12:13 hito Exp $
+ * $Id: gra.c,v 1.3 2008/06/12 09:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -421,7 +421,7 @@ struct objlist *GRAgetlist(int GC,int *oid,char **field,int n)
   return getobjlist(sdata[n],oid,field,NULL);
 }
 
-void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redrawf,
+void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
                 int addn,struct objlist *obj,char *inst,char *field)
 {
   int i;
@@ -443,10 +443,10 @@ void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redrawf,
     if ((dobj=getobjlist(sdata[i],&did,&dfield,NULL))!=NULL) {
       if ((dinst=chkobjinstoid(dobj,did))!=NULL) {
         if (setredrawf) {
-	  int t = TRUE;
+	  int t = (redraw_num != 0);
           _getobj(dobj,"redraw_flag",dinst,&redrawfsave);
           _putobj(dobj,"redraw_flag",dinst, &t);
-          _putobj(dobj,"redraw_num",dinst, &redrawf);
+          _putobj(dobj,"redraw_num",dinst, &redraw_num);
         }
         _exeobj(dobj,dfield,dinst,1,dargv);
         if (setredrawf) {
@@ -459,12 +459,12 @@ void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redrawf,
   }
 }
 
-void GRAredraw(struct objlist *obj,char *inst,int setredrawf,int redrawf)
+void GRAredraw(struct objlist *obj,char *inst,int setredrawf,int redraw_num)
 {
-  GRAredraw2(obj,inst,setredrawf,redrawf,-1,NULL,NULL,NULL);
+  GRAredraw2(obj,inst,setredrawf,redraw_num,-1,NULL,NULL,NULL);
 }
 
-void GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redrawf,
+void GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redraw_num,
                 int addn,struct objlist *aobj,char *ainst,char *afield)
 {
   struct narray *sarray;
@@ -512,7 +512,7 @@ void GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redrawf,
       return;
     }
   }
-  _GRAredraw(GCnew,snum,sdata,setredrawf,redrawf,addn,aobj,ainst,afield);
+  _GRAredraw(GCnew,snum,sdata,setredrawf,redraw_num,addn,aobj,ainst,afield);
   arrayfree2(sarray);
   if (GC==-1) _exeobj(gobj,"close",ginst,0,NULL);
 }

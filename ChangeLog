@@ -1,5 +1,24 @@
 2008-06-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/omerge.c (mergeinit): initialize "line_num".
+
+	* src/ogra.c (set_progress_val): add.
+	(oGRAdraw): use set_progress_val().
+	(oGRAdrawparent): call set_progress_val().
+
+	* src/omerge.c (mergeredraw): check redraw_num.
+
+	* src/gra.c (_GRAredraw): set "redraw_flag" as FALSE when redrawf
+	is zero.
+	(GRAredraw2, GRAredraw, _GRAredraw): replacec redrawf to redraw_num.
+
+	* src/omerge.c (merge): add "line_num"
+
+	* src/oaxis.c (axisautoscalefile): display "groupe" property when
+	the property is not NULL.
+
+	* src/gtk/x11axis.c (axis_list_set_val): get "group" instead of "name".
+
 	* src/gtk/ox11menu.c (mx_redraw): remove set_draw_lock().
 
 	* src/gtk/x11view.c (AddInvalidateRect, Match): remove set_draw_lock().
@@ -25,7 +44,7 @@
 	(gtkmenu): add "focused".
 
 	* src/gtk/x11dialg.c (CopyDialogSetup, SelectDialogSetup): select
-	if there is only one instance.
+	item if there is only one item.
 
 	* src/gtk/x11view.c (Match, AddInvalidateRect): add
 	set_draw_lock().

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.2 2008/06/10 04:21:33 hito Exp $
+ * $Id: ogra.c,v 1.3 2008/06/12 09:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,10 +25,12 @@
 
 #include <limits.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 #include "ngraph.h"
 #include "object.h"
+#include "ioutil.h"
 #include "gra.h"
 
 #define NAME "gra"
@@ -56,6 +58,8 @@ char *GRAerrorlist[ERRNUM]={
   "gra is now opened.",
   "gra is closed."
 };
+
+static void set_progress_val(int i, int n, char *name);
 
 int oGRAinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
@@ -317,15 +321,21 @@ int oGRAdrawparent(struct objlist *parent)
 {
   struct objlist *ocur;
   int i,instnum;
+  char *objname;
 
   ocur=chkobjroot();
   while (ocur!=NULL) {
     if (chkobjparent(ocur)==parent) {
-      if ((instnum=chkobjlastinst(ocur))!=-1)
+      instnum = chkobjlastinst(ocur);
+      if (instnum != -1) {
+	objname = chkobjectname(ocur);
         for (i=0;i<=instnum;i++) {
+	  set_progress_val(i, instnum, objname);
+
           if (ninterrupt()) return FALSE;
           exeobj(ocur,"draw",i,1,oGRAargv);
         }
+      }
       if (!oGRAdrawparent(ocur)) return FALSE;
     }
     ocur=ocur->next;
@@ -340,8 +350,6 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *array;
   char **drawrable, *objname;
   int j,i,anum,instnum;
-  char msgbuf[1024];
-  double frac;
 
   _getobj(obj,"GC",inst,&GC);
   if (GC==-1) {
@@ -368,9 +376,7 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
       objname = chkobjectname(draw);
       for (i=0;i<=instnum;i++) {
-	frac = 1.0 * i / (instnum + 1);
-	sprintf(msgbuf, _("drawing %s (%.1f%%)"), objname, frac * 100);
-	set_progress(1, msgbuf, frac);
+	set_progress_val(i, instnum, objname);
 
 	if (ninterrupt()) return 0;
 	exeobj(draw,"draw",i,1,oGRAargv);
@@ -378,6 +384,17 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
   }
   return 0;
+}
+
+static void
+set_progress_val(int i, int n, char *name)
+{
+  double frac;
+  char msgbuf[1024];
+
+  frac = 1.0 * i / (n + 1);
+  snprintf(msgbuf, sizeof(msgbuf), _("drawing %s (%.1f%%)"), name, frac * 100);
+  set_progress(1, msgbuf, frac);
 }
 
 #define TBLNUM 18

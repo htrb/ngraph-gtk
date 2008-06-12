@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.2 2008/06/03 07:18:29 hito Exp $
+ * $Id: omerge.c,v 1.3 2008/06/12 09:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -73,14 +73,16 @@ struct mergelocal {
 
 int mergeinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int zm,greek;
+  int zm, greek, n;
   struct mergelocal *mergelocal;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   zm=10000;
   greek=TRUE;
+  n = 0;
   if (_putobj(obj,"zoom",inst,&zm)) return 1;
   if (_putobj(obj,"symbol_greek",inst,&greek)) return 1;
+  if (_putobj(obj,"line_num",inst,&n)) return 1;
   if ((mergelocal=memalloc(sizeof(struct mergelocal)))==NULL) goto errexit;
   if (_putobj(obj,"_local",inst,mergelocal)) goto errexit;
   mergelocal->storefd=NULL;
@@ -106,7 +108,7 @@ int mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   FILE *fd;
   char *buf;
   int lm,tm,zm;
-  int newgra,rcode,greek;
+  int newgra,rcode,greek,line = 0;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"GC",inst,&GC);
@@ -164,21 +166,27 @@ int mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 1;
     }
     memfree(buf);
+    line++;
   }
   fclose(fd);
   GRAaddlist(GC,obj,inst,(char *)argv[0],"redraw");
+  _putobj(obj, "line_num", inst, &line);
   return 0;
 }
 
 int mergeredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int redrawf;
+  int redrawf, dmax, line_num;
   int GC;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"redraw_flag",inst,&redrawf);
-  if (redrawf) mergedraw(obj,inst,rval,argc,argv);
-  else {
+  _getobj(obj,"redraw_num", inst, &dmax);
+  _getobj(obj,"line_num", inst, &line_num);
+
+  if (redrawf && line_num > 0 && line_num < dmax * 10) {
+    mergedraw(obj,inst,rval,argc,argv);
+  } else {
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
     GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
@@ -579,9 +587,7 @@ int mergegeometry(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-#define TBLNUM 23
-
-struct objtable merge[TBLNUM] = {
+struct objtable merge[] = {
   {"init",NVFUNC,NEXEC,mergeinit,NULL,0},
   {"done",NVFUNC,NEXEC,mergedone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -600,6 +606,7 @@ struct objtable merge[TBLNUM] = {
   {"load_dummy",NVFUNC,NREAD|NEXEC,mergeloaddum,"s"},
   {"time",NSFUNC,NREAD|NEXEC,mergetime,"i",0},
   {"date",NSFUNC,NREAD|NEXEC,mergedate,"i",0},
+  {"line_num",NINT,NREAD,NULL,NULL,0},
 
   {"bbox",NIAFUNC,NREAD|NEXEC,mergebbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,mergemove,"ii",0},
@@ -608,6 +615,8 @@ struct objtable merge[TBLNUM] = {
 
   {"_local",NPOINTER,0,NULL,NULL,0}
 };
+
+#define TBLNUM (sizeof(merge) / sizeof(*merge))
 
 void *addmerge()
 /* addmerge() returns NULL on error */

@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.4 2008/06/10 04:21:33 hito Exp $
+ * $Id: oaxis.c,v 1.5 2008/06/12 09:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,7 @@
 #include "common.h"
 
 #include "ngraph.h"
+#include "ioutil.h"
 #include "object.h"
 #include "mathfn.h"
 #include "spline.h"
@@ -2224,7 +2225,7 @@ int axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,
   struct narray iarray;
   double min,max,min1,max1, frac;
   int i,id,set;
-  char buf[20], msgbuf[64];
+  char buf[20], msgbuf[64], *group;
   char *argv2[4];
   struct narray *minmax;
 
@@ -2234,12 +2235,13 @@ int axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,
   fdata=arraydata(&iarray);
   _getobj(obj,"id",inst,&id);
   sprintf(buf,"axis:%d",id);
+  _getobj(obj,"group",inst,&group);
   argv2[0]=(void *)buf;
   argv2[1]=NULL;
   set=FALSE;
   for (i=0;i<fnum;i++) {
     frac = 1.0 * i / fnum;
-    snprintf(msgbuf, sizeof(msgbuf), "%s (%.1f%%)", buf, frac * 100);
+    snprintf(msgbuf, sizeof(msgbuf), "%s (%.1f%%)", (group) ? group : buf, frac * 100);
     set_progress(1, msgbuf, frac);
     minmax=NULL;
     getobj(fobj,"bounding",fdata[i],1,argv2,&minmax);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.7 2008/06/10 11:31:11 hito Exp $
+ * $Id: x11dialg.c,v 1.8 2008/06/12 09:04:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -417,7 +417,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   char *s;
   struct CopyDialog *d;
-  int i, n;
+  int i;
   GtkWidget *swin, *w;
   GtkTreeIter iter;
   n_list_store copy_list[] = {

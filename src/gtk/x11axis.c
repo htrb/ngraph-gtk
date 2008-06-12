@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.9 2008/06/06 04:30:58 hito Exp $
+ * $Id: x11axis.c,v 1.10 2008/06/12 09:04:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2839,7 +2839,7 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
   for (i = 0; i < AXIS_WIN_COL_NUM; i++) {
     if (strcmp(Alist[i].name, "group") == 0) {
       char *name;
-      getobj(d->obj, "name", row, 0, NULL, &name);
+      getobj(d->obj, "group", row, 0, NULL, &name);
       if (name != NULL) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, name);
       } else {
