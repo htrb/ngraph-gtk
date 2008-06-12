@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.11 2008/06/08 03:01:25 hito Exp $
+ * $Id: x11file.c,v 1.12 2008/06/12 10:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1195,6 +1195,7 @@ FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
   double x, y;
   struct narray *move, *movex, *movey;
   GtkTreeIter iter;
+  char buf[64];
 
   list_store_clear(d->list);
 
@@ -1220,8 +1221,12 @@ FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
 
       list_store_append(d->list, &iter);
       list_store_set_int(d->list, &iter, 0, line);
-      list_store_set_double(d->list, &iter, 1, x);
-      list_store_set_double(d->list, &iter, 2, y);
+
+      snprintf(buf, sizeof(buf), "%+.15e", x);
+      list_store_set_string(d->list, &iter, 1, buf);
+
+      snprintf(buf, sizeof(buf), "%+.15e", y);
+      list_store_set_string(d->list, &iter, 2, buf);
     }
   }
 }
@@ -1233,7 +1238,7 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   int a;
   double x, y;
   const char *buf;
-  char *endptr;
+  char *endptr, buf2[64];
   GtkTreeIter iter;
 
   d = (struct FileMoveDialog *) client_data;
@@ -1258,8 +1263,12 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
 
   list_store_append(d->list, &iter);
   list_store_set_int(d->list, &iter, 0, a);
-  list_store_set_double(d->list, &iter, 1, x);
-  list_store_set_double(d->list, &iter, 2, y);
+
+  snprintf(buf2, sizeof(buf2), "%+.15e", x);
+  list_store_set_string(d->list, &iter, 1, buf2);
+
+  snprintf(buf2, sizeof(buf2), "%+.15e", y);
+  list_store_set_string(d->list, &iter, 2, buf2);
 
   gtk_entry_set_text(GTK_ENTRY(d->line), "");
   gtk_entry_set_text(GTK_ENTRY(d->x), "");
@@ -1288,8 +1297,8 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct FileMoveDialog *d;
   n_list_store list[] = {
     {N_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL},
-    {"X",        G_TYPE_DOUBLE, TRUE, FALSE, NULL},
-    {"Y",        G_TYPE_DOUBLE, TRUE, FALSE, NULL},
+    {"X",            G_TYPE_STRING, TRUE, FALSE, NULL},
+    {"Y",            G_TYPE_STRING, TRUE, FALSE, NULL},
   };
 
   d = (struct FileMoveDialog *) data;
@@ -1347,7 +1356,7 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
-    gtk_window_set_default_size(GTK_WINDOW(wi), 400, 400);
+    gtk_window_set_default_size(GTK_WINDOW(wi), 640, 400);
   }
 
   FileMoveDialogSetupItem(wi, d, d->Id);
@@ -1360,12 +1369,12 @@ static void
 FileMoveDialogClose(GtkWidget *w, void *data)
 {
   struct FileMoveDialog *d;
-  int ret;
-  int j, movenum, line, a;
+  int ret, j, movenum, line, a;
   double x, y;
   struct narray *move, *movex, *movey;
   GtkTreeIter iter;
   gboolean state;
+  char *ptr, *endptr;
 
   d = (struct FileMoveDialog *) data;
   if (d->ret != IDOK)
@@ -1391,8 +1400,12 @@ FileMoveDialogClose(GtkWidget *w, void *data)
   state = list_store_get_iter_first(d->list, &iter);
   while (state) {
     a = list_store_get_int(d->list, &iter, 0); 
-    x = list_store_get_double(d->list, &iter, 0); 
-    y = list_store_get_double(d->list, &iter, 0); 
+
+    ptr = list_store_get_string(d->list, &iter, 1); 
+    x = strtod(ptr, &endptr);
+
+    ptr = list_store_get_string(d->list, &iter, 2); 
+    y = strtod(ptr, &endptr);
 
     if (move == NULL)
       move = arraynew(sizeof(int));

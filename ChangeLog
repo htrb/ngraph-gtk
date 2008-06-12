@@ -1,5 +1,13 @@
 2008-06-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (EvalDialogSetup): now "X" and "Y" is string.
+	(EvalDialogSetupItem): add string converted from double.
+
+	* src/gtk/x11file.c (FileMoveDialogClose): x and y is converted
+	from string to double.
+	(FileMoveDialogSetup): now "X" and "Y" is string.
+	(FileMoveDialogAdd): add string converted from double.
+
 	* src/omerge.c (mergeinit): initialize "line_num".
 
 	* src/ogra.c (set_progress_val): add.

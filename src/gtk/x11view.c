@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.21 2008/06/12 07:11:45 hito Exp $
+ * $Id: x11view.c,v 1.22 2008/06/12 10:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -384,14 +384,19 @@ EvalDialogSetupItem(GtkWidget *w, struct EvalDialog *d)
 {
   int i;
   GtkTreeIter iter;
+  char buf[64];
 
   list_store_clear(d->list);
   for (i = 0; i < d->Num; i++) {
     list_store_append(d->list, &iter);
     list_store_set_int(d->list, &iter, 0, EvalList[i].id);
     list_store_set_int(d->list, &iter, 1, EvalList[i].line);
-    list_store_set_double(d->list, &iter, 2, EvalList[i].x);
-    list_store_set_double(d->list, &iter, 3, EvalList[i].y);
+
+    snprintf(buf, sizeof(buf), "%+.15e", EvalList[i].x);
+    list_store_set_string(d->list, &iter, 2, buf);
+
+    snprintf(buf, sizeof(buf), "%+.15e", EvalList[i].y);
+    list_store_set_string(d->list, &iter, 3, buf);
   }
 }
 
@@ -401,10 +406,10 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *swin, *hbox;
   struct EvalDialog *d;
   n_list_store list[] = {
-    {"#",       G_TYPE_INT,    TRUE, FALSE, NULL},
+    {"#",           G_TYPE_INT,    TRUE, FALSE, NULL},
     {_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL},
-    {"X",       G_TYPE_DOUBLE, TRUE, FALSE, NULL},
-    {"Y",       G_TYPE_DOUBLE, TRUE, FALSE, NULL},
+    {"X",           G_TYPE_STRING, TRUE, FALSE, NULL},
+    {"Y",           G_TYPE_STRING, TRUE, FALSE, NULL},
   };
 
 
@@ -433,7 +438,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->show_cancel = FALSE;
 
-    gtk_window_set_default_size(GTK_WINDOW(wi), 300, 400);
+    gtk_window_set_default_size(GTK_WINDOW(wi), 500, 400);
   }
   EvalDialogSetupItem(wi, d);
 }
