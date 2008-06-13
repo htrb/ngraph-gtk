@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.10 2008/06/12 09:04:25 hito Exp $
+ * $Id: x11axis.c,v 1.11 2008/06/13 13:48:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1044,12 +1044,12 @@ AxisBaseDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
     w = combo_box_entry_create();
     gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-    item_setup(hbox, w, _("_Style:"), TRUE);
+    item_setup(hbox, w, _("Line _Style:"), TRUE);
     d->style = w;
 
     w = combo_box_entry_create();
     gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-    item_setup(hbox, w, _("_Width:"), TRUE);
+    item_setup(hbox, w, _("_Line Width:"), TRUE);
     d->width = w;
 
     w = create_color_button(wi);

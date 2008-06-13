@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.7 2008/06/05 02:45:03 hito Exp $
+ * $Id: gtk_subwin.c,v 1.8 2008/06/13 13:48:31 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -779,11 +779,17 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
     else
       return FALSE;
     break;
-  case GDK_Page_Up:
-    tree_move_up(d);
+  case GDK_Up:
+    if (e->state & GDK_SHIFT_MASK)
+      tree_move_up(d);
+    else
+      return FALSE;
     break;
-  case GDK_Page_Down:
-    tree_move_down(d);
+  case GDK_Down:
+    if (e->state & GDK_SHIFT_MASK)
+      tree_move_down(d);
+    else
+      return FALSE;
     break;
   case GDK_Return:
     tree_update(d);

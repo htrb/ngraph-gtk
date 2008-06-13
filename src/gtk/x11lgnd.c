@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.10 2008/06/06 04:30:58 hito Exp $
+ * $Id: x11lgnd.c,v 1.11 2008/06/13 13:48:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -264,6 +264,9 @@ set_fonts(struct LegendDialog *d, int id)
 static void
 legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 {
+  int x1, y1, x2, y2;
+  char buf[64];
+
   SetTextFromObjField(d->points, d->Obj, id, "points");
   SetStyleFromObjField(d->style, d->Obj, id, "style");
   if (d->width) {
@@ -318,10 +321,23 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
   SetTextFromObjField(d->x, d->Obj, id, "x");
   SetTextFromObjField(d->y, d->Obj, id, "y");
+
   SetTextFromObjField(d->x1, d->Obj, id, "x1");
   SetTextFromObjField(d->y1, d->Obj, id, "y1");
-  SetTextFromObjField(d->x2, d->Obj, id, "x2");
-  SetTextFromObjField(d->y2, d->Obj, id, "y2");
+
+  if (d->x1 && d->y1 && d->x2 && d->y2) {
+    getobj(d->Obj, "x1", id, 0, NULL, &x1);
+    getobj(d->Obj, "y1", id, 0, NULL, &y1);
+    getobj(d->Obj, "x2", id, 0, NULL, &x2);
+    getobj(d->Obj, "y2", id, 0, NULL, &y2);
+
+    snprintf(buf, sizeof(buf), "%d", x2 - x1);
+    gtk_entry_set_text(GTK_ENTRY(d->x2), buf);
+
+    snprintf(buf, sizeof(buf), "%d", y2 - y1);
+    gtk_entry_set_text(GTK_ENTRY(d->y2), buf);
+  }
+
   SetTextFromObjField(d->rx, d->Obj, id, "rx");
   SetTextFromObjField(d->ry, d->Obj, id, "ry");
   SetTextFromObjField(d->angle1, d->Obj, id, "angle1");
@@ -375,7 +391,9 @@ static void
 legend_dialog_close(GtkWidget *w, void *data)
 {
   struct LegendDialog *d;
-  int ret;
+  int ret, x1, y1, x2, y2;
+  const char *tmp;
+  char *ptr;
 
   d = (struct LegendDialog *) data;
 
@@ -423,11 +441,32 @@ legend_dialog_close(GtkWidget *w, void *data)
   if (SetObjFieldFromText(d->y1, d->Obj, d->Id, "y1"))
     return;
 
-  if (SetObjFieldFromText(d->x2, d->Obj, d->Id, "x2"))
-    return;
+  if (d->x1 && d->y1 && d->x2 && d->y2) {
+    tmp = gtk_entry_get_text(GTK_ENTRY(d->x1));
+    x1 = strtol(tmp, &ptr, 10);
+    if (ptr[0] != '\0') return;
 
-  if (SetObjFieldFromText(d->y2, d->Obj, d->Id, "y2"))
-    return;
+    tmp = gtk_entry_get_text(GTK_ENTRY(d->x2));
+    x2 = strtol(tmp, &ptr, 10);
+    if (ptr[0] != '\0') return;
+
+    tmp = gtk_entry_get_text(GTK_ENTRY(d->y1));
+    y1 = strtol(tmp, &ptr, 10);
+    if (ptr[0] != '\0') return;
+
+    tmp = gtk_entry_get_text(GTK_ENTRY(d->y2));
+    y2 = strtol(tmp, &ptr, 10);
+    if (ptr[0] != '\0') return;
+
+    x2 += x1;
+    y2 += y1;
+
+    if (putobj(d->Obj, "x2", d->Id, &x2) == -1)
+      return;
+
+    if (putobj(d->Obj, "y2", d->Id, &y2) == -1)
+      return;
+  }
 
   if (SetObjFieldFromText(d->rx, d->Obj, d->Id, "rx"))
     return;
@@ -561,7 +600,7 @@ width_setup(struct LegendDialog *d, GtkWidget *box)
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
   d->width = w;
-  item_setup(box, w, _("_Width:"), TRUE);
+  item_setup(box, w, _("_Line width:"), TRUE);
 }
 
 static void
@@ -582,7 +621,7 @@ style_setup(struct LegendDialog *d, GtkWidget *box)
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
   d->style = w;
-  item_setup(box, w, _("_Style:"), TRUE);
+  item_setup(box, w, _("Line _Style:"), TRUE);
 }
 
 static void
@@ -961,19 +1000,19 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, "_X1:", FALSE);
+    item_setup(hbox, w, "_X:", FALSE);
     d->x1 = w;
 
     w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, "_Y1:", FALSE);
+    item_setup(hbox, w, "_Y:", FALSE);
     d->y1 = w;
 
     w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, "_X2:", FALSE);
+    item_setup(hbox, w, _("_Width:"), FALSE);
     d->x2 = w;
 
     w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, "_Y2:", FALSE);
+    item_setup(hbox, w, _("_Height:"), FALSE);
     d->y2 = w;
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);

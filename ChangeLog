@@ -1,3 +1,13 @@
+2008-06-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (legend_dialog_close)
+	(legend_dialog_setup_item, LegendRectDialogSetup): use width and
+	height instaed of x2 and y2 for legend rectangle.
+
+	* src/gtk/x11view.c (swapint): add.
+	(ViewerEvLButtonDblClk): x2 and y2 are always greater than x1 and
+	y2 respectivery.
+
 2008-06-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (EvalDialogSetup): now "X" and "Y" is string.

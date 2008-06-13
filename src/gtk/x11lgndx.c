@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.4 2008/06/06 04:30:58 hito Exp $
+ * $Id: x11lgndx.c,v 1.5 2008/06/13 13:48:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -357,13 +357,13 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox2 = gtk_hbox_new(FALSE, 4);
     w = combo_box_entry_create();
-    item_setup(hbox2, w, _("_Style:"), TRUE);
+    item_setup(hbox2, w, _("Line _Style:"), TRUE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
     d->style = w;
 
     hbox2 = gtk_hbox_new(FALSE, 4);
     w = combo_box_entry_create();
-    item_setup(hbox2, w, _("_Width:"), TRUE);
+    item_setup(hbox2, w, _("_Line Width:"), TRUE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
     d->width = w;
 

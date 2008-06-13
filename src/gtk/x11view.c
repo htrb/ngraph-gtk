@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.22 2008/06/12 10:42:50 hito Exp $
+ * $Id: x11view.c,v 1.23 2008/06/13 13:48:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2341,6 +2341,16 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
   return TRUE;
 }
 
+static void
+swapint(int *a, int *b)
+{
+  int tmp;
+
+  tmp = *a;
+  *a = *b;
+  *b = tmp;
+}
+
 static gboolean
 ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
 {
@@ -2488,6 +2498,13 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
 	    y1 = pdata[0]->y;
 	    x2 = pdata[1]->x;
 	    y2 = pdata[1]->y;
+
+	    if (x1 > x2)
+	      swapint(&x1, &x2);
+
+	    if (y1 > y2)
+	      swapint(&y1, &y2);
+
 	    PaintLock = TRUE;
 
 	    if (d->Mode == RectB) {
@@ -3105,14 +3122,14 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   if ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB)) {
     num = arraynum(d->focusobj);
     if (num > 0) {
-      for (i = 0; i < 4; i++) {
+      for (i = 0; i < 3; i++) {
 	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
       }
     }
     if (num == 1) {
       focus = *(struct focuslist **) arraynget(d->focusobj, 0);
       obj = focus->obj;
-      for (i = 4; i < VIEWER_POPUP_ITEM_NUM; i++) {
+      for (i = 3; i < VIEWER_POPUP_ITEM_NUM; i++) {
 	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
       }
     }
