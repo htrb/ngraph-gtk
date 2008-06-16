@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.11 2008/06/13 13:48:31 hito Exp $
+ * $Id: x11axis.c,v 1.12 2008/06/16 00:41:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2978,7 +2978,11 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
   switch (e->keyval) {
   case GDK_space:
-    list_sub_window_focus(NULL, d);
+    if (e->state & GDK_SHIFT_MASK) {
+      list_sub_window_add_focus(NULL, d);
+    } else {
+      list_sub_window_focus(NULL, d);
+    }
     break;
   default:
     return FALSE;

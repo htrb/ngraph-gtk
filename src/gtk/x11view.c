@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.23 2008/06/13 13:48:32 hito Exp $
+ * $Id: x11view.c,v 1.24 2008/06/16 00:41:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -66,6 +66,12 @@ enum ViewerPopupIdn {
   VIEW_TOP,
   VIEW_LAST,
   VIEW_CROSS,
+  VIEW_ALIGN_LEFT,
+  VIEW_ALIGN_RIGHT,
+  VIEW_ALIGN_HCENTER,
+  VIEW_ALIGN_TOP,
+  VIEW_ALIGN_VCENTER,
+  VIEW_ALIGN_BOTTOM,
 };
 
 struct viewer_popup
@@ -73,6 +79,7 @@ struct viewer_popup
   char *title;
   gboolean use_stock;
   enum ViewerPopupIdn idn;
+  struct viewer_popup *submenu;
 };
 
 #define MOUSENONE   0
@@ -482,17 +489,8 @@ EvalDialog(struct EvalDialog *data,
 }
 
 static GtkWidget *
-create_popup_menu(struct Viewer *d)
+create_menu(struct viewer_popup *popup, struct Viewer *d)
 {
-  struct viewer_popup popup[] = {
-    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE},
-    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE},
-    {"_Duplicate",          FALSE, VIEW_COPY},
-    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP},
-    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST},
-    {"_Show cross",         FALSE, VIEW_CROSS},
-    {NULL},
-  };
   GtkWidget *menu, *item;
   int i = 0;
 
@@ -502,14 +500,48 @@ create_popup_menu(struct Viewer *d)
     if (popup[i].use_stock) {
       item = gtk_image_menu_item_new_from_stock(popup[i].title, NULL);
     } else {
-      item = gtk_menu_item_new_with_mnemonic(popup[i].title);
+      item = gtk_menu_item_new_with_mnemonic(_(popup[i].title));
     }
-    d->popup_item[i] = item;
+    if (d) {
+      d->popup_item[i] = item;
+    }
+    if (popup[i].submenu) {
+      GtkWidget *submenu;
+      submenu = create_menu(popup[i].submenu, NULL);
+      gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
+    } else {
+      g_signal_connect(item, "activate", G_CALLBACK(ViewerPopupMenu), GINT_TO_POINTER(popup[i].idn));
+    }
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-    g_signal_connect(item, "activate", G_CALLBACK(ViewerPopupMenu), GINT_TO_POINTER(popup[i].idn));
   }
 
   return menu;
+}
+
+static GtkWidget *
+create_popup_menu(struct Viewer *d)
+{
+  struct viewer_popup align_popup[] = {
+    {N_("_Left"),              FALSE, VIEW_ALIGN_LEFT,    NULL},
+    {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL},
+    {N_("_Right"),             FALSE, VIEW_ALIGN_RIGHT,   NULL},
+    {N_("_Top"),               FALSE, VIEW_ALIGN_TOP,     NULL},
+    {N_("_Vertical center"),   FALSE, VIEW_ALIGN_VCENTER, NULL},
+    {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL},
+    {NULL},
+  };
+  struct viewer_popup popup[] = {
+    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL},
+    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL},
+    {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL},
+    {N_("_Align"),          FALSE, 0,           align_popup},
+    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL},
+    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL},
+    {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL},
+    {NULL},
+  };
+
+  return create_menu(popup, d);
 }
 
 static gboolean
@@ -1344,6 +1376,115 @@ ShowFocusFrame(GdkGC *gc)
   }
   gdk_gc_set_function(gc, GDK_COPY);
   restorestdio(&save);
+}
+
+static void
+AlignFocusedObj(int align)
+{
+  int i, num, bboxnum, *bbox, minx, miny, maxx, maxy, dx, dy;
+  struct focuslist **focus;
+  struct narray *abbox;
+  char *argv[4];
+  char *inst;
+  struct Viewer *d;
+
+  d = &(NgraphApp.Viewer);
+
+  num = arraynum(d->focusobj);
+
+  if (num < 2)
+    return;
+
+  focus = (struct focuslist **) arraydata(d->focusobj);
+
+  maxx = maxy = INT_MIN;
+  minx = miny = INT_MAX;
+
+  for (i = 0; i < num; i++) {
+    inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
+    _getobj(focus[i]->obj, "bbox", inst, &abbox);
+
+    bboxnum = arraynum(abbox);
+    bbox = (int *) arraydata(abbox);
+
+    if (bboxnum >= 4) {
+      if (bbox[0] < minx)
+	minx = bbox[0];
+      if (bbox[1] < miny)
+	miny = bbox[1];
+      if (bbox[2] > maxx)
+	maxx = bbox[2];
+      if (bbox[3] > maxy)
+	maxy = bbox[3];
+    }
+  }
+
+  if (maxx < minx || maxy < miny)
+    return;
+
+  d->allclear = FALSE;
+
+  PaintLock = TRUE;
+
+  for (i = 0; i < num; i++) {
+    inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    _getobj(focus[i]->obj, "bbox", inst, &abbox);
+
+    bboxnum = arraynum(abbox);
+    bbox = (int *) arraydata(abbox);
+
+    if (bboxnum < 4) {
+      continue;
+    }
+
+    dx = dy = 0;
+    switch (align) {
+    case VIEW_ALIGN_LEFT:
+      dx = minx - bbox[0];
+      break;
+    case VIEW_ALIGN_HCENTER:
+      dx = (maxx + minx - bbox[2] - bbox[0]) / 2;
+      break;
+    case VIEW_ALIGN_RIGHT:
+      dx = maxx - bbox[2];
+      break;
+    case VIEW_ALIGN_TOP:
+      dy = miny - bbox[1];
+      break;
+    case VIEW_ALIGN_VCENTER:
+      dy = (maxy + miny - bbox[3] - bbox[1]) / 2;
+      break;
+    case VIEW_ALIGN_BOTTOM:
+      dy = maxy - bbox[3];
+      break;
+    }
+    
+    if (dx == 0 && dy == 0)
+      continue;
+
+    argv[0] = (char *) &dx;
+    argv[1] = (char *) &dy;
+    argv[2] = NULL;
+
+    if (focus[i]->obj == chkobject("axis")) {
+      d->allclear = TRUE;
+    }
+    AddInvalidateRect(focus[i]->obj, inst);
+      
+    _exeobj(focus[i]->obj, "move", inst, 2, argv);
+      
+    NgraphApp.Changed = TRUE;
+    AddInvalidateRect(focus[i]->obj, inst);
+  }
+  PaintLock = FALSE;
+  UpdateAll();
 }
 
 static void
@@ -3123,13 +3264,15 @@ do_popup(GdkEventButton *event, struct Viewer *d)
     num = arraynum(d->focusobj);
     if (num > 0) {
       for (i = 0; i < 3; i++) {
-	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
+ 	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
       }
     }
-    if (num == 1) {
+    if (num > 1) {
+      gtk_widget_set_sensitive(d->popup_item[3], TRUE);
+    } else if (num == 1) {
       focus = *(struct focuslist **) arraynget(d->focusobj, 0);
       obj = focus->obj;
-      for (i = 3; i < VIEWER_POPUP_ITEM_NUM; i++) {
+      for (i = 4; i < VIEWER_POPUP_ITEM_NUM; i++) {
 	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
       }
     }
@@ -3674,8 +3817,31 @@ MakeRuler(GdkGC *gc)
   }
 }
 
+static int
+check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
+{
+  int i, num;
+  struct focuslist *focus;
+
+  num = arraynum(focusobj);
+
+  if (fobj == NULL)
+    return FALSE;
+
+  for (i = 0; i < num; i++) {
+    focus = *(struct focuslist **) arraynget(focusobj, i);
+    if (focus == NULL)
+      continue;
+
+    if (fobj == focus->obj && oid == focus->oid) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
 void
-Focus(struct objlist *fobj, int id)
+Focus(struct objlist *fobj, int id, int add)
 {
   int oid;
   char *inst;
@@ -3692,6 +3858,9 @@ Focus(struct objlist *fobj, int id)
   int man;
   struct Viewer *d;
 
+  if (fobj == NULL)
+    return;
+
   d = &(NgraphApp.Viewer);
 
   if (chkobjchild(chkobject("legend"), fobj)) {
@@ -3702,45 +3871,55 @@ Focus(struct objlist *fobj, int id)
     return;
   }
 
-  UnFocus();
-  dc = gdk_gc_new(d->win);
+  if (! add)
+    UnFocus();
 
   inst = chkobjinst(fobj, id);
 
   _getobj(fobj, "oid", inst, &oid);
 
+
+  if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
+    return;
+
+  snum = arraynum(sarray);
+  if (snum == 0)
+    return;
+
   ignorestdio(&save);
 
-  if (fobj) {
-    if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
-      return;
+  sdata = (char **) arraydata(sarray);
 
-    if ((snum = arraynum(sarray)) == 0)
-      return;
-
-    sdata = (char **) arraydata(sarray);
-
-    for (i = 1; i < snum; i++) {
-      dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-      if (dobj && (fobj == dobj) && (did == oid)) {
-	focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
-	if (focus) {
-	  if (chkobjchild(chkobject("axis"), dobj)) {
-	    getobj(fobj, "group_manager", id, 0, NULL, &man);
-	    getobj(fobj, "oid", man, 0, NULL, &did);
-	  }
-	  focus->obj = dobj;
-	  focus->oid = did;
-	  arrayadd(d->focusobj, &focus);
-	  d->ShowFrame = TRUE;
-	  ShowFocusFrame(dc);
-	}
-	d->MouseMode = MOUSENONE;
-	break;
-      }
+  for (i = 1; i < snum; i++) {
+    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
+    if (! dobj || (fobj != dobj) || (did != oid)) {
+      continue;
     }
+
+    if (check_focused_obj(d->focusobj, fobj, oid))
+      break;
+
+    focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
+    if (focus) {
+      if (chkobjchild(chkobject("axis"), dobj)) {
+	getobj(fobj, "group_manager", id, 0, NULL, &man);
+	getobj(fobj, "oid", man, 0, NULL, &did);
+      }
+      focus->obj = dobj;
+      focus->oid = did;
+      arrayadd(d->focusobj, &focus);
+    }
+    d->MouseMode = MOUSENONE;
+    break;
   }
+
+  dc = gdk_gc_new(d->win);
+  d->allclear = FALSE;
+  UpdateAll();
+  ShowFocusFrame(dc);
+  d->ShowFrame = TRUE;
   g_object_unref(G_OBJECT(dc));
+
   restorestdio(&save);
 }
 
@@ -4881,6 +5060,14 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
     break;
   case VIEW_CROSS:
     ViewCross();
+    break;
+  case VIEW_ALIGN_LEFT:
+  case VIEW_ALIGN_HCENTER:
+  case VIEW_ALIGN_RIGHT:
+  case VIEW_ALIGN_TOP:
+  case VIEW_ALIGN_VCENTER:
+  case VIEW_ALIGN_BOTTOM:
+    AlignFocusedObj((int) client_data);
     break;
   }
 }

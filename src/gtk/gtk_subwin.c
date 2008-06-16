@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.8 2008/06/13 13:48:31 hito Exp $
+ * $Id: gtk_subwin.c,v 1.9 2008/06/16 00:41:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -353,7 +353,7 @@ update(struct SubWin *d)
 }
 
 static void
-focus(struct SubWin *d)
+focus(struct SubWin *d, int add)
 {
   int sel;
 
@@ -363,7 +363,7 @@ focus(struct SubWin *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
 
   if ((sel >= 0) && (sel <= d->num))
-    Focus(d->obj, sel);
+    Focus(d->obj, sel, add);
 }
 
 static void
@@ -668,7 +668,7 @@ tree_update(struct LegendWin *d)
 }
 
 static void
-tree_focus(struct LegendWin *d)
+tree_focus(struct LegendWin *d, int add)
 {
   int n, m;
   gboolean sel;
@@ -681,7 +681,7 @@ tree_focus(struct LegendWin *d)
   if (m < 0) {
     tree_store_selected_toggle_expand(GTK_WIDGET(d->text));
   } else if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
-    Focus(d->obj[n], m);
+    Focus(d->obj[n], m, add);
   }
 }
 
@@ -798,7 +798,7 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
     tree_hidden(d);
     break;
   case GDK_space:
-    tree_focus(d);
+    tree_focus(d, e->state & GDK_SHIFT_MASK);
   default:
     return FALSE;
   }
@@ -1047,7 +1047,13 @@ list_sub_window_hide(GtkMenuItem *item, gpointer user_data)
 void 
 list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 {
-  focus((struct SubWin *) user_data);
+  focus((struct SubWin *) user_data, FALSE);
+}
+
+void 
+list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
+{
+  focus((struct SubWin *) user_data, TRUE);
 }
 
 void 
@@ -1101,7 +1107,13 @@ tree_sub_window_hide(GtkMenuItem *item, gpointer user_data)
 void 
 tree_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 {
-  tree_focus((struct LegendWin *) user_data);
+  tree_focus((struct LegendWin *) user_data, FALSE);
+}
+
+void 
+tree_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
+{
+  tree_focus((struct LegendWin *) user_data, TRUE);
 }
 
 static gboolean

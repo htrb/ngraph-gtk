@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.h,v 1.2 2008/05/29 12:13:36 hito Exp $
+ * $Id: gtk_subwin.h,v 1.3 2008/06/16 00:41:06 hito Exp $
  */
 
 #ifndef _GTK_SUBWIN_HEADER
@@ -38,6 +38,7 @@ void list_sub_window_move_down(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_update(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_hide(GtkMenuItem *item, gpointer user_data);
 void list_sub_window_focus(GtkMenuItem *item, gpointer user_data);
+void list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data);
 
 void tree_sub_window_delete(GtkMenuItem *item, gpointer user_data);
 void tree_sub_window_copy(GtkMenuItem *item, gpointer user_data);
@@ -48,6 +49,7 @@ void tree_sub_window_move_down(GtkMenuItem *item, gpointer user_data);
 void tree_sub_window_update(GtkMenuItem *item, gpointer user_data);
 void tree_sub_window_hide(GtkMenuItem *item, gpointer user_data);
 void tree_sub_window_focus(GtkMenuItem *item, gpointer user_data);
+void tree_sub_window_add_focus(GtkMenuItem *item, gpointer user_data);
 
 GtkWidget *sub_win_create_popup_menu(struct SubWin *d, int n, struct subwin_popup_list *list, GCallback cb);
 

@@ -1,3 +1,24 @@
+2008-06-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (enum ViewerPopupIdn): add alignment id.
+	(struct viewer_popup): add member 'struct viewer_popup *submenu'
+	(create_menu): add.
+	(create_popup_menu): add alignment submenu. use create_menu.
+	(AlignFocusedObj): add.
+	(do_popup): add codes for alignment submenu.
+	(check_focused_obj): add.
+	(Focus): add argument "int add". add codes for multiple focus.
+	(ViewerPopupMenu): call AlignFocusedObj().
+
+	* src/gtk/x11axis.c (ev_key_down): check 'e->state &
+	GDK_SHIFT_MASK' when e->keyval == GDK_space.
+
+	* src/gtk/gtk_subwin.c (focus, tree_focus): add argument "int
+	add".
+	(ev_key_down_tree): check 'e->state & GDK_SHIFT_MASK' when
+	e->keyval == GDK_space.
+	(list_sub_window_add_focus, tree_sub_window_add_focus): add.
+
 2008-06-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (legend_dialog_close)
