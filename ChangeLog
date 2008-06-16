@@ -2,9 +2,12 @@
 
 	* src/gtk/x11view.c (add_focus_obj, clear_focus_obj)
 	(mouse_down_point, mouse_down_move, mouse_up_point)
-	(set_mouse_cursor_hover): add.
+	(set_mouse_cursor_hover, mouse_up_drag, mouse_up_zoom)
+	(mouse_up_change, mouse_up_lgend1, mouse_up_lgend2): add.
 	(Match, Focus): use add_focus_obj();
 	(ViewerWinUpdate, UnFocus, ViewUpdate): use clear_focus_obj();
+	(ViewerEvLButtonUp): use mouse_down_point(), mouse_up_drag(),
+	mouse_up_zoom() and mouse_up_change().
 
 	* src/gtk/x11menu.c (Command2_data): add move tool button.
 	(createcommand2): default sensitivity of the MoveButton is false.
