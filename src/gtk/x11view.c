@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.27 2008/06/16 11:39:36 hito Exp $
+ * $Id: x11view.c,v 1.28 2008/06/16 11:53:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -99,7 +99,7 @@ struct viewer_popup
 #define Button5 5
 
 static GdkRegion *region = NULL;
-static int PaintLock = FALSE, ZoomLock = FALSE;
+static int PaintLock = FALSE, ZoomLock = FALSE, DefaultMode = 0;;
 
 #define EVAL_NUM_MAX 5000
 static struct evaltype EvalList[EVAL_NUM_MAX];
@@ -1021,7 +1021,7 @@ clear_focus_obj(struct narray *focusobj, int mode)
   SetMoveButtonState(FALSE);
 
   if (mode == MoveB)
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[0]), TRUE);
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
 }
 
 
@@ -2591,7 +2591,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
     } else if (d->MouseMode == MOUSEPOINT) {
       mouse_up_point(state, point, d, dc, zoom);
     } else if (d->MouseMode == MOUSENONE && d->Mode == MoveB) {
-      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[0]), TRUE);
+      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     }
     d->MouseMode=MOUSENONE;
     break;
@@ -3617,7 +3617,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
   switch (e->keyval) {
   case GDK_Escape:
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[0]), TRUE);
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     return FALSE;
   case GDK_KP_Space:
     CmViewerDrawB(NULL, NULL);
@@ -4785,7 +4785,7 @@ ViewUpdate(void)
     d->allclear = FALSE;
 
   if (d->Mode == MoveB)
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[0]), TRUE);
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
 
   UpdateAll();
   ShowFocusFrame(dc);
@@ -5324,8 +5324,17 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
 
   switch (Mode) {
   case PointB:
+    DefaultMode = 0;
+    SetCursor(GDK_LEFT_PTR);
+    break;
   case LegendB:
+    DefaultMode = 1;
+    SetCursor(GDK_LEFT_PTR);
+    break;
   case AxisB:
+    DefaultMode = 2;
+    SetCursor(GDK_LEFT_PTR);
+    break;
   case TrimB:
   case DataB:
   case EvalB:
