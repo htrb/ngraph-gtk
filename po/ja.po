@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2008-06-16 08:34+0900\n"
-"PO-Revision-Date: 2008-06-13 16:32+0900\n"
+"PO-Revision-Date: 2008-06-16 09:46+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -118,7 +118,6 @@ msgid "Line _Style:"
 msgstr "線種(_S):"
 
 #: src/gtk/x11axis.c:1052 src/gtk/x11file.c:2567 src/gtk/x11lgndx.c:366
-#, fuzzy
 msgid "_Line Width:"
 msgstr "線幅(_W):"
 
@@ -1801,42 +1800,36 @@ msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
 
 #: src/gtk/x11view.c:525
-#, fuzzy
 msgid "_Left"
-msgstr "左"
+msgstr "左揃え(_L)"
 
 #: src/gtk/x11view.c:526
 msgid "_Holizontal center"
-msgstr ""
+msgstr "水平中央揃え(_H)"
 
 #: src/gtk/x11view.c:527
-#, fuzzy
 msgid "_Right"
-msgstr "右"
+msgstr "右揃え(_R)"
 
 #: src/gtk/x11view.c:528
-#, fuzzy
 msgid "_Top"
-msgstr "種類(_T):"
+msgstr "上端揃え(_T):"
 
 #: src/gtk/x11view.c:529
 msgid "_Vertical center"
-msgstr ""
+msgstr "垂直中央揃え(_V)"
 
 #: src/gtk/x11view.c:530
-#, fuzzy
 msgid "_Bottom"
-msgstr "ズーム(_Z):"
+msgstr "下端揃え(_B):"
 
 #: src/gtk/x11view.c:537
-#, fuzzy
 msgid "_Align"
-msgstr "位置合わせ(_A):"
+msgstr "位置合わせ(_A)"
 
 #: src/gtk/x11view.c:540
-#, fuzzy
 msgid "_Show cross"
-msgstr "ルーラー表示(_R)"
+msgstr "クロスゲージ表示(_S)"
 
 #: src/gtk/x11view.c:712
 #, c-format

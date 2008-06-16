@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.24 2008/06/16 00:41:06 hito Exp $
+ * $Id: x11view.c,v 1.25 2008/06/16 00:48:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -523,10 +523,10 @@ create_popup_menu(struct Viewer *d)
 {
   struct viewer_popup align_popup[] = {
     {N_("_Left"),              FALSE, VIEW_ALIGN_LEFT,    NULL},
-    {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL},
+    {N_("_Vertical center"),   FALSE, VIEW_ALIGN_VCENTER, NULL},
     {N_("_Right"),             FALSE, VIEW_ALIGN_RIGHT,   NULL},
     {N_("_Top"),               FALSE, VIEW_ALIGN_TOP,     NULL},
-    {N_("_Vertical center"),   FALSE, VIEW_ALIGN_VCENTER, NULL},
+    {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL},
     {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL},
     {NULL},
   };
@@ -1449,7 +1449,7 @@ AlignFocusedObj(int align)
     case VIEW_ALIGN_LEFT:
       dx = minx - bbox[0];
       break;
-    case VIEW_ALIGN_HCENTER:
+    case VIEW_ALIGN_VCENTER:
       dx = (maxx + minx - bbox[2] - bbox[0]) / 2;
       break;
     case VIEW_ALIGN_RIGHT:
@@ -1458,7 +1458,7 @@ AlignFocusedObj(int align)
     case VIEW_ALIGN_TOP:
       dy = miny - bbox[1];
       break;
-    case VIEW_ALIGN_VCENTER:
+    case VIEW_ALIGN_HCENTER:
       dy = (maxy + miny - bbox[3] - bbox[1]) / 2;
       break;
     case VIEW_ALIGN_BOTTOM:
