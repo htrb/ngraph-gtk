@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.6 2008/06/16 00:41:06 hito Exp $
+ * $Id: x11menu.h,v 1.7 2008/06/16 08:47:52 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -203,9 +203,10 @@ enum PointerType {
   DataB,
   EvalB,
   ZoomB,
+  MoveB,
 };
 
-#define CURSOR_TYPE_NUM 11
+#define CURSOR_TYPE_NUM 12
 
 struct NgraphApp
 {
@@ -216,7 +217,7 @@ struct NgraphApp
   guint Message1, Message2, Message3;
   GtkWidget *ghistory[MENU_HISTORY_NUM], *fhistory[MENU_HISTORY_NUM];
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list;
-  GtkToolItem *interrupt, *viewb[19];
+  GtkToolItem *interrupt, *viewb[20];
   GdkPixmap *markpix[MARK_TYPE_NUM];
   GList *iconpix;
   GdkCursor *cursor[CURSOR_TYPE_NUM];
@@ -263,5 +264,6 @@ int InputYN(char *mes);
 GdkPixbuf *create_pixbuf_from_xpm(GtkWidget *win, char **xpm);
 void QuitGUI(void);
 void set_draw_lock(int lock);
+void SetMoveButtonState(gboolean state);
 
 #endif

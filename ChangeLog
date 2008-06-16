@@ -1,5 +1,16 @@
 2008-06-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (add_focus_obj, clear_focus_obj)
+	(mouse_down_point, mouse_down_move, mouse_up_point)
+	(set_mouse_cursor_hover): add.
+	(Match, Focus): use add_focus_obj();
+	(ViewerWinUpdate, UnFocus, ViewUpdate): use clear_focus_obj();
+
+	* src/gtk/x11menu.c (Command2_data): add move tool button.
+	(createcommand2): default sensitivity of the MoveButton is false.
+	(SetMoveButtonState): add.
+	(SetCursor): add GDK_FLEUR.
+
 	* src/gtk/x11view.c (enum ViewerPopupIdn): add alignment id.
 	(struct viewer_popup): add member 'struct viewer_popup *submenu'
 	(create_menu): add.

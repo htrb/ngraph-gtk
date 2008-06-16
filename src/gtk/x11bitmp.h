@@ -1,5 +1,5 @@
 /* 
- * $Id: x11bitmp.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11bitmp.h,v 1.2 2008/06/16 08:47:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -62,6 +62,7 @@ extern gchar Single_bits[];
 extern gchar Text_bits[];
 extern gchar Trimming_bits[];
 extern gchar Zoom_bits[];
+extern gchar Move_bits[];
 
 extern gchar *Arc_xpm[];
 extern gchar *Axispoint_xpm[];
@@ -99,3 +100,4 @@ extern gchar *Single_xpm[];
 extern gchar *Text_xpm[];
 extern gchar *Trimming_xpm[];
 extern gchar *Zoom_xpm[];
+extern gchar *Move_xpm[];

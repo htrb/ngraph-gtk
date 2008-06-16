@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.14 2008/06/12 07:11:45 hito Exp $
+ * $Id: x11menu.c,v 1.15 2008/06/16 08:47:52 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -66,7 +66,7 @@ GtkWidget *TopLevel = NULL;
 static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL,
-  *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL;
+  *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL, *MoveButton = NULL;
 
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
@@ -218,7 +218,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Point"),
     N_("Pointer"),
-    N_("Pointer (+CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
+    N_("Pointer (+SHIFT: Multi select)"), 
     Point_xpm,
     Point_bits,
     PointB,
@@ -227,7 +227,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Legend"),
     N_("Legend Pointer"),
-    N_("Legend Pointer (+CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
+    N_("Legend Pointer (+SHIFT: Multi select)"),
     Legendpoint_xpm,
     Legendpoint_bits,
     LegendB,
@@ -236,7 +236,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Axis"),
     N_("Axis Pointer"),
-    N_("Axis Pointer (+CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
+    N_("Axis Pointer (+SHIFT: Multi select)"),
     Axispoint_xpm,
     Axispoint_bits,
     AxisB,
@@ -245,10 +245,19 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Data"),
     N_("Data Pointer"),
-    N_("Data Pointer"), 
+    N_("Data Pointer"),
     Datapoint_xpm,
     Datapoint_bits,
     DataB,
+  },
+  {
+    NULL,
+    N_("Move"),
+    N_("Move object"),
+    N_("Move object (+CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
+    Move_xpm,
+    Move_bits,
+    MoveB,
   },
   {NULL},
   {
@@ -1060,6 +1069,7 @@ create_cursor(void)
     GDK_SIZING,
     GDK_SIZING,
     GDK_WATCH,
+    GDK_FLEUR,
   };
   int i;
 
@@ -1153,10 +1163,24 @@ createcommand2(GtkToolbar *parent)
 
       NgraphApp.viewb[j] = b;
       j++;
+
+      if (Command2_data[i].type == MoveB) {
+	MoveButton = GTK_WIDGET(b);
+	SetMoveButtonState(FALSE);
+      }
+
     } else {
       b = gtk_separator_tool_item_new();
     }
     gtk_toolbar_insert(parent, GTK_TOOL_ITEM(b), -1);
+  }
+}
+
+void
+SetMoveButtonState(gboolean state)
+{
+  if (MoveButton) {
+    gtk_widget_set_sensitive(MoveButton, state);
   }
 }
 
@@ -1766,6 +1790,9 @@ SetCursor(unsigned int type)
     break;
   case GDK_WATCH:
     gdk_window_set_cursor(win, NgraphApp.cursor[10]);
+    break;
+  case GDK_FLEUR:
+    gdk_window_set_cursor(win, NgraphApp.cursor[11]);
     break;
   }
 }

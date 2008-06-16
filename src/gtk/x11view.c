@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.25 2008/06/16 00:48:10 hito Exp $
+ * $Id: x11view.c,v 1.26 2008/06/16 08:47:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -53,6 +53,7 @@
 
 #define ID_BUF_SIZE 16
 #define SCROLL_INC 20
+#define POINT_ERROR 4
 
 struct pointslist
 {
@@ -135,6 +136,7 @@ static void ViewLast(void);
 static void ViewCopy(void);
 static void ViewCross(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
+static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
 
 static int
 graph_dropped(char *fname)
@@ -992,6 +994,36 @@ Trimming(int x1, int y1, int x2, int y2)
   arraydel(&farray);
 }
 
+static int
+add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
+{
+  struct focuslist *focus;
+
+  if (check_focused_obj(focusobj, obj, oid))
+    return FALSE;
+    
+  focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
+  if (! focus)
+    return FALSE;
+
+  focus->obj = obj;
+  focus->oid = oid;
+  arrayadd(focusobj, &focus);
+  SetMoveButtonState(TRUE);
+
+  return TRUE;
+}
+
+static void
+clear_focus_obj(struct narray *focusobj, int mode)
+{
+  arraydel2(focusobj);
+  SetMoveButtonState(FALSE);
+
+  if (mode == MoveB)
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[0]), TRUE);
+}
+
 
 static void
 Match(char *objname, int x1, int y1, int x2, int y2, int err)
@@ -1005,14 +1037,12 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
   int did;
   char *dfield, *dinst;
   int i, match;
-  struct focuslist *focus;
   int minx, miny, maxx, maxy;
   struct savedstdio save;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
 
-  ignorestdio(&save);
 
   minx = (x1 < x2) ? x1 : x2;
   miny = (y1 < y2) ? y1 : y2;
@@ -1027,33 +1057,36 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
   argv[5] = NULL;
 
   fobj = chkobject(objname);
-  if (fobj) {
-    if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
-      return;
+  if (! fobj)
+    return;
 
-    if ((snum = arraynum(sarray)) == 0)
-      return;
+  if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
+    return;
 
-    sdata = (char **) arraydata(sarray);
+  if ((snum = arraynum(sarray)) == 0)
+    return;
 
-    for (i = 1; i < snum; i++) {
-      dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-      if (dobj && chkobjchild(fobj, dobj)) {
-	dinst = chkobjinstoid(dobj, did);
-	if (dinst) {
-	  _exeobj(dobj, "match", dinst, 5, argv);
-	  _getobj(dobj, "match", dinst, &match);
-	  if (match) {
-	    focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
-	    if (focus) {
-	      focus->obj = dobj;
-	      focus->oid = did;
-	      arrayadd(d->focusobj, &focus);
-	    }
-	  }
-	}
-      }
-    }
+  ignorestdio(&save);
+
+  sdata = (char **) arraydata(sarray);
+
+  for (i = 1; i < snum; i++) {
+    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
+
+    if (! dobj || ! chkobjchild(fobj, dobj))
+      continue;
+
+    dinst = chkobjinstoid(dobj, did);
+    if (! dinst)
+      continue;
+
+    _exeobj(dobj, "match", dinst, 5, argv);
+    _getobj(dobj, "match", dinst, &match);
+    if (! match)
+      continue;
+
+    if (! add_focus_obj(d->focusobj, dobj, did))
+      continue;
   }
   restorestdio(&save);
 }
@@ -1797,21 +1830,157 @@ CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
   }
 }
 
+static void
+mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
+{
+  double zoom;
+
+  zoom = Menulocal.PaperZoom / 10000.0;
+
+  d->Capture = TRUE;
+
+  if (arraynum(d->focusobj) && ! (state & GDK_SHIFT_MASK)) {
+    ShowFocusFrame(dc);
+    d->ShowFrame = FALSE;
+    clear_focus_obj(d->focusobj, d->Mode);
+  }
+
+  d->MouseMode = MOUSEPOINT;
+  d->ShowRect = TRUE;
+}
+
+static void
+mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
+{
+  int j, x1, y1, minx, miny, maxx, maxy, vx1, vy1, vx2, vy2, bboxnum;
+  int *bbox;
+  double cc, nn, zoom, zoom2;
+  struct focuslist *focus;
+  struct narray *abbox;
+  char *inst;
+
+  zoom = Menulocal.PaperZoom / 10000.0;
+
+  d->Capture = TRUE;
+
+  if (arraynum(d->focusobj) != 0) {
+    GetFocusFrame(&minx, &miny, &maxx, &maxy, 0, 0);
+
+    if ((minx - 10 <= point->x) && (point->x <= minx - 4)
+	&& (miny - 10 <= point->y) && (point->y <= miny - 4)) {
+      GetLargeFrame(&(d->RefX2), &(d->RefY2), &(d->RefX1), &(d->RefY1));
+      d->MouseMode = MOUSEZOOM1;
+      SetCursor(GDK_TOP_LEFT_CORNER);
+    } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
+	       && (miny - 10 <= point->y) && (point->y <= miny - 4)) {
+      GetLargeFrame(&(d->RefX1), &(d->RefY2), &(d->RefX2), &(d->RefY1));
+      d->MouseMode = MOUSEZOOM2;
+      SetCursor(GDK_TOP_RIGHT_CORNER);
+    } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
+	       && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
+      GetLargeFrame(&(d->RefX1), &(d->RefY1), &(d->RefX2), &(d->RefY2));
+      d->MouseMode = MOUSEZOOM3;
+      SetCursor(GDK_BOTTOM_RIGHT_CORNER);
+    } else if ((minx - 10 <= point->x) && (point->x <= minx - 4)
+	       && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
+      GetLargeFrame(&(d->RefX2), &(d->RefY1), &(d->RefX1), &(d->RefY2));
+      d->MouseMode = MOUSEZOOM4;
+      SetCursor(GDK_BOTTOM_LEFT_CORNER);
+    } else {
+      focus = *(struct focuslist **) arraynget(d->focusobj, 0);
+      if ((arraynum(d->focusobj) == 1)
+	  && ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL)) {
+
+	_exeobj(focus->obj, "bbox", inst, 0, NULL);
+	_getobj(focus->obj, "bbox", inst, &abbox);
+
+	bboxnum = arraynum(abbox);
+	bbox = (int *) arraydata(abbox);
+
+	for (j = 4; j < bboxnum; j += 2) {
+	  x1 = mxd2p(bbox[j] * zoom + Menulocal.LeftMargin)
+	    - d->hscroll + d->cx;
+
+	  y1 = mxd2p(bbox[j + 1] * zoom + Menulocal.TopMargin)
+	    - d->vscroll + d->cy;
+
+	  if ((x1 - 3 <= point->x) && (point->x <= x1 + 3)
+	      && (y1 - 3 <= point->y) && (point->y <= y1 + 3))
+	    break;
+	}
+
+	if (j < bboxnum) {
+	  d->MouseMode = MOUSECHANGE;
+	  d->ChangePoint = (j - 4) / 2;
+	  ShowFocusFrame(dc);
+	  d->ShowFrame = FALSE;
+	  SetCursor(GDK_CROSSHAIR);
+	  d->ShowLine = TRUE;
+	  d->LineX = d->LineY = 0;
+	  ShowFocusLine(dc, d->ChangePoint);
+	}
+      }
+    }
+
+    if (d->MouseMode == MOUSENONE) {
+      if ((minx <= point->x) && (point->x <= maxx)
+	  && (miny <= point->y) && (point->y <= maxy)) {
+	d->MouseMode = MOUSEDRAG;
+      }
+    } else if ((MOUSEZOOM1 <= d->MouseMode)
+	       && (d->MouseMode <= MOUSEZOOM4)) {
+      ShowFocusFrame(dc);
+
+      d->ShowFrame = FALSE;
+      d->MouseDX = d->RefX2 - d->MouseX1;
+      d->MouseDY = d->RefY2 - d->MouseY1;
+
+      vx1 = d->MouseX1;
+      vy1 = d->MouseY1;
+
+      vx1 -= d->RefX1 - d->MouseDX;
+      vy1 -= d->RefY1 - d->MouseDY;
+
+      vx2 = (d->RefX2 - d->RefX1);
+      vy2 = (d->RefY2 - d->RefY1);
+
+      cc = vx1 * vx2 + vy1 * vy2;
+      nn = vx2 * vx2 + vy2 * vy2;
+
+      if ((nn == 0) || (cc < 0)) {
+	zoom2 = 0;
+      } else {
+	zoom2 = cc / nn;
+      }
+
+      CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+
+      SetZoom(zoom2);
+
+      vx1 = d->RefX1 + vx2 * zoom2;
+      vy1 = d->RefY1 + vy2 * zoom2;
+
+      d->MouseX1 = d->RefX1;
+      d->MouseY1 = d->RefY1;
+
+      d->MouseX2 = vx1;
+      d->MouseY2 = vy1;
+
+      ShowFrameRect(dc);
+
+      d->ShowRect = TRUE;
+    }
+  }
+}
+
 static gboolean
 ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
-  int minx, miny, maxx, maxy;
-  int x1, y1, vx1, vx2, vy1, vy2;
-  double cc, nn;
+  int x1, y1;
   struct pointslist *po;
-  double zoom, zoom2;
+  double zoom;
   int i, j;
-  struct narray *abbox;
-  int bboxnum;
-  int *bbox;
-  char *inst;
-  struct focuslist *focus;
   int vdpi;
   int selnum, sel, movenum, iline;
   struct narray *move, *movex, *movey;
@@ -1939,126 +2108,10 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
     d->MoveData = FALSE;
     d->Capture = FALSE;
     SetCursor(GDK_LEFT_PTR);
-  } else if ((d->Mode == PointB) || (d->Mode == LegendB)
-	     || (d->Mode == AxisB)) {
-    d->Capture = TRUE;
-
-    if (arraynum(d->focusobj) != 0) {
-      GetFocusFrame(&minx, &miny, &maxx, &maxy, 0, 0);
-
-      if ((minx - 10 <= point->x) && (point->x <= minx - 4)
-	  && (miny - 10 <= point->y) && (point->y <= miny - 4)) {
-	GetLargeFrame(&(d->RefX2), &(d->RefY2), &(d->RefX1), &(d->RefY1));
-	d->MouseMode = MOUSEZOOM1;
-	SetCursor(GDK_TOP_LEFT_CORNER);
-      } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
-		 && (miny - 10 <= point->y) && (point->y <= miny - 4)) {
-	GetLargeFrame(&(d->RefX1), &(d->RefY2), &(d->RefX2), &(d->RefY1));
-	d->MouseMode = MOUSEZOOM2;
-	SetCursor(GDK_TOP_RIGHT_CORNER);
-      } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
-		 && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
-	GetLargeFrame(&(d->RefX1), &(d->RefY1), &(d->RefX2), &(d->RefY2));
-	d->MouseMode = MOUSEZOOM3;
-	SetCursor(GDK_BOTTOM_RIGHT_CORNER);
-      } else if ((minx - 10 <= point->x) && (point->x <= minx - 4)
-		 && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
-	GetLargeFrame(&(d->RefX2), &(d->RefY1), &(d->RefX1), &(d->RefY2));
-	d->MouseMode = MOUSEZOOM4;
-	SetCursor(GDK_BOTTOM_LEFT_CORNER);
-      } else {
-	focus = *(struct focuslist **) arraynget(d->focusobj, 0);
-	if ((arraynum(d->focusobj) == 1)
-	    && ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL)) {
-
-	  _exeobj(focus->obj, "bbox", inst, 0, NULL);
-	  _getobj(focus->obj, "bbox", inst, &abbox);
-
-	  bboxnum = arraynum(abbox);
-	  bbox = (int *) arraydata(abbox);
-
-	  for (j = 4; j < bboxnum; j += 2) {
-	    x1 = mxd2p(bbox[j] * zoom + Menulocal.LeftMargin)
-	      - d->hscroll + d->cx;
-
-	    y1 = mxd2p(bbox[j + 1] * zoom + Menulocal.TopMargin)
-	      - d->vscroll + d->cy;
-
-	    if ((x1 - 3 <= point->x) && (point->x <= x1 + 3)
-		&& (y1 - 3 <= point->y) && (point->y <= y1 + 3))
-	      break;
-	  }
-
-	  if (j < bboxnum) {
-	    d->MouseMode = MOUSECHANGE;
-	    d->ChangePoint = (j - 4) / 2;
-	    ShowFocusFrame(dc);
-	    d->ShowFrame = FALSE;
-	    SetCursor(GDK_CROSSHAIR);
-	    d->ShowLine = TRUE;
-	    d->LineX = d->LineY = 0;
-	    ShowFocusLine(dc, d->ChangePoint);
-	  }
-	}
-      }
-
-      if (d->MouseMode == MOUSENONE) {
-	if ((minx <= point->x) && (point->x <= maxx)
-	    && (miny <= point->y) && (point->y <= maxy)) {
-	  d->MouseMode = MOUSEDRAG;
-	} else {
-	  ShowFocusFrame(dc);
-	  d->ShowFrame = FALSE;
-	  arraydel2(d->focusobj);
-	}
-      } else if ((MOUSEZOOM1 <= d->MouseMode)
-		 && (d->MouseMode <= MOUSEZOOM4)) {
-	ShowFocusFrame(dc);
-
-	d->ShowFrame = FALSE;
-	d->MouseDX = d->RefX2 - d->MouseX1;
-	d->MouseDY = d->RefY2 - d->MouseY1;
-
-	vx1 = d->MouseX1;
-	vy1 = d->MouseY1;
-
-	vx1 -= d->RefX1 - d->MouseDX;
-	vy1 -= d->RefY1 - d->MouseDY;
-
-	vx2 = (d->RefX2 - d->RefX1);
-	vy2 = (d->RefY2 - d->RefY1);
-
-	cc = vx1 * vx2 + vy1 * vy2;
-	nn = vx2 * vx2 + vy2 * vy2;
-
-	if ((nn == 0) || (cc < 0)) {
-	  zoom2 = 0;
-	} else {
-	  zoom2 = cc / nn;
-	}
-
-	CheckGrid(FALSE, state, NULL, NULL, &zoom2);
-
-	SetZoom(zoom2);
-
-	vx1 = d->RefX1 + vx2 * zoom2;
-	vy1 = d->RefY1 + vy2 * zoom2;
-
-	d->MouseX1 = d->RefX1;
-	d->MouseY1 = d->RefY1;
-
-	d->MouseX2 = vx1;
-	d->MouseY2 = vy1;
-
-	ShowFrameRect(dc);
-
-	d->ShowRect = TRUE;
-      }
-    }
-    if (arraynum(d->focusobj) == 0) {
-      d->MouseMode = MOUSEPOINT;
-      d->ShowRect = TRUE;
-    }
+  } else if (d->Mode == PointB || d->Mode == LegendB || d->Mode == AxisB) {
+    mouse_down_point(state, point, d, dc);
+  } else if (d->Mode == MoveB) {
+    mouse_down_move(state, point, d, dc);
   } else if ((d->Mode == TrimB) || (d->Mode == DataB) || (d->Mode == EvalB)) {
     d->Capture = TRUE;
     d->MouseMode = MOUSEPOINT;
@@ -2149,10 +2202,69 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   return TRUE;
 }
 
+static void
+mouse_up_point(TPoint *point, struct Viewer *d, GdkGC *dc, double zoom)
+{
+  int x1, x2, y1, y2, err;
+
+  d->Capture = FALSE;
+  ShowFrameRect(dc);
+
+  d->ShowRect = FALSE;
+
+  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
+		- Menulocal.LeftMargin) / zoom;
+
+  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
+		- Menulocal.TopMargin) / zoom;
+
+  x1 = d->MouseX1;
+  y1 = d->MouseY1;
+
+  x2 = d->MouseX2;
+  y2 = d->MouseY2;
+
+  err = mxp2d(POINT_ERROR) / zoom;
+
+  if (d->Mode == PointB) {
+    Match("legend", x1, y1, x2, y2, err);
+    Match("axis", x1, y1, x2, y2, err);
+    Match("merge", x1, y1, x2, y2, err);
+
+    d->FrameOfsX = d->FrameOfsY = 0;
+    d->ShowFrame = TRUE;
+
+    ShowFocusFrame(dc);
+  } else if (d->Mode == LegendB) {
+    Match("legend", x1, y1, x2, y2, err);
+    Match("merge", x1, y1, x2, y2, err);
+
+    d->FrameOfsX = d->FrameOfsY = 0;
+    d->ShowFrame = TRUE;
+
+    ShowFocusFrame(dc);
+  } else if (d->Mode == AxisB) {
+    Match("axis", x1, y1, x2, y2, err);
+
+    d->FrameOfsX = d->FrameOfsY = 0;
+    d->ShowFrame = TRUE;
+
+    ShowFocusFrame(dc);
+  } else if (d->Mode == TrimB) {
+    Trimming(x1, y1, x2, y2);
+  } else if (d->Mode == DataB) {
+    if (ViewerWinFileUpdate(x1, y1, x2, y2, err)) {
+      UpdateAll();
+    }
+  } else {
+    Evaluate(x1, y1, x2, y2, err);
+  }
+}
+
 static gboolean
 ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
 {
-  int x1, y1, x2, y2, err;
+  int x1, y1;
   GdkGC *dc;
   int i, num, dx, dy;
   struct focuslist *focus;
@@ -2168,108 +2280,44 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
   if (Menulock || GlobalLock)
     return FALSE;
 
-  dc = gdk_gc_new(d->win);
-
   zoom = Menulocal.PaperZoom / 10000.0;
   axis = FALSE;
 
-  if (d->Capture) {
-    if ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB)
-	|| (d->Mode == TrimB) || (d->Mode == DataB) || (d->Mode == EvalB)) {
+  if (! d->Capture)
+    return TRUE;
 
-      if (d->MouseMode == MOUSEDRAG) {
-	d->Capture = FALSE;
+  dc = gdk_gc_new(d->win);
 
-	if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
-	  ShowFocusFrame(dc);
+  if (d->Mode == MoveB ||
+      d->Mode == TrimB ||
+      d->Mode == DataB ||
+      d->Mode == EvalB) {
 
-	  d->ShowFrame = FALSE;
+    if (d->MouseMode == MOUSEDRAG) {
+      d->Capture = FALSE;
 
-	  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-			- Menulocal.LeftMargin) / zoom;
+      if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
+	ShowFocusFrame(dc);
 
-	  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-			- Menulocal.TopMargin) / zoom;
+	d->ShowFrame = FALSE;
 
-	  dx = d->MouseX2 - d->MouseX1;
-	  dy = d->MouseY2 - d->MouseY1;
+	d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
+		      - Menulocal.LeftMargin) / zoom;
 
-	  CheckGrid(FALSE, state, &dx, &dy, NULL);
+	d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
+		      - Menulocal.TopMargin) / zoom;
 
-	  argv[0] = (char *) &dx;
-	  argv[1] = (char *) &dy;
-	  argv[2] = NULL;
+	dx = d->MouseX2 - d->MouseX1;
+	dy = d->MouseY2 - d->MouseY1;
 
-	  num = arraynum(d->focusobj);
+	CheckGrid(FALSE, state, &dx, &dy, NULL);
 
-	  PaintLock = TRUE;
-
-	  for (i = num - 1; i >= 0; i--) {
-	    focus = *(struct focuslist **) arraynget(d->focusobj, i);
-	    obj = focus->obj;
-
-	    if (obj == chkobject("axis"))
-	      axis = TRUE;
-
-	    if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
-	      AddInvalidateRect(obj, inst);
-	      _exeobj(obj, "move", inst, 2, argv);
-	      NgraphApp.Changed = TRUE;
-	      AddInvalidateRect(obj, inst);
-	    }
-	  }
-
-	  PaintLock = FALSE;
-	  d->FrameOfsX = d->FrameOfsY = 0;
-	  ShowFocusFrame(dc);
-	  d->ShowFrame = TRUE;
-
-	  if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis))) {
-	    d->allclear = FALSE;
-	  }
-	  UpdateAll();
-	}
-	d->MouseMode = MOUSENONE;
-      } else if ((MOUSEZOOM1 <= d->MouseMode) && (d->MouseMode <= MOUSEZOOM4)) {
-	d->Capture = FALSE;
-	ShowFrameRect(dc);
-	d->ShowRect = FALSE;
-
-	vx1 = (mxp2d(point->x - d->cx + d->hscroll)
-	       - Menulocal.LeftMargin) / zoom;
-
-	vy1 = (mxp2d(point->y - d->cy + d->vscroll)
-	       - Menulocal.TopMargin) / zoom;
-
-	vx1 -= d->RefX1 - d->MouseDX;
-	vy1 -= d->RefY1 - d->MouseDY;
-
-	vx2 = (d->RefX2 - d->RefX1);
-	vy2 = (d->RefY2 - d->RefY1);
-
-	cc = vx1 * vx2 + vy1 * vy2;
-	nn = vx2 * vx2 + vy2 * vy2;
-
-	if ((nn == 0) || (cc < 0)) {
-	  zoom2 = 0;
-	} else {
-	  zoom2 = cc / nn;
-	}
-
-	if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-	  CheckGrid(FALSE, state, NULL, NULL, &zoom2);
-	}
-
-	zm = nround(zoom2 * 10000);
-	ResetZoom();
-
-	argv[0] = (char *) &zm;
-	argv[1] = (char *) &(d->RefX1);
-	argv[2] = (char *) &(d->RefY1);
-	argv[3] = (char *) &Menulocal.preserve_width;
-	argv[4] = NULL;
+	argv[0] = (char *) &dx;
+	argv[1] = (char *) &dy;
+	argv[2] = NULL;
 
 	num = arraynum(d->focusobj);
+
 	PaintLock = TRUE;
 
 	for (i = num - 1; i >= 0; i--) {
@@ -2281,202 +2329,226 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
 
 	  if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
 	    AddInvalidateRect(obj, inst);
-	    _exeobj(obj, "zooming", inst, 4, argv);
+	    _exeobj(obj, "move", inst, 2, argv);
 	    NgraphApp.Changed = TRUE;
 	    AddInvalidateRect(obj, inst);
 	  }
 	}
 
 	PaintLock = FALSE;
-
 	d->FrameOfsX = d->FrameOfsY = 0;
+	ShowFocusFrame(dc);
 	d->ShowFrame = TRUE;
 
-	ShowFocusFrame(dc);
-
-	if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis))) {
+	if (d->Mode == MoveB && ! axis) {
 	  d->allclear = FALSE;
 	}
-
 	UpdateAll();
-	SetCursor(GDK_LEFT_PTR);
-	d->MouseMode = MOUSENONE;
-      } else if (d->MouseMode == MOUSECHANGE) {
-	d->Capture = FALSE;
-	ShowFocusLine(dc, d->ChangePoint);
-	d->ShowLine = FALSE;
+      }
+      d->MouseMode = MOUSENONE;
+    } else if ((MOUSEZOOM1 <= d->MouseMode) && (d->MouseMode <= MOUSEZOOM4)) {
+      d->Capture = FALSE;
+      ShowFrameRect(dc);
+      d->ShowRect = FALSE;
 
-	if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
-	  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-			- Menulocal.LeftMargin) / zoom;
+      vx1 = (mxp2d(point->x - d->cx + d->hscroll)
+	     - Menulocal.LeftMargin) / zoom;
 
-	  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-			- Menulocal.TopMargin) / zoom;
+      vy1 = (mxp2d(point->y - d->cy + d->vscroll)
+	     - Menulocal.TopMargin) / zoom;
 
-	  dx = d->MouseX2 - d->MouseX1;
-	  dy = d->MouseY2 - d->MouseY1;
+      vx1 -= d->RefX1 - d->MouseDX;
+      vy1 -= d->RefY1 - d->MouseDY;
 
-	  if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-	    CheckGrid(FALSE, state, &dx, &dy, NULL);
-	  }
+      vx2 = (d->RefX2 - d->RefX1);
+      vy2 = (d->RefY2 - d->RefY1);
 
-	  argv[0] = (char *) &(d->ChangePoint);
-	  argv[1] = (char *) &dx;
-	  argv[2] = (char *) &dy;
-	  argv[3] = NULL;
+      cc = vx1 * vx2 + vy1 * vy2;
+      nn = vx2 * vx2 + vy2 * vy2;
 
-	  focus = *(struct focuslist **) arraynget(d->focusobj, 0);
+      if ((nn == 0) || (cc < 0)) {
+	zoom2 = 0;
+      } else {
+	zoom2 = cc / nn;
+      }
 
-	  obj = focus->obj;
+      if ((d->Mode != DataB) && (d->Mode != EvalB)) {
+	CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+      }
 
-	  if (obj == chkobject("axis")) {
-	    axis = TRUE;
-	  }
-	  PaintLock = TRUE;
+      zm = nround(zoom2 * 10000);
+      ResetZoom();
 
-	  if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
-	    AddInvalidateRect(obj, inst);
-	    _exeobj(obj, "change", inst, 3, argv);
-	    NgraphApp.Changed = TRUE;
-	    AddInvalidateRect(obj, inst);
-	  }
+      argv[0] = (char *) &zm;
+      argv[1] = (char *) &(d->RefX1);
+      argv[2] = (char *) &(d->RefY1);
+      argv[3] = (char *) &Menulocal.preserve_width;
+      argv[4] = NULL;
 
-	  PaintLock = FALSE;
-	  d->FrameOfsX = d->FrameOfsY = 0;
-	  d->ShowFrame = TRUE;
-	  ShowFocusFrame(dc);
+      num = arraynum(d->focusobj);
+      PaintLock = TRUE;
 
-	  if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis))) {
-	    d->allclear = FALSE;
-	  }
-	  UpdateAll();
-	} else {
-	  d->FrameOfsX = d->FrameOfsY = 0;
-	  d->ShowFrame = TRUE;
-	  ShowFocusFrame(dc);
+      for (i = num - 1; i >= 0; i--) {
+	focus = *(struct focuslist **) arraynget(d->focusobj, i);
+	obj = focus->obj;
+
+	if (obj == chkobject("axis"))
+	  axis = TRUE;
+
+	if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
+	  AddInvalidateRect(obj, inst);
+	  _exeobj(obj, "zooming", inst, 4, argv);
+	  NgraphApp.Changed = TRUE;
+	  AddInvalidateRect(obj, inst);
 	}
-	SetCursor(GDK_LEFT_PTR);
-	d->MouseMode = MOUSENONE;
-      } else if (d->MouseMode == MOUSEPOINT) {
-	d->Capture = FALSE;
-	ShowFrameRect(dc);
+      }
 
-	d->ShowRect = FALSE;
+      PaintLock = FALSE;
 
+      d->FrameOfsX = d->FrameOfsY = 0;
+      d->ShowFrame = TRUE;
+
+      ShowFocusFrame(dc);
+
+      if (d->Mode == MoveB && ! axis) {
+	d->allclear = FALSE;
+      }
+
+      UpdateAll();
+      SetCursor(GDK_LEFT_PTR);
+      d->MouseMode = MOUSENONE;
+    } else if (d->MouseMode == MOUSECHANGE) {
+      d->Capture = FALSE;
+      ShowFocusLine(dc, d->ChangePoint);
+      d->ShowLine = FALSE;
+
+      if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
 	d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
 		      - Menulocal.LeftMargin) / zoom;
 
 	d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
 		      - Menulocal.TopMargin) / zoom;
 
-	x1 = d->MouseX1;
-	y1 = d->MouseY1;
+	dx = d->MouseX2 - d->MouseX1;
+	dy = d->MouseY2 - d->MouseY1;
 
-	x2 = d->MouseX2;
-	y2 = d->MouseY2;
-
-	err = mxp2d(2) / zoom;
-	if (d->Mode == PointB) {
-	  Match("legend", x1, y1, x2, y2, err);
-	  Match("axis", x1, y1, x2, y2, err);
-	  Match("merge", x1, y1, x2, y2, err);
-
-	  d->FrameOfsX = d->FrameOfsY = 0;
-	  d->ShowFrame = TRUE;
-
-	  ShowFocusFrame(dc);
-	} else if (d->Mode == LegendB) {
-	  Match("legend", x1, y1, x2, y2, err);
-	  Match("merge", x1, y1, x2, y2, err);
-
-	  d->FrameOfsX = d->FrameOfsY = 0;
-	  d->ShowFrame = TRUE;
-
-	  ShowFocusFrame(dc);
-	} else if (d->Mode == AxisB) {
-	  Match("axis", x1, y1, x2, y2, err);
-
-	  d->FrameOfsX = d->FrameOfsY = 0;
-	  d->ShowFrame = TRUE;
-
-	  ShowFocusFrame(dc);
-	} else if (d->Mode == TrimB) {
-	  Trimming(x1, y1, x2, y2);
-	} else if (d->Mode == DataB) {
-	  if (ViewerWinFileUpdate(x1, y1, x2, y2, err)) {
-	    UpdateAll();
-	  }
-	} else {
-	  Evaluate(x1, y1, x2, y2, err);
+	if ((d->Mode != DataB) && (d->Mode != EvalB)) {
+	  CheckGrid(FALSE, state, &dx, &dy, NULL);
 	}
+
+	argv[0] = (char *) &(d->ChangePoint);
+	argv[1] = (char *) &dx;
+	argv[2] = (char *) &dy;
+	argv[3] = NULL;
+
+	focus = *(struct focuslist **) arraynget(d->focusobj, 0);
+
+	obj = focus->obj;
+
+	if (obj == chkobject("axis")) {
+	  axis = TRUE;
+	}
+	PaintLock = TRUE;
+
+	if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
+	  AddInvalidateRect(obj, inst);
+	  _exeobj(obj, "change", inst, 3, argv);
+	  NgraphApp.Changed = TRUE;
+	  AddInvalidateRect(obj, inst);
+	}
+
+	PaintLock = FALSE;
+	d->FrameOfsX = d->FrameOfsY = 0;
+	d->ShowFrame = TRUE;
+	ShowFocusFrame(dc);
+
+	if (d->Mode == MoveB && ! axis) {
+	  d->allclear = FALSE;
+	}
+	UpdateAll();
+      } else {
+	d->FrameOfsX = d->FrameOfsY = 0;
+	d->ShowFrame = TRUE;
+	ShowFocusFrame(dc);
       }
+      SetCursor(GDK_LEFT_PTR);
       d->MouseMode = MOUSENONE;
-    } else if ((d->Mode == MarkB) || (d->Mode == TextB)) {
-      d->Capture = FALSE;
-      ShowPoints(dc);
+    }
+  } else if (d->Mode == PointB ||
+	     d->Mode == LegendB ||
+	     d->Mode == AxisB) {
+    if (d->MouseMode == MOUSEPOINT) {
+      mouse_up_point(point, d, dc, zoom);
+      d->allclear = FALSE;
+      UpdateAll();
+    }
+    d->MouseMode = MOUSENONE;
+  } else if ((d->Mode == MarkB) || (d->Mode == TextB)) {
+    d->Capture = FALSE;
+    ShowPoints(dc);
 
-      d->MouseX1 = (mxp2d(point->x + d->hscroll - d->cx)
-		    - Menulocal.LeftMargin) / zoom;
+    d->MouseX1 = (mxp2d(point->x + d->hscroll - d->cx)
+		  - Menulocal.LeftMargin) / zoom;
 
-      d->MouseY1 = (mxp2d(point->y + d->vscroll - d->cy)
-		    - Menulocal.TopMargin) / zoom;
+    d->MouseY1 = (mxp2d(point->y + d->vscroll - d->cy)
+		  - Menulocal.TopMargin) / zoom;
 
-      x1 = d->MouseX1;
-      y1 = d->MouseY1;
+    x1 = d->MouseX1;
+    y1 = d->MouseY1;
 
-      CheckGrid(TRUE, state, &x1, &y1, NULL);
+    CheckGrid(TRUE, state, &x1, &y1, NULL);
 
-      num = arraynum(d->points);
-      if (num >= 1) {
-	po = *(struct pointslist **) arraynget(d->points, 0);
+    num = arraynum(d->points);
+    if (num >= 1) {
+      po = *(struct pointslist **) arraynget(d->points, 0);
+      po->x = x1;
+      po->y = y1;
+    }
+    ShowPoints(dc);
+    if (arraynum(d->points) == 1) {
+      ViewerEvLButtonDblClk(state, point, d);
+    }
+  } else if ((d->Mode != MarkB) && (d->Mode != TextB)) {
+    ShowPoints(dc);
+
+    d->MouseX1 = (mxp2d(point->x + d->hscroll - d->cx)
+		  - Menulocal.LeftMargin) / zoom;
+
+    d->MouseY1 = (mxp2d(point->y + d->vscroll - d->cy)
+		  - Menulocal.TopMargin) / zoom;
+
+    x1 = d->MouseX1;
+    y1 = d->MouseY1;
+
+    CheckGrid(TRUE, state, &x1, &y1, NULL);
+
+    num = arraynum(d->points);
+    if (num >= 2) {
+      po = *(struct pointslist **) arraynget(d->points, num - 2);
+    }
+    if ((num < 2) || (po->x != x1) || (po->y != y1)) {
+      po = (struct pointslist *) memalloc(sizeof(struct pointslist));
+      if (po) {
 	po->x = x1;
 	po->y = y1;
+
+	arrayadd(d->points, &po);
       }
-      ShowPoints(dc);
-      if (arraynum(d->points) == 1) {
+    }
+
+    ShowPoints(dc);
+
+    if ((d->Mode == RectB) || (d->Mode == ArcB) || (d->Mode == GaussB)
+	|| (d->Mode == FrameB) || (d->Mode == SectionB)
+	|| (d->Mode == CrossB) || (d->Mode == SingleB)) {
+
+      if (arraynum(d->points) == 3) {
+	d->Capture = FALSE;
 	ViewerEvLButtonDblClk(state, point, d);
-      }
-    } else if ((d->Mode != MarkB) && (d->Mode != TextB)) {
-      ShowPoints(dc);
-
-      d->MouseX1 = (mxp2d(point->x + d->hscroll - d->cx)
-		    - Menulocal.LeftMargin) / zoom;
-
-      d->MouseY1 = (mxp2d(point->y + d->vscroll - d->cy)
-		    - Menulocal.TopMargin) / zoom;
-
-      x1 = d->MouseX1;
-      y1 = d->MouseY1;
-
-      CheckGrid(TRUE, state, &x1, &y1, NULL);
-
-      num = arraynum(d->points);
-      if (num >= 2) {
-	po = *(struct pointslist **) arraynget(d->points, num - 2);
-      }
-      if ((num < 2) || (po->x != x1) || (po->y != y1)) {
-	po = (struct pointslist *) memalloc(sizeof(struct pointslist));
-	if (po) {
-	  po->x = x1;
-	  po->y = y1;
-
-	  arrayadd(d->points, &po);
-	}
-      }
-
-      ShowPoints(dc);
-
-      if ((d->Mode == RectB) || (d->Mode == ArcB) || (d->Mode == GaussB)
-	  || (d->Mode == FrameB) || (d->Mode == SectionB)
-	  || (d->Mode == CrossB) || (d->Mode == SingleB)) {
-
-	if (arraynum(d->points) == 3) {
-	  d->Capture = FALSE;
-	  ViewerEvLButtonDblClk(state, point, d);
-	}
       }
     }
   }
+
   g_object_unref(G_OBJECT(dc));
 
   return TRUE;
@@ -3056,6 +3128,62 @@ ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   return FALSE;
 }
 
+static void
+set_mouse_cursor_hover(struct Viewer *d, int x, int y)
+{
+  int j, x1, y1, x2, y2, num, bboxnum, *bbox;;
+  char *inst;
+  struct narray *abbox;
+  struct focuslist **focus;
+  double zoom;
+
+  if (d->Mode != MoveB)
+    return;
+
+  num = arraynum(d->focusobj);
+  focus = (struct focuslist **) arraydata(d->focusobj);
+
+  if (num == 0)
+    return;
+
+  GetFocusFrame(&x1, &y1, &x2, &y2, d->FrameOfsX, d->FrameOfsY);
+
+  if (x > x1 && x < x2 && y > y1 && y < y2) {
+    SetCursor(GDK_FLEUR);
+  } else {
+    SetCursor(GDK_LEFT_PTR);
+  }
+
+  if (num != 1)
+    return;
+
+  inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
+  if (inst == NULL)
+    return;
+
+  zoom = Menulocal.PaperZoom / 10000.0;
+
+  _exeobj(focus[0]->obj, "bbox", inst, 0, NULL);
+  _getobj(focus[0]->obj, "bbox", inst, &abbox);
+
+  bboxnum = arraynum(abbox);
+  bbox = (int *) arraydata(abbox);
+
+  for (j = 4; j < bboxnum; j += 2) {
+    x1 =
+      mxd2p((bbox[j] + d->FrameOfsX) * zoom +
+	    Menulocal.LeftMargin) - d->hscroll + d->cx;
+    y1 =
+      mxd2p((bbox[j + 1] + d->FrameOfsY) * zoom +
+	    Menulocal.TopMargin) - d->vscroll + d->cy;
+
+    if (x > x1 - 3 && x < x1 + 3 && y > y1 - 3 && y < y2 + 3) {
+      SetCursor(GDK_LEFT_PTR);
+      break;
+    }
+  }
+}
+
 static gboolean
 ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 {
@@ -3095,9 +3223,13 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
       ShowCrossGauge(dc);
   }
 
-  if (d->Capture) {
-    if ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB)
-	|| (d->Mode == TrimB) || (d->Mode == DataB) || (d->Mode == EvalB)) {
+  if (! d->Capture) {
+    set_mouse_cursor_hover(d, point->x, point->y);
+  } else {
+    if (d->Mode == MoveB ||
+	d->Mode == TrimB ||
+	d->Mode == DataB ||
+	d->Mode == EvalB) {
 
       if (d->MouseMode == MOUSEDRAG) {
 
@@ -3181,7 +3313,11 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
 	ShowFocusLine(dc, d->ChangePoint);
 
-      } else if (d->MouseMode == MOUSEPOINT) {
+      }
+    } else if (d->Mode == PointB ||
+	       d->Mode == LegendB ||
+	       d->Mode == AxisB) {
+      if (d->MouseMode == MOUSEPOINT) {
 	ShowFrameRect(dc);
 
 	d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
@@ -3260,7 +3396,12 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   for (i = 0; i < VIEWER_POPUP_ITEM_NUM - 1; i++) {
     gtk_widget_set_sensitive(d->popup_item[i], FALSE);
   }
-  if ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB)) {
+
+  switch (d->Mode) {
+  case MoveB:
+  case PointB:
+  case LegendB:
+  case AxisB:
     num = arraynum(d->focusobj);
     if (num > 0) {
       for (i = 0; i < 3; i++) {
@@ -3721,6 +3862,9 @@ ViewerWinUpdate(int clear)
       arrayndel2(d->focusobj, i);
   }
 
+  if (arraynum(d->focusobj) == 0)
+    clear_focus_obj(d->focusobj, d->Mode);
+
   if (d->allclear) {
     mx_clear(NULL);
     mx_redraw(Menulocal.obj, Menulocal.inst);
@@ -3852,7 +3996,6 @@ Focus(struct objlist *fobj, int id, int add)
   int did;
   char *dfield;
   int i;
-  struct focuslist *focus;
   struct savedstdio save;
   GdkGC *dc;
   int man;
@@ -3864,9 +4007,9 @@ Focus(struct objlist *fobj, int id, int add)
   d = &(NgraphApp.Viewer);
 
   if (chkobjchild(chkobject("legend"), fobj)) {
-    CmViewerButtonArm(NgraphApp.viewb[1], NULL);
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[1]), TRUE);
   } else if (chkobjchild(chkobject("axis"), fobj)) {
-    CmViewerButtonArm(NgraphApp.viewb[10], NULL);
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[2]), TRUE);
   } else {
     return;
   }
@@ -3899,16 +4042,12 @@ Focus(struct objlist *fobj, int id, int add)
     if (check_focused_obj(d->focusobj, fobj, oid))
       break;
 
-    focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
-    if (focus) {
-      if (chkobjchild(chkobject("axis"), dobj)) {
-	getobj(fobj, "group_manager", id, 0, NULL, &man);
-	getobj(fobj, "oid", man, 0, NULL, &did);
-      }
-      focus->obj = dobj;
-      focus->oid = did;
-      arrayadd(d->focusobj, &focus);
+    if (chkobjchild(chkobject("axis"), dobj)) {
+      getobj(fobj, "group_manager", id, 0, NULL, &man);
+      getobj(fobj, "oid", man, 0, NULL, &did);
     }
+    add_focus_obj(d->focusobj, dobj, did);
+
     d->MouseMode = MOUSENONE;
     break;
   }
@@ -3935,7 +4074,7 @@ UnFocus(void)
     gc = gdk_gc_new(d->win);
     ShowFocusFrame(gc);
     g_object_unref(G_OBJECT(gc));
-    arraydel2(d->focusobj);
+    clear_focus_obj(d->focusobj, d->Mode);
   }
 
   d->ShowFrame = FALSE;
@@ -4558,6 +4697,9 @@ ViewUpdate(void)
   }
   PaintLock = FALSE;
 
+  if (arraynum(d->focusobj) == 0)
+    clear_focus_obj(d->focusobj, d->Mode);
+
   if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis)))
     d->allclear = FALSE;
 
@@ -4579,42 +4721,50 @@ ViewDelete(void)
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
-  if ((d->MouseMode == MOUSENONE)
-      && ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
-
-    dc = gdk_gc_new(d->win);
-    ShowFocusFrame(dc);
-    d->ShowFrame = FALSE;
-
-    axis = FALSE;
-    PaintLock = TRUE;
-
-    num = arraynum(d->focusobj);
-
-    for (i = num - 1; i >= 0; i--) {
-      focus = *(struct focuslist **) arraynget(d->focusobj, i);
-      obj = focus->obj;
-
-      if ((inst = chkobjinstoid(obj, focus->oid)) != NULL) {
-	AddInvalidateRect(obj, inst);
-	DelList(obj, inst);
-	_getobj(obj, "id", inst, &id);
-
-	if (obj == chkobject("axis")) {
-	  AxisDel(id);
-	  axis = TRUE;
-	} else {
-	  delobj(obj, id);
-	}
-	NgraphApp.Changed = TRUE;
-      }
-    }
-    PaintLock = FALSE;
-    if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis)))
-      d->allclear = FALSE;
-    if (num != 0)
-      UpdateAll();
+  if ((d->MouseMode != MOUSENONE) ||
+      (d->Mode != MoveB &&
+       d->Mode != PointB &&
+       d->Mode != LegendB &&
+       d->Mode != AxisB)) {
+    return;
   }
+
+  dc = gdk_gc_new(d->win);
+  ShowFocusFrame(dc);
+  d->ShowFrame = FALSE;
+
+  axis = FALSE;
+  PaintLock = TRUE;
+
+  num = arraynum(d->focusobj);
+
+  for (i = num - 1; i >= 0; i--) {
+    focus = *(struct focuslist **) arraynget(d->focusobj, i);
+    obj = focus->obj;
+
+    inst = chkobjinstoid(obj, focus->oid);
+    if (inst == NULL)
+      continue;
+
+    AddInvalidateRect(obj, inst);
+    DelList(obj, inst);
+    _getobj(obj, "id", inst, &id);
+
+    if (obj == chkobject("axis")) {
+      AxisDel(id);
+      axis = TRUE;
+    } else {
+      delobj(obj, id);
+    }
+    NgraphApp.Changed = TRUE;
+  }
+  PaintLock = FALSE;
+
+  if (((d->Mode == MoveB) || (d->Mode == LegendB)) || ((d->Mode == PointB) && (!axis)))
+    d->allclear = FALSE;
+
+  if (num != 0)
+    UpdateAll();
 }
 
 static void
@@ -4628,7 +4778,7 @@ ViewTop(void)
 
   d = &(NgraphApp.Viewer);
   if ((d->MouseMode == MOUSENONE)
-      && ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
+      && ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
     num = arraynum(d->focusobj);
 
     if (num == 1) {
@@ -4661,7 +4811,7 @@ ViewLast(void)
 
   d = &(NgraphApp.Viewer);
   if ((d->MouseMode == MOUSENONE)
-      && ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
+      && ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
 
     num = arraynum(d->focusobj);
 
@@ -4729,7 +4879,7 @@ ViewCopy(void)
   d = &(NgraphApp.Viewer);
 
   if ((d->MouseMode == MOUSENONE)
-      && ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
+      && ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
 
     dc = gdk_gc_new(d->win);
 
@@ -5008,7 +5158,7 @@ ViewCopy(void)
     }
     PaintLock = FALSE;
 
-    if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis)))
+    if ((d->Mode == MoveB) || (d->Mode == LegendB) || ((d->Mode == PointB) && (!axis)))
       d->allclear = FALSE;
 
     UpdateAll();
@@ -5081,20 +5231,30 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
   d = &(NgraphApp.Viewer);
 
   if (! gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(w)))
-      return;
-
-  UnFocus();
+    return;
 
   Mode = NgraphApp.Viewer.Mode = (int) client_data;
 
-  if ((Mode == PointB) || (Mode == LegendB) || (Mode == AxisB)
-      || (Mode == TrimB) || (Mode == DataB) || (Mode == EvalB)) {
+  if (Mode != MoveB)
+    UnFocus();
+
+  switch (Mode) {
+  case PointB:
+  case LegendB:
+  case AxisB:
+  case TrimB:
+  case DataB:
+  case EvalB:
+  case MoveB:
     SetCursor(GDK_LEFT_PTR);
-  } else if (Mode == TextB) {
+    break;
+  case TextB:
     SetCursor(GDK_XTERM);
-  } else if (Mode == ZoomB) {
+    break;
+  case ZoomB:
     SetCursor(GDK_TARGET);
-  } else {
+    break;
+  default:
     SetCursor(GDK_CROSSHAIR);
   }
   NgraphApp.Viewer.Capture = FALSE;
