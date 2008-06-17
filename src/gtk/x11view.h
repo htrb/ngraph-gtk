@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.h,v 1.3 2008/06/16 00:41:06 hito Exp $
+ * $Id: x11view.h,v 1.4 2008/06/17 10:55:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,7 +35,7 @@ void OpenGC(void);
 void CloseGC(void);
 void SetScroller(void);
 void Focus(struct objlist *fobj, int id, int add);
-void UnFocus(void);
+void UnFocus(int init_cursor);
 void ChangeDPI(int redraw);
 void Draw(int SelectFile);
 void CmViewerDraw(void);

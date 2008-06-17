@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.11 2008/06/13 13:48:31 hito Exp $
+ * $Id: x11lgnd.c,v 1.12 2008/06/17 10:55:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1926,7 +1926,7 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
   if (Menulock || GlobalLock)
     return;
 
-  UnFocus();
+  UnFocus(TRUE);
 
   num = 0;
   update = FALSE;

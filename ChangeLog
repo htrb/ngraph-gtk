@@ -12,7 +12,7 @@
 	(ViewerEvLButtonDblClk): use create_axis(), create_single_axis(),
 	create_legendx(), create_legend3(), create_legend2() and
 	create_legend1().
-
+	(clear_focus_obj, UnFocus): add argument "int init_cursor".
 
 2008-06-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.31 2008/06/17 10:18:40 hito Exp $
+ * $Id: x11view.c,v 1.32 2008/06/17 10:55:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1015,12 +1015,12 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
 }
 
 static void
-clear_focus_obj(struct narray *focusobj, int mode)
+clear_focus_obj(struct narray *focusobj, int mode, int init_cursor)
 {
   arraydel2(focusobj);
   SetMoveButtonState(FALSE);
 
-  if (mode == MoveB)
+  if (mode == MoveB && init_cursor)
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
 }
 
@@ -1842,7 +1842,7 @@ mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
   if (arraynum(d->focusobj) && ! (state & GDK_SHIFT_MASK)) {
     ShowFocusFrame(dc);
     d->ShowFrame = FALSE;
-    clear_focus_obj(d->focusobj, d->Mode);
+    clear_focus_obj(d->focusobj, d->Mode, TRUE);
   }
 
   d->MouseMode = MOUSEPOINT;
@@ -4038,7 +4038,7 @@ ViewerWinUpdate(int clear)
   }
 
   if (arraynum(d->focusobj) == 0)
-    clear_focus_obj(d->focusobj, d->Mode);
+    clear_focus_obj(d->focusobj, d->Mode, TRUE);
 
   if (d->allclear) {
     mx_clear(NULL);
@@ -4181,16 +4181,15 @@ Focus(struct objlist *fobj, int id, int add)
 
   d = &(NgraphApp.Viewer);
 
-  if (chkobjchild(chkobject("legend"), fobj)) {
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[1]), TRUE);
-  } else if (chkobjchild(chkobject("axis"), fobj)) {
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[2]), TRUE);
+  if (chkobjchild(chkobject("legend"), fobj) ||
+      chkobjchild(chkobject("axis"), fobj)) {
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[4]), TRUE);
   } else {
     return;
   }
 
   if (! add)
-    UnFocus();
+    UnFocus(FALSE);
 
   inst = chkobjinst(fobj, id);
 
@@ -4239,7 +4238,7 @@ Focus(struct objlist *fobj, int id, int add)
 
 
 void
-UnFocus(void)
+UnFocus(int init_cursor)
 {
   GdkGC *gc;
   struct Viewer *d;
@@ -4249,7 +4248,7 @@ UnFocus(void)
     gc = gdk_gc_new(d->win);
     ShowFocusFrame(gc);
     g_object_unref(G_OBJECT(gc));
-    clear_focus_obj(d->focusobj, d->Mode);
+    clear_focus_obj(d->focusobj, d->Mode, init_cursor);
   }
 
   d->ShowFrame = FALSE;
@@ -4472,7 +4471,7 @@ CloseGC(void)
 
   Mxlocal->region = NULL;
 
-  UnFocus();
+  UnFocus(TRUE);
 }
 
 void
@@ -4590,7 +4589,7 @@ void
 Clear(void)
 {
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
-    UnFocus();
+    UnFocus(TRUE);
     _exeobj(Menulocal.GRAobj, "clear", Menulocal.GRAinst, 0, NULL);
     ReopenGC();
   }
@@ -4873,7 +4872,7 @@ ViewUpdate(void)
   PaintLock = FALSE;
 
   if (arraynum(d->focusobj) == 0)
-    clear_focus_obj(d->focusobj, d->Mode);
+    clear_focus_obj(d->focusobj, d->Mode, TRUE);
 
   if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis)))
     d->allclear = FALSE;
@@ -5413,7 +5412,7 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
 
   Mode = (int) client_data;
   if (Mode != MoveB)
-    UnFocus();
+    UnFocus(TRUE);
 
   switch (Mode) {
   case PointB:
