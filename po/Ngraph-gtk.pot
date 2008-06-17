@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30.gtk-01\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-16 23:18+0900\n"
+"POT-Creation-Date: 2008-06-17 22:00+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1851,15 +1851,15 @@ msgstr ""
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:4422
+#: src/gtk/x11view.c:4515
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4428
+#: src/gtk/x11view.c:4521
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11view.c:4429
+#: src/gtk/x11view.c:4522
 msgid "Drawing"
 msgstr ""
 
