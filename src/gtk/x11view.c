@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.30 2008/06/17 10:10:16 hito Exp $
+ * $Id: x11view.c,v 1.31 2008/06/17 10:18:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3956,8 +3956,6 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     gdk_region_destroy(region);
     region = NULL;
   }
-
-  //  gtk_widget_grab_focus(w);
 
   return FALSE;
 }
