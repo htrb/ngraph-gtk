@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.29 2008/06/17 10:04:38 hito Exp $
+ * $Id: x11view.c,v 1.30 2008/06/17 10:10:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3239,6 +3239,11 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 	break;
       case RectB:
       case ArcB:
+      case GaussB:
+      case SingleB:
+      case FrameB:
+      case SectionB:
+      case CrossB:
 	ShowPoints(dc);
 	arraydel2(d->points);
 	d->Capture = FALSE;
