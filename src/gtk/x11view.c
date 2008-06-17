@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.28 2008/06/16 11:53:49 hito Exp $
+ * $Id: x11view.c,v 1.29 2008/06/17 10:04:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1973,23 +1973,193 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
   }
 }
 
+static void
+mouse_down_move_data(TPoint *point, struct Viewer *d)
+{
+  struct objlist *fileobj, *aobjx, *aobjy;
+  struct narray iarray, *move, *movex, *movey;
+  int selnum, sel, i, j, ax, ay, anum, movenum, iline;
+  double dx, dy;
+  char *axis, *argv[3];
+
+  fileobj = chkobject("file");
+  if (fileobj == NULL) {
+    selnum = arraynum(&SelList);
+
+    for (i = 0; i < selnum; i++) {
+      sel = *(int *) arraynget(&SelList, i);
+
+      getobj(fileobj, "axis_x", EvalList[sel].id, 0, NULL, &axis);
+      arrayinit(&iarray, sizeof(int));
+
+      if (getobjilist(axis, &aobjx, &iarray, FALSE, NULL)) {
+	ax = -1;
+      } else {
+	anum = arraynum(&iarray);
+	ax = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
+	arraydel(&iarray);
+      }
+
+      getobj(fileobj, "axis_y", EvalList[sel].id, 0, NULL, &axis);
+      arrayinit(&iarray, sizeof(int));
+
+      if (getobjilist(axis, &aobjy, &iarray, FALSE, NULL)) {
+	ay = -1;
+      } else {
+	anum = arraynum(&iarray);
+	ay = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
+	arraydel(&iarray);
+      }
+      if ((ax != -1) && (ax != -1)) {
+	argv[0] = (char *) &(d->MouseX1);
+	argv[1] = (char *) &(d->MouseY1);
+	argv[2] = NULL;
+
+	if ((getobj(aobjx, "coordinate", ax, 2, argv, &dx) != -1)
+	    && (getobj(aobjy, "coordinate", ay, 2, argv, &dy) != -1)) {
+
+	  getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move);
+	  getobj(fileobj, "move_data_x", EvalList[sel].id, 0, NULL, &movex);
+	  getobj(fileobj, "move_data_y", EvalList[sel].id, 0, NULL, &movey);
+
+	  if (move == NULL) {
+	    move = arraynew(sizeof(int));
+	    putobj(fileobj, "move_data", EvalList[sel].id, move);
+	  }
+
+	  if (movex == NULL) {
+	    movex = arraynew(sizeof(double));
+	    putobj(fileobj, "move_data_x", EvalList[sel].id, movex);
+	  }
+
+	  if (movey == NULL) {
+	    movey = arraynew(sizeof(double));
+	    putobj(fileobj, "move_data_y", EvalList[sel].id, movey);
+	  }
+
+	  movenum = arraynum(move);
+
+	  if (arraynum(movex) < movenum) {
+	    for (j = movenum - 1; j >= arraynum(movex); j--) {
+	      arrayndel(move, j);
+	    }
+	    movenum = arraynum(movex);
+	  }
+
+	  if (arraynum(movey) < movenum) {
+	    for (j = movenum - 1; j >= arraynum(movey); j--) {
+	      arrayndel(move, j);
+	      arrayndel(movex, j);
+	    }
+	    movenum = arraynum(movey);
+	  }
+
+	  for (j = 0; j < movenum; j++) {
+	    iline = *(int *) arraynget(move, j);
+	    if (iline == EvalList[sel].line)
+	      break;
+	  }
+
+	  if (j == movenum) {
+	    arrayadd(move, &(EvalList[sel].line));
+	    arrayadd(movex, &dx);
+	    arrayadd(movey, &dy);
+	    NgraphApp.Changed = TRUE;
+	  } else {
+	    arrayput(move, &(EvalList[sel].line), j);
+	    arrayput(movex, &dx, j);
+	    arrayput(movey, &dy, j);
+	    NgraphApp.Changed = TRUE;
+	  }
+	}
+      }
+    }
+    MessageBox(TopLevel, "Data points are moved.", "Confirm", MB_OK);
+  }
+  arraydel(&SelList);
+  d->MoveData = FALSE;
+  d->Capture = FALSE;
+  SetCursor(GDK_LEFT_PTR);
+}
+
+static void
+mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
+{
+  int vdpi;
+
+  if (ZoomLock)
+    return;
+
+  ZoomLock = TRUE;
+  if (state & GDK_SHIFT_MASK) {
+    d->hscroll -= (d->cx - point->x);
+    d->vscroll -= (d->cy - point->y);
+
+    ChangeDPI(TRUE);
+  } else if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &vdpi) != -1) {
+    if (zoom_out) {
+      if ((int) (vdpi / sqrt(2)) >= 20) {
+	vdpi = nround(vdpi / sqrt(2));
+
+	if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
+	  d->hscroll -= (d->cx - point->x);
+	  d->vscroll -= (d->cy - point->y);
+
+	  //	    ChangeDPI(FALSE);
+	  ChangeDPI(TRUE);
+	}
+      } else {
+	MessageBeep(TopLevel);
+      }
+    } else {
+      if ((int) (vdpi * sqrt(2)) <= 620) {
+	vdpi = nround(vdpi * sqrt(2));
+	if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
+	  d->hscroll -= (d->cx - point->x);
+	  d->vscroll -= (d->cy - point->y);
+	  //	    ChangeDPI(FALSE);
+	  ChangeDPI(TRUE);
+	}
+      } else {
+	MessageBeep(TopLevel);
+      }
+    }
+  }
+  ZoomLock = FALSE;
+}
+
+static void
+mouse_down_set_points(unsigned int state, struct Viewer *d, GdkGC *dc, int n)
+{
+  int x1, y1, i;
+  struct pointslist *po;
+
+  if (d->Capture)
+    return;
+
+  x1 = d->MouseX1;
+  y1 = d->MouseY1;
+
+  CheckGrid(TRUE, state, &x1, &y1, NULL);
+
+  for (i = 0; i < n; i++) {
+    po = (struct pointslist *) memalloc(sizeof(struct pointslist));
+    if (po) {
+      po->x = x1;
+      po->y = y1;
+      arrayadd(d->points, &po);
+    }
+  }
+
+  ShowPoints(dc);
+  d->Capture = TRUE;
+}
+
 static gboolean
 ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
-  int x1, y1;
-  struct pointslist *po;
   double zoom;
-  int i, j;
-  int vdpi;
-  int selnum, sel, movenum, iline;
-  struct narray *move, *movex, *movey;
-  struct objlist *fileobj, *aobjx, *aobjy;
-  char *argv[3];
-  double dx, dy;
-  int ax, ay, anum;
-  struct narray iarray;
-  char *axis;
 
   if (Menulock || GlobalLock)
     return FALSE;
@@ -2007,196 +2177,42 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 
   d->MouseMode = MOUSENONE;
 
-  dc = gdk_gc_new(d->win);
 
   if (d->MoveData) {
-    fileobj = chkobject("file");
-    if (fileobj) {
-      selnum = arraynum(&SelList);
+    mouse_down_move_data(point, d);
+    return TRUE;
+  }
 
-      for (i = 0; i < selnum; i++) {
-	sel = *(int *) arraynget(&SelList, i);
+  dc = gdk_gc_new(d->win);
 
-	getobj(fileobj, "axis_x", EvalList[sel].id, 0, NULL, &axis);
-	arrayinit(&iarray, sizeof(int));
-
-	if (getobjilist(axis, &aobjx, &iarray, FALSE, NULL)) {
-	  ax = -1;
-	} else {
-	  anum = arraynum(&iarray);
-	  ax = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
-	  arraydel(&iarray);
-	}
-
-	getobj(fileobj, "axis_y", EvalList[sel].id, 0, NULL, &axis);
-	arrayinit(&iarray, sizeof(int));
-
-	if (getobjilist(axis, &aobjy, &iarray, FALSE, NULL)) {
-	  ay = -1;
-	} else {
-	  anum = arraynum(&iarray);
-	  ay = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
-	  arraydel(&iarray);
-	}
-	if ((ax != -1) && (ax != -1)) {
-	  argv[0] = (char *) &(d->MouseX1);
-	  argv[1] = (char *) &(d->MouseY1);
-	  argv[2] = NULL;
-
-	  if ((getobj(aobjx, "coordinate", ax, 2, argv, &dx) != -1)
-	      && (getobj(aobjy, "coordinate", ay, 2, argv, &dy) != -1)) {
-
-	    getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move);
-	    getobj(fileobj, "move_data_x", EvalList[sel].id, 0, NULL, &movex);
-	    getobj(fileobj, "move_data_y", EvalList[sel].id, 0, NULL, &movey);
-
-	    if (move == NULL) {
-	      move = arraynew(sizeof(int));
-	      putobj(fileobj, "move_data", EvalList[sel].id, move);
-	    }
-
-	    if (movex == NULL) {
-	      movex = arraynew(sizeof(double));
-	      putobj(fileobj, "move_data_x", EvalList[sel].id, movex);
-	    }
-
-	    if (movey == NULL) {
-	      movey = arraynew(sizeof(double));
-	      putobj(fileobj, "move_data_y", EvalList[sel].id, movey);
-	    }
-
-	    movenum = arraynum(move);
-
-	    if (arraynum(movex) < movenum) {
-	      for (j = movenum - 1; j >= arraynum(movex); j--) {
-		arrayndel(move, j);
-	      }
-	      movenum = arraynum(movex);
-	    }
-
-	    if (arraynum(movey) < movenum) {
-	      for (j = movenum - 1; j >= arraynum(movey); j--) {
-		arrayndel(move, j);
-		arrayndel(movex, j);
-	      }
-	      movenum = arraynum(movey);
-	    }
-
-	    for (j = 0; j < movenum; j++) {
-	      iline = *(int *) arraynget(move, j);
-	      if (iline == EvalList[sel].line)
-		break;
-	    }
-
-	    if (j == movenum) {
-	      arrayadd(move, &(EvalList[sel].line));
-	      arrayadd(movex, &dx);
-	      arrayadd(movey, &dy);
-	      NgraphApp.Changed = TRUE;
-	    } else {
-	      arrayput(move, &(EvalList[sel].line), j);
-	      arrayput(movex, &dx, j);
-	      arrayput(movey, &dy, j);
-	      NgraphApp.Changed = TRUE;
-	    }
-	  }
-	}
-      }
-      MessageBox(TopLevel, "Data points are moved.", "Confirm", MB_OK);
-    }
-    arraydel(&SelList);
-    d->MoveData = FALSE;
-    d->Capture = FALSE;
-    SetCursor(GDK_LEFT_PTR);
-  } else if (d->Mode == PointB || d->Mode == LegendB || d->Mode == AxisB) {
+  switch (d->Mode) {
+  case PointB:
+  case LegendB:
+  case AxisB:
     mouse_down_point(state, point, d, dc);
-  } else if (d->Mode == MoveB) {
+    break;
+  case MoveB:
     mouse_down_move(state, point, d, dc);
-  } else if ((d->Mode == TrimB) || (d->Mode == DataB) || (d->Mode == EvalB)) {
+    break;
+  case TrimB:
+  case DataB:
+  case EvalB:
     d->Capture = TRUE;
     d->MouseMode = MOUSEPOINT;
     d->ShowRect = TRUE;
-  } else if ((d->Mode == MarkB) || (d->Mode == TextB)) {
-    if (!d->Capture) {
-      x1 = d->MouseX1;
-      y1 = d->MouseY1;
-
-      CheckGrid(TRUE, state, &x1, &y1, NULL);
-
-      po = (struct pointslist *) memalloc(sizeof(struct pointslist));
-      if (po) {
-	po->x = x1;
-	po->y = y1;
-	arrayadd(d->points, &po);
-      }
-
-      ShowPoints(dc);
-      d->Capture = TRUE;
-    }
-  } else if (d->Mode == ZoomB) {
-    if (! ZoomLock) {
-      ZoomLock = TRUE;
-      if (state & GDK_SHIFT_MASK) {
-	d->hscroll -= (d->cx - point->x);
-	d->vscroll -= (d->cy - point->y);
-
-	ChangeDPI(TRUE);
-      } else if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &vdpi) != -1) {
-	if (state & GDK_CONTROL_MASK) {
-	  if ((int) (vdpi / sqrt(2)) >= 20) {
-	    vdpi = nround(vdpi / sqrt(2));
-
-	    if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
-	      d->hscroll -= (d->cx - point->x);
-	      d->vscroll -= (d->cy - point->y);
-
-	    //	    ChangeDPI(FALSE);
-	      ChangeDPI(TRUE);
-	    }
-	  } else {
-	    MessageBeep(TopLevel);
-	  }
-	} else {
-	  if ((int) (vdpi * sqrt(2)) <= 620) {
-	    vdpi = nround(vdpi * sqrt(2));
-	    if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
-	    d->hscroll -= (d->cx - point->x);
-	    d->vscroll -= (d->cy - point->y);
-	    //	    ChangeDPI(FALSE);
-	    ChangeDPI(TRUE);
-	    }
-	  } else {
-	    MessageBeep(TopLevel);
-	  }
-	}
-      }
-      ZoomLock = FALSE;
-    }
-  } else {
-    if (!(d->Capture)) {
-      x1 = d->MouseX1;
-      y1 = d->MouseY1;
-
-      CheckGrid(TRUE, state, &x1, &y1, NULL);
-
-      po = (struct pointslist *) memalloc(sizeof(struct pointslist));
-      if (po) {
-	po->x = x1;
-	po->y = y1;
-	arrayadd(d->points, &po);
-      }
-
-      po = (struct pointslist *) memalloc(sizeof(struct pointslist));
-      if (po) {
-	po->x = x1;
-	po->y = y1;
-	arrayadd(d->points, &po);
-      }
-
-      ShowPoints(dc);
-      d->Capture = TRUE;
-    }
+    break;
+  case MarkB:
+  case TextB:
+    mouse_down_set_points(state, d, dc, 1);
+    break;
+  case ZoomB:
+    mouse_down_zoom(state, point, d, state & GDK_CONTROL_MASK);
+    break;
+  default:
+    mouse_down_set_points(state, d, dc, 2);
+    break;
   }
+
   g_object_unref(G_OBJECT(dc));
 
   return TRUE;
@@ -2628,464 +2644,553 @@ swapint(int *a, int *b)
   *b = tmp;
 }
 
-static gboolean
-ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
+static void
+create_legend1(struct Viewer *d, GdkGC *dc)
 {
-  int i, id, num;
-  struct objlist *obj = NULL, *obj2;
+  int id, num, x1, y1, ret;
   char *inst;
-  int ret = IDCANCEL;
-  GdkGC *dc;
-  int x1, y1, x2, y2, x, y, rx, ry;
-  struct pointslist *po, **pdata;
-  struct narray *parray;
-  int idx, idy, idu, idr, idg, lenx, leny, oidx, oidy;
-  double fx1, fy1;
-  int dir;
-  struct narray group;
-  int type;
-  char *argv[2];
-  char *ref;
+  struct objlist *obj = NULL;
+  struct pointslist *po;
 
-  if (Menulock || GlobalLock)
-    return FALSE;
+  d->Capture = FALSE;
+  num = arraynum(d->points);
 
-  if ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB)) {
-    d->Capture = FALSE;
-    ViewUpdate();
-  } else if ((d->Mode != TrimB) && (d->Mode != DataB) && (d->Mode != EvalB)) {
-    dc = gdk_gc_new(d->win);
+  if (d->Mode == MarkB) {
+    obj = chkobject("mark");
+  } else {
+    obj = chkobject("text");
+  }
 
-    if ((d->Mode == MarkB) || (d->Mode == TextB)) {
-      d->Capture = FALSE;
-      num = arraynum(d->points);
-
-      if (d->Mode == MarkB) {
-	obj = chkobject("mark");
-      } else {
-	obj = chkobject("text");
+  if (obj) {
+    id = newobj(obj);
+    if (id >= 0) {
+      if (num >= 1) {
+	po = *(struct pointslist **) arraynget(d->points, 0);
+	x1 = po->x;
+	y1 = po->y;
       }
 
-      if (obj != NULL) {
-	if ((id = newobj(obj)) >= 0) {
-	  if (num >= 1) {
-	    po = *(struct pointslist **) arraynget(d->points, 0);
-	    x1 = po->x;
-	    y1 = po->y;
-	  }
+      inst = chkobjinst(obj, id);
+      _putobj(obj, "x", inst, &x1);
+      _putobj(obj, "y", inst, &y1);
+      PaintLock = TRUE;
 
-	  inst = chkobjinst(obj, id);
-	  _putobj(obj, "x", inst, &x1);
-	  _putobj(obj, "y", inst, &y1);
-	  PaintLock = TRUE;
+      if (d->Mode == MarkB) {
+	LegendMarkDialog(&DlgLegendMark, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendMark);
+      } else {
+	LegendTextDialog(&DlgLegendText, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendText);
+      }
 
-	  if (d->Mode == MarkB) {
-	    LegendMarkDialog(&DlgLegendMark, obj, id);
-	    ret = DialogExecute(TopLevel, &DlgLegendMark);
-	  } else {
-	    LegendTextDialog(&DlgLegendText, obj, id);
-	    ret = DialogExecute(TopLevel, &DlgLegendText);
-	  }
+      if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+	delobj(obj, id);
+      } else {
+	AddList(obj, inst);
+	AddInvalidateRect(obj, inst);
+	NgraphApp.Changed = TRUE;
+      }
+      PaintLock = FALSE;
+    }
+  }
 
-	  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+  ShowPoints(dc);
+  arraydel2(d->points);
+  d->allclear = FALSE;
+}
+
+static void
+create_legend2(struct Viewer *d, GdkGC *dc)
+{
+  int i, id, num, ret = IDCANCEL;
+  char *inst;
+  struct objlist *obj = NULL;
+  struct pointslist *po;
+  struct narray *parray;
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+
+  if (num >= 3) {
+    if (d->Mode == LineB) {
+      obj = chkobject("line");
+    } else if (d->Mode == CurveB) {
+      obj = chkobject("curve");
+    } else if (d->Mode == PolyB) {
+      obj = chkobject("polygon");
+    }
+
+    if (obj) {
+      id = newobj(obj);
+      if (id >= 0) {
+	inst = chkobjinst(obj, id);
+	parray = arraynew(sizeof(int));
+
+	for (i = 0; i < num - 1; i++) {
+	  po = *(struct pointslist **) arraynget(d->points, i);
+	  arrayadd(parray, &(po->x));
+	  arrayadd(parray, &(po->y));
+	}
+
+	_putobj(obj, "points", inst, parray);
+	PaintLock = TRUE;
+
+	if (d->Mode == LineB) {
+	  LegendArrowDialog(&DlgLegendArrow, obj, id);
+	  ret = DialogExecute(TopLevel, &DlgLegendArrow);
+	} else if (d->Mode == CurveB) {
+	  LegendCurveDialog(&DlgLegendCurve, obj, id);
+	  ret = DialogExecute(TopLevel, &DlgLegendCurve);
+	} else if (d->Mode == PolyB) {
+	  LegendPolyDialog(&DlgLegendPoly, obj, id);
+	  ret = DialogExecute(TopLevel, &DlgLegendPoly);
+	}
+
+	if (ret == IDDELETE || ret == IDCANCEL) {
+	  delobj(obj, id);
+	} else {
+	  AddList(obj, inst);
+	  AddInvalidateRect(obj, inst);
+	  NgraphApp.Changed = TRUE;
+	}
+
+	PaintLock = FALSE;
+      }
+    }
+  }
+
+  ShowPoints(dc);
+  arraydel2(d->points);
+
+  d->allclear = FALSE;
+}
+
+static void
+create_legend3(struct Viewer *d, GdkGC *dc)
+{
+  int id, num, x1, y1, x2, y2, ret = IDCANCEL;
+  char *inst;
+  struct objlist *obj = NULL;
+  struct pointslist **pdata;
+
+  d->Capture = FALSE;
+
+  num = arraynum(d->points);
+  pdata = (struct pointslist **) arraydata(d->points);
+
+  if (num >= 3) {
+    if (d->Mode == RectB) {
+      obj = chkobject("rectangle");
+    } else if (d->Mode == ArcB) {
+      obj = chkobject("arc");
+    }
+
+    if (obj) {
+      id = newobj(obj);
+      if (id >= 0) {
+	inst = chkobjinst(obj, id);
+	x1 = pdata[0]->x;
+	y1 = pdata[0]->y;
+	x2 = pdata[1]->x;
+	y2 = pdata[1]->y;
+
+	if (x1 > x2)
+	  swapint(&x1, &x2);
+
+	if (y1 > y2)
+	  swapint(&y1, &y2);
+
+	PaintLock = TRUE;
+
+	if (d->Mode == RectB) {
+	  _putobj(obj, "x1", inst, &x1);
+	  _putobj(obj, "y1", inst, &y1);
+	  _putobj(obj, "x2", inst, &x2);
+	  _putobj(obj, "y2", inst, &y2);
+	  LegendRectDialog(&DlgLegendRect, obj, id);
+	  ret = DialogExecute(TopLevel, &DlgLegendRect);
+	} else if (d->Mode == ArcB) {
+	  int x, y, rx, ry;
+
+	  x = (x1 + x2) / 2;
+	  y = (y1 + y2) / 2;
+	  rx = abs(x1 - x);
+	  ry = abs(y1 - y);
+	  _putobj(obj, "x", inst, &x);
+	  _putobj(obj, "y", inst, &y);
+	  _putobj(obj, "rx", inst, &rx);
+	  _putobj(obj, "ry", inst, &ry);
+	  LegendArcDialog(&DlgLegendArc, obj, id);
+	  ret = DialogExecute(TopLevel, &DlgLegendArc);
+	}
+
+	if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+	  delobj(obj, id);
+	} else {
+	  AddList(obj, inst);
+	  AddInvalidateRect(obj, inst);
+	  NgraphApp.Changed = TRUE;
+	}
+	PaintLock = FALSE;
+      }
+    }
+  }
+
+  ShowPoints(dc);
+  arraydel2(d->points);
+  d->allclear = FALSE;
+}
+
+static void
+create_legendx(struct Viewer *d, GdkGC *dc)
+{
+  int id, num, x, y, x1, y1, x2, y2, ret = IDCANCEL;
+  char *inst;
+  struct objlist *obj = NULL;
+  struct pointslist **pdata;
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+  pdata = (struct pointslist **) arraydata(d->points);
+
+  if (num >= 3) {
+    obj = chkobject("curve");
+
+    if (obj) {
+      id = newobj(obj);
+
+      if (id >= 0) {
+	inst = chkobjinst(obj, id);
+	x1 = pdata[0]->x;
+	y1 = pdata[0]->y;
+	x2 = pdata[1]->x;
+	y2 = pdata[1]->y;
+
+	if (x1 > x2) {
+	  x = x1;
+	  x1 = x2;
+	  x2 = x;
+	}
+
+	if (y1 > y2) {
+	  y = y1;
+	  y1 = y2;
+	  y2 = y;
+	}
+
+	PaintLock = TRUE;
+
+	if ((x1 != x2) && (y1 != y2)) {
+	  LegendGaussDialog(&DlgLegendGauss, obj, id, x1, y1,
+			    x2 - x1, y2 - y1);
+	  ret = DialogExecute(TopLevel, &DlgLegendGauss);
+
+	  if (ret != IDOK) {
 	    delobj(obj, id);
 	  } else {
 	    AddList(obj, inst);
 	    AddInvalidateRect(obj, inst);
 	    NgraphApp.Changed = TRUE;
 	  }
-	  PaintLock = FALSE;
 	}
+	PaintLock = FALSE;
       }
-
-      ShowPoints(dc);
-      arraydel2(d->points);
-      d->allclear = FALSE;
-
-    } else if ((d->Mode == LineB) || (d->Mode == CurveB) || (d->Mode == PolyB)) {
-      d->Capture = FALSE;
-      num = arraynum(d->points);
-
-      if (num >= 3) {
-	if (d->Mode == LineB) {
-	  obj = chkobject("line");
-	} else if (d->Mode == CurveB) {
-	  obj = chkobject("curve");
-	} else if (d->Mode == PolyB) {
-	  obj = chkobject("polygon");
-	}
-
-	if (obj != NULL) {
-	  if ((id = newobj(obj)) >= 0) {
-	    inst = chkobjinst(obj, id);
-	    parray = arraynew(sizeof(int));
-
-	    for (i = 0; i < num - 1; i++) {
-	      po = *(struct pointslist **) arraynget(d->points, i);
-	      arrayadd(parray, &(po->x));
-	      arrayadd(parray, &(po->y));
-	    }
-
-	    _putobj(obj, "points", inst, parray);
-	    PaintLock = TRUE;
-
-	    if (d->Mode == LineB) {
-	      LegendArrowDialog(&DlgLegendArrow, obj, id);
-	      ret = DialogExecute(TopLevel, &DlgLegendArrow);
-	    } else if (d->Mode == CurveB) {
-	      LegendCurveDialog(&DlgLegendCurve, obj, id);
-	      ret = DialogExecute(TopLevel, &DlgLegendCurve);
-	    } else if (d->Mode == PolyB) {
-	      LegendPolyDialog(&DlgLegendPoly, obj, id);
-	      ret = DialogExecute(TopLevel, &DlgLegendPoly);
-	    }
-	    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	      delobj(obj, id);
-	    } else {
-	      AddList(obj, inst);
-	      AddInvalidateRect(obj, inst);
-	      NgraphApp.Changed = TRUE;
-	    }
-	    PaintLock = FALSE;
-	  }
-	}
-      }
-
-      ShowPoints(dc);
-      arraydel2(d->points);
-
-      d->allclear = FALSE;
-    } else if ((d->Mode == RectB) || (d->Mode == ArcB)) {
-      d->Capture = FALSE;
-
-      num = arraynum(d->points);
-      pdata = (struct pointslist **) arraydata(d->points);
-
-      if (num >= 3) {
-	if (d->Mode == RectB) {
-	  obj = chkobject("rectangle");
-	} else if (d->Mode == ArcB) {
-	  obj = chkobject("arc");
-	}
-
-	if (obj != NULL) {
-	  if ((id = newobj(obj)) >= 0) {
-	    inst = chkobjinst(obj, id);
-	    x1 = pdata[0]->x;
-	    y1 = pdata[0]->y;
-	    x2 = pdata[1]->x;
-	    y2 = pdata[1]->y;
-
-	    if (x1 > x2)
-	      swapint(&x1, &x2);
-
-	    if (y1 > y2)
-	      swapint(&y1, &y2);
-
-	    PaintLock = TRUE;
-
-	    if (d->Mode == RectB) {
-	      _putobj(obj, "x1", inst, &x1);
-	      _putobj(obj, "y1", inst, &y1);
-	      _putobj(obj, "x2", inst, &x2);
-	      _putobj(obj, "y2", inst, &y2);
-	      LegendRectDialog(&DlgLegendRect, obj, id);
-	      ret = DialogExecute(TopLevel, &DlgLegendRect);
-	    } else if (d->Mode == ArcB) {
-	      x = (x1 + x2) / 2;
-	      y = (y1 + y2) / 2;
-	      rx = abs(x1 - x);
-	      ry = abs(y1 - y);
-	      _putobj(obj, "x", inst, &x);
-	      _putobj(obj, "y", inst, &y);
-	      _putobj(obj, "rx", inst, &rx);
-	      _putobj(obj, "ry", inst, &ry);
-	      LegendArcDialog(&DlgLegendArc, obj, id);
-	      ret = DialogExecute(TopLevel, &DlgLegendArc);
-	    }
-
-	    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	      delobj(obj, id);
-	    } else {
-	      AddList(obj, inst);
-	      AddInvalidateRect(obj, inst);
-	      NgraphApp.Changed = TRUE;
-	    }
-	    PaintLock = FALSE;
-	  }
-	}
-      }
-
-      ShowPoints(dc);
-      arraydel2(d->points);
-      d->allclear = FALSE;
-
-    } else if (d->Mode == GaussB) {
-      d->Capture = FALSE;
-      num = arraynum(d->points);
-      pdata = (struct pointslist **) arraydata(d->points);
-
-      if (num >= 3) {
-	obj = chkobject("curve");
-
-	if (obj) {
-	  id = newobj(obj);
-
-	  if (id >= 0) {
-	    inst = chkobjinst(obj, id);
-	    x1 = pdata[0]->x;
-	    y1 = pdata[0]->y;
-	    x2 = pdata[1]->x;
-	    y2 = pdata[1]->y;
-
-	    if (x1 > x2) {
-	      x = x1;
-	      x1 = x2;
-	      x2 = x;
-	    }
-
-	    if (y1 > y2) {
-	      y = y1;
-	      y1 = y2;
-	      y2 = y;
-	    }
-
-	    PaintLock = TRUE;
-
-	    if ((x1 != x2) && (y1 != y2)) {
-	      LegendGaussDialog(&DlgLegendGauss, obj, id, x1, y1,
-				x2 - x1, y2 - y1);
-	      ret = DialogExecute(TopLevel, &DlgLegendGauss);
-
-	      if (ret != IDOK) {
-		delobj(obj, id);
-	      } else {
-		AddList(obj, inst);
-		AddInvalidateRect(obj, inst);
-		NgraphApp.Changed = TRUE;
-	      }
-	    }
-	    PaintLock = FALSE;
-	  }
-	}
-      }
-      ShowPoints(dc);
-      arraydel2(d->points);
-      d->allclear = FALSE;
-    } else if (d->Mode == SingleB) {
-      d->Capture = FALSE;
-
-      num = arraynum(d->points);
-      pdata = (struct pointslist **) arraydata(d->points);
-
-      if (num >= 3) {
-	obj = chkobject("axis");
-	if (obj != NULL) {
-	  if ((id = newobj(obj)) >= 0) {
-	    inst = chkobjinst(obj, id);
-	    x1 = pdata[0]->x;
-	    y1 = pdata[0]->y;
-	    x2 = pdata[1]->x;
-	    y2 = pdata[1]->y;
-	    fx1 = x2 - x1;
-	    fy1 = y2 - y1;
-	    lenx = nround(sqrt(fx1 * fx1 + fy1 * fy1));
-
-	    if (fx1 == 0) {
-	      if (fy1 >= 0) {
-		dir = 27000;
-	      } else {
-		dir = 9000;
-	      }
-	    } else {
-	      dir = nround(atan(-fy1 / fx1) / MPI * 18000);
-
-	      if (fx1 < 0)
-		dir += 18000;
-
-	      if (dir < 0)
-		dir += 36000;
-
-	      if (dir >= 36000)
-		dir -= 36000;
-	    }
-
-	    inst = chkobjinst(obj, id);
-
-	    _putobj(obj, "x", inst, &x1);
-	    _putobj(obj, "y", inst, &y1);
-	    _putobj(obj, "length", inst, &lenx);
-	    _putobj(obj, "direction", inst, &dir);
-
-	    AxisDialog(&DlgAxis, obj, id, TRUE);
-	    ret = DialogExecute(TopLevel, &DlgAxis);
-
-	    if (ret == IDDELETE || ret == IDCANCEL) {
-	      delobj(obj, id);
-	    } else {
-	      AddList(obj, inst);
-	      NgraphApp.Changed = TRUE;
-	    }
-	  }
-	}
-      }
-      ShowPoints(dc);
-      arraydel2(d->points);
-      d->allclear = TRUE;
-    } else if ((d->Mode == FrameB) || (d->Mode == SectionB)
-	       || (d->Mode == CrossB)) {
-      d->Capture = FALSE;
-      num = arraynum(d->points);
-      pdata = (struct pointslist **) arraydata(d->points);
-
-      if (num >= 3) {
-	obj = chkobject("axis");
-	obj2 = chkobject("axisgrid");
-
-	if (obj != NULL) {
-	  x1 = pdata[0]->x;
-	  y1 = pdata[0]->y;
-	  x2 = pdata[1]->x;
-	  y2 = pdata[1]->y;
-	  lenx = abs(x1 - x2);
-	  leny = abs(y1 - y2);
-	  x1 = (x1 < x2) ? x1 : x2;
-	  y1 = (y1 > y2) ? y1 : y2;
-	  idx = newobj(obj);
-	  idy = newobj(obj);
-
-	  if (d->Mode != CrossB) {
-	    idu = newobj(obj);
-	    idr = newobj(obj);
-	    arrayinit(&group, sizeof(int));
-	    if (d->Mode == FrameB) {
-	      type = 1;
-	    } else {
-	      type = 2;
-	    }
-
-	    arrayadd(&group, &type);
-	    arrayadd(&group, &idx);
-	    arrayadd(&group, &idy);
-	    arrayadd(&group, &idu);
-	    arrayadd(&group, &idr);
-	    arrayadd(&group, &x1);
-	    arrayadd(&group, &y1);
-	    arrayadd(&group, &lenx);
-	    arrayadd(&group, &leny);
-
-	    argv[0] = (char *) &group;
-	    argv[1] = NULL;
-	    exeobj(obj, "default_grouping", idr, 1, argv);
-	    arraydel(&group);
-
-	  } else {
-	    arrayinit(&group, sizeof(int));
-	    type = 3;
-
-	    arrayadd(&group, &type);
-	    arrayadd(&group, &idx);
-	    arrayadd(&group, &idy);
-	    arrayadd(&group, &x1);
-	    arrayadd(&group, &y1);
-	    arrayadd(&group, &lenx);
-	    arrayadd(&group, &leny);
-
-	    argv[0] = (char *) &group;
-	    argv[1] = NULL;
-
-	    exeobj(obj, "default_grouping", idx, 1, argv);
-	    arraydel(&group);
-	  }
-	  if ((d->Mode == SectionB) && (obj2 != NULL)) {
-	    idg = newobj(obj2);
-	    if (idg >= 0) {
-	      getobj(obj, "oid", idx, 0, NULL, &oidx);
-
-	      ref = memalloc(ID_BUF_SIZE);
-	      if (ref) {
-		snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidx);
-		putobj(obj2, "axis_x", idg, ref);
-	      }
-
-	      getobj(obj, "oid", idy, 0, NULL, &oidy);
-
-	      ref = memalloc(ID_BUF_SIZE);
-	      if (ref) {
-		snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
-		putobj(obj2, "axis_y", idg, ref);
-	      }
-	    }
-	  } else {
-	    idg = -1;
-	  }
-
-	  if (d->Mode == FrameB) {
-	    SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-			  idx, idy, idu, idr, obj2, &idg, FALSE);
-
-	    ret = DialogExecute(TopLevel, &DlgSection);
-	  } else if (d->Mode == SectionB) {
-	    SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-			  idx, idy, idu, idr, obj2, &idg, TRUE);
-
-	    ret = DialogExecute(TopLevel, &DlgSection);
-	  } else if (d->Mode == CrossB) {
-	    CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
-
-	    ret = DialogExecute(TopLevel, &DlgCross);
-	  }
-
-	  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	    if (d->Mode != CrossB) {
-	      delobj(obj, idr);
-	      delobj(obj, idu);
-	    }
-
-	    delobj(obj, idy);
-	    delobj(obj, idx);
-
-	    if ((idg != -1) && (obj2 != NULL)) {
-	      delobj(obj2, idg);
-	    }
-	  } else {
-	    inst = chkobjinst(obj, idx);
-	    if (inst)
-	      AddList(obj, inst);
-
-	    inst = chkobjinst(obj, idy);
-	    if (inst)
-	      AddList(obj, inst);
-
-	    if (d->Mode != CrossB) {
-	      inst = chkobjinst(obj, idu);
-	      if (inst)
-		AddList(obj, inst);
-
-	      inst = chkobjinst(obj, idr);
-	      if (inst)
-		AddList(obj, inst);
-	    }
-	    if ((idg != -1) && (obj2 != NULL)) {
-
-	      inst = chkobjinst(obj2, idg);
-	      if (inst)
-		AddList(obj2, inst);
-
-	    }
-	    NgraphApp.Changed = TRUE;
-	  }
-	}
-      }
-      ShowPoints(dc);
-      arraydel2(d->points);
-      d->allclear = TRUE;
     }
-    g_object_unref(G_OBJECT(dc));
-    UpdateAll();
   }
+  ShowPoints(dc);
+  arraydel2(d->points);
+  d->allclear = FALSE;
+}
+
+static void
+create_single_axis(struct Viewer *d, GdkGC *dc)
+{
+  int id, num, x1, y1, x2, y2, lenx, dir, ret = IDCANCEL;
+  double fx1, fy1;
+  char *inst;
+  struct objlist *obj = NULL;
+  struct pointslist **pdata;
+
+  d->Capture = FALSE;
+
+  num = arraynum(d->points);
+  pdata = (struct pointslist **) arraydata(d->points);
+
+  if (num >= 3) {
+    obj = chkobject("axis");
+    if (obj != NULL) {
+      if ((id = newobj(obj)) >= 0) {
+	inst = chkobjinst(obj, id);
+	x1 = pdata[0]->x;
+	y1 = pdata[0]->y;
+	x2 = pdata[1]->x;
+	y2 = pdata[1]->y;
+	fx1 = x2 - x1;
+	fy1 = y2 - y1;
+	lenx = nround(sqrt(fx1 * fx1 + fy1 * fy1));
+
+	if (fx1 == 0) {
+	  if (fy1 >= 0) {
+	    dir = 27000;
+	  } else {
+	    dir = 9000;
+	  }
+	} else {
+	  dir = nround(atan(-fy1 / fx1) / MPI * 18000);
+
+	  if (fx1 < 0)
+	    dir += 18000;
+
+	  if (dir < 0)
+	    dir += 36000;
+
+	  if (dir >= 36000)
+	    dir -= 36000;
+	}
+
+	inst = chkobjinst(obj, id);
+
+	_putobj(obj, "x", inst, &x1);
+	_putobj(obj, "y", inst, &y1);
+	_putobj(obj, "length", inst, &lenx);
+	_putobj(obj, "direction", inst, &dir);
+
+	AxisDialog(&DlgAxis, obj, id, TRUE);
+	ret = DialogExecute(TopLevel, &DlgAxis);
+
+	if (ret == IDDELETE || ret == IDCANCEL) {
+	  delobj(obj, id);
+	} else {
+	  AddList(obj, inst);
+	  NgraphApp.Changed = TRUE;
+	}
+      }
+    }
+  }
+  ShowPoints(dc);
+  arraydel2(d->points);
+  d->allclear = TRUE;
+}
+
+static void
+create_axis(struct Viewer *d, GdkGC *dc)
+{
+  int idx, idy, idu, idr, idg, oidx, oidy, type,
+    num, x1, y1, x2, y2, lenx, leny, ret = IDCANCEL;
+  char *inst, *argv[2], *ref;
+  struct objlist *obj = NULL, *obj2;
+  struct pointslist **pdata;
+  struct narray group;
+
+  d->Capture = FALSE;
+  num = arraynum(d->points);
+  pdata = (struct pointslist **) arraydata(d->points);
+
+  if (num >= 3) {
+    obj = chkobject("axis");
+    obj2 = chkobject("axisgrid");
+
+    if (obj != NULL) {
+      x1 = pdata[0]->x;
+      y1 = pdata[0]->y;
+      x2 = pdata[1]->x;
+      y2 = pdata[1]->y;
+      lenx = abs(x1 - x2);
+      leny = abs(y1 - y2);
+      x1 = (x1 < x2) ? x1 : x2;
+      y1 = (y1 > y2) ? y1 : y2;
+      idx = newobj(obj);
+      idy = newobj(obj);
+
+      if (d->Mode != CrossB) {
+	idu = newobj(obj);
+	idr = newobj(obj);
+	arrayinit(&group, sizeof(int));
+	if (d->Mode == FrameB) {
+	  type = 1;
+	} else {
+	  type = 2;
+	}
+
+	arrayadd(&group, &type);
+	arrayadd(&group, &idx);
+	arrayadd(&group, &idy);
+	arrayadd(&group, &idu);
+	arrayadd(&group, &idr);
+	arrayadd(&group, &x1);
+	arrayadd(&group, &y1);
+	arrayadd(&group, &lenx);
+	arrayadd(&group, &leny);
+
+	argv[0] = (char *) &group;
+	argv[1] = NULL;
+	exeobj(obj, "default_grouping", idr, 1, argv);
+	arraydel(&group);
+
+      } else {
+	arrayinit(&group, sizeof(int));
+	type = 3;
+
+	arrayadd(&group, &type);
+	arrayadd(&group, &idx);
+	arrayadd(&group, &idy);
+	arrayadd(&group, &x1);
+	arrayadd(&group, &y1);
+	arrayadd(&group, &lenx);
+	arrayadd(&group, &leny);
+
+	argv[0] = (char *) &group;
+	argv[1] = NULL;
+
+	exeobj(obj, "default_grouping", idx, 1, argv);
+	arraydel(&group);
+      }
+      if ((d->Mode == SectionB) && (obj2 != NULL)) {
+	idg = newobj(obj2);
+	if (idg >= 0) {
+	  getobj(obj, "oid", idx, 0, NULL, &oidx);
+
+	  ref = memalloc(ID_BUF_SIZE);
+	  if (ref) {
+	    snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidx);
+	    putobj(obj2, "axis_x", idg, ref);
+	  }
+
+	  getobj(obj, "oid", idy, 0, NULL, &oidy);
+
+	  ref = memalloc(ID_BUF_SIZE);
+	  if (ref) {
+	    snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
+	    putobj(obj2, "axis_y", idg, ref);
+	  }
+	}
+      } else {
+	idg = -1;
+      }
+
+      if (d->Mode == FrameB) {
+	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
+		      idx, idy, idu, idr, obj2, &idg, FALSE);
+
+	ret = DialogExecute(TopLevel, &DlgSection);
+      } else if (d->Mode == SectionB) {
+	SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
+		      idx, idy, idu, idr, obj2, &idg, TRUE);
+
+	ret = DialogExecute(TopLevel, &DlgSection);
+      } else if (d->Mode == CrossB) {
+	CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
+
+	ret = DialogExecute(TopLevel, &DlgCross);
+      }
+
+      if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+	if (d->Mode != CrossB) {
+	  delobj(obj, idr);
+	  delobj(obj, idu);
+	}
+
+	delobj(obj, idy);
+	delobj(obj, idx);
+
+	if ((idg != -1) && (obj2 != NULL)) {
+	  delobj(obj2, idg);
+	}
+      } else {
+	inst = chkobjinst(obj, idx);
+	if (inst)
+	  AddList(obj, inst);
+
+	inst = chkobjinst(obj, idy);
+	if (inst)
+	  AddList(obj, inst);
+
+	if (d->Mode != CrossB) {
+	  inst = chkobjinst(obj, idu);
+	  if (inst)
+	    AddList(obj, inst);
+
+	  inst = chkobjinst(obj, idr);
+	  if (inst)
+	    AddList(obj, inst);
+	}
+	if ((idg != -1) && (obj2 != NULL)) {
+
+	  inst = chkobjinst(obj2, idg);
+	  if (inst)
+	    AddList(obj2, inst);
+
+	}
+	NgraphApp.Changed = TRUE;
+      }
+    }
+  }
+  ShowPoints(dc);
+  arraydel2(d->points);
+  d->allclear = TRUE;
+}
+
+static gboolean
+ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
+{
+  GdkGC *dc;
+
+  if (Menulock || GlobalLock)
+    return FALSE;
+
+  dc = gdk_gc_new(d->win);
+
+  switch (d->Mode) {
+  case MoveB:
+  case PointB:
+  case LegendB:
+  case AxisB:
+    d->Capture = FALSE;
+    ViewUpdate();
+    break;
+  case TrimB:
+  case DataB:
+  case EvalB:
+    break;
+  case MarkB:
+  case TextB:
+    create_legend1(d, dc);
+    break;
+  case LineB:
+  case CurveB:
+  case PolyB:
+    create_legend2(d, dc);
+    break;
+  case RectB:
+  case ArcB:
+    create_legend3(d, dc);
+    break;
+  case GaussB:
+    create_legendx(d, dc);
+    break;
+  case SingleB:
+    create_single_axis(d, dc);
+    break;
+  case FrameB:
+  case SectionB:
+  case CrossB:
+    create_axis(d, dc);
+    break;
+  }
+  g_object_unref(G_OBJECT(dc));
+  UpdateAll();
 
   return TRUE;
+}
+
+static void
+move_data_cancel(struct Viewer *d)
+{
+  arraydel(&SelList);
+  d->MoveData = FALSE;
+  d->Capture = FALSE;
+  SetCursor(GDK_LEFT_PTR);
+  MessageBox(TopLevel, "Moving data points is canceled.", "Confirm", MB_OK);
 }
 
 static gboolean
@@ -3095,78 +3200,58 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
   int num;
   struct pointslist *po;
   double zoom;
-  int vdpi;
 
   if (Menulock || GlobalLock)
     return FALSE;
 
   if (d->MoveData) {
-    arraydel(&SelList);
-    d->MoveData = FALSE;
-    d->Capture = FALSE;
-    SetCursor(GDK_LEFT_PTR);
-    MessageBox(TopLevel, "Moving data points is canceled.", "Confirm", MB_OK);
-  } else if (d->Capture && ((d->Mode == LineB) || (d->Mode == CurveB)
-			    || (d->Mode == PolyB))) {
+    move_data_cancel(d);
+    return TRUE;
+  }
+
+  if (d->Capture) {
     zoom = Menulocal.PaperZoom / 10000.0;
     dc = gdk_gc_new(d->win);
-    num = arraynum(d->points);
-    if (num > 0) {
-      ShowPoints(dc);
-      arrayndel2(d->points, num - 1);
-      if (num <= 2) {
+    switch (d->Mode) {
+    case LineB:
+    case CurveB:
+    case PolyB:
+      num = arraynum(d->points);
+      if (num > 0) {
+	ShowPoints(dc);
+	arrayndel2(d->points, num - 1);
+	if (num <= 2) {
+	  arraydel2(d->points);
+	  d->Capture = FALSE;
+	} else {
+	  po = *(struct pointslist **) arraylast(d->points);
+	  if (po != NULL) {
+	    d->MouseX1 = (mxp2d(d->hscroll + point->x - d->cx)
+			  - Menulocal.LeftMargin) / zoom;
+	    d->MouseY1 = (mxp2d(d->vscroll + point->y - d->cy)
+			  - Menulocal.TopMargin) / zoom;
+	    po->x = d->MouseX1;
+	    po->y = d->MouseY1;
+	    CheckGrid(TRUE, state, &(po->x), &(po->y), NULL);
+	  }
+	  ShowPoints(dc);
+	}
+	break;
+      case RectB:
+      case ArcB:
+	ShowPoints(dc);
 	arraydel2(d->points);
 	d->Capture = FALSE;
-      } else {
-	po = *(struct pointslist **) arraylast(d->points);
-	if (po != NULL) {
-	  d->MouseX1 = (mxp2d(d->hscroll + point->x - d->cx)
-			- Menulocal.LeftMargin) / zoom;
-	  d->MouseY1 = (mxp2d(d->vscroll + point->y - d->cy)
-			- Menulocal.TopMargin) / zoom;
-	  po->x = d->MouseX1;
-	  po->y = d->MouseY1;
-	  CheckGrid(TRUE, state, &(po->x), &(po->y), NULL);
-	}
-	ShowPoints(dc);
+	break;
       }
+      g_object_unref(G_OBJECT(dc));
     }
-    g_object_unref(G_OBJECT(dc));
-  } else if (d->Mode == ZoomB) {
-    if (! ZoomLock) {
-      ZoomLock = TRUE;
-      if (state & GDK_SHIFT_MASK) {
-	d->hscroll -= (d->cx - point->x);
-	d->vscroll -= (d->cy - point->y);
-	ChangeDPI(TRUE);
-      } else if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &vdpi) != -1) {
-	if (state & GDK_CONTROL_MASK) {
-	  if ((int) (vdpi * sqrt(2)) <= 620) {
-	    vdpi = nround(vdpi * sqrt(2));
-	    if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
-	      d->hscroll -= (d->cx - point->x);
-	      d->vscroll -= (d->cy - point->y);
-	      //	    ChangeDPI(FALSE);
-	      ChangeDPI(TRUE);
-	    }
-	  } else
-	    MessageBeep(TopLevel);
-	} else {
-	  if ((int) (vdpi / sqrt(2)) >= 20) {
-	    vdpi = nround(vdpi / sqrt(2));
-	    if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
-	      d->hscroll -= (d->cx - point->x);
-	      d->vscroll -= (d->cy - point->y);
-	      //	    ChangeDPI(FALSE);
-	      ChangeDPI(TRUE);
-	    }
-	  } else
-	    MessageBeep(TopLevel);
-	}
-      }
-      ZoomLock = FALSE;
-    }
-  } else if (!(d->MoveData) && !(d->Capture) && (d->MouseMode == MOUSENONE)) {
+    return TRUE;
+  }
+
+  if (d->Mode == ZoomB) {
+    mouse_down_zoom(state, point, d, ! (state & GDK_CONTROL_MASK));
+  } else if (d->MouseMode == MOUSENONE) {
     do_popup(e, d);
   }
 
@@ -3216,14 +3301,19 @@ set_mouse_cursor_hover(struct Viewer *d, int x, int y)
     SetCursor(GDK_FLEUR);
   } else if (x > x1 - 11 && x < x1 - 5 && y > y1 - 11 && y < y1 - 5){
     SetCursor(GDK_TOP_LEFT_CORNER);
+    return;
   } else if (x > x1 - 11 && x < x1 - 5 && y < y2 + 11 && y > y2 + 5){
     SetCursor(GDK_BOTTOM_LEFT_CORNER);
+    return;
   } else if (x > x1 + 11 && x > x1 + 5 && y > y1 - 11 && y < y1 - 5){
     SetCursor(GDK_TOP_RIGHT_CORNER);
+    return;
   } else if (x < x2 + 11 && x > x2 + 5 && y < y2 + 11 && y > y2 + 5){
     SetCursor(GDK_BOTTOM_RIGHT_CORNER);
+    return;
   } else {
     SetCursor(GDK_LEFT_PTR);
+    return;
   }
 
   if (num != 1)
@@ -3254,6 +3344,18 @@ set_mouse_cursor_hover(struct Viewer *d, int x, int y)
       break;
     }
   }
+}
+
+static void
+update_frame_rect(TPoint *point, struct Viewer *d, GdkGC *dc, double zoom)
+{
+  ShowFrameRect(dc);
+  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
+		- Menulocal.LeftMargin) / zoom;
+
+  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
+		- Menulocal.TopMargin) / zoom;
+  ShowFrameRect(dc);
 }
 
 static gboolean
@@ -3387,27 +3489,13 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 	ShowFocusLine(dc, d->ChangePoint);
 
       } else if (d->MouseMode == MOUSEPOINT) {
-        ShowFrameRect(dc);
-	d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		      - Menulocal.LeftMargin) / zoom;
-
-	d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		      - Menulocal.TopMargin) / zoom;
-        ShowFrameRect(dc);
+	update_frame_rect(point, d, dc, zoom);
       }
     } else if (d->Mode == PointB ||
 	       d->Mode == LegendB ||
 	       d->Mode == AxisB) {
       if (d->MouseMode == MOUSEPOINT) {
-	ShowFrameRect(dc);
-
-	d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		      - Menulocal.LeftMargin) / zoom;
-
-	d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		      - Menulocal.TopMargin) / zoom;
-
-	ShowFrameRect(dc);
+	update_frame_rect(point, d, dc, zoom);
       }
     } else {
 
@@ -3617,6 +3705,9 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
   switch (e->keyval) {
   case GDK_Escape:
+    if (d->MoveData) {
+      move_data_cancel(d);
+    }
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     return FALSE;
   case GDK_KP_Space:
@@ -3648,7 +3739,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_Left:
   case GDK_Right:
     if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG))
-	&& ((d->Mode == PointB) || (d->Mode == LegendB)
+	&& ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB)
 	    || (d->Mode == AxisB))) {
       dc = gdk_gc_new(d->win);
       zoom = Menulocal.PaperZoom / 10000.0;
@@ -3861,7 +3952,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     region = NULL;
   }
 
-  gtk_widget_grab_focus(w);
+  //  gtk_widget_grab_focus(w);
 
   return FALSE;
 }
@@ -5317,8 +5408,7 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
   if (! gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(w)))
     return;
 
-  Mode = NgraphApp.Viewer.Mode = (int) client_data;
-
+  Mode = (int) client_data;
   if (Mode != MoveB)
     UnFocus();
 
@@ -5350,6 +5440,7 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
   default:
     SetCursor(GDK_CROSSHAIR);
   }
+  NgraphApp.Viewer.Mode = Mode;
   NgraphApp.Viewer.Capture = FALSE;
   NgraphApp.Viewer.MouseMode = MOUSENONE;
 }

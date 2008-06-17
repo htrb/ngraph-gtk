@@ -1,3 +1,19 @@
+2008-06-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (mouse_down_move_data)
+	(mouse_down_set_points, mouse_down_zoom): add.
+	(ViewerEvLButtonDown): use mouse_down_move_data(),
+	mouse_down_set_points() and mouse_down_zoom().
+	(ViewerEvRButtonDown): use mouse_down_zoom();
+	(ViewerEvRButtonDown): cancel make arc and rectangle when Button3
+	is pressed.
+	(create_axis, create_single_axis, create_legendx)
+	(create_legend3, create_legend2, create_legend1): add.
+	(ViewerEvLButtonDblClk): use create_axis(), create_single_axis(),
+	create_legendx(), create_legend3(), create_legend2() and
+	create_legend1().
+
+
 2008-06-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (add_focus_obj, clear_focus_obj)
