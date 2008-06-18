@@ -176,7 +176,7 @@ EXTRA_DIST = axisref.gif barc.gif baxispo.gif \
 	bscale.gif bscundo.gif bsection.gif bsingle.gif \
 	bstop.gif btext.gif btrim.gif bzoom.gif \
 	iconl.gif winaxis.gif wincoord.gif windata.gif \
-	wininfo.gif winlgnd.gif winmerge.gif
+	wininfo.gif winlgnd.gif winmerge.gif move.gif
 
 
 htmljaimgdir = $(docdir)/html_ja/img

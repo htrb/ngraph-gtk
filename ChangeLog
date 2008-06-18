@@ -1,3 +1,9 @@
+2008-06-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (ev_key_down): add.
+
+	* src/gtk/x11view.c (Focus): now merge object can be focused.
+
 2008-06-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_down_move_data)

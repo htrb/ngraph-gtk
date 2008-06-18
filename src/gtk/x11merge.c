@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.2 2008/05/29 12:13:37 hito Exp $
+ * $Id: x11merge.c,v 1.3 2008/06/18 08:05:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -65,15 +65,15 @@ static void merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 
 static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_OPEN,        G_CALLBACK(MergeWinMergeOpen), TRUE, NULL},
-  //  {"_Focus",              G_CALLBACK(list_sub_window_focus), FALSE, NULL},
+  {"_Focus",              G_CALLBACK(list_sub_window_focus), FALSE, NULL},
   {GTK_STOCK_PREFERENCES, G_CALLBACK(list_sub_window_update), TRUE, NULL},
   {GTK_STOCK_CLOSE,       G_CALLBACK(list_sub_window_delete), TRUE, NULL},
-  {GTK_STOCK_GOTO_FIRST,  G_CALLBACK(list_sub_window_move_top), TRUE, NULL},
+  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL},
   {GTK_STOCK_GO_UP,       G_CALLBACK(list_sub_window_move_up), TRUE, NULL},
   {GTK_STOCK_GO_DOWN,     G_CALLBACK(list_sub_window_move_down), TRUE, NULL},
-  {GTK_STOCK_GOTO_LAST,   G_CALLBACK(list_sub_window_move_last), TRUE, NULL},
-  {N_("_Duplicate"),          G_CALLBACK(list_sub_window_copy), FALSE, NULL},
-  {N_("_Hide"),               G_CALLBACK(list_sub_window_hide), FALSE, NULL},
+  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(list_sub_window_move_last), TRUE, NULL},
+  {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL},
+  {N_("_Hide"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
@@ -403,6 +403,35 @@ MergeWindowUnmap(GtkWidget *w, gpointer client_data)
 }
 */
 
+static gboolean
+ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
+{
+  struct SubWin *d;
+  GdkEventKey *e;
+
+  g_return_val_if_fail(w != NULL, FALSE);
+  g_return_val_if_fail(event != NULL, FALSE);
+
+  if (Menulock || GlobalLock)
+    return TRUE;
+
+  d = (struct SubWin *) user_data;
+  e = (GdkEventKey *)event;
+
+  switch (e->keyval) {
+  case GDK_space:
+    if (e->state & GDK_SHIFT_MASK) {
+      list_sub_window_add_focus(NULL, d);
+    } else {
+      list_sub_window_focus(NULL, d);
+    }
+    break;
+  default:
+    return FALSE;
+  }
+  return TRUE;
+}
+
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
@@ -437,6 +466,7 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
     d->update = MergeWinUpdate;
     d->setup_dialog = MergeDialog;
     d->dialog = &DlgMerge;
+    d->ev_key = ev_key_down;
 
     dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm);
 

@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.34 2008/06/18 07:00:08 hito Exp $
+ * $Id: x11view.c,v 1.35 2008/06/18 08:05:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4183,7 +4183,8 @@ Focus(struct objlist *fobj, int id, int add)
   d = &(NgraphApp.Viewer);
 
   if (chkobjchild(chkobject("legend"), fobj) ||
-      chkobjchild(chkobject("axis"), fobj)) {
+      chkobjchild(chkobject("axis"), fobj) ||
+      chkobjchild(chkobject("merge"), fobj)) {
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[4]), TRUE);
   } else {
     return;
