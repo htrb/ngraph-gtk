@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.15 2008/06/16 08:47:52 hito Exp $
+ * $Id: x11menu.c,v 1.16 2008/06/18 10:14:51 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -64,6 +64,7 @@ GtkWidget *TopLevel = NULL;
 // XtWorkProcId WorkProcId;
 
 static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
+static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL,
   *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL, *MoveButton = NULL;
@@ -79,6 +80,23 @@ struct command_data {
   int type;
   GtkWidget *img;
 };
+
+GdkCursorType Cursor[] = {
+  GDK_LEFT_PTR,
+  GDK_XTERM,
+  GDK_CROSSHAIR,
+  GDK_TOP_LEFT_CORNER,
+  GDK_TOP_RIGHT_CORNER,
+  GDK_BOTTOM_RIGHT_CORNER,
+  GDK_BOTTOM_LEFT_CORNER,
+  GDK_TARGET,
+  GDK_SIZING,
+  GDK_SIZING,
+  GDK_WATCH,
+  GDK_FLEUR,
+};
+
+#define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
 
 static struct command_data Command1_data[] = {
   {
@@ -1054,28 +1072,20 @@ createicon(GtkWidget *win)
   NgraphApp.iconpix = list;
 }
 
-static void
+static int
 create_cursor(void)
 {
-  GdkCursorType cursor[] = {
-    GDK_LEFT_PTR,
-    GDK_XTERM,
-    GDK_CROSSHAIR,
-    GDK_TOP_LEFT_CORNER,
-    GDK_TOP_RIGHT_CORNER,
-    GDK_BOTTOM_RIGHT_CORNER,
-    GDK_BOTTOM_LEFT_CORNER,
-    GDK_TARGET,
-    GDK_SIZING,
-    GDK_SIZING,
-    GDK_WATCH,
-    GDK_FLEUR,
-  };
   int i;
 
+  NgraphApp.cursor = malloc(sizeof(GdkCursor *) * CURSOR_TYPE_NUM);
+  if (NgraphApp.cursor == NULL)
+    return 1;
+
   for (i = 0; i < CURSOR_TYPE_NUM; i++) {
-    NgraphApp.cursor[i] = gdk_cursor_new_for_display(Disp, cursor[i]);
+    NgraphApp.cursor[i] = gdk_cursor_new_for_display(Disp, Cursor[i]);
   }
+
+  return 0;
 }
 
 static void
@@ -1087,6 +1097,7 @@ free_cursor(void)
     gdk_cursor_unref(NgraphApp.cursor[i]);
     NgraphApp.cursor[i] = NULL;
   }
+  free(NgraphApp.cursor);
 }
 
 static gboolean
@@ -1537,7 +1548,9 @@ application(char *file)
 
   create_markpixmap(TopLevel);
 
-  create_cursor();
+  if (create_cursor())
+    return;
+
   SetCaption(NULL);
   SetCursor(GDK_LEFT_PTR);
 
@@ -1748,6 +1761,12 @@ SetCaption(char *file)
   memfree(fullpath);
 }
 
+unsigned int
+GetCursor(void)
+{
+  return CursorType;
+}
+
 void
 SetCursor(unsigned int type)
 {
@@ -1756,6 +1775,8 @@ SetCursor(unsigned int type)
 
   d = &(NgraphApp.Viewer);
   win = d->win;
+
+  CursorType = type;
 
   switch (type) {
   case GDK_LEFT_PTR:

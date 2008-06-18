@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.7 2008/06/10 12:45:42 hito Exp $
+ * $Id: x11commn.c,v 1.8 2008/06/18 10:14:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -55,6 +55,7 @@
 
 static GtkWidget *ProgressDiaog = NULL;
 static GtkProgressBar *ProgressBar, *ProgressBar2;
+static unsigned int SaveCursor;
 
 void
 OpenGRA(void)
@@ -1618,6 +1619,9 @@ ProgressDialogCreate(char *title)
   if (ProgressDiaog)
     gtk_widget_destroy(ProgressDiaog);
 
+  SaveCursor = GetCursor();
+  SetCursor(GDK_WATCH);
+
   set_draw_lock(DrawLockDraw);
 
   ProgressDiaog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1658,6 +1662,7 @@ ProgressDialogCreate(char *title)
 void
 ProgressDialogFinalize(void)
 {
+  SetCursor(SaveCursor);
   set_progress_func(NULL);
   gtk_widget_destroy(ProgressDiaog);
   ProgressDiaog = NULL;

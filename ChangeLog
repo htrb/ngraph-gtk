@@ -1,5 +1,10 @@
 2008-06-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (ProgressDialogCreate): set cursor to GDK_WATCH.
+	(ProgressDialogFinalize): restore cursor.
+
+	* src/gtk/x11menu.c (GetCursor): add.
+
 	* src/gtk/x11merge.c (ev_key_down): add.
 
 	* src/gtk/x11view.c (Focus): now merge object can be focused.
