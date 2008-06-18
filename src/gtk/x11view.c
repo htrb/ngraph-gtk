@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.33 2008/06/18 01:48:18 hito Exp $
+ * $Id: x11view.c,v 1.34 2008/06/18 07:00:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3318,7 +3318,6 @@ set_mouse_cursor_hover(struct Viewer *d, int x, int y)
     return;
   } else {
     SetCursor(GDK_LEFT_PTR);
-    return;
   }
 
   if (num != 1)
@@ -5415,7 +5414,7 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
 
   Mode = (int) client_data;
   if (Mode != MoveB)
-    UnFocus(TRUE);
+    UnFocus(FALSE);
 
   switch (Mode) {
   case PointB:
