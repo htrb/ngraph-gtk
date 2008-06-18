@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.32 2008/06/17 10:55:40 hito Exp $
+ * $Id: x11view.c,v 1.33 2008/06/18 01:48:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3659,6 +3659,8 @@ ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data)
   ViewerPoint.x = point.x;
   ViewerPoint.y = point.y;
 
+  gtk_widget_grab_focus(w);
+
   switch (e->button) {
   case Button1:
     if (e->type == GDK_BUTTON_PRESS) {
@@ -3812,7 +3814,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   char *inst;
   struct objlist *obj;
   char *argv[4];
-  int axis;
+  int axis = FALSE;
 
   if (Menulock || GlobalLock)
     return FALSE;
@@ -3861,7 +3863,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
       d->ShowFrame = TRUE;
       ShowFocusFrame(dc);
       g_object_unref(G_OBJECT(dc));
-      if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis)))
+      if (! axis)
 	d->allclear = FALSE;
       UpdateAll();
       d->MouseMode = MOUSENONE;
@@ -4232,6 +4234,7 @@ Focus(struct objlist *fobj, int id, int add)
   ShowFocusFrame(dc);
   d->ShowFrame = TRUE;
   g_object_unref(G_OBJECT(dc));
+  gtk_widget_grab_focus(d->Win);
 
   restorestdio(&save);
 }
@@ -4874,7 +4877,7 @@ ViewUpdate(void)
   if (arraynum(d->focusobj) == 0)
     clear_focus_obj(d->focusobj, d->Mode, TRUE);
 
-  if ((d->Mode == LegendB) || ((d->Mode == PointB) && (!axis)))
+  if (! axis)
     d->allclear = FALSE;
 
   if (d->Mode == MoveB)
@@ -4937,7 +4940,7 @@ ViewDelete(void)
   }
   PaintLock = FALSE;
 
-  if (((d->Mode == MoveB) || (d->Mode == LegendB)) || ((d->Mode == PointB) && (!axis)))
+  if (! axis)
     d->allclear = FALSE;
 
   if (num != 0)
@@ -5050,7 +5053,7 @@ ViewCopy(void)
   int tp;
   struct narray agroup;
   char *argv[2];
-  int axis;
+  int axis = FALSE;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
@@ -5335,7 +5338,7 @@ ViewCopy(void)
     }
     PaintLock = FALSE;
 
-    if ((d->Mode == MoveB) || (d->Mode == LegendB) || ((d->Mode == PointB) && (!axis)))
+    if (! axis)
       d->allclear = FALSE;
 
     UpdateAll();
