@@ -8,7 +8,7 @@ EXTRA_DIST = aclear.jpg addgraph.jpg adialog.jpg \
 	graphc.jpg graphf.jpg graphs.jpg \
 	infowin.jpg lapoint.jpg legend.jpg \
 	lwindow.jpg math.jpg pointer.jpg \
-	scundo.jpg trimming.jpg window.jpg
+	scundo.jpg trimming.jpg window.png
 
 htmljatutorialdir = $(docdir)/html_ja/tutorial
 
