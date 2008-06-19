@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.37 2008/06/19 02:02:01 hito Exp $
+ * $Id: x11view.c,v 1.38 2008/06/19 02:11:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4688,153 +4688,149 @@ ViewUpdate(void)
 
   for (i = num - 1; i >= 0; i--) {
     focus = *(struct focuslist **) arraynget(d->focusobj, i);
-    if (focus && ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL)) {
-      obj = focus->obj;
-      _getobj(obj, "id", inst, &id);
-      ret = IDCANCEL;
+    if (focus == NULL)
+      continue;
 
-      if (obj == chkobject("axis")) {
-	axis = TRUE;
-	_getobj(obj, "group", inst, &group);
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL)
+      continue;
 
-	if ((group != NULL) && (group[0] != 'a')) {
-	  findX = findY = findU = findR = findG = FALSE;
-	  type = group[0];
+    obj = focus->obj;
+    _getobj(obj, "id", inst, &id);
+    ret = IDCANCEL;
 
-	  for (j = 0; j <= id; j++) {
-	    inst2 = chkobjinst(obj, j);
-	    _getobj(obj, "group", inst2, &group2);
-	    _getobj(obj, "id", inst2, &id2);
+    if (obj == chkobject("axis")) {
+      axis = TRUE;
+      _getobj(obj, "group", inst, &group);
 
-	    if ((group2 != NULL) && (group2[0] == type)) {
-	      if (strcmp(group + 2, group2 + 2) == 0) {
-		if (group2[1] == 'X') {
-		  findX = TRUE;
-		  idx = id2;
-		} else if (group2[1] == 'Y') {
-		  findY = TRUE;
-		  idy = id2;
-		} else if (group2[1] == 'U') {
-		  findU = TRUE;
-		  idu = id2;
-		} else if (group2[1] == 'R') {
-		  findR = TRUE;
-		  idr = id2;
+      if ((group != NULL) && (group[0] != 'a')) {
+	findX = findY = findU = findR = findG = FALSE;
+	type = group[0];
+
+	for (j = 0; j <= id; j++) {
+	  inst2 = chkobjinst(obj, j);
+	  _getobj(obj, "group", inst2, &group2);
+	  _getobj(obj, "id", inst2, &id2);
+
+	  if (group2 == NULL || group2[0] != type)
+	    continue;
+
+	  if (strcmp(group + 2, group2 + 2))
+	    continue;
+
+	  if (group2[1] == 'X') {
+	    findX = TRUE;
+	    idx = id2;
+	  } else if (group2[1] == 'Y') {
+	    findY = TRUE;
+	    idy = id2;
+	  } else if (group2[1] == 'U') {
+	    findU = TRUE;
+		idu = id2;
+	  } else if (group2[1] == 'R') {
+	    findR = TRUE;
+	    idr = id2;
+	  }
+	}
+
+	if (((type == 's') || (type == 'f')) && findX && findY
+	    && !_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray)
+	    && ((snum = arraynum(sarray)) >= 0)) {
+	  sdata = (char **) arraydata(sarray);
+
+	  for (j = 1; j < snum; j++) {
+	    if (((dobj = getobjlist(sdata[j], &did, &dfield, NULL)) != NULL)
+		&& (dobj == chkobject("axisgrid"))) {
+	      if ((dinst = chkobjinstoid(dobj, did)) != NULL) {
+		_getobj(dobj, "axis_x", dinst, &axisx);
+		_getobj(dobj, "axis_y", dinst, &axisy);
+		matchx = matchy = FALSE;
+		if (axisx != NULL) {
+		  arrayinit(&iarray, sizeof(int));
+		  if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
+		    if ((arraynum(&iarray) >= 1)
+			&& (obj == aobj)
+			&& (*(int *) arraylast(&iarray)
+			    == idx))
+		      matchx = TRUE;
+		  }
+		  arraydel(&iarray);
+		}
+
+		if (axisy != NULL) {
+		  arrayinit(&iarray, sizeof(int));
+		  if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
+		    if ((arraynum(&iarray) >= 1)
+			&& (obj == aobj)
+			&& (*(int *) arraylast(&iarray)
+			    == idy))
+		      matchy = TRUE;
+		  }
+		  arraydel(&iarray);
+		}
+
+		if (matchx && matchy) {
+		  findG = TRUE;
+		  _getobj(dobj, "id", dinst, &idg);
+		  break;
 		}
 	      }
 	    }
 	  }
+	}
 
-	  if (((type == 's') || (type == 'f')) && findX && findY
-	      && !_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray)
-	      && ((snum = arraynum(sarray)) >= 0)) {
-	    sdata = (char **) arraydata(sarray);
+	if (((type == 's') || (type == 'f'))
+	    && findX && findY && findU && findR) {
 
-	    for (j = 1; j < snum; j++) {
-	      if (((dobj = getobjlist(sdata[j], &did, &dfield, NULL)) != NULL)
-		  && (dobj == chkobject("axisgrid"))) {
-		if ((dinst = chkobjinstoid(dobj, did)) != NULL) {
-		  _getobj(dobj, "axis_x", dinst, &axisx);
-		  _getobj(dobj, "axis_y", dinst, &axisy);
-		  matchx = matchy = FALSE;
-		  if (axisx != NULL) {
-		    arrayinit(&iarray, sizeof(int));
-		    if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
-		      if ((arraynum(&iarray) >= 1)
-			  && (obj == aobj)
-			  && (*(int *) arraylast(&iarray)
-			      == idx))
-			matchx = TRUE;
-		    }
-		    arraydel(&iarray);
-		  }
-
-		  if (axisy != NULL) {
-		    arrayinit(&iarray, sizeof(int));
-		    if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
-		      if ((arraynum(&iarray) >= 1)
-			  && (obj == aobj)
-			  && (*(int *) arraylast(&iarray)
-			      == idy))
-			matchy = TRUE;
-		    }
-		    arraydel(&iarray);
-		  }
-
-		  if (matchx && matchy) {
-		    findG = TRUE;
-		    _getobj(dobj, "id", dinst, &idg);
-		    break;
-		  }
-		}
-	      }
-	    }
+	  if (!findG) {
+	    dobj = chkobject("axisgrid");
+	    idg = -1;
 	  }
 
-	  if (((type == 's') || (type == 'f'))
-	      && findX && findY && findU && findR) {
+	  if (type == 's')
+	    section = TRUE;
+	  else
+	    section = FALSE;
 
-	    if (!findG) {
-	      dobj = chkobject("axisgrid");
-	      idg = -1;
-	    }
+	  getobj(obj, "y", idx, 0, NULL, &y1);
+	  getobj(obj, "x", idy, 0, NULL, &x1);
+	  getobj(obj, "y", idu, 0, NULL, &leny);
+	  getobj(obj, "x", idr, 0, NULL, &lenx);
 
-	    if (type == 's')
-	      section = TRUE;
-	    else
-	      section = FALSE;
+	  leny = y1 - leny;
+	  lenx = lenx - x1;
 
-	    getobj(obj, "y", idx, 0, NULL, &y1);
-	    getobj(obj, "x", idy, 0, NULL, &x1);
-	    getobj(obj, "y", idu, 0, NULL, &leny);
-	    getobj(obj, "x", idr, 0, NULL, &lenx);
+	  SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
+			idx, idy, idu, idr, dobj, &idg, section);
 
-	    leny = y1 - leny;
-	    lenx = lenx - x1;
-
-	    SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-			  idx, idy, idu, idr, dobj, &idg, section);
-
-	    ret = DialogExecute(TopLevel, &DlgSection);
-
-	    if (ret == IDDELETE) {
-	      AxisDel(id);
-	      arrayndel2(d->focusobj, i);
-	    }
-
-	    if (!findG) {
-	      if (idg != -1) {
-		if ((dinst = chkobjinst(dobj, idg)) != NULL)
-		  AddList(dobj, dinst);
-	      }
-	    }
-
-	    if (ret != IDCANCEL)
-	      NgraphApp.Changed = TRUE;
-	  } else if ((type == 'c') && findX && findY) {
-	    getobj(obj, "x", idx, 0, NULL, &x1);
-	    getobj(obj, "y", idy, 0, NULL, &y1);
-	    getobj(obj, "length", idx, 0, NULL, &lenx);
-	    getobj(obj, "length", idy, 0, NULL, &leny);
-
-	    CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
-
-	    ret = DialogExecute(TopLevel, &DlgCross);
-
-	    if (ret == IDDELETE) {
-	      AxisDel(aid);
-	      arrayndel2(d->focusobj, i);
-	    }
-
-	    if (ret != IDCANCEL)
-	      NgraphApp.Changed = TRUE;
-	  }
-	} else {
-	  AxisDialog(&DlgAxis, obj, id, TRUE);
-	  ret = DialogExecute(TopLevel, &DlgAxis);
+	  ret = DialogExecute(TopLevel, &DlgSection);
 
 	  if (ret == IDDELETE) {
 	    AxisDel(id);
+	    arrayndel2(d->focusobj, i);
+	  }
+
+	  if (!findG) {
+	    if (idg != -1) {
+	      if ((dinst = chkobjinst(dobj, idg)) != NULL)
+		AddList(dobj, dinst);
+	    }
+	  }
+
+	  if (ret != IDCANCEL)
+	    NgraphApp.Changed = TRUE;
+	} else if ((type == 'c') && findX && findY) {
+	  getobj(obj, "x", idx, 0, NULL, &x1);
+	  getobj(obj, "y", idy, 0, NULL, &y1);
+	  getobj(obj, "length", idx, 0, NULL, &lenx);
+	  getobj(obj, "length", idy, 0, NULL, &leny);
+
+	  CrossDialog(&DlgCross, x1, y1, lenx, leny, obj, idx, idy);
+
+	  ret = DialogExecute(TopLevel, &DlgCross);
+
+	  if (ret == IDDELETE) {
+	    AxisDel(aid);
 	    arrayndel2(d->focusobj, i);
 	  }
 
@@ -4842,44 +4838,55 @@ ViewUpdate(void)
 	    NgraphApp.Changed = TRUE;
 	}
       } else {
-	AddInvalidateRect(obj, inst);
-
-	if (obj == chkobject("line")) {
-	  LegendArrowDialog(&DlgLegendArrow, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendArrow);
-	} else if (obj == chkobject("curve")) {
-	  LegendCurveDialog(&DlgLegendCurve, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendCurve);
-	} else if (obj == chkobject("polygon")) {
-	  LegendPolyDialog(&DlgLegendPoly, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendPoly);
-	} else if (obj == chkobject("rectangle")) {
-	  LegendRectDialog(&DlgLegendRect, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendRect);
-	} else if (obj == chkobject("arc")) {
-	  LegendArcDialog(&DlgLegendArc, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendArc);
-	} else if (obj == chkobject("mark")) {
-	  LegendMarkDialog(&DlgLegendMark, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendMark);
-	} else if (obj == chkobject("text")) {
-	  LegendTextDialog(&DlgLegendText, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendText);
-	} else if (obj == chkobject("merge")) {
-	  MergeDialog(&DlgMerge, obj, id, 0);
-	  ret = DialogExecute(TopLevel, &DlgMerge);
-	}
+	AxisDialog(&DlgAxis, obj, id, TRUE);
+	ret = DialogExecute(TopLevel, &DlgAxis);
 
 	if (ret == IDDELETE) {
-	  delobj(obj, id);
+	  AxisDel(id);
+	  arrayndel2(d->focusobj, i);
 	}
-
-	if (ret == IDOK)
-	  AddInvalidateRect(obj, inst);
 
 	if (ret != IDCANCEL)
 	  NgraphApp.Changed = TRUE;
       }
+    } else {
+      AddInvalidateRect(obj, inst);
+
+      if (obj == chkobject("line")) {
+	LegendArrowDialog(&DlgLegendArrow, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendArrow);
+      } else if (obj == chkobject("curve")) {
+	LegendCurveDialog(&DlgLegendCurve, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendCurve);
+      } else if (obj == chkobject("polygon")) {
+	LegendPolyDialog(&DlgLegendPoly, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendPoly);
+      } else if (obj == chkobject("rectangle")) {
+	LegendRectDialog(&DlgLegendRect, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendRect);
+      } else if (obj == chkobject("arc")) {
+	LegendArcDialog(&DlgLegendArc, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendArc);
+      } else if (obj == chkobject("mark")) {
+	LegendMarkDialog(&DlgLegendMark, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendMark);
+      } else if (obj == chkobject("text")) {
+	LegendTextDialog(&DlgLegendText, obj, id);
+	ret = DialogExecute(TopLevel, &DlgLegendText);
+      } else if (obj == chkobject("merge")) {
+	MergeDialog(&DlgMerge, obj, id, 0);
+	ret = DialogExecute(TopLevel, &DlgMerge);
+      }
+
+      if (ret == IDDELETE) {
+	delobj(obj, id);
+      }
+
+      if (ret == IDOK)
+	AddInvalidateRect(obj, inst);
+
+      if (ret != IDCANCEL)
+	NgraphApp.Changed = TRUE;
     }
   }
   PaintLock = FALSE;
@@ -4960,7 +4967,7 @@ ViewDelete(void)
 
 
 static void
-reorder_obvect(int top)
+reorder_object(int top)
 {
   int id, num;
   struct focuslist *focus;
@@ -4983,34 +4990,36 @@ reorder_obvect(int top)
   focus = *(struct focuslist **) arraynget(d->focusobj, 0);
   obj = focus->obj;
 
-  if (chkobjchild(chkobject("legend"), obj)) {
-    inst = chkobjinstoid(obj, focus->oid);
-    if (inst) {
-      DelList(obj, inst);
-      _getobj(obj, "id", inst, &id);
-      if (top) {
-	movetopobj(obj, id);
-      } else {
-	movelastobj(obj, id);
-      }
-      AddList(obj, inst);
-      NgraphApp.Changed = TRUE;
-      d->allclear = TRUE;
-      UpdateAll();
-    }
+  if (! chkobjchild(chkobject("legend"), obj))
+    return;
+
+  inst = chkobjinstoid(obj, focus->oid);
+  if (inst == NULL)
+    return;
+
+  DelList(obj, inst);
+  _getobj(obj, "id", inst, &id);
+  if (top) {
+    movetopobj(obj, id);
+  } else {
+    movelastobj(obj, id);
   }
+  AddList(obj, inst);
+  NgraphApp.Changed = TRUE;
+  d->allclear = TRUE;
+  UpdateAll();
 }
 
 static void
 ViewTop(void)
 {
-  reorder_obvect(TRUE);
+  reorder_object(TRUE);
 }
 
 static void
 ViewLast(void)
 {
-  reorder_obvect(FALSE);
+  reorder_object(FALSE);
 }
 
 static void
