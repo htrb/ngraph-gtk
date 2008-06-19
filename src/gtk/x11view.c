@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.35 2008/06/18 08:05:02 hito Exp $
+ * $Id: x11view.c,v 1.36 2008/06/19 01:37:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2598,18 +2598,28 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
   case DataB :
   case EvalB:
     d->Capture = FALSE;
-    if (d->MouseMode == MOUSEDRAG) {
+    switch (d->MouseMode) {
+    case MOUSEDRAG:
       mouse_up_drag(state, point, zoom, d, dc);
-    } else if ((MOUSEZOOM1 <= d->MouseMode) && (d->MouseMode <= MOUSEZOOM4)) {
+      break;
+    case MOUSEZOOM1:
+    case MOUSEZOOM2:
+    case MOUSEZOOM3:
+    case MOUSEZOOM4:
       mouse_up_zoom(state, point, zoom, d, dc);
-    } else if (d->MouseMode == MOUSECHANGE) {
+      break;
+    case MOUSECHANGE:
       mouse_up_change(state, point, zoom, d, dc);
-    } else if (d->MouseMode == MOUSEPOINT) {
+      break;
+    case MOUSEPOINT:
       mouse_up_point(state, point, d, dc, zoom);
-    } else if (d->MouseMode == MOUSENONE && d->Mode == MoveB) {
-      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
+      break;
+    case MOUSENONE:
+      if (d->Mode == MoveB) {
+	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
+      }
     }
-    d->MouseMode=MOUSENONE;
+    d->MouseMode = MOUSENONE;
     break;
   case PointB :
   case LegendB :
@@ -3834,41 +3844,41 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_Up:
   case GDK_Left:
   case GDK_Right:
-    if (d->MouseMode == MOUSEDRAG) {
-      dc = gdk_gc_new(d->win);
-      ShowFocusFrame(dc);
-      dx = d->FrameOfsX;
-      dy = d->FrameOfsY;
-      argv[0] = (char *) &dx;
-      argv[1] = (char *) &dy;
-      argv[2] = NULL;
-      num = arraynum(d->focusobj);
-      axis = FALSE;
-      PaintLock = TRUE;
-      for (i = num - 1; i >= 0; i--) {
-	focus = *(struct focuslist **) arraynget(d->focusobj, i);
-	obj = focus->obj;
-	if (obj == chkobject("axis"))
-	  axis = TRUE;
-	if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
-	  AddInvalidateRect(obj, inst);
-	  _exeobj(obj, "move", inst, 2, argv);
-	  NgraphApp.Changed = TRUE;
-	  AddInvalidateRect(obj, inst);
-	}
+    if (d->MouseMode != MOUSEDRAG)
+      break;
+
+    dc = gdk_gc_new(d->win);
+    ShowFocusFrame(dc);
+    dx = d->FrameOfsX;
+    dy = d->FrameOfsY;
+    argv[0] = (char *) &dx;
+    argv[1] = (char *) &dy;
+    argv[2] = NULL;
+    num = arraynum(d->focusobj);
+    axis = FALSE;
+    PaintLock = TRUE;
+    for (i = num - 1; i >= 0; i--) {
+      focus = *(struct focuslist **) arraynget(d->focusobj, i);
+      obj = focus->obj;
+      if (obj == chkobject("axis"))
+	axis = TRUE;
+      if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
+	AddInvalidateRect(obj, inst);
+	_exeobj(obj, "move", inst, 2, argv);
+	NgraphApp.Changed = TRUE;
+	AddInvalidateRect(obj, inst);
       }
-      PaintLock = FALSE;
-      d->FrameOfsX = d->FrameOfsY = 0;
-      d->ShowFrame = TRUE;
-      ShowFocusFrame(dc);
-      g_object_unref(G_OBJECT(dc));
-      if (! axis)
-	d->allclear = FALSE;
-      UpdateAll();
-      d->MouseMode = MOUSENONE;
-      return TRUE;
     }
-    break;
+    PaintLock = FALSE;
+    d->FrameOfsX = d->FrameOfsY = 0;
+    d->ShowFrame = TRUE;
+    ShowFocusFrame(dc);
+    g_object_unref(G_OBJECT(dc));
+    if (! axis)
+      d->allclear = FALSE;
+    UpdateAll();
+    d->MouseMode = MOUSENONE;
+    return TRUE;
   default:
     break;
   }
@@ -4947,8 +4957,10 @@ ViewDelete(void)
     UpdateAll();
 }
 
+
+
 static void
-ViewTop(void)
+reorder_obvect(int top)
 {
   int id, num;
   struct focuslist *focus;
@@ -4957,62 +4969,48 @@ ViewTop(void)
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
-  if ((d->MouseMode == MOUSENONE)
-      && ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
-    num = arraynum(d->focusobj);
 
-    if (num == 1) {
-      focus = *(struct focuslist **) arraynget(d->focusobj, 0);
-      obj = focus->obj;
+  if (d->MouseMode != MOUSENONE ||
+      (d->Mode != MoveB && d->Mode != PointB && 
+       d->Mode != LegendB && d->Mode != AxisB))
+       return;
 
-      if (chkobjchild(chkobject("legend"), obj)) {
-	if ((inst = chkobjinstoid(obj, focus->oid)) != NULL) {
-	  DelList(obj, inst);
-	  _getobj(obj, "id", inst, &id);
-	  movetopobj(obj, id);
-	  AddList(obj, inst);
-	  NgraphApp.Changed = TRUE;
-	  d->allclear = TRUE;
-	  UpdateAll();
-	}
+  num = arraynum(d->focusobj);
+
+  if (num != 1)
+    return;
+
+  focus = *(struct focuslist **) arraynget(d->focusobj, 0);
+  obj = focus->obj;
+
+  if (chkobjchild(chkobject("legend"), obj)) {
+    inst = chkobjinstoid(obj, focus->oid);
+    if (inst) {
+      DelList(obj, inst);
+      _getobj(obj, "id", inst, &id);
+      if (top) {
+	movetopobj(obj, id);
+      } else {
+	movelastobj(obj, id);
       }
+      AddList(obj, inst);
+      NgraphApp.Changed = TRUE;
+      d->allclear = TRUE;
+      UpdateAll();
     }
   }
 }
 
 static void
+ViewTop(void)
+{
+  reorder_obvect(TRUE);
+}
+
+static void
 ViewLast(void)
 {
-  int id, num;
-  struct focuslist *focus;
-  struct objlist *obj;
-  char *inst;
-  struct Viewer *d;
-
-  d = &(NgraphApp.Viewer);
-  if ((d->MouseMode == MOUSENONE)
-      && ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
-
-    num = arraynum(d->focusobj);
-
-    if (num == 1) {
-      focus = *(struct focuslist **) arraynget(d->focusobj, 0);
-      obj = focus->obj;
-
-      if (chkobjchild(chkobject("legend"), obj)) {
-	inst = chkobjinstoid(obj, focus->oid);
-	if (inst) {
-	  DelList(obj, inst);
-	  _getobj(obj, "id", inst, &id);
-	  movelastobj(obj, id);
-	  AddList(obj, inst);
-	  NgraphApp.Changed = TRUE;
-	  d->allclear = TRUE;
-	  UpdateAll();
-	}
-      }
-    }
-  }
+  reorder_obvect(FALSE);
 }
 
 static void
