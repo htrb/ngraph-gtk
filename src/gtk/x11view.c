@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.40 2008/06/19 02:37:15 hito Exp $
+ * $Id: x11view.c,v 1.41 2008/06/19 07:51:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3924,10 +3924,10 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
 
   if ((e->count != 0) || GlobalLock)
     return TRUE;
-
+  /*
   if (region == NULL)
     region = gdk_region_new();
-
+  */
   gc = gdk_gc_new(e->window);
 
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid)) {
@@ -3968,12 +3968,10 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
 
     g_object_unref(G_OBJECT(gc));
   }
-
-  if (!PaintLock) {
+  if (! PaintLock && region) {
     gdk_region_destroy(region);
     region = NULL;
   }
-
   return FALSE;
 }
 
