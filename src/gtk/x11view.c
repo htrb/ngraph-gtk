@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.39 2008/06/19 02:25:54 hito Exp $
+ * $Id: x11view.c,v 1.40 2008/06/19 02:37:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1985,101 +1985,103 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
   char *axis, *argv[3];
 
   fileobj = chkobject("file");
-  if (fileobj == NULL) {
-    selnum = arraynum(&SelList);
+  if (fileobj == NULL)
+    return;
 
-    for (i = 0; i < selnum; i++) {
-      sel = *(int *) arraynget(&SelList, i);
+  selnum = arraynum(&SelList);
 
-      getobj(fileobj, "axis_x", EvalList[sel].id, 0, NULL, &axis);
-      arrayinit(&iarray, sizeof(int));
+  for (i = 0; i < selnum; i++) {
+    sel = *(int *) arraynget(&SelList, i);
 
-      if (getobjilist(axis, &aobjx, &iarray, FALSE, NULL)) {
-	ax = -1;
-      } else {
-	anum = arraynum(&iarray);
-	ax = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
-	arraydel(&iarray);
-      }
+    getobj(fileobj, "axis_x", EvalList[sel].id, 0, NULL, &axis);
+    arrayinit(&iarray, sizeof(int));
 
-      getobj(fileobj, "axis_y", EvalList[sel].id, 0, NULL, &axis);
-      arrayinit(&iarray, sizeof(int));
-
-      if (getobjilist(axis, &aobjy, &iarray, FALSE, NULL)) {
-	ay = -1;
-      } else {
-	anum = arraynum(&iarray);
-	ay = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
-	arraydel(&iarray);
-      }
-
-      if (ax == -1 || ax == -1)
-	continue;
-
-      argv[0] = (char *) &(d->MouseX1);
-      argv[1] = (char *) &(d->MouseY1);
-      argv[2] = NULL;
-
-      if (getobj(aobjx, "coordinate", ax, 2, argv, &dx) == -1 ||
-	  getobj(aobjy, "coordinate", ay, 2, argv, &dy) == -1)
-	continue;
-
-      getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move);
-      getobj(fileobj, "move_data_x", EvalList[sel].id, 0, NULL, &movex);
-      getobj(fileobj, "move_data_y", EvalList[sel].id, 0, NULL, &movey);
-
-      if (move == NULL) {
-	move = arraynew(sizeof(int));
-	putobj(fileobj, "move_data", EvalList[sel].id, move);
-      }
-
-      if (movex == NULL) {
-	movex = arraynew(sizeof(double));
-	putobj(fileobj, "move_data_x", EvalList[sel].id, movex);
-      }
-
-      if (movey == NULL) {
-	movey = arraynew(sizeof(double));
-	putobj(fileobj, "move_data_y", EvalList[sel].id, movey);
-      }
-
-      movenum = arraynum(move);
-
-      if (arraynum(movex) < movenum) {
-	for (j = movenum - 1; j >= arraynum(movex); j--) {
-	  arrayndel(move, j);
-	}
-	movenum = arraynum(movex);
-      }
-
-      if (arraynum(movey) < movenum) {
-	for (j = movenum - 1; j >= arraynum(movey); j--) {
-	  arrayndel(move, j);
-	  arrayndel(movex, j);
-	}
-	movenum = arraynum(movey);
-      }
-
-      for (j = 0; j < movenum; j++) {
-	iline = *(int *) arraynget(move, j);
-	if (iline == EvalList[sel].line)
-	  break;
-      }
-
-      if (j == movenum) {
-	arrayadd(move, &(EvalList[sel].line));
-	arrayadd(movex, &dx);
-	arrayadd(movey, &dy);
-	NgraphApp.Changed = TRUE;
-      } else {
-	arrayput(move, &(EvalList[sel].line), j);
-	arrayput(movex, &dx, j);
-	arrayput(movey, &dy, j);
-	NgraphApp.Changed = TRUE;
-      }
+    if (getobjilist(axis, &aobjx, &iarray, FALSE, NULL)) {
+      ax = -1;
+    } else {
+      anum = arraynum(&iarray);
+      ax = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
+      arraydel(&iarray);
     }
-    MessageBox(TopLevel, "Data points are moved.", "Confirm", MB_OK);
+
+    getobj(fileobj, "axis_y", EvalList[sel].id, 0, NULL, &axis);
+    arrayinit(&iarray, sizeof(int));
+
+    if (getobjilist(axis, &aobjy, &iarray, FALSE, NULL)) {
+      ay = -1;
+    } else {
+      anum = arraynum(&iarray);
+      ay = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
+      arraydel(&iarray);
+    }
+
+    if (ax == -1 || ax == -1)
+      continue;
+
+    argv[0] = (char *) &(d->MouseX1);
+    argv[1] = (char *) &(d->MouseY1);
+    argv[2] = NULL;
+
+    if (getobj(aobjx, "coordinate", ax, 2, argv, &dx) == -1 ||
+	getobj(aobjy, "coordinate", ay, 2, argv, &dy) == -1)
+      continue;
+
+    getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move);
+    getobj(fileobj, "move_data_x", EvalList[sel].id, 0, NULL, &movex);
+    getobj(fileobj, "move_data_y", EvalList[sel].id, 0, NULL, &movey);
+
+    if (move == NULL) {
+      move = arraynew(sizeof(int));
+      putobj(fileobj, "move_data", EvalList[sel].id, move);
+    }
+
+    if (movex == NULL) {
+      movex = arraynew(sizeof(double));
+      putobj(fileobj, "move_data_x", EvalList[sel].id, movex);
+    }
+
+    if (movey == NULL) {
+      movey = arraynew(sizeof(double));
+      putobj(fileobj, "move_data_y", EvalList[sel].id, movey);
+    }
+
+    movenum = arraynum(move);
+
+    if (arraynum(movex) < movenum) {
+      for (j = movenum - 1; j >= arraynum(movex); j--) {
+	arrayndel(move, j);
+      }
+      movenum = arraynum(movex);
+    }
+
+    if (arraynum(movey) < movenum) {
+      for (j = movenum - 1; j >= arraynum(movey); j--) {
+	arrayndel(move, j);
+	arrayndel(movex, j);
+      }
+      movenum = arraynum(movey);
+    }
+
+    for (j = 0; j < movenum; j++) {
+      iline = *(int *) arraynget(move, j);
+      if (iline == EvalList[sel].line)
+	break;
+    }
+
+    if (j == movenum) {
+      arrayadd(move, &(EvalList[sel].line));
+      arrayadd(movex, &dx);
+      arrayadd(movey, &dy);
+      NgraphApp.Changed = TRUE;
+    } else {
+      arrayput(move, &(EvalList[sel].line), j);
+      arrayput(movex, &dx, j);
+      arrayput(movey, &dy, j);
+      NgraphApp.Changed = TRUE;
+    }
   }
+
+  MessageBox(TopLevel, "Data points are moved.", "Confirm", MB_OK);
   arraydel(&SelList);
   d->MoveData = FALSE;
   d->Capture = FALSE;
