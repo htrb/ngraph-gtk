@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.36 2008/06/19 01:37:47 hito Exp $
+ * $Id: x11view.c,v 1.37 2008/06/19 02:02:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5030,13 +5030,11 @@ ncopyobj(struct objlist *obj, int id1, int id2)
 }
 
 static void
-ViewCopy(void)
+ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
 {
-  int i, j, id, id2, did, num;
-  struct focuslist *focus;
-  struct objlist *obj, *dobj, *aobj;
-  char *inst, *inst2, *dinst, *dfield;
-  GdkGC *dc;
+  int j, id2, did;
+  struct objlist *dobj, *aobj;
+  char *inst2, *dinst, *dfield;
   int findX, findY, findU, findR, findG;
   char *axisx, *axisy;
   int matchx, matchy;
@@ -5051,299 +5049,321 @@ ViewCopy(void)
   int tp;
   struct narray agroup;
   char *argv[2];
+
+  _getobj(obj, "group", inst, &group);
+
+  if ((group != NULL) && (group[0] != 'a')) {
+    findX = findY = findU = findR = findG = FALSE;
+    type = group[0];
+
+    for (j = 0; j <= id; j++) {
+      inst2 = chkobjinst(obj, j);
+      _getobj(obj, "group", inst2, &group2);
+      _getobj(obj, "id", inst2, &id2);
+
+      if (group2 == NULL || group2[0] != type)
+	continue;
+
+      if (strcmp(group + 2, group2 + 2) != 0)
+	continue;
+
+      if (group2[1] == 'X') {
+	findX = TRUE;
+	idx = id2;
+      } else if (group2[1] == 'Y') {
+	findY = TRUE;
+	idy = id2;
+      } else if (group2[1] == 'U') {
+	findU = TRUE;
+	idu = id2;
+      } else if (group2[1] == 'R') {
+	findR = TRUE;
+	idr = id2;
+      }
+    }
+
+    if (((type == 's') || (type == 'f')) && findX && findY
+	&& !_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray)
+	&& ((snum = arraynum(sarray)) >= 0)) {
+      sdata = (char **) arraydata(sarray);
+      for (j = 1; j < snum; j++) {
+	dobj = getobjlist(sdata[j], &did, &dfield, NULL);
+	if (dobj == NULL || dobj != chkobject("axisgrid"))
+	  continue;
+
+	dinst = chkobjinstoid(dobj, did);
+	if (dinst == NULL)
+	  continue;
+
+	_getobj(dobj, "axis_x", dinst, &axisx);
+	_getobj(dobj, "axis_y", dinst, &axisy);
+	matchx = matchy = FALSE;
+
+	if (axisx) {
+	  arrayinit(&iarray, sizeof(int));
+	  if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
+	    if ((arraynum(&iarray) >= 1)
+		&& (obj == aobj)
+		&& (*(int *)
+		    arraylast(&iarray) == idx))
+	      matchx = TRUE;
+	  }
+	  arraydel(&iarray);
+	}
+	if (axisy) {
+	  arrayinit(&iarray, sizeof(int));
+	  if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
+	    if ((arraynum(&iarray) >= 1)
+		&& (obj == aobj)
+		&& (*(int *)
+		    arraylast(&iarray) == idy))
+	      matchy = TRUE;
+	  }
+	  arraydel(&iarray);
+	}
+	if (matchx && matchy) {
+	  findG = TRUE;
+	  _getobj(dobj, "id", dinst, &idg);
+	  break;
+	}
+      }
+    }
+
+    if (((type == 's') || (type == 'f'))
+	&& findX && findY && findU && findR) {
+      if ((idx2 = newobj(obj)) >= 0) {
+	ncopyobj(obj, idx2, idx);
+	inst2 = chkobjinst(obj, idx2);
+	_getobj(obj, "oid", inst2, &oidx);
+	AddList(obj, inst2);
+	AddInvalidateRect(obj, inst2);
+	NgraphApp.Changed = TRUE;
+      } else {
+	AddInvalidateRect(obj, inst);
+      }
+
+      if ((idy2 = newobj(obj)) >= 0) {
+	ncopyobj(obj, idy2, idy);
+	inst2 = chkobjinst(obj, idy2);
+	_getobj(obj, "oid", inst2, &oidy);
+	AddList(obj, inst2);
+	AddInvalidateRect(obj, inst2);
+	NgraphApp.Changed = TRUE;
+      } else {
+	AddInvalidateRect(obj, inst);
+      }
+
+      if ((idu2 = newobj(obj)) >= 0) {
+	ncopyobj(obj, idu2, idu);
+	inst2 = chkobjinst(obj, idu2);
+	if (idx2 >= 0) {
+	  axisx = (char *) memalloc(ID_BUF_SIZE);
+	  if (axisx) {
+	    snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
+	    putobj(obj, "reference", idu2, axisx);
+	  }
+	}
+	AddList(obj, inst2);
+	AddInvalidateRect(obj, inst2);
+	NgraphApp.Changed = TRUE;
+      } else {
+	AddInvalidateRect(obj, inst);
+      }
+
+      if ((idr2 = newobj(obj)) >= 0) {
+	ncopyobj(obj, idr2, idr);
+	inst2 = chkobjinst(obj, idr2);
+	if (idy2 >= 0) {
+	  axisy = (char *) memalloc(ID_BUF_SIZE);
+	  if(axisy) {
+	    snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
+	    putobj(obj, "reference", idr2, axisy);
+	  }
+	}
+
+	arrayinit(&agroup, sizeof(int));
+
+	if (type == 'f')
+	  tp = 1;
+	else
+	  tp = 2;
+
+	arrayadd(&agroup, &tp);
+	arrayadd(&agroup, &idx2);
+	arrayadd(&agroup, &idy2);
+	arrayadd(&agroup, &idu2);
+	arrayadd(&agroup, &idr2);
+
+	argv[0] = (char *) &agroup;
+	argv[1] = NULL;
+
+	exeobj(obj, "grouping", idr2, 1, argv);
+
+	arraydel(&agroup);
+
+	_getobj(obj, "oid", inst2, &(focus->oid));
+
+	AddList(obj, inst2);
+	AddInvalidateRect(obj, inst2);
+
+	NgraphApp.Changed = TRUE;
+      } else {
+	AddInvalidateRect(obj, inst);
+      }
+
+      if (findG) {
+	dobj = chkobject("axisgrid");
+	if ((idg2 = newobj(dobj)) >= 0) {
+	  ncopyobj(dobj, idg2, idg);
+	  inst2 = chkobjinst(dobj, idg2);
+	  if (idx2 >= 0 && idu2 >= 0) {
+	    axisx = (char *) memalloc(ID_BUF_SIZE);
+	    if (axisx) {
+	      snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
+	      putobj(dobj, "axis_x", idg2, axisx);
+	    }
+	  }
+	  if (idy2 >= 0 && idr2 >= 0) {
+	    axisy = (char *) memalloc(ID_BUF_SIZE);
+	    if (axisy) {
+	      snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
+	      putobj(dobj, "axis_y", idg2, axisy);
+	    }
+	  }
+	  AddList(dobj, inst2);
+	  NgraphApp.Changed = TRUE;
+	}
+      }
+    } else if ((type == 'c') && findX && findY) {
+      if ((idx2 = newobj(obj)) >= 0) {
+	ncopyobj(obj, idx2, idx);
+	inst2 = chkobjinst(obj, idx2);
+	_getobj(obj, "oid", inst2, &oidx);
+	AddList(obj, inst2);
+	AddInvalidateRect(obj, inst2);
+	NgraphApp.Changed = TRUE;
+      } else {
+	AddInvalidateRect(obj, inst);
+      }
+
+      if ((idy2 = newobj(obj)) >= 0) {
+	ncopyobj(obj, idy2, idy);
+	inst2 = chkobjinst(obj, idy2);
+	_getobj(obj, "oid", inst2, &oidy);
+	arrayinit(&agroup, sizeof(int));
+	tp = 3;
+
+	arrayadd(&agroup, &tp);
+	arrayadd(&agroup, &idx2);
+	arrayadd(&agroup, &idy2);
+
+	argv[0] = (char *) &agroup;
+	argv[1] = NULL;
+
+	exeobj(obj, "grouping", idy2, 1, argv);
+	arraydel(&agroup);
+
+	focus->oid = oidy;
+	AddList(obj, inst2);
+	AddInvalidateRect(obj, inst2);
+	NgraphApp.Changed = TRUE;
+
+      } else {
+	AddInvalidateRect(obj, inst);
+      }
+
+      if (idx2 >= 0 && idy2 >= 0) {
+	axisy = (char *) memalloc(ID_BUF_SIZE);
+	if (axisy) {
+	  snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
+	  putobj(obj, "adjust_axis", idx2, axisy);
+	}
+	axisx = (char *) memalloc(ID_BUF_SIZE);
+	if (axisx) {
+	  snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
+	  putobj(obj, "adjust_axis", idy2, axisx);
+	}
+      }
+    }
+  } else {
+    if ((id2 = newobj(obj)) >= 0) {
+      ncopyobj(obj, id2, id);
+      inst2 = chkobjinst(obj, id2);
+      _getobj(obj, "oid", inst2, &(focus->oid));
+      AddList(obj, inst2);
+      AddInvalidateRect(obj, inst2);
+      NgraphApp.Changed = TRUE;
+    } else {
+      AddInvalidateRect(obj, inst);
+    }
+  }
+}
+
+static void
+ViewCopy(void)
+{
+  int i, id, id2, num;
+  struct focuslist *focus;
+  struct objlist *obj;
+  char *inst, *inst2;
+  GdkGC *dc;
   int axis = FALSE;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
 
-  if ((d->MouseMode == MOUSENONE)
-      && ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
+  if (d->MouseMode != MOUSENONE ||
+      (d->Mode != MoveB && d->Mode != PointB &&
+       d->Mode != LegendB && d->Mode == AxisB))
+    return;
 
-    dc = gdk_gc_new(d->win);
+  dc = gdk_gc_new(d->win);
 
-    ShowFocusFrame(dc);
-    d->ShowFrame = FALSE;
+  ShowFocusFrame(dc);
+  d->ShowFrame = FALSE;
 
-    axis = FALSE;
-    PaintLock = TRUE;
+  axis = FALSE;
+  PaintLock = TRUE;
 
-    num = arraynum(d->focusobj);
+  num = arraynum(d->focusobj);
 
-    for (i = 0; i < num; i++) {
-      focus = *(struct focuslist **) arraynget(d->focusobj, i);
+  for (i = 0; i < num; i++) {
+    focus = *(struct focuslist **) arraynget(d->focusobj, i);
+    if (focus == NULL)
+      continue;
 
-      if (focus && ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL)) {
-	obj = focus->obj;
-	_getobj(obj, "id", inst, &id);
+    inst = chkobjinstoid(focus->obj, focus->oid);
+    if (inst == NULL)
+      continue;
 
-	if (obj == chkobject("axis")) {
-	  axis = TRUE;
-	  _getobj(obj, "group", inst, &group);
+    obj = focus->obj;
+    _getobj(obj, "id", inst, &id);
 
-	  if ((group != NULL) && (group[0] != 'a')) {
-	    findX = findY = findU = findR = findG = FALSE;
-	    type = group[0];
-
-	    for (j = 0; j <= id; j++) {
-	      inst2 = chkobjinst(obj, j);
-	      _getobj(obj, "group", inst2, &group2);
-	      _getobj(obj, "id", inst2, &id2);
-
-	      if ((group2 != NULL) && (group2[0] == type)) {
-		if (strcmp(group + 2, group2 + 2) == 0) {
-		  if (group2[1] == 'X') {
-		    findX = TRUE;
-		    idx = id2;
-		  } else if (group2[1] == 'Y') {
-		    findY = TRUE;
-		    idy = id2;
-		  } else if (group2[1] == 'U') {
-		    findU = TRUE;
-		    idu = id2;
-		  } else if (group2[1] == 'R') {
-		    findR = TRUE;
-		    idr = id2;
-		  }
-		}
-	      }
-	    }
-
-	    if (((type == 's') || (type == 'f')) && findX && findY
-		&& !_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray)
-		&& ((snum = arraynum(sarray)) >= 0)) {
-	      sdata = (char **) arraydata(sarray);
-	      for (j = 1; j < snum; j++) {
-		if (((dobj =
-		      getobjlist(sdata[j], &did, &dfield, NULL)) != NULL)
-		    && (dobj == chkobject("axisgrid"))) {
-		  if ((dinst = chkobjinstoid(dobj, did)) != NULL) {
-		    _getobj(dobj, "axis_x", dinst, &axisx);
-		    _getobj(dobj, "axis_y", dinst, &axisy);
-		    matchx = matchy = FALSE;
-		    if (axisx != NULL) {
-		      arrayinit(&iarray, sizeof(int));
-		      if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
-			if ((arraynum(&iarray) >= 1)
-			    && (obj == aobj)
-			    && (*(int *)
-				arraylast(&iarray) == idx))
-			  matchx = TRUE;
-		      }
-		      arraydel(&iarray);
-		    }
-		    if (axisy != NULL) {
-		      arrayinit(&iarray, sizeof(int));
-		      if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
-			if ((arraynum(&iarray) >= 1)
-			    && (obj == aobj)
-			    && (*(int *)
-				arraylast(&iarray) == idy))
-			  matchy = TRUE;
-		      }
-		      arraydel(&iarray);
-		    }
-		    if (matchx && matchy) {
-		      findG = TRUE;
-		      _getobj(dobj, "id", dinst, &idg);
-		      break;
-		    }
-		  }
-		}
-	      }
-	    }
-
-	    if (((type == 's') || (type == 'f'))
-		&& findX && findY && findU && findR) {
-	      if ((idx2 = newobj(obj)) >= 0) {
-		ncopyobj(obj, idx2, idx);
-		inst2 = chkobjinst(obj, idx2);
-		_getobj(obj, "oid", inst2, &oidx);
-		AddList(obj, inst2);
-		AddInvalidateRect(obj, inst2);
-		NgraphApp.Changed = TRUE;
-	      } else {
-		AddInvalidateRect(obj, inst);
-	      }
-
-	      if ((idy2 = newobj(obj)) >= 0) {
-		ncopyobj(obj, idy2, idy);
-		inst2 = chkobjinst(obj, idy2);
-		_getobj(obj, "oid", inst2, &oidy);
-		AddList(obj, inst2);
-		AddInvalidateRect(obj, inst2);
-		NgraphApp.Changed = TRUE;
-	      } else {
-		AddInvalidateRect(obj, inst);
-	      }
-
-	      if ((idu2 = newobj(obj)) >= 0) {
-		ncopyobj(obj, idu2, idu);
-		inst2 = chkobjinst(obj, idu2);
-		if (idx2 >= 0) {
-		  axisx = (char *) memalloc(ID_BUF_SIZE);
-		  if (axisx) {
-		    snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
-		    putobj(obj, "reference", idu2, axisx);
-		  }
-		}
-		AddList(obj, inst2);
-		AddInvalidateRect(obj, inst2);
-		NgraphApp.Changed = TRUE;
-	      } else {
-		AddInvalidateRect(obj, inst);
-	      }
-
-	      if ((idr2 = newobj(obj)) >= 0) {
-		ncopyobj(obj, idr2, idr);
-		inst2 = chkobjinst(obj, idr2);
-		if (idy2 >= 0) {
-		  axisy = (char *) memalloc(ID_BUF_SIZE);
-		  if(axisy) {
-		    snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
-		    putobj(obj, "reference", idr2, axisy);
-		  }
-		}
-
-		arrayinit(&agroup, sizeof(int));
-
-		if (type == 'f')
-		  tp = 1;
-		else
-		  tp = 2;
-
-		arrayadd(&agroup, &tp);
-		arrayadd(&agroup, &idx2);
-		arrayadd(&agroup, &idy2);
-		arrayadd(&agroup, &idu2);
-		arrayadd(&agroup, &idr2);
-
-		argv[0] = (char *) &agroup;
-		argv[1] = NULL;
-
-		exeobj(obj, "grouping", idr2, 1, argv);
-
-		arraydel(&agroup);
-
-		_getobj(obj, "oid", inst2, &(focus->oid));
-
-		AddList(obj, inst2);
-		AddInvalidateRect(obj, inst2);
-
-		NgraphApp.Changed = TRUE;
-	      } else {
-		AddInvalidateRect(obj, inst);
-	      }
-
-	      if (findG) {
-		dobj = chkobject("axisgrid");
-		if ((idg2 = newobj(dobj)) >= 0) {
-		  ncopyobj(dobj, idg2, idg);
-		  inst2 = chkobjinst(dobj, idg2);
-		  if (idx2 >= 0 && idu2 >= 0) {
-		    axisx = (char *) memalloc(ID_BUF_SIZE);
-		    if (axisx) {
-		      snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
-		      putobj(dobj, "axis_x", idg2, axisx);
-		    }
-		  }
-		  if (idy2 >= 0 && idr2 >= 0) {
-		    axisy = (char *) memalloc(ID_BUF_SIZE);
-		    if (axisy) {
-		      snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
-		      putobj(dobj, "axis_y", idg2, axisy);
-		    }
-		  }
-		  AddList(dobj, inst2);
-		  NgraphApp.Changed = TRUE;
-		}
-	      }
-	    } else if ((type == 'c') && findX && findY) {
-	      if ((idx2 = newobj(obj)) >= 0) {
-		ncopyobj(obj, idx2, idx);
-		inst2 = chkobjinst(obj, idx2);
-		_getobj(obj, "oid", inst2, &oidx);
-		AddList(obj, inst2);
-		AddInvalidateRect(obj, inst2);
-		NgraphApp.Changed = TRUE;
-	      } else {
-		AddInvalidateRect(obj, inst);
-	      }
-
-	      if ((idy2 = newobj(obj)) >= 0) {
-		ncopyobj(obj, idy2, idy);
-		inst2 = chkobjinst(obj, idy2);
-		_getobj(obj, "oid", inst2, &oidy);
-		arrayinit(&agroup, sizeof(int));
-		tp = 3;
-
-		arrayadd(&agroup, &tp);
-		arrayadd(&agroup, &idx2);
-		arrayadd(&agroup, &idy2);
-
-		argv[0] = (char *) &agroup;
-		argv[1] = NULL;
-
-		exeobj(obj, "grouping", idy2, 1, argv);
-		arraydel(&agroup);
-
-		focus->oid = oidy;
-		AddList(obj, inst2);
-		AddInvalidateRect(obj, inst2);
-		NgraphApp.Changed = TRUE;
-
-	      } else {
-		AddInvalidateRect(obj, inst);
-	      }
-
-	      if (idx2 >= 0 && idy2 >= 0) {
-		axisy = (char *) memalloc(ID_BUF_SIZE);
-		if (axisy) {
-		  snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
-		  putobj(obj, "adjust_axis", idx2, axisy);
-		}
-		axisx = (char *) memalloc(ID_BUF_SIZE);
-		if (axisx) {
-		  snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
-		  putobj(obj, "adjust_axis", idy2, axisx);
-		}
-	      }
-	    }
-	  } else {
-	    if ((id2 = newobj(obj)) >= 0) {
-	      ncopyobj(obj, id2, id);
-	      inst2 = chkobjinst(obj, id2);
-	      _getobj(obj, "oid", inst2, &(focus->oid));
-	      AddList(obj, inst2);
-	      AddInvalidateRect(obj, inst2);
-	      NgraphApp.Changed = TRUE;
-	    } else {
-	      AddInvalidateRect(obj, inst);
-	    }
-	  }
-	} else {
-	  if ((id2 = newobj(obj)) >= 0) {
-	    ncopyobj(obj, id2, id);
-	    inst2 = chkobjinst(obj, id2);
-	    _getobj(obj, "oid", inst2, &(focus->oid));
-	    AddList(obj, inst2);
-	    AddInvalidateRect(obj, inst2);
-	    NgraphApp.Changed = TRUE;
-	  } else {
-	    AddInvalidateRect(obj, inst);
-	  }
-	}
+    if (obj == chkobject("axis")) {
+      axis = TRUE;
+      ViewCopyAxis(obj, id, focus, inst);
+    } else {
+      if ((id2 = newobj(obj)) >= 0) {
+	ncopyobj(obj, id2, id);
+	inst2 = chkobjinst(obj, id2);
+	_getobj(obj, "oid", inst2, &(focus->oid));
+	AddList(obj, inst2);
+	AddInvalidateRect(obj, inst2);
+	NgraphApp.Changed = TRUE;
+      } else {
+	AddInvalidateRect(obj, inst);
       }
     }
-    PaintLock = FALSE;
-
-    if (! axis)
-      d->allclear = FALSE;
-
-    UpdateAll();
-    ShowFocusFrame(dc);
-    d->ShowFrame = TRUE;
-    g_object_unref(G_OBJECT(dc));
   }
+  PaintLock = FALSE;
+
+  if (! axis)
+    d->allclear = FALSE;
+
+  UpdateAll();
+  ShowFocusFrame(dc);
+  d->ShowFrame = TRUE;
+  g_object_unref(G_OBJECT(dc));
 }
 
 static void
