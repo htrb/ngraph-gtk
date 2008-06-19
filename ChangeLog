@@ -1,5 +1,8 @@
 2008-06-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (detach_toolbar, create_toolbar): add.
+	(setupwindow): use create_toolbar().
+
 	* src/gtk/x11view.c (reorder_object): add.
 	(ViewTop, ViewLast): use reorder_object().
 	(ViewCopyAxis): add.

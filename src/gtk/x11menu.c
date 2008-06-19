@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.16 2008/06/18 10:14:51 hito Exp $
+ * $Id: x11menu.c,v 1.17 2008/06/19 09:57:51 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1195,6 +1195,37 @@ SetMoveButtonState(gboolean state)
   }
 }
 
+static void
+detach_toolbar(GtkHandleBox *handlebox, GtkWidget *widget, gpointer user_data)
+{
+  gtk_toolbar_set_show_arrow(GTK_TOOLBAR(widget), (int) user_data);
+}
+
+static GtkWidget *
+create_toolbar(GtkWidget *box, GtkOrientation o)
+{
+  GtkWidget *t, *w;
+  GtkPositionType p;
+
+  if (o == GTK_ORIENTATION_HORIZONTAL) {
+    p =  GTK_POS_LEFT;
+  } else {
+    p =  GTK_POS_TOP;
+  }
+
+  t = gtk_toolbar_new();
+  gtk_toolbar_set_style(GTK_TOOLBAR(t), GTK_TOOLBAR_ICONS);
+  gtk_toolbar_set_show_arrow(GTK_TOOLBAR(t), TRUE);
+  gtk_toolbar_set_orientation(GTK_TOOLBAR(t), o);
+  w = gtk_handle_box_new();
+  g_signal_connect(w, "child-attached", G_CALLBACK(detach_toolbar), GINT_TO_POINTER(TRUE));
+  g_signal_connect(w, "child-detached", G_CALLBACK(detach_toolbar), GINT_TO_POINTER(FALSE));
+  gtk_handle_box_set_handle_position(GTK_HANDLE_BOX(w), p);
+  gtk_container_add(GTK_CONTAINER(w), t);
+  gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
+
+  return t;
+}
 
 static void
 setupwindow(void)
@@ -1208,14 +1239,8 @@ setupwindow(void)
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   createmenu(GTK_MENU_BAR(menubar));
 
-  command1 = gtk_toolbar_new();
-  gtk_toolbar_set_style(GTK_TOOLBAR(command1), GTK_TOOLBAR_ICONS);
-  gtk_box_pack_start(GTK_BOX(vbox), command1, FALSE, FALSE, 0);
-
-  command2 = gtk_toolbar_new();
-  gtk_toolbar_set_style(GTK_TOOLBAR(command2), GTK_TOOLBAR_ICONS);
-  gtk_toolbar_set_orientation(GTK_TOOLBAR(command2), GTK_ORIENTATION_VERTICAL);
-  gtk_box_pack_start(GTK_BOX(hbox), command2, FALSE, FALSE, 0);
+  command1 = create_toolbar(vbox, GTK_ORIENTATION_HORIZONTAL);
+  command2 = create_toolbar(hbox, GTK_ORIENTATION_VERTICAL);
 
 
   NgraphApp.Viewer.HScroll = gtk_hscrollbar_new(NULL);
