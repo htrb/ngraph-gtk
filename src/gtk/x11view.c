@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.38 2008/06/19 02:11:16 hito Exp $
+ * $Id: x11view.c,v 1.39 2008/06/19 02:25:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -792,8 +792,6 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
 
   d = &(NgraphApp.Viewer);
 
-  ignorestdio(&save);
-
   minx = (x1 < x2) ? x1 : x2;
   miny = (y1 < y2) ? y1 : y2;
   maxx = (x1 > x2) ? x1 : x2;
@@ -809,79 +807,82 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
   argv[5] = (char *) &limit;
   argv[6] = NULL;
 
-  if ((fileobj = chkobject("file")) != NULL) {
-    snprintf(mes, sizeof(mes), _("Evaluating."));
-    SetStatusBar(mes);
+  if ((fileobj = chkobject("file")) == NULL)
+    return;
 
-    if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
-      return;
+  ignorestdio(&save);
 
-    if ((snum = arraynum(sarray)) == 0)
-      return;
+  snprintf(mes, sizeof(mes), _("Evaluating."));
+  SetStatusBar(mes);
 
-    ProgressDialogCreate(_("Evaluating"));
+  if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
+    return;
 
-    sdata = (char **) arraydata(sarray);
-    tot = 0;
+  if ((snum = arraynum(sarray)) == 0)
+    return;
 
-    for (i = 1; i < snum; i++) {
-      dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-      if (dobj && fileobj == dobj) {
-	dinst = chkobjinstoid(dobj, did);
-	if (dinst) {
-	  _getobj(dobj, "id", dinst, &id);
-	  _exeobj(dobj, "evaluate", dinst, 6, argv);
-	  _getobj(dobj, "evaluate", dinst, &eval);
-	  evalnum = arraynum(eval) / 3;
-	  for (j = 0; j < evalnum; j++) {
-	    if (tot >= limit) break;
-	    tot++;
-	    line = *(double *) arraynget(eval, j * 3 + 0);
-	    dx = *(double *) arraynget(eval, j * 3 + 1);
-	    dy = *(double *) arraynget(eval, j * 3 + 2);
-	    EvalList[tot - 1].id = id;
-	    EvalList[tot - 1].line = nround(line);
-	    EvalList[tot - 1].x = dx;
-	    EvalList[tot - 1].y = dy;
-	  }
+  ProgressDialogCreate(_("Evaluating"));
+
+  sdata = (char **) arraydata(sarray);
+  tot = 0;
+
+  for (i = 1; i < snum; i++) {
+    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
+    if (dobj && fileobj == dobj) {
+      dinst = chkobjinstoid(dobj, did);
+      if (dinst) {
+	_getobj(dobj, "id", dinst, &id);
+	_exeobj(dobj, "evaluate", dinst, 6, argv);
+	_getobj(dobj, "evaluate", dinst, &eval);
+	evalnum = arraynum(eval) / 3;
+	for (j = 0; j < evalnum; j++) {
 	  if (tot >= limit) break;
+	  tot++;
+	  line = *(double *) arraynget(eval, j * 3 + 0);
+	  dx = *(double *) arraynget(eval, j * 3 + 1);
+	  dy = *(double *) arraynget(eval, j * 3 + 2);
+	  EvalList[tot - 1].id = id;
+	  EvalList[tot - 1].line = nround(line);
+	  EvalList[tot - 1].x = dx;
+	  EvalList[tot - 1].y = dy;
 	}
+	if (tot >= limit) break;
       }
     }
+  }
 
-    ProgressDialogFinalize();
-    ResetStatusBar();
+  ProgressDialogFinalize();
+  ResetStatusBar();
 
-    if (tot > 0) {
-      EvalDialog(&DlgEval, fileobj, tot, &SelList);
-      ret = DialogExecute(TopLevel, &DlgEval);
-      selnum = arraynum(&SelList);
+  if (tot > 0) {
+    EvalDialog(&DlgEval, fileobj, tot, &SelList);
+    ret = DialogExecute(TopLevel, &DlgEval);
+    selnum = arraynum(&SelList);
 
-      if (ret == IDEVMASK) {
-	for (i = 0; i < selnum; i++) {
-	  sel = *(int *) arraynget(&SelList, i);
-	  getobj(fileobj, "mask", EvalList[sel].id, 0, NULL, &mask);
-	  if (mask == NULL) {
-	    mask = arraynew(sizeof(int));
-	    putobj(fileobj, "mask", EvalList[sel].id, mask);
-	  }
-	  masknum = arraynum(mask);
-	  for (j = 0; j < masknum; j++) {
-	    iline = *(int *) arraynget(mask, j);
-	    if (iline == EvalList[sel].line)
-	      break;
-	  }
-	  if (j == masknum) {
-	    arrayadd(mask, &(EvalList[sel].line));
-	    NgraphApp.Changed = TRUE;
-	  }
+    if (ret == IDEVMASK) {
+      for (i = 0; i < selnum; i++) {
+	sel = *(int *) arraynget(&SelList, i);
+	getobj(fileobj, "mask", EvalList[sel].id, 0, NULL, &mask);
+	if (mask == NULL) {
+	  mask = arraynew(sizeof(int));
+	  putobj(fileobj, "mask", EvalList[sel].id, mask);
 	}
-	arraydel(&SelList);
-      } else if ((ret == IDEVMOVE) && (selnum > 0)) {
-	SetCursor(GDK_LEFT_PTR);
-	d->Capture = TRUE;
-	d->MoveData = TRUE;
+	masknum = arraynum(mask);
+	for (j = 0; j < masknum; j++) {
+	  iline = *(int *) arraynget(mask, j);
+	  if (iline == EvalList[sel].line)
+	    break;
+	}
+	if (j == masknum) {
+	  arrayadd(mask, &(EvalList[sel].line));
+	  NgraphApp.Changed = TRUE;
+	}
       }
+      arraydel(&SelList);
+    } else if ((ret == IDEVMOVE) && (selnum > 0)) {
+      SetCursor(GDK_LEFT_PTR);
+      d->Capture = TRUE;
+      d->MoveData = TRUE;
     }
   }
   restorestdio(&save);
@@ -1863,113 +1864,114 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
 
   d->Capture = TRUE;
 
-  if (arraynum(d->focusobj) != 0) {
-    GetFocusFrame(&minx, &miny, &maxx, &maxy, 0, 0);
+  if (arraynum(d->focusobj) == 0)
+    return;
 
-    if ((minx - 10 <= point->x) && (point->x <= minx - 4)
-	&& (miny - 10 <= point->y) && (point->y <= miny - 4)) {
-      GetLargeFrame(&(d->RefX2), &(d->RefY2), &(d->RefX1), &(d->RefY1));
-      d->MouseMode = MOUSEZOOM1;
-      SetCursor(GDK_TOP_LEFT_CORNER);
-    } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
-	       && (miny - 10 <= point->y) && (point->y <= miny - 4)) {
-      GetLargeFrame(&(d->RefX1), &(d->RefY2), &(d->RefX2), &(d->RefY1));
-      d->MouseMode = MOUSEZOOM2;
-      SetCursor(GDK_TOP_RIGHT_CORNER);
-    } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
-	       && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
-      GetLargeFrame(&(d->RefX1), &(d->RefY1), &(d->RefX2), &(d->RefY2));
-      d->MouseMode = MOUSEZOOM3;
-      SetCursor(GDK_BOTTOM_RIGHT_CORNER);
-    } else if ((minx - 10 <= point->x) && (point->x <= minx - 4)
-	       && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
-      GetLargeFrame(&(d->RefX2), &(d->RefY1), &(d->RefX1), &(d->RefY2));
-      d->MouseMode = MOUSEZOOM4;
-      SetCursor(GDK_BOTTOM_LEFT_CORNER);
+  GetFocusFrame(&minx, &miny, &maxx, &maxy, 0, 0);
+
+  if ((minx - 10 <= point->x) && (point->x <= minx - 4)
+      && (miny - 10 <= point->y) && (point->y <= miny - 4)) {
+    GetLargeFrame(&(d->RefX2), &(d->RefY2), &(d->RefX1), &(d->RefY1));
+    d->MouseMode = MOUSEZOOM1;
+    SetCursor(GDK_TOP_LEFT_CORNER);
+  } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
+	     && (miny - 10 <= point->y) && (point->y <= miny - 4)) {
+    GetLargeFrame(&(d->RefX1), &(d->RefY2), &(d->RefX2), &(d->RefY1));
+    d->MouseMode = MOUSEZOOM2;
+    SetCursor(GDK_TOP_RIGHT_CORNER);
+  } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
+	     && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
+    GetLargeFrame(&(d->RefX1), &(d->RefY1), &(d->RefX2), &(d->RefY2));
+    d->MouseMode = MOUSEZOOM3;
+    SetCursor(GDK_BOTTOM_RIGHT_CORNER);
+  } else if ((minx - 10 <= point->x) && (point->x <= minx - 4)
+	     && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
+    GetLargeFrame(&(d->RefX2), &(d->RefY1), &(d->RefX1), &(d->RefY2));
+    d->MouseMode = MOUSEZOOM4;
+    SetCursor(GDK_BOTTOM_LEFT_CORNER);
+  } else {
+    focus = *(struct focuslist **) arraynget(d->focusobj, 0);
+    if ((arraynum(d->focusobj) == 1)
+	&& ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL)) {
+
+      _exeobj(focus->obj, "bbox", inst, 0, NULL);
+      _getobj(focus->obj, "bbox", inst, &abbox);
+
+      bboxnum = arraynum(abbox);
+      bbox = (int *) arraydata(abbox);
+
+      for (j = 4; j < bboxnum; j += 2) {
+	x1 = mxd2p(bbox[j] * zoom + Menulocal.LeftMargin)
+	  - d->hscroll + d->cx;
+
+	y1 = mxd2p(bbox[j + 1] * zoom + Menulocal.TopMargin)
+	  - d->vscroll + d->cy;
+
+	if ((x1 - 3 <= point->x) && (point->x <= x1 + 3)
+	    && (y1 - 3 <= point->y) && (point->y <= y1 + 3))
+	  break;
+      }
+
+      if (j < bboxnum) {
+	d->MouseMode = MOUSECHANGE;
+	d->ChangePoint = (j - 4) / 2;
+	ShowFocusFrame(dc);
+	d->ShowFrame = FALSE;
+	SetCursor(GDK_CROSSHAIR);
+	d->ShowLine = TRUE;
+	d->LineX = d->LineY = 0;
+	ShowFocusLine(dc, d->ChangePoint);
+      }
+    }
+  }
+
+  if (d->MouseMode == MOUSENONE) {
+    if ((minx <= point->x) && (point->x <= maxx)
+	&& (miny <= point->y) && (point->y <= maxy)) {
+      d->MouseMode = MOUSEDRAG;
+    }
+  } else if ((MOUSEZOOM1 <= d->MouseMode)
+	     && (d->MouseMode <= MOUSEZOOM4)) {
+    ShowFocusFrame(dc);
+
+    d->ShowFrame = FALSE;
+    d->MouseDX = d->RefX2 - d->MouseX1;
+    d->MouseDY = d->RefY2 - d->MouseY1;
+
+    vx1 = d->MouseX1;
+    vy1 = d->MouseY1;
+
+    vx1 -= d->RefX1 - d->MouseDX;
+    vy1 -= d->RefY1 - d->MouseDY;
+
+    vx2 = (d->RefX2 - d->RefX1);
+    vy2 = (d->RefY2 - d->RefY1);
+
+    cc = vx1 * vx2 + vy1 * vy2;
+    nn = vx2 * vx2 + vy2 * vy2;
+
+    if ((nn == 0) || (cc < 0)) {
+      zoom2 = 0;
     } else {
-      focus = *(struct focuslist **) arraynget(d->focusobj, 0);
-      if ((arraynum(d->focusobj) == 1)
-	  && ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL)) {
-
-	_exeobj(focus->obj, "bbox", inst, 0, NULL);
-	_getobj(focus->obj, "bbox", inst, &abbox);
-
-	bboxnum = arraynum(abbox);
-	bbox = (int *) arraydata(abbox);
-
-	for (j = 4; j < bboxnum; j += 2) {
-	  x1 = mxd2p(bbox[j] * zoom + Menulocal.LeftMargin)
-	    - d->hscroll + d->cx;
-
-	  y1 = mxd2p(bbox[j + 1] * zoom + Menulocal.TopMargin)
-	    - d->vscroll + d->cy;
-
-	  if ((x1 - 3 <= point->x) && (point->x <= x1 + 3)
-	      && (y1 - 3 <= point->y) && (point->y <= y1 + 3))
-	    break;
-	}
-
-	if (j < bboxnum) {
-	  d->MouseMode = MOUSECHANGE;
-	  d->ChangePoint = (j - 4) / 2;
-	  ShowFocusFrame(dc);
-	  d->ShowFrame = FALSE;
-	  SetCursor(GDK_CROSSHAIR);
-	  d->ShowLine = TRUE;
-	  d->LineX = d->LineY = 0;
-	  ShowFocusLine(dc, d->ChangePoint);
-	}
-      }
+      zoom2 = cc / nn;
     }
 
-    if (d->MouseMode == MOUSENONE) {
-      if ((minx <= point->x) && (point->x <= maxx)
-	  && (miny <= point->y) && (point->y <= maxy)) {
-	d->MouseMode = MOUSEDRAG;
-      }
-    } else if ((MOUSEZOOM1 <= d->MouseMode)
-	       && (d->MouseMode <= MOUSEZOOM4)) {
-      ShowFocusFrame(dc);
+    CheckGrid(FALSE, state, NULL, NULL, &zoom2);
 
-      d->ShowFrame = FALSE;
-      d->MouseDX = d->RefX2 - d->MouseX1;
-      d->MouseDY = d->RefY2 - d->MouseY1;
+    SetZoom(zoom2);
 
-      vx1 = d->MouseX1;
-      vy1 = d->MouseY1;
+    vx1 = d->RefX1 + vx2 * zoom2;
+    vy1 = d->RefY1 + vy2 * zoom2;
 
-      vx1 -= d->RefX1 - d->MouseDX;
-      vy1 -= d->RefY1 - d->MouseDY;
+    d->MouseX1 = d->RefX1;
+    d->MouseY1 = d->RefY1;
 
-      vx2 = (d->RefX2 - d->RefX1);
-      vy2 = (d->RefY2 - d->RefY1);
+    d->MouseX2 = vx1;
+    d->MouseY2 = vy1;
 
-      cc = vx1 * vx2 + vy1 * vy2;
-      nn = vx2 * vx2 + vy2 * vy2;
+    ShowFrameRect(dc);
 
-      if ((nn == 0) || (cc < 0)) {
-	zoom2 = 0;
-      } else {
-	zoom2 = cc / nn;
-      }
-
-      CheckGrid(FALSE, state, NULL, NULL, &zoom2);
-
-      SetZoom(zoom2);
-
-      vx1 = d->RefX1 + vx2 * zoom2;
-      vy1 = d->RefY1 + vy2 * zoom2;
-
-      d->MouseX1 = d->RefX1;
-      d->MouseY1 = d->RefY1;
-
-      d->MouseX2 = vx1;
-      d->MouseY2 = vy1;
-
-      ShowFrameRect(dc);
-
-      d->ShowRect = TRUE;
-    }
+    d->ShowRect = TRUE;
   }
 }
 
@@ -2010,68 +2012,70 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 	ay = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
 	arraydel(&iarray);
       }
-      if ((ax != -1) && (ax != -1)) {
-	argv[0] = (char *) &(d->MouseX1);
-	argv[1] = (char *) &(d->MouseY1);
-	argv[2] = NULL;
 
-	if ((getobj(aobjx, "coordinate", ax, 2, argv, &dx) != -1)
-	    && (getobj(aobjy, "coordinate", ay, 2, argv, &dy) != -1)) {
+      if (ax == -1 || ax == -1)
+	continue;
 
-	  getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move);
-	  getobj(fileobj, "move_data_x", EvalList[sel].id, 0, NULL, &movex);
-	  getobj(fileobj, "move_data_y", EvalList[sel].id, 0, NULL, &movey);
+      argv[0] = (char *) &(d->MouseX1);
+      argv[1] = (char *) &(d->MouseY1);
+      argv[2] = NULL;
 
-	  if (move == NULL) {
-	    move = arraynew(sizeof(int));
-	    putobj(fileobj, "move_data", EvalList[sel].id, move);
-	  }
+      if (getobj(aobjx, "coordinate", ax, 2, argv, &dx) == -1 ||
+	  getobj(aobjy, "coordinate", ay, 2, argv, &dy) == -1)
+	continue;
 
-	  if (movex == NULL) {
-	    movex = arraynew(sizeof(double));
-	    putobj(fileobj, "move_data_x", EvalList[sel].id, movex);
-	  }
+      getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move);
+      getobj(fileobj, "move_data_x", EvalList[sel].id, 0, NULL, &movex);
+      getobj(fileobj, "move_data_y", EvalList[sel].id, 0, NULL, &movey);
 
-	  if (movey == NULL) {
-	    movey = arraynew(sizeof(double));
-	    putobj(fileobj, "move_data_y", EvalList[sel].id, movey);
-	  }
+      if (move == NULL) {
+	move = arraynew(sizeof(int));
+	putobj(fileobj, "move_data", EvalList[sel].id, move);
+      }
 
-	  movenum = arraynum(move);
+      if (movex == NULL) {
+	movex = arraynew(sizeof(double));
+	putobj(fileobj, "move_data_x", EvalList[sel].id, movex);
+      }
 
-	  if (arraynum(movex) < movenum) {
-	    for (j = movenum - 1; j >= arraynum(movex); j--) {
-	      arrayndel(move, j);
-	    }
-	    movenum = arraynum(movex);
-	  }
+      if (movey == NULL) {
+	movey = arraynew(sizeof(double));
+	putobj(fileobj, "move_data_y", EvalList[sel].id, movey);
+      }
 
-	  if (arraynum(movey) < movenum) {
-	    for (j = movenum - 1; j >= arraynum(movey); j--) {
-	      arrayndel(move, j);
-	      arrayndel(movex, j);
-	    }
-	    movenum = arraynum(movey);
-	  }
+      movenum = arraynum(move);
 
-	  for (j = 0; j < movenum; j++) {
-	    iline = *(int *) arraynget(move, j);
-	    if (iline == EvalList[sel].line)
-	      break;
-	  }
-
-	  if (j == movenum) {
-	    arrayadd(move, &(EvalList[sel].line));
-	    arrayadd(movex, &dx);
-	    arrayadd(movey, &dy);
-	    NgraphApp.Changed = TRUE;
-	  } else {
-	    arrayput(move, &(EvalList[sel].line), j);
-	    arrayput(movex, &dx, j);
-	    arrayput(movey, &dy, j);
-	    NgraphApp.Changed = TRUE;
-	  }
+      if (arraynum(movex) < movenum) {
+	for (j = movenum - 1; j >= arraynum(movex); j--) {
+	  arrayndel(move, j);
 	}
+	movenum = arraynum(movex);
+      }
+
+      if (arraynum(movey) < movenum) {
+	for (j = movenum - 1; j >= arraynum(movey); j--) {
+	  arrayndel(move, j);
+	  arrayndel(movex, j);
+	}
+	movenum = arraynum(movey);
+      }
+
+      for (j = 0; j < movenum; j++) {
+	iline = *(int *) arraynget(move, j);
+	if (iline == EvalList[sel].line)
+	  break;
+      }
+
+      if (j == movenum) {
+	arrayadd(move, &(EvalList[sel].line));
+	arrayadd(movex, &dx);
+	arrayadd(movey, &dy);
+	NgraphApp.Changed = TRUE;
+      } else {
+	arrayput(move, &(EvalList[sel].line), j);
+	arrayput(movex, &dx, j);
+	arrayput(movey, &dy, j);
+	NgraphApp.Changed = TRUE;
       }
     }
     MessageBox(TopLevel, "Data points are moved.", "Confirm", MB_OK);
@@ -4096,53 +4100,55 @@ MakeRuler(GdkGC *gc)
   gdk_gc_set_rgb_fg_color(gc, &gray);
 
   gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
-  if (Mxlocal->ruler) {
-    gdk_gc_set_rgb_fg_color(gc, &gray);
-    for (x = 500; x < Width; x += 500) {
-      if (!(x % 10000)) {
-	gdk_gc_set_rgb_fg_color(gc, &red);
-      }
 
-      if (!(x % 10000)) {
-	len = 225;
-      } else if (!(x % 1000)) {
-	len = 150;
-      } else {
-	len = 75;
-      }
+  if (! Mxlocal->ruler)
+    return;
 
-      px = mxd2p(x) - Mxlocal->scrollx;
-      plen = mxd2p(len);
-
-      gdk_draw_line(d->win, gc, px, y1, px, y1 + plen);
-      gdk_draw_line(d->win, gc, px, y2, px, y2 - plen);
-
-      if (!(x % 10000)) {
-	gdk_gc_set_rgb_fg_color(gc, &gray);
-      }
+  gdk_gc_set_rgb_fg_color(gc, &gray);
+  for (x = 500; x < Width; x += 500) {
+    if (!(x % 10000)) {
+      gdk_gc_set_rgb_fg_color(gc, &red);
     }
-    for (y = 500; y < Height; y += 500) {
-      if (!(y % 10000)) {
-	gdk_gc_set_rgb_fg_color(gc, &red);
-      }
 
-      if (!(y % 10000)) {
-	len = 225;
-      } else if (!(y % 1000)) {
-	len = 150;
-      } else {
-	len = 75;
-      }
+    if (!(x % 10000)) {
+      len = 225;
+    } else if (!(x % 1000)) {
+      len = 150;
+    } else {
+      len = 75;
+    }
 
-      py = mxd2p(y) - Mxlocal->scrolly;
-      plen = mxd2p(len);
+    px = mxd2p(x) - Mxlocal->scrollx;
+    plen = mxd2p(len);
 
-      gdk_draw_line(d->win, gc, x1, py, x1 + plen, py);
-      gdk_draw_line(d->win, gc, x2, py, x2 - plen, py);
+    gdk_draw_line(d->win, gc, px, y1, px, y1 + plen);
+    gdk_draw_line(d->win, gc, px, y2, px, y2 - plen);
 
-      if (!(y % 10000)) {
-	gdk_gc_set_rgb_fg_color(gc, &gray);
-      }
+    if (!(x % 10000)) {
+      gdk_gc_set_rgb_fg_color(gc, &gray);
+    }
+  }
+  for (y = 500; y < Height; y += 500) {
+    if (!(y % 10000)) {
+      gdk_gc_set_rgb_fg_color(gc, &red);
+    }
+
+    if (!(y % 10000)) {
+      len = 225;
+    } else if (!(y % 1000)) {
+      len = 150;
+    } else {
+      len = 75;
+    }
+
+    py = mxd2p(y) - Mxlocal->scrolly;
+    plen = mxd2p(len);
+
+    gdk_draw_line(d->win, gc, x1, py, x1 + plen, py);
+    gdk_draw_line(d->win, gc, x2, py, x2 - plen, py);
+
+    if (!(y % 10000)) {
+      gdk_gc_set_rgb_fg_color(gc, &gray);
     }
   }
 }
