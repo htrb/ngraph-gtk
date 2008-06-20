@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30.gtk-01\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-18 21:09+0900\n"
+"POT-Creation-Date: 2008-06-20 15:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1561,11 +1561,11 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:1845
+#: src/gtk/x11menu.c:1870
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:1895
+#: src/gtk/x11menu.c:1920
 msgid "Question"
 msgstr ""
 
@@ -1842,24 +1842,24 @@ msgstr ""
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:813
+#: src/gtk/x11view.c:815
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:822
+#: src/gtk/x11view.c:824
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:4518
+#: src/gtk/x11view.c:4534
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4524
+#: src/gtk/x11view.c:4540
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11view.c:4525
+#: src/gtk/x11view.c:4541
 msgid "Drawing"
 msgstr ""
 
