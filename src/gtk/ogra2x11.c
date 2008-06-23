@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.3 2008/06/23 01:11:37 hito Exp $
+ * $Id: ogra2x11.c,v 1.4 2008/06/23 02:51:51 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -135,8 +135,7 @@ static int gtkflush(struct objlist *obj, char *inst, char *rval, int argc,
 static int gtkloadconfig(struct objlist *obj, struct gtklocal *gtklocal);
 static void gtk_redraw(struct objlist *obj, void *inst,
 		       struct gtklocal *gtklocal);
-static gboolean gtkclose(GtkWidget * widget, GdkEvent * event,
-			 gpointer user_data);
+static void gtkclose(GtkWidget * widget, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);;
 static gboolean gtkevpaint(GtkWidget * w, GdkEventExpose * e,
 			   gpointer user_data);
@@ -324,8 +323,8 @@ gtkevpaint(GtkWidget * w, GdkEventExpose * e, gpointer user_data)
   return FALSE;
 }
 
-static gboolean
-gtkclose(GtkWidget * widget, GdkEvent * event, gpointer user_data)
+static void
+gtkclose(GtkWidget * widget, gpointer user_data)
 {
   char *inst;
   struct gtklocal *local;
@@ -342,7 +341,7 @@ gtkclose(GtkWidget * widget, GdkEvent * event, gpointer user_data)
       break;
     }
   }
-  return TRUE;
+  return;
 }
 
 static void
@@ -352,6 +351,25 @@ gtkevsize(GtkWidget * w, GtkRequisition * reqest, gpointer user_data)
 
   gtklocal = (struct gtklocal *) user_data;
   gtkchangedpi(gtklocal);
+}
+
+static gboolean
+ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
+{
+  GdkEventKey *e;
+
+  g_return_val_if_fail(w != NULL, FALSE);
+  g_return_val_if_fail(event != NULL, FALSE);
+
+  e = (GdkEventKey *)event;
+
+  switch (e->keyval) {
+  case GDK_w:
+    if (e->state & GDK_CONTROL_MASK) 
+      gtk_widget_destroy(GTK_WIDGET(user_data));
+    return TRUE;
+  }
+  return FALSE;
 }
 
 static int
@@ -440,8 +458,10 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     goto errexit;
 
   g_signal_connect_swapped(gtklocal->mainwin,
-			   "delete-event",
+			   "destroy",
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
+
+  g_signal_connect(gtklocal->mainwin, "key-press-event", G_CALLBACK(ev_key_down), gtklocal->mainwin);
 
   g_signal_connect(gtklocal->mainwin,
 		   "expose-event", G_CALLBACK(gtkevpaint), gtklocal);
@@ -1438,7 +1458,7 @@ gtk_charwidth(struct objlist *obj, char *inst, char *rval,
 {
   struct gtklocal *gtklocal;
   char ch[3], *font, *tmp;
-  double size, dir;
+  double size, dir, s, c;
   int cashpos, width;;
 
   ch[0] = (*(unsigned int *)(argv[3]) & 0xff);
@@ -1464,6 +1484,9 @@ gtk_charwidth(struct objlist *obj, char *inst, char *rval,
   }
 
   dir = gtklocal->fontdir;
+  s = gtklocal->fontsin;
+  c = gtklocal->fontcos;
+
   gtklocal->fontdir = 0;
   gtklocal->fontsin = 0;
   gtklocal->fontcos = 1;
@@ -1480,6 +1503,8 @@ gtk_charwidth(struct objlist *obj, char *inst, char *rval,
     free(tmp);
   }
 
+  gtklocal->fontsin = s;
+  gtklocal->fontcos = c;
   gtklocal->fontdir = dir;
 
   return 0;
@@ -1491,7 +1516,7 @@ gtk_charheight(struct objlist *obj, char *inst, char *rval,
 {
   struct gtklocal *gtklocal;
   char *font, *tmp;
-  double size, dir;
+  double size, dir, s, c;
   char *func;
   int height, descent, ascent, cashpos;
   //  XFontStruct *fontstruct;
@@ -1537,6 +1562,9 @@ gtk_charheight(struct objlist *obj, char *inst, char *rval,
 
 
   dir = gtklocal->fontdir;
+  s = gtklocal->fontsin;
+  c = gtklocal->fontcos;
+
   gtklocal->fontdir = 0;
   gtklocal->fontsin = 0;
   gtklocal->fontcos = 1;
@@ -1549,6 +1577,8 @@ gtk_charheight(struct objlist *obj, char *inst, char *rval,
     *(int *)rval = pixel2dot(gtklocal, descent);
   }
 
+  gtklocal->fontsin = s;
+  gtklocal->fontcos = c;
   gtklocal->fontdir = dir;
 
   return 0;
