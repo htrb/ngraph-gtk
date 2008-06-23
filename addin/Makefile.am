@@ -6,3 +6,5 @@ EXTRA_DIST = ${pkgdata_DATA}
 bin_PROGRAMS = nfft
 
 nfft_SOURCES = fft.c
+
+nfft_CFLAGS = -D_FORTIFY_SOURCE

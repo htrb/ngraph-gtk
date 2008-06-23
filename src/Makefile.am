@@ -22,4 +22,4 @@ nterminal_SOURCES = terminal.c
 
 ngraph_LDADD = $(GTK_LIBS) gtk/libngraph.la
 
-ngraph_CFLAGS =  -I..
+ngraph_CFLAGS =  -I.. -D_FORTIFY_SOURCE

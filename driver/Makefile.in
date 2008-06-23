@@ -176,6 +176,9 @@ bin_PROGRAMS = gra2ps gra2wmf
 gra2ps_SOURCES = gra2ps.c
 
 gra2wmf_SOURCES = gra2wmf.c wmfapi.c wmfapi.h
+
+gra2ps_CFLAGS = -D_FORTIFY_SOURCE
+gra2wmf_CFLAGS = -D_FORTIFY_SOURCE
 subdir = driver
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -184,12 +187,12 @@ CONFIG_CLEAN_FILES =
 bin_PROGRAMS = gra2ps$(EXEEXT) gra2wmf$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
-am_gra2ps_OBJECTS = gra2ps.$(OBJEXT)
+am_gra2ps_OBJECTS = gra2ps-gra2ps.$(OBJEXT)
 gra2ps_OBJECTS = $(am_gra2ps_OBJECTS)
 gra2ps_LDADD = $(LDADD)
 gra2ps_DEPENDENCIES =
 gra2ps_LDFLAGS =
-am_gra2wmf_OBJECTS = gra2wmf.$(OBJEXT) wmfapi.$(OBJEXT)
+am_gra2wmf_OBJECTS = gra2wmf-gra2wmf.$(OBJEXT) gra2wmf-wmfapi.$(OBJEXT)
 gra2wmf_OBJECTS = $(am_gra2wmf_OBJECTS)
 gra2wmf_LDADD = $(LDADD)
 gra2wmf_DEPENDENCIES =
@@ -198,8 +201,9 @@ gra2wmf_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/gra2ps.Po ./$(DEPDIR)/gra2wmf.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/wmfapi.Po
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/gra2ps-gra2ps.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gra2wmf-gra2wmf.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/gra2wmf-wmfapi.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
@@ -264,9 +268,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gra2ps.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gra2wmf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wmfapi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gra2ps-gra2ps.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gra2wmf-gra2wmf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gra2wmf-wmfapi.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" \
@@ -300,6 +304,105 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
+
+gra2ps-gra2ps.o: gra2ps.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2ps_CFLAGS) $(CFLAGS) -MT gra2ps-gra2ps.o -MD -MP -MF "$(DEPDIR)/gra2ps-gra2ps.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2ps-gra2ps.o `test -f 'gra2ps.c' || echo '$(srcdir)/'`gra2ps.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2ps-gra2ps.Tpo" "$(DEPDIR)/gra2ps-gra2ps.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2ps-gra2ps.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gra2ps.c' object='gra2ps-gra2ps.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2ps-gra2ps.Po' tmpdepfile='$(DEPDIR)/gra2ps-gra2ps.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2ps_CFLAGS) $(CFLAGS) -c -o gra2ps-gra2ps.o `test -f 'gra2ps.c' || echo '$(srcdir)/'`gra2ps.c
+
+gra2ps-gra2ps.obj: gra2ps.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2ps_CFLAGS) $(CFLAGS) -MT gra2ps-gra2ps.obj -MD -MP -MF "$(DEPDIR)/gra2ps-gra2ps.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2ps-gra2ps.obj `if test -f 'gra2ps.c'; then $(CYGPATH_W) 'gra2ps.c'; else $(CYGPATH_W) '$(srcdir)/gra2ps.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2ps-gra2ps.Tpo" "$(DEPDIR)/gra2ps-gra2ps.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2ps-gra2ps.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gra2ps.c' object='gra2ps-gra2ps.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2ps-gra2ps.Po' tmpdepfile='$(DEPDIR)/gra2ps-gra2ps.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2ps_CFLAGS) $(CFLAGS) -c -o gra2ps-gra2ps.obj `if test -f 'gra2ps.c'; then $(CYGPATH_W) 'gra2ps.c'; else $(CYGPATH_W) '$(srcdir)/gra2ps.c'; fi`
+
+gra2ps-gra2ps.lo: gra2ps.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2ps_CFLAGS) $(CFLAGS) -MT gra2ps-gra2ps.lo -MD -MP -MF "$(DEPDIR)/gra2ps-gra2ps.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2ps-gra2ps.lo `test -f 'gra2ps.c' || echo '$(srcdir)/'`gra2ps.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2ps-gra2ps.Tpo" "$(DEPDIR)/gra2ps-gra2ps.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2ps-gra2ps.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gra2ps.c' object='gra2ps-gra2ps.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2ps-gra2ps.Plo' tmpdepfile='$(DEPDIR)/gra2ps-gra2ps.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2ps_CFLAGS) $(CFLAGS) -c -o gra2ps-gra2ps.lo `test -f 'gra2ps.c' || echo '$(srcdir)/'`gra2ps.c
+
+gra2wmf-gra2wmf.o: gra2wmf.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -MT gra2wmf-gra2wmf.o -MD -MP -MF "$(DEPDIR)/gra2wmf-gra2wmf.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2wmf-gra2wmf.o `test -f 'gra2wmf.c' || echo '$(srcdir)/'`gra2wmf.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2wmf-gra2wmf.Tpo" "$(DEPDIR)/gra2wmf-gra2wmf.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2wmf-gra2wmf.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gra2wmf.c' object='gra2wmf-gra2wmf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2wmf-gra2wmf.Po' tmpdepfile='$(DEPDIR)/gra2wmf-gra2wmf.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -c -o gra2wmf-gra2wmf.o `test -f 'gra2wmf.c' || echo '$(srcdir)/'`gra2wmf.c
+
+gra2wmf-gra2wmf.obj: gra2wmf.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -MT gra2wmf-gra2wmf.obj -MD -MP -MF "$(DEPDIR)/gra2wmf-gra2wmf.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2wmf-gra2wmf.obj `if test -f 'gra2wmf.c'; then $(CYGPATH_W) 'gra2wmf.c'; else $(CYGPATH_W) '$(srcdir)/gra2wmf.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2wmf-gra2wmf.Tpo" "$(DEPDIR)/gra2wmf-gra2wmf.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2wmf-gra2wmf.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gra2wmf.c' object='gra2wmf-gra2wmf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2wmf-gra2wmf.Po' tmpdepfile='$(DEPDIR)/gra2wmf-gra2wmf.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -c -o gra2wmf-gra2wmf.obj `if test -f 'gra2wmf.c'; then $(CYGPATH_W) 'gra2wmf.c'; else $(CYGPATH_W) '$(srcdir)/gra2wmf.c'; fi`
+
+gra2wmf-gra2wmf.lo: gra2wmf.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -MT gra2wmf-gra2wmf.lo -MD -MP -MF "$(DEPDIR)/gra2wmf-gra2wmf.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2wmf-gra2wmf.lo `test -f 'gra2wmf.c' || echo '$(srcdir)/'`gra2wmf.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2wmf-gra2wmf.Tpo" "$(DEPDIR)/gra2wmf-gra2wmf.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2wmf-gra2wmf.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gra2wmf.c' object='gra2wmf-gra2wmf.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2wmf-gra2wmf.Plo' tmpdepfile='$(DEPDIR)/gra2wmf-gra2wmf.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -c -o gra2wmf-gra2wmf.lo `test -f 'gra2wmf.c' || echo '$(srcdir)/'`gra2wmf.c
+
+gra2wmf-wmfapi.o: wmfapi.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -MT gra2wmf-wmfapi.o -MD -MP -MF "$(DEPDIR)/gra2wmf-wmfapi.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2wmf-wmfapi.o `test -f 'wmfapi.c' || echo '$(srcdir)/'`wmfapi.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2wmf-wmfapi.Tpo" "$(DEPDIR)/gra2wmf-wmfapi.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2wmf-wmfapi.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='wmfapi.c' object='gra2wmf-wmfapi.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2wmf-wmfapi.Po' tmpdepfile='$(DEPDIR)/gra2wmf-wmfapi.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -c -o gra2wmf-wmfapi.o `test -f 'wmfapi.c' || echo '$(srcdir)/'`wmfapi.c
+
+gra2wmf-wmfapi.obj: wmfapi.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -MT gra2wmf-wmfapi.obj -MD -MP -MF "$(DEPDIR)/gra2wmf-wmfapi.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2wmf-wmfapi.obj `if test -f 'wmfapi.c'; then $(CYGPATH_W) 'wmfapi.c'; else $(CYGPATH_W) '$(srcdir)/wmfapi.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2wmf-wmfapi.Tpo" "$(DEPDIR)/gra2wmf-wmfapi.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2wmf-wmfapi.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='wmfapi.c' object='gra2wmf-wmfapi.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2wmf-wmfapi.Po' tmpdepfile='$(DEPDIR)/gra2wmf-wmfapi.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -c -o gra2wmf-wmfapi.obj `if test -f 'wmfapi.c'; then $(CYGPATH_W) 'wmfapi.c'; else $(CYGPATH_W) '$(srcdir)/wmfapi.c'; fi`
+
+gra2wmf-wmfapi.lo: wmfapi.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -MT gra2wmf-wmfapi.lo -MD -MP -MF "$(DEPDIR)/gra2wmf-wmfapi.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o gra2wmf-wmfapi.lo `test -f 'wmfapi.c' || echo '$(srcdir)/'`wmfapi.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/gra2wmf-wmfapi.Tpo" "$(DEPDIR)/gra2wmf-wmfapi.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/gra2wmf-wmfapi.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='wmfapi.c' object='gra2wmf-wmfapi.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/gra2wmf-wmfapi.Plo' tmpdepfile='$(DEPDIR)/gra2wmf-wmfapi.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gra2wmf_CFLAGS) $(CFLAGS) -c -o gra2wmf-wmfapi.lo `test -f 'wmfapi.c' || echo '$(srcdir)/'`wmfapi.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

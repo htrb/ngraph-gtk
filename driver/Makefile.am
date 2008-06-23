@@ -13,3 +13,6 @@ gra2ps.c: dir_defs.h
 
 dir_defs.h: dir_defs.h.in
 	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(demodir) dir_defs.h.in
+
+gra2ps_CFLAGS = -D_FORTIFY_SOURCE
+gra2wmf_CFLAGS = -D_FORTIFY_SOURCE

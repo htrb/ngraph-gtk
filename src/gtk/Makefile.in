@@ -190,7 +190,7 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h \
 
 libngraph_la_LDFLAGS = -static
 
-libngraph_la_CFLAGS = $(GTK_CFLAGS) -I..
+libngraph_la_CFLAGS = $(GTK_CFLAGS) -I.. -D_FORTIFY_SOURCE
 subdir = src/gtk
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
