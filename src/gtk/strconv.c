@@ -1,5 +1,5 @@
 /* 
- * $Id: strconv.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: strconv.c,v 1.2 2008/06/23 01:11:38 hito Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -22,7 +22,7 @@ ascii2greece(char unsigned *src)
   lcode = (l[0] << 8) + l[1];
 
   slen = strlen((char *)src);
-  dlen = slen * 2;
+  dlen = slen * 2 + 1;
 
   tmp = malloc(dlen);
   if (tmp == NULL)
@@ -65,7 +65,7 @@ str2utf8(char *str, char *scode, char *dcode)
   }
 
   slen = strlen(str);
-  dlen = slen * 6;
+  dlen = slen * 6 + 1;
 
   tmp = malloc(dlen);
   if (tmp == NULL) 

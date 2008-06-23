@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.17 2008/06/19 09:57:51 hito Exp $
+ * $Id: x11menu.c,v 1.18 2008/06/23 01:11:38 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1453,6 +1453,7 @@ init_ngraph_app_struct(void)
   NgraphApp.FileWin.ev_key = NULL;
   NgraphApp.FileWin.ev_button = NULL;
   NgraphApp.FileWin.window_state = 0;
+  NgraphApp.FileWin.can_focus = FALSE;
 
   NgraphApp.AxisWin.Win = NULL;
   NgraphApp.AxisWin.popup = NULL;
@@ -1460,6 +1461,7 @@ init_ngraph_app_struct(void)
   NgraphApp.AxisWin.ev_key = NULL;
   NgraphApp.AxisWin.ev_button = NULL;
   NgraphApp.AxisWin.window_state = 0;
+  NgraphApp.AxisWin.can_focus = TRUE;
 
   NgraphApp.LegendWin.Win = NULL;
   NgraphApp.LegendWin.popup = NULL;
@@ -1467,6 +1469,7 @@ init_ngraph_app_struct(void)
   NgraphApp.LegendWin.ev_key = NULL;
   NgraphApp.LegendWin.ev_button = NULL;
   NgraphApp.LegendWin.window_state = 0;
+  NgraphApp.LegendWin.can_focus = TRUE;
 
   NgraphApp.MergeWin.Win = NULL;
   NgraphApp.MergeWin.popup = NULL;
@@ -1474,6 +1477,7 @@ init_ngraph_app_struct(void)
   NgraphApp.MergeWin.ev_key = NULL;
   NgraphApp.MergeWin.ev_button = NULL;
   NgraphApp.MergeWin.window_state = 0;
+  NgraphApp.MergeWin.can_focus = TRUE;
 
   NgraphApp.InfoWin.Win = NULL;
   NgraphApp.InfoWin.popup = NULL;
@@ -1482,6 +1486,7 @@ init_ngraph_app_struct(void)
   NgraphApp.InfoWin.ev_key = NULL;
   NgraphApp.InfoWin.ev_button = NULL;
   NgraphApp.InfoWin.window_state = 0;
+  NgraphApp.FileWin.can_focus = FALSE;
 
   NgraphApp.CoordWin.Win = NULL;
   NgraphApp.CoordWin.popup = NULL;
@@ -1490,6 +1495,7 @@ init_ngraph_app_struct(void)
   NgraphApp.CoordWin.ev_key = NULL;
   NgraphApp.CoordWin.ev_button = NULL;
   NgraphApp.CoordWin.window_state = 0;
+  NgraphApp.FileWin.can_focus = FALSE;
 
   NgraphApp.legend_text_list = NULL;
   NgraphApp.x_math_list = NULL;

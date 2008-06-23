@@ -1,3 +1,24 @@
+2008-06-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c: remove ev_key_down().
+	(CmMergeWindow): remove setting for d->ev_key.
+
+	* src/gtk/x11axis.c: remove ev_key_down().
+	(CmAxisWindow): remove setting for d->ev_key.
+
+	* src/gtk/strconv.c (ascii2greece): bug fix. dlen must be "slen *
+	2 + 1".
+	(str2utf8): bug fix. dlen must be "slen * 6 + 1".
+
+	* src/gtk/ogra2x11.c (gtk_charwidth, gtk_charheight): save and
+	restore fontdir, fontsin and fontcos and set fontdir as 0 before
+	call draw_str().
+
+	* src/gtk/gtk_subwin.c (ev_key_down): add case for "GDK_SPACE"
+
+	* src/gtk/gtk_liststore.c (create_tree_view): bug fix. add braces
+	as "(n + cnum)" in argument of malloc.
+
 2008-06-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (detach_toolbar, create_toolbar): add.

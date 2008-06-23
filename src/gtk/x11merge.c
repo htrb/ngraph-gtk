@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.3 2008/06/18 08:05:02 hito Exp $
+ * $Id: x11merge.c,v 1.4 2008/06/23 01:11:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -403,35 +403,6 @@ MergeWindowUnmap(GtkWidget *w, gpointer client_data)
 }
 */
 
-static gboolean
-ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  struct SubWin *d;
-  GdkEventKey *e;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  if (Menulock || GlobalLock)
-    return TRUE;
-
-  d = (struct SubWin *) user_data;
-  e = (GdkEventKey *)event;
-
-  switch (e->keyval) {
-  case GDK_space:
-    if (e->state & GDK_SHIFT_MASK) {
-      list_sub_window_add_focus(NULL, d);
-    } else {
-      list_sub_window_focus(NULL, d);
-    }
-    break;
-  default:
-    return FALSE;
-  }
-  return TRUE;
-}
-
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
@@ -466,7 +437,6 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
     d->update = MergeWinUpdate;
     d->setup_dialog = MergeDialog;
     d->dialog = &DlgMerge;
-    d->ev_key = ev_key_down;
 
     dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm);
 

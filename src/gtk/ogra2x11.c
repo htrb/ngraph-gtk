@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.2 2008/06/02 08:21:47 hito Exp $
+ * $Id: ogra2x11.c,v 1.3 2008/06/23 01:11:37 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1438,7 +1438,7 @@ gtk_charwidth(struct objlist *obj, char *inst, char *rval,
 {
   struct gtklocal *gtklocal;
   char ch[3], *font, *tmp;
-  double size;
+  double size, dir;
   int cashpos, width;;
 
   ch[0] = (*(unsigned int *)(argv[3]) & 0xff);
@@ -1453,13 +1453,20 @@ gtk_charwidth(struct objlist *obj, char *inst, char *rval,
 
   tmp = gtklocal->fontalias;
   gtklocal->fontalias = font;
+
   cashpos = mxloadfont(gtklocal, FALSE);
+
   gtklocal->fontalias = tmp;
 
   if (cashpos == -1) {
     *(int *) rval = nround(size * 0.600);
     return 0;
   }
+
+  dir = gtklocal->fontdir;
+  gtklocal->fontdir = 0;
+  gtklocal->fontsin = 0;
+  gtklocal->fontcos = 1;
 
   if (ch[1]) {
     tmp = sjis_to_utf8(ch);
@@ -1473,6 +1480,8 @@ gtk_charwidth(struct objlist *obj, char *inst, char *rval,
     free(tmp);
   }
 
+  gtklocal->fontdir = dir;
+
   return 0;
 }
 
@@ -1482,7 +1491,7 @@ gtk_charheight(struct objlist *obj, char *inst, char *rval,
 {
   struct gtklocal *gtklocal;
   char *font, *tmp;
-  double size;
+  double size, dir;
   char *func;
   int height, descent, ascent, cashpos;
   //  XFontStruct *fontstruct;
@@ -1527,6 +1536,11 @@ gtk_charheight(struct objlist *obj, char *inst, char *rval,
   }
 
 
+  dir = gtklocal->fontdir;
+  gtklocal->fontdir = 0;
+  gtklocal->fontsin = 0;
+  gtklocal->fontcos = 1;
+
   draw_str(gtklocal, NULL, "A", cashpos, size, 0, NULL, &ascent, &descent);
 
   if (height) {
@@ -1534,6 +1548,8 @@ gtk_charheight(struct objlist *obj, char *inst, char *rval,
   } else {
     *(int *)rval = pixel2dot(gtklocal, descent);
   }
+
+  gtklocal->fontdir = dir;
 
   return 0;
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.12 2008/06/12 07:11:45 hito Exp $
+ * $Id: ox11menu.c,v 1.13 2008/06/23 01:11:37 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -2188,7 +2188,7 @@ mx_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct mxlocal *mxlocal;
   char ch[3], *font, *tmp;
-  double size;
+  double size, dir;
   //  XChar2b kanji[1];
   int cashpos, width;;
   //  XFontStruct *fontstruct;
@@ -2210,6 +2210,11 @@ mx_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 0;
   }
 
+  dir = Mxlocal->fontdir;
+  Mxlocal->fontdir = 0;
+  Mxlocal->fontsin = 0;
+  Mxlocal->fontcos = 1;
+
   if (ch[1]) {
     tmp = sjis_to_utf8(ch);
     draw_str(NULL, tmp, cashpos, size, 0, &width, NULL, NULL);
@@ -2222,6 +2227,8 @@ mx_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     free(tmp);
   }
 
+  Mxlocal->fontdir = dir;
+
   return 0;
 }
 
@@ -2230,7 +2237,7 @@ mx_charheight(struct objlist *obj, char *inst, char *rval, int argc, char **argv
 {
   struct mxlocal *mxlocal;
   char *font;
-  double size;
+  double size, dir;
   char *func;
   int height, descent, ascent, cashpos;
   //  XFontStruct *fontstruct;
@@ -2270,6 +2277,11 @@ mx_charheight(struct objlist *obj, char *inst, char *rval, int argc, char **argv
       *(int *) rval = nround(size * 0.250);
     }
   }
+
+  dir = Mxlocal->fontdir;
+  Mxlocal->fontdir = 0;
+  Mxlocal->fontsin = 0;
+  Mxlocal->fontcos = 1;
 
   draw_str(NULL, "A", cashpos, size, 0, NULL, &ascent, &descent);
 
@@ -2312,6 +2324,9 @@ mx_charheight(struct objlist *obj, char *inst, char *rval, int argc, char **argv
     }
   }
   */
+
+  Mxlocal->fontdir = dir;
+
   return 0;
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.9 2008/06/16 00:41:05 hito Exp $
+ * $Id: gtk_subwin.c,v 1.10 2008/06/23 01:11:37 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -511,6 +511,16 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     break;
   case GDK_BackSpace:
     hidden(d);
+    break;
+  case GDK_space:
+    if (! d->can_focus)
+      return FALSE;
+
+    if (e->state & GDK_SHIFT_MASK) {
+      list_sub_window_add_focus(NULL, d);
+    } else {
+      list_sub_window_focus(NULL, d);
+    }
     break;
   default:
     return FALSE;

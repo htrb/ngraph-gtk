@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.8 2008/06/18 10:14:52 hito Exp $
+ * $Id: x11menu.h,v 1.9 2008/06/23 01:11:38 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -116,7 +116,7 @@ struct SubWin
   GtkWidget *Win, *swin, *popup, **popup_item;
   GdkWindowState window_state;
   GObject *text;
-  int select, num;
+  int select, num, can_focus;
   void (* update)(int);
   void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
   void *dialog;
@@ -134,7 +134,7 @@ struct LegendWin
   GtkWidget *Win, *swin, *popup, **popup_item;
   GdkWindowState window_state;
   GObject *text;
-  int select, num;
+  int select, num, can_focus;
   void (* update)(int);
   void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
   void *dialog;
@@ -152,7 +152,7 @@ struct InfoWin
   GtkWidget *Win, *swin, *popup, **popup_item;
   GdkWindowState window_state;
   GObject *text;
-  int select, num;
+  int select, num, can_focus;
   void (* update)(int);
   void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
   void *dialog;
@@ -169,7 +169,7 @@ struct CoordWin
   GtkWidget *Win, *swin, *popup, **popup_item;
   GdkWindowState window_state;
   GObject *text;
-  int select, num;
+  int select, num, can_focus;
   void (* update)(int);
   void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
   void *dialog;

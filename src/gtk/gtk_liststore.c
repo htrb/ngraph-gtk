@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.3 2008/06/03 10:25:59 hito Exp $
+ * $Id: gtk_liststore.c,v 1.4 2008/06/23 01:11:37 hito Exp $
  */
 
 #include <stdlib.h>
@@ -76,7 +76,7 @@ create_tree_view(int n, n_list_store *list, int tree)
     }
   }
 
-  tarray = malloc(sizeof(*tarray) * n + cnum);
+  tarray = malloc(sizeof(*tarray) * (n + cnum));
   if (tarray == NULL)
     return NULL;
 
