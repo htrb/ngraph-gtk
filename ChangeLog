@@ -1,4 +1,4 @@
-2008-06-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+2008-06-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11merge.c: remove ev_key_down().
 	(CmMergeWindow): remove setting for d->ev_key.
