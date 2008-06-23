@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.2 2008/05/30 08:51:07 hito Exp $
+ * $Id: x11scrip.c,v 1.3 2008/06/23 02:18:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -90,7 +90,7 @@ ScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *swin, *hbox;
   struct ScriptDialog *d;
   n_list_store clist[] = {
-    {N_("Addin"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("Addin"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct ScriptDialog *) data;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.13 2008/06/23 01:11:38 hito Exp $
+ * $Id: x11axis.c,v 1.14 2008/06/23 02:18:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,18 +48,18 @@
 #include "x11commn.h"
 
 static n_list_store Alist[] = {
-  {"",     G_TYPE_BOOLEAN, TRUE, FALSE, "hidden"},
-  {"#",    G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"name", G_TYPE_STRING,  TRUE, FALSE, "group"},
-  {"min",  G_TYPE_STRING,  TRUE, FALSE, "min"},
-  {"max",  G_TYPE_STRING,  TRUE, FALSE, "max"},
-  {"inc",  G_TYPE_STRING,  TRUE, FALSE, "inc"},
-  {"type", G_TYPE_STRING,  TRUE, FALSE, "type"},
-  {"x",    G_TYPE_INT,     TRUE, FALSE, "x"},
-  {"y",    G_TYPE_INT,     TRUE, FALSE, "y"},
-  {"dir",  G_TYPE_INT,     TRUE, FALSE, "direction"},
-  {"len",  G_TYPE_INT,     TRUE, FALSE, "length"},
-  {"^#",   G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {"",     G_TYPE_BOOLEAN, TRUE, FALSE, "hidden", FALSE},
+  {"#",    G_TYPE_INT,     TRUE, FALSE, "id",     FALSE},
+  {"name", G_TYPE_STRING,  TRUE, FALSE, "group",  FALSE},
+  {"min",  G_TYPE_STRING,  TRUE, FALSE, "min",    FALSE},
+  {"max",  G_TYPE_STRING,  TRUE, FALSE, "max",    FALSE},
+  {"inc",  G_TYPE_STRING,  TRUE, FALSE, "inc",    FALSE},
+  {"type", G_TYPE_STRING,  TRUE, FALSE, "type",   FALSE},
+  {"x",    G_TYPE_INT,     TRUE, FALSE, "x",      FALSE},
+  {"y",    G_TYPE_INT,     TRUE, FALSE, "y",      FALSE},
+  {"dir",  G_TYPE_INT,     TRUE, FALSE, "direction", FALSE},
+  {"len",  G_TYPE_INT,     TRUE, FALSE, "length", FALSE},
+  {"^#",   G_TYPE_INT,     TRUE, FALSE, "oid",    FALSE},
 };
 
 #define AXIS_WIN_COL_NUM (sizeof(Alist)/sizeof(*Alist))
@@ -2831,8 +2831,7 @@ AxisWinUpdate(int clear)
 static void
 axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 {
-  int cx;
-  int i, len;
+  int cx, i, len;
   double min, max, inc;
   char buf[256];
 

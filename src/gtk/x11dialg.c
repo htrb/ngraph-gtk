@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.8 2008/06/12 09:04:26 hito Exp $
+ * $Id: x11dialg.c,v 1.9 2008/06/23 02:18:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -282,7 +282,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *swin, *w, *hbox;
   GtkTreeIter iter;
   n_list_store list[] = {
-    {N_("multi select"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("multi select"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   } ;
 
   d = (struct SelectDialog *) data;
@@ -421,7 +421,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *swin, *w;
   GtkTreeIter iter;
   n_list_store copy_list[] = {
-    {N_("single select"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("single select"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   } ;
 
   d = (struct CopyDialog *) data;

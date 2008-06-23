@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.13 2008/06/13 13:48:31 hito Exp $
+ * $Id: x11file.c,v 1.14 2008/06/23 02:18:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -55,21 +55,21 @@
 #include "x11commn.h"
 
 static n_list_store Flist[] = {
-  {"",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
-  {"#",		G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"file",	G_TYPE_STRING,  TRUE, FALSE, "file", TRUE},
-  {"x",		G_TYPE_INT,     TRUE, FALSE, "x"},
-  {"y",		G_TYPE_INT,     TRUE, FALSE, "y"},
-  {"ax",	G_TYPE_STRING,  TRUE, FALSE, "axis_x"},
-  {"ay",	G_TYPE_STRING,  TRUE, FALSE, "axis_y"},
-  {"type",	G_TYPE_OBJECT,  TRUE, FALSE, "type"},
-  {"size",	G_TYPE_INT,     TRUE, FALSE, "mark_size"},
-  {"width",	G_TYPE_INT,     TRUE, FALSE, "line_width"},
-  {"skip",	G_TYPE_INT,     TRUE, FALSE, "head_skip"},
-  {"step",	G_TYPE_INT,     TRUE, FALSE, "read_step"},
-  {"final",	G_TYPE_INT,     TRUE, FALSE, "final_line"},
-  {"num",	G_TYPE_INT,     TRUE, FALSE, "data_num"},
-  {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {"",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",     FALSE},
+  {"#",		G_TYPE_INT,     TRUE, FALSE, "id",         FALSE},
+  {"file",	G_TYPE_STRING,  TRUE, FALSE, "file",       TRUE},
+  {"x",		G_TYPE_INT,     TRUE, FALSE, "x",          FALSE},
+  {"y",		G_TYPE_INT,     TRUE, FALSE, "y",          FALSE},
+  {"ax",	G_TYPE_STRING,  TRUE, FALSE, "axis_x",     FALSE},
+  {"ay",	G_TYPE_STRING,  TRUE, FALSE, "axis_y",     FALSE},
+  {"type",	G_TYPE_OBJECT,  TRUE, FALSE, "type",       FALSE},
+  {"size",	G_TYPE_INT,     TRUE, FALSE, "mark_size",  FALSE},
+  {"width",	G_TYPE_INT,     TRUE, FALSE, "line_width", FALSE},
+  {"skip",	G_TYPE_INT,     TRUE, FALSE, "head_skip",  FALSE},
+  {"step",	G_TYPE_INT,     TRUE, FALSE, "read_step",  FALSE},
+  {"final",	G_TYPE_INT,     TRUE, FALSE, "final_line", FALSE},
+  {"num",	G_TYPE_INT,     TRUE, FALSE, "data_num",   FALSE},
+  {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid",        FALSE},
 };
 
 #define FILE_WIN_COL_NUM (sizeof(Flist)/sizeof(*Flist))
@@ -354,8 +354,8 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *swin, *vbox, *hbox;
   struct MathDialog *d;
   static n_list_store list[] = {
-    {"id",   G_TYPE_INT, TRUE, FALSE, NULL},
-    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
+    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
   int i;
 
@@ -455,7 +455,7 @@ FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w;
   GtkTreeIter iter;
   n_list_store list[] = {
-    {N_("Fit setting"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("Fit setting"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct FitLoadDialog *) data;
@@ -1296,9 +1296,9 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *hbox, *vbox, *swin;
   struct FileMoveDialog *d;
   n_list_store list[] = {
-    {N_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL},
-    {"X",            G_TYPE_STRING, TRUE, FALSE, NULL},
-    {"Y",            G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
+    {"X",            G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {"Y",            G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct FileMoveDialog *) data;
@@ -1513,7 +1513,7 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *swin, *hbox, *vbox;
   struct FileMaskDialog *d;
   n_list_store list[] = {
-    {_("Line No."), G_TYPE_INT, TRUE, FALSE, NULL},
+    {_("Line No."), G_TYPE_INT, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct FileMaskDialog *) data;
@@ -2820,7 +2820,8 @@ FileDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromText(d->file, d->Obj, d->Id, "file"))
     return;
 
-  if (FileDialogCloseCommon(w, d));
+  if (FileDialogCloseCommon(w, d))
+    return;
 
   if (SetObjFieldFromText(d->xcol, d->Obj, d->Id, "x"))
     return;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.8 2008/06/07 05:43:36 hito Exp $
+ * $Id: x11graph.c,v 1.9 2008/06/23 02:18:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -478,7 +478,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
   int num2, num1, j, k;
   char **buf;
   static n_list_store list[] = {
-    {N_("Object"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("Object"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct SwitchDialog *) data;

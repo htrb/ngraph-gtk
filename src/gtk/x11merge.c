@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.4 2008/06/23 01:11:38 hito Exp $
+ * $Id: x11merge.c,v 1.5 2008/06/23 02:18:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,13 +46,13 @@
 #include "x11commn.h"
 
 static n_list_store Mlist[] = {
-  {"",     G_TYPE_BOOLEAN, TRUE, FALSE, "hidden"},
-  {"#",    G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"file", G_TYPE_STRING,  TRUE, FALSE, "file"},
-  {"tm",   G_TYPE_INT,     TRUE, FALSE, "top_margin"},
-  {"lm",   G_TYPE_INT,     TRUE, FALSE, "left_margin"},
-  {"zm",   G_TYPE_INT,     TRUE, FALSE, "zoom"},
-  {"^#",   G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {"",     G_TYPE_BOOLEAN, TRUE, FALSE, "hidden",      FALSE},
+  {"#",    G_TYPE_INT,     TRUE, FALSE, "id",          FALSE},
+  {"file", G_TYPE_STRING,  TRUE, FALSE, "file",        FALSE},
+  {"tm",   G_TYPE_INT,     TRUE, FALSE, "top_margin",  FALSE},
+  {"lm",   G_TYPE_INT,     TRUE, FALSE, "left_margin", FALSE},
+  {"zm",   G_TYPE_INT,     TRUE, FALSE, "zoom",        FALSE},
+  {"^#",   G_TYPE_INT,     TRUE, FALSE, "oid",         FALSE},
 };
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))

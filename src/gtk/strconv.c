@@ -1,5 +1,5 @@
 /* 
- * $Id: strconv.c,v 1.2 2008/06/23 01:11:38 hito Exp $
+ * $Id: strconv.c,v 1.3 2008/06/23 02:18:25 hito Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -59,7 +59,7 @@ str2utf8(char *str, char *scode, char *dcode)
     return NULL;
 
   cd = iconv_open(dcode, scode);
-  if (cd < 0) {
+  if (cd == (iconv_t)(-1)) {
     iconv_close(cd);
     return NULL;
   }
@@ -73,7 +73,7 @@ str2utf8(char *str, char *scode, char *dcode)
 
   ptr = tmp;
   l = iconv(cd, &str, &slen, &ptr, &dlen);
-  if (l < 0) {
+  if (l == (size_t)(-1)) {
     free(tmp);
     tmp = NULL;
   } else {

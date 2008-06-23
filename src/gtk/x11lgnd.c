@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.12 2008/06/17 10:55:40 hito Exp $
+ * $Id: x11lgnd.c,v 1.13 2008/06/23 02:18:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,13 +56,13 @@
 #define CB_BUF_SIZE 128
 
 static n_list_store Llist[] = {
-  {"",         G_TYPE_BOOLEAN, TRUE, FALSE, "hidden"},
-  {"#",        G_TYPE_INT,     TRUE, FALSE, "id"},
-  {"object",   G_TYPE_STRING,  TRUE, FALSE, "object"},
-  {"property", G_TYPE_STRING,  TRUE, FALSE, "property"},
-  {"x",        G_TYPE_INT,     TRUE, FALSE, "x"},
-  {"y",        G_TYPE_INT,     TRUE, FALSE, "y"},
-  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {"",         G_TYPE_BOOLEAN, TRUE, FALSE, "hidden",   FALSE},
+  {"#",        G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
+  {"object",   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
+  {"property", G_TYPE_STRING,  TRUE, FALSE, "property", FALSE},
+  {"x",        G_TYPE_INT,     TRUE, FALSE, "x",        FALSE},
+  {"y",        G_TYPE_INT,     TRUE, FALSE, "y",        FALSE},
+  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
 };
 
 #define LEGEND_WIN_COL_NUM (sizeof(Llist)/sizeof(*Llist))

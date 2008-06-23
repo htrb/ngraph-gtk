@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.9 2008/06/10 07:12:15 hito Exp $
+ * $Id: x11opt.c,v 1.10 2008/06/23 02:18:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -720,7 +720,7 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *hbox, *vbox, *swin;
   struct PrefScriptDialog *d;
   n_list_store list[] = {
-    {N_("Script"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("Script"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct PrefScriptDialog *) data;
@@ -1057,7 +1057,7 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *hbox, *vbox, *swin;
   struct PrefDriverDialog *d;
   n_list_store list[] = {
-    {N_("Driver"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("Driver"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct PrefDriverDialog *) data;
