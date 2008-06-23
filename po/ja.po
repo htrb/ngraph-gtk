@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-20 15:43+0900\n"
+"POT-Creation-Date: 2008-06-23 13:32+0900\n"
 "PO-Revision-Date: 2008-06-16 17:33+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -833,11 +833,11 @@ msgstr "編集(_E)"
 msgid "This file contain invalid UTF-8 strings."
 msgstr "ファイルに不正な UTF-8 文字列が含まれています."
 
-#: src/gtk/x11file.c:3025
+#: src/gtk/x11file.c:3026
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:3067
+#: src/gtk/x11file.c:3068
 msgid "Data open"
 msgstr "データを開く"
 
@@ -1565,11 +1565,11 @@ msgstr "ステータスバー(_S)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:1870
+#: src/gtk/x11menu.c:1876
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:1920
+#: src/gtk/x11menu.c:1926
 msgid "Question"
 msgstr "質問:"
 
