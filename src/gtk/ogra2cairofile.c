@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.1 2008/06/25 08:57:42 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.2 2008/06/25 12:23:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,6 +40,7 @@
 #include "ioutil.h"
 
 #include "x11gui.h"
+#include "ogra2cairo.h"
 
 #define NAME "gra2cairofile"
 #define PARENT "gra2cairo"
@@ -59,10 +60,11 @@ char *surface_type[] = {
   "pdf",
   "svg1.1",
   "svg1.2",
+  "png",
   NULL,
 };
 
-static enum surface_type_id {
+enum surface_type_id {
   TYPE_PS2,
   TYPE_PS3,
   TYPE_EPS2,
@@ -70,6 +72,7 @@ static enum surface_type_id {
   TYPE_PDF,
   TYPE_SVG1_1,
   TYPE_SVG1_2,
+  TYPE_PNG,
 };
 
 char *gra2cairofile_errorlist[]={
@@ -98,18 +101,17 @@ gra2cairofile_init(struct objlist *obj, char *inst, char *rval, int argc, char *
 static int 
 gra2cairofile_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  cairo_surface_t *sf;
-
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
 
   return 0;
 }
 
-static  cairo_surface_t *
-create_surface(struct objlist *obj, char *inst, char *fname, int iw, int ih)
+static  cairo_t *
+create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih)
 {
   cairo_surface_t *ps;
+  cairo_t *cairo;
   double w, h;
   int format;
 
@@ -140,21 +142,45 @@ create_surface(struct objlist *obj, char *inst, char *fname, int iw, int ih)
     cairo_ps_surface_set_eps(ps, TRUE);
     break;
   case TYPE_PDF:
-    ps = cairo_ps_surface_create(fname, w, h);
+    ps = cairo_pdf_surface_create(fname, w, h);
     break;
   case TYPE_SVG1_1:
-    ps = cairo_ps_surface_create(fname, w, h);
+    ps = cairo_svg_surface_create(fname, w, h);
     cairo_svg_surface_restrict_to_version(ps, CAIRO_SVG_VERSION_1_1);
     break;
   case TYPE_SVG1_2:
-    ps = cairo_ps_surface_create(fname, w, h);
+    ps = cairo_svg_surface_create(fname, w, h);
     cairo_svg_surface_restrict_to_version(ps, CAIRO_SVG_VERSION_1_2);
+    break;
+  case TYPE_PNG:
+    ps = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w, h);
     break;
   default:
     ps = cairo_ps_surface_create(fname, w, h);
   }
 
-  return ps;
+  if (cairo_surface_status(ps) != CAIRO_STATUS_SUCCESS) {
+    cairo_surface_destroy(ps);
+    return NULL;
+  }
+
+  cairo = cairo_create(ps);
+  /* cairo_create() references target, so you can immediately call cairo_surface_destroy() on it */
+  cairo_surface_destroy(ps);
+
+  if (cairo_status(cairo) != CAIRO_STATUS_SUCCESS) {
+    cairo_destroy(cairo);
+    return NULL;
+  }
+
+  if (format == TYPE_PNG) {
+    cairo_set_source_rgb(cairo, 1, 1, 1);
+    cairo_rectangle(cairo, 0, 0, w, h);
+    cairo_fill(cairo);
+    cairo_new_path(cairo);
+  }
+
+  return cairo;
 }
 
 static int 
@@ -162,11 +188,12 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
                  int argc, char **argv)
 {
   char code, *cstr, *fname;
-  int *cpar, dpi;
-  cairo_surface_t *ps;
+  int *cpar, dpi, format;
   cairo_t *cairo;
   char *sargv[2];
+  struct gra2cairo_local *local;
 
+  local = (struct gra2cairo_local *)argv[2];
   code = *(char *)(argv[3]);
   cpar = (int *)argv[4];
   cstr = argv[5];
@@ -181,25 +208,25 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
     if (_putobj(obj, "dpi", inst, &dpi) < 0)
       return 1;
 
-    ps = create_surface(obj, inst, fname, cpar[3], cpar[4]);
-    if (cairo_surface_status(ps) != CAIRO_STATUS_SUCCESS) {
-      cairo_surface_destroy(ps);
-      return 1;
-    }
+    cairo = create_cairo(obj, inst, fname, cpar[3], cpar[4]);
 
-    cairo = cairo_create(ps);
-    if (cairo_status(cairo) != CAIRO_STATUS_SUCCESS) {
-      cairo_destroy(cairo);
+    if (cairo == NULL)
       return 1;
-    }
-
-    /* cairo_status() references target, so you can immediately call cairo_surface_destroy() on it */
-    cairo_surface_destroy(ps);
 
     sargv[0] = (char *) cairo;
     sargv[1] = NULL;
     _exeobj(obj, "cairo", inst, 1, sargv);
 
+    break;
+  case 'E':
+    _getobj(obj, "format", inst, &format);
+    if (local->cairo && format == TYPE_PNG) {
+      _getobj(obj, "file", inst, &fname);
+      if (fname == NULL)
+	return 1;
+
+      cairo_surface_write_to_png(cairo_get_target(local->cairo), fname);
+    }
     break;
   }
 
