@@ -1,3 +1,9 @@
+2008-06-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairofile.c: add.
+
+	* src/gtk/ogra2cairo.c: add.
+
 2008-06-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11merge.c: remove ev_key_down().
