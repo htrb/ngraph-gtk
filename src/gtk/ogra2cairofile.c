@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.2 2008/06/25 12:23:37 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.3 2008/06/25 14:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -213,9 +213,10 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
     if (cairo == NULL)
       return 1;
 
-    sargv[0] = (char *) cairo;
-    sargv[1] = NULL;
-    _exeobj(obj, "cairo", inst, 1, sargv);
+    if (local->cairo != NULL)
+      cairo_destroy(local->cairo);
+
+    local->cairo = cairo;
 
     break;
   case 'E':

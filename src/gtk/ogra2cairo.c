@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.1 2008/06/25 08:57:41 hito Exp $
+ * $Id: ogra2cairo.c,v 1.2 2008/06/25 14:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -79,25 +79,6 @@ static double
 mxd2py(struct gra2cairo_local *local, int y)
 {
   return y * local->pixel_dot + local->offsety;
-}
-
-
-static int 
-gra2cairo_cairo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
-{
-  struct gra2cairo_local *local;
-
-  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
-    return 1;
-
-  _getobj(obj, "_local", inst, &local);
-
-  if (local->cairo != NULL)
-    cairo_destroy(local->cairo);
-
-  local->cairo = (cairo_t *) argv[2];
-
-  return 0;
 }
 
 static int
@@ -425,7 +406,7 @@ static struct objtable gra2cairo[] = {
   {"next", NPOINTER, 0, NULL, NULL, 0}, 
   {"dpi", NINT, NREAD | NWRITE, NULL, NULL, 0},
   {"region", NVFUNC, NEXEC, gra2cairo_set_region, NULL, 0}, 
-  {"cairo", NVFUNC, 0, gra2cairo_cairo, NULL, 0}, 
+  //  {"cairo", NVFUNC, 0, gra2cairo_cairo, NULL, 0}, 
   {"_local", NPOINTER, 0, NULL, NULL, 0}, 
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
 };
