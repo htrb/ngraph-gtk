@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.3 2008/06/10 11:31:11 hito Exp $
+ * $Id: x11print.c,v 1.4 2008/06/25 08:57:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -452,60 +452,67 @@ CmOutputDriver(int print)
 
   if (Menulock || GlobalLock)
     return;
-  if (SetFileHidden()) {
-    FileAutoScale();
-    AdjustAxis();
-    if ((graobj = chkobject("gra")) == NULL)
-      return;
-    if ((g2wobj = chkobject("gra2prn")) == NULL)
-      return;
-    g2wid = newobj(g2wobj);
-    if (g2wid >= 0) {
-      if (print) {
-	PrintDialog(&DlgPrinter, g2wobj, g2wid);
-	ret = DialogExecute(TopLevel, &DlgPrinter);
-      } else {
-	DriverDialog(&DlgDriver, g2wobj, g2wid);
-	ret = DialogExecute(TopLevel, &DlgDriver);
-      }
-      if (ret == IDOK) {
-	ProgressDialogCreate(_("Spawning external driver"));
-	SetStatusBar(_("Spawning external driver."));
-	g2winst = chkobjinst(g2wobj, g2wid);
-	_getobj(g2wobj, "oid", g2winst, &g2woid);
-	id = newobj(graobj);
-	putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
-	putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
-	putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
-	putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
-	putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
-	if (arraynum(&(Menulocal.drawrable)) > 0) {
-	  drawrable = arraynew(sizeof(char *));
-	  for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-	    arrayadd2(drawrable,
-		      (char **) arraynget(&(Menulocal.drawrable), i));
-	  }
-	} else
-	  drawrable = NULL;
-	putobj(graobj, "draw_obj", id, drawrable);
-	device = (char *) memalloc(DEVICE_BUF_SIZE);
-	snprintf(device, DEVICE_BUF_SIZE, "gra2prn:^%d", g2woid);
-	putobj(graobj, "device", id, device);
-	ProgressDialogCreate(_("Printing"));
-	SetStatusBar(_("Printing."));
-	ignorestdio(&stdio);
-	getobj(graobj, "open", id, 0, NULL, &GC);
-	exeobj(graobj, "draw", id, 0, NULL);
-	exeobj(graobj, "flush", id, 0, NULL);
-	exeobj(graobj, "close", id, 0, NULL);
-	restorestdio(&stdio);
-	delobj(graobj, id);
-	ProgressDialogFinalize();
-	ResetStatusBar();
-      }
-      delobj(g2wobj, g2wid);
-    }
+
+  if (! SetFileHidden())
+    return;
+
+  FileAutoScale();
+  AdjustAxis();
+
+  if ((graobj = chkobject("gra")) == NULL)
+    return;
+
+  if ((g2wobj = chkobject("gra2prn")) == NULL)
+    return;
+
+  g2wid = newobj(g2wobj);
+  if (g2wid < 0)
+    return;
+
+  if (print) {
+    PrintDialog(&DlgPrinter, g2wobj, g2wid);
+    ret = DialogExecute(TopLevel, &DlgPrinter);
+  } else {
+    DriverDialog(&DlgDriver, g2wobj, g2wid);
+    ret = DialogExecute(TopLevel, &DlgDriver);
   }
+
+  if (ret == IDOK) {
+    ProgressDialogCreate(_("Spawning external driver"));
+    SetStatusBar(_("Spawning external driver."));
+    g2winst = chkobjinst(g2wobj, g2wid);
+    _getobj(g2wobj, "oid", g2winst, &g2woid);
+    id = newobj(graobj);
+    putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
+    putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
+    putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
+    putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
+    putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
+    if (arraynum(&(Menulocal.drawrable)) > 0) {
+      drawrable = arraynew(sizeof(char *));
+      for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
+	arrayadd2(drawrable,
+		  (char **) arraynget(&(Menulocal.drawrable), i));
+      }
+    } else
+      drawrable = NULL;
+    putobj(graobj, "draw_obj", id, drawrable);
+    device = (char *) memalloc(DEVICE_BUF_SIZE);
+    snprintf(device, DEVICE_BUF_SIZE, "gra2prn:^%d", g2woid);
+    putobj(graobj, "device", id, device);
+    ProgressDialogCreate(_("Printing"));
+    SetStatusBar(_("Printing."));
+    ignorestdio(&stdio);
+    getobj(graobj, "open", id, 0, NULL, &GC);
+    exeobj(graobj, "draw", id, 0, NULL);
+    exeobj(graobj, "flush", id, 0, NULL);
+    exeobj(graobj, "close", id, 0, NULL);
+    restorestdio(&stdio);
+    delobj(graobj, id);
+    ProgressDialogFinalize();
+    ResetStatusBar();
+  }
+  delobj(g2wobj, g2wid);
 }
 
 void
@@ -521,57 +528,61 @@ CmOutputViewer(void)
   if (Menulock || GlobalLock)
     return;
 
-  if (SetFileHidden()) {
-    FileAutoScale();
-    AdjustAxis();
+  if (! SetFileHidden())
+    return;
 
-    if ((graobj = chkobject("gra")) == NULL)
-      return;
+  FileAutoScale();
+  AdjustAxis();
 
-    if ((g2wobj = chkobject("gra2gtk")) == NULL)
-      return;
+  if ((graobj = chkobject("gra")) == NULL)
+    return;
 
-    ProgressDialogCreate(_("Spawning external viewer"));
-    SetStatusBar(_("Spawning external viewer."));
-    g2wid = newobj(g2wobj);
+  if ((g2wobj = chkobject("gra2gtk")) == NULL)
+    return;
 
-    if (g2wid != -1) {
-      g2winst = chkobjinst(g2wobj, g2wid);
-      _getobj(g2wobj, "oid", g2winst, &g2woid);
-      putobj(g2wobj, "dpi", g2wid, &(Menulocal.exwindpi));
-      putobj(g2wobj, "store_in_memory", g2wid,
-	     &(Menulocal.exwinbackingstore));
-      putobj(g2wobj, "BR", g2wid, &(Menulocal.bg_r));
-      putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
-      putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
-      id = newobj(graobj);
-      putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
-      putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
-      putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
-      putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
-      putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
-      if (arraynum(&(Menulocal.drawrable)) > 0) {
-	drawrable = arraynew(sizeof(char *));
-	for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-	  arrayadd2(drawrable,
-		    (char **) arraynget(&(Menulocal.drawrable), i));
-	}
-      } else {
-	drawrable = NULL;
-      }
-      putobj(graobj, "draw_obj", id, drawrable);
-      device = (char *) memalloc(DEVICE_BUF_SIZE);
-      snprintf(device, DEVICE_BUF_SIZE, "gra2gtk:^%d", g2woid);
-      putobj(graobj, "device", id, device);
-      getobj(graobj, "open", id, 0, NULL, &GC);
-      exeobj(graobj, "draw", id, 0, NULL);
-      exeobj(graobj, "flush", id, 0, NULL);
-      delgra = TRUE;
-      _putobj(g2wobj, "delete_gra", g2winst, &delgra);
+  g2wid = newobj(g2wobj);
+
+  if (g2wid < 0)
+    return;
+
+  ProgressDialogCreate(_("Spawning external viewer"));
+  SetStatusBar(_("Spawning external viewer."));
+
+  g2winst = chkobjinst(g2wobj, g2wid);
+  _getobj(g2wobj, "oid", g2winst, &g2woid);
+  putobj(g2wobj, "dpi", g2wid, &(Menulocal.exwindpi));
+  putobj(g2wobj, "store_in_memory", g2wid,
+	 &(Menulocal.exwinbackingstore));
+  putobj(g2wobj, "BR", g2wid, &(Menulocal.bg_r));
+  putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
+  putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
+  id = newobj(graobj);
+  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
+  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
+  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
+  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
+  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
+  if (arraynum(&(Menulocal.drawrable)) > 0) {
+    drawrable = arraynew(sizeof(char *));
+    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
+      arrayadd2(drawrable,
+		(char **) arraynget(&(Menulocal.drawrable), i));
     }
-    ProgressDialogFinalize();
-    ResetStatusBar();
+  } else {
+    drawrable = NULL;
   }
+  putobj(graobj, "draw_obj", id, drawrable);
+  device = (char *) memalloc(DEVICE_BUF_SIZE);
+  snprintf(device, DEVICE_BUF_SIZE, "gra2gtk:^%d", g2woid);
+  putobj(graobj, "device", id, device);
+  getobj(graobj, "open", id, 0, NULL, &GC);
+  exeobj(graobj, "draw", id, 0, NULL);
+  exeobj(graobj, "flush", id, 0, NULL);
+  delgra = TRUE;
+  _putobj(g2wobj, "delete_gra", g2winst, &delgra);
+
+  ProgressDialogFinalize();
+  ResetStatusBar();
 }
 
 void
@@ -588,68 +599,83 @@ CmPrintGRAFile(void)
 
   if (Menulock || GlobalLock)
     return;
+
   if (nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, NULL,
-		       &filebuf, "*.gra", Menulocal.changedirectory) == IDOK)
-  {
-    if (access(filebuf, 04) == 0) {
-      snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), filebuf);
-      if (MessageBox(TopLevel, buf, _("GRA file"), MB_YESNO) != IDYES) {
-	free(filebuf);
-	return;
-      }
-    }
-    file = nstrdup(filebuf);
-    free(filebuf);
-    if (file == NULL) {
+		       &filebuf, "*.gra", Menulocal.changedirectory) != IDOK)
+    return;
+
+  if (access(filebuf, 04) == 0) {
+    snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), filebuf);
+    if (MessageBox(TopLevel, buf, _("GRA file"), MB_YESNO) != IDYES) {
+      free(filebuf);
       return;
     }
-    if (SetFileHidden()) {
-      FileAutoScale();
-      AdjustAxis();
-      if ((graobj = chkobject("gra")) == NULL) {
-	memfree(file);
-	return;
-      }
-      if ((g2wobj = chkobject("gra2file")) == NULL) {
-	memfree(file);
-	return;
-      }
-      g2wid = newobj(g2wobj);
-      if (g2wid >= 0) {
-	ProgressDialogCreate(_("Making GRA file"));
-	SetStatusBar(_("Making GRA file."));
-	g2winst = chkobjinst(g2wobj, g2wid);
-	_getobj(g2wobj, "oid", g2winst, &g2woid);
-	putobj(g2wobj, "file", g2wid, file);
-	id = newobj(graobj);
-	putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
-	putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
-	putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
-	putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
-	putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
-	if (arraynum(&(Menulocal.drawrable)) > 0) {
-	  drawrable = arraynew(sizeof(char *));
-	  for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-	    arrayadd2(drawrable,
-		      (char **) arraynget(&(Menulocal.drawrable), i));
-	  }
-	} else
-	  drawrable = NULL;
-	putobj(graobj, "draw_obj", id, drawrable);
-	device = (char *) memalloc(DEVICE_BUF_SIZE);
-	snprintf(device, DEVICE_BUF_SIZE, "gra2file:^%d", g2woid);
-	putobj(graobj, "device", id, device);
-	getobj(graobj, "open", id, 0, NULL, &GC);
-	exeobj(graobj, "draw", id, 0, NULL);
-	exeobj(graobj, "flush", id, 0, NULL);
-	exeobj(graobj, "close", id, 0, NULL);
-	delobj(graobj, id);
-	delobj(g2wobj, g2wid);
-	ProgressDialogFinalize();
-	ResetStatusBar();
-      }
-    }
   }
+
+  file = nstrdup(filebuf);
+  free(filebuf);
+  if (file == NULL) {
+    return;
+  }
+
+  if (! SetFileHidden())
+    return;
+
+  FileAutoScale();
+  AdjustAxis();
+
+  if ((graobj = chkobject("gra")) == NULL) {
+    memfree(file);
+    return;
+  }
+
+  if ((g2wobj = chkobject("gra2file")) == NULL) {
+    memfree(file);
+    return;
+  }
+
+  g2wid = newobj(g2wobj);
+  if (g2wid < 0) {
+    memfree(file);
+    return;
+  }
+
+  ProgressDialogCreate(_("Making GRA file"));
+  SetStatusBar(_("Making GRA file."));
+
+  g2winst = chkobjinst(g2wobj, g2wid);
+  _getobj(g2wobj, "oid", g2winst, &g2woid);
+  putobj(g2wobj, "file", g2wid, file);
+  id = newobj(graobj);
+  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
+  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
+  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
+  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
+  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
+
+  if (arraynum(&(Menulocal.drawrable)) > 0) {
+    drawrable = arraynew(sizeof(char *));
+    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
+      arrayadd2(drawrable,
+		(char **) arraynget(&(Menulocal.drawrable), i));
+    }
+  } else {
+    drawrable = NULL;
+  }
+  putobj(graobj, "draw_obj", id, drawrable);
+
+  device = (char *) memalloc(DEVICE_BUF_SIZE);
+  snprintf(device, DEVICE_BUF_SIZE, "gra2file:^%d", g2woid);
+  putobj(graobj, "device", id, device);
+  getobj(graobj, "open", id, 0, NULL, &GC);
+  exeobj(graobj, "draw", id, 0, NULL);
+  exeobj(graobj, "flush", id, 0, NULL);
+  exeobj(graobj, "close", id, 0, NULL);
+  delobj(graobj, id);
+  delobj(g2wobj, g2wid);
+
+  ProgressDialogFinalize();
+  ResetStatusBar();
 }
 
 void
@@ -672,38 +698,47 @@ CmPrintDataFile(void)
     return;
 
   CopyDialog(&DlgCopy, obj, -1, FileCB);
-  if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
-    id = DlgCopy.sel;
-    if ((id >= 0) && (id <= chkobjlastinst(obj))) {
-      div = 10;
-      getobj(obj, "type", id, 0, NULL, &type);
-      if (type == 3) {
-	OutputDataDialog(&DlgOutputData, div);
-	if (DialogExecute(TopLevel, &DlgOutputData) != IDOK)
-	  return;
-	div = DlgOutputData.div;
-      }
-      if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
-			   &file, "*", Menulocal.changedirectory) == IDOK) {
-	if (access(file, 04) == 0) {
-	  snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), file);
-	  if (MessageBox(TopLevel, buf, _("Data file"), MB_YESNO) != IDYES) {
-	    free(file);
-	    return;
-	  }
-	}
-	ProgressDialogCreate(_("Making data file"));
-	SetStatusBar(_("Making data file."));
-	argv[0] = (char *) file;
-	argv[1] = (char *) &div;
-	argv[2] = NULL;
-	exeobj(obj, "output_file", id, 2, argv);
-	ProgressDialogFinalize();
-	ResetStatusBar();
-      }
+  if (DialogExecute(TopLevel, &DlgCopy) != IDOK)
+    return;
+
+  id = DlgCopy.sel;
+  if (id < 0)
+    return;
+
+  if (id > chkobjlastinst(obj))
+    return;
+
+  div = 10;
+  getobj(obj, "type", id, 0, NULL, &type);
+  if (type == 3) {
+    OutputDataDialog(&DlgOutputData, div);
+    if (DialogExecute(TopLevel, &DlgOutputData) != IDOK)
+      return;
+    div = DlgOutputData.div;
+  }
+
+  if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
+		       &file, "*", Menulocal.changedirectory) != IDOK)
+    return;
+
+  if (access(file, 04) == 0) {
+    snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), file);
+    if (MessageBox(TopLevel, buf, _("Data file"), MB_YESNO) != IDYES) {
       free(file);
+      return;
     }
   }
+
+  ProgressDialogCreate(_("Making data file"));
+  SetStatusBar(_("Making data file."));
+  argv[0] = (char *) file;
+  argv[1] = (char *) &div;
+  argv[2] = NULL;
+  exeobj(obj, "output_file", id, 2, argv);
+  ProgressDialogFinalize();
+  ResetStatusBar();
+
+  free(file);
 }
 
 void

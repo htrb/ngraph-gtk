@@ -176,8 +176,8 @@ noinst_LTLIBRARIES = libngraph.la
 libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h \
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c \
 	gtk_liststore.h gtk_subwin.c gtk_subwin.h main.c main.h \
-	ogra2x11.c ogra2x11.h ox11dlg.c ox11menu.c \
-	ox11menu.h strconv.c strconv.h x11axis.c \
+	ogra2x11.c ogra2cairo.c ogra2cairofile.c ogra2x11.h ox11dlg.c \
+	ox11menu.c ox11menu.h strconv.c strconv.h x11axis.c \
 	x11axis.h x11bitmp.c x11bitmp.h x11commn.c \
 	x11commn.h x11cood.c x11cood.h x11dialg.c \
 	x11dialg.h x11file.c x11file.h x11graph.c \
@@ -203,6 +203,7 @@ am_libngraph_la_OBJECTS = libngraph_la-gtk_combo.lo \
 	libngraph_la-gtk_entry_completion.lo \
 	libngraph_la-gtk_liststore.lo libngraph_la-gtk_subwin.lo \
 	libngraph_la-main.lo libngraph_la-ogra2x11.lo \
+	libngraph_la-ogra2cairo.lo libngraph_la-ogra2cairofile.lo \
 	libngraph_la-ox11dlg.lo libngraph_la-ox11menu.lo \
 	libngraph_la-strconv.lo libngraph_la-x11axis.lo \
 	libngraph_la-x11bitmp.lo libngraph_la-x11commn.lo \
@@ -223,6 +224,8 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-gtk_liststore.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-gtk_subwin.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-main.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-ogra2cairo.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-ogra2cairofile.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-ogra2x11.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-ox11dlg.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-ox11menu.Plo \
@@ -287,6 +290,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_liststore.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_subwin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-main.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2cairo.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2cairofile.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2x11.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ox11dlg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ox11menu.Plo@am__quote@
@@ -539,6 +544,72 @@ libngraph_la-ogra2x11.lo: ogra2x11.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-ogra2x11.Plo' tmpdepfile='$(DEPDIR)/libngraph_la-ogra2x11.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2x11.lo `test -f 'ogra2x11.c' || echo '$(srcdir)/'`ogra2x11.c
+
+libngraph_la-ogra2cairo.o: ogra2cairo.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2cairo.o -MD -MP -MF "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-ogra2cairo.o `test -f 'ogra2cairo.c' || echo '$(srcdir)/'`ogra2cairo.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo" "$(DEPDIR)/libngraph_la-ogra2cairo.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ogra2cairo.c' object='libngraph_la-ogra2cairo.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-ogra2cairo.Po' tmpdepfile='$(DEPDIR)/libngraph_la-ogra2cairo.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2cairo.o `test -f 'ogra2cairo.c' || echo '$(srcdir)/'`ogra2cairo.c
+
+libngraph_la-ogra2cairo.obj: ogra2cairo.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2cairo.obj -MD -MP -MF "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-ogra2cairo.obj `if test -f 'ogra2cairo.c'; then $(CYGPATH_W) 'ogra2cairo.c'; else $(CYGPATH_W) '$(srcdir)/ogra2cairo.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo" "$(DEPDIR)/libngraph_la-ogra2cairo.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ogra2cairo.c' object='libngraph_la-ogra2cairo.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-ogra2cairo.Po' tmpdepfile='$(DEPDIR)/libngraph_la-ogra2cairo.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2cairo.obj `if test -f 'ogra2cairo.c'; then $(CYGPATH_W) 'ogra2cairo.c'; else $(CYGPATH_W) '$(srcdir)/ogra2cairo.c'; fi`
+
+libngraph_la-ogra2cairo.lo: ogra2cairo.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2cairo.lo -MD -MP -MF "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-ogra2cairo.lo `test -f 'ogra2cairo.c' || echo '$(srcdir)/'`ogra2cairo.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo" "$(DEPDIR)/libngraph_la-ogra2cairo.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-ogra2cairo.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ogra2cairo.c' object='libngraph_la-ogra2cairo.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-ogra2cairo.Plo' tmpdepfile='$(DEPDIR)/libngraph_la-ogra2cairo.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2cairo.lo `test -f 'ogra2cairo.c' || echo '$(srcdir)/'`ogra2cairo.c
+
+libngraph_la-ogra2cairofile.o: ogra2cairofile.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2cairofile.o -MD -MP -MF "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-ogra2cairofile.o `test -f 'ogra2cairofile.c' || echo '$(srcdir)/'`ogra2cairofile.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo" "$(DEPDIR)/libngraph_la-ogra2cairofile.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ogra2cairofile.c' object='libngraph_la-ogra2cairofile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-ogra2cairofile.Po' tmpdepfile='$(DEPDIR)/libngraph_la-ogra2cairofile.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2cairofile.o `test -f 'ogra2cairofile.c' || echo '$(srcdir)/'`ogra2cairofile.c
+
+libngraph_la-ogra2cairofile.obj: ogra2cairofile.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2cairofile.obj -MD -MP -MF "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-ogra2cairofile.obj `if test -f 'ogra2cairofile.c'; then $(CYGPATH_W) 'ogra2cairofile.c'; else $(CYGPATH_W) '$(srcdir)/ogra2cairofile.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo" "$(DEPDIR)/libngraph_la-ogra2cairofile.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ogra2cairofile.c' object='libngraph_la-ogra2cairofile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-ogra2cairofile.Po' tmpdepfile='$(DEPDIR)/libngraph_la-ogra2cairofile.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2cairofile.obj `if test -f 'ogra2cairofile.c'; then $(CYGPATH_W) 'ogra2cairofile.c'; else $(CYGPATH_W) '$(srcdir)/ogra2cairofile.c'; fi`
+
+libngraph_la-ogra2cairofile.lo: ogra2cairofile.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ogra2cairofile.lo -MD -MP -MF "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-ogra2cairofile.lo `test -f 'ogra2cairofile.c' || echo '$(srcdir)/'`ogra2cairofile.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo" "$(DEPDIR)/libngraph_la-ogra2cairofile.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-ogra2cairofile.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ogra2cairofile.c' object='libngraph_la-ogra2cairofile.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-ogra2cairofile.Plo' tmpdepfile='$(DEPDIR)/libngraph_la-ogra2cairofile.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-ogra2cairofile.lo `test -f 'ogra2cairofile.c' || echo '$(srcdir)/'`ogra2cairofile.c
 
 libngraph_la-ox11dlg.o: ox11dlg.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-ox11dlg.o -MD -MP -MF "$(DEPDIR)/libngraph_la-ox11dlg.Tpo" \
