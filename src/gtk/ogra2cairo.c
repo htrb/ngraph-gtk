@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.5 2008/06/26 06:54:00 hito Exp $
+ * $Id: ogra2cairo.c,v 1.6 2008/06/26 07:10:31 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -479,26 +479,27 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
 
   if (draw && str) {
     double x, y;
+    double cx, cy;
 
     x = - local->fontsin * baseline;
     y = - local->fontcos * baseline;
 
+    cairo_get_current_point(local->cairo, &cx, &cy);
     cairo_rel_move_to(local->cairo, x, y);
+
     cairo_save(local->cairo);
     cairo_rotate(local->cairo, -local->fontdir * G_PI / 180.);
     pango_cairo_update_layout(local->cairo, layout);
     if (local->text2path) {
-      double cx, cy;
-
-      cairo_get_current_point(local->cairo, &cx, &cy);
       pango_cairo_layout_path(local->cairo, layout);
       cairo_fill(local->cairo);
-      cairo_move_to(local->cairo, cx + w * local->fontcos - x, cy - w * local->fontsin - y);
+      cairo_restore(local->cairo);
+      cairo_move_to(local->cairo, cx + w * local->fontcos, cy - w * local->fontsin);
     } else {
       pango_cairo_show_layout(local->cairo, layout);
+      cairo_restore(local->cairo);
       cairo_rel_move_to(local->cairo, w * local->fontcos - x, - w * local->fontsin - y);
     }
-    cairo_restore(local->cairo);
   }
 
   pango_layout_iter_free(piter);
