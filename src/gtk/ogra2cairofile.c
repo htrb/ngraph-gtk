@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.4 2008/06/26 01:27:59 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.5 2008/06/26 06:25:52 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -164,14 +164,40 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih)
   return cairo;
 }
 
+static int
+init_cairo(struct objlist *obj, char *inst, struct gra2cairo_local *local, int w, int h)
+{
+  char *fname;
+  cairo_t *cairo;
+  int *cpar, dpi;
+
+  _getobj(obj, "file", inst, &fname);
+  if (fname == NULL)
+    return 1;
+
+  dpi = 72;
+  if (_putobj(obj, "dpi", inst, &dpi) < 0)
+    return 1;
+
+  cairo = create_cairo(obj, inst, fname, w, h);
+
+  if (cairo == NULL)
+    return 1;
+
+  if (local->cairo != NULL)
+    cairo_destroy(local->cairo);
+
+  local->cairo = cairo;
+
+  return 0;
+}
+
 static int 
 gra2cairofile_output(struct objlist *obj, char *inst, char *rval, 
                  int argc, char **argv)
 {
   char code, *cstr, *fname;
-  int *cpar, dpi, format;
-  cairo_t *cairo;
-  char *sargv[2];
+  int *cpar, format;
   struct gra2cairo_local *local;
 
   local = (struct gra2cairo_local *)argv[2];
@@ -181,24 +207,8 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
 
   switch (code) {
   case 'I':
-    _getobj(obj, "file", inst, &fname);
-    if (fname == NULL)
+    if (init_cairo(obj, inst, local, cpar[3], cpar[4]))
       return 1;
-
-    dpi = 72;
-    if (_putobj(obj, "dpi", inst, &dpi) < 0)
-      return 1;
-
-    cairo = create_cairo(obj, inst, fname, cpar[3], cpar[4]);
-
-    if (cairo == NULL)
-      return 1;
-
-    if (local->cairo != NULL)
-      cairo_destroy(local->cairo);
-
-    local->cairo = cairo;
-
     break;
   case 'E':
     _getobj(obj, "format", inst, &format);
@@ -225,6 +235,9 @@ static struct objtable gra2cairofile[] = {
   {"file", NSTR, NREAD|NWRITE, NULL, NULL,0},
   {"format", NENUM, NREAD | NWRITE, NULL, surface_type, 0},
   {"_output", NVFUNC, 0, gra2cairofile_output, NULL, 0}, 
+  {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
+  {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
+  {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
 };
 
 #define TBLNUM (sizeof(gra2cairofile) / sizeof(*gra2cairofile))
