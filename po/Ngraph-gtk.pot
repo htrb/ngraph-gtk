@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30.gtk-01\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-06-23 13:32+0900\n"
+"POT-Creation-Date: 2008-06-26 22:49+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1723,8 +1723,8 @@ msgstr ""
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1619 src/gtk/x11print.c:219 src/gtk/x11print.c:595
-#: src/gtk/x11print.c:689
+#: src/gtk/x11opt.c:1619 src/gtk/x11print.c:219 src/gtk/x11print.c:608
+#: src/gtk/x11print.c:725
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1748,51 +1748,51 @@ msgstr ""
 msgid "_Print:"
 msgstr ""
 
-#: src/gtk/x11print.c:472
+#: src/gtk/x11print.c:481
 msgid "Spawning external driver"
 msgstr ""
 
-#: src/gtk/x11print.c:473
+#: src/gtk/x11print.c:482
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:494
+#: src/gtk/x11print.c:503
 msgid "Printing"
 msgstr ""
 
-#: src/gtk/x11print.c:495
+#: src/gtk/x11print.c:504
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:534
+#: src/gtk/x11print.c:548
 msgid "Spawning external viewer"
 msgstr ""
 
-#: src/gtk/x11print.c:535
+#: src/gtk/x11print.c:549
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:591 src/gtk/x11print.c:596
+#: src/gtk/x11print.c:603 src/gtk/x11print.c:609
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:619
+#: src/gtk/x11print.c:643
 msgid "Making GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:620
+#: src/gtk/x11print.c:644
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:686 src/gtk/x11print.c:690
+#: src/gtk/x11print.c:720 src/gtk/x11print.c:726
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:695
+#: src/gtk/x11print.c:732
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:696
+#: src/gtk/x11print.c:733
 msgid "Making data file."
 msgstr ""
 

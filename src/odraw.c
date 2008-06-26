@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.3 2008/06/10 07:12:13 hito Exp $
+ * $Id: odraw.c,v 1.4 2008/06/26 23:54:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -228,7 +228,7 @@ struct objtable draw[] = {
   {"B",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"clip",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"redraw_flag",NBOOL,NREAD|NWRITE,NULL,NULL,0},
-  {"redraw_num",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"redraw_num",NINT,0,NULL,NULL,0},
 };
 
 #define TBLNUM (sizeof(draw) / sizeof(*draw))

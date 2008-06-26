@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.6 2008/06/26 07:10:31 hito Exp $
+ * $Id: ogra2cairo.c,v 1.7 2008/06/26 23:54:01 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -271,7 +271,7 @@ gra2cairo_set_region(struct objlist *obj, char *inst, char *rval, int argc, char
   return 0;
 }
 
-static void
+void
 gra2cairo_set_dpi(struct gra2cairo_local *local, struct objlist *obj, char *inst)
 {
   int dpi;
@@ -833,6 +833,9 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   if (_getobj(obj, "_local", inst, &local))
     return 1;
 
+  if (local->cairo == NULL)
+    return 1;
+
   cashpos = loadfont(font, FALSE);
 
   if (cashpos == -1) {
@@ -882,6 +885,9 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   font = (char *)(argv[4]);
 
   if (_getobj(obj, "_local", inst, &local))
+    return 1;
+
+  if (local->cairo == NULL)
     return 1;
 
   if (strcmp0(func, "_charascent") == 0) {
