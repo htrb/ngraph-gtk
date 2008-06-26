@@ -1,24 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.2 2008/06/25 14:04:24 hito Exp $
- * 
- * This file is part of "Ngraph for X11".
- * 
- * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
- * "Ngraph for X11" is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * "Ngraph for X11" is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ * $Id: ogra2cairo.c,v 1.3 2008/06/26 01:27:59 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -36,12 +17,15 @@
 #include "nstring.h"
 #include "object.h"
 #include "ioutil.h"
+#include "nconfig.h"
 
 #include "x11gui.h"
+#include "ogra2cairo.h"
 
 #define NAME "gra2cairo"
 #define PARENT "gra2"
 #define OVERSION  "1.00.00"
+#define CAIROCONF "[gra2cairo]"
 
 #define ERRFOPEN 100
 
@@ -55,13 +39,9 @@ char *gra2cairo_errorlist[]={
 
 #define ERRNUM (sizeof(gra2cairo_errorlist) / sizeof(*gra2cairo_errorlist))
 
+static struct gra2cairo_config *Conf = NULL;
+static int Instance = 0;
 
-struct gra2cairo_local {
-  cairo_t *cairo;
-  int linetonum, region_active;
-  char *fontalias;
-  double pixel_dot, offsetx, offsety, cpx, cpy, region[4];
-};
 
 static double
 mxd2p(struct gra2cairo_local *local, int r)
@@ -82,11 +62,116 @@ mxd2py(struct gra2cairo_local *local, int y)
 }
 
 static int
+loadconfig(void)
+{
+  FILE *fp;
+  char *tok, *str, *s2;
+  char *f1, *f2, *f3, *f4;
+  int val;
+  char *endptr, symbol[] = "Sym";
+  int len;
+  struct fontmap *fcur, *fnew;
+
+  fp = openconfig(CAIROCONF);
+  if (fp == NULL)
+    return 0;
+
+  fcur = Conf->fontmaproot;
+  while ((tok = getconfig(fp, &str))) {
+    s2 = str;
+    if (strcmp(tok, "font_map") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      f2 = getitok2(&s2, &len, " \t,");
+      f3 = getitok2(&s2, &len, " \t,");
+      for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
+      f4 = getitok2(&s2, &len, "");
+      if (f1 && f2 && f3 && f4) {
+	if ((fnew = memalloc(sizeof(struct fontmap))) == NULL) {
+	  memfree(tok);
+	  memfree(f1);
+	  memfree(f2);
+	  memfree(f3);
+	  memfree(f4);
+	  closeconfig(fp);
+	  return 1;
+	}
+	if (fcur == NULL) {
+	  Conf->fontmaproot = fnew;
+	} else {
+	  fcur->next = fnew;
+	}
+	fcur = fnew;
+	fcur->next = NULL;
+	fcur->fontalias = f1;
+	fcur->symbol = ! strncmp(f1, symbol, sizeof(symbol) - 1);
+	if (strcmp(f2, "bold") == 0) {
+	  fcur->type = BOLD;
+	} else if (strcmp(f2, "italic") == 0) {
+	  fcur->type = ITALIC;
+	} else if (strcmp(f2, "bold_italic") == 0) {
+	  fcur->type = BOLDITALIC;
+	} else if (strcmp(f2, "oblique") == 0) {
+	  fcur->type = OBLIQUE;
+	} else if (strcmp(f2, "bold_oblique") == 0) {
+	  fcur->type = BOLDOBLIQUE;
+	} else {
+	  fcur->type = NORMAL;
+	}
+	memfree(f2);
+	val = strtol(f3, &endptr, 10);
+	memfree(f3);
+	fcur->twobyte = val;
+	fcur->fontname = f4;
+      } else {
+	memfree(f1);
+	memfree(f2);
+	memfree(f3);
+	memfree(f4);
+      }
+    }
+    memfree(tok);
+    memfree(str);
+  }
+  closeconfig(fp);
+  return 0;
+}
+
+static int
+init_conf(void)
+{
+  Conf = malloc(sizeof(*Conf));
+  if (Conf == NULL)
+    return 1;
+
+  Conf->fontmaproot = NULL;
+  if (loadconfig()) {
+    free(Conf);
+    return 1;
+  }
+
+  return 0;
+}
+
+static void
+free_conf(void)
+{
+  if (Conf == NULL)
+    return;
+
+  free(Conf);
+  Conf = NULL;
+}
+
+static int
 gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {  
   struct gra2cairo_local *local;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
+
+  if (Conf == NULL && init_conf()) {
+    goto errexit;
+  }
 
   local = memalloc(sizeof(struct gra2cairo_local));
   if (local == NULL)
@@ -104,10 +189,12 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
     local->region[2] = local->region[3] = 0;
 
   local->region_active = FALSE;
+  Instance++;
 
   return 0;
 
  errexit:
+  free_conf();
   memfree(local);
   return 1;
 }
@@ -124,6 +211,11 @@ gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 
   if (local->cairo) {
     cairo_destroy(local->cairo);
+  }
+
+  Instance--;
+  if (Instance == 0) {
+    free_conf();
   }
 
   return 0;
@@ -406,7 +498,6 @@ static struct objtable gra2cairo[] = {
   {"next", NPOINTER, 0, NULL, NULL, 0}, 
   {"dpi", NINT, NREAD | NWRITE, NULL, NULL, 0},
   {"region", NVFUNC, NEXEC, gra2cairo_set_region, NULL, 0}, 
-  //  {"cairo", NVFUNC, 0, gra2cairo_cairo, NULL, 0}, 
   {"_local", NPOINTER, 0, NULL, NULL, 0}, 
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
 };
