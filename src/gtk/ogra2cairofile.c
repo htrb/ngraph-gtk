@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.5 2008/06/26 06:25:52 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.6 2008/06/26 06:54:00 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -169,7 +169,7 @@ init_cairo(struct objlist *obj, char *inst, struct gra2cairo_local *local, int w
 {
   char *fname;
   cairo_t *cairo;
-  int *cpar, dpi;
+  int *cpar, dpi, t2p;
 
   _getobj(obj, "file", inst, &fname);
   if (fname == NULL)
@@ -187,7 +187,10 @@ init_cairo(struct objlist *obj, char *inst, struct gra2cairo_local *local, int w
   if (local->cairo != NULL)
     cairo_destroy(local->cairo);
 
+  _getobj(obj, "text2path", inst, &t2p);
+
   local->cairo = cairo;
+  local->text2path = t2p;
 
   return 0;
 }
@@ -233,6 +236,7 @@ static struct objtable gra2cairofile[] = {
   {"done", NVFUNC, NEXEC, gra2cairofile_done, NULL, 0}, 
   {"next", NPOINTER, 0, NULL, NULL, 0}, 
   {"file", NSTR, NREAD|NWRITE, NULL, NULL,0},
+  {"text2path", NBOOL, NREAD|NWRITE, NULL, NULL,0},
   {"format", NENUM, NREAD | NWRITE, NULL, surface_type, 0},
   {"_output", NVFUNC, 0, gra2cairofile_output, NULL, 0}, 
   {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
