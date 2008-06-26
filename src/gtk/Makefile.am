@@ -7,7 +7,7 @@ noinst_LTLIBRARIES = libngraph.la
 libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h \
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c \
 	gtk_liststore.h gtk_subwin.c gtk_subwin.h main.c main.h \
-	ogra2x11.c ogra2cairo.c ogra2cairofile.c ogra2x11.h ox11dlg.c \
+	ogra2x11.c ogra2cairo.c ogra2cairo.h ogra2cairofile.c ogra2x11.h ox11dlg.c \
 	ox11menu.c ox11menu.h strconv.c strconv.h x11axis.c \
 	x11axis.h x11bitmp.c x11bitmp.h x11commn.c \
 	x11commn.h x11cood.c x11cood.h x11dialg.c \
