@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.9 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11dialg.c,v 1.10 2008/06/28 00:53:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,6 +40,7 @@
 #include "ngraph.h"
 #include "object.h"
 
+#include "ogra2cairo.h"
 #include "ox11menu.h"
 #include "x11gui.h"
 #include "x11dialg.h"
@@ -766,7 +767,7 @@ SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name, int jf
   getobj(obj, name, id, 0, NULL, &font);
   combo_box_clear(w);
 
-  fcur = Mxlocal->fontmaproot;
+  fcur = Gra2cairoConf->fontmaproot;
   j = 0;
   selfont = -1;
   while (fcur != NULL) {
@@ -798,7 +799,7 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
     return;
 
   j = 0;
-  for (fcur = Mxlocal->fontmaproot; fcur; fcur = fcur->next) {
+  for (fcur = Gra2cairoConf->fontmaproot; fcur; fcur = fcur->next) {
     if ((! jfont || ! fcur->twobyte) && (jfont || fcur->twobyte))
 	continue;
 

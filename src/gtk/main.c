@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.7 2008/06/26 23:54:01 hito Exp $
+ * $Id: main.c,v 1.8 2008/06/28 00:53:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,6 +46,7 @@
 #include "shell.h"
 #include "ox11menu.h"
 #include "ogra2x11.h"
+#include "ogra2cairo.h"
 #include <assert.h>
 static char **attempt_shell_completion(char *text, int start, int end);
 #define HIST_SIZE 100
@@ -856,13 +857,15 @@ static char **
 get_obj_font_list(struct objlist *objcur, char *member, char *val)
 {
   char **list = (char **) NULL;
-  struct fontmap *fontmap;
+  struct fontmap *fontmap, *fontmaproot;
   int i, j, len, twobyte;
 
   if (Mxlocal == NULL)
     return NULL;
 
-  if (Mxlocal->fontmaproot == NULL)
+  fontmaproot = Gra2cairoConf->fontmaproot;
+
+  if (fontmaproot == NULL)
     return NULL;
 
   if (chkobjfieldtype(objcur, member) != NSTR)
@@ -871,7 +874,7 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
   if (strstr(member, "font") == NULL)
     return NULL;
 
-  for (i = 0, fontmap = Mxlocal->fontmaproot; fontmap != NULL;
+  for (i = 0, fontmap = fontmaproot; fontmap != NULL;
        fontmap = fontmap->next, i++);
 
   if ((list = malloc((sizeof(*list)) * (i + 1))) == NULL)
@@ -884,7 +887,7 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
 
   len = strlen(val);
   j = 0;
-  for (fontmap = Mxlocal->fontmaproot; fontmap != NULL;
+  for (fontmap = fontmaproot; fontmap != NULL;
        fontmap = fontmap->next) {
     if ((fontmap->twobyte == twobyte)
 	&& (strncmp(fontmap->fontalias, val, len) == 0)) {

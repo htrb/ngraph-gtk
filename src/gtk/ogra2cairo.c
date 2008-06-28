@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.7 2008/06/26 23:54:01 hito Exp $
+ * $Id: ogra2cairo.c,v 1.8 2008/06/28 00:53:43 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -42,7 +42,7 @@ char *gra2cairo_errorlist[]={
 
 #define ERRNUM (sizeof(gra2cairo_errorlist) / sizeof(*gra2cairo_errorlist))
 
-static struct gra2cairo_config *Conf = NULL;
+struct gra2cairo_config *Gra2cairoConf = NULL;
 static int Instance = 0;
 
 
@@ -85,7 +85,7 @@ loadconfig(void)
   if (fp == NULL)
     return 0;
 
-  fcur = Conf->fontmaproot;
+  fcur = Gra2cairoConf->fontmaproot;
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (strcmp(tok, "font_map") == 0) {
@@ -105,7 +105,7 @@ loadconfig(void)
 	  return 1;
 	}
 	if (fcur == NULL) {
-	  Conf->fontmaproot = fnew;
+	  Gra2cairoConf->fontmaproot = fnew;
 	} else {
 	  fcur->next = fnew;
 	}
@@ -148,14 +148,15 @@ loadconfig(void)
 static int
 init_conf(void)
 {
-  Conf = malloc(sizeof(*Conf));
-  if (Conf == NULL)
+  Gra2cairoConf = malloc(sizeof(*Gra2cairoConf));
+  if (Gra2cairoConf == NULL)
     return 1;
 
-  Conf->fontmaproot = NULL;
-  Conf->loadfont = 0;
+  Gra2cairoConf->fontmaproot = NULL;
+  Gra2cairoConf->loadfont = 0;
   if (loadconfig()) {
-    free(Conf);
+    free(Gra2cairoConf);
+    Gra2cairoConf = NULL;
     return 1;
   }
 
@@ -167,21 +168,21 @@ free_conf(void)
 {
   int i;
 
-  if (Conf == NULL)
+  if (Gra2cairoConf == NULL)
     return;
 
-  for (i = 0; i < Conf->loadfont; i++) {
-    if (Conf->font[i].fontalias) {
-      memfree(Conf->font[i].fontalias);
-      pango_font_description_free(Conf->font[i].font);
-      Conf->font[i].fontalias = NULL;
-      Conf->font[i].font = NULL;
+  for (i = 0; i < Gra2cairoConf->loadfont; i++) {
+    if (Gra2cairoConf->font[i].fontalias) {
+      memfree(Gra2cairoConf->font[i].fontalias);
+      pango_font_description_free(Gra2cairoConf->font[i].font);
+      Gra2cairoConf->font[i].fontalias = NULL;
+      Gra2cairoConf->font[i].font = NULL;
     }
   }
-  Conf->loadfont = 0;
+  Gra2cairoConf->loadfont = 0;
 
-  free(Conf);
-  Conf = NULL;
+  free(Gra2cairoConf);
+  Gra2cairoConf = NULL;
 }
 
 static int
@@ -191,7 +192,7 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
-  if (Conf == NULL && init_conf()) {
+  if (Gra2cairoConf == NULL && init_conf()) {
     goto errexit;
   }
 
@@ -244,45 +245,68 @@ gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   return 0;
 }
 
-static int 
-gra2cairo_set_region(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+int 
+gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region)
 {
-  struct gra2cairo_local *local;
+  if (local == NULL || local->cairo == NULL)
+    return;
+
+  cairo_new_path(local->cairo);
+  if (region) {
+    gdk_cairo_region(local->cairo, region);
+    cairo_clip(local->cairo);
+  } else {
+    cairo_reset_clip(local->cairo);
+  }
+}
+
+int 
+gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, int y2)
+{
+  
   int i;
 
-  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
-    return 1;
-
-  _getobj(obj, "_local", inst, &local);
-
-  if (argc == 4) {
-    for (i = 0; i < 2; i++) {
-      local->region[i] = mxd2px(local, *(int *) argv[i * 2 + 2]);
-      local->region[i] = mxd2py(local, *(int *) argv[i * 2 + 3]);
-    }
-    local->region_active = TRUE;
-  } else {
-    for (i = 0; i < 4; i++) {
-      local->region[i] = 0;
-    }
-    local->region_active = FALSE;
-  }
+  local->region[0] = mxd2px(local, x1);
+  local->region[1] = mxd2py(local, y1);
+  local->region[2] = mxd2px(local, x2);
+  local->region[3] = mxd2py(local, y2);
+  local->region_active = TRUE;
 
   return 0;
 }
 
-void
-gra2cairo_set_dpi(struct gra2cairo_local *local, struct objlist *obj, char *inst)
+int 
+gra2cairo_clear_region(struct gra2cairo_local *local)
 {
+  
+  int i;
+
+  local->region[0] = 0;
+  local->region[1] = 0;
+  local->region[2] = 0;
+  local->region[3] = 0;
+  local->region_active = FALSE;
+
+  return 0;
+}
+
+static void
+gra2cairo_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  struct gra2cairo_local *local;
   int dpi;
 
-  _getobj(obj, "dpi", inst, &dpi);
+  dpi = *(int *) argv[2];
 
   if (dpi < 1)
     dpi = 1;
 
   if (dpi > DPI_MAX)
     dpi = DPI_MAX;
+
+  *(int *)argv[2] = dpi;
+
+  _getobj(obj, "_local", inst, &local);
 
   local->pixel_dot = dpi / (DPI_MAX * 1.0);
 }
@@ -307,8 +331,8 @@ loadfont(char *fontalias, int top)
     lang_ja = pango_language_from_string("ja-JP");
   }
 
-  for (i = 0; i < Conf->loadfont; i++) {
-    if (strcmp((Conf->font[i]).fontalias, fontalias) == 0) {
+  for (i = 0; i < Gra2cairoConf->loadfont; i++) {
+    if (strcmp((Gra2cairoConf->font[i]).fontalias, fontalias) == 0) {
       fontcashfind=i;
       break;
     }
@@ -316,11 +340,11 @@ loadfont(char *fontalias, int top)
 
   if (fontcashfind != -1) {
     if (top) {
-      font = Conf->font[fontcashfind];
+      font = Gra2cairoConf->font[fontcashfind];
       for (i = fontcashfind - 1; i >= 0; i--) {
-	Conf->font[i + 1] = Conf->font[i];
+	Gra2cairoConf->font[i + 1] = Gra2cairoConf->font[i];
       }
-      Conf->font[0] = font;
+      Gra2cairoConf->font[0] = font;
       return 0;
     } else {
       return fontcashfind;
@@ -329,7 +353,7 @@ loadfont(char *fontalias, int top)
 
   fontname = NULL;
 
-  for (fcur = Conf->fontmaproot; fcur; fcur=fcur->next) {
+  for (fcur = Gra2cairoConf->fontmaproot; fcur; fcur=fcur->next) {
     if (strcmp(fontalias, fcur->fontalias) == 0) {
       fontname = fcur->fontname;
       type = fcur->type;
@@ -369,39 +393,39 @@ loadfont(char *fontalias, int top)
   }
   pango_font_description_set_weight(pfont, weight);
 
-  if (Conf->loadfont == CAIRO_FONTCASH) {
+  if (Gra2cairoConf->loadfont == CAIRO_FONTCASH) {
     i = CAIRO_FONTCASH - 1;
 
-    memfree((Conf->font[i]).fontalias);
-    Conf->font[i].fontalias = NULL;
+    memfree((Gra2cairoConf->font[i]).fontalias);
+    Gra2cairoConf->font[i].fontalias = NULL;
 
-    pango_font_description_free((Conf->font[i]).font);
-    Conf->font[i].font = NULL;
+    pango_font_description_free((Gra2cairoConf->font[i]).font);
+    Gra2cairoConf->font[i].font = NULL;
 
-    Conf->loadfont--;
+    Gra2cairoConf->loadfont--;
   }
 
   if (top) {
-    for (i = Conf->loadfont - 1; i >= 0; i--) {
-      Conf->font[i + 1] = Conf->font[i];
+    for (i = Gra2cairoConf->loadfont - 1; i >= 0; i--) {
+      Gra2cairoConf->font[i + 1] = Gra2cairoConf->font[i];
     }
     store=0;
   } else {
-    store = Conf->loadfont;
+    store = Gra2cairoConf->loadfont;
   }
 
-  Conf->font[store].fontalias = nstrdup(fontalias);
-  if (Conf->font[store].fontalias == NULL) {
+  Gra2cairoConf->font[store].fontalias = nstrdup(fontalias);
+  if (Gra2cairoConf->font[store].fontalias == NULL) {
     pango_font_description_free(pfont);
-    Conf->font[store].font = NULL;
+    Gra2cairoConf->font[store].font = NULL;
     return -1;
   }
 
-  Conf->font[store].font = pfont;
-  Conf->font[store].fonttype = type;
-  Conf->font[store].symbol = symbol;
+  Gra2cairoConf->font[store].font = pfont;
+  Gra2cairoConf->font[store].fonttype = type;
+  Gra2cairoConf->font[store].symbol = symbol;
 
-  Conf->loadfont++;
+  Gra2cairoConf->loadfont++;
 
   return store;
 }
@@ -424,7 +448,7 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
   attr = pango_attr_letter_spacing_new(mxd2p(local, space) * PANGO_SCALE);
   pango_attr_list_insert(alist, attr);
 
-  pango_layout_set_font_description(layout, Conf->font[font].font);
+  pango_layout_set_font_description(layout, Gra2cairoConf->font[font].font);
   pango_layout_set_attributes(layout, alist);
 
   pango_layout_set_text(layout, str, -1);
@@ -535,7 +559,6 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
   }
   switch (code) {
   case 'I':
-    gra2cairo_set_dpi(local, obj, inst);
     local->linetonum = 0;
     break;
   case '%': case 'X':
@@ -545,15 +568,13 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
   case 'V':
     local->offsetx = mxd2p(local, cpar[1]);
     local->offsety = mxd2p(local, cpar[2]);
-    local->cpx = 0;
-    local->cpy = 0;
+    cairo_new_path(local->cairo);
     if (cpar[5]) {
       x = mxd2p(local, cpar[1]);
       y = mxd2p(local, cpar[2]);
       w = mxd2p(local, cpar[3]) - x;
       h = mxd2p(local, cpar[4]) - y;
 
-      cairo_new_path(local->cairo);
       cairo_rectangle(local->cairo, x, y, w, h);
 
       if (local->region_active) {
@@ -786,7 +807,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       break;
     }
 
-    if (Conf->font[0].symbol) {
+    if (Gra2cairoConf->font[0].symbol) {
       char *ptr;
 
       ptr = ascii2greece(tmp2);
@@ -834,7 +855,7 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
     return 1;
 
   if (local->cairo == NULL)
-    return 1;
+    return 0;
 
   cashpos = loadfont(font, FALSE);
 
@@ -896,7 +917,7 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
     height = FALSE;
   }
 
-  fcur = Conf->fontmaproot;
+  fcur = Gra2cairoConf->fontmaproot;
   twobyte = FALSE;
 
   while (fcur) {
@@ -978,8 +999,7 @@ static struct objtable gra2cairo[] = {
   {"init", NVFUNC, NEXEC, gra2cairo_init, NULL, 0}, 
   {"done", NVFUNC, NEXEC, gra2cairo_done, NULL, 0}, 
   {"next", NPOINTER, 0, NULL, NULL, 0}, 
-  {"dpi", NINT, NREAD | NWRITE, NULL, NULL, 0},
-  {"region", NVFUNC, NEXEC, gra2cairo_set_region, NULL, 0}, 
+  {"dpi", NINT, NREAD | NWRITE, gra2cairo_set_dpi, NULL, NULL, 0},
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
   {"_local", NPOINTER, 0, NULL, NULL, 0}, 
 };

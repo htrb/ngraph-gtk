@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.5 2008/06/26 23:54:01 hito Exp $
+ * $Id: ogra2x11.c,v 1.6 2008/06/28 00:53:43 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -99,7 +99,7 @@ static int gtkflush(struct objlist *obj, char *inst, char *rval, int argc,
 static int gtkloadconfig(struct gtklocal *gtklocal);
 static void gtk_redraw(struct objlist *obj, void *inst,
 		       struct gtklocal *gtklocal);
-static void gtkclose(GtkWidget * widget, gpointer user_data);
+static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);;
 static gboolean gtkevpaint(GtkWidget * w, GdkEventExpose * e,
 			   gpointer user_data);
@@ -233,8 +233,8 @@ gtkevpaint(GtkWidget * w, GdkEventExpose * e, gpointer user_data)
   return FALSE;
 }
 
-static void
-gtkclose(GtkWidget * widget, gpointer user_data)
+static int
+gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
   char *inst;
   struct gtklocal *local;
@@ -251,7 +251,7 @@ gtkclose(GtkWidget * widget, gpointer user_data)
       break;
     }
   }
-  return;
+  return FALSE;
 }
 
 static void
@@ -267,6 +267,9 @@ static gboolean
 ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
   GdkEventKey *e;
+  struct gtklocal *gtklocal;
+
+  gtklocal = (struct gtklocal *) user_data;
 
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
@@ -275,8 +278,10 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
   switch (e->keyval) {
   case GDK_w:
-    if (e->state & GDK_CONTROL_MASK) 
-      gtk_widget_destroy(GTK_WIDGET(user_data));
+    if (e->state & GDK_CONTROL_MASK) {
+      gtk_widget_destroy(gtklocal->mainwin);
+      gtklocal->mainwin = NULL;
+    }
     return TRUE;
   }
   return FALSE;
@@ -364,10 +369,10 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     goto errexit;
 
   g_signal_connect_swapped(gtklocal->mainwin,
-			   "destroy",
+			   "delete-event",
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
 
-  g_signal_connect(gtklocal->mainwin, "key-press-event", G_CALLBACK(ev_key_down), gtklocal->mainwin);
+  g_signal_connect(gtklocal->mainwin, "key-press-event", G_CALLBACK(ev_key_down), gtklocal);
 
   g_signal_connect(gtklocal->mainwin,
 		   "expose-event", G_CALLBACK(gtkevpaint), gtklocal);
@@ -429,7 +434,6 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 errexit:
   if (gtklocal->mainwin) {
     g_object_unref(gtklocal->gc);
-    g_object_unref(gtklocal->win);
     gtk_widget_destroy(gtklocal->mainwin);
   }
 
@@ -726,7 +730,6 @@ gtk_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     if (_getobj(obj, "_gtklocal", inst, &gtklocal))
       return 1;
 
-    gra2cairo_set_dpi(local, obj, inst);
     gtklocal->PaperWidth = cpar[3];
     gtklocal->PaperHeight = cpar[4];
     gtkchangedpi(gtklocal);

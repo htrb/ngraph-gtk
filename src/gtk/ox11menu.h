@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.5 2008/06/10 07:12:15 hito Exp $
+ * $Id: ox11menu.h,v 1.6 2008/06/28 00:53:43 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -75,14 +75,6 @@ struct script
   struct script *next;
 };
 
-struct fontlocal
-{
-  char *fontalias;
-  PangoFontDescription *font;
-  int fontsize, fonttype, fontdir, symbol;
-  //  int iso8859;
-};
-
 struct mxlocal
 {
   GdkDrawable *win, *pix;
@@ -93,20 +85,14 @@ struct mxlocal
   int grid;
   GdkColormap cmap;
   int privatecolor, cdepth;
-  double pixel_dot;
-  int offsetx, offsety;
-  int cpx, cpy;
-  struct fontmap *fontmaproot;
-  int loadfont;
-  int loadfontf;
+  double pixel_dot, offsetx, offsety;
   char *fontalias;
-  double fontsize, fontspace, fontcos, fontsin, fontdir;
-  struct fontlocal font[GTKFONTCASH];
   GdkPoint points[LINETOLIMIT];
   GdkRegion *region;
-  int linetonum;
   int lock;
   int minus_hyphen;
+  struct gra2cairo_local *local;
+  cairo_t *cairo_save;
 };
 
 struct menulocal
@@ -155,17 +141,6 @@ struct menulocal
   int showtip;
   int movechild, preserve_width;
   int hist_size, info_size, bg_r, bg_g, bg_b;
-};
-
-enum
-  { NORMAL = 0, BOLD, ITALIC, BOLDITALIC, OBLIQUE, BOLDOBLIQUE };
-
-struct fontmap
-{
-  char *fontalias;
-  char *fontname;
-  int type, twobyte, symbol;
-  struct fontmap *next;
 };
 
 extern struct menulocal Menulocal;

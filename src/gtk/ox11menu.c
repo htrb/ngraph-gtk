@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.14 2008/06/23 02:51:51 hito Exp $
+ * $Id: ox11menu.c,v 1.15 2008/06/28 00:53:43 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -48,6 +48,7 @@
 
 #include "strconv.h"
 
+#include "ogra2cairo.h"
 #include "ogra2x11.h"
 #include "ox11menu.h"
 #include "x11menu.h"
@@ -56,7 +57,7 @@
 
 #define NAME "menu"
 #define ALIAS "winmenu:gtkmenu"
-#define PARENT "gra2"
+#define PARENT "gra2cairo"
 #define NVERSION  "1.00.00"
 #define MGTKCONF "[x11menu]"
 #define G2WINCONF "[gra2gtk]"
@@ -87,9 +88,8 @@ mgtkloadconfig(void)
   char *tok, *str, *s2;
   char *f1, *f2, *f3, *f4, *f5;
   int val;
-  char *endptr, symbol[] = "Sym";
+  char *endptr;
   int len;
-  struct fontmap *fcur, *fnew;
   struct extprinter *pcur, *pnew;
   struct prnprinter *pcur2, *pnew2;
   struct script *scur, *snew;
@@ -98,7 +98,6 @@ mgtkloadconfig(void)
   if (fp == NULL)
     return 0;
 
-  fcur = Mxlocal->fontmaproot;
   pcur = Menulocal.extprinterroot;
   pcur2 = Menulocal.prnprinterroot;
   scur = Menulocal.scriptroot;
@@ -561,53 +560,6 @@ mgtkloadconfig(void)
 	memfree(f2);
 	memfree(f3);
       }
-    } else if (strcmp(tok, "font_map") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
-      f4 = getitok2(&s2, &len, "");
-      if (f1 && f2 && f3 && f4) {
-	if ((fnew = memalloc(sizeof(struct fontmap))) == NULL) {
-	  memfree(tok);
-	  memfree(f1);
-	  memfree(f2);
-	  memfree(f3);
-	  memfree(f4);
-	  closeconfig(fp);
-	  return 1;
-	}
-	if (fcur == NULL)
-	  Mxlocal->fontmaproot = fnew;
-	else
-	  fcur->next = fnew;
-	fcur = fnew;
-	fcur->next = NULL;
-	fcur->fontalias = f1;
-	fcur->symbol = ! strncmp(f1, symbol, sizeof(symbol) - 1);
-	if (strcmp(f2, "bold") == 0)
-	  fcur->type = BOLD;
-	else if (strcmp(f2, "italic") == 0)
-	  fcur->type = ITALIC;
-	else if (strcmp(f2, "bold_italic") == 0)
-	  fcur->type = BOLDITALIC;
-	else if (strcmp(f2, "oblique") == 0)
-	  fcur->type = OBLIQUE;
-	else if (strcmp(f2, "bold_oblique") == 0)
-	  fcur->type = BOLDOBLIQUE;
-	else
-	  fcur->type = NORMAL;
-	memfree(f2);
-	val = strtol(f3, &endptr, 10);
-	memfree(f3);
-	fcur->twobyte = val;
-	fcur->fontname = f4;
-      } else {
-	memfree(f1);
-	memfree(f2);
-	memfree(f3);
-	memfree(f4);
-      }
     } else if (strcmp(tok, "viewer_dpi") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
@@ -977,14 +929,17 @@ static int
 menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct objlist *robj;
-  struct fontmap *fcur, *fdel;
   struct extprinter *pcur, *pdel;
   struct prnprinter *pcur2, *pdel2;
   struct script *scur, *sdel;
+  struct gra2cairo_local *local;
   int i, numf, numd;
   char *dum;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
+    return 1;
+
+  if (_getobj(obj, "_local", inst, &local))
     return 1;
 
   Mxlocal = (struct mxlocal *) memalloc(sizeof(struct mxlocal));
@@ -1040,7 +995,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
 
-  Mxlocal->fontmaproot = NULL;
   Mxlocal->windpi = DEFAULT_DPI;
   Mxlocal->autoredraw = TRUE;
   Mxlocal->redrawf = TRUE;
@@ -1050,8 +1004,9 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Mxlocal->cdepth = GTKCOLORDEPTH;
   Mxlocal->backingstore = FALSE;
   Mxlocal->minus_hyphen = TRUE;
+  Mxlocal->local = local;
 
-  if (_putobj(obj, "_local", inst, Mxlocal))
+  if (_putobj(obj, "_gtklocal", inst, Mxlocal))
     goto errexit;
 
   if (mgtkloadconfig())
@@ -1155,14 +1110,6 @@ errexit:
     memfree(sdel->option);
     memfree(sdel);
   }
-  fcur = Mxlocal->fontmaproot;
-  while (fcur) {
-    fdel = fcur;
-    fcur = fcur->next;
-    memfree(fdel->fontalias);
-    memfree(fdel->fontname);
-    memfree(fdel);
-  }
 
   if (Mxlocal->pix)
     g_object_unref(Mxlocal->pix);
@@ -1174,11 +1121,9 @@ errexit:
 static int
 menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  struct fontmap *fcur, *fdel;
   struct extprinter *pcur, *pdel;
   struct prnprinter *pcur2, *pdel2;
   struct script *scur, *sdel;
-  int i;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
@@ -1222,24 +1167,6 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     memfree(sdel->option);
     memfree(sdel);
   }
-  fcur = Mxlocal->fontmaproot;
-  while (fcur) {
-    fdel = fcur;
-    fcur = fcur->next;
-    memfree(fdel->fontname);
-    memfree(fdel->fontalias);
-    memfree(fdel);
-  }
-
-  for (i = 0; i < Mxlocal->loadfont; i++) {
-    if (Mxlocal->font[i].fontalias) {
-      memfree(Mxlocal->font[i].fontalias);
-      pango_font_description_free(Mxlocal->font[i].font);
-      Mxlocal->font[i].fontalias = NULL;
-      Mxlocal->font[i].font = NULL;
-    }
-  }
-  Mxlocal->loadfont = 0;
 
   if (Mxlocal->pix)
     g_object_unref(Mxlocal->pix);
@@ -1425,8 +1352,9 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (dpi > DPI_MAX)
     dpi = DPI_MAX;
   Mxlocal->windpi = dpi;
-  Mxlocal->pixel_dot = dpi / (DPI_MAX * 1.0);
+  Mxlocal->local->pixel_dot = dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
+
   if (Disp && Mxlocal->win) {
     gdk_window_invalidate_rect(Mxlocal->win, NULL, TRUE);
   }
@@ -1436,13 +1364,6 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 mxflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  if (Mxlocal->linetonum != 0) {
-    if (Disp) {
-      gdk_draw_lines(Mxlocal->pix, Mxlocal->gc,
-		     Mxlocal->points, Mxlocal->linetonum);
-      Mxlocal->linetonum = 0;
-    }
-  }
   if (Disp)
     gdk_display_flush(Disp);
   return 0;
@@ -1482,11 +1403,6 @@ mxclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
 
-  if (Mxlocal->linetonum && Disp) {
-    gdk_draw_lines(Mxlocal->pix, Mxlocal->gc, Mxlocal->points, Mxlocal->linetonum);
-    Mxlocal->linetonum = 0;
-  }
-
   mx_clear(NULL);
 
   if (Mxlocal->win) {
@@ -1500,844 +1416,82 @@ void
 mxsaveGC(GdkGC * gc, GdkDrawable *pix, GdkDrawable * d, int scrollx, int scrolly,
 	 struct mxlocal *mxsave, int dpi, GdkRegion * region)
 {
+  if (Mxlocal->local->cairo)
+    cairo_new_path(Mxlocal->local->cairo);
+
   memcpy(mxsave, Mxlocal, sizeof(*mxsave));
   Mxlocal->pix = pix;
   Mxlocal->win = d;
   Mxlocal->gc = gc;
   Mxlocal->scrollx = scrollx;
   Mxlocal->scrolly = scrolly;
-  Mxlocal->offsetx = 0;
-  Mxlocal->offsety = 0;
-  Mxlocal->cpx = 0;
-  Mxlocal->cpy = 0;
-  Mxlocal->fontalias = NULL;
-  /*
-  for (i = 0; i < GTKFONTCASH; i++)
-    (Mxlocal->font[i]).fontalias = NULL;
-  Mxlocal->loadfont = 0;
-  Mxlocal->loadfontf = -1;
-  */
-  Mxlocal->linetonum = 0;
+  Mxlocal->offsetx = Mxlocal->local->offsetx;
+  Mxlocal->offsety = Mxlocal->local->offsety;
+  Mxlocal->fontalias =Mxlocal->local->fontalias;
+  Mxlocal->cairo_save = Mxlocal->local->cairo;
+  Mxlocal->local->cairo = gdk_cairo_create(pix);
+  Mxlocal->pixel_dot = Mxlocal->local->pixel_dot;
+
   if (dpi != -1) {
     Mxlocal->windpi = dpi;
-    Mxlocal->pixel_dot = Mxlocal->windpi / (DPI_MAX * 1.0);
+    Mxlocal->local->pixel_dot = Mxlocal->windpi / (DPI_MAX * 1.0);
   } else {
     Mxlocal->windpi = mxsave->windpi;
-    Mxlocal->pixel_dot = mxsave->pixel_dot;
   }
+  Mxlocal->local->offsety = 0;
+  Mxlocal->local->offsetx = 0;
+  Mxlocal->local->fontalias = NULL;
+  Mxlocal->local->linetonum = 0;
   Mxlocal->region = region;
 }
 
 void
 mxrestoreGC(struct mxlocal *mxsave)
 {
-  int i;
-  struct fontlocal font[GTKFONTCASH];
-
-  if (Mxlocal->linetonum != 0) {
-    if (Disp) {
-      gdk_draw_lines(Mxlocal->pix, Mxlocal->gc,
-		     Mxlocal->points, Mxlocal->linetonum);
-      Mxlocal->linetonum = 0;
-      gdk_display_flush(Disp);
-    }
-  }
-
   if (Mxlocal->region) {
     gdk_region_destroy(Mxlocal->region);
     Mxlocal->region = NULL;
   }
 
-  memfree(Mxlocal->fontalias);
+  memfree(Mxlocal->local->fontalias);
+  Mxlocal->local->fontalias = Mxlocal->fontalias;
 
-  for (i = 0; i < GTKFONTCASH; i++) {
-    font[i] = Mxlocal->font[i];
-  }
+  if (Mxlocal->local->cairo)
+    cairo_destroy(Mxlocal->local->cairo);
+
+  Mxlocal->local->cairo = Mxlocal->cairo_save;
+  Mxlocal->local->offsety = Mxlocal->offsety;
+  Mxlocal->local->offsetx = Mxlocal->offsetx;
+  Mxlocal->local->pixel_dot = Mxlocal->pixel_dot;
 
   memcpy(Mxlocal, mxsave, sizeof(*mxsave));
-
-  for (i = 0; i < GTKFONTCASH; i++) {
-    Mxlocal->font[i] = font[i];
-  }
 }
 
 int
 mxd2p(int r)
 {
-  return nround(r * Mxlocal->pixel_dot);
+  return nround(r * Mxlocal->local->pixel_dot);
 }
 
 int
 mxd2px(int x)
 {
-  return nround(x * Mxlocal->pixel_dot + Mxlocal->offsetx);
+  return nround(x * Mxlocal->local->pixel_dot + Mxlocal->local->offsetx);
   //  return nround(x * Mxlocal->pixel_dot + Mxlocal->offsetx - Mxlocal->scrollx);
 }
 
 int
 mxd2py(int y)
 {
-  return nround(y * Mxlocal->pixel_dot + Mxlocal->offsety);
+  return nround(y * Mxlocal->local->pixel_dot + Mxlocal->local->offsety);
   //  return nround(y * Mxlocal->pixel_dot + Mxlocal->offsety - Mxlocal->scrolly);
 }
 
 int
 mxp2d(int r)
 {
-  return ceil(r / Mxlocal->pixel_dot);
+  return ceil(r / Mxlocal->local->pixel_dot);
   //  return nround(r / Mxlocal->pixel_dot);
-}
-
-static int
-calc_color(int c)
-{
-  c = c * Mxlocal->cdepth / 256;
-  if (c >= Mxlocal->cdepth) {
-    c = Mxlocal->cdepth - 1;
-  } else if (c < 0) {
-    c = 0;
-  }
-  return c * 65535 / (Mxlocal->cdepth - 1);
-}
-
-unsigned long
-RGB(int R, int G, int B)
-{
-  GdkColor col;
-
-  col.red = calc_color(R);
-  col.green = calc_color(G);
-  col.blue = calc_color(B);
-
-  gdk_colormap_alloc_color(&(Mxlocal->cmap), &col, TRUE, TRUE);
-
-  return col.pixel;
-}
-
-static int
-mxloadfont(char *fontalias, int top)
-{
-  struct fontlocal font;
-  struct fontmap *fcur;
-  char *fontname;
-  int twobyte = FALSE, type = NORMAL, fontcashfind, i, store, symbol = FALSE;
-  PangoFontDescription *pfont;
-  PangoStyle style;
-  PangoWeight weight;
-  static PangoLanguage *lang_ja = NULL, *lang = NULL;
-
-  fontcashfind = -1;
-
-
-  if (lang == NULL) {
-    lang = pango_language_from_string("en-US");
-    lang_ja = pango_language_from_string("ja-JP");
-  }
-
-  for (i = 0; i < Mxlocal->loadfont; i++) {
-    if (strcmp((Mxlocal->font[i]).fontalias, fontalias) == 0) {
-      fontcashfind=i;
-      break;
-    }
-  }
-
-  if (fontcashfind != -1) {
-    if (top) {
-      font = Mxlocal->font[fontcashfind];
-      for (i = fontcashfind - 1; i >= 0; i--) {
-	Mxlocal->font[i + 1] = Mxlocal->font[i];
-      }
-      Mxlocal->font[0] = font;
-      return 0;
-    } else {
-      return fontcashfind;
-    }
-  }
-
-  fontname = NULL;
-
-  for (fcur = Mxlocal->fontmaproot; fcur; fcur=fcur->next) {
-    if (strcmp(fontalias, fcur->fontalias) == 0) {
-      fontname = fcur->fontname;
-      type = fcur->type;
-      twobyte = fcur->twobyte;
-      symbol = fcur->symbol;
-      break;
-    }
-  }
-
-  pfont = pango_font_description_new();
-  pango_font_description_set_family(pfont, fontname);
-
-  switch (type) {
-  case ITALIC:
-  case BOLDITALIC:
-    style = PANGO_STYLE_ITALIC;
-    break;
-  case OBLIQUE:
-  case BOLDOBLIQUE:
-    style = PANGO_STYLE_OBLIQUE;
-    break;
-  default:
-    style = PANGO_STYLE_NORMAL;
-    break;
-  }
-  pango_font_description_set_style(pfont, style);
-
-  switch (type) {
-  case BOLD:
-  case BOLDITALIC:
-  case BOLDOBLIQUE:
-    weight = PANGO_WEIGHT_BOLD;
-    break;
-  default:
-    weight = PANGO_WEIGHT_NORMAL;
-    break;
-  }
-  pango_font_description_set_weight(pfont, weight);
-
-  if (Mxlocal->loadfont == GTKFONTCASH) {
-    i = GTKFONTCASH - 1;
-
-    memfree((Mxlocal->font[i]).fontalias);
-    Mxlocal->font[i].fontalias = NULL;
-
-    pango_font_description_free((Mxlocal->font[i]).font);
-    Mxlocal->font[i].font = NULL;
-
-    Mxlocal->loadfont--;
-  }
-
-  if (top) {
-    for (i = Mxlocal->loadfont - 1; i >= 0; i--) {
-      Mxlocal->font[i + 1] = Mxlocal->font[i];
-    }
-    store=0;
-  } else {
-    store = Mxlocal->loadfont;
-  }
-
-  Mxlocal->font[store].fontalias = nstrdup(fontalias);
-  if (Mxlocal->font[store].fontalias == NULL) {
-    pango_font_description_free(pfont);
-    Mxlocal->font[store].font = NULL;
-    return -1;
-  }
-
-  Mxlocal->font[store].font = pfont;
-  Mxlocal->font[store].fonttype = type;
-  Mxlocal->font[store].symbol = symbol;
-
-  Mxlocal->loadfont++;
-
-  return store;
-}
-
-static GdkColor *
-gtkRGB(struct mxlocal *gtklocal, int R, int G, int B)
-{
-  static GdkColor col;
-
-  R = R * gtklocal->cdepth / 256;
-  if (R >= gtklocal->cdepth) {
-    R = gtklocal->cdepth - 1;
-  } else if (R < 0) {
-    R = 0;
-  }
-
-  G = G * gtklocal->cdepth / 256;
-  if (G >= gtklocal->cdepth) {
-    G = gtklocal->cdepth - 1;
-  } else if (G < 0) {
-    G = 0;
-  }
-
-  B = B * gtklocal->cdepth / 256;
-  if (B >= gtklocal->cdepth) {
-    B = gtklocal->cdepth - 1;
-  } else if (B < 0) {
-    B = 0;
-  }
-
-  col.red = R * 65535 / (gtklocal->cdepth - 1);
-  col.green = G * 65535 / (gtklocal->cdepth - 1);
-  col.blue = B * 65535 / (gtklocal->cdepth - 1);
-
-  return &col;
-}
-
-static void
-draw_str(GdkDrawable *pix, char *str, int font, int size, int space, int *fw, int *ah, int *dh)
-{
-  PangoLayout *layout;
-  PangoAttribute *attr;
-  PangoAttrList *alist;
-  PangoContext *context;
-  PangoMatrix matrix = PANGO_MATRIX_INIT;
-  PangoLayoutIter *piter;
-  int x, y, w, h, width, height, baseline;
-
-  layout = gtk_widget_create_pango_layout(TopLevel, "");
-  context = pango_layout_get_context(layout);
-  pango_matrix_rotate(&matrix, Mxlocal->fontdir);
-  pango_context_set_matrix(context, &matrix);
-
-  alist = pango_attr_list_new();
-
-  attr = pango_attr_size_new_absolute(mxd2p(size) * PANGO_SCALE);
-  pango_attr_list_insert(alist, attr);
-
-  attr = pango_attr_letter_spacing_new(mxd2p(space) * PANGO_SCALE);
-  pango_attr_list_insert(alist, attr);
-
-  pango_layout_set_font_description(layout, Mxlocal->font[font].font);
-  pango_layout_set_attributes(layout, alist);
-
-  pango_layout_set_text(layout, str, -1);
-
-  pango_layout_get_pixel_size(layout, &w, &h);
-  piter = pango_layout_get_iter(layout);
-  baseline = pango_layout_iter_get_baseline(piter) / PANGO_SCALE;
-
-  x = mxd2px(Mxlocal->cpx);
-  y = mxd2py(Mxlocal->cpy);
-
-#if 0
-  if (pix) {
-    PangoLayoutLine *pline;
-    PangoRectangle prect;
-    int ascent, descent, s = mxd2p(size);
-
-    pline = pango_layout_get_line_readonly(layout, 0);
-    pango_layout_line_get_pixel_extents(pline, &prect, NULL);
-    ascent = PANGO_ASCENT(prect);
-    descent = PANGO_DESCENT(prect);
-
-    gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, FALSE, x, y  - baseline, s, s);
-
-    gdk_gc_set_rgb_fg_color(Mxlocal->gc, &red);
-    gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, FALSE, x, y - baseline, w, h);
-    gdk_draw_line(Mxlocal->pix, Mxlocal->gc, x, y - baseline, x + w, y - baseline);
-
-    gdk_gc_set_rgb_fg_color(Mxlocal->gc, &blue);
-
-    gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, FALSE, x + prect.x, y - ascent, prect.width, prect.height);
-    gdk_draw_line(Mxlocal->pix, Mxlocal->gc, x + prect.x, y, x + prect.x + prect.width, y);
-
-    gdk_gc_set_rgb_fg_color(Mxlocal->gc, &black);
-  }
-#endif
-
-  if (Mxlocal->fontdir <= 90) {
-    width = Mxlocal->fontcos * w + Mxlocal->fontsin * baseline;
-    height = Mxlocal->fontcos * baseline + Mxlocal->fontsin * w;
-    x -= Mxlocal->fontsin * baseline;
-    y -= height;
-  } else if (Mxlocal->fontdir < 180) {
-    width = - Mxlocal->fontcos * w + Mxlocal->fontsin * baseline;
-    height = - Mxlocal->fontcos * baseline + Mxlocal->fontsin * w;
-    x -= width;
-    y -= height - Mxlocal->fontsin * baseline;
-  } else if (Mxlocal->fontdir <= 270) {
-    width = - Mxlocal->fontcos * w - Mxlocal->fontsin * baseline;
-    height = - Mxlocal->fontcos * baseline - Mxlocal->fontsin * w;
-    x -= width + Mxlocal->fontsin * baseline;
-  } else if (Mxlocal->fontdir < 360) {
-    width = Mxlocal->fontcos * w - Mxlocal->fontsin * baseline;
-    height = Mxlocal->fontcos * baseline - Mxlocal->fontsin * w;
-    y += Mxlocal->fontsin * baseline;
-  }
-
-  if (fw)
-    *fw = w;
-
-  if (ah)
-    *ah = baseline;
-
-  if (dh)
-    *dh = h - baseline;
-
-  if (pix && str) {
-    gdk_draw_layout(pix, Mxlocal->gc, x, y, layout);
-    Mxlocal->cpx += mxp2d(w * Mxlocal->fontcos);
-    Mxlocal->cpy -= mxp2d(w * Mxlocal->fontsin);
-  }
-
-  pango_layout_iter_free(piter);
-  pango_attr_list_unref(alist);
-  g_object_unref(layout);
-}
-
-static int
-mx_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
-{
-  char code;
-  int *cpar, i, j, x, y, x1, y1, x2, y2, width, l, fontcashsize, fontcashdir;
-  char *cstr, *tmp, *tmp2;
-  double fontsize, fontspace, fontdir, fontsin, fontcos;
-  GdkRectangle rect;
-  GdkJoinStyle join;
-  GdkCapStyle cap;
-  GdkLineStyle style;
-  gint8 *dashlist = NULL;
-  int arcmode;
-  GdkPoint *xpoint;
-  GdkRegion *region;
-
-  code = *(char *) (argv[3]);
-  cpar = (int *) argv[4];
-  cstr = (char *) argv[5];
-
-  if (Disp == NULL || Mxlocal->gc == NULL ||  Mxlocal->pix == NULL)
-    return -1;
-
-  if (Mxlocal->linetonum != 0) {
-    if ((code != 'T') || (Mxlocal->linetonum >= LINETOLIMIT)) {
-      gdk_draw_lines(Mxlocal->pix, Mxlocal->gc,
-		     Mxlocal->points, Mxlocal->linetonum);
-      Mxlocal->linetonum = 0;
-    }
-  }
-  switch (code) {
-  case 'I':
-    break;
-  case '%': case 'X':
-    break;
-  case 'E':
-    gdk_display_flush(Disp);
-    break;
-  case 'V':
-    Mxlocal->offsetx = mxd2p(cpar[1]);
-    Mxlocal->offsety = mxd2p(cpar[2]);
-    Mxlocal->cpx = 0;
-    Mxlocal->cpy = 0;
-    if (cpar[5]) {
-      rect.x = mxd2p(cpar[1]);
-      rect.y = mxd2p(cpar[2]);
-      rect.width = mxd2p(cpar[3]) - rect.x;
-      rect.height = mxd2p(cpar[4]) - rect.y;
-
-      region = gdk_region_new();
-      gdk_region_union_with_rect(region, &rect);
-      if (Mxlocal->region) {
-        gdk_region_intersect(region, Mxlocal->region);
-      }
-      gdk_gc_set_clip_region(Mxlocal->gc, region);
-      gdk_region_destroy(region);
-    } else {
-      if (Mxlocal->region) {
-	gdk_gc_set_clip_region(Mxlocal->gc, Mxlocal->region);
-      } else {
-	rect.x = 0;
-	rect.y = 0;
-	rect.width = SHRT_MAX;
-	rect.height = SHRT_MAX;
-	gdk_gc_set_clip_rectangle(Mxlocal->gc, &rect);
-      }
-    }
-    break;
-  case 'A':
-    if (cpar[1] == 0) {
-      style = LineSolid;
-    } else {
-      style = LineOnOffDash;
-      dashlist = memalloc(sizeof(char) * cpar[1]);
-      if (dashlist == NULL)
-	break;
-      for (i = 0; i < cpar[1]; i++) {
-	dashlist[i] = mxd2p(cpar[6 + i]);
-        if (dashlist[i] <= 0) {
-	  dashlist[i]=1;
-	}
-      }
-    }
-
-    width = mxd2p(cpar[2]);
-
-    if (cpar[3] == 2) {
-      cap = CapProjecting;
-    } else if (cpar[3] == 1) {
-      cap = CapRound;
-    } else {
-      cap=CapButt;
-    }
-
-    if (cpar[4] == 2) {
-      join = JoinBevel;
-    } else if (cpar[4] == 1) {
-      join = JoinRound;
-    } else {
-      join = JoinMiter;
-    }
-    gdk_gc_set_line_attributes(Mxlocal->gc, width, style, cap, join);
-
-    if (style != LineSolid) {
-      gdk_gc_set_dashes(Mxlocal->gc, 0, dashlist, cpar[1]);
-    }
-
-    if (cpar[1] != 0) {
-      memfree(dashlist);
-    }
-    break;
-  case 'G':
-    gdk_gc_set_rgb_fg_color(Mxlocal->gc, gtkRGB(Mxlocal, cpar[1], cpar[2], cpar[3]));
-    break;
-  case 'M':
-    Mxlocal->cpx = cpar[1];
-    Mxlocal->cpy = cpar[2];
-    break;
-  case 'N':
-    Mxlocal->cpx += cpar[1];
-    Mxlocal->cpy += cpar[2];
-    break;
-  case 'L':
-    gdk_draw_line(Mxlocal->pix, Mxlocal->gc,
-              mxd2px(cpar[1]), mxd2py(cpar[2]),
-              mxd2px(cpar[3]), mxd2py(cpar[4]));
-    break;
-  case 'T':
-    x = mxd2px(cpar[1]);
-    y = mxd2py(cpar[2]);
-    if (Mxlocal->linetonum == 0) {
-      Mxlocal->points[0].x = mxd2px(Mxlocal->cpx);
-      Mxlocal->points[0].y = mxd2py(Mxlocal->cpy);;
-      Mxlocal->linetonum++;
-    }
-    Mxlocal->points[Mxlocal->linetonum].x = x;
-    Mxlocal->points[Mxlocal->linetonum].y = y;
-    Mxlocal->linetonum++;
-    Mxlocal->cpx = cpar[1];
-    Mxlocal->cpy = cpar[2];
-    break;
-  case 'C':
-    if (cpar[7]==0) {
-      gdk_draw_arc(Mxlocal->pix, Mxlocal->gc,
-		   FALSE,
-		   mxd2px(cpar[1] - cpar[3]),
-		   mxd2py(cpar[2] - cpar[4]),
-		   mxd2p(2 * cpar[3]),
-		   mxd2p(2 * cpar[4]),
-		   (int) cpar[5] * 64 / 100, (int) cpar[6] * 64 / 100);
-    } else {
-      if ((mxd2p(cpar[3]) < 2) && (mxd2p(cpar[4]) < 2)) {
-	gdk_draw_point(Mxlocal->pix, Mxlocal->gc,
-                   mxd2px(cpar[1]), mxd2py(cpar[2]));
-      } else {
-        if (cpar[7] == 1) {
-	  arcmode = ArcPieSlice;
-	} else {
-	  arcmode = ArcChord;
-	}
-	gdkgc_set_arc_mode(Mxlocal->gc, arcmode);
-	gdk_draw_arc(Mxlocal->pix, Mxlocal->gc,
-		     TRUE,
-		     mxd2px(cpar[1] - cpar[3]),
-		     mxd2py(cpar[2] - cpar[4]),
-		     mxd2p(2 * cpar[3]), mxd2p(2 * cpar[4]),
-		     (int) cpar[5] * 64 / 100, (int) cpar[6] * 64 / 100);
-      }
-    }
-    break;
-  case 'B':
-    if (cpar[1] <= cpar[3]) {
-      x1 = mxd2px(cpar[1]);
-      x2 = mxd2p(cpar[3] - cpar[1]);
-    } else {
-      x1 = mxd2px(cpar[3]);
-      x2 = mxd2p(cpar[1] - cpar[3]);
-    }
-    if (cpar[2] <= cpar[4]) {
-      y1 = mxd2py(cpar[2]);
-      y2 = mxd2p(cpar[4] - cpar[2]);
-    } else {
-      y1 = mxd2py(cpar[4]);
-      y2 = mxd2p(cpar[2] - cpar[4]);
-    }
-    if (cpar[5] == 0) {
-      gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, FALSE, 
-			 x1, y1, x2 + 1, y2 + 1);
-    } else {
-      gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, x1, y1, x2 + 1, y2 + 1);
-    }
-    break;
-  case 'P': 
-    gdk_draw_point(Mxlocal->pix, Mxlocal->gc,
-		   mxd2px(cpar[1]), mxd2py(cpar[2]));
-    break;
-  case 'R': 
-    if (cpar[1] == 0) break;
-    if ((xpoint = memalloc(sizeof(*xpoint) *cpar[1])) == NULL) break;
-    for (i = 0; i < cpar[1]; i++) {
-      xpoint[i].x = mxd2px(cpar[i * 2 + 2]);
-      xpoint[i].y = mxd2py(cpar[i * 2 + 3]);
-    }
-    gdk_draw_polygon(Mxlocal->pix, Mxlocal->gc, FALSE, xpoint, cpar[1]);
-    memfree(xpoint);
-    break;
-  case 'D': 
-    if (cpar[1] == 0) break;
-    if ((xpoint = memalloc(sizeof(*xpoint) *cpar[1])) == NULL) break;
-    for (i = 0; i < cpar[1]; i++) {
-      xpoint[i].x = mxd2px(cpar[i * 2 + 3]);
-      xpoint[i].y = mxd2py(cpar[i * 2 + 4]);
-    }
-    if (cpar[2] == 1) {
-      gdkgc_set_fill_rule(Mxlocal->gc, EvenOddRule);
-    } else {
-      gdkgc_set_fill_rule(Mxlocal->gc, WindingRule);
-    }
-
-    gdk_draw_polygon(Mxlocal->pix, Mxlocal->gc, cpar[2] != 0, xpoint, cpar[1]);
-    memfree(xpoint);
-    break;
-  case 'F':
-    memfree(Mxlocal->fontalias);
-    Mxlocal->fontalias = nstrdup(cstr);
-    break;
-  case 'H':
-    fontspace = cpar[2] / 72.0 * 25.4;
-    Mxlocal->fontspace = fontspace;
-    fontsize = cpar[1] / 72.0 * 25.4;
-    Mxlocal->fontsize = fontsize;
-    fontcashsize = mxd2p(fontsize);
-    fontcashdir = cpar[3];
-    fontdir = cpar[3] * MPI / 18000.0;
-    fontsin = sin(fontdir);
-    fontcos = cos(fontdir);
-    Mxlocal->fontdir = (cpar[3] % 36000) / 100.0;
-    if (Mxlocal->fontdir < 0) {
-      Mxlocal->fontdir += 360;
-    }
-    Mxlocal->fontsin = fontsin;
-    Mxlocal->fontcos = fontcos;
-
-    Mxlocal->loadfontf = mxloadfont(Mxlocal->fontalias, TRUE);
-    break;
-  case 'S':
-    if (Mxlocal->loadfontf == -1)
-      break;
-
-    tmp = strdup(cstr);
-    if (tmp == NULL)
-      break;
-
-    l = strlen(cstr);
-    for (j = i = 0; i <= l; i++, j++) {
-      char c;
-      if (cstr[i] == '\\') {
-	i++;
-        if (cstr[i] == 'x') {
-	  i++;
-	  c = toupper(cstr[i]);
-          if (c >= 'A') {
-	    tmp[j] = c - 'A' + 10;
-	  } else { 
-	    tmp[j] = cstr[i] - '0';
-	  }
-
-	  i++;
-	  tmp[j] *= 16;
-	  c = toupper(cstr[i]);
-          if (c >= 'A'){
-	    tmp[j] += c - 'A' + 10;
-	  } else {
-	    tmp[j] += cstr[i] - '0';
-	  }
-        } else if (cstr[i] != '\0') {
-          tmp[j] = cstr[i];
-        }
-      } else {
-        tmp[j] = cstr[i];
-      }
-    }
-
-    tmp2= iso8859_to_utf8(tmp);
-    if (tmp2 == NULL) {
-      free(tmp);
-      break;
-    }
-
-    if (Mxlocal->font[0].symbol) {
-      char *ptr;
-
-      ptr = ascii2greece(tmp2);
-      if (ptr) {
-	free(tmp2);
-	tmp2 = ptr;
-      }
-    }
-    draw_str(Mxlocal->pix, tmp2, 0, Mxlocal->fontsize, Mxlocal->fontspace, NULL, NULL, NULL);
-    free(tmp2);
-    free(tmp);
-    break;
-  case 'K':
-    tmp2 = sjis_to_utf8(cstr);
-    if (tmp2 == NULL) 
-      break;
-    draw_str(Mxlocal->pix, tmp2, 0, Mxlocal->fontsize, Mxlocal->fontspace, NULL, NULL, NULL);
-    free(tmp2);
-    break;
-  default:
-    break;
-  }
-  return 0;
-}
-
-static int
-mx_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
-{
-  struct mxlocal *mxlocal;
-  char ch[3], *font, *tmp;
-  double size, dir, s,c ;
-  //  XChar2b kanji[1];
-  int cashpos, width;;
-  //  XFontStruct *fontstruct;
-
-  ch[0] = (*(unsigned int *)(argv[3]) & 0xff);
-  ch[1] = (*(unsigned int *)(argv[3]) & 0xff00) >> 8;
-  ch[2] = '\0';
-
-  size = (*(int *)(argv[4])) / 72.0 * 25.4;
-  font = (char *)(argv[5]);
-
-  if (_getobj(obj, "_local", inst, &mxlocal))
-    return 1;
-
-  cashpos = mxloadfont(font, FALSE);
-
-  if (cashpos == -1) {
-    *(int *) rval = nround(size * 0.600);
-    return 0;
-  }
-
-  dir = Mxlocal->fontdir;
-  s = Mxlocal->fontsin;
-  c = Mxlocal->fontcos;
-
-  Mxlocal->fontdir = 0;
-  Mxlocal->fontsin = 0;
-  Mxlocal->fontcos = 1;
-
-  if (ch[1]) {
-    tmp = sjis_to_utf8(ch);
-    draw_str(NULL, tmp, cashpos, size, 0, &width, NULL, NULL);
-    *(int *) rval = mxp2d(width);
-    free(tmp);
-  } else {
-    tmp = iso8859_to_utf8(ch);
-    draw_str(NULL, tmp, cashpos, size, 0, &width, NULL, NULL);
-    *(int *) rval = mxp2d(width);
-    free(tmp);
-  }
-
-  Mxlocal->fontsin = s;
-  Mxlocal->fontcos = c;
-  Mxlocal->fontdir = dir;
-
-  return 0;
-}
-
-static int
-mx_charheight(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
-{
-  struct mxlocal *mxlocal;
-  char *font;
-  double size, dir, s, c;
-  char *func;
-  int height, descent, ascent, cashpos;
-  //  XFontStruct *fontstruct;
-  struct fontmap *fcur;
-  int twobyte;
-
-  func = (char *)argv[1];
-  size = (*(int *)(argv[3])) / 72.0 * 25.4;
-  font = (char *)(argv[4]);
-
-  if (_getobj(obj, "_local", inst, &mxlocal))
-    return 1;
-
-  if (strcmp0(func, "_charascent") == 0) {
-    height = TRUE;
-  } else {
-    height = FALSE;
-  }
-
-  fcur = Mxlocal->fontmaproot;
-  twobyte = FALSE;
-
-  while (fcur) {
-    if (strcmp(font, fcur->fontalias) == 0) {
-      twobyte = fcur->twobyte;
-      break;
-    }
-    fcur = fcur->next;
-  }
-
-  cashpos = mxloadfont(font, FALSE);
-
-  if (cashpos < 0) {
-    if (height) {
-      *(int *) rval = nround(size * 0.562);
-    } else {
-      *(int *) rval = nround(size * 0.250);
-    }
-  }
-
-  dir = Mxlocal->fontdir;
-  s = Mxlocal->fontsin;
-  c = Mxlocal->fontcos;
-
-  Mxlocal->fontdir = 0;
-  Mxlocal->fontsin = 0;
-  Mxlocal->fontcos = 1;
-
-  draw_str(NULL, "A", cashpos, size, 0, NULL, &ascent, &descent);
-
-  if (height) {
-    *(int *)rval = mxp2d(ascent);
-  } else {
-    *(int *)rval = mxp2d(descent);
-  }
-
-  /*
-
-  if (cashpos != -1) {
-    fontstruct = (mxlocal->font[cashpos]).fontstruct;    
-    if (fontstruct) {
-      if (twobyte) {
-        if (height) {
-	  *(int *)rval = nround(size * 0.791);
-	} else {
-	  *(int *)rval = nround(size * 0.250);
-	}
-      } else {
-        if {
-	  (height) *(int *)rval = nround(size * 0.562);
-	} else {
-	  *(int *)rval = nround(size * 0.250);
-	}
-      }
-    } else {
-      if (height) {
-	*(int *) rval = mxp2d(fontstruct->ascent);
-      } else {
-	*(int *) rval = mxp2d(fontstruct->descent);
-      }
-    }
-  } else {
-    if (height) {
-      *(int *) rval = nround(size * 0.562);
-    } else {
-      *(int *) rval = nround(size * 0.250);
-    }
-  }
-  */
-
-  Mxlocal->fontsin = s;
-  Mxlocal->fontcos = c;
-  Mxlocal->fontdir = dir;
-
-  return 0;
 }
 
 static int
@@ -2396,6 +1550,31 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 
 }
 
+static int
+gtk_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  char code, *cstr;
+  int *cpar;
+  struct gtklocal *gtklocal;
+  struct gra2cairo_local *local;
+
+  local = (struct gra2cairo_local *) argv[2];
+
+  code = *(char *) (argv[3]);
+  cpar = (int *) argv[4];
+  cstr = argv[5];
+
+  switch (code) {
+  case 'E':
+    break;
+  }
+
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
+    return 1;
+
+  return 0;
+}
+
 static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
   {"done", NVFUNC, NEXEC, menudone, NULL, 0},
@@ -2410,12 +1589,12 @@ static struct objtable gtkmenu[] = {
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
-  {"_output", NVFUNC, 0, mx_output, NULL, 0},
-  {"_charwidth", NIFUNC, 0, mx_charwidth, NULL, 0},
-  {"_charascent", NIFUNC, 0, mx_charheight, NULL, 0},
-  {"_chardescent", NIFUNC, 0, mx_charheight, NULL, 0},
+  {"_output", NVFUNC, 0, gtk_output, NULL, 0},
+  {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
+  {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
+  {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
+  {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
-  {"_local", NPOINTER, 0, NULL, NULL, 0},
 };
 
 #define TBLNUM (sizeof(gtkmenu) / sizeof(*gtkmenu))

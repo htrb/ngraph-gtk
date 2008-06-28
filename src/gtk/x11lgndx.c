@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.5 2008/06/13 13:48:32 hito Exp $
+ * $Id: x11lgndx.c,v 1.6 2008/06/28 00:53:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,6 +36,7 @@
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "x11menu.h"
+#include "ogra2cairo.h"
 #include "ox11menu.h"
 #include "x11commn.h"
 
@@ -157,7 +158,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
     mxsaveGC(gc, win, NULL, 0, 0, &mxsave, dpi, NULL);
     GC = _GRAopen(chkobjectname(Menulocal.obj), "_output",
 		  Menulocal.outputobj, Menulocal.inst, Menulocal.output, -1,
-		  -1, -1, NULL, Mxlocal);
+		  -1, -1, NULL, Mxlocal->local);
     if (GC >= 0) {
       GRAview(GC, mxp2d(minx), mxp2d(miny), mxp2d(maxx), mxp2d(maxy), 1);
 

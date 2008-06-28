@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.42 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11view.c,v 1.43 2008/06/28 00:53:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,6 +40,7 @@
 
 #include "x11gui.h"
 #include "x11dialg.h"
+#include "ogra2cairo.h"
 #include "ox11menu.h"
 #include "x11menu.h"
 #include "x11graph.h"
@@ -586,7 +587,7 @@ ViewerWinSetup(void)
   int x, y, width, height;
 
   d = &(NgraphApp.Viewer);
-  d->win = NgraphApp.Viewer.Win->window;
+  d->win = d->Win->window;
   Menulocal.GRAoid = -1;
   Menulocal.GRAinst = NULL;
   d->Mode = PointB;
@@ -621,15 +622,15 @@ ViewerWinSetup(void)
 
   d->hscroll = gtk_range_get_value(GTK_RANGE(d->HScroll));
   d->vscroll = gtk_range_get_value(GTK_RANGE(d->VScroll));
-
   g_signal_connect(d->Win, "expose-event", G_CALLBACK(ViewerEvPaint), NULL);
   g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), NULL);
-  init_dnd(d);
 
   g_signal_connect(d->HScroll, "change-value", G_CALLBACK(ViewerEvHScroll), NULL);
   g_signal_connect(d->VScroll, "change-value", G_CALLBACK(ViewerEvVScroll), NULL);
   g_signal_connect(d->HScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), GINT_TO_POINTER(1));
   g_signal_connect(d->VScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), NULL);
+
+  init_dnd(d);
 
   gtk_widget_add_events(d->Win,
 			GDK_POINTER_MOTION_MASK |
@@ -638,6 +639,7 @@ ViewerWinSetup(void)
 			GDK_KEY_PRESS_MASK |
 			GDK_KEY_RELEASE_MASK);
   GTK_WIDGET_SET_FLAGS(d->Win, GTK_CAN_FOCUS);
+
   g_signal_connect(d->Win, "button-press-event", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(d->Win, "button-release-event", G_CALLBACK(ViewerEvButtonUp), d);
   g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
@@ -645,7 +647,6 @@ ViewerWinSetup(void)
   g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
   g_signal_connect(d->Win, "key-press-event", G_CALLBACK(ViewerEvKeyDown), d);
   g_signal_connect(d->Win, "key-release-event", G_CALLBACK(ViewerEvKeyUp), d);
-
   d->popup = create_popup_menu(d);
   gtk_widget_show_all(d->popup);
   gtk_menu_attach_to_widget(GTK_MENU(d->popup), NgraphApp.Viewer.Win, NULL);
@@ -4060,7 +4061,9 @@ ViewerWinUpdate(int clear)
     mx_redraw(Menulocal.obj, Menulocal.inst);
   } else if (region) {
     Mxlocal->region = region;
+    gra2cairo_clip_region(Mxlocal->local, region);
     mx_redraw(Menulocal.obj, Menulocal.inst);
+    gra2cairo_clip_region(Mxlocal->local, NULL);
     Mxlocal->region = NULL;
   }
   gdk_window_invalidate_rect(d->win, NULL, TRUE);
@@ -4290,6 +4293,11 @@ create_pix(int w, int h)
   if (h == 0)
     h = 1;
 
+  if (Mxlocal->local->cairo)
+    cairo_destroy(Mxlocal->local->cairo);
+
+  Mxlocal->local->cairo = NULL;
+
   if (Mxlocal->pix)
     g_object_unref(Mxlocal->pix);
 
@@ -4302,6 +4310,10 @@ create_pix(int w, int h)
   gdk_gc_set_clip_rectangle(Mxlocal->gc, &rect);
   gdk_gc_set_rgb_fg_color(Mxlocal->gc, &white);
   gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, 0, 0, w, h);
+
+  Mxlocal->local->cairo = gdk_cairo_create(Mxlocal->pix);
+  Mxlocal->local->offsetx = 0;
+  Mxlocal->local->offsety = 0;
 }
 
 void
@@ -4313,6 +4325,10 @@ OpenGC(void)
     return;
 
   Disp = gdk_display_get_default();
+
+  Mxlocal->local->pixel_dot = Mxlocal->windpi / 25.4 / 100;
+  Mxlocal->local->offsetx = 0;
+  Mxlocal->local->offsety = 0;
 
   width = mxd2p(Menulocal.PaperWidth);
   height = mxd2p(Menulocal.PaperHeight);
@@ -4329,17 +4345,8 @@ OpenGC(void)
 
   Mxlocal->offsetx = 0;
   Mxlocal->offsety = 0;
-  Mxlocal->cpx = 0;
-  Mxlocal->cpy = 0;
-  Mxlocal->pixel_dot = Mxlocal->windpi / 25.4 / 100;
   Mxlocal->fontalias = NULL;
 
-  for (i = 0; i < GTKFONTCASH; i++)
-    (Mxlocal->font[i]).fontalias = NULL;
-
-  Mxlocal->loadfont = 0;
-  Mxlocal->loadfontf = -1;
-  Mxlocal->linetonum = 0;
   Mxlocal->scrollx = 0;
   Mxlocal->scrolly = 0;
   Mxlocal->region = NULL;
@@ -4424,7 +4431,7 @@ ChangeDPI(int redraw)
 
   if (w != width || h != height) {
     create_pix(width, height);
-    mx_redraw(Menulocal.obj, Menulocal.inst);
+    //    mx_redraw(Menulocal.obj, Menulocal.inst);
   }
 
   XPos = width * ratex;
@@ -4466,24 +4473,11 @@ CloseGC(void)
   if (Mxlocal->gc == 0)
     return;
  
-  if (Mxlocal->linetonum != 0) {
-    gdk_draw_lines(Mxlocal->pix, Mxlocal->gc, Mxlocal->points, Mxlocal->linetonum);
-    Mxlocal->linetonum = 0;
-  }
-
   gdk_display_flush(Disp);
   g_object_unref(G_OBJECT(Mxlocal->gc));
   Mxlocal->gc = 0;
 
   memfree(Mxlocal->fontalias);
-  for (i = 0; i < GTKFONTCASH; i++) {
-    if (Mxlocal->font[i].fontalias != NULL) {
-      memfree(Mxlocal->font[i].fontalias);
-      pango_font_description_free(Mxlocal->font[i].font);
-      Mxlocal->font[i].fontalias = NULL;
-      Mxlocal->font[i].font = NULL;
-    }
-  }
 
   if (Mxlocal->region != NULL)
     gdk_region_destroy(Mxlocal->region);
@@ -4497,21 +4491,13 @@ void
 ReopenGC(void)
 {
   if (Mxlocal->gc != 0) {
-    if (Mxlocal->linetonum != 0) {
-      gdk_draw_lines(Mxlocal->pix, Mxlocal->gc, Mxlocal->points, Mxlocal->linetonum);
-      Mxlocal->linetonum = 0;
-    }
     gdk_display_flush(Disp);
     g_object_unref(G_OBJECT(Mxlocal->gc));
   }
   Mxlocal->gc = gdk_gc_new(Mxlocal->win);
   Mxlocal->offsetx = 0;
   Mxlocal->offsety = 0;
-  Mxlocal->cpx = 0;
-  Mxlocal->cpy = 0;
-  Mxlocal->pixel_dot = Mxlocal->windpi / 25.4 / 100;
-  Mxlocal->loadfontf = -1;
-  Mxlocal->linetonum = 0;
+  Mxlocal->local->pixel_dot = Mxlocal->windpi / 25.4 / 100;
 
   if (Mxlocal->region != NULL)
     gdk_region_destroy(Mxlocal->region);

@@ -1,3 +1,9 @@
+2008-06-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2x11.c (gtkinit): gtkclose() is now called when
+	"delete-event" signal is emitted.
+	object 'gra2gtk' is now chiled of 'gra2cairo'.
+
 2008-06-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairofile.c: add.

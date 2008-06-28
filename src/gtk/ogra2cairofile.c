@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.6 2008/06/26 06:54:00 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.7 2008/06/28 00:53:43 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -184,12 +184,13 @@ init_cairo(struct objlist *obj, char *inst, struct gra2cairo_local *local, int w
   if (cairo == NULL)
     return 1;
 
-  if (local->cairo != NULL)
+  if (local->cairo)
     cairo_destroy(local->cairo);
+
+  local->cairo = cairo;
 
   _getobj(obj, "text2path", inst, &t2p);
 
-  local->cairo = cairo;
   local->text2path = t2p;
 
   return 0;

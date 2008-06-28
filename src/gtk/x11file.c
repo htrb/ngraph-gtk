@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.14 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11file.c,v 1.15 2008/06/28 00:53:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,6 +48,7 @@
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "x11menu.h"
+#include "ogra2cairo.h"
 #include "ox11menu.h"
 #include "x11graph.h"
 #include "x11view.h"
@@ -3648,7 +3649,6 @@ draw_type_pixbuf(struct objlist *obj, int i)
     gc = gdk_gc_new(TopLevel->window);
   }
 
-
   pix = gdk_pixmap_new(TopLevel->window, width, height, -1);
 
   color.red = Menulocal.bg_r * 0xff;
@@ -3667,10 +3667,11 @@ draw_type_pixbuf(struct objlist *obj, int i)
   getobj(obj, "B2", i, 0, NULL, &fb2);
 
   dpi = height * 254;
+  dpi = DPI_MAX;
   mxsaveGC(gc, pix, NULL, 0, 0, &mxsave, dpi, NULL);
   ggc = _GRAopen(chkobjectname(Menulocal.obj), "_output",
 		 Menulocal.outputobj, Menulocal.inst, Menulocal.output, -1,
-		 -1, -1, NULL, Mxlocal);
+		 -1, -1, NULL, Mxlocal->local);
   if (ggc < 0) {
     _GRAclose(ggc);
     mxrestoreGC(&mxsave);

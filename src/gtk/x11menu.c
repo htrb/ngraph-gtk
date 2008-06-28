@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.18 2008/06/23 01:11:38 hito Exp $
+ * $Id: x11menu.c,v 1.19 2008/06/28 00:53:44 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -32,6 +32,7 @@
 #include "main.h"
 #include "x11bitmp.h"
 #include "x11dialg.h"
+#include "ogra2cairo.h"
 #include "ox11menu.h"
 #include "x11menu.h"
 #include "x11info.h"
@@ -1017,10 +1018,11 @@ create_markpixmap(GtkWidget *win)
     pix = gdk_pixmap_new(win->window, MARK_PIX_SIZE, MARK_PIX_SIZE, -1);
     gdk_gc_set_rgb_fg_color(gc, &white);
     gdk_draw_rectangle(pix, gc, TRUE, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
+    /*
     mxsaveGC(gc, pix, NULL, 0, 0, &mxsave, dpi, NULL);
     gra = _GRAopen(chkobjectname(Menulocal.obj), "_output",
 		   Menulocal.outputobj, Menulocal.inst, Menulocal.output, -1,
-		   -1, -1, NULL, Mxlocal);
+		   -1, -1, NULL, Mxlocal->local);
     if (gra >= 0) {
       GRAview(gra, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE, 0);
       GRAlinestyle(gra, 0, NULL, 0, 0, 0, 1000);
@@ -1028,6 +1030,7 @@ create_markpixmap(GtkWidget *win)
     }
     _GRAclose(gra);
     mxrestoreGC(&mxsave);
+    */
     NgraphApp.markpix[i] = pix;
   }
   g_object_unref(G_OBJECT(gc));
