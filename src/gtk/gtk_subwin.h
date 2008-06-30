@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.h,v 1.3 2008/06/16 00:41:06 hito Exp $
+ * $Id: gtk_subwin.h,v 1.4 2008/06/30 13:03:22 hito Exp $
  */
 
 #ifndef _GTK_SUBWIN_HEADER
@@ -7,6 +7,9 @@
 
 #include "gtk_liststore.h"
 
+#include "ngraph.h"
+#include "object.h"
+#include "ogra2cairo.h"
 #include "x11menu.h"
 #include "ox11menu.h"
 

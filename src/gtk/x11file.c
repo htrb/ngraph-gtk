@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.17 2008/06/30 08:43:34 hito Exp $
+ * $Id: x11file.c,v 1.18 2008/06/30 13:03:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,6 +49,7 @@
 #include "x11dialg.h"
 #include "x11menu.h"
 #include "ogra2cairo.h"
+#include "ogra2gdk.h"
 #include "ox11menu.h"
 #include "x11graph.h"
 #include "x11view.h"

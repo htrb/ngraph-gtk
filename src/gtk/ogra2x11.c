@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.6 2008/06/28 00:53:43 hito Exp $
+ * $Id: ogra2x11.c,v 1.7 2008/06/30 13:03:22 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -118,17 +118,8 @@ static int gtkstorememory(struct objlist *obj, char *inst, char *rval,
 static int gtkredraw(struct objlist *obj, char *inst, char *rval, int argc,
 		     char **argv);
 static int dot2pixel(struct gtklocal *gtklocal, int r);
-static int dot2pixelx(struct gtklocal *gtklocal, int x);
-static int dot2pixely(struct gtklocal *gtklocal, int y);
-static int pixel2dot(struct gtklocal *gtklocal, int r);
-static int pixel2dotx(struct gtklocal *gtklocal, int x);
-static int pixel2doty(struct gtklocal *gtklocal, int y);
 static int gtk_output(struct objlist *obj, char *inst, char *rval, int argc,
 		      char **argv);
-static int gtk_charwidth(struct objlist *obj, char *inst, char *rval,
-			 int argc, char **argv);
-static int gtk_charheight(struct objlist *obj, char *inst, char *rval,
-			  int argc, char **argv);
 
 static GdkColor *gtkRGB(struct gtklocal *gtklocal, int R, int G, int B);
 

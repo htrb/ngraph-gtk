@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.9 2008/06/23 01:11:38 hito Exp $
+ * $Id: x11menu.h,v 1.10 2008/06/30 13:03:22 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -264,5 +264,6 @@ GdkPixbuf *create_pixbuf_from_xpm(GtkWidget *win, char **xpm);
 void QuitGUI(void);
 void set_draw_lock(int lock);
 void SetMoveButtonState(gboolean state);
+int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 
 #endif

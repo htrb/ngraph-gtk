@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.16 2008/06/30 05:13:39 hito Exp $
+ * $Id: ox11menu.c,v 1.17 2008/06/30 13:03:22 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1309,19 +1309,19 @@ void
 mx_inslist(struct objlist *obj, char *inst,
 	   struct objlist *aobj, char *ainst, char *afield, int addn)
 {
-  int GC;
+  int gc;
 
-  _getobj(obj, "_GC", inst, &GC);
-  GRAinslist(GC, aobj, ainst, chkobjectname(aobj), afield, addn);
+  _getobj(obj, "_GC", inst, &gc);
+  GRAinslist(gc, aobj, ainst, chkobjectname(aobj), afield, addn);
 }
 
 void
 mx_dellist(struct objlist *obj, char *inst, int deln)
 {
-  int GC;
+  int gc;
 
-  _getobj(obj, "_GC", inst, &GC);
-  GRAdellist(GC, deln);
+  _getobj(obj, "_GC", inst, &gc);
+  GRAdellist(gc, deln);
 }
 
 static int

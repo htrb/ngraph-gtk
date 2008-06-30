@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.9 2008/06/30 05:13:38 hito Exp $
+ * $Id: ogra2cairo.c,v 1.10 2008/06/30 13:03:22 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -253,7 +253,7 @@ int
 gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region)
 {
   if (local == NULL || local->cairo == NULL)
-    return;
+    return 1;
 
   cairo_new_path(local->cairo);
   if (region) {
@@ -262,6 +262,7 @@ gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region)
   } else {
     cairo_reset_clip(local->cairo);
   }
+  return 0;
 }
 
 int 
@@ -288,7 +289,7 @@ gra2cairo_clear_region(struct gra2cairo_local *local)
   return 0;
 }
 
-static void
+static int
 gra2cairo_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
@@ -307,6 +308,8 @@ gra2cairo_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **
   _getobj(obj, "_local", inst, &local);
 
   local->pixel_dot = dpi / (DPI_MAX * 1.0);
+
+  return 0;
 }
 
 static int
@@ -1016,7 +1019,7 @@ static struct objtable gra2cairo[] = {
   {"init", NVFUNC, NEXEC, gra2cairo_init, NULL, 0}, 
   {"done", NVFUNC, NEXEC, gra2cairo_done, NULL, 0}, 
   {"next", NPOINTER, 0, NULL, NULL, 0}, 
-  {"dpi", NINT, NREAD | NWRITE, gra2cairo_set_dpi, NULL, NULL, 0},
+  {"dpi", NINT, NREAD | NWRITE, gra2cairo_set_dpi, NULL, 0},
   {"flush",NVFUNC,NREAD|NEXEC,gra2cairo_flush,"",0},
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
   {"_local", NPOINTER, 0, NULL, NULL, 0}, 
