@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.16 2008/06/30 05:13:39 hito Exp $
+ * $Id: x11file.c,v 1.17 2008/06/30 08:43:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3684,7 +3684,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
   case 0:
     getobj(obj, "mark_type", i, 0, NULL, &marktype);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    GRAmark(ggc, marktype, height / 2, height / 2, height - 6,
+    GRAmark(ggc, marktype, height / 2, height / 2, height - 2,
 	    fr, fg, fb, fr2, fg2, fb2);
     break;
   case 1:

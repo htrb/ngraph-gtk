@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.3 2008/06/12 09:04:24 hito Exp $
+ * $Id: gra.c,v 1.4 2008/06/30 08:43:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1195,13 +1195,13 @@ void GRAmark(int GC,int type,int x0,int y0,int size,
       }
       d=sqrt(3.0);
       po[0]=x0;
-      po[1]=y0-sgn*size/d;
-      po[2]=x0+size/2;
-      po[3]=y0+sgn*size/d/2;
-      po[4]=x0-size/2;
-      po[5]=y0+sgn*size/d/2;
+      po[1]=y0-sgn*size/2;
+      po[2]=x0+size*d/4;
+      po[3]=y0+sgn*size/4;
+      po[4]=x0-size*d/4;
+      po[5]=y0+sgn*size/4;
       po[6]=x0;
-      po[7]=y0-sgn*size/d;
+      po[7]=y0-sgn*size/2;
       if (type2==0) {
         GRAcolor(GC,fr,fg,fb);
         GRAdrawpoly(GC,4,po,1);
@@ -1263,13 +1263,13 @@ void GRAmark(int GC,int type,int x0,int y0,int size,
         sgn=1;
       }
       d=sqrt(3.0);
-      po[0]=x0-sgn*size/d;
+      po[0]=x0-sgn*size/2;
       po[1]=y0;
-      po[2]=x0+sgn*size/d/2;
-      po[3]=y0+size/2;
-      po[4]=x0+sgn*size/d/2;
-      po[5]=y0-size/2;
-      po[6]=x0-sgn*size/d;
+      po[2]=x0+sgn*size/4;
+      po[3]=y0+size*d/4;
+      po[4]=x0+sgn*size/4;
+      po[5]=y0-size*d/4;
+      po[6]=x0-sgn*size/2;
       po[7]=y0;
       if (type2==0) {
         GRAcolor(GC,fr,fg,fb);

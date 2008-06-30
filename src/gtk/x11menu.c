@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.20 2008/06/30 05:13:39 hito Exp $
+ * $Id: x11menu.c,v 1.21 2008/06/30 08:43:35 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1035,7 +1035,7 @@ create_toolbar_pixmap(GtkWidget *win)
   createpixmap(win, COMMAND2_NUM, Command2_data);
 }
 
-#define MARK_PIX_SIZE 24
+#define MARK_PIX_SIZE 28
 static void
 create_markpixmap(GtkWidget *win)
 {
@@ -1065,7 +1065,7 @@ create_markpixmap(GtkWidget *win)
 	if (gra >= 0) {
 	  GRAview(gra, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE, 0);
 	  GRAlinestyle(gra, 0, NULL, 1, 0, 0, 1000);
-	  GRAmark(gra, i, MARK_PIX_SIZE / 2, MARK_PIX_SIZE / 2, MARK_PIX_SIZE - 6, R, G, B, R2, G2, B2);
+	  GRAmark(gra, i, MARK_PIX_SIZE / 2, MARK_PIX_SIZE / 2, MARK_PIX_SIZE - 4, R, G, B, R2, G2, B2);
 	}
 	_GRAclose(gra);
       }

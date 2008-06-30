@@ -1,5 +1,9 @@
 2008-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (MARK_PIX_SIZE): chage mark pix size.
+
+	* src/gra.c (GRAmark): fix size of triangle.
+
 	* src/gtk/ox11menu.c: remove mxsaveGC() and mxrestoreGC().
 
 	* src/gtk/x11file.c (draw_type_pixbuf): use gra2gdk.
