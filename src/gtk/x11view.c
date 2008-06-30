@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.43 2008/06/28 00:53:44 hito Exp $
+ * $Id: x11view.c,v 1.44 2008/06/30 05:13:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -609,8 +609,8 @@ ViewerWinSetup(void)
   d->allclear = TRUE;
   d->ignoreredraw = FALSE;
   region = NULL;
-  OpenGRA();
   OpenGC();
+  OpenGRA();
   SetScroller();
   ChangeDPI(TRUE);
   gdk_window_get_position(d->win, &x, &y);
@@ -4312,6 +4312,10 @@ create_pix(int w, int h)
   gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, 0, 0, w, h);
 
   Mxlocal->local->cairo = gdk_cairo_create(Mxlocal->pix);
+#if 0
+  cairo_set_tolerance(Mxlocal->local->cairo, 0.1);
+  cairo_set_antialias(Mxlocal->local->cairo, CAIRO_ANTIALIAS_NONE);
+#endif
   Mxlocal->local->offsetx = 0;
   Mxlocal->local->offsety = 0;
 }
@@ -4319,7 +4323,7 @@ create_pix(int w, int h)
 void
 OpenGC(void)
 {
-  int width, height, i;
+  int width, height;
 
   if (Mxlocal->gc != 0)
     return;
@@ -4431,7 +4435,7 @@ ChangeDPI(int redraw)
 
   if (w != width || h != height) {
     create_pix(width, height);
-    //    mx_redraw(Menulocal.obj, Menulocal.inst);
+    mx_redraw(Menulocal.obj, Menulocal.inst);
   }
 
   XPos = width * ratex;
@@ -4468,8 +4472,6 @@ ChangeDPI(int redraw)
 void
 CloseGC(void)
 {
-  int i;
-
   if (Mxlocal->gc == 0)
     return;
  
@@ -4555,12 +4557,12 @@ Draw(int SelectFile)
   region = NULL;
 
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
-    _exeobj(Menulocal.GRAobj, "clear", Menulocal.GRAinst, 0, NULL);
     d->ignoreredraw = TRUE;
+    _exeobj(Menulocal.GRAobj, "clear", Menulocal.GRAinst, 0, NULL);
     //    ResetEvent();    /* XmUpdateDisplay(d->Win); */
-    d->ignoreredraw = FALSE;
     _exeobj(Menulocal.GRAobj, "draw", Menulocal.GRAinst, 0, NULL);
     _exeobj(Menulocal.GRAobj, "flush", Menulocal.GRAinst, 0, NULL);
+    d->ignoreredraw = FALSE;
   }
 
   d->ShowFrame = SShowFrame;

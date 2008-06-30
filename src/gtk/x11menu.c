@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.19 2008/06/28 00:53:44 hito Exp $
+ * $Id: x11menu.c,v 1.20 2008/06/30 05:13:39 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -33,6 +33,7 @@
 #include "x11bitmp.h"
 #include "x11dialg.h"
 #include "ogra2cairo.h"
+#include "ogra2gdk.h"
 #include "ox11menu.h"
 #include "x11menu.h"
 #include "x11info.h"
@@ -493,6 +494,48 @@ QuitGUI(void)
     Hide_window = TRUE;
   }
 }
+
+int
+find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal)
+{
+  static struct objlist *obj = NULL, *robj = NULL;
+  static char *inst = NULL, *oname = "gra2gdk";
+  static int pos;
+  static struct gra2cairo_local *local = NULL;
+  int id;
+
+  if (obj == NULL) {
+    obj = chkobject(oname);
+    pos = getobjtblpos(obj, "_output", &robj);
+  }
+
+  if (obj == NULL)
+    return FALSE;
+
+  inst = chkobjinst(obj, 0);
+  if (inst == NULL) {
+    id = newobj(obj);
+    if (id < 0)
+      return FALSE;
+
+    inst = chkobjinst(obj, 0);
+    _getobj(obj, "_local", inst, &local);
+  }
+
+  if (inst == NULL) {
+    return FALSE;
+  }
+
+  *routput = pos;
+  *i = inst;
+  *o = obj;
+  *ro = robj;
+  *name = oname;
+  *rlocal = local;
+
+  return TRUE;
+}
+
 
 static GtkWidget * 
 create_menu_item(GtkWidget *menu, gchar *label, gboolean use_stock,
@@ -997,43 +1040,38 @@ static void
 create_markpixmap(GtkWidget *win)
 {
   GdkPixmap *pix;
-  int dpi, gra;
-  GdkGC *gc;
-  struct mxlocal mxsave;
-  int i, R, G, B, R2, G2, B2;
-  GdkColor white;
+  int gra, i, R, G, B, R2, G2, B2, found, output;
+  struct objlist *obj, *robj;
+  char *inst, *name;
+  struct gra2cairo_local *local;
 
   R = G = B = 0;
   R2 = 0;
   G2 = B2 = 255;
-  dpi = MARK_PIX_SIZE * 254;
 
-  white.red = 0xffff;
-  white.green = 0xffff;
-  white.blue = 0xffff;
-
-  gc = gdk_gc_new(win->window);
+  found = find_gra2gdk_inst(&name, &obj, &inst, &robj, &output, &local);
 
   for (i = 0; i < MARK_TYPE_NUM; i++) {
-    pix = gdk_pixmap_new(win->window, MARK_PIX_SIZE, MARK_PIX_SIZE, -1);
-    gdk_gc_set_rgb_fg_color(gc, &white);
-    gdk_draw_rectangle(pix, gc, TRUE, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
-    /*
-    mxsaveGC(gc, pix, NULL, 0, 0, &mxsave, dpi, NULL);
-    gra = _GRAopen(chkobjectname(Menulocal.obj), "_output",
-		   Menulocal.outputobj, Menulocal.inst, Menulocal.output, -1,
-		   -1, -1, NULL, Mxlocal->local);
-    if (gra >= 0) {
-      GRAview(gra, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE, 0);
-      GRAlinestyle(gra, 0, NULL, 0, 0, 0, 1000);
-      GRAmark(gra, i, 5, 5, 8, R, G, B, R2, G2, B2);
+    if (! found) {
+      pix = NULL;
+    } else {
+      pix = gra2gdk_create_pixmap(obj, inst, local, win->window,
+				  MARK_PIX_SIZE, MARK_PIX_SIZE,
+				  255, 255, 255);
+      if (pix) {
+	gra = _GRAopen("gra2gdk", "_output",
+		       robj, inst, output, -1,
+		       -1, -1, NULL, local);
+	if (gra >= 0) {
+	  GRAview(gra, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE, 0);
+	  GRAlinestyle(gra, 0, NULL, 1, 0, 0, 1000);
+	  GRAmark(gra, i, MARK_PIX_SIZE / 2, MARK_PIX_SIZE / 2, MARK_PIX_SIZE - 6, R, G, B, R2, G2, B2);
+	}
+	_GRAclose(gra);
+      }
     }
-    _GRAclose(gra);
-    mxrestoreGC(&mxsave);
-    */
     NgraphApp.markpix[i] = pix;
   }
-  g_object_unref(G_OBJECT(gc));
 }
 
 static void
@@ -1042,7 +1080,8 @@ free_markpixmap(void)
   int i;
 
   for (i = 0; i < MARK_TYPE_NUM; i++) {
-    g_object_unref(NgraphApp.markpix[i]);
+    if (NgraphApp.markpix[i])
+      g_object_unref(NgraphApp.markpix[i]);
     NgraphApp.markpix[i] = NULL;
   }
 }

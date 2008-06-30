@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.8 2008/06/28 00:53:43 hito Exp $
+ * $Id: main.c,v 1.9 2008/06/30 05:13:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -88,6 +88,7 @@ void *addgra2file(void);
 void *addgra2prn(void);
 void *addgra2cairo(void);
 void *addgra2cairofile(void);
+void *addgra2gdk(void);
 void *addmerge(void);
 void *addlegend(void);
 void *addline(void);
@@ -156,6 +157,7 @@ static void * (* obj_add_func_ary[]) (void) = {
   addgra2cairo,
   addgra2cairofile,
   addgra2gtk,
+  addgra2gdk,
   addint,
   adddouble,
   addstring,

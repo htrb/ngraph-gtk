@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.15 2008/06/28 00:53:44 hito Exp $
+ * $Id: x11file.c,v 1.16 2008/06/30 05:13:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2004,8 +2004,10 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     for (type = 0; type < MARK_TYPE_NUM; type++) {
       w = gtk_toggle_button_new();
-      img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
-      gtk_button_set_image(GTK_BUTTON(w), img);
+      if (NgraphApp.markpix[type]) {
+	img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
+	gtk_button_set_image(GTK_BUTTON(w), img);
+      }
       g_signal_connect(w, "clicked", G_CALLBACK(MarkDialogCB), d);
       d->toggle[type] = w;
       if (type % COL == 0) {
@@ -2092,8 +2094,10 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
   if (a < 0 || a >= MARK_TYPE_NUM)
     a = 0;
 
-  img = gtk_image_new_from_pixmap(NgraphApp.markpix[a], NULL);
-  gtk_button_set_image(GTK_BUTTON(d->mark_btn), img);
+  if (NgraphApp.markpix[a]) {
+    img = gtk_image_new_from_pixmap(NgraphApp.markpix[a], NULL);
+    gtk_button_set_image(GTK_BUTTON(d->mark_btn), img);
+  }
 
   MarkDialog(&(d->mark), a);
 
@@ -3632,30 +3636,31 @@ file_fit_popup_func(GtkMenuItem *w, gpointer client_data)
 static GdkPixbuf *
 draw_type_pixbuf(struct objlist *obj, int i)
 {
-  int j, k, ggc, dpi, fr, fg, fb, fr2, fg2, fb2,
+  int j, k, ggc, fr, fg, fb, fr2, fg2, fb2,
     type, width = 40, height = 20, poly[14], marktype,
-    intp, spcond, spnum, lockstate;
+    intp, spcond, spnum, lockstate, found, output;
   double spx[7], spy[7], spz[7], spc[6][7], spc2[6];
-  struct mxlocal mxsave;
   GdkPixmap *pix;
   GdkPixbuf *pixbuf;
-  static GdkGC *gc = NULL;
-  GdkColor color;
+  struct objlist *gobj, *robj;
+  char *inst, *name;
+  struct gra2cairo_local *local;
 
   lockstate = GlobalLock;
   GlobalLock = TRUE;
 
-  if (gc == NULL) {
-    gc = gdk_gc_new(TopLevel->window);
+  found = find_gra2gdk_inst(&name, &gobj, &inst, &robj, &output, &local);
+  if (! found) {
+    return NULL;
   }
 
-  pix = gdk_pixmap_new(TopLevel->window, width, height, -1);
+  pix = gra2gdk_create_pixmap(gobj, inst, local, TopLevel->window,
+			      width, height,
+			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+  if (pix == NULL) {
+    return NULL;
+  }
 
-  color.red = Menulocal.bg_r * 0xff;
-  color.green = Menulocal.bg_g * 0xff;
-  color.blue = Menulocal.bg_b * 0xff;
-  gdk_gc_set_rgb_fg_color(gc, &color);
-  gdk_draw_rectangle(pix, gc, TRUE, 0, 0, width, height);
 
   getobj(obj, "type", i, 0, NULL, &type);
   getobj(obj, "R", i, 0, NULL, &fr);
@@ -3666,15 +3671,11 @@ draw_type_pixbuf(struct objlist *obj, int i)
   getobj(obj, "G2", i, 0, NULL, &fg2);
   getobj(obj, "B2", i, 0, NULL, &fb2);
 
-  dpi = height * 254;
-  dpi = DPI_MAX;
-  mxsaveGC(gc, pix, NULL, 0, 0, &mxsave, dpi, NULL);
-  ggc = _GRAopen(chkobjectname(Menulocal.obj), "_output",
-		 Menulocal.outputobj, Menulocal.inst, Menulocal.output, -1,
-		 -1, -1, NULL, Mxlocal->local);
+  ggc = _GRAopen("gra2gdk", "_output",
+		 robj, inst, output, -1,
+		 -1, -1, NULL, local);
   if (ggc < 0) {
     _GRAclose(ggc);
-    mxrestoreGC(&mxsave);
     return NULL;
   }
   GRAview(ggc, 0, 0, width, height, 0);
@@ -3682,48 +3683,56 @@ draw_type_pixbuf(struct objlist *obj, int i)
   switch (type) {
   case 0:
     getobj(obj, "mark_type", i, 0, NULL, &marktype);
-    GRAlinestyle(ggc, 0, NULL, 0, 0, 0, 1000);
-    GRAmark(ggc, marktype, 5, 5, 8, fr, fg, fb, fr2, fg2, fb2);
+    GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
+    GRAmark(ggc, marktype, height / 2, height / 2, height - 6,
+	    fr, fg, fb, fr2, fg2, fb2);
     break;
   case 1:
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    GRAline(ggc, 0, 5, 10, 5);
+    GRAline(ggc, 1, height / 2, height - 1, height / 2);
     break;
   case 2:
-    poly[0] = 0;
-    poly[1] = 5;
-    poly[2] = 3;
-    poly[3] = 2;
-    poly[4] = 7;
-    poly[5] = 8;
-    poly[6] = 10;
-    poly[7] = 5;
-    poly[8] = 7;
-    poly[9] = 2;
-    poly[10] = 3;
-    poly[11] = 8;
-    poly[12] = 0;
-    poly[13] = 5;
+    poly[0] = 1;
+    poly[1] = height / 2;
+
+    poly[2] = height / 4;
+    poly[3] = 1;
+
+    poly[4] = height * 3 / 4;
+    poly[5] = height - 1;
+
+    poly[6] = height - 1;
+    poly[7] = height / 2;
+
+    poly[8] = height * 3 / 4;
+    poly[9] = 1;
+
+    poly[10] = height / 4;
+    poly[11] = height - 1;
+
+    poly[12] = 1;
+    poly[13] = height / 2;
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     GRAdrawpoly(ggc, 7, poly, 0);
     break;
   case 3:
-    spx[0] = 0;
-    spx[1] = 3;
-    spx[2] = 7;
-    spx[3] = 10;
-    spx[4] = 7;
-    spx[5] = 3;
-    spx[6] = 0;
-    spy[0] = 5;
-    spy[1] = 2;
-    spy[2] = 8;
-    spy[3] = 5;
-    spy[4] = 2;
-    spy[5] = 8;
-    spy[6] = 5;
+    spx[0] = 1;
+    spx[1] = height / 3;
+    spx[2] = height * 2 / 3;
+    spx[3] = height - 1;
+    spx[4] = height * 2 / 3;
+    spx[5] = height / 3;
+    spx[6] = 1;
+
+    spy[0] = height / 2;
+    spy[1] = 1;
+    spy[2] = height - 1;
+    spy[3] = height / 2;
+    spy[4] = 1;
+    spy[5] = height - 1;
+    spy[6] = height / 2;
     for (j = 0; j < 7; j++)
       spz[j] = j;
     getobj(obj, "interpolation", i, 0, NULL, &intp);
@@ -3739,8 +3748,8 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     if (intp >= 2) {
-      GRAmoveto(ggc, 12, 8);
-      GRAtextstyle(ggc, "Times", 28, 0, 0);
+      GRAmoveto(ggc, height, height * 3 / 4);
+      GRAtextstyle(ggc, "Times", 52, 0, 0);
       GRAouttext(ggc, "B");
     }
     GRAcurvefirst(ggc, 0, NULL, NULL, NULL, splinedif, splineint, NULL, spx[0], spy[0]);
@@ -3761,20 +3770,23 @@ draw_type_pixbuf(struct objlist *obj, int i)
       GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     else
       GRAlinestyle(ggc, 0, NULL, 1, 2, 0, 1000);
-    spx[0] = 0;
-    spy[0] = 7;
-    spx[1] = 10;
-    spy[1] = 3;
+    spx[0] = 1;
+    spy[0] = height - 1;
+
+    spx[1] = height - 1;
+    spy[1] = 1;
     if ((type == 4) || (type == 5))
       GRAline(ggc, spx[0], spy[0], spx[1], spy[1]);
     if (type == 5) {
-      poly[0] = 9;
-      poly[1] = 3;
+      poly[0] = height - 6;
+      poly[1] = 1;
+
       poly[2] = spx[1];
       poly[3] = spy[1];
-      poly[4] = 10;
-      poly[5] = 4;
-      GRAdrawpoly(ggc, 3, poly, 0);
+
+      poly[4] = height - 1;
+      poly[5] = 6;
+      GRAdrawpoly(ggc, 3, poly, 1);
     }
     if ((type == 7) || (type == 8)) {
       if (type == 7)
@@ -3795,13 +3807,13 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     if (type == 9) {
-      GRAline(ggc, 0, 5, 10, 5);
-      GRAline(ggc, 0, 3, 0, 7);
-      GRAline(ggc, 10, 3, 10, 7);
+      GRAline(ggc, 1, height / 2, height - 1, height / 2);
+      GRAline(ggc, 1, height / 4, 1, height * 3 / 4);
+      GRAline(ggc, height - 1, height / 4, height - 1, height * 3 / 4);
     } else {
-      GRAline(ggc, 5, 1, 5, 9);
-      GRAline(ggc, 3, 1, 7, 1);
-      GRAline(ggc, 3, 9, 7, 9);
+      GRAline(ggc, height / 2, 1, height / 2, height - 1);
+      GRAline(ggc, height / 4, 1, height * 3 / 4, 1);
+      GRAline(ggc, height / 4, height -1, height * 3 / 4, height - 1);
     }
     break;
   case 11:
@@ -3809,19 +3821,19 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     if (type == 11) {
-      GRAmoveto(ggc, 0, 9);
-      GRAlineto(ggc, 3, 9);
-      GRAlineto(ggc, 3, 5);
-      GRAlineto(ggc, 7, 5);
-      GRAlineto(ggc, 7, 1);
-      GRAlineto(ggc, 10, 1);
+      GRAmoveto(ggc, 1, height - 1);
+      GRAlineto(ggc, height / 4, height - 1);
+      GRAlineto(ggc, height / 4, height / 2);
+      GRAlineto(ggc, height * 3 / 4, height / 2);
+      GRAlineto(ggc, height * 3 / 4, 1);
+      GRAlineto(ggc, height - 1, 1);
     } else {
-      GRAmoveto(ggc, 0, 9);
-      GRAlineto(ggc, 0, 6);
-      GRAlineto(ggc, 5, 6);
-      GRAlineto(ggc, 5, 3);
-      GRAlineto(ggc, 10, 3);
-      GRAlineto(ggc, 10, 1);
+      GRAmoveto(ggc, 1, height - 1);
+      GRAlineto(ggc, 1, height / 2 + 1);
+      GRAlineto(ggc, height / 2, height / 2 + 1);
+      GRAlineto(ggc, height / 2, height / 4);
+      GRAlineto(ggc, height - 1, height / 4);
+      GRAlineto(ggc, height - 1, 1);
     }
     break;
   case 13:
@@ -3835,43 +3847,46 @@ draw_type_pixbuf(struct objlist *obj, int i)
     if ((type == 15) || (type == 17)) {
       if (type == 15)
 	GRAcolor(ggc, fr2, fg2, fb2);
-      GRArectangle(ggc, 0, 4, 10, 6, 1);
+      GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 1);
       if (type == 15)
 	GRAcolor(ggc, fr, fg, fb);
     }
     if ((type == 16) || (type == 18)) {
       if (type == 16)
 	GRAcolor(ggc, fr2, fg2, fb2);
-      GRArectangle(ggc, 4, 1, 6, 9, 1);
+      GRArectangle(ggc, height / 3, 1, height * 3 / 4, height - 1, 1);
       if (type == 16)
 	GRAcolor(ggc, fr, fg, fb);
     }
     if ((type == 13) || (type == 15)) {
-      GRAline(ggc, 0, 4, 10, 4);
-      GRAline(ggc, 10, 4, 10, 6);
-      GRAline(ggc, 10, 6, 0, 6);
-      GRAline(ggc, 0, 6, 0, 4);
+      GRAline(ggc, 1,          height / 4,     height - 1, height /4);
+      GRAline(ggc, height - 1, height / 4,     height - 1, height * 3 / 4);
+      GRAline(ggc, height - 1, height * 3 / 4, 1,          height * 3 / 4);
+      GRAline(ggc, 1,          height * 3 / 4, 1,          height / 4);
     }
     if ((type == 14) || (type == 16)) {
-      GRAline(ggc, 4, 1, 6, 1);
-      GRAline(ggc, 6, 1, 6, 9);
-      GRAline(ggc, 6, 9, 4, 9);
-      GRAline(ggc, 4, 9, 4, 1);
+      GRAline(ggc, height / 4,     1,          height * 3 / 4, 1);
+      GRAline(ggc, height * 3 / 4, 1,          height * 3 / 4, height - 1);
+      GRAline(ggc, height * 3/ 4,  height - 1, height / 4,     height - 1);
+      GRAline(ggc, height / 4,     height - 1, height / 4,     1);
     }
     break;
   case 19:
     GRAcolor(ggc, fr, fg, fb);
-    GRAmoveto(ggc, 0, 8);
-    GRAtextstyle(ggc, "Times", 28, 0, 0);
+    GRAmoveto(ggc, 1, height * 3 / 4);
+    GRAtextstyle(ggc, "Times", 52, 0, 0);
     GRAouttext(ggc, "fit");
     break;
   }
 
   _GRAclose(ggc);
-  mxrestoreGC(&mxsave);
+  if (local->linetonum && local->cairo) {
+    cairo_stroke(local->cairo);
+    local->linetonum = 0;
+  }
+
   pixbuf = gdk_pixbuf_get_from_drawable(NULL, pix, NULL, 0, 0, 0, 0, width, height);
 
-  //  g_object_unref(G_OBJECT(gc));
   g_object_unref(G_OBJECT(pix));
 
   GlobalLock = lockstate;

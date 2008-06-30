@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.8 2008/06/18 10:14:51 hito Exp $
+ * $Id: x11commn.c,v 1.9 2008/06/30 05:13:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -112,8 +112,7 @@ OpenGRA(void)
     drawrable = NULL;
   }
   putobj(Menulocal.GRAobj, "draw_obj", id, drawrable);
-  device = (char *) memalloc(10);
-  strcpy(device, "menu:0");
+  device = nstrdup("menu:0");
   putobj(Menulocal.GRAobj, "device", id, device);
   name = nstrdup(name_str);
   putobj(Menulocal.GRAobj, "name", id, name);

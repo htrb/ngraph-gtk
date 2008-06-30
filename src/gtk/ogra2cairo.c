@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.8 2008/06/28 00:53:43 hito Exp $
+ * $Id: ogra2cairo.c,v 1.9 2008/06/30 05:13:38 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -234,6 +234,10 @@ gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   _getobj(obj, "_local", inst, &local);
 
   if (local->cairo) {
+    if (local->linetonum) {
+      cairo_stroke(local->cairo);
+      local->linetonum = 0;
+    }
     cairo_destroy(local->cairo);
   }
 
@@ -263,9 +267,6 @@ gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region)
 int 
 gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, int y2)
 {
-  
-  int i;
-
   local->region[0] = mxd2px(local, x1);
   local->region[1] = mxd2py(local, y1);
   local->region[2] = mxd2px(local, x2);
@@ -278,9 +279,6 @@ gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, int 
 int 
 gra2cairo_clear_region(struct gra2cairo_local *local)
 {
-  
-  int i;
-
   local->region[0] = 0;
   local->region[1] = 0;
   local->region[2] = 0;
@@ -532,6 +530,23 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
 }
 
 
+int 
+gra2cairo_flush(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{ 
+  struct gra2cairo_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+
+  if (local->cairo == NULL)
+    return -1;
+
+  if (local->linetonum) {
+    cairo_stroke(local->cairo);
+    local->linetonum = 0;
+  }
+  return 0;
+}
+
 static int 
 gra2cairo_output(struct objlist *obj, char *inst, char *rval, 
                  int argc, char **argv)
@@ -575,6 +590,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       w = mxd2p(local, cpar[3]) - x;
       h = mxd2p(local, cpar[4]) - y;
 
+      //      cairo_reset_clip(local->cairo);
       cairo_rectangle(local->cairo, x, y, w, h);
 
       if (local->region_active) {
@@ -585,14 +601,15 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 
       cairo_clip(local->cairo);
     } else {
-      if (local->region) {
+      if (local->region_active) {
+	cairo_reset_clip(local->cairo);
 	cairo_rectangle(local->cairo,
 			local->region[0], local->region[1],
 			local->region[2], local->region[3]);
+	cairo_clip(local->cairo);
       } else {
-	cairo_rectangle(local->cairo, 0, 0, SHRT_MAX, SHRT_MAX);
+	cairo_reset_clip(local->cairo);
       }
-      cairo_clip(local->cairo);
     }
     break;
   case 'A':
@@ -636,19 +653,19 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     cairo_set_source_rgb(local->cairo, cpar[1] / 255.0, cpar[2] / 255.0, cpar[3] / 255.0);
     break;
   case 'M':
-    cairo_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2px(local, cpar[2]));
+    cairo_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]));
     break;
   case 'N':
-    cairo_rel_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2px(local, cpar[2]));
+    cairo_rel_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]));
     break;
   case 'L':
     cairo_new_path(local->cairo);
-    cairo_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2px(local, cpar[2]));
-    cairo_line_to(local->cairo, mxd2px(local, cpar[3]), mxd2px(local, cpar[4]));
+    cairo_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]));
+    cairo_line_to(local->cairo, mxd2px(local, cpar[3]), mxd2py(local, cpar[4]));
     cairo_stroke(local->cairo);
     break;
   case 'T':
-    cairo_line_to(local->cairo, mxd2px(local, cpar[1]), mxd2px(local, cpar[2]));
+    cairo_line_to(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]));
     local->linetonum++;
     break;
   case 'C':
@@ -701,7 +718,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     break;
   case 'P': 
     cairo_new_path(local->cairo);
-    cairo_arc(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]), mxd2p(local, 10), 0, 2 * M_PI);
+    cairo_arc(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]), mxd2p(local, 1), 0, 2 * M_PI);
     cairo_fill(local->cairo);
     break;
   case 'R': 
@@ -1000,6 +1017,7 @@ static struct objtable gra2cairo[] = {
   {"done", NVFUNC, NEXEC, gra2cairo_done, NULL, 0}, 
   {"next", NPOINTER, 0, NULL, NULL, 0}, 
   {"dpi", NINT, NREAD | NWRITE, gra2cairo_set_dpi, NULL, NULL, 0},
+  {"flush",NVFUNC,NREAD|NEXEC,gra2cairo_flush,"",0},
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
   {"_local", NPOINTER, 0, NULL, NULL, 0}, 
 };

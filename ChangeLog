@@ -1,3 +1,21 @@
+2008-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c: remove mxsaveGC() and mxrestoreGC().
+
+	* src/gtk/x11file.c (draw_type_pixbuf): use gra2gdk.
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogPaint): use gra2gdk.
+
+	* src/gtk/x11menu.c (create_markpixmap): use gra2gdk.
+	(find_gra2gdk_inst): add.
+
+	* src/gtk/x11view.c (ViewerWinSetup): call OpenGRA() after
+	OpenGC().
+
+	* src/gtk/Makefile.am (libngraph_la_SOURCES): add ogra2cairo.c,
+	ogra2cairo.h, ogra2cairofile.c, ogra2x11.h, ogra2gdk.c and
+	ogra2gdk.h
+
 2008-06-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2x11.c (gtkinit): gtkclose() is now called when

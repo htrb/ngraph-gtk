@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.6 2008/06/28 00:53:44 hito Exp $
+ * $Id: x11lgndx.c,v 1.7 2008/06/30 05:13:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -101,15 +101,31 @@ static gboolean
 LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data)
 {
   struct LegendGaussDialog *d;
-  int i, j, k, pw, dw, minx, miny, maxx, maxy, amp, wd, dpi, GC, spnum;
+  int i, j, k, pw, dw, minx, miny, maxx, maxy,
+    amp, wd, GC, spnum, output, found;
   double ppd, x, y = 0, tmp, spc2[6];
-  struct mxlocal mxsave;
+  GdkPixmap *pix;
   GdkWindow *win;
   GdkColor black, white;
   GdkGC *gc;
+  struct objlist *gobj, *robj;
+  char *inst, *name;
+  struct gra2cairo_local *local;
 
   d = (struct LegendGaussDialog *) client_data;
   win = w->window;
+
+  found = find_gra2gdk_inst(&name, &gobj, &inst, &robj, &output, &local);
+  if (! found) {
+    return FALSE;
+  }
+
+  pix = gra2gdk_create_pixmap(gobj, inst, local, win,
+			      VIEW_SIZE, VIEW_SIZE,
+			      255, 255, 255);
+  if (pix == NULL) {
+    return FALSE;
+  }
 
   gc = gdk_gc_new(win);
 
@@ -130,20 +146,19 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 
 
   ppd = pw / ((double) dw);
-  dpi = nround(ppd * 2540);
   minx = VIEW_SIZE / 2 - d->Wdx * ppd / 2;
   miny = VIEW_SIZE / 2 - d->Wdy * ppd / 2;
   maxx = VIEW_SIZE / 2 + d->Wdx * ppd / 2;
   maxy = VIEW_SIZE / 2 + d->Wdy * ppd / 2;
 
   gdk_gc_set_rgb_fg_color(gc, &white);
-  gdk_draw_rectangle(win, gc, TRUE, 0, 0, VIEW_SIZE, VIEW_SIZE);
+  gdk_draw_rectangle(pix, gc, TRUE, 0, 0, VIEW_SIZE, VIEW_SIZE);
 
   gdk_gc_set_rgb_fg_color(gc, &black);
 
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
   gdk_gc_set_dashes(gc, 0, Dashes, DashesNum);
-  gdk_draw_rectangle(win, gc, FALSE, minx, miny, maxx - minx, maxy - miny);
+  gdk_draw_rectangle(pix, gc, FALSE, minx, miny, maxx - minx, maxy - miny);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
   if ((d->Dir == 0) || (d->Dir == 1)) {
@@ -155,12 +170,12 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   }
 
   if (d->alloc) {
-    mxsaveGC(gc, win, NULL, 0, 0, &mxsave, dpi, NULL);
-    GC = _GRAopen(chkobjectname(Menulocal.obj), "_output",
-		  Menulocal.outputobj, Menulocal.inst, Menulocal.output, -1,
-		  -1, -1, NULL, Mxlocal->local);
+    GC = _GRAopen("gra2gdk", "_output",
+		   robj, inst, output, -1,
+		   -1, -1, NULL, local);
+    GRAlinestyle(GC, 0, NULL, 1, 0, 0, 1000);
     if (GC >= 0) {
-      GRAview(GC, mxp2d(minx), mxp2d(miny), mxp2d(maxx), mxp2d(maxy), 1);
+      GRAview(GC, minx, miny, maxx, maxy, 1);
 
       if (d->Div > DIV_MAX)
 	d->Div = DIV_MAX;
@@ -207,6 +222,8 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 	  spy[i] = d->Wdy - nround(x);
 	}
 	spz[i] = i;
+	spx[i] *= ppd;
+	spy[i] *= ppd;
       }
       spnum = d->Div + 1;
       spline(spz, spx, spc[0], spc[1], spc[2], spnum, SPLCND2NDDIF,
@@ -224,8 +241,14 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
       }
     }
     _GRAclose(GC);
-    mxrestoreGC(&mxsave);
+    if (local->linetonum && local->cairo) {
+      cairo_stroke(local->cairo);
+      local->linetonum = 0;
+    }
   }
+  gdk_draw_drawable(win, gc, pix, 0, 0, 0, 0, VIEW_SIZE, VIEW_SIZE);
+
+  g_object_unref(G_OBJECT(pix));
   g_object_unref(gc);
 
   return FALSE;

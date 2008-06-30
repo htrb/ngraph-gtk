@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.6 2008/06/28 00:53:43 hito Exp $
+ * $Id: ox11menu.h,v 1.7 2008/06/30 05:13:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -152,9 +152,6 @@ int mxd2px(int x);
 int mxd2py(int y);
 int mxp2d(int r);
 unsigned long RGB(int R, int G, int B);
-void mxsaveGC(GdkGC * gc, GdkDrawable *pix, GdkDrawable *d, int scrollx, int scrolly,
-	      struct mxlocal *mxsave, int dpi, GdkRegion * region);
-void mxrestoreGC(struct mxlocal *mxsave);
 void mx_redraw(struct objlist *obj, char *inst);
 void mx_clear(GdkRegion *region);
 void mx_inslist(struct objlist *obj, char *inst,

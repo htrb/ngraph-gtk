@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.15 2008/06/28 00:53:43 hito Exp $
+ * $Id: ox11menu.c,v 1.16 2008/06/30 05:13:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1364,6 +1364,11 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 mxflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  if (Mxlocal->local->linetonum && Mxlocal->local->cairo) {
+    cairo_stroke(Mxlocal->local->cairo);
+    Mxlocal->local->linetonum = 0;
+  }
+
   if (Disp)
     gdk_display_flush(Disp);
   return 0;
@@ -1410,61 +1415,6 @@ mxclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
 return 0;
-}
-
-void
-mxsaveGC(GdkGC * gc, GdkDrawable *pix, GdkDrawable * d, int scrollx, int scrolly,
-	 struct mxlocal *mxsave, int dpi, GdkRegion * region)
-{
-  if (Mxlocal->local->cairo)
-    cairo_new_path(Mxlocal->local->cairo);
-
-  memcpy(mxsave, Mxlocal, sizeof(*mxsave));
-  Mxlocal->pix = pix;
-  Mxlocal->win = d;
-  Mxlocal->gc = gc;
-  Mxlocal->scrollx = scrollx;
-  Mxlocal->scrolly = scrolly;
-  Mxlocal->offsetx = Mxlocal->local->offsetx;
-  Mxlocal->offsety = Mxlocal->local->offsety;
-  Mxlocal->fontalias =Mxlocal->local->fontalias;
-  Mxlocal->cairo_save = Mxlocal->local->cairo;
-  Mxlocal->local->cairo = gdk_cairo_create(pix);
-  Mxlocal->pixel_dot = Mxlocal->local->pixel_dot;
-
-  if (dpi != -1) {
-    Mxlocal->windpi = dpi;
-    Mxlocal->local->pixel_dot = Mxlocal->windpi / (DPI_MAX * 1.0);
-  } else {
-    Mxlocal->windpi = mxsave->windpi;
-  }
-  Mxlocal->local->offsety = 0;
-  Mxlocal->local->offsetx = 0;
-  Mxlocal->local->fontalias = NULL;
-  Mxlocal->local->linetonum = 0;
-  Mxlocal->region = region;
-}
-
-void
-mxrestoreGC(struct mxlocal *mxsave)
-{
-  if (Mxlocal->region) {
-    gdk_region_destroy(Mxlocal->region);
-    Mxlocal->region = NULL;
-  }
-
-  memfree(Mxlocal->local->fontalias);
-  Mxlocal->local->fontalias = Mxlocal->fontalias;
-
-  if (Mxlocal->local->cairo)
-    cairo_destroy(Mxlocal->local->cairo);
-
-  Mxlocal->local->cairo = Mxlocal->cairo_save;
-  Mxlocal->local->offsety = Mxlocal->offsety;
-  Mxlocal->local->offsetx = Mxlocal->offsetx;
-  Mxlocal->local->pixel_dot = Mxlocal->pixel_dot;
-
-  memcpy(Mxlocal, mxsave, sizeof(*mxsave));
 }
 
 int
@@ -1553,22 +1503,6 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 static int
 gtk_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  char code, *cstr;
-  int *cpar;
-  struct gtklocal *gtklocal;
-  struct gra2cairo_local *local;
-
-  local = (struct gra2cairo_local *) argv[2];
-
-  code = *(char *) (argv[3]);
-  cpar = (int *) argv[4];
-  cstr = argv[5];
-
-  switch (code) {
-  case 'E':
-    break;
-  }
-
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
 
