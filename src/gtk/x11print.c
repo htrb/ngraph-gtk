@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.5 2008/07/01 07:09:39 hito Exp $
+ * $Id: x11print.c,v 1.6 2008/07/01 07:38:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -539,11 +539,11 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), FALSE);
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
     d->dpi = w;
-    d->dlabel = item_setup(d->vbox, w, "DPI:", FALSE);
+    d->dlabel = item_setup(GTK_WIDGET(d->vbox), w, "DPI:", FALSE);
 
     w = combo_box_create();
     d->version = w;
-    d->vlabel = item_setup(d->vbox, w, "", FALSE);
+    d->vlabel = item_setup(GTK_WIDGET(d->vbox), w, "", FALSE);
   }
 
   switch (d->DlgType) {
@@ -888,7 +888,7 @@ CmOutputImage(int type)
   int i, ret, format, t2p, dpi;
   struct savedstdio stdio;
   char *ext_name, *ext_str, *ext;
-  char *file, *filebuf, buf[MESSAGE_BUF_SIZE];
+  char *file, *filebuf, *tmp, *ptr, buf[MESSAGE_BUF_SIZE];
 
   if (Menulock || GlobalLock)
     return;
@@ -921,9 +921,24 @@ CmOutputImage(int type)
     break;
   }
 
-  if (nGetSaveFileName(TopLevel, ext_name, ext_str, NULL, NULL,
-		       &filebuf, ext, Menulocal.changedirectory) != IDOK)
+  if (NgraphApp.FileName == NULL) {
+    tmp = NULL;
+  } else {
+    tmp = strdup(NgraphApp.FileName);
+    ptr = strrchr(tmp, '.');
+    if (ptr && strcmp(ptr, ".ngp") == 0) {
+      *ptr = '\0';
+    }
+  }
+
+  ret = nGetSaveFileName(TopLevel, ext_name, ext_str, NULL, tmp,
+			 &filebuf, ext, Menulocal.changedirectory);
+  if (tmp)
+    free(tmp);
+
+  if (ret != IDOK) {
     return;
+  }
 
   if (access(filebuf, 04) == 0) {
     snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), filebuf);

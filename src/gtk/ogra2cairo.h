@@ -1,6 +1,8 @@
 #ifndef _O_GRA2CAIRO_HEADER
 #define _O_GRA2CAIRO_HEADER
 
+#include "object.h"
+
 #define CAIRO_FONTCASH 60		/* must be greater than 1 */
 
 extern struct gra2cairo_config *Gra2cairoConf;

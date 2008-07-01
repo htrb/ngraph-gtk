@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.11 2008/07/01 07:09:39 hito Exp $
+ * $Id: x11menu.h,v 1.12 2008/07/01 07:38:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -25,6 +25,7 @@
 #define GTK_MENU_HEADER
 
 #include "x11dialg.h"
+#include "ogra2cairo.h"
 
 enum MenuID {
   MenuIdGraphLoad,

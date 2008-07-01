@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2008-07-01 16:11+0900\n"
-"PO-Revision-Date: 2008-07-01 16:15+0900\n"
+"PO-Revision-Date: 2008-07-01 16:17+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1523,7 +1523,7 @@ msgstr "出力(_O)"
 
 #: src/gtk/x11menu.c:844
 msgid "_Export image"
-msgstr "画像ファイルにエクスポート(_E)"
+msgstr "画像にエクスポート(_E)"
 
 #: src/gtk/x11menu.c:848
 msgid "external _Viewer"
