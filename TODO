@@ -3,7 +3,6 @@
 * Symbol font 対応の強化
 * File Window, Merge Window の DnD 対応
 
-* PNG, EPS, PS, PDF へのエクスポート機能
 * GtkPrintUnixDialog の利用
 * 内部コードに utf-8 を採用した簡易的な国際化
 * Color selection dialog のパレット設定保存、読込
