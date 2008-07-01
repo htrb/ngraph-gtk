@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.6 2008/07/01 07:38:03 hito Exp $
+ * $Id: x11print.c,v 1.7 2008/07/01 07:54:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -481,7 +481,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_PostScript Version:"));
     break;
   case MenuIdOutputPNGFile:
-    combo_box_append_text(d->version, "--------");
+    combo_box_append_text(d->version, "NA");
 
     gtk_widget_set_sensitive(d->dlabel, TRUE);
     gtk_widget_set_sensitive(d->dpi, TRUE);
@@ -746,6 +746,7 @@ CmOutputViewer(void)
   if (g2wid < 0)
     return;
 
+  ProgressDialogCreate(_("Spawning external viewer."));
   SetStatusBar(_("Spawning external viewer."));
 
   g2winst = chkobjinst(g2wobj, g2wid);
@@ -840,6 +841,7 @@ CmPrintGRAFile(void)
     return;
   }
 
+  ProgressDialogCreate(_("Making GRA file."));
   SetStatusBar(_("Making GRA file."));
 
   g2winst = chkobjinst(g2wobj, g2wid);
