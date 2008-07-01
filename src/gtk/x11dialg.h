@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.6 2008/06/10 07:12:15 hito Exp $
+ * $Id: x11dialg.h,v 1.7 2008/07/01 07:09:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -831,6 +831,22 @@ void CopyDialog(struct CopyDialog *data,
 		struct objlist *obj, int id,
 		char *(*callback) (struct objlist * obj, int id));
 
+struct OutputImageDialog
+{
+  GtkWidget *parent, *widget;
+  GtkVBox *vbox;
+  int ret, show_buttons, show_cancel;
+  char *resource;
+  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
+  void (*CloseWindow) (GtkWidget *w, void *data);
+  /****** local member *******/
+  GtkWidget *version, *t2p, *dpi, *vlabel, *dlabel;
+  int Version, text2path, Dpi, DlgType;
+};
+void OutputImageDialog(struct OutputImageDialog *data, int type);
+
+
+
 extern struct FileDialog DlgFile;
 extern struct FileDialog DlgFileDef;
 extern struct EvalDialog DlgEval;
@@ -883,6 +899,7 @@ extern struct ExViewerDialog DlgExViewer;
 extern struct ViewerDialog DlgViewer;
 extern struct SelectDialog DlgSelect;
 extern struct CopyDialog DlgCopy;
+extern struct OutputImageDialog DlgImageOut;
 
 #endif
 

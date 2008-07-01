@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.10 2008/06/30 13:03:22 hito Exp $
+ * $Id: x11menu.h,v 1.11 2008/07/01 07:09:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -65,7 +65,12 @@ enum MenuID {
   MenuIdViewerDraw,
   MenuIdViewerClear,
   MenuIdOutputViewer,
-  MenuIdPrintGRAFile,
+  MenuIdOutputGRAFile,
+  MenuIdOutputPSFile,
+  MenuIdOutputEPSFile,
+  MenuIdOutputPNGFile,
+  MenuIdOutputPDFFile,
+  MenuIdOutputSVGFile,
   MenuIdPrintDataFile,
   MenuIdOptionViewer,
   MenuIdOptionExtViewer,

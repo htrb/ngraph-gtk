@@ -1,3 +1,19 @@
+2008-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_image_outputmenu): add.
+	(create_outputmenu): add "Export image" sub menu.
+
+	* src/gtk/x11menu.h (enum MenuID): add MenuId MenuIdOutputPSFile,
+	MenuIdOutputEPSFile, MenuIdOutputPDFFile, MenuIdOutputPNGFile and
+	MenuIdOutputSVGFile.
+
+	* src/gtk/x11print.c (OutputImageDialogSetupItem)
+	(OutputImageDialogSetup, OutputImageDialogClose)
+	(OutputImageDialog, CmOutputImage): add.
+	(CmOutputMenu): add case MenuIdOutputPSFile, MenuIdOutputEPSFile,
+	MenuIdOutputPDFFile, MenuIdOutputPNGFile and MenuIdOutputSVGFile.
+
+
 2008-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (MARK_PIX_SIZE): chage mark pix size.

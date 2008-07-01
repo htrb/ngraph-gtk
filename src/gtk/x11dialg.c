@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.10 2008/06/28 00:53:44 hito Exp $
+ * $Id: x11dialg.c,v 1.11 2008/07/01 07:09:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -129,6 +129,7 @@ struct ExViewerDialog DlgExViewer;
 struct ViewerDialog DlgViewer;
 struct SelectDialog DlgSelect;
 struct CopyDialog DlgCopy;
+struct OutputImageDialog DlgImageOut;
 
 void
 initdialog(void)
@@ -243,6 +244,8 @@ initdialog(void)
   DlgSelect.resource = N_("multi select");
   DlgCopy.widget = NULL;
   DlgCopy.resource = N_("single select");
+  DlgImageOut.widget = NULL;
+  DlgImageOut.resource = N_("output image");
 }
 
 static gboolean

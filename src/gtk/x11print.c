@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.4 2008/06/25 08:57:07 hito Exp $
+ * $Id: x11print.c,v 1.5 2008/07/01 07:09:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,6 +40,7 @@
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "ox11menu.h"
+#include "ogra2cairofile.h"
 #include "x11menu.h"
 #include "x11print.h"
 #include "x11file.h"
@@ -48,6 +49,18 @@
 
 #define DEVICE_BUF_SIZE 20
 #define MESSAGE_BUF_SIZE 1024
+
+static char *PsVersion[] = {
+  "PostScript Level 3",
+  "PostScript Level 2",
+  NULL,
+};
+
+static char *SvgVersion[] = {
+  "SVG version 1.2",
+  "SVG version 1.1",
+  NULL,
+};
 
 static void
 DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
@@ -439,6 +452,195 @@ OutputDataDialog(struct OutputDataDialog *data, int div)
   data->div = div;
 }
 
+static void
+OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
+{
+  int i;
+
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
+  gtk_label_set_text(GTK_LABEL(d->vlabel), "");
+
+  combo_box_clear(d->version);
+  switch (d->DlgType) {
+  case MenuIdOutputPSFile:
+  case MenuIdOutputEPSFile:
+    for (i = 0; PsVersion[i]; i++) {
+      combo_box_append_text(d->version, PsVersion[i]);
+    }
+    combo_box_set_active(d->version, 0);
+
+    gtk_widget_set_sensitive(d->dlabel, FALSE);
+    gtk_widget_set_sensitive(d->dpi, FALSE);
+
+    gtk_widget_set_sensitive(d->dlabel, TRUE);
+    gtk_widget_set_sensitive(d->dpi, TRUE);
+    gtk_widget_set_sensitive(d->version, TRUE);
+    gtk_widget_set_sensitive(d->vlabel, TRUE);
+    gtk_widget_set_sensitive(d->t2p, TRUE);
+
+    gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_PostScript Version:"));
+    break;
+  case MenuIdOutputPNGFile:
+    combo_box_append_text(d->version, "--------");
+
+    gtk_widget_set_sensitive(d->dlabel, TRUE);
+    gtk_widget_set_sensitive(d->dpi, TRUE);
+
+    gtk_widget_set_sensitive(d->version, FALSE);
+    gtk_widget_set_sensitive(d->vlabel, FALSE);
+    gtk_widget_set_sensitive(d->t2p, FALSE);
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Mxlocal->windpi);
+    break;
+  case MenuIdOutputPDFFile:
+    combo_box_append_text(d->version, "--------");
+
+    gtk_widget_set_sensitive(d->dlabel, FALSE);
+    gtk_widget_set_sensitive(d->dpi, FALSE);
+    gtk_widget_set_sensitive(d->version, FALSE);
+    gtk_widget_set_sensitive(d->vlabel, FALSE);
+
+    gtk_widget_set_sensitive(d->t2p, TRUE);
+    gtk_widget_set_sensitive(d->dlabel, TRUE);
+    gtk_widget_set_sensitive(d->dpi, TRUE);
+    break;
+  case MenuIdOutputSVGFile:
+    for (i = 0; PsVersion[i]; i++) {
+      combo_box_append_text(d->version, SvgVersion[i]);
+    }
+    combo_box_set_active(d->version, 0);
+
+    gtk_widget_set_sensitive(d->dlabel, FALSE);
+    gtk_widget_set_sensitive(d->dpi, FALSE);
+
+    gtk_widget_set_sensitive(d->version, TRUE);
+    gtk_widget_set_sensitive(d->vlabel, TRUE);
+    gtk_widget_set_sensitive(d->t2p, TRUE);
+
+    gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_SVG Version:"));
+    break;
+  }
+}
+
+static void
+OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GtkWidget *w, *hbox;
+  struct OutputImageDialog *d;
+  char *title;
+
+  d = (struct OutputImageDialog *) data;
+  if (makewidget) {
+    w = gtk_check_button_new_with_mnemonic(_("_Convert texts to paths"));
+    d->t2p = w;
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_spin_button_new_with_range(1, DPI_MAX, 1);
+    gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), FALSE);
+    gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
+    d->dpi = w;
+    d->dlabel = item_setup(d->vbox, w, "DPI:", FALSE);
+
+    w = combo_box_create();
+    d->version = w;
+    d->vlabel = item_setup(d->vbox, w, "", FALSE);
+  }
+
+  switch (d->DlgType) {
+  case MenuIdOutputPSFile:
+    title = N_("Cairo PS Output");
+    break;
+  case MenuIdOutputEPSFile:
+    title = N_("Cairo EPS Output");
+    break;
+  case MenuIdOutputPNGFile:
+    title = N_("Cairo PNG Output");
+    break;
+  case MenuIdOutputPDFFile:
+    title = N_("Cairo PDF Output");
+    break;
+  case MenuIdOutputSVGFile:
+    title = N_("Cairo SVG Output");
+    break;
+  }
+
+  gtk_window_set_title(GTK_WINDOW(wi), _(title));
+  OutputImageDialogSetupItem(w, d);
+}
+
+static void
+OutputImageDialogClose(GtkWidget *w, void *data)
+{
+  struct OutputImageDialog *d;
+  int a;
+
+  d = (struct OutputImageDialog *) data;
+
+  if (d->ret != IDOK)
+    return;
+
+  switch (d->DlgType) {
+  case MenuIdOutputPSFile:
+    d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
+    a = combo_box_get_active(d->version);
+    switch (a) {
+    case 0:
+      d->Version = TYPE_PS3;
+      break;
+    case 1:
+    default:
+      d->Version = TYPE_PS2;
+      break;
+    }
+    break;
+  case MenuIdOutputEPSFile:
+    d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
+    a = combo_box_get_active(d->version);
+    switch (a) {
+    case 0:
+      d->Version = TYPE_EPS3;
+      break;
+    case 1:
+    default:
+      d->Version = TYPE_EPS2;
+      break;
+    }
+    break;
+  case MenuIdOutputPNGFile:
+    d->Dpi = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(d->dpi));
+    d->Version = TYPE_PNG;
+    break;
+  case MenuIdOutputPDFFile:
+    d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
+    d->Version = TYPE_PDF;
+    break;
+  case MenuIdOutputSVGFile:
+    d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
+    a = combo_box_get_active(d->version);
+    switch (a) {
+    case 0:
+      d->Version = TYPE_SVG1_2;
+      break;
+    case 1:
+    default:
+      d->Version = TYPE_SVG1_2;
+      break;
+    }
+    break;
+  }
+  d->Dpi = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(d->dpi));
+
+}
+
+void
+OutputImageDialog(struct OutputImageDialog *data, int type)
+{
+  data->SetupWindow = OutputImageDialogSetup;
+  data->CloseWindow = OutputImageDialogClose;
+  data->DlgType = type;
+}
+
+
 void
 CmOutputDriver(int print)
 {
@@ -478,7 +680,6 @@ CmOutputDriver(int print)
   }
 
   if (ret == IDOK) {
-    ProgressDialogCreate(_("Spawning external driver"));
     SetStatusBar(_("Spawning external driver."));
     g2winst = chkobjinst(g2wobj, g2wid);
     _getobj(g2wobj, "oid", g2winst, &g2woid);
@@ -545,7 +746,6 @@ CmOutputViewer(void)
   if (g2wid < 0)
     return;
 
-  ProgressDialogCreate(_("Spawning external viewer"));
   SetStatusBar(_("Spawning external viewer."));
 
   g2winst = chkobjinst(g2wobj, g2wid);
@@ -640,7 +840,6 @@ CmPrintGRAFile(void)
     return;
   }
 
-  ProgressDialogCreate(_("Making GRA file"));
   SetStatusBar(_("Making GRA file."));
 
   g2winst = chkobjinst(g2wobj, g2wid);
@@ -676,6 +875,151 @@ CmPrintGRAFile(void)
 
   ProgressDialogFinalize();
   ResetStatusBar();
+}
+
+void
+CmOutputImage(int type)
+{
+  struct objlist *graobj, *g2wobj;
+  int id, g2wid, g2woid;
+  char *device, *g2winst;
+  int GC;
+  struct narray *drawrable;
+  int i, ret, format, t2p, dpi;
+  struct savedstdio stdio;
+  char *ext_name, *ext_str, *ext;
+  char *file, *filebuf, buf[MESSAGE_BUF_SIZE];
+
+  if (Menulock || GlobalLock)
+    return;
+
+  switch (type) {
+  case MenuIdOutputPSFile:
+    ext_name = "PostScript (*.ps)";
+    ext_str = "ps";
+    ext = "*.ps";
+    break;
+  case MenuIdOutputEPSFile:
+    ext_name = "Encapsulated PostScript (*.eps)";
+    ext_str = "eps";
+    ext = "*.eps";
+    break;
+  case MenuIdOutputPDFFile:
+    ext_name = "PDF (*.pdf)";
+    ext_str = "pdf";
+    ext = "*.pdf";
+    break;
+  case MenuIdOutputPNGFile:
+    ext_name = "PNG (*.png)";
+    ext_str = "png";
+    ext = "*.png";
+    break;
+  case MenuIdOutputSVGFile:
+    ext_name = "SVG (*.svg)";
+    ext_str = "svg";
+    ext = "*.svg";
+    break;
+  }
+
+  if (nGetSaveFileName(TopLevel, ext_name, ext_str, NULL, NULL,
+		       &filebuf, ext, Menulocal.changedirectory) != IDOK)
+    return;
+
+  if (access(filebuf, 04) == 0) {
+    snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), filebuf);
+    if (MessageBox(TopLevel, buf, _("confirm"), MB_YESNO) != IDYES) {
+      free(filebuf);
+      return;
+    }
+  }
+
+  file = nstrdup(filebuf);
+  free(filebuf);
+  if (file == NULL) {
+    return;
+  }
+
+  OutputImageDialog(&DlgImageOut, type);
+  ret = DialogExecute(TopLevel, &DlgImageOut);
+  if (ret != IDOK) {
+    memfree(file);
+    return;
+  }
+
+  if (! SetFileHidden())
+    return;
+
+  FileAutoScale();
+  AdjustAxis();
+
+  if ((graobj = chkobject("gra")) == NULL) {
+    memfree(file);
+    return;
+  }
+
+  if ((g2wobj = chkobject("gra2cairofile")) == NULL) {
+    memfree(file);
+    return;
+  }
+
+  g2wid = newobj(g2wobj);
+  if (g2wid < 0) {
+    memfree(file);
+    return;
+  }
+
+  g2winst = chkobjinst(g2wobj, g2wid);
+  _getobj(g2wobj, "oid", g2winst, &g2woid);
+  id = newobj(graobj);
+  putobj(g2wobj, "file", g2wid, file);
+
+  switch (type) {
+  case MenuIdOutputPSFile:
+  case MenuIdOutputEPSFile:
+  case MenuIdOutputSVGFile:
+  case MenuIdOutputPDFFile:
+    t2p = DlgImageOut.text2path;
+    putobj(g2wobj, "text2path", g2wid, &t2p);
+    break;
+  case MenuIdOutputPNGFile:
+    break;
+  }
+  dpi = DlgImageOut.Dpi;
+  putobj(g2wobj, "dpi", g2wid, &dpi);
+  format = DlgImageOut.Version;
+  putobj(g2wobj, "format", g2wid, &format);
+
+  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
+  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
+  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
+  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
+  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
+  if (arraynum(&(Menulocal.drawrable)) > 0) {
+    drawrable = arraynew(sizeof(char *));
+    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
+      arrayadd2(drawrable,
+		(char **) arraynget(&(Menulocal.drawrable), i));
+    }
+  } else {
+    drawrable = NULL;
+  }
+  putobj(graobj, "draw_obj", id, drawrable);
+  device = (char *) memalloc(DEVICE_BUF_SIZE);
+  snprintf(device, DEVICE_BUF_SIZE, "gra2cairofile:^%d", g2woid);
+  putobj(graobj, "device", id, device);
+  ProgressDialogCreate(_("Drawing"));
+  SetStatusBar(_("Drawing."));
+  ignorestdio(&stdio);
+  getobj(graobj, "open", id, 0, NULL, &GC);
+  exeobj(graobj, "draw", id, 0, NULL);
+  exeobj(graobj, "flush", id, 0, NULL);
+  exeobj(graobj, "close", id, 0, NULL);
+  restorestdio(&stdio);
+  delobj(graobj, id);
+  ProgressDialogFinalize();
+  ResetStatusBar();
+
+  delobj(g2wobj, g2wid);
 }
 
 void
@@ -769,8 +1113,15 @@ CmOutputMenu(GtkWidget *wi, gpointer client_data)
   case MenuIdOutputDriver:
     CmOutputDriver(FALSE);
     break;
-  case MenuIdPrintGRAFile:
+  case MenuIdOutputGRAFile:
     CmPrintGRAFile();
+    break;
+  case MenuIdOutputPSFile:
+  case MenuIdOutputEPSFile:
+  case MenuIdOutputPDFFile:
+  case MenuIdOutputPNGFile:
+  case MenuIdOutputSVGFile:
+    CmOutputImage((int) client_data);
     break;
   case MenuIdPrintDataFile:
     CmPrintDataFile();

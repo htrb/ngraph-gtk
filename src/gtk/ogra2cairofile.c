@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.8 2008/06/30 05:13:38 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.9 2008/07/01 07:09:38 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -22,6 +22,7 @@
 
 #include "x11gui.h"
 #include "ogra2cairo.h"
+#include "ogra2cairofile.h"
 
 #define NAME "gra2cairofile"
 #define PARENT "gra2cairo"
@@ -45,17 +46,6 @@ char *surface_type[] = {
   NULL,
 };
 
-enum surface_type_id {
-  TYPE_PS2,
-  TYPE_PS3,
-  TYPE_EPS2,
-  TYPE_EPS3,
-  TYPE_PDF,
-  TYPE_SVG1_1,
-  TYPE_SVG1_2,
-  TYPE_PNG,
-};
-
 char *gra2cairofile_errorlist[]={
   "I/O error: open file"
 };
@@ -73,7 +63,13 @@ struct gra2cairofile_local {
 static int 
 gra2cairofile_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {  
+  int dpi;
+
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
+    return 1;
+
+  dpi = 72;
+  if (_putobj(obj, "dpi", inst, &dpi) < 0)
     return 1;
 
   return 0;
@@ -88,18 +84,19 @@ gra2cairofile_done(struct objlist *obj, char *inst, char *rval, int argc, char *
   return 0;
 }
 
-static  cairo_t *
+static cairo_t *
 create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih)
 {
   cairo_surface_t *ps;
   cairo_t *cairo;
   double w, h;
-  int format;
+  int format, dpi;
 
   _getobj(obj, "format", inst, &format);
+  _getobj(obj, "dpi", inst, &dpi);
 
-  w = iw * 72.0 / 25.4 / 100;
-  h = ih * 72.0 / 25.4 / 100;
+  w = iw * dpi / 25.4 / 100;
+  h = ih * dpi / 25.4 / 100;
 
   switch (format) {
   case TYPE_PS2:
@@ -169,14 +166,10 @@ init_cairo(struct objlist *obj, char *inst, struct gra2cairo_local *local, int w
 {
   char *fname;
   cairo_t *cairo;
-  int dpi, t2p;
+  int t2p;
 
   _getobj(obj, "file", inst, &fname);
   if (fname == NULL)
-    return 1;
-
-  dpi = 72;
-  if (_putobj(obj, "dpi", inst, &dpi) < 0)
     return 1;
 
   cairo = create_cairo(obj, inst, fname, w, h);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.21 2008/06/30 08:43:35 hito Exp $
+ * $Id: x11menu.c,v 1.22 2008/07/01 07:09:38 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -809,6 +809,23 @@ create_mergemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 }
 
 static void 
+create_image_outputmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
+{
+  GtkWidget *menu;
+
+  menu = gtk_menu_new();
+  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
+
+  create_menu_item(menu, _("_GRA file"), FALSE, "<Ngraph>/Output/GRA File", 0, 0, CmOutputMenu, MenuIdOutputGRAFile);
+  create_menu_item(menu, _("_PS file"),  FALSE, "<Ngraph>/Output/PS File",  0, 0, CmOutputMenu, MenuIdOutputPSFile);
+  create_menu_item(menu, _("_EPS file"), FALSE, "<Ngraph>/Output/EPS File", 0, 0, CmOutputMenu, MenuIdOutputEPSFile);
+  create_menu_item(menu, _("_PDF file"), FALSE, "<Ngraph>/Output/PDF File", 0, 0, CmOutputMenu, MenuIdOutputPDFFile);
+  create_menu_item(menu, _("_SVG file"), FALSE, "<Ngraph>/Output/SVG File", 0, 0, CmOutputMenu, MenuIdOutputSVGFile);
+  create_menu_item(menu, _("_PNG file"), FALSE, "<Ngraph>/Output/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
+}
+
+static void 
 create_outputmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
   GtkWidget *item, *menu;
@@ -823,9 +840,13 @@ create_outputmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_Draw"), FALSE, "<Ngraph>/Output/Draw", GDK_d, GDK_CONTROL_MASK, CmOutputMenu, MenuIdViewerDraw);
   create_menu_item(menu, GTK_STOCK_CLEAR, TRUE, "<Ngraph>/Output/Clear", GDK_e, GDK_CONTROL_MASK, CmOutputMenu, MenuIdViewerClear);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+
+  item = gtk_menu_item_new_with_mnemonic(_("_Export image"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+  create_image_outputmenu(item, accel_group);
+
   create_menu_item(menu, _("external _Viewer"), FALSE, "<Ngraph>/Output/External Viewer", 0, 0, CmOutputMenu, MenuIdOutputViewer);
   create_menu_item(menu, _("external _Driver"), FALSE, "<Ngraph>/Output/External Driver", 0, 0, CmOutputMenu, MenuIdOutputDriver);
-  create_menu_item(menu, _("_GRA file"), FALSE, "<Ngraph>/Output/GRA File", 0, 0, CmOutputMenu, MenuIdPrintGRAFile);
   create_menu_item(menu, _("data _File"), FALSE, "<Ngraph>/Output/Data File", 0, 0, CmOutputMenu, MenuIdPrintDataFile);
 }
 
