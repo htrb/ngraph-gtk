@@ -1,8 +1,6 @@
 #ifndef _O_GRA2CAIROFILE_HEADER
 #define _O_GRA2CAIROFILE_HEADER
 
-
-
 enum surface_type_id {
   TYPE_PS2,
   TYPE_PS3,

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.10 2008/06/30 13:03:22 hito Exp $
+ * $Id: ogra2cairo.c,v 1.11 2008/07/02 13:35:09 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -40,6 +40,16 @@ char *gra2cairo_errorlist[]={
   "I/O error: open file"
 };
 
+char *gra2cairo_antialias_type[] = {
+  N_("none"),
+  N_("default"),
+  N_("gray"),
+  //  N_("subpixel"),
+  NULL,
+};
+
+
+
 #define ERRNUM (sizeof(gra2cairo_errorlist) / sizeof(*gra2cairo_errorlist))
 
 struct gra2cairo_config *Gra2cairoConf = NULL;
@@ -47,27 +57,39 @@ static int Instance = 0;
 
 
 static int
-mxp2d(struct gra2cairo_local *local, int r)
+mxp2dw(struct gra2cairo_local *local, int r)
 {
-  return r / local->pixel_dot;
+  return r / local->pixel_dot_x;
 }
 
 static double
-mxd2p(struct gra2cairo_local *local, int r)
+mxd2pw(struct gra2cairo_local *local, int r)
 {
-  return r * local->pixel_dot;
+  return r * local->pixel_dot_x;
+}
+
+static int
+mxp2dh(struct gra2cairo_local *local, int r)
+{
+  return r / local->pixel_dot_y;
+}
+
+static double
+mxd2ph(struct gra2cairo_local *local, int r)
+{
+  return r * local->pixel_dot_y;
 }
 
 static double
 mxd2px(struct gra2cairo_local *local, int x)
 {
-  return x * local->pixel_dot + local->offsetx;
+  return x * local->pixel_dot_x + local->offsetx;
 }
 
 static double
 mxd2py(struct gra2cairo_local *local, int y)
 {
-  return y * local->pixel_dot + local->offsety;
+  return y * local->pixel_dot_y + local->offsety;
 }
 
 static int
@@ -189,6 +211,7 @@ static int
 gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {  
   struct gra2cairo_local *local;
+  int antialias = ANTIALIAS_TYPE_DEFAULT;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
@@ -203,11 +226,17 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   if (_putobj(obj, "_local", inst, local))
     goto errexit;
 
+  if (_putobj(obj, "antialias", inst, &antialias))
+    goto errexit;
+
   local->cairo = NULL;
   local->fontalias = NULL;
-  local->pixel_dot = 1;
+  local->pixel_dot_x = 1;
+  local->pixel_dot_y = 1;
   local->linetonum = 0;
   local->text2path = FALSE;
+  local->antialias = antialias;
+  local->font_opt = cairo_font_options_create();
 
   local->region[0] = local->region[1] =
     local->region[2] = local->region[3] = 0;
@@ -239,6 +268,10 @@ gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **arg
       local->linetonum = 0;
     }
     cairo_destroy(local->cairo);
+  }
+
+  if (local->font_opt) {
+    cairo_font_options_destroy(local->font_opt);
   }
 
   Instance--;
@@ -289,10 +322,9 @@ gra2cairo_clear_region(struct gra2cairo_local *local)
   return 0;
 }
 
-static int
-gra2cairo_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+static double
+gra2cairo_get_pixel_dot(struct objlist *obj, char *inst, char **argv)
 {
-  struct gra2cairo_local *local;
   int dpi;
 
   dpi = *(int *) argv[2];
@@ -305,9 +337,89 @@ gra2cairo_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **
 
   *(int *)argv[2] = dpi;
 
+  return dpi / (DPI_MAX * 1.0);
+}
+
+static int
+gra2cairo_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int dpi;
+  struct gra2cairo_local *local;
+
+  dpi = *(int *) argv[2];
+
   _getobj(obj, "_local", inst, &local);
 
-  local->pixel_dot = dpi / (DPI_MAX * 1.0);
+  _putobj(obj, "dpix", inst, &dpi);
+  _putobj(obj, "dpiy", inst, &dpi);
+
+  local->pixel_dot_x =
+    local->pixel_dot_y = gra2cairo_get_pixel_dot(obj, inst, argv);
+
+  return 0;
+}
+
+static int
+gra2cairo_set_dpi_x(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  struct gra2cairo_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+
+  local->pixel_dot_x = gra2cairo_get_pixel_dot(obj, inst, argv);
+
+  return 0;
+}
+
+static int
+gra2cairo_set_dpi_y(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  struct gra2cairo_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+
+  local->pixel_dot_y = gra2cairo_get_pixel_dot(obj, inst, argv);
+
+  return 0;
+}
+
+void
+gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
+{
+  if (local->cairo == NULL)
+    return;
+
+  switch (antialias) {
+  case ANTIALIAS_TYPE_NONE:
+    antialias = CAIRO_ANTIALIAS_NONE;
+    break;
+  case ANTIALIAS_TYPE_DEFAULT:
+    antialias = CAIRO_ANTIALIAS_DEFAULT;
+    break;
+  case ANTIALIAS_TYPE_GRAY:
+    antialias = CAIRO_ANTIALIAS_GRAY;
+    break;
+  case ANTIALIAS_TYPE_SUBPIXEL:
+    antialias = CAIRO_ANTIALIAS_SUBPIXEL;
+    break;
+  }
+
+  cairo_set_antialias(local->cairo, antialias);
+}
+
+static int
+set_antialias(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int antialias;
+  struct gra2cairo_local *local;
+
+  antialias = *(int *) argv[2];
+
+  _getobj(obj, "_local", inst, &local);
+
+  local->antialias = antialias;
+
+  gra2cairo_set_antialias(local, antialias);
 
   return 0;
 }
@@ -443,10 +555,10 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
   layout = pango_cairo_create_layout(local->cairo);
 
   alist = pango_attr_list_new();
-  attr = pango_attr_size_new_absolute(mxd2p(local, size) * PANGO_SCALE);
+  attr = pango_attr_size_new_absolute(mxd2ph(local, size) * PANGO_SCALE);
   pango_attr_list_insert(alist, attr);
 
-  attr = pango_attr_letter_spacing_new(mxd2p(local, space) * PANGO_SCALE);
+  attr = pango_attr_letter_spacing_new(mxd2ph(local, space) * PANGO_SCALE);
   pango_attr_list_insert(alist, attr);
 
   pango_layout_set_font_description(layout, Gra2cairoConf->font[font].font);
@@ -464,7 +576,7 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
 
     PangoLayoutLine *pline;
     PangoRectangle prect;
-    int ascent, descent, s = mxd2p(local, size);
+    int ascent, descent, s = mxd2ph(local, size);
 
     pline = pango_layout_get_line_readonly(layout, 0);
     pango_layout_line_get_pixel_extents(pline, &prect, NULL);
@@ -577,6 +689,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
   }
   switch (code) {
   case 'I':
+    gra2cairo_set_antialias(local, local->antialias);
     local->linetonum = 0;
     break;
   case '%': case 'X':
@@ -584,14 +697,14 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
   case 'E':
     break;
   case 'V':
-    local->offsetx = mxd2p(local, cpar[1]);
-    local->offsety = mxd2p(local, cpar[2]);
+    local->offsetx = mxd2pw(local, cpar[1]);
+    local->offsety = mxd2ph(local, cpar[2]);
     cairo_new_path(local->cairo);
     if (cpar[5]) {
-      x = mxd2p(local, cpar[1]);
-      y = mxd2p(local, cpar[2]);
-      w = mxd2p(local, cpar[3]) - x;
-      h = mxd2p(local, cpar[4]) - y;
+      x = mxd2pw(local, cpar[1]);
+      y = mxd2ph(local, cpar[2]);
+      w = mxd2pw(local, cpar[3]) - x;
+      h = mxd2ph(local, cpar[4]) - y;
 
       //      cairo_reset_clip(local->cairo);
       cairo_rectangle(local->cairo, x, y, w, h);
@@ -623,7 +736,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       if (dashlist == NULL)
 	break;
       for (i = 0; i < cpar[1]; i++) {
-	dashlist[i] = mxd2p(local, cpar[6 + i]);
+	dashlist[i] = mxd2pw(local, cpar[6 + i]);
         if (dashlist[i] <= 0) {
 	  dashlist[i] = 1;
 	}
@@ -632,7 +745,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       memfree(dashlist);
     }
 
-    cairo_set_line_width(local->cairo, mxd2p(local, cpar[2]));
+    cairo_set_line_width(local->cairo, mxd2pw(local, cpar[2]));
 
     if (cpar[3] == 2) {
       cap = CAIRO_LINE_CAP_SQUARE;
@@ -675,8 +788,8 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     cairo_new_path(local->cairo);
     x = mxd2px(local, cpar[1] - cpar[3]);
     y = mxd2py(local, cpar[2] - cpar[4]);
-    w = mxd2p(local, cpar[3]);
-    h = mxd2p(local, cpar[4]);
+    w = mxd2pw(local, cpar[3]);
+    h = mxd2ph(local, cpar[4]);
     a1 = cpar[5] * (M_PI / 18000.0);
     a2 = cpar[6] * (M_PI / 18000.0) + a1;
 
@@ -699,18 +812,18 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     cairo_new_path(local->cairo);
     if (cpar[1] <= cpar[3]) {
       x = mxd2px(local, cpar[1]);
-      w = mxd2p(local, cpar[3] - cpar[1]);
+      w = mxd2pw(local, cpar[3] - cpar[1]);
     } else {
       x = mxd2px(local, cpar[3]);
-      w = mxd2p(local, cpar[1] - cpar[3]);
+      w = mxd2pw(local, cpar[1] - cpar[3]);
     }
 
     if (cpar[2] <= cpar[4]) {
       y = mxd2py(local, cpar[2]);
-      h = mxd2p(local, cpar[4] - cpar[2]);
+      h = mxd2ph(local, cpar[4] - cpar[2]);
     } else {
       y = mxd2py(local, cpar[4]);
-      h = mxd2p(local, cpar[2] - cpar[4]);
+      h = mxd2ph(local, cpar[2] - cpar[4]);
     }
     cairo_rectangle(local->cairo, x, y, w, h);
     if (cpar[5] == 0) {
@@ -721,7 +834,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     break;
   case 'P': 
     cairo_new_path(local->cairo);
-    cairo_arc(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]), mxd2p(local, 1), 0, 2 * M_PI);
+    cairo_arc(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]), mxd2pw(local, 1), 0, 2 * M_PI);
     cairo_fill(local->cairo);
     break;
   case 'R': 
@@ -769,7 +882,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     local->fontspace = fontspace;
     fontsize = cpar[1] / 72.0 * 25.4;
     local->fontsize = fontsize;
-    fontcashsize = mxd2p(local, fontsize);
+    fontcashsize = mxd2ph(local, fontsize);
     fontcashdir = cpar[3];
     fontdir = cpar[3] * MPI / 18000.0;
     fontsin = sin(fontdir);
@@ -899,7 +1012,7 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   }
 
   draw_str(local, FALSE, tmp, cashpos, size, 0, &width, NULL, NULL);
-  *(int *) rval = mxp2d(local, width);
+  *(int *) rval = mxp2dw(local, width);
   free(tmp);
 
   local->fontsin = s;
@@ -969,9 +1082,9 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   draw_str(local, FALSE, "A", cashpos, size, 0, NULL, &ascent, &descent);
 
   if (height) {
-    *(int *)rval = mxp2d(local, ascent);
+    *(int *)rval = mxp2dh(local, ascent);
   } else {
-    *(int *)rval = mxp2d(local, descent);
+    *(int *)rval = mxp2dh(local, descent);
   }
 
   /*
@@ -994,9 +1107,9 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
       }
     } else {
       if (height) {
-	*(int *) rval = mxp2d(fontstruct->ascent);
+	*(int *) rval = mxp2dh(fontstruct->ascent);
       } else {
-	*(int *) rval = mxp2d(fontstruct->descent);
+	*(int *) rval = mxp2dh(fontstruct->descent);
       }
     }
   } else {
@@ -1020,8 +1133,14 @@ static struct objtable gra2cairo[] = {
   {"done", NVFUNC, NEXEC, gra2cairo_done, NULL, 0}, 
   {"next", NPOINTER, 0, NULL, NULL, 0}, 
   {"dpi", NINT, NREAD | NWRITE, gra2cairo_set_dpi, NULL, 0},
+  {"dpix", NINT, NREAD | NWRITE, gra2cairo_set_dpi_x, NULL, 0},
+  {"dpiy", NINT, NREAD | NWRITE, gra2cairo_set_dpi_y, NULL, 0},
   {"flush",NVFUNC,NREAD|NEXEC,gra2cairo_flush,"",0},
+  {"antialias", NENUM, NREAD | NWRITE, set_antialias, gra2cairo_antialias_type, 0},
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
+  {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
+  {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
+  {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_local", NPOINTER, 0, NULL, NULL, 0}, 
 };
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.10 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11opt.c,v 1.11 2008/07/02 13:35:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -282,6 +282,10 @@ DefaultDialogClose(GtkWidget *win, void *data)
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->viewer))) {
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
       snprintf(buf, BUF_SIZE, "viewer_dpi=%d", Mxlocal->windpi);
+      arrayadd(&conf, &buf);
+    }
+    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+      snprintf(buf, BUF_SIZE, "antialias=%d", Mxlocal->antialias);
       arrayadd(&conf, &buf);
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
@@ -1463,6 +1467,9 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ruler)), Mxlocal->ruler);
 
+  getobj(d->Obj, "antialias", d->Id, 0, NULL, &a);
+  combo_box_set_active(d->antialias, a);
+
   getobj(d->Obj, "auto_redraw", d->Id, 0, NULL, &a);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->redraw)), a);
 
@@ -1482,6 +1489,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *vbox;
   struct ViewerDialog *d;
+  int i;
 
   d = (struct ViewerDialog *) data;
   if (makewidget) {
@@ -1497,6 +1505,15 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = create_text_entry(FALSE, TRUE);
     item_setup(hbox, w, _("_Grid:"), TRUE);
     d->grid = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+    w = combo_box_create();
+    for (i = 0; gra2cairo_antialias_type[i]; i++) {
+      combo_box_append_text(w, _(gra2cairo_antialias_type[i]));
+    }
+    d->antialias = w;
+    item_setup(hbox, w, _("_Antialias:"), FALSE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_Show ruler"));
@@ -1552,6 +1569,11 @@ ViewerDialogClose(GtkWidget *w, void *data)
   if (Mxlocal->ruler != a)
     d->Clear = TRUE;
   Mxlocal->ruler = a;
+
+  a = combo_box_get_active(d->antialias);
+  if (putobj(d->Obj, "antialias", d->Id, &a) == -1)
+    return;
+  Mxlocal->antialias = a;
 
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->redraw));
   a = a ? TRUE : FALSE;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.7 2008/07/01 07:54:10 hito Exp $
+ * $Id: x11print.c,v 1.8 2008/07/02 13:35:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -467,8 +467,6 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     for (i = 0; PsVersion[i]; i++) {
       combo_box_append_text(d->version, PsVersion[i]);
     }
-    combo_box_set_active(d->version, 0);
-
     gtk_widget_set_sensitive(d->dlabel, FALSE);
     gtk_widget_set_sensitive(d->dpi, FALSE);
 
@@ -481,7 +479,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_PostScript Version:"));
     break;
   case MenuIdOutputPNGFile:
-    combo_box_append_text(d->version, "NA");
+    combo_box_append_text(d->version, "--------");
 
     gtk_widget_set_sensitive(d->dlabel, TRUE);
     gtk_widget_set_sensitive(d->dpi, TRUE);
@@ -508,7 +506,6 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     for (i = 0; PsVersion[i]; i++) {
       combo_box_append_text(d->version, SvgVersion[i]);
     }
-    combo_box_set_active(d->version, 0);
 
     gtk_widget_set_sensitive(d->dlabel, FALSE);
     gtk_widget_set_sensitive(d->dpi, FALSE);
@@ -520,6 +517,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_SVG Version:"));
     break;
   }
+  combo_box_set_active(d->version, 0);
 }
 
 static void
@@ -1033,10 +1031,10 @@ CmOutputImage(int type)
   exeobj(graobj, "close", id, 0, NULL);
   restorestdio(&stdio);
   delobj(graobj, id);
+  delobj(g2wobj, g2wid);
+
   ProgressDialogFinalize();
   ResetStatusBar();
-
-  delobj(g2wobj, g2wid);
 }
 
 void

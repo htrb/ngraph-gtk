@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.17 2008/06/30 13:03:22 hito Exp $
+ * $Id: ox11menu.c,v 1.18 2008/07/02 13:35:09 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -560,6 +560,13 @@ mgtkloadconfig(void)
 	memfree(f2);
 	memfree(f3);
       }
+    } else if (strcmp(tok, "antialias") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0') {
+	Mxlocal->antialias = val;
+      }
+      memfree(f1);
     } else if (strcmp(tok, "viewer_dpi") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
@@ -1015,6 +1022,10 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (exwinloadconfig())
     goto errexit;
 
+  Mxlocal->local->antialias = Mxlocal->antialias;
+  if (_putobj(obj, "antialias", inst, &(Mxlocal->antialias)))
+    goto errexit;
+
   numf = arraynum(Menulocal.ngpfilelist);
   numd = arraynum(Menulocal.ngpdirlist);
   dum = NULL;
@@ -1352,7 +1363,8 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (dpi > DPI_MAX)
     dpi = DPI_MAX;
   Mxlocal->windpi = dpi;
-  Mxlocal->local->pixel_dot = dpi / (DPI_MAX * 1.0);
+  Mxlocal->local->pixel_dot_x =
+      Mxlocal->local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
 
   if (Disp && Mxlocal->win) {
@@ -1420,27 +1432,27 @@ return 0;
 int
 mxd2p(int r)
 {
-  return nround(r * Mxlocal->local->pixel_dot);
+  return nround(r * Mxlocal->local->pixel_dot_x);
 }
 
 int
 mxd2px(int x)
 {
-  return nround(x * Mxlocal->local->pixel_dot + Mxlocal->local->offsetx);
+  return nround(x * Mxlocal->local->pixel_dot_x + Mxlocal->local->offsetx);
   //  return nround(x * Mxlocal->pixel_dot + Mxlocal->offsetx - Mxlocal->scrollx);
 }
 
 int
 mxd2py(int y)
 {
-  return nround(y * Mxlocal->local->pixel_dot + Mxlocal->local->offsety);
+  return nround(y * Mxlocal->local->pixel_dot_y + Mxlocal->local->offsety);
   //  return nround(y * Mxlocal->pixel_dot + Mxlocal->offsety - Mxlocal->scrolly);
 }
 
 int
 mxp2d(int r)
 {
-  return ceil(r / Mxlocal->local->pixel_dot);
+  return ceil(r / Mxlocal->local->pixel_dot_x);
   //  return nround(r / Mxlocal->pixel_dot);
 }
 
@@ -1500,15 +1512,6 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 
 }
 
-static int
-gtk_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
-{
-  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
-    return 1;
-
-  return 0;
-}
-
 static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
   {"done", NVFUNC, NEXEC, menudone, NULL, 0},
@@ -1523,11 +1526,7 @@ static struct objtable gtkmenu[] = {
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
-  {"_output", NVFUNC, 0, gtk_output, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
-  {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
-  {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
-  {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 

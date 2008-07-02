@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.44 2008/06/30 05:13:39 hito Exp $
+ * $Id: x11view.c,v 1.45 2008/07/02 13:35:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4312,9 +4312,9 @@ create_pix(int w, int h)
   gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, 0, 0, w, h);
 
   Mxlocal->local->cairo = gdk_cairo_create(Mxlocal->pix);
+  gra2cairo_set_antialias(Mxlocal->local, Mxlocal->local->antialias);
 #if 0
   cairo_set_tolerance(Mxlocal->local->cairo, 0.1);
-  cairo_set_antialias(Mxlocal->local->cairo, CAIRO_ANTIALIAS_NONE);
 #endif
   Mxlocal->local->offsetx = 0;
   Mxlocal->local->offsety = 0;
@@ -4330,7 +4330,9 @@ OpenGC(void)
 
   Disp = gdk_display_get_default();
 
-  Mxlocal->local->pixel_dot = Mxlocal->windpi / 25.4 / 100;
+  Mxlocal->local->pixel_dot_x =
+  Mxlocal->local->pixel_dot_y =
+    Mxlocal->windpi / 25.4 / 100;
   Mxlocal->local->offsetx = 0;
   Mxlocal->local->offsety = 0;
 
@@ -4499,7 +4501,9 @@ ReopenGC(void)
   Mxlocal->gc = gdk_gc_new(Mxlocal->win);
   Mxlocal->offsetx = 0;
   Mxlocal->offsety = 0;
-  Mxlocal->local->pixel_dot = Mxlocal->windpi / 25.4 / 100;
+  Mxlocal->local->pixel_dot_x =
+  Mxlocal->local->pixel_dot_y =
+    Mxlocal->windpi / 25.4 / 100;
 
   if (Mxlocal->region != NULL)
     gdk_region_destroy(Mxlocal->region);

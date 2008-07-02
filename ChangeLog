@@ -1,3 +1,39 @@
+2008-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (create_pix): add settings for antialias.
+	(OpenGC, ReopenGC): add settings for pixel_dot_x and pixel_dot_y.
+
+	* src/gtk/x11opt.c (DefaultDialogClose, ViewerDialogSetupItem)
+	(ViewerDialogSetup, ViewerDialogClose): add settings for antialias.
+
+	* src/gtk/ox11menu.c (mgtkloadconfig, menuinit): add settings for
+	antialias.
+	(mxdpi): add settings for pixel_dot_x and pixel_dot_y.
+	(mxd2p, mxd2px, mxd2py, mxp2d): use pixel_dot_x and pixel_dot_y.
+	remove gtk_output().
+
+	* src/gtk/ogra2x11.c (gtkinit): add settings for dpix and dpiy.
+	(dot2pixel): use pixel_dot_x.
+
+	* src/gtk/ogra2gdk.c (g2g_init): add settings for dpix and dpiy.
+
+	* src/gtk/ogra2cairofile.c (gra2cairofile_init): add settings for
+	dpix and dpiy
+
+	* src/gtk/ogra2cairo.c (gra2cairo_antialias_type)
+	(gra2cairo_set_antialias, set_antialias): add.
+	(gra2cairo_output, gra2cairo_init): add antialias settings.
+	(gra2cairo): add member "antialias", "dpix" and "dpiy".
+	(mxp2dw, mxd2pw, mxp2dh, mxd2ph, mxd2px, mxd2py): add.
+	(gra2cairo_init, gra2cairo_set_dpi): add settings for pixel_dot_x
+	and pixel_dot_y.
+	(gra2cairo_set_dpi_x, gra2cairo_set_dpi_y): add.
+	(draw_str, gra2cairo_output): use mxp2dw(), mxd2pw(), mxp2dh(),
+	mxd2ph(), mxd2px() and mxd2py().
+
+	* src/gtk/ogra2cairo.h (struct gra2cairo_local): add antialias,
+	pixel_dot_x and pixel_dot_y.
+
 2008-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_image_outputmenu): add.

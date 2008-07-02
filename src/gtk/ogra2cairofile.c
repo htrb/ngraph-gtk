@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.9 2008/07/01 07:09:38 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.10 2008/07/02 13:35:09 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -53,24 +53,30 @@ char *gra2cairofile_errorlist[]={
 #define ERRNUM (sizeof(gra2cairofile_errorlist) / sizeof(*gra2cairofile_errorlist))
 
 
-struct gra2cairofile_local {
-  cairo_t* cairo;
-  int linetonum, offsetx, offsety, cpx, cpy, region[4], region_active;
-  char *fontalias;
-  double pixel_dot;
-};
-
 static int 
 gra2cairofile_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {  
   int dpi;
+  struct gra2cairo_local *local;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
 
   dpi = 72;
+  
   if (_putobj(obj, "dpi", inst, &dpi) < 0)
     return 1;
+
+  if (_putobj(obj, "dpix", inst, &dpi) < 0)
+    return 1;
+
+  if (_putobj(obj, "dpiy", inst, &dpi) < 0)
+    return 1;
+
+  _getobj(obj, "_local", inst, &local);
+
+  local->pixel_dot_x = 
+  local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
 
   return 0;
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.7 2008/06/30 13:03:22 hito Exp $
+ * $Id: ogra2x11.c,v 1.8 2008/07/02 13:35:09 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -121,7 +121,7 @@ static int dot2pixel(struct gtklocal *gtklocal, int r);
 static int gtk_output(struct objlist *obj, char *inst, char *rval, int argc,
 		      char **argv);
 
-static GdkColor *gtkRGB(struct gtklocal *gtklocal, int R, int G, int B);
+static GdkColor *gtkRGB(int R, int G, int B);
 
 static int
 gtkloadconfig(struct gtklocal *gtklocal)
@@ -285,9 +285,8 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   struct gra2cairo_local *local;
   GdkWindow *win;
   GdkGC *gc = NULL;
-  int oid;
   struct objlist *robj;
-  int idn;
+  int idn, oid;
   GtkWidget *scrolled_window = NULL, *vbox = NULL;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
@@ -332,6 +331,18 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (gtklocal->windpi > DPI_MAX)
     gtklocal->windpi = DPI_MAX;
 
+  if (_putobj(obj, "dpi", inst, &(gtklocal->windpi)))
+    goto errexit;
+
+  if (_putobj(obj, "dpix", inst, &(gtklocal->windpi)))
+    goto errexit;
+
+  if (_putobj(obj, "dpiy", inst, &(gtklocal->windpi)))
+    goto errexit;
+
+  local->pixel_dot_x = 
+  local->pixel_dot_y = gtklocal->windpi / (DPI_MAX * 1.0);
+
   if (gtklocal->winwidth < 1)
     gtklocal->winwidth = 1;
 
@@ -343,9 +354,6 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (gtklocal->winheight > 10000)
     gtklocal->winheight = 10000;
-
-  if (_putobj(obj, "dpi", inst, &(gtklocal->windpi)))
-    goto errexit;
 
   if (_putobj(obj, "auto_redraw", inst, &(gtklocal->autoredraw)))
     goto errexit;
@@ -598,7 +606,7 @@ gtk_evloop(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dot2pixel(struct gtklocal *gtklocal, int r)
 {
-  return nround(r * gtklocal->local->pixel_dot);
+  return nround(r * gtklocal->local->pixel_dot_x);
 }
 
 static void
@@ -649,7 +657,7 @@ gtkchangedpi(struct gtklocal *gtklocal)
 }
 
 static GdkColor *
-gtkRGB(struct gtklocal *gtklocal, int r, int g, int b)
+gtkRGB(int r, int g, int b)
 {
   static GdkColor col;
 
@@ -679,7 +687,7 @@ gtkMakeRuler(struct gtklocal *gtklocal)
   gdk_gc_set_function(gc, GDK_XOR);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT,
 			     GDK_JOIN_MITER);
-  col1 = gtkRGB(gtklocal, 127, 127, 127);
+  col1 = gtkRGB(127, 127, 127);
   gdk_gc_set_rgb_fg_color(gc, col1);
   gdk_draw_rectangle(win, gc, FALSE,
 		     0, 0,
@@ -749,6 +757,9 @@ struct objtable gra2gtk[] = {
   {"BB", NINT, NREAD | NWRITE, gtkbb, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_output", NVFUNC, 0, gtk_output, NULL, 0},
+  {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
+  {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
+  {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_evloop", NVFUNC, 0, gtk_evloop, NULL, 0},
 };
 

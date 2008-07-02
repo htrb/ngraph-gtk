@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2gdk.c,v 1.1 2008/06/30 05:13:38 hito Exp $
+ * $Id: ogra2gdk.c,v 1.2 2008/07/02 13:35:09 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -42,18 +42,27 @@ char *gra2gdk_errorlist[]={
 static int 
 g2g_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {  
-  int dpi;
   struct gra2cairo_local *local;
+  int dpi;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
 
   dpi = DPI_MAX;
+
   if (_putobj(obj, "dpi", inst, &dpi) < 0)
     return 1;
 
+  if (_putobj(obj, "dpix", inst, &dpi) < 0)
+    return 1;
+
+  if (_putobj(obj, "dpiy", inst, &dpi) < 0)
+    return 1;
+
   _getobj(obj, "_local", inst, &local);
-  local->pixel_dot = 1;
+
+  local->pixel_dot_x = 
+  local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
 
   return 0;
 }

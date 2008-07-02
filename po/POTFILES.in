@@ -1,5 +1,6 @@
 # List of source files which contain translatable strings.
 src/gtk/ox11dlg.c
+src/gtk/ogra2cairo.c
 src/gtk/x11axis.c
 src/gtk/x11commn.c
 src/gtk/x11dialg.c

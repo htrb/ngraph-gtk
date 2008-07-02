@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.7 2008/06/30 05:13:39 hito Exp $
+ * $Id: ox11menu.h,v 1.8 2008/07/02 13:35:09 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -92,6 +92,7 @@ struct mxlocal
   int lock;
   int minus_hyphen;
   struct gra2cairo_local *local;
+  int antialias;
   cairo_t *cairo_save;
 };
 
