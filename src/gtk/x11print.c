@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.12 2008/07/03 10:25:14 hito Exp $
+ * $Id: x11print.c,v 1.13 2008/07/03 14:17:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -612,6 +612,7 @@ CmOutputPrinter(void)
   print = gtk_print_operation_new();
   gtk_print_operation_set_n_pages(print, 1);
   gtk_print_operation_set_current_page(print, 0);
+  gtk_print_operation_set_use_full_page(print, TRUE);
 
   if (PrintSettings == NULL)
     PrintSettings = gtk_print_settings_new();
