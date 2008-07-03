@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.18 2008/06/30 13:03:22 hito Exp $
+ * $Id: x11file.c,v 1.19 2008/07/03 04:39:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -565,7 +565,7 @@ FitDialogSetupItem(GtkWidget *w, struct FitDialog *d, int id)
   SetListFromObjField(d->type, d->Obj, id, "type");
 
   getobj(d->Obj, "poly_dimension", id, 0, NULL, &a);
-  combo_box_set_active(d->dim, a);
+  combo_box_set_active(d->dim, a - 1);
 
   SetTextFromObjField(d->weight, d->Obj, id, "weight_func");
 
@@ -726,7 +726,8 @@ FitDialogSave(struct FitDialog *d)
     return;
 
   num = combo_box_get_active(d->dim);
-  if (num >= 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1)
+  num++;
+  if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1)
     return;
 
   if (SetObjFieldFromText(d->weight, d->Obj, id, "weight_func"))
@@ -917,7 +918,8 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
     return FALSE;
 
   num = combo_box_get_active(d->dim);
-  if (num >= 0 && putobj(d->Obj, "poly_dimension", d->Id, &num) == -1)
+  num++;
+  if (num > 0 && putobj(d->Obj, "poly_dimension", d->Id, &num) == -1)
       return FALSE;
 
   if (SetObjFieldFromText(d->weight, d->Obj, d->Id, "weight_func"))

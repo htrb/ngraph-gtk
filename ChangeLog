@@ -1,5 +1,18 @@
 2008-07-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (fitout): fitout is now static.
+
+	* src/ofit.c (fitpoly): fix bug. write information in buf instead
+	of equation.
+
+	* src/gtk/x11file.c (FitDialogSetupItem, FitDialogSave)
+	(FitDialogApply): bug fix poly_dimension is active item + 1.
+
+	* src/gtk/x11commn.c (GetDrawFiles): add.
+
+	* src/gtk/x11print.c (CmPrintDataFile): now CmPrintDataFile() can
+	output multi data files into one file.
+
 	* src/gtk/x11commn.c (SetFileHidden): add arraydel(&ifarray) when
 	return value of DialogExecute() is nor IDOK.
 

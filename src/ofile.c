@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.9 2008/07/03 02:19:45 hito Exp $
+ * $Id: ofile.c,v 1.10 2008/07/03 04:39:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3557,9 +3557,10 @@ int barout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int fitout(struct objlist *obj,struct f2ddata *fp,int GC,
-           int width,int snum,int *style,
-           int join,int miter,char *fit,int redraw)
+static int 
+fitout(struct objlist *obj,struct f2ddata *fp,int GC,
+       int width,int snum,int *style,
+       int join,int miter,char *fit,int redraw)
 {
   int emerr,emserr,emnonum,emig,emng;
   int j,num;

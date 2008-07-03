@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.6 2008/06/12 09:04:24 hito Exp $
+ * $Id: ofit.c,v 1.7 2008/07/03 04:39:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -113,7 +113,6 @@ int fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"poly_dimension",inst,&dimension)) return 1;
   if (_putobj(obj,"converge",inst,&converge)) return 1;
   if (_putobj(obj,"display",inst,&disp)) return 1;
-
 
   if ((fitlocal=memalloc(sizeof(struct fitlocal)))==NULL) return 1;
   fitlocal->codef=NULL;
@@ -280,7 +279,6 @@ int fitpoly(struct fitlocal *fitlocal,
   if ((equation=memalloc(512))==NULL) return 1;
   equation[0]='\0';
   j=0;
-  j += sprintf(equation+j, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
   if (type==0) {
     for (i=dim-1;i>1;i--) j+=sprintf(equation+j,"%.15e*X^%d+",coe[i],i);
     j+=sprintf(equation+j,"%.15e*X+%.15e",coe[1],coe[0]);
@@ -291,10 +289,11 @@ int fitpoly(struct fitlocal *fitlocal,
 
   if (disp) {
     i=0;
+    i += sprintf(buf + i, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
     if (type==0) i+=sprintf(buf+i,"Eq: %%0i*X^i (i=0-%d)\n\n",dim-1);
-    else if (type==1) i+=sprintf(buf+i,"Eq: exp(%%00)*X^%%01\n\n");
-    else if (type==2) i+=sprintf(buf+i,"Eq: exp(%%01*X+%%00)\n\n");
-    else if (type==3) i+=sprintf(buf+i,"Eq: %%01*Ln(X)+%%00\n\n");
+    else if (type==1) i += sprintf(buf + i,"Eq: exp(%%00)*X^%%01\n\n");
+    else if (type==2) i += sprintf(buf + i,"Eq: exp(%%01*X+%%00)\n\n");
+    else if (type==3) i += sprintf(buf + i,"Eq: %%01*Ln(X)+%%00\n\n");
     for (j=0;j<dim;j++)
       i+=sprintf(buf+i,"       %%0%d = %+.7e\n",j,coe[j]);
     i+=sprintf(buf+i,"\n");
