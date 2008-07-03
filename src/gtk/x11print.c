@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.8 2008/07/02 13:35:10 hito Exp $
+ * $Id: x11print.c,v 1.9 2008/07/03 02:19:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -523,7 +523,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 static void
 OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox;
+  GtkWidget *w;
   struct OutputImageDialog *d;
   char *title;
 
@@ -1040,63 +1040,85 @@ CmOutputImage(int type)
 void
 CmPrintDataFile(void)
 {
+  struct narray farray;
   struct objlist *obj;
-  int id;
-  int type, div;
+  int i, num, onum, type, div, curve = FALSE, *array, append;
   char buf[MESSAGE_BUF_SIZE], *file;
-  char *argv[3];
+  char *argv[4];
 
   if (Menulock || GlobalLock)
+    return;
+
+  if (GetDrawFiles(&farray))
     return;
 
   obj = chkobject("file");
   if (obj == NULL)
     return;
 
-  if (chkobjlastinst(obj) == -1)
-    return;
+  onum = chkobjlastinst(obj);
+  num = arraynum(&farray);
 
-  CopyDialog(&DlgCopy, obj, -1, FileCB);
-  if (DialogExecute(TopLevel, &DlgCopy) != IDOK)
+  if (num == 0) {
+    arraydel(&farray);
     return;
+  }
 
-  id = DlgCopy.sel;
-  if (id < 0)
-    return;
+  array = (int *) arraydata(&farray);
+  for (i = 0; i < num; i++) {
+    if (array[i] < 0 || array[i] > onum)
+      continue;
 
-  if (id > chkobjlastinst(obj))
-    return;
+    getobj(obj, "type", array[i], 0, NULL, &type);
+    if (type == 3) {
+      curve = TRUE;
+    }
+  }
 
   div = 10;
-  getobj(obj, "type", id, 0, NULL, &type);
-  if (type == 3) {
+
+  if (curve) {
     OutputDataDialog(&DlgOutputData, div);
-    if (DialogExecute(TopLevel, &DlgOutputData) != IDOK)
+    if (DialogExecute(TopLevel, &DlgOutputData) != IDOK) {
+      arraydel(&farray);
       return;
+    }
     div = DlgOutputData.div;
   }
 
   if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
-		       &file, "*", Menulocal.changedirectory) != IDOK)
+		       &file, "*", Menulocal.changedirectory) != IDOK) {
+    arraydel(&farray);
     return;
+  }
 
   if (access(file, 04) == 0) {
     snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), file);
     if (MessageBox(TopLevel, buf, _("Data file"), MB_YESNO) != IDYES) {
       free(file);
+      arraydel(&farray);
       return;
     }
   }
 
   ProgressDialogCreate(_("Making data file"));
   SetStatusBar(_("Making data file."));
+
   argv[0] = (char *) file;
   argv[1] = (char *) &div;
-  argv[2] = NULL;
-  exeobj(obj, "output_file", id, 2, argv);
+  argv[3] = NULL;
+  for (i = 0; i < num; i++) {
+    if (array[i] < 0 || array[i] > onum)
+      continue;
+
+    append = (i == 0) ? FALSE : TRUE;
+    argv[2] = &append;
+    exeobj(obj, "output_file", array[i], 3, argv);
+  }
   ProgressDialogFinalize();
   ResetStatusBar();
 
+  arraydel(&farray);
   free(file);
 }
 

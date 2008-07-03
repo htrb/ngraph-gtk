@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.9 2008/06/30 05:13:39 hito Exp $
+ * $Id: x11commn.c,v 1.10 2008/07/03 02:19:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1423,6 +1423,7 @@ SetFileHidden(void)
       for (i = 0; i < num; i++)
 	putobj(fobj, "hidden", array[i], &a);
     } else {
+      arraydel(&ifarray);
       arraydel(&farray);
       return 0;
     }
@@ -1430,6 +1431,42 @@ SetFileHidden(void)
     arraydel(&farray);
   }
   return 1;
+}
+
+int
+GetDrawFiles(struct narray *farray)
+{
+  struct objlist *fobj;
+  int lastinst;
+  struct narray ifarray;
+  int i, a, num;
+
+  if (farray == NULL)
+    return 1;
+
+  fobj = chkobject("file");
+  if (fobj == NULL)
+    return 1;
+
+  lastinst = chkobjlastinst(fobj);
+  if (lastinst < 0)
+    return 1;
+
+  arrayinit(&ifarray, sizeof(int));
+  for (i = 0; i <= lastinst; i++) {
+    getobj(fobj, "hidden", i, 0, NULL, &a);
+    if (!a)
+      arrayadd(&ifarray, &i);
+  }
+  SelectDialog(&DlgSelect, fobj, FileCB, farray, &ifarray);
+  if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
+    arraydel(&ifarray);
+    arraydel(&farray);
+    return 1;
+  }
+  arraydel(&ifarray);
+
+  return 0;
 }
 
 int

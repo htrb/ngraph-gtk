@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.h,v 1.2 2008/06/10 01:34:28 hito Exp $
+ * $Id: x11commn.h,v 1.3 2008/07/03 02:19:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,36 +21,37 @@
  * 
  */
 
-void OpenGRA();
-void CloseGRA();
-void ChangeGRA();
-void CheckPage();
-void SetPageSettingsToGRA();
-void GetPageSettingsFromGRA();
+void OpenGRA(void);
+void CloseGRA(void);
+void ChangeGRA(void);
+void CheckPage(void);
+void SetPageSettingsToGRA(void);
+void GetPageSettingsFromGRA(void);
 void AxisDel(int id);
 void AxisMove(int id1, int id2);
-void AdjustAxis();
+void AdjustAxis(void);
 void FitCopy(struct objlist *obj, int did, int sid);
 void FitDel(struct objlist *obj, int id);
-void FitClear();
+void FitClear(void);
 void LoadPrmFile(char *File);
 void LoadNgpFile(char *File, int ignorepath, int expand,
 		 char *exdir, int console, char *option);
 int SaveDrawrable(char *name, int storedata, int storemerge);
 int GraphSave(int overwrite);
-void DeleteDrawable();
-void FileAutoScale();
-int CheckSave();
+void DeleteDrawable(void);
+void FileAutoScale(void);
+int CheckSave(void);
 void AddMathList(char *math);
 void AddNgpFileList(char *file);
 void AddDataFileList(char *file);
 void SetFileName(char *name);
-int CheckIniFile();
-void SaveHistory();
-int AllocConsole();
+int CheckIniFile(void);
+void SaveHistory(void);
+int AllocConsole(void);
 void FreeConsole(int allocnow);
 char *FileCB(struct objlist *obj, int id);
-int SetFileHidden();
+int SetFileHidden(void);
+int GetDrawFiles(struct narray *farray);
 void ExtTextOut(GdkDisplay *disp, GtkWindow *win, GdkGC gc,
 		int x, int y, GdkRectangle *rect, char *buf, int len);
 GtkWidget *item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand);

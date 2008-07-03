@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.8 2008/06/12 09:04:24 hito Exp $
+ * $Id: ofile.c,v 1.9 2008/07/03 02:19:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -6016,12 +6016,14 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
   char *file;
-  int rcode,type,intp,div;
+  int rcode,type,intp,div,append;
   FILE *fp2;
 
   _getobj(obj,"_local",inst,&f2dlocal);
   file=(char *)argv[2];
   div=*(int *)argv[3];
+  append = *(int *) argv[4];
+
   if (div<1) div=1;
   if ((fp=opendata(obj,inst,f2dlocal,FALSE,FALSE))==NULL) return 1;
   if (hskipdata(fp)!=0) {
@@ -6039,7 +6041,7 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
       return 1;
     }
   }
-  if ((fp2=nfopen(file,"wt"))==NULL) {
+  if ((fp2=nfopen(file, (append) ? "at" : "wt"))==NULL) {
     closedata(fp);
     return 1;
   }
@@ -6191,7 +6193,7 @@ struct objtable file2d[TBLNUM] = {
   {"load_dummy",NVFUNC,NREAD|NEXEC,f2dloaddum,"s",0},
   {"tight",NVFUNC,NREAD|NEXEC,f2dtight,NULL,0},
   {"save_config",NVFUNC,NREAD|NEXEC,f2dsaveconfig,NULL,0},
-  {"output_file",NVFUNC,NREAD|NEXEC,f2doutputfile,"si",0},
+  {"output_file",NVFUNC,NREAD|NEXEC,f2doutputfile,"sib",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 

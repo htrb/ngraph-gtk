@@ -1,3 +1,11 @@
+2008-07-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (SetFileHidden): add arraydel(&ifarray) when
+	return value of DialogExecute() is nor IDOK.
+
+	* src/ofile.c (f2doutputfile): add append mode.
+	(file2d): change arguments of "output_file" from "si" to "sib".
+
 2008-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (create_pix): add settings for antialias.
