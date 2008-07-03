@@ -1,5 +1,14 @@
 2008-07-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11graph.c (CmGraphMenu): call CmOutputPrinter() when
+	sel == MenuIdOutputDriver.
+
+	* src/gtk/ogra2gtkprint.c: add.
+
+	* src/gtk/x11print.c (CmOutputPrinter, draw_page)
+	(struct print_obj): add.
+	add global variable PrintSettings.
+
 	* src/gtk/ogra2cairo.c (gra2cairo_output): save current point
 	after call cairo_stroke() for graphic command 'T'.
 

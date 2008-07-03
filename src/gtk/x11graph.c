@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.9 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11graph.c,v 1.10 2008/07/03 09:51:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1101,7 +1101,7 @@ CmGraphMenu(GtkWidget *w, gpointer client_data)
     CmGraphSwitch();
     break;
   case MenuIdOutputDriver:
-    CmOutputDriver(TRUE);
+    CmOutputPrinter();
     break;
   case MenuIdGraphDirectory:
     CmGraphDirectory();

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.10 2008/07/03 06:31:14 hito Exp $
+ * $Id: x11print.c,v 1.11 2008/07/03 09:51:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,6 +61,14 @@ static char *SvgVersion[] = {
   "SVG version 1.1",
   NULL,
 };
+
+struct print_obj {
+  struct objlist *graobj, *g2wobj;
+  int id, g2wid;
+  char *g2winst;
+};
+
+static GtkPrintSettings *PrintSettings = NULL;
 
 static void
 DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
@@ -638,6 +646,125 @@ OutputImageDialog(struct OutputImageDialog *data, int type)
   data->DlgType = type;
 }
 
+static void
+draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, gpointer user_data)
+{
+  struct savedstdio stdio;
+  struct objlist *graobj, *g2wobj;
+  char *argv[2];
+  struct print_obj *pobj;
+  int GC, id, g2wid;
+  char *g2winst;
+
+  pobj = (struct print_obj *) user_data;
+  graobj = pobj->graobj;
+  g2wobj = pobj->g2wobj;
+  id = pobj->id;
+  g2wid = pobj->g2wid;
+  g2winst = pobj->g2winst;
+
+  argv[0] = (char *) context;
+  argv[1] = NULL;
+  _exeobj(g2wobj, "_context", g2winst, 1, argv);
+
+  ProgressDialogCreate(_("Printing"));
+  SetStatusBar(_("Printing."));
+  ignorestdio(&stdio);
+  getobj(graobj, "open", id, 0, NULL, &GC);
+  exeobj(graobj, "draw", id, 0, NULL);
+  exeobj(graobj, "flush", id, 0, NULL);
+  exeobj(graobj, "close", id, 0, NULL);
+  restorestdio(&stdio);
+  ProgressDialogFinalize();
+  ResetStatusBar();
+}
+
+void
+CmOutputPrinter(void)
+{
+  GtkPrintOperation *print;
+  GtkPrintOperationResult res;
+  char buf[MESSAGE_BUF_SIZE];
+  struct objlist *graobj, *g2wobj;
+  int id, g2wid, g2woid;
+  char *device, *g2winst;
+  int i, ret;;
+  GError *error;
+  struct narray *drawrable;
+  struct print_obj pobj;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  if (! SetFileHidden())
+    return;
+
+  FileAutoScale();
+  AdjustAxis();
+
+  if ((graobj = chkobject("gra")) == NULL)
+    return;
+
+  if ((g2wobj = chkobject("gra2gtkprint")) == NULL)
+    return;
+
+  g2wid = newobj(g2wobj);
+  if (g2wid < 0)
+    return;
+
+  g2winst = chkobjinst(g2wobj, g2wid);
+  _getobj(g2wobj, "oid", g2winst, &g2woid);
+  id = newobj(graobj);
+  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
+  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
+  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
+  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
+  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
+  if (arraynum(&(Menulocal.drawrable)) > 0) {
+    drawrable = arraynew(sizeof(char *));
+    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
+      arrayadd2(drawrable,
+		(char **) arraynget(&(Menulocal.drawrable), i));
+    }
+  } else
+    drawrable = NULL;
+  putobj(graobj, "draw_obj", id, drawrable);
+  device = (char *) memalloc(DEVICE_BUF_SIZE);
+  snprintf(device, DEVICE_BUF_SIZE, "gra2gtkprint:^%d", g2woid);
+  putobj(graobj, "device", id, device);
+
+  print = gtk_print_operation_new();
+  gtk_print_operation_set_n_pages(print, 1);
+  gtk_print_operation_set_current_page(print, 0);
+
+  if (PrintSettings != NULL)
+    gtk_print_operation_set_print_settings(print, PrintSettings);
+
+  pobj.graobj = graobj;
+  pobj.id = id;
+  pobj.g2wobj = g2wobj;
+  pobj.g2wid = g2wid;
+  pobj.g2winst = g2winst;
+  g_signal_connect(print, "draw_page", G_CALLBACK(draw_page), &pobj);
+
+  res = gtk_print_operation_run(print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
+				GTK_WINDOW(TopLevel), &error);
+
+  if (res == GTK_PRINT_OPERATION_RESULT_ERROR) {
+    snprintf(buf, sizeof(buf), _("Printing error: %s"), error->message);
+    MessageBox(TopLevel, buf, _("Print"), MB_ERROR);
+    g_error_free(error);
+  } else if (res == GTK_PRINT_OPERATION_RESULT_APPLY) {
+    if (PrintSettings)
+      g_object_unref(PrintSettings);
+    PrintSettings = g_object_ref(gtk_print_operation_get_print_settings(print));
+  }
+  g_object_unref(print);
+
+  delobj(graobj, id);
+  delobj(g2wobj, g2wid);
+}
+
 
 void
 CmOutputDriver(int print)
@@ -1126,6 +1253,12 @@ void
 CmOutputDriverB(GtkWidget *wi, gpointer client_data)
 {
   CmOutputDriver(TRUE);
+}
+
+void
+CmOutputPrinterB(GtkWidget *wi, gpointer client_data)
+{
+  CmOutputPrinter();
 }
 
 void

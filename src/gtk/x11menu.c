@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.22 2008/07/01 07:09:38 hito Exp $
+ * $Id: x11menu.c,v 1.23 2008/07/03 09:51:18 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -199,7 +199,7 @@ static struct command_data Command1_data[] = {
     Clear_bits
   },
   {
-    CmOutputDriverB,
+    CmOutputPrinterB,
     N_("Print"),
     N_("Print"),
     N_("Print"), 
