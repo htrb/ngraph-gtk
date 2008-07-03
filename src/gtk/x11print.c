@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.11 2008/07/03 09:51:18 hito Exp $
+ * $Id: x11print.c,v 1.12 2008/07/03 10:25:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -277,131 +277,6 @@ DriverDialog(struct DriverDialog *data, struct objlist *obj, int id)
 {
   data->SetupWindow = DriverDialogSetup;
   data->CloseWindow = DriverDialogClose;
-  data->Obj = obj;
-  data->Id = id;
-}
-
-static void
-PrintDialogSelectCB(GtkWidget *wi, gpointer client_data)
-{
-  int a, i;
-  struct prnprinter *pcur;
-  struct PrintDialog *d;
-
-  d = (struct PrintDialog *) client_data;
-
-  a = combo_box_get_active(wi);
-
-  if (a < 0)
-    return;
-
-  pcur = Menulocal.prnprinterroot;
-  i = 0;
-
-  while (pcur != NULL) {
-    if (i == a) {
-      gtk_entry_set_text(GTK_ENTRY(d->option), (pcur->option) ?  pcur->option: "");
-      gtk_entry_set_text(GTK_ENTRY(d->print), (pcur->prn) ?  pcur->prn: "");
-      break;
-    }
-    pcur = pcur->next;
-    i++;
-  }
-}
-
-static void
-PrintDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  GtkWidget *w, *hbox, *vbox;
-  struct PrintDialog *d;
-  struct prnprinter *pcur;
-
-  d = (struct PrintDialog *) data;
-  if (makewidget) {
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = combo_box_create();
-    d->driver = w;
-    item_setup(hbox, w, _("_Driver:"), FALSE);
-    g_signal_connect(d->driver, "changed", G_CALLBACK(PrintDialogSelectCB), d);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
-    d->option = w;
-    item_setup(hbox, w, _("_Option:"), TRUE);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
-    d->print = w;
-    item_setup(hbox, w, _("_Print:"), TRUE);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-  }
-
-  combo_box_clear(d->driver);
-  pcur = Menulocal.prnprinterroot;
-
-  while (pcur != NULL) {
-    combo_box_append_text(d->driver, pcur->name);
-    pcur = pcur->next;
-  }
-  combo_box_set_active(d->driver, 0);
-}
-
-static void
-PrintDialogClose(GtkWidget *w, void *data)
-{
-  int a, i;
-  struct prnprinter *pcur;
-  struct PrintDialog *d;
-  const char *s;
-  char *driver, *option, *prn;
-
-  d = (struct PrintDialog *) data;
-
-  if (d->ret == IDCANCEL)
-    return;
-
-  a = combo_box_get_active(d->driver);
-  pcur = Menulocal.prnprinterroot;
-
-  i = 0;
-  while (pcur != NULL) {
-    if (i == a && pcur->driver) {
-      driver = nstrdup(pcur->driver);
-      if (driver) {
-	putobj(d->Obj, "driver", d->Id, driver);
-      }
-      break;
-    }
-    pcur = pcur->next;
-    i++;
-  }
-
-  s = gtk_entry_get_text(GTK_ENTRY(d->option));
-  if (s && strlen(s) > 0) {
-    option = nstrdup(s);
-    if (option) {
-      putobj(d->Obj, "option", d->Id, option);
-    }
-  }
-
-  s = gtk_entry_get_text(GTK_ENTRY(d->print));
-  if (s && strlen(s) > 0) {
-    prn = nstrdup(s);
-    if (prn) {
-      putobj(d->Obj, "prn", d->Id, prn);
-    }
-  }
-}
-
-void
-PrintDialog(struct PrintDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = PrintDialogSetup;
-  data->CloseWindow = PrintDialogClose;
   data->Obj = obj;
   data->Id = id;
 }
@@ -692,6 +567,7 @@ CmOutputPrinter(void)
   GError *error;
   struct narray *drawrable;
   struct print_obj pobj;
+  GtkPaperSize *paper_size;
 
   if (Menulock || GlobalLock)
     return;
@@ -737,8 +613,12 @@ CmOutputPrinter(void)
   gtk_print_operation_set_n_pages(print, 1);
   gtk_print_operation_set_current_page(print, 0);
 
-  if (PrintSettings != NULL)
-    gtk_print_operation_set_print_settings(print, PrintSettings);
+  if (PrintSettings == NULL)
+    PrintSettings = gtk_print_settings_new();
+
+  paper_size = gtk_paper_size_new(GTK_PAPER_NAME_A4);
+  gtk_print_settings_set_orientation(PrintSettings, GTK_PAGE_ORIENTATION_LANDSCAPE);
+  gtk_print_operation_set_print_settings(print, PrintSettings);
 
   pobj.graobj = graobj;
   pobj.id = id;
@@ -767,7 +647,7 @@ CmOutputPrinter(void)
 
 
 void
-CmOutputDriver(int print)
+CmOutputDriver(void)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
@@ -796,13 +676,8 @@ CmOutputDriver(int print)
   if (g2wid < 0)
     return;
 
-  if (print) {
-    PrintDialog(&DlgPrinter, g2wobj, g2wid);
-    ret = DialogExecute(TopLevel, &DlgPrinter);
-  } else {
-    DriverDialog(&DlgDriver, g2wobj, g2wid);
-    ret = DialogExecute(TopLevel, &DlgDriver);
-  }
+  DriverDialog(&DlgDriver, g2wobj, g2wid);
+  ret = DialogExecute(TopLevel, &DlgDriver);
 
   if (ret == IDOK) {
     SetStatusBar(_("Spawning external driver."));
@@ -1252,7 +1127,7 @@ CmPrintDataFile(void)
 void
 CmOutputDriverB(GtkWidget *wi, gpointer client_data)
 {
-  CmOutputDriver(TRUE);
+  CmOutputDriver();
 }
 
 void
@@ -1281,7 +1156,7 @@ CmOutputMenu(GtkWidget *wi, gpointer client_data)
     CmOutputViewer();
     break;
   case MenuIdOutputDriver:
-    CmOutputDriver(FALSE);
+    CmOutputDriver();
     break;
   case MenuIdOutputGRAFile:
     CmPrintGRAFile();
