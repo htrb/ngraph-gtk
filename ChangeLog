@@ -1,5 +1,8 @@
 2008-07-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2cairo.c (gra2cairo_output): save current point
+	after call cairo_stroke() for graphic command 'T'.
+
 	* src/ofile.c (fitout): fitout is now static.
 
 	* src/ofit.c (fitpoly): fix bug. write information in buf instead

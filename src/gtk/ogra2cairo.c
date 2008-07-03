@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.11 2008/07/02 13:35:09 hito Exp $
+ * $Id: ogra2cairo.c,v 1.12 2008/07/03 05:23:42 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -683,8 +683,11 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
   if (local->cairo == NULL)
     return -1;
 
-  if (local->linetonum != 0 && code != 'T') {
+  if (local->linetonum && code != 'T') {
+    double x, y;
+    cairo_get_current_point(local->cairo, &x, &y);
     cairo_stroke(local->cairo);
+    cairo_move_to(local->cairo, x, y);
     local->linetonum = 0;
   }
   switch (code) {
