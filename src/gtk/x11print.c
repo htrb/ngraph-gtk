@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.9 2008/07/03 02:19:49 hito Exp $
+ * $Id: x11print.c,v 1.10 2008/07/03 06:31:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1112,7 +1112,7 @@ CmPrintDataFile(void)
       continue;
 
     append = (i == 0) ? FALSE : TRUE;
-    argv[2] = &append;
+    argv[2] = (char *) &append;
     exeobj(obj, "output_file", array[i], 3, argv);
   }
   ProgressDialogFinalize();

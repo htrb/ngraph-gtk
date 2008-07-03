@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.10 2008/07/03 02:19:48 hito Exp $
+ * $Id: x11commn.c,v 1.11 2008/07/03 06:31:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1461,7 +1461,7 @@ GetDrawFiles(struct narray *farray)
   SelectDialog(&DlgSelect, fobj, FileCB, farray, &ifarray);
   if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
     arraydel(&ifarray);
-    arraydel(&farray);
+    arraydel(farray);
     return 1;
   }
   arraydel(&ifarray);
