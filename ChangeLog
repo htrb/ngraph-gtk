@@ -1,5 +1,8 @@
 2008-07-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2gtkprint.c (create_cairo): remove cairo_destroy().
+	(gra2gtkprint_done): set NULL to local->cairo.
+
 	* src/gtk/x11graph.c (PageDialogPage): width and height entry is
 	sensitive only when paper type is custom.
 

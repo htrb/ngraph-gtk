@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2gtkprint.c,v 1.1 2008/07/03 09:51:18 hito Exp $
+ * $Id: ogra2gtkprint.c,v 1.2 2008/07/04 10:04:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -52,6 +52,18 @@ gra2gtkprint_init(struct objlist *obj, char *inst, char *rval, int argc, char **
 static int 
 gra2gtkprint_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  struct gra2cairo_local *local;
+
+  _getobj(obj, "_local", inst, &local);
+
+  if (local) {
+    if (local->linetonum && local->cairo) {
+      cairo_stroke(local->cairo);
+      local->linetonum = 0;
+    }
+    local->cairo = NULL;
+  }
+
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
 
@@ -74,7 +86,6 @@ create_cairo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   cairo = gtk_print_context_get_cairo_context(gpc);
 
   if (cairo_status(cairo) != CAIRO_STATUS_SUCCESS) {
-    cairo_destroy(cairo);
     return -1;
   }
 
@@ -82,13 +93,11 @@ create_cairo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   dpi = gtk_print_context_get_dpi_x(gpc);
   if (putobj(obj, "dpix", id, &dpi) < 0) {
-    cairo_destroy(cairo);
     return -1;
   }
 
   dpi = gtk_print_context_get_dpi_y(gpc);
   if (putobj(obj, "dpiy", id, &dpi) < 0) {
-    cairo_destroy(cairo);
     return -1;
   }
 
