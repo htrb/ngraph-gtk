@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.15 2008/07/04 11:02:38 hito Exp $
+ * $Id: ogra2cairo.c,v 1.16 2008/07/04 11:18:50 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -200,6 +200,9 @@ free_conf(void)
     if (fcur->fontalias) {
       memfree(fcur->fontalias);
     }
+    if (fcur->fontname) {
+      memfree(fcur->fontname);
+    }
     ptr = fcur;
     fcur = fcur->next;
     memfree(ptr);
@@ -284,6 +287,10 @@ gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 
   if (local->font_opt) {
     cairo_font_options_destroy(local->font_opt);
+  }
+
+  if (local->fontalias) {
+    memfree(local->fontalias);
   }
 
   Instance--;

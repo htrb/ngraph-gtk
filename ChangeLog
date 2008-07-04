@@ -1,5 +1,7 @@
 2008-07-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2cairo.c (gra2cairo_done): free 'local->fontalias'.
+
 	* src/gtk/x11file.c (file_list_set_val, FileDialogSetupItem): free
 	'valstr'.
 
