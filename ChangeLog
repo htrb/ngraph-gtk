@@ -11,7 +11,7 @@
 	(set_paper_type): add.
 	(struct pagelisttype, pagelist): add name, landscape and id;
 
-	* src/gtk/x11commn.c (CheckPage): fix bug: remove redundant return.
+	* src/gtk/x11commn.c (CheckPage): bug fix: remove redundant return.
 
 2008-07-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -29,11 +29,11 @@
 
 	* src/ofile.c (fitout): fitout is now static.
 
-	* src/ofit.c (fitpoly): fix bug. write information in buf instead
-	of equation.
+	* src/ofit.c (fitpoly): bug fix: write information in 'buf'
+	instead of 'equation'.
 
 	* src/gtk/x11file.c (FitDialogSetupItem, FitDialogSave)
-	(FitDialogApply): bug fix poly_dimension is active item + 1.
+	(FitDialogApply): bug fix: poly_dimension is active item + 1.
 
 	* src/gtk/x11commn.c (GetDrawFiles): add.
 
@@ -140,9 +140,9 @@
 	* src/gtk/x11axis.c: remove ev_key_down().
 	(CmAxisWindow): remove setting for d->ev_key.
 
-	* src/gtk/strconv.c (ascii2greece): bug fix. dlen must be "slen *
+	* src/gtk/strconv.c (ascii2greece): bug fix: dlen must be "slen *
 	2 + 1".
-	(str2utf8): bug fix. dlen must be "slen * 6 + 1".
+	(str2utf8): bug fix: dlen must be "slen * 6 + 1".
 
 	* src/gtk/ogra2x11.c (gtk_charwidth, gtk_charheight): save and
 	restore fontdir, fontsin and fontcos and set fontdir as 0 before
@@ -150,7 +150,7 @@
 
 	* src/gtk/gtk_subwin.c (ev_key_down): add case for "GDK_SPACE"
 
-	* src/gtk/gtk_liststore.c (create_tree_view): bug fix. add braces
+	* src/gtk/gtk_liststore.c (create_tree_view): bug fix: add braces
 	as "(n + cnum)" in argument of malloc.
 
 2008-06-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -271,7 +271,7 @@
 	* src/gtk/x11menu.c (ChkInterrupt): do gtk_main_iteration_do() only
 	when DrawLock == DrawLockDraw.
 
-	* src/gtk/ox11menu.c (mx_output): bug fix add 360 to
+	* src/gtk/ox11menu.c (mx_output): bug fix: add 360 to
 	Mxlocal->fontdir when Mxlocal->fontdir is negative.
 
 	* configure.in: required version of GTK+ is greater than 2.12
@@ -282,7 +282,7 @@
 
 	* src/gtk/x11commn.c (FreeConsole): restore ninterrupt.
 
-	* driver/gra2wmf.c (draw, getboundingbox): fix bug reported at
+	* driver/gra2wmf.c (draw, getboundingbox): bug fix: reported at
 	http://www2e.biglobe.ne.jp/~isizaka/bbs_old/light.cgi [670].
 
 	* src/gtk/ox11menu.c (mx_get_focused): add.
@@ -294,7 +294,7 @@
 	* src/gtk/x11view.c (Match, AddInvalidateRect): add
 	set_draw_lock().
 
-	* src/gtk/x11menu.c (save_hist): fix bug: remove redundant return.
+	* src/gtk/x11menu.c (save_hist): bug fix: remove redundant return.
 
 	* src/gtk/x11opt.c (ViewerDialogSetupItem, ViewerDialogSetup)
 	(ViewerDialogClose): add settings for "redraw_num".
@@ -357,11 +357,11 @@
 
 2008-06-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11view.c (ViewerWinFileUpdate): fix bug reported at
+	* src/gtk/x11view.c (ViewerWinFileUpdate): bug fix: reported at
 	http://www2e.biglobe.ne.jp/~isizaka/bbs_old/light.cgi [802]-[805].
 	(ViewerEvLButtonDown, ViewerEvRButtonDown): use nround() when
 	change dpi.
-	(ViewerEvScroll): fix bug d->VScroll to d->HScroll.
+	(ViewerEvScroll): bug fix: d->VScroll to d->HScroll.
 
 
 2008-06-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
