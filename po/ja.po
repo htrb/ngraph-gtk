@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2008-07-03 21:07+0900\n"
-"PO-Revision-Date: 2008-07-02 22:07+0900\n"
+"PO-Revision-Date: 2008-07-04 15:48+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -875,7 +875,7 @@ msgstr "左マージン(_L)<:"
 
 #: src/gtk/x11graph.c:180
 msgid "_Top margin:"
-msgstr "右マージン(_R):"
+msgstr "上マージン(_T):"
 
 #: src/gtk/x11graph.c:188
 msgid "paper _Zoom:"
@@ -1836,9 +1836,9 @@ msgid "Printing."
 msgstr "印刷中"
 
 #: src/gtk/x11print.c:634
-#, fuzzy, c-format
+#, c-format
 msgid "Printing error: %s"
-msgstr "印刷中"
+msgstr "印刷エラー: %s"
 
 #: src/gtk/x11print.c:683
 msgid "Spawning external driver."

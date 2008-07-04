@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.23 2008/07/03 09:51:18 hito Exp $
+ * $Id: x11menu.c,v 1.24 2008/07/04 06:54:12 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -622,10 +622,9 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, GTK_STOCK_SAVE_AS, TRUE, "<Ngraph>/Graph/SaveAs",  GDK_s, GDK_CONTROL_MASK | GDK_SHIFT_MASK, CmGraphMenu, MenuIdGraphSave);
   create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
-  create_menu_item(menu, _("pa_Ge"), FALSE, "<Ngraph>/Graph/Page", 0, 0, CmGraphMenu, MenuIdGraphPage);
-  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("_Draw order"), FALSE, "<Ngraph>/Graph/Draw order", 0, 0, CmGraphMenu, MenuIdGraphSwitch);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+  create_menu_item(menu, _("pa_Ge"), FALSE, "<Ngraph>/Graph/Page", 0, 0, CmGraphMenu, MenuIdGraphPage);
   create_menu_item(menu, GTK_STOCK_PRINT, TRUE, "<Ngraph>/Graph/Print",  GDK_p, GDK_CONTROL_MASK, CmGraphMenu, MenuIdOutputDriver);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("_Current directory"), FALSE, "<Ngraph>/Graph/Current directory", 0, 0, CmGraphMenu, MenuIdGraphDirectory);
