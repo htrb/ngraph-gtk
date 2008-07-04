@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: nconfig.c,v 1.2 2008/07/04 10:52:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -139,10 +139,11 @@ FILE *openconfig(char *section)
       }
     }
   }
-  if (homeconf!=NULL) {
+  if (homeconf) {
 #if 0
-    if (libconf==NULL) s=homeconf;
-    else if (homestat.st_mtime>=libstat.st_mtime) {
+    if (libconf==NULL) {
+      s=homeconf;
+    } else if (homestat.st_mtime>=libstat.st_mtime) {
       s=homeconf;
       memfree(libconf);
     } else {
@@ -151,9 +152,13 @@ FILE *openconfig(char *section)
     }
 #else
     s=homeconf;
+    memfree(libconf);
 #endif
-  } else if (libconf!=NULL) s=libconf;
-  else return NULL;
+  } else if (libconf) {
+    s=libconf;
+  } else {
+    return NULL;
+  }
   if ((fp=nfopen(s,"rt"))==NULL) {
     memfree(s);
     return NULL;

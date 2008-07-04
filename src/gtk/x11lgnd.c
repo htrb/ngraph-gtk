@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.13 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11lgnd.c,v 1.14 2008/07/04 10:52:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2103,6 +2103,7 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	getobj(d->obj[type], "text", row, 0, NULL, &text);
 	{
 	  char *tmp;
+	  buf[0] = '\0';
 #ifdef JAPANESE
 /* SJIS ---> UTF-8 */
 	  tmp = sjis_to_utf8(text);

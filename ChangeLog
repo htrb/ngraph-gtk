@@ -1,5 +1,12 @@
 2008-07-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (file_list_set_val, FileDialogSetupItem): free
+	'valstr'.
+
+	* src/gtk/ogra2cairo.c (free_conf): free fontmap.
+
+	* src/gtk/gtk_entry_completion.c (add_completion): free 'buf'.
+
 	* src/gtk/ogra2gtkprint.c (create_cairo): remove cairo_destroy().
 	(gra2gtkprint_done): set NULL to local->cairo.
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.19 2008/07/03 04:39:59 hito Exp $
+ * $Id: x11file.c,v 1.20 2008/07/04 10:52:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2140,6 +2140,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
     if (valstr[i] == ':')
       i++;
     gtk_label_set_text(GTK_LABEL(d->fitid), valstr + i);
+    memfree(valstr);
   }
 }
 
@@ -3937,6 +3938,7 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       if (valstr[j] == ':') j++;
       len = snprintf(buf, sizeof(buf), "%3s", valstr + j);
       list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
+      memfree(valstr);
     } else if (strcmp(Flist[i].name, "hidden") == 0) {
       getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
       cx = ! cx;

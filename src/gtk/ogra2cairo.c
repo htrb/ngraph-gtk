@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.13 2008/07/03 06:31:13 hito Exp $
+ * $Id: ogra2cairo.c,v 1.14 2008/07/04 10:52:50 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -117,7 +117,8 @@ loadconfig(void)
       for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
       f4 = getitok2(&s2, &len, "");
       if (f1 && f2 && f3 && f4) {
-	if ((fnew = memalloc(sizeof(struct fontmap))) == NULL) {
+	fnew = memalloc(sizeof(struct fontmap));
+	if (fnew == NULL) {
 	  memfree(tok);
 	  memfree(f1);
 	  memfree(f2);
@@ -189,9 +190,20 @@ static void
 free_conf(void)
 {
   int i;
+  struct fontmap *fcur, *ptr;
 
   if (Gra2cairoConf == NULL)
     return;
+
+  fcur = Gra2cairoConf->fontmaproot;
+  while (fcur) {
+    ptr = fcur;
+    fcur = fcur->next;
+    if (fcur->fontalias) {
+      memfree(fcur->fontalias);
+    }
+    memfree(ptr);
+  }
 
   for (i = 0; i < Gra2cairoConf->loadfont; i++) {
     if (Gra2cairoConf->font[i].fontalias) {
