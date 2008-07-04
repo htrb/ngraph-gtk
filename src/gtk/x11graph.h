@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11graph.h,v 1.2 2008/07/04 08:21:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,3 +28,4 @@ void CmGraphMenu(GtkWidget *w, gpointer client_data);
 void CmGraphHistory(GtkWidget *w, gpointer client_data);
 void CmGraphLoadB(GtkWidget *w, gpointer client_data);
 void CmGraphSaveB(GtkWidget *w, gpointer client_data);
+int set_paper_type(int w, int h);

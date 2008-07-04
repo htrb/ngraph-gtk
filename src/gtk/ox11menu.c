@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.19 2008/07/04 06:44:06 hito Exp $
+ * $Id: ox11menu.c,v 1.20 2008/07/04 08:21:51 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -54,6 +54,7 @@
 #include "x11menu.h"
 #include "x11gui.h"
 #include "x11view.h"
+#include "x11graph.h"
 
 #define NAME "menu"
 #define ALIAS "winmenu:gtkmenu"
