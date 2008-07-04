@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.8 2008/07/02 13:35:09 hito Exp $
+ * $Id: ox11menu.h,v 1.9 2008/07/04 06:44:06 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -48,6 +48,17 @@ extern int mgtkputstdout(char *s);
 extern int mgtkprintfstdout(char *fmt, ...);
 extern int mgtkinterrupt(void);
 extern int mgtkinputyn(char *mes);
+
+enum paper_id {
+  PAPER_ID_A3,
+  PAPER_ID_A4,
+  PAPER_ID_A5,
+  PAPER_ID_B4,
+  PAPER_ID_B5,
+  PAPER_ID_LETTER,
+  PAPER_ID_LEGAL,
+  PAPER_ID_CUSTOM,
+};
 
 struct extprinter
 {
@@ -108,7 +119,9 @@ struct menulocal
   int GRAoid;
   char *GRAinst;
   int GC;
-  int PaperWidth, PaperHeight;
+  int PaperWidth, PaperHeight, PaperLandscape;
+  char *PaperName;
+  enum paper_id PaperId;
   int LeftMargin, TopMargin;
   int PaperZoom;
   struct narray drawrable;

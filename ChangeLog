@@ -1,3 +1,18 @@
+2008-07-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (PageDialogPage): width and height entry is
+	sensitive only when paper type is custom.
+
+	* src/gtk/ox11menu.h (struct menulocal): add PaperLandscape,
+	PaperId and PaperName.
+	(enum paper_id): add.
+
+	* src/gtk/x11graph.c (PageDialogClose): check paper size.
+	(set_paper_type): add.
+	(struct pagelisttype, pagelist): add name, landscape and id;
+
+	* src/gtk/x11commn.c (CheckPage): fix bug: remove redundant return.
+
 2008-07-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (CmGraphMenu): call CmOutputPrinter() when

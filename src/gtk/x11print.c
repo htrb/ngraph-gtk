@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.13 2008/07/03 14:17:38 hito Exp $
+ * $Id: x11print.c,v 1.14 2008/07/04 06:44:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -568,6 +568,7 @@ CmOutputPrinter(void)
   struct narray *drawrable;
   struct print_obj pobj;
   GtkPaperSize *paper_size;
+  GtkPageSetup *page_setup;
 
   if (Menulock || GlobalLock)
     return;
@@ -617,8 +618,25 @@ CmOutputPrinter(void)
   if (PrintSettings == NULL)
     PrintSettings = gtk_print_settings_new();
 
-  paper_size = gtk_paper_size_new(GTK_PAPER_NAME_A4);
-  gtk_print_settings_set_orientation(PrintSettings, GTK_PAGE_ORIENTATION_LANDSCAPE);
+  if (Menulocal.PaperId == PAPER_ID_CUSTOM) {
+    paper_size = gtk_paper_size_new_custom(Menulocal.PaperName,
+					   Menulocal.PaperName,
+					   Menulocal.PaperWidth / 100.0,
+					   Menulocal.PaperHeight / 100.0,
+					   GTK_UNIT_MM);
+  } else {
+    paper_size = gtk_paper_size_new(Menulocal.PaperName);
+  }
+
+  page_setup = gtk_page_setup_new();
+  gtk_page_setup_set_paper_size(page_setup, paper_size);
+  if (Menulocal.PaperLandscape) {
+    gtk_page_setup_set_orientation(page_setup, GTK_PAGE_ORIENTATION_LANDSCAPE);
+  } else {
+    gtk_page_setup_set_orientation(page_setup, GTK_PAGE_ORIENTATION_PORTRAIT);
+  }
+
+  gtk_print_operation_set_default_page_setup(print, page_setup);
   gtk_print_operation_set_print_settings(print, PrintSettings);
 
   pobj.graobj = graobj;

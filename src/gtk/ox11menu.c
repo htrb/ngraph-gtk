@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.18 2008/07/02 13:35:09 hito Exp $
+ * $Id: ox11menu.c,v 1.19 2008/07/04 06:44:06 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -967,8 +967,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.editor = NULL;
   Menulocal.browser = NULL;
   Menulocal.help_browser = NULL;
-  Menulocal.PaperWidth = 21000;
-  Menulocal.PaperHeight = 29700;
+  set_paper_type(21000, 29700);
   Menulocal.LeftMargin = 0;
   Menulocal.TopMargin = 0;
   Menulocal.PaperZoom = 10000;

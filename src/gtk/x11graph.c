@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.10 2008/07/03 09:51:18 hito Exp $
+ * $Id: x11graph.c,v 1.11 2008/07/04 06:44:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -53,28 +53,57 @@
 
 struct pagelisttype
 {
-  char *paper;
-  int width;
-  int height;
+  char *paper, *name;
+  enum paper_id id;
+  int langscape, width, height;
 };
 
 static struct pagelisttype pagelist[] = {
-  {"A3 P (29700x42000)", 29700, 42000},
-  {"A4 P (21000x29700)", 21000, 29700},
-  {"A4 L (29700x21000)", 29700, 21000},
-  {"A5 P (14800x21000)", 14800, 21000},
-  {"A5 L (21000x14800)", 21000, 14800},
-  {"B4 P (25700x36400)", 25700, 36400},
-  {"B5 P (18200x25700)", 18200, 25700},
-  {"B5 L (25700x18200)", 25700, 18200},
-  {"Letter P (21590x27940)", 21590, 27940},
-  {"Letter L (27940x21590)", 27940, 21590},
-  {"Legal  P (21590x35560)", 21590, 35560},
-  {"Legal  L (35560x35560)", 35560, 21590},
+  {"Custom",                 "custom",              PAPER_ID_CUSTOM, TRUE,  0,     0},
+  {"A3 P (29700x42000)",     GTK_PAPER_NAME_A3,     PAPER_ID_A3,     FALSE, 29700, 42000},
+  {"A4 P (21000x29700)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     FALSE, 21000, 29700},
+  {"A4 L (29700x21000)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     TRUE,  29700, 21000},
+  {"A5 P (14800x21000)",     GTK_PAPER_NAME_A5,     PAPER_ID_A5,     FALSE, 14800, 21000},
+  {"A5 L (21000x14800)",     GTK_PAPER_NAME_A5,     PAPER_ID_A5,     TRUE,  21000, 14800},
+  {"B4 P (25700x36400)",     "iso_b4",              PAPER_ID_B4,     FALSE, 25700, 36400},
+  {"B5 P (18200x25700)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     FALSE, 18200, 25700},
+  {"B5 L (25700x18200)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     TRUE,  25700, 18200},
+  {"Letter P (21590x27940)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, FALSE, 21590, 27940},
+  {"Letter L (27940x21590)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, TRUE,  27940, 21590},
+  {"Legal  P (21590x35560)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  FALSE, 21590, 35560},
+  {"Legal  L (35560x35560)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  TRUE,  35560, 21590},
 };
 
 #define PAGELISTNUM (sizeof(pagelist) / sizeof(*pagelist))
-#define DEFAULT_PAPER_SIZE 1
+#define DEFAULT_PAPER_SIZE 0
+
+int
+set_paper_type(int w, int h)
+{
+  int j;
+
+  if (w < 1 || h < 1)
+    return 0;
+
+  Menulocal.PaperWidth = w;
+  Menulocal.PaperHeight = h;
+
+  for (j = 0; j < PAGELISTNUM; j++) {
+    if (w == pagelist[j].width &&  h == pagelist[j].height) {
+      break;
+    }
+  }
+
+  if (j == PAGELISTNUM) {
+    j = DEFAULT_PAPER_SIZE;
+  }
+
+  Menulocal.PaperName = pagelist[j].name;
+  Menulocal.PaperId = pagelist[j].id;
+  Menulocal.PaperLandscape = pagelist[j].langscape;
+
+  return j;
+}
 
 static void
 PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
@@ -97,15 +126,8 @@ PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
   snprintf(buf, sizeof(buf), "%d", Menulocal.PaperZoom);
   gtk_entry_set_text(GTK_ENTRY(d->paperzoom), buf);
 
-  for (j = 0; j < PAGELISTNUM; j++) {
-    if ((Menulocal.PaperWidth == pagelist[j].width)
-	&& (Menulocal.PaperHeight == pagelist[j].height))
-      break;
-  }
+  j = set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
 
-  if (j == PAGELISTNUM) {
-    j = DEFAULT_PAPER_SIZE;
-  }
   combo_box_set_active(d->paper, j);
 }
 
@@ -123,11 +145,16 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
   if (a < 0)
     return;
 
-  snprintf(buf, sizeof(buf), "%d", pagelist[a].width);
-  gtk_entry_set_text(GTK_ENTRY(d->paperwidth), buf);
+  gtk_widget_set_sensitive(d->paperwidth, a == 0);
+  gtk_widget_set_sensitive(d->paperheight, a == 0);
 
-  snprintf(buf, sizeof(buf), "%d", pagelist[a].height);
-  gtk_entry_set_text(GTK_ENTRY(d->paperheight), buf);
+  if (a > 0) {
+    snprintf(buf, sizeof(buf), "%d", pagelist[a].width);
+    gtk_entry_set_text(GTK_ENTRY(d->paperwidth), buf);
+
+    snprintf(buf, sizeof(buf), "%d", pagelist[a].height);
+    gtk_entry_set_text(GTK_ENTRY(d->paperheight), buf);
+  }
 }
 
 static void
@@ -196,16 +223,34 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 }
 
 static void
-PageDialogClose(GtkWidget *w, void *data)
+PageDialogClose(GtkWidget *wi, void *data)
 {
   struct PageDialog *d;
   const char *buf;
   char *endptr;
-  int a;
+  int a, w, h;
 
   d = (struct PageDialog *) data;
   if (d->ret != IDOK)
     return;
+
+  buf = gtk_entry_get_text(GTK_ENTRY(d->paperwidth));
+  a = strtol(buf, &endptr, 10);
+  if (endptr[0] == '\0')
+    w = a;
+
+  buf = gtk_entry_get_text(GTK_ENTRY(d->paperheight));
+  a = strtol(buf, &endptr, 10);
+  if (endptr[0] == '\0')
+    h = a;
+
+  if (w < 1000 || h < 1000) {
+    d->ret = IDLOOP;
+    return;
+  }
+
+  set_paper_type(w, h);
+
   buf = gtk_entry_get_text(GTK_ENTRY(d->leftmargin));
   a = strtol(buf, &endptr, 10);
   if (endptr[0] == '\0')
@@ -215,16 +260,6 @@ PageDialogClose(GtkWidget *w, void *data)
   a = strtol(buf, &endptr, 10);
   if (endptr[0] == '\0')
     Menulocal.TopMargin = a;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->paperwidth));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    Menulocal.PaperWidth = a;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->paperheight));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    Menulocal.PaperHeight = a;
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->paperzoom));
   a = strtol(buf, &endptr, 10);

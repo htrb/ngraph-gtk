@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.11 2008/07/03 06:31:13 hito Exp $
+ * $Id: x11commn.c,v 1.12 2008/07/04 06:44:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -122,8 +122,6 @@ OpenGRA(void)
 void
 CheckPage(void)
 {
-  return;
-
   _getobj(Menulocal.GRAobj, "paper_width", Menulocal.GRAinst,
 	  &(Menulocal.PaperWidth));
   _getobj(Menulocal.GRAobj, "paper_height", Menulocal.GRAinst,
@@ -134,6 +132,8 @@ CheckPage(void)
 	  &(Menulocal.TopMargin));
   _getobj(Menulocal.GRAobj, "zoom", Menulocal.GRAinst,
 	  &(Menulocal.PaperZoom));
+
+  set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
 }
 
 static int
