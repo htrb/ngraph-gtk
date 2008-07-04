@@ -1,5 +1,9 @@
 2008-07-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (SetCaption): free 'buf'.
+
+	* src/ogra.c (set_progress_val): initialize progress bar when 'i == 0'.
+
 	* src/gtk/ogra2cairo.c (gra2cairo_done): free 'local->fontalias'.
 
 	* src/gtk/x11file.c (file_list_set_val, FileDialogSetupItem): free

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.3 2008/06/12 09:04:24 hito Exp $
+ * $Id: ogra.c,v 1.4 2008/07/04 11:40:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -391,6 +391,10 @@ set_progress_val(int i, int n, char *name)
 {
   double frac;
   char msgbuf[1024];
+
+  if (i == 0) {
+    set_progress(0, "", 0);
+  }
 
   frac = 1.0 * i / (n + 1);
   snprintf(msgbuf, sizeof(msgbuf), _("drawing %s (%.1f%%)"), name, frac * 100);

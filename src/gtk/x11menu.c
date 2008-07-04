@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.24 2008/07/04 06:54:12 hito Exp $
+ * $Id: x11menu.c,v 1.25 2008/07/04 11:40:47 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1850,6 +1850,7 @@ SetCaption(char *file)
 	     (fullpath) ? ":" : "",
 	     (fullpath) ? fullpath : "");
     gtk_window_set_title(GTK_WINDOW(TopLevel), buf);
+    memfree(buf);
   }
   memfree(fullpath);
 }
