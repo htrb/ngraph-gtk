@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.20 2008/07/04 08:21:51 hito Exp $
+ * $Id: ox11menu.c,v 1.21 2008/07/04 11:02:38 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -207,14 +207,20 @@ mgtkloadconfig(void)
 	arrayadd(Menulocal.datafilelist, &f1);
     } else if (strcmp(tok, "framex") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.framex = val;
+      if (f1) {
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  Menulocal.framex = val;
+      }
+      memfree(f1);
     } else if (strcmp(tok, "framey") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.framey = val;
+      if (f1) {
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  Menulocal.framey = val;
+      }
+      memfree(f1);
     } else if (strcmp(tok, "menu_win") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       f2 = getitok2(&s2, &len, " \t,");

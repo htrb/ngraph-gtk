@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.14 2008/07/04 10:52:50 hito Exp $
+ * $Id: ogra2cairo.c,v 1.15 2008/07/04 11:02:38 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -197,11 +197,11 @@ free_conf(void)
 
   fcur = Gra2cairoConf->fontmaproot;
   while (fcur) {
-    ptr = fcur;
-    fcur = fcur->next;
     if (fcur->fontalias) {
       memfree(fcur->fontalias);
     }
+    ptr = fcur;
+    fcur = fcur->next;
     memfree(ptr);
   }
 
