@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.20 2008/07/04 10:52:50 hito Exp $
+ * $Id: x11file.c,v 1.21 2008/07/05 02:15:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1203,9 +1203,9 @@ FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
 
   list_store_clear(d->list);
 
-  getobj(d->Obj, "move_data", d->Id, 0, NULL, &move);
-  getobj(d->Obj, "move_data_x", d->Id, 0, NULL, &movex);
-  getobj(d->Obj, "move_data_y", d->Id, 0, NULL, &movey);
+  getobj(d->Obj, "move_data", id, 0, NULL, &move);
+  getobj(d->Obj, "move_data_x", id, 0, NULL, &movex);
+  getobj(d->Obj, "move_data_y", id, 0, NULL, &movey);
 
   movenum = arraynum(move);
   
@@ -1308,6 +1308,10 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct FileMoveDialog *) data;
 
   if (makewidget) {
+    gtk_dialog_add_buttons(GTK_DIALOG(wi),
+			   GTK_STOCK_COPY, IDCOPY,
+			   NULL);
+
     swin = gtk_scrolled_window_new(NULL, NULL);
     w = list_store_create(sizeof(list) / sizeof(*list), list);
     list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
@@ -1370,6 +1374,17 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 }
 
 static void
+FileMoveDialogCopy(struct FileMoveDialog *d)
+{
+  int sel;
+
+  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
+
+  if (sel != -1)
+    FileMoveDialogSetupItem(d->widget, d, sel);
+}
+
+static void
 FileMoveDialogClose(GtkWidget *w, void *data)
 {
   struct FileMoveDialog *d;
@@ -1381,8 +1396,18 @@ FileMoveDialogClose(GtkWidget *w, void *data)
   char *ptr, *endptr;
 
   d = (struct FileMoveDialog *) data;
-  if (d->ret != IDOK)
+
+  switch (d->ret) {
+  case IDOK:
+    break;
+  case IDCOPY:
+    FileMoveDialogCopy(d);
+    d->ret = IDLOOP;
     return;
+  default:
+    return;
+  }
+
   ret = d->ret;
   d->ret = IDLOOP;
   getobj(d->Obj, "move_data", d->Id, 0, NULL, &move);
@@ -1465,7 +1490,7 @@ FileMaskDialogSetupItem(GtkWidget *w, struct FileMaskDialog *d, int id)
   GtkTreeIter iter;
 
   list_store_clear(d->list);
-  getobj(d->Obj, "mask", d->Id, 0, NULL, &mask);
+  getobj(d->Obj, "mask", id, 0, NULL, &mask);
   if ((masknum = arraynum(mask)) > 0) {
     for (j = 0; j < masknum; j++) {
       line = *(int *) arraynget(mask, j);
@@ -1512,6 +1537,17 @@ mask_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
 }
 
 static void
+FileMaskDialogCopy(struct FileMaskDialog *d)
+{
+  int sel;
+
+  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
+
+  if (sel != -1)
+    FileMaskDialogSetupItem(d->widget, d, sel);
+}
+
+static void
 FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *swin, *hbox, *vbox;
@@ -1523,6 +1559,10 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct FileMaskDialog *) data;
 
   if (makewidget) {
+    gtk_dialog_add_buttons(GTK_DIALOG(wi),
+			   GTK_STOCK_COPY, IDCOPY,
+			   NULL);
+
     hbox = gtk_hbox_new(FALSE, 4);
     vbox = gtk_vbox_new(FALSE, 4);
 
@@ -1574,8 +1614,17 @@ FileMaskDialogClose(GtkWidget *w, void *data)
   gboolean state;
 
   d = (struct FileMaskDialog *) data;
-  if (d->ret != IDOK)
+
+  switch (d->ret) {
+  case IDOK:
+    break;
+  case IDCOPY:
+    FileMaskDialogCopy(d);
+    d->ret = IDLOOP;
     return;
+  default:
+    return;
+  }
 
   ret = d->ret;
   d->ret = IDLOOP;
