@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.16 2008/07/04 11:18:50 hito Exp $
+ * $Id: ogra2cairo.c,v 1.17 2008/07/06 23:55:56 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -793,7 +793,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     cairo_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]));
     break;
   case 'N':
-    cairo_rel_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]));
+    cairo_rel_move_to(local->cairo, mxd2pw(local, cpar[1]), mxd2ph(local, cpar[2]));
     break;
   case 'L':
     cairo_new_path(local->cairo);
