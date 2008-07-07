@@ -1,4 +1,7 @@
-new axis name:frameX
+#!ngraph
+#%creator: Ngraph for X11 
+#%version: 6.03.30.gtk-03
+new axis name:fX1
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -62,7 +65,7 @@ new axis name:frameX
 	axis::num_G=0
 	axis::num_B=0
 
-new axis name:frameY
+new axis name:fY1
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -126,7 +129,7 @@ new axis name:frameY
 	axis::num_G=0
 	axis::num_B=0
 
-new axis name:frameU
+new axis name:fU1
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -190,7 +193,7 @@ new axis name:frameU
 	axis::num_G=0
 	axis::num_B=0
 
-new axis name:frameR
+new axis name:fR1
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -269,7 +272,7 @@ new file
 	file::type=mark
 	file::interpolation=spline
 	file::fit=
-	file::math_x='COLOR(0,255/1.2*%03)=COLOR(1,255*%03/1.2)=COLOR(2,255*%03/1.2)=x'
+	file::math_x='HSB(1-%03/1.6,1,1)=x'
 	file::math_y=
 	file::func_f=
 	file::func_g=
@@ -287,6 +290,7 @@ new file
 	file::B2=255
 	file::remark='#%'\'''
 	file::ifs=' ,	()'
+	file::csv=false
 	file::head_skip=0
 	file::read_step=1
 	file::final_line=-1
@@ -296,6 +300,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
+	file::data_clip=true
 	file::file='/usr/local/share/doc/Ngraph-gtk/demo/demo1.dat'
 
 new file
@@ -329,6 +334,7 @@ new file
 	file::B2=255
 	file::remark='#%'\'''
 	file::ifs=' ,	()'
+	file::csv=false
 	file::head_skip=0
 	file::read_step=1
 	file::final_line=-1
@@ -338,6 +344,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
+	file::data_clip=true
 	file::file='/usr/local/share/doc/Ngraph-gtk/demo/demo1.dat'
 
 new file
@@ -371,6 +378,7 @@ new file
 	file::B2=255
 	file::remark='#%'\'''
 	file::ifs=' ,	()'
+	file::csv=false
 	file::head_skip=0
 	file::read_step=1
 	file::final_line=-1
@@ -380,6 +388,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
+	file::data_clip=true
 	file::file='/usr/local/share/doc/Ngraph-gtk/demo/demo1.dat'
 
 new file
@@ -391,19 +400,19 @@ new file
 	file::redraw_flag=true
 	file::save_path=unchange
 	file::x=1
-	file::y=0
-	file::type=arrow
+	file::y=2
+	file::type=mark
 	file::interpolation=spline
 	file::fit=
-	file::math_x='IF(FIRST,%01+1,%01+1+%03/20)'
-	file::math_y='IF(FIRST,%02+1,%02+1+%03/20)'
+	file::math_x='RGB(%03/1.6,1-%03/1.6,1)=x+1'
+	file::math_y='y+1'
 	file::func_f=
 	file::func_g=
 	file::func_h=
 	file::smooth_x=0
 	file::smooth_y=0
 	file::mark_type=10
-	file::mark_size=200
+	file::mark_size=250
 	file::line_width=40
 	file::line_style=
 	file::line_join=miter
@@ -413,6 +422,7 @@ new file
 	file::B2=255
 	file::remark='#%'\'''
 	file::ifs=' ,	()'
+	file::csv=false
 	file::head_skip=0
 	file::read_step=1
 	file::final_line=-1
@@ -422,6 +432,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
+	file::data_clip=true
 	file::file='/usr/local/share/doc/Ngraph-gtk/demo/demo1.dat'
 
 new text
@@ -468,8 +479,8 @@ new text
 	text::clip=true
 	text::redraw_flag=true
 	text::text='Demo #1:'
-	text::x=3500
-	text::y=7000
+	text::x=1900
+	text::y=6100
 	text::pt=2000
 	text::font='HelveticaBold'
 	text::jfont='Gothic'
@@ -485,9 +496,9 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='COLOR(), MARKSIZE() FUNCTION'
-	text::x=7000
-	text::y=7000
+	text::text='COLOR(), RGB(), HSB() and MARKSIZE() FUNCTION'
+	text::x=1900
+	text::y=7300
 	text::pt=2000
 	text::font='HelveticaBold'
 	text::jfont='Gothic'
