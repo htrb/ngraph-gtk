@@ -272,7 +272,7 @@ new file
 	file::type=mark
 	file::interpolation=spline
 	file::fit=
-	file::math_x='HSB(1-%03/1.6,1,1)=x'
+	file::math_x='HSB(%03/3-0.33,1,1)=x'
 	file::math_y=
 	file::func_f=
 	file::func_g=
@@ -412,7 +412,7 @@ new file
 	file::smooth_x=0
 	file::smooth_y=0
 	file::mark_type=10
-	file::mark_size=250
+	file::mark_size=200
 	file::line_width=40
 	file::line_style=
 	file::line_join=miter
