@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.17 2008/07/06 23:55:56 hito Exp $
+ * $Id: ogra2cairo.c,v 1.18 2008/07/08 07:24:45 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -591,11 +591,17 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
 
 #if 0
   if (draw) {
-    cairo_save(local->cairo);
-
+    double x, y;
     PangoLayoutLine *pline;
     PangoRectangle prect;
     int ascent, descent, s = mxd2ph(local, size);
+
+    //    x = - local->fontsin * baseline;
+    //    y = - local->fontcos * baseline;
+
+    cairo_get_current_point(local->cairo, &x, &y);
+
+    cairo_save(local->cairo);
 
     pline = pango_layout_get_line_readonly(layout, 0);
     pango_layout_line_get_pixel_extents(pline, &prect, NULL);
@@ -620,6 +626,8 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
     //    gdk_gc_set_rgb_fg_color(Mxlocal->gc, &black);
 
     cairo_restore(local->cairo);
+
+    cairo_rel_move_to(local->cairo, x, y);
   }
 
 #endif
