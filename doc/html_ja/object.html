@@ -5,7 +5,7 @@
 </HEAD>
 <BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#0000FF" VLINK="#0000FF">
 <A NAME="TOP">&nbsp;</A>
-<A HREF="./ngraph.html"><B>Ngraphオブジェクト</B></A>
+<h1><A HREF="./ngraph.html">Ngraphオブジェクト</A></h1>
 <UL>
 <LI><A HREF="#OBJECT">概要</A>
 <LI><A HREF="#OBJECTLIST">Ngraphオブジェクト一覧</A>
@@ -18,7 +18,7 @@
 
 
 <A NAME="OBJECT">&nbsp;</A>
-<A HREF="#TOP"><B>概要</B></A>
+<h2><A HREF="#TOP">概要</A></h2>
 <BR>
 <BLOCKQUOTE>
 Ngraphで描画されるグラフはNgraphオブジェクトの集合から成り立っています。<BR>
@@ -34,38 +34,42 @@ Ngraphオブジェクト階層<BR>
 <BR>
 <PRE>
 object
-	system
-	shell
-	gra
-	gra2
-		gra2null
-		gra2win
-		gra2file
-		gra2prn
-		menu
-	int
-	double
-	string
-	iarray
-	darray
-	sarray
-	math
-	fit
-	prm
-	draw
-		axisgrid
-		axis
-		file
-		merge
-		legend
-			rectangle
-			line
-			curve
-			arc
-			polygon
-			mark
-			text
-	dialog
+        system
+        shell
+        gra
+        gra2
+                gra2null
+                gra2file
+                gra2prn
+                gra2cairo
+                        gra2cairofile
+                        gra2gtkprint
+                        gra2gtk
+                        gra2gdk
+                        menu
+        int
+        double
+        string
+        iarray
+        darray
+        sarray
+        math
+        fit
+        prm
+        draw
+                axisgrid
+                axis
+                file
+                merge
+                legend
+                        rectangle
+                        line
+                        curve
+                        arc
+                        polygon
+                        mark
+                        text
+        dialog
 </PRE>
 </BLOCKQUOTE>
 
@@ -76,53 +80,55 @@ object
 
 
 <A NAME="OBJECTLIST">&nbsp;</A>
-<A HREF="#TOP"><B>Ngraphオブジェクト一覧</B></A>
+<h2><A HREF="#TOP">Ngraphオブジェクト一覧</A></h2>
 <BR>
-<BLOCKQUOTE>
 各オブジェクトのフィールド一覧を示します。<BR>
 各オブジェクトのフィールドは
 <UL><PRE>permission     field_name   field_type</PRE></UL>
 の形式で表示されています。
 <BR>
-<TABLE BORDER=1>
-<TR><TD>objectオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+
+<h3>object オブジェクト</h3>
+<pre>
 object: object
+alias:
+version: 1.00.00
 parent: (null)
+object id: 0
 number of fields: 6
-size of instance: 16
+size of instance: 32
 --x            init    void( )
 --x            done    void( )
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
-</PRE>
-</UL>
-<BR>
+r-x            save    *char( char *[] )
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>systemオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>system オブジェクト</h3>
+<pre>
 object: system
+alias:
+version: 6.03.30.gtk-03
 parent: object
-number of fields: 23
-size of instance: 76
+object id: 1
+number of fields: 27
+size of instance: 176
+current instance: 0
+last instance id: 0
 r--              id    int
 r--             oid    int
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 r--            name    char*
 r--         version    char*
 r--       copyright    char*
 r--          e-mail    char*
+r--             web    char*
 rw-     login_shell    char*
 rw-             cwd    char*
+rw-     ignore_path    bool
 rw-     expand_file    bool
 rw-      expand_dir    char*
 r--            GRAF    char*
@@ -132,49 +138,51 @@ r--        home_dir    char*
 r-x            time    *char( int )
 r-x            date    *char( int )
 r-x       temp_file    *char( )
+r--       temp_list    *char[]
 r-x unlink_temp_file    void( )
-r-x   hide_instance    void( char * )
-r-x recover_instance    void( char * )
-</PRE>
-</UL>
-<BR>
+r-x   hide_instance    void( char *[] )
+r-x recover_instance    void( char *[] )
+r-x          resize    void( int[] )
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>shellオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>shell オブジェクト</h3>
+<pre>
 object: shell
+alias:
+version: 1.00.00
 parent: object
+object id: 2
 number of fields: 10
-size of instance: 24
+size of instance: 48
+current instance: 0
+last instance id: 0
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
-r-x           shell    void( char * )
----        security    void( )
+r-x           shell    void( char *[] )
+---        security    void( bool )
 ---          _local    void*
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>graオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>gra オブジェクト</h3>
+<pre>
 object: gra
+alias:
+version: 1.00.00
 parent: object
+object id: 3
 number of fields: 22
-size of instance: 60
+size of instance: 120
+current instance: 0
+last instance id: 0
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -193,23 +201,21 @@ r-x           flush    void( void )
 r-x           clear    void( void )
 r--         _device    char*
 r-x            draw    void( void )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>gra2オブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>gra2 オブジェクト</h3>
+<pre>
 object: gra2
+alias:
+version: 1.00.00
 parent: object
+object id: 4
 number of fields: 11
-size of instance: 28
+size of instance: 56
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 r-x           clear    void( void )
@@ -217,23 +223,21 @@ r--           _list    *char[]
 r--             _GC    int
 rw-      delete_gra    bool
 r-x      disconnect    void( void )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>gra2nullオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>gra2null オブジェクト</h3>
+<pre>
 object: gra2null
+alias:
+version: 1.00.00
 parent: gra2
+object id: 5
 number of fields: 15
-size of instance: 44
+size of instance: 88
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 r-x           clear    void( void )
 r--           _list    *char[]
 r--             _GC    int
@@ -245,23 +249,21 @@ r-x      disconnect    void( void )
 ---      _charwidth    int( )
 ---     _charascent    int( )
 ---    _chardescent    int( )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>gra2fileオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>gra2file オブジェクト</h3>
+<pre>
 object: gra2file
+alias:
+version: 1.00.00
 parent: gra2
+object id: 6
 number of fields: 15
-size of instance: 40
+size of instance: 80
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 r-x           clear    void( void )
 r--           _list    *char[]
 r--             _GC    int
@@ -273,23 +275,21 @@ r-x      disconnect    void( void )
 rw-            file    char*
 ---          _local    void*
 ---         _output    void( )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>gra2prnオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>gra2prn オブジェクト</h3>
+<pre>
 object: gra2prn
+alias:
+version: 1.00.00
 parent: gra2
+object id: 7
 number of fields: 17
-size of instance: 48
+size of instance: 96
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 r-x           clear    void( void )
 r--           _list    *char[]
 r--             _GC    int
@@ -303,27 +303,215 @@ rw-          option    char*
 rw-             prn    char*
 ---          _local    void*
 ---         _output    void( )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>menuオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
-object: menu
+<h3>gra2cairo オブジェクト</h3>
+<pre>
+object: gra2cairo
+alias:
+version: 1.00.00
 parent: gra2
-number of fields: 25
-size of instance: 64
+object id: 8
+number of fields: 22
+size of instance: 128
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
+r-x           clear    void( void )
 r--           _list    *char[]
 r--             _GC    int
 rw-      delete_gra    bool
 r-x      disconnect    void( void )
+--x            init    void( )
+--x            done    void( )
+---            next    void*
+rw-             dpi    int
+rw-            dpix    int
+rw-            dpiy    int
+r-x           flush    void( void )
+rw-       antialias    enum( none default gray )
+---         _output    void( )
+---      _charwidth    int( )
+---     _charascent    int( )
+---    _chardescent    int( )
+---          _local    void*
+</pre>
+
+<h3>gra2cairofile オブジェクト</h3>
+<pre>
+object: gra2cairofile
+alias:
+version: 1.00.00
+parent: gra2cairo
+object id: 9
+number of fields: 25
+size of instance: 184
+r--              id    int
+r--             oid    int
+rw-            name    char*
+r-x            save    *char( char *[] )
+r-x           clear    void( void )
+r--           _list    *char[]
+r--             _GC    int
+rw-      delete_gra    bool
+r-x      disconnect    void( void )
+rw-             dpi    int
+rw-            dpix    int
+rw-            dpiy    int
+r-x           flush    void( void )
+rw-       antialias    enum( none default gray )
+---          _local    void*
+--x            init    void( )
+--x            done    void( )
+---            next    void*
+rw-            file    char*
+rw-       text2path    bool
+rw-          format    enum( ps2 ps3 eps2 eps3 pdf svg1.1 svg1.2 png )
+---         _output    void( )
+---      _charwidth    int( )
+---     _charascent    int( )
+---    _chardescent    int( )
+</pre>
+
+<h3>gra2gtkprint オブジェクト</h3>
+<pre>
+object: gra2gtkprint
+alias:
+version: 1.00.00
+parent: gra2cairo
+object id: 10
+number of fields: 23
+size of instance: 136
+r--              id    int
+r--             oid    int
+rw-            name    char*
+r-x            save    *char( char *[] )
+r-x           clear    void( void )
+r--           _list    *char[]
+r--             _GC    int
+rw-      delete_gra    bool
+r-x      disconnect    void( void )
+rw-             dpi    int
+rw-            dpix    int
+rw-            dpiy    int
+r-x           flush    void( void )
+rw-       antialias    enum( none default gray )
+---         _output    void( )
+---      _charwidth    int( )
+---     _charascent    int( )
+---    _chardescent    int( )
+---          _local    void*
+--x            init    void( )
+--x            done    void( )
+---            next    void*
+---        _context    void( )
+</pre>
+
+<h3>gra2gtk オブジェクト</h3>
+<pre>
+object: gra2gtk
+alias:
+version: 1.00.00
+parent: gra2cairo
+object id: 11
+number of fields: 30
+size of instance: 208
+r--              id    int
+r--             oid    int
+rw-            name    char*
+r-x            save    *char( char *[] )
+r--           _list    *char[]
+r--             _GC    int
+rw-      delete_gra    bool
+r-x      disconnect    void( void )
+rw-             dpi    int
+rw-            dpix    int
+rw-            dpiy    int
+rw-       antialias    enum( none default gray )
+---          _local    void*
+--x            init    void( )
+--x            done    void( )
+---            next    void*
+rw-     auto_redraw    bool
+rw- store_in_memory    bool
+r-x          redraw    void( void )
+r-x           flush    void( void )
+r-x           clear    void( void )
+rw-              BR    int
+rw-              BG    int
+rw-              BB    int
+---       _gtklocal    void*
+---         _output    void( )
+---      _charwidth    int( )
+---     _charascent    int( )
+---    _chardescent    int( )
+---         _evloop    void( )
+</pre>
+
+<h3>gra2gdk オブジェクト</h3>
+<pre>
+object: gra2gdk
+alias:
+version: 1.00.00
+parent: gra2cairo
+object id: 12
+number of fields: 22
+size of instance: 136
+current instance: 0
+last instance id: 0
+r--              id    int
+r--             oid    int
+rw-            name    char*
+r-x            save    *char( char *[] )
+r-x           clear    void( void )
+r--           _list    *char[]
+r--             _GC    int
+rw-      delete_gra    bool
+r-x      disconnect    void( void )
+rw-             dpi    int
+rw-            dpix    int
+rw-            dpiy    int
+r-x           flush    void( void )
+rw-       antialias    enum( none default gray )
+---         _output    void( )
+---      _charwidth    int( )
+---     _charascent    int( )
+---    _chardescent    int( )
+---          _local    void*
+--x            init    void( )
+--x            done    void( )
+---            next    void*
+</pre>
+
+<h3>menu オブジェクト</h3>
+<pre>
+object: menu
+alias: winmenu:gtkmenu
+version: 1.00.00
+parent: gra2cairo
+object id: 35
+number of fields: 32
+size of instance: 192
+current instance: 0
+last instance id: 0
+r--              id    int
+r--             oid    int
+rw-            name    char*
+r-x            save    *char( char *[] )
+r--           _list    *char[]
+r--             _GC    int
+rw-      delete_gra    bool
+r-x      disconnect    void( void )
+---            next    void*
+rw-            dpix    int
+rw-            dpiy    int
+rw-       antialias    enum( none default gray )
+---         _output    void( )
+---      _charwidth    int( )
+---     _charascent    int( )
+---    _chardescent    int( )
+---          _local    void*
 --x            init    void( )
 --x            done    void( )
 r-x            menu    void( )
@@ -332,95 +520,85 @@ rw-    fullpath_ngp    char*
 rw-             dpi    int
 rw-     auto_redraw    bool
 rw-     redraw_flag    bool
+rw-      redraw_num    bool
 r-x          redraw    void( void )
 r-x           flush    void( void )
 r-x           clear    void( void )
----         _output    void( )
----      _charwidth    int( )
----     _charascent    int( )
----    _chardescent    int( )
+r-x         focused    *char[]( )
+---       _gtklocal    void*
 ---         _evloop    void( )
----          _local    void*
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>intオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>int オブジェクト</h3>
+<pre>
 object: int
+alias:
+version: 1.00.00
 parent: object
+object id: 13
 number of fields: 8
-size of instance: 24
+size of instance: 48
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
 rw-               @    int
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>doubleオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>double オブジェクト</h3>
+<pre>
 object: double
+alias:
+version: 1.00.00
 parent: object
+object id: 14
 number of fields: 8
-size of instance: 28
+size of instance: 48
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
 rw-               @    double
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>stringオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>string オブジェクト</h3>
+<pre>
 object: string
+alias:
+version: 1.00.00
 parent: object
+object id: 15
 number of fields: 8
-size of instance: 24
+size of instance: 48
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
 rw-               @    char*
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>iarrayオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>iarray オブジェクト</h3>
+<pre>
 object: iarray
+alias:
+version: 1.00.00
 parent: object
+object id: 16
 number of fields: 14
-size of instance: 32
+size of instance: 64
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -431,77 +609,71 @@ r-x             put    void( int int )
 r-x             add    void( int )
 r-x             ins    void( int int )
 r-x             del    void( int )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>darrayオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>darray オブジェクト</h3>
+<pre>
 object: darray
+alias:
+version: 1.00.00
 parent: object
+object id: 17
 number of fields: 14
-size of instance: 32
+size of instance: 64
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
 rw-               @    double[]
 r-x             num    int( )
-r-x             get    int( int )
+r-x             get    double( int )
 r-x             put    void( int double )
-r-x             add    void( int )
+r-x             add    void( double )
 r-x             ins    void( int double )
 r-x             del    void( int )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>sarrayオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>sarray オブジェクト</h3>
+<pre>
 object: sarray
+alias:
+version: 1.00.00
 parent: object
+object id: 18
 number of fields: 14
-size of instance: 32
+size of instance: 64
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
 rw-               @    *char[]
 r-x             num    int( )
-r-x             get    int( int )
+r-x             get    *char( int )
 r-x             put    void( int char * )
-r-x             add    void( int )
+r-x             add    void( char * )
 r-x             ins    void( int char * )
 r-x             del    void( int )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>mathオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>math オブジェクト</h3>
+<pre>
 object: math
+alias:
+version: 1.00.00
 parent: object
+object id: 19
 number of fields: 38
-size of instance: 236
+size of instance: 280
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -533,29 +705,28 @@ rw-             m17    double
 rw-             m18    double
 rw-             m19    double
 r--          status    enum( noerr err nan undef syntax cont break nonum eof )
-r-x            calc    double( double )
+r-x            calc    double( double[] )
 r-x           clear    void( )
 ---          _local    void*
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>fitオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>fit オブジェクト</h3>
+<pre>
 object: fit
+alias:
+version: 1.00.01
 parent: object
-number of fields: 57
-size of instance: 324
+object id: 20
+number of fields: 58
+size of instance: 440
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
+rw-         profile    char*
 rw-            type    enum( poly pow exp log user )
 rw-             min    double
 rw-             max    double
@@ -604,25 +775,23 @@ r--          number    int
 r--           error    double
 r--     correlation    double
 rw-         display    bool
-r-x             fit    void( double )
+r-x             fit    void( double[] )
 ---          _local    void*
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>prmオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>prm オブジェクト</h3>
+<pre>
 object: prm
+alias:
+version: 1.00.00
 parent: object
+object id: 21
 number of fields: 11
-size of instance: 32
+size of instance: 64
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -630,23 +799,21 @@ rw-            file    char*
 rw-    symbol_greek    bool
 rw-     ignore_path    bool
 r-x            load    void( )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>drawオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>draw オブジェクト</h3>
+<pre>
 object: draw
+alias:
+version: 1.00.00
 parent: object
-number of fields: 15
-size of instance: 44
+object id: 22
+number of fields: 16
+size of instance: 96
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 ---            init    void( )
 ---            done    void( )
 ---              GC    int
@@ -658,23 +825,22 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
-</PRE>
-</UL>
-<BR>
+---      redraw_num    int
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>axisgridオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>axisgrid オブジェクト</h3>
+<pre>
 object: axisgrid
+alias:
+version: 1.00.00
 parent: draw
-number of fields: 29
-size of instance: 96
+object id: 23
+number of fields: 30
+size of instance: 200
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 ---              GC    int
 rw-          hidden    bool
 r-x          redraw    void( int )
@@ -683,6 +849,7 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -700,19 +867,19 @@ rw-              BG    int
 rw-              BB    int
 r-x            draw    void( int )
 r-x           tight    void( )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>axisオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>axis オブジェクト</h3>
+<pre>
 object: axis
+alias:
+version: 1.00.00
 parent: draw
-number of fields: 88
-size of instance: 324
+object id: 24
+number of fields: 93
+size of instance: 616
+current instance: 3
+last instance id: 3
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -724,6 +891,7 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -784,6 +952,9 @@ rw-     num_shift_n    int
 rw-           num_R    int
 rw-           num_G    int
 rw-           num_B    int
+r-x      scale_push    void( )
+r-x       scale_pop    void( )
+r--   scale_history    double[]
 r-x           scale    void( double double int )
 r-x      auto_scale    void( obj int )
 r-x  get_auto_scale    double[]( obj int )
@@ -793,27 +964,26 @@ r-x            draw    void( int )
 r-x            bbox    int[]( void )
 r-x            move    void( int int )
 r-x          change    void( int int int )
-r-x            zoom    void( int int int )
+r-x         zooming    void( int int int int )
 r-x           match    bool( int int int int int )
 r-x      coordinate    double( int int )
 r-x           tight    void( )
-r-x        grouping    void( int )
+r-x        grouping    void( int[] )
+r-x default_grouping    void( int[] )
+r-x  group_position    void( int[] )
 r-x   group_manager    int( )
-r-x            save    *char( char * )
----          (null)    void
-</PRE>
-</UL>
-<BR>
+r-x            save    *char( char *[] )
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>fileオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>file オブジェクト</h3>
+<pre>
 object: file
+alias: data
+version: 1.00.00
 parent: draw
-number of fields: 94
-size of instance: 348
+object id: 25
+number of fields: 113
+size of instance: 776
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -824,6 +994,7 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -862,6 +1033,21 @@ rw-     move_data_x    double[]
 rw-     move_data_y    double[]
 rw-          axis_x    obj
 rw-          axis_y    obj
+rw-       data_clip    bool
+r-x            dnum    *char( )
+r-x           dminx    *char( )
+r-x           dmaxx    *char( )
+r-x            davx    *char( )
+r-x           dsigx    *char( )
+r-x           dminy    *char( )
+r-x           dmaxy    *char( )
+r-x            davy    *char( )
+r-x           dsigy    *char( )
+r-x              dx    *char( int )
+r-x              dy    *char( int )
+r-x              d2    *char( int )
+r-x              d3    *char( int )
+r--        data_num    int
 r--          data_x    double
 r--          data_y    double
 r--          data_2    double
@@ -884,22 +1070,24 @@ r--       stat_miny    enum( noerr err nan undef syntax cont break nonum eof )
 r--       stat_maxy    enum( noerr err nan undef syntax cont break nonum eof )
 r--            line    int
 r-x            draw    void( int )
+r-x        getcoord    int[]( double double )
 r-x          redraw    void( int )
 r-x        opendata    void( )
 r-x       opendatac    void( )
 r-x         getdata    void( )
 r-x       closedata    void( )
 --x    opendata_raw    void( )
---x     getdata_raw    double[]( int )
+--x     getdata_raw    double[]( int[] )
 --x   closedata_raw    void( )
 r-x          column    *char( int int )
+r-x        basename    *char( )
 r-x      head_lines    *char( int )
-r-x       boundings    void( )
+r-x       boundings    void( bool )
 r-x        bounding    double[]( obj )
 r-x   load_settings    void( )
 r-x            time    *char( int )
 r-x            date    *char( int )
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 r-x        evaluate    double[]( int int int int int int )
 r-x      store_data    *char( )
 r-x       load_data    void( char * )
@@ -907,20 +1095,19 @@ r-x     store_dummy    *char( )
 r-x      load_dummy    void( char * )
 r-x           tight    void( )
 r-x     save_config    void( )
+r-x     output_file    void( char * int bool )
 ---          _local    void*
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>mergeオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>merge オブジェクト</h3>
+<pre>
 object: merge
+alias:
+version: 1.00.00
 parent: draw
-number of fields: 29
-size of instance: 96
+object id: 26
+number of fields: 35
+size of instance: 224
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -931,6 +1118,7 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -942,31 +1130,34 @@ rw-            zoom    int
 rw-    symbol_greek    bool
 r-x            draw    void( int )
 r-x          redraw    void( int )
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 r-x      store_data    *char( )
 r-x       load_data    void( char * )
 r-x     store_dummy    *char( )
 r-x      load_dummy    void( char * )
 r-x            time    *char( int )
 r-x            date    *char( int )
+r--        line_num    int
+r-x            bbox    int[]( void )
+r-x            move    void( int int )
+r-x         zooming    void( int int int int )
+r-x           match    bool( int int int int int )
 ---          _local    void*
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>legendオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>legend オブジェクト</h3>
+<pre>
 object: legend
+alias:
+version: 1.00.00
 parent: draw
-number of fields: 19
-size of instance: 52
+object id: 27
+number of fields: 20
+size of instance: 112
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 ---              GC    int
 rw-          hidden    bool
 r-x            draw    void( int )
@@ -976,111 +1167,28 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 ---            init    void( )
 ---            done    void( )
 r-x            bbox    int[]( void )
 r-x            move    void( int int )
-r-x            zoom    void( int int int )
+r-x         zooming    void( int int int int )
 r-x           match    bool( int int int int int )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>lineオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
-object: line
-parent: legend
-number of fields: 29
-size of instance: 96
-r--              id    int
-r--             oid    int
-rw-            name    char*
-r-x            save    *char( char * )
----              GC    int
-rw-          hidden    bool
-r-x          redraw    void( int )
-rw-               R    int
-rw-               G    int
-rw-               B    int
-rw-            clip    bool
-rw-     redraw_flag    bool
---x            init    void( )
---x            done    void( )
----            next    void*
-rw-          points    int[]
-rw-           width    int
-rw-           style    int[]
-rw-            join    enum( miter round bevel )
-rw-     miter_limit    int
-rw-           arrow    enum( none end begin both )
-rw-    arrow_length    int
-rw-     arrow_width    int
-r-x            draw    void( int )
-r-x            bbox    int[]( void )
-r-x            move    void( int int )
-r-x          change    void( int int int )
-r-x            zoom    void( int int int )
-r-x           match    bool( int int int int int )
-</PRE>
-</UL>
-<BR>
-
-<TABLE BORDER=1>
-<TR><TD>curveオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
-object: curve
-parent: legend
-number of fields: 27
-size of instance: 88
-r--              id    int
-r--             oid    int
-rw-            name    char*
-r-x            save    *char( char * )
----              GC    int
-rw-          hidden    bool
-r-x          redraw    void( int )
-rw-               R    int
-rw-               G    int
-rw-               B    int
-rw-            clip    bool
-rw-     redraw_flag    bool
---x            init    void( )
---x            done    void( )
----            next    void*
-rw-          points    int[]
-rw-   interpolation    enum( spline spline_close bspline bspline_close )
-rw-           width    int
-rw-           style    int[]
-rw-            join    enum( miter round bevel )
-rw-     miter_limit    int
-r-x            draw    void( int )
-r-x            bbox    int[]( void )
-r-x            move    void( int int )
-r-x          change    void( int int int )
-r-x            zoom    void( int int int )
-r-x           match    bool( int int int int int )
-</PRE>
-</UL>
-<BR>
-
-<TABLE BORDER=1>
-<TR><TD>rectangleオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>rectangle オブジェクト</h3>
+<pre>
 object: rectangle
+alias:
+version: 1.00.00
 parent: legend
-number of fields: 32
-size of instance: 108
+object id: 28
+number of fields: 33
+size of instance: 224
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 ---              GC    int
 rw-          hidden    bool
 r-x          redraw    void( int )
@@ -1089,6 +1197,7 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -1107,25 +1216,23 @@ r-x            draw    void( int )
 r-x            bbox    int[]( void )
 r-x            move    void( int int )
 r-x          change    void( int int int )
-r-x            zoom    void( int int int )
+r-x         zooming    void( int int int int )
 r-x           match    bool( int int int int int )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>arcオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
-object: arc
+<h3>line オブジェクト</h3>
+<pre>
+object: line
+alias:
+version: 1.00.01
 parent: legend
+object id: 29
 number of fields: 30
-size of instance: 104
+size of instance: 200
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 ---              GC    int
 rw-          hidden    bool
 r-x          redraw    void( int )
@@ -1134,6 +1241,87 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
+--x            init    void( )
+--x            done    void( )
+---            next    void*
+rw-          points    int[]
+rw-           width    int
+rw-           style    int[]
+rw-            join    enum( miter round bevel )
+rw-     miter_limit    int
+rw-           arrow    enum( none end begin both )
+rw-    arrow_length    int
+rw-     arrow_width    int
+r-x            draw    void( int )
+r-x            bbox    int[]( void )
+r-x            move    void( int int )
+r-x          change    void( int int int )
+r-x         zooming    void( int int int int )
+r-x           match    bool( int int int int int )
+</pre>
+
+<h3>curve オブジェクト</h3>
+<pre>
+object: curve
+alias:
+version: 1.00.00
+parent: legend
+object id: 30
+number of fields: 28
+size of instance: 184
+r--              id    int
+r--             oid    int
+rw-            name    char*
+r-x            save    *char( char *[] )
+---              GC    int
+rw-          hidden    bool
+r-x          redraw    void( int )
+rw-               R    int
+rw-               G    int
+rw-               B    int
+rw-            clip    bool
+rw-     redraw_flag    bool
+---      redraw_num    int
+--x            init    void( )
+--x            done    void( )
+---            next    void*
+rw-          points    int[]
+rw-   interpolation    enum( spline spline_close bspline bspline_close )
+rw-           width    int
+rw-           style    int[]
+rw-            join    enum( miter round bevel )
+rw-     miter_limit    int
+r-x            draw    void( int )
+r-x            bbox    int[]( void )
+r-x            move    void( int int )
+r-x          change    void( int int int )
+r-x         zooming    void( int int int int )
+r-x           match    bool( int int int int int )
+</pre>
+
+<h3>arc オブジェクト</h3>
+<pre>
+object: arc
+alias:
+version: 1.00.00
+parent: legend
+object id: 31
+number of fields: 31
+size of instance: 216
+r--              id    int
+r--             oid    int
+rw-            name    char*
+r-x            save    *char( char *[] )
+---              GC    int
+rw-          hidden    bool
+r-x          redraw    void( int )
+rw-               R    int
+rw-               G    int
+rw-               B    int
+rw-            clip    bool
+rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -1150,25 +1338,23 @@ rw-           style    int[]
 r-x            draw    void( int )
 r-x            bbox    int[]( void )
 r-x            move    void( int int )
-r-x            zoom    void( int int int )
+r-x         zooming    void( int int int int )
 r-x           match    bool( int int int int int )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>polygonオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>polygon オブジェクト</h3>
+<pre>
 object: polygon
+alias:
+version: 1.00.00
 parent: legend
-number of fields: 27
-size of instance: 88
+object id: 32
+number of fields: 28
+size of instance: 184
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 ---              GC    int
 rw-          hidden    bool
 r-x          redraw    void( int )
@@ -1177,6 +1363,7 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -1190,25 +1377,23 @@ r-x            draw    void( int )
 r-x            bbox    int[]( void )
 r-x            move    void( int int )
 r-x          change    void( int int int )
-r-x            zoom    void( int int int )
+r-x         zooming    void( int int int int )
 r-x           match    bool( int int int int int )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>markオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>mark オブジェクト</h3>
+<pre>
 object: mark
+alias:
+version: 1.00.00
 parent: legend
-number of fields: 29
-size of instance: 100
+object id: 33
+number of fields: 30
+size of instance: 208
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 ---              GC    int
 rw-          hidden    bool
 r-x          redraw    void( int )
@@ -1217,6 +1402,7 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -1232,25 +1418,23 @@ rw-           style    int[]
 r-x            draw    void( int )
 r-x            bbox    int[]( void )
 r-x            move    void( int int )
-r-x            zoom    void( int int int )
+r-x         zooming    void( int int int int )
 r-x           match    bool( int int int int int )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>textオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>text オブジェクト</h3>
+<pre>
 object: text
+alias:
+version: 1.00.00
 parent: legend
-number of fields: 31
-size of instance: 104
+object id: 34
+number of fields: 33
+size of instance: 224
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 ---              GC    int
 rw-          hidden    bool
 r-x          redraw    void( int )
@@ -1259,6 +1443,7 @@ rw-               G    int
 rw-               B    int
 rw-            clip    bool
 rw-     redraw_flag    bool
+---      redraw_num    int
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -1273,28 +1458,27 @@ rw-       direction    int
 rw-     script_size    int
 rw-             raw    bool
 r-x            draw    void( int )
+r-x          printf    *char( char *[] )
 r-x            bbox    int[]( void )
 r-x            move    void( int int )
-r-x            zoom    void( int int int )
+r-x         zooming    void( int int int int )
 r-x           match    bool( int int int int int )
 r-x     save_config    void( )
-</PRE>
-</UL>
-<BR>
+</pre>
 
-<TABLE BORDER=1>
-<TR><TD>dialogオブジェクト</TD></TR>
-</TABLE>
-<UL>
-<PRE>
+<h3>dialog オブジェクト</h3>
+<pre>
 object: dialog
+alias:
+version: 1.00.00
 parent: object
-number of fields: 13
-size of instance: 36
+object id: 36
+number of fields: 14
+size of instance: 80
 r--              id    int
 r--             oid    int
 rw-            name    char*
-r-x            save    *char( char * )
+r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
@@ -1302,12 +1486,10 @@ r-x           yesno    int( char * )
 r-x         message    void( char * )
 r-x           input    *char( char * )
 r-x            beep    void( )
-r-x   get_open_file    *char( char * )
-r-x   get_save_file    *char( char * )
-</PRE>
-</UL>
-<BR>
-</BLOCKQUOTE>
+r-x   get_open_file    *char( char *[] )
+r-x  get_open_files    *char[]( char *[] )
+r-x   get_save_file    *char( char *[] )
+</pre>
 
 <BR>
 <HR>
