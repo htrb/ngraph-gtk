@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.2 2008/06/03 10:25:59 hito Exp $
+ * $Id: gtk_liststore.h,v 1.3 2008/07/12 14:29:01 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
@@ -39,6 +39,7 @@ char *list_store_get_selected_string(GtkWidget *w, int col);
 int list_store_get_num(GtkWidget *w);
 void list_store_set_selection_mode(GtkWidget *w, GtkSelectionMode mode);
 void list_store_select_nth(GtkWidget *w, int n);
+void list_store_select_iter(GtkWidget *w, GtkTreeIter *iter);
 void list_store_multi_select_nth(GtkWidget *w, int n, int m);
 gboolean list_store_get_selected_nth(GtkWidget *w, int *n);
 int list_store_get_selected_index(GtkWidget *w);

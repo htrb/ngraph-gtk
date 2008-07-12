@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.11 2008/07/12 00:21:34 hito Exp $
+ * $Id: gtk_subwin.c,v 1.12 2008/07/12 14:29:01 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1007,7 +1007,7 @@ tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_st
   lstor = tree_store_create(lisu_num, list);
   d->text = G_OBJECT(lstor);
 
-  set_cell_renderer_cb(d, lisu_num, list, lstor);
+  set_cell_renderer_cb((struct SubWin *)d, lisu_num, list, lstor);
 
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down_tree), d);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down_tree), d);
