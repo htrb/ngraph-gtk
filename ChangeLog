@@ -73,7 +73,7 @@
 	output multi data files into one file.
 
 	* src/gtk/x11commn.c (SetFileHidden): add arraydel(&ifarray) when
-	return value of DialogExecute() is nor IDOK.
+	return value of DialogExecute() is not IDOK.
 
 	* src/ofile.c (f2doutputfile): add append mode.
 	(file2d): change arguments of "output_file" from "si" to "sib".
