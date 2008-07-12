@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.4 2008/06/23 01:11:37 hito Exp $
+ * $Id: gtk_liststore.c,v 1.5 2008/07/12 00:21:34 hito Exp $
  */
 
 #include <stdlib.h>
@@ -19,6 +19,9 @@ create_column(n_list_store *list, int i, int j)
     renderer = gtk_cell_renderer_toggle_new();
     col = gtk_tree_view_column_new_with_attributes(list[i].title, renderer,
 						   "active", i, NULL);
+    if (list[i].editable) {
+      g_object_set(renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, NULL);
+    }
     break;
   case G_TYPE_INT:
   case G_TYPE_UINT:

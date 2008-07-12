@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.21 2008/07/05 02:15:00 hito Exp $
+ * $Id: x11file.c,v 1.22 2008/07/12 00:21:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -87,14 +87,14 @@ static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
-  {GTK_STOCK_OPEN,        G_CALLBACK(CmFileOpenB), TRUE, NULL},
-  {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL},
-  {GTK_STOCK_CLOSE,       G_CALLBACK(file_delete_popup_func), TRUE, NULL},
-  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL},
-  {GTK_STOCK_GO_UP,       G_CALLBACK(list_sub_window_move_up), TRUE, NULL},
-  {GTK_STOCK_GO_DOWN,     G_CALLBACK(list_sub_window_move_down), TRUE, NULL},
-  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(list_sub_window_move_last), TRUE, NULL},
-  {GTK_STOCK_EDIT,        G_CALLBACK(file_edit_popup_func), TRUE, NULL},
+  {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpenB), TRUE, NULL},
+  {GTK_STOCK_PROPERTIES,      G_CALLBACK(list_sub_window_update), TRUE, NULL},
+  {GTK_STOCK_CLOSE,           G_CALLBACK(file_delete_popup_func), TRUE, NULL},
+  {GTK_STOCK_GOTO_TOP,        G_CALLBACK(list_sub_window_move_top), TRUE, NULL},
+  {GTK_STOCK_GO_UP,           G_CALLBACK(list_sub_window_move_up), TRUE, NULL},
+  {GTK_STOCK_GO_DOWN,         G_CALLBACK(list_sub_window_move_down), TRUE, NULL},
+  {GTK_STOCK_GOTO_BOTTOM,     G_CALLBACK(list_sub_window_move_last), TRUE, NULL},
+  {GTK_STOCK_EDIT,            G_CALLBACK(file_edit_popup_func), TRUE, NULL},
   {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL},
   {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL},
   {N_("_Draw"),               G_CALLBACK(file_draw_popup_func), FALSE, NULL},

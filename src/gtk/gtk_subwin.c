@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.10 2008/06/23 01:11:37 hito Exp $
+ * $Id: gtk_subwin.c,v 1.11 2008/07/12 00:21:34 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -22,6 +22,57 @@
 #define COL_ID 1
 
 static int SaveWindowState = FALSE;
+
+static void hidden(struct SubWin *d);
+static void tree_hidden(struct LegendWin *d);
+
+static void
+toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  struct SubWin *d;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
+
+  list_store_select_iter(GTK_WIDGET(view), &iter);
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE)) {
+    hidden(d);
+  } else {
+    tree_hidden((struct LegendWin *) user_data);
+  }
+}
+
+static void
+set_cell_renderer_cb(struct SubWin *d, int n, n_list_store *list, GtkWidget *w)
+{
+  int i;
+  GtkTreeViewColumn *col;
+  GtkCellRenderer *rend;
+  GtkTreeView *view;
+  GList *glist;
+
+  view = GTK_TREE_VIEW(w);
+
+  for (i = 0; i < n; i++) {
+    switch (list[i].type) {
+    case G_TYPE_BOOLEAN:
+      col = gtk_tree_view_get_column(view, i);
+      glist = gtk_tree_view_column_get_cell_renderers(col);
+      rend = GTK_CELL_RENDERER(glist->data);
+      g_list_free(glist);
+      g_signal_connect(rend, "toggled", G_CALLBACK(toggle_cb), d);
+    }
+  }
+}
 
 static void
 get_geometry(struct SubWin *d, int *x, int *y, int *w, int *h)
@@ -940,6 +991,8 @@ list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store
   lstor = list_store_create(lisu_num, list);
   d->text = G_OBJECT(lstor);
 
+  set_cell_renderer_cb(d, lisu_num, list, lstor);
+
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), d);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), d);
 
@@ -953,6 +1006,8 @@ tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_st
 
   lstor = tree_store_create(lisu_num, list);
   d->text = G_OBJECT(lstor);
+
+  set_cell_renderer_cb(d, lisu_num, list, lstor);
 
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down_tree), d);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down_tree), d);

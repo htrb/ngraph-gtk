@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.14 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11axis.c,v 1.15 2008/07/12 00:21:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,7 +48,7 @@
 #include "x11commn.h"
 
 static n_list_store Alist[] = {
-  {"",     G_TYPE_BOOLEAN, TRUE, FALSE, "hidden", FALSE},
+  {"",     G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden", FALSE},
   {"#",    G_TYPE_INT,     TRUE, FALSE, "id",     FALSE},
   {"name", G_TYPE_STRING,  TRUE, FALSE, "group",  FALSE},
   {"min",  G_TYPE_STRING,  TRUE, FALSE, "min",    FALSE},

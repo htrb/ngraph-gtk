@@ -1,3 +1,12 @@
+2008-07-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_liststore.c (create_column): set "mode" attribute as
+	GTK_CELL_RENDERER_MODE_ACTIVATABLE when the column is editable.
+
+	* src/gtk/gtk_subwin.c (set_cell_renderer_cb, toggle_cb): add.
+	(list_sub_window_create, tree_sub_window_create): call
+	set_cell_renderer_cb().
+
 2008-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileMoveDialogSetup, FileMaskDialogSetup):

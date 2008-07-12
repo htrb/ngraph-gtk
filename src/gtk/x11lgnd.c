@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.14 2008/07/04 10:52:50 hito Exp $
+ * $Id: x11lgnd.c,v 1.15 2008/07/12 00:21:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,7 +56,7 @@
 #define CB_BUF_SIZE 128
 
 static n_list_store Llist[] = {
-  {"",         G_TYPE_BOOLEAN, TRUE, FALSE, "hidden",   FALSE},
+  {"",         G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
   {"#",        G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
   {"object",   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
   {"property", G_TYPE_STRING,  TRUE, FALSE, "property", FALSE},
