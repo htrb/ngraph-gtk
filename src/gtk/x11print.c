@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.15 2008/07/14 07:42:51 hito Exp $
+ * $Id: x11print.c,v 1.16 2008/07/14 14:16:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -296,7 +296,7 @@ OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct OutputDataDialog *) data;
   if (makewidget) {
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry(0, 200, 1, FALSE, TRUE);
     d->div_entry = w;
     hbox = gtk_hbox_new(FALSE, 4);
     item_setup(hbox, w, _("_Div:"), TRUE);

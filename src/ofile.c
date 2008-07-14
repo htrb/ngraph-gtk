@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.11 2008/07/14 07:42:48 hito Exp $
+ * $Id: ofile.c,v 1.12 2008/07/14 14:16:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -432,6 +432,22 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
       error(obj,ERRAXISDIR);
       return NULL;
     }
+  } else {
+    axposx = 0;
+    axposy = 0;
+    axlen = 0;
+    dirx = 0;
+    axmin = 0;
+    axmax = 0;
+    axtype = 0;
+
+    ayposx = 0;
+    ayposy = 0;
+    aylen = 0;
+    diry = 0;
+    aymin = 0;
+    aymax = 0;
+    aytype = 0;
   }
   if ((fp=memalloc(sizeof(struct f2ddata)))==NULL) return NULL;
   fp->file=file;
@@ -5752,8 +5768,7 @@ int curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
     x=y=z=c1=c2=c3=c4=c5=c6=NULL;
     r=g=b=NULL;
     while (getdata(fp)==0) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
+      if (fp->dxstat==MNOERR && fp->dystat==MNOERR) {
         if (dataadd(fp->dx,fp->dy,count,fp->colr,fp->colg,fp->colb,&num,
                    &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
         count++;

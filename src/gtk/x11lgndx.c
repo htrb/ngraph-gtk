@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.9 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11lgndx.c,v 1.10 2008/07/14 14:16:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -70,8 +70,7 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 
   SetStyleFromObjField(d->style, d->Obj, id, "style");
 
-  SetComboList(d->width, CbLineWidth, CbLineWidthNum);
-  SetTextFromObjField(GTK_BIN(d->width)->child, d->Obj, id, "width");
+  SetTextFromObjField(d->width, d->Obj, id, "width");
 
   SetListFromObjField(d->join, d->Obj, id, "join");
 
@@ -388,7 +387,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->style = w;
 
     hbox2 = gtk_hbox_new(FALSE, 4);
-    w = combo_box_entry_create();
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
     item_setup(hbox2, w, _("_Line Width:"), TRUE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
     d->width = w;
@@ -492,7 +491,7 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->width)->child, d->Obj, d->Id, "width"))
+  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "width"))
     return;
 
   if (SetObjFieldFromList(d->join, d->Obj, d->Id, "join"))

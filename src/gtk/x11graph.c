@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.12 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11graph.c,v 1.13 2008/07/14 14:16:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -51,6 +51,8 @@
 #include "x11commn.h"
 #include "x11scrip.h"
 #include "x11info.h"
+
+#define PAPER_SIZE_MIN 1000
 
 struct pagelisttype
 {
@@ -161,10 +163,12 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
+    spin_entry_set_range(w, PAPER_SIZE_MIN, G_MAXUSHORT);
     item_setup(hbox, w, _("paper _Width:"), TRUE);
     d->paperwidth = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
+    spin_entry_set_range(w, PAPER_SIZE_MIN, G_MAXUSHORT);
     item_setup(hbox, w, _("paper _Height:"), TRUE);
     d->paperheight = w;
 
@@ -226,7 +230,7 @@ PageDialogClose(GtkWidget *wi, void *data)
   w = spin_entry_get_val(d->paperwidth);
   h = spin_entry_get_val(d->paperheight);
 
-  if (w < 1000 || h < 1000) {
+  if (w < PAPER_SIZE_MIN || h < PAPER_SIZE_MIN) {
     d->ret = IDLOOP;
     return;
   }

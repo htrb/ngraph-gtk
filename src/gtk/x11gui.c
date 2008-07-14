@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.7 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11gui.c,v 1.8 2008/07/14 14:16:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -341,7 +341,7 @@ fsok(GtkWidget *dlg)
 
   top = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dlg));
   n = g_slist_length(top);
-  farray = malloc(sizeof(*farray) * n + 1);
+  farray = malloc(sizeof(*farray) * (n + 1));
   if (farray == NULL) {
     free_str_list(top);
     return;

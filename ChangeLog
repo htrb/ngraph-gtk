@@ -1,5 +1,13 @@
 2008-07-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (curveoutfile): remove condition "getposition2(fp,
+	fp->axtype, fp->aytype, &(fp->dx), &(fp->dy)) == 0"
+	(opendata): bug fix: initialize some variables when "axis" is
+	FALSE.
+
+	* src/gtk/x11gui.c (fsok): bug fix: : add braces as "(n + 1)"
+	in argument of malloc.
+
 	* src/orect.c (rectzoom): check if x1 and y1 are equal to x2 and
 	y2 respectively.
 

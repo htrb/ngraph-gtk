@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.16 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11lgnd.c,v 1.17 2008/07/14 14:16:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,6 +33,7 @@
 
 #include "ngraph.h"
 #include "object.h"
+#include "otext.h"
 #include "jstring.h"
 #include "nstring.h"
 #include "mathfn.h"
@@ -1224,6 +1225,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *vbox)
   d->space = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
+  spin_entry_set_range(w, TEXT_OBJ_SCRIPT_SIZE_MIN, TEXT_OBJ_SCRIPT_SIZE_MAX);
   item_setup(hbox, w, _("_Script:"), FALSE);
   d->script_size = w;
 
