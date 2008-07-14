@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.11 2008/07/02 13:35:09 hito Exp $
+ * $Id: x11opt.c,v 1.12 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,6 +38,7 @@
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "x11gui.h"
 #include "x11dialg.h"
@@ -53,6 +54,9 @@
 #define BUF_SIZE 64
 #define MESSAGE_BUF_SIZE 4096
 
+#define WIN_SIZE_MIN 100
+#define WIN_SIZE_MAX 2048
+#define GRID_MAX 1000
 
 static void
 DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -1119,7 +1123,6 @@ static void
 MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 {
   GdkColor color;
-  char buf[1024];
 
   if (Menulocal.editor != NULL)
     gtk_entry_set_text(GTK_ENTRY(d->editor), Menulocal.editor);
@@ -1143,11 +1146,8 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ignorepath)), Menulocal.ignorepath);
 
-  snprintf(buf, sizeof(buf), "%d", Menulocal.hist_size);
-  gtk_entry_set_text(GTK_ENTRY(d->hist_size), buf);
-
-  snprintf(buf, sizeof(buf), "%d", Menulocal.info_size);
-  gtk_entry_set_text(GTK_ENTRY(d->info_size), buf);
+  spin_entry_set_val(d->hist_size, Menulocal.hist_size);
+  spin_entry_set_val(d->info_size, Menulocal.info_size);
 
   color.red = Menulocal.bg_r * 257;
   color.green = Menulocal.bg_g * 257;
@@ -1256,11 +1256,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry(1, HIST_SIZE_MAX, 1, FALSE, TRUE);
     item_setup(vbox, w, _("_Size of completion history:"), FALSE);
     d->hist_size = w;
 
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry(1, INFOWIN_SIZE_MAX, 1, FALSE, TRUE);
     item_setup(vbox, w, _("_Length of information window:"), FALSE);
     d->info_size = w;
 
@@ -1278,7 +1278,7 @@ MiscDialogClose(GtkWidget *w, void *data)
   struct MiscDialog *d;
   int a, ret;
   const char *buf;
-  char *buf2, *endptr;
+  char *buf2;
   GdkColor color;
 
   d = (struct MiscDialog *) data;
@@ -1336,19 +1336,11 @@ MiscDialogClose(GtkWidget *w, void *data)
   Menulocal.preserve_width =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->hist_size));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
+  a = spin_entry_get_val(d->hist_size);
   if (a < HIST_SIZE_MAX && a > 0) 
     Menulocal.hist_size = a;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->info_size));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
+  a = spin_entry_get_val(d->info_size);
   if (a < INFOWIN_SIZE_MAX && a > 0) 
     Menulocal.info_size = a;
 
@@ -1370,16 +1362,11 @@ MiscDialog(struct MiscDialog *data)
 static void
 ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
 {
-  char buf[64];
-
   gtk_range_set_value(GTK_RANGE(d->dpi), Menulocal.exwindpi);
 #if 1
 
-  snprintf(buf, sizeof(buf), "%d", Menulocal.exwinwidth);
-  gtk_entry_set_text(GTK_ENTRY(d->width), buf);
-
-  snprintf(buf, sizeof(buf), "%d", Menulocal.exwinheight);
-  gtk_entry_set_text(GTK_ENTRY(d->height), buf);
+  spin_entry_set_val(d->width, Menulocal.exwinwidth);
+  spin_entry_set_val(d->height, Menulocal.exwinheight);
 #endif
 }
 
@@ -1400,13 +1387,13 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 #if 1
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
     item_setup(hbox, w, _("Window _Width:"), TRUE);
     d->width = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
     item_setup(hbox, w, _("Window _Height:"), TRUE);
     d->height = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -1420,9 +1407,7 @@ static void
 ExViewerDialogClose(GtkWidget *w, void *data)
 {
   struct ExViewerDialog *d;
-  int a, ret;
-  const char *buf;
-  char *endptr;
+  int ret;
 
   d = (struct ExViewerDialog *) data;
 
@@ -1435,15 +1420,8 @@ ExViewerDialogClose(GtkWidget *w, void *data)
   Menulocal.exwindpi = gtk_range_get_value(GTK_RANGE(d->dpi));
 
 #if 1
-  buf = gtk_entry_get_text(GTK_ENTRY(d->width));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    Menulocal.exwinwidth = a;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->height));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    Menulocal.exwinheight = a;
+  Menulocal.exwinwidth = spin_entry_get_val(d->width);
+  Menulocal.exwinheight = spin_entry_get_val(d->height);
 #endif
   d->ret = ret;
 }
@@ -1460,7 +1438,6 @@ static void
 ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 {
   int a;
-  char buf[64];
 
   getobj(d->Obj, "dpi", d->Id, 0, NULL, &(d->dpis));
   gtk_range_set_value(GTK_RANGE(d->dpi), d->dpis);
@@ -1476,12 +1453,8 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   getobj(d->Obj, "redraw_flag", d->Id, 0, NULL, &a);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->loadfile)), a);
 
-  getobj(d->Obj, "redraw_num", d->Id, 0, NULL, &a);
-  snprintf(buf, sizeof(buf), "%d", Mxlocal->redrawf_num);
-  gtk_entry_set_text(GTK_ENTRY(d->data_num), buf);
-
-  snprintf(buf, sizeof(buf), "%d", Mxlocal->grid);
-  gtk_entry_set_text(GTK_ENTRY(d->grid), buf);
+  spin_entry_set_val(d->data_num, Mxlocal->redrawf_num);
+  spin_entry_set_val(d->grid, Mxlocal->grid);
 }
 
 static void
@@ -1502,7 +1475,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry(1, GRID_MAX, 1, FALSE, TRUE);
     item_setup(hbox, w, _("_Grid:"), TRUE);
     d->grid = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -1530,7 +1503,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
     item_setup(vbox, w, _("_Maximum number of data on redraw:"), FALSE);
     d->data_num = w;
 
@@ -1543,11 +1516,7 @@ static void
 ViewerDialogClose(GtkWidget *w, void *data)
 {
   struct ViewerDialog *d;
-  int ret;
-  int dpi;
-  const char *buf;
-  char *endptr;
-  int a;
+  int ret, dpi, a;
 
   d = (struct ViewerDialog *) data;
  
@@ -1587,22 +1556,8 @@ ViewerDialogClose(GtkWidget *w, void *data)
     return;
   Mxlocal->redrawf = a;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->data_num));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0') {
-    Mxlocal->redrawf_num = a;
-  }
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->grid));
-  a = strtol(buf, &endptr, 10);
-  if (a < 1) {
-    a = 1;
-  } else if (a > 1000) {
-    a = 1000;
-  }
-  if (endptr[0] == '\0') {
-    Mxlocal->grid = a;
-  }
+  Mxlocal->redrawf_num = spin_entry_get_val(d->grid);
+  Mxlocal->grid = spin_entry_get_val(d->grid);
 
   d->ret = ret;
 }

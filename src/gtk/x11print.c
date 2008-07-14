@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.14 2008/07/04 06:44:06 hito Exp $
+ * $Id: x11print.c,v 1.15 2008/07/14 07:42:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -30,6 +30,7 @@
 
 #include "gtk_liststore.h"
 #include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "ngraph.h"
 #include "nstring.h"
@@ -284,10 +285,7 @@ DriverDialog(struct DriverDialog *data, struct objlist *obj, int id)
 static void
 OutputDataDialogSetupItem(GtkWidget *w, struct OutputDataDialog *d)
 {
-  char buf[256];
-
-  snprintf(buf, sizeof(buf), "%d", d->div);
-  gtk_entry_set_text(GTK_ENTRY(d->div_entry), buf);
+  spin_entry_set_val(d->div_entry, d->div);
 }
 
 static void
@@ -311,20 +309,13 @@ static void
 OutputDataDialogClose(GtkWidget *w, void *data)
 {
   struct OutputDataDialog *d;
-  int a;
-  const char *buf;
-  char *endptr;
 
   d = (struct OutputDataDialog *) data;
 
   if (d->ret != IDOK)
     return;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->div_entry));
-  a = strtol(buf, &endptr, 10);
-
-  if (endptr[0] == '\0')
-    d->div = a;
+  d->div = spin_entry_get_val(d->div_entry);
 }
 
 void

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_entry_completion.c,v 1.3 2008/07/04 10:52:49 hito Exp $
+ * $Id: gtk_entry_completion.c,v 1.4 2008/07/14 07:42:49 hito Exp $
  */
 
 #include <stdio.h>
@@ -9,6 +9,7 @@
 
 #include "gtk_common.h"
 #include "ioutil.h"
+#include "object.h"
 
 static int HistSize;
 

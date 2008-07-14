@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.3 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11scrip.c,v 1.4 2008/07/14 07:42:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,6 +34,7 @@
 #include "object.h"
 #include "nstring.h"
 
+#include "gtk_widget.h"
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "x11menu.h"

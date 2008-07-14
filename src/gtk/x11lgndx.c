@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.8 2008/06/30 13:03:22 hito Exp $
+ * $Id: x11lgndx.c,v 1.9 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,6 +32,7 @@
 #include "spline.h"
 
 #include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "x11gui.h"
 #include "x11dialg.h"
@@ -393,7 +394,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->width = w;
 
     hbox2 = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox2, w, _("_Miter:"), FALSE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
     d->miter = w;

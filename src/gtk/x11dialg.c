@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.11 2008/07/01 07:09:38 hito Exp $
+ * $Id: x11dialg.c,v 1.12 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,6 +36,7 @@
 
 #include "gtk_liststore.h"
 #include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "ngraph.h"
 #include "object.h"
@@ -522,6 +523,10 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
   if (w == NULL)
     return 0;
 
+  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
+    return SetObjFieldFromSpin(w, Obj, Id, field);
+  }
+
   entry = GTK_ENTRY(w);
   tmp = gtk_entry_get_text(entry);
 
@@ -552,11 +557,48 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
   if (w == NULL)
     return;
 
+  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
+    SetSpinFromObjField(w, Obj, Id, field);
+    return;
+  }
+
   entry = GTK_ENTRY(w);
 
   sgetobjfield(Obj, Id, field, NULL, &buf, FALSE, FALSE, FALSE);
   gtk_entry_set_text(entry, buf);
   memfree(buf);
+}
+
+int
+SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id,
+		    char *field)
+{
+  int val;
+
+  if (w == NULL)
+    return 0;
+
+  val = spin_entry_get_val(w);
+
+  if (putobj(Obj, field, Id, &val) < 0) {
+    return -1;
+  }
+
+  return 0;
+}
+
+void
+SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
+		    char *field)
+{
+  int val;
+
+  if (w == NULL)
+    return;
+
+  getobj(Obj, field, Id, 0, NULL, &val);
+
+  spin_entry_set_val(w, val);
 }
 
 int
@@ -888,44 +930,3 @@ putobj_color2(GtkWidget *w, struct objlist *obj, int id)
   return _putobj_color(w, obj, id, NULL, "2");
 }
 
-static gboolean
-show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
-{
-  GtkWidget *dlg;
-  GtkColorSelection *sel;
-  GdkColor col;
-  GtkColorButton *button;
-  gboolean r;
-
-  button = GTK_COLOR_BUTTON(w);
-
-  gtk_color_button_get_color(button, &col);
-
-  dlg = gtk_color_selection_dialog_new(_("Pick a Clolor"));
-  gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(user_data));
-  sel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg)->colorsel);
-
-  gtk_color_selection_set_has_palette(sel, TRUE);
-  gtk_color_selection_set_has_opacity_control(sel, FALSE);
-  gtk_color_selection_set_current_color(sel, &col);
-
-  r = gtk_dialog_run(GTK_DIALOG(dlg));
-  gtk_color_selection_get_current_color(sel, &col);
-  gtk_widget_destroy(dlg);
-
-  if (r == GTK_RESPONSE_OK)
-    gtk_color_button_set_color(button, &col);
-
-  return TRUE;
-}
-
-GtkWidget *
-create_color_button(GtkWidget *win)
-{
-  GtkWidget *w;
-
-  w = gtk_color_button_new();
-  g_signal_connect(w, "button-release-event", G_CALLBACK(show_color_sel), win);
-
-  return w;
-}

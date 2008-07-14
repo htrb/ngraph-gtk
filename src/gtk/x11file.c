@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.22 2008/07/12 00:21:35 hito Exp $
+ * $Id: x11file.c,v 1.23 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,6 +33,7 @@
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "ngraph.h"
 #include "object.h"
@@ -43,6 +44,7 @@
 #include "gra.h"
 #include "spline.h"
 #include "nconfig.h"
+#include "ofile.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -1053,7 +1055,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Max:"), TRUE);
     d->max = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
     item_setup(hbox, w, _("_Div:"), TRUE);
     d->div = w;
 
@@ -1078,7 +1080,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_text_entry(TRUE, TRUE);
-
     item_setup(hbox, w, _("_Converge (%):"), TRUE);
     d->converge = w;
 
@@ -1247,11 +1248,7 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
 
   d = (struct FileMoveDialog *) client_data;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->line));
-  if (buf[0] == '\0') return;
-
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') return;
+  a = spin_entry_get_val(d->line);
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->x));
   if (buf[0] == '\0') return;
@@ -1274,7 +1271,6 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   snprintf(buf2, sizeof(buf2), "%+.15e", y);
   list_store_set_string(d->list, &iter, 2, buf2);
 
-  gtk_entry_set_text(GTK_ENTRY(d->line), "");
   gtk_entry_set_text(GTK_ENTRY(d->x), "");
   gtk_entry_set_text(GTK_ENTRY(d->y), "");
 }
@@ -1322,7 +1318,7 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(TRUE, FALSE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, FALSE);
     g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
     item_setup(hbox, w, _("_Line:"), TRUE);
     d->line = w;
@@ -1505,21 +1501,13 @@ FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
 {
   struct FileMaskDialog *d;
   int a;
-  const char *buf;
-  char *endptr;
   GtkTreeIter iter;
 
   d = (struct FileMaskDialog *) client_data;
-  buf = gtk_entry_get_text(GTK_ENTRY(d->line));
-  if (buf[0] == '\0') return;
 
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0') {
-    list_store_append(d->list, &iter);
-    list_store_set_int(d->list, &iter, 0, a);
-  }
-
-  gtk_entry_set_text(GTK_ENTRY(d->line), "");
+  a = spin_entry_get_val(d->line);
+  list_store_append(d->list, &iter);
+  list_store_set_int(d->list, &iter, 0, a);
 }
 
 static gboolean
@@ -1566,7 +1554,7 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, FALSE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, FALSE);
     g_signal_connect(w, "key-press-event", G_CALLBACK(mask_dialog_key_pressed), d);
 
     item_setup(vbox, w, _("_Line:"), FALSE);
@@ -1719,18 +1707,16 @@ FileLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
-
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
     item_setup(hbox, w, _("_Head skip:"), TRUE);
     d->headskip = w;
 
-    w = create_text_entry(TRUE, TRUE);
-
+    w = create_spin_entry(1, INT_MAX, 1, TRUE, TRUE);
     item_setup(hbox, w, _("_Read step:"), TRUE);
     d->readstep = w;
 
-    w = create_text_entry(TRUE, TRUE);
 
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_NUM, TRUE, TRUE);
     item_setup(hbox, w, _("_Final line:"), TRUE);
     d->finalline = w;
 
@@ -1740,12 +1726,10 @@ FileLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_text_entry(TRUE, TRUE);
-
     item_setup(hbox, w, _("_Remark:"), TRUE);
     d->remark = w;
 
     w = create_text_entry(TRUE, TRUE);
-
     item_setup(hbox, w, _("_Ifs:"), TRUE);
     d->ifs = w;
 
@@ -1888,7 +1872,7 @@ FileMathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, TRUE, TRUE);
     item_setup(hbox, w, _("_X smooth:"), FALSE);
     d->xsmooth = w;
 
@@ -1901,7 +1885,7 @@ FileMathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, TRUE, TRUE);
     item_setup(hbox, w, _("_Y smooth:"), FALSE);
     d->ysmooth = w;
 
@@ -2153,11 +2137,9 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
 
   MarkDialog(&(d->mark), a);
 
-  SetComboList(d->size, CbMarkSize, CbMarkSizeNum);
-  SetTextFromObjField(GTK_BIN(d->size)->child, d->Obj, id, "mark_size");
+  SetTextFromObjField(d->size, d->Obj, id, "mark_size");
 
-  SetComboList(d->width, CbLineWidth, CbLineWidthNum);
-  SetTextFromObjField(GTK_BIN(d->width)->child, d->Obj, id, "line_width");
+  SetTextFromObjField(d->width, d->Obj, id, "line_width");
 
   SetStyleFromObjField(d->style, d->Obj, id, "line_style");
 
@@ -2525,8 +2507,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 
   hbox = gtk_hbox_new(FALSE, 4);
 
-  w = create_text_entry(TRUE, TRUE);
-
+  w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, TRUE, TRUE);
   item_setup(hbox, w, _("_X column:"), TRUE);
   d->xcol = w;
 
@@ -2542,8 +2523,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 
   hbox = gtk_hbox_new(FALSE, 4);
 
-  w = create_text_entry(TRUE, TRUE);
-
+  w = create_spin_entry(0, FILE_OBJ_MAXCOL, 1, TRUE, TRUE);
   item_setup(hbox, w, _("_Y column:"), TRUE);
   d->ycol = w;
 
@@ -2620,17 +2600,15 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   item_setup(vbox2, w, _("Line _Style:"), TRUE);
   d->style = w;
 
-  w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
   item_setup(vbox2, w, _("_Line Width:"), TRUE);
   d->width = w;
 
-  w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
   item_setup(vbox2, w, _("_Size:"), TRUE);
   d->size = w;
 
-  w = create_text_entry(TRUE, TRUE);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
   item_setup(vbox2, w, _("_Miter:"), TRUE);
   d->miter = w;
 
@@ -2818,10 +2796,10 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
   if (putobj(d->Obj, "mark_type", d->Id, &(d->mark.Type)) == -1)
     return TRUE;
 
-  if (SetObjFieldFromText(GTK_BIN(d->size)->child, d->Obj, d->Id, "mark_size"))
+  if (SetObjFieldFromText(d->size, d->Obj, d->Id, "mark_size"))
     return TRUE;
 
-  if (SetObjFieldFromText(GTK_BIN(d->width)->child, d->Obj, d->Id, "line_width"))
+  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "line_width"))
     return TRUE;
 
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "line_style"))
@@ -2936,10 +2914,10 @@ FileDialogClose(GtkWidget *w, void *data)
   if (putobj(d->Obj, "mark_type", d->Id, &(d->mark.Type)) == -1)
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->size)->child, d->Obj, d->Id, "mark_size"))
+  if (SetObjFieldFromText(d->size, d->Obj, d->Id, "mark_size"))
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->width)->child, d->Obj, d->Id, "line_width"))
+  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "line_width"))
     return;
 
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "line_style"))

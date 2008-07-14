@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.12 2008/07/04 06:44:06 hito Exp $
+ * $Id: x11commn.c,v 1.13 2008/07/14 07:42:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,6 +44,7 @@
 
 #include "main.h"
 #include "x11gui.h"
+#include "x11graph.h"
 #include "x11dialg.h"
 #include "ox11menu.h"
 #include "x11menu.h"
@@ -1439,7 +1440,7 @@ GetDrawFiles(struct narray *farray)
   struct objlist *fobj;
   int lastinst;
   struct narray ifarray;
-  int i, a, num;
+  int i, a;
 
   if (farray == NULL)
     return 1;
@@ -1573,37 +1574,6 @@ SaveHistory(void)
   removeconfig("[x11menu]", &conf);
   arraydel2(&conf);
 }
-
-GtkWidget *
-item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
-{
-  GtkWidget *hbox, *label;
-
-  hbox = gtk_hbox_new(FALSE, 4);
-  label = gtk_label_new_with_mnemonic(title);
-  gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
-  gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
-  gtk_box_pack_start(GTK_BOX(hbox), w, expand, expand, 2);
-  gtk_box_pack_start(GTK_BOX(box), hbox, expand, expand, 4);
-
-  return label;
-}
-
-GtkWidget *
-create_text_entry(int set_default_size, int set_default_action)
-{
-  GtkWidget *w;
-
-  w = gtk_entry_new();
-  if (set_default_size)
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
-
-  if (set_default_action)
-    gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
-
-  return w;
-}
-
 
 void
 ProgressDialogSetTitle(char *title)

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.2 2008/06/04 01:40:21 hito Exp $
+ * $Id: x11gui.h,v 1.3 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,8 +46,6 @@
 
 #define DPI_MAX 2540
 #define DEFAULT_DPI 70
-
-#define NUM_ENTRY_WIDTH 80
 
 typedef struct _tpoint {
   int x, y;

@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.2 2008/06/03 07:18:28 hito Exp $
+ * $Id: oarc.c,v 1.3 2008/07/14 07:42:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -246,6 +246,13 @@ int arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y=(y-refy)*zoom+refy;
   rx=rx*zoom;
   ry=ry*zoom;
+
+  if (rx < 1)
+    rx = 1;
+
+  if (ry < 1)
+    ry = 1;
+
   if (! preserve_width) {
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;

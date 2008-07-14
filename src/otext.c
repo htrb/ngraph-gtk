@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.2 2008/06/03 07:18:29 hito Exp $
+ * $Id: otext.c,v 1.3 2008/07/14 07:42:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,6 +35,7 @@
 #include "object.h"
 #include "gra.h"
 #include "odraw.h"
+#include "otext.h"
 #include "olegend.h"
 #include "mathfn.h"
 #include "nstring.h"
@@ -229,11 +230,16 @@ int textgeometry(struct objlist *obj,char *inst,char *rval,
   struct narray *array; 
 
   field=(char *)(argv[1]);
-  if (strcmp(field,"pt")==0) {
-    if (*(int *)(argv[2])<500) *(int *)(argv[2])=500;
+  if (strcmp(field,"pt") == 0) {
+    if (*(int *)(argv[2])<TEXT_SIZE_MIN) {
+      *(int *)(argv[2])=TEXT_SIZE_MIN;
+    }
   } else if (strcmp(field,"script_size")==0) {
-    if (*(int *)(argv[2])<1000) *(int *)(argv[2])=1000;
-    else if (*(int *)(argv[2])>100000) *(int *)(argv[2])=100000;
+    if (*(int *)(argv[2]) < TEXT_OBJ_SCRIPT_SIZE_MIN) {
+      *(int *)(argv[2])=TEXT_OBJ_SCRIPT_SIZE_MIN;
+    } else if (*(int *)(argv[2])>TEXT_OBJ_SCRIPT_SIZE_MAX) {
+      *(int *)(argv[2])=TEXT_OBJ_SCRIPT_SIZE_MAX;
+    }
   }
   _getobj(obj,"bbox",inst,&array);
   arrayfree(array);

@@ -1,3 +1,52 @@
+2008-07-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/orect.c (rectzoom): check if x1 and y1 are equal to x2 and
+	y2 respectively.
+
+	* src/oaxis.c (axisput): use TEXT_SIZE_MIN macro.
+
+	* src/oarc.c (arczoom): check value of rx and ry.
+
+	* src/otext.c (textgeometry): use macro; TEXT_OBJ_SCRIPT_SIZE_MIN,
+	TEXT_OBJ_SCRIPT_SIZE_MAX and TEXT_SIZE_MIN.
+
+	* src/gtk/x11print.c (OutputDataDialogSetupItem)
+	(OutputDataDialogClose): use GtkSpinButton.
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
+	(MiscDialogClose, ExViewerDialogSetupItem, ExViewerDialogSetup)
+	(ExViewerDialogClose, ViewerDialogSetupItem, ViewerDialogSetup)
+	(ViewerDialogClose):  use GtkSpinButton.
+
+	* src/gtk/x11merge.c (MergeDialogSetup):  use GtkSpinButton.
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogSetup):  use GtkSpinButton.
+
+	* src/gtk/x11lgnd.c (legend_dialog_setup_item)
+	(legend_dialog_close, width_setup, miter_setup)
+	(LegendRectDialogSetup, LegendArcDialogSetup)
+	(LegendMarkDialogSetup, legend_dialog_setup_sub)
+	(LegendTextDialogSetup):  use GtkSpinButton.
+
+	* src/gtk/x11graph.c (PageDialogSetupItem, PageDialogPage)
+	(PageDialogSetup, PageDialogClose):  use GtkSpinButton.
+
+	* src/gtk/x11file.c (FitDialogSetup, FileMaskDialogAdd)
+	(FileLoadDialogSetup, FileMathDialogSetup)
+	(FileDialogSetupCommon):  use GtkSpinButton.
+
+	* src/gtk/x11dialg.c (SetObjFieldFromSpin, SetSpinFromObjField):
+	use GtkSpinButton.
+
+	* src/gtk/x11axis.c (gauge_syle_setup, SectionDialogSetupItem)
+	(SectionDialogSetup, SectionDialogClose, CrossDialogSetupItem)
+	(CrossDialogSetup, CrossDialogClose, ZoomDialogSetup)
+	(ZoomDialogClose, AxisBaseDialogSetup, AxisPosDialogSetup)
+	(NumDialogSetup, AxisFontDialogSetup, AxisDialogSetup): use
+	GtkSpinButton.
+
+	* src/gtk/gtk_widget.c: add.
+
 2008-07-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_liststore.c (create_column): set "mode" attribute as

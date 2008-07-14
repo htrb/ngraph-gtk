@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.5 2008/06/23 02:18:25 hito Exp $
+ * $Id: x11merge.c,v 1.6 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,6 +35,7 @@
 
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"
+#include "gtk_widget.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -127,15 +128,15 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 2);
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, _("_Top Margin:"), TRUE);
     d->topmargin = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, _("_Left Margin:"), TRUE);
     d->leftmargin = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
     item_setup(hbox, w, _("_Zoom:"), TRUE);
     d->zoom = w;
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.5 2008/06/12 09:04:24 hito Exp $
+ * $Id: oaxis.c,v 1.6 2008/07/14 07:42:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -482,7 +482,7 @@ int axisput(struct objlist *obj,char *inst,char *rval,
           || (strcmp(field,"wave_width"))==0) {
     if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
   } else if (strcmp(field,"num_pt")==0) {
-    if (*(int *)(argv[2])<500) *(int *)(argv[2])=500;
+    if (*(int *)(argv[2])<TEXT_SIZE_MIN) *(int *)(argv[2])=TEXT_SIZE_MIN;
   } else if (strcmp(field,"num_script_size")==0) {
     if (*(int *)(argv[2])<1000) *(int *)(argv[2])=1000;
 	else if (*(int *)(argv[2])>100000) *(int *)(argv[2])=100000;

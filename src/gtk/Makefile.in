@@ -184,7 +184,8 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11file.h x11graph.c x11graph.h x11gui.c x11gui.h x11info.c	\
 	x11info.h x11lgnd.c x11lgnd.h x11lgndx.c x11menu.c x11menu.h	\
 	x11merge.c x11merge.h x11opt.c x11opt.h x11print.c x11print.h	\
-	x11scrip.c x11scrip.h x11view.c x11view.h
+	x11scrip.c x11scrip.h x11view.c x11view.h gtk_widget.c		\
+	gtk_widget.h
 
 
 libngraph_la_LDFLAGS = -static
@@ -213,7 +214,8 @@ am_libngraph_la_OBJECTS = libngraph_la-gtk_combo.lo \
 	libngraph_la-x11lgnd.lo libngraph_la-x11lgndx.lo \
 	libngraph_la-x11menu.lo libngraph_la-x11merge.lo \
 	libngraph_la-x11opt.lo libngraph_la-x11print.lo \
-	libngraph_la-x11scrip.lo libngraph_la-x11view.lo
+	libngraph_la-x11scrip.lo libngraph_la-x11view.lo \
+	libngraph_la-gtk_widget.lo
 libngraph_la_OBJECTS = $(am_libngraph_la_OBJECTS)
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I$(top_builddir)
@@ -223,6 +225,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-gtk_entry_completion.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-gtk_liststore.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-gtk_subwin.Plo \
+@AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-gtk_widget.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-main.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-ogra2cairo.Plo \
 @AMDEP_TRUE@	./$(DEPDIR)/libngraph_la-ogra2cairofile.Plo \
@@ -291,6 +294,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_entry_completion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_liststore.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_subwin.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_widget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-main.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2cairo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-ogra2cairofile.Plo@am__quote@
@@ -1340,6 +1344,39 @@ libngraph_la-x11view.lo: x11view.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-x11view.Plo' tmpdepfile='$(DEPDIR)/libngraph_la-x11view.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-x11view.lo `test -f 'x11view.c' || echo '$(srcdir)/'`x11view.c
+
+libngraph_la-gtk_widget.o: gtk_widget.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_widget.o -MD -MP -MF "$(DEPDIR)/libngraph_la-gtk_widget.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-gtk_widget.o `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-gtk_widget.Tpo" "$(DEPDIR)/libngraph_la-gtk_widget.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-gtk_widget.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk_widget.c' object='libngraph_la-gtk_widget.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-gtk_widget.Po' tmpdepfile='$(DEPDIR)/libngraph_la-gtk_widget.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_widget.o `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c
+
+libngraph_la-gtk_widget.obj: gtk_widget.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_widget.obj -MD -MP -MF "$(DEPDIR)/libngraph_la-gtk_widget.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-gtk_widget.obj `if test -f 'gtk_widget.c'; then $(CYGPATH_W) 'gtk_widget.c'; else $(CYGPATH_W) '$(srcdir)/gtk_widget.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-gtk_widget.Tpo" "$(DEPDIR)/libngraph_la-gtk_widget.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-gtk_widget.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk_widget.c' object='libngraph_la-gtk_widget.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-gtk_widget.Po' tmpdepfile='$(DEPDIR)/libngraph_la-gtk_widget.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_widget.obj `if test -f 'gtk_widget.c'; then $(CYGPATH_W) 'gtk_widget.c'; else $(CYGPATH_W) '$(srcdir)/gtk_widget.c'; fi`
+
+libngraph_la-gtk_widget.lo: gtk_widget.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_widget.lo -MD -MP -MF "$(DEPDIR)/libngraph_la-gtk_widget.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o libngraph_la-gtk_widget.lo `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libngraph_la-gtk_widget.Tpo" "$(DEPDIR)/libngraph_la-gtk_widget.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/libngraph_la-gtk_widget.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk_widget.c' object='libngraph_la-gtk_widget.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/libngraph_la-gtk_widget.Plo' tmpdepfile='$(DEPDIR)/libngraph_la-gtk_widget.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_widget.lo `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

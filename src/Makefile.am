@@ -2,21 +2,17 @@ SUBDIRS = gtk
 
 bin_PROGRAMS = ngraph nterminal
 
-ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h \
-	gra.c gra.h ioutil.c ioutil.h jstring.c \
-	jstring.h mathcode.c mathcode.h mathfn.c \
-	mathfn.h ngraph.h nstring.c nstring.h \
-	ntime.c ntime.h oagrid.c oarc.c oaxis.c \
-	object.c object.h ocurve.c odarray.c \
-	odouble.c odraw.c odraw.h ofile.c ofit.c \
-	ogra.c ogra2.c ogra2fil.c ogra2nul.c \
-	ogra2prn.c oiarray.c oint.c olegend.c \
-	olegend.h oline.c omark.c omath.c omerge.c \
-	opolygon.c oprm.c orect.c oroot.c oroot.h \
-	osarray.c oshell.c ostring.c osystem.c \
-	otext.c shell.c shell.h shellcm.c shellcm.h \
-	shellux.c shellux.h spline.c spline.h \
-	gettext.h common.h
+ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
+	ioutil.c ioutil.h jstring.c jstring.h mathcode.c mathcode.h	\
+	mathfn.c mathfn.h ngraph.h nstring.c nstring.h ntime.c ntime.h	\
+	oagrid.c oarc.c oaxis.c object.c object.h ocurve.c odarray.c	\
+	odouble.c odraw.c odraw.h ofile.c ofile.h ofit.c ogra.c		\
+	ogra2.c ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oint.c	\
+	olegend.c olegend.h oline.c omark.c omath.c omerge.c		\
+	opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c oshell.c	\
+	ostring.c osystem.c otext.c otext.h shell.c shell.h shellcm.c		\
+	shellcm.h shellux.c shellux.h spline.c spline.h gettext.h	\
+	common.h
 
 nterminal_SOURCES = terminal.c
 

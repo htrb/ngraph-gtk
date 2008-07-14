@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.8 2008/07/02 13:35:09 hito Exp $
+ * $Id: x11dialg.h,v 1.9 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,6 +56,8 @@ int CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 	      char *(*callback) (struct objlist *, int));
 int SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+int SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+void SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field);
@@ -74,7 +76,6 @@ void set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix);
 void set_color2(GtkWidget *w, struct objlist *obj, int id);
 int putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix);
 int putobj_color2(GtkWidget *w, struct objlist *obj, int id);
-GtkWidget *create_color_button(GtkWidget *win);
 
 struct DialogType
 {

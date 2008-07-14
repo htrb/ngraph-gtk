@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.15 2008/07/12 00:21:35 hito Exp $
+ * $Id: x11lgnd.c,v 1.16 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,6 +41,7 @@
 #include "gtk_entry_completion.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -265,14 +266,10 @@ static void
 legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 {
   int x1, y1, x2, y2;
-  char buf[64];
 
   SetTextFromObjField(d->points, d->Obj, id, "points");
   SetStyleFromObjField(d->style, d->Obj, id, "style");
-  if (d->width) {
-    SetComboList(d->width, CbLineWidth, CbLineWidthNum);
-    SetTextFromObjField(GTK_BIN(d->width)->child, d->Obj, id, "width");
-  }
+  SetTextFromObjField(d->width, d->Obj, id, "width");
   SetListFromObjField(d->join, d->Obj, id, "join");
   SetTextFromObjField(d->miter, d->Obj, id, "miter_limit");
   SetToggleFromObjField(d->fill, d->Obj, id, "fill");
@@ -296,8 +293,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   }
 
   if (d->size) {
-    SetComboList(d->size, CbMarkSize, CbMarkSizeNum);
-    SetTextFromObjField(GTK_BIN(d->size)->child, d->Obj, id, "size");
+    SetTextFromObjField(d->size, d->Obj, id, "size");
   }
 
   if (d->arrow_length) {
@@ -331,11 +327,8 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     getobj(d->Obj, "x2", id, 0, NULL, &x2);
     getobj(d->Obj, "y2", id, 0, NULL, &y2);
 
-    snprintf(buf, sizeof(buf), "%d", x2 - x1);
-    gtk_entry_set_text(GTK_ENTRY(d->x2), buf);
-
-    snprintf(buf, sizeof(buf), "%d", y2 - y1);
-    gtk_entry_set_text(GTK_ENTRY(d->y2), buf);
+    spin_entry_set_val(d->x2, x2 - x1);
+    spin_entry_set_val(d->y2, y2 - y1);
   }
 
   SetTextFromObjField(d->rx, d->Obj, id, "rx");
@@ -364,16 +357,12 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     gtk_entry_set_text(GTK_ENTRY(d->text), buf);
     memfree(buf);
   }
-  if (d->direction) {
-    SetComboList(d->direction, CbDirection, CbDirectionNum);
-    SetTextFromObjField(GTK_BIN(d->direction)->child, d->Obj, id, "direction");
-  }
+
+  SetTextFromObjField(d->direction, d->Obj, id, "direction");
+
   SetTextFromObjField(d->space, d->Obj, id, "space");
   
-  if (d->pt) {
-    SetComboList(d->pt, CbTextPt, CbTextPtNum);
-    SetTextFromObjField(GTK_BIN(d->pt)->child, d->Obj, id, "pt");
-  }
+  SetTextFromObjField(d->pt, d->Obj, id, "pt");
 
   SetTextFromObjField(d->script_size, d->Obj, id, "script_size");
 
@@ -392,8 +381,6 @@ legend_dialog_close(GtkWidget *w, void *data)
 {
   struct LegendDialog *d;
   int ret, x1, y1, x2, y2;
-  const char *tmp;
-  char *ptr;
 
   d = (struct LegendDialog *) data;
 
@@ -417,7 +404,7 @@ legend_dialog_close(GtkWidget *w, void *data)
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
     return;
 
-  if (d->width && SetObjFieldFromText(GTK_BIN(d->width)->child, d->Obj, d->Id, "width"))
+  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "width"))
     return;
 
   if (SetObjFieldFromList(d->join, d->Obj, d->Id, "join"))
@@ -442,21 +429,10 @@ legend_dialog_close(GtkWidget *w, void *data)
     return;
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
-    tmp = gtk_entry_get_text(GTK_ENTRY(d->x1));
-    x1 = strtol(tmp, &ptr, 10);
-    if (ptr[0] != '\0') return;
-
-    tmp = gtk_entry_get_text(GTK_ENTRY(d->x2));
-    x2 = strtol(tmp, &ptr, 10);
-    if (ptr[0] != '\0') return;
-
-    tmp = gtk_entry_get_text(GTK_ENTRY(d->y1));
-    y1 = strtol(tmp, &ptr, 10);
-    if (ptr[0] != '\0') return;
-
-    tmp = gtk_entry_get_text(GTK_ENTRY(d->y2));
-    y2 = strtol(tmp, &ptr, 10);
-    if (ptr[0] != '\0') return;
+    x1 = spin_entry_get_val(d->x1);
+    x2 = spin_entry_get_val(d->x2);
+    y1 = spin_entry_get_val(d->y1);
+    y2 = spin_entry_get_val(d->y2);
 
     x2 += x1;
     y2 += y1;
@@ -519,13 +495,13 @@ legend_dialog_close(GtkWidget *w, void *data)
   if (d->type && putobj(d->Obj, "type", d->Id, &(d->mark.Type)) == -1)
     return;
 
-  if (d->size && SetObjFieldFromText(GTK_BIN(d->size)->child, d->Obj, d->Id, "size"))
+  if (SetObjFieldFromText(d->size, d->Obj, d->Id, "size"))
     return;
 
-  if (d->pt && SetObjFieldFromText(GTK_BIN(d->pt)->child, d->Obj, d->Id, "pt"))
+  if (SetObjFieldFromText(d->pt, d->Obj, d->Id, "pt"))
     return;
 
-  if (d->direction && SetObjFieldFromText(GTK_BIN(d->direction)->child, d->Obj, d->Id, "direction"))
+  if (SetObjFieldFromText(d->direction, d->Obj, d->Id, "direction"))
     return;
 
   if (SetObjFieldFromText(d->space, d->Obj, d->Id, "space"))
@@ -597,8 +573,7 @@ width_setup(struct LegendDialog *d, GtkWidget *box)
 {
   GtkWidget *w;
 
-  w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
   d->width = w;
   item_setup(box, w, _("_Line width:"), TRUE);
 }
@@ -629,7 +604,7 @@ miter_setup(struct LegendDialog *d, GtkWidget *box)
 {
   GtkWidget *w;
 
-  w = create_text_entry(TRUE, TRUE);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
   d->miter = w;
   item_setup(box, w, _("_Miter:"), FALSE);
 }
@@ -999,19 +974,19 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_X:", FALSE);
     d->x1 = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_Y:", FALSE);
     d->y1 = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, _("_Width:"), FALSE);
     d->x2 = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, _("_Height:"), FALSE);
     d->y2 = w;
 
@@ -1076,19 +1051,19 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_X:", FALSE);
     d->x = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_Y:", FALSE);
     d->y = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, "_RX:", FALSE);
     d->rx = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, "_RY:", FALSE);
     d->ry = w;
 
@@ -1100,11 +1075,11 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->pieslice = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);
     item_setup(hbox, w, _("_Angle1:"), FALSE);
     d->angle1 = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);
     item_setup(hbox, w, _("_Angle2:"), FALSE);
     d->angle2 = w;
 
@@ -1176,11 +1151,11 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_X:", FALSE);
     d->x = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_Y:", FALSE);
     d->y = w;
 
@@ -1200,7 +1175,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(LegendMarkDialogMark), d);
     d->type = w;
 
-    w = combo_box_entry_create();
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, _("_Size:"), FALSE);
     d->size = w;
 
@@ -1240,15 +1215,15 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *vbox)
 
   hbox = gtk_hbox_new(FALSE, 4);
 
-  w = combo_box_entry_create();
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
   item_setup(hbox, w, _("_Pt:"), FALSE);
   d->pt = w;
 
-  w = create_text_entry(TRUE, TRUE);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_SPACE_POINT, TRUE, TRUE);
   item_setup(hbox, w, _("_Space:"), FALSE);
   d->space = w;
 
-  w = create_text_entry(TRUE, TRUE);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
   item_setup(hbox, w, _("_Script:"), FALSE);
   d->script_size = w;
 
@@ -1276,8 +1251,7 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *vbox)
 
   color_setup(d, hbox);
 
-  w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 2, -1);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);
   item_setup(hbox, w, _("_Direction:"), FALSE);
   d->direction = w;
 
@@ -1310,11 +1284,11 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_X:", FALSE);
     d->x = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_Y:", FALSE);
     d->y = w;
 

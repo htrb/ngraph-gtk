@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.h,v 1.3 2008/07/03 02:19:49 hito Exp $
+ * $Id: x11commn.h,v 1.4 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -54,8 +54,6 @@ int SetFileHidden(void);
 int GetDrawFiles(struct narray *farray);
 void ExtTextOut(GdkDisplay *disp, GtkWindow *win, GdkGC gc,
 		int x, int y, GdkRectangle *rect, char *buf, int len);
-GtkWidget *item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand);
-GtkWidget *create_text_entry(int set_default_size, int set_default_action);
 void ProgressDialogCreate(char *title);
 void ProgressDialogSetTitle(char *title);
 void ProgressDialogFinalize(void);

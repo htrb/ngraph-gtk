@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.6 2008/06/10 01:34:29 hito Exp $
+ * $Id: x11gui.c,v 1.7 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,8 @@
 #include <unistd.h>
 #include <limits.h>
 #include <libgen.h>
+
+#include "gtk_widget.h"
 
 #include "x11gui.h"
 #include "x11dialg.h"

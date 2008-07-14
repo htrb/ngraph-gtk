@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.11 2008/07/04 06:44:06 hito Exp $
+ * $Id: x11graph.c,v 1.12 2008/07/14 07:42:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,6 +37,7 @@
 
 #include "gtk_liststore.h"
 #include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "main.h"
 #include "x11dialg.h"
@@ -109,22 +110,14 @@ static void
 PageDialogSetupItem(GtkWidget *w, struct PageDialog *d)
 {
   int j;
-  char buf[256];
 
-  snprintf(buf, sizeof(buf), "%d", Menulocal.LeftMargin);
-  gtk_entry_set_text(GTK_ENTRY(d->leftmargin), buf);
+  spin_entry_set_val(d->leftmargin, Menulocal.LeftMargin);
+  spin_entry_set_val(d->topmargin, Menulocal.TopMargin);
 
-  snprintf(buf, sizeof(buf), "%d", Menulocal.TopMargin);
-  gtk_entry_set_text(GTK_ENTRY(d->topmargin), buf);
+  spin_entry_set_val(d->paperwidth, Menulocal.PaperWidth);
+  spin_entry_set_val(d->paperheight, Menulocal.PaperHeight);
 
-  snprintf(buf, sizeof(buf), "%d", Menulocal.PaperWidth);
-  gtk_entry_set_text(GTK_ENTRY(d->paperwidth), buf);
-
-  snprintf(buf, sizeof(buf), "%d", Menulocal.PaperHeight);
-  gtk_entry_set_text(GTK_ENTRY(d->paperheight), buf);
-
-  snprintf(buf, sizeof(buf), "%d", Menulocal.PaperZoom);
-  gtk_entry_set_text(GTK_ENTRY(d->paperzoom), buf);
+  spin_entry_set_val(d->paperzoom, Menulocal.PaperZoom);
 
   j = set_paper_type(Menulocal.PaperWidth, Menulocal.PaperHeight);
 
@@ -136,7 +129,6 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
 {
   struct PageDialog *d;
   int a;
-  char buf[256];
 
   d = (struct PageDialog *) client_data;
 
@@ -149,11 +141,8 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
   gtk_widget_set_sensitive(d->paperheight, a == 0);
 
   if (a > 0) {
-    snprintf(buf, sizeof(buf), "%d", pagelist[a].width);
-    gtk_entry_set_text(GTK_ENTRY(d->paperwidth), buf);
-
-    snprintf(buf, sizeof(buf), "%d", pagelist[a].height);
-    gtk_entry_set_text(GTK_ENTRY(d->paperheight), buf);
+    spin_entry_set_val(d->paperwidth, pagelist[a].width);
+    spin_entry_set_val(d->paperheight, pagelist[a].height);
   }
 }
 
@@ -171,11 +160,11 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     item_setup(hbox, w, _("paper _Width:"), TRUE);
     d->paperwidth = w;
 
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     item_setup(hbox, w, _("paper _Height:"), TRUE);
     d->paperheight = w;
 
@@ -198,12 +187,12 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     item_setup(hbox, w, _("_Left margin:"), TRUE);
     d->leftmargin = w;
 
 
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     item_setup(hbox, w, _("_Top margin:"), TRUE);
     d->topmargin = w;
 
@@ -211,7 +200,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, FALSE, TRUE);
     item_setup(hbox, w, _("paper _Zoom:"), TRUE);
     d->paperzoom = w;
 
@@ -234,15 +223,8 @@ PageDialogClose(GtkWidget *wi, void *data)
   if (d->ret != IDOK)
     return;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->paperwidth));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    w = a;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->paperheight));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    h = a;
+  w = spin_entry_get_val(d->paperwidth);
+  h = spin_entry_get_val(d->paperheight);
 
   if (w < 1000 || h < 1000) {
     d->ret = IDLOOP;
@@ -251,20 +233,10 @@ PageDialogClose(GtkWidget *wi, void *data)
 
   set_paper_type(w, h);
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->leftmargin));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    Menulocal.LeftMargin = a;
+  Menulocal.LeftMargin = spin_entry_get_val(d->leftmargin);
+  Menulocal.TopMargin = spin_entry_get_val(d->topmargin);
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->topmargin));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    Menulocal.TopMargin = a;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->paperzoom));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0')
-    Menulocal.PaperZoom = a;
+  Menulocal.PaperZoom = spin_entry_get_val(d->paperzoom);
 }
 
 void

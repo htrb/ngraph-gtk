@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.2 2008/06/03 07:18:29 hito Exp $
+ * $Id: orect.c,v 1.3 2008/07/14 07:42:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -254,6 +254,15 @@ int rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     width = width * zoom;
     for (i=0;i<snum;i++) sdata[i] *= zoom;
   }
+
+  if (x1 == x2) {
+    x2 = x1 + 1;
+  }
+
+  if (y1 == y2) {
+    y2 = y1 + 1;
+  }
+
   if (_putobj(obj,"x1",inst,&x1)) return 1;
   if (_putobj(obj,"y1",inst,&y1)) return 1;
   if (_putobj(obj,"x2",inst,&x2)) return 1;

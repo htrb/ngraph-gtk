@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.15 2008/07/12 00:21:35 hito Exp $
+ * $Id: x11axis.c,v 1.16 2008/07/14 07:42:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,6 +35,7 @@
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"
 #include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -166,8 +167,7 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
     SetStyleFromObjField(d->style[i], d->Obj, id, style);
 
     width[sizeof(width) - 2] += i;
-    SetComboList(d->width[i], CbLineWidth, CbLineWidthNum);
-    SetTextFromObjField(GTK_BIN(d->width[i])->child, d->Obj, id, width);
+    SetTextFromObjField(d->width[i], d->Obj, id, width);
   }
   SetToggleFromObjField(d->background, d->Obj, id, "background");
 
@@ -219,7 +219,7 @@ gauge_syle_setup(struct GridDialog *d, GtkWidget *box, int n)
   d->style[n] = w;
 
   snprintf(buf, sizeof(buf), _("_Width %d:"), n + 1);
-  w = combo_box_entry_create();
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
   item_setup(hbox, w, buf, TRUE);
   d->width[n] = w;
 
@@ -361,7 +361,7 @@ GridDialogClose(GtkWidget *w, void *data)
       return;
 
     width[sizeof(width) - 2] += i;
-    if (SetObjFieldFromText(GTK_BIN(d->width[i])->child, d->Obj, d->Id, width))
+    if (SetObjFieldFromText(d->width[i], d->Obj, d->Id, width))
       return;
   }
 
@@ -403,13 +403,8 @@ set_axis_id(GtkWidget *w, int id)
 static void
 SectionDialogSetupItem(GtkWidget *w, struct SectionDialog *d)
 {
-  char buf[256];
-
-  snprintf(buf, sizeof(buf), "%d", d->X);
-  gtk_entry_set_text(GTK_ENTRY(d->x), buf);
-
-  snprintf(buf, sizeof(buf), "%d", d->Y);
-  gtk_entry_set_text(GTK_ENTRY(d->y), buf);
+  spin_entry_set_val(d->x, d->X);
+  spin_entry_set_val(d->y, d->Y);
 
   set_axis_id(d->xid, d->IDX);
   set_axis_id(d->yid, d->IDY);
@@ -417,11 +412,8 @@ SectionDialogSetupItem(GtkWidget *w, struct SectionDialog *d)
   set_axis_id(d->rid, d->IDR);
   set_axis_id(d->gid, *(d->IDG));
 
-  snprintf(buf, sizeof(buf), "%d", d->LenX);
-  gtk_entry_set_text(GTK_ENTRY(d->width), buf);
-
-  snprintf(buf, sizeof(buf), "%d", d->LenY);
-  gtk_entry_set_text(GTK_ENTRY(d->height), buf);
+  spin_entry_set_val(d->width, d->LenX);
+  spin_entry_set_val(d->height, d->LenY);
 }
 
 static void
@@ -522,11 +514,11 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(vbox, w, "_X:", FALSE);
     d->x = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(vbox, w, "_Y:", FALSE);
     d->y = w;
 
@@ -535,11 +527,11 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(vbox, w, _("Graph _Width:"), FALSE);
     d->width = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(vbox, w, _("Graph _Height:"), FALSE);
     d->height = w;
 
@@ -641,33 +633,12 @@ SectionDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
 
   d->ret = IDLOOP;
-  buf = gtk_entry_get_text(GTK_ENTRY(d->x));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
-  d->X = a;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->y));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
-  d->Y = a;
+  d->X = spin_entry_get_val(d->x);
+  d->Y = spin_entry_get_val(d->y);
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->width));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
-  d->LenX = a;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->height));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
-  d->LenY = a;
+  d->LenX = spin_entry_get_val(d->width);
+  d->LenY = spin_entry_get_val(d->height);
 
   if ((d->X != d->X0) || (d->Y != d->Y0)
       || (d->LenX0 != d->LenX) || (d->LenY0 != d->LenY)) {
@@ -720,22 +691,14 @@ SectionDialog(struct SectionDialog *data,
 static void
 CrossDialogSetupItem(GtkWidget *w, struct CrossDialog *d)
 {
-  char buf[256];
-
-  snprintf(buf, sizeof(buf), "%d", d->X);
-  gtk_entry_set_text(GTK_ENTRY(d->x), buf);
-
-  snprintf(buf, sizeof(buf), "%d", d->Y);
-  gtk_entry_set_text(GTK_ENTRY(d->y), buf);
+  spin_entry_set_val(d->x, d->X);
+  spin_entry_set_val(d->y, d->Y);
 
   set_axis_id(d->xid, d->IDX);
   set_axis_id(d->yid, d->IDY);
 
-  snprintf(buf, sizeof(buf), "%d", d->LenX);
-  gtk_entry_set_text(GTK_ENTRY(d->width), buf);
-
-  snprintf(buf, sizeof(buf), "%d", d->LenY);
-  gtk_entry_set_text(GTK_ENTRY(d->height), buf);
+  spin_entry_set_val(d->width, d->LenX);
+  spin_entry_set_val(d->height, d->LenY);
 }
 
 static void
@@ -777,11 +740,11 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(vbox, w, "_X:", FALSE);
     d->x = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(vbox, w, "_Y:", FALSE);
     d->y = w;
 
@@ -790,11 +753,11 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(vbox, w, _("Graph _Width:"), FALSE);
     d->width = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(vbox, w, _("Graph _Height:"), FALSE);
     d->height = w;
 
@@ -841,9 +804,7 @@ CrossDialogClose(GtkWidget *w, void *data)
 {
   struct CrossDialog *d;
   int ret;
-  int type, a;
-  const char *buf;
-  char *endptr;
+  int type;
   struct narray group;
   char *argv[2];
 
@@ -855,33 +816,11 @@ CrossDialogClose(GtkWidget *w, void *data)
 
   d->ret = IDLOOP;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->x));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
-  d->X = a;
+  d->X = spin_entry_get_val(d->x);
+  d->Y = spin_entry_get_val(d->y);
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->y));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
-  d->Y = a;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->width));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
-  d->LenX = a;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->height));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] != '\0') {
-    return;
-  }
-  d->LenY = a;
+  d->LenX = spin_entry_get_val(d->width);
+  d->LenY = spin_entry_get_val(d->height);
 
   if ((d->X != d->X0) || (d->Y != d->Y0)
       || (d->LenX != d->LenX0) || (d->LenY != d->LenY0)) {
@@ -942,7 +881,7 @@ ZoomDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct ZoomDialog *) data;
   if (makewidget) {
     vbox = gtk_vbox_new(FALSE, 4);
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
     item_setup(vbox, w, _("_Zoom:"), TRUE);
     d->zoom_entry = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
@@ -962,18 +901,7 @@ ZoomDialogClose(GtkWidget *w, void *data)
   if (d->ret != IDOK)
     return;
 
-  ret = d->ret;
-
-  d->ret = IDLOOP;
-
-  buf = gtk_entry_get_text(GTK_ENTRY(d->zoom_entry));
-  a = strtol(buf, &endptr, 10);
-  if (endptr[0] == '\0') {
-    d->zoom = a;
-  } else {
-    return;
-  }
-  d->ret = ret;
+  d->zoom = spin_entry_get_val(d->zoom_entry);
 }
 
 void
@@ -989,8 +917,7 @@ AxisBaseDialogSetupItem(GtkWidget *w, struct AxisBaseDialog *d, int id)
 {
   SetStyleFromObjField(d->style, d->Obj, id, "style");
 
-  SetComboList(d->width, CbLineWidth, CbLineWidthNum);
-  SetTextFromObjField(GTK_BIN(d->width)->child, d->Obj, id, "width");
+  SetTextFromObjField(d->width, d->Obj, id, "width");
 
   SetToggleFromObjField(d->baseline, d->Obj, id, "baseline");
 
@@ -1004,8 +931,7 @@ AxisBaseDialogSetupItem(GtkWidget *w, struct AxisBaseDialog *d, int id)
 
   SetTextFromObjField(d->wavelen, d->Obj, id, "wave_length");
 
-  SetComboList(d->wavewid, CbLineWidth, CbLineWidthNum);
-  SetTextFromObjField(GTK_BIN(d->wavewid)->child, d->Obj, id, "wave_width");
+  SetTextFromObjField(d->wavewid, d->Obj, id, "wave_width");
 
   set_color(d->color, d->Obj, id, NULL);
 }
@@ -1047,8 +973,7 @@ AxisBaseDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("Line _Style:"), TRUE);
     d->style = w;
 
-    w = combo_box_entry_create();
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
     item_setup(hbox, w, _("_Line Width:"), TRUE);
     d->width = w;
 
@@ -1065,11 +990,11 @@ AxisBaseDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Arrow:"), FALSE);
     d->arrow = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, _("_Arrow length:"), TRUE);
     d->arrowlen = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, _("_Arrow width:"), TRUE);
     d->arrowwid = w;
 
@@ -1082,11 +1007,11 @@ AxisBaseDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Wave:"), FALSE);
     d->wave = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, _("_Wave length:"), TRUE);
     d->wavelen = w;
 
-    w = combo_box_entry_create();
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
     gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
     item_setup(hbox, w, _("_Wave width:"), FALSE);
     d->wavewid = w;
@@ -1123,7 +1048,7 @@ AxisBaseDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->width)->child, d->Obj, d->Id, "width"))
+  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "width"))
     return;
 
   if (SetObjFieldFromToggle(d->baseline, d->Obj, d->Id, "baseline"))
@@ -1144,7 +1069,7 @@ AxisBaseDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromText(d->wavelen, d->Obj, d->Id, "wave_length"))
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->wavewid)->child, d->Obj, d->Id, "wave_width"))
+  if (SetObjFieldFromText(d->wavewid, d->Obj, d->Id, "wave_width"))
     return;
 
   if (putobj_color(d->color, d->Obj, d->Id, NULL))
@@ -1176,8 +1101,7 @@ AxisPosDialogSetupItem(GtkWidget *w, struct AxisPosDialog *d, int id)
 
   SetTextFromObjField(d->len, d->Obj, id, "length");
 
-  SetComboList(d->direction, CbDirection, CbDirectionNum);
-  SetTextFromObjField(GTK_BIN(d->direction)->child, d->Obj, id, "direction");
+  SetTextFromObjField(d->direction, d->Obj, id, "direction");
 
   lastinst = chkobjlastinst(d->Obj);
   combo_box_clear(d->adjust);
@@ -1239,20 +1163,19 @@ AxisPosDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_X:", TRUE);
     d->x = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, "_Y:", TRUE);
     d->y = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
     item_setup(hbox, w, _("_Length:"), TRUE);
     d->len = w;
 
-    w = combo_box_entry_create();
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 2, -1);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);
     item_setup(hbox, w, _("_Direction:"), FALSE);
     d->direction = w;
 
@@ -1267,7 +1190,7 @@ AxisPosDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Adjust:"), FALSE);
     d->adjust = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
     item_setup(hbox, w, _("Adjust _Position:"), FALSE);
     d->adjustpos = w;
 
@@ -1313,8 +1236,7 @@ AxisPosDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromText(d->len, d->Obj, d->Id, "length"))
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->direction)->child,
-			  d->Obj, d->Id, "direction"))
+  if (SetObjFieldFromText(d->direction, d->Obj, d->Id, "direction"))
     return;
 
   s = combo_box_entry_get_text(d->adjust);
@@ -1436,15 +1358,15 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
     item_setup(hbox, w, _("_Begin:"), TRUE);
     d->begin = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
     item_setup(hbox, w, _("_Step:"), TRUE);
     d->step = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_NUM, TRUE, TRUE);
     item_setup(hbox, w, _("_Num:"), TRUE);
     d->numnum = w;
 
@@ -1498,11 +1420,11 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, _("shift (_P):"), TRUE);
     d->shiftp = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, _("shift (_N):"), TRUE);
     d->shiftn = w;
 
@@ -1523,8 +1445,8 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Auto normalization:"), TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
+    item_setup(hbox, w, _("_Auto normalization:"), FALSE);
     d->norm = w;
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -1636,9 +1558,7 @@ AxisFontDialogSetupItem(GtkWidget *w, struct AxisFontDialog *d, int id)
 {
   SetTextFromObjField(d->space, d->Obj, id, "num_space");
 
-  SetComboList(d->pt, CbTextPt, CbTextPtNum);
-
-  SetTextFromObjField(GTK_BIN(d->pt)->child, d->Obj, id, "num_pt");
+  SetTextFromObjField(d->pt, d->Obj, id, "num_pt");
 
   SetTextFromObjField(d->script, d->Obj, id, "num_script_size");
 
@@ -1676,15 +1596,15 @@ AxisFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = combo_box_entry_create();
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
     item_setup(hbox, w, _("_Point:"), TRUE);
     d->pt = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_SPACE_POINT, TRUE, TRUE);
     item_setup(hbox, w, _("_Space:"), TRUE);
     d->space = w;
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
     item_setup(hbox, w, _("_Script size:"), TRUE);
     d->script = w;
 
@@ -1740,7 +1660,7 @@ AxisFontDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromText(d->space, d->Obj, d->Id, "num_space"))
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->pt)->child, d->Obj, d->Id, "num_pt"))
+  if (SetObjFieldFromText(d->pt, d->Obj, d->Id, "num_pt"))
     return;
 
   if (SetObjFieldFromText(d->script, d->Obj, d->Id, "num_script_size"))
@@ -1784,8 +1704,7 @@ GaugeDialogSetupItem(GtkWidget *w, struct GaugeDialog *d, int id)
     char width[] = "gauge_width1", length[] = "gauge_length1"; 
 
     width[sizeof(width) - 2] += i;
-    SetComboList(d->width[i], CbLineWidth, CbLineWidthNum);
-    SetTextFromObjField(GTK_BIN(d->width[i])->child, d->Obj, id, width);
+    SetTextFromObjField(d->width[i], d->Obj, id, width);
 
     length[sizeof(length) - 2] += i;
     SetTextFromObjField(d->length[i], d->Obj, id, length);
@@ -1854,12 +1773,12 @@ GaugeDialogSetup(GtkWidget *wi, void *data, int makewidget)
       hbox = gtk_hbox_new(FALSE, 4);
 
       snprintf(buf, sizeof(buf), _("_Width %d:"), i + 1);
-      w = combo_box_entry_create();
+      w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
       item_setup(hbox, w, buf, TRUE);
       d->width[i] = w;
 
       snprintf(buf, sizeof(buf), _("_Length %d:"), i + 1);
-      w = create_text_entry(TRUE, TRUE);
+      w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
       item_setup(hbox, w, buf, TRUE);
       d->length[i] = w;
       
@@ -1911,7 +1830,7 @@ GaugeDialogClose(GtkWidget *w, void *data)
     char width[] = "gauge_width1", length[] = "gauge_length1"; 
 
     width[sizeof(width) - 2] += i;
-    if (SetObjFieldFromText(GTK_BIN(d->width[i])->child, d->Obj, d->Id, width))
+    if (SetObjFieldFromText(d->width[i], d->Obj, d->Id, width))
       return;
 
     length[sizeof(length) - 2] += i;
@@ -2239,7 +2158,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox2), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
     item_setup(vbox, w, _("_Div:"), FALSE);
     d->div = w;
 

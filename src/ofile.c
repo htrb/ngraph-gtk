@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.10 2008/07/03 04:39:57 hito Exp $
+ * $Id: ofile.c,v 1.11 2008/07/14 07:42:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,6 +49,7 @@
 #include "ntime.h"
 #include "oroot.h"
 #include "odraw.h"
+#include "ofile.h"
 #include "axis.h"
 #include "nconfig.h"
 
@@ -130,7 +131,6 @@ char *f2dtypechar[]={
   NULL
 };
 
-#define MAXCOL 999
 #define DXBUFSIZE 101
 
 struct f2ddata {
@@ -1362,7 +1362,7 @@ int f2dput(struct objlist *obj,char *inst,char *rval,
     if (*(int *)(argv[2])<-1) *(int *)(argv[2])=-1;
   } else if ((strcmp(field,"x")==0) || (strcmp(field,"y")==0)) {
     if (*(int *)(argv[2])<0) *(int *)(argv[2])=0;
-    else if (*(int *)(argv[2])>MAXCOL) *(int *)(argv[2])=MAXCOL;
+    else if (*(int *)(argv[2])>FILE_OBJ_MAXCOL) *(int *)(argv[2])=FILE_OBJ_MAXCOL;
   } else if ((strcmp(field,"math_x")==0) || (strcmp(field,"math_y")==0)
           || (strcmp(field,"func_f")==0) || (strcmp(field,"func_g")==0)
           || (strcmp(field,"func_h")==0)) {
@@ -1375,7 +1375,7 @@ int f2dput(struct objlist *obj,char *inst,char *rval,
     }
   } else if ((strcmp(field,"smooth_x")==0) || (strcmp(field,"smooth_y")==0)) {
     if (*(int *)(argv[2])<0) *(int *)(argv[2])=0;
-    else if (*(int *)(argv[2])>50) *(int *)(argv[2])=50;
+    else if (*(int *)(argv[2])>FILE_OBJ_SMOOTH_MAX) *(int *)(argv[2])=FILE_OBJ_SMOOTH_MAX;
   }
   return 0;
 }
@@ -1556,8 +1556,8 @@ int getdata(struct f2ddata *fp)
   double *gdata;
   char *gstat;
 
-  if (((gdata=(double *)memalloc(sizeof(double)*(MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(MAXCOL+1)))==NULL)) {
+  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
+  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
    memfree(gdata);
    memfree(gstat);
    return -1;
@@ -2052,8 +2052,8 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
   double *gdata;
   char *gstat;
 
-  if (((gdata=(double *)memalloc(sizeof(double)*(MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(MAXCOL+1)))==NULL)) {
+  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
+  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
    memfree(gdata);
    memfree(gstat);
    return -1;
@@ -2267,8 +2267,8 @@ int getminmaxdata(struct f2ddata *fp)
   double *gdata;
   char *gstat;
 
-  if (((gdata=(double *)memalloc(sizeof(double)*(MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(MAXCOL+1)))==NULL)) {
+  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
+  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
    memfree(gdata);
    memfree(gstat);
    return -1;
@@ -4869,8 +4869,8 @@ int f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv
   double *gdata;
   char *gstat;
 
-  if (((gdata=(double *)memalloc(sizeof(double)*(MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(MAXCOL+1)))==NULL)) {
+  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
+  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
    memfree(gdata);
    memfree(gstat);
    return -1;
@@ -4895,7 +4895,7 @@ int f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv
     memfree(gstat);
     return 0;
   }
-  if (maxdim>MAXCOL) maxdim=MAXCOL;
+  if (maxdim>FILE_OBJ_MAXCOL) maxdim=FILE_OBJ_MAXCOL;
   rcode=getdataraw(fp,maxdim,gdata,gstat);
   if (rcode!=0) {
     closedata(fp);
@@ -4906,12 +4906,12 @@ int f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv
   }
   darray=arraynew(sizeof(double));
   for (i=0;i<num;i++) {
-    if (data[i]>MAXCOL) d=0;
+    if (data[i]>FILE_OBJ_MAXCOL) d=0;
     else d=gdata[data[i]];
     arrayadd(darray,&d);
   }
   for (i=0;i<num;i++) {
-    if (data[i]>MAXCOL) d=MNONUM;
+    if (data[i]>FILE_OBJ_MAXCOL) d=MNONUM;
     else d=gstat[data[i]];
     arrayadd(darray,&d);
   }
