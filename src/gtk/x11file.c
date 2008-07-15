@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.23 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11file.c,v 1.24 2008/07/15 09:15:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -67,8 +67,8 @@ static n_list_store Flist[] = {
   {"ax",	G_TYPE_STRING,  TRUE, FALSE, "axis_x",     FALSE},
   {"ay",	G_TYPE_STRING,  TRUE, FALSE, "axis_y",     FALSE},
   {"type",	G_TYPE_OBJECT,  TRUE, FALSE, "type",       FALSE},
-  {"size",	G_TYPE_INT,     TRUE, FALSE, "mark_size",  FALSE},
-  {"width",	G_TYPE_INT,     TRUE, FALSE, "line_width", FALSE},
+  {"size",	G_TYPE_DOUBLE,  TRUE, FALSE, "mark_size",  FALSE},
+  {"width",	G_TYPE_DOUBLE,  TRUE, FALSE, "line_width", FALSE},
   {"skip",	G_TYPE_INT,     TRUE, FALSE, "head_skip",  FALSE},
   {"step",	G_TYPE_INT,     TRUE, FALSE, "read_step",  FALSE},
   {"final",	G_TYPE_INT,     TRUE, FALSE, "final_line", FALSE},
@@ -3970,6 +3970,9 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Flist[i].type, &cx);
+    } else if (Flist[i].type == G_TYPE_DOUBLE) {
+      getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
+      list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
     } else {
       getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Flist[i].type, &cx);

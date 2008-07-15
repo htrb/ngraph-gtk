@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.13 2008/07/14 14:16:48 hito Exp $
+ * $Id: x11opt.c,v 1.14 2008/07/15 09:15:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1475,7 +1475,8 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_spin_entry(1, GRID_MAX, 1, FALSE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
+    spin_entry_set_range(w, 1, GRID_MAX);
     item_setup(hbox, w, _("_Grid:"), TRUE);
     d->grid = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);

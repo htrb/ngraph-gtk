@@ -1,3 +1,44 @@
+2008-07-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.c (SetTextFromObjPoints)
+	(SetObjPointsFromText): add.
+	(SetObjFieldFromStyle): call SetObjPointsFromText() to set value.
+	(SetStyleFromObjField): call SetTextFromObjPoints() to set value.
+
+	* src/gtk/x11axis.c (Alist): type of 'x', 'y', 'dir' and 'len' are
+	G_TYPE_DOUBLE.
+	(axis_list_set_val): now position and lendth are shown in mm.
+	direction is shown in degree.
+
+	* src/gtk/x11file.c (Flist): type of 'size' and 'width' are
+	G_TYPE_DOUBLE.
+	(file_list_set_val): now size and width are shown in mm.
+
+
+	* src/gtk/x11merge.c (Mlist): type of 'tm', 'lm' and 'zm' are
+	G_TYPE_DOUBLE.
+	(merge_list_set_val): now margin and zoom are shown in mm and
+	percent respectively.
+
+	* src/gtk/x11cood.c (CoordWinSetCoord): now position is shown in
+	mm.
+
+	* src/gtk/x11menu.c (SetPoint): now position is shown in mm.
+
+	* src/gtk/x11lgnd.c (Llist): type of 'x' and 'y' are
+	G_TYPE_DOUBLE.
+	(LegendLineCB, LegendRectCB, LegendArcCB): now position is shown
+	in mm.
+	(legend_dialog_setup_item): use SetTextFromObjPoints() for
+	"points" property.
+	(legend_dialog_close): use SetObjPointsFromText() for "points"
+	property.
+	(legend_list_set_val): now position and size are shown in mm.
+
+	* src/gtk/gtk_liststore.c (tree_store_set_double)
+	(list_store_set_double): set formated string.
+	(create_tree_view): set G_TYPE_STRING when type is G_TYPE_DOUBLE.
+
 2008-07-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (curveoutfile): remove condition "getposition2(fp,

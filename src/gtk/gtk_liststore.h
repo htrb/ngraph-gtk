@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.3 2008/07/12 14:29:01 hito Exp $
+ * $Id: gtk_liststore.h,v 1.4 2008/07/15 09:15:14 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
@@ -19,8 +19,8 @@ void list_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, vo
 
 int list_store_get_int(GtkWidget *w, GtkTreeIter *iter, int col);
 void list_store_set_int(GtkWidget *w, GtkTreeIter *iter, int col, int v);
-double list_store_get_double(GtkWidget *w, GtkTreeIter *iter, int col);
 void list_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v);
+void tree_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v);
 char *list_store_get_string(GtkWidget *w, GtkTreeIter *iter, int col);
 void list_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, char *v);
 gboolean list_store_get_boolean(GtkWidget *w, GtkTreeIter *iter, int col);

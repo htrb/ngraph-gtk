@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.17 2008/07/14 14:16:48 hito Exp $
+ * $Id: x11lgnd.c,v 1.18 2008/07/15 09:15:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -62,8 +62,8 @@ static n_list_store Llist[] = {
   {"#",        G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
   {"object",   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
   {"property", G_TYPE_STRING,  TRUE, FALSE, "property", FALSE},
-  {"x",        G_TYPE_INT,     TRUE, FALSE, "x",        FALSE},
-  {"y",        G_TYPE_INT,     TRUE, FALSE, "y",        FALSE},
+  {"x",        G_TYPE_DOUBLE,  TRUE, FALSE, "x",        FALSE},
+  {"y",        G_TYPE_DOUBLE,  TRUE, FALSE, "y",        FALSE},
   {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
 };
 
@@ -131,7 +131,7 @@ LegendLineCB(struct objlist *obj, int id)
   if (num < 2)
     snprintf(s, CB_BUF_SIZE, "%-5d", id);
   else
-    snprintf(s, CB_BUF_SIZE, "%-5d (%d,%d)-", id ,data[0], data[1]);
+    snprintf(s, CB_BUF_SIZE, "%-5d (X:%.2f Y:%.2f)-", id, data[0] / 100.0, data[1] / 100.0);
   return s;
 }
 
@@ -146,7 +146,7 @@ LegendRectCB(struct objlist *obj, int id)
 
   getobj(obj, "x1", id, 0, NULL, &x1);
   getobj(obj, "y1", id, 0, NULL, &y1);
-  snprintf(s, CB_BUF_SIZE, "%-5d x1:%d y1:%d", id, x1, y1);
+  snprintf(s, CB_BUF_SIZE, "%-5d x1:%.2f y1:%.2f", id, x1 / 100.0, y1 / 100.0);
   return s;
 }
 
@@ -162,7 +162,7 @@ LegendArcCB(struct objlist *obj, int id)
 
   getobj(obj, "x", id, 0, NULL, &x1);
   getobj(obj, "y", id, 0, NULL, &y1);
-  snprintf(s, CB_BUF_SIZE, "%-5d X:%d Y:%d", id, x1, y1);
+  snprintf(s, CB_BUF_SIZE, "%-5d X:%.2f Y:%.2f", id, x1 / 100.0, y1 / 100.0);
   return s;
 }
 
@@ -268,7 +268,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 {
   int x1, y1, x2, y2;
 
-  SetTextFromObjField(d->points, d->Obj, id, "points");
+  SetTextFromObjPoints(d->points, d->Obj, id, "points");
   SetStyleFromObjField(d->style, d->Obj, id, "style");
   SetTextFromObjField(d->width, d->Obj, id, "width");
   SetListFromObjField(d->join, d->Obj, id, "join");
@@ -399,7 +399,7 @@ legend_dialog_close(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjFieldFromText(d->points, d->Obj, d->Id, "points"))
+  if (SetObjPointsFromText(d->points, d->Obj, d->Id, "points"))
     return;
 
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
@@ -2051,27 +2051,27 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	  x0 = points[0];
 	  y0 = points[1];
 	}
-	snprintf(buf, sizeof(buf), "points:%-6d%s", arraynum(array) / 2, (ex)? ex: "");
+	snprintf(buf, sizeof(buf), "points:%-3d%s", arraynum(array) / 2, (ex)? ex: "");
 	break;
       case LegendTypeRect:
 	getobj(d->obj[type], "x1", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y1", row, 0, NULL, &y0);
 	getobj(d->obj[type], "x2", row, 0, NULL, &x2);
 	getobj(d->obj[type], "y2", row, 0, NULL, &y2);
-	snprintf(buf, sizeof(buf), "w:%-6d h:%-6d", abs(x0 - x2), abs(y0 - y2));
+	snprintf(buf, sizeof(buf), "w:%.2f h:%.2f", abs(x0 - x2) / 100.0, abs(y0 - y2) / 100.0);
 	break;
       case LegendTypeArc:
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y", row, 0, NULL, &y0);
 	getobj(d->obj[type], "rx", row, 0, NULL, &x2);
 	getobj(d->obj[type], "ry", row, 0, NULL, &y2);
-	snprintf(buf, sizeof(buf), "rx:%-6d ry:%-6d", x2, y2);
+	snprintf(buf, sizeof(buf), "rx:%.2f ry:%.2f", x2 / 100.0, y2 / 100.0);
 	break;
       case LegendTypeMark:
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y", row, 0, NULL, &y0);
 	getobj(d->obj[type], "type", row, 0, NULL, &mark);
-	snprintf(buf, sizeof(buf), "type:%-6d", mark);
+	snprintf(buf, sizeof(buf), "type:%d", mark);
 	break;
       case LegendTypeText:
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
@@ -2097,9 +2097,9 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
       }
       tree_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
     } else if (strcmp(Llist[i].name, "x") == 0) {
-      tree_store_set_int(GTK_WIDGET(d->text), iter, i, x0);
+      tree_store_set_double(GTK_WIDGET(d->text), iter, i, x0 / 100.0);
     } else if (strcmp(Llist[i].name, "y") == 0) {
-      tree_store_set_int(GTK_WIDGET(d->text), iter, i, y0);
+      tree_store_set_double(GTK_WIDGET(d->text), iter, i, y0 / 100.0);
     } else {
       getobj(d->obj[type], Llist[i].name, row, 0, NULL, &cx);
       tree_store_set_val(GTK_WIDGET(d->text), iter, i, Llist[i].type, &cx);

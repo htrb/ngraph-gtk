@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11cood.c,v 1.2 2008/07/15 09:15:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -78,7 +78,7 @@ CoordWinSetCoord(int x, int y)
 
     if (d->str) {
       j = 0;
-      j += snprintf(d->str + j, bufsize - j, "(X:%d  Y:%d)\n", x, y);
+      j += snprintf(d->str + j, bufsize - j, "(X:%.2f  Y:%.2f)\n", x / 100.0, y / 100.0);
       argv[0] = (char *) &x;
       argv[1] = (char *) &y;
       argv[2] = NULL;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.9 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11dialg.h,v 1.10 2008/07/15 09:15:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,6 +56,7 @@ int CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 	      char *(*callback) (struct objlist *, int));
 int SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+void SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.6 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11merge.c,v 1.7 2008/07/15 09:15:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,9 +50,9 @@ static n_list_store Mlist[] = {
   {"",     G_TYPE_BOOLEAN, TRUE, FALSE, "hidden",      FALSE},
   {"#",    G_TYPE_INT,     TRUE, FALSE, "id",          FALSE},
   {"file", G_TYPE_STRING,  TRUE, FALSE, "file",        FALSE},
-  {"tm",   G_TYPE_INT,     TRUE, FALSE, "top_margin",  FALSE},
-  {"lm",   G_TYPE_INT,     TRUE, FALSE, "left_margin", FALSE},
-  {"zm",   G_TYPE_INT,     TRUE, FALSE, "zoom",        FALSE},
+  {"tm",   G_TYPE_DOUBLE,  TRUE, FALSE, "top_margin",  FALSE},
+  {"lm",   G_TYPE_DOUBLE,  TRUE, FALSE, "left_margin", FALSE},
+  {"zm",   G_TYPE_DOUBLE,  TRUE, FALSE, "zoom",        FALSE},
   {"^#",   G_TYPE_INT,     TRUE, FALSE, "oid",         FALSE},
 };
 
@@ -128,11 +128,11 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 2);
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, _("_Top Margin:"), TRUE);
     d->topmargin = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, _("_Left Margin:"), TRUE);
     d->leftmargin = w;
 
@@ -353,6 +353,9 @@ merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Mlist[i].type, &cx);
+    } else if (Mlist[i].type == G_TYPE_DOUBLE) {
+      getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
+      list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
     } else {
       getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Mlist[i].type, &cx);

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.5 2008/07/12 00:21:34 hito Exp $
+ * $Id: gtk_liststore.c,v 1.6 2008/07/15 09:15:14 hito Exp $
  */
 
 #include <stdlib.h>
@@ -84,7 +84,11 @@ create_tree_view(int n, n_list_store *list, int tree)
     return NULL;
 
   for (i = 0; i < n; i++) {
-    tarray[i] = list[i].type;
+    if (list[i].type == G_TYPE_DOUBLE) {
+      tarray[i] = G_TYPE_STRING;
+    } else {
+      tarray[i] = list[i].type;
+    }
   }
 
   for (i = 0; i < cnum; i++) {
@@ -168,25 +172,22 @@ tree_store_set_int(GtkWidget *w, GtkTreeIter *iter, int col, int v)
 }
 
 
-double
-list_store_get_double(GtkWidget *w, GtkTreeIter *iter, int col)
-{
-  GtkTreeModel *model;
-  double v;
-
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
-  gtk_tree_model_get(model, iter, col, &v, -1);
-
-  return v;
-}
-
 void 
 list_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v)
 {
-  GtkListStore *list;
+  char buf[128];
 
-  list = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(w)));
-  gtk_list_store_set(list, iter, col, v, -1);
+  snprintf(buf, sizeof(buf), "%.2f", v);
+  list_store_set_string(w, iter, col, buf);
+}
+
+void 
+tree_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v)
+{
+  char buf[128];
+
+  snprintf(buf, sizeof(buf), "%.2f", v);
+  tree_store_set_string(w, iter, col, buf);
 }
 
 gboolean 

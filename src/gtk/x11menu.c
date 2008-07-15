@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.25 2008/07/04 11:40:47 hito Exp $
+ * $Id: x11menu.c,v 1.26 2008/07/15 09:15:15 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1785,7 +1785,7 @@ SetPoint(int x, int y)
 {
   char buf[40];
 
-  snprintf(buf, sizeof(buf), "X:%d Y:%d", x, y);
+  snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f", x / 100.0, y / 100.0);
   gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message3);
   gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message3, buf);
 }

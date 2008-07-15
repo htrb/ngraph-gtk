@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.12 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11dialg.c,v 1.13 2008/07/15 09:15:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -513,6 +513,105 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 }
 
 int
+SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
+		    char *field)
+{
+  double d;
+  int ip;
+  char *buf, *ptr, *tmp, *eptr;
+  struct narray *array = NULL, *atmp;
+
+  tmp = gtk_entry_get_text(w);
+  if (tmp == NULL)
+    return -1;
+
+  buf = strdup(tmp);
+
+  if (buf == NULL)
+    return -1;
+
+  array = arraynew(sizeof(int));
+
+  ptr = buf;
+
+
+  while (1) {
+    while (ptr && isspace(*ptr))
+      ptr++;
+
+    if (*ptr == '\0')
+      break;
+
+    tmp = strchr(ptr, ' ');
+    if (tmp)
+      *tmp = '\0';
+
+    d = strtod(ptr, &eptr);
+    if (eptr[0] != '\0')
+      goto ErrEnd;
+
+    ip = nround(d * 100);
+    atmp = arrayadd(array, &ip);
+    if (atmp == NULL)
+      goto ErrEnd;
+
+    array = atmp;
+
+    if (tmp == NULL)
+      break;
+
+    ptr = tmp + 1;
+  }
+  if (putobj(Obj, field, Id, array) < 0)
+    goto ErrEnd;
+
+  free(buf);
+  return 0;
+
+
+ ErrEnd:
+  if (buf)
+    free(buf);
+
+  if (array)
+    arrayfree(array);
+}
+
+void
+SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id,
+		    char *field)
+{
+  GtkEntry *entry;
+  struct narray *array;
+  char *str, buf[128], *tmp;
+  int i, n, *points;
+
+  if (w == NULL)
+    return;
+
+  str = nstrnew();
+  if (str == NULL)
+    return;
+
+  entry = GTK_ENTRY(w);
+  getobj(Obj, field, Id, 0, NULL, &array);
+  n = arraynum(array);
+  points = (int *) arraydata(array);
+  for (i = 0; i < n; i++) {
+    snprintf(buf, sizeof(buf), "%.2f ", points[i] / 100.0);
+    tmp = nstrcat(str, buf);
+    if (tmp == NULL)
+      goto END;
+    str = tmp;
+  }
+
+  gtk_entry_set_text(entry, str);
+
+ END:
+  memfree(str);
+}
+
+int
 SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
 		    char *field)
 {
@@ -663,7 +762,7 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return -1;
 
   if (j == CLINESTYLE) {
-    if (sputobjfield(Obj, Id, field, buf) != 0) {
+    if (SetObjPointsFromText(GTK_BIN(w)->child, Obj, Id, field)) {
       free(buf);
       return -1;
     }
@@ -710,7 +809,7 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 	goto match;
     }
   }
-  SetTextFromObjField(GTK_WIDGET(entry), Obj, Id, field);
+  SetTextFromObjPoints(GTK_WIDGET(entry), Obj, Id, field);
   return;
 
 match:
