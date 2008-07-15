@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.2 2008/06/04 12:00:53 hito Exp $
+ * $Id: shell.c,v 1.3 2008/07/15 04:21:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1992,7 +1992,7 @@ int checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
       /* check variable setting command */
       prmcur=cmdcur->prm;
       while (prmcur!=NULL) {
-        if (prmcur->prmno==PPNO) {
+        if (prmcur->prmno == PPNO) {
           po=prmcur->str;
           if (isobject(&po) && (po[0]=='=')) {
             prmcur->prmno=PPSETO;
@@ -3218,8 +3218,9 @@ errexit:
   while (cmdcur!=NULL) {
     prmcur=cmdcur->prm;
     while (prmcur!=NULL) {
-      if ((prmcur->prmno==PPSI2) && (prmcur->next!=NULL)
-      && ((prmcur->next)->str!=NULL)) {
+      if (prmcur->prmno == PPSI2 &&
+	  prmcur->next!=NULL &&
+	  prmcur->next->str != NULL) {
         unlink((prmcur->next)->str);
         prmcur=prmcur->next;
       }
