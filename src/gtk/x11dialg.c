@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.13 2008/07/15 09:15:14 hito Exp $
+ * $Id: x11dialg.c,v 1.14 2008/07/15 09:23:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,6 +33,7 @@
 #include <math.h>
 #include <time.h>
 #include <limits.h>
+ #include <ctype.h>
 
 #include "gtk_liststore.h"
 #include "gtk_combo.h"
@@ -40,6 +41,8 @@
 
 #include "ngraph.h"
 #include "object.h"
+#include "mathfn.h"
+#include "nstring.h"
 
 #include "ogra2cairo.h"
 #include "ox11menu.h"
@@ -519,13 +522,14 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
   double d;
   int ip;
   char *buf, *ptr, *tmp, *eptr;
+  const char *ctmp;
   struct narray *array = NULL, *atmp;
 
-  tmp = gtk_entry_get_text(w);
-  if (tmp == NULL)
+  ctmp = gtk_entry_get_text(GTK_ENTRY(w));
+  if (ctmp == NULL)
     return -1;
 
-  buf = strdup(tmp);
+  buf = strdup(ctmp);
 
   if (buf == NULL)
     return -1;
