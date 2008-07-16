@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.17 2008/07/15 09:15:14 hito Exp $
+ * $Id: x11axis.c,v 1.18 2008/07/16 02:40:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -167,9 +167,9 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
     SetStyleFromObjField(d->style[i], d->Obj, id, style);
 
     width[sizeof(width) - 2] += i;
-    SetTextFromObjField(d->width[i], d->Obj, id, width);
+    SetWidgetFromObjField(d->width[i], d->Obj, id, width);
   }
-  SetToggleFromObjField(d->background, d->Obj, id, "background");
+  SetWidgetFromObjField(d->background, d->Obj, id, "background");
 
   set_color(d->color, d->Obj, id, NULL);
   set_color(d->bcolor, d->Obj, id, "B");
@@ -361,11 +361,11 @@ GridDialogClose(GtkWidget *w, void *data)
       return;
 
     width[sizeof(width) - 2] += i;
-    if (SetObjFieldFromText(d->width[i], d->Obj, d->Id, width))
+    if (SetObjFieldFromWidget(d->width[i], d->Obj, d->Id, width))
       return;
   }
 
-  if (SetObjFieldFromToggle(d->background, d->Obj, d->Id, "background"))
+  if (SetObjFieldFromWidget(d->background, d->Obj, d->Id, "background"))
     return;
 
   if (putobj_color(d->color, d->Obj, d->Id, NULL))
@@ -917,21 +917,21 @@ AxisBaseDialogSetupItem(GtkWidget *w, struct AxisBaseDialog *d, int id)
 {
   SetStyleFromObjField(d->style, d->Obj, id, "style");
 
-  SetTextFromObjField(d->width, d->Obj, id, "width");
+  SetWidgetFromObjField(d->width, d->Obj, id, "width");
 
-  SetToggleFromObjField(d->baseline, d->Obj, id, "baseline");
+  SetWidgetFromObjField(d->baseline, d->Obj, id, "baseline");
 
-  SetListFromObjField(d->arrow, d->Obj, id, "arrow");
+  SetWidgetFromObjField(d->arrow, d->Obj, id, "arrow");
 
-  SetTextFromObjField(d->arrowlen, d->Obj, id, "arrow_length");
+  SetWidgetFromObjField(d->arrowlen, d->Obj, id, "arrow_length");
 
-  SetTextFromObjField(d->arrowwid, d->Obj, id, "arrow_width");
+  SetWidgetFromObjField(d->arrowwid, d->Obj, id, "arrow_width");
 
-  SetListFromObjField(d->wave, d->Obj, id, "wave");
+  SetWidgetFromObjField(d->wave, d->Obj, id, "wave");
 
-  SetTextFromObjField(d->wavelen, d->Obj, id, "wave_length");
+  SetWidgetFromObjField(d->wavelen, d->Obj, id, "wave_length");
 
-  SetTextFromObjField(d->wavewid, d->Obj, id, "wave_width");
+  SetWidgetFromObjField(d->wavewid, d->Obj, id, "wave_width");
 
   set_color(d->color, d->Obj, id, NULL);
 }
@@ -1048,28 +1048,28 @@ AxisBaseDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
     return;
 
-  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "width"))
+  if (SetObjFieldFromWidget(d->width, d->Obj, d->Id, "width"))
     return;
 
-  if (SetObjFieldFromToggle(d->baseline, d->Obj, d->Id, "baseline"))
+  if (SetObjFieldFromWidget(d->baseline, d->Obj, d->Id, "baseline"))
     return;
 
-  if (SetObjFieldFromList(d->arrow, d->Obj, d->Id, "arrow"))
+  if (SetObjFieldFromWidget(d->arrow, d->Obj, d->Id, "arrow"))
     return;
 
-  if (SetObjFieldFromText(d->arrowlen, d->Obj, d->Id, "arrow_length"))
+  if (SetObjFieldFromWidget(d->arrowlen, d->Obj, d->Id, "arrow_length"))
     return;
 
-  if (SetObjFieldFromText(d->arrowwid, d->Obj, d->Id, "arrow_width"))
+  if (SetObjFieldFromWidget(d->arrowwid, d->Obj, d->Id, "arrow_width"))
     return;
 
-  if (SetObjFieldFromList(d->wave, d->Obj, d->Id, "wave"))
+  if (SetObjFieldFromWidget(d->wave, d->Obj, d->Id, "wave"))
     return;
 
-  if (SetObjFieldFromText(d->wavelen, d->Obj, d->Id, "wave_length"))
+  if (SetObjFieldFromWidget(d->wavelen, d->Obj, d->Id, "wave_length"))
     return;
 
-  if (SetObjFieldFromText(d->wavewid, d->Obj, d->Id, "wave_width"))
+  if (SetObjFieldFromWidget(d->wavewid, d->Obj, d->Id, "wave_width"))
     return;
 
   if (putobj_color(d->color, d->Obj, d->Id, NULL))
@@ -1095,13 +1095,13 @@ AxisPosDialogSetupItem(GtkWidget *w, struct AxisPosDialog *d, int id)
   int lastinst;
   char *name;
 
-  SetTextFromObjField(d->x, d->Obj, id, "x");
+  SetWidgetFromObjField(d->x, d->Obj, id, "x");
 
-  SetTextFromObjField(d->y, d->Obj, id, "y");
+  SetWidgetFromObjField(d->y, d->Obj, id, "y");
 
-  SetTextFromObjField(d->len, d->Obj, id, "length");
+  SetWidgetFromObjField(d->len, d->Obj, id, "length");
 
-  SetTextFromObjField(d->direction, d->Obj, id, "direction");
+  SetWidgetFromObjField(d->direction, d->Obj, id, "direction");
 
   lastinst = chkobjlastinst(d->Obj);
   combo_box_clear(d->adjust);
@@ -1120,7 +1120,7 @@ AxisPosDialogSetupItem(GtkWidget *w, struct AxisPosDialog *d, int id)
   combo_box_entry_set_text(d->adjust, valstr + i);
   memfree(valstr);
 
-  SetTextFromObjField(d->adjustpos, d->Obj, id, "adjust_position");
+  SetWidgetFromObjField(d->adjustpos, d->Obj, id, "adjust_position");
 }
 
 static void
@@ -1227,16 +1227,16 @@ AxisPosDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjFieldFromText(d->x, d->Obj, d->Id, "x"))
+  if (SetObjFieldFromWidget(d->x, d->Obj, d->Id, "x"))
     return;
 
-  if (SetObjFieldFromText(d->y, d->Obj, d->Id, "y"))
+  if (SetObjFieldFromWidget(d->y, d->Obj, d->Id, "y"))
     return;
 
-  if (SetObjFieldFromText(d->len, d->Obj, d->Id, "length"))
+  if (SetObjFieldFromWidget(d->len, d->Obj, d->Id, "length"))
     return;
 
-  if (SetObjFieldFromText(d->direction, d->Obj, d->Id, "direction"))
+  if (SetObjFieldFromWidget(d->direction, d->Obj, d->Id, "direction"))
     return;
 
   s = combo_box_entry_get_text(d->adjust);
@@ -1255,7 +1255,7 @@ AxisPosDialogClose(GtkWidget *w, void *data)
     }
   }
 
-  if (SetObjFieldFromText(d->adjustpos, d->Obj, d->Id, "adjust_position"))
+  if (SetObjFieldFromWidget(d->adjustpos, d->Obj, d->Id, "adjust_position"))
     return;
 
   d->ret = ret;
@@ -1276,15 +1276,15 @@ NumDialogSetupItem(GtkWidget *w, struct NumDialog *d, int id)
   char *format, *endptr;
   int j, a;
 
-  SetListFromObjField(d->num, d->Obj, id, "num");
+  SetWidgetFromObjField(d->num, d->Obj, id, "num");
 
-  SetTextFromObjField(d->begin, d->Obj, id, "num_begin");
+  SetWidgetFromObjField(d->begin, d->Obj, id, "num_begin");
 
-  SetTextFromObjField(d->step, d->Obj, id, "num_step");
+  SetWidgetFromObjField(d->step, d->Obj, id, "num_step");
 
-  SetTextFromObjField(d->numnum, d->Obj, id, "num_num");
+  SetWidgetFromObjField(d->numnum, d->Obj, id, "num_num");
 
-  SetTextFromObjField(d->head, d->Obj, id, "num_head");
+  SetWidgetFromObjField(d->head, d->Obj, id, "num_head");
 
   combo_box_clear(d->fraction);
   for (j = 0; j < FwNumStyleNum; j++) {
@@ -1308,21 +1308,21 @@ NumDialogSetupItem(GtkWidget *w, struct NumDialog *d, int id)
 
   combo_box_set_active(d->fraction, a);
 
-  SetTextFromObjField(d->tail, d->Obj, id, "num_tail");
+  SetWidgetFromObjField(d->tail, d->Obj, id, "num_tail");
 
-  SetListFromObjField(d->align, d->Obj, id, "num_align");
+  SetWidgetFromObjField(d->align, d->Obj, id, "num_align");
 
-  SetListFromObjField(d->direction, d->Obj, id, "num_direction");
+  SetWidgetFromObjField(d->direction, d->Obj, id, "num_direction");
 
-  SetTextFromObjField(d->shiftp, d->Obj, id, "num_shift_p");
+  SetWidgetFromObjField(d->shiftp, d->Obj, id, "num_shift_p");
 
-  SetTextFromObjField(d->shiftn, d->Obj, id, "num_shift_n");
+  SetWidgetFromObjField(d->shiftn, d->Obj, id, "num_shift_n");
 
-  SetToggleFromObjField(d->log_power, d->Obj, id, "num_log_pow");
+  SetWidgetFromObjField(d->log_power, d->Obj, id, "num_log_pow");
 
-  SetToggleFromObjField(d->no_zero, d->Obj, id, "num_no_zero");
+  SetWidgetFromObjField(d->no_zero, d->Obj, id, "num_no_zero");
 
-  SetTextFromObjField(d->norm, d->Obj, id, "num_auto_norm");
+  SetWidgetFromObjField(d->norm, d->Obj, id, "num_auto_norm");
 }
 
 static void
@@ -1483,19 +1483,19 @@ NumDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjFieldFromList(d->num, d->Obj, d->Id, "num"))
+  if (SetObjFieldFromWidget(d->num, d->Obj, d->Id, "num"))
     return;
 
-  if (SetObjFieldFromText(d->begin, d->Obj, d->Id, "num_begin"))
+  if (SetObjFieldFromWidget(d->begin, d->Obj, d->Id, "num_begin"))
     return;
 
-  if (SetObjFieldFromText(d->step, d->Obj, d->Id, "num_step"))
+  if (SetObjFieldFromWidget(d->step, d->Obj, d->Id, "num_step"))
     return;
 
-  if (SetObjFieldFromText(d->numnum, d->Obj, d->Id, "num_num"))
+  if (SetObjFieldFromWidget(d->numnum, d->Obj, d->Id, "num_num"))
     return;
 
-  if (SetObjFieldFromText(d->head, d->Obj, d->Id, "num_head"))
+  if (SetObjFieldFromWidget(d->head, d->Obj, d->Id, "num_head"))
     return;
 
   format = (char *) memalloc(FORMAT_LENGTH);
@@ -1515,28 +1515,28 @@ NumDialogClose(GtkWidget *w, void *data)
   if (putobj(d->Obj, "num_format", d->Id, format) == -1)
     return;
 
-  if (SetObjFieldFromText(d->tail, d->Obj, d->Id, "num_tail"))
+  if (SetObjFieldFromWidget(d->tail, d->Obj, d->Id, "num_tail"))
     return;
 
-  if (SetObjFieldFromList(d->align, d->Obj, d->Id, "num_align"))
+  if (SetObjFieldFromWidget(d->align, d->Obj, d->Id, "num_align"))
     return;
 
-  if (SetObjFieldFromList(d->direction, d->Obj, d->Id, "num_direction"))
+  if (SetObjFieldFromWidget(d->direction, d->Obj, d->Id, "num_direction"))
     return;
 
-  if (SetObjFieldFromText(d->shiftp, d->Obj, d->Id, "num_shift_p"))
+  if (SetObjFieldFromWidget(d->shiftp, d->Obj, d->Id, "num_shift_p"))
     return;
 
-  if (SetObjFieldFromText(d->shiftn, d->Obj, d->Id, "num_shift_n"))
+  if (SetObjFieldFromWidget(d->shiftn, d->Obj, d->Id, "num_shift_n"))
     return;
 
-  if (SetObjFieldFromToggle(d->log_power, d->Obj, d->Id, "num_log_pow"))
+  if (SetObjFieldFromWidget(d->log_power, d->Obj, d->Id, "num_log_pow"))
     return;
 
-  if (SetObjFieldFromToggle(d->no_zero, d->Obj, d->Id, "num_no_zero"))
+  if (SetObjFieldFromWidget(d->no_zero, d->Obj, d->Id, "num_no_zero"))
     return;
 
-  if (SetObjFieldFromText(d->norm, d->Obj, d->Id, "num_auto_norm"))
+  if (SetObjFieldFromWidget(d->norm, d->Obj, d->Id, "num_auto_norm"))
     return;
 
   d->ret = ret;
@@ -1556,11 +1556,11 @@ NumDialog(struct NumDialog *data, struct objlist *obj, int id)
 static void
 AxisFontDialogSetupItem(GtkWidget *w, struct AxisFontDialog *d, int id)
 {
-  SetTextFromObjField(d->space, d->Obj, id, "num_space");
+  SetWidgetFromObjField(d->space, d->Obj, id, "num_space");
 
-  SetTextFromObjField(d->pt, d->Obj, id, "num_pt");
+  SetWidgetFromObjField(d->pt, d->Obj, id, "num_pt");
 
-  SetTextFromObjField(d->script, d->Obj, id, "num_script_size");
+  SetWidgetFromObjField(d->script, d->Obj, id, "num_script_size");
 
   SetFontListFromObj(d->font, d->Obj, d->Id, "num_font", FALSE);
 
@@ -1657,13 +1657,13 @@ AxisFontDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjFieldFromText(d->space, d->Obj, d->Id, "num_space"))
+  if (SetObjFieldFromWidget(d->space, d->Obj, d->Id, "num_space"))
     return;
 
-  if (SetObjFieldFromText(d->pt, d->Obj, d->Id, "num_pt"))
+  if (SetObjFieldFromWidget(d->pt, d->Obj, d->Id, "num_pt"))
     return;
 
-  if (SetObjFieldFromText(d->script, d->Obj, d->Id, "num_script_size"))
+  if (SetObjFieldFromWidget(d->script, d->Obj, d->Id, "num_script_size"))
     return;
 
   SetObjFieldFromFontList(d->font, d->Obj, d->Id, "num_font", FALSE);
@@ -1692,11 +1692,11 @@ GaugeDialogSetupItem(GtkWidget *w, struct GaugeDialog *d, int id)
 {
   int i;
 
-  SetListFromObjField(d->gauge, d->Obj, id, "gauge");
+  SetWidgetFromObjField(d->gauge, d->Obj, id, "gauge");
 
-  SetTextFromObjField(d->min, d->Obj, id, "gauge_min");
+  SetWidgetFromObjField(d->min, d->Obj, id, "gauge_min");
 
-  SetTextFromObjField(d->max, d->Obj, id, "gauge_max");
+  SetWidgetFromObjField(d->max, d->Obj, id, "gauge_max");
 
   SetStyleFromObjField(d->style, d->Obj, id, "gauge_style");
 
@@ -1704,10 +1704,10 @@ GaugeDialogSetupItem(GtkWidget *w, struct GaugeDialog *d, int id)
     char width[] = "gauge_width1", length[] = "gauge_length1"; 
 
     width[sizeof(width) - 2] += i;
-    SetTextFromObjField(d->width[i], d->Obj, id, width);
+    SetWidgetFromObjField(d->width[i], d->Obj, id, width);
 
     length[sizeof(length) - 2] += i;
-    SetTextFromObjField(d->length[i], d->Obj, id, length);
+    SetWidgetFromObjField(d->length[i], d->Obj, id, length);
   }
 
   set_color(d->color, d->Obj, id, "gauge_");
@@ -1814,13 +1814,13 @@ GaugeDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjFieldFromList(d->gauge, d->Obj, d->Id, "gauge"))
+  if (SetObjFieldFromWidget(d->gauge, d->Obj, d->Id, "gauge"))
     return;
 
-  if (SetObjFieldFromText(d->min, d->Obj, d->Id, "gauge_min"))
+  if (SetObjFieldFromWidget(d->min, d->Obj, d->Id, "gauge_min"))
     return;
 
-  if (SetObjFieldFromText(d->max, d->Obj, d->Id, "gauge_max"))
+  if (SetObjFieldFromWidget(d->max, d->Obj, d->Id, "gauge_max"))
     return;
 
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "gauge_style"))
@@ -1830,11 +1830,11 @@ GaugeDialogClose(GtkWidget *w, void *data)
     char width[] = "gauge_width1", length[] = "gauge_length1"; 
 
     width[sizeof(width) - 2] += i;
-    if (SetObjFieldFromText(d->width[i], d->Obj, d->Id, width))
+    if (SetObjFieldFromWidget(d->width[i], d->Obj, d->Id, width))
       return;
 
     length[sizeof(length) - 2] += i;
-    if (SetObjFieldFromText(d->length[i], d->Obj, d->Id, length))
+    if (SetObjFieldFromWidget(d->length[i], d->Obj, d->Id, length))
       return;
   }
 
@@ -1907,8 +1907,8 @@ AxisDialogSetupItem(GtkWidget *w, struct AxisDialog *d, int id)
   }
 
   getobj(d->Obj, "div", id, 0, NULL, &div);
-  SetTextFromObjField(d->div, d->Obj, id, "div");
-  SetListFromObjField(d->scale, d->Obj, id, "type");
+  SetWidgetFromObjField(d->div, d->Obj, id, "div");
+  SetWidgetFromObjField(d->scale, d->Obj, id, "type");
 
   combo_box_clear(d->ref);
   lastinst = chkobjlastinst(d->Obj);
@@ -2238,22 +2238,19 @@ AxisDialogClose(GtkWidget *w, void *data)
 
   exeobj(d->Obj, "scale_push", d->Id, 0, NULL);
 
-  if (SetObjFieldFromText(GTK_BIN(d->min)->child,
-			  d->Obj, d->Id, "min"))
+  if (SetObjFieldFromWidget(d->min, d->Obj, d->Id, "min"))
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->max)->child,
-			  d->Obj, d->Id, "max"))
+  if (SetObjFieldFromWidget(d->max, d->Obj, d->Id, "max"))
     return;
 
-  if (SetObjFieldFromText(GTK_BIN(d->inc)->child,
-			  d->Obj, d->Id, "inc"))
+  if (SetObjFieldFromWidget(d->inc, d->Obj, d->Id, "inc"))
     return;
 
-  if (SetObjFieldFromText(d->div, d->Obj, d->Id, "div"))
+  if (SetObjFieldFromWidget(d->div, d->Obj, d->Id, "div"))
     return;
 
-  if (SetObjFieldFromList(d->scale, d->Obj, d->Id, "type"))
+  if (SetObjFieldFromWidget(d->scale, d->Obj, d->Id, "type"))
     return;
 
   s = combo_box_entry_get_text(d->ref);

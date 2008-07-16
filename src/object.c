@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.2 2008/06/09 09:21:55 hito Exp $
+ * $Id: object.c,v 1.3 2008/07/16 02:40:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1937,11 +1937,14 @@ int putobj(struct objlist *obj,char *vname,int id,void *val)
 
   if ((idn=getobjtblpos(obj,vname,&robj))==-1) return -1;
   idp=chkobjoffset2(robj,idn);
+
   if ((instcur=getobjinst(obj,id))==NULL) return -1;
+
   if ((robj->table[idn].attrib & NWRITE)==0) {
     error2(obj,ERRPERMISSION,vname);
     return -1;
   }
+
   if ((robj->table[idn].type<NVFUNC) && (robj->table[idn].proc!=NULL)) {
     argv=NULL;
     if (arg_add2(&argv,3,obj->name,vname,val)==NULL) {
@@ -1954,6 +1957,7 @@ int putobj(struct objlist *obj,char *vname,int id,void *val)
     memfree(argv);
     if (rcode!=0) return -1;
   }
+
   switch (robj->table[idn].type) {
   case NSTR:
   case NPOINTER:
@@ -1973,6 +1977,7 @@ int putobj(struct objlist *obj,char *vname,int id,void *val)
   default:
     break;
   }
+
   switch (robj->table[idn].type) {
   case NVOID:
   case NLABEL:

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.18 2008/07/15 09:15:15 hito Exp $
+ * $Id: x11lgnd.c,v 1.19 2008/07/16 02:40:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -270,13 +270,13 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
   SetTextFromObjPoints(d->points, d->Obj, id, "points");
   SetStyleFromObjField(d->style, d->Obj, id, "style");
-  SetTextFromObjField(d->width, d->Obj, id, "width");
-  SetListFromObjField(d->join, d->Obj, id, "join");
-  SetTextFromObjField(d->miter, d->Obj, id, "miter_limit");
-  SetToggleFromObjField(d->fill, d->Obj, id, "fill");
-  SetListFromObjField(d->fill_rule, d->Obj, id, "fill");
-  SetToggleFromObjField(d->frame, d->Obj, id, "frame");
-  SetListFromObjField(d->arrow, d->Obj, id, "arrow");
+  SetWidgetFromObjField(d->width, d->Obj, id, "width");
+  SetWidgetFromObjField(d->join, d->Obj, id, "join");
+  SetWidgetFromObjField(d->miter, d->Obj, id, "miter_limit");
+  SetWidgetFromObjField(d->fill, d->Obj, id, "fill");
+  SetWidgetFromObjField(d->fill_rule, d->Obj, id, "fill");
+  SetWidgetFromObjField(d->frame, d->Obj, id, "frame");
+  SetWidgetFromObjField(d->arrow, d->Obj, id, "arrow");
 
   if (d->type) {
     int a;
@@ -294,7 +294,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   }
 
   if (d->size) {
-    SetTextFromObjField(d->size, d->Obj, id, "size");
+    SetWidgetFromObjField(d->size, d->Obj, id, "size");
   }
 
   if (d->arrow_length) {
@@ -316,11 +316,11 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     gtk_range_set_value(GTK_RANGE(d->arrow_length), d->ang);
   }
 
-  SetTextFromObjField(d->x, d->Obj, id, "x");
-  SetTextFromObjField(d->y, d->Obj, id, "y");
+  SetWidgetFromObjField(d->x, d->Obj, id, "x");
+  SetWidgetFromObjField(d->y, d->Obj, id, "y");
 
-  SetTextFromObjField(d->x1, d->Obj, id, "x1");
-  SetTextFromObjField(d->y1, d->Obj, id, "y1");
+  SetWidgetFromObjField(d->x1, d->Obj, id, "x1");
+  SetWidgetFromObjField(d->y1, d->Obj, id, "y1");
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
     getobj(d->Obj, "x1", id, 0, NULL, &x1);
@@ -332,13 +332,13 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     spin_entry_set_val(d->y2, y2 - y1);
   }
 
-  SetTextFromObjField(d->rx, d->Obj, id, "rx");
-  SetTextFromObjField(d->ry, d->Obj, id, "ry");
-  SetTextFromObjField(d->angle1, d->Obj, id, "angle1");
-  SetTextFromObjField(d->angle2, d->Obj, id, "angle2");
-  SetToggleFromObjField(d->pieslice, d->Obj, id, "pieslice");
-  SetToggleFromObjField(d->raw, d->Obj, id, "raw");
-  SetListFromObjField(d->interpolation, d->Obj, id, "interpolation");
+  SetWidgetFromObjField(d->rx, d->Obj, id, "rx");
+  SetWidgetFromObjField(d->ry, d->Obj, id, "ry");
+  SetWidgetFromObjField(d->angle1, d->Obj, id, "angle1");
+  SetWidgetFromObjField(d->angle2, d->Obj, id, "angle2");
+  SetWidgetFromObjField(d->pieslice, d->Obj, id, "pieslice");
+  SetWidgetFromObjField(d->raw, d->Obj, id, "raw");
+  SetWidgetFromObjField(d->interpolation, d->Obj, id, "interpolation");
 
   if (d->text) {
     char *buf;
@@ -359,13 +359,13 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     memfree(buf);
   }
 
-  SetTextFromObjField(d->direction, d->Obj, id, "direction");
+  SetWidgetFromObjField(d->direction, d->Obj, id, "direction");
 
-  SetTextFromObjField(d->space, d->Obj, id, "space");
+  SetWidgetFromObjField(d->space, d->Obj, id, "space");
   
-  SetTextFromObjField(d->pt, d->Obj, id, "pt");
+  SetWidgetFromObjField(d->pt, d->Obj, id, "pt");
 
-  SetTextFromObjField(d->script_size, d->Obj, id, "script_size");
+  SetWidgetFromObjField(d->script_size, d->Obj, id, "script_size");
 
   if (d->font)
     set_fonts(d, id);
@@ -405,28 +405,28 @@ legend_dialog_close(GtkWidget *w, void *data)
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
     return;
 
-  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "width"))
+  if (SetObjFieldFromWidget(d->width, d->Obj, d->Id, "width"))
     return;
 
-  if (SetObjFieldFromList(d->join, d->Obj, d->Id, "join"))
+  if (SetObjFieldFromWidget(d->join, d->Obj, d->Id, "join"))
     return;
 
-  if (SetObjFieldFromText(d->miter, d->Obj, d->Id, "miter_limit"))
+  if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "miter_limit"))
     return;
 
-  if (SetObjFieldFromList(d->interpolation, d->Obj, d->Id, "interpolation"))
+  if (SetObjFieldFromWidget(d->interpolation, d->Obj, d->Id, "interpolation"))
     return;
 
-  if (SetObjFieldFromText(d->x, d->Obj, d->Id, "x"))
+  if (SetObjFieldFromWidget(d->x, d->Obj, d->Id, "x"))
     return;
 
-  if (SetObjFieldFromText(d->y, d->Obj, d->Id, "y"))
+  if (SetObjFieldFromWidget(d->y, d->Obj, d->Id, "y"))
     return;
 
-  if (SetObjFieldFromText(d->x1, d->Obj, d->Id, "x1"))
+  if (SetObjFieldFromWidget(d->x1, d->Obj, d->Id, "x1"))
     return;
 
-  if (SetObjFieldFromText(d->y1, d->Obj, d->Id, "y1"))
+  if (SetObjFieldFromWidget(d->y1, d->Obj, d->Id, "y1"))
     return;
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
@@ -445,34 +445,34 @@ legend_dialog_close(GtkWidget *w, void *data)
       return;
   }
 
-  if (SetObjFieldFromText(d->rx, d->Obj, d->Id, "rx"))
+  if (SetObjFieldFromWidget(d->rx, d->Obj, d->Id, "rx"))
     return;
 
-  if (SetObjFieldFromText(d->ry, d->Obj, d->Id, "ry"))
+  if (SetObjFieldFromWidget(d->ry, d->Obj, d->Id, "ry"))
     return;
 
-  if (SetObjFieldFromText(d->angle1, d->Obj, d->Id, "angle1"))
+  if (SetObjFieldFromWidget(d->angle1, d->Obj, d->Id, "angle1"))
     return;
 
-  if (SetObjFieldFromText(d->angle2, d->Obj, d->Id, "angle2"))
+  if (SetObjFieldFromWidget(d->angle2, d->Obj, d->Id, "angle2"))
     return;
 
-  if (SetObjFieldFromToggle(d->fill, d->Obj, d->Id, "fill"))
+  if (SetObjFieldFromWidget(d->fill, d->Obj, d->Id, "fill"))
     return;
 
-  if (SetObjFieldFromList(d->fill_rule, d->Obj, d->Id, "fill"))
+  if (SetObjFieldFromWidget(d->fill_rule, d->Obj, d->Id, "fill"))
     return;
 
-  if (SetObjFieldFromToggle(d->frame, d->Obj, d->Id, "frame"))
+  if (SetObjFieldFromWidget(d->frame, d->Obj, d->Id, "frame"))
     return;
 
-  if (SetObjFieldFromToggle(d->raw, d->Obj, d->Id, "raw"))
+  if (SetObjFieldFromWidget(d->raw, d->Obj, d->Id, "raw"))
     return;
 
-  if (SetObjFieldFromList(d->arrow, d->Obj, d->Id, "arrow"))
+  if (SetObjFieldFromWidget(d->arrow, d->Obj, d->Id, "arrow"))
     return;
 
-  if (SetObjFieldFromToggle(d->pieslice, d->Obj, d->Id, "pieslice"))
+  if (SetObjFieldFromWidget(d->pieslice, d->Obj, d->Id, "pieslice"))
     return;
 
   if (d->arrow_length) {
@@ -496,19 +496,19 @@ legend_dialog_close(GtkWidget *w, void *data)
   if (d->type && putobj(d->Obj, "type", d->Id, &(d->mark.Type)) == -1)
     return;
 
-  if (SetObjFieldFromText(d->size, d->Obj, d->Id, "size"))
+  if (SetObjFieldFromWidget(d->size, d->Obj, d->Id, "size"))
     return;
 
-  if (SetObjFieldFromText(d->pt, d->Obj, d->Id, "pt"))
+  if (SetObjFieldFromWidget(d->pt, d->Obj, d->Id, "pt"))
     return;
 
-  if (SetObjFieldFromText(d->direction, d->Obj, d->Id, "direction"))
+  if (SetObjFieldFromWidget(d->direction, d->Obj, d->Id, "direction"))
     return;
 
-  if (SetObjFieldFromText(d->space, d->Obj, d->Id, "space"))
+  if (SetObjFieldFromWidget(d->space, d->Obj, d->Id, "space"))
     return;
 
-  if (SetObjFieldFromText(d->script_size, d->Obj, d->Id, "script_size"))
+  if (SetObjFieldFromWidget(d->script_size, d->Obj, d->Id, "script_size"))
     return;
 
   if (d->font) {

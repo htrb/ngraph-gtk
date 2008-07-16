@@ -1,6 +1,5 @@
 * コードの整理
 
-* 整数入力欄を GtkEntry から GtkSpinButton に変更
 * Symbol font 対応の強化
 * File Window, Merge Window の DnD 対応
 

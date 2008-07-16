@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.13 2008/07/14 14:16:48 hito Exp $
+ * $Id: x11graph.c,v 1.14 2008/07/16 02:40:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -62,19 +62,19 @@ struct pagelisttype
 };
 
 static struct pagelisttype pagelist[] = {
-  {"Custom",                 "custom",              PAPER_ID_CUSTOM, TRUE,  0,     0},
-  {"A3 P (29700x42000)",     GTK_PAPER_NAME_A3,     PAPER_ID_A3,     FALSE, 29700, 42000},
-  {"A4 P (21000x29700)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     FALSE, 21000, 29700},
-  {"A4 L (29700x21000)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     TRUE,  29700, 21000},
-  {"A5 P (14800x21000)",     GTK_PAPER_NAME_A5,     PAPER_ID_A5,     FALSE, 14800, 21000},
-  {"A5 L (21000x14800)",     GTK_PAPER_NAME_A5,     PAPER_ID_A5,     TRUE,  21000, 14800},
-  {"B4 P (25700x36400)",     "iso_b4",              PAPER_ID_B4,     FALSE, 25700, 36400},
-  {"B5 P (18200x25700)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     FALSE, 18200, 25700},
-  {"B5 L (25700x18200)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     TRUE,  25700, 18200},
-  {"Letter P (21590x27940)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, FALSE, 21590, 27940},
-  {"Letter L (27940x21590)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, TRUE,  27940, 21590},
-  {"Legal  P (21590x35560)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  FALSE, 21590, 35560},
-  {"Legal  L (35560x35560)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  TRUE,  35560, 21590},
+  {"Custom",                   "custom",              PAPER_ID_CUSTOM, TRUE,  0,     0},
+  {"A3 P (297.00x420.00)",     GTK_PAPER_NAME_A3,     PAPER_ID_A3,     FALSE, 29700, 42000},
+  {"A4 P (210.00x297.00)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     FALSE, 21000, 29700},
+  {"A4 L (297.00x210.00)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     TRUE,  29700, 21000},
+  {"A5 P (148.00x210.00)",     GTK_PAPER_NAME_A5,     PAPER_ID_A5,     FALSE, 14800, 21000},
+  {"A5 L (210.00x148.00)",     GTK_PAPER_NAME_A5,     PAPER_ID_A5,     TRUE,  21000, 14800},
+  {"B4 P (257.00x364.00)",     "iso_b4",              PAPER_ID_B4,     FALSE, 25700, 36400},
+  {"B5 P (182.00x257.00)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     FALSE, 18200, 25700},
+  {"B5 L (257.00x182.00)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     TRUE,  25700, 18200},
+  {"Letter P (215.90x279.40)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, FALSE, 21590, 27940},
+  {"Letter L (279.40x215.90)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, TRUE,  27940, 21590},
+  {"Legal  P (215.90x355.60)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  FALSE, 21590, 35560},
+  {"Legal  L (355.60x355.60)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  TRUE,  35560, 21590},
 };
 
 #define PAGELISTNUM (sizeof(pagelist) / sizeof(*pagelist))

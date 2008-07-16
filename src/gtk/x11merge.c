@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.7 2008/07/15 09:15:15 hito Exp $
+ * $Id: x11merge.c,v 1.8 2008/07/16 02:40:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -84,13 +84,13 @@ static void
 MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
 {
   if (file) {
-    SetTextFromObjField(d->file, d->Obj, id, "file");
+    SetWidgetFromObjField(d->file, d->Obj, id, "file");
   }
-  SetTextFromObjField(d->topmargin, d->Obj, id, "top_margin");
-  SetTextFromObjField(d->leftmargin, d->Obj, id, "left_margin");
-  SetTextFromObjField(d->zoom, d->Obj, id, "zoom");
+  SetWidgetFromObjField(d->topmargin, d->Obj, id, "top_margin");
+  SetWidgetFromObjField(d->leftmargin, d->Obj, id, "left_margin");
+  SetWidgetFromObjField(d->zoom, d->Obj, id, "zoom");
 #ifdef JAPANESE
-  SetToggleFromObjField(d->greeksymbol, d->Obj, id, "symbol_greek");
+  SetWidgetFromObjField(d->greeksymbol, d->Obj, id, "symbol_greek");
 #endif
 }
 
@@ -175,16 +175,16 @@ MergeDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjFieldFromText(d->file, d->Obj, d->Id, "file"))
+  if (SetObjFieldFromWidget(d->file, d->Obj, d->Id, "file"))
     return;
-  if (SetObjFieldFromText(d->topmargin, d->Obj, d->Id, "top_margin"))
+  if (SetObjFieldFromWidget(d->topmargin, d->Obj, d->Id, "top_margin"))
     return;
-  if (SetObjFieldFromText(d->leftmargin, d->Obj, d->Id, "left_margin"))
+  if (SetObjFieldFromWidget(d->leftmargin, d->Obj, d->Id, "left_margin"))
     return;
-  if (SetObjFieldFromText(d->zoom, d->Obj, d->Id, "zoom"))
+  if (SetObjFieldFromWidget(d->zoom, d->Obj, d->Id, "zoom"))
     return;
 #ifdef JAPANESE
-  if (SetObjFieldFromToggle(d->greeksymbol, d->Obj, d->Id, "symbol_greek"))
+  if (SetObjFieldFromWidget(d->greeksymbol, d->Obj, d->Id, "symbol_greek"))
     return;
 #endif
   d->ret = ret;

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.6 2008/07/15 09:15:14 hito Exp $
+ * $Id: gtk_liststore.c,v 1.7 2008/07/16 02:40:18 hito Exp $
  */
 
 #include <stdlib.h>
@@ -31,11 +31,14 @@ create_column(n_list_store *list, int i, int j)
   case G_TYPE_UINT64:
   case G_TYPE_FLOAT:
   case G_TYPE_DOUBLE:
-    renderer = gtk_cell_renderer_text_new();
+    renderer = gtk_cell_renderer_spin_new();
     col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						   "text", i, NULL);
     gtk_tree_view_column_set_resizable(col, TRUE);
     g_object_set((GObject *) renderer, "xalign", (gfloat) 1.0, NULL);
+    if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_FLOAT) {
+      g_object_set((GObject *) renderer, "digits", 2, NULL);
+    }
     break;
   case G_TYPE_OBJECT:
     renderer = gtk_cell_renderer_pixbuf_new();
@@ -103,7 +106,11 @@ create_tree_view(int n, n_list_store *list, int tree)
   free(tarray);
 
   tview = gtk_tree_view_new_with_model(lstore);
+
   gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tview), TRUE);
+  gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(tview), TRUE);
+  gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tview), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
+
   sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tview));
   gtk_tree_selection_set_mode(sel, GTK_SELECTION_SINGLE);
 

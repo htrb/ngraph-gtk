@@ -1,3 +1,8 @@
+2008-07-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.c (SetObjFieldFromWidget)
+	(SetWidgetFromObjField): add.
+
 2008-07-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.c (SetTextFromObjPoints)

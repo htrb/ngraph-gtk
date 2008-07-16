@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.10 2008/07/14 14:16:48 hito Exp $
+ * $Id: x11lgndx.c,v 1.11 2008/07/16 02:40:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -70,11 +70,11 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 
   SetStyleFromObjField(d->style, d->Obj, id, "style");
 
-  SetTextFromObjField(d->width, d->Obj, id, "width");
+  SetWidgetFromObjField(d->width, d->Obj, id, "width");
 
-  SetListFromObjField(d->join, d->Obj, id, "join");
+  SetWidgetFromObjField(d->join, d->Obj, id, "join");
 
-  SetTextFromObjField(d->miter, d->Obj, id, "miter_limit");
+  SetWidgetFromObjField(d->miter, d->Obj, id, "miter_limit");
 
   set_color(d->color, d->Obj, id, NULL);
 
@@ -491,13 +491,13 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
     return;
 
-  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "width"))
+  if (SetObjFieldFromWidget(d->width, d->Obj, d->Id, "width"))
     return;
 
-  if (SetObjFieldFromList(d->join, d->Obj, d->Id, "join"))
+  if (SetObjFieldFromWidget(d->join, d->Obj, d->Id, "join"))
     return;
 
-  if (SetObjFieldFromText(d->miter, d->Obj, d->Id, "miter_limit"))
+  if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "miter_limit"))
     return;
 
   if (putobj_color(d->color, d->Obj, d->Id, NULL))

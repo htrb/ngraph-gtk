@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.14 2008/07/15 09:23:30 hito Exp $
+ * $Id: x11dialg.c,v 1.15 2008/07/16 02:40:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -525,6 +525,9 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
   const char *ctmp;
   struct narray *array = NULL, *atmp;
 
+  if (w == NULL)
+    return 0;
+
   ctmp = gtk_entry_get_text(GTK_ENTRY(w));
   if (ctmp == NULL)
     return -1;
@@ -616,7 +619,7 @@ SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 int
-SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
+SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id,
 		    char *field)
 {
   GtkEntry *entry;
@@ -628,7 +631,52 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
 
   if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
     return SetObjFieldFromSpin(w, Obj, Id, field);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
+    return SetObjFieldFromText(w, Obj, Id, field);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
+    return SetObjFieldFromText(GTK_BIN(w)->child, Obj, Id, field);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
+    return SetObjFieldFromList(w, Obj, Id, field);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
+    return SetObjFieldFromToggle(w, Obj, Id, field);
   }
+
+  return 0;
+}
+
+void
+SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
+		    char *field)
+{
+  GtkEntry *entry;
+  char *buf;
+
+  if (w == NULL)
+    return;
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
+    SetSpinFromObjField(w, Obj, Id, field);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
+    SetTextFromObjField(w, Obj, Id, field);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
+    SetTextFromObjField(GTK_BIN(w)->child, Obj, Id, field);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
+    SetListFromObjField(w, Obj, Id, field);
+  } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
+    SetToggleFromObjField(w, Obj, Id, field);
+  }
+}
+
+int
+SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
+		    char *field)
+{
+  GtkEntry *entry;
+  const char *tmp;
+  char *buf;
+
+  if (w == NULL)
+    return 0;
 
   entry = GTK_ENTRY(w);
   tmp = gtk_entry_get_text(entry);
@@ -659,11 +707,6 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
 
   if (w == NULL)
     return;
-
-  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
-    SetSpinFromObjField(w, Obj, Id, field);
-    return;
-  }
 
   entry = GTK_ENTRY(w);
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.24 2008/07/15 09:15:15 hito Exp $
+ * $Id: x11file.c,v 1.25 2008/07/16 02:40:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -564,32 +564,32 @@ FitDialogSetupItem(GtkWidget *w, struct FitDialog *d, int id)
 {
   int a, i;
 
-  SetListFromObjField(d->type, d->Obj, id, "type");
+  SetWidgetFromObjField(d->type, d->Obj, id, "type");
 
   getobj(d->Obj, "poly_dimension", id, 0, NULL, &a);
   combo_box_set_active(d->dim, a - 1);
 
-  SetTextFromObjField(d->weight, d->Obj, id, "weight_func");
+  SetWidgetFromObjField(d->weight, d->Obj, id, "weight_func");
 
-  SetToggleFromObjField(d->through_point, d->Obj, id, "through_point");
+  SetWidgetFromObjField(d->through_point, d->Obj, id, "through_point");
 
-  SetTextFromObjField(d->x, d->Obj, id, "point_x");
+  SetWidgetFromObjField(d->x, d->Obj, id, "point_x");
 
-  SetTextFromObjField(d->y, d->Obj, id, "point_y");
+  SetWidgetFromObjField(d->y, d->Obj, id, "point_y");
 
-  SetTextFromObjField(d->min, d->Obj, id, "min");
+  SetWidgetFromObjField(d->min, d->Obj, id, "min");
 
-  SetTextFromObjField(d->max, d->Obj, id, "max");
+  SetWidgetFromObjField(d->max, d->Obj, id, "max");
 
-  SetTextFromObjField(d->div, d->Obj, id, "div");
+  SetWidgetFromObjField(d->div, d->Obj, id, "div");
 
-  SetToggleFromObjField(d->interpolation, d->Obj, id, "interpolation");
+  SetWidgetFromObjField(d->interpolation, d->Obj, id, "interpolation");
 
-  SetTextFromObjField(d->formula, d->Obj, id, "user_func");
+  SetWidgetFromObjField(d->formula, d->Obj, id, "user_func");
 
-  SetTextFromObjField(d->converge, d->Obj, id, "converge");
+  SetWidgetFromObjField(d->converge, d->Obj, id, "converge");
 
-  SetToggleFromObjField(d->derivatives, d->Obj, id, "derivative");
+  SetWidgetFromObjField(d->derivatives, d->Obj, id, "derivative");
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "parameter0", dd[] = "derivative0";
@@ -597,8 +597,8 @@ FitDialogSetupItem(GtkWidget *w, struct FitDialog *d, int id)
     p[sizeof(p) - 2] += i;
     dd[sizeof(dd) - 2] += i;
 
-    SetTextFromObjField(d->p[i], d->Obj, id, p);
-    SetTextFromObjField(d->d[i], d->Obj, id, dd);
+    SetWidgetFromObjField(d->p[i], d->Obj, id, p);
+    SetWidgetFromObjField(d->d[i], d->Obj, id, dd);
   }
 }
 
@@ -724,7 +724,7 @@ FitDialogSave(struct FitDialog *d)
   if (putobj(d->Obj, "profile", id, DlgFitSave.Profile) == -1)
     return;
 
-  if (SetObjFieldFromList(d->type, d->Obj, id, "type"))
+  if (SetObjFieldFromWidget(d->type, d->Obj, id, "type"))
     return;
 
   num = combo_box_get_active(d->dim);
@@ -732,38 +732,38 @@ FitDialogSave(struct FitDialog *d)
   if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1)
     return;
 
-  if (SetObjFieldFromText(d->weight, d->Obj, id, "weight_func"))
+  if (SetObjFieldFromWidget(d->weight, d->Obj, id, "weight_func"))
     return;
 
-  if (SetObjFieldFromToggle
+  if (SetObjFieldFromWidget
       (d->through_point, d->Obj, id, "through_point"))
     return;
 
-  if (SetObjFieldFromText(d->x, d->Obj, id, "point_x"))
+  if (SetObjFieldFromWidget(d->x, d->Obj, id, "point_x"))
     return;
 
-  if (SetObjFieldFromText(d->y, d->Obj, id, "point_y"))
+  if (SetObjFieldFromWidget(d->y, d->Obj, id, "point_y"))
     return;
 
-  if (SetObjFieldFromText(d->min, d->Obj, id, "min"))
+  if (SetObjFieldFromWidget(d->min, d->Obj, id, "min"))
     return;
 
-  if (SetObjFieldFromText(d->max, d->Obj, id, "max"))
+  if (SetObjFieldFromWidget(d->max, d->Obj, id, "max"))
     return;
 
-  if (SetObjFieldFromText(d->div, d->Obj, id, "div"))
+  if (SetObjFieldFromWidget(d->div, d->Obj, id, "div"))
     return;
 
-  if (SetObjFieldFromToggle(d->interpolation, d->Obj, id,
+  if (SetObjFieldFromWidget(d->interpolation, d->Obj, id,
 			    "interpolation"))
     return;
-  if (SetObjFieldFromText(d->formula, d->Obj, id, "user_func"))
+  if (SetObjFieldFromWidget(d->formula, d->Obj, id, "user_func"))
     return;
 
-  if (SetObjFieldFromToggle(d->derivatives, d->Obj, id, "derivative"))
+  if (SetObjFieldFromWidget(d->derivatives, d->Obj, id, "derivative"))
     return;
 
-  if (SetObjFieldFromText(d->converge, d->Obj, id, "converge"))
+  if (SetObjFieldFromWidget(d->converge, d->Obj, id, "converge"))
     return;
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
@@ -772,10 +772,10 @@ FitDialogSave(struct FitDialog *d)
     p[sizeof(p) - 2] += i;
     dd[sizeof(dd) - 2] += i;
 
-    if (SetObjFieldFromText(d->p[i], d->Obj, id, p))
+    if (SetObjFieldFromWidget(d->p[i], d->Obj, id, p))
       return;
 
-    if (SetObjFieldFromText(d->d[i], d->Obj, id, dd))
+    if (SetObjFieldFromWidget(d->d[i], d->Obj, id, dd))
       return;
   }
 
@@ -916,7 +916,7 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
   int i;
   int num;
 
-  if (SetObjFieldFromList(d->type, d->Obj, d->Id, "type"))
+  if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
     return FALSE;
 
   num = combo_box_get_active(d->dim);
@@ -924,37 +924,37 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
   if (num > 0 && putobj(d->Obj, "poly_dimension", d->Id, &num) == -1)
       return FALSE;
 
-  if (SetObjFieldFromText(d->weight, d->Obj, d->Id, "weight_func"))
+  if (SetObjFieldFromWidget(d->weight, d->Obj, d->Id, "weight_func"))
     return FALSE;
 
-  if (SetObjFieldFromToggle(d->through_point, d->Obj, d->Id, "through_point"))
+  if (SetObjFieldFromWidget(d->through_point, d->Obj, d->Id, "through_point"))
     return FALSE;
 
-  if (SetObjFieldFromText(d->x, d->Obj, d->Id, "point_x"))
+  if (SetObjFieldFromWidget(d->x, d->Obj, d->Id, "point_x"))
     return FALSE;
 
-  if (SetObjFieldFromText(d->y, d->Obj, d->Id, "point_y"))
+  if (SetObjFieldFromWidget(d->y, d->Obj, d->Id, "point_y"))
     return FALSE;
 
-  if (SetObjFieldFromText(d->min, d->Obj, d->Id, "min"))
+  if (SetObjFieldFromWidget(d->min, d->Obj, d->Id, "min"))
     return FALSE;
 
-  if (SetObjFieldFromText(d->max, d->Obj, d->Id, "max"))
+  if (SetObjFieldFromWidget(d->max, d->Obj, d->Id, "max"))
     return FALSE;
 
-  if (SetObjFieldFromText(d->div, d->Obj, d->Id, "div"))
+  if (SetObjFieldFromWidget(d->div, d->Obj, d->Id, "div"))
     return FALSE;
 
-  if (SetObjFieldFromToggle(d->interpolation, d->Obj, d->Id, "interpolation"))
+  if (SetObjFieldFromWidget(d->interpolation, d->Obj, d->Id, "interpolation"))
     return FALSE;
 
-  if (SetObjFieldFromText(d->formula, d->Obj, d->Id, "user_func"))
+  if (SetObjFieldFromWidget(d->formula, d->Obj, d->Id, "user_func"))
     return FALSE;
 
-  if (SetObjFieldFromToggle(d->derivatives, d->Obj, d->Id, "derivative"))
+  if (SetObjFieldFromWidget(d->derivatives, d->Obj, d->Id, "derivative"))
     return FALSE;
 
-  if (SetObjFieldFromText(d->converge, d->Obj, d->Id, "converge"))
+  if (SetObjFieldFromWidget(d->converge, d->Obj, d->Id, "converge"))
     return FALSE;
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
@@ -963,10 +963,10 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
     p[sizeof(p) - 2] += i;
     dd[sizeof(dd) - 2] += i;
 
-    if (SetObjFieldFromText(d->p[i], d->Obj, d->Id, p))
+    if (SetObjFieldFromWidget(d->p[i], d->Obj, d->Id, p))
       return FALSE;
 
-    if (SetObjFieldFromText(d->d[i], d->Obj, d->Id, dd))
+    if (SetObjFieldFromWidget(d->d[i], d->Obj, d->Id, dd))
       return FALSE;
   }
 
@@ -1659,10 +1659,10 @@ FileLoadDialogSetupItem(GtkWidget *w, struct FileLoadDialog *d, int id)
   char *ifs, *s;
   int i;
 
-  SetTextFromObjField(d->headskip, d->Obj, id, "head_skip");
-  SetTextFromObjField(d->readstep, d->Obj, id, "read_step");
-  SetTextFromObjField(d->finalline, d->Obj, id, "final_line");
-  SetTextFromObjField(d->remark, d->Obj, id, "remark");
+  SetWidgetFromObjField(d->headskip, d->Obj, id, "head_skip");
+  SetWidgetFromObjField(d->readstep, d->Obj, id, "read_step");
+  SetWidgetFromObjField(d->finalline, d->Obj, id, "final_line");
+  SetWidgetFromObjField(d->remark, d->Obj, id, "remark");
   sgetobjfield(d->Obj, id, "ifs", NULL, &ifs, FALSE, FALSE, FALSE);
   s = nstrnew();
   for (i = 0; i < strlen(ifs); i++) {
@@ -1678,7 +1678,7 @@ FileLoadDialogSetupItem(GtkWidget *w, struct FileLoadDialog *d, int id)
   gtk_entry_set_text(GTK_ENTRY(d->ifs), s);
   memfree(s);
   memfree(ifs);
-  SetToggleFromObjField(d->csv, d->Obj, id, "csv");
+  SetWidgetFromObjField(d->csv, d->Obj, id, "csv");
 }
 
 static void
@@ -1769,16 +1769,16 @@ FileLoadDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjFieldFromText(d->headskip, d->Obj, d->Id, "head_skip"))
+  if (SetObjFieldFromWidget(d->headskip, d->Obj, d->Id, "head_skip"))
     return;
 
-  if (SetObjFieldFromText(d->readstep, d->Obj, d->Id, "read_step"))
+  if (SetObjFieldFromWidget(d->readstep, d->Obj, d->Id, "read_step"))
     return;
 
-  if (SetObjFieldFromText(d->finalline, d->Obj, d->Id, "final_line"))
+  if (SetObjFieldFromWidget(d->finalline, d->Obj, d->Id, "final_line"))
     return;
 
-  if (SetObjFieldFromText(d->remark, d->Obj, d->Id, "remark"))
+  if (SetObjFieldFromWidget(d->remark, d->Obj, d->Id, "remark"))
     return;
 
   ifs = gtk_entry_get_text(GTK_ENTRY(d->ifs));
@@ -1803,7 +1803,7 @@ FileLoadDialogClose(GtkWidget *w, void *data)
 
   memfree(s);
 
-  if (SetObjFieldFromToggle(d->csv, d->Obj, d->Id, "csv"))
+  if (SetObjFieldFromWidget(d->csv, d->Obj, d->Id, "csv"))
     return;
 
   d->ret = ret;
@@ -1821,13 +1821,13 @@ FileLoadDialog(struct FileLoadDialog *data, struct objlist *obj, int id)
 static void
 FileMathDialogSetupItem(GtkWidget *w, struct FileMathDialog *d, int id)
 {
-  SetTextFromObjField(d->xsmooth, d->Obj, id, "smooth_x");
-  SetTextFromObjField(d->ysmooth, d->Obj, id, "smooth_y");
-  SetTextFromObjField(d->xmath, d->Obj, id, "math_x");
-  SetTextFromObjField(d->ymath, d->Obj, id, "math_y");
-  SetTextFromObjField(d->fmath, d->Obj, id, "func_f");
-  SetTextFromObjField(d->gmath, d->Obj, id, "func_g");
-  SetTextFromObjField(d->hmath, d->Obj, id, "func_h");
+  SetWidgetFromObjField(d->xsmooth, d->Obj, id, "smooth_x");
+  SetWidgetFromObjField(d->ysmooth, d->Obj, id, "smooth_y");
+  SetWidgetFromObjField(d->xmath, d->Obj, id, "math_x");
+  SetWidgetFromObjField(d->ymath, d->Obj, id, "math_y");
+  SetWidgetFromObjField(d->fmath, d->Obj, id, "func_f");
+  SetWidgetFromObjField(d->gmath, d->Obj, id, "func_g");
+  SetWidgetFromObjField(d->hmath, d->Obj, id, "func_h");
 }
 
 static void
@@ -1964,25 +1964,25 @@ FileMathDialogClose(GtkWidget *w, void *data)
   s = gtk_entry_get_text(GTK_ENTRY(d->hmath));
   entry_completion_append(NgraphApp.func_list, s);
 
-  if (SetObjFieldFromText(d->xsmooth, d->Obj, d->Id, "smooth_x"))
+  if (SetObjFieldFromWidget(d->xsmooth, d->Obj, d->Id, "smooth_x"))
     return;
 
-  if (SetObjFieldFromText(d->xmath, d->Obj, d->Id, "math_x"))
+  if (SetObjFieldFromWidget(d->xmath, d->Obj, d->Id, "math_x"))
     return;
 
-  if (SetObjFieldFromText(d->ysmooth, d->Obj, d->Id, "smooth_y"))
+  if (SetObjFieldFromWidget(d->ysmooth, d->Obj, d->Id, "smooth_y"))
     return;
 
-  if (SetObjFieldFromText(d->ymath, d->Obj, d->Id, "math_y"))
+  if (SetObjFieldFromWidget(d->ymath, d->Obj, d->Id, "math_y"))
     return;
 
-  if (SetObjFieldFromText(d->fmath, d->Obj, d->Id, "func_f"))
+  if (SetObjFieldFromWidget(d->fmath, d->Obj, d->Id, "func_f"))
     return;
 
-  if (SetObjFieldFromText(d->gmath, d->Obj, d->Id, "func_g"))
+  if (SetObjFieldFromWidget(d->gmath, d->Obj, d->Id, "func_g"))
     return;
 
-  if (SetObjFieldFromText(d->hmath, d->Obj, d->Id, "func_h"))
+  if (SetObjFieldFromWidget(d->hmath, d->Obj, d->Id, "func_h"))
     return;
 
   gtk_entry_set_completion(GTK_ENTRY(d->ymath), NULL);
@@ -2104,7 +2104,7 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
     combo_box_append_text(d->yaxis, name);
   }
 
-  SetTextFromObjField(d->xcol, d->Obj, id, "x");
+  SetWidgetFromObjField(d->xcol, d->Obj, id, "x");
 
   sgetobjfield(d->Obj, id, "axis_x", NULL, &valstr, FALSE, FALSE, FALSE);
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
@@ -2113,7 +2113,7 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
   combo_box_entry_set_text(d->xaxis, valstr + i);;
   memfree(valstr);
 
-  SetTextFromObjField(d->ycol, d->Obj, id, "y");
+  SetWidgetFromObjField(d->ycol, d->Obj, id, "y");
 
   sgetobjfield(d->Obj, id, "axis_y", NULL, &valstr, FALSE, FALSE, FALSE);
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
@@ -2122,9 +2122,9 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
   combo_box_entry_set_text(d->yaxis, valstr + i);;
   memfree(valstr);
 
-  SetListFromObjField(d->type, d->Obj, id, "type");
+  SetWidgetFromObjField(d->type, d->Obj, id, "type");
 
-  SetListFromObjField(d->curve, d->Obj, id, "interpolation");
+  SetWidgetFromObjField(d->curve, d->Obj, id, "interpolation");
 
   getobj(d->Obj, "mark_type", id, 0, NULL, &a);
   if (a < 0 || a >= MARK_TYPE_NUM)
@@ -2137,17 +2137,17 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
 
   MarkDialog(&(d->mark), a);
 
-  SetTextFromObjField(d->size, d->Obj, id, "mark_size");
+  SetWidgetFromObjField(d->size, d->Obj, id, "mark_size");
 
-  SetTextFromObjField(d->width, d->Obj, id, "line_width");
+  SetWidgetFromObjField(d->width, d->Obj, id, "line_width");
 
   SetStyleFromObjField(d->style, d->Obj, id, "line_style");
 
-  SetListFromObjField(d->join, d->Obj, id, "line_join");
+  SetWidgetFromObjField(d->join, d->Obj, id, "line_join");
 
-  SetTextFromObjField(d->miter, d->Obj, id, "line_miter_limit");
+  SetWidgetFromObjField(d->miter, d->Obj, id, "line_miter_limit");
 
-  SetToggleFromObjField(d->clip, d->Obj, id, "data_clip");
+  SetWidgetFromObjField(d->clip, d->Obj, id, "data_clip");
 
   set_color(d->col1, d->Obj, id, NULL);
   set_color2(d->col2, d->Obj, id);
@@ -2162,7 +2162,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
   FileDialogSetupItemCommon(w, d, id);
 
   if (file) {
-    SetTextFromObjField(d->file, d->Obj, id, "file");
+    SetWidgetFromObjField(d->file, d->Obj, id, "file");
   }
 
   if (id == d->Id) {
@@ -2741,7 +2741,7 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
   char *buf;
   int len;
 
-  if (SetObjFieldFromText(d->xcol, d->Obj, d->Id, "x"))
+  if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
     return TRUE;
 
   s = combo_box_entry_get_text(d->xaxis);
@@ -2764,7 +2764,7 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
     memfree(buf);
   }
 
-  if (SetObjFieldFromText(d->ycol, d->Obj, d->Id, "y"))
+  if (SetObjFieldFromWidget(d->ycol, d->Obj, d->Id, "y"))
     return TRUE;
 
   s = combo_box_entry_get_text(d->yaxis);
@@ -2787,31 +2787,31 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
     memfree(buf);
   }
 
-  if (SetObjFieldFromList(d->type, d->Obj, d->Id, "type"))
+  if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
     return TRUE;
 
-  if (SetObjFieldFromList(d->curve, d->Obj, d->Id, "interpolation"))
+  if (SetObjFieldFromWidget(d->curve, d->Obj, d->Id, "interpolation"))
     return TRUE;
 
   if (putobj(d->Obj, "mark_type", d->Id, &(d->mark.Type)) == -1)
     return TRUE;
 
-  if (SetObjFieldFromText(d->size, d->Obj, d->Id, "mark_size"))
+  if (SetObjFieldFromWidget(d->size, d->Obj, d->Id, "mark_size"))
     return TRUE;
 
-  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "line_width"))
+  if (SetObjFieldFromWidget(d->width, d->Obj, d->Id, "line_width"))
     return TRUE;
 
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "line_style"))
     return TRUE;
 
-  if (SetObjFieldFromList(d->join, d->Obj, d->Id, "line_join"))
+  if (SetObjFieldFromWidget(d->join, d->Obj, d->Id, "line_join"))
     return TRUE;
 
-  if (SetObjFieldFromText(d->miter, d->Obj, d->Id, "line_miter_limit"))
+  if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "line_miter_limit"))
     return TRUE;
 
-  if (SetObjFieldFromToggle(d->clip, d->Obj, d->Id, "data_clip"))
+  if (SetObjFieldFromWidget(d->clip, d->Obj, d->Id, "data_clip"))
     return TRUE;
 
   if (putobj_color(d->col1, d->Obj, d->Id, NULL))
@@ -2853,13 +2853,13 @@ FileDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjFieldFromText(d->file, d->Obj, d->Id, "file"))
+  if (SetObjFieldFromWidget(d->file, d->Obj, d->Id, "file"))
     return;
 
   if (FileDialogCloseCommon(w, d))
     return;
 
-  if (SetObjFieldFromText(d->xcol, d->Obj, d->Id, "x"))
+  if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
     return;
 
   s = combo_box_entry_get_text(d->xaxis);
@@ -2882,7 +2882,7 @@ FileDialogClose(GtkWidget *w, void *data)
     memfree(buf);
   }
 
-  if (SetObjFieldFromText(d->ycol, d->Obj, d->Id, "y"))
+  if (SetObjFieldFromWidget(d->ycol, d->Obj, d->Id, "y"))
     return;
 
   s = combo_box_entry_get_text(d->yaxis);
@@ -2905,31 +2905,31 @@ FileDialogClose(GtkWidget *w, void *data)
     memfree(buf);
   }
 
-  if (SetObjFieldFromList(d->type, d->Obj, d->Id, "type"))
+  if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
     return;
 
-  if (SetObjFieldFromList(d->curve, d->Obj, d->Id, "interpolation"))
+  if (SetObjFieldFromWidget(d->curve, d->Obj, d->Id, "interpolation"))
     return;
 
   if (putobj(d->Obj, "mark_type", d->Id, &(d->mark.Type)) == -1)
     return;
 
-  if (SetObjFieldFromText(d->size, d->Obj, d->Id, "mark_size"))
+  if (SetObjFieldFromWidget(d->size, d->Obj, d->Id, "mark_size"))
     return;
 
-  if (SetObjFieldFromText(d->width, d->Obj, d->Id, "line_width"))
+  if (SetObjFieldFromWidget(d->width, d->Obj, d->Id, "line_width"))
     return;
 
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "line_style"))
     return;
 
-  if (SetObjFieldFromList(d->join, d->Obj, d->Id, "line_join"))
+  if (SetObjFieldFromWidget(d->join, d->Obj, d->Id, "line_join"))
     return;
 
-  if (SetObjFieldFromText(d->miter, d->Obj, d->Id, "line_miter_limit"))
+  if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "line_miter_limit"))
     return;
 
-  if (SetObjFieldFromToggle(d->clip, d->Obj, d->Id, "data_clip"))
+  if (SetObjFieldFromWidget(d->clip, d->Obj, d->Id, "data_clip"))
     return;
 
   putobj_color(d->col1, d->Obj, d->Id, NULL);
