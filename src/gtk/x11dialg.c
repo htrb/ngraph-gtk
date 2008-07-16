@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.15 2008/07/16 02:40:18 hito Exp $
+ * $Id: x11dialg.c,v 1.16 2008/07/16 10:24:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -622,10 +622,6 @@ int
 SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id,
 		    char *field)
 {
-  GtkEntry *entry;
-  const char *tmp;
-  char *buf;
-
   if (w == NULL)
     return 0;
 
@@ -648,9 +644,6 @@ void
 SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
 		    char *field)
 {
-  GtkEntry *entry;
-  char *buf;
-
   if (w == NULL)
     return;
 

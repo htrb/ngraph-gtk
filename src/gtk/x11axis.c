@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.19 2008/07/16 10:18:02 hito Exp $
+ * $Id: x11axis.c,v 1.20 2008/07/16 10:24:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -621,9 +621,7 @@ SectionDialogClose(GtkWidget *w, void *data)
 {
   struct SectionDialog *d;
   int ret;
-  int type, a;
-  const char *buf;
-  char *endptr;
+  int type;
   struct narray group;
   char *argv[2];
 
@@ -893,9 +891,6 @@ static void
 ZoomDialogClose(GtkWidget *w, void *data)
 {
   struct ZoomDialog *d;
-  int ret, a;
-  const char *buf;
-  char *endptr;
 
   d = (struct ZoomDialog *) data;
   if (d->ret != IDOK)

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.14 2008/07/16 02:40:18 hito Exp $
+ * $Id: x11graph.c,v 1.15 2008/07/16 10:24:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -219,9 +219,7 @@ static void
 PageDialogClose(GtkWidget *wi, void *data)
 {
   struct PageDialog *d;
-  const char *buf;
-  char *endptr;
-  int a, w, h;
+  int w, h;
 
   d = (struct PageDialog *) data;
   if (d->ret != IDOK)

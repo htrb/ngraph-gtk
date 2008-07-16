@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.13 2008/07/16 10:18:01 hito Exp $
+ * $Id: gtk_subwin.c,v 1.14 2008/07/16 10:24:32 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -109,7 +109,6 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   n_list_store *list;
   double val;
   char *ptr;
-  int lock;
 
   Menulock = FALSE;
 
@@ -141,9 +140,6 @@ string_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user
   GtkTreeIter iter;
   struct SubWin *d;
   n_list_store *list;
-  double val;
-  char *ptr;
-  int lock;
 
   Menulock = FALSE;
 
@@ -191,12 +187,12 @@ set_cell_renderer_cb(struct SubWin *d, int n, n_list_store *list, GtkWidget *w)
     case G_TYPE_INT:
       g_signal_connect(rend, "edited", G_CALLBACK(numeric_cb), d);
       g_signal_connect(rend, "editing-started", G_CALLBACK(start_editing), d);
-      g_signal_connect(rend, "editing-canceled", G_CALLBACK(start_editing), NULL);
+      g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), NULL);
       break;
     case G_TYPE_STRING:
       g_signal_connect(rend, "edited", G_CALLBACK(string_cb), d);
       g_signal_connect(rend, "editing-started", G_CALLBACK(start_editing), d);
-      g_signal_connect(rend, "editing-canceled", G_CALLBACK(start_editing), NULL);
+      g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), NULL);
       break;
     }
   }
