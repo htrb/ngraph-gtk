@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.19 2008/07/16 02:40:18 hito Exp $
+ * $Id: x11lgnd.c,v 1.20 2008/07/16 04:31:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -112,6 +112,11 @@ enum LegendType {
   LegendTypeArc,
   LegendTypeMark,
   LegendTypeText,
+};
+
+struct lwidget {
+  GtkWidget *w;
+  char *f
 };
 
 static char *
@@ -266,17 +271,39 @@ set_fonts(struct LegendDialog *d, int id)
 static void
 legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 {
-  int x1, y1, x2, y2;
+  int i, x1, y1, x2, y2;
+  struct lwidget lw[] = {
+    {d->width, "width"},
+    {d->join, "join"},
+    {d->miter, "miter_limit"},
+    {d->interpolation, "interpolation"},
+    {d->x, "x"},
+    {d->y, "y"},
+    {d->x1, "x1"},
+    {d->y1, "y1"},
+    {d->rx, "rx"},
+    {d->ry, "ry"},
+    {d->angle1, "angle1"},
+    {d->angle2, "angle2"},
+    {d->fill, "fill"},
+    {d->fill_rule, "fill"},
+    {d->frame, "frame"},
+    {d->raw, "raw"},
+    {d->arrow, "arrow"},
+    {d->pieslice, "pieslice"},
+    {d->size, "size"},
+    {d->pt, "pt"},
+    {d->direction, "direction"},
+    {d->space, "space"},
+    {d->script_size, "script_size"},
+  };
 
   SetTextFromObjPoints(d->points, d->Obj, id, "points");
   SetStyleFromObjField(d->style, d->Obj, id, "style");
-  SetWidgetFromObjField(d->width, d->Obj, id, "width");
-  SetWidgetFromObjField(d->join, d->Obj, id, "join");
-  SetWidgetFromObjField(d->miter, d->Obj, id, "miter_limit");
-  SetWidgetFromObjField(d->fill, d->Obj, id, "fill");
-  SetWidgetFromObjField(d->fill_rule, d->Obj, id, "fill");
-  SetWidgetFromObjField(d->frame, d->Obj, id, "frame");
-  SetWidgetFromObjField(d->arrow, d->Obj, id, "arrow");
+
+  for (i = 0; i < sizeof(lw) / sizeof(*lw); i++) {
+    SetWidgetFromObjField(lw[i].w, d->Obj, id, lw[i].f);
+  }
 
   if (d->type) {
     int a;
@@ -291,10 +318,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     img = gtk_image_new_from_pixmap(NgraphApp.markpix[a], NULL);
     gtk_button_set_image(GTK_BUTTON(d->type), img);
     MarkDialog(&d->mark, a);
-  }
-
-  if (d->size) {
-    SetWidgetFromObjField(d->size, d->Obj, id, "size");
   }
 
   if (d->arrow_length) {
@@ -316,12 +339,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     gtk_range_set_value(GTK_RANGE(d->arrow_length), d->ang);
   }
 
-  SetWidgetFromObjField(d->x, d->Obj, id, "x");
-  SetWidgetFromObjField(d->y, d->Obj, id, "y");
-
-  SetWidgetFromObjField(d->x1, d->Obj, id, "x1");
-  SetWidgetFromObjField(d->y1, d->Obj, id, "y1");
-
   if (d->x1 && d->y1 && d->x2 && d->y2) {
     getobj(d->Obj, "x1", id, 0, NULL, &x1);
     getobj(d->Obj, "y1", id, 0, NULL, &y1);
@@ -331,14 +348,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     spin_entry_set_val(d->x2, x2 - x1);
     spin_entry_set_val(d->y2, y2 - y1);
   }
-
-  SetWidgetFromObjField(d->rx, d->Obj, id, "rx");
-  SetWidgetFromObjField(d->ry, d->Obj, id, "ry");
-  SetWidgetFromObjField(d->angle1, d->Obj, id, "angle1");
-  SetWidgetFromObjField(d->angle2, d->Obj, id, "angle2");
-  SetWidgetFromObjField(d->pieslice, d->Obj, id, "pieslice");
-  SetWidgetFromObjField(d->raw, d->Obj, id, "raw");
-  SetWidgetFromObjField(d->interpolation, d->Obj, id, "interpolation");
 
   if (d->text) {
     char *buf;
@@ -359,14 +368,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     memfree(buf);
   }
 
-  SetWidgetFromObjField(d->direction, d->Obj, id, "direction");
-
-  SetWidgetFromObjField(d->space, d->Obj, id, "space");
-  
-  SetWidgetFromObjField(d->pt, d->Obj, id, "pt");
-
-  SetWidgetFromObjField(d->script_size, d->Obj, id, "script_size");
-
   if (d->font)
     set_fonts(d, id);
 
@@ -380,10 +381,33 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 static void
 legend_dialog_close(GtkWidget *w, void *data)
 {
-  struct LegendDialog *d;
-  int ret, x1, y1, x2, y2;
-
-  d = (struct LegendDialog *) data;
+  struct LegendDialog *d = (struct LegendDialog *) data;
+  int i, ret, x1, y1, x2, y2;
+  struct lwidget lw[] = {
+    {d->width, "width"},
+    {d->join, "join"},
+    {d->miter, "miter_limit"},
+    {d->interpolation, "interpolation"},
+    {d->x, "x"},
+    {d->y, "y"},
+    {d->x1, "x1"},
+    {d->y1, "y1"},
+    {d->rx, "rx"},
+    {d->ry, "ry"},
+    {d->angle1, "angle1"},
+    {d->angle2, "angle2"},
+    {d->fill, "fill"},
+    {d->fill_rule, "fill"},
+    {d->frame, "frame"},
+    {d->raw, "raw"},
+    {d->arrow, "arrow"},
+    {d->pieslice, "pieslice"},
+    {d->size, "size"},
+    {d->pt, "pt"},
+    {d->direction, "direction"},
+    {d->space, "space"},
+    {d->script_size, "script_size"},
+  };
 
   switch(d->ret) {
   case IDOK:
@@ -399,35 +423,10 @@ legend_dialog_close(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (SetObjPointsFromText(d->points, d->Obj, d->Id, "points"))
-    return;
-
-  if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
-    return;
-
-  if (SetObjFieldFromWidget(d->width, d->Obj, d->Id, "width"))
-    return;
-
-  if (SetObjFieldFromWidget(d->join, d->Obj, d->Id, "join"))
-    return;
-
-  if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "miter_limit"))
-    return;
-
-  if (SetObjFieldFromWidget(d->interpolation, d->Obj, d->Id, "interpolation"))
-    return;
-
-  if (SetObjFieldFromWidget(d->x, d->Obj, d->Id, "x"))
-    return;
-
-  if (SetObjFieldFromWidget(d->y, d->Obj, d->Id, "y"))
-    return;
-
-  if (SetObjFieldFromWidget(d->x1, d->Obj, d->Id, "x1"))
-    return;
-
-  if (SetObjFieldFromWidget(d->y1, d->Obj, d->Id, "y1"))
-    return;
+  for (i = 0; i < sizeof(lw) / sizeof(*lw); i++) {
+    if (SetObjFieldFromWidget(lw[i].w, d->Obj, d->Id, lw[i].f))
+      return;
+  }
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
     x1 = spin_entry_get_val(d->x1);
@@ -444,36 +443,6 @@ legend_dialog_close(GtkWidget *w, void *data)
     if (putobj(d->Obj, "y2", d->Id, &y2) == -1)
       return;
   }
-
-  if (SetObjFieldFromWidget(d->rx, d->Obj, d->Id, "rx"))
-    return;
-
-  if (SetObjFieldFromWidget(d->ry, d->Obj, d->Id, "ry"))
-    return;
-
-  if (SetObjFieldFromWidget(d->angle1, d->Obj, d->Id, "angle1"))
-    return;
-
-  if (SetObjFieldFromWidget(d->angle2, d->Obj, d->Id, "angle2"))
-    return;
-
-  if (SetObjFieldFromWidget(d->fill, d->Obj, d->Id, "fill"))
-    return;
-
-  if (SetObjFieldFromWidget(d->fill_rule, d->Obj, d->Id, "fill"))
-    return;
-
-  if (SetObjFieldFromWidget(d->frame, d->Obj, d->Id, "frame"))
-    return;
-
-  if (SetObjFieldFromWidget(d->raw, d->Obj, d->Id, "raw"))
-    return;
-
-  if (SetObjFieldFromWidget(d->arrow, d->Obj, d->Id, "arrow"))
-    return;
-
-  if (SetObjFieldFromWidget(d->pieslice, d->Obj, d->Id, "pieslice"))
-    return;
 
   if (d->arrow_length) {
     int wid, ang, len;
@@ -494,21 +463,6 @@ legend_dialog_close(GtkWidget *w, void *data)
   }
 
   if (d->type && putobj(d->Obj, "type", d->Id, &(d->mark.Type)) == -1)
-    return;
-
-  if (SetObjFieldFromWidget(d->size, d->Obj, d->Id, "size"))
-    return;
-
-  if (SetObjFieldFromWidget(d->pt, d->Obj, d->Id, "pt"))
-    return;
-
-  if (SetObjFieldFromWidget(d->direction, d->Obj, d->Id, "direction"))
-    return;
-
-  if (SetObjFieldFromWidget(d->space, d->Obj, d->Id, "space"))
-    return;
-
-  if (SetObjFieldFromWidget(d->script_size, d->Obj, d->Id, "script_size"))
     return;
 
   if (d->font) {

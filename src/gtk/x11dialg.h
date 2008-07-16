@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.11 2008/07/15 09:23:31 hito Exp $
+ * $Id: x11dialg.h,v 1.12 2008/07/16 04:31:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -54,6 +54,8 @@ extern int DashesNum;
 void initdialog();
 int CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 	      char *(*callback) (struct objlist *, int));
+int SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+void SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
