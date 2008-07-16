@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.25 2008/07/16 02:40:18 hito Exp $
+ * $Id: x11file.c,v 1.26 2008/07/16 10:18:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,17 +61,17 @@
 static n_list_store Flist[] = {
   {"",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",     FALSE},
   {"#",		G_TYPE_INT,     TRUE, FALSE, "id",         FALSE},
-  {"file",	G_TYPE_STRING,  TRUE, FALSE, "file",       TRUE},
-  {"x",		G_TYPE_INT,     TRUE, FALSE, "x",          FALSE},
-  {"y",		G_TYPE_INT,     TRUE, FALSE, "y",          FALSE},
+  {"file",	G_TYPE_STRING,  TRUE, TRUE,  "file",       TRUE},
+  {"x   ",	G_TYPE_INT,     TRUE, TRUE,  "x",          FALSE,  0, 999, 1, 10},
+  {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",          FALSE,  0, 999, 1, 10},
   {"ax",	G_TYPE_STRING,  TRUE, FALSE, "axis_x",     FALSE},
   {"ay",	G_TYPE_STRING,  TRUE, FALSE, "axis_y",     FALSE},
   {"type",	G_TYPE_OBJECT,  TRUE, FALSE, "type",       FALSE},
-  {"size",	G_TYPE_DOUBLE,  TRUE, FALSE, "mark_size",  FALSE},
-  {"width",	G_TYPE_DOUBLE,  TRUE, FALSE, "line_width", FALSE},
-  {"skip",	G_TYPE_INT,     TRUE, FALSE, "head_skip",  FALSE},
-  {"step",	G_TYPE_INT,     TRUE, FALSE, "read_step",  FALSE},
-  {"final",	G_TYPE_INT,     TRUE, FALSE, "final_line", FALSE},
+  {"size",	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0, SPIN_ENTRY_MAX, 100, 1000},
+  {"width",	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0, SPIN_ENTRY_MAX, 10,   100},
+  {"skip",	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  FALSE,  0, INT_MAX,         1,    10},
+  {"step",	G_TYPE_INT,     TRUE, TRUE,  "read_step",  FALSE,  0, INT_MAX,         1,    10},
+  {"final",	G_TYPE_INT,     TRUE, TRUE,  "final_line", FALSE, -1, INT_MAX,         1,    10},
   {"num",	G_TYPE_INT,     TRUE, FALSE, "data_num",   FALSE},
   {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid",        FALSE},
 };

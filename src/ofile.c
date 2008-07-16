@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.12 2008/07/14 14:16:46 hito Exp $
+ * $Id: ofile.c,v 1.13 2008/07/16 10:18:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -229,6 +229,8 @@ struct f2dlocal {
   FILE *storefd;
   int endstore;
 };
+
+static int set_data_progress(struct f2ddata *fp);
 
 struct f2ddata *opendata(struct objlist *obj,char *inst,
                          struct f2dlocal *f2dlocal,int axis,int raw)
@@ -725,6 +727,9 @@ void closedata(struct f2ddata *fp)
   char *inst1,*inst;
 
   if (fp==NULL) return;
+
+  set_data_progress(fp);
+
   num2=arraynum(&(fp->fileopen));
   data2=arraydata(&(fp->fileopen));
   for (j=0;j<num2;j++) {
@@ -1611,7 +1616,7 @@ int getdata(struct f2ddata *fp)
   datay=arraydata(&filedatay);
   staty=arraydata(&filestaty);
   while (!fp->eof && (fp->bufnum<DXBUFSIZE)) {
-    if ((fp->line & 0x3fff) == 0 && set_data_progress(fp)) {
+    if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
       break;
     }
 

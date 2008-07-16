@@ -1,5 +1,20 @@
 2008-07-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_subwin.c (start_editing, cancel_editing)
+	(numeric_cb, string_cb): add.
+	(set_cell_renderer_cb): set callback functions when type is
+	G_TYPE_DOUBLE, G_TYPE_INT or G_TYPE_STRING.
+	(modify_numeric, modify_string): add.
+
+	* src/gtk/gtk_liststore.h (_list_store): add min, max, inc and
+	page.
+
+	* src/gtk/gtk_liststore.c (create_column): set "editable",
+	"adjustment", "digits" and "user-data" properties to renderer when
+	editable is TRUE.
+
+	* src/ofile.c (closedata): call set_data_progress();
+
 	* src/gtk/x11dialg.c (SetObjFieldFromWidget)
 	(SetWidgetFromObjField): add.
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.7 2008/07/16 02:40:18 hito Exp $
+ * $Id: gtk_liststore.c,v 1.8 2008/07/16 10:18:01 hito Exp $
  */
 
 #include <stdlib.h>
@@ -36,8 +36,32 @@ create_column(n_list_store *list, int i, int j)
 						   "text", i, NULL);
     gtk_tree_view_column_set_resizable(col, TRUE);
     g_object_set((GObject *) renderer, "xalign", (gfloat) 1.0, NULL);
-    if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_FLOAT) {
-      g_object_set((GObject *) renderer, "digits", 2, NULL);
+    if (list[i].editable) {
+      if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_FLOAT) {
+	g_object_set((GObject *) renderer,
+		     "editable", list[i].editable,
+		     "adjustment", gtk_adjustment_new(0,
+						      list[i].min / 100.0,
+						      list[i].max / 100.0,
+						      list[i].inc / 100.0,
+						      list[i].page / 100.0,
+						      list[i].page / 100.0),
+		     "digits", 2,
+		     "user-data", &list[i],
+		     NULL);
+      } else {
+	g_object_set((GObject *) renderer,
+		     "editable", list[i].editable,
+		     "adjustment", gtk_adjustment_new(0,
+						      list[i].min,
+						      list[i].max,
+						      list[i].inc,
+						      list[i].page,
+						      list[i].page),
+		     "digits", 0,
+		     "user-data", &list[i],
+		   NULL);
+      }
     }
     break;
   case G_TYPE_OBJECT:
@@ -48,6 +72,10 @@ create_column(n_list_store *list, int i, int j)
   case G_TYPE_STRING:
   default:
     renderer = gtk_cell_renderer_text_new();
+    g_object_set((GObject *) renderer,
+		 "editable", list[i].editable, 
+		 "user-data", &list[i],
+		 NULL);
     if (list[i].color){
       col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						     "text", i,

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.12 2008/07/12 14:29:01 hito Exp $
+ * $Id: gtk_subwin.c,v 1.13 2008/07/16 10:18:01 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -9,6 +9,7 @@
 #include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
+#include "mathfn.h"
 
 #include "main.h"
 #include "ox11menu.h"
@@ -25,6 +26,54 @@ static int SaveWindowState = FALSE;
 
 static void hidden(struct SubWin *d);
 static void tree_hidden(struct LegendWin *d);
+static void modify_numeric(struct SubWin *d, char *field, int val);
+static void modify_string(struct SubWin *d, char *field, char *str);
+
+static void
+start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  n_list_store *list;
+  struct SubWin *d;
+  int sel;
+
+  Menulock = TRUE;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
+
+  list_store_select_iter(GTK_WIDGET(view), &iter);
+
+  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
+
+  if (list->type != G_TYPE_STRING)
+    return;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+
+  if (GTK_IS_ENTRY(editable)) {
+    char *valstr;
+    GtkEntry *entry = GTK_ENTRY(editable);
+
+    sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
+    gtk_entry_set_text(entry, valstr);
+    memfree(valstr);
+  }
+
+}
+
+static void
+cancel_editing(GtkCellRenderer *renderer, gpointer user_data)
+{
+  Menulock = FALSE;
+}
 
 static void
 toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
@@ -52,6 +101,69 @@ toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
 }
 
 static void
+numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  struct SubWin *d;
+  n_list_store *list;
+  double val;
+  char *ptr;
+  int lock;
+
+  Menulock = FALSE;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
+
+  val = strtod(str, &ptr);
+  if (ptr[0] != '\0') {
+    return;
+  }
+
+  if (list->type == G_TYPE_DOUBLE || list->type == G_TYPE_FLOAT)
+    val *= 100;
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE)) {
+    modify_numeric(d, list->name, nround(val));
+  }
+}
+
+static void
+string_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  struct SubWin *d;
+  n_list_store *list;
+  double val;
+  char *ptr;
+  int lock;
+
+  Menulock = FALSE;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
+
+  list_store_select_iter(GTK_WIDGET(view), &iter);
+  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE)) {
+    modify_string(d, list->name, str);
+  }
+}
+
+static void
 set_cell_renderer_cb(struct SubWin *d, int n, n_list_store *list, GtkWidget *w)
 {
   int i;
@@ -63,13 +175,29 @@ set_cell_renderer_cb(struct SubWin *d, int n, n_list_store *list, GtkWidget *w)
   view = GTK_TREE_VIEW(w);
 
   for (i = 0; i < n; i++) {
+    if (! list[i].editable)
+      continue;
+
+    col = gtk_tree_view_get_column(view, i);
+    glist = gtk_tree_view_column_get_cell_renderers(col);
+    rend = GTK_CELL_RENDERER(glist->data);
+    g_list_free(glist);
+
     switch (list[i].type) {
     case G_TYPE_BOOLEAN:
-      col = gtk_tree_view_get_column(view, i);
-      glist = gtk_tree_view_column_get_cell_renderers(col);
-      rend = GTK_CELL_RENDERER(glist->data);
-      g_list_free(glist);
       g_signal_connect(rend, "toggled", G_CALLBACK(toggle_cb), d);
+      break;
+    case G_TYPE_DOUBLE:
+    case G_TYPE_INT:
+      g_signal_connect(rend, "edited", G_CALLBACK(numeric_cb), d);
+      g_signal_connect(rend, "editing-started", G_CALLBACK(start_editing), d);
+      g_signal_connect(rend, "editing-canceled", G_CALLBACK(start_editing), NULL);
+      break;
+    case G_TYPE_STRING:
+      g_signal_connect(rend, "edited", G_CALLBACK(string_cb), d);
+      g_signal_connect(rend, "editing-started", G_CALLBACK(start_editing), d);
+      g_signal_connect(rend, "editing-canceled", G_CALLBACK(start_editing), NULL);
+      break;
     }
   }
 }
@@ -415,6 +543,44 @@ focus(struct SubWin *d, int add)
 
   if ((sel >= 0) && (sel <= d->num))
     Focus(d->obj, sel, add);
+}
+
+static void
+modify_numeric(struct SubWin *d, char *field, int val)
+{
+  int sel;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+
+  if ((sel >= 0) && (sel <= d->num)) {
+    if (putobj(d->obj, field, sel, &val) >= 0) {
+      d->select = sel;
+      d->update(FALSE);
+      NgraphApp.Changed = TRUE;
+    }
+  }
+}
+
+static void
+modify_string(struct SubWin *d, char *field, char *str)
+{
+  int sel;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+
+  if ((sel >= 0) && (sel <= d->num)) {
+    if (sputobjfield(d->obj, sel, field, str) == 0) {
+      d->select = sel;
+      d->update(FALSE);
+      NgraphApp.Changed = TRUE;
+    }
+  }
 }
 
 static void
