@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.26 2008/07/16 10:18:02 hito Exp $
+ * $Id: x11file.c,v 1.27 2008/07/17 08:04:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4034,6 +4034,10 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     FileWinFileDelete(d);
     break;
   case GDK_Return:
+    if (e->state & GDK_SHIFT_MASK) {
+      return FALSE;
+    }
+
     FileWinFileUpdate(d);
     break;
   case GDK_Insert:
@@ -4043,6 +4047,9 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
       FileWinFileCopy(d);
     break;
   case GDK_space:
+    if (e->state & GDK_CONTROL_MASK)
+      return FALSE;
+
     FileWinFileDraw(d);
     break;
   case GDK_F:
