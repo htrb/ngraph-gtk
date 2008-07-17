@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.14 2008/07/16 10:24:32 hito Exp $
+ * $Id: gtk_subwin.c,v 1.15 2008/07/17 02:34:16 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -37,7 +37,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   GtkTreeIter iter;
   n_list_store *list;
   struct SubWin *d;
-  int sel;
 
   Menulock = TRUE;
 
@@ -53,20 +52,28 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
 
-  if (list->type != G_TYPE_STRING)
-    return;
+  switch (list->type) {
+  case G_TYPE_STRING:
+    if (GTK_IS_ENTRY(editable)) {
+      int sel;
+      char *valstr;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+      sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+      sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
+      gtk_entry_set_text(GTK_ENTRY(editable), valstr);
+      memfree(valstr);
+    }
+    break;
+  case G_TYPE_DOUBLE:
+  case G_TYPE_INT:
+    if (GTK_IS_SPIN_BUTTON(editable)) {
+      if (list->max == 36000)
+	gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(editable), TRUE);
 
-  if (GTK_IS_ENTRY(editable)) {
-    char *valstr;
-    GtkEntry *entry = GTK_ENTRY(editable);
-
-    sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
-    gtk_entry_set_text(entry, valstr);
-    memfree(valstr);
+      gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(editable), TRUE);
+    }
+    break;
   }
-
 }
 
 static void
