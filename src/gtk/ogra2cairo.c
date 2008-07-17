@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.18 2008/07/08 07:24:45 hito Exp $
+ * $Id: ogra2cairo.c,v 1.19 2008/07/17 01:38:44 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -262,20 +262,22 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   return 0;
 
  errexit:
-  free_conf();
+  if (Instance == 0)
+    free_conf();
+
   memfree(local);
   return 1;
 }
 
-static int 
-gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+struct gra2cairo_local *
+gra2cairo_free(struct objlist *obj, char *inst)
 {
   struct gra2cairo_local *local;
 
-  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
-    return 1;
-
   _getobj(obj, "_local", inst, &local);
+
+  if (local == NULL)
+    return NULL;
 
   if (local->cairo) {
     if (local->linetonum) {
@@ -297,6 +299,18 @@ gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   if (Instance == 0) {
     free_conf();
   }
+
+  return local;
+}
+
+static int 
+gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
+    return 1;
+
+  gra2cairo_free(obj, inst);
 
   return 0;
 }

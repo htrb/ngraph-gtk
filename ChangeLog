@@ -1,3 +1,21 @@
+2008-07-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (checkcmd): bug fix: initialize prmcur->prmno as
+	PPNULL when prmcur->str[1] == ';'.
+	(checkcmd): fix indent.
+
+	* src/gtk/ogra2x11.c (gtkinit): free gra2cairo_local when failed.
+
+	* src/gtk/ogra2gdk.c (g2g_init): free gra2cairo_local when failed.
+
+	* src/gtk/ox11menu.c (menuinit): free gra2cairo_local when failed.
+
+	* src/gtk/ogra2cairo.c (gra2cairo_free): add.
+	(gra2cairo_init): call free_conf() only when Instance == 0.
+
+	* src/gtk/ogra2cairofile.c (gra2cairofile_init): free
+	gra2cairo_local when failed.
+
 2008-07-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (start_editing, cancel_editing)

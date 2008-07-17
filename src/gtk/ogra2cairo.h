@@ -53,5 +53,6 @@ int gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, 
 int gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, int y2);
 int gra2cairo_clear_region(struct gra2cairo_local *local);
 void gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias);
+struct gra2cairo_local *gra2cairo_free(struct objlist *obj, char *inst);
 
 #endif

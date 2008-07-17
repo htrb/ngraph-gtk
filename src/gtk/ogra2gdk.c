@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2gdk.c,v 1.2 2008/07/02 13:35:09 hito Exp $
+ * $Id: ogra2gdk.c,v 1.3 2008/07/17 01:38:44 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -51,13 +51,13 @@ g2g_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   dpi = DPI_MAX;
 
   if (_putobj(obj, "dpi", inst, &dpi) < 0)
-    return 1;
+    goto Err;
 
   if (_putobj(obj, "dpix", inst, &dpi) < 0)
-    return 1;
+    goto Err;
 
   if (_putobj(obj, "dpiy", inst, &dpi) < 0)
-    return 1;
+    goto Err;
 
   _getobj(obj, "_local", inst, &local);
 
@@ -65,6 +65,12 @@ g2g_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
 
   return 0;
+
+ Err:
+  local = gra2cairo_free(obj, inst);
+  memfree(local);
+
+  return 1;
 }
 
 static int 

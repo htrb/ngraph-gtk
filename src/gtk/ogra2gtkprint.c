@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2gtkprint.c,v 1.2 2008/07/04 10:04:05 hito Exp $
+ * $Id: ogra2gtkprint.c,v 1.3 2008/07/17 01:38:44 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -43,8 +43,9 @@ char *gra2gtkprint_errorlist[]={
 static int 
 gra2gtkprint_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {  
-  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
+  }
 
   return 0;
 }

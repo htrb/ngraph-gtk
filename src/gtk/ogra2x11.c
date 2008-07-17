@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.8 2008/07/02 13:35:09 hito Exp $
+ * $Id: ogra2x11.c,v 1.9 2008/07/17 01:38:44 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -290,15 +290,16 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   GtkWidget *scrolled_window = NULL, *vbox = NULL;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
-    return 1;
+    goto errexit;
 
   gtklocal = memalloc(sizeof(*gtklocal));
   if (gtklocal == NULL)
-    return 1;
+    goto errexit;
 
   gtklocal->obj = obj;
   gtklocal->inst = inst;
   gtklocal->title = NULL;
+  gtklocal->mainwin = NULL;
 
   if (_putobj(obj, "_gtklocal", inst, gtklocal))
     goto errexit;
@@ -431,13 +432,21 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 
 errexit:
-  if (gtklocal->mainwin) {
-    g_object_unref(gtklocal->gc);
-    gtk_widget_destroy(gtklocal->mainwin);
+  if (gtklocal) {
+    if (gtklocal->mainwin) {
+      g_object_unref(gtklocal->gc);
+      gtk_widget_destroy(gtklocal->mainwin);
+    }
+
+    if (gtklocal->mainwin) {
+      memfree(gtklocal->title);
+    }
+    memfree(gtklocal);
   }
 
-  memfree(gtklocal->title);
-  memfree(gtklocal);
+  local = gra2cairo_free(obj, inst);
+  memfree(local);
+
   return 1;
 }
 

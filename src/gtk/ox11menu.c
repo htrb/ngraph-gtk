@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.21 2008/07/04 11:02:38 hito Exp $
+ * $Id: ox11menu.c,v 1.22 2008/07/17 01:38:44 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -950,15 +950,22 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   int i, numf, numd;
   char *dum;
 
-  if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
+  if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv)) {
     return 1;
+  }
 
-  if (_getobj(obj, "_local", inst, &local))
+  if (_getobj(obj, "_local", inst, &local)) {
+    local = gra2cairo_free(obj, inst);
+    memfree(local);
     return 1;
+  }
 
   Mxlocal = (struct mxlocal *) memalloc(sizeof(struct mxlocal));
-  if (Mxlocal == NULL)
+  if (Mxlocal == NULL) {
+    local = gra2cairo_free(obj, inst);
+    memfree(local);
     return 1;
+  }
 
   Menulocal.framex = Menulocal.framey = 0;
   Menulocal.menux = Menulocal.menuy
@@ -1132,6 +1139,10 @@ errexit:
     g_object_unref(Mxlocal->pix);
 
   memfree(Mxlocal);
+
+  local = gra2cairo_free(obj, inst);
+  memfree(local);
+
   return 1;
 }
 
