@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.15 2008/07/17 02:34:16 hito Exp $
+ * $Id: gtk_subwin.c,v 1.16 2008/07/17 02:51:20 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1354,6 +1354,8 @@ static gboolean
 ev_popup_menu(GtkWidget *w, gpointer client_data)
 {
   struct SubWin *d;
+
+  if (Menulock || GlobalLock) return TRUE;
 
   d = (struct SubWin *) client_data;
   do_popup(NULL, d);
