@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.16 2008/07/14 14:16:48 hito Exp $
+ * $Id: x11print.c,v 1.17 2008/07/17 02:17:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -554,7 +554,7 @@ CmOutputPrinter(void)
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   char *device, *g2winst;
-  int i, ret;;
+  int i;;
   GError *error;
   struct narray *drawrable;
   struct print_obj pobj;
