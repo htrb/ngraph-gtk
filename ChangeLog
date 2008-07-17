@@ -1,5 +1,9 @@
 2008-07-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2cairo.c (gra2cairo_output): in the case 'V' call
+	cairo_reset_clip() before clip rectangle and restore clip region
+	when local->region is not NULL.
+
 	* src/shell.c (checkcmd): bug fix: initialize prmcur->prmno as
 	PPNULL when prmcur->str[1] == ';'.
 	(checkcmd): fix indent.

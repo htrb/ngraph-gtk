@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.19 2008/07/17 01:38:44 hito Exp $
+ * $Id: ogra2cairo.c,v 1.20 2008/07/17 10:20:31 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -252,11 +252,8 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   local->text2path = FALSE;
   local->antialias = antialias;
   local->font_opt = cairo_font_options_create();
+  local->region = NULL;
 
-  local->region[0] = local->region[1] =
-    local->region[2] = local->region[3] = 0;
-
-  local->region_active = FALSE;
   Instance++;
 
   return 0;
@@ -325,33 +322,11 @@ gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region)
   if (region) {
     gdk_cairo_region(local->cairo, region);
     cairo_clip(local->cairo);
+    local->region = region;
   } else {
     cairo_reset_clip(local->cairo);
+    local->region = NULL;
   }
-  return 0;
-}
-
-int 
-gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, int y2)
-{
-  local->region[0] = mxd2px(local, x1);
-  local->region[1] = mxd2py(local, y1);
-  local->region[2] = mxd2px(local, x2);
-  local->region[3] = mxd2py(local, y2);
-  local->region_active = TRUE;
-
-  return 0;
-}
-
-int 
-gra2cairo_clear_region(struct gra2cairo_local *local)
-{
-  local->region[0] = 0;
-  local->region[1] = 0;
-  local->region[2] = 0;
-  local->region[3] = 0;
-  local->region_active = FALSE;
-
   return 0;
 }
 
@@ -749,27 +724,16 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       w = mxd2pw(local, cpar[3]) - x;
       h = mxd2ph(local, cpar[4]) - y;
 
-      //      cairo_reset_clip(local->cairo);
+      cairo_reset_clip(local->cairo);
       cairo_rectangle(local->cairo, x, y, w, h);
-
-      if (local->region_active) {
-	cairo_rectangle(local->cairo,
-			local->region[0], local->region[1],
-			local->region[2], local->region[3]);
-      }
-
       cairo_clip(local->cairo);
     } else {
-      if (local->region_active) {
-	cairo_reset_clip(local->cairo);
-	cairo_rectangle(local->cairo,
-			local->region[0], local->region[1],
-			local->region[2], local->region[3]);
-	cairo_clip(local->cairo);
-      } else {
-	cairo_reset_clip(local->cairo);
-      }
+      cairo_reset_clip(local->cairo);
     }
+
+    if (local->region)
+      gra2cairo_clip_region(local, local->region);
+
     break;
   case 'A':
     if (cpar[1] == 0) {

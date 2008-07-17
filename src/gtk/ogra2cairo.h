@@ -41,10 +41,11 @@ struct gra2cairo_config {
 struct gra2cairo_local {
   cairo_t *cairo;
   cairo_font_options_t *font_opt;
-  int linetonum, region_active, loadfontf, text2path, antialias;
+  int linetonum, loadfontf, text2path, antialias;
   char *fontalias;
-  double pixel_dot_x,  pixel_dot_y, offsetx, offsety, region[4],
+  double pixel_dot_x,  pixel_dot_y, offsetx, offsety,
     fontdir, fontcos, fontsin, fontspace, fontsize;
+  GdkRegion *region;
 };
 
 int gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region);
