@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.16 2008/07/17 02:51:20 hito Exp $
+ * $Id: gtk_subwin.c,v 1.17 2008/07/17 04:24:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -727,12 +727,20 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
       return FALSE;
     break;
   case GDK_Return:
+    if (e->state & GDK_SHIFT_MASK) {
+      e->state &= ~ GDK_SHIFT_MASK;
+      return FALSE;
+    }
+
     update(d);
     break;
   case GDK_BackSpace:
     hidden(d);
     break;
   case GDK_space:
+    if (e->state & GDK_CONTROL_MASK)
+      return FALSE;
+
     if (! d->can_focus)
       return FALSE;
 
