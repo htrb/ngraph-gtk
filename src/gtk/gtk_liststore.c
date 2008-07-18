@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.8 2008/07/16 10:18:01 hito Exp $
+ * $Id: gtk_liststore.c,v 1.9 2008/07/18 04:24:20 hito Exp $
  */
 
 #include <stdlib.h>
@@ -164,6 +164,43 @@ create_tree_view(int n, n_list_store *list, int tree)
   return tview;
 }
 
+void
+list_store_set_sort_all(GtkWidget *tview)
+{
+  GList *list, *ptr;
+  int i;
+
+  list = gtk_tree_view_get_columns(GTK_TREE_VIEW(tview));
+
+  if (list == NULL)
+    return;
+
+  for (ptr = list, i = 0; ptr; ptr = ptr->next, i++) {
+    gtk_tree_view_column_set_sort_column_id(GTK_TREE_VIEW_COLUMN(ptr->data), i);
+  }
+
+  g_list_free(list);
+}
+
+void
+list_store_set_sort_column(GtkWidget *tview, int col)
+{
+  GList *list, *ptr;
+  int i;
+
+  list = gtk_tree_view_get_columns(GTK_TREE_VIEW(tview));
+
+  if (list == NULL)
+    return;
+
+  ptr = g_list_nth(list, col);
+
+  if (ptr)
+    gtk_tree_view_column_set_sort_column_id(GTK_TREE_VIEW_COLUMN(ptr->data), col);
+
+  g_list_free(list);
+}
+
 GtkWidget *
 list_store_create(int n, n_list_store *list)
 {
@@ -206,6 +243,25 @@ tree_store_set_int(GtkWidget *w, GtkTreeIter *iter, int col, int v)
   gtk_tree_store_set(list, iter, col, v, -1);
 }
 
+
+int
+list_store_path_get_int(GtkWidget *w, GtkTreePath *path, int col, int *val)
+{
+  GtkTreeModel *model;
+  gboolean found;
+  GtkTreeIter iter;
+  int v;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  found = gtk_tree_model_get_iter(model, &iter, path);
+
+  if (! found)
+    return 1;
+
+  gtk_tree_model_get(model, &iter, col, val, -1);
+
+  return 0;
+}
 
 void 
 list_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v)

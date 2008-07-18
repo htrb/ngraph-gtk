@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.27 2008/07/17 08:04:02 hito Exp $
+ * $Id: x11file.c,v 1.28 2008/07/18 04:24:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -242,7 +242,7 @@ static void
 MathDialogList(GtkButton *w, gpointer client_data)
 {
   struct MathDialog *d;
-  int a, *ary;
+  int a, *ary, r;
   char *field = NULL, *buf;
   GtkTreeSelection *gsel;
   GtkTreePath *path;
@@ -259,16 +259,14 @@ MathDialogList(GtkButton *w, gpointer client_data)
   gtk_tree_view_get_cursor(GTK_TREE_VIEW(d->list), &path, NULL);
 
   if (path) {
-    ary = gtk_tree_path_get_indices(path);
-    a = ary[0];
+    r = list_store_path_get_int(d->list, path, 0, &a);
     gtk_tree_path_free(path);
   } else {
     data = g_list_last(list);
-    ary = gtk_tree_path_get_indices(data->data);
-    a = ary[0];
+    r = list_store_path_get_int(d->list, data->data, 0, &a);
   }
 
-  if (ary == NULL)
+  if (r)
     goto END;
 
   if (d->Mode < 0 || d->Mode >= MATH_FNC_NUM)
@@ -284,11 +282,11 @@ MathDialogList(GtkButton *w, gpointer client_data)
 
   if (DialogExecute(d->widget, &DlgMathText) == IDOK) {
     for (data = list; data; data = data->next) {
-      ary = gtk_tree_path_get_indices(data->data);
-      if (ary == NULL)
+      r = list_store_path_get_int(d->list, data->data, 0, &a);
+      if (r)
 	continue;
 
-      sputobjfield(d->Obj, ary[0], field, DlgMathText.math);
+      sputobjfield(d->Obj, a, field, DlgMathText.math);
       AddMathList(DlgMathText.math);
       NgraphApp.Changed = TRUE;
     }
@@ -379,6 +377,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     w = list_store_create(sizeof(list) / sizeof(*list), list);
+    list_store_set_sort_all(w);
     list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
     g_signal_connect(w, "key-press-event", G_CALLBACK(math_dialog_key_pressed_cb), d);
     g_signal_connect(w, "button-press-event", G_CALLBACK(math_dialog_butten_pressed_cb), d);
@@ -1310,6 +1309,7 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     w = list_store_create(sizeof(list) / sizeof(*list), list);
+    list_store_set_sort_column(w, 0);
     list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
     d->list = w;
     gtk_container_add(GTK_CONTAINER(swin), w);
@@ -1562,6 +1562,7 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     w = list_store_create(sizeof(list) / sizeof(*list), list);
+    list_store_set_sort_column(w, 0);
     list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
     d->list = w;
     gtk_container_add(GTK_CONTAINER(swin), w);

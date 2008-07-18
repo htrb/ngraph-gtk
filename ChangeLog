@@ -1,3 +1,16 @@
+2008-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (MathDialogSetup, MathDialogList): now math
+	dialog can be sorted.
+
+	* src/gtk/gtk_liststore.c (list_store_path_get_int): add.
+
+	* src/gtk/x11file.c (FileMoveDialogSetup, FileMaskDialogSetup):
+	now lists of masked and moved data are sorted by line number.
+
+	* src/gtk/gtk_liststore.c (list_store_set_sort_column)
+	(list_store_set_sort_all): add.
+
 2008-07-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.c (gra2cairo_output): in the case 'V' call

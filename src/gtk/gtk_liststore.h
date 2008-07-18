@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.5 2008/07/16 10:18:01 hito Exp $
+ * $Id: gtk_liststore.h,v 1.6 2008/07/18 04:24:20 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
@@ -17,9 +17,12 @@ typedef struct _list_store {
 GtkWidget *list_store_create(int n, n_list_store *list);
 
 void list_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, void *ptr);
+void list_store_set_sort_all(GtkWidget *tview);
+void list_store_set_sort_column(GtkWidget *tview, int col);
 
 int list_store_get_int(GtkWidget *w, GtkTreeIter *iter, int col);
 void list_store_set_int(GtkWidget *w, GtkTreeIter *iter, int col, int v);
+int list_store_path_get_int(GtkWidget *w, GtkTreePath *path, int col, int *val);
 void list_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v);
 void tree_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v);
 char *list_store_get_string(GtkWidget *w, GtkTreeIter *iter, int col);
