@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.20 2008/07/16 10:24:32 hito Exp $
+ * $Id: x11axis.c,v 1.21 2008/07/18 14:17:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -103,7 +103,7 @@ AxisCB(struct objlist *obj, int id)
   if (name == NULL)
     name = "";
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  snprintf(s, CB_BUF_SIZE, "%-5d %-10s %.6s dir:%d", id, name, valstr, dir);
+  snprintf(s, CB_BUF_SIZE, "%-10s %.6s dir:%d", name, valstr, dir);
   memfree(valstr);
   return s;
 }
@@ -117,7 +117,7 @@ GridCB(struct objlist *obj, int id)
     return NULL;
   getobj(obj, "axis_x", id, 0, NULL, &s1);
   getobj(obj, "axis_y", id, 0, NULL, &s2);
-  snprintf(s, CB_BUF_SIZE, "%-5d %.8s %.8s", id, (s1)? s1: "-----", (s2)? s2: "-----");
+  snprintf(s, CB_BUF_SIZE, "%.8s %.8s", (s1)? s1: "-----", (s2)? s2: "-----");
   return s;
 }
 
@@ -2032,11 +2032,16 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 	argv2[1] = (char *) &room;
 	argv2[2] = NULL;
 
-	a = combo_box_get_active(d->scale);
-
-	if (a >= 0 && ((getobj(d->Obj, "type", d->Id, 0, NULL, &type) == -1)
-		       || (putobj(d->Obj, "type", d->Id, &a) == -1))) {
+	if (getobj(d->Obj, "type", d->Id, 0, NULL, &type) == -1) {
 	  arraydel(&farray);
+	  memfree(buf);
+	  return;
+	}
+
+	a = combo_box_get_active(d->scale);
+	if (a >= 0 && (putobj(d->Obj, "type", d->Id, &a) == -1)) {
+	  arraydel(&farray);
+	  memfree(buf);
 	  return;
 	}
 
@@ -2130,7 +2135,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    w = combo_box_entry_create();
+    w = combo_box_create();
     item_setup(hbox, w, _("_Scale:"), TRUE);
     d->scale = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);

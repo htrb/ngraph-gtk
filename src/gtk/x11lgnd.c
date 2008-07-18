@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.20 2008/07/16 04:31:44 hito Exp $
+ * $Id: x11lgnd.c,v 1.21 2008/07/18 14:17:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -134,9 +134,9 @@ LegendLineCB(struct objlist *obj, int id)
   num = arraynum(array);
   data = (int *) arraydata(array);
   if (num < 2)
-    snprintf(s, CB_BUF_SIZE, "%-5d", id);
+    snprintf(s, CB_BUF_SIZE, "------");
   else
-    snprintf(s, CB_BUF_SIZE, "%-5d (X:%.2f Y:%.2f)-", id, data[0] / 100.0, data[1] / 100.0);
+    snprintf(s, CB_BUF_SIZE, "(X:%.2f Y:%.2f)-", data[0] / 100.0, data[1] / 100.0);
   return s;
 }
 
@@ -151,7 +151,7 @@ LegendRectCB(struct objlist *obj, int id)
 
   getobj(obj, "x1", id, 0, NULL, &x1);
   getobj(obj, "y1", id, 0, NULL, &y1);
-  snprintf(s, CB_BUF_SIZE, "%-5d x1:%.2f y1:%.2f", id, x1 / 100.0, y1 / 100.0);
+  snprintf(s, CB_BUF_SIZE, "X1:%.2f Y1:%.2f", x1 / 100.0, y1 / 100.0);
   return s;
 }
 
@@ -167,7 +167,7 @@ LegendArcCB(struct objlist *obj, int id)
 
   getobj(obj, "x", id, 0, NULL, &x1);
   getobj(obj, "y", id, 0, NULL, &y1);
-  snprintf(s, CB_BUF_SIZE, "%-5d X:%.2f Y:%.2f", id, x1 / 100.0, y1 / 100.0);
+  snprintf(s, CB_BUF_SIZE, "X:%.2f Y:%.2f", x1 / 100.0, y1 / 100.0);
   return s;
 }
 
@@ -189,15 +189,13 @@ LegendTextCB(struct objlist *obj, int id)
     {
       char *tmp;
       tmp = sjis_to_utf8(text);
+      len = snprintf(s, CB_BUF_SIZE, "%s", (tmp) ? tmp : "");
       if (tmp) {
-	len = snprintf(s, CB_BUF_SIZE, "%-5d %s", id, tmp);
 	free(tmp);
-      } else {
-	len = snprintf(s, CB_BUF_SIZE, "%-5d ", id);
       }
     }
 #else
-    len = snprintf(s, CB_BUF_SIZE, "%-5d %s", id, text);
+    len = snprintf(s, CB_BUF_SIZE, "%s", text);
 #endif
   }
   return s;

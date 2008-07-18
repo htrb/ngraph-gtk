@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.12 2008/07/16 04:31:44 hito Exp $
+ * $Id: x11dialg.h,v 1.13 2008/07/18 14:17:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,16 +37,7 @@ struct line_style {
 extern struct line_style FwLineStyle[];
 extern char *FwNumStyle[];
 extern int FwNumStyleNum;
-extern char *CbLineWidth[];
-extern int CbLineWidthNum;
-extern char *CbTextPt[];
-extern int CbTextPtNum;
-extern char *CbDirection[];
-extern int CbDirectionNum;
-extern char *CbMarkSize[];
-extern int CbMarkSizeNum;
 extern gint8 Dashes[];
-extern int CbLineWidthNum;
 extern int DashesNum;
 
 #define N_RESPONSE_ALL 1

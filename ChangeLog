@@ -1,5 +1,21 @@
 2008-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11dialg.c (search_id): add.
+	(SelectDialogSetup, SelectDialogSetup): add id column. check id
+	column insteadof index.
+
+	* src/gtk/x11lgnd.c (LegendLineCB, LegendRectCB, LegendArcCB)
+	(LegendTextCB): remove id.
+
+	* src/gtk/x11file.c (FitCB): remove id.
+
+	* src/gtk/x11commn.c (FileCB): remove id.
+
+	* src/gtk/x11axis.c (AxisDialogFile): always get scale type.
+	(AxisDialogSetup): bug fix: widget type of Scale setting is
+	GtkComboBox.
+	(AxisCB, GridCB): remove id.
+
 	* src/gtk/x11file.c (MathDialogSetup, MathDialogList): now math
 	dialog can be sorted.
 

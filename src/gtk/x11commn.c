@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.13 2008/07/14 07:42:49 hito Exp $
+ * $Id: x11commn.c,v 1.14 2008/07/18 14:17:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1386,11 +1386,10 @@ FileCB(struct objlist *obj, int id)
 
   getobj(obj, "file", id, 0, NULL, &file);
   valstr = getbasename(file);
+  snprintf(s, CB_BUF_SIZE, "%.100s", (valstr) ? valstr : "....................");
   if (valstr != NULL) {
-    snprintf(s, CB_BUF_SIZE, "%-5d %.100s", id, valstr);
     memfree(valstr);
-  } else
-    snprintf(s, CB_BUF_SIZE, "%-5d %.100s", id, "....................");
+  }
   return s;
 }
 

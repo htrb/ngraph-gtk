@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.16 2008/07/16 10:24:32 hito Exp $
+ * $Id: x11dialg.c,v 1.17 2008/07/18 14:17:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,7 +33,7 @@
 #include <math.h>
 #include <time.h>
 #include <limits.h>
- #include <ctype.h>
+#include <ctype.h>
 
 #include "gtk_liststore.h"
 #include "gtk_combo.h"
@@ -65,18 +65,6 @@ struct line_style FwLineStyle[] = {
 char *FwNumStyle[] =
   {N_("auto"), "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 int FwNumStyleNum = sizeof(FwNumStyle) / sizeof(*FwNumStyle);
-
-char *CbLineWidth[] = { "10", "20", "40", "80", "120" };
-int CbLineWidthNum = sizeof(CbLineWidth) / sizeof(*CbLineWidth);
-
-char *CbTextPt[] = { "1200", "1600", "1800", "2000", "2400", "3000" };
-int CbTextPtNum = sizeof(CbTextPt) / sizeof(*CbTextPt);
-
-char *CbDirection[] = { "0", "9000", "18000", "27000" };
-int CbDirectionNum = (sizeof(CbDirection) / sizeof(*CbDirection));
-
-char *CbMarkSize[] = { "100", "200", "300", "400", "500" };
-int CbMarkSizeNum = sizeof(CbMarkSize) / sizeof(*CbMarkSize);
 
 gint8 Dashes[] = { 2, 2 };
 int DashesNum = sizeof(Dashes) / sizeof(*Dashes);
@@ -281,22 +269,47 @@ multi_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
   return FALSE;
 }
 
+static int
+search_id(GtkWidget *list, int id)
+{
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  int r, a, i;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
+  r = gtk_tree_model_get_iter_first(model, &iter);
+
+  i = 0;
+  while (r) {
+    gtk_tree_model_get(model, &iter, 0, &a, -1);
+    if (a == id)
+      return i;
+
+    r = gtk_tree_model_iter_next(model, &iter);
+    i++;
+  }
+
+  return -1;
+}
+
 static void
 SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   char *s;
   struct SelectDialog *d;
-  int i, *seldata, selnum;
+  int i, *seldata, selnum, a;
   GtkWidget *swin, *w, *hbox;
   GtkTreeIter iter;
   n_list_store list[] = {
-    {N_("multi select"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
+    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   } ;
 
   d = (struct SelectDialog *) data;
 
   if (makewidget) {
     d->list = list_store_create(sizeof(list) / sizeof(*list), list);
+    list_store_set_sort_all(d->list);
     list_store_set_selection_mode(d->list, GTK_SELECTION_MULTIPLE);
     g_signal_connect(d->list, "button-press-event", G_CALLBACK(multi_list_default_cb), d);
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(multi_list_default_cb), d);
@@ -324,7 +337,8 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
     s = d->cb(d->Obj, i);
     list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, (s) ? s: "");
+    list_store_set_int(d->list, &iter, 0, i);
+    list_store_set_string(d->list, &iter, 1, (s) ? s: "");
     memfree(s);
   }
 
@@ -343,7 +357,10 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     selnum = arraynum(d->isel);
 
     for (i = 0; i < selnum; i++) {
-       list_store_multi_select_nth(d->list, seldata[i], seldata[i]);
+      a = search_id(d->list, seldata[i]);
+      if (a >= 0) {
+	list_store_multi_select_nth(d->list, a, a);
+      }
     }
   }
 }
@@ -353,13 +370,10 @@ select_tree_selection_foreach_cb(GtkTreeModel *model, GtkTreePath *path,
 			  GtkTreeIter *iter, gpointer data)
 {
   int a;
-  char *s;
   struct SelectDialog *d;
 
   d = (struct SelectDialog *) data;
-  s = gtk_tree_path_to_string(path);
-  a = atoi(s);
-  g_free(s);
+  a = list_store_get_int(d->list, iter, 0);
   arrayadd(d->sel, &a);
 }
 
@@ -425,16 +439,18 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   char *s;
   struct CopyDialog *d;
-  int i;
+  int i, a;
   GtkWidget *swin, *w;
   GtkTreeIter iter;
   n_list_store copy_list[] = {
-    {N_("single select"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {"id",       G_TYPE_INT, TRUE, FALSE, NULL, FALSE},
+    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   } ;
 
   d = (struct CopyDialog *) data;
   if (makewidget) {
     d->list = list_store_create(sizeof(copy_list) / sizeof(*copy_list), copy_list);
+    list_store_set_sort_all(d->list);
     list_store_set_selection_mode(d->list, GTK_SELECTION_SINGLE);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
@@ -454,14 +470,17 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
     s = d->cb(d->Obj, i);
     list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, (s) ? s: "");
+    list_store_set_int(d->list, &iter, 0, i);
+    list_store_set_string(d->list, &iter, 1, (s) ? s: "");
     memfree(s);
   }
 
   if (chkobjlastinst(d->Obj) == 0) {
     list_store_select_nth(d->list, 0);
   } else if (d->Id >= 0) {
-    list_store_select_nth(d->list, d->Id);
+    a = search_id(d->list, d->Id);
+    if (a >= 0)
+      list_store_select_nth(d->list, a);
   }
   /*
   if (makewidget) {

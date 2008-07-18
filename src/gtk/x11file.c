@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.28 2008/07/18 04:24:20 hito Exp $
+ * $Id: x11file.c,v 1.29 2008/07/18 14:17:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -611,7 +611,7 @@ FitCB(struct objlist *obj, int id)
     return NULL;
 
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  snprintf(s, CB_BUF_SIZE, "%-5d %.100s", id, valstr);
+  snprintf(s, CB_BUF_SIZE, "%.100s", valstr);
   memfree(valstr);
   return s;
 }
@@ -2513,7 +2513,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   d->xcol = w;
 
   w = combo_box_entry_create();
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
 
   item_setup(hbox, w, _("_X axis:"), TRUE);
   d->xaxis = w;
@@ -2529,7 +2529,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   d->ycol = w;
 
   w = combo_box_entry_create();
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
 
   item_setup(hbox, w, _("_Y axis:"), TRUE);
   d->yaxis = w;
