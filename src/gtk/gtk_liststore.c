@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.10 2008/07/22 14:27:19 hito Exp $
+ * $Id: gtk_liststore.c,v 1.11 2008/07/22 14:40:21 hito Exp $
  */
 
 #include <stdlib.h>
@@ -200,7 +200,6 @@ void
 list_store_set_sort_column(GtkWidget *tview, int col)
 {
   GList *list, *ptr;
-  int i;
 
   list = gtk_tree_view_get_columns(GTK_TREE_VIEW(tview));
 
@@ -264,7 +263,6 @@ list_store_path_get_int(GtkWidget *w, GtkTreePath *path, int col, int *val)
   GtkTreeModel *model;
   gboolean found;
   GtkTreeIter iter;
-  int v;
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
   found = gtk_tree_model_get_iter(model, &iter, path);

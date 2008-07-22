@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.27 2008/07/22 06:57:29 hito Exp $
+ * $Id: x11menu.c,v 1.28 2008/07/22 14:40:22 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -707,7 +707,6 @@ create_recent_data_menu(GtkWidget *parent, GtkAccelGroup *accel_group)
 static void 
 create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
-  int i = 0;
   GtkWidget *item, *menu;
 
   item = gtk_menu_item_new_with_mnemonic(_("_Data"));
