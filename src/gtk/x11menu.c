@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.26 2008/07/15 09:15:15 hito Exp $
+ * $Id: x11menu.c,v 1.27 2008/07/22 06:57:29 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -69,7 +69,8 @@ static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL,
-  *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL, *MoveButton = NULL;
+  *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL, *MoveButton = NULL,
+  *RecentGraph = NULL, *RecentData = NULL;
 
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
@@ -588,6 +589,10 @@ show_graphmwnu_cb(GtkWidget *w, gpointer user_data)
 
   num = arraynum(Menulocal.ngpfilelist);
   data = (char **) arraydata(Menulocal.ngpfilelist);
+
+  if (RecentGraph)
+    gtk_widget_set_sensitive(RecentGraph, num > 0);
+
   for (i = 0; i < MENU_HISTORY_NUM; i++) {
     if (i < num) {
       label = gtk_bin_get_child(GTK_BIN(NgraphApp.ghistory[i]));
@@ -597,13 +602,28 @@ show_graphmwnu_cb(GtkWidget *w, gpointer user_data)
       gtk_widget_hide(GTK_WIDGET(NgraphApp.ghistory[i]));
     }
   }
+}
 
+static void
+create_recent_graph_menu(GtkWidget *parent, GtkAccelGroup *accel_group)
+{
+  int i;
+  GtkWidget *menu;
+
+  menu = gtk_menu_new();
+  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
+
+  for (i = 0; i < MENU_HISTORY_NUM; i++) {
+    NgraphApp.ghistory[i] = gtk_menu_item_new_with_label("");
+    g_signal_connect(NgraphApp.ghistory[i], "activate", G_CALLBACK(CmGraphHistory),  (gpointer) i);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(NgraphApp.ghistory[i]));
+  }
 }
 
 static void 
 create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
-  int i = 1;
   GtkWidget *item, *menu;
 
   item = gtk_menu_item_new_with_mnemonic(_("_Graph"));
@@ -621,6 +641,12 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_Load graph"), FALSE, "<Ngraph>/Graph/Load graph", GDK_r, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphLoad);
   create_menu_item(menu, GTK_STOCK_SAVE_AS, TRUE, "<Ngraph>/Graph/SaveAs",  GDK_s, GDK_CONTROL_MASK | GDK_SHIFT_MASK, CmGraphMenu, MenuIdGraphSave);
   create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);
+
+  item = gtk_menu_item_new_with_mnemonic(_("_Recent graphs"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+  create_recent_graph_menu(item, accel_group);
+  RecentGraph = item;
+
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("_Draw order"), FALSE, "<Ngraph>/Graph/Draw order", 0, 0, CmGraphMenu, MenuIdGraphSwitch);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
@@ -633,14 +659,6 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_Ngraph shell"), FALSE, "<Ngraph>/Graph/Ngraph shell", 0, 0, CmGraphMenu, MenuIdGraphShell);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, GTK_STOCK_QUIT, TRUE, "<Ngraph>/Graph/Quit",  GDK_q, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphQuit);
-  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
-
-  for (i = 0; i < MENU_HISTORY_NUM; i++) {
-    NgraphApp.ghistory[i] = gtk_menu_item_new_with_label("");
-    g_signal_connect(NgraphApp.ghistory[i], "activate", G_CALLBACK(CmGraphHistory),  (gpointer) i);
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(NgraphApp.ghistory[i]));
-  }
-
 }
 
 static void
@@ -653,6 +671,10 @@ show_filemwnu_cb(GtkWidget *w, gpointer user_data)
 
   num = arraynum(Menulocal.datafilelist);
   data = (char **) arraydata(Menulocal.datafilelist);
+
+  if (RecentData)
+    gtk_widget_set_sensitive(RecentData, num > 0);
+
   for (i = 0; i < MENU_HISTORY_NUM; i++) {
     if (i < num) {
       label = gtk_bin_get_child(GTK_BIN(NgraphApp.fhistory[i]));
@@ -663,6 +685,23 @@ show_filemwnu_cb(GtkWidget *w, gpointer user_data)
     }
   }
 
+}
+
+static void
+create_recent_data_menu(GtkWidget *parent, GtkAccelGroup *accel_group)
+{
+  int i;
+  GtkWidget *menu;
+
+  menu = gtk_menu_new();
+  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
+
+  for (i = 0; i < MENU_HISTORY_NUM; i++) {
+    NgraphApp.fhistory[i] = gtk_menu_item_new_with_label("");
+    g_signal_connect(NgraphApp.fhistory[i], "activate", G_CALLBACK(CmFileHistory), NULL);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(NgraphApp.fhistory[i]));
+  }
 }
 
 static void 
@@ -685,13 +724,10 @@ create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, GTK_STOCK_CLOSE, TRUE, "<Ngraph>/Data/Close", 0, 0, CmFileMenu, MenuIdFileClose);
   create_menu_item(menu, GTK_STOCK_EDIT, TRUE, "<Ngraph>/Data/Close", 0, 0, CmFileMenu, MenuIdFileEdit);
 
-  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
-
-  for (i = 0; i < MENU_HISTORY_NUM; i++) {
-    NgraphApp.fhistory[i] = gtk_menu_item_new_with_label("");
-    g_signal_connect(NgraphApp.fhistory[i], "activate", G_CALLBACK(CmFileHistory), NULL);
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(NgraphApp.fhistory[i]));
-  }
+  item = gtk_menu_item_new_with_mnemonic(_("_Recent data"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+  create_recent_data_menu(item, accel_group);
+  RecentData = item;
 }
 
 static void 

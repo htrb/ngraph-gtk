@@ -1,5 +1,11 @@
 2008-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c: add global variables RecentGraph and
+	RecentData.
+	(create_recent_graph_menu, create_recent_data_menu): add.
+	(create_graphmenu): call create_recent_graph_menu.
+	(create_filemenu): call create_recent_data_menu.
+
 	* src/gtk/gtk_subwin.c (modify_numeric, modify_string): check the
 	value is modified or not.
 	(ev_button_down, ev_button_down_tree): return FALSE when locked.
