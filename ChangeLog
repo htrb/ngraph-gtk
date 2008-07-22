@@ -1,3 +1,9 @@
+2008-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (modify_numeric, modify_string): check the
+	value is modified or not.
+	(ev_button_down, ev_button_down_tree): return FALSE when locked.
+
 2008-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.c (search_id): add.

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.17 2008/07/17 04:24:05 hito Exp $
+ * $Id: gtk_subwin.c,v 1.18 2008/07/22 01:23:08 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -551,19 +551,24 @@ focus(struct SubWin *d, int add)
 static void
 modify_numeric(struct SubWin *d, char *field, int val)
 {
-  int sel;
+  int sel, org;
 
   if (Menulock || GlobalLock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
 
-  if ((sel >= 0) && (sel <= d->num)) {
-    if (putobj(d->obj, field, sel, &val) >= 0) {
-      d->select = sel;
-      d->update(FALSE);
-      NgraphApp.Changed = TRUE;
-    }
+  if (sel < 0 || sel > d->num)
+    return;
+
+  getobj(d->obj, field, sel, 0, NULL, &org);
+  if (org == val)
+    return;
+
+  if (putobj(d->obj, field, sel, &val) >= 0) {
+    d->select = sel;
+    d->update(FALSE);
+    NgraphApp.Changed = TRUE;
   }
 }
 
@@ -571,18 +576,32 @@ static void
 modify_string(struct SubWin *d, char *field, char *str)
 {
   int sel;
+  char *valstr;
 
   if (Menulock || GlobalLock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
 
-  if ((sel >= 0) && (sel <= d->num)) {
-    if (sputobjfield(d->obj, sel, field, str) == 0) {
-      d->select = sel;
-      d->update(FALSE);
-      NgraphApp.Changed = TRUE;
-    }
+  if (sel < 0 || sel > d->num)
+    return;
+
+  sgetobjfield(d->obj, sel, field, NULL, &valstr, FALSE, FALSE, FALSE);
+
+  if (valstr == NULL)
+    return;
+
+  if (strcmp(valstr, str) == 0) {
+    memfree(valstr);
+    return;
+  }
+
+  memfree(valstr);
+
+  if (sputobjfield(d->obj, sel, field, str) == 0) {
+    d->select = sel;
+    d->update(FALSE);
+    NgraphApp.Changed = TRUE;
   }
 }
 
@@ -647,7 +666,7 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 {
   struct SubWin *d;
 
-  if (Menulock || GlobalLock) return TRUE;
+  if (Menulock || GlobalLock) return FALSE;
 
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
@@ -950,7 +969,7 @@ ev_button_down_tree(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 {
   struct LegendWin *d;
 
-  if (Menulock || GlobalLock) return TRUE;
+  if (Menulock || GlobalLock) return FALSE;
 
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
