@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2008-07-22 15:55+0900\n"
-"PO-Revision-Date: 2008-07-22 15:58+0900\n"
+"PO-Revision-Date: 2008-07-22 15:56+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1428,7 +1428,7 @@ msgstr "開く(_L)"
 
 #: src/gtk/x11menu.c:645
 msgid "_Recent graphs"
-msgstr "最近使用したグラフ(_R)"
+msgstr "最近使用したデータ(_R)"
 
 #: src/gtk/x11menu.c:651
 msgid "_Draw order"
@@ -1456,7 +1456,7 @@ msgstr "データ(_D)"
 
 #: src/gtk/x11menu.c:727
 msgid "_Recent data"
-msgstr "最近使用したデータ(_R)"
+msgstr "最近使用したグラフ(_R)"
 
 #: src/gtk/x11menu.c:745
 msgid "Single _Axis"
