@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.h,v 1.4 2008/06/30 13:03:22 hito Exp $
+ * $Id: gtk_subwin.h,v 1.5 2008/07/22 14:27:20 hito Exp $
  */
 
 #ifndef _GTK_SUBWIN_HEADER
@@ -27,6 +27,8 @@ GtkWidget *list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n
 GtkWidget *tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, char **xpm);
 void sub_window_minimize(void *d);
 void sub_window_restore_state(void *d);
+
+void set_combo_cell_renderer_cb(struct SubWin *d, int col, n_list_store *list, GCallback start, GCallback end);
 
 gboolean list_sub_window_must_rebuild(struct SubWin *d);
 void list_sub_window_build(struct SubWin *d, list_sub_window_set_val_func func);

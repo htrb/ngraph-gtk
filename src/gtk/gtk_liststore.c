@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.9 2008/07/18 04:24:20 hito Exp $
+ * $Id: gtk_liststore.c,v 1.10 2008/07/22 14:27:19 hito Exp $
  */
 
 #include <stdlib.h>
@@ -13,6 +13,7 @@ create_column(n_list_store *list, int i, int j)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *col;
+  GtkTreeModel *model;
 
   switch (list[i].type) {
   case G_TYPE_BOOLEAN:
@@ -69,6 +70,19 @@ create_column(n_list_store *list, int i, int j)
     col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						     "pixbuf", i, NULL);
     break;
+  case G_TYPE_ENUM:
+    renderer = gtk_cell_renderer_combo_new();
+    model = GTK_TREE_MODEL(gtk_list_store_new(1, G_TYPE_STRING));
+    g_object_set((GObject *) renderer,
+		 "has-entry", FALSE, 
+		 "model", model,
+		 "text-column", 0,
+		 "editable", list[i].editable, 
+		 "user-data", &list[i],
+		 NULL);
+    col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+						   "text", i, NULL);
+    break;
   case G_TYPE_STRING:
   default:
     renderer = gtk_cell_renderer_text_new();
@@ -115,7 +129,7 @@ create_tree_view(int n, n_list_store *list, int tree)
     return NULL;
 
   for (i = 0; i < n; i++) {
-    if (list[i].type == G_TYPE_DOUBLE) {
+    if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_ENUM) {
       tarray[i] = G_TYPE_STRING;
     } else {
       tarray[i] = list[i].type;

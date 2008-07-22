@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.29 2008/07/18 14:17:09 hito Exp $
+ * $Id: x11file.c,v 1.30 2008/07/22 14:27:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -64,8 +64,8 @@ static n_list_store Flist[] = {
   {"file",	G_TYPE_STRING,  TRUE, TRUE,  "file",       TRUE},
   {"x   ",	G_TYPE_INT,     TRUE, TRUE,  "x",          FALSE,  0, 999, 1, 10},
   {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",          FALSE,  0, 999, 1, 10},
-  {"ax",	G_TYPE_STRING,  TRUE, FALSE, "axis_x",     FALSE},
-  {"ay",	G_TYPE_STRING,  TRUE, FALSE, "axis_y",     FALSE},
+  {"ax",	G_TYPE_ENUM,    TRUE, TRUE,  "axis_x",     FALSE},
+  {"ay",	G_TYPE_ENUM,    TRUE, TRUE,  "axis_y",     FALSE},
   {"type",	G_TYPE_OBJECT,  TRUE, FALSE, "type",       FALSE},
   {"size",	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0, SPIN_ENTRY_MAX, 100, 1000},
   {"width",	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0, SPIN_ENTRY_MAX, 10,   100},
@@ -79,6 +79,8 @@ static n_list_store Flist[] = {
 #define FILE_WIN_COL_NUM (sizeof(Flist)/sizeof(*Flist))
 #define FILE_WIN_COL_OID (FILE_WIN_COL_NUM - 1)
 #define FILE_WIN_COL_ID 1
+#define FILE_WIN_COL_X_AXIS 5
+#define FILE_WIN_COL_Y_AXIS 6
 
 
 static void file_delete_popup_func(GtkMenuItem *w, gpointer client_data);
@@ -4077,6 +4079,107 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 }
 
+static void
+start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  n_list_store *list;
+  struct SubWin *d;
+  GtkComboBox *cbox;
+  int lastinst, j;
+  struct objlist *aobj;
+  char *name;
+
+  Menulock = TRUE;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
+
+  list_store_select_iter(GTK_WIDGET(view), &iter);
+
+  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
+
+  cbox = GTK_COMBO_BOX(editable);
+
+  combo_box_clear(cbox);
+  aobj = getobject("axis");
+  lastinst = chkobjlastinst(aobj);
+  for (j = 0; j <= lastinst; j++) {
+    getobj(aobj, "group", j, 0, NULL, &name);
+    if (name == NULL) {
+      name = "";
+    }
+    combo_box_append_text(cbox, name);
+  }
+}
+
+static void
+edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, char *axis)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  struct SubWin *d;
+  n_list_store *list;
+  int sel, lastinst, j;
+  char buf[64], *name;
+  struct objlist *aobj;
+
+  Menulock = FALSE;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
+
+  list_store_select_iter(GTK_WIDGET(view), &iter);
+  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
+
+  sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
+
+  aobj = getobject("axis");
+  lastinst = chkobjlastinst(aobj);
+  for (j = 0; j <= lastinst; j++) {
+    getobj(aobj, "group", j, 0, NULL, &name);
+    if (name == NULL)
+      continue;
+
+    if (strcmp(str, name) == 0)
+      break;
+  }
+
+  if (j <= lastinst) {
+    snprintf(buf, sizeof(buf), "axis:%d", j);
+    if (sputobjfield(d->obj, sel, axis, buf) == 0) {
+      d->select = sel;
+      d->update(FALSE);
+      NgraphApp.Changed = TRUE;
+    }
+  }
+}
+
+static void
+edited_x(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  edited_axis(cell_renderer, path, str, user_data, "axis_x");
+}
+
+static void
+edited_y(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  edited_axis(cell_renderer, path, str, user_data, "axis_y");
+}
+
 void
 CmFileWindow(GtkWidget *w, gpointer client_data)
 {
@@ -4108,6 +4211,8 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
 
     d->select = -1;
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+    set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing), G_CALLBACK(edited_x));
+    set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing), G_CALLBACK(edited_y));
     gtk_widget_show_all(dlg);
   }
 }

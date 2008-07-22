@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.21 2008/07/18 14:17:08 hito Exp $
+ * $Id: x11axis.c,v 1.22 2008/07/22 14:27:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -55,7 +55,7 @@ static n_list_store Alist[] = {
   {"min",  G_TYPE_STRING,  TRUE, TRUE,  "min",       FALSE},
   {"max",  G_TYPE_STRING,  TRUE, TRUE,  "max",       FALSE},
   {"inc",  G_TYPE_STRING,  TRUE, TRUE,  "inc",       FALSE},
-  {"type", G_TYPE_STRING,  TRUE, FALSE, "type",      FALSE},
+  {"type", G_TYPE_ENUM,    TRUE, TRUE,  "type",      FALSE},
   {"x",    G_TYPE_DOUBLE,  TRUE, TRUE,  "x",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",    G_TYPE_DOUBLE,  TRUE, TRUE,  "y",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"dir",  G_TYPE_DOUBLE,  TRUE, TRUE,  "direction", FALSE,                0,          36000, 100, 1500},
@@ -66,6 +66,7 @@ static n_list_store Alist[] = {
 #define AXIS_WIN_COL_NUM (sizeof(Alist)/sizeof(*Alist))
 #define AXIS_WIN_COL_OID (AXIS_WIN_COL_NUM - 1)
 #define AXIS_WIN_COL_ID 1
+#define AXIS_WIN_COL_TYPE 6
 
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL},
@@ -2893,6 +2894,81 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 }
 
+static void
+start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  n_list_store *list;
+  struct SubWin *d;
+  GtkComboBox *cbox;
+  int lastinst, j, sel, type;
+  struct objlist *aobj;
+  char *name;
+
+  Menulock = TRUE;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
+
+  list_store_select_iter(GTK_WIDGET(view), &iter);
+  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
+  sel = list_store_get_selected_int(GTK_WIDGET(view), AXIS_WIN_COL_ID);
+
+  cbox = GTK_COMBO_BOX(editable);
+
+  SetWidgetFromObjField(cbox, d->obj, sel, "type");
+
+  getobj(d->obj, "type", sel, 0, NULL, &type);
+  combo_box_set_active(cbox, type);
+}
+
+static void
+edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  struct SubWin *d;
+  n_list_store *list;
+  int sel, lastinst, j;
+  char buf[64], *name;
+  char **enumlist;
+  struct objlist *aobj;
+
+  Menulock = FALSE;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
+
+  list_store_select_iter(GTK_WIDGET(view), &iter);
+  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
+
+  sel = list_store_get_selected_int(GTK_WIDGET(view), AXIS_WIN_COL_ID);
+
+  enumlist = (char **) chkobjarglist(d->obj, "type");
+  for (j = 0; enumlist[j] != NULL; j++) {
+    if (strcmp(str, _(enumlist[j])) == 0) {
+      putobj(d->obj, "type", sel, &j);
+      d->select = sel;
+      d->update(FALSE);
+      NgraphApp.Changed = TRUE;
+      return;
+    }
+  }
+}
+
 void
 CmAxisWindow(GtkWidget *w, gpointer client_data)
 {
@@ -2923,6 +2999,7 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
 
     d->select = -1;
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+    set_combo_cell_renderer_cb(d, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
     gtk_widget_show_all(dlg);
   }
 }

@@ -1,5 +1,17 @@
 2008-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (edited_y, edited_x, edited_axis)
+	(start_editing): add.
+	(CmFileWindow): call set_combo_cell_renderer_cb().
+
+	* src/gtk/x11axis.c (start_editing, edited): add.
+	(CmAxisWindow): call set_combo_cell_renderer_cb().
+
+	* src/gtk/gtk_subwin.c (set_combo_cell_renderer_cb): add.
+
+	* src/gtk/gtk_liststore.c (create_column): add case G_TYPE_ENUM.
+	(create_tree_view): column type of G_TYPE_ENUM is string.
+
 	* src/gtk/x11menu.c: add global variables RecentGraph and
 	RecentData.
 	(create_recent_graph_menu, create_recent_data_menu): add.
