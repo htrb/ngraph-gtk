@@ -1,3 +1,12 @@
+2008-07-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (select_axis, select_axis_x, select_axis_y):
+	add.
+	(start_editing): use "changed" signal.
+
+	* src/gtk/x11axis.c (select_type): add.
+	(start_editing): use "changed" signal.
+
 2008-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (edited_y, edited_x, edited_axis)
