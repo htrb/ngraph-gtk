@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.32 2008/07/23 06:45:30 hito Exp $
+ * $Id: x11file.c,v 1.33 2008/07/23 06:48:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4086,7 +4086,7 @@ select_axis(GtkComboBox *w, gpointer user_data, char *axis)
   int j, sel;
   struct SubWin *d;
 
-  sel = GPOINTER_TO_INT(g_object_get_data(w, "user-data"));
+  sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0)
     return;
 
@@ -4144,7 +4144,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);
-  g_object_set_data(cbox, "user-data", GINT_TO_POINTER(sel));
+  g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
 
   combo_box_clear(GTK_WIDGET(cbox));
   aobj = getobject("axis");
