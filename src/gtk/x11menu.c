@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.28 2008/07/22 14:40:22 hito Exp $
+ * $Id: x11menu.c,v 1.29 2008/07/23 06:11:40 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -586,6 +586,7 @@ show_graphmwnu_cb(GtkWidget *w, gpointer user_data)
   GtkWidget *label;
   char **data;
   int num, i;
+  static GString *str = NULL;
 
   num = arraynum(Menulocal.ngpfilelist);
   data = (char **) arraydata(Menulocal.ngpfilelist);
@@ -593,10 +594,14 @@ show_graphmwnu_cb(GtkWidget *w, gpointer user_data)
   if (RecentGraph)
     gtk_widget_set_sensitive(RecentGraph, num > 0);
 
+  if (str == NULL)
+    str = g_string_new("");
+
   for (i = 0; i < MENU_HISTORY_NUM; i++) {
     if (i < num) {
       label = gtk_bin_get_child(GTK_BIN(NgraphApp.ghistory[i]));
-      gtk_label_set_text(GTK_LABEL(label), data[i]);
+      g_string_printf(str, "_%d: %s", i, data[i]);
+      gtk_label_set_text_with_mnemonic(GTK_LABEL(label), str->str);
       gtk_widget_show(GTK_WIDGET(NgraphApp.ghistory[i]));
     } else {
       gtk_widget_hide(GTK_WIDGET(NgraphApp.ghistory[i]));
@@ -639,14 +644,15 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_graphnewmenu(item, accel_group);
 
   create_menu_item(menu, _("_Load graph"), FALSE, "<Ngraph>/Graph/Load graph", GDK_r, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphLoad);
-  create_menu_item(menu, GTK_STOCK_SAVE_AS, TRUE, "<Ngraph>/Graph/SaveAs",  GDK_s, GDK_CONTROL_MASK | GDK_SHIFT_MASK, CmGraphMenu, MenuIdGraphSave);
-  create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);
 
   item = gtk_menu_item_new_with_mnemonic(_("_Recent graphs"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
   create_recent_graph_menu(item, accel_group);
   RecentGraph = item;
 
+  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+  create_menu_item(menu, GTK_STOCK_SAVE_AS, TRUE, "<Ngraph>/Graph/SaveAs",  GDK_s, GDK_CONTROL_MASK | GDK_SHIFT_MASK, CmGraphMenu, MenuIdGraphSave);
+  create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("_Draw order"), FALSE, "<Ngraph>/Graph/Draw order", 0, 0, CmGraphMenu, MenuIdGraphSwitch);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
@@ -667,7 +673,7 @@ show_filemwnu_cb(GtkWidget *w, gpointer user_data)
   GtkWidget *label;
   char **data;
   int num, i;
-
+  static GString *str = NULL;
 
   num = arraynum(Menulocal.datafilelist);
   data = (char **) arraydata(Menulocal.datafilelist);
@@ -675,16 +681,19 @@ show_filemwnu_cb(GtkWidget *w, gpointer user_data)
   if (RecentData)
     gtk_widget_set_sensitive(RecentData, num > 0);
 
+  if (str == NULL)
+    str = g_string_new("");
+
   for (i = 0; i < MENU_HISTORY_NUM; i++) {
     if (i < num) {
       label = gtk_bin_get_child(GTK_BIN(NgraphApp.fhistory[i]));
-      gtk_label_set_text(GTK_LABEL(label), data[i]);
+      g_string_printf(str, "_%d: %s", i, data[i]);
+      gtk_label_set_text_with_mnemonic(GTK_LABEL(label), str->str);
       gtk_widget_show(GTK_WIDGET(NgraphApp.fhistory[i]));
     } else {
       gtk_widget_hide(GTK_WIDGET(NgraphApp.fhistory[i]));
     }
   }
-
 }
 
 static void
@@ -719,14 +728,17 @@ create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 
   create_menu_item(menu, GTK_STOCK_NEW, TRUE, "<Ngraph>/Data/New", 0, 0, CmFileMenu, MenuIdFileNew);
   create_menu_item(menu, GTK_STOCK_OPEN, TRUE, "<Ngraph>/Data/Open", GDK_o, GDK_CONTROL_MASK, CmFileMenu, MenuIdFileOpen);
-  create_menu_item(menu, GTK_STOCK_PROPERTIES, TRUE, "<Ngraph>/Data/Property", 0, 0, CmFileMenu, MenuIdFileUpdate);
-  create_menu_item(menu, GTK_STOCK_CLOSE, TRUE, "<Ngraph>/Data/Close", 0, 0, CmFileMenu, MenuIdFileClose);
-  create_menu_item(menu, GTK_STOCK_EDIT, TRUE, "<Ngraph>/Data/Close", 0, 0, CmFileMenu, MenuIdFileEdit);
 
   item = gtk_menu_item_new_with_mnemonic(_("_Recent data"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
   create_recent_data_menu(item, accel_group);
   RecentData = item;
+
+  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+  create_menu_item(menu, GTK_STOCK_PROPERTIES, TRUE, "<Ngraph>/Data/Property", 0, 0, CmFileMenu, MenuIdFileUpdate);
+  create_menu_item(menu, GTK_STOCK_CLOSE, TRUE, "<Ngraph>/Data/Close", 0, 0, CmFileMenu, MenuIdFileClose);
+  create_menu_item(menu, GTK_STOCK_EDIT, TRUE, "<Ngraph>/Data/Close", 0, 0, CmFileMenu, MenuIdFileEdit);
+
 }
 
 static void 

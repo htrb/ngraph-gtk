@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.23 2008/07/22 14:40:22 hito Exp $
+ * $Id: x11axis.c,v 1.24 2008/07/23 06:11:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2895,6 +2895,29 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 }
 
 static void
+select_type(GtkComboBox *w, gpointer user_data)
+{
+  int j, type;
+  struct SubWin *d;
+
+  d = (struct SubWin *) user_data;
+
+  if (d->select < 0)
+    return;
+
+  getobj(d->obj, "type", d->select, 0, NULL, &type);
+
+  j = combo_box_get_active(GTK_WIDGET(w));
+  if (j < 0 || j == type) {
+    d->select = -1;
+    return;
+  }
+
+  if (putobj(d->obj, "type", d->select, &j) < 0)
+    d->select = -1;
+}
+
+static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
 {
   GtkTreeView *view;
@@ -2918,13 +2941,15 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   list_store_select_iter(GTK_WIDGET(view), &iter);
   list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
   sel = list_store_get_selected_int(GTK_WIDGET(view), AXIS_WIN_COL_ID);
+  d->select = sel;
 
   cbox = GTK_COMBO_BOX(editable);
 
-  SetWidgetFromObjField(cbox, d->obj, sel, "type");
+  SetWidgetFromObjField(GTK_WIDGET(cbox), d->obj, sel, "type");
 
   getobj(d->obj, "type", sel, 0, NULL, &type);
-  combo_box_set_active(cbox, type);
+  combo_box_set_active(GTK_WIDGET(cbox), type);
+  g_signal_connect(cbox, "changed", G_CALLBACK(select_type), d);
 }
 
 static void
@@ -2942,27 +2967,11 @@ edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_da
 
   d = (struct SubWin *) user_data;
 
-  view = GTK_TREE_VIEW(d->text);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+  if (str == NULL || d->select < 0)
     return;
 
-  list_store_select_iter(GTK_WIDGET(view), &iter);
-  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
-
-  sel = list_store_get_selected_int(GTK_WIDGET(view), AXIS_WIN_COL_ID);
-
-  enumlist = (char **) chkobjarglist(d->obj, "type");
-  for (j = 0; enumlist[j] != NULL; j++) {
-    if (strcmp(str, _(enumlist[j])) == 0) {
-      putobj(d->obj, "type", sel, &j);
-      d->select = sel;
-      d->update(FALSE);
-      NgraphApp.Changed = TRUE;
-      return;
-    }
-  }
+  d->update(FALSE);
+  NgraphApp.Changed = TRUE;
 }
 
 void

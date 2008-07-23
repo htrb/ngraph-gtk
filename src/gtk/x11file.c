@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.30 2008/07/22 14:27:20 hito Exp $
+ * $Id: x11file.c,v 1.31 2008/07/23 06:11:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4080,7 +4080,39 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 }
 
 static void
-start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+select_axis(GtkComboBox *w, gpointer user_data, char *axis)
+{
+  char buf[64];
+  int j;
+  struct SubWin *d;
+
+  d = (struct SubWin *) user_data;
+
+  j = combo_box_get_active(GTK_WIDGET(w));
+
+  if (j < 0 || d->select < 0)
+    return;
+
+  snprintf(buf, sizeof(buf), "axis:%d", j);
+  if (sputobjfield(d->obj, d->select, axis, buf) != 0) {
+    d->select = -1;
+  }
+}
+
+static void
+select_axis_x(GtkComboBox *w, gpointer user_data)
+{
+  select_axis(w, user_data, "axis_x");
+}
+
+static void
+select_axis_y(GtkComboBox *w, gpointer user_data)
+{
+  select_axis(w, user_data, "axis_y");
+}
+
+static void
+start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, GCallback select_axis_cb)
 {
   GtkTreeView *view;
   GtkTreeModel *model;
@@ -4105,10 +4137,12 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   list_store_select_iter(GTK_WIDGET(view), &iter);
 
   list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
+  d->select = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);
+  g_signal_connect(cbox, "changed", G_CALLBACK(select_axis_cb), d);
 
-  combo_box_clear(cbox);
+  combo_box_clear(GTK_WIDGET(cbox));
   aobj = getobject("axis");
   lastinst = chkobjlastinst(aobj);
   for (j = 0; j <= lastinst; j++) {
@@ -4116,68 +4150,36 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
     if (name == NULL) {
       name = "";
     }
-    combo_box_append_text(cbox, name);
+    combo_box_append_text(GTK_WIDGET(cbox), name);
   }
+}
+
+static void
+start_editing_x(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+{
+  start_editing(renderer, editable, path, user_data, G_CALLBACK(select_axis_x));
+}
+
+static void
+start_editing_y(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+{
+  start_editing(renderer, editable, path, user_data, G_CALLBACK(select_axis_y));
 }
 
 static void
 edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, char *axis)
 {
-  GtkTreeView *view;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
   struct SubWin *d;
-  n_list_store *list;
-  int sel, lastinst, j;
-  char buf[64], *name;
-  struct objlist *aobj;
 
   Menulock = FALSE;
 
   d = (struct SubWin *) user_data;
 
-  view = GTK_TREE_VIEW(d->text);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+  if (str == NULL || d->select < 0)
     return;
 
-  list_store_select_iter(GTK_WIDGET(view), &iter);
-  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
-
-  sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
-
-  aobj = getobject("axis");
-  lastinst = chkobjlastinst(aobj);
-  for (j = 0; j <= lastinst; j++) {
-    getobj(aobj, "group", j, 0, NULL, &name);
-    if (name == NULL)
-      continue;
-
-    if (strcmp(str, name) == 0)
-      break;
-  }
-
-  if (j <= lastinst) {
-    snprintf(buf, sizeof(buf), "axis:%d", j);
-    if (sputobjfield(d->obj, sel, axis, buf) == 0) {
-      d->select = sel;
-      d->update(FALSE);
-      NgraphApp.Changed = TRUE;
-    }
-  }
-}
-
-static void
-edited_x(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
-{
-  edited_axis(cell_renderer, path, str, user_data, "axis_x");
-}
-
-static void
-edited_y(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
-{
-  edited_axis(cell_renderer, path, str, user_data, "axis_y");
+  d->update(FALSE);
+  NgraphApp.Changed = TRUE;
 }
 
 void
@@ -4211,8 +4213,8 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
 
     d->select = -1;
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-    set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing), G_CALLBACK(edited_x));
-    set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing), G_CALLBACK(edited_y));
+    set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
+    set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
     gtk_widget_show_all(dlg);
   }
 }
