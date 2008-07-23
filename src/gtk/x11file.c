@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.31 2008/07/23 06:11:40 hito Exp $
+ * $Id: x11file.c,v 1.32 2008/07/23 06:45:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4083,19 +4083,23 @@ static void
 select_axis(GtkComboBox *w, gpointer user_data, char *axis)
 {
   char buf[64];
-  int j;
+  int j, sel;
   struct SubWin *d;
+
+  sel = GPOINTER_TO_INT(g_object_get_data(w, "user-data"));
+  if (sel < 0)
+    return;
 
   d = (struct SubWin *) user_data;
 
   j = combo_box_get_active(GTK_WIDGET(w));
 
-  if (j < 0 || d->select < 0)
+  if (j < 0)
     return;
 
   snprintf(buf, sizeof(buf), "axis:%d", j);
-  if (sputobjfield(d->obj, d->select, axis, buf) != 0) {
-    d->select = -1;
+  if (sputobjfield(d->obj, sel, axis, buf) == 0) {
+    d->select = sel;
   }
 }
 
@@ -4120,7 +4124,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   n_list_store *list;
   struct SubWin *d;
   GtkComboBox *cbox;
-  int lastinst, j;
+  int lastinst, j, sel;
   struct objlist *aobj;
   char *name;
 
@@ -4137,10 +4141,10 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   list_store_select_iter(GTK_WIDGET(view), &iter);
 
   list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
-  d->select = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
+  sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);
-  g_signal_connect(cbox, "changed", G_CALLBACK(select_axis_cb), d);
+  g_object_set_data(cbox, "user-data", GINT_TO_POINTER(sel));
 
   combo_box_clear(GTK_WIDGET(cbox));
   aobj = getobject("axis");
@@ -4152,6 +4156,9 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
     }
     combo_box_append_text(GTK_WIDGET(cbox), name);
   }
+
+  d->select = -1;
+  g_signal_connect(cbox, "changed", G_CALLBACK(select_axis_cb), d);
 }
 
 static void
