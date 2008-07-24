@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.33 2008/07/23 06:48:40 hito Exp $
+ * $Id: x11file.c,v 1.34 2008/07/24 02:54:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3928,13 +3928,28 @@ draw_type_pixbuf(struct objlist *obj, int i)
   return pixbuf;
 }
 
+static char *
+get_axis_obj_str(struct objlist *obj, int id, char *field)
+{
+  char *tmp, *valstr;
+  int j;
+
+  sgetobjfield(obj, id, field, NULL, &valstr, FALSE, FALSE, FALSE);
+  for (j = 0; (valstr[j] != '\0') && (valstr[j] != ':'); j++);
+  if (valstr[j] == ':') j++;
+  tmp = strdup(valstr + j);
+  memfree(valstr);
+
+  return tmp;
+}
+
 static void
 file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 {
-  int cx, i, j, len;
-  char buf[256], *color, *valstr;
+  int cx, i, len;
+  char buf[256], *color;
   struct narray *mask, *move;
-  char *file, *bfile;
+  char *file, *bfile, *axis;
 
   for (i = 0; i < FILE_WIN_COL_NUM; i++) {
     if (strcmp(Flist[i].name, "file") == 0) {
@@ -3963,12 +3978,12 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 	g_object_unref(pixbuf);
       }
     } else if (strncmp(Flist[i].name, "axis_", 5) == 0) {
-      sgetobjfield(d->obj, row, Flist[i].name, NULL, &valstr, FALSE, FALSE, FALSE);
-      for (j = 0; (valstr[j] != '\0') && (valstr[j] != ':'); j++);
-      if (valstr[j] == ':') j++;
-      len = snprintf(buf, sizeof(buf), "%3s", valstr + j);
-      list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
-      memfree(valstr);
+      axis = get_axis_obj_str(d->obj, row, Flist[i].name);
+      if (axis) {
+	len = snprintf(buf, sizeof(buf), "%3s", axis);
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
+	free(axis);
+      }
     } else if (strcmp(Flist[i].name, "hidden") == 0) {
       getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
@@ -4116,7 +4131,7 @@ select_axis_y(GtkComboBox *w, gpointer user_data)
 }
 
 static void
-start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, GCallback select_axis_cb)
+start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, int axis)
 {
   GtkTreeView *view;
   GtkTreeModel *model;
@@ -4124,9 +4139,9 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   n_list_store *list;
   struct SubWin *d;
   GtkComboBox *cbox;
-  int lastinst, j, sel;
+  int lastinst, j, sel, id = 0;
   struct objlist *aobj;
-  char *name;
+  char *name, *ptr;
 
   Menulock = TRUE;
 
@@ -4157,20 +4172,31 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
     combo_box_append_text(GTK_WIDGET(cbox), name);
   }
 
+  name = get_axis_obj_str(d->obj, sel, (axis) ? "axis_y" : "axis_x");
+  if (name) {
+    id = strtol(name, &ptr, 10);
+    if (*ptr == '\0') {
+      combo_box_set_active(GTK_WIDGET(cbox), id);
+    }
+    free(name);
+  }
+
+
+
   d->select = -1;
-  g_signal_connect(cbox, "changed", G_CALLBACK(select_axis_cb), d);
+  g_signal_connect(cbox, "changed", G_CALLBACK((axis) ? select_axis_y : select_axis_x), d);
 }
 
 static void
 start_editing_x(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
 {
-  start_editing(renderer, editable, path, user_data, G_CALLBACK(select_axis_x));
+  start_editing(renderer, editable, path, user_data, 0);
 }
 
 static void
 start_editing_y(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
 {
-  start_editing(renderer, editable, path, user_data, G_CALLBACK(select_axis_y));
+  start_editing(renderer, editable, path, user_data, 1);
 }
 
 static void

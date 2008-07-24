@@ -1,3 +1,9 @@
+2008-07-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (get_axis_obj_str): add.
+	(file_list_set_val): use get_axis_obj_str().
+	(start_editing): check axis object.
+
 2008-07-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (select_axis, select_axis_x, select_axis_y):
