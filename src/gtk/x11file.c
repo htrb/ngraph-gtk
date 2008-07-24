@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.34 2008/07/24 02:54:10 hito Exp $
+ * $Id: x11file.c,v 1.35 2008/07/24 05:24:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4130,6 +4130,9 @@ select_axis_y(GtkComboBox *w, gpointer user_data)
   select_axis(w, user_data, "axis_y");
 }
 
+#define AXIS_X 0
+#define AXIS_Y 1
+
 static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, int axis)
 {
@@ -4172,7 +4175,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
     combo_box_append_text(GTK_WIDGET(cbox), name);
   }
 
-  name = get_axis_obj_str(d->obj, sel, (axis) ? "axis_y" : "axis_x");
+  name = get_axis_obj_str(d->obj, sel, (axis == AXIS_X) ? "axis_x" : "axis_y");
   if (name) {
     id = strtol(name, &ptr, 10);
     if (*ptr == '\0') {
@@ -4181,22 +4184,20 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
     free(name);
   }
 
-
-
   d->select = -1;
-  g_signal_connect(cbox, "changed", G_CALLBACK((axis) ? select_axis_y : select_axis_x), d);
+  g_signal_connect(cbox, "changed", G_CALLBACK((axis == AXIS_X) ? select_axis_x : select_axis_y), d);
 }
 
 static void
 start_editing_x(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
 {
-  start_editing(renderer, editable, path, user_data, 0);
+  start_editing(renderer, editable, path, user_data, AXIS_X);
 }
 
 static void
 start_editing_y(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
 {
-  start_editing(renderer, editable, path, user_data, 1);
+  start_editing(renderer, editable, path, user_data, AXIS_Y);
 }
 
 static void
