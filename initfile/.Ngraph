@@ -182,7 +182,7 @@ do
 		gra:viewer:close
 		del system:0
 	;;
-	-h|-help)
+	-h|-help|--help)
 		echo ${system::name} version ${system::version}
 		echo ${system::copyright}
 		echo 'Usage: ngraph [ options ] [ data | NGP | PRM ]'
@@ -203,6 +203,11 @@ do
 		echo ' -zy min max inc         axis settings'
 		echo ' -g                      load settings from data file'
 		echo ' -n                      output ngp-file to stdout'
+		del system:0
+	;;
+	-v|-version|--version)
+		echo ${system::name} version ${system::version}
+		echo ${system::copyright}
 		del system:0
 	;;
 	*)

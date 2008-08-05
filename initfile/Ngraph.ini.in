@@ -8,6 +8,7 @@ script_console=0
 addin_console=1
 framex=0
 framey=0
+expand_to_fullpath=1
 minus_hyphen=1
 status_bar=1
 show_tip=1
