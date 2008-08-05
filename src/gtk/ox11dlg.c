@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ox11dlg.c,v 1.2 2008/08/05 02:45:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,7 +32,7 @@
 #include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "ioutil.h"
 #include "ox11menu.h"
 
@@ -146,8 +146,8 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   *(char **)rval = NULL;
   inputbuf = NULL;
 
-  if ((DialogInput(DLGTopLevel, "Input", mes, &inputbuf) == IDOK) 
-      && (inputbuf!=NULL)) {
+  if (DialogInput(DLGTopLevel, "Input", mes, &inputbuf) == IDOK &&
+      inputbuf != NULL) {
     s = nstrdup(inputbuf);
     free(inputbuf);
     *(char **)rval = s;

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.9 2008/07/17 01:38:44 hito Exp $
+ * $Id: ogra2x11.c,v 1.10 2008/08/05 02:45:26 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -41,7 +41,7 @@
 #include "ioutil.h"
 #include "gra.h"
 #include "nstring.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "mathfn.h"
 #include "nconfig.h"
 

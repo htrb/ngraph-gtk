@@ -1,5 +1,5 @@
 /* 
- * $Id: shellux.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: shellux.c,v 1.2 2008/08/05 02:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -287,11 +287,13 @@ int cmtest(struct nshell *nshell,int argc,char **argv)
         prebuf[oppo]=4;
         i++;
       } else if (((strcmp2(argv[i],"-d")==0) || (strcmp2(argv[i],"-e")==0)
-      || (strcmp2(argv[i],"-f")==0) || (strcmp2(argv[i],"-r")==0)
-      || (strcmp2(argv[i],"-s")==0) || (strcmp2(argv[i],"-w")==0)
-      || (strcmp2(argv[i],"-x")==0) || (strcmp2(argv[i],"-z")==0)
-      || (strcmp2(argv[i],"-n")==0)) && ((i+1)<argc)) {
-        if (!testexpand(6,&oppo,&numpo,numbuf,numbufc,opbuf,prebuf)) {
+		  || (strcmp2(argv[i],"-f")==0) || (strcmp2(argv[i],"-r")==0)
+		  || (strcmp2(argv[i],"-s")==0) || (strcmp2(argv[i],"-w")==0)
+		  || (strcmp2(argv[i],"-x")==0) || (strcmp2(argv[i],"-z")==0)
+		  || (strcmp2(argv[i],"-n")==0))
+		 && ((i+1)<argc)
+		 && (strcmp2(argv[i+1],"=")!=0) && (strcmp2(argv[i+1],"!=")!=0)) {
+	if (!testexpand(6,&oppo,&numpo,numbuf,numbufc,opbuf,prebuf)) {
           sherror4(argv[0],ERRTESTSYNTAX);
           return 1;
         }

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2ps.c,v 1.2 2008/06/10 13:41:40 hito Exp $
+ * $Id: gra2ps.c,v 1.3 2008/08/05 02:45:16 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -30,8 +30,8 @@
 #define MPI 3.1415926535897932385
 
 #define GRAF "%Ngraph GRAF"
-#ifndef DATADIR
-#define DATADIR "/usr/local/lib/Ngraph"
+#ifndef LIBDIR
+#define LIBDIR "/usr/local/lib/Ngraph"
 #endif
 #define CONF "gra2ps.ini"
 #define GRA2CONF "[gra2ps]"
@@ -39,7 +39,7 @@
 #define CONFSEP "/"
 #define NSTRLEN 256
 #define LINETOLIMIT 500
-#define VERSION "2.03.17"
+#define VERSION "2.03.18"
 
 #define TRUE  1
 #define FALSE 0
@@ -68,6 +68,7 @@ int paper=A4;
 int rotate=FALSE;
 int bottom=29700;
 int sjis=FALSE;
+int font_slant=12;
 
 int printfstderr(char *fmt,...)
 {
@@ -828,7 +829,7 @@ void draw(char code,int *cpar,char *cstr)
   struct fontmap *fcur;
   unsigned int jis,R,G,B;
   int c1,c2,sx,sy;
-  double d;
+  double d,ftan;
 
   if (lineto) {
     if (code!='T') {
@@ -1067,11 +1068,14 @@ void draw(char code,int *cpar,char *cstr)
     sprintf(textspace,"%g %g",cpar[2]*cos(MPI*cpar[3]/18000.0)*25.4/72,
                              -cpar[2]*sin(MPI*cpar[3]/18000.0)*25.4/72);
     if ((fonttype==ITALIC) || (fonttype==BOLDITALIC)) {
+      ftan=tan(font_slant*MPI/180.0);
       printfstdout("[%g %g %g %g 0 0] ",
          cpar[1]*cos(MPI*cpar[3]/18000.0)*25.4/72,
         -cpar[1]*sin(MPI*cpar[3]/18000.0)*25.4/72,
-        -cpar[1]*(sin(MPI*cpar[3]/18000.0)-0.36*cos(MPI*cpar[3]/18000.0))*25.4/72,
-        -cpar[1]*(cos(MPI*cpar[3]/18000.0)+0.36*sin(MPI*cpar[3]/18000.0))*25.4/72);
+        -cpar[1]*(sin(MPI*cpar[3]/18000.0)
+         -ftan*cos(MPI*cpar[3]/18000.0))*25.4/72,
+        -cpar[1]*(cos(MPI*cpar[3]/18000.0)
+         +ftan*sin(MPI*cpar[3]/18000.0))*25.4/72);
     } else {
       printfstdout("[%g %g %g %g 0 0] ",
          cpar[1]*cos(MPI*cpar[3]/18000.0)*25.4/72,
@@ -1230,6 +1234,8 @@ int main(int argc,char **argv)
   char *lib,*home;
   char *tmpname;
   int ch;
+  char *endptr;
+  int a;
 
   printfstderr("Ngraph - PostScript(R) Printer Driver version: "VERSION"\n");
 
@@ -1331,6 +1337,13 @@ int main(int argc,char **argv)
     case 'r':
       rotate=TRUE;
       break;
+    case 's':
+      if ((i+1)<argc) {
+        a=strtol(argv[i+1],&endptr,10);
+        if ((endptr[0]=='\0') && (0<=a) && (a<=60)) font_slant=a;
+        i++;
+      }
+      break;
     default:
       printfstderr("unknown option `%s'.\n",argv[i]);
       free(includefile);
@@ -1349,7 +1362,8 @@ int main(int argc,char **argv)
     printfstderr(" -e                             : EPSF output\n");
     printfstderr(" -p a3|a4|b4|a5|b5|letter|legal : paper\n");
     printfstderr(" -l                             : landscape\n");
-    printfstderr(" -r                             : rotate 90 degree\n");
+    printfstderr(" -r                             : rotate by 90 degree\n");
+    printfstderr(" -s theta                       : slant angle (degree)\n");
     free(includefile);
     free(libdir);
     free(homedir);

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2nul.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ogra2nul.c,v 1.2 2008/08/05 02:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,7 +34,7 @@
 #include "ioutil.h"
 #include "gra.h"
 #include "nstring.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "mathfn.h"
 #include "nconfig.h"
 

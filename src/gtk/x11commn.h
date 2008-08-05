@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.h,v 1.4 2008/07/14 07:42:50 hito Exp $
+ * $Id: x11commn.h,v 1.5 2008/08/05 02:45:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,6 +33,7 @@ void AdjustAxis(void);
 void FitCopy(struct objlist *obj, int did, int sid);
 void FitDel(struct objlist *obj, int id);
 void FitClear(void);
+void ToFullPath(void);
 void LoadPrmFile(char *File);
 void LoadNgpFile(char *File, int ignorepath, int expand,
 		 char *exdir, int console, char *option);

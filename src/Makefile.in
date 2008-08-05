@@ -172,14 +172,14 @@ SUBDIRS = gtk
 bin_PROGRAMS = ngraph nterminal
 
 ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
-	ioutil.c ioutil.h jstring.c jstring.h mathcode.c mathcode.h	\
+	ioutil.c ioutil.h jnstring.c jnstring.h mathcode.c mathcode.h	\
 	mathfn.c mathfn.h ngraph.h nstring.c nstring.h ntime.c ntime.h	\
 	oagrid.c oarc.c oaxis.c object.c object.h ocurve.c odarray.c	\
 	odouble.c odraw.c odraw.h ofile.c ofile.h ofit.c ogra.c		\
 	ogra2.c ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oint.c	\
 	olegend.c olegend.h oline.c omark.c omath.c omerge.c		\
 	opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c oshell.c	\
-	ostring.c osystem.c otext.c otext.h shell.c shell.h shellcm.c		\
+	ostring.c osystem.c otext.c otext.h shell.c shell.h shellcm.c	\
 	shellcm.h shellux.c shellux.h spline.c spline.h gettext.h	\
 	common.h
 
@@ -199,7 +199,7 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-gra.$(OBJEXT) ngraph-ioutil.$(OBJEXT) \
-	ngraph-jstring.$(OBJEXT) ngraph-mathcode.$(OBJEXT) \
+	ngraph-jnstring.$(OBJEXT) ngraph-mathcode.$(OBJEXT) \
 	ngraph-mathfn.$(OBJEXT) ngraph-nstring.$(OBJEXT) \
 	ngraph-ntime.$(OBJEXT) ngraph-oagrid.$(OBJEXT) \
 	ngraph-oarc.$(OBJEXT) ngraph-oaxis.$(OBJEXT) \
@@ -234,7 +234,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/ngraph-axis.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-gra.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-ioutil.Po \
-@AMDEP_TRUE@	./$(DEPDIR)/ngraph-jstring.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/ngraph-jnstring.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-mathcode.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-mathfn.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-nconfig.Po \
@@ -348,7 +348,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-axis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-gra.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-ioutil.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-jstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-jnstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-mathcode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-mathfn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-nconfig.Po@am__quote@
@@ -556,38 +556,38 @@ ngraph-ioutil.lo: ioutil.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-ioutil.lo `test -f 'ioutil.c' || echo '$(srcdir)/'`ioutil.c
 
-ngraph-jstring.o: jstring.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-jstring.o -MD -MP -MF "$(DEPDIR)/ngraph-jstring.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ngraph-jstring.o `test -f 'jstring.c' || echo '$(srcdir)/'`jstring.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-jstring.Tpo" "$(DEPDIR)/ngraph-jstring.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-jstring.Tpo"; exit 1; \
+ngraph-jnstring.o: jnstring.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-jnstring.o -MD -MP -MF "$(DEPDIR)/ngraph-jnstring.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o ngraph-jnstring.o `test -f 'jnstring.c' || echo '$(srcdir)/'`jnstring.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-jnstring.Tpo" "$(DEPDIR)/ngraph-jnstring.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-jnstring.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jstring.c' object='ngraph-jstring.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-jstring.Po' tmpdepfile='$(DEPDIR)/ngraph-jstring.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jnstring.c' object='ngraph-jnstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-jnstring.Po' tmpdepfile='$(DEPDIR)/ngraph-jnstring.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-jstring.o `test -f 'jstring.c' || echo '$(srcdir)/'`jstring.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-jnstring.o `test -f 'jnstring.c' || echo '$(srcdir)/'`jnstring.c
 
-ngraph-jstring.obj: jstring.c
-@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-jstring.obj -MD -MP -MF "$(DEPDIR)/ngraph-jstring.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ngraph-jstring.obj `if test -f 'jstring.c'; then $(CYGPATH_W) 'jstring.c'; else $(CYGPATH_W) '$(srcdir)/jstring.c'; fi`; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-jstring.Tpo" "$(DEPDIR)/ngraph-jstring.Po"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-jstring.Tpo"; exit 1; \
+ngraph-jnstring.obj: jnstring.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-jnstring.obj -MD -MP -MF "$(DEPDIR)/ngraph-jnstring.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o ngraph-jnstring.obj `if test -f 'jnstring.c'; then $(CYGPATH_W) 'jnstring.c'; else $(CYGPATH_W) '$(srcdir)/jnstring.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-jnstring.Tpo" "$(DEPDIR)/ngraph-jnstring.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-jnstring.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jstring.c' object='ngraph-jstring.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-jstring.Po' tmpdepfile='$(DEPDIR)/ngraph-jstring.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jnstring.c' object='ngraph-jnstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-jnstring.Po' tmpdepfile='$(DEPDIR)/ngraph-jnstring.TPo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-jstring.obj `if test -f 'jstring.c'; then $(CYGPATH_W) 'jstring.c'; else $(CYGPATH_W) '$(srcdir)/jstring.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-jnstring.obj `if test -f 'jnstring.c'; then $(CYGPATH_W) 'jnstring.c'; else $(CYGPATH_W) '$(srcdir)/jnstring.c'; fi`
 
-ngraph-jstring.lo: jstring.c
-@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-jstring.lo -MD -MP -MF "$(DEPDIR)/ngraph-jstring.Tpo" \
-@am__fastdepCC_TRUE@	  -c -o ngraph-jstring.lo `test -f 'jstring.c' || echo '$(srcdir)/'`jstring.c; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-jstring.Tpo" "$(DEPDIR)/ngraph-jstring.Plo"; \
-@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-jstring.Tpo"; exit 1; \
+ngraph-jnstring.lo: jnstring.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-jnstring.lo -MD -MP -MF "$(DEPDIR)/ngraph-jnstring.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o ngraph-jnstring.lo `test -f 'jnstring.c' || echo '$(srcdir)/'`jnstring.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-jnstring.Tpo" "$(DEPDIR)/ngraph-jnstring.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-jnstring.Tpo"; exit 1; \
 @am__fastdepCC_TRUE@	fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jstring.c' object='ngraph-jstring.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-jstring.Plo' tmpdepfile='$(DEPDIR)/ngraph-jstring.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jnstring.c' object='ngraph-jnstring.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-jnstring.Plo' tmpdepfile='$(DEPDIR)/ngraph-jnstring.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-jstring.lo `test -f 'jstring.c' || echo '$(srcdir)/'`jstring.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-jnstring.lo `test -f 'jnstring.c' || echo '$(srcdir)/'`jnstring.c
 
 ngraph-mathcode.o: mathcode.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-mathcode.o -MD -MP -MF "$(DEPDIR)/ngraph-mathcode.Tpo" \

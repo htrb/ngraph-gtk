@@ -1,13 +1,12 @@
 /**
  *
- * $Id: gra2wmf.c,v 1.3 2008/06/10 13:41:40 hito Exp $
+ * $Id: gra2wmf.c,v 1.4 2008/08/05 02:45:16 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
  * Original author: Satoshi ISHIZAKA
  *                  isizaka@msa.biglobe.ne.jp
  **/
-
 
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -34,7 +33,7 @@
 #define CONFSEP "/"
 #define NSTRLEN 256
 #define LINETOLIMIT 500
-#define VERSION "1.00.00"
+#define VERSION "1.00.01"
 
 #define TRUE  1
 #define FALSE 0
@@ -327,8 +326,7 @@ errexit:
   return FALSE;
 }
 
-int 
-nround(double x)
+int nround(double x)
 {
   int ix;
   double dx;
@@ -628,7 +626,7 @@ void getboundingbox(char code,int *cpar,char *cstr)
   int i,lw;
   double x,y,csin,ccos;
   int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
-  int c1,c2;
+  int c1,c2,exchange;
   char ch;
 
   switch (code) {
@@ -769,7 +767,6 @@ void getboundingbox(char code,int *cpar,char *cstr)
       if (niskanji((unsigned char)cstr[i]) && (cstr[i+1]!='\0')) {
         w=charwidth((((unsigned char)cstr[i+1])<<8)+(unsigned char)cstr[i],
                        bfontalias,bpt);
-        i+=2;
         h=charheight(bfontalias,bpt);
         d=chardescent(bfontalias,bpt);
         x=0;
@@ -792,6 +789,7 @@ void getboundingbox(char code,int *cpar,char *cstr)
         setbbminmax(x2,y2,x3,y3,FALSE);
         bposx+=(int )((w+bspc*25.4/72)*ccos);
         bposy-=(int )((w+bspc*25.4/72)*csin);
+        i+=2;
       } else i++;
     }
     break;
@@ -876,11 +874,13 @@ void draw(char code,int *cpar,char *cstr)
   int i,R,G,B;
   double Theta1,Theta2;
   POINT *Points;
+  LOGBRUSH lBrush;
   int italic;
   char *fontname;
   struct fontmap *fcur;
   double fontdir;
   double x0,y0,fontwidth;
+  RECT rect;
 
   DC=DDC;
   if (DC<0) return;

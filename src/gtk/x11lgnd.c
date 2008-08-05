@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.21 2008/07/18 14:17:09 hito Exp $
+ * $Id: x11lgnd.c,v 1.22 2008/08/05 02:45:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,7 +34,7 @@
 #include "ngraph.h"
 #include "object.h"
 #include "otext.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "nstring.h"
 #include "mathfn.h"
 

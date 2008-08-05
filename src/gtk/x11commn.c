@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.14 2008/07/18 14:17:08 hito Exp $
+ * $Id: x11commn.c,v 1.15 2008/08/05 02:45:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,7 +38,7 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "odraw.h"
 #include "nconfig.h"
 
@@ -971,6 +971,29 @@ GraphSave(int overwrite)
   return ret;
 }
 
+void 
+ToFullPath(void)
+{
+  struct objlist *obj;
+  int i;
+  char *file,*file2;
+
+  if ((obj=chkobject("file"))!=NULL) {
+    for (i=0;i<=chkobjlastinst(obj);i++) {
+      getobj(obj,"file",i,0,NULL,&file);
+      file2=getfullpath(file);
+      putobj(obj,"file",i,file2);
+    }
+  }
+  if ((obj=chkobject("merge"))!=NULL) {
+    for (i=0;i<=chkobjlastinst(obj);i++) {
+      getobj(obj,"file",i,0,NULL,&file);
+      file2=getfullpath(file);
+      putobj(obj,"file",i,file2);
+    }
+  }
+}
+
 void
 LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
 	    int console, char *option)
@@ -999,88 +1022,92 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
   putobj(sys, "expand_dir", 0, expanddir);
   putobj(sys, "expand_file", 0, &expand);
   putobj(sys, "ignore_path", 0, &ignorepath);
-  ignorepath = FALSE;
 
   if ((obj = chkobject("shell")) == NULL)
     return;
 
   newid = newobj(obj);
 
-  if (newid < 0)
-    return;
+  if (newid >= 0) {
+    inst = chkobjinst(obj, newid);
+    arrayinit(&sarray, sizeof(char *));
+    while ((s = getitok2(&option, &len, " \t")) != NULL) {
+      if (arrayadd(&sarray, &s) == NULL) {
+	memfree(s);
+	arraydel2(&sarray);
+	putobj(sys, "ignore_path", 0, &ignorepath);
+	return;
+      }
+    }
 
-  inst = chkobjinst(obj, newid);
-  arrayinit(&sarray, sizeof(char *));
-  while ((s = getitok2(&option, &len, " \t")) != NULL) {
-    if (arrayadd(&sarray, &s) == NULL) {
-      memfree(s);
+    name = nstrdup(File);
+
+    if (name == NULL) {
       arraydel2(&sarray);
       putobj(sys, "ignore_path", 0, &ignorepath);
       return;
     }
-  }
 
-  name = nstrdup(File);
+    SetFileName(File);
+    SetCaption(File);
+    changefilename(name);
 
-  if (name == NULL) {
+    if (arrayadd(&sarray, &name) == NULL) {
+      memfree(name);
+      arraydel2(&sarray);
+      ignorepath = FALSE;
+      putobj(sys, "ignore_path", 0, &ignorepath);
+      return;
+    }
+
+    DeleteDrawable();
+
+    if (console)
+      allocnow = AllocConsole();
+
+    sec = TRUE;
+    argv[0] = (char *) &sec;
+    argv[1] = NULL;
+    _exeobj(obj, "security", inst, 1, argv);
+
+    argv[0] = (char *) &sarray;
+    argv[1] = NULL;
+    AddNgpFileList(name);
+    snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
+    SetStatusBar(mes);
+    _exeobj(obj, "shell", inst, 1, argv);
+
+    sec = FALSE;
+    argv[0] = (char *) &sec;
+    argv[1] = NULL;
+    _exeobj(obj, "security", inst, 1, argv);
+
+    if ((aobj = getobject("axis")) != NULL) {
+      for (i = 0; i <= chkobjlastinst(aobj); i++)
+	exeobj(aobj, "tight", i, 0, NULL);
+    }
+
+    if ((aobj = getobject("axisgrid")) != NULL) {
+      for (i = 0; i <= chkobjlastinst(aobj); i++)
+	exeobj(aobj, "tight", i, 0, NULL);
+    }
+
+    AxisNameToGroup();
+    ResetStatusBar();
     arraydel2(&sarray);
-    putobj(sys, "ignore_path", 0, &ignorepath);
-    return;
+
+    if (console)
+      FreeConsole(allocnow);
+
+    GetPageSettingsFromGRA();
+    UpdateAll();
+    delobj(obj, newid);
   }
 
-  SetFileName(File);
-  SetCaption(File);
-  changefilename(name);
+  if (Menulocal.expandtofullpath && (!ignorepath))
+    ToFullPath();
 
-  if (arrayadd(&sarray, &name) == NULL) {
-    memfree(name);
-    arraydel2(&sarray);
-    putobj(sys, "ignore_path", 0, &ignorepath);
-    return;
-  }
-
-  DeleteDrawable();
-
-  if (console)
-    allocnow = AllocConsole();
-
-  sec = TRUE;
-  argv[0] = (char *) &sec;
-  argv[1] = NULL;
-  _exeobj(obj, "security", inst, 1, argv);
-
-  argv[0] = (char *) &sarray;
-  argv[1] = NULL;
-  AddNgpFileList(name);
-  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
-  SetStatusBar(mes);
-  _exeobj(obj, "shell", inst, 1, argv);
-
-  sec = FALSE;
-  argv[0] = (char *) &sec;
-  argv[1] = NULL;
-  _exeobj(obj, "security", inst, 1, argv);
-
-  if ((aobj = getobject("axis")) != NULL) {
-    for (i = 0; i <= chkobjlastinst(aobj); i++)
-      exeobj(aobj, "tight", i, 0, NULL);
-  }
-
-  if ((aobj = getobject("axisgrid")) != NULL) {
-    for (i = 0; i <= chkobjlastinst(aobj); i++)
-      exeobj(aobj, "tight", i, 0, NULL);
-  }
-
-  AxisNameToGroup();
-  ResetStatusBar();
-  arraydel2(&sarray);
-
-  if (console)
-    FreeConsole(allocnow);
-
-  GetPageSettingsFromGRA();
-  UpdateAll();
-  delobj(obj, newid);
+  ignorepath=FALSE;
 
   putobj(sys, "ignore_path", 0, &ignorepath);
   InfoWinClear();

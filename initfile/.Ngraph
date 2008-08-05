@@ -10,6 +10,8 @@ fi
 #
 XCOLUMN=1
 YCOLUMN=2
+XAXIS=0
+YAXIS=1
 PLOTTYPE=mark
 MARKTYPE=0
 MARKSIZE=200
@@ -50,6 +52,14 @@ do
 	-y)
 		shift
 		YCOLUMN=$1
+	;;
+	-X)	XAXIS=0
+	;;
+	-Y)	YAXIS=1
+	;;
+	-U)	XAXIS=2
+	;;
+	-R)	YAXIS=3
 	;;
 	-d)
 		shift
@@ -142,32 +152,57 @@ do
 	-g)
 		LOADSETTINGS=1
 	;;
+	-n)
+		echo '#!ngraph'
+		echo '#%creator:' ${system:0:name}
+		echo '#%version:' ${system:0:version}
+		for i in `derive -instance draw`
+		do
+			get ${i}:0-! -id -field save
+		done
+		get gra:0 -id -field save
+		del system:0                           
+	;;
+	-p)
+		for i in `derive -instance draw`
+		do
+			del ${i}:0-!
+		done
+		if [ `exist gra:viewer` != 0 ]
+		then
+			del gra:viewer
+		fi
+		. $2
+		new gra2prn name=OUTPUT
+		gra2prn::driver=gra2ps
+		gra2prn::prn=" | lpr"
+		gra:viewer:device=gra2prn:OUTPUT
+		gra:viewer:open
+		gra:viewer:draw                      
+		gra:viewer:close
+		del system:0
+	;;
 	-h|-help)
 		echo ${system::name} version ${system::version}
 		echo ${system::copyright}
 		echo 'Usage: ngraph [ options ] [ data | NGP | PRM ]'
 		echo 'valid options:'
-		echo ' -x column         data column (abscissas)'
-		echo ' -y column         data column (ordinates)'
-		echo ' -d type           plot type'
-		echo ' -m type           mark type'
-		echo ' -o size           mark size'
-		echo ' -l style          line style'
-		echo ' -w width          line width'
-		echo ' -c R G B          plot color'
-		echo ' -C R G B          plot color (2nd)'
-		echo ' -s line           head skip'
-		echo ' -r step           read step'
-		echo ' -f line           finale line'
-		echo ' -vx num           neighbour average (abscissas)'
-		echo ' -vy num           neighbour average (ordinates)'
-		echo ' -mx math          transformation (abscissas)'
-		echo ' -my math          transformation (ordinates)'
-		echo ' -ex type          scale type (abscissas)'
-		echo ' -ey type          scale type (ordinates)'
-		echo ' -zx min max inc   scale type (abscissas)'
-		echo ' -zy min max inc   scale type (ordinates)'
-		echo ' -g                load settings from data file'
+		echo ' -x column -y column     data column'
+		echo ' -X -Y -U -R             axis'
+		echo ' -d type                 plot type'
+		echo ' -m type -o size         mark type and size'
+		echo ' -l style -w width       line style and width'
+		echo ' -c R G B -C R G B       plot color (1st and 2nd)'
+		echo ' -s line                 head skip'
+		echo ' -r step                 read step'
+		echo ' -f line                 finale line'
+		echo ' -vx num -vy num         neighbour average'
+		echo ' -mx math -my math       math transformation'
+		echo ' -ex type -ey type       scale type'
+		echo ' -zx min max inc         axis settings'
+		echo ' -zy min max inc         axis settings'
+		echo ' -g                      load settings from data file'
+		echo ' -n                      output ngp-file to stdout'
 		del system:0
 	;;
 	*)
@@ -192,8 +227,8 @@ do
 		file::smooth_y=$AVERAGEY
 		file::math_x=$MATHX
 		file::math_y=$MATHY
-		file::axis_x=axis:0
-		file::axis_y=axis:1
+		file::axis_x=axis:$XAXIS
+		file::axis_y=axis:$YAXIS
 		if [ $LOADSETTINGS = 1 ]; then
 			file::load_settings
 		fi

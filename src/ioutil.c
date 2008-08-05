@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.3 2008/06/10 04:21:33 hito Exp $
+ * $Id: ioutil.c,v 1.4 2008/08/05 02:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,7 +43,7 @@
 #endif
 #include "object.h"
 #include "nstring.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "ioutil.h"
 
 #define TRUE  1
@@ -177,7 +177,7 @@ char *getfullpath(char *name)
   char buf[MAXPATH],*s;
 
   if (name==NULL) return NULL;
-  unchangefilename(s);
+  unchangefilename(name);
   if (GetFullPathName(name,MAXPATH,buf,&s)==0) return NULL;
   if ((s=memalloc(strlen(buf)+1))==NULL) return NULL;
   strcpy(s,buf);
@@ -215,13 +215,17 @@ char *getrelativepath(char *name)
       strcpy(cwd2,cwd);
       memfree(cwd);
       i=strlen(cwd2);
-      cwd2[i]=DIRSEP;
-      cwd2[i+1]='\0';
+      if ((i==0) || (cwd2[i-1]!=DIRSEP)) {
+	cwd2[i]=DIRSEP;
+	cwd2[i+1]='\0';
+      }
       for (i=0;(cwd2[i]!='\0') && (name[i+top]!='\0');i++)
         if (cwd2[i]!=name[i+top]) break;
-      for (;cwd2[i]!=DIRSEP;i--);
+      if (i>0) i--;
+      for (;niskanji2(cwd2,i) || (cwd2[i]!=DIRSEP);i--);
       depth=0;
-      for (j=strlen(cwd2);j!=i;j--) if (cwd2[j]==DIRSEP) depth++;
+      for (j=strlen(cwd2);j!=i;j--)
+        if (!niskanji2(cwd2,j) && (cwd2[j]==DIRSEP)) depth++;
       memfree(cwd2);
       if ((s=nstrnew())==NULL) return NULL;
       if (depth==0) {

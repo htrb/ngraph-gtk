@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.9 2008/07/04 06:44:06 hito Exp $
+ * $Id: ox11menu.h,v 1.10 2008/08/05 02:45:26 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -142,6 +142,7 @@ struct menulocal
   char *expanddir;
   int expand;
   int ignorepath;
+  int expandtofullpath;
   int changedirectory;
   int savehistory;
   int savepath, savewithdata, savewithmerge;

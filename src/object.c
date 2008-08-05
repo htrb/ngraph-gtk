@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.3 2008/07/16 02:40:16 hito Exp $
+ * $Id: object.c,v 1.4 2008/08/05 02:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,6 +37,10 @@
 #include "object.h"
 #include "mathcode.h"
 #include "mathfn.h"
+
+#ifdef WINDOWS
+#include <math.h>
+#endif
 
 #ifdef DEBUG
 #ifdef WINDOWS
@@ -339,6 +343,7 @@ void *memrealloc(void *ptr,size_t size)
       }
       if (plcur==NULL) {
         printfconsole("*%p\n",ptr);
+	sleep(30);
         exit(1);
       }
       if (plprev==NULL) memallocroot=plcur->next;
@@ -879,7 +884,7 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->doneproc=doneproc;
   if (parent==NULL) offset=0;
   else offset=parent->size;
-  if (offset%8 != 0) offset=offset+(8-offset%8);
+  if (offset % ALIGNSIZE != 0) offset = offset + (ALIGNSIZE - offset % ALIGNSIZE);
   for (i=0;i<tblnum;i++) {
     table[i].offset=offset;
     switch (table[i].type) {
@@ -899,7 +904,7 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
     default:
       offset+=sizeof(void *);
     }
-    if (offset%8 != 0) offset=offset+(8-offset%8);
+    if (offset % ALIGNSIZE != 0) offset = offset + (ALIGNSIZE - offset % ALIGNSIZE);
     if (table[i].attrib & NEXEC) table[i].attrib&=~NWRITE;
   }
   objnew->size=offset;

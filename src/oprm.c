@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oprm.c,v 1.2 2008/08/05 02:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,7 +43,7 @@
 #endif
 #include "ngraph.h"
 #include "mathfn.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "ntime.h"
 #include "object.h"
 #include "gra.h"

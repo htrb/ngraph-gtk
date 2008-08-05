@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.22 2008/07/17 01:38:44 hito Exp $
+ * $Id: ox11menu.c,v 1.23 2008/08/05 02:45:26 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -40,7 +40,7 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "nconfig.h"
 #include "mathfn.h"
 #include "gra.h"
@@ -164,6 +164,13 @@ mgtkloadconfig(void)
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  Menulocal.ignorepath = val;
+      }
+      memfree(f1);
+    } else if (strcmp(tok,"expand_to_fullpath")==0) {
+      f1=getitok2(&s2,&len," \t,");
+      if (f1!=NULL) {
+        val=strtol(f1,&endptr,10);
+        if (endptr[0]=='\0') Menulocal.expandtofullpath=val;
       }
       memfree(f1);
     } else if (strcmp(tok, "save_path") == 0) {
@@ -995,6 +1002,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.expanddir = (char *) memalloc(3);
   strcpy(Menulocal.expanddir, "./");
   Menulocal.ignorepath = 0;
+  Menulocal.expandtofullpath=TRUE;
   Menulocal.savepath = 0;
   Menulocal.savewithdata = 0;
   Menulocal.savewithmerge = 0;

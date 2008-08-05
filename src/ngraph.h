@@ -1,5 +1,5 @@
 /* 
- * $Id: ngraph.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ngraph.h,v 1.2 2008/08/05 02:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,8 @@ void displaydialog(char *str);
 void displaystatus(char *str);
 void pausewindowconsole(char *title,char *str);
 
+#define ALIGNSIZE 8
+
 #ifdef WINDOWS
 int winputstderr(char *s);
 int winprintfstderr(char *fmt,...);
@@ -37,6 +39,7 @@ int nallocconsole(void);
 void nsetconsolemode(void);
 void nfreeconsole(void);
 void nforegroundconsole(void);
+
 #define PLATFORM "for Windows"
 #else
 #ifndef PLATFORM

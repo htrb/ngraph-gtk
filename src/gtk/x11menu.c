@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.29 2008/07/23 06:11:40 hito Exp $
+ * $Id: x11menu.c,v 1.30 2008/08/05 02:45:26 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -19,7 +19,7 @@
 #include "object.h"
 #include "ioutil.h"
 #include "shell.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "nstring.h"
 #include "nconfig.h"
 #include "mathfn.h"

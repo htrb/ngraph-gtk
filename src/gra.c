@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.4 2008/06/30 08:43:32 hito Exp $
+ * $Id: gra.c,v 1.5 2008/08/05 02:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,7 +33,7 @@
 #include <math.h>
 #include "object.h"
 #include "nstring.h"
-#include "jstring.h"
+#include "jnstring.h"
 #include "mathfn.h"
 #include "mathcode.h"
 #include "gra.h"
