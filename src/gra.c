@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.5 2008/08/05 02:45:24 hito Exp $
+ * $Id: gra.c,v 1.6 2008/08/05 08:45:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2324,20 +2324,26 @@ void GRAtextextent(char *s,char *font,char *jfont,
         h=GRAcharascent(jfont2,size2);
         d=GRAchardescent(jfont2,size2);
       } else {
-        w=0;
-        for (i=0;i<strlen(str);i++) {
-          if ((str[i]=='\\') && (str[i+1]=='x')) {
-            if (toupper(str[i+2])>='A') ch=toupper(str[i+2])-'A'+10;
-            else ch=str[i+2]-'0';
-            if (toupper(str[i+3])>='A') ch=ch*16+toupper(str[i+3])-'A'+10;
-            else ch=ch*16+str[i+3]-'0';
+        w = 0;
+        for (i = 0; i < strlen(str); i++) {
+          if (str[i] == '\\' && str[i + 1] == 'x') {
+            if (toupper(str[i + 2]) >= 'A') {
+	      ch = toupper(str[i+2]) - 'A' + 10;
+	    } else {
+	      ch = str[i+2] - '0';
+	    }
+            if (toupper(str[i+3])>='A') {
+	      ch = ch * 16 + toupper(str[i + 3]) - 'A' + 10;
+	    } else {
+	      ch = ch * 16 + str[i + 3] - '0';
+	    }
             str[i]=ch;
-            w+=GRAcharwidth((unsigned char)str[i],font2,size2)
-              +nround(space2/72.0*25.4);
-            i+=3;
+            w += GRAcharwidth((unsigned char)str[i],font2,size2)
+              + nround(space2 / 72.0 * 25.4);
+            i += 3;
           } else {
-            w+=GRAcharwidth((unsigned char)str[i],font2,size2)
-              +nround(space2/72.0*25.4);
+            w += GRAcharwidth((unsigned char)str[i],font2,size2)
+              + nround(space2 / 72.0 * 25.4);
           }
         }
         h=GRAcharascent(font2,size2);

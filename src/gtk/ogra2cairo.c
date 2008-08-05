@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.20 2008/07/17 10:20:31 hito Exp $
+ * $Id: ogra2cairo.c,v 1.21 2008/08/05 08:46:04 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -59,7 +59,7 @@ static int Instance = 0;
 static int
 mxp2dw(struct gra2cairo_local *local, int r)
 {
-  return r / local->pixel_dot_x;
+  return ceil(r / local->pixel_dot_x);
 }
 
 static double
@@ -71,7 +71,7 @@ mxd2pw(struct gra2cairo_local *local, int r)
 static int
 mxp2dh(struct gra2cairo_local *local, int r)
 {
-  return r / local->pixel_dot_y;
+  return ceil(r / local->pixel_dot_y);
 }
 
 static double
