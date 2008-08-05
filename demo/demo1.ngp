@@ -1,7 +1,4 @@
-#!ngraph
-#%creator: Ngraph for X11 
-#%version: 6.03.30.gtk-03
-new axis name:fX1
+new axis name:frameX
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -65,7 +62,7 @@ new axis name:fX1
 	axis::num_G=0
 	axis::num_B=0
 
-new axis name:fY1
+new axis name:frameY
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -129,7 +126,7 @@ new axis name:fY1
 	axis::num_G=0
 	axis::num_B=0
 
-new axis name:fU1
+new axis name:frameU
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -193,7 +190,7 @@ new axis name:fU1
 	axis::num_G=0
 	axis::num_B=0
 
-new axis name:fR1
+new axis name:frameR
 	axis::hidden=false
 	axis::R=0
 	axis::G=0
@@ -272,7 +269,7 @@ new file
 	file::type=mark
 	file::interpolation=spline
 	file::fit=
-	file::math_x='HSB(%03/3-0.33,1,1)=x'
+	file::math_x='HSB(1-%03/1.6,1,1)=x'
 	file::math_y=
 	file::func_f=
 	file::func_g=
@@ -290,7 +287,6 @@ new file
 	file::B2=255
 	file::remark='#%'\'''
 	file::ifs=' ,	()'
-	file::csv=false
 	file::head_skip=0
 	file::read_step=1
 	file::final_line=-1
@@ -300,7 +296,6 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::data_clip=true
 	file::file='/usr/local/share/doc/Ngraph-gtk/demo/demo1.dat'
 
 new file
@@ -334,7 +329,6 @@ new file
 	file::B2=255
 	file::remark='#%'\'''
 	file::ifs=' ,	()'
-	file::csv=false
 	file::head_skip=0
 	file::read_step=1
 	file::final_line=-1
@@ -344,7 +338,6 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::data_clip=true
 	file::file='/usr/local/share/doc/Ngraph-gtk/demo/demo1.dat'
 
 new file
@@ -378,7 +371,6 @@ new file
 	file::B2=255
 	file::remark='#%'\'''
 	file::ifs=' ,	()'
-	file::csv=false
 	file::head_skip=0
 	file::read_step=1
 	file::final_line=-1
@@ -388,7 +380,6 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::data_clip=true
 	file::file='/usr/local/share/doc/Ngraph-gtk/demo/demo1.dat'
 
 new file
@@ -422,7 +413,6 @@ new file
 	file::B2=255
 	file::remark='#%'\'''
 	file::ifs=' ,	()'
-	file::csv=false
 	file::head_skip=0
 	file::read_step=1
 	file::final_line=-1
@@ -432,7 +422,6 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::data_clip=true
 	file::file='/usr/local/share/doc/Ngraph-gtk/demo/demo1.dat'
 
 new text

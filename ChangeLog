@@ -1,3 +1,29 @@
+2008-08-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.h (struct menulocal): add member 'expandtofullpath'
+
+	* src/gtk/ox11menu.c (mgtkloadconfig): add condition for
+	'expand_to_fullpath'
+	(menuinit): initialize Menulocal.expandtofullpath.
+
+	* src/gtk/x11commn.c (ToFullPath): add.
+	(LoadNgpFile): call ToFullPath() when 'Menulocal.expandtofullpath
+	&& (!ignorepath)'
+
+	* src/ioutil.c (getfullpath): argument of changefilename() is
+	'name'.
+
+	* src/object.c (memrealloc): add sleep().
+
+	* src/shellux.c (cmtest): add condition
+	'(strcmp2(argv[i+1],"=")!=0) && (strcmp2(argv[i+1],"!=")!=0)'
+
+	* src/jnstring.h: add.
+
+	* src/jnstring.c: add.
+
+	* src/ngraph.h (ALIGNSIZE): add.
+
 2008-07-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (get_axis_obj_str): add.
