@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.25 2008/07/23 06:45:30 hito Exp $
+ * $Id: x11axis.c,v 1.27 2008/08/06 10:20:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -986,11 +986,13 @@ AxisBaseDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Arrow:"), FALSE);
     d->arrow = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
+    spin_entry_set_inc(w, 1000, 10000);
     item_setup(hbox, w, _("_Arrow length:"), TRUE);
     d->arrowlen = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
+    spin_entry_set_inc(w, 1000, 10000);
     item_setup(hbox, w, _("_Arrow width:"), TRUE);
     d->arrowwid = w;
 
@@ -2902,7 +2904,7 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   d = (struct SubWin *) user_data;
 
-  sel = GPOINTER_TO_INT(g_object_get_data(w, "user-data"));
+  sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0)
     return;
 
@@ -2942,7 +2944,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   sel = list_store_get_selected_int(GTK_WIDGET(view), AXIS_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);
-  g_object_set_data(cbox, "user-data", GINT_TO_POINTER(sel));
+  g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
 
   SetWidgetFromObjField(GTK_WIDGET(cbox), d->obj, sel, "type");
 
@@ -2956,13 +2958,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 static void
 edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
 {
-  GtkTreeView *view;
-  GtkTreeModel *model;
-  GtkTreeIter iter;
   struct SubWin *d;
-  n_list_store *list;
-  int sel, j;
-  char **enumlist;
 
   Menulock = FALSE;
 
