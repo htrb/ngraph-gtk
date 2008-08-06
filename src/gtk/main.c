@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.10 2008/07/03 09:51:18 hito Exp $
+ * $Id: main.c,v 1.11 2008/08/06 09:10:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -226,16 +226,23 @@ interruptconsole(void)
 int
 inputynconsole(char *mes)
 {
-  int len;
-  char buf[10];
+  int len, r;
+  char buf[10], yn[] = " [yn] ";
 
   len = strlen(mes);
   write(consolefdout, mes, len);
+  write(consolefdout, yn, sizeof(yn) - 1);
   do {
-    read(consolefdin, buf, 1);
-  }
-  while ((buf[0] != 'y') && (buf[0] != 'Y') && (buf[0] != 'n')
-	 && (buf[0] != 'N'));
+    r = read(consolefdin, buf, 1);
+  } while (strchr("yYnN", buf[0]) == NULL && r >= 0);
+
+  if (r < 0)
+    return FALSE;
+
+  do {
+    r = read(consolefdin, buf, 1);
+  } while(buf[0] != '\n' && r >= 0);
+
   if ((buf[0] == 'y') || (buf[0] == 'Y'))
     return TRUE;
   return FALSE;

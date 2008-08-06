@@ -1,4 +1,30 @@
 # Ngraph initialization script
+save_image() {
+    if [ ! -f "$1" ]
+    then
+	echo 'missing file operand'
+	return
+    fi
+
+    for i in `derive -instance draw`
+    do
+	del ${i}:0-!
+    done
+    if [ `exist gra:viewer` != 0 ]
+    then
+	del gra:viewer
+    fi
+    . $1
+    new gra2cairofile name=OUTPUT
+    gra2cairofile::format=$2
+    gra2cairofile::file=$3
+    gra:viewer:device=gra2cairofile:OUTPUT
+    gra:viewer:open
+    gra:viewer:draw
+    gra:viewer:close
+    del gra2cairofile
+}
+
 new menu
 system:0:login_shell=menu:0:menu
 #
@@ -161,7 +187,7 @@ do
 			get ${i}:0-! -id -field save
 		done
 		get gra:0 -id -field save
-		del system:0                           
+		del system:0
 	;;
 	-p)
 		for i in `derive -instance draw`
@@ -178,8 +204,28 @@ do
 		gra2prn::prn=" | lpr"
 		gra:viewer:device=gra2prn:OUTPUT
 		gra:viewer:open
-		gra:viewer:draw                      
+		gra:viewer:draw
 		gra:viewer:close
+		del system:0
+	;;
+	-png)
+		save_image "$2" png `basename $2 .ngp`.png
+		del system:0
+	;;
+	-ps)
+		save_image "$2" ps3 `basename $2 .ngp`.ps
+		del system:0
+	;;
+	-eps)
+		save_image "$2" eps3 `basename $2 .ngp`.eps
+		del system:0
+	;;
+	-pdf)
+		save_image "$2" pdf `basename $2 .ngp`.pdf
+		del system:0
+	;;
+	-svg)
+		save_image "$2" svg1.1 `basename $2 .ngp`.svg
 		del system:0
 	;;
 	-h|-help|--help)
@@ -202,6 +248,11 @@ do
 		echo ' -zx min max inc         axis settings'
 		echo ' -zy min max inc         axis settings'
 		echo ' -g                      load settings from data file'
+		echo ' -png                    save png file'
+		echo ' -pdf                    save pdf file'
+		echo ' -ps                     save ps file'
+		echo ' -eps                    save eps file'
+		echo ' -svg                    save svg file'
 		echo ' -n                      output ngp-file to stdout'
 		del system:0
 	;;

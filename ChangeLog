@@ -1,3 +1,12 @@
+2008-08-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/.Ngraph: add save_image().
+	add -png, -ps, -eps, -pdf and -svg option.
+
+	* src/gtk/main.c (inputynconsole): add message ' [yn] '.
+	use strchr() to check input character.
+	read while '\n' appear.
+
 2008-08-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.h (struct menulocal): add member 'expandtofullpath'
