@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.27 2008/08/06 10:20:20 hito Exp $
+ * $Id: x11axis.c,v 1.28 2008/08/07 00:50:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -958,7 +958,7 @@ AxisBaseDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    w = gtk_check_button_new_with_mnemonic(_("_Baseline:"));
+    w = gtk_check_button_new_with_mnemonic(_("_Baseline"));
     d->baseline = w;
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
