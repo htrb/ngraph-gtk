@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.19 2008/07/22 14:27:19 hito Exp $
+ * $Id: gtk_subwin.c,v 1.20 2008/08/08 08:39:37 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -231,6 +231,33 @@ set_combo_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallbac
   } else {
     g_signal_connect(rend, "edited", G_CALLBACK(string_cb), d);
   }
+
+  if (start)
+    g_signal_connect(rend, "editing-started", G_CALLBACK(start), d);
+
+  g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), NULL);
+}
+
+void
+set_obj_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback start)
+{
+  GtkTreeViewColumn *col;
+  GtkCellRenderer *rend;
+  GtkTreeView *view;
+  GList *glist;
+
+  view = GTK_TREE_VIEW(d->text);
+
+  if (list == NULL || col < 0)
+    return;
+
+  if (! list[i].editable || list[i].type != G_TYPE_OBJECT)
+    return;
+
+  col = gtk_tree_view_get_column(view, i);
+  glist = gtk_tree_view_column_get_cell_renderers(col);
+  rend = GTK_CELL_RENDERER(glist->data);
+  g_list_free(glist);
 
   if (start)
     g_signal_connect(rend, "editing-started", G_CALLBACK(start), d);

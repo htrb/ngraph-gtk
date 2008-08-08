@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.35 2008/07/24 05:24:55 hito Exp $
+ * $Id: x11file.c,v 1.36 2008/08/08 08:39:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -66,7 +66,7 @@ static n_list_store Flist[] = {
   {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",          FALSE,  0, 999, 1, 10},
   {"ax",	G_TYPE_ENUM,    TRUE, TRUE,  "axis_x",     FALSE},
   {"ay",	G_TYPE_ENUM,    TRUE, TRUE,  "axis_y",     FALSE},
-  {"type",	G_TYPE_OBJECT,  TRUE, FALSE, "type",       FALSE},
+  {"type",	G_TYPE_OBJECT,  TRUE, TRUE,  "type",       FALSE},
   {"size",	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0, SPIN_ENTRY_MAX, 100, 1000},
   {"width",	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0, SPIN_ENTRY_MAX, 10,   100},
   {"skip",	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  FALSE,  0, INT_MAX,         1,    10},
@@ -81,6 +81,7 @@ static n_list_store Flist[] = {
 #define FILE_WIN_COL_ID 1
 #define FILE_WIN_COL_X_AXIS 5
 #define FILE_WIN_COL_Y_AXIS 6
+#define FILE_WIN_COL_TYPE   7
 
 
 static void file_delete_popup_func(GtkMenuItem *w, gpointer client_data);
@@ -4095,6 +4096,83 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 }
 
 static void
+select_type(GtkComboBox *w, gpointer user_data)
+{
+  int sel, type, a;
+  struct objlist *obj;
+  struct SubWin *d;
+
+  Menulock = FALSE;
+
+  sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
+  if (sel < 0)
+    return;
+
+  d = (struct SubWin *) user_data;
+  obj = getobject("file");
+  getobj(obj, "type", sel, 0, NULL, &type);
+
+  a = combo_box_get_active(GTK_WIDGET(w));
+
+  if (a == type)
+    return;
+
+  putobj(obj, "type", sel, &a);
+
+  d->update(FALSE);
+  NgraphApp.Changed = TRUE;
+}
+
+static void
+start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+{
+  GtkTreeView *view;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  n_list_store *list;
+  struct SubWin *d;
+  GtkComboBox *cbox;
+  int j, sel, type;
+  struct objlist *obj;
+  char **enumlist;
+
+  Menulock = TRUE;
+
+  d = (struct SubWin *) user_data;
+
+  view = GTK_TREE_VIEW(d->text);
+  model = gtk_tree_view_get_model(view);
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+    return;
+
+  list_store_select_iter(GTK_WIDGET(view), &iter);
+
+  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
+  sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
+
+  cbox = GTK_COMBO_BOX(editable);
+  g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
+
+  combo_box_clear(GTK_WIDGET(cbox));
+  obj = getobject("file");
+
+  enumlist = (char **) chkobjarglist(obj, "type");
+  for (j = 0; enumlist[j] != NULL; j++) {
+    combo_box_append_text(GTK_WIDGET(cbox), _(enumlist[j]));
+  }
+
+  getobj(obj, "type", sel, 0, NULL, &type);
+  combo_box_set_active(GTK_WIDGET(cbox), type);
+
+  gtk_widget_show(GTK_WIDGET(cbox));
+
+  g_signal_connect(cbox, "editing-done", G_CALLBACK(select_type), d);
+
+  return;
+}
+
+static void
 select_axis(GtkComboBox *w, gpointer user_data, char *axis)
 {
   char buf[64];
@@ -4249,6 +4327,7 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
     set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
+    set_obj_cell_renderer_cb(d, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
     gtk_widget_show_all(dlg);
   }
 }

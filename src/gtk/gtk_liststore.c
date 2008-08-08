@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.11 2008/07/22 14:40:21 hito Exp $
+ * $Id: gtk_liststore.c,v 1.12 2008/08/08 08:39:37 hito Exp $
  */
 
 #include <stdlib.h>
@@ -7,6 +7,26 @@
 #include "gtk_common.h"
 
 #include "gtk_liststore.h"
+
+static GtkCellEditable *
+start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, const gchar *path,
+	      GdkRectangle *background_area, GdkRectangle *cell_area, GtkCellRendererState flags)
+{
+  GtkTreeModel *model;
+  GtkCellRenderer *rend_s;
+  GtkWidget *cbox;
+
+  model = GTK_TREE_MODEL(gtk_list_store_new(1, G_TYPE_STRING));
+  cbox = gtk_combo_box_new_with_model(model);
+
+  rend_s = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend_s, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend_s, "text", 0);
+
+  g_object_set(cbox, "has-frame", FALSE, NULL);
+
+  return GTK_CELL_EDITABLE(cbox);
+}
 
 static GtkTreeViewColumn *
 create_column(n_list_store *list, int i, int j)
@@ -67,8 +87,16 @@ create_column(n_list_store *list, int i, int j)
     break;
   case G_TYPE_OBJECT:
     renderer = gtk_cell_renderer_pixbuf_new();
+    g_object_set((GObject *) renderer,
+		 "mode", (list[i].editable) ?
+		 GTK_CELL_RENDERER_MODE_EDITABLE :
+		 GTK_CELL_RENDERER_MODE_INERT,
+		 "sensitive", list[i].editable,
+		 "user-data", &list[i],
+		 NULL);
+    GTK_CELL_RENDERER_GET_CLASS(renderer)->start_editing = start_editing_obj;
     col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
-						     "pixbuf", i, NULL);
+						   "pixbuf", i, NULL);
     break;
   case G_TYPE_ENUM:
     renderer = gtk_cell_renderer_combo_new();

@@ -1,3 +1,14 @@
+2008-08-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_liststore.c (start_editing_obj): add.
+	(create_column): set some properties to GtkCellRenderer.
+	set start_editing virtual function.
+
+	* src/gtk/gtk_subwin.c (set_obj_cell_renderer_cb): add.
+
+	* src/gtk/x11file.c (select_type, start_editing_type): add.
+	(CmFileWindow): call set_obj_cell_renderer_cb.
+
 2008-08-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/.Ngraph: add save_image().
