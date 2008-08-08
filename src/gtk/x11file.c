@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.36 2008/08/08 08:39:37 hito Exp $
+ * $Id: x11file.c,v 1.37 2008/08/08 09:55:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2620,7 +2620,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   item_setup(vbox2, w, _("_Join:"), TRUE);
   d->join = w;
 
-  gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 4);
 
 
   vbox2 = gtk_vbox_new(FALSE, 4);
@@ -4134,7 +4134,6 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   GtkComboBox *cbox;
   int j, sel, type;
   struct objlist *obj;
-  char **enumlist;
 
   Menulock = TRUE;
 
@@ -4154,13 +4153,8 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   cbox = GTK_COMBO_BOX(editable);
   g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
 
-  combo_box_clear(GTK_WIDGET(cbox));
   obj = getobject("file");
-
-  enumlist = (char **) chkobjarglist(obj, "type");
-  for (j = 0; enumlist[j] != NULL; j++) {
-    combo_box_append_text(GTK_WIDGET(cbox), _(enumlist[j]));
-  }
+  SetWidgetFromObjField(cbox, obj, sel, "type");
 
   getobj(obj, "type", sel, 0, NULL, &type);
   combo_box_set_active(GTK_WIDGET(cbox), type);
