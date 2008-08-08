@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.20 2008/08/08 08:39:37 hito Exp $
+ * $Id: gtk_subwin.c,v 1.21 2008/08/08 10:02:56 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -215,7 +215,7 @@ set_combo_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallbac
 
   view = GTK_TREE_VIEW(d->text);
 
-  if (list == NULL || col < 0)
+  if (list == NULL || i < 0)
     return;
 
   if (! list[i].editable || list[i].type != G_TYPE_ENUM)
@@ -248,7 +248,7 @@ set_obj_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback 
 
   view = GTK_TREE_VIEW(d->text);
 
-  if (list == NULL || col < 0)
+  if (list == NULL || i < 0)
     return;
 
   if (! list[i].editable || list[i].type != G_TYPE_OBJECT)

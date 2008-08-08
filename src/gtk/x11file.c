@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.37 2008/08/08 09:55:55 hito Exp $
+ * $Id: x11file.c,v 1.38 2008/08/08 10:02:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4132,7 +4132,7 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   n_list_store *list;
   struct SubWin *d;
   GtkComboBox *cbox;
-  int j, sel, type;
+  int sel, type;
   struct objlist *obj;
 
   Menulock = TRUE;
@@ -4154,7 +4154,7 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
 
   obj = getobject("file");
-  SetWidgetFromObjField(cbox, obj, sel, "type");
+  SetWidgetFromObjField(GTK_WIDGET(cbox), obj, sel, "type");
 
   getobj(obj, "type", sel, 0, NULL, &type);
   combo_box_set_active(GTK_WIDGET(cbox), type);
