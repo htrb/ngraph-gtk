@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.30 2008/08/05 02:45:26 hito Exp $
+ * $Id: x11menu.c,v 1.31 2008/08/11 02:53:51 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1102,7 +1102,7 @@ create_toolbar_pixmap(GtkWidget *win)
   createpixmap(win, COMMAND2_NUM, Command2_data);
 }
 
-#define MARK_PIX_SIZE 28
+#define MARK_PIX_SIZE 24
 static void
 create_markpixmap(GtkWidget *win)
 {

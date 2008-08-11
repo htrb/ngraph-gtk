@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.12 2008/08/08 08:39:37 hito Exp $
+ * $Id: gtk_liststore.c,v 1.13 2008/08/11 02:53:50 hito Exp $
  */
 
 #include <stdlib.h>
@@ -13,15 +13,20 @@ start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, con
 	      GdkRectangle *background_area, GdkRectangle *cell_area, GtkCellRendererState flags)
 {
   GtkTreeModel *model;
-  GtkCellRenderer *rend_s;
+  GtkCellRenderer *rend;
   GtkWidget *cbox;
 
-  model = GTK_TREE_MODEL(gtk_list_store_new(1, G_TYPE_STRING));
+  model = GTK_TREE_MODEL(gtk_tree_store_new(2, G_TYPE_OBJECT, G_TYPE_STRING));
   cbox = gtk_combo_box_new_with_model(model);
 
-  rend_s = gtk_cell_renderer_text_new();
-  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend_s, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend_s, "text", 0);
+  rend = gtk_cell_renderer_pixbuf_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", 0);
+
+  rend = gtk_cell_renderer_text_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 1);
+
 
   g_object_set(cbox, "has-frame", FALSE, NULL);
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.17 2008/07/18 14:17:08 hito Exp $
+ * $Id: x11dialg.c,v 1.18 2008/08/11 02:53:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -352,7 +352,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (chkobjlastinst(d->Obj) == 0) {
     list_store_select_nth(d->list, 0);
-  } else if (d->isel != NULL) {
+  } else if (d->isel) {
     seldata = arraydata(d->isel);
     selnum = arraynum(d->isel);
 
@@ -922,7 +922,7 @@ SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   count = combo_box_get_num(w);
   if (count == 0) {
     enumlist = (char **) chkobjarglist(Obj, field);
-    for (j = 0; enumlist[j] != NULL; j++) {
+    for (j = 0; enumlist[j]; j++) {
       combo_box_append_text(w, _(enumlist[j]));
     }
   }
@@ -973,7 +973,7 @@ SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name, int jf
   fcur = Gra2cairoConf->fontmaproot;
   j = 0;
   selfont = -1;
-  while (fcur != NULL) {
+  while (fcur) {
     if ((jfont && fcur->twobyte) || (! jfont && !(fcur->twobyte))) {
       combo_box_append_text(w, fcur->fontalias);
       if (strcmp(font, fcur->fontalias) == 0)

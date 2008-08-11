@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.38 2008/08/08 10:02:56 hito Exp $
+ * $Id: x11file.c,v 1.39 2008/08/11 02:53:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1117,7 +1117,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
     enumlist = (char **) chkobjarglist(d->Obj, "type");
-    for (i = 0; enumlist[i] != NULL; i++) {
+    for (i = 0; enumlist[i]; i++) {
       combo_box_append_text(d->type, _(enumlist[i]));
     }
 
@@ -1412,15 +1412,15 @@ FileMoveDialogClose(GtkWidget *w, void *data)
   getobj(d->Obj, "move_data", d->Id, 0, NULL, &move);
   getobj(d->Obj, "move_data_x", d->Id, 0, NULL, &movex);
   getobj(d->Obj, "move_data_y", d->Id, 0, NULL, &movey);
-  if (move != NULL) {
+  if (move) {
     putobj(d->Obj, "move_data", d->Id, NULL);
     move = NULL;
   }
-  if (movex != NULL) {
+  if (movex) {
     putobj(d->Obj, "move_data_x", d->Id, NULL);
     movex = NULL;
   }
-  if (movey != NULL) {
+  if (movey) {
     putobj(d->Obj, "move_data_y", d->Id, NULL);
     movey = NULL;
   }
@@ -1622,7 +1622,7 @@ FileMaskDialogClose(GtkWidget *w, void *data)
   d->ret = IDLOOP;
 
   getobj(d->Obj, "mask", d->Id, 0, NULL, &mask);
-  if (mask != NULL) {
+  if (mask) {
     putobj(d->Obj, "mask", d->Id, NULL);
     mask = NULL;
   }
@@ -2224,7 +2224,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
   if (getobj(d->Obj, "fit", d->Id, 0, NULL, &fit) == -1)
     return;
 
-  if (fit != NULL) {
+  if (fit) {
     arrayinit(&iarray, sizeof(int));
     if (getobjilist(fit, &obj, &iarray, FALSE, NULL))
       return;
@@ -3034,7 +3034,8 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
     return;
   if ((id = newobj(obj)) >= 0) {
     len = strlen(data[fil]);
-    if ((name = (char *) memalloc(len + 1)) != NULL) {
+    name = (char *) memalloc(len + 1);
+    if (name) {
       strcpy(name, data[fil]);
       putobj(obj, "file", id, name);
       FileDialog(&DlgFile, obj, id, 0);
@@ -3293,7 +3294,7 @@ CmFileEdit(void)
   argv[2] = NULL;
   if (getobj(obj, "file", i, 0, NULL, &name) == -1)
     return;
-  if (name != NULL) {
+  if (name) {
     argv[1] = name;
     if ((pid = fork()) >= 0) {
       if (pid == 0) {
@@ -3627,7 +3628,7 @@ FileWinFit(struct SubWin *d)
   if (getobj(d->obj, "fit", sel, 0, NULL, &fit) == -1)
     return;
 
-  if (fit != NULL) {
+  if (fit) {
     arrayinit(&iarray, sizeof(int));
     if (getobjilist(fit, &obj2, &iarray, FALSE, NULL)) {
       arraydel(&iarray);
@@ -3963,7 +3964,7 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 	color = "black";
       }
       bfile = getbasename(file);
-      if (bfile != NULL) {
+      if (bfile) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, bfile);
 	memfree(bfile);
       } else {
@@ -4096,11 +4097,52 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 }
 
 static void
+create_type_combo_box(GtkWidget *cbox, struct objlist *obj)
+{
+  char **enumlist, **curvelist;
+  int i, j, count;
+  GtkTreeStore *list;
+  GtkTreeIter iter, child;
+
+  count = combo_box_get_num(cbox);
+  if (count > 0)
+    return;
+
+  enumlist = (char **) chkobjarglist(obj, "type");
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+
+  for (i = 0; enumlist[i]; i++) {
+    gtk_tree_store_append(list, &iter, NULL);
+    gtk_tree_store_set(list, &iter, 0, NULL, 1, _(enumlist[i]), -1);
+
+    if (strcmp(enumlist[i], "mark") == 0) {
+      for (j = 0; j < MARK_TYPE_NUM; j++) {
+	GdkPixbuf *pixbuf;
+
+	pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
+
+	gtk_tree_store_append(list, &child, &iter);
+	gtk_tree_store_set(list, &child, 0, pixbuf, 1, NULL, -1);
+      }
+    } else if (strcmp(enumlist[i], "curve") == 0) {
+      curvelist = (char **) chkobjarglist(obj, "interpolation");
+      for (j = 0; curvelist[j]; j++) {
+	gtk_tree_store_append(list, &child, &iter);
+	gtk_tree_store_set(list, &child, 0, NULL, 1, _(curvelist[j]), -1);
+      }
+    }
+  }
+}
+
+static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, type, a;
+  int sel, type, mark_type, curve_type, a, b, *ary, found, depth;
   struct objlist *obj;
   struct SubWin *d;
+  GtkTreeStore *list;
+  GtkTreeIter iter;
+  GtkTreePath *path;
 
   Menulock = FALSE;
 
@@ -4112,10 +4154,50 @@ select_type(GtkComboBox *w, gpointer user_data)
   obj = getobject("file");
   getobj(obj, "type", sel, 0, NULL, &type);
 
-  a = combo_box_get_active(GTK_WIDGET(w));
-
-  if (a == type)
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(w)));
+  found = gtk_combo_box_get_active_iter(w, &iter);
+  if (! found)
     return;
+
+  path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
+  ary = gtk_tree_path_get_indices(path);
+  depth = gtk_tree_path_get_depth(path);
+  a = ary[0];
+  if (depth > 1) {
+    b = ary[1];
+  } else {
+    b = -1;
+  }
+  gtk_tree_path_free(path);
+
+  switch (a) {
+  case 0:
+    getobj(obj, "mark_type", sel, 0, NULL, &mark_type);
+
+    if (b < 0)
+      b = mark_type;
+
+    if (a == type && b == mark_type)
+      return;
+
+    putobj(obj, "mark_type", sel, &b);
+
+    break;
+  case 3:
+    getobj(obj, "interpolation", sel, 0, NULL, &curve_type);
+
+    if (b < 0)
+      b = curve_type;
+
+    if (a == type && b == curve_type)
+      return;
+
+    putobj(obj, "interpolation", sel, &b);
+    break;
+  default:
+    if (a == type)
+      return;
+  }
 
   putobj(obj, "type", sel, &a);
 
@@ -4124,7 +4206,7 @@ select_type(GtkComboBox *w, gpointer user_data)
 }
 
 static void
-start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
+start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path_str, gpointer user_data)
 {
   GtkTreeView *view;
   GtkTreeModel *model;
@@ -4132,8 +4214,10 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   n_list_store *list;
   struct SubWin *d;
   GtkComboBox *cbox;
-  int sel, type;
+  int sel, type, child = -1;
   struct objlist *obj;
+  char buf[64];
+  GtkTreePath *path = NULL;
 
   Menulock = TRUE;
 
@@ -4142,7 +4226,7 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
 
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path_str))
     return;
 
   list_store_select_iter(GTK_WIDGET(view), &iter);
@@ -4154,10 +4238,32 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
 
   obj = getobject("file");
-  SetWidgetFromObjField(GTK_WIDGET(cbox), obj, sel, "type");
+  create_type_combo_box(GTK_WIDGET(cbox), obj);
 
   getobj(obj, "type", sel, 0, NULL, &type);
-  combo_box_set_active(GTK_WIDGET(cbox), type);
+
+  switch (type) {
+  case 0:
+    getobj(obj, "mark_type", sel, 0, NULL, &child);
+    break;
+  case 3:
+    getobj(obj, "interpolation", sel, 0, NULL, &child);
+    break;
+  default:
+    gtk_combo_box_set_active(cbox, type);
+  }
+
+  if (child >= 0) {
+    snprintf(buf, sizeof(buf), "%d:%d", type, child);
+    path = gtk_tree_path_new_from_string(buf);
+    if (path) {
+      model = gtk_combo_box_get_model(cbox);
+      if (gtk_tree_model_get_iter(model, &iter, path)) {
+	gtk_combo_box_set_active_iter(cbox, &iter);
+      }
+      gtk_tree_path_free(path);
+    }
+  }
 
   gtk_widget_show(GTK_WIDGET(cbox));
 

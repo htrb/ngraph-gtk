@@ -1,3 +1,13 @@
+2008-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (MARK_PIX_SIZE): change mark size from 28 to 24.
+
+	* src/gtk/x11file.c (create_type_combo_box): add.
+	(select_type, start_editing_type): modified for tree model.
+
+	* src/gtk/gtk_liststore.c (start_editing_obj): use GtkTreeModel
+	for combo_box.
+
 2008-08-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_liststore.c (start_editing_obj): add.
