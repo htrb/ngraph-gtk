@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.18 2008/08/11 02:53:50 hito Exp $
+ * $Id: x11dialg.c,v 1.19 2008/08/11 03:41:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -601,6 +601,8 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
 
   if (array)
     arrayfree(array);
+
+  return -1;
 }
 
 void
