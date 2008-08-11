@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.45 2008/07/02 13:35:10 hito Exp $
+ * $Id: x11view.c,v 1.46 2008/08/11 08:27:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -377,13 +377,12 @@ static void
 init_dnd(struct Viewer *d)
 {
   GtkWidget *widget;
-
-  widget = d->Win;
-
   GtkTargetEntry target[] = {
     {"text/uri-list", 0, DROP_TYPE_FILE},
     {"text/plain", 0, DROP_TYPE_TEXT},
   };
+
+  widget = d->Win;
 
   gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), d);

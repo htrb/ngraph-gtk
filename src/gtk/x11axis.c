@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.28 2008/08/07 00:50:32 hito Exp $
+ * $Id: x11axis.c,v 1.29 2008/08/11 08:27:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2810,7 +2810,7 @@ AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
   struct SubWin *d;
 
   if (Menulock || GlobalLock)
-    return TRUE;
+    return FALSE;
 
   d = &(NgraphApp.AxisWin);
 

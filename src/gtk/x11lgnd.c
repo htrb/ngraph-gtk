@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.22 2008/08/05 02:45:26 hito Exp $
+ * $Id: x11lgnd.c,v 1.23 2008/08/11 08:27:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2115,7 +2115,7 @@ LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
   struct LegendWin *d;
 
   if (Menulock || GlobalLock)
-    return TRUE;
+    return FALSE;
 
   d = &(NgraphApp.LegendWin);
   if (GTK_WIDGET(d->text) == NULL)

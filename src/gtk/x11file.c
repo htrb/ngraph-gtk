@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.39 2008/08/11 02:53:50 hito Exp $
+ * $Id: x11file.c,v 1.40 2008/08/11 08:27:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4006,7 +4006,7 @@ FileWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
   struct SubWin *d;
 
   if (Menulock || GlobalLock)
-    return TRUE;
+    return FALSE;
 
   d = &(NgraphApp.FileWin);
 
