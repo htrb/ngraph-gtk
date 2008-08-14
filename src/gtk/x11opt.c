@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.14 2008/07/15 09:15:15 hito Exp $
+ * $Id: x11opt.c,v 1.15 2008/08/14 01:41:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -165,7 +165,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->child_geometry))) {
     get_window_geometry(TopLevel, &x0, &y0, &w, &h, &state);
 
-    if (NgraphApp.FileWin.Win) {
+    if (NgraphApp.FileWin.Win && NgraphApp.FileWin.Win->window) {
       get_window_geometry(NgraphApp.FileWin.Win, &x, &y, &w, &h, &state);
       Menulocal.filewidth = w;
       Menulocal.fileheight = h;
@@ -184,7 +184,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.AxisWin.Win) {
+    if (NgraphApp.AxisWin.Win && NgraphApp.AxisWin.Win->window) {
       get_window_geometry(NgraphApp.AxisWin.Win, &x, &y, &w, &h, &state);
       Menulocal.axiswidth = w;
       Menulocal.axisheight = h;
@@ -203,7 +203,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.LegendWin.Win) {
+    if (NgraphApp.LegendWin.Win && NgraphApp.LegendWin.Win->window) {
       get_window_geometry(NgraphApp.LegendWin.Win, &x, &y, &w, &h, &state);
       Menulocal.legendwidth = w;
       Menulocal.legendheight = h;
@@ -223,7 +223,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.MergeWin.Win) {
+    if (NgraphApp.MergeWin.Win && NgraphApp.MergeWin.Win->window) {
       get_window_geometry(NgraphApp.MergeWin.Win, &x, &y, &w, &h, &state);
       Menulocal.mergewidth = w;
       Menulocal.mergeheight = h;
@@ -243,7 +243,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.InfoWin.Win) {
+    if (NgraphApp.InfoWin.Win && NgraphApp.InfoWin.Win->window) {
       get_window_geometry(NgraphApp.InfoWin.Win, &x, &y, &w, &h, &state);
       Menulocal.dialogwidth = w;
       Menulocal.dialogheight = h;
@@ -263,7 +263,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.CoordWin.Win) {
+    if (NgraphApp.CoordWin.Win && NgraphApp.CoordWin.Win->window) {
       get_window_geometry(NgraphApp.CoordWin.Win, &x, &y, &w, &h, &state);
       Menulocal.coordwidth = w;
       Menulocal.coordheight = h;

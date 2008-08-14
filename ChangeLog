@@ -1,3 +1,8 @@
+2008-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (DefaultDialogClose): check
+	NgraphApp.FileWin.Win->window etc.
+
 2008-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (MARK_PIX_SIZE): change mark size from 28 to 24.

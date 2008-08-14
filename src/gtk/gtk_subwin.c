@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.21 2008/08/08 10:02:56 hito Exp $
+ * $Id: gtk_subwin.c,v 1.22 2008/08/14 01:41:37 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1130,7 +1130,7 @@ sub_window_minimize(void *ptr)
 
   d = (struct SubWin *) ptr;
 
-  if (d->Win == NULL)
+  if (d->Win == NULL || d->Win->window == NULL)
     return;
 
   window_state = gdk_window_get_state(d->Win->window);

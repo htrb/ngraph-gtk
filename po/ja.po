@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-08-08 22:56+0900\n"
+"POT-Creation-Date: 2008-08-12 13:06+0900\n"
 "PO-Revision-Date: 2008-08-07 09:49+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -43,7 +43,7 @@ msgid "_Focus"
 msgstr "フォーカス(_F)"
 
 #: src/gtk/x11axis.c:79 src/gtk/x11file.c:103 src/gtk/x11lgnd.c:83
-#: src/gtk/x11merge.c:76 src/gtk/x11view.c:539
+#: src/gtk/x11merge.c:76 src/gtk/x11view.c:538
 msgid "_Duplicate"
 msgstr "複製(_D)"
 
@@ -708,7 +708,7 @@ msgstr "微分式指定(_D)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1301 src/gtk/x11file.c:1547 src/gtk/x11view.c:420
+#: src/gtk/x11file.c:1301 src/gtk/x11file.c:1547 src/gtk/x11view.c:419
 msgid "Line No."
 msgstr "行"
 
@@ -829,11 +829,11 @@ msgstr "ファイル名(_F):"
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:2705 src/gtk/x11view.c:429
+#: src/gtk/x11file.c:2705 src/gtk/x11view.c:428
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:2709 src/gtk/x11view.c:430
+#: src/gtk/x11file.c:2709 src/gtk/x11view.c:429
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -845,11 +845,11 @@ msgstr "編集(_E)"
 msgid "This file contain invalid UTF-8 strings."
 msgstr "ファイルに不正な UTF-8 文字列が含まれています."
 
-#: src/gtk/x11file.c:3066
+#: src/gtk/x11file.c:3067
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:3108
+#: src/gtk/x11file.c:3109
 msgid "Data open"
 msgstr "データを開く"
 
@@ -1864,11 +1864,11 @@ msgstr "合成ファイル作成中"
 msgid "confirm"
 msgstr "確認"
 
-#: src/gtk/x11print.c:1037 src/gtk/x11view.c:4533
+#: src/gtk/x11print.c:1037 src/gtk/x11view.c:4532
 msgid "Drawing"
 msgstr "描画中"
 
-#: src/gtk/x11print.c:1038 src/gtk/x11view.c:4532
+#: src/gtk/x11print.c:1038 src/gtk/x11view.c:4531
 msgid "Drawing."
 msgstr "描画中"
 
@@ -1893,53 +1893,53 @@ msgstr "アドイン"
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
 
-#: src/gtk/x11view.c:528
+#: src/gtk/x11view.c:527
 msgid "_Left"
 msgstr "左揃え(_L)"
 
-#: src/gtk/x11view.c:529
+#: src/gtk/x11view.c:528
 msgid "_Vertical center"
 msgstr "垂直中央揃え(_V)"
 
-#: src/gtk/x11view.c:530
+#: src/gtk/x11view.c:529
 msgid "_Right"
 msgstr "右揃え(_R)"
 
-#: src/gtk/x11view.c:531
+#: src/gtk/x11view.c:530
 msgid "_Top"
 msgstr "上端揃え(_T)"
 
-#: src/gtk/x11view.c:532
+#: src/gtk/x11view.c:531
 msgid "_Holizontal center"
 msgstr "水平中央揃え(_H)"
 
-#: src/gtk/x11view.c:533
+#: src/gtk/x11view.c:532
 msgid "_Bottom"
 msgstr "下端揃え(_B)"
 
-#: src/gtk/x11view.c:540
+#: src/gtk/x11view.c:539
 msgid "_Align"
 msgstr "位置合わせ(_A)"
 
-#: src/gtk/x11view.c:543
+#: src/gtk/x11view.c:542
 msgid "_Show cross"
 msgstr "クロスゲージ表示(_S)"
 
-#: src/gtk/x11view.c:715
+#: src/gtk/x11view.c:714
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:816
+#: src/gtk/x11view.c:815
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:825
+#: src/gtk/x11view.c:824
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:4526
+#: src/gtk/x11view.c:4525
 msgid "Scaling"
 msgstr "軸スケール設定中"
 

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ngraph-gtk 6.03.47.gtk-04\n"
+"Project-Id-Version: Ngraph-gtk 6.03.47.gtk-05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-08-08 22:56+0900\n"
+"POT-Creation-Date: 2008-08-12 13:06+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgid "_Focus"
 msgstr ""
 
 #: src/gtk/x11axis.c:79 src/gtk/x11file.c:103 src/gtk/x11lgnd.c:83
-#: src/gtk/x11merge.c:76 src/gtk/x11view.c:539
+#: src/gtk/x11merge.c:76 src/gtk/x11view.c:538
 msgid "_Duplicate"
 msgstr ""
 
@@ -706,7 +706,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1301 src/gtk/x11file.c:1547 src/gtk/x11view.c:420
+#: src/gtk/x11file.c:1301 src/gtk/x11file.c:1547 src/gtk/x11view.c:419
 msgid "Line No."
 msgstr ""
 
@@ -827,11 +827,11 @@ msgstr ""
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:2705 src/gtk/x11view.c:429
+#: src/gtk/x11file.c:2705 src/gtk/x11view.c:428
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:2709 src/gtk/x11view.c:430
+#: src/gtk/x11file.c:2709 src/gtk/x11view.c:429
 msgid "_Move"
 msgstr ""
 
@@ -843,11 +843,11 @@ msgstr ""
 msgid "This file contain invalid UTF-8 strings."
 msgstr ""
 
-#: src/gtk/x11file.c:3066
+#: src/gtk/x11file.c:3067
 msgid "Data new"
 msgstr ""
 
-#: src/gtk/x11file.c:3108
+#: src/gtk/x11file.c:3109
 msgid "Data open"
 msgstr ""
 
@@ -1858,11 +1858,11 @@ msgstr ""
 msgid "confirm"
 msgstr ""
 
-#: src/gtk/x11print.c:1037 src/gtk/x11view.c:4533
+#: src/gtk/x11print.c:1037 src/gtk/x11view.c:4532
 msgid "Drawing"
 msgstr ""
 
-#: src/gtk/x11print.c:1038 src/gtk/x11view.c:4532
+#: src/gtk/x11print.c:1038 src/gtk/x11view.c:4531
 msgid "Drawing."
 msgstr ""
 
@@ -1887,53 +1887,53 @@ msgstr ""
 msgid "Executing `%.128s'."
 msgstr ""
 
-#: src/gtk/x11view.c:528
+#: src/gtk/x11view.c:527
 msgid "_Left"
 msgstr ""
 
-#: src/gtk/x11view.c:529
+#: src/gtk/x11view.c:528
 msgid "_Vertical center"
 msgstr ""
 
-#: src/gtk/x11view.c:530
+#: src/gtk/x11view.c:529
 msgid "_Right"
 msgstr ""
 
-#: src/gtk/x11view.c:531
+#: src/gtk/x11view.c:530
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11view.c:532
+#: src/gtk/x11view.c:531
 msgid "_Holizontal center"
 msgstr ""
 
-#: src/gtk/x11view.c:533
+#: src/gtk/x11view.c:532
 msgid "_Bottom"
 msgstr ""
 
-#: src/gtk/x11view.c:540
+#: src/gtk/x11view.c:539
 msgid "_Align"
 msgstr ""
 
-#: src/gtk/x11view.c:543
+#: src/gtk/x11view.c:542
 msgid "_Show cross"
 msgstr ""
 
-#: src/gtk/x11view.c:715
+#: src/gtk/x11view.c:714
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:816
+#: src/gtk/x11view.c:815
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:825
+#: src/gtk/x11view.c:824
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:4526
+#: src/gtk/x11view.c:4525
 msgid "Scaling"
 msgstr ""
 
