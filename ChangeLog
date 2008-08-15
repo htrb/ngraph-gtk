@@ -1,3 +1,8 @@
+2008-08-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (AddList): bug fix: call GRAdellist() when
+	inst2 == NULL.
+
 2008-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (DefaultDialogClose): check

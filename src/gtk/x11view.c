@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.46 2008/08/11 08:27:04 hito Exp $
+ * $Id: x11view.c,v 1.47 2008/08/15 08:03:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1145,6 +1145,10 @@ AddList(struct objlist *obj, char *inst)
     }
     if (j == po) {
       inst2 = chkobjinstoid(obj2, oid);
+      if (inst2 == NULL) {
+	GRAdellist(Menulocal.GC, i);
+	continue;
+      }
       _getobj(obj2, "id", inst2, &id2);
       if (id2 > id) {
 	addi = i;
