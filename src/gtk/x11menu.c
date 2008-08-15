@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.31 2008/08/11 02:53:51 hito Exp $
+ * $Id: x11menu.c,v 1.32 2008/08/15 08:33:12 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -58,6 +58,7 @@
 int Menulock = FALSE;
 struct NgraphApp NgraphApp;
 GtkWidget *TopLevel = NULL;
+GtkAccelGroup *AccelGroup = NULL;
 
 // GdkAtom NgraphClose;
 // GdkAtom COMPOUND_TEXT;
@@ -71,7 +72,6 @@ static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL,
   *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL, *MoveButton = NULL,
   *RecentGraph = NULL, *RecentData = NULL;
-
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 
@@ -661,7 +661,7 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("_Current directory"), FALSE, "<Ngraph>/Graph/Current directory", 0, 0, CmGraphMenu, MenuIdGraphDirectory);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
-  create_menu_item(menu, _("_Add-In"), FALSE, "<Ngraph>/Graph/Add-In", 0, 0, CmGraphMenu, MenuIdScriptExec);
+  create_menu_item(menu, _("_Add-In"), FALSE, "<Ngraph>/Graph/Add-In", GDK_x, GDK_CONTROL_MASK, CmGraphMenu, MenuIdScriptExec);
   create_menu_item(menu, _("_Ngraph shell"), FALSE, "<Ngraph>/Graph/Ngraph shell", 0, 0, CmGraphMenu, MenuIdGraphShell);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, GTK_STOCK_QUIT, TRUE, "<Ngraph>/Graph/Quit",  GDK_q, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphQuit);
@@ -789,7 +789,7 @@ create_axismenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, GTK_STOCK_PROPERTIES, TRUE, "<Ngraph>/Axis/Property", 0, 0, CmAxisMenu, MenuIdAxisUpdate);
   create_menu_item(menu, GTK_STOCK_DELETE, TRUE, "<Ngraph>/Axis/Delete", 0, 0, CmAxisMenu, MenuIdAxisDel);
   create_menu_item(menu, _("Scale _Zoom"), FALSE, "<Ngraph>/Axis/Scale Zoom", 0, 0, CmAxisMenu, MenuIdAxisZoom);
-  create_menu_item(menu, _("Scale _Clear"), FALSE, "<Ngraph>/Axis/Scale Clear", 0, 0, CmAxisMenu, MenuIdAxisClear);
+  create_menu_item(menu, _("Scale _Clear"), FALSE, "<Ngraph>/Axis/Scale Clear", GDK_c, GDK_CONTROL_MASK, CmAxisMenu, MenuIdAxisClear);
   item = gtk_menu_item_new_with_mnemonic(_("_Grid"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
   create_axisgridmenu(item, accel_group);
@@ -973,6 +973,24 @@ toggle_status_bar(GtkWidget *w, gpointer data)
   }
 }
 
+static GtkWidget * 
+create_toggle_menu_item(GtkWidget *menu, gchar *label, gchar *accel_path, guint accel_key,
+			GdkModifierType accel_mods, gpointer callback, gpointer data)
+{
+  GtkWidget * menuitem;
+
+  menuitem = gtk_check_menu_item_new_with_mnemonic(label);
+  gtk_menu_item_set_accel_path(GTK_MENU_ITEM(menuitem), accel_path);
+  g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(callback), data);
+
+  if (accel_key)
+    gtk_accel_map_add_entry(accel_path, accel_key, accel_mods);
+
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(menuitem));
+
+  return menuitem;
+}
+
 static void 
 create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
@@ -985,35 +1003,23 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
 
-  item = gtk_check_menu_item_new_with_mnemonic("_Data Window");
-  g_signal_connect(item, "toggled", G_CALLBACK(toggle_win_cb), CmFileWindow);
+  item = create_toggle_menu_item(menu, "_Data Window", "<Ngraph>/Window/Data Window", GDK_F3, 0, G_CALLBACK(toggle_win_cb), CmFileWindow);
   ShowFileWin = item;
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  item = gtk_check_menu_item_new_with_mnemonic("_Axis Window");
-  g_signal_connect(item, "toggled", G_CALLBACK(toggle_win_cb), CmAxisWindow);
+  item = create_toggle_menu_item(menu, "_Axis Window", "<Ngraph>/Window/Axis Window", GDK_F4, 0, G_CALLBACK(toggle_win_cb), CmAxisWindow);
   ShowAxisWin = item;
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  item = gtk_check_menu_item_new_with_mnemonic("_Legend Window");
-  g_signal_connect(item, "toggled", G_CALLBACK(toggle_win_cb), CmLegendWindow);
+  item = create_toggle_menu_item(menu, "_Legend Window", "<Ngraph>/Window/Legend Window", GDK_F5, 0, G_CALLBACK(toggle_win_cb), CmLegendWindow);
   ShowLegendWin = item;
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  item = gtk_check_menu_item_new_with_mnemonic("_Merge Window");
-  g_signal_connect(item, "toggled", G_CALLBACK(toggle_win_cb), CmMergeWindow);
+  item = create_toggle_menu_item(menu, "_Merge Window", "<Ngraph>/Window/Merge Window", GDK_F6, 0, G_CALLBACK(toggle_win_cb), CmMergeWindow);
   ShowMergeWin = item;
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  item = gtk_check_menu_item_new_with_mnemonic("_Coordinate Window");
-  g_signal_connect(item, "toggled", G_CALLBACK(toggle_win_cb), CmCoordinateWindow);
+  item = create_toggle_menu_item(menu, "_Coordinate Window", "<Ngraph>/Window/Coordinate Window", GDK_F7, 0, G_CALLBACK(toggle_win_cb), CmCoordinateWindow);
   ShowCoodinateWin = item;
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  item = gtk_check_menu_item_new_with_mnemonic("_Information Window");
-  g_signal_connect(item, "toggled", G_CALLBACK(toggle_win_cb), CmInformationWindow);
+  item = create_toggle_menu_item(menu, "_Information Window", "<Ngraph>/Window/Information Window", GDK_F8, 0, G_CALLBACK(toggle_win_cb), CmInformationWindow);
   ShowInfoWin = item;
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
   item = gtk_separator_menu_item_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
@@ -1072,6 +1078,7 @@ createmenu(GtkMenuBar *parent)
   create_helpmenu(parent, accel_group);
 
   gtk_window_add_accel_group (GTK_WINDOW(TopLevel), accel_group);
+  AccelGroup = accel_group;
 }
 
 static void

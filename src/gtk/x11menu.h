@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.12 2008/07/01 07:38:03 hito Exp $
+ * $Id: x11menu.h,v 1.13 2008/08/15 08:33:12 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -241,6 +241,7 @@ extern GtkWidget *TopLevel;
 extern struct narray ChildList;
 extern GdkDisplay *Disp;
 extern GdkColor black, white, gray, red, blue;
+extern GtkAccelGroup *AccelGroup;
 
 void application(char *file);
 

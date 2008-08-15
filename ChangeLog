@@ -1,5 +1,15 @@
 2008-08-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c: add.
+	(create_graphmenu, create_axismenu): add accelerator.
+	(create_toggle_menu_item): add.
+	(create_windowmenu): use create_toggle_menu_item().
+
+	* src/gtk/x11menu.h: add.
+
+	* src/gtk/gtk_subwin.c (sub_window_create): add accel group to sub
+	window.
+
 	* src/gtk/x11view.c (AddList): bug fix: call GRAdellist() when
 	inst2 == NULL.
 

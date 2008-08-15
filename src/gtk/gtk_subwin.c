@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.22 2008/08/14 01:41:37 hito Exp $
+ * $Id: gtk_subwin.c,v 1.23 2008/08/15 08:33:12 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1191,6 +1191,9 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, char **xpm)
   GtkWindowGroup *group;
 
   dlg = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  if (AccelGroup)
+    gtk_window_add_accel_group(GTK_WINDOW(dlg), AccelGroup);
+
   d->Win = dlg;
 
   if (xpm) {
