@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-08-12 13:06+0900\n"
+"POT-Creation-Date: 2008-08-15 21:57+0900\n"
 "PO-Revision-Date: 2008-08-07 09:49+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1594,27 +1594,27 @@ msgstr "データファイル初期状態(_D)"
 msgid "_Legend text default"
 msgstr "レジェンドテキスト初期状態(_T)"
 
-#: src/gtk/x11menu.c:981
+#: src/gtk/x11menu.c:999
 msgid "_Window"
 msgstr "ウィンドウ(_W)"
 
-#: src/gtk/x11menu.c:1021
+#: src/gtk/x11menu.c:1027
 msgid "default _Window config"
 msgstr "初期状態のウィンドウ配置(_W)"
 
-#: src/gtk/x11menu.c:1030
+#: src/gtk/x11menu.c:1036
 msgid "_Status bar"
 msgstr "ステータスバー(_S)"
 
-#: src/gtk/x11menu.c:1044
+#: src/gtk/x11menu.c:1050
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:1986
+#: src/gtk/x11menu.c:1993
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2036
+#: src/gtk/x11menu.c:2043
 msgid "Question"
 msgstr "質問:"
 
@@ -1864,11 +1864,11 @@ msgstr "合成ファイル作成中"
 msgid "confirm"
 msgstr "確認"
 
-#: src/gtk/x11print.c:1037 src/gtk/x11view.c:4532
+#: src/gtk/x11print.c:1037 src/gtk/x11view.c:4536
 msgid "Drawing"
 msgstr "描画中"
 
-#: src/gtk/x11print.c:1038 src/gtk/x11view.c:4531
+#: src/gtk/x11print.c:1038 src/gtk/x11view.c:4535
 msgid "Drawing."
 msgstr "描画中"
 
@@ -1939,7 +1939,7 @@ msgstr "データ評価中"
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:4525
+#: src/gtk/x11view.c:4529
 msgid "Scaling"
 msgstr "軸スケール設定中"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-05\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-08-12 13:06+0900\n"
+"POT-Creation-Date: 2008-08-15 21:57+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1590,27 +1590,27 @@ msgstr ""
 msgid "_Legend text default"
 msgstr ""
 
-#: src/gtk/x11menu.c:981
+#: src/gtk/x11menu.c:999
 msgid "_Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:1021
+#: src/gtk/x11menu.c:1027
 msgid "default _Window config"
 msgstr ""
 
-#: src/gtk/x11menu.c:1030
+#: src/gtk/x11menu.c:1036
 msgid "_Status bar"
 msgstr ""
 
-#: src/gtk/x11menu.c:1044
+#: src/gtk/x11menu.c:1050
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:1986
+#: src/gtk/x11menu.c:1993
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2036
+#: src/gtk/x11menu.c:2043
 msgid "Question"
 msgstr ""
 
@@ -1858,11 +1858,11 @@ msgstr ""
 msgid "confirm"
 msgstr ""
 
-#: src/gtk/x11print.c:1037 src/gtk/x11view.c:4532
+#: src/gtk/x11print.c:1037 src/gtk/x11view.c:4536
 msgid "Drawing"
 msgstr ""
 
-#: src/gtk/x11print.c:1038 src/gtk/x11view.c:4531
+#: src/gtk/x11print.c:1038 src/gtk/x11view.c:4535
 msgid "Drawing."
 msgstr ""
 
@@ -1933,7 +1933,7 @@ msgstr ""
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:4525
+#: src/gtk/x11view.c:4529
 msgid "Scaling"
 msgstr ""
 
