@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.40 2008/08/11 08:27:04 hito Exp $
+ * $Id: x11file.c,v 1.41 2008/08/17 14:10:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4416,7 +4416,7 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
     d->dialog = &DlgFile;
     d->ev_key = ev_key_down;
 
-    dlg = list_sub_window_create(d, "File Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm);
+    dlg = list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm);
 
     g_signal_connect(dlg, "expose-event", G_CALLBACK(FileWinExpose), NULL);
 
