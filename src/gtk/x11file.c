@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.41 2008/08/17 14:10:48 hito Exp $
+ * $Id: x11file.c,v 1.42 2008/08/18 02:31:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4201,6 +4201,7 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   putobj(obj, "type", sel, &a);
 
+  d->select = sel;
   d->update(FALSE);
   NgraphApp.Changed = TRUE;
 }
