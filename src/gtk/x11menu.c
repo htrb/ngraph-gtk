@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.32 2008/08/15 08:33:12 hito Exp $
+ * $Id: x11menu.c,v 1.33 2008/08/18 01:59:14 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -581,6 +581,20 @@ create_graphnewmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
 }
 
 static void
+add_underscore(GString *str)
+{
+  int i = 1;
+
+  while (i < str->len) {
+    if (str->str[i] == '_') {
+      g_string_insert_c(str, i, '_');
+      i++;
+    }
+    i++;
+  }
+}
+
+static void
 show_graphmwnu_cb(GtkWidget *w, gpointer user_data)
 {
   GtkWidget *label;
@@ -601,6 +615,7 @@ show_graphmwnu_cb(GtkWidget *w, gpointer user_data)
     if (i < num) {
       label = gtk_bin_get_child(GTK_BIN(NgraphApp.ghistory[i]));
       g_string_printf(str, "_%d: %s", i, data[i]);
+      add_underscore(str);
       gtk_label_set_text_with_mnemonic(GTK_LABEL(label), str->str);
       gtk_widget_show(GTK_WIDGET(NgraphApp.ghistory[i]));
     } else {
@@ -688,6 +703,7 @@ show_filemwnu_cb(GtkWidget *w, gpointer user_data)
     if (i < num) {
       label = gtk_bin_get_child(GTK_BIN(NgraphApp.fhistory[i]));
       g_string_printf(str, "_%d: %s", i, data[i]);
+      add_underscore(str);
       gtk_label_set_text_with_mnemonic(GTK_LABEL(label), str->str);
       gtk_widget_show(GTK_WIDGET(NgraphApp.fhistory[i]));
     } else {

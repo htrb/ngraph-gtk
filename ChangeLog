@@ -1,3 +1,8 @@
+2008-08-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (add_underscore): add.
+	(show_graphmwnu_cb, show_filemwnu_cb): call add_underscore().
+
 2008-08-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c: add.
