@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.6 2008/08/05 08:45:59 hito Exp $
+ * $Id: gra.c,v 1.7 2008/08/19 06:45:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3353,8 +3353,7 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
   int i,lw;
   double x,y,csin,ccos;
   int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
-  char ch;
-  int c1,c2;
+  int c1, c2, ch;
   struct GRAbbox *bbox;
 
   bbox=local;
@@ -3462,7 +3461,7 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
         ch=cstr[i];
         i++;
       }
-      w=GRAcharwidth((unsigned int)ch,bbox->fontalias,bbox->pt);
+      w=GRAcharwidth((unsigned int) (ch & 0xff),bbox->fontalias,bbox->pt);
       h=GRAcharascent(bbox->fontalias,bbox->pt);
       d=GRAchardescent(bbox->fontalias,bbox->pt);
       x=0;

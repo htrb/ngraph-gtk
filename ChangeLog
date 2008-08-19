@@ -1,3 +1,8 @@
+2008-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAboundingbox): now ch is int.
+	(GRAboundingbox): first argument of Gracharwidth is '(ch & 0xff)'.
+
 2008-08-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (select_type): set selected item to d->select.
