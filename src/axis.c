@@ -1,5 +1,5 @@
 /* 
- * $Id: axis.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: axis.c,v 1.2 2008/08/20 02:15:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -103,15 +103,15 @@ void getaxispositionfirst(struct axislocal *alocal)
   } else if (alocal->atype==AXISLOGNORM) {
     if (alocal->div==1) {
       alocal->countsend=1;
-      if (alocal->dposm>0) alocal->dposs=9;
+      if (alocal->inc>0) alocal->dposs=9;
       else alocal->dposs=-0.9;
     } else if (alocal->div==2) {
       alocal->countsend=2;
-      if (alocal->dposm>0) alocal->dposs=4;
+      if (alocal->inc>0) alocal->dposs=4;
       else alocal->dposs=-0.5;
     } else {
       alocal->countsend=9;
-      if (alocal->dposm>0) alocal->dposs=1;
+      if (alocal->inc>0) alocal->dposs=1;
       else alocal->dposs=-0.1;
     }
     alocal->dposl=alocal->inc*10;

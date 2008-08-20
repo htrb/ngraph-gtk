@@ -1,3 +1,8 @@
+2008-08-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/axis.c (getaxispositionfirst): use alocal->inc instead of
+	alocal->dposm to determine alocal->dposs.
+
 2008-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAboundingbox): now ch is int.
