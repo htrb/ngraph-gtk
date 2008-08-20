@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.15 2008/08/20 10:43:50 hito Exp $
+ * $Id: ofile.c,v 1.16 2008/08/20 10:52:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1444,7 +1444,7 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
 #endif
         val=strtod(po,&endptr);
         if (endptr>=po2) {
-	if (val != val || val == HUGE_VAL) {
+	  if (val != val || val == HUGE_VAL || val == - HUGE_VAL) {
 	    st = MNAN;
 	  } else {
 	    st=MNOERR;
@@ -1477,7 +1477,7 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
 #endif
       val=strtod(po,&endptr);
       if (endptr>=po2) {
-	if (val != val || val == HUGE_VAL) {
+	if (val != val || val == HUGE_VAL || val == - HUGE_VAL) {
 	  st = MNAN;
 	} else {
 	  st=MNOERR;
