@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.4 2008/08/05 02:45:24 hito Exp $
+ * $Id: ioutil.c,v 1.5 2008/08/20 06:35:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -661,8 +661,10 @@ int fgetline(FILE *fp,char **buf)
 
   i = 0;
   while (TRUE) {
+#if 0
     if ((ch=='\0') || (ch=='\n') || (ch==EOF)) {
       *buf = s;
+      s[i] = '\0'; /* nstraddchar() is not terminate string */
       return 0;
     }
     if (ch != '\r') {
@@ -671,6 +673,22 @@ int fgetline(FILE *fp,char **buf)
       if (s == NULL)
 	return -1;
     }
+#else
+    switch (ch) {
+    case '\0':
+    case '\n':
+    case EOF:
+      *buf = s;
+      s[i] = '\0'; /* nstraddchar() is not terminate string */
+      return 0;
+    case '\r':
+      break;
+    default:
+      s = nstraddchar(s, i, ch);
+      if (s == NULL)
+	return -1;
+    }
+#endif
     ch = fgetc(fp);
     i++;
   }

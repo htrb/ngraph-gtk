@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.13 2008/07/16 10:18:00 hito Exp $
+ * $Id: ofile.c,v 1.14 2008/08/20 06:35:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1502,6 +1502,9 @@ int hskipdata(struct f2ddata *fp)
 
   skip=0;
   while (skip<fp->hskip) {
+    if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
+      return 0;
+    }
     rcode=fgetline(fp->fd,&buf);
     if (rcode==-1) return -1;
     if (rcode==1) {
@@ -1541,80 +1544,28 @@ set_data_progress(struct f2ddata *fp)
   return FALSE;
 }
 
-int getdata(struct f2ddata *fp)
-/*
-  return -1: fatal error
-          0: no error
-          1: EOF
-*/
+static int
+getdata_sub1(struct f2ddata *fp, char *buf, int fnumx, int fnumy, int *needx, int *needy, double *datax, double *datay, char *statx, char *staty, double *gdata, char *gstat, int filenum, int*openfile)
 {
-  char *buf;
-  int i,j,k,step,rcode;
-  double dx,dy,d2,d3,val;
-  char dxstat,dystat,d2stat,d3stat,st;
-  double dx2,dy2,dx3,dy3;
-  char dx2stat,dy2stat,dx3stat,dy3stat;
-  char *code2,*code3;
-  double sumx,sumy,sum2,sum3;
-  int numx,numy,num2,num3,num,smx,smy,sm2,sm3;
-  int masked,moved,moven;
-  int filenum,*openfile,id,col;
-  struct narray filedatax,filedatay;
-  struct narray filestatx,filestaty;
-  int fnumx,fnumy,*needx,*needy;
-  double *datax,*datay;
-  char *statx,*staty;
-  int fnum2,fnum3,*need2,*need3;
-  double *data2,*data3;
-  char *stat2,*stat3;
-  struct narray iarray;
   int *idata,inum,argc;
   char *argv[2];
-  struct narray *coldata;
+  int i,j,k,step,rcode;
   double *ddata;
   int colnum,first2,first3;
   char *inst1;
-  double *gdata;
-  char *gstat;
+  int masked,moved,moven;
+  struct narray iarray;
+  double dx,dy,d2,d3,val;
+  char dxstat,dystat,d2stat,d3stat,st;
+  double dx2,dy2,dx3,dy3;
+  int id,col;
+  struct narray *coldata;
+  char dx2stat,dy2stat,dx3stat,dy3stat;
+  char *code2,*code3;
+  int fnum2,fnum3,*need2,*need3;
+  double *data2,*data3;
+  char *stat2,*stat3;
 
-  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
-   memfree(gdata);
-   memfree(gstat);
-   return -1;
-  }
-  fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
-  filenum=arraynum(&(fp->fileopen));
-  openfile=arraydata(&(fp->fileopen));
-  fnumx=arraynum(fp->needfilex);
-  needx=arraydata(fp->needfilex);
-  arrayinit(&filedatax,sizeof(double));
-  arrayinit(&filestatx,sizeof(char));
-  for (i=0;i<fnumx;i++) {
-    dx=0;
-    st=MNONUM;
-    arrayadd(&filedatax,&dx);
-    arrayadd(&filestatx,&st);
-  }
-  if (arraynum(&filedatax)<fnumx) fnumx=arraynum(&filedatax);
-  if (arraynum(&filestatx)<fnumx) fnumx=arraynum(&filestatx);
-  datax=arraydata(&filedatax);
-  statx=arraydata(&filestatx);
-  fnumy=arraynum(fp->needfiley);
-  needy=arraydata(fp->needfiley);
-  arrayinit(&filedatay,sizeof(double));
-  arrayinit(&filestaty,sizeof(char));
-  for (i=0;i<fnumy;i++) {
-    dy=0;
-    st=MNONUM;
-    arrayadd(&filedatay,&dy);
-    arrayadd(&filestaty,&st);
-  }
-  if (arraynum(&filedatay)<fnumy) fnumy=arraynum(&filedatay);
-  if (arraynum(&filestaty)<fnumy) fnumy=arraynum(&filestaty);
-  datay=arraydata(&filedatay);
-  staty=arraydata(&filestaty);
   while (!fp->eof && (fp->bufnum<DXBUFSIZE)) {
     if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
       break;
@@ -1631,8 +1582,6 @@ int getdata(struct f2ddata *fp)
     }
 
     if (rcode==-1) {
-      memfree(gdata);
-      memfree(gstat);
       return -1;
     }
 
@@ -1653,8 +1602,6 @@ int getdata(struct f2ddata *fp)
         moven=j;
       } else moved=FALSE;
       if (rcode==-1) {
-        memfree(gdata);
-        memfree(gstat);
         return -1;
       }
 
@@ -1932,8 +1879,6 @@ int getdata(struct f2ddata *fp)
           break;
         }
         if (rcode==-1) {
-          memfree(gdata);
-          memfree(gstat);
           return -1;
         }
         fp->line++;
@@ -1946,6 +1891,77 @@ int getdata(struct f2ddata *fp)
     } else memfree(buf);
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
+  return 0;
+}
+
+int getdata(struct f2ddata *fp)
+/*
+  return -1: fatal error
+          0: no error
+          1: EOF
+*/
+{
+  char *buf;
+  int i,rcode;
+  double dx,dy;
+  char st;
+  double sumx,sumy,sum2,sum3;
+  int numx,numy,num2,num3,num,smx,smy,sm2,sm3;
+  int filenum,*openfile;
+  struct narray filedatax,filedatay;
+  struct narray filestatx,filestaty;
+  int fnumx,fnumy,*needx,*needy;
+  double *datax,*datay;
+  char *statx,*staty;
+  double *gdata;
+  char *gstat;
+
+  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
+  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
+   memfree(gdata);
+   memfree(gstat);
+   return -1;
+  }
+  fp->dx=fp->dy=fp->d2=fp->d3=0;
+  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
+  filenum=arraynum(&(fp->fileopen));
+  openfile=arraydata(&(fp->fileopen));
+  fnumx=arraynum(fp->needfilex);
+  needx=arraydata(fp->needfilex);
+  arrayinit(&filedatax,sizeof(double));
+  arrayinit(&filestatx,sizeof(char));
+  for (i=0;i<fnumx;i++) {
+    dx=0;
+    st=MNONUM;
+    arrayadd(&filedatax,&dx);
+    arrayadd(&filestatx,&st);
+  }
+  if (arraynum(&filedatax)<fnumx) fnumx=arraynum(&filedatax);
+  if (arraynum(&filestatx)<fnumx) fnumx=arraynum(&filestatx);
+  datax=arraydata(&filedatax);
+  statx=arraydata(&filestatx);
+  fnumy=arraynum(fp->needfiley);
+  needy=arraydata(fp->needfiley);
+  arrayinit(&filedatay,sizeof(double));
+  arrayinit(&filestaty,sizeof(char));
+  for (i=0;i<fnumy;i++) {
+    dy=0;
+    st=MNONUM;
+    arrayadd(&filedatay,&dy);
+    arrayadd(&filestaty,&st);
+  }
+  if (arraynum(&filedatay)<fnumy) fnumy=arraynum(&filedatay);
+  if (arraynum(&filestaty)<fnumy) fnumy=arraynum(&filestaty);
+  datay=arraydata(&filedatay);
+  staty=arraydata(&filestaty);
+
+  rcode = getdata_sub1(fp, buf, fnumx, fnumy, needx, needy, datax, datay, statx, staty, gdata, gstat, filenum, openfile);
+  if (rcode) {
+    memfree(gdata);
+    memfree(gstat);
+    return rcode;
+  }
+
   arraydel(&filedatax);
   arraydel(&filestatx);
   arraydel(&filedatay);
@@ -2030,8 +2046,10 @@ int getdata(struct f2ddata *fp)
     if ((fp->dxstat==MNOERR) 
      && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) fp->datanum++;
   }
-  if (fp->bufpo<fp->smooth) fp->bufpo++;
-  else {
+  if (fp->bufpo<fp->smooth) {
+    fp->bufpo++;
+  } else {
+#if 0
     for (i=0;i<fp->bufnum-1;i++) {
       fp->dxbuf[i]=fp->dxbuf[i+1];
       fp->dybuf[i]=fp->dybuf[i+1];
@@ -2049,6 +2067,25 @@ int getdata(struct f2ddata *fp)
       fp->linebuf[i]=fp->linebuf[i+1];
     }
     fp->bufnum--;
+#else
+    if (fp->bufnum > 0) {
+      fp->bufnum--;
+      memmove(fp->dxbuf, fp->dxbuf + 1, sizeof(*fp->dxbuf) * fp->bufnum);
+      memmove(fp->dybuf, fp->dybuf + 1, sizeof(*fp->dybuf) * fp->bufnum);
+      memmove(fp->d2buf, fp->d2buf + 1, sizeof(*fp->d2buf) * fp->bufnum);
+      memmove(fp->d3buf, fp->d3buf + 1, sizeof(*fp->d3buf) * fp->bufnum);
+      memmove(fp->colbufr, fp->colbufr + 1, sizeof(*fp->colbufr) * fp->bufnum);
+      memmove(fp->colbufg, fp->colbufg + 1, sizeof(*fp->colbufg) * fp->bufnum);
+      memmove(fp->colbufb, fp->colbufb + 1, sizeof(*fp->colbufb) * fp->bufnum);
+      memmove(fp->marksizebuf, fp->marksizebuf + 1, sizeof(*fp->marksizebuf) * fp->bufnum);
+      memmove(fp->marktypebuf, fp->marktypebuf + 1, sizeof(*fp->marktypebuf) * fp->bufnum);
+      memmove(fp->dxstatbuf, fp->dxstatbuf + 1, sizeof(*fp->dxstatbuf) * fp->bufnum);
+      memmove(fp->dystatbuf, fp->dystatbuf + 1, sizeof(*fp->dystatbuf) * fp->bufnum);
+      memmove(fp->d2statbuf, fp->d2statbuf + 1, sizeof(*fp->d2statbuf) * fp->bufnum);
+      memmove(fp->d3statbuf, fp->d3statbuf + 1, sizeof(*fp->d3statbuf) * fp->bufnum);
+      memmove(fp->linebuf, fp->linebuf + 1, sizeof(*fp->linebuf) * fp->bufnum);
+    }
+#endif
   }
   memfree(gdata);
   memfree(gstat);

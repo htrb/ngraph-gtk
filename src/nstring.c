@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: nstring.c,v 1.2 2008/08/20 06:35:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -87,11 +87,11 @@ char *nstrccat(char *po,char ch)
 char *
 nstraddchar(char *po, int len, char ch)
 {
-  char *po2;
-
-  if (po == NULL) return NULL;
+  //  if (po == NULL) return NULL;
 
   if ((len & (NSTRLEN - 1)) == NSTRLEN - 1) {
+    char *po2;
+
     po2 = memrealloc(po, NSTRLEN * (len / NSTRLEN + 2));
     if (po2 == NULL) {
       memfree(po);
@@ -100,7 +100,7 @@ nstraddchar(char *po, int len, char ch)
     po = po2;
   }
   po[len] = ch;
-  po[len + 1] = '\0';
+  //  po[len + 1] = '\0';
   return po;
 }
 
@@ -113,10 +113,13 @@ char *nstrcat(char *po,char *s)
   if (po == NULL) return NULL;
   if (s == NULL) return po; 
   len = strlen(po);
-  for (i = 0; s[i] != '\0'; i++) 
+  for (i = 0; s[i] != '\0'; i++) {
     po = nstraddchar(po, len + i, s[i]);
-    if (po == NULL)
+    if (po == NULL) {
       return NULL;
+    }
+  }
+  po[len + i] = '\0'; /* nstraddchar() is not terminate string */
   return po;
 }
 

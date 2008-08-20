@@ -1,5 +1,11 @@
 2008-08-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ioutil.c (fgetline): use switch instead of if.
+
+	* src/ofile.c (getdata_sub1): add.
+	(getdata): use getdata_sub1().
+	(getdata): use memmove() instead of loop.
+
 	* src/axis.c (getaxispositionfirst): use alocal->inc instead of
 	alocal->dposm to determine alocal->dposs.
 
