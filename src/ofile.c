@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.14 2008/08/20 06:35:45 hito Exp $
+ * $Id: ofile.c,v 1.15 2008/08/20 10:43:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1443,8 +1443,13 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
 	}
 #endif
         val=strtod(po,&endptr);
-        if (endptr>=po2) st=MNOERR;
-        else {
+        if (endptr>=po2) {
+	if (val != val || val == HUGE_VAL) {
+	    st = MNAN;
+	  } else {
+	    st=MNOERR;
+	  }
+	} else {
           if (((po2-po)==1) && (*po=='|')) st=MSCONT;
           else if (((po2-po)==1) && (*po=='=')) st=MSBREAK;
           else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MNAN;
@@ -1471,8 +1476,13 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
       }
 #endif
       val=strtod(po,&endptr);
-      if (endptr>=po2) st=MNOERR;
-      else {
+      if (endptr>=po2) {
+	if (val != val || val == HUGE_VAL) {
+	  st = MNAN;
+	} else {
+	  st=MNOERR;
+	}
+      } else {
         if (((po2-po)==1) && (*po=='|')) st=MSCONT;
         else if (((po2-po)==1) && (*po=='=')) st=MSBREAK;
         else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MNAN;
@@ -1608,7 +1618,7 @@ getdata_sub1(struct f2ddata *fp, char *buf, int fnumx, int fnumy, int *needx, in
       if (!masked) {
         for (i=0;i<fnumx;i++) {
           if ((needx[i]/1000)==fp->id) {
-	    j = needx[i]%1000;
+	    j = needx[i] % 1000;
             datax[i]=gdata[j];
             statx[i]=gstat[j];
           } else {
@@ -1618,7 +1628,7 @@ getdata_sub1(struct f2ddata *fp, char *buf, int fnumx, int fnumy, int *needx, in
         }
         for (i=0;i<fnumy;i++) {
           if ((needy[i]/1000)==fp->id) {
-	    j = needy[i]%1000;
+	    j = needy[i] % 1000;
             datay[i]=gdata[j];
             staty[i]=gstat[j];
           } else {

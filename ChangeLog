@@ -1,5 +1,7 @@
 2008-08-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (getdataarray): check val is NaN or INF.
+
 	* src/ioutil.c (fgetline): use switch instead of if.
 
 	* src/ofile.c (getdata_sub1): add.
