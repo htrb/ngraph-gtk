@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.7 2008/08/21 03:39:49 hito Exp $
+ * $Id: ioutil.c,v 1.6 2008/08/21 03:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -246,7 +246,7 @@ char *getrelativepath(char *name)
 
 #if 0
 } /* dummy */
-#endif
+#enfif
 
 char *getbasename(char *name)
 {
@@ -684,7 +684,7 @@ int fgetline(FILE *fp,char **buf)
       if (ch != '\n') {
 	ungetc(ch, fp);
       }
-      /* FALLTHRU */
+      /* fall-through */
     case '\0':
     case '\n':
     case EOF:
