@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.17 2008/07/17 02:17:18 hito Exp $
+ * $Id: x11print.c,v 1.18 2008/08/21 06:05:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -434,6 +434,8 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
   case MenuIdOutputSVGFile:
     title = N_("Cairo SVG Output");
     break;
+  default:
+    title = NULL; /* not reachable */
   }
 
   gtk_window_set_title(GTK_WINDOW(wi), _(title));
@@ -931,6 +933,11 @@ CmOutputImage(int type)
     ext_str = "svg";
     ext = "*.svg";
     break;
+  default:
+    /* not reachable */
+    ext_name = NULL;
+    ext_str = NULL;
+    ext = NULL;
   }
 
   if (NgraphApp.FileName == NULL) {

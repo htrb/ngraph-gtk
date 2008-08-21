@@ -1,5 +1,7 @@
 2008-08-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gra.c (GRAboundingbox): consider line width in the case 'R'.
+
 	* src/ofile.c (reopendata): set fp->prev_datanum.
 	(getdataraw): call set_data_progress().
 	(getdataraw): increment fp->datanum in loop.

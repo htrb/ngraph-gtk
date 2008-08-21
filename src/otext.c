@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.3 2008/07/14 07:42:48 hito Exp $
+ * $Id: otext.c,v 1.4 2008/08/21 06:05:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -200,8 +200,10 @@ int textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   scriptsize=7000;
   if (_putobj(obj,"pt",inst,&pt)) return 1;
   if (_putobj(obj,"script_size",inst,&scriptsize)) return 1;
-  if (((font=memalloc(strlen(fontchar[4])+1))==NULL)
-  || ((jfont=memalloc(strlen(jfontchar[1])+1))==NULL)) {
+
+  font = memalloc(strlen(fontchar[4]) + 1);
+  jfont = memalloc(strlen(jfontchar[1]) + 1);
+  if (font == NULL || jfont == NULL) {
     memfree(font);
     memfree(jfont);
     return 1;

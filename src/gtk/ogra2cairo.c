@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.21 2008/08/05 08:46:04 hito Exp $
+ * $Id: ogra2cairo.c,v 1.22 2008/08/21 06:05:49 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -225,7 +225,7 @@ free_conf(void)
 static int
 gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {  
-  struct gra2cairo_local *local;
+  struct gra2cairo_local *local = NULL;
   int antialias = ANTIALIAS_TYPE_DEFAULT;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;

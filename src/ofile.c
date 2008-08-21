@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.17 2008/08/21 03:38:53 hito Exp $
+ * $Id: ofile.c,v 1.18 2008/08/21 06:05:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1556,10 +1556,10 @@ set_data_progress(struct f2ddata *fp)
 }
 
 static int
-getdata_sub1(struct f2ddata *fp, char *buf, int fnumx, int fnumy, int *needx, int *needy, double *datax, double *datay, char *statx, char *staty, double *gdata, char *gstat, int filenum, int*openfile)
+getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, double *datax, double *datay, char *statx, char *staty, double *gdata, char *gstat, int filenum, int*openfile)
 {
   int *idata,inum,argc;
-  char *argv[2];
+  char *argv[2], *buf;
   int i,j,k,step,rcode;
   double *ddata;
   int colnum,first2,first3;
@@ -1927,8 +1927,10 @@ int getdata(struct f2ddata *fp)
   double *gdata;
   char *gstat;
 
-  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
+  gdata = (double *) memalloc(sizeof(double) * (FILE_OBJ_MAXCOL + 1));
+  gstat = (char *) memalloc(sizeof(char) * (FILE_OBJ_MAXCOL + 1));
+
+  if (gdata == NULL || gstat == NULL) {
    memfree(gdata);
    memfree(gstat);
    return -1;
@@ -1966,7 +1968,7 @@ int getdata(struct f2ddata *fp)
   datay=arraydata(&filedatay);
   staty=arraydata(&filestaty);
 
-  rcode = getdata_sub1(fp, buf, fnumx, fnumy, needx, needy, datax, datay, statx, staty, gdata, gstat, filenum, openfile);
+  rcode = getdata_sub1(fp, fnumx, fnumy, needx, needy, datax, datay, statx, staty, gdata, gstat, filenum, openfile);
   if (rcode) {
     memfree(gdata);
     memfree(gstat);
@@ -2971,8 +2973,8 @@ int lineout(struct objlist *obj,struct f2ddata *fp,int GC,
       } else  GRAdashlinetod(GC,fp->dx,fp->dy);
     } else {
       if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+        if (! first && close) GRAdashlinetod(GC,x0,y0);
         first=TRUE;
-        if (close) GRAdashlinetod(GC,x0,y0);
       }
       errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
     }

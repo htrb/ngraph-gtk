@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: omath.c,v 1.2 2008/08/21 06:05:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -230,6 +230,9 @@ int mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       multi=FALSE;
       usrfn=FALSE;
       memory=FALSE;
+    } else {
+      /* not reachable */
+      return 0;
     }
     arrayinit(&needdata,sizeof(int));
     rcode=mathcode(math,&code,&needdata,NULL,&maxdim,NULL,
@@ -301,8 +304,11 @@ int mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     error(obj,ERRSMLARG);
     return 1;
   }
-  if (((data=memalloc(sizeof(double)*(num+1)))==NULL)
-  || ((datastat=memalloc(sizeof(char)*(num+1)))==NULL)) {
+
+  data = memalloc(sizeof(double) * (num + 1));
+  datastat = memalloc(sizeof(char) * (num + 1));
+
+  if (data == NULL || datastat == NULL) {
     memfree(data);
     memfree(datastat);
     return 1;

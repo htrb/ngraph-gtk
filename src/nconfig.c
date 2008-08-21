@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.2 2008/07/04 10:52:48 hito Exp $
+ * $Id: nconfig.c,v 1.3 2008/08/21 06:05:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -632,8 +632,10 @@ int copyconfig()
     }
   }
   if (!findfilename(libdir,CONFSEP,CONF)) return FALSE;
-  if (((homename=getfilename(homedir,CONFSEP,CONF))==NULL) ||
-      ((libname=getfilename(libdir,CONFSEP,CONF))==NULL)) {
+
+  homename = getfilename(homedir,CONFSEP,CONF);
+  libname = getfilename(libdir,CONFSEP,CONF);
+  if (homename == NULL || libname == NULL) {
     memfree(homename);
     memfree(libname);
     return FALSE;

@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.7 2008/08/19 06:45:22 hito Exp $
+ * $Id: gra.c,v 1.8 2008/08/21 06:05:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3425,7 +3425,7 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
     break;
   case 'R':
     for (i=0;i<(cpar[1]-1);i++)
-      setbbminmax(bbox,cpar[i*2+2],cpar[i*2+3],cpar[i*2+4],cpar[i*2+5],lw);
+      setbbminmax(bbox,cpar[i*2+2],cpar[i*2+3],cpar[i*2+4],cpar[i*2+5], TRUE);
     break;
   case 'D':
     if (cpar[2]==0) lw=TRUE;

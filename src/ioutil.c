@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.6 2008/08/21 03:38:53 hito Exp $
+ * $Id: ioutil.c,v 1.8 2008/08/21 06:05:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -246,7 +246,7 @@ char *getrelativepath(char *name)
 
 #if 0
 } /* dummy */
-#enfif
+#endif
 
 char *getbasename(char *name)
 {
@@ -566,9 +566,10 @@ int nglob2(char *path,int po,int *num,char ***list)
     }
   } else {
     for (;(path[i]!='\0') && (path[i]!=DIRSEP);i++) ;
-    if (((s1=memalloc(p1+1))==NULL)
-     || ((s2=memalloc(i-p1+1))==NULL)
-     || ((s3=memalloc(strlen(path)-i+1))==NULL)) {
+    s1 = memalloc(p1 + 1);
+    s2 = memalloc(i - p1 + 1);
+    s3 = memalloc(strlen(path) - i + 1);
+    if (s1 == NULL || s2 == NULL || s3 == NULL) {
       memfree(s1);
       memfree(s2);
       memfree(s3);
@@ -684,7 +685,7 @@ int fgetline(FILE *fp,char **buf)
       if (ch != '\n') {
 	ungetc(ch, fp);
       }
-      /* fall-through */
+      /* FALLTHRU */
     case '\0':
     case '\n':
     case EOF:

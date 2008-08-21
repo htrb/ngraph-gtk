@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.6 2008/07/14 07:42:47 hito Exp $
+ * $Id: oaxis.c,v 1.7 2008/08/21 06:05:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -636,7 +636,7 @@ int axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         } else if (group2[1]=='R') {
           findR=TRUE;
           instR=inst2;
-        }
+	}
       }
     }
   }
@@ -914,7 +914,7 @@ int axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         } else if (group2[1]=='R') {
           findR=TRUE;
           instR=inst2;
-        }
+	}
       }
     }
   }
@@ -1302,7 +1302,7 @@ int axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         } else if (group2[1]=='R') {
           findR=TRUE;
           instR=inst2;
-        }
+	}
       }
     }
   }
@@ -2753,7 +2753,7 @@ int axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         } else if (group2[1]=='R') {
           findR=TRUE;
           idr=i;
-        }
+	}
       }
     }
   }
