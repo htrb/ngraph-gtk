@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.16 2008/08/20 10:52:44 hito Exp $
+ * $Id: ofile.c,v 1.17 2008/08/21 03:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -679,6 +679,7 @@ void reopendata(struct f2ddata *fp)
   fp->bufnum=0;
   fp->bufpo=0;
   fp->line=0;
+  fp->prev_datanum = fp->datanum;
   fp->datanum=0;
   fp->dline=0;
   fp->count=0;
@@ -2232,6 +2233,10 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
   datanum=0;
   while (!fp->eof && (datanum==0)) {
+    if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
+      break;
+    }
+
     if ((fp->final>=0) && (fp->line>=fp->final)) {
       fp->eof=TRUE;
       break;
@@ -2314,6 +2319,7 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
           step++;
         memfree(buf);
       }
+      fp->datanum++;
     } else memfree(buf);
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }

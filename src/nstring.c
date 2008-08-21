@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.c,v 1.2 2008/08/20 06:35:45 hito Exp $
+ * $Id: nstring.c,v 1.3 2008/08/21 03:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -89,7 +89,7 @@ nstraddchar(char *po, int len, char ch)
 {
   //  if (po == NULL) return NULL;
 
-  if ((len & (NSTRLEN - 1)) == NSTRLEN - 1) {
+  if (! ((len + 1) & (NSTRLEN - 1))) {
     char *po2;
 
     po2 = memrealloc(po, NSTRLEN * (len / NSTRLEN + 2));

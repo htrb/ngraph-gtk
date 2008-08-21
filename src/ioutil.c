@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.5 2008/08/20 06:35:45 hito Exp $
+ * $Id: ioutil.c,v 1.7 2008/08/21 03:39:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -204,7 +204,7 @@ char *getrelativepath(char *name)
 #else
     if (isalpha(name[0]) && (name[1]==':')) top=2;
     if ((name[top]==DIRSEP)
-    && ((top!=2) || ((toupper(name[0])-'A')==getdisk()))) {
+        && ((top!=2) || ((toupper(name[0])-'A')==getdisk()))) {
 #endif
       if ((cwd=ngetcwd())==NULL) return NULL;
 #ifdef WINDOWS
@@ -216,8 +216,8 @@ char *getrelativepath(char *name)
       memfree(cwd);
       i=strlen(cwd2);
       if ((i==0) || (cwd2[i-1]!=DIRSEP)) {
-	cwd2[i]=DIRSEP;
-	cwd2[i+1]='\0';
+        cwd2[i]=DIRSEP;
+        cwd2[i+1]='\0';
       }
       for (i=0;(cwd2[i]!='\0') && (name[i+top]!='\0');i++)
         if (cwd2[i]!=name[i+top]) break;
@@ -243,6 +243,10 @@ char *getrelativepath(char *name)
   }
   return s;
 }
+
+#if 0
+} /* dummy */
+#endif
 
 char *getbasename(char *name)
 {
@@ -669,28 +673,32 @@ int fgetline(FILE *fp,char **buf)
     }
     if (ch != '\r') {
       s = nstraddchar(s, i, ch);
-
+      i++;
       if (s == NULL)
 	return -1;
     }
 #else
     switch (ch) {
+    case '\r':
+      ch = fgetc(fp);
+      if (ch != '\n') {
+	ungetc(ch, fp);
+      }
+      /* FALLTHRU */
     case '\0':
     case '\n':
     case EOF:
-      *buf = s;
       s[i] = '\0'; /* nstraddchar() is not terminate string */
+      *buf = s;
       return 0;
-    case '\r':
-      break;
     default:
       s = nstraddchar(s, i, ch);
+      i++;
       if (s == NULL)
 	return -1;
     }
 #endif
     ch = fgetc(fp);
-    i++;
   }
 }
 

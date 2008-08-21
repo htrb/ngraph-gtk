@@ -1,6 +1,16 @@
+2008-08-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (reopendata): set fp->prev_datanum.
+	(getdataraw): call set_data_progress().
+	(getdataraw): increment fp->datanum in loop.
+
+	* src/ioutil.c (fgetline): bug fix: increment 'i' only
+	after nstraddchar().
+	(fgetline) now '\r' is also treated as line break.
+
 2008-08-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofile.c (getdataarray): check val is NaN or INF.
+	* src/ofile.c (getdataarray): bug fix: check if val is NaN or INF.
 
 	* src/ioutil.c (fgetline): use switch instead of if.
 
