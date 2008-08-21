@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.8 2008/08/21 06:05:47 hito Exp $
+ * $Id: gra.c,v 1.9 2008/08/21 08:43:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3390,8 +3390,7 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
     bbox->posy=cpar[2];
     break;
   case 'C':
-    if (cpar[7]==0) lw=TRUE;
-    else lw=FALSE;
+    lw = (cpar[7] == 0);
     if (cpar[7]==1) setbbminmax(bbox,cpar[1],cpar[2],cpar[1],cpar[2],lw);
     setbbminmax(bbox,cpar[1]+(int )(cpar[3]*cos(cpar[5]/18000.0*MPI)),
                 cpar[2]-(int )(cpar[4]*sin(cpar[5]/18000.0*MPI)),
@@ -3416,9 +3415,7 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
       setbbminmax(bbox,cpar[1]+cpar[3],cpar[2],cpar[1]+cpar[3],cpar[2],lw);
     break;
   case 'B':
-    if (cpar[5]==1) lw=FALSE;
-    else lw=TRUE;
-    setbbminmax(bbox,cpar[1],cpar[2],cpar[3],cpar[4],lw);
+    setbbminmax(bbox,cpar[1],cpar[2],cpar[3],cpar[4], cpar[5] == 0);
     break;
   case 'P':
     setbbminmax(bbox,cpar[1],cpar[2],cpar[1],cpar[2],FALSE);
@@ -3428,8 +3425,7 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
       setbbminmax(bbox,cpar[i*2+2],cpar[i*2+3],cpar[i*2+4],cpar[i*2+5], TRUE);
     break;
   case 'D':
-    if (cpar[2]==0) lw=TRUE;
-    else lw=FALSE;
+    lw = (cpar[2] == 0);
     for (i=0;i<(cpar[1]-1);i++)
       setbbminmax(bbox,cpar[i*2+3],cpar[i*2+4],cpar[i*2+5],cpar[i*2+6],lw);
     break;
