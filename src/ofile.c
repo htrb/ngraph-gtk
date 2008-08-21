@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.19 2008/08/21 07:47:27 hito Exp $
+ * $Id: ofile.c,v 1.20 2008/08/21 09:41:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -467,7 +467,6 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   fp->buf = memalloc(sizeof(*fp->buf) * DXBUFSIZE);
   if (fp->buf == NULL) {
     fclose(fp->fd);
-    memfree(fp->buf);
     memfree(fp);
     return NULL;
   }
