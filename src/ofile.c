@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.18 2008/08/21 06:05:47 hito Exp $
+ * $Id: ofile.c,v 1.19 2008/08/21 07:47:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -133,6 +133,12 @@ char *f2dtypechar[]={
 
 #define DXBUFSIZE 101
 
+struct f2ddata_buf {
+  double dx, dy, d2, d3;
+  int colr, colg, colb, marksize, marktype, line;
+  char dxstat, dystat, d2stat, d3stat;
+};
+
 struct f2ddata {
   struct objlist *obj;
   int id;
@@ -201,10 +207,7 @@ struct f2ddata {
   int ignore,negative;
   int colr,colg,colb;
   int msize,mtype;
-  double *dxbuf,*dybuf,*d2buf,*d3buf;
-  char *dxstatbuf,*dystatbuf,*d2statbuf,*d3statbuf;
-  int *colbufr,*colbufg,*colbufb,*marksizebuf,*marktypebuf;
-  int *linebuf;
+  struct f2ddata_buf *buf;
   int bufnum,bufpo;
   int smooth,smoothx,smoothy;
   int masknum;
@@ -460,42 +463,11 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   }
   fp->obj=obj;
   fp->id=fid;
-  fp->dxbuf=fp->dybuf=fp->d2buf=fp->d3buf=NULL;
-  fp->colbufr=fp->colbufg=fp->colbufb=NULL;
-  fp->marksizebuf=NULL;
-  fp->marktypebuf=NULL;
-  fp->dxstatbuf=fp->dystatbuf=fp->d2statbuf=fp->d3statbuf=NULL;
-  fp->linebuf=NULL;
   fp->prev_datanum = prev_datanum;
-  if (((fp->dxbuf=memalloc(sizeof(double)*DXBUFSIZE))==NULL)
-   || ((fp->dybuf=memalloc(sizeof(double)*DXBUFSIZE))==NULL)
-   || ((fp->d2buf=memalloc(sizeof(double)*DXBUFSIZE))==NULL)
-   || ((fp->d3buf=memalloc(sizeof(double)*DXBUFSIZE))==NULL)
-   || ((fp->colbufr=memalloc(sizeof(int)*DXBUFSIZE))==NULL)
-   || ((fp->colbufg=memalloc(sizeof(int)*DXBUFSIZE))==NULL)
-   || ((fp->colbufb=memalloc(sizeof(int)*DXBUFSIZE))==NULL)
-   || ((fp->marksizebuf=memalloc(sizeof(int)*DXBUFSIZE))==NULL)
-   || ((fp->marktypebuf=memalloc(sizeof(int)*DXBUFSIZE))==NULL)
-   || ((fp->dxstatbuf=memalloc(sizeof(char)*DXBUFSIZE))==NULL)
-   || ((fp->dystatbuf=memalloc(sizeof(char)*DXBUFSIZE))==NULL)
-   || ((fp->d2statbuf=memalloc(sizeof(char)*DXBUFSIZE))==NULL)
-   || ((fp->d3statbuf=memalloc(sizeof(char)*DXBUFSIZE))==NULL)
-   || ((fp->linebuf=memalloc(sizeof(int)*DXBUFSIZE))==NULL)) {
+  fp->buf = memalloc(sizeof(*fp->buf) * DXBUFSIZE);
+  if (fp->buf == NULL) {
     fclose(fp->fd);
-    memfree(fp->dxbuf);
-    memfree(fp->dybuf);
-    memfree(fp->d2buf);
-    memfree(fp->d3buf);
-    memfree(fp->colbufr);
-    memfree(fp->colbufg);
-    memfree(fp->colbufb);
-    memfree(fp->marksizebuf);
-    memfree(fp->marktypebuf);
-    memfree(fp->dxstatbuf);
-    memfree(fp->dystatbuf);
-    memfree(fp->d2statbuf);
-    memfree(fp->d3statbuf);
-    memfree(fp->linebuf);
+    memfree(fp->buf);
     memfree(fp);
     return NULL;
   }
@@ -740,20 +712,7 @@ void closedata(struct f2ddata *fp)
   }
   arraydel(&(fp->fileopen));
   fclose(fp->fd);
-  memfree(fp->dxbuf);
-  memfree(fp->dybuf);
-  memfree(fp->d2buf);
-  memfree(fp->d3buf);
-  memfree(fp->colbufr);
-  memfree(fp->colbufg);
-  memfree(fp->colbufb);
-  memfree(fp->marksizebuf);
-  memfree(fp->marktypebuf);
-  memfree(fp->dxstatbuf);
-  memfree(fp->dystatbuf);
-  memfree(fp->d2statbuf);
-  memfree(fp->d3statbuf);
-  memfree(fp->linebuf);
+  memfree(fp->buf);
   if ((inst=chkobjinst(fp->obj,fp->id))!=NULL)
     _putobj(fp->obj,"data_num",inst,&(fp->datanum));
   memfree(fp);
@@ -1556,7 +1515,10 @@ set_data_progress(struct f2ddata *fp)
 }
 
 static int
-getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, double *datax, double *datay, char *statx, char *staty, double *gdata, char *gstat, int filenum, int*openfile)
+getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy,
+	     int *needx, int *needy, double *datax, double *datay,
+	     char *statx, char *staty, double *gdata, char *gstat,
+	     int filenum, int *openfile)
 {
   int *idata,inum,argc;
   char *argv[2], *buf;
@@ -1868,20 +1830,20 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
           d3=dy;
         }
       }
-      fp->dxbuf[fp->bufnum]=dx;
-      fp->dybuf[fp->bufnum]=dy;
-      fp->d2buf[fp->bufnum]=d2;
-      fp->d3buf[fp->bufnum]=d3;
-      fp->colbufr[fp->bufnum]=fp->color[0];
-      fp->colbufg[fp->bufnum]=fp->color[1];
-      fp->colbufb[fp->bufnum]=fp->color[2];
-      fp->marksizebuf[fp->bufnum]=fp->marksize;
-      fp->marktypebuf[fp->bufnum]=fp->marktype;
-      fp->dxstatbuf[fp->bufnum]=dxstat;
-      fp->dystatbuf[fp->bufnum]=dystat;
-      fp->d2statbuf[fp->bufnum]=d2stat;
-      fp->d3statbuf[fp->bufnum]=d3stat;
-      fp->linebuf[fp->bufnum]=fp->line;
+      fp->buf[fp->bufnum].dx = dx;
+      fp->buf[fp->bufnum].dy = dy;
+      fp->buf[fp->bufnum].d2 = d2;
+      fp->buf[fp->bufnum].d3 = d3;
+      fp->buf[fp->bufnum].colr = fp->color[0];
+      fp->buf[fp->bufnum].colg = fp->color[1];
+      fp->buf[fp->bufnum].colb = fp->color[2];
+      fp->buf[fp->bufnum].marksize = fp->marksize;
+      fp->buf[fp->bufnum].marktype = fp->marktype;
+      fp->buf[fp->bufnum].dxstat = dxstat;
+      fp->buf[fp->bufnum].dystat = dystat;
+      fp->buf[fp->bufnum].d2stat = d2stat;
+      fp->buf[fp->bufnum].d3stat = d3stat;
+      fp->buf[fp->bufnum].line = fp->line;
       fp->bufnum++;
       step=1;
       while (step<fp->rstep) {
@@ -1912,7 +1874,6 @@ int getdata(struct f2ddata *fp)
           1: EOF
 */
 {
-  char *buf;
   int i,rcode;
   double dx,dy;
   char st;
@@ -2012,41 +1973,41 @@ int getdata(struct f2ddata *fp)
   if (fp->bufpo+fp->smooth>=fp->bufnum) num=fp->bufnum-1;
   else num=fp->bufpo+fp->smooth;
   for (i=0;i<=num;i++) {
-    if ((fp->dxstatbuf[i]==MNOERR)
+    if ((fp->buf[i].dxstat==MNOERR)
      && (i>=fp->bufpo-smx) && (i<=fp->bufpo+smx)) {
-      sumx+=fp->dxbuf[i];
+      sumx+=fp->buf[i].dx;
       numx++;
     }
-    if ((fp->dystatbuf[i]==MNOERR)
+    if ((fp->buf[i].dystat==MNOERR)
      && (i>=fp->bufpo-smy) && (i<=fp->bufpo+smy)) {
-      sumy+=fp->dybuf[i];
+      sumy+=fp->buf[i].dy;
       numy++;
     }
-    if ((fp->d2statbuf[i]==MNOERR)
+    if ((fp->buf[i].d2stat==MNOERR)
      && (i>=fp->bufpo-sm2) && (i<=fp->bufpo+sm2)) {
-      sum2+=fp->d2buf[i];
+      sum2+=fp->buf[i].d2;
       num2++;
     }
-    if ((fp->d3statbuf[i]==MNOERR)
+    if ((fp->buf[i].d3stat==MNOERR)
      && (i>=fp->bufpo-sm3) && (i<=fp->bufpo+sm3)) {
-      sum3+=fp->d3buf[i];
+      sum3+=fp->buf[i].d3;
       num3++;
     }
   }
   if (numx!=0) fp->dx=sumx/numx;
-  fp->dxstat=fp->dxstatbuf[fp->bufpo];
+  fp->dxstat=fp->buf[fp->bufpo].dxstat;
   if (numy!=0) fp->dy=sumy/numy;
-  fp->dystat=fp->dystatbuf[fp->bufpo];
+  fp->dystat=fp->buf[fp->bufpo].dystat;
   if (num2!=0) fp->d2=sum2/num2;
-  fp->d2stat=fp->d2statbuf[fp->bufpo];
+  fp->d2stat=fp->buf[fp->bufpo].d2stat;
   if (num3!=0) fp->d3=sum3/num3;
-  fp->d3stat=fp->d3statbuf[fp->bufpo];
-  fp->dline=fp->linebuf[fp->bufpo];
-  fp->colr=fp->colbufr[fp->bufpo];
-  fp->colg=fp->colbufg[fp->bufpo];
-  fp->colb=fp->colbufb[fp->bufpo];
-  fp->msize=fp->marksizebuf[fp->bufpo];
-  fp->mtype=fp->marktypebuf[fp->bufpo];
+  fp->d3stat=fp->buf[fp->bufpo].d3stat;
+  fp->dline=fp->buf[fp->bufpo].line;
+  fp->colr=fp->buf[fp->bufpo].colr;
+  fp->colg=fp->buf[fp->bufpo].colg;
+  fp->colb=fp->buf[fp->bufpo].colb;
+  fp->msize=fp->buf[fp->bufpo].marksize;
+  fp->mtype=fp->buf[fp->bufpo].marktype;
   if (fp->type==0) {
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) fp->datanum++;
   } else if (fp->type==1) {
@@ -2064,39 +2025,13 @@ int getdata(struct f2ddata *fp)
   } else {
 #if 0
     for (i=0;i<fp->bufnum-1;i++) {
-      fp->dxbuf[i]=fp->dxbuf[i+1];
-      fp->dybuf[i]=fp->dybuf[i+1];
-      fp->d2buf[i]=fp->d2buf[i+1];
-      fp->d3buf[i]=fp->d3buf[i+1];
-      fp->colbufr[i]=fp->colbufr[i+1];
-      fp->colbufg[i]=fp->colbufg[i+1];
-      fp->colbufb[i]=fp->colbufb[i+1];
-      fp->marksizebuf[i]=fp->marksizebuf[i+1];
-      fp->marktypebuf[i]=fp->marktypebuf[i+1];
-      fp->dxstatbuf[i]=fp->dxstatbuf[i+1];
-      fp->dystatbuf[i]=fp->dystatbuf[i+1];
-      fp->d2statbuf[i]=fp->d2statbuf[i+1];
-      fp->d3statbuf[i]=fp->d3statbuf[i+1];
-      fp->linebuf[i]=fp->linebuf[i+1];
+      fp->buf[i]=fp->buf[i+1];
     }
     fp->bufnum--;
 #else
     if (fp->bufnum > 0) {
       fp->bufnum--;
-      memmove(fp->dxbuf, fp->dxbuf + 1, sizeof(*fp->dxbuf) * fp->bufnum);
-      memmove(fp->dybuf, fp->dybuf + 1, sizeof(*fp->dybuf) * fp->bufnum);
-      memmove(fp->d2buf, fp->d2buf + 1, sizeof(*fp->d2buf) * fp->bufnum);
-      memmove(fp->d3buf, fp->d3buf + 1, sizeof(*fp->d3buf) * fp->bufnum);
-      memmove(fp->colbufr, fp->colbufr + 1, sizeof(*fp->colbufr) * fp->bufnum);
-      memmove(fp->colbufg, fp->colbufg + 1, sizeof(*fp->colbufg) * fp->bufnum);
-      memmove(fp->colbufb, fp->colbufb + 1, sizeof(*fp->colbufb) * fp->bufnum);
-      memmove(fp->marksizebuf, fp->marksizebuf + 1, sizeof(*fp->marksizebuf) * fp->bufnum);
-      memmove(fp->marktypebuf, fp->marktypebuf + 1, sizeof(*fp->marktypebuf) * fp->bufnum);
-      memmove(fp->dxstatbuf, fp->dxstatbuf + 1, sizeof(*fp->dxstatbuf) * fp->bufnum);
-      memmove(fp->dystatbuf, fp->dystatbuf + 1, sizeof(*fp->dystatbuf) * fp->bufnum);
-      memmove(fp->d2statbuf, fp->d2statbuf + 1, sizeof(*fp->d2statbuf) * fp->bufnum);
-      memmove(fp->d3statbuf, fp->d3statbuf + 1, sizeof(*fp->d3statbuf) * fp->bufnum);
-      memmove(fp->linebuf, fp->linebuf + 1, sizeof(*fp->linebuf) * fp->bufnum);
+      memmove(fp->buf, fp->buf + 1, sizeof(*fp->buf) * fp->bufnum);
     }
 #endif
   }

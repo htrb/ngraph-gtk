@@ -1,5 +1,9 @@
 2008-08-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (struct f2ddata_buf): add.
+	(struct f2ddata, opendata, closedata, getdata_sub1, getdata): use
+	'struct f2ddata_buf'.
+
 	* src/gra.c (GRAboundingbox): consider line width in the case 'R'.
 
 	* src/ofile.c (reopendata): set fp->prev_datanum.
