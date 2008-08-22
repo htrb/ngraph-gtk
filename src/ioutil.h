@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.h,v 1.3 2008/06/10 04:21:33 hito Exp $
+ * $Id: ioutil.h,v 1.4 2008/08/22 10:05:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,6 +46,7 @@ void changefilename(char *name);
 #ifdef WINDOWS
 void unchangefilename(char *name);
 #endif
+void char_type_buf_init(void);
 char *getfullpath(char *name);
 char *getrelativepath(char *name);
 char *getbasename(char *name);

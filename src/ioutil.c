@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.8 2008/08/21 06:05:47 hito Exp $
+ * $Id: ioutil.c,v 1.9 2008/08/22 10:05:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,6 +50,20 @@
 #define FALSE 0
 
 static void (* ShowProgressFunc)(int, char *, double) = NULL;
+
+#if EOF == -1
+static char C_type_buf[257];
+
+void
+char_type_buf_init(void)
+{
+  memset(C_type_buf, 0, sizeof(C_type_buf));
+  C_type_buf[0] = 1;
+  C_type_buf['\r' + 1] = 1;
+  C_type_buf['\n' + 1] = 1;
+  C_type_buf['\0' + 1] = 1;
+}
+#endif
 
 #ifndef WINDOWS
 void changefilename(char *name)
@@ -666,13 +680,23 @@ int fgetline(FILE *fp,char **buf)
 
   i = 0;
   while (TRUE) {
-#if 0
-    if ((ch=='\0') || (ch=='\n') || (ch==EOF)) {
-      *buf = s;
-      s[i] = '\0'; /* nstraddchar() is not terminate string */
-      return 0;
-    }
-    if (ch != '\r') {
+#if EOF == -1
+    if (C_type_buf[ch + 1]) {
+      switch (ch) {
+      case '\r':
+	ch = fgetc(fp);
+	if (ch != '\n') {
+	  ungetc(ch, fp);
+	}
+	/* FALLTHRU */
+      case '\0':
+      case '\n':
+      case EOF:
+	s[i] = '\0'; /* nstraddchar() is not terminate string */
+	*buf = s;
+	return 0;
+      }
+    } else {
       s = nstraddchar(s, i, ch);
       i++;
       if (s == NULL)

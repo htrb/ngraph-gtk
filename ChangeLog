@@ -1,5 +1,15 @@
 2008-08-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (struct f2ddata): add ifs_buf.
+	(check_ifs_init, CHECK_IFS, CHECK_REMARK): add.
+	(opendata): call check_ifs_init().
+	(getdataarray, getdata_sub1, getdata2, getdataraw): use
+	CHECK_REMARK and CHECK_IFS instead of strchr().
+
+	* src/ioutil.c: add.
+	(char_type_buf_init): add.
+	(fgetline): use C_type_buf when EOF == -1.
+
 	* src/gtk/x11file.c (FileMoveDialogAdd): check if x and y are NaN or INF.
 
 	* src/gtk/x11dialg.c (SetObjPointsFromText): check if d is NaN or INF.

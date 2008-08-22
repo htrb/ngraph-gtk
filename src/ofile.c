@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.21 2008/08/22 07:29:28 hito Exp $
+ * $Id: ofile.c,v 1.22 2008/08/22 10:05:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -156,7 +156,7 @@ struct f2ddata {
   int rstep;
   int final;
   int csv;
-  char *remark,*ifs;
+  char *remark,*ifs, ifs_buf[256];
   int line,dline;
   double count;
   int eof;
@@ -234,6 +234,29 @@ struct f2dlocal {
 };
 
 static int set_data_progress(struct f2ddata *fp);
+
+static int check_ifs_init(struct f2ddata *fp)
+{
+  unsigned char *ifs, *remark;
+
+  ifs = fp->ifs;
+  remark = fp->remark;
+
+  memset(fp->ifs_buf, 0, sizeof(fp->ifs_buf));
+  if (ifs) {
+    for (; *ifs; ifs++) {
+      fp->ifs_buf[*ifs] |= 1;
+    }
+  }
+  if (remark) {
+    for (; *remark; remark++) {
+      fp->ifs_buf[*remark] |= 2;
+    }
+  }
+}
+
+#define CHECK_IFS(buf, ch) (buf[(unsigned char) ch] & 1)
+#define CHECK_REMARK(buf, ch) (buf[(unsigned char) ch] & 2)
 
 struct f2ddata *opendata(struct objlist *obj,char *inst,
                          struct f2dlocal *f2dlocal,int axis,int raw)
@@ -509,6 +532,8 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   fp->final=final;
   fp->remark=remark;
   fp->ifs=ifs;
+  check_ifs_init(fp);
+
   fp->csv=csv;
   fp->line=0;
   fp->datanum=0;
@@ -1384,18 +1409,18 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
     if (csv) {
       for (;(*po==' ');po++);
       if (*po=='\0') break;
-      if (strchr(ifs,*po)!=NULL) {
+      if (CHECK_IFS(ifs, *po)) {
         po2=po;
         po2++;
         val=0;
         st=MNONUM;
       } else {
 #if 0
-        for (po2=po;(*po2!='\0') && (strchr(ifs,*po2)==NULL) && (*po2!=' ');po2++)
+        for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2) && (*po2!=' ');po2++)
           *po2=toupper(*po2);
         for (i=0;i<po2-po;i++) if (*(po+i)=='D') *(po+i)='e';
 #else
-        for (po2=po;(*po2!='\0') && (strchr(ifs,*po2)==NULL) && (*po2!=' ');po2++) {
+        for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2) && (*po2!=' ');po2++) {
 	  *po2=toupper(*po2);
 	  if (*po == 'D')
 	    *po = 'e';
@@ -1418,17 +1443,17 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
           else st=MNONUM;
         }
         for (;(*po2==' ');po2++);
-        if (strchr(ifs,*po2)!=NULL) po2++;
+        if (CHECK_IFS(ifs, *po2)) po2++;
      }
     } else {
-      for (;(*po!='\0') && (strchr(ifs,*po)!=NULL);po++);
+      for (;(*po!='\0') && CHECK_IFS(ifs, *po);po++);
       if (*po=='\0') break;
 #if 0
-      for (po2=po;(*po2!='\0') && (strchr(ifs,*po2)==NULL);po2++)
+      for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2));po2++)
         *po2=toupper(*po2);
       for (i=0;i<po2-po;i++) if (*(po+i)=='D') *(po+i)='e';
 #else
-      for (po2=po;(*po2!='\0') && (strchr(ifs,*po2)==NULL);po2++) {
+      for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2);po2++) {
         *po2=toupper(*po2);
 	if (*po == 'D')
 	  *po = 'e';
@@ -1558,10 +1583,10 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy,
     }
 
     fp->line++;
-    for (i=0;(buf[i]!='\0') && (strchr(fp->ifs,buf[i])!=NULL);i++);
+    for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]);i++);
     if ((buf[i]!='\0')
-    && ((fp->remark==NULL) || (strchr(fp->remark,buf[i])==NULL))) {
-      rcode=getdataarray(buf,fp->maxdim,&(fp->count),gdata,gstat,fp->ifs,fp->csv);
+    && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
+      rcode=getdataarray(buf,fp->maxdim,&(fp->count),gdata,gstat,fp->ifs_buf,fp->csv);
       memfree(buf);
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
@@ -1854,9 +1879,9 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy,
           return -1;
         }
         fp->line++;
-        for (i=0;(buf[i]!='\0') && (strchr(fp->ifs,buf[i])!=NULL);i++);
+        for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
         if ((buf[i]!='\0')
-        && ((fp->remark==NULL) || (strchr(fp->remark,buf[i])==NULL)))
+        && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i])))
           step++;
         memfree(buf);
       }
@@ -2081,10 +2106,10 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
       return -1;
     }
     fp->line++;
-    for (i=0;(buf[i]!='\0') && (strchr(fp->ifs,buf[i])!=NULL);i++);
+    for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
     if ((buf[i]!='\0')
-    && ((fp->remark==NULL) || (strchr(fp->remark,buf[i])==NULL))) {
-      rcode=getdataarray(buf,maxdim,&(fp->count),gdata,gstat,fp->ifs,fp->csv);
+    && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
+      rcode=getdataarray(buf,maxdim,&(fp->count),gdata,gstat,fp->ifs_buf,fp->csv);
       memfree(buf);
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
@@ -2132,9 +2157,9 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
           return -1;
         }
         fp->line++;
-        for (i=0;(buf[i]!='\0') && (strchr(fp->ifs,buf[i])!=NULL);i++);
+        for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]);i++);
         if ((buf[i]!='\0')
-        && ((fp->remark==NULL) || (strchr(fp->remark,buf[i])==NULL)))
+        && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i])))
           step++;
         memfree(buf);
       }
@@ -2183,10 +2208,10 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
     }
     if (rcode==-1) return -1;
     fp->line++;
-    for (i=0;(buf[i]!='\0') && (strchr(fp->ifs,buf[i])!=NULL);i++);
+    for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
     if ((buf[i]!='\0')
-    && ((fp->remark==NULL) || (strchr(fp->remark,buf[i])==NULL))) {
-      rcode=getdataarray(buf,maxdim,&(fp->count),data,stat,fp->ifs,fp->csv);
+    && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
+      rcode=getdataarray(buf,maxdim,&(fp->count),data,stat,fp->ifs_buf,fp->csv);
       memfree(buf);
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
@@ -2249,9 +2274,9 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
         }
         if (rcode==-1) return -1;
         fp->line++;
-        for (i=0;(buf[i]!='\0') && (strchr(fp->ifs,buf[i])!=NULL);i++);
+        for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]);i++);
         if ((buf[i]!='\0')
-        && ((fp->remark==NULL) || (strchr(fp->remark,buf[i])==NULL)))
+        && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i])))
           step++;
         memfree(buf);
       }

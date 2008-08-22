@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.11 2008/08/06 09:10:00 hito Exp $
+ * $Id: main.c,v 1.12 2008/08/22 10:05:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -415,6 +415,10 @@ main(int argc, char **argv, char **environ)
 #ifdef HAVE_LIBREADLINE
   int history_size = HIST_SIZE;
   char *history_file;
+#endif
+
+#if EOF == -1
+  char_type_buf_init();
 #endif
 
   gtk_set_locale();
