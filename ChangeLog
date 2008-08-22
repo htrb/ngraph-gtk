@@ -1,3 +1,13 @@
+2008-08-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileMoveDialogAdd): check if x and y are NaN or INF.
+
+	* src/gtk/x11dialg.c (SetObjPointsFromText): check if d is NaN or INF.
+
+	* src/gtk/gtk_subwin.c (numeric_cb): check if val is NaN or INF.
+
+	* src/ofile.c (f2dsettings): check if f1, a2 and f3 are NaN or INF.
+
 2008-08-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (struct f2ddata_buf): add.

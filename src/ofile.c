@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.20 2008/08/21 09:41:29 hito Exp $
+ * $Id: ofile.c,v 1.21 2008/08/22 07:29:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4577,21 +4577,28 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         break;
       case 'z':
         if ((po[2]=='x') || (po[2]=='y')) {
-          if (po[2]=='x') x=TRUE;
-          else x=FALSE;
+          x = (po[2] == 'x');
           po+=3;
           f1=strtod(po,&endptr);
-          if ((endptr==po) || (endptr[0]!=',')) err=TRUE;
-          else {
+          if (f1 != f1 || f1 == HUGE_VAL || f1 == - HUGE_VAL ||
+	      endptr == po || endptr[0] != ',') {
+	    err=TRUE;
+	  } else {
             po=endptr+1;
             f2=strtod(po,&endptr);
-            if ((endptr==po) || (endptr[0]!=',')) err=TRUE;
-            else {
+            if (f2 != f2 || f2 == HUGE_VAL || f2 == - HUGE_VAL ||
+		endptr == po || endptr[0] != ',') {
+	      err=TRUE;
+	    } else {
               po=endptr+1;
               f3=strtod(po,&endptr);
-              if (endptr==po) err=TRUE;
-              else po=endptr;
-            }
+              if (f3 != f3 || f3 == HUGE_VAL || f3 == - HUGE_VAL ||
+		  endptr == po) {
+		err=TRUE;
+	      } else {
+		po=endptr;
+	      }
+	    }
           }
           if (!err) {
             if (x) _getobj(obj,"axis_x",inst,&s);

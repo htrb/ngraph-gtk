@@ -1,10 +1,11 @@
 /* 
- * $Id: gtk_subwin.c,v 1.23 2008/08/15 08:33:12 hito Exp $
+ * $Id: gtk_subwin.c,v 1.24 2008/08/22 07:29:29 hito Exp $
  */
 
 #include "gtk_common.h"
 
 #include <stdlib.h>
+#include <math.h>
 
 #include "ngraph.h"
 #include "object.h"
@@ -127,7 +128,7 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
 
   val = strtod(str, &ptr);
-  if (ptr[0] != '\0') {
+  if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
     return;
   }
 

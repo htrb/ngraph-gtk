@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.19 2008/08/11 03:41:53 hito Exp $
+ * $Id: x11dialg.c,v 1.20 2008/08/22 07:29:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -573,7 +573,7 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
       *tmp = '\0';
 
     d = strtod(ptr, &eptr);
-    if (eptr[0] != '\0')
+    if (d != d || d == HUGE_VAL || d == - HUGE_VAL || eptr[0] != '\0')
       goto ErrEnd;
 
     ip = nround(d * 100);

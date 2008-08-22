@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.42 2008/08/18 02:31:54 hito Exp $
+ * $Id: x11file.c,v 1.43 2008/08/22 07:29:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <math.h>
 
 #include "gtk_entry_completion.h"
 #include "gtk_liststore.h"
@@ -1256,13 +1257,15 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
   if (buf[0] == '\0') return;
 
   x = strtod(buf, &endptr);
-  if (endptr[0] != '\0') return;
+  if (x != x || x == HUGE_VAL || x == - HUGE_VAL || endptr[0] != '\0')
+    return;
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->y));
   if (buf[0] == '\0') return;
 
   y = strtod(buf, &endptr);
-  if (endptr[0] != '\0') return;
+  if (y != y || y == HUGE_VAL || y == - HUGE_VAL || endptr[0] != '\0')
+    return;
 
   list_store_append(d->list, &iter);
   list_store_set_int(d->list, &iter, 0, a);
