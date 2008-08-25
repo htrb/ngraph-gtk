@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.10 2008/08/25 02:25:06 hito Exp $
+ * $Id: ioutil.c,v 1.11 2008/08/25 06:56:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -658,7 +658,8 @@ int nglob(char *path,char ***namelist)
   return num;
 }
 
-int fgetline(FILE *fp,char **buf)
+int 
+fgetline(FILE *fp, char **buf)
 {
 /*
   rcode: 0 noerror
@@ -729,7 +730,8 @@ int fgetline(FILE *fp,char **buf)
   }
 }
 
-int fgetnline(FILE *fp,char *buf,int len)
+int 
+fgetnline(FILE *fp, char *buf, int len)
 {
 /*
   rcode: 0 noerror

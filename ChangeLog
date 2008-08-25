@@ -19,7 +19,7 @@
 
 	* src/ioutil.c: add.
 	(char_type_buf_init): add.
-	(fgetline): use C_type_buf when EOF == -1.
+	(fgetline): use is_line_sep() when EOF == -1.
 
 	* src/gtk/x11file.c (FileMoveDialogAdd): check if x and y are NaN or INF.
 
