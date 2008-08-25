@@ -1,7 +1,6 @@
 2008-08-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ioutil.c (fgetnline): now '\r' is also treated as line
-	break.
+	* src/ioutil.c (fgetnline): now '\r' is treated as line break.
 
 	* src/ofile.c (f2dhead): change length of 'buf' from 128 to 256.
 	(f2dhead): use 'sizeof()' instead of immediate.
@@ -43,7 +42,7 @@
 
 	* src/ioutil.c (fgetline): bug fix: increment 'i' only
 	after nstraddchar().
-	(fgetline) now '\r' is also treated as line break.
+	(fgetline) now '\r' is treated as line break.
 
 2008-08-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
