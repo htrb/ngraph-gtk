@@ -1,3 +1,14 @@
+2008-08-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ioutil.c (fgetnline): now '\r' is also treated as line
+	break.
+
+	* src/ofile.c (f2dhead): change length of 'buf' from 128 to 256.
+	(f2dhead): use 'sizeof()' instead of immediate.
+
+	* src/gtk/x11file.c (FileDialogSetup): change value of 'line' from
+	10 to 20.
+
 2008-08-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (struct f2ddata): add ifs_buf.

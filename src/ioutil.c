@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.9 2008/08/22 10:05:55 hito Exp $
+ * $Id: ioutil.c,v 1.10 2008/08/25 02:25:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -63,6 +63,8 @@ char_type_buf_init(void)
   C_type_buf['\n' + 1] = 1;
   C_type_buf['\0' + 1] = 1;
 }
+
+#define is_line_sep(ch) (C_type_buf[ch + 1])
 #endif
 
 #ifndef WINDOWS
@@ -681,7 +683,7 @@ int fgetline(FILE *fp,char **buf)
   i = 0;
   while (TRUE) {
 #if EOF == -1
-    if (C_type_buf[ch + 1]) {
+    if (is_line_sep(ch)) {
       switch (ch) {
       case '\r':
 	ch = fgetc(fp);
@@ -736,18 +738,32 @@ int fgetnline(FILE *fp,char *buf,int len)
   int i;
   int ch;
 
-  buf[0]='\0';
-  ch=fgetc(fp);
-  if (ch==EOF) return 1;
-  i=0;
-  while (TRUE) {
-    if ((ch=='\0') || (ch=='\n') || (ch==EOF)) {
-      buf[i]='\0';
+  buf[0] = '\0';
+  ch = fgetc(fp);
+  if (ch == EOF) return 1;
+
+  for (i = 0; i < len - 1;) {
+    switch (ch) {
+    case '\r':
+      ch = fgetc(fp);
+      if (ch != '\n') {
+	ungetc(ch, fp);
+      }
+      /* FALLTHRU */
+    case '\0':
+    case '\n':
+    case EOF:
+      buf[i] = '\0';
       return 0;
+    default:
+      buf[i] = ch;
+      i++;
     }
-    if ((i<len-1) && (ch!='\r')) buf[i++]=ch;
-    ch=fgetc(fp);
+    ch = fgetc(fp);
   }
+
+  buf[i] = '\0';
+  return 0;
 }
 
 int nfgetc(FILE *fp)
