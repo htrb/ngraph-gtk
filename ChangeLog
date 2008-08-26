@@ -1,6 +1,8 @@
-2008-08-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+2008-08-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ioutil.c (fgetnline): now '\r' is treated as line break.
+	* src/ioutil.c (fgetnline): use fgetline().
+
+2008-08-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (f2dhead): change length of 'buf' from 128 to 256.
 	(f2dhead): use 'sizeof()' instead of immediate.

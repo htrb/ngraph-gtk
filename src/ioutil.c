@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.11 2008/08/25 06:56:50 hito Exp $
+ * $Id: ioutil.c,v 1.12 2008/08/26 01:31:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -735,36 +735,23 @@ fgetnline(FILE *fp, char *buf, int len)
 {
 /*
   rcode: 0 noerror
+        -1 fatal error
          1 EOF
 */
-  int i;
-  int ch;
+  int rcode;
+  char *ptr;
 
   buf[0] = '\0';
-  ch = fgetc(fp);
-  if (ch == EOF) return 1;
 
-  for (i = 0; i < len - 1;) {
-    switch (ch) {
-    case '\r':
-      ch = fgetc(fp);
-      if (ch != '\n') {
-	ungetc(ch, fp);
-      }
-      /* FALLTHRU */
-    case '\0':
-    case '\n':
-    case EOF:
-      buf[i] = '\0';
-      return 0;
-    default:
-      buf[i] = ch;
-      i++;
-    }
-    ch = fgetc(fp);
-  }
+  rcode = fgetline(fp, &ptr);
+  if (rcode)
+    return rcode;
 
-  buf[i] = '\0';
+  strncpy(buf, ptr, len);
+  buf[len - 1] = '\0';
+
+  memfree(ptr);
+
   return 0;
 }
 

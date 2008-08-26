@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.2 2008/08/05 02:45:24 hito Exp $
+ * $Id: oprm.c,v 1.3 2008/08/26 01:31:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -413,7 +413,7 @@ char *mathconv(char *math)
 
 int prmloadline(struct objlist *obj,char *file,FILE *fp,char *buf,int err)
 {
-  if (fgetnline(fp,buf,BUFSIZE)==1) {
+  if (fgetnline(fp,buf,BUFSIZE)) {
     if (err) error2(obj,ERRREAD,file);
     return -1;
   }
