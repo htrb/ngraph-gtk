@@ -1,5 +1,19 @@
 2008-08-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (f2dhead): check return value of nstrnew() is NULL
+	or not.
+
+	* src/gtk/x11gui.c (dialog_key_down_cb): return FALSE when 'w' key
+	is pressed without control key.
+
+	* src/gtk/gtk_subwin.c (ev_sub_win_key_down): return FALSE when
+	'w' key is pressed without control key.
+
+	* src/gtk/ogra2x11.c (ev_key_down): return FALSE when 'w' key is
+	pressed without control key.
+
+	* src/ofile.c (f2dhead): add line number.
+
 	* src/ioutil.c (fgetnline): use fgetline().
 
 2008-08-25  Ito Hiroyuki  <ZXB01226 at nifty.com>

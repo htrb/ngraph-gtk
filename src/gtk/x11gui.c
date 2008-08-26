@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.8 2008/07/14 14:16:48 hito Exp $
+ * $Id: x11gui.c,v 1.9 2008/08/26 13:23:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -75,9 +75,11 @@ dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
   switch (e->keyval) {
   case GDK_w:
-    if (e->state & GDK_CONTROL_MASK) 
+    if (e->state & GDK_CONTROL_MASK) {
       gtk_dialog_response(GTK_DIALOG(w), GTK_RESPONSE_CANCEL);
-    return TRUE;
+      return TRUE;
+    }
+    return FALSE;
   }
   return FALSE;
 }

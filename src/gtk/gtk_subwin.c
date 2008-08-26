@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.24 2008/08/22 07:29:29 hito Exp $
+ * $Id: gtk_subwin.c,v 1.25 2008/08/26 13:23:42 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1177,9 +1177,11 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
   switch (e->keyval) {
   case GDK_w:
-    if (e->state & GDK_CONTROL_MASK) 
+    if (e->state & GDK_CONTROL_MASK) {
       gtk_widget_hide_all(w);
-    return TRUE;
+      return TRUE;
+    }
+    return FALSE;
   }
   return FALSE;
 }

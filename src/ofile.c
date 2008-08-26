@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.23 2008/08/25 02:25:06 hito Exp $
+ * $Id: ofile.c,v 1.24 2008/08/26 13:23:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4375,30 +4375,50 @@ int f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 int f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  char *file;
-  int cline;
-  int line;
+  int cline, line, n;
+  char *file, buf[256], *s;
   FILE *fd;
-  char buf[256];
-  char *s;
 
   memfree(*(char **)rval);
-  *(char **)rval=NULL;
-  _getobj(obj,"file",inst,&file);
-  line=*(int *)argv[2];
-  if (line<=0) return 0;
-  if (file==NULL) return 0;
-  if ((fd=nfopen(file,"rt"))==NULL) return 0;
-  cline=0;
-  s=nstrnew();
-  while (cline<line) {
-    if (fgetnline(fd,buf,sizeof(buf))!=0) break;
-    cline++;
-    if (cline!=1) s=nstrccat(s,'\n');
-    s=nstrcat(s,buf);
+
+  *(char **) rval = NULL;
+
+  _getobj(obj, "file", inst, &file);
+
+  line = *(int *) argv[2];
+
+  if (line <= 0)
+    return 0;
+
+  if (file == NULL)
+    return 0;
+
+  fd = nfopen(file, "rt");
+  if (fd == NULL)
+    return 0;
+
+  s = nstrnew();
+  if (s == NULL) {
+    fclose(fd);
+    return 0;
   }
+
+  for (cline = 0; cline < line; cline++) {
+    n = sprintf(buf, "%2d: ", cline + 1);
+
+    if (fgetnline(fd, buf + n, sizeof(buf) - n))
+      break;
+
+    if (cline)
+      s = nstrccat(s,'\n');
+
+    s = nstrcat(s,buf);
+  }
+
   fclose(fd);
-  *(char **)rval=s;
+
+  *(char **) rval = s;
+
   return 0;
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.10 2008/08/05 02:45:26 hito Exp $
+ * $Id: ogra2x11.c,v 1.11 2008/08/26 13:23:42 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -272,8 +272,9 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     if (e->state & GDK_CONTROL_MASK) {
       gtk_widget_destroy(gtklocal->mainwin);
       gtklocal->mainwin = NULL;
+      return TRUE;
     }
-    return TRUE;
+    return FALSE;
   }
   return FALSE;
 }
