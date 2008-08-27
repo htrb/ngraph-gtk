@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.23 2008/08/11 08:27:04 hito Exp $
+ * $Id: x11lgnd.c,v 1.24 2008/08/27 10:56:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -425,6 +425,9 @@ legend_dialog_close(GtkWidget *w, void *data)
     if (SetObjFieldFromWidget(lw[i].w, d->Obj, d->Id, lw[i].f))
       return;
   }
+
+  if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
+    return;
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
     x1 = spin_entry_get_val(d->x1);
