@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.15 2008/08/14 01:41:37 hito Exp $
+ * $Id: x11opt.c,v 1.16 2008/08/27 01:42:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -310,6 +310,10 @@ DefaultDialogClose(GtkWidget *win, void *data)
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
       snprintf(buf, BUF_SIZE, "viewer_grid=%d", Mxlocal->grid);
+      arrayadd(&conf, &buf);
+    }
+    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+      snprintf(buf, BUF_SIZE, "data_head_lines=%d", Mxlocal->data_head_lines);
       arrayadd(&conf, &buf);
     }
   }
@@ -1148,6 +1152,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   spin_entry_set_val(d->hist_size, Menulocal.hist_size);
   spin_entry_set_val(d->info_size, Menulocal.info_size);
+  spin_entry_set_val(d->data_head_lines, Mxlocal->data_head_lines);
 
   color.red = Menulocal.bg_r * 257;
   color.green = Menulocal.bg_g * 257;
@@ -1264,6 +1269,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(vbox, w, _("_Length of information window:"), FALSE);
     d->info_size = w;
 
+    w = create_spin_entry(0, SPIN_ENTRY_MAX, 1, FALSE, TRUE);
+    item_setup(vbox, w, _("_Length data preview:"), FALSE);
+    d->data_head_lines = w;
+
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
@@ -1348,6 +1357,8 @@ MiscDialogClose(GtkWidget *w, void *data)
   Menulocal.bg_r = color.red / 256;
   Menulocal.bg_g = color.green / 256;
   Menulocal.bg_b = color.blue / 256;
+
+  Mxlocal->data_head_lines = spin_entry_get_val(d->data_head_lines);
 
   d->ret = ret;
 }

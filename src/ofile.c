@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.24 2008/08/26 13:23:40 hito Exp $
+ * $Id: ofile.c,v 1.25 2008/08/27 01:42:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4375,7 +4375,7 @@ int f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 int f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int cline, line, n;
+  int cline, line, n, p;
   char *file, buf[256], *s;
   FILE *fd;
 
@@ -4403,8 +4403,10 @@ int f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 0;
   }
 
+  p = ceil(log10(line + 1));
+
   for (cline = 0; cline < line; cline++) {
-    n = sprintf(buf, "%2d: ", cline + 1);
+    n = sprintf(buf, "%*d: ", p, cline + 1);
 
     if (fgetnline(fd, buf + n, sizeof(buf) - n))
       break;

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.23 2008/08/05 02:45:26 hito Exp $
+ * $Id: ox11menu.c,v 1.24 2008/08/27 01:42:33 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -636,6 +636,12 @@ mgtkloadconfig(void)
       if (endptr[0] == '\0')
 	Mxlocal->grid = val;
       memfree(f1);
+    } else if (strcmp(tok, "data_head_lines") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0')
+	Mxlocal->data_head_lines = val;
+      memfree(f1);
     } else if (strcmp(tok, "minus_hyphen") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
@@ -1032,6 +1038,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Mxlocal->cdepth = GTKCOLORDEPTH;
   Mxlocal->backingstore = FALSE;
   Mxlocal->minus_hyphen = TRUE;
+  Mxlocal->data_head_lines = 20;
   Mxlocal->local = local;
 
   if (_putobj(obj, "_gtklocal", inst, Mxlocal))
@@ -1077,6 +1084,9 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     Mxlocal->cdepth = 2;
 
   if (_putobj(obj, "dpi", inst, &(Mxlocal->windpi)))
+    goto errexit;
+
+  if (_putobj(obj, "data_head_lines", inst, &(Mxlocal->data_head_lines)))
     goto errexit;
 
   if (_putobj(obj, "auto_redraw", inst, &(Mxlocal->autoredraw)))
@@ -1322,6 +1332,23 @@ mxredraw_num(struct objlist *obj, char *inst, char *rval, int argc,
   return 0;
 }
 
+static int
+mx_data_head_lines(struct objlist *obj, char *inst, char *rval, int argc,
+	     char **argv)
+{
+  int n;
+
+  n = *(int *) argv[2];
+
+  n = (n < 0) ? 0: n;
+
+  Mxlocal->data_head_lines = n;
+
+  *(int *) argv[2] = n;
+
+  return 0;
+}
+
 void
 mx_redraw(struct objlist *obj, char *inst)
 {
@@ -1551,6 +1578,7 @@ static struct objtable gtkmenu[] = {
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
+  {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
