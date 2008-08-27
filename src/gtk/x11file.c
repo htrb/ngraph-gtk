@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.45 2008/08/27 01:42:34 hito Exp $
+ * $Id: x11file.c,v 1.46 2008/08/27 05:58:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2546,11 +2546,12 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   hbox = gtk_hbox_new(FALSE, 4);
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), vbox2);
-  gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
   d->comment_box = hbox;
 
+  vbox2 = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
-
 
   hbox = gtk_hbox_new(FALSE, 4);
 
@@ -2558,6 +2559,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   item_setup(hbox, w, _("_Type:"), FALSE);
   d->type = w;
   g_signal_connect(w, "changed", G_CALLBACK(FileDialogType), d);
+  gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
 
 
   vbox2 = gtk_vbox_new(FALSE, 4);
@@ -2578,7 +2580,6 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 
   vbox2 = gtk_vbox_new(FALSE, 4);
 
-  gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
   gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
   hbox = gtk_hbox_new(FALSE, 4);

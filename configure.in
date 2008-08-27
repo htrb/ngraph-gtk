@@ -53,6 +53,7 @@ AC_FUNC_STAT
 AC_FUNC_STRTOD
 AC_FUNC_UTIME_NULL
 AC_FUNC_VPRINTF
+AC_FUNC_MMAP
 AC_CHECK_FUNCS([alarm dup2 getcwd mkdir pow sqrt strchr strdup strerror strncasecmp strstr strtol utime])
 
 ALL_LINGUAS="ja"
