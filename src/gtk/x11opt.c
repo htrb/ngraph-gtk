@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.16 2008/08/27 01:42:34 hito Exp $
+ * $Id: x11opt.c,v 1.17 2008/08/27 01:49:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -312,10 +312,6 @@ DefaultDialogClose(GtkWidget *win, void *data)
       snprintf(buf, BUF_SIZE, "viewer_grid=%d", Mxlocal->grid);
       arrayadd(&conf, &buf);
     }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "data_head_lines=%d", Mxlocal->data_head_lines);
-      arrayadd(&conf, &buf);
-    }
   }
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_driver))) {
     pcur = Menulocal.extprinterroot;
@@ -409,6 +405,10 @@ DefaultDialogClose(GtkWidget *win, void *data)
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
       snprintf(buf, BUF_SIZE, "infowin_size=%d", Menulocal.info_size);
+      arrayadd(&conf, &buf);
+    }
+    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+      snprintf(buf, BUF_SIZE, "data_head_lines=%d", Mxlocal->data_head_lines);
       arrayadd(&conf, &buf);
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
