@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.17 2008/08/27 01:49:43 hito Exp $
+ * $Id: x11opt.c,v 1.18 2008/08/27 02:06:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1626,10 +1626,8 @@ CmOptionViewer(void)
     return;
   ViewerDialog(&DlgViewer, Menulocal.obj, 0);
   if (DialogExecute(TopLevel, &DlgViewer) == IDOK) {
-    /*
     if (DlgViewer.Clear)
       ChangeDPI(TRUE);
-    */
   }
 }
 
