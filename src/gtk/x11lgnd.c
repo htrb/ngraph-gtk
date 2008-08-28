@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.24 2008/08/27 10:56:10 hito Exp $
+ * $Id: x11lgnd.c,v 1.25 2008/08/28 02:05:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -425,6 +425,9 @@ legend_dialog_close(GtkWidget *w, void *data)
     if (SetObjFieldFromWidget(lw[i].w, d->Obj, d->Id, lw[i].f))
       return;
   }
+
+  if (SetObjPointsFromText(d->points, d->Obj, d->Id, "points"))
+    return;
 
   if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "style"))
     return;

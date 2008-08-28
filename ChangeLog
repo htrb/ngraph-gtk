@@ -1,3 +1,8 @@
+2008-08-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (legend_dialog_close): bug fix: call
+	SetObjPointsFromText().
+
 2008-08-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (legend_dialog_close): bug fix: call
