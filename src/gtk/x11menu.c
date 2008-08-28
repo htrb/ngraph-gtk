@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.33 2008/08/18 01:59:14 hito Exp $
+ * $Id: x11menu.c,v 1.34 2008/08/28 10:25:59 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -666,8 +666,8 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   RecentGraph = item;
 
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
-  create_menu_item(menu, GTK_STOCK_SAVE_AS, TRUE, "<Ngraph>/Graph/SaveAs",  GDK_s, GDK_CONTROL_MASK | GDK_SHIFT_MASK, CmGraphMenu, MenuIdGraphSave);
   create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);
+  create_menu_item(menu, GTK_STOCK_SAVE_AS, TRUE, "<Ngraph>/Graph/SaveAs",  GDK_s, GDK_CONTROL_MASK | GDK_SHIFT_MASK, CmGraphMenu, MenuIdGraphSave);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("_Draw order"), FALSE, "<Ngraph>/Graph/Draw order", 0, 0, CmGraphMenu, MenuIdGraphSwitch);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
