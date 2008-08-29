@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.25 2008/08/26 13:23:42 hito Exp $
+ * $Id: gtk_subwin.c,v 1.26 2008/08/29 08:47:18 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -22,6 +22,7 @@
 #include "gtk_subwin.h"
 
 #define COL_ID 1
+#define DOUBLE_CLICK_PERIOD 250
 
 static int SaveWindowState = FALSE;
 
@@ -726,8 +727,16 @@ static gboolean
 ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 {
   struct SubWin *d;
+  static guint32 time = 0;
+  int tdif;
 
   if (Menulock || GlobalLock) return FALSE;
+
+  tdif = event->time - time;
+  time = event->time;
+
+  if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
+    return TRUE;
 
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
@@ -1029,8 +1038,16 @@ static gboolean
 ev_button_down_tree(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 {
   struct LegendWin *d;
+  static guint32 time = 0;
+  int tdif;
 
   if (Menulock || GlobalLock) return FALSE;
+
+  tdif = event->time - time;
+  time = event->time;
+
+  if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
+    return TRUE;
 
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);

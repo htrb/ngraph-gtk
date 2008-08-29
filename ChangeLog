@@ -1,3 +1,8 @@
+2008-08-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (ev_button_down, ev_button_down_tree):
+	check 'event->time' to treat double click as double click.
+
 2008-08-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (legend_dialog_close): bug fix: call
