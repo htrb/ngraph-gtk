@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.26 2008/08/29 08:47:18 hito Exp $
+ * $Id: gtk_subwin.c,v 1.27 2008/09/01 02:06:38 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -58,12 +58,22 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   case G_TYPE_STRING:
     if (GTK_IS_ENTRY(editable)) {
       int sel;
-      char *valstr;
 
       sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-      sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
-      gtk_entry_set_text(GTK_ENTRY(editable), valstr);
-      memfree(valstr);
+      if (chkobjfieldtype(d->obj, list->name) == NDOUBLE) {
+	char buf[64];
+	double val;
+
+	getobj(d->obj, list->name, sel, 0, NULL, &val);
+	snprintf(buf, sizeof(buf), "%.15g", val);
+	gtk_entry_set_text(GTK_ENTRY(editable), buf);
+      } else {
+	char *valstr;
+
+	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
+	gtk_entry_set_text(GTK_ENTRY(editable), valstr);
+	memfree(valstr);
+      }
     }
     break;
   case G_TYPE_DOUBLE:
@@ -638,7 +648,7 @@ static void
 modify_string(struct SubWin *d, char *field, char *str)
 {
   int sel;
-  char *valstr;
+  char *valstr = NULL, *valstr2 = NULL;
 
   if (Menulock || GlobalLock)
     return;
@@ -649,22 +659,29 @@ modify_string(struct SubWin *d, char *field, char *str)
     return;
 
   sgetobjfield(d->obj, sel, field, NULL, &valstr, FALSE, FALSE, FALSE);
-
   if (valstr == NULL)
     return;
 
-  if (strcmp(valstr, str) == 0) {
-    memfree(valstr);
-    return;
+  if (sputobjfield(d->obj, sel, field, str)) {
+    goto End;
   }
 
+  sgetobjfield(d->obj, sel, field, NULL, &valstr2, FALSE, FALSE, FALSE);
+  if (valstr2 == NULL) {
+    goto End;
+  }
+
+  if (strcmp(valstr, valstr2) == 0) {
+    goto End;
+  }
+
+  d->select = sel;
+  d->update(FALSE);
+  NgraphApp.Changed = TRUE;
+
+ End:
   memfree(valstr);
-
-  if (sputobjfield(d->obj, sel, field, str) == 0) {
-    d->select = sel;
-    d->update(FALSE);
-    NgraphApp.Changed = TRUE;
-  }
+  memfree(valstr2);
 }
 
 static void

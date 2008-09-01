@@ -1,3 +1,10 @@
+2008-09-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (start_editing): use snprintf() when
+	'list->type == G_TYPE_STRING' and 'chkobjfieldtype(d->obj,
+	list->name) == NDOUBLE' to set value.
+	(modify_string): check if the value is really modified.
+
 2008-08-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (ev_button_down, ev_button_down_tree):
