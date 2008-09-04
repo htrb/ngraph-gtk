@@ -1,5 +1,8 @@
 2008-09-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (POPUP_ITEM_FIT): add.
+	(popup_show_cb): check if the object associate with fit.
+
 	* src/gtk/x11view.c (ViewerWinFileUpdate): call
 	ProgressDialogCreate() before evaluate.
 	(range_increment): add.

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.46 2008/08/27 05:58:14 hito Exp $
+ * $Id: x11file.c,v 1.47 2008/09/04 09:19:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -109,6 +109,7 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
+#define POPUP_ITEM_FIT (POPUP_ITEM_NUM - 1)
 
 #define FITSAVE "fit.ngp"
 #define CB_BUF_SIZE 128
@@ -4096,7 +4097,15 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 
   sel = d->select;
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
-    gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
+    if (i == POPUP_ITEM_FIT && sel >= 0) {
+      char *fit = NULL;
+      int id;
+
+      getobj(d->obj, "fit", sel, 0, NULL, &fit);
+      gtk_widget_set_sensitive(d->popup_item[i], fit != NULL);
+    } else {
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
+    }
   }
 }
 
