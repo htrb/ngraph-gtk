@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.27 2008/09/01 02:06:38 hito Exp $
+ * $Id: gtk_subwin.c,v 1.28 2008/09/04 07:35:18 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -115,7 +115,38 @@ toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
   if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE)) {
     hidden(d);
   } else {
+#if 0
     tree_hidden((struct LegendWin *) user_data);
+#else
+    int hide, n, m, dep, *ary;
+    struct LegendWin *ld;
+    GtkTreePath *gpth;
+
+    ld = (struct LegendWin *) user_data;
+
+    gpth = gtk_tree_path_new_from_string(path);
+    if (gpth == NULL)
+      return;
+
+    dep = gtk_tree_path_get_depth(gpth);
+    ary = gtk_tree_path_get_indices(gpth);
+
+    if (dep != 2) {
+      gtk_tree_path_free(gpth);
+      return;
+    }
+
+    n = ary[0];
+    m = ary[1];
+    gtk_tree_path_free(gpth);
+
+    if (m >= 0 && m <= ld->legend[n]) {
+      hide = gtk_cell_renderer_toggle_get_active(cell_renderer);
+      putobj(ld->obj[n], "hidden", m, &hide);
+      hide = ! hide;
+      gtk_tree_store_set(GTK_TREE_STORE(model), &iter, 0, hide, -1);
+    }
+#endif
   }
 }
 

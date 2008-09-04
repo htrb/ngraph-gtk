@@ -1,3 +1,17 @@
+2008-09-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerWinFileUpdate): call
+	ProgressDialogCreate() before evaluate.
+	(range_increment): add.
+	(scrollbar_scroll_cb, ViewerEvScroll): use range_increment().
+	(ViewerEvMouseMove): scroll when mouse position is out of the
+	widget.
+	(TopAlignFocusedObj): add.
+	(AlignFocusedObj): call TopAlignFocusedObj() when number of
+	focused object is 1.
+	(do_popup): set sensitivity of d->popup_item[3] as TRUE when 'num
+	> 0'.
+
 2008-09-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (start_editing): use snprintf() when

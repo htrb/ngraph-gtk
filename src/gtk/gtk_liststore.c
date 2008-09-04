@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.13 2008/08/11 02:53:50 hito Exp $
+ * $Id: gtk_liststore.c,v 1.14 2008/09/04 07:35:18 hito Exp $
  */
 
 #include <stdlib.h>
@@ -696,7 +696,7 @@ select_path_str(GtkWidget *w, char *str)
 
   gtk_tree_selection_select_path(sel, path);
 
-  gtk_tree_view_set_cursor(GTK_TREE_VIEW(w), path, NULL, FALSE);
+  //  gtk_tree_view_set_cursor(GTK_TREE_VIEW(w), path, NULL, FALSE);
 
   gtk_tree_path_free(path);
 }

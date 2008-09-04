@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.47 2008/08/15 08:03:34 hito Exp $
+ * $Id: x11view.c,v 1.48 2008/09/04 07:35:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -138,6 +138,19 @@ static void ViewCopy(void);
 static void ViewCross(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
+
+
+static double 
+range_increment(GtkWidget *w, double inc)
+{
+  double val;
+
+  val = gtk_range_get_value(GTK_RANGE(w));
+  val += inc;
+  gtk_range_set_value(GTK_RANGE(w), val);
+
+  return val;
+}
 
 static int
 graph_dropped(char *fname)
@@ -557,15 +570,11 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   switch (e->direction) {
   case GDK_SCROLL_UP:
   case GDK_SCROLL_LEFT:
-    val = gtk_range_get_value(GTK_RANGE(w));
-    val -= SCROLL_INC;
-    gtk_range_set_value(GTK_RANGE(w), val);
+    val = range_increment(w, -SCROLL_INC);
     break;
   case GDK_SCROLL_DOWN:
   case GDK_SCROLL_RIGHT:
-    val = gtk_range_get_value(GTK_RANGE(w));
-    val += SCROLL_INC;
-    gtk_range_set_value(GTK_RANGE(w), val);
+    val = range_increment(w, SCROLL_INC);
     break;
   default:
     return FALSE;
@@ -709,59 +718,65 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   argv[6] = NULL;
 
   fileobj = chkobject("file");
-  if (fileobj) {
-    arrayinit(&dfile, sizeof(int));
-    snprintf(mes, sizeof(mes), _("Searching for data."));
-    SetStatusBar(mes);
+  if (! fileobj)
+    goto End;
 
-    if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
-      return ret;
+  arrayinit(&dfile, sizeof(int));
+  snprintf(mes, sizeof(mes), _("Searching for data."));
+  SetStatusBar(mes);
 
-    if ((snum = arraynum(sarray)) == 0)
-      return ret;
+  if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
+    goto End;
 
-    sdata = (char **) arraydata(sarray);
+  if ((snum = arraynum(sarray)) == 0)
+    goto End;
 
-    for (i = 1; i < snum; i++) {
-      dobj = getobjlist(sdata[i], &did, &dfield, NULL);
-      if (dobj && chkobjchild(fileobj, dobj)) {
-	dinst = chkobjinstoid(dobj, did);
-	if (dinst) {
-	  _getobj(dobj, "id", dinst, &id);
-	  _exeobj(dobj, "evaluate", dinst, 6, argv);
-	  _getobj(dobj, "evaluate", dinst, &eval);
-	  evalnum = arraynum(eval) / 3;
-	  if (evalnum != 0)
-	    arrayadd(&dfile, &id);
-	}
+  sdata = (char **) arraydata(sarray);
+
+  ProgressDialogCreate(_("Searching for data."));
+
+  for (i = 1; i < snum; i++) {
+    dobj = getobjlist(sdata[i], &did, &dfield, NULL);
+    if (dobj && chkobjchild(fileobj, dobj)) {
+      dinst = chkobjinstoid(dobj, did);
+      if (dinst) {
+	_getobj(dobj, "id", dinst, &id);
+	_exeobj(dobj, "evaluate", dinst, 6, argv);
+	_getobj(dobj, "evaluate", dinst, &eval);
+	evalnum = arraynum(eval) / 3;
+	if (evalnum != 0)
+	  arrayadd(&dfile, &id);
       }
     }
-
-    ResetStatusBar();
-
-    dnum = arraynum(&dfile);
-    ddata = (int *) arraydata(&dfile);
-
-    for (i = 0; i < dnum; i++) {
-      id = ddata[i];
-      FileDialog(&DlgFile, fileobj, id, 0);
-      ret2 = DialogExecute(TopLevel, &DlgFile);
-      if (ret2 == IDDELETE) {
-	FitDel(fileobj, id);
-	delobj(fileobj, id);
-	NgraphApp.Changed = TRUE;
-	for (j = i + 1; j < dnum; j++) {
-	  if (ddata[j] > id) {
-	    ddata[j] = ddata[j] - 1;
-	  }
-	}
-      } else if (ret2 != IDCANCEL) {
-	NgraphApp.Changed = TRUE;
-      }
-      ret = TRUE;
-    }
-    arraydel(&dfile);
   }
+
+  ProgressDialogFinalize();
+  ResetStatusBar();
+
+  dnum = arraynum(&dfile);
+  ddata = (int *) arraydata(&dfile);
+
+  for (i = 0; i < dnum; i++) {
+    id = ddata[i];
+    FileDialog(&DlgFile, fileobj, id, 0);
+    ret2 = DialogExecute(TopLevel, &DlgFile);
+    if (ret2 == IDDELETE) {
+      FitDel(fileobj, id);
+      delobj(fileobj, id);
+      NgraphApp.Changed = TRUE;
+      for (j = i + 1; j < dnum; j++) {
+	if (ddata[j] > id) {
+	  ddata[j] = ddata[j] - 1;
+	}
+      }
+    } else if (ret2 != IDCANCEL) {
+      NgraphApp.Changed = TRUE;
+    }
+    ret = TRUE;
+  }
+  arraydel(&dfile);
+
+ End:
   restorestdio(&save);
   return ret;
 }
@@ -1417,6 +1432,81 @@ ShowFocusFrame(GdkGC *gc)
 }
 
 static void
+TopAlignFocusedObj(int align)
+{
+  int i, bboxnum, *bbox, x, y, dx, dy;
+  struct focuslist **focus;
+  struct narray *abbox;
+  char *argv[4];
+  char *inst;
+  struct Viewer *d;
+
+  d = &(NgraphApp.Viewer);
+
+  focus = (struct focuslist **) arraydata(d->focusobj);
+
+  inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
+  if (inst == NULL) {
+    return;
+  }
+  _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
+  _getobj(focus[i]->obj, "bbox", inst, &abbox);
+
+  bboxnum = arraynum(abbox);
+  bbox = (int *) arraydata(abbox);
+
+  if (bboxnum < 4) {
+    return;
+  }
+
+  x = (bbox[0] + bbox[2]) / 2;
+  y = (bbox[1] + bbox[3]) / 2;
+
+  d->allclear = FALSE;
+
+  PaintLock = TRUE;
+
+  dx = dy = 0;
+  switch (align) {
+  case VIEW_ALIGN_LEFT:
+    dx = - bbox[0];
+    break;
+  case VIEW_ALIGN_VCENTER:
+    dx = Menulocal.PaperWidth / 2 - x;
+    break;
+  case VIEW_ALIGN_RIGHT:
+    dx = Menulocal.PaperWidth - bbox[2];
+    break;
+  case VIEW_ALIGN_TOP:
+    dy = - bbox[1];
+    break;
+  case VIEW_ALIGN_HCENTER:
+    dy = Menulocal.PaperHeight / 2 - y;
+    break;
+  case VIEW_ALIGN_BOTTOM:
+    dy = Menulocal.PaperHeight - bbox[3];
+    break;
+  }
+
+  argv[0] = (char *) &dx;
+  argv[1] = (char *) &dy;
+  argv[2] = NULL;
+
+  if (focus[i]->obj == chkobject("axis")) {
+    d->allclear = TRUE;
+  }
+  AddInvalidateRect(focus[i]->obj, inst);
+
+  _exeobj(focus[i]->obj, "move", inst, 2, argv);
+
+  NgraphApp.Changed = TRUE;
+  AddInvalidateRect(focus[i]->obj, inst);
+
+  PaintLock = FALSE;
+  UpdateAll();
+}
+
+static void
 AlignFocusedObj(int align)
 {
   int i, num, bboxnum, *bbox, minx, miny, maxx, maxy, dx, dy;
@@ -1430,8 +1520,12 @@ AlignFocusedObj(int align)
 
   num = arraynum(d->focusobj);
 
-  if (num < 2)
+  if (num < 1) {
     return;
+  } else if (num < 2) {
+    TopAlignFocusedObj(align);
+    return;
+  }
 
   focus = (struct focuslist **) arraydata(d->focusobj);
 
@@ -3387,12 +3481,14 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
   struct pointslist *po;
-  int x, y, dx, dy, vx1, vx2, vy1, vy2;
-  double cc, nn;
+  int x, y, dx, dy, vx1, vx2, vy1, vy2, wx, wy, w, h, depth;
+  double cc, nn, val;
   double zoom, zoom2;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || GlobalLock || ! d->win)
     return FALSE;
+
+  gdk_window_get_geometry(d->win, &wx, &wy, &w, &h, &depth);
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -3422,6 +3518,23 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     if (d->ShowCross)
       ShowCrossGauge(dc);
   }
+
+  if (point->y > h) {
+    val = range_increment(d->VScroll, SCROLL_INC);
+    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+  } else if (point->y < 0) {
+    val = range_increment(d->VScroll, -SCROLL_INC);
+    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+  }
+
+  if (point->x > w) {
+    val = range_increment(d->HScroll, SCROLL_INC);
+    ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+  } else if (point->x < 0) {
+    val = range_increment(d->HScroll, -SCROLL_INC);
+    ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+  }
+
 
   if (! d->Capture) {
     set_mouse_cursor_hover(d, point->x, point->y);
@@ -3601,7 +3714,7 @@ do_popup(GdkEventButton *event, struct Viewer *d)
  	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
       }
     }
-    if (num > 1) {
+    if (num > 0) {
       gtk_widget_set_sensitive(d->popup_item[3], TRUE);
     } else if (num == 1) {
       focus = *(struct focuslist **) arraynget(d->focusobj, 0);
@@ -3636,27 +3749,19 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 
   switch (e->direction) {
   case GDK_SCROLL_UP:
-    val = gtk_range_get_value(GTK_RANGE(d->VScroll));
-    val -= SCROLL_INC;
-    gtk_range_set_value(GTK_RANGE(d->VScroll), val);
+    val = range_increment(d->VScroll, -SCROLL_INC);
     ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
     return TRUE;
   case GDK_SCROLL_DOWN:
-    val = gtk_range_get_value(GTK_RANGE(d->VScroll));
-    val += SCROLL_INC;
-    gtk_range_set_value(GTK_RANGE(d->VScroll), val);
+    val = range_increment(d->VScroll, SCROLL_INC);
     ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
     return TRUE;
   case GDK_SCROLL_LEFT:
-    val = gtk_range_get_value(GTK_RANGE(d->HScroll));
-    val -= SCROLL_INC;
-    gtk_range_set_value(GTK_RANGE(d->HScroll), val);
+    val = range_increment(d->HScroll, -SCROLL_INC);
     ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
     return TRUE;
   case GDK_SCROLL_RIGHT:
-    val = gtk_range_get_value(GTK_RANGE(d->HScroll));
-    val += SCROLL_INC;
-    gtk_range_set_value(GTK_RANGE(d->HScroll), val);
+    val = range_increment(d->HScroll, SCROLL_INC);
     ViewerEvHScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
     return TRUE;
   }
