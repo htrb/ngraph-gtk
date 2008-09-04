@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.47 2008/09/04 09:19:11 hito Exp $
+ * $Id: x11file.c,v 1.48 2008/09/04 10:02:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -644,7 +644,7 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
   if (lastid == d->Lastid) {
     if ((file = searchscript(FITSAVE)) == NULL) {
       if (errmes)
-	MessageBox(TopLevel, "Setting file not found.", FITSAVE, MB_OK);
+	MessageBox(TopLevel, _("Setting file not found."), FITSAVE, MB_OK);
       return FALSE;
     }
     if ((shell = chkobject("shell")) == NULL)
@@ -679,7 +679,7 @@ FitDialogLoad(struct FitDialog *d)
     return;
   lastid = chkobjlastinst(d->Obj);
   if ((d->Lastid < 0) || (lastid == d->Lastid)) {
-    MessageBox(TopLevel, "No settings.", FITSAVE, MB_OK);
+    MessageBox(TopLevel, _("No settings."), FITSAVE, MB_OK);
     return;
   }
   FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
@@ -711,7 +711,7 @@ FitDialogSave(struct FitDialog *d)
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     if (strcmp(s, DlgFitSave.Profile) == 0) {
-      if (MessageBox(TopLevel, "Overwrite existing setting?", "Confirm",
+      if (MessageBox(TopLevel, _("Overwrite existing setting?"), "Confirm",
 		     MB_YESNO) != IDYES) {
 	return;
       }
@@ -800,7 +800,7 @@ FitDialogSave(struct FitDialog *d)
   }
   nclose(hFile);
   if (error)
-    MessageBox(TopLevel, "I/O error: Write", "Error:", MB_OK);
+    MessageBox(TopLevel, _("I/O error: Write"), "Error:", MB_OK);
   memfree(ngpfile);
 }
 

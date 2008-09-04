@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.15 2008/08/05 02:45:26 hito Exp $
+ * $Id: x11commn.c,v 1.16 2008/09/04 10:02:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -900,7 +900,7 @@ SaveDrawrable(char *name, int storedata, int storemerge)
   }
   nclose(hFile);
   if (error)
-    MessageBox(TopLevel, "I/O error: Write", NULL, MB_OK);
+    MessageBox(TopLevel, _("I/O error: Write"), NULL, MB_OK);
   return !error;
 }
 

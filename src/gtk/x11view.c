@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.50 2008/09/04 09:44:19 hito Exp $
+ * $Id: x11view.c,v 1.51 2008/09/04 10:02:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2110,7 +2110,7 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
     }
   }
 
-  MessageBox(TopLevel, "Data points are moved.", "Confirm", MB_OK);
+  MessageBox(TopLevel, _("Data points are moved."), "Confirm", MB_OK);
   arraydel(&SelList);
   d->MoveData = FALSE;
   d->Capture = FALSE;
@@ -3235,7 +3235,7 @@ move_data_cancel(struct Viewer *d)
   d->MoveData = FALSE;
   d->Capture = FALSE;
   SetCursor(GDK_LEFT_PTR);
-  MessageBox(TopLevel, "Moving data points is canceled.", "Confirm", MB_OK);
+  MessageBox(TopLevel, _("Moving data points is canceled."), "Confirm", MB_OK);
 }
 
 static gboolean
