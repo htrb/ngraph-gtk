@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.48 2008/09/04 07:35:18 hito Exp $
+ * $Id: x11view.c,v 1.49 2008/09/04 09:27:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -555,6 +555,8 @@ create_popup_menu(struct Viewer *d)
     {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL},
     {NULL},
   };
+
+#define VIEWER_POPUP_ITEM_ALIGN 3
 
   return create_menu(popup, d);
 }
@@ -3710,16 +3712,15 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   case AxisB:
     num = arraynum(d->focusobj);
     if (num > 0) {
-      for (i = 0; i < 3; i++) {
+      for (i = 0; i < VIEWER_POPUP_ITEM_ALIGN; i++) {
  	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
       }
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ALIGN], TRUE);
     }
-    if (num > 0) {
-      gtk_widget_set_sensitive(d->popup_item[3], TRUE);
-    } else if (num == 1) {
+    if (num == 1) {
       focus = *(struct focuslist **) arraynget(d->focusobj, 0);
       obj = focus->obj;
-      for (i = 4; i < VIEWER_POPUP_ITEM_NUM; i++) {
+      for (i = VIEWER_POPUP_ITEM_ALIGN + 1; i < VIEWER_POPUP_ITEM_NUM; i++) {
 	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
       }
     }
