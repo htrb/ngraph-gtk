@@ -9,9 +9,8 @@
 	(scrollbar_scroll_cb, ViewerEvScroll): use range_increment().
 	(ViewerEvMouseMove): scroll when mouse position is out of the
 	widget.
-	(TopAlignFocusedObj): add.
-	(AlignFocusedObj): call TopAlignFocusedObj() when number of
-	focused object is 1.
+	(AlignFocusedObj): align to the paper when number of focused
+	object is 1.
 	(do_popup): set sensitivity of d->popup_item[3] as TRUE when 'num
 	> 0'.
 

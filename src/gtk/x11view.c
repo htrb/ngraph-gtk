@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.49 2008/09/04 09:27:59 hito Exp $
+ * $Id: x11view.c,v 1.50 2008/09/04 09:44:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1434,81 +1434,6 @@ ShowFocusFrame(GdkGC *gc)
 }
 
 static void
-TopAlignFocusedObj(int align)
-{
-  int i, bboxnum, *bbox, x, y, dx, dy;
-  struct focuslist **focus;
-  struct narray *abbox;
-  char *argv[4];
-  char *inst;
-  struct Viewer *d;
-
-  d = &(NgraphApp.Viewer);
-
-  focus = (struct focuslist **) arraydata(d->focusobj);
-
-  inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
-  if (inst == NULL) {
-    return;
-  }
-  _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
-  _getobj(focus[i]->obj, "bbox", inst, &abbox);
-
-  bboxnum = arraynum(abbox);
-  bbox = (int *) arraydata(abbox);
-
-  if (bboxnum < 4) {
-    return;
-  }
-
-  x = (bbox[0] + bbox[2]) / 2;
-  y = (bbox[1] + bbox[3]) / 2;
-
-  d->allclear = FALSE;
-
-  PaintLock = TRUE;
-
-  dx = dy = 0;
-  switch (align) {
-  case VIEW_ALIGN_LEFT:
-    dx = - bbox[0];
-    break;
-  case VIEW_ALIGN_VCENTER:
-    dx = Menulocal.PaperWidth / 2 - x;
-    break;
-  case VIEW_ALIGN_RIGHT:
-    dx = Menulocal.PaperWidth - bbox[2];
-    break;
-  case VIEW_ALIGN_TOP:
-    dy = - bbox[1];
-    break;
-  case VIEW_ALIGN_HCENTER:
-    dy = Menulocal.PaperHeight / 2 - y;
-    break;
-  case VIEW_ALIGN_BOTTOM:
-    dy = Menulocal.PaperHeight - bbox[3];
-    break;
-  }
-
-  argv[0] = (char *) &dx;
-  argv[1] = (char *) &dy;
-  argv[2] = NULL;
-
-  if (focus[i]->obj == chkobject("axis")) {
-    d->allclear = TRUE;
-  }
-  AddInvalidateRect(focus[i]->obj, inst);
-
-  _exeobj(focus[i]->obj, "move", inst, 2, argv);
-
-  NgraphApp.Changed = TRUE;
-  AddInvalidateRect(focus[i]->obj, inst);
-
-  PaintLock = FALSE;
-  UpdateAll();
-}
-
-static void
 AlignFocusedObj(int align)
 {
   int i, num, bboxnum, *bbox, minx, miny, maxx, maxy, dx, dy;
@@ -1524,36 +1449,40 @@ AlignFocusedObj(int align)
 
   if (num < 1) {
     return;
-  } else if (num < 2) {
-    TopAlignFocusedObj(align);
-    return;
   }
 
   focus = (struct focuslist **) arraydata(d->focusobj);
 
-  maxx = maxy = INT_MIN;
-  minx = miny = INT_MAX;
+  if (num == 1) {
+    maxx = Menulocal.PaperWidth;;
+    maxy = Menulocal.PaperHeight;
+    minx = 0;
+    miny = 0;
+  } else {
+    maxx = maxy = INT_MIN;
+    minx = miny = INT_MAX;
 
-  for (i = 0; i < num; i++) {
-    inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
-    if (inst == NULL) {
-      continue;
-    }
-    _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
-    _getobj(focus[i]->obj, "bbox", inst, &abbox);
+    for (i = 0; i < num; i++) {
+      inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
+      if (inst == NULL) {
+	continue;
+      }
+      _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
+      _getobj(focus[i]->obj, "bbox", inst, &abbox);
 
-    bboxnum = arraynum(abbox);
-    bbox = (int *) arraydata(abbox);
+      bboxnum = arraynum(abbox);
+      bbox = (int *) arraydata(abbox);
 
-    if (bboxnum >= 4) {
-      if (bbox[0] < minx)
-	minx = bbox[0];
-      if (bbox[1] < miny)
-	miny = bbox[1];
-      if (bbox[2] > maxx)
-	maxx = bbox[2];
-      if (bbox[3] > maxy)
-	maxy = bbox[3];
+      if (bboxnum >= 4) {
+	if (bbox[0] < minx)
+	  minx = bbox[0];
+	if (bbox[1] < miny)
+	  miny = bbox[1];
+	if (bbox[2] > maxx)
+	  maxx = bbox[2];
+	if (bbox[3] > maxy)
+	  maxy = bbox[3];
+      }
     }
   }
 
