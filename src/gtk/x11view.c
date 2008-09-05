@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.52 2008/09/05 09:54:24 hito Exp $
+ * $Id: x11view.c,v 1.53 2008/09/05 10:05:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3979,14 +3979,14 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
       restorestdio(&save);
     }
     */
-    Mxlocal->scrollx = -d->cx + d->hscroll;
-    Mxlocal->scrolly = -d->cy + d->vscroll;
+    Mxlocal->scrollx = d->hscroll - d->cx;
+    Mxlocal->scrolly = d->vscroll - d->cy;
 
     if (Mxlocal->pix) {
       gdk_region_get_clipbox(e->region, &rect);
       gdk_draw_drawable(e->window, gc, Mxlocal->pix,
-			-d->cx + d->hscroll + rect.x,
-			-d->cy + d->vscroll + rect.y,
+			d->hscroll - d->cx + rect.x,
+			d->vscroll - d->cy + rect.y,
 			rect.x, rect.y,
 			rect.width, rect.height);
     }
