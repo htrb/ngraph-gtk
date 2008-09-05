@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.51 2008/09/04 10:02:11 hito Exp $
+ * $Id: x11view.c,v 1.52 2008/09/05 09:54:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1027,7 +1027,6 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   focus->obj = obj;
   focus->oid = oid;
   arrayadd(focusobj, &focus);
-  SetMoveButtonState(TRUE);
 
   return TRUE;
 }
@@ -1036,10 +1035,6 @@ static void
 clear_focus_obj(struct narray *focusobj, int mode, int init_cursor)
 {
   arraydel2(focusobj);
-  SetMoveButtonState(FALSE);
-
-  if (mode == MoveB && init_cursor)
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
 }
 
 
@@ -2195,6 +2190,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
   double zoom;
+  int pos;
 
   if (Menulock || GlobalLock)
     return FALSE;
@@ -2224,10 +2220,12 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   case PointB:
   case LegendB:
   case AxisB:
-    mouse_down_point(state, point, d, dc);
-    break;
-  case MoveB:
-    mouse_down_move(state, point, d, dc);
+    pos = GetCursor();
+    if (pos == GDK_LEFT_PTR) {
+      mouse_down_point(state, point, d, dc);
+    } else {
+      mouse_down_move(state, point, d, dc);
+    }
     break;
   case TrimB:
   case DataB:
@@ -2312,9 +2310,6 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
   }
 
   num = arraynum(d->focusobj);
-  if (num > 0 && ! (state & GDK_SHIFT_MASK)) {
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[4]), TRUE);
-  }
 }
 
 static void
@@ -2370,10 +2365,8 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
     d->FrameOfsX = d->FrameOfsY = 0;
     ShowFocusFrame(dc);
     d->ShowFrame = TRUE;
-
-    if (d->Mode == MoveB && ! axis) {
-      d->allclear = FALSE;
-    }
+    if (d->Mode == LegendB || (d->Mode==PointB && !axis))
+      d->allclear=FALSE;
     UpdateAll();
   }
   d->MouseMode = MOUSENONE;
@@ -2451,11 +2444,8 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   d->ShowFrame = TRUE;
 
   ShowFocusFrame(dc);
-
-  if (d->Mode == MoveB && ! axis) {
-    d->allclear = FALSE;
-  }
-
+  if (d->Mode == LegendB || (d->Mode==PointB && !axis))
+    d->allclear=FALSE;
   UpdateAll();
   SetCursor(GDK_LEFT_PTR);
   d->MouseMode = MOUSENONE;
@@ -2513,10 +2503,8 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
     ShowFocusFrame(dc);
-
-    if (d->Mode == MoveB && ! axis) {
-      d->allclear = FALSE;
-    }
+    if (d->Mode == LegendB || (d->Mode==PointB && !axis))
+      d->allclear=FALSE;
     UpdateAll();
   } else {
     d->FrameOfsX = d->FrameOfsY = 0;
@@ -2628,7 +2616,9 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
   dc = gdk_gc_new(d->win);
 
   switch (d->Mode) {
-  case MoveB :
+  case PointB :
+  case LegendB :
+  case AxisB:
   case TrimB :
   case DataB :
   case EvalB:
@@ -2648,21 +2638,18 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
       break;
     case MOUSEPOINT:
       mouse_up_point(state, point, d, dc, zoom);
+      if (d->Mode == PointB || d->Mode == LegendB || d->Mode == AxisB) {
+	d->allclear = FALSE;
+	UpdateAll();
+      }
       break;
     case MOUSENONE:
+      /*
       if (d->Mode == MoveB) {
 	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
       }
-    }
-    d->MouseMode = MOUSENONE;
-    break;
-  case PointB :
-  case LegendB :
-  case AxisB:
-    if (d->MouseMode == MOUSEPOINT) {
-      mouse_up_point(state, point, d, dc, zoom);
-      d->allclear = FALSE;
-      UpdateAll();
+      */
+      break;
     }
     d->MouseMode = MOUSENONE;
     break;
@@ -3186,7 +3173,6 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   dc = gdk_gc_new(d->win);
 
   switch (d->Mode) {
-  case MoveB:
   case PointB:
   case LegendB:
   case AxisB:
@@ -3327,50 +3313,43 @@ ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   return FALSE;
 }
 
-static void
-set_mouse_cursor_hover(struct Viewer *d, int x, int y)
+static int
+get_mouse_cursor_type(struct Viewer *d, int x, int y)
 {
-  int j, x1, y1, x2, y2, num, bboxnum, *bbox;;
+  int j, x1, y1, x2, y2, num, cursor, bboxnum, *bbox;
   char *inst;
   struct narray *abbox;
   struct focuslist **focus;
   double zoom;
 
-  if (d->Mode != MoveB)
-    return;
-
   num = arraynum(d->focusobj);
-  focus = (struct focuslist **) arraydata(d->focusobj);
 
   if (num == 0)
-    return;
+    return -1;
 
   GetFocusFrame(&x1, &y1, &x2, &y2, d->FrameOfsX, d->FrameOfsY);
 
-  if (x > x1 && x < x2 && y > y1 && y < y2) {
-    SetCursor(GDK_FLEUR);
+  if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+    cursor = GDK_FLEUR;
   } else if (x > x1 - 11 && x < x1 - 5 && y > y1 - 11 && y < y1 - 5){
-    SetCursor(GDK_TOP_LEFT_CORNER);
-    return;
+    cursor = GDK_TOP_LEFT_CORNER;
   } else if (x > x1 - 11 && x < x1 - 5 && y < y2 + 11 && y > y2 + 5){
-    SetCursor(GDK_BOTTOM_LEFT_CORNER);
-    return;
+    cursor = GDK_BOTTOM_LEFT_CORNER;
   } else if (x > x1 + 11 && x > x1 + 5 && y > y1 - 11 && y < y1 - 5){
-    SetCursor(GDK_TOP_RIGHT_CORNER);
-    return;
+    cursor = GDK_TOP_RIGHT_CORNER;
   } else if (x < x2 + 11 && x > x2 + 5 && y < y2 + 11 && y > y2 + 5){
-    SetCursor(GDK_BOTTOM_RIGHT_CORNER);
-    return;
+    cursor = GDK_BOTTOM_RIGHT_CORNER;
   } else {
-    SetCursor(GDK_LEFT_PTR);
+    cursor = GDK_LEFT_PTR;
   }
 
-  if (num != 1)
-    return;
+  if (num > 1)
+    return cursor;
 
+  focus = (struct focuslist **) arraydata(d->focusobj);
   inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
   if (inst == NULL)
-    return;
+    return cursor;
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -3388,11 +3367,27 @@ set_mouse_cursor_hover(struct Viewer *d, int x, int y)
       mxd2p((bbox[j + 1] + d->FrameOfsY) * zoom +
 	    Menulocal.TopMargin) - d->vscroll + d->cy;
 
-    if (x > x1 - 3 && x < x1 + 3 && y > y1 - 3 && y < y2 + 3) {
-      SetCursor(GDK_CROSSHAIR);
+    if (x > x1 - 3 && x < x1 + 3 && y > y1 - 3 && y < y1 + 3) {
+      cursor = GDK_CROSSHAIR;
       break;
     }
   }
+
+  return cursor;
+}
+
+static void
+set_mouse_cursor_hover(struct Viewer *d, int x, int y)
+{
+  int cursor;
+
+  if (d->Mode != PointB && d->Mode != LegendB && d->Mode != AxisB)
+    return;
+
+  cursor = get_mouse_cursor_type(d, x, y);
+
+  if (cursor >= 0)
+    SetCursor(cursor);
 }
 
 static void
@@ -3470,7 +3465,15 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   if (! d->Capture) {
     set_mouse_cursor_hover(d, point->x, point->y);
   } else {
-    if (d->Mode == MoveB ||
+    int pos;
+
+    pos = GetCursor();
+    if (pos == GDK_FLEUR ||
+	pos == GDK_TOP_LEFT_CORNER ||
+	pos == GDK_BOTTOM_LEFT_CORNER ||
+	pos == GDK_TOP_RIGHT_CORNER ||
+	pos == GDK_BOTTOM_RIGHT_CORNER ||
+	pos == GDK_CROSSHAIR ||
 	d->Mode == TrimB ||
 	d->Mode == DataB ||
 	d->Mode == EvalB) {
@@ -3635,7 +3638,6 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   }
 
   switch (d->Mode) {
-  case MoveB:
   case PointB:
   case LegendB:
   case AxisB:
@@ -3800,8 +3802,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_Left:
   case GDK_Right:
     if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG))
-	&& ((d->Mode == MoveB) || (d->Mode == PointB) || (d->Mode == LegendB)
-	    || (d->Mode == AxisB))) {
+	&& ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
       dc = gdk_gc_new(d->win);
       zoom = Menulocal.PaperZoom / 10000.0;
       ShowFocusFrame(dc);
@@ -4932,10 +4933,10 @@ ViewUpdate(void)
 
   if (! axis)
     d->allclear = FALSE;
-
+  /*
   if (d->Mode == MoveB)
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
-
+  */
   UpdateAll();
   ShowFocusFrame(dc);
   d->ShowFrame = TRUE;
@@ -4955,8 +4956,7 @@ ViewDelete(void)
 
   d = &(NgraphApp.Viewer);
   if ((d->MouseMode != MOUSENONE) ||
-      (d->Mode != MoveB &&
-       d->Mode != PointB &&
+      (d->Mode != PointB &&
        d->Mode != LegendB &&
        d->Mode != AxisB)) {
     return;
@@ -5014,7 +5014,7 @@ reorder_object(int top)
   d = &(NgraphApp.Viewer);
 
   if (d->MouseMode != MOUSENONE ||
-      (d->Mode != MoveB && d->Mode != PointB && 
+      (d->Mode != PointB && 
        d->Mode != LegendB && d->Mode != AxisB))
        return;
 
@@ -5358,7 +5358,7 @@ ViewCopy(void)
   d = &(NgraphApp.Viewer);
 
   if (d->MouseMode != MOUSENONE ||
-      (d->Mode != MoveB && d->Mode != PointB &&
+      (d->Mode != PointB &&
        d->Mode != LegendB && d->Mode == AxisB))
     return;
 
@@ -5477,8 +5477,8 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
     return;
 
   Mode = (int) client_data;
-  if (Mode != MoveB)
-    UnFocus(FALSE);
+
+  UnFocus(FALSE);
 
   switch (Mode) {
   case PointB:
@@ -5496,7 +5496,6 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
   case TrimB:
   case DataB:
   case EvalB:
-  case MoveB:
     SetCursor(GDK_LEFT_PTR);
     break;
   case TextB:
@@ -5506,7 +5505,7 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
     SetCursor(GDK_TARGET);
     break;
   default:
-    SetCursor(GDK_CROSSHAIR);
+    SetCursor(GDK_PENCIL);
   }
   NgraphApp.Viewer.Mode = Mode;
   NgraphApp.Viewer.Capture = FALSE;

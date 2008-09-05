@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.48 2008/09/04 10:02:11 hito Exp $
+ * $Id: x11file.c,v 1.49 2008/09/05 09:54:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4099,7 +4099,6 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
     if (i == POPUP_ITEM_FIT && sel >= 0) {
       char *fit = NULL;
-      int id;
 
       getobj(d->obj, "fit", sel, 0, NULL, &fit);
       gtk_widget_set_sensitive(d->popup_item[i], fit != NULL);

@@ -1,3 +1,11 @@
+2008-09-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (mouse_up_point): don't change cursor.
+	(get_mouse_cursor_type): add.
+	(set_mouse_cursor_hover): use get_mouse_cursor_type().
+
+	* src/gtk/x11menu.c (Command2_data): remove MoveB.
+
 2008-09-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (POPUP_ITEM_FIT): add.
