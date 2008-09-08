@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.28 2008/09/04 07:35:18 hito Exp $
+ * $Id: gtk_subwin.c,v 1.29 2008/09/08 04:41:40 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1175,6 +1175,11 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
       return FALSE;
     break;
   case GDK_Return:
+    if (e->state & GDK_SHIFT_MASK) {
+      e->state &= ~ GDK_SHIFT_MASK;
+      return FALSE;
+    }
+
     tree_update(d);
     break;
   case GDK_BackSpace:
@@ -1182,6 +1187,7 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
     break;
   case GDK_space:
     tree_focus(d, e->state & GDK_SHIFT_MASK);
+    break;
   default:
     return FALSE;
   }

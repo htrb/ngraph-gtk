@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.35 2008/09/05 09:54:24 hito Exp $
+ * $Id: x11menu.c,v 1.36 2008/09/08 04:46:19 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -97,7 +97,7 @@ GdkCursorType Cursor[] = {
   GDK_SIZING,
   GDK_WATCH,
   GDK_FLEUR,
-  GDK_TOP_LEFT_ARROW,
+  GDK_PENCIL,
 };
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))

@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.53 2008/09/05 10:05:47 hito Exp $
+ * $Id: x11view.c,v 1.54 2008/09/08 04:41:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1017,7 +1017,7 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
 {
   struct focuslist *focus;
 
-  if (check_focused_obj(focusobj, obj, oid))
+  if (check_focused_obj(focusobj, obj, oid) >= 0)
     return FALSE;
     
   focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
@@ -4204,7 +4204,7 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
   num = arraynum(focusobj);
 
   if (fobj == NULL)
-    return FALSE;
+    return -1;
 
   for (i = 0; i < num; i++) {
     focus = *(struct focuslist **) arraynget(focusobj, i);
@@ -4212,16 +4212,16 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
       continue;
 
     if (fobj == focus->obj && oid == focus->oid) {
-      return TRUE;
+      return i;
     }
   }
-  return FALSE;
+  return -1;
 }
 
 void
 Focus(struct objlist *fobj, int id, int add)
 {
-  int oid;
+  int oid, focus;
   char *inst;
   struct narray *sarray;
   char **sdata;
@@ -4240,11 +4240,9 @@ Focus(struct objlist *fobj, int id, int add)
 
   d = &(NgraphApp.Viewer);
 
-  if (chkobjchild(chkobject("legend"), fobj) ||
-      chkobjchild(chkobject("axis"), fobj) ||
-      chkobjchild(chkobject("merge"), fobj)) {
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[4]), TRUE);
-  } else {
+  if (! chkobjchild(chkobject("legend"), fobj) &&
+      ! chkobjchild(chkobject("axis"), fobj) &&
+      ! chkobjchild(chkobject("merge"), fobj)) {
     return;
   }
 
@@ -4273,18 +4271,25 @@ Focus(struct objlist *fobj, int id, int add)
       continue;
     }
 
-    if (check_focused_obj(d->focusobj, fobj, oid))
-      break;
-
     if (chkobjchild(chkobject("axis"), dobj)) {
       getobj(fobj, "group_manager", id, 0, NULL, &man);
       getobj(fobj, "oid", man, 0, NULL, &did);
     }
+
+    focus = check_focused_obj(d->focusobj, fobj, did);
+    if (focus >= 0) {
+      arrayndel2(d->focusobj, focus);
+      break;
+    }
+
     add_focus_obj(d->focusobj, dobj, did);
 
     d->MouseMode = MOUSENONE;
     break;
   }
+
+  if (arraynum(d->focusobj) == 0)
+    UnFocus(FALSE);
 
   dc = gdk_gc_new(d->win);
   d->allclear = FALSE;

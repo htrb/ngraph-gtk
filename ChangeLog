@@ -1,3 +1,14 @@
+2008-09-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (Focus): remove 'gtk_toggle_tool_button_set_active()'.
+	(check_focused_obj): now return index of found item.
+	(Focus): remove gtk_toggle_tool_button_set_active().
+
+	* src/gtk/gtk_subwin.c (ev_key_down_tree): add 'break;' in the
+	case of 'GDK_space'.
+	(ev_key_down_tree): return 'FALSE' when shift key is pressed in
+	the case of 'GDK_Return'.
+
 2008-09-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_up_point): don't change cursor.
