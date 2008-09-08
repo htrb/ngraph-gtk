@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-09-07 11:50+0900\n"
+"POT-Creation-Date: 2008-09-08 21:16+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1284,7 +1284,9 @@ msgid "Rectangle"
 msgstr ""
 
 #: src/gtk/x11menu.c:308
-msgid "New Legend Rectangle (+SHIFT: Fine)"
+msgid ""
+"New Legend Rectangle (+SHIFT: Fine / +CONTROL: square integer ratio "
+"rectangle)"
 msgstr ""
 
 #: src/gtk/x11menu.c:315 src/gtk/x11menu.c:316
@@ -1292,7 +1294,8 @@ msgid "Arc"
 msgstr ""
 
 #: src/gtk/x11menu.c:317
-msgid "New Legend Arc (+SHIFT: Fine)"
+msgid ""
+"New Legend Arc (+SHIFT: Fine / +CONTROL: circle or integer ratio ellipse)"
 msgstr ""
 
 #: src/gtk/x11menu.c:324 src/gtk/x11menu.c:325
@@ -1320,7 +1323,7 @@ msgid "Gaussian"
 msgstr ""
 
 #: src/gtk/x11menu.c:344
-msgid "New Legend Gaussian (+SHIFT: Fine)"
+msgid "New Legend Gaussian (+SHIFT: Fine / +CONTROL: integer ratio)"
 msgstr ""
 
 #: src/gtk/x11menu.c:351
@@ -1871,11 +1874,11 @@ msgstr ""
 msgid "confirm"
 msgstr ""
 
-#: src/gtk/x11print.c:1044 src/gtk/x11view.c:4572
+#: src/gtk/x11print.c:1044 src/gtk/x11view.c:4709
 msgid "Drawing"
 msgstr ""
 
-#: src/gtk/x11print.c:1045 src/gtk/x11view.c:4571
+#: src/gtk/x11print.c:1045 src/gtk/x11view.c:4708
 msgid "Drawing."
 msgstr ""
 
@@ -1946,15 +1949,15 @@ msgstr ""
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2108
+#: src/gtk/x11view.c:2112
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3224
+#: src/gtk/x11view.c:3228
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4565
+#: src/gtk/x11view.c:4702
 msgid "Scaling"
 msgstr ""
 

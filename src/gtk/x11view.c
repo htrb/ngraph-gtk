@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.55 2008/09/08 07:34:31 hito Exp $
+ * $Id: x11view.c,v 1.56 2008/09/08 22:30:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3406,11 +3406,127 @@ update_frame_rect(TPoint *point, struct Viewer *d, GdkGC *dc, double zoom)
   ShowFrameRect(dc);
 }
 
+#define SQRT3 1.73205080756888
+
+static void
+calc_snap_angle(struct narray *points, int *dx, int *dy)
+{
+  struct pointslist *po2;
+  int x, y, w, h, n;
+  double angle, l;
+
+  x = *dx;
+  y = *dy;
+
+  n = arraynum(points);
+  if (n < 2)
+    return;
+
+  po2 = *(struct pointslist **) arraynget(points, n - 2);
+
+  w = x - po2->x;
+  h = y - po2->y;
+
+  if (h == 0 || w == 0)
+    return;
+
+  l = sqrt(w * w + h * h);
+
+  if (w / h) {
+    angle = acos(w / l);
+    if (h < 0)
+      angle = -angle;
+  } else {
+    angle = asin(h / l);
+    if (w < 0)
+      angle = -angle;
+  }
+
+  if (angle < 0)
+    angle += 2 * MPI;
+
+  angle *= 180 / MPI;
+
+  if (angle < 15) {
+    y = po2->y;
+  } else if (angle < 37) {  /* 30 */
+    y = po2->y + w / SQRT3;
+  } else if (angle < 52) {  /* 45 */
+    y = po2->y + w;
+  } else if (angle < 75) {  /* 60 */
+    x = po2->x + h / SQRT3;
+  } else if (angle < 105) { /* 90 */
+    x = po2->x;
+  } else if (angle < 127) { /* 120 */
+    x = po2->x - h / SQRT3;
+  } else if (angle < 142) { /* 135 */
+    y = po2->y - w;
+  } else if (angle < 165) { /* 150 */
+    y = po2->y - w / SQRT3;
+  } else if (angle < 195) { /* 180 */
+    y = po2->y;
+  } else if (angle < 217) { /* 210 */
+    y = po2->y + w / SQRT3;
+  } else if (angle < 232) { /* 225 */
+    y = po2->y + w;
+  } else if (angle < 255) { /* 240 */
+    x = po2->x + h / SQRT3;
+  } else if (angle < 285) { /* 270 */
+    x = po2->x;
+  } else if (angle < 307) { /* 300 */
+    x = po2->x - h / SQRT3;
+  } else if (angle < 322) { /* 315 */
+    y = po2->y - w;
+  } else if (angle < 345) { /* 330 */
+    y = po2->y - w / SQRT3;
+  } else {                  /* 360 */
+    y = po2->y;
+  }
+
+  *dx = x;
+  *dy = y;
+}
+
+static void
+calc_integer_ratio(struct narray *points, int *dx, int *dy)
+{
+  struct pointslist *po2;
+  int x, y, w, h;
+
+  x = *dx;
+  y = *dy;
+
+  po2 = *(struct pointslist **) arraynget(points, 0);
+
+  if (pow == NULL)
+    return;
+
+  w = abs(x - po2->x);
+  h = abs(y - po2->y);
+  if (w < h) {
+    w *= (w) ? h / w: 0;
+    if (y > po2->y) {
+      y = po2->y + w;
+    } else {
+      y = po2->y - w;
+    }
+  } else {
+    h *= (h) ? w / h: 0;
+    if (x > po2->x) {
+      x = po2->x + h;
+    } else {
+      x = po2->x - h;
+    }
+  }
+
+  *dx = x;
+  *dy = y;
+}
+
 static gboolean
 ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
-  struct pointslist *po;
   int x, y, dx, dy, vx1, vx2, vy1, vy2, wx, wy, w, h, depth;
   double cc, nn, val;
   double zoom, zoom2;
@@ -3577,7 +3693,19 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
       ShowPoints(dc);
 
       if (arraynum(d->points) != 0) {
+	struct pointslist *po;
 	po = *(struct pointslist **) arraylast(d->points);
+
+	if (state & GDK_CONTROL_MASK) {
+	  if (d->Mode == ArcB ||d->Mode == RectB ||d->Mode == GaussB) {
+	    calc_integer_ratio(d->points, &dx, &dy);
+	  } else if (d->Mode == CurveB ||d->Mode == LineB ||d->Mode == PolyB) {
+	    calc_snap_angle(d->points, &dx, &dy);
+	    if (! (state & GDK_SHIFT_MASK)) {
+	      CheckGrid(FALSE, 0, &dx, &dy, NULL);
+	    }
+	  }
+	}
 
 	if (po != NULL) {
 	  po->x = dx;

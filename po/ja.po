@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-09-07 11:50+0900\n"
-"PO-Revision-Date: 2008-09-05 18:10+0900\n"
+"POT-Creation-Date: 2008-09-08 21:16+0900\n"
+"PO-Revision-Date: 2008-09-08 17:24+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1288,16 +1288,20 @@ msgid "Rectangle"
 msgstr "四角形"
 
 #: src/gtk/x11menu.c:308
-msgid "New Legend Rectangle (+SHIFT: Fine)"
-msgstr "四角形の新規作成 (+SHIFT:微動)"
+msgid ""
+"New Legend Rectangle (+SHIFT: Fine / +CONTROL: square integer ratio "
+"rectangle)"
+msgstr ""
+"四角形の新規作成 (+SHIFT:微動 / +CONTROL: 正方形または縦横が整数比の矩形)"
 
 #: src/gtk/x11menu.c:315 src/gtk/x11menu.c:316
 msgid "Arc"
 msgstr "円"
 
 #: src/gtk/x11menu.c:317
-msgid "New Legend Arc (+SHIFT: Fine)"
-msgstr "円の新規作成 (+SHIFT:微動)"
+msgid ""
+"New Legend Arc (+SHIFT: Fine / +CONTROL: circle or integer ratio ellipse)"
+msgstr "円の新規作成 (+SHIFT:微動 / +CONTROL: 真円または縦横が整数比の楕円)"
 
 #: src/gtk/x11menu.c:324 src/gtk/x11menu.c:325
 msgid "Mark"
@@ -1324,8 +1328,8 @@ msgid "Gaussian"
 msgstr "ガウス関数"
 
 #: src/gtk/x11menu.c:344
-msgid "New Legend Gaussian (+SHIFT: Fine)"
-msgstr "ガウス関数等の新規作成 (+SHIFT:微動)"
+msgid "New Legend Gaussian (+SHIFT: Fine / +CONTROL: integer ratio)"
+msgstr "ガウス関数等の新規作成 (+SHIFT:微動 / +CONTROL: 縦横を整数比にする)"
 
 #: src/gtk/x11menu.c:351
 msgid "Frame axis"
@@ -1877,11 +1881,11 @@ msgstr "合成ファイル作成中"
 msgid "confirm"
 msgstr "確認"
 
-#: src/gtk/x11print.c:1044 src/gtk/x11view.c:4572
+#: src/gtk/x11print.c:1044 src/gtk/x11view.c:4709
 msgid "Drawing"
 msgstr "描画中"
 
-#: src/gtk/x11print.c:1045 src/gtk/x11view.c:4571
+#: src/gtk/x11print.c:1045 src/gtk/x11view.c:4708
 msgid "Drawing."
 msgstr "描画中"
 
@@ -1952,15 +1956,15 @@ msgstr "データ評価中"
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2108
+#: src/gtk/x11view.c:2112
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3224
+#: src/gtk/x11view.c:3228
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:4565
+#: src/gtk/x11view.c:4702
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
@@ -2156,6 +2160,9 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#~ msgid "New Legend Arc (+SHIFT: Fine)"
+#~ msgstr "円の新規作成 (+SHIFT:微動)"
 
 #~ msgid "Pointer (+SHIFT: Multi select)"
 #~ msgstr "選択 (+SHIFT:複数選択)"

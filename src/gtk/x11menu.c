@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.36 2008/09/08 04:46:19 hito Exp $
+ * $Id: x11menu.c,v 1.37 2008/09/08 22:30:28 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -305,7 +305,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Rectangle"),
     N_("Rectangle"),
-    N_("New Legend Rectangle (+SHIFT: Fine)"), 
+    N_("New Legend Rectangle (+SHIFT: Fine / +CONTROL: square integer ratio rectangle)"), 
     Rect_xpm,
     Rect_bits,
     RectB,
@@ -314,7 +314,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Arc"),
     N_("Arc"),
-    N_("New Legend Arc (+SHIFT: Fine)"), 
+    N_("New Legend Arc (+SHIFT: Fine / +CONTROL: circle or integer ratio ellipse)"), 
     Arc_xpm,
     Arc_bits,
     ArcB,
@@ -341,7 +341,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Gauss"),
     N_("Gaussian"),
-    N_("New Legend Gaussian (+SHIFT: Fine)"), 
+    N_("New Legend Gaussian (+SHIFT: Fine / +CONTROL: integer ratio)"), 
     Gauss_xpm,
     Gauss_bits,
     GaussB,

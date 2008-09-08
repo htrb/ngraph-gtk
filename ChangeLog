@@ -1,9 +1,13 @@
 2008-09-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11view.c (Focus): remove 'gtk_toggle_tool_button_set_active()'.
+	* src/gtk/x11view.c (Focus): remove
+	'gtk_toggle_tool_button_set_active()'.
 	(check_focused_obj): now return index of found item.
 	(Focus): remove gtk_toggle_tool_button_set_active().
 	(ShowPoints): draw arc when 'd->Mode == ArcB'.
+	(calc_snap_angle, calc_integer_ratio, SQRT3): add.
+	(ViewerEvMouseMove): call calc_snap_angle() or
+	calc_integer_ratio().
 
 	* src/gtk/gtk_subwin.c (ev_key_down_tree): add 'break;' in the
 	case of 'GDK_space'.
