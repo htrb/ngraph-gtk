@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.54 2008/09/08 04:41:40 hito Exp $
+ * $Id: x11view.c,v 1.55 2008/09/08 07:34:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1729,7 +1729,11 @@ ShowPoints(GdkGC *gc)
       width = abs(x2 - x1);
       height = abs(y2 - y1);
 
-      gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
+      if (d->Mode == ArcB) {
+	gdk_draw_arc(d->win, gc, FALSE, minx, miny, width, height, 0, 360 * 64);
+      } else {
+	gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
+      }
     }
   } else {
     gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
