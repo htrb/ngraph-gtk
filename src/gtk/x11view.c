@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.56 2008/09/08 22:30:28 hito Exp $
+ * $Id: x11view.c,v 1.57 2008/09/08 23:25:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1737,7 +1737,6 @@ ShowPoints(GdkGC *gc)
     }
   } else {
     gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
-
     for (i = 0; i < num; i++) {
       x1 = mxd2p(po[i]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
       y1 = mxd2p(po[i]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
@@ -1745,6 +1744,8 @@ ShowPoints(GdkGC *gc)
       gdk_draw_line(d->win, gc, x1 - 4, y1, x1 + 5, y1);
       gdk_draw_line(d->win, gc, x1, y1 - 4, x1, y1 + 5);
     }
+
+    gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
     if (num >= 1) {
       x1 = mxd2p(po[0]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
       y1 = mxd2p(po[0]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
@@ -1832,7 +1833,7 @@ CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
   int offset;
   int grid;
 
-  if ((state &GDK_CONTROL_MASK) && (!ofs)) {
+  if ((state & GDK_CONTROL_MASK) && (!ofs)) {
     if ((x != NULL) && (y != NULL)) {
       if (abs(*x) > abs(*y))
 	*y = 0;
