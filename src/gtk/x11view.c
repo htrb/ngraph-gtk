@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.57 2008/09/08 23:25:12 hito Exp $
+ * $Id: x11view.c,v 1.58 2008/09/09 02:51:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3698,9 +3698,17 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 	po = *(struct pointslist **) arraylast(d->points);
 
 	if (state & GDK_CONTROL_MASK) {
-	  if (d->Mode == ArcB ||d->Mode == RectB ||d->Mode == GaussB) {
+	  if (d->Mode == ArcB ||
+	      d->Mode == RectB ||
+	      d->Mode == GaussB ||
+	      d->Mode == FrameB ||
+	      d->Mode == SectionB ||
+	      d->Mode == CrossB) {
 	    calc_integer_ratio(d->points, &dx, &dy);
-	  } else if (d->Mode == CurveB ||d->Mode == LineB ||d->Mode == PolyB) {
+	  } else if (d->Mode == CurveB ||
+		     d->Mode == LineB ||
+		     d->Mode == PolyB ||
+		     d->Mode == SingleB) {
 	    calc_snap_angle(d->points, &dx, &dy);
 	    if (! (state & GDK_SHIFT_MASK)) {
 	      CheckGrid(FALSE, 0, &dx, &dy, NULL);
