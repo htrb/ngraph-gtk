@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.58 2008/09/09 02:51:18 hito Exp $
+ * $Id: x11view.c,v 1.59 2008/09/09 10:30:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -158,31 +158,36 @@ graph_dropped(char *fname)
   int load;
   char *ext;
 
-  if (fname) {
-    load = FALSE;
-    if ((ext = getextention(fname)) != NULL) {
-      if (strcmp0(ext, "prm") == 0) {
+  if (fname == NULL) {
+    return 0;
+  }
 
-	if (!CheckSave())
-	  return 1;
+  load = FALSE;
 
-	LoadPrmFile(fname);
-	load = TRUE;
-      } else if (strcmp0(ext, "ngp") == 0) {
-	if (!CheckSave())
-	  return 1;;
+  ext = getextention(fname);
+  if (ext == NULL)
+    return 0;
 
-	LoadNgpFile(fname, Menulocal.ignorepath, Menulocal.expand,
-		    Menulocal.expanddir, FALSE, NULL);
-	load = TRUE;
-      }
-    }
-    g_free(fname);
-    if (load) {
-      NgraphApp.Changed = FALSE;
-      CmViewerDrawB(NULL, NULL);
+  if (strcmp0(ext, "prm") == 0) {
+
+    if (!CheckSave())
       return 1;
-    }
+
+    LoadPrmFile(fname);
+    load = TRUE;
+  } else if (strcmp0(ext, "ngp") == 0) {
+    if (!CheckSave())
+      return 1;;
+
+    LoadNgpFile(fname, Menulocal.ignorepath, Menulocal.expand,
+		Menulocal.expanddir, FALSE, NULL);
+    load = TRUE;
+  }
+
+  if (load) {
+    NgraphApp.Changed = FALSE;
+    CmViewerDrawB(NULL, NULL);
+    return 1;
   }
   return 0;
 }
@@ -373,6 +378,7 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
     if (num == 1) {
       fname = g_filename_from_uri(filenames[0], NULL, NULL);
       r = graph_dropped(fname);
+      g_free(fname);
     }
 
     if (! r) {

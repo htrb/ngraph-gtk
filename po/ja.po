@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2008-09-09 11:27+0900\n"
-"PO-Revision-Date: 2008-09-09 11:32+0900\n"
+"PO-Revision-Date: 2008-09-09 13:46+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1265,7 +1265,7 @@ msgstr "直線"
 
 #: src/gtk/x11menu.c:280
 msgid "New Legend Line (+SHIFT: Fine +CONTROL: snap angle)"
-msgstr "直線の新規作成 (+SHIFT:微動 +CONTROL: 角度をスナップ)"
+msgstr "直線の新規作成 (+SHIFT:微動 +CONTROL:角度をスナップ)"
 
 #: src/gtk/x11menu.c:287 src/gtk/x11menu.c:288
 msgid "Curve"
@@ -1273,7 +1273,7 @@ msgstr "曲線"
 
 #: src/gtk/x11menu.c:289
 msgid "New Legend Curve (+SHIFT: Fine +CONTROL: snap angle)"
-msgstr "曲線の新規作成 (+SHIFT:微動 +CONTROL: 角度をスナップ)"
+msgstr "曲線の新規作成 (+SHIFT:微動 +CONTROL:角度をスナップ)"
 
 #: src/gtk/x11menu.c:297 src/gtk/x11menu.c:298
 msgid "Polygon"
@@ -1281,7 +1281,7 @@ msgstr "多角形"
 
 #: src/gtk/x11menu.c:299
 msgid "New Legend Polygon (+SHIFT: Fine +CONTROL: snap angle)"
-msgstr "多角形の新規作成 (+SHIFT:微動 +CONTROL: 角度をスナップ))"
+msgstr "多角形の新規作成 (+SHIFT:微動 +CONTROL:角度をスナップ)"
 
 #: src/gtk/x11menu.c:306 src/gtk/x11menu.c:307
 msgid "Rectangle"
@@ -1290,7 +1290,7 @@ msgstr "四角形"
 #: src/gtk/x11menu.c:308
 msgid ""
 "New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"
-msgstr "四角形の新規作成 (+SHIFT:微動 +CONTROL: 正方形または縦横が整数比の矩形)"
+msgstr "四角形の新規作成 (+SHIFT:微動 +CONTROL:正方形または縦横が整数比の矩形)"
 
 #: src/gtk/x11menu.c:315 src/gtk/x11menu.c:316
 msgid "Arc"
@@ -1298,7 +1298,7 @@ msgstr "円"
 
 #: src/gtk/x11menu.c:317
 msgid "New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"
-msgstr "円の新規作成 (+SHIFT:微動 +CONTROL: 真円または縦横が整数比の楕円)"
+msgstr "円の新規作成 (+SHIFT:微動 +CONTROL:真円または縦横が整数比の楕円)"
 
 #: src/gtk/x11menu.c:324 src/gtk/x11menu.c:325
 msgid "Mark"
@@ -1326,7 +1326,7 @@ msgstr "ガウス関数"
 
 #: src/gtk/x11menu.c:344
 msgid "New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"
-msgstr "ガウス関数等の新規作成 (+SHIFT:微動 +CONTROL: 縦横を整数比にする)"
+msgstr "ガウス関数等の新規作成 (+SHIFT:微動 +CONTROL:縦横を整数比にする)"
 
 #: src/gtk/x11menu.c:351
 msgid "Frame axis"
@@ -1338,7 +1338,7 @@ msgstr "フレームグラフ"
 
 #: src/gtk/x11menu.c:353
 msgid "New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"
-msgstr "フレームグラフの新規作成 (+SHIFT:微動 +CONTROL: 縦横を整数比にする)"
+msgstr "フレームグラフの新規作成 (+SHIFT:微動 +CONTROL:縦横を整数比にする)"
 
 #: src/gtk/x11menu.c:360
 msgid "Section axis"
@@ -1350,7 +1350,7 @@ msgstr "方眼グラフ"
 
 #: src/gtk/x11menu.c:362
 msgid "New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"
-msgstr "方眼グラフの新規作成 (+SHIFT:微動 +CONTROL: 縦横を整数比にする)"
+msgstr "方眼グラフの新規作成 (+SHIFT:微動 +CONTROL:縦横を整数比にする)"
 
 #: src/gtk/x11menu.c:369
 msgid "Cross axis"
@@ -1370,7 +1370,7 @@ msgstr "単体軸"
 
 #: src/gtk/x11menu.c:380
 msgid "New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"
-msgstr "単体軸の新規作成 (+SHIFT:微動 +CONTROL: 角度をスナップ)"
+msgstr "単体軸の新規作成 (+SHIFT:微動 +CONTROL:角度をスナップ)"
 
 #: src/gtk/x11menu.c:388
 msgid "Trimming"
