@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-09-08 21:16+0900\n"
+"POT-Creation-Date: 2008-09-09 10:57+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1260,7 +1260,7 @@ msgid "Line"
 msgstr ""
 
 #: src/gtk/x11menu.c:280
-msgid "New Legend Line (+SHIFT: Fine)"
+msgid "New Legend Line (+SHIFT: Fine / +CONTROL: snap angle)"
 msgstr ""
 
 #: src/gtk/x11menu.c:287 src/gtk/x11menu.c:288
@@ -1268,7 +1268,7 @@ msgid "Curve"
 msgstr ""
 
 #: src/gtk/x11menu.c:289
-msgid "New Legend Curve (+SHIFT: Fine)"
+msgid "New Legend Curve (+SHIFT: Fine / +CONTROL: snap angle)"
 msgstr ""
 
 #: src/gtk/x11menu.c:297 src/gtk/x11menu.c:298
@@ -1276,7 +1276,7 @@ msgid "Polygon"
 msgstr ""
 
 #: src/gtk/x11menu.c:299
-msgid "New Legend Polygon (+SHIFT: Fine)"
+msgid "New Legend Polygon (+SHIFT: Fine / +CONTROL: snap angle)"
 msgstr ""
 
 #: src/gtk/x11menu.c:306 src/gtk/x11menu.c:307
@@ -1874,11 +1874,11 @@ msgstr ""
 msgid "confirm"
 msgstr ""
 
-#: src/gtk/x11print.c:1044 src/gtk/x11view.c:4709
+#: src/gtk/x11print.c:1044 src/gtk/x11view.c:4710
 msgid "Drawing"
 msgstr ""
 
-#: src/gtk/x11print.c:1045 src/gtk/x11view.c:4708
+#: src/gtk/x11print.c:1045 src/gtk/x11view.c:4709
 msgid "Drawing."
 msgstr ""
 
@@ -1949,15 +1949,15 @@ msgstr ""
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2112
+#: src/gtk/x11view.c:2113
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3228
+#: src/gtk/x11view.c:3229
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4702
+#: src/gtk/x11view.c:4703
 msgid "Scaling"
 msgstr ""
 

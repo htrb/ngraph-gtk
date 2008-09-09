@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.37 2008/09/08 22:30:28 hito Exp $
+ * $Id: x11menu.c,v 1.38 2008/09/09 02:07:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -277,7 +277,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Line"),
     N_("Line"),
-    N_("New Legend Line (+SHIFT: Fine)"), 
+    N_("New Legend Line (+SHIFT: Fine / +CONTROL: snap angle)"), 
     Line_xpm,
     Line_bits,
     LineB,
@@ -286,7 +286,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Curve"),
     N_("Curve"),
-    N_("New Legend Curve (+SHIFT: Fine)"), 
+    N_("New Legend Curve (+SHIFT: Fine / +CONTROL: snap angle)"), 
     Curve_xpm,
     Curve_bits,
     CurveB,
@@ -296,7 +296,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Polygon"),
     N_("Polygon"),
-    N_("New Legend Polygon (+SHIFT: Fine)"), 
+    N_("New Legend Polygon (+SHIFT: Fine / +CONTROL: snap angle)"), 
     Polygon_xpm,
     Polygon_bits,
     PolyB,

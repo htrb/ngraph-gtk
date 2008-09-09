@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-09-08 21:16+0900\n"
-"PO-Revision-Date: 2008-09-08 17:24+0900\n"
+"POT-Creation-Date: 2008-09-09 10:57+0900\n"
+"PO-Revision-Date: 2008-09-09 11:04+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1264,24 +1264,24 @@ msgid "Line"
 msgstr "直線"
 
 #: src/gtk/x11menu.c:280
-msgid "New Legend Line (+SHIFT: Fine)"
-msgstr "直線の新規作成 (+SHIFT:微動)"
+msgid "New Legend Line (+SHIFT: Fine / +CONTROL: snap angle)"
+msgstr "直線の新規作成 (+SHIFT:微動 / +CONTROL: 角度をスナップ)"
 
 #: src/gtk/x11menu.c:287 src/gtk/x11menu.c:288
 msgid "Curve"
 msgstr "曲線"
 
 #: src/gtk/x11menu.c:289
-msgid "New Legend Curve (+SHIFT: Fine)"
-msgstr "曲線の新規作成 (+SHIFT:微動)"
+msgid "New Legend Curve (+SHIFT: Fine / +CONTROL: snap angle)"
+msgstr "曲線の新規作成 (+SHIFT:微動 / +CONTROL: 角度をスナップ)"
 
 #: src/gtk/x11menu.c:297 src/gtk/x11menu.c:298
 msgid "Polygon"
 msgstr "多角形"
 
 #: src/gtk/x11menu.c:299
-msgid "New Legend Polygon (+SHIFT: Fine)"
-msgstr "多角形の新規作成 (+SHIFT:微動)"
+msgid "New Legend Polygon (+SHIFT: Fine / +CONTROL: snap angle)"
+msgstr "多角形の新規作成 (+SHIFT:微動 / +CONTROL: 角度をスナップ))"
 
 #: src/gtk/x11menu.c:306 src/gtk/x11menu.c:307
 msgid "Rectangle"
@@ -1881,11 +1881,11 @@ msgstr "合成ファイル作成中"
 msgid "confirm"
 msgstr "確認"
 
-#: src/gtk/x11print.c:1044 src/gtk/x11view.c:4709
+#: src/gtk/x11print.c:1044 src/gtk/x11view.c:4710
 msgid "Drawing"
 msgstr "描画中"
 
-#: src/gtk/x11print.c:1045 src/gtk/x11view.c:4708
+#: src/gtk/x11print.c:1045 src/gtk/x11view.c:4709
 msgid "Drawing."
 msgstr "描画中"
 
@@ -1956,15 +1956,15 @@ msgstr "データ評価中"
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2112
+#: src/gtk/x11view.c:2113
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3228
+#: src/gtk/x11view.c:3229
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:4702
+#: src/gtk/x11view.c:4703
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
@@ -2160,6 +2160,12 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#~ msgid "New Legend Line (+SHIFT: Fine)"
+#~ msgstr "直線の新規作成 (+SHIFT:微動)"
+
+#~ msgid "New Legend Curve (+SHIFT: Fine)"
+#~ msgstr "曲線の新規作成 (+SHIFT:微動)"
 
 #~ msgid "New Legend Arc (+SHIFT: Fine)"
 #~ msgstr "円の新規作成 (+SHIFT:微動)"
