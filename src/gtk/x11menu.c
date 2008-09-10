@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.39 2008/09/09 02:51:18 hito Exp $
+ * $Id: x11menu.c,v 1.40 2008/09/10 04:23:01 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1288,6 +1288,9 @@ createcommand2(GtkToolbar *parent)
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "leave-notify-event",
 		       G_CALLBACK(tool_button_enter_leave_cb), NULL);
+      g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
+		       "button-press-event",
+		       G_CALLBACK(CmViewerButtonPressed), NULL);
 
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(b));
 

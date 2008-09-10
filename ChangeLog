@@ -1,3 +1,15 @@
+2008-09-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (createcommand2): set signal handler for
+	"button-press-event".
+
+	* src/gtk/x11view.h: add prototype of CmViewerButtonPressed().
+
+	* src/gtk/x11view.c: add 'KeepMouseMode'.
+	(ViewerEvLButtonDblClk): call gtk_toggle_tool_button_set_active()
+	when 'KeepMouseMode == FALSE'.
+	(CmViewerButtonPressed): add.
+
 2008-09-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (Focus): remove

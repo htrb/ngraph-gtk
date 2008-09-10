@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.60 2008/09/10 01:48:06 hito Exp $
+ * $Id: x11view.c,v 1.61 2008/09/10 04:23:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -100,7 +100,7 @@ struct viewer_popup
 #define Button5 5
 
 static GdkRegion *region = NULL;
-static int PaintLock = FALSE, ZoomLock = FALSE, DefaultMode = 0;;
+static int PaintLock = FALSE, ZoomLock = FALSE, DefaultMode = 0, KeepMouseMode = FALSE;
 
 #define EVAL_NUM_MAX 5000
 static struct evaltype EvalList[EVAL_NUM_MAX];
@@ -2655,11 +2655,6 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
       }
       break;
     case MOUSENONE:
-      /*
-      if (d->Mode == MoveB) {
-	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
-      }
-      */
       break;
     }
     d->MouseMode = MOUSENONE;
@@ -3197,26 +3192,38 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   case MarkB:
   case TextB:
     create_legend1(d, dc);
+    if (! KeepMouseMode)
+      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case LineB:
   case CurveB:
   case PolyB:
     create_legend2(d, dc);
+    if (! KeepMouseMode)
+      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case RectB:
   case ArcB:
     create_legend3(d, dc);
+    if (! KeepMouseMode)
+      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case GaussB:
     create_legendx(d, dc);
+    if (! KeepMouseMode)
+      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case SingleB:
     create_single_axis(d, dc);
+    if (! KeepMouseMode)
+      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case FrameB:
   case SectionB:
   case CrossB:
     create_axis(d, dc);
+    if (! KeepMouseMode)
+      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   }
   g_object_unref(G_OBJECT(dc));
@@ -5615,6 +5622,13 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
     AlignFocusedObj((int) client_data);
     break;
   }
+}
+
+gboolean
+CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+  KeepMouseMode = (event->state & GDK_SHIFT_MASK);
+  return FALSE;
 }
 
 void

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.h,v 1.4 2008/06/17 10:55:40 hito Exp $
+ * $Id: x11view.h,v 1.5 2008/09/10 04:23:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,3 +43,4 @@ void CmViewerClear(void);
 void CmViewerDrawB(GtkWidget *w, gpointer client_data);
 void CmViewerClearB(GtkWidget *w, gpointer client_data);
 void CmViewerButtonArm(GtkToolItem *w, gpointer client_data);
+gboolean CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
