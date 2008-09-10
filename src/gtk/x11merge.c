@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.9 2008/07/16 10:18:02 hito Exp $
+ * $Id: x11merge.c,v 1.10 2008/09/10 09:46:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -45,6 +45,7 @@
 #include "x11file.h"
 #include "x11merge.h"
 #include "x11commn.h"
+#include "x11view.h"
 
 static n_list_store Mlist[] = {
   {"",     G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",      FALSE},
@@ -212,8 +213,10 @@ CmMergeOpen(void)
 
   if (Menulock || GlobalLock)
     return;
+
   if ((obj = chkobject("merge")) == NULL)
     return;
+
   if (nGetOpenFileName(TopLevel, _("Merge open"), "gra", NULL, NULL, &name,
 		       "*.gra", TRUE, Menulocal.changedirectory) != IDOK || ! name)
     return;
@@ -421,6 +424,37 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 }
 
+static void 
+drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
+{
+  gchar **filenames;
+  int num;
+
+  switch (info) {
+  case DROP_TYPE_FILE:
+    filenames = gtk_selection_data_get_uris(data);
+    num = g_strv_length(filenames);
+    data_dropped(filenames, num, FILE_TYPE_MERGE);
+    g_strfreev(filenames);
+    gtk_drag_finish(context, TRUE, FALSE, time);
+    break;
+  }
+}
+
+static void
+init_dnd(struct SubWin *d)
+{
+  GtkWidget *widget;
+  GtkTargetEntry target[] = {
+    {"text/uri-list", 0, DROP_TYPE_FILE},
+  };
+
+  widget = d->Win;
+
+  gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
+  g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
+}
+
 void
 CmMergeWindow(GtkWidget *w, gpointer client_data)
 {
@@ -451,6 +485,9 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
 
     d->select = -1;
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+
+    init_dnd(d);
+
     gtk_widget_show_all(dlg);
  }
 }

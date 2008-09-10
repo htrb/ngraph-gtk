@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.61 2008/09/10 04:23:01 hito Exp $
+ * $Id: x11view.c,v 1.62 2008/09/10 09:46:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -159,25 +159,25 @@ graph_dropped(char *fname)
   char *ext;
 
   if (fname == NULL) {
-    return 0;
+    return 1;
   }
 
   load = FALSE;
 
   ext = getextention(fname);
   if (ext == NULL)
-    return 0;
+    return 1;
 
   if (strcmp0(ext, "prm") == 0) {
 
     if (!CheckSave())
-      return 1;
+      return 0;
 
     LoadPrmFile(fname);
     load = TRUE;
   } else if (strcmp0(ext, "ngp") == 0) {
     if (!CheckSave())
-      return 1;
+      return 0;
 
     LoadNgpFile(fname, Menulocal.ignorepath, Menulocal.expand,
 		Menulocal.expanddir, FALSE, NULL);
@@ -187,28 +187,95 @@ graph_dropped(char *fname)
   if (load) {
     NgraphApp.Changed = FALSE;
     CmViewerDrawB(NULL, NULL);
-    return 1;
+    return 0;
   }
+  return 1;
+}
+
+static int
+new_merge_obj(char *name, struct objlist *obj)
+{
+  int id, ret;
+
+  id = newobj(obj);
+
+  if (id < 0)
+    return 1;
+
+  changefilename(name);
+  putobj(obj, "file", id, name);
+  MergeDialog(&DlgMerge, obj, id, -1);
+  ret = DialogExecute(TopLevel, &DlgMerge);
+  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+    delobj(obj, id);
+  } else {
+    NgraphApp.Changed = TRUE;
+  }
+
   return 0;
 }
 
 static int
-data_dropped(char **filenames, int num)
+new_file_obj(char *name, struct objlist *obj, int *id0)
 {
-  char *fname, *name, *field;
-  int i, j, id, id0, perm, type, ret;
-  struct objlist *obj;
+  char *field;
+  int id, j, perm, type, ret;
 
-  if ((obj = chkobject("file")) == NULL) {
+  id = newobj(obj);
+  if (id < 0) {
+    return 1;
+  }
+
+  AddDataFileList(name);
+  putobj(obj, "file", id, name);
+  if (*id0 != -1) {
+    for (j = 0; j < chkobjfieldnum(obj); j++) {
+      field = chkobjfieldname(obj, j);
+      perm = chkobjperm(obj, field);
+      type = chkobjfieldtype(obj, field);
+      if ((strcmp2(field, "name") != 0)
+	  && (strcmp2(field, "file") != 0)
+	  && (strcmp2(field, "fit") != 0)
+	  && ((perm & NREAD) != 0) && ((perm & NWRITE) != 0)
+	  && (type < NVFUNC))
+	copyobj(obj, field, id, *id0);
+    }
+    FitCopy(obj, id, *id0);
+  } else {
+    FileDialog(&DlgFile, obj, id, 0);
+    ret = DialogExecute(TopLevel, &DlgFile);
+    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+      FitDel(obj, id);
+      delobj(obj, id);
+    } else {
+      if (ret == IDFAPPLY)
+	*id0 = id;
+      NgraphApp.Changed = TRUE;
+    }
+  }
+
+  return 0;
+}
+
+int
+data_dropped(char **filenames, int num, int file_type)
+{
+  char *fname, *name, *ext;
+  int i, id0, type, ret;
+  struct objlist *obj, *mobj;
+
+  obj = chkobject("file");
+  if (obj == NULL) {
+    return 1;
+  }
+
+  mobj = chkobject("merge");
+  if (mobj == NULL) {
     return 1;
   }
 
   id0 = -1;
   for (i = 0; i < num; i++) {
-    id = newobj(obj);
-    if (id < 0)
-      continue;
-
     fname = g_filename_from_uri(filenames[i], NULL, NULL);
     if (fname == NULL)
       continue;
@@ -220,35 +287,30 @@ data_dropped(char **filenames, int num)
       return 1;
     }
 
-    AddDataFileList(name);
-    putobj(obj, "file", id, name);
-    if (id0 != -1) {
-      for (j = 0; j < chkobjfieldnum(obj); j++) {
-	field = chkobjfieldname(obj, j);
-	perm = chkobjperm(obj, field);
-	type = chkobjfieldtype(obj, field);
-	if ((strcmp2(field, "name") != 0)
-	    && (strcmp2(field, "file") != 0)
-	    && (strcmp2(field, "fit") != 0)
-	    && ((perm & NREAD) != 0) && ((perm & NWRITE) != 0)
-	      && (type < NVFUNC))
-	  copyobj(obj, field, id, id0);
-      }
-      FitCopy(obj, id, id0);
-    } else {
-      FileDialog(&DlgFile, obj, id, 0);
-      ret = DialogExecute(TopLevel, &DlgFile);
-      if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	FitDel(obj, id);
-	delobj(obj, id);
+    type = file_type;
+    if (type == FILE_TYPE_AUTO) {
+      ext = getextention(name);
+      if (ext && strcmp0(ext, "gra") == 0) {
+	type = FILE_TYPE_MERGE;
       } else {
-	if (ret == IDFAPPLY)
-	  id0 = id;
-	NgraphApp.Changed = TRUE;
+	type = FILE_TYPE_DATA;
       }
+    }
+
+    ret = 1;
+    if (type == FILE_TYPE_MERGE) {
+      ret = new_merge_obj(name, mobj);
+    } else {
+      ret = new_file_obj(name, obj, &id0);
+    }
+
+    if (ret) {
+      memfree(name);
+      continue;
     }
   }
 
+  MergeWinUpdate(TRUE);
   FileWinUpdate(TRUE);
   return 0;
 }
@@ -349,9 +411,6 @@ text_dropped(char *str, gint x, gint y, struct Viewer *d)
   return 0;
 }
 
-#define DROP_TYPE_FILE 0
-#define DROP_TYPE_TEXT 1
-
 static void 
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
@@ -374,15 +433,15 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
 
     num = g_strv_length(filenames);
 
-    r = 0;
+    r = 1;
     if (num == 1) {
       fname = g_filename_from_uri(filenames[0], NULL, NULL);
       r = graph_dropped(fname);
       g_free(fname);
     }
 
-    if (! r) {
-      data_dropped(filenames,  num);
+    if (r) {
+      data_dropped(filenames, num, FILE_TYPE_AUTO);
     }
 
     g_strfreev(filenames);

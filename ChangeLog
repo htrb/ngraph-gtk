@@ -1,5 +1,18 @@
 2008-09-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (new_merge_obj, new_file_obj): add.
+	(data_dropped): add argument 'file_type'. use new_file_obj() and
+	new_merge_obj().
+
+	* src/gtk/x11view.h: add prototype of data_dropped().
+
+	* src/gtk/x11merge.c: include "x11view.h"
+	(drag_drop_cb, init_dnd): add.
+	(CmMergeWindow): call init_dnd().
+
+	* src/gtk/x11file.c (drag_drop_cb, init_dnd): add.
+	(CmFileWindow): call init_dnd().
+
 	* src/gtk/x11menu.c (createcommand2): set signal handler for
 	"button-press-event".
 

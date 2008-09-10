@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.40 2008/09/10 04:23:01 hito Exp $
+ * $Id: x11menu.c,v 1.41 2008/09/10 09:46:44 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1355,7 +1355,6 @@ setupwindow(void)
   command1 = create_toolbar(vbox, GTK_ORIENTATION_HORIZONTAL);
   command2 = create_toolbar(hbox, GTK_ORIENTATION_VERTICAL);
 
-
   NgraphApp.Viewer.HScroll = gtk_hscrollbar_new(NULL);
   NgraphApp.Viewer.VScroll = gtk_vscrollbar_new(NULL);
   NgraphApp.Viewer.Win = gtk_drawing_area_new();
@@ -1416,6 +1415,7 @@ defaultwindowconfig(void)
     if (Menulocal.filey == CW_USEDEFAULT)
       Menulocal.filey = 0;
   }
+
   if (Menulocal.axisopen) {
     if (Menulocal.axiswidth == CW_USEDEFAULT)
       Menulocal.axiswidth = w / 4;
@@ -1429,8 +1429,8 @@ defaultwindowconfig(void)
     if (Menulocal.axisy == CW_USEDEFAULT)
       Menulocal.axisy = Menulocal.fileheight + Menulocal.framey + 4;
   }
-  if (Menulocal.coordopen) {
 
+  if (Menulocal.coordopen) {
     if (Menulocal.coordwidth == CW_USEDEFAULT)
       Menulocal.coordwidth = w / 4;
 

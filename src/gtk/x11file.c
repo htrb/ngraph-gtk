@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.49 2008/09/05 09:54:24 hito Exp $
+ * $Id: x11file.c,v 1.50 2008/09/10 09:46:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4407,6 +4407,37 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   NgraphApp.Changed = TRUE;
 }
 
+static void 
+drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
+{
+  gchar **filenames;
+  int num;
+
+  switch (info) {
+  case DROP_TYPE_FILE:
+    filenames = gtk_selection_data_get_uris(data);
+    num = g_strv_length(filenames);
+    data_dropped(filenames, num, FILE_TYPE_DATA);
+    g_strfreev(filenames);
+    gtk_drag_finish(context, TRUE, FALSE, time);
+    break;
+  }
+}
+
+static void
+init_dnd(struct SubWin *d)
+{
+  GtkWidget *widget;
+  GtkTargetEntry target[] = {
+    {"text/uri-list", 0, DROP_TYPE_FILE},
+  };
+
+  widget = d->Win;
+
+  gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
+  g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), NULL);
+}
+
 void
 CmFileWindow(GtkWidget *w, gpointer client_data)
 {
@@ -4441,6 +4472,9 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
     set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
     set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
     set_obj_cell_renderer_cb(d, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
+
+    init_dnd(d);
+
     gtk_widget_show_all(dlg);
   }
 }
