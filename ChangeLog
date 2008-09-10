@@ -1,5 +1,10 @@
 2008-09-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11print.c (CmPrintGRAFile): set base-name of ngp file
+	as default GRA filename.
+	(get_base_ngp_name): add.
+	(CmPrintGRAFile, CmOutputImage): use get_base_ngp_name().
+
 	* src/gtk/ogra2cairo.c (draw_str, gra2cairo_charheight)
 	(gra2cairo_charwidth):  check font size.
 

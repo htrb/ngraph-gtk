@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.18 2008/08/21 06:05:49 hito Exp $
+ * $Id: x11print.c,v 1.19 2008/09/10 10:31:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -798,23 +798,46 @@ CmOutputViewer(void)
   ResetStatusBar();
 }
 
+static char *
+get_base_ngp_name(void)
+{
+  char *ptr, *tmp;
+
+  if (NgraphApp.FileName == NULL)
+    return NULL;
+
+  tmp = strdup(NgraphApp.FileName);
+  if (tmp == NULL)
+    return NULL;
+
+  ptr = strrchr(tmp, '.');
+  if (ptr && strcmp(ptr, ".ngp") == 0) {
+    *ptr = '\0';
+  }
+
+  return tmp;
+}
+
 void
 CmPrintGRAFile(void)
 {
   struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid;
-  char *device, *g2winst;
-  int GC;
-  char *file, buf[MESSAGE_BUF_SIZE];
+  int id, g2wid, g2woid, GC, i, ret;
+  char *device, *g2winst, *tmp, *file, buf[MESSAGE_BUF_SIZE], *filebuf;
   struct narray *drawrable;
-  int i;
-  char *filebuf;
 
   if (Menulock || GlobalLock)
     return;
 
-  if (nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, NULL,
-		       &filebuf, "*.gra", Menulocal.changedirectory) != IDOK)
+  tmp = get_base_ngp_name();
+
+  ret = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp,
+			 &filebuf, "*.gra", Menulocal.changedirectory);
+
+  if (tmp)
+    free(tmp);
+
+  if (ret != IDOK)
     return;
 
   if (access(filebuf, 04) == 0) {
@@ -902,7 +925,7 @@ CmOutputImage(int type)
   int i, ret, format, t2p, dpi;
   struct savedstdio stdio;
   char *ext_name, *ext_str, *ext;
-  char *file, *filebuf, *tmp, *ptr, buf[MESSAGE_BUF_SIZE];
+  char *file, *filebuf, *tmp, buf[MESSAGE_BUF_SIZE];
 
   if (Menulock || GlobalLock)
     return;
@@ -940,15 +963,7 @@ CmOutputImage(int type)
     ext = NULL;
   }
 
-  if (NgraphApp.FileName == NULL) {
-    tmp = NULL;
-  } else {
-    tmp = strdup(NgraphApp.FileName);
-    ptr = strrchr(tmp, '.');
-    if (ptr && strcmp(ptr, ".ngp") == 0) {
-      *ptr = '\0';
-    }
-  }
+  tmp = get_base_ngp_name();
 
   ret = nGetSaveFileName(TopLevel, ext_name, ext_str, NULL, tmp,
 			 &filebuf, ext, Menulocal.changedirectory);
