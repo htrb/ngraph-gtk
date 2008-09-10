@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.10 2008/09/10 09:46:44 hito Exp $
+ * $Id: x11merge.c,v 1.11 2008/09/10 10:13:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -51,9 +51,9 @@ static n_list_store Mlist[] = {
   {"",     G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",      FALSE},
   {"#",    G_TYPE_INT,     TRUE, FALSE, "id",          FALSE},
   {"file", G_TYPE_STRING,  TRUE, FALSE, "file",        FALSE},
-  {"tm",   G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"lm",   G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"zm",   G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom",        FALSE,                0, SPIN_ENTRY_MAX, 100, 1000},
+  {"top",  G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"left ", G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"zoom", G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom",        FALSE,                0, SPIN_ENTRY_MAX, 100, 1000},
   {"^#",   G_TYPE_INT,     TRUE, FALSE, "oid",         FALSE},
 };
 

@@ -1,5 +1,8 @@
 2008-09-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2cairo.c (draw_str, gra2cairo_charheight)
+	(gra2cairo_charwidth):  check font size.
+
 	* src/gtk/x11view.c (new_merge_obj, new_file_obj): add.
 	(data_dropped): add argument 'file_type'. use new_file_obj() and
 	new_merge_obj().

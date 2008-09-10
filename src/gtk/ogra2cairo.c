@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.22 2008/08/21 06:05:49 hito Exp $
+ * $Id: ogra2cairo.c,v 1.23 2008/09/10 10:13:44 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -560,6 +560,18 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
   PangoLayoutIter *piter;
   int w, h, baseline;
 
+  if (size == 0) {
+    if (fw)
+      *fw = 0;
+
+    if (ah)
+      *ah = 0;
+
+    if (dh)
+      *dh = 0;
+    return;
+  }
+
   layout = pango_cairo_create_layout(local->cairo);
 
   alist = pango_attr_list_new();
@@ -991,6 +1003,11 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   size = (*(int *)(argv[4])) / 72.0 * 25.4;
   font = (char *)(argv[5]);
 
+  if (size == 0) {
+    *(int *) rval = 0;
+    return 0;
+  }
+
   if (_getobj(obj, "_local", inst, &local))
     return 1;
 
@@ -1044,6 +1061,11 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   func = (char *)argv[1];
   size = (*(int *)(argv[3])) / 72.0 * 25.4;
   font = (char *)(argv[4]);
+
+  if (size == 0) {
+    *(int *) rval = 0;
+    return 0;
+  }
 
   if (_getobj(obj, "_local", inst, &local))
     return 1;
