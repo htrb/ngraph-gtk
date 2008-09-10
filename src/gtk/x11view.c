@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.59 2008/09/09 10:30:44 hito Exp $
+ * $Id: x11view.c,v 1.60 2008/09/10 01:48:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -177,7 +177,7 @@ graph_dropped(char *fname)
     load = TRUE;
   } else if (strcmp0(ext, "ngp") == 0) {
     if (!CheckSave())
-      return 1;;
+      return 1;
 
     LoadNgpFile(fname, Menulocal.ignorepath, Menulocal.expand,
 		Menulocal.expanddir, FALSE, NULL);
