@@ -1,5 +1,5 @@
 /* 
- * $Id: jnstring.c,v 1.1 2008/08/05 08:45:59 hito Exp $
+ * $Id: jnstring.c,v 1.2 2008/09/11 07:07:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,12 +33,13 @@
 
 void njms2euc(char *s)
 {
-  int i;
+  unsigned int i, n;
   unsigned int jis;
 
-  for (i=0;i<strlen(s);i++) {
+  n = strlen(s);
+  for (i=0;i<n;i++) {
     if (niskanji((unsigned char)s[i])) {
-      if (i+1<strlen(s)) {
+      if (i+1<n) {
         jis=njms2jis(((unsigned char)s[i] << 8)+(unsigned char)s[i+1]);
         s[i]=(jis >> 8) | 0x80;
         s[i+1]=(jis & 0xff) | 0x80; 
@@ -50,10 +51,11 @@ void njms2euc(char *s)
 
 void neuc2jms(char *s)
 {
-  int i;
+  unsigned int i, n;
   unsigned int jms;
 
-  for (i=0;i<strlen(s);i++) {
+  n = strlen(s);
+  for (i=0;i<n;i++) {
     if ((s[i] & 0x80) && (s[i+1] & 0x80)) {
       jms=njis2jms((((unsigned char)s[i] << 8)
                     +(unsigned char)s[i+1]) & 0x7f7f);

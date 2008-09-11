@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.12 2008/08/26 01:31:10 hito Exp $
+ * $Id: ioutil.c,v 1.13 2008/09/11 07:07:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -292,12 +292,21 @@ char *getextention(char *name)
 char *getfilename(char *dir,char *sep,char *file)
 {
   char *s;
-  if ((s=memalloc(strlen(dir)+strlen(sep)+strlen(file)+1))==NULL) return NULL;
-  strcpy(s,dir);
-  if ((strlen(dir)>0) && ((s[strlen(dir)-1]=='/') || s[strlen(dir)-1]=='\\'))
-    s[strlen(dir)-1]='\0';
-  strcat(s,sep);
-  strcat(s,file);
+  unsigned int dir_len;
+
+  dir_len = strlen(dir);
+
+  s = memalloc(dir_len + strlen(sep) + strlen(file) + 1);
+  if (s == NULL)
+    return NULL;
+
+  strcpy(s, dir);
+
+  if (dir_len > 0 && (s[dir_len - 1] == '/' || s[dir_len - 1] == '\\'))
+    s[dir_len - 1]='\0';
+
+  strcat(s, sep);
+  strcat(s, file);
   changefilename(s);
   return s;
 }
@@ -511,7 +520,7 @@ int nscandir(char *dir,char ***namelist,
              int (*select)(char *dir,struct dirent *ent),
              int (*compar)())
 {
-  int i;
+  unsigned int i;
   DIR *dp;
   struct dirent *ent;
   char **po,**po2;
@@ -526,7 +535,9 @@ int nscandir(char *dir,char ***namelist,
 #endif
     if (allocn==alloc) {
       if ((po2=realloc(po,(allocn+=256)*sizeof(char *)))==NULL) {
-        for (i=0;i<alloc;i++) free(po[i]);
+        for (i=0;i<alloc;i++) {
+	  free(po[i]);
+	}
         free(po);
         return -1;
       }

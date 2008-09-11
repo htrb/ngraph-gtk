@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: shell.h,v 1.2 2008/09/11 07:07:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -62,6 +62,7 @@ extern int security;
 #define ERRTESTNEST 133
 #define ERRTESTSYNTAX 134
 #define ERRSECURITY 135
+#define ERRUNKNOWNSH 136
 
 struct prmlist;
 struct prmlist {

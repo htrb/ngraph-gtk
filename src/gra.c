@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.9 2008/08/21 08:43:39 hito Exp $
+ * $Id: gra.c,v 1.10 2008/09/11 07:07:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2239,6 +2239,7 @@ void GRAtextextent(char *s,char *font,char *jfont,
   char *c,*tok;
   char *str;
   int w,h,d,len,kanji,scmovey,scriptf;
+  unsigned int u, n;
   char *endptr;
   char *font2,*jfont2;
   int size2,space2;
@@ -2317,32 +2318,34 @@ void GRAtextextent(char *s,char *font,char *jfont,
     if (str[0]!='\0') {
       if (kanji) {
         w=0;
-        for (i=0;i<strlen(str);i+=2) {
-          w+=GRAcharwidth((((unsigned char)str[i+1])<<8)+(unsigned char)str[i],
+	n = strlen(str);
+        for (u = 0; u < n; u += 2) {
+          w+=GRAcharwidth((((unsigned char)str[u + 1])<<8) + (unsigned char)str[u],
                            jfont2,size2)+nround(space2/72.0*25.4);
         }
         h=GRAcharascent(jfont2,size2);
         d=GRAchardescent(jfont2,size2);
       } else {
         w = 0;
-        for (i = 0; i < strlen(str); i++) {
-          if (str[i] == '\\' && str[i + 1] == 'x') {
-            if (toupper(str[i + 2]) >= 'A') {
-	      ch = toupper(str[i+2]) - 'A' + 10;
+	n = strlen(str);
+        for (u = 0; u < n; u++) {
+          if (str[u] == '\\' && str[u + 1] == 'x') {
+            if (toupper(str[u + 2]) >= 'A') {
+	      ch = toupper(str[u + 2]) - 'A' + 10;
 	    } else {
-	      ch = str[i+2] - '0';
+	      ch = str[u + 2] - '0';
 	    }
-            if (toupper(str[i+3])>='A') {
-	      ch = ch * 16 + toupper(str[i + 3]) - 'A' + 10;
+            if (toupper(str[u + 3])>='A') {
+	      ch = ch * 16 + toupper(str[u + 3]) - 'A' + 10;
 	    } else {
-	      ch = ch * 16 + str[i + 3] - '0';
+	      ch = ch * 16 + str[u + 3] - '0';
 	    }
-            str[i]=ch;
-            w += GRAcharwidth((unsigned char)str[i],font2,size2)
+            str[u]=ch;
+            w += GRAcharwidth((unsigned char)str[u],font2,size2)
               + nround(space2 / 72.0 * 25.4);
-            i += 3;
+            u += 3;
           } else {
-            w += GRAcharwidth((unsigned char)str[i],font2,size2)
+            w += GRAcharwidth((unsigned char)str[u],font2,size2)
               + nround(space2 / 72.0 * 25.4);
           }
         }
@@ -2497,7 +2500,8 @@ void GRAtextextentraw(char *s,char *font,char *jfont,
   char *c;
   char *str;
   int w,h,len,kanji;
-  int i,j,x0,y0;
+  unsigned int i, n;
+  int j,x0,y0;
 
   *gx0=*gy0=*gx1=*gy1=0;
   if ((font==NULL) || (jfont==NULL)) return;
@@ -2533,14 +2537,16 @@ void GRAtextextentraw(char *s,char *font,char *jfont,
     if (str[0]!='\0') {
       if (kanji) {
         w=0;
-        for (i=0;i<strlen(str);i+=2) {
+	n = strlen(str);
+        for (i=0;i<n;i+=2) {
           w+=GRAcharwidth((((unsigned char)str[i+1])<<8)+(unsigned char)str[i],
                            jfont,size)+nround(space/72.0*25.4);
         }
         h=GRAcharascent(jfont,size);
       } else {
         w=0;
-        for (i=0;i<strlen(str);i++)
+	n = strlen(str);
+        for (i=0;i<n;i++)
           w+=GRAcharwidth((unsigned char)str[i],font,size)
             +nround(space/72.0*25.4);
         h=GRAcharascent(font,size);
@@ -3350,7 +3356,8 @@ void GRAendbbox(struct GRAbbox *bbox)
 
 int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
 {
-  int i,lw;
+  unsigned int i, n;
+  int lw, j;
   double x,y,csin,ccos;
   int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
   int c1, c2, ch;
@@ -3421,13 +3428,13 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
     setbbminmax(bbox,cpar[1],cpar[2],cpar[1],cpar[2],FALSE);
     break;
   case 'R':
-    for (i=0;i<(cpar[1]-1);i++)
-      setbbminmax(bbox,cpar[i*2+2],cpar[i*2+3],cpar[i*2+4],cpar[i*2+5], TRUE);
+    for (j = 0; j < cpar[1] - 1; j++)
+      setbbminmax(bbox, cpar[j * 2 + 2], cpar[j * 2 + 3], cpar[j * 2 + 4], cpar[j * 2 + 5], TRUE);
     break;
   case 'D':
     lw = (cpar[2] == 0);
-    for (i=0;i<(cpar[1]-1);i++)
-      setbbminmax(bbox,cpar[i*2+3],cpar[i*2+4],cpar[i*2+5],cpar[i*2+6],lw);
+    for (j = 0; j < cpar[1] - 1; j++)
+      setbbminmax(bbox, cpar[j * 2 + 3], cpar[j * 2 + 4], cpar[j * 2 + 5], cpar[j * 2 + 6],lw);
     break;
   case 'F':
     memfree(bbox->fontalias);
@@ -3445,7 +3452,8 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
     csin=sin(bbox->dir/18000.0*MPI);
     ccos=cos(bbox->dir/18000.0*MPI);
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i<n) {
       if ((cstr[i]=='\\') && (cstr[i+1]=='x')) {
         if (toupper(cstr[i+2])>='A') c1=toupper(cstr[i+2])-'A'+10;
         else c1=cstr[i+2]-'0';
@@ -3487,7 +3495,8 @@ int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
     csin=sin(bbox->dir/18000.0*MPI);
     ccos=cos(bbox->dir/18000.0*MPI);
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i<n) {
       if (niskanji((unsigned char)cstr[i]) && (cstr[i+1]!='\0')) {
         i+=2;
         w=GRAcharwidth((((unsigned char)cstr[i+1])<<8)+(unsigned char)cstr[i],

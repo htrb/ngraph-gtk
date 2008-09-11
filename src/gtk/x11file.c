@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.50 2008/09/10 09:46:44 hito Exp $
+ * $Id: x11file.c,v 1.51 2008/09/11 07:07:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1200,7 +1200,8 @@ FitDialog(struct FitDialog *data, struct objlist *obj, int id)
 static void
 FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
 {
-  int j, movenum, line;
+  unsigned int j, movenum;
+  int line;
   double x, y;
   struct narray *move, *movex, *movey;
   GtkTreeIter iter;
@@ -1391,7 +1392,8 @@ static void
 FileMoveDialogClose(GtkWidget *w, void *data)
 {
   struct FileMoveDialog *d;
-  int ret, j, movenum, line, a;
+  unsigned int j, movenum;
+  int ret, line, a;
   double x, y;
   struct narray *move, *movex, *movey;
   GtkTreeIter iter;
@@ -1665,7 +1667,7 @@ static void
 FileLoadDialogSetupItem(GtkWidget *w, struct FileLoadDialog *d, int id)
 {
   char *ifs, *s;
-  int i;
+  unsigned int i, l;
 
   SetWidgetFromObjField(d->headskip, d->Obj, id, "head_skip");
   SetWidgetFromObjField(d->readstep, d->Obj, id, "read_step");
@@ -1673,7 +1675,9 @@ FileLoadDialogSetupItem(GtkWidget *w, struct FileLoadDialog *d, int id)
   SetWidgetFromObjField(d->remark, d->Obj, id, "remark");
   sgetobjfield(d->Obj, id, "ifs", NULL, &ifs, FALSE, FALSE, FALSE);
   s = nstrnew();
-  for (i = 0; i < strlen(ifs); i++) {
+
+  l = strlen(ifs);
+  for (i = 0; i < l; i++) {
     if (ifs[i] == '\t') {
       s = nstrccat(s, '\\');
       s = nstrccat(s, 't');
@@ -1759,7 +1763,7 @@ FileLoadDialogClose(GtkWidget *w, void *data)
   int ret;
   const char *ifs;
   char *s;
-  int i;
+  unsigned int i, l;
 
   d = (struct FileLoadDialog *) data;
 
@@ -1792,7 +1796,8 @@ FileLoadDialogClose(GtkWidget *w, void *data)
   ifs = gtk_entry_get_text(GTK_ENTRY(d->ifs));
   s = nstrnew();
 
-  for (i = 0; i < strlen(ifs); i++) {
+  l = strlen(ifs);
+  for (i = 0; i < l; i++) {
     if ((ifs[i] == '\\') && (ifs[i + 1] == 't')) {
       s = nstrccat(s, 0x09);
       i++;
@@ -3953,7 +3958,8 @@ get_axis_obj_str(struct objlist *obj, int id, char *field)
 static void
 file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 {
-  int cx, i, len;
+  int cx, len;
+  unsigned int i;
   char buf[256], *color;
   struct narray *mask, *move;
   char *file, *bfile, *axis;
@@ -4090,7 +4096,8 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
-  int sel, i;
+  int sel;
+  unsigned int i;
   struct SubWin *d;
 
   d = (struct SubWin *) user_data;

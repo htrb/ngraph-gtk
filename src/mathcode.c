@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: mathcode.c,v 1.2 2008/09/11 07:07:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -142,7 +142,8 @@ int mathcode(char *str,char **code,
     int column,int multi,int minmax,int memory,int userfn,
     int color,int marksize,int file)
 {
-  int rcode,i,j,po,integpo,difpo,dim,id,*ndata,nn,maxdim2;
+  int rcode,i,po,integpo,difpo,dim,id,*ndata,nn,maxdim2;
+  unsigned int j;
   size_t len;
   double x;
   unsigned char ch;

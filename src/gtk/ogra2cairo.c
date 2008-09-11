@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.23 2008/09/10 10:13:44 hito Exp $
+ * $Id: ogra2cairo.c,v 1.24 2008/09/11 07:07:21 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1160,7 +1160,6 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
 static struct objtable gra2cairo[] = {
   {"init", NVFUNC, NEXEC, gra2cairo_init, NULL, 0}, 
   {"done", NVFUNC, NEXEC, gra2cairo_done, NULL, 0}, 
-  {"next", NPOINTER, 0, NULL, NULL, 0}, 
   {"dpi", NINT, NREAD | NWRITE, gra2cairo_set_dpi, NULL, 0},
   {"dpix", NINT, NREAD | NWRITE, gra2cairo_set_dpi_x, NULL, 0},
   {"dpiy", NINT, NREAD | NWRITE, gra2cairo_set_dpi_y, NULL, 0},

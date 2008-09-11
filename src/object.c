@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.4 2008/08/05 02:45:24 hito Exp $
+ * $Id: object.c,v 1.5 2008/09/11 07:07:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -440,7 +440,7 @@ void arraydel(struct narray *array)
 
 void arraydel2(struct narray *array)
 {
-  int i;
+  unsigned int i;
   char **data;
 
   if (array==NULL) return;
@@ -461,7 +461,7 @@ void arrayfree(struct narray *array)
 
 void arrayfree2(struct narray *array)
 {
-  int i;
+  unsigned int i;
   char **data;
 
   if (array==NULL) return;
@@ -527,7 +527,8 @@ struct narray *arrayadd2(struct narray *array,char **val)
 
 struct narray *arrayins(struct narray *array,void *val,unsigned int idx)
 {
-  int i,size,base;
+  unsigned int i;
+  int size,base;
   char *data;
 
   if (array==NULL) return NULL;
@@ -550,7 +551,8 @@ struct narray *arrayins(struct narray *array,void *val,unsigned int idx)
 
 struct narray *arrayins2(struct narray *array, char **val, unsigned int idx)
 {
-  int i,size;
+  unsigned int i;
+  int size;
   char **data;
   char *s;
 
@@ -589,7 +591,8 @@ struct narray *arrayins2(struct narray *array, char **val, unsigned int idx)
 
 struct narray *arrayndel(struct narray *array,unsigned int idx)
 {
-  int i,base;
+  unsigned int i;
+  int base;
   char *data;
 
   if (array==NULL) return NULL;
@@ -604,7 +607,7 @@ struct narray *arrayndel(struct narray *array,unsigned int idx)
 
 struct narray *arrayndel2(struct narray *array,unsigned int idx)
 {
-  int i;
+  unsigned int i;
   char **data;
 
   if (array==NULL) return NULL;
@@ -2189,7 +2192,8 @@ int exeobj(struct objlist *obj,char *vname,int id,int argc,char **argv)
 int copyobj(struct objlist *obj,char *vname,int did,int sid)
 {
   struct objlist *robj;
-  int i,idn;
+  unsigned int i;
+  int idn;
   char value[8];
   char *po;
   struct narray *array;
@@ -2993,7 +2997,8 @@ char *getvaluestr(struct objlist *obj,char *field,void *val,int cr,int quote)
   struct narray *array;
   void *po;
   char *bval,*s,*arglist;
-  int i,k,j;
+  unsigned int k;
+  int i,j;
   int type,len;
 
   arglist=chkobjarglist(obj,field);

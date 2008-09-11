@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.11 2008/09/10 10:13:44 hito Exp $
+ * $Id: x11merge.c,v 1.12 2008/09/11 07:07:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -339,7 +339,7 @@ static void
 merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 {
   int cx;
-  int i = 0;
+  unsigned int i = 0;
   char *file, *bfile;
 
   for (i = 0; i < MERG_WIN_COL_NUM; i++) {
@@ -413,7 +413,8 @@ MergeWindowUnmap(GtkWidget *w, gpointer client_data)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
-  int sel, i;
+  unsigned int i;
+  int sel;
   struct SubWin *d;
 
   d = (struct SubWin *) user_data;

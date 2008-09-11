@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.4 2008/07/17 01:38:42 hito Exp $
+ * $Id: shell.c,v 1.5 2008/09/11 07:07:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -141,9 +141,7 @@ static char *Prompt;
 
 #define TEMPPFX "NGS"
 
-#define ERRNUM 36
-
-char *cmderrorlist[ERRNUM]={
+char *cmderrorlist[] = {
   "unexpected EOF.",
   "bad substitution.",
   "syntax error near unexpected token",
@@ -180,7 +178,10 @@ char *cmderrorlist[ERRNUM]={
   "deep nest.",
   "syntax error.",
   "security check.",
+  "unknown error.",
 };
+
+#define ERRNUM (sizeof(cmderrorlist) / sizeof(*cmderrorlist))
 
 extern char **mainenviron;
 extern HANDLE consolefd;
@@ -1404,6 +1405,7 @@ char *expand(struct nshell *nshell,char *str,int *quote,int *bquote,
   char *po;
   int quote2,bquote2,escape;
   int i,j,num;
+  unsigned int u, n;
   char *c1,*name,*val,ch,valf,*ifs;
   char *s,*sb,*se;
   HANDLE sout,sout2;
@@ -1497,7 +1499,12 @@ char *expand(struct nshell *nshell,char *str,int *quote,int *bquote,
             goto errexit;
           }
           free(tmpfil);
-          for (j=0;j<strlen(sb);j++) if (sb[j]=='\n') sb[j]=' ';
+	  n = strlen(sb);
+          for (u = 0; u < n; u++) {
+	    if (sb[u] == '\n') {
+	      sb[u] = ' ';
+	    }
+	  }
           for (j=strlen(sb)-1;(j>=0) && (sb[j]==' ');j--);
           sb[j+1]='\0';
           if ((c1=quotation(nshell,sb,*quote))==NULL) goto errexit;

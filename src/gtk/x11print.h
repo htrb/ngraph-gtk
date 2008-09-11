@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.h,v 1.3 2008/07/03 10:25:14 hito Exp $
+ * $Id: x11print.h,v 1.4 2008/09/11 07:07:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -22,7 +22,7 @@
  */
 
 void CmOutputDriver(void);
-void CmOutputPrinter(void);
+void CmOutputPrinter(int show_dialog);
 void CmOutputMenu(GtkWidget *w, gpointer client_data);
 void CmOutputDriverB(GtkWidget *w, gpointer client_data);
 void CmOutputViewerB(GtkWidget *w, gpointer client_data);

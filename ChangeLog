@@ -1,3 +1,33 @@
+2008-09-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (CmOutputPrinter): add argument 'int
+	show_dialog'.
+	(CmOutputPrinter): check 'show_dialog' when call
+	gtk_print_operation_run().
+	(CmOutputPrinterB): add argument when call CmOutputPrinter().
+	(init_graobj): add.
+	(CmOutputPrinter, CmOutputDriver, CmOutputViewer)
+	(CmPrintGRAFile, CmOutputImage): use init_graobj().
+	(draw_gra): add.
+	(draw_page, CmOutputDriver, CmPrintGRAFile, CmOutputImage): use draw_gra().
+
+	* src/gtk/x11menu.c (SetPoint, SetZoom, ResetZoom, SetStatusBar)
+	(SetStatusBarXm, ResetStatusBar): check 'NgraphApp.Message' is
+	NULL or not.
+	(SetCursor): check 'NgraphApp.Cursor' is NULL or not.
+
+	* src/gtk/x11graph.c (CmGraphMenu): add argument when call
+	CmOutputPrinter().
+
+	* src/gtk/ox11menu.c (mx_print): add.
+	(gtkmenu): add member "print".
+
+	* src/gtk/ogra2gtkprint.c (gra2gtkprint): remove member "next".
+
+	* src/gtk/ogra2cairo.c (gra2cairo): remove member "next".
+
+	* initfile/.Ngraph: add -p option.
+
 2008-09-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (CmPrintGRAFile): set base-name of ngp file

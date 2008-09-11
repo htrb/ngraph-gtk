@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.9 2008/08/26 13:23:42 hito Exp $
+ * $Id: x11gui.c,v 1.10 2008/09/11 07:07:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -497,7 +497,9 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OPEN);
   if (ret == IDOK) {
     *file = FileSelection.file;
-    if (FileSelection.chdir && initdir) chdir(*initdir);
+    if (FileSelection.chdir && initdir) {
+      chdir(*initdir);
+    }
   } else {
     *file = NULL;
   }
@@ -530,7 +532,9 @@ nGetOpenFileName(GtkWidget * parent,
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     free(FileSelection.file);
-    if (FileSelection.chdir && initdir) chdir(*initdir);
+    if (FileSelection.chdir && initdir) {
+      chdir(*initdir);
+    }
   } else {
     *file = NULL;
   }
@@ -560,7 +564,9 @@ nGetSaveFileName(GtkWidget * parent,
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     free(FileSelection.file);
-    if (FileSelection.chdir && initdir) chdir(*initdir);
+    if (FileSelection.chdir && initdir) {
+      chdir(*initdir);
+    }
   } else {
     *file = NULL;
   }

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.19 2008/09/10 10:31:58 hito Exp $
+ * $Id: x11print.c,v 1.20 2008/09/11 07:07:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -515,13 +515,30 @@ OutputImageDialog(struct OutputImageDialog *data, int type)
 }
 
 static void
-draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, gpointer user_data)
+draw_gra(struct objlist *graobj, int id, char *msg, char *msg2)
 {
   struct savedstdio stdio;
+  int GC;
+
+  ProgressDialogCreate(msg);
+  SetStatusBar(msg2);
+  ignorestdio(&stdio);
+  getobj(graobj, "open", id, 0, NULL, &GC);
+  exeobj(graobj, "draw", id, 0, NULL);
+  exeobj(graobj, "flush", id, 0, NULL);
+  exeobj(graobj, "close", id, 0, NULL);
+  restorestdio(&stdio);
+  ProgressDialogFinalize();
+  ResetStatusBar();
+}
+
+static void
+draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, gpointer user_data)
+{
   struct objlist *graobj, *g2wobj;
   char *argv[2];
   struct print_obj *pobj;
-  int GC, id, g2wid;
+  int id, g2wid;
   char *g2winst;
 
   pobj = (struct print_obj *) user_data;
@@ -535,20 +552,35 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
   argv[1] = NULL;
   _exeobj(g2wobj, "_context", g2winst, 1, argv);
 
-  ProgressDialogCreate(_("Printing"));
-  SetStatusBar(_("Printing."));
-  ignorestdio(&stdio);
-  getobj(graobj, "open", id, 0, NULL, &GC);
-  exeobj(graobj, "draw", id, 0, NULL);
-  exeobj(graobj, "flush", id, 0, NULL);
-  exeobj(graobj, "close", id, 0, NULL);
-  restorestdio(&stdio);
-  ProgressDialogFinalize();
-  ResetStatusBar();
+  draw_gra(graobj, id, _("Printing"), _("Printing."));
+}
+
+static void
+init_graobj(struct objlist *graobj, int id)
+{
+  struct narray *drawrable;
+  unsigned int i, n;
+
+  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
+  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
+  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
+  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
+  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
+  if (arraynum(&(Menulocal.drawrable)) > 0) {
+    drawrable = arraynew(sizeof(char *));
+    n = arraynum(&(Menulocal.drawrable));
+    for (i = 0; i < n; i++) {
+      arrayadd2(drawrable,
+		(char **) arraynget(&(Menulocal.drawrable), i));
+    }
+  } else {
+    drawrable = NULL;
+  }
+  putobj(graobj, "draw_obj", id, drawrable);
 }
 
 void
-CmOutputPrinter(void)
+CmOutputPrinter(int show_dialog)
 {
   GtkPrintOperation *print;
   GtkPrintOperationResult res;
@@ -556,9 +588,7 @@ CmOutputPrinter(void)
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   char *device, *g2winst;
-  int i;;
   GError *error;
-  struct narray *drawrable;
   struct print_obj pobj;
   GtkPaperSize *paper_size;
   GtkPageSetup *page_setup;
@@ -585,20 +615,7 @@ CmOutputPrinter(void)
   g2winst = chkobjinst(g2wobj, g2wid);
   _getobj(g2wobj, "oid", g2winst, &g2woid);
   id = newobj(graobj);
-  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
-  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
-  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
-  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
-  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
-  if (arraynum(&(Menulocal.drawrable)) > 0) {
-    drawrable = arraynew(sizeof(char *));
-    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-      arrayadd2(drawrable,
-		(char **) arraynget(&(Menulocal.drawrable), i));
-    }
-  } else
-    drawrable = NULL;
-  putobj(graobj, "draw_obj", id, drawrable);
+  init_graobj(graobj, id);
   device = (char *) memalloc(DEVICE_BUF_SIZE);
   snprintf(device, DEVICE_BUF_SIZE, "gra2gtkprint:^%d", g2woid);
   putobj(graobj, "device", id, device);
@@ -639,7 +656,8 @@ CmOutputPrinter(void)
   pobj.g2winst = g2winst;
   g_signal_connect(print, "draw_page", G_CALLBACK(draw_page), &pobj);
 
-  res = gtk_print_operation_run(print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
+  res = gtk_print_operation_run(print,
+				(show_dialog) ? GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG: GTK_PRINT_OPERATION_ACTION_PRINT,
 				GTK_WINDOW(TopLevel), &error);
 
   if (res == GTK_PRINT_OPERATION_RESULT_ERROR) {
@@ -664,10 +682,7 @@ CmOutputDriver(void)
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   char *device, *g2winst;
-  int GC;
-  struct narray *drawrable;
-  int i, ret;
-  struct savedstdio stdio;
+  int ret;
 
   if (Menulock || GlobalLock)
     return;
@@ -696,34 +711,12 @@ CmOutputDriver(void)
     g2winst = chkobjinst(g2wobj, g2wid);
     _getobj(g2wobj, "oid", g2winst, &g2woid);
     id = newobj(graobj);
-    putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
-    putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
-    putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
-    putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
-    putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
-    if (arraynum(&(Menulocal.drawrable)) > 0) {
-      drawrable = arraynew(sizeof(char *));
-      for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-	arrayadd2(drawrable,
-		  (char **) arraynget(&(Menulocal.drawrable), i));
-      }
-    } else
-      drawrable = NULL;
-    putobj(graobj, "draw_obj", id, drawrable);
+    init_graobj(graobj, id);
     device = (char *) memalloc(DEVICE_BUF_SIZE);
     snprintf(device, DEVICE_BUF_SIZE, "gra2prn:^%d", g2woid);
     putobj(graobj, "device", id, device);
-    ProgressDialogCreate(_("Printing"));
-    SetStatusBar(_("Printing."));
-    ignorestdio(&stdio);
-    getobj(graobj, "open", id, 0, NULL, &GC);
-    exeobj(graobj, "draw", id, 0, NULL);
-    exeobj(graobj, "flush", id, 0, NULL);
-    exeobj(graobj, "close", id, 0, NULL);
-    restorestdio(&stdio);
+    draw_gra(graobj, id, _("Printing"), _("Printing."));
     delobj(graobj, id);
-    ProgressDialogFinalize();
-    ResetStatusBar();
   }
   delobj(g2wobj, g2wid);
 }
@@ -735,8 +728,6 @@ CmOutputViewer(void)
   int id, g2wid, g2woid;
   char *device, *g2winst;
   int GC, delgra;
-  struct narray *drawrable;
-  int i;
 
   if (Menulock || GlobalLock)
     return;
@@ -770,21 +761,7 @@ CmOutputViewer(void)
   putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
   putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
   id = newobj(graobj);
-  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
-  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
-  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
-  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
-  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
-  if (arraynum(&(Menulocal.drawrable)) > 0) {
-    drawrable = arraynew(sizeof(char *));
-    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-      arrayadd2(drawrable,
-		(char **) arraynget(&(Menulocal.drawrable), i));
-    }
-  } else {
-    drawrable = NULL;
-  }
-  putobj(graobj, "draw_obj", id, drawrable);
+  init_graobj(graobj, id);
   device = (char *) memalloc(DEVICE_BUF_SIZE);
   snprintf(device, DEVICE_BUF_SIZE, "gra2gtk:^%d", g2woid);
   putobj(graobj, "device", id, device);
@@ -822,9 +799,8 @@ void
 CmPrintGRAFile(void)
 {
   struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid, GC, i, ret;
+  int id, g2wid, g2woid, ret;
   char *device, *g2winst, *tmp, *file, buf[MESSAGE_BUF_SIZE], *filebuf;
-  struct narray *drawrable;
 
   if (Menulock || GlobalLock)
     return;
@@ -876,42 +852,17 @@ CmPrintGRAFile(void)
     return;
   }
 
-  ProgressDialogCreate(_("Making GRA file."));
-  SetStatusBar(_("Making GRA file."));
-
   g2winst = chkobjinst(g2wobj, g2wid);
   _getobj(g2wobj, "oid", g2winst, &g2woid);
   putobj(g2wobj, "file", g2wid, file);
   id = newobj(graobj);
-  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
-  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
-  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
-  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
-  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
-
-  if (arraynum(&(Menulocal.drawrable)) > 0) {
-    drawrable = arraynew(sizeof(char *));
-    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-      arrayadd2(drawrable,
-		(char **) arraynget(&(Menulocal.drawrable), i));
-    }
-  } else {
-    drawrable = NULL;
-  }
-  putobj(graobj, "draw_obj", id, drawrable);
-
+  init_graobj(graobj, id);
   device = (char *) memalloc(DEVICE_BUF_SIZE);
   snprintf(device, DEVICE_BUF_SIZE, "gra2file:^%d", g2woid);
   putobj(graobj, "device", id, device);
-  getobj(graobj, "open", id, 0, NULL, &GC);
-  exeobj(graobj, "draw", id, 0, NULL);
-  exeobj(graobj, "flush", id, 0, NULL);
-  exeobj(graobj, "close", id, 0, NULL);
+  draw_gra(graobj, id, _("Making GRA file."), _("Making GRA file."));
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
-
-  ProgressDialogFinalize();
-  ResetStatusBar();
 }
 
 void
@@ -920,10 +871,7 @@ CmOutputImage(int type)
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   char *device, *g2winst;
-  int GC;
-  struct narray *drawrable;
-  int i, ret, format, t2p, dpi;
-  struct savedstdio stdio;
+  int ret, format, t2p, dpi;
   char *ext_name, *ext_str, *ext;
   char *file, *filebuf, *tmp, buf[MESSAGE_BUF_SIZE];
 
@@ -1037,38 +985,13 @@ CmOutputImage(int type)
   putobj(g2wobj, "dpi", g2wid, &dpi);
   format = DlgImageOut.Version;
   putobj(g2wobj, "format", g2wid, &format);
-
-  putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
-  putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
-  putobj(graobj, "left_margin", id, &(Menulocal.LeftMargin));
-  putobj(graobj, "top_margin", id, &(Menulocal.TopMargin));
-  putobj(graobj, "zoom", id, &(Menulocal.PaperZoom));
-  if (arraynum(&(Menulocal.drawrable)) > 0) {
-    drawrable = arraynew(sizeof(char *));
-    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-      arrayadd2(drawrable,
-		(char **) arraynget(&(Menulocal.drawrable), i));
-    }
-  } else {
-    drawrable = NULL;
-  }
-  putobj(graobj, "draw_obj", id, drawrable);
+  init_graobj(graobj, id);
   device = (char *) memalloc(DEVICE_BUF_SIZE);
   snprintf(device, DEVICE_BUF_SIZE, "gra2cairofile:^%d", g2woid);
   putobj(graobj, "device", id, device);
-  ProgressDialogCreate(_("Drawing"));
-  SetStatusBar(_("Drawing."));
-  ignorestdio(&stdio);
-  getobj(graobj, "open", id, 0, NULL, &GC);
-  exeobj(graobj, "draw", id, 0, NULL);
-  exeobj(graobj, "flush", id, 0, NULL);
-  exeobj(graobj, "close", id, 0, NULL);
-  restorestdio(&stdio);
+  draw_gra(graobj, id, _("Drawing"), _("Drawing."));
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
-
-  ProgressDialogFinalize();
-  ResetStatusBar();
 }
 
 void
@@ -1165,7 +1088,7 @@ CmOutputDriverB(GtkWidget *wi, gpointer client_data)
 void
 CmOutputPrinterB(GtkWidget *wi, gpointer client_data)
 {
-  CmOutputPrinter();
+  CmOutputPrinter(TRUE);
 }
 
 void

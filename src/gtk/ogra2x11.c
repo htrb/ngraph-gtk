@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.11 2008/08/26 13:23:42 hito Exp $
+ * $Id: ogra2x11.c,v 1.12 2008/09/11 07:07:22 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -291,7 +291,7 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   GtkWidget *scrolled_window = NULL, *vbox = NULL;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
-    goto errexit;
+    return 1;
 
   gtklocal = memalloc(sizeof(*gtklocal));
   if (gtklocal == NULL)

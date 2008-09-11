@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.20 2008/08/22 07:29:29 hito Exp $
+ * $Id: x11dialg.c,v 1.21 2008/09/11 07:07:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -795,7 +795,7 @@ SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
 int
 SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  int j;
+  unsigned int j;
   char *buf;
   const char *ptr;
 
@@ -836,7 +836,8 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 void
 SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  int i, j;
+  unsigned int j;
+  int i;
   GtkEntry *entry;
   struct narray *array;
   int stylenum;

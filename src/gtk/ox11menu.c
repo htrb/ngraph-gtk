@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.24 2008/08/27 01:42:33 hito Exp $
+ * $Id: ox11menu.c,v 1.25 2008/09/11 07:07:22 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -55,6 +55,7 @@
 #include "x11gui.h"
 #include "x11view.h"
 #include "x11graph.h"
+#include "x11print.h"
 
 #define NAME "menu"
 #define ALIAS "winmenu:gtkmenu"
@@ -1564,6 +1565,18 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 
 }
 
+static int
+mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int show_dialog;
+
+  show_dialog = * (int *) argv[2];
+
+  CmOutputPrinter(show_dialog);
+  return 0;
+}
+
+
 static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
   {"done", NVFUNC, NEXEC, menudone, NULL, 0},
@@ -1578,6 +1591,7 @@ static struct objtable gtkmenu[] = {
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
+  {"print", NSAFUNC, NREAD | NEXEC, mx_print, "i", 0},
   {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.15 2008/07/16 10:24:32 hito Exp $
+ * $Id: x11graph.c,v 1.16 2008/09/11 07:07:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -83,7 +83,7 @@ static struct pagelisttype pagelist[] = {
 int
 set_paper_type(int w, int h)
 {
-  int j;
+  unsigned int j;
 
   if (w < 1 || h < 1)
     return 0;
@@ -152,7 +152,7 @@ static void
 PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *vbox;
-  int j;
+  unsigned int j;
   struct PageDialog *d;
 
   d = (struct PageDialog *) data;
@@ -1110,7 +1110,7 @@ CmGraphMenu(GtkWidget *w, gpointer client_data)
     CmGraphSwitch();
     break;
   case MenuIdOutputDriver:
-    CmOutputPrinter();
+    CmOutputPrinter(TRUE);
     break;
   case MenuIdGraphDirectory:
     CmGraphDirectory();

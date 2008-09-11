@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.29 2008/08/11 08:27:03 hito Exp $
+ * $Id: x11axis.c,v 1.30 2008/09/11 07:07:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2750,7 +2750,8 @@ AxisWinUpdate(int clear)
 static void
 axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 {
-  int cx, i, len;
+  int cx, len;
+  unsigned int i;
   double min, max, inc;
   char buf[256];
 
@@ -2885,7 +2886,8 @@ CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
-  int sel, i;
+  unsigned int i;
+  int sel;
   struct SubWin *d;
 
   d = (struct SubWin *) user_data;

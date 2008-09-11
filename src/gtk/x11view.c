@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.62 2008/09/10 09:46:44 hito Exp $
+ * $Id: x11view.c,v 1.63 2008/09/11 07:07:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -51,6 +51,7 @@
 #include "x11lgnd.h"
 #include "x11view.h"
 #include "x11commn.h"
+#include "x11merge.h"
 
 #define ID_BUF_SIZE 16
 #define SCROLL_INC 20
@@ -2074,7 +2075,8 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 {
   struct objlist *fileobj, *aobjx, *aobjy;
   struct narray iarray, *move, *movex, *movey;
-  int selnum, sel, i, j, ax, ay, anum, movenum, iline;
+  int selnum, sel, i, ax, ay, anum, iline;
+  unsigned int movenum, j;
   double dx, dy;
   char *axis, *argv[3];
 

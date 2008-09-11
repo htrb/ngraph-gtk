@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.12 2008/08/22 10:05:57 hito Exp $
+ * $Id: main.c,v 1.13 2008/09/11 07:07:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -402,13 +402,14 @@ main(int argc, char **argv, char **environ)
   char *homedir, *libdir, *home, *inifile, *loginshell;
   char *inst;
   struct objlist *sys, *obj, *lobj;
-  int i, id;
+  unsigned int j;
+  int i;
   char *sarg[2];
   struct narray sarray;
   FILE *fp;
   char *tok, *str, *s2;
   char *f1, *endptr;
-  int len, val;
+  int len, val, id;
   int allocnow, allocconsole = FALSE;
   struct narray iarray;
   char *arg;
@@ -493,8 +494,8 @@ main(int argc, char **argv, char **environ)
   if (_getobj(sys, "name", inst, &systemname) == -1)
     exit(1);
 
-  for (i = 0; i < sizeof(obj_add_func_ary) / sizeof(*obj_add_func_ary); i++) {
-    if (obj_add_func_ary[i]() == NULL)
+  for (j = 0; j < sizeof(obj_add_func_ary) / sizeof(*obj_add_func_ary); j++) {
+    if (obj_add_func_ary[j]() == NULL)
       exit(1);
   }
 

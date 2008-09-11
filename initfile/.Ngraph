@@ -199,6 +199,19 @@ do
 			del gra:viewer
 		fi
 		. $2
+		menu::print 1
+		del system:0
+		;;
+	-P)
+		for i in `derive -instance draw`
+		do
+			del ${i}:0-!
+		done
+		if [ `exist gra:viewer` != 0 ]
+		then
+			del gra:viewer
+		fi
+		. $2
 		new gra2prn name=OUTPUT
 		gra2prn::driver=gra2ps
 		gra2prn::prn=" | lpr"

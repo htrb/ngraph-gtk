@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.26 2008/09/04 07:35:18 hito Exp $
+ * $Id: x11lgnd.c,v 1.27 2008/09/11 07:07:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -116,7 +116,7 @@ enum LegendType {
 
 struct lwidget {
   GtkWidget *w;
-  char *f
+  char *f;
 };
 
 static char *
@@ -269,7 +269,8 @@ set_fonts(struct LegendDialog *d, int id)
 static void
 legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 {
-  int i, x1, y1, x2, y2;
+  unsigned int i;
+  int x1, y1, x2, y2;
   struct lwidget lw[] = {
     {d->width, "width"},
     {d->join, "join"},
@@ -380,7 +381,8 @@ static void
 legend_dialog_close(GtkWidget *w, void *data)
 {
   struct LegendDialog *d = (struct LegendDialog *) data;
-  int i, ret, x1, y1, x2, y2;
+  unsigned int i;
+  int ret, x1, y1, x2, y2;
   struct lwidget lw[] = {
     {d->width, "width"},
     {d->join, "join"},
@@ -1979,7 +1981,7 @@ static void
 legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 {
   int cx, x0, y0, x2, y2, mark, *points;
-  int i = 0;
+  unsigned int i = 0;
   char *valstr, *text, *ex, buf[256], buf2[256];
   struct narray *array;
 
@@ -2165,7 +2167,8 @@ LegendWindowUnmap(GtkWidget *w, gpointer client_data)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
-  int sel, i, n, m;
+  unsigned int i; 
+  int sel, n, m;
   struct LegendWin *d;
 
   d = (struct LegendWin *) user_data;

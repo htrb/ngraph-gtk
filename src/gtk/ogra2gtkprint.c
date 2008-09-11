@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2gtkprint.c,v 1.3 2008/07/17 01:38:44 hito Exp $
+ * $Id: ogra2gtkprint.c,v 1.4 2008/09/11 07:07:22 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -112,7 +112,6 @@ create_cairo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static struct objtable gra2gtkprint[] = {
   {"init", NVFUNC, NEXEC, gra2gtkprint_init, NULL, 0}, 
   {"done", NVFUNC, NEXEC, gra2gtkprint_done, NULL, 0}, 
-  {"next", NPOINTER, 0, NULL, NULL, 0}, 
   {"_context", NVFUNC, 0, create_cairo, NULL,0},
 };
 

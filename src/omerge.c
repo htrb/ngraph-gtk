@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.4 2008/07/03 06:31:11 hito Exp $
+ * $Id: omerge.c,v 1.5 2008/09/11 07:07:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -601,7 +601,7 @@ struct objtable merge[] = {
   {"redraw",NVFUNC,NREAD|NEXEC,mergeredraw,"i",0},
   {"save",NSFUNC,NREAD|NEXEC,pathsave,"sa",0},
   {"store_data",NSFUNC,NREAD|NEXEC,mergestore,NULL,0},
-  {"load_data",NVFUNC,NREAD|NEXEC,mergeload,"s",NULL,0},
+  {"load_data",NVFUNC,NREAD|NEXEC,mergeload,"s",0},
   {"store_dummy",NSFUNC,NREAD|NEXEC,mergestoredum,NULL,0},
   {"load_dummy",NVFUNC,NREAD|NEXEC,mergeloaddum,"s",0},
   {"time",NSFUNC,NREAD|NEXEC,mergetime,"i",0},

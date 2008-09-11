@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.25 2008/08/27 01:42:32 hito Exp $
+ * $Id: ofile.c,v 1.26 2008/09/11 07:07:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1903,10 +1903,10 @@ int getdata(struct f2ddata *fp)
   char st;
   double sumx,sumy,sum2,sum3;
   int numx,numy,num2,num3,num,smx,smy,sm2,sm3;
-  int filenum,*openfile;
+  int filenum,*openfile,*needx,*needy;;
   struct narray filedatax,filedatay;
   struct narray filestatx,filestaty;
-  int fnumx,fnumy,*needx,*needy;
+  unsigned int fnumx,fnumy,j;
   double *datax,*datay;
   char *statx,*staty;
   double *gdata;
@@ -1928,7 +1928,7 @@ int getdata(struct f2ddata *fp)
   needx=arraydata(fp->needfilex);
   arrayinit(&filedatax,sizeof(double));
   arrayinit(&filestatx,sizeof(char));
-  for (i=0;i<fnumx;i++) {
+  for (j=0;j<fnumx;j++) {
     dx=0;
     st=MNONUM;
     arrayadd(&filedatax,&dx);
@@ -1942,7 +1942,7 @@ int getdata(struct f2ddata *fp)
   needy=arraydata(fp->needfiley);
   arrayinit(&filedatay,sizeof(double));
   arrayinit(&filestaty,sizeof(char));
-  for (i=0;i<fnumy;i++) {
+  for (j=0;j<fnumy;j++) {
     dy=0;
     st=MNONUM;
     arrayadd(&filedatay,&dy);

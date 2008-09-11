@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.16 2008/09/04 10:02:11 hito Exp $
+ * $Id: x11commn.c,v 1.17 2008/09/11 07:07:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,6 +61,7 @@ static unsigned int SaveCursor;
 void
 OpenGRA(void)
 {
+  unsigned int j;
   int i, id, otherGC;
   char *device, *name, *name_str = "viewer";
   struct narray *drawrable;
@@ -106,8 +107,8 @@ OpenGRA(void)
 
   if (arraynum(&(Menulocal.drawrable)) > 0) {
     drawrable = arraynew(sizeof(char *));
-    for (i = 0; i < arraynum(&(Menulocal.drawrable)); i++) {
-      arrayadd2(drawrable, (char **) arraynget(&(Menulocal.drawrable), i));
+    for (j = 0; j < arraynum(&(Menulocal.drawrable)); j++) {
+      arrayadd2(drawrable, (char **) arraynget(&(Menulocal.drawrable), j));
     }
   } else {
     drawrable = NULL;

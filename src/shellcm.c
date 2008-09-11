@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: shellcm.c,v 1.2 2008/09/11 07:07:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -156,7 +156,8 @@ int cmset(struct nshell *nshell,int argc,char **argv)
   struct cmdlist *cmdcur;
   struct prmlist *prmcur;
   char *s;
-  int i,j,ops;
+  unsigned int i, n;
+  int j,ops;
   char **argv2;
   int argc2;
 
@@ -191,7 +192,10 @@ int cmset(struct nshell *nshell,int argc,char **argv)
     for (j=1;j<argc;j++) {
       s=argv[j];
       if ((s[0]=='-') && (s[1]=='-')) {
-        for (i=1;i<=strlen(argv[j]);i++) argv[j][i-1]=argv[j][i];
+	n = strlen(argv[j]);
+        for (i = 1; i <= n; i++) {
+	  argv[j][i-1]=argv[j][i];
+	}
         break;
       } else if ((s[0]=='-') || (s[0]=='+')) {
         if ((s[1]=='\0') || (strchr("efvx",s[1])==NULL)) {
@@ -946,6 +950,7 @@ int cmdexpr(struct nshell*nshell,int argc,char **argv)
     if (rcode==MCSYNTAX) ecode=ERRMSYNTAX;
     else if (rcode==MCILLEGAL) ecode=ERRMILLEGAL;
     else if (rcode==MCNEST) ecode=ERRMNEST;
+    else ecode = ERRUNKNOWNSH;
     sherror4(argv[0],ERRVALUE);
     return ecode;
   }
