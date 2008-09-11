@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.17 2008/09/11 07:07:22 hito Exp $
+ * $Id: x11commn.c,v 1.18 2008/09/11 10:04:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1649,6 +1649,9 @@ ProgressDialogCreate(char *title)
 {
   GtkWidget *btn, *vbox, *hbox;
 
+  if (TopLevel == NULL)
+    return;
+
   if (ProgressDiaog)
     gtk_widget_destroy(ProgressDiaog);
 
@@ -1695,6 +1698,9 @@ ProgressDialogCreate(char *title)
 void
 ProgressDialogFinalize(void)
 {
+  if (TopLevel == NULL)
+    return;
+
   SetCursor(SaveCursor);
   set_progress_func(NULL);
   gtk_widget_destroy(ProgressDiaog);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.20 2008/09/11 07:07:23 hito Exp $
+ * $Id: x11print.c,v 1.21 2008/09/11 10:04:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -556,10 +556,11 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
 }
 
 static void
-init_graobj(struct objlist *graobj, int id)
+init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
 {
   struct narray *drawrable;
   unsigned int i, n;
+  char *device;
 
   putobj(graobj, "paper_width", id, &(Menulocal.PaperWidth));
   putobj(graobj, "paper_height", id, &(Menulocal.PaperHeight));
@@ -577,6 +578,10 @@ init_graobj(struct objlist *graobj, int id)
     drawrable = NULL;
   }
   putobj(graobj, "draw_obj", id, drawrable);
+
+  device = (char *) memalloc(DEVICE_BUF_SIZE);
+  snprintf(device, DEVICE_BUF_SIZE, "%s:^%d", dev_name, dev_oid);
+  putobj(graobj, "device", id, device);
 }
 
 void
@@ -587,7 +592,7 @@ CmOutputPrinter(int show_dialog)
   char buf[MESSAGE_BUF_SIZE];
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
-  char *device, *g2winst;
+  char *g2winst;
   GError *error;
   struct print_obj pobj;
   GtkPaperSize *paper_size;
@@ -615,10 +620,7 @@ CmOutputPrinter(int show_dialog)
   g2winst = chkobjinst(g2wobj, g2wid);
   _getobj(g2wobj, "oid", g2winst, &g2woid);
   id = newobj(graobj);
-  init_graobj(graobj, id);
-  device = (char *) memalloc(DEVICE_BUF_SIZE);
-  snprintf(device, DEVICE_BUF_SIZE, "gra2gtkprint:^%d", g2woid);
-  putobj(graobj, "device", id, device);
+  init_graobj(graobj, id, "gra2gtkprint", g2woid);
 
   print = gtk_print_operation_new();
   gtk_print_operation_set_n_pages(print, 1);
@@ -681,7 +683,7 @@ CmOutputDriver(void)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
-  char *device, *g2winst;
+  char *g2winst;
   int ret;
 
   if (Menulock || GlobalLock)
@@ -711,10 +713,7 @@ CmOutputDriver(void)
     g2winst = chkobjinst(g2wobj, g2wid);
     _getobj(g2wobj, "oid", g2winst, &g2woid);
     id = newobj(graobj);
-    init_graobj(graobj, id);
-    device = (char *) memalloc(DEVICE_BUF_SIZE);
-    snprintf(device, DEVICE_BUF_SIZE, "gra2prn:^%d", g2woid);
-    putobj(graobj, "device", id, device);
+    init_graobj(graobj, id, "gra2prn", g2woid);
     draw_gra(graobj, id, _("Printing"), _("Printing."));
     delobj(graobj, id);
   }
@@ -726,7 +725,7 @@ CmOutputViewer(void)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
-  char *device, *g2winst;
+  char *g2winst;
   int GC, delgra;
 
   if (Menulock || GlobalLock)
@@ -761,10 +760,7 @@ CmOutputViewer(void)
   putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
   putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
   id = newobj(graobj);
-  init_graobj(graobj, id);
-  device = (char *) memalloc(DEVICE_BUF_SIZE);
-  snprintf(device, DEVICE_BUF_SIZE, "gra2gtk:^%d", g2woid);
-  putobj(graobj, "device", id, device);
+  init_graobj(graobj, id, "gra2gtk", g2woid);
   getobj(graobj, "open", id, 0, NULL, &GC);
   exeobj(graobj, "draw", id, 0, NULL);
   exeobj(graobj, "flush", id, 0, NULL);
@@ -800,7 +796,7 @@ CmPrintGRAFile(void)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid, ret;
-  char *device, *g2winst, *tmp, *file, buf[MESSAGE_BUF_SIZE], *filebuf;
+  char *g2winst, *tmp, *file, buf[MESSAGE_BUF_SIZE], *filebuf;
 
   if (Menulock || GlobalLock)
     return;
@@ -856,10 +852,7 @@ CmPrintGRAFile(void)
   _getobj(g2wobj, "oid", g2winst, &g2woid);
   putobj(g2wobj, "file", g2wid, file);
   id = newobj(graobj);
-  init_graobj(graobj, id);
-  device = (char *) memalloc(DEVICE_BUF_SIZE);
-  snprintf(device, DEVICE_BUF_SIZE, "gra2file:^%d", g2woid);
-  putobj(graobj, "device", id, device);
+  init_graobj(graobj, id, "gra2file", g2woid);
   draw_gra(graobj, id, _("Making GRA file."), _("Making GRA file."));
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
@@ -870,7 +863,7 @@ CmOutputImage(int type)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
-  char *device, *g2winst;
+  char *g2winst;
   int ret, format, t2p, dpi;
   char *ext_name, *ext_str, *ext;
   char *file, *filebuf, *tmp, buf[MESSAGE_BUF_SIZE];
@@ -985,10 +978,7 @@ CmOutputImage(int type)
   putobj(g2wobj, "dpi", g2wid, &dpi);
   format = DlgImageOut.Version;
   putobj(g2wobj, "format", g2wid, &format);
-  init_graobj(graobj, id);
-  device = (char *) memalloc(DEVICE_BUF_SIZE);
-  snprintf(device, DEVICE_BUF_SIZE, "gra2cairofile:^%d", g2woid);
-  putobj(graobj, "device", id, device);
+  init_graobj(graobj, id,  "gra2cairofile", g2woid);
   draw_gra(graobj, id, _("Drawing"), _("Drawing."));
   delobj(graobj, id);
   delobj(g2wobj, g2wid);

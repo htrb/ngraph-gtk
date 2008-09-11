@@ -189,7 +189,7 @@ do
 		get gra:0 -id -field save
 		del system:0
 	;;
-	-p)
+	-P)
 		for i in `derive -instance draw`
 		do
 			del ${i}:0-!
@@ -201,8 +201,8 @@ do
 		. $2
 		menu::print 1
 		del system:0
-		;;
-	-P)
+	;;
+	-p)
 		for i in `derive -instance draw`
 		do
 			del ${i}:0-!

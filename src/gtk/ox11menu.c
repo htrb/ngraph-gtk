@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.25 2008/09/11 07:07:22 hito Exp $
+ * $Id: ox11menu.c,v 1.26 2008/09/11 10:04:58 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1568,11 +1568,28 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 static int
 mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int show_dialog;
+  int show_dialog, create_window = FALSE;
+  GtkWidget *label;
 
   show_dialog = * (int *) argv[2];
 
+  if (TopLevel == NULL) {
+    create_window = TRUE;
+    TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    g_signal_connect(TopLevel, "delete-event", G_CALLBACK(gtk_true), NULL);
+    label = gtk_label_new("Ngraph print graph.");
+    gtk_container_add(GTK_CONTAINER(TopLevel), label);
+    gtk_widget_show_all(TopLevel);
+    ResetEvent();
+  }
+
   CmOutputPrinter(show_dialog);
+
+  if (create_window) {
+    gtk_widget_destroy(TopLevel);
+    TopLevel = NULL;
+    ResetEvent();
+  }
   return 0;
 }
 
