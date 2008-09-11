@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.21 2008/09/11 10:04:58 hito Exp $
+ * $Id: x11print.c,v 1.22 2008/09/11 10:20:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -515,18 +515,20 @@ OutputImageDialog(struct OutputImageDialog *data, int type)
 }
 
 static void
-draw_gra(struct objlist *graobj, int id, char *msg, char *msg2)
+draw_gra(struct objlist *graobj, int id, char *msg, int close)
 {
   struct savedstdio stdio;
   int GC;
 
   ProgressDialogCreate(msg);
-  SetStatusBar(msg2);
+  SetStatusBar(msg);
   ignorestdio(&stdio);
   getobj(graobj, "open", id, 0, NULL, &GC);
   exeobj(graobj, "draw", id, 0, NULL);
   exeobj(graobj, "flush", id, 0, NULL);
-  exeobj(graobj, "close", id, 0, NULL);
+  if (close) {
+    exeobj(graobj, "close", id, 0, NULL);
+  }
   restorestdio(&stdio);
   ProgressDialogFinalize();
   ResetStatusBar();
@@ -552,7 +554,7 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
   argv[1] = NULL;
   _exeobj(g2wobj, "_context", g2winst, 1, argv);
 
-  draw_gra(graobj, id, _("Printing"), _("Printing."));
+  draw_gra(graobj, id, _("Printing."), TRUE);
 }
 
 static void
@@ -695,10 +697,12 @@ CmOutputDriver(void)
   FileAutoScale();
   AdjustAxis();
 
-  if ((graobj = chkobject("gra")) == NULL)
+  graobj = chkobject("gra");
+  if (graobj == NULL)
     return;
 
-  if ((g2wobj = chkobject("gra2prn")) == NULL)
+  g2wobj = chkobject("gra2prn");
+  if (g2wobj == NULL)
     return;
 
   g2wid = newobj(g2wobj);
@@ -714,7 +718,7 @@ CmOutputDriver(void)
     _getobj(g2wobj, "oid", g2winst, &g2woid);
     id = newobj(graobj);
     init_graobj(graobj, id, "gra2prn", g2woid);
-    draw_gra(graobj, id, _("Printing"), _("Printing."));
+    draw_gra(graobj, id, _("Printing."), TRUE);
     delobj(graobj, id);
   }
   delobj(g2wobj, g2wid);
@@ -748,9 +752,6 @@ CmOutputViewer(void)
   if (g2wid < 0)
     return;
 
-  ProgressDialogCreate(_("Spawning external viewer."));
-  SetStatusBar(_("Spawning external viewer."));
-
   g2winst = chkobjinst(g2wobj, g2wid);
   _getobj(g2wobj, "oid", g2winst, &g2woid);
   putobj(g2wobj, "dpi", g2wid, &(Menulocal.exwindpi));
@@ -761,14 +762,10 @@ CmOutputViewer(void)
   putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
   id = newobj(graobj);
   init_graobj(graobj, id, "gra2gtk", g2woid);
-  getobj(graobj, "open", id, 0, NULL, &GC);
-  exeobj(graobj, "draw", id, 0, NULL);
-  exeobj(graobj, "flush", id, 0, NULL);
+  draw_gra(graobj, id, _("Spawning external viewer."), FALSE);
+
   delgra = TRUE;
   _putobj(g2wobj, "delete_gra", g2winst, &delgra);
-
-  ProgressDialogFinalize();
-  ResetStatusBar();
 }
 
 static char *
@@ -853,7 +850,7 @@ CmPrintGRAFile(void)
   putobj(g2wobj, "file", g2wid, file);
   id = newobj(graobj);
   init_graobj(graobj, id, "gra2file", g2woid);
-  draw_gra(graobj, id, _("Making GRA file."), _("Making GRA file."));
+  draw_gra(graobj, id, _("Making GRA file."), TRUE);
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
 }
@@ -979,7 +976,7 @@ CmOutputImage(int type)
   format = DlgImageOut.Version;
   putobj(g2wobj, "format", g2wid, &format);
   init_graobj(graobj, id,  "gra2cairofile", g2woid);
-  draw_gra(graobj, id, _("Drawing"), _("Drawing."));
+  draw_gra(graobj, id, _("Drawing."), TRUE);
   delobj(graobj, id);
   delobj(g2wobj, g2wid);
 }
