@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.26 2008/09/11 10:04:58 hito Exp $
+ * $Id: ox11menu.c,v 1.27 2008/09/11 10:42:25 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1583,7 +1583,7 @@ mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     ResetEvent();
   }
 
-  CmOutputPrinter(show_dialog);
+  CmOutputPrinter(show_dialog, FALSE);
 
   if (create_window) {
     gtk_widget_destroy(TopLevel);

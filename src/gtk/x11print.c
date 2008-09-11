@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.22 2008/09/11 10:20:51 hito Exp $
+ * $Id: x11print.c,v 1.23 2008/09/11 10:42:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -587,7 +587,7 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
 }
 
 void
-CmOutputPrinter(int show_dialog)
+CmOutputPrinter(int show_dialog, int select_file)
 {
   GtkPrintOperation *print;
   GtkPrintOperationResult res;
@@ -603,7 +603,7 @@ CmOutputPrinter(int show_dialog)
   if (Menulock || GlobalLock)
     return;
 
-  if (! SetFileHidden())
+  if (select_file && ! SetFileHidden())
     return;
 
   FileAutoScale();
@@ -1075,7 +1075,7 @@ CmOutputDriverB(GtkWidget *wi, gpointer client_data)
 void
 CmOutputPrinterB(GtkWidget *wi, gpointer client_data)
 {
-  CmOutputPrinter(TRUE);
+  CmOutputPrinter(TRUE, TRUE);
 }
 
 void
