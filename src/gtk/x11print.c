@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.23 2008/09/11 10:42:25 hito Exp $
+ * $Id: x11print.c,v 1.24 2008/09/12 06:38:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -518,12 +518,11 @@ static void
 draw_gra(struct objlist *graobj, int id, char *msg, int close)
 {
   struct savedstdio stdio;
-  int GC;
 
   ProgressDialogCreate(msg);
   SetStatusBar(msg);
   ignorestdio(&stdio);
-  getobj(graobj, "open", id, 0, NULL, &GC);
+  exeobj(graobj, "open", id, 0, NULL);
   exeobj(graobj, "draw", id, 0, NULL);
   exeobj(graobj, "flush", id, 0, NULL);
   if (close) {
@@ -730,7 +729,7 @@ CmOutputViewer(void)
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   char *g2winst;
-  int GC, delgra;
+  int delgra;
 
   if (Menulock || GlobalLock)
     return;
