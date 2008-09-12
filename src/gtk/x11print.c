@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.24 2008/09/12 06:38:23 hito Exp $
+ * $Id: x11print.c,v 1.25 2008/09/12 07:46:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,6 +50,11 @@
 
 #define DEVICE_BUF_SIZE 20
 #define MESSAGE_BUF_SIZE 1024
+
+#define SHOW_DIALOG_NONE    0
+#define SHOW_DIALOG_DIALOG  1
+#define SHOW_DIALOG_PREVIEW 2
+
 
 static char *PsVersion[] = {
   "PostScript Level 3",
@@ -592,7 +597,7 @@ CmOutputPrinter(int show_dialog, int select_file)
   GtkPrintOperationResult res;
   char buf[MESSAGE_BUF_SIZE];
   struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid;
+  int id, g2wid, g2woid, opt;
   char *g2winst;
   GError *error;
   struct print_obj pobj;
@@ -659,9 +664,21 @@ CmOutputPrinter(int show_dialog, int select_file)
   pobj.g2winst = g2winst;
   g_signal_connect(print, "draw_page", G_CALLBACK(draw_page), &pobj);
 
-  res = gtk_print_operation_run(print,
-				(show_dialog) ? GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG: GTK_PRINT_OPERATION_ACTION_PRINT,
-				GTK_WINDOW(TopLevel), &error);
+  switch (show_dialog) {
+  case SHOW_DIALOG_NONE:
+    opt = GTK_PRINT_OPERATION_ACTION_PRINT;
+    break;
+  case SHOW_DIALOG_DIALOG:
+    opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
+    break;
+  case SHOW_DIALOG_PREVIEW:
+    opt = GTK_PRINT_OPERATION_ACTION_PREVIEW;
+    break;
+  default:
+    opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
+  }
+
+  res = gtk_print_operation_run(print, opt, GTK_WINDOW(TopLevel), &error);
 
   if (res == GTK_PRINT_OPERATION_RESULT_ERROR) {
     snprintf(buf, sizeof(buf), _("Printing error: %s"), error->message);
@@ -724,8 +741,9 @@ CmOutputDriver(void)
 }
 
 void
-CmOutputViewer(void)
+CmOutputViewer(int select_file)
 {
+#if 0
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   char *g2winst;
@@ -734,7 +752,7 @@ CmOutputViewer(void)
   if (Menulock || GlobalLock)
     return;
 
-  if (! SetFileHidden())
+  if (select_file && ! SetFileHidden())
     return;
 
   FileAutoScale();
@@ -765,6 +783,30 @@ CmOutputViewer(void)
 
   delgra = TRUE;
   _putobj(g2wobj, "delete_gra", g2winst, &delgra);
+#else
+  struct objlist *menuobj;
+  int show_dialog;
+  char *argv[2];
+
+  if (Menulock || GlobalLock)
+    return;
+
+  if (select_file && ! SetFileHidden())
+    return;
+
+  FileAutoScale();
+  AdjustAxis();
+
+  menuobj = chkobject("menu");
+  if (menuobj == NULL)
+    return;
+
+  show_dialog = SHOW_DIALOG_PREVIEW;
+  argv[0] = (char *) &show_dialog;
+  argv[1] = NULL;
+
+  exeobj(menuobj, "print", 0, 1, argv);
+#endif
 }
 
 static char *
@@ -1074,13 +1116,13 @@ CmOutputDriverB(GtkWidget *wi, gpointer client_data)
 void
 CmOutputPrinterB(GtkWidget *wi, gpointer client_data)
 {
-  CmOutputPrinter(TRUE, TRUE);
+  CmOutputPrinter(TRUE, FALSE);
 }
 
 void
 CmOutputViewerB(GtkWidget *wi, gpointer client_data)
 {
-  CmOutputViewer();
+  CmOutputViewer(FALSE);
 }
 
 void
@@ -1094,7 +1136,7 @@ CmOutputMenu(GtkWidget *wi, gpointer client_data)
     CmViewerClear();
     break;
   case MenuIdOutputViewer:
-    CmOutputViewer();
+    CmOutputViewer(TRUE);
     break;
   case MenuIdOutputDriver:
     CmOutputDriver();

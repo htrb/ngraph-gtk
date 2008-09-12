@@ -2,6 +2,12 @@
 
 	* src/gtk/x11print.c (draw_gra): use 'exeobj()' to call "open"
 	member function.
+	(CmOutputViewer): add argument 'select_file'.
+	(CmOutputViewer): use "menu::print" instead of "gra2gtk".
+	(CmOutputMenu, CmOutputViewerB): add argument to call
+	CmOutputViewer().
+	(CmOutputPrinterB): now second argument of CmOutputPrinter() is
+	'FALSE'.
 
 	* src/shellcm.c (cmset): use memmove().
 	(cmobject): fix typo ("filed" to "field").
