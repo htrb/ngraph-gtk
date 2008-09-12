@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.29 2008/09/12 08:50:18 hito Exp $
+ * $Id: ox11menu.c,v 1.30 2008/09/12 09:12:08 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1574,10 +1574,11 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 static int
 mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int show_dialog, create_window = FALSE, lock;
+  int show_dialog, select_file, create_window = FALSE, lock;
   GtkWidget *label;
 
-  show_dialog = * (int *) argv[2];
+  select_file = * (int *) argv[2];
+  show_dialog = * (int *) argv[3];
 
   if (TopLevel == NULL) {
     create_window = TRUE;
@@ -1592,7 +1593,7 @@ mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   lock = Menulock;
   Menulock = FALSE;
-  CmOutputPrinter(show_dialog, FALSE);
+  CmOutputPrinter(select_file, show_dialog);
   Menulock = lock;
 
   if (create_window) {
@@ -1618,7 +1619,7 @@ static struct objtable gtkmenu[] = {
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
-  {"print", NSAFUNC, NREAD | NEXEC, mx_print, "i", 0},
+  {"print", NSAFUNC, NREAD | NEXEC, mx_print, "bi", 0},
   {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},

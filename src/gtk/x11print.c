@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.26 2008/09/12 08:50:18 hito Exp $
+ * $Id: x11print.c,v 1.27 2008/09/12 09:12:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,11 +50,6 @@
 
 #define DEVICE_BUF_SIZE 20
 #define MESSAGE_BUF_SIZE 1024
-
-#define SHOW_DIALOG_NONE    0
-#define SHOW_DIALOG_DIALOG  1
-#define SHOW_DIALOG_PREVIEW 2
-
 
 static char *PsVersion[] = {
   "PostScript Level 3",
@@ -591,7 +586,7 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
 }
 
 void
-CmOutputPrinter(int show_dialog, int select_file)
+CmOutputPrinter(int select_file, int show_dialog)
 {
   GtkPrintOperation *print;
   GtkPrintOperationResult res;
@@ -665,14 +660,14 @@ CmOutputPrinter(int show_dialog, int select_file)
   g_signal_connect(print, "draw_page", G_CALLBACK(draw_page), &pobj);
 
   switch (show_dialog) {
-  case SHOW_DIALOG_NONE:
+  case PRINT_SHOW_DIALOG_NONE:
     opt = GTK_PRINT_OPERATION_ACTION_PRINT;
     break;
-  case SHOW_DIALOG_DIALOG:
-    opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
-    break;
-  case SHOW_DIALOG_PREVIEW:
+  case PRINT_SHOW_DIALOG_PREVIEW:
     opt = GTK_PRINT_OPERATION_ACTION_PREVIEW;
+    break;
+  case PRINT_SHOW_DIALOG_DIALOG:
+    opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
     break;
   default:
     opt = GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG;
@@ -762,7 +757,7 @@ CmOutputViewer(int select_file)
     if (menuobj == NULL)
       return;
 
-    show_dialog = SHOW_DIALOG_PREVIEW;
+    show_dialog = PRINT_SHOW_DIALOG_PREVIEW;
     argv[0] = (char *) &show_dialog;
     argv[1] = NULL;
 
@@ -1108,7 +1103,7 @@ CmOutputDriverB(GtkWidget *wi, gpointer client_data)
 void
 CmOutputPrinterB(GtkWidget *wi, gpointer client_data)
 {
-  CmOutputPrinter(TRUE, FALSE);
+  CmOutputPrinter(FALSE, PRINT_SHOW_DIALOG_DIALOG);
 }
 
 void
