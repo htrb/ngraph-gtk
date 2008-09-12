@@ -1,5 +1,8 @@
 2008-09-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11print.c (draw_gra): use 'exeobj()' to call "open"
+	member function.
+
 	* src/shellcm.c (cmset): use memmove().
 	(cmobject): fix typo ("filed" to "field").
 
