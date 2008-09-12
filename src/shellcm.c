@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.2 2008/09/11 07:07:20 hito Exp $
+ * $Id: shellcm.c,v 1.3 2008/09/12 00:14:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -193,9 +193,13 @@ int cmset(struct nshell *nshell,int argc,char **argv)
       s=argv[j];
       if ((s[0]=='-') && (s[1]=='-')) {
 	n = strlen(argv[j]);
+#if 0
         for (i = 1; i <= n; i++) {
 	  argv[j][i-1]=argv[j][i];
 	}
+#else
+	memmove(argv[j], argv[j] + 1, n);
+#endif
         break;
       } else if ((s[0]=='-') || (s[0]=='+')) {
         if ((s[1]=='\0') || (strchr("efvx",s[1])==NULL)) {

@@ -1,3 +1,9 @@
+2008-09-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shellcm.c (cmset): use memmove().
+
+	* src/object.c (arrayndel2): use memmove().
+
 2008-09-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (CmOutputPrinter): add argument 'int

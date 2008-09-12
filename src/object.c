@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.5 2008/09/11 07:07:19 hito Exp $
+ * $Id: object.c,v 1.6 2008/09/12 00:14:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -614,8 +614,12 @@ struct narray *arrayndel2(struct narray *array,unsigned int idx)
   if (idx>=array->num) return NULL;
   data=(char **)array->data;
   memfree(data[idx]);
+#if 0
   for (i=idx+1;i<array->num;i++)
     data[i-1]=data[i];
+#else
+  memmove(data + idx, data + idx + 1, array->num - idx - 1);
+#endif
   (array->num)--;
   return array;
 }
