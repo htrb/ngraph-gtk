@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.26 2008/09/11 07:07:19 hito Exp $
+ * $Id: ofile.c,v 1.27 2008/09/12 05:50:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -235,7 +235,8 @@ struct f2dlocal {
 
 static int set_data_progress(struct f2ddata *fp);
 
-static int check_ifs_init(struct f2ddata *fp)
+static void 
+check_ifs_init(struct f2ddata *fp)
 {
   unsigned char *ifs, *remark;
 

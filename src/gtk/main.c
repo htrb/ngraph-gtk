@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.13 2008/09/11 07:07:21 hito Exp $
+ * $Id: main.c,v 1.14 2008/09/12 05:50:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -479,9 +479,9 @@ main(int argc, char **argv, char **environ)
   if (addsystem() == NULL)
     exit(1);
 
-  newobj(getobject("system"));
   if ((sys = getobject("system")) == NULL)
     exit(1);
+  newobj(sys);
   inst = chkobjinst(sys, 0);
   if (_putobj(sys, "lib_dir", inst, libdir))
     exit(1);

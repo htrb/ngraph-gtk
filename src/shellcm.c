@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.3 2008/09/12 00:14:11 hito Exp $
+ * $Id: shellcm.c,v 1.4 2008/09/12 05:50:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -156,7 +156,7 @@ int cmset(struct nshell *nshell,int argc,char **argv)
   struct cmdlist *cmdcur;
   struct prmlist *prmcur;
   char *s;
-  unsigned int i, n;
+  unsigned int n;
   int j,ops;
   char **argv2;
   int argc2;
@@ -198,7 +198,7 @@ int cmset(struct nshell *nshell,int argc,char **argv)
 	  argv[j][i-1]=argv[j][i];
 	}
 #else
-	memmove(argv[j], argv[j] + 1, n);
+	memmove(argv[j], argv[j] + 1, sizeof(**argv) * n);
 #endif
         break;
       } else if ((s[0]=='-') || (s[0]=='+')) {
@@ -484,7 +484,7 @@ int cmobject(struct nshell *nshell,int argc,char **argv)
         else
           printfstdout("(null)\n");
       } else if (strcmp0(argv[i]+1,"id")==0) printfstdout("%d\n",chkobjectid(obj));
-      else if (strcmp0(argv[i]+1,"filed")==0) printfstdout("%d\n",chkobjfieldnum(obj));
+      else if (strcmp0(argv[i]+1,"field")==0) printfstdout("%d\n",chkobjfieldnum(obj));
       else if (strcmp0(argv[i]+1,"size")==0) printfstdout("%d\n",chkobjsize(obj));
       else if (strcmp0(argv[i]+1,"current")==0) printfstdout("%d\n",chkobjcurinst(obj));
       else if (strcmp0(argv[i]+1,"last")==0) printfstdout("%d\n",chkobjlastinst(obj));
