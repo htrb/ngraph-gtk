@@ -109,13 +109,11 @@ r-x            save    *char( char *[] )
 <pre>
 object: system
 alias:
-version: 6.03.30.gtk-03
+version: 6.03.47.gtk-07
 parent: object
 object id: 1
 number of fields: 27
 size of instance: 176
-current instance: 0
-last instance id: 0
 r--              id    int
 r--             oid    int
 r-x            save    *char( char *[] )
@@ -154,8 +152,6 @@ parent: object
 object id: 2
 number of fields: 10
 size of instance: 48
-current instance: 0
-last instance id: 0
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -177,8 +173,6 @@ parent: object
 object id: 3
 number of fields: 22
 size of instance: 120
-current instance: 0
-last instance id: 0
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -312,8 +306,8 @@ alias:
 version: 1.00.00
 parent: gra2
 object id: 8
-number of fields: 22
-size of instance: 128
+number of fields: 21
+size of instance: 120
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -325,7 +319,6 @@ rw-      delete_gra    bool
 r-x      disconnect    void( void )
 --x            init    void( )
 --x            done    void( )
----            next    void*
 rw-             dpi    int
 rw-            dpix    int
 rw-            dpiy    int
@@ -346,7 +339,7 @@ version: 1.00.00
 parent: gra2cairo
 object id: 9
 number of fields: 25
-size of instance: 184
+size of instance: 176
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -381,8 +374,8 @@ alias:
 version: 1.00.00
 parent: gra2cairo
 object id: 10
-number of fields: 23
-size of instance: 136
+number of fields: 22
+size of instance: 120
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -404,7 +397,6 @@ rw-       antialias    enum( none default gray )
 ---          _local    void*
 --x            init    void( )
 --x            done    void( )
----            next    void*
 ---        _context    void( )
 </pre>
 
@@ -416,7 +408,7 @@ version: 1.00.00
 parent: gra2cairo
 object id: 11
 number of fields: 30
-size of instance: 208
+size of instance: 200
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -457,9 +449,7 @@ version: 1.00.00
 parent: gra2cairo
 object id: 12
 number of fields: 22
-size of instance: 136
-current instance: 0
-last instance id: 0
+size of instance: 128
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -491,10 +481,8 @@ alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
 object id: 35
-number of fields: 32
-size of instance: 192
-current instance: 0
-last instance id: 0
+number of fields: 33
+size of instance: 200
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -503,7 +491,6 @@ r--           _list    *char[]
 r--             _GC    int
 rw-      delete_gra    bool
 r-x      disconnect    void( void )
----            next    void*
 rw-            dpix    int
 rw-            dpiy    int
 rw-       antialias    enum( none default gray )
@@ -525,6 +512,8 @@ r-x          redraw    void( void )
 r-x           flush    void( void )
 r-x           clear    void( void )
 r-x         focused    *char[]( )
+r-x           print    *char[]( int )
+rw- data_head_lines    int
 ---       _gtklocal    void*
 ---         _evloop    void( )
 </pre>
@@ -878,8 +867,6 @@ parent: draw
 object id: 24
 number of fields: 93
 size of instance: 616
-current instance: 3
-last instance id: 3
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -1490,7 +1477,6 @@ r-x   get_open_file    *char( char *[] )
 r-x  get_open_files    *char[]( char *[] )
 r-x   get_save_file    *char( char *[] )
 </pre>
-
 <BR>
 <HR>
 <BR>
