@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.18 2008/08/27 02:06:45 hito Exp $
+ * $Id: x11opt.c,v 1.19 2008/09/12 08:50:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -419,6 +419,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
   }
   replaceconfig("[x11menu]", &conf);
   arraydel2(&conf);
+
   arrayinit(&conf, sizeof(char *));
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_viewer))) {
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
@@ -431,6 +432,10 @@ DefaultDialogClose(GtkWidget *win, void *data)
     }
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
       snprintf(buf, BUF_SIZE, "win_height=%d", Menulocal.exwinheight);
+      arrayadd(&conf, &buf);
+    }
+    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+      snprintf(buf, BUF_SIZE, "use_external_viewer=%d", Menulocal.exwin_use_external);
       arrayadd(&conf, &buf);
     }
   }
@@ -1373,12 +1378,26 @@ MiscDialog(struct MiscDialog *data)
 static void
 ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
 {
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_external), Menulocal.exwin_use_external);
   gtk_range_set_value(GTK_RANGE(d->dpi), Menulocal.exwindpi);
-#if 1
-
   spin_entry_set_val(d->width, Menulocal.exwinwidth);
   spin_entry_set_val(d->height, Menulocal.exwinheight);
-#endif
+}
+
+
+void 
+use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
+{
+  gboolean state;
+  struct ExViewerDialog *d;
+
+  d = (struct ExViewerDialog *) user_data;
+
+  state = ! gtk_toggle_button_get_active(togglebutton);
+
+  gtk_widget_set_sensitive(d->dpi, state);
+  gtk_widget_set_sensitive(d->width, state);
+  gtk_widget_set_sensitive(d->height, state);
 }
 
 static void
@@ -1391,12 +1410,17 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     vbox = gtk_vbox_new(FALSE, 4);
 
+    w = gtk_check_button_new_with_mnemonic(_("use _External previewer"));
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    g_signal_connect(w, "toggled", G_CALLBACK(use_external_toggled), d);
+    d->use_external = w;
+
     hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_hscale_new_with_range(20, 620, 1);
     d->dpi = w;
     item_setup(hbox, w, "_DPI:", TRUE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-#if 1
+
     hbox = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
     item_setup(hbox, w, _("Window _Width:"), TRUE);
@@ -1408,7 +1432,7 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("Window _Height:"), TRUE);
     d->height = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-#endif
+
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
   ExViewerDialogSetupItem(wi, d);
@@ -1429,11 +1453,10 @@ ExViewerDialogClose(GtkWidget *w, void *data)
   d->ret = IDLOOP;
 
   Menulocal.exwindpi = gtk_range_get_value(GTK_RANGE(d->dpi));
-
-#if 1
   Menulocal.exwinwidth = spin_entry_get_val(d->width);
   Menulocal.exwinheight = spin_entry_get_val(d->height);
-#endif
+  Menulocal.exwin_use_external = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_external));
+
   d->ret = ret;
 }
 

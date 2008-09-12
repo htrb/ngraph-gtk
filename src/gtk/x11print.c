@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.25 2008/09/12 07:46:38 hito Exp $
+ * $Id: x11print.c,v 1.26 2008/09/12 08:50:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -743,12 +743,6 @@ CmOutputDriver(void)
 void
 CmOutputViewer(int select_file)
 {
-#if 0
-  struct objlist *graobj, *g2wobj;
-  int id, g2wid, g2woid;
-  char *g2winst;
-  int delgra;
-
   if (Menulock || GlobalLock)
     return;
 
@@ -758,55 +752,53 @@ CmOutputViewer(int select_file)
   FileAutoScale();
   AdjustAxis();
 
-  if ((graobj = chkobject("gra")) == NULL)
-    return;
 
-  if ((g2wobj = chkobject("gra2gtk")) == NULL)
-    return;
+  if (Menulocal.exwin_use_external) {
+    struct objlist *menuobj;
+    int show_dialog;
+    char *argv[2];
 
-  g2wid = newobj(g2wobj);
+    menuobj = chkobject("menu");
+    if (menuobj == NULL)
+      return;
 
-  if (g2wid < 0)
-    return;
+    show_dialog = SHOW_DIALOG_PREVIEW;
+    argv[0] = (char *) &show_dialog;
+    argv[1] = NULL;
 
-  g2winst = chkobjinst(g2wobj, g2wid);
-  _getobj(g2wobj, "oid", g2winst, &g2woid);
-  putobj(g2wobj, "dpi", g2wid, &(Menulocal.exwindpi));
-  putobj(g2wobj, "store_in_memory", g2wid,
-	 &(Menulocal.exwinbackingstore));
-  putobj(g2wobj, "BR", g2wid, &(Menulocal.bg_r));
-  putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
-  putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
-  id = newobj(graobj);
-  init_graobj(graobj, id, "gra2gtk", g2woid);
-  draw_gra(graobj, id, _("Spawning external viewer."), FALSE);
+    exeobj(menuobj, "print", 0, 1, argv);
+  } else {
+    struct objlist *graobj, *g2wobj;
+    int id, g2wid, g2woid;
+    char *g2winst;
+    int delgra;
 
-  delgra = TRUE;
-  _putobj(g2wobj, "delete_gra", g2winst, &delgra);
-#else
-  struct objlist *menuobj;
-  int show_dialog;
-  char *argv[2];
+    if ((graobj = chkobject("gra")) == NULL)
+      return;
 
-  if (Menulock || GlobalLock)
-    return;
+    if ((g2wobj = chkobject("gra2gtk")) == NULL)
+      return;
 
-  if (select_file && ! SetFileHidden())
-    return;
+    g2wid = newobj(g2wobj);
 
-  FileAutoScale();
-  AdjustAxis();
+    if (g2wid < 0)
+      return;
 
-  menuobj = chkobject("menu");
-  if (menuobj == NULL)
-    return;
+    g2winst = chkobjinst(g2wobj, g2wid);
+    _getobj(g2wobj, "oid", g2winst, &g2woid);
+    putobj(g2wobj, "dpi", g2wid, &(Menulocal.exwindpi));
+    putobj(g2wobj, "store_in_memory", g2wid,
+	   &(Menulocal.exwinbackingstore));
+    putobj(g2wobj, "BR", g2wid, &(Menulocal.bg_r));
+    putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
+    putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
+    id = newobj(graobj);
+    init_graobj(graobj, id, "gra2gtk", g2woid);
+    draw_gra(graobj, id, _("Spawning external viewer."), FALSE);
 
-  show_dialog = SHOW_DIALOG_PREVIEW;
-  argv[0] = (char *) &show_dialog;
-  argv[1] = NULL;
-
-  exeobj(menuobj, "print", 0, 1, argv);
-#endif
+    delgra = TRUE;
+    _putobj(g2wobj, "delete_gra", g2winst, &delgra);
+  }
 }
 
 static char *

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.28 2008/09/12 07:18:59 hito Exp $
+ * $Id: ox11menu.c,v 1.29 2008/09/12 08:50:18 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -927,6 +927,12 @@ exwinloadconfig(void)
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	Menulocal.exwinbackingstore = val;
+      memfree(f1);
+    } else if (strcmp(tok, "use_external_viewer") == 0) {
+      f1 = getitok2(&s2, &len, " \t,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0')
+	Menulocal.exwin_use_external = val;
       memfree(f1);
     }
     memfree(tok);

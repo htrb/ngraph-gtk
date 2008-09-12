@@ -1,5 +1,15 @@
 2008-09-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (DefaultDialogClose, ExViewerDialogSetupItem)
+	(ExViewerDialogSetup): add settings for 'use_external'.
+	(use_external_toggled): add.
+
+	* src/gtk/ox11menu.h (struct menulocal): add member
+	"exwin_use_external".
+
+	* src/gtk/x11dialg.h (struct ExViewerDialog): add member
+	"use_external".
+
 	* src/gtk/x11print.c (draw_gra): use 'exeobj()' to call "open"
 	member function.
 	(CmOutputViewer): add argument 'select_file'.
