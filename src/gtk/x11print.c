@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.27 2008/09/12 09:12:08 hito Exp $
+ * $Id: x11print.c,v 1.28 2008/09/12 09:20:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -750,18 +750,20 @@ CmOutputViewer(int select_file)
 
   if (Menulocal.exwin_use_external) {
     struct objlist *menuobj;
-    int show_dialog;
-    char *argv[2];
+    int show_dialog, s;
+    char *argv[3];
 
     menuobj = chkobject("menu");
     if (menuobj == NULL)
       return;
 
+    s = FALSE;
     show_dialog = PRINT_SHOW_DIALOG_PREVIEW;
-    argv[0] = (char *) &show_dialog;
-    argv[1] = NULL;
+    argv[0] = (char *) &s;
+    argv[1] = (char *) &show_dialog;
+    argv[2] = NULL;
 
-    exeobj(menuobj, "print", 0, 1, argv);
+    exeobj(menuobj, "print", 0, 2, argv);
   } else {
     struct objlist *graobj, *g2wobj;
     int id, g2wid, g2woid;
