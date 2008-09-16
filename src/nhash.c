@@ -1,3 +1,7 @@
+/* 
+ * $Id: nhash.c,v 1.3 2008/09/16 10:26:00 hito Exp $
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -41,7 +45,7 @@ nhash_free(NHASH hash)
 }
 
 static int
-calc_key(int v)
+calc_key(unsigned int v)
 {
   return v % HASH_SIZE;
 }
@@ -49,7 +53,7 @@ calc_key(int v)
 static int
 calc_key_from_str(char *ptr)
 {
-  int i, v;
+  unsigned int i, v;
 
   for (v = i = 0; ptr[i]; i++) {
     v += ptr[i];
@@ -66,10 +70,6 @@ create_hash(NHASH hash, char *key)
   struct nhash *h, *ptr, *prev;
 
   hkey = calc_key_from_str(key);
-
-  h = malloc(sizeof(struct nhash));
-  if (h == NULL)
-    return NULL;
 
   ptr = hash[hkey];
 
@@ -99,6 +99,7 @@ create_hash(NHASH hash, char *key)
   }
 
   h->key = k;
+  h->next = NULL;
 
   return h;
 }
@@ -114,7 +115,6 @@ nhash_set_int(NHASH hash, char *key, int val)
     return 1;
 
   h->val.i = val;
-  h->next = NULL;
 
   return 0;
 }
