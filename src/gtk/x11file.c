@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.51 2008/09/11 07:07:22 hito Exp $
+ * $Id: x11file.c,v 1.52 2008/09/16 09:45:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1372,9 +1372,10 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   FileMoveDialogSetupItem(wi, d, d->Id);
-
+  /*
   if (makewidget)
     d->widget = NULL;
+  */
 }
 
 static void
@@ -3551,7 +3552,7 @@ FileWinFileUpdate(struct SubWin *d)
   if ((sel >= 0) && (sel <= d->num)) {
     d->setup_dialog(d->dialog, d->obj, sel, -1);
     d->select = sel;
-    if ((ret = DialogExecute(TopLevel, d->dialog)) == IDDELETE) {
+    if ((ret = DialogExecute(d->Win, d->dialog)) == IDDELETE) {
       FitDel(d->obj, sel);
       delobj(d->obj, sel);
       d->select = -1;
