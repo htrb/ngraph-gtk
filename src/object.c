@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.7 2008/09/12 05:50:33 hito Exp $
+ * $Id: object.c,v 1.8 2008/09/16 08:52:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,6 +37,7 @@
 #include "object.h"
 #include "mathcode.h"
 #include "mathfn.h"
+#include "nhash.h"
 
 #ifdef WINDOWS
 #include <math.h>
@@ -50,23 +51,25 @@
 #endif
 #endif
 
+#define USE_HASH 1
+
 #define TRUE  1
 #define FALSE 0
 
 #define OBJ_MAX 100
 #define INST_MAX 32767
 
-struct objlist *objroot=NULL;
+static struct objlist *objroot=NULL;
 
 struct loopproc *looproot=NULL;
-int ineventloop=FALSE;
-struct loopproc *loopnext=NULL;
+static int ineventloop=FALSE;
+static struct loopproc *loopnext=NULL;
 
-struct objlist *errobj=NULL;
+static struct objlist *errobj=NULL;
 char errormsg1[256]={'\0'};
 char errormsg2[256]={'\0'};
 char errormsg[256]={'\0'};
-int errcode=0;
+static int errcode=0;
 int GlobalLock=FALSE;
 
 int (*getstdin)(void);
@@ -79,6 +82,9 @@ int (*inputyn)(char *mes);
 void (*ndisplaydialog)(char *str);
 void (*ndisplaystatus)(char *str);
 
+#if USE_HASH
+static NHASH ObjHash = NULL;
+#endif
 
 #define ERRNUM 25
 
@@ -833,6 +839,37 @@ struct objlist *chkobjroot()
   return objroot;
 }
 
+#if USE_HASH
+static int
+add_onj_to_hash(char *name, char *alias, void *obj)
+{
+  if (ObjHash == NULL) {
+    ObjHash = nhash_new();
+    if (ObjHash == NULL)
+      return 1;
+  }
+
+  if (nhash_set_ptr(ObjHash, name, obj))
+    return 1;
+
+  if (alias) {
+    char *s, *aliasname;
+    int len;
+
+    s = alias;
+    while ((aliasname = getitok2(&s, &len, ":"))) {
+      if (nhash_set_ptr(ObjHash, aliasname, obj)) {
+	memfree(aliasname);
+	return 1;
+      }
+      memfree(aliasname);
+    }
+  }
+
+  return 0;
+}
+#endif
+
 void *addobject(char *name,char *alias,char *parentname,char *ver,
                 int tblnum,struct objtable *table,
                 int errnum,char **errtable,void *local,DoneProc doneproc)
@@ -840,6 +877,7 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
 {
   struct objlist *objcur,*objprev,*objnew,*parent,*objdel;
   int i,offset,id;
+  NHASH tbl_hash;
 
   id=0;
   objcur=objroot;
@@ -869,6 +907,20 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
     return NULL;
   }
   if ((objnew=memalloc(sizeof(struct objlist)))==NULL) return NULL;
+
+#if USE_HASH
+  if (add_onj_to_hash(name, alias, objnew)) {
+    memfree(objnew);
+    return NULL;
+  }
+
+  tbl_hash = nhash_new();
+  if (tbl_hash == NULL) {
+    memfree(objnew);
+    return NULL;
+  }
+#endif
+
   if (objprev==NULL) objroot=objnew;
   else objprev->next=objnew;
   objnew->next=objcur;
@@ -882,6 +934,9 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->ver=ver;
   objnew->tblnum=tblnum;
   objnew->table=table;
+#if USE_HASH
+  objnew->table_hash=tbl_hash;
+#endif
   objnew->errnum=errnum;
   objnew->errtable=errtable;
   objnew->parent=parent;
@@ -913,11 +968,19 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
     }
     if (offset % ALIGNSIZE != 0) offset = offset + (ALIGNSIZE - offset % ALIGNSIZE);
     if (table[i].attrib & NEXEC) table[i].attrib&=~NWRITE;
+#if USE_HASH
+    if (nhash_set_int(tbl_hash, table[i].name, i)) {
+      memfree(objnew);
+      nhash_free(tbl_hash);
+      return NULL;
+    }
+#endif
   }
   objnew->size=offset;
   objnew->idp=chkobjoffset(objnew,"id");
   objnew->oidp=chkobjoffset(objnew,"oid");
   objnew->nextp=chkobjoffset(objnew,"next");
+
   return objnew;
 }
 
@@ -985,6 +1048,16 @@ void recoverinstance(struct objlist *obj)
 struct objlist *chkobject(char *name)
 /* chkobject() returns NULL when the named object is not found */
 {
+#if USE_HASH
+  struct objlist *obj;
+  int r;
+
+  r = nhash_get_ptr(ObjHash, name, (void **) &obj);
+  if (r)
+    return NULL;
+
+  return obj;
+#else
   struct objlist *obj,*objcur;
   char *s,*aliasname;
   int len;
@@ -1002,6 +1075,7 @@ struct objlist *chkobject(char *name)
     objcur=objcur->next;
   }
   return obj;
+#endif
 }
 
 char *chkobjectname(struct objlist *obj)
@@ -1073,6 +1147,15 @@ int chkobjcurinst(struct objlist *obj)
 int chkobjoffset(struct objlist *obj,char *name)
 /* chkobjoffset() returns -1 on error */
 {
+#if USE_HASH
+  struct objlist *objcur;
+  int i;
+
+  i = chkobjtblpos(obj, name, &objcur);
+  if (i < 0) return -1;
+
+  return objcur->table[i].offset;
+#else
   struct objlist *objcur;
   int i;
 
@@ -1085,6 +1168,7 @@ int chkobjoffset(struct objlist *obj,char *name)
     objcur=objcur->parent;
   }
   return -1;
+#endif
 }
 
 int chkobjoffset2(struct objlist *obj,int tblpos)
@@ -1117,6 +1201,21 @@ int chkobjtblpos(struct objlist *obj,char *name,
                  struct objlist **robj)
 /* chkobjtblpos() returns -1 on error */
 {
+#if USE_HASH
+  struct objlist *objcur;
+  int i;
+
+  objcur = obj;
+  while (objcur) {
+    if (nhash_get_int(objcur->table_hash, name, &i) == 0) {
+      *robj = objcur;
+      return i;
+    }
+    objcur = objcur->parent;
+  }
+  *robj = NULL;
+  return -1;
+#else
   struct objlist *objcur;
   int i;
 
@@ -1131,6 +1230,7 @@ int chkobjtblpos(struct objlist *obj,char *name,
   }
   *robj=NULL;
   return -1;
+#endif
 }
 
 char *chkobjinst(struct objlist *obj,int id)
@@ -1314,6 +1414,15 @@ match:
 
 int chkobjfield(struct objlist *obj,char *name)
 {
+#if USE_HASH
+  struct objlist *objcur;
+  int i;
+
+  i = chkobjtblpos(obj, name, &objcur);
+  if (i < 0) return -1;
+
+  return 0;
+#else
   struct objlist *objcur;
   int i;
 
@@ -1324,6 +1433,7 @@ int chkobjfield(struct objlist *obj,char *name)
     objcur=objcur->parent;
   }
   return -1;
+#endif
 }
 
 int chkobjperm(struct objlist *obj,char *name)

@@ -12,7 +12,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c oshell.c	\
 	ostring.c osystem.c otext.c otext.h shell.c shell.h shellcm.c	\
 	shellcm.h shellux.c shellux.h spline.c spline.h gettext.h	\
-	common.h
+	common.h nhash.h nhash.c
 
 nterminal_SOURCES = terminal.c
 

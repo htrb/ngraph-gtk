@@ -181,7 +181,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c oshell.c	\
 	ostring.c osystem.c otext.c otext.h shell.c shell.h shellcm.c	\
 	shellcm.h shellux.c shellux.h spline.c spline.h gettext.h	\
-	common.h
+	common.h nhash.h nhash.c
 
 
 nterminal_SOURCES = terminal.c
@@ -218,7 +218,8 @@ am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-oshell.$(OBJEXT) ngraph-ostring.$(OBJEXT) \
 	ngraph-osystem.$(OBJEXT) ngraph-otext.$(OBJEXT) \
 	ngraph-shell.$(OBJEXT) ngraph-shellcm.$(OBJEXT) \
-	ngraph-shellux.$(OBJEXT) ngraph-spline.$(OBJEXT)
+	ngraph-shellux.$(OBJEXT) ngraph-spline.$(OBJEXT) \
+	ngraph-nhash.$(OBJEXT)
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 ngraph_DEPENDENCIES = gtk/libngraph.la
 ngraph_LDFLAGS =
@@ -238,6 +239,7 @@ am__depfiles_maybe = depfiles
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-mathcode.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-mathfn.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-nconfig.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/ngraph-nhash.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-nstring.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-ntime.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/ngraph-oagrid.Po \
@@ -352,6 +354,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-mathcode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-mathfn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-nconfig.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-nhash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-nstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-ntime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oagrid.Po@am__quote@
@@ -1875,6 +1878,39 @@ ngraph-spline.lo: spline.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-spline.Plo' tmpdepfile='$(DEPDIR)/ngraph-spline.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-spline.lo `test -f 'spline.c' || echo '$(srcdir)/'`spline.c
+
+ngraph-nhash.o: nhash.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-nhash.o -MD -MP -MF "$(DEPDIR)/ngraph-nhash.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o ngraph-nhash.o `test -f 'nhash.c' || echo '$(srcdir)/'`nhash.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-nhash.Tpo" "$(DEPDIR)/ngraph-nhash.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-nhash.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nhash.c' object='ngraph-nhash.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-nhash.Po' tmpdepfile='$(DEPDIR)/ngraph-nhash.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-nhash.o `test -f 'nhash.c' || echo '$(srcdir)/'`nhash.c
+
+ngraph-nhash.obj: nhash.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-nhash.obj -MD -MP -MF "$(DEPDIR)/ngraph-nhash.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o ngraph-nhash.obj `if test -f 'nhash.c'; then $(CYGPATH_W) 'nhash.c'; else $(CYGPATH_W) '$(srcdir)/nhash.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-nhash.Tpo" "$(DEPDIR)/ngraph-nhash.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-nhash.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nhash.c' object='ngraph-nhash.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-nhash.Po' tmpdepfile='$(DEPDIR)/ngraph-nhash.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-nhash.obj `if test -f 'nhash.c'; then $(CYGPATH_W) 'nhash.c'; else $(CYGPATH_W) '$(srcdir)/nhash.c'; fi`
+
+ngraph-nhash.lo: nhash.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-nhash.lo -MD -MP -MF "$(DEPDIR)/ngraph-nhash.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o ngraph-nhash.lo `test -f 'nhash.c' || echo '$(srcdir)/'`nhash.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/ngraph-nhash.Tpo" "$(DEPDIR)/ngraph-nhash.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/ngraph-nhash.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nhash.c' object='ngraph-nhash.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/ngraph-nhash.Plo' tmpdepfile='$(DEPDIR)/ngraph-nhash.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-nhash.lo `test -f 'nhash.c' || echo '$(srcdir)/'`nhash.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

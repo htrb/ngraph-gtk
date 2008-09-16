@@ -1,3 +1,17 @@
+2008-09-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/object.c (add_onj_to_hash): add.
+	(addobject): use set obhect name and table position to hash.
+	(chkobject): use hash to serach object.
+	(chkobjtblpos): use hash to serach table position.
+	(chkobjoffset, chkobjfield): use chkobjtblpos().
+
+	* src/object.h (struct objlist): add member 'table_hash'.
+
+	* src/nhash.h: add.
+
+	* src/nhash.c: add.
+
 2008-09-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (DefaultDialogClose, ExViewerDialogSetupItem)

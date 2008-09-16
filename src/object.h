@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.2 2008/07/14 07:42:48 hito Exp $
+ * $Id: object.h,v 1.3 2008/09/16 08:52:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,6 +25,8 @@
 #define N_OBJECT_HEADER
 
 #define TEXT_SIZE_MIN 500
+
+#include "nhash.h"
 
 #ifdef DEBUG
 extern struct plist *memallocroot;
@@ -64,6 +66,7 @@ struct objlist {
     char *ver;
     int tblnum;
     struct objtable *table;
+    NHASH table_hash;
     int size;
     int errnum;
     char **errtable;
