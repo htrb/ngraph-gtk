@@ -1,7 +1,3 @@
-/* 
- * $Id: nhash.c,v 1.2 2008/09/16 08:53:04 hito Exp $
- */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
