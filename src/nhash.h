@@ -1,19 +1,17 @@
 /* 
- * $Id: nhash.h,v 1.1 2008/09/16 08:52:40 hito Exp $
+ * $Id: nhash.h,v 1.2 2008/09/17 01:54:58 hito Exp $
  */
 
 #ifndef NHASH_HEADER
 #define NHASH_HEADER
 
-union nval {
-  int i;
-  void *p;
-};
-
 struct nhash {
   char *key;
-  union nval val;
-  struct nhash *next;
+  union {
+    int i;
+    void *p;
+  } val;
+  struct nhash *l, *r;
 };
 
 typedef struct nhash **NHASH;

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.8 2008/09/16 08:52:40 hito Exp $
+ * $Id: object.c,v 1.9 2008/09/17 01:54:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1795,34 +1795,43 @@ int newobj(struct objlist *obj)
   char **argv;
   struct objlist *objcur;
 
-  if ((idp=obj->idp)==-1) {
-    error(obj,ERRNOID);
+  idp = obj->idp;
+  if (idp == -1) {
+    error(obj, ERRNOID);
     return -1;
   }
-  if ((initn=getobjtblpos(obj,"init",&robj))==-1) return -1;
-  initp=chkobjoffset2(robj,initn);
-  if ((robj->table[initn].attrib & NEXEC)==0) {
-    error2(obj,ERRPERMISSION,"init");
+
+  initn = getobjtblpos(obj, "init", &robj);
+  if (initn == -1)
+    return -1;
+
+  initp = chkobjoffset2(robj, initn);
+  if ((robj->table[initn].attrib & NEXEC) == 0) {
+    error2(obj, ERRPERMISSION, "init");
     return -1;
   }
-  id=obj->lastinst+1;
-  if ((id+obj->lastinst2+1)==INST_MAX) {
-    error3(obj,ERRINSTNUM,INST_MAX);
+
+  id = obj->lastinst + 1;
+  if ((id + obj->lastinst2 + 1) == INST_MAX) {
+    error3(obj, ERRINSTNUM, INST_MAX);
     return -1;
   }
-  nextp=obj->nextp;
-  if ((instcur=chkobjinst(obj,obj->lastinst))!=NULL) {
-    if (nextp==-1) {
-      error(obj,ERRNONEXT);
-      return -1;
-    }
+
+  nextp = obj->nextp;
+  instcur = chkobjinst(obj, obj->lastinst);
+  if (instcur != NULL && nextp == -1) {
+    error(obj, ERRNONEXT);
+    return -1;
   }
-  instnew=memalloc(obj->size);
-  if (instnew==NULL) return -1;
-  objcur=obj;
-  while (objcur!=NULL) {
-    for (i=0;i<objcur->tblnum;i++) {
-      offset=objcur->table[i].offset;
+
+  instnew = memalloc(obj->size);
+  if (instnew == NULL)
+    return -1;
+
+  objcur = obj;
+  while (objcur) {
+    for (i = 0; i < objcur->tblnum; i++) {
+      offset = objcur->table[i].offset;
       switch (objcur->table[i].type) {
       case NVOID:
       case NLABEL:
@@ -1835,68 +1844,83 @@ int newobj(struct objlist *obj)
       case NBFUNC:
       case NCFUNC:
       case NIFUNC:
-        *(int *)(instnew+offset)=0;
+        *(int *)(instnew + offset) = 0;
         break;
       case NDOUBLE:
       case NDFUNC:
-        *(double *)(instnew+offset)=0.0;
+        *(double *)(instnew + offset) = 0.0;
         break;
       default:
-        *(char **)(instnew+offset)=NULL;
+        *(char **)(instnew + offset) = NULL;
         break;
       }
     }
-    objcur=objcur->parent;
+    objcur = objcur->parent;
   }
-  *(int *)(instnew+idp)=id;
-  if ((oidp=obj->oidp)!=-1) {
-    if (obj->lastoid==INT_MAX) obj->lastoid=0;
-    else obj->lastoid++;
-    if (nextp!=-1) {
+  *(int *)(instnew + idp) = id;
+  oidp = obj->oidp;
+  if (oidp != -1) {
+    if (obj->lastoid == INT_MAX) {
+      obj->lastoid=0;
+    } else {
+      obj->lastoid++;
+    }
+    if (nextp != -1) {
       do {
         inst=obj->root;
-        while (inst!=NULL) {
-          if (*(int *)(inst+oidp)==obj->lastoid) {
-            if (obj->lastoid==INT_MAX) obj->lastoid=0;
-            else obj->lastoid++;
+        while (inst) {
+          if (*(int *)(inst + oidp) == obj->lastoid) {
+            if (obj->lastoid == INT_MAX) {
+	      obj->lastoid=0;
+            } else {
+	      obj->lastoid++;
+	    }
             break;
           }
-          inst=*(char **)(inst+nextp);
+          inst = *(char **)(inst + nextp);
         }
-        if (inst==NULL) {
-          inst=obj->root2;
-          while (inst!=NULL) {
-            if (*(int *)(inst+oidp)==obj->lastoid) {
-              if (obj->lastoid==INT_MAX) obj->lastoid=0;
-              else obj->lastoid++;
+        if (inst == NULL) {
+          inst = obj->root2;
+          while (inst) {
+            if (*(int *)(inst + oidp) == obj->lastoid) {
+              if (obj->lastoid == INT_MAX) {
+		obj->lastoid = 0;
+              } else {
+		obj->lastoid++;
+	      }
               break;
             }
-            inst=*(char **)(inst+nextp);
+            inst = *(char **)(inst + nextp);
           }
         }
-      } while (inst!=NULL);
+      } while (inst);
     }
-    *(int *)(instnew+oidp)=obj->lastoid;
+    *(int *)(instnew + oidp) = obj->lastoid;
   }
-  if (robj->table[initn].proc!=NULL) {
-    argv=NULL;
-    if (arg_add2(&argv,2,obj->name,"init")==NULL) {
+  if (robj->table[initn].proc) {
+    argv = NULL;
+    if (arg_add2(&argv, 2, obj->name, "init") == NULL) {
       memfree(argv);
       return -1;
     }
-    argc=getargc(argv);
-    rcode=robj->table[initn].proc(robj,instnew,instnew+initp,argc,argv);
+    argc = getargc(argv);
+    rcode = robj->table[initn].proc(robj, instnew, instnew + initp, argc, argv);
     memfree(argv);
-    if (rcode!=0) {
+    if (rcode != 0) {
       memfree(instnew);
       return -1;
     }
   }
-  if (instcur==NULL) obj->root=instnew;
-  else *(char **)(instcur+nextp)=instnew;
-  if (nextp!=-1) *(char **)(instnew+nextp)=NULL;
-  obj->lastinst=id;
-  obj->curinst=id;
+  if (instcur == NULL) {
+    obj->root=instnew;
+  } else {
+    *(char **)(instcur + nextp) = instnew;
+  }
+  if (nextp != -1) {
+    *(char **)(instnew + nextp) = NULL;
+  }
+  obj->lastinst = id;
+  obj->curinst = id;
   return id;
 }
 

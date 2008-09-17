@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.c,v 1.3 2008/09/16 10:26:00 hito Exp $
+ * $Id: nhash.c,v 1.4 2008/09/17 01:54:58 hito Exp $
  */
 
 #include <stdlib.h>
@@ -23,15 +23,17 @@ nhash_new(void)
 static void
 free_hash_list(struct nhash *hash)
 {
-  struct nhash *next;
+  struct nhash *l, *r;
 
   if (hash == NULL)
     return;
 
-  next = hash->next;
+  l = hash->l;
+  r = hash->r;
   free(hash->key);
   free(hash);
-  free_hash_list(next);
+  free_hash_list(l);
+  free_hash_list(r);
 }
 
 void
@@ -45,12 +47,6 @@ nhash_free(NHASH hash)
 }
 
 static int
-calc_key(unsigned int v)
-{
-  return v % HASH_SIZE;
-}
-
-static int
 calc_key_from_str(char *ptr)
 {
   unsigned int i, v;
@@ -59,15 +55,15 @@ calc_key_from_str(char *ptr)
     v += ptr[i];
   }
 
-  return calc_key(v);
+  return v % HASH_SIZE;
 }
 
 struct nhash *
 create_hash(NHASH hash, char *key)
 {
-  int hkey;
+  int hkey, lr = 0;
   char *k;
-  struct nhash *h, *ptr, *prev;
+  struct nhash *h, *ptr, *prev = NULL;
 
   hkey = calc_key_from_str(key);
 
@@ -80,16 +76,24 @@ create_hash(NHASH hash, char *key)
     hash[hkey] = h;
   } else {
     while (ptr) {
-      if (strcmp(key, ptr->key) == 0) {
+      lr = strcmp(key, ptr->key);
+      switch (lr) {
+      case -1:
+	prev = ptr;
+	ptr = ptr->l;
+	break;
+      case 0:
 	return ptr;
+      case 1:
+	prev = ptr;
+	ptr = ptr->r;
+	break;
       }
-      prev = ptr;
-      ptr = ptr->next;
     }
     h = malloc(sizeof(struct nhash));
-    if (h == NULL)
+    if (h == NULL) {
       return NULL;
-    prev->next = h;
+    }
   }
 
   k = strdup(key);
@@ -98,8 +102,17 @@ create_hash(NHASH hash, char *key)
     return NULL;
   }
 
+  if (prev) {
+    if (lr == -1) {
+      prev->l = h;
+    } else {
+      prev->r = h;
+    }
+  }
+
   h->key = k;
-  h->next = NULL;
+  h->l = NULL;
+  h->r = NULL;
 
   return h;
 }
@@ -130,7 +143,6 @@ nhash_set_ptr(NHASH hash, char *key, void *val)
     return 1;
 
   h->val.p = val;
-  h->next = NULL;
 
   return 0;
 }
@@ -149,10 +161,16 @@ nhash_get(NHASH hash, char *key)
   ptr = hash[hk];
 
   while (ptr) {
-    if (strcmp(key, ptr->key) == 0) {
+    switch (strcmp(key, ptr->key)) {
+    case -1:
+      ptr = ptr->l;
+      break;
+    case 0:
       return ptr;
+    case 1:
+      ptr = ptr->r;
+      break;
     }
-    ptr = ptr->next;
   }
 
   return NULL;
@@ -188,19 +206,24 @@ nhash_get_ptr(NHASH hash, char *key, void **ptr)
   return 0;
 }
 
+static void print_hash(struct nhash *h)
+{
+  if (h == NULL)
+    return;
+
+  printf("%s ", h->key);
+  print_hash(h->l);
+  print_hash(h->r);
+}
+
 void
 nhash_show(NHASH hash)
 {
-  struct nhash *h;
   int i;
 
   for (i = 0; i < HASH_SIZE; i++) {
-    h = hash[i];
     printf("%2d: ", i);
-    while (h) {
-      printf("%s%s", h->key, (h->next) ? "\t": "");
-      h = h->next;
-    }
+    print_hash(hash[i]);
     printf("\n");
   }
 }
