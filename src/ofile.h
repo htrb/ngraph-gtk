@@ -1,0 +1,2 @@
+#define FILE_OBJ_MAXCOL 999
+#define FILE_OBJ_SMOOTH_MAX 50
