@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.12 2008/09/18 08:13:43 hito Exp $
+ * $Id: x11gui.c,v 1.13 2008/09/18 09:22:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -386,8 +386,8 @@ fsok(GtkWidget *dlg)
       if (data->mustexist) {
 	if ((stat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG) 
 	    || (access(file2, R_OK) != 0)) {
-	  error22(NULL, 0, "I/O error", file2);
 	  gdk_beep();
+	  error22(NULL, 0, "I/O error", file2);
 	  free(file2);
 	  continue;
 	}

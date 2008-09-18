@@ -1,6 +1,16 @@
 2008-09-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11print.c (CmPrintDataFile): check return value of
+	* src/gtk/x11commn.c (FileAutoScale): return when fail to allcate
+	memory.
+
+	* src/ofile.c (f2dbounding): return 1 when error is occurred.
+
+	* src/oaxis.c (axisautoscalefile): check the return value of
+	getobj().
+	(axisautoscale): return 1 when the return value of
+	axisautoscalefile() is not 0.
+
+	* src/gtk/x11print.c (CmPrintDataFile): check the return value of
 	exeobj().
 
 	* src/gtk/ogra2gtkprint.c (create_cairo): show error message when
@@ -14,7 +24,8 @@
 
 2008-09-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11print.c (draw_gra): check return value of exeobj().
+	* src/gtk/x11print.c (draw_gra): check the return value of
+	exeobj().
 
 	* src/gtk/x11gui.c (fsok): set NULL to data->ext when fiter name
 	is "All".
@@ -32,8 +43,7 @@
 	and 'E'.
 	(addgra2cairo): add error messages.
 
-	* src/ogra.c (oGRAopen): check return value of GRAinit().
-	(oGRAdrawparent, oGRAdraw): check return value exeobj().
+	* src/ogra.c (oGRAopen): check the return value of GRAinit().
 
 	* src/gra.c (GRAreopen, GRAdraw, GRAinit, GRAend): return int.
 
@@ -224,8 +234,8 @@
 
 2008-08-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofile.c (f2dhead): check return value of nstrnew() is NULL
-	or not.
+	* src/ofile.c (f2dhead): check the return value of nstrnew() is
+	NULL or not.
 
 	* src/gtk/x11gui.c (dialog_key_down_cb): return FALSE when 'w' key
 	is pressed without control key.

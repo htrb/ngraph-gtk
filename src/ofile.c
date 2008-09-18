@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.28 2008/09/18 08:13:42 hito Exp $
+ * $Id: ofile.c,v 1.29 2008/09/18 09:22:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5277,11 +5277,16 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
   if (_putobj(obj,"stat_miny",inst,&minmaxstat)) return 1;
   if (_putobj(obj,"stat_maxy",inst,&minmaxstat)) return 1;
   _getobj(obj,"_local",inst,&f2dlocal);
-  if ((fp=opendata(obj,inst,f2dlocal,FALSE,FALSE))==NULL) return 1;
+
+  fp = opendata(obj,inst,f2dlocal,FALSE,FALSE);
+  if (fp == NULL)
+    return 1;
+
   if (hskipdata(fp)!=0) {
     closedata(fp);
     return 1;
   }
+
   if (fp->need2pass) {
     if (getminmaxdata(fp)==-1) {
       closedata(fp);
@@ -5410,7 +5415,7 @@ int f2dbounding(struct objlist *obj,char *inst,char *rval,
   char *axisx,*axisy;
   struct narray iarray,iarray2;
   struct objlist *aobj;
-  int i,anum,anum2,id;
+  int i,anum,anum2,id,r = 1;
   int *adata;
   double min,max;
   int minstat,maxstat;
@@ -5436,10 +5441,15 @@ int f2dbounding(struct objlist *obj,char *inst,char *rval,
   _getobj(obj,"axis_x",inst,&axisx);
   if (axisx!=NULL) {
     arrayinit(&iarray2,sizeof(int));
-    if (getobjilist(axisx,&aobj,&iarray2,FALSE,NULL)) goto exit;
+
+    if (getobjilist(axisx,&aobj,&iarray2,FALSE,NULL))
+      goto exit;
+
     anum2=arraynum(&iarray2);
-    if (anum2<1) arraydel(&iarray2);
-    else {
+
+    if (anum2<1) {
+      arraydel(&iarray2);
+    } else {
       id=*(int *)arraylast(&iarray2);
       arraydel(&iarray2);
       for (i=0;i<anum;i++) if (adata[i]==id) break;
@@ -5459,6 +5469,7 @@ int f2dbounding(struct objlist *obj,char *inst,char *rval,
           arrayadd(minmax,&max);
           *(struct narray **)rval=minmax;
         }
+	r = 0;
         goto exit;
       }
     }
@@ -5492,9 +5503,10 @@ int f2dbounding(struct objlist *obj,char *inst,char *rval,
       }
     }
   }
+  r = 0;
 exit:
   arraydel(&iarray);
-  return 0;
+  return r;
 }
 
 int f2dsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)

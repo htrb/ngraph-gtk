@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.18 2008/09/11 10:04:58 hito Exp $
+ * $Id: x11commn.c,v 1.19 2008/09/18 09:22:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1168,58 +1168,64 @@ FileAutoScale(void)
 
   if ((fobj = chkobject("file")) == NULL)
     return;
+
   lastinst = chkobjlastinst(fobj);
   aobj = chkobject("axis");
   anum = chkobjlastinst(aobj);
-  if ((lastinst >= 0) && (aobj != NULL) && (anum != 0)) {
-    len = 6 * (lastinst + 1) + 6;
-    buf = (char *) memalloc(len);
-    if (buf) {
-      j = 0;
-      j += snprintf(buf + j, len - j, "file:");
-      for (i = 0; i <= lastinst; i++) {
-	getobj(fobj, "hidden", i, 0, NULL, &a);
-	if (!a)
-	  j += snprintf(buf + j, len - j, "%d,", i);
-      }
-      if (buf[j] == ',')
-	buf[j] = '\0';
-      room = 0;
-      argv2[0] = (char *) buf;
-      argv2[1] = (char *) &room;
-      argv2[2] = NULL;
-      for (i = 0; i <= anum; i++) {
-	getobj(aobj, "min", i, 0, NULL, &min);
-	getobj(aobj, "max", i, 0, NULL, &max);
-	getobj(aobj, "inc", i, 0, NULL, &inc);
-	getobj(aobj, "group", i, 0, NULL, &group);
-	getobj(aobj, "reference", i, 0, NULL, &ref);
-	refother = FALSE;
-	if (ref != NULL) {
-	  refother = TRUE;
-	  arrayinit(&iarray, sizeof(int));
-	  if (!getobjilist(ref, &aobj2, &iarray, FALSE, NULL)) {
-	    anum2 = arraynum(&iarray);
-	    if (anum2 > 0) {
-	      aid2 = *(int *) arraylast(&iarray);
-	      arraydel(&iarray);
-	      if ((anum2 > 0)
-		  && ((inst = getobjinst(aobj2, aid2)) != NULL)) {
-		_getobj(aobj2, "group", inst, &refgroup);
-		if ((refgroup != NULL) && (group != NULL)
-		    && (refgroup[0] == group[0])
-		    && (strcmp(refgroup + 2, group + 2) == 0))
-		  refother = FALSE;
-	      }
-	    }
+
+  if (lastinst < 0 || aobj == NULL || anum == 0)
+    return;
+
+  len = 6 * (lastinst + 1) + 6;
+  buf = (char *) memalloc(len);
+  if (buf == NULL) {
+    error(NULL, ERRHEAP);
+    return;
+  }
+
+  j = 0;
+  j += snprintf(buf + j, len - j, "file:");
+  for (i = 0; i <= lastinst; i++) {
+    getobj(fobj, "hidden", i, 0, NULL, &a);
+    if (!a)
+      j += snprintf(buf + j, len - j, "%d,", i);
+  }
+  if (buf[j] == ',')
+    buf[j] = '\0';
+  room = 0;
+  argv2[0] = (char *) buf;
+  argv2[1] = (char *) &room;
+  argv2[2] = NULL;
+  for (i = 0; i <= anum; i++) {
+    getobj(aobj, "min", i, 0, NULL, &min);
+    getobj(aobj, "max", i, 0, NULL, &max);
+    getobj(aobj, "inc", i, 0, NULL, &inc);
+    getobj(aobj, "group", i, 0, NULL, &group);
+    getobj(aobj, "reference", i, 0, NULL, &ref);
+    refother = FALSE;
+    if (ref != NULL) {
+      refother = TRUE;
+      arrayinit(&iarray, sizeof(int));
+      if (!getobjilist(ref, &aobj2, &iarray, FALSE, NULL)) {
+	anum2 = arraynum(&iarray);
+	if (anum2 > 0) {
+	  aid2 = *(int *) arraylast(&iarray);
+	  arraydel(&iarray);
+	  inst = getobjinst(aobj2, aid2);
+	  if (inst) {
+	    _getobj(aobj2, "group", inst, &refgroup);
+	    if (refgroup && group && refgroup[0] == group[0]
+		&& strcmp(refgroup + 2, group + 2) == 0)
+	      refother = FALSE;
 	  }
 	}
-	if ((!refother) && ((min == max) || (inc == 0)))
-	  exeobj(aobj, "auto_scale", i, 2, argv2);
       }
-      memfree(buf);
+    }
+    if (! refother && (min == max || inc == 0)) {
+      exeobj(aobj, "auto_scale", i, 2, argv2);
     }
   }
+  memfree(buf);
 }
 
 void

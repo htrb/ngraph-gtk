@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.5 2008/09/18 01:35:11 hito Exp $
+ * $Id: ogra.c,v 1.6 2008/09/18 09:22:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -329,9 +329,7 @@ int oGRAdrawparent(struct objlist *parent)
 	  set_progress_val(i, instnum, objname);
 
           if (ninterrupt()) return FALSE;
-          r = exeobj(ocur,"draw",i,1,oGRAargv);
-	  if (r)
-	    return r;
+	  exeobj(ocur,"draw",i,1,oGRAargv);
         }
       }
       if (!oGRAdrawparent(ocur)) return FALSE;
@@ -377,9 +375,7 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 	set_progress_val(i, instnum, objname);
 
 	if (ninterrupt()) return 0;
-	r = exeobj(draw,"draw",i,1,oGRAargv);
-	if (r)
-	  return r;
+	exeobj(draw,"draw",i,1,oGRAargv);
       }
     }
   }

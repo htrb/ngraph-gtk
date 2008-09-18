@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.7 2008/08/21 06:05:47 hito Exp $
+ * $Id: oaxis.c,v 1.8 2008/09/18 09:22:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2245,6 +2245,7 @@ int axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,
     set_progress(1, msgbuf, frac);
     minmax=NULL;
     getobj(fobj,"bounding",fdata[i],1,argv2,&minmax);
+
     if (arraynum(minmax)>=2) {
       min1=*(double *)arraynget(minmax,0);
       max1=*(double *)arraynget(minmax,1);
@@ -2275,18 +2276,20 @@ int axisautoscale(struct objlist *obj,char *inst,char *rval,
 
   fileobj=(char *)argv[2];
   room=*(int *)argv[3];
-  if (axisautoscalefile(obj,inst,fileobj,&min,&max)==0) {
-    axischangescale(obj,inst,&min,&max,&inc,room);
-    _getobj(obj,"min",inst,&omin);
-    _getobj(obj,"max",inst,&omax);
-    _getobj(obj,"inc",inst,&oinc);
-    if (omin==omax) {
-      if (_putobj(obj,"min",inst,&min)) return 1;
-      if (_putobj(obj,"max",inst,&max)) return 1;
-    }
-    if (oinc==0) {
-      if (_putobj(obj,"inc",inst,&inc)) return 1;
-    }
+
+  if (axisautoscalefile(obj,inst,fileobj,&min,&max))
+    return 1;
+
+  axischangescale(obj,inst,&min,&max,&inc,room);
+  _getobj(obj,"min",inst,&omin);
+  _getobj(obj,"max",inst,&omax);
+  _getobj(obj,"inc",inst,&oinc);
+  if (omin==omax) {
+    if (_putobj(obj,"min",inst,&min)) return 1;
+    if (_putobj(obj,"max",inst,&max)) return 1;
+  }
+  if (oinc==0) {
+    if (_putobj(obj,"inc",inst,&inc)) return 1;
   }
   return 0;
 }
