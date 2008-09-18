@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.11 2008/09/18 01:35:13 hito Exp $
+ * $Id: x11gui.c,v 1.12 2008/09/18 08:13:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -348,7 +348,7 @@ fsok(GtkWidget *dlg)
   top = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dlg));
   filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dlg));
   filter_name = gtk_file_filter_get_name(filter);
-  if (strcmp(filter_name, _("All")) == 0) {
+  if (filter_name == NULL || strcmp(filter_name, _("All")) == 0) {
     data->ext = NULL;
   }
 
@@ -403,6 +403,9 @@ fsok(GtkWidget *dlg)
       k++;
     }
   }
+
+  if (k == 0)
+    return;
 
   if (data->changedir && k > 0) {
     data->chdir = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->chdir_cb));

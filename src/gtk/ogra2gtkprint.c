@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2gtkprint.c,v 1.5 2008/09/18 01:35:13 hito Exp $
+ * $Id: ogra2gtkprint.c,v 1.6 2008/09/18 08:13:43 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -73,26 +73,31 @@ create_cairo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   gpc = GTK_PRINT_CONTEXT(argv[2]);
 
-  if (gpc == NULL)
-    return -1;
+  if (gpc == NULL) {
+    error(obj, CAIRO_STATUS_NULL_POINTER + 100);
+    return 1;
+  }
 
   cairo = gtk_print_context_get_cairo_context(gpc);
 
   r = cairo_status(cairo);
   if (r != CAIRO_STATUS_SUCCESS) {
-    return r + 100;
+    error(obj, r + 100);
+    return 1;
   }
 
   _getobj(obj, "id", inst, &id);
 
   dpi = gtk_print_context_get_dpi_x(gpc);
   if (putobj(obj, "dpix", id, &dpi) < 0) {
-    return -1;
+    error(obj, ERRFIELD);
+    return 1;
   }
 
   dpi = gtk_print_context_get_dpi_y(gpc);
   if (putobj(obj, "dpiy", id, &dpi) < 0) {
-    return -1;
+    error(obj, ERRFIELD);
+    return 1;
   }
 
   _getobj(obj, "_local", inst, &local);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.29 2008/09/18 01:35:13 hito Exp $
+ * $Id: x11print.c,v 1.30 2008/09/18 08:13:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -517,13 +517,9 @@ OutputImageDialog(struct OutputImageDialog *data, int type)
 static void
 draw_gra(struct objlist *graobj, int id, char *msg, int close)
 {
-  struct savedstdio stdio;
-
   ProgressDialogCreate(msg);
   SetStatusBar(msg);
-  ignorestdio(&stdio);
-  putstderr = stdio.putstderr;
-  printfstderr = stdio.printfstderr;
+
   if (exeobj(graobj, "open", id, 0, NULL) == 0) {
     exeobj(graobj, "draw", id, 0, NULL);
     exeobj(graobj, "flush", id, 0, NULL);
@@ -531,7 +527,7 @@ draw_gra(struct objlist *graobj, int id, char *msg, int close)
       exeobj(graobj, "close", id, 0, NULL);
     }
   }
-  restorestdio(&stdio);
+
   ProgressDialogFinalize();
   ResetStatusBar();
   gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
@@ -557,9 +553,7 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
   argv[1] = NULL;
   r = _exeobj(g2wobj, "_context", g2winst, 1, argv);
 
-  if (r) {
-    error(g2wobj, r);
-  } else {
+  if (r == 0) {
     draw_gra(graobj, id, _("Printing."), TRUE);
   }
 }
@@ -706,6 +700,7 @@ CmOutputDriver(void)
   int id, g2wid, g2woid;
   char *g2winst;
   int ret;
+  struct savedstdio stdio;
 
   if (Menulock || GlobalLock)
     return;
@@ -737,7 +732,9 @@ CmOutputDriver(void)
     _getobj(g2wobj, "oid", g2winst, &g2woid);
     id = newobj(graobj);
     init_graobj(graobj, id, "gra2prn", g2woid);
-    draw_gra(graobj, id, _("Printing."), TRUE);
+    ignorestdio(&stdio);
+    draw_gra(graobj, id, _("Drawing."), TRUE);
+    restorestdio(&stdio);
     delobj(graobj, id);
   }
   delobj(g2wobj, g2wid);
@@ -1095,10 +1092,12 @@ CmPrintDataFile(void)
 
     append = (i == 0) ? FALSE : TRUE;
     argv[2] = (char *) &append;
-    exeobj(obj, "output_file", array[i], 3, argv);
+    if (exeobj(obj, "output_file", array[i], 3, argv))
+      break;
   }
   ProgressDialogFinalize();
   ResetStatusBar();
+  gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
 
   arraydel(&farray);
   free(file);

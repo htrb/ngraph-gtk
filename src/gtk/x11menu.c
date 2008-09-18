@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.42 2008/09/11 07:07:23 hito Exp $
+ * $Id: x11menu.c,v 1.43 2008/09/18 08:13:44 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1996,18 +1996,27 @@ DisplayStatus(char *str)
 int
 PutStdout(char *s)
 {
-  DisplayDialog(s);
-  return strlen(s) + 1;
+  gssize len, rlen, wlen;
+  char *ustr;
+
+  len = strlen(s);
+  ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
+  DisplayDialog(ustr);
+  g_free(ustr);
+  return len + 1;
 }
 
 int
 PutStderr(char *s)
 {
-  int len;
+  gssize len, rlen, wlen;
+  char *ustr;
 
-  MessageBox(TopLevel, s, _("Error:"), MB_ERROR);
-  UpdateAll2();
   len = strlen(s);
+  ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
+  MessageBox(TopLevel, ustr, _("Error:"), MB_ERROR);
+  g_free(ustr);
+  UpdateAll2();
   return len + 1;
 }
 

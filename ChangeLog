@@ -1,7 +1,20 @@
+2008-09-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (CmPrintDataFile): check return value of
+	exeobj().
+
+	* src/gtk/ogra2gtkprint.c (create_cairo): show error message when
+	error is occurred.
+
+	* src/ofile.c (f2doutputfile): show error message when error is
+	occurred.
+
+	* src/gtk/x11menu.c (PutStdout, PutStderr): convert string from
+	locale to UTF-8.
+
 2008-09-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (draw_gra): check return value of exeobj().
-	(draw_gra): restore 'putstderr' and 'printfstderr' before drawing.
 
 	* src/gtk/x11gui.c (fsok): set NULL to data->ext when fiter name
 	is "All".

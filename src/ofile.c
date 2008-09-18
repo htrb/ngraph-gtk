@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.27 2008/09/12 05:50:33 hito Exp $
+ * $Id: ofile.c,v 1.28 2008/09/18 08:13:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,7 @@
 #include <fcntl.h>
 #include <utime.h>
 #include <time.h>
+#include <errno.h>
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -61,8 +62,6 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 20
-
 #define ERRFILE 100
 #define ERROPEN 101
 #define ERRSYNTAX 102
@@ -83,8 +82,10 @@
 #define ERRILOPTION 117
 #define ERRIGNORE 118
 #define ERRNEGATIVE 119
+#define ERRREAD 120
+#define ERRWRITE 121
 
-char *f2derrorlist[ERRNUM]={
+char *f2derrorlist[]={
   "file is not specified.",
   "I/O error: open file",
   "syntax error in math.",
@@ -105,7 +106,11 @@ char *f2derrorlist[ERRNUM]={
   "illegal file option",
   "illegal value for axis ---> ignored",
   "negative value in LOG-axis ---> ABS()",
+  "I/O error: read file",
+  "I/O error: write file",
 };
+
+#define ERRNUM (sizeof(f2derrorlist) / sizeof(*f2derrorlist))
 
 char *f2dtypechar[]={
   N_("mark"),
@@ -6080,42 +6085,58 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
-  char *file;
-  int rcode,type,intp,div,append;
+  char *file, *data_file;
+  int rcode,type,intp,div,append,r;
   FILE *fp2;
 
   _getobj(obj,"_local",inst,&f2dlocal);
+  _getobj(obj,"file", inst, &data_file);
+
   file=(char *)argv[2];
   div=*(int *)argv[3];
   append = *(int *) argv[4];
 
   if (div<1) div=1;
-  if ((fp=opendata(obj,inst,f2dlocal,FALSE,FALSE))==NULL) return 1;
+
+  fp = opendata(obj,inst,f2dlocal,FALSE,FALSE);
+  if (fp == NULL) {
+    return 1;
+  }
+
   if (hskipdata(fp)!=0) {
     closedata(fp);
+    error2(obj, ERRREAD, data_file);
     return 1;
   }
   if (fp->need2pass) {
     if (getminmaxdata(fp)==-1) {
       closedata(fp);
+      error2(obj, ERRREAD, data_file);
       return 1;
     }
     reopendata(fp);
     if (hskipdata(fp)!=0) {
       closedata(fp);
+      error2(obj, ERRREAD, data_file);
       return 1;
     }
   }
-  if ((fp2=nfopen(file, (append) ? "at" : "wt"))==NULL) {
+
+  fp2 = nfopen(file, (append) ? "at" : "wt");
+  if (fp2 == NULL) {
+    //    error2(obj, ERROPEN, file);
+    error22(obj, ERRUNKNOWN, strerror(errno), file);
     closedata(fp);
     return 1;
   }
+
   _getobj(obj,"type",inst,&type);
   if (type==3) {
     _getobj(obj,"interpolation",inst,&intp);
     if (curveoutfile(obj,fp,fp2,intp,div)!=0) {
       closedata(fp);
       fclose(fp2);
+      error2(obj, ERRWRITE, file);
       return 1;
     }
   } else {
@@ -6139,6 +6160,12 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
                      fp->dx,fp->dy,fp->d2-fp->dy,fp->d3-fp->dy);
       }
     }
+  }
+
+  r = 0;
+  if (ferror(fp2)) {
+    error2(obj, ERRWRITE, file);
+    r = 1;
   }
   closedata(fp);
   fclose(fp2);
