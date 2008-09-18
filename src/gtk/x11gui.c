@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.10 2008/09/11 07:07:23 hito Exp $
+ * $Id: x11gui.c,v 1.11 2008/09/18 01:35:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,8 @@
 #include <unistd.h>
 #include <limits.h>
 #include <libgen.h>
+
+#include "object.h"
 
 #include "gtk_widget.h"
 
@@ -335,13 +337,21 @@ fsok(GtkWidget *dlg)
 {
   struct nGetOpenFileData *data;
   char *file, *file2, **farray;
+  const char *filter_name;
   int i, k, len, n, l;
   struct stat buf;
   GSList *top, *list;
+  GtkFileFilter *filter;
 
   data = &FileSelection;
 
   top = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dlg));
+  filter = gtk_file_chooser_get_filter(GTK_FILE_CHOOSER(dlg));
+  filter_name = gtk_file_filter_get_name(filter);
+  if (strcmp(filter_name, _("All")) == 0) {
+    data->ext = NULL;
+  }
+
   n = g_slist_length(top);
   farray = malloc(sizeof(*farray) * (n + 1));
   if (farray == NULL) {
@@ -376,6 +386,7 @@ fsok(GtkWidget *dlg)
       if (data->mustexist) {
 	if ((stat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG) 
 	    || (access(file2, R_OK) != 0)) {
+	  error22(NULL, 0, "I/O error", file2);
 	  gdk_beep();
 	  free(file2);
 	  continue;
@@ -383,6 +394,7 @@ fsok(GtkWidget *dlg)
       } else {
 	if ((stat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
 	  gdk_beep();
+	  error22(NULL, 0, "I/O error", file2);
 	  free(file2);
 	  continue;
 	}

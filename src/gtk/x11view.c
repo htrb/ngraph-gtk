@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.63 2008/09/11 07:07:23 hito Exp $
+ * $Id: x11view.c,v 1.64 2008/09/18 01:35:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4177,7 +4177,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
 
   d = &(NgraphApp.Viewer);
 
-  if ((e->count != 0) || GlobalLock)
+  if ((e && e->count != 0) || GlobalLock)
     return TRUE;
   /*
   if (region == NULL)

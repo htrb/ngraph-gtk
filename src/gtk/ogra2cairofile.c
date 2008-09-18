@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.11 2008/07/17 01:38:44 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.12 2008/09/18 01:35:12 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -28,8 +28,6 @@
 #define PARENT "gra2cairo"
 #define OVERSION  "1.00.00"
 
-#define ERRFOPEN 100
-
 #ifndef M_PI
 #define M_PI 3.141592
 #endif
@@ -45,12 +43,6 @@ char *surface_type[] = {
   "png",
   NULL,
 };
-
-char *gra2cairofile_errorlist[]={
-  "I/O error: open file"
-};
-
-#define ERRNUM (sizeof(gra2cairofile_errorlist) / sizeof(*gra2cairofile_errorlist))
 
 
 static int 
@@ -97,15 +89,19 @@ gra2cairofile_done(struct objlist *obj, char *inst, char *rval, int argc, char *
 }
 
 static cairo_t *
-create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih)
+create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *err)
 {
   cairo_surface_t *ps;
   cairo_t *cairo;
   double w, h;
-  int format, dpi;
+  int format, dpi, r;
+  struct gra2cairo_local *local;
+
+  *err = 0;
 
   _getobj(obj, "format", inst, &format);
   _getobj(obj, "dpi", inst, &dpi);
+  _getobj(obj, "_local", inst, &local);
 
   w = iw * dpi / 25.4 / 100;
   h = ih * dpi / 25.4 / 100;
@@ -149,7 +145,9 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih)
     ps = cairo_ps_surface_create(fname, w, h);
   }
 
-  if (cairo_surface_status(ps) != CAIRO_STATUS_SUCCESS) {
+  r = cairo_surface_status(ps);
+  if (r != CAIRO_STATUS_SUCCESS) {
+    *err = r;
     cairo_surface_destroy(ps);
     return NULL;
   }
@@ -158,7 +156,9 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih)
   /* cairo_create() references target, so you can immediately call cairo_surface_destroy() on it */
   cairo_surface_destroy(ps);
 
-  if (cairo_status(cairo) != CAIRO_STATUS_SUCCESS) {
+  r = cairo_status(cairo);
+  if (r != CAIRO_STATUS_SUCCESS) {
+    *err = r;
     cairo_destroy(cairo);
     return NULL;
   }
@@ -178,16 +178,17 @@ init_cairo(struct objlist *obj, char *inst, struct gra2cairo_local *local, int w
 {
   char *fname;
   cairo_t *cairo;
-  int t2p;
+  int t2p, r;
 
   _getobj(obj, "file", inst, &fname);
   if (fname == NULL)
-    return 1;
+    return CAIRO_STATUS_NULL_POINTER;
 
-  cairo = create_cairo(obj, inst, fname, w, h);
+  cairo = create_cairo(obj, inst, fname, w, h, &r);
 
-  if (cairo == NULL)
-    return 1;
+  if (cairo == NULL) {
+    return r;
+  }
 
   if (local->cairo)
     cairo_destroy(local->cairo);
@@ -206,7 +207,7 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
                  int argc, char **argv)
 {
   char code, *cstr, *fname;
-  int *cpar, format;
+  int *cpar, format, r;
   struct gra2cairo_local *local;
 
   local = (struct gra2cairo_local *)argv[2];
@@ -216,8 +217,12 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
 
   switch (code) {
   case 'I':
-    if (init_cairo(obj, inst, local, cpar[3], cpar[4]))
+    r = init_cairo(obj, inst, local, cpar[3], cpar[4]);
+    if (r) {
+      _getobj(obj, "file", inst, &fname);
+      error2(obj, r + 100, fname);
       return 1;
+    }
     break;
   case 'E':
     _getobj(obj, "format", inst, &format);
@@ -226,7 +231,12 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
       if (fname == NULL)
 	return 1;
 
-      cairo_surface_write_to_png(cairo_get_target(local->cairo), fname);
+      r = cairo_surface_write_to_png(cairo_get_target(local->cairo), fname);
+      if (r) {
+	_getobj(obj, "file", inst, &fname);
+	error2(obj, r + 100, fname);
+	return 1;
+      }
     }
     break;
   }
@@ -256,5 +266,5 @@ void *
 addgra2cairofile()
 /* addgra2cairofile() returns NULL on error */
 {
-  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2cairofile, ERRNUM, gra2cairofile_errorlist, NULL, NULL);
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2cairofile, Gra2CairoErrMsgNum, Gra2CairoErrMsgs, NULL, NULL);
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2gtkprint.c,v 1.4 2008/09/11 07:07:22 hito Exp $
+ * $Id: ogra2gtkprint.c,v 1.5 2008/09/18 01:35:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -27,17 +27,9 @@
 #define PARENT "gra2cairo"
 #define OVERSION  "1.00.00"
 
-#define ERRFOPEN 100
-
 #ifndef M_PI
 #define M_PI 3.141592
 #endif
-
-char *gra2gtkprint_errorlist[]={
-  "I/O error: open file"
-};
-
-#define ERRNUM (sizeof(gra2gtkprint_errorlist) / sizeof(*gra2gtkprint_errorlist))
 
 
 static int 
@@ -75,7 +67,7 @@ static int
 create_cairo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   cairo_t *cairo;
-  int dpi, id;
+  int dpi, id, r;
   struct gra2cairo_local *local;
   GtkPrintContext *gpc;
 
@@ -86,8 +78,9 @@ create_cairo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   cairo = gtk_print_context_get_cairo_context(gpc);
 
-  if (cairo_status(cairo) != CAIRO_STATUS_SUCCESS) {
-    return -1;
+  r = cairo_status(cairo);
+  if (r != CAIRO_STATUS_SUCCESS) {
+    return r + 100;
   }
 
   _getobj(obj, "id", inst, &id);
@@ -121,5 +114,5 @@ void *
 addgra2gtkprint()
 /* addgra2gtkprint() returns NULL on error */
 {
-  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2gtkprint, ERRNUM, gra2gtkprint_errorlist, NULL, NULL);
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2gtkprint, Gra2CairoErrMsgNum, Gra2CairoErrMsgs, NULL, NULL);
 }

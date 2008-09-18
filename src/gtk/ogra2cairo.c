@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.24 2008/09/11 07:07:21 hito Exp $
+ * $Id: ogra2cairo.c,v 1.25 2008/09/18 01:35:12 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -30,15 +30,12 @@
 #define OVERSION  "1.00.00"
 #define CAIROCONF "[gra2cairo]"
 
-#define ERRFOPEN 100
-
 #ifndef M_PI
 #define M_PI 3.141592
 #endif
 
-char *gra2cairo_errorlist[]={
-  "I/O error: open file"
-};
+char **Gra2CairoErrMsgs = NULL;
+int Gra2CairoErrMsgNum = 0;
 
 char *gra2cairo_antialias_type[] = {
   N_("none"),
@@ -47,10 +44,6 @@ char *gra2cairo_antialias_type[] = {
   //  N_("subpixel"),
   NULL,
 };
-
-
-
-#define ERRNUM (sizeof(gra2cairo_errorlist) / sizeof(*gra2cairo_errorlist))
 
 struct gra2cairo_config *Gra2cairoConf = NULL;
 static int Instance = 0;
@@ -672,9 +665,24 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
   g_object_unref(layout);
 }
 
+static int
+check_cairo_status(cairo_t *cairo)
+{
+  int r;
+
+  r = cairo_status(cairo);
+  if (r != CAIRO_STATUS_SUCCESS) {
+    return r + 100;
+  }
+  r = cairo_surface_status(cairo_get_target(cairo));
+  if (r != CAIRO_STATUS_SUCCESS) {
+    return r + 100;
+  }
+  return 0;
+}
 
 int 
-gra2cairo_flush(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2cairo_flush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 { 
   struct gra2cairo_local *local;
 
@@ -687,7 +695,8 @@ gra2cairo_flush(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     cairo_stroke(local->cairo);
     local->linetonum = 0;
   }
-  return 0;
+
+  return check_cairo_status(local->cairo);
 }
 
 static int 
@@ -695,7 +704,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
                  int argc, char **argv)
 {
   char code, *cstr, *tmp, *tmp2;
-  int *cpar, i, j;
+  int *cpar, i, j, r;
   double x, y, w, h, l, fontcashsize, fontcashdir, fontsize,
     fontspace, fontdir, fontsin, fontcos, a1, a2;
   cairo_line_join_t join;
@@ -721,10 +730,20 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
   case 'I':
     gra2cairo_set_antialias(local, local->antialias);
     local->linetonum = 0;
+    r = check_cairo_status(local->cairo);
+    if (r) {
+      error(obj, r);
+      return 1;
+    }
     break;
   case '%': case 'X':
     break;
   case 'E':
+    r = check_cairo_status(local->cairo);
+    if (r) {
+      error(obj, r);
+      return 1;
+    }
     break;
   case 'V':
     local->offsetx = mxd2pw(local, cpar[1]);
@@ -1178,5 +1197,43 @@ void *
 addgra2cairo()
 /* addgra2cairoile() returns NULL on error */
 {
-  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2cairo, ERRNUM, gra2cairo_errorlist, NULL, NULL);
+  int errcode[] = {
+    CAIRO_STATUS_SUCCESS,
+    CAIRO_STATUS_NO_MEMORY,
+    CAIRO_STATUS_INVALID_RESTORE,
+    CAIRO_STATUS_INVALID_POP_GROUP,
+    CAIRO_STATUS_NO_CURRENT_POINT,
+    CAIRO_STATUS_INVALID_MATRIX,
+    CAIRO_STATUS_INVALID_STATUS,
+    CAIRO_STATUS_NULL_POINTER,
+    CAIRO_STATUS_INVALID_STRING,
+    CAIRO_STATUS_INVALID_PATH_DATA,
+    CAIRO_STATUS_READ_ERROR,
+    CAIRO_STATUS_WRITE_ERROR,
+    CAIRO_STATUS_SURFACE_FINISHED,
+    CAIRO_STATUS_SURFACE_TYPE_MISMATCH,
+    CAIRO_STATUS_PATTERN_TYPE_MISMATCH,
+    CAIRO_STATUS_INVALID_CONTENT,
+    CAIRO_STATUS_INVALID_FORMAT,
+    CAIRO_STATUS_INVALID_VISUAL,
+    CAIRO_STATUS_FILE_NOT_FOUND,
+    CAIRO_STATUS_INVALID_DASH,
+    CAIRO_STATUS_INVALID_DSC_COMMENT,
+    CAIRO_STATUS_INVALID_INDEX,
+    CAIRO_STATUS_CLIP_NOT_REPRESENTABLE,
+    CAIRO_STATUS_TEMP_FILE_ERROR,
+    CAIRO_STATUS_INVALID_STRIDE,
+  };
+  int i, n;
+
+  n = sizeof(errcode) / sizeof(*errcode);
+
+  Gra2CairoErrMsgs = malloc(sizeof(*Gra2CairoErrMsgs) * n);
+  Gra2CairoErrMsgNum = n;
+
+  for (i = 0; i < n; i++) {
+    Gra2CairoErrMsgs[i] = strdup(cairo_status_to_string(errcode[i]));
+  }
+
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2cairo, n, Gra2CairoErrMsgs, NULL, NULL);
 }

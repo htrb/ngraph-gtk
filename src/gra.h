@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: gra.h,v 1.2 2008/09/18 01:35:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -83,7 +83,7 @@ int GRAopen(char *objname,char *outputname,
             struct objlist *obj,char *inst,
             int output,int charwidth,int charascent,int chardescent,
             struct narray **list,void *local);
-void GRAreopen(int GC);
+int GRAreopen(int GC);
 int GRAopened(int GC);
 void _GRAclose(int GC);
 void GRAclose(int GC);
@@ -100,11 +100,11 @@ void GRAinslist(int GC,struct objlist *obj,char *inst,
                 char *objname,char *field,int n);
 void GRAdellist(int GC,int n);
 struct objlist *GRAgetlist(int GC,int *oid,char **field,int n);
-void GRAdraw(int GC,char code,int *cpar,char *cstr);
-void GRAinit(int GC,int leftm,int topm,int width,int height,int zoom);
+int GRAdraw(int GC,char code,int *cpar,char *cstr);
+int GRAinit(int GC,int leftm,int topm,int width,int height,int zoom);
 void GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom);
 void GRAdirect(int GC,int cpar[]);
-void GRAend(int GC);
+int GRAend(int GC);
 void GRAremark(int GC,char *s);
 void GRAview(int GC,int x1,int y1,int x2,int y2,int clip);
 void GRAwindow(int GC,double minx,double miny,double maxx,double maxy);

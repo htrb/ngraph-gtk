@@ -1,3 +1,31 @@
+2008-09-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (draw_gra): check return value of exeobj().
+	(draw_gra): restore 'putstderr' and 'printfstderr' before drawing.
+
+	* src/gtk/x11gui.c (fsok): set NULL to data->ext when fiter name
+	is "All".
+	(fsok): call error22() after call gdk_beep().
+
+	* src/gtk/ogra2cairofile.c (create_cairo): add argument 'err' and
+	set cairo_status to err.
+	(gra2cairofile_output): call error2() when some error is occured
+	in the case of 'I' and 'E'.
+	(addgra2cairofile): add error messages.
+
+	* src/gtk/ogra2cairo.c (check_cairo_status): add.
+	(gra2cairo_flush): call check_cairo_status().
+	(gra2cairo_output): call check_cairo_status() in the case of 'I'
+	and 'E'.
+	(addgra2cairo): add error messages.
+
+	* src/ogra.c (oGRAopen): check return value of GRAinit().
+	(oGRAdrawparent, oGRAdraw): check return value exeobj().
+
+	* src/gra.c (GRAreopen, GRAdraw, GRAinit, GRAend): return int.
+
+	* src/ogra.h (ERROPEN): add.
+
 2008-09-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.c (add_onj_to_hash): add.

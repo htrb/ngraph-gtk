@@ -6,7 +6,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	ioutil.c ioutil.h jnstring.c jnstring.h mathcode.c mathcode.h	\
 	mathfn.c mathfn.h ngraph.h nstring.c nstring.h ntime.c ntime.h	\
 	oagrid.c oarc.c oaxis.c object.c object.h ocurve.c odarray.c	\
-	odouble.c odraw.c odraw.h ofile.c ofile.h ofit.c ogra.c		\
+	odouble.c odraw.c odraw.h ofile.c ofile.h ofit.c ogra.c	ogra.h	\
 	ogra2.c ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oint.c	\
 	olegend.c olegend.h oline.c omark.c omath.c omerge.c		\
 	opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c oshell.c	\

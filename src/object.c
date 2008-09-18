@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.9 2008/09/17 01:54:58 hito Exp $
+ * $Id: object.c,v 1.10 2008/09/18 01:35:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -124,6 +124,10 @@ void error(struct objlist *obj,int code)
   GlobalLock=TRUE;
   errobj=obj;
   errcode=code;
+
+  if (code < 0)
+    code = ERRUNKNOWN;
+
   if (obj==NULL) objname="kernel";
   else objname=obj->name;
   if (code==ERRUNKNOWN)

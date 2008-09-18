@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2gdk.c,v 1.3 2008/07/17 01:38:44 hito Exp $
+ * $Id: ogra2gdk.c,v 1.4 2008/09/18 01:35:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -27,17 +27,9 @@
 #define PARENT "gra2cairo"
 #define OVERSION  "1.00.00"
 
-#define ERRFOPEN 100
-
 #ifndef M_PI
 #define M_PI 3.141592
 #endif
-
-char *gra2gdk_errorlist[]={
-  "I/O error: open file"
-};
-
-#define ERRNUM (sizeof(gra2gdk_errorlist) / sizeof(*gra2gdk_errorlist))
 
 static int 
 g2g_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
@@ -123,5 +115,5 @@ void *
 addgra2gdk()
 /* addgra2gdk() returns NULL on error */
 {
-  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2gdk, ERRNUM, gra2gdk_errorlist, NULL, NULL);
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2gdk, Gra2CairoErrMsgNum, Gra2CairoErrMsgs, NULL, NULL);
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.28 2008/09/12 09:20:37 hito Exp $
+ * $Id: x11print.c,v 1.29 2008/09/18 01:35:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -522,15 +522,19 @@ draw_gra(struct objlist *graobj, int id, char *msg, int close)
   ProgressDialogCreate(msg);
   SetStatusBar(msg);
   ignorestdio(&stdio);
-  exeobj(graobj, "open", id, 0, NULL);
-  exeobj(graobj, "draw", id, 0, NULL);
-  exeobj(graobj, "flush", id, 0, NULL);
-  if (close) {
-    exeobj(graobj, "close", id, 0, NULL);
+  putstderr = stdio.putstderr;
+  printfstderr = stdio.printfstderr;
+  if (exeobj(graobj, "open", id, 0, NULL) == 0) {
+    exeobj(graobj, "draw", id, 0, NULL);
+    exeobj(graobj, "flush", id, 0, NULL);
+    if (close) {
+      exeobj(graobj, "close", id, 0, NULL);
+    }
   }
   restorestdio(&stdio);
   ProgressDialogFinalize();
   ResetStatusBar();
+  gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
 }
 
 static void
@@ -539,7 +543,7 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
   struct objlist *graobj, *g2wobj;
   char *argv[2];
   struct print_obj *pobj;
-  int id, g2wid;
+  int id, g2wid, r;
   char *g2winst;
 
   pobj = (struct print_obj *) user_data;
@@ -551,9 +555,13 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
 
   argv[0] = (char *) context;
   argv[1] = NULL;
-  _exeobj(g2wobj, "_context", g2winst, 1, argv);
+  r = _exeobj(g2wobj, "_context", g2winst, 1, argv);
 
-  draw_gra(graobj, id, _("Printing."), TRUE);
+  if (r) {
+    error(g2wobj, r);
+  } else {
+    draw_gra(graobj, id, _("Printing."), TRUE);
+  }
 }
 
 static void

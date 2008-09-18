@@ -6,7 +6,8 @@
 #define CAIRO_FONTCASH 60		/* must be greater than 1 */
 
 extern struct gra2cairo_config *Gra2cairoConf;
-extern char *gra2cairo_antialias_type[];
+extern char *gra2cairo_antialias_type[], **Gra2CairoErrMsgs;
+extern int Gra2CairoErrMsgNum;
 
 enum antialias_type_id {
   ANTIALIAS_TYPE_NONE,

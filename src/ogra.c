@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.4 2008/07/04 11:40:46 hito Exp $
+ * $Id: ogra.c,v 1.5 2008/09/18 01:35:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,7 @@
 #include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
+#include "ogra.h"
 #include "gra.h"
 
 #define NAME "gra"
@@ -38,14 +39,6 @@
 #define OVERSION  "1.00.00"
 #define TRUE  1
 #define FALSE 0
-
-#define ERROPEN 100
-#define ERRBUSY 101
-#define ERRALOPEN 102
-#define ERRNODEVICE 103
-#define ERRILGC 104
-#define ERRGRABUSY 105
-#define ERRGRACLOSE 106
 
 #define ERRNUM 7
 
@@ -139,7 +132,7 @@ int oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int anum,id;
   struct narray iarray;
-  int GC;
+  int GC, r;
   char *device,*dev,*gfield;
   struct objlist *dobj,*gobj,*robj;
   char *dinst,*ginst;
@@ -237,7 +230,10 @@ int oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
   *(int *)rval=GC;
   if (_putobj(obj,"GC",inst,&GC)) return 1;
-  GRAinit(GC,leftm,topm,width,height,zoom);
+  r = GRAinit(GC,leftm,topm,width,height,zoom);
+  if (r)
+    return r;
+
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
@@ -320,7 +316,7 @@ char *oGRAargv[2];
 int oGRAdrawparent(struct objlist *parent)
 {
   struct objlist *ocur;
-  int i,instnum;
+  int i,instnum,r;
   char *objname;
 
   ocur=chkobjroot();
@@ -333,7 +329,9 @@ int oGRAdrawparent(struct objlist *parent)
 	  set_progress_val(i, instnum, objname);
 
           if (ninterrupt()) return FALSE;
-          exeobj(ocur,"draw",i,1,oGRAargv);
+          r = exeobj(ocur,"draw",i,1,oGRAargv);
+	  if (r)
+	    return r;
         }
       }
       if (!oGRAdrawparent(ocur)) return FALSE;
@@ -349,7 +347,7 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct objlist *draw;
   struct narray *array;
   char **drawrable, *objname;
-  int j,i,anum,instnum;
+  int j,i,anum,instnum,r;
 
   _getobj(obj,"GC",inst,&GC);
   if (GC==-1) {
@@ -379,7 +377,9 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 	set_progress_val(i, instnum, objname);
 
 	if (ninterrupt()) return 0;
-	exeobj(draw,"draw",i,1,oGRAargv);
+	r = exeobj(draw,"draw",i,1,oGRAargv);
+	if (r)
+	  return r;
       }
     }
   }

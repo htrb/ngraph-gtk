@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.10 2008/09/11 07:07:18 hito Exp $
+ * $Id: gra.c,v 1.11 2008/09/18 01:35:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,6 +37,7 @@
 #include "mathfn.h"
 #include "mathcode.h"
 #include "gra.h"
+#include "ogra.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -271,13 +272,13 @@ int GRAopen(char *objname,char *outputname,
   return i;
 }
 
-void GRAreopen(int GC)
+int GRAreopen(int GC)
 {
   char code;
   int cpar[6];
 
-  if (GC<0) return;
-  if (GC>=GRAClimit) return;
+  if (GC<0) return ERRILGC;
+  if (GC>=GRAClimit) return ERRILGC;
   memfree(GRAClist[GC].linedash);
   memfree(GRAClist[GC].gdashlist);
   memfree(GRAClist[GC].textfont);
@@ -296,7 +297,11 @@ void GRAreopen(int GC)
   cpar[3]=GRAClist[GC].width;
   cpar[4]=GRAClist[GC].height;
   cpar[5]=nround(GRAClist[GC].zoom*10000);
-  GRAdraw(GC,code,cpar,NULL);
+
+  if (GRAdraw(GC,code,cpar,NULL))
+    return ERROPEN;
+
+  return 0;
 }
 
 int GRAopened(int GC)
@@ -517,30 +522,30 @@ void GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redraw_num,
   if (GC==-1) _exeobj(gobj,"close",ginst,0,NULL);
 }
 
-void GRAdraw(int GC,char code,int *cpar,char *cstr)
+int GRAdraw(int GC,char code,int *cpar,char *cstr)
 {
   char *argv[7];
   double zoom;
   int i,zoomf;
 
-  if (GC<0) return;
-  if (GC>=GRAClimit) return;
-  if (!(GRAClist[GC].open)) return;
+  if (GC<0) return ERRILGC;
+  if (GC>=GRAClimit) return ERRILGC;
+  if (!(GRAClist[GC].open)) return ERRGRACLOSE;
   if ((GRAClist[GC].direct==NULL)
-  && ((GRAClist[GC].output==-1) || (GRAClist[GC].obj==NULL))) return;
+  && ((GRAClist[GC].output==-1) || (GRAClist[GC].obj==NULL))) return ERRNODEVICE;
   zoom=GRAClist[GC].zoom;
   if (zoom==1) zoomf=FALSE;
   else zoomf=TRUE;
   switch (code) {
   case 'I':
-    if (GRAClist[GC].init) return;
+    if (GRAClist[GC].init) return 0;
     GRAClist[GC].init=TRUE;
     break;
   case 'V':
     if (GRAClist[GC].viewf
     && (cpar[1]==GRAClist[GC].gminx) && (cpar[3]==GRAClist[GC].gmaxx)
     && (cpar[2]==GRAClist[GC].gminy) && (cpar[4]==GRAClist[GC].gmaxy)
-    && (cpar[5]==GRAClist[GC].clip)) return;
+    && (cpar[5]==GRAClist[GC].clip)) return 0;
     GRAClist[GC].viewf=TRUE;
     GRAClist[GC].gminx=cpar[1];
     GRAClist[GC].gminy=cpar[2];
@@ -559,7 +564,7 @@ void GRAdraw(int GC,char code,int *cpar,char *cstr)
     && (cpar[5]==GRAClist[GC].linemiter)) {
       for (i=0;i<cpar[1];i++)
         if (cpar[6+i]!=(GRAClist[GC].linedash)[i]) break;
-      if (i==cpar[1]) return;
+      if (i==cpar[1]) return 0;
     }
     GRAClist[GC].linef=TRUE;
     GRAClist[GC].linewidth=cpar[2];
@@ -580,7 +585,7 @@ void GRAdraw(int GC,char code,int *cpar,char *cstr)
   case 'G':
     if (GRAClist[GC].colorf
     && (cpar[1]==GRAClist[GC].fr) && (cpar[2]==GRAClist[GC].fg)
-    && (cpar[3]==GRAClist[GC].fb)) return;
+    && (cpar[3]==GRAClist[GC].fb)) return 0;
     GRAClist[GC].colorf=TRUE;
     GRAClist[GC].fr=cpar[1];
     GRAClist[GC].fg=cpar[2];
@@ -588,16 +593,16 @@ void GRAdraw(int GC,char code,int *cpar,char *cstr)
     break;
   case 'F':
     if ((GRAClist[GC].textfont!=NULL)
-    && (strcmp(GRAClist[GC].textfont,cstr)==0)) return;
+    && (strcmp(GRAClist[GC].textfont,cstr)==0)) return 0;
     memfree(GRAClist[GC].textfont);
-    if ((GRAClist[GC].textfont=memalloc(strlen(cstr)+1))==NULL) return;
+    if ((GRAClist[GC].textfont=memalloc(strlen(cstr)+1))==NULL) return 0;
     strcpy(GRAClist[GC].textfont,cstr);
     GRAClist[GC].textf=FALSE;
     break;
   case 'H':
     if ((GRAClist[GC].textf) && (cpar[1]==GRAClist[GC].textsize)
     && (cpar[2]==GRAClist[GC].textspace) && (cpar[3]==GRAClist[GC].textdir))
-      return;
+      return 0;
     GRAClist[GC].textf=TRUE;
     GRAClist[GC].textsize=cpar[1];
     GRAClist[GC].textspace=cpar[2];
@@ -638,9 +643,9 @@ void GRAdraw(int GC,char code,int *cpar,char *cstr)
     argv[4]=(char *)cpar;
     argv[5]=cstr;
     argv[6]=NULL;
-    __exeobj(GRAClist[GC].obj,GRAClist[GC].output,GRAClist[GC].inst,6,argv);
+    return __exeobj(GRAClist[GC].obj,GRAClist[GC].output,GRAClist[GC].inst,6,argv);
   } else {
-    GRAClist[GC].direct(code,cpar,cstr,GRAClist[GC].local);
+    return GRAClist[GC].direct(code,cpar,cstr,GRAClist[GC].local);
   }
 }
 
@@ -702,10 +707,10 @@ int GRAchardescent(char *font,int size)
   return *(int *)(GRAClist[i].inst+idp);
 }
 
-void GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
+int GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
 {
   char code;
-  int cpar[6];
+  int cpar[6], r;
 
   code='I';
   cpar[0]=5;
@@ -714,12 +719,14 @@ void GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
   cpar[3]=width;
   cpar[4]=height;
   cpar[5]=zoom;
-  GRAdraw(GC,code,cpar,NULL);
+  r = GRAdraw(GC,code,cpar,NULL);
   GRAClist[GC].leftm=leftm;
   GRAClist[GC].topm=topm;
   GRAClist[GC].width=width;
   GRAClist[GC].height=height;
   GRAClist[GC].zoom=zoom/10000.0;
+
+  return (r) ? ERROPEN: 0;
 }
 
 void GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom)
@@ -739,14 +746,14 @@ void GRAdirect(int GC,int cpar[])
   GRAdraw(GC,code,cpar,NULL);
 }
 
-void GRAend(int GC)
+int GRAend(int GC)
 {
   char code;
   int cpar[1];
 
   code='E';
   cpar[0]=0;
-  GRAdraw(GC,code,cpar,NULL);
+  return GRAdraw(GC,code,cpar,NULL);
 }
 
 void GRAremark(int GC,char *s)
