@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.21 2008/09/11 07:07:22 hito Exp $
+ * $Id: x11dialg.c,v 1.22 2008/09/19 07:16:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,6 +46,7 @@
 
 #include "ogra2cairo.h"
 #include "ox11menu.h"
+#include "x11menu.h"
 #include "x11gui.h"
 #include "x11dialg.h"
 
@@ -556,6 +557,17 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
   if (buf == NULL)
     return -1;
 
+  SetTextFromObjPoints(w, Obj, Id, field);
+  ctmp = gtk_entry_get_text(GTK_ENTRY(w));
+
+  if (ctmp && strcmp(ctmp, buf) == 0) {
+    gtk_entry_set_text(GTK_ENTRY(w), buf);
+    free(buf);
+    return 0;
+  }
+
+  gtk_entry_set_text(GTK_ENTRY(w), buf);
+
   array = arraynew(sizeof(int));
 
   ptr = buf;
@@ -592,6 +604,7 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
     goto ErrEnd;
 
   free(buf);
+  NgraphApp.Changed = TRUE;
   return 0;
 
 
@@ -687,7 +700,7 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
 {
   GtkEntry *entry;
   const char *tmp;
-  char *buf;
+  char *buf, *obuf;
 
   if (w == NULL)
     return 0;
@@ -703,11 +716,18 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
   if (buf == NULL)
     return -1;
 
-  if (sputobjfield(Obj, Id, field, buf) != 0) {
-    free(buf);
-    return -1;
+  sgetobjfield(Obj, Id, field, NULL, &obuf, FALSE, FALSE, FALSE);
+
+  if (obuf == NULL || strcmp(buf, obuf)) {
+    if (sputobjfield(Obj, Id, field, buf) != 0) {
+      memfree(obuf);
+      free(buf);
+      return -1;
+    }
+    NgraphApp.Changed = TRUE;
   }
 
+  memfree(obuf);
   free(buf);
   return 0;
 }
@@ -733,15 +753,19 @@ int
 SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id,
 		    char *field)
 {
-  int val;
+  int val, oval;
 
   if (w == NULL)
     return 0;
 
   val = spin_entry_get_val(w);
+  getobj(Obj, field, Id, 0, NULL, &oval);
 
-  if (putobj(Obj, field, Id, &val) < 0) {
-    return -1;
+  if (val != oval) {
+    if (putobj(Obj, field, Id, &val) < 0) {
+      return -1;
+    }
+    NgraphApp.Changed = TRUE;
   }
 
   return 0;
@@ -757,7 +781,6 @@ SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
     return;
 
   getobj(Obj, field, Id, 0, NULL, &val);
-
   spin_entry_set_val(w, val);
 }
 
@@ -766,15 +789,23 @@ SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id,
 		      char *field)
 {
   gboolean state;
-  int a;
+  int a, oa;
 
   if (w == NULL)
     return 0;
 
   state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
   a = state ? TRUE : FALSE;
-  if (putobj(Obj, field, Id, &a) == -1)
-    return -1;
+
+  getobj(Obj, field, Id, 0, NULL, &oa);
+  oa = oa ? TRUE : FALSE;
+
+  if (a != oa) {
+    if (putobj(Obj, field, Id, &a) == -1){
+      return -1;
+    }
+    NgraphApp.Changed = TRUE;
+  }
 
   return 0;
 }
@@ -808,19 +839,31 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return -1;
   }
 
+  buf = strdup(ptr);
+  if (buf == NULL)
+    return -1;
+
+  SetStyleFromObjField(w, Obj, Id, field);
+  ptr = gtk_entry_get_text(GTK_ENTRY(GTK_BIN(w)->child));
+
+  if (ptr && strcmp(ptr, buf) == 0) {
+    gtk_entry_set_text(GTK_ENTRY(GTK_BIN(w)->child), buf);
+    free(buf);
+    return 0;
+  }
+  gtk_entry_set_text(GTK_ENTRY(GTK_BIN(w)->child), buf);
+
   for (j = 0; j < CLINESTYLE; j++) {
     if (strcmp(ptr, FwLineStyle[j].name) == 0 || 
 	strcmp(ptr, _(FwLineStyle[j].name)) == 0) {
       if (sputobjfield(Obj, Id, field, FwLineStyle[j].list) != 0) {
+	free(buf);
 	return -1;
       }
-      break;
+      NgraphApp.Changed = TRUE;
+      return 0;;
     }
   }
-
-  buf = strdup(ptr);
-  if (buf == NULL)
-    return -1;
 
   if (j == CLINESTYLE) {
     if (SetObjPointsFromText(GTK_BIN(w)->child, Obj, Id, field)) {
@@ -829,6 +872,7 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     }
   }
 
+  NgraphApp.Changed = TRUE;
   free(buf);
   return 0;
 }
@@ -899,15 +943,24 @@ int
 SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id,
 		    char *field)
 {
-  int pos;
+  int pos, opos;
 
   if (w == NULL)
     return 0;
 
   pos = combo_box_get_active(w);
 
-  if (pos < 0 || putobj(Obj, field, Id, &pos) == -1) {
+  if (pos < 0) {
     return -1;
+  }
+
+  getobj(Obj, field, Id, 0, NULL, &opos);
+
+  if (pos != opos) {
+    if (putobj(Obj, field, Id, &pos) == -1) {
+      return -1;
+    }
+    NgraphApp.Changed = TRUE;
   }
 
   return 0;
@@ -995,6 +1048,7 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
 {
   struct fontmap *fcur;
   int pos, j;
+  char *obuf;
 
   if (w == NULL)
     return;
@@ -1004,17 +1058,62 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
   if (pos < 0)
     return;
 
+  sgetobjfield(obj, id, name, NULL, &obuf, FALSE, FALSE, FALSE);
+
   j = 0;
   for (fcur = Gra2cairoConf->fontmaproot; fcur; fcur = fcur->next) {
     if ((! jfont || ! fcur->twobyte) && (jfont || fcur->twobyte))
 	continue;
 
     if (j == pos) {
-      sputobjfield(obj, id, name, fcur->fontalias);
+      if (obuf == NULL || strcmp(fcur->fontalias, obuf)) {
+	sputobjfield(obj, id, name, fcur->fontalias);
+	NgraphApp.Changed = TRUE;
+      }
       break;
     }
     j++;
   }
+  memfree(obuf);
+}
+
+int
+SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field)
+{
+  const char *s;
+  char *buf, *obuf;
+  int len;
+
+  s = combo_box_entry_get_text(w);
+  sgetobjfield(obj, id, field, NULL, &obuf, FALSE, FALSE, FALSE);
+
+  if (s == NULL || s[0] == '\0') {
+    if (obuf == NULL)
+      return 0;
+
+    if (sputobjfield(obj, id, field, NULL)) {
+      memfree(obuf);
+      return 1;
+    }
+    NgraphApp.Changed = TRUE;
+  } else {
+    len = strlen(s) + 6;
+    buf = (char *) memalloc(len);
+    if (buf) {
+      snprintf(buf, len, "axis:%s", (s)? s: "");
+      if (obuf == NULL || strcmp(buf, obuf)) {
+	if (sputobjfield(obj, id, field, buf)) {
+	  memfree(obuf);
+	  memfree(buf);
+	  return 1;
+	}
+	NgraphApp.Changed = TRUE;
+      }
+      memfree(buf);
+    }
+  } 
+  memfree(obuf);
+  return 0;
 }
 
 static void
@@ -1056,7 +1155,7 @@ static int
 _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
 {
   GdkColor color;
-  int r, g, b;
+  int r, g, b, o;
   char buf[64];
 
   gtk_color_button_get_color(GTK_COLOR_BUTTON(w), &color);
@@ -1065,16 +1164,33 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
   b = (color.blue >> 8);
 
   snprintf(buf, sizeof(buf), "%sR%s", (prefix)? prefix: "", (postfix)? postfix: "");
-  if (putobj(obj, buf, id, &r) == -1)
-    return TRUE;
+
+  getobj(obj, buf, id, 0, NULL, &o);
+  if (o != r) {
+    if (putobj(obj, buf, id, &r) == -1) {
+      return TRUE;
+    }
+    NgraphApp.Changed = TRUE;
+  }
+
 
   snprintf(buf, sizeof(buf), "%sG%s", (prefix)? prefix: "", (postfix)? postfix: "");
-  if (putobj(obj, buf, id, &g) == -1)
-    return TRUE;
+  getobj(obj, buf, id, 0, NULL, &o);
+  if (o != g) {
+    if (putobj(obj, buf, id, &g) == -1) {
+      return TRUE;
+    }
+    NgraphApp.Changed = TRUE;
+  }
 
   snprintf(buf, sizeof(buf), "%sB%s", (prefix)? prefix: "", (postfix)? postfix: "");
-  if (putobj(obj, buf, id, &b) == -1)
-    return TRUE;
+  getobj(obj, buf, id, 0, NULL, &o);
+  if (o != b) {
+    if (putobj(obj, buf, id, &b) == -1) {
+      return TRUE;
+    }
+    NgraphApp.Changed = TRUE;
+  }
 
   return FALSE;
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.27 2008/09/11 07:07:23 hito Exp $
+ * $Id: x11lgnd.c,v 1.28 2008/09/19 07:16:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -382,7 +382,7 @@ legend_dialog_close(GtkWidget *w, void *data)
 {
   struct LegendDialog *d = (struct LegendDialog *) data;
   unsigned int i;
-  int ret, x1, y1, x2, y2;
+  int ret, x1, y1, x2, y2, oval;
   struct lwidget lw[] = {
     {d->width, "width"},
     {d->join, "join"},
@@ -443,10 +443,12 @@ legend_dialog_close(GtkWidget *w, void *data)
     x2 += x1;
     y2 += y1;
 
-    if (putobj(d->Obj, "x2", d->Id, &x2) == -1)
+    getobj(d->Obj, "x2", d->Id, 0, NULL, &oval);
+    if (oval != x2 && putobj(d->Obj, "x2", d->Id, &x2) == -1)
       return;
 
-    if (putobj(d->Obj, "y2", d->Id, &y2) == -1)
+    getobj(d->Obj, "y2", d->Id, 0, NULL, &oval);
+    if (oval != y2 && putobj(d->Obj, "y2", d->Id, &y2) == -1)
       return;
   }
 
@@ -461,15 +463,32 @@ legend_dialog_close(GtkWidget *w, void *data)
 
     len = d->wid * 0.5 / tan(d->ang * 0.5 * MPI / 180);
 
-    if (putobj(d->Obj, "arrow_length", d->Id, &len) == -1)
-      return;
+    getobj(d->Obj, "arrow_length", d->Id, 0, NULL, &oval);
+    if (oval != len) {
+      if (putobj(d->Obj, "arrow_length", d->Id, &len) == -1) {
+	return;
+      }
+      NgraphApp.Changed = TRUE;
+    }
 
-    if (putobj(d->Obj, "arrow_width", d->Id, &(d->wid)) == -1)
-      return;
+    getobj(d->Obj, "arrow_width", d->Id, 0, NULL, &oval);
+    if (oval != d->wid) {
+      if(putobj(d->Obj, "arrow_width", d->Id, &(d->wid)) == -1) {
+	return;
+      }
+      NgraphApp.Changed = TRUE;
+    }
   }
 
-  if (d->type && putobj(d->Obj, "type", d->Id, &(d->mark.Type)) == -1)
-    return;
+  if (d->type) {
+    getobj(d->Obj, "type", d->Id, 0, NULL, &oval);
+    if (oval != d->mark.Type) {
+      if (putobj(d->Obj, "type", d->Id, &(d->mark.Type)) == -1) {
+	return;
+      }
+      NgraphApp.Changed = TRUE;
+    }
+  }
 
   if (d->font) {
     get_font("font", d, FALSE);
@@ -1364,11 +1383,10 @@ CmLineUpdate(void)
       LegendArrowDialog(&DlgLegendArrow, obj, data[i]);
       if ((ret = DialogExecute(TopLevel, &DlgLegendArrow)) == IDDELETE) {
 	delobj(obj, data[i]);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < num; j++)
 	  data[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
     LegendWinUpdate(TRUE);
   }
@@ -1438,11 +1456,10 @@ CmCurveUpdate(void)
       LegendCurveDialog(&DlgLegendCurve, obj, data[i]);
       if ((ret = DialogExecute(TopLevel, &DlgLegendCurve)) == IDDELETE) {
 	delobj(obj, data[i]);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < num; j++)
 	  data[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
     LegendWinUpdate(TRUE);
   }
@@ -1511,11 +1528,10 @@ CmPolyUpdate(void)
       LegendPolyDialog(&DlgLegendPoly, obj, data[i]);
       if ((ret = DialogExecute(TopLevel, &DlgLegendPoly)) == IDDELETE) {
 	delobj(obj, data[i]);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < num; j++)
 	  data[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
     LegendWinUpdate(TRUE);
   }
@@ -1584,11 +1600,10 @@ CmRectUpdate(void)
       LegendRectDialog(&DlgLegendRect, obj, data[i]);
       if ((ret = DialogExecute(TopLevel, &DlgLegendRect)) == IDDELETE) {
 	delobj(obj, data[i]);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < num; j++)
 	  data[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
     LegendWinUpdate(TRUE);
   }
@@ -1657,11 +1672,10 @@ CmArcUpdate(void)
       LegendArcDialog(&DlgLegendArc, obj, data[i]);
       if ((ret = DialogExecute(TopLevel, &DlgLegendArc)) == IDDELETE) {
 	delobj(obj, data[i]);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < num; j++)
 	  data[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
     LegendWinUpdate(TRUE);
   }
@@ -1728,13 +1742,12 @@ CmMarkUpdate(void)
     data = (int *) arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendMarkDialog(&DlgLegendMark, obj, data[i]);
+	NgraphApp.Changed = TRUE;
       if ((ret = DialogExecute(TopLevel, &DlgLegendMark)) == IDDELETE) {
 	delobj(obj, data[i]);
 	for (j = i + 1; j < num; j++)
 	  data[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
     LegendWinUpdate(TRUE);
   }
@@ -1803,11 +1816,10 @@ CmTextUpdate(void)
       LegendTextDialog(&DlgLegendText, obj, data[i]);
       if ((ret = DialogExecute(TopLevel, &DlgLegendText)) == IDDELETE) {
 	delobj(obj, data[i]);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < num; j++)
 	  data[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
     LegendWinUpdate(TRUE);
   }
@@ -1921,14 +1933,13 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
  }
   if (ret == IDDELETE) {
     delobj(d->obj[id], sub_id);
+    NgraphApp.Changed = TRUE;
     update = TRUE;
     d->select = -1;
     d->legend_type = -1;
   } else if (ret == IDOK) {
     update = TRUE;
   }
-  if (ret != IDCANCEL)
-    NgraphApp.Changed = TRUE;
 
   if (update)
     LegendWinUpdate(FALSE);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.52 2008/09/16 09:45:41 hito Exp $
+ * $Id: x11file.c,v 1.53 2008/09/19 07:16:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -124,8 +124,6 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *hbox;
   struct MathTextDialog *d;
   static char *label[] = {N_("_Math X:"), N_("_Math Y:"), "_F(X,Y,Z):", "_G(X,Y,Z):", "_H(X,Y,Z):"};
-  char **array;
-  int num;
 
   d = (struct MathTextDialog *) data;
   d->math = NULL;
@@ -136,8 +134,6 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->list = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
   }
-  num = arraynum(Menulocal.mathlist);
-  array = (char **) arraydata(Menulocal.mathlist);
 
   switch (d->Mode) {
   case 0:
@@ -248,7 +244,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
 {
   struct MathDialog *d;
   int a, *ary, r;
-  char *field = NULL, *buf;
+  char *field = NULL, *buf, *obuf;
   GtkTreeSelection *gsel;
   GtkTreePath *path;
   GList *list, *data;
@@ -291,9 +287,12 @@ MathDialogList(GtkButton *w, gpointer client_data)
       if (r)
 	continue;
 
-      sputobjfield(d->Obj, a, field, DlgMathText.math);
-      AddMathList(DlgMathText.math);
-      NgraphApp.Changed = TRUE;
+      sgetobjfield(d->Obj, a, field, NULL, &obuf, FALSE, FALSE, FALSE);
+      if (obuf == NULL || strcmp(obuf, DlgMathText.math)) {
+	sputobjfield(d->Obj, a, field, DlgMathText.math);
+	NgraphApp.Changed = TRUE;
+      }
+      memfree(obuf);
     }
     free(DlgMathText.math);
   }
@@ -973,8 +972,6 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
     if (SetObjFieldFromWidget(d->d[i], d->Obj, d->Id, dd))
       return FALSE;
   }
-
-  NgraphApp.Changed = TRUE;
 
   return TRUE;
 }
@@ -1763,7 +1760,7 @@ FileLoadDialogClose(GtkWidget *w, void *data)
   struct FileLoadDialog *d;
   int ret;
   const char *ifs;
-  char *s;
+  char *s, *obuf;
   unsigned int i, l;
 
   d = (struct FileLoadDialog *) data;
@@ -1810,11 +1807,17 @@ FileLoadDialogClose(GtkWidget *w, void *data)
     }
   }
 
-  if (sputobjfield(d->Obj, d->Id, "ifs", s) != 0) {
-    memfree(s);
-    return;
+  sgetobjfield(d->Obj, d->Id, "ifs", NULL, &obuf, FALSE, FALSE, FALSE);
+  if (obuf == NULL || strcmp(s, obuf)) {
+    if (sputobjfield(d->Obj, d->Id, "ifs", s) != 0) {
+      memfree(obuf);
+      memfree(s);
+      return;
+    }
+    NgraphApp.Changed = TRUE;
   }
 
+  memfree(obuf);
   memfree(s);
 
   if (SetObjFieldFromWidget(d->csv, d->Obj, d->Id, "csv"))
@@ -2752,55 +2755,17 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static int
 FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
 {
-  const char *s;
-  char *buf;
-  int len;
-
   if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
     return TRUE;
 
-  s = combo_box_entry_get_text(d->xaxis);
-
-  if (s)
-    len = strlen(s);
-  else
-    len = 0;
-
-  len += 6;
-  buf = (char *) memalloc(len);
-  if (buf) {
-    strcpy(buf, "axis:");
-    if (s)
-      strcat(buf, s);
-    if (sputobjfield(d->Obj, d->Id, "axis_x", buf) != 0) {
-      memfree(buf);
-      return TRUE;
-    }
-    memfree(buf);
-  }
+  if (SetObjAxisFieldFromWidget(d->xaxis, d->Obj, d->Id, "axis_x"))
+    return TRUE;
 
   if (SetObjFieldFromWidget(d->ycol, d->Obj, d->Id, "y"))
     return TRUE;
 
-  s = combo_box_entry_get_text(d->yaxis);
-
-  if (s)
-    len = strlen(s);
-  else
-    len = 0;
-
-  len += 6;
-  buf = (char *) memalloc(len);
-  if (buf) {
-    strcpy(buf, "axis:");
-    if (s)
-      strcat(buf, s);
-    if (sputobjfield(d->Obj, d->Id, "axis_y", buf) != 0) {
-      memfree(buf);
-      return TRUE;
-    }
-    memfree(buf);
-  }
+  if (SetObjAxisFieldFromWidget(d->yaxis, d->Obj, d->Id, "axis_y"))
+    return TRUE;
 
   if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
     return TRUE;
@@ -2843,9 +2808,6 @@ FileDialogClose(GtkWidget *w, void *data)
 {
   struct FileDialog *d;
   int ret;
-  const char *s;
-  char *buf;
-  int len;
 
   d = (struct FileDialog *) data;
 
@@ -2873,82 +2835,6 @@ FileDialogClose(GtkWidget *w, void *data)
 
   if (FileDialogCloseCommon(w, d))
     return;
-
-  if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
-    return;
-
-  s = combo_box_entry_get_text(d->xaxis);
-
-  if (s)
-    len = strlen(s);
-  else
-    len = 0;
-
-  len += 6;
-  buf = (char *) memalloc(len);
-  if (buf) {
-    strcpy(buf, "axis:");
-    if (s)
-      strcat(buf, s);
-    if (sputobjfield(d->Obj, d->Id, "axis_x", buf) != 0) {
-      memfree(buf);
-      return;
-    }
-    memfree(buf);
-  }
-
-  if (SetObjFieldFromWidget(d->ycol, d->Obj, d->Id, "y"))
-    return;
-
-  s = combo_box_entry_get_text(d->yaxis);
-
-  if (s)
-    len = strlen(s);
-  else
-    len = 0;
-
-  len += 6;
-  buf = (char *) memalloc(len);
-  if (buf) {
-    strcpy(buf, "axis:");
-    if (s)
-      strcat(buf, s);
-    if (sputobjfield(d->Obj, d->Id, "axis_y", buf) != 0) {
-      memfree(buf);
-      return;
-    }
-    memfree(buf);
-  }
-
-  if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
-    return;
-
-  if (SetObjFieldFromWidget(d->curve, d->Obj, d->Id, "interpolation"))
-    return;
-
-  if (putobj(d->Obj, "mark_type", d->Id, &(d->mark.Type)) == -1)
-    return;
-
-  if (SetObjFieldFromWidget(d->size, d->Obj, d->Id, "mark_size"))
-    return;
-
-  if (SetObjFieldFromWidget(d->width, d->Obj, d->Id, "line_width"))
-    return;
-
-  if (SetObjFieldFromStyle(d->style, d->Obj, d->Id, "line_style"))
-    return;
-
-  if (SetObjFieldFromWidget(d->join, d->Obj, d->Id, "line_join"))
-    return;
-
-  if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "line_miter_limit"))
-    return;
-
-  if (SetObjFieldFromWidget(d->clip, d->Obj, d->Id, "data_clip"))
-    return;
-
-  putobj_color(d->col1, d->Obj, d->Id, NULL);
-  putobj_color2(d->col2, d->Obj, d->Id);
 
   d->ret = ret;
 }
@@ -3252,18 +3138,19 @@ CmFileUpdate(void)
 	    copyobj(obj, field, array[i], array[id0]);
 	}
 	FitCopy(obj, array[i], array[id0]);
+	NgraphApp.Changed = TRUE;
       } else {
 	FileDialog(&DlgFile, obj, array[i], 0);
 	ret = DialogExecute(TopLevel, &DlgFile);
 	if (ret == IDDELETE) {
 	  FitDel(obj, array[i]);
 	  delobj(obj, array[i]);
+	  NgraphApp.Changed = TRUE;
 	  for (j = i + 1; j < num; j++)
 	    array[j]--;
-	} else if (ret == IDFAPPLY)
+	} else if (ret == IDFAPPLY) {
 	  id0 = i;
-	if (ret != IDCANCEL)
-	  NgraphApp.Changed = TRUE;
+	}
       }
     }
     FileWinUpdate(TRUE);
@@ -3556,9 +3443,8 @@ FileWinFileUpdate(struct SubWin *d)
       FitDel(d->obj, sel);
       delobj(d->obj, sel);
       d->select = -1;
-    }
-    if (ret != IDCANCEL)
       NgraphApp.Changed = TRUE;
+    }
     d->update(FALSE);
   }
 }

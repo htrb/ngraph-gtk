@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.6 2008/09/18 09:22:16 hito Exp $
+ * $Id: ogra.c,v 1.7 2008/09/19 07:16:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -316,7 +316,7 @@ char *oGRAargv[2];
 int oGRAdrawparent(struct objlist *parent)
 {
   struct objlist *ocur;
-  int i,instnum,r;
+  int i,instnum;
   char *objname;
 
   ocur=chkobjroot();
@@ -345,7 +345,7 @@ int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct objlist *draw;
   struct narray *array;
   char **drawrable, *objname;
-  int j,i,anum,instnum,r;
+  int j,i,anum,instnum;
 
   _getobj(obj,"GC",inst,&GC);
   if (GC==-1) {

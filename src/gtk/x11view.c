@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.64 2008/09/18 01:35:13 hito Exp $
+ * $Id: x11view.c,v 1.65 2008/09/19 07:16:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -837,8 +837,6 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 	  ddata[j] = ddata[j] - 1;
 	}
       }
-    } else if (ret2 != IDCANCEL) {
-      NgraphApp.Changed = TRUE;
     }
     ret = TRUE;
   }
@@ -5064,6 +5062,7 @@ ViewUpdate(void)
 
 	  if (ret == IDDELETE) {
 	    AxisDel(id);
+	    NgraphApp.Changed = TRUE;
 	    arrayndel2(d->focusobj, i);
 	  }
 
@@ -5073,9 +5072,6 @@ ViewUpdate(void)
 		AddList(dobj, dinst);
 	    }
 	  }
-
-	  if (ret != IDCANCEL)
-	    NgraphApp.Changed = TRUE;
 	} else if ((type == 'c') && findX && findY) {
 	  getobj(obj, "x", idx, 0, NULL, &x1);
 	  getobj(obj, "y", idy, 0, NULL, &y1);
@@ -5088,11 +5084,9 @@ ViewUpdate(void)
 
 	  if (ret == IDDELETE) {
 	    AxisDel(aid);
+	    NgraphApp.Changed = TRUE;
 	    arrayndel2(d->focusobj, i);
 	  }
-
-	  if (ret != IDCANCEL)
-	    NgraphApp.Changed = TRUE;
 	}
       } else {
 	AxisDialog(&DlgAxis, obj, id, TRUE);
@@ -5100,11 +5094,9 @@ ViewUpdate(void)
 
 	if (ret == IDDELETE) {
 	  AxisDel(id);
+	  NgraphApp.Changed = TRUE;
 	  arrayndel2(d->focusobj, i);
 	}
-
-	if (ret != IDCANCEL)
-	  NgraphApp.Changed = TRUE;
       }
     } else {
       AddInvalidateRect(obj, inst);
@@ -5136,14 +5128,12 @@ ViewUpdate(void)
       }
 
       if (ret == IDDELETE) {
+	NgraphApp.Changed = TRUE;
 	delobj(obj, id);
       }
 
       if (ret == IDOK)
 	AddInvalidateRect(obj, inst);
-
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
   }
   PaintLock = FALSE;

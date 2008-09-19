@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.30 2008/09/11 07:07:22 hito Exp $
+ * $Id: x11axis.c,v 1.31 2008/09/19 07:16:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -301,9 +301,7 @@ GridDialogClose(GtkWidget *w, void *data)
 {
   struct GridDialog *d;
   int ret;
-  const char *s;
-  char *buf;
-  int len, i;
+  int i;
 
   d = (struct GridDialog *) data;
 
@@ -321,38 +319,11 @@ GridDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  s = combo_box_entry_get_text(d->axisx);
-  if ((s == NULL) || (strlen(s) == 0)) {
-    if (sputobjfield(d->Obj, d->Id, "axis_x", NULL) != 0)
-      return;
-  } else {
-    len = strlen(s) + 6;
-    if ((buf = (char *) memalloc(len)) != NULL) {
-      snprintf(buf, len, "axis:%s", (s)? s: "");
-      if (sputobjfield(d->Obj, d->Id, "axis_x", buf) != 0) {
-	memfree(buf);
-	return;
-      }
-      memfree(buf);
-    }
-  }
+  if (SetObjAxisFieldFromWidget(d->axisx, d->Obj, d->Id, "axis_x"))
+    return;
 
-  s = combo_box_entry_get_text(d->axisy);
-  if ((s == NULL) || (strlen(s) == 0)) {
-    if (sputobjfield(d->Obj, d->Id, "axis_y", NULL) != 0)
-      return;
-  } else {
-    len = strlen(s) + 6;
-    if ((buf = (char *) memalloc(len)) != NULL) {
-      strcpy(buf, "axis:");
-      snprintf(buf, len, "axis:%s", (s)? s: "");
-      if (sputobjfield(d->Obj, d->Id, "axis_y", buf) != 0) {
-	memfree(buf);
-	return;
-      }
-      memfree(buf);
-    }
-  }
+  if (SetObjAxisFieldFromWidget(d->axisy, d->Obj, d->Id, "axis_y"))
+    return;
 
   for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
     char width[] = "width1", style[] = "style1"; 
@@ -1205,9 +1176,6 @@ AxisPosDialogClose(GtkWidget *w, void *data)
 {
   struct AxisPosDialog *d;
   int ret;
-  const char *s;
-  char *buf;
-  int len;
 
   d = (struct AxisPosDialog *) data;
 
@@ -1237,21 +1205,8 @@ AxisPosDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromWidget(d->direction, d->Obj, d->Id, "direction"))
     return;
 
-  s = combo_box_entry_get_text(d->adjust);
-  if ((s == NULL) || (strlen(s) == 0)) {
-    if (sputobjfield(d->Obj, d->Id, "adjust_axis", NULL) != 0)
-      return;
-  } else {
-    len = strlen(s) + 6;
-    if ((buf = (char *) memalloc(len)) != NULL) {
-      snprintf(buf, len, "axis:%s", (s)? s: "");
-      if (sputobjfield(d->Obj, d->Id, "adjust_axis", buf) != 0) {
-	memfree(buf);
-	return;
-      }
-      memfree(buf);
-    }
-  }
+  if (SetObjAxisFieldFromWidget(d->adjust, d->Obj, d->Id, "adjust_axis"))
+    return;
 
   if (SetObjFieldFromWidget(d->adjustpos, d->Obj, d->Id, "adjust_position"))
     return;
@@ -2219,9 +2174,6 @@ AxisDialogClose(GtkWidget *w, void *data)
 {
   struct AxisDialog *d;
   int ret;
-  const char *s;
-  char *buf;
-  int len;
 
   d = (struct AxisDialog *) data;
 
@@ -2256,21 +2208,9 @@ AxisDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromWidget(d->scale, d->Obj, d->Id, "type"))
     return;
 
-  s = combo_box_entry_get_text(d->ref);
-  if (s == NULL || s[0] == '\0') {
-    if (sputobjfield(d->Obj, d->Id, "reference", NULL) != 0)
-      return;
-  } else {
-    len = strlen(s) + 6;
-    if ((buf = (char *) memalloc(len)) != NULL) {
-      snprintf(buf, len, "axis:%s", (s)? s: "");
-      if (sputobjfield(d->Obj, d->Id, "reference", buf) != 0) {
-	memfree(buf);
-	return;
-      }
-      memfree(buf);
-    }
-  }
+  if (SetObjAxisFieldFromWidget(d->ref, d->Obj, d->Id, "reference"))
+    return;
+
   d->ret = ret;
 }
 
@@ -2537,8 +2477,6 @@ CmAxisUpdate(void)
   if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
     AxisDel(i);
   }
-  if (ret != IDCANCEL)
-    NgraphApp.Changed = TRUE;
   AxisWinUpdate(TRUE);
   FileWinUpdate(TRUE);
 }
@@ -2705,11 +2643,10 @@ CmAxisGridUpdate(void)
       GridDialog(&DlgGrid, obj, array[i]);
       if ((ret = DialogExecute(TopLevel, &DlgGrid)) == IDDELETE) {
 	delobj(obj, array[i]);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < num; j++)
 	  array[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
   }
   arraydel(&farray);

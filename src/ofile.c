@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.29 2008/09/18 09:22:16 hito Exp $
+ * $Id: ofile.c,v 1.30 2008/09/19 07:16:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -236,9 +236,13 @@ struct f2dlocal {
   int coord,idx,idy,id2,id3,icx,icy,ic2,ic3,isx,isy,is2,is3,iline;
   FILE *storefd;
   int endstore;
+  double sumx, sumy, sumxx, sumyy, sumxy, minx, maxx, miny, maxy;
+  int num;
+  time_t mtime;
 };
 
 static int set_data_progress(struct f2ddata *fp);
+static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 
 static void 
 check_ifs_init(struct f2ddata *fp)
@@ -292,6 +296,8 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   char *raxis;
   double ip1,ip2;
   int dataclip;
+  struct stat stat_buf;
+  time_t mtime;
 
   _getobj(obj,"id",inst,&fid);
   _getobj(obj,"file",inst,&file);
@@ -490,6 +496,16 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
     memfree(fp);
     return NULL;
   }
+
+  if (fstat(fileno(fp->fd), &stat_buf)) {
+    error2(obj,ERROPEN,file);
+    fclose(fp->fd);
+    memfree(fp);
+    return NULL;
+  }
+  mtime = stat_buf.st_mtime;
+  f2dlocal->mtime = mtime;
+
   fp->obj=obj;
   fp->id=fid;
   fp->prev_datanum = prev_datanum;
@@ -1333,7 +1349,10 @@ int f2dfile(struct objlist *obj,char *inst,char *rval,
   int ignorepath;
   char *file,*file2;
   int num2;
+  struct f2dlocal *f2dlocal;
 
+  _getobj(obj,"_local",inst,&f2dlocal);
+  f2dlocal->mtime = 0;
   sys=getobject("system");
   getobj(sys,"ignore_path",0,0,NULL,&ignorepath);
   if (!ignorepath) return 0;
@@ -1368,6 +1387,7 @@ int f2dput(struct objlist *obj,char *inst,char *rval,
   struct f2dlocal *f2dlocal;
 
   _getobj(obj,"_local",inst,&f2dlocal);
+  f2dlocal->mtime = 0;
   field=argv[1];
   if (strcmp(field,"final_line")==0) {
     if (*(int *)(argv[2])<-1) *(int *)(argv[2])=-1;
@@ -2298,7 +2318,7 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
   return 0;
 }
 
-int getminmaxdata(struct f2ddata *fp)
+static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 /*
   return -1: fatal error
           0: no error
@@ -3879,7 +3899,7 @@ int f2ddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
   if (fp->need2pass) {
-    if (getminmaxdata(fp)==-1) {
+    if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
       return 1;
     }
@@ -4157,7 +4177,7 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
   if (fp->need2pass) {
-    if (getminmaxdata(fp)==-1) {
+    if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
       return 1;
     }
@@ -4853,7 +4873,7 @@ int f2dopendata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
   if (fp->need2pass) {
-    if (getminmaxdata(fp)==-1) {
+    if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
       f2dlocal->data=NULL;
       return 1;
@@ -5027,7 +5047,7 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
     return 1;
   }
   if (fp->need2pass) {
-    if (getminmaxdata(fp)==-1) {
+    if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
       return 1;
     }
@@ -5207,7 +5227,7 @@ int f2dstat2(struct objlist *obj,char *inst,char *rval,
     return 1;
   }
   if (fp->need2pass) {
-    if (getminmaxdata(fp)==-1) {
+    if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
       return 1;
     }
@@ -5288,7 +5308,7 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
   }
 
   if (fp->need2pass) {
-    if (getminmaxdata(fp)==-1) {
+    if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
       return 1;
     }
@@ -6121,7 +6141,7 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
     return 1;
   }
   if (fp->need2pass) {
-    if (getminmaxdata(fp)==-1) {
+    if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
       error2(obj, ERRREAD, data_file);
       return 1;
@@ -6184,9 +6204,32 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-#define TBLNUM 102
+static int 
+update_field(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
+{
+  struct f2dlocal *f2dlocal;
 
-struct objtable file2d[TBLNUM] = {
+  _getobj(obj,"_local",inst,&f2dlocal);
+  f2dlocal->mtime = 0;
+
+  return 0;
+}
+
+static int foputabs(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  update_field(obj, inst, rval, argc, argv);
+  return oputabs(obj, inst, rval, argc, argv);
+}
+
+int foputge1(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  update_field(obj, inst, rval, argc, argv);
+  return oputge1(obj, inst, rval, argc, argv);
+}
+
+
+
+struct objtable file2d[] = {
   {"init",NVFUNC,NEXEC,f2dinit,NULL,0},
   {"done",NVFUNC,NEXEC,f2ddone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -6219,16 +6262,16 @@ struct objtable file2d[TBLNUM] = {
   {"G2",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"B2",NINT,NREAD|NWRITE,NULL,NULL,0},
 
-  {"remark",NSTR,NREAD|NWRITE,NULL,NULL,0},
-  {"ifs",NSTR,NREAD|NWRITE,NULL,NULL,0},
-  {"csv",NBOOL,NREAD|NWRITE,NULL,NULL,0},
-  {"head_skip",NINT,NREAD|NWRITE,oputabs,NULL,0},
-  {"read_step",NINT,NREAD|NWRITE,oputge1,NULL,0},
+  {"remark",NSTR,NREAD|NWRITE,update_field,NULL,0},
+  {"ifs",NSTR,NREAD|NWRITE,update_field,NULL,0},
+  {"csv",NBOOL,NREAD|NWRITE,update_field,NULL,0},
+  {"head_skip",NINT,NREAD|NWRITE,foputabs,NULL,0},
+  {"read_step",NINT,NREAD|NWRITE,foputge1,NULL,0},
   {"final_line",NINT,NREAD|NWRITE,f2dput,NULL,0},
-  {"mask",NIARRAY,NREAD|NWRITE,NULL,NULL,0},
-  {"move_data",NIARRAY,NREAD|NWRITE,NULL,NULL,0},
-  {"move_data_x",NDARRAY,NREAD|NWRITE,NULL,NULL,0},
-  {"move_data_y",NDARRAY,NREAD|NWRITE,NULL,NULL,0},
+  {"mask",NIARRAY,NREAD|NWRITE,update_field,NULL,0},
+  {"move_data",NIARRAY,NREAD|NWRITE,update_field,NULL,0},
+  {"move_data_x",NDARRAY,NREAD|NWRITE,update_field,NULL,0},
+  {"move_data_y",NDARRAY,NREAD|NWRITE,update_field,NULL,0},
 
   {"axis_x",NOBJ,NREAD|NWRITE,NULL,NULL,0},
   {"axis_y",NOBJ,NREAD|NWRITE,NULL,NULL,0},
@@ -6300,6 +6343,8 @@ struct objtable file2d[TBLNUM] = {
   {"output_file",NVFUNC,NREAD|NEXEC,f2doutputfile,"sib",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
+
+#define TBLNUM (sizeof(file2d) / sizeof(*file2d))
 
 void *addfile()
 /* addfile() returns NULL on error */

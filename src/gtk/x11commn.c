@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.19 2008/09/18 09:22:18 hito Exp $
+ * $Id: x11commn.c,v 1.20 2008/09/19 07:16:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1256,39 +1256,6 @@ CheckSave(void)
       return FALSE;
   }
   return TRUE;
-}
-
-void
-AddMathList(char *math)
-{
-  int i, j, num;
-  char **data;
-  char *s;
-  struct narray *mathlist;
-
-  if ((math == NULL) || (math[0] == '\0'))
-    return;
-
-  mathlist = Menulocal.mathlist;
-  num = arraynum(mathlist);
-  data = (char **) arraydata(mathlist);
-
-  for (i = 0; i < num; i++)
-    if (strcmp0(data[i], math) == 0)
-      break;
-
-  if (i == num) {
-    if (num >= 10)
-      arrayndel2(mathlist, num - 1);
-    else
-      num++;
-    arrayins2(mathlist, &math, 0);
-  } else {
-    s = data[i];
-    for (j = i - 1; j >= 0; j--)
-      data[j + 1] = data[j];
-    data[0] = s;
-  }
 }
 
 void

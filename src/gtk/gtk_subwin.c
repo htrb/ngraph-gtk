@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.29 2008/09/08 04:41:40 hito Exp $
+ * $Id: gtk_subwin.c,v 1.30 2008/09/19 07:16:19 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -631,8 +631,6 @@ update(struct SubWin *d)
       delobj(d->obj, sel);
       d->select = -1;
     }
-    if (ret != IDCANCEL)
-      NgraphApp.Changed = TRUE;
     d->update(FALSE);
   }
 }

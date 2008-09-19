@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.12 2008/09/11 07:07:23 hito Exp $
+ * $Id: x11merge.c,v 1.13 2008/09/19 07:16:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -287,11 +287,10 @@ CmMergeUpdate(void)
       MergeDialog(&DlgMerge, obj, array[i], -1);
       if ((ret = DialogExecute(TopLevel, &DlgMerge)) == IDDELETE) {
 	delobj(obj, array[i]);
+	NgraphApp.Changed = TRUE;
 	for (j = i + 1; j < num; j++)
 	  array[j]--;
       }
-      if (ret != IDCANCEL)
-	NgraphApp.Changed = TRUE;
     }
     MergeWinUpdate(TRUE);
   }

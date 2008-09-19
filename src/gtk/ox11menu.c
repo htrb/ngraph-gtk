@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.30 2008/09/12 09:12:08 hito Exp $
+ * $Id: ox11menu.c,v 1.31 2008/09/19 07:16:19 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1019,7 +1019,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.savepath = 0;
   Menulocal.savewithdata = 0;
   Menulocal.savewithmerge = 0;
-  Menulocal.mathlist = arraynew(sizeof(char *));
   Menulocal.ngpfilelist = arraynew(sizeof(char *));
   Menulocal.ngpdirlist = arraynew(sizeof(char *));
   Menulocal.datafilelist = arraynew(sizeof(char *));
@@ -1181,7 +1180,6 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
   arraydel2(&(Menulocal.drawrable));
-  arrayfree2(Menulocal.mathlist);
   arrayfree2(Menulocal.ngpfilelist);
   arrayfree2(Menulocal.ngpdirlist);
   arrayfree2(Menulocal.datafilelist);

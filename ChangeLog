@@ -1,4 +1,57 @@
+2008-09-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerWinFileUpdate, ViewUpdate): set
+	'NgraphApp.Changed' as 'TRUE' only when return value is
+	'IDDELETE'.
+
+	* src/gtk/x11merge.c (CmMergeClose): set 'NgraphApp.Changed' as
+	'TRUE' only when return value is 'IDDELETE'.
+
+	* src/gtk/x11lgnd.c (legend_dialog_close): check if the value is
+	really changed.
+	(CmLineUpdate, CmCurveUpdate, CmPolyUpdate, CmRectUpdate)
+	(CmArcUpdate, CmMarkUpdate, CmTextUpdate, LegendWinLegendUpdate):
+	set 'NgraphApp.Changed' as 'TRUE' only when return value is
+	'IDDELETE'.
+
+	* src/gtk/x11file.c (MathDialogList): remove AddMathList().
+	(MathDialogList): check if the math text is really changed.
+	(FitDialogApply): do not set 'TRUE' to 'NgraphApp.Changed'.
+	(FileLoadDialogClose): check if the ifs text is really changed.
+	(FileDialogCloseCommon): call SetObjAxisFieldFromWidget().
+	(FileDefDialogClose): remove duplicate settings.
+
+	* src/gtk/x11axis.c (CmAxisUpdate, CmAxisGridUpdate): do not set
+	'TRUE' to 'NgraphApp.Changed' when the return value is not IDOK.
+
+	* src/gtk/x11file.c (FileDialogCloseCommon): use
+	SetObjAxisFieldFromWidget().
+
+	* src/gtk/x11axis.c (GridDialogClose, AxisPosDialogClose)
+	(AxisDialogClose): use SetObjAxisFieldFromWidget().
+
+	* src/gtk/x11dialg.c (SetObjPointsFromText, SetObjFieldFromText)
+	(SetObjFieldFromSpin, SetObjFieldFromToggle)
+	(SetObjFieldFromStyle, SetObjFieldFromList)
+	(SetObjFieldFromFontList, _putobj_color): check if the value is
+	really changed.
+	(SetObjAxisFieldFromWidget): add
+
+	* src/gtk/gtk_subwin.c (update): do not set 'TRUE' to
+	'NgraphApp.Changed'.
+
+	* src/ofile.c (struct f2dlocal): add member "sumx, sumy, sumxx,
+	sumyy, sumxy, minx, maxx, miny, maxy, num and mtime".
+	(f2dfile, f2dput): set 'f2dlocal->mtime' as 0.
+	(update_field, foputabs, foputge1): add.
+	(getminmaxdata): add argument 'local'.
+	(f2ddraw, f2devaluate, f2dopendata, f2dstat, f2dstat2)
+	(f2dboundings, f2doutputfile): add argument to getminmaxdata().
+
 2008-09-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (opendata): check mtime of the file.
+	(file2d): add field "mtime".
 
 	* src/gtk/x11commn.c (FileAutoScale): return when fail to allcate
 	memory.

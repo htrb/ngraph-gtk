@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.15 2008/09/12 08:50:18 hito Exp $
+ * $Id: x11dialg.h,v 1.16 2008/09/19 07:16:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,6 +59,7 @@ int SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 void SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+int SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field);
 void SetComboList(GtkWidget *w, char **list, int num);
 void SetComboList2(GtkWidget *w, char **list, int num);
 GtkWidget *GetComboBoxList(GtkWidget *w);
