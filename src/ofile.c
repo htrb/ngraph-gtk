@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.31 2008/09/22 02:53:32 hito Exp $
+ * $Id: ofile.c,v 1.32 2008/09/22 03:56:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5127,12 +5127,12 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
 
   fp = opendata(obj, inst, f2dlocal, FALSE, FALSE);
   if (fp == NULL) return 1;
-
+#if 1
   if (f2dlocal->mtime == fp->mtime) {
     minx = f2dlocal->dminx;
     maxx = f2dlocal->dmaxx;
     miny = f2dlocal->dminy;
-    minx = f2dlocal->dmaxy;
+    maxy = f2dlocal->dmaxy;
     sumx = f2dlocal->davx;
     sumy = f2dlocal->davy;
     sumxx = f2dlocal->dsigx;
@@ -5144,7 +5144,7 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
       goto End;
     }
   }
-
+#endif
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
@@ -5282,7 +5282,7 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
   f2dlocal->dminx = minx;
   f2dlocal->dmaxx = maxx;
   f2dlocal->dminy = miny;
-  f2dlocal->dmaxy = minx;
+  f2dlocal->dmaxy = maxy;
   f2dlocal->davx = sumx;
   f2dlocal->davy = sumy;
   f2dlocal->dsigx = sumxx;
