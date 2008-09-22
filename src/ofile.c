@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.33 2008/09/22 05:31:41 hito Exp $
+ * $Id: ofile.c,v 1.34 2008/09/22 08:56:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1623,7 +1623,7 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy,
   double *data2,*data3;
   char *stat2,*stat3;
 
-  while (!fp->eof && (fp->bufnum<DXBUFSIZE)) {
+  while (! fp->eof && fp->bufnum < DXBUFSIZE) {
     if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
       break;
     }
@@ -1644,275 +1644,277 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy,
 
     fp->line++;
     for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]);i++);
-    if ((buf[i]!='\0')
-    && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
+
+    if (buf[i] == '\0' || (fp->remark && CHECK_REMARK(fp->ifs_buf, buf[i]))) {
+      memfree(buf);
+    } else {
       rcode=getdataarray(buf,fp->maxdim,&(fp->count),gdata,gstat,fp->ifs_buf,fp->csv);
       memfree(buf);
       for (j=0;j<fp->masknum;j++)
-        if ((fp->mask)[j]==fp->line) break;
+	if ((fp->mask)[j]==fp->line) break;
       if (j!=fp->masknum) masked=TRUE;
       else masked=FALSE;
       for (j=0;j<fp->movenum;j++)
-        if ((fp->move)[j]==fp->line) break;
+	if ((fp->move)[j]==fp->line) break;
       if ((j!=fp->movenum) && (!masked)) {
-        moved=TRUE;
-        moven=j;
+	moved=TRUE;
+	moven=j;
       } else moved=FALSE;
       if (rcode==-1) {
-        return -1;
+	return -1;
       }
 
       if (!masked) {
-        for (i=0;i<fnumx;i++) {
-          if ((needx[i]/1000)==fp->id) {
+	for (i=0;i<fnumx;i++) {
+	  if ((needx[i]/1000)==fp->id) {
 	    j = needx[i] % 1000;
-            datax[i]=gdata[j];
-            statx[i]=gstat[j];
-          } else {
-            datax[i]=0;
-            statx[i]=MNONUM;
-          }
-        }
-        for (i=0;i<fnumy;i++) {
-          if ((needy[i]/1000)==fp->id) {
+	    datax[i]=gdata[j];
+	    statx[i]=gstat[j];
+	  } else {
+	    datax[i]=0;
+	    statx[i]=MNONUM;
+	  }
+	}
+	for (i=0;i<fnumy;i++) {
+	  if ((needy[i]/1000)==fp->id) {
 	    j = needy[i] % 1000;
-            datay[i]=gdata[j];
-            staty[i]=gstat[j];
-          } else {
-            datay[i]=0;
-            staty[i]=MNONUM;
-          }
-        }
-        for (i=0;i<filenum;i++) {
-          id=openfile[i];
-          arrayinit(&iarray,sizeof(int));
-          for (j=0;j<fnumx;j++) {
-            if ((needx[j]/1000)==id) {
-              col=needx[j]%1000;
-              arrayadd(&iarray,&col);
-            }
-          }
-          for (j=0;j<fnumy;j++) {
-            if ((needy[j]/1000)==id) {
-              col=needy[j]%1000;
-              arrayadd(&iarray,&col);
-            }
-          }
-          inum=arraynum(&iarray);
-          idata=arraydata(&iarray);
-          argv[0]=(char *)&iarray;
-          argv[1]=NULL;
-          argc=1;
-          if (((inst1=chkobjinst(fp->obj,id))!=NULL) &&
-              (_exeobj(fp->obj,"getdata_raw",inst1,argc,argv)==0)) {
-            _getobj(fp->obj,"getdata_raw",inst1,&coldata);
-            colnum=arraynum(coldata);
-            ddata=arraydata(coldata);
-            if (colnum==inum*2) {
+	    datay[i]=gdata[j];
+	    staty[i]=gstat[j];
+	  } else {
+	    datay[i]=0;
+	    staty[i]=MNONUM;
+	  }
+	}
+	for (i=0;i<filenum;i++) {
+	  id=openfile[i];
+	  arrayinit(&iarray,sizeof(int));
+	  for (j=0;j<fnumx;j++) {
+	    if ((needx[j]/1000)==id) {
+	      col=needx[j]%1000;
+	      arrayadd(&iarray,&col);
+	    }
+	  }
+	  for (j=0;j<fnumy;j++) {
+	    if ((needy[j]/1000)==id) {
+	      col=needy[j]%1000;
+	      arrayadd(&iarray,&col);
+	    }
+	  }
+	  inum=arraynum(&iarray);
+	  idata=arraydata(&iarray);
+	  argv[0]=(char *)&iarray;
+	  argv[1]=NULL;
+	  argc=1;
+	  if (((inst1=chkobjinst(fp->obj,id))!=NULL) &&
+	      (_exeobj(fp->obj,"getdata_raw",inst1,argc,argv)==0)) {
+	    _getobj(fp->obj,"getdata_raw",inst1,&coldata);
+	    colnum=arraynum(coldata);
+	    ddata=arraydata(coldata);
+	    if (colnum==inum*2) {
 	      int n;
-              for (j=0;j<fnumx;j++) {
-                if ((needx[j]/1000)==id) {
+	      for (j=0;j<fnumx;j++) {
+		if ((needx[j]/1000)==id) {
 		  n = needx[j] % 1000;
-                  for (k=0;k<inum;k++)
-                    if (idata[k]==n) {
-                      datax[j]=ddata[k];
-                      statx[j]=nround(ddata[k+inum]);
-                    }
-                }
-              }
-              for (j=0;j<fnumy;j++) {
-                if ((needy[j]/1000)==id) {
+		  for (k=0;k<inum;k++)
+		    if (idata[k]==n) {
+		      datax[j]=ddata[k];
+		      statx[j]=nround(ddata[k+inum]);
+		    }
+		}
+	      }
+	      for (j=0;j<fnumy;j++) {
+		if ((needy[j]/1000)==id) {
 		  n = needy[j] % 1000;
-                  for (k=0;k<inum;k++)
-                    if (idata[k]==n) {
-                      datay[j]=ddata[k];
-                      staty[j]=nround(ddata[k+inum]);
-                    }
-                }
-              }
-            }
-          }
-          arraydel(&iarray);
-        }
+		  for (k=0;k<inum;k++)
+		    if (idata[k]==n) {
+		      datay[j]=ddata[k];
+		      staty[j]=nround(ddata[k+inum]);
+		    }
+		}
+	      }
+	    }
+	  }
+	  arraydel(&iarray);
+	}
       }
       dx=dy=d2=d3=0;
       dxstat=dystat=d2stat=d3stat=MUNDEF;
       dx=gdata[fp->x];
       dxstat=gstat[fp->x];
       if (fp->type!=1) {
-        dy=gdata[fp->y];
-        dystat=gstat[fp->y];
+	dy=gdata[fp->y];
+	dystat=gstat[fp->y];
       } else {
-        dy=gdata[fp->x+1];
-        dystat=gstat[fp->x+1];
+	dy=gdata[fp->x+1];
+	dystat=gstat[fp->x+1];
       }
       dx2=dx;
       dx2stat=dxstat;
       dy2=dy;
       dy2stat=dystat;
       if (fp->codex!=NULL) {
-        st=calculate(fp->codex,1,
-                     dx2,dx2stat,dy2,dy2stat,0,MNOERR,
-                     fp->minx,fp->minxstat,fp->maxx,fp->maxxstat,
-                     fp->miny,fp->minystat,fp->maxy,fp->maxystat,
-                     fp->num,fp->sumx,fp->sumy,fp->sumxx,fp->sumyy,fp->sumxy,
-                     gdata,gstat,
-                     fp->memoryx,fp->memorystatx,
-                     fp->sumdatax,fp->sumstatx,
-                     fp->difdatax,fp->difstatx,
-                     fp->color,&(fp->marksize),&(fp->marktype),
-                     fp->codef,fp->codeg,fp->codeh,
-                     fnumx,needx,datax,statx,fp->id,&val);
-        dx=val;
-        dxstat=st;
+	st=calculate(fp->codex,1,
+		     dx2,dx2stat,dy2,dy2stat,0,MNOERR,
+		     fp->minx,fp->minxstat,fp->maxx,fp->maxxstat,
+		     fp->miny,fp->minystat,fp->maxy,fp->maxystat,
+		     fp->num,fp->sumx,fp->sumy,fp->sumxx,fp->sumyy,fp->sumxy,
+		     gdata,gstat,
+		     fp->memoryx,fp->memorystatx,
+		     fp->sumdatax,fp->sumstatx,
+		     fp->difdatax,fp->difstatx,
+		     fp->color,&(fp->marksize),&(fp->marktype),
+		     fp->codef,fp->codeg,fp->codeh,
+		     fnumx,needx,datax,statx,fp->id,&val);
+	dx=val;
+	dxstat=st;
       }
       if (fp->codey!=NULL) {
-        st=calculate(fp->codey,1,
-                   dx2,dx2stat,dy2,dy2stat,0,MNOERR,
-                   fp->minx,fp->minxstat,fp->maxx,fp->maxxstat,
-                   fp->miny,fp->minystat,fp->maxy,fp->maxystat,
-                   fp->num,fp->sumx,fp->sumy,fp->sumxx,fp->sumyy,fp->sumxy,
-                   gdata,gstat,
-                   fp->memoryy,fp->memorystaty,
-                   fp->sumdatay,fp->sumstaty,
-                   fp->difdatay,fp->difstaty,
-                   fp->color,&(fp->marksize),&(fp->marktype),
-                   fp->codef,fp->codeg,fp->codeh,
-                   fnumy,needy,datay,staty,fp->id,&val);
-        dy=val;
-        dystat=st;
+	st=calculate(fp->codey,1,
+		     dx2,dx2stat,dy2,dy2stat,0,MNOERR,
+		     fp->minx,fp->minxstat,fp->maxx,fp->maxxstat,
+		     fp->miny,fp->minystat,fp->maxy,fp->maxystat,
+		     fp->num,fp->sumx,fp->sumy,fp->sumxx,fp->sumyy,fp->sumxy,
+		     gdata,gstat,
+		     fp->memoryy,fp->memorystaty,
+		     fp->sumdatay,fp->sumstaty,
+		     fp->difdatay,fp->difstaty,
+		     fp->color,&(fp->marksize),&(fp->marktype),
+		     fp->codef,fp->codeg,fp->codeh,
+		     fnumy,needy,datay,staty,fp->id,&val);
+	dy=val;
+	dystat=st;
       }
       if (fp->type==1) {
-        d2=gdata[fp->y];
-        d2stat=gstat[fp->y];
-        d3=gdata[fp->y+1];
-        d3stat=gstat[fp->y+1];
-        code2=fp->codex;
-        fnum2=fnumx;
-        need2=needx;
-        data2=datax;
-        stat2=statx;
-        dx2=d2;
-        dx2stat=d2stat;
-        dy2=d3;
-        dy2stat=d3stat;
-        first2=0;
-        code3=fp->codey;
-        fnum3=fnumy;
-        need3=needy;
-        data3=datay;
-        stat3=staty;
-        dx3=d2;
-        dx3stat=d2stat;
-        dy3=d3;
-        dy3stat=d3stat;
-        first3=0;
+	d2=gdata[fp->y];
+	d2stat=gstat[fp->y];
+	d3=gdata[fp->y+1];
+	d3stat=gstat[fp->y+1];
+	code2=fp->codex;
+	fnum2=fnumx;
+	need2=needx;
+	data2=datax;
+	stat2=statx;
+	dx2=d2;
+	dx2stat=d2stat;
+	dy2=d3;
+	dy2stat=d3stat;
+	first2=0;
+	code3=fp->codey;
+	fnum3=fnumy;
+	need3=needy;
+	data3=datay;
+	stat3=staty;
+	dx3=d2;
+	dx3stat=d2stat;
+	dy3=d3;
+	dy3stat=d3stat;
+	first3=0;
       } else if (fp->type==2) {
-        d2=gdata[fp->x]+gdata[fp->x+1];
-        if (gstat[fp->x]<gstat[fp->x+1]) d2stat=gstat[fp->x];
-        else d2stat=gstat[fp->x+1];
-        d3=gdata[fp->x]+gdata[fp->x+2];
-        if (gstat[fp->x]<gstat[fp->x+2]) d3stat=gstat[fp->x];
-        else d3stat=gstat[fp->x+2];
-        code2=fp->codex;
-        fnum2=fnumx;
-        need2=needx;
-        data2=datax;
-        stat2=statx;
-        dx2=d2;
-        dx2stat=d2stat;
-        dy2=gdata[fp->y];
-        dy2stat=gstat[fp->y];
-        first2=1;
-        code3=fp->codex;
-        fnum3=fnumx;
-        need3=needx;
-        data3=datax;
-        stat3=statx;
-        dx3=d3;
-        dx3stat=d3stat;
-        dy3=gdata[fp->y];
-        dy3stat=gstat[fp->y];
-        first3=0;
+	d2=gdata[fp->x]+gdata[fp->x+1];
+	if (gstat[fp->x]<gstat[fp->x+1]) d2stat=gstat[fp->x];
+	else d2stat=gstat[fp->x+1];
+	d3=gdata[fp->x]+gdata[fp->x+2];
+	if (gstat[fp->x]<gstat[fp->x+2]) d3stat=gstat[fp->x];
+	else d3stat=gstat[fp->x+2];
+	code2=fp->codex;
+	fnum2=fnumx;
+	need2=needx;
+	data2=datax;
+	stat2=statx;
+	dx2=d2;
+	dx2stat=d2stat;
+	dy2=gdata[fp->y];
+	dy2stat=gstat[fp->y];
+	first2=1;
+	code3=fp->codex;
+	fnum3=fnumx;
+	need3=needx;
+	data3=datax;
+	stat3=statx;
+	dx3=d3;
+	dx3stat=d3stat;
+	dy3=gdata[fp->y];
+	dy3stat=gstat[fp->y];
+	first3=0;
       } else if (fp->type==3) {
-        d2=gdata[fp->y]+gdata[fp->y+1];
-        if (gstat[fp->y]<gstat[fp->y+1]) d2stat=gstat[fp->y];
-        else d2stat=gstat[fp->y+1];
-        d3=gdata[fp->y]+gdata[fp->y+2];
-        if (gstat[fp->y]<gstat[fp->y+2]) d3stat=gstat[fp->y];
-        else d3stat=gstat[fp->y+2];
-        code2=fp->codey;
-        fnum2=fnumy;
-        need2=needy;
-        data2=datay;
-        stat2=staty;
-        dx2=gdata[fp->x];
-        dx2stat=gstat[fp->x];
-        dy2=d2;
-        dy2stat=d2stat;
-        first2=1;
-        code3=fp->codey;
-        fnum3=fnumy;
-        need3=needy;
-        data3=datay;
-        stat3=staty;
-        dx3=gdata[fp->x];
-        dx3stat=gstat[fp->x];
-        dy3=d3;
-        dy3stat=d3stat;
-        first3=0;
+	d2=gdata[fp->y]+gdata[fp->y+1];
+	if (gstat[fp->y]<gstat[fp->y+1]) d2stat=gstat[fp->y];
+	else d2stat=gstat[fp->y+1];
+	d3=gdata[fp->y]+gdata[fp->y+2];
+	if (gstat[fp->y]<gstat[fp->y+2]) d3stat=gstat[fp->y];
+	else d3stat=gstat[fp->y+2];
+	code2=fp->codey;
+	fnum2=fnumy;
+	need2=needy;
+	data2=datay;
+	stat2=staty;
+	dx2=gdata[fp->x];
+	dx2stat=gstat[fp->x];
+	dy2=d2;
+	dy2stat=d2stat;
+	first2=1;
+	code3=fp->codey;
+	fnum3=fnumy;
+	need3=needy;
+	data3=datay;
+	stat3=staty;
+	dx3=gdata[fp->x];
+	dx3stat=gstat[fp->x];
+	dy3=d3;
+	dy3stat=d3stat;
+	first3=0;
       }
       if (fp->type!=0) {
-        if (code2!=NULL) {
-          st=calculate(code2,first2,
-                     dx2,dx2stat,dy2,dy2stat,0,MNOERR,
-                     fp->minx,fp->minxstat,fp->maxx,fp->maxxstat,
-                     fp->miny,fp->minystat,fp->maxy,fp->maxystat,
-                     fp->num,fp->sumx,fp->sumy,fp->sumxx,fp->sumyy,fp->sumxy,
-                     gdata,gstat,
-                     fp->memory2,fp->memorystat2,
-                     fp->sumdata2,fp->sumstat2,
-                     fp->difdata2,fp->difstat2,
-                     fp->color,&(fp->marksize),&(fp->marktype),
-                     fp->codef,fp->codeg,fp->codeh,
-                     fnum2,need2,data2,stat2,fp->id,&val);
-          d2=val;
-          d2stat=st;
-        }
-        if (code3!=NULL) {
-          st=calculate(code3,first3,
-                     dx3,dx3stat,dy3,dy3stat,0,MNOERR,
-                     fp->minx,fp->minxstat,fp->maxx,fp->maxxstat,
-                     fp->miny,fp->minystat,fp->maxy,fp->maxystat,
-                     fp->num,fp->sumx,fp->sumy,fp->sumxx,fp->sumyy,fp->sumxy,
-                     gdata,gstat,
-                     fp->memory3,fp->memorystat3,
-                     fp->sumdata3,fp->sumstat3,
-                     fp->difdata3,fp->difstat3,
-                     fp->color,&(fp->marksize),&(fp->marktype),
-                     fp->codef,fp->codeg,fp->codeh,
-                     fnum3,need3,data3,stat3,fp->id,&val);
-          d3=val;
-          d3stat=st;
-        }
+	if (code2!=NULL) {
+	  st=calculate(code2,first2,
+		       dx2,dx2stat,dy2,dy2stat,0,MNOERR,
+		       fp->minx,fp->minxstat,fp->maxx,fp->maxxstat,
+		       fp->miny,fp->minystat,fp->maxy,fp->maxystat,
+		       fp->num,fp->sumx,fp->sumy,fp->sumxx,fp->sumyy,fp->sumxy,
+		       gdata,gstat,
+		       fp->memory2,fp->memorystat2,
+		       fp->sumdata2,fp->sumstat2,
+		       fp->difdata2,fp->difstat2,
+		       fp->color,&(fp->marksize),&(fp->marktype),
+		       fp->codef,fp->codeg,fp->codeh,
+		       fnum2,need2,data2,stat2,fp->id,&val);
+	  d2=val;
+	  d2stat=st;
+	}
+	if (code3!=NULL) {
+	  st=calculate(code3,first3,
+		       dx3,dx3stat,dy3,dy3stat,0,MNOERR,
+		       fp->minx,fp->minxstat,fp->maxx,fp->maxxstat,
+		       fp->miny,fp->minystat,fp->maxy,fp->maxystat,
+		       fp->num,fp->sumx,fp->sumy,fp->sumxx,fp->sumyy,fp->sumxy,
+		       gdata,gstat,
+		       fp->memory3,fp->memorystat3,
+		       fp->sumdata3,fp->sumstat3,
+		       fp->difdata3,fp->difstat3,
+		       fp->color,&(fp->marksize),&(fp->marktype),
+		       fp->codef,fp->codeg,fp->codeh,
+		       fnum3,need3,data3,stat3,fp->id,&val);
+	  d3=val;
+	  d3stat=st;
+	}
       }
       if (masked) {
-        dxstat=dystat=d2stat=d3stat=MSCONT;
+	dxstat=dystat=d2stat=d3stat=MSCONT;
       }
       if (moved) {
-        dxstat=dystat=d2stat=d3stat=MNOERR;
-        dx=fp->movex[moven];
-        dy=fp->movey[moven];
-        if (fp->type==2) {
-          d2=dx;
-          d3=dx;
-        } else if (fp->type==3) {
-          d2=dy;
-          d3=dy;
-        } else {
-          d2=dx;
-          d3=dy;
-        }
+	dxstat=dystat=d2stat=d3stat=MNOERR;
+	dx=fp->movex[moven];
+	dy=fp->movey[moven];
+	if (fp->type==2) {
+	  d2=dx;
+	  d3=dx;
+	} else if (fp->type==3) {
+	  d2=dy;
+	  d3=dy;
+	} else {
+	  d2=dx;
+	  d3=dy;
+	}
       }
       fp->buf[fp->bufnum].dx = dx;
       fp->buf[fp->bufnum].dy = dy;
@@ -1931,21 +1933,21 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy,
       fp->bufnum++;
       step=1;
       while (step<fp->rstep) {
-        if ((rcode=fgetline(fp->fd,&buf))==1) {
-          fp->eof=TRUE;
-          break;
-        }
-        if (rcode==-1) {
-          return -1;
-        }
-        fp->line++;
-        for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
-        if ((buf[i]!='\0')
-        && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i])))
-          step++;
-        memfree(buf);
+	if ((rcode=fgetline(fp->fd,&buf))==1) {
+	  fp->eof=TRUE;
+	  break;
+	}
+	if (rcode==-1) {
+	  return -1;
+	}
+	fp->line++;
+	for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
+	if ((buf[i]!='\0')
+	    && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i])))
+	  step++;
+	memfree(buf);
       }
-    } else memfree(buf);
+    }
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
   return 0;

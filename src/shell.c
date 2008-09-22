@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.5 2008/09/11 07:07:19 hito Exp $
+ * $Id: shell.c,v 1.6 2008/09/22 08:56:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -135,6 +135,7 @@ static char *Prompt;
 #include "shell.h"
 #include "shellcm.h"
 #include "shellux.h"
+#include "mathcode.h"
 
 #define FALSE 0
 #define TRUE 1

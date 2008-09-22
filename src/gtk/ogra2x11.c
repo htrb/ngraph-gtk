@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.12 2008/09/11 07:07:22 hito Exp $
+ * $Id: ogra2x11.c,v 1.13 2008/09/22 08:56:34 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -51,6 +51,7 @@
 #include "ogra2cairo.h"
 
 #define NAME "gra2gtk"
+#define ALIAS "gra2win:gra2x11"
 #define PARENT "gra2cairo"
 #define NVERSION  "1.00.00"
 #define GRA2GTKCONF "[gra2gtk]"
@@ -780,6 +781,6 @@ void *
 addgra2gtk(void)
 /* addgra2gtk() returns NULL on error */
 {
-  return addobject(NAME, NULL, PARENT, NVERSION, TBLNUM, gra2gtk,
+  return addobject(NAME, ALIAS, PARENT, NVERSION, TBLNUM, gra2gtk,
 		   ERRNUM, gtkerrorlist, NULL, NULL);
 }

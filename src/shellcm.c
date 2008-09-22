@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.4 2008/09/12 05:50:33 hito Exp $
+ * $Id: shellcm.c,v 1.5 2008/09/22 08:56:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -930,6 +930,64 @@ int cmexe(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
+int
+str_calc(char *str, double *val, int *r)
+{
+  int rcode, ecode = 0, i;
+  char *code;
+  double memory[MEMORYNUM];
+  char memorystat[MEMORYNUM];
+
+  rcode = mathcode(str, &code, NULL, NULL, NULL, NULL, 
+		   FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+		   FALSE, FALSE, FALSE, FALSE, FALSE);
+
+  if (rcode != MCNOERR) {
+    switch (rcode) {
+    case MCSYNTAX:
+      ecode = ERRMSYNTAX;
+      break;
+    case MCILLEGAL:
+      ecode = ERRMILLEGAL;
+      break;
+    case MCNEST:
+      ecode = ERRMNEST;
+      break;
+    default:
+      ecode = ERRUNKNOWNSH;
+    }
+    return ecode;
+  }
+  for (i = 0; i < MEMORYNUM; i++) {
+    memory[i] = 0;
+    memorystat[i] = MNOERR;
+  }
+  rcode = calculate(code, 1, 
+		    0, MNOERR, 0, MNOERR, 0, MNOERR, 
+		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+		    NULL, NULL, 
+		    memory, memorystat, 
+		    NULL, NULL, 
+		    NULL, NULL, 
+		    NULL, NULL, NULL, 
+		    NULL, NULL, NULL, 0, NULL, NULL, NULL, 0, val);
+  memfree(code);
+
+  if (rcode == MSERR) {
+    ecode = ERRMSYNTAX;
+  } else if (rcode == MERR) {
+    ecode = ERRMFAT;
+  }
+
+  if (ecode) {
+    return ecode;
+  }
+
+  *r = rcode;
+
+  return 0;
+}
+
 int cmdexpr(struct nshell*nshell,int argc,char **argv)
 {
   int rcode,ecode;
@@ -947,35 +1005,15 @@ int cmdexpr(struct nshell*nshell,int argc,char **argv)
   if ((s=nstrnew())==NULL) return ERR;
   for (i=1;i<argc;i++)
     if ((s=nstrcat(s,argv[i]))==NULL) return ERR;
-  rcode=mathcode(s,&code,NULL,NULL,NULL,NULL,
-                 FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
+
+  ecode = str_calc(s, &vd, &rcode);
   memfree(s);
-  if (rcode!=MCNOERR) {
-    if (rcode==MCSYNTAX) ecode=ERRMSYNTAX;
-    else if (rcode==MCILLEGAL) ecode=ERRMILLEGAL;
-    else if (rcode==MCNEST) ecode=ERRMNEST;
-    else ecode = ERRUNKNOWNSH;
-    sherror4(argv[0],ERRVALUE);
-    return ecode;
-  }
-  for (i=0;i<MEMORYNUM;i++) {memory[i]=0;memorystat[i]=MNOERR;}
-  rcode=calculate(code,1,
-                  0,MNOERR,0,MNOERR,0,MNOERR,
-                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                  NULL,NULL,
-                  memory,memorystat,
-                  NULL,NULL,
-                  NULL,NULL,
-                  NULL,NULL,NULL,
-                  NULL,NULL,NULL,0,NULL,NULL,NULL,0,&vd);
-  memfree(code);
-  ecode=0;
-  if (rcode==MSERR) ecode=ERRMSYNTAX;
-  else if (rcode==MERR) ecode=ERRMFAT;
-  if (ecode!=0) {
+
+  if (ecode) {
     sherror4(argv[0],ecode);
     return ecode;
   }
+
   if (rcode==MNAN) {
     putstdout("nan");
     return ERR;
@@ -983,6 +1021,7 @@ int cmdexpr(struct nshell*nshell,int argc,char **argv)
     putstdout("undifined");
     return ERR;
   }
+
   if (argv[0][0]=='d') printfstdout("%.15e\n",vd);
   else printfstdout("%d\n",nround(vd));
   return 0;
