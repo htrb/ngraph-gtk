@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.32 2008/09/22 03:56:15 hito Exp $
+ * $Id: ofile.c,v 1.33 2008/09/22 05:31:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -242,7 +242,7 @@ struct f2dlocal {
   double dminx, dmaxx, dminy, dmaxy, davx, davy, dsigx, dsigy;
   int num, rcode;
   char minxstat, maxxstat, minystat, maxystat;
-  time_t mtime;
+  time_t mtime, mtime_stat;
 };
 
 static int set_data_progress(struct f2ddata *fp);
@@ -1344,6 +1344,7 @@ int f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   f2dlocal->minystat = MUNDEF;
   f2dlocal->maxystat = MUNDEF;
   f2dlocal->mtime = 0;
+  f2dlocal->mtime_stat = 0;
 
   f2dloadconfig(obj,inst);
   return 0;
@@ -1383,6 +1384,7 @@ int f2dfile(struct objlist *obj,char *inst,char *rval,
 
   _getobj(obj,"_local",inst,&f2dlocal);
   f2dlocal->mtime = 0;
+  f2dlocal->mtime_stat = 0;
   sys=getobject("system");
   getobj(sys,"ignore_path",0,0,NULL,&ignorepath);
   if (!ignorepath) return 0;
@@ -1418,6 +1420,7 @@ int f2dput(struct objlist *obj,char *inst,char *rval,
 
   _getobj(obj,"_local",inst,&f2dlocal);
   f2dlocal->mtime = 0;
+  f2dlocal->mtime_stat = 0;
   field=argv[1];
   if (strcmp(field,"final_line")==0) {
     if (*(int *)(argv[2])<-1) *(int *)(argv[2])=-1;
@@ -5113,12 +5116,13 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
-  int rcode;
+  int rcode, interrupt;
   int dnum,minxstat,maxxstat,minystat,maxystat;
   double minx,maxx,miny,maxy;
   double sumx,sumxx,sumy,sumyy;
   char *field;
   char *str;
+  time_t mtime;
 
   memfree(*(char **)rval);
   *(char **)rval=NULL;
@@ -5127,8 +5131,8 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
 
   fp = opendata(obj, inst, f2dlocal, FALSE, FALSE);
   if (fp == NULL) return 1;
-#if 1
-  if (f2dlocal->mtime == fp->mtime) {
+
+  if (f2dlocal->mtime_stat == fp->mtime) {
     minx = f2dlocal->dminx;
     maxx = f2dlocal->dmaxx;
     miny = f2dlocal->dminy;
@@ -5144,7 +5148,7 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
       goto End;
     }
   }
-#endif
+
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
       closedata(fp);
@@ -5264,6 +5268,8 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
       }
     }
   }
+  interrupt = fp->interrupt;
+  mtime = fp->mtime;
   closedata(fp);
   if (rcode==-1) return -1;
   if (dnum!=0) {
@@ -5288,6 +5294,9 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
   f2dlocal->dsigx = sumxx;
   f2dlocal->dsigy = sumyy;
 
+  if (interrupt == FALSE)
+    f2dlocal->mtime_stat = mtime;
+
  End:
   if ((str=memalloc(24))==NULL) return -1;
   if (strcmp(field,"dnum")==0) {
@@ -5310,9 +5319,6 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
     sprintf(str,"%.15e",sumyy);
   }
   *(char **)rval=str;
-
-  if (fp->interrupt == FALSE)
-    f2dlocal->mtime = fp->mtime;
 
   return 0;
 }
@@ -6310,6 +6316,7 @@ update_field(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   _getobj(obj, "_local", inst, &f2dlocal);
   f2dlocal->mtime = 0;
+  f2dlocal->mtime_stat = 0;
 
   return 0;
 }
