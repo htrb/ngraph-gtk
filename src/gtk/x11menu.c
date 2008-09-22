@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.43 2008/09/18 08:13:44 hito Exp $
+ * $Id: x11menu.c,v 1.44 2008/09/22 02:53:35 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -194,8 +194,8 @@ static struct command_data Command1_data[] = {
   },
   {
     CmViewerClearB,
-    N_("Clear"),
-    N_("Clear"),
+    N_("Clear Image"),
+    N_("Clear Image"),
     N_("Clear Viewer Window"), 
     Clear_xpm,
     Clear_bits

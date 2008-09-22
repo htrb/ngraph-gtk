@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.16 2008/09/19 07:16:19 hito Exp $
+ * $Id: x11dialg.h,v 1.17 2008/09/22 02:53:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -229,7 +229,7 @@ struct FileMoveDialog
   /****** local member *******/
   GtkWidget *line, *x, *y, *list;
   struct objlist *Obj;
-  int Id;
+  int Id, changed;
 };
 void FileMoveDialog(struct FileMoveDialog *data, struct objlist *obj, int id);
 
@@ -244,7 +244,7 @@ struct FileMaskDialog
   /****** local member *******/
   GtkWidget *line, *list;
   struct objlist *Obj;
-  int Id;
+  int Id, changed;
 };
 void FileMaskDialog(struct FileMaskDialog *data, struct objlist *obj, int id);
 

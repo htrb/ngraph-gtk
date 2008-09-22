@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.53 2008/09/19 07:16:20 hito Exp $
+ * $Id: x11file.c,v 1.54 2008/09/22 02:53:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1277,6 +1277,7 @@ FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
 
   gtk_entry_set_text(GTK_ENTRY(d->x), "");
   gtk_entry_set_text(GTK_ENTRY(d->y), "");
+  d->changed = TRUE;
 }
 
 
@@ -1292,6 +1293,16 @@ move_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
   FileMoveDialogAdd(NULL, d);
 
   return TRUE;
+}
+
+static void
+FileMoveDialogRemove(GtkWidget *w, gpointer client_data)
+{
+  struct FileMoveDialog *d;
+  d = (struct FileMoveDialog *) client_data;
+
+  list_store_remove_selected_cb(w, d->list);
+  d->changed = TRUE;
 }
 
 static void
@@ -1323,7 +1334,7 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, FALSE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
     g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
     item_setup(hbox, w, _("_Line:"), TRUE);
     d->line = w;
@@ -1350,7 +1361,7 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(list_store_remove_selected_cb), d->list);
+    g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogRemove), d);
 
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
@@ -1382,8 +1393,10 @@ FileMoveDialogCopy(struct FileMoveDialog *d)
 
   sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
 
-  if (sel != -1)
+  if (sel != -1) {
     FileMoveDialogSetupItem(d->widget, d, sel);
+    d->changed = TRUE;
+  }
 }
 
 static void
@@ -1408,6 +1421,10 @@ FileMoveDialogClose(GtkWidget *w, void *data)
     d->ret = IDLOOP;
     return;
   default:
+    return;
+  }
+
+  if (d->changed == FALSE) {
     return;
   }
 
@@ -1483,6 +1500,7 @@ FileMoveDialog(struct FileMoveDialog *data, struct objlist *obj, int id)
   data->CloseWindow = FileMoveDialogClose;
   data->Obj = obj;
   data->Id = id;
+  data->changed = FALSE;
 }
 
 static void
@@ -1515,6 +1533,7 @@ FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
   a = spin_entry_get_val(d->line);
   list_store_append(d->list, &iter);
   list_store_set_int(d->list, &iter, 0, a);
+  d->changed = TRUE;
 }
 
 static gboolean
@@ -1538,8 +1557,20 @@ FileMaskDialogCopy(struct FileMaskDialog *d)
 
   sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
 
-  if (sel != -1)
+  if (sel != -1) {
     FileMaskDialogSetupItem(d->widget, d, sel);
+    d->changed = TRUE;
+  }
+}
+
+static void
+FileMaskDialogRemove(GtkWidget *w, gpointer client_data)
+{
+  struct FileMaskDialog *d;
+  d = (struct FileMaskDialog *) client_data;
+
+  list_store_remove_selected_cb(w, d->list);
+  d->changed = TRUE;
 }
 
 static void
@@ -1561,7 +1592,7 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, FALSE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
     g_signal_connect(w, "key-press-event", G_CALLBACK(mask_dialog_key_pressed), d);
 
     item_setup(vbox, w, _("_Line:"), FALSE);
@@ -1580,7 +1611,7 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(list_store_remove_selected_cb), d->list);
+    g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogRemove), d);
 
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
@@ -1622,6 +1653,10 @@ FileMaskDialogClose(GtkWidget *w, void *data)
     return;
   }
 
+  if (d->changed == FALSE) {
+    return;
+  }
+
   ret = d->ret;
   d->ret = IDLOOP;
 
@@ -1650,6 +1685,7 @@ FileMaskDialogClose(GtkWidget *w, void *data)
   }
   putobj(d->Obj, "mask", d->Id, mask);
   d->ret = ret;
+  NgraphApp.Changed = TRUE;
 }
 
 void
@@ -1659,6 +1695,7 @@ FileMaskDialog(struct FileMaskDialog *data, struct objlist *obj, int id)
   data->CloseWindow = FileMaskDialogClose;
   data->Obj = obj;
   data->Id = id;
+  data->changed = FALSE;
 }
 
 static void

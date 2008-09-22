@@ -1,4 +1,31 @@
+2008-09-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (struct f2ddata): add member 'mtime' and
+	'interrupt'.
+	(opendata): set mtime to 'fp->mtime'.
+	(check_mtime): add.
+	(getminmaxdata): call check_mtime() and hskipdata().
+	(f2ddraw, f2devaluate, f2dopendata, f2dstat, f2dstat2)
+	(f2dboundings, f2doutputfile): remove check_mtime() placed before
+	getminmaxdata().
+	(f2dstat): check if 'f2dlocal->mtime == fp->mtime'.
+
 2008-09-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileMoveDialogAdd, FileMoveDialogRemove)
+	(FileMoveDialogCopy): set 'd->changed' as 'TRUE'.
+	(FileMoveDialogClose, FileMaskDialogClose): do nothing when
+	'd->changed' is 'FALSE'.
+	(FileMaskDialog, FileMoveDialog): initialize 'data->changed'.
+
+	* src/gtk/gtk_widget.h (enum SPIN_BUTTON_TYPE): add
+	'SPIN_BUTTON_TYPE_NATURAL'.
+
+	* src/gtk/gtk_widget.c (create_spin_entry_type): add case
+	'SPIN_BUTTON_TYPE_NATURAL'
+
+	* src/gtk/x11dialg.h (struct FileMoveDialog)
+	(struct FileMaskDialog): add member 'changed'.
 
 	* src/gtk/x11view.c (ViewerWinFileUpdate, ViewUpdate): set
 	'NgraphApp.Changed' as 'TRUE' only when return value is
