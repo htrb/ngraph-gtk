@@ -1,4 +1,5 @@
 # Ngraph initialization script
+
 save_image() {
     if [ ! -f "$1" ]
     then
@@ -25,6 +26,18 @@ save_image() {
     del gra2cairofile
 }
 
+cheke_set() {
+    if [ -n "$3" ]
+    then
+	VAL=$3
+	if [ -n "$4" ]
+	then
+	    VAL=$4:$3
+	fi
+	put $1: $2=$VAL
+    fi
+}
+
 new menu
 system:0:login_shell=menu:0:menu
 #
@@ -34,28 +47,6 @@ elif [ -f "${NGRAPHLIB}/.Ngraph.ngp" ]; then
         . "${NGRAPHLIB}/.Ngraph.ngp"
 fi
 #
-XCOLUMN=1
-YCOLUMN=2
-XAXIS=0
-YAXIS=1
-PLOTTYPE=mark
-MARKTYPE=0
-MARKSIZE=200
-LINESTYLE=
-LINEWIDTH=40
-COLORR=0
-COLORG=0
-COLORB=0
-COLORR2=255
-COLORG2=255
-COLORB2=255
-HEADSKIP=0
-READSTEP=1
-FINALLINE=-1
-AVERAGEX=0
-AVERAGEY=0
-MATHX=
-MATHY=
 LOADSETTINGS=0
 #
 while [ "$1" ]
@@ -282,28 +273,28 @@ do
 	;;
 	*)
 		new file file:$1
-		file::x=$XCOLUMN
-		file::y=$YCOLUMN
-		file::type=$PLOTTYPE
-		file::mark_type=$MARKTYPE
-		file::mark_size=$MARKSIZE
-		file::line_style=$LINESTYLE
-		file::line_width=$LINEWIDTH
-		file::R=$COLORR
-		file::G=$COLORG
-		file::B=$COLORB
-		file::R2=$COLORR2
-		file::G2=$COLORG2
-		file::B2=$COLORB2
-		file::head_skip=$HEADSKIP
-		file::read_step=$READSTEP
-		file::final_line=$FINALLINE
-		file::smooth_x=$AVERAGEX
-		file::smooth_y=$AVERAGEY
-		file::math_x=$MATHX
-		file::math_y=$MATHY
-		file::axis_x=axis:$XAXIS
-		file::axis_y=axis:$YAXIS
+		cheke_set file x $XCOLUMN
+		cheke_set file y $YCOLUMN
+		cheke_set file type $PLOTTYPE
+		cheke_set file mark_type $MARKTYPE
+		cheke_set file mark_size $MARKSIZE
+		cheke_set file line_style $LINESTYLE
+		cheke_set file line_width $LINEWIDTH
+		cheke_set file R $COLORR
+		cheke_set file G $COLORG
+		cheke_set file B $COLORB
+		cheke_set file R2 $COLORR2
+		cheke_set file G2 $COLORG2
+		cheke_set file B2 $COLORB2
+		cheke_set file head_skip $HEADSKIP
+		cheke_set file read_step $READSTEP
+		cheke_set file final_line $FINALLINE
+		cheke_set file smooth_x $AVERAGEX
+		cheke_set file smooth_y $AVERAGEY
+		cheke_set file math_x $MATHX
+		cheke_set file math_y $MATHY
+		cheke_set file axis_x "$XAXIS" axis
+		cheke_set file axis_y "$YAXIS" axis
 		if [ $LOADSETTINGS = 1 ]; then
 			file::load_settings
 		fi

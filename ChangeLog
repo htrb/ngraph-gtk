@@ -1,3 +1,10 @@
+2008-09-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/.Ngraph (cheke_set): add.
+
+	* initfile/.Ngraph: use cheke_set to initialize file object.
+	
+
 2008-09-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (struct f2ddata): add member 'mtime' and
