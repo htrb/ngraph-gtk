@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.35 2008/09/24 08:39:49 hito Exp $
+ * $Id: ofile.c,v 1.36 2008/09/24 09:50:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -150,7 +150,7 @@ struct f2ddata {
   char *file;
   FILE *fd;
   int x,y;
-  int type;
+  enum {TYPE_NORMAL, TYPE_DIAGONAL, TYPE_ERR_X, TYPE_ERR_Y} type;
 /*
   fp->type: 0 normal (dx ... dy)
             1 diagonal (dx dy ... d2 d3)
@@ -538,16 +538,16 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
 
   switch (type) {
   case 4: case 5: case 6: case 7: case 8:
-    fp->type=1;
+    fp->type=TYPE_DIAGONAL;
     break;
   case 9:
-    fp->type=2;
+    fp->type=TYPE_ERR_X;
     break;
   case 10:
-    fp->type=3;
+    fp->type=TYPE_ERR_Y;
     break;
   default:
-    fp->type=0;
+    fp->type=TYPE_NORMAL;
     break;
   }
 
@@ -598,11 +598,20 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   fp->codeh=f2dlocal->codeh;
   fp->needfilex=f2dlocal->needfilex;
   fp->needfiley=f2dlocal->needfiley;
-  if (fp->type==1) {
+  switch (fp->type) {
+  case TYPE_NORMAL:
+    break;
+  case TYPE_DIAGONAL:
     x++;
     y++;
-  } else if (fp->type==2) x+=2;
-  else if (fp->type==3) y+=2;
+    break;
+  case TYPE_ERR_X:
+    x+=2;
+    break;
+  case TYPE_ERR_Y:
+    y+=2;
+    break;
+  }
   fp->maxdim=f2dlocal->maxdimx;
   if (fp->maxdim<x) fp->maxdim=x;
   if (fp->maxdim<f2dlocal->maxdimy) fp->maxdim=f2dlocal->maxdimy;
@@ -1679,7 +1688,7 @@ getdata_skip_step(struct f2ddata *fp)
   char *buf;
   int i, step, rcode;;
 
-  step=1;
+  step = 1;
   while (step < fp->rstep) {
     rcode = fgetline(fp->fd, &buf);
     if (rcode == 1) {
@@ -1765,12 +1774,14 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
   d2stat = d3stat = MUNDEF;
   dx = gdata[fp->x];
   dxstat = gstat[fp->x];
-  if (fp->type != 1) {
-    dy = gdata[fp->y];
-    dystat = gstat[fp->y];
-  } else {
+  switch (fp->type) {
+  case TYPE_DIAGONAL:
     dy = gdata[fp->x+1];
     dystat = gstat[fp->x+1];
+    break;
+  default:
+    dy = gdata[fp->y];
+    dystat = gstat[fp->y];
   }
   dx2 = dx;
   dx2stat = dxstat;
@@ -1809,91 +1820,94 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
     dystat=st;
   }
 
-  if (fp->type != 0) {
-    switch (fp->type) {
-    case 1:
-      d2=gdata[fp->y];
-      d2stat=gstat[fp->y];
-      d3=gdata[fp->y+1];
-      d3stat=gstat[fp->y+1];
-      code2=fp->codex;
-      fnum2=fnumx;
-      need2=needx;
-      data2=datax;
-      stat2=statx;
-      dx2=d2;
-      dx2stat=d2stat;
-      dy2=d3;
-      dy2stat=d3stat;
-      first2=0;
-      code3=fp->codey;
-      fnum3=fnumy;
-      need3=needy;
-      data3=datay;
-      stat3=staty;
-      dx3=d2;
-      dx3stat=d2stat;
-      dy3=d3;
-      dy3stat=d3stat;
-      first3=0;
-      break;
-    case 2:
-      d2=gdata[fp->x]+gdata[fp->x+1];
-      if (gstat[fp->x]<gstat[fp->x+1]) d2stat=gstat[fp->x];
-      else d2stat=gstat[fp->x+1];
-      d3=gdata[fp->x]+gdata[fp->x+2];
-      if (gstat[fp->x]<gstat[fp->x+2]) d3stat=gstat[fp->x];
-      else d3stat=gstat[fp->x+2];
-      code2=fp->codex;
-      fnum2=fnumx;
-      need2=needx;
-      data2=datax;
-      stat2=statx;
-      dx2=d2;
-      dx2stat=d2stat;
-      dy2=gdata[fp->y];
-      dy2stat=gstat[fp->y];
-      first2=1;
-      code3=fp->codex;
-      fnum3=fnumx;
-      need3=needx;
-      data3=datax;
-      stat3=statx;
-      dx3=d3;
-      dx3stat=d3stat;
-      dy3=gdata[fp->y];
-      dy3stat=gstat[fp->y];
-      first3=0;
-      break;
-    case 3:
-      d2=gdata[fp->y]+gdata[fp->y+1];
-      if (gstat[fp->y]<gstat[fp->y+1]) d2stat=gstat[fp->y];
-      else d2stat=gstat[fp->y+1];
-      d3=gdata[fp->y]+gdata[fp->y+2];
-      if (gstat[fp->y]<gstat[fp->y+2]) d3stat=gstat[fp->y];
-      else d3stat=gstat[fp->y+2];
-      code2=fp->codey;
-      fnum2=fnumy;
-      need2=needy;
-      data2=datay;
-      stat2=staty;
-      dx2=gdata[fp->x];
-      dx2stat=gstat[fp->x];
-      dy2=d2;
-      dy2stat=d2stat;
-      first2=1;
-      code3=fp->codey;
-      fnum3=fnumy;
-      need3=needy;
-      data3=datay;
-      stat3=staty;
-      dx3=gdata[fp->x];
-      dx3stat=gstat[fp->x];
-      dy3=d3;
-      dy3stat=d3stat;
-      first3=0;
-    }
+  switch (fp->type) {
+  case TYPE_NORMAL:
+    break;
+  case TYPE_DIAGONAL:
+    d2=gdata[fp->y];
+    d2stat=gstat[fp->y];
+    d3=gdata[fp->y+1];
+    d3stat=gstat[fp->y+1];
+    code2=fp->codex;
+    fnum2=fnumx;
+    need2=needx;
+    data2=datax;
+    stat2=statx;
+    dx2=d2;
+    dx2stat=d2stat;
+    dy2=d3;
+    dy2stat=d3stat;
+    first2=0;
+    code3=fp->codey;
+    fnum3=fnumy;
+    need3=needy;
+    data3=datay;
+    stat3=staty;
+    dx3=d2;
+    dx3stat=d2stat;
+    dy3=d3;
+    dy3stat=d3stat;
+    first3=0;
+    break;
+  case TYPE_ERR_X:
+    d2=gdata[fp->x]+gdata[fp->x+1];
+    if (gstat[fp->x]<gstat[fp->x+1]) d2stat=gstat[fp->x];
+    else d2stat=gstat[fp->x+1];
+    d3=gdata[fp->x]+gdata[fp->x+2];
+    if (gstat[fp->x]<gstat[fp->x+2]) d3stat=gstat[fp->x];
+    else d3stat=gstat[fp->x+2];
+    code2=fp->codex;
+    fnum2=fnumx;
+    need2=needx;
+    data2=datax;
+    stat2=statx;
+    dx2=d2;
+    dx2stat=d2stat;
+    dy2=gdata[fp->y];
+    dy2stat=gstat[fp->y];
+    first2=1;
+    code3=fp->codex;
+    fnum3=fnumx;
+    need3=needx;
+    data3=datax;
+    stat3=statx;
+    dx3=d3;
+    dx3stat=d3stat;
+    dy3=gdata[fp->y];
+    dy3stat=gstat[fp->y];
+    first3=0;
+    break;
+  case TYPE_ERR_Y:
+    d2=gdata[fp->y]+gdata[fp->y+1];
+    if (gstat[fp->y]<gstat[fp->y+1]) d2stat=gstat[fp->y];
+    else d2stat=gstat[fp->y+1];
+    d3=gdata[fp->y]+gdata[fp->y+2];
+    if (gstat[fp->y]<gstat[fp->y+2]) d3stat=gstat[fp->y];
+    else d3stat=gstat[fp->y+2];
+    code2=fp->codey;
+    fnum2=fnumy;
+    need2=needy;
+    data2=datay;
+    stat2=staty;
+    dx2=gdata[fp->x];
+    dx2stat=gstat[fp->x];
+    dy2=d2;
+    dy2stat=d2stat;
+    first2=1;
+    code3=fp->codey;
+    fnum3=fnumy;
+    need3=needy;
+    data3=datay;
+    stat3=staty;
+    dx3=gdata[fp->x];
+    dx3stat=gstat[fp->x];
+    dy3=d3;
+    dy3stat=d3stat;
+    first3=0;
+    break;
+  }
 
+  if (fp->type != TYPE_NORMAL) {
     if (code2) {
       st=calculate(code2,first2,
 		   dx2,dx2stat,dy2,dy2stat,0,MNOERR,
@@ -1934,15 +1948,19 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
     dxstat = dystat = d2stat = d3stat = MNOERR;
     dx = fp->movex[moven];
     dy = fp->movey[moven];
-    if (fp->type == 2) {
+    switch (fp->type) {
+    case TYPE_ERR_X:
       d2=dx;
       d3=dx;
-    } else if (fp->type == 3) {
+      break;
+    case TYPE_ERR_Y:
       d2=dy;
       d3=dy;
-    } else {
+      break;
+    default:
       d2=dx;
       d3=dy;
+      break;
     }
   }
 
@@ -2099,32 +2117,31 @@ int getdata(struct f2ddata *fp)
     memfree(gstat);
     return 1;
   }
-  if (fp->type==0) {
+  switch (fp->type) {
+  case TYPE_NORMAL:
     smx=fp->smoothx;
     smy=fp->smoothy;
     sm2=0;
     sm3=0;
-  } else if (fp->type==1) {
+    break;
+  case TYPE_DIAGONAL:
     smx=fp->smoothx;
     smy=fp->smoothy;
     sm2=fp->smoothx;
     sm3=fp->smoothy;
-  } else if (fp->type==2) {
+    break;
+  case TYPE_ERR_X:
     smx=fp->smoothx;
     smy=fp->smoothy;
     sm2=fp->smoothx;
     sm3=fp->smoothx;
-  } else if (fp->type==3) {
+    break;
+  case TYPE_ERR_Y:
     smx=fp->smoothx;
     smy=fp->smoothy;
     sm2=fp->smoothy;
     sm3=fp->smoothy;
-  } else {
-    /* not reached */
-    smx=0;
-    smy=0;
-    sm2=0;
-    sm3=0;
+    break;
   }
   sumx=sumy=sum2=sum3=0;
   numx=numy=num2=num3=0;
@@ -2166,17 +2183,24 @@ int getdata(struct f2ddata *fp)
   fp->colb=fp->buf[fp->bufpo].colb;
   fp->msize=fp->buf[fp->bufpo].marksize;
   fp->mtype=fp->buf[fp->bufpo].marktype;
-  if (fp->type==0) {
-    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) fp->datanum++;
-  } else if (fp->type==1) {
-    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-     && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) fp->datanum++;
-  } else if (fp->type==2) {
-    if ((fp->dystat==MNOERR)
-     && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) fp->datanum++;
-  } else if (fp->type==3) {
-    if ((fp->dxstat==MNOERR) 
-     && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) fp->datanum++;
+
+  switch (fp->type) {
+  case TYPE_NORMAL:
+    if (fp->dxstat==MNOERR && fp->dystat==MNOERR)
+      fp->datanum++;
+    break;
+  case TYPE_DIAGONAL:
+    if (fp->dxstat==MNOERR && fp->dystat==MNOERR && fp->d2stat==MNOERR && fp->d3stat==MNOERR)
+      fp->datanum++;
+    break;
+  case TYPE_ERR_X:
+    if (fp->dystat==MNOERR && fp->d2stat==MNOERR && fp->d3stat==MNOERR)
+      fp->datanum++;
+    break;
+  case TYPE_ERR_Y:
+    if (fp->dxstat==MNOERR && fp->d2stat==MNOERR && fp->d3stat==MNOERR)
+      fp->datanum++;
+    break;
   }
   if (fp->bufpo<fp->smooth) {
     fp->bufpo++;
@@ -2356,32 +2380,42 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
       dxstat=dystat=d2stat=d3stat=MUNDEF;
       dx=data[fp->x];
       dxstat=stat[fp->x];
-      if (fp->type!=1) {
-        dy=data[fp->y];
-        dystat=stat[fp->y];
-      } else {
+
+      switch (fp->type) {
+      case TYPE_DIAGONAL:
         dy=data[fp->x+1];
         dystat=stat[fp->x+1];
+	break;
+      default:
+        dy=data[fp->y];
+        dystat=stat[fp->y];
       }
-      if (fp->type==1) {
+
+      switch (fp->type) {
+      case TYPE_NORMAL:
+	break;
+      case TYPE_DIAGONAL:
         d2=data[fp->y];
         d2stat=stat[fp->y];
         d3=data[fp->y+1];
         d3stat=stat[fp->y+1];
-      } else if (fp->type==2) {
+	break;
+      case TYPE_ERR_X:
         d2=data[fp->x]+data[fp->x+1];
         if (stat[fp->x]<stat[fp->x+1]) d2stat=stat[fp->x];
         else d2stat=stat[fp->x+1];
         fp->d3=data[fp->x]+data[fp->x+2];
         if (stat[fp->x]<stat[fp->x+2]) d3stat=stat[fp->x];
         else d3stat=stat[fp->x+2];
-      } else if (fp->type==3) {
+	break;
+      case TYPE_ERR_Y:
         d2=data[fp->y]+data[fp->y+1];
         if (stat[fp->y]<stat[fp->y+1]) d2stat=stat[fp->y];
         else d2stat=stat[fp->y+1];
         d3=data[fp->y]+data[fp->y+2];
         if (stat[fp->y]<stat[fp->y+2]) d3stat=stat[fp->y];
         else d3stat=stat[fp->y+2];
+	break;
       }
       if (masked) {
         dxstat=dystat=d2stat=d3stat=MSCONT;
@@ -2495,7 +2529,9 @@ static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   fp->sumxy=0;
   fp->num=0;
   while ((rcode=getdataraw(fp,fp->maxdim,gdata,gstat))==0) {
-    if ((fp->type==0) || (fp->type==1)) {
+    switch (fp->type) {
+    case TYPE_NORMAL:
+    case TYPE_DIAGONAL:
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
         if ((fp->minxstat==MUNDEF) || (fp->minx>fp->dx)) fp->minx=fp->dx;
         if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->dx)) fp->maxx=fp->dx;
@@ -2512,25 +2548,28 @@ static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
         fp->sumxy+=(fp->dx)*(fp->dy);
         fp->num++;
       }
-    }
-    if (fp->type==1) {
+
+      if (fp->type == TYPE_NORMAL)
+	break;
+
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) {
-        if ((fp->minxstat==MUNDEF) || (fp->minx>fp->d2)) fp->minx=fp->d2;
-        if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->d2)) fp->maxx=fp->d2;
-        fp->minxstat=MNOERR;
-        fp->maxxstat=MNOERR;
-        if ((fp->minystat==MUNDEF) || (fp->miny>fp->d3)) fp->miny=fp->d3;
-        if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->d3)) fp->maxx=fp->d3;
-        fp->minystat=MNOERR;
-        fp->maxystat=MNOERR;
-        fp->sumx+=fp->d2;
-        fp->sumxx+=(fp->d2)*(fp->d2);
-        fp->sumy+=fp->d3;
-        fp->sumyy+=(fp->d3)*(fp->d3);
-        fp->sumxy+=(fp->d2)*(fp->d3);
-        fp->num++;
+	if ((fp->minxstat==MUNDEF) || (fp->minx>fp->d2)) fp->minx=fp->d2;
+	if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->d2)) fp->maxx=fp->d2;
+	fp->minxstat=MNOERR;
+	fp->maxxstat=MNOERR;
+	if ((fp->minystat==MUNDEF) || (fp->miny>fp->d3)) fp->miny=fp->d3;
+	if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->d3)) fp->maxx=fp->d3;
+	fp->minystat=MNOERR;
+	fp->maxystat=MNOERR;
+	fp->sumx+=fp->d2;
+	fp->sumxx+=(fp->d2)*(fp->d2);
+	fp->sumy+=fp->d3;
+	fp->sumyy+=(fp->d3)*(fp->d3);
+	fp->sumxy+=(fp->d2)*(fp->d3);
+	fp->num++;
       }
-    } else if (fp->type==2) {
+      break;
+    case TYPE_ERR_X:
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
        && (fp->dystat==MNOERR)) {
         if ((fp->minxstat==MUNDEF) || (fp->minx>fp->d2)) fp->minx=fp->d2;
@@ -2558,7 +2597,8 @@ static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
         fp->sumxy+=(fp->d3)*(fp->dy);
         fp->num++;
       }
-    } else if (fp->type==3) {
+      break;
+    case TYPE_ERR_Y:
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
        && (fp->dxstat==MNOERR)) {
         if ((fp->minystat==MUNDEF) || (fp->miny>fp->d2)) fp->miny=fp->d2;
@@ -2586,6 +2626,7 @@ static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
         fp->sumxy+=(fp->dx)*(fp->d3);
         fp->num++;
       }
+      break;
     }
   }
   fp->dx=fp->dy=fp->d2=fp->d3=0;
@@ -2912,15 +2953,22 @@ void errordisp(struct objlist *obj,
     y=FALSE;
     if ((fp->dxstat==MERR) || (fp->dxstat==MNAN)) x=TRUE;
     if ((fp->dystat==MERR) || (fp->dystat==MNAN)) y=TRUE;
-    if (fp->type==1) {
+
+    switch (fp->type) {
+    case TYPE_NORMAL:
+      break;
+    case TYPE_DIAGONAL:
       if ((fp->d2stat==MERR) || (fp->d2stat==MNAN)) x=TRUE;
       if ((fp->d3stat==MERR) || (fp->d3stat==MNAN)) y=TRUE;
-    } else if (fp->type==2) {
+      break;
+    case TYPE_ERR_X:
       if ((fp->d2stat==MERR) || (fp->d2stat==MNAN)) x=TRUE;
       if ((fp->d3stat==MERR) || (fp->d3stat==MNAN)) x=TRUE;
-    } else if (fp->type==3) {
+      break;
+    case TYPE_ERR_Y:
       if ((fp->d2stat==MERR) || (fp->d2stat==MNAN)) y=TRUE;
       if ((fp->d3stat==MERR) || (fp->d3stat==MNAN)) y=TRUE;
+      break;
     }
     if (x || y) {
       if (x && (!y)) s="x";
@@ -2935,15 +2983,21 @@ void errordisp(struct objlist *obj,
     y=FALSE;
     if (fp->dxstat==MSERR) x=TRUE;
     if (fp->dystat==MSERR) y=TRUE;
-    if (fp->type==1) {
+    switch (fp->type) {
+    case TYPE_NORMAL:
+      break;
+    case TYPE_DIAGONAL:
       if (fp->d2stat==MSERR) x=TRUE;
       if (fp->d3stat==MSERR) y=TRUE;
-    } else if (fp->type==2) {
+      break;
+    case TYPE_ERR_X:
       if (fp->d2stat==MSERR) x=TRUE;
       if (fp->d3stat==MSERR) x=TRUE;
-    } else if (fp->type==3) {
+      break;
+    case TYPE_ERR_Y:
       if (fp->d2stat==MSERR) y=TRUE;
       if (fp->d3stat==MSERR) y=TRUE;
+      break;
     }
     if (x || y) {
       if (x && (!y)) s="x";
@@ -2958,15 +3012,21 @@ void errordisp(struct objlist *obj,
     y=FALSE;
     if (fp->dxstat==MNONUM) x=TRUE;
     if (fp->dystat==MNONUM) y=TRUE;
-    if (fp->type==1) {
+    switch (fp->type) {
+    case TYPE_NORMAL:
+      break;
+    case TYPE_DIAGONAL:
       if (fp->d2stat==MNONUM) x=TRUE;
       if (fp->d3stat==MNONUM) y=TRUE;
-    } else if (fp->type==2) {
+      break;
+    case TYPE_ERR_X:
       if (fp->d2stat==MNONUM) x=TRUE;
       if (fp->d3stat==MNONUM) x=TRUE;
-    } else if (fp->type==3) {
+      break;
+    case TYPE_ERR_Y:
       if (fp->d2stat==MNONUM) y=TRUE;
       if (fp->d3stat==MNONUM) y=TRUE;
+      break;
     }
     if (x || y) {
       if (x && (!y)) s="x";
@@ -4108,7 +4168,7 @@ int f2ddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     rcode=fitout(obj,fp,GC,lwidth,snum,style,ljoin,lmiter,fit,redraw);
     break;
   default:
-    /* not reached */
+    /* not reachable */
     rcode = -1;
   }
   closedata(fp);
@@ -4368,7 +4428,8 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     maxy+=err;
   }
   while (getdata(fp)==0) {
-    if (fp->type==0) {
+    switch (fp->type) {
+    case TYPE_NORMAL:
       dx=fp->dx;
       dy=fp->dy;
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
@@ -4381,7 +4442,8 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           arrayadd(array,&(fp->dy));
         }
       }
-    } else if (fp->type==1) {
+      break;
+    case TYPE_DIAGONAL:
       dx=fp->dx;
       dy=fp->dy;
       d2=fp->d2;
@@ -4404,7 +4466,8 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           arrayadd(array,&(fp->d3));
         }
       }
-    } else if (fp->type==2) {
+      break;
+    case TYPE_ERR_X:
       dx=fp->dx;
       dy=fp->dy;
       d2=fp->d2;
@@ -4427,7 +4490,8 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           arrayadd(array,&(fp->dy));
         }
       }
-    } else if (fp->type==3) {
+      break;
+    case TYPE_ERR_Y:
       dx=fp->dx;
       dy=fp->dy;
       d2=fp->d2;
@@ -4450,6 +4514,7 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           arrayadd(array,&(fp->d3));
         }
       }
+      break;
     }
     if (arraynum(array)>=(limit*3)) break;
   }
@@ -4961,7 +5026,7 @@ void f2dsettbl(char *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
   int gx,gy,g2,g3;
 
   switch (fp->type) {
-  case 0:
+  case TYPE_NORMAL:
     *(double *)(inst+f2dlocal->idx)=fp->dx;
     *(double *)(inst+f2dlocal->idy)=fp->dy;
     if (f2dlocal->coord) {
@@ -4970,7 +5035,7 @@ void f2dsettbl(char *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
       *(int *)(inst+f2dlocal->icy)=gy;
     }
     break;
-  case 1:
+  case TYPE_DIAGONAL:
     *(double *)(inst+f2dlocal->idx)=fp->dx;
     *(double *)(inst+f2dlocal->idy)=fp->dy;
     *(double *)(inst+f2dlocal->id2)=fp->d2;
@@ -4984,7 +5049,7 @@ void f2dsettbl(char *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
       *(int *)(inst+f2dlocal->ic3)=g3;
     }
     break;
-  case 2:
+  case TYPE_ERR_X:
     *(double *)(inst+f2dlocal->idx)=fp->dx;
     *(double *)(inst+f2dlocal->idy)=fp->dy;
     *(double *)(inst+f2dlocal->id2)=fp->d2;
@@ -4999,7 +5064,7 @@ void f2dsettbl(char *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
       *(int *)(inst+f2dlocal->ic3)=g3;
     }
     break;
-  case 3:
+  case TYPE_ERR_Y:
     *(double *)(inst+f2dlocal->idx)=fp->dx;
     *(double *)(inst+f2dlocal->idy)=fp->dy;
     *(double *)(inst+f2dlocal->id2)=fp->d2;
@@ -5245,7 +5310,8 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
   minx=maxx=miny=maxy=0;
   sumx=sumxx=sumy=sumyy=0;
   while ((rcode=getdata(fp))==0) {
-    if (fp->type==0) {
+    switch (fp->type) {
+    case TYPE_NORMAL:
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
         if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
         if ((maxxstat==MUNDEF) || (maxx<fp->dx)) maxx=fp->dx;
@@ -5261,7 +5327,8 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
         sumyy=sumyy+(fp->dy)*(fp->dy);
         dnum++;
       }
-    } else if (fp->type==1) {
+      break;
+    case TYPE_DIAGONAL:
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
        && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) {
         if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
@@ -5291,7 +5358,8 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
         sumyy=sumyy+(fp->d3)*(fp->d3);
         dnum++;
       }
-    } else if (fp->type==2) {
+      break;
+    case TYPE_ERR_X:
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
        && (fp->dystat==MNOERR)) {
         if ((minystat==MUNDEF) || (miny>fp->dy)) miny=fp->dy;
@@ -5317,7 +5385,8 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
         sumyy=sumyy+(fp->dy)*(fp->dy);
         dnum++;
       }
-    } else if (fp->type==3) {
+      break;
+    case TYPE_ERR_Y:
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
        && (fp->dxstat==MNOERR)) {
         if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
@@ -5343,6 +5412,7 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
         sumyy=sumyy+(fp->d3)*(fp->d3);
         dnum++;
       }
+      break;
     }
   }
   interrupt = fp->interrupt;
@@ -5433,13 +5503,15 @@ int f2dstat2(struct objlist *obj,char *inst,char *rval,
   find=FALSE;
   while ((rcode=getdata(fp))==0) {
     if (fp->dline==line) {
-      if (fp->type==0) {
+      switch (fp->type) {
+      case TYPE_NORMAL:
         if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
           dx=fp->dx;
           dy=fp->dy;
           find=TRUE;
         }
-      } else {
+	break;
+      default:
         if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
          && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) {
           dx=fp->dx;
@@ -5448,6 +5520,7 @@ int f2dstat2(struct objlist *obj,char *inst,char *rval,
           d3=fp->d3;
           find=TRUE;
         }
+	break;
       }
     }
   }
@@ -5511,7 +5584,8 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
   maxystat=MUNDEF;
   minx=maxx=miny=maxy=0;
   while ((rcode=getdata(fp))==0) {
-    if (fp->type==0) {
+    switch (fp->type) {
+    case TYPE_NORMAL:
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
         if ((!abs) || (fp->dx>0)) {
           if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
@@ -5526,7 +5600,8 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
           maxystat=MNOERR;
         }
       }
-    } else if (fp->type==1) {
+      break;
+    case TYPE_DIAGONAL:
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
        && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) {
         if ((!abs) || (fp->dx>0)) {
@@ -5554,7 +5629,8 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
           maxystat=MNOERR;
         }
       }
-    } else if (fp->type==2) {
+      break;
+    case TYPE_ERR_X:
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
        && (fp->dystat==MNOERR)) {
         if ((!abs) || (fp->dy>0)) {
@@ -5576,7 +5652,8 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
           maxxstat=MNOERR;
         }
       }
-    } else if (fp->type==3) {
+      break;
+    case TYPE_ERR_Y:
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
        && (fp->dxstat==MNOERR)) {
         if ((!abs) || (fp->dx>0)) {
@@ -5598,6 +5675,7 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
           maxystat=MNOERR;
         }
       }
+      break;
     }
   }
   closedata(fp);
@@ -6355,23 +6433,28 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
     }
   } else {
     while ((rcode=getdata(fp))==0) {
-      if (fp->type==0) {
+      switch (fp->type) {
+      case TYPE_NORMAL:
         if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR))
           fprintf(fp2,"%.15e %.15e\n",fp->dx,fp->dy);
-      } else if (fp->type==1) {
+	break;
+      case TYPE_DIAGONAL:
         if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
          && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR))
           fprintf(fp2,"%.15e %.15e %.15e %.15e\n",fp->dx,fp->dy,fp->d2,fp->d3);
-      } else if (fp->type==2) {
+	break;
+      case TYPE_ERR_X:
         if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
          && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR))
           fprintf(fp2,"%.15e %.15e %.15e %.15e\n",
                      fp->dx,fp->d2-fp->dx,fp->d3-fp->dx,fp->dy);
-      } else if (fp->type==3) {
+	break;
+      case TYPE_ERR_Y:
         if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
          && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR))
           fprintf(fp2,"%.15e %.15e %.15e %.15e\n",
                      fp->dx,fp->dy,fp->d2-fp->dy,fp->d3-fp->dy);
+	break;
       }
     }
   }

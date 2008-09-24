@@ -2,6 +2,7 @@
 
 	* src/ofile.c (getdata_sub2, getdata_skip_step): add.
 	(getdata_sub1): use getdata_sub2().
+	(struct f2ddata): use enum instead of int for 'type'.
 
 2008-09-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
