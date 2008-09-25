@@ -1,3 +1,10 @@
+2008-09-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvKeyDown): add case "GDK_Page_Up" and
+	"GDK_Page_Down".
+	(ViewerEvKeyDown): in case of GDK_Down, GDK_Up, GDK_Left and
+	GDK_Right, scroll screnn if no objects are focused.
+
 2008-09-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (getdata_sub2, getdata_skip_step): add.

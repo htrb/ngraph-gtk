@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.65 2008/09/19 07:16:20 hito Exp $
+ * $Id: x11view.c,v 1.66 2008/09/25 06:38:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3971,8 +3971,8 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 {
   struct Viewer *d;
   GdkGC *dc;
-  int dx = 0, dy = 0, mv;
-  double zoom;
+  int dx = 0, dy = 0, mv, n;
+  double zoom, val;
 
   if (Menulock || GlobalLock)
     return FALSE;
@@ -4010,10 +4010,42 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
       return TRUE;
     }
     break;
+  case GDK_Page_Up:
+    val = range_increment(d->VScroll, SCROLL_INC * 4);
+    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+    return TRUE;
+  case GDK_Page_Down:
+    val = range_increment(d->VScroll, -SCROLL_INC * 4);
+    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    return TRUE;
   case GDK_Down:
   case GDK_Up:
   case GDK_Left:
   case GDK_Right:
+    n = arraynum(d->focusobj);
+
+    if (n == 0) {
+      switch (e->keyval) {
+      case GDK_Up:
+	val = range_increment(d->VScroll, -SCROLL_INC);
+	ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+	return TRUE;
+      case GDK_Down:
+	val = range_increment(d->VScroll, SCROLL_INC);
+	ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+	return TRUE;
+      case GDK_Left:
+	val = range_increment(d->HScroll, -SCROLL_INC);
+	ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+	return TRUE;
+      case GDK_Right:
+	val = range_increment(d->HScroll, SCROLL_INC);
+	ViewerEvHScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+	return TRUE;
+      }
+      return FALSE;
+    }
+
     if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG))
 	&& ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
       dc = gdk_gc_new(d->win);
