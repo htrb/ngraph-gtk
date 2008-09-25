@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.66 2008/09/25 06:38:20 hito Exp $
+ * $Id: x11view.c,v 1.67 2008/09/25 10:35:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4011,12 +4011,12 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     }
     break;
   case GDK_Page_Up:
-    val = range_increment(d->VScroll, SCROLL_INC * 4);
-    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
-    return TRUE;
-  case GDK_Page_Down:
     val = range_increment(d->VScroll, -SCROLL_INC * 4);
     ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    return TRUE;
+  case GDK_Page_Down:
+    val = range_increment(d->VScroll, SCROLL_INC * 4);
+    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
     return TRUE;
   case GDK_Down:
   case GDK_Up:
