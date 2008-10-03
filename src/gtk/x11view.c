@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.68 2008/10/03 03:53:58 hito Exp $
+ * $Id: x11view.c,v 1.69 2008/10/03 07:13:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -958,14 +958,8 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
 	} else if ((* (int *) arraynget(mask, 0)) > EvalList[sel].line) {
 	  arrayins(mask, &(EvalList[sel].line), 0);
 	} else {
-	  for (j = 0; j < masknum; j++) {
-	    iline = *(int *) arraynget(mask, j);
-	    if (iline == EvalList[sel].line) {
-	      break;
-	    } else if (iline > EvalList[sel].line) {
-	      arrayins(mask, &(EvalList[sel].line), j);
-	      break;
-	    }
+	  if (bsearch_int(arraydata(mask), masknum, EvalList[sel].line, &j) == 0) {
+	    arrayins(mask, &(EvalList[sel].line), j);
 	  }
 	}
       }

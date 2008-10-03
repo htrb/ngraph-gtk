@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.37 2008/10/03 03:53:53 hito Exp $
+ * $Id: ofile.c,v 1.38 2008/10/03 07:13:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1737,7 +1737,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
     }
   }
 #else
-  masked = (bsearch_int(fp->mask, fp->masknum, fp->line) >= 0);
+  masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
 #endif
 
   moved = FALSE;
@@ -2279,7 +2279,7 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
       if (j!=fp->masknum) masked=TRUE;
       else masked=FALSE;
 #else
-      masked = (bsearch_int(fp->mask, fp->masknum, fp->line) >= 0);
+      masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
 #endif
       if (rcode==-1) {
 	memfree(gdata);
@@ -2385,7 +2385,7 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
       if (j!=fp->masknum) masked=TRUE;
       else masked=FALSE;
 #else
-      masked = (bsearch_int(fp->mask, fp->masknum, fp->line) >= 0);
+      masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
 #endif
       if (rcode==-1) return -1;
       dx=dy=d2=d3=0;

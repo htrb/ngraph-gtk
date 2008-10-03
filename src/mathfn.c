@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.c,v 1.2 2008/10/03 03:53:53 hito Exp $
+ * $Id: mathfn.c,v 1.3 2008/10/03 07:13:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -778,46 +778,44 @@ void HSB2RGB(double h,double s,double b,int *R,int *G,int *B)
 }
 
 int
-bsearch_int(int *ary, int n, int val)
+bsearch_int(int *ary, int n, int val, int *idx)
 {
   int min, max, i;
 
-  if (n == 0 || ary == NULL)
-    return -1;
+  if (n == 0 || ary == NULL) {
+    if (idx)
+      *idx = 0;
 
-  i = (n - 1) / 2;
+    return 0;
+  }
+
   min = 0;
   max = n - 1;
 
   while (1) {
-    if (val < ary[min] || val > ary[max]) {
-      i = -1;
-      break;
+    i = (min + max) / 2;
+
+    if (ary[i] == val) {
+      if (idx)
+	*idx = i;
+      return 1;
     }
 
-    if (ary[min] == val) {
-      i = min;
-      break;
-    } else if (ary[max] == val) {
-      i = max;
-      break;
-    } else if (ary[i] == val) {
-      break;
-    }
-
-    if (max - min < 2) {
-      i = -1;
-      break;
+    if (min >= max) {
+      if (idx) {
+	if (ary[i] < val)
+	  i++;
+	*idx = i;
+      }
+      return 0;
     }
 
     if (ary[i] < val) {
-      min = i;
-      i = (i + max) / 2;
-    } else if (ary[i] > val) {
-      max = i;
-      i = (i + min ) / 2;
+      min = i + 1;
+    } else {
+      max = i - 1;
     }
   }
 
-  return i;
+  return 0;
 }
