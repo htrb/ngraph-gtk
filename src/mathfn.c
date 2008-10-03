@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: mathfn.c,v 1.2 2008/10/03 03:53:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -777,3 +777,47 @@ void HSB2RGB(double h,double s,double b,int *R,int *G,int *B)
   }
 }
 
+int
+bsearch_int(int *ary, int n, int val)
+{
+  int min, max, i;
+
+  if (n == 0 || ary == NULL)
+    return -1;
+
+  i = (n - 1) / 2;
+  min = 0;
+  max = n - 1;
+
+  while (1) {
+    if (val < ary[min] || val > ary[max]) {
+      i = -1;
+      break;
+    }
+
+    if (ary[min] == val) {
+      i = min;
+      break;
+    } else if (ary[max] == val) {
+      i = max;
+      break;
+    } else if (ary[i] == val) {
+      break;
+    }
+
+    if (max - min < 2) {
+      i = -1;
+      break;
+    }
+
+    if (ary[i] < val) {
+      min = i;
+      i = (i + max) / 2;
+    } else if (ary[i] > val) {
+      max = i;
+      i = (i + min ) / 2;
+    }
+  }
+
+  return i;
+}

@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.67 2008/09/25 10:35:34 hito Exp $
+ * $Id: x11view.c,v 1.68 2008/10/03 03:53:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -944,19 +944,29 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
       for (i = 0; i < selnum; i++) {
 	sel = *(int *) arraynget(&SelList, i);
 	getobj(fileobj, "mask", EvalList[sel].id, 0, NULL, &mask);
+
 	if (mask == NULL) {
 	  mask = arraynew(sizeof(int));
 	  putobj(fileobj, "mask", EvalList[sel].id, mask);
 	}
+
 	masknum = arraynum(mask);
-	for (j = 0; j < masknum; j++) {
-	  iline = *(int *) arraynget(mask, j);
-	  if (iline == EvalList[sel].line)
-	    break;
-	}
-	if (j == masknum) {
+
+	if (masknum == 0 || (* (int *) arraynget(mask, masknum - 1)) < EvalList[sel].line) {
 	  arrayadd(mask, &(EvalList[sel].line));
 	  NgraphApp.Changed = TRUE;
+	} else if ((* (int *) arraynget(mask, 0)) > EvalList[sel].line) {
+	  arrayins(mask, &(EvalList[sel].line), 0);
+	} else {
+	  for (j = 0; j < masknum; j++) {
+	    iline = *(int *) arraynget(mask, j);
+	    if (iline == EvalList[sel].line) {
+	      break;
+	    } else if (iline > EvalList[sel].line) {
+	      arrayins(mask, &(EvalList[sel].line), j);
+	      break;
+	    }
+	  }
 	}
       }
       arraydel(&SelList);

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.36 2008/09/24 09:50:43 hito Exp $
+ * $Id: ofile.c,v 1.37 2008/10/03 03:53:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1728,6 +1728,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
   char dxstat, dystat, d2stat, d3stat;
   struct f2ddata_buf *buf;
 
+#if 0
   masked = FALSE;
   for (j = 0; j < fp->masknum; j++) {
     if (fp->mask[j] == fp->line) {
@@ -1735,6 +1736,9 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
       break;
     }
   }
+#else
+  masked = (bsearch_int(fp->mask, fp->masknum, fp->line) >= 0);
+#endif
 
   moved = FALSE;
   if (! masked) {
@@ -2269,10 +2273,14 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
     && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
       rcode=getdataarray(buf,maxdim,&(fp->count),gdata,gstat,fp->ifs_buf,fp->csv);
       memfree(buf);
+#if 0
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
       if (j!=fp->masknum) masked=TRUE;
       else masked=FALSE;
+#else
+      masked = (bsearch_int(fp->mask, fp->masknum, fp->line) >= 0);
+#endif
       if (rcode==-1) {
 	memfree(gdata);
 	memfree(gstat);
@@ -2371,10 +2379,14 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
     && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
       rcode=getdataarray(buf,maxdim,&(fp->count),data,stat,fp->ifs_buf,fp->csv);
       memfree(buf);
+#if 0
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
       if (j!=fp->masknum) masked=TRUE;
       else masked=FALSE;
+#else
+      masked = (bsearch_int(fp->mask, fp->masknum, fp->line) >= 0);
+#endif
       if (rcode==-1) return -1;
       dx=dy=d2=d3=0;
       dxstat=dystat=d2stat=d3stat=MUNDEF;
@@ -6481,6 +6493,19 @@ update_field(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
+int update_mask(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct narray *array;
+  int num, *adata;
+
+  update_field(obj, inst, rval, argc, argv);
+
+  array = (struct narray *) argv[2];
+  arraysort_int(array);
+
+  return 0;
+}
+
 static int foputabs(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   update_field(obj, inst, rval, argc, argv);
@@ -6533,7 +6558,7 @@ struct objtable file2d[] = {
   {"head_skip",NINT,NREAD|NWRITE,foputabs,NULL,0},
   {"read_step",NINT,NREAD|NWRITE,foputge1,NULL,0},
   {"final_line",NINT,NREAD|NWRITE,f2dput,NULL,0},
-  {"mask",NIARRAY,NREAD|NWRITE,update_field,NULL,0},
+  {"mask",NIARRAY,NREAD|NWRITE,update_mask,NULL,0},
   {"move_data",NIARRAY,NREAD|NWRITE,update_field,NULL,0},
   {"move_data_x",NDARRAY,NREAD|NWRITE,update_field,NULL,0},
   {"move_data_y",NDARRAY,NREAD|NWRITE,update_field,NULL,0},

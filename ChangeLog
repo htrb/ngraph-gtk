@@ -1,3 +1,16 @@
+2008-10-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (update_mask): add.
+	(file2d): use update_mask() for "mask" field.
+	(getdataraw, getdata2, getdata_sub2): use bsearch_int() to check
+	mask.
+
+	* src/gtk/x11view.c (Evaluate): add masked line as sorted.
+
+	* src/object.c (cmp_func_int, arraysort_int): add.
+
+	* src/mathfn.c (bsearch_int): add.
+
 2008-09-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerEvKeyDown): add case "GDK_Page_Up" and

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.10 2008/09/18 01:35:10 hito Exp $
+ * $Id: object.c,v 1.11 2008/10/03 03:53:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -695,6 +695,27 @@ void *arraylast(struct narray *array)
   data=array->data;
   base=array->base;
   return data+(array->num-1)*base;
+}
+
+static int
+cmp_func_int(const void *p1, const void *p2)
+{
+  return (* (int *) p1) - (* (int *) p2);
+}
+
+void
+arraysort_int(struct narray *array)
+{
+  int num, *adata;
+
+  if (array == NULL)
+    return;
+
+  num = arraynum(array);
+  adata = arraydata(array);
+  if (num > 1)
+    qsort(adata, num, sizeof(int), cmp_func_int);
+
 }
 
 #define ARGBUFNUM 10
