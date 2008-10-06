@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.5 2008/09/22 08:56:31 hito Exp $
+ * $Id: shellcm.c,v 1.6 2008/10/06 07:05:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -991,11 +991,8 @@ str_calc(char *str, double *val, int *r)
 int cmdexpr(struct nshell*nshell,int argc,char **argv)
 {
   int rcode,ecode;
-  char *code;
   double vd;
   int i;
-  double memory[MEMORYNUM];
-  char memorystat[MEMORYNUM];
   char *s;
 
   if (argc<1) {

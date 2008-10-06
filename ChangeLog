@@ -1,5 +1,13 @@
 2008-10-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (FileMaskDialogClose): don't check if the line
+	number is already contained in mask.
+
+	* cakk arrayuniq_int() after call arrayuniq_int().
+
+	* src/object.c (arrayndel): use memmove() instead of memcpy().
+	(arrayuniq_int): add
+
 	* src/gtk/x11view.c (Evaluate): call file::modified when add pask
 	points.
 

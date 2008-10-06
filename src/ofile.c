@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.39 2008/10/06 03:45:19 hito Exp $
+ * $Id: ofile.c,v 1.40 2008/10/06 07:05:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -6523,13 +6523,12 @@ update_field(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 int update_mask(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
-  int num, *adata;
 
   update_field(obj, inst, rval, argc, argv);
 
   array = (struct narray *) argv[2];
   arraysort_int(array);
-
+  arrayuniq_int(array);
   return 0;
 }
 

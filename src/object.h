@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.5 2008/10/03 03:53:53 hito Exp $
+ * $Id: object.h,v 1.6 2008/10/06 07:05:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -218,6 +218,7 @@ struct narray *arrayput2(struct narray *array,char **val,unsigned int idx);
 void *arraynget(struct narray *array,unsigned int idx);
 void *arraylast(struct narray *array);
 void arraysort_int(struct narray *array);
+void arrayuniq_int(struct narray *array);
 
 int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);

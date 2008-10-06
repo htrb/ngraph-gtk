@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.70 2008/10/06 03:45:20 hito Exp $
+ * $Id: x11view.c,v 1.71 2008/10/06 07:05:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -867,7 +867,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
   char mes[256];
   int ret;
   int selnum, sel;
-  int masknum, iline;
+  int masknum;
   struct narray *mask;
   struct Viewer *d;
 

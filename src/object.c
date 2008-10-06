@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.11 2008/10/03 03:53:53 hito Exp $
+ * $Id: object.c,v 1.12 2008/10/06 07:05:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -601,7 +601,6 @@ struct narray *arrayins2(struct narray *array, char **val, unsigned int idx)
 
 struct narray *arrayndel(struct narray *array,unsigned int idx)
 {
-  unsigned int i;
   int base;
   char *data;
 
@@ -609,8 +608,13 @@ struct narray *arrayndel(struct narray *array,unsigned int idx)
   if (idx>=array->num) return NULL;
   data=array->data;
   base=array->base;
+#if 0
   for (i=idx+1;i<array->num;i++)
     memcpy(data+(i-1)*base,data+i*base,base);
+#else
+  data += (idx * base);
+  memmove(data, data + base, base * (array->num - idx - 1));
+#endif
   (array->num)--;
   return array;
 }
@@ -716,6 +720,31 @@ arraysort_int(struct narray *array)
   if (num > 1)
     qsort(adata, num, sizeof(int), cmp_func_int);
 
+}
+
+void
+arrayuniq_int(struct narray *array)
+{
+  int i, val, num, *adata;
+
+  if (array == NULL)
+    return;
+
+  num = arraynum(array);
+  if (num < 2)
+    return;
+
+  adata = arraydata(array);
+  val = adata[0];
+  for (i = 1; i < num;) {
+    if (adata[i] == val) {
+      arrayndel(array, i);
+      num--;
+    } else {
+      val = adata[i];
+      i++;
+    }
+  }
 }
 
 #define ARGBUFNUM 10

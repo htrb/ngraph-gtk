@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.54 2008/09/22 02:53:34 hito Exp $
+ * $Id: x11file.c,v 1.55 2008/10/06 07:05:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1635,7 +1635,7 @@ static void
 FileMaskDialogClose(GtkWidget *w, void *data)
 {
   struct FileMaskDialog *d;
-  int ret, j, masknum, line, a;
+  int ret, a;
   struct narray *mask;
   GtkTreeIter iter;
   gboolean state;
@@ -1672,15 +1672,7 @@ FileMaskDialogClose(GtkWidget *w, void *data)
     if (mask == NULL)
       mask = arraynew(sizeof(int));
 
-    masknum = arraynum(mask);
-    for (j = 0; j < masknum; j++) {
-      line = *(int *) arraynget(mask, j);
-      if (line == a)
-	break;
-    }
-    if (j == masknum)
-      arrayadd(mask, &a);
-
+    arrayadd(mask, &a);
     state = list_store_iter_next(d->list, &iter);
   }
   putobj(d->Obj, "mask", d->Id, mask);
