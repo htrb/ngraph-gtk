@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.69 2008/10/03 07:13:52 hito Exp $
+ * $Id: x11view.c,v 1.70 2008/10/06 03:45:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -954,12 +954,17 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
 
 	if (masknum == 0 || (* (int *) arraynget(mask, masknum - 1)) < EvalList[sel].line) {
 	  arrayadd(mask, &(EvalList[sel].line));
+	  exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
 	  NgraphApp.Changed = TRUE;
 	} else if ((* (int *) arraynget(mask, 0)) > EvalList[sel].line) {
 	  arrayins(mask, &(EvalList[sel].line), 0);
+	  exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
+	  NgraphApp.Changed = TRUE;
 	} else {
 	  if (bsearch_int(arraydata(mask), masknum, EvalList[sel].line, &j) == 0) {
 	    arrayins(mask, &(EvalList[sel].line), j);
+	    exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
+	    NgraphApp.Changed = TRUE;
 	  }
 	}
       }

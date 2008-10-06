@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.38 2008/10/03 07:13:51 hito Exp $
+ * $Id: ofile.c,v 1.39 2008/10/06 03:45:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -561,6 +561,7 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   fp->csv=csv;
   fp->line=0;
   fp->datanum=0;
+  fp->num=0;
   fp->dline=0;
   fp->count=0;
   fp->eof=FALSE;
@@ -753,7 +754,7 @@ void reopendata(struct f2ddata *fp)
   fp->marktype=fp->marktype0;
 }
 
-void closedata(struct f2ddata *fp)
+void closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 {
   int j,num2,*data2;
   char *inst1,*inst;
@@ -774,6 +775,9 @@ void closedata(struct f2ddata *fp)
   memfree(fp->buf);
   if ((inst=chkobjinst(fp->obj,fp->id))!=NULL)
     _putobj(fp->obj,"data_num",inst,&(fp->datanum));
+
+  f2dlocal->num = fp->datanum;
+
   memfree(fp);
 }
 
@@ -1377,7 +1381,7 @@ int f2ddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"_local",inst,&f2dlocal);
-  closedata(f2dlocal->data);
+  closedata(f2dlocal->data, f2dlocal);
   memfree(f2dlocal->codex);
   memfree(f2dlocal->codey);
   memfree(f2dlocal->codef);
@@ -2234,7 +2238,7 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
 */
 {
   char *buf;
-  int i,j,step,rcode;
+  int i,step,rcode;
   double val;
   char st;
   double dx2,dy2;
@@ -2350,7 +2354,7 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 */
 {
   char *buf;
-  int i,j,step,rcode;
+  int i,step,rcode;
   int masked;
   double dx,dy,d2,d3;
   char dxstat,dystat,d2stat,d3stat;
@@ -2519,7 +2523,7 @@ static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   }
 
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, local);
     return 1;
   }
 
@@ -3954,7 +3958,6 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
       datanum2=fp->datanum;
       reopendata(fp);
       if (hskipdata(fp)!=0) {
-        closedata(fp);
         arraydel(&data);
         return 1;
       }
@@ -4140,13 +4143,13 @@ int f2ddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if ((fp=opendata(obj,inst,f2dlocal,TRUE,FALSE))==NULL) return 1;
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp);
+      closedata(fp, f2dlocal);
       return 1;
     }
     reopendata(fp);
   }
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     return 1;
   }
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
@@ -4183,7 +4186,7 @@ int f2ddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     /* not reachable */
     rcode = -1;
   }
-  closedata(fp);
+  closedata(fp, f2dlocal);
   if (rcode==-1) return 1;
   GRAaddlist(GC,obj,inst,(char *)argv[0],"redraw");
   return 0;
@@ -4417,13 +4420,13 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if ((fp=opendata(obj,inst,f2dlocal,TRUE,FALSE))==NULL) return 1;
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp);
+      closedata(fp, f2dlocal);
       return 1;
     }
     reopendata(fp);
   }
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     return 1;
   }
   array=arraynew(sizeof(double));
@@ -4530,7 +4533,7 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
     if (arraynum(array)>=(limit*3)) break;
   }
-  closedata(fp);
+  closedata(fp, f2dlocal);
   num=arraynum(array);
   if (num/3>0) *(struct narray **)rval=array;
   else arrayfree(array);
@@ -5109,19 +5112,19 @@ int f2dopendata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (strcmp0((char *)argv[1],"opendatac")==0) f2dlocal->coord=TRUE;
   else f2dlocal->coord=FALSE;
   fp=f2dlocal->data;
-  if (fp!=NULL) closedata(fp);
+  if (fp!=NULL) closedata(fp, f2dlocal);
   f2dlocal->data=NULL;
   if ((fp=opendata(obj,inst,f2dlocal,f2dlocal->coord,FALSE))==NULL) return 1;
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp);
+      closedata(fp, f2dlocal);
       f2dlocal->data=NULL;
       return 1;
     }
     reopendata(fp);
   }
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     f2dlocal->data=NULL;
     return 1;
   }
@@ -5144,7 +5147,7 @@ int f2dgetdata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   rcode=getdata(fp);
   f2dsettbl(inst,f2dlocal,fp);
   if (rcode!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     f2dlocal->data=NULL;
     return 1;
   }
@@ -5163,7 +5166,7 @@ int f2dclosedata(struct objlist *obj,char *inst,char *rval,
   fp->dx=fp->dy=fp->d2=fp->d3=0;
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MEOF;
   f2dsettbl(inst,f2dlocal,fp);
-  closedata(fp);
+  closedata(fp, f2dlocal);
   f2dlocal->data=NULL;
   return 0;
 }
@@ -5175,11 +5178,11 @@ int f2dopendataraw(struct objlist *obj,char *inst,char *rval,int argc,char **arg
 
   _getobj(obj,"_local",inst,&f2dlocal);
   fp=f2dlocal->data;
-  if (fp!=NULL) closedata(fp);
+  if (fp!=NULL) closedata(fp, f2dlocal);
   f2dlocal->data=NULL;
   if ((fp=opendata(obj,inst,f2dlocal,FALSE,TRUE))==NULL) return 1;
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     f2dlocal->data=NULL;
     return 1;
   }
@@ -5228,7 +5231,7 @@ int f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv
   if (maxdim>FILE_OBJ_MAXCOL) maxdim=FILE_OBJ_MAXCOL;
   rcode=getdataraw(fp,maxdim,gdata,gstat);
   if (rcode!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     f2dlocal->data=NULL;
     memfree(gdata);
     memfree(gstat);
@@ -5260,8 +5263,28 @@ int f2dclosedataraw(struct objlist *obj,char *inst,char *rval,
   _getobj(obj,"_local",inst,&f2dlocal);
   fp=f2dlocal->data;
   if (fp==NULL) return 0;
-  closedata(fp);
+  closedata(fp, f2dlocal);
   f2dlocal->data=NULL;
+  return 0;
+}
+
+static time_t 
+get_mtime(struct objlist *obj, char *inst, time_t *mtime)
+{
+  struct stat buf;
+  int r;
+  char *file;
+
+  _getobj(obj, "file", inst, &file);
+  
+  if (file == NULL)
+    return 1;
+
+  r = stat(file, &buf);
+  if (r)
+    return 1;
+
+  *mtime = buf.st_mtime;
   return 0;
 }
 
@@ -5283,10 +5306,12 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
   field=argv[1];
   _getobj(obj,"_local",inst,&f2dlocal);
 
-  fp = opendata(obj, inst, f2dlocal, FALSE, FALSE);
-  if (fp == NULL) return 1;
+  /* evaluate ov mtime must be done before call opendata(). */
 
-  if (f2dlocal->mtime_stat == fp->mtime) {
+  if (get_mtime(obj, inst, &mtime))
+    return 1;
+
+  if (f2dlocal->mtime_stat == mtime) {
     minx = f2dlocal->dminx;
     maxx = f2dlocal->dmaxx;
     miny = f2dlocal->dminy;
@@ -5298,20 +5323,22 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
     dnum =  f2dlocal->num;
 
     if (f2dlocal->dminx != HUGE_VAL || strcmp(field, "dnum") == 0) {
-      closedata(fp);
       goto End;
     }
   }
 
+  fp = opendata(obj, inst, f2dlocal, FALSE, FALSE);
+  if (fp == NULL) return 1;
+
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp);
+      closedata(fp, f2dlocal);
       return 1;
     }
     reopendata(fp);
   }
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     return 1;
   }
   minxstat=MUNDEF;
@@ -5429,7 +5456,7 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
   }
   interrupt = fp->interrupt;
   mtime = fp->mtime;
-  closedata(fp);
+  closedata(fp, f2dlocal);
   if (rcode==-1) return -1;
   if (dnum!=0) {
     sumx=sumx/(double )dnum;
@@ -5502,13 +5529,13 @@ int f2dstat2(struct objlist *obj,char *inst,char *rval,
   if ((fp=opendata(obj,inst,f2dlocal,FALSE,FALSE))==NULL) return 1;
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp);
+      closedata(fp, f2dlocal);
       return 1;
     }
     reopendata(fp);
   }
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     return 1;
   }
   dx=dy=d2=d3=0;
@@ -5536,7 +5563,7 @@ int f2dstat2(struct objlist *obj,char *inst,char *rval,
       }
     }
   }
-  closedata(fp);
+  closedata(fp, f2dlocal);
   if (!find) return -1;
   if ((str=memalloc(24))==NULL) return -1;
   if (strcmp(field,"dx")==0) {
@@ -5581,13 +5608,13 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
 
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp);
+      closedata(fp, f2dlocal);
       return 1;
     }
     reopendata(fp);
   }
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     return 1;
   }
   minxstat=MUNDEF;
@@ -5690,7 +5717,7 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
       break;
     }
   }
-  closedata(fp);
+  closedata(fp, f2dlocal);
   if (rcode==-1) return -1;
   if (_putobj(obj,"minx",inst,&minx)) return 1;
   if (_putobj(obj,"maxx",inst,&maxx)) return 1;
@@ -6414,14 +6441,14 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
 
   if (fp->need2pass) {
     if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp);
+      closedata(fp, f2dlocal);
       error2(obj, ERRREAD, data_file);
       return 1;
     }
     reopendata(fp);
   }
   if (hskipdata(fp)!=0) {
-    closedata(fp);
+    closedata(fp, f2dlocal);
     error2(obj, ERRREAD, data_file);
     return 1;
   }
@@ -6430,7 +6457,7 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
   if (fp2 == NULL) {
     //    error2(obj, ERROPEN, file);
     error22(obj, ERRUNKNOWN, strerror(errno), file);
-    closedata(fp);
+    closedata(fp, f2dlocal);
     return 1;
   }
 
@@ -6438,7 +6465,7 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
   if (type==3) {
     _getobj(obj,"interpolation",inst,&intp);
     if (curveoutfile(obj,fp,fp2,intp,div)!=0) {
-      closedata(fp);
+      closedata(fp, f2dlocal);
       fclose(fp2);
       error2(obj, ERRWRITE, file);
       return 1;
@@ -6476,7 +6503,7 @@ int f2doutputfile(struct objlist *obj,char *inst,char *rval,
     error2(obj, ERRWRITE, file);
     r = 1;
   }
-  closedata(fp);
+  closedata(fp, f2dlocal);
   fclose(fp2);
   return 0;
 }
@@ -6631,6 +6658,7 @@ struct objtable file2d[] = {
   {"tight",NVFUNC,NREAD|NEXEC,f2dtight,NULL,0},
   {"save_config",NVFUNC,NREAD|NEXEC,f2dsaveconfig,NULL,0},
   {"output_file",NVFUNC,NREAD|NEXEC,f2doutputfile,"sib",0},
+  {"modified",NVFUNC,NEXEC,update_field,NULL,0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.c,v 1.3 2008/10/03 07:13:51 hito Exp $
+ * $Id: mathfn.c,v 1.4 2008/10/06 03:45:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -786,7 +786,7 @@ bsearch_int(int *ary, int n, int val, int *idx)
     if (idx)
       *idx = 0;
 
-    return 0;
+    return FALSE;
   }
 
   min = 0;
@@ -798,7 +798,7 @@ bsearch_int(int *ary, int n, int val, int *idx)
     if (ary[i] == val) {
       if (idx)
 	*idx = i;
-      return 1;
+      return TRUE;
     }
 
     if (min >= max) {
@@ -807,7 +807,7 @@ bsearch_int(int *ary, int n, int val, int *idx)
 	  i++;
 	*idx = i;
       }
-      return 0;
+      return FALSE;
     }
 
     if (ary[i] < val) {
@@ -817,5 +817,5 @@ bsearch_int(int *ary, int n, int val, int *idx)
     }
   }
 
-  return 0;
+  return FALSE;
 }

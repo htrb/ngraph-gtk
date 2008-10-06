@@ -1,3 +1,19 @@
+2008-10-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (Evaluate): call file::modified when add pask
+	points.
+
+	* src/ofile.c (opendata): initialize fp->num.
+	(closedata): addd argument "f2dlocal".
+	(closedata): set fp->datanum to f2dlocal->num.
+	(f2ddone, getminmaxdata, f2ddraw, f2devaluate, f2dopendata)
+	(f2dgetdata, f2dclosedata, f2dopendataraw, f2dgetdataraw)
+	(f2dclosedataraw, f2dstat, f2dstat2, f2dboundings)
+	(f2doutputfile): add argument to closedata().
+	(get_mtime): add.
+	(f2dstat): use get_mtime() to check mtime.
+	(fitout): remove closedata().
+
 2008-10-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (update_mask): add.
