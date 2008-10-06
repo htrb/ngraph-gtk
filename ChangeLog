@@ -3,16 +3,16 @@
 	* src/gtk/x11file.c (FileMaskDialogClose): don't check if the line
 	number is already contained in mask.
 
-	* cakk arrayuniq_int() after call arrayuniq_int().
+	* call arrayuniq_int() after call arrayuniq_int().
 
 	* src/object.c (arrayndel): use memmove() instead of memcpy().
 	(arrayuniq_int): add
 
-	* src/gtk/x11view.c (Evaluate): call file::modified when add pask
+	* src/gtk/x11view.c (Evaluate): call file::modified when add mask
 	points.
 
 	* src/ofile.c (opendata): initialize fp->num.
-	(closedata): addd argument "f2dlocal".
+	(closedata): add argument "f2dlocal".
 	(closedata): set fp->datanum to f2dlocal->num.
 	(f2ddone, getminmaxdata, f2ddraw, f2devaluate, f2dopendata)
 	(f2dgetdata, f2dclosedata, f2dopendataraw, f2dgetdataraw)
@@ -40,7 +40,7 @@
 	* src/gtk/x11view.c (ViewerEvKeyDown): add case "GDK_Page_Up" and
 	"GDK_Page_Down".
 	(ViewerEvKeyDown): in case of GDK_Down, GDK_Up, GDK_Left and
-	GDK_Right, scroll screnn if no objects are focused.
+	GDK_Right, scroll screen if no objects are focused.
 
 2008-09-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -50,8 +50,8 @@
 
 2008-09-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* initfile/.Ngraph (cheke_set): add.
-	* initfile/.Ngraph: use cheke_set to initialize file object.
+	* initfile/.Ngraph (check_set): add.
+	* initfile/.Ngraph: use check_set to initialize file object.
 	
 
 2008-09-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -163,13 +163,13 @@
 	* src/gtk/x11print.c (draw_gra): check the return value of
 	exeobj().
 
-	* src/gtk/x11gui.c (fsok): set NULL to data->ext when fiter name
+	* src/gtk/x11gui.c (fsok): set NULL to data->ext when filer name
 	is "All".
 	(fsok): call error22() after call gdk_beep().
 
 	* src/gtk/ogra2cairofile.c (create_cairo): add argument 'err' and
 	set cairo_status to err.
-	(gra2cairofile_output): call error2() when some error is occured
+	(gra2cairofile_output): call error2() when some error is occurred
 	in the case of 'I' and 'E'.
 	(addgra2cairofile): add error messages.
 
@@ -187,10 +187,10 @@
 
 2008-09-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/object.c (add_onj_to_hash): add.
-	(addobject): use set obhect name and table position to hash.
-	(chkobject): use hash to serach object.
-	(chkobjtblpos): use hash to serach table position.
+	* src/object.c (add_obj_to_hash): add.
+	(addobject): set object name and table position to hash.
+	(chkobject): use hash to search object.
+	(chkobjtblpos): use hash to search table position.
 	(chkobjoffset, chkobjfield): use chkobjtblpos().
 
 	* src/object.h (struct objlist): add member 'table_hash'.
@@ -650,7 +650,7 @@
 
 	* src/gtk/x11axis.c (Alist): type of 'x', 'y', 'dir' and 'len' are
 	G_TYPE_DOUBLE.
-	(axis_list_set_val): now position and lendth are shown in mm.
+	(axis_list_set_val): now position and length are shown in mm.
 	direction is shown in degree.
 
 	* src/gtk/x11file.c (Flist): type of 'size' and 'width' are
@@ -897,7 +897,7 @@
 
 	* src/gtk/ogra2x11.c (gtkinit): gtkclose() is now called when
 	"delete-event" signal is emitted.
-	object 'gra2gtk' is now chiled of 'gra2cairo'.
+	object 'gra2gtk' is now child of 'gra2cairo'.
 
 2008-06-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -1028,11 +1028,11 @@
 
 	* src/gra.c (_GRAredraw): set "redraw_flag" as FALSE when redrawf
 	is zero.
-	(GRAredraw2, GRAredraw, _GRAredraw): replacec redrawf to redraw_num.
+	(GRAredraw2, GRAredraw, _GRAredraw): replace redrawf to redraw_num.
 
 	* src/omerge.c (merge): add "line_num"
 
-	* src/oaxis.c (axisautoscalefile): display "groupe" property when
+	* src/oaxis.c (axisautoscalefile): display "group" property when
 	the property is not NULL.
 
 	* src/gtk/x11axis.c (axis_list_set_val): get "group" instead of "name".

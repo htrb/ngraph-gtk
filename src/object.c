@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.12 2008/10/06 07:05:48 hito Exp $
+ * $Id: object.c,v 1.13 2008/10/06 10:37:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -895,7 +895,7 @@ struct objlist *chkobjroot()
 
 #if USE_HASH
 static int
-add_onj_to_hash(char *name, char *alias, void *obj)
+add_obj_to_hash(char *name, char *alias, void *obj)
 {
   if (ObjHash == NULL) {
     ObjHash = nhash_new();

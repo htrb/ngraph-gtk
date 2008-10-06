@@ -26,7 +26,7 @@ save_image() {
     del gra2cairofile
 }
 
-cheke_set() {
+check_set() {
     if [ -n "$3" ]
     then
 	VAL=$3
@@ -273,28 +273,28 @@ do
 	;;
 	*)
 		new file file:$1
-		cheke_set file x $XCOLUMN
-		cheke_set file y $YCOLUMN
-		cheke_set file type $PLOTTYPE
-		cheke_set file mark_type $MARKTYPE
-		cheke_set file mark_size $MARKSIZE
-		cheke_set file line_style $LINESTYLE
-		cheke_set file line_width $LINEWIDTH
-		cheke_set file R $COLORR
-		cheke_set file G $COLORG
-		cheke_set file B $COLORB
-		cheke_set file R2 $COLORR2
-		cheke_set file G2 $COLORG2
-		cheke_set file B2 $COLORB2
-		cheke_set file head_skip $HEADSKIP
-		cheke_set file read_step $READSTEP
-		cheke_set file final_line $FINALLINE
-		cheke_set file smooth_x $AVERAGEX
-		cheke_set file smooth_y $AVERAGEY
-		cheke_set file math_x $MATHX
-		cheke_set file math_y $MATHY
-		cheke_set file axis_x "$XAXIS" axis
-		cheke_set file axis_y "$YAXIS" axis
+		check_set file x $XCOLUMN
+		check_set file y $YCOLUMN
+		check_set file type $PLOTTYPE
+		check_set file mark_type $MARKTYPE
+		check_set file mark_size $MARKSIZE
+		check_set file line_style $LINESTYLE
+		check_set file line_width $LINEWIDTH
+		check_set file R $COLORR
+		check_set file G $COLORG
+		check_set file B $COLORB
+		check_set file R2 $COLORR2
+		check_set file G2 $COLORG2
+		check_set file B2 $COLORB2
+		check_set file head_skip $HEADSKIP
+		check_set file read_step $READSTEP
+		check_set file final_line $FINALLINE
+		check_set file smooth_x $AVERAGEX
+		check_set file smooth_y $AVERAGEY
+		check_set file math_x $MATHX
+		check_set file math_y $MATHY
+		check_set file axis_x "$XAXIS" axis
+		check_set file axis_y "$YAXIS" axis
 		if [ $LOADSETTINGS = 1 ]; then
 			file::load_settings
 		fi
