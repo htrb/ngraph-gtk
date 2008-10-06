@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.13 2008/10/06 10:37:51 hito Exp $
+ * $Id: object.c,v 1.14 2008/10/06 14:39:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -963,7 +963,7 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
   if ((objnew=memalloc(sizeof(struct objlist)))==NULL) return NULL;
 
 #if USE_HASH
-  if (add_onj_to_hash(name, alias, objnew)) {
+  if (add_obj_to_hash(name, alias, objnew)) {
     memfree(objnew);
     return NULL;
   }
