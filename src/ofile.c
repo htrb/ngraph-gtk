@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.40 2008/10/06 07:05:48 hito Exp $
+ * $Id: ofile.c,v 1.41 2008/10/07 07:45:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4960,36 +4960,25 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         } else err=TRUE;
         break;
       case 'm':
-        if (po[2]=='x') {
-          for (i=3;(po[i]!='\0') && (strchr(" \t",po[i])==NULL);i++);
-          if (i>3) {
-            if ((s=memalloc(i-2))!=NULL) {
-              strncpy(s,po+3,i-3);
-              s[i-3]='\0';
-            } else {
-              err=TRUE;
-              break;
-            }
-          } else s=NULL;
-          putobj(obj,"math_x",id,s);
-          po+=i;
-        } else if (po[2]=='y') {
-          for (i=3;(po[i]!='\0') && (strchr(" \t",po[i])==NULL);i++);
-          if (i>3) {
-            if ((s=memalloc(i-2))!=NULL) {
-              strncpy(s,po+3,i-3);
-              s[i-3]='\0';
-            } else {
-              err=TRUE;
-              break;
-            }
-          } else s=NULL;
-          putobj(obj,"math_y",id,s);
-          po+=i;
-        } else err=TRUE;
+        if (po[2] != 'x' && po[2] != 'y') {
+	  err = TRUE;
+	  break;
+	}
+
+	for (i=3;(po[i]!='\0') && (strchr(" \t",po[i])==NULL);i++);
+	if (i>3) {
+	  if ((s=memalloc(i-2))!=NULL) {
+	    strncpy(s,po+3,i-3);
+	    s[i-3]='\0';
+	  } else {
+	    err=TRUE;
+	    break;
+	  }
+	} else s=NULL;
+	putobj(obj, (po[2] == 'x') ?  "math_x" : "math_y", id, s);
+	po+=i;
         break;
       default:
-        err=TRUE;
         break;
       }
     } else err=TRUE;
