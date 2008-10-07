@@ -1,3 +1,8 @@
+2008-10-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11scrip.c (CmScriptExec): call
+	gdk_window_invalidate_rect() after execute script.
+
 2008-10-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileMaskDialogClose): don't check if the line

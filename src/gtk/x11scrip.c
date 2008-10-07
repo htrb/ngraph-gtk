@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.4 2008/07/14 07:42:51 hito Exp $
+ * $Id: x11scrip.c,v 1.5 2008/10/07 04:02:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -232,5 +232,6 @@ CmScriptExec(void)
     } else
       memfree(name);
     delobj(shell, newid);
+    gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
   }
 }
