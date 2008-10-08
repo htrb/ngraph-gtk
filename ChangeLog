@@ -1,5 +1,10 @@
 2008-10-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11graph.c (SwitchDialogDown, SwitchDialogUp): add.
+	(SwitchDialogSetup): add 'GO UP' and 'GO DOWN' button.
+	(SwitchDialogLast): select last item after move object.
+	(SwitchDialogTop): select first item after move object.
+
 	* src/gtk/x11view.c (ViewDelete): set mouse cursor to GDK_LEFT_PTR
 	after delete objects.
 

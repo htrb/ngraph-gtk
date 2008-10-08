@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.18 2008/09/12 09:12:08 hito Exp $
+ * $Id: x11graph.c,v 1.19 2008/10/08 11:18:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -402,6 +402,95 @@ switch_dialog_last_cb(gpointer data, gpointer user_data)
 }
 
 static void
+SwitchDialogUp(GtkWidget *w, gpointer client_data)
+{
+  GtkTreeSelection *selected;
+  GList *list;
+  struct SwitchDialog *d;
+  int n, i, k, *ary;
+  GtkTreePath *path;
+
+  d = (struct SwitchDialog *) client_data;
+  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
+  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+
+  if (list == NULL) {
+    return;
+  }
+
+  path = (GtkTreePath *) g_list_nth_data(list, 0);
+  n = g_list_length(list);
+
+  i = -1;
+  if (n == 1) {
+    ary = gtk_tree_path_get_indices(path);
+
+    if (ary) {
+      i = ary[0];
+      if (i > 0) {
+	k = *(int *) arraynget(&(d->idrawrable), i);
+	arrayndel(&(d->idrawrable), i);
+	i--;
+	arrayins(&(d->idrawrable), &k, i);
+      }
+    }
+  }
+
+  g_list_foreach(list, free_tree_path_cb, NULL);
+  g_list_free(list);
+
+  SwitchDialogSetupItem(d->widget, d);
+
+  if (i >= 0)
+    list_store_select_nth(d->drawlist, i);
+}
+
+static void
+SwitchDialogDown(GtkWidget *w, gpointer client_data)
+{
+  GtkTreeSelection *selected;
+  GList *list;
+  struct SwitchDialog *d;
+  int n, i, k, num, *ary;
+  GtkTreePath *path;
+
+  d = (struct SwitchDialog *) client_data;
+  selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
+  list = gtk_tree_selection_get_selected_rows(selected, NULL);
+
+  if (list == NULL) {
+    return;
+  }
+
+  path = (GtkTreePath *) g_list_nth_data(list, 0);
+  n = g_list_length(list);
+  num = list_store_get_num(d->drawlist);
+
+  i = -1;
+  if (n == 1) {
+    ary = gtk_tree_path_get_indices(path);
+
+    if (ary) {
+      i = ary[0];
+      if (i < num - 1) {
+	k = *(int *) arraynget(&(d->idrawrable), i);
+	arrayndel(&(d->idrawrable), i);
+	i++;
+	arrayins(&(d->idrawrable), &k, i);
+      }
+    }
+  }
+
+  g_list_foreach(list, free_tree_path_cb, NULL);
+  g_list_free(list);
+
+  SwitchDialogSetupItem(d->widget, d);
+
+  if (i >= 0)
+    list_store_select_nth(d->drawlist, i);
+}
+
+static void
 SwitchDialogTop(GtkWidget *w, gpointer client_data)
 {
   GtkTreeSelection *selected;
@@ -418,6 +507,7 @@ SwitchDialogTop(GtkWidget *w, gpointer client_data)
     g_list_free(list);
   }
   SwitchDialogSetupItem(d->widget, d);
+  list_store_select_nth(d->drawlist, 0);
 }
 
 static void
@@ -426,6 +516,7 @@ SwitchDialogLast(GtkWidget *w, gpointer client_data)
   struct SwitchDialog *d;
   GtkTreeSelection *selected;
   GList *list;
+  int n;
 
   d = (struct SwitchDialog *) client_data;
   selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
@@ -438,6 +529,8 @@ SwitchDialogLast(GtkWidget *w, gpointer client_data)
     g_list_free (list);
   }
   SwitchDialogSetupItem(d->widget, d);
+  n = list_store_get_num(d->drawlist);
+  list_store_select_nth(d->drawlist, n - 1);
 }
 
 static void
@@ -525,6 +618,14 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_button_new_from_stock(GTK_STOCK_GOTO_TOP);
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogTop), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+    g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogUp), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+    g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogDown), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     w = gtk_button_new_from_stock(GTK_STOCK_GOTO_BOTTOM);
