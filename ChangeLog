@@ -1,6 +1,10 @@
 2008-10-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/otext.c (textprintf): add 'G' to the conversion specifier.
+	(textprintf): check format string.
+
 	* src/gra.c (GRAexpandpf): add 'G' to the conversion specifier.
+	(GRAexpandpf): check format string.
 
 2008-10-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
