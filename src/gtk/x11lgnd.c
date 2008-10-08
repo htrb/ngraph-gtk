@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.28 2008/09/19 07:16:20 hito Exp $
+ * $Id: x11lgnd.c,v 1.29 2008/10/08 05:02:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -513,6 +513,7 @@ legend_dialog_close(GtkWidget *w, void *data)
     ptr = strdup(str);
 
     if (ptr) {
+      char *org_str;
 #ifdef JAPANESE
 /* UTF-8 ---> SJIS */
       char *tmp;
@@ -522,10 +523,16 @@ legend_dialog_close(GtkWidget *w, void *data)
 	ptr = tmp;
       }
 #endif
-      if (sputobjfield(d->Obj, d->Id, "text", ptr) != 0) {
-	free(ptr);
-	return;
+      sgetobjfield(d->Obj, d->Id, "text", NULL, &org_str, FALSE, FALSE, FALSE);
+      if (org_str == NULL || strcmp(ptr, org_str)) {
+	if (sputobjfield(d->Obj, d->Id, "text", ptr) != 0) {
+	  memfree(org_str);
+	  free(ptr);
+	  return;
+	}
+	NgraphApp.Changed = TRUE;
       }
+      memfree(org_str);
       free(ptr);
     }
   }

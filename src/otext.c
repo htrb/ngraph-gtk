@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.4 2008/08/21 06:05:48 hito Exp $
+ * $Id: otext.c,v 1.5 2008/10/08 05:02:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -295,6 +295,7 @@ int textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *buf;
   int len1,len2,len;
   int vi,err;
+  long long int vll;
   double vd;
   char *endptr;
 
@@ -319,8 +320,12 @@ int textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
     po=i;
     if (format[po]=='%') {
-      for (i=1;(format[po+i]!='\0') 
-            && (strchr("diouxXeEfgcs%",format[po+i])==NULL);i++);
+      for (i = 1; format[po+i] != '\0' && strchr("diouxXeEfgGcs%",format[po+i]) == NULL; i++) {
+	if (strchr("$*qjzZtLh", format[i])) {
+          memfree(ret);
+          return 1;
+	}
+      }
       if (format[po+i]!='\0') {
         if ((format2=memalloc(i+2))==NULL) {
           memfree(ret);
@@ -341,26 +346,43 @@ int textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
             if (isdigit(s[j])) {
               len2=strtol(s+j,&endptr,10);
               if (len2<0) len2=0;
-            } else err=TRUE;
+            } else {
+	      err = TRUE;
+	    }
           }
         }
-        if (strchr(format2,'*')!=NULL) err=TRUE;
         if (!err) {
           len=len1+len2+256;
           switch (format[po+i]) {
           case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
-            vi=0;
-            if ((arg<argc2) && (argv2[arg]!=NULL)) {
-              vi=strtol(argv2[arg],&endptr,10);
-            }
-            arg++;
-            if ((buf=memalloc(len))!=NULL) {
-              sprintf(buf,format2,vi);
-              ret=nstrcat(ret,buf);
-              memfree(buf);
-            }
+	    if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+	      vll=0;
+	      if ((arg<argc2) && (argv2[arg]!=NULL)) {
+		vll=strtoll(argv2[arg],&endptr,10);
+	      }
+	      arg++;
+	      if ((buf=memalloc(len))!=NULL) {
+		sprintf(buf,format2,vll);
+		ret=nstrcat(ret,buf);
+		memfree(buf);
+	      }
+	    }else {
+	      vi=0;
+	      if ((arg<argc2) && (argv2[arg]!=NULL)) {
+		vi=strtol(argv2[arg],&endptr,10);
+	      }
+	      arg++;
+	      if ((buf=memalloc(len))!=NULL) {
+		sprintf(buf,format2,vi);
+		ret=nstrcat(ret,buf);
+		memfree(buf);
+	      }
+	    }
             break;
-          case 'e': case 'E': case 'f': case 'g':
+          case 'e': case 'E': case 'f': case 'g': case 'G':
+	    if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+	      break;
+	    }
             vd=0.0;
             if ((arg<argc2) && (argv2[arg]!=NULL)) {
               vd=strtod(argv2[arg],&endptr);

@@ -1,3 +1,7 @@
+2008-10-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAexpandpf): add 'G' to the conversion specifier.
+
 2008-10-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11scrip.c (CmScriptExec): call

@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.11 2008/09/18 01:35:10 hito Exp $
+ * $Id: gra.c,v 1.12 2008/10/08 05:02:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1763,7 +1763,8 @@ char *GRAexpandpf(char **s)
   int i,j,len,len1,len2,err;
   char *str,*format,*format2,*s2,*ret,*ret2;
   int quote;
-  int vi;
+  long int vi;
+  long long int vll;
   double vd;
   char *buf;
   char *endptr;
@@ -1802,8 +1803,11 @@ char *GRAexpandpf(char **s)
   (*s)++;
 
   if (format[0]=='%') {
-    for (i=1;(format[i]!='\0')
-         && (strchr("diouxXeEfgcs%",format[i])==NULL);i++);
+    for (i = 1; format[i] != '\0' && strchr("diouxXeEfgGcs%",format[i]) == NULL; i++) {
+      if (strchr("$*qjzZtLh", format[i])) {
+	goto errexit;
+      }
+    }
     if (format[i]!='\0') {
       if ((format2=memalloc(i+2))==NULL) goto errexit;
       strncpy(format2,format,i+1);
@@ -1824,25 +1828,36 @@ char *GRAexpandpf(char **s)
           } else err=TRUE;
         }
       }
-      if (strchr(format2,'*')!=NULL) err=TRUE;
       if (!err) {
         len=len1+len2+256;
         switch (format[i]) {
         case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
-          vi=strtol(str,&endptr,10);
-          if ((buf=memalloc(len))!=NULL) {
-            sprintf(buf,format2,vi);
-            ret=nstrcat(ret,buf);
-            memfree(buf);
-          }
+	  if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+	    vll = strtoll(str, &endptr, 10);
+	    if ((buf=memalloc(len))!=NULL) {
+	      sprintf(buf,format2,vll);
+	      ret=nstrcat(ret,buf);
+	      memfree(buf);
+	    }
+	  }else {
+	    vi=strtol(str,&endptr,10);
+	    if ((buf=memalloc(len))!=NULL) {
+	      sprintf(buf,format2,vi);
+	      ret=nstrcat(ret,buf);
+	      memfree(buf);
+	    }
+	  }
           break;
-        case 'e': case 'E': case 'f': case 'g':
-          vd=strtod(str,&endptr);
-          if ((buf=memalloc(len))!=NULL) {
-            sprintf(buf,format2,vd);
-            ret=nstrcat(ret,buf);
-            memfree(buf);
-          }
+        case 'e': case 'E': case 'f': case 'g': case 'G':
+	  if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+	    break;
+	  }
+	  vd=strtod(str,&endptr);
+	  if ((buf=memalloc(len))!=NULL) {
+	    sprintf(buf,format2,vd);
+	    ret=nstrcat(ret,buf);
+	    memfree(buf);
+	  }
           break;
         case 's':
           if ((buf=memalloc(len+strlen(str)))!=NULL) {
@@ -1867,7 +1882,9 @@ char *GRAexpandpf(char **s)
   memfree(str);
   memfree(format);
   return ret;
+
 errexit:
+  memfree(ret);
   memfree(str);
   memfree(format);
   return NULL;
