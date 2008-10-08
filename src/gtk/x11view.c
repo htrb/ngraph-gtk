@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.71 2008/10/06 07:05:50 hito Exp $
+ * $Id: x11view.c,v 1.72 2008/10/08 10:23:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5249,6 +5249,8 @@ ViewDelete(void)
 
   if (num != 0)
     UpdateAll();
+
+  SetCursor(GDK_LEFT_PTR);
 }
 
 
