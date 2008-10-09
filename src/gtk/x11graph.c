@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.19 2008/10/08 11:18:01 hito Exp $
+ * $Id: x11graph.c,v 1.20 2008/10/09 01:20:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -405,9 +405,9 @@ static void
 SwitchDialogUp(GtkWidget *w, gpointer client_data)
 {
   GtkTreeSelection *selected;
-  GList *list;
+  GList *list, *ptr;
   struct SwitchDialog *d;
-  int n, i, k, *ary;
+  int i, k, num, top, *ary;
   GtkTreePath *path;
 
   d = (struct SwitchDialog *) client_data;
@@ -418,40 +418,55 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
     return;
   }
 
-  path = (GtkTreePath *) g_list_nth_data(list, 0);
-  n = g_list_length(list);
+  num = list_store_get_num(d->drawlist);
 
-  i = -1;
-  if (n == 1) {
+  top = FALSE;
+  for (ptr = list; ptr; ptr = g_list_next(ptr)) {
+    path = (GtkTreePath *) ptr->data;
     ary = gtk_tree_path_get_indices(path);
 
-    if (ary) {
-      i = ary[0];
-      if (i > 0) {
-	k = *(int *) arraynget(&(d->idrawrable), i);
-	arrayndel(&(d->idrawrable), i);
-	i--;
-	arrayins(&(d->idrawrable), &k, i);
-      }
+    if (ary == NULL)
+      break;
+
+    i = ary[0];
+    if (i <= 0) {
+      top = TRUE;
+      break;
     }
+
+    k = *(int *) arraynget(&(d->idrawrable), i);
+    arrayndel(&(d->idrawrable), i);
+    i--;
+    arrayins(&(d->idrawrable), &k, i);
+  }
+
+  SwitchDialogSetupItem(d->widget, d);
+
+  for (ptr = list; ptr; ptr = g_list_next(ptr)) {
+    path = (GtkTreePath *) ptr->data;
+    ary = gtk_tree_path_get_indices(path);
+
+    if (ary == NULL)
+      break;
+
+    i = ary[0];
+    if (! top)
+      i--;
+
+    list_store_select_nth(d->drawlist, i);
   }
 
   g_list_foreach(list, free_tree_path_cb, NULL);
   g_list_free(list);
-
-  SwitchDialogSetupItem(d->widget, d);
-
-  if (i >= 0)
-    list_store_select_nth(d->drawlist, i);
 }
 
 static void
 SwitchDialogDown(GtkWidget *w, gpointer client_data)
 {
   GtkTreeSelection *selected;
-  GList *list;
+  GList *list, *ptr;
   struct SwitchDialog *d;
-  int n, i, k, num, *ary;
+  int i, k, num, tail, *ary;
   GtkTreePath *path;
 
   d = (struct SwitchDialog *) client_data;
@@ -462,32 +477,46 @@ SwitchDialogDown(GtkWidget *w, gpointer client_data)
     return;
   }
 
-  path = (GtkTreePath *) g_list_nth_data(list, 0);
-  n = g_list_length(list);
   num = list_store_get_num(d->drawlist);
 
-  i = -1;
-  if (n == 1) {
+  tail = FALSE;
+  for (ptr = g_list_last(list); ptr; ptr = g_list_previous(ptr)) {
+    path = (GtkTreePath *) ptr->data;
     ary = gtk_tree_path_get_indices(path);
 
-    if (ary) {
-      i = ary[0];
-      if (i < num - 1) {
-	k = *(int *) arraynget(&(d->idrawrable), i);
-	arrayndel(&(d->idrawrable), i);
-	i++;
-	arrayins(&(d->idrawrable), &k, i);
-      }
+    if (ary == NULL)
+      break;
+
+    i = ary[0];
+    if (i >= num - 1) {
+      tail = TRUE;
+      break;
     }
+
+    k = *(int *) arraynget(&(d->idrawrable), i);
+    arrayndel(&(d->idrawrable), i);
+    i++;
+    arrayins(&(d->idrawrable), &k, i);
+  }
+
+  SwitchDialogSetupItem(d->widget, d);
+
+  for (ptr = g_list_last(list); ptr; ptr = g_list_previous(ptr)) {
+    path = (GtkTreePath *) ptr->data;
+    ary = gtk_tree_path_get_indices(path);
+
+    if (ary == NULL)
+      break;
+
+    i = ary[0];
+    if (! tail)
+      i++;
+
+    list_store_select_nth(d->drawlist, i);
   }
 
   g_list_foreach(list, free_tree_path_cb, NULL);
   g_list_free(list);
-
-  SwitchDialogSetupItem(d->widget, d);
-
-  if (i >= 0)
-    list_store_select_nth(d->drawlist, i);
 }
 
 static void
@@ -496,18 +525,22 @@ SwitchDialogTop(GtkWidget *w, gpointer client_data)
   GtkTreeSelection *selected;
   GList *list;
   struct SwitchDialog *d;
+  int i, num = 0;
 
   d = (struct SwitchDialog *) client_data;
   selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
   list = gtk_tree_selection_get_selected_rows(selected, NULL);
 
   if (list) {
+    num = g_list_length(list);
     g_list_foreach(list, switch_dialog_top_cb, d);
     g_list_foreach(list, free_tree_path_cb, NULL);
     g_list_free(list);
   }
   SwitchDialogSetupItem(d->widget, d);
-  list_store_select_nth(d->drawlist, 0);
+  for (i = 0; i < num; i++) {
+    list_store_select_nth(d->drawlist, i);
+  }
 }
 
 static void
@@ -516,13 +549,14 @@ SwitchDialogLast(GtkWidget *w, gpointer client_data)
   struct SwitchDialog *d;
   GtkTreeSelection *selected;
   GList *list;
-  int n;
+  int n, i, num = 0;
 
   d = (struct SwitchDialog *) client_data;
   selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
   list = gtk_tree_selection_get_selected_rows(selected, NULL);
   
   if (list) {
+    num = g_list_length(list);
     list = g_list_reverse(list);
     g_list_foreach(list, switch_dialog_last_cb, d);
     g_list_foreach(list, free_tree_path_cb, NULL);
@@ -530,7 +564,9 @@ SwitchDialogLast(GtkWidget *w, gpointer client_data)
   }
   SwitchDialogSetupItem(d->widget, d);
   n = list_store_get_num(d->drawlist);
-  list_store_select_nth(d->drawlist, n - 1);
+  for (i = 0; i < num; i++) {
+    list_store_select_nth(d->drawlist, n - i - 1);
+  }
 }
 
 static void
@@ -574,7 +610,7 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
 static void
 SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *label, *frame;
+  GtkWidget *w, *hbox, *vbox, *vbox2, *label, *frame;
   GtkTreeIter iter;
   struct SwitchDialog *d;
   int num2, num1, j, k;
@@ -616,6 +652,9 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogInsert), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
+    w = gtk_hseparator_new();
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
     w = gtk_button_new_from_stock(GTK_STOCK_GOTO_TOP);
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogTop), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
@@ -636,7 +675,10 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogRemove), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
+    vbox2 = gtk_vbox_new(FALSE, 4);
+    gtk_box_pack_end(GTK_BOX(vbox2), vbox, FALSE, FALSE, 4);
+
+    gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
 
     vbox = gtk_vbox_new(FALSE, 4);
 
