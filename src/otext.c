@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.5 2008/10/08 05:02:16 hito Exp $
+ * $Id: otext.c,v 1.6 2008/10/09 10:43:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -395,6 +395,9 @@ int textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
             }
             break;
           case 's':
+	    if (i > 1 && format2[i - 1] == 'l') {
+	      break;
+	    }
             if ((arg<argc2) && (argv2[arg]!=NULL)) {
               if ((buf=memalloc(len+strlen(argv2[arg])))!=NULL) {
                 sprintf(buf,format2,argv2[arg]);
@@ -405,6 +408,9 @@ int textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
             arg++;
             break;
           case 'c':
+	    if (i > 1 && format2[i - 1] == 'l') {
+	      break;
+	    }
             if ((arg<argc2) && (argv2[arg]!=NULL)) {
               if ((buf=memalloc(len+strlen(argv2[arg])))!=NULL) {
                 sprintf(buf,format2,argv2[arg][0]);

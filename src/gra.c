@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.12 2008/10/08 05:02:16 hito Exp $
+ * $Id: gra.c,v 1.13 2008/10/09 10:43:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1860,6 +1860,9 @@ char *GRAexpandpf(char **s)
 	  }
           break;
         case 's':
+	  if (i > 1 && format2[i - 1] == 'l') {
+	    break;
+	  }
           if ((buf=memalloc(len+strlen(str)))!=NULL) {
             sprintf(buf,format2,str);
             ret=nstrcat(ret,buf);
@@ -1867,6 +1870,9 @@ char *GRAexpandpf(char **s)
           }
           break;
         case 'c':
+	  if (i > 1 && format2[i - 1] == 'l') {
+	    break;
+	  }
           if ((buf=memalloc(len+strlen(str)))!=NULL) {
             sprintf(buf,format2,str[0]);
             ret=nstrcat(ret,buf);
