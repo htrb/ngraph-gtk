@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.20 2008/10/09 01:20:22 hito Exp $
+ * $Id: x11graph.c,v 1.21 2008/10/09 01:58:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -407,7 +407,7 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
   GtkTreeSelection *selected;
   GList *list, *ptr;
   struct SwitchDialog *d;
-  int i, k, num, top, *ary;
+  int i, k, num, modified, *ary;
   GtkTreePath *path;
 
   d = (struct SwitchDialog *) client_data;
@@ -420,17 +420,17 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
 
   num = list_store_get_num(d->drawlist);
 
-  top = FALSE;
+  modified = FALSE;
   for (ptr = list; ptr; ptr = g_list_next(ptr)) {
     path = (GtkTreePath *) ptr->data;
     ary = gtk_tree_path_get_indices(path);
 
-    if (ary == NULL)
+    if (ary == NULL) {
       break;
+    }
 
     i = ary[0];
     if (i <= 0) {
-      top = TRUE;
       break;
     }
 
@@ -438,22 +438,21 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
     arrayndel(&(d->idrawrable), i);
     i--;
     arrayins(&(d->idrawrable), &k, i);
+    modified = TRUE;
   }
 
-  SwitchDialogSetupItem(d->widget, d);
+  if (modified) {
+    SwitchDialogSetupItem(d->widget, d);
 
-  for (ptr = list; ptr; ptr = g_list_next(ptr)) {
-    path = (GtkTreePath *) ptr->data;
-    ary = gtk_tree_path_get_indices(path);
+    for (ptr = list; ptr; ptr = g_list_next(ptr)) {
+      path = (GtkTreePath *) ptr->data;
+      ary = gtk_tree_path_get_indices(path);
 
-    if (ary == NULL)
-      break;
+      if (ary == NULL)
+	break;
 
-    i = ary[0];
-    if (! top)
-      i--;
-
-    list_store_select_nth(d->drawlist, i);
+      list_store_select_nth(d->drawlist, ary[0] - 1);
+    }
   }
 
   g_list_foreach(list, free_tree_path_cb, NULL);
@@ -466,7 +465,7 @@ SwitchDialogDown(GtkWidget *w, gpointer client_data)
   GtkTreeSelection *selected;
   GList *list, *ptr;
   struct SwitchDialog *d;
-  int i, k, num, tail, *ary;
+  int i, k, num, modified, *ary;
   GtkTreePath *path;
 
   d = (struct SwitchDialog *) client_data;
@@ -479,7 +478,7 @@ SwitchDialogDown(GtkWidget *w, gpointer client_data)
 
   num = list_store_get_num(d->drawlist);
 
-  tail = FALSE;
+  modified = FALSE;
   for (ptr = g_list_last(list); ptr; ptr = g_list_previous(ptr)) {
     path = (GtkTreePath *) ptr->data;
     ary = gtk_tree_path_get_indices(path);
@@ -489,7 +488,6 @@ SwitchDialogDown(GtkWidget *w, gpointer client_data)
 
     i = ary[0];
     if (i >= num - 1) {
-      tail = TRUE;
       break;
     }
 
@@ -497,22 +495,21 @@ SwitchDialogDown(GtkWidget *w, gpointer client_data)
     arrayndel(&(d->idrawrable), i);
     i++;
     arrayins(&(d->idrawrable), &k, i);
+    modified = TRUE;
   }
 
-  SwitchDialogSetupItem(d->widget, d);
+  if (modified) {
+    SwitchDialogSetupItem(d->widget, d);
 
-  for (ptr = g_list_last(list); ptr; ptr = g_list_previous(ptr)) {
-    path = (GtkTreePath *) ptr->data;
-    ary = gtk_tree_path_get_indices(path);
+    for (ptr = g_list_last(list); ptr; ptr = g_list_previous(ptr)) {
+      path = (GtkTreePath *) ptr->data;
+      ary = gtk_tree_path_get_indices(path);
 
-    if (ary == NULL)
-      break;
+      if (ary == NULL)
+	break;
 
-    i = ary[0];
-    if (! tail)
-      i++;
-
-    list_store_select_nth(d->drawlist, i);
+      list_store_select_nth(d->drawlist, ary[0] + 1);
+    }
   }
 
   g_list_foreach(list, free_tree_path_cb, NULL);
