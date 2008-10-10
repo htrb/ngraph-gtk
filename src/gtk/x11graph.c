@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.22 2008/10/10 04:03:06 hito Exp $
+ * $Id: x11graph.c,v 1.23 2008/10/10 04:52:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -761,9 +761,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), w);
 
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
-
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
     d->btn_lock = FALSE;
