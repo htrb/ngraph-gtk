@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.21 2008/10/09 01:58:42 hito Exp $
+ * $Id: x11graph.c,v 1.22 2008/10/10 04:03:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -249,11 +249,30 @@ PageDialog(struct PageDialog *data)
 }
 
 static void
+set_objlist_btn_state(struct SwitchDialog *d, gboolean b)
+{
+  gtk_widget_set_sensitive(d->add, b);
+  gtk_widget_set_sensitive(d->ins, b);
+}
+
+static void
+set_drawlist_btn_state(struct SwitchDialog *d, gboolean b)
+{
+  gtk_widget_set_sensitive(d->top, b);
+  gtk_widget_set_sensitive(d->bottom, b);
+  gtk_widget_set_sensitive(d->up, b);
+  gtk_widget_set_sensitive(d->down, b);
+  gtk_widget_set_sensitive(d->del, b);
+}
+
+static void
 SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
 {
   int j, num;
   char **buf;
   GtkTreeIter iter;
+
+  d->btn_lock = TRUE;
 
   list_store_clear(d->drawlist);
   num = arraynum(&(d->idrawrable));
@@ -263,6 +282,8 @@ SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
     list_store_append(d->drawlist, &iter);
     list_store_set_string(d->drawlist, &iter, 0, *buf);
   }
+
+  d->btn_lock = FALSE;
 }
 
 static void
@@ -304,6 +325,7 @@ SwitchDialogAdd(GtkWidget *w, gpointer client_data)
   }
 
   SwitchDialogSetupItem(d->widget, d);
+  set_drawlist_btn_state(d, FALSE);
 }
 
 static void
@@ -357,6 +379,7 @@ SwitchDialogInsert(GtkWidget *w, gpointer client_data)
   }
 
   SwitchDialogSetupItem(d->widget, d);
+  set_drawlist_btn_state(d, FALSE);
 }
 
 static void
@@ -602,6 +625,37 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
     g_list_free (list);
   }
   SwitchDialogSetupItem(d->widget, d);
+  set_drawlist_btn_state(d, FALSE);
+}
+
+gboolean 
+drawlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+  int n;
+  struct SwitchDialog *d;
+
+  d = (struct SwitchDialog *) user_data;
+
+  if (! d->btn_lock) {
+    n = gtk_tree_selection_count_selected_rows(sel);
+    set_drawlist_btn_state(d, n);
+  }
+  return FALSE;
+}
+
+gboolean 
+objlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+  int n;
+  struct SwitchDialog *d;
+
+  d = (struct SwitchDialog *) user_data;
+
+  if (! d->btn_lock) {
+    n = gtk_tree_selection_count_selected_rows(sel);
+    set_objlist_btn_state(d, n);
+  }
+  return FALSE;
 }
 
 static void
@@ -612,6 +666,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct SwitchDialog *d;
   int num2, num1, j, k;
   char **buf;
+  GtkTreeSelection *sel;
   static n_list_store list[] = {
     {N_("Object"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
@@ -632,6 +687,10 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->drawlist = w;
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
 
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+    g_signal_connect(sel, "changed", G_CALLBACK(drawlist_sel_cb), d);
+
+
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), w);
 
@@ -644,10 +703,12 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_ADD);
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogAdd), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    d->add = w;
 
     w = gtk_button_new_with_mnemonic(_("_Insert"));
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogInsert), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    d->ins = w;
 
     w = gtk_hseparator_new();
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
@@ -655,22 +716,27 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_GOTO_TOP);
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogTop), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    d->top =w;
 
     w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogUp), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    d->up = w;
 
     w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogDown), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    d->down = w;
 
     w = gtk_button_new_from_stock(GTK_STOCK_GOTO_BOTTOM);
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogLast), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    d->bottom = w;
 
     w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
     g_signal_connect(w, "clicked", G_CALLBACK(SwitchDialogRemove), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    d->del = w;
 
     vbox2 = gtk_vbox_new(FALSE, 4);
     gtk_box_pack_end(GTK_BOX(vbox2), vbox, FALSE, FALSE, 4);
@@ -687,6 +753,10 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->objlist = w;
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
 
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+    g_signal_connect(sel, "changed", G_CALLBACK(objlist_sel_cb), d);
+
+
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), w);
 
@@ -695,6 +765,8 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+
+    d->btn_lock = FALSE;
   }
 
   menuadddrawrable(chkobject("draw"), &(d->drawrable));
@@ -718,6 +790,8 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
   }
   SwitchDialogSetupItem(wi, d);
+  set_objlist_btn_state(d, FALSE);
+  set_drawlist_btn_state(d, FALSE);
 }
 
 static void

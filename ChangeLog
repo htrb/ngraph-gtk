@@ -1,3 +1,16 @@
+2008-10-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (set_objlist_btn_state)
+	(set_drawlist_btn_state): add.
+	(SwitchDialogAdd, SwitchDialogInsert, SwitchDialogRemove): call
+	set_drawlist_btn_state() after call SwitchDialogSetupItem().
+	(SwitchDialogSetup): set_drawlist_btn_state() and
+	set_objlist_btn_state() after call SwitchDialogSetupItem().
+	(drawlist_sel_cb, objlist_sel_cb): add.
+
+	* src/gtk/x11dialg.h (struct SwitchDialog): add member "top",
+	"up", "down", "bottom", "del", "ins", "add" and "btn_lock".
+
 2008-10-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (SwitchDialogDown, SwitchDialogUp): add.

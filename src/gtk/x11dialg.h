@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.17 2008/09/22 02:53:34 hito Exp $
+ * $Id: x11dialg.h,v 1.18 2008/10/10 04:03:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -549,7 +549,8 @@ struct SwitchDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *drawlist, *objlist;
+  GtkWidget *drawlist, *objlist, *top, *up, *down, *bottom, *del, *ins, *add;
+  int btn_lock;
   struct narray drawrable;
   struct narray idrawrable;
 };
