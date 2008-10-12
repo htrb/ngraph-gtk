@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-10-09 11:46+0900\n"
+"POT-Creation-Date: 2008-10-12 15:42+0900\n"
 "PO-Revision-Date: 2008-09-22 11:44+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -893,55 +893,55 @@ msgstr "上マージン(_T):"
 msgid "paper _Zoom:"
 msgstr "拡大率(_Z):"
 
-#: src/gtk/x11graph.c:616
+#: src/gtk/x11graph.c:671
 msgid "Object"
 msgstr "オブジェクト"
 
-#: src/gtk/x11graph.c:627
+#: src/gtk/x11graph.c:682
 msgid "_Draw Order"
 msgstr "描画順(_D)"
 
-#: src/gtk/x11graph.c:648
+#: src/gtk/x11graph.c:708
 msgid "_Insert"
 msgstr "挿入(_I)"
 
-#: src/gtk/x11graph.c:682
+#: src/gtk/x11graph.c:748
 msgid "_Objects"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11graph.c:765 src/gtk/x11graph.c:815
+#: src/gtk/x11graph.c:837 src/gtk/x11graph.c:887
 msgid "_Dir:"
 msgstr "ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:810
+#: src/gtk/x11graph.c:882
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
-#: src/gtk/x11graph.c:818 src/gtk/x11graph.c:865 src/gtk/x11opt.c:1236
+#: src/gtk/x11graph.c:890 src/gtk/x11graph.c:937 src/gtk/x11opt.c:1236
 msgid "_Ignore file path"
 msgstr "パス情報無視(_I)"
 
-#: src/gtk/x11graph.c:869
+#: src/gtk/x11graph.c:941
 msgid "_Greek Symbol"
 msgstr "全角ギリシア -> シンボル(_G)"
 
-#: src/gtk/x11graph.c:928 src/gtk/x11opt.c:1207
+#: src/gtk/x11graph.c:1000 src/gtk/x11opt.c:1207
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:931
+#: src/gtk/x11graph.c:1003
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:935
+#: src/gtk/x11graph.c:1007
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1068 src/gtk/x11menu.c:167
+#: src/gtk/x11graph.c:1140 src/gtk/x11menu.c:167
 msgid "Load NGP file"
 msgstr "NGP ファイルを開く"
 
-#: src/gtk/x11graph.c:1314
+#: src/gtk/x11graph.c:1386
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for the "
 "researcher and engineer."

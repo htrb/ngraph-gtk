@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-08\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-10-09 11:46+0900\n"
+"POT-Creation-Date: 2008-10-12 15:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -891,55 +891,55 @@ msgstr ""
 msgid "paper _Zoom:"
 msgstr ""
 
-#: src/gtk/x11graph.c:616
+#: src/gtk/x11graph.c:671
 msgid "Object"
 msgstr ""
 
-#: src/gtk/x11graph.c:627
+#: src/gtk/x11graph.c:682
 msgid "_Draw Order"
 msgstr ""
 
-#: src/gtk/x11graph.c:648
+#: src/gtk/x11graph.c:708
 msgid "_Insert"
 msgstr ""
 
-#: src/gtk/x11graph.c:682
+#: src/gtk/x11graph.c:748
 msgid "_Objects"
 msgstr ""
 
-#: src/gtk/x11graph.c:765 src/gtk/x11graph.c:815
+#: src/gtk/x11graph.c:837 src/gtk/x11graph.c:887
 msgid "_Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:810
+#: src/gtk/x11graph.c:882
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:818 src/gtk/x11graph.c:865 src/gtk/x11opt.c:1236
+#: src/gtk/x11graph.c:890 src/gtk/x11graph.c:937 src/gtk/x11opt.c:1236
 msgid "_Ignore file path"
 msgstr ""
 
-#: src/gtk/x11graph.c:869
+#: src/gtk/x11graph.c:941
 msgid "_Greek Symbol"
 msgstr ""
 
-#: src/gtk/x11graph.c:928 src/gtk/x11opt.c:1207
+#: src/gtk/x11graph.c:1000 src/gtk/x11opt.c:1207
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:931
+#: src/gtk/x11graph.c:1003
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:935
+#: src/gtk/x11graph.c:1007
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1068 src/gtk/x11menu.c:167
+#: src/gtk/x11graph.c:1140 src/gtk/x11menu.c:167
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1314
+#: src/gtk/x11graph.c:1386
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for the "
 "researcher and engineer."
