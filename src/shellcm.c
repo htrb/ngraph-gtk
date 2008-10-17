@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.7 2008/10/17 06:43:02 hito Exp $
+ * $Id: shellcm.c,v 1.8 2008/10/17 08:07:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -140,8 +140,8 @@ cmseq(struct nshell *nshell, int argc, char **argv)
     }
   }
 
-  for (x = first; x <= last; x += inc) {
-    printfstdout("%G\n",x);
+  for (x = first; (inc < 0) ? (x >= last) : (x <= last); x += inc) {
+    printfstdout("%G\n", x);
   }
   return 0;
 }
