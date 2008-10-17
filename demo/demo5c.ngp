@@ -5,7 +5,7 @@ text::y=6500
 text::font="HelveticaBold"
 text::text="Demo #5C: TEXT"
 #
-for i in 0 4500 9000 13500 18000 22500 27000 31500
+for i in `seq 0 4500 31500`
 do
   new text
   text::x=12000

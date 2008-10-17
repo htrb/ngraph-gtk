@@ -1,3 +1,10 @@
+2008-10-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (cmdtable): add setting for 'seq'.
+	(getcmdline): exit shell when input EOF.
+
+	* src/shellcm.c (cmseq): add.
+
 2008-10-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (set_objlist_btn_state)

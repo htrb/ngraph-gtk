@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.6 2008/10/06 07:05:48 hito Exp $
+ * $Id: shellcm.c,v 1.7 2008/10/17 06:43:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -79,6 +79,70 @@ int cmecho(struct nshell *nshell,int argc,char **argv)
     if (i!=(argc-1)) printfstdout(" ");
   }
   putstdout("");
+  return 0;
+}
+
+int 
+cmseq(struct nshell *nshell, int argc, char **argv)
+{
+  int i, f, l;
+  double x, first, last, inc;
+  char *endptr;
+
+  switch (argc) {
+  case 0:  case 1:
+    sherror4(argv[0], ERRSMLARG);
+    return ERR;
+  case 2:
+    f = 0;
+    i = 0;
+    l = 1;
+    first = 1.0;
+    inc = 1.0;
+    break;
+  case 3:
+    f = 1;
+    i = 0;
+    l = 2;
+    inc = 1.0;
+    break;
+  default:
+    f = 1;
+    i = 2;
+    l = 3;
+    break;
+  }
+
+  if (f) {
+    errno = 0;
+    first= strtod(argv[f], &endptr);
+    if (errno || endptr == argv[f]) {
+      sherror4(argv[0], ERRNUMERIC);
+      return ERR;
+    }
+  }
+
+  if (l) {
+    errno = 0;
+    last= strtod(argv[l], &endptr);
+    if (errno || endptr == argv[l]) {
+      sherror4(argv[0], ERRNUMERIC);
+      return ERR;
+    }
+  }
+
+  if (i) {
+    errno = 0;
+    inc= strtod(argv[i], &endptr);
+    if (errno || endptr == argv[i]) {
+      sherror4(argv[0], ERRNUMERIC);
+      return ERR;
+    }
+  }
+
+  for (x = first; x <= last; x += inc) {
+    printfstdout("%G\n",x);
+  }
   return 0;
 }
 

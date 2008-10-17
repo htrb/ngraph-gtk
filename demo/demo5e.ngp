@@ -5,7 +5,7 @@ text::y=6500
 text::font="HelveticaBold"
 text::text="Demo #5E: AXIS"
 #
-for i in 0 3000 6000 9000 12000 15000
+for i in `seq 0 3000 15000`
 do
   new axis name:axis${i}
   axis::min=0.0
@@ -28,7 +28,7 @@ do
   axis::arrow=end
 done
 #
-for i in 18000 21000 24000 27000 30000 33000
+for i in `seq 18000 3000 33000`
 do
   new axis name:axis${i}
   axis::min=0.0

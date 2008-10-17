@@ -28,7 +28,7 @@ put line arrow_width=30000
 put line width=500
 put line arrow=end
 #
-for i in 4 6 8 10 12 14 16 18
+for i in `seq 4 2 18`
 do
   new line
   put line points="10000 18000 ${i}000 12500"
@@ -36,7 +36,7 @@ do
   put line arrow=end
 done
 #
-for i in 4 6 8 10 12 14 16 18
+for i in `seq 4 2 18`
 do
   new line
   put line arrow_length=80000

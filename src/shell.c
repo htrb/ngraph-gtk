@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.6 2008/09/22 08:56:31 hito Exp $
+ * $Id: shell.c,v 1.7 2008/10/17 06:43:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -533,9 +533,10 @@ int shprintfstderr(char *fmt,...)
 
 #endif
 
-struct cmdtabletype cmdtable[CMDNUM] = {
+struct cmdtabletype cmdtable[] = {
                   {"cd",cmcd},
                   {"echo",cmecho},
+                  {"seq",cmseq},
                   {"eval",cmeval},
                   {"exit",cmexit} ,
                   {"export",cmexport},
@@ -569,6 +570,8 @@ struct cmdtabletype cmdtable[CMDNUM] = {
                   {"sleep",cmsleep},
                   {"test",cmtest},
                  };
+
+int CMDNUM = sizeof(cmdtable) / sizeof(*cmdtable);
 
 char *cpcmdtable[CPCMDNUM] = {
                   ";&|",
@@ -1145,8 +1148,14 @@ int getcmdline(struct nshell *nshell,
                 nshell->quit=TRUE;
                 goto errexit;
               } else {
+#if 1
+                putconsole("exit");
+                nshell->quit=TRUE;
+                goto errexit;
+#else
                 sherror(ERREOF);
                 ch='\0';
+#endif
               }
             }
           }

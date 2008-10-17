@@ -7,7 +7,7 @@ text::text="Demo #5D: CURVE"
 #
 STYLE=""
 drawcurve() {
-  for i in 0 1 2 3 4 5 6 7 8 9 10
+  for i in `seq 0 10`
   do
     new curve
     put curve points:"3000 2000 10000 2000 15000 11000 20000 6000 \
