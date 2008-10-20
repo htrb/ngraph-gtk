@@ -4,7 +4,6 @@
 
 	* src/shellcm.c (cmtype): use 'check_cpcmd()' and 'check_cmd()'.
 
-
 	* src/shell.c (init_cmd_tbl, check_cmd, check_cpcmd): add.
 	(checkcmd): use 'check_cpcmd()'.
 	(cmdexec): use 'check_cmd()'.
