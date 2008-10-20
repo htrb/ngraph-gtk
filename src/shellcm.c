@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.8 2008/10/17 08:07:00 hito Exp $
+ * $Id: shellcm.c,v 1.9 2008/10/20 05:51:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -353,12 +353,12 @@ int cmtype(struct nshell *nshell,int argc,char **argv)
   struct cmdlist *cmdcur;
   int i,j;
   char *cmdname;
+  shell_proc proc;
 
   for (j=1;j<argc;j++) {
-    for (i=1;i<CPCMDNUM;i++)
-      if (strcmp0(cpcmdtable[i],argv[j])==0) break;
-    if (i!=CPCMDNUM) {
-      printfstdout("%.256s is a shell keyword.\n",argv[j]);
+    i = check_cpcmd(argv[j]);
+    if (i >= 0) {
+      printfstdout("%.256s is a shell keyword.\n", argv[j]);
     } else if ((cmdcur=getfunc(nshell,argv[j]))!=NULL) {
       printfstdout("%.256s is a function.\n",argv[j]);
       printfstdout("%.256s=()\n",argv[j]);
@@ -380,9 +380,8 @@ int cmtype(struct nshell *nshell,int argc,char **argv)
     || (strcmp0("return",argv[j])==0)) {
       printfstdout("%.256s is a shell builtin.\n",argv[j]);
     } else {
-      for (i=0;i<CMDNUM;i++)
-        if (strcmp0(argv[j],cmdtable[i].name)==0) break;
-      if (i!=CMDNUM) {
+      proc = check_cmd(argv[j]);
+      if (proc) {
         printfstdout("%.256s is a shell builtin.\n",argv[j]);
       } else {
         cmdname=nsearchpath(getval(nshell,"PATH"),argv[j],FALSE);

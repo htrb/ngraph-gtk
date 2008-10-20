@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.7 2008/10/17 06:43:02 hito Exp $
+ * $Id: shell.c,v 1.8 2008/10/20 05:51:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -573,7 +573,7 @@ struct cmdtabletype cmdtable[] = {
 
 int CMDNUM = sizeof(cmdtable) / sizeof(*cmdtable);
 
-char *cpcmdtable[CPCMDNUM] = {
+char *cpcmdtable[] = {
                   ";&|",
                   "if",
                   "then" ,
@@ -588,7 +588,10 @@ char *cpcmdtable[CPCMDNUM] = {
                   "do",
                   "done",
                   "{",
-                  "}" };
+                  "}",
+};
+
+int CPCMDNUM = sizeof(cpcmdtable) / sizeof(*cpcmdtable);
 
 enum {CPNULL=1,CPIF,CPTHEN,CPELSE,CPELIF,CPFI,CPCASE,CPESAC,
       CPFOR,CPWHILE,CPUNTIL,CPDO,CPDONE,CPBI,CPBO,
@@ -606,6 +609,68 @@ struct cmdstack {
   struct cmdlist *cmd;
   void *next;
 };
+
+static NHASH CmdTblHash, CpCmdTblHash;
+
+int 
+init_cmd_tbl(void)
+{
+  int i, r;
+
+  CmdTblHash = nhash_new();
+  if (CmdTblHash == NULL)
+    return 1;
+
+  CpCmdTblHash = nhash_new();
+  if (CpCmdTblHash == NULL)
+    return 1;
+
+  for (i = 0; i < CMDNUM; i++) {
+    r = nhash_set_ptr(CmdTblHash, cmdtable[i].name, cmdtable[i].proc);
+    if (r) {
+      nhash_free(CmdTblHash);
+      nhash_free(CpCmdTblHash);
+      return 1;
+    }
+  }
+
+  for (i = 1; i < CPCMDNUM; i++) {
+    r = nhash_set_int(CpCmdTblHash, cpcmdtable[i], i);
+    if (r) {
+      nhash_free(CmdTblHash);
+      nhash_free(CpCmdTblHash);
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+shell_proc 
+check_cmd(char *name)
+{
+  shell_proc proc;
+  int r;
+
+  r = nhash_get_ptr(CmdTblHash, name, (void *) &proc);
+  if (r)
+    return NULL;
+
+  return proc;
+}
+
+int 
+check_cpcmd(char *name)
+{
+  int r, i;
+
+  r = nhash_get_int(CpCmdTblHash, name, &i);
+
+  if (r)
+    i = -1;
+
+  return i;
+}
 
 void prmfree(struct prmlist *prmroot)
 {
@@ -1816,10 +1881,11 @@ int checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
       prmcur=cmdcur->prm;
       if ((prmcur->str[0]!='\0') 
       && (strchr(cpcmdtable[0],prmcur->str[0])!=NULL)) cmd=CPNULL;
-      for (i=1;i<CPCMDNUM;i++)
-        if (strcmp0(cpcmdtable[i],prmcur->str)==0) break;
-      if (i!=CPCMDNUM) cmd=i+1;
-      else {
+
+      i = check_cpcmd(prmcur->str);
+      if (i >= 0) {
+	cmd = i + 1;
+      } else {
         prmcur=prmcur->next;
         if ((prmcur!=NULL) && (prmcur->str[0]=='(')) {
           prmcur=prmcur->next;
@@ -2314,6 +2380,7 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   int readbyte;
   int ch;
   char buf[2];
+  shell_proc proc;
   
 #ifndef WINDOWS
   pid_t pid;
@@ -3107,23 +3174,21 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    if (nshell->quit) break;
 	    /* exec inner command */
 	  } else {
-	    for (i=0;i<CMDNUM;i++)
-	      if (strcmp0(prmcur->str,cmdtable[i].name)==0) break;
-	    if (i!=CMDNUM) {
-	      if (cmdtable[i].proc!=NULL) {
-		argv=NULL;
-		if (arg_add(&argv,NULL)==NULL) goto errexit;
-		prm=prmnewroot;
-		while (prm!=NULL) {
-		  if (arg_add(&argv,prm->str)==NULL) {
-		    memfree(argv);
-		    goto errexit;
-		  }
-		  prm=prm->next;
+	    proc = check_cmd(prmcur->str);
+	    if (proc) {
+	      argv = NULL;
+	      if (arg_add(&argv, NULL) == NULL)
+		goto errexit;
+	      prm = prmnewroot;
+	      while (prm) {
+		if (arg_add(&argv, prm->str) == NULL) {
+		  memfree(argv);
+		  goto errexit;
 		}
-		errlevel=cmdtable[i].proc(nshell,pnum,(char **)argv);
-		memfree(argv);
-	      } else errlevel=0;
+		prm = prm->next;
+	      }
+	      errlevel = proc(nshell, pnum, (char **)argv);
+	      memfree(argv);
 	    } else {
 	      cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,FALSE);
 	      if (cmdname==NULL) {

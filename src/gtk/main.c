@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.14 2008/09/12 05:50:35 hito Exp $
+ * $Id: main.c,v 1.15 2008/10/20 05:52:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -427,6 +427,10 @@ main(int argc, char **argv, char **environ)
   g_set_application_name(AppName);
 
   mainenviron = environ;
+
+  if (init_cmd_tbl()) {
+    exit(1);
+  }
 
   ignorestdio(NULL);
   inputyn = vinputyn;

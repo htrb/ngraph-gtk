@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.h,v 1.3 2008/10/17 06:43:02 hito Exp $
+ * $Id: shell.h,v 1.4 2008/10/20 05:51:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -122,14 +122,21 @@ struct nshell {
 
 extern int CMDNUM;
 
+typedef int (* shell_proc)(struct nshell *nshell,int argc,char **argv);
+
 struct cmdtabletype {
   char *name;
-  int (*proc)(struct nshell *nshell,int argc,char **argv);
+  shell_proc proc;
 };
 extern struct cmdtabletype cmdtable[];
 
-#define CPCMDNUM 15
-extern char *cpcmdtable[CPCMDNUM];
+extern int CPCMDNUM;
+extern char *cpcmdtable[];
+
+shell_proc check_cmd(char *name);
+int check_cpcmd(char *name);
+int init_cmd_tbl(void);
+
 
 char *gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape);
 char *unquotation(char *s,int *quoted);
