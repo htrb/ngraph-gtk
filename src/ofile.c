@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.41 2008/10/07 07:45:11 hito Exp $
+ * $Id: ofile.c,v 1.42 2008/10/22 05:35:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1257,7 +1257,7 @@ int f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int x,y,rstep,final,msize,r2,g2,b2,lwidth,miter;
   char *s1,*s2,*s3,*s4;
   struct f2dlocal *f2dlocal;
-  int stat,minmaxstat,dataclip,num;
+  int stat,minmaxstat,dataclip,num,ljoin;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   x=1;
@@ -1274,6 +1274,7 @@ int f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   stat=MEOF;
   minmaxstat=MUNDEF;
   dataclip=TRUE;
+  ljoin = 2;
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"read_step",inst,&rstep)) return 1;
@@ -1284,6 +1285,7 @@ int f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"B2",inst,&b2)) return 1;
   if (_putobj(obj,"line_width",inst,&lwidth)) return 1;
   if (_putobj(obj,"line_miter_limit",inst,&miter)) return 1;
+  if (_putobj(obj,"line_join",inst,&ljoin)) return 1;
   if (_putobj(obj,"data_num",inst,&num)) return 1;
   if (_putobj(obj,"stat_x",inst,&stat)) return 1;
   if (_putobj(obj,"stat_y",inst,&stat)) return 1;
