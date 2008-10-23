@@ -1,3 +1,8 @@
+2008-10-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c: add macro "check_infinite()".
+	(getdataarray, f2dsettings): use "check_infinite()".
+
 2008-10-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (f2dinit): initialize "line_join" ad "bevel".

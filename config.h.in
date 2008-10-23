@@ -38,6 +38,9 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
+/* Define to 1 if you have the `finite' function. */
+#undef HAVE_FINITE
+
 /* Define to 1 if you have the `fork' function. */
 #undef HAVE_FORK
 
@@ -55,6 +58,9 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `is_finite' function. */
+#undef HAVE_IS_FINITE
 
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM

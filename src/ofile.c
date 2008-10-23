@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.42 2008/10/22 05:35:02 hito Exp $
+ * $Id: ofile.c,v 1.43 2008/10/23 06:28:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -137,6 +137,15 @@ char *f2dtypechar[]={
 };
 
 #define DXBUFSIZE 101
+
+#if HAVE_IS_FINITE
+#define check_infinite(v) (! isfinite(v))
+#elsif HAVE_FINITE
+#define check_infinite(v) (! finite(v))
+#else
+#define check_infinite(v) ((v) != (v) || (v) == HUGE_VAL || (v) == - HUGE_VAL)
+#endif
+
 
 struct f2ddata_buf {
   double dx, dy, d2, d3;
@@ -1508,7 +1517,7 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
 #endif
         val=strtod(po,&endptr);
         if (endptr>=po2) {
-	  if (val != val || val == HUGE_VAL || val == - HUGE_VAL) {
+	  if (check_infinite(val)) {
 	    st = MNAN;
 	  } else {
 	    st=MNOERR;
@@ -1541,7 +1550,7 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
 #endif
       val=strtod(po,&endptr);
       if (endptr>=po2) {
-	if (val != val || val == HUGE_VAL || val == - HUGE_VAL) {
+	if (check_infinite(val)) {
 	  st = MNAN;
 	} else {
 	  st=MNOERR;
@@ -4902,20 +4911,17 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           x = (po[2] == 'x');
           po+=3;
           f1=strtod(po,&endptr);
-          if (f1 != f1 || f1 == HUGE_VAL || f1 == - HUGE_VAL ||
-	      endptr == po || endptr[0] != ',') {
+          if (check_infinite(f1) || endptr == po || endptr[0] != ',') {
 	    err=TRUE;
 	  } else {
             po=endptr+1;
             f2=strtod(po,&endptr);
-            if (f2 != f2 || f2 == HUGE_VAL || f2 == - HUGE_VAL ||
-		endptr == po || endptr[0] != ',') {
+            if (check_infinite(f2) || endptr == po || endptr[0] != ',') {
 	      err=TRUE;
 	    } else {
               po=endptr+1;
               f3=strtod(po,&endptr);
-              if (f3 != f3 || f3 == HUGE_VAL || f3 == - HUGE_VAL ||
-		  endptr == po) {
+              if (check_infinite(f3) || endptr == po) {
 		err=TRUE;
 	      } else {
 		po=endptr;
