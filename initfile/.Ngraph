@@ -1,12 +1,6 @@
 # Ngraph initialization script
 
-save_image() {
-    if [ ! -f "$1" ]
-    then
-	echo 'missing file operand'
-	return
-    fi
-
+clear_viewer() {
     for i in `derive -instance draw`
     do
 	del ${i}:0-!
@@ -15,6 +9,16 @@ save_image() {
     then
 	del gra:viewer
     fi
+}
+
+save_image() {
+    if [ ! -f "$1" ]
+    then
+	echo 'missing file operand'
+	return
+    fi
+
+    clear_viewer
     . $1
     new gra2cairofile name=OUTPUT
     gra2cairofile::format=$2
@@ -181,14 +185,7 @@ do
 		del system:0
 	;;
 	-p)
-		for i in `derive -instance draw`
-		do
-			del ${i}:0-!
-		done
-		if [ `exist gra:viewer` != 0 ]
-		then
-			del gra:viewer
-		fi
+		clear_viewer
 		. $2
 		SHOW_DIALOG=2
 		if [ -n "$3" ]
@@ -196,18 +193,10 @@ do
 			SHOW_DIALOG=0
 		fi
 		menu::print false $SHOW_DIALOG
-		menu::print false 1
 		del system:0
 	;;
 	-P)
-		for i in `derive -instance draw`
-		do
-			del ${i}:0-!
-		done
-		if [ `exist gra:viewer` != 0 ]
-		then
-			del gra:viewer
-		fi
+		clear_viewer
 		. $2
 		new gra2prn name=OUTPUT
 		gra2prn::driver=gra2ps
