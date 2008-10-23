@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.8 2008/10/20 05:51:59 hito Exp $
+ * $Id: shell.c,v 1.9 2008/10/23 02:36:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1199,28 +1199,26 @@ int getcmdline(struct nshell *nshell,
                 goto errexit;
               }
               eofcount++;
-              if ((ignoreeof=getval(nshell,"IGNOREEOF"))==NULL) eofnum=0;
-              else {
-                if (ignoreeof[0]=='\0') eofnum=10;
-                else {
-                  eofnum=strtol(ignoreeof,&endptr,10);
-                  if (endptr[0]!='\0') eofnum=10;
+	      ignoreeof = getval(nshell,"IGNOREEOF");
+              if (ignoreeof == NULL) {
+		eofnum=0;
+	      } else {
+                if (ignoreeof[0] == '\0') {
+		  eofnum = 10;
+                } else {
+                  eofnum = strtol(ignoreeof,&endptr,10);
+                  if (endptr[0] != '\0')
+		    eofnum = 10;
                 }
               }
-              if (eofcount>eofnum) {
+              if (eofcount > eofnum) {
                 err=1;
                 putconsole("exit");
                 nshell->quit=TRUE;
                 goto errexit;
               } else {
-#if 1
-                putconsole("exit");
-                nshell->quit=TRUE;
-                goto errexit;
-#else
                 sherror(ERREOF);
                 ch='\0';
-#endif
               }
             }
           }

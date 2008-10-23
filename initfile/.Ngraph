@@ -42,6 +42,8 @@ check_set() {
     fi
 }
 
+IGNOREEOF=0
+
 new menu
 system:0:login_shell=menu:0:menu
 #
