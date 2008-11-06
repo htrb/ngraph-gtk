@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.15 2008/10/07 02:15:25 hito Exp $
+ * $Id: object.c,v 1.16 2008/11/06 05:47:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -747,7 +747,7 @@ arrayuniq_int(struct narray *array)
   }
 }
 
-#define ARGBUFNUM 10
+#define ARGBUFNUM 32
 
 int getargc(char **arg)
 {

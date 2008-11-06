@@ -1,5 +1,7 @@
+#ifndef _SHELL_HEADER
+#define _SHELL_HEADER
 /* 
- * $Id: shell.h,v 1.4 2008/10/20 05:51:59 hito Exp $
+ * $Id: shell.h,v 1.5 2008/11/06 05:47:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -99,8 +101,12 @@ struct explist {
 
 struct nshell {
   struct objlist *obj;
+#if USE_HASH
+  NHASH exproot, valroot;
+#else
   struct vallist *valroot;
   struct explist *exproot;
+#endif
   int argc;
   char **argv;
   int cmdexec;
@@ -167,3 +173,4 @@ int getshelloption(struct nshell *nshell,char opt);
 void setshellargument(struct nshell *nshell,int argc,char **argv);
 int printfconsole(char *fmt,...);
 void ngraphenvironment(struct nshell *nshell);
+#endif

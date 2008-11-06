@@ -1,11 +1,12 @@
 /* 
- * $Id: nhash.c,v 1.4 2008/09/17 01:54:58 hito Exp $
+ * $Id: nhash.c,v 1.5 2008/11/06 05:47:26 hito Exp $
  */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "object.h"
 #include "nhash.h"
 
 #define HASH_SIZE 67
@@ -21,7 +22,7 @@ nhash_new(void)
 }
 
 static void
-free_hash_list(struct nhash *hash)
+free_hash_list(struct nhash *hash, int free_ptr)
 {
   struct nhash *l, *r;
 
@@ -31,23 +32,36 @@ free_hash_list(struct nhash *hash)
   l = hash->l;
   r = hash->r;
   free(hash->key);
+  if (free_ptr) {
+    memfree(hash->val.p);
+  }
   free(hash);
-  free_hash_list(l);
-  free_hash_list(r);
+  free_hash_list(l, free_ptr);
+  free_hash_list(r, free_ptr);
 }
 
 void
 nhash_free(NHASH hash)
 {
-  int i = 0;
+  int i;
 
   for (i = 0; i < HASH_SIZE; i++) {
-    free_hash_list(hash[i]);
+    free_hash_list(hash[i], 0);
   }
 }
 
-static int
-calc_key_from_str(char *ptr)
+void
+nhash_free_with_memfree_ptr(NHASH hash)
+{
+  int i;
+
+  for (i = 0; i < HASH_SIZE; i++) {
+    free_hash_list(hash[i], 1);
+  }
+}
+
+int 
+nhash_hkey(char *ptr)
 {
   unsigned int i, v;
 
@@ -58,14 +72,12 @@ calc_key_from_str(char *ptr)
   return v % HASH_SIZE;
 }
 
-struct nhash *
-create_hash(NHASH hash, char *key)
+static struct nhash *
+create_hash_with_hkey(NHASH hash, char *key, int hkey)
 {
-  int hkey, lr = 0;
+  int lr = 0;
   char *k;
   struct nhash *h, *ptr, *prev = NULL;
-
-  hkey = calc_key_from_str(key);
 
   ptr = hash[hkey];
 
@@ -77,17 +89,14 @@ create_hash(NHASH hash, char *key)
   } else {
     while (ptr) {
       lr = strcmp(key, ptr->key);
-      switch (lr) {
-      case -1:
+      if (lr < 0) {
 	prev = ptr;
 	ptr = ptr->l;
-	break;
-      case 0:
-	return ptr;
-      case 1:
+      } else if (lr > 0) {
 	prev = ptr;
 	ptr = ptr->r;
-	break;
+      } else {
+	return ptr;
       }
     }
     h = malloc(sizeof(struct nhash));
@@ -113,8 +122,17 @@ create_hash(NHASH hash, char *key)
   h->key = k;
   h->l = NULL;
   h->r = NULL;
+  h->p = prev;
 
   return h;
+}
+
+struct nhash *
+create_hash(NHASH hash, char *key)
+{
+  int hkey;
+  hkey = nhash_hkey(key);
+  return create_hash_with_hkey(hash, key, hkey);
 }
 
 int
@@ -147,29 +165,84 @@ nhash_set_ptr(NHASH hash, char *key, void *val)
   return 0;
 }
 
+int
+nhash_set_int_with_hkey(NHASH hash, char *key, int hkey, int val)
+{
+  struct nhash *h;
+
+  h = create_hash_with_hkey(hash, key, hkey);
+
+  if (h == NULL)
+    return 1;
+
+  h->val.i = val;
+
+  return 0;
+}
+
+int
+nhash_set_ptr_with_hkey(NHASH hash, char *key, int hkey, void *val)
+{
+  struct nhash *h;
+
+  h = create_hash_with_hkey(hash, key, hkey);
+
+  if (h == NULL)
+    return 1;
+
+  h->val.p = val;
+
+  return 0;
+}
+
 static struct nhash *
 nhash_get(NHASH hash, char *key)
 {
   struct nhash *ptr;
-  int hk;
+  int hk, r;
 
   if (key == NULL)
     return NULL;
 
-  hk = calc_key_from_str(key);
+  hk = nhash_hkey(key);
 
   ptr = hash[hk];
 
   while (ptr) {
-    switch (strcmp(key, ptr->key)) {
-    case -1:
+    r = strcmp(key, ptr->key);
+
+    if (r < 0) {
       ptr = ptr->l;
-      break;
-    case 0:
-      return ptr;
-    case 1:
+    } else if (r > 0) {
       ptr = ptr->r;
-      break;
+    } else {
+      return ptr;
+    }
+  }
+
+  return NULL;
+}
+
+static struct nhash *
+nhash_get_with_hkey(NHASH hash, char *key, int hk)
+{
+  struct nhash *ptr;
+  int r;
+
+  if (key == NULL)
+    return NULL;
+
+  ptr = hash[hk];
+
+  while (ptr) {
+    r = strcmp(key, ptr->key);
+
+    if (r < 0) {
+      ptr = ptr->l;
+    } else if (r > 0) {
+      ptr = ptr->r;
+    } else {
+      return ptr;
     }
   }
 
@@ -192,21 +265,196 @@ nhash_get_int(NHASH hash, char *key, int *val)
 }
 
 int
+nhash_get_int_with_hkey(NHASH hash, char *key, int hkey, int *val)
+{
+  struct nhash *h;
+
+  h = nhash_get_with_hkey(hash, key, hkey);
+
+  if (h == NULL)
+    return 1;
+
+  *val = h->val.i;
+
+  return 0;
+}
+
+static void
+btree_cat(struct nhash *dest, struct nhash *src)
+{
+  struct nhash *h;
+  int r;
+
+  h = dest;
+
+  while (1) {
+    r = strcmp(h->key, src->key);
+    if (r < 0) {
+      if (h->l == NULL) {
+	h->l = src;
+	break;
+      }
+      h = h->l;
+    } else if (r > 0) {
+      if (h->r == NULL) {
+	h->r = src;
+	break;
+      }
+      h = h->r;
+    } else {
+      /* never reached */
+      break;
+    }
+  }
+  src->p = h;
+}
+
+static void
+nhash_del_sub(NHASH hash, struct nhash *h, int hkey)
+{
+  struct nhash *p;
+
+  p = h->p;
+
+  if (p == NULL) {
+    if (h->l && h->r) {
+      btree_cat(h->r, h->l);
+      hash[hkey] = h->r;
+      h->r->p = NULL;
+    } else if (h->l) {
+      hash[hkey] = h->l;
+      h->l->p = NULL;
+    } else if (h->r) {
+      hash[hkey] = h->r;
+      h->r->p = NULL;
+    } else {
+      hash[hkey] = NULL;
+    }
+  } else {
+    if (h->l && h->r) {
+      btree_cat(h->r, h->l);
+      if (p->l == h) {
+	p->l = h->r;
+      } else {
+	p->r = h->r;
+      }
+      h->r->p = p;
+    } else if (h->l) {
+      if (p->l == h) {
+	p->l = h->l;
+      } else {
+	p->r = h->l;
+      }
+      h->l->p = p;
+    } else if (h->r) {
+      if (p->l == h) {
+	p->l = h->r;
+      } else {
+	p->r = h->r;
+      }
+      h->r->p = p;
+    } else {
+      if (p->l == h) {
+	p->l = NULL;
+      } else {
+	p->r = NULL;
+      }
+      h->r->p = p;
+    }
+  }
+  free(h->key);
+  free(h);
+}
+
+void
+nhash_del_with_hkey(NHASH hash, char *key, int hkey)
+{
+  struct nhash *h;
+
+  h = nhash_get_with_hkey(hash, key, hkey);
+  nhash_del_sub(hash, h, hkey);
+}
+
+void
+nhash_del(NHASH hash, char *key)
+{
+  struct nhash *h;
+  int hkey;
+
+  hkey = nhash_hkey(key);
+  h = nhash_get_with_hkey(hash, key, hkey);
+  nhash_del_sub(hash, h, hkey);
+}
+
+static int
+hash_each_sub(struct nhash *h, int(* func)(struct nhash *, void *), void *data)
+{
+  if (h == NULL)
+    return 0;
+
+  if (h->l)
+    hash_each_sub(h->l, func, data);
+
+  if (h->r)
+    hash_each_sub(h->r, func, data);
+
+  return func(h, data);
+}
+
+int
+nhash_each(NHASH hash, int(* func)(struct nhash *, void *), void *data)
+{
+  int i, r;
+
+  if (func == NULL || hash == NULL)
+    return 0;
+
+  for (i = 0; i < HASH_SIZE; i++) {
+    if (hash[i]) {
+      r = hash_each_sub(hash[i], func, data);
+      if (r)
+	return r;
+    }
+  }
+  return 0;
+}
+
+int
 nhash_get_ptr(NHASH hash, char *key, void **ptr)
 {
   struct nhash *h;
 
   h = nhash_get(hash, key);
 
-  if (h == NULL)
+  if (h == NULL) {
+    *ptr = NULL;
     return 1;
+  }
 
   *ptr = h->val.p;
 
   return 0;
 }
 
-static void print_hash(struct nhash *h)
+int
+nhash_get_ptr_with_hkey(NHASH hash, char *key, int hkey, void **ptr)
+{
+  struct nhash *h;
+
+  h = nhash_get_with_hkey(hash, key, hkey);
+
+  if (h == NULL) {
+    *ptr = NULL;
+    return 1;
+  }
+
+  *ptr = h->val.p;
+
+  return 0;
+}
+
+static void 
+print_hash(struct nhash *h)
 {
   if (h == NULL)
     return;

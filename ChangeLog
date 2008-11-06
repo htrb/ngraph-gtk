@@ -1,3 +1,30 @@
+2008-11-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (saveval): bug fix: "valcur->next" is NULL when
+	"name" is found in nshell->valroot.
+
+	* src/gtk/x11print.c (DriverDialogClose): change buffer size of a
+	message.
+
+	* src/shellcm.c (printexp): add.
+	(cmexport, cmset): use hash when "USE_HASH" is true.
+
+
+	* src/shell.c (create_vallist, free_vallist): add.
+	(addval, saveval, restoreval, addexp, delval, getval, getexp)
+	(newfunc, addfunc, getfunc, cmdexec, newshell, delshell): use hash
+	when "USE_HASH" is true.
+
+	* src/object.c (ARGBUFNUM): change value from 10 to 32.
+
+	* src/nhash.c (free_hash_list): add argument "free_ptr".
+	(free_hash_list): call memfree() when "free_ptr" is true.
+	(nhash_free): add second argument.
+	(nhash_free_with_memfree_ptr, create_hash_with_hkey)
+	(nhash_set_int_with_hkey, nhash_set_ptr_with_hkey)
+	(nhash_get_with_hkey, nhash_get_int_with_hkey)
+	(nhash_del_with_hkey, nhash_get_ptr_with_hkey): add.
+
 2008-10-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c: add macro "check_infinite()".

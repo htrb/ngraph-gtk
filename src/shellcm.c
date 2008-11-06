@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.9 2008/10/20 05:51:59 hito Exp $
+ * $Id: shellcm.c,v 1.10 2008/11/06 05:47:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,6 +36,9 @@
 #include <dos.h>
 #include <dir.h>
 #endif
+
+#define USE_HASH 1
+
 #include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
@@ -185,9 +188,29 @@ int cmexit(struct nshell *nshell,int argc,char **argv)
   }
 }
 
+#if USE_HASH
+int
+printexp(struct nhash *h, void *data)
+{
+  printfstdout("%.256s\n", h->key);
+  return 0;
+}
+#endif
+
 int cmexport(struct nshell *nshell,int argc,char **argv)
 {
   int i;
+#if USE_HASH
+  if (argv[1] == NULL) {
+    nhash_each(nshell->exproot, printexp, NULL);
+  } else {
+    for (i = 1; i < argc; i++) {
+      if (addexp(nshell, argv[i]) == NULL)
+	return ERR;
+    }
+  }
+  return 0;
+#else
   struct explist *valcur;
 
   if (argv[1]==NULL) {
@@ -199,9 +222,10 @@ int cmexport(struct nshell *nshell,int argc,char **argv)
     return 0;
   } else {
     for (i=1;i<argc;i++)
-      if (addexp(nshell,argv[1])==NULL) return ERR;
+      if (addexp(nshell,argv[i])==NULL) return ERR;
     return 0;
   }
+#endif
 }
 
 int cmpwd(struct nshell *nshell,int argc,char **argv)
@@ -214,8 +238,128 @@ int cmpwd(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
+static int
+print_val(struct nhash *h, void *data)
+{
+  struct vallist *val;
+
+  val = (struct vallist *) h->val.p;
+  if (!val->func)
+    printfstdout("%.256s=%.256s\n", val->name, (char *)(val->val));
+
+  return 0;
+}
+
+static int
+print_func(struct nhash *h, void *data)
+{
+  struct vallist *val;
+  struct cmdlist *cmdcur;
+  struct prmlist *prmcur;
+
+  val = (struct vallist *) h->val.p;
+  if (val->func) {
+    printfstdout("%.256s=()\n", val->name);
+    putstdout("{");
+    cmdcur = val->val;
+    while (cmdcur) {
+      prmcur = cmdcur->prm;
+      printfstdout("    ");
+      while (prmcur) {
+	if (prmcur->str)
+	  printfstdout("%.256s ", prmcur->str);
+	prmcur = prmcur->next;
+      }
+      printfstdout("\n");
+      cmdcur = cmdcur->next;
+    }
+    putstdout("}");
+  }
+  return 0;
+}
+
 int cmset(struct nshell *nshell,int argc,char **argv)
 {
+#if USE_HASH
+  char *s;
+  unsigned int n;
+  int j,ops;
+  char **argv2;
+  int argc2;
+
+  if (argc < 2) {
+    nhash_each(nshell->valroot, print_val, NULL);
+    nhash_each(nshell->valroot, print_func, NULL);
+  } else {
+    for (j = 1; j < argc; j++) {
+      s = argv[j];
+      if (s[0] == '-' && s[1] == '-') {
+	n = strlen(argv[j]);
+	memmove(argv[j], argv[j] + 1, sizeof(**argv) * n);
+        break;
+      } else if (s[0] == '-' || s[0] == '+') {
+	if (s[1] == '\0' || strchr("efvx", s[1]) == NULL) {
+	  sherror3(argv[0], ERRILOPS, s);
+	  return ERRILOPS;
+	}
+      } else {
+	break;
+      }
+    }
+    if (j != argc) { 
+      argv2 = NULL;
+      s = nstrdup(nshell->argv[0]);
+      if (s == NULL)
+	return ERR;
+
+      if (arg_add(&argv2, s) == NULL) {
+        memfree(s);
+        arg_del(argv2);
+        return ERR;
+      }
+
+      for (; j < argc; j++) {
+	s = nstrdup(argv[j]);
+        if (s == NULL)
+	  return ERR;
+
+        if (arg_add(&argv2, s) == NULL) {
+          memfree(s);
+          arg_del(argv2);
+          return ERR;
+        }
+      }
+      argc2 = getargc(argv2);
+      arg_del(nshell->argv);
+      nshell->argv = argv2;
+      nshell->argc = argc2;
+    }
+    for (j = 1 ; j < argc; j++) {
+      s = argv[j];
+      if (s[0] == '-') {
+	ops=TRUE;
+      } else if (s[0]=='+') {
+	ops=FALSE;
+      } else {
+	break;
+      }
+      switch (s[1]) {
+      case 'e':
+        nshell->optione = ops;
+        break;
+      case 'f':
+        nshell->optionf = ops;
+        break;
+      case 'v':
+        nshell->optionv = ops;
+        break;
+      case 'x':
+        nshell->optionx = ops;
+        break;
+      }
+    }
+  }
+#else
   struct vallist *valcur;
   struct cmdlist *cmdcur;
   struct prmlist *prmcur;
@@ -316,6 +460,7 @@ int cmset(struct nshell *nshell,int argc,char **argv)
       }
     }
   }
+#endif
   return 0;
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.9 2008/10/23 02:36:15 hito Exp $
+ * $Id: shell.c,v 1.10 2008/11/06 05:47:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -127,6 +127,8 @@ static char *Prompt;
 #include <process.h>
 #include <windows.h>
 #endif
+
+#define USE_HASH 1
 
 #include "ngraph.h"
 #include "object.h"
@@ -652,7 +654,7 @@ check_cmd(char *name)
   shell_proc proc;
   int r;
 
-  r = nhash_get_ptr(CmdTblHash, name, (void *) &proc);
+  r = nhash_get_ptr(CmdTblHash, name, (void **) &proc);
   if (r)
     return NULL;
 
@@ -774,9 +776,74 @@ void cmdstackrmlast(struct cmdstack **stroot)
   memfree(stcur);
 }
 
-char *addval(struct nshell *nshell,char *name,char *val)
+static struct vallist *
+create_vallist(char *name, char *val)
+{
+  struct vallist *valnew;
+
+  valnew = memalloc(sizeof(* valnew));
+  if (valnew == NULL)
+    return NULL;
+
+  valnew->name = nstrdup(name);
+  if (valnew->name == NULL) {
+    memfree(valnew);
+    return NULL;
+  }
+
+  if (val) {
+    valnew->val = nstrdup(val);
+    if (valnew->val == NULL) {
+      memfree(valnew->name);
+      memfree(valnew);
+      return NULL;
+    }
+  } else {
+    valnew->val = NULL;
+  }
+
+  return valnew;
+}
+
+static void
+free_vallist(struct vallist *val)
+{
+  if (val == NULL)
+    return;
+
+  memfree(val->name);
+  if (val->func)
+    cmdfree(val->val);
+  else
+    memfree(val->val);
+  memfree(val);
+}
+
+char *
+addval(struct nshell *nshell,char *name,char *val)
 /* addval() returns NULL on error */
 {
+#if USE_HASH
+  struct vallist *valnew, *valcur;
+  int hkey;
+
+  valnew = create_vallist(name, val);
+  if (valnew == NULL)
+    return NULL;
+
+  valnew->func = FALSE;
+  valnew->arg = FALSE;
+
+  hkey = nhash_hkey(name);
+  nhash_get_ptr_with_hkey(nshell->valroot, name, hkey, (void **) &valcur);
+  if (valcur) {
+    free_vallist(valcur);
+  }
+
+  nhash_set_ptr_with_hkey(nshell->valroot, valnew->name, hkey, valnew);
+
+  return valnew->name;
+#else
   struct vallist *valcur,*valprev,*valnew;
 
   if ((valnew=memalloc(sizeof(struct vallist)))==NULL) return NULL;
@@ -814,12 +881,42 @@ char *addval(struct nshell *nshell,char *name,char *val)
     valnew->next=valcur;
   }
   return valnew->name;
+#endif
 }
 
 char *saveval(struct nshell *nshell,char *name,char *val,
               struct vallist **newvalroot)
 /* saveval() returns NULL on error */
 {
+#if USE_HASH
+  struct vallist *valnew, *valcur;
+  int hkey;
+
+  valnew = create_vallist(name, val);
+  if (valnew == NULL)
+    return NULL;
+
+  valnew->func = FALSE;
+  valnew->arg = TRUE;
+
+  hkey = nhash_hkey(name);
+  nhash_get_ptr_with_hkey(nshell->valroot, name, hkey, (void **) &valcur);
+
+  if (valcur) {
+    //    valcur->next = *newvalroot;    /* this code may be wrong. */
+    valcur->next = NULL;
+    printf("newvalroot = %p\n", *newvalroot);
+    if (*newvalroot == NULL) {
+      *newvalroot = valcur;
+    } else {
+      (*newvalroot)->next=valcur;
+    }
+  }
+
+  nhash_set_ptr_with_hkey(nshell->valroot, name, hkey, valnew);
+
+  return valnew->name;
+#else
   struct vallist *valcur,*valprev,*valnew;
 
   if ((valnew=memalloc(sizeof(struct vallist)))==NULL) return NULL;
@@ -856,11 +953,49 @@ char *saveval(struct nshell *nshell,char *name,char *val,
     valnew->next=valcur;
   }
   return valnew->name;
+#endif
+}
+
+static int
+delete_save_val(struct nhash *hash, void *data)
+{
+  struct vallist *val;
+  struct nshell *nshell;
+
+  val = (struct vallist *) hash->val.p;
+  nshell = (struct nshell *) data;
+
+  if (val->arg) {
+    nhash_del(nshell->valroot, val->name);
+    free_vallist(val);
+  }
+
+  return 0;
 }
 
 void restoreval(struct nshell *nshell,struct vallist *newvalroot)
 /* restoreval() returns NULL on error */
 {
+#if USE_HASH
+  struct vallist *valcur,*valnext, *valcur2;
+  int hk;
+
+  nhash_each(nshell->valroot, delete_save_val, nshell);
+
+  valcur = newvalroot;
+  while (valcur) {
+    valnext = valcur->next;
+    hk = nhash_hkey(valcur->name);
+    nhash_get_ptr_with_hkey(nshell->valroot, valcur->name, hk, (void **) &valcur2);
+
+    if (valcur2) {
+      free_vallist(valcur);
+    } else {
+      nhash_set_ptr_with_hkey(nshell->valroot, valcur->name, hk, (void *) valcur);
+    }
+    valcur = valnext;
+  }
+#else
   struct vallist *valcur,*valprev,*valnext;
   struct vallist *valcur2,*valprev2;
 
@@ -903,11 +1038,18 @@ void restoreval(struct nshell *nshell,struct vallist *newvalroot)
     }
     valcur=valnext;
   }
+#endif
 }
 
 char *addexp(struct nshell *nshell,char *name)
 /* addexp() returns NULL on error */
 {
+#if USE_HASH
+  if (nhash_set_int(nshell->exproot, name, TRUE))
+    return NULL;
+
+  return name;
+#else
   struct explist *valcur,*valprev,*valnew;
   int cmp;
 
@@ -930,10 +1072,25 @@ char *addexp(struct nshell *nshell,char *name)
   strcpy(valnew->val,name);
   valnew->next=valcur;
   return valnew->val;
+#endif
 }
 
 int delval(struct nshell *nshell,char *name)
 {
+#if USE_HASH
+  struct vallist *val;
+  int r, hkey;
+
+  hkey = nhash_hkey(name);
+  r = nhash_get_ptr_with_hkey(nshell->valroot, name, hkey, (void **) &val);
+  if (r == 0) {
+    free_vallist(val);
+    nhash_del_with_hkey(nshell->valroot, name, hkey);
+    return TRUE;
+  }
+
+  return FALSE;
+#else
   struct vallist *valcur,*valprev;
 
   valcur=nshell->valroot;
@@ -952,10 +1109,20 @@ int delval(struct nshell *nshell,char *name)
     valcur=valcur->next;
   }
   return FALSE;
+#endif
 }
 
 char *getval(struct nshell *nshell,char *name)
 {
+#if USE_HASH
+  struct vallist *val;
+
+  nhash_get_ptr(nshell->valroot, name, (void **) &val);
+  if (val && ! val->func) {
+    return val->val;
+  }
+  return FALSE;
+#else
   struct vallist *valcur;
 
   valcur=nshell->valroot;
@@ -964,10 +1131,17 @@ char *getval(struct nshell *nshell,char *name)
     valcur=valcur->next;
   }
   return NULL;
+#endif
 }
 
 int getexp(struct nshell *nshell,char *name)
 {
+#if USE_HASH
+  int i, r;
+
+  r = nhash_get_int(nshell->exproot, name, &i);
+  return ! r;
+#else
   struct explist *valcur;
 
   valcur=nshell->exproot;
@@ -976,11 +1150,33 @@ int getexp(struct nshell *nshell,char *name)
     valcur=valcur->next;
   }
   return FALSE;
+#endif
 }
 
 char *newfunc(struct nshell *nshell,char *name)
 /* newfunc() returns NULL on error */
 {
+#if USE_HASH
+  struct vallist *valnew, *valcur;
+  int hkey;
+
+  valnew = create_vallist(name, NULL);
+  if (valnew == NULL)
+    return NULL;
+
+  valnew->func = TRUE;
+  valnew->arg = FALSE;
+
+  hkey = nhash_hkey(name);
+  nhash_get_ptr_with_hkey(nshell->valroot, name, hkey, (void **) &valcur);
+  if (valcur) {
+    free_vallist(valcur);
+  }
+
+  nhash_set_ptr_with_hkey(nshell->valroot, valnew->name, hkey, valnew);
+
+  return valnew->name;
+#else
   struct vallist *valcur,*valprev,*valnew;
 
   if ((valnew=memalloc(sizeof(struct vallist)))==NULL) return NULL;
@@ -1013,11 +1209,79 @@ char *newfunc(struct nshell *nshell,char *name)
     valnew->next=valcur;
   }
   return valnew->name;
+#endif
 }
 
 char *addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
 /* addfunc() returns NULL on error */
 {
+#if USE_HASH
+  struct vallist *valcur;
+  struct cmdlist *cmdcur,*cmdprev,*cmdnew;
+  struct prmlist *prmcur,*prmprev,*prmnew;
+  char *snew;
+
+  nhash_get_ptr(nshell->valroot, name, (void **) &valcur);
+  if (valcur == NULL) {
+    return NULL;
+  }
+
+  if (! valcur->func) {
+    return NULL;
+  }
+
+  cmdcur = valcur->val;
+  cmdprev = NULL;
+  while (cmdcur) {
+    cmdprev = cmdcur;
+    cmdcur = cmdcur->next;
+  }
+
+  cmdnew = memalloc(sizeof(* cmdnew));
+  if (cmdnew == NULL) {
+    delval(nshell, name);
+    return NULL;
+  }
+
+  if (cmdprev == NULL) {
+    valcur->val = cmdnew;
+  } else {
+    cmdprev->next = cmdnew;
+  }
+
+  *cmdnew = *val;
+  cmdnew->prm = NULL;
+  cmdnew->next = NULL;
+  prmcur = val->prm;
+  prmprev = NULL;
+
+  while (prmcur) {
+    prmnew = memalloc(sizeof(* prmnew));
+    if (prmnew == NULL) {
+      delval(nshell, name);
+      return NULL;
+    }
+    if (prmprev == NULL) {
+      cmdnew->prm=prmnew;
+    } else {
+      prmprev->next=prmnew;
+    }
+    *prmnew = *prmcur;
+    prmnew->next = NULL;
+    if (prmcur->str) {
+      snew = nstrdup(prmcur->str);
+      if (snew == NULL) {
+	delval(nshell, name);
+	return NULL;
+      }
+      prmnew->str = snew;
+    }
+    prmprev = prmnew;
+    prmcur = prmcur->next;
+  }
+
+  return valcur->name;
+#else
   struct vallist *valcur;
   struct cmdlist *cmdcur,*cmdprev,*cmdnew;
   struct prmlist *prmcur,*prmprev,*prmnew;
@@ -1068,10 +1332,20 @@ char *addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
     valcur=valcur->next;
   }
   return valcur->name;
+#endif
 }
 
 struct cmdlist *getfunc(struct nshell *nshell,char *name)
 {
+#if USE_HASH
+  struct vallist *val;
+
+  nhash_get_ptr(nshell->valroot, name, (void **) &val);
+  if (val && val->func) {
+    return val->val;
+  }
+  return FALSE;
+#else
   struct vallist *valcur;
 
   valcur=nshell->valroot;
@@ -1080,6 +1354,7 @@ struct cmdlist *getfunc(struct nshell *nshell,char *name)
     valcur=valcur->next;
   }
   return NULL;
+#endif
 }
 
 char *gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
@@ -2348,11 +2623,54 @@ int syntax(struct nshell *nshell,
   return 0;
 }
 
+struct set_env_arg {
+  struct nshell *nshell;
+  char ***newenviron;
+};
+
+static int
+set_env_val(struct nhash *h, void *data)
+{
+  struct vallist *valcur;
+  struct set_env_arg *arg;
+  char *val, *s, *env;
+  int len, r;
+
+  valcur = (struct vallist *) h->val.p;
+  arg = (struct set_env_arg *) data;
+
+  if (valcur->func)
+    return 0;
+
+  r = getexp(arg->nshell, valcur->name);
+  if (r || valcur->arg) {
+    val = valcur->val;
+  } else if ((env = getenv(valcur->name))) {
+    val = env;
+  } else {
+    return 0;
+  }
+
+  len = strlen(valcur->name); 
+  s = memalloc(len + strlen(val) + 2);
+  if (s == NULL)
+    return 1;
+
+  memcpy(s, valcur->name, len);
+  s[len] = '=';
+  strcpy(s + len + 1, val);
+  if (arg_add(arg->newenviron, s) == NULL) {
+    memfree(s);
+    return 1;
+  }
+  return 0;
+}
+
 int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 {
   struct cmdlist *cmdcur,*cmdnew,*cmd;
   struct prmlist *prmcur,*prmprev,*prm,*prmnewroot;
-  struct vallist *valcur,*newvalroot;
+  struct vallist *newvalroot;
   int err,quote,bquote,rcode,needcmd;
   char *str,*name,*val,*po,*cmdname;
   int i,j,num,pnum,errlevel,a,looplevel,len;
@@ -2828,7 +3146,17 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	if ((prmcur!=NULL) && (prmcur->prmno==PPNO)) {
 
 	  /* set environment variable */
-	  valcur=nshell->valroot;
+#if USE_HASH
+	  {
+	    struct set_env_arg se_arg;
+
+	    se_arg.nshell = nshell;
+	    se_arg.newenviron = &newenviron;
+	    if (nhash_each(nshell->valroot, set_env_val, &se_arg))
+	      goto errexit;
+	  }
+#else
+	  struct vallist *valcur = nshell->valroot;
 	  while (valcur!=NULL) {
 	    if (!valcur->func
 		&& (getexp(nshell,valcur->name) || valcur->arg ||
@@ -2847,6 +3175,7 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    }
 	    valcur=valcur->next;
 	  }
+#endif
 
 	  environ=mainenviron;
 	  mainenviron=(char **)newenviron;
@@ -3423,12 +3752,22 @@ struct nshell *newshell()
   char *name,**env,*tok;
   int i,len;
 
-  if ((nshell=memalloc(sizeof(struct nshell)))==NULL) return NULL;
-  nshell->valroot=NULL;
-  nshell->exproot=NULL;
-  env=mainenviron;
+  nshell = memalloc(sizeof(struct nshell));
+  if (nshell == NULL)
+    return NULL;
+
+#if USE_HASH
+  nshell->valroot = nhash_new();
+  nshell->exproot = nhash_new();
+#else
+  nshell->valroot = NULL;
+  nshell->exproot = NULL;
+#endif
+
+  env = mainenviron;
+
   i=0;
-  while (env[i]!=NULL) {
+  while (env[i]) {
     tok=env[i];
     name=getitok2(&tok,&len,"=");
     if (tok[0]=='=') tok++;
@@ -3440,6 +3779,7 @@ struct nshell *newshell()
     memfree(name);
     i++;
   }
+
   if ((getval(nshell,"PATH")==NULL) && (getenv("Path")!=NULL)) {
     addval(nshell,"PATH",getenv("Path"));
   }
@@ -3457,15 +3797,34 @@ struct nshell *newshell()
   nshell->readbuf=memalloc(SHELLBUFSIZE);
   nshell->readbyte=0;
   nshell->readpo=0;
+
   return nshell;
+}
+
+static int
+del_vallist(struct nhash *h, void *data)
+{
+  struct vallist *val;
+
+  val = (struct vallist *) h->val.p;
+  free_vallist(val);
+
+  return 0;
 }
 
 void delshell(struct nshell *nshell)
 {
-  struct vallist *valcur,*valdel;
+#if ! USE_HASH
+  struct vallist *valcur, *valdel;
   struct explist *expcur,*expdel;
+#endif
 
   if (nshell==NULL) return;
+
+#if USE_HASH
+  nhash_each(nshell->valroot, del_vallist, NULL);
+  nhash_free(nshell->valroot);
+#else
   valcur=nshell->valroot;
   while (valcur!=NULL) {
     memfree(valcur->name);
@@ -3475,6 +3834,11 @@ void delshell(struct nshell *nshell)
     valcur=valcur->next;
     memfree(valdel);
   }
+#endif
+
+#if USE_HASH
+  nhash_free(nshell->exproot);
+#else
   expcur=nshell->exproot;
   while (expcur!=NULL) {
     memfree(expcur->val);
@@ -3482,6 +3846,7 @@ void delshell(struct nshell *nshell)
     expcur=expcur->next;
     memfree(expdel);
   }
+#endif
   arg_del(nshell->argv);
   memfree(nshell->readbuf);
   memfree(nshell);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.30 2008/09/18 08:13:44 hito Exp $
+ * $Id: x11print.c,v 1.31 2008/11/06 05:47:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -235,7 +235,7 @@ DriverDialogClose(GtkWidget *w, void *data)
   option[j] = '\0';
   if (len2 != 0) {
     if (access(file, 04) == 0) {
-      len2 += 60;
+      len2 += MESSAGE_BUF_SIZE;
       buf = (char *) memalloc(len2);
       if (buf) {
 	snprintf(buf, len2, _("`%s'\n\nOverwrite existing file?"), file);
