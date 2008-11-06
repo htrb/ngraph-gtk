@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.15 2008/10/20 05:52:00 hito Exp $
+ * $Id: main.c,v 1.16 2008/11/06 08:42:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -141,6 +141,7 @@ char *Translator =
 
 char *Documenter[] = {
   "Satoshi ISHIZAKA",
+  "Ito Hiroyuki",
   NULL
 };
 
@@ -480,6 +481,7 @@ main(int argc, char **argv, char **environ)
 
   if (addobjectroot() == NULL)
     exit(1);
+
   if (addsystem() == NULL)
     exit(1);
 
