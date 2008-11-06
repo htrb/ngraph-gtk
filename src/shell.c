@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.11 2008/11/06 06:27:34 hito Exp $
+ * $Id: shell.c,v 1.12 2008/11/06 06:53:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -903,7 +903,6 @@ char *saveval(struct nshell *nshell,char *name,char *val,
   nhash_get_ptr_with_hkey(nshell->valroot, name, hkey, (void **) &valcur);
 
   if (valcur) {
-    //    valcur->next = *newvalroot;    /* this code may be wrong. */
     valcur->next = NULL;
     if (*newvalroot == NULL) {
       *newvalroot = valcur;
@@ -945,7 +944,8 @@ char *saveval(struct nshell *nshell,char *name,char *val,
     valnew->next=NULL;
   } else if (strcmp0(name,valcur->name)==0) {
     valnew->next=valcur->next;
-    valcur->next=*newvalroot;
+    //    valcur->next = *newvalroot;    /* this code may be wrong. */
+    valcur->next=NULL;
     if (*newvalroot==NULL) *newvalroot=valcur;
     else (*newvalroot)->next=valcur;
   } else {
