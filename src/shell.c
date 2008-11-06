@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.10 2008/11/06 05:47:26 hito Exp $
+ * $Id: shell.c,v 1.11 2008/11/06 06:27:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -905,7 +905,6 @@ char *saveval(struct nshell *nshell,char *name,char *val,
   if (valcur) {
     //    valcur->next = *newvalroot;    /* this code may be wrong. */
     valcur->next = NULL;
-    printf("newvalroot = %p\n", *newvalroot);
     if (*newvalroot == NULL) {
       *newvalroot = valcur;
     } else {
