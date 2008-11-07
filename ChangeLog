@@ -32,7 +32,7 @@
 
 2008-10-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofile.c (f2dinit): initialize "line_join" ad "bevel".
+	* src/ofile.c (f2dinit): initialize "line_join" as "bevel".
 
 2008-10-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
