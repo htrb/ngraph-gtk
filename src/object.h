@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.6 2008/10/06 07:05:48 hito Exp $
+ * $Id: object.h,v 1.7 2008/11/07 07:47:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -64,7 +64,7 @@ struct objlist {
     char *name;
     char *alias;
     char *ver;
-    int tblnum;
+    int tblnum, fieldnum;
     struct objtable *table;
     NHASH table_hash;
     int size;

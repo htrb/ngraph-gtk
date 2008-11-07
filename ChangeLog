@@ -1,3 +1,15 @@
+2008-11-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (get_home): add.
+	(createmenu): load accel map when "KEYMAP_FILE" is exist in
+	"NGRAPH_HOME".
+
+	* src/object.h (struct objlist): add member "fieldnum".
+
+	* src/object.c (addobject): initialize "objnew->fieldnum".
+	(chkobjfieldnum): return "obj->fieldnum" when value of
+	"obj->fieldnum" is valid.
+
 2008-11-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (saveval): bug fix: "valcur->next" is NULL when

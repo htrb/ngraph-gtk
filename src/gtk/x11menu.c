@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.44 2008/09/22 02:53:35 hito Exp $
+ * $Id: x11menu.c,v 1.45 2008/11/07 07:47:35 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -14,6 +14,7 @@
 #include <math.h>
 #include <time.h>
 #include <limits.h>
+#include <unistd.h>
 
 #include "ngraph.h"
 #include "object.h"
@@ -54,6 +55,7 @@
 #define MATH_X_HISTORY   "math_x_history"
 #define MATH_Y_HISTORY   "math_y_history"
 #define FUNCTION_HISTORY "function_history"
+#define KEYMAP_FILE      "accel_map"
 
 int Menulock = FALSE;
 struct NgraphApp NgraphApp;
@@ -797,7 +799,7 @@ create_axismenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, GTK_STOCK_PROPERTIES, TRUE, "<Ngraph>/Axis/Property", 0, 0, CmAxisMenu, MenuIdAxisUpdate);
   create_menu_item(menu, GTK_STOCK_DELETE, TRUE, "<Ngraph>/Axis/Delete", 0, 0, CmAxisMenu, MenuIdAxisDel);
   create_menu_item(menu, _("Scale _Zoom"), FALSE, "<Ngraph>/Axis/Scale Zoom", 0, 0, CmAxisMenu, MenuIdAxisZoom);
-  create_menu_item(menu, _("Scale _Clear"), FALSE, "<Ngraph>/Axis/Scale Clear", GDK_c, GDK_CONTROL_MASK, CmAxisMenu, MenuIdAxisClear);
+  create_menu_item(menu, _("Scale _Clear"), FALSE, "<Ngraph>/Axis/Scale Clear", GDK_c, GDK_SHIFT_MASK | GDK_CONTROL_MASK, CmAxisMenu, MenuIdAxisClear);
   item = gtk_menu_item_new_with_mnemonic(_("_Grid"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
   create_axisgridmenu(item, accel_group);
@@ -1066,10 +1068,26 @@ create_helpmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, GTK_STOCK_ABOUT, TRUE, "<Ngraph>/Help/About", 0, 0, CmHelpMenu, MenuIdHelpAbout);
 }
 
+static char *
+get_home(void)
+{
+  struct objlist *sysobj;
+  char *inst, *home, *buf;
+  int len;
+
+  sysobj = chkobject("system");
+  inst = chkobjinst(sysobj, 0);
+  _getobj(sysobj, "home_dir", inst, &home);
+
+  return home;
+}
+
 static void
 createmenu(GtkMenuBar *parent)
 {
   GtkAccelGroup *accel_group;
+  char *home, *filename;
+  int len;
  
   accel_group = gtk_accel_group_new();
 
@@ -1087,6 +1105,22 @@ createmenu(GtkMenuBar *parent)
 
   gtk_window_add_accel_group (GTK_WINDOW(TopLevel), accel_group);
   AccelGroup = accel_group;
+
+  home = get_home();
+  if (home == NULL)
+    return;
+
+  len = strlen(home) + strlen(KEYMAP_FILE) + 2;
+  filename = malloc(len);
+
+  if (filename == NULL)
+    return;
+
+  snprintf(filename, len, "%s/%s", home, KEYMAP_FILE);
+  if (access(filename, R_OK) == 0) {
+    gtk_accel_map_load(filename);
+  }
+  free(filename);
 }
 
 static void
@@ -1457,8 +1491,7 @@ set_gdk_color(GdkColor *col, int r, int g, int b)
 static void
 load_hist(void)
 {
-  struct objlist *sysobj;
-  char *inst, *home, *filename;
+  char *home, *filename;
   int len;
 
   NgraphApp.legend_text_list = entry_completion_create();
@@ -1466,10 +1499,7 @@ load_hist(void)
   NgraphApp.y_math_list = entry_completion_create();
   NgraphApp.func_list = entry_completion_create();
 
-  sysobj = chkobject("system");
-  inst = chkobjinst(sysobj, 0);
-  _getobj(sysobj, "home_dir", inst, &home);
-
+  home = get_home();
   if (home == NULL)
     return;
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.16 2008/11/06 05:47:26 hito Exp $
+ * $Id: object.c,v 1.17 2008/11/07 07:47:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -989,6 +989,7 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->alias=alias;
   objnew->ver=ver;
   objnew->tblnum=tblnum;
+  objnew->fieldnum=-1;
   objnew->table=table;
 #if USE_HASH
   objnew->table_hash=tbl_hash;
@@ -1419,6 +1420,9 @@ int chkobjfieldnum(struct objlist *obj)
   char *name;
   int i,j,num;
 
+  if (obj->fieldnum >= 0)
+    return obj->fieldnum;
+
   num=0;
   objcur=obj;
   while (objcur!=NULL) {
@@ -1435,6 +1439,8 @@ match:
     }
     objcur=objcur->parent;
   }
+
+  obj->fieldnum = num;
   return num;
 }
 
