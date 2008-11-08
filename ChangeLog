@@ -21,7 +21,6 @@
 	* src/shellcm.c (printexp): add.
 	(cmexport, cmset): use hash when "USE_HASH" is true.
 
-
 	* src/shell.c (create_vallist, free_vallist): add.
 	(addval, saveval, restoreval, addexp, delval, getval, getexp)
 	(newfunc, addfunc, getfunc, cmdexec, newshell, delshell): use hash
