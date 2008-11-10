@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.55 2008/10/06 07:05:50 hito Exp $
+ * $Id: x11file.c,v 1.56 2008/11/10 07:05:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2447,97 +2447,97 @@ FileDialogType(GtkWidget *w, gpointer client_data)
 
   d = (struct FileDialog *) client_data;
 
-  gtk_widget_set_sensitive(d->mark_btn, TRUE);
-  gtk_widget_set_sensitive(d->curve, TRUE);
-  gtk_widget_set_sensitive(d->col1, TRUE);
-  gtk_widget_set_sensitive(d->col2, TRUE);
-  gtk_widget_set_sensitive(d->style, TRUE);
-  gtk_widget_set_sensitive(d->width, TRUE);
-  gtk_widget_set_sensitive(d->size, TRUE);
-  gtk_widget_set_sensitive(d->miter, TRUE);
-  gtk_widget_set_sensitive(d->join, TRUE);
-
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), TRUE);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), TRUE);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->col1), TRUE);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), TRUE);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->style), TRUE);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->width), TRUE);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), TRUE);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), TRUE);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), TRUE);
+  
   type = combo_box_get_active(w);
 
   switch (type) {
   case 0:
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
   case 1:
   case 2:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
     break;
   case 3:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
     break;
   case 4:
   case 6:
   case 8:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
   case 5:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
   case 7:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
   case 9:
   case 10:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
   case 11:
   case 12:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
     break;
   case 13:
   case 14:
   case 17:
   case 18:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
   case 15:
   case 16:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
   case 19:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
+    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
     break;
   }
 }

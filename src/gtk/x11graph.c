@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.23 2008/10/10 04:52:21 hito Exp $
+ * $Id: x11graph.c,v 1.24 2008/11/10 07:05:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -74,7 +74,7 @@ static struct pagelisttype pagelist[] = {
   {"Letter P (215.90x279.40)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, FALSE, 21590, 27940},
   {"Letter L (279.40x215.90)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, TRUE,  27940, 21590},
   {"Legal  P (215.90x355.60)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  FALSE, 21590, 35560},
-  {"Legal  L (355.60x355.60)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  TRUE,  35560, 21590},
+  {"Legal  L (355.60x215.90)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  TRUE,  35560, 21590},
 };
 
 #define PAGELISTNUM (sizeof(pagelist) / sizeof(*pagelist))
@@ -139,8 +139,8 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
   if (a < 0)
     return;
 
-  gtk_widget_set_sensitive(d->paperwidth, a == 0);
-  gtk_widget_set_sensitive(d->paperheight, a == 0);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->paperwidth), a == 0);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->paperheight), a == 0);
 
   if (a > 0) {
     spin_entry_set_val(d->paperwidth, pagelist[a].width);

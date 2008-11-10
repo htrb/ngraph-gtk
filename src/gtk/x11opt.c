@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.19 2008/09/12 08:50:18 hito Exp $
+ * $Id: x11opt.c,v 1.20 2008/11/10 07:05:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1395,9 +1395,9 @@ use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 
   state = ! gtk_toggle_button_get_active(togglebutton);
 
-  gtk_widget_set_sensitive(d->dpi, state);
-  gtk_widget_set_sensitive(d->width, state);
-  gtk_widget_set_sensitive(d->height, state);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->dpi), state);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->width), state);
+  gtk_widget_set_sensitive(gtk_widget_get_parent(d->height), state);
 }
 
 static void
