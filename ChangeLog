@@ -5,8 +5,8 @@
 
 	* src/shell.h (struct nshell): add member "deleted".
 
-	* src/shell.c (getcmdline): goto "errexit" when "nshell->deleted"
-	is true.
+	* src/shell.c (cmdexecute): exit loop when "nshell->deleted" is
+	true.
 	(newshell): initialize "nshell->deleted".
 
 	* src/oshell.c (cmddone): if "shlocal->lock" is true, set

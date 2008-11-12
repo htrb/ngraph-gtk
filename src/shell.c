@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.13 2008/11/12 08:47:33 hito Exp $
+ * $Id: shell.c,v 1.14 2008/11/12 09:32:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1454,11 +1454,6 @@ int getcmdline(struct nshell *nshell,
 #endif
       }
       do {
-	if (nshell->deleted) {
-	  err = -1;
-	  goto errexit;
-	}
-
         ch=shget(nshell);
         if (ch==EOF) {
           if (strlen(tok)!=0) {
@@ -3679,6 +3674,12 @@ int cmdexecute(struct nshell *nshell,char *cline)
     cmdcur=cmdroot;
     cmdnew=NULL;
     stroot=NULL;
+
+    if (nshell->deleted) {
+      rcode = -1;
+      break;
+    }
+
     do {
       if ((rcode=getcmdline(nshell,&cmdnew,cmdroot,cline,&istr))!=0) break;
       if ((rcode=checkcmd(nshell,&cmdnew))!=0) break;
