@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.12 2008/11/06 06:53:01 hito Exp $
+ * $Id: shell.c,v 1.13 2008/11/12 08:47:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -263,11 +263,11 @@ int shget(struct nshell *nshell)
       str_ptr = line_str = readline(Prompt);
       if(str_ptr == NULL){
 	byte = 0;
-      }else if(strlen(str_ptr) > 0) {
+      } else if(strlen(str_ptr) > 0) {
 	int pos;
 	for(pos = history_length; pos >= 0; pos--){
-	  if((pos = history_search_pos(str_ptr, -1, pos)) >= 0 &&
-	     strcmp(history_get(pos+history_base)->line, str_ptr) == 0){
+	  pos = history_search_pos(str_ptr, -1, pos);
+	  if(pos >= 0 && strcmp(history_get(pos + history_base)->line, str_ptr) == 0){
 	    remove_history(pos);
 	    break;
 	  }
@@ -1454,6 +1454,11 @@ int getcmdline(struct nshell *nshell,
 #endif
       }
       do {
+	if (nshell->deleted) {
+	  err = -1;
+	  goto errexit;
+	}
+
         ch=shget(nshell);
         if (ch==EOF) {
           if (strlen(tok)!=0) {
@@ -3796,6 +3801,7 @@ struct nshell *newshell()
   nshell->readbuf=memalloc(SHELLBUFSIZE);
   nshell->readbyte=0;
   nshell->readpo=0;
+  nshell->deleted = 0;
 
   return nshell;
 }

@@ -1,7 +1,7 @@
 #ifndef _SHELL_HEADER
 #define _SHELL_HEADER
 /* 
- * $Id: shell.h,v 1.5 2008/11/06 05:47:26 hito Exp $
+ * $Id: shell.h,v 1.6 2008/11/12 08:47:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -121,6 +121,7 @@ struct nshell {
   char *readbuf;
   int readpo;
   int readbyte;
+  int deleted;
   int (*sgetstdin)();
   int (*sputstdout)(char *s);
   int (*sprintfstdout)(char *fmt,...);

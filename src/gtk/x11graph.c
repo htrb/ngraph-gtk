@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.24 2008/11/10 07:05:29 hito Exp $
+ * $Id: x11graph.c,v 1.25 2008/11/12 08:47:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1214,7 +1214,7 @@ CmGraphShell(void)
 {
   struct objlist *obj, *robj, *shell;
   char *inst;
-  int idn, allocnow;
+  int idn, allocnow, n;
 
   if (Menulock || GlobalLock)
     return;
@@ -1224,6 +1224,10 @@ CmGraphShell(void)
   idn = getobjtblpos(obj, "_evloop", &robj);
   registerevloop(chkobjectname(obj), "_evloop", robj, idn, inst, NULL);
   if ((shell = chkobject("shell")) != NULL) {
+    n = chkobjlastinst(shell);
+    if (n < 0) {
+      newobj(shell);
+    }
     allocnow = AllocConsole();
     exeobj(shell, "shell", 0, 0, NULL);
     FreeConsole(allocnow);

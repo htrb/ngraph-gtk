@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.16 2008/11/06 08:42:41 hito Exp $
+ * $Id: main.c,v 1.17 2008/11/12 08:47:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -592,7 +592,14 @@ main(int argc, char **argv, char **environ)
   }
 
   inifile = NULL;
-  id = newobj((obj = getobject("shell")));
+  obj = getobject("shell");
+  if (obj == NULL)
+    exit(1);
+
+  id = newobj(obj);
+  if (id < 0)
+    exit(1);
+
   for (i = 1; i < argc; i++) {
     if (argv[i][0] != '-' || argv[i][1] != 'i' || i >= argc - 1) {
       break;
@@ -610,7 +617,7 @@ main(int argc, char **argv, char **environ)
     else if (findfilename(libdir, CONFTOP, systemname))
       inifile = getfilename(libdir, CONFTOP, systemname);
   }
-  if (inifile != NULL) {
+  if (inifile) {
     arrayinit(&sarray, sizeof(char *));
     if (arrayadd(&sarray, &inifile) == NULL)
       exit(1);
@@ -959,8 +966,9 @@ my_completion_function(const char *text, int state, char **func(const char *))
 
     list_index++;
     return t;
-  } else
-    return NULL;
+  }
+
+  return NULL;
 }
 
 static int

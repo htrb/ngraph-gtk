@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.c,v 1.6 2008/11/06 06:53:01 hito Exp $
+ * $Id: nhash.c,v 1.7 2008/11/12 08:47:33 hito Exp $
  */
 
 #include <stdlib.h>
@@ -371,7 +371,8 @@ nhash_del_with_hkey(NHASH hash, char *key, int hkey)
   struct nhash *h;
 
   h = nhash_get_with_hkey(hash, key, hkey);
-  nhash_del_sub(hash, h, hkey);
+  if (h)
+    nhash_del_sub(hash, h, hkey);
 }
 
 void
@@ -382,7 +383,8 @@ nhash_del(NHASH hash, char *key)
 
   hkey = nhash_hkey(key);
   h = nhash_get_with_hkey(hash, key, hkey);
-  nhash_del_sub(hash, h, hkey);
+  if (h)
+    nhash_del_sub(hash, h, hkey);
 }
 
 static int

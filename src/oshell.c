@@ -1,5 +1,5 @@
 /* 
- * $Id: oshell.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oshell.c,v 1.2 2008/11/12 08:47:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,13 +50,13 @@
 #define ERRNOCL 101
 #define ERRFILEFIND 102
 
-#define ERRNUM 3
-
-char *sherrorlist[ERRNUM]={
+char *sherrorlist[]={
   "already running.",
   "no command string is specified.",
   "no such file",
 };
+
+#define ERRNUM (sizeof(sherrorlist) / sizeof(*sherrorlist))
 
 struct shlocal {
   int lock;
@@ -86,7 +86,13 @@ int cmddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct shlocal *shlocal;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+
   _getobj(obj,"_local",inst,&shlocal);
+  if (shlocal->lock) {
+    shlocal->nshell->deleted = 1;
+    return 1;
+  }
+
   delshell(shlocal->nshell);
   return 0;
 }
@@ -185,6 +191,10 @@ int cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   } else setshhandle(nshell,stdinfd());
   do {
     rcode=cmdexecute(nshell,NULL);
+
+    if (nshell->deleted)
+      break;
+
   } while (nisatty(getshhandle(nshell)) && (rcode!=0));
 
   if (fd!=NOHANDLE) {
@@ -201,6 +211,13 @@ int cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 errexit:
   shellrestorestdio(nshell);
   shlocal->lock=0;
+
+  if (nshell->deleted) {
+    int id;
+    _getobj(obj, "id", inst, &id);
+    delobj(obj, id);
+  }
+
   return err;
 }
 

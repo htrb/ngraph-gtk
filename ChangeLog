@@ -1,3 +1,21 @@
+2008-11-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (CmGraphShell): create new instance when
+	there are no instances of "shell" object.
+
+	* src/shell.h (struct nshell): add member "deleted".
+
+	* src/shell.c (getcmdline): goto "errexit" when "nshell->deleted"
+	is true.
+	(newshell): initialize "nshell->deleted".
+
+	* src/oshell.c (cmddone): if "shlocal->lock" is true, set
+	"shlocal->nshell->deleted" as 1 and return 1.
+	(cmdshell): exit roop when "nshell->deleted" is true.
+	(cmdshell): delete instance when "nshell->deleted" is true.
+
+	* src/nhash.c (nhash_del_with_hkey, nhash_del): check "h".
+
 2008-11-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileDialogType): set sensitivity of parent widgets.
