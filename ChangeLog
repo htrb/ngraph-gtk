@@ -10,9 +10,9 @@
 	(newshell): initialize "nshell->deleted".
 
 	* src/oshell.c (cmddone): if "shlocal->lock" is true, set
-	"shlocal->nshell->deleted" as 1 and return 1.
+	"shlocal->nshell->deleted" as 1.
 	(cmdshell): exit roop when "nshell->deleted" is true.
-	(cmdshell): delete instance when "nshell->deleted" is true.
+	(cmdshell): call "delshell()" when "nshell->deleted" is true.
 
 	* src/nhash.c (nhash_del_with_hkey, nhash_del): check "h".
 

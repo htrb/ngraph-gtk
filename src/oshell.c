@@ -1,5 +1,5 @@
 /* 
- * $Id: oshell.c,v 1.2 2008/11/12 08:47:33 hito Exp $
+ * $Id: oshell.c,v 1.3 2008/11/13 01:24:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -90,10 +90,9 @@ int cmddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"_local",inst,&shlocal);
   if (shlocal->lock) {
     shlocal->nshell->deleted = 1;
-    return 1;
+  } else {
+    delshell(shlocal->nshell);
   }
-
-  delshell(shlocal->nshell);
   return 0;
 }
 
@@ -210,12 +209,11 @@ int cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 errexit:
   shellrestorestdio(nshell);
-  shlocal->lock=0;
 
   if (nshell->deleted) {
-    int id;
-    _getobj(obj, "id", inst, &id);
-    delobj(obj, id);
+    delshell(nshell);
+  } else {
+    shlocal->lock = 0;
   }
 
   return err;
