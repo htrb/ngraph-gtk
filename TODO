@@ -1,8 +1,5 @@
-* ofile.c: evaluate ov mtime must be done before call opendata(). 
-
 * コードの整理
 * Color selection dialog のパレット設定保存、読込
-* ショートカットキー設定の保存、読み込み
 
 * Symbol font 対応の強化
 
