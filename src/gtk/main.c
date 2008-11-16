@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.19 2008/11/16 09:10:10 hito Exp $
+ * $Id: main.c,v 1.20 2008/11/16 12:47:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,11 +39,11 @@
 #include "ioutil.h"
 #include "nstring.h"
 #include "nconfig.h"
+#include "shell.h"
 
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
-#include "shell.h"
 #include "ox11menu.h"
 #include "ogra2x11.h"
 #include "ogra2cairo.h"
