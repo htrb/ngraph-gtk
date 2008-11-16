@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.c,v 1.7 2008/11/12 08:47:33 hito Exp $
+ * $Id: nhash.c,v 1.8 2008/11/16 08:46:18 hito Exp $
  */
 
 #include <stdlib.h>
@@ -89,14 +89,14 @@ create_hash_with_hkey(NHASH hash, char *key, int hkey)
   } else {
     while (ptr) {
       lr = strcmp(key, ptr->key);
-      if (lr < 0) {
+      if (lr == 0) {
+	return ptr;
+      } else if (lr < 0) {
 	prev = ptr;
 	ptr = ptr->l;
-      } else if (lr > 0) {
+      } else {
 	prev = ptr;
 	ptr = ptr->r;
-      } else {
-	return ptr;
       }
     }
     h = malloc(sizeof(struct nhash));
@@ -112,7 +112,7 @@ create_hash_with_hkey(NHASH hash, char *key, int hkey)
   }
 
   if (prev) {
-    if (lr == -1) {
+    if (lr < 0) {
       prev->l = h;
     } else {
       prev->r = h;
