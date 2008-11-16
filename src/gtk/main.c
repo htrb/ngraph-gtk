@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.18 2008/11/16 08:46:19 hito Exp $
+ * $Id: main.c,v 1.19 2008/11/16 09:10:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -485,7 +485,7 @@ main(int argc, char **argv, char **environ)
   if (addsystem() == NULL)
     exit(1);
 
-  sys = getobject("system")
+  sys = getobject("system");
   if (sys == NULL)
     exit(1);
 
