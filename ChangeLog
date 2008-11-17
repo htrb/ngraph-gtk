@@ -1,3 +1,11 @@
+2008-11-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ogra.c (oGRAopen): put error message when the return value
+	of "GRAinit()" is false.
+
+	* src/gra.c (GRAinit): don't return "ERROPEN" when
+	"GRAClist[GC]output == -1".
+
 2008-11-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/nhash.c (create_hash_with_hkey): fix condition (from "lr ==

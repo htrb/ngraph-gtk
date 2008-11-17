@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.7 2008/09/19 07:16:18 hito Exp $
+ * $Id: ogra.c,v 1.8 2008/11/17 07:53:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -231,8 +231,10 @@ int oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   *(int *)rval=GC;
   if (_putobj(obj,"GC",inst,&GC)) return 1;
   r = GRAinit(GC,leftm,topm,width,height,zoom);
-  if (r)
+  if (r) {
+    error2(obj,ERROPEN,device);
     return r;
+  }
 
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;

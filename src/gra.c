@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.13 2008/10/09 10:43:08 hito Exp $
+ * $Id: gra.c,v 1.14 2008/11/17 07:53:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -726,7 +726,7 @@ int GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
   GRAClist[GC].height=height;
   GRAClist[GC].zoom=zoom/10000.0;
 
-  return (r) ? ERROPEN: 0;
+  return (r && GRAClist[GC].output != -1) ? ERROPEN: 0;
 }
 
 void GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom)
