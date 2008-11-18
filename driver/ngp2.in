@@ -1,5 +1,5 @@
 #! DEMODIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.2 2008/11/18 04:35:44 hito Exp $
+# $id$
 # ngp2 Version 1.10 written by H.I.
 
 IGN_PATH=0
