@@ -1,0 +1,221 @@
+#! DEMODIRDEF/ngraph -i
+# $Id: ngp2.in,v 1.2 2008/11/18 04:35:44 hito Exp $
+# ngp2 Version 1.10 written by H.I.
+
+IGN_PATH=0
+GRA2PS_OPTION=""
+AUTO_SCALE=0
+OPTION="-gra"
+CHDIR=0
+PWD=`pwd`
+
+clear_viewer() {
+    for i in `derive -instance draw fit`
+    do
+	del ${i}:0-!
+    done
+
+    if exist gra:viewer > /dev/null
+    then
+	del gra:viewer
+    fi
+}
+
+save_image() {
+    new gra2cairofile name=OUTPUT
+    new gra
+    gra2cairofile::format=$1
+    gra2cairofile::file=$2
+    gra::device=gra2cairofile:OUTPUT
+    gra::open
+    gra::draw
+    gra::close
+    del gra
+    del gra2cairofile
+}
+
+save_gra() {
+    if [ -n "$1" ]
+    then
+	new gra2file name=gra2file file="$1"
+	gra::device=gra2file:gra2file
+	gra::open
+	gra::draw
+	gra::close
+	del gra2file:gra2file
+    fi
+}
+
+new menu
+
+new gra2cairofile file=/dev/null
+new gra
+gra::device=gra2cairofile:0
+gra::open
+
+while true
+do
+    case "$1" in
+	-I)
+	    IGN_PATH=1
+	    shift
+	    ;;
+	-a)
+	    AUTO_SCALE=1
+	    shift
+	    ;;
+	-A)
+	    AUTO_SCALE=2
+	    shift
+	    ;;
+	-c)
+	    CHDIR=1
+	    shift
+	    ;;
+	-r|-l)
+	    GRA2PS_OPTION="$GRA2PS_OPTION $1"
+	    shift
+	    ;;
+	-p)
+	    GRA2PS_OPTION="$GRA2PS_OPTION $1 $2"
+	    shift 2
+	    ;;
+	-*)
+	    OPTION="$1"
+	    shift
+	    ;;
+	*)
+	    break
+	    ;;
+    esac
+done
+
+NGP_FILES=$@
+if [ -z "$NGP_FILES" ]
+then
+    echo ngp2 version 1.10
+    echo
+    echo usage: ngp2 [option] ngpfile ...
+fi
+
+for NGP_FILE in $NGP_FILES
+do
+    clear_viewer
+
+    if [ -f "$NGP_FILE" ]
+    then
+	NGP_NAME=`basename "$NGP_FILE" .ngp`
+	PATH_NAME=`dirname $NGP_FILE`
+
+	if exist menu > /dev/null
+	then
+	    menu::fullpath_ngp="$NGP_FILE"
+	fi
+
+	case "$OPTION" in
+	    -)
+		;;
+	    *)
+		echo "Drawing ${NGP_FILE}."
+		;;
+	esac
+
+	new shell
+	shell::shell "$NGP_FILE"
+	del shell
+
+	if [ $IGN_PATH -ne 0 ]
+	then
+	    for i in `object file -instances`
+	    do
+		put file:$i file=`get file:$i -field basename`
+	    done
+	fi
+
+	if [ $CHDIR -ne 0 ]
+	then
+	    cd $PATH_NAME
+	fi
+
+	if exist axis > /dev/null
+	then
+	    if exist file > /dev/null
+	    then
+		case "$AUTO_SCALE" in
+		    2)
+			axis:0-!:clear
+			axis:0-!:auto_scale:'file:0-! 0'
+			;;
+		    1)
+			axis:0-!:auto_scale:'file:0-! 0'
+			;;
+		esac
+	    fi
+	fi
+
+	TMPFILE=${system:0:temp_file}
+
+	case "$OPTION" in
+#======================================================================
+#オプション
+#
+# "$TMPFILE" に作業用のファイル名が代入されています。"$TMPFILE" は自動
+# 的に削除されます。また、"$NGP_NAME" には NGP ファイル名から".ngp" を
+# のぞいた部分が代入されています。
+
+	    -ps|-ps3)
+		save_image "ps3" $NGP_NAME.ps
+		;;
+	    -ps2)
+		save_image "ps2" $NGP_NAME.ps
+		;;
+	    -eps|-eps3)
+		save_image "eps3" $NGP_NAME.eps
+		;;
+	    -eps2)
+		save_image "eps2" $NGP_NAME.eps
+		;;
+	    -wmf)
+		save_gra $TMPFILE
+		gra2wmf -o $NGP_NAME.wmf $TMPFILE
+		;;
+	    -pdf)
+		save_image "pdf" $NGP_NAME.pdf
+		;;
+	    -svg|svg1.1)
+		save_image "svg1.1" $NGP_NAME.svg
+		;;
+	    -svg1.2)
+		save_image "svg1.2" $NGP_NAME.svg
+		;;
+	    -png)
+		save_image "png" $NGP_NAME.png
+		;;
+	    -)
+		save_gra $TMPFILE
+		cat $TMPFILE
+		;;
+	    *)
+		save_gra "$NGP_NAME.gra"
+		;;
+#======================================================================
+	esac
+	system:0:unlink_temp_file
+
+	if [ $CHDIR -ne 0 ]
+	then
+	    cd $PWD
+	fi
+
+    fi
+done
+
+echo
+
+if exist menu > /dev/null
+then
+    del menu
+fi
+
+del system:0
+exit

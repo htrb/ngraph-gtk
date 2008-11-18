@@ -5,7 +5,7 @@ clear_viewer() {
     do
 	del ${i}:0-!
     done
-    if [ `exist gra:viewer` != 0 ]
+    if exist gra:viewer > /dev/null
     then
 	del gra:viewer
     fi
@@ -21,12 +21,14 @@ save_image() {
     clear_viewer
     . $1
     new gra2cairofile name=OUTPUT
+    new gra
     gra2cairofile::format=$2
     gra2cairofile::file=$3
-    gra:viewer:device=gra2cairofile:OUTPUT
-    gra:viewer:open
-    gra:viewer:draw
-    gra:viewer:close
+    gra::device=gra2cairofile:OUTPUT
+    gra::open
+    gra::draw
+    gra::close
+    del gra
     del gra2cairofile
 }
 
@@ -201,12 +203,13 @@ do
 		clear_viewer
 		. $2
 		new gra2prn name=OUTPUT
+		new gra
 		gra2prn::driver=gra2ps
 		gra2prn::prn=" | lpr"
-		gra:viewer:device=gra2prn:OUTPUT
-		gra:viewer:open
-		gra:viewer:draw
-		gra:viewer:close
+		gra::device=gra2prn:OUTPUT
+		gra::open
+		gra::draw
+		gra::close
 		del system:0
 	;;
 	-png)

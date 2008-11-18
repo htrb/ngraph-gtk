@@ -10,8 +10,8 @@ shift
 
 if [ "X$2" != "X" ]
 then
-  DEMODIR=`echo $1 | sed 's/\//\\\\\//g'`
-  shift
+    DEMODIR=`echo $1 | sed 's/\//\\\\\//g'`
+    shift
 fi
 
 TARGET=`basename $1 .in`
