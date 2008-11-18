@@ -1,5 +1,5 @@
 #! DEMODIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.3 2008/11/18 05:30:16 hito Exp $
+# $Id: ngp2.in,v 1.4 2008/11/18 06:04:57 hito Exp $
 # ngp2 Version 1.10 written by H.I.
 
 IGN_PATH=0
@@ -8,6 +8,7 @@ AUTO_SCALE=0
 OPTION="-gra"
 CHDIR=0
 PWD=`pwd`
+NULL_DEVICE=/dev/null
 
 clear_viewer() {
     for i in `derive -instance draw fit`
@@ -15,7 +16,7 @@ clear_viewer() {
 	del ${i}:0-!
     done
 
-    if exist gra:viewer > /dev/null
+    if exist gra:viewer > $NULL_DEVICE
     then
 	del gra:viewer
     fi
@@ -57,7 +58,7 @@ show_usage() {
     echo "    -ps, -ps3     output PostScript (R) level 3"
     echo "    -ps2          output PostScript (R) level 2"
     echo "    -eps, -eps3   output Encapsulated PostScript (R) level 3"
-    echo "    -eps2         output Encapsulated PostScript (R) level 3"
+    echo "    -eps2         output Encapsulated PostScript (R) level 2"
     echo "    -wmf          output Windows meta file"
     echo "    -pdf          output Portable Document Format"
     echo "    -svg, -svg1.1 output Scalable Vector Graphics version 1.1"
@@ -70,7 +71,7 @@ show_usage() {
 
 new menu
 
-new gra2cairofile file=/dev/null
+new gra2cairofile file=$NULL_DEVICE
 new gra
 gra::device=gra2cairofile:0
 gra::open
@@ -130,7 +131,7 @@ do
 	NGP_NAME=`basename "$NGP_FILE" .ngp`
 	PATH_NAME=`dirname $NGP_FILE`
 
-	if exist menu > /dev/null
+	if exist menu > $NULL_DEVICE
 	then
 	    menu::fullpath_ngp="$NGP_FILE"
 	fi
@@ -160,9 +161,9 @@ do
 	    cd $PATH_NAME
 	fi
 
-	if exist axis > /dev/null
+	if exist axis > $NULL_DEVICE
 	then
-	    if exist file > /dev/null
+	    if exist file > $NULL_DEVICE
 	    then
 		case "$AUTO_SCALE" in
 		    2)
@@ -235,7 +236,7 @@ done
 
 echo
 
-if exist menu > /dev/null
+if exist menu > $NULL_DEVICE
 then
     del menu
 fi
