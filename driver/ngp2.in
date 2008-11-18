@@ -1,5 +1,5 @@
 #! DEMODIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.4 2008/11/18 06:04:57 hito Exp $
+# $Id: ngp2.in,v 1.5 2008/11/18 06:28:15 hito Exp $
 # ngp2 Version 1.10 written by H.I.
 
 IGN_PATH=0
@@ -55,10 +55,10 @@ show_usage() {
     echo "    -a            auto scale"
     echo "    -A            clear scale and auto scale"
     echo "    -c            change directory"
-    echo "    -ps, -ps3     output PostScript (R) level 3"
-    echo "    -ps2          output PostScript (R) level 2"
-    echo "    -eps, -eps3   output Encapsulated PostScript (R) level 3"
-    echo "    -eps2         output Encapsulated PostScript (R) level 2"
+    echo "    -ps, -ps3     output PostScript level 3"
+    echo "    -ps2          output PostScript level 2"
+    echo "    -eps, -eps3   output Encapsulated PostScript level 3"
+    echo "    -eps2         output Encapsulated PostScript level 2"
     echo "    -wmf          output Windows meta file"
     echo "    -pdf          output Portable Document Format"
     echo "    -svg, -svg1.1 output Scalable Vector Graphics version 1.1"
