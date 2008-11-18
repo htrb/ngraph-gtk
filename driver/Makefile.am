@@ -16,7 +16,7 @@ gra2ps.c: dir_defs.h
 dir_defs.h: dir_defs.h.in
 	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(demodir) dir_defs.h.in
 
-ngp2: dir_defs.h.in
+ngp2: ngp2.in
 	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(bindir) ngp2.in
 
 gra2ps_CFLAGS = -D_FORTIFY_SOURCE

@@ -1,5 +1,5 @@
 #! DEMODIRDEF/ngraph -i
-# $id$
+# $Id: ngp2.in,v 1.3 2008/11/18 05:30:16 hito Exp $
 # ngp2 Version 1.10 written by H.I.
 
 IGN_PATH=0
@@ -46,6 +46,28 @@ save_gra() {
     fi
 }
 
+show_usage() {
+    echo "ngp2 version 1.10"
+    echo "usage: ngp2 [option] ngpfile ..."
+    echo
+    echo "    -I            ignore path"
+    echo "    -a            auto scale"
+    echo "    -A            clear scale and auto scale"
+    echo "    -c            change directory"
+    echo "    -ps, -ps3     output PostScript (R) level 3"
+    echo "    -ps2          output PostScript (R) level 2"
+    echo "    -eps, -eps3   output Encapsulated PostScript (R) level 3"
+    echo "    -eps2         output Encapsulated PostScript (R) level 3"
+    echo "    -wmf          output Windows meta file"
+    echo "    -pdf          output Portable Document Format"
+    echo "    -svg, -svg1.1 output Scalable Vector Graphics version 1.1"
+    echo "    -svg1.2       output Scalable Vector Graphics version 1.2"
+    echo "    -png          output Portable Network Graphics"
+    echo
+
+    del system
+}
+
 new menu
 
 new gra2cairofile file=/dev/null
@@ -80,6 +102,9 @@ do
 	    GRA2PS_OPTION="$GRA2PS_OPTION $1 $2"
 	    shift 2
 	    ;;
+	-h)
+	    show_usage
+	    ;;
 	-*)
 	    OPTION="$1"
 	    shift
@@ -93,9 +118,7 @@ done
 NGP_FILES=$@
 if [ -z "$NGP_FILES" ]
 then
-    echo ngp2 version 1.10
-    echo
-    echo usage: ngp2 [option] ngpfile ...
+    show_usage
 fi
 
 for NGP_FILE in $NGP_FILES
