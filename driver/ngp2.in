@@ -1,5 +1,5 @@
 #! DEMODIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.5 2008/11/18 06:28:15 hito Exp $
+# $Id: ngp2.in,v 1.6 2008/11/21 01:27:55 hito Exp $
 # ngp2 Version 1.10 written by H.I.
 
 IGN_PATH=0
@@ -38,12 +38,23 @@ save_image() {
 save_gra() {
     if [ -n "$1" ]
     then
-	new gra2file name=gra2file file="$1"
-	gra::device=gra2file:gra2file
-	gra::open
-	gra::draw
-	gra::close
-	del gra2file:gra2file
+	new gra2cairofile file=$NULL_DEVICE
+	new gra name=DUMMY
+	gra:DUMMY:device=gra2cairofile:0
+	gra:DUMMY:open
+
+	new gra2file name=OUTPUT file="$1"
+	new gra name=OUTPUT
+	gra:OUTPUT:device=gra2file:OUTPUT
+	gra:OUTPUT:open
+	gra:OUTPUT:draw
+	gra:OUTPUT:close
+	del gra:OUTPUT
+	del gra2file:OUTPUT
+
+	gra:DUMMY:close
+	del gra:DUMMY
+	del gra2cairofile
     fi
 }
 
@@ -69,12 +80,9 @@ show_usage() {
     del system
 }
 
-new menu
+set +e
 
-new gra2cairofile file=$NULL_DEVICE
-new gra
-gra::device=gra2cairofile:0
-gra::open
+new menu
 
 while true
 do
