@@ -1,5 +1,5 @@
 #! DEMODIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.6 2008/11/21 01:27:55 hito Exp $
+# $Id: ngp2.in,v 1.7 2008/11/21 01:34:03 hito Exp $
 # ngp2 Version 1.10 written by H.I.
 
 IGN_PATH=0
@@ -189,11 +189,10 @@ do
 
 	case "$OPTION" in
 #======================================================================
-#オプション
+# options
 #
-# "$TMPFILE" に作業用のファイル名が代入されています。"$TMPFILE" は自動
-# 的に削除されます。また、"$NGP_NAME" には NGP ファイル名から".ngp" を
-# のぞいた部分が代入されています。
+# $TMPFILE : temporary file (automatically deleted).
+# $NGP_NAME : base name of ngp file.
 
 	    -ps|-ps3)
 		save_image "ps3" $NGP_NAME.ps
