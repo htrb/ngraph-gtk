@@ -1,5 +1,5 @@
 #! DEMODIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.7 2008/11/21 01:34:03 hito Exp $
+# $Id: ngp2.in,v 1.8 2008/11/21 01:35:44 hito Exp $
 # ngp2 Version 1.10 written by H.I.
 
 IGN_PATH=0
@@ -66,6 +66,7 @@ show_usage() {
     echo "    -a            auto scale"
     echo "    -A            clear scale and auto scale"
     echo "    -c            change directory"
+    echo
     echo "    -ps, -ps3     output PostScript level 3"
     echo "    -ps2          output PostScript level 2"
     echo "    -eps, -eps3   output Encapsulated PostScript level 3"
