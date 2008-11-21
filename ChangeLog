@@ -1,3 +1,8 @@
+2008-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c  (GRAcharascent, GRAchardescent, GRAcharwidth): return
+	calculated value when return value of "__exeobj()" is not zero.
+
 2008-11-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/.Ngraph: use new gra to create image file.

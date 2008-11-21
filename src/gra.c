@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.14 2008/11/17 07:53:30 hito Exp $
+ * $Id: gra.c,v 1.15 2008/11/21 14:38:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -652,58 +652,79 @@ int GRAdraw(int GC,char code,int *cpar,char *cstr)
 int GRAcharwidth(unsigned int ch, char *font,int size)
 {
   char *argv[7];
-  int i,idp;
+  int i, idp;
 
-  for (i=GRAClimit-1;i>=0;i--)
-    if ((GRAopened(i)==i) && (GRAClist[i].charwidth!=-1)) break;
-  if (i==-1) return nround(25.4/72000.0*size*600);
-  argv[0]=GRAClist[i].objname;
-  argv[1]="_charwidth";
-  argv[2]=GRAClist[i].local;
-  argv[3]=(char *)&ch;
-  argv[4]=(char *)&size;
-  argv[5]=font;
-  argv[6]=NULL;
-  __exeobj(GRAClist[i].obj,GRAClist[i].charwidth,GRAClist[i].inst,6,argv);
-  idp=chkobjoffset2(GRAClist[i].obj,GRAClist[i].charwidth);
+  for (i = GRAClimit - 1; i >= 0; i--) {
+    if (GRAopened(i) == i && GRAClist[i].charwidth != -1)
+      break;
+  }
+  if (i == -1)
+    return nround(25.4 / 72000.0 * size * 600);
+
+  argv[0] = GRAClist[i].objname;
+  argv[1] = "_charwidth";
+  argv[2] = GRAClist[i].local;
+  argv[3] = (char *)&ch;
+  argv[4] = (char *)&size;
+  argv[5] = font;
+  argv[6] = NULL;
+
+  if (__exeobj(GRAClist[i].obj, GRAClist[i].charwidth, GRAClist[i].inst, 6, argv))
+    return nround(25.4 / 72000.0 * size * 600);
+
+  idp = chkobjoffset2(GRAClist[i].obj, GRAClist[i].charwidth);
   return *(int *)(GRAClist[i].inst+idp);
 }
 
 int GRAcharascent(char *font,int size)
 {
   char *argv[6];
-  int i,idp;
+  int i, idp;
 
-  for (i=GRAClimit-1;i>=0;i--)
-    if ((GRAopened(i)==i) && (GRAClist[i].charascent!=-1)) break;
-  if (i==-1) return nround(25.4/72000.0*size*563);
-  argv[0]=GRAClist[i].objname;
-  argv[1]="_charascent";
-  argv[2]=GRAClist[i].local;
-  argv[3]=(char *)&size;
-  argv[4]=font;
-  argv[5]=NULL;
-  __exeobj(GRAClist[i].obj,GRAClist[i].charascent,GRAClist[i].inst,5,argv);
-  idp=chkobjoffset2(GRAClist[i].obj,GRAClist[i].charascent);
+  for (i = GRAClimit - 1; i >= 0; i--) {
+    if (GRAopened(i) == i && GRAClist[i].charascent != -1)
+      break;
+  }
+  if (i == -1)
+    return nround(25.4 / 72000.0 * size * 563);
+
+  argv[0] = GRAClist[i].objname;
+  argv[1] = "_charascent";
+  argv[2] = GRAClist[i].local;
+  argv[3] = (char *)&size;
+  argv[4] = font;
+  argv[5] = NULL;
+
+  if (__exeobj(GRAClist[i].obj, GRAClist[i].charascent, GRAClist[i].inst, 5, argv))
+    return nround(25.4 / 72000.0 * size * 563);
+
+  idp = chkobjoffset2(GRAClist[i].obj, GRAClist[i].charascent);
   return *(int *)(GRAClist[i].inst+idp);
 }
 
 int GRAchardescent(char *font,int size)
 {
   char *argv[6];
-  int i,idp;
+  int i, idp;
 
-  for (i=GRAClimit-1;i>=0;i--)
-    if ((GRAopened(i)==i) && (GRAClist[i].chardescent!=-1)) break;
-  if (i==-1) return nround(25.4/72000.0*size*250);
-  argv[0]=GRAClist[i].objname;
-  argv[1]="_chardescent";
-  argv[2]=GRAClist[i].local;
-  argv[3]=(char *)&size;
-  argv[4]=font;
-  argv[5]=NULL;
-  __exeobj(GRAClist[i].obj,GRAClist[i].chardescent,GRAClist[i].inst,5,argv);
-  idp=chkobjoffset2(GRAClist[i].obj,GRAClist[i].chardescent);
+  for (i = GRAClimit - 1; i >= 0; i--) {
+    if (GRAopened(i) == i && GRAClist[i].chardescent != -1)
+      break;
+  }
+  if (i == -1)
+    return nround(25.4 / 72000.0 * size * 250);
+
+  argv[0] = GRAClist[i].objname;
+  argv[1] = "_chardescent";
+  argv[2] = GRAClist[i].local;
+  argv[3] = (char *)&size;
+  argv[4] = font;
+  argv[5] = NULL;
+
+  if (__exeobj(GRAClist[i].obj, GRAClist[i].chardescent, GRAClist[i].inst, 5, argv))
+    return nround(25.4 / 72000.0 * size * 250);
+
+  idp = chkobjoffset2(GRAClist[i].obj, GRAClist[i].chardescent);
   return *(int *)(GRAClist[i].inst+idp);
 }
 
