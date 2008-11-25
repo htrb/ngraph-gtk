@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.4 2008/06/26 23:54:00 hito Exp $
+ * $Id: odraw.c,v 1.5 2008/11/25 08:43:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,7 @@
 #include "object.h"
 #include "ioutil.h"
 #include "gra.h"
+#include "oroot.h"
 #include "odraw.h"
 #include "nstring.h"
 
@@ -223,9 +224,9 @@ struct objtable draw[] = {
   {"hidden",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,drawdraw,"i",0},
   {"redraw",NVFUNC,NREAD|NEXEC,drawdraw,"i",0},
-  {"R",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"G",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"B",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"clip",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"redraw_flag",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"redraw_num",NINT,0,NULL,NULL,0},

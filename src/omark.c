@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.2 2008/06/03 07:18:29 hito Exp $
+ * $Id: omark.c,v 1.3 2008/11/25 08:43:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -253,9 +253,9 @@ struct objtable mark[TBLNUM] = {
   {"size",NINT,NREAD|NWRITE,markgeometry,NULL,0},
 
   {"type",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"R2",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"G2",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"B2",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"R2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"G2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"width",NINT,NREAD|NWRITE,markgeometry,NULL,0},
   {"style",NIARRAY,NREAD|NWRITE,oputstyle,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,markdraw,"i",0},

@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.c,v 1.8 2008/11/16 08:46:18 hito Exp $
+ * $Id: nhash.c,v 1.9 2008/11/25 08:43:32 hito Exp $
  */
 
 #include <stdlib.h>
@@ -475,4 +475,30 @@ nhash_show(NHASH hash)
     print_hash(hash[i]);
     printf("\n");
   }
+}
+
+static void
+count_hash(struct nhash *h, int *n) {
+  if (h == NULL)
+    return;
+
+  if (h->l)
+    count_hash(h->l, n);
+
+  if (h->r)
+    count_hash(h->r, n);
+
+  *n++;
+}
+
+int
+nhash_num(NHASH hash)
+{
+  int i, n = 0;
+  for (i = 0; i < HASH_SIZE; i++) {
+    if (hash[i]) {
+      count_hash(hash[i], &n);
+    }
+  }
+  return n;
 }

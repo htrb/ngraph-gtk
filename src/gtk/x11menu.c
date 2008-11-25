@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.45 2008/11/07 07:47:35 hito Exp $
+ * $Id: x11menu.c,v 1.46 2008/11/25 08:47:06 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1072,8 +1072,7 @@ static char *
 get_home(void)
 {
   struct objlist *sysobj;
-  char *inst, *home, *buf;
-  int len;
+  char *inst, *home;
 
   sysobj = chkobject("system");
   inst = chkobjinst(sysobj, 0);

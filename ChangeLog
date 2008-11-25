@@ -1,3 +1,47 @@
+2008-11-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/orect.c (rect): use "oputcolor()" to set value to fields
+	"R2", "G2" and "B2".
+
+	* src/omark.c (mark): use "oputcolor()" to set value to fields
+	"R2", "G2" and "B2".
+
+	* src/ofile.c (file2d): use "oputcolor()" to set value to fields
+	"R2", "G2" and "B2".
+
+	* src/odraw.c (draw): use "oputcolor()" to set value to fields
+	"R", "G" and "B".
+
+	* src/oroot.h: add prototype of "oputcolor()".
+
+	* src/oroot.c (oputcolor): add.
+
+	* src/gtk/x11dialg.c (SetFontListFromObj): use
+	"Gra2cairoConf->fontmap_list_root" instead of
+	"Gra2cairoConf->fontmaproot".
+	(SetFontListFromObj): sheck if "font" is NULL or not.
+	(SetFontListFromObj): default value of "selfont" is now 0.
+	(SetObjFieldFromFontList): use hash to search font alias.
+	(_set_color): check value of "R", "G" and "B".
+
+	* src/gtk/ogra2cairo.h (struct gra2cairo_config): add member
+	"fontmap_list_root".
+
+	* src/gtk/ogra2cairo.c: add global valiable "FontFace".
+	(loadconfig): save font configuration to hash.
+	(init_conf): init "FontFace" and "Gra2cairoConf->fontmaproot".
+	(free_conf): use "nhash_free_with_memfree_ptr()" to free fontmap.
+	(loadfont, gra2cairo_charheight): use hash to search font alias
+	settings.
+
+	* src/gtk/main.c (get_obj_font_list): use
+	"Gra2cairoConf->fontmap_list_root" instead of
+	"Gra2cairoConf->fontmaproot".
+
+	* src/nhash.h: add prototype of "nhash_num()".
+
+	* src/nhash.c (count_hash, nhash_num): add.
+
 2008-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c  (GRAcharascent, GRAchardescent, GRAcharwidth): return

@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.h,v 1.3 2008/11/06 05:47:26 hito Exp $
+ * $Id: nhash.h,v 1.4 2008/11/25 08:43:32 hito Exp $
  */
 
 #ifndef NHASH_HEADER
@@ -31,6 +31,7 @@ int nhash_set_ptr_with_hkey(NHASH hash, char *key, int hkey, void *val);
 int nhash_get_int_with_hkey(NHASH hash, char *key, int hkey, int *val);
 int nhash_get_ptr_with_hkey(NHASH hash, char *key, int hkey, void **val);
 void nhash_del_with_hkey(NHASH hash, char *key, int hkey);
+int nhash_num(NHASH hash);
 
 int  nhash_hkey(char *ptr);
 

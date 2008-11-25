@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.22 2008/09/19 07:16:19 hito Exp $
+ * $Id: x11dialg.c,v 1.24 2008/11/25 08:46:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1026,21 +1026,20 @@ SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name, int jf
   getobj(obj, name, id, 0, NULL, &font);
   combo_box_clear(w);
 
-  fcur = Gra2cairoConf->fontmaproot;
+  fcur = Gra2cairoConf->fontmap_list_root;
   j = 0;
-  selfont = -1;
+  selfont = 0;
   while (fcur) {
     if ((jfont && fcur->twobyte) || (! jfont && !(fcur->twobyte))) {
       combo_box_append_text(w, fcur->fontalias);
-      if (strcmp(font, fcur->fontalias) == 0)
+      if (font && strcmp(font, fcur->fontalias) == 0)
 	selfont = j;
       j++;
     }
     fcur = fcur->next;
   }
 
-  if (selfont != -1)
-    combo_box_set_active(w, selfont);
+  combo_box_set_active(w, selfont);
 }
 
 void
@@ -1048,32 +1047,29 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
 {
   struct fontmap *fcur;
   int pos, j;
-  char *obuf;
+  char *obuf, *fontalias;
 
   if (w == NULL)
     return;
 
-  pos = combo_box_get_active(w);
+  fontalias = combo_box_get_active_text(w);
 
-  if (pos < 0)
+  if (fontalias == NULL)
+    return;
+
+  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fcur))
+    return;
+
+  if ((! jfont || ! fcur->twobyte) && (jfont || fcur->twobyte))
     return;
 
   sgetobjfield(obj, id, name, NULL, &obuf, FALSE, FALSE, FALSE);
 
-  j = 0;
-  for (fcur = Gra2cairoConf->fontmaproot; fcur; fcur = fcur->next) {
-    if ((! jfont || ! fcur->twobyte) && (jfont || fcur->twobyte))
-	continue;
-
-    if (j == pos) {
-      if (obuf == NULL || strcmp(fcur->fontalias, obuf)) {
-	sputobjfield(obj, id, name, fcur->fontalias);
-	NgraphApp.Changed = TRUE;
-      }
-      break;
-    }
-    j++;
+  if (obuf == NULL || strcmp(fcur->fontalias, obuf)) {
+    sputobjfield(obj, id, name, fcur->fontalias);
+    NgraphApp.Changed = TRUE;
   }
+
   memfree(obuf);
 }
 
@@ -1131,6 +1127,24 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
 
   snprintf(buf, sizeof(buf), "%sB%s", (prefix)? prefix: "", (postfix)? postfix: "");
   getobj(obj, buf, id, 0, NULL, &b);
+
+  if (r > 255)
+    r = 255;
+
+  if (g > 255)
+    g = 255;
+
+  if (b > 255)
+    b = 255;
+
+  if (r < 0)
+    r = 0;
+
+  if (g < 0)
+    g = 0;
+
+  if (b < 0)
+    b = 0;
 
   color.red = r * 257;
   color.green = g * 257;

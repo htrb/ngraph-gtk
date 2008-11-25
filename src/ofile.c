@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.44 2008/11/14 07:58:09 hito Exp $
+ * $Id: ofile.c,v 1.45 2008/11/25 08:43:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -6571,9 +6571,9 @@ struct objtable file2d[] = {
   {"line_style",NIARRAY,NREAD|NWRITE,oputstyle,NULL,0},
   {"line_join",NENUM,NREAD|NWRITE,NULL,joinchar,0},
   {"line_miter_limit",NINT,NREAD|NWRITE,oputge1,NULL,0},
-  {"R2",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"G2",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"B2",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"R2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"G2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
 
   {"remark",NSTR,NREAD|NWRITE,update_field,NULL,0},
   {"ifs",NSTR,NREAD|NWRITE,update_field,NULL,0},

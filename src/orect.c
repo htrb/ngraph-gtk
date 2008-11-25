@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.3 2008/07/14 07:42:48 hito Exp $
+ * $Id: orect.c,v 1.4 2008/11/25 08:43:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -348,9 +348,9 @@ struct objtable rect[TBLNUM] = {
 
   {"fill",NBOOL,NREAD|NWRITE,legendgeometry,NULL,0},
   {"frame",NBOOL,NREAD|NWRITE,legendgeometry,NULL,0},
-  {"R2",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"G2",NINT,NREAD|NWRITE,NULL,NULL,0},
-  {"B2",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"R2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"G2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"width",NINT,NREAD|NWRITE,rectgeometry,NULL,0},
   {"style",NIARRAY,NREAD|NWRITE,oputstyle,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,rectdraw,"i",0},

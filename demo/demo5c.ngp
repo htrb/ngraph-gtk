@@ -39,7 +39,7 @@ do
   Y=`iexpr $Y+3000`
 done
 #
-new text R:256 G:0 B:0
+new text R:255 G:0 B:0
 text::x=3000
 text::y=22000
 text::pt=4000

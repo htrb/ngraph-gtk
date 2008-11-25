@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oroot.c,v 1.2 2008/11/25 08:43:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -95,6 +95,13 @@ int oputangle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<0) *(int *)(argv[2])=0;
   else if (*(int *)(argv[2])>36000) *(int *)(argv[2])=36000;
+  return 0;
+}
+
+int oputcolor(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  if (*(int *) (argv[2]) < 0) *(int *)(argv[2]) = 0;
+  else if (*(int *)(argv[2]) > 255) *(int *)(argv[2]) = 255;
   return 0;
 }
 

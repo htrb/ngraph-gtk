@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oroot.h,v 1.2 2008/11/25 08:43:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,3 +25,4 @@ int oputabs(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 int oputge1(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 int oputangle(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 int oputstyle(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
+int oputcolor(struct objlist *obj,char *inst,char *rval,int argc,char **argv);

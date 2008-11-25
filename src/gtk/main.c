@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.20 2008/11/16 12:47:50 hito Exp $
+ * $Id: main.c,v 1.21 2008/11/25 08:43:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -899,7 +899,7 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
   if (Mxlocal == NULL)
     return NULL;
 
-  fontmaproot = Gra2cairoConf->fontmaproot;
+  fontmaproot = Gra2cairoConf->fontmap_list_root;
 
   if (fontmaproot == NULL)
     return NULL;
@@ -916,10 +916,7 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
   if ((list = malloc((sizeof(*list)) * (i + 1))) == NULL)
     return NULL;
 
-  if (strstr(member, "jfont") != NULL)
-    twobyte = TRUE;
-  else
-    twobyte = FALSE;
+  twobyte = (strstr(member, "jfont") != NULL);
 
   len = strlen(val);
   j = 0;

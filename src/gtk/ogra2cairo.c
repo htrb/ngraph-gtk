@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.25 2008/09/18 01:35:12 hito Exp $
+ * $Id: ogra2cairo.c,v 1.27 2008/11/25 08:46:11 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -47,7 +47,7 @@ char *gra2cairo_antialias_type[] = {
 
 struct gra2cairo_config *Gra2cairoConf = NULL;
 static int Instance = 0;
-
+static NHASH FontFace = NULL;
 
 static int
 mxp2dw(struct gra2cairo_local *local, int r)
@@ -94,13 +94,15 @@ loadconfig(void)
   int val;
   char *endptr, symbol[] = "Sym";
   int len;
-  struct fontmap *fcur, *fnew;
+  struct fontmap *fnew, *fprev;
+  NHASH fcur;
 
   fp = openconfig(CAIROCONF);
   if (fp == NULL)
     return 0;
 
   fcur = Gra2cairoConf->fontmaproot;
+  fprev = NULL;
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (strcmp(tok, "font_map") == 0) {
@@ -120,33 +122,40 @@ loadconfig(void)
 	  closeconfig(fp);
 	  return 1;
 	}
-	if (fcur == NULL) {
-	  Gra2cairoConf->fontmaproot = fnew;
-	} else {
-	  fcur->next = fnew;
+
+	if (nhash_set_ptr(fcur, f1, fnew)) {
+	  memfree(tok);
+	  memfree(f1);
+	  memfree(f2);
+	  memfree(f3);
+	  memfree(f4);
+	  closeconfig(fp);
+	  return 1;
 	}
-	fcur = fnew;
-	fcur->next = NULL;
-	fcur->fontalias = f1;
-	fcur->symbol = ! strncmp(f1, symbol, sizeof(symbol) - 1);
-	if (strcmp(f2, "bold") == 0) {
-	  fcur->type = BOLD;
-	} else if (strcmp(f2, "italic") == 0) {
-	  fcur->type = ITALIC;
-	} else if (strcmp(f2, "bold_italic") == 0) {
-	  fcur->type = BOLDITALIC;
-	} else if (strcmp(f2, "oblique") == 0) {
-	  fcur->type = OBLIQUE;
-	} else if (strcmp(f2, "bold_oblique") == 0) {
-	  fcur->type = BOLDOBLIQUE;
-	} else {
-	  fcur->type = NORMAL;
+
+	fnew->fontalias = f1;
+	fnew->symbol = ! strncmp(f1, symbol, sizeof(symbol) - 1);
+	if (FontFace) {
+	  int i;
+	  if (nhash_get_int(FontFace, f2, &i)) {
+	    fnew->type = NORMAL;
+	  } else {
+	    fnew->type = i;
+	  }
 	}
 	memfree(f2);
 	val = strtol(f3, &endptr, 10);
 	memfree(f3);
-	fcur->twobyte = val;
-	fcur->fontname = f4;
+	fnew->twobyte = val;
+	fnew->fontname = f4;
+	fnew->next = NULL;
+
+	if (fprev)
+	  fprev->next = fnew;
+	fprev = fnew;
+
+	if (Gra2cairoConf->fontmap_list_root == NULL)
+	  Gra2cairoConf->fontmap_list_root = fnew;
       } else {
 	memfree(f1);
 	memfree(f2);
@@ -168,7 +177,26 @@ init_conf(void)
   if (Gra2cairoConf == NULL)
     return 1;
 
-  Gra2cairoConf->fontmaproot = NULL;
+  if (FontFace == NULL) {
+    FontFace = nhash_new();
+    if (FontFace) {
+      nhash_set_int(FontFace, "bold",         BOLD);
+      nhash_set_int(FontFace, "italic",       ITALIC);
+      nhash_set_int(FontFace, "bold_italic",  BOLDITALIC);
+      nhash_set_int(FontFace, "oblique",      OBLIQUE);
+      nhash_set_int(FontFace, "bold_oblique", BOLDOBLIQUE);
+    }
+  }
+
+  Gra2cairoConf->fontmaproot = nhash_new();
+  if (Gra2cairoConf->fontmaproot == NULL) {
+    free(Gra2cairoConf);
+    Gra2cairoConf = NULL;
+    return 1;
+  }
+
+  Gra2cairoConf->fontmap_list_root = NULL;
+
   Gra2cairoConf->loadfont = 0;
   if (loadconfig()) {
     free(Gra2cairoConf);
@@ -183,23 +211,11 @@ static void
 free_conf(void)
 {
   int i;
-  struct fontmap *fcur, *ptr;
 
   if (Gra2cairoConf == NULL)
     return;
 
-  fcur = Gra2cairoConf->fontmaproot;
-  while (fcur) {
-    if (fcur->fontalias) {
-      memfree(fcur->fontalias);
-    }
-    if (fcur->fontname) {
-      memfree(fcur->fontname);
-    }
-    ptr = fcur;
-    fcur = fcur->next;
-    memfree(ptr);
-  }
+  nhash_free_with_memfree_ptr(Gra2cairoConf->fontmaproot);
 
   for (i = 0; i < Gra2cairoConf->loadfont; i++) {
     if (Gra2cairoConf->font[i].fontalias) {
@@ -467,15 +483,13 @@ loadfont(char *fontalias, int top)
 
   fontname = NULL;
 
-  for (fcur = Gra2cairoConf->fontmaproot; fcur; fcur=fcur->next) {
-    if (strcmp(fontalias, fcur->fontalias) == 0) {
-      fontname = fcur->fontname;
-      type = fcur->type;
-      twobyte = fcur->twobyte;
-      symbol = fcur->symbol;
-      break;
-    }
-  }
+  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fcur))
+    return -1;
+  
+  fontname = fcur->fontname;
+  type = fcur->type;
+  twobyte = fcur->twobyte;
+  symbol = fcur->symbol;
 
   pfont = pango_font_description_new();
   pango_font_description_set_family(pfont, fontname);
@@ -1098,17 +1112,10 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
     height = FALSE;
   }
 
-  fcur = Gra2cairoConf->fontmaproot;
-  twobyte = FALSE;
+  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, font, (void *) &fcur))
+    return 1;
 
-  while (fcur) {
-    if (strcmp(font, fcur->fontalias) == 0) {
-      twobyte = fcur->twobyte;
-      break;
-    }
-    fcur = fcur->next;
-  }
-
+  twobyte = fcur->twobyte;
   cashpos = loadfont(font, FALSE);
 
   if (cashpos < 0) {

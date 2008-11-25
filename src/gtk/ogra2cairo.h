@@ -2,6 +2,7 @@
 #define _O_GRA2CAIRO_HEADER
 
 #include "object.h"
+#include "nhash.h"
 
 #define CAIRO_FONTCASH 60		/* must be greater than 1 */
 
@@ -33,7 +34,8 @@ struct fontlocal
 };
 
 struct gra2cairo_config {
-  struct fontmap *fontmaproot;
+  NHASH fontmaproot;
+  struct fontmap *fontmap_list_root;
   int loadfont;
   char *fontalias;
   struct fontlocal font[CAIRO_FONTCASH];
