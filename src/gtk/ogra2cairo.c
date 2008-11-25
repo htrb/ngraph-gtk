@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.26 2008/11/25 08:43:33 hito Exp $
+ * $Id: ogra2cairo.c,v 1.28 2008/11/25 09:59:51 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -447,23 +447,21 @@ loadfont(char *fontalias, int top)
   struct fontlocal font;
   struct fontmap *fcur;
   char *fontname;
-  int r, twobyte = FALSE, type = NORMAL, fontcashfind, i, store, symbol = FALSE;
+  int twobyte = FALSE, type = NORMAL, fontcashfind, i, store, symbol = FALSE;
   PangoFontDescription *pfont;
   PangoStyle style;
   PangoWeight weight;
   static PangoLanguage *lang_ja = NULL, *lang = NULL;
-
-  fontcashfind = -1;
-
 
   if (lang == NULL) {
     lang = pango_language_from_string("en-US");
     lang_ja = pango_language_from_string("ja-JP");
   }
 
+  fontcashfind = -1;
   for (i = 0; i < Gra2cairoConf->loadfont; i++) {
     if (strcmp((Gra2cairoConf->font[i]).fontalias, fontalias) == 0) {
-      fontcashfind=i;
+      fontcashfind = i;
       break;
     }
   }
@@ -483,7 +481,7 @@ loadfont(char *fontalias, int top)
 
   fontname = NULL;
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, &fcur))
+  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fcur))
     return -1;
   
   fontname = fcur->fontname;
@@ -1112,7 +1110,7 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
     height = FALSE;
   }
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, font, &fcur))
+  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, font, (void *) &fcur))
     return 1;
 
   twobyte = fcur->twobyte;

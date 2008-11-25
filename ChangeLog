@@ -19,7 +19,7 @@
 	* src/gtk/x11dialg.c (SetFontListFromObj): use
 	"Gra2cairoConf->fontmap_list_root" instead of
 	"Gra2cairoConf->fontmaproot".
-	(SetFontListFromObj): sheck if "font" is NULL or not.
+	(SetFontListFromObj): bug fix: check if "font" is NULL or not.
 	(SetFontListFromObj): default value of "selfont" is now 0.
 	(SetObjFieldFromFontList): use hash to search font alias.
 	(_set_color): check value of "R", "G" and "B".
