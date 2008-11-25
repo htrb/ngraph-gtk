@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.c,v 1.9 2008/11/25 08:43:32 hito Exp $
+ * $Id: nhash.c,v 1.10 2008/11/25 08:54:33 hito Exp $
  */
 
 #include <stdlib.h>
@@ -488,7 +488,7 @@ count_hash(struct nhash *h, int *n) {
   if (h->r)
     count_hash(h->r, n);
 
-  *n++;
+  (*n)++;
 }
 
 int
