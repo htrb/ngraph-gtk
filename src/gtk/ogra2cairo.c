@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.27 2008/11/25 08:46:11 hito Exp $
+ * $Id: ogra2cairo.c,v 1.26 2008/11/25 08:43:33 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -447,7 +447,7 @@ loadfont(char *fontalias, int top)
   struct fontlocal font;
   struct fontmap *fcur;
   char *fontname;
-  int twobyte = FALSE, type = NORMAL, fontcashfind, i, store, symbol = FALSE;
+  int r, twobyte = FALSE, type = NORMAL, fontcashfind, i, store, symbol = FALSE;
   PangoFontDescription *pfont;
   PangoStyle style;
   PangoWeight weight;
@@ -483,7 +483,7 @@ loadfont(char *fontalias, int top)
 
   fontname = NULL;
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fcur))
+  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, &fcur))
     return -1;
   
   fontname = fcur->fontname;
@@ -1112,7 +1112,7 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
     height = FALSE;
   }
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, font, (void *) &fcur))
+  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, font, &fcur))
     return 1;
 
   twobyte = fcur->twobyte;
