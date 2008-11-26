@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.28 2008/11/25 09:59:51 hito Exp $
+ * $Id: ogra2cairo.c,v 1.29 2008/11/26 02:59:39 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -85,6 +85,22 @@ mxd2py(struct gra2cairo_local *local, int y)
   return y * local->pixel_dot_y + local->offsety;
 }
 
+static void
+free_font_map(struct fontmap *fcur)
+{
+  if (fcur == NULL)
+    return;
+
+  if (fcur->font) {
+    pango_font_description_free(fcur->font);
+  }
+
+  memfree(fcur->fontalias);
+  memfree(fcur->fontname);
+
+  memfree(fcur);
+}
+
 static int
 loadconfig(void)
 {
@@ -112,6 +128,10 @@ loadconfig(void)
       for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
       f4 = getitok2(&s2, &len, "");
       if (f1 && f2 && f3 && f4) {
+	if (nhash_get_ptr(fcur, f1, (void *) &fnew) == 0) {
+	  free_font_map(fnew);
+	}
+
 	fnew = memalloc(sizeof(struct fontmap));
 	if (fnew == NULL) {
 	  memfree(tok);
@@ -148,6 +168,7 @@ loadconfig(void)
 	memfree(f3);
 	fnew->twobyte = val;
 	fnew->fontname = f4;
+	fnew->font = NULL;
 	fnew->next = NULL;
 
 	if (fprev)
@@ -156,6 +177,8 @@ loadconfig(void)
 
 	if (Gra2cairoConf->fontmap_list_root == NULL)
 	  Gra2cairoConf->fontmap_list_root = fnew;
+
+	Gra2cairoConf->font_num++;
       } else {
 	memfree(f1);
 	memfree(f2);
@@ -196,8 +219,8 @@ init_conf(void)
   }
 
   Gra2cairoConf->fontmap_list_root = NULL;
+  Gra2cairoConf->font_num = 0;
 
-  Gra2cairoConf->loadfont = 0;
   if (loadconfig()) {
     free(Gra2cairoConf);
     Gra2cairoConf = NULL;
@@ -207,25 +230,26 @@ init_conf(void)
   return 0;
 }
 
+static int
+free_fonts_sub(struct nhash *h, void *d)
+{
+  struct fontmap *fcur;
+
+  fcur = (struct fontmap *) h->val.p;
+
+  free_font_map(fcur);
+
+  return 0;
+}
+
 static void
 free_conf(void)
 {
-  int i;
-
   if (Gra2cairoConf == NULL)
     return;
 
-  nhash_free_with_memfree_ptr(Gra2cairoConf->fontmaproot);
-
-  for (i = 0; i < Gra2cairoConf->loadfont; i++) {
-    if (Gra2cairoConf->font[i].fontalias) {
-      memfree(Gra2cairoConf->font[i].fontalias);
-      pango_font_description_free(Gra2cairoConf->font[i].font);
-      Gra2cairoConf->font[i].fontalias = NULL;
-      Gra2cairoConf->font[i].font = NULL;
-    }
-  }
-  Gra2cairoConf->loadfont = 0;
+  nhash_each(Gra2cairoConf->fontmaproot, free_fonts_sub, NULL);
+  nhash_free(Gra2cairoConf->fontmaproot);
 
   free(Gra2cairoConf);
   Gra2cairoConf = NULL;
@@ -441,13 +465,10 @@ set_antialias(struct objlist *obj, char *inst, char *rval, int argc, char **argv
   return 0;
 }
 
-static int
-loadfont(char *fontalias, int top)
+static struct fontmap *
+loadfont(char *fontalias)
 {
-  struct fontlocal font;
   struct fontmap *fcur;
-  char *fontname;
-  int twobyte = FALSE, type = NORMAL, fontcashfind, i, store, symbol = FALSE;
   PangoFontDescription *pfont;
   PangoStyle style;
   PangoWeight weight;
@@ -458,41 +479,16 @@ loadfont(char *fontalias, int top)
     lang_ja = pango_language_from_string("ja-JP");
   }
 
-  fontcashfind = -1;
-  for (i = 0; i < Gra2cairoConf->loadfont; i++) {
-    if (strcmp((Gra2cairoConf->font[i]).fontalias, fontalias) == 0) {
-      fontcashfind = i;
-      break;
-    }
-  }
-
-  if (fontcashfind != -1) {
-    if (top) {
-      font = Gra2cairoConf->font[fontcashfind];
-      for (i = fontcashfind - 1; i >= 0; i--) {
-	Gra2cairoConf->font[i + 1] = Gra2cairoConf->font[i];
-      }
-      Gra2cairoConf->font[0] = font;
-      return 0;
-    } else {
-      return fontcashfind;
-    }
-  }
-
-  fontname = NULL;
-
   if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fcur))
-    return -1;
-  
-  fontname = fcur->fontname;
-  type = fcur->type;
-  twobyte = fcur->twobyte;
-  symbol = fcur->symbol;
+    return NULL;
+
+  if (fcur->font)
+    return fcur;
 
   pfont = pango_font_description_new();
-  pango_font_description_set_family(pfont, fontname);
+  pango_font_description_set_family(pfont, fcur->fontname);
 
-  switch (type) {
+  switch (fcur->type) {
   case ITALIC:
   case BOLDITALIC:
     style = PANGO_STYLE_ITALIC;
@@ -507,7 +503,7 @@ loadfont(char *fontalias, int top)
   }
   pango_font_description_set_style(pfont, style);
 
-  switch (type) {
+  switch (fcur->type) {
   case BOLD:
   case BOLDITALIC:
   case BOLDOBLIQUE:
@@ -519,45 +515,13 @@ loadfont(char *fontalias, int top)
   }
   pango_font_description_set_weight(pfont, weight);
 
-  if (Gra2cairoConf->loadfont == CAIRO_FONTCASH) {
-    i = CAIRO_FONTCASH - 1;
+  fcur->font = pfont;
 
-    memfree((Gra2cairoConf->font[i]).fontalias);
-    Gra2cairoConf->font[i].fontalias = NULL;
-
-    pango_font_description_free((Gra2cairoConf->font[i]).font);
-    Gra2cairoConf->font[i].font = NULL;
-
-    Gra2cairoConf->loadfont--;
-  }
-
-  if (top) {
-    for (i = Gra2cairoConf->loadfont - 1; i >= 0; i--) {
-      Gra2cairoConf->font[i + 1] = Gra2cairoConf->font[i];
-    }
-    store=0;
-  } else {
-    store = Gra2cairoConf->loadfont;
-  }
-
-  Gra2cairoConf->font[store].fontalias = nstrdup(fontalias);
-  if (Gra2cairoConf->font[store].fontalias == NULL) {
-    pango_font_description_free(pfont);
-    Gra2cairoConf->font[store].font = NULL;
-    return -1;
-  }
-
-  Gra2cairoConf->font[store].font = pfont;
-  Gra2cairoConf->font[store].fonttype = type;
-  Gra2cairoConf->font[store].symbol = symbol;
-
-  Gra2cairoConf->loadfont++;
-
-  return store;
+  return fcur;
 }
 
 static void
-draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size, int space, int *fw, int *ah, int *dh)
+draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *font, int size, int space, int *fw, int *ah, int *dh)
 {
   PangoLayout *layout;
   PangoAttribute *attr;
@@ -586,7 +550,7 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, int font, int size,
   attr = pango_attr_letter_spacing_new(mxd2ph(local, space) * PANGO_SCALE);
   pango_attr_list_insert(alist, attr);
 
-  pango_layout_set_font_description(layout, Gra2cairoConf->font[font].font);
+  pango_layout_set_font_description(layout, font->font);
   pango_layout_set_attributes(layout, alist);
 
   pango_layout_set_text(layout, str, -1);
@@ -944,10 +908,10 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     local->fontsin = fontsin;
     local->fontcos = fontcos;
 
-    local->loadfontf = loadfont(local->fontalias, TRUE);
+    local->loadfont = loadfont(local->fontalias);
     break;
   case 'S':
-    if (local->loadfontf == -1)
+    if (local->loadfont == NULL)
       break;
 
     tmp = strdup(cstr);
@@ -990,7 +954,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       break;
     }
 
-    if (Gra2cairoConf->font[0].symbol) {
+    if (local->loadfont->symbol) {
       char *ptr;
 
       ptr = ascii2greece(tmp2);
@@ -999,15 +963,18 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 	tmp2 = ptr;
       }
     }
-    draw_str(local, TRUE, tmp2, 0, local->fontsize, local->fontspace, NULL, NULL, NULL);
+    draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
     free(tmp2);
     free(tmp);
     break;
   case 'K':
+    if (local->loadfont == NULL)
+      break;
+
     tmp2 = sjis_to_utf8(cstr);
     if (tmp2 == NULL) 
       break;
-    draw_str(local, TRUE, tmp2, 0, local->fontsize, local->fontspace, NULL, NULL, NULL);
+    draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
     free(tmp2);
     break;
   default:
@@ -1024,7 +991,8 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   char ch[3], *font, *tmp;
   double size, dir, s,c ;
   //  XChar2b kanji[1];
-  int cashpos, width;;
+  int width;
+  struct fontmap *fcur;
   //  XFontStruct *fontstruct;
 
   ch[0] = (*(unsigned int *)(argv[3]) & 0xff);
@@ -1045,9 +1013,9 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   if (local->cairo == NULL)
     return 0;
 
-  cashpos = loadfont(font, FALSE);
+  fcur = loadfont(font);
 
-  if (cashpos == -1) {
+  if (fcur == NULL) {
     *(int *) rval = nround(size * 0.600);
     return 0;
   }
@@ -1066,7 +1034,7 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
     tmp = iso8859_to_utf8(ch);
   }
 
-  draw_str(local, FALSE, tmp, cashpos, size, 0, &width, NULL, NULL);
+  draw_str(local, FALSE, tmp, fcur, size, 0, &width, NULL, NULL);
   *(int *) rval = mxp2dw(local, width);
   free(tmp);
 
@@ -1084,7 +1052,7 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   char *font;
   double size, dir, s, c;
   char *func;
-  int height, descent, ascent, cashpos;
+  int height, descent, ascent;
   //  XFontStruct *fontstruct;
   struct fontmap *fcur;
   int twobyte;
@@ -1110,19 +1078,19 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
     height = FALSE;
   }
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, font, (void *) &fcur))
-    return 1;
+  fcur = loadfont(font);
 
-  twobyte = fcur->twobyte;
-  cashpos = loadfont(font, FALSE);
-
-  if (cashpos < 0) {
+  if (fcur == NULL) {
     if (height) {
       *(int *) rval = nround(size * 0.562);
     } else {
       *(int *) rval = nround(size * 0.250);
     }
+
+    return 0;
   }
+
+  twobyte = fcur->twobyte;
 
   dir = local->fontdir;
   s = local->fontsin;
@@ -1132,7 +1100,7 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   local->fontsin = 0;
   local->fontcos = 1;
 
-  draw_str(local, FALSE, "A", cashpos, size, 0, NULL, &ascent, &descent);
+  draw_str(local, FALSE, "A", fcur, size, 0, NULL, &ascent, &descent);
 
   if (height) {
     *(int *)rval = mxp2dh(local, ascent);

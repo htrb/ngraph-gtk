@@ -4,8 +4,6 @@
 #include "object.h"
 #include "nhash.h"
 
-#define CAIRO_FONTCASH 60		/* must be greater than 1 */
-
 extern struct gra2cairo_config *Gra2cairoConf;
 extern char *gra2cairo_antialias_type[], **Gra2CairoErrMsgs;
 extern int Gra2CairoErrMsgNum;
@@ -20,31 +18,23 @@ enum antialias_type_id {
 enum cairo_font_type {NORMAL = 0, BOLD, ITALIC, BOLDITALIC, OBLIQUE, BOLDOBLIQUE };
 struct fontmap
 {
-  char *fontalias;
-  char *fontname;
+  char *fontalias, *fontname;
   int type, twobyte, symbol;
-  struct fontmap *next;
-};
-
-struct fontlocal
-{
-  char *fontalias;
   PangoFontDescription *font;
-  int fontsize, fonttype, fontdir, symbol;
+  struct fontmap *next;
 };
 
 struct gra2cairo_config {
   NHASH fontmaproot;
   struct fontmap *fontmap_list_root;
-  int loadfont;
-  char *fontalias;
-  struct fontlocal font[CAIRO_FONTCASH];
+  int font_num;
 };
 
 struct gra2cairo_local {
   cairo_t *cairo;
   cairo_font_options_t *font_opt;
-  int linetonum, loadfontf, text2path, antialias;
+  int linetonum, text2path, antialias;
+  struct fontmap *loadfont;
   char *fontalias;
   double pixel_dot_x,  pixel_dot_y, offsetx, offsety,
     fontdir, fontcos, fontsin, fontspace, fontsize;

@@ -1,3 +1,27 @@
+2008-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.c (SetObjFieldFromFontList): free "fontalias".
+
+	* src/gtk/main.c (get_obj_font_list): use
+	"Gra2cairoConf->font_num".
+
+	* src/gtk/ogra2cairo.c (free_font_map): add.
+	(loadconfig): free font map when the definition is already exists.
+	(loadconfig): initialize "fnew->font" and increment
+	"Gra2cairoConf->font_num".
+	(init_conf): initialize "Gra2cairoConf->font_num".
+	(free_fonts_sub): add.
+	(free_conf): use "nhash_each" and "nhash_free" to free font maps.
+	(loadfont): remove second argument and return "struct fontmap *".
+	(loadfont): remove codes related with " Gra2cairoConf->font".
+	(draw_str): change 4th argument.
+	(gra2cairo_output): use "local->loadfont".
+
+	* src/gtk/ogra2cairo.h: remove definition of "struct fontlocal".
+	(struct fontmap): add member "PangoFontDescription *font".
+	(struct gra2cairo_local): remove member "loadfontf" and add member
+	"loadfont".
+
 2008-11-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/orect.c (rect): use "oputcolor()" to set value to fields
