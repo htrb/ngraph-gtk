@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.72 2008/10/08 10:23:43 hito Exp $
+ * $Id: x11view.c,v 1.73 2008/11/26 06:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4649,7 +4649,6 @@ OpenGC(void)
 
   Mxlocal->offsetx = 0;
   Mxlocal->offsety = 0;
-  Mxlocal->fontalias = NULL;
 
   Mxlocal->scrollx = 0;
   Mxlocal->scrolly = 0;
@@ -4778,8 +4777,6 @@ CloseGC(void)
   gdk_display_flush(Disp);
   g_object_unref(G_OBJECT(Mxlocal->gc));
   Mxlocal->gc = 0;
-
-  memfree(Mxlocal->fontalias);
 
   if (Mxlocal->region != NULL)
     gdk_region_destroy(Mxlocal->region);

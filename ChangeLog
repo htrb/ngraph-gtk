@@ -1,5 +1,7 @@
 2008-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11menu.h (struct mxlocal): remove unused member "fontalias".
+
 	* src/gtk/x11dialg.c (SetObjFieldFromFontList): free "fontalias".
 
 	* src/gtk/main.c (get_obj_font_list): use

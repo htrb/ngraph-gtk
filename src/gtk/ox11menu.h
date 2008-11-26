@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.13 2008/09/19 07:16:19 hito Exp $
+ * $Id: ox11menu.h,v 1.14 2008/11/26 06:04:24 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -25,7 +25,6 @@
 #define _O_X11_MENU_HEADER
 
 #define LINETOLIMIT 500
-#define GTKFONTCASH 60		/* must be greater than 1 */
 #define GTKCOLORDEPTH 2
 
 #define CW_USEDEFAULT -100000
@@ -97,7 +96,6 @@ struct mxlocal
   GdkColormap cmap;
   int privatecolor, cdepth;
   double pixel_dot, offsetx, offsety;
-  char *fontalias;
   GdkPoint points[LINETOLIMIT];
   GdkRegion *region;
   int lock;
