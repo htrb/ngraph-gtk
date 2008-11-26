@@ -6,9 +6,8 @@
 	"Gra2cairoConf->font_num".
 
 	* src/gtk/ogra2cairo.c (free_font_map): add.
-	(loadconfig): free font map when the definition is already exists.
-	(loadconfig): initialize "fnew->font" and increment
-	"Gra2cairoConf->font_num".
+	(create_font_map): add.
+	(loadconfig): use "create_font_map()"
 	(init_conf): initialize "Gra2cairoConf->font_num".
 	(free_fonts_sub): add.
 	(free_conf): use "nhash_each" and "nhash_free" to free font maps.
@@ -19,6 +18,7 @@
 
 	* src/gtk/ogra2cairo.h: remove definition of "struct fontlocal".
 	(struct fontmap): add member "PangoFontDescription *font".
+	(struct fontmap): add member "struct fontmap *prev".
 	(struct gra2cairo_local): remove member "loadfontf" and add member
 	"loadfont".
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.29 2008/11/26 02:59:39 hito Exp $
+ * $Id: ogra2cairo.c,v 1.30 2008/11/26 05:55:58 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -98,7 +98,60 @@ free_font_map(struct fontmap *fcur)
   memfree(fcur->fontalias);
   memfree(fcur->fontname);
 
+  if (fcur->prev) {
+    fcur->prev->next = fcur->next;
+  } else {
+    Gra2cairoConf->fontmap_list_root = fcur->next;
+  }
+
+  if (fcur->next) {
+    fcur->next->prev = fcur->prev;
+  }
+
   memfree(fcur);
+}
+
+static struct fontmap *
+create_font_map(char *fontalias, char *fontname, int type, int twobyte, struct fontmap *fprev)
+{
+  struct fontmap *fnew;
+  char symbol[] = "Sym";
+
+  if (Gra2cairoConf->fontmaproot == NULL)
+    return NULL;
+
+  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fnew) == 0) {
+    free_font_map(fnew);
+  }
+
+  fnew = memalloc(sizeof(struct fontmap));
+  if (fnew == NULL) {
+    return NULL;
+  }
+
+  if (nhash_set_ptr(Gra2cairoConf->fontmaproot, fontalias, fnew)) {
+    memfree(fnew);
+    return NULL;
+  }
+
+  fnew->fontalias = fontalias;
+  fnew->symbol = ! strncmp(fontalias, symbol, sizeof(symbol) - 1);
+  fnew->type = type;
+  fnew->twobyte = twobyte;
+  fnew->fontname = fontname;
+  fnew->font = NULL;
+  fnew->next = NULL;
+  fnew->prev = fprev;
+
+  if (fprev)
+    fprev->next = fnew;
+
+  if (Gra2cairoConf->fontmap_list_root == NULL)
+    Gra2cairoConf->fontmap_list_root = fnew;
+
+  Gra2cairoConf->font_num++;
+
+  return fnew;
 }
 
 static int
@@ -108,8 +161,8 @@ loadconfig(void)
   char *tok, *str, *s2;
   char *f1, *f2, *f3, *f4;
   int val;
-  char *endptr, symbol[] = "Sym";
-  int len;
+  char *endptr;
+  int len, type;
   struct fontmap *fnew, *fprev;
   NHASH fcur;
 
@@ -128,11 +181,19 @@ loadconfig(void)
       for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
       f4 = getitok2(&s2, &len, "");
       if (f1 && f2 && f3 && f4) {
-	if (nhash_get_ptr(fcur, f1, (void *) &fnew) == 0) {
-	  free_font_map(fnew);
+	type = NORMAL;
+	if (FontFace) {
+	  int i;
+	  if (nhash_get_int(FontFace, f2, &i) == 0) {
+	    type = i;
+	  }
 	}
+	memfree(f2);
 
-	fnew = memalloc(sizeof(struct fontmap));
+	val = strtol(f3, &endptr, 10);
+	memfree(f3);
+
+	fnew = create_font_map(f1, f4, type, val, fprev);
 	if (fnew == NULL) {
 	  memfree(tok);
 	  memfree(f1);
@@ -143,42 +204,7 @@ loadconfig(void)
 	  return 1;
 	}
 
-	if (nhash_set_ptr(fcur, f1, fnew)) {
-	  memfree(tok);
-	  memfree(f1);
-	  memfree(f2);
-	  memfree(f3);
-	  memfree(f4);
-	  closeconfig(fp);
-	  return 1;
-	}
-
-	fnew->fontalias = f1;
-	fnew->symbol = ! strncmp(f1, symbol, sizeof(symbol) - 1);
-	if (FontFace) {
-	  int i;
-	  if (nhash_get_int(FontFace, f2, &i)) {
-	    fnew->type = NORMAL;
-	  } else {
-	    fnew->type = i;
-	  }
-	}
-	memfree(f2);
-	val = strtol(f3, &endptr, 10);
-	memfree(f3);
-	fnew->twobyte = val;
-	fnew->fontname = f4;
-	fnew->font = NULL;
-	fnew->next = NULL;
-
-	if (fprev)
-	  fprev->next = fnew;
 	fprev = fnew;
-
-	if (Gra2cairoConf->fontmap_list_root == NULL)
-	  Gra2cairoConf->fontmap_list_root = fnew;
-
-	Gra2cairoConf->font_num++;
       } else {
 	memfree(f1);
 	memfree(f2);

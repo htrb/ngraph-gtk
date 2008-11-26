@@ -21,7 +21,7 @@ struct fontmap
   char *fontalias, *fontname;
   int type, twobyte, symbol;
   PangoFontDescription *font;
-  struct fontmap *next;
+  struct fontmap *prev, *next;
 };
 
 struct gra2cairo_config {
