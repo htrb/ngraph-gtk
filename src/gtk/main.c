@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.23 2008/11/26 03:00:37 hito Exp $
+ * $Id: main.c,v 1.22 2008/11/26 02:59:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -894,7 +894,7 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
 {
   char **list = (char **) NULL;
   struct fontmap *fontmap, *fontmaproot;
-  int j, len, twobyte;
+  int i, j, len, twobyte;
 
   if (Mxlocal == NULL)
     return NULL;
