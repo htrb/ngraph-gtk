@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.14 2008/11/12 09:32:41 hito Exp $
+ * $Id: shell.c,v 1.15 2008/11/26 07:05:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -630,22 +630,24 @@ init_cmd_tbl(void)
   for (i = 0; i < CMDNUM; i++) {
     r = nhash_set_ptr(CmdTblHash, cmdtable[i].name, cmdtable[i].proc);
     if (r) {
-      nhash_free(CmdTblHash);
-      nhash_free(CpCmdTblHash);
-      return 1;
+      goto Err;
     }
   }
 
   for (i = 1; i < CPCMDNUM; i++) {
     r = nhash_set_int(CpCmdTblHash, cpcmdtable[i], i);
     if (r) {
-      nhash_free(CmdTblHash);
-      nhash_free(CpCmdTblHash);
-      return 1;
+      goto Err;
     }
   }
 
   return 0;
+
+ Err:
+  nhash_free(CmdTblHash);
+  nhash_free(CpCmdTblHash);
+
+  return 1;
 }
 
 shell_proc 

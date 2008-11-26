@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.3 2008/08/21 06:05:48 hito Exp $
+ * $Id: osystem.c,v 1.4 2008/11/26 07:05:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -139,7 +139,13 @@ int sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   while (objectcur!=NULL) {
     objectdel=objectcur;
     objectcur=objectcur->next;
-    if (objectdel->doneproc!=NULL) objectdel->doneproc(objectdel,objectdel->local);
+
+    if (objectdel->doneproc)
+      objectdel->doneproc(objectdel,objectdel->local);
+
+    if (objectdel->table_hash)
+      nhash_free(objectdel->table_hash);
+
     memfree(objectdel);
   }
   memfree(inst);

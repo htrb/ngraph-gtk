@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.c,v 1.10 2008/11/25 08:54:33 hito Exp $
+ * $Id: nhash.c,v 1.11 2008/11/26 07:05:12 hito Exp $
  */
 
 #include <stdlib.h>
@@ -48,6 +48,7 @@ nhash_free(NHASH hash)
   for (i = 0; i < HASH_SIZE; i++) {
     free_hash_list(hash[i], 0);
   }
+  free(hash);
 }
 
 void
@@ -58,6 +59,7 @@ nhash_free_with_memfree_ptr(NHASH hash)
   for (i = 0; i < HASH_SIZE; i++) {
     free_hash_list(hash[i], 1);
   }
+  free(hash);
 }
 
 int 

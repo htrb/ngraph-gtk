@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.17 2008/11/07 07:47:34 hito Exp $
+ * $Id: object.c,v 1.18 2008/11/26 07:05:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -931,9 +931,7 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
 {
   struct objlist *objcur,*objprev,*objnew,*parent,*objdel;
   int i,offset,id;
-#if USE_HASH
-  NHASH tbl_hash;
-#endif
+  NHASH tbl_hash = NULL;
 
   id=0;
   objcur=objroot;
