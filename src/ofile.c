@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.45 2008/11/25 08:43:32 hito Exp $
+ * $Id: ofile.c,v 1.46 2008/11/26 08:01:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,6 +40,7 @@
 #include "common.h"
 
 #include "ngraph.h"
+#include "nhash.h"
 #include "object.h"
 #include "ioutil.h"
 #include "nstring.h"
@@ -135,6 +136,55 @@ char *f2dtypechar[]={
   N_("fit"),
   NULL
 };
+
+enum file_config_type {
+  FILE_CONFIG_TYPE_NUMERIC,
+  FILE_CONFIG_TYPE_MATH,
+  FILE_CONFIG_TYPE_STRING,
+  FILE_CONFIG_TYPE_OTHER,
+};
+
+static int set_line_style_config(struct objlist *obj, char *inst, char *field, char *str);
+
+struct file_config {
+  char *name;
+  enum file_config_type type;
+  int (* proc)(struct objlist *, char *, char *, char *);
+};
+static struct file_config FileConfig[] = {
+  {"R",                FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"G",                FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"B",                FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"R2",               FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"G2",               FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"x",                FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"y",                FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"type",             FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"smooth_x",         FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"smooth_y",         FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"mark_type",        FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"mark_size",        FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"line_width",       FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"line_join",        FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"line_miter_limit", FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"head_skip",        FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"read_step",        FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"final_line",       FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"csv",              FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"data_clip",        FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"interpolation",    FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"math_x",           FILE_CONFIG_TYPE_MATH,    NULL},
+  {"math_y",           FILE_CONFIG_TYPE_MATH,    NULL},
+  {"func_f",           FILE_CONFIG_TYPE_MATH,    NULL},
+  {"func_g",           FILE_CONFIG_TYPE_MATH,    NULL},
+  {"func_h",           FILE_CONFIG_TYPE_MATH,    NULL},
+  {"remark",           FILE_CONFIG_TYPE_STRING,  NULL},
+  {"ifs",              FILE_CONFIG_TYPE_STRING,  NULL},
+  {"axis_x",           FILE_CONFIG_TYPE_STRING,  NULL},
+  {"line_style",       FILE_CONFIG_TYPE_OTHER,   set_line_style_config},
+};
+
+static NHASH FileConfigHash = NULL;
 
 #define DXBUFSIZE 101
 
@@ -868,6 +918,27 @@ int f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
   return 0;
 }
 
+static int 
+set_line_style_config(struct objlist *obj, char *inst, char *field, char *str)
+{
+  char *f1, *endptr;
+  struct narray *iarray;
+  int len, val;
+
+  iarray = arraynew(sizeof(int));
+  if (iarray == NULL)
+    return 1;
+
+  while ((f1 = getitok2(&str, &len," \t,"))) {
+    val = strtol(f1, &endptr,10);
+    if (endptr[0] == '\0')
+      arrayadd(iarray, &val);
+    memfree(f1);
+  }
+  _putobj(obj, field, inst, iarray);
+  return 0;
+}
+
 int f2dloadconfig(struct objlist *obj,char *inst)
 {
   FILE *fp;
@@ -876,169 +947,42 @@ int f2dloadconfig(struct objlist *obj,char *inst)
   int val;
   char *endptr;
   int len;
-  struct narray *iarray;
+  struct file_config *cfg;
 
-  if ((fp=openconfig(F2DCONF))==NULL) return 0;
-  while ((tok=getconfig(fp,&str))!=NULL) {
-    s2=str;
-    if (strcmp(tok,"R")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"R",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"G")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"G",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"B")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"B",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"x")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"x",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"y")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"y",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"type")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"type",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"smooth_x")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"smooth_x",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"smooth_y")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"smooth_y",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"mark_type")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"mark_type",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"mark_size")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"mark_size",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"line_width")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"line_width",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"line_join")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"line_join",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"line_miter_limit")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"line_miter_limit",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"R2")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"R2",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"G2")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"G2",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"B2")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"B2",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"head_skip")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"head_skip",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"read_step")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"read_step",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"final_line")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"final_line",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"csv")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"csv",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"data_clip")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"data_clip",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"interpolation")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"interpolation",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"math_x")==0) {
-      f1=getitok2(&s2,&len,"");
-      if (f2dputmath(obj,inst,"math_x",f1)==0) _putobj(obj,"math_x",inst,f1);
-      else memfree(f1);
-    } else if (strcmp(tok,"math_y")==0) {
-      f1=getitok2(&s2,&len,"");
-      if (f2dputmath(obj,inst,"math_y",f1)==0) _putobj(obj,"math_y",inst,f1);
-      else memfree(f1);
-    } else if (strcmp(tok,"func_f")==0) {
-      f1=getitok2(&s2,&len,"");
-      if (f2dputmath(obj,inst,"func_f",f1)==0) _putobj(obj,"func_f",inst,f1);
-      else memfree(f1);
-    } else if (strcmp(tok,"func_g")==0) {
-      f1=getitok2(&s2,&len,"");
-      if (f2dputmath(obj,inst,"func_g",f1)==0) _putobj(obj,"func_g",inst,f1);
-      else memfree(f1);
-    } else if (strcmp(tok,"func_h")==0) {
-      f1=getitok2(&s2,&len,"");
-      if (f2dputmath(obj,inst,"func_h",f1)==0) _putobj(obj,"func_h",inst,f1);
-      else memfree(f1);
-    } else if (strcmp(tok,"remark")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"remark",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"remark",inst,f1);
-    } else if (strcmp(tok,"ifs")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"ifs",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"ifs",inst,f1);
-    } else if (strcmp(tok,"axis_x")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"axis_x",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"axis_x",inst,f1);
-    } else if (strcmp(tok,"axis_y")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"axis_y",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"axis_y",inst,f1);
-    } else if (strcmp(tok,"line_style")==0) {
-      if ((iarray=arraynew(sizeof(int)))!=NULL) {
-        while ((f1=getitok2(&s2,&len," \t,"))!=NULL) {
-          val=strtol(f1,&endptr,10);
-          if (endptr[0]=='\0') arrayadd(iarray,&val);
-          memfree(f1);
-        }
-        _putobj(obj,"line_style",inst,iarray);
+  fp = openconfig(F2DCONF);
+  if (fp == NULL)
+    return 0;
+
+  while ((tok = getconfig(fp, &str))) {
+    s2 = str;
+    if (nhash_get_ptr(FileConfigHash, tok, (void *) &cfg) == 0) {
+      switch (cfg->type) {
+      case FILE_CONFIG_TYPE_NUMERIC:
+	f1 = getitok2(&s2, &len, " \t,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  _putobj(obj, cfg->name, inst, &val);
+	memfree(f1);
+	break;
+      case FILE_CONFIG_TYPE_MATH:
+	f1 = getitok2(&s2, &len, "");
+	if (f2dputmath(obj, inst, cfg->name, f1) == 0) {
+	  _putobj(obj, cfg->name, inst, f1);
+	} else {
+	  memfree(f1);
+	}
+	break;
+      case FILE_CONFIG_TYPE_STRING:
+	f1 = getitok2(&s2, &len, "");
+	_getobj(obj, cfg->name, inst, &f2);
+	memfree(f2);
+	_putobj(obj, cfg->name, inst, f1);
+	break;
+      case FILE_CONFIG_TYPE_OTHER:
+	if (cfg->proc) {
+	  cfg->proc(obj, inst, cfg->name, s2);
+	}
+	break;
       }
     }
     memfree(tok);
@@ -6663,6 +6607,20 @@ struct objtable file2d[] = {
 void *addfile()
 /* addfile() returns NULL on error */
 {
+  unsigned int i;
+
+  if (FileConfigHash == NULL) {
+    FileConfigHash = nhash_new();
+    if (FileConfigHash ==NULL)
+      return NULL;
+
+    for (i = 0; i < sizeof(FileConfig) / sizeof(*FileConfig); i++) {
+      if (nhash_set_ptr(FileConfigHash, FileConfig[i].name, (void *) &FileConfig[i])) {
+	nhash_free(FileConfigHash);
+	return NULL;
+      }
+    }
+  }
   return addobject(NAME,ALIAS,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,f2derrorlist,NULL,NULL);
 }
 

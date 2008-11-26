@@ -1,5 +1,10 @@
 2008-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c add global valiable "FileConfigHash".
+	(enum file_config_type, struct file_config, FileConfig): add.
+	(f2dloadconfig): use "FileConfigHash".
+	(addfile): initialize "FileConfigHash".
+
 	* src/gtk/ox11menu.h (struct mxlocal): remove unused member "fontalias".
 
 	* src/gtk/x11dialg.c (SetObjFieldFromFontList): free "fontalias".
