@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.46 2008/11/26 08:01:14 hito Exp $
+ * $Id: ofile.c,v 1.47 2008/11/27 06:50:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -157,6 +157,7 @@ static struct file_config FileConfig[] = {
   {"B",                FILE_CONFIG_TYPE_NUMERIC, NULL},
   {"R2",               FILE_CONFIG_TYPE_NUMERIC, NULL},
   {"G2",               FILE_CONFIG_TYPE_NUMERIC, NULL},
+  {"B2",               FILE_CONFIG_TYPE_NUMERIC, NULL},
   {"x",                FILE_CONFIG_TYPE_NUMERIC, NULL},
   {"y",                FILE_CONFIG_TYPE_NUMERIC, NULL},
   {"type",             FILE_CONFIG_TYPE_NUMERIC, NULL},
@@ -181,6 +182,7 @@ static struct file_config FileConfig[] = {
   {"remark",           FILE_CONFIG_TYPE_STRING,  NULL},
   {"ifs",              FILE_CONFIG_TYPE_STRING,  NULL},
   {"axis_x",           FILE_CONFIG_TYPE_STRING,  NULL},
+  {"axis_y",           FILE_CONFIG_TYPE_STRING,  NULL},
   {"line_style",       FILE_CONFIG_TYPE_OTHER,   set_line_style_config},
 };
 

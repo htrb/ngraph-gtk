@@ -1,3 +1,22 @@
+2008-11-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.h (struct menulocal): remove unused member
+	"framex", "framey" and "exwinbackingstore".
+	(struct mxlocal): remove unused member "backingstore".
+
+	* src/gtk/ox11menu.c (enum menu_config_type)
+	(menu_config_menu_geometry, menu_config_file_geometry)
+	(menu_config_axis_geometry, menu_config_legend_geometry)
+	(menu_config_merge_geometry, menu_config_dialog_geometry)
+	(menu_config_coord_geometry, struct menu_config, MenuConfig)
+	(MenuConfigHash, menu_config_set_elements)
+	(menu_config_set_four_elements, menu_config_set_window_geometry)
+	(menu_config_set_bgcolor, menu_config_set_ext_driver)
+	(menu_config_set_prn_driver, menu_config_set_script)
+	(set_menu_config_mxlocal): add.
+	(addmenu): initialize "MenuConfigHash".
+	(mgtkloadconfig, mgtkwindowconfig): use "FileConfigHash".
+
 2008-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c add global valiable "FileConfigHash".

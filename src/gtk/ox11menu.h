@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.14 2008/11/26 06:04:24 hito Exp $
+ * $Id: ox11menu.h,v 1.15 2008/11/27 06:50:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -90,7 +90,7 @@ struct mxlocal
   GdkDrawable *win, *pix;
   GdkGC *gc;
   int scrollx, scrolly;
-  int autoredraw, redrawf, redrawf_num, ruler, backingstore;
+  int autoredraw, redrawf, redrawf_num, ruler;
   int windpi, data_head_lines;
   int grid;
   GdkColormap cmap;
@@ -133,8 +133,7 @@ struct menulocal
   int mergeheight, mergewidth, mergex, mergey, mergeopen;
   int dialogheight, dialogwidth, dialogx, dialogy, dialogopen;
   int coordheight, coordwidth, coordx, coordy, coordopen;
-  int exwindpi, exwinwidth, exwinheight, exwinbackingstore, exwin_use_external;
-  int framex, framey;
+  int exwindpi, exwinwidth, exwinheight, exwin_use_external;
   char *fileopendir;
   char *graphloaddir;
   char *expanddir;

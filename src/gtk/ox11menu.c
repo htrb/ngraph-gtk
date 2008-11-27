@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.31 2008/09/19 07:16:19 hito Exp $
+ * $Id: ox11menu.c,v 1.32 2008/11/27 06:50:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -83,18 +83,370 @@ static int mxflush(struct objlist *obj, char *inst, char *rval, int argc,
 		   char **argv);
 
 
+enum menu_config_type {
+  MENU_CONFIG_TYPE_NUMERIC,
+  MENU_CONFIG_TYPE_BOOL,
+  MENU_CONFIG_TYPE_STRING,
+  MENU_CONFIG_TYPE_WINDOW,
+  MENU_CONFIG_TYPE_HISTORY,
+  MENU_CONFIG_TYPE_OTHER,
+};
+
+static int menu_config_set_four_elements(char *s2, void *data);
+static int menu_config_set_window_geometry(char *s2, void *data);
+static int menu_config_set_bgcolor(char *s2, void *data);
+static int menu_config_set_ext_driver(char *s2, void *data);
+static int menu_config_set_prn_driver(char *s2, void *data);
+static int menu_config_set_script(char *s2, void *data);
+
+static int *menu_config_menu_geometry[] = {
+  &Menulocal.menux,
+  &Menulocal.menuy,
+  &Menulocal.menuwidth,
+  &Menulocal.menuheight,
+};
+
+static int *menu_config_file_geometry[] = {
+  &(Menulocal.filex),
+  &Menulocal.filey,
+  &Menulocal.filewidth,
+  &Menulocal.fileheight,
+  &Menulocal.fileopen,
+};
+
+static int *menu_config_axis_geometry[] = {
+  &Menulocal.axisx,
+  &Menulocal.axisy,
+  &Menulocal.axiswidth,
+  &Menulocal.axisheight,
+  &Menulocal.axisopen,
+};
+
+static int *menu_config_legend_geometry[] = {
+  &Menulocal.legendx,
+  &Menulocal.legendy,
+  &Menulocal.legendwidth,
+  &Menulocal.legendheight,
+  &Menulocal.legendopen,
+};
+
+static int *menu_config_merge_geometry[] = {
+  &Menulocal.mergex,
+  &Menulocal.mergey,
+  &Menulocal.mergewidth,
+  &Menulocal.mergeheight,
+  &Menulocal.mergeopen,
+};
+
+static int *menu_config_dialog_geometry[] = {
+  &Menulocal.dialogx,
+  &Menulocal.dialogy,
+  &Menulocal.dialogwidth,
+  &Menulocal.dialogheight,
+  &Menulocal.dialogopen,
+};
+
+static int *menu_config_coord_geometry[] = {
+  &Menulocal.coordx,
+  &Menulocal.coordy,
+  &Menulocal.coordwidth,
+  &Menulocal.coordheight,
+  &Menulocal.coordopen,
+};
+
+struct menu_config {
+  char *name;
+  enum menu_config_type type;
+  int (* proc)(char *, void *);
+  void *data;
+};
+static struct menu_config MenuConfig[] = {
+  {"script_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.scriptconsole},
+  {"addin_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.addinconsole},
+  {"preserve_width",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.preserve_width},
+  {"change_directory",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
+  {"save_history",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savehistory},
+  {"save_path",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savepath},
+  {"save_with_data",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithdata},
+  {"save_with_merge",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
+  {"status_bar",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusb},
+  {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
+  {"move_child_window",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.movechild},
+  {"expand",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expand},
+  {"ignore_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ignorepath},
+  {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
+  {"history_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
+  {"infowin_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
+
+  {"expand_dir",		MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.expanddir},
+  {"editor",			MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.editor},
+  {"browser",			MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.browser},
+  {"help_browser",		MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.help_browser},
+
+  {"ngp_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.ngpfilelist},
+  {"ngp_dir_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.ngpdirlist},
+  {"data_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.datafilelist},
+
+  {"background_color",		MENU_CONFIG_TYPE_OTHER, menu_config_set_bgcolor,       NULL},
+  {"ext_driver",		MENU_CONFIG_TYPE_OTHER, menu_config_set_ext_driver,    NULL},
+  {"prn_driver",		MENU_CONFIG_TYPE_OTHER, menu_config_set_prn_driver,    NULL},
+  {"script",			MENU_CONFIG_TYPE_OTHER, menu_config_set_script,        NULL},
+  {"menu_win",			MENU_CONFIG_TYPE_OTHER, menu_config_set_four_elements, menu_config_menu_geometry},
+
+  {"file_win",			MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_file_geometry},
+  {"axis_win",			MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_axis_geometry},
+  {"legend_win",		MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_legend_geometry},
+  {"merge_win",			MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_merge_geometry},
+  {"information_win",		MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_dialog_geometry},
+  {"coordinate_win",		MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_coord_geometry},
+
+  {"antialias",				MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"viewer_dpi",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"color_depth",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"viewer_load_file_data_number",	MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"data_head_lines",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"minus_hyphen",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
+
+  {"viewer_auto_redraw",		MENU_CONFIG_TYPE_BOOL, NULL, NULL},
+  {"viewer_load_file_on_redraw",	MENU_CONFIG_TYPE_BOOL, NULL, NULL},
+  {"viewer_show_ruler",			MENU_CONFIG_TYPE_BOOL, NULL, NULL},
+};
+
+static NHASH MenuConfigHash = NULL;
+
+static int
+menu_config_set_four_elements(char *s2, void *data)
+{
+  int len, i, val, **ary;
+  char *endptr, *f[] = {NULL, NULL, NULL, NULL};
+
+  if (data == NULL)
+    return 0;
+
+  ary = (int **) data;
+
+  for (i = 0; i < 4; i++) {
+    f[i] = getitok2(&s2, &len, " \t,");
+    if (f[i] == NULL)
+      goto End;
+  }
+
+  for (i = 0; i < 4; i++) {
+    val = strtol(f[i], &endptr, 10);
+    if (endptr[0] == '\0' && val != 0) {
+      *(ary[i]) = val;
+    }
+  }
+
+ End:
+  for (i = 0; i < 4; i++) {
+    memfree(f[i]);
+  }
+  return 0;
+}
+
+static int
+menu_config_set_window_geometry(char *s2, void *data)
+{
+  int len, i, val, **ary;
+  char *endptr, *f[] = {NULL, NULL, NULL, NULL, NULL};
+
+  if (data == NULL)
+    return 0;
+
+  ary = (int **) data;
+
+  for (i = 0; i < 5; i++) {
+    f[i] = getitok2(&s2, &len, " \t,");
+    if (f[i] == NULL)
+      goto End;
+  }
+
+  for (i = 0; i < 5; i++) {
+    val = strtol(f[i], &endptr, 10);
+    if (endptr[0] == '\0') {
+      *(ary[i]) = val;
+    }
+  }
+
+ End:
+  for (i = 0; i < 5; i++) {
+    memfree(f[i]);
+  }
+  return 0;
+}
+
+static int
+menu_config_set_bgcolor(char *s2, void *data)
+{
+  char *f1, *endptr;
+  int len, val;
+
+  f1 = getitok2(&s2, &len, " \t,");
+  val = strtol(f1, &endptr, 16);
+  if (endptr[0] == '\0') {
+    Menulocal.bg_r = (val >> 16) & 0xff;
+    Menulocal.bg_g = (val >> 8) & 0xff;
+    Menulocal.bg_b = val & 0xff;
+  }
+  memfree(f1);
+  return 0;
+}
+
+static int
+menu_config_set_ext_driver(char *s2, void *data)
+{
+  char *f[4] = {NULL, NULL, NULL, NULL};
+  int len, i;
+  struct extprinter *pnew, *pcur, **pptr;
+
+  pptr = (struct extprinter **) data;
+  pcur = *pptr;
+
+  f[0] = getitok2(&s2, &len, ",");
+  f[1] = getitok2(&s2, &len, ",");
+
+  if (s2[1] == ',') {
+    f[2] = NULL;
+  } else {
+    f[2] = getitok2(&s2, &len, ",");
+  }
+
+  for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
+
+  f[3] = getitok2(&s2, &len, "");
+
+  if (f[0] && f[1]) {
+    pnew = (struct extprinter *) memalloc(sizeof(struct extprinter));
+    if (pnew == NULL) {
+      for (i = 0; i < 4; i++) {
+	memfree(f[i]);
+      }
+      return 1;
+    }
+    if (pcur == NULL) {
+      Menulocal.extprinterroot = pnew;
+    } else {
+      pcur->next = pnew;
+    }
+    *pptr = pnew;
+    pcur = pnew;
+    pcur->next = NULL;
+    pcur->name = f[0];
+    pcur->driver = f[1];
+    pcur->ext = f[2];
+    pcur->option = f[3];
+  } else {
+    for (i = 0; i < 4; i++) {
+      memfree(f[i]);
+    }
+  }
+  return 0;
+}
+
+static int
+menu_config_set_prn_driver(char *s2, void *data)
+{
+  char *f[4] = {NULL, NULL, NULL, NULL};
+  int len, i;
+  struct prnprinter *pnew, *pcur, **pptr;
+
+  pptr = (struct prnprinter **) data;
+  pcur = *pptr;
+
+  f[0] = getitok2(&s2, &len, ",");
+  f[1] = getitok2(&s2, &len, ",");
+  f[2] = getitok2(&s2, &len, ",");
+
+  for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
+
+  f[3] = getitok2(&s2, &len, "");
+
+  if (f[0] && f[1]) {
+    pnew = (struct prnprinter *) memalloc(sizeof(struct prnprinter));
+    if (pnew == NULL) {
+      for (i = 0; i < 4; i++) {
+	memfree(f[i]);
+      }
+      return 1;
+    }
+    if (pcur == NULL) {
+      Menulocal.prnprinterroot = pnew;
+    } else {
+      pcur->next = pnew;
+    }
+    *pptr = pnew;
+    pcur = pnew;
+    pcur->next = NULL;
+    pcur->name = f[0];
+    pcur->driver = f[1];
+    pcur->prn = f[2];
+    pcur->option = f[3];
+  } else {
+    for (i = 0; i < 4; i++) {
+      memfree(f[i]);
+    }
+  }
+  return 0;
+}
+
+static int
+menu_config_set_script(char *s2, void *data)
+{
+  char *f[4] = {NULL, NULL, NULL};
+  int len, i;
+  struct script *snew, *scur, **sptr;
+
+  sptr = (struct script **) data;
+  scur = *sptr;
+
+  f[0] = getitok2(&s2, &len, ",");
+  f[1] = getitok2(&s2, &len, ",");
+
+  for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
+  f[2] = getitok2(&s2, &len, "");
+
+  if (f[0] && f[1]) {
+    snew = (struct script *) memalloc(sizeof(struct script));
+    if (snew == NULL) {
+      for (i = 0; i < 3; i++) {
+	memfree(f[i]);
+      }
+      return 1;
+    }
+    if (scur == NULL) {
+      Menulocal.scriptroot = snew;
+    } else {
+      scur->next = snew;
+    }
+    *sptr = snew;
+    scur = snew;
+    scur->next = NULL;
+    scur->name = f[0];
+    scur->script = f[1];
+    scur->option = f[2];
+  } else { 
+    for (i = 0; i < 3; i++) {
+      memfree(f[i]);
+    }
+  }
+  return 0;
+}
+
 static int
 mgtkloadconfig(void)
 {
   FILE *fp;
   char *tok, *str, *s2;
-  char *f1, *f2, *f3, *f4, *f5;
+  char *f1;
   int val;
   char *endptr;
   int len;
-  struct extprinter *pcur, *pnew;
-  struct prnprinter *pcur2, *pnew2;
-  struct script *scur, *snew;
+  struct extprinter *pcur;
+  struct prnprinter *pcur2;
+  struct script *scur;
+  struct menu_config *cfg;
 
   fp = openconfig(MGTKCONF);
   if (fp == NULL)
@@ -103,552 +455,73 @@ mgtkloadconfig(void)
   pcur = Menulocal.extprinterroot;
   pcur2 = Menulocal.prnprinterroot;
   scur = Menulocal.scriptroot;
+
+  if (nhash_get_ptr(MenuConfigHash, "ext_driver", (void *) &cfg) == 0) {
+    if (cfg) {
+      cfg->data = &pcur;
+    }
+  }
+
+  if (nhash_get_ptr(MenuConfigHash, "prn_driver", (void *) &cfg) == 0) {
+    if (cfg) {
+      cfg->data = &pcur2;
+    }
+  }
+
+  if (nhash_get_ptr(MenuConfigHash, "script", (void *) &cfg) == 0) {
+    if (cfg) {
+      cfg->data = &scur;
+    }
+  }
+
+
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
-    if (strcmp(tok, "script_console") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.scriptconsole = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "addin_console") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.addinconsole = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "preserve_width") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.preserve_width = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "change_directory") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.changedirectory = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "save_history") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.savehistory = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "expand_dir") == 0) {
-      f1 = getitok2(&s2, &len, "");
-      if (f1) {
-	memfree(Menulocal.expanddir);
-	Menulocal.expanddir = f1;
-      }
-    } else if (strcmp(tok, "expand") == 0) {
-      f1 = getitok2(&s2, &len, " \x09, ");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.expand = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "ignore_path") == 0) {
-      f1 = getitok2(&s2, &len, " \x09, ");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.ignorepath = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok,"expand_to_fullpath")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      if (f1!=NULL) {
-        val=strtol(f1,&endptr,10);
-        if (endptr[0]=='\0') Menulocal.expandtofullpath=val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "save_path") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.savepath = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "save_with_data") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.savewithdata = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "save_with_merge") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.savewithmerge = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "ngp_history") == 0) {
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-      f1 = getitok2(&s2, &len, "");
-      if (f1)
-	arrayadd(Menulocal.ngpfilelist, &f1);
-    } else if (strcmp(tok, "ngp_dir_history") == 0) {
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-      f1 = getitok2(&s2, &len, "");
-      if (f1)
-	arrayadd(Menulocal.ngpdirlist, &f1);
-    } else if (strcmp(tok, "data_history") == 0) {
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-      f1 = getitok2(&s2, &len, "");
-      if (f1)
-	arrayadd(Menulocal.datafilelist, &f1);
-    } else if (strcmp(tok, "framex") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.framex = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "framey") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.framey = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "menu_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4) {
-	val = strtol(f1, &endptr, 10);
-	if ((endptr[0] == '\0') && (val != 0))
-	  Menulocal.menux = val;
-	val = strtol(f2, &endptr, 10);
-	if ((endptr[0] == '\0') && (val != 0))
-	  Menulocal.menuy = val;
-	val = strtol(f3, &endptr, 10);
-	if ((endptr[0] == '\0') && (val != 0))
-	  Menulocal.menuwidth = val;
-	val = strtol(f4, &endptr, 10);
-	if ((endptr[0] == '\0') && (val != 0))
-	  Menulocal.menuheight = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-    } else if (strcmp(tok, "file_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.filex = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.filey = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.filewidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.fileheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.fileopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "axis_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axisx = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axisy = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axiswidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axisheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axisopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "legend_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendx = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendy = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendwidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "merge_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergex = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergey = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergewidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergeheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergeopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "information_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogx = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogy = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogwidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "coordinate_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordx = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordy = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordwidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "status_bar") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.statusb = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "show_tip") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.showtip = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "move_child_window") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      if (f1) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.movechild = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "editor") == 0) {
-      memfree(Menulocal.editor);
-      f1 = getitok2(&s2, &len, "");
-      Menulocal.editor = f1;
-    } else if (strcmp(tok, "history_size") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.hist_size = val;
-      memfree(f1);
-    } else if (strcmp(tok, "infowin_size") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.info_size = val;
-      memfree(f1);
-    } else if (strcmp(tok, "background_color") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 16);
-      if (endptr[0] == '\0') {
-	Menulocal.bg_r = (val >> 16) & 0xff;
-	Menulocal.bg_g = (val >> 8) & 0xff;
-	Menulocal.bg_b = val & 0xff;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "browser") == 0) {
-      memfree(Menulocal.browser);
-      f1 = getitok2(&s2, &len, "");
-      Menulocal.browser = f1;
-    } else if (strcmp(tok, "help_browser") == 0) {
-      memfree(Menulocal.help_browser);
-      f1 = getitok2(&s2, &len, "");
-      Menulocal.help_browser = f1;
-    } else if (strcmp(tok, "ext_driver") == 0) {
-      f1 = getitok2(&s2, &len, ",");
-      f2 = getitok2(&s2, &len, ",");
-      if (s2[1] == ',')
-	f3 = NULL;
-      else
-	f3 = getitok2(&s2, &len, ",");
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-      f4 = getitok2(&s2, &len, "");
-      if (f1 && f2) {
-	pnew = (struct extprinter *) memalloc(sizeof(struct extprinter));
-	if (pnew == NULL) {
+    if (nhash_get_ptr(MenuConfigHash, tok, (void *) &cfg) == 0 && cfg) {
+      switch (cfg->type) {
+      case MENU_CONFIG_TYPE_NUMERIC:
+	f1 = getitok2(&s2, &len, " \t,");
+	if (f1) {
+	  val = strtol(f1, &endptr, 10);
+	  if (endptr[0] == '\0')
+	    * (int *) (cfg->data) = val;
+	}
+	memfree(f1);
+	break;
+      case MENU_CONFIG_TYPE_BOOL:
+	f1 = getitok2(&s2, &len, " \t,");
+	if (f1) {
+	  val = strtol(f1, &endptr, 10);
+	  if (endptr[0] == '\0')
+	    * (int *) (cfg->data) = (val != 0);
+	}
+	memfree(f1);
+	break;
+      case MENU_CONFIG_TYPE_STRING:
+	f1 = getitok2(&s2, &len, "");
+	if (f1) {
+	  memfree(* (char **) (cfg->data));
+	  * (char **) (cfg->data) = f1;
+	}
+	break;
+      case MENU_CONFIG_TYPE_WINDOW:
+	menu_config_set_window_geometry(s2, cfg->data);
+	break;
+      case MENU_CONFIG_TYPE_HISTORY:
+	for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
+	f1 = getitok2(&s2, &len, "");
+	if (f1)
+	  arrayadd(* (struct narray **) cfg->data, &f1);
+	break;
+      case MENU_CONFIG_TYPE_OTHER:
+	if (cfg->proc && cfg->proc(s2, cfg->data)) {
 	  memfree(tok);
-	  memfree(f1);
-	  memfree(f2);
-	  memfree(f3);
-	  memfree(f4);
+	  memfree(str);
 	  closeconfig(fp);
 	  return 1;
 	}
-	if (pcur == NULL)
-	  Menulocal.extprinterroot = pnew;
-	else
-	  pcur->next = pnew;
-	pcur = pnew;
-	pcur->next = NULL;
-	pcur->name = f1;
-	pcur->driver = f2;
-	pcur->ext = f3;
-	pcur->option = f4;
-      } else {
-	memfree(f1);
-	memfree(f2);
-	memfree(f3);
-	memfree(f4);
+	break;
       }
-    } else if (strcmp(tok, "prn_driver") == 0) {
-      f1 = getitok2(&s2, &len, ",");
-      f2 = getitok2(&s2, &len, ",");
-      f3 = getitok2(&s2, &len, ",");
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-      f4 = getitok2(&s2, &len, "");
-      if (f1 && f2) {
-	if ((pnew2 = (struct prnprinter *)
-	     memalloc(sizeof(struct prnprinter))) == NULL) {
-	  memfree(tok);
-	  memfree(f1);
-	  memfree(f2);
-	  memfree(f3);
-	  memfree(f4);
-	  closeconfig(fp);
-	  return 1;
-	}
-	if (pcur2 == NULL)
-	  Menulocal.prnprinterroot = pnew2;
-	else
-	  pcur2->next = pnew2;
-	pcur2 = pnew2;
-	pcur2->next = NULL;
-	pcur2->name = f1;
-	pcur2->driver = f2;
-	pcur2->prn = f3;
-	pcur2->option = f4;
-      } else {
-	memfree(f1);
-	memfree(f2);
-	memfree(f3);
-	memfree(f4);
-      }
-    } else if (strcmp(tok, "script") == 0) {
-      f1 = getitok2(&s2, &len, ",");
-      f2 = getitok2(&s2, &len, ",");
-      for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-      f3 = getitok2(&s2, &len, "");
-      if (f1 && f2) {
-	if ((snew =
-	     (struct script *) memalloc(sizeof(struct script))) == NULL) {
-	  memfree(tok);
-	  memfree(f1);
-	  memfree(f2);
-	  memfree(f3);
-	  closeconfig(fp);
-	  return 1;
-	}
-	if (scur == NULL)
-	  Menulocal.scriptroot = snew;
-	else
-	  scur->next = snew;
-	scur = snew;
-	scur->next = NULL;
-	scur->name = f1;
-	scur->script = f2;
-	scur->option = f3;
-      } else {
-	memfree(f1);
-	memfree(f2);
-	memfree(f3);
-      }
-    } else if (strcmp(tok, "antialias") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0') {
-	Mxlocal->antialias = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "viewer_dpi") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Mxlocal->windpi = val;
-      memfree(f1);
-    } else if (strcmp(tok, "color_depth") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Mxlocal->cdepth = val;
-      memfree(f1);
-    } else if (strcmp(tok, "viewer_auto_redraw") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0') {
-	if (val == 0)
-	  Mxlocal->autoredraw = FALSE;
-	else
-	  Mxlocal->autoredraw = TRUE;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "viewer_load_file_on_redraw") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0') {
-	if (val == 0)
-	  Mxlocal->redrawf = FALSE;
-	else
-	  Mxlocal->redrawf = TRUE;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "viewer_load_file_data_number") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0') {
-	Mxlocal->redrawf_num = val;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "viewer_show_ruler") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0') {
-	if (val == 0)
-	  Mxlocal->ruler = FALSE;
-	else
-	  Mxlocal->ruler = TRUE;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "viewer_grid") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Mxlocal->grid = val;
-      memfree(f1);
-    } else if (strcmp(tok, "data_head_lines") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Mxlocal->data_head_lines = val;
-      memfree(f1);
-    } else if (strcmp(tok, "minus_hyphen") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Mxlocal->minus_hyphen = val;
-      memfree(f1);
     }
     memfree(tok);
     memfree(str);
@@ -703,183 +576,16 @@ mgtkwindowconfig(void)
 {
   FILE *fp;
   char *tok, *str, *s2;
-  char *f1, *f2, *f3, *f4, *f5;
-  int val;
-  char *endptr;
-  int len;
+  struct menu_config *cfg;
 
   if ((fp = openconfig(MGTKCONF)) == NULL)
     return 0;
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
-    if (strcmp(tok, "file_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.filex = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.filey = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.filewidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.fileheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.fileopen = val;
+    if (nhash_get_ptr(MenuConfigHash, tok, (void *) &cfg) == 0) {
+      if(cfg && cfg->type == MENU_CONFIG_TYPE_WINDOW) {
+	menu_config_set_window_geometry(s2, cfg->data);
       }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "axis_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axisx = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axisy = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axiswidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axisheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.axisopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "legend_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendx = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendy = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendwidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.legendopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "merge_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergex = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergey = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergewidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergeheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.mergeopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "information_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogx = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogy = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogwidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.dialogopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
-    } else if (strcmp(tok, "coordinate_win") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
-      f4 = getitok2(&s2, &len, " \t,");
-      f5 = getitok2(&s2, &len, " \t,");
-      if (f1 && f2 && f3 && f4 && f5) {
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordx = val;
-	val = strtol(f2, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordy = val;
-	val = strtol(f3, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordwidth = val;
-	val = strtol(f4, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordheight = val;
-	val = strtol(f5, &endptr, 10);
-	if (endptr[0] == '\0')
-	  Menulocal.coordopen = val;
-      }
-      memfree(f1);
-      memfree(f2);
-      memfree(f3);
-      memfree(f4);
-      memfree(f5);
     }
     memfree(tok);
     memfree(str);
@@ -922,12 +628,6 @@ exwinloadconfig(void)
       if (endptr[0] == '\0')
 	Menulocal.exwinheight = val;
       memfree(f1);
-    } else if (strcmp(tok, "backing_store") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.exwinbackingstore = val;
-      memfree(f1);
     } else if (strcmp(tok, "use_external_viewer") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
@@ -959,6 +659,43 @@ menuadddrawrable(struct objlist *parent, struct narray *drawrable)
   }
 }
 
+static void
+set_menu_config_mxlocal(void)
+{
+  struct menu_config *cfg;
+
+  if (nhash_get_ptr(MenuConfigHash, "antialias", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->antialias);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "viewer_dpi", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->windpi);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "color_depth", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->cdepth);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "viewer_load_file_data_number", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->redrawf_num);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "viewer_grid", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->grid);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "data_head_lines", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->data_head_lines);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "minus_hyphen", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->minus_hyphen);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "viewer_auto_redraw", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->autoredraw);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "viewer_load_file_on_redraw", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->redrawf);
+  }
+  if (nhash_get_ptr(MenuConfigHash, "viewer_show_ruler", (void *) &cfg) == 0) {
+    cfg->data = &(Mxlocal->ruler);
+  }
+}
+
 static int
 menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
@@ -987,7 +724,8 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 1;
   }
 
-  Menulocal.framex = Menulocal.framey = 0;
+  set_menu_config_mxlocal();
+
   Menulocal.menux = Menulocal.menuy
     = Menulocal.menuheight = Menulocal.menuwidth = CW_USEDEFAULT;
   initwindowconfig();
@@ -1008,7 +746,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.exwindpi = DEFAULT_DPI;
   Menulocal.exwinwidth = 0;
   Menulocal.exwinheight = 0;
-  Menulocal.exwinbackingstore = FALSE;
   Menulocal.fileopendir = NULL;
   Menulocal.graphloaddir = NULL;
   Menulocal.expand = 1;
@@ -1042,7 +779,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Mxlocal->ruler = TRUE;
   Mxlocal->grid = 200;
   Mxlocal->cdepth = GTKCOLORDEPTH;
-  Mxlocal->backingstore = FALSE;
   Mxlocal->minus_hyphen = TRUE;
   Mxlocal->data_head_lines = 20;
   Mxlocal->local = local;
@@ -1626,8 +1362,23 @@ static struct objtable gtkmenu[] = {
 #define TBLNUM (sizeof(gtkmenu) / sizeof(*gtkmenu))
 
 void *
-addmenu()
+addmenu(void)
 {
+  unsigned int i;
+
+  if (MenuConfigHash == NULL) {
+    MenuConfigHash = nhash_new();
+    if (MenuConfigHash ==NULL)
+      return NULL;
+
+    for (i = 0; i < sizeof(MenuConfig) / sizeof(*MenuConfig); i++) {
+      if (nhash_set_ptr(MenuConfigHash, MenuConfig[i].name, (void *) &MenuConfig[i])) {
+	nhash_free(MenuConfigHash);
+	return NULL;
+      }
+    }
+  }
+
   return addobject(NAME, ALIAS, PARENT, NVERSION, TBLNUM, gtkmenu, ERRNUM,
 		   menuerrorlist, NULL, NULL);
 }

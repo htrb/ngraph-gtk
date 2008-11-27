@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.31 2008/11/06 05:47:27 hito Exp $
+ * $Id: x11print.c,v 1.32 2008/11/27 06:50:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -789,8 +789,6 @@ CmOutputViewer(int select_file)
     g2winst = chkobjinst(g2wobj, g2wid);
     _getobj(g2wobj, "oid", g2winst, &g2woid);
     putobj(g2wobj, "dpi", g2wid, &(Menulocal.exwindpi));
-    putobj(g2wobj, "store_in_memory", g2wid,
-	   &(Menulocal.exwinbackingstore));
     putobj(g2wobj, "BR", g2wid, &(Menulocal.bg_r));
     putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
     putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));

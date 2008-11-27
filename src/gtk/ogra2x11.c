@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.13 2008/09/22 08:56:34 hito Exp $
+ * $Id: ogra2x11.c,v 1.14 2008/11/27 06:50:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -86,7 +86,6 @@ struct gtklocal
   unsigned int winwidth, winheight, windpi;
   GdkColormap *cmap;
   int PaperWidth, PaperHeight;
-  int backingstore;
   int minus_hyphen;
   int bg_r, bg_g, bg_b;
   struct gra2cairo_local *local;
@@ -114,8 +113,6 @@ static int gtkclear(struct objlist *obj, char *inst, char *rval, int argc,
 		    char **argv);
 static int gtkautoredraw(struct objlist *obj, char *inst, char *rval,
 			 int argc, char **argv);
-static int gtkstorememory(struct objlist *obj, char *inst, char *rval,
-			  int argc, char **argv);
 static int gtkredraw(struct objlist *obj, char *inst, char *rval, int argc,
 		     char **argv);
 static int dot2pixel(struct gtklocal *gtklocal, int r);
@@ -140,13 +137,7 @@ gtkloadconfig(struct gtklocal *gtklocal)
 
   while ((tok = getconfig(fp, &str)) != NULL) {
     s2 = str;
-    if (strcmp(tok, "backing_store") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	gtklocal->backingstore = val;
-      memfree(f1);
-    } else if (strcmp(tok, "win_dpi") == 0) {
+    if  (strcmp(tok, "win_dpi") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
@@ -318,7 +309,6 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   gtklocal->winheight = WINHEIGHT;
   gtklocal->windpi = DEFAULT_DPI;
   gtklocal->autoredraw = TRUE;
-  gtklocal->backingstore = FALSE;
   gtklocal->minus_hyphen = TRUE;
   gtklocal->bg_r = 0xff;
   gtklocal->bg_g = 0xff;
@@ -587,13 +577,6 @@ gtkautoredraw(struct objlist *obj, char *inst, char *rval,
 }
 
 static int
-gtkstorememory(struct objlist *obj, char *inst, char *rval,
-	       int argc, char **argv)
-{
-  return 0;
-}
-
-static int
 gtkredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
@@ -759,7 +742,6 @@ struct objtable gra2gtk[] = {
   {"done", NVFUNC, NEXEC, gtkdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
   {"auto_redraw", NBOOL, NREAD | NWRITE, gtkautoredraw, NULL, 0},
-  {"store_in_memory", NBOOL, NREAD | NWRITE, gtkstorememory, NULL, 0},
   {"redraw", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},

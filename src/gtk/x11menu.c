@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.46 2008/11/25 08:47:06 hito Exp $
+ * $Id: x11menu.c,v 1.47 2008/11/27 06:50:03 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1443,7 +1443,7 @@ defaultwindowconfig(void)
       Menulocal.fileheight = h / 4;
 
     if (Menulocal.filex == CW_USEDEFAULT)
-      Menulocal.filex = -Menulocal.filewidth - Menulocal.framex * 2 - 4;
+      Menulocal.filex = -Menulocal.filewidth - 4;
 
     if (Menulocal.filey == CW_USEDEFAULT)
       Menulocal.filey = 0;
@@ -1457,10 +1457,10 @@ defaultwindowconfig(void)
       Menulocal.axisheight = h / 4;
 
     if (Menulocal.axisx == CW_USEDEFAULT)
-      Menulocal.axisx = -Menulocal.axiswidth - Menulocal.framex * 2 - 4;
+      Menulocal.axisx = -Menulocal.axiswidth - 4;
 
     if (Menulocal.axisy == CW_USEDEFAULT)
-      Menulocal.axisy = Menulocal.fileheight + Menulocal.framey + 4;
+      Menulocal.axisy = Menulocal.fileheight + 4;
   }
 
   if (Menulocal.coordopen) {
@@ -1471,11 +1471,10 @@ defaultwindowconfig(void)
       Menulocal.coordheight = h / 4;
 
     if (Menulocal.coordx == CW_USEDEFAULT)
-      Menulocal.coordx = -Menulocal.coordwidth - Menulocal.framex * 2 - 4;
+      Menulocal.coordx = -Menulocal.coordwidth - 4;
 
     if (Menulocal.coordy == CW_USEDEFAULT)
-      Menulocal.coordy = Menulocal.fileheight + Menulocal.axisheight
-	+ Menulocal.framey * 2 + 8;
+      Menulocal.coordy = Menulocal.fileheight + Menulocal.axisheight + 8;
   }
 }
 
