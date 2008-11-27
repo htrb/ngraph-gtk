@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.2 2008/08/05 02:45:26 hito Exp $
+ * $Id: ox11dlg.c,v 1.3 2008/11/27 10:13:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,13 +59,13 @@ extern int OpenApplication();
 extern GdkDisplay *Disp;
 extern int OpenApplication();
 
-gboolean
+static gboolean
 dialogclose(GtkWidget *w, GdkEvent  *event, gpointer user_data)
 {
   return TRUE;
 }
 
-int
+static int
 dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
@@ -84,14 +84,14 @@ dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 
-int
+static int
 dlgdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
   return 0;
 }
 
-int
+static int
 dlgconfirm(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   char *mes;
@@ -113,7 +113,7 @@ dlgconfirm(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return (rcode == IDYES)? 0 : 1;
 }
 
-int
+static int
 dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   char *mes;
@@ -131,7 +131,7 @@ dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
-int
+static int
 dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   char *mes;
@@ -160,7 +160,72 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
-int
+static int
+dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int locksave, r;
+
+  locksave = GlobalLock;
+  GlobalLock = TRUE;
+
+  if (DialogRadio(DLGTopLevel, "Select", (struct narray *)argv[2], &r) != IDOK) {
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  *(int *) rval = r;
+
+  GlobalLock = locksave;
+  return 0;
+}
+
+static int
+dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int locksave, *r;
+  struct narray *array, *sarray;
+  int i, n;
+
+  locksave = GlobalLock;
+  GlobalLock = TRUE;
+
+  array = *(struct narray **) rval;
+  if (arraynum(array) != 0) {
+    arraydel(array);
+  }
+
+  if (array == NULL && (array = arraynew(sizeof(int))) == NULL) {
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  sarray = (struct narray *)argv[2];
+  n = arraynum(sarray);
+
+  if (DialogCheck(DLGTopLevel, "Check", sarray, &r) != IDOK) {
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  for (i = 0; i < n; i++) {
+    arrayadd(array, &r[i]);
+  }
+
+  memfree(r);
+
+  if (arraynum(array)==0) {
+    arrayfree(array);
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  *(struct narray **) rval = array;
+
+  GlobalLock = locksave;
+  return 0;
+}
+
+static int
 dlgbeep(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int locksave;
@@ -173,7 +238,7 @@ dlgbeep(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
-int
+static int
 dlggetopenfile(struct objlist *obj, char *inst, char *rval,
 	       int argc, char **argv)
 {
@@ -212,7 +277,7 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
   return (ret == IDOK)? 0 : 1;
 }
 
-int
+static int
 dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
 		int argc, char **argv)
 {
@@ -255,7 +320,7 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
   return (ret == IDOK)? 0 : 1;
 }
 
-int
+static int
 dlggetsavefile(struct objlist *obj, char *inst, char *rval,
 	       int argc, char **argv)
 {
@@ -294,21 +359,22 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   return (ret == IDOK)?0:1;
 }
 
-
-#define TBLNUM 10
-
-struct objtable dialog[TBLNUM] = {
+struct objtable dialog[] = {
   {"init", NVFUNC, NEXEC, dlginit, NULL, 0},
   {"done", NVFUNC, NEXEC, dlgdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
   {"yesno", NIFUNC, NREAD | NEXEC, dlgconfirm, "s", 0},
   {"message", NVFUNC, NREAD | NEXEC, dlgmessage, "s", 0},
   {"input", NSFUNC, NREAD | NEXEC, dlginput, "s", 0},
+  {"radio", NIFUNC, NREAD | NEXEC, dlgradio, "sa", 0},
+  {"check", NIAFUNC, NREAD | NEXEC, dlgcheck, "sa", 0},
   {"beep", NVFUNC, NREAD | NEXEC, dlgbeep, NULL, 0},
   {"get_open_file", NSFUNC, NREAD | NEXEC, dlggetopenfile, "sa", 0},
   {"get_open_files", NSAFUNC, NREAD | NEXEC, dlggetopenfiles, "sa", 0},
   {"get_save_file", NSFUNC, NREAD | NEXEC, dlggetsavefile, "sa", 0},
 };
+
+#define TBLNUM (sizeof(dialog) / sizeof(*dialog))
 
 void *
 adddialog()

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.13 2008/09/18 09:22:18 hito Exp $
+ * $Id: x11gui.c,v 1.14 2008/11/27 10:13:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -319,6 +319,134 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s)
   return data;
 }
 
+int
+DialogRadio(GtkWidget *parent, char *title, struct narray *array, int *r)
+{
+  GtkWidget *dlg, *btn, **btn_ary;
+  GtkVBox *vbox;
+  int data;
+  gint res_id;
+  char **d;
+  int i, anum;
+
+  d = arraydata(array);
+  anum = arraynum(array);
+
+  btn_ary = malloc(anum * sizeof(*btn_ary));
+  if (btn_ary == NULL)
+    return IDCANCEL;
+
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				    NULL);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+
+  btn = NULL;
+  for (i = 0; i < anum; i++) {
+    btn = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
+    gtk_box_pack_start(GTK_BOX(vbox), btn, FALSE, FALSE, 2);
+    btn_ary[i] = btn;
+  }
+
+  gtk_widget_show_all(dlg);
+  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+
+  switch (res_id) {
+  case GTK_RESPONSE_OK:
+    *r = -1;
+    for (i = 0; i < anum; i++) {
+      if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]))) {
+	*r = i;
+	break;
+      }
+    }
+    data = IDOK;
+    break;
+  default:
+    data = IDCANCEL; 
+    break;
+  }
+
+
+  free(btn_ary);
+
+  gtk_widget_destroy(dlg);
+  ResetEvent();
+
+  return data;
+}
+
+int
+DialogCheck(GtkWidget *parent, char *title, struct narray *array, int **r)
+{
+  GtkWidget *dlg, *btn, **btn_ary;
+  GtkVBox *vbox;
+  int data, *i_ary;
+  gint res_id;
+  char **d;
+  int i, anum;
+
+  d = arraydata(array);
+  anum = arraynum(array);
+
+  btn_ary = malloc(anum * sizeof(*btn_ary));
+  if (btn_ary == NULL)
+    return IDCANCEL;
+
+  i_ary = memalloc(anum * sizeof(int));
+  if (i_ary == NULL) {
+    memfree(btn_ary);
+    return IDCANCEL;
+  }
+
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				    NULL);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+
+  btn = NULL;
+  for (i = 0; i < anum; i++) {
+    btn = gtk_check_button_new_with_label(d[i]);
+    gtk_box_pack_start(GTK_BOX(vbox), btn, FALSE, FALSE, 2);
+    btn_ary[i] = btn;
+  }
+
+  gtk_widget_show_all(dlg);
+  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+
+  switch (res_id) {
+  case GTK_RESPONSE_OK:
+    for (i = 0; i < anum; i++) {
+      i_ary[i] = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]));
+    }
+    *r = i_ary;
+    data = IDOK;
+    break;
+  default:
+    data = IDCANCEL; 
+    memfree(i_ary);
+    *r = NULL;
+    break;
+  }
+
+  free(btn_ary);
+
+
+  gtk_widget_destroy(dlg);
+  ResetEvent();
+
+  return data;
+}
 static void
 free_str_list(GSList *top)
 {
