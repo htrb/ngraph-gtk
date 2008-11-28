@@ -109,7 +109,7 @@ r-x            save    *char( char *[] )
 <pre>
 object: system
 alias:
-version: 6.03.47.gtk-07
+version: 6.03.47.gtk-12
 parent: object
 object id: 1
 number of fields: 27
@@ -403,12 +403,12 @@ rw-       antialias    enum( none default gray )
 <h3>gra2gtk オブジェクト</h3>
 <pre>
 object: gra2gtk
-alias:
+alias: gra2win:gra2x11
 version: 1.00.00
 parent: gra2cairo
 object id: 11
-number of fields: 30
-size of instance: 200
+number of fields: 29
+size of instance: 192
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -426,7 +426,6 @@ rw-       antialias    enum( none default gray )
 --x            done    void( )
 ---            next    void*
 rw-     auto_redraw    bool
-rw- store_in_memory    bool
 r-x          redraw    void( void )
 r-x           flush    void( void )
 r-x           clear    void( void )
@@ -512,7 +511,7 @@ r-x          redraw    void( void )
 r-x           flush    void( void )
 r-x           clear    void( void )
 r-x         focused    *char[]( )
-r-x           print    *char[]( int )
+r-x           print    *char[]( bool int )
 rw- data_head_lines    int
 ---       _gtklocal    void*
 ---         _evloop    void( )
@@ -969,7 +968,7 @@ alias: data
 version: 1.00.00
 parent: draw
 object id: 25
-number of fields: 113
+number of fields: 114
 size of instance: 776
 r--              id    int
 r--             oid    int
@@ -1083,6 +1082,7 @@ r-x      load_dummy    void( char * )
 r-x           tight    void( )
 r-x     save_config    void( )
 r-x     output_file    void( char * int bool )
+--x        modified    void( )
 ---          _local    void*
 </pre>
 
@@ -1460,8 +1460,8 @@ alias:
 version: 1.00.00
 parent: object
 object id: 36
-number of fields: 14
-size of instance: 80
+number of fields: 17
+size of instance: 104
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -1472,6 +1472,9 @@ r-x            save    *char( char *[] )
 r-x           yesno    int( char * )
 r-x         message    void( char * )
 r-x           input    *char( char * )
+r-x           radio    int( char *[] )
+r-x           check    int[]( char *[] )
+r-x           combo    *char( char *[] )
 r-x            beep    void( )
 r-x   get_open_file    *char( char *[] )
 r-x  get_open_files    *char[]( char *[] )
