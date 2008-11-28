@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.3 2008/11/27 10:13:42 hito Exp $
+ * $Id: ox11dlg.c,v 1.4 2008/11/28 03:56:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -180,6 +180,29 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
+dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int locksave;
+  char *r;
+
+  locksave = GlobalLock;
+  GlobalLock = TRUE;
+
+  free(*(char **)rval);
+  *(char **)rval = NULL;
+
+  if (DialogCombo(DLGTopLevel, "Select", (struct narray *)argv[2], &r) != IDOK) {
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  *(char **)rval = r;
+
+  GlobalLock = locksave;
+  return 0;
+}
+
+static int
 dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int locksave, *r;
@@ -252,7 +275,7 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
-  free(*(char **)rval);
+  memfree(*(char **)rval);
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
   d=arraydata(array);
@@ -334,7 +357,7 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
 
   locksave = GlobalLock;
   GlobalLock=TRUE;
-  free(*(char **)rval);
+  memfree(*(char **)rval);
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
   d = arraydata(array);
@@ -368,6 +391,7 @@ struct objtable dialog[] = {
   {"input", NSFUNC, NREAD | NEXEC, dlginput, "s", 0},
   {"radio", NIFUNC, NREAD | NEXEC, dlgradio, "sa", 0},
   {"check", NIAFUNC, NREAD | NEXEC, dlgcheck, "sa", 0},
+  {"combo", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
   {"beep", NVFUNC, NREAD | NEXEC, dlgbeep, NULL, 0},
   {"get_open_file", NSFUNC, NREAD | NEXEC, dlggetopenfile, "sa", 0},
   {"get_open_files", NSAFUNC, NREAD | NEXEC, dlggetopenfiles, "sa", 0},

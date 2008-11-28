@@ -1,3 +1,15 @@
+2008-11-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c (dlgcombo): add.
+	(dialog): add field "combo".
+	(dlggetsavefile, dlggetopenfile): use "memfree()" to free "*(char
+	**)rval".
+
+	* src/gtk/x11gui.c (DialogCombo): 
+
+	* demo/encoding.ngp: use "dialog::combo" instead of
+	"dialog::input".
+
 2008-11-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11dlg.c (dlgcheck, dlgradio): add.

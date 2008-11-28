@@ -1,6 +1,35 @@
+new sarray
+sarray::add Times
+sarray::add TimesBold
+sarray::add TimesItalic
+sarray::add TimesBoldItalic
+sarray::add Helvetica
+sarray::add HelveticaBold
+sarray::add HelveticaOblique
+sarray::add HelveticaItalic
+sarray::add HelveticaBoldOblique
+sarray::add HelveticaBoldItalic
+sarray::add Courier
+sarray::add CourierBold
+sarray::add CourierOblique
+sarray::add CourierItalic
+sarray::add CourierBoldOblique
+sarray::add CourierBoldItalic
+sarray::add Symbol
+sarray::add SymbolBold
+sarray::add SymbolItalic
+sarray::add SymbolBoldItalic
+
 new dialog
-FONT=${dialog::input:'font name'}
+FONT=`get dialog: -field combo:"${sarray::@}"`
 del dialog
+
+del sarray
+
+if [ -z "$FONT" ]
+then
+  exit
+fi
 
 for i in -1 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 do

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.14 2008/11/27 10:13:42 hito Exp $
+ * $Id: x11gui.c,v 1.15 2008/11/28 03:56:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,6 +33,7 @@
 #include "object.h"
 
 #include "gtk_widget.h"
+#include "gtk_combo.h"
 
 #include "x11gui.h"
 #include "x11dialg.h"
@@ -374,6 +375,60 @@ DialogRadio(GtkWidget *parent, char *title, struct narray *array, int *r)
 
 
   free(btn_ary);
+
+  gtk_widget_destroy(dlg);
+  ResetEvent();
+
+  return data;
+}
+
+int
+DialogCombo(GtkWidget *parent, char *title, struct narray *array, char **r)
+{
+  GtkWidget *dlg, *combo;
+  GtkVBox *vbox;
+  int data;
+  gint res_id;
+  char **d;
+  int i, anum;
+
+  d = arraydata(array);
+  anum = arraynum(array);
+
+  *r = NULL;
+
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				    NULL);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+
+  combo = combo_box_create();
+  for (i = 0; i < anum; i++) {
+    combo_box_append_text(combo, d[i]);
+  }
+  combo_box_set_active(combo, 0);
+
+  gtk_box_pack_start(GTK_BOX(vbox), combo, FALSE, FALSE, 2);
+
+  gtk_widget_show_all(dlg);
+  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+
+  switch (res_id) {
+  case GTK_RESPONSE_OK:
+    i = combo_box_get_active(combo);
+    if (i >= 0)
+      *r = nstrdup(d[i]);
+    data = IDOK;
+    break;
+  default:
+    data = IDCANCEL; 
+    break;
+  }
 
   gtk_widget_destroy(dlg);
   ResetEvent();

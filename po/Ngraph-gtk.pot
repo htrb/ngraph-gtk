@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-12\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-11-22 08:23+0900\n"
+"POT-Creation-Date: 2008-11-27 22:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,19 +16,19 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11dlg.c:200
+#: src/gtk/ox11dlg.c:265
 msgid "Open file"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:240
+#: src/gtk/ox11dlg.c:305
 msgid "Open files"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:282
+#: src/gtk/ox11dlg.c:347
 msgid "Save file"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:41 src/odraw.c:99 src/oaxis.c:78 src/oaxis.c:86
+#: src/gtk/ogra2cairo.c:41 src/odraw.c:100 src/oaxis.c:78 src/oaxis.c:86
 msgid "none"
 msgstr ""
 
@@ -425,7 +425,7 @@ msgstr ""
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:145 src/ofile.c:135
+#: src/gtk/x11dialg.c:145 src/ofile.c:136
 msgid "fit"
 msgstr ""
 
@@ -945,15 +945,15 @@ msgid ""
 "researcher and engineer."
 msgstr ""
 
-#: src/gtk/x11gui.c:351 src/gtk/x11gui.c:459
+#: src/gtk/x11gui.c:479 src/gtk/x11gui.c:587
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:444
+#: src/gtk/x11gui.c:572
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:601
+#: src/gtk/x11gui.c:729
 msgid "Color selection"
 msgstr ""
 
@@ -1620,11 +1620,11 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2047
+#: src/gtk/x11menu.c:2045
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2097
+#: src/gtk/x11menu.c:2095
 msgid "Question"
 msgstr ""
 
@@ -1794,8 +1794,8 @@ msgstr ""
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1631 src/gtk/x11print.c:241 src/gtk/x11print.c:848
-#: src/gtk/x11print.c:951 src/gtk/x11print.c:1075
+#: src/gtk/x11opt.c:1631 src/gtk/x11print.c:241 src/gtk/x11print.c:846
+#: src/gtk/x11print.c:949 src/gtk/x11print.c:1073
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1860,35 +1860,35 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4830
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1012 src/gtk/x11view.c:4827
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:799
+#: src/gtk/x11print.c:797
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:838 src/gtk/x11print.c:849
+#: src/gtk/x11print.c:836 src/gtk/x11print.c:847
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:888
+#: src/gtk/x11print.c:886
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:952
+#: src/gtk/x11print.c:950
 msgid "confirm"
 msgstr ""
 
-#: src/gtk/x11print.c:1068 src/gtk/x11print.c:1076
+#: src/gtk/x11print.c:1066 src/gtk/x11print.c:1074
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1083
+#: src/gtk/x11print.c:1081
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1084
+#: src/gtk/x11print.c:1082
 msgid "Making data file."
 msgstr ""
 
@@ -1955,67 +1955,67 @@ msgstr ""
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4824
+#: src/gtk/x11view.c:4821
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4831
+#: src/gtk/x11view.c:4828
 msgid "Drawing"
 msgstr ""
 
-#: src/odraw.c:54
+#: src/odraw.c:55
 msgid "unchange"
 msgstr ""
 
-#: src/odraw.c:55
+#: src/odraw.c:56
 msgid "full"
 msgstr ""
 
-#: src/odraw.c:56
+#: src/odraw.c:57
 msgid "relative"
 msgstr ""
 
-#: src/odraw.c:57
+#: src/odraw.c:58
 msgid "base"
 msgstr ""
 
-#: src/odraw.c:69
+#: src/odraw.c:70
 msgid "miter"
 msgstr ""
 
-#: src/odraw.c:70
+#: src/odraw.c:71
 msgid "round"
 msgstr ""
 
-#: src/odraw.c:71
+#: src/odraw.c:72
 msgid "bevel"
 msgstr ""
 
-#: src/odraw.c:100
+#: src/odraw.c:101
 msgid "end"
 msgstr ""
 
-#: src/odraw.c:101
+#: src/odraw.c:102
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:102 src/oaxis.c:79
+#: src/odraw.c:103 src/oaxis.c:79
 msgid "both"
 msgstr ""
 
-#: src/odraw.c:107
+#: src/odraw.c:108
 msgid "spline"
 msgstr ""
 
-#: src/odraw.c:108
+#: src/odraw.c:109
 msgid "spline_close"
 msgstr ""
 
-#: src/odraw.c:109
+#: src/odraw.c:110
 msgid "bspline"
 msgstr ""
 
-#: src/odraw.c:110
+#: src/odraw.c:111
 msgid "bspline_close"
 msgstr ""
 
@@ -2075,79 +2075,79 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: src/ofile.c:116
+#: src/ofile.c:117
 msgid "mark"
 msgstr ""
 
-#: src/ofile.c:117
+#: src/ofile.c:118
 msgid "line"
 msgstr ""
 
-#: src/ofile.c:118
+#: src/ofile.c:119
 msgid "polygon"
 msgstr ""
 
-#: src/ofile.c:119
+#: src/ofile.c:120
 msgid "curve"
 msgstr ""
 
-#: src/ofile.c:120
+#: src/ofile.c:121
 msgid "diagonal"
 msgstr ""
 
-#: src/ofile.c:121
+#: src/ofile.c:122
 msgid "arrow"
 msgstr ""
 
-#: src/ofile.c:122
+#: src/ofile.c:123
 msgid "rectangle"
 msgstr ""
 
-#: src/ofile.c:123
+#: src/ofile.c:124
 msgid "rectangle_fill"
 msgstr ""
 
-#: src/ofile.c:124
+#: src/ofile.c:125
 msgid "rectangle_solid_fill"
 msgstr ""
 
-#: src/ofile.c:125
+#: src/ofile.c:126
 msgid "errorbar_x"
 msgstr ""
 
-#: src/ofile.c:126
+#: src/ofile.c:127
 msgid "errorbar_y"
 msgstr ""
 
-#: src/ofile.c:127
+#: src/ofile.c:128
 msgid "staircase_x"
 msgstr ""
 
-#: src/ofile.c:128
+#: src/ofile.c:129
 msgid "staircase_y"
 msgstr ""
 
-#: src/ofile.c:129
+#: src/ofile.c:130
 msgid "bar_x"
 msgstr ""
 
-#: src/ofile.c:130
+#: src/ofile.c:131
 msgid "bar_y"
 msgstr ""
 
-#: src/ofile.c:131
+#: src/ofile.c:132
 msgid "bar_fill_x"
 msgstr ""
 
-#: src/ofile.c:132
+#: src/ofile.c:133
 msgid "bar_fill_y"
 msgstr ""
 
-#: src/ofile.c:133
+#: src/ofile.c:134
 msgid "bar_solid_fill_x"
 msgstr ""
 
-#: src/ofile.c:134
+#: src/ofile.c:135
 msgid "bar_solid_fill_y"
 msgstr ""
 
