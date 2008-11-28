@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.4 2008/11/28 03:56:42 hito Exp $
+ * $Id: ox11dlg.c,v 1.5 2008/11/28 06:30:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -268,7 +268,7 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
   struct narray *array;
   char **d;
   int anum;
-  char *filter;
+  char *filter = NULL, *initfile = NULL;
   int locksave;
   int ret;
   char *file, *file2;
@@ -279,14 +279,21 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
   d=arraydata(array);
-  anum = arraynum(array)/2;
-  if ((anum>0) && (d[1]!=NULL)) {
-    filter=d[1];
-  } else {
-    filter=NULL;
+  anum = arraynum(array);
+  switch (anum) {
+  case 0:
+    break;
+  case 2:
+    initfile = d[1];
+  case 1:
+    filter = d[0];
+    break;
+  default:
+    filter = d[0];
+    initfile = d[1];
   }
   ret = nGetOpenFileName(DLGTopLevel, _("Open file"),
-			 NULL, NULL, NULL,
+			 NULL, NULL, initfile,
 			 &file, filter, TRUE, TRUE);
   if (ret == IDOK) {
     file2 = nstrdup(file);
@@ -307,7 +314,7 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
   struct narray *array;
   char **d;
   int anum, i;
-  char *filter;
+  char *filter = NULL, *initfile = NULL;
   int locksave;
   int ret;
   char **file = NULL, *name;
@@ -319,14 +326,21 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
   d = arraydata(array);
-  anum = arraynum(array) / 2;
-  if ((anum > 0) && (d[1] != NULL)) {
-    filter=d[1];
-  } else {
-    filter=NULL;
+  anum = arraynum(array);
+  switch (anum) {
+  case 0:
+    break;
+  case 2:
+    initfile = d[1];
+  case 1:
+    filter = d[0];
+    break;
+  default:
+    filter = d[0];
+    initfile = d[1];
   }
   ret = nGetOpenFileNameMulti(DLGTopLevel, _("Open files"),
-			      NULL, NULL, NULL,
+			      NULL, NULL, initfile,
 			      &file, filter, TRUE);
   if (ret == IDOK) {
     farray = arraynew(sizeof(char *));
@@ -350,7 +364,7 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   struct narray *array;
   char **d;
   int anum;
-  char *filter;
+  char *filter = NULL, *initfile = NULL;
   int locksave;
   int ret;
   char *file, *file2;
@@ -361,14 +375,21 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
   d = arraydata(array);
-  anum = arraynum(array)/2;
-  if ((anum>0) && (d[1]!=NULL)) {
-    filter = d[1];
-  } else {
-    filter = NULL;
+  anum = arraynum(array);
+  switch (anum) {
+  case 0:
+    break;
+  case 2:
+    initfile = d[1];
+  case 1:
+    filter = d[0];
+    break;
+  default:
+    filter = d[0];
+    initfile = d[1];
   }
   ret = nGetSaveFileName(DLGTopLevel, _("Save file"),
-			 NULL, NULL, NULL,
+			 NULL, NULL, initfile,
 			 &file, filter, TRUE);
   if (ret == IDOK) {
     file2 = nstrdup(file);

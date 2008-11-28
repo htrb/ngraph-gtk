@@ -1,5 +1,12 @@
 2008-11-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11dlg.c (dlggetopenfile, dlggetopenfiles)
+	(dlggetsavefile): second argument is used as an initial file name.
+
+	* src/gtk/x11gui.c (FileSelectionDialog): check "type" before call
+	set name.
+	(fsok): check "filter".
+
 	* src/gtk/ox11dlg.c (dlgcombo): add.
 	(dialog): add field "combo".
 	(dlggetsavefile, dlggetopenfile): use "memfree()" to free "*(char

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ngraph-gtk 6.03.47.gtk-12\n"
+"Project-Id-Version: Ngraph-gtk 6.03.47.gtk-13\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-11-27 22:26+0900\n"
+"POT-Creation-Date: 2008-11-28 14:46+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11dlg.c:265
+#: src/gtk/ox11dlg.c:295
 msgid "Open file"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:305
+#: src/gtk/ox11dlg.c:342
 msgid "Open files"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:347
+#: src/gtk/ox11dlg.c:391
 msgid "Save file"
 msgstr ""
 
@@ -945,15 +945,15 @@ msgid ""
 "researcher and engineer."
 msgstr ""
 
-#: src/gtk/x11gui.c:479 src/gtk/x11gui.c:587
+#: src/gtk/x11gui.c:534 src/gtk/x11gui.c:642
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:572
+#: src/gtk/x11gui.c:627
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:729
+#: src/gtk/x11gui.c:784
 msgid "Color selection"
 msgstr ""
 

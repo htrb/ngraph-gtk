@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-11-27 22:26+0900\n"
+"POT-Creation-Date: 2008-11-28 14:46+0900\n"
 "PO-Revision-Date: 2008-09-22 11:44+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -14,15 +14,15 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11dlg.c:265
+#: src/gtk/ox11dlg.c:295
 msgid "Open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:305
+#: src/gtk/ox11dlg.c:342
 msgid "Open files"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:347
+#: src/gtk/ox11dlg.c:391
 msgid "Save file"
 msgstr "別名で保存"
 
@@ -949,15 +949,15 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: src/gtk/x11gui.c:479 src/gtk/x11gui.c:587
+#: src/gtk/x11gui.c:534 src/gtk/x11gui.c:642
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:572
+#: src/gtk/x11gui.c:627
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:729
+#: src/gtk/x11gui.c:784
 msgid "Color selection"
 msgstr "色の選択"
 
