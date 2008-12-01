@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.5 2008/11/28 06:30:54 hito Exp $
+ * $Id: ox11dlg.c,v 1.6 2008/12/01 04:58:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -94,8 +94,12 @@ dlgdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlgconfirm(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  char *mes;
+  char *mes, *title;
   int rcode, locksave;
+
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
 
   mes = (char *)argv[2];
   locksave = GlobalLock;
@@ -103,7 +107,7 @@ dlgconfirm(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (mes == NULL) {
     mes = "";
   }
-  rcode = MessageBox(DLGTopLevel, mes, "Select", MB_YESNO);
+  rcode = MessageBox(DLGTopLevel, mes, (title) ? title : "Select", MB_YESNO);
   GlobalLock = locksave;
   if (rcode == IDYES) {
     *(int *)rval = 1;
@@ -116,8 +120,12 @@ dlgconfirm(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  char *mes;
+  char *mes, *title;
   int rcode, locksave;
+
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
 
   mes = (char *)argv[2];
   locksave = GlobalLock;
@@ -125,7 +133,7 @@ dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (mes == NULL) {
     mes="";
   }
-  rcode = MessageBox(DLGTopLevel, mes, "Confirm", MB_OK);
+  rcode = MessageBox(DLGTopLevel, mes, (title) ? title : "Confirm", MB_OK);
   GlobalLock = locksave;
 
   return 0;
@@ -134,7 +142,7 @@ dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  char *mes;
+  char *mes, *title;
   int locksave;
   char *inputbuf;
   char *s;
@@ -146,7 +154,15 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   *(char **)rval = NULL;
   inputbuf = NULL;
 
-  if (DialogInput(DLGTopLevel, "Input", mes, &inputbuf) == IDOK &&
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
+
+  if (mes == NULL) {
+    _getobj(obj, "caption", inst, &mes);
+  }
+
+  if (DialogInput(DLGTopLevel, (title) ? title : "Input", mes, &inputbuf) == IDOK &&
       inputbuf != NULL) {
     s = nstrdup(inputbuf);
     free(inputbuf);
@@ -163,12 +179,21 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  char *title, *caption;
   int locksave, r;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
 
-  if (DialogRadio(DLGTopLevel, "Select", (struct narray *)argv[2], &r) != IDOK) {
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
+
+  if (_getobj(obj, "caption", inst, &caption)) {
+    caption = NULL;
+  }
+
+  if (DialogRadio(DLGTopLevel, (title) ? title : "Select", caption, (struct narray *)argv[2], &r) != IDOK) {
     GlobalLock = locksave;
     return 1;
   }
@@ -183,7 +208,7 @@ static int
 dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int locksave;
-  char *r;
+  char *r, *title, *caption;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
@@ -191,7 +216,46 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   free(*(char **)rval);
   *(char **)rval = NULL;
 
-  if (DialogCombo(DLGTopLevel, "Select", (struct narray *)argv[2], &r) != IDOK) {
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
+
+  if (_getobj(obj, "caption", inst, &caption)) {
+    caption = NULL;
+  }
+
+  if (DialogCombo(DLGTopLevel, (title) ? title : "Select", caption, (struct narray *)argv[2], &r) != IDOK) {
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  *(char **)rval = r;
+
+  GlobalLock = locksave;
+  return 0;
+}
+
+static int
+dlgcombo_entry(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int locksave;
+  char *r, *title, *caption;
+
+  locksave = GlobalLock;
+  GlobalLock = TRUE;
+
+  free(*(char **)rval);
+  *(char **)rval = NULL;
+
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
+
+  if (_getobj(obj, "caption", inst, &caption)) {
+    caption = NULL;
+  }
+
+  if (DialogComboEntry(DLGTopLevel, (title) ? title : "Input", caption, (struct narray *)argv[2], &r) != IDOK) {
     GlobalLock = locksave;
     return 1;
   }
@@ -205,9 +269,9 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int locksave, *r;
+  int locksave, *r, i, n;
   struct narray *array, *sarray;
-  int i, n;
+  char *title, *caption;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
@@ -225,7 +289,15 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   sarray = (struct narray *)argv[2];
   n = arraynum(sarray);
 
-  if (DialogCheck(DLGTopLevel, "Check", sarray, &r) != IDOK) {
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
+
+  if (_getobj(obj, "caption", inst, &caption)) {
+    caption = NULL;
+  }
+
+  if (DialogCheck(DLGTopLevel, (title) ? title : "Check", caption, sarray, &r) != IDOK) {
     GlobalLock = locksave;
     return 1;
   }
@@ -407,12 +479,15 @@ struct objtable dialog[] = {
   {"init", NVFUNC, NEXEC, dlginit, NULL, 0},
   {"done", NVFUNC, NEXEC, dlgdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
+  {"title", NSTR, NREAD | NWRITE, NULL, NULL, 0},
+  {"caption", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"yesno", NIFUNC, NREAD | NEXEC, dlgconfirm, "s", 0},
   {"message", NVFUNC, NREAD | NEXEC, dlgmessage, "s", 0},
   {"input", NSFUNC, NREAD | NEXEC, dlginput, "s", 0},
   {"radio", NIFUNC, NREAD | NEXEC, dlgradio, "sa", 0},
   {"check", NIAFUNC, NREAD | NEXEC, dlgcheck, "sa", 0},
   {"combo", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
+  {"combo_entry", NSFUNC, NREAD | NEXEC, dlgcombo_entry, "sa", 0},
   {"beep", NVFUNC, NREAD | NEXEC, dlgbeep, NULL, 0},
   {"get_open_file", NSFUNC, NREAD | NEXEC, dlggetopenfile, "sa", 0},
   {"get_open_files", NSAFUNC, NREAD | NEXEC, dlggetopenfiles, "sa", 0},

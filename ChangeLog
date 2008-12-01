@@ -1,3 +1,18 @@
+2008-12-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c
+
+	* src/gtk/x11gui.c (DialogRadio, DialogCombo, DialogCheck): add
+	label if "caption" is not NULL.
+	(DialogComboEntry): add.
+
+	* src/gtk/ox11dlg.c (dlgconfirm, dlgmessage, dlgradio, dlgcombo)
+	(dlgcheck): check and use "title" field.
+	(dlginput, dlgradio, dlgcombo, dlgcheck): check and use "caption"
+	field.
+	(dlgcombo_entry): add.
+	(dialog): add "combo_entry", "title" and "caption" field.
+
 2008-11-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11dlg.c (dlggetopenfile, dlggetopenfiles)
@@ -12,7 +27,7 @@
 	(dlggetsavefile, dlggetopenfile): use "memfree()" to free "*(char
 	**)rval".
 
-	* src/gtk/x11gui.c (DialogCombo): 
+	* src/gtk/x11gui.c (DialogCombo): add.
 
 	* demo/encoding.ngp: use "dialog::combo" instead of
 	"dialog::input".
@@ -36,11 +51,10 @@
 	(menu_config_axis_geometry, menu_config_legend_geometry)
 	(menu_config_merge_geometry, menu_config_dialog_geometry)
 	(menu_config_coord_geometry, struct menu_config, MenuConfig)
-	(MenuConfigHash, menu_config_set_elements)
-	(menu_config_set_four_elements, menu_config_set_window_geometry)
-	(menu_config_set_bgcolor, menu_config_set_ext_driver)
-	(menu_config_set_prn_driver, menu_config_set_script)
-	(set_menu_config_mxlocal): add.
+	(MenuConfigHash, menu_config_set_four_elements)
+	(menu_config_set_window_geometry, menu_config_set_bgcolor)
+	(menu_config_set_ext_driver, menu_config_set_prn_driver)
+	(menu_config_set_script, set_menu_config_mxlocal): add.
 	(addmenu): initialize "MenuConfigHash".
 	(mgtkloadconfig, mgtkwindowconfig): use "FileConfigHash".
 

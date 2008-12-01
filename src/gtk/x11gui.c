@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.16 2008/11/28 06:30:54 hito Exp $
+ * $Id: x11gui.c,v 1.17 2008/12/01 04:58:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,7 @@
 #include <libgen.h>
 
 #include "object.h"
+#include "nstring.h"
 
 #include "gtk_widget.h"
 #include "gtk_combo.h"
@@ -321,7 +322,7 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s)
 }
 
 int
-DialogRadio(GtkWidget *parent, char *title, struct narray *array, int *r)
+DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkVBox *vbox;
@@ -346,6 +347,13 @@ DialogRadio(GtkWidget *parent, char *title, struct narray *array, int *r)
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
   vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+
+  if (caption) {
+    GtkWidget *label;
+    label = gtk_label_new(caption);
+    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+  }
+
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
@@ -383,7 +391,7 @@ DialogRadio(GtkWidget *parent, char *title, struct narray *array, int *r)
 }
 
 int
-DialogCombo(GtkWidget *parent, char *title, struct narray *array, char **r)
+DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, char **r)
 {
   GtkWidget *dlg, *combo;
   GtkVBox *vbox;
@@ -406,6 +414,12 @@ DialogCombo(GtkWidget *parent, char *title, struct narray *array, char **r)
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
   vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+
+  if (caption) {
+    GtkWidget *label;
+    label = gtk_label_new(caption);
+    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+  }
 
   combo = combo_box_create();
   for (i = 0; i < anum; i++) {
@@ -437,7 +451,71 @@ DialogCombo(GtkWidget *parent, char *title, struct narray *array, char **r)
 }
 
 int
-DialogCheck(GtkWidget *parent, char *title, struct narray *array, int **r)
+DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, char **r)
+{
+  GtkWidget *dlg, *combo;
+  GtkVBox *vbox;
+  int data;
+  gint res_id;
+  char **d;
+  const char *s;
+  int i, anum;
+
+  d = arraydata(array);
+  anum = arraynum(array);
+
+  *r = NULL;
+
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				    NULL);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+
+  if (caption) {
+    GtkWidget *label;
+    label = gtk_label_new(caption);
+    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+  }
+
+  combo = combo_box_entry_create();
+  for (i = 0; i < anum; i++) {
+    combo_box_append_text(combo, d[i]);
+  }
+  combo_box_set_active(combo, 0);
+
+  gtk_box_pack_start(GTK_BOX(vbox), combo, FALSE, FALSE, 2);
+
+  gtk_widget_show_all(dlg);
+  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+
+  switch (res_id) {
+  case GTK_RESPONSE_OK:
+    s = combo_box_entry_get_text(combo);
+    if (s) {
+      *r = nstrdup(s);
+    } else {
+      *r = NULL;
+    }
+    data = IDOK;
+    break;
+  default:
+    data = IDCANCEL; 
+    break;
+  }
+
+  gtk_widget_destroy(dlg);
+  ResetEvent();
+
+  return data;
+}
+
+int
+DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int **r)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkVBox *vbox;
@@ -468,6 +546,13 @@ DialogCheck(GtkWidget *parent, char *title, struct narray *array, int **r)
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
   vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+
+  if (caption) {
+    GtkWidget *label;
+    label = gtk_label_new(caption);
+    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+  }
+
 
   btn = NULL;
   for (i = 0; i < anum; i++) {

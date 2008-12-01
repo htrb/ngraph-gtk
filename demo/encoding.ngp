@@ -1,30 +1,10 @@
-new sarray
-sarray::add Times
-sarray::add TimesBold
-sarray::add TimesItalic
-sarray::add TimesBoldItalic
-sarray::add Helvetica
-sarray::add HelveticaBold
-sarray::add HelveticaOblique
-sarray::add HelveticaItalic
-sarray::add HelveticaBoldOblique
-sarray::add HelveticaBoldItalic
-sarray::add Courier
-sarray::add CourierBold
-sarray::add CourierOblique
-sarray::add CourierItalic
-sarray::add CourierBoldOblique
-sarray::add CourierBoldItalic
-sarray::add Symbol
-sarray::add SymbolBold
-sarray::add SymbolItalic
-sarray::add SymbolBoldItalic
+FONTS="Times TimesBold TimesItalic TimesBoldItalic Helvetica HelveticaBold HelveticaOblique HelveticaItalic HelveticaBoldOblique HelveticaBoldItalic Courier CourierBold CourierOblique CourierItalic CourierBoldOblique CourierBoldItalic Symbol SymbolBold SymbolItalic SymbolBoldItalic"
 
 new dialog
-FONT=`get dialog: -field combo:"${sarray::@}"`
+dialog::title="encoding.ngp"
+dialog::caption="select font"
+FONT=`get dialog: -field combo:"$FONTS"`
 del dialog
-
-del sarray
 
 if [ -z "$FONT" ]
 then

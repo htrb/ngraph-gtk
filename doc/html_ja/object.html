@@ -1460,8 +1460,10 @@ alias:
 version: 1.00.00
 parent: object
 object id: 36
-number of fields: 17
-size of instance: 104
+number of fields: 20
+size of instance: 128
+current instance: -1
+last instance id: -1
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -1469,12 +1471,15 @@ r-x            save    *char( char *[] )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
+rw-           title    char*
+rw-         caption    char*
 r-x           yesno    int( char * )
 r-x         message    void( char * )
 r-x           input    *char( char * )
 r-x           radio    int( char *[] )
 r-x           check    int[]( char *[] )
 r-x           combo    *char( char *[] )
+r-x     combo_entry    *char( char *[] )
 r-x            beep    void( )
 r-x   get_open_file    *char( char *[] )
 r-x  get_open_files    *char[]( char *[] )
