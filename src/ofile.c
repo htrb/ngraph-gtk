@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.47 2008/11/27 06:50:02 hito Exp $
+ * $Id: ofile.c,v 1.48 2008/12/02 07:16:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -186,6 +186,11 @@ static struct file_config FileConfig[] = {
   {"line_style",       FILE_CONFIG_TYPE_OTHER,   set_line_style_config},
 };
 
+#define MASK_SERACH_METHOD_LINER  0
+#define MASK_SERACH_METHOD_BINARY 1
+#define MASK_SERACH_METHOD_CONST  2
+#define MASK_SERACH_METHOD MASK_SERACH_METHOD_CONST
+
 static NHASH FileConfigHash = NULL;
 
 #define DXBUFSIZE 101
@@ -278,6 +283,9 @@ struct f2ddata {
   int smooth,smoothx,smoothy;
   int masknum;
   int *mask;
+#if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
+  int mask_index;
+#endif
   int movenum;
   double *movex,*movey;
   int *move;
@@ -582,6 +590,9 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   fp->bufpo=0;
   fp->masknum=arraynum(mask);
   fp->mask=arraydata(mask);
+#if  MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
+  fp->mask_index = 0;
+#endif
   fp->movenum=arraynum(move);
   fp->move=arraydata(move);
   if (arraynum(movex)<fp->movenum) fp->movenum=arraynum(movex);
@@ -773,6 +784,9 @@ void reopendata(struct f2ddata *fp)
   fp->line=0;
   fp->prev_datanum = fp->datanum;
   fp->datanum=0;
+#if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
+  fp->mask_index = 0;
+#endif
   fp->dline=0;
   fp->count=0;
   fp->eof=FALSE;
@@ -1669,6 +1683,17 @@ getdata_skip_step(struct f2ddata *fp)
   return 0;
 }
 
+#if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
+int
+search_mask(int *mask, int n, int index, int line)
+{
+  if (mask == NULL || index >= n)
+    return FALSE;
+
+  return (mask[index] == line);
+}
+#endif
+
 static int
 getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, double *datax, double *datay,
 	     char *statx, char *staty, double *gdata, char *gstat,
@@ -1689,7 +1714,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
   char dxstat, dystat, d2stat, d3stat;
   struct f2ddata_buf *buf;
 
-#if 0
+#if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
   masked = FALSE;
   for (j = 0; j < fp->masknum; j++) {
     if (fp->mask[j] == fp->line) {
@@ -1697,8 +1722,12 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
       break;
     }
   }
-#else
+#elif MASK_SERACH_METHOD == MASK_SERACH_METHOD_BINARY
   masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
+#else
+  masked = search_mask(fp->mask, fp->masknum, fp->mask_index, fp->line);
+  if (masked)
+    fp->mask_index++;
 #endif
 
   moved = FALSE;
@@ -2234,13 +2263,17 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
     && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
       rcode=getdataarray(buf,maxdim,&(fp->count),gdata,gstat,fp->ifs_buf,fp->csv);
       memfree(buf);
-#if 0
+#if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
       if (j!=fp->masknum) masked=TRUE;
       else masked=FALSE;
-#else
+#elif MASK_SERACH_METHOD == MASK_SERACH_METHOD_BINARY
       masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
+#else
+      masked = search_mask(fp->mask, fp->masknum, fp->mask_index, fp->line);
+      if (masked)
+	fp->mask_index++;
 #endif
       if (rcode==-1) {
 	memfree(gdata);
@@ -2340,13 +2373,17 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
     && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
       rcode=getdataarray(buf,maxdim,&(fp->count),data,stat,fp->ifs_buf,fp->csv);
       memfree(buf);
-#if 0
+#if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
       if (j!=fp->masknum) masked=TRUE;
       else masked=FALSE;
-#else
+#elif MASK_SERACH_METHOD == MASK_SERACH_METHOD_BINARY
       masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
+#else
+      masked = search_mask(fp->mask, fp->masknum, fp->mask_index, fp->line);
+      if (masked)
+	fp->mask_index++;
 #endif
       if (rcode==-1) return -1;
       dx=dy=d2=d3=0;

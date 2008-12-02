@@ -1,3 +1,10 @@
+2008-12-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (search_mask): add.
+	(getdata_sub2, getdata2, getdataraw): use "search_mask()".
+	(struct f2ddata): add member "mask_index".
+	(opendata, reopendata): initialize "fp->mask_index".
+
 2008-12-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11dlg.c
