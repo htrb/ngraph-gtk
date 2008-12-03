@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.49 2008/12/03 01:47:41 hito Exp $
+ * $Id: ofile.c,v 1.51 2008/12/03 13:07:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1687,12 +1687,32 @@ getdata_skip_step(struct f2ddata *fp)
 
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
 int
-search_mask(int *mask, int n, int index, int line)
+search_mask(int *mask, int n, int *index, int line)
 {
-  if (mask == NULL || index >= n)
+  int i;
+
+  i = *index;
+
+  if (mask == NULL || i >= n)
     return FALSE;
 
-  return (mask[index] == line);
+  if (mask[i] < line) {
+    for (; i < n; i++) {
+      if (mask[i] >= line)
+	break;
+    }
+  }
+
+  if (mask[i] > line) {
+    *index = i;
+    return FALSE;
+  } else if (mask[i] < line) {
+    *index = n;
+    return FALSE;
+  }
+
+  *index = i + 1;
+  return TRUE;
 }
 #endif
 
@@ -1727,9 +1747,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
 #elif MASK_SERACH_METHOD == MASK_SERACH_METHOD_BINARY
   masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
 #else
-  masked = search_mask(fp->mask, fp->masknum, fp->mask_index, fp->line);
-  if (masked)
-    fp->mask_index++;
+  masked = search_mask(fp->mask, fp->masknum, &(fp->mask_index), fp->line);
 #endif
 
   moved = FALSE;
@@ -2273,9 +2291,7 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
 #elif MASK_SERACH_METHOD == MASK_SERACH_METHOD_BINARY
       masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
 #else
-      masked = search_mask(fp->mask, fp->masknum, fp->mask_index, fp->line);
-      if (masked)
-	fp->mask_index++;
+      masked = search_mask(fp->mask, fp->masknum, &(fp->mask_index), fp->line);
 #endif
       if (rcode==-1) {
 	memfree(gdata);
@@ -2346,7 +2362,7 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 */
 {
   char *buf;
-  int i,step,rcode;
+  int i,rcode;
   int masked;
   double dx,dy,d2,d3;
   char dxstat,dystat,d2stat,d3stat;
@@ -2383,9 +2399,7 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 #elif MASK_SERACH_METHOD == MASK_SERACH_METHOD_BINARY
       masked = bsearch_int(fp->mask, fp->masknum, fp->line, NULL);
 #else
-      masked = search_mask(fp->mask, fp->masknum, fp->mask_index, fp->line);
-      if (masked)
-	fp->mask_index++;
+      masked = search_mask(fp->mask, fp->masknum, &(fp->mask_index), fp->line);
 #endif
       if (rcode==-1) return -1;
       dx=dy=d2=d3=0;
