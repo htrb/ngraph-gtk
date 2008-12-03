@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.50 2008/12/03 01:48:31 hito Exp $
+ * $Id: ofile.c,v 1.49 2008/12/03 01:47:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2346,7 +2346,7 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 */
 {
   char *buf;
-  int i,rcode;
+  int i,step,rcode;
   int masked;
   double dx,dy,d2,d3;
   char dxstat,dystat,d2stat,d3stat;
