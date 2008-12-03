@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.48 2008/12/02 07:16:10 hito Exp $
+ * $Id: ofile.c,v 1.50 2008/12/03 01:48:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1667,9 +1667,11 @@ getdata_skip_step(struct f2ddata *fp)
   while (step < fp->rstep) {
     rcode = fgetline(fp->fd, &buf);
     if (rcode == 1) {
-      fp->eof=TRUE;
+      fp->eof = TRUE;
+      memfree(buf);
       break;
     } else if (rcode == -1) {
+      memfree(buf);
       return -1;
     }
     fp->line++;
@@ -2092,7 +2094,7 @@ int getdata(struct f2ddata *fp)
   staty=arraydata(&filestaty);
 
   rcode = getdata_sub1(fp, fnumx, fnumy, needx, needy, datax, datay,
-		   statx, staty, gdata, gstat,
+		       statx, staty, gdata, gstat,
 		       filenum, openfile);
   if (rcode) {
     memfree(gdata);
@@ -2344,7 +2346,7 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 */
 {
   char *buf;
-  int i,step,rcode;
+  int i,rcode;
   int masked;
   double dx,dy,d2,d3;
   char dxstat,dystat,d2stat,d3stat;
@@ -2444,21 +2446,12 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
       fp->d2stat=d2stat;
       fp->d3stat=d3stat;
       datanum++;
-      step=1;
-      while (step<fp->rstep) {
-        if ((rcode=fgetline(fp->fd,&buf))==1) {
-          fp->eof=TRUE;
-          break;
-        }
-        if (rcode==-1) return -1;
-        fp->line++;
-        for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]);i++);
-        if ((buf[i]!='\0')
-        && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i])))
-          step++;
-        memfree(buf);
-      }
+
+      if (fp->rstep && getdata_skip_step(fp))
+	return -1;
+
       fp->datanum++;
+
     } else memfree(buf);
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
