@@ -1,4 +1,7 @@
-FONTS="Times TimesBold TimesItalic TimesBoldItalic Helvetica HelveticaBold HelveticaOblique HelveticaItalic HelveticaBoldOblique HelveticaBoldItalic Courier CourierBold CourierOblique CourierItalic CourierBoldOblique CourierBoldItalic Symbol SymbolBold SymbolItalic SymbolBoldItalic"
+FONTS='Times TimesBold TimesItalic TimesBoldItalic 
+Helvetica HelveticaBold HelveticaOblique HelveticaItalic HelveticaBoldOblique HelveticaBoldItalic 
+Courier CourierBold CourierOblique CourierItalic CourierBoldOblique CourierBoldItalic 
+Symbol SymbolBold SymbolItalic SymbolBoldItalic'
 
 new dialog
 dialog::title="encoding.ngp"
