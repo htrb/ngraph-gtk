@@ -2,7 +2,6 @@
 
 	* src/ofile.c (getdata_skip_step): call "memfree(buf)" when
 	"rcode" is 1 or -1.
-	.
 
 2008-12-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
