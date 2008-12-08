@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.10 2008/11/06 05:47:26 hito Exp $
+ * $Id: shellcm.c,v 1.11 2008/12/08 23:42:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -75,13 +75,19 @@ int cmcd(struct nshell *nshell,int argc,char **argv)
 
 int cmecho(struct nshell *nshell,int argc,char **argv)
 {
-  int i;
+  int i, nbr;
 
-  for (i=1;i<argc;i++) {
+  nbr = (argc > 1 && strcmp(argv[1], "-n") == 0);
+
+  for (i = (nbr) ? 2 : 1; i < argc; i++) {
     printfstdout("%.256s",argv[i]);
-    if (i!=(argc-1)) printfstdout(" ");
+    if (i != (argc - 1))
+      printfstdout(" ");
   }
-  putstdout("");
+
+  if (! nbr)
+    putstdout("");
+
   return 0;
 }
 

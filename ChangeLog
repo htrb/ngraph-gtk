@@ -1,3 +1,7 @@
+2008-12-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shellcm.c (cmecho): add "-n" option.
+
 2008-12-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (getdata_skip_step): call "memfree(buf)" when
