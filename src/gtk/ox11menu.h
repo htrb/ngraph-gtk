@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.16 2008/12/12 08:40:39 hito Exp $
+ * $Id: ox11menu.h,v 1.17 2008/12/12 09:27:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -92,16 +92,11 @@ struct mxlocal
   int autoredraw, redrawf, redrawf_num, ruler;
   int windpi, data_head_lines;
   int grid;
-  GdkColormap cmap;
-  int privatecolor;
   double pixel_dot, offsetx, offsety;
-  GdkPoint points[LINETOLIMIT];
   GdkRegion *region;
   int lock;
-  int minus_hyphen;
   struct gra2cairo_local *local;
   int antialias;
-  cairo_t *cairo_save;
 };
 
 struct menulocal
@@ -148,7 +143,7 @@ struct menulocal
   int scriptconsole, addinconsole;
   int statusb;
   int showtip;
-  int movechild, preserve_width;
+  int preserve_width;
   int hist_size, info_size, bg_r, bg_g, bg_b;
 };
 

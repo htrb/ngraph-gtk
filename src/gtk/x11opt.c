@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.20 2008/11/10 07:05:29 hito Exp $
+ * $Id: x11opt.c,v 1.21 2008/12/12 09:27:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -152,14 +152,6 @@ DefaultDialogClose(GtkWidget *win, void *data)
       snprintf(buf, BUF_SIZE, "status_bar=%d", Menulocal.statusb);
       arrayadd(&conf, &buf);
     }
-
-    /*
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "move_child_window=%d", Menulocal.movechild);
-      arrayadd(&conf, &buf);
-    }
-    */
   }
 
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->child_geometry))) {

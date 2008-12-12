@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.16 2008/12/12 07:38:56 hito Exp $
+ * $Id: ogra2x11.c,v 1.17 2008/12/12 09:27:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -81,12 +81,10 @@ struct gtklocal
   GdkPixmap *win;
   GdkWindow *window;
   char *title;
-  int autoredraw, redraw;
+  int redraw;
   GdkGC *gc;
   unsigned int winwidth, winheight, windpi;
-  GdkColormap *cmap;
   int PaperWidth, PaperHeight;
-  int minus_hyphen;
   int bg_r, bg_g, bg_b;
   struct gra2cairo_local *local;
 };
@@ -109,8 +107,6 @@ static int gtkdone(struct objlist *obj, char *inst, char *rval, int argc,
 		   char **argv);
 static int gtkclear(struct objlist *obj, char *inst, char *rval, int argc,
 		    char **argv);
-static int gtkautoredraw(struct objlist *obj, char *inst, char *rval,
-			 int argc, char **argv);
 static int gtkredraw(struct objlist *obj, char *inst, char *rval, int argc,
 		     char **argv);
 static int dot2pixel(struct gtklocal *gtklocal, int r);
@@ -152,22 +148,6 @@ gtkloadconfig(struct gtklocal *gtklocal)
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	gtklocal->winheight = val;
-      memfree(f1);
-    } else if (strcmp(tok, "auto_redraw") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0') {
-	if (val == 0)
-	  gtklocal->autoredraw = FALSE;
-	else
-	  gtklocal->autoredraw = TRUE;
-      }
-      memfree(f1);
-    } else if (strcmp(tok, "minus_hyphen") == 0) {
-      f1 = getitok2(&s2, &len, " \x09,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	gtklocal->minus_hyphen = val;
       memfree(f1);
     }
     memfree(tok);
@@ -299,8 +279,6 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   gtklocal->winwidth = WINWIDTH;
   gtklocal->winheight = WINHEIGHT;
   gtklocal->windpi = DEFAULT_DPI;
-  gtklocal->autoredraw = TRUE;
-  gtklocal->minus_hyphen = TRUE;
   gtklocal->bg_r = 0xff;
   gtklocal->bg_g = 0xff;
   gtklocal->bg_b = 0xff;
@@ -338,9 +316,6 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (gtklocal->winheight > 10000)
     gtklocal->winheight = 10000;
-
-  if (_putobj(obj, "auto_redraw", inst, &(gtklocal->autoredraw)))
-    goto errexit;
 
   if (!OpenApplication())
     goto errexit;
@@ -389,7 +364,6 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 					(scrolled_window), gtklocal->View);
 
   gtk_widget_show_all(gtklocal->mainwin);
-  gtklocal->cmap = gdk_colormap_get_system();
 
   win = gtklocal->View->window;
   gc = gdk_gc_new(win);
@@ -548,22 +522,6 @@ gtkbg(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 1;
 
   gtklocal->bg_g = set_color(gtklocal, argc, argv);
-  return 0;
-}
-
-static int
-gtkautoredraw(struct objlist *obj, char *inst, char *rval,
-	      int argc, char **argv)
-{
-  struct gtklocal *gtklocal;
-  char *arg;
-
-  if (_getobj(obj, "_gtklocal", inst, &gtklocal))
-    return 1;
-
-  arg = argv[1];
-  gtklocal->autoredraw = abs(*(int *) argv[2]);
-
   return 0;
 }
 
@@ -734,7 +692,6 @@ struct objtable gra2gtk[] = {
   {"init", NVFUNC, NEXEC, gtkinit, NULL, 0},
   {"done", NVFUNC, NEXEC, gtkdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
-  {"auto_redraw", NBOOL, NREAD | NWRITE, gtkautoredraw, NULL, 0},
   {"redraw", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},

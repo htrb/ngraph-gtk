@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.33 2008/12/12 08:40:39 hito Exp $
+ * $Id: ox11menu.c,v 1.34 2008/12/12 09:27:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -171,7 +171,6 @@ static struct menu_config MenuConfig[] = {
   {"save_with_merge",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
   {"status_bar",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusb},
   {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
-  {"move_child_window",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.movechild},
   {"expand",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expand},
   {"ignore_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ignorepath},
   {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
@@ -205,7 +204,6 @@ static struct menu_config MenuConfig[] = {
   {"viewer_load_file_data_number",	MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"data_head_lines",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
-  {"minus_hyphen",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
 
   {"viewer_auto_redraw",		MENU_CONFIG_TYPE_BOOL, NULL, NULL},
   {"viewer_load_file_on_redraw",	MENU_CONFIG_TYPE_BOOL, NULL, NULL},
@@ -678,9 +676,6 @@ set_menu_config_mxlocal(void)
   if (nhash_get_ptr(MenuConfigHash, "data_head_lines", (void *) &cfg) == 0) {
     cfg->data = &(Mxlocal->data_head_lines);
   }
-  if (nhash_get_ptr(MenuConfigHash, "minus_hyphen", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->minus_hyphen);
-  }
   if (nhash_get_ptr(MenuConfigHash, "viewer_auto_redraw", (void *) &cfg) == 0) {
     cfg->data = &(Mxlocal->autoredraw);
   }
@@ -727,7 +722,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   initwindowconfig();
   Menulocal.showtip = TRUE;
   Menulocal.statusb = TRUE;
-  Menulocal.movechild = FALSE;
   Menulocal.scriptconsole = FALSE;
   Menulocal.addinconsole = TRUE;
   Menulocal.changedirectory = 1;
@@ -773,7 +767,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Mxlocal->redrawf_num = 0xff;
   Mxlocal->ruler = TRUE;
   Mxlocal->grid = 200;
-  Mxlocal->minus_hyphen = TRUE;
   Mxlocal->data_head_lines = 20;
   Mxlocal->local = local;
 
