@@ -12,10 +12,8 @@ expand_to_fullpath=1
 minus_hyphen=1
 status_bar=1
 show_tip=1
-backing_store=1
 browser=xdg-open
 help_browser=yelp DOCDIRDEF/html_ja/ngraph.html
-mouse_click=300
 color_depth=8
 antialias=1
 viewer_dpi=70
@@ -201,7 +199,6 @@ num=1
 num_align=2
 
 [gra2gtk]
-backing_store=1
 minus_hyphen=1
 win_dpi=40
 win_width=368

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.32 2008/11/27 06:50:03 hito Exp $
+ * $Id: ox11menu.c,v 1.33 2008/12/12 08:40:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -202,7 +202,6 @@ static struct menu_config MenuConfig[] = {
 
   {"antialias",				MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"viewer_dpi",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
-  {"color_depth",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"viewer_load_file_data_number",	MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"data_head_lines",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
@@ -670,9 +669,6 @@ set_menu_config_mxlocal(void)
   if (nhash_get_ptr(MenuConfigHash, "viewer_dpi", (void *) &cfg) == 0) {
     cfg->data = &(Mxlocal->windpi);
   }
-  if (nhash_get_ptr(MenuConfigHash, "color_depth", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->cdepth);
-  }
   if (nhash_get_ptr(MenuConfigHash, "viewer_load_file_data_number", (void *) &cfg) == 0) {
     cfg->data = &(Mxlocal->redrawf_num);
   }
@@ -734,7 +730,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.movechild = FALSE;
   Menulocal.scriptconsole = FALSE;
   Menulocal.addinconsole = TRUE;
-  Menulocal.mouseclick = 500;
   Menulocal.changedirectory = 1;
   Menulocal.editor = NULL;
   Menulocal.browser = NULL;
@@ -778,7 +773,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Mxlocal->redrawf_num = 0xff;
   Mxlocal->ruler = TRUE;
   Mxlocal->grid = 200;
-  Mxlocal->cdepth = GTKCOLORDEPTH;
   Mxlocal->minus_hyphen = TRUE;
   Mxlocal->data_head_lines = 20;
   Mxlocal->local = local;
@@ -821,9 +815,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (Mxlocal->windpi > DPI_MAX)
     Mxlocal->windpi = DPI_MAX;
-
-  if (Mxlocal->cdepth < 2)
-    Mxlocal->cdepth = 2;
 
   if (_putobj(obj, "dpi", inst, &(Mxlocal->windpi)))
     goto errexit;

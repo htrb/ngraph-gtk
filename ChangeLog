@@ -1,5 +1,12 @@
 2008-12-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11menu.h (struct mxlocal): remove unused member
+	"privatecolor" and "cdepth".  "
+	(struct menulocal): remove unused member "mousecloick".
+
+	* src/gtk/x11menu.c (createcommand1, createcommand2): check
+	"Menulocal.showtip".
+
 	* src/gtk/gtk_liststore.c (create_column): set pga_size of
 	GtkAdjustment as 0.
 

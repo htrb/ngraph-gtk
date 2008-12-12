@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.47 2008/11/27 06:50:03 hito Exp $
+ * $Id: x11menu.c,v 1.48 2008/12/12 08:40:39 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1282,7 +1282,9 @@ createcommand1(GtkToolbar *parent)
   for (i = 0; i < COMMAND1_NUM; i++) {
     if (Command1_data[i].label) {
       b = gtk_tool_button_new(Command1_data[i].img, _(Command1_data[i].label));
-      gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(Command1_data[i].tip));
+
+      if (Menulocal.showtip)
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(Command1_data[i].tip));
 
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "enter-notify-event",
@@ -1312,7 +1314,9 @@ createcommand2(GtkToolbar *parent)
   for (i = 0; i < COMMAND2_NUM; i++) {
     if (Command2_data[i].label) {
       b = gtk_radio_tool_button_new(list);
-      gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(Command2_data[i].tip));
+
+      if (Menulocal.showtip)
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(Command2_data[i].tip));
 
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "enter-notify-event",
