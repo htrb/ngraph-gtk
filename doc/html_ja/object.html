@@ -407,8 +407,8 @@ alias: gra2win:gra2x11
 version: 1.00.00
 parent: gra2cairo
 object id: 11
-number of fields: 29
-size of instance: 192
+number of fields: 28
+size of instance: 184
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -425,7 +425,6 @@ rw-       antialias    enum( none default gray )
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
-rw-     auto_redraw    bool
 r-x          redraw    void( void )
 r-x           flush    void( void )
 r-x           clear    void( void )
