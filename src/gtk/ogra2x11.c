@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.15 2008/12/12 04:51:27 hito Exp $
+ * $Id: ogra2x11.c,v 1.16 2008/12/12 07:38:56 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -577,7 +577,6 @@ gtkredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   gdk_window_invalidate_rect(gtklocal->window, NULL, TRUE);
   gdk_flush();
-  gdk_window_process_all_updates();
   gtk_evloop(NULL, NULL, NULL, 0, NULL);
   return 0;
 }
