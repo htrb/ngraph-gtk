@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.14 2008/11/27 06:50:03 hito Exp $
+ * $Id: ogra2x11.c,v 1.15 2008/12/12 04:51:27 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -97,8 +97,6 @@ static int gtk_evloop(struct objlist *obj, char *inst, char *rval, int argc,
 static int gtkflush(struct objlist *obj, char *inst, char *rval, int argc,
 		    char **argv);
 static int gtkloadconfig(struct gtklocal *gtklocal);
-static void gtk_redraw(struct objlist *obj, void *inst,
-		       struct gtklocal *gtklocal);
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);;
 static gboolean gtkevpaint(GtkWidget * w, GdkEventExpose * e,
@@ -179,13 +177,6 @@ gtkloadconfig(struct gtklocal *gtklocal)
   return 0;
 }
 
-static void
-gtk_redraw(struct objlist *obj, void *inst, struct gtklocal *gtklocal)
-{
-  GRAredraw(obj, inst, FALSE, FALSE);
-  gdk_flush();
-}
-
 static gboolean
 gtkevpaint(GtkWidget * w, GdkEventExpose * e, gpointer user_data)
 {
@@ -201,7 +192,7 @@ gtkevpaint(GtkWidget * w, GdkEventExpose * e, gpointer user_data)
     return FALSE;
 
   if (gtklocal->redraw) {
-    gtk_redraw(gtklocal->obj, gtklocal->inst, gtklocal);
+    GRAredraw(gtklocal->obj, gtklocal->inst, FALSE, FALSE);
     gtklocal->redraw = FALSE;
     gtkMakeRuler(gtklocal);
   }
@@ -485,7 +476,7 @@ gtkflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  gdk_flush();
+  gtkredraw(obj, inst, rval, argc, argv);
   return 0;
 }
 
@@ -500,10 +491,10 @@ gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  gdk_flush();
   gtklocal->PaperWidth = 0;
   gtklocal->PaperHeight = 0;
   gtkchangedpi(gtklocal);
+  gtkredraw(obj, inst, rval, argc, argv);
   return 0;
 }
 
@@ -584,7 +575,10 @@ gtkredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  gtk_redraw(obj, inst, gtklocal);
+  gdk_window_invalidate_rect(gtklocal->window, NULL, TRUE);
+  gdk_flush();
+  gdk_window_process_all_updates();
+  gtk_evloop(NULL, NULL, NULL, 0, NULL);
   return 0;
 }
 

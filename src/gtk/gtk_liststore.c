@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.14 2008/09/04 07:35:18 hito Exp $
+ * $Id: gtk_liststore.c,v 1.15 2008/12/12 04:51:27 hito Exp $
  */
 
 #include <stdlib.h>
@@ -71,7 +71,7 @@ create_column(n_list_store *list, int i, int j)
 						      list[i].max / 100.0,
 						      list[i].inc / 100.0,
 						      list[i].page / 100.0,
-						      list[i].page / 100.0),
+						      0),
 		     "digits", 2,
 		     "user-data", &list[i],
 		     NULL);
@@ -83,7 +83,7 @@ create_column(n_list_store *list, int i, int j)
 						      list[i].max,
 						      list[i].inc,
 						      list[i].page,
-						      list[i].page),
+						      0),
 		     "digits", 0,
 		     "user-data", &list[i],
 		   NULL);

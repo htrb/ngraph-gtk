@@ -1,3 +1,8 @@
+2008-12-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_liststore.c (create_column): set pga_size of
+	GtkAdjustment as 0.
+
 2008-12-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shellcm.c (cmecho): add "-n" option.
