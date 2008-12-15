@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.48 2008/12/12 08:40:39 hito Exp $
+ * $Id: x11menu.c,v 1.49 2008/12/15 03:07:17 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -61,12 +61,6 @@ int Menulock = FALSE;
 struct NgraphApp NgraphApp;
 GtkWidget *TopLevel = NULL;
 GtkAccelGroup *AccelGroup = NULL;
-
-// GdkAtom NgraphClose;
-// GdkAtom COMPOUND_TEXT;
-// char *CloseMessage = "NgraphClose";
-// int RegisterWorkProc;
-// XtWorkProcId WorkProcId;
 
 static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
@@ -514,8 +508,8 @@ find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro
       return FALSE;
 
     inst = chkobjinst(obj, 0);
-    _getobj(obj, "_local", inst, &local);
   }
+  _getobj(obj, "_local", inst, &local);
 
   if (inst == NULL) {
     return FALSE;
@@ -1696,7 +1690,6 @@ application(char *file)
   //    g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
-  //    NgraphClose = gdk_atom_intern_static_string(CloseMessage);
 
   set_gdk_color(&black, 0,     0,   0);
   set_gdk_color(&white, 255, 255, 255);

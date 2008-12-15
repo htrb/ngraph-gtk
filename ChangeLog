@@ -1,3 +1,8 @@
+2008-12-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (find_gra2gdk_inst): bug fix: always get
+	"_local" field.
+
 2008-12-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2x11.c (struct gtklocal): remove unused member
