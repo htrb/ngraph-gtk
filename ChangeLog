@@ -18,7 +18,7 @@
 	* src/gtk/x11menu.c (createcommand1, createcommand2): check
 	"Menulocal.showtip".
 
-	* src/gtk/gtk_liststore.c (create_column): set pga_size of
+	* src/gtk/gtk_liststore.c (create_column): set page_size of
 	GtkAdjustment as 0.
 
 2008-12-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
