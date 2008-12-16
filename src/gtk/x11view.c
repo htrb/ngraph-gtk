@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.73 2008/11/26 06:04:24 hito Exp $
+ * $Id: x11view.c,v 1.74 2008/12/16 07:05:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -63,7 +63,7 @@ struct pointslist
 };
 
 enum ViewerPopupIdn {
-  VIEW_UPDATE,
+  VIEW_UPDATE = 1,
   VIEW_DELETE,
   VIEW_COPY,
   VIEW_TOP,
@@ -83,6 +83,7 @@ struct viewer_popup
   gboolean use_stock;
   enum ViewerPopupIdn idn;
   struct viewer_popup *submenu;
+  int submenu_item_num;
 };
 
 #define MOUSENONE   0
@@ -570,28 +571,35 @@ EvalDialog(struct EvalDialog *data,
 }
 
 static GtkWidget *
-create_menu(struct viewer_popup *popup, struct Viewer *d)
+create_menu(struct viewer_popup *popup, int n, struct Viewer *d)
 {
   GtkWidget *menu, *item;
-  int i = 0;
+  int i, j = 0;
 
   menu = gtk_menu_new();
 
-  for (i = 0; popup[i].title; i++) {
-    if (popup[i].use_stock) {
-      item = gtk_image_menu_item_new_from_stock(popup[i].title, NULL);
+  for (i = 0; i < n; i++) {
+    if (popup[i].title) {
+      if (popup[i].use_stock) {
+	item = gtk_image_menu_item_new_from_stock(popup[i].title, NULL);
+      } else {
+	item = gtk_menu_item_new_with_mnemonic(_(popup[i].title));
+      }
+
+      if (d) {
+	d->popup_item[j] = item;
+	j++;
+      }
+
+      if (popup[i].submenu) {
+	GtkWidget *submenu;
+	submenu = create_menu(popup[i].submenu, popup[i].submenu_item_num, NULL);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
+      } else {
+	g_signal_connect(item, "activate", G_CALLBACK(ViewerPopupMenu), GINT_TO_POINTER(popup[i].idn));
+      }
     } else {
-      item = gtk_menu_item_new_with_mnemonic(_(popup[i].title));
-    }
-    if (d) {
-      d->popup_item[i] = item;
-    }
-    if (popup[i].submenu) {
-      GtkWidget *submenu;
-      submenu = create_menu(popup[i].submenu, NULL);
-      gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
-    } else {
-      g_signal_connect(item, "activate", G_CALLBACK(ViewerPopupMenu), GINT_TO_POINTER(popup[i].idn));
+      item = gtk_separator_menu_item_new();
     }
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
   }
@@ -603,28 +611,36 @@ static GtkWidget *
 create_popup_menu(struct Viewer *d)
 {
   struct viewer_popup align_popup[] = {
-    {N_("_Left"),              FALSE, VIEW_ALIGN_LEFT,    NULL},
-    {N_("_Vertical center"),   FALSE, VIEW_ALIGN_VCENTER, NULL},
-    {N_("_Right"),             FALSE, VIEW_ALIGN_RIGHT,   NULL},
-    {N_("_Top"),               FALSE, VIEW_ALIGN_TOP,     NULL},
-    {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL},
-    {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL},
-    {NULL},
+    {N_("_Left"),              FALSE, VIEW_ALIGN_LEFT,    NULL, 0},
+    {N_("_Vertical center"),   FALSE, VIEW_ALIGN_VCENTER, NULL, 0},
+    {N_("_Right"),             FALSE, VIEW_ALIGN_RIGHT,   NULL, 0},
+    {NULL, 0, 0, NULL, 0},
+    {N_("_Top"),               FALSE, VIEW_ALIGN_TOP,     NULL, 0},
+    {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL, 0},
+    {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0},
   };
   struct viewer_popup popup[] = {
-    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL},
-    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL},
-    {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL},
-    {N_("_Align"),          FALSE, 0,           align_popup},
-    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL},
-    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL},
-    {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL},
-    {NULL},
+    {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL,        0},
+    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL,        0},
+    {NULL, 0, 0, NULL, 0},
+    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL,        0},
+    {NULL, 0, 0, NULL, 0},
+    {N_("_Align"),          FALSE, 0,           align_popup, sizeof(align_popup) / sizeof(*align_popup)},
+    {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL,        0},
+    {NULL, 0, 0, NULL, 0},
+    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL,        0},
+    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL,        0},
   };
 
-#define VIEWER_POPUP_ITEM_ALIGN 3
+#define VIEWER_POPUP_ITEM_DUP    0
+#define VIEWER_POPUP_ITEM_DEL    1
+#define VIEWER_POPUP_ITEM_PROP   2
+#define VIEWER_POPUP_ITEM_ALIGN  3
+#define VIEWER_POPUP_ITEM_CROSS  4
+#define VIEWER_POPUP_ITEM_TOP    5
+#define VIEWER_POPUP_ITEM_BOTTOM 6
 
-  return create_menu(popup, d);
+  return create_menu(popup, sizeof(popup) / sizeof(*popup), d);
 }
 
 static gboolean
@@ -3843,8 +3859,6 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 {
   int button, event_time, i, num;
   GtkMenuPositionFunc func = NULL;
-  struct focuslist *focus;
-  struct objlist *obj;
 
   if (event) {
     button = event->button;
@@ -3855,31 +3869,28 @@ do_popup(GdkEventButton *event, struct Viewer *d)
     func = popup_menu_position;
   }
 
-  for (i = 0; i < VIEWER_POPUP_ITEM_NUM - 1; i++) {
+  for (i = 0; i < VIEWER_POPUP_ITEM_NUM; i++) {
     gtk_widget_set_sensitive(d->popup_item[i], FALSE);
   }
 
+  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_CROSS], TRUE);
   switch (d->Mode) {
   case PointB:
   case LegendB:
   case AxisB:
     num = arraynum(d->focusobj);
     if (num > 0) {
-      for (i = 0; i < VIEWER_POPUP_ITEM_ALIGN; i++) {
- 	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
-      }
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DUP], TRUE);
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DEL], TRUE);
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_PROP], TRUE);
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ALIGN], TRUE);
     }
     if (num == 1) {
-      focus = *(struct focuslist **) arraynget(d->focusobj, 0);
-      obj = focus->obj;
-      for (i = VIEWER_POPUP_ITEM_ALIGN + 1; i < VIEWER_POPUP_ITEM_NUM; i++) {
-	gtk_widget_set_sensitive(d->popup_item[i], TRUE);
-      }
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_TOP], TRUE);
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
     }
   }
-  gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d,
-		 button, event_time);
+  gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d, button, event_time);
 }
 
 

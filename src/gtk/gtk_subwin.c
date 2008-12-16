@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.30 2008/09/19 07:16:19 hito Exp $
+ * $Id: gtk_subwin.c,v 1.31 2008/12/16 07:05:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1538,14 +1538,18 @@ sub_win_create_popup_menu(struct SubWin *d, int n, struct subwin_popup_list *lis
   menu = gtk_menu_new();
 
   for (i = 0; i < n; i++) {
-    if (list[i].use_stock) {
-      item = gtk_image_menu_item_new_from_stock(list[i].title, list[i].accel_group);
+    if (list[i].title) {
+      if (list[i].use_stock) {
+	item = gtk_image_menu_item_new_from_stock(list[i].title, list[i].accel_group);
+      } else {
+	item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
+      }
+      g_signal_connect(item, "activate", list[i].func, d);
     } else {
-      item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
+      item = gtk_separator_menu_item_new();
     }
     d->popup_item[i] = item;
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-    g_signal_connect(item, "activate", list[i].func, d);
   }
 
   d->popup = menu;

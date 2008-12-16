@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.29 2008/10/08 05:02:17 hito Exp $
+ * $Id: x11lgnd.c,v 1.30 2008/12/16 07:05:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -73,16 +73,18 @@ static n_list_store Llist[] = {
 #define LEGEND_WIN_COL_NAME 2
 
 static struct subwin_popup_list Popup_list[] = {
-  {N_("_Focus"),          G_CALLBACK(tree_sub_window_focus), FALSE, NULL},
-  {GTK_STOCK_PROPERTIES,  G_CALLBACK(tree_sub_window_update), TRUE, NULL},
+  {N_("_Duplicate"),      G_CALLBACK(tree_sub_window_copy), FALSE, NULL},
+  //  {N_("duplicate _Behind"),   G_CALLBACK(tree_sub_window_copy), FALSE, NULL},
   {GTK_STOCK_DELETE,      G_CALLBACK(tree_sub_window_delete), TRUE, NULL},
+  {NULL, NULL, 0, NULL},
+  {N_("_Focus"),          G_CALLBACK(tree_sub_window_focus), FALSE, NULL},
+  {N_("_Hide"),           G_CALLBACK(tree_sub_window_hide), FALSE, NULL},
+  {GTK_STOCK_PROPERTIES,  G_CALLBACK(tree_sub_window_update), TRUE, NULL},
+  {NULL, NULL, 0, NULL},
   {GTK_STOCK_GOTO_TOP,    G_CALLBACK(tree_sub_window_move_top), TRUE, NULL},
   {GTK_STOCK_GO_UP,       G_CALLBACK(tree_sub_window_move_up), TRUE, NULL},
   {GTK_STOCK_GO_DOWN,     G_CALLBACK(tree_sub_window_move_down), TRUE, NULL},
   {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(tree_sub_window_move_last), TRUE, NULL},
-  {N_("_Duplicate"),      G_CALLBACK(tree_sub_window_copy), FALSE, NULL},
-  //  {N_("duplicate _Behind"),   G_CALLBACK(tree_sub_window_copy), FALSE, NULL},
-  {N_("_Hide"),           G_CALLBACK(tree_sub_window_hide), FALSE, NULL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))

@@ -1,3 +1,25 @@
+2008-12-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (struct viewer_popup): add member "submenu_item_num".
+	(create_menu): add argument "int n".
+	(create_menu): add separator when "popup[i].title" is NULL.
+	(create_popup_menu): add separator to menus.
+
+	* src/gtk/x11merge.c (Mlist): add separator.
+	(Mlist): "file" column is editable.
+
+	* src/gtk/x11lgnd.c (Popup_list): add separator.
+
+	* src/gtk/x11file.c (Flist): minimum value of "step" is 1.
+	(Popup_list): add separator.
+
+	* src/gtk/x11axis.c (Popup_list): add separator.
+	(Popup_list): add clear menu item.
+	(axiswin_scale_clear): add.
+
+	* src/gtk/gtk_subwin.c (sub_win_create_popup_menu): add
+	"GtkSeparatorMenuItem" when "list[i].title" is NULL.
+
 2008-12-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (find_gra2gdk_inst): bug fix: always get

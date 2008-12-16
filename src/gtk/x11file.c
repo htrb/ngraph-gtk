@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.56 2008/11/10 07:05:29 hito Exp $
+ * $Id: x11file.c,v 1.57 2008/12/16 07:05:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -71,7 +71,7 @@ static n_list_store Flist[] = {
   {"size",	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0, SPIN_ENTRY_MAX, 100, 1000},
   {"width",	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0, SPIN_ENTRY_MAX, 10,   100},
   {"skip",	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  FALSE,  0, INT_MAX,         1,    10},
-  {"step",	G_TYPE_INT,     TRUE, TRUE,  "read_step",  FALSE,  0, INT_MAX,         1,    10},
+  {"step",	G_TYPE_INT,     TRUE, TRUE,  "read_step",  FALSE,  1, INT_MAX,         1,    10},
   {"final",	G_TYPE_INT,     TRUE, TRUE,  "final_line", FALSE, -1, INT_MAX,         1,    10},
   {"num",	G_TYPE_INT,     TRUE, FALSE, "data_num",   FALSE},
   {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid",        FALSE},
@@ -94,22 +94,24 @@ static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpenB), TRUE, NULL},
-  {GTK_STOCK_PROPERTIES,      G_CALLBACK(list_sub_window_update), TRUE, NULL},
+  {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL},
+  {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL},
   {GTK_STOCK_CLOSE,           G_CALLBACK(file_delete_popup_func), TRUE, NULL},
+  {NULL, NULL, 0, NULL},
+  {N_("_Draw"),               G_CALLBACK(file_draw_popup_func), FALSE, NULL},
+  {N_("_Hide"),               G_CALLBACK(list_sub_window_hide), FALSE, NULL},
+  {GTK_STOCK_PROPERTIES,      G_CALLBACK(list_sub_window_update), TRUE, NULL},
+  {GTK_STOCK_EDIT,            G_CALLBACK(file_edit_popup_func), TRUE, NULL},
+  {N_("_Fit"),                G_CALLBACK(file_fit_popup_func), FALSE, NULL},
+  {NULL, NULL, 0, NULL},
   {GTK_STOCK_GOTO_TOP,        G_CALLBACK(list_sub_window_move_top), TRUE, NULL},
   {GTK_STOCK_GO_UP,           G_CALLBACK(list_sub_window_move_up), TRUE, NULL},
   {GTK_STOCK_GO_DOWN,         G_CALLBACK(list_sub_window_move_down), TRUE, NULL},
   {GTK_STOCK_GOTO_BOTTOM,     G_CALLBACK(list_sub_window_move_last), TRUE, NULL},
-  {GTK_STOCK_EDIT,            G_CALLBACK(file_edit_popup_func), TRUE, NULL},
-  {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL},
-  {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL},
-  {N_("_Draw"),               G_CALLBACK(file_draw_popup_func), FALSE, NULL},
-  {N_("_Hide"),               G_CALLBACK(list_sub_window_hide), FALSE, NULL},
-  {N_("_Fit"),                G_CALLBACK(file_fit_popup_func), FALSE, NULL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
-#define POPUP_ITEM_FIT (POPUP_ITEM_NUM - 1)
+#define POPUP_ITEM_FIT 9
 
 #define FITSAVE "fit.ngp"
 #define CB_BUF_SIZE 128

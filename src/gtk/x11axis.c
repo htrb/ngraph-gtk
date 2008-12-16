@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.31 2008/09/19 07:16:19 hito Exp $
+ * $Id: x11axis.c,v 1.32 2008/12/16 07:05:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -68,16 +68,21 @@ static n_list_store Alist[] = {
 #define AXIS_WIN_COL_ID 1
 #define AXIS_WIN_COL_TYPE 6
 
+void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
+
 static struct subwin_popup_list Popup_list[] = {
-  {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL},
-  {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL},
+  {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL},
   {GTK_STOCK_DELETE,      G_CALLBACK(list_sub_window_delete), TRUE, NULL},
+  {NULL, NULL, 0, NULL},
+  {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL},
+  {N_("_Hide"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL},
+  {GTK_STOCK_CLEAR,       G_CALLBACK(axiswin_scale_clear), TRUE, NULL},
+  {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL},
+  {NULL, NULL, 0, NULL},
   {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL},
   {GTK_STOCK_GO_UP,       G_CALLBACK(list_sub_window_move_up), TRUE, NULL},
   {GTK_STOCK_GO_DOWN,     G_CALLBACK(list_sub_window_move_down), TRUE, NULL},
   {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(list_sub_window_move_last), TRUE, NULL},
-  {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL},
-  {N_("_Hide"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
@@ -2524,6 +2529,33 @@ CmAxisZoom(void)
       AxisWinUpdate(TRUE);
     }
     arraydel(&farray);
+  }
+}
+
+void 
+axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
+{
+  struct SubWin *d;
+  struct objlist *obj;
+  int sel;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  obj = chkobject("axis");
+  if (obj == NULL)
+    return;
+
+  d = (struct SubWin *) user_data;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+
+  if ((sel >= 0) && (sel <= d->num)) {
+    d->setup_dialog(d->dialog, d->obj, sel, -1);
+    d->select = sel;
+    exeobj(obj, "scale_push", sel, 0, NULL);
+    exeobj(obj, "clear", sel, 0, NULL);
+    d->update(FALSE);
   }
 }
 
