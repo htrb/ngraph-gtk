@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.58 2008/12/17 05:47:48 hito Exp $
+ * $Id: x11file.c,v 1.59 2008/12/17 10:31:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3484,9 +3484,8 @@ FileWinFileUpdate(struct SubWin *d)
 static void
 FileWinFileDraw(struct SubWin *d)
 {
-  int i, sel;
-  int hidden;
-  
+  int i, sel, hidden, h;
+
   if (Menulock || GlobalLock)
     return;
 
@@ -3494,17 +3493,22 @@ FileWinFileDraw(struct SubWin *d)
 
   if ((sel >= 0) && (sel <= d->num)) {
     for (i = 0; i <= d->num; i++) {
-      if (i == sel)
-	hidden = FALSE;
-      else
-	hidden = TRUE;
+      hidden = (i != sel);
+      getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
+      if (h != hidden) {
+	NgraphApp.Changed = TRUE;
+      }
     }
     d->select = sel;
   } else {
     hidden = FALSE;
     for (i = 0; i <= d->num; i++) {
+      getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
+      if (h != hidden) {
+	NgraphApp.Changed = TRUE;
+      }
     }
     d->select = -1;
   }
