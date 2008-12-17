@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.15 2008/12/12 04:51:27 hito Exp $
+ * $Id: gtk_liststore.c,v 1.16 2008/12/17 03:33:52 hito Exp $
  */
 
 #include <stdlib.h>
@@ -216,6 +216,7 @@ list_store_set_sort_all(GtkWidget *tview)
 {
   GList *list, *ptr;
   int i;
+  GtkTreeViewColumn *column;
 
   list = gtk_tree_view_get_columns(GTK_TREE_VIEW(tview));
 
@@ -223,7 +224,9 @@ list_store_set_sort_all(GtkWidget *tview)
     return;
 
   for (ptr = list, i = 0; ptr; ptr = ptr->next, i++) {
-    gtk_tree_view_column_set_sort_column_id(GTK_TREE_VIEW_COLUMN(ptr->data), i);
+    column = GTK_TREE_VIEW_COLUMN(ptr->data);
+    gtk_tree_view_column_set_sort_column_id(column, i);
+    gtk_tree_view_column_set_clickable(column, TRUE);
   }
 
   g_list_free(list);
@@ -241,8 +244,12 @@ list_store_set_sort_column(GtkWidget *tview, int col)
 
   ptr = g_list_nth(list, col);
 
-  if (ptr)
-    gtk_tree_view_column_set_sort_column_id(GTK_TREE_VIEW_COLUMN(ptr->data), col);
+  if (ptr) {
+    GtkTreeViewColumn *column = GTK_TREE_VIEW_COLUMN(ptr->data);
+
+    gtk_tree_view_column_set_sort_column_id(column, col);
+    gtk_tree_view_column_set_clickable(column, TRUE);
+  }
 
   g_list_free(list);
 }
