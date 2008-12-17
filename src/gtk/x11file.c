@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.57 2008/12/16 07:05:13 hito Exp $
+ * $Id: x11file.c,v 1.58 2008/12/17 05:47:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -94,6 +94,7 @@ static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpenB), TRUE, NULL},
+  {NULL, NULL, 0, NULL},
   {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL},
   {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL},
   {GTK_STOCK_CLOSE,           G_CALLBACK(file_delete_popup_func), TRUE, NULL},
@@ -111,7 +112,7 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
-#define POPUP_ITEM_FIT 9
+#define POPUP_ITEM_FIT 10
 
 #define FITSAVE "fit.ngp"
 #define CB_BUF_SIZE 128
