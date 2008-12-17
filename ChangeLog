@@ -1,5 +1,8 @@
 2008-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (Match): return matched instance number.
+	(mouse_up_point): change cursor if any object is focused.
+
 	* src/gtk/ox11menu.c (gtkmenu): add field "draw".
 	(mxdraw): add.
 	(mx_redraw): call "gdk_window_invalidate_rect()".

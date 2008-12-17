@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.74 2008/12/16 07:05:13 hito Exp $
+ * $Id: x11view.c,v 1.75 2008/12/17 09:27:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -140,6 +140,7 @@ static void ViewCopy(void);
 static void ViewCross(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
+static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 
 
 static double 
@@ -1127,7 +1128,7 @@ clear_focus_obj(struct narray *focusobj, int mode, int init_cursor)
 }
 
 
-static void
+static int
 Match(char *objname, int x1, int y1, int x2, int y2, int err)
 {
   struct objlist *fobj;
@@ -1138,7 +1139,7 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
   struct objlist *dobj;
   int did;
   char *dfield, *dinst;
-  int i, match;
+  int i, match, r;
   int minx, miny, maxx, maxy;
   struct savedstdio save;
   struct Viewer *d;
@@ -1160,18 +1161,19 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
 
   fobj = chkobject(objname);
   if (! fobj)
-    return;
+    return 0;
 
   if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
-    return;
+    return 0;
 
   if ((snum = arraynum(sarray)) == 0)
-    return;
+    return 0;
 
   ignorestdio(&save);
 
   sdata = (char **) arraydata(sarray);
 
+  r = 0;
   for (i = 1; i < snum; i++) {
     dobj = getobjlist(sdata[i], &did, &dfield, NULL);
 
@@ -1187,10 +1189,12 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
     if (! match)
       continue;
 
-    if (! add_focus_obj(d->focusobj, dobj, did))
-      continue;
+    if (add_focus_obj(d->focusobj, dobj, did)) {
+      r++;
+    }
   }
   restorestdio(&save);
+  return r;
 }
 
 static void
@@ -1514,6 +1518,7 @@ ShowFocusFrame(GdkGC *gc)
     }
   }
   gdk_gc_set_function(gc, GDK_COPY);
+
   restorestdio(&save);
 }
 
@@ -2349,7 +2354,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 static void
 mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, double zoom)
 {
-  int x1, x2, y1, y2, err, num;
+  int x1, x2, y1, y2, err, num, focused = FALSE;
 
   d->Capture = FALSE;
   ShowFrameRect(dc);
@@ -2371,24 +2376,24 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
   err = mxp2d(POINT_ERROR) / zoom;
 
   if (d->Mode == PointB) {
-    Match("legend", x1, y1, x2, y2, err);
-    Match("axis", x1, y1, x2, y2, err);
-    Match("merge", x1, y1, x2, y2, err);
+    focused |= Match("legend", x1, y1, x2, y2, err);
+    focused |= Match("axis", x1, y1, x2, y2, err);
+    focused |= Match("merge", x1, y1, x2, y2, err);
 
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
 
     ShowFocusFrame(dc);
   } else if (d->Mode == LegendB) {
-    Match("legend", x1, y1, x2, y2, err);
-    Match("merge", x1, y1, x2, y2, err);
+    focused |= Match("legend", x1, y1, x2, y2, err);
+    focused |= Match("merge", x1, y1, x2, y2, err);
 
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
 
     ShowFocusFrame(dc);
   } else if (d->Mode == AxisB) {
-    Match("axis", x1, y1, x2, y2, err);
+    focused |= Match("axis", x1, y1, x2, y2, err);
 
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
@@ -2403,6 +2408,15 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
   } else {
     Evaluate(x1, y1, x2, y2, err);
   }
+
+  if (focused) {
+    int cursor;
+
+    cursor = get_mouse_cursor_type(d, point->x, point->y);
+    if (cursor >= 0)
+      SetCursor(cursor);
+  }
+
 
   num = arraynum(d->focusobj);
 }
