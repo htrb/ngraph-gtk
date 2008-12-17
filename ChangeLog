@@ -1,3 +1,13 @@
+2008-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (MergeDialogSetup): use
+	"gtk_check_button_new_with_mnemonic()" instead of
+	"gtk_check_button_new_with_label()".
+
+	* src/gtk/x11gui.c (FileSelectionDialog): use
+	"gtk_check_button_new_with_mnemonic()" instead of
+	"gtk_check_button_new_with_label()".
+
 2008-12-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (struct viewer_popup): add member "submenu_item_num".

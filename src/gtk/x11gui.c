@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.17 2008/12/01 04:58:21 hito Exp $
+ * $Id: x11gui.c,v 1.18 2008/12/17 02:40:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -715,7 +715,7 @@ FileSelectionDialog(GtkWidget * parent, int type, char *stock)
 				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				    stock, GTK_RESPONSE_ACCEPT,
 				    NULL);
-  rc = gtk_check_button_new_with_label(_("_Change current directory"));
+  rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
   gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dlg)->vbox), rc, FALSE, FALSE, 5);
   data->chdir_cb = rc;
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dlg), data->multi);

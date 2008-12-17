@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.14 2008/12/16 07:05:13 hito Exp $
+ * $Id: x11merge.c,v 1.15 2008/12/17 02:40:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -147,7 +147,7 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 #ifdef JAPANESE
     hbox = gtk_hbox_new(FALSE, 2);
-    w = gtk_check_button_new_with_label(_("GreekSymbol"));
+    w = gtk_check_button_new_with_mnemonic(_("GreekSymbol"));
     d->greeksymbol = w;
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
