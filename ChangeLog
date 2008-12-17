@@ -1,5 +1,8 @@
 2008-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/oline.c (arrowbbox): add valiable "num2" and "num2" is used
+	only to calculate positions of an arrow.
+
 	* src/gtk/x11view.c (Match): return matched instance number.
 	(mouse_up_point): change cursor if any object is focused.
 

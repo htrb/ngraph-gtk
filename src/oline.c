@@ -1,5 +1,5 @@
 /* 
- * $Id: oline.c,v 1.2 2008/06/03 07:18:29 hito Exp $
+ * $Id: oline.c,v 1.3 2008/12/17 10:09:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -217,7 +217,7 @@ int arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 int arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
-  int x,y,num;
+  int x,y,num,num2;
   struct narray *points;
   int *pdata;
   struct narray *array;
@@ -252,8 +252,8 @@ int arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       y1=y0;
     }
   }
-  num=j;
-  if (num<2) {
+  num2=j;
+  if (num2<2) {
     memfree(points2);
     return 0;
   }
@@ -261,10 +261,10 @@ int arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y0=points2[1];
   x1=points2[2];
   y1=points2[3];
-  x2=points2[2*num-4];
-  y2=points2[2*num-3];
-  x3=points2[2*num-2];
-  y3=points2[2*num-1];
+  x2=points2[2*num2-4];
+  y2=points2[2*num2-3];
+  x3=points2[2*num2-2];
+  y3=points2[2*num2-1];
   memfree(points2);
   alen=width*(double )headlen/10000;
   alen2=alen-10;
