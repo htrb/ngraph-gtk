@@ -1,5 +1,9 @@
 2008-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11menu.c (gtkmenu): add field "draw".
+	(mxdraw): add.
+	(mx_redraw): call "gdk_window_invalidate_rect()".
+
 	* src/gtk/x11merge.c (MergeDialogSetup): use
 	"gtk_check_button_new_with_mnemonic()" instead of
 	"gtk_check_button_new_with_label()".

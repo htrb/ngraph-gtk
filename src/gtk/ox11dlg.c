@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.6 2008/12/01 04:58:21 hito Exp $
+ * $Id: ox11dlg.c,v 1.7 2008/12/17 06:15:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,7 +56,6 @@ char *dlgerrorlist[ERRNUM] = {
 GtkWidget *DLGTopLevel = NULL;
 
 extern int OpenApplication();
-extern GdkDisplay *Disp;
 extern int OpenApplication();
 
 static gboolean

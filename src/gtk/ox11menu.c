@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.34 2008/12/12 09:27:03 hito Exp $
+ * $Id: ox11menu.c,v 1.35 2008/12/17 06:15:45 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -73,8 +73,6 @@ static char *menuerrorlist[ERRNUM] = {
 };
 
 extern int OpenApplication();
-extern GdkDisplay *Disp;
-
 struct menulocal Menulocal;
 struct mxlocal *Mxlocal;
 struct savedstdio GtkIOSave;
@@ -1091,6 +1089,10 @@ mx_redraw(struct objlist *obj, char *inst)
 
   GRAredraw(obj, inst, TRUE, n);
   mxflush(obj, inst, NULL, 0, NULL);
+
+  if (Mxlocal->win) {
+    gdk_window_invalidate_rect(Mxlocal->win, NULL, TRUE);
+  }
 }
 
 void
@@ -1322,6 +1324,12 @@ mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
+static int
+mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  Draw(FALSE);
+  return 0;
+}
 
 static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
@@ -1334,6 +1342,7 @@ static struct objtable gtkmenu[] = {
   {"redraw_flag", NBOOL, NREAD | NWRITE, mxredrawflag, NULL, 0},
   {"redraw_num", NBOOL, NREAD | NWRITE, mxredraw_num, NULL, 0},
   {"redraw", NVFUNC, NREAD | NEXEC, mxredraw, "", 0},
+  {"draw", NVFUNC, NREAD | NEXEC, mxdraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},

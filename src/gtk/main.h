@@ -2,6 +2,7 @@
 #define _MAIN_HEADER
 
 extern char *AppName, *AppClass, *License, *Auther[], *Translator, *Documenter[];
+extern GdkDisplay *Disp;
 
 int nallocconsole(void);
 void nfreeconsole(void);
