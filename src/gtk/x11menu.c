@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.49 2008/12/15 03:07:17 hito Exp $
+ * $Id: x11menu.c,v 1.50 2008/12/18 08:46:57 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -423,21 +423,34 @@ set_draw_lock(int lock)
 }
 
 void
+kill_signal_handler(int sig)
+{
+  Hide_window = TRUE;
+}
+
+void
 childhandler(int sig)
 {
   int i, num;
   pid_t *data;
+  struct sigaction act;
 
   if (!signaltrap)
     return;
-  signal(sig, SIG_IGN);
+
+  act.sa_handler = SIG_IGN;
+  act.sa_flags = 0;
+  sigemptyset(&act.sa_mask);
+
+  sigaction(sig, &act, NULL);
   data = arraydata(&ChildList);
   num = arraynum(&ChildList);
   for (i = num - 1; i >= 0; i--) {
     if (waitpid(-data[i], NULL, WNOHANG | WUNTRACED) > 0)
       arrayndel(&ChildList, i);
   }
-  signal(sig, childhandler);
+  act.sa_handler = childhandler;
+  sigaction(sig, &act, NULL);
 }
 
 void
@@ -448,7 +461,11 @@ AppMainLoop(void)
     NgraphApp.Interrupt = FALSE;
     gtk_main_iteration();
     if (Hide_window && ! gtk_events_pending()) {
-      break;
+      Hide_window = FALSE;
+      if(CheckSave()) {
+	SaveHistory();
+	break;
+      }
     }
   }
 }
@@ -479,7 +496,6 @@ void
 QuitGUI(void)
 {
   if (TopLevel) {
-    gtk_widget_hide_all(TopLevel);
     Hide_window = TRUE;
   }
 }
@@ -1649,6 +1665,7 @@ application(char *file)
   struct objlist *aobj;
   int x, y, width, height, w, h;
   GdkScreen *screen;
+  struct sigaction act;
 
   if (TopLevel)
     return;
@@ -1775,12 +1792,24 @@ application(char *file)
 
   arrayinit(&ChildList, sizeof(pid_t));
   signaltrap = TRUE;
-  signal(SIGCHLD, childhandler);
+
+  act.sa_handler = childhandler;
+  act.sa_flags = 0;
+  sigemptyset(&act.sa_mask);
+  sigaction(SIGCHLD, &act, NULL);
+
+  act.sa_handler = kill_signal_handler;
+  act.sa_flags = 0;
+  sigaction(SIGINT, &act, NULL);
 
   ResetEvent();
   gtk_window_present(GTK_WINDOW(TopLevel));
 
   AppMainLoop();
+
+  act.sa_handler = SIG_DFL;
+  act.sa_flags = 0;
+  sigaction(SIGINT, &act, NULL);
 
   save_hist();
 

@@ -1,5 +1,13 @@
 2008-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (kill_signal_handler): add.
+	(childhandler): use "sigaction()" instead of "signal()".
+	(AppMainLoop): call "CheckSave()" when "Hide_window" is TRUE.
+	(application): use "sigaction()" instead of "signal()".
+	(application): set signal handler for "SIGINT" signal.
+
+	* src/gtk/x11graph.c (CmGraphQuit): just call "QuitGUI()".
+
 	* src/gtk/x11opt.c (MiscDialogSetup): change design of the dialog.
 
 	* src/gtk/x11view.c (enum ViewerPopupIdn): add "VIEW_UP" and
