@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.21 2008/12/12 09:27:03 hito Exp $
+ * $Id: x11opt.c,v 1.22 2008/12/18 07:42:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1160,19 +1160,23 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 static void
 MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *frame;
+  GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *frame;
   struct MiscDialog *d;
   int j;
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
+    hbox2 = gtk_hbox_new(FALSE, 4);
+
+    vbox2 = gtk_vbox_new(FALSE, 4);
+
     frame = gtk_frame_new(NULL);
     hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
     item_setup(hbox, w, _("_Editor:"), TRUE);
     d->editor = w;
     gtk_container_add(GTK_CONTAINER(frame), hbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
     frame = gtk_frame_new(NULL);
@@ -1188,11 +1192,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
     frame = gtk_frame_new(NULL);
-
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = combo_box_create();
@@ -1208,11 +1211,16 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
+
+    gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
+
+
+
+    vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
-
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_Expand include file"));
@@ -1229,7 +1237,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ignorepath = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
     for (j = 0; pathchar[j] != NULL; j++) {
       combo_box_append_text(d->path, _(pathchar[j]));
@@ -1252,7 +1260,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
     frame = gtk_frame_new(NULL);
@@ -1271,9 +1279,12 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->data_head_lines = w;
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
+    gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, FALSE, FALSE, 4);
   }
   MiscDialogSetupItem(wi, d);
 }

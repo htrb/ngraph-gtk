@@ -1,5 +1,7 @@
 2008-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (MiscDialogSetup): change design of the dialog.
+
 	* src/gtk/x11view.c (enum ViewerPopupIdn): add "VIEW_UP" and
 	"VIEW_DOWN".
 	(enum object_move_type): add.
