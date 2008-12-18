@@ -1,5 +1,13 @@
 2008-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (enum ViewerPopupIdn): add "VIEW_UP" and
+	"VIEW_DOWN".
+	(enum object_move_type): add.
+	(create_popup_menu): add up and down object menu item.
+	(ViewerPopupMenu): add case "VIEW_DOWN" and "VIEW_UP".
+	(reorder_object): change argument from int to "enum
+	object_move_type".
+
 	* src/gtk/ogra2cairo.c (gra2cairo_output): don't draw arc if "w"
 	or "h" is 0 in the case of "code" is 'C'.
 

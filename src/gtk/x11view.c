@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.75 2008/12/17 09:27:30 hito Exp $
+ * $Id: x11view.c,v 1.76 2008/12/18 07:12:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -68,6 +68,8 @@ enum ViewerPopupIdn {
   VIEW_COPY,
   VIEW_TOP,
   VIEW_LAST,
+  VIEW_UP,
+  VIEW_DOWN,
   VIEW_CROSS,
   VIEW_ALIGN_LEFT,
   VIEW_ALIGN_RIGHT,
@@ -75,6 +77,13 @@ enum ViewerPopupIdn {
   VIEW_ALIGN_TOP,
   VIEW_ALIGN_VCENTER,
   VIEW_ALIGN_BOTTOM,
+};
+
+enum object_move_type {
+  OBJECT_MOVE_TYPE_TOP,
+  OBJECT_MOVE_TYPE_UP,
+  OBJECT_MOVE_TYPE_DOWN,
+  OBJECT_MOVE_TYPE_LAST,
 };
 
 struct viewer_popup
@@ -134,13 +143,12 @@ static void DelList(struct objlist *obj, char *inst);
 static void MakeRuler(GdkGC *gc);
 static void ViewUpdate(void);
 static void ViewDelete(void);
-static void ViewTop(void);
-static void ViewLast(void);
 static void ViewCopy(void);
 static void ViewCross(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
+static void reorder_object(enum object_move_type type);
 
 
 static double 
@@ -621,16 +629,18 @@ create_popup_menu(struct Viewer *d)
     {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0},
   };
   struct viewer_popup popup[] = {
-    {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL,        0},
-    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL,        0},
+    {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL, 0},
+    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL, 0},
     {NULL, 0, 0, NULL, 0},
-    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL,        0},
+    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL, 0},
     {NULL, 0, 0, NULL, 0},
-    {N_("_Align"),          FALSE, 0,           align_popup, sizeof(align_popup) / sizeof(*align_popup)},
-    {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL,        0},
+    {N_("_Align"),          FALSE, 0, align_popup, sizeof(align_popup) / sizeof(*align_popup)},
+    {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL, 0},
     {NULL, 0, 0, NULL, 0},
-    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL,        0},
-    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL,        0},
+    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL, 0},
+    {GTK_STOCK_GO_UP,       TRUE,  VIEW_UP,     NULL, 0},
+    {GTK_STOCK_GO_DOWN,     TRUE,  VIEW_DOWN,   NULL, 0},
+    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL, 0},
   };
 
 #define VIEWER_POPUP_ITEM_DUP    0
@@ -4034,13 +4044,13 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     return TRUE;
   case GDK_Home:
     if (e->state & GDK_SHIFT_MASK) {
-      ViewTop();
+      reorder_object(OBJECT_MOVE_TYPE_TOP);
       return TRUE;
     }
     break;
   case GDK_End:
     if (e->state & GDK_SHIFT_MASK) {
-      ViewLast();
+      reorder_object(OBJECT_MOVE_TYPE_LAST);
       return TRUE;
     }
     break;
@@ -5278,7 +5288,7 @@ ViewDelete(void)
 
 
 static void
-reorder_object(int top)
+reorder_object(enum object_move_type type)
 {
   int id, num;
   struct focuslist *focus;
@@ -5310,27 +5320,24 @@ reorder_object(int top)
 
   DelList(obj, inst);
   _getobj(obj, "id", inst, &id);
-  if (top) {
+  switch (type) {
+  case OBJECT_MOVE_TYPE_TOP:
     movetopobj(obj, id);
-  } else {
+    break;
+  case OBJECT_MOVE_TYPE_LAST:
     movelastobj(obj, id);
+    break;
+  case OBJECT_MOVE_TYPE_UP:
+    moveupobj(obj, id);
+    break;
+  case OBJECT_MOVE_TYPE_DOWN:
+    movedownobj(obj, id);
+    break;
   }
   AddList(obj, inst);
   NgraphApp.Changed = TRUE;
   d->allclear = TRUE;
   UpdateAll();
-}
-
-static void
-ViewTop(void)
-{
-  reorder_object(TRUE);
-}
-
-static void
-ViewLast(void)
-{
-  reorder_object(FALSE);
 }
 
 static void
@@ -5721,10 +5728,16 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
     ViewCopy();
     break;
   case VIEW_TOP:
-    ViewTop();
+    reorder_object(OBJECT_MOVE_TYPE_TOP);
     break;
   case VIEW_LAST:
-    ViewLast();
+    reorder_object(OBJECT_MOVE_TYPE_LAST);
+    break;
+  case VIEW_UP:
+    reorder_object(OBJECT_MOVE_TYPE_UP);
+    break;
+  case VIEW_DOWN:
+    reorder_object(OBJECT_MOVE_TYPE_DOWN);
     break;
   case VIEW_CROSS:
     ViewCross();

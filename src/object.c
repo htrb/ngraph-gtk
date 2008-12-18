@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.18 2008/11/26 07:05:12 hito Exp $
+ * $Id: object.c,v 1.19 2008/12/18 07:12:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2625,7 +2625,7 @@ int movedownobj(struct objlist *obj,int id)
 }
 
 int movelastobj(struct objlist *obj,int id)
-/* movetopobj() returns id or -1 on error */
+/* movelastobj() returns id or -1 on error */
 {
   char *instcur,*instprev,*lastinst;
   char *pinst,*inst;
