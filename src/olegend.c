@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.2 2008/06/03 07:18:29 hito Exp $
+ * $Id: olegend.c,v 1.3 2008/12/18 05:46:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -248,6 +248,10 @@ int legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
   }
+
+  if (width < 1)
+    width = 1;
+
   if (_putobj(obj,"width",inst,&width)) return 1;
   _getobj(obj,"bbox",inst,&array);
   arrayfree(array);

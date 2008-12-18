@@ -1,10 +1,27 @@
+2008-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (gra2cairo_output): don't draw arc if "w"
+	or "h" is 0 in the case of "code" is 'C'.
+
+	* src/otext.c (textzoom): minimum value of "pt" is 1.
+
+	* src/orect.c (rectzoom): minimum value of "width" is 1.
+
+	* src/omark.c (markzoom): minimum value of "size" and "width" is 1.
+	(markgeometry): use temporal variable "val".
+
+	* src/olegend.c (legendzoom): minimum value of "width" is 1.
+
+	* src/oarc.c (arcgeometry): use temporal variable "val".
+	(arczoom): minimum value of "rx", "ry", and "width" is 1.
+
 2008-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileWinFileDraw): check if the graph is
 	changed or not.
 
-	* src/oline.c (arrowbbox): add valiable "num2" and "num2" is used
-	only to calculate positions of an arrow.
+	* src/oline.c (arrowbbox): bug fix: add valiable "num2" and "num2"
+	is used only to calculate positions of an arrow.
 
 	* src/gtk/x11view.c (Match): return matched instance number.
 	(mouse_up_point): change cursor if any object is focused.

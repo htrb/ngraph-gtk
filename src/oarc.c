@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.3 2008/07/14 07:42:47 hito Exp $
+ * $Id: oarc.c,v 1.4 2008/12/18 05:46:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -113,26 +113,42 @@ int arcgeometry(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   char *field;
+  int val;
   struct narray *array;
 
-  field=(char *)(argv[1]);
+  field = (char *) (argv[1]);
+  val = * (int *) (argv[2]);
+
   if (strcmp(field,"width")==0) {
-    if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
-  } else if ((strcmp(field,"rx")==0) || (strcmp(field,"ry")==0)) {
-    if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
-  } else if (strcmp(field,"angle1")==0){
-    if (*(int *)(argv[2])<0) {
-      while (*(int *)(argv[2])<0) *(int *)(argv[2])+=36000;
-    } else if (*(int *)(argv[2])>36000) {
-      while (*(int *)(argv[2])<36000) *(int *)(argv[2])-=36000;
+    if (val < 1)
+      val = 1;
+  } else if (strcmp(field, "rx") == 0 || strcmp(field, "ry") == 0) {
+    if (val < 1)
+      val = 1;
+  } else if (strcmp(field, "angle1") == 0){
+    if (val < 0) {
+      val %= 36000;
+      if (val < 0) {
+	val += 36000;
+      }
+    } else if (val > 36000) {
+      val %= 36000;
     }
-  } else if (strcmp(field,"angle2")==0) {
-    if (*(int *)(argv[2])<0) *(int *)(argv[2])=0;
-    else if (*(int *)(argv[2])>36000) *(int *)(argv[2])=36000;
+  } else if (strcmp(field, "angle2") == 0) {
+    if (val < 0) {
+      val = 0;
+    } else if (val > 36000) {
+      val = 36000;
+    }
   }
-  _getobj(obj,"bbox",inst,&array);
+  * (int *)(argv[2]) = val;
+
+  _getobj(obj,"bbox", inst, &array);
   arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (_putobj(obj,"bbox",inst,NULL))
+    return 1;
+
   return 0;
 }
 
@@ -257,6 +273,10 @@ int arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
   }
+
+  if (width < 1)
+    width = 1;
+
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"rx",inst,&rx)) return 1;

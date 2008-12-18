@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.3 2008/11/25 08:43:32 hito Exp $
+ * $Id: omark.c,v 1.4 2008/12/18 05:46:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -176,6 +176,13 @@ int markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     width=width*zoom;
     for (i=0;i<snum;i++) sdata[i]=sdata[i]*zoom;
   }
+
+  if (width < 1)
+    width = 1;
+
+  if (size < 1)
+    size = 1;
+
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"size",inst,&size)) return 1;
@@ -191,16 +198,26 @@ int markgeometry(struct objlist *obj,char *inst,char *rval,
 {
   char *field;
   struct narray *array;
+  int val;
 
-  field=(char *)(argv[1]);
-  if (strcmp(field,"width")==0) {
-    if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
-  } else if (strcmp(field,"size")==0) {
-    if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
+  field = (char *) (argv[1]);
+  val = * (int *) (argv[2]);
+
+  if (strcmp(field, "width") == 0) {
+    if (val < 1)
+      val = 1;
+  } else if (strcmp(field, "size") == 0) {
+    if (val < 1)
+      val = 1;
   }
+  * (int *) (argv[2]) = val;
+
   _getobj(obj,"bbox",inst,&array);
   arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (_putobj(obj,"bbox",inst,NULL))
+    return 1;
+
   return 0;
 }
 

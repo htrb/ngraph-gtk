@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.30 2008/11/26 05:55:58 hito Exp $
+ * $Id: ogra2cairo.c,v 1.31 2008/12/18 05:46:26 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -825,7 +825,6 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     local->linetonum++;
     break;
   case 'C':
-    cairo_new_path(local->cairo);
     x = mxd2px(local, cpar[1] - cpar[3]);
     y = mxd2py(local, cpar[2] - cpar[4]);
     w = mxd2pw(local, cpar[3]);
@@ -833,6 +832,10 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     a1 = cpar[5] * (M_PI / 18000.0);
     a2 = cpar[6] * (M_PI / 18000.0) + a1;
 
+    if (w == 0 || h == 0)
+      break;
+
+    cairo_new_path(local->cairo);
     cairo_save(local->cairo);
     cairo_translate(local->cairo, x + w, y + h);
     cairo_scale(local->cairo, w, h);

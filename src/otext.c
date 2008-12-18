@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.6 2008/10/09 10:43:08 hito Exp $
+ * $Id: otext.c,v 1.7 2008/12/18 05:46:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -525,6 +525,10 @@ int textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y=(y-refy)*zoom+refy;
   pt=pt*zoom;
   space=space*zoom;
+
+  if (pt < 1)
+    pt = 1;
+
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"pt",inst,&pt)) return 1;
