@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.59 2008/12/17 10:31:04 hito Exp $
+ * $Id: x11file.c,v 1.60 2008/12/19 11:03:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3688,11 +3688,11 @@ draw_type_pixbuf(struct objlist *obj, int i)
     break;
   case 3:
     spx[0] = 1;
-    spx[1] = height / 3;
+    spx[1] = height / 3 + 1;
     spx[2] = height * 2 / 3;
     spx[3] = height - 1;
     spx[4] = height * 2 / 3;
-    spx[5] = height / 3;
+    spx[5] = height / 3 + 1;
     spx[6] = 1;
 
     spy[0] = height / 2;
