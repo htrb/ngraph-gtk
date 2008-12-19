@@ -1,3 +1,8 @@
+2008-12-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (set_data_progress): check if "frac" is greater than
+	1 or not.
+
 2008-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (kill_signal_handler): add.

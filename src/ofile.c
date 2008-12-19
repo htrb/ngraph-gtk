@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.51 2008/12/03 13:07:29 hito Exp $
+ * $Id: ofile.c,v 1.52 2008/12/19 00:14:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1578,6 +1578,10 @@ set_data_progress(struct f2ddata *fp)
   } else {
     frac = -1;
   }
+
+  if (frac > 1)
+    frac = 1.0;
+
   snprintf(msgbuf, sizeof(msgbuf), "%d: %s (%d)", fp->id, fp->file, fp->line);
   set_progress(0, msgbuf, frac);
   if (ninterrupt()) {
@@ -2010,12 +2014,12 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
   int i, rcode;
 
   while (! fp->eof && fp->bufnum < DXBUFSIZE) {
-    if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
+    if (fp->final >= 0 && fp->line >= fp->final) {
+      fp->eof=TRUE;
       break;
     }
 
-    if (fp->final >= 0 && fp->line >= fp->final) {
-      fp->eof=TRUE;
+    if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
       break;
     }
 
@@ -2372,14 +2376,15 @@ int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
   datanum=0;
   while (!fp->eof && (datanum==0)) {
-    if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
-      break;
-    }
-
     if ((fp->final>=0) && (fp->line>=fp->final)) {
       fp->eof=TRUE;
       break;
     }
+
+    if ((fp->line & 0x1fff) == 0 && set_data_progress(fp)) {
+      break;
+    }
+
     if ((rcode=fgetline(fp->fd,&buf))==1) {
       fp->eof=TRUE;
       break;

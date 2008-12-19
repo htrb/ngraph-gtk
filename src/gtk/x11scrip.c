@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.5 2008/10/07 04:02:47 hito Exp $
+ * $Id: x11scrip.c,v 1.6 2008/12/19 00:14:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -151,7 +151,8 @@ ScriptDialogClose(GtkWidget *w, void *data)
   }
 
   ptr = gtk_entry_get_text(GTK_ENTRY(d->entry));
-  strncpy(d->option, ptr, 255);
+  strncpy(d->option, ptr, sizeof(d->option) - 1);
+  d->option[sizeof(d->option) - 1] = '\0';
 }
 
 void
