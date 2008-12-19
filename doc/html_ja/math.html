@@ -25,18 +25,18 @@
 <A HREF="#TOP"><B>概要</B></A>
 <BR>
 <BLOCKQUOTE>
-描画は隣接平均, 数式変換などデ−タの加工を行った後に行われます。
+描画は隣接平均, 数式変換などデータの加工を行った後に行われます。
 グラフを作成する際その処理手順を意識することが重要な場合があります。
-以下にデ−タの流れを示します。<BR>
+以下にデータの流れを示します。<BR>
 <BR>
 <CENTER>
 データファイル<BR>
 ↓<BR>
 数式変換<BR>
 ↓<BR>
-マスクされたデ−タを削除<BR>
+マスクされたデータを削除<BR>
 ↓<BR>
-移動されたデ−タを移動<BR>
+移動されたデータを移動<BR>
 ↓<BR>
 隣接平均<BR>
 ↓<BR>
@@ -45,7 +45,7 @@
 出力(グラフ描画)<BR>
 </CENTER>
 <BR>
-ロググラフを作成する場合, 曲線の補間はデ−タを対数変換した後に行われるので通常の線形グラフとロググラフでは結果が異なります。
+ロググラフを作成する場合, 曲線の補間はデータを対数変換した後に行われるので通常の線形グラフとロググラフでは結果が異なります。
 最小二乗法に関してはロググラフでも通常の線形グラフと同じ係数を求めます。<BR>
 </BLOCKQUOTE>
 
@@ -62,25 +62,25 @@
 <TR><TD>数値</TD><TD>数値定数(1, 2.0, 3.0E10等)</TD></TR>
 <TR><TD>PI</TD><TD>円周率</TD></TR>
 <TR><TD>E</TD><TD>自然対数の底</TD></TR>
-<TR><TD>EULER</TD><TD>オイラ−の定数</TD></TR>
-<TR><TD>NAN</TD><TD>欠損デ−タ エラー表示</TD></TR>
-<TR><TD>UNDEF</TD><TD>欠損デ−タ エラー非表示</TD></TR>
+<TR><TD>EULER</TD><TD>オイラーの定数</TD></TR>
+<TR><TD>NAN</TD><TD>欠損データ エラー表示</TD></TR>
+<TR><TD>UNDEF</TD><TD>欠損データ エラー非表示</TD></TR>
 <TR><TD>CONT</TD><TD>欠損データ (データ線は結合)</TD></TR>
 <TR><TD>BREAK</TD><TD>欠損データ (データ線は分断)</TD></TR>
-<TR><TD>NUM</TD><TD>デ−タの個数</TD></TR>
-<TR><TD>MINX</TD><TD>(X) column の生デ−タの最小値</TD></TR>
-<TR><TD>MAXX</TD><TD>(X) column の生デ−タの最大値</TD></TR>
-<TR><TD>MINY</TD><TD>(Y) column の生デ−タの最小値</TD></TR>
-<TR><TD>MAXY</TD><TD>(Y) column の生デ−タの最大値</TD></TR>
-<TR><TD>SUMX</TD><TD>(X) column の生デ−タの和</TD></TR>
-<TR><TD>SUMY</TD><TD>(Y) column の生デ−タの和</TD></TR>
-<TR><TD>SUMXX</TD><TD>(X) column の生デ−タの二乗和</TD></TR>
-<TR><TD>SUMYY</TD><TD>(Y) column の生デ−タの二乗和</TD></TR>
-<TR><TD>SUMXY</TD><TD>(X) column, (Y) column の生デ−タの積和</TD></TR>
-<TR><TD>AVX</TD><TD>(X) column の生デ−タの平均</TD></TR>
-<TR><TD>AVY</TD><TD>(Y) column の生デ−タの平均</TD></TR>
-<TR><TD>SGX</TD><TD>(X) column の生デ−タの標準偏差</TD></TR>
-<TR><TD>SGY</TD><TD>(Y) column の生デ−タの標準偏差</TD></TR>
+<TR><TD>NUM</TD><TD>データの個数</TD></TR>
+<TR><TD>MINX</TD><TD>(X) column の生データの最小値</TD></TR>
+<TR><TD>MAXX</TD><TD>(X) column の生データの最大値</TD></TR>
+<TR><TD>MINY</TD><TD>(Y) column の生データの最小値</TD></TR>
+<TR><TD>MAXY</TD><TD>(Y) column の生データの最大値</TD></TR>
+<TR><TD>SUMX</TD><TD>(X) column の生データの和</TD></TR>
+<TR><TD>SUMY</TD><TD>(Y) column の生データの和</TD></TR>
+<TR><TD>SUMXX</TD><TD>(X) column の生データの二乗和</TD></TR>
+<TR><TD>SUMYY</TD><TD>(Y) column の生データの二乗和</TD></TR>
+<TR><TD>SUMXY</TD><TD>(X) column, (Y) column の生データの積和</TD></TR>
+<TR><TD>AVX</TD><TD>(X) column の生データの平均</TD></TR>
+<TR><TD>AVY</TD><TD>(Y) column の生データの平均</TD></TR>
+<TR><TD>SGX</TD><TD>(X) column の生データの標準偏差</TD></TR>
+<TR><TD>SGY</TD><TD>(Y) column の生データの標準偏差</TD></TR>
 <TR><TD>FIRST</TD><TD>diagonal, errorbar など一行のデータで2回の変換が行われる場合、1回目の呼出しで真(=1)、2回目の呼出しで偽(=0)</TD></TR>
 </TABLE>
 </BLOCKQUOTE>
@@ -96,12 +96,12 @@
 <BR>
 <BLOCKQUOTE>
 <TABLE BORDER=1>
-<TR><TD>X</TD><TD>(X)column の生のデ−タ</TD></TR>
-<TR><TD>Y</TD><TD>(Y)column の生のデ−タ</TD></TR>
-<TR><TD>%0</TD><TD>デ−タを読み込んだ順番に1から番号をつけたときの値</TD></TR>
-<TR><TD>%1〜%999</TD><TD>同一行中 1〜999 カラムの生デ−タ</TD></TR>
+<TR><TD>X</TD><TD>(X)column の生のデータ</TD></TR>
+<TR><TD>Y</TD><TD>(Y)column の生のデータ</TD></TR>
+<TR><TD>%0</TD><TD>データを読み込んだ順番に1から番号をつけたときの値</TD></TR>
+<TR><TD>%1〜%999</TD><TD>同一行中 1〜999 カラムの生データ</TD></TR>
 <TR><TD>%D</TD><TD>データファイルの番号</TD></TR>
-<TR><TD>%Fxx1〜%Fxx999</TD><TD>データファイル xx の同じ行の 1〜999 カラムの生デ−タ</TD></TR>
+<TR><TD>%Fxx1〜%Fxx999</TD><TD>データファイル xx の同じ行の 1〜999 カラムの生データ</TD></TR>
 </TABLE>
 </BLOCKQUOTE>
 
@@ -173,18 +173,18 @@
 <TABLE BORDER=1>
 <TR><TD>RAND(x)</TD><TD>0≦RAND(x)＜x (x＞0のとき)の乱数</TD></TR>
 <TR><TD>THETA(x)</TD><TD>階段関数(x≧0 のとき 1,  それ以外は 0 )</TD></TR>
-<TR><TD>DELTA(x)</TD><TD>クロネッカ−のδ(x=0 のとき 1, それ以外は 0)</TD></TR>
+<TR><TD>DELTA(x)</TD><TD>クロネッカーのδ(x=0 のとき 1, それ以外は 0)</TD></TR>
 <TR><TD>GAMMA(x)</TD><TD>ガンマ関数 Γ(x)</TD></TR>
 <TR><TD>ICGAM(m,x)</TD><TD>不完全ガンマ関数 Γ(μ,x)</TD></TR>
 <TR><TD>ERFC(x)</TD><TD>誤差関数 Erfc(x)</TD></TR>
 <TR><TD>QINV(x)</TD><TD>誤差関数 Erfc(x) の逆関数</TD></TR>
 <TR><TD>EI(x)</TD><TD>積分指数関数 Ei(x)</TD></TR>
-<TR><TD>BETA(x,y)</TD><TD>ベ−タ関数 B(p,q)</TD></TR>
+<TR><TD>BETA(x,y)</TD><TD>ベータ関数 B(p,q)</TD></TR>
 <TR><TD>JN(n,x)</TD><TD>第1種n次ベッセル関数</TD></TR>
 <TR><TD>YN(n,x)</TD><TD>第2種n次ベッセル関数</TD></TR>
 <TR><TD>PN(n,x)</TD><TD>ルジャンドル多項式</TD></TR>
-<TR><TD>LGN(n,a,x)</TD><TD>ラゲ−ル倍多項式</TD></TR>
-<TR><TD>HN(n,x)</TD><TD>エルミ−ト多項式</TD></TR>
+<TR><TD>LGN(n,a,x)</TD><TD>ラゲール倍多項式</TD></TR>
+<TR><TD>HN(n,x)</TD><TD>エルミート多項式</TD></TR>
 <TR><TD>TN(n,x)</TD><TD>チェビシフ多項式</TD></TR>
 <TR><TD>MJD(year,month,day)</TD><TD>修正ユリウス日(year, month, day はグレゴリオ暦)</TD></TR>
 </TABLE>
@@ -207,8 +207,8 @@
 <TABLE BORDER=1>
 <TR><TD>SUM(x)</TD><TD>積算(一つの数式で 10 個まで)</TD></TR>
 <TR><TD>DIF(x)</TD><TD>差分(一つの数式で 10 個まで)</TD></TR>
-<TR><TD>M(n,x)</TD><TD>引数を第nメモリ−に代入する(n=0〜19)</TD></TR>
-<TR><TD>RM(n)</TD><TD>現在の第nメモリ−の値(n=0〜19)</TD></TR>
+<TR><TD>M(n,x)</TD><TD>引数を第nメモリーに代入する(n=0〜19)</TD></TR>
+<TR><TD>RM(n)</TD><TD>現在の第nメモリーの値(n=0〜19)</TD></TR>
 <TR><TD>F(x,y,z)</TD><TD>ユーザ定義関数</TD></TR>
 <TR><TD>G(x,y,z)</TD><TD>ユーザ定義関数</TD></TR>
 <TR><TD>H(x,y,z)</TD><TD>ユーザ定義関数</TD></TR>
@@ -271,7 +271,7 @@ M(0,...式...)= ... RM(0) .... =
 <BR>
 <BR>
 M() はメモリへの代入、RM() は読みだしです。
-またメモリはデ−タファイル先頭から最後まで有効です(ただし，X, Yの変換式で独立)。
+またメモリはデータファイル先頭から最後まで有効です(ただし，X, Yの変換式で独立)。
 例えば
 <BLOCKQUOTE>
 M(0,RM(0)+Y)=
@@ -284,7 +284,7 @@ M(0,RM(0)+Y)=
 <BR>
 <BR>
 関数 DIF() は微分でなく差分を返す関数です。
-現在のデ−タがデ−タファイル中 n 番目としそれを Y(n) で表すとすると
+現在のデータがデータファイル中 n 番目としそれを Y(n) で表すとすると
 <BLOCKQUOTE>
 DIF(Y)=Y(n) - Y(n-1)
 </BLOCKQUOTE>
@@ -300,22 +300,22 @@ DIF(Y)/DIF(X)は {Y(n)-Y(n-1)} / {X(n)-X(n-1)} になります。
 <BLOCKQUOTE>
 X-DIF(X)*0.5
 </BLOCKQUOTE>
-としてXを"現在のデ−タと一つ前のデ−タの中間値"としておいた方がより真に近いグラフが得られると思われます。
+としてXを"現在のデータと一つ前のデータの中間値"としておいた方がより真に近いグラフが得られると思われます。
 <BLOCKQUOTE>
 X変換式: X-DIF(X)*0.5 (これは { X(n-1)+X(n) }*0.5 になります)<BR>
 Y変換式: DIF(Y)/DIF(X) (これは { Y(n)-Y(n-1) } / { X(n)-X(n-1) } になります)
 </BLOCKQUOTE>
 <BLOCKQUOTE>
-DIF()  は現在のデ−タと一つ前のデ−タとの差分を返しますから、Y-DIF(Y) とすることで一つ前のデ−タを取り出すことができます。
-同様に Y-DIF(Y)-DIF(Y-DIF(Y)) で2つ前のデ−タを取り出すことができます。
- Y-DIF(Y)-DIF(Y-DIF(Y))-DIF(Y-DIF(Y)-DIF(Y-DIF(Y)))は3つ前のデ−タです．
+DIF()  は現在のデータと一つ前のデータとの差分を返しますから、Y-DIF(Y) とすることで一つ前のデータを取り出すことができます。
+同様に Y-DIF(Y)-DIF(Y-DIF(Y)) で2つ前のデータを取り出すことができます。
+ Y-DIF(Y)-DIF(Y-DIF(Y))-DIF(Y-DIF(Y)-DIF(Y-DIF(Y)))は3つ前のデータです．
 </BLOCKQUOTE>
 <BLOCKQUOTE>
-一番初めの DIF() の戻り値は"不定"です．このため，式全体の値も"不定"となり、結果としてデ−タの個数は1つ減ります(一番初めのデ−タに差分は存在しない)。
+一番初めの DIF() の戻り値は"不定"です．このため，式全体の値も"不定"となり、結果としてデータの個数は1つ減ります(一番初めのデータに差分は存在しない)。
 また DIF() をいくつも含む式では、全ての DIF() が初期化されるまで式全体の値は"不定"です。
-例えば DIF() をネストして DIF(DIF()) のように使った場合、一番初めのデ−タでは内側の DIF() が初期化されその戻り値は不定の為、外側の DIF() の初期化は行われません。
-外側の DIF() が初期化されるのは 2番目のデ−タの時です。
-従ってデ−タの個数は2つ減ることになります。
+例えば DIF() をネストして DIF(DIF()) のように使った場合、一番初めのデータでは内側の DIF() が初期化されその戻り値は不定の為、外側の DIF() の初期化は行われません。
+外側の DIF() が初期化されるのは 2番目のデータの時です。
+従ってデータの個数は2つ減ることになります。
 </BLOCKQUOTE>
 <BR>
 <BR>
@@ -324,7 +324,7 @@ DIF()  は現在のデ−タと一つ前のデ−タとの差分を返します�
 <BR>
 <BR>
 関数 SUM() は積算を返す関数です。
-現在のデ−タが n 番目としそれを Y(n) で表すとすると
+現在のデータが n 番目としそれを Y(n) で表すとすると
 <BLOCKQUOTE>
 SUM(Y)=Σ Y(n) (n=1..n)
 </BLOCKQUOTE>
@@ -369,7 +369,7 @@ IF( LT(x,0), 0, SQRT(x) )
 <BLOCKQUOTE>
 IF( EQ(%00,1), M(0,値), ...式... )
 </BLOCKQUOTE>
-のような使い方をしたとき  M(0,値) は EQ(%00,1) が真のとき(すなわちデ−タの最初)だけ実行されるので、メモリ関数の初期化に使えます。
+のような使い方をしたとき  M(0,値) は EQ(%00,1) が真のとき(すなわちデータの最初)だけ実行されるので、メモリ関数の初期化に使えます。
 <BR>
 <BR>
 
