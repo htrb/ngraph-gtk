@@ -5,7 +5,6 @@
 	(enum): add error identifier.
 	(menuinit): call "error()" when "OpenApplication()" returns FALSE.
 
-
 	* src/gtk/ox11dlg.c (dlginit): call "error()" when
 	"OpenApplication()" returns FALSE.
 
