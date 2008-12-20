@@ -1,3 +1,14 @@
+2008-12-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (menuerrorlist): add message "cannot open
+	display.".
+	(enum): add error identifier.
+	(menuinit): call "error()" when "OpenApplication()" returns FALSE.
+
+
+	* src/gtk/ox11dlg.c (dlginit): call "error()" when
+	"OpenApplication()" returns FALSE.
+
 2008-12-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (set_data_progress): check if "frac" is greater than

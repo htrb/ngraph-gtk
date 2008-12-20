@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.35 2008/12/17 06:15:45 hito Exp $
+ * $Id: ox11menu.c,v 1.36 2008/12/20 02:10:42 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -64,12 +64,21 @@
 #define MGTKCONF "[x11menu]"
 #define G2WINCONF "[gra2gtk]"
 
-#define ERRNUM 3
 
-static char *menuerrorlist[ERRNUM] = {
+static char *menuerrorlist[] = {
   "already running.",
   "not enough color cell.",
   "cannot create font. Check `windowfont' resource.",
+  "cannot open display.",
+};
+
+#define ERRNUM (sizeof(menuerrorlist) / sizeof(*menuerrorlist))
+
+enum {
+  ERR_MENU_RUN = 100,
+  ERR_MENU_COLOR,
+  ERR_MENU_FONT,
+  ERR_MENU_DISPLAY,
 };
 
 extern int OpenApplication();
@@ -838,8 +847,10 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Mxlocal->gc = NULL;
   Mxlocal->lock = 0;
 
-  if (!OpenApplication())
+  if (!OpenApplication()) {
+    error(obj, ERR_MENU_DISPLAY);
     goto errexit;
+  }
 
   return 0;
 
@@ -1017,7 +1028,7 @@ menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
   if (Mxlocal->lock) {
-    error(obj, ERRRUN);
+    error(obj, ERR_MENU_RUN);
     return 1;
   }
   Mxlocal->lock = 1;

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.7 2008/12/17 06:15:45 hito Exp $
+ * $Id: ox11dlg.c,v 1.8 2008/12/20 02:10:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,12 +46,12 @@
 #define ERRDISPLAY 100
 #define ERRNODLGINST 101
 
-#define ERRNUM 2
-
-char *dlgerrorlist[ERRNUM] = {
+char *dlgerrorlist[] = {
   "cannot open display.",
   "no instance for dialog",
 };
+
+#define ERRNUM (sizeof(dlgerrorlist) / sizeof(*dlgerrorlist))
 
 GtkWidget *DLGTopLevel = NULL;
 
@@ -72,6 +72,7 @@ dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   if (!OpenApplication()) {
+    error(obj, ERRDISPLAY);
     return 1;
   }
 
