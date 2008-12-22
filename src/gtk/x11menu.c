@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.50 2008/12/18 08:46:57 hito Exp $
+ * $Id: x11menu.c,v 1.51 2008/12/22 06:30:54 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1656,6 +1656,9 @@ init_ngraph_app_struct(void)
   NgraphApp.x_math_list = NULL;
   NgraphApp.y_math_list = NULL;
   NgraphApp.func_list = NULL;
+
+  NgraphApp.Changed = FALSE;
+  NgraphApp.Interrupt = FALSE;
 }
 
 void

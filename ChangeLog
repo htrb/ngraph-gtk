@@ -1,7 +1,21 @@
 2008-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* addin/math.nsc: set +e and check return value of dexpr.
+
+	* src/gtk/x11dialg.h (struct MiscDialog): add menber "Obj" and
+	"Id".
+
+	* src/gtk/x11menu.c (init_ngraph_app_struct): initialize
+	"NgraphApp.Changed" and "NgraphApp.Interrupt".
+
+	* src/gtk/x11menu.h (struct NgraphApp): remove unused member
+	"interrupt".
+
 	* src/gtk/x11opt.c (ViewerDialogClose): call "putobj()" to set
 	"redraw_num" field.
+	(MiscDialog): add argument "struct objlist *obj" and "int id".
+	(CmOptionMisc): add argument to call "MiscDialog()".
+	(MiscDialogClose): call "putobj()" to save "data_head_lines".
 
 	* src/gtk/ox11menu.c (gtkmenu): type of "redraw_num" field is
 	"NINT".

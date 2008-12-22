@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.37 2008/12/22 02:32:00 hito Exp $
+ * $Id: ox11menu.c,v 1.38 2008/12/22 06:30:54 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1066,8 +1066,11 @@ mxredraw_num(struct objlist *obj, char *inst, char *rval, int argc,
 
   n = *(int *) argv[2];
 
-  if (n >= 0)
-    Mxlocal->redrawf_num = n;
+  n = (n < 0) ? 0: n;
+
+  Mxlocal->redrawf_num = n;
+
+  *(int *) argv[2] = n;
 
   return 0;
 }

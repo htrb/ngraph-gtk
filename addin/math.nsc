@@ -2,10 +2,16 @@
 #
 # Line-calculator using shell-builtin command "dexpr".
 #
+set +e
 new dialog
 MATH=${dialog::input:'Input mathematical expression'}
 if [ "$MATH" ]
 then
-  dialog::message:"$MATH="`dexpr "$MATH"`
+    if result=`dexpr "$MATH"`
+    then
+	dialog::message:"$MATH=$result"
+    else
+	dialog::message:"error: $MATH"
+    fi
 fi
 del dialog

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.23 2008/12/22 02:32:00 hito Exp $
+ * $Id: x11opt.c,v 1.24 2008/12/22 06:30:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1366,16 +1366,19 @@ MiscDialogClose(GtkWidget *w, void *data)
   Menulocal.bg_g = color.green / 256;
   Menulocal.bg_b = color.blue / 256;
 
-  Mxlocal->data_head_lines = spin_entry_get_val(d->data_head_lines);
+  a = spin_entry_get_val(d->data_head_lines);
+  putobj(d->Obj, "data_head_lines", d->Id, &a);
 
   d->ret = ret;
 }
 
 void
-MiscDialog(struct MiscDialog *data)
+MiscDialog(struct MiscDialog *data, struct objlist *obj, int id)
 {
   data->SetupWindow = MiscDialogSetup;
   data->CloseWindow = MiscDialogClose;
+  data->Obj = obj;
+  data->Id = id;
 }
 
 static void
@@ -1586,16 +1589,13 @@ ViewerDialogClose(GtkWidget *w, void *data)
   a = a ? TRUE : FALSE;
   if (putobj(d->Obj, "auto_redraw", d->Id, &a) == -1)
     return;
-  Mxlocal->autoredraw = a;
 
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->loadfile));
   a = a ? TRUE : FALSE;
   if (putobj(d->Obj, "redraw_flag", d->Id, &a) == -1)
     return;
-  Mxlocal->redrawf = a;
 
   a = spin_entry_get_val(d->data_num);
-  Mxlocal->redrawf_num = a;
   if (putobj(d->Obj, "redraw_num", d->Id, &a) == -1)
     return;
 
@@ -1693,7 +1693,7 @@ CmOptionMisc(void)
 {
   if (Menulock || GlobalLock)
     return;
-  MiscDialog(&DlgMisc);
+  MiscDialog(&DlgMisc, Menulocal.obj, 0);
   DialogExecute(TopLevel, &DlgMisc);
 }
 
