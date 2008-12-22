@@ -39,5 +39,6 @@ then
     text::jfont=$JFONT
     text::direction=$DIR
   done
+  menu::modified=TRUE
   file:0:closedata
 fi

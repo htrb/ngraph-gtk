@@ -251,6 +251,7 @@ proc makescript { f gx gy height cap val} {
     puts $f "int:texttot:@=\${int:textlen:@}"
     puts $f "fi"
   }
+  puts $f "menu::modified=TRUE"
 }
 
 proc savescript {} {

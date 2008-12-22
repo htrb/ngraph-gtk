@@ -35,4 +35,5 @@ then
     del gra
   fi
   menu:0:clear
+  menu:0:modified=TREU
 fi

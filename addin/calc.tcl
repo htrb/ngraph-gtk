@@ -98,10 +98,11 @@ proc savescript {} {
   if { $script != "" } {
     set f [ open $script w ]
     puts $f "new file"
-    puts $f "file::file=$output"    
+    puts $f "file::file=$output"
     puts $f "file::head_skip=2"
     puts $f "file::type=line"
     puts $f "file::math_y='$formula'"
+    puts $f "menu::modified=true"
     close $f
   }
 }

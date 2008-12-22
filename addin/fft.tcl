@@ -63,6 +63,7 @@ proc savescript {} {
     puts $f "file::y=2"
     puts $f "file::type=staircase_x"
     puts $f "file::math_y='SQRT(%02^2+%03^2)'"
+    puts $f "menu::modified=TRUE"
     close $f
   }
 }
