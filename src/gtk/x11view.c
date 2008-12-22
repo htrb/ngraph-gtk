@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.76 2008/12/18 07:12:13 hito Exp $
+ * $Id: x11view.c,v 1.77 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -196,7 +196,7 @@ graph_dropped(char *fname)
   }
 
   if (load) {
-    NgraphApp.Changed = FALSE;
+    reset_graph_modified();
     CmViewerDrawB(NULL, NULL);
     return 0;
   }
@@ -220,7 +220,7 @@ new_merge_obj(char *name, struct objlist *obj)
   if ((ret == IDDELETE) || (ret == IDCANCEL)) {
     delobj(obj, id);
   } else {
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   return 0;
@@ -261,7 +261,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0)
     } else {
       if (ret == IDFAPPLY)
 	*id0 = id;
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     }
   }
 
@@ -414,7 +414,7 @@ text_dropped(char *str, gint x, gint y, struct Viewer *d)
     d->allclear = FALSE;
     AddList(obj, inst);
     AddInvalidateRect(obj, inst);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
     UpdateAll();
   }
   PaintLock = FALSE;
@@ -858,7 +858,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
     if (ret2 == IDDELETE) {
       FitDel(fileobj, id);
       delobj(fileobj, id);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
       for (j = i + 1; j < dnum; j++) {
 	if (ddata[j] > id) {
 	  ddata[j] = ddata[j] - 1;
@@ -982,16 +982,16 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
 	if (masknum == 0 || (* (int *) arraynget(mask, masknum - 1)) < EvalList[sel].line) {
 	  arrayadd(mask, &(EvalList[sel].line));
 	  exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	} else if ((* (int *) arraynget(mask, 0)) > EvalList[sel].line) {
 	  arrayins(mask, &(EvalList[sel].line), 0);
 	  exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	} else {
 	  if (bsearch_int(arraydata(mask), masknum, EvalList[sel].line, &j) == 0) {
 	    arrayins(mask, &(EvalList[sel].line), j);
 	    exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
-	    NgraphApp.Changed = TRUE;
+	    set_graph_modified();
 	  }
 	}
       }
@@ -1101,7 +1101,7 @@ Trimming(int x1, int y1, int x2, int y2)
 	  argv[2] = (char *) &room;
 	  argv[3] = NULL;
 	  exeobj(obj, "scale", id, 3, argv);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	}
       }
     }
@@ -1642,7 +1642,7 @@ AlignFocusedObj(int align)
       
     _exeobj(focus[i]->obj, "move", inst, 2, argv);
       
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
     AddInvalidateRect(focus[i]->obj, inst);
   }
   PaintLock = FALSE;
@@ -2206,12 +2206,12 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
       arrayadd(move, &(EvalList[sel].line));
       arrayadd(movex, &dx);
       arrayadd(movey, &dy);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     } else {
       arrayput(move, &(EvalList[sel].line), j);
       arrayput(movex, &dx, j);
       arrayput(movey, &dy, j);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     }
   }
 
@@ -2475,7 +2475,7 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
       if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
 	AddInvalidateRect(obj, inst);
 	_exeobj(obj, "move", inst, 2, argv);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
 	AddInvalidateRect(obj, inst);
       }
     }
@@ -2552,7 +2552,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
     if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
       AddInvalidateRect(obj, inst);
       _exeobj(obj, "zooming", inst, 4, argv);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
       AddInvalidateRect(obj, inst);
     }
   }
@@ -2614,7 +2614,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
       AddInvalidateRect(obj, inst);
       _exeobj(obj, "change", inst, 3, argv);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
       AddInvalidateRect(obj, inst);
     }
 
@@ -2834,7 +2834,7 @@ create_legend1(struct Viewer *d, GdkGC *dc)
       } else {
 	AddList(obj, inst);
 	AddInvalidateRect(obj, inst);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       }
       PaintLock = FALSE;
     }
@@ -2897,7 +2897,7 @@ create_legend2(struct Viewer *d, GdkGC *dc)
 	} else {
 	  AddList(obj, inst);
 	  AddInvalidateRect(obj, inst);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	}
 
 	PaintLock = FALSE;
@@ -2975,7 +2975,7 @@ create_legend3(struct Viewer *d, GdkGC *dc)
 	} else {
 	  AddList(obj, inst);
 	  AddInvalidateRect(obj, inst);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	}
 	PaintLock = FALSE;
       }
@@ -3036,7 +3036,7 @@ create_legendx(struct Viewer *d, GdkGC *dc)
 	  } else {
 	    AddList(obj, inst);
 	    AddInvalidateRect(obj, inst);
-	    NgraphApp.Changed = TRUE;
+	    set_graph_modified();
 	  }
 	}
 	PaintLock = FALSE;
@@ -3108,7 +3108,7 @@ create_single_axis(struct Viewer *d, GdkGC *dc)
 	  delobj(obj, id);
 	} else {
 	  AddList(obj, inst);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	}
       }
     }
@@ -3267,7 +3267,7 @@ create_axis(struct Viewer *d, GdkGC *dc)
 	    AddList(obj2, inst);
 
 	}
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       }
     }
   }
@@ -4200,7 +4200,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
       if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
 	AddInvalidateRect(obj, inst);
 	_exeobj(obj, "move", inst, 2, argv);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
 	AddInvalidateRect(obj, inst);
       }
     }
@@ -5135,7 +5135,7 @@ ViewUpdate(void)
 
 	  if (ret == IDDELETE) {
 	    AxisDel(id);
-	    NgraphApp.Changed = TRUE;
+	    set_graph_modified();
 	    arrayndel2(d->focusobj, i);
 	  }
 
@@ -5157,7 +5157,7 @@ ViewUpdate(void)
 
 	  if (ret == IDDELETE) {
 	    AxisDel(aid);
-	    NgraphApp.Changed = TRUE;
+	    set_graph_modified();
 	    arrayndel2(d->focusobj, i);
 	  }
 	}
@@ -5167,7 +5167,7 @@ ViewUpdate(void)
 
 	if (ret == IDDELETE) {
 	  AxisDel(id);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	  arrayndel2(d->focusobj, i);
 	}
       }
@@ -5201,7 +5201,7 @@ ViewUpdate(void)
       }
 
       if (ret == IDDELETE) {
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
 	delobj(obj, id);
       }
 
@@ -5272,7 +5272,7 @@ ViewDelete(void)
     } else {
       delobj(obj, id);
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
   PaintLock = FALSE;
 
@@ -5335,7 +5335,7 @@ reorder_object(enum object_move_type type)
     break;
   }
   AddList(obj, inst);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
   d->allclear = TRUE;
   UpdateAll();
 }
@@ -5464,7 +5464,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
 	_getobj(obj, "oid", inst2, &oidx);
 	AddList(obj, inst2);
 	AddInvalidateRect(obj, inst2);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       } else {
 	AddInvalidateRect(obj, inst);
       }
@@ -5475,7 +5475,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
 	_getobj(obj, "oid", inst2, &oidy);
 	AddList(obj, inst2);
 	AddInvalidateRect(obj, inst2);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       } else {
 	AddInvalidateRect(obj, inst);
       }
@@ -5492,7 +5492,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
 	}
 	AddList(obj, inst2);
 	AddInvalidateRect(obj, inst2);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       } else {
 	AddInvalidateRect(obj, inst);
       }
@@ -5533,7 +5533,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
 	AddList(obj, inst2);
 	AddInvalidateRect(obj, inst2);
 
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       } else {
 	AddInvalidateRect(obj, inst);
       }
@@ -5558,7 +5558,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
 	    }
 	  }
 	  AddList(dobj, inst2);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	}
       }
     } else if ((type == 'c') && findX && findY) {
@@ -5568,7 +5568,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
 	_getobj(obj, "oid", inst2, &oidx);
 	AddList(obj, inst2);
 	AddInvalidateRect(obj, inst2);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       } else {
 	AddInvalidateRect(obj, inst);
       }
@@ -5593,7 +5593,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
 	focus->oid = oidy;
 	AddList(obj, inst2);
 	AddInvalidateRect(obj, inst2);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
 
       } else {
 	AddInvalidateRect(obj, inst);
@@ -5619,7 +5619,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
       _getobj(obj, "oid", inst2, &(focus->oid));
       AddList(obj, inst2);
       AddInvalidateRect(obj, inst2);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     } else {
       AddInvalidateRect(obj, inst);
     }
@@ -5676,7 +5676,7 @@ ViewCopy(void)
 	_getobj(obj, "oid", inst2, &(focus->oid));
 	AddList(obj, inst2);
 	AddInvalidateRect(obj, inst2);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       } else {
 	AddInvalidateRect(obj, inst);
       }

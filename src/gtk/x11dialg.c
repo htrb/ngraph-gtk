@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.26 2008/11/26 02:59:39 hito Exp $
+ * $Id: x11dialg.c,v 1.27 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -604,7 +604,7 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
     goto ErrEnd;
 
   free(buf);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
   return 0;
 
 
@@ -724,7 +724,7 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
       free(buf);
       return -1;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   memfree(obuf);
@@ -765,7 +765,7 @@ SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id,
     if (putobj(Obj, field, Id, &val) < 0) {
       return -1;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   return 0;
@@ -804,7 +804,7 @@ SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id,
     if (putobj(Obj, field, Id, &a) == -1){
       return -1;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   return 0;
@@ -860,7 +860,7 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 	free(buf);
 	return -1;
       }
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
       return 0;;
     }
   }
@@ -872,7 +872,7 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     }
   }
 
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
   free(buf);
   return 0;
 }
@@ -960,7 +960,7 @@ SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id,
     if (putobj(Obj, field, Id, &pos) == -1) {
       return -1;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   return 0;
@@ -1070,7 +1070,7 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
 
   if (obuf == NULL || strcmp(fcur->fontalias, obuf)) {
     sputobjfield(obj, id, name, fcur->fontalias);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   memfree(obuf);
@@ -1094,7 +1094,7 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
       memfree(obuf);
       return 1;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   } else {
     len = strlen(s) + 6;
     buf = (char *) memalloc(len);
@@ -1106,7 +1106,7 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
 	  memfree(buf);
 	  return 1;
 	}
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       }
       memfree(buf);
     }
@@ -1187,7 +1187,7 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
     if (putobj(obj, buf, id, &r) == -1) {
       return TRUE;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
 
@@ -1197,7 +1197,7 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
     if (putobj(obj, buf, id, &g) == -1) {
       return TRUE;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   snprintf(buf, sizeof(buf), "%sB%s", (prefix)? prefix: "", (postfix)? postfix: "");
@@ -1206,7 +1206,7 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
     if (putobj(obj, buf, id, &b) == -1) {
       return TRUE;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   return FALSE;

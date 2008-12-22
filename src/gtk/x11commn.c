@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.21 2008/12/22 01:47:21 hito Exp $
+ * $Id: x11commn.c,v 1.22 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -963,7 +963,7 @@ GraphSave(int overwrite)
       ResetStatusBar();
       SetFileName(file);
       SetCaption(file);
-      NgraphApp.Changed = FALSE;
+      reset_graph_modified();
     }
     free(file);
   }
@@ -1222,7 +1222,6 @@ FileAutoScale(void)
       }
     }
     if (! refother && (min == max || inc == 0)) {
-      NgraphApp.Changed = TRUE;
       exeobj(aobj, "auto_scale", i, 2, argv2);
     }
   }
@@ -1247,7 +1246,7 @@ CheckSave(void)
 {
   int ret;
 
-  if (NgraphApp.Changed) {
+  if (get_graph_modified()) {
     ret = MessageBox(TopLevel, _("This graph is modified.\nSave this graph?"),
 		     "Modified", MB_YESNOCANCEL);
     if (ret == IDYES) {

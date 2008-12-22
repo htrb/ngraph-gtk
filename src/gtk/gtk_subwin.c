@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.31 2008/12/16 07:05:13 hito Exp $
+ * $Id: gtk_subwin.c,v 1.32 2008/12/22 07:42:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -517,7 +517,7 @@ copy(struct SubWin *d)
     if (id >= 0) {
       obj_copy(d->obj, id, sel);
       d->num++;
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
       d->select = id;
       d->update(FALSE);
     }
@@ -546,7 +546,7 @@ delete(struct SubWin *d)
       d->select = sel;
     }
     d->update(update);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -563,7 +563,7 @@ move_top(struct SubWin *d)
     movetopobj(d->obj, sel);
     d->select = 0;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -579,7 +579,7 @@ move_last(struct SubWin *d)
     movelastobj(d->obj, sel);
     d->select = d->num;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -595,7 +595,7 @@ move_up(struct SubWin *d)
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -611,7 +611,7 @@ move_down(struct SubWin *d)
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -669,7 +669,7 @@ modify_numeric(struct SubWin *d, char *field, int val)
   if (putobj(d->obj, field, sel, &val) >= 0) {
     d->select = sel;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -706,7 +706,7 @@ modify_string(struct SubWin *d, char *field, char *str)
 
   d->select = sel;
   d->update(FALSE);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
 
  End:
   memfree(valstr);
@@ -730,7 +730,7 @@ hidden(struct SubWin *d)
     putobj(d->obj, "hidden", sel, &hidden);
     d->select = sel;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -908,7 +908,7 @@ tree_copy(struct LegendWin *d)
       d->legend_type = n;
       d->legend[n]++;
       d->update(FALSE);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     }
   }
 }
@@ -940,7 +940,7 @@ tree_delete(struct LegendWin *d)
       d->select = m;
     }
     d->update(update);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -960,7 +960,7 @@ tree_move_top(struct LegendWin *d)
     d->select = 0;
     d->legend_type = n;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -980,7 +980,7 @@ tree_move_last(struct LegendWin *d)
     d->select = d->legend[n];
     d->legend_type = n;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -1000,7 +1000,7 @@ tree_move_up(struct LegendWin *d)
     d->select = m - 1;
     d->legend_type = n;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -1020,7 +1020,7 @@ tree_move_down(struct LegendWin *d)
     d->select = m + 1;
     d->legend_type = n;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -1076,7 +1076,7 @@ tree_hidden(struct LegendWin *d)
     d->select = m;
     d->legend_type = n;
     d->update(FALSE);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 

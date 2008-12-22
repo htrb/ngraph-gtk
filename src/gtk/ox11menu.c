@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.38 2008/12/22 06:30:54 hito Exp $
+ * $Id: ox11menu.c,v 1.39 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -831,6 +831,10 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_putobj(obj, "redraw_num", inst, &(Mxlocal->redrawf_num)))
     goto errexit;
 
+  i = 0;
+  if (_putobj(obj, "modified", inst, &i))
+    goto errexit;
+
   if (!chkobjfield(obj, "_output")) {
     Menulocal.output = getobjtblpos(obj, "_output", &robj);
     if (Menulocal.output == -1)
@@ -950,6 +954,8 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (Mxlocal->pix)
     g_object_unref(Mxlocal->pix);
+
+  Menulocal.obj = NULL;
 
   return 0;
 }
@@ -1351,12 +1357,48 @@ mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
+int
+get_graph_modified(void)
+{
+  int a;
+
+  if (Menulocal.obj == NULL)
+    return FALSE;
+
+  getobj(Menulocal.obj, "modified", 0, 0, NULL, &a);
+
+  return a;
+}
+
+void
+set_graph_modified(void)
+{
+  int a = 1;
+
+  if (Menulocal.obj == NULL)
+    return;
+
+  putobj(Menulocal.obj, "modified", 0, &a);
+}
+
+void
+reset_graph_modified(void)
+{
+  int a = 0;
+
+  if (Menulocal.obj == NULL)
+    return;
+
+  putobj(Menulocal.obj, "modified", 0, &a);
+}
+
 static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
   {"done", NVFUNC, NEXEC, menudone, NULL, 0},
   {"menu", NVFUNC, NREAD | NEXEC, menumenu, NULL, 0},
   {"ngp", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"fullpath_ngp", NSTR, NREAD | NWRITE, mxfullpathngp, NULL, 0},
+  {"modified", NBOOL, NREAD | NWRITE, NULL, NULL, 0},
   {"dpi", NINT, NREAD | NWRITE, mxdpi, NULL, 0},
   {"auto_redraw", NBOOL, NREAD | NWRITE, mxautoredraw, NULL, 0},
   {"redraw_flag", NBOOL, NREAD | NWRITE, mxredrawflag, NULL, 0},

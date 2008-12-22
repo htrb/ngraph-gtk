@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.15 2008/12/22 06:30:54 hito Exp $
+ * $Id: x11menu.h,v 1.16 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -214,7 +214,6 @@ enum PointerType {
 struct NgraphApp
 {
   int Interrupt;
-  int Changed;
   char *FileName;
   GtkWidget *Message;
   guint Message1, Message2, Message3;

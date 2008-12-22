@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.6 2008/12/19 00:14:49 hito Exp $
+ * $Id: x11scrip.c,v 1.7 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -229,7 +229,6 @@ CmScriptExec(void)
 	FreeConsole(allocnow);
       GetPageSettingsFromGRA();
       UpdateAll2();
-      NgraphApp.Changed = TRUE;
     } else
       memfree(name);
     delobj(shell, newid);

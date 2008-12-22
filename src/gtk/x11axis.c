@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.32 2008/12/16 07:05:13 hito Exp $
+ * $Id: x11axis.c,v 1.33 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -471,7 +471,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
     }
   }
   SectionDialogSetupItem(d->widget, d);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
 }
 
 
@@ -2283,7 +2283,7 @@ CmAxisNewFrame(void)
     delobj(obj, idy);
     delobj(obj, idx);
   } else
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   AxisWinUpdate(TRUE);
 }
 
@@ -2349,7 +2349,7 @@ CmAxisNewSection(void)
     delobj(obj, idy);
     delobj(obj, idx);
   } else
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   AxisWinUpdate(TRUE);
 }
 
@@ -2391,7 +2391,7 @@ CmAxisNewCross(void)
     delobj(obj, idy);
     delobj(obj, idx);
   } else
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   AxisWinUpdate(TRUE);
 }
 
@@ -2411,7 +2411,7 @@ CmAxisNewSingle(void)
     if ((ret == IDDELETE) || (ret == IDCANCEL)) {
       delobj(obj, id);
     } else
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     AxisWinUpdate(TRUE);
   }
 }
@@ -2454,7 +2454,7 @@ CmAxisDel(void)
     return;
   }
   AxisDel(i);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
   AxisWinUpdate(TRUE);
   FileWinUpdate(TRUE);
 }
@@ -2523,7 +2523,7 @@ CmAxisZoom(void)
 	  argv[2] = (char *) &room;
 	  argv[3] = NULL;
 	  exeobj(obj, "scale", array[i], 3, argv);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	}
       }
       AxisWinUpdate(TRUE);
@@ -2580,7 +2580,7 @@ CmAxisClear(GtkWidget *w, gpointer p)
     for (i = 0; i < num; i++) {
       exeobj(obj, "scale_push", array[i], 0, NULL);
       exeobj(obj, "clear", array[i], 0, NULL);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     }
     AxisWinUpdate(TRUE);
   }
@@ -2622,7 +2622,7 @@ CmAxisGridNew(void)
     if ((ret == IDDELETE) || (ret == IDCANCEL)) {
       delobj(obj, id);
     } else
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
   }
 }
 
@@ -2646,7 +2646,7 @@ CmAxisGridDel(void)
     array = (int *) arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, array[i]);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     }
   }
   arraydel(&farray);
@@ -2675,7 +2675,7 @@ CmAxisGridUpdate(void)
       GridDialog(&DlgGrid, obj, array[i]);
       if ((ret = DialogExecute(TopLevel, &DlgGrid)) == IDDELETE) {
 	delobj(obj, array[i]);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
 	for (j = i + 1; j < num; j++)
 	  array[j]--;
       }
@@ -2845,7 +2845,7 @@ CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
     for (i = num - 1; i >= 0; i--) {
       argv[0] = NULL;
       exeobj(obj, "scale_pop", array[i], 0, argv);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     }
     AxisWinUpdate(TRUE);
   }
@@ -2939,7 +2939,7 @@ edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_da
     return;
 
   d->update(FALSE);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
 }
 
 void

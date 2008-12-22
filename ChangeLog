@@ -1,5 +1,65 @@
 2008-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (new_merge_obj, new_file_obj)
+	(text_dropped, ViewerWinFileUpdate, Evaluate, Trimming)
+	(AlignFocusedObj, mouse_down_move_data, mouse_up_drag)
+	(mouse_up_zoom, mouse_up_change, create_legend1, create_legend2)
+	(create_legend3, create_legendx, create_single_axis)
+	(create_axis, ViewerEvKeyUp, ViewUpdate, ViewDelete)
+	(reorder_object, ViewCopyAxis, ViewCopy): use
+	"set_graph_modified()".
+	(graph_dropped): use "reset_graph_modified()".
+
+	* src/gtk/x11merge.c (CmMergeOpen, CmMergeClose, CmMergeUpdate):
+	use "set_graph_modified()".
+
+	* src/gtk/x11lgnd.c (legend_dialog_close, CmLineDel)
+	(CmLineUpdate, CmCurveDel, CmCurveUpdate, CmPolyDel)
+	(CmPolyUpdate, CmRectDel, CmRectUpdate, CmArcDel, CmArcUpdate)
+	(CmMarkDel, CmMarkUpdate, CmTextDel, CmTextUpdate)
+	(LegendWinLegendUpdate): use "set_graph_modified()".
+
+	* src/gtk/x11graph.c (CmGraphSwitch, CmGraphPage): use
+	"set_graph_modified()".
+	(CmGraphLoad, CmGraphHistory): use "reset_graph_modified()".
+
+	* src/gtk/x11file.c (MathDialogList, FileMaskDialogClose)
+	(FileLoadDialogClose, FileDialogCopyAll, CmFileHistory)
+	(CmFileNew, CmFileOpen, CmFileClose, CmFileUpdate)
+	(FileWinFileDelete, file_obj_copy, FileWinFileUpdate)
+	(FileWinFileDraw, select_type, edited_axis): use
+	"set_graph_modified()".
+
+	* src/gtk/x11dialg.c (SetObjPointsFromText, SetObjFieldFromText)
+	(SetObjFieldFromSpin, SetObjFieldFromToggle)
+	(SetObjFieldFromStyle, SetObjFieldFromList)
+	(SetObjFieldFromFontList, SetObjAxisFieldFromWidget)
+	(_putobj_color): use "set_graph_modified()".
+
+	* src/gtk/x11commn.c (CheckSave): use "get_graph_modified()".
+	(GraphSave): use "reset_graph_modified()".
+
+	* src/gtk/x11axis.c (SectionDialogGrid, CmAxisNewFrame)
+	(CmAxisNewSection, CmAxisNewCross, CmAxisNewSingle, CmAxisDel)
+	(CmAxisZoom, CmAxisClear, CmAxisGridNew, CmAxisGridDel)
+	(CmAxisGridUpdate, AxisWinExpose, edited): use
+	"set_graph_modified()".
+
+	* src/gtk/ox11menu.h: add prototype of "get_graph_modified",
+	"reset_graph_modified" and "set_graph_modified".
+	
+
+	* src/gtk/ox11menu.c (get_graph_modified, reset_graph_modified)
+	(set_graph_modified): add
+	(menuinit): initialize "modified" field.
+	(gtkmenu): add "modified" field.
+
+	* src/gtk/gtk_subwin.c (copy, delete, move_top, move_last)
+	(move_up, move_down, modify_numeric, modify_string, hidden)
+	(tree_copy, tree_delete, tree_move_top, tree_move_last)
+	(tree_move_up, tree_move_down, tree_hidden): use
+	"set_graph_modified()".
+
 	* addin/math.nsc: set +e and check return value of dexpr.
 
 	* src/gtk/x11dialg.h (struct MiscDialog): add menber "Obj" and
@@ -19,9 +79,6 @@
 
 	* src/gtk/ox11menu.c (gtkmenu): type of "redraw_num" field is
 	"NINT".
-
-	* src/gtk/x11commn.c (FileAutoScale): set 'NgraphApp.Changed' as
-	'TRUE' when scale is changed.
 
 2008-12-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

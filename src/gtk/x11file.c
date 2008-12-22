@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.60 2008/12/19 11:03:15 hito Exp $
+ * $Id: x11file.c,v 1.61 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -293,7 +293,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
       sgetobjfield(d->Obj, a, field, NULL, &obuf, FALSE, FALSE, FALSE);
       if (obuf == NULL || strcmp(obuf, DlgMathText.math)) {
 	sputobjfield(d->Obj, a, field, DlgMathText.math);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       }
       memfree(obuf);
     }
@@ -1680,7 +1680,7 @@ FileMaskDialogClose(GtkWidget *w, void *data)
   }
   putobj(d->Obj, "mask", d->Id, mask);
   d->ret = ret;
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
 }
 
 void
@@ -1846,7 +1846,7 @@ FileLoadDialogClose(GtkWidget *w, void *data)
       memfree(s);
       return;
     }
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 
   memfree(obuf);
@@ -2351,7 +2351,7 @@ FileDialogCopyAll(struct FileDialog *d)
   }
   FitCopy(d->Obj, d->Id, sel);
   FileDialogSetupItem(d->widget, d, FALSE, d->Id);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
 }
 
 static void
@@ -2973,7 +2973,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
 	FitDel(obj, id);
 	delobj(obj, id);
       } else {
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       }
     }
   }
@@ -3012,7 +3012,7 @@ CmFileNew(void)
 	FitDel(obj, id);
 	delobj(obj, id);
       } else
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       FileWinUpdate(TRUE);
     }
     free(file);
@@ -3087,10 +3087,10 @@ CmFileOpen(void)
 	} else if (ret == IDFAPPLY) {
 	  id0 = id;
 	  id++;
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	} else {
 	  id++;
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	}
       }
       FileWinUpdate(TRUE);
@@ -3119,7 +3119,7 @@ CmFileClose(void)
     for (i = num - 1; i >= 0; i--) {
       FitDel(obj, array[i]);
       delobj(obj, array[i]);
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     }
     FileWinUpdate(TRUE);
   }
@@ -3170,14 +3170,14 @@ CmFileUpdate(void)
 	    copyobj(obj, field, array[i], array[id0]);
 	}
 	FitCopy(obj, array[i], array[id0]);
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       } else {
 	FileDialog(&DlgFile, obj, array[i], 0);
 	ret = DialogExecute(TopLevel, &DlgFile);
 	if (ret == IDDELETE) {
 	  FitDel(obj, array[i]);
 	  delobj(obj, array[i]);
-	  NgraphApp.Changed = TRUE;
+	  set_graph_modified();
 	  for (j = i + 1; j < num; j++)
 	    array[j]--;
 	} else if (ret == IDFAPPLY) {
@@ -3359,7 +3359,7 @@ FileWinFileDelete(struct SubWin *d)
       d->select = sel;
     }
     FileWinUpdate(update);
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -3404,7 +3404,7 @@ file_obj_copy(struct SubWin *d)
   }
   FitCopy(d->obj, id, sel);
   d->num++;
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
 
   return id;
 }
@@ -3475,7 +3475,7 @@ FileWinFileUpdate(struct SubWin *d)
       FitDel(d->obj, sel);
       delobj(d->obj, sel);
       d->select = -1;
-      NgraphApp.Changed = TRUE;
+      set_graph_modified();
     }
     d->update(FALSE);
   }
@@ -3497,7 +3497,7 @@ FileWinFileDraw(struct SubWin *d)
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       }
     }
     d->select = sel;
@@ -3507,7 +3507,7 @@ FileWinFileDraw(struct SubWin *d)
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
-	NgraphApp.Changed = TRUE;
+	set_graph_modified();
       }
     }
     d->select = -1;
@@ -4145,7 +4145,7 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   d->select = sel;
   d->update(FALSE);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
 }
 
 static void
@@ -4334,7 +4334,7 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
     return;
 
   d->update(FALSE);
-  NgraphApp.Changed = TRUE;
+  set_graph_modified();
 }
 
 static void 

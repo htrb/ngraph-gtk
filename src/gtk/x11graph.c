@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.26 2008/12/18 08:46:57 hito Exp $
+ * $Id: x11graph.c,v 1.27 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1144,13 +1144,13 @@ CmGraphLoad(void)
     ext = getextention(file);
     if (ext && ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0))) {
       LoadPrmFile(file);
-      NgraphApp.Changed = FALSE;
+      reset_graph_modified();
     } else {
       LoadDialog(&DlgLoad);
       if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
 	LoadNgpFile(file, DlgLoad.ignorepath, DlgLoad.expand,
 		    DlgLoad.exdir, Menulocal.scriptconsole, "-f");
-	NgraphApp.Changed = FALSE;
+	reset_graph_modified();
       }
       memfree(DlgLoad.exdir);
     }
@@ -1181,7 +1181,7 @@ CmGraphSwitch(void)
     return;
   SwitchDialog(&DlgSwitch);
   if (DialogExecute(TopLevel, &DlgSwitch) == IDOK) {
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
     ChangePage();
   }
 }
@@ -1196,7 +1196,7 @@ CmGraphPage(void)
     SetPageSettingsToGRA();
     ChangePage();
     GetPageSettingsFromGRA();
-    NgraphApp.Changed = TRUE;
+    set_graph_modified();
   }
 }
 
@@ -1281,7 +1281,7 @@ CmGraphHistory(GtkWidget *w, gpointer client_data)
     LoadNgpFile(data[fil], DlgLoad.ignorepath, DlgLoad.expand,
 		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
 
-    NgraphApp.Changed = FALSE;
+    reset_graph_modified();
   }
   memfree(DlgLoad.exdir);
 }

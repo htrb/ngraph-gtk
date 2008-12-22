@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.17 2008/12/12 09:27:03 hito Exp $
+ * $Id: ox11menu.h,v 1.18 2008/12/22 07:42:05 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -170,5 +170,8 @@ int mgtkinputyn(char *mes);
 void initwindowconfig(void);
 int mgtkwindowconfig(void);
 void menuadddrawrable(struct objlist *parent, struct narray *drawrable);
+int get_graph_modified(void);
+void set_graph_modified(void);
+void reset_graph_modified(void);
 
 #endif

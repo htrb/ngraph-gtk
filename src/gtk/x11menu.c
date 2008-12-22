@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.51 2008/12/22 06:30:54 hito Exp $
+ * $Id: x11menu.c,v 1.52 2008/12/22 07:42:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1657,7 +1657,6 @@ init_ngraph_app_struct(void)
   NgraphApp.y_math_list = NULL;
   NgraphApp.func_list = NULL;
 
-  NgraphApp.Changed = FALSE;
   NgraphApp.Interrupt = FALSE;
 }
 
@@ -1728,7 +1727,6 @@ application(char *file)
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
 
-  NgraphApp.Changed = FALSE;
   NgraphApp.FileName = NULL;
 
   ResetEvent();
