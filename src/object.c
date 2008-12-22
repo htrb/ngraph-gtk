@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.19 2008/12/18 07:12:12 hito Exp $
+ * $Id: object.c,v 1.20 2008/12/22 02:31:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2257,11 +2257,12 @@ int getobj(struct objlist *obj,char *vname,int id,
       memfree(argv2);
       return -1;
     }
-    for (i=0;i<argc;i++)
+    for (i=0;i<argc;i++) {
       if (arg_add(&argv2,((char **)argv)[i])==NULL) {
         memfree(argv2);
         return -1;
       }
+    }
     argc2=getargc(argv2);
     rcode=robj->table[idn].proc(robj,instcur,instcur+idp,argc2,argv2);
     memfree(argv2);

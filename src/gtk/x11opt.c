@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.22 2008/12/18 07:42:39 hito Exp $
+ * $Id: x11opt.c,v 1.23 2008/12/22 02:32:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1594,7 +1594,11 @@ ViewerDialogClose(GtkWidget *w, void *data)
     return;
   Mxlocal->redrawf = a;
 
-  Mxlocal->redrawf_num = spin_entry_get_val(d->data_num);
+  a = spin_entry_get_val(d->data_num);
+  Mxlocal->redrawf_num = a;
+  if (putobj(d->Obj, "redraw_num", d->Id, &a) == -1)
+    return;
+
   Mxlocal->grid = spin_entry_get_val(d->grid);
 
   d->ret = ret;

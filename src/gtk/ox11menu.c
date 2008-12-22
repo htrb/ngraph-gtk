@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.36 2008/12/20 02:10:42 hito Exp $
+ * $Id: ox11menu.c,v 1.37 2008/12/22 02:32:00 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1062,7 +1062,13 @@ static int
 mxredraw_num(struct objlist *obj, char *inst, char *rval, int argc,
 	     char **argv)
 {
-  Mxlocal->redrawf_num = *(int *) argv[2];
+  int n;
+
+  n = *(int *) argv[2];
+
+  if (n >= 0)
+    Mxlocal->redrawf_num = n;
+
   return 0;
 }
 
@@ -1351,7 +1357,7 @@ static struct objtable gtkmenu[] = {
   {"dpi", NINT, NREAD | NWRITE, mxdpi, NULL, 0},
   {"auto_redraw", NBOOL, NREAD | NWRITE, mxautoredraw, NULL, 0},
   {"redraw_flag", NBOOL, NREAD | NWRITE, mxredrawflag, NULL, 0},
-  {"redraw_num", NBOOL, NREAD | NWRITE, mxredraw_num, NULL, 0},
+  {"redraw_num", NINT, NREAD | NWRITE, mxredraw_num, NULL, 0},
   {"redraw", NVFUNC, NREAD | NEXEC, mxredraw, "", 0},
   {"draw", NVFUNC, NREAD | NEXEC, mxdraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},

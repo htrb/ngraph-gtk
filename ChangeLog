@@ -1,5 +1,11 @@
 2008-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (ViewerDialogClose): call "putobj()" to set
+	"redraw_num" field.
+
+	* src/gtk/ox11menu.c (gtkmenu): type of "redraw_num" field is
+	"NINT".
+
 	* src/gtk/x11commn.c (FileAutoScale): set 'NgraphApp.Changed' as
 	'TRUE' when scale is changed.
 
