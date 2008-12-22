@@ -1,3 +1,8 @@
+2008-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (FileAutoScale): set 'NgraphApp.Changed' as
+	'TRUE' when scale is changed.
+
 2008-12-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (menuerrorlist): add message "cannot open

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.20 2008/09/19 07:16:19 hito Exp $
+ * $Id: x11commn.c,v 1.21 2008/12/22 01:47:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1222,6 +1222,7 @@ FileAutoScale(void)
       }
     }
     if (! refother && (min == max || inc == 0)) {
+      NgraphApp.Changed = TRUE;
       exeobj(aobj, "auto_scale", i, 2, argv2);
     }
   }

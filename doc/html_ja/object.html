@@ -479,7 +479,7 @@ alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
 object id: 35
-number of fields: 33
+number of fields: 34
 size of instance: 200
 r--              id    int
 r--             oid    int
@@ -507,6 +507,7 @@ rw-     auto_redraw    bool
 rw-     redraw_flag    bool
 rw-      redraw_num    bool
 r-x          redraw    void( void )
+r-x            draw    void( void )
 r-x           flush    void( void )
 r-x           clear    void( void )
 r-x         focused    *char[]( )
