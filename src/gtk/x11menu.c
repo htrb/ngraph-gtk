@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.52 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11menu.c,v 1.53 2008/12/22 08:18:59 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2095,7 +2095,7 @@ ChkInterrupt(void)
   }
   gdk_event_free(e);
   if (NgraphApp.Interrupt) {
-    NgraphApp.Interrupt= FALSE;
+    NgraphApp.Interrupt = FALSE;
     return TRUE;
   }
 #else
