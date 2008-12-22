@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.22 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11commn.c,v 1.23 2008/12/22 09:08:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1654,7 +1654,6 @@ ProgressDialogCreate(char *title)
 
   hbox = gtk_hbox_new(FALSE, 4);
   btn = gtk_button_new_from_stock(GTK_STOCK_STOP);
-  g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
 
   gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
