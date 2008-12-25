@@ -1,3 +1,8 @@
+2008-12-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/.Ngraph: save paper size when new gra object is used to
+	create image file.
+
 2008-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (new_merge_obj, new_file_obj)

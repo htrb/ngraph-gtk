@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.32 2008/11/27 06:50:03 hito Exp $
+ * $Id: x11print.c,v 1.33 2008/12/25 05:12:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -972,12 +972,14 @@ CmOutputImage(int type)
   FileAutoScale();
   AdjustAxis();
 
-  if ((graobj = chkobject("gra")) == NULL) {
+  graobj = chkobject("gra");
+  if (graobj == NULL) {
     memfree(file);
     return;
   }
 
-  if ((g2wobj = chkobject("gra2cairofile")) == NULL) {
+  g2wobj = chkobject("gra2cairofile");
+  if (g2wobj == NULL) {
     memfree(file);
     return;
   }

@@ -7,6 +7,7 @@ clear_viewer() {
     done
     if exist gra:viewer > /dev/null
     then
+	
 	del gra:viewer
     fi
 }
@@ -22,6 +23,11 @@ save_image() {
     . $1
     new gra2cairofile name=OUTPUT
     new gra
+    if exist gra:viewer > /dev/null
+    then
+	gra:!:paper_width=${gra:viewer:paper_width}
+	gra:!:paper_height=${gra:viewer:paper_height}
+    fi
     gra2cairofile::format=$2
     gra2cairofile::file=$3
     gra::device=gra2cairofile:OUTPUT
@@ -204,6 +210,11 @@ do
 		. $2
 		new gra2prn name=OUTPUT
 		new gra
+		if exist gra:viewer > /dev/null
+		then
+		    gra:!:paper_width=${gra:viewer:paper_width}
+		    gra:!:paper_height=${gra:viewer:paper_height}
+		fi
 		gra2prn::driver=gra2ps
 		gra2prn::prn=" | lpr"
 		gra::device=gra2prn:OUTPUT

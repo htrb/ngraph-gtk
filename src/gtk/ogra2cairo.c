@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.31 2008/12/18 05:46:26 hito Exp $
+ * $Id: ogra2cairo.c,v 1.32 2008/12/25 05:12:42 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -584,49 +584,6 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *fon
   pango_layout_get_pixel_size(layout, &w, &h);
   piter = pango_layout_get_iter(layout);
   baseline = pango_layout_iter_get_baseline(piter) / PANGO_SCALE;
-
-#if 0
-  if (draw) {
-    double x, y;
-    PangoLayoutLine *pline;
-    PangoRectangle prect;
-    int ascent, descent, s = mxd2ph(local, size);
-
-    //    x = - local->fontsin * baseline;
-    //    y = - local->fontcos * baseline;
-
-    cairo_get_current_point(local->cairo, &x, &y);
-
-    cairo_save(local->cairo);
-
-    pline = pango_layout_get_line_readonly(layout, 0);
-    pango_layout_line_get_pixel_extents(pline, &prect, NULL);
-    ascent = PANGO_ASCENT(prect);
-    descent = PANGO_DESCENT(prect);
-
-    cairo_rectangle(local->cairo, x, y  - baseline, s, s);
-    cairo_stroke(local->cairo);
-
-    //    gdk_gc_set_rgb_fg_color(Mxlocal->gc, &red);
-    cairo_rectangle(local->cairo, x, y  - baseline, w, h);
-    cairo_stroke(local->cairo);
-
-    //    gdk_draw_line(Mxlocal->pix, Mxlocal->gc, x, y - baseline, x + w, y - baseline);
-
-    //    gdk_gc_set_rgb_fg_color(Mxlocal->gc, &blue);
-
-    cairo_rectangle(local->cairo, x + prect.x, y - ascent, prect.width, prect.height);
-    cairo_stroke(local->cairo);
-    //    gdk_draw_line(Mxlocal->pix, Mxlocal->gc, x + prect.x, y, x + prect.x + prect.width, y);
-
-    //    gdk_gc_set_rgb_fg_color(Mxlocal->gc, &black);
-
-    cairo_restore(local->cairo);
-
-    cairo_rel_move_to(local->cairo, x, y);
-  }
-
-#endif
 
   if (fw)
     *fw = w;
