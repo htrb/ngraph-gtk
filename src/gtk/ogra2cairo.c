@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.32 2008/12/25 05:12:42 hito Exp $
+ * $Id: ogra2cairo.c,v 1.33 2008/12/26 01:48:15 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -305,6 +305,7 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 
   local->cairo = NULL;
   local->fontalias = NULL;
+  local->layout = NULL;
   local->pixel_dot_x = 1;
   local->pixel_dot_y = 1;
   local->linetonum = 0;
@@ -345,6 +346,10 @@ gra2cairo_free(struct objlist *obj, char *inst)
 
   if (local->font_opt) {
     cairo_font_options_destroy(local->font_opt);
+  }
+
+  if (local->layout) {
+    g_object_unref(local->layout);
   }
 
   if (local->fontalias) {
@@ -549,7 +554,6 @@ loadfont(char *fontalias)
 static void
 draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *font, int size, int space, int *fw, int *ah, int *dh)
 {
-  PangoLayout *layout;
   PangoAttribute *attr;
   PangoAttrList *alist;
   PangoLayoutIter *piter;
@@ -567,7 +571,9 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *fon
     return;
   }
 
-  layout = pango_cairo_create_layout(local->cairo);
+  if (local->layout == NULL) {
+    local->layout = pango_cairo_create_layout(local->cairo);
+  }
 
   alist = pango_attr_list_new();
   attr = pango_attr_size_new_absolute(mxd2ph(local, size) * PANGO_SCALE);
@@ -576,13 +582,14 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *fon
   attr = pango_attr_letter_spacing_new(mxd2ph(local, space) * PANGO_SCALE);
   pango_attr_list_insert(alist, attr);
 
-  pango_layout_set_font_description(layout, font->font);
-  pango_layout_set_attributes(layout, alist);
+  pango_layout_set_font_description(local->layout, font->font);
+  pango_layout_set_attributes(local->layout, alist);
+  pango_attr_list_unref(alist);
 
-  pango_layout_set_text(layout, str, -1);
+  pango_layout_set_text(local->layout, str, -1);
 
-  pango_layout_get_pixel_size(layout, &w, &h);
-  piter = pango_layout_get_iter(layout);
+  pango_layout_get_pixel_size(local->layout, &w, &h);
+  piter = pango_layout_get_iter(local->layout);
   baseline = pango_layout_iter_get_baseline(piter) / PANGO_SCALE;
 
   if (fw)
@@ -606,22 +613,20 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *fon
 
     cairo_save(local->cairo);
     cairo_rotate(local->cairo, -local->fontdir * G_PI / 180.);
-    pango_cairo_update_layout(local->cairo, layout);
+    pango_cairo_update_layout(local->cairo, local->layout);
     if (local->text2path) {
-      pango_cairo_layout_path(local->cairo, layout);
+      pango_cairo_layout_path(local->cairo, local->layout);
       cairo_fill(local->cairo);
       cairo_restore(local->cairo);
       cairo_move_to(local->cairo, cx + w * local->fontcos, cy - w * local->fontsin);
     } else {
-      pango_cairo_show_layout(local->cairo, layout);
+      pango_cairo_show_layout(local->cairo, local->layout);
       cairo_restore(local->cairo);
       cairo_rel_move_to(local->cairo, w * local->fontcos - x, - w * local->fontsin - y);
     }
   }
 
   pango_layout_iter_free(piter);
-  pango_attr_list_unref(alist);
-  g_object_unref(layout);
 }
 
 static int

@@ -33,6 +33,7 @@ struct gra2cairo_config {
 struct gra2cairo_local {
   cairo_t *cairo;
   cairo_font_options_t *font_opt;
+  PangoLayout *layout;
   int linetonum, text2path, antialias;
   struct fontmap *loadfont;
   char *fontalias;

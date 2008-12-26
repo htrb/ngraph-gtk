@@ -1,7 +1,19 @@
+2008-12-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (draw_str): create PangoLayoute only when
+	"local->layout" is NULL.
+	(gra2cairo_init): initialize "local->layout".
+	(gra2cairo_free): unref "local->layout" if "local->layout" is not
+	NULL.
+
+	* src/gtk/ogra2cairo.h (struct gra2cairo_local): add member
+	"layout".
+
 2008-12-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/.Ngraph: save paper size when new gra object is used to
 	create image file.
+	add "-gra" option.
 
 2008-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

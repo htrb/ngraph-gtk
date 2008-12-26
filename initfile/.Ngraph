@@ -1,5 +1,13 @@
 # Ngraph initialization script
 
+check_file() {
+    if [ ! -f "$1" ]
+    then
+	echo "${system::name}: missing file operand"
+	del system:0
+    fi
+}
+
 clear_viewer() {
     for i in `derive -instance draw`
     do
@@ -7,27 +15,15 @@ clear_viewer() {
     done
     if exist gra:viewer > /dev/null
     then
-	
 	del gra:viewer
     fi
 }
 
 save_image() {
-    if [ ! -f "$1" ]
-    then
-	echo 'missing file operand'
-	return
-    fi
-
+    check_file $1
     clear_viewer
     . $1
     new gra2cairofile name=OUTPUT
-    new gra
-    if exist gra:viewer > /dev/null
-    then
-	gra:!:paper_width=${gra:viewer:paper_width}
-	gra:!:paper_height=${gra:viewer:paper_height}
-    fi
     gra2cairofile::format=$2
     gra2cairofile::file=$3
     gra::device=gra2cairofile:OUTPUT
@@ -195,6 +191,7 @@ do
 		del system:0
 	;;
 	-p)
+		check_file $2
 		clear_viewer
 		. $2
 		SHOW_DIALOG=2
@@ -206,15 +203,10 @@ do
 		del system:0
 	;;
 	-P)
+		check_file $2
 		clear_viewer
 		. $2
 		new gra2prn name=OUTPUT
-		new gra
-		if exist gra:viewer > /dev/null
-		then
-		    gra:!:paper_width=${gra:viewer:paper_width}
-		    gra:!:paper_height=${gra:viewer:paper_height}
-		fi
 		gra2prn::driver=gra2ps
 		gra2prn::prn=" | lpr"
 		gra::device=gra2prn:OUTPUT
@@ -241,6 +233,20 @@ do
 	;;
 	-svg)
 		save_image "$2" svg1.1 `basename $2 .ngp`.svg
+		del system:0
+	;;
+	-gra)
+		check_file $2
+		clear_viewer
+		. $2
+		new gra2file name=OUTPUT
+		gra2file::file=`basename $2 .ngp`.gra
+		gra::device=gra2file:OUTPUT
+		gra::open
+		gra::draw
+		gra::close
+		del gra
+		del gra2file
 		del system:0
 	;;
 	-h|-help|--help)
@@ -306,3 +312,9 @@ do
 	esac
 	shift
 done
+
+for i in check_file clear_viewer save_image check_set LOADSETTINGS
+do
+    unset $i
+done
+unset i
