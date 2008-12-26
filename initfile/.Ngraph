@@ -274,6 +274,7 @@ do
 		echo ' -ps                     save ps file'
 		echo ' -eps                    save eps file'
 		echo ' -svg                    save svg file'
+		echo ' -gra                    save gra file'
 		echo ' -n                      output ngp-file to stdout'
 		del system:0
 	;;
