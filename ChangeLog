@@ -1,5 +1,8 @@
 2008-12-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (get_mouse_cursor_type): bug fix: fix
+	conditions for "GDK_TOP_RIGHT_CORNER".
+
 	* src/gtk/ogra2cairo.c (draw_str): create PangoLayoute only when
 	"local->layout" is NULL.
 	(gra2cairo_init): initialize "local->layout".

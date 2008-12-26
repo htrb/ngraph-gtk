@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.77 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11view.c,v 1.78 2008/12/26 09:51:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3461,7 +3461,7 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
     cursor = GDK_TOP_LEFT_CORNER;
   } else if (x > x1 - 11 && x < x1 - 5 && y < y2 + 11 && y > y2 + 5){
     cursor = GDK_BOTTOM_LEFT_CORNER;
-  } else if (x > x1 + 11 && x > x1 + 5 && y > y1 - 11 && y < y1 - 5){
+  } else if (x < x2 + 11 && x > x2 + 5 && y > y1 - 11 && y < y1 - 5){
     cursor = GDK_TOP_RIGHT_CORNER;
   } else if (x < x2 + 11 && x > x2 + 5 && y < y2 + 11 && y > y2 + 5){
     cursor = GDK_BOTTOM_RIGHT_CORNER;
