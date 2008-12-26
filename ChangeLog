@@ -1,5 +1,13 @@
 2008-12-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (ShowFrameRect, ShowPoints, ShowFocusLine)
+	(ShowFocusFrame): do not call " gdk_gc_set_dashes()".
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogPaint): do not call
+	"gdk_gc_set_dashes()".
+
+	* src/gtk/x11dialg.c: remove variables "Dashes" and "DashesNum".
+
 	* src/gtk/x11view.c (get_mouse_cursor_type): bug fix: fix
 	conditions for "GDK_TOP_RIGHT_CORNER".
 

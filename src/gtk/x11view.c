@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.78 2008/12/26 09:51:16 hito Exp $
+ * $Id: x11view.c,v 1.79 2008/12/26 10:00:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1443,7 +1443,6 @@ ShowFocusFrame(GdkGC *gc)
 
   gdk_gc_set_rgb_fg_color(gc, &gray);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_gc_set_dashes(gc, 0, Dashes, 2);
   gdk_gc_set_function(gc, GDK_XOR);
 
   num = arraynum(d->focusobj);
@@ -1672,7 +1671,6 @@ ShowFocusLine(GdkGC *gc, int change)
   gdk_gc_set_rgb_fg_color(gc, &gray);
   gdk_gc_set_function(gc, GDK_XOR);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_gc_set_dashes(gc, 0, Dashes, 2);
   num = arraynum(d->focusobj);
 
   focus = (struct focuslist **) arraydata(d->focusobj);
@@ -1820,7 +1818,6 @@ ShowPoints(GdkGC *gc)
 
     if (num == 2) {
       gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-      gdk_gc_set_dashes(gc, 0, Dashes, 2);
 
       x1 = mxd2p(po[0]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
       y1 = mxd2p(po[0]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
@@ -1885,7 +1882,6 @@ ShowFrameRect(GdkGC *gc)
   gdk_gc_set_rgb_fg_color(gc, &gray);
   gdk_gc_set_function(gc, GDK_XOR);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_gc_set_dashes(gc, 0, Dashes, 2);
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
     x1 = mxd2p(d->MouseX1 * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;

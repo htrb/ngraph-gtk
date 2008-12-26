@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.27 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11dialg.c,v 1.28 2008/12/26 10:00:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -66,9 +66,6 @@ struct line_style FwLineStyle[] = {
 char *FwNumStyle[] =
   {N_("auto"), "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 int FwNumStyleNum = sizeof(FwNumStyle) / sizeof(*FwNumStyle);
-
-gint8 Dashes[] = { 2, 2 };
-int DashesNum = sizeof(Dashes) / sizeof(*Dashes);
 
 struct FileDialog DlgFile;
 struct FileDialog DlgFileDef;

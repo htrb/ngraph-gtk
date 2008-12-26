@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.11 2008/07/16 02:40:18 hito Exp $
+ * $Id: x11lgndx.c,v 1.12 2008/12/26 10:00:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -158,7 +158,6 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   gdk_gc_set_rgb_fg_color(gc, &black);
 
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_gc_set_dashes(gc, 0, Dashes, DashesNum);
   gdk_draw_rectangle(pix, gc, FALSE, minx, miny, maxx - minx, maxy - miny);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 

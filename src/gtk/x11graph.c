@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.27 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11graph.c,v 1.28 2008/12/26 10:00:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1240,8 +1240,6 @@ CmGraphShell(void)
 void
 CmGraphQuit(void)
 {
-  int quit = 0;
-
   if (Menulock || GlobalLock)
     return;
 
