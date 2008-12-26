@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.4 2008/12/18 05:46:26 hito Exp $
+ * $Id: omark.c,v 1.5 2008/12/26 10:16:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -221,6 +221,20 @@ int markgeometry(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
+int marktype(struct objlist *obj,char *inst,char *rval,
+	     int argc,char **argv)
+{
+  int type;
+
+  type = * (int *) (argv[2]);
+
+  if (type < 0 || type > 89) {
+    * (int *) (argv[2]) = 0;
+  }
+
+  return 0;
+}
+
 int markmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
@@ -269,7 +283,7 @@ struct objtable mark[TBLNUM] = {
   {"y",NINT,NREAD|NWRITE,markgeometry,NULL,0},
   {"size",NINT,NREAD|NWRITE,markgeometry,NULL,0},
 
-  {"type",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"type",NINT,NREAD|NWRITE,marktype,NULL,0},
   {"R2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"G2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
