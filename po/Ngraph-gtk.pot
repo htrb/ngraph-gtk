@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-14\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-12-20 11:11+0900\n"
+"POT-Creation-Date: 2008-12-26 22:36+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,7 +78,7 @@ msgid "Axis (_Y):"
 msgstr ""
 
 #: src/gtk/x11axis.c:287 src/gtk/x11axis.c:953 src/gtk/x11axis.c:1587
-#: src/gtk/x11axis.c:1725 src/gtk/x11lgnd.c:618 src/gtk/x11lgndx.c:409
+#: src/gtk/x11axis.c:1725 src/gtk/x11lgnd.c:618 src/gtk/x11lgndx.c:408
 msgid "_Color:"
 msgstr ""
 
@@ -127,11 +127,11 @@ msgid "_Baseline"
 msgstr ""
 
 #: src/gtk/x11axis.c:945 src/gtk/x11file.c:2650 src/gtk/x11lgnd.c:588
-#: src/gtk/x11lgndx.c:385
+#: src/gtk/x11lgndx.c:384
 msgid "Line _Style:"
 msgstr ""
 
-#: src/gtk/x11axis.c:949 src/gtk/x11file.c:2654 src/gtk/x11lgndx.c:391
+#: src/gtk/x11axis.c:949 src/gtk/x11file.c:2654 src/gtk/x11lgndx.c:390
 msgid "_Line Width:"
 msgstr ""
 
@@ -336,7 +336,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/gtk/x11commn.c:958 src/gtk/x11opt.c:1640
+#: src/gtk/x11commn.c:958 src/gtk/x11opt.c:1644
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -401,223 +401,223 @@ msgstr ""
 msgid "auto"
 msgstr ""
 
-#: src/gtk/x11dialg.c:131
+#: src/gtk/x11dialg.c:128
 msgid "data"
 msgstr ""
 
-#: src/gtk/x11dialg.c:133 src/gtk/x11dialg.c:137 src/gtk/x11dialg.c:193
+#: src/gtk/x11dialg.c:130 src/gtk/x11dialg.c:134 src/gtk/x11dialg.c:190
 msgid "mark selection"
 msgstr ""
 
-#: src/gtk/x11dialg.c:135
+#: src/gtk/x11dialg.c:132
 msgid "data default"
 msgstr ""
 
-#: src/gtk/x11dialg.c:139
+#: src/gtk/x11dialg.c:136
 msgid "evaluation"
 msgstr ""
 
-#: src/gtk/x11dialg.c:141 src/gtk/x11file.c:367
+#: src/gtk/x11dialg.c:138 src/gtk/x11file.c:367
 msgid "math"
 msgstr ""
 
-#: src/gtk/x11dialg.c:143
+#: src/gtk/x11dialg.c:140
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:145 src/ofile.c:136
+#: src/gtk/x11dialg.c:142 src/ofile.c:136
 msgid "fit"
 msgstr ""
 
-#: src/gtk/x11dialg.c:147
+#: src/gtk/x11dialg.c:144
 msgid "fit load"
 msgstr ""
 
-#: src/gtk/x11dialg.c:149
+#: src/gtk/x11dialg.c:146
 msgid "fit save"
 msgstr ""
 
-#: src/gtk/x11dialg.c:151
+#: src/gtk/x11dialg.c:148
 msgid "data move"
 msgstr ""
 
-#: src/gtk/x11dialg.c:153
+#: src/gtk/x11dialg.c:150
 msgid "data mask"
 msgstr ""
 
-#: src/gtk/x11dialg.c:155
+#: src/gtk/x11dialg.c:152
 msgid "data load"
 msgstr ""
 
-#: src/gtk/x11dialg.c:157
+#: src/gtk/x11dialg.c:154
 msgid "data math"
 msgstr ""
 
-#: src/gtk/x11dialg.c:159
+#: src/gtk/x11dialg.c:156
 msgid "Frame/Section Graph"
 msgstr ""
 
-#: src/gtk/x11dialg.c:161 src/gtk/x11menu.c:366
+#: src/gtk/x11dialg.c:158 src/gtk/x11menu.c:366
 msgid "Cross Graph"
 msgstr ""
 
-#: src/gtk/x11dialg.c:163
+#: src/gtk/x11dialg.c:160
 msgid "axis"
 msgstr ""
 
-#: src/gtk/x11dialg.c:165
+#: src/gtk/x11dialg.c:162
 msgid "grid"
 msgstr ""
 
-#: src/gtk/x11dialg.c:167
+#: src/gtk/x11dialg.c:164
 msgid "Scale Zoom"
 msgstr ""
 
-#: src/gtk/x11dialg.c:169
+#: src/gtk/x11dialg.c:166
 msgid "Axis Baseine"
 msgstr ""
 
-#: src/gtk/x11dialg.c:171
+#: src/gtk/x11dialg.c:168
 msgid "Axis Position"
 msgstr ""
 
-#: src/gtk/x11dialg.c:173
+#: src/gtk/x11dialg.c:170
 msgid "Axis Numbering"
 msgstr ""
 
-#: src/gtk/x11dialg.c:175
+#: src/gtk/x11dialg.c:172
 msgid "Axis Font"
 msgstr ""
 
-#: src/gtk/x11dialg.c:177
+#: src/gtk/x11dialg.c:174
 msgid "Axis Gauge"
 msgstr ""
 
-#: src/gtk/x11dialg.c:179
+#: src/gtk/x11dialg.c:176
 msgid "merge"
 msgstr ""
 
-#: src/gtk/x11dialg.c:181
+#: src/gtk/x11dialg.c:178
 msgid "legend curve"
 msgstr ""
 
-#: src/gtk/x11dialg.c:183
+#: src/gtk/x11dialg.c:180
 msgid "legend polygon"
 msgstr ""
 
-#: src/gtk/x11dialg.c:185
+#: src/gtk/x11dialg.c:182
 msgid "legend line"
 msgstr ""
 
-#: src/gtk/x11dialg.c:187
+#: src/gtk/x11dialg.c:184
 msgid "legend rectangle"
 msgstr ""
 
-#: src/gtk/x11dialg.c:189
+#: src/gtk/x11dialg.c:186
 msgid "legend arc"
 msgstr ""
 
-#: src/gtk/x11dialg.c:191
+#: src/gtk/x11dialg.c:188
 msgid "legend mark"
 msgstr ""
 
-#: src/gtk/x11dialg.c:195
+#: src/gtk/x11dialg.c:192
 msgid "legend text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:197
+#: src/gtk/x11dialg.c:194
 msgid "textdefault"
 msgstr ""
 
-#: src/gtk/x11dialg.c:199
+#: src/gtk/x11dialg.c:196
 msgid "legend gauss"
 msgstr ""
 
-#: src/gtk/x11dialg.c:201
+#: src/gtk/x11dialg.c:198
 msgid "page"
 msgstr ""
 
-#: src/gtk/x11dialg.c:203
+#: src/gtk/x11dialg.c:200
 msgid "drawobj"
 msgstr ""
 
-#: src/gtk/x11dialg.c:205
+#: src/gtk/x11dialg.c:202
 msgid "directory"
 msgstr ""
 
-#: src/gtk/x11dialg.c:207
+#: src/gtk/x11dialg.c:204
 msgid "load"
 msgstr ""
 
-#: src/gtk/x11dialg.c:209
+#: src/gtk/x11dialg.c:206
 msgid "loadprm"
 msgstr ""
 
-#: src/gtk/x11dialg.c:211
+#: src/gtk/x11dialg.c:208
 msgid "save"
 msgstr ""
 
-#: src/gtk/x11dialg.c:213
+#: src/gtk/x11dialg.c:210
 msgid "driver"
 msgstr ""
 
-#: src/gtk/x11dialg.c:215
+#: src/gtk/x11dialg.c:212
 msgid "print"
 msgstr ""
 
-#: src/gtk/x11dialg.c:217
+#: src/gtk/x11dialg.c:214
 msgid "output data"
 msgstr ""
 
-#: src/gtk/x11dialg.c:219
+#: src/gtk/x11dialg.c:216
 msgid "addin"
 msgstr ""
 
-#: src/gtk/x11dialg.c:221
+#: src/gtk/x11dialg.c:218
 msgid "save default"
 msgstr ""
 
-#: src/gtk/x11dialg.c:223
+#: src/gtk/x11dialg.c:220
 msgid "setscript"
 msgstr ""
 
-#: src/gtk/x11dialg.c:225
+#: src/gtk/x11dialg.c:222
 msgid "prefscript"
 msgstr ""
 
-#: src/gtk/x11dialg.c:227
+#: src/gtk/x11dialg.c:224
 msgid "setdriver"
 msgstr ""
 
-#: src/gtk/x11dialg.c:229
+#: src/gtk/x11dialg.c:226
 msgid "prefdriver"
 msgstr ""
 
-#: src/gtk/x11dialg.c:231
+#: src/gtk/x11dialg.c:228
 msgid "misc"
 msgstr ""
 
-#: src/gtk/x11dialg.c:233
+#: src/gtk/x11dialg.c:230
 msgid "extviewer"
 msgstr ""
 
-#: src/gtk/x11dialg.c:235
+#: src/gtk/x11dialg.c:232
 msgid "viewer"
 msgstr ""
 
-#: src/gtk/x11dialg.c:237
+#: src/gtk/x11dialg.c:234
 msgid "multi select"
 msgstr ""
 
-#: src/gtk/x11dialg.c:239
+#: src/gtk/x11dialg.c:236
 msgid "single select"
 msgstr ""
 
-#: src/gtk/x11dialg.c:241
+#: src/gtk/x11dialg.c:238
 msgid "output image"
 msgstr ""
 
-#: src/gtk/x11dialg.c:321
+#: src/gtk/x11dialg.c:318
 msgid "_All"
 msgstr ""
 
@@ -810,11 +810,11 @@ msgstr ""
 msgid "_Size:"
 msgstr ""
 
-#: src/gtk/x11file.c:2662 src/gtk/x11lgnd.c:598 src/gtk/x11lgndx.c:397
+#: src/gtk/x11file.c:2662 src/gtk/x11lgnd.c:598 src/gtk/x11lgndx.c:396
 msgid "_Miter:"
 msgstr ""
 
-#: src/gtk/x11file.c:2666 src/gtk/x11lgnd.c:608 src/gtk/x11lgndx.c:403
+#: src/gtk/x11file.c:2666 src/gtk/x11lgnd.c:608 src/gtk/x11lgndx.c:402
 msgid "_Join:"
 msgstr ""
 
@@ -939,7 +939,7 @@ msgstr ""
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1385
+#: src/gtk/x11graph.c:1383
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for the "
 "researcher and engineer."
@@ -1056,28 +1056,28 @@ msgstr ""
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:348
+#: src/gtk/x11lgndx.c:347
 #, c-format
 msgid "Legend Gaussian/Lorentzian/Parabola/Sin %d"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:358
+#: src/gtk/x11lgndx.c:357
 msgid "_Sin"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:362
+#: src/gtk/x11lgndx.c:361
 msgid "_Parabola"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:366
+#: src/gtk/x11lgndx.c:365
 msgid "_Lorentz"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:370
+#: src/gtk/x11lgndx.c:369
 msgid "_Gauss"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:415
+#: src/gtk/x11lgndx.c:414
 msgid "_Division:"
 msgstr ""
 
@@ -1620,11 +1620,11 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2071
+#: src/gtk/x11menu.c:2072
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2121
+#: src/gtk/x11menu.c:2122
 msgid "Question"
 msgstr ""
 
@@ -1754,48 +1754,48 @@ msgstr ""
 msgid "_Length data preview:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1416
+#: src/gtk/x11opt.c:1419
 msgid "use _External previewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:1429
+#: src/gtk/x11opt.c:1432
 msgid "Window _Width:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1435
+#: src/gtk/x11opt.c:1438
 msgid "Window _Height:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1511
+#: src/gtk/x11opt.c:1514
 msgid "_DPI:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1517
+#: src/gtk/x11opt.c:1520
 msgid "_Grid:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1527
+#: src/gtk/x11opt.c:1530
 msgid "_Antialias:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1530
+#: src/gtk/x11opt.c:1533
 msgid "_Show ruler"
 msgstr ""
 
-#: src/gtk/x11opt.c:1534
+#: src/gtk/x11opt.c:1537
 msgid "_Auto redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1538
+#: src/gtk/x11opt.c:1541
 msgid "_Load files on redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1545
+#: src/gtk/x11opt.c:1548
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1634 src/gtk/x11print.c:241 src/gtk/x11print.c:846
-#: src/gtk/x11print.c:949 src/gtk/x11print.c:1073
+#: src/gtk/x11opt.c:1638 src/gtk/x11print.c:241 src/gtk/x11print.c:846
+#: src/gtk/x11print.c:949 src/gtk/x11print.c:1075
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1803,7 +1803,7 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11opt.c:1635
+#: src/gtk/x11opt.c:1639
 msgid "Save as .Ngraph.ngp"
 msgstr ""
 
@@ -1860,7 +1860,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1012 src/gtk/x11view.c:4862
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4859
 msgid "Drawing."
 msgstr ""
 
@@ -1880,15 +1880,15 @@ msgstr ""
 msgid "confirm"
 msgstr ""
 
-#: src/gtk/x11print.c:1066 src/gtk/x11print.c:1074
+#: src/gtk/x11print.c:1068 src/gtk/x11print.c:1076
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1081
+#: src/gtk/x11print.c:1083
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1082
+#: src/gtk/x11print.c:1084
 msgid "Making data file."
 msgstr ""
 
@@ -1947,19 +1947,19 @@ msgstr ""
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2218
+#: src/gtk/x11view.c:2215
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3350
+#: src/gtk/x11view.c:3347
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4856
+#: src/gtk/x11view.c:4853
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4863
+#: src/gtk/x11view.c:4860
 msgid "Drawing"
 msgstr ""
 

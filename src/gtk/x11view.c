@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.80 2008/12/26 10:16:23 hito Exp $
+ * $Id: x11view.c,v 1.81 2008/12/26 13:56:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1470,7 +1470,7 @@ ShowFocusFrame(GdkGC *gc)
   }
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  //  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
   if (num > 1) {
     for (i = 0; i < num; i++) {
       inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);

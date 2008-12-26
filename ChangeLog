@@ -1,8 +1,5 @@
 2008-12-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11view.c (ShowFocusFrame): line style of individual
-	object is "GDK_LINE_SOLID".
-
 	* src/omark.c (marktype): add.
 	(mark): check marktype.
 
