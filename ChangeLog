@@ -27,9 +27,8 @@
 
 2008-12-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* initfile/.Ngraph: save paper size when new gra object is used to
-	create image file.
-	add "-gra" option.
+	* initfile/.Ngraph: add "-gra" option.
+	do not create new "gra" object after evaluate ngp file.
 
 2008-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
