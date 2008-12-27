@@ -6,7 +6,7 @@
 	* demo/demo5b.ngp (text): "i" changes form 0 to 8
 
 	* src/gtk/x11view.c (ShowFrameRect, ShowPoints, ShowFocusLine)
-	(ShowFocusFrame): do not call " gdk_gc_set_dashes()".
+	(ShowFocusFrame): do not call "gdk_gc_set_dashes()".
 
 	* src/gtk/x11lgndx.c (LegendGaussDialogPaint): do not call
 	"gdk_gc_set_dashes()".
