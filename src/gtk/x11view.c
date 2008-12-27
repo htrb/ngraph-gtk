@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.82 2008/12/27 10:10:21 hito Exp $
+ * $Id: x11view.c,v 1.83 2008/12/27 16:11:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2453,26 +2453,29 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
 
     CheckGrid(FALSE, state, &dx, &dy, NULL);
 
-    argv[0] = (char *) &dx;
-    argv[1] = (char *) &dy;
-    argv[2] = NULL;
-
-    num = arraynum(d->focusobj);
-
     PaintLock = TRUE;
 
-    for (i = num - 1; i >= 0; i--) {
-      focus = *(struct focuslist **) arraynget(d->focusobj, i);
-      obj = focus->obj;
+    if (dx != 0 || dy != 0) {
+      argv[0] = (char *) &dx;
+      argv[1] = (char *) &dy;
+      argv[2] = NULL;
 
-      if (obj == chkobject("axis"))
-	axis = TRUE;
+      num = arraynum(d->focusobj);
 
-      if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
-	AddInvalidateRect(obj, inst);
-	_exeobj(obj, "move", inst, 2, argv);
-	set_graph_modified();
-	AddInvalidateRect(obj, inst);
+      for (i = num - 1; i >= 0; i--) {
+	focus = *(struct focuslist **) arraynget(d->focusobj, i);
+	obj = focus->obj;
+
+	if (obj == chkobject("axis"))
+	  axis = TRUE;
+
+	inst = chkobjinstoid(focus->obj, focus->oid);
+	if (inst) {
+	  AddInvalidateRect(obj, inst);
+	  _exeobj(obj, "move", inst, 2, argv);
+	  set_graph_modified();
+	  AddInvalidateRect(obj, inst);
+	}
       }
     }
 
@@ -2529,27 +2532,30 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   zm = nround(zoom2 * 10000);
   ResetZoom();
 
-  argv[0] = (char *) &zm;
-  argv[1] = (char *) &(d->RefX1);
-  argv[2] = (char *) &(d->RefY1);
-  argv[3] = (char *) &Menulocal.preserve_width;
-  argv[4] = NULL;
+  if (zm != 0 && zm != 10000) {
+    argv[0] = (char *) &zm;
+    argv[1] = (char *) &(d->RefX1);
+    argv[2] = (char *) &(d->RefY1);
+    argv[3] = (char *) &Menulocal.preserve_width;
+    argv[4] = NULL;
 
-  num = arraynum(d->focusobj);
-  PaintLock = TRUE;
+    num = arraynum(d->focusobj);
+    PaintLock = TRUE;
 
-  for (i = num - 1; i >= 0; i--) {
-    focus = *(struct focuslist **) arraynget(d->focusobj, i);
-    obj = focus->obj;
+    for (i = num - 1; i >= 0; i--) {
+      focus = *(struct focuslist **) arraynget(d->focusobj, i);
+      obj = focus->obj;
 
-    if (obj == chkobject("axis"))
-      axis = TRUE;
+      if (obj == chkobject("axis"))
+	axis = TRUE;
 
-    if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
-      AddInvalidateRect(obj, inst);
-      _exeobj(obj, "zooming", inst, 4, argv);
-      set_graph_modified();
-      AddInvalidateRect(obj, inst);
+      inst = chkobjinstoid(focus->obj, focus->oid);
+      if (inst) {
+	AddInvalidateRect(obj, inst);
+	_exeobj(obj, "zooming", inst, 4, argv);
+	set_graph_modified();
+	AddInvalidateRect(obj, inst);
+      }
     }
   }
 
@@ -2593,28 +2599,31 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
       CheckGrid(FALSE, state, &dx, &dy, NULL);
     }
 
-    argv[0] = (char *) &(d->ChangePoint);
-    argv[1] = (char *) &dx;
-    argv[2] = (char *) &dy;
-    argv[3] = NULL;
+    if (dx != 0 && dy != 0) {
+      argv[0] = (char *) &(d->ChangePoint);
+      argv[1] = (char *) &dx;
+      argv[2] = (char *) &dy;
+      argv[3] = NULL;
 
-    focus = *(struct focuslist **) arraynget(d->focusobj, 0);
+      focus = *(struct focuslist **) arraynget(d->focusobj, 0);
 
-    obj = focus->obj;
+      obj = focus->obj;
 
-    if (obj == chkobject("axis")) {
-      axis = TRUE;
+      if (obj == chkobject("axis")) {
+	axis = TRUE;
+      }
+      PaintLock = TRUE;
+
+      inst = chkobjinstoid(focus->obj, focus->oid);
+      if (inst) {
+	AddInvalidateRect(obj, inst);
+	_exeobj(obj, "change", inst, 3, argv);
+	set_graph_modified();
+	AddInvalidateRect(obj, inst);
+      }
+
+      PaintLock = FALSE;
     }
-    PaintLock = TRUE;
-
-    if ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL) {
-      AddInvalidateRect(obj, inst);
-      _exeobj(obj, "change", inst, 3, argv);
-      set_graph_modified();
-      AddInvalidateRect(obj, inst);
-    }
-
-    PaintLock = FALSE;
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
     ShowFocusFrame(dc);
