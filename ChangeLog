@@ -10,7 +10,7 @@
 	* src/omark.c (marktype): add.
 	(mark): check marktype.
 
-	* demo/demo5b.ngp (text): "i" changes form 0 to 8
+	* demo/demo5b.ngp (text): maximum value of "i" is 8.
 
 	* src/gtk/x11view.c (ShowFrameRect, ShowPoints, ShowFocusLine)
 	(ShowFocusFrame): do not call "gdk_gc_set_dashes()".
