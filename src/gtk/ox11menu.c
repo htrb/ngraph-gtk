@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.40 2008/12/30 02:54:04 hito Exp $
+ * $Id: ox11menu.c,v 1.41 2008/12/30 12:07:00 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1408,7 +1408,7 @@ static struct objtable gtkmenu[] = {
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
-  {"print", NSAFUNC, NREAD | NEXEC, mx_print, "bi", 0},
+  {"print", NVFUNC, NREAD | NEXEC, mx_print, "bi", 0},
   {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},

@@ -36,6 +36,7 @@
 	lock gui.
 
 	* src/gtk/ox11menu.c (mx_print): use "menu_lock()" to lock gui.
+	(gtkmenu): type of "print" field is "NVFUNC".
 
 	* src/gtk/gtk_subwin.c (start_editing, cancel_editing)
 	(numeric_cb, string_cb):  use "menu_lock()" to lock
