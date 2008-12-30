@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.23 2008/12/22 09:08:57 hito Exp $
+ * $Id: x11commn.c,v 1.24 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1011,8 +1011,11 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
   char mes[256];
   int sec;
   char *inst;
+  struct objlist *robj;
+  int idn;
 
-  if ((sys = chkobject("system")) == NULL)
+  sys = chkobject("system");
+  if (sys == NULL)
     return;
 
   expanddir = nstrdup(exdir);
@@ -1076,7 +1079,15 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
     AddNgpFileList(name);
     snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
     SetStatusBar(mes);
+
+    menu_lock(TRUE);
+    idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
+    registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
+
     _exeobj(obj, "shell", inst, 1, argv);
+
+    unregisterevloop(robj, idn, Menulocal.inst);
+    menu_lock(FALSE);
 
     sec = FALSE;
     argv[0] = (char *) &sec;

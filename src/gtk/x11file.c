@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.61 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11file.c,v 1.62 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4086,13 +4086,14 @@ select_type(GtkComboBox *w, gpointer user_data)
   GtkTreeIter iter;
   GtkTreePath *path;
 
-  Menulock = FALSE;
+  menu_lock(FALSE);
+
+  d = (struct SubWin *) user_data;
 
   sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0)
     return;
 
-  d = (struct SubWin *) user_data;
   obj = getobject("file");
   getobj(obj, "type", sel, 0, NULL, &type);
 
@@ -4162,7 +4163,7 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   char buf[64];
   GtkTreePath *path = NULL;
 
-  Menulock = TRUE;
+  menu_lock(TRUE);
 
   d = (struct SubWin *) user_data;
 
@@ -4267,7 +4268,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   struct objlist *aobj;
   char *name, *ptr;
 
-  Menulock = TRUE;
+  menu_lock(TRUE);
 
   d = (struct SubWin *) user_data;
 
@@ -4326,7 +4327,7 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
 {
   struct SubWin *d;
 
-  Menulock = FALSE;
+  menu_lock(FALSE);
 
   d = (struct SubWin *) user_data;
 

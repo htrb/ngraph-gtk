@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.83 2008/12/27 16:11:21 hito Exp $
+ * $Id: x11view.c,v 1.84 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1541,6 +1541,9 @@ AlignFocusedObj(int align)
   char *inst;
   struct Viewer *d;
 
+  if (Menulock || GlobalLock)
+    return;
+
   d = &(NgraphApp.Viewer);
 
   num = arraynum(d->focusobj);
@@ -2453,14 +2456,14 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
 
     CheckGrid(FALSE, state, &dx, &dy, NULL);
 
+    num = arraynum(d->focusobj);
+
     PaintLock = TRUE;
 
     if (dx != 0 || dy != 0) {
       argv[0] = (char *) &dx;
       argv[1] = (char *) &dy;
       argv[2] = NULL;
-
-      num = arraynum(d->focusobj);
 
       for (i = num - 1; i >= 0; i--) {
 	focus = *(struct focuslist **) arraynget(d->focusobj, i);
@@ -5242,6 +5245,9 @@ ViewDelete(void)
   int axis;
   struct Viewer *d;
 
+  if (Menulock || GlobalLock)
+    return;
+
   d = &(NgraphApp.Viewer);
   if ((d->MouseMode != MOUSENONE) ||
       (d->Mode != PointB &&
@@ -5300,6 +5306,9 @@ reorder_object(enum object_move_type type)
   struct objlist *obj;
   char *inst;
   struct Viewer *d;
+
+  if (Menulock || GlobalLock)
+    return;
 
   d = &(NgraphApp.Viewer);
 
@@ -5642,6 +5651,9 @@ ViewCopy(void)
   int axis = FALSE;
   struct Viewer *d;
 
+  if (Menulock || GlobalLock)
+    return;
+
   d = &(NgraphApp.Viewer);
 
   if (d->MouseMode != MOUSENONE ||
@@ -5703,6 +5715,9 @@ ViewCross(void)
 {
   GdkGC *dc;
   struct Viewer *d;
+
+  if (Menulock || GlobalLock)
+    return;
 
   d = &(NgraphApp.Viewer);
 

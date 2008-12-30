@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.32 2008/12/22 07:42:05 hito Exp $
+ * $Id: gtk_subwin.c,v 1.33 2008/12/30 02:54:04 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -40,7 +40,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   n_list_store *list;
   struct SubWin *d;
 
-  Menulock = TRUE;
+  menu_lock(TRUE);
 
   d = (struct SubWin *) user_data;
 
@@ -91,7 +91,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 static void
 cancel_editing(GtkCellRenderer *renderer, gpointer user_data)
 {
-  Menulock = FALSE;
+  menu_lock(FALSE);
 }
 
 static void
@@ -160,7 +160,7 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   double val;
   char *ptr;
 
-  Menulock = FALSE;
+  menu_lock(FALSE);
 
   d = (struct SubWin *) user_data;
 
@@ -191,7 +191,7 @@ string_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user
   struct SubWin *d;
   n_list_store *list;
 
-  Menulock = FALSE;
+  menu_lock(FALSE);
 
   d = (struct SubWin *) user_data;
 

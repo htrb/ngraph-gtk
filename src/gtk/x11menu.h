@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.16 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11menu.h,v 1.17 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -233,6 +233,7 @@ struct NgraphApp
 };
 
 
+extern int Menulock;
 extern struct NgraphApp NgraphApp;
 extern int FWidth, FHeight;
 extern GtkWidget *TopLevel;
@@ -267,6 +268,7 @@ int ChkInterrupt();
 int InputYN(char *mes);
 GdkPixbuf *create_pixbuf_from_xpm(GtkWidget *win, char **xpm);
 void QuitGUI(void);
+void menu_lock(int lock);
 void set_draw_lock(int lock);
 int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 

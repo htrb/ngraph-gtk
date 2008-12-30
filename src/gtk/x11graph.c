@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.28 2008/12/26 10:00:59 hito Exp $
+ * $Id: x11graph.c,v 1.29 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1218,7 +1218,9 @@ CmGraphShell(void)
 
   if (Menulock || GlobalLock)
     return;
-  Menulock = TRUE;
+
+  menu_lock(TRUE);
+
   obj = Menulocal.obj;
   inst = Menulocal.inst;
   idn = getobjtblpos(obj, "_evloop", &robj);
@@ -1233,7 +1235,7 @@ CmGraphShell(void)
     FreeConsole(allocnow);
   }
   unregisterevloop(robj, idn, inst);
-  Menulock = FALSE;
+  menu_lock(FALSE);
   UpdateAll();
 }
 
@@ -1363,6 +1365,9 @@ CmHelpAbout(void)
   struct objlist *obj;
   char *web, *copyright;
 
+  if (Menulock || GlobalLock)
+    return;
+
   if ((obj = chkobject("system")) == NULL)
     return;
 
@@ -1388,6 +1393,9 @@ void
 CmHelpHelp(void)
 {
   pid_t pid;
+
+  if (Menulock || GlobalLock)
+    return;
 
   if (Menulocal.help_browser == NULL)
     return;

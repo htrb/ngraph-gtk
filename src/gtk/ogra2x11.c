@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.17 2008/12/12 09:27:03 hito Exp $
+ * $Id: ogra2x11.c,v 1.18 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -457,17 +457,23 @@ gtkflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  struct gtklocal *gtklocal;
+  struct gtklocal *local;
+  GdkColor color;
+  gint w, h;
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv))
     return 1;
 
-  if (_getobj(obj, "_gtklocal", inst, &gtklocal))
+  if (_getobj(obj, "_gtklocal", inst, &local))
     return 1;
 
-  gtklocal->PaperWidth = 0;
-  gtklocal->PaperHeight = 0;
-  gtkchangedpi(gtklocal);
+  gdk_drawable_get_size(local->win, &w, &h);
+
+  color.red = local->bg_r * 0xff;
+  color.green = local->bg_g * 0xff;
+  color.blue = local->bg_b * 0xff;
+  gdk_gc_set_rgb_fg_color(local->gc, &color);
+  gdk_draw_rectangle(local->win, local->gc, TRUE, 0, 0, w, h);
   gtkredraw(obj, inst, rval, argc, argv);
   return 0;
 }
@@ -533,9 +539,10 @@ gtkredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
+  GRAredraw(obj, inst, TRUE, 0);
+
   gdk_window_invalidate_rect(gtklocal->window, NULL, TRUE);
-  gdk_flush();
-  gtk_evloop(NULL, NULL, NULL, 0, NULL);
+  gdk_window_process_updates(gtklocal->window, TRUE);
   return 0;
 }
 
@@ -688,10 +695,36 @@ gtk_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
+static int
+gtk_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int dpi;
+  struct gtklocal *local;
+
+  dpi = abs(*(int *) argv[2]);
+
+  _getobj(obj, "_gtklocal", inst, &local);
+
+  if (dpi < 1)
+    dpi = 1;
+  if (dpi > DPI_MAX)
+    dpi = DPI_MAX;
+
+  local->windpi = dpi;
+  local->local->pixel_dot_x =
+    local->local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
+  *(int *) argv[2] = dpi;
+
+  gtkchangedpi(local);
+
+  return 0;
+}
+
 struct objtable gra2gtk[] = {
   {"init", NVFUNC, NEXEC, gtkinit, NULL, 0},
   {"done", NVFUNC, NEXEC, gtkdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
+  {"dpi", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
   {"redraw", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.53 2008/12/22 08:18:59 hito Exp $
+ * $Id: x11menu.c,v 1.54 2008/12/30 02:54:04 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -415,6 +415,29 @@ struct narray ChildList;
 int signaltrap = FALSE;
 
 GdkColor black, white, gray, red, blue;
+
+void
+menu_lock(int lock)
+{
+  static int count = 0;
+
+  if (lock) {
+    count++;
+  } else {
+    count--;
+  }
+
+  if (count > 0) {
+    Menulock = TRUE;
+  } else {
+    Menulock = FALSE;
+    count = 0;
+  }
+
+  if (TopLevel) {
+    gtk_widget_set_sensitive(TopLevel, ! Menulock);
+  }
+}
 
 void 
 set_draw_lock(int lock)

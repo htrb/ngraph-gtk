@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.24 2008/12/22 06:30:54 hito Exp $
+ * $Id: x11opt.c,v 1.25 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1622,6 +1622,9 @@ CmOptionSaveNgp(void)
   char mes[MESSAGE_BUF_SIZE];
   int i, path;
   struct objlist *obj;
+
+  if (Menulock || GlobalLock)
+    return;
 
   if ((ngpfile = getscriptname("Ngraph.ngp")) == NULL)
     return;

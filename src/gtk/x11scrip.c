@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.7 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11scrip.c,v 1.8 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -212,7 +212,8 @@ CmScriptExec(void)
       snprintf(mes, sizeof(mes), _("Executing `%.128s'."), name);
       SetStatusBar(mes);
 
-      Menulock = TRUE;
+      menu_lock(TRUE);
+
       obj = Menulocal.obj;
       inst = Menulocal.inst;
       idn = getobjtblpos(obj, "_evloop", &robj);
@@ -221,7 +222,8 @@ CmScriptExec(void)
       exeobj(shell, "shell", newid, 1, argv);
 
       unregisterevloop(robj, idn, inst);
-      Menulock = FALSE;
+
+      menu_lock(FALSE);
 
       ResetStatusBar();
       arraydel2(&sarray);

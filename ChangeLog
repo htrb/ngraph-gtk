@@ -1,3 +1,43 @@
+2008-12-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (AlignFocusedObj, ViewDelete, ViewCopy)
+	(ViewCross): do nothing when "Menulock" or "GlobalLock" is TRUE.
+
+	* src/gtk/x11opt.c (CmOptionSaveNgp): do nothing when "Menulock"
+	or "GlobalLock" is TRUE.
+
+	* src/gtk/x11graph.c (CmHelpAbout, CmHelpHelp): do nothing when
+	"Menulock" or "GlobalLock" is TRUE.
+
+	* src/gtk/ogra2x11.c (gtkclear): clear pixmap.
+	(gtk_set_dpi): add.
+	(gra2gtk): add filed "dpi".
+
+	* src/gtk/x11scrip.c (CmScriptExec): use "menu_lock()" to lock
+	gui.
+
+	* src/gtk/x11menu.c (menu_lock): add
+
+	* src/gtk/x11graph.c (CmGraphShell): use "menu_lock()" to lock
+	gui.
+
+	* src/gtk/x11file.c (select_type, start_editing_type)
+	(start_editing, edited_axis):  use "menu_lock()" to lock
+	gui.
+
+	* src/gtk/x11commn.c (LoadNgpFile): use "menu_lock()" to lock gui.
+
+	* src/gtk/x11axis.c (start_editing, edited): use "menu_lock()" to
+	lock gui.
+
+	* src/gtk/ox11menu.c (mx_print): use "menu_lock()" to lock gui.
+
+	* src/gtk/gtk_subwin.c (start_editing, cancel_editing)
+	(numeric_cb, string_cb):  use "menu_lock()" to lock
+	gui.
+
+	* src/shellux.c (cmsleep): call "sleep()" while wating timeout.
+
 2008-12-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_up_drag): move object only when

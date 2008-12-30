@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.18 2008/12/22 07:42:05 hito Exp $
+ * $Id: ox11menu.h,v 1.19 2008/12/30 02:54:04 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -149,7 +149,6 @@ struct menulocal
 
 extern struct menulocal Menulocal;
 extern struct mxlocal *Mxlocal;
-extern int Menulock;
 
 int mxd2p(int r);
 int mxd2px(int x);
