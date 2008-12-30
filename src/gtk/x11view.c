@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.84 2008/12/30 02:54:04 hito Exp $
+ * $Id: x11view.c,v 1.85 2008/12/30 03:13:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2535,7 +2535,10 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   zm = nround(zoom2 * 10000);
   ResetZoom();
 
-  if (zm != 0 && zm != 10000) {
+  if (zm < 1000)
+    zm = 1000;
+
+  if (zm != 10000) {
     argv[0] = (char *) &zm;
     argv[1] = (char *) &(d->RefX1);
     argv[2] = (char *) &(d->RefY1);

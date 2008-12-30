@@ -4,6 +4,7 @@
 
 	* src/gtk/x11view.c (AlignFocusedObj, ViewDelete, ViewCopy)
 	(ViewCross): do nothing when "Menulock" or "GlobalLock" is TRUE.
+	(mouse_up_zoom): minimum value of "zm" is 1000.
 
 	* src/gtk/x11opt.c (CmOptionSaveNgp): do nothing when "Menulock"
 	or "GlobalLock" is TRUE.
