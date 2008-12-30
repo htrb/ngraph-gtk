@@ -1,0 +1,40 @@
+ID=${gra:viewer:id}
+#
+for demo in demo1 demo2 demo3 demo4 demo5a demo5b demo5c demo5d demo5e
+do
+  for drawrable in `derive -instance draw`
+  do
+    del ${drawrable}:0-!
+  done
+  gra:$ID:clear
+
+  . ${NGRAPHLIB}/demo/${demo}.ngp
+  ID2=${gra::id}
+  if [ $ID != $ID2 ]
+  then
+    gra:$ID:close
+    eval gra:$ID:top_margin='${'gra:$ID2:top_margin'}'
+    eval gra:$ID:left_margin='${'gra:$ID2:left_margin'}'
+    eval gra:$ID:zoom='${'gra:$ID2:zoom'}'
+    eval gra:$ID:draw_obj='${'gra:$ID2:draw_obj'}'
+    gra:$ID:open
+    del gra:$ID2
+  fi
+
+  new text
+  text::x=12000
+  eval text::y=5000-'${'gra:$ID:top_margin'}'  
+  text::font="HelveticaBold"
+  text::text="Please wait 5 seconds!"
+  text::R=255
+
+  menu::draw
+  sleep 5
+
+done
+
+for drawrable in `derive -instance draw`
+do
+  del ${drawrable}:0-!
+done
+gra:$ID:clear

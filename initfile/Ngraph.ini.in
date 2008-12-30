@@ -53,15 +53,7 @@ merge_win=-100000,-100000,-100000,-100000,0
 coordinate_win=-100000,-100000,-100000,-100000,1
 information_win=-100000,-100000,-100000,-100000,0
 history_size=1000
-ngp_history=DOCDIRDEF/demo/demo1.ngp
-ngp_history=DOCDIRDEF/demo/demo2.ngp
-ngp_history=DOCDIRDEF/demo/demo3.ngp
-ngp_history=DOCDIRDEF/demo/demo4.ngp
-ngp_history=DOCDIRDEF/demo/demo5a.ngp
-ngp_history=DOCDIRDEF/demo/demo5b.ngp
-ngp_history=DOCDIRDEF/demo/demo5c.ngp
-ngp_history=DOCDIRDEF/demo/demo5d.ngp
-ngp_history=DOCDIRDEF/demo/demo5e.ngp
+ngp_history=DOCDIRDEF/demo/demo.ngp
 ngp_dir_history=DOCDIRDEF/demo
 
 [gra2cairo]

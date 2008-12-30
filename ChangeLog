@@ -1,5 +1,7 @@
 2008-12-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* demo/demo.ngp: add.
+
 	* src/gtk/x11view.c (AlignFocusedObj, ViewDelete, ViewCopy)
 	(ViewCross): do nothing when "Menulock" or "GlobalLock" is TRUE.
 
@@ -26,6 +28,8 @@
 	gui.
 
 	* src/gtk/x11commn.c (LoadNgpFile): use "menu_lock()" to lock gui.
+	(LoadNgpFile): call "registerevloop()" and "unregisterevloop()"
+	before and after call "_exeobj()" respectively.
 
 	* src/gtk/x11axis.c (start_editing, edited): use "menu_lock()" to
 	lock gui.
