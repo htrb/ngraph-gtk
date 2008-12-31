@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.24 2008/12/31 12:33:35 hito Exp $
+ * $Id: main.c,v 1.25 2008/12/31 12:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -199,8 +199,12 @@ putconsole(char *s)
   int len;
 
   len = strlen(s);
-  write(consolefdout, s, len);
-  write(consolefdout, "\n", 1);
+  if (write(consolefdout, s, len) < 0)
+    return 0;
+
+  if (write(consolefdout, "\n", 1) < 0)
+    return 0;
+
   return len + 1;
 }
 
@@ -214,7 +218,9 @@ printfconsole(char *fmt, ...)
   va_start(ap, fmt);
   len = vsnprintf(buf, sizeof(buf),  fmt, ap);
   va_end(ap);
-  write(consolefdout, buf, len);
+  if (write(consolefdout, buf, len) < 0)
+    return 0;
+
   return len;
 }
 
@@ -231,8 +237,12 @@ inputynconsole(char *mes)
   char buf[10], yn[] = " [yn] ";
 
   len = strlen(mes);
-  write(consolefdout, mes, len);
-  write(consolefdout, yn, sizeof(yn) - 1);
+  if (write(consolefdout, mes, len))
+    return FALSE;
+
+  if (write(consolefdout, yn, sizeof(yn) - 1))
+    return FALSE;
+
   do {
     r = read(consolefdin, buf, 1);
   } while (strchr("yYnN", buf[0]) == NULL && r >= 0);
@@ -317,7 +327,10 @@ nallocconsole()
   getobj(sys, "version", 0, 0, NULL, &version);
   snprintf(buf, sizeof(buf), "%c]2;Ngraph shell%c%s version %s. Script interpreter.\n",
 	  0x1b, 0x07, sysname, version);
-  write(fdo[1], buf, strlen(buf) + 1);
+
+  if (write(fdo[1], buf, strlen(buf) + 1) < 0)
+    return FALSE;
+
   pipefd = fdo[1];
   consolepid = pid;
   i = 0;

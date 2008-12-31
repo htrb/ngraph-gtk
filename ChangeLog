@@ -1,5 +1,8 @@
 2008-12-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/main.c (putconsole, printfconsole, inputynconsole)
+	(nallocconsole): check return value of "write()".
+
 	* src/gtk/ogra2x11.c (gtkflush): remove.
 	(gra2gtk): remove field "flush".
 	(gra2gtk): rename field "redraw" to "expose".
