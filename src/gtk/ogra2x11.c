@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.20 2008/12/31 12:00:42 hito Exp $
+ * $Id: ogra2x11.c,v 1.19 2008/12/31 11:57:10 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -547,7 +547,7 @@ dot2pixel(struct gtklocal *gtklocal, int r)
 static void
 gtkchangedpi(struct gtklocal *gtklocal)
 {
-  int width, height;
+  int width, height, pw, ph;
   GdkPixmap *pixmap;
 
 
@@ -560,8 +560,6 @@ gtkchangedpi(struct gtklocal *gtklocal)
 
   pixmap = gtklocal->win;
   if (pixmap) {
-    int pw, ph;
-
     gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &pw, &ph);
     if (pw != width || ph != height) {
       g_object_unref(G_OBJECT(pixmap));
@@ -697,7 +695,7 @@ gtk_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   local->windpi = dpi;
   local->local->pixel_dot_x =
-    local->local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
+    local->local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
 
   gtkchangedpi(local);
