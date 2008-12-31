@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.21 2008/12/31 12:03:38 hito Exp $
+ * $Id: ogra2x11.c,v 1.22 2008/12/31 12:30:49 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -22,9 +22,6 @@
  */
 
 #include "gtk_common.h"
-
-#include <gdk/gdkx.h>
-#include <X11/Xlib.h>
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -55,9 +52,6 @@
 #define PARENT "gra2cairo"
 #define NVERSION  "1.00.00"
 #define GRA2GTKCONF "[gra2gtk]"
-#define LINETOLIMIT 500
-
-extern int OpenApplication();
 
 #define ERRDISPLAY 100
 #define ERRCMAP 101
@@ -315,15 +309,14 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (gtklocal->winheight > 10000)
     gtklocal->winheight = 10000;
 
-  if (!OpenApplication())
+  if (! OpenApplication()) {
+    error(obj, ERRDISPLAY);
     goto errexit;
+  }
 
   gtklocal->title = mkobjlist(obj, NULL, oid, NULL, TRUE);
 
   gtklocal->mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  if (gtklocal->mainwin == NULL)
-    goto errexit;
-
   g_signal_connect_swapped(gtklocal->mainwin,
 			   "delete-event",
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
@@ -335,23 +328,15 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
   scrolled_window = gtk_scrolled_window_new(NULL, NULL);
-  if (scrolled_window == NULL)
-    goto errexit;
   gtk_widget_set_size_request((GtkWidget *) scrolled_window,
 			      gtklocal->winwidth, gtklocal->winheight);
 
   vbox = gtk_vbox_new(FALSE, 0);
-  if (vbox == NULL)
-    goto errexit;
-
   gtk_container_add(GTK_CONTAINER(gtklocal->mainwin), vbox);
 
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
   gtklocal->View = gtk_drawing_area_new();
-  if (gtklocal->View == NULL)
-    goto errexit;
-
   g_signal_connect(gtklocal->View,
 		   "expose-event", G_CALLBACK(gtkevpaint), gtklocal);
 
@@ -465,7 +450,7 @@ gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-set_color(struct gtklocal *gtklocal, int argc, char **argv)
+get_color(struct gtklocal *gtklocal, int argc, char **argv)
 {
   int c;
 
@@ -489,7 +474,7 @@ gtkbr(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  gtklocal->bg_r = set_color(gtklocal, argc, argv);
+  gtklocal->bg_r = get_color(gtklocal, argc, argv);
   return 0;
 }
 
@@ -501,7 +486,7 @@ gtkbb(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  gtklocal->bg_b = set_color(gtklocal, argc, argv);
+  gtklocal->bg_b = get_color(gtklocal, argc, argv);
   return 0;
 }
 
@@ -513,7 +498,7 @@ gtkbg(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  gtklocal->bg_g = set_color(gtklocal, argc, argv);
+  gtklocal->bg_g = get_color(gtklocal, argc, argv);
   return 0;
 }
 
@@ -631,20 +616,6 @@ gtkMakeRuler(struct gtklocal *gtklocal)
 		     dot2pixel(gtklocal, width) - 1, dot2pixel(gtklocal, height) - 1);
   gdk_gc_set_function(gc, GDK_COPY);
   g_object_unref(gc);
-}
-
-int
-gdkgc_set_arc_mode(GdkGC * gc, int arc_mode)
-{
-  return XSetArcMode(gdk_x11_gc_get_xdisplay(gc), gdk_x11_gc_get_xgc(gc),
-		     arc_mode);
-}
-
-int
-gdkgc_set_fill_rule(GdkGC * gc, int fill_rule)
-{
-  return XSetFillRule(gdk_x11_gc_get_xdisplay(gc), gdk_x11_gc_get_xgc(gc),
-		      fill_rule);
 }
 
 static int

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.8 2008/12/20 02:10:42 hito Exp $
+ * $Id: ox11dlg.c,v 1.9 2008/12/31 12:30:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -54,9 +54,6 @@ char *dlgerrorlist[] = {
 #define ERRNUM (sizeof(dlgerrorlist) / sizeof(*dlgerrorlist))
 
 GtkWidget *DLGTopLevel = NULL;
-
-extern int OpenApplication();
-extern int OpenApplication();
 
 static gboolean
 dialogclose(GtkWidget *w, GdkEvent  *event, gpointer user_data)

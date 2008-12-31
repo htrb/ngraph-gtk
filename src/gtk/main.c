@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.22 2008/11/26 02:59:39 hito Exp $
+ * $Id: main.c,v 1.24 2008/12/31 12:33:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -45,6 +45,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "ox11menu.h"
+#include "x11menu.h"
 #include "ogra2x11.h"
 #include "ogra2cairo.h"
 #include <assert.h>
@@ -145,7 +146,6 @@ char *Documenter[] = {
   NULL
 };
 
-extern GtkWidget *TopLevel;
 
 static int OpenDisplay = FALSE;
 
@@ -894,7 +894,7 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
 {
   char **list = (char **) NULL;
   struct fontmap *fontmap, *fontmaproot;
-  int i, j, len, twobyte;
+  int j, len, twobyte;
 
   if (Mxlocal == NULL)
     return NULL;

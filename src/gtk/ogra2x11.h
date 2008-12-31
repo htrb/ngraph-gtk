@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ogra2x11.h,v 1.2 2008/12/31 12:30:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -22,5 +22,3 @@
  */
 
 void *addgra2gtk(void);
-int gdkgc_set_arc_mode(GdkGC * gc, int arc_mode);
-int gdkgc_set_fill_rule(GdkGC * gc, int fill_rule);

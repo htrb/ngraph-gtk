@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.41 2008/12/30 12:07:00 hito Exp $
+ * $Id: ox11menu.c,v 1.42 2008/12/31 12:30:49 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -48,6 +48,7 @@
 
 #include "strconv.h"
 
+#include "main.h"
 #include "ogra2cairo.h"
 #include "ogra2x11.h"
 #include "ox11menu.h"
@@ -81,7 +82,6 @@ enum {
   ERR_MENU_DISPLAY,
 };
 
-extern int OpenApplication();
 struct menulocal Menulocal;
 struct mxlocal *Mxlocal;
 struct savedstdio GtkIOSave;

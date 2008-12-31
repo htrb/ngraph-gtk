@@ -5,6 +5,9 @@
 	(gra2gtk): rename field "redraw" to "expose".
 	(gra2gtk): add field "dpix" and "dpiy".
 	(gtkinit): "gtkevpaint()" is connected to "gtklocal->View".
+	(gdkgc_set_arc_mode, gdkgc_set_fill_rule): remove.
+	(gtkinit): show error message when "OpenApplication()" returns
+	FALSE.
 
 2008-12-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
