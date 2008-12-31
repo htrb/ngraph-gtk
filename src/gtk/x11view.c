@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.85 2008/12/30 03:13:51 hito Exp $
+ * $Id: x11view.c,v 1.86 2008/12/31 11:46:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4669,7 +4669,7 @@ OpenGC(void)
 {
   int width, height;
 
-  if (Mxlocal->gc != 0)
+  if (Mxlocal->gc)
     return;
 
   Disp = gdk_display_get_default();
@@ -4817,12 +4817,12 @@ ChangeDPI(int redraw)
 void
 CloseGC(void)
 {
-  if (Mxlocal->gc == 0)
+  if (Mxlocal->gc == NULL)
     return;
  
   gdk_display_flush(Disp);
   g_object_unref(G_OBJECT(Mxlocal->gc));
-  Mxlocal->gc = 0;
+  Mxlocal->gc = NULL;
 
   if (Mxlocal->region != NULL)
     gdk_region_destroy(Mxlocal->region);
@@ -4835,7 +4835,7 @@ CloseGC(void)
 void
 ReopenGC(void)
 {
-  if (Mxlocal->gc != 0) {
+  if (Mxlocal->gc) {
     gdk_display_flush(Disp);
     g_object_unref(G_OBJECT(Mxlocal->gc));
   }
