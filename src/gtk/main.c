@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.25 2008/12/31 12:40:14 hito Exp $
+ * $Id: main.c,v 1.26 2008/12/31 12:53:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -328,8 +328,12 @@ nallocconsole()
   snprintf(buf, sizeof(buf), "%c]2;Ngraph shell%c%s version %s. Script interpreter.\n",
 	  0x1b, 0x07, sysname, version);
 
-  if (write(fdo[1], buf, strlen(buf) + 1) < 0)
+  if (write(fdo[1], buf, strlen(buf) + 1) < 0) {
+    close(fdi[0]);
+    close(fdo[1]);
+
     return FALSE;
+  }
 
   pipefd = fdo[1];
   consolepid = pid;
@@ -391,9 +395,11 @@ nfreeconsole()
       dup2(consolefd[2], 2);
       close(consolefd[2]);
     }
-    buf[0] = '\0';
-    write(pipefd, buf, 1);
-    close(pipefd);
+    if (pipefd != -1) {
+      buf[0] = '\0';
+      write(pipefd, buf, 1);
+      close(pipefd);
+    }
     pipefd = -1;
     consolepid = -1;
     close(consolefdin);

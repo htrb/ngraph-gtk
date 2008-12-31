@@ -2,6 +2,7 @@
 
 	* src/gtk/main.c (putconsole, printfconsole, inputynconsole)
 	(nallocconsole): check return value of "write()".
+	(nfreeconsole): check value of "pipefd".
 
 	* src/gtk/ogra2x11.c (gtkflush): remove.
 	(gra2gtk): remove field "flush".
