@@ -1,3 +1,11 @@
+2008-12-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2x11.c (gtkflush): remove.
+	(gra2gtk): remove field "flush".
+	(gra2gtk): rename field "redraw" to "expose".
+	(gra2gtk): add field "dpix" and "dpiy".
+	(gtkinit): "gtkevpaint()" is connected to "gtklocal->View".
+
 2008-12-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* demo/demo.ngp: add.

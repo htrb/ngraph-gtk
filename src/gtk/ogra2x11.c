@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.18 2008/12/30 02:54:04 hito Exp $
+ * $Id: ogra2x11.c,v 1.20 2008/12/31 12:00:42 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -92,8 +92,6 @@ struct gtklocal
 static void gtkMakeRuler(struct gtklocal *gtklocal);
 static int gtk_evloop(struct objlist *obj, char *inst, char *rval, int argc,
 		      char **argv);
-static int gtkflush(struct objlist *obj, char *inst, char *rval, int argc,
-		    char **argv);
 static int gtkloadconfig(struct gtklocal *gtklocal);
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);;
@@ -332,9 +330,6 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   g_signal_connect(gtklocal->mainwin, "key-press-event", G_CALLBACK(ev_key_down), gtklocal);
 
-  g_signal_connect(gtklocal->mainwin,
-		   "expose-event", G_CALLBACK(gtkevpaint), gtklocal);
-
   //  g_signal_connect(gtklocal->mainwin, "size-request", G_CALLBACK(gtkevsize), gtklocal);
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
@@ -356,6 +351,9 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   gtklocal->View = gtk_drawing_area_new();
   if (gtklocal->View == NULL)
     goto errexit;
+
+  g_signal_connect(gtklocal->View,
+		   "expose-event", G_CALLBACK(gtkevpaint), gtklocal);
 
   gtk_widget_set_size_request(gtklocal->View,
 			      gtklocal->winwidth, gtklocal->winheight);
@@ -443,18 +441,6 @@ gtkdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-gtkflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
-{
-  struct gtklocal *gtklocal;
-
-  if (_getobj(obj, "_gtklocal", inst, &gtklocal))
-    return 1;
-
-  gtkredraw(obj, inst, rval, argc, argv);
-  return 0;
-}
-
-static int
 gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct gtklocal *local;
@@ -474,7 +460,7 @@ gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   color.blue = local->bg_b * 0xff;
   gdk_gc_set_rgb_fg_color(local->gc, &color);
   gdk_draw_rectangle(local->win, local->gc, TRUE, 0, 0, w, h);
-  gtkredraw(obj, inst, rval, argc, argv);
+  gdk_window_invalidate_rect(local->window, NULL, TRUE);
   return 0;
 }
 
@@ -539,10 +525,7 @@ gtkredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_getobj(obj, "_gtklocal", inst, &gtklocal))
     return 1;
 
-  GRAredraw(obj, inst, TRUE, 0);
-
   gdk_window_invalidate_rect(gtklocal->window, NULL, TRUE);
-  gdk_window_process_updates(gtklocal->window, TRUE);
   return 0;
 }
 
@@ -564,7 +547,7 @@ dot2pixel(struct gtklocal *gtklocal, int r)
 static void
 gtkchangedpi(struct gtklocal *gtklocal)
 {
-  int width, height, pw, ph;
+  int width, height;
   GdkPixmap *pixmap;
 
 
@@ -577,6 +560,8 @@ gtkchangedpi(struct gtklocal *gtklocal)
 
   pixmap = gtklocal->win;
   if (pixmap) {
+    int pw, ph;
+
     gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &pw, &ph);
     if (pw != width || ph != height) {
       g_object_unref(G_OBJECT(pixmap));
@@ -712,7 +697,7 @@ gtk_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   local->windpi = dpi;
   local->local->pixel_dot_x =
-    local->local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
+    local->local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
 
   gtkchangedpi(local);
@@ -725,8 +710,9 @@ struct objtable gra2gtk[] = {
   {"done", NVFUNC, NEXEC, gtkdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
   {"dpi", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
-  {"redraw", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
-  {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
+  {"dpix", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
+  {"dpiy", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
+  {"expose", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},
   {"BR", NINT, NREAD | NWRITE, gtkbr, NULL, 0},
   {"BG", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
