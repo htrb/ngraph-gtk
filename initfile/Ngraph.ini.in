@@ -1,4 +1,6 @@
 [Ngraph]
+# terminal=gnome-terminal -x nterminal
+# terminal=rxvt -e nterminal
 terminal=xterm -e nterminal
 alloc_console=0
 history_size=1000

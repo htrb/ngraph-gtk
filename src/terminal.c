@@ -2,6 +2,9 @@
 #include "config.h"
 #endif
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -11,29 +14,66 @@
 int
 main(int argc,char **argv)
 {
-  int fdi[2],fdo[2],len;
-  char buf[1];
+  int fdi, fdo, len;
+  char *ptr, buf[256] = {0};
 
-  if (argc<5) return 0;
-  fdo[0]=atoi(argv[1]);
-  fdo[1]=atoi(argv[2]);
-  fdi[0]=atoi(argv[3]);
-  fdi[1]=atoi(argv[4]);
-  close(fdo[0]);
-  close(fdi[1]);
-  if (!isatty(0) || !isatty(1)) {
-    close(fdo[1]);
-    close(fdi[1]);
-    return 1;
+  if (argc < 3) {
+    goto End;
   }
-  while ((read(fdi[0],buf,1)==1) && (buf[0]!='\0')) {
-    printf("%c",buf[0]);
+
+  if (! isatty(0) || ! isatty(1)) {
+    goto End;
   }
-  len=strlen(ttyname(0));
-  write(fdo[1],ttyname(0),len+1);
-  close(fdo[1]);
+
+  ptr = ttyname(0);
+  if (ptr == NULL) {
+    goto End;
+  }
+
+  fdo = open(argv[1], O_WRONLY);
+  fdi = open(argv[2], O_RDONLY);
+
+  while (1) {
+    int n;
+    n = read(fdi,buf,1);
+    if (n != 1) {
+      perror("");
+      break;
+    }
+    if (buf[0] == '\0')
+      break;
+    putchar(buf[0]);
+  }
+
+  len = strlen(ptr);
+  if (write(fdo, ptr, len + 1) < 0) {
+    close(fdo);
+    close(fdi);
+    goto End;;
+  }
+
+  len = snprintf(buf, sizeof(buf) - 1, "%d", getpid());
+  if (write(fdo, buf, len + 1) < 0) {
+    close(fdo);
+    close(fdi);
+    goto End;;
+  }
+  
+  close(fdo);
+  close(fdi);
+
+  unlink(argv[1]);
+  unlink(argv[2]);
+
   signal(SIGINT,SIG_IGN);
-  read(fdi[0],buf,1);
-  close(fdi[0]);
+  pause();
+
   return 0;
+
+
+ End:
+  unlink(argv[1]);
+  unlink(argv[2]);
+
+  return 1;
 }

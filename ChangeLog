@@ -1,3 +1,14 @@
+2009-01-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/terminal.c (main): use named pipe.
+	(main): use "pause()" to waite termination.
+
+	* src/gtk/main.c: global variables "terminal", "consolesave",
+	"consolefd[]" and "consolepid" are static.
+	remove unused variable "pipefd".
+	(nallocconsole): use named pipe.
+	(nfreeconsole): use "kill()" to terminate "nterminal".
+
 2008-12-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.c (putconsole, printfconsole, inputynconsole)

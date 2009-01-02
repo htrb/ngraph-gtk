@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.26 2008/12/31 12:53:50 hito Exp $
+ * $Id: main.c,v 1.27 2009/01/02 05:22:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <locale.h>
+#include <signal.h>
 
 #include "dir_defs.h"
 #include "ngraph.h"
@@ -270,11 +271,10 @@ displaystatusconsole(char *str)
 {
 }
 
-char *terminal = NULL;
-struct savedstdio consolesave;
-int consolefd[3];
-int pipefd = -1;
-pid_t consolepid = -1;
+static char *terminal = NULL;
+static struct savedstdio consolesave;
+static int consolefd[3];
+static pid_t consolepid = -1;
 
 void
 resizeconsole(int col, int row)
@@ -282,11 +282,12 @@ resizeconsole(int col, int row)
 }
 
 int
-nallocconsole()
+nallocconsole(void)
 {
-  int fd[3], fdi[2], fdo[2], len, i;
+  int fd[3], fdi, fdo, len;
+  unsigned int i;
   pid_t pid;
-  char buf[256], ttyname[256];
+  char buf[256], ttyname[256], fifo_in[1024], fifo_out[1024];
   char *s, *s2;
   char **argv;
   struct objlist *sys;
@@ -295,23 +296,28 @@ nallocconsole()
 
   if (consoleac)
     return FALSE;
+
   if (terminal == NULL)
     return FALSE;
-  if (pipe(fdi) == -1)
-    return FALSE;
-  if (pipe(fdo) == -1) {
-    close(fdi[0]);
-    close(fdi[1]);
+
+  snprintf(fifo_in, sizeof(fifo_in) - 1, "/tmp/nterm1_%d", getpid());
+  snprintf(fifo_out, sizeof(fifo_out) - 1, "/tmp/nterm2_%d", getpid());
+
+  if (mkfifo(fifo_in, 0600)) {
     return FALSE;
   }
+
+  if (mkfifo(fifo_out, 0600)) {
+    unlink(fifo_in);
+    return FALSE;
+  }
+
   if ((pid = fork()) == -1) {
-    close(fdi[0]);
-    close(fdi[1]);
-    close(fdo[0]);
-    close(fdo[1]);
+    unlink(fifo_in);
+    unlink(fifo_out);
     return FALSE;
   } else if (pid == 0) {
-    snprintf(buf, sizeof(buf), "%s %d %d %d %d", terminal, fdi[0], fdi[1], fdo[0], fdo[1]);
+    snprintf(buf, sizeof(buf), "%s %s %s", terminal, fifo_in, fifo_out);
     argv = NULL;
     s = buf;
     while ((s2 = getitok2(&s, &len, " \t")) != NULL) {
@@ -320,44 +326,69 @@ nallocconsole()
     execvp(argv[0], argv);
     exit(1);
   }
-  close(fdi[1]);
-  close(fdo[0]);
+  fdi = open(fifo_in, O_RDONLY);
+  fdo = open(fifo_out, O_WRONLY);
+
   sys = chkobject("system");
   getobj(sys, "name", 0, 0, NULL, &sysname);
   getobj(sys, "version", 0, 0, NULL, &version);
   snprintf(buf, sizeof(buf), "%c]2;Ngraph shell%c%s version %s. Script interpreter.\n",
 	  0x1b, 0x07, sysname, version);
 
-  if (write(fdo[1], buf, strlen(buf) + 1) < 0) {
-    close(fdi[0]);
-    close(fdo[1]);
-
+  if (write(fdo, buf, strlen(buf) + 1) < 0) {
+    close(fdi);
+    close(fdo);
     return FALSE;
   }
 
-  pipefd = fdo[1];
+  close(fdo);
   consolepid = pid;
-  i = 0;
-  while ((read(fdi[0], buf, 1) == 1) && (buf[0] != '\0')) {
-    ttyname[i] = buf[0];
-    i++;
+
+  for (i = 0; i < sizeof(ttyname) - 1; i++) {
+    if (read(fdi, ttyname + i, 1) != 1)
+      break;
+
+    if (ttyname[i] == '\0')
+      break;
   }
   ttyname[i] = '\0';
-  close(fdi[0]);
+
+  if (i == 0) {
+    close(fdi);
+    return FALSE;
+  }
+
+  for (i = 0; i < sizeof(buf) - 1; i++) {
+    if (read(fdi, buf, 1) != 1)
+      break;
+
+    if (buf[0] == '\0')
+      break;
+  }
+  close(fdi);
+
   if (i == 0)
     return FALSE;
+
+  buf[i] = '\0';
+  consolepid = atoi(buf);
+
   fd[0] = open(ttyname, O_RDONLY);
   fd[1] = open(ttyname, O_WRONLY);
   fd[2] = open(ttyname, O_WRONLY);
+
   consolefd[0] = dup(0);
   close(0);
   dup2(fd[0], 0);
+
   consolefd[1] = dup(1);
   close(1);
   dup2(fd[1], 1);
+
   consolefd[2] = dup(2);
   close(2);
   dup2(fd[2], 2);
+
   close(fd[0]);
   close(fd[1]);
   close(fd[2]);
@@ -371,14 +402,13 @@ nallocconsole()
   inputyn = inputynconsole;
   ndisplaydialog = displaydialogconsole;
   ndisplaystatus = displaystatusconsole;
+
   return TRUE;
 }
 
 void
-nfreeconsole()
+nfreeconsole(void)
 {
-  char buf[1];
-
   if (consoleac) {
     close(0);
     if (consolefd[0] != -1) {
@@ -395,15 +425,13 @@ nfreeconsole()
       dup2(consolefd[2], 2);
       close(consolefd[2]);
     }
-    if (pipefd != -1) {
-      buf[0] = '\0';
-      write(pipefd, buf, 1);
-      close(pipefd);
-    }
-    pipefd = -1;
+
+    kill(consolepid, SIGTERM);
     consolepid = -1;
+
     close(consolefdin);
     close(consolefdout);
+
     consolefdin = 0;
     consolefdout = 2;
     consoleac = FALSE;
