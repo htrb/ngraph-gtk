@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-12-30 11:31+0900\n"
+"POT-Creation-Date: 2009-01-02 14:36+0900\n"
 "PO-Revision-Date: 2008-09-22 11:44+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -14,15 +14,15 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11dlg.c:367
+#: src/gtk/ox11dlg.c:364
 msgid "Open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:414
+#: src/gtk/ox11dlg.c:411
 msgid "Open files"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:463
+#: src/gtk/ox11dlg.c:460
 msgid "Save file"
 msgstr "別名で保存"
 
@@ -1866,7 +1866,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4868
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4873
 msgid "Drawing."
 msgstr "描画中"
 
@@ -1957,15 +1957,15 @@ msgstr "データ評価中"
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3356
+#: src/gtk/x11view.c:3361
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:4862
+#: src/gtk/x11view.c:4867
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:4869
+#: src/gtk/x11view.c:4874
 msgid "Drawing"
 msgstr "描画中"
 

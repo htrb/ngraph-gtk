@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-15\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2008-12-30 11:31+0900\n"
+"POT-Creation-Date: 2009-01-02 14:36+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11dlg.c:367
+#: src/gtk/ox11dlg.c:364
 msgid "Open file"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:414
+#: src/gtk/ox11dlg.c:411
 msgid "Open files"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:463
+#: src/gtk/ox11dlg.c:460
 msgid "Save file"
 msgstr ""
 
@@ -1860,7 +1860,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4868
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4873
 msgid "Drawing."
 msgstr ""
 
@@ -1951,15 +1951,15 @@ msgstr ""
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3356
+#: src/gtk/x11view.c:3361
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4862
+#: src/gtk/x11view.c:4867
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4869
+#: src/gtk/x11view.c:4874
 msgid "Drawing"
 msgstr ""
 

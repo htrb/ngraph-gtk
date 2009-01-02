@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.27 2009/01/02 05:22:37 hito Exp $
+ * $Id: main.c,v 1.28 2009/01/02 06:16:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -284,7 +284,7 @@ resizeconsole(int col, int row)
 int
 nallocconsole(void)
 {
-  int fd[3], fdi, fdo, len;
+  int fd[3] = {-1, -1, -1}, fdi, fdo, len;
   unsigned int i;
   pid_t pid;
   char buf[256], ttyname[256], fifo_in[1024], fifo_out[1024];
@@ -342,7 +342,6 @@ nallocconsole(void)
   }
 
   close(fdo);
-  consolepid = pid;
 
   for (i = 0; i < sizeof(ttyname) - 1; i++) {
     if (read(fdi, ttyname + i, 1) != 1)
@@ -359,7 +358,7 @@ nallocconsole(void)
   }
 
   for (i = 0; i < sizeof(buf) - 1; i++) {
-    if (read(fdi, buf, 1) != 1)
+    if (read(fdi, buf + i, 1) != 1)
       break;
 
     if (buf[0] == '\0')
@@ -371,11 +370,23 @@ nallocconsole(void)
     return FALSE;
 
   buf[i] = '\0';
-  consolepid = atoi(buf);
 
   fd[0] = open(ttyname, O_RDONLY);
+  if (fd[0] < 0) {
+    goto ErrEnd;
+  }
+
   fd[1] = open(ttyname, O_WRONLY);
+  if (fd[1] < 0) {
+    goto ErrEnd;
+  }
+
   fd[2] = open(ttyname, O_WRONLY);
+  if (fd[2] < 0) {
+    goto ErrEnd;
+  }
+
+  consolepid = atoi(buf);
 
   consolefd[0] = dup(0);
   close(0);
@@ -404,6 +415,21 @@ nallocconsole(void)
   ndisplaystatus = displaystatusconsole;
 
   return TRUE;
+
+ ErrEnd:
+  if (fd[0] < 0) {
+    close(fd[0]);
+  }
+
+  if (fd[1] < 0) {
+    close(fd[1]);
+  }
+
+  if (fd[2] < 0) {
+    close(fd[2]);
+  }
+
+  return FALSE;
 }
 
 void
@@ -426,7 +452,7 @@ nfreeconsole(void)
       close(consolefd[2]);
     }
 
-    kill(consolepid, SIGTERM);
+    kill(consolepid, SIGCHLD);
     consolepid = -1;
 
     close(consolefdin);

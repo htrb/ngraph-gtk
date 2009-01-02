@@ -11,11 +11,17 @@
 #include <string.h>
 #include <unistd.h>
 
+static void
+sig_handler(int sig)
+{
+}
+
 int
 main(int argc,char **argv)
 {
   int fdi, fdo, len;
   char *ptr, buf[256] = {0};
+  struct sigaction act;
 
   if (argc < 3) {
     goto End;
@@ -65,7 +71,23 @@ main(int argc,char **argv)
   unlink(argv[1]);
   unlink(argv[2]);
 
-  signal(SIGINT,SIG_IGN);
+  act.sa_handler = SIG_IGN;
+  act.sa_flags = 0;
+  sigemptyset(&act.sa_mask);
+  sigaction(SIGINT, &act, NULL);
+
+#ifdef SIGWINCH
+  act.sa_handler = SIG_IGN;
+  act.sa_flags = 0;
+  sigemptyset(&act.sa_mask);
+  sigaction(SIGWINCH, &act, NULL);
+#endif
+
+  act.sa_handler = sig_handler;
+  act.sa_flags = 0;
+  sigemptyset(&act.sa_mask);
+  sigaction(SIGCHLD, &act, NULL);
+
   pause();
 
   return 0;
