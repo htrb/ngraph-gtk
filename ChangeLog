@@ -1,3 +1,11 @@
+2009-01-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.c: variables "consolecol", "consolerow",
+	"consolefdout", "consolefdin" and "consoleac" are static.
+
+	* src/osystem.c (systemresize): don't check "data[0]" and
+	"data[1]".
+
 2009-01-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_cursor): use "gdk_cursor_new()"

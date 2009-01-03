@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.4 2008/11/26 07:05:12 hito Exp $
+ * $Id: osystem.c,v 1.5 2009/01/03 15:10:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -312,19 +312,13 @@ int systemresize(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *iarray;
   int num;
   int *data;
-  int col,row;
 
   iarray=(struct narray *)argv[2];
   num=arraynum(iarray);
-  if (num<2) {
-    col=consolecol;
-    row=consolerow;
-  } else {
+  if (num >= 2) {
     data=(int *)arraydata(iarray);
-    col = (data[0] > 0) ? data[0] : consolecol;
-    row = (data[1] > 0) ? data[1] : consolerow;
+    resizeconsole(data[0], data[1]);
   }
-  resizeconsole(col,row);
   return 0;
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.29 2009/01/03 14:40:25 hito Exp $
+ * $Id: main.c,v 1.30 2009/01/03 15:10:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,15 +60,12 @@ static char **attempt_shell_completion(char *text, int start, int end);
 #define DATADIR "/usr/local/lib/Ngraph"
 #endif
 
-int consolecol = 80;
-int consolerow = 25;
+static int consolecol = 80, consolerow = 25;
 
 
 char **mainenviron;
 char *systemname;
-int consolefdout;
-int consolefdin;
-int consoleac = FALSE;
+static int consolefdout, consolefdin, consoleac = FALSE;
 
 void *addobjectroot(void);
 void *addint(void);
