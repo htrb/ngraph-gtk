@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.42 2008/12/31 12:30:49 hito Exp $
+ * $Id: ox11menu.c,v 1.43 2009/01/03 14:40:25 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1172,7 +1172,7 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
       Mxlocal->local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
 
-  if (Disp && Mxlocal->win) {
+  if (Mxlocal->win) {
     gdk_window_invalidate_rect(Mxlocal->win, NULL, TRUE);
   }
   return 0;
@@ -1186,15 +1186,13 @@ mxflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     Mxlocal->local->linetonum = 0;
   }
 
-  if (Disp)
-    gdk_display_flush(Disp);
   return 0;
 }
 
 void
 mx_clear(GdkRegion *region)
 {
-  if (Disp) {
+  if (Mxlocal->pix) {
     gint w, h;
     GdkColor color;
 

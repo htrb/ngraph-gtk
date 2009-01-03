@@ -1,3 +1,20 @@
+2009-01-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_cursor): use "gdk_cursor_new()"
+	instead of "gdk_cursor_new_for_display()".
+
+	* src/gtk/main.c: remove global variable "Disp".
+
+	* src/gtk/x11view.c (OpenGC): don't call
+	"gdk_display_get_default()".
+
+	* src/gtk/ogra2x11.c (gtkflush): add.
+
+	* src/gtk/ox11menu.c (mxflush): don't call "gdk_display_flush()".
+
+	* src/gtk/x11view.c (CloseGC, ReopenGC): don't call
+	"gdk_display_flush()".
+
 2009-01-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/terminal.c (main): use named pipe.

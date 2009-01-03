@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.22 2008/12/31 12:30:49 hito Exp $
+ * $Id: ogra2x11.c,v 1.23 2009/01/03 14:40:25 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -450,6 +450,21 @@ gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
+gtkflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  struct gtklocal *local;
+
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv))
+    return 1;
+
+  if (_getobj(obj, "_gtklocal", inst, &local))
+    return 1;
+
+  gdk_window_invalidate_rect(local->window, NULL, TRUE);
+  return 0;
+}
+
+static int
 get_color(struct gtklocal *gtklocal, int argc, char **argv)
 {
   int c;
@@ -684,6 +699,7 @@ struct objtable gra2gtk[] = {
   {"dpix", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
   {"dpiy", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
   {"expose", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
+  {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},
   {"BR", NINT, NREAD | NWRITE, gtkbr, NULL, 0},
   {"BG", NINT, NREAD | NWRITE, gtkbg, NULL, 0},

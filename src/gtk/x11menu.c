@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.54 2008/12/30 02:54:04 hito Exp $
+ * $Id: x11menu.c,v 1.55 2009/01/03 14:40:25 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1272,7 +1272,7 @@ create_cursor(void)
     return 1;
 
   for (i = 0; i < CURSOR_TYPE_NUM; i++) {
-    NgraphApp.cursor[i] = gdk_cursor_new_for_display(Disp, Cursor[i]);
+    NgraphApp.cursor[i] = gdk_cursor_new(Cursor[i]);
   }
 
   return 0;

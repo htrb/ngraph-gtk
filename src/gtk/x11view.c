@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.87 2009/01/03 12:04:11 hito Exp $
+ * $Id: x11view.c,v 1.88 2009/01/03 14:40:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4672,8 +4672,6 @@ OpenGC(void)
   if (Mxlocal->gc)
     return;
 
-  Disp = gdk_display_get_default();
-
   Mxlocal->local->pixel_dot_x =
   Mxlocal->local->pixel_dot_y =
     Mxlocal->windpi / 25.4 / 100;
@@ -4820,7 +4818,6 @@ CloseGC(void)
   if (Mxlocal->gc == NULL)
     return;
  
-  gdk_display_flush(Disp);
   g_object_unref(G_OBJECT(Mxlocal->gc));
   Mxlocal->gc = NULL;
 
@@ -4836,7 +4833,6 @@ void
 ReopenGC(void)
 {
   if (Mxlocal->gc) {
-    gdk_display_flush(Disp);
     g_object_unref(G_OBJECT(Mxlocal->gc));
   }
   Mxlocal->gc = gdk_gc_new(Mxlocal->win);

@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.28 2009/01/02 06:16:08 hito Exp $
+ * $Id: main.c,v 1.29 2009/01/03 14:40:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -112,7 +112,6 @@ void *adddialog(void);
 void resizeconsole(int col, int row);
 
 // XtAppContext Application=NULL;
-GdkDisplay *Disp = NULL;
 char *AppName = "Ngraph", *AppClass = "Ngraph", *Home;
 char *License = "\
 This program is free software; you can redistribute it and/or modify\
