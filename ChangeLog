@@ -73,8 +73,8 @@
 2008-12-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_up_drag): move object only when
-	"dx != 0 && dy != 0".
-	(mouse_up_change): change object only when "dx != 0 && dy != 0".
+	"dx != 0 || dy != 0".
+	(mouse_up_change): change object only when "dx != 0 || dy != 0".
 	(mouse_up_zoom): zoom object only when "zm != 0 && zm != 10000".
 
 2008-12-26  Ito Hiroyuki  <ZXB01226 at nifty.com>

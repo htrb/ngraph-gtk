@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.86 2008/12/31 11:46:34 hito Exp $
+ * $Id: x11view.c,v 1.87 2009/01/03 12:04:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2605,7 +2605,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
       CheckGrid(FALSE, state, &dx, &dy, NULL);
     }
 
-    if (dx != 0 && dy != 0) {
+    if (dx != 0 || dy != 0) {
       argv[0] = (char *) &(d->ChangePoint);
       argv[1] = (char *) &dx;
       argv[2] = (char *) &dy;
