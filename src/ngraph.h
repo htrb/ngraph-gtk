@@ -1,5 +1,5 @@
 /* 
- * $Id: ngraph.h,v 1.2 2008/08/05 02:45:24 hito Exp $
+ * $Id: ngraph.h,v 1.3 2009/01/04 02:19:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,7 +21,6 @@
  * 
  */
 
-extern char *systemname;
 int printfconsole(char *fmt,...);
 int putconsole(char *s);
 int printfconsole(char *fmt,...);
