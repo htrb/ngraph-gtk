@@ -16,12 +16,22 @@ sig_handler(int sig)
 {
 }
 
+static void
+my_signal(int signum, void (* sighandler))
+{
+  struct sigaction act;
+
+  act.sa_handler = sighandler;
+  act.sa_flags = 0;
+  sigemptyset(&act.sa_mask);
+  sigaction(signum, &act, NULL);
+}
+
 int
 main(int argc,char **argv)
 {
   int fdi, fdo, len;
   char *ptr, buf[256] = {0};
-  struct sigaction act;
 
   if (argc < 3) {
     goto End;
@@ -50,18 +60,17 @@ main(int argc,char **argv)
       break;
     putchar(buf[0]);
   }
+  close(fdi);
 
-  len = strlen(ptr);
-  if (write(fdo, ptr, len + 1) < 0) {
+  len = strlen(ptr) + 1;
+  if (write(fdo, ptr, len) < 0) {
     close(fdo);
-    close(fdi);
     goto End;;
   }
 
-  len = snprintf(buf, sizeof(buf) - 1, "%d", getpid());
-  if (write(fdo, buf, len + 1) < 0) {
+  len = snprintf(buf, sizeof(buf) - 1, "%d", getpid()) + 1;
+  if (write(fdo, buf, len) < 0) {
     close(fdo);
-    close(fdi);
     goto End;;
   }
   
@@ -71,22 +80,13 @@ main(int argc,char **argv)
   unlink(argv[1]);
   unlink(argv[2]);
 
-  act.sa_handler = SIG_IGN;
-  act.sa_flags = 0;
-  sigemptyset(&act.sa_mask);
-  sigaction(SIGINT, &act, NULL);
+  my_signal(SIGINT, SIG_IGN);
 
 #ifdef SIGWINCH
-  act.sa_handler = SIG_IGN;
-  act.sa_flags = 0;
-  sigemptyset(&act.sa_mask);
-  sigaction(SIGWINCH, &act, NULL);
+  my_signal(SIGWINCH, SIG_IGN);
 #endif
 
-  act.sa_handler = sig_handler;
-  act.sa_flags = 0;
-  sigemptyset(&act.sa_mask);
-  sigaction(SIGCHLD, &act, NULL);
+  my_signal(SIGCHLD, sig_handler);
 
   pause();
 

@@ -1,5 +1,8 @@
 2009-01-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/terminal.c (my_signal): add.
+	(main): use "my_signal".
+
 	* src/gtk/main.c: variables "consolecol", "consolerow",
 	"consolefdout", "consolefdin", "consoleac" and "systemname" are
 	static.
