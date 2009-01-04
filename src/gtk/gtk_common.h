@@ -23,5 +23,7 @@
 
 #endif /* HAVE_GETTEXT */
 
+#define PLATFORM "for GTK+"
+
 #endif
 
