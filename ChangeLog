@@ -3,6 +3,8 @@
 	* src/gtk/main.c: variables "consolecol", "consolerow",
 	"consolefdout", "consolefdin", "consoleac" and "systemname" are
 	static.
+	(interruptconsole, inputynconsole, displaydialogconsole)
+	(displaystatusconsole): these functions are static.
 
 	* src/osystem.c (systemresize): don't check "data[0]" and
 	"data[1]".

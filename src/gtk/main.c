@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.31 2009/01/04 02:19:39 hito Exp $
+ * $Id: main.c,v 1.32 2009/01/04 11:56:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -221,13 +221,13 @@ printfconsole(char *fmt, ...)
   return len;
 }
 
-int
+static int
 interruptconsole(void)
 {
   return FALSE;
 }
 
-int
+static int
 inputynconsole(char *mes)
 {
   int len, r;
@@ -256,13 +256,13 @@ inputynconsole(char *mes)
   return FALSE;
 }
 
-void
+static void
 displaydialogconsole(char *str)
 {
   putconsole(str);
 }
 
-void
+static void
 displaystatusconsole(char *str)
 {
 }
