@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.34 2008/12/30 02:54:04 hito Exp $
+ * $Id: x11axis.c,v 1.35 2009/01/05 05:41:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -68,7 +68,7 @@ static n_list_store Alist[] = {
 #define AXIS_WIN_COL_ID 1
 #define AXIS_WIN_COL_TYPE 6
 
-void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
+static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
 
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL},
@@ -2532,7 +2532,7 @@ CmAxisZoom(void)
   }
 }
 
-void 
+static void 
 axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
 {
   struct SubWin *d;

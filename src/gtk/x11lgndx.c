@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.12 2008/12/26 10:00:59 hito Exp $
+ * $Id: x11lgndx.c,v 1.13 2009/01/05 05:41:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -63,7 +63,7 @@ clear_view(struct LegendGaussDialog *d)
   }
 }
 
-void
+static void
 LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 {
   int n;

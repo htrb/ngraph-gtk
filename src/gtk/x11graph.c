@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.30 2009/01/04 02:19:39 hito Exp $
+ * $Id: x11graph.c,v 1.31 2009/01/05 05:41:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -628,7 +628,7 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
   set_drawlist_btn_state(d, FALSE);
 }
 
-gboolean 
+static gboolean 
 drawlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
   int n;
@@ -643,7 +643,7 @@ drawlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
   return FALSE;
 }
 
-gboolean 
+static gboolean 
 objlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
   int n;

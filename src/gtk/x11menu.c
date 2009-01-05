@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.55 2009/01/03 14:40:25 hito Exp $
+ * $Id: x11menu.c,v 1.56 2009/01/05 05:41:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -445,13 +445,13 @@ set_draw_lock(int lock)
   DrawLock = lock;
 }
 
-void
+static void
 kill_signal_handler(int sig)
 {
   Hide_window = TRUE;
 }
 
-void
+static void
 childhandler(int sig)
 {
   int i, num;

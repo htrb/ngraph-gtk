@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.88 2009/01/03 14:40:25 hito Exp $
+ * $Id: x11view.c,v 1.89 2009/01/05 05:41:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -773,7 +773,7 @@ ViewerWinClose(void)
 
 }
 
-int
+static int
 ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 {
   struct objlist *fileobj;
@@ -4933,7 +4933,7 @@ Draw(int SelectFile)
   gdk_window_invalidate_rect(d->win, NULL, TRUE);
 }
 
-void
+static void
 Clear(void)
 {
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {

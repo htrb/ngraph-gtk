@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.33 2008/12/26 01:48:15 hito Exp $
+ * $Id: ogra2cairo.c,v 1.34 2009/01/05 05:41:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -645,7 +645,7 @@ check_cairo_status(cairo_t *cairo)
   return 0;
 }
 
-int 
+static int 
 gra2cairo_flush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 { 
   struct gra2cairo_local *local;

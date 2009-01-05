@@ -147,7 +147,7 @@ spin_entry_get_val(GtkWidget *entry)
   return val2int(type, val);
 }
 
-GtkWidget *
+static GtkWidget *
 _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
 		   double inc, double page, gboolean numeric,
 		   gboolean wrap, int set_default_size, int set_default_action)

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.25 2008/12/30 02:54:04 hito Exp $
+ * $Id: x11opt.c,v 1.26 2009/01/05 05:41:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1391,7 +1391,7 @@ ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
 }
 
 
-void 
+static void 
 use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
   gboolean state;
