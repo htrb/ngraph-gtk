@@ -195,16 +195,16 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = axisref.gif barc.gif baxispo.gif \
-	bclear.gif bcross.gif bcurve.gif bdataopn.gif \
-	bdatapo.gif bdraw.gif beval.gif bframe.gif \
-	bgauss.gif blgndpo.gif bline.gif bload.gif \
-	bmark.gif bmath.gif bpoint.gif bpolygon.gif \
-	bpreview.gif bprint.gif brect.gif bsave.gif \
-	bscale.gif bscundo.gif bsection.gif bsingle.gif \
-	bstop.gif btext.gif btrim.gif bzoom.gif \
-	iconl.gif winaxis.gif wincoord.gif windata.gif \
-	wininfo.gif winlgnd.gif winmerge.gif move.gif
+EXTRA_DIST = axisref.png barc.png baxispo.png \
+	bclear.png bcross.png bcurve.png bdataopn.png \
+	bdatapo.png bdraw.png beval.png bframe.png \
+	bgauss.png blgndpo.png bline.png bload.png \
+	bmark.png bmath.png bpoint.png bpolygon.png \
+	bpreview.png bprint.png brect.png bsave.png \
+	bscale.png bscundo.png bsection.png bsingle.png \
+	bstop.png btext.png btrim.png bzoom.png \
+	iconl.png winaxis.png wincoord.png windata.png \
+	wininfo.png winlgnd.png winmerge.png move.png
 
 htmljaimgdir = $(docdir)/html_ja/img
 htmljaimg_DATA = ${EXTRA_DIST}
