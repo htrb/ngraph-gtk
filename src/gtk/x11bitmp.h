@@ -1,5 +1,5 @@
 /* 
- * $Id: x11bitmp.h,v 1.2 2008/06/16 08:47:52 hito Exp $
+ * $Id: x11bitmp.h,v 1.3 2009/01/06 01:06:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,83 +21,43 @@
  * 
  */
 
-extern gchar *Icon_xpm[];
-extern gchar *Icon_xpm_64[];
+extern const gchar *Icon_xpm[];
+extern const gchar *Icon_xpm_64[];
 
-extern gchar Icon_bits[];
-extern gchar Icon_bits_64[];
-extern gchar Arc_bits[];
-extern gchar Axispoint_bits[];
-extern gchar Axiswin_bits[];
-extern gchar Clear_bits[];
-extern gchar Coordwin_bits[];
-extern gchar Cross_bits[];
-extern gchar Curve_bits[];
-extern gchar Datapoint_bits[];
-extern gchar Draw_bits[];
-extern gchar Eval_bits[];
-extern gchar Fileopen_bits[];
-extern gchar Filewin_bits[];
-extern gchar Frame_bits[];
-extern gchar Gauss_bits[];
-extern gchar Infowin_bits[];
-extern gchar Interrupt_bits[];
-extern gchar Legendpoint_bits[];
-extern gchar Legendwin_bits[];
-extern gchar Line_bits[];
-extern gchar Load_bits[];
-extern gchar Mark_bits[];
-extern gchar Math_bits[];
-extern gchar Mergewin_bits[];
-extern gchar Point_bits[];
-extern gchar Polygon_bits[];
-extern gchar Preview_bits[];
-extern gchar Print_bits[];
-extern gchar Rect_bits[];
-extern gchar Save_bits[];
-extern gchar Scale_bits[];
-extern gchar Scaleundo_bits[];
-extern gchar Section_bits[];
-extern gchar Single_bits[];
-extern gchar Text_bits[];
-extern gchar Trimming_bits[];
-extern gchar Zoom_bits[];
-extern gchar Move_bits[];
-
-extern gchar *Arc_xpm[];
-extern gchar *Axispoint_xpm[];
-extern gchar *Axiswin_xpm[];
-extern gchar *Clear_xpm[];
-extern gchar *Coordwin_xpm[];
-extern gchar *Cross_xpm[];
-extern gchar *Curve_xpm[];
-extern gchar *Datapoint_xpm[];
-extern gchar *Draw_xpm[];
-extern gchar *Eval_xpm[];
-extern gchar *Fileopen_xpm[];
-extern gchar *Filewin_xpm[];
-extern gchar *Frame_xpm[];
-extern gchar *Gauss_xpm[];
-extern gchar *Infowin_xpm[];
-extern gchar *Interrupt_xpm[];
-extern gchar *Legendpoint_xpm[];
-extern gchar *Legendwin_xpm[];
-extern gchar *Line_xpm[];
-extern gchar *Load_xpm[];
-extern gchar *Mark_xpm[];
-extern gchar *Math_xpm[];
-extern gchar *Mergewin_xpm[];
-extern gchar *Point_xpm[];
-extern gchar *Polygon_xpm[];
-extern gchar *Preview_xpm[];
-extern gchar *Print_xpm[];
-extern gchar *Rect_xpm[];
-extern gchar *Save_xpm[];
-extern gchar *Scale_xpm[];
-extern gchar *Scaleundo_xpm[];
-extern gchar *Section_xpm[];
-extern gchar *Single_xpm[];
-extern gchar *Text_xpm[];
-extern gchar *Trimming_xpm[];
-extern gchar *Zoom_xpm[];
-extern gchar *Move_xpm[];
+extern const gchar *Arc_xpm[];
+extern const gchar *Axispoint_xpm[];
+extern const gchar *Axiswin_xpm[];
+extern const gchar *Clear_xpm[];
+extern const gchar *Coordwin_xpm[];
+extern const gchar *Cross_xpm[];
+extern const gchar *Curve_xpm[];
+extern const gchar *Datapoint_xpm[];
+extern const gchar *Draw_xpm[];
+extern const gchar *Eval_xpm[];
+extern const gchar *Fileopen_xpm[];
+extern const gchar *Filewin_xpm[];
+extern const gchar *Frame_xpm[];
+extern const gchar *Gauss_xpm[];
+extern const gchar *Infowin_xpm[];
+extern const gchar *Interrupt_xpm[];
+extern const gchar *Legendpoint_xpm[];
+extern const gchar *Legendwin_xpm[];
+extern const gchar *Line_xpm[];
+extern const gchar *Load_xpm[];
+extern const gchar *Mark_xpm[];
+extern const gchar *Math_xpm[];
+extern const gchar *Mergewin_xpm[];
+extern const gchar *Point_xpm[];
+extern const gchar *Polygon_xpm[];
+extern const gchar *Preview_xpm[];
+extern const gchar *Print_xpm[];
+extern const gchar *Rect_xpm[];
+extern const gchar *Save_xpm[];
+extern const gchar *Scale_xpm[];
+extern const gchar *Scaleundo_xpm[];
+extern const gchar *Section_xpm[];
+extern const gchar *Single_xpm[];
+extern const gchar *Text_xpm[];
+extern const gchar *Trimming_xpm[];
+extern const gchar *Zoom_xpm[];
+extern const gchar *Move_xpm[];

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.56 2009/01/05 05:41:13 hito Exp $
+ * $Id: x11menu.c,v 1.57 2009/01/06 01:06:11 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -74,8 +74,7 @@ static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 struct command_data {
   void (*func)(GtkWidget *, gpointer);
   gchar *label, *tip, *caption;
-  char **xpm;
-  gchar *xbm;
+  const char **xpm;
   int type;
   GtkWidget *img;
 };
@@ -105,7 +104,6 @@ static struct command_data Command1_data[] = {
     "Data Window",
     N_("Activate Data Window"), 
     Filewin_xpm,
-    Filewin_bits
   },
   {
     CmAxisWindow,
@@ -113,7 +111,6 @@ static struct command_data Command1_data[] = {
     "Axis Window",
     N_("Activate Axis Window"), 
     Axiswin_xpm,
-    Axiswin_bits
   },
   {
     CmLegendWindow,
@@ -121,7 +118,6 @@ static struct command_data Command1_data[] = {
     "Legend Window",
     N_("Activate Legend Window"), 
     Legendwin_xpm,
-    Legendwin_bits
   },
   {
     CmMergeWindow,
@@ -129,7 +125,6 @@ static struct command_data Command1_data[] = {
     "Merge Window",
     N_("Activate Merge Window"), 
     Mergewin_xpm,
-    Mergewin_bits
   },
   {
     CmCoordinateWindow,
@@ -137,7 +132,6 @@ static struct command_data Command1_data[] = {
     "Coordinate Window",
     N_("Activate Coordinate Window"), 
     Coordwin_xpm,
-    Coordwin_bits
   },
   {
     CmInformationWindow,
@@ -145,7 +139,6 @@ static struct command_data Command1_data[] = {
     "Information Window",
     N_("Activate Information Window"), 
     Infowin_xpm,
-    Infowin_bits
   },
   {NULL},
   {
@@ -154,7 +147,6 @@ static struct command_data Command1_data[] = {
     N_("Open Data"),
     N_("Open Data file"), 
     Fileopen_xpm,
-    Fileopen_bits
   },
   {
     CmGraphLoadB,
@@ -162,7 +154,6 @@ static struct command_data Command1_data[] = {
     N_("Load NGP"),
     N_("Load NGP file"), 
     Load_xpm,
-    Load_bits
   },
   {
     CmGraphSaveB,
@@ -170,7 +161,6 @@ static struct command_data Command1_data[] = {
     N_("Save NGP"),
     N_("Save NGP file "), 
     Save_xpm,
-    Save_bits
   },
   {
     CmAxisClear,
@@ -178,7 +168,6 @@ static struct command_data Command1_data[] = {
     N_("Clear Scale"),
     N_("Clear Scale"), 
     Scale_xpm,
-    Scale_bits
   },
   {
     CmViewerDrawB,
@@ -186,7 +175,6 @@ static struct command_data Command1_data[] = {
     N_("Draw"),
     N_("Draw on Viewer Window"), 
     Draw_xpm,
-    Draw_bits
   },
   {
     CmViewerClearB,
@@ -194,7 +182,6 @@ static struct command_data Command1_data[] = {
     N_("Clear Image"),
     N_("Clear Viewer Window"), 
     Clear_xpm,
-    Clear_bits
   },
   {
     CmOutputPrinterB,
@@ -202,7 +189,6 @@ static struct command_data Command1_data[] = {
     N_("Print"),
     N_("Print"), 
     Print_xpm,
-    Print_bits
   },
   {
     CmOutputViewerB,
@@ -210,7 +196,6 @@ static struct command_data Command1_data[] = {
     N_("Ex. Viewer"),
     N_("Open External Viewer"), 
     Preview_xpm,
-    Preview_bits
   },
   {NULL},
   {
@@ -219,7 +204,6 @@ static struct command_data Command1_data[] = {
     N_("Math Transformation"),
     N_("Set Math Transformation"), 
     Math_xpm,
-    Math_bits
   },
   {
     CmAxisWinScaleUndo,
@@ -227,7 +211,6 @@ static struct command_data Command1_data[] = {
     N_("Scale Undo"),
     N_("Undo Scale Settings"), 
     Scaleundo_xpm,
-    Scaleundo_bits
   },
 }; 
 
@@ -238,7 +221,6 @@ static struct command_data Command2_data[] = {
     N_("Pointer"),
     N_("Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
     Point_xpm,
-    Point_bits,
     PointB,
   },
   {
@@ -247,7 +229,6 @@ static struct command_data Command2_data[] = {
     N_("Legend Pointer"),
     N_("Legend Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     Legendpoint_xpm,
-    Legendpoint_bits,
     LegendB,
   },
   {
@@ -256,7 +237,6 @@ static struct command_data Command2_data[] = {
     N_("Axis Pointer"),
     N_("Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     Axispoint_xpm,
-    Axispoint_bits,
     AxisB,
   },
   {
@@ -265,7 +245,6 @@ static struct command_data Command2_data[] = {
     N_("Data Pointer"),
     N_("Data Pointer"),
     Datapoint_xpm,
-    Datapoint_bits,
     DataB,
   },
   {NULL},
@@ -275,7 +254,6 @@ static struct command_data Command2_data[] = {
     N_("Line"),
     N_("New Legend Line (+SHIFT: Fine +CONTROL: snap angle)"), 
     Line_xpm,
-    Line_bits,
     LineB,
   },
   {
@@ -284,7 +262,6 @@ static struct command_data Command2_data[] = {
     N_("Curve"),
     N_("New Legend Curve (+SHIFT: Fine +CONTROL: snap angle)"), 
     Curve_xpm,
-    Curve_bits,
     CurveB,
 
   },
@@ -294,7 +271,6 @@ static struct command_data Command2_data[] = {
     N_("Polygon"),
     N_("New Legend Polygon (+SHIFT: Fine +CONTROL: snap angle)"), 
     Polygon_xpm,
-    Polygon_bits,
     PolyB,
   },
   {
@@ -303,7 +279,6 @@ static struct command_data Command2_data[] = {
     N_("Rectangle"),
     N_("New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"), 
     Rect_xpm,
-    Rect_bits,
     RectB,
   },
   {
@@ -312,7 +287,6 @@ static struct command_data Command2_data[] = {
     N_("Arc"),
     N_("New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"), 
     Arc_xpm,
-    Arc_bits,
     ArcB,
   },
   {
@@ -321,7 +295,6 @@ static struct command_data Command2_data[] = {
     N_("Mark"),
     N_("New Legend Mark (+SHIFT: Fine)"), 
     Mark_xpm,
-    Mark_bits,
     MarkB,
   },
   {
@@ -330,7 +303,6 @@ static struct command_data Command2_data[] = {
     N_("Text"),
     N_("New Legend Text (+SHIFT: Fine)"), 
     Text_xpm,
-    Text_bits,
     TextB,
   },
   {
@@ -339,7 +311,6 @@ static struct command_data Command2_data[] = {
     N_("Gaussian"),
     N_("New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Gauss_xpm,
-    Gauss_bits,
     GaussB,
   },
   {
@@ -348,7 +319,6 @@ static struct command_data Command2_data[] = {
     N_("Frame Graph"),
     N_("New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Frame_xpm,
-    Frame_bits,
     FrameB,
   },
   {
@@ -357,7 +327,6 @@ static struct command_data Command2_data[] = {
     N_("Section Graph"),
     N_("New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Section_xpm,
-    Section_bits,
     SectionB,
   },
   {
@@ -366,7 +335,6 @@ static struct command_data Command2_data[] = {
     N_("Cross Graph"),
     N_("New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Cross_xpm,
-    Cross_bits,
     CrossB,
   },
   {
@@ -375,7 +343,6 @@ static struct command_data Command2_data[] = {
     N_("Single Axis"),
     N_("New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"), 
     Single_xpm,
-    Single_bits,
     SingleB,
   },
   {NULL},
@@ -385,7 +352,6 @@ static struct command_data Command2_data[] = {
     N_("Axis Trimming"),
     N_("Axis Trimming (+SHIFT: Fine)"), 
     Trimming_xpm,
-    Trimming_bits,
     TrimB,
   },
   {
@@ -394,7 +360,6 @@ static struct command_data Command2_data[] = {
     N_("Evaluate Data"),
     N_("Evaluate Data Point"), 
     Eval_xpm,
-    Eval_bits,
     EvalB,
   },
   {
@@ -403,7 +368,6 @@ static struct command_data Command2_data[] = {
     N_("Viewer Zoom"),
     N_("Viewer Zoom-In (+CONTROL: Zomm-Out +SHIFT: Centering)"), 
     Zoom_xpm,
-    Zoom_bits,
     ZoomB,
   },
 };
@@ -1158,21 +1122,16 @@ createmenu(GtkMenuBar *parent)
 static void
 createpixmap(GtkWidget *win, int n, struct command_data *data)
 {
-  GdkPixmap *pixmap;
-  GdkBitmap *bitmap;
+  GdkPixbuf *pixbuf;
   int i;
 
   for (i = 0; i < n; i++) {
     if (data[i].label == NULL)
       continue;
 
-    bitmap = gdk_bitmap_create_from_data(win->window,
-					 data[i].xbm,
-					 20, 20);
-    pixmap = gdk_pixmap_create_from_xpm_d(win->window, &bitmap, NULL,
-					  data[i].xpm);
-    data[i].img = gtk_image_new_from_pixmap(pixmap, bitmap);
-    g_object_unref(bitmap);
+    pixbuf = gdk_pixbuf_new_from_xpm_data(data[i].xpm);
+    data[i].img = gtk_image_new_from_pixbuf(pixbuf);
+    g_object_unref(pixbuf);
   }
 }
 
@@ -1234,29 +1193,16 @@ free_markpixmap(void)
   }
 }
 
-GdkPixbuf *
-create_pixbuf_from_xpm(GtkWidget *win, char **xpm)
-{
-  GdkPixmap *pixmap;
-  GdkPixbuf *pixbuf;
-
-  pixmap = gdk_pixmap_create_from_xpm_d(win->window, NULL, NULL, xpm);
-  pixbuf = gdk_pixbuf_get_from_drawable(NULL, pixmap, NULL, 0, 0, 0, 0, -1, -1);
-  g_object_unref(G_OBJECT(pixmap));
-
-  return pixbuf;
-}
-
 static void
 createicon(GtkWidget *win)
 {
   GList *list = NULL;
   GdkPixbuf *pixbuf;
 
-  pixbuf = create_pixbuf_from_xpm(win, Icon_xpm);
+  pixbuf = gdk_pixbuf_new_from_xpm_data(Icon_xpm);
   list = g_list_append(list, pixbuf);
 
-  pixbuf = create_pixbuf_from_xpm(win, Icon_xpm_64);
+  pixbuf = gdk_pixbuf_new_from_xpm_data(Icon_xpm_64);
   list = g_list_append(list, pixbuf);
 
   NgraphApp.iconpix = list;

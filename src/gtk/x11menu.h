@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.17 2008/12/30 02:54:04 hito Exp $
+ * $Id: x11menu.h,v 1.18 2009/01/06 01:06:11 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -266,7 +266,6 @@ void DisplayStatus(char *str);
 void DisplayDialog(char *str);
 int ChkInterrupt();
 int InputYN(char *mes);
-GdkPixbuf *create_pixbuf_from_xpm(GtkWidget *win, char **xpm);
 void QuitGUI(void);
 void menu_lock(int lock);
 void set_draw_lock(int lock);

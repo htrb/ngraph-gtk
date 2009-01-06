@@ -1,3 +1,19 @@
+2009-01-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (struct command_data): remove member "xbm".
+
+	* src/gtk/x11bitmp.c: remove xbm data.
+
+	* src/gtk/x11menu.c (createpixmap, createicon): use
+	"gdk_pixbuf_new_from_xpm_data()" instead of
+	"create_pixbuf_from_xpm()".
+
+	* src/gtk/gtk_subwin.c (sub_window_create): use
+	"gdk_pixbuf_new_from_xpm_data()" instead of
+	"create_pixbuf_from_xpm()".
+
+	* src/gtk/x11menu.c (create_pixbuf_from_xpm): remove.
+
 2009-01-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/terminal.c (my_signal): add.

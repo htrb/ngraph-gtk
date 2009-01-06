@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.33 2008/12/30 02:54:04 hito Exp $
+ * $Id: gtk_subwin.c,v 1.34 2009/01/06 01:06:11 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1256,7 +1256,7 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 static GtkWidget *
-sub_window_create(struct SubWin *d, char *title, GtkWidget *text, char **xpm)
+sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **xpm)
 {
   GtkWidget *dlg, *swin;
   GdkPixbuf *icon;
@@ -1269,7 +1269,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, char **xpm)
   d->Win = dlg;
 
   if (xpm) {
-    icon = create_pixbuf_from_xpm(TopLevel, xpm);
+    icon = gdk_pixbuf_new_from_xpm_data(xpm);
     gtk_window_set_icon(GTK_WINDOW(dlg), icon);
   }
   if (title) {
@@ -1301,7 +1301,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, char **xpm)
 }
 
 GtkWidget *
-text_sub_window_create(struct SubWin *d, char *title, char **xpm)
+text_sub_window_create(struct SubWin *d, char *title, const char **xpm)
 {
   GtkWidget *view;
 
@@ -1315,7 +1315,7 @@ text_sub_window_create(struct SubWin *d, char *title, char **xpm)
 }
 
 GtkWidget *
-list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, char **xpm)
+list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm)
 {
   GtkWidget *lstor;
 
@@ -1331,7 +1331,7 @@ list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store
 }
 
 GtkWidget *
-tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, char **xpm)
+tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm)
 {
   GtkWidget *lstor;
 
