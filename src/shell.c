@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.16 2009/01/06 08:08:29 hito Exp $
+ * $Id: shell.c,v 1.17 2009/01/06 08:17:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3560,8 +3560,8 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		} else {
 		  if (has_eventloop()) {
 		    while (waitpid(pid,&errlevel,WNOHANG)==0) {
-		      msleep(10);
 		      eventloop();
+		      msleep(10);
 		    }
 		  } else {
 		    waitpid(pid, &errlevel, 0);
