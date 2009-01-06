@@ -1,5 +1,5 @@
 /* 
- * $Id: x11bitmp.h,v 1.3 2009/01/06 01:06:11 hito Exp $
+ * $Id: x11bitmp.h,v 1.4 2009/01/06 04:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,3 +61,9 @@ extern const gchar *Text_xpm[];
 extern const gchar *Trimming_xpm[];
 extern const gchar *Zoom_xpm[];
 extern const gchar *Move_xpm[];
+extern const gchar *Axiswin48_xpm[];
+extern const gchar *Coordwin48_xpm[];
+extern const gchar *Filewin48_xpm[];
+extern const gchar *Infowin48_xpm[];
+extern const gchar *Legendwin48_xpm[];
+extern const gchar *Mergewin48_xpm[];

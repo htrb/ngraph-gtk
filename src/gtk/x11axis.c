@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.35 2009/01/05 05:41:13 hito Exp $
+ * $Id: x11axis.c,v 1.36 2009/01/06 04:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2963,7 +2963,7 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
     d->setup_dialog = AxisDialog;
     d->dialog = &DlgAxis;
 
-    dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm);
+    dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
 
     g_signal_connect(dlg, "expose-event", G_CALLBACK(AxisWinExpose), NULL);
 

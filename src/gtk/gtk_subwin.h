@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.h,v 1.7 2009/01/06 01:06:11 hito Exp $
+ * $Id: gtk_subwin.h,v 1.8 2009/01/06 04:54:48 hito Exp $
  */
 
 #ifndef _GTK_SUBWIN_HEADER
@@ -22,9 +22,9 @@ struct subwin_popup_list {
   GtkAccelGroup *accel_group;
 };
 
-GtkWidget *text_sub_window_create(struct SubWin *d, char *title, const char **xpm);
-GtkWidget *list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm);
-GtkWidget *tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm);
+GtkWidget *text_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2);
+GtkWidget *list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2);
+GtkWidget *tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2);
 void sub_window_minimize(void *d);
 void sub_window_restore_state(void *d);
 

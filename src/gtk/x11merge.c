@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.16 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11merge.c,v 1.17 2009/01/06 04:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -478,7 +478,7 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
     d->setup_dialog = MergeDialog;
     d->dialog = &DlgMerge;
 
-    dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm);
+    dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
 
     g_signal_connect(dlg, "expose-event", G_CALLBACK(MergeWinExpose), NULL);
 

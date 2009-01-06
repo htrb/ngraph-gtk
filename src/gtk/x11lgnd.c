@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.31 2008/12/22 07:42:05 hito Exp $
+ * $Id: x11lgnd.c,v 1.32 2009/01/06 04:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2227,7 +2227,7 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
     d->setup_dialog = LegendWinLegendUpdate;
     d->ev_key = NULL;
 
-    dlg = tree_sub_window_create(d, "Legend Window", LEGEND_WIN_COL_NUM, Llist, Legendwin_xpm);
+    dlg = tree_sub_window_create(d, "Legend Window", LEGEND_WIN_COL_NUM, Llist, Legendwin_xpm, Legendwin48_xpm);
 
     g_signal_connect(dlg, "expose-event", G_CALLBACK(LegendWinExpose), NULL);
 

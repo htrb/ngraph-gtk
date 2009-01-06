@@ -1,5 +1,12 @@
 2009-01-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_subwin.c (sub_window_create): add argument "xpm2"
+	and call "gtk_window_set_icon_list()" when "xpm2" is not NULL.
+
+	* src/gtk/x11bitmp.c: add "Axiswin48_xpm", "Coordwin48_xpm",
+	"Filewin48_xpm", "Infowin48_xpm", "Legendwin48_xpm" and
+	"Mergewin48_xpm".
+
 	* src/gtk/x11menu.c (struct command_data): remove member "xbm".
 
 	* src/gtk/x11bitmp.c: remove xbm data.

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.34 2009/01/06 01:06:11 hito Exp $
+ * $Id: gtk_subwin.c,v 1.35 2009/01/06 04:54:48 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1256,7 +1256,7 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 static GtkWidget *
-sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **xpm)
+sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **xpm, const char **xpm2)
 {
   GtkWidget *dlg, *swin;
   GdkPixbuf *icon;
@@ -1270,7 +1270,18 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
 
   if (xpm) {
     icon = gdk_pixbuf_new_from_xpm_data(xpm);
-    gtk_window_set_icon(GTK_WINDOW(dlg), icon);
+    if (xpm2) {
+      GList *list = NULL;
+
+      list = g_list_append(list, icon);
+
+      icon = gdk_pixbuf_new_from_xpm_data(xpm2);
+      list = g_list_append(list, icon);
+
+      gtk_window_set_icon_list(GTK_WINDOW(dlg), list);
+    } else {
+      gtk_window_set_icon(GTK_WINDOW(dlg), icon);
+    }
   }
   if (title) {
     gtk_window_set_title(GTK_WINDOW(dlg), title);
@@ -1301,7 +1312,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
 }
 
 GtkWidget *
-text_sub_window_create(struct SubWin *d, char *title, const char **xpm)
+text_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2)
 {
   GtkWidget *view;
 
@@ -1311,11 +1322,11 @@ text_sub_window_create(struct SubWin *d, char *title, const char **xpm)
 
   d->text = G_OBJECT(view);
 
-  return sub_window_create(d, title, view, xpm);
+  return sub_window_create(d, title, view, xpm, xpm2);
 }
 
 GtkWidget *
-list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm)
+list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2)
 {
   GtkWidget *lstor;
 
@@ -1327,11 +1338,11 @@ list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), d);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), d);
 
-  return sub_window_create(d, title, lstor, xpm);
+  return sub_window_create(d, title, lstor, xpm, xpm2);
 }
 
 GtkWidget *
-tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm)
+tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2)
 {
   GtkWidget *lstor;
 
@@ -1343,7 +1354,7 @@ tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_st
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down_tree), d);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down_tree), d);
 
-  return sub_window_create((struct SubWin *)d, title, lstor, xpm);
+  return sub_window_create((struct SubWin *)d, title, lstor, xpm, xpm2);
 }
 
 gboolean

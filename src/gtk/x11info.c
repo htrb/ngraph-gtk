@@ -1,5 +1,5 @@
 /* 
- * $Id: x11info.c,v 1.2 2008/06/03 02:53:07 hito Exp $
+ * $Id: x11info.c,v 1.3 2009/01/06 04:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,7 +42,7 @@ create_win(void)
   d = &(NgraphApp.InfoWin);
   d ->type = TypeInfoWin;
 
-  return text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm);
+  return text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm, Infowin48_xpm);
 }
 
 void
