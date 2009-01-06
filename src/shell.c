@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.15 2008/11/26 07:05:12 hito Exp $
+ * $Id: shell.c,v 1.16 2009/01/06 08:08:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2667,6 +2667,16 @@ set_env_val(struct nhash *h, void *data)
   return 0;
 }
 
+int
+msleep(int ms)
+{
+  struct timespec ts;
+
+  ts.tv_sec = ms / 1000;
+  ts.tv_nsec = (ms % 1000) * 1000000;
+  return nanosleep(&ts, NULL);
+}
+
 int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 {
   struct cmdlist *cmdcur,*cmdnew,*cmd;
@@ -3548,9 +3558,13 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 			       argv[0],strerror(errno));
 		  exit(errlevel);
 		} else {
-		  while (waitpid(pid,&errlevel,WNOHANG)==0) {
-		    sleep(1);
-		    eventloop();
+		  if (has_eventloop()) {
+		    while (waitpid(pid,&errlevel,WNOHANG)==0) {
+		      msleep(10);
+		      eventloop();
+		    }
+		  } else {
+		    waitpid(pid, &errlevel, 0);
 		  }
 		}
 #else

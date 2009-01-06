@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.20 2008/12/22 02:31:59 hito Exp $
+ * $Id: object.c,v 1.21 2009/01/06 08:08:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,10 +60,7 @@
 #define INST_MAX 32767
 
 static struct objlist *objroot=NULL;
-
-struct loopproc *looproot=NULL;
-static int ineventloop=FALSE;
-static struct loopproc *loopnext=NULL;
+static struct loopproc *looproot=NULL, *loopnext=NULL;
 
 static struct objlist *errobj=NULL;
 char errormsg1[256]={'\0'};
@@ -865,8 +862,14 @@ void unregisterallevloop()
   loopnext=NULL;
 }
 
+int 
+has_eventloop(void) {
+  return looproot != NULL;
+}
+
 void eventloop()
 {
+  static int ineventloop = FALSE;
   struct loopproc *lpcur;
   char *argv[4];
 

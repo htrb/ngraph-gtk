@@ -1,5 +1,19 @@
 2009-01-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/object.c: variable "looproot" is static.
+	(has_eventloop): add.
+
+	* src/shell.c (msleep): add.
+	(cmdexec): don't set "WNOHANG" when "has_eventloop()" returns
+	FALSE.
+	(cmdexec): use "msleep()" after call "eventloop()".
+
+	* src/shellux.c (cmsleep): use "sleep()" when "has_eventloop()"
+	returns FALSE.
+	(cmsleep): use "msleep()" after call "eventloop()".
+
+	* demo/demo.ngp.in: add.
+
 	* src/gtk/gtk_subwin.c (sub_window_create): add argument "xpm2"
 	and call "gtk_window_set_icon_list()" when "xpm2" is not NULL.
 

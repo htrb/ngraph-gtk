@@ -1,7 +1,7 @@
 #ifndef _SHELL_HEADER
 #define _SHELL_HEADER
 /* 
- * $Id: shell.h,v 1.6 2008/11/12 08:47:33 hito Exp $
+ * $Id: shell.h,v 1.7 2009/01/06 08:08:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -174,4 +174,5 @@ int getshelloption(struct nshell *nshell,char opt);
 void setshellargument(struct nshell *nshell,int argc,char **argv);
 int printfconsole(char *fmt,...);
 void ngraphenvironment(struct nshell *nshell);
+int msleep(int ms);
 #endif

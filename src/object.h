@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.7 2008/11/07 07:47:34 hito Exp $
+ * $Id: object.h,v 1.8 2009/01/06 08:08:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -97,7 +97,6 @@ struct loopproc {
   char *inst;
   void *local;
 };
-extern struct loopproc *looproot;
 
 #define NVOID 0
 #define NBOOL 1
@@ -337,5 +336,6 @@ int sexeobjfield(struct objlist *obj,int id,char *field,char *arg);
 int sexefield(struct objlist *obj,int id,char *arg);
 int sexeobj(char *arg);
 char *getuniqname(struct objlist *obj,char *prefix,char sep);
+int has_eventloop(void);
 
 #endif
