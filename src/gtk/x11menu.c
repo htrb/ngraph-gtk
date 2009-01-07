@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.60 2009/01/07 09:14:19 hito Exp $
+ * $Id: x11menu.c,v 1.59 2009/01/07 09:11:21 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2204,12 +2204,12 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
 
   if (Menulocal.dialogopen) {
     CmInformationWindow(NULL, NULL);
-    sub_window_set_geometry((struct SubWin *) &(NgraphApp.InfoWin), TRUE);
+    sub_window_set_geometry(&(NgraphApp.InfoWin), TRUE);
   }
 
   if (Menulocal.coordopen) {
     CmCoordinateWindow(NULL, NULL);
-    sub_window_set_geometry((struct SubWin *) &(NgraphApp.CoordWin), TRUE);
+    sub_window_set_geometry(&(NgraphApp.CoordWin), TRUE);
   }
 
   if (Menulocal.mergeopen) {
@@ -2219,7 +2219,7 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
 
   if (Menulocal.legendopen) {
     CmLegendWindow(NULL, NULL);
-    sub_window_set_geometry((struct SubWin *) &(NgraphApp.LegendWin), TRUE);
+    sub_window_set_geometry(&(NgraphApp.LegendWin), TRUE);
   }
 
   if (Menulocal.axisopen) {
