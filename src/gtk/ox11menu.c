@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.43 2009/01/03 14:40:25 hito Exp $
+ * $Id: ox11menu.c,v 1.44 2009/01/07 07:32:22 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -183,6 +183,7 @@ static struct menu_config MenuConfig[] = {
   {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
   {"history_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
   {"infowin_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
+  {"focus_frame_type",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.focus_frame_type},
 
   {"expand_dir",		MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.expanddir},
   {"editor",			MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.editor},
@@ -764,6 +765,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.bg_r = 0xff;
   Menulocal.bg_g = 0xff;
   Menulocal.bg_b = 0xff;
+  Menulocal.focus_frame_type = GDK_LINE_ON_OFF_DASH;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));

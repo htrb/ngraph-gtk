@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.89 2009/01/05 05:41:13 hito Exp $
+ * $Id: x11view.c,v 1.90 2009/01/07 07:32:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1442,7 +1442,9 @@ ShowFocusFrame(GdkGC *gc)
   ignorestdio(&save);
 
   gdk_gc_set_rgb_fg_color(gc, &gray);
-  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  gdk_gc_set_line_attributes(gc, 1,
+			     (Menulocal.focus_frame_type ==  GDK_LINE_SOLID) ? GDK_LINE_SOLID : GDK_LINE_ON_OFF_DASH,
+			     GDK_CAP_BUTT, GDK_JOIN_MITER);
   gdk_gc_set_function(gc, GDK_XOR);
 
   num = arraynum(d->focusobj);

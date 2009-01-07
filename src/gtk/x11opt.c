@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.26 2009/01/05 05:41:13 hito Exp $
+ * $Id: x11opt.c,v 1.27 2009/01/07 07:32:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -406,6 +406,10 @@ DefaultDialogClose(GtkWidget *win, void *data)
     if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
       snprintf(buf, BUF_SIZE, "background_color=%02x%02x%02x",
 	       Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+      arrayadd(&conf, &buf);
+    }
+    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+      snprintf(buf, BUF_SIZE, "focus_frame_type=%d", Menulocal.focus_frame_type);
       arrayadd(&conf, &buf);
     }
   }
@@ -1134,6 +1138,8 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   combo_box_set_active(d->path, Menulocal.savepath);
 
+  combo_box_set_active(d->fftype, (Menulocal.focus_frame_type == GDK_LINE_SOLID) ? 0 : 1);
+
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->datafile)), Menulocal.savewithdata);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->mergefile)), Menulocal.savewithmerge);
@@ -1201,6 +1207,9 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     item_setup(vbox, w, _("_Path:"), FALSE);
     d->path = w;
+    for (j = 0; pathchar[j] != NULL; j++) {
+      combo_box_append_text(d->path, _(pathchar[j]));
+    }
 
     w = gtk_check_button_new_with_mnemonic(_("include _Data file"));
     d->datafile = w;
@@ -1212,13 +1221,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-
-
-    gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
-
-
-
-    vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1239,9 +1241,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
-    for (j = 0; pathchar[j] != NULL; j++) {
-      combo_box_append_text(d->path, _(pathchar[j]));
-    }
+    gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
+
+
+
+    vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1257,6 +1261,14 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = create_color_button(wi);
     item_setup(hbox, w, _("_Background Color:"), FALSE);
     d->bgcol = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+    w = combo_box_create();
+    combo_box_append_text(w, _("solid"));
+    combo_box_append_text(w, _("dot"));
+    item_setup(hbox, w, _("_Line attribute of focus frame:"), FALSE);
+    d->fftype = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
@@ -1352,6 +1364,9 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   Menulocal.preserve_width =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
+
+  a = combo_box_get_active(d->fftype);
+  Menulocal.focus_frame_type = ((a == 0) ? GDK_LINE_SOLID : GDK_LINE_ON_OFF_DASH);
 
   a = spin_entry_get_val(d->hist_size);
   if (a < HIST_SIZE_MAX && a > 0) 

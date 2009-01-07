@@ -1,5 +1,20 @@
 2009-01-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (ShowFocusFrame): use
+	""Menulocal.focus_frame_type" for line attribute of focus frame.
+
+	* src/gtk/x11opt.c (DefaultDialogClose): save
+	"Menulocal.focus_frame_type".
+	(MiscDialogSetupItem): setpu "d->fftype".
+	(MiscDialogClose): set "Menulocal.focus_frame_type".
+
+	* src/gtk/ox11menu.h (struct menulocal): add member
+	"focus_frame_type".
+
+	* src/gtk/ox11menu.c (MenuConfig): add item for
+	"focus_frame_type".
+	(menuinit): initialize "Menulocal.focus_frame_type".
+
 	* src/gtk/x11menu.c (show_instance_menu_cb)
 	(set_show_instance_menu_cb, struct show_instance_menu_data): add.
 	(create_filemenu, create_axisgridmenu, create_axismenu)
