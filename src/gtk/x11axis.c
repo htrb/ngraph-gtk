@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.36 2009/01/06 04:54:48 hito Exp $
+ * $Id: x11axis.c,v 1.37 2009/01/07 02:39:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2439,24 +2439,24 @@ void
 CmAxisDel(void)
 {
   struct objlist *obj;
-  int i;
 
   if (Menulock || GlobalLock)
     return;
+
   if ((obj = chkobject("axis")) == NULL)
     return;
+
   if (chkobjlastinst(obj) == -1)
     return;
+
   CopyDialog(&DlgCopy, obj, -1, AxisCB);
+
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
-    i = DlgCopy.sel;
-  } else {
-    return;
+    AxisDel(DlgCopy.sel);
+    set_graph_modified();
+    AxisWinUpdate(TRUE);
+    FileWinUpdate(TRUE);
   }
-  AxisDel(i);
-  set_graph_modified();
-  AxisWinUpdate(TRUE);
-  FileWinUpdate(TRUE);
 }
 
 void
