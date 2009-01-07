@@ -1,5 +1,43 @@
 2009-01-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (CmReloadWindowConfig): call
+	"sub_window_set_geometry()" after show the window.
+
+	* src/gtk/x11cood.c (CmCoordinateWindow): call
+	"sub_window_save_geometry()" before hide.
+	(CmCoordinateWindow): call "sub_window_set_geometry()" after call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11axis.c (CmAxisWindow): call
+	"sub_window_save_geometry()" before hide.
+	(CmAxisWindow): call "sub_window_set_geometry()" after call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11file.c (CmFileWindow): call
+	"sub_window_save_geometry()" before hide.
+	(CmFileWindow): call "sub_window_set_geometry()" after call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11lgnd.c (CmLegendWindow): call
+	"sub_window_save_geometry()" before hide.
+	(CmLegendWindow): call "sub_window_set_geometry()" after call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11merge.c (CmMergeWindow): call
+	"sub_window_save_geometry()" before hide.
+	(CmMergeWindow): call "sub_window_set_geometry()" after call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11info.c (InfoWinUpdate): call
+	"sub_window_save_geometry()" before hide.
+	(InfoWinUpdate): call "sub_window_set_geometry()" after call
+	"gtk_widget_show_all()".
+
+	* src/gtk/gtk_subwin.c (sub_window_set_geometry)
+	(sub_window_save_geometry): add.
+	(cb_show): call "sub_window_set_geometry()".
+	(cb_del): call "sub_window_save_geometry()".
+
 	* src/gtk/x11view.c (ShowFocusFrame): use
 	""Menulocal.focus_frame_type" for line attribute of focus frame.
 

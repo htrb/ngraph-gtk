@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.32 2009/01/06 04:54:48 hito Exp $
+ * $Id: x11lgnd.c,v 1.33 2009/01/07 09:11:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2215,6 +2215,7 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
 
   if (d->Win) {
     if (GTK_WIDGET_VISIBLE(d->Win)) { 
+      sub_window_save_geometry((struct SubWin *)d);
       gtk_widget_hide(d->Win);
     } else {
       gtk_widget_show_all(d->Win);
@@ -2241,5 +2242,6 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
     legend_list_build(d);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(d->text));
     gtk_widget_show_all(dlg);
+    sub_window_set_geometry((struct SubWin *)d, TRUE);
   }
 }

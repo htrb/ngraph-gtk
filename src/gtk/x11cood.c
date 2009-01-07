@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.c,v 1.3 2009/01/06 04:54:48 hito Exp $
+ * $Id: x11cood.c,v 1.5 2009/01/07 09:14:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -137,6 +137,7 @@ CmCoordinateWindow(GtkWidget *w, gpointer client_data)
 
   if (d->Win) {
     if (GTK_WIDGET_VISIBLE(d->Win)) { 
+      sub_window_save_geometry((struct SubWin *) d);
       gtk_widget_hide(d->Win);
     } else {
       gtk_widget_show_all(d->Win);
@@ -148,5 +149,6 @@ CmCoordinateWindow(GtkWidget *w, gpointer client_data)
 
     dlg = text_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
     gtk_widget_show_all(dlg);
+    sub_window_set_geometry((struct SubWin *) d, TRUE);
   }
 }

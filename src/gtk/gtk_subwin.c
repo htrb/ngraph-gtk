@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.35 2009/01/06 04:54:48 hito Exp $
+ * $Id: gtk_subwin.c,v 1.36 2009/01/07 09:11:21 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -403,13 +403,10 @@ set_geometry(struct SubWin *d, int x, int y, int w, int h)
 #define DEFAULT_WIDTH 240
 #define DEFAULT_HEIGHT 320
 
-static void
-cb_show(GtkWidget *widget, gpointer user_data)
+void
+sub_window_set_geometry(struct SubWin *d, int resize)
 {
-  struct SubWin *d;
   int w, h, x, y, x0, y0;
-
-  d = (struct SubWin *) user_data;
 
   if (d->Win == NULL) return;
 
@@ -438,30 +435,45 @@ cb_show(GtkWidget *widget, gpointer user_data)
   }
 
   gtk_window_set_default_size(GTK_WINDOW(d->Win), w, h);
+
+  if (resize)
+    gtk_window_resize(GTK_WINDOW(d->Win), w, h);
+}
+
+void
+sub_window_save_geometry(struct SubWin *d)
+{
+  gint x, y, x0, y0, w, h;
+
+  if (d->Win) {
+    gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
+    gtk_window_get_position(GTK_WINDOW(d->Win), &x, &y);
+    gtk_window_get_size(GTK_WINDOW(d->Win), &w, &h);
+
+    set_geometry(d, x - x0, y - y0, w, h);
+  }
 }
 
 static void
-cb_hide(GtkWidget *widget, gpointer user_data)
+cb_show(GtkWidget *widget, gpointer user_data)
 {
   struct SubWin *d;
 
   d = (struct SubWin *) user_data;
 
-  if (d->Win) {
-    gint x, y, x0, y0, w0, h0;
+  if (d->Win == NULL) return;
 
-    gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
-    gtk_window_get_position(GTK_WINDOW(widget), &x, &y);
-    gtk_window_get_size(GTK_WINDOW(d->Win), &w0, &h0);
-
-    set_geometry(d, x - x0, y - y0, w0, h0);
-
-  }
+  sub_window_set_geometry(d, FALSE);
 }
 
 static gboolean
 cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
+  struct SubWin *d;
+
+  d = (struct SubWin *) user_data;
+
+  sub_window_save_geometry(d);
   gtk_widget_hide_all(w);
 
   return TRUE;
@@ -1302,12 +1314,10 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
   d->swin = swin;
 
   g_signal_connect(dlg, "show", G_CALLBACK(cb_show), d);
-  //  g_signal_connect(dlg, "hide", G_CALLBACK(cb_hide), d);
   g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
   g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
   g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), NULL);
 
-  cb_show(dlg, d);
   return dlg;
 }
 

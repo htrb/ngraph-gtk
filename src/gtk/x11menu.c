@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.58 2009/01/07 02:39:34 hito Exp $
+ * $Id: x11menu.c,v 1.60 2009/01/07 09:14:19 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2186,7 +2186,7 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
   if (NgraphApp.CoordWin.Win != NULL)
     CmCoordinateWindow(NULL, NULL);
 
-  ResetEvent();
+  //  ResetEvent();
 
   initwindowconfig();
   mgtkwindowconfig();
@@ -2202,22 +2202,34 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
 
   defaultwindowconfig();
 
-  if (Menulocal.dialogopen)
+  if (Menulocal.dialogopen) {
     CmInformationWindow(NULL, NULL);
+    sub_window_set_geometry((struct SubWin *) &(NgraphApp.InfoWin), TRUE);
+  }
 
-  if (Menulocal.coordopen)
+  if (Menulocal.coordopen) {
     CmCoordinateWindow(NULL, NULL);
+    sub_window_set_geometry((struct SubWin *) &(NgraphApp.CoordWin), TRUE);
+  }
 
-  if (Menulocal.mergeopen)
+  if (Menulocal.mergeopen) {
     CmMergeWindow(NULL, NULL);
+    sub_window_set_geometry(&(NgraphApp.MergeWin), TRUE);
+  }
 
-  if (Menulocal.legendopen)
+  if (Menulocal.legendopen) {
     CmLegendWindow(NULL, NULL);
+    sub_window_set_geometry((struct SubWin *) &(NgraphApp.LegendWin), TRUE);
+  }
 
-  if (Menulocal.axisopen)
+  if (Menulocal.axisopen) {
     CmAxisWindow(NULL, NULL);
+    sub_window_set_geometry(&(NgraphApp.AxisWin), TRUE);
+  }
 
-  if (Menulocal.fileopen)
+  if (Menulocal.fileopen) {
     CmFileWindow(NULL, NULL);
+    sub_window_set_geometry(&(NgraphApp.FileWin), TRUE);
+  }
 }
 

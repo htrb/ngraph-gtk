@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.63 2009/01/06 04:54:48 hito Exp $
+ * $Id: x11file.c,v 1.64 2009/01/07 09:11:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4379,6 +4379,7 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
 
   if (d->Win) {
     if (GTK_WIDGET_VISIBLE(d->Win)) { 
+      sub_window_save_geometry(d);
       gtk_widget_hide(d->Win);
     } else {
       gtk_widget_show_all(d->Win);
@@ -4407,5 +4408,6 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
     init_dnd(d);
 
     gtk_widget_show_all(dlg);
+    sub_window_set_geometry(d, TRUE);
   }
 }
