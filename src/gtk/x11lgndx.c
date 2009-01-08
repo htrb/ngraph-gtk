@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.13 2009/01/05 05:41:13 hito Exp $
+ * $Id: x11lgndx.c,v 1.14 2009/01/08 04:58:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,7 +58,6 @@ static void
 clear_view(struct LegendGaussDialog *d)
 {
   if (d->view->window) {
-    gdk_window_clear(d->view->window);
     gdk_window_invalidate_rect(d->view->window, NULL, TRUE);
   }
 }

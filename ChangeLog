@@ -1,5 +1,8 @@
 2009-01-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgndx.c (clear_view): don't call
+	"gdk_window_clear()".
+
 	* src/gtk/x11opt.c (DefaultDialogClose): use
 	"sub_window_save_geometry()" to get geometry of a sub window.
 
