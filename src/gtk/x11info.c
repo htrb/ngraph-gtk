@@ -1,5 +1,5 @@
 /* 
- * $Id: x11info.c,v 1.4 2009/01/07 09:11:21 hito Exp $
+ * $Id: x11info.c,v 1.6 2009/01/08 04:18:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -136,17 +136,13 @@ CmInformationWindow(GtkWidget *w, gpointer data)
   d = &(NgraphApp.InfoWin);
 
   if (d->Win) {
-    if (GTK_WIDGET_VISIBLE(d->Win)) { 
-      sub_window_save_geometry(d);
-      gtk_widget_hide_all(d->Win);
-    } else {
-      gtk_widget_show_all(d->Win);
-    }
+    sub_window_toggle_visibility((struct SubWin *) d);
   } else {
     GtkWidget *dlg;
 
     dlg = create_win();
-    gtk_widget_show_all(dlg);
-    sub_window_set_geometry(d, TRUE);
+
+    sub_window_show((struct SubWin *) d);
+    sub_window_set_geometry((struct SubWin *) d, TRUE);
   }
 }

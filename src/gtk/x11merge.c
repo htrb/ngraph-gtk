@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.18 2009/01/07 09:11:22 hito Exp $
+ * $Id: x11merge.c,v 1.19 2009/01/08 04:18:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -466,12 +466,7 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
   d ->type = TypeMergeWin;
 
   if (d->Win) {
-    if (GTK_WIDGET_VISIBLE(d->Win)) { 
-      sub_window_save_geometry(d);
-      gtk_widget_hide(d->Win);
-    } else {
-      gtk_widget_show_all(d->Win);
-    }
+    sub_window_toggle_visibility(d);
   } else {
     GtkWidget *dlg;
 
@@ -491,7 +486,7 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
 
     init_dnd(d);
 
-    gtk_widget_show_all(dlg);
+    sub_window_show(d);
     sub_window_set_geometry(d, TRUE);
  }
 }

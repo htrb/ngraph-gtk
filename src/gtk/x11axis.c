@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.38 2009/01/07 09:11:21 hito Exp $
+ * $Id: x11axis.c,v 1.39 2009/01/08 04:18:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2951,12 +2951,7 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
   d ->type = TypeAxisWin;
 
   if (d->Win) {
-    if (GTK_WIDGET_VISIBLE(d->Win)) { 
-      sub_window_save_geometry(d);
-      gtk_widget_hide(d->Win);
-    } else {
-      gtk_widget_show_all(d->Win);
-    }
+    sub_window_toggle_visibility(d);
   } else {
     GtkWidget *dlg;
 
@@ -2974,7 +2969,8 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
     d->select = -1;
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     set_combo_cell_renderer_cb(d, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
-    gtk_widget_show_all(dlg);
+
+    sub_window_show(d);
     sub_window_set_geometry(d, TRUE);
   }
 }

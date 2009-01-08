@@ -1,3 +1,31 @@
+2009-01-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (DefaultDialogClose): use
+	"sub_window_save_geometry()" to get geometry of a sub window.
+
+	* src/gtk/x11menu.c (CmReloadWindowConfig): use
+	"sub_window_hide()" to hide sub window.
+
+	* src/gtk/x11info.c (CmInformationWindow): 
+
+	* src/gtk/x11cood.c (CmCoordinateWindow): 
+
+	* src/gtk/x11merge.c (CmMergeWindow): 
+
+	* src/gtk/x11lgnd.c (CmLegendWindow): 
+
+	* src/gtk/x11axis.c (CmAxisWindow): 
+
+	* src/gtk/x11file.c (CmFileWindow): use
+	"sub_window_toggle_visibility()" and "sub_window_show()"
+
+	* src/gtk/gtk_subwin.c (set_geometry): add argument "state" and
+	save window state.
+	(sub_window_save_geometry): save window state.
+	(sub_window_hide, sub_window_show, sub_window_toggle_visibility):
+	add.
+	(cb_del): just call "sub_window_hide()".
+
 2009-01-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (CmReloadWindowConfig): call

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.36 2009/01/07 09:11:21 hito Exp $
+ * $Id: gtk_subwin.c,v 1.37 2009/01/08 04:18:00 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -358,44 +358,54 @@ get_geometry(struct SubWin *d, int *x, int *y, int *w, int *h)
 }
 
 static void
-set_geometry(struct SubWin *d, int x, int y, int w, int h)
+set_geometry(struct SubWin *d, int x, int y, int w, int h, GdkWindowState state)
 {
+  int s;
+
+  s = ! (state & GDK_WINDOW_STATE_WITHDRAWN);
+
   switch (d->type) {
   case TypeFileWin:
     Menulocal.filewidth = w;
     Menulocal.fileheight = h;
     Menulocal.filex = x;
     Menulocal.filey = y;
+    Menulocal.fileopen = s;
     break;
   case TypeAxisWin:
     Menulocal.axiswidth = w;
     Menulocal.axisheight = h;
     Menulocal.axisx = x;
     Menulocal.axisy = y;
+    Menulocal.axisopen = s;
     break;
   case TypeLegendWin:
     Menulocal.legendwidth = w;
     Menulocal.legendheight = h;
     Menulocal.legendx = x;
     Menulocal.legendy = y;
+    Menulocal.legendopen = s;
     break;
   case TypeMergeWin:
     Menulocal.mergewidth = w;
     Menulocal.mergeheight = h;
     Menulocal.mergex = x;
     Menulocal.mergey = y;
+    Menulocal.mergeopen = s;
     break;
   case TypeInfoWin:
     Menulocal.dialogwidth = w;
     Menulocal.dialogheight = h;
     Menulocal.dialogx = x;
     Menulocal.dialogy = y;
+    Menulocal.dialogopen = s;
     break;
   case TypeCoordWin:
     Menulocal.coordwidth = w;
     Menulocal.coordheight = h;
     Menulocal.coordx = x;
     Menulocal.coordy = y;
+    Menulocal.coordopen = s;
     break;
   }
 }
@@ -444,13 +454,42 @@ void
 sub_window_save_geometry(struct SubWin *d)
 {
   gint x, y, x0, y0, w, h;
+  GdkWindowState state;
 
-  if (d->Win) {
+  if (d->Win && d->Win->window) {
     gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
-    gtk_window_get_position(GTK_WINDOW(d->Win), &x, &y);
-    gtk_window_get_size(GTK_WINDOW(d->Win), &w, &h);
+    get_window_geometry(d->Win, &x, &y, &w, &h, &state);
 
-    set_geometry(d, x - x0, y - y0, w, h);
+    set_geometry(d, x - x0, y - y0, w, h, state);
+  }
+}
+
+void
+sub_window_hide(struct SubWin *d)
+{
+  if (d->Win) {
+    sub_window_save_geometry(d);
+    gtk_widget_hide_all(d->Win);
+  }
+}
+
+void
+sub_window_show(struct SubWin *d)
+{
+  if (d->Win) {
+    gtk_widget_show_all(d->Win);
+  }
+}
+
+void
+sub_window_toggle_visibility(struct SubWin *d)
+{
+  if (d->Win) {
+    if (GTK_WIDGET_VISIBLE(d->Win)) { 
+      sub_window_hide(d);
+    } else {
+      sub_window_show(d);
+    }
   }
 }
 
@@ -469,12 +508,7 @@ cb_show(GtkWidget *widget, gpointer user_data)
 static gboolean
 cb_del(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
-  struct SubWin *d;
-
-  d = (struct SubWin *) user_data;
-
-  sub_window_save_geometry(d);
-  gtk_widget_hide_all(w);
+  sub_window_hide((struct SubWin *) user_data);
 
   return TRUE;
 }

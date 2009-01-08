@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.59 2009/01/07 09:11:21 hito Exp $
+ * $Id: x11menu.c,v 1.61 2009/01/08 04:18:00 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2168,29 +2168,17 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
 {
   gint x, y, w0, h0;
 
-  if (NgraphApp.FileWin.Win != NULL)
-    CmFileWindow(NULL, NULL);
-
-  if (NgraphApp.AxisWin.Win != NULL)
-    CmAxisWindow(NULL, NULL);
-
-  if (NgraphApp.LegendWin.Win != NULL)
-    CmLegendWindow(NULL, NULL);
-
-  if (NgraphApp.MergeWin.Win != NULL)
-    CmMergeWindow(NULL, NULL);
-
-  if (NgraphApp.InfoWin.Win != NULL)
-    CmInformationWindow(NULL, NULL);
-
-  if (NgraphApp.CoordWin.Win != NULL)
-    CmCoordinateWindow(NULL, NULL);
+  sub_window_hide(&(NgraphApp.FileWin));
+  sub_window_hide(&(NgraphApp.AxisWin));
+  sub_window_hide(&(NgraphApp.MergeWin));
+  sub_window_hide((struct SubWin *) &(NgraphApp.LegendWin));
+  sub_window_hide((struct SubWin *) &(NgraphApp.InfoWin));
+  sub_window_hide((struct SubWin *) &(NgraphApp.CoordWin));
 
   //  ResetEvent();
 
   initwindowconfig();
   mgtkwindowconfig();
-
 
   gtk_window_get_position(GTK_WINDOW(TopLevel), &x, &y);
   gtk_window_get_size(GTK_WINDOW(TopLevel), &w0, &h0);
@@ -2204,12 +2192,12 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
 
   if (Menulocal.dialogopen) {
     CmInformationWindow(NULL, NULL);
-    sub_window_set_geometry(&(NgraphApp.InfoWin), TRUE);
+    sub_window_set_geometry((struct SubWin *) &(NgraphApp.InfoWin), TRUE);
   }
 
   if (Menulocal.coordopen) {
     CmCoordinateWindow(NULL, NULL);
-    sub_window_set_geometry(&(NgraphApp.CoordWin), TRUE);
+    sub_window_set_geometry((struct SubWin *) &(NgraphApp.CoordWin), TRUE);
   }
 
   if (Menulocal.mergeopen) {
@@ -2219,7 +2207,7 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
 
   if (Menulocal.legendopen) {
     CmLegendWindow(NULL, NULL);
-    sub_window_set_geometry(&(NgraphApp.LegendWin), TRUE);
+    sub_window_set_geometry((struct SubWin *) &(NgraphApp.LegendWin), TRUE);
   }
 
   if (Menulocal.axisopen) {

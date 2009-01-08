@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.27 2009/01/07 07:32:22 hito Exp $
+ * $Id: x11opt.c,v 1.28 2009/01/08 04:18:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -115,7 +115,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
   struct script *scur;
   char *driver, *ext, *option, *script;
   GdkWindowState state;
-  gint x, y, x0, y0, w, h;
+  gint x, y, w, h;
 
   d = (struct DefaultDialog *) data;
 
@@ -155,19 +155,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
   }
 
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->child_geometry))) {
-    get_window_geometry(TopLevel, &x0, &y0, &w, &h, &state);
-
-    if (NgraphApp.FileWin.Win && NgraphApp.FileWin.Win->window) {
-      get_window_geometry(NgraphApp.FileWin.Win, &x, &y, &w, &h, &state);
-      Menulocal.filewidth = w;
-      Menulocal.fileheight = h;
-      Menulocal.filex = x - x0;
-      Menulocal.filey = y - y0;
-      Menulocal.fileopen = ! state;
-    } else {
-      Menulocal.fileopen = 0;
-    }
-
+    sub_window_save_geometry(&(NgraphApp.FileWin));
     buf = (char *) memalloc(BUF_SIZE);    
     if (buf) {
       snprintf(buf, BUF_SIZE, "file_win=%d,%d,%d,%d,%d",
@@ -176,17 +164,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.AxisWin.Win && NgraphApp.AxisWin.Win->window) {
-      get_window_geometry(NgraphApp.AxisWin.Win, &x, &y, &w, &h, &state);
-      Menulocal.axiswidth = w;
-      Menulocal.axisheight = h;
-      Menulocal.axisx = x - x0;
-      Menulocal.axisy = y - y0;
-      Menulocal.axisopen = ! state;
-    } else {
-      Menulocal.axisopen = 0;
-    }
-
+    sub_window_save_geometry(&(NgraphApp.AxisWin));
     buf = (char *) memalloc(BUF_SIZE);    
     if (buf) {
       snprintf(buf, BUF_SIZE, "axis_win=%d,%d,%d,%d,%d",
@@ -195,17 +173,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.LegendWin.Win && NgraphApp.LegendWin.Win->window) {
-      get_window_geometry(NgraphApp.LegendWin.Win, &x, &y, &w, &h, &state);
-      Menulocal.legendwidth = w;
-      Menulocal.legendheight = h;
-      Menulocal.legendx = x - x0;
-      Menulocal.legendy = y - y0;
-      Menulocal.legendopen = ! state;
-    } else {
-      Menulocal.legendopen = 0;
-    }
-
+    sub_window_save_geometry((struct SubWin *) &(NgraphApp.LegendWin));
     buf = (char *) memalloc(BUF_SIZE);    
     if (buf) {
       snprintf(buf, BUF_SIZE, "legend_win=%d,%d,%d,%d,%d",
@@ -215,17 +183,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.MergeWin.Win && NgraphApp.MergeWin.Win->window) {
-      get_window_geometry(NgraphApp.MergeWin.Win, &x, &y, &w, &h, &state);
-      Menulocal.mergewidth = w;
-      Menulocal.mergeheight = h;
-      Menulocal.mergex = x - x0;
-      Menulocal.mergey = y - y0;
-      Menulocal.mergeopen = 1;
-    } else {
-      Menulocal.mergeopen = 0;
-    }
-
+    sub_window_save_geometry(&(NgraphApp.MergeWin));
     buf = (char *) memalloc(BUF_SIZE);    
     if (buf) {
       snprintf(buf, BUF_SIZE, "merge_win=%d,%d,%d,%d,%d",
@@ -235,17 +193,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.InfoWin.Win && NgraphApp.InfoWin.Win->window) {
-      get_window_geometry(NgraphApp.InfoWin.Win, &x, &y, &w, &h, &state);
-      Menulocal.dialogwidth = w;
-      Menulocal.dialogheight = h;
-      Menulocal.dialogx = x - x0;
-      Menulocal.dialogy = y - y0;
-      Menulocal.dialogopen = ! state;
-    } else {
-      Menulocal.dialogopen = 0;
-    }
-
+    sub_window_save_geometry((struct SubWin *) &(NgraphApp.InfoWin));
     buf = (char *) memalloc(BUF_SIZE);    
     if (buf) {
       snprintf(buf, BUF_SIZE, "information_win=%d,%d,%d,%d,%d",
@@ -255,17 +203,7 @@ DefaultDialogClose(GtkWidget *win, void *data)
       arrayadd(&conf, &buf);
     }
 
-    if (NgraphApp.CoordWin.Win && NgraphApp.CoordWin.Win->window) {
-      get_window_geometry(NgraphApp.CoordWin.Win, &x, &y, &w, &h, &state);
-      Menulocal.coordwidth = w;
-      Menulocal.coordheight = h;
-      Menulocal.coordx = x - x0;
-      Menulocal.coordy = y - y0;
-      Menulocal.coordopen = ! state;
-    } else {
-      Menulocal.coordopen = 0;
-    }
-
+    sub_window_save_geometry((struct SubWin *) &(NgraphApp.CoordWin));
     buf = (char *) memalloc(BUF_SIZE);    
     if (buf) {
       snprintf(buf, BUF_SIZE, "coordinate_win=%d,%d,%d,%d,%d",
