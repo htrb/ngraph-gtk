@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.14 2009/01/08 04:58:27 hito Exp $
+ * $Id: x11lgndx.c,v 1.15 2009/01/08 05:22:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -47,12 +47,13 @@
 static double *spx, *spy, *spz;
 static double *spc[6];
 
-static gboolean LegendGaussDialogScaleH(GtkWidget *w, GtkScrollType scroll, gdouble value, gpointer client_data);
-static gboolean LegendGaussDialogScaleH(GtkWidget *w, GtkScrollType scroll, gdouble value, gpointer client_data);
-static gboolean LegendGaussDialogDiv(GtkWidget *w, GtkScrollType scroll, gdouble value, gpointer client_data);
+static void LegendGaussDialogScaleH(GtkWidget *w, gpointer client_data);
+static void LegendGaussDialogScaleH(GtkWidget *w, gpointer client_data);
+static void LegendGaussDialogDiv(GtkWidget *w, gpointer client_data);
 
 #define DIV_MAX 200
-
+#define SCALE_V_MAX 1000.0
+#define SCALE_H_MAX 100.0
 
 static void
 clear_view(struct LegendGaussDialog *d)
@@ -93,8 +94,8 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
   }
 
   gtk_range_set_value(GTK_RANGE(d->div), d->Div);
-  gtk_range_set_value(GTK_RANGE(d->sch), d->Position * 100);
-  gtk_range_set_value(GTK_RANGE(d->scv), d->Param * 1000);
+  gtk_range_set_value(GTK_RANGE(d->sch), d->Position * SCALE_H_MAX);
+  gtk_range_set_value(GTK_RANGE(d->scv), d->Param * SCALE_V_MAX);
 }
 
 static gboolean
@@ -253,30 +254,26 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   return FALSE;
 }
 
-static gboolean
-LegendGaussDialogScaleV(GtkWidget *w, GtkScrollType scroll, gdouble value, gpointer client_data)
+static void
+LegendGaussDialogScaleV(GtkWidget *w, gpointer client_data)
 {
   struct LegendGaussDialog *d;
 
   d = (struct LegendGaussDialog *) client_data;
-  d->Param = value / 1000.0;
+  d->Param = gtk_range_get_value(GTK_RANGE(w)) / SCALE_V_MAX;
 
   clear_view(d);
-
-  return FALSE;
 }
 
-static gboolean
-LegendGaussDialogScaleH(GtkWidget *w, GtkScrollType scroll, gdouble value, gpointer client_data)
+static void
+LegendGaussDialogScaleH(GtkWidget *w, gpointer client_data)
 {
   struct LegendGaussDialog *d;
 
   d = (struct LegendGaussDialog *) client_data;
-  d->Position = value / 100.0;
+  d->Position = gtk_range_get_value(GTK_RANGE(w)) / SCALE_H_MAX;
 
   clear_view(d);
-
-  return FALSE;
 }
 
 static void
@@ -321,17 +318,15 @@ LegendGaussDialogDir(GtkWidget *w, gpointer client_data)
   clear_view(d);
 }
 
-static gboolean
-LegendGaussDialogDiv(GtkWidget *w, GtkScrollType scroll, gdouble value, gpointer client_data)
+static void
+LegendGaussDialogDiv(GtkWidget *w, gpointer client_data)
 {
   struct LegendGaussDialog *d;
 
   d = (struct LegendGaussDialog *) client_data;
-  d->Div = value;
+  d->Div = gtk_range_get_value(GTK_RANGE(w));
 
   clear_view(d);
-
-  return FALSE;
 }
 
 static void
@@ -411,7 +406,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox2 = gtk_hbox_new(FALSE, 4);
     w = gtk_hscale_new_with_range(10, DIV_MAX, 1);
     item_setup(hbox2, w, _("_Division:"), TRUE);
-    g_signal_connect(w, "change-value", G_CALLBACK(LegendGaussDialogDiv), d);
+    g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogDiv), d);
     d->div = w;
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
@@ -420,8 +415,8 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = gtk_hscale_new_with_range(0, 1000, 1);
-    g_signal_connect(w, "change-value", G_CALLBACK(LegendGaussDialogScaleV), d);
+    w = gtk_hscale_new_with_range(0, SCALE_V_MAX, 1);
+    g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleV), d);
     d->scv = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 
@@ -431,8 +426,8 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "expose-event", G_CALLBACK(LegendGaussDialogPaint), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 
-    w = gtk_hscale_new_with_range(-100, 100, 1);
-    g_signal_connect(w, "change-value", G_CALLBACK(LegendGaussDialogScaleH), d);
+    w = gtk_hscale_new_with_range(- SCALE_H_MAX, SCALE_H_MAX, 1);
+    g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleH), d);
     d->sch = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 

@@ -2,6 +2,8 @@
 
 	* src/gtk/x11lgndx.c (clear_view): don't call
 	"gdk_window_clear()".
+	(LegendGaussDialogSetup): use "value-changed" signal instead of
+	"change-value".
 
 	* src/gtk/x11opt.c (DefaultDialogClose): use
 	"sub_window_save_geometry()" to get geometry of a sub window.
