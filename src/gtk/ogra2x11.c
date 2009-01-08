@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.23 2009/01/03 14:40:25 hito Exp $
+ * $Id: ogra2x11.c,v 1.24 2009/01/08 06:55:33 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -104,8 +104,6 @@ static int gtkredraw(struct objlist *obj, char *inst, char *rval, int argc,
 static int dot2pixel(struct gtklocal *gtklocal, int r);
 static int gtk_output(struct objlist *obj, char *inst, char *rval, int argc,
 		      char **argv);
-
-static GdkColor *gtkRGB(int R, int G, int B);
 
 static int
 gtkloadconfig(struct gtklocal *gtklocal)
@@ -593,23 +591,10 @@ gtkchangedpi(struct gtklocal *gtklocal)
   gtk_widget_set_size_request(gtklocal->View, width, height);
 }
 
-static GdkColor *
-gtkRGB(int r, int g, int b)
-{
-  static GdkColor col;
-
-  col.red = r << 8;
-  col.green = g << 8;
-  col.blue = b << 8;
-
-  return &col;
-}
-
 static void
 gtkMakeRuler(struct gtklocal *gtklocal)
 {
   int width, height;
-  GdkColor *col1;
   GdkWindow *win;
   GdkGC *gc;
 
@@ -621,11 +606,9 @@ gtkMakeRuler(struct gtklocal *gtklocal)
     return;
 
   gc = gdk_gc_new(gtklocal->window);
-  gdk_gc_set_function(gc, GDK_XOR);
+  gdk_gc_set_function(gc, GDK_INVERT);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT,
 			     GDK_JOIN_MITER);
-  col1 = gtkRGB(127, 127, 127);
-  gdk_gc_set_rgb_fg_color(gc, col1);
   gdk_draw_rectangle(win, gc, FALSE,
 		     0, 0,
 		     dot2pixel(gtklocal, width) - 1, dot2pixel(gtklocal, height) - 1);

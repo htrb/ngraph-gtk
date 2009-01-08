@@ -1,5 +1,13 @@
 2009-01-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2x11.c (gtkMakeRuler): use "GDK_INVERT" instead of
+	"GDK_XOR".
+	(gtkRGB): remove.
+
+	* src/gtk/x11view.c (ShowFocusFrame, ShowFocusLine, ShowPoints)
+	(ShowFrameRect, ShowCrossGauge): use "GDK_INVERT" instead of
+	"GDK_XOR".
+
 	* src/gtk/x11lgndx.c (clear_view): don't call
 	"gdk_window_clear()".
 	(LegendGaussDialogSetup): use "value-changed" signal instead of
