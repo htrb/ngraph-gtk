@@ -1,3 +1,8 @@
+2009-01-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (do_popup): set sensitivity of popup item
+	related to "VIEWER_POPUP_ITEM_UP" and "VIEWER_POPUP_ITEM_DOWN".
+
 2009-01-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.h (VIEWER_POPUP_ITEM_NUM): change value from 7
