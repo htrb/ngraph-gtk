@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.18 2008/12/17 02:40:22 hito Exp $
+ * $Id: x11gui.c,v 1.19 2009/01/09 06:23:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -864,35 +864,6 @@ nGetSaveFileName(GtkWidget * parent,
     *file = NULL;
   }
 
-  return ret;
-}
-
-int
-GetColor(GtkWidget * parent, int *r, int *g, int *b)
-{
-  GtkWidget *dlg;
-  GtkColorSelection *csel;
-  GdkColor color;
-  gint rval;
-  int ret;
-
-  dlg = gtk_color_selection_dialog_new(_("Color selection"));
-  csel = GTK_COLOR_SELECTION(dlg);
-
-  gtk_color_selection_set_has_opacity_control(csel, FALSE);
-  gtk_color_selection_set_has_palette(csel, TRUE);
-
-  rval = gtk_dialog_run(GTK_DIALOG(dlg));
-
-  ret = IDCANCEL;
-  if (rval == GTK_RESPONSE_OK) {
-    gtk_color_selection_get_current_color(csel, &color);
-    *r = color.red;
-    *g = color.green;
-    *b = color.blue;
-    ret = IDOK;
-  }
- 
   return ret;
 }
 

@@ -1,12 +1,15 @@
+2009-01-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (GetColor): remove.
+
+	* src/gtk/x11menu.c (application): change coror of "gray" from
+	"#7f7f7f" to "#aaaaaa".
+
 2009-01-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2x11.c (gtkMakeRuler): use "GDK_INVERT" instead of
 	"GDK_XOR".
 	(gtkRGB): remove.
-
-	* src/gtk/x11view.c (ShowFocusFrame, ShowFocusLine, ShowPoints)
-	(ShowFrameRect, ShowCrossGauge): use "GDK_INVERT" instead of
-	"GDK_XOR".
 
 	* src/gtk/x11lgndx.c (clear_view): don't call
 	"gdk_window_clear()".
@@ -19,18 +22,23 @@
 	* src/gtk/x11menu.c (CmReloadWindowConfig): use
 	"sub_window_hide()" to hide sub window.
 
-	* src/gtk/x11info.c (CmInformationWindow): 
+	* src/gtk/x11info.c (CmInformationWindow): use "sub_window_show()"
+	 and "sub_window_toggle_visibility()".
 
-	* src/gtk/x11cood.c (CmCoordinateWindow): 
+	* src/gtk/x11cood.c (CmCoordinateWindow): use "sub_window_show()"
+	 and "sub_window_toggle_visibility()".
 
-	* src/gtk/x11merge.c (CmMergeWindow): 
+	* src/gtk/x11merge.c (CmMergeWindow): use "sub_window_show()" and
+	 "sub_window_toggle_visibility()".
 
-	* src/gtk/x11lgnd.c (CmLegendWindow): 
+	* src/gtk/x11lgnd.c (CmLegendWindow): use "sub_window_show()" and
+	 "sub_window_toggle_visibility()".
 
-	* src/gtk/x11axis.c (CmAxisWindow): 
+	* src/gtk/x11axis.c (CmAxisWindow): use "sub_window_show()" and
+	 "sub_window_toggle_visibility()".
 
-	* src/gtk/x11file.c (CmFileWindow): use
-	"sub_window_toggle_visibility()" and "sub_window_show()"
+	* src/gtk/x11file.c (CmFileWindow): use "sub_window_show()" and
+	 "sub_window_toggle_visibility()".
 
 	* src/gtk/gtk_subwin.c (set_geometry): add argument "state" and
 	save window state.

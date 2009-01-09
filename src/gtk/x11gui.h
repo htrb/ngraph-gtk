@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.6 2008/12/01 04:58:21 hito Exp $
+ * $Id: x11gui.h,v 1.7 2009/01/09 06:23:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -68,6 +68,5 @@ int nGetOpenFileName(GtkWidget * parent, char *title, char *defext,
 int nGetSaveFileName(GtkWidget * parent, char *title, char *defext,
 		     char **initdir, char *initfil, char **file, char *filter,
 		     int chdir);
-int GetColor(GtkWidget * parent, int *r, int *g, int *b);
 void get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h, GdkWindowState *state);
 #endif

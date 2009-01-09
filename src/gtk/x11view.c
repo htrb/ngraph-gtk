@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.91 2009/01/08 06:55:33 hito Exp $
+ * $Id: x11view.c,v 1.92 2009/01/09 06:23:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1441,10 +1441,11 @@ ShowFocusFrame(GdkGC *gc)
   d = &(NgraphApp.Viewer);
   ignorestdio(&save);
 
+  gdk_gc_set_rgb_fg_color(gc, &gray);
   gdk_gc_set_line_attributes(gc, 1,
 			     (Menulocal.focus_frame_type ==  GDK_LINE_SOLID) ? GDK_LINE_SOLID : GDK_LINE_ON_OFF_DASH,
 			     GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_gc_set_function(gc, GDK_INVERT);
+  gdk_gc_set_function(gc, GDK_XOR);
 
   num = arraynum(d->focusobj);
   focus = (struct focuslist **) arraydata(d->focusobj);
@@ -1672,7 +1673,8 @@ ShowFocusLine(GdkGC *gc, int change)
   d = &(NgraphApp.Viewer);
   ignorestdio(&save);
 
-  gdk_gc_set_function(gc, GDK_INVERT);
+  gdk_gc_set_rgb_fg_color(gc, &gray);
+  gdk_gc_set_function(gc, GDK_XOR);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
   num = arraynum(d->focusobj);
 
@@ -1808,7 +1810,8 @@ ShowPoints(GdkGC *gc)
 
   d = &(NgraphApp.Viewer);
 
-  gdk_gc_set_function(gc, GDK_INVERT);
+  gdk_gc_set_rgb_fg_color(gc, &gray);
+  gdk_gc_set_function(gc, GDK_XOR);
 
   num = arraynum(d->points);
   po = (struct pointslist **) arraydata(d->points);
@@ -1881,7 +1884,8 @@ ShowFrameRect(GdkGC *gc)
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  gdk_gc_set_function(gc, GDK_INVERT);
+  gdk_gc_set_rgb_fg_color(gc, &gray);
+  gdk_gc_set_function(gc, GDK_XOR);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
@@ -1911,7 +1915,8 @@ ShowCrossGauge(GdkGC *gc)
 
   d = &(NgraphApp.Viewer);
 
-  gdk_gc_set_function(gc, GDK_INVERT);
+  gdk_gc_set_rgb_fg_color(gc, &gray);
+  gdk_gc_set_function(gc, GDK_XOR);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
   gdk_window_get_position(d->win, &x, &y);

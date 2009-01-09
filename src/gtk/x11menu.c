@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.61 2009/01/08 04:18:00 hito Exp $
+ * $Id: x11menu.c,v 1.62 2009/01/09 06:23:25 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1534,9 +1534,9 @@ defaultwindowconfig(void)
 static void
 set_gdk_color(GdkColor *col, int r, int g, int b)
 {
-  col->red = r * 255;
-  col->green = g * 255;
-  col->blue = b * 255;
+  col->red = r << 8;
+  col->green = g << 8;
+  col->blue = b << 8;
 }
 
 static void
@@ -1751,7 +1751,7 @@ application(char *file)
 
   set_gdk_color(&black, 0,     0,   0);
   set_gdk_color(&white, 255, 255, 255);
-  set_gdk_color(&gray,  127, 127, 127);
+  set_gdk_color(&gray,  0xaa, 0xaa, 0xaa);
   set_gdk_color(&red,   255,   0,   0);
   set_gdk_color(&blue,    0,   0, 255);
 
