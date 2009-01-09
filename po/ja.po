@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-01-08 19:26+0900\n"
+"POT-Creation-Date: 2009-01-10 01:17+0900\n"
 "PO-Revision-Date: 2009-01-07 16:34+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -957,10 +957,6 @@ msgstr "全てのファイル"
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:879
-msgid "Color selection"
-msgstr "色の選択"
-
 #: src/gtk/x11lgnd.c:567
 msgid "_Line width:"
 msgstr "線幅(_W):"
@@ -1870,7 +1866,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4866
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4878
 msgid "Drawing."
 msgstr "描画中"
 
@@ -1943,33 +1939,33 @@ msgstr "位置合わせ(_A)"
 msgid "_Show cross"
 msgstr "クロスゲージ表示(_S)"
 
-#: src/gtk/x11view.c:820 src/gtk/x11view.c:831
+#: src/gtk/x11view.c:825 src/gtk/x11view.c:836
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:923
+#: src/gtk/x11view.c:928
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:932
+#: src/gtk/x11view.c:937
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2214
+#: src/gtk/x11view.c:2224
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3358
+#: src/gtk/x11view.c:3368
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:4860
+#: src/gtk/x11view.c:4872
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:4867
+#: src/gtk/x11view.c:4879
 msgid "Drawing"
 msgstr "描画中"
 
@@ -2165,6 +2161,9 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#~ msgid "Color selection"
+#~ msgstr "色の選択"
 
 #~ msgid "Printing"
 #~ msgstr "印刷中"

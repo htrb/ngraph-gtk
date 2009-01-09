@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-16\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-01-08 19:26+0900\n"
+"POT-Creation-Date: 2009-01-10 01:17+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -953,10 +953,6 @@ msgstr ""
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:879
-msgid "Color selection"
-msgstr ""
-
 #: src/gtk/x11lgnd.c:567
 msgid "_Line width:"
 msgstr ""
@@ -1864,7 +1860,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4866
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4878
 msgid "Drawing."
 msgstr ""
 
@@ -1937,33 +1933,33 @@ msgstr ""
 msgid "_Show cross"
 msgstr ""
 
-#: src/gtk/x11view.c:820 src/gtk/x11view.c:831
+#: src/gtk/x11view.c:825 src/gtk/x11view.c:836
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:923
+#: src/gtk/x11view.c:928
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:932
+#: src/gtk/x11view.c:937
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2214
+#: src/gtk/x11view.c:2224
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3358
+#: src/gtk/x11view.c:3368
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4860
+#: src/gtk/x11view.c:4872
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4867
+#: src/gtk/x11view.c:4879
 msgid "Drawing"
 msgstr ""
 
