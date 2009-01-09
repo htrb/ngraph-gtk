@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.93 2009/01/09 15:03:37 hito Exp $
+ * $Id: x11view.c,v 1.94 2009/01/09 16:17:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -653,6 +653,9 @@ create_popup_menu(struct Viewer *d)
 #define VIEWER_POPUP_ITEM_DOWN   7
 #define VIEWER_POPUP_ITEM_BOTTOM 8
 
+#if VIEWER_POPUP_ITEM_BOTTOM + 1 != VIEWER_POPUP_ITEM_NUM
+#error invarid array size (struct Viewer.popup_item)
+#endif
   return create_menu(popup, sizeof(popup) / sizeof(*popup), d);
 }
 

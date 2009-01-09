@@ -2,6 +2,7 @@
 
 	* src/gtk/x11view.c (do_popup): set sensitivity of popup item
 	related to "VIEWER_POPUP_ITEM_UP" and "VIEWER_POPUP_ITEM_DOWN".
+	(create_popup_menu): add "#error" directive to check array size.
 
 2009-01-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
