@@ -1,5 +1,8 @@
 2009-01-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.h (VIEWER_POPUP_ITEM_NUM): change value from 7
+	to 9.
+
 	* src/gtk/x11gui.c (GetColor): remove.
 
 	* src/gtk/x11menu.c (application): change coror of "gray" from

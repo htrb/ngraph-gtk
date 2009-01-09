@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.92 2009/01/09 06:23:25 hito Exp $
+ * $Id: x11view.c,v 1.93 2009/01/09 15:03:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -649,7 +649,9 @@ create_popup_menu(struct Viewer *d)
 #define VIEWER_POPUP_ITEM_ALIGN  3
 #define VIEWER_POPUP_ITEM_CROSS  4
 #define VIEWER_POPUP_ITEM_TOP    5
-#define VIEWER_POPUP_ITEM_BOTTOM 6
+#define VIEWER_POPUP_ITEM_UP     6
+#define VIEWER_POPUP_ITEM_DOWN   7
+#define VIEWER_POPUP_ITEM_BOTTOM 8
 
   return create_menu(popup, sizeof(popup) / sizeof(*popup), d);
 }
@@ -3924,6 +3926,8 @@ do_popup(GdkEventButton *event, struct Viewer *d)
     }
     if (num == 1) {
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_TOP], TRUE);
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_UP], TRUE);
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DOWN], TRUE);
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
     }
   }

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.18 2009/01/06 01:06:11 hito Exp $
+ * $Id: x11menu.h,v 1.19 2009/01/09 15:00:06 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -88,7 +88,7 @@ enum MenuID {
 
 enum DrawLockVal {DrawLockNone, DrawLockDraw, DrawLockExpose};
 
-#define VIEWER_POPUP_ITEM_NUM 7
+#define VIEWER_POPUP_ITEM_NUM 9
 struct Viewer
 {
   GtkWidget *Win;
