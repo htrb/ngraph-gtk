@@ -408,7 +408,7 @@ version: 1.00.00
 parent: gra2cairo
 object id: 11
 number of fields: 28
-size of instance: 184
+size of instance: 208
 r--              id    int
 r--             oid    int
 rw-            name    char*
@@ -417,15 +417,15 @@ r--           _list    *char[]
 r--             _GC    int
 rw-      delete_gra    bool
 r-x      disconnect    void( void )
-rw-             dpi    int
-rw-            dpix    int
-rw-            dpiy    int
 rw-       antialias    enum( none default gray )
 ---          _local    void*
 --x            init    void( )
 --x            done    void( )
 ---            next    void*
-r-x          redraw    void( void )
+rw-             dpi    int
+rw-            dpix    int
+rw-            dpiy    int
+r-x          expose    void( void )
 r-x           flush    void( void )
 r-x           clear    void( void )
 rw-              BR    int
@@ -479,7 +479,7 @@ alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
 object id: 35
-number of fields: 34
+number of fields: 35
 size of instance: 200
 r--              id    int
 r--             oid    int
@@ -502,16 +502,17 @@ rw-       antialias    enum( none default gray )
 r-x            menu    void( )
 rw-             ngp    char*
 rw-    fullpath_ngp    char*
+rw-        modified    bool
 rw-             dpi    int
 rw-     auto_redraw    bool
 rw-     redraw_flag    bool
-rw-      redraw_num    bool
+rw-      redraw_num    int
 r-x          redraw    void( void )
 r-x            draw    void( void )
 r-x           flush    void( void )
 r-x           clear    void( void )
 r-x         focused    *char[]( )
-r-x           print    *char[]( bool int )
+r-x           print    void( bool int )
 rw- data_head_lines    int
 ---       _gtklocal    void*
 ---         _evloop    void( )
