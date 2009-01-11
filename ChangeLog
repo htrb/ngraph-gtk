@@ -1,3 +1,10 @@
+2009-01-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (init_zoom): add.
+	(mouse_down_move): use "get_mouse_cursor_type()" to check cursor
+	position.
+	(get_mouse_cursor_type): set "d->ChangePoint".
+
 2009-01-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (do_popup): set sensitivity of popup item

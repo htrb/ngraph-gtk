@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.94 2009/01/09 16:17:31 hito Exp $
+ * $Id: x11view.c,v 1.95 2009/01/11 09:43:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1990,127 +1990,107 @@ mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
 }
 
 static void
+init_zoom(unsigned int state, struct Viewer *d, GdkGC *dc)
+{
+  int vx1, vy1, vx2, vy2;
+  double cc, nn;
+  double zoom2;
+
+  ShowFocusFrame(dc);
+
+  d->ShowFrame = FALSE;
+  d->MouseDX = d->RefX2 - d->MouseX1;
+  d->MouseDY = d->RefY2 - d->MouseY1;
+
+  vx1 = d->MouseX1;
+  vy1 = d->MouseY1;
+
+  vx1 -= d->RefX1 - d->MouseDX;
+  vy1 -= d->RefY1 - d->MouseDY;
+
+  vx2 = (d->RefX2 - d->RefX1);
+  vy2 = (d->RefY2 - d->RefY1);
+
+  cc = vx1 * vx2 + vy1 * vy2;
+  nn = vx2 * vx2 + vy2 * vy2;
+
+  if ((nn == 0) || (cc < 0)) {
+    zoom2 = 0;
+  } else {
+    zoom2 = cc / nn;
+  }
+
+  CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+
+  SetZoom(zoom2);
+
+  vx1 = d->RefX1 + vx2 * zoom2;
+  vy1 = d->RefY1 + vy2 * zoom2;
+
+  d->MouseX1 = d->RefX1;
+  d->MouseY1 = d->RefY1;
+
+  d->MouseX2 = vx1;
+  d->MouseY2 = vy1;
+
+  ShowFrameRect(dc);
+
+  d->ShowRect = TRUE;
+}
+
+static void
 mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
 {
-  int j, x1, y1, minx, miny, maxx, maxy, vx1, vy1, vx2, vy2, bboxnum;
-  int *bbox;
-  double cc, nn, zoom, zoom2;
-  struct focuslist *focus;
-  struct narray *abbox;
-  char *inst;
+  int cursor;
 
-  zoom = Menulocal.PaperZoom / 10000.0;
-
-  d->Capture = TRUE;
+  cursor = get_mouse_cursor_type(d, point->x, point->y);
+  if (cursor == GDK_LEFT_PTR) {
+    SetCursor(cursor);
+    return;
+  }
 
   if (arraynum(d->focusobj) == 0)
     return;
 
-  GetFocusFrame(&minx, &miny, &maxx, &maxy, 0, 0);
+  d->Capture = TRUE;
 
-  if ((minx - 10 <= point->x) && (point->x <= minx - 4)
-      && (miny - 10 <= point->y) && (point->y <= miny - 4)) {
+  switch (cursor) {
+  case GDK_TOP_LEFT_CORNER:
     GetLargeFrame(&(d->RefX2), &(d->RefY2), &(d->RefX1), &(d->RefY1));
     d->MouseMode = MOUSEZOOM1;
-    SetCursor(GDK_TOP_LEFT_CORNER);
-  } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
-	     && (miny - 10 <= point->y) && (point->y <= miny - 4)) {
+    SetCursor(cursor);
+    init_zoom(state, d, dc);
+    break;
+  case GDK_TOP_RIGHT_CORNER:
     GetLargeFrame(&(d->RefX1), &(d->RefY2), &(d->RefX2), &(d->RefY1));
     d->MouseMode = MOUSEZOOM2;
-    SetCursor(GDK_TOP_RIGHT_CORNER);
-  } else if ((maxx + 4 <= point->x) && (point->x <= maxx + 10)
-	     && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
+    SetCursor(cursor);
+    init_zoom(state, d, dc);
+    break;
+  case GDK_BOTTOM_RIGHT_CORNER:
     GetLargeFrame(&(d->RefX1), &(d->RefY1), &(d->RefX2), &(d->RefY2));
     d->MouseMode = MOUSEZOOM3;
-    SetCursor(GDK_BOTTOM_RIGHT_CORNER);
-  } else if ((minx - 10 <= point->x) && (point->x <= minx - 4)
-	     && (maxy + 4 <= point->y) && (point->y <= maxy + 10)) {
+    SetCursor(cursor);
+    init_zoom(state, d, dc);
+    break;
+  case GDK_BOTTOM_LEFT_CORNER:
     GetLargeFrame(&(d->RefX2), &(d->RefY1), &(d->RefX1), &(d->RefY2));
     d->MouseMode = MOUSEZOOM4;
-    SetCursor(GDK_BOTTOM_LEFT_CORNER);
-  } else {
-    focus = *(struct focuslist **) arraynget(d->focusobj, 0);
-    if ((arraynum(d->focusobj) == 1)
-	&& ((inst = chkobjinstoid(focus->obj, focus->oid)) != NULL)) {
-
-      _exeobj(focus->obj, "bbox", inst, 0, NULL);
-      _getobj(focus->obj, "bbox", inst, &abbox);
-
-      bboxnum = arraynum(abbox);
-      bbox = (int *) arraydata(abbox);
-
-      for (j = 4; j < bboxnum; j += 2) {
-	x1 = mxd2p(bbox[j] * zoom + Menulocal.LeftMargin)
-	  - d->hscroll + d->cx;
-
-	y1 = mxd2p(bbox[j + 1] * zoom + Menulocal.TopMargin)
-	  - d->vscroll + d->cy;
-
-	if ((x1 - 3 <= point->x) && (point->x <= x1 + 3)
-	    && (y1 - 3 <= point->y) && (point->y <= y1 + 3))
-	  break;
-      }
-
-      if (j < bboxnum) {
-	d->MouseMode = MOUSECHANGE;
-	d->ChangePoint = (j - 4) / 2;
-	ShowFocusFrame(dc);
-	d->ShowFrame = FALSE;
-	SetCursor(GDK_CROSSHAIR);
-	d->ShowLine = TRUE;
-	d->LineX = d->LineY = 0;
-	ShowFocusLine(dc, d->ChangePoint);
-      }
-    }
-  }
-
-  if (d->MouseMode == MOUSENONE) {
-    if ((minx <= point->x) && (point->x <= maxx)
-	&& (miny <= point->y) && (point->y <= maxy)) {
-      d->MouseMode = MOUSEDRAG;
-    }
-  } else if ((MOUSEZOOM1 <= d->MouseMode)
-	     && (d->MouseMode <= MOUSEZOOM4)) {
+    SetCursor(cursor);
+    init_zoom(state, d, dc);
+    break;
+  case GDK_CROSSHAIR:
+    d->MouseMode = MOUSECHANGE;
     ShowFocusFrame(dc);
-
     d->ShowFrame = FALSE;
-    d->MouseDX = d->RefX2 - d->MouseX1;
-    d->MouseDY = d->RefY2 - d->MouseY1;
-
-    vx1 = d->MouseX1;
-    vy1 = d->MouseY1;
-
-    vx1 -= d->RefX1 - d->MouseDX;
-    vy1 -= d->RefY1 - d->MouseDY;
-
-    vx2 = (d->RefX2 - d->RefX1);
-    vy2 = (d->RefY2 - d->RefY1);
-
-    cc = vx1 * vx2 + vy1 * vy2;
-    nn = vx2 * vx2 + vy2 * vy2;
-
-    if ((nn == 0) || (cc < 0)) {
-      zoom2 = 0;
-    } else {
-      zoom2 = cc / nn;
-    }
-
-    CheckGrid(FALSE, state, NULL, NULL, &zoom2);
-
-    SetZoom(zoom2);
-
-    vx1 = d->RefX1 + vx2 * zoom2;
-    vy1 = d->RefY1 + vy2 * zoom2;
-
-    d->MouseX1 = d->RefX1;
-    d->MouseY1 = d->RefY1;
-
-    d->MouseX2 = vx1;
-    d->MouseY2 = vy1;
-
-    ShowFrameRect(dc);
-
-    d->ShowRect = TRUE;
+    d->ShowLine = TRUE;
+    d->LineX = d->LineY = 0;
+    ShowFocusLine(dc, d->ChangePoint);
+    SetCursor(cursor);
+    break;
+  case GDK_FLEUR:
+    d->MouseMode = MOUSEDRAG;
+    break;
   }
 }
 
@@ -3513,6 +3493,7 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
 
     if (x > x1 - 3 && x < x1 + 3 && y > y1 - 3 && y < y1 + 3) {
       cursor = GDK_CROSSHAIR;
+      d->ChangePoint = (j - 4) / 2;
       break;
     }
   }
