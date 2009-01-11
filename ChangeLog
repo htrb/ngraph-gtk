@@ -1,9 +1,16 @@
 2009-01-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.h (enum MouseMode): add.
+	(struct Viewer): member "MouseMode" and "Mode" are enum.
+
 	* src/gtk/x11view.c (init_zoom): add.
 	(mouse_down_move): use "get_mouse_cursor_type()" to check cursor
 	position.
 	(get_mouse_cursor_type): set "d->ChangePoint".
+	(POINT_LENGTH, FOCUS_FRAME_OFST, FOCUS_RECT_SIZE): add.
+	(ShowFocusFrame, get_mouse_cursor_type): use "FOCUS_RECT_SIZE" and
+	"FOCUS_FRAME_OFST".
+	(ShowPoints): use "POINT_LENGTH".
 
 2009-01-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

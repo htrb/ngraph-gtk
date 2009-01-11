@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.19 2009/01/09 15:00:06 hito Exp $
+ * $Id: x11menu.h,v 1.20 2009/01/11 11:57:17 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -88,6 +88,39 @@ enum MenuID {
 
 enum DrawLockVal {DrawLockNone, DrawLockDraw, DrawLockExpose};
 
+enum PointerType {
+  PointB,
+  LegendB,
+  LineB,
+  CurveB,
+  PolyB,
+  RectB,
+  ArcB,
+  MarkB,
+  TextB,
+  GaussB,
+  AxisB,
+  TrimB,
+  FrameB,
+  SectionB,
+  CrossB,
+  SingleB,
+  DataB,
+  EvalB,
+  ZoomB,
+};
+
+enum MouseMode {
+  MOUSENONE,
+  MOUSEPOINT,
+  MOUSEDRAG,
+  MOUSEZOOM1,
+  MOUSEZOOM2,
+  MOUSEZOOM3,
+  MOUSEZOOM4,
+  MOUSECHANGE,
+};
+
 #define VIEWER_POPUP_ITEM_NUM 9
 struct Viewer
 {
@@ -95,7 +128,9 @@ struct Viewer
   GdkWindow *win;
   GtkWidget *VScroll, *HScroll, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
   int ShowFrame, ShowLine, ShowRect, ShowCross;
-  int Mode, Capture, MoveData, MouseMode;
+  int Capture, MoveData;
+  enum MouseMode MouseMode;
+  enum PointerType Mode;
   struct narray *focusobj, *points;
   int FrameOfsX, FrameOfsY;
   int MouseX1, MouseY1, MouseX2, MouseY2, MouseDX, MouseDY;
@@ -188,28 +223,6 @@ struct CoordWin
 
 #define MARK_TYPE_NUM 90
 #define MENU_HISTORY_NUM 10
-
-enum PointerType {
-  PointB,
-  LegendB,
-  LineB,
-  CurveB,
-  PolyB,
-  RectB,
-  ArcB,
-  MarkB,
-  TextB,
-  GaussB,
-  AxisB,
-  TrimB,
-  FrameB,
-  SectionB,
-  CrossB,
-  SingleB,
-  DataB,
-  EvalB,
-  ZoomB,
-};
 
 struct NgraphApp
 {

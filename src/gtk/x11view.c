@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.95 2009/01/11 09:43:33 hito Exp $
+ * $Id: x11view.c,v 1.96 2009/01/11 11:57:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -95,20 +95,15 @@ struct viewer_popup
   int submenu_item_num;
 };
 
-#define MOUSENONE   0
-#define MOUSEPOINT  1
-#define MOUSEDRAG   2
-#define MOUSEZOOM1  3
-#define MOUSEZOOM2  4
-#define MOUSEZOOM3  5
-#define MOUSEZOOM4  6
-#define MOUSECHANGE 7
-
 #define Button1 1
 #define Button2 2
 #define Button3 3
 #define Button4 4
 #define Button5 5
+
+#define POINT_LENGTH 5
+#define FOCUS_FRAME_OFST 5
+#define FOCUS_RECT_SIZE 6
 
 static GdkRegion *region = NULL;
 static int PaintLock = FALSE, ZoomLock = FALSE, DefaultMode = 0, KeepMouseMode = FALSE;
@@ -1458,10 +1453,10 @@ ShowFocusFrame(GdkGC *gc)
   if (num > 0) {
     GetFocusFrame(&x1, &y1, &x2, &y2, d->FrameOfsX, d->FrameOfsY);
 
-    x1 -= 5;
-    y1 -= 5;
-    x2 += 4;
-    y2 += 4;
+    x1 -= FOCUS_FRAME_OFST;
+    y1 -= FOCUS_FRAME_OFST;
+    x2 += FOCUS_FRAME_OFST - 1;
+    y2 += FOCUS_FRAME_OFST - 1;
 
     minx = (x1 < x2) ? x1 : x2;
     miny = (y1 < y2) ? y1 : y2;
@@ -1470,10 +1465,23 @@ ShowFocusFrame(GdkGC *gc)
     height = abs(y2 - y1);
 
     gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
-    gdk_draw_rectangle(d->win, gc, TRUE, x1 - 6, y1 - 6, 6, 6);
-    gdk_draw_rectangle(d->win, gc, TRUE, x1 - 6, y2,     6, 6);
-    gdk_draw_rectangle(d->win, gc, TRUE, x2,     y1 - 6, 6, 6);
-    gdk_draw_rectangle(d->win, gc, TRUE, x2,     y2,     6, 6);
+
+    gdk_draw_rectangle(d->win, gc, TRUE,
+		       x1 - FOCUS_RECT_SIZE,
+		       y1 - FOCUS_RECT_SIZE,
+		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
+    gdk_draw_rectangle(d->win, gc, TRUE,
+		       x1 - FOCUS_RECT_SIZE,
+		       y2,
+		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
+    gdk_draw_rectangle(d->win, gc, TRUE,
+		       x2,
+		       y1 - FOCUS_RECT_SIZE,
+		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
+    gdk_draw_rectangle(d->win, gc, TRUE,
+		       x2,
+		       y2,
+		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
   }
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -1529,7 +1537,11 @@ ShowFocusFrame(GdkGC *gc)
 	  mxd2p((bbox[j + 1] + d->FrameOfsY) * zoom +
 		Menulocal.TopMargin) - d->vscroll + d->cy;
 
-	gdk_draw_rectangle(d->win, gc, TRUE, x1 - 3, y1 - 3, 6, 6);
+	gdk_draw_rectangle(d->win, gc, TRUE,
+			   x1 - FOCUS_RECT_SIZE / 2,
+			   y1 - FOCUS_RECT_SIZE / 2,
+			   FOCUS_RECT_SIZE,
+			   FOCUS_RECT_SIZE);
       }
     }
   }
@@ -1852,8 +1864,12 @@ ShowPoints(GdkGC *gc)
       x1 = mxd2p(po[i]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
       y1 = mxd2p(po[i]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
 
-      gdk_draw_line(d->win, gc, x1 - 4, y1, x1 + 5, y1);
-      gdk_draw_line(d->win, gc, x1, y1 - 4, x1, y1 + 5);
+      gdk_draw_line(d->win, gc,
+		    x1 - (POINT_LENGTH - 1), y1,
+		    x1 + POINT_LENGTH, y1);
+      gdk_draw_line(d->win, gc,
+		    x1, y1 - (POINT_LENGTH - 1),
+		    x1, y1 + POINT_LENGTH);
     }
 
     gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
@@ -1993,8 +2009,7 @@ static void
 init_zoom(unsigned int state, struct Viewer *d, GdkGC *dc)
 {
   int vx1, vy1, vx2, vy2;
-  double cc, nn;
-  double zoom2;
+  double cc, nn, zoom2;
 
   ShowFocusFrame(dc);
 
@@ -2044,6 +2059,7 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
   int cursor;
 
   cursor = get_mouse_cursor_type(d, point->x, point->y);
+
   if (cursor == GDK_LEFT_PTR) {
     SetCursor(cursor);
     return;
@@ -3331,6 +3347,8 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
     if (! KeepMouseMode)
       gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
+  case ZoomB:
+    break;
   }
   g_object_unref(G_OBJECT(dc));
   UpdateAll();
@@ -3403,6 +3421,8 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 	arraydel2(d->points);
 	d->Capture = FALSE;
 	break;
+      default:
+	break;
       }
       g_object_unref(G_OBJECT(dc));
     }
@@ -3455,13 +3475,25 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
 
   if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
     cursor = GDK_FLEUR;
-  } else if (x > x1 - 11 && x < x1 - 5 && y > y1 - 11 && y < y1 - 5){
+  } else if (x > x1 - FOCUS_RECT_SIZE - FOCUS_FRAME_OFST &&
+	     x < x1 - FOCUS_FRAME_OFST &&
+	     y > y1 - FOCUS_RECT_SIZE - FOCUS_FRAME_OFST &&
+	     y < y1 - FOCUS_FRAME_OFST) {
     cursor = GDK_TOP_LEFT_CORNER;
-  } else if (x > x1 - 11 && x < x1 - 5 && y < y2 + 11 && y > y2 + 5){
+  } else if (x > x1 - FOCUS_RECT_SIZE - FOCUS_FRAME_OFST &&
+	     x < x1 - FOCUS_FRAME_OFST &&
+	     y < y2 + FOCUS_RECT_SIZE + FOCUS_FRAME_OFST - 1 &&
+	     y > y2 + FOCUS_FRAME_OFST - 1) {
     cursor = GDK_BOTTOM_LEFT_CORNER;
-  } else if (x < x2 + 11 && x > x2 + 5 && y > y1 - 11 && y < y1 - 5){
+  } else if (x < x2 + FOCUS_RECT_SIZE + FOCUS_FRAME_OFST - 1 &&
+	     x > x2 + FOCUS_FRAME_OFST - 1 &&
+	     y > y1 - FOCUS_RECT_SIZE - FOCUS_FRAME_OFST &&
+	     y < y1 - FOCUS_FRAME_OFST) {
     cursor = GDK_TOP_RIGHT_CORNER;
-  } else if (x < x2 + 11 && x > x2 + 5 && y < y2 + 11 && y > y2 + 5){
+  } else if (x < x2 + FOCUS_RECT_SIZE + FOCUS_FRAME_OFST - 1 &&
+	     x > x2 + FOCUS_FRAME_OFST - 1 &&
+	     y < y2 + FOCUS_RECT_SIZE + FOCUS_FRAME_OFST - 1 &&
+	     y > y2 + FOCUS_FRAME_OFST - 1) {
     cursor = GDK_BOTTOM_RIGHT_CORNER;
   } else {
     cursor = GDK_LEFT_PTR;
@@ -3491,7 +3523,10 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
       mxd2p((bbox[j + 1] + d->FrameOfsY) * zoom +
 	    Menulocal.TopMargin) - d->vscroll + d->cy;
 
-    if (x > x1 - 3 && x < x1 + 3 && y > y1 - 3 && y < y1 + 3) {
+    if (x > x1 - FOCUS_RECT_SIZE / 2 &&
+	x < x1 + FOCUS_RECT_SIZE / 2 &&
+	y > y1 - FOCUS_RECT_SIZE / 2 &&
+	y < y1 + FOCUS_RECT_SIZE / 2) {
       cursor = GDK_CROSSHAIR;
       d->ChangePoint = (j - 4) / 2;
       break;
@@ -3914,6 +3949,8 @@ do_popup(GdkEventButton *event, struct Viewer *d)
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DOWN], TRUE);
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
     }
+  default:
+    break;
   }
   gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d, button, event_time);
 }
