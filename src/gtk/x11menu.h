@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.20 2009/01/11 11:57:17 hito Exp $
+ * $Id: x11menu.h,v 1.21 2009/01/13 10:20:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -126,7 +126,7 @@ struct Viewer
 {
   GtkWidget *Win;
   GdkWindow *win;
-  GtkWidget *VScroll, *HScroll, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
+  GtkWidget *menu, *VScroll, *HScroll, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
   int ShowFrame, ShowLine, ShowRect, ShowCross;
   int Capture, MoveData;
   enum MouseMode MouseMode;

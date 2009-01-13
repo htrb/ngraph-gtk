@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.62 2009/01/09 06:23:25 hito Exp $
+ * $Id: x11menu.c,v 1.63 2009/01/13 10:20:03 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -93,6 +93,7 @@ GdkCursorType Cursor[] = {
   GDK_WATCH,
   GDK_FLEUR,
   GDK_PENCIL,
+  GDK_TCROSS,
 };
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
@@ -1435,6 +1436,8 @@ setupwindow(void)
   hbox = gtk_hbox_new(FALSE, 0);
 
   menubar = gtk_menu_bar_new();
+  NgraphApp.Viewer.menu = menubar;
+
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   createmenu(GTK_MENU_BAR(menubar));
 
@@ -2071,6 +2074,9 @@ SetCursor(unsigned int type)
     break;
   case GDK_PENCIL:
     gdk_window_set_cursor(win, NgraphApp.cursor[12]);
+    break;
+  case GDK_TCROSS:
+    gdk_window_set_cursor(win, NgraphApp.cursor[13]);
     break;
   }
 }

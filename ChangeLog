@@ -1,7 +1,22 @@
 2009-01-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11view.c (do_popup): check id of focused object when
-	"num == 1".
+	* src/gtk/x11view.c (menu_activate): add.
+	(ViewerWinSetup): add signal handler for "selection-done" to
+	"d->menu".
+	(Evaluate): cursor type is "GDK_TCROSS" when move data mode.
+	(mouse_down_move_data): check return value of "getobj()" and
+	"getobjlist()" and goto "ErrEnd" when these functions rturn FALSE.
+	(move_data_cancel): add argument "show_message".
+	(mouse_down_move_data): truncate "movex" or "movey" when number of
+	these array is greater than that of "move".
+	(mouse_down_move_data): check return value of "arraynget()".
+	(do_popup): check id of focused object when "num == 1".
+
+	* src/gtk/x11menu.h (struct Viewer): add member "menu".
+
+	* src/gtk/x11menu.c (Cursor): add "GDK_TCROSS".
+	(SetCursor): add case "GDK_TCROSS".
+	(setupwindow): initialize "NgraphApp.Viewer.menu".
 
 2009-01-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

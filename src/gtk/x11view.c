@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.97 2009/01/13 03:50:54 hito Exp $
+ * $Id: x11view.c,v 1.98 2009/01/13 10:20:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -144,6 +144,7 @@ static void do_popup(GdkEventButton *event, struct Viewer *d);
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 static void reorder_object(enum object_move_type type);
+static void move_data_cancel(struct Viewer *d, gboolean show_message);
 
 
 static double 
@@ -683,6 +684,18 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   return TRUE;
 }
 
+static void
+menu_activate(GtkMenuShell *menushell, gpointer user_data)
+{
+  struct Viewer *d;
+
+  d = (struct Viewer *) user_data;
+
+  if (d->MoveData) {
+   move_data_cancel(d, FALSE);
+  }
+}
+
 void
 ViewerWinSetup(void)
 {
@@ -750,9 +763,12 @@ ViewerWinSetup(void)
   g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
   g_signal_connect(d->Win, "key-press-event", G_CALLBACK(ViewerEvKeyDown), d);
   g_signal_connect(d->Win, "key-release-event", G_CALLBACK(ViewerEvKeyUp), d);
+
+  g_signal_connect(d->menu, "selection-done", G_CALLBACK(menu_activate), d);
+
   d->popup = create_popup_menu(d);
   gtk_widget_show_all(d->popup);
-  gtk_menu_attach_to_widget(GTK_MENU(d->popup), NgraphApp.Viewer.Win, NULL);
+  gtk_menu_attach_to_widget(GTK_MENU(d->popup), d->Win, NULL);
 }
 
 void
@@ -997,7 +1013,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
       }
       arraydel(&SelList);
     } else if ((ret == IDEVMOVE) && (selnum > 0)) {
-      SetCursor(GDK_LEFT_PTR);
+      SetCursor(GDK_TCROSS);
       d->Capture = TRUE;
       d->MoveData = TRUE;
     }
@@ -2115,10 +2131,10 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 {
   struct objlist *fileobj, *aobjx, *aobjy;
   struct narray iarray, *move, *movex, *movey;
-  int selnum, sel, i, ax, ay, anum, iline;
-  unsigned int movenum, j;
+  int selnum, sel, i, ax, ay, anum, iline, j, movenum, n;
   double dx, dy;
   char *axis, *argv[3];
+  void *ptr;
 
   fileobj = chkobject("file");
   if (fileobj == NULL)
@@ -2129,7 +2145,9 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
   for (i = 0; i < selnum; i++) {
     sel = *(int *) arraynget(&SelList, i);
 
-    getobj(fileobj, "axis_x", EvalList[sel].id, 0, NULL, &axis);
+    if (getobj(fileobj, "axis_x", EvalList[sel].id, 0, NULL, &axis) == -1)
+      goto ErrEnd;
+
     arrayinit(&iarray, sizeof(int));
 
     if (getobjilist(axis, &aobjx, &iarray, FALSE, NULL)) {
@@ -2140,7 +2158,9 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
       arraydel(&iarray);
     }
 
-    getobj(fileobj, "axis_y", EvalList[sel].id, 0, NULL, &axis);
+    if (getobj(fileobj, "axis_y", EvalList[sel].id, 0, NULL, &axis) == -1)
+      goto ErrEnd;
+
     arrayinit(&iarray, sizeof(int));
 
     if (getobjilist(axis, &aobjy, &iarray, FALSE, NULL)) {
@@ -2152,7 +2172,7 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
     }
 
     if (ax == -1 || ax == -1)
-      continue;
+      goto ErrEnd;
 
     argv[0] = (char *) &(d->MouseX1);
     argv[1] = (char *) &(d->MouseY1);
@@ -2160,11 +2180,16 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 
     if (getobj(aobjx, "coordinate", ax, 2, argv, &dx) == -1 ||
 	getobj(aobjy, "coordinate", ay, 2, argv, &dy) == -1)
-      continue;
+      goto ErrEnd;
 
-    getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move);
-    getobj(fileobj, "move_data_x", EvalList[sel].id, 0, NULL, &movex);
-    getobj(fileobj, "move_data_y", EvalList[sel].id, 0, NULL, &movey);
+    if (getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move) == -1)
+      goto ErrEnd;
+
+    if (getobj(fileobj, "move_data_x", EvalList[sel].id, 0, NULL, &movex) == -1)
+      goto ErrEnd;
+
+    if (getobj(fileobj, "move_data_y", EvalList[sel].id, 0, NULL, &movey) == - 1)
+      goto ErrEnd;
 
     if (move == NULL) {
       move = arraynew(sizeof(int));
@@ -2183,25 +2208,39 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 
     movenum = arraynum(move);
 
-    if (arraynum(movex) < movenum) {
-      for (j = movenum - 1; j >= arraynum(movex); j--) {
+    n = arraynum(movex);
+    if (n < movenum) {
+      for (j = movenum - 1; j >= n; j--) {
 	arrayndel(move, j);
       }
-      movenum = arraynum(movex);
+    } else if (n > movenum) {
+      for (j = n - 1; j >= movenum; j--) {
+	arrayndel(movex, j);
+      }
     }
+    movenum = arraynum(movex);
 
-    if (arraynum(movey) < movenum) {
-      for (j = movenum - 1; j >= arraynum(movey); j--) {
+    n = arraynum(movey);
+    if (n < movenum) {
+      for (j = movenum - 1; j >= n; j--) {
 	arrayndel(move, j);
 	arrayndel(movex, j);
       }
-      movenum = arraynum(movey);
+    } else if (n > movenum) {
+      for (j = n - 1; j >= movenum; j--) {
+	arrayndel(movey, j);
+      }
     }
+    movenum = arraynum(movey);
+
 
     for (j = 0; j < movenum; j++) {
-      iline = *(int *) arraynget(move, j);
-      if (iline == EvalList[sel].line)
-	break;
+      ptr = arraynget(move, j);
+      if (ptr) {
+	iline = * (int *) ptr;
+	if (iline == EvalList[sel].line)
+	  break;
+      }
     }
 
     if (j == movenum) {
@@ -2218,10 +2257,9 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
   }
 
   MessageBox(TopLevel, _("Data points are moved."), "Confirm", MB_OK);
-  arraydel(&SelList);
-  d->MoveData = FALSE;
-  d->Capture = FALSE;
-  SetCursor(GDK_LEFT_PTR);
+
+ ErrEnd:
+  move_data_cancel(d, FALSE);
 }
 
 static void
@@ -3357,13 +3395,15 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
 }
 
 static void
-move_data_cancel(struct Viewer *d)
+move_data_cancel(struct Viewer *d, gboolean show_message)
 {
   arraydel(&SelList);
   d->MoveData = FALSE;
   d->Capture = FALSE;
   SetCursor(GDK_LEFT_PTR);
-  MessageBox(TopLevel, _("Moving data points is canceled."), "Confirm", MB_OK);
+
+  if (show_message)
+    MessageBox(TopLevel, _("Moving data points is canceled."), "Confirm", MB_OK);
 }
 
 static gboolean
@@ -3378,7 +3418,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
     return FALSE;
 
   if (d->MoveData) {
-    move_data_cancel(d);
+    move_data_cancel(d, TRUE);
     return TRUE;
   }
 
@@ -4075,7 +4115,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   switch (e->keyval) {
   case GDK_Escape:
     if (d->MoveData) {
-      move_data_cancel(d);
+      move_data_cancel(d, TRUE);
     }
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     return FALSE;
@@ -5862,4 +5902,8 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
   NgraphApp.Viewer.Mode = Mode;
   NgraphApp.Viewer.Capture = FALSE;
   NgraphApp.Viewer.MouseMode = MOUSENONE;
+
+  if (d->MoveData) {
+    move_data_cancel(d, TRUE);
+  }
 }
