@@ -1,3 +1,8 @@
+2009-01-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (do_popup): check id of focused object when
+	"num == 1".
+
 2009-01-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.h (enum MouseMode): add.
