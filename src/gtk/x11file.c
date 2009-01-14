@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.65 2009/01/08 04:18:00 hito Exp $
+ * $Id: x11file.c,v 1.66 2009/01/14 01:57:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1209,6 +1209,7 @@ FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
 
   list_store_clear(d->list);
 
+  exeobj(d->Obj, "move_data_adjust", id, 0, NULL);
   getobj(d->Obj, "move_data", id, 0, NULL, &move);
   getobj(d->Obj, "move_data_x", id, 0, NULL, &movex);
   getobj(d->Obj, "move_data_y", id, 0, NULL, &movey);
@@ -1433,6 +1434,7 @@ FileMoveDialogClose(GtkWidget *w, void *data)
 
   ret = d->ret;
   d->ret = IDLOOP;
+  exeobj(d->Obj, "move_data_adjust", d->Id, 0, NULL);
   getobj(d->Obj, "move_data", d->Id, 0, NULL, &move);
   getobj(d->Obj, "move_data_x", d->Id, 0, NULL, &movex);
   getobj(d->Obj, "move_data_y", d->Id, 0, NULL, &movey);

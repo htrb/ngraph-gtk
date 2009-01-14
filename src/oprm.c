@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.3 2008/08/26 01:31:10 hito Exp $
+ * $Id: oprm.c,v 1.4 2009/01/14 01:57:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -976,6 +976,7 @@ int prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           goto errexit;
         }
         fid=fidroot+d1-1;
+        exeobj(fobj, "move_data_adjust", fid, 0, NULL);
         getobj(fobj,"move_data",fid,0,NULL,&move);
         getobj(fobj,"move_data_x",fid,0,NULL,&movex);
         getobj(fobj,"move_data_y",fid,0,NULL,&movey);

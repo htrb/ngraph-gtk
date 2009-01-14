@@ -1,3 +1,21 @@
+2009-01-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (mouse_down_move_data): execute
+	"move_data_adjust" before get "move_data", "move_data_x" and
+	"move_data_y".
+
+	* src/gtk/x11file.c (FileMoveDialogSetupItem)
+	(FileMoveDialogClose): execute "move_data_adjust" before get
+	"move_data", "move_data_x" and "move_data_y".
+
+	* src/oprm.c (prmload): execute "move_data_adjust" before get
+	"move_data", "move_data_x" and "move_data_y".
+
+	* src/ofile.c (adjust_move_num): add.
+	(file2d): add field "move_data_adjust".
+	(opendata): execute "move_data_adjust" before get "move_data",
+	"move_data_x" and "move_data_y".
+
 2009-01-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (menu_activate): add.
@@ -7,8 +25,6 @@
 	(mouse_down_move_data): check return value of "getobj()" and
 	"getobjlist()" and goto "ErrEnd" when these functions rturn FALSE.
 	(move_data_cancel): add argument "show_message".
-	(mouse_down_move_data): truncate "movex" or "movey" when number of
-	these array is greater than that of "move".
 	(mouse_down_move_data): check return value of "arraynget()".
 	(do_popup): check id of focused object when "num == 1".
 

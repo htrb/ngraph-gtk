@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.98 2009/01/13 10:20:03 hito Exp $
+ * $Id: x11view.c,v 1.99 2009/01/14 01:57:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2131,10 +2131,10 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 {
   struct objlist *fileobj, *aobjx, *aobjy;
   struct narray iarray, *move, *movex, *movey;
-  int selnum, sel, i, ax, ay, anum, iline, j, movenum, n;
+  int selnum, sel, i, ax, ay, anum, iline, j, movenum;
   double dx, dy;
   char *axis, *argv[3];
-  void *ptr;
+  int *ptr;
 
   fileobj = chkobject("file");
   if (fileobj == NULL)
@@ -2182,6 +2182,9 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 	getobj(aobjy, "coordinate", ay, 2, argv, &dy) == -1)
       goto ErrEnd;
 
+    if (exeobj(fileobj, "move_data_adjust", EvalList[sel].id, 0, NULL) == -1)
+      goto ErrEnd;
+
     if (getobj(fileobj, "move_data", EvalList[sel].id, 0, NULL, &move) == -1)
       goto ErrEnd;
 
@@ -2208,36 +2211,10 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 
     movenum = arraynum(move);
 
-    n = arraynum(movex);
-    if (n < movenum) {
-      for (j = movenum - 1; j >= n; j--) {
-	arrayndel(move, j);
-      }
-    } else if (n > movenum) {
-      for (j = n - 1; j >= movenum; j--) {
-	arrayndel(movex, j);
-      }
-    }
-    movenum = arraynum(movex);
-
-    n = arraynum(movey);
-    if (n < movenum) {
-      for (j = movenum - 1; j >= n; j--) {
-	arrayndel(move, j);
-	arrayndel(movex, j);
-      }
-    } else if (n > movenum) {
-      for (j = n - 1; j >= movenum; j--) {
-	arrayndel(movey, j);
-      }
-    }
-    movenum = arraynum(movey);
-
-
     for (j = 0; j < movenum; j++) {
-      ptr = arraynget(move, j);
+      ptr = (int *) arraynget(move, j);
       if (ptr) {
-	iline = * (int *) ptr;
+	iline = * ptr;
 	if (iline == EvalList[sel].line)
 	  break;
       }

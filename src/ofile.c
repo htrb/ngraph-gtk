@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.52 2008/12/19 00:14:48 hito Exp $
+ * $Id: ofile.c,v 1.53 2009/01/14 01:57:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -387,6 +387,7 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   _getobj(obj,"smooth_x",inst,&smoothx);
   _getobj(obj,"smooth_y",inst,&smoothy);
   _getobj(obj,"mask",inst,&mask);
+  _exeobj(obj,"move_data_adjust",inst,0,NULL);
   _getobj(obj,"move_data",inst,&move);
   _getobj(obj,"move_data_x",inst,&movex);
   _getobj(obj,"move_data_y",inst,&movey);
@@ -593,12 +594,12 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
 #if  MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
   fp->mask_index = 0;
 #endif
+
   fp->movenum=arraynum(move);
   fp->move=arraydata(move);
-  if (arraynum(movex)<fp->movenum) fp->movenum=arraynum(movex);
   fp->movex=arraydata(movex);
-  if (arraynum(movey)<fp->movenum) fp->movenum=arraynum(movey);
   fp->movey=arraydata(movey);
+
   if (smoothx>smoothy) fp->smooth=smoothx;
   else fp->smooth=smoothy;
   fp->smoothx=smoothx;
@@ -6536,6 +6537,60 @@ int foputge1(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return oputge1(obj, inst, rval, argc, argv);
 }
 
+int
+adjust_move_num(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  struct narray *move, *move_x, *move_y;
+  int i, n, nx, ny;
+
+  _getobj(obj, "move_data",   inst, &move);
+  _getobj(obj, "move_data_x", inst, &move_x);
+  _getobj(obj, "move_data_y", inst, &move_y);
+
+  if (move == NULL || move_x == NULL || move_y == NULL) {
+    arrayfree(move);
+    arrayfree(move_x);
+    arrayfree(move_y);
+    move = NULL;
+    _putobj(obj, "move_data",   inst, move);
+    _putobj(obj, "move_data_x", inst, move);
+    _putobj(obj, "move_data_y", inst, move);
+
+    return 0;
+  }
+
+  n = arraynum(move);
+  nx = arraynum(move_x);
+  ny = arraynum(move_y);
+
+  if (n == nx && n == ny)
+    return 0;
+
+  if (nx < n) {
+    for (i = n - 1; i >= nx; i--) {
+      arrayndel(move, i);
+    }
+    n = nx;
+  } else if (nx > n) {
+    for (i = nx - 1; i >= n; i--) {
+      arrayndel(move_x, i);
+    }
+  }
+
+  if (ny < n) {
+    for (i = n - 1; i >= ny; i--) {
+      arrayndel(move, i);
+      arrayndel(move_x, i);
+    }
+    n = ny;
+  } else if (ny > n) {
+    for (i = ny - 1; i >= n; i--) {
+      arrayndel(move_y, i);
+    }
+  }
+
+  return 0;
+}
 
 struct objtable file2d[] = {
   {"init",NVFUNC,NEXEC,f2dinit,NULL,0},
@@ -6580,6 +6635,7 @@ struct objtable file2d[] = {
   {"move_data",NIARRAY,NREAD|NWRITE,update_field,NULL,0},
   {"move_data_x",NDARRAY,NREAD|NWRITE,update_field,NULL,0},
   {"move_data_y",NDARRAY,NREAD|NWRITE,update_field,NULL,0},
+  {"move_data_adjust",NVFUNC,NREAD|NEXEC,adjust_move_num,NULL,0},
 
   {"axis_x",NOBJ,NREAD|NWRITE,NULL,NULL,0},
   {"axis_y",NOBJ,NREAD|NWRITE,NULL,NULL,0},
