@@ -969,7 +969,7 @@ alias: data
 version: 1.00.00
 parent: draw
 object id: 25
-number of fields: 114
+number of fields: 115
 size of instance: 776
 r--              id    int
 r--             oid    int
@@ -1018,6 +1018,7 @@ rw-            mask    int[]
 rw-       move_data    int[]
 rw-     move_data_x    double[]
 rw-     move_data_y    double[]
+r-x move_data_adjust    void( )
 rw-          axis_x    obj
 rw-          axis_y    obj
 rw-       data_clip    bool

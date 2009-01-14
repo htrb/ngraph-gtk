@@ -1,5 +1,8 @@
 2009-01-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/shellcm.c (dispfield): change field size for field name from
+	15 to 16.
+
 	* src/gtk/x11view.c (mouse_down_move_data): execute
 	"move_data_adjust" before get "move_data", "move_data_x" and
 	"move_data_y".

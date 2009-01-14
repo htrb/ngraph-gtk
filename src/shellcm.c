@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.11 2008/12/08 23:42:17 hito Exp $
+ * $Id: shellcm.c,v 1.12 2009/01/14 02:20:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -622,7 +622,7 @@ void dispfield(struct objlist *obj,char *name)
   if (chkobjperm(obj,name) & NEXEC) perm[2]='x';
   else perm[2]='-';
   perm[3]='\0';
-  printfstdout("%3s %15.256s    %.256s",
+  printfstdout("%3s %16.256s    %.256s",
                    (char *)perm,(char *)name,(char *)type);
   if (ftype>=NVFUNC) {
     if ((alist=chkobjarglist(obj,name))!=NULL) {
