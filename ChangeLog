@@ -1,5 +1,41 @@
 2009-01-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11dialg.h (struct FileDialog): add member "apply_all"
+	and "multi_open".
+
+	* src/gtk/x11merge.c (MergeDialogSetup): add signal handler for
+	"copy" button.
+
+	* src/gtk/x11lgnd.c (LegendCurveDialogSetup)
+	(LegendPolyDialogSetup, LegendArrowDialogSetup)
+	(LegendRectDialogSetup, LegendArcDialogSetup)
+	(LegendMarkDialogSetup, LegendTextDialogSetup): add signal handler
+	for "copy" and "copy all" button.
+
+	* src/gtk/x11file.c (FitDialogSetup, FileMoveDialogSetup)
+	(FileMaskDialogSetup, FileLoadDialogSetup, FileMathDialogSetup)
+	(FileDialogSetup): add signal handler for "copy" button.
+	(FileDialogSetupItem): set sensitivity of "d->apply_all" by
+	"d->multi_open".
+	(FileDialog): initialize "d->multi_open".
+	(FitDialogApply): check "poly_dimension" field is changed or not.
+
+	* src/gtk/x11axis.c (GridDialogSetup, AxisBaseDialogSetup)
+	(AxisPosDialogSetup, NumDialogSetup, AxisFontDialogSetup)
+	(GaugeDialogSetup, AxisDialogSetup): add signal handler for "copy"
+	button.
+	(SectionDialogGrid): delete instance of "axisgrid" object when
+	"ret == IDCANCEL" and "create == FALSE".
+	(SectionDialogGrid): don't call "set_graph_modified()" when
+	"axisgrid" object is not created.
+
+	* src/gtk/x11gui.c (set_sensitivity_by_check_instance): add.
+	(DialogExecute): call "gtk_widget_hide_all()" before call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11file.c (FileDialogFit): delete instance of "fit"
+	object when "ret == IDCANCEL" and "create == FALSE".
+
 	* src/shellcm.c (dispfield): change field size for field name from
 	15 to 16.
 
