@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.99 2009/01/14 01:57:06 hito Exp $
+ * $Id: x11view.c,v 1.100 2009/01/14 08:44:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -869,7 +869,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 
   for (i = 0; i < dnum; i++) {
     id = ddata[i];
-    FileDialog(&DlgFile, fileobj, id, 0);
+    FileDialog(&DlgFile, fileobj, id, i < dnum - 1);
     ret2 = DialogExecute(TopLevel, &DlgFile);
     if (ret2 == IDDELETE) {
       FitDel(fileobj, id);

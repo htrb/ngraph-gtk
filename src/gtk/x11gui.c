@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.19 2009/01/09 06:23:25 hito Exp $
+ * $Id: x11gui.c,v 1.20 2009/01/14 08:44:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,6 +59,20 @@ struct nGetOpenFileData
 
 static struct nGetOpenFileData FileSelection = {NULL, NULL};
 
+void
+set_sensitivity_by_check_instance(GtkWidget *widget, gpointer user_data)
+{
+  char *name;
+  struct objlist *obj;
+  int n;
+
+  name = (char *) user_data;
+
+  obj = chkobject(name);
+  n = chkobjlastinst(obj);
+
+  gtk_widget_set_sensitive(widget, n > 0);
+}
 
 static void
 dialog_destroyed_cb(GtkWidget *w, gpointer user_data)
@@ -149,6 +163,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->SetupWindow(dlg, data, FALSE);
   }
 
+  gtk_widget_hide_all(dlg);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   data->widget = dlg;
   data->ret = IDLOOP;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.31 2009/01/05 05:41:13 hito Exp $
+ * $Id: x11graph.c,v 1.32 2009/01/14 08:44:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1384,7 +1384,7 @@ CmHelpAbout(void)
 			"authors", Auther,
 			"translator-credits", Translator, 
 			"documenters", Documenter,
-			"comments", _("Ngraph is the program creating scientific 2-dimensinal graphs for the researcher and engineer."),
+			"comments", _("Ngraph is the program creating scientific 2-dimensinal graphs for researchers and engineers."),
 			NULL);
 }
 

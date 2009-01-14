@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.19 2009/01/08 04:18:00 hito Exp $
+ * $Id: x11merge.c,v 1.20 2009/01/14 08:44:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -119,10 +119,10 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_CLOSE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CLOSE, IDDELETE);
+
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "merge");
 
     hbox = gtk_hbox_new(FALSE, 2);
     w = create_text_entry(FALSE, TRUE);

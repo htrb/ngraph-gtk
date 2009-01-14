@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.66 2009/01/14 01:57:06 hito Exp $
+ * $Id: x11file.c,v 1.67 2009/01/14 08:44:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -919,16 +919,21 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
 static int
 FitDialogApply(GtkWidget *w, struct FitDialog *d)
 {
-  int i;
-  int num;
+  int i, num, dim;
 
   if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
+    return FALSE;
+
+  if (getobj(d->Obj, "poly_dimension", d->Id, 0, NULL, &dim) == -1)
     return FALSE;
 
   num = combo_box_get_active(d->dim);
   num++;
   if (num > 0 && putobj(d->Obj, "poly_dimension", d->Id, &num) == -1)
-      return FALSE;
+    return FALSE;
+
+  if (num != dim)
+    set_graph_modified();
 
   if (SetObjFieldFromWidget(d->weight, d->Obj, d->Id, "weight_func"))
     return FALSE;
@@ -1004,12 +1009,13 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   _("_Load"), IDLOAD,
-			   GTK_STOCK_SAVE, IDSAVE,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "fit");
+
+    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Load"), IDLOAD);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1323,9 +1329,8 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct FileMoveDialog *) data;
 
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     w = list_store_create(sizeof(list) / sizeof(*list), list);
@@ -1590,9 +1595,8 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct FileMaskDialog *) data;
 
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
 
     hbox = gtk_hbox_new(FALSE, 4);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1743,9 +1747,8 @@ FileLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct FileLoadDialog *) data;
 
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
 
     vbox = gtk_vbox_new(FALSE, 4);
 
@@ -1908,6 +1911,7 @@ func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
   return FALSE;
 }
 
+
 static void
 FileMathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -1916,9 +1920,8 @@ FileMathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct FileMathDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
 
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
@@ -2224,6 +2227,8 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
     gtk_label_set_text(GTK_LABEL(d->fitid), valstr + i);
     memfree(valstr);
   }
+  
+  gtk_widget_set_sensitive(d->apply_all, d->multi_open);
 }
 
 static void
@@ -2259,7 +2264,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
   struct FileDialog *d;
   struct objlist *fitobj, *obj;
   char *fit, *inst;
-  int i, idnum, fitid = 0, fitoid, ret;
+  int i, idnum, fitid = 0, fitoid, ret, create = FALSE;
   struct narray iarray;
   char *valstr;
 
@@ -2301,16 +2306,23 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
       memfree(fit);
       return;
     }
+    create = TRUE;
   }
 
   FitDialog(&DlgFit, fitobj, fitid);
   ret = DialogExecute(d->widget, &DlgFit);
 
-  if (ret == IDDELETE) {
+  switch (ret) {
+  case IDCANCEL:
+    if (! create)
+      break;
+  case IDDELETE:
     delobj(fitobj, fitid);
     putobj(d->Obj, "fit", d->Id, NULL);
-  } else if (ret == IDOK) {
+    break;
+  case IDOK:
     combo_box_set_active(d->type, 19);
+    break;
   }
 
   sgetobjfield(d->Obj, d->Id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
@@ -2703,12 +2715,15 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   _("_Apply all"), IDFAPPLY,
-			   GTK_STOCK_CLOSE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   _("_Copy all"), IDCOPYALL,
-			   NULL);
+    d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
+
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CLOSE, IDDELETE);
+
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
+
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Copy all"), IDCOPYALL);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
 
     hbox = gtk_hbox_new(FALSE, 4);
 
@@ -2874,7 +2889,7 @@ FileDialogClose(GtkWidget *w, void *data)
 }
 
 void
-FileDialog(void *data, struct objlist *obj, int id, int candel)
+FileDialog(void *data, struct objlist *obj, int id, int multi)
 {
   struct FileDialog *d;
 
@@ -2884,6 +2899,7 @@ FileDialog(void *data, struct objlist *obj, int id, int candel)
   d->CloseWindow = FileDialogClose;
   d->Obj = obj;
   d->Id = id;
+  d->multi_open = multi;
 }
 
 static void
@@ -2969,7 +2985,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
     if (name) {
       strcpy(name, data[fil]);
       putobj(obj, "file", id, name);
-      FileDialog(&DlgFile, obj, id, 0);
+      FileDialog(&DlgFile, obj, id, FALSE);
       ret = DialogExecute(TopLevel, &DlgFile);
       if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	FitDel(obj, id);
@@ -3008,7 +3024,7 @@ CmFileNew(void)
       changefilename(name);
       AddDataFileList(name);
       putobj(obj, "file", id, name);
-      FileDialog(&DlgFile, obj, id, 0);
+      FileDialog(&DlgFile, obj, id, FALSE);
       ret = DialogExecute(TopLevel, &DlgFile);
       if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	FitDel(obj, id);
@@ -3080,7 +3096,7 @@ CmFileOpen(void)
 	FitCopy(obj, id, id0);
 	id++;
       } else {
-	FileDialog(&DlgFile, obj, id, 0);
+	FileDialog(&DlgFile, obj, id, id < ide);
 	ret = DialogExecute(TopLevel, &DlgFile);
 	if ((ret == IDDELETE) || (ret == IDCANCEL)) {
 	  FitDel(obj, id);
@@ -3174,7 +3190,7 @@ CmFileUpdate(void)
 	FitCopy(obj, array[i], array[id0]);
 	set_graph_modified();
       } else {
-	FileDialog(&DlgFile, obj, array[i], 0);
+	FileDialog(&DlgFile, obj, array[i], i < num - 1);
 	ret = DialogExecute(TopLevel, &DlgFile);
 	if (ret == IDDELETE) {
 	  FitDel(obj, array[i]);
@@ -3471,7 +3487,7 @@ FileWinFileUpdate(struct SubWin *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
  
   if ((sel >= 0) && (sel <= d->num)) {
-    d->setup_dialog(d->dialog, d->obj, sel, -1);
+    d->setup_dialog(d->dialog, d->obj, sel, FALSE);
     d->select = sel;
     if ((ret = DialogExecute(d->Win, d->dialog)) == IDDELETE) {
       FitDel(d->obj, sel);

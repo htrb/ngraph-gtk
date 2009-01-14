@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.39 2009/01/08 04:18:00 hito Exp $
+ * $Id: x11axis.c,v 1.40 2009/01/14 08:44:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -246,10 +246,10 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct GridDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axisgrid");
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -446,7 +446,7 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 {
   struct SectionDialog *d;
   char *ref;
-  int oidx, oidy;
+  int ret, oidx, oidy, create = FALSE;
 
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
@@ -461,17 +461,26 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
 	snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
 	putobj(d->Obj2, "axis_y", *(d->IDG), ref);
       }
+      create = TRUE;
     }
   }
   if (*(d->IDG) >= 0) {
     GridDialog(&DlgGrid, d->Obj2, *(d->IDG));
-    if (DialogExecute(d->widget, &DlgGrid) == IDDELETE) {
+    ret = DialogExecute(d->widget, &DlgGrid);
+    switch (ret) {
+    case IDCANCEL:
+      if (! create)
+	break;
+    case IDDELETE:
       delobj(d->Obj2, *(d->IDG));
       *(d->IDG) = -1;
+      if (create)
+	break;
+    default:
+      set_graph_modified();
     }
   }
   SectionDialogSetupItem(d->widget, d);
-  set_graph_modified();
 }
 
 
@@ -926,9 +935,8 @@ AxisBaseDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct AxisBaseDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1130,9 +1138,8 @@ AxisPosDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct AxisPosDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1300,9 +1307,8 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct NumDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1546,9 +1552,8 @@ AxisFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct AxisFontDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
     vbox = gtk_vbox_new(FALSE, 4);
 
@@ -1690,9 +1695,8 @@ GaugeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct GaugeDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
     frame = gtk_frame_new(NULL);
     hbox = gtk_hbox_new(FALSE, 4);
@@ -2071,10 +2075,10 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);

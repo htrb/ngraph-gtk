@@ -19,6 +19,11 @@
 	"d->multi_open".
 	(FileDialog): initialize "d->multi_open".
 	(FitDialogApply): check "poly_dimension" field is changed or not.
+	(FileMoveDialogSetupItem, FileMoveDialogClose): execute
+	"move_data_adjust" before get "move_data", "move_data_x" and
+	"move_data_y".
+	(FileDialogFit): delete instance of "fit" object when "ret ==
+	IDCANCEL" and "create == FALSE".
 
 	* src/gtk/x11axis.c (GridDialogSetup, AxisBaseDialogSetup)
 	(AxisPosDialogSetup, NumDialogSetup, AxisFontDialogSetup)
@@ -33,19 +38,12 @@
 	(DialogExecute): call "gtk_widget_hide_all()" before call
 	"gtk_widget_show_all()".
 
-	* src/gtk/x11file.c (FileDialogFit): delete instance of "fit"
-	object when "ret == IDCANCEL" and "create == FALSE".
-
 	* src/shellcm.c (dispfield): change field size for field name from
 	15 to 16.
 
 	* src/gtk/x11view.c (mouse_down_move_data): execute
 	"move_data_adjust" before get "move_data", "move_data_x" and
 	"move_data_y".
-
-	* src/gtk/x11file.c (FileMoveDialogSetupItem)
-	(FileMoveDialogClose): execute "move_data_adjust" before get
-	"move_data", "move_data_x" and "move_data_y".
 
 	* src/oprm.c (prmload): execute "move_data_adjust" before get
 	"move_data", "move_data_x" and "move_data_y".

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.34 2009/01/08 04:18:00 hito Exp $
+ * $Id: x11lgnd.c,v 1.35 2009/01/14 08:44:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -643,10 +643,10 @@ LegendCurveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "curve");
 
     vbox = gtk_vbox_new(FALSE, 5);
 
@@ -708,10 +708,10 @@ LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "polygon");
 
     vbox = gtk_vbox_new(FALSE, 5);
 
@@ -864,10 +864,9 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "line");
 
     vbox2 = gtk_vbox_new(FALSE, 4);
 
@@ -955,10 +954,9 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "rectangle");
 
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1032,10 +1030,9 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "arc");
 
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1132,10 +1129,9 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "mark");
 
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1266,10 +1262,9 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   GTK_STOCK_COPY, IDCOPY,
-			   NULL);
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
+    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
+    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "text");
 
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
