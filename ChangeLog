@@ -1,3 +1,13 @@
+2009-01-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.h (struct FitDialog): add members
+	"through_box", "dim_box", "weight_box", "usr_deriv_box",
+	"usr_def_frame" and "div_box".
+
+	* src/gtk/x11file.c (FitDialogSetSensitivity): add.
+	(FitDialogSetup): add signal handler for some widgets to change
+	sensitibity of widgets.
+
 2009-01-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (struct FileDialog): add member "apply_all"
