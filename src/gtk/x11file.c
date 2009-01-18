@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.68 2009/01/17 11:30:43 hito Exp $
+ * $Id: x11file.c,v 1.69 2009/01/18 07:49:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -113,6 +113,10 @@ static struct subwin_popup_list Popup_list[] = {
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
 #define POPUP_ITEM_FIT 10
+#define POPUP_ITEM_TOP 12
+#define POPUP_ITEM_UP 13
+#define POPUP_ITEM_DOWN 14
+#define POPUP_ITEM_BOTTOM 15
 
 #define FITSAVE "fit.ngp"
 #define CB_BUF_SIZE 128
@@ -2959,7 +2963,7 @@ FileDialog(void *data, struct objlist *obj, int id, int multi)
   d->CloseWindow = FileDialogClose;
   d->Obj = obj;
   d->Id = id;
-  d->multi_open = multi;
+  d->multi_open = multi > 0;
 }
 
 static void
@@ -4100,17 +4104,29 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   int sel;
   unsigned int i;
   struct SubWin *d;
+  char *fit;
 
   d = (struct SubWin *) user_data;
 
   sel = d->select;
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
-    if (i == POPUP_ITEM_FIT && sel >= 0) {
-      char *fit = NULL;
-
-      getobj(d->obj, "fit", sel, 0, NULL, &fit);
+    switch (i) {
+    case POPUP_ITEM_FIT:
+      fit = NULL;
+      if (sel >= 0) {
+	getobj(d->obj, "fit", sel, 0, NULL, &fit);
+      }
       gtk_widget_set_sensitive(d->popup_item[i], fit != NULL);
-    } else {
+      break;
+    case POPUP_ITEM_TOP:
+    case POPUP_ITEM_UP:
+      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= d->num);
+      break;
+    case POPUP_ITEM_DOWN:
+    case POPUP_ITEM_BOTTOM:
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < d->num);
+      break;
+    default:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
     }
   }

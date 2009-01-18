@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.35 2009/01/14 08:44:18 hito Exp $
+ * $Id: x11lgnd.c,v 1.36 2009/01/18 07:49:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -88,6 +88,10 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
+#define POPUP_ITEM_TOP 7
+#define POPUP_ITEM_UP 8
+#define POPUP_ITEM_DOWN 9
+#define POPUP_ITEM_BOTTOM 10
 
 static gboolean LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
 static void LegendDialogCopy(struct LegendDialog *d);
@@ -2183,14 +2187,29 @@ static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i; 
-  int sel, n, m;
+  int sel, n, m, last_id;
   struct LegendWin *d;
 
   d = (struct LegendWin *) user_data;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
   for (i = 0; i < POPUP_ITEM_NUM; i++) {
-    gtk_widget_set_sensitive(d->popup_item[i], sel &&  m >= 0);
+    switch (i) {
+    case POPUP_ITEM_TOP:
+    case POPUP_ITEM_UP:
+      gtk_widget_set_sensitive(d->popup_item[i], sel && m > 0);
+      break;
+    case POPUP_ITEM_DOWN:
+    case POPUP_ITEM_BOTTOM:
+      last_id = -1;
+      if (sel) {
+	last_id = chkobjlastinst(d->obj[n]);
+      }
+      gtk_widget_set_sensitive(d->popup_item[i], sel && m >= 0 && m < last_id);
+      break;
+    default:
+      gtk_widget_set_sensitive(d->popup_item[i], sel &&  m >= 0);
+    }
   }
 }
 

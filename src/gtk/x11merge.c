@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.20 2009/01/14 08:44:18 hito Exp $
+ * $Id: x11merge.c,v 1.21 2009/01/18 07:49:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -81,6 +81,10 @@ static struct subwin_popup_list Popup_list[] = {
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
+#define POPUP_ITEM_TOP 8
+#define POPUP_ITEM_UP 9
+#define POPUP_ITEM_DOWN 10
+#define POPUP_ITEM_BOTTOM 11
 
 
 static void
@@ -422,7 +426,18 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 
   sel = d->select;
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
-    gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
+    switch (i) {
+    case POPUP_ITEM_TOP:
+    case POPUP_ITEM_UP:
+      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= d->num);
+      break;
+    case POPUP_ITEM_DOWN:
+    case POPUP_ITEM_BOTTOM:
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < d->num);
+      break;
+    default:
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
+    }
   }
 }
 

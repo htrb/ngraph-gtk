@@ -1,3 +1,22 @@
+2009-01-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)
+	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): add.
+	(MergeWinExpose): change sensitibity of popup menu item.
+
+	* src/gtk/x11lgnd.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)
+	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): add.
+	(LegendWinExpose): change sensitibity of popup menu item.
+
+	* src/gtk/x11file.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)
+	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): add.
+	(popup_show_cb): change sensitibity of popup menu item.
+	(FileDialog): d->multi_open is TRUE when "multi > 0".
+
+	* src/gtk/x11axis.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)
+	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): add.
+	(popup_show_cb): change sensitibity of popup menu item.
+
 2009-01-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (struct FitDialog): add members
