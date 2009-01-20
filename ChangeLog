@@ -1,5 +1,8 @@
 2009-01-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (start_editing): treat "id" as oid when
+	"name[0] == '^'".
+
 	* src/oagrid.c (agridtight): use "obj_do_tighten()".
 
 	* src/oaxis.c (axistight): use "obj_do_tighten()".
