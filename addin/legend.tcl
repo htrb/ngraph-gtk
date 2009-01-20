@@ -433,7 +433,7 @@ proc savescript {} {
     puts $f "del int:texttot"
     puts $f "del iarray:textbbox"
   }
-  puts $f "menu::modified=TRUE"
+  puts $f "menu::modified=true"
   close $f
 }
 

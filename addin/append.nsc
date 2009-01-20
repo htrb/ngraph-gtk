@@ -11,7 +11,7 @@ then
   FILE=$*
 else
   new dialog
-  FILE=${dialog::get_open_file:'NGP_File(*.ngp) *.ngp'}
+  FILE=${dialog::get_open_file:'*.ngp'}
   del dialog
 fi
 if [ "$FILE" ]
@@ -35,5 +35,5 @@ then
     del gra
   fi
   menu:0:clear
-  menu:0:modified=TREU
+  menu:0:modified=true
 fi
