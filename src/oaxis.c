@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.8 2008/09/18 09:22:16 hito Exp $
+ * $Id: oaxis.c,v 1.9 2009/01/20 06:18:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2318,48 +2318,11 @@ int axisgetautoscale(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int axistight(struct objlist *obj,char *inst,char *rval,
-              int argc,char **argv)
+int axistight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
 {
-  char *axis,*axis2;
-  struct narray iarray;
-  int anum,id,oid;
-  struct objlist *aobj;
+  obj_do_tighten(obj, inst, "reference");
+  obj_do_tighten(obj, inst, "adjust_axis");
 
-  if ((!_getobj(obj,"reference",inst,&axis)) && (axis!=NULL)) {
-    arrayinit(&iarray,sizeof(int));
-    if (!getobjilist(axis,&aobj,&iarray,FALSE,NULL)) {
-      anum=arraynum(&iarray);
-      if (anum>0) {
-        id=*(int *)arraylast(&iarray);
-        if (getobj(aobj,"oid",id,0,NULL,&oid)!=-1) {
-          if ((axis2=(char *)memalloc(strlen(chkobjectname(aobj))+10))!=NULL) {
-            sprintf(axis2,"%s:^%d",chkobjectname(aobj),oid);
-            _putobj(obj,"reference",inst,axis2);
-            memfree(axis);
-          }
-        }
-      }
-    }
-    arraydel(&iarray);
-  }
-  if ((!_getobj(obj,"adjust_axis",inst,&axis)) && (axis!=NULL)) {
-    arrayinit(&iarray,sizeof(int));
-    if (!getobjilist(axis,&aobj,&iarray,FALSE,NULL)) {
-      anum=arraynum(&iarray);
-      if (anum>0) {
-        id=*(int *)arraylast(&iarray);
-        if (getobj(aobj,"oid",id,0,NULL,&oid)!=-1) {
-          if ((axis2=(char *)memalloc(strlen(chkobjectname(aobj))+10))!=NULL) {
-            sprintf(axis2,"%s:^%d",chkobjectname(aobj),oid);
-            _putobj(obj,"adjust_axis",inst,axis2);
-            memfree(axis);
-          }
-        }
-      }
-    }
-    arraydel(&iarray);
-  }
   return 0;
 }
 

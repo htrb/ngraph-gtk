@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oagrid.c,v 1.2 2009/01/20 06:18:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -409,45 +409,9 @@ exit:
 int agridtight(struct objlist *obj,char *inst,char *rval,
                int argc,char **argv)
 {
-  char *axis,*axis2;
-  struct narray iarray;
-  int anum,id,oid;
-  struct objlist *aobj;
+  obj_do_tighten(obj, inst, "axis_x");
+  obj_do_tighten(obj, inst, "axis_y");
 
-  if ((!_getobj(obj,"axis_x",inst,&axis)) && (axis!=NULL)) {
-    arrayinit(&iarray,sizeof(int));
-    if (!getobjilist(axis,&aobj,&iarray,FALSE,NULL)) {
-      anum=arraynum(&iarray);
-      if (anum>0) {
-        id=*(int *)arraylast(&iarray);
-        if (getobj(aobj,"oid",id,0,NULL,&oid)!=-1) {
-          if ((axis2=(char *)memalloc(strlen(chkobjectname(aobj))+10))!=NULL) {
-            sprintf(axis2,"%s:^%d",chkobjectname(aobj),oid);
-            _putobj(obj,"axis_x",inst,axis2);
-            memfree(axis);
-          }
-        }
-      }
-    }
-    arraydel(&iarray);
-  }
-  if ((!_getobj(obj,"axis_y",inst,&axis)) && (axis!=NULL)) {
-    arrayinit(&iarray,sizeof(int));
-    if (!getobjilist(axis,&aobj,&iarray,FALSE,NULL)) {
-      anum=arraynum(&iarray);
-      if (anum>0) {
-        id=*(int *)arraylast(&iarray);
-        if (getobj(aobj,"oid",id,0,NULL,&oid)!=-1) {
-          if ((axis2=(char *)memalloc(strlen(chkobjectname(aobj))+10))!=NULL) {
-            sprintf(axis2,"%s:^%d",chkobjectname(aobj),oid);
-            _putobj(obj,"axis_y",inst,axis2);
-            memfree(axis);
-          }
-        }
-      }
-    }
-    arraydel(&iarray);
-  }
   return 0;
 }
 

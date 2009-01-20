@@ -1,3 +1,13 @@
+2009-01-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oagrid.c (agridtight): use "obj_do_tighten()".
+
+	* src/oaxis.c (axistight): use "obj_do_tighten()".
+
+	* src/ofile.c (f2dtight): use "obj_do_tighten()".
+
+	* src/object.c (obj_do_tighten): add.
+
 2009-01-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11merge.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)

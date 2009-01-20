@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.21 2009/01/06 08:08:29 hito Exp $
+ * $Id: object.c,v 1.22 2009/01/20 06:18:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3957,6 +3957,38 @@ int sexeobj(char *arg)
   }
   arraydel(&iarray);
   return rcode;
+}
+
+void
+obj_do_tighten(struct objlist *obj, char *inst, char *field)
+{
+  char *dest, *dest2;
+  struct narray iarray;
+  struct objlist *dobj;
+  int anum, id, oid;
+
+  if (_getobj(obj, field, inst, &dest))
+    return;
+
+  if (dest == NULL)
+    return;
+
+  arrayinit(&iarray, sizeof(int));
+  if (! getobjilist(dest, &dobj, &iarray, FALSE, NULL)) {
+    anum = arraynum(&iarray);
+    if (anum > 0) {
+      id = * (int *) arraylast(&iarray);
+      if (getobj(dobj, "oid", id, 0, NULL, &oid) != -1) {
+	dest2 = (char *) memalloc(strlen(chkobjectname(dobj)) + 10);
+	if (dest2) {
+	  sprintf(dest2, "%s:^%d", chkobjectname(dobj), oid);
+	  _putobj(obj, field, inst, dest2);
+	  memfree(dest);
+	}
+      }
+    }
+  }
+  arraydel(&iarray);
 }
 
 char *getuniqname(struct objlist *obj,char *prefix,char sep)

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.8 2009/01/06 08:08:29 hito Exp $
+ * $Id: object.h,v 1.9 2009/01/20 06:18:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -337,5 +337,6 @@ int sexefield(struct objlist *obj,int id,char *arg);
 int sexeobj(char *arg);
 char *getuniqname(struct objlist *obj,char *prefix,char sep);
 int has_eventloop(void);
+void obj_do_tighten(struct objlist *obj, char *inst, char *field);
 
 #endif
