@@ -422,7 +422,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::file='/usr/share/doc/Ngraph-gtk/demo/demo3.dat'
+	file::file='/usr/share/Ngraph-gtk/demo/demo3.dat'
 
 new file
 	file::hidden=false
@@ -464,7 +464,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::file='/usr/share/doc/Ngraph-gtk/demo/demo3.dat'
+	file::file='/usr/share/Ngraph-gtk/demo/demo3.dat'
 
 new file
 	file::hidden=false
@@ -506,7 +506,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:4'
-	file::file='/usr/share/doc/Ngraph-gtk/demo/demo3.dat'
+	file::file='/usr/share/Ngraph-gtk/demo/demo3.dat'
 
 new file
 	file::hidden=false
@@ -548,7 +548,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:4'
-	file::file='/usr/share/doc/Ngraph-gtk/demo/demo3.dat'
+	file::file='/usr/share/Ngraph-gtk/demo/demo3.dat'
 
 new line
 	line::hidden=false

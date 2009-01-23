@@ -8,7 +8,7 @@ do
   done
   gra:$ID:clear
 
-  . /usr/share/doc/Ngraph-gtk/demo/${demo}.ngp
+  . /usr/share/Ngraph-gtk/demo/${demo}.ngp
   ID2=${gra::id}
   if [ $ID != $ID2 ]
   then
