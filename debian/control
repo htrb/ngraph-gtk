@@ -9,5 +9,5 @@ Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
 Package: ngraph-gtk
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Ngraph is the program creating scientific 2-dimensinal
- graphs for researchers and engineers.
+Description: creating scientific 2-dimensinal graphs
+ Ngraph is the program creating scientific 2-dimensinal graphs for researchers and engineers.
