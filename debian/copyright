@@ -1,0 +1,26 @@
+This package was debianized by Ito Hiroyuki <ZXB01226@nifty.com> on
+Fri, 23 Jan 2009 10:10:07 +0900.
+
+It was downloaded from http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
+
+Upstream Author(s):
+
+    Satoshi ISHIZAKA <isizaka@msa.biglobe.ne.jp>
+    Ito Hiroyuki <ZXB01226@nifty.com>
+
+Copyright:
+
+    <Copyright (C) 2002 Satoshi ISHIZAKA>
+
+License:
+
+    You are free to distribute this software under the terms of the
+    GNU General Public License.  On Debian systems, the complete text
+    of the GNU General Public License can be found in the file
+    `/usr/share/common-licenses/GPL'.
+
+The Debian packaging is (C) 2009, Ito Hiroyuki <ZXB01226@nifty.com> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.

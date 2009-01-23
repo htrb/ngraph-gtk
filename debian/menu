@@ -1,0 +1,3 @@
+?package(ngraph-gtk):needs="X11" section="Applications/see-menu-manual"\
+  title="ngraph-gtk" command="/usr/bin/ngraph-gtk"\
+  icon="/usr/share/doc/Ngraph-gtk/html_ja/img/iconl.png"

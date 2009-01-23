@@ -1,3 +1,10 @@
+2009-01-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* debian/Makefile.am: add files for debian package.
+
+	* src/gtk/x11menu.c (application): call "gtk_widget_show_all()"
+	instead of "gtk_window_present()".
+
 2009-01-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (start_editing): treat "id" as oid when

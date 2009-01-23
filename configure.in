@@ -72,11 +72,12 @@ AC_MSG_RESULT($enable_japanese)])
 AC_NGRAPH_ENABLE_JAPANESE
 
 AC_CONFIG_FILES([Makefile src/Makefile src/gtk/Makefile driver/Makefile \
-			  addin/Makefile  po/Makefile.in m4/Makefile \
+			  addin/Makefile po/Makefile.in m4/Makefile \
 			  demo/Makefile initfile/Makefile \
 			  doc/Makefile doc/html_ja/Makefile \
 			  doc/html_ja/tutorial/Makefile \
 			  doc/html_ja/img/Makefile \
-			  doc/html_ja/dialogs/Makefile])
+			  doc/html_ja/dialogs/Makefile
+			  debian/Makefile])
 AM_CONFIG_HEADER([config.h])
 AC_OUTPUT

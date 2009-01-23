@@ -1,0 +1,13 @@
+Source: ngraph-gtk
+Section: X11
+Priority: extra
+Maintainer: Ito Hiroyuki <ZXB01226@nifty.com>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.7.3
+Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
+
+Package: ngraph-gtk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Ngraph is the program creating scientific 2-dimensinal
+ graphs for researchers and engineers.

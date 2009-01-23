@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.63 2009/01/13 10:20:03 hito Exp $
+ * $Id: x11menu.c,v 1.64 2009/01/23 05:07:41 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1730,7 +1730,7 @@ application(char *file)
     Menulocal.menuwidth = w / 2;
 
   if (Menulocal.menuheight == CW_USEDEFAULT)
-    Menulocal.menuheight = w * 1.2 / 2;
+    Menulocal.menuheight = h / 1.2;
 
   x = Menulocal.menux;
   y = Menulocal.menuy;
@@ -1846,7 +1846,7 @@ application(char *file)
   sigaction(SIGINT, &act, NULL);
 
   ResetEvent();
-  gtk_window_present(GTK_WINDOW(TopLevel));
+  gtk_widget_show_all(GTK_WIDGET(TopLevel));
 
   AppMainLoop();
 
