@@ -185,7 +185,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = README.Debian  changelog  compat  control  copyright  dirs  docs  files  menu  rules watch
+EXTRA_DIST = README.Debian changelog compat control copyright dirs docs menu rules watch
 all: all-am
 
 .SUFFIXES:
