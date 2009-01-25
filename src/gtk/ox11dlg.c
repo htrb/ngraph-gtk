@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.9 2008/12/31 12:30:49 hito Exp $
+ * $Id: ox11dlg.c,v 1.10 2009/01/25 09:50:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -347,7 +347,7 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
   memfree(*(char **)rval);
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
-  d=arraydata(array);
+  d = arraydata(array);
   anum = arraynum(array);
   switch (anum) {
   case 0:
