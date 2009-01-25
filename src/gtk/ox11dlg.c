@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.10 2009/01/25 09:50:00 hito Exp $
+ * $Id: ox11dlg.c,v 1.11 2009/01/25 09:53:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -439,7 +439,7 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   char *file, *file2;
 
   locksave = GlobalLock;
-  GlobalLock=TRUE;
+  GlobalLock = TRUE;
   memfree(*(char **)rval);
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
