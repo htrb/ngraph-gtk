@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.101 2009/01/28 10:23:56 hito Exp $
+ * $Id: x11view.c,v 1.102 2009/01/28 15:07:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2399,7 +2399,8 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
 
   err = mxp2d(POINT_ERROR) / zoom;
 
-  if (d->Mode == PointB) {
+  switch (d->Mode) {
+  case PointB:
     Match("legend", x1, y1, x2, y2, err);
     Match("axis", x1, y1, x2, y2, err);
     Match("merge", x1, y1, x2, y2, err);
@@ -2408,7 +2409,8 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
     d->ShowFrame = TRUE;
 
     ShowFocusFrame(dc);
-  } else if (d->Mode == LegendB) {
+    break;
+  case LegendB:
     Match("legend", x1, y1, x2, y2, err);
     Match("merge", x1, y1, x2, y2, err);
 
@@ -2416,21 +2418,29 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
     d->ShowFrame = TRUE;
 
     ShowFocusFrame(dc);
-  } else if (d->Mode == AxisB) {
+    break;
+  case AxisB:
     Match("axis", x1, y1, x2, y2, err);
 
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
 
     ShowFocusFrame(dc);
-  } else if (d->Mode == TrimB) {
+    break;
+  case TrimB:
     Trimming(x1, y1, x2, y2);
-  } else if (d->Mode == DataB) {
+    break;
+  case DataB:
     if (ViewerWinFileUpdate(x1, y1, x2, y2, err)) {
       UpdateAll();
     }
-  } else {
+    break;
+  case EvalB:
     Evaluate(x1, y1, x2, y2, err);
+    break;
+  default:
+    /* never reached */
+    break;
   }
 }
 
