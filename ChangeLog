@@ -1,6 +1,14 @@
 2009-01-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* addin/math.nsc: format result with "text::printf".
+	* src/gtk/x11view.c (mouse_down_move): don't check
+	"arraynum(d->focusobj)".
+	(mouse_up_point): remove unused variables "num" and "focused".
+	(mouse_up_drag, mouse_up_zoom, mouse_up_change): don't call
+	"SetCursor()".
+	(ViewerEvLButtonUp): call "SetCursor()" when "d->Mode" is
+	"PointB", "LegendB", "AxisB", "TrimB", "DataB" or "EvalB".  *
+	addin/math.nsc: format result with "text::printf".
+	(get_mouse_cursor_type): return GDK_LEFT_PTR when "num == 0".
 
 	* src/gtk/x11scrip.c (ScriptDialogClose): initialize
 	"d->execscript" as NULL before check "d->ret".

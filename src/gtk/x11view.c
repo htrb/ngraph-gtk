@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.100 2009/01/14 08:44:18 hito Exp $
+ * $Id: x11view.c,v 1.101 2009/01/28 10:23:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2081,9 +2081,6 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
     return;
   }
 
-  if (arraynum(d->focusobj) == 0)
-    return;
-
   d->Capture = TRUE;
 
   switch (cursor) {
@@ -2381,7 +2378,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 static void
 mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, double zoom)
 {
-  int x1, x2, y1, y2, err, num, focused = FALSE;
+  int x1, x2, y1, y2, err;
 
   d->Capture = FALSE;
   ShowFrameRect(dc);
@@ -2403,24 +2400,24 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
   err = mxp2d(POINT_ERROR) / zoom;
 
   if (d->Mode == PointB) {
-    focused |= Match("legend", x1, y1, x2, y2, err);
-    focused |= Match("axis", x1, y1, x2, y2, err);
-    focused |= Match("merge", x1, y1, x2, y2, err);
+    Match("legend", x1, y1, x2, y2, err);
+    Match("axis", x1, y1, x2, y2, err);
+    Match("merge", x1, y1, x2, y2, err);
 
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
 
     ShowFocusFrame(dc);
   } else if (d->Mode == LegendB) {
-    focused |= Match("legend", x1, y1, x2, y2, err);
-    focused |= Match("merge", x1, y1, x2, y2, err);
+    Match("legend", x1, y1, x2, y2, err);
+    Match("merge", x1, y1, x2, y2, err);
 
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
 
     ShowFocusFrame(dc);
   } else if (d->Mode == AxisB) {
-    focused |= Match("axis", x1, y1, x2, y2, err);
+    Match("axis", x1, y1, x2, y2, err);
 
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
@@ -2435,17 +2432,6 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
   } else {
     Evaluate(x1, y1, x2, y2, err);
   }
-
-  if (focused) {
-    int cursor;
-
-    cursor = get_mouse_cursor_type(d, point->x, point->y);
-    if (cursor >= 0)
-      SetCursor(cursor);
-  }
-
-
-  num = arraynum(d->focusobj);
 }
 
 static void
@@ -2508,7 +2494,6 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
       d->allclear=FALSE;
     UpdateAll();
   }
-  d->MouseMode = MOUSENONE;
 }
 
 static void
@@ -2589,11 +2574,10 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   d->ShowFrame = TRUE;
 
   ShowFocusFrame(dc);
-  if (d->Mode == LegendB || (d->Mode==PointB && !axis))
-    d->allclear=FALSE;
+  if (d->Mode == LegendB || (d->Mode == PointB && !axis))
+    d->allclear = FALSE;
+
   UpdateAll();
-  SetCursor(GDK_LEFT_PTR);
-  d->MouseMode = MOUSENONE;
 }
 
 static void
@@ -2659,8 +2643,6 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     d->ShowFrame = TRUE;
     ShowFocusFrame(dc);
   }
-  SetCursor(GDK_LEFT_PTR);
-  d->MouseMode = MOUSENONE;
 }
 
 static void
@@ -2764,11 +2746,11 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
   dc = gdk_gc_new(d->win);
 
   switch (d->Mode) {
-  case PointB :
-  case LegendB :
+  case PointB:
+  case LegendB:
   case AxisB:
-  case TrimB :
-  case DataB :
+  case TrimB:
+  case DataB:
   case EvalB:
     d->Capture = FALSE;
     switch (d->MouseMode) {
@@ -2794,6 +2776,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
     case MOUSENONE:
       break;
     }
+    SetCursor(get_mouse_cursor_type(d, point->x, point->y));
     d->MouseMode = MOUSENONE;
     break;
   case MarkB:
@@ -3486,7 +3469,7 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
   num = arraynum(d->focusobj);
 
   if (num == 0)
-    return -1;
+    return GDK_LEFT_PTR;
 
   GetFocusFrame(&x1, &y1, &x2, &y2, d->FrameOfsX, d->FrameOfsY);
 
@@ -3556,15 +3539,10 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
 static void
 set_mouse_cursor_hover(struct Viewer *d, int x, int y)
 {
-  int cursor;
-
   if (d->Mode != PointB && d->Mode != LegendB && d->Mode != AxisB)
     return;
 
-  cursor = get_mouse_cursor_type(d, x, y);
-
-  if (cursor >= 0)
-    SetCursor(cursor);
+  SetCursor(get_mouse_cursor_type(d, x, y));
 }
 
 static void
