@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.8 2008/12/30 02:54:04 hito Exp $
+ * $Id: x11scrip.c,v 1.9 2009/01/28 01:39:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -130,10 +130,10 @@ ScriptDialogClose(GtkWidget *w, void *data)
 
   d = (struct ScriptDialog *) data;
 
+  d->execscript = NULL;
+
   if (d->ret != IDOK)
     return;
-
-  d->execscript = NULL;
 
   n = list_store_get_selected_index(d->list);
 
@@ -141,7 +141,7 @@ ScriptDialogClose(GtkWidget *w, void *data)
     return;
 
   
-  i=0;
+  i = 0;
   for (pcur = Menulocal.scriptroot; pcur != NULL; pcur = pcur->next) {
     if (i == n && pcur->script) {
       d->execscript = nstrdup(pcur->script);
@@ -165,7 +165,6 @@ ScriptDialog(struct ScriptDialog *data)
 void
 CmScriptExec(void)
 {
-  struct objlist *obj;
   char *name;
   int newid, allocnow = FALSE;
   char *option, *s;
@@ -174,66 +173,76 @@ CmScriptExec(void)
   struct narray sarray;
   char mes[256];
   struct objlist *robj, *shell;
-  char *inst;
   int idn;
 
   if (Menulock || GlobalLock)
     return;
 
-  if ((shell = chkobject("shell")) == NULL)
+  shell = chkobject("shell");
+  if (shell == NULL)
     return;
 
   ScriptDialog(&DlgScript);
+  if (DialogExecute(TopLevel, &DlgScript) != IDOK)
+    return;
 
-  if ((DialogExecute(TopLevel, &DlgScript) == IDOK)
-      && (DlgScript.execscript)) {
-    name = DlgScript.execscript;
-    newid = newobj(shell);
-    if (newid >= 0) {
-      arrayinit(&sarray, sizeof(char *));
-      if (arrayadd(&sarray, &name) == NULL) {
-	memfree(name);
-	arraydel2(&sarray);
-	return;
-      }
-      option = DlgScript.option;
-      while ((s = getitok2(&option, &len, " \t")) != NULL) {
-	if (arrayadd(&sarray, &s) == NULL) {
-	  memfree(s);
-	  arraydel2(&sarray);
-	  return;
-	}
-      }
-      if (Menulocal.addinconsole) {
-	allocnow = AllocConsole();
-      }
-      argv[0] = (char *) &sarray;
-      argv[1] = NULL;
-      snprintf(mes, sizeof(mes), _("Executing `%.128s'."), name);
-      SetStatusBar(mes);
+  if (DlgScript.execscript == NULL)
+    return;
 
-      menu_lock(TRUE);
+  name = DlgScript.execscript;
 
-      obj = Menulocal.obj;
-      inst = Menulocal.inst;
-      idn = getobjtblpos(obj, "_evloop", &robj);
-      registerevloop(chkobjectname(obj), "_evloop", robj, idn, inst, NULL);
-
-      exeobj(shell, "shell", newid, 1, argv);
-
-      unregisterevloop(robj, idn, inst);
-
-      menu_lock(FALSE);
-
-      ResetStatusBar();
-      arraydel2(&sarray);
-      if (Menulocal.addinconsole)
-	FreeConsole(allocnow);
-      GetPageSettingsFromGRA();
-      UpdateAll2();
-    } else
-      memfree(name);
-    delobj(shell, newid);
-    gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
+  newid = newobj(shell);
+  if (newid < 0) {
+    memfree(name);
+    return;
   }
+
+  arrayinit(&sarray, sizeof(char *));
+  if (arrayadd(&sarray, &name) == NULL) {
+    delobj(shell, newid);
+    memfree(name);
+    arraydel2(&sarray);
+    return;
+  }
+
+  option = DlgScript.option;
+  while ((s = getitok2(&option, &len, " \t")) != NULL) {
+    if (arrayadd(&sarray, &s) == NULL) {
+      delobj(shell, newid);
+      memfree(s);
+      arraydel2(&sarray);
+      return;
+    }
+  }
+
+  if (Menulocal.addinconsole) {
+    allocnow = AllocConsole();
+  }
+
+  snprintf(mes, sizeof(mes), _("Executing `%.128s'."), name);
+  SetStatusBar(mes);
+
+  menu_lock(TRUE);
+
+  idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
+  registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
+  argv[0] = (char *) &sarray;
+  argv[1] = NULL;
+  exeobj(shell, "shell", newid, 1, argv);
+  unregisterevloop(robj, idn, Menulocal.inst);
+
+  menu_lock(FALSE);
+
+  ResetStatusBar();
+  arraydel2(&sarray);
+
+  if (Menulocal.addinconsole) {
+    FreeConsole(allocnow);
+  }
+
+  GetPageSettingsFromGRA();
+  UpdateAll2();
+
+  delobj(shell, newid);
+  gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
 }
