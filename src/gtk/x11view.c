@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.102 2009/01/28 15:07:09 hito Exp $
+ * $Id: x11view.c,v 1.103 2009/01/29 01:05:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2401,30 +2401,16 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
 
   switch (d->Mode) {
   case PointB:
-    Match("legend", x1, y1, x2, y2, err);
-    Match("axis", x1, y1, x2, y2, err);
-    Match("merge", x1, y1, x2, y2, err);
-
-    d->FrameOfsX = d->FrameOfsY = 0;
-    d->ShowFrame = TRUE;
-
-    ShowFocusFrame(dc);
-    break;
-  case LegendB:
-    Match("legend", x1, y1, x2, y2, err);
-    Match("merge", x1, y1, x2, y2, err);
-
-    d->FrameOfsX = d->FrameOfsY = 0;
-    d->ShowFrame = TRUE;
-
-    ShowFocusFrame(dc);
-    break;
   case AxisB:
     Match("axis", x1, y1, x2, y2, err);
-
+    /* fall-through */
+  case LegendB:
+    if (d->Mode != AxisB) {
+      Match("legend", x1, y1, x2, y2, err);
+      Match("merge", x1, y1, x2, y2, err);
+    }
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
-
     ShowFocusFrame(dc);
     break;
   case TrimB:
