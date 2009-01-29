@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.103 2009/01/29 01:05:20 hito Exp $
+ * $Id: x11view.c,v 1.104 2009/01/29 01:22:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2998,7 +2998,7 @@ create_legend3(struct Viewer *d, GdkGC *dc)
 static void
 create_legendx(struct Viewer *d, GdkGC *dc)
 {
-  int id, num, x, y, x1, y1, x2, y2, ret = IDCANCEL;
+  int id, num, x1, y1, x2, y2, ret = IDCANCEL;
   char *inst;
   struct objlist *obj = NULL;
   struct pointslist **pdata;
@@ -3020,17 +3020,11 @@ create_legendx(struct Viewer *d, GdkGC *dc)
 	x2 = pdata[1]->x;
 	y2 = pdata[1]->y;
 
-	if (x1 > x2) {
-	  x = x1;
-	  x1 = x2;
-	  x2 = x;
-	}
+	if (x1 > x2)
+	  swapint(&x1, &x2);
 
-	if (y1 > y2) {
-	  y = y1;
-	  y1 = y2;
-	  y2 = y;
-	}
+	if (y1 > y2)
+	  swapint(&y1, &y2);
 
 	PaintLock = TRUE;
 

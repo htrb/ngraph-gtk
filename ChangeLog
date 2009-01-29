@@ -1,3 +1,7 @@
+2009-01-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (create_legendx): use "swapint()".
+
 2009-01-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/math.nsc: format result with "text::printf".
