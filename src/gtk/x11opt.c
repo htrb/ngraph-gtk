@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.30 2009/02/03 12:04:13 hito Exp $
+ * $Id: x11opt.c,v 1.31 2009/02/03 12:15:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1315,13 +1315,14 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = create_text_entry(FALSE, FALSE);
-    item_setup(vbox, w, _("_Alias"), FALSE);
+    item_setup(vbox, w, _("_Alias:"), FALSE);
     d->alias = w;
 
     hbox = gtk_hbox_new(FALSE, 4);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     w = list_store_create(sizeof(list) / sizeof(*list), list);
+    list_store_set_sort_all(w);
     d->list = w;
     g_signal_connect(d->list, "button-press-event", G_CALLBACK(font_list_defailt_cb), d);
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(font_list_defailt_cb), d);
