@@ -1,5 +1,8 @@
 2009-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2cairo.h (struct gra2cairo_local): remove unused
+	member "font_opt".
+
 	* src/gtk/ogra2cairo.c (free_fonts, gra2cairo_update_fontmap):
 	add.
 	(init_conf, free_conf): use "free_fonts()".

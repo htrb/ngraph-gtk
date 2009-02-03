@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.35 2009/02/03 03:58:17 hito Exp $
+ * $Id: ogra2cairo.c,v 1.36 2009/02/03 04:07:04 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -334,7 +334,6 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   local->linetonum = 0;
   local->text2path = FALSE;
   local->antialias = antialias;
-  local->font_opt = cairo_font_options_create();
   local->region = NULL;
 
   Instance++;
@@ -365,10 +364,6 @@ gra2cairo_free(struct objlist *obj, char *inst)
       local->linetonum = 0;
     }
     cairo_destroy(local->cairo);
-  }
-
-  if (local->font_opt) {
-    cairo_font_options_destroy(local->font_opt);
   }
 
   if (local->layout) {
