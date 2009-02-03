@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.21 2009/01/13 10:20:03 hito Exp $
+ * $Id: x11menu.h,v 1.22 2009/02/03 11:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -75,6 +75,7 @@ enum MenuID {
   MenuIdPrintDataFile,
   MenuIdOptionViewer,
   MenuIdOptionExtViewer,
+  MenuIdOptionPrefFont,
   MenuIdOptionPrefDriver,
   MenuIdOptionScript,
   MenuIdOptionMisc,

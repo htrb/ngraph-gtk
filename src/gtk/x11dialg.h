@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.23 2009/01/17 11:30:43 hito Exp $
+ * $Id: x11dialg.h,v 1.24 2009/02/03 11:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -683,7 +683,7 @@ struct DefaultDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *geometry, *child_geometry, *viewer, *external_driver, *addin_script, *misc, *external_viewer;
+  GtkWidget *geometry, *child_geometry, *viewer, *external_driver, *addin_script, *misc, *external_viewer, *fonts;
 };
 void DefaultDialog(struct DefaultDialog *data);
 
@@ -740,6 +740,19 @@ struct PrefDriverDialog
   GtkWidget *list;
 };
 void PrefDriverDialog(struct PrefDriverDialog *data);
+
+struct PrefFontDialog
+{
+  GtkWidget *parent, *widget;
+  GtkVBox *vbox;
+  int ret, show_buttons, show_cancel;
+  char *resource;
+  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
+  void (*CloseWindow) (GtkWidget *w, void *data);
+  /****** local member *******/
+  GtkWidget *list, *alias, *two_byte;
+};
+void PrefFontDialog(struct PrefFontDialog *data);
 
 struct MiscDialog
 {
@@ -893,6 +906,7 @@ extern struct SetScriptDialog DlgSetScript;
 extern struct PrefScriptDialog DlgPrefScript;
 extern struct SetDriverDialog DlgSetDriver;
 extern struct PrefDriverDialog DlgPrefDriver;
+extern struct PrefFontDialog DlgPrefFont;
 extern struct MiscDialog DlgMisc;
 extern struct ExViewerDialog DlgExViewer;
 extern struct ViewerDialog DlgViewer;

@@ -48,6 +48,10 @@ int gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, 
 int gra2cairo_clear_region(struct gra2cairo_local *local);
 void gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias);
 struct gra2cairo_local *gra2cairo_free(struct objlist *obj, char *inst);
-int gra2cairo_update_fontmap(void);
+void gra2cairo_update_fontmap(const char *fontalias, const char *fontname, int type, int two_byte);
+const char *gra2cairo_get_font_type_str(int type);
+struct fontmap *gra2cairo_get_fontmap(char *font_alias);
+void gra2cairo_remove_fontmap(char *fontalias);
+void gra2cairo_add_fontmap(const char *fontalias, const char *fontname, int type, int two_byte);
 
 #endif

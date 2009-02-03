@@ -1,12 +1,33 @@
 2009-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/ogra2cairo.h (struct gra2cairo_local): remove unused
-	member "font_opt".
+	* src/gtk/x11opt.c (DefaultDialogSetup): add "Font aliases"
+	button.
+	(DefaultDialogClose): add codes for save font map.
+	(PrefFontDialogSetupItem, create_font_selection_dialog)
+	(font_selection_dialog_set_font, PrefFontDialogUpdate)
+	(PrefFontDialogRemove, PrefFontDialogAdd, font_list_defailt_cb)
+	(PrefFontDialogSetup, PrefFontDialogClose, PrefFontDialog)
+	(CmOptionPrefFont): add.
+	(CmOptionMenu): add case for "MenuIdOptionPrefFont".
 
-	* src/gtk/ogra2cairo.c (free_fonts, gra2cairo_update_fontmap):
-	add.
+	* src/gtk/x11menu.h (enum MenuID): add "MenuIdOptionPrefFont".
+
+	* src/gtk/x11menu.c (create_preferencemenu): add menu item "Font
+	aliases".
+
+	* src/gtk/x11dialg.h (struct PrefFontDialog): add.
+
+	* src/gtk/x11dialg.c: add global variable "DlgPrefFont".
+
+	* src/gtk/ogra2cairo.c (FontFaceStr, gra2cairo_get_fontmap)
+	(gra2cairo_remove_fontmap, gra2cairo_add_fontmap, free_fonts)
+	(gra2cairo_update_fontmap, check_type): add.
 	(init_conf, free_conf): use "free_fonts()".
 	(loadconfig): remove unused variable "fcur".
+	(init_conf): use "FontFaceStr".
+
+	* src/gtk/ogra2cairo.h (struct gra2cairo_local): remove unused
+	member "font_opt".
 
 2009-01-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

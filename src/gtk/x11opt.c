@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.28 2009/01/08 04:18:00 hito Exp $
+ * $Id: x11opt.c,v 1.29 2009/02/03 11:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -75,6 +75,10 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->child_geometry = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
+    w = gtk_check_button_new_with_mnemonic(_("_Font aliases"));
+    d->fonts = w;
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+
     w = gtk_check_button_new_with_mnemonic(_("_Viewer"));
     d->viewer = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
@@ -111,8 +115,6 @@ DefaultDialogClose(GtkWidget *win, void *data)
   int ret, len;
   struct narray conf;
   char *buf;
-  struct extprinter *pcur;
-  struct script *scur;
   char *driver, *ext, *option, *script;
   GdkWindowState state;
   gint x, y, w, h;
@@ -244,6 +246,8 @@ DefaultDialogClose(GtkWidget *win, void *data)
     }
   }
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_driver))) {
+    struct extprinter *pcur;
+
     pcur = Menulocal.extprinterroot;
     while (pcur != NULL) {
       if (pcur->driver == NULL)
@@ -267,6 +271,8 @@ DefaultDialogClose(GtkWidget *win, void *data)
     }
   }
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->addin_script))) {
+    struct script *scur;
+
     scur = Menulocal.scriptroot;
     while (scur != NULL) {
       if (scur->script == NULL)
@@ -374,6 +380,28 @@ DefaultDialogClose(GtkWidget *win, void *data)
     }
   }
   replaceconfig("[gra2gtk]", &conf);
+  arraydel2(&conf);
+
+  arrayinit(&conf, sizeof(char *));
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fonts))) {
+    struct fontmap *fcur;
+    fcur = Gra2cairoConf->fontmap_list_root;
+    while (fcur) {
+      len = strlen(fcur->fontalias) + strlen(fcur->fontname) + 64;
+      buf = (char *) memalloc(len);
+      if (buf) {
+	snprintf(buf, len,
+		 "font_map=%s,%s,%d,%s",
+		 fcur->fontalias,
+		 gra2cairo_get_font_type_str(fcur->type),
+		 (fcur->twobyte) ? 1 : 0,
+		 fcur->fontname);
+	arrayadd(&conf, &buf);
+      }
+      fcur = fcur->next;
+    }
+  }
+  replaceconfig("[gra2cairo]", &conf);
   arraydel2(&conf);
 
   arrayinit(&conf, sizeof(char *));
@@ -1063,6 +1091,284 @@ PrefDriverDialog(struct PrefDriverDialog *data)
 }
 
 static void
+PrefFontDialogSetupItem(struct PrefFontDialog *d)
+{
+  struct fontmap *fcur;
+  GtkTreeIter iter;
+
+  list_store_clear(d->list);
+  fcur = Gra2cairoConf->fontmap_list_root;
+  while (fcur != NULL) {
+    list_store_append(d->list, &iter);
+    list_store_set_string(d->list, &iter, 0, fcur->fontalias);
+    list_store_set_string(d->list, &iter, 1, fcur->fontname);
+    list_store_set_string(d->list, &iter, 2, gra2cairo_get_font_type_str(fcur->type));
+    fcur = fcur->next;
+  }
+}
+
+static GtkWidget *
+create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
+{
+  GtkWidget *dialog, *vbox, *w;
+  static char *type[] = {
+    "",
+    "Bold",
+    "Italic",
+    "Bold Italic",
+    "Italic",
+    "Bold Italic",
+  };
+
+  dialog = gtk_font_selection_dialog_new("Font alias");
+
+#ifdef JAPANESE
+  vbox = GTK_DIALOG(dialog)->vbox;
+  w = gtk_check_button_new_with_mnemonic(_("_JFont"));
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  gtk_widget_show(w);
+  d->two_byte = w;
+#endif
+
+  if (fcur) {
+    int len, t;
+    char *buf;
+
+    len = strlen(fcur->fontname) + 64;
+    buf = malloc(len);
+    if (buf) {
+      t = (fcur->type < 0 || fcur->type >= sizeof(type) / sizeof(*type)) ? 0 : fcur->type;
+
+      snprintf(buf, len, "%s %s 20", fcur->fontname, type[t]);
+      gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(dialog), buf);
+      free(buf);
+    }
+#ifdef JAPANESE
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->two_byte), fcur->twobyte);
+#endif
+  }
+
+  return dialog;
+}
+
+static void
+font_selection_dialog_set_font(GtkWidget *w, struct PrefFontDialog *d, struct fontmap *fcur)
+{
+  PangoFontDescription *pdesc;
+  char *fname;
+  PangoStyle style;
+  PangoWeight weight;
+  int type, two_byte;
+
+  fname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(w));
+  pdesc = pango_font_description_from_string(fname);
+  weight = pango_font_description_get_weight(pdesc);
+  style =  pango_font_description_get_style(pdesc);
+
+  switch (style) {
+  case PANGO_STYLE_NORMAL:
+    if (weight > PANGO_WEIGHT_NORMAL) {
+      type = BOLD;
+    } else {
+      type = NORMAL;
+    }
+    break;
+  case PANGO_STYLE_OBLIQUE:
+    if (weight > PANGO_WEIGHT_NORMAL) {
+      type = BOLDITALIC;
+     } else {
+      type = ITALIC;
+    }
+    break;
+  case PANGO_STYLE_ITALIC:
+    if (weight > PANGO_WEIGHT_NORMAL) {
+      type = BOLDOBLIQUE;
+    } else {
+      type = OBLIQUE;
+    }
+    break;
+  default:
+    type = NORMAL;
+  }
+
+#ifdef JAPANESE
+  two_byte = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->two_byte));
+#else
+  two_byte = FALSE;
+#endif
+
+  if (fcur) {
+    gra2cairo_update_fontmap(fcur->fontalias,
+			     pango_font_description_get_family(pdesc),
+			     type,
+			     two_byte);
+  } else {
+    const char *alias;
+
+    alias = gtk_entry_get_text(GTK_ENTRY(d->alias));
+    gra2cairo_add_fontmap(alias,
+			     pango_font_description_get_family(pdesc),
+			     type,
+			     two_byte);
+  }
+  pango_font_description_free(pdesc);
+}
+
+static void
+PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
+{
+  struct PrefFontDialog *d;
+  struct fontmap *fcur;
+  char *fontalias;
+  GtkWidget *dialog;
+
+  d = (struct PrefFontDialog *) client_data;
+
+  fontalias = list_store_get_selected_string(d->list, 0);
+
+  if (fontalias == NULL)
+    return;
+
+  fcur = gra2cairo_get_fontmap(fontalias);
+  if (fcur == NULL)
+    return;
+
+  dialog = create_font_selection_dialog(d, fcur);
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
+    font_selection_dialog_set_font(dialog, d, fcur);
+  }
+
+  gtk_widget_destroy (dialog);
+}
+
+static void
+PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
+{
+  struct PrefFontDialog *d;
+  char *fontalias;
+
+  d = (struct PrefFontDialog *) client_data;
+
+  fontalias = list_store_get_selected_string(d->list, 0);
+  gra2cairo_remove_fontmap(fontalias);
+  PrefFontDialogSetupItem(d);
+}
+
+static void
+PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
+{
+  struct PrefFontDialog *d;
+  const char *alias;
+  GtkWidget *dialog;
+
+  d = (struct PrefFontDialog *) client_data;
+
+  alias = gtk_entry_get_text(GTK_ENTRY(d->alias));
+  if (alias == NULL || alias[0] == '\0')
+    return;
+
+  dialog = create_font_selection_dialog(d, NULL);
+
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
+    font_selection_dialog_set_font(dialog, d, NULL);
+  }
+  gtk_widget_destroy (dialog);
+  PrefFontDialogSetupItem(d);
+}
+
+static gboolean
+font_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
+{
+  struct PrefFontDialog *d;
+  int i;
+
+  d = (struct PrefFontDialog *) user_data;
+
+  if (e->type == GDK_2BUTTON_PRESS ||
+      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
+
+    i = list_store_get_selected_index(d->list);
+    if (i < 0)
+      return FALSE;
+
+    PrefFontDialogUpdate(NULL, d);
+
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static void
+PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
+{
+  GtkWidget *w, *hbox, *vbox, *swin;
+  struct PrefFontDialog *d;
+  n_list_store list[] = {
+    {N_("alias"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("name"),  G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("style"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+  };
+
+  d = (struct PrefFontDialog *) data;
+  if (makewidget) {
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    w = create_text_entry(FALSE, FALSE);
+    item_setup(vbox, w, _("_Alias"), FALSE);
+    d->alias = w;
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    swin = gtk_scrolled_window_new(NULL, NULL);
+    w = list_store_create(sizeof(list) / sizeof(*list), list);
+    d->list = w;
+    g_signal_connect(d->list, "button-press-event", G_CALLBACK(font_list_defailt_cb), d);
+    g_signal_connect(d->list, "key-press-event", G_CALLBACK(font_list_defailt_cb), d);
+    gtk_container_add(GTK_CONTAINER(swin), w);
+
+    w = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
+
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogAdd), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogUpdate), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogRemove), d);
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+
+    d->show_cancel = FALSE;
+
+    gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
+  }
+  PrefFontDialogSetupItem(d);
+}
+
+static void
+PrefFontDialogClose(GtkWidget *w, void *data)
+{
+}
+
+void
+PrefFontDialog(struct PrefFontDialog *data)
+{
+  data->SetupWindow = PrefFontDialogSetup;
+  data->CloseWindow = PrefFontDialogClose;
+}
+
+static void
 MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 {
   GdkColor color;
@@ -1627,6 +1933,15 @@ CmOptionExtViewer(void)
 }
 
 static void
+CmOptionPrefFont(void)
+{
+  if (Menulock || GlobalLock)
+    return;
+  PrefFontDialog(&DlgPrefFont);
+  DialogExecute(TopLevel, &DlgPrefFont);
+}
+
+static void
 CmOptionPrefDriver(void)
 {
   if (Menulock || GlobalLock)
@@ -1671,6 +1986,9 @@ CmOptionMenu(GtkMenuItem *w, gpointer client_data)
     break;
   case MenuIdOptionExtViewer:
     CmOptionExtViewer();
+    break;
+  case MenuIdOptionPrefFont:
+    CmOptionPrefFont();
     break;
   case MenuIdOptionPrefDriver:
     CmOptionPrefDriver();

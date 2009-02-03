@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.30 2009/02/03 03:58:17 hito Exp $
+ * $Id: x11dialg.c,v 1.31 2009/02/03 11:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -114,6 +114,7 @@ struct SetScriptDialog DlgSetScript;
 struct PrefScriptDialog DlgPrefScript;
 struct SetDriverDialog DlgSetDriver;
 struct PrefDriverDialog DlgPrefDriver;
+struct PrefFontDialog DlgPrefFont;
 struct MiscDialog DlgMisc;
 struct ExViewerDialog DlgExViewer;
 struct ViewerDialog DlgViewer;
@@ -224,6 +225,8 @@ initdialog(void)
   DlgSetDriver.resource = N_("setdriver");
   DlgPrefDriver.widget = NULL;
   DlgPrefDriver.resource = N_("prefdriver");
+  DlgPrefFont.widget = NULL;
+  DlgPrefFont.resource = N_("preffont");
   DlgMisc.widget = NULL;
   DlgMisc.resource = N_("misc");
   DlgExViewer.widget = NULL;

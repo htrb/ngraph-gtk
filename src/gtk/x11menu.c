@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.64 2009/01/23 05:07:41 hito Exp $
+ * $Id: x11menu.c,v 1.65 2009/02/03 11:45:24 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -988,6 +988,7 @@ create_preferencemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 
   create_menu_item(menu, _("_Viewer"), FALSE, "<Ngraph>/Preference/Viewer", 0, 0, CmOptionMenu, MenuIdOptionViewer);
   create_menu_item(menu, _("_External viewer"), FALSE, "<Ngraph>/Preference/External Viewer", 0, 0, CmOptionMenu, MenuIdOptionExtViewer);
+  create_menu_item(menu, _("_Font aliases"), FALSE, "<Ngraph>/Preference/Font aliases", 0, 0, CmOptionMenu, MenuIdOptionPrefFont);
   create_menu_item(menu, _("External _Driver"), FALSE, "<Ngraph>/Preference/External Driver", 0, 0, CmOptionMenu, MenuIdOptionPrefDriver);
   create_menu_item(menu, _("_Addin script"), FALSE, "<Ngraph>/Preference/Addin Script", 0, 0, CmOptionMenu, MenuIdOptionScript);
   create_menu_item(menu, _("_Miscellaneous"), FALSE, "<Ngraph>/Preference/Miscellaneous", 0, 0, CmOptionMenu, MenuIdOptionMisc);
