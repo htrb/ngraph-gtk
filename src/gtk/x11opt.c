@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.31 2009/02/03 12:15:11 hito Exp $
+ * $Id: x11opt.c,v 1.32 2009/02/03 12:22:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1166,29 +1166,26 @@ font_selection_dialog_set_font(GtkWidget *w, struct PrefFontDialog *d, struct fo
   style =  pango_font_description_get_style(pdesc);
 
   switch (style) {
-  case PANGO_STYLE_NORMAL:
+  case PANGO_STYLE_OBLIQUE:
+    if (weight > PANGO_WEIGHT_NORMAL) {
+      type = BOLDOBLIQUE;
+     } else {
+      type = OBLIQUE;
+    }
+    break;
+  case PANGO_STYLE_ITALIC:
+    if (weight > PANGO_WEIGHT_NORMAL) {
+      type = BOLDITALIC;
+    } else {
+      type = ITALIC;
+    }
+    break;
+  default:
     if (weight > PANGO_WEIGHT_NORMAL) {
       type = BOLD;
     } else {
       type = NORMAL;
     }
-    break;
-  case PANGO_STYLE_OBLIQUE:
-    if (weight > PANGO_WEIGHT_NORMAL) {
-      type = BOLDITALIC;
-     } else {
-      type = ITALIC;
-    }
-    break;
-  case PANGO_STYLE_ITALIC:
-    if (weight > PANGO_WEIGHT_NORMAL) {
-      type = BOLDOBLIQUE;
-    } else {
-      type = OBLIQUE;
-    }
-    break;
-  default:
-    type = NORMAL;
   }
 
 #ifdef JAPANESE
