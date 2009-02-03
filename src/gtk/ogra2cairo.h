@@ -25,7 +25,7 @@ struct fontmap
 };
 
 struct gra2cairo_config {
-  NHASH fontmaproot;
+  NHASH fontmap;
   struct fontmap *fontmap_list_root;
   int font_num;
 };

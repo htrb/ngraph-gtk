@@ -1,3 +1,10 @@
+2009-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (free_fonts, gra2cairo_update_fontmap):
+	add.
+	(init_conf, free_conf): use "free_fonts()".
+	(loadconfig): remove unused variable "fcur".
+
 2009-01-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (create_legendx): use "swapint()".

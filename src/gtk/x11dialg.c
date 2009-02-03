@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.29 2009/01/09 06:58:32 hito Exp $
+ * $Id: x11dialg.c,v 1.30 2009/02/03 03:58:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1053,7 +1053,7 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
   if (fontalias == NULL)
     return;
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fcur)) {
+  if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fcur)) {
     free(fontalias);
     return;
   }

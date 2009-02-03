@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.34 2009/01/05 05:41:13 hito Exp $
+ * $Id: ogra2cairo.c,v 1.35 2009/02/03 03:58:17 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -117,10 +117,10 @@ create_font_map(char *fontalias, char *fontname, int type, int twobyte, struct f
   struct fontmap *fnew;
   char symbol[] = "Sym";
 
-  if (Gra2cairoConf->fontmaproot == NULL)
+  if (Gra2cairoConf->fontmap == NULL)
     return NULL;
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fnew) == 0) {
+  if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fnew) == 0) {
     free_font_map(fnew);
   }
 
@@ -129,7 +129,7 @@ create_font_map(char *fontalias, char *fontname, int type, int twobyte, struct f
     return NULL;
   }
 
-  if (nhash_set_ptr(Gra2cairoConf->fontmaproot, fontalias, fnew)) {
+  if (nhash_set_ptr(Gra2cairoConf->fontmap, fontalias, fnew)) {
     memfree(fnew);
     return NULL;
   }
@@ -164,13 +164,11 @@ loadconfig(void)
   char *endptr;
   int len, type;
   struct fontmap *fnew, *fprev;
-  NHASH fcur;
 
   fp = openconfig(CAIROCONF);
   if (fp == NULL)
     return 0;
 
-  fcur = Gra2cairoConf->fontmaproot;
   fprev = NULL;
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
@@ -220,6 +218,25 @@ loadconfig(void)
 }
 
 static int
+free_fonts_sub(struct nhash *h, void *d)
+{
+  struct fontmap *fcur;
+
+  fcur = (struct fontmap *) h->val.p;
+
+  free_font_map(fcur);
+
+  return 0;
+}
+
+static void
+free_fonts(struct gra2cairo_config *conf)
+{
+  nhash_each(conf->fontmap, free_fonts_sub, NULL);
+  conf->font_num = 0;
+}
+
+static int
 init_conf(void)
 {
   Gra2cairoConf = malloc(sizeof(*Gra2cairoConf));
@@ -237,8 +254,8 @@ init_conf(void)
     }
   }
 
-  Gra2cairoConf->fontmaproot = nhash_new();
-  if (Gra2cairoConf->fontmaproot == NULL) {
+  Gra2cairoConf->fontmap = nhash_new();
+  if (Gra2cairoConf->fontmap == NULL) {
     free(Gra2cairoConf);
     Gra2cairoConf = NULL;
     return 1;
@@ -248,22 +265,12 @@ init_conf(void)
   Gra2cairoConf->font_num = 0;
 
   if (loadconfig()) {
+    free_fonts(Gra2cairoConf);
+    nhash_free(Gra2cairoConf->fontmap);
     free(Gra2cairoConf);
     Gra2cairoConf = NULL;
     return 1;
   }
-
-  return 0;
-}
-
-static int
-free_fonts_sub(struct nhash *h, void *d)
-{
-  struct fontmap *fcur;
-
-  fcur = (struct fontmap *) h->val.p;
-
-  free_font_map(fcur);
 
   return 0;
 }
@@ -274,11 +281,27 @@ free_conf(void)
   if (Gra2cairoConf == NULL)
     return;
 
-  nhash_each(Gra2cairoConf->fontmaproot, free_fonts_sub, NULL);
-  nhash_free(Gra2cairoConf->fontmaproot);
+  free_fonts(Gra2cairoConf);
+  nhash_free(Gra2cairoConf->fontmap);
 
   free(Gra2cairoConf);
   Gra2cairoConf = NULL;
+}
+
+int
+gra2cairo_update_fontmap(void)
+{
+  if (Gra2cairoConf->fontmap == NULL)
+    return 1;
+
+  free_fonts(Gra2cairoConf);
+
+  if (loadconfig()) {
+    free_fonts(Gra2cairoConf);
+    return 1;
+  }
+
+  return 0;
 }
 
 static int
@@ -510,7 +533,7 @@ loadfont(char *fontalias)
     lang_ja = pango_language_from_string("ja-JP");
   }
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmaproot, fontalias, (void *) &fcur))
+  if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fcur))
     return NULL;
 
   if (fcur->font)
