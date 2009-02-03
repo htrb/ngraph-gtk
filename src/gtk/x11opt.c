@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.29 2009/02/03 11:45:24 hito Exp $
+ * $Id: x11opt.c,v 1.30 2009/02/03 12:04:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1124,7 +1124,7 @@ create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
 
 #ifdef JAPANESE
   vbox = GTK_DIALOG(dialog)->vbox;
-  w = gtk_check_button_new_with_mnemonic(_("_JFont"));
+  w = gtk_check_button_new_with_mnemonic(_("_Jfont"));
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
   gtk_widget_show(w);
   d->two_byte = w;
@@ -1236,8 +1236,8 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
   dialog = create_font_selection_dialog(d, fcur);
   if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
     font_selection_dialog_set_font(dialog, d, fcur);
+    PrefFontDialogSetupItem(d);
   }
-
   gtk_widget_destroy (dialog);
 }
 
@@ -1271,9 +1271,9 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 
   if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
     font_selection_dialog_set_font(dialog, d, NULL);
+    PrefFontDialogSetupItem(d);
   }
   gtk_widget_destroy (dialog);
-  PrefFontDialogSetupItem(d);
 }
 
 static gboolean
