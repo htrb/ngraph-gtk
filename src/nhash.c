@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.c,v 1.11 2008/11/26 07:05:12 hito Exp $
+ * $Id: nhash.c,v 1.12 2009/02/04 07:28:46 hito Exp $
  */
 
 #include <stdlib.h>
@@ -63,7 +63,7 @@ nhash_free_with_memfree_ptr(NHASH hash)
 }
 
 int 
-nhash_hkey(char *ptr)
+nhash_hkey(const char *ptr)
 {
   unsigned int i, v;
 
@@ -75,7 +75,7 @@ nhash_hkey(char *ptr)
 }
 
 static struct nhash *
-create_hash_with_hkey(NHASH hash, char *key, int hkey)
+create_hash_with_hkey(NHASH hash, const char *key, int hkey)
 {
   int lr = 0;
   char *k;
@@ -130,7 +130,7 @@ create_hash_with_hkey(NHASH hash, char *key, int hkey)
 }
 
 struct nhash *
-create_hash(NHASH hash, char *key)
+create_hash(NHASH hash, const char *key)
 {
   int hkey;
   hkey = nhash_hkey(key);
@@ -138,7 +138,7 @@ create_hash(NHASH hash, char *key)
 }
 
 int
-nhash_set_int(NHASH hash, char *key, int val)
+nhash_set_int(NHASH hash, const char *key, int val)
 {
   struct nhash *h;
 
@@ -153,7 +153,7 @@ nhash_set_int(NHASH hash, char *key, int val)
 }
 
 int
-nhash_set_ptr(NHASH hash, char *key, void *val)
+nhash_set_ptr(NHASH hash, const char *key, void *val)
 {
   struct nhash *h;
 
@@ -168,7 +168,7 @@ nhash_set_ptr(NHASH hash, char *key, void *val)
 }
 
 int
-nhash_set_int_with_hkey(NHASH hash, char *key, int hkey, int val)
+nhash_set_int_with_hkey(NHASH hash, const char *key, int hkey, int val)
 {
   struct nhash *h;
 
@@ -183,7 +183,7 @@ nhash_set_int_with_hkey(NHASH hash, char *key, int hkey, int val)
 }
 
 int
-nhash_set_ptr_with_hkey(NHASH hash, char *key, int hkey, void *val)
+nhash_set_ptr_with_hkey(NHASH hash, const char *key, int hkey, void *val)
 {
   struct nhash *h;
 
@@ -198,7 +198,7 @@ nhash_set_ptr_with_hkey(NHASH hash, char *key, int hkey, void *val)
 }
 
 static struct nhash *
-nhash_get(NHASH hash, char *key)
+nhash_get(NHASH hash, const char *key)
 {
   struct nhash *ptr;
   int hk, r;
@@ -226,7 +226,7 @@ nhash_get(NHASH hash, char *key)
 }
 
 static struct nhash *
-nhash_get_with_hkey(NHASH hash, char *key, int hk)
+nhash_get_with_hkey(NHASH hash, const char *key, int hk)
 {
   struct nhash *ptr;
   int r;
@@ -252,7 +252,7 @@ nhash_get_with_hkey(NHASH hash, char *key, int hk)
 }
 
 int
-nhash_get_int(NHASH hash, char *key, int *val)
+nhash_get_int(NHASH hash, const char *key, int *val)
 {
   struct nhash *h;
 
@@ -267,7 +267,7 @@ nhash_get_int(NHASH hash, char *key, int *val)
 }
 
 int
-nhash_get_int_with_hkey(NHASH hash, char *key, int hkey, int *val)
+nhash_get_int_with_hkey(NHASH hash, const char *key, int hkey, int *val)
 {
   struct nhash *h;
 
@@ -368,7 +368,7 @@ nhash_del_sub(NHASH hash, struct nhash *h, int hkey)
 }
 
 void
-nhash_del_with_hkey(NHASH hash, char *key, int hkey)
+nhash_del_with_hkey(NHASH hash, const char *key, int hkey)
 {
   struct nhash *h;
 
@@ -378,7 +378,7 @@ nhash_del_with_hkey(NHASH hash, char *key, int hkey)
 }
 
 void
-nhash_del(NHASH hash, char *key)
+nhash_del(NHASH hash, const char *key)
 {
   struct nhash *h;
   int hkey;
@@ -423,7 +423,7 @@ nhash_each(NHASH hash, int(* func)(struct nhash *, void *), void *data)
 }
 
 int
-nhash_get_ptr(NHASH hash, char *key, void **ptr)
+nhash_get_ptr(NHASH hash, const char *key, void **ptr)
 {
   struct nhash *h;
 
@@ -440,7 +440,7 @@ nhash_get_ptr(NHASH hash, char *key, void **ptr)
 }
 
 int
-nhash_get_ptr_with_hkey(NHASH hash, char *key, int hkey, void **ptr)
+nhash_get_ptr_with_hkey(NHASH hash, const char *key, int hkey, void **ptr)
 {
   struct nhash *h;
 
