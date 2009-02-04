@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.36 2009/02/04 04:53:57 hito Exp $
+ * $Id: x11opt.c,v 1.37 2009/02/04 06:33:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1227,10 +1227,11 @@ get_font_alias(struct PrefFontDialog *d)
 }
 
 static void
-font_selection_dialog_set_font(GtkWidget *w, struct PrefFontDialog *d, struct fontmap *fcur)
+set_font_from_font_selection_dialog(GtkWidget *w, struct PrefFontDialog *d, struct fontmap *fcur)
 {
   PangoFontDescription *pdesc;
   char *fname;
+  const char *family;
   PangoStyle style;
   PangoWeight weight;
   int type, two_byte;
@@ -1239,6 +1240,12 @@ font_selection_dialog_set_font(GtkWidget *w, struct PrefFontDialog *d, struct fo
   pdesc = pango_font_description_from_string(fname);
   weight = pango_font_description_get_weight(pdesc);
   style = pango_font_description_get_style(pdesc);
+  family = pango_font_description_get_family(pdesc);
+
+  if (family == NULL) {
+    pango_font_description_free(pdesc);
+    return;
+  }
 
   switch (style) {
   case PANGO_STYLE_OBLIQUE:
@@ -1270,19 +1277,13 @@ font_selection_dialog_set_font(GtkWidget *w, struct PrefFontDialog *d, struct fo
 #endif
 
   if (fcur) {
-    gra2cairo_update_fontmap(fcur->fontalias,
-			     pango_font_description_get_family(pdesc),
-			     type,
-			     two_byte);
+    gra2cairo_update_fontmap(fcur->fontalias, family, type, two_byte);
   } else {
     char *alias;
 
     alias = get_font_alias(d);
     if (alias) {
-      gra2cairo_add_fontmap(alias,
-			    pango_font_description_get_family(pdesc),
-			    type,
-			    two_byte);
+      gra2cairo_add_fontmap(alias, family, type, two_byte);
       free(alias);
     }
   }
@@ -1310,7 +1311,7 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
 
   dialog = create_font_selection_dialog(d, fcur);
   if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
-    font_selection_dialog_set_font(dialog, d, fcur);
+    set_font_from_font_selection_dialog(dialog, d, fcur);
     PrefFontDialogSetupItem(d);
   }
   gtk_widget_destroy (dialog);
@@ -1356,7 +1357,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   dialog = create_font_selection_dialog(d, NULL);
 
   if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
-    font_selection_dialog_set_font(dialog, d, NULL);
+    set_font_from_font_selection_dialog(dialog, d, NULL);
     PrefFontDialogSetupItem(d);
     gtk_entry_set_text(GTK_ENTRY(d->alias), "");
   }

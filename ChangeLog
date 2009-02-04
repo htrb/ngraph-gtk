@@ -1,12 +1,15 @@
 2009-02-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2cairo.c (loadfont): remove unused variables "lang"
+	and "lang_ja".
+
 	* src/gtk/x11opt.c (scriptlist_sel_cb, drvlist_sel_cb)
 	(fontlist_sel_cb): add.
 	(PrefScriptDialogSetup, PrefDriverDialogSetup)
 	(PrefFontDialogSetup): set signal handler to GtkTreeSelection for
 	"changed" signal.
 	(get_font_alias): add.
-	(font_selection_dialog_set_font): use "get_font_alias()".
+	(set_font_from_font_selection_dialog): use "get_font_alias()".
 	(PrefFontDialogAdd): use "get_font_alias()" and
 	"gra2cairo_get_fontmap()" to check if "alias" is valid string.
 
@@ -24,7 +27,7 @@
 	button.
 	(DefaultDialogClose): add codes for save font map.
 	(PrefFontDialogSetupItem, create_font_selection_dialog)
-	(font_selection_dialog_set_font, PrefFontDialogUpdate)
+	(set_font_from_font_selection_dialog, PrefFontDialogUpdate)
 	(PrefFontDialogRemove, PrefFontDialogAdd, font_list_defailt_cb)
 	(PrefFontDialogSetup, PrefFontDialogClose, PrefFontDialog)
 	(CmOptionPrefFont): add.

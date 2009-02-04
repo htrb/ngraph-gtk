@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.37 2009/02/03 11:45:24 hito Exp $
+ * $Id: ogra2cairo.c,v 1.38 2009/02/04 06:33:10 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -597,12 +597,6 @@ loadfont(char *fontalias)
   PangoFontDescription *pfont;
   PangoStyle style;
   PangoWeight weight;
-  static PangoLanguage *lang_ja = NULL, *lang = NULL;
-
-  if (lang == NULL) {
-    lang = pango_language_from_string("en-US");
-    lang_ja = pango_language_from_string("ja-JP");
-  }
 
   if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fcur))
     return NULL;
