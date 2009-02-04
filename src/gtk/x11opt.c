@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.32 2009/02/03 12:22:20 hito Exp $
+ * $Id: x11opt.c,v 1.33 2009/02/04 01:53:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1095,14 +1095,16 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
 {
   struct fontmap *fcur;
   GtkTreeIter iter;
+  const char *type;
 
   list_store_clear(d->list);
   fcur = Gra2cairoConf->fontmap_list_root;
   while (fcur != NULL) {
+    type = gra2cairo_get_font_type_str(fcur->type);
     list_store_append(d->list, &iter);
     list_store_set_string(d->list, &iter, 0, fcur->fontalias);
     list_store_set_string(d->list, &iter, 1, fcur->fontname);
-    list_store_set_string(d->list, &iter, 2, gra2cairo_get_font_type_str(fcur->type));
+    list_store_set_string(d->list, &iter, 2, type);
     fcur = fcur->next;
   }
 }
@@ -1163,7 +1165,7 @@ font_selection_dialog_set_font(GtkWidget *w, struct PrefFontDialog *d, struct fo
   fname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(w));
   pdesc = pango_font_description_from_string(fname);
   weight = pango_font_description_get_weight(pdesc);
-  style =  pango_font_description_get_style(pdesc);
+  style = pango_font_description_get_style(pdesc);
 
   switch (style) {
   case PANGO_STYLE_OBLIQUE:

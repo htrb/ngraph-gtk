@@ -1,3 +1,9 @@
+2009-02-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_liststore.c (list_store_set_string)
+	(list_store_path_set_string, tree_store_set_string): type of
+	argument "v" is "const char *".
+
 2009-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (DefaultDialogSetup): add "Font aliases"

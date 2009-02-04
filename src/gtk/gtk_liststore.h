@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.6 2008/07/18 04:24:20 hito Exp $
+ * $Id: gtk_liststore.h,v 1.7 2009/02/04 01:53:54 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
@@ -26,10 +26,10 @@ int list_store_path_get_int(GtkWidget *w, GtkTreePath *path, int col, int *val);
 void list_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v);
 void tree_store_set_double(GtkWidget *w, GtkTreeIter *iter, int col, double v);
 char *list_store_get_string(GtkWidget *w, GtkTreeIter *iter, int col);
-void list_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, char *v);
+void list_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, const char *v);
 gboolean list_store_get_boolean(GtkWidget *w, GtkTreeIter *iter, int col);
 void list_store_set_boolean(GtkWidget *w, GtkTreeIter *iter, int col, int v);
-void list_store_path_set_string(GtkWidget *w, GtkTreePath *path, int col, char *v);
+void list_store_path_set_string(GtkWidget *w, GtkTreePath *path, int col, const char *v);
 char *list_store_path_get_string(GtkWidget *w, GtkTreePath *path, int col);
 
 gboolean list_store_get_iter_first(GtkWidget *w, GtkTreeIter *iter);
@@ -59,7 +59,7 @@ void tree_store_select_nth(GtkWidget *w, int n, int m);
 void tree_store_clear(GtkWidget *w);
 int tree_store_get_child_num(GtkWidget *w, GtkTreeIter *iter);
 void tree_store_set_int(GtkWidget *w, GtkTreeIter *iter, int col, int v);
-void tree_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, char *v);
+void tree_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, const char *v);
 void tree_store_set_boolean(GtkWidget *w, GtkTreeIter *iter, int col, int v);
 void tree_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, void *ptr);
 

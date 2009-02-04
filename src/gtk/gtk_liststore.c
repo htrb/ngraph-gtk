@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.16 2008/12/17 03:33:52 hito Exp $
+ * $Id: gtk_liststore.c,v 1.17 2009/02/04 01:53:54 hito Exp $
  */
 
 #include <stdlib.h>
@@ -395,7 +395,7 @@ list_store_path_get_string(GtkWidget *w, GtkTreePath *path, int col)
 }
 
 void 
-list_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, char *v)
+list_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, const char *v)
 {
   GtkListStore *list;
 
@@ -404,7 +404,7 @@ list_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, char *v)
 }
 
 void 
-list_store_path_set_string(GtkWidget *w, GtkTreePath *path, int col, char *v)
+list_store_path_set_string(GtkWidget *w, GtkTreePath *path, int col, const char *v)
 {
   GtkListStore *list;
   gboolean found;
@@ -420,7 +420,7 @@ list_store_path_set_string(GtkWidget *w, GtkTreePath *path, int col, char *v)
 }
 
 void 
-tree_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, char *v)
+tree_store_set_string(GtkWidget *w, GtkTreeIter *iter, int col, const char *v)
 {
   GtkTreeStore *list;
 
