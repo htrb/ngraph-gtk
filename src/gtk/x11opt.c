@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.33 2009/02/04 01:53:54 hito Exp $
+ * $Id: x11opt.c,v 1.34 2009/02/04 02:15:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1118,8 +1118,8 @@ create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
     "Bold",
     "Italic",
     "Bold Italic",
-    "Italic",
-    "Bold Italic",
+    "Oblique",
+    "Bold Oblique",
   };
 
   dialog = gtk_font_selection_dialog_new("Font alias");
@@ -1141,7 +1141,7 @@ create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
     if (buf) {
       t = (fcur->type < 0 || fcur->type >= sizeof(type) / sizeof(*type)) ? 0 : fcur->type;
 
-      snprintf(buf, len, "%s %s 20", fcur->fontname, type[t]);
+      snprintf(buf, len, "%s %s 16", fcur->fontname, type[t]);
       gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(dialog), buf);
       free(buf);
     }
