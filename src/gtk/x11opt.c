@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.34 2009/02/04 02:15:14 hito Exp $
+ * $Id: x11opt.c,v 1.35 2009/02/04 03:46:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -693,10 +693,26 @@ script_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
   return FALSE;
 }
 
+static gboolean 
+scriptlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+  gboolean n;
+  struct PrefScriptDialog *d;
+
+  d = (struct PrefScriptDialog *) user_data;
+
+  n = gtk_tree_selection_count_selected_rows(sel);
+  gtk_widget_set_sensitive(d->update_b, n);
+  gtk_widget_set_sensitive(d->del_b, n);
+
+  return FALSE;
+}
+
 static void
 PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *vbox, *swin;
+  GtkTreeSelection *sel;
   struct PrefScriptDialog *d;
   n_list_store list[] = {
     {N_("Script"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
@@ -713,6 +729,9 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(script_list_defailt_cb), d);
     gtk_container_add(GTK_CONTAINER(swin), w);
 
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+    g_signal_connect(sel, "changed", G_CALLBACK(scriptlist_sel_cb), d);
+
     w = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
@@ -726,10 +745,14 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
     g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogUpdate), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->update_b = w;
 
     w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
     g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogRemove), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->del_b = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
 
@@ -1030,10 +1053,26 @@ driver_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
   return FALSE;
 }
 
+static gboolean 
+drvlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+  gboolean n;
+  struct PrefDriverDialog *d;
+
+  d = (struct PrefDriverDialog *) user_data;
+
+  n = gtk_tree_selection_count_selected_rows(sel);
+  gtk_widget_set_sensitive(d->update_b, n);
+  gtk_widget_set_sensitive(d->del_b, n);
+
+  return FALSE;
+}
+
 static void
 PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *vbox, *swin;
+  GtkTreeSelection *sel;
   struct PrefDriverDialog *d;
   n_list_store list[] = {
     {N_("Driver"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
@@ -1050,6 +1089,9 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(driver_list_defailt_cb), d);
     gtk_container_add(GTK_CONTAINER(swin), w);
 
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+    g_signal_connect(sel, "changed", G_CALLBACK(drvlist_sel_cb), d);
+
     w = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
@@ -1063,10 +1105,14 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
     g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogUpdate), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->update_b = w;
 
     w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
     g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogRemove), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->del_b = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
@@ -1153,6 +1199,33 @@ create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
   return dialog;
 }
 
+static char *
+get_font_alias(struct PrefFontDialog *d)
+{
+  const char *alias;
+  char *tmp, *ptr;
+
+  alias = gtk_entry_get_text(GTK_ENTRY(d->alias));
+  tmp = strdup(alias);
+
+  if (tmp == NULL)
+    return NULL;
+
+  g_strchug(tmp);
+
+  for (ptr = tmp; *ptr != '\0'; ptr++) {
+    if (*ptr == '\t')
+      *ptr = ' ';
+  }
+
+  if (tmp[0] == '\0') {
+    free(tmp);
+    tmp = NULL;
+  }
+
+  return tmp;
+}
+
 static void
 font_selection_dialog_set_font(GtkWidget *w, struct PrefFontDialog *d, struct fontmap *fcur)
 {
@@ -1202,13 +1275,16 @@ font_selection_dialog_set_font(GtkWidget *w, struct PrefFontDialog *d, struct fo
 			     type,
 			     two_byte);
   } else {
-    const char *alias;
+    char *alias;
 
-    alias = gtk_entry_get_text(GTK_ENTRY(d->alias));
-    gra2cairo_add_fontmap(alias,
-			     pango_font_description_get_family(pdesc),
-			     type,
-			     two_byte);
+    alias = get_font_alias(d);
+    if (alias) {
+      gra2cairo_add_fontmap(alias,
+			    pango_font_description_get_family(pdesc),
+			    type,
+			    two_byte);
+      free(alias);
+    }
   }
   pango_font_description_free(pdesc);
 }
@@ -1257,13 +1333,20 @@ static void
 PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 {
   struct PrefFontDialog *d;
-  const char *alias;
+  char *alias;
   GtkWidget *dialog;
+  struct fontmap *fmap;
 
   d = (struct PrefFontDialog *) client_data;
 
-  alias = gtk_entry_get_text(GTK_ENTRY(d->alias));
-  if (alias == NULL || alias[0] == '\0')
+  alias = get_font_alias(d);
+  if (alias == NULL)
+    return;
+
+  fmap = gra2cairo_get_fontmap(alias);
+  free(alias);
+
+  if (fmap)
     return;
 
   dialog = create_font_selection_dialog(d, NULL);
@@ -1271,6 +1354,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
     font_selection_dialog_set_font(dialog, d, NULL);
     PrefFontDialogSetupItem(d);
+    gtk_entry_set_text(GTK_ENTRY(d->alias), "");
   }
   gtk_widget_destroy (dialog);
 }
@@ -1298,10 +1382,26 @@ font_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
   return FALSE;
 }
 
+static gboolean 
+fontlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+  gboolean n;
+  struct PrefFontDialog *d;
+
+  d = (struct PrefFontDialog *) user_data;
+
+  n = gtk_tree_selection_count_selected_rows(sel);
+  gtk_widget_set_sensitive(d->update_b, n);
+  gtk_widget_set_sensitive(d->del_b, n);
+
+  return FALSE;
+}
+
 static void
 PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *vbox, *swin;
+  GtkTreeSelection *sel;
   struct PrefFontDialog *d;
   n_list_store list[] = {
     {N_("alias"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
@@ -1327,6 +1427,9 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(font_list_defailt_cb), d);
     gtk_container_add(GTK_CONTAINER(swin), w);
 
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+    g_signal_connect(sel, "changed", G_CALLBACK(fontlist_sel_cb), d);
+
     w = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
@@ -1341,10 +1444,14 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
     g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogUpdate), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->update_b = w;
 
     w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
     g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogRemove), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->del_b = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);

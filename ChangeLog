@@ -1,5 +1,19 @@
 2009-02-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (scriptlist_sel_cb, drvlist_sel_cb)
+	(fontlist_sel_cb): add.
+	(PrefScriptDialogSetup, PrefDriverDialogSetup)
+	(PrefFontDialogSetup): set signal handler to GtkTreeSelection for
+	"changed" signal.
+	(get_font_alias): add.
+	(font_selection_dialog_set_font): use "get_font_alias()".
+	(PrefFontDialogAdd): use "get_font_alias()" and
+	"gra2cairo_get_fontmap()" to check if "alias" is valid string.
+
+	* src/gtk/x11dialg.h (struct PrefScriptDialog)
+	(struct PrefDriverDialog, struct PrefFontDialog): add member
+	"update_b" and "del_b".
+
 	* src/gtk/gtk_liststore.c (list_store_set_string)
 	(list_store_path_set_string, tree_store_set_string): type of
 	argument "v" is "const char *".
