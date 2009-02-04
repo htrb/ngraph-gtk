@@ -2,9 +2,15 @@
 
 	* src/gtk/ogra2cairo.c (loadfont): remove unused variables "lang"
 	and "lang_ja".
+	(gra2cairo_get_fontmap_num): add.
 
-	* src/gtk/x11opt.c (scriptlist_sel_cb, drvlist_sel_cb)
-	(fontlist_sel_cb): add.
+	* src/gtk/x11opt.c (save_font_config, save_ext_viewer_config)
+	(save_misc_config, save_script_config, save_ext_driver_config)
+	(save_viewer_config, save_child_geometory_config)
+	(save_geometory_config, add_str_to_array): add.
+	(DefaultDialogClose): use "add_str_to_array()",
+	"save_geometory_config()" and so on.
+	(scriptlist_sel_cb, drvlist_sel_cb, fontlist_sel_cb): add.
 	(PrefScriptDialogSetup, PrefDriverDialogSetup)
 	(PrefFontDialogSetup): set signal handler to GtkTreeSelection for
 	"changed" signal.

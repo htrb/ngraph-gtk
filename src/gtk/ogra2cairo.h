@@ -53,5 +53,6 @@ const char *gra2cairo_get_font_type_str(int type);
 struct fontmap *gra2cairo_get_fontmap(char *font_alias);
 void gra2cairo_remove_fontmap(char *fontalias);
 void gra2cairo_add_fontmap(const char *fontalias, const char *fontname, int type, int two_byte);
+int gra2cairo_get_fontmap_num(void);
 
 #endif

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.37 2009/02/04 06:33:10 hito Exp $
+ * $Id: x11opt.c,v 1.38 2009/02/04 07:23:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -109,15 +109,326 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
 }
 
 static void
+save_geometory_config(struct narray *conf)
+{
+  ;
+  char *buf;
+  GdkWindowState state;
+  gint x, y, w, h;
+
+  get_window_geometry(TopLevel, &x, &y, &w, &h, &state);
+
+  Menulocal.menux = x;
+  Menulocal.menuy = y;
+  Menulocal.menuwidth = w;
+  Menulocal.menuheight = h;
+
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "menu_win=%d,%d,%d,%d",
+	     Menulocal.menux, Menulocal.menuy,
+	     Menulocal.menuwidth, Menulocal.menuheight);
+    arrayadd(conf, &buf);
+  }
+
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "status_bar=%d", Menulocal.statusb);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+save_child_geometory_config(struct narray *conf)
+{
+  char *buf;
+
+  sub_window_save_geometry(&(NgraphApp.FileWin));
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "file_win=%d,%d,%d,%d,%d",
+	     Menulocal.filex, Menulocal.filey,
+	     Menulocal.filewidth, Menulocal.fileheight, Menulocal.fileopen);
+    arrayadd(conf, &buf);
+  }
+
+  sub_window_save_geometry(&(NgraphApp.AxisWin));
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "axis_win=%d,%d,%d,%d,%d",
+	     Menulocal.axisx, Menulocal.axisy,
+	     Menulocal.axiswidth, Menulocal.axisheight, Menulocal.axisopen);
+    arrayadd(conf, &buf);
+  }
+
+  sub_window_save_geometry((struct SubWin *) &(NgraphApp.LegendWin));
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "legend_win=%d,%d,%d,%d,%d",
+	     Menulocal.legendx, Menulocal.legendy,
+	     Menulocal.legendwidth, Menulocal.legendheight,
+	     Menulocal.legendopen);
+    arrayadd(conf, &buf);
+  }
+
+  sub_window_save_geometry(&(NgraphApp.MergeWin));
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "merge_win=%d,%d,%d,%d,%d",
+	     Menulocal.mergex, Menulocal.mergey,
+	     Menulocal.mergewidth, Menulocal.mergeheight,
+	     Menulocal.mergeopen);
+    arrayadd(conf, &buf);
+  }
+
+  sub_window_save_geometry((struct SubWin *) &(NgraphApp.InfoWin));
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "information_win=%d,%d,%d,%d,%d",
+	     Menulocal.dialogx, Menulocal.dialogy,
+	     Menulocal.dialogwidth, Menulocal.dialogheight,
+	     Menulocal.dialogopen);
+    arrayadd(conf, &buf);
+  }
+
+  sub_window_save_geometry((struct SubWin *) &(NgraphApp.CoordWin));
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "coordinate_win=%d,%d,%d,%d,%d",
+	     Menulocal.coordx, Menulocal.coordy,
+	     Menulocal.coordwidth, Menulocal.coordheight,
+	     Menulocal.coordopen);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+save_viewer_config(struct narray *conf)
+{
+  char *buf;
+
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "viewer_dpi=%d", Mxlocal->windpi);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "antialias=%d", Mxlocal->antialias);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "viewer_auto_redraw=%d", Mxlocal->autoredraw);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "viewer_load_file_on_redraw=%d", Mxlocal->redrawf);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "viewer_load_file_data_number=%d", Mxlocal->redrawf_num);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "viewer_show_ruler=%d", Mxlocal->ruler);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "viewer_grid=%d", Mxlocal->grid);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+save_ext_driver_config(struct narray *conf)
+{
+  char *buf, *driver, *ext, *option;
+  struct extprinter *pcur;
+  int len;
+
+  pcur = Menulocal.extprinterroot;
+  while (pcur != NULL) {
+    if (pcur->driver == NULL)
+      driver = "";
+    else
+      driver = pcur->driver;
+    if (pcur->ext == NULL)
+      ext = "";
+    else
+      ext = pcur->ext;
+    if (pcur->option == NULL)
+      option = "";
+    else
+      option = pcur->option;
+    len = strlen(pcur->name) + strlen(driver) + strlen(ext) + strlen(option) + 20;
+    if ((buf = (char *) memalloc(len)) != NULL) {
+      snprintf(buf, len, "ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
+      arrayadd(conf, &buf);
+    }
+    pcur = pcur->next;
+  }
+}
+
+static void
+save_script_config(struct narray *conf)
+{
+  char *buf, *script, *option;
+  int len;
+  struct script *scur;
+
+  scur = Menulocal.scriptroot;
+  while (scur != NULL) {
+    if (scur->script == NULL)
+      script = "";
+    else
+      script = scur->script;
+    if (scur->option == NULL)
+      option = "";
+    else
+      option = scur->option;
+    len = strlen(scur->name) + strlen(script) + strlen(option) + 20;
+    if ((buf = (char *) memalloc(len)) != NULL) {
+      snprintf(buf, len, "script=%s,%s,%s", scur->name, script, option);
+      arrayadd(conf, &buf);
+    }
+    scur = scur->next;
+  }
+}
+
+static void
+save_misc_config(struct narray *conf)
+{
+  char *buf;
+  int len;
+
+  if (Menulocal.editor != NULL) {
+    len = strlen(Menulocal.editor) + 10;
+    if ((buf = (char *) memalloc(len)) != NULL) {
+      snprintf(buf, len, "editor=%s", Menulocal.editor);
+      arrayadd(conf, &buf);
+    }
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "change_directory=%d", Menulocal.changedirectory);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "save_history=%d", Menulocal.savehistory);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "save_path=%d", Menulocal.savepath);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "save_with_data=%d", Menulocal.savewithdata);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "save_with_merge=%d", Menulocal.savewithmerge);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(strlen(Menulocal.expanddir) + 20)) != NULL) {
+    snprintf(buf, BUF_SIZE, "expand_dir=%s", Menulocal.expanddir);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "expand=%d", Menulocal.expand);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "ignore_path=%d", Menulocal.ignorepath);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "history_size=%d", Menulocal.hist_size);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "preserve_width=%d", Menulocal.preserve_width);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "infowin_size=%d", Menulocal.info_size);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "data_head_lines=%d", Mxlocal->data_head_lines);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "background_color=%02x%02x%02x",
+	     Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "focus_frame_type=%d", Menulocal.focus_frame_type);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+save_ext_viewer_config(struct narray *conf)
+{
+  char *buf;
+
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "win_dpi=%d", Menulocal.exwindpi);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "win_width=%d", Menulocal.exwinwidth);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "win_height=%d", Menulocal.exwinheight);
+    arrayadd(conf, &buf);
+  }
+  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+    snprintf(buf, BUF_SIZE, "use_external_viewer=%d", Menulocal.exwin_use_external);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+save_font_config(struct narray *conf)
+{
+  char *buf;
+  int len;
+  struct fontmap *fcur;
+
+  fcur = Gra2cairoConf->fontmap_list_root;
+  while (fcur) {
+    len = strlen(fcur->fontalias) + strlen(fcur->fontname) + 64;
+    buf = (char *) memalloc(len);
+    if (buf) {
+      snprintf(buf, len,
+	       "font_map=%s,%s,%d,%s",
+	       fcur->fontalias,
+	       gra2cairo_get_font_type_str(fcur->type),
+	       (fcur->twobyte) ? 1 : 0,
+	       fcur->fontname);
+      arrayadd(conf, &buf);
+    }
+    fcur = fcur->next;
+  }
+}
+
+static void
+add_str_to_array(struct narray *conf, char *str)
+{
+  char *buf;
+
+  buf = nstrdup(str);
+  if (buf) {
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
 DefaultDialogClose(GtkWidget *win, void *data)
 {
   struct DefaultDialog *d;
-  int ret, len;
+  int ret;
   struct narray conf;
-  char *buf;
-  char *driver, *ext, *option, *script;
-  GdkWindowState state;
-  gint x, y, w, h;
 
   d = (struct DefaultDialog *) data;
 
@@ -134,303 +445,78 @@ DefaultDialogClose(GtkWidget *win, void *data)
 
   arrayinit(&conf, sizeof(char *));
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->geometry))) {
-    get_window_geometry(TopLevel, &x, &y, &w, &h, &state);
-
-    Menulocal.menux = x;
-    Menulocal.menuy = y;
-    Menulocal.menuwidth = w;
-    Menulocal.menuheight = h;
-
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "menu_win=%d,%d,%d,%d",
-	      Menulocal.menux, Menulocal.menuy,
-	      Menulocal.menuwidth, Menulocal.menuheight);
-      arrayadd(&conf, &buf);
-    }
-
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "status_bar=%d", Menulocal.statusb);
-      arrayadd(&conf, &buf);
-    }
+    save_geometory_config(&conf);
   }
 
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->child_geometry))) {
-    sub_window_save_geometry(&(NgraphApp.FileWin));
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "file_win=%d,%d,%d,%d,%d",
-	      Menulocal.filex, Menulocal.filey,
-	      Menulocal.filewidth, Menulocal.fileheight, Menulocal.fileopen);
-      arrayadd(&conf, &buf);
-    }
-
-    sub_window_save_geometry(&(NgraphApp.AxisWin));
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "axis_win=%d,%d,%d,%d,%d",
-	      Menulocal.axisx, Menulocal.axisy,
-	      Menulocal.axiswidth, Menulocal.axisheight, Menulocal.axisopen);
-      arrayadd(&conf, &buf);
-    }
-
-    sub_window_save_geometry((struct SubWin *) &(NgraphApp.LegendWin));
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "legend_win=%d,%d,%d,%d,%d",
-	      Menulocal.legendx, Menulocal.legendy,
-	      Menulocal.legendwidth, Menulocal.legendheight,
-	      Menulocal.legendopen);
-      arrayadd(&conf, &buf);
-    }
-
-    sub_window_save_geometry(&(NgraphApp.MergeWin));
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "merge_win=%d,%d,%d,%d,%d",
-	      Menulocal.mergex, Menulocal.mergey,
-	      Menulocal.mergewidth, Menulocal.mergeheight,
-	      Menulocal.mergeopen);
-      arrayadd(&conf, &buf);
-    }
-
-    sub_window_save_geometry((struct SubWin *) &(NgraphApp.InfoWin));
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "information_win=%d,%d,%d,%d,%d",
-	      Menulocal.dialogx, Menulocal.dialogy,
-	      Menulocal.dialogwidth, Menulocal.dialogheight,
-	      Menulocal.dialogopen);
-      arrayadd(&conf, &buf);
-    }
-
-    sub_window_save_geometry((struct SubWin *) &(NgraphApp.CoordWin));
-    buf = (char *) memalloc(BUF_SIZE);    
-    if (buf) {
-      snprintf(buf, BUF_SIZE, "coordinate_win=%d,%d,%d,%d,%d",
-	      Menulocal.coordx, Menulocal.coordy,
-	      Menulocal.coordwidth, Menulocal.coordheight,
-	      Menulocal.coordopen);
-      arrayadd(&conf, &buf);
-    }
+    save_child_geometory_config(&conf);
   }
+
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->viewer))) {
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "viewer_dpi=%d", Mxlocal->windpi);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "antialias=%d", Mxlocal->antialias);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "viewer_auto_redraw=%d", Mxlocal->autoredraw);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "viewer_load_file_on_redraw=%d", Mxlocal->redrawf);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "viewer_load_file_data_number=%d", Mxlocal->redrawf_num);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "viewer_show_ruler=%d", Mxlocal->ruler);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "viewer_grid=%d", Mxlocal->grid);
-      arrayadd(&conf, &buf);
-    }
+    save_viewer_config(&conf);
   }
+
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_driver))) {
-    struct extprinter *pcur;
-
-    pcur = Menulocal.extprinterroot;
-    while (pcur != NULL) {
-      if (pcur->driver == NULL)
-	driver = "";
-      else
-	driver = pcur->driver;
-      if (pcur->ext == NULL)
-	ext = "";
-      else
-	ext = pcur->ext;
-      if (pcur->option == NULL)
-	option = "";
-      else
-	option = pcur->option;
-      len = strlen(pcur->name) + strlen(driver) + strlen(ext) + strlen(option) + 20;
-      if ((buf = (char *) memalloc(len)) != NULL) {
-	snprintf(buf, len, "ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
-	arrayadd(&conf, &buf);
-      }
-      pcur = pcur->next;
-    }
+    save_ext_driver_config(&conf);
   }
+
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->addin_script))) {
-    struct script *scur;
+    save_script_config(&conf);
+  }
 
-    scur = Menulocal.scriptroot;
-    while (scur != NULL) {
-      if (scur->script == NULL)
-	script = "";
-      else
-	script = scur->script;
-      if (scur->option == NULL)
-	option = "";
-      else
-	option = scur->option;
-      len = strlen(scur->name) + strlen(script) + strlen(option) + 20;
-      if ((buf = (char *) memalloc(len)) != NULL) {
-	snprintf(buf, len, "script=%s,%s,%s", scur->name, script, option);
-	arrayadd(&conf, &buf);
-      }
-      scur = scur->next;
-    }
-  }
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->misc))) {
-    if (Menulocal.editor != NULL) {
-      len = strlen(Menulocal.editor) + 10;
-      if ((buf = (char *) memalloc(len)) != NULL) {
-	snprintf(buf, len, "editor=%s", Menulocal.editor);
-	arrayadd(&conf, &buf);
-      }
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "change_directory=%d", Menulocal.changedirectory);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "save_history=%d", Menulocal.savehistory);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "save_path=%d", Menulocal.savepath);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "save_with_data=%d", Menulocal.savewithdata);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "save_with_merge=%d", Menulocal.savewithmerge);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(strlen(Menulocal.expanddir) + 20)) != NULL) {
-      snprintf(buf, BUF_SIZE, "expand_dir=%s", Menulocal.expanddir);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "expand=%d", Menulocal.expand);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "ignore_path=%d", Menulocal.ignorepath);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "history_size=%d", Menulocal.hist_size);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "preserve_width=%d", Menulocal.preserve_width);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "infowin_size=%d", Menulocal.info_size);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "data_head_lines=%d", Mxlocal->data_head_lines);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "background_color=%02x%02x%02x",
-	       Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "focus_frame_type=%d", Menulocal.focus_frame_type);
-      arrayadd(&conf, &buf);
-    }
+    save_misc_config(&conf);
   }
+
   replaceconfig("[x11menu]", &conf);
   arraydel2(&conf);
 
+
   arrayinit(&conf, sizeof(char *));
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_viewer))) {
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "win_dpi=%d", Menulocal.exwindpi);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "win_width=%d", Menulocal.exwinwidth);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "win_height=%d", Menulocal.exwinheight);
-      arrayadd(&conf, &buf);
-    }
-    if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-      snprintf(buf, BUF_SIZE, "use_external_viewer=%d", Menulocal.exwin_use_external);
-      arrayadd(&conf, &buf);
-    }
+    save_ext_viewer_config(&conf);
   }
   replaceconfig("[gra2gtk]", &conf);
   arraydel2(&conf);
 
+
   arrayinit(&conf, sizeof(char *));
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fonts))) {
-    struct fontmap *fcur;
-    fcur = Gra2cairoConf->fontmap_list_root;
-    while (fcur) {
-      len = strlen(fcur->fontalias) + strlen(fcur->fontname) + 64;
-      buf = (char *) memalloc(len);
-      if (buf) {
-	snprintf(buf, len,
-		 "font_map=%s,%s,%d,%s",
-		 fcur->fontalias,
-		 gra2cairo_get_font_type_str(fcur->type),
-		 (fcur->twobyte) ? 1 : 0,
-		 fcur->fontname);
-	arrayadd(&conf, &buf);
-      }
-      fcur = fcur->next;
-    }
+    save_font_config(&conf);
   }
   replaceconfig("[gra2cairo]", &conf);
   arraydel2(&conf);
 
+
   arrayinit(&conf, sizeof(char *));
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_driver))) {
     if (Menulocal.extprinterroot == NULL) {
-      if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-	snprintf(buf, BUF_SIZE, "ext_driver");
-	arrayadd(&conf, &buf);
-      }
+      add_str_to_array(&conf, "ext_driver");
     }
   }
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->addin_script))) {
     if (Menulocal.scriptroot == NULL) {
-      if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-	snprintf(buf, BUF_SIZE, "script");
-	arrayadd(&conf, &buf);
-      }
+      add_str_to_array(&conf, "script");
     }
   }
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->misc))) {
     if (Menulocal.editor == NULL) {
-      if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-	snprintf(buf, BUF_SIZE, "editor");
-	arrayadd(&conf, &buf);
-      }
+      add_str_to_array(&conf, "editor");
     }
   }
   removeconfig("[x11menu]", &conf);
   arraydel2(&conf);
+
+
+  arrayinit(&conf, sizeof(char *));
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fonts))) {
+    if (gra2cairo_get_fontmap_num() == 0) {
+      add_str_to_array(&conf, "font_map");
+    }
+  }
+  removeconfig("[gra2cairo]", &conf);
+  arraydel2(&conf);
+
   d->ret = ret;
 }
 

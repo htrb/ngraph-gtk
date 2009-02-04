@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.38 2009/02/04 06:33:10 hito Exp $
+ * $Id: ogra2cairo.c,v 1.39 2009/02/04 07:23:06 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -324,6 +324,17 @@ gra2cairo_get_fontmap(char *fontalias)
     return NULL;
   }
   return fnew;
+}
+
+int
+gra2cairo_get_fontmap_num(void)
+{
+  int n = 0;
+
+  if (Gra2cairoConf->fontmap) {
+    n = nhash_num(Gra2cairoConf->fontmap);
+  }
+  return n;
 }
 
 void
