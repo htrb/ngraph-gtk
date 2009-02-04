@@ -1,5 +1,9 @@
 2009-02-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* driver/Makefile.am (ngp2, dir_defs.h): depend on Makefile.
+
+	* src/gtk/Makefile.am (dir_defs.h): depend on Makefile.
+
 	* src/gtk/ogra2cairo.c (loadfont): remove unused variables "lang"
 	and "lang_ja".
 	(gra2cairo_get_fontmap_num): add.

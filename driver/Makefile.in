@@ -233,8 +233,8 @@ top_srcdir = @top_srcdir@
 pkgdata_DATA = gra2ps.ini Ngraph.ps gra2wmf.ini
 EXTRA_DIST = dir_defs.h.in ngp2.in ${pkgdata_DATA}
 bin_SCRIPTS = ngp2
-gra2ps_SOURCES = gra2ps.c
-gra2wmf_SOURCES = gra2wmf.c wmfapi.c wmfapi.h
+gra2ps_SOURCES = gra2ps.c dir_defs.h
+gra2wmf_SOURCES = gra2wmf.c wmfapi.c wmfapi.h dir_defs.h
 gra2ps_CFLAGS = -D_FORTIFY_SOURCE
 gra2wmf_CFLAGS = -D_FORTIFY_SOURCE
 all: all-am
@@ -601,13 +601,10 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 	uninstall-binSCRIPTS uninstall-pkgdataDATA
 
 
-gra2wmf.c: dir_defs.h
-gra2ps.c: dir_defs.h
-
-dir_defs.h: dir_defs.h.in
+dir_defs.h: dir_defs.h.in Makefile
 	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(demodir) dir_defs.h.in
 
-ngp2: ngp2.in
+ngp2: ngp2.in Makefile
 	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(bindir) ngp2.in
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
