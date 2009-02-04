@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.31 2009/02/03 11:45:24 hito Exp $
+ * $Id: x11dialg.c,v 1.32 2009/02/04 04:53:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -218,21 +218,21 @@ initdialog(void)
   DlgDefault.widget = NULL;
   DlgDefault.resource = N_("save default");
   DlgSetScript.widget = NULL;
-  DlgSetScript.resource = N_("setscript");
+  DlgSetScript.resource = N_("Add-in script");
   DlgPrefScript.widget = NULL;
-  DlgPrefScript.resource = N_("prefscript");
+  DlgPrefScript.resource = N_("Add-in script setup");
   DlgSetDriver.widget = NULL;
-  DlgSetDriver.resource = N_("setdriver");
+  DlgSetDriver.resource = N_("External driver");
   DlgPrefDriver.widget = NULL;
-  DlgPrefDriver.resource = N_("prefdriver");
+  DlgPrefDriver.resource = N_("External driver setup");
   DlgPrefFont.widget = NULL;
-  DlgPrefFont.resource = N_("preffont");
+  DlgPrefFont.resource = N_("Font");
   DlgMisc.widget = NULL;
-  DlgMisc.resource = N_("misc");
+  DlgMisc.resource = N_("Miscellaneous");
   DlgExViewer.widget = NULL;
-  DlgExViewer.resource = N_("extviewer");
+  DlgExViewer.resource = N_("External viewer");
   DlgViewer.widget = NULL;
-  DlgViewer.resource = N_("viewer");
+  DlgViewer.resource = N_("Viewer");
   DlgSelect.widget = NULL;
   DlgSelect.resource = N_("multi select");
   DlgCopy.widget = NULL;

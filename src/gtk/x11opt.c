@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.35 2009/02/04 03:46:42 hito Exp $
+ * $Id: x11opt.c,v 1.36 2009/02/04 04:53:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1168,7 +1168,7 @@ create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
     "Bold Oblique",
   };
 
-  dialog = gtk_font_selection_dialog_new("Font alias");
+  dialog = gtk_font_selection_dialog_new(_("Font"));
 
 #ifdef JAPANESE
   vbox = GTK_DIALOG(dialog)->vbox;
@@ -1340,14 +1340,18 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   d = (struct PrefFontDialog *) client_data;
 
   alias = get_font_alias(d);
-  if (alias == NULL)
+  if (alias == NULL) {
+    MessageBox(TopLevel, _("Please specify a new alias name."), NULL, MB_OK);
     return;
+  }
 
   fmap = gra2cairo_get_fontmap(alias);
   free(alias);
 
-  if (fmap)
+  if (fmap) {
+    MessageBox(TopLevel, _("Alias name already exists."), NULL, MB_OK);
     return;
+  }
 
   dialog = create_font_selection_dialog(d, NULL);
 
@@ -1414,7 +1418,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = create_text_entry(FALSE, FALSE);
-    item_setup(vbox, w, _("_Alias:"), FALSE);
+    item_setup(vbox, w, _("_New alias:"), FALSE);
     d->alias = w;
 
     hbox = gtk_hbox_new(FALSE, 4);
