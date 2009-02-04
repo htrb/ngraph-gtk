@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.38 2009/02/04 07:23:06 hito Exp $
+ * $Id: x11opt.c,v 1.39 2009/02/04 08:00:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -109,6 +109,29 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
 }
 
 static void
+add_str_to_array(struct narray *conf, char *str)
+{
+  char *buf;
+
+  buf = nstrdup(str);
+  if (buf) {
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+add_str_with_int_to_array(struct narray *conf, char *str, int val)
+{
+  char *buf;
+
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "%s=%d", str, val);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
 save_geometory_config(struct narray *conf)
 {
   ;
@@ -131,9 +154,18 @@ save_geometory_config(struct narray *conf)
     arrayadd(conf, &buf);
   }
 
+  add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
+}
+
+static void
+add_geometry_to_array(struct narray *conf, char *str, int x, int y, int w, int h, int stat)
+{
+  char *buf;
+
   buf = (char *) memalloc(BUF_SIZE);    
   if (buf) {
-    snprintf(buf, BUF_SIZE, "status_bar=%d", Menulocal.statusb);
+    snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d,%d",
+	     str, x, y, w, h, stat);
     arrayadd(conf, &buf);
   }
 }
@@ -141,100 +173,53 @@ save_geometory_config(struct narray *conf)
 static void
 save_child_geometory_config(struct narray *conf)
 {
-  char *buf;
-
   sub_window_save_geometry(&(NgraphApp.FileWin));
-  buf = (char *) memalloc(BUF_SIZE);    
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "file_win=%d,%d,%d,%d,%d",
-	     Menulocal.filex, Menulocal.filey,
-	     Menulocal.filewidth, Menulocal.fileheight, Menulocal.fileopen);
-    arrayadd(conf, &buf);
-  }
+  add_geometry_to_array(conf, "file_win",
+			Menulocal.filex, Menulocal.filey,
+			Menulocal.filewidth, Menulocal.fileheight,
+			Menulocal.fileopen);
 
   sub_window_save_geometry(&(NgraphApp.AxisWin));
-  buf = (char *) memalloc(BUF_SIZE);    
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "axis_win=%d,%d,%d,%d,%d",
-	     Menulocal.axisx, Menulocal.axisy,
-	     Menulocal.axiswidth, Menulocal.axisheight, Menulocal.axisopen);
-    arrayadd(conf, &buf);
-  }
+  add_geometry_to_array(conf, "axis_win",
+			Menulocal.axisx, Menulocal.axisy,
+			Menulocal.axiswidth, Menulocal.axisheight,
+			Menulocal.axisopen);
 
   sub_window_save_geometry((struct SubWin *) &(NgraphApp.LegendWin));
-  buf = (char *) memalloc(BUF_SIZE);    
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "legend_win=%d,%d,%d,%d,%d",
-	     Menulocal.legendx, Menulocal.legendy,
-	     Menulocal.legendwidth, Menulocal.legendheight,
-	     Menulocal.legendopen);
-    arrayadd(conf, &buf);
-  }
+  add_geometry_to_array(conf, "legend_win",
+			Menulocal.legendx, Menulocal.legendy,
+			Menulocal.legendwidth, Menulocal.legendheight,
+			Menulocal.legendopen);
 
   sub_window_save_geometry(&(NgraphApp.MergeWin));
-  buf = (char *) memalloc(BUF_SIZE);    
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "merge_win=%d,%d,%d,%d,%d",
-	     Menulocal.mergex, Menulocal.mergey,
-	     Menulocal.mergewidth, Menulocal.mergeheight,
-	     Menulocal.mergeopen);
-    arrayadd(conf, &buf);
-  }
+  add_geometry_to_array(conf, "merge_win",
+			Menulocal.mergex, Menulocal.mergey,
+			Menulocal.mergewidth, Menulocal.mergeheight,
+			Menulocal.mergeopen);
 
   sub_window_save_geometry((struct SubWin *) &(NgraphApp.InfoWin));
-  buf = (char *) memalloc(BUF_SIZE);    
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "information_win=%d,%d,%d,%d,%d",
-	     Menulocal.dialogx, Menulocal.dialogy,
-	     Menulocal.dialogwidth, Menulocal.dialogheight,
-	     Menulocal.dialogopen);
-    arrayadd(conf, &buf);
-  }
+  add_geometry_to_array(conf, "information_win",
+			Menulocal.dialogx, Menulocal.dialogy,
+			Menulocal.dialogwidth, Menulocal.dialogheight,
+			Menulocal.dialogopen);
 
   sub_window_save_geometry((struct SubWin *) &(NgraphApp.CoordWin));
-  buf = (char *) memalloc(BUF_SIZE);    
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "coordinate_win=%d,%d,%d,%d,%d",
-	     Menulocal.coordx, Menulocal.coordy,
-	     Menulocal.coordwidth, Menulocal.coordheight,
-	     Menulocal.coordopen);
-    arrayadd(conf, &buf);
-  }
+  add_geometry_to_array(conf, "coordinate_win",
+			Menulocal.coordx, Menulocal.coordy,
+			Menulocal.coordwidth, Menulocal.coordheight,
+			Menulocal.coordopen);
 }
 
 static void
 save_viewer_config(struct narray *conf)
 {
-  char *buf;
-
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "viewer_dpi=%d", Mxlocal->windpi);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "antialias=%d", Mxlocal->antialias);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "viewer_auto_redraw=%d", Mxlocal->autoredraw);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "viewer_load_file_on_redraw=%d", Mxlocal->redrawf);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "viewer_load_file_data_number=%d", Mxlocal->redrawf_num);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "viewer_show_ruler=%d", Mxlocal->ruler);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "viewer_grid=%d", Mxlocal->grid);
-    arrayadd(conf, &buf);
-  }
+  add_str_with_int_to_array(conf, "viewer_dpi", Mxlocal->windpi);
+  add_str_with_int_to_array(conf, "antialias", Mxlocal->antialias);
+  add_str_with_int_to_array(conf, "viewer_auto_redraw", Mxlocal->autoredraw);
+  add_str_with_int_to_array(conf, "viewer_load_file_on_redraw", Mxlocal->redrawf);
+  add_str_with_int_to_array(conf, "viewer_load_file_data_number", Mxlocal->redrawf_num);
+  add_str_with_int_to_array(conf, "viewer_show_ruler", Mxlocal->ruler);
+  add_str_with_int_to_array(conf, "viewer_grid", Mxlocal->grid);
 }
 
 static void
@@ -245,21 +230,29 @@ save_ext_driver_config(struct narray *conf)
   int len;
 
   pcur = Menulocal.extprinterroot;
-  while (pcur != NULL) {
-    if (pcur->driver == NULL)
+  while (pcur) {
+    if (pcur->driver == NULL) {
       driver = "";
-    else
+    } else {
       driver = pcur->driver;
-    if (pcur->ext == NULL)
+    }
+
+    if (pcur->ext == NULL) {
       ext = "";
-    else
+    } else {
       ext = pcur->ext;
-    if (pcur->option == NULL)
+    }
+
+    if (pcur->option == NULL) {
       option = "";
-    else
+    } else {
       option = pcur->option;
+    }
+
     len = strlen(pcur->name) + strlen(driver) + strlen(ext) + strlen(option) + 20;
-    if ((buf = (char *) memalloc(len)) != NULL) {
+
+    buf = (char *) memalloc(len);
+    if (buf) {
       snprintf(buf, len, "ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
       arrayadd(conf, &buf);
     }
@@ -275,17 +268,22 @@ save_script_config(struct narray *conf)
   struct script *scur;
 
   scur = Menulocal.scriptroot;
-  while (scur != NULL) {
-    if (scur->script == NULL)
+  while (scur) {
+    if (scur->script == NULL) {
       script = "";
-    else
+    } else {
       script = scur->script;
-    if (scur->option == NULL)
+    }
+
+    if (scur->option == NULL) {
       option = "";
-    else
+    } else {
       option = scur->option;
+    }
+
     len = strlen(scur->name) + strlen(script) + strlen(option) + 20;
-    if ((buf = (char *) memalloc(len)) != NULL) {
+    buf = (char *) memalloc(len);
+    if (buf) {
       snprintf(buf, len, "script=%s,%s,%s", scur->name, script, option);
       arrayadd(conf, &buf);
     }
@@ -299,93 +297,51 @@ save_misc_config(struct narray *conf)
   char *buf;
   int len;
 
-  if (Menulocal.editor != NULL) {
+  if (Menulocal.editor) {
     len = strlen(Menulocal.editor) + 10;
-    if ((buf = (char *) memalloc(len)) != NULL) {
+    buf = (char *) memalloc(len);
+    if (buf) {
       snprintf(buf, len, "editor=%s", Menulocal.editor);
       arrayadd(conf, &buf);
     }
   }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "change_directory=%d", Menulocal.changedirectory);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "save_history=%d", Menulocal.savehistory);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "save_path=%d", Menulocal.savepath);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "save_with_data=%d", Menulocal.savewithdata);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "save_with_merge=%d", Menulocal.savewithmerge);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(strlen(Menulocal.expanddir) + 20)) != NULL) {
+
+  add_str_with_int_to_array(conf, "change_directory", Menulocal.changedirectory);
+  add_str_with_int_to_array(conf, "save_history", Menulocal.savehistory);
+  add_str_with_int_to_array(conf, "save_path", Menulocal.savepath);
+  add_str_with_int_to_array(conf, "save_with_data", Menulocal.savewithdata);
+  add_str_with_int_to_array(conf, "save_with_merge", Menulocal.savewithmerge);
+
+  buf = (char *) memalloc(strlen(Menulocal.expanddir) + 20);
+  if (buf) {
     snprintf(buf, BUF_SIZE, "expand_dir=%s", Menulocal.expanddir);
     arrayadd(conf, &buf);
   }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "expand=%d", Menulocal.expand);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "ignore_path=%d", Menulocal.ignorepath);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "history_size=%d", Menulocal.hist_size);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "preserve_width=%d", Menulocal.preserve_width);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "infowin_size=%d", Menulocal.info_size);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "data_head_lines=%d", Mxlocal->data_head_lines);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
+
+  add_str_with_int_to_array(conf, "expand", Menulocal.expand);
+  add_str_with_int_to_array(conf, "ignore_path", Menulocal.ignorepath);
+  add_str_with_int_to_array(conf, "history_size", Menulocal.hist_size);
+  add_str_with_int_to_array(conf, "preserve_width", Menulocal.preserve_width);
+  add_str_with_int_to_array(conf, "infowin_size", Menulocal.info_size);
+  add_str_with_int_to_array(conf, "data_head_lines", Mxlocal->data_head_lines);
+
+  buf = (char *) memalloc(BUF_SIZE);
+  if (buf) {
     snprintf(buf, BUF_SIZE, "background_color=%02x%02x%02x",
 	     Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
     arrayadd(conf, &buf);
   }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "focus_frame_type=%d", Menulocal.focus_frame_type);
-    arrayadd(conf, &buf);
-  }
+
+  add_str_with_int_to_array(conf, "focus_frame_type", Menulocal.focus_frame_type);
 }
 
 static void
 save_ext_viewer_config(struct narray *conf)
 {
-  char *buf;
-
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "win_dpi=%d", Menulocal.exwindpi);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "win_width=%d", Menulocal.exwinwidth);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "win_height=%d", Menulocal.exwinheight);
-    arrayadd(conf, &buf);
-  }
-  if ((buf = (char *) memalloc(BUF_SIZE)) != NULL) {
-    snprintf(buf, BUF_SIZE, "use_external_viewer=%d", Menulocal.exwin_use_external);
-    arrayadd(conf, &buf);
-  }
+  add_str_with_int_to_array(conf, "win_dpi", Menulocal.exwindpi);
+  add_str_with_int_to_array(conf, "win_width", Menulocal.exwinwidth);
+  add_str_with_int_to_array(conf, "win_height", Menulocal.exwinheight);
+  add_str_with_int_to_array(conf, "use_external_viewer", Menulocal.exwin_use_external);
 }
 
 static void
@@ -409,17 +365,6 @@ save_font_config(struct narray *conf)
       arrayadd(conf, &buf);
     }
     fcur = fcur->next;
-  }
-}
-
-static void
-add_str_to_array(struct narray *conf, char *str)
-{
-  char *buf;
-
-  buf = nstrdup(str);
-  if (buf) {
-    arrayadd(conf, &buf);
   }
 }
 
@@ -651,7 +596,7 @@ PrefScriptDialogSetupItem(GtkWidget *w, struct PrefScriptDialog *d)
 
   list_store_clear(d->list);
   fcur = Menulocal.scriptroot;
-  while (fcur != NULL) {
+  while (fcur) {
     list_store_append(d->list, &iter);
     list_store_set_string(d->list, &iter, 0, fcur->name);
     fcur = fcur->next;
@@ -671,13 +616,13 @@ PrefScriptDialogUpdate(GtkWidget *w, gpointer client_data)
 
   j = 0;
   fcur = Menulocal.scriptroot;
-  while (fcur != NULL) {
+  while (fcur) {
     if (j == a)
       break;
     fcur = fcur->next;
     j++;
   }
-  if (fcur != NULL) {
+  if (fcur) {
     SetScriptDialog(&DlgSetScript, fcur);
     DialogExecute(d->widget, &DlgSetScript);
     PrefScriptDialogSetupItem(d->widget, d);
@@ -698,7 +643,7 @@ PrefScriptDialogRemove(GtkWidget *w, gpointer client_data)
   j = 0;
   fprev = NULL;
   fcur = Menulocal.scriptroot;
-  while (fcur != NULL) {
+  while (fcur) {
     if (j == a) {
       fdel = fcur;
       if (fprev == NULL)
@@ -729,11 +674,13 @@ PrefScriptDialogAdd(GtkWidget *w, gpointer client_data)
   d = (struct PrefScriptDialog *) client_data;
   fprev = NULL;
   fcur = Menulocal.scriptroot;
-  while (fcur != NULL) {
+  while (fcur) {
     fprev = fcur;
     fcur = fcur->next;
   }
-  if ((fnew = (struct script *) memalloc(sizeof(struct script))) != NULL) {
+
+  fnew = (struct script *) memalloc(sizeof(struct script));
+  if (fnew) {
     fnew->next = NULL;
     fnew->name = NULL;
     fnew->script = NULL;
@@ -1007,7 +954,7 @@ PrefDriverDialogSetupItem(GtkWidget *w, struct PrefDriverDialog *d)
 
   list_store_clear(d->list);
   fcur = Menulocal.extprinterroot;
-  while (fcur != NULL) {
+  while (fcur) {
     list_store_append(d->list, &iter);
     list_store_set_string(d->list, &iter, 0, fcur->name);
     fcur = fcur->next;
@@ -1027,13 +974,13 @@ PrefDriverDialogUpdate(GtkWidget *w, gpointer client_data)
 
   j = 0;
   fcur = Menulocal.extprinterroot;
-  while (fcur != NULL) {
+  while (fcur) {
     if (j == a)
       break;
     fcur = fcur->next;
     j++;
   }
-  if (fcur != NULL) {
+  if (fcur) {
     SetDriverDialog(&DlgSetDriver, fcur);
     DialogExecute(d->widget, &DlgSetDriver);
     PrefDriverDialogSetupItem(d->widget, d);
@@ -1054,7 +1001,7 @@ PrefDriverDialogRemove(GtkWidget *w, gpointer client_data)
   j = 0;
   fprev = NULL;
   fcur = Menulocal.extprinterroot;
-  while (fcur != NULL) {
+  while (fcur) {
     if (j == a) {
       fdel = fcur;
       if (fprev == NULL)
@@ -1087,7 +1034,7 @@ PrefDriverDialogAdd(GtkWidget *w, gpointer client_data)
   fprev = NULL;
   fcur = Menulocal.extprinterroot;
 
-  while (fcur != NULL) {
+  while (fcur) {
     fprev = fcur;
     fcur = fcur->next;
   }
@@ -1231,7 +1178,7 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
 
   list_store_clear(d->list);
   fcur = Gra2cairoConf->fontmap_list_root;
-  while (fcur != NULL) {
+  while (fcur) {
     type = gra2cairo_get_font_type_str(fcur->type);
     list_store_append(d->list, &iter);
     list_store_set_string(d->list, &iter, 0, fcur->fontalias);
@@ -1571,7 +1518,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 {
   GdkColor color;
 
-  if (Menulocal.editor != NULL)
+  if (Menulocal.editor)
     gtk_entry_set_text(GTK_ENTRY(d->editor), Menulocal.editor);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->directory)), Menulocal.changedirectory);
@@ -1590,7 +1537,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->preserve_width)), Menulocal.preserve_width);
 
-  if (Menulocal.expanddir != NULL)
+  if (Menulocal.expanddir)
     gtk_entry_set_text(GTK_ENTRY(d->expanddir), Menulocal.expanddir);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ignorepath)), Menulocal.ignorepath);
@@ -1649,7 +1596,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     item_setup(vbox, w, _("_Path:"), FALSE);
     d->path = w;
-    for (j = 0; pathchar[j] != NULL; j++) {
+    for (j = 0; pathchar[j]; j++) {
       combo_box_append_text(d->path, _(pathchar[j]));
     }
 
@@ -2083,17 +2030,24 @@ CmOptionSaveNgp(void)
   if (Menulock || GlobalLock)
     return;
 
-  if ((ngpfile = getscriptname("Ngraph.ngp")) == NULL)
+  ngpfile = getscriptname("Ngraph.ngp");
+  if (ngpfile == NULL)
     return;
+
   path = 1;
-  if ((obj = chkobject("file")) != NULL) {
+
+  obj = chkobject("file");
+  if (obj) {
     for (i = 0; i <= chkobjlastinst(obj); i++)
       putobj(obj, "save_path", i, &path);
   }
-  if ((obj = chkobject("merge")) != NULL) {
+
+  obj = chkobject("merge");
+  if (obj) {
     for (i = 0; i <= chkobjlastinst(obj); i++)
       putobj(obj, "save_path", i, &path);
   }
+
   if (access(ngpfile, 04) == 0) {
     snprintf(mes, sizeof(mes), _("`%s'\n\nOverwrite existing file?"), ngpfile);
     if (MessageBox(TopLevel, mes, _("Save as .Ngraph.ngp"), MB_YESNO) != IDYES) {
@@ -2101,6 +2055,7 @@ CmOptionSaveNgp(void)
       return;
     }
   }
+
   snprintf(mes, sizeof(mes), _("Saving `%.128s'."), ngpfile);
   SetStatusBar(mes);
   SaveDrawrable(ngpfile, FALSE, FALSE);

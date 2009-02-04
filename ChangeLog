@@ -7,7 +7,8 @@
 	* src/gtk/x11opt.c (save_font_config, save_ext_viewer_config)
 	(save_misc_config, save_script_config, save_ext_driver_config)
 	(save_viewer_config, save_child_geometory_config)
-	(save_geometory_config, add_str_to_array): add.
+	(save_geometory_config, add_str_to_array)
+	(add_str_with_int_to_array, add_geometry_to_array): add.
 	(DefaultDialogClose): use "add_str_to_array()",
 	"save_geometory_config()" and so on.
 	(scriptlist_sel_cb, drvlist_sel_cb, fontlist_sel_cb): add.
