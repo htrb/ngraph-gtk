@@ -1,5 +1,7 @@
 2009-02-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/odraw.h (enum INTERPOLATION_TYPE): add.
+
 	* src/mathcode.c (mathcode): return value type of "mathcode()" is
 	"enum MATH_CODE_ERROR_NO".
 
@@ -13,7 +15,7 @@
 	(MathTextDialogSetup, MathTextDialogClose): use "MATH_FNC_TYPE".
 	(FitDialogSetSensitivity): use "FIT_OBJ_TYPE".
 	(FileDialogFit, FileDialogType, draw_type_pixbuf, select_type)
-	(start_editing_type): use "FILE_OBJ_PLOT_TYPE".
+	(start_editing_type, f2dsettings): use "FILE_OBJ_PLOT_TYPE".
 
 	* src/ofit.c (fitpoly, fitfit): use "FIT_OBJ_TYPE".
 
@@ -23,6 +25,7 @@
 	call "fitout()" when "redraw" is true.
 	(opendata, rectout, errorbarout, stairout, barout, f2ddraw): use
 	"FILE_OBJ_PLOT_TYPE".
+	(curveout, curveoutfile, f2dsettings): use "INTERPOLATION_TYPE".
 
 	* src/ofile.h (enum FILE_OBJ_PLOT_TYPE): add
 

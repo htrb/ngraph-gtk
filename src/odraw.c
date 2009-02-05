@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.5 2008/11/25 08:43:32 hito Exp $
+ * $Id: odraw.c,v 1.6 2009/02/05 07:52:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,14 +44,15 @@
 #define ERRILGC 100
 #define ERRGCOPEN 101
 
-#define ERRNUM 2
 
-char *drawerrorlist[ERRNUM]={
+char *drawerrorlist[]={
   "illegal graphics context",
   "grahics context is not opened"
 };
 
-char *pathchar[5]={
+#define ERRNUM (sizeof(drawerrorlist) / sizeof(*drawerrorlist))
+
+char *pathchar[]={
   N_("unchange"),
   N_("full"),
   N_("relative"),
@@ -59,21 +60,21 @@ char *pathchar[5]={
   NULL,
 };
 
-char *capchar[4]={
+char *capchar[]={
   "butt",
   "round",
   "projecting",
   NULL
 };
 
-char *joinchar[4]={
+char *joinchar[]={
   N_("miter"),
   N_("round"),
   N_("bevel"),
   NULL
 };
 
-char *fontchar[14]={
+char *fontchar[]={
   "Times",
   "TimesBold",
   "TimesItalic",
@@ -90,13 +91,13 @@ char *fontchar[14]={
    NULL
 };
 
-char *jfontchar[3]={
+char *jfontchar[]={
   "Mincho",
   "Gothic",
   NULL
 };
 
-char *arrowchar[5]={
+char *arrowchar[]={
   N_("none"),
   N_("end"),
   N_("begin"),
@@ -104,7 +105,7 @@ char *arrowchar[5]={
   NULL
 };
 
-char *intpchar[5]={
+char *intpchar[]={
   N_("spline"),
   N_("spline_close"),
   N_("bspline"),

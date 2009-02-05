@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.57 2009/02/05 06:38:25 hito Exp $
+ * $Id: ofile.c,v 1.58 2009/02/05 07:52:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -341,8 +341,9 @@ check_ifs_init(struct f2ddata *fp)
 #define CHECK_IFS(buf, ch) (buf[(unsigned char) ch] & 1)
 #define CHECK_REMARK(buf, ch) (buf[(unsigned char) ch] & 2)
 
-struct f2ddata *opendata(struct objlist *obj,char *inst,
-                         struct f2dlocal *f2dlocal,int axis,int raw)
+static struct f2ddata *
+opendata(struct objlist *obj,char *inst,
+	 struct f2dlocal *f2dlocal,int axis,int raw)
 {
   int fid;
   char *file;
@@ -796,7 +797,8 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   return fp;
 }
 
-void reopendata(struct f2ddata *fp)
+static void 
+reopendata(struct f2ddata *fp)
 {
   int i;
 
@@ -851,7 +853,8 @@ void reopendata(struct f2ddata *fp)
   fp->marktype=fp->marktype0;
 }
 
-void closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
+static void 
+closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 {
   int j,num2,*data2;
   char *inst1,*inst;
@@ -878,7 +881,8 @@ void closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
   memfree(fp);
 }
 
-int f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
+static int 
+f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 {
   enum MATH_CODE_ERROR_NO rcode;
   int maxdim,need2pass;
@@ -984,7 +988,8 @@ set_line_style_config(struct objlist *obj, char *inst, char *field, char *str)
   return 0;
 }
 
-int f2dloadconfig(struct objlist *obj,char *inst)
+static int 
+f2dloadconfig(struct objlist *obj,char *inst)
 {
   FILE *fp;
   char *tok,*str,*s2;
@@ -1037,7 +1042,8 @@ int f2dloadconfig(struct objlist *obj,char *inst)
   return 0;
 }
 
-int f2dloadconfig2(struct objlist *obj,int *cashlen)
+static int 
+f2dloadconfig2(struct objlist *obj,int *cashlen)
 {
   FILE *fp;
   char *tok,*str,*s2;
@@ -1062,7 +1068,8 @@ int f2dloadconfig2(struct objlist *obj,int *cashlen)
   return 0;
 }
 
-int f2dsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray conf;
   char *buf;
@@ -1250,7 +1257,8 @@ int f2dsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv
   return 0;
 }
 
-int f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y,rstep,final,msize,r2,g2,b2,lwidth,miter;
   char *s1,*s2,*s3,*s4;
@@ -1375,7 +1383,8 @@ errexit:
   return 1;
 }
 
-int f2ddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2ddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
 
@@ -1392,8 +1401,9 @@ int f2ddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dfile(struct objlist *obj,char *inst,char *rval,
-            int argc,char **argv)
+static int 
+f2dfile(struct objlist *obj,char *inst,char *rval,
+	int argc,char **argv)
 {
   struct objlist *sys;
   int ignorepath;
@@ -1416,7 +1426,8 @@ int f2dfile(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int f2dbasename(struct objlist *obj,char *inst,char *rval,
+static int 
+f2dbasename(struct objlist *obj,char *inst,char *rval,
                 int argc,char **argv)
 {
   char *file,*file2;
@@ -1430,8 +1441,9 @@ int f2dbasename(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int f2dput(struct objlist *obj,char *inst,char *rval,
-            int argc,char **argv)
+static int 
+f2dput(struct objlist *obj,char *inst,char *rval,
+       int argc,char **argv)
 {
   char *field;
   char *math;
@@ -1463,8 +1475,9 @@ int f2dput(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
-                 char *ifs,int csv)
+static int 
+getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
+	     char *ifs,int csv)
 {
 /*
    return: 0 no error
@@ -1567,7 +1580,8 @@ int getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
 }
 
 
-int hskipdata(struct f2ddata *fp)
+static int 
+hskipdata(struct f2ddata *fp)
 {
   int skip,rcode;
   char *buf;
@@ -2080,7 +2094,8 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
   return 0;
 }
 
-int getdata(struct f2ddata *fp)
+static int 
+getdata(struct f2ddata *fp)
 /*
   return -1: fatal error
           0: no error
@@ -2276,7 +2291,8 @@ int getdata(struct f2ddata *fp)
   return 0;
 }
 
-int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
+static int 
+getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
 /*
   return -1: fatal error
           0: no error
@@ -2396,7 +2412,8 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
   return 0;
 }
 
-int getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
+static int 
+getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 /*
   return -1: fatal error
 		  0: no error
@@ -2721,7 +2738,8 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   return 0;
 }
 
-int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
+static int 
+getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
 /*
   return -1: unable to transform
           0: normal
@@ -2797,7 +2815,8 @@ int getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
   return 0;
 }
 
-int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
+static int 
+getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
 /*
   return -1: unable to transform
           0: normal
@@ -2838,7 +2857,8 @@ int getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
   return 0;
 }
 
-void f2dtransf(double x,double y,int *gx,int *gy,void *local)
+static void 
+f2dtransf(double x,double y,int *gx,int *gy,void *local)
 {
   struct f2ddata *fp;
   double minx,miny;
@@ -2871,7 +2891,8 @@ void f2dtransf(double x,double y,int *gx,int *gy,void *local)
   }
 }
 
-int f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
+static int 
+f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 {
   double a,xl,yl,xg,yg;
   double minx,miny,maxx,maxy;
@@ -2923,7 +2944,8 @@ int f2dlineclipf(double *x0,double *y0,double *x1,double *y1,void *local)
   return 0;
 }
 
-int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local)
+static int 
+f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local)
 {
   double xl,yl,xg,yg;
   double minx,miny,maxx,maxy;
@@ -2968,8 +2990,9 @@ int f2drectclipf(double *x0,double *y0,double *x1,double *y1,void *local)
   return 0;
 }
 
-void f2dsplinedif(double d,double c[],
-                  double *dx,double *dy,double *ddx,double *ddy,void *local)
+static void 
+f2dsplinedif(double d,double c[],
+	     double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
   struct f2ddata *fp;
 
@@ -2981,8 +3004,9 @@ void f2dsplinedif(double d,double c[],
   (*ddy)*=fp->ratey;
 }
 
-void f2dbsplinedif(double d,double c[],
-                  double *dx,double *dy,double *ddx,double *ddy,void *local)
+static void 
+f2dbsplinedif(double d,double c[],
+	      double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
   struct f2ddata *fp;
 
@@ -2994,7 +3018,8 @@ void f2dbsplinedif(double d,double c[],
   (*ddy)*=fp->ratey;
 }
 
-void f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
+static void 
+f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
 {
   char buf[256];
 
@@ -3002,9 +3027,10 @@ void f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
   error2(obj,code,buf);
 }
 
-void errordisp(struct objlist *obj,
-               struct f2ddata *fp,
-               int *emerr,int *emserr,int *emnonum,int *emig,int *emng)
+static void 
+errordisp(struct objlist *obj,
+	  struct f2ddata *fp,
+	  int *emerr,int *emserr,int *emnonum,int *emig,int *emng)
 {
   int x,y;
   char *s;
@@ -3108,10 +3134,11 @@ void errordisp(struct objlist *obj,
   }
 }
 
-void errordisp2(struct objlist *obj,
-                struct f2ddata *fp,
-                int *emerr,int *emserr,int *emnonum,int *emig,int *emng,
-                char ddstat,char *s)
+static void 
+errordisp2(struct objlist *obj,
+	   struct f2ddata *fp,
+	   int *emerr,int *emserr,int *emnonum,int *emig,int *emng,
+	   char ddstat,char *s)
 {
   if (!*emerr && (ddstat==MERR)) {
     f2derror(obj,fp,ERRMERR,s);
@@ -3141,12 +3168,13 @@ void errordisp2(struct objlist *obj,
 
 #define SPBUFFERSZ 1024
 
-double *dataadd(double dx,double dy,double dz,
-                int fr,int fg,int fb,int *size,
-                double **x,double **y,double **z,
-                int **r,int **g,int **b,
-                double **c1,double **c2,double **c3,
-                double **c4,double **c5,double **c6)
+static double *
+dataadd(double dx,double dy,double dz,
+	int fr,int fg,int fb,int *size,
+	double **x,double **y,double **z,
+	int **r,int **g,int **b,
+	double **c1,double **c2,double **c3,
+	double **c4,double **c5,double **c6)
 {
   double *xb,*yb,*zb,*c1b,*c2b,*c3b,*c4b,*c5b,*c6b;
   int *rb,*gb,*bb;
@@ -3282,7 +3310,8 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   emerr=emserr=emnonum=emig=emng=FALSE;
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
   switch (intp) {
-  case 0: case 1:
+  case INTERPOLATION_TYPE_SPLINE:
+  case INTERPOLATION_TYPE_SPLINE_CLOSE:
     num=0;
     count=0;
     x=y=z=c1=c2=c3=c4=c5=c6=NULL;
@@ -3366,7 +3395,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
     memfree(c1); memfree(c2); memfree(c3);
     memfree(c4); memfree(c5); memfree(c6);
     break;
-  case 2:
+  case INTERPOLATION_TYPE_BSPLINE:
     first=TRUE;
     num=0;
     while (getdata(fp)==0) {
@@ -3436,7 +3465,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
     }
     break;
-  case 3:
+  case INTERPOLATION_TYPE_BSPLINE_CLOSE:
     first=TRUE;
     num=0;
     while (getdata(fp)==0) {
@@ -4168,7 +4197,8 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
+static int 
+f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   int GC;
@@ -4285,7 +4315,8 @@ int f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   double x,y;
   int gx,gy;
@@ -4493,7 +4524,8 @@ int f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
@@ -4633,7 +4665,8 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int redrawf, num, dmax;
   int GC;
@@ -4653,7 +4686,8 @@ int f2dredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *file,*ifs;
   int csv;
@@ -4740,7 +4774,8 @@ int f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int cline, line, n, p;
   char *file, buf[256], *s;
@@ -4791,7 +4826,8 @@ int f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *file;
   FILE *fd;
@@ -4844,13 +4880,16 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         }
         break;
       case 'd':
-        for (i=PLOT_TYPE_FIT;i>=0;i--)
-          if (strncmp(f2dtypechar[i],po+2,strlen(f2dtypechar[i]))==0) break;
-        if ((i==-1)
-        || ((i==0) && (po[2+4]!=','))
-        || ((i==3) && (po[2+5]!=','))) err=TRUE;
-        else {
-          if (i==0) {
+        for (i = PLOT_TYPE_FIT; i >= 0; i--) {
+          if (strncmp(f2dtypechar[i], po + 2, strlen(f2dtypechar[i])) == 0)
+	    break;
+	}
+        if ((i==-1) ||
+	    ((i == PLOT_TYPE_MARK) && (po[2+4]!=',')) ||
+	    ((i == PLOT_TYPE_CURVE) && (po[2+5]!=','))) {
+	  err=TRUE;
+	} else {
+          if (i == PLOT_TYPE_MARK) {
             d1=strtol(po+2+5,&endptr,10);
             if (endptr==(po+2+5)) err=TRUE;
             else {
@@ -4858,11 +4897,14 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
               putobj(obj,"mark_type",id,&d1);
               po=endptr;
             }
-          } else if (i==3) {
-            for (j=3;j>=0;j--)
-              if (strncmp(intpchar[j],po+2+6,strlen(intpchar[j]))==0) break;
-            if (j==-1) err=TRUE;
-            else {
+          } else if (i == PLOT_TYPE_CURVE) {
+            for (j = INTERPOLATION_TYPE_BSPLINE_CLOSE; j >= 0; j--) {
+              if (strncmp(intpchar[j], po + 2 + 6, strlen(intpchar[j])) == 0)
+		break;
+	    }
+            if (j == -1) {
+	      err = TRUE;
+	    } else {
               putobj(obj,"type",id,&i);
               putobj(obj,"interpolation",id,&j);
               po=po+2+6+strlen(intpchar[j]);
@@ -5084,7 +5126,8 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 
-int f2dtime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dtime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *file;
   struct stat buf;
@@ -5100,7 +5143,8 @@ int f2dtime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2ddate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2ddate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *file;
   struct stat buf;
@@ -5116,7 +5160,8 @@ int f2ddate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-void f2dsettbl(char *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
+static void 
+f2dsettbl(char *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
 {
   int gx,gy,g2,g3;
 
@@ -5182,7 +5227,8 @@ void f2dsettbl(char *inst,struct f2dlocal *f2dlocal,struct f2ddata *fp)
   *(int *)(inst+f2dlocal->iline)=fp->dline;
 }
 
-int f2dopendata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dopendata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
@@ -5215,7 +5261,8 @@ int f2dopendata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dgetdata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dgetdata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
@@ -5234,7 +5281,8 @@ int f2dgetdata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dclosedata(struct objlist *obj,char *inst,char *rval,
+static int 
+f2dclosedata(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -5251,7 +5299,8 @@ int f2dclosedata(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int f2dopendataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dopendataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
@@ -5270,7 +5319,8 @@ int f2dopendataraw(struct objlist *obj,char *inst,char *rval,int argc,char **arg
   return 0;
 }
 
-int f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
@@ -5334,7 +5384,8 @@ int f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv
   return 0;
 }
 
-int f2dclosedataraw(struct objlist *obj,char *inst,char *rval,
+static int 
+f2dclosedataraw(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -5368,8 +5419,9 @@ get_mtime(struct objlist *obj, char *inst, time_t *mtime)
   return 0;
 }
 
-int f2dstat(struct objlist *obj,char *inst,char *rval,
-            int argc,char **argv)
+static int 
+f2dstat(struct objlist *obj,char *inst,char *rval,
+	int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
@@ -5589,8 +5641,9 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int f2dstat2(struct objlist *obj,char *inst,char *rval,
-             int argc,char **argv)
+static int 
+f2dstat2(struct objlist *obj,char *inst,char *rval,
+	 int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
@@ -5659,8 +5712,8 @@ int f2dstat2(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int f2dboundings(struct objlist *obj,char *inst,char *rval,
-                 int argc,char **argv)
+static int 
+f2dboundings(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
@@ -5811,8 +5864,9 @@ int f2dboundings(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int f2dbounding(struct objlist *obj,char *inst,char *rval,
-                 int argc,char **argv)
+static int 
+f2dbounding(struct objlist *obj,char *inst,char *rval,
+	    int argc,char **argv)
 {
   struct narray *minmax;
   char *axiss;
@@ -5913,7 +5967,8 @@ exit:
   return r;
 }
 
-int f2dsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct objlist *fitobj;
   struct narray iarray,*array,*array2;
@@ -5969,7 +6024,8 @@ int f2dsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   char *file,*base,*date,*time;
@@ -6027,7 +6083,8 @@ int f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 }
 
-int f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct objlist *sys;
   int expand;
@@ -6086,7 +6143,8 @@ int f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dstoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dstoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   char *file,*base,*date,*time;
@@ -6127,7 +6185,8 @@ int f2dstoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 }
 
-int f2dloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+f2dloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct objlist *sys;
   int expand;
@@ -6155,7 +6214,8 @@ int f2dloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int f2dtight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
+static int 
+f2dtight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
 {
   obj_do_tighten(obj, inst, "axis_x");
   obj_do_tighten(obj, inst, "axis_y");
@@ -6164,7 +6224,8 @@ int f2dtight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
   return 0;
 }
 
-int curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
+static int 
+curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
                  int intp,int div)
 {
   int emerr,emserr,emnonum,emig,emng;
@@ -6179,7 +6240,8 @@ int curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
 
   emerr=emserr=emnonum=emig=emng=FALSE;
   switch (intp) {
-  case 0: case 1:
+  case INTERPOLATION_TYPE_SPLINE:
+  case INTERPOLATION_TYPE_SPLINE_CLOSE:
     num=0;
     count=0;
     x=y=z=c1=c2=c3=c4=c5=c6=NULL;
@@ -6266,7 +6328,7 @@ int curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
     memfree(c1); memfree(c2); memfree(c3);
     memfree(c4); memfree(c5); memfree(c6);
     break;
-  case 2:
+  case INTERPOLATION_TYPE_BSPLINE:
     first=TRUE;
     num=0;
     while (getdata(fp)==0) {
@@ -6347,7 +6409,7 @@ int curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
       }
     }
     break;
-  case 3:
+  case INTERPOLATION_TYPE_BSPLINE_CLOSE:
     first=TRUE;
     num=0;
     while (getdata(fp)==0) {
@@ -6443,7 +6505,8 @@ int curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
   return 0;
 }
 
-int f2doutputfile(struct objlist *obj,char *inst,char *rval,
+static int 
+f2doutputfile(struct objlist *obj,char *inst,char *rval,
                   int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
@@ -6547,7 +6610,8 @@ update_field(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
-int update_mask(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+update_mask(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
 
@@ -6566,13 +6630,14 @@ foputabs(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return oputabs(obj, inst, rval, argc, argv);
 }
 
-int foputge1(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+static int 
+foputge1(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   update_field(obj, inst, rval, argc, argv);
   return oputge1(obj, inst, rval, argc, argv);
 }
 
-int
+static int
 adjust_move_num(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct narray *move, *move_x, *move_y;
@@ -6627,7 +6692,7 @@ adjust_move_num(struct objlist *obj, char *inst, char *rval, int argc, char **ar
   return 0;
 }
 
-struct objtable file2d[] = {
+static struct objtable file2d[] = {
   {"init",NVFUNC,NEXEC,f2dinit,NULL,0},
   {"done",NVFUNC,NEXEC,f2ddone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -6753,7 +6818,7 @@ void *addfile()
 
   if (FileConfigHash == NULL) {
     FileConfigHash = nhash_new();
-    if (FileConfigHash ==NULL)
+    if (FileConfigHash == NULL)
       return NULL;
 
     for (i = 0; i < sizeof(FileConfig) / sizeof(*FileConfig); i++) {
@@ -6763,6 +6828,7 @@ void *addfile()
       }
     }
   }
+
   return addobject(NAME,ALIAS,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,f2derrorlist,NULL,NULL);
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: odraw.h,v 1.2 2009/02/05 07:52:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,6 +21,18 @@
  * 
  */
 
+#ifndef ODRAW_HEADER
+#define ODRAW_HEADER
+
+enum INTERPOLATION_TYPE {
+  INTERPOLATION_TYPE_SPLINE,
+  INTERPOLATION_TYPE_SPLINE_CLOSE,
+  INTERPOLATION_TYPE_BSPLINE,
+  INTERPOLATION_TYPE_BSPLINE_CLOSE,
+};
+
+#define INTERPOLATION_TYPE_NUM (INTERPOLATION_TYPE_BSPLINE_CLOSE + 1)
+
 extern char *pathchar[5];
 extern char *capchar[4];
 extern char *joinchar[4];
@@ -33,3 +45,4 @@ extern char *arrowchar[5];
 int pathsave(struct objlist *obj,char *inst,char *rval,
              int argc,char **argv);
 
+#endif
