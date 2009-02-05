@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.5 2009/02/05 10:18:20 hito Exp $
+ * $Id: oagrid.c,v 1.6 2009/02/05 12:27:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -370,7 +370,7 @@ agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           y1 = g;
 	  break;
 	case 1:
-          x0 = g;
+	  x0 = g;
           y0 = ayposy;
           x1 = g;
           y1 = ayposy - aylen;

@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.12 2009/02/05 10:18:20 hito Exp $
+ * $Id: oaxis.c,v 1.13 2009/02/05 12:27:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -578,7 +578,7 @@ axisdirection(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   * (int *) argv[2] = dir;
 
-  return axisgeometry(obj, inst, rval, argc, **argv);
+  return axisgeometry(obj, inst, rval, argc, argv);
 }
 
 
