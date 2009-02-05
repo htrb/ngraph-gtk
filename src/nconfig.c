@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.4 2009/02/05 08:40:14 hito Exp $
+ * $Id: nconfig.c,v 1.5 2009/02/05 08:42:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,7 +46,11 @@
 #endif
 
 #define CONF "Ngraph.ini"
+#ifndef WINDOWS
 #define CONFBAK "Ngraph.ini~"
+#else
+#define CONFBAK "Ngraph.in~"
+#endif
 #define LOCK "Ngraph.lock"
 
 #define TRUE  1

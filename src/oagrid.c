@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.3 2009/02/05 07:58:29 hito Exp $
+ * $Id: oagrid.c,v 1.4 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -419,9 +419,7 @@ agridtight(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-#define TBLNUM 17
-
-static struct objtable agrid[TBLNUM] = {
+static struct objtable agrid[] = {
   {"init",NVFUNC,NEXEC,agridinit,NULL,0},
   {"done",NVFUNC,NEXEC,agriddone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -440,6 +438,8 @@ static struct objtable agrid[TBLNUM] = {
   {"draw",NVFUNC,NREAD|NEXEC,agriddraw,"i",0},
   {"tight",NVFUNC,NREAD|NEXEC,agridtight,NULL,0},
 };
+
+#define TBLNUM (sizeof(agrid) / sizeof(*agrid))
 
 void *addagrid()
 {
