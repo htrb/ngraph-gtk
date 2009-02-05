@@ -1676,7 +1676,7 @@
 	when local->region is not NULL.
 
 	* src/shell.c (checkcmd): bug fix: initialize prmcur->prmno as
-	PPNULL when prmcur->str[1] == ';'.
+	NULL when prmcur->str[1] == ';'.
 	(checkcmd): fix indent.
 
 	* src/gtk/ogra2x11.c (gtkinit): free gra2cairo_local when failed.
