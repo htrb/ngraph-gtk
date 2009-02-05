@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.54 2009/01/20 06:18:51 hito Exp $
+ * $Id: ofile.c,v 1.55 2009/02/05 02:29:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4188,6 +4188,8 @@ int f2ddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     break;
   case 19:
     rcode=fitout(obj,fp,GC,lwidth,snum,style,ljoin,lmiter,fit,redraw);
+    if (redraw)
+      fp->datanum = f2dlocal->num;
     break;
   default:
     /* not reachable */
@@ -4557,8 +4559,9 @@ int f2dredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"data_num",inst,&num);
   _getobj(obj,"redraw_num",inst,&dmax);
 
-  if (num > 0 && num <= dmax && redrawf) f2ddraw(obj,inst,rval,argc,argv);
-  else {
+  if (num > 0 && num <= dmax && redrawf) {
+    f2ddraw(obj,inst,rval,argc,argv);
+  } else {
     _getobj(obj,"GC",inst,&GC);
     if (GC<0) return 0;
     GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
@@ -5313,7 +5316,7 @@ int f2dstat(struct objlist *obj,char *inst,char *rval,
     sumy = f2dlocal->davy;
     sumxx = f2dlocal->dsigx;
     sumyy = f2dlocal->dsigy;
-    dnum =  f2dlocal->num;
+    dnum = f2dlocal->num;
 
     if (f2dlocal->dminx != HUGE_VAL || strcmp(field, "dnum") == 0) {
       goto End;
