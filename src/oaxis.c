@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.11 2009/02/05 08:40:14 hito Exp $
+ * $Id: oaxis.c,v 1.12 2009/02/05 10:18:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -563,6 +563,22 @@ axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayfree(array);
   if (_putobj(obj,"bbox",inst,NULL)) return 1;
   return 0;
+}
+
+static int 
+axisdirection(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int dir;
+
+  dir = * (int *) argv[2];
+
+  dir %= 36000;
+  if (dir < 0)
+    dir += 36000;
+
+  * (int *) argv[2] = dir;
+
+  return axisgeometry(obj, inst, rval, argc, **argv);
 }
 
 
@@ -2896,7 +2912,7 @@ static struct objtable axis[] = {
   {"type",NENUM,NREAD|NWRITE,NULL,axistypechar,0},
   {"x",NINT,NREAD|NWRITE,axisgeometry,NULL,0},
   {"y",NINT,NREAD|NWRITE,axisgeometry,NULL,0},
-  {"direction",NINT,NREAD|NWRITE,axisgeometry,NULL,0},
+  {"direction",NINT,NREAD|NWRITE,axisdirection,NULL,0},
   {"baseline",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"length",NINT,NREAD|NWRITE,axisgeometry,NULL,0},
   {"width",NINT,NREAD|NWRITE,NULL,NULL,0},

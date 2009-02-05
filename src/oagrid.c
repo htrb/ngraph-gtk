@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.4 2009/02/05 08:40:14 hito Exp $
+ * $Id: oagrid.c,v 1.5 2009/02/05 10:18:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -146,126 +146,144 @@ agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (axisx==NULL) {
     return 0;
-  } else {
-    arrayinit(&iarray,sizeof(int));
-    if (getobjilist(axisx,&aobj,&iarray,FALSE,NULL)) return 1;
-    anum=arraynum(&iarray);
-    if (anum<1) {
-      arraydel(&iarray);
-      error2(obj,ERRNOAXISINST,axisx);
-      return 1;
-    }
-    id=*(int *)arraylast(&iarray);
+  }
+
+  arrayinit(&iarray,sizeof(int));
+  if (getobjilist(axisx,&aobj,&iarray,FALSE,NULL)) return 1;
+  anum=arraynum(&iarray);
+  if (anum<1) {
     arraydel(&iarray);
-    if ((inst1=getobjinst(aobj,id))==NULL) return 1;
-    if (_getobj(aobj,"x",inst1,&axposx)) return 1;
-    if (_getobj(aobj,"y",inst1,&axposy)) return 1;
-    if (_getobj(aobj,"length",inst1,&axlen)) return 1;
-    if (_getobj(aobj,"direction",inst1,&dirx)) return 1;
-    if (_getobj(aobj,"min",inst1,&axmin)) return 1;
-    if (_getobj(aobj,"max",inst1,&axmax)) return 1;
-    if (_getobj(aobj,"inc",inst1,&axinc)) return 1;
-    if (_getobj(aobj,"div",inst1,&axdiv)) return 1;
-    if (_getobj(aobj,"type",inst1,&axtype)) return 1;
-    if ((axmin==0) && (axmax==0) && (axinc==0)) {
-      if (_getobj(aobj,"reference",inst1,&raxis)) return 1;
-      if (raxis!=NULL) {
-        arrayinit(&iarray,sizeof(int));
-        if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
-          anum=arraynum(&iarray);
-          if (anum>0) {
-            id=*(int *)arraylast(&iarray);
-            arraydel(&iarray);
-            if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-              _getobj(aobj,"min",inst1,&axmin);
-              _getobj(aobj,"max",inst1,&axmax);
-              _getobj(aobj,"inc",inst1,&axinc);
-              _getobj(aobj,"div",inst1,&axdiv);
-              _getobj(aobj,"type",inst1,&axtype);
-            }
-          }
-        }
-      }
-    }
-    if ((dirx%9000)!=0) {
-      error(obj,ERRAXISDIR);
-      return 1;
-    }
-    axdir=dirx/9000;
-    if (axmin!=axmax) {
-      if (axtype==1) {
-        minx=log10(axmin);
-        maxx=log10(axmax);
-      } else if (axtype==2) {
-        minx=1/axmin;
-        maxx=1/axmax;
-      } else {
-        minx=axmin;
-        maxx=axmax;
+    error2(obj,ERRNOAXISINST,axisx);
+    return 1;
+  }
+  id=*(int *)arraylast(&iarray);
+  arraydel(&iarray);
+  if ((inst1=getobjinst(aobj,id))==NULL) return 1;
+  if (_getobj(aobj,"x",inst1,&axposx)) return 1;
+  if (_getobj(aobj,"y",inst1,&axposy)) return 1;
+  if (_getobj(aobj,"length",inst1,&axlen)) return 1;
+  if (_getobj(aobj,"direction",inst1,&dirx)) return 1;
+  if (_getobj(aobj,"min",inst1,&axmin)) return 1;
+  if (_getobj(aobj,"max",inst1,&axmax)) return 1;
+  if (_getobj(aobj,"inc",inst1,&axinc)) return 1;
+  if (_getobj(aobj,"div",inst1,&axdiv)) return 1;
+  if (_getobj(aobj,"type",inst1,&axtype)) return 1;
+  if ((axmin==0) && (axmax==0) && (axinc==0)) {
+    if (_getobj(aobj,"reference",inst1,&raxis)) return 1;
+    if (raxis!=NULL) {
+      arrayinit(&iarray,sizeof(int));
+      if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
+	anum=arraynum(&iarray);
+	if (anum>0) {
+	  id=*(int *)arraylast(&iarray);
+	  arraydel(&iarray);
+	  if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
+	    _getobj(aobj,"min",inst1,&axmin);
+	    _getobj(aobj,"max",inst1,&axmax);
+	    _getobj(aobj,"inc",inst1,&axinc);
+	    _getobj(aobj,"div",inst1,&axdiv);
+	    _getobj(aobj,"type",inst1,&axtype);
+	  }
+	}
       }
     }
   }
+  if ((dirx%9000)!=0) {
+    error(obj,ERRAXISDIR);
+    return 1;
+  }
+  dirx %= 36000;
+  if (dirx < 0)
+    dirx += 36000;
+
+  axdir = dirx / 9000;
+  if (axmin!=axmax) {
+    if (axtype==1) {
+      minx=log10(axmin);
+      maxx=log10(axmax);
+    } else if (axtype==2) {
+      minx=1/axmin;
+      maxx=1/axmax;
+    } else {
+      minx=axmin;
+      maxx=axmax;
+    }
+  } else {
+    /* these initialization are exist to avoid compile warnings. */
+    minx = 0;
+    maxx = 0;
+  }
+
+
   if (axisy==NULL) {
     return 0;
-  } else {
-    arrayinit(&iarray,sizeof(int));
-    if (getobjilist(axisy,&aobj,&iarray,FALSE,NULL)) return 1;
-    anum=arraynum(&iarray);
-    if (anum<1) {
-      arraydel(&iarray);
-      error2(obj,ERRNOAXISINST,axisy);
-      return 1;
-    }
-    id=*(int *)arraylast(&iarray);
+  }
+  arrayinit(&iarray,sizeof(int));
+  if (getobjilist(axisy,&aobj,&iarray,FALSE,NULL)) return 1;
+  anum=arraynum(&iarray);
+  if (anum<1) {
     arraydel(&iarray);
-    if ((inst1=getobjinst(aobj,id))==NULL) return 1;
-    if (_getobj(aobj,"x",inst1,&ayposx)) return 1;
-    if (_getobj(aobj,"y",inst1,&ayposy)) return 1;
-    if (_getobj(aobj,"length",inst1,&aylen)) return 1;
-    if (_getobj(aobj,"direction",inst1,&diry)) return 1;
-    if (_getobj(aobj,"min",inst1,&aymin)) return 1;
-    if (_getobj(aobj,"max",inst1,&aymax)) return 1;
-    if (_getobj(aobj,"inc",inst1,&ayinc)) return 1;
-    if (_getobj(aobj,"div",inst1,&aydiv)) return 1;
-    if (_getobj(aobj,"type",inst1,&aytype)) return 1;
-    if ((aymin==0) && (aymax==0) && (ayinc==0)) {
-      if (_getobj(aobj,"reference",inst1,&raxis)) return 1;
-      if (raxis!=NULL) {
-        arrayinit(&iarray,sizeof(int));
-        if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
-          anum=arraynum(&iarray);
-          if (anum>0) {
-            id=*(int *)arraylast(&iarray);
-            arraydel(&iarray);
-            if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-              _getobj(aobj,"min",inst1,&aymin);
-              _getobj(aobj,"max",inst1,&aymax);
-              _getobj(aobj,"inc",inst1,&ayinc);
-              _getobj(aobj,"div",inst1,&aydiv);
-              _getobj(aobj,"type",inst1,&aytype);
-            }
-          }
-        }
-      }
-    }
-    if ((diry%9000)!=0) {
-      error(obj,ERRAXISDIR);
-      return 1;
-    }
-    aydir=diry/9000;
-    if (aymin!=aymax) {
-      if (aytype==1) {
-        miny=log10(aymin);
-        maxy=log10(aymax);
-      } else if (aytype==2) {
-        miny=1/aymin;
-        maxy=1/aymax;
-      } else {
-        miny=aymin;
-        maxy=aymax;
+    error2(obj,ERRNOAXISINST,axisy);
+    return 1;
+  }
+  id=*(int *)arraylast(&iarray);
+  arraydel(&iarray);
+  if ((inst1=getobjinst(aobj,id))==NULL) return 1;
+  if (_getobj(aobj,"x",inst1,&ayposx)) return 1;
+  if (_getobj(aobj,"y",inst1,&ayposy)) return 1;
+  if (_getobj(aobj,"length",inst1,&aylen)) return 1;
+  if (_getobj(aobj,"direction",inst1,&diry)) return 1;
+  if (_getobj(aobj,"min",inst1,&aymin)) return 1;
+  if (_getobj(aobj,"max",inst1,&aymax)) return 1;
+  if (_getobj(aobj,"inc",inst1,&ayinc)) return 1;
+  if (_getobj(aobj,"div",inst1,&aydiv)) return 1;
+  if (_getobj(aobj,"type",inst1,&aytype)) return 1;
+  if ((aymin==0) && (aymax==0) && (ayinc==0)) {
+    if (_getobj(aobj,"reference",inst1,&raxis)) return 1;
+    if (raxis!=NULL) {
+      arrayinit(&iarray,sizeof(int));
+      if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
+	anum=arraynum(&iarray);
+	if (anum>0) {
+	  id=*(int *)arraylast(&iarray);
+	  arraydel(&iarray);
+	  if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
+	    _getobj(aobj,"min",inst1,&aymin);
+	    _getobj(aobj,"max",inst1,&aymax);
+	    _getobj(aobj,"inc",inst1,&ayinc);
+	    _getobj(aobj,"div",inst1,&aydiv);
+	    _getobj(aobj,"type",inst1,&aytype);
+	  }
+	}
       }
     }
   }
+  if ((diry%9000)!=0) {
+    error(obj,ERRAXISDIR);
+    return 1;
+  }
+  diry %= 36000;
+  if (diry < 0)
+    diry += 36000;
+
+  aydir=diry/9000;
+  if (aymin!=aymax) {
+    if (aytype==1) {
+      miny=log10(aymin);
+      maxy=log10(aymax);
+    } else if (aytype==2) {
+      miny=1/aymin;
+      maxy=1/aymax;
+    } else {
+      miny=aymin;
+      maxy=aymax;
+    }
+  } else {
+    /* these initialization are exist to avoid compile warnings. */
+    miny = 0;
+    maxy = 0;
+  }
+
   if (((axdir+aydir)%2)==0) {
     error(obj,ERRAXISDIR);
     return 1;
@@ -324,31 +342,54 @@ agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         wid=wid3;
       }
       if (wid!=0) {
+	int g;
+
         GRAlinestyle(GC,snum,sdata,wid,0,0,1000);
-        if (axdir==0) gx0=axposx+(po-minx)*axlen/(maxx-minx);
-        else if (axdir==1) gy0=axposy-(po-minx)*axlen/(maxx-minx);
-        else if (axdir==2) gx0=axposx-(po-minx)*axlen/(maxx-minx);
-        else gy0=axposy+(po-minx)*axlen/(maxx-minx);
-        if (aydir==0) {
-          x0=ayposx;
-          y0=gy0;
-          x1=ayposx+aylen;
-          y1=gy0;
-        } else if (aydir==1) {
-          x0=gx0;
-          y0=ayposy;
-          x1=gx0;
-          y1=ayposy-aylen;
-        } else if (aydir==2) {
-          x0=ayposx;
-          y0=gy0;
-          x1=ayposx-aylen;
-          y1=gy0;
-        } else {
-          x0=ayposx;
-          y0=gy0;
-          x1=ayposx-aylen;
-          y1=gy0;
+	switch (axdir) {
+	case 0:
+	  g = axposx + (po - minx) * axlen / (maxx - minx);
+	  break;
+	case 1:
+	  g = axposy - (po - minx) * axlen / (maxx - minx);
+	  break;
+        case 2:
+	  g = axposx - (po - minx) * axlen / (maxx - minx);
+	  break;
+	case 3:
+	  g = axposy + (po - minx) * axlen / (maxx - minx);
+	  break;
+	default:
+	  /* never reached */
+	  g = 0;
+	}
+        switch (aydir) {
+	case 0:
+          x0 = ayposx;
+          y0 = g;
+          x1 = ayposx + aylen;
+          y1 = g;
+	  break;
+	case 1:
+          x0 = g;
+          y0 = ayposy;
+          x1 = g;
+          y1 = ayposy - aylen;
+	  break;
+	case 2:
+          x0 = ayposx;
+          y0 = g;
+          x1 = ayposx - aylen;
+          y1 = g;
+	  break;
+	case 3:
+          x0 = g;
+          y0 = ayposy;
+          x1 = g;
+          y1 = ayposx + aylen;
+	  break;
+	default:
+	  /* never reached */
+	  x0 = x1 = y0 = y1 = 0;
         }
         GRAline(GC,x0,y0,x1,y1);
       }
@@ -374,31 +415,54 @@ agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         wid=wid3;
       }
       if (wid!=0) {
+	int g;
+
         GRAlinestyle(GC,snum,sdata,wid,0,0,1000);
-        if (aydir==0) gx0=ayposx+(po-miny)*aylen/(maxy-miny);
-        else if (aydir==1) gy0=ayposy-(po-miny)*aylen/(maxy-miny);
-        else if (aydir==2) gx0=ayposx-(po-miny)*aylen/(maxy-miny);
-        else gy0=ayposy+(po-miny)*aylen/(maxy-miny);
-        if (axdir==0) {
-          x0=axposx;
-          y0=gy0;
-          x1=axposx+axlen;
-          y1=gy0;
-        } else if (axdir==1) {
-          x0=gx0;
-          y0=axposy;
-          x1=gx0;
-          y1=axposy-axlen;
-        } else if (axdir==2) {
-          x0=axposx;
-          y0=gy0;
-          x1=axposx-axlen;
-          y1=gy0;
-        } else {
-          x0=axposx;
-          y0=gy0;
-          x1=axposx-axlen;
-          y1=gy0;
+        switch (aydir) {
+	case 0:
+	  g = ayposx + (po - miny) * aylen / (maxy - miny);
+	  break;
+        case 1:
+	  g = ayposy - (po - miny) * aylen / (maxy - miny);
+	  break;
+        case 2:
+	  g = ayposx - (po - miny) * aylen / (maxy - miny);
+	  break;
+        case 3:
+	  g = ayposy + (po - miny) * aylen / (maxy - miny);
+	  break;
+	default:
+	  /* never reached */
+	  g = 0;
+	}
+	switch (axdir) {
+	case 0:
+          x0 = axposx;
+          y0 = g;
+          x1 = axposx + axlen;
+          y1 = g;
+	  break;
+	case 1:
+          x0 = g;
+          y0 = axposy;
+          x1 = g;
+          y1 = axposy - axlen;
+	  break;
+	case 2:
+          x0 = axposx;
+          y0 = g;
+          x1 = axposx - axlen;
+          y1 = g;
+	  break;
+	case 3:
+          x0 = g;
+          y0 = axposy;
+          x1 = g;
+          y1 = axposy + axlen;
+	  break;
+	default:
+	  /* never reached */
+	  x0 = x1 = y0 = y1 = 0;
         }
         GRAline(GC,x0,y0,x1,y1);
       }

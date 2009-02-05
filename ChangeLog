@@ -1,5 +1,14 @@
 2009-02-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/oagrid.c (agriddraw): bug fix: fix calculation of coordinate
+	when "axdir" or "aydir" is 3.
+	(agriddraw): adjust "dirx" and "diry" as these value is greater or
+	equal to zero and less than 36000.
+
+	* src/oaxis.c (axisdirection): add.
+	(axis): "axisdirection()" is called wheh field "direction" is
+	changed.
+
 	* src/odraw.h (enum INTERPOLATION_TYPE): add.
 
 	* src/mathcode.c (mathcode): return value type of "mathcode()" is
