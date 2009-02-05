@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.32 2009/01/14 08:44:18 hito Exp $
+ * $Id: x11graph.c,v 1.33 2009/02/05 05:34:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "ngraph.h"
 #include "object.h"
@@ -858,8 +859,11 @@ DirectoryDialogClose(GtkWidget *w, void *data)
 
   s = gtk_entry_get_text(GTK_ENTRY(d->dir));
 
-  if (s && strlen(s) > 0)
-    chdir(s);
+  if (s && strlen(s) > 0) {
+    if (chdir(s)) {
+      ErrorMessage(errno);
+    }
+  }
 }
 
 void
@@ -1272,8 +1276,11 @@ CmGraphHistory(GtkWidget *w, gpointer client_data)
   if (!CheckSave())
     return;
 
-  if ((fil >= 0) && (fil < num2) && data2[fil] && (data2[0] != '\0'))
-    chdir(data2[fil]);
+  if ((fil >= 0) && (fil < num2) && data2[fil] && (data2[0] != '\0')) {
+    if (chdir(data2[fil])) {
+      ErrorMessage(errno);
+    }
+  }
 
   LoadDialog(&DlgLoad);
 

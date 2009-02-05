@@ -1,5 +1,10 @@
 2009-02-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11graph.c (DirectoryDialogClose, CmGraphHistory): call
+	"ErrorMessage()" when "chdir()" returns non zero value.
+
+	* src/gtk/x11commn.c (ErrorMessage): add.
+
 	* src/gtk/x11file.c (FitDialogSetSensitivity): use "FIT_OBJ_TYPE".
 	(enum MATH_FNC_TYPE): add.
 	(MathTextDialogSetup, MathTextDialogClose): use "MATH_FNC_TYPE".

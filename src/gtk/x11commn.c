@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.24 2008/12/30 02:54:04 hito Exp $
+ * $Id: x11commn.c,v 1.25 2009/02/05 05:34:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,7 @@
 #include <sys/stat.h>
 #include <limits.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include "dir_defs.h"
 #include "ngraph.h"
@@ -1690,4 +1691,16 @@ ProgressDialogFinalize(void)
   ProgressDiaog = NULL;
   ProgressBar = NULL;
   set_draw_lock(DrawLockNone);
+}
+
+void
+ErrorMessage(int n)
+{
+  char *ptr;
+
+  ptr = g_locale_to_utf8(strerror(n), -1, NULL, NULL, NULL);
+  if (ptr) {
+    MessageBox(TopLevel, ptr, _("error"), MB_OK);
+    g_free(ptr);
+  }
 }
