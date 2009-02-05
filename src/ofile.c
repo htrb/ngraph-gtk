@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.56 2009/02/05 05:09:41 hito Exp $
+ * $Id: ofile.c,v 1.57 2009/02/05 06:38:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -405,147 +405,151 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   }
 
   if (axis) {
-    if (axisx==NULL) {
-      error(obj,ERRNOAXIS);
+    if (axisx == NULL) {
+      error(obj, ERRNOAXIS);
       return NULL;
-    } else {
-      arrayinit(&iarray,sizeof(int));
-      if (getobjilist(axisx,&aobj,&iarray,FALSE,NULL)) return NULL;
-      anum=arraynum(&iarray);
-      if (anum<1) {
-        arraydel(&iarray);
-        error2(obj,ERRNOAXISINST,axisx);
-        return NULL;
-      }
-      id=*(int *)arraylast(&iarray);
-      arraydel(&iarray);
-      if ((inst1=getobjinst(aobj,id))==NULL) return NULL;
-      if (_getobj(aobj,"x",inst1,&axposx)) return NULL;
-      if (_getobj(aobj,"y",inst1,&axposy)) return NULL;
-      if (_getobj(aobj,"length",inst1,&axlen)) return NULL;
-      if (_getobj(aobj,"direction",inst1,&dirx)) return NULL;
-      if (_getobj(aobj,"min",inst1,&axmin)) return NULL;
-      if (_getobj(aobj,"max",inst1,&axmax)) return NULL;
-      if (_getobj(aobj,"type",inst1,&axtype)) return NULL;
-      if ((axmin==0) && (axmax==0)) {
-        if (_getobj(aobj,"reference",inst1,&raxis)) return NULL;
-        if (raxis!=NULL) {
-          arrayinit(&iarray,sizeof(int));
-          if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
-            anum=arraynum(&iarray);
-            if (anum>0) {
-              id=*(int *)arraylast(&iarray);
-              arraydel(&iarray);
-              if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-                _getobj(aobj,"min",inst1,&axmin);
-                _getobj(aobj,"max",inst1,&axmax);
-                _getobj(aobj,"type",inst1,&axtype);
-              }
-            }
-          }
-        }
-      }
-      axdir=dirx/18000.0*MPI;
-      axvx=cos(axdir);
-      axvy=-sin(axdir);
-      axmin2=axmin;
-      axmax2=axmax;
-      if (axmin==axmax) {
-        error(obj,ERRNOSETAXIS);
-        return NULL;
-      } else if (axtype==1) {
-        if ((axmin<=0) || (axmax<=0)) {
-          error(obj,ERRMINMAX);
-          return NULL;
-        } else {
-          axmin=log10(axmin);
-          axmax=log10(axmax);
-        }
-      } else if (axtype==2) {
-        if (axmin*axmax<=0) {
-          error(obj,ERRMINMAX);
-          return NULL;
-        } else {
-          axmin=1/axmin;
-          axmax=1/axmax;
-        }
-      }
-      ratex=axlen/(axmax-axmin);
     }
+
+    arrayinit(&iarray,sizeof(int));
+    if (getobjilist(axisx,&aobj,&iarray,FALSE,NULL)) return NULL;
+    anum=arraynum(&iarray);
+    if (anum<1) {
+      arraydel(&iarray);
+      error2(obj,ERRNOAXISINST,axisx);
+      return NULL;
+    }
+    id=*(int *)arraylast(&iarray);
+    arraydel(&iarray);
+    if ((inst1=getobjinst(aobj,id))==NULL) return NULL;
+    if (_getobj(aobj,"x",inst1,&axposx)) return NULL;
+    if (_getobj(aobj,"y",inst1,&axposy)) return NULL;
+    if (_getobj(aobj,"length",inst1,&axlen)) return NULL;
+    if (_getobj(aobj,"direction",inst1,&dirx)) return NULL;
+    if (_getobj(aobj,"min",inst1,&axmin)) return NULL;
+    if (_getobj(aobj,"max",inst1,&axmax)) return NULL;
+    if (_getobj(aobj,"type",inst1,&axtype)) return NULL;
+    if ((axmin==0) && (axmax==0)) {
+      if (_getobj(aobj,"reference",inst1,&raxis)) return NULL;
+      if (raxis!=NULL) {
+	arrayinit(&iarray,sizeof(int));
+	if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
+	  anum=arraynum(&iarray);
+	  if (anum>0) {
+	    id=*(int *)arraylast(&iarray);
+	    arraydel(&iarray);
+	    if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
+	      _getobj(aobj,"min",inst1,&axmin);
+	      _getobj(aobj,"max",inst1,&axmax);
+	      _getobj(aobj,"type",inst1,&axtype);
+	    }
+	  }
+	}
+      }
+    }
+    axdir=dirx/18000.0*MPI;
+    axvx=cos(axdir);
+    axvy=-sin(axdir);
+    axmin2=axmin;
+    axmax2=axmax;
+    if (axmin==axmax) {
+      error(obj,ERRNOSETAXIS);
+      return NULL;
+    } else if (axtype==1) {
+      if ((axmin<=0) || (axmax<=0)) {
+	error(obj,ERRMINMAX);
+	return NULL;
+      } else {
+	axmin=log10(axmin);
+	axmax=log10(axmax);
+      }
+    } else if (axtype==2) {
+      if (axmin*axmax<=0) {
+	error(obj,ERRMINMAX);
+	return NULL;
+      } else {
+	axmin=1/axmin;
+	axmax=1/axmax;
+      }
+    }
+    ratex=axlen/(axmax-axmin);
+
     if (axisy==NULL) {
       error(obj,ERRNOAXIS);
       return NULL;
-    } else {
-      arrayinit(&iarray,sizeof(int));
-      if (getobjilist(axisy,&aobj,&iarray,FALSE,NULL)) return NULL;
-      anum=arraynum(&iarray);
-      if (anum<1) {
-        arraydel(&iarray);
-        error2(obj,ERRNOAXISINST,axisy);
-        return NULL;
-      }
-      id=*(int *)arraylast(&iarray);
-      arraydel(&iarray);
-      if ((inst1=getobjinst(aobj,id))==NULL) return NULL;
-      if (_getobj(aobj,"x",inst1,&ayposx)) return NULL;
-      if (_getobj(aobj,"y",inst1,&ayposy)) return NULL;
-      if (_getobj(aobj,"length",inst1,&aylen)) return NULL;
-      if (_getobj(aobj,"direction",inst1,&diry)) return NULL;
-      if (_getobj(aobj,"min",inst1,&aymin)) return NULL;
-      if (_getobj(aobj,"max",inst1,&aymax)) return NULL;
-      if (_getobj(aobj,"type",inst1,&aytype)) return NULL;
-      if ((aymin==0) && (aymax==0)) {
-        if (_getobj(aobj,"reference",inst1,&raxis)) return NULL;
-        if (raxis!=NULL) {
-          arrayinit(&iarray,sizeof(int));
-          if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
-            anum=arraynum(&iarray);
-            if (anum>0) {
-              id=*(int *)arraylast(&iarray);
-              arraydel(&iarray);
-              if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-                _getobj(aobj,"min",inst1,&aymin);
-                _getobj(aobj,"max",inst1,&aymax);
-                _getobj(aobj,"type",inst1,&aytype);
-              }
-            }
-          }
-        }
-      }
-      aydir=diry/18000.0*MPI;
-      ayvx=cos(aydir);
-      ayvy=-sin(aydir);
-      aymin2=aymin;
-      aymax2=aymax;
-      if (aymin==aymax) {
-        error(obj,ERRNOSETAXIS);
-        return NULL;
-      } else if (aytype==1) {
-        if ((aymin<=0) || (aymax<=0)) {
-          error(obj,ERRMINMAX);
-          return NULL;
-        } else {
-          aymin=log10(aymin);
-          aymax=log10(aymax);
-        }
-      } else if (aytype==2) {
-        if (aymin*aymax<=0) {
-          error(obj,ERRMINMAX);
-          return NULL;
-        } else {
-          aymin=1/aymin;
-          aymax=1/aymax;
-        }
-      }
-      ratey=aylen/(aymax-aymin);
     }
+
+    arrayinit(&iarray,sizeof(int));
+    if (getobjilist(axisy,&aobj,&iarray,FALSE,NULL)) return NULL;
+    anum=arraynum(&iarray);
+    if (anum<1) {
+      arraydel(&iarray);
+      error2(obj,ERRNOAXISINST,axisy);
+      return NULL;
+    }
+    id=*(int *)arraylast(&iarray);
+    arraydel(&iarray);
+    if ((inst1=getobjinst(aobj,id))==NULL) return NULL;
+    if (_getobj(aobj,"x",inst1,&ayposx)) return NULL;
+    if (_getobj(aobj,"y",inst1,&ayposy)) return NULL;
+    if (_getobj(aobj,"length",inst1,&aylen)) return NULL;
+    if (_getobj(aobj,"direction",inst1,&diry)) return NULL;
+    if (_getobj(aobj,"min",inst1,&aymin)) return NULL;
+    if (_getobj(aobj,"max",inst1,&aymax)) return NULL;
+    if (_getobj(aobj,"type",inst1,&aytype)) return NULL;
+    if ((aymin==0) && (aymax==0)) {
+      if (_getobj(aobj,"reference",inst1,&raxis)) return NULL;
+      if (raxis!=NULL) {
+	arrayinit(&iarray,sizeof(int));
+	if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
+	  anum=arraynum(&iarray);
+	  if (anum>0) {
+	    id=*(int *)arraylast(&iarray);
+	    arraydel(&iarray);
+	    if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
+	      _getobj(aobj,"min",inst1,&aymin);
+	      _getobj(aobj,"max",inst1,&aymax);
+	      _getobj(aobj,"type",inst1,&aytype);
+	    }
+	  }
+	}
+      }
+    }
+    aydir=diry/18000.0*MPI;
+    ayvx=cos(aydir);
+    ayvy=-sin(aydir);
+    aymin2=aymin;
+    aymax2=aymax;
+    if (aymin==aymax) {
+      error(obj,ERRNOSETAXIS);
+      return NULL;
+    } else if (aytype==1) {
+      if ((aymin<=0) || (aymax<=0)) {
+	error(obj,ERRMINMAX);
+	return NULL;
+      } else {
+	aymin=log10(aymin);
+	aymax=log10(aymax);
+      }
+    } else if (aytype==2) {
+      if (aymin*aymax<=0) {
+	error(obj,ERRMINMAX);
+	return NULL;
+      } else {
+	aymin=1/aymin;
+	aymax=1/aymax;
+      }
+    }
+    ratey=aylen/(aymax-aymin);
+
     ip1=-axvy*ayvx+axvx*ayvy;
     ip2=-ayvy*axvx+ayvx*axvy;
+
     if ((fabs(ip1)<=1e-15) || (fabs(ip2)<=1e-15)) {
       error(obj,ERRAXISDIR);
       return NULL;
     }
   } else {
+    /* these initialization are exist to avoid compile warnings. */
     axposx = 0;
     axposy = 0;
     axlen = 0;
@@ -561,6 +565,19 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
     aymin = 0;
     aymax = 0;
     aytype = 0;
+
+    axvx = 0;
+    axvy = 0;
+    ayvx = 0;
+    ayvy = 0;
+    aydir = 0;
+    axdir = 0;
+    ratey = 0;
+    ratex = 0;
+    aymax2 = 0;
+    aymin2 = 0;
+    axmax2 = 0;
+    axmin2 = 0;
   }
   if ((fp=memalloc(sizeof(struct f2ddata)))==NULL) return NULL;
   fp->file=file;
@@ -863,7 +880,8 @@ void closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 
 int f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 {
-  int rcode,ecode,maxdim,need2pass;
+  enum MATH_CODE_ERROR_NO rcode;
+  int maxdim,need2pass;
   char *code;
   struct f2dlocal *f2dlocal;
   struct narray *needfile;
@@ -878,17 +896,17 @@ int f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
         arrayfree(needfile);
         needfile=NULL;
       }
-      if (rcode!=MCNOERR) {
-        if (rcode==MCSYNTAX) {
-	  ecode=ERRSYNTAX;
-        } else if (rcode==MCILLEGAL) {
-	  ecode=ERRILLEGAL;
-        } else if (rcode==MCNEST) {
-	  ecode=ERRNEST;
-	} else {
-	  ecode=ERRUNKNOWN;
-	}
-        error(obj,ecode);
+      switch (rcode) {
+      case MCNOERR:
+        break;
+      case MCSYNTAX:
+	error(obj, ERRSYNTAX);
+        return 1;
+      case MCILLEGAL:
+	error(obj, ERRILLEGAL);
+        return 1;
+      case MCNEST:
+	error(obj, ERRNEST);
         return 1;
       }
     } else {
@@ -917,11 +935,17 @@ int f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
     if (math!=NULL) {
       rcode=mathcode(math,&code,NULL,NULL,NULL,NULL,
                      TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
-      if (rcode!=MCNOERR) {
-        if (rcode==MCSYNTAX) ecode=ERRSYNTAX;
-        else if (rcode==MCILLEGAL) ecode=ERRILLEGAL;
-        else if (rcode==MCNEST) ecode=ERRNEST;
-        error(obj,ecode);
+      switch (rcode) {
+      case MCNOERR:
+        break;
+      case MCSYNTAX:
+	error(obj, ERRSYNTAX);
+        return 1;
+      case MCILLEGAL:
+	error(obj, ERRILLEGAL);
+        return 1;
+      case MCNEST:
+	error(obj, ERRNEST);
         return 1;
       }
     } else code=NULL;
@@ -2165,6 +2189,13 @@ int getdata(struct f2ddata *fp)
     sm2=fp->smoothy;
     sm3=fp->smoothy;
     break;
+  default:
+    /* never reached */
+    smx = 0;
+    smy = 0;
+    sm2 = 0;
+    sm3 = 0;
+    break;
   }
   sumx=sumy=sum2=sum3=0;
   numx=numy=num2=num3=0;
@@ -2263,10 +2294,12 @@ int getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
   double *gdata;
   char *gstat;
 
-  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
-   memfree(gdata);
-   memfree(gstat);
+  gdata = (double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1));
+  gstat = (char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1));
+
+  if (gdata == NULL || gstat  == NULL) {
+    memfree(gdata);
+    memfree(gstat);
    return -1;
   }
   *dd=0;
@@ -3908,7 +3941,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
   double min,max,dx,dy;
   int div;
   char *code;
-  int i,ecode,rcode;
+  int i,rcode;
   double dnum;
   char *weight;
   int maxdim,need2pass;
@@ -3965,11 +3998,19 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
       needdata=arraynew(sizeof(int));
       rcode=mathcode(weight,&code,needdata,NULL,&maxdim,&need2pass,
                    TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE);
-      if (rcode!=MCNOERR) {
-        if (rcode==MCSYNTAX) ecode=ERRSYNTAX;
-        else if (rcode==MCILLEGAL) ecode=ERRILLEGAL;
-        else if (rcode==MCNEST) ecode=ERRNEST;
-        error(obj,ecode);
+      switch (rcode) {
+      case MCNOERR:
+        break;
+      case MCSYNTAX:
+	error(obj, ERRSYNTAX);
+        arraydel(&data);
+        return 1;
+      case MCILLEGAL:
+	error(obj, ERRILLEGAL);
+        arraydel(&data);
+        return 1;
+      case MCNEST:
+	error(obj, ERRNEST);
         arraydel(&data);
         return 1;
       }
@@ -4019,12 +4060,18 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
   rcode=mathcode(equation,&code,NULL,NULL,NULL,NULL,
                  TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,
                  FALSE,FALSE,FALSE,FALSE,FALSE);
-  if (rcode!=MCNOERR) {
-    if (rcode==MCSYNTAX) ecode=ERRSYNTAX;
-    else if (rcode==MCILLEGAL) ecode=ERRILLEGAL;
-    else if (rcode==MCNEST) ecode=ERRNEST;
-    error(obj,ecode);
-    return -1 ;
+  switch (rcode) {
+  case MCNOERR:
+    break;
+  case MCSYNTAX:
+    error(obj, ERRSYNTAX);
+    return 1;
+  case MCILLEGAL:
+    error(obj, ERRILLEGAL);
+    return 1;
+  case MCNEST:
+    error(obj, ERRNEST);
+    return 1;
   }
   GRAcolor(GC,fp->fr,fp->fg,fp->fb);
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
@@ -4577,7 +4624,7 @@ int f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       }
       break;
     }
-    if (arraynum(array)>=(limit*3)) break;
+    if (arraynum(array) >= (limit * 3)) break;
   }
   closedata(fp, f2dlocal);
   num=arraynum(array);

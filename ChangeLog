@@ -1,5 +1,8 @@
 2009-02-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/mathcode.c (mathcode): return value type of "mathcode()" is
+	"enum MATH_CODE_ERROR_NO".
+
 	* src/gtk/x11graph.c (DirectoryDialogClose, CmGraphHistory): call
 	"ErrorMessage()" when "chdir()" returns non zero value.
 

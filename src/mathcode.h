@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: mathcode.h,v 1.2 2009/02/05 06:38:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,17 +25,19 @@ extern char *matherrorchar[10];
 
 #define MEMORYNUM 20
 
-#define MCNOERR   0
-#define MCSYNTAX  1
-#define MCILLEGAL 2
-#define MCNEST    3
+enum MATH_CODE_ERROR_NO {
+  MCNOERR,
+  MCSYNTAX,
+  MCILLEGAL,
+  MCNEST,
+};
 
-int mathcode(char *str,char **code,
-             struct narray *needdata,struct narray *needfile,
-             int *maxdim,int *twopass,
-             int datax,int datay,int dataz,
-             int column,int multi,int minmax,int memory,int userfn,
-             int color,int marksize,int file);
+enum MATH_CODE_ERROR_NO mathcode(char *str,char **code,
+				 struct narray *needdata,struct narray *needfile,
+				 int *maxdim,int *twopass,
+				 int datax,int datay,int dataz,
+				 int column,int multi,int minmax,int memory,int userfn,
+				 int color,int marksize,int file);
 
 #define MNOERR 0
 #define MERR 1

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.9 2009/02/05 05:09:41 hito Exp $
+ * $Id: ofit.c,v 1.10 2009/02/05 06:38:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -146,7 +146,8 @@ int fitput(struct objlist *obj,char *inst,char *rval,
            int argc,char **argv)
 {
   char *field;
-  int rcode,ecode,maxdim,need2pass;
+  enum MATH_CODE_ERROR_NO rcode;
+  int maxdim,need2pass;
   struct narray *needdata;
   char *math,*code;
   struct fitlocal *fitlocal;
@@ -167,11 +168,18 @@ int fitput(struct objlist *obj,char *inst,char *rval,
       if (field[0]!='u') {
         arrayfree(needdata);
       }
-      if (rcode!=MCNOERR) {
-        if (rcode==MCSYNTAX) ecode=ERRSYNTAX;
-        else if (rcode==MCILLEGAL) ecode=ERRILLEGAL;
-        else if (rcode==MCNEST) ecode=ERRNEST;
-        error(obj,ecode);
+
+      switch (rcode) {
+      case MCNOERR:
+	break;
+      case MCSYNTAX:
+	error(obj, ERRSYNTAX);
+        return 1;
+      case MCILLEGAL:
+	error(obj, ERRILLEGAL);
+        return 1;
+      case MCNEST:
+	error(obj, ERRNEST);
         return 1;
       }
       if (maxdim>9) {
@@ -704,18 +712,24 @@ int fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   data=arraydata(darray);
   anum=arraynum(darray)-1;
   dnum=nround(data[0]);
-  data+=1;
-  if (dnum==(anum/2)) weight=FALSE;
-  else if (dnum==(anum/3)) {
-    weight=TRUE;
-    wdata=data+2*dnum;
-  } else return 1;
+  data += 1;
+  if (dnum == (anum / 2)) {
+    weight = FALSE;
+    wt = 0; 			/* dummy code to avoid compile warnings */
+    wdata = NULL;		/* dummy code to avoid compile warnings */
+  } else if (dnum == (anum / 3)) {
+    weight = TRUE;
+    wdata = data + 2 * dnum;
+  } else {
+    return 1;
+  }
   num=0;
   err2=err3=FALSE;
   for (i=0;i<dnum;i++) {
     x=data[i*2];
     y=data[i*2+1];
-    if (weight) wt=wdata[i];
+    if (weight)
+      wt = wdata[i];
     err=FALSE;
     if (type == FIT_TYPE_POW) {
       if (y<=0) err=TRUE;
@@ -730,14 +744,15 @@ int fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       else x=log(x);
     }
     if (err) err2=TRUE;
-    else if (weight && (wt<=0)) {
+    else if (weight && (wt <= 0)) {
       err=TRUE;
       err3=TRUE;
     }
     if (!err) {
       data[num*2]=x;
       data[num*2+1]=y;
-      if (weight) wdata[num]=wt;
+      if (weight)
+	wdata[num] = wt;
       num++;
     }
   }

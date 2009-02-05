@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.33 2009/02/05 05:34:56 hito Exp $
+ * $Id: x11graph.c,v 1.34 2009/02/05 06:38:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1279,6 +1279,7 @@ CmGraphHistory(GtkWidget *w, gpointer client_data)
   if ((fil >= 0) && (fil < num2) && data2[fil] && (data2[0] != '\0')) {
     if (chdir(data2[fil])) {
       ErrorMessage(errno);
+      return;
     }
   }
 
