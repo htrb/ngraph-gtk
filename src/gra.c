@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.15 2008/11/21 14:38:38 hito Exp $
+ * $Id: gra.c,v 1.16 2009/02/05 06:59:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2158,7 +2158,7 @@ void GRAdrawtext(int GC,char *s,char *font,char *jfont,
         }
         if (c[j]=='^') scriptf=1;
         else scriptf=2;
-		break;
+	break;
       case '@':
         if (scriptf!=0) {
           scriptf=0;
@@ -2172,8 +2172,8 @@ void GRAdrawtext(int GC,char *s,char *font,char *jfont,
           size2=size3;
           space2=space3;
         }
-		scmovex=0;
-		scmovey=0;
+	scmovex=0;
+	scmovey=0;
         break;
       }
       j++;
@@ -2333,7 +2333,11 @@ void GRAtextextent(char *s,char *font,char *jfont,
                     &fx0,&fy0,&fx1,&fy1,TRUE);
       c[k]=ch;
       alignlen=fx1;
-    } else alignlen=0;
+    } else {
+      alignlen=0;
+    }
+  } else {
+    alignlen=0;			/* dummy code to avoid compile warnings */
   }
 
   kanji=FALSE;
@@ -2486,9 +2490,9 @@ void GRAtextextent(char *s,char *font,char *jfont,
 		  jfont3=NULL;
           size2=size3;
           space2=space3;
-		}
-		scmovey=0;
-        break;
+	}
+	scmovey=0;
+	break;
       }
       j++;
     } else if (c[j]=='%') {
