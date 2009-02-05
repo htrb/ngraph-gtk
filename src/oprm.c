@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.4 2009/01/14 01:57:04 hito Exp $
+ * $Id: oprm.c,v 1.5 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -64,14 +64,15 @@
 
 #define ERRNUM 4
 
-char *prmerrorlist[ERRNUM]={
+static char *prmerrorlist[ERRNUM]={
   "I/O error: open file",
   "I/O error: read file",
   "unsupported PRM file",
   "skip existing file",
 };
 
-int prminit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+prminit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   int greek;
 
@@ -81,13 +82,15 @@ int prminit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int prmdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+prmdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-char *pathconv(char *s,int ignorepath)
+static char *
+pathconv(char *s,int ignorepath)
 {
   int i;
   char *file;
@@ -107,7 +110,8 @@ char *pathconv(char *s,int ignorepath)
 }
 
 
-struct narray *linestyleconv(int attr,int dottedsize)
+static struct 
+narray *linestyleconv(int attr,int dottedsize)
 {
   int i,dt[4],num;
   struct narray *array;
@@ -133,7 +137,8 @@ struct narray *linestyleconv(int attr,int dottedsize)
   return array;
 }
 
-void addfontcontrol(char *s,int *po,int *fchange,int *jchange,
+static void 
+addfontcontrol(char *s,int *po,int *fchange,int *jchange,
                     int *fff,int *ffb,int *ffj,int script)
 {
   int j;
@@ -151,7 +156,8 @@ void addfontcontrol(char *s,int *po,int *fchange,int *jchange,
 }
 
 
-char *remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
+static char *
+remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
                  int greek)
 /* %C is ignored
    %F ---> %F{}
@@ -324,7 +330,8 @@ char *remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
   return s2;
 }
 
-char *mathconv(char *math)
+static char *
+mathconv(char *math)
 /* INTEG ---> SUM
    F(,) ---> F(,,)
    NAN ---> CONT
@@ -411,7 +418,8 @@ char *mathconv(char *math)
 #define BUFSIZE 512
 
 
-int prmloadline(struct objlist *obj,char *file,FILE *fp,char *buf,int err)
+static int 
+prmloadline(struct objlist *obj,char *file,FILE *fp,char *buf,int err)
 {
   if (fgetnline(fp,buf,BUFSIZE)) {
     if (err) error2(obj,ERRREAD,file);
@@ -420,7 +428,8 @@ int prmloadline(struct objlist *obj,char *file,FILE *fp,char *buf,int err)
   return 0;
 }
 
-int sscanf2(char *buffer,char *format,...)
+static int 
+sscanf2(char *buffer,char *format,...)
 {
   va_list ap;
   int i,num;
@@ -456,7 +465,8 @@ int sscanf2(char *buffer,char *format,...)
 char buf[BUFSIZE];
 char buf2[BUFSIZE];
 
-int prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *file;
   FILE *fp,*fp2;
@@ -1697,7 +1707,7 @@ errexit:
 
 #define TBLNUM 7
 
-struct objtable prm[TBLNUM] = {
+static struct objtable prm[TBLNUM] = {
   {"init",NVFUNC,NEXEC,prminit,NULL,0},
   {"done",NVFUNC,NEXEC,prmdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

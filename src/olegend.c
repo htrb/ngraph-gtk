@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.3 2008/12/18 05:46:26 hito Exp $
+ * $Id: olegend.c,v 1.4 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,23 +40,26 @@
 
 #define ERRNUM 1
 
-char *legenderrorlist[ERRNUM]={
+static char *legenderrorlist[ERRNUM]={
   "",
 };
 
-int legendinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+legendinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int legenddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+legenddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int legendgeometry(struct objlist *obj,char *inst,char *rval,
+int 
+legendgeometry(struct objlist *obj,char *inst,char *rval,
                    int argc,char **argv)
 {
   struct narray *array;
@@ -67,7 +70,8 @@ int legendgeometry(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -128,7 +132,8 @@ int legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int legendbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+legendbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x,y,num;
@@ -177,7 +182,8 @@ int legendbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int legendmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+legendmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *points,*array;
   int i,num,*pdata;
@@ -197,7 +203,8 @@ int legendmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 
-int legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *points,*array;
   int num,*pdata;
@@ -220,7 +227,8 @@ int legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *points,*array,*style;
   int i,num,width,snum,*pdata,*sdata,preserve_width;
@@ -261,7 +269,7 @@ int legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 6
 
-struct objtable legend[TBLNUM] = {
+static struct objtable legend[TBLNUM] = {
   {"init",NVFUNC,0,legendinit,NULL,0},
   {"done",NVFUNC,0,legenddone,NULL,0},
   {"bbox",NIAFUNC,NREAD|NEXEC,NULL,"",0},

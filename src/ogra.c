@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.8 2008/11/17 07:53:30 hito Exp $
+ * $Id: ogra.c,v 1.9 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,7 +42,7 @@
 
 #define ERRNUM 7
 
-char *GRAerrorlist[ERRNUM]={
+static char *GRAerrorlist[ERRNUM]={
   "unable to open device",
   "device is busy",
   "device is already opened",
@@ -54,7 +54,8 @@ char *GRAerrorlist[ERRNUM]={
 
 static void set_progress_val(int i, int n, char *name);
 
-int oGRAinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oGRAinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC,width,height,zoom;
 
@@ -71,7 +72,8 @@ int oGRAinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int oGRAdisconnect(struct objlist *obj,void *inst,int clear)
+static int 
+oGRAdisconnect(struct objlist *obj,void *inst,int clear)
 {
   struct objlist *dobj,*gobj;
   struct narray *sarray;
@@ -103,7 +105,8 @@ int oGRAdisconnect(struct objlist *obj,void *inst,int clear)
   return 0;
 }
 
-int oGRAdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oGRAdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
 
@@ -114,7 +117,8 @@ int oGRAdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int oGRAputdevice(struct objlist *obj,char *inst,char *rval,
+static int 
+oGRAputdevice(struct objlist *obj,char *inst,char *rval,
                   int argc,char **argv)
 {
   int GC;
@@ -128,7 +132,8 @@ int oGRAputdevice(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int anum,id;
   struct narray iarray;
@@ -240,7 +245,8 @@ int oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int oGRAclose(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oGRAclose(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
 
@@ -252,7 +258,8 @@ int oGRAclose(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int oGRAredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oGRAredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct objlist *dobj;
   char *dinst,*field;
@@ -271,7 +278,8 @@ int oGRAredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int oGRAclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oGRAclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   struct objlist *dobj;
@@ -293,7 +301,8 @@ int oGRAclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int oGRAputtopm(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oGRAputtopm(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   char *arg;
@@ -315,7 +324,8 @@ int oGRAputtopm(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 char *oGRAargv[2];
 
-int oGRAdrawparent(struct objlist *parent)
+static int 
+oGRAdrawparent(struct objlist *parent)
 {
   struct objlist *ocur;
   int i,instnum;
@@ -341,7 +351,8 @@ int oGRAdrawparent(struct objlist *parent)
   return TRUE;
 }
 
-int oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   struct objlist *draw;
@@ -401,7 +412,7 @@ set_progress_val(int i, int n, char *name)
 
 #define TBLNUM 18
 
-struct objtable GRA[TBLNUM] = {
+static struct objtable GRA[TBLNUM] = {
   {"init",NVFUNC,NEXEC,oGRAinit,NULL,0},
   {"done",NVFUNC,NEXEC,oGRAdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

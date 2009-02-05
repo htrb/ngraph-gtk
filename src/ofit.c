@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.10 2009/02/05 06:38:25 hito Exp $
+ * $Id: ofit.c,v 1.11 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,7 +59,7 @@
 #define ERRNEGATIVEWEIGHT 112
 #define ERRCONVERGE 113
 
-char *fiterrorlist[ERRNUM]={
+static char *fiterrorlist[ERRNUM]={
   "syntax error.",
   "not allowd function.",
   "sum() or dif(): deep nest.",
@@ -97,7 +97,8 @@ struct fitlocal {
   char *equation;
 };
 
-int fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int div,dimension;
   double converge;
@@ -128,7 +129,8 @@ int fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct fitlocal *fitlocal;
   int i;
@@ -142,7 +144,8 @@ int fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int fitput(struct objlist *obj,char *inst,char *rval,
+static int 
+fitput(struct objlist *obj,char *inst,char *rval,
            int argc,char **argv)
 {
   char *field;
@@ -206,7 +209,8 @@ int fitput(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int fitpoly(struct fitlocal *fitlocal,
+static int 
+fitpoly(struct fitlocal *fitlocal,
             int type,int dimension,int through,double x0,double y0,
             double *data,int num,int disp,int weight,double *wdata)
 /*
@@ -318,7 +322,8 @@ int fitpoly(struct fitlocal *fitlocal,
   return 0;
 }
 
-int fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
+static int 
+fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
             int deriv,double converge,double *data,int num,int disp,
             int weight,double *wdata)
 /*
@@ -639,7 +644,8 @@ errexit:
   return ecode;
 }
 
-int fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct fitlocal *fitlocal;
   int i,type,through,dimension,deriv,disp;
@@ -817,7 +823,7 @@ int fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 54
 
-struct objtable fit[TBLNUM] = {
+static struct objtable fit[TBLNUM] = {
   {"init",NVFUNC,NEXEC,fitinit,NULL,0},
   {"done",NVFUNC,NEXEC,fitdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.7 2008/12/18 05:46:26 hito Exp $
+ * $Id: otext.c,v 1.8 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,12 +50,13 @@
 
 #define ERRNUM 1
 
-char *texterrorlist[ERRNUM]={
+static char *texterrorlist[ERRNUM]={
   ""
 };
 
 
-int textloadconfig(struct objlist *obj,char *inst)
+static int 
+textloadconfig(struct objlist *obj,char *inst)
 {
   FILE *fp;
   char *tok,*str,*s2;
@@ -125,7 +126,8 @@ int textloadconfig(struct objlist *obj,char *inst)
   return 0;
 }
 
-int textsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray conf;
   char *buf;
@@ -190,7 +192,8 @@ int textsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **arg
   return 0;
 }
 
-int textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int pt,scriptsize;
   char *font,*jfont;
@@ -219,13 +222,15 @@ int textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int textdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int textgeometry(struct objlist *obj,char *inst,char *rval,
+static int 
+textgeometry(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   char *field;
@@ -249,7 +254,8 @@ int textgeometry(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int x,y,pt,space,dir,fr,fg,fb,tm,lm,w,h,scriptsize,raw;
@@ -284,7 +290,8 @@ int textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   char **argv2;
@@ -432,7 +439,8 @@ int textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int textbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   struct narray *array;
@@ -490,7 +498,8 @@ int textbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int textmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y;
   struct narray *array;
@@ -508,7 +517,8 @@ int textmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y,pt,space,refx,refy;
   double zoom;
@@ -539,7 +549,8 @@ int textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -597,7 +608,7 @@ int textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 20
 
-struct objtable text[TBLNUM] = {
+static struct objtable text[TBLNUM] = {
   {"init",NVFUNC,NEXEC,textinit,NULL,0},
   {"done",NVFUNC,NEXEC,textdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

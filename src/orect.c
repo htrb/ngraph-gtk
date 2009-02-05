@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.5 2008/12/18 05:46:26 hito Exp $
+ * $Id: orect.c,v 1.6 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,11 +41,12 @@
 
 #define ERRNUM 1
 
-char *recterrorlist[ERRNUM]={
+static char *recterrorlist[ERRNUM]={
   ""
 };
 
-int rectinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int width,frame;
 
@@ -57,13 +58,15 @@ int rectinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int rectdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int x1,y1,x2,y2,width,ifill,iframe,fr,fg,fb,br,bg,bb,tm,lm,w,h;
@@ -111,7 +114,8 @@ int rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x1,y1,x2,y2,width,fill,frame;
@@ -161,7 +165,8 @@ int rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int rectmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
   struct narray *array;
@@ -185,7 +190,8 @@ int rectmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
   int point,x,y;
@@ -227,7 +233,8 @@ int rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,snum,*sdata,refx,refy,x1,y1,x2,y2,width,preserve_width;
   double zoom;
@@ -277,7 +284,8 @@ int rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -326,7 +334,8 @@ int rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int rectgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+rectgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
 
@@ -339,7 +348,7 @@ int rectgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 20
 
-struct objtable rect[TBLNUM] = {
+static struct objtable rect[TBLNUM] = {
   {"init",NVFUNC,NEXEC,rectinit,NULL,0},
   {"done",NVFUNC,NEXEC,rectdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

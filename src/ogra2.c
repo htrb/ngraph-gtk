@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ogra2.c,v 1.2 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,11 +39,12 @@
 #define ERRLOCK 100
 #define ERRNUM 1
 
-char *gra2errorlist[ERRNUM]={
+static char *gra2errorlist[ERRNUM]={
   "device is locked"
 };
 
-int gra2init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+gra2init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
 
@@ -53,7 +54,8 @@ int gra2init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int gra2done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+gra2done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   struct narray *sarray;
@@ -88,7 +90,8 @@ int gra2done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int gra2clear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+gra2clear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,num;
   struct narray *sarray;
@@ -99,7 +102,8 @@ int gra2clear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int gra2disconnect(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+gra2disconnect(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   struct narray *sarray;
@@ -128,7 +132,7 @@ int gra2disconnect(struct objlist *obj,char *inst,char *rval,int argc,char **arg
 
 #define TBLNUM 7
 
-struct objtable gra2[TBLNUM] = {
+static struct objtable gra2[TBLNUM] = {
   {"init",NVFUNC,NEXEC,gra2init,NULL,0},
   {"done",NVFUNC,NEXEC,gra2done,NULL,0},
   {"clear",NVFUNC,NREAD|NEXEC,gra2clear,"",0},

@@ -1,5 +1,5 @@
 /* 
- * $Id: oshell.c,v 1.3 2008/11/13 01:24:39 hito Exp $
+ * $Id: oshell.c,v 1.4 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,7 +50,7 @@
 #define ERRNOCL 101
 #define ERRFILEFIND 102
 
-char *sherrorlist[]={
+static char *sherrorlist[]={
   "already running.",
   "no command string is specified.",
   "no such file",
@@ -63,7 +63,8 @@ struct shlocal {
   struct nshell *nshell;
 };
 
-int cmdinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+cmdinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
   struct nshell *nshell;
@@ -81,7 +82,8 @@ int cmdinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int cmddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+cmddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
 
@@ -96,7 +98,8 @@ int cmddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
   struct nshell *nshell;
@@ -219,7 +222,8 @@ errexit:
   return err;
 }
 
-int cmdsecurity(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+cmdsecurity(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   security=*(int *)argv[2];
   return 0;
@@ -227,7 +231,7 @@ int cmdsecurity(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 6
 
-struct objtable shell[TBLNUM] = {
+static struct objtable shell[TBLNUM] = {
   {"init",NVFUNC,NEXEC,cmdinit,NULL,0},
   {"done",NVFUNC,NEXEC,cmddone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

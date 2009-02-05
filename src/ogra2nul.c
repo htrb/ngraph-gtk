@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2nul.c,v 1.2 2008/08/05 02:45:24 hito Exp $
+ * $Id: ogra2nul.c,v 1.3 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,23 +48,25 @@
 
 #define ERRNUM 1
 
-char *g2nulerrorlist[ERRNUM]={
+static char *g2nulerrorlist[ERRNUM]={
   "",
 };
 
-int g2nulinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+g2nulinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 
-int g2nuldone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+g2nuldone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   return 0;
 }
 
-int HelveticaSet[256]={
+static int HelveticaSet[256]={
 278,278,278,278,278,278,278,278,278,278,278,278,278,278,278,278,
 278,278,278,278,278,278,278,278,278,278,278,278,278,278,278,278,
 278,278,355,556,556,889,667,222,333,333,389,584,278,584,278,278,
@@ -82,7 +84,7 @@ int HelveticaSet[256]={
 556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,
 556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500};
 
-int HelveticaBoldSet[256]={
+static int HelveticaBoldSet[256]={
 278,278,278,278,278,278,278,278,278,278,278,278,278,278,278,278,
 278,278,278,278,278,278,278,278,278,278,278,278,278,278,278,278,
 278,333,474,556,556,889,722,278,333,333,389,584,278,584,278,278,
@@ -100,7 +102,7 @@ int HelveticaBoldSet[256]={
 556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,
 611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556};
 
-int TimesRomanSet[256]={
+static int TimesRomanSet[256]={
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,333,408,500,500,833,778,333,333,333,500,564,250,564,250,278,
@@ -118,7 +120,7 @@ int TimesRomanSet[256]={
 444,444,444,444,444,444,667,444,444,444,444,444,278,278,278,278,
 500,500,500,500,500,500,500,564,500,500,500,500,500,500,500,500};
 
-int TimesBoldSet[256]={
+static int TimesBoldSet[256]={
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,333,555,500,500,1000,833,333,333,333,500,570,250,570,250,278,
@@ -136,7 +138,7 @@ int TimesBoldSet[256]={
 500,500,500,500,500,500,722,444,444,444,444,444,278,278,278,278,
 500,556,500,500,500,500,500,570,500,556,556,556,556,500,556,500};
 
-int TimesItalicSet[256]={
+static int TimesItalicSet[256]={
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,333,420,500,500,833,778,333,333,333,500,675,250,675,250,278,
@@ -154,7 +156,7 @@ int TimesItalicSet[256]={
 500,500,500,500,500,500,667,444,444,444,444,444,278,278,278,278,
 500,500,500,500,500,500,500,675,500,500,500,500,500,444,500,444};
 
-int TimesBoldItalicSet[256]={
+static int TimesBoldItalicSet[256]={
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,389,555,500,500,833,778,333,333,333,500,570,250,606,250,278,
@@ -172,7 +174,7 @@ int TimesBoldItalicSet[256]={
 500,500,500,500,500,500,722,444,444,444,444,444,278,278,278,278,
 500,556,500,500,500,500,500,570,500,556,556,556,556,444,500,444};
 
-int SymbolSet[256]={
+static int SymbolSet[256]={
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,250,
 250,333,713,500,549,833,778,439,333,333,500,549,250,549,250,278,
@@ -190,7 +192,8 @@ int SymbolSet[256]={
 494,329,790,790,786,713,384,384,384,384,384,384,494,494,494,494,
 250,329,274,686,686,686,384,384,384,384,384,384,494,494,494,250};
 
-int g2nul_charwidth(struct objlist *obj,char *inst,char *rval,
+static int 
+g2nul_charwidth(struct objlist *obj,char *inst,char *rval,
                     int argc,char **argv)
 {
   unsigned int ch;
@@ -234,7 +237,8 @@ int g2nul_charwidth(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int g2nul_charheight(struct objlist *obj,char *inst,char *rval,
+static int 
+g2nul_charheight(struct objlist *obj,char *inst,char *rval,
                      int argc,char **argv)
 {
   char *font;
@@ -281,7 +285,8 @@ int g2nul_charheight(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int g2nul_chardescent(struct objlist *obj,char *inst,char *rval,
+static int 
+g2nul_chardescent(struct objlist *obj,char *inst,char *rval,
                      int argc,char **argv)
 {
   char *font;
@@ -295,7 +300,7 @@ int g2nul_chardescent(struct objlist *obj,char *inst,char *rval,
 
 #define TBLNUM 6
 
-struct objtable gra2null[TBLNUM] = {
+static struct objtable gra2null[TBLNUM] = {
   {"init",NVFUNC,NEXEC,g2nulinit,NULL,0},
   {"done",NVFUNC,NEXEC,g2nuldone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

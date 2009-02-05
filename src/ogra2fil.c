@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2fil.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ogra2fil.c,v 1.2 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,7 +44,7 @@
 
 #define ERRNUM 1
 
-char *gra2ferrorlist[ERRNUM]={
+static char *gra2ferrorlist[ERRNUM]={
   "I/O error: open file"
 };
 
@@ -52,7 +52,8 @@ struct gra2flocal {
   FILE *fil;
 };
 
-int gra2finit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+gra2finit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   struct gra2flocal *gra2flocal;
 
@@ -67,7 +68,8 @@ errexit:
   return 1;
 }
 
-int gra2fdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+gra2fdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct gra2flocal *gra2flocal;
 
@@ -77,7 +79,8 @@ int gra2fdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int gra2f_output(struct objlist *obj,char *inst,char *rval,
+static int 
+gra2f_output(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   struct gra2flocal *gra2flocal;
@@ -130,7 +133,7 @@ int gra2f_output(struct objlist *obj,char *inst,char *rval,
 
 #define TBLNUM 6
 
-struct objtable gra2f[TBLNUM] = {
+static struct objtable gra2f[TBLNUM] = {
   {"init",NVFUNC,NEXEC,gra2finit,NULL,0},
   {"done",NVFUNC,NEXEC,gra2fdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

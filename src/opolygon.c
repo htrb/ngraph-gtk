@@ -1,5 +1,5 @@
 /* 
- * $Id: opolygon.c,v 1.2 2008/06/03 07:18:29 hito Exp $
+ * $Id: opolygon.c,v 1.3 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,7 +43,7 @@
 
 #define ERRNUM 1
 
-char *polyfillmode[4]={
+static char *polyfillmode[4]={
   "empty",
   "even_odd_rule",
   "winding_rule",
@@ -54,7 +54,8 @@ char *polyerrorlist[ERRNUM]={
   ""
 };
 
-int polyinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+polyinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int width,miter;
 
@@ -66,13 +67,15 @@ int polyinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int polydone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+polydone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int polymatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+polymatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -140,7 +143,8 @@ int polymatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int polydraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+polydraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   struct narray *points;
@@ -180,7 +184,8 @@ int polydraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int polygeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+polygeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
 
@@ -193,7 +198,7 @@ int polygeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 15
 
-struct objtable opoly[TBLNUM] = {
+static struct objtable opoly[TBLNUM] = {
   {"init",NVFUNC,NEXEC,polyinit,NULL,0},
   {"done",NVFUNC,NEXEC,polydone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

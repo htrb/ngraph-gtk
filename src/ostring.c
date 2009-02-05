@@ -1,5 +1,5 @@
 /* 
- * $Id: ostring.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ostring.c,v 1.2 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,17 +40,19 @@
 
 #define ERRNUM 1
 
-char *stringerrorlist[ERRNUM]={
+static char *stringerrorlist[ERRNUM]={
 ""
 };
 
-int stringinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+stringinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int stringdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+stringdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
@@ -58,7 +60,7 @@ int stringdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 4
 
-struct objtable ostring[TBLNUM] = {
+static struct objtable ostring[TBLNUM] = {
   {"init",NVFUNC,NEXEC,stringinit,NULL,0},
   {"done",NVFUNC,NEXEC,stringdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

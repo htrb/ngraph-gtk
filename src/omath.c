@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.2 2008/08/21 06:05:47 hito Exp $
+ * $Id: omath.c,v 1.3 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -47,7 +47,7 @@
 
 #define ERRNUM 5
 
-char *matherrorlist[ERRNUM]={
+static char *matherrorlist[ERRNUM]={
   "syntax error.",
   "not allowd function.",
   "sum() or dif(): deep nest.",
@@ -98,7 +98,8 @@ struct mlocal {
   int idpr;
 };
 
-void msettbl(char *inst,struct mlocal *mlocal)
+static void 
+msettbl(char *inst,struct mlocal *mlocal)
 {
   *(double *)(inst+mlocal->idpx)=mlocal->x;
   *(double *)(inst+mlocal->idpy)=mlocal->y;
@@ -126,7 +127,8 @@ void msettbl(char *inst,struct mlocal *mlocal)
   *(int *)(inst+mlocal->idpr)=mlocal->rcode;
 }
 
-void mlocalclear(struct mlocal *mlocal,int memory)
+static void 
+mlocalclear(struct mlocal *mlocal,int memory)
 {
   int i;
   if (memory) {
@@ -143,7 +145,8 @@ void mlocalclear(struct mlocal *mlocal,int memory)
   }
 }
 
-int minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   struct mlocal *mlocal;
 
@@ -196,7 +199,8 @@ errexit:
   return 1;
 }
 
-int mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
 
@@ -209,7 +213,8 @@ int mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *math,*code;
   int rcode,ecode;
@@ -266,7 +271,8 @@ int mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *arg;
   int m;
@@ -286,7 +292,8 @@ int mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
   int i,num;
@@ -341,7 +348,8 @@ int mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int mclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+mclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
 
@@ -354,7 +362,7 @@ int mclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 34
 
-struct objtable math[TBLNUM] = {
+static struct objtable math[TBLNUM] = {
   {"init",NVFUNC,NEXEC,minit,NULL,0},
   {"done",NVFUNC,NEXEC,mdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

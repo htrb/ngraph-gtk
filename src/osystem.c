@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.5 2009/01/03 15:10:38 hito Exp $
+ * $Id: osystem.c,v 1.6 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -63,12 +63,13 @@
 void resizeconsole(int col,int row);
 extern int consolecol,consolerow;
 
-char *syserrorlist[ERRNUM]={
+static char *syserrorlist[ERRNUM]={
   "no such directory"
 };
 
 
-int sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *wd;
   int expand;
@@ -95,7 +96,8 @@ int sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct objlist *objcur;
   int i;
@@ -167,7 +169,8 @@ int sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int syscwd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+syscwd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *wd;
   char *home;
@@ -192,7 +195,8 @@ int syscwd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int systime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+systime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   time_t t;
   int style;
@@ -204,7 +208,8 @@ int systime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int sysdate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+sysdate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   time_t t;
   int style;
@@ -216,7 +221,8 @@ int sysdate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int systemp(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+systemp(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *pfx,*tmpfil;
   struct narray *array;
@@ -238,7 +244,8 @@ int systemp(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int sysunlink(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+sysunlink(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *tmpfil;
   struct narray *array;
@@ -269,7 +276,8 @@ int sysunlink(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int syshideinstance(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+syshideinstance(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   struct objlist *obj2;
@@ -288,7 +296,8 @@ int syshideinstance(struct objlist *obj,char *inst,char *rval,int argc,char **ar
   return 0;
 }
 
-int sysrecoverinstance(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+sysrecoverinstance(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   struct objlist *obj2;
@@ -307,7 +316,8 @@ int sysrecoverinstance(struct objlist *obj,char *inst,char *rval,int argc,char *
   return 0;
 }
 
-int systemresize(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+systemresize(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *iarray;
   int num;
@@ -324,7 +334,7 @@ int systemresize(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 24
 
-struct objtable nsystem[TBLNUM] = {
+static struct objtable nsystem[TBLNUM] = {
   {"init",NVFUNC,NEXEC,sysinit,NULL,0},
   {"done",NVFUNC,NEXEC,sysdone,NULL,0},
   {"name",NSTR,NREAD,NULL,NULL,0},

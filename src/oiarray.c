@@ -1,5 +1,5 @@
 /* 
- * $Id: oiarray.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oiarray.c,v 1.2 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,23 +40,26 @@
 
 #define ERRNUM 1
 
-char *iarrayerrorlist[ERRNUM]={
+static char *iarrayerrorlist[ERRNUM]={
 ""
 };
 
-int iarrayinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+iarrayinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int iarraydone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+iarraydone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int iarraynum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+iarraynum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
 
@@ -65,7 +68,8 @@ int iarraynum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int iarrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+iarrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   int num,*po;
@@ -78,7 +82,8 @@ int iarrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int iarrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+iarrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -91,7 +96,8 @@ int iarrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int iarrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+iarrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   int val;
@@ -109,7 +115,8 @@ int iarrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int iarrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+iarrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -129,7 +136,8 @@ int iarrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int iarraydel(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+iarraydel(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -147,7 +155,7 @@ int iarraydel(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 10
 
-struct objtable oiarray[TBLNUM] = {
+static struct objtable oiarray[TBLNUM] = {
   {"init",NVFUNC,NEXEC,iarrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,iarraydone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

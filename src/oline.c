@@ -1,5 +1,5 @@
 /* 
- * $Id: oline.c,v 1.3 2008/12/17 10:09:44 hito Exp $
+ * $Id: oline.c,v 1.4 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,11 +44,12 @@
 
 #define ERRNUM 1
 
-char *arrowerrorlist[ERRNUM]={
+static char *arrowerrorlist[ERRNUM]={
   "",
 };
 
-int arrowinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arrowinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   int width,headlen,headwidth,miter;
 
@@ -64,13 +65,15 @@ int arrowinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int arrowdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arrowdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int arrowput(struct objlist *obj,char *inst,char *rval,
+static int 
+arrowput(struct objlist *obj,char *inst,char *rval,
              int argc,char **argv)
 {
   char *field;
@@ -92,7 +95,8 @@ int arrowput(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int width,fr,fg,fb,lm,tm,w,h,headlen,headwidth;
@@ -214,7 +218,8 @@ int arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x,y,num,num2;
@@ -345,7 +350,7 @@ int arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 17
 
-struct objtable arrow[TBLNUM] = {
+static struct objtable arrow[TBLNUM] = {
   {"init",NVFUNC,NEXEC,arrowinit,NULL,0},
   {"done",NVFUNC,NEXEC,arrowdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

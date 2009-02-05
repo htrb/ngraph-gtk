@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.c,v 1.2 2008/11/25 08:43:32 hito Exp $
+ * $Id: oroot.c,v 1.3 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,23 +43,26 @@
 
 #define ERRNUM 1
 
-char *rooterrorlist[ERRNUM]={
+static char *rooterrorlist[ERRNUM]={
      "illegal instance name"
 };
 
-int oinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int odone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+odone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int oputname(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+oputname(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *arg;
   int i;
@@ -79,33 +82,38 @@ int oputname(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int oputabs(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+oputabs(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<0) *(int *)argv[2]=0;
   return 0;
 }
 
-int oputge1(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+oputge1(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
   return 0;
 }
 
-int oputangle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+oputangle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<0) *(int *)(argv[2])=0;
   else if (*(int *)(argv[2])>36000) *(int *)(argv[2])=36000;
   return 0;
 }
 
-int oputcolor(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+oputcolor(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (*(int *) (argv[2]) < 0) *(int *)(argv[2]) = 0;
   else if (*(int *)(argv[2]) > 255) *(int *)(argv[2]) = 255;
   return 0;
 }
 
-int oputstyle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+oputstyle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
   int i,num,*adata;
@@ -118,7 +126,8 @@ int oputstyle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-void ochgobjlist(char **olist)
+static void 
+ochgobjlist(char **olist)
 {
   char *list,*objname,*field;
   char *ids,*ids2;
@@ -164,7 +173,8 @@ void ochgobjlist(char **olist)
   return;
 }
 
-int osave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+osave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct objlist *obj2;
   char *s,*field,*name,*valstr;
@@ -230,7 +240,7 @@ errexit:
 
 #define TBLNUM 6
 
-struct objtable objectroot[TBLNUM] = {
+static struct objtable objectroot[TBLNUM] = {
   {"init",NVFUNC,NEXEC,oinit,NULL,0},
   {"done",NVFUNC,NEXEC,odone,NULL,0},
   {"id",NINT,NREAD,NULL,NULL,0},

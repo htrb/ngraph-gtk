@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.5 2008/12/26 10:16:22 hito Exp $
+ * $Id: omark.c,v 1.6 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,11 +41,12 @@
 
 #define ERRNUM 1
 
-char *markerrorlist[ERRNUM]={
+static char *markerrorlist[ERRNUM]={
   ""
 };
 
-int markinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+markinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   int size,width,r2,g2,b2;
 
@@ -63,13 +64,15 @@ int markinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int markdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+markdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int x,y,type,size,width,fr,fg,fb,br,bg,bb,tm,lm,w,h;
@@ -103,7 +106,8 @@ int markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int markbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+markbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x,y,size,width;
@@ -133,7 +137,8 @@ int markbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int markmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+markmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y;
   struct narray *array;
@@ -151,7 +156,8 @@ int markmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,x,y,size,refx,refy,width,snum,*sdata,preserve_width;
   double zoom;
@@ -193,7 +199,8 @@ int markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int markgeometry(struct objlist *obj,char *inst,char *rval,
+static int 
+markgeometry(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   char *field;
@@ -221,7 +228,8 @@ int markgeometry(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int marktype(struct objlist *obj,char *inst,char *rval,
+static int 
+marktype(struct objlist *obj,char *inst,char *rval,
 	     int argc,char **argv)
 {
   int type;
@@ -235,7 +243,8 @@ int marktype(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int markmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+markmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -274,7 +283,7 @@ int markmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 17
 
-struct objtable mark[TBLNUM] = {
+static struct objtable mark[TBLNUM] = {
   {"init",NVFUNC,NEXEC,markinit,NULL,0},
   {"done",NVFUNC,NEXEC,markdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

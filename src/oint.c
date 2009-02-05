@@ -1,5 +1,5 @@
 /* 
- * $Id: oint.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: oint.c,v 1.2 2009/02/05 08:13:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,17 +40,19 @@
 
 #define ERRNUM 1
 
-char *interrorlist[ERRNUM]={
+static char *interrorlist[ERRNUM]={
 ""
 };
 
-int intinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+intinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int intdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+intdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
@@ -58,7 +60,7 @@ int intdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 4
 
-struct objtable oint[TBLNUM] = {
+static struct objtable oint[TBLNUM] = {
   {"init",NVFUNC,NEXEC,intinit,NULL,0},
   {"done",NVFUNC,NEXEC,intdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
