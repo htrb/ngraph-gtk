@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.2 2009/01/20 06:18:51 hito Exp $
+ * $Id: oagrid.c,v 1.3 2009/02/05 07:58:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,19 +42,20 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 3
-
 #define ERRNOAXISINST 100
 #define ERRMINMAX 101
 #define ERRAXISDIR 102
 
-char *agriderrorlist[ERRNUM]={
+static char *agriderrorlist[]={
   "no instance for axis",
   "illegal axis min/max.",
   "illegal axis direction.", 
 };
 
-int agridinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+#define ERRNUM (sizeof(agriderrorlist) / sizeof(*agriderrorlist))
+
+static int 
+agridinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int wid1,wid2,wid3,dot;
   int r,g,b,br,bg,bb;
@@ -88,13 +89,15 @@ int agridinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 
-int agriddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+agriddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int fr,fg,fb,br,bg,bb,lm,tm,w,h;
@@ -406,7 +409,8 @@ exit:
   return 0;
 }
 
-int agridtight(struct objlist *obj,char *inst,char *rval,
+static int 
+agridtight(struct objlist *obj,char *inst,char *rval,
                int argc,char **argv)
 {
   obj_do_tighten(obj, inst, "axis_x");
@@ -417,7 +421,7 @@ int agridtight(struct objlist *obj,char *inst,char *rval,
 
 #define TBLNUM 17
 
-struct objtable agrid[TBLNUM] = {
+static struct objtable agrid[TBLNUM] = {
   {"init",NVFUNC,NEXEC,agridinit,NULL,0},
   {"done",NVFUNC,NEXEC,agriddone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

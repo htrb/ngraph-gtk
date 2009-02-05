@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.4 2008/12/18 05:46:25 hito Exp $
+ * $Id: oarc.c,v 1.5 2009/02/05 07:59:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,11 +43,12 @@
 
 #define ERRNUM 1
 
-char *arcerrorlist[ERRNUM]={
+static char *arcerrorlist[ERRNUM]={
  ""
 };
 
-int arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   int angle2,width,pieslice;
 
@@ -61,13 +62,15 @@ int arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int arcdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arcdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,tm,lm,w,h;
@@ -109,7 +112,8 @@ int arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int arcgeometry(struct objlist *obj,char *inst,char *rval,
+static int 
+arcgeometry(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   char *field;
@@ -152,7 +156,8 @@ int arcgeometry(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x,y,x1,y1;
@@ -221,7 +226,8 @@ int arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y;
   struct narray *array;
@@ -239,7 +245,8 @@ int arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
   double zoom;
@@ -288,7 +295,8 @@ int arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int arcmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+arcmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -327,7 +335,7 @@ int arcmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #define TBLNUM 18
 
-struct objtable arc[TBLNUM] = {
+static struct objtable arc[TBLNUM] = {
   {"init",NVFUNC,NEXEC,arcinit,NULL,0},
   {"done",NVFUNC,NEXEC,arcdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

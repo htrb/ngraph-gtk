@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.6 2009/02/05 07:52:18 hito Exp $
+ * $Id: odraw.c,v 1.7 2009/02/05 07:58:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -113,7 +113,8 @@ char *intpchar[]={
   NULL
 };
 
-int drawinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+drawinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int clip,redrawf;
 
@@ -125,14 +126,16 @@ int drawinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int drawdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+drawdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 
-int drawdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+drawdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC,hidden;
 
@@ -147,7 +150,8 @@ int drawdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int 
+pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array,*array2;
   int anum;
@@ -218,7 +222,7 @@ errexit:
   return 1;
 }
 
-struct objtable draw[] = {
+static struct objtable draw[] = {
   {"init",NVFUNC,0,drawinit,NULL,0},
   {"done",NVFUNC,0,drawdone,NULL,0},
   {"GC",NINT,0,NULL,NULL,0},

@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.9 2009/01/20 06:18:51 hito Exp $
+ * $Id: oaxis.c,v 1.10 2009/02/05 08:00:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,7 +58,7 @@
 #define ERRMINMAX 104
 #define ERRFORMAT 105
 
-char *axiserrorlist[ERRNUM]={
+static char *axiserrorlist[ERRNUM]={
   "illegal axis type.",
   "illegal arrow/wave type.",
   "illegal gauge type.",
@@ -104,7 +104,8 @@ char *anumdirchar[4]={
   NULL
 };
 
-int axisuniqgroup(struct objlist *obj,char type)
+static int 
+axisuniqgroup(struct objlist *obj,char type)
 {
   int num;
   char *inst,*group,*endptr;
@@ -136,7 +137,8 @@ int axisuniqgroup(struct objlist *obj,char type)
   return num;
 }
 
-int axisloadconfig(struct objlist *obj,char *inst,char *conf)
+static int 
+axisloadconfig(struct objlist *obj,char *inst,char *conf)
 {
   FILE *fp;
   char *tok,*str,*s2;
@@ -380,7 +382,8 @@ int axisloadconfig(struct objlist *obj,char *inst,char *conf)
   return 0;
 }
 
-int axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int width;
   int alen,awid,wlen,wwid;
@@ -457,13 +460,15 @@ errexit:
   return 1;
 }
 
-int axisdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int axisput(struct objlist *obj,char *inst,char *rval,
+static int 
+axisput(struct objlist *obj,char *inst,char *rval,
             int argc,char **argv)
 {
   char *field;
@@ -549,7 +554,8 @@ int axisput(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
 
@@ -560,7 +566,8 @@ int axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 
-int axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x0,y0,x1,y1,length,direction;
@@ -599,7 +606,8 @@ int axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,id;
   char *group,*group2;
@@ -740,7 +748,8 @@ int axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -804,7 +813,8 @@ int axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axismatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axismatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,id;
   char *group,*group2;
@@ -864,7 +874,8 @@ int axismatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y;
   struct narray *array;
@@ -882,7 +893,8 @@ int axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,id;
   char *group,*group2;
@@ -930,7 +942,8 @@ int axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axischange2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axischange2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int len,dir,x,y;
   double x2,y2;
@@ -974,7 +987,8 @@ int axischange2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,id;
   char *group,*group2;
@@ -1198,7 +1212,8 @@ int axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y,len,refx,refy,preserve_width;
   double zoom;
@@ -1270,7 +1285,8 @@ int axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,id;
   char *group,*group2;
@@ -1318,7 +1334,8 @@ int axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-void numformat(char *num,char *format,double a)
+static void 
+numformat(char *num,char *format,double a)
 {
   int i,j,len,ret;
   char *s;
@@ -1338,7 +1355,8 @@ void numformat(char *num,char *format,double a)
   }
 }
 
-int axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int fr,fg,fb,lm,tm,w,h;
@@ -1995,7 +2013,8 @@ exit:
   return 0;
 }
 
-int axisclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   double min,max,inc;
 
@@ -2006,7 +2025,8 @@ int axisclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axisadjust(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisadjust(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *axis;
   int ad;
@@ -2089,7 +2109,8 @@ int axisadjust(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axischangescale(struct objlist *obj,char *inst,
+static int 
+axischangescale(struct objlist *obj,char *inst,
                     double *rmin,double *rmax,double *rinc,int room)
 {
   int type;
@@ -2162,7 +2183,8 @@ int axischangescale(struct objlist *obj,char *inst,
   return 0;
 }
 
-int axisscale(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axisscale(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int type,room;
   double min,max,inc;
@@ -2178,7 +2200,8 @@ int axisscale(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axiscoordinate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axiscoordinate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y,dx,dy,type,dir,len;
   double min,max,c,t,val;
@@ -2217,7 +2240,8 @@ int axiscoordinate(struct objlist *obj,char *inst,char *rval,int argc,char **arg
   return 0;
 }
 
-int axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,double *rmax)
+static int 
+axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,double *rmax)
 {
   struct objlist *fobj;
   int fnum;
@@ -2266,7 +2290,8 @@ int axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,
   return 0;
 }
 
-int axisautoscale(struct objlist *obj,char *inst,char *rval,
+static int 
+axisautoscale(struct objlist *obj,char *inst,char *rval,
                   int argc,char **argv)
 {
   char *fileobj;
@@ -2294,7 +2319,8 @@ int axisautoscale(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int axisgetautoscale(struct objlist *obj,char *inst,char *rval,
+static int 
+axisgetautoscale(struct objlist *obj,char *inst,char *rval,
                   int argc,char **argv)
 {
   char *fileobj;
@@ -2318,7 +2344,8 @@ int axisgetautoscale(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int axistight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
+static int 
+axistight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
 {
   obj_do_tighten(obj, inst, "reference");
   obj_do_tighten(obj, inst, "adjust_axis");
@@ -2326,7 +2353,8 @@ int axistight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
   return 0;
 }
 
-int axisgrouping(struct objlist *obj,char *inst,char *rval,
+static int 
+axisgrouping(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   struct narray *iarray;
@@ -2435,7 +2463,8 @@ int axisgrouping(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int axisgrouppos(struct objlist *obj,char *inst,char *rval,
+static int 
+axisgrouppos(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   int x0,y0,x,y,lenx,leny,len,dir;
@@ -2543,7 +2572,8 @@ int axisgrouppos(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int axisdefgrouping(struct objlist *obj,char *inst,char *rval,
+static int 
+axisdefgrouping(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   int dir,gauge,num,align,oidx,oidy;
@@ -2677,7 +2707,8 @@ int axisdefgrouping(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-int axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,j,id;
   char *group,*group2;
@@ -2765,7 +2796,8 @@ int axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axismanager(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+axismanager(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,id,lastinst;
   char *group,*group2;
@@ -2791,7 +2823,8 @@ int axismanager(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int axisscalepush(struct objlist *obj,char *inst,char *rval,int argc,
+static int 
+axisscalepush(struct objlist *obj,char *inst,char *rval,int argc,
                   char **argv)
 {
   struct narray *array;
@@ -2824,7 +2857,8 @@ int axisscalepush(struct objlist *obj,char *inst,char *rval,int argc,
   return 0;
 }
 
-int axisscalepop(struct objlist *obj,char *inst,char *rval,int argc,
+static int 
+axisscalepop(struct objlist *obj,char *inst,char *rval,int argc,
                   char **argv)
 {
   struct narray *array;
@@ -2852,7 +2886,7 @@ int axisscalepop(struct objlist *obj,char *inst,char *rval,int argc,
 
 #define TBLNUM 81
 
-struct objtable axis[TBLNUM] = {
+static struct objtable axis[TBLNUM] = {
   {"init",NVFUNC,NEXEC,axisinit,NULL,0},
   {"done",NVFUNC,NEXEC,axisdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},

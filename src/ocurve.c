@@ -1,5 +1,5 @@
 /* 
- * $Id: ocurve.c,v 1.2 2008/06/03 07:18:29 hito Exp $
+ * $Id: ocurve.c,v 1.3 2009/02/05 07:58:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,14 +41,16 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 1
 #define ERRSPL  100
 
-char *curveerrorlist[ERRNUM]={
+char *curveerrorlist[]={
   "error: spline interpolation."
 };
 
-int curveinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+#define ERRNUM (sizeof(curveerrorlist) / sizeof(*curveerrorlist))
+
+static int 
+curveinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   int width,miter;
 
@@ -60,13 +62,15 @@ int curveinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int curvedone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+curvedone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
-int curvedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+curvedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int width,join,miter,intp,fr,fg,fb,lm,tm,w,h;
@@ -219,7 +223,8 @@ int curvedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y,bminx,bminy,bmaxx,bmaxy;
   int i,num;
@@ -375,7 +380,8 @@ int curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 
-int curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -548,7 +554,8 @@ int curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-int curvegeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int 
+curvegeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct narray *array;
 
@@ -561,7 +568,7 @@ int curvegeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv
 
 #define TBLNUM 15
 
-struct objtable curve[TBLNUM] = {
+static struct objtable curve[TBLNUM] = {
   {"init",NVFUNC,NEXEC,curveinit,NULL,0},
   {"done",NVFUNC,NEXEC,curvedone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
