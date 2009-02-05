@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.55 2009/02/05 02:29:28 hito Exp $
+ * $Id: ofile.c,v 1.56 2009/02/05 05:09:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -610,13 +610,17 @@ struct f2ddata *opendata(struct objlist *obj,char *inst,
   fp->y=y;
 
   switch (type) {
-  case 4: case 5: case 6: case 7: case 8:
+  case PLOT_TYPE_DIAGONAL:
+  case PLOT_TYPE_ARROW:
+  case PLOT_TYPE_RECTANGLE:
+  case PLOT_TYPE_RECTANGLE_FILL:
+  case PLOT_TYPE_RECTANGLE_SOLID_FILL:
     fp->type=TYPE_DIAGONAL;
     break;
-  case 9:
+  case PLOT_TYPE_ERRORBAR_X:
     fp->type=TYPE_ERR_X;
     break;
-  case 10:
+  case PLOT_TYPE_ERRORBAR_Y:
     fp->type=TYPE_ERR_Y;
     break;
   default:
@@ -2515,7 +2519,8 @@ check_mtime(struct f2ddata *fp, struct f2dlocal *local)
   return 0;
 }
 
-static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
+static int 
+getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 /*
   return -1: fatal error
           0: no error
@@ -3169,9 +3174,10 @@ double *dataadd(double dx,double dy,double dz,
   return *x;
 }
 
-int markout(struct objlist *obj,struct f2ddata *fp,int GC,
-            int fr2,int fg2,int fb2,
-            int type,int width,int snum,int *style)
+static int 
+markout(struct objlist *obj,struct f2ddata *fp,int GC,
+	int fr2,int fg2,int fb2,
+	int type,int width,int snum,int *style)
 {
   int emerr,emserr,emnonum,emig,emng;
   int gx,gy;
@@ -3189,9 +3195,10 @@ int markout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int lineout(struct objlist *obj,struct f2ddata *fp,int GC,
-            int width,int snum,int *style,
-            int join,int miter,int close)
+static int 
+lineout(struct objlist *obj,struct f2ddata *fp,int GC,
+	int width,int snum,int *style,
+	int join,int miter,int close)
 {
   int emerr,emserr,emnonum,emig,emng;
   int first;
@@ -3224,9 +3231,10 @@ int lineout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int curveout(struct objlist *obj,struct f2ddata *fp,int GC,
-              int width,int snum,int *style,
-              int join,int miter,int intp)
+static int 
+curveout(struct objlist *obj,struct f2ddata *fp,int GC,
+	 int width,int snum,int *style,
+	 int join,int miter,int intp)
 {
   int emerr,emserr,emnonum,emig,emng;
   int j,num;
@@ -3481,9 +3489,10 @@ int curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int rectout(struct objlist *obj,struct f2ddata *fp,int GC,
-            int fr2,int fg2,int fb2,
-            int width,int snum,int *style,int type)
+static int 
+rectout(struct objlist *obj,struct f2ddata *fp,int GC,
+	int fr2,int fg2,int fb2,
+	int width,int snum,int *style,int type)
 {
   int emerr,emserr,emnonum,emig,emng;
   double x0,y0,x1,y1;
@@ -3494,7 +3503,8 @@ int rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   emerr=emserr=emnonum=FALSE;
   headlen=72426;
   headwidth=60000;
-  if (type==0) GRAlinestyle(GC,snum,style,width,0,0,1000);
+
+  if (type == PLOT_TYPE_DIAGONAL) GRAlinestyle(GC,snum,style,width,0,0,1000);
   else GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
     GRAcolor(GC,fp->colr,fp->colg,fp->colb);
@@ -3502,7 +3512,7 @@ int rectout(struct objlist *obj,struct f2ddata *fp,int GC,
      && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->d2),&(fp->d3))==0)) {
-      if (type==0) {
+      if (type == PLOT_TYPE_DIAGONAL) {
         x0=fp->dx;
         y0=fp->dy;
         x1=fp->d2;
@@ -3513,7 +3523,7 @@ int rectout(struct objlist *obj,struct f2ddata *fp,int GC,
           GRAline(GC,gx0,gy0,gx1,gy1);
         }
       }
-      if (type==1) {
+      if (type == PLOT_TYPE_ARROW) {
         x0=fp->dx;
         y0=fp->dy;
         x1=fp->d2;
@@ -3542,8 +3552,8 @@ int rectout(struct objlist *obj,struct f2ddata *fp,int GC,
           } else GRAline(GC,gx0,gy0,gx1,gy1);
         }
       }
-      if ((type==3) || (type==4)) {
-        if (type==3) GRAcolor(GC,fr2,fg2,fb2);
+      if (type == PLOT_TYPE_RECTANGLE_FILL || type == PLOT_TYPE_RECTANGLE_SOLID_FILL) {
+        if (type == PLOT_TYPE_RECTANGLE_FILL) GRAcolor(GC,fr2,fg2,fb2);
         x0=fp->dx;
         y0=fp->dy;
         x1=fp->d2;
@@ -3553,9 +3563,9 @@ int rectout(struct objlist *obj,struct f2ddata *fp,int GC,
           f2dtransf(x1,y1,&gx1,&gy1,fp);
           GRArectangle(GC,gx0,gy0,gx1,gy1,1);
         }
-        if (type==3) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+        if (type == PLOT_TYPE_RECTANGLE_FILL) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
       }
-      if ((type==2) || (type==3)) {
+      if (type == PLOT_TYPE_RECTANGLE || type == PLOT_TYPE_RECTANGLE_FILL) {
         x0=fp->dx;
         y0=fp->dy;
         x1=fp->dx;
@@ -3599,8 +3609,9 @@ int rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
-                int width,int snum,int *style,int type)
+static int 
+errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
+	    int width,int snum,int *style,int type)
 {
   int emerr,emserr,emnonum,emig,emng;
   double x0,y0,x1,y1;
@@ -3612,7 +3623,7 @@ int errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
     GRAcolor(GC,fp->colr,fp->colg,fp->colb);
-    if (type==0) {
+    if (type == PLOT_TYPE_ERRORBAR_X) {
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
        && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
@@ -3639,7 +3650,7 @@ int errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
           }
         }
       } else errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
-    } else if (type==1) {
+    } else if (type == PLOT_TYPE_ERRORBAR_Y) {
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
        && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
@@ -3672,9 +3683,10 @@ int errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int stairout(struct objlist *obj,struct f2ddata *fp,int GC,
-              int width,int snum,int *style,
-              int join,int miter,int type)
+static int 
+stairout(struct objlist *obj,struct f2ddata *fp,int GC,
+	 int width,int snum,int *style,
+	 int join,int miter,int type)
 {
   int emerr,emserr,emnonum,emig,emng;
   int num;
@@ -3694,7 +3706,7 @@ int stairout(struct objlist *obj,struct f2ddata *fp,int GC,
       } else if (num==1) {
         x1=fp->dx;
         y1=fp->dy;
-        if (type==0) {
+        if (type == PLOT_TYPE_STAIRCASE_X) {
           dx=(x1-x0)*0.5;
           y=y0;
           x=x0-dx;
@@ -3719,7 +3731,7 @@ int stairout(struct objlist *obj,struct f2ddata *fp,int GC,
       } else {
         x1=fp->dx;
         y1=fp->dy;
-        if (type==0) {
+        if (type == PLOT_TYPE_STAIRCASE_X) {
           dx=(x1-x0)*0.5;
           y=y0;
           x=x0+dx;
@@ -3740,7 +3752,7 @@ int stairout(struct objlist *obj,struct f2ddata *fp,int GC,
     } else {
       if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
         if (num!=0) {
-          if (type==0) {
+          if (type == PLOT_TYPE_STAIRCASE_X) {
             dx=x0-x;
             x=x0+dx;
             GRAdashlinetod(GC,x,y);
@@ -3756,7 +3768,7 @@ int stairout(struct objlist *obj,struct f2ddata *fp,int GC,
     }
   }
   if (num!=0) {
-    if (type==0) {
+    if (type == PLOT_TYPE_STAIRCASE_X) {
       dx=x0-x;
       x=x0+dx;
       GRAdashlinetod(GC,x,y);
@@ -3770,9 +3782,10 @@ int stairout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int barout(struct objlist *obj,struct f2ddata *fp,int GC,
-           int fr2,int fg2,int fb2,
-           int width,int snum,int *style,int type)
+static int 
+barout(struct objlist *obj,struct f2ddata *fp,int GC,
+       int fr2,int fg2,int fb2,
+       int width,int snum,int *style,int type)
 {
   int emerr,emserr,emnonum,emig,emng;
   double x0,y0,x1,y1;
@@ -3781,14 +3794,14 @@ int barout(struct objlist *obj,struct f2ddata *fp,int GC,
   int ap[8];
 
   emerr=emserr=emnonum=emig=emng=FALSE;
-  if (type<=3) GRAlinestyle(GC,snum,style,width,2,0,1000);
+  if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
     GRAcolor(GC,fp->colr,fp->colg,fp->colb);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
-      if ((type==2) || (type==4)) {
-        if (type==2) GRAcolor(GC,fr2,fg2,fb2);
+      if ((type == PLOT_TYPE_BAR_FILL_X) || (type == PLOT_TYPE_BAR_SOLID_FILL_X)) {
+        if (type == PLOT_TYPE_BAR_FILL_X) GRAcolor(GC,fr2,fg2,fb2);
         x0=0;
         y0=fp->dy;
         x1=fp->dx;
@@ -3806,10 +3819,10 @@ int barout(struct objlist *obj,struct f2ddata *fp,int GC,
           ap[7]=gy0-nround(size*fp->ayvy);
           GRAdrawpoly(GC,4,ap,1);
         }
-        if (type==2) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+        if (type == PLOT_TYPE_BAR_FILL_X) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
       }
-      if ((type==3) || (type==5)) {
-        if (type==3) GRAcolor(GC,fr2,fg2,fb2);
+      if ((type == PLOT_TYPE_BAR_FILL_Y) || (type == PLOT_TYPE_BAR_SOLID_FILL_Y)) {
+        if (type == PLOT_TYPE_BAR_FILL_Y) GRAcolor(GC,fr2,fg2,fb2);
         x0=fp->dx;
         y0=0;
         x1=fp->dx;
@@ -3827,9 +3840,9 @@ int barout(struct objlist *obj,struct f2ddata *fp,int GC,
           ap[7]=gy0-nround(size*fp->axvy);
           GRAdrawpoly(GC,4,ap,1);
         }
-        if (type==3) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+        if (type == PLOT_TYPE_BAR_FILL_Y) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
       }
-      if ((type==0) || (type==2)) {
+      if ((type == PLOT_TYPE_BAR_X) || (type == PLOT_TYPE_BAR_FILL_X)) {
         x0=0;
         y0=fp->dy;
         x1=fp->dx;
@@ -3848,7 +3861,7 @@ int barout(struct objlist *obj,struct f2ddata *fp,int GC,
           GRAdrawpoly(GC,4,ap,0);
         }
       }
-      if ((type==1) || (type==3)) {
+      if ((type == PLOT_TYPE_BAR_Y) || (type == PLOT_TYPE_BAR_FILL_Y)) {
         x0=fp->dx;
         y0=0;
         x1=fp->dx;
@@ -4108,96 +4121,120 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
-int f2ddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+int f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
 {
   struct f2dlocal *f2dlocal;
   int GC;
   int type;
-  int mtype,fr2,fg2,fb2;
-  int lwidth,ljoin,lmiter,intp;
+  int mtype, fr2, fg2, fb2;
+  int lwidth, ljoin, lmiter, intp;
   struct narray *lstyle;
-  int snum,*style;
+  int snum, *style;
   struct f2ddata *fp;
   int rcode;
-  int tm,lm,w,h,clip,zoom,redraw;
-  char *fit,*field;
+  int tm, lm, w, h, clip, zoom;
+  char *fit, *field;
   char *file;
 
-  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  field=(char *)argv[1];
-  if (field[0]=='r') redraw=TRUE;
-  else redraw=FALSE;
-  _getobj(obj,"_local",inst,&f2dlocal);
-  _getobj(obj,"GC",inst,&GC);
-  if (GC<0) return 0;
-  _getobj(obj,"file",inst,&file);
-  if (file==NULL) return 0;
-  _getobj(obj,"type",inst,&type);
-  _getobj(obj,"mark_type",inst,&mtype);
-  _getobj(obj,"R2",inst,&fr2);
-  _getobj(obj,"G2",inst,&fg2);
-  _getobj(obj,"B2",inst,&fb2);
-  _getobj(obj,"line_width",inst,&lwidth);
-  _getobj(obj,"line_style",inst,&lstyle);
-  _getobj(obj,"line_join",inst,&ljoin);
-  _getobj(obj,"line_miter_limit",inst,&lmiter);
-  _getobj(obj,"interpolation",inst,&intp);
-  _getobj(obj,"fit",inst,&fit);
-  _getobj(obj,"clip",inst,&clip);
-  snum=arraynum(lstyle);
-  style=arraydata(lstyle);
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
+    return 1;
 
-  if ((fp=opendata(obj,inst,f2dlocal,TRUE,FALSE))==NULL) return 1;
+  _getobj(obj, "_local", inst, &f2dlocal);
+  _getobj(obj, "GC", inst, &GC);
+  if (GC<0)
+    return 0;
+
+  _getobj(obj, "file", inst, &file);
+  if (file == NULL)
+    return 0;
+
+  _getobj(obj, "type", inst, &type);
+  _getobj(obj, "mark_type", inst, &mtype);
+  _getobj(obj, "R2", inst, &fr2);
+  _getobj(obj, "G2", inst, &fg2);
+  _getobj(obj, "B2", inst, &fb2);
+  _getobj(obj, "line_width", inst, &lwidth);
+  _getobj(obj, "line_style", inst, &lstyle);
+  _getobj(obj, "line_join", inst, &ljoin);
+  _getobj(obj, "line_miter_limit", inst, &lmiter);
+  _getobj(obj, "interpolation", inst, &intp);
+  _getobj(obj, "fit", inst, &fit);
+  _getobj(obj, "clip", inst, &clip);
+
+  snum = arraynum(lstyle);
+  style = arraydata(lstyle);
+
+  fp = opendata(obj, inst, f2dlocal, TRUE, FALSE);
+  if (fp == NULL)
+    return 1;
+
   if (fp->need2pass) {
-    if (getminmaxdata(fp, f2dlocal)==-1) {
-      closedata(fp, f2dlocal);
+    if (getminmaxdata(fp,  f2dlocal) == -1) {
+      closedata(fp,  f2dlocal);
       return 1;
     }
     reopendata(fp);
   }
-  if (hskipdata(fp)!=0) {
-    closedata(fp, f2dlocal);
+
+  if (hskipdata(fp)) {
+    closedata(fp,  f2dlocal);
     return 1;
   }
-  GRAregion(GC,&lm,&tm,&w,&h,&zoom);
-  GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
+
+  GRAregion(GC, &lm, &tm, &w, &h, &zoom);
+  GRAview(GC, 0, 0, w*10000.0/zoom, h*10000.0/zoom, clip);
   switch (type) {
-  case 0:
-    rcode=markout(obj,fp,GC,fr2,fg2,fb2,mtype,lwidth,snum,style);
+  case PLOT_TYPE_MARK:
+    rcode = markout(obj, fp, GC, fr2, fg2, fb2, mtype, lwidth, snum, style);
     break;
-  case 1:
-    rcode=lineout(obj,fp,GC,lwidth,snum,style,ljoin,lmiter,FALSE);
+  case PLOT_TYPE_LINE:
+    rcode = lineout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, FALSE);
     break;
-  case 2:
-    rcode=lineout(obj,fp,GC,lwidth,snum,style,ljoin,lmiter,TRUE);
+  case PLOT_TYPE_POLYGON:
+    rcode = lineout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, TRUE);
     break;
-  case 3:
-    rcode=curveout(obj,fp,GC,lwidth,snum,style,ljoin,lmiter,intp);
+  case PLOT_TYPE_CURVE:
+    rcode = curveout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, intp);
     break;
-  case 4: case 5: case 6: case 7: case 8:
-    rcode=rectout(obj,fp,GC,fr2,fg2,fb2,lwidth,snum,style,type-4);
+  case PLOT_TYPE_DIAGONAL:
+  case PLOT_TYPE_ARROW:
+  case PLOT_TYPE_RECTANGLE:
+  case PLOT_TYPE_RECTANGLE_FILL:
+  case PLOT_TYPE_RECTANGLE_SOLID_FILL:
+    rcode = rectout(obj, fp, GC, fr2, fg2, fb2, lwidth, snum, style, type);
     break;
-  case 9: case 10:
-    rcode=errorbarout(obj,fp,GC,lwidth,snum,style,type-9);
+  case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAR_Y:
+    rcode = errorbarout(obj, fp, GC, lwidth, snum, style, type);
     break;
-  case 11: case 12:
-    rcode=stairout(obj,fp,GC,lwidth,snum,style,ljoin,lmiter,type-11);
+  case PLOT_TYPE_STAIRCASE_X:
+  case PLOT_TYPE_STAIRCASE_Y:
+    rcode = stairout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, type);
     break;
-  case 13: case 14: case 15: case 16: case 17: case 18:
-    rcode=barout(obj,fp,GC,fr2,fg2,fb2,lwidth,snum,style,type-13);
+  case PLOT_TYPE_BAR_X:
+  case PLOT_TYPE_BAR_Y:
+  case PLOT_TYPE_BAR_FILL_X:
+  case PLOT_TYPE_BAR_FILL_Y:
+  case PLOT_TYPE_BAR_SOLID_FILL_X:
+  case PLOT_TYPE_BAR_SOLID_FILL_Y:
+    rcode = barout(obj, fp, GC, fr2, fg2, fb2, lwidth, snum, style, type);
     break;
-  case 19:
-    rcode=fitout(obj,fp,GC,lwidth,snum,style,ljoin,lmiter,fit,redraw);
-    if (redraw)
+  case PLOT_TYPE_FIT:
+    field = (char *)argv[1];
+    rcode = fitout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, fit, field[0] == 'r');
+    if (field[0] == 'r')
       fp->datanum = f2dlocal->num;
     break;
   default:
     /* not reachable */
     rcode = -1;
   }
+
   closedata(fp, f2dlocal);
-  if (rcode==-1) return 1;
-  GRAaddlist(GC,obj,inst,(char *)argv[0],"redraw");
+  if (rcode == -1)
+    return 1;
+
+  GRAaddlist(GC, obj, inst, (char *) argv[0], "redraw");
   return 0;
 }
 
@@ -4760,7 +4797,7 @@ int f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         }
         break;
       case 'd':
-        for (i=19;i>=0;i--)
+        for (i=PLOT_TYPE_FIT;i>=0;i--)
           if (strncmp(f2dtypechar[i],po+2,strlen(f2dtypechar[i]))==0) break;
         if ((i==-1)
         || ((i==0) && (po[2+4]!=','))
@@ -6475,7 +6512,8 @@ int update_mask(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-static int foputabs(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+static int 
+foputabs(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   update_field(obj, inst, rval, argc, argv);
   return oputabs(obj, inst, rval, argc, argv);

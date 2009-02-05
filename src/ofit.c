@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.8 2008/07/16 10:18:00 hito Exp $
+ * $Id: ofit.c,v 1.9 2009/02/05 05:09:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,6 +34,7 @@
 #include "mathcode.h"
 #include "mathfn.h"
 #include "oroot.h"
+#include "ofit.h"
 
 #define NAME "fit"
 #define PARENT "object"
@@ -75,7 +76,7 @@ char *fiterrorlist[ERRNUM]={
   "convergence error.",
 };
 
-char *fittypechar[6]={
+char *fittypechar[]={
   N_("poly"),
   N_("pow"),
   N_("exp"),
@@ -216,7 +217,7 @@ int fitpoly(struct fitlocal *fitlocal,
   char *equation;
   char buf[1024];
 
-  if (type==0) dim=dimension+1;
+  if (type == FIT_TYPE_POLY) dim=dimension+1;
   else dim=2;
   if (!through && (num<dim)) return -1;
   if (through && (num<dim+1)) return -1;
@@ -279,21 +280,21 @@ int fitpoly(struct fitlocal *fitlocal,
   if ((equation=memalloc(512))==NULL) return 1;
   equation[0]='\0';
   j=0;
-  if (type==0) {
+  if (type == FIT_TYPE_POLY) {
     for (i=dim-1;i>1;i--) j+=sprintf(equation+j,"%.15e*X^%d+",coe[i],i);
     j+=sprintf(equation+j,"%.15e*X+%.15e",coe[1],coe[0]);
-  } else if (type==1) sprintf(equation,"exp(%.15e)*X^%.15e",coe[0],coe[1]);
-  else if (type==2) sprintf(equation,"exp(%.15e*X+%.15e)",coe[1],coe[0]);
-  else if (type==3) sprintf(equation,"%.15e*Ln(X)+%.15e",coe[1],coe[0]);
+  } else if (type == FIT_TYPE_POW) sprintf(equation,"exp(%.15e)*X^%.15e",coe[0],coe[1]);
+  else if (type == FIT_TYPE_EXP) sprintf(equation,"exp(%.15e*X+%.15e)",coe[1],coe[0]);
+  else if (type == FIT_TYPE_LOG) sprintf(equation,"%.15e*Ln(X)+%.15e",coe[1],coe[0]);
   fitlocal->equation=equation;
 
   if (disp) {
     i=0;
     i += sprintf(buf + i, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
-    if (type==0) i+=sprintf(buf+i,"Eq: %%0i*X^i (i=0-%d)\n\n",dim-1);
-    else if (type==1) i += sprintf(buf + i,"Eq: exp(%%00)*X^%%01\n\n");
-    else if (type==2) i += sprintf(buf + i,"Eq: exp(%%01*X+%%00)\n\n");
-    else if (type==3) i += sprintf(buf + i,"Eq: %%01*Ln(X)+%%00\n\n");
+    if (type == FIT_TYPE_POLY) i+=sprintf(buf+i,"Eq: %%0i*X^i (i=0-%d)\n\n",dim-1);
+    else if (type == FIT_TYPE_POW) i += sprintf(buf + i,"Eq: exp(%%00)*X^%%01\n\n");
+    else if (type == FIT_TYPE_EXP) i += sprintf(buf + i,"Eq: exp(%%01*X+%%00)\n\n");
+    else if (type == FIT_TYPE_USER) i += sprintf(buf + i,"Eq: %%01*Ln(X)+%%00\n\n");
     for (j=0;j<dim;j++)
       i+=sprintf(buf+i,"       %%0%d = %+.7e\n",j,coe[j]);
     i+=sprintf(buf+i,"\n");
@@ -694,7 +695,7 @@ int fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"parameter9",inst,&(fitlocal->coe[9]));
   _getobj(obj,"display",inst,&disp);
 
-  if (through && (type==4)) {
+  if (through && (type == FIT_TYPE_USER)) {
     error(obj,ERRTHROUGH);
     return 1;
   }
@@ -716,15 +717,15 @@ int fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     y=data[i*2+1];
     if (weight) wt=wdata[i];
     err=FALSE;
-    if (type==1) {
+    if (type == FIT_TYPE_POW) {
       if (y<=0) err=TRUE;
       else y=log(y);
       if (x<=0) err=TRUE;
       else x=log(x);
-    } else if (type==2) {
+    } else if (type == FIT_TYPE_EXP) {
       if (y<=0) err=TRUE;
       else y=log(y);
-    } else if (type==3) {
+    } else if (type == FIT_TYPE_LOG) {
       if (x<=0) err=TRUE;
       else x=log(x);
     }
@@ -744,15 +745,15 @@ int fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (err3) error(obj,ERRNEGATIVEWEIGHT);
   if (through) {
     err=FALSE;
-    if (type==1) {
+    if (type == FIT_TYPE_POW) {
       if (y0<=0) err=TRUE;
       else y0=log(y0);
       if (x0<=0) err=TRUE;
       else x0=log(x0);
-    } else if (type==2) {
+    } else if (type == FIT_TYPE_EXP) {
       if (y0<=0) err=TRUE;
       else y0=log(y0);
-    } else if (type==3) {
+    } else if (type == FIT_TYPE_LOG) {
       if (x0<=0) err=TRUE;
       else x0=log(x0);
     }
@@ -761,7 +762,7 @@ int fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 1;
     }
   }
-  if (type!=4)
+  if (type != FIT_TYPE_USER)
     rcode=fitpoly(fitlocal,type,dimension,through,x0,y0,data,num,disp,weight,wdata);
   else
     rcode=fituser(obj,fitlocal,func,deriv,converge,data,num,disp,weight,wdata);

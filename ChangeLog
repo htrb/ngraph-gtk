@@ -1,7 +1,22 @@
 2009-02-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (FitDialogSetSensitivity): use "FIT_OBJ_TYPE".
+	(enum MATH_FNC_TYPE): add.
+	(MathTextDialogSetup, MathTextDialogClose): use "MATH_FNC_TYPE".
+	(FitDialogSetSensitivity): use "FIT_OBJ_TYPE".
+	(FileDialogFit, FileDialogType, draw_type_pixbuf, select_type)
+	(start_editing_type): use "FILE_OBJ_PLOT_TYPE".
+
+	* src/ofit.c (fitpoly, fitfit): use "FIT_OBJ_TYPE".
+
+	* src/ofit.h: add.
+
 	* src/ofile.c (f2ddraw): do "fp->datanum = f2dlocal->num" after
 	call "fitout()" when "redraw" is true.
+	(opendata, rectout, errorbarout, stairout, barout, f2ddraw): use
+	"FILE_OBJ_PLOT_TYPE".
+
+	* src/ofile.h (enum FILE_OBJ_PLOT_TYPE): add
 
 2009-02-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.22 2009/02/03 11:45:24 hito Exp $
+ * $Id: x11menu.h,v 1.23 2009/02/05 05:09:42 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -222,7 +222,6 @@ struct CoordWin
   char *str;
 };
 
-#define MARK_TYPE_NUM 90
 #define MENU_HISTORY_NUM 10
 
 struct NgraphApp

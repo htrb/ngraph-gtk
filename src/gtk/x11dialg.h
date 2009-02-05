@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.25 2009/02/04 03:46:42 hito Exp $
+ * $Id: x11dialg.h,v 1.26 2009/02/05 05:09:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,9 @@
 #include <gdk/gdk.h>
 
 #include "object.h"
+
+#define MARK_TYPE_NUM 90
+#define MATH_FNC_NUM 5
 
 struct line_style {
   char *name, *list;
@@ -90,7 +93,7 @@ struct MarkDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *toggle[90];
+  GtkWidget *toggle[MARK_TYPE_NUM];
   int Type, cb_respond;
 };
 void MarkDialog(struct MarkDialog *data, int type);
@@ -133,7 +136,6 @@ struct EvalDialog
 void EvalDialog(struct EvalDialog *data,
 		struct objlist *obj, int num, struct narray *iarray);
 
-#define MATH_FNC_NUM 5
 struct MathDialog
 {
   GtkWidget *parent, *widget;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.70 2009/01/20 07:02:43 hito Exp $
+ * $Id: x11file.c,v 1.71 2009/02/05 05:09:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,6 +46,7 @@
 #include "spline.h"
 #include "nconfig.h"
 #include "ofile.h"
+#include "ofit.h"
 
 #include "x11bitmp.h"
 #include "x11gui.h"
@@ -121,6 +122,14 @@ static struct subwin_popup_list Popup_list[] = {
 #define FITSAVE "fit.ngp"
 #define CB_BUF_SIZE 128
 
+enum MATH_FNC_TYPE {
+  TYPE_MATH_X = 0,
+  TYPE_MATH_Y,
+  TYPE_FUNC_F,
+  TYPE_FUNC_G,
+  TYPE_FUNC_H,
+};
+
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
 static gboolean FileWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
@@ -143,15 +152,15 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
 
   switch (d->Mode) {
-  case 0:
+  case TYPE_MATH_X:
     gtk_entry_set_completion(GTK_ENTRY(d->list), NgraphApp.x_math_list);
     break;
-  case 1:
+  case TYPE_MATH_Y:
     gtk_entry_set_completion(GTK_ENTRY(d->list), NgraphApp.y_math_list);
     break;
-  case 2:
-  case 3:
-  case 4:
+  case TYPE_FUNC_F:
+  case TYPE_FUNC_G:
+  case TYPE_FUNC_H:
     gtk_entry_set_completion(GTK_ENTRY(d->list), NgraphApp.func_list);
     break;
   }
@@ -175,15 +184,15 @@ MathTextDialogClose(GtkWidget *w, void *data)
   p = gtk_entry_get_text(GTK_ENTRY(d->list));
   d->math = strdup(p);
   switch (d->Mode) {
-  case 0:
+  case TYPE_MATH_X:
     entry_completion_append(NgraphApp.x_math_list, p);
     break;
-  case 1:
+  case TYPE_MATH_Y:
     entry_completion_append(NgraphApp.y_math_list, p);
     break;
-  case 2:
-  case 3:
-  case 4:
+  case TYPE_FUNC_F:
+  case TYPE_FUNC_G:
+  case TYPE_FUNC_H:
     entry_completion_append(NgraphApp.func_list, p);
     break;
   }
@@ -1013,16 +1022,16 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   intp =  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->interpolation));
 
   switch (type) {
-  case 0:
-  case 1:
-  case 2:
-  case 3:
+  case FIT_TYPE_POLY:
+  case FIT_TYPE_POW:
+  case FIT_TYPE_EXP:
+  case FIT_TYPE_LOG:
     gtk_widget_set_sensitive(d->dim_box, type == 0);
     gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
     gtk_widget_set_sensitive(d->through_box, through);
     gtk_widget_set_sensitive(d->through_point, TRUE);
     break;
-  case 4:
+  case FIT_TYPE_USER:
     deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
 
     gtk_widget_set_sensitive(d->dim_box, FALSE);
@@ -2385,7 +2394,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
     putobj(d->Obj, "fit", d->Id, NULL);
     break;
   case IDOK:
-    combo_box_set_active(d->type, 19);
+    combo_box_set_active(d->type, PLOT_TYPE_FIT);
     break;
   }
 
@@ -2541,26 +2550,26 @@ FileDialogType(GtkWidget *w, gpointer client_data)
   type = combo_box_get_active(w);
 
   switch (type) {
-  case 0:
+  case PLOT_TYPE_MARK:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
-  case 1:
-  case 2:
+  case PLOT_TYPE_LINE:
+  case PLOT_TYPE_POLYGON:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
     break;
-  case 3:
+  case PLOT_TYPE_CURVE:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
     break;
-  case 4:
-  case 6:
-  case 8:
+  case PLOT_TYPE_DIAGONAL:
+  case PLOT_TYPE_RECTANGLE:
+  case PLOT_TYPE_RECTANGLE_SOLID_FILL:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
@@ -2568,53 +2577,53 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
-  case 5:
+  case PLOT_TYPE_ARROW:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
-  case 7:
+  case PLOT_TYPE_RECTANGLE_FILL:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
-  case 9:
-  case 10:
+  case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAR_Y:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
-  case 11:
-  case 12:
+  case PLOT_TYPE_STAIRCASE_X:
+  case PLOT_TYPE_STAIRCASE_Y:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
     break;
-  case 13:
-  case 14:
-  case 17:
-  case 18:
+  case PLOT_TYPE_BAR_X:
+  case PLOT_TYPE_BAR_Y:
+  case PLOT_TYPE_BAR_SOLID_FILL_X:
+  case PLOT_TYPE_BAR_SOLID_FILL_Y:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
-  case 15:
-  case 16:
+  case PLOT_TYPE_BAR_FILL_X:
+  case PLOT_TYPE_BAR_FILL_Y:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
     break;
-  case 19:
+  case PLOT_TYPE_FIT:
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
     gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
@@ -3732,18 +3741,18 @@ draw_type_pixbuf(struct objlist *obj, int i)
   GRAview(ggc, 0, 0, width, height, 0);
 
   switch (type) {
-  case 0:
+  case PLOT_TYPE_MARK:
     getobj(obj, "mark_type", i, 0, NULL, &marktype);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     GRAmark(ggc, marktype, height / 2, height / 2, height - 2,
 	    fr, fg, fb, fr2, fg2, fb2);
     break;
-  case 1:
+  case PLOT_TYPE_LINE:
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     GRAline(ggc, 1, height / 2, height - 1, height / 2);
     break;
-  case 2:
+  case PLOT_TYPE_POLYGON:
     poly[0] = 1;
     poly[1] = height / 2;
 
@@ -3768,7 +3777,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     GRAdrawpoly(ggc, 7, poly, 0);
     break;
-  case 3:
+  case PLOT_TYPE_CURVE:
     spx[0] = 1;
     spx[1] = height / 3 + 1;
     spx[2] = height * 2 / 3;
@@ -3811,13 +3820,13 @@ draw_type_pixbuf(struct objlist *obj, int i)
       if (!GRAcurve(ggc, spc2, spx[j], spy[j])) break;
     }
     break;
-  case 4:
-  case 5:
-  case 6:
-  case 7:
-  case 8:
+  case PLOT_TYPE_DIAGONAL:
+  case PLOT_TYPE_ARROW:
+  case PLOT_TYPE_RECTANGLE:
+  case PLOT_TYPE_RECTANGLE_FILL:
+  case PLOT_TYPE_RECTANGLE_SOLID_FILL:
     GRAcolor(ggc, fr, fg, fb);
-    if ((type == 4) || (type == 5))
+    if ((type == PLOT_TYPE_DIAGONAL) || (type == PLOT_TYPE_ARROW))
       GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     else
       GRAlinestyle(ggc, 0, NULL, 1, 2, 0, 1000);
@@ -3826,9 +3835,9 @@ draw_type_pixbuf(struct objlist *obj, int i)
 
     spx[1] = height - 1;
     spy[1] = 1;
-    if ((type == 4) || (type == 5))
+    if ((type == PLOT_TYPE_DIAGONAL) || (type == PLOT_TYPE_ARROW))
       GRAline(ggc, spx[0], spy[0], spx[1], spy[1]);
-    if (type == 5) {
+    if (type == PLOT_TYPE_ARROW) {
       poly[0] = height - 6;
       poly[1] = 1;
 
@@ -3839,25 +3848,25 @@ draw_type_pixbuf(struct objlist *obj, int i)
       poly[5] = 6;
       GRAdrawpoly(ggc, 3, poly, 1);
     }
-    if ((type == 7) || (type == 8)) {
-      if (type == 7)
+    if ((type == PLOT_TYPE_RECTANGLE_FILL) || (type == PLOT_TYPE_RECTANGLE_SOLID_FILL)) {
+      if (type == PLOT_TYPE_RECTANGLE_FILL)
 	GRAcolor(ggc, fr2, fg2, fb2);
       GRArectangle(ggc, spx[0], spy[0], spx[1], spy[1], 1);
-      if (type == 7)
+      if (type == PLOT_TYPE_RECTANGLE_FILL)
 	GRAcolor(ggc, fr, fg, fb);
     }
-    if ((type == 6) || (type == 7)) {
+    if ((type == PLOT_TYPE_RECTANGLE) || (type == PLOT_TYPE_RECTANGLE_FILL)) {
       GRAline(ggc, spx[0], spy[0], spx[0], spy[1]);
       GRAline(ggc, spx[0], spy[1], spx[1], spy[1]);
       GRAline(ggc, spx[1], spy[1], spx[1], spy[0]);
       GRAline(ggc, spx[1], spy[0], spx[0], spy[0]);
     }
     break;
-  case 9:
-  case 10:
+  case PLOT_TYPE_ERRORBAR_X:
+  case PLOT_TYPE_ERRORBAR_Y:
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    if (type == 9) {
+    if (type == PLOT_TYPE_ERRORBAR_X) {
       GRAline(ggc, 1, height / 2, height - 1, height / 2);
       GRAline(ggc, 1, height / 4, 1, height * 3 / 4);
       GRAline(ggc, height - 1, height / 4, height - 1, height * 3 / 4);
@@ -3867,11 +3876,11 @@ draw_type_pixbuf(struct objlist *obj, int i)
       GRAline(ggc, height / 4, height -1, height * 3 / 4, height - 1);
     }
     break;
-  case 11:
-  case 12:
+  case PLOT_TYPE_STAIRCASE_X:
+  case PLOT_TYPE_STAIRCASE_Y:
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    if (type == 11) {
+    if (type == PLOT_TYPE_STAIRCASE_X) {
       GRAmoveto(ggc, 1, height - 1);
       GRAlineto(ggc, height / 4, height - 1);
       GRAlineto(ggc, height / 4, height / 2);
@@ -3887,42 +3896,42 @@ draw_type_pixbuf(struct objlist *obj, int i)
       GRAlineto(ggc, height - 1, 1);
     }
     break;
-  case 13:
-  case 14:
-  case 15:
-  case 16:
-  case 17:
-  case 18:
+  case PLOT_TYPE_BAR_X:
+  case PLOT_TYPE_BAR_Y:
+  case PLOT_TYPE_BAR_FILL_X:
+  case PLOT_TYPE_BAR_FILL_Y:
+  case PLOT_TYPE_BAR_SOLID_FILL_X:
+  case PLOT_TYPE_BAR_SOLID_FILL_Y:
     GRAcolor(ggc, fr, fg, fb);
     GRAlinestyle(ggc, 0, NULL, 1, 2, 0, 1000);
-    if ((type == 15) || (type == 17)) {
-      if (type == 15)
+    if ((type == PLOT_TYPE_BAR_FILL_X) || (type == PLOT_TYPE_BAR_SOLID_FILL_X)) {
+      if (type == PLOT_TYPE_BAR_FILL_X)
 	GRAcolor(ggc, fr2, fg2, fb2);
       GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 1);
-      if (type == 15)
+      if (type == PLOT_TYPE_BAR_FILL_X)
 	GRAcolor(ggc, fr, fg, fb);
     }
-    if ((type == 16) || (type == 18)) {
-      if (type == 16)
+    if ((type == PLOT_TYPE_BAR_FILL_Y) || (type == PLOT_TYPE_BAR_SOLID_FILL_Y)) {
+      if (type == PLOT_TYPE_BAR_FILL_Y)
 	GRAcolor(ggc, fr2, fg2, fb2);
       GRArectangle(ggc, height / 3, 1, height * 3 / 4, height - 1, 1);
-      if (type == 16)
+      if (type == PLOT_TYPE_BAR_FILL_Y)
 	GRAcolor(ggc, fr, fg, fb);
     }
-    if ((type == 13) || (type == 15)) {
+    if ((type == PLOT_TYPE_BAR_X) || (type == PLOT_TYPE_BAR_FILL_X)) {
       GRAline(ggc, 1,          height / 4,     height - 1, height /4);
       GRAline(ggc, height - 1, height / 4,     height - 1, height * 3 / 4);
       GRAline(ggc, height - 1, height * 3 / 4, 1,          height * 3 / 4);
       GRAline(ggc, 1,          height * 3 / 4, 1,          height / 4);
     }
-    if ((type == 14) || (type == 16)) {
+    if ((type == PLOT_TYPE_BAR_Y) || (type == PLOT_TYPE_BAR_FILL_Y)) {
       GRAline(ggc, height / 4,     1,          height * 3 / 4, 1);
       GRAline(ggc, height * 3 / 4, 1,          height * 3 / 4, height - 1);
       GRAline(ggc, height * 3/ 4,  height - 1, height / 4,     height - 1);
       GRAline(ggc, height / 4,     height - 1, height / 4,     1);
     }
     break;
-  case 19:
+  case PLOT_TYPE_FIT:
     GRAcolor(ggc, fr, fg, fb);
     GRAmoveto(ggc, 1, height * 3 / 4);
     GRAtextstyle(ggc, "Times", 52, 0, 0);
@@ -4208,7 +4217,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   gtk_tree_path_free(path);
 
   switch (a) {
-  case 0:
+  case PLOT_TYPE_MARK:
     getobj(obj, "mark_type", sel, 0, NULL, &mark_type);
 
     if (b < 0)
@@ -4220,7 +4229,7 @@ select_type(GtkComboBox *w, gpointer user_data)
     putobj(obj, "mark_type", sel, &b);
 
     break;
-  case 3:
+  case PLOT_TYPE_CURVE:
     getobj(obj, "interpolation", sel, 0, NULL, &curve_type);
 
     if (b < 0)
@@ -4281,10 +4290,10 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   getobj(obj, "type", sel, 0, NULL, &type);
 
   switch (type) {
-  case 0:
+  case PLOT_TYPE_MARK:
     getobj(obj, "mark_type", sel, 0, NULL, &child);
     break;
-  case 3:
+  case PLOT_TYPE_CURVE:
     getobj(obj, "interpolation", sel, 0, NULL, &child);
     break;
   default:
