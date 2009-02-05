@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.6 2009/02/05 08:13:08 hito Exp $
+ * $Id: omerge.c,v 1.7 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -57,14 +57,14 @@
 #define ERRGRA  102
 #define ERRGRAFM 103
 
-#define ERRNUM 4
-
-static char *mergeerrorlist[ERRNUM]={
+static char *mergeerrorlist[]={
   "GRA file is not specified.",
   "I/O error: open file",
   "not GRA file",
   "illegal GRA format"
 };
+
+#define ERRNUM (sizeof(mergeerrorlist) / sizeof(*mergeerrorlist))
 
 struct mergelocal {
   FILE *storefd;

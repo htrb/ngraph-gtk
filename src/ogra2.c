@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2.c,v 1.2 2009/02/05 08:13:08 hito Exp $
+ * $Id: ogra2.c,v 1.3 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,11 +37,12 @@
 #define FALSE 0
 
 #define ERRLOCK 100
-#define ERRNUM 1
 
-static char *gra2errorlist[ERRNUM]={
+static char *gra2errorlist[]={
   "device is locked"
 };
+
+#define ERRNUM (sizeof(gra2errorlist) / sizeof(*gra2errorlist))
 
 static int 
 gra2init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -130,9 +131,7 @@ gra2disconnect(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 7
-
-static struct objtable gra2[TBLNUM] = {
+static struct objtable gra2[] = {
   {"init",NVFUNC,NEXEC,gra2init,NULL,0},
   {"done",NVFUNC,NEXEC,gra2done,NULL,0},
   {"clear",NVFUNC,NREAD|NEXEC,gra2clear,"",0},
@@ -141,6 +140,8 @@ static struct objtable gra2[TBLNUM] = {
   {"delete_gra",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"disconnect",NVFUNC,NREAD|NEXEC,NULL,"",0},
 };
+
+#define TBLNUM (sizeof(gra2) / sizeof(*gra2))
 
 void *addgra2()
 /* addgra2() returns NULL on error */

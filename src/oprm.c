@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.5 2009/02/05 08:13:08 hito Exp $
+ * $Id: oprm.c,v 1.6 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -62,14 +62,14 @@
 #define ERRPRM 102
 #define ERREXIST 103
 
-#define ERRNUM 4
-
-static char *prmerrorlist[ERRNUM]={
+static char *prmerrorlist[]={
   "I/O error: open file",
   "I/O error: read file",
   "unsupported PRM file",
   "skip existing file",
 };
+
+#define ERRNUM (sizeof(prmerrorlist) / sizeof(*prmerrorlist))
 
 static int 
 prminit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -1705,9 +1705,7 @@ errexit:
   return 1;
 }
 
-#define TBLNUM 7
-
-static struct objtable prm[TBLNUM] = {
+static struct objtable prm[] = {
   {"init",NVFUNC,NEXEC,prminit,NULL,0},
   {"done",NVFUNC,NEXEC,prmdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -1716,6 +1714,8 @@ static struct objtable prm[TBLNUM] = {
   {"ignore_path",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"load",NVFUNC,NREAD|NEXEC,prmload,NULL,0},
 };
+
+#define TBLNUM (sizeof(prm) / sizeof(*prm))
 
 void *addprm()
 {

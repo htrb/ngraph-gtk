@@ -1,5 +1,5 @@
 /* 
- * $Id: opolygon.c,v 1.3 2009/02/05 08:13:08 hito Exp $
+ * $Id: opolygon.c,v 1.4 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,14 +41,14 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 1
-
-static char *polyfillmode[4]={
+static char *polyfillmode[]={
   "empty",
   "even_odd_rule",
   "winding_rule",
   NULL,
 };
+
+#define ERRNUM (sizeof(polyfillmode) / sizeof(*polyfillmode))
 
 char *polyerrorlist[ERRNUM]={
   ""
@@ -196,9 +196,7 @@ polygeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 15
-
-static struct objtable opoly[TBLNUM] = {
+static struct objtable opoly[] = {
   {"init",NVFUNC,NEXEC,polyinit,NULL,0},
   {"done",NVFUNC,NEXEC,polydone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -218,6 +216,8 @@ static struct objtable opoly[TBLNUM] = {
   {"zooming",NVFUNC,NREAD|NEXEC,legendzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,polymatch,"iiiii",0},
 };
+
+#define TBLNUM (sizeof(opoly) / sizeof(*opoly))
 
 void *addpolygon()
 /* addpolygon() returns NULL on error */

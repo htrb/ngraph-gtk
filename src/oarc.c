@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.5 2009/02/05 07:59:26 hito Exp $
+ * $Id: oarc.c,v 1.6 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,11 +41,11 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 1
-
-static char *arcerrorlist[ERRNUM]={
+static char *arcerrorlist[]={
  ""
 };
+
+#define ERRNUM (sizeof(arcerrorlist) / sizeof(*arcerrorlist))
 
 static int 
 arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -333,9 +333,7 @@ arcmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 18
-
-static struct objtable arc[TBLNUM] = {
+static struct objtable arc[] = {
   {"init",NVFUNC,NEXEC,arcinit,NULL,0},
   {"done",NVFUNC,NEXEC,arcdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -355,6 +353,8 @@ static struct objtable arc[TBLNUM] = {
   {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},
 };
+
+#define TBLNUM (sizeof(arc) / sizeof(*arc))
 
 void *addarc()
 /* addarc() returns NULL on error */

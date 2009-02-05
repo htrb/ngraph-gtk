@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2nul.c,v 1.3 2009/02/05 08:13:08 hito Exp $
+ * $Id: ogra2nul.c,v 1.4 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,11 +46,11 @@
 
 #define ERRCONF 100
 
-#define ERRNUM 1
-
-static char *g2nulerrorlist[ERRNUM]={
+static char *g2nulerrorlist[]={
   "",
 };
+
+#define ERRNUM (sizeof(g2nulerrorlist) / sizeof(*g2nulerrorlist))
 
 static int 
 g2nulinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -298,9 +298,7 @@ g2nul_chardescent(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-#define TBLNUM 6
-
-static struct objtable gra2null[TBLNUM] = {
+static struct objtable gra2null[] = {
   {"init",NVFUNC,NEXEC,g2nulinit,NULL,0},
   {"done",NVFUNC,NEXEC,g2nuldone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -308,6 +306,8 @@ static struct objtable gra2null[TBLNUM] = {
   {"_charascent",NIFUNC,0,g2nul_charheight,NULL,0},
   {"_chardescent",NIFUNC,0,g2nul_chardescent,NULL,0},
 };
+
+#define TBLNUM (sizeof(gra2null) / sizeof(*gra2null))
 
 void *addgra2null()
 /* addgra2null() returns NULL on error */

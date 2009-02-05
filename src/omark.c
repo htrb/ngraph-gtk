@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.6 2009/02/05 08:13:08 hito Exp $
+ * $Id: omark.c,v 1.7 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,11 +39,11 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 1
-
-static char *markerrorlist[ERRNUM]={
+static char *markerrorlist[]={
   ""
 };
+
+#define ERRNUM (sizeof(markerrorlist) / sizeof(*markerrorlist))
 
 static int 
 markinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -281,9 +281,7 @@ markmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 17
-
-static struct objtable mark[TBLNUM] = {
+static struct objtable mark[] = {
   {"init",NVFUNC,NEXEC,markinit,NULL,0},
   {"done",NVFUNC,NEXEC,markdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -305,6 +303,8 @@ static struct objtable mark[TBLNUM] = {
   {"zooming",NVFUNC,NREAD|NEXEC,markzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,markmatch,"iiiii",0},
 };
+
+#define TBLNUM (sizeof(mark) / sizeof(*mark))
 
 void *addmark()
 /* addmark() returns NULL on error */

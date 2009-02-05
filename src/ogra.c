@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.9 2009/02/05 08:13:08 hito Exp $
+ * $Id: ogra.c,v 1.10 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,9 +40,7 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 7
-
-static char *GRAerrorlist[ERRNUM]={
+static char *GRAerrorlist[]={
   "unable to open device",
   "device is busy",
   "device is already opened",
@@ -51,6 +49,8 @@ static char *GRAerrorlist[ERRNUM]={
   "gra is now opened.",
   "gra is closed."
 };
+
+#define ERRNUM (sizeof(GRAerrorlist) / sizeof(*GRAerrorlist))
 
 static void set_progress_val(int i, int n, char *name);
 
@@ -410,9 +410,7 @@ set_progress_val(int i, int n, char *name)
   set_progress(1, msgbuf, frac);
 }
 
-#define TBLNUM 18
-
-static struct objtable GRA[TBLNUM] = {
+static struct objtable GRA[] = {
   {"init",NVFUNC,NEXEC,oGRAinit,NULL,0},
   {"done",NVFUNC,NEXEC,oGRAdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -432,6 +430,8 @@ static struct objtable GRA[TBLNUM] = {
   {"_device",NSTR,NREAD,NULL,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,oGRAdraw,"",0},
 };
+
+#define TBLNUM (sizeof(GRA) / sizeof(*GRA))
 
 void *addgra()
 /* addgra() returns NULL on error */

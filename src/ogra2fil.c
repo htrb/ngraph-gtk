@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2fil.c,v 1.2 2009/02/05 08:13:08 hito Exp $
+ * $Id: ogra2fil.c,v 1.3 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,11 +42,11 @@
 
 #define ERRFOPEN 100
 
-#define ERRNUM 1
-
-static char *gra2ferrorlist[ERRNUM]={
+static char *gra2ferrorlist[]={
   "I/O error: open file"
 };
+
+#define ERRNUM (sizeof(gra2ferrorlist) / sizeof(*gra2ferrorlist))
 
 struct gra2flocal {
   FILE *fil;
@@ -131,9 +131,7 @@ gra2f_output(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-#define TBLNUM 6
-
-static struct objtable gra2f[TBLNUM] = {
+static struct objtable gra2f[] = {
   {"init",NVFUNC,NEXEC,gra2finit,NULL,0},
   {"done",NVFUNC,NEXEC,gra2fdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -141,6 +139,8 @@ static struct objtable gra2f[TBLNUM] = {
   {"_local",NPOINTER,0,NULL,NULL,0},
   {"_output",NVFUNC,0,gra2f_output,NULL,0},
 };
+
+#define TBLNUM (sizeof(gra2f) / sizeof(*gra2f))
 
 void *addgra2file()
 /* addgra2file() returns NULL on error */

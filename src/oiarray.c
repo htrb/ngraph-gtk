@@ -1,5 +1,5 @@
 /* 
- * $Id: oiarray.c,v 1.2 2009/02/05 08:13:08 hito Exp $
+ * $Id: oiarray.c,v 1.3 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,11 +38,11 @@
 
 #define ERRILNAME 100
 
-#define ERRNUM 1
-
-static char *iarrayerrorlist[ERRNUM]={
+static char *iarrayerrorlist[]={
 ""
 };
+
+#define ERRNUM (sizeof(iarrayerrorlist) / sizeof(*iarrayerrorlist))
 
 static int 
 iarrayinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -153,9 +153,7 @@ iarraydel(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 10
-
-static struct objtable oiarray[TBLNUM] = {
+static struct objtable oiarray[] = {
   {"init",NVFUNC,NEXEC,iarrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,iarraydone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -167,6 +165,8 @@ static struct objtable oiarray[TBLNUM] = {
   {"ins",NVFUNC,NREAD|NEXEC,iarrayins,"ii",0},
   {"del",NVFUNC,NREAD|NEXEC,iarraydel,"i",0},
 };
+
+#define TBLNUM (sizeof(oiarray) / sizeof(*oiarray))
 
 void *addiarray()
 {

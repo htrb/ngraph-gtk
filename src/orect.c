@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.6 2009/02/05 08:13:08 hito Exp $
+ * $Id: orect.c,v 1.7 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,11 +39,11 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 1
-
-static char *recterrorlist[ERRNUM]={
+static char *recterrorlist[]={
   ""
 };
+
+#define ERRNUM (sizeof(recterrorlist) / sizeof(*recterrorlist))
 
 static int 
 rectinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -346,9 +346,7 @@ rectgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 20
-
-static struct objtable rect[TBLNUM] = {
+static struct objtable rect[] = {
   {"init",NVFUNC,NEXEC,rectinit,NULL,0},
   {"done",NVFUNC,NEXEC,rectdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -373,6 +371,8 @@ static struct objtable rect[TBLNUM] = {
   {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,rectmatch,"iiiii",0},
 };
+
+#define TBLNUM (sizeof(rect) / sizeof(*rect))
 
 void *addrectangle()
 /* addrectangle() returns NULL on error */

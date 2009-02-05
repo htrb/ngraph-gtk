@@ -1,5 +1,5 @@
 /* 
- * $Id: odouble.c,v 1.2 2009/02/05 08:13:08 hito Exp $
+ * $Id: odouble.c,v 1.3 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,11 +39,11 @@
 
 #define ERRILNAME 100
 
-#define ERRNUM 1
-
-static char *doubleerrorlist[ERRNUM]={
+static char *doubleerrorlist[]={
 ""
 };
+
+#define ERRNUM (sizeof(doubleerrorlist) / sizeof(*doubleerrorlist))
 
 static int 
 doubleinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -59,14 +59,14 @@ doubledone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 4
-
-static struct objtable odouble[TBLNUM] = {
+static struct objtable odouble[] = {
   {"init",NVFUNC,NEXEC,doubleinit,NULL,0},
   {"done",NVFUNC,NEXEC,doubledone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
   {"@",NDOUBLE,NREAD|NWRITE,NULL,NULL,0},
 };
+
+#define TBLNUM (sizeof(odouble) / sizeof(*odouble))
 
 void *adddouble()
 {

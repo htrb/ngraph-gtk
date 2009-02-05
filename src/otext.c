@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.8 2009/02/05 08:13:08 hito Exp $
+ * $Id: otext.c,v 1.9 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,11 +48,11 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 1
-
-static char *texterrorlist[ERRNUM]={
+static char *texterrorlist[]={
   ""
 };
+
+#define ERRNUM (sizeof(texterrorlist) / sizeof(*texterrorlist))
 
 
 static int 
@@ -606,9 +606,7 @@ textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 20
-
-static struct objtable text[TBLNUM] = {
+static struct objtable text[] = {
   {"init",NVFUNC,NEXEC,textinit,NULL,0},
   {"done",NVFUNC,NEXEC,textdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -633,6 +631,8 @@ static struct objtable text[TBLNUM] = {
   {"match",NBFUNC,NREAD|NEXEC,textmatch,"iiiii",0},
   {"save_config",NVFUNC,NREAD|NEXEC,textsaveconfig,NULL,0},
 };
+
+#define TBLNUM (sizeof(text) / sizeof(*text))
 
 void *addtext()
 /* addtext() returns NULL on error */

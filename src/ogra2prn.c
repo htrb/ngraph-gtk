@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2prn.c,v 1.2 2009/02/05 08:13:08 hito Exp $
+ * $Id: ogra2prn.c,v 1.3 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,11 +49,11 @@
 
 #define ERRFOPEN 100
 
-#define ERRNUM 1
-
-static char *gra2perrorlist[ERRNUM]={
+static char *gra2perrorlist[]={
   "I/O error: open file"
 };
+
+#define ERRNUM (sizeof(gra2perrorlist) / sizeof(*gra2perrorlist))
 
 struct gra2plocal {
   char *fname;
@@ -179,9 +179,7 @@ errexit:
   return 1;
 }
 
-#define TBLNUM 8
-
-static struct objtable gra2p[TBLNUM] = {
+static struct objtable gra2p[] = {
   {"init",NVFUNC,NEXEC,gra2pinit,NULL,0},
   {"done",NVFUNC,NEXEC,gra2pdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -191,6 +189,8 @@ static struct objtable gra2p[TBLNUM] = {
   {"_local",NPOINTER,0,NULL,NULL,0},
   {"_output",NVFUNC,0,gra2p_output,NULL,0},
 };
+
+#define TBLNUM (sizeof(gra2p) / sizeof(*gra2p))
 
 void *addgra2prn()
 /* addgra2prn() returns NULL on error */

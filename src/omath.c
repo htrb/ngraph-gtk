@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.3 2009/02/05 08:13:08 hito Exp $
+ * $Id: omath.c,v 1.4 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -45,15 +45,15 @@
 #define ERRARG    103
 #define ERRSMLARG 104
 
-#define ERRNUM 5
-
-static char *matherrorlist[ERRNUM]={
+static char *matherrorlist[]={
   "syntax error.",
   "not allowd function.",
   "sum() or dif(): deep nest.",
   "illegal argument",
   "not enouph argument."
 };
+
+#define ERRNUM (sizeof(matherrorlist) / sizeof(*matherrorlist))
 
 struct mlocal {
   double x;
@@ -360,9 +360,7 @@ mclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 
-#define TBLNUM 34
-
-static struct objtable math[TBLNUM] = {
+static struct objtable math[] = {
   {"init",NVFUNC,NEXEC,minit,NULL,0},
   {"done",NVFUNC,NEXEC,mdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -398,6 +396,8 @@ static struct objtable math[TBLNUM] = {
   {"clear",NVFUNC,NREAD|NEXEC,mclear,NULL,0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
+
+#define TBLNUM (sizeof(math) / sizeof(*math))
 
 void *addmath()
 /* addmath() returns NULL on error */

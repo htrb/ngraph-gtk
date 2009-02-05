@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.11 2009/01/25 09:53:12 hito Exp $
+ * $Id: ox11dlg.c,v 1.12 2009/02/05 08:40:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,7 +46,7 @@
 #define ERRDISPLAY 100
 #define ERRNODLGINST 101
 
-char *dlgerrorlist[] = {
+static char *dlgerrorlist[] = {
   "cannot open display.",
   "no instance for dialog",
 };
@@ -472,7 +472,7 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   return (ret == IDOK)?0:1;
 }
 
-struct objtable dialog[] = {
+static struct objtable dialog[] = {
   {"init", NVFUNC, NEXEC, dlginit, NULL, 0},
   {"done", NVFUNC, NEXEC, dlgdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},

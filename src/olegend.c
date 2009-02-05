@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.4 2009/02/05 08:13:08 hito Exp $
+ * $Id: olegend.c,v 1.5 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,11 +38,11 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 1
-
-static char *legenderrorlist[ERRNUM]={
+static char *legenderrorlist[]={
   "",
 };
+
+#define ERRNUM (sizeof(legenderrorlist) / sizeof(*legenderrorlist))
 
 static int 
 legendinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -267,9 +267,7 @@ legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 6
-
-static struct objtable legend[TBLNUM] = {
+static struct objtable legend[] = {
   {"init",NVFUNC,0,legendinit,NULL,0},
   {"done",NVFUNC,0,legenddone,NULL,0},
   {"bbox",NIAFUNC,NREAD|NEXEC,NULL,"",0},
@@ -277,6 +275,8 @@ static struct objtable legend[TBLNUM] = {
   {"zooming",NVFUNC,NREAD|NEXEC,NULL,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,NULL,"iiiii",0},
 };
+
+#define TBLNUM (sizeof(legend) / sizeof(*legend))
 
 void *addlegend()
 /* addlegend() returns NULL on error */

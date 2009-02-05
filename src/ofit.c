@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.11 2009/02/05 08:13:08 hito Exp $
+ * $Id: ofit.c,v 1.12 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,8 +42,6 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 14
-
 #define ERRSYNTAX 100
 #define ERRILLEGAL 101
 #define ERRNEST   102
@@ -59,7 +57,7 @@
 #define ERRNEGATIVEWEIGHT 112
 #define ERRCONVERGE 113
 
-static char *fiterrorlist[ERRNUM]={
+static char *fiterrorlist[]={
   "syntax error.",
   "not allowd function.",
   "sum() or dif(): deep nest.",
@@ -75,6 +73,8 @@ static char *fiterrorlist[ERRNUM]={
   "negative or zero weight -> ignored.",
   "convergence error.",
 };
+
+#define ERRNUM (sizeof(fiterrorlist) / sizeof(*fiterrorlist))
 
 char *fittypechar[]={
   N_("poly"),
@@ -820,10 +820,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 
-
-#define TBLNUM 54
-
-static struct objtable fit[TBLNUM] = {
+static struct objtable fit[] = {
   {"init",NVFUNC,NEXEC,fitinit,NULL,0},
   {"done",NVFUNC,NEXEC,fitdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -884,6 +881,8 @@ static struct objtable fit[TBLNUM] = {
   {"fit",NVFUNC,NREAD|NEXEC,fitfit,"da",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
+
+#define TBLNUM (sizeof(fit) / sizeof(*fit))
 
 void *addfit()
 /* addfit() returns NULL on error */

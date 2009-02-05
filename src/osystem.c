@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.6 2009/02/05 08:13:08 hito Exp $
+ * $Id: osystem.c,v 1.7 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -57,16 +57,15 @@
 
 #define ERRNODIR   100
 
-#define ERRNUM 1
-
 
 void resizeconsole(int col,int row);
 extern int consolecol,consolerow;
 
-static char *syserrorlist[ERRNUM]={
+static char *syserrorlist[]={
   "no such directory"
 };
 
+#define ERRNUM (sizeof(syserrorlist) / sizeof(*syserrorlist))
 
 static int 
 sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -332,9 +331,7 @@ systemresize(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 24
-
-static struct objtable nsystem[TBLNUM] = {
+static struct objtable nsystem[] = {
   {"init",NVFUNC,NEXEC,sysinit,NULL,0},
   {"done",NVFUNC,NEXEC,sysdone,NULL,0},
   {"name",NSTR,NREAD,NULL,NULL,0},
@@ -360,6 +357,8 @@ static struct objtable nsystem[TBLNUM] = {
   {"recover_instance",NVFUNC,NREAD|NEXEC,sysrecoverinstance,"sa",0},
   {"resize",NVFUNC,NREAD|NEXEC,systemresize,"ia",0},
 };
+
+#define TBLNUM (sizeof(nsystem) / sizeof(*nsystem))
 
 void *addsystem()
 /* addsystem() returns NULL on error */

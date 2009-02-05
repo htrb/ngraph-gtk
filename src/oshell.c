@@ -1,5 +1,5 @@
 /* 
- * $Id: oshell.c,v 1.4 2009/02/05 08:13:08 hito Exp $
+ * $Id: oshell.c,v 1.5 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -229,15 +229,15 @@ cmdsecurity(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 6
-
-static struct objtable shell[TBLNUM] = {
+static struct objtable shell[] = {
   {"init",NVFUNC,NEXEC,cmdinit,NULL,0},
   {"done",NVFUNC,NEXEC,cmddone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
   {"shell",NVFUNC,NREAD|NEXEC,cmdshell,"sa",0},
   {"security",NVFUNC,0,cmdsecurity,"b",0},
   {"_local",NPOINTER,0,NULL,NULL,0}};
+
+#define TBLNUM (sizeof(shell) / sizeof(*shell))
 
 void *addshell()
 {

@@ -1,5 +1,5 @@
 /* 
- * $Id: oline.c,v 1.4 2009/02/05 08:13:08 hito Exp $
+ * $Id: oline.c,v 1.5 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,11 +42,11 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 1
-
-static char *arrowerrorlist[ERRNUM]={
+static char *arrowerrorlist[]={
   "",
 };
+
+#define ERRNUM (sizeof(arrowerrorlist) / sizeof(*arrowerrorlist))
 
 static int 
 arrowinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -348,9 +348,7 @@ arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 17
-
-static struct objtable arrow[TBLNUM] = {
+static struct objtable arrow[] = {
   {"init",NVFUNC,NEXEC,arrowinit,NULL,0},
   {"done",NVFUNC,NEXEC,arrowdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -372,6 +370,8 @@ static struct objtable arrow[TBLNUM] = {
   {"zooming",NVFUNC,NREAD|NEXEC,legendzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,legendmatch,"iiiii",0},
 };
+
+#define TBLNUM (sizeof(arrow) / sizeof(*arrow))
 
 void *addline()
 /* addarrow() returns NULL on error */

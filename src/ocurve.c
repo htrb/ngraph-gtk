@@ -1,5 +1,5 @@
 /* 
- * $Id: ocurve.c,v 1.3 2009/02/05 07:58:29 hito Exp $
+ * $Id: ocurve.c,v 1.4 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -566,9 +566,7 @@ curvegeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 15
-
-static struct objtable curve[TBLNUM] = {
+static struct objtable curve[] = {
   {"init",NVFUNC,NEXEC,curveinit,NULL,0},
   {"done",NVFUNC,NEXEC,curvedone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -588,6 +586,8 @@ static struct objtable curve[TBLNUM] = {
   {"zooming",NVFUNC,NREAD|NEXEC,legendzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,curvematch,"iiiii",0},
 };
+
+#define TBLNUM (sizeof(curve) / sizeof(*curve))
 
 void *addcurve()
 /* addcurve() returns NULL on error */

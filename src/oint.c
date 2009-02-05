@@ -1,5 +1,5 @@
 /* 
- * $Id: oint.c,v 1.2 2009/02/05 08:13:08 hito Exp $
+ * $Id: oint.c,v 1.3 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,11 +38,11 @@
 
 #define ERRILNAME 100
 
-#define ERRNUM 1
-
-static char *interrorlist[ERRNUM]={
+static char *interrorlist[]={
 ""
 };
+
+#define ERRNUM (sizeof(interrorlist) / sizeof(*interrorlist))
 
 static int 
 intinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -58,14 +58,14 @@ intdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#define TBLNUM 4
-
-static struct objtable oint[TBLNUM] = {
+static struct objtable oint[] = {
   {"init",NVFUNC,NEXEC,intinit,NULL,0},
   {"done",NVFUNC,NEXEC,intdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
   {"@",NINT,NREAD|NWRITE,NULL,NULL,0},
 };
+
+#define TBLNUM (sizeof(oint) / sizeof(*oint))
 
 void *addint()
 {

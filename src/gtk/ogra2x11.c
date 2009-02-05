@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.24 2009/01/08 06:55:33 hito Exp $
+ * $Id: ogra2x11.c,v 1.25 2009/02/05 08:40:15 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -674,7 +674,7 @@ gtk_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
-struct objtable gra2gtk[] = {
+static struct objtable gra2gtk[] = {
   {"init", NVFUNC, NEXEC, gtkinit, NULL, 0},
   {"done", NVFUNC, NEXEC, gtkdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},

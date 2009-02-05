@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.10 2009/02/05 08:00:29 hito Exp $
+ * $Id: oaxis.c,v 1.11 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,8 +49,6 @@
 #define TRUE  1
 #define FALSE 0
 
-#define ERRNUM 6
-
 #define ERRAXISTYPE 100
 #define ERRAXISHEAD 101
 #define ERRAXISGAUGE 102
@@ -58,7 +56,7 @@
 #define ERRMINMAX 104
 #define ERRFORMAT 105
 
-static char *axiserrorlist[ERRNUM]={
+static char *axiserrorlist[]={
   "illegal axis type.",
   "illegal arrow/wave type.",
   "illegal gauge type.",
@@ -66,6 +64,8 @@ static char *axiserrorlist[ERRNUM]={
   "illegal value of min/max/inc.",
   "illegal format.",
 };
+
+#define ERRNUM (sizeof(axiserrorlist) / sizeof(*axiserrorlist))
 
 char *axistypechar[4]={
   N_("linear"),
@@ -2884,9 +2884,7 @@ axisscalepop(struct objlist *obj,char *inst,char *rval,int argc,
   return 0;
 }
 
-#define TBLNUM 81
-
-static struct objtable axis[TBLNUM] = {
+static struct objtable axis[] = {
   {"init",NVFUNC,NEXEC,axisinit,NULL,0},
   {"done",NVFUNC,NEXEC,axisdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -2969,6 +2967,8 @@ static struct objtable axis[TBLNUM] = {
   {"group_manager",NIFUNC,NREAD|NEXEC,axismanager,NULL,0},
   {"save",NSFUNC,NREAD|NEXEC,axissave,"sa",0},
 };
+
+#define TBLNUM (sizeof(axis) / sizeof(*axis))
 
 void *addaxis()
 /* addaxis() returns NULL on error */

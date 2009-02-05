@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.c,v 1.3 2009/02/05 08:13:08 hito Exp $
+ * $Id: oroot.c,v 1.4 2009/02/05 08:40:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,11 +41,11 @@
 
 #define ERRILNAME 100
 
-#define ERRNUM 1
-
-static char *rooterrorlist[ERRNUM]={
+static char *rooterrorlist[]={
      "illegal instance name"
 };
+
+#define ERRNUM (sizeof(rooterrorlist) / sizeof(*rooterrorlist))
 
 static int 
 oinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -238,9 +238,7 @@ errexit:
 }
 
 
-#define TBLNUM 6
-
-static struct objtable objectroot[TBLNUM] = {
+static struct objtable objectroot[] = {
   {"init",NVFUNC,NEXEC,oinit,NULL,0},
   {"done",NVFUNC,NEXEC,odone,NULL,0},
   {"id",NINT,NREAD,NULL,NULL,0},
@@ -248,6 +246,8 @@ static struct objtable objectroot[TBLNUM] = {
   {"name",NSTR,NREAD|NWRITE,oputname,NULL,0},
   {"save",NSFUNC,NREAD|NEXEC,osave,"sa",0},
 };
+
+#define TBLNUM (sizeof(objectroot) / sizeof(*objectroot))
 
 void *addobjectroot()
 /* addobjectroot() returns NULL on error */
