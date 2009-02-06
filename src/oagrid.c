@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.7 2009/02/05 12:45:54 hito Exp $
+ * $Id: oagrid.c,v 1.8 2009/02/06 04:29:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -188,15 +188,18 @@ agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       }
     }
   }
-  if ((dirx%9000)!=0) {
-    error(obj,ERRAXISDIR);
+
+  if ((dirx % 9000) != 0) {
+    error(obj, ERRAXISDIR);
     return 1;
   }
+
   dirx %= 36000;
   if (dirx < 0)
     dirx += 36000;
 
   axdir = dirx / 9000;
+
   if (axmin!=axmax) {
     if (axtype==1) {
       minx=log10(axmin);
@@ -258,15 +261,18 @@ agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       }
     }
   }
-  if ((diry%9000)!=0) {
-    error(obj,ERRAXISDIR);
+
+  if ((diry % 9000) != 0) {
+    error(obj, ERRAXISDIR);
     return 1;
   }
+
   diry %= 36000;
   if (diry < 0)
     diry += 36000;
 
   aydir=diry/9000;
+
   if (aymin!=aymax) {
     if (aytype==1) {
       miny=log10(aymin);
