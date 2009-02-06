@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.c,v 1.8 2009/02/06 09:08:25 hito Exp $
+ * $Id: x11cood.c,v 1.9 2009/02/06 11:50:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,11 +41,8 @@ CoordWinSetFont(const char *font)
   PangoAttrList *pattr;
   PangoFontDescription *desc;
   GtkLabel *label;
-  struct CoordWin *d;
 
-  d = &(NgraphApp.CoordWin);
-
-  label = GTK_LABEL(d->text);
+  label = GTK_LABEL(NgraphApp.CoordWin.text);
 
   if (label == NULL)
     return;
@@ -153,7 +150,7 @@ CmCoordinateWindow(GtkWidget *w, gpointer client_data)
   } else {
     GtkWidget *dlg;
 
-    d ->type = TypeCoordWin;
+    d->type = TypeCoordWin;
 
     dlg = label_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
 
