@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-18\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-02-06 16:14+0900\n"
+"POT-Creation-Date: 2009-02-06 17:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -336,7 +336,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/gtk/x11commn.c:959 src/gtk/x11opt.c:2094
+#: src/gtk/x11commn.c:959 src/gtk/x11opt.c:2101
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -1794,47 +1794,47 @@ msgstr ""
 msgid "_Font of coordinate window:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1858
+#: src/gtk/x11opt.c:1865
 msgid "use _External previewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:1871
+#: src/gtk/x11opt.c:1878
 msgid "Window _Width:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1877
+#: src/gtk/x11opt.c:1884
 msgid "Window _Height:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1953
+#: src/gtk/x11opt.c:1960
 msgid "_DPI:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1959
+#: src/gtk/x11opt.c:1966
 msgid "_Grid:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1969
+#: src/gtk/x11opt.c:1976
 msgid "_Antialias:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1972
+#: src/gtk/x11opt.c:1979
 msgid "_Show ruler"
 msgstr ""
 
-#: src/gtk/x11opt.c:1976
+#: src/gtk/x11opt.c:1983
 msgid "_Auto redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1980
+#: src/gtk/x11opt.c:1987
 msgid "_Load files on redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1987
+#: src/gtk/x11opt.c:1994
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:2087 src/gtk/x11print.c:241 src/gtk/x11print.c:846
+#: src/gtk/x11opt.c:2094 src/gtk/x11print.c:241 src/gtk/x11print.c:846
 #: src/gtk/x11print.c:949 src/gtk/x11print.c:1075
 #, c-format
 msgid ""
@@ -1843,7 +1843,7 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11opt.c:2088
+#: src/gtk/x11opt.c:2095
 msgid "Save as .Ngraph.ngp"
 msgstr ""
 
