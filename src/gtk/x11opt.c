@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.39 2009/02/04 08:00:10 hito Exp $
+ * $Id: x11opt.c,v 1.40 2009/02/06 08:25:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,6 +50,7 @@
 #include "x11lgnd.h"
 #include "x11opt.h"
 #include "x11commn.h"
+#include "x11cood.h"
 
 #define BUF_SIZE 64
 #define MESSAGE_BUF_SIZE 4096
@@ -116,6 +117,22 @@ add_str_to_array(struct narray *conf, char *str)
   buf = nstrdup(str);
   if (buf) {
     arrayadd(conf, &buf);
+  }
+}
+
+static void
+add_prm_str_to_array(struct narray *conf, char *str, char *prm)
+{
+  char *buf;
+  int len;
+
+  if (prm) {
+    len = strlen(prm) + strlen(str) + 2;
+    buf = (char *) memalloc(len);
+    if (buf) {
+      snprintf(buf, len, "%s=%s", str, prm);
+      arrayadd(conf, &buf);
+    }
   }
 }
 
@@ -295,16 +312,9 @@ static void
 save_misc_config(struct narray *conf)
 {
   char *buf;
-  int len;
 
-  if (Menulocal.editor) {
-    len = strlen(Menulocal.editor) + 10;
-    buf = (char *) memalloc(len);
-    if (buf) {
-      snprintf(buf, len, "editor=%s", Menulocal.editor);
-      arrayadd(conf, &buf);
-    }
-  }
+  add_prm_str_to_array(conf, "editor", Menulocal.editor);
+  add_prm_str_to_array(conf, "coordwin_font", Menulocal.coordwin_font);
 
   add_str_with_int_to_array(conf, "change_directory", Menulocal.changedirectory);
   add_str_with_int_to_array(conf, "save_history", Menulocal.savehistory);
@@ -447,6 +457,9 @@ DefaultDialogClose(GtkWidget *win, void *data)
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->misc))) {
     if (Menulocal.editor == NULL) {
       add_str_to_array(&conf, "editor");
+    }
+    if (Menulocal.coordwin_font == NULL) {
+      add_str_to_array(&conf, "coordwin_font");
     }
   }
   removeconfig("[x11menu]", &conf);
@@ -1550,6 +1563,10 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   color.green = Menulocal.bg_g * 257;
   color.blue = Menulocal.bg_b * 257;
   gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
+
+  if (Menulocal.coordwin_font) {
+    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->coordwin_font), Menulocal.coordwin_font);
+  }
 }
 
 static void
@@ -1683,6 +1700,16 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
+    frame = gtk_frame_new(NULL);
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    w = gtk_font_button_new();
+    item_setup(vbox, w, _("_Font of coordinate window:"), FALSE);
+    d->coordwin_font = w;
+
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, FALSE, FALSE, 4);
@@ -1772,6 +1799,21 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   a = spin_entry_get_val(d->data_head_lines);
   putobj(d->Obj, "data_head_lines", d->Id, &a);
+
+
+  buf = gtk_font_button_get_font_name(GTK_FONT_BUTTON(d->coordwin_font));
+  if (Menulocal.coordwin_font) {
+    if (strcmp(Menulocal.coordwin_font, buf)) {
+      memfree(Menulocal.coordwin_font);
+    } else {
+      buf = NULL;
+    }
+  }
+
+  if (buf) {
+    Menulocal.coordwin_font = nstrdup(buf);
+    CoordWinSetFont(buf);
+  }
 
   d->ret = ret;
 }

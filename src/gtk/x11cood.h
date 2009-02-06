@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11cood.h,v 1.2 2009/02/06 08:25:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,6 +21,7 @@
  * 
  */
 
+void CoordWinSetFont(const char *font);
 void CoordWinUpdate(int clear);
 void CoordWinSetCoord(int x, int y);
 void CmCoordinateWindow(GtkWidget *w, gpointer client_data);

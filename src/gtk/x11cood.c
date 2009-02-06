@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.c,v 1.6 2009/01/08 04:18:00 hito Exp $
+ * $Id: x11cood.c,v 1.7 2009/02/06 08:25:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,21 +34,33 @@
 #include "x11menu.h"
 #include "x11cood.h"
 
-static void
-CoordWinDrawText(void)
+void
+CoordWinSetFont(const char *font)
 {
-  GtkTextBuffer *buf;
-  char *str;
+  const char *ptr;
+  PangoAttrList *pattr;
+  PangoFontDescription *desc;
+  GtkLabel *label;
+  struct CoordWin *d;
 
-  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(NgraphApp.CoordWin.text));
-  if (buf == NULL)
+  d = &(NgraphApp.CoordWin);
+
+  label = GTK_LABEL(d->text);
+
+  if (label == NULL)
     return;
 
-  str = NgraphApp.CoordWin.str;
-  if (str == NULL)
-    return;
+  pattr = gtk_label_get_attributes(label);
+  if (pattr == NULL) {
+    pattr = pango_attr_list_new();
+    gtk_label_set_attributes(GTK_LABEL(label), pattr);
+  }
 
-  gtk_text_buffer_set_text(buf, str, -1);
+  ptr = (font) ? font : "Monospace";
+
+  desc = pango_font_description_from_string(ptr);
+  pango_attr_list_change(pattr, pango_attr_font_desc_new(desc));
+  pango_font_description_free(desc);
 }
 
 void
@@ -66,35 +78,36 @@ CoordWinSetCoord(int x, int y)
 
   obj = chkobject("axis");
 
-  if (obj) {
-    num = chkobjlastinst(obj) + 1;
-    l = 45 * (num + 1);
+  if (obj == NULL || d->text == NULL)
+    return;
 
-    if (l > bufsize) {
-      memfree(d->str);
-      d->str = (char *) memalloc(l);
-      bufsize = l;
-    }
+  num = chkobjlastinst(obj) + 1;
+  l = 45 * (num + 1);
 
-    if (d->str) {
-      j = 0;
-      j += snprintf(d->str + j, bufsize - j, "(X:%.2f  Y:%.2f)\n", x / 100.0, y / 100.0);
-      argv[0] = (char *) &x;
-      argv[1] = (char *) &y;
-      argv[2] = NULL;
-      for (i = 0; i < num; i++) {
-	getobj(obj, "group", i, 0, NULL, &name);
-	if (getobj(obj, "coordinate", i, 2, argv, &a) != -1) {
-	  j += snprintf(d->str + j, bufsize - j, "%d %5s %+.7e\n", i, name, a);
-	}
-      }
+  if (l > bufsize) {
+    memfree(d->str);
+    d->str = (char *) memalloc(l);
+    bufsize = l;
+  }
+
+  if (d->str == NULL) {
+    bufsize = 0;
+    return;
+  }
+
+  j = 0;
+  j += snprintf(d->str + j, bufsize - j, "(X:%6.2f  Y:%6.2f)\n", x / 100.0, y / 100.0);
+  argv[0] = (char *) &x;
+  argv[1] = (char *) &y;
+  argv[2] = NULL;
+  for (i = 0; i < num; i++) {
+    getobj(obj, "group", i, 0, NULL, &name);
+    if (getobj(obj, "coordinate", i, 2, argv, &a) != -1) {
+      j += snprintf(d->str + j, bufsize - j, "%d %5s %+.7e\n", i, name, a);
     }
   }
 
-  if (d->text == NULL)
-    return;
-
-  CoordWinDrawText();
+  gtk_label_set_text(GTK_LABEL(d->text), d->str);
 }
 
 void
@@ -142,9 +155,10 @@ CmCoordinateWindow(GtkWidget *w, gpointer client_data)
 
     d ->type = TypeCoordWin;
 
-    dlg = text_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
+    dlg = label_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
 
     sub_window_show((struct SubWin *) d);
     sub_window_set_geometry((struct SubWin *) d, TRUE);
+    CoordWinSetFont(Menulocal.coordwin_font);
   }
 }

@@ -1,5 +1,45 @@
 2009-02-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (add_prm_str_to_array): add.
+	(save_misc_config): use "add_prm_str_to_array()".
+	(save_misc_config): save "coordwin_font".
+	(DefaultDialogClose): call "add_str_to_array()" when
+	"Menulocal.coordwin_font" is NULL.
+	(MiscDialogSetupItem): set font name to "d->coordwin_font" if
+	"Menulocal.coordwin_font" is not NULL.
+	(MiscDialogSetup): create widgets for "Menulocal.coordwin_font".
+	(MiscDialogClose): set selected font to "Menulocal.coordwin_font"
+	and call "CoordWinSetFont()".
+
+	* src/gtk/x11dialg.h (struct MiscDialog): add member
+	"coordwin_font".
+
+	* src/gtk/x11cood.c (CoordWinSetFont): add.
+	(CoordWinDrawTex): remove.
+	(CoordWinSetCoord): call "gtk_label_set_text()" instead of
+	"CoordWinSetCoord()".
+	(CoordWinSetCoord): change format strings for "x" and "y" from
+	"%.2f" to "%6.2f".
+	(CoordWinUpdate): call "label_sub_window_create()" instead of
+	"text_sub_window_create()".
+
+	* src/gtk/ox11menu.c (MenuConfig): add data for "coordwin_font".
+	(menuinit): initialize "Menulocal.coordwin_font".
+
+	* src/gtk/ox11menu.h (struct menulocal): add member
+	"coordwin_font".
+
+	* src/gtk/gtk_subwin.c (sub_window_create): add argument
+	"with_view_port".
+	(sub_window_create): use "gtk_scrolled_window_add_with_viewport()"
+	when "with_view_port" is TRUE.
+	(label_sub_window_create): add.
+
+	* src/omath.c (mformula): use "switch" to cheack "rcode".
+
+	* src/ofile.c (mathcode_error): add.
+	(f2dputmath, fitout): use "mathcode_error()".
+
 	* src/gtk/x11gui.c (DialogExecute): call "gtk_widget_grab_focus()"
 	when "data->focus" is not NULL.
 	(DialogExecute): call "gtk_widget_show_all()" out side of the

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.58 2009/02/05 07:52:18 hito Exp $
+ * $Id: ofile.c,v 1.59 2009/02/06 08:25:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -316,6 +316,25 @@ struct f2dlocal {
 
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
+
+static int
+mathcode_error(struct objlist *obj, enum MATH_CODE_ERROR_NO rcode) {
+  switch (rcode) {
+  case MCNOERR:
+    return 0;
+  case MCSYNTAX:
+    error(obj, ERRSYNTAX);
+    return 1;
+  case MCILLEGAL:
+    error(obj, ERRILLEGAL);
+    return 1;
+  case MCNEST:
+    error(obj, ERRNEST);
+    return 1;
+  }
+  /* never reached */
+  return 1;
+}
 
 static void 
 check_ifs_init(struct f2ddata *fp)
@@ -900,17 +919,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
         arrayfree(needfile);
         needfile=NULL;
       }
-      switch (rcode) {
-      case MCNOERR:
-        break;
-      case MCSYNTAX:
-	error(obj, ERRSYNTAX);
-        return 1;
-      case MCILLEGAL:
-	error(obj, ERRILLEGAL);
-        return 1;
-      case MCNEST:
-	error(obj, ERRNEST);
+      if (mathcode_error(obj, rcode)) {
         return 1;
       }
     } else {
@@ -939,17 +948,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
     if (math!=NULL) {
       rcode=mathcode(math,&code,NULL,NULL,NULL,NULL,
                      TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
-      switch (rcode) {
-      case MCNOERR:
-        break;
-      case MCSYNTAX:
-	error(obj, ERRSYNTAX);
-        return 1;
-      case MCILLEGAL:
-	error(obj, ERRILLEGAL);
-        return 1;
-      case MCNEST:
-	error(obj, ERRNEST);
+      if (mathcode_error(obj, rcode)) {
         return 1;
       }
     } else code=NULL;
@@ -4027,20 +4026,8 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
       needdata=arraynew(sizeof(int));
       rcode=mathcode(weight,&code,needdata,NULL,&maxdim,&need2pass,
                    TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE);
-      switch (rcode) {
-      case MCNOERR:
-        break;
-      case MCSYNTAX:
-	error(obj, ERRSYNTAX);
-        arraydel(&data);
-        return 1;
-      case MCILLEGAL:
-	error(obj, ERRILLEGAL);
-        arraydel(&data);
-        return 1;
-      case MCNEST:
-	error(obj, ERRNEST);
-        arraydel(&data);
+      if (mathcode_error(obj, rcode)) {
+	arraydel(&data);
         return 1;
       }
       if (maxdim<fp->x) maxdim=fp->x;
@@ -4089,17 +4076,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
   rcode=mathcode(equation,&code,NULL,NULL,NULL,NULL,
                  TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,
                  FALSE,FALSE,FALSE,FALSE,FALSE);
-  switch (rcode) {
-  case MCNOERR:
-    break;
-  case MCSYNTAX:
-    error(obj, ERRSYNTAX);
-    return 1;
-  case MCILLEGAL:
-    error(obj, ERRILLEGAL);
-    return 1;
-  case MCNEST:
-    error(obj, ERRNEST);
+  if (mathcode_error(obj, rcode)) {
     return 1;
   }
   GRAcolor(GC,fp->fr,fp->fg,fp->fb);

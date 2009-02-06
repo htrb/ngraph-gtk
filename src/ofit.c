@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.12 2009/02/05 08:40:14 hito Exp $
+ * $Id: ofit.c,v 1.13 2009/02/06 08:25:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -177,14 +177,15 @@ fitput(struct objlist *obj,char *inst,char *rval,
 	break;
       case MCSYNTAX:
 	error(obj, ERRSYNTAX);
-        return 1;
+	return 1;
       case MCILLEGAL:
 	error(obj, ERRILLEGAL);
-        return 1;
+	return 1;
       case MCNEST:
 	error(obj, ERRNEST);
-        return 1;
+	return 1;
       }
+
       if (maxdim>9) {
         error(obj,ERRMANYPARAM);
         return 1;

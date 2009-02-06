@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.4 2009/02/05 08:40:14 hito Exp $
+ * $Id: omath.c,v 1.5 2009/02/06 08:25:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -216,8 +216,8 @@ mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
+  enum MATH_CODE_ERROR_NO rcode;
   char *math,*code;
-  int rcode,ecode;
   struct mlocal *mlocal;
   struct narray needdata;
   int column,multi,maxdim,memory,usrfn;
@@ -243,12 +243,18 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     rcode=mathcode(math,&code,&needdata,NULL,&maxdim,NULL,
                    TRUE,TRUE,TRUE,column,multi,FALSE,memory,usrfn,FALSE,FALSE,FALSE);
     if (column) arraydel(&needdata);
-    if (rcode!=MCNOERR) {
-      if (rcode==MCSYNTAX) ecode=ERRSYNTAX;
-      else if (rcode==MCILLEGAL) ecode=ERRILLEGAL;
-      else if (rcode==MCNEST) ecode=ERRNEST;
-      error(obj,ecode);
-      return ecode;
+    switch (rcode) {
+    case MCNOERR:
+      break;
+    case MCSYNTAX:
+      error(obj, ERRSYNTAX);
+      return 1;
+    case MCILLEGAL:
+      error(obj, ERRILLEGAL);
+      return 1;
+    case MCNEST:
+      error(obj, ERRNEST);
+      return 1;
     }
   } else code=NULL;
   _getobj(obj,"_local",inst,&mlocal);

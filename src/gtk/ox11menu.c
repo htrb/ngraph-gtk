@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.44 2009/01/07 07:32:22 hito Exp $
+ * $Id: ox11menu.c,v 1.45 2009/02/06 08:25:14 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -189,6 +189,7 @@ static struct menu_config MenuConfig[] = {
   {"editor",			MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.editor},
   {"browser",			MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.browser},
   {"help_browser",		MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.help_browser},
+  {"coordwin_font",		MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.coordwin_font},
 
   {"ngp_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.ngpfilelist},
   {"ngp_dir_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.ngpdirlist},
@@ -735,6 +736,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.changedirectory = 1;
   Menulocal.editor = NULL;
   Menulocal.browser = NULL;
+  Menulocal.coordwin_font = NULL;
   Menulocal.help_browser = NULL;
   set_paper_type(21000, 29700);
   Menulocal.LeftMargin = 0;
