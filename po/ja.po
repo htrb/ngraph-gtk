@@ -2226,7 +2226,6 @@ msgstr "%s 描画中 (%.1f%%)"
 #~ msgid "viewer"
 #~ msgstr "ビューア"
 
-#, fuzzy
 #~ msgid "_JFont"
 #~ msgstr "英文フォント(_F):"
 
