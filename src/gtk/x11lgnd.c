@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.36 2009/01/18 07:49:37 hito Exp $
+ * $Id: x11lgnd.c,v 1.37 2009/02/06 02:58:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1300,7 +1300,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   }
   legend_dialog_setup_item(wi, d, d->Id);
   gtk_entry_set_completion(GTK_ENTRY(d->text), NgraphApp.legend_text_list);
-  gtk_widget_grab_focus(d->text);
+  d->focus = d->text;
 }
 
 void

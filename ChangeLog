@@ -1,3 +1,25 @@
+2009-02-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (DialogExecute): call "gtk_widget_grab_focus()"
+	when "data->focus" is not NULL.
+	(DialogExecute): call "gtk_widget_show_all()" out side of the
+	loop.
+	(DialogExecute): check "data->show_buttons "out side of the
+	loop.
+
+	* src/gtk/x11lgnd.c (LegendTextDialogSetup): set poniter of the
+	widget to "d->focus" instead of call "gtk_widget_grab_focus()".
+
+	* src/gtk/x11graph.c (SaveDialogSetup): 
+
+	* src/gtk/x11file.c (MarkDialogSetup): 
+
+	* src/gtk/x11dialg.c (initdialog): initialize member "focus" of
+	each instance of struct.
+
+	* src/gtk/x11dialg.h (struct DialogType): add member "focus" to
+	dialog related struct.
+
 2009-02-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oagrid.c (agriddraw): bug fix: fix calculation of coordinate

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.71 2009/02/05 05:09:42 hito Exp $
+ * $Id: x11file.c,v 1.72 2009/02/06 02:58:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2191,7 +2191,7 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->toggle[type]), FALSE);
   }
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->toggle[d->Type]), TRUE);
-  gtk_widget_grab_focus(d->toggle[d->Type]);
+  d->focus = d->toggle[d->Type];
   d->cb_respond = TRUE;
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.26 2009/02/05 05:09:42 hito Exp $
+ * $Id: x11dialg.h,v 1.27 2009/02/06 02:58:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -76,7 +76,7 @@ int putobj_color2(GtkWidget *w, struct objlist *obj, int id);
 
 struct DialogType
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -86,7 +86,7 @@ struct DialogType
 
 struct MarkDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -100,7 +100,7 @@ void MarkDialog(struct MarkDialog *data, int type);
 
 struct FileDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -121,7 +121,7 @@ void FileDialog(void *data, struct objlist *obj, int id, int candel);
 
 struct EvalDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -138,7 +138,7 @@ void EvalDialog(struct EvalDialog *data,
 
 struct MathDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -153,7 +153,7 @@ void MathDialog(struct MathDialog *data, struct objlist *obj);
 
 struct MathTextDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -170,7 +170,7 @@ void MathTextDialog(struct MathTextDialog *data, char *text, int mode);
 
 struct FitDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -189,7 +189,7 @@ void FitDialog(struct FitDialog *data, struct objlist *obj, int id);
 
 struct FitLoadDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -205,7 +205,7 @@ void FitLoadDialog(struct FitLoadDialog *data, struct objlist *obj, int sid);
 
 struct FitSaveDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -221,7 +221,7 @@ void FitSaveDialog(struct FitSaveDialog *data, struct objlist *obj, int sid);
 
 struct FileMoveDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -236,7 +236,7 @@ void FileMoveDialog(struct FileMoveDialog *data, struct objlist *obj, int id);
 
 struct FileMaskDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -251,7 +251,7 @@ void FileMaskDialog(struct FileMaskDialog *data, struct objlist *obj, int id);
 
 struct FileLoadDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -266,7 +266,7 @@ void FileLoadDialog(struct FileLoadDialog *data, struct objlist *obj, int id);
 
 struct FileMathDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -281,7 +281,7 @@ void FileMathDialog(struct FileMathDialog *data, struct objlist *obj, int id);
 
 struct SectionDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -303,7 +303,7 @@ void SectionDialog(struct SectionDialog *data,
 
 struct CrossDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -323,7 +323,7 @@ void CrossDialog(struct CrossDialog *data,
 
 struct AxisDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -340,7 +340,7 @@ void AxisDialog(void *data, struct objlist *obj, int id, int candel);
 
 struct AxisBaseDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -357,7 +357,7 @@ void AxisBaseDialog(struct AxisBaseDialog *data, struct objlist *obj, int id);
 
 struct AxisPosDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -372,7 +372,7 @@ void AxisPosDialog(struct AxisPosDialog *data, struct objlist *obj, int id);
 
 struct AxisFontDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -389,7 +389,7 @@ void AxisFontDialog(struct AxisFontDialog *data, struct objlist *obj, int id);
 #define GAUGE_STYLE_NUM 3
 struct GaugeDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -408,7 +408,7 @@ void GaugeDialog(struct GaugeDialog *data, struct objlist *obj, int id);
 
 struct GridDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -425,7 +425,7 @@ void GridDialog(struct GridDialog *data, struct objlist *obj, int id);
 
 struct ZoomDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -439,7 +439,7 @@ void ZoomDialog(struct ZoomDialog *data);
 
 struct NumDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -455,7 +455,7 @@ void NumDialog(struct NumDialog *data, struct objlist *obj, int id);
 
 struct MergeDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -470,7 +470,7 @@ void MergeDialog(void *data, struct objlist *obj, int id, int Sub_id);
 
 struct LegendDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -506,7 +506,7 @@ void LegendTextDialog(struct LegendDialog *data,
 
 struct LegendGaussDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -530,7 +530,7 @@ void LegendGaussDialog(struct LegendGaussDialog *data,
 
 struct PageDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -543,7 +543,7 @@ void PageDialog(struct PageDialog *data);
 
 struct SwitchDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -559,7 +559,7 @@ void SwitchDialog(struct SwitchDialog *data);
 
 struct DirectoryDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -572,7 +572,7 @@ void DirectoryDialog(struct DirectoryDialog *data);
 
 struct LoadDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -589,7 +589,7 @@ void LoadDialog(struct LoadDialog *data);
 
 struct PrmDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -604,7 +604,7 @@ void PrmDialog(struct PrmDialog *data, struct objlist *obj, int id);
 
 struct SaveDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -619,7 +619,7 @@ void SaveDialog(struct SaveDialog *data, int *sdata, int *smerge);
 
 struct DriverDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -634,7 +634,7 @@ void DriverDialog(struct DriverDialog *data, struct objlist *obj, int id);
 
 struct PrintDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -649,7 +649,7 @@ void PrintDialog(struct PrintDialog *data, struct objlist *obj, int id);
 
 struct OutputDataDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -663,7 +663,7 @@ void OutputDataDialog(struct OutputDataDialog *data, int div);
 
 struct ScriptDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -678,7 +678,7 @@ void ScriptDialog(struct ScriptDialog *data);
 
 struct DefaultDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -691,7 +691,7 @@ void DefaultDialog(struct DefaultDialog *data);
 
 struct SetScriptDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -705,7 +705,7 @@ void SetScriptDialog(struct SetScriptDialog *data, struct script *sc);
 
 struct PrefScriptDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -718,7 +718,7 @@ void PrefScriptDialog(struct PrefScriptDialog *data);
 
 struct SetDriverDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -732,7 +732,7 @@ void SetDriverDialog(struct SetDriverDialog *data, struct extprinter *prn);
 
 struct PrefDriverDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -745,7 +745,7 @@ void PrefDriverDialog(struct PrefDriverDialog *data);
 
 struct PrefFontDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -758,7 +758,7 @@ void PrefFontDialog(struct PrefFontDialog *data);
 
 struct MiscDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -775,7 +775,7 @@ void MiscDialog(struct MiscDialog *data, struct objlist *obj, int id);
 
 struct ExViewerDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -790,7 +790,7 @@ void ExViewerDialog(struct ExViewerDialog *data);
 
 struct ViewerDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -807,7 +807,7 @@ void ViewerDialog(struct ViewerDialog *data, struct objlist *obj, int id);
 
 struct SelectDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -827,7 +827,7 @@ void SelectDialog(struct SelectDialog *data,
 
 struct CopyDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;
@@ -847,7 +847,7 @@ void CopyDialog(struct CopyDialog *data,
 
 struct OutputImageDialog
 {
-  GtkWidget *parent, *widget;
+  GtkWidget *parent, *widget, *focus;
   GtkVBox *vbox;
   int ret, show_buttons, show_cancel;
   char *resource;

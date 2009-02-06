@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.20 2009/01/14 08:44:18 hito Exp $
+ * $Id: x11gui.c,v 1.21 2009/02/06 02:58:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -168,14 +168,16 @@ DialogExecute(GtkWidget *parent, void *dialog)
   data->widget = dlg;
   data->ret = IDLOOP;
 
+  gtk_widget_show_all(dlg);
+  if (data->focus)
+    gtk_widget_grab_focus(data->focus);
+
+  if (! data->show_buttons) {
+    gtk_widget_hide(GTK_DIALOG(dlg)->action_area);
+    gtk_dialog_set_has_separator(GTK_DIALOG(dlg), FALSE);
+  }
+
   while (data->ret == IDLOOP) {
-    gtk_widget_show_all(dlg);
-
-    if (! data->show_buttons) {
-      gtk_widget_hide(GTK_DIALOG(dlg)->action_area);
-      gtk_dialog_set_has_separator(GTK_DIALOG(dlg), FALSE);
-    }
-
     res_id = gtk_dialog_run(GTK_DIALOG(dlg));
 
     if (res_id < 0) {
