@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.c,v 1.7 2009/02/06 08:25:14 hito Exp $
+ * $Id: x11cood.c,v 1.8 2009/02/06 09:08:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -103,7 +103,7 @@ CoordWinSetCoord(int x, int y)
   for (i = 0; i < num; i++) {
     getobj(obj, "group", i, 0, NULL, &name);
     if (getobj(obj, "coordinate", i, 2, argv, &a) != -1) {
-      j += snprintf(d->str + j, bufsize - j, "%d %5s %+.7e\n", i, name, a);
+      j += snprintf(d->str + j, bufsize - j, "%2d %5s %+.7e\n", i, name, a);
     }
   }
 

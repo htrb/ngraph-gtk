@@ -20,6 +20,8 @@
 	"CoordWinSetCoord()".
 	(CoordWinSetCoord): change format strings for "x" and "y" from
 	"%.2f" to "%6.2f".
+	(CoordWinSetCoord): change format strings for axis id from "%d" to
+	"%2d".
 	(CoordWinUpdate): call "label_sub_window_create()" instead of
 	"text_sub_window_create()".
 
