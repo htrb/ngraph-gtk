@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.40 2009/02/06 08:25:14 hito Exp $
+ * $Id: x11opt.c,v 1.41 2009/02/06 13:12:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1693,7 +1693,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->info_size = w;
 
     w = create_spin_entry(0, SPIN_ENTRY_MAX, 1, FALSE, TRUE);
-    item_setup(vbox, w, _("_Length data preview:"), FALSE);
+    item_setup(vbox, w, _("_Length of data preview:"), FALSE);
     d->data_head_lines = w;
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-18\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-02-06 17:26+0900\n"
+"POT-Creation-Date: 2009-02-06 22:10+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1787,7 +1787,7 @@ msgid "_Length of information window:"
 msgstr ""
 
 #: src/gtk/x11opt.c:1696
-msgid "_Length data preview:"
+msgid "_Length of data preview:"
 msgstr ""
 
 #: src/gtk/x11opt.c:1707
