@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.14 2009/02/09 07:34:58 hito Exp $
+ * $Id: oaxis.c,v 1.15 2009/02/09 07:40:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2500,9 +2500,9 @@ set_group_pos(struct objlist *obj, int id, int x, int y, int len, int dir)
 
 static int 
 axisgrouppos(struct objlist *obj, char *inst, char *rval, 
-                 int argc, char **argv)
+	     int argc, char **argv)
 {
-  int x0, y0, lenx, leny;
+  int x, y, lx, ly;
   struct narray *iarray;
   int *data;
   int anum;
@@ -2522,28 +2522,28 @@ axisgrouppos(struct objlist *obj, char *inst, char *rval,
     if (anum < 9)
       return 1;
 
-    x0 = data[5];
-    y0 = data[6];
-    lenx = data[7];
-    leny = data[8];
+    x = data[5];
+    y = data[6];
+    lx = data[7];
+    ly = data[8];
 
-    set_group_pos(obj, data[1], x0, y0, lenx, 0);
-    set_group_pos(obj, data[2], x0, y0, leny, 9000);
-    set_group_pos(obj, data[3], x0, y0 - leny, lenx, 0);
-    set_group_pos(obj, data[4], x0 + lenx, y0, leny, 9000);
+    set_group_pos(obj, data[1], x,      y,      lx,    0);
+    set_group_pos(obj, data[2], x,      y,      ly, 9000);
+    set_group_pos(obj, data[3], x,      y - ly, lx,    0);
+    set_group_pos(obj, data[4], x + lx, y,      ly, 9000);
 
     break;
   case 3:
     if (anum < 7)
       return 1;
 
-    x0 = data[3];
-    y0 = data[4];
-    lenx = data[5];
-    leny = data[6];
+    x = data[3];
+    y = data[4];
+    lx = data[5];
+    ly = data[6];
 
-    set_group_pos(obj, data[1], x0, y0, lenx, 0);
-    set_group_pos(obj, data[2], x0, y0, leny, 9000);
+    set_group_pos(obj, data[1], x, y, lx, 0);
+    set_group_pos(obj, data[2], x, y, ly, 9000);
     break;
   }
   return 0;
