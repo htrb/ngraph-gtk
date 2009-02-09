@@ -1,5 +1,5 @@
 /* 
- * $Id: jnstring.c,v 1.2 2008/09/11 07:07:19 hito Exp $
+ * $Id: jnstring.c,v 1.3 2009/02/09 03:01:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -107,8 +107,8 @@ unsigned int njis2jms(unsigned int code)
 
 int niskanji(unsigned char code)
 {
-  if (((0x81<=code) && (code<=0x9f))
-   || ((0xe0<=code) && (code<=0xff))) return TRUE;
+  if ((0x81 <= code && code <= 0x9f) ||
+      (0xe0 <= code && code <= 0xff)) return TRUE;
   return FALSE;
 }
 
