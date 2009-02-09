@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.13 2009/02/06 08:25:13 hito Exp $
+ * $Id: ofit.c,v 1.14 2009/02/09 01:04:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,6 +56,8 @@
 #define ERRRANGE 111
 #define ERRNEGATIVEWEIGHT 112
 #define ERRCONVERGE 113
+
+static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
 static char *fiterrorlist[]={
   "syntax error.",
@@ -172,18 +174,8 @@ fitput(struct objlist *obj,char *inst,char *rval,
         arrayfree(needdata);
       }
 
-      switch (rcode) {
-      case MCNOERR:
-	break;
-      case MCSYNTAX:
-	error(obj, ERRSYNTAX);
-	return 1;
-      case MCILLEGAL:
-	error(obj, ERRILLEGAL);
-	return 1;
-      case MCNEST:
-	error(obj, ERRNEST);
-	return 1;
+      if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
+        return 1;
       }
 
       if (maxdim>9) {
@@ -888,5 +880,10 @@ static struct objtable fit[] = {
 void *addfit()
 /* addfit() returns NULL on error */
 {
+  MathErrorCodeArray[MCNOERR] = 0;
+  MathErrorCodeArray[MCSYNTAX] = ERRSYNTAX;
+  MathErrorCodeArray[MCILLEGAL] = ERRILLEGAL;
+  MathErrorCodeArray[MCNEST] = ERRNEST;
+
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,fit,ERRNUM,fiterrorlist,NULL,NULL);
 }

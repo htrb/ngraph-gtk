@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.5 2009/02/06 08:25:13 hito Exp $
+ * $Id: omath.c,v 1.6 2009/02/09 01:04:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,6 +44,8 @@
 #define ERRNEST   102
 #define ERRARG    103
 #define ERRSMLARG 104
+
+static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
 static char *matherrorlist[]={
   "syntax error.",
@@ -243,17 +245,8 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     rcode=mathcode(math,&code,&needdata,NULL,&maxdim,NULL,
                    TRUE,TRUE,TRUE,column,multi,FALSE,memory,usrfn,FALSE,FALSE,FALSE);
     if (column) arraydel(&needdata);
-    switch (rcode) {
-    case MCNOERR:
-      break;
-    case MCSYNTAX:
-      error(obj, ERRSYNTAX);
-      return 1;
-    case MCILLEGAL:
-      error(obj, ERRILLEGAL);
-      return 1;
-    case MCNEST:
-      error(obj, ERRNEST);
+
+    if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
       return 1;
     }
   } else code=NULL;
@@ -408,5 +401,10 @@ static struct objtable math[] = {
 void *addmath()
 /* addmath() returns NULL on error */
 {
+  MathErrorCodeArray[MCNOERR] = 0;
+  MathErrorCodeArray[MCSYNTAX] = ERRSYNTAX;
+  MathErrorCodeArray[MCILLEGAL] = ERRILLEGAL;
+  MathErrorCodeArray[MCNEST] = ERRNEST;
+
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,math,ERRNUM,matherrorlist,NULL,NULL);
 }

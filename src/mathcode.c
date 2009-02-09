@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.3 2009/02/05 06:38:25 hito Exp $
+ * $Id: mathcode.c,v 1.4 2009/02/09 01:04:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -134,6 +134,21 @@ b0 b1 b2 b3
 d0 d1 d2 d3 d4 d5 d6 d7 d8 d9 da db dc dd
 
 */
+
+int
+mathcode_error(struct objlist *obj, enum MATH_CODE_ERROR_NO rcode, int *ecode) {
+  switch (rcode) {
+  case MCNOERR:
+    return 0;
+  case MCSYNTAX:
+  case MCILLEGAL:
+  case MCNEST:
+    error(obj, ecode[rcode]);
+    return 1;
+  }
+  /* never reached */
+  return 1;
+}
 
 enum MATH_CODE_ERROR_NO 
 mathcode(char *str,char **code,

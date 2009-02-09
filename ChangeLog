@@ -1,3 +1,19 @@
+2009-02-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/omath.c (mformula): use "mathcode_error()".
+
+	* src/ofit.c (fitput): use "mathcode_error()".
+
+	* src/omath.c (addmath): initialize "MathErrorCodeArray".
+
+	* src/ofit.c (addfit): initialize "MathErrorCodeArray".
+
+	* src/ofile.c (f2dloadconfig2): remove.
+	(mathcode_error): remove.
+	(addfile): initialize "MathErrorCodeArray".
+
+	* src/mathcode.c (mathcode_error): add.
+
 2009-02-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (add_prm_str_to_array): add.

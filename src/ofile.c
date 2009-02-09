@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.59 2009/02/06 08:25:13 hito Exp $
+ * $Id: ofile.c,v 1.60 2009/02/09 01:04:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -85,6 +85,8 @@
 #define ERRNEGATIVE 119
 #define ERRREAD 120
 #define ERRWRITE 121
+
+static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
 char *f2derrorlist[]={
   "file is not specified.",
@@ -316,25 +318,6 @@ struct f2dlocal {
 
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
-
-static int
-mathcode_error(struct objlist *obj, enum MATH_CODE_ERROR_NO rcode) {
-  switch (rcode) {
-  case MCNOERR:
-    return 0;
-  case MCSYNTAX:
-    error(obj, ERRSYNTAX);
-    return 1;
-  case MCILLEGAL:
-    error(obj, ERRILLEGAL);
-    return 1;
-  case MCNEST:
-    error(obj, ERRNEST);
-    return 1;
-  }
-  /* never reached */
-  return 1;
-}
 
 static void 
 check_ifs_init(struct f2ddata *fp)
@@ -919,7 +902,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
         arrayfree(needfile);
         needfile=NULL;
       }
-      if (mathcode_error(obj, rcode)) {
+      if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
         return 1;
       }
     } else {
@@ -948,7 +931,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
     if (math!=NULL) {
       rcode=mathcode(math,&code,NULL,NULL,NULL,NULL,
                      TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
-      if (mathcode_error(obj, rcode)) {
+      if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
         return 1;
       }
     } else code=NULL;
@@ -1033,32 +1016,6 @@ f2dloadconfig(struct objlist *obj,char *inst)
 	}
 	break;
       }
-    }
-    memfree(tok);
-    memfree(str);
-  }
-  closeconfig(fp);
-  return 0;
-}
-
-static int 
-f2dloadconfig2(struct objlist *obj,int *cashlen)
-{
-  FILE *fp;
-  char *tok,*str,*s2;
-  char *f1;
-  int val;
-  char *endptr;
-  int len;
-
-  if ((fp=openconfig(F2DCONF))==NULL) return 0;
-  while ((tok=getconfig(fp,&str))!=NULL) {
-    s2=str;
-    if (strcmp(tok,"cash")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if ((endptr[0]=='\0') && (val>=0)) *cashlen=val;
-      memfree(f1);
     }
     memfree(tok);
     memfree(str);
@@ -4026,7 +3983,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
       needdata=arraynew(sizeof(int));
       rcode=mathcode(weight,&code,needdata,NULL,&maxdim,&need2pass,
                    TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE);
-      if (mathcode_error(obj, rcode)) {
+      if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
 	arraydel(&data);
         return 1;
       }
@@ -4076,7 +4033,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
   rcode=mathcode(equation,&code,NULL,NULL,NULL,NULL,
                  TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,
                  FALSE,FALSE,FALSE,FALSE,FALSE);
-  if (mathcode_error(obj, rcode)) {
+  if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
     return 1;
   }
   GRAcolor(GC,fp->fr,fp->fg,fp->fb);
@@ -6805,6 +6762,11 @@ void *addfile()
       }
     }
   }
+
+  MathErrorCodeArray[MCNOERR] = 0;
+  MathErrorCodeArray[MCSYNTAX] = ERRSYNTAX;
+  MathErrorCodeArray[MCILLEGAL] = ERRILLEGAL;
+  MathErrorCodeArray[MCNEST] = ERRNEST;
 
   return addobject(NAME,ALIAS,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,f2derrorlist,NULL,NULL);
 }
