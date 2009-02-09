@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.13 2009/02/05 12:27:02 hito Exp $
+ * $Id: oaxis.c,v 1.14 2009/02/09 07:34:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -55,6 +55,7 @@
 #define ERRAXISSPL 103
 #define ERRMINMAX 104
 #define ERRFORMAT 105
+#define ERRGROUPING 106
 
 static char *axiserrorlist[]={
   "illegal axis type.",
@@ -63,6 +64,7 @@ static char *axiserrorlist[]={
   "error: spline interpolation.",
   "illegal value of min/max/inc.",
   "illegal format.",
+  "illegal grouping type.",
 };
 
 #define ERRNUM (sizeof(axiserrorlist) / sizeof(*axiserrorlist))
@@ -642,6 +644,7 @@ axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return axisbbox2(obj,inst,rval,argc,argv);
   _getobj(obj,"id",inst,&id);
   findX=findY=findU=findR=FALSE;
+  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
   type=group[0];
   for (i=0;i<=id;i++) {
     inst2=chkobjinst(obj,i);
@@ -846,6 +849,7 @@ axismatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return axismatch2(obj,inst,rval,argc,argv);
   _getobj(obj,"id",inst,&id);
   findX=findY=findU=findR=FALSE;
+  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
   type=group[0];
   for (i=0;i<=id;i++) {
     inst2=chkobjinst(obj,i);
@@ -924,6 +928,7 @@ axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return axismove2(obj,inst,rval,argc,argv);
   _getobj(obj,"id",inst,&id);
   findX=findY=findU=findR=FALSE;
+  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
   type=group[0];
   for (i=0;i<=id;i++) {
     inst2=chkobjinst(obj,i);
@@ -1021,6 +1026,7 @@ axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return axischange2(obj,inst,rval,argc,argv);
   _getobj(obj,"id",inst,&id);
   findX=findY=findU=findR=FALSE;
+  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
   type=group[0];
   for (i=0;i<=id;i++) {
     inst2=chkobjinst(obj,i);
@@ -1316,6 +1322,7 @@ axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return axiszoom2(obj,inst,rval,argc,argv);
   _getobj(obj,"id",inst,&id);
   findX=findY=findU=findR=FALSE;
+  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
   type=group[0];
   for (i=0;i<=id;i++) {
     inst2=chkobjinst(obj,i);
@@ -1706,11 +1713,21 @@ numbering:
     if (tail!=NULL) taillen=strlen(tail);
     else taillen=0;
 
-    if (ndir==0) ndirection=0;
-    else if (ndir==1) ndirection=direction;
-    else if (ndir==2) {
-      ndirection=direction+18000;
-      if (ndirection>36000) ndirection-=36000;
+    switch (ndir) {
+    case 0:
+      ndirection = 0;
+      break;
+    case 1:
+      ndirection = direction;
+      break;
+    case 2:
+      ndirection = direction + 18000;
+      if (ndirection > 36000)
+	ndirection -= 36000;
+      break;
+    default:
+      /* never reached */
+      ndirection = 0;
     }
     nndir=ndirection/18000.0*MPI;
 
@@ -1907,6 +1924,13 @@ numbering:
         dlx2=-py1*sin(dir);
         dly2=-py1*cos(dir);
         maxlen=abs(hx1-hx0);
+      } else {
+	/* never reached */
+        dlx = 0;
+        dly = 0;
+        dlx2 = 0;
+        dly2 = 0;
+        maxlen = 0;
       }
       if (getaxispositionini(&alocal,type,min,max,inc,div,FALSE)!=0)
         goto exit;
@@ -2094,6 +2118,7 @@ axisadjust(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     min=1/min;
     max=1/max;
   }
+  gx0 = gy0 = 0;	/* this initialization is added to avoid compile warnings. */
   first=TRUE;
   count=0;
   while ((rcode=getaxisposition(&alocal,&po))!=-2) {
@@ -2278,6 +2303,7 @@ axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,doub
   _getobj(obj,"group",inst,&group);
   argv2[0]=(void *)buf;
   argv2[1]=NULL;
+  min = max = 0;	/* this initialization is added to avoid compile warnings. */
   set=FALSE;
   for (i=0;i<fnum;i++) {
     frac = 1.0 * i / fnum;
@@ -2292,11 +2318,11 @@ axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,doub
       if (!set) {
         min=min1;
         max=max1;
+	set=TRUE;
       } else {
         if (min1<min) min=min1;
         if (max1>max) max=max1;
       }
-      set=TRUE;
     }
   }
   arraydel(&iarray);
@@ -2369,6 +2395,35 @@ axistight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
   return 0;
 }
 
+#define BUF_SIZE 16
+static void
+set_group(struct objlist *obj, int gnum, int id, char axis, char type)
+{
+  char *group,*group2;
+  char *inst2;
+
+  inst2 = chkobjinst(obj, id);
+  if (inst2 == NULL) {
+    return;
+  }
+
+  group = memalloc(BUF_SIZE);
+  if (group) {
+    _getobj(obj, "group", inst2, &group2);
+    memfree(group2);
+    snprintf(group, BUF_SIZE, "%c%c%d", type, axis, gnum);
+    _putobj(obj, "group", inst2, group);
+  }
+
+  group = memalloc(BUF_SIZE);
+  if (group) {
+    _getobj(obj, "name", inst2, &group2);
+    memfree(group2);
+    snprintf(group, BUF_SIZE, "%c%c%d", type, axis, gnum);
+    _putobj(obj, "name", inst2, group);
+  }
+}
+
 static int 
 axisgrouping(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
@@ -2376,214 +2431,120 @@ axisgrouping(struct objlist *obj,char *inst,char *rval,
   struct narray *iarray;
   int *data;
   int num,gnum;
-  char *group,*group2;
-  char *inst2,type;
+  char type;
 
-  iarray=(struct narray *)argv[2];
-  num=arraynum(iarray);
-  if (num<1) return 1;
-  data=(int *)arraydata(iarray);
-  if (data[0]==1) type='f';
-  else if (data[0]==2) type='s';
-  else if (data[0]==3) type='c';
-  gnum=axisuniqgroup(obj,type);
-  if ((data[0]==1) || (data[0]==2)) {
-    if (num<5) return 1;
-    if ((inst2=chkobjinst(obj,data[1]))!=NULL) {
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"group",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cX%d",type,gnum);
-        _putobj(obj,"group",inst2,group);
-      }
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"name",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cX%d",type,gnum);
-        _putobj(obj,"name",inst2,group);
-      }
-    }
-    if ((inst2=chkobjinst(obj,data[2]))!=NULL) {
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"group",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cY%d",type,gnum);
-        _putobj(obj,"group",inst2,group);
-      }
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"name",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cY%d",type,gnum);
-        _putobj(obj,"name",inst2,group);
-      }
-    }
-    if ((inst2=chkobjinst(obj,data[3]))!=NULL) {
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"group",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cU%d",type,gnum);
-        _putobj(obj,"group",inst2,group);
-      }
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"name",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cU%d",type,gnum);
-        _putobj(obj,"name",inst2,group);
-      }
-    }
-    if ((inst2=chkobjinst(obj,data[4]))!=NULL) {
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"group",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cR%d",type,gnum);
-        _putobj(obj,"group",inst2,group);
-      }
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"name",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cR%d",type,gnum);
-        _putobj(obj,"name",inst2,group);
-      }
-    }
-  } else if (data[0]==3) {
-    if (num<3) return 1;
-    if ((inst2=chkobjinst(obj,data[1]))!=NULL) {
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"group",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cX%d",type,gnum);
-        _putobj(obj,"group",inst2,group);
-      }
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"name",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cX%d",type,gnum);
-        _putobj(obj,"name",inst2,group);
-      }
-    }
-    if ((inst2=chkobjinst(obj,data[2]))!=NULL) {
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"group",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cY%d",type,gnum);
-        _putobj(obj,"group",inst2,group);
-      }
-      if ((group=memalloc(13))!=NULL) {
-        _getobj(obj,"name",inst2,&group2);
-        memfree(group2);
-        sprintf(group,"%cY%d",type,gnum);
-        _putobj(obj,"name",inst2,group);
-      }
-    }
+  iarray = (struct narray *)argv[2];
+  num = arraynum(iarray);
+
+  if (num < 1)
+    return 1;
+
+  data = (int *)arraydata(iarray);
+
+  switch (data[0]) {
+  case 1:
+    type='f';
+    break;
+  case 2:
+    type='s';
+    break;
+  case 3:
+    type='c';
+    break;
+  default:
+    error(obj, ERRGROUPING);
+    return 1;
+  }
+
+  gnum = axisuniqgroup(obj, type);
+
+  switch (data[0]) {
+  case 1:
+  case 2:
+    if (num < 5)
+      return 1;
+
+    set_group(obj, gnum, data[1], 'X', type);
+    set_group(obj, gnum, data[2], 'Y', type);
+    set_group(obj, gnum, data[3], 'U', type);
+    set_group(obj, gnum, data[4], 'R', type);
+    break;
+  case 3:
+    if (num<3)
+      return 1;
+
+    set_group(obj, gnum, data[1], 'X', type);
+    set_group(obj, gnum, data[2], 'Y', type);
   }
   return 0;
 }
 
-static int 
-axisgrouppos(struct objlist *obj,char *inst,char *rval,
-                 int argc,char **argv)
+static void
+set_group_pos(struct objlist *obj, int id, int x, int y, int len, int dir)
 {
-  int x0,y0,x,y,lenx,leny,len,dir;
-  struct narray *iarray;
   struct narray *array;
-  int *data;
-  int anum;
   char *inst2;
 
-  iarray=(struct narray *)argv[2];
-  anum=arraynum(iarray);
-  if (anum<1) return 1;
-  data=(int *)arraydata(iarray);
-  if ((data[0]==1) || (data[0]==2)) {
-    if (anum<9) return 1;
-    x0=data[5];
-    y0=data[6];
-    lenx=data[7];
-    leny=data[8];
-    if ((inst2=chkobjinst(obj,data[1]))!=NULL) {
-      x=x0;
-      y=y0;
-      len=lenx;
-      dir=0;
-      _putobj(obj,"direction",inst2,&dir);
-      _putobj(obj,"x",inst2,&x);
-      _putobj(obj,"y",inst2,&y);
-      _putobj(obj,"length",inst2,&len);
-      _getobj(obj,"bbox",inst2,&array);
-      arrayfree(array);
-      _putobj(obj,"bbox",inst2,NULL);
-    }
-    if ((inst2=chkobjinst(obj,data[2]))!=NULL) {
-      x=x0;
-      y=y0;
-      len=leny;
-      dir=9000;
-      _putobj(obj,"direction",inst2,&dir);
-      _putobj(obj,"x",inst2,&x);
-      _putobj(obj,"y",inst2,&y);
-      _putobj(obj,"length",inst2,&len);
-      _getobj(obj,"bbox",inst2,&array);
-      arrayfree(array);
-      _putobj(obj,"bbox",inst2,NULL);
-    }
-    if ((inst2=chkobjinst(obj,data[3]))!=NULL) {
-      x=x0;
-      y=y0-leny;
-      len=lenx;
-      dir=0;
-      _putobj(obj,"direction",inst2,&dir);
-      _putobj(obj,"x",inst2,&x);
-      _putobj(obj,"y",inst2,&y);
-      _putobj(obj,"length",inst2,&len);
-      _getobj(obj,"bbox",inst2,&array);
-      arrayfree(array);
-      _putobj(obj,"bbox",inst2,NULL);
-    }
-    if ((inst2=chkobjinst(obj,data[4]))!=NULL) {
-      x=x0+lenx;
-      y=y0;
-      len=leny;
-      dir=9000;
-      _putobj(obj,"direction",inst2,&dir);
-      _putobj(obj,"x",inst2,&x);
-      _putobj(obj,"y",inst2,&y);
-      _putobj(obj,"length",inst2,&len);
-      _getobj(obj,"bbox",inst2,&array);
-      arrayfree(array);
-      _putobj(obj,"bbox",inst2,NULL);
-    }
-  } else if (data[0]==3) {
-    if (anum<7) return 1;
-    x0=data[3];
-    y0=data[4];
-    lenx=data[5];
-    leny=data[6];
-    if ((inst2=chkobjinst(obj,data[1]))!=NULL) {
-      x=x0;
-      y=y0;
-      len=lenx;
-      dir=0;
-      _putobj(obj,"direction",inst2,&dir);
-      _putobj(obj,"x",inst2,&x);
-      _putobj(obj,"y",inst2,&y);
-      _putobj(obj,"length",inst2,&len);
-      _getobj(obj,"bbox",inst2,&array);
-      arrayfree(array);
-      _putobj(obj,"bbox",inst2,NULL);
-    }
-    if ((inst2=chkobjinst(obj,data[2]))!=NULL) {
-      x=x0;
-      y=y0;
-      len=leny;
-      dir=9000;
-      _putobj(obj,"direction",inst2,&dir);
-      _putobj(obj,"x",inst2,&x);
-      _putobj(obj,"y",inst2,&y);
-      _putobj(obj,"length",inst2,&len);
-      _getobj(obj,"bbox",inst2,&array);
-      arrayfree(array);
-      _putobj(obj,"bbox",inst2,NULL);
-    }
+  inst2 = chkobjinst(obj, id);
+  if (inst2 == NULL)
+    return;
+
+  _putobj(obj, "direction", inst2, &dir);
+  _putobj(obj, "x", inst2, &x);
+  _putobj(obj, "y", inst2, &y);
+  _putobj(obj, "length", inst2, &len);
+  _getobj(obj, "bbox", inst2, &array);
+  arrayfree(array);
+  _putobj(obj, "bbox", inst2, NULL);
+}
+
+static int 
+axisgrouppos(struct objlist *obj, char *inst, char *rval, 
+                 int argc, char **argv)
+{
+  int x0, y0, lenx, leny;
+  struct narray *iarray;
+  int *data;
+  int anum;
+
+  iarray = (struct narray *)argv[2];
+
+  anum = arraynum(iarray);
+
+  if (anum < 1)
+    return 1;
+
+  data = (int *)arraydata(iarray);
+
+  switch (data[0]) {
+  case 1:
+  case 2:
+    if (anum < 9)
+      return 1;
+
+    x0 = data[5];
+    y0 = data[6];
+    lenx = data[7];
+    leny = data[8];
+
+    set_group_pos(obj, data[1], x0, y0, lenx, 0);
+    set_group_pos(obj, data[2], x0, y0, leny, 9000);
+    set_group_pos(obj, data[3], x0, y0 - leny, lenx, 0);
+    set_group_pos(obj, data[4], x0 + lenx, y0, leny, 9000);
+
+    break;
+  case 3:
+    if (anum < 7)
+      return 1;
+
+    x0 = data[3];
+    y0 = data[4];
+    lenx = data[5];
+    leny = data[6];
+
+    set_group_pos(obj, data[1], x0, y0, lenx, 0);
+    set_group_pos(obj, data[2], x0, y0, leny, 9000);
+    break;
   }
   return 0;
 }
@@ -2748,6 +2709,7 @@ axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (strcmp("grouping",adata[j])==0) return 0;
   _getobj(obj,"id",inst,&id);
   findX=findY=findU=findR=FALSE;
+  idx = idy = idr = idu = 0;	/* this initialization is added to avoid compile warnings. */
   type=group[0];
   for (i=0;i<=id;i++) {
     inst2=chkobjinst(obj,i);

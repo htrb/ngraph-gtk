@@ -1,5 +1,14 @@
 2009-02-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/oaxis.c (axissave, axisbbox, axismatch, axismove)
+	(axischange, axiszoom, axisadjust, axisautoscalefile)
+	(axisdraw): add initialization to avoid compile warnings.
+	(axisautoscalefile): set "set" as TRUE when "set" is FALSE.
+	(axisgrouping): check "data[0]".
+	(set_group, set_group_pos): add.
+	(axisgrouping): use "set_group()".
+	(axisgrouppos): use "set_group_pos()".
+
 	* src/omath.c (mformula): use "mathcode_error()".
 
 	* src/ofit.c (fitput): use "mathcode_error()".
