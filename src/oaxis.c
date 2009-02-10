@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.16 2009/02/10 09:22:27 hito Exp $
+ * $Id: oaxis.c,v 1.17 2009/02/10 16:14:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -661,11 +661,19 @@ axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int
 check_direction(struct objlist *obj, int type, char **inst_array)
 {
-  int i, n, direction, normal_dir[] = {0, 9000, 0, 9000};
+  int i, n, len1, len2, direction, normal_dir[] = {0, 9000, 0, 9000};
 
   switch (type) {
   case 'f':
   case 's':
+    for (i = 0; i < 2; i++) {
+      _getobj(obj, "length", inst_array[0 + i], &len1);
+      _getobj(obj, "length", inst_array[2 + i], &len2);
+
+      if ((len1 > 0 && len2 < 0) || (len1 < 0 && len2 > 0))
+	return 1;
+    }
+
     n = 4;
     break;
   case 'c':
@@ -677,7 +685,7 @@ check_direction(struct objlist *obj, int type, char **inst_array)
   }
 
   for (i = 0; i < n; i++) {
-    _getobj(obj,"direction", inst_array[i], &direction);
+    _getobj(obj, "direction", inst_array[i], &direction);
     if (direction != normal_dir[i]) {
       return 1;
     }
@@ -1070,34 +1078,34 @@ axis_change_point0(struct objlist *obj, int type, char **inst_array, int x0, int
   switch (type) {
   case 'f':
   case 's':
-    _getobj(obj,"x",inst_array[2],&x);
-    _getobj(obj,"y",inst_array[2],&y);
-    _getobj(obj,"length",inst_array[2],&len);
-    x+=x0;
-    y+=y0;
-    len-=x0;
-    _putobj(obj,"x",inst_array[2],&x);
-    _putobj(obj,"y",inst_array[2],&y);
+    _getobj(obj, "x", inst_array[2], &x);
+    _getobj(obj, "y", inst_array[2], &y);
+    _getobj(obj, "length", inst_array[2], &len);
+    x += x0;
+    y += y0;
+    len -= x0;
+    _putobj(obj, "x", inst_array[2], &x);
+    _putobj(obj, "y", inst_array[2], &y);
 
-    _putobj(obj,"length",inst_array[2],&len);
-    _getobj(obj,"length",inst_array[3],&len);
-    len-=y0;
-    _putobj(obj,"length",inst_array[3],&len);
+    _putobj(obj, "length", inst_array[2], &len);
+    _getobj(obj, "length", inst_array[3], &len);
+    len -= y0;
+    _putobj(obj, "length", inst_array[3], &len);
     /* FALLTHROUGH */
   case 'c':
-    _getobj(obj,"x",inst_array[0],&x);
-    _getobj(obj,"length",inst_array[0],&len);
-    x+=x0;
-    len-=x0;
-    _putobj(obj,"x",inst_array[0],&x);
-    _putobj(obj,"length",inst_array[0],&len);
+    _getobj(obj, "x", inst_array[0], &x);
+    _getobj(obj, "length", inst_array[0], &len);
+    x += x0;
+    len -= x0;
+    _putobj(obj, "x", inst_array[0], &x);
+    _putobj(obj, "length", inst_array[0], &len);
 
-    _getobj(obj,"x",inst_array[1],&x);
-    _getobj(obj,"length",inst_array[1],&len);
-    x+=x0;
-    len-=y0;
-    _putobj(obj,"x",inst_array[1],&x);
-    _putobj(obj,"length",inst_array[1],&len);
+    _getobj(obj, "x", inst_array[1], &x);
+    _getobj(obj, "length", inst_array[1], &len);
+    x += x0;
+    len -= y0;
+    _putobj(obj, "x", inst_array[1], &x);
+    _putobj(obj, "length", inst_array[1], &len);
     break;
   }
 }
@@ -1110,28 +1118,28 @@ axis_change_point1(struct objlist *obj, int type, char **inst_array, int x0, int
   switch (type) {
   case 'f':
   case 's':
-    _getobj(obj,"y",inst_array[2],&y);
-    _getobj(obj,"length",inst_array[2],&len);
-    y+=y0;
-    len+=x0;
-    _putobj(obj,"y",inst_array[2],&y);
-    _putobj(obj,"length",inst_array[2],&len);
+    _getobj(obj, "y", inst_array[2], &y);
+    _getobj(obj, "length", inst_array[2], &len);
+    y += y0;
+    len += x0;
+    _putobj(obj, "y", inst_array[2], &y);
+    _putobj(obj, "length", inst_array[2], &len);
 
-    _getobj(obj,"x",inst_array[3],&x);
-    _getobj(obj,"length",inst_array[3],&len);
-    x+=x0;
-    len-=y0;
-    _putobj(obj,"x",inst_array[3],&x);
-    _putobj(obj,"length",inst_array[3],&len);
+    _getobj(obj, "x", inst_array[3], &x);
+    _getobj(obj, "length", inst_array[3], &len);
+    x += x0;
+    len -= y0;
+    _putobj(obj, "x", inst_array[3], &x);
+    _putobj(obj, "length", inst_array[3], &len);
     /* FALLTHROUGH */
   case 'c':
-    _getobj(obj,"length",inst_array[0],&len);
-    len+=x0;
-    _putobj(obj,"length",inst_array[0],&len);
+    _getobj(obj, "length", inst_array[0], &len);
+    len += x0;
+    _putobj(obj, "length", inst_array[0], &len);
 
-    _getobj(obj,"length",inst_array[1],&len);
-    len-=y0;
-    _putobj(obj,"length",inst_array[1],&len);
+    _getobj(obj, "length", inst_array[1], &len);
+    len -= y0;
+    _putobj(obj, "length", inst_array[1], &len);
     break;
   }
 }
@@ -1144,34 +1152,34 @@ axis_change_point2(struct objlist *obj, int type, char **inst_array, int x0, int
   switch (type) {
   case 'f':
   case 's':
-    _getobj(obj,"length",inst_array[2],&len);
-    len+=x0;
-    _putobj(obj,"length",inst_array[2],&len);
+    _getobj(obj, "length", inst_array[2], &len);
+    len += x0;
+    _putobj(obj, "length", inst_array[2], &len);
 
-    _getobj(obj,"x",inst_array[3],&x);
-    _getobj(obj,"y",inst_array[3],&y);
-    _getobj(obj,"length",inst_array[3],&len);
-    x+=x0;
-    y+=y0;
-    len+=y0;
-    _putobj(obj,"x",inst_array[3],&x);
-    _putobj(obj,"y",inst_array[3],&y);
-    _putobj(obj,"length",inst_array[3],&len);
+    _getobj(obj, "x", inst_array[3], &x);
+    _getobj(obj, "y", inst_array[3], &y);
+    _getobj(obj, "length", inst_array[3], &len);
+    x += x0;
+    y += y0;
+    len += y0;
+    _putobj(obj, "x", inst_array[3], &x);
+    _putobj(obj, "y", inst_array[3], &y);
+    _putobj(obj, "length", inst_array[3], &len);
     /* FALLTHROUGH */
   case 'c':
-    _getobj(obj,"y",inst_array[0],&y);
-    _getobj(obj,"length",inst_array[0],&len);
-    y+=y0;
-    len+=x0;
-    _putobj(obj,"y",inst_array[0],&y);
-    _putobj(obj,"length",inst_array[0],&len);
+    _getobj(obj, "y", inst_array[0], &y);
+    _getobj(obj, "length", inst_array[0], &len);
+    y += y0;
+    len += x0;
+    _putobj(obj, "y", inst_array[0], &y);
+    _putobj(obj, "length", inst_array[0], &len);
 
-    _getobj(obj,"y",inst_array[1],&y);
-    _getobj(obj,"length",inst_array[1],&len);
-    y+=y0;
-    len+=y0;
-    _putobj(obj,"y",inst_array[1],&y);
-    _putobj(obj,"length",inst_array[1],&len);
+    _getobj(obj, "y", inst_array[1], &y);
+    _getobj(obj, "length", inst_array[1], &len);
+    y += y0;
+    len += y0;
+    _putobj(obj, "y", inst_array[1], &y);
+    _putobj(obj, "length", inst_array[1], &len);
     break;
   }
 }
@@ -1184,40 +1192,40 @@ axis_change_point3(struct objlist *obj, int type, char **inst_array, int x0, int
   switch (type) {
   case 'f':
   case 's':
-    _getobj(obj,"x",inst_array[2],&x);
-    _getobj(obj,"length",inst_array[2],&len);
-    x+=x0;
-    len-=x0;
-    _putobj(obj,"x",inst_array[2],&x);
-    _putobj(obj,"length",inst_array[2],&len);
+    _getobj(obj, "x", inst_array[2], &x);
+    _getobj(obj, "length", inst_array[2], &len);
+    x += x0;
+    len -= x0;
+    _putobj(obj, "x", inst_array[2], &x);
+    _putobj(obj, "length", inst_array[2], &len);
 
-    _getobj(obj,"y",inst_array[3],&y);
-    _getobj(obj,"length",inst_array[3],&len);
-    y+=y0;
-    len+=y0;
-    _putobj(obj,"y",inst_array[3],&y);
-    _putobj(obj,"length",inst_array[3],&len);
+    _getobj(obj, "y", inst_array[3], &y);
+    _getobj(obj, "length", inst_array[3], &len);
+    y += y0;
+    len += y0;
+    _putobj(obj, "y", inst_array[3], &y);
+    _putobj(obj, "length", inst_array[3], &len);
     /* FALLTHROUGH */
   case 'c':
-    _getobj(obj,"x",inst_array[0],&x);
-    _getobj(obj,"y",inst_array[0],&y);
-    _getobj(obj,"length",inst_array[0],&len);
-    x+=x0;
-    y+=y0;
-    len-=x0;
-    _putobj(obj,"x",inst_array[0],&x);
-    _putobj(obj,"y",inst_array[0],&y);
-    _putobj(obj,"length",inst_array[0],&len);
+    _getobj(obj, "x", inst_array[0], &x);
+    _getobj(obj, "y", inst_array[0], &y);
+    _getobj(obj, "length", inst_array[0], &len);
+    x += x0;
+    y += y0;
+    len -= x0;
+    _putobj(obj, "x", inst_array[0], &x);
+    _putobj(obj, "y", inst_array[0], &y);
+    _putobj(obj, "length", inst_array[0], &len);
 
-    _getobj(obj,"x",inst_array[1],&x);
-    _getobj(obj,"y",inst_array[1],&y);
-    _getobj(obj,"length",inst_array[1],&len);
-    x+=x0;
-    y+=y0;
-    len+=y0;
-    _putobj(obj,"x",inst_array[1],&x);
-    _putobj(obj,"y",inst_array[1],&y);
-    _putobj(obj,"length",inst_array[1],&len);
+    _getobj(obj, "x", inst_array[1], &x);
+    _getobj(obj, "y", inst_array[1], &y);
+    _getobj(obj, "length", inst_array[1], &len);
+    x += x0;
+    y += y0;
+    len += y0;
+    _putobj(obj, "x", inst_array[1], &x);
+    _putobj(obj, "y", inst_array[1], &y);
+    _putobj(obj, "length", inst_array[1], &len);
     break;
   }
 }
@@ -1226,7 +1234,7 @@ static int
 axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *inst_array[4];
-  int type, point, x0, y0, x1, x2, y1, y2;
+  int type, point, x0, y0, len;
   struct narray *array;
 
   type = get_axis_group_type(obj, inst, inst_array);
@@ -1241,20 +1249,12 @@ axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     break;
   case 'f':
   case 's':
-    _getobj(obj, "y", inst_array[0], &y1);
-    _getobj(obj, "y", inst_array[2], &y2);
-    if  (y1 < y2) {
-      switch (point) {
-      case 0: point = 3; break;
-      case 1: point = 2; break;
-      case 2: point = 1; break;
-      case 3: point = 0; break;
-      }
-    }
+  case 'c':
+    if (check_direction(obj, type, inst_array))
+      return 0;
 
-    _getobj(obj, "x", inst_array[1], &x1);
-    _getobj(obj, "x", inst_array[3], &x2);
-    if  (x1 > x2) {
+    _getobj(obj, "length", inst_array[0], &len);
+    if (len < 0) {
       switch (point) {
       case 0: point = 1; break;
       case 1: point = 0; break;
@@ -1262,10 +1262,16 @@ axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       case 3: point = 2; break;
       }
     }
-    /* FALLTHROUGH */
-  case 'c':
-    if (check_direction(obj, type, inst_array))
-      return 0;
+
+    _getobj(obj, "length", inst_array[1], &len);
+    if (len < 0) {
+      switch (point) {
+      case 0: point = 3; break;
+      case 1: point = 2; break;
+      case 2: point = 1; break;
+      case 3: point = 0; break;
+      }
+    }
 
     switch (point) {
     case 0:

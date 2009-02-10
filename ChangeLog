@@ -1,3 +1,8 @@
+2009-02-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (axischange): check length of axis instead of
+	position.
+
 2009-02-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11commn.c (GraphSave): "overwrite" is FALSE when

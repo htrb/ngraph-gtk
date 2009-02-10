@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-02-10 19:11+0900\n"
+"POT-Creation-Date: 2009-02-10 19:17+0900\n"
 "PO-Revision-Date: 2009-02-06 22:10+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -323,7 +323,7 @@ msgstr "I/O エラー: 書き込み"
 msgid "Save NGP file"
 msgstr "NGP ファイルの保存"
 
-#: src/gtk/x11commn.c:955
+#: src/gtk/x11commn.c:944
 #, c-format
 msgid ""
 "A file named `%s'already exists.\n"
@@ -332,7 +332,7 @@ msgstr ""
 "'%s' というファイルは既に存在しています。\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11commn.c:956 src/gtk/x11menu.c:161
+#: src/gtk/x11commn.c:945 src/gtk/x11menu.c:161
 msgid "Save"
 msgstr "保存"
 
