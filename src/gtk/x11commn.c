@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.26 2009/02/10 10:03:33 hito Exp $
+ * $Id: x11commn.c,v 1.27 2009/02/10 10:16:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -940,6 +940,13 @@ GraphSave(int overwrite)
     ret = IDOK;
   }
   if (ret == IDOK) {
+    if ((!overwrite) && (access(file, 04) == 0)) {
+      snprintf(buf, sizeof(buf), _("A file named `%s'already exists.\nDo you want to replace it?"), file);
+      if (MessageBox(TopLevel, buf, _("Save"), MB_YESNO) != IDYES) {
+	free(file);
+	return IDCANCEL;
+      }
+    }
     SaveDialog(&DlgSave, &sdata, &smerge);
     if ((ret = DialogExecute(TopLevel, &DlgSave)) == IDOK) {
       path = DlgSave.Path;
@@ -950,13 +957,6 @@ GraphSave(int overwrite)
       if ((obj = chkobject("merge")) != NULL) {
 	for (i = 0; i <= chkobjlastinst(obj); i++)
 	  putobj(obj, "save_path", i, &path);
-      }
-      if ((!overwrite) && (access(file, 04) == 0)) {
-	snprintf(buf, sizeof(buf), _("A file named `%s'already exists.\nDo you want to replace it?"), file);
-	if (MessageBox(TopLevel, buf, _("Save"), MB_YESNO) != IDYES) {
-	  free(file);
-	  return IDCANCEL;
-	}
       }
       snprintf(mes, sizeof(mes), _("Saving `%.128s'."), file);
       SetStatusBar(mes);

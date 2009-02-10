@@ -2,6 +2,7 @@
 
 	* src/gtk/x11commn.c (GraphSave): "overwrite" is FALSE when
 	"initfil" is NULL.
+	(GraphSave): check overwrite before show save dialog.
 
 	* src/gtk/x11axis.c (SectionDialogSetup, CrossDialogSetup)
 	(AxisPosDialogSetup): type of spin buttons for width, height and
