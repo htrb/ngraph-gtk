@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.25 2009/02/05 05:34:56 hito Exp $
+ * $Id: x11commn.c,v 1.26 2009/02/10 10:03:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -925,9 +925,11 @@ GraphSave(int overwrite)
       if ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0))
 	strcpy(ext, "ngp");
     }
-  } else
+  } else {
     initfil = NULL;
-  if ((initfil == NULL) || (!overwrite || (access(initfil, 04) == -1))) {
+    overwrite = FALSE;
+  }
+  if ((initfil == NULL) || (! overwrite || (access(initfil, 04) == -1))) {
     ret = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
 			   &(Menulocal.graphloaddir), initfil,
 			   &file, "*.ngp", Menulocal.changedirectory);

@@ -1,5 +1,8 @@
 2009-02-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (GraphSave): "overwrite" is FALSE when
+	"initfil" is NULL.
+
 	* src/gtk/x11axis.c (SectionDialogSetup, CrossDialogSetup)
 	(AxisPosDialogSetup): type of spin buttons for width, height and
 	length are "SPIN_BUTTON_TYPE_POSITION".
