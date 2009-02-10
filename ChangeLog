@@ -1,9 +1,5 @@
 2009-02-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/oaxis.c (check_direction): add.
-	(axisbbox, axischange): call "check_direction()" to check
-	direction of axises.
-
 	* src/gtk/x11axis.c (SectionDialogSetup, CrossDialogSetup)
 	(AxisPosDialogSetup): type of spin buttons for width, height and
 	length are "SPIN_BUTTON_TYPE_POSITION".
@@ -18,6 +14,10 @@
 	(axis_change_point3): add.
 	(axischange): use "axis_change_point0()", "axis_change_point1()",
 	"axis_change_point2()" and "axis_change_point3()".
+	(check_direction): add.
+	(axisbbox, axischange): call "check_direction()" to check
+	direction of axises.
+
 
 2009-02-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

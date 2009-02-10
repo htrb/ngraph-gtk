@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.41 2009/01/18 07:49:37 hito Exp $
+ * $Id: x11axis.c,v 1.42 2009/02/10 09:22:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -518,11 +518,11 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(vbox, w, _("Graph _Width:"), FALSE);
     d->width = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(vbox, w, _("Graph _Height:"), FALSE);
     d->height = w;
 
@@ -742,11 +742,11 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     vbox = gtk_vbox_new(FALSE, 4);
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(vbox, w, _("Graph _Width:"), FALSE);
     d->width = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(vbox, w, _("Graph _Height:"), FALSE);
     d->height = w;
 
@@ -1157,7 +1157,7 @@ AxisPosDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, "_Y:", TRUE);
     d->y = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
     item_setup(hbox, w, _("_Length:"), TRUE);
     d->len = w;
 

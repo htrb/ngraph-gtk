@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.15 2009/02/09 07:40:58 hito Exp $
+ * $Id: oaxis.c,v 1.16 2009/02/10 09:22:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -69,6 +69,13 @@ static char *axiserrorlist[]={
 
 #define ERRNUM (sizeof(axiserrorlist) / sizeof(*axiserrorlist))
 
+enum AXIS_TYPE {
+  AXIS_TYPE_SINGLE,
+  AXIS_TYPE_FRAME,
+  AXIS_TYPE_SECTION,
+  AXIS_TYPE_CROSS,
+};
+
 char *axistypechar[4]={
   N_("linear"),
   N_("log"),
@@ -76,7 +83,7 @@ char *axistypechar[4]={
   NULL
 };
 
-char *axisgaugechar[5]={
+char *axisgaugechar[]={
   N_("none"),
   N_("both"),
   N_("left"),
@@ -84,14 +91,27 @@ char *axisgaugechar[5]={
   NULL
 };
 
-char *axisnumchar[4]={
+enum AXIS_GAUGE {
+  AXIS_GAUGE_NONE,
+  AXIS_GAUGE_BOTH,
+  AXIS_GAUGE_LEFT,
+  AXIS_GAUGE_RIGHT,
+};
+
+char *axisnumchar[]={
   N_("none"),
   N_("left"),
   N_("right"),
   NULL
 };
 
-char *anumalignchar[5]={
+enum AXIS_NUM_POS {
+  AXIS_NUM_POS_NONE,
+  AXIS_NUM_POS_LEFT,
+  AXIS_NUM_POS_RIGHT,
+};
+
+char *anumalignchar[]={
   N_("center"),
   N_("left"),
   N_("right"),
@@ -99,12 +119,26 @@ char *anumalignchar[5]={
   NULL
 };
 
-char *anumdirchar[4]={
+enum AXIS_NUM_ALIGN {
+  AXIS_NUM_ALIGN_CENTER,
+  AXIS_NUM_ALIGN_LEFT,
+  AXIS_NUM_ALIGN_RIGHT,
+  AXIS_NUM_ALIGN_POINT,
+};
+
+char *anumdirchar[]={
   N_("normal"),
   N_("parallel"),
   N_("parallel2"),
   NULL
 };
+
+enum AXIS_NUM_DIR {
+  AXIS_NUM_POS_NORMAL,
+  AXIS_NUM_POS_PARALLEL1,
+  AXIS_NUM_POS_PARALLEL2,
+};
+
 
 static int 
 axisuniqgroup(struct objlist *obj,char type)
@@ -624,146 +658,212 @@ axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static int
+check_direction(struct objlist *obj, int type, char **inst_array)
+{
+  int i, n, direction, normal_dir[] = {0, 9000, 0, 9000};
+
+  switch (type) {
+  case 'f':
+  case 's':
+    n = 4;
+    break;
+  case 'c':
+    n = 2;
+    break;
+  case 'a':
+  default:
+    return 1;
+  }
+
+  for (i = 0; i < n; i++) {
+    _getobj(obj,"direction", inst_array[i], &direction);
+    if (direction != normal_dir[i]) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
+static int
+get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
+{
+  char *group, *group2, *inst2;
+  char type;
+  int findX, findY, findU, findR, len, id, i;
+
+  _getobj(obj, "group", inst, &group);
+
+  if (group  ==  NULL || group[0]  ==  'a')
+    return 'a';
+
+  len = strlen(group);
+  if (len < 3)
+    return 'a';
+
+  _getobj(obj, "id", inst, &id);
+
+  findX = findY = findU = findR = FALSE;
+
+  type = group[0];
+
+  for (i = 0; i <= id; i++) {
+    inst2 = chkobjinst(obj, i);
+    _getobj(obj, "group", inst2, &group2);
+
+    if (group2 == NULL || group2[0] != type)
+      continue;
+
+    len = strlen(group2);
+    if (len < 3)
+      continue;
+
+    if (strcmp(group + 2, group2 + 2))
+      continue;
+
+    switch (group2[1]) {
+    case 'X':
+      findX = TRUE;
+      inst_array[0] = inst2;
+      break;
+    case 'Y':
+      findY = TRUE;
+      inst_array[1] = inst2;
+      break;
+    case 'U':
+      findU = TRUE;
+      inst_array[2] = inst2;
+      break;
+    case 'R':
+      findR = TRUE;
+      inst_array[3] = inst2;
+      break;
+    }
+  }
+
+  switch (type) {
+  case 'f':
+  case 's':
+    if (findX && findY && findU && findR) {
+      return type;
+    }
+    break;
+  case 'c':
+    if (findX && findY)
+      return type;
+    break;
+  }
+
+  return -1;
+}
+
+static void
+get_axis_box(struct objlist *obj, char *inst, int argc, char **argv, int *minx, int *miny, int *maxx, int *maxy)
+{
+  struct narray *rval2;
+
+  rval2 = NULL;
+  axisbbox2(obj, inst, (void *) &rval2, argc, argv);
+  *minx = * (int *) arraynget(rval2, 0);
+  *miny = * (int *) arraynget(rval2, 1);
+  *maxx = * (int *) arraynget(rval2, 2);
+  *maxy = * (int *) arraynget(rval2, 3);
+  arrayfree(rval2);
+}
+
+static struct narray *
+set_axis_box(struct narray *array, int minx, int miny, int maxx, int maxy, int add_point)
+{
+  if (array == NULL && ((array = arraynew(sizeof(int))) == NULL))
+    return NULL;
+
+  arrayadd(array,&minx);
+  arrayadd(array,&miny);
+  arrayadd(array,&maxx);
+  arrayadd(array,&maxy);
+
+  if (add_point) {
+    arrayadd(array,&minx);
+    arrayadd(array,&miny);
+
+    arrayadd(array,&maxx);
+    arrayadd(array,&miny);
+
+    arrayadd(array,&maxx);
+    arrayadd(array,&maxy);
+
+    arrayadd(array,&minx);
+    arrayadd(array,&maxy);
+  }
+
+  if (arraynum(array)==0) {
+    arrayfree(array);
+    return NULL;
+  }
+
+  return array;
+}
+
 static int 
 axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i,id;
-  char *group,*group2;
-  char type;
-  int findX,findY,findU,findR;
-  char *inst2;
-  char *instX,*instY,*instU,*instR;
-  struct narray *rval2,*array;
+  int i, type, dir;
+  char *inst_array[4];
+  struct narray *array;
   int minx,miny,maxx,maxy;
   int x0,y0,x1,y1;
 
-  array=*(struct narray **)rval;
-  if (arraynum(array)!=0) return 0;
-  _getobj(obj,"group",inst,&group);
-  if ((group==NULL) || (group[0]=='a'))
-    return axisbbox2(obj,inst,rval,argc,argv);
-  _getobj(obj,"id",inst,&id);
-  findX=findY=findU=findR=FALSE;
-  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
-  type=group[0];
-  for (i=0;i<=id;i++) {
-    inst2=chkobjinst(obj,i);
-    _getobj(obj,"group",inst2,&group2);
-    if ((group2!=NULL) && (group2[0]==type)) {
-      if (strcmp(group+2,group2+2)==0) {
-        if (group2[1]=='X') {
-          findX=TRUE;
-          instX=inst2;
-        } else if (group2[1]=='Y') {
-          findY=TRUE;
-          instY=inst2;
-        } else if (group2[1]=='U') {
-          findU=TRUE;
-          instU=inst2;
-        } else if (group2[1]=='R') {
-          findR=TRUE;
-          instR=inst2;
-	}
-      }
+  array = * (struct narray **) rval;
+  if (arraynum(array) != 0)
+    return 0;
+
+  type = get_axis_group_type(obj, inst, inst_array);
+
+  switch (type) {
+  case 'a':
+    return axisbbox2(obj, inst, rval, argc, argv);
+    break;
+  case 'f':
+  case 's':
+    get_axis_box(obj, inst_array[0], argc, argv, &minx, &miny, &maxx, &maxy);
+
+    for (i = 1; i < 4; i++) {
+      get_axis_box(obj, inst_array[i], argc, argv, &x0, &y0, &x1, &y1);
+      if (x0 < minx) minx = x0;
+      if (y0 < miny) miny = y0;
+      if (x1 > maxx) maxx = x1;
+      if (y1 > maxy) maxy = y1;
     }
-  }
-  if (((type=='f') || (type=='s')) && findX && findY && findU && findR) {
-    rval2=NULL;
-    axisbbox2(obj,instX,(void *)&rval2,argc,argv);
-    minx=*(int *)arraynget(rval2,0);
-    miny=*(int *)arraynget(rval2,1);
-    maxx=*(int *)arraynget(rval2,2);
-    maxy=*(int *)arraynget(rval2,3);
-    arrayfree(rval2);
-    rval2=NULL;
-    axisbbox2(obj,instY,(void *)&rval2,argc,argv);
-    x0=*(int *)arraynget(rval2,0);
-    y0=*(int *)arraynget(rval2,1);
-    x1=*(int *)arraynget(rval2,2);
-    y1=*(int *)arraynget(rval2,3);
-    if (x0<minx) minx=x0;
-    if (y0<miny) miny=y0;
-    if (x1>maxx) maxx=x1;
-    if (y1>maxy) maxy=y1;
-    arrayfree(rval2);
-    rval2=NULL;
-    axisbbox2(obj,instU,(void *)&rval2,argc,argv);
-    x0=*(int *)arraynget(rval2,0);
-    y0=*(int *)arraynget(rval2,1);
-    x1=*(int *)arraynget(rval2,2);
-    y1=*(int *)arraynget(rval2,3);
-    if (x0<minx) minx=x0;
-    if (y0<miny) miny=y0;
-    if (x1>maxx) maxx=x1;
-    if (y1>maxy) maxy=y1;
-    arrayfree(rval2);
-    rval2=NULL;
-    axisbbox2(obj,instR,(void *)&rval2,argc,argv);
-    x0=*(int *)arraynget(rval2,0);
-    y0=*(int *)arraynget(rval2,1);
-    x1=*(int *)arraynget(rval2,2);
-    y1=*(int *)arraynget(rval2,3);
-    if (x0<minx) minx=x0;
-    if (y0<miny) miny=y0;
-    if (x1>maxx) maxx=x1;
-    if (y1>maxy) maxy=y1;
-    arrayfree(rval2);
-    if ((array==NULL) && ((array=arraynew(sizeof(int)))==NULL)) return 1;
-    arrayadd(array,&minx);
-    arrayadd(array,&miny);
-    arrayadd(array,&maxx);
-    arrayadd(array,&maxy);
-    arrayadd(array,&minx);
-    arrayadd(array,&miny);
-    arrayadd(array,&maxx);
-    arrayadd(array,&miny);
-    arrayadd(array,&maxx);
-    arrayadd(array,&maxy);
-    arrayadd(array,&minx);
-    arrayadd(array,&maxy);
-    if (arraynum(array)==0) {
-      arrayfree(array);
+
+    dir = check_direction(obj, type, inst_array);
+    array = set_axis_box(array, minx, miny, maxx, maxy, ! dir);
+    if (array == NULL)
       return 1;
-    }
-    *(struct narray **)rval=array;
-  } else if ((type=='c') && findX && findY) {
-    rval2=NULL;
-    axisbbox2(obj,instX,(void *)&rval2,argc,argv);
-    minx=*(int *)arraynget(rval2,0);
-    miny=*(int *)arraynget(rval2,1);
-    maxx=*(int *)arraynget(rval2,2);
-    maxy=*(int *)arraynget(rval2,3);
-    arrayfree(rval2);
-    rval2=NULL;
-    axisbbox2(obj,instY,(void *)&rval2,argc,argv);
-    x0=*(int *)arraynget(rval2,0);
-    y0=*(int *)arraynget(rval2,1);
-    x1=*(int *)arraynget(rval2,2);
-    y1=*(int *)arraynget(rval2,3);
-    if (x0<minx) minx=x0;
-    if (y0<miny) miny=y0;
-    if (x1>maxx) maxx=x1;
-    if (y1>maxy) maxy=y1;
-    arrayfree(rval2);
-    if ((array==NULL) && ((array=arraynew(sizeof(int)))==NULL)) return 1;
-    arrayadd(array,&minx);
-    arrayadd(array,&miny);
-    arrayadd(array,&maxx);
-    arrayadd(array,&maxy);
-    arrayadd(array,&minx);
-    arrayadd(array,&miny);
-    arrayadd(array,&maxx);
-    arrayadd(array,&miny);
-    arrayadd(array,&maxx);
-    arrayadd(array,&maxy);
-    arrayadd(array,&minx);
-    arrayadd(array,&maxy);
-    if (arraynum(array)==0) {
-      arrayfree(array);
+
+    * (struct narray **) rval = array;
+    break;
+  case 'c':
+    get_axis_box(obj, inst_array[0], argc, argv, &minx, &miny, &maxx, &maxy);
+    get_axis_box(obj, inst_array[1], argc, argv, &x0, &y0, &x1, &y1);
+
+    if (x0 < minx) minx = x0;
+    if (y0 < miny) miny = y0;
+    if (x1 > maxx) maxx = x1;
+    if (y1 > maxy) maxy = y1;
+
+    if (array == NULL && ((array = arraynew(sizeof(int))) == NULL))
       return 1;
-    }
-    *(struct narray **)rval=array;
+
+    dir = check_direction(obj, type, inst_array);
+    array = set_axis_box(array, minx, miny, maxx, maxy, ! dir);
+    if (array == NULL)
+      return 1;
+
+    * (struct narray **) rval = array;
+    break;
   }
+
   return 0;
 }
 
@@ -833,63 +933,41 @@ axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axismatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axismatch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int i,id;
-  char *group,*group2;
-  char type;
-  int findX,findY,findU,findR;
-  char *inst2;
-  char *instX,*instY,*instU,*instR;
-  int rval2,match;
+  int i, type;
+  char *inst_array[4];
+  int rval2, match;
 
-  *(int *)rval=FALSE;
-  _getobj(obj,"group",inst,&group);
-  if ((group==NULL) || (group[0]=='a'))
-    return axismatch2(obj,inst,rval,argc,argv);
-  _getobj(obj,"id",inst,&id);
-  findX=findY=findU=findR=FALSE;
-  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
-  type=group[0];
-  for (i=0;i<=id;i++) {
-    inst2=chkobjinst(obj,i);
-    _getobj(obj,"group",inst2,&group2);
-    if ((group2!=NULL) && (group2[0]==type)) {
-      if (strcmp(group+2,group2+2)==0) {
-        if (group2[1]=='X') {
-          findX=TRUE;
-          instX=inst2;
-        } else if (group2[1]=='Y') {
-          findY=TRUE;
-          instY=inst2;
-        } else if (group2[1]=='U') {
-          findU=TRUE;
-          instU=inst2;
-        } else if (group2[1]=='R') {
-          findR=TRUE;
-          instR=inst2;
-        }
-      }
+  *(int *)rval = FALSE;
+
+  type = get_axis_group_type(obj, inst, inst_array);
+
+  switch (type) {
+  case 'a':
+    return axismatch2(obj, inst, rval, argc, argv);
+    break;
+  case 'f':
+  case 's':
+    match = FALSE;
+
+    for (i = 0; i < 4; i++) {
+      axismatch2(obj, inst_array[i], (void *)&rval2, argc, argv);
+      match = match || rval2;
     }
-  }
-  if (((type=='f') || (type=='s')) && findX && findY && findU && findR) {
-    match=FALSE;
-    axismatch2(obj,instX,(void *)&rval2,argc,argv);
-    match=match || rval2;
-    axismatch2(obj,instY,(void *)&rval2,argc,argv);
-    match=match || rval2;
-    axismatch2(obj,instU,(void *)&rval2,argc,argv);
-    match=match || rval2;
-    axismatch2(obj,instR,(void *)&rval2,argc,argv);
-    match=match || rval2;
-    *(int *)rval=match;
-  } else if ((type=='c') && findX && findY) {
-    match=FALSE;
-    axismatch2(obj,instX,(void *)&rval2,argc,argv);
-    match=match || rval2;
-    axismatch2(obj,instY,(void *)&rval2,argc,argv);
-    match=match || rval2;
-    *(int *)rval=match;
+
+    *(int *)rval = match;
+    break;
+  case 'c':
+    match = FALSE;
+
+    for (i = 0; i < 2; i++) {
+      axismatch2(obj, inst_array[i], (void *)&rval2, argc, argv);
+      match = match || rval2;
+    }
+
+    * (int *) rval = match;
+    break;
   }
   return 0;
 }
@@ -916,49 +994,25 @@ axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i,id;
-  char *group,*group2;
-  char type;
-  int findX,findY,findU,findR;
-  char *inst2;
-  char *instX,*instY,*instU,*instR;
+  int i, type;
+  char *inst_array[4];
 
-  _getobj(obj,"group",inst,&group);
-  if ((group==NULL) || (group[0]=='a'))
-    return axismove2(obj,inst,rval,argc,argv);
-  _getobj(obj,"id",inst,&id);
-  findX=findY=findU=findR=FALSE;
-  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
-  type=group[0];
-  for (i=0;i<=id;i++) {
-    inst2=chkobjinst(obj,i);
-    _getobj(obj,"group",inst2,&group2);
-    if ((group2!=NULL) && (group2[0]==type)) {
-      if (strcmp(group+2,group2+2)==0) {
-        if (group2[1]=='X') {
-          findX=TRUE;
-          instX=inst2;
-        } else if (group2[1]=='Y') {
-          findY=TRUE;
-          instY=inst2;
-        } else if (group2[1]=='U') {
-          findU=TRUE;
-          instU=inst2;
-        } else if (group2[1]=='R') {
-          findR=TRUE;
-          instR=inst2;
-	}
-      }
+  type = get_axis_group_type(obj, inst, inst_array);
+
+  switch (type) {
+  case 'a':
+    return axismove2(obj, inst, rval, argc, argv);
+    break;
+  case 'f':
+  case 's':
+    for (i = 0; i < 4; i++) {
+      axismove2(obj, inst_array[i], rval, argc, argv);
     }
-  }
-  if (((type=='f') || (type=='s')) && findX && findY && findU && findR) {
-    axismove2(obj,instX,rval,argc,argv);
-    axismove2(obj,instY,rval,argc,argv);
-    axismove2(obj,instU,rval,argc,argv);
-    axismove2(obj,instR,rval,argc,argv);
-  } else if ((type=='c') && findX && findY) {
-    axismove2(obj,instX,rval,argc,argv);
-    axismove2(obj,instY,rval,argc,argv);
+    break;
+  case 'c':
+    axismove2(obj, inst_array[0], rval, argc, argv);
+    axismove2(obj, inst_array[1], rval, argc, argv);
+    break;
   }
   return 0;
 }
@@ -1008,228 +1062,233 @@ axischange2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static void
+axis_change_point0(struct objlist *obj, int type, char **inst_array, int x0, int y0)
+{
+  int len, x, y;
+
+  switch (type) {
+  case 'f':
+  case 's':
+    _getobj(obj,"x",inst_array[2],&x);
+    _getobj(obj,"y",inst_array[2],&y);
+    _getobj(obj,"length",inst_array[2],&len);
+    x+=x0;
+    y+=y0;
+    len-=x0;
+    _putobj(obj,"x",inst_array[2],&x);
+    _putobj(obj,"y",inst_array[2],&y);
+
+    _putobj(obj,"length",inst_array[2],&len);
+    _getobj(obj,"length",inst_array[3],&len);
+    len-=y0;
+    _putobj(obj,"length",inst_array[3],&len);
+    /* FALLTHROUGH */
+  case 'c':
+    _getobj(obj,"x",inst_array[0],&x);
+    _getobj(obj,"length",inst_array[0],&len);
+    x+=x0;
+    len-=x0;
+    _putobj(obj,"x",inst_array[0],&x);
+    _putobj(obj,"length",inst_array[0],&len);
+
+    _getobj(obj,"x",inst_array[1],&x);
+    _getobj(obj,"length",inst_array[1],&len);
+    x+=x0;
+    len-=y0;
+    _putobj(obj,"x",inst_array[1],&x);
+    _putobj(obj,"length",inst_array[1],&len);
+    break;
+  }
+}
+
+static void
+axis_change_point1(struct objlist *obj, int type, char **inst_array, int x0, int y0)
+{
+  int len, x, y;
+
+  switch (type) {
+  case 'f':
+  case 's':
+    _getobj(obj,"y",inst_array[2],&y);
+    _getobj(obj,"length",inst_array[2],&len);
+    y+=y0;
+    len+=x0;
+    _putobj(obj,"y",inst_array[2],&y);
+    _putobj(obj,"length",inst_array[2],&len);
+
+    _getobj(obj,"x",inst_array[3],&x);
+    _getobj(obj,"length",inst_array[3],&len);
+    x+=x0;
+    len-=y0;
+    _putobj(obj,"x",inst_array[3],&x);
+    _putobj(obj,"length",inst_array[3],&len);
+    /* FALLTHROUGH */
+  case 'c':
+    _getobj(obj,"length",inst_array[0],&len);
+    len+=x0;
+    _putobj(obj,"length",inst_array[0],&len);
+
+    _getobj(obj,"length",inst_array[1],&len);
+    len-=y0;
+    _putobj(obj,"length",inst_array[1],&len);
+    break;
+  }
+}
+
+static void
+axis_change_point2(struct objlist *obj, int type, char **inst_array, int x0, int y0)
+{
+  int len, x, y;
+
+  switch (type) {
+  case 'f':
+  case 's':
+    _getobj(obj,"length",inst_array[2],&len);
+    len+=x0;
+    _putobj(obj,"length",inst_array[2],&len);
+
+    _getobj(obj,"x",inst_array[3],&x);
+    _getobj(obj,"y",inst_array[3],&y);
+    _getobj(obj,"length",inst_array[3],&len);
+    x+=x0;
+    y+=y0;
+    len+=y0;
+    _putobj(obj,"x",inst_array[3],&x);
+    _putobj(obj,"y",inst_array[3],&y);
+    _putobj(obj,"length",inst_array[3],&len);
+    /* FALLTHROUGH */
+  case 'c':
+    _getobj(obj,"y",inst_array[0],&y);
+    _getobj(obj,"length",inst_array[0],&len);
+    y+=y0;
+    len+=x0;
+    _putobj(obj,"y",inst_array[0],&y);
+    _putobj(obj,"length",inst_array[0],&len);
+
+    _getobj(obj,"y",inst_array[1],&y);
+    _getobj(obj,"length",inst_array[1],&len);
+    y+=y0;
+    len+=y0;
+    _putobj(obj,"y",inst_array[1],&y);
+    _putobj(obj,"length",inst_array[1],&len);
+    break;
+  }
+}
+
+static void
+axis_change_point3(struct objlist *obj, int type, char **inst_array, int x0, int y0)
+{
+  int len, x, y;
+
+  switch (type) {
+  case 'f':
+  case 's':
+    _getobj(obj,"x",inst_array[2],&x);
+    _getobj(obj,"length",inst_array[2],&len);
+    x+=x0;
+    len-=x0;
+    _putobj(obj,"x",inst_array[2],&x);
+    _putobj(obj,"length",inst_array[2],&len);
+
+    _getobj(obj,"y",inst_array[3],&y);
+    _getobj(obj,"length",inst_array[3],&len);
+    y+=y0;
+    len+=y0;
+    _putobj(obj,"y",inst_array[3],&y);
+    _putobj(obj,"length",inst_array[3],&len);
+    /* FALLTHROUGH */
+  case 'c':
+    _getobj(obj,"x",inst_array[0],&x);
+    _getobj(obj,"y",inst_array[0],&y);
+    _getobj(obj,"length",inst_array[0],&len);
+    x+=x0;
+    y+=y0;
+    len-=x0;
+    _putobj(obj,"x",inst_array[0],&x);
+    _putobj(obj,"y",inst_array[0],&y);
+    _putobj(obj,"length",inst_array[0],&len);
+
+    _getobj(obj,"x",inst_array[1],&x);
+    _getobj(obj,"y",inst_array[1],&y);
+    _getobj(obj,"length",inst_array[1],&len);
+    x+=x0;
+    y+=y0;
+    len+=y0;
+    _putobj(obj,"x",inst_array[1],&x);
+    _putobj(obj,"y",inst_array[1],&y);
+    _putobj(obj,"length",inst_array[1],&len);
+    break;
+  }
+}
+
 static int 
 axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i,id;
-  char *group,*group2;
-  char type;
-  int findX,findY,findU,findR;
-  char *inst2;
-  char *instX,*instY,*instU,*instR;
-  int point,x0,y0;
-  int x,y,len,x1,x2,y1,y2;
+  char *inst_array[4];
+  int type, point, x0, y0, x1, x2, y1, y2;
   struct narray *array;
 
-  _getobj(obj,"group",inst,&group);
-  if ((group==NULL) || (group[0]=='a'))
-    return axischange2(obj,inst,rval,argc,argv);
-  _getobj(obj,"id",inst,&id);
-  findX=findY=findU=findR=FALSE;
-  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
-  type=group[0];
-  for (i=0;i<=id;i++) {
-    inst2=chkobjinst(obj,i);
-    _getobj(obj,"group",inst2,&group2);
-    if ((group2!=NULL) && (group2[0]==type)) {
-      if (strcmp(group+2,group2+2)==0) {
-        if (group2[1]=='X') {
-          findX=TRUE;
-          instX=inst2;
-        } else if (group2[1]=='Y') {
-          findY=TRUE;
-          instY=inst2;
-        } else if (group2[1]=='U') {
-          findU=TRUE;
-          instU=inst2;
-        } else if (group2[1]=='R') {
-          findR=TRUE;
-          instR=inst2;
-        }
+  type = get_axis_group_type(obj, inst, inst_array);
+
+  point= * (int *) argv[2];
+  x0 = * (int *) argv[3];
+  y0 = * (int *) argv[4];
+
+  switch (type) {
+  case 'a':
+    return axischange2(obj, inst, rval, argc, argv);
+    break;
+  case 'f':
+  case 's':
+    _getobj(obj, "y", inst_array[0], &y1);
+    _getobj(obj, "y", inst_array[2], &y2);
+    if  (y1 < y2) {
+      switch (point) {
+      case 0: point = 3; break;
+      case 1: point = 2; break;
+      case 2: point = 1; break;
+      case 3: point = 0; break;
       }
     }
-  }
-  point=*(int *)argv[2];
-  x0=*(int *)argv[3];
-  y0=*(int *)argv[4];
-  if (((type=='f') || (type=='s')) && findX && findY && findU && findR) {
-    _getobj(obj,"y",instX,&y1);
-    _getobj(obj,"y",instU,&y2);
-    if  (y1<y2) {
-      if (point==0) point=3;
-      else if (point==1) point=2;
-      else if (point==2) point=1;
-      else if (point==3) point=0;
+
+    _getobj(obj, "x", inst_array[1], &x1);
+    _getobj(obj, "x", inst_array[3], &x2);
+    if  (x1 > x2) {
+      switch (point) {
+      case 0: point = 1; break;
+      case 1: point = 0; break;
+      case 2: point = 3; break;
+      case 3: point = 2; break;
+      }
     }
-    _getobj(obj,"x",instY,&x1);
-    _getobj(obj,"x",instR,&x2);
-    if  (x1>x2) {
-      if (point==0) point=1;
-      else if (point==1) point=0;
-      else if (point==2) point=3;
-      else if (point==3) point=2;
+    /* FALLTHROUGH */
+  case 'c':
+    if (check_direction(obj, type, inst_array))
+      return 0;
+
+    switch (point) {
+    case 0:
+      axis_change_point0(obj, type, inst_array, x0, y0);
+      break;
+    case 1:
+      axis_change_point1(obj, type, inst_array, x0, y0);
+      break;
+    case 2:
+      axis_change_point2(obj, type, inst_array, x0, y0);
+      break;
+    case 3:
+      axis_change_point3(obj, type, inst_array, x0, y0);
+      break;
     }
-    if (point==0) {
-      _getobj(obj,"x",instX,&x);
-      _getobj(obj,"length",instX,&len);
-      x+=x0;
-      len-=x0;
-      _putobj(obj,"x",instX,&x);
-      _putobj(obj,"length",instX,&len);
-      _getobj(obj,"x",instY,&x);
-      _getobj(obj,"length",instY,&len);
-      x+=x0;
-      len-=y0;
-      _putobj(obj,"x",instY,&x);
-      _putobj(obj,"length",instY,&len);
-      _getobj(obj,"x",instU,&x);
-      _getobj(obj,"y",instU,&y);
-      _getobj(obj,"length",instU,&len);
-      x+=x0;
-      y+=y0;
-      len-=x0;
-      _putobj(obj,"x",instU,&x);
-      _putobj(obj,"y",instU,&y);
-      _putobj(obj,"length",instU,&len);
-      _getobj(obj,"length",instR,&len);
-      len-=y0;
-      _putobj(obj,"length",instR,&len);
-    } else if (point==1) {
-      _getobj(obj,"length",instX,&len);
-      len+=x0;
-      _putobj(obj,"length",instX,&len);
-      _getobj(obj,"length",instY,&len);
-      len-=y0;
-      _putobj(obj,"length",instY,&len);
-      _getobj(obj,"y",instU,&y);
-      _getobj(obj,"length",instU,&len);
-      y+=y0;
-      len+=x0;
-      _putobj(obj,"y",instU,&y);
-      _putobj(obj,"length",instU,&len);
-      _getobj(obj,"x",instR,&x);
-      _getobj(obj,"length",instR,&len);
-      x+=x0;
-      len-=y0;
-      _putobj(obj,"x",instR,&x);
-      _putobj(obj,"length",instR,&len);
-    } else if (point==2) {
-      _getobj(obj,"y",instX,&y);
-      _getobj(obj,"length",instX,&len);
-      y+=y0;
-      len+=x0;
-      _putobj(obj,"y",instX,&y);
-      _putobj(obj,"length",instX,&len);
-      _getobj(obj,"y",instY,&y);
-      _getobj(obj,"length",instY,&len);
-      y+=y0;
-      len+=y0;
-      _putobj(obj,"y",instY,&y);
-      _putobj(obj,"length",instY,&len);
-      _getobj(obj,"length",instU,&len);
-      len+=x0;
-      _putobj(obj,"length",instU,&len);
-      _getobj(obj,"x",instR,&x);
-      _getobj(obj,"y",instR,&y);
-      _getobj(obj,"length",instR,&len);
-      x+=x0;
-      y+=y0;
-      len+=y0;
-      _putobj(obj,"x",instR,&x);
-      _putobj(obj,"y",instR,&y);
-      _putobj(obj,"length",instR,&len);
-    } else if (point==3) {
-      _getobj(obj,"x",instX,&x);
-      _getobj(obj,"y",instX,&y);
-      _getobj(obj,"length",instX,&len);
-      x+=x0;
-      y+=y0;
-      len-=x0;
-      _putobj(obj,"x",instX,&x);
-      _putobj(obj,"y",instX,&y);
-      _putobj(obj,"length",instX,&len);
-      _getobj(obj,"x",instY,&x);
-      _getobj(obj,"y",instY,&y);
-      _getobj(obj,"length",instY,&len);
-      x+=x0;
-      y+=y0;
-      len+=y0;
-      _putobj(obj,"x",instY,&x);
-      _putobj(obj,"y",instY,&y);
-      _putobj(obj,"length",instY,&len);
-      _getobj(obj,"x",instU,&x);
-      _getobj(obj,"length",instU,&len);
-      x+=x0;
-      len-=x0;
-      _putobj(obj,"x",instU,&x);
-      _putobj(obj,"length",instU,&len);
-      _getobj(obj,"y",instR,&y);
-      _getobj(obj,"length",instR,&len);
-      y+=y0;
-      len+=y0;
-      _putobj(obj,"y",instR,&y);
-      _putobj(obj,"length",instR,&len);
-    }
-    _getobj(obj,"bbox",inst,&array);
+
+    _getobj(obj, "bbox", inst, &array);
     arrayfree(array);
-    if (_putobj(obj,"bbox",inst,NULL)) return 1;
-  } else if ((type=='c') && findX && findY) {
-    if (point==0) {
-      _getobj(obj,"x",instX,&x);
-      _getobj(obj,"length",instX,&len);
-      x+=x0;
-      len-=x0;
-      _putobj(obj,"x",instX,&x);
-      _putobj(obj,"length",instX,&len);
-      _getobj(obj,"x",instY,&x);
-      _getobj(obj,"length",instY,&len);
-      x+=x0;
-      len-=y0;
-      _putobj(obj,"x",instY,&x);
-      _putobj(obj,"length",instY,&len);
-    } else if (point==1) {
-      _getobj(obj,"length",instX,&len);
-      len+=x0;
-      _putobj(obj,"length",instX,&len);
-      _getobj(obj,"length",instY,&len);
-      len-=y0;
-      _putobj(obj,"length",instY,&len);
-    } else if (point==2) {
-      _getobj(obj,"y",instX,&y);
-      _getobj(obj,"length",instX,&len);
-      y+=y0;
-      len+=x0;
-      _putobj(obj,"y",instX,&y);
-      _putobj(obj,"length",instX,&len);
-      _getobj(obj,"y",instY,&y);
-      _getobj(obj,"length",instY,&len);
-      y+=y0;
-      len+=y0;
-      _putobj(obj,"y",instY,&y);
-      _putobj(obj,"length",instY,&len);
-    } else if (point==3) {
-      _getobj(obj,"x",instX,&x);
-      _getobj(obj,"y",instX,&y);
-      _getobj(obj,"length",instX,&len);
-      x+=x0;
-      y+=y0;
-      len-=x0;
-      _putobj(obj,"x",instX,&x);
-      _putobj(obj,"y",instX,&y);
-      _putobj(obj,"length",instX,&len);
-      _getobj(obj,"x",instY,&x);
-      _getobj(obj,"y",instY,&y);
-      _getobj(obj,"length",instY,&len);
-      x+=x0;
-      y+=y0;
-      len+=y0;
-      _putobj(obj,"x",instY,&x);
-      _putobj(obj,"y",instY,&y);
-      _putobj(obj,"length",instY,&len);
-    }
-    _getobj(obj,"bbox",inst,&array);
-    arrayfree(array);
-    if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+    if (_putobj(obj, "bbox", inst, NULL))
+      return 1;
+
+    break;
   }
   return 0;
 }
@@ -1310,49 +1369,25 @@ axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i,id;
-  char *group,*group2;
-  char type;
-  int findX,findY,findU,findR;
-  char *inst2;
-  char *instX,*instY,*instU,*instR;
+  int i, type;
+  char *inst_array[4];
 
-  _getobj(obj,"group",inst,&group);
-  if ((group==NULL) || (group[0]=='a'))
-    return axiszoom2(obj,inst,rval,argc,argv);
-  _getobj(obj,"id",inst,&id);
-  findX=findY=findU=findR=FALSE;
-  instX = instY = instR = instU = NULL;	/* this initialization is added to avoid compile warnings. */
-  type=group[0];
-  for (i=0;i<=id;i++) {
-    inst2=chkobjinst(obj,i);
-    _getobj(obj,"group",inst2,&group2);
-    if ((group2!=NULL) && (group2[0]==type)) {
-      if (strcmp(group+2,group2+2)==0) {
-        if (group2[1]=='X') {
-          findX=TRUE;
-          instX=inst2;
-        } else if (group2[1]=='Y') {
-          findY=TRUE;
-          instY=inst2;
-        } else if (group2[1]=='U') {
-          findU=TRUE;
-          instU=inst2;
-        } else if (group2[1]=='R') {
-          findR=TRUE;
-          instR=inst2;
-	}
-      }
+  type = get_axis_group_type(obj, inst, inst_array);
+
+  switch (type) {
+  case 'a':
+    return axiszoom2(obj, inst, rval, argc, argv);
+    break;
+  case 'f':
+  case 's':
+    for (i = 0; i < 4; i++) {
+      axiszoom2(obj, inst_array[i], rval, argc, argv);
     }
-  }
-  if (((type=='f') || (type=='s')) && findX && findY && findU && findR) {
-    axiszoom2(obj,instX,rval,argc,argv);
-    axiszoom2(obj,instY,rval,argc,argv);
-    axiszoom2(obj,instU,rval,argc,argv);
-    axiszoom2(obj,instR,rval,argc,argv);
-  } else if ((type=='c') && findX && findY) {
-    axiszoom2(obj,instX,rval,argc,argv);
-    axiszoom2(obj,instY,rval,argc,argv);
+    break;
+  case 'c':
+    axiszoom2(obj, inst_array[0], rval, argc, argv);
+    axiszoom2(obj, inst_array[1], rval, argc, argv);
+    break;
   }
   return 0;
 }
@@ -2442,13 +2477,13 @@ axisgrouping(struct objlist *obj,char *inst,char *rval,
   data = (int *)arraydata(iarray);
 
   switch (data[0]) {
-  case 1:
+  case AXIS_TYPE_FRAME:
     type='f';
     break;
-  case 2:
+  case AXIS_TYPE_SECTION:
     type='s';
     break;
-  case 3:
+  case AXIS_TYPE_CROSS:
     type='c';
     break;
   default:
@@ -2459,8 +2494,8 @@ axisgrouping(struct objlist *obj,char *inst,char *rval,
   gnum = axisuniqgroup(obj, type);
 
   switch (data[0]) {
-  case 1:
-  case 2:
+  case AXIS_TYPE_FRAME:
+  case AXIS_TYPE_SECTION:
     if (num < 5)
       return 1;
 
@@ -2469,7 +2504,7 @@ axisgrouping(struct objlist *obj,char *inst,char *rval,
     set_group(obj, gnum, data[3], 'U', type);
     set_group(obj, gnum, data[4], 'R', type);
     break;
-  case 3:
+  case AXIS_TYPE_CROSS:
     if (num<3)
       return 1;
 
@@ -2517,8 +2552,8 @@ axisgrouppos(struct objlist *obj, char *inst, char *rval,
   data = (int *)arraydata(iarray);
 
   switch (data[0]) {
-  case 1:
-  case 2:
+  case AXIS_TYPE_FRAME:
+  case AXIS_TYPE_SECTION:
     if (anum < 9)
       return 1;
 
@@ -2533,7 +2568,7 @@ axisgrouppos(struct objlist *obj, char *inst, char *rval,
     set_group_pos(obj, data[4], x + lx, y,      ly, 9000);
 
     break;
-  case 3:
+  case AXIS_TYPE_CROSS:
     if (anum < 7)
       return 1;
 
@@ -2549,138 +2584,135 @@ axisgrouppos(struct objlist *obj, char *inst, char *rval,
   return 0;
 }
 
+static void
+axis_default(struct objlist *obj, int id, int *oid, int dir,
+	     enum AXIS_GAUGE gauge, enum AXIS_NUM_POS num,
+	     enum AXIS_NUM_ALIGN align, char *conf)
+{
+  char *inst2;
+
+  inst2 = chkobjinst(obj, id);
+  if (inst2 == NULL)
+    return;
+
+  _putobj(obj, "gauge", inst2, &gauge);
+  _putobj(obj, "num", inst2, &num);
+  _putobj(obj, "num_align", inst2, &align);
+  _putobj(obj, "direction", inst2, &dir);
+
+  if (oid)
+    _getobj(obj, "oid", inst2, oid);
+
+  if (conf)
+    axisloadconfig(obj, inst2, conf);
+}
+
+static void
+axis_default_set(struct objlist *obj, int id, int oid, char *field, char *conf)
+{
+  char *inst2, *ref, *ref2;
+
+  inst2 = chkobjinst(obj, id);
+  if (inst2 == NULL)
+    return;
+
+  ref = memalloc(BUF_SIZE);
+  if (ref == NULL)
+    return;
+
+  _getobj(obj, field, inst2, &ref2);
+  memfree(ref2);
+  snprintf(ref, BUF_SIZE, "axis:^%d", oid);
+  _putobj(obj, field, inst2, ref);
+
+  axisloadconfig(obj, inst2, conf);
+}
+
+
+static void
+axis_default_set_ref(struct objlist *obj, int id, int oid, char *conf)
+{
+  axis_default_set(obj, id, oid, "reference", conf);
+}
+
+static void
+axis_default_set_adj(struct objlist *obj, int id, int oid, char *conf)
+{
+  axis_default_set(obj, id, oid, "adjust_axis", conf);
+}
+
 static int 
 axisdefgrouping(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
-  int dir,gauge,num,align,oidx,oidy;
+  int oidx, oidy;
   struct narray *iarray;
   int *data;
   int anum;
-  char *ref,*ref2;
-  char *inst2;
 
-  if (axisgrouping(obj,inst,rval,argc,argv)) return 1;
-  iarray=(struct narray *)argv[2];
-  anum=arraynum(iarray);
-  if (anum<1) return 1;
-  data=(int *)arraydata(iarray);
-  oidx=oidy=0;
-  if ((data[0]==1) || (data[0]==2)) {
-    if (anum<5) return 1;
-    if ((inst2=chkobjinst(obj,data[1]))!=NULL) {
-      dir=0;
-      if (data[0]==2) gauge=0;
-      else gauge=2;
-      num=2;
-      align=0;
-      _putobj(obj,"gauge",inst2,&gauge);
-      _putobj(obj,"num",inst2,&num);
-      _putobj(obj,"num_align",inst2,&align);
-      _putobj(obj,"direction",inst2,&dir);
-      _getobj(obj,"oid",inst2,&oidx);
-      if (data[0]==1) axisloadconfig(obj,inst2,"[axis_fX]");
-      else axisloadconfig(obj,inst2,"[axis_sX]");
-    }
-    if ((inst2=chkobjinst(obj,data[2]))!=NULL) {
-      dir=9000;
-      if (data[0]==2) gauge=0;
-      else gauge=3;
-      num=1;
-      align=2;
-      _putobj(obj,"gauge",inst2,&gauge);
-      _putobj(obj,"num",inst2,&num);
-      _putobj(obj,"num_align",inst2,&align);
-      _putobj(obj,"direction",inst2,&dir);
-      _getobj(obj,"oid",inst2,&oidy);
-      if (data[0]==1) axisloadconfig(obj,inst2,"[axis_fY]");
-      else axisloadconfig(obj,inst2,"[axis_sY]");
-    }
-    if ((inst2=chkobjinst(obj,data[3]))!=NULL) {
-      dir=0;
-      if (data[0]==2) gauge=0;
-      else gauge=3;
-      num=1;
-      align=0;
-      _putobj(obj,"gauge",inst2,&gauge);
-      _putobj(obj,"num",inst2,&num);
-      _putobj(obj,"num_align",inst2,&align);
-      _putobj(obj,"direction",inst2,&dir);
-      if ((ref=memalloc(15))!=NULL) {
-        _getobj(obj,"reference",inst2,&ref2);
-        memfree(ref2);
-        sprintf(ref,"axis:^%d",oidx);
-        _putobj(obj,"reference",inst2,ref);
-      }
-      if (data[0]==1) axisloadconfig(obj,inst2,"[axis_fU]");
-      else axisloadconfig(obj,inst2,"[axis_sU]");
-    }
-    if ((inst2=chkobjinst(obj,data[4]))!=NULL) {
-      dir=9000;
-      if (data[0]==2) gauge=0;
-      else gauge=2;
-      num=2;
-      align=1;
-      _putobj(obj,"gauge",inst2,&gauge);
-      _putobj(obj,"num",inst2,&num);
-      _putobj(obj,"num_align",inst2,&align);
-      _putobj(obj,"direction",inst2,&dir);
-      if ((ref=memalloc(15))!=NULL) {
-        _getobj(obj,"reference",inst2,&ref2);
-        memfree(ref2);
-        sprintf(ref,"axis:^%d",oidy);
-        _putobj(obj,"reference",inst2,ref);
-      }
-      if (data[0]==1) axisloadconfig(obj,inst2,"[axis_fR]");
-      else axisloadconfig(obj,inst2,"[axis_sR]");
-    }
-    if (anum<9) return 0;
-    if (axisgrouppos(obj,inst,rval,argc,argv)) return 1;
-  } else if (data[0]==3) {
-    if (anum<3) return 1;
-    if ((inst2=chkobjinst(obj,data[1]))!=NULL) {
-      dir=0;
-      gauge=1;
-      num=2;
-      align=0;
-      _putobj(obj,"gauge",inst2,&gauge);
-      _putobj(obj,"num",inst2,&num);
-      _putobj(obj,"num_align",inst2,&align);
-      _putobj(obj,"direction",inst2,&dir);
-      _getobj(obj,"oid",inst2,&oidx);
-    }
-    if ((inst2=chkobjinst(obj,data[2]))!=NULL) {
-      dir=9000;
-      gauge=1;
-      num=1;
-      align=2;
-      _putobj(obj,"gauge",inst2,&gauge);
-      _putobj(obj,"num",inst2,&num);
-      _putobj(obj,"num_align",inst2,&align);
-      _putobj(obj,"direction",inst2,&dir);
-      _getobj(obj,"oid",inst2,&oidy);
-    }
-    if ((inst2=chkobjinst(obj,data[1]))!=NULL) {
-      if ((ref=memalloc(15))!=NULL) {
-        _getobj(obj,"adjust_axis",inst2,&ref2);
-        memfree(ref2);
-        sprintf(ref,"axis:^%d",oidy);
-        _putobj(obj,"adjust_axis",inst2,ref);
-      }
-      axisloadconfig(obj,inst2,"[axis_cX]");
-    }
-    if ((inst2=chkobjinst(obj,data[2]))!=NULL) {
-      if ((ref=memalloc(15))!=NULL) {
-        _getobj(obj,"adjust_axis",inst2,&ref2);
-        memfree(ref2);
-        sprintf(ref,"axis:^%d",oidx);
-        _putobj(obj,"adjust_axis",inst2,ref);
-      }
-      axisloadconfig(obj,inst2,"[axis_cY]");
-    }
-    if (anum<7) return 0;
-    if (axisgrouppos(obj,inst,rval,argc,argv)) return 1;
+  if (axisgrouping(obj, inst, rval, argc, argv))
+    return 1;
+
+  iarray = (struct narray *) argv[2];
+  anum = arraynum(iarray);
+  if (anum < 1)
+    return 1;
+
+  data = (int *)arraydata(iarray);
+
+  switch (data[0]) {
+  case AXIS_TYPE_FRAME:
+    if (anum < 5)
+      return 1;
+
+    axis_default(obj, data[1], &oidx,    0, AXIS_GAUGE_LEFT,  AXIS_NUM_POS_RIGHT, AXIS_NUM_ALIGN_CENTER, "[axis_fX]");
+    axis_default(obj, data[2], &oidy, 9000, AXIS_GAUGE_RIGHT, AXIS_NUM_POS_LEFT,  AXIS_NUM_ALIGN_RIGHT,  "[axis_fY]");
+    axis_default(obj, data[3], NULL,     0, AXIS_GAUGE_RIGHT, AXIS_NUM_POS_LEFT,  AXIS_NUM_ALIGN_CENTER, NULL);
+    axis_default(obj, data[4], NULL,  9000, AXIS_GAUGE_LEFT,  AXIS_NUM_POS_RIGHT, AXIS_NUM_ALIGN_LEFT,   NULL);
+
+    axis_default_set_ref(obj, data[3], oidx, "[axis_fU]");
+    axis_default_set_ref(obj, data[4], oidy, "[axis_fR]");
+
+    if (anum < 9)
+      return 0;
+
+    break;
+  case AXIS_TYPE_SECTION:
+    if (anum < 5)
+      return 1;
+
+    axis_default(obj, data[1], &oidx,    0, AXIS_GAUGE_NONE, AXIS_NUM_POS_RIGHT, AXIS_NUM_ALIGN_CENTER, "[axis_sX]");
+    axis_default(obj, data[2], &oidy, 9000, AXIS_GAUGE_NONE, AXIS_NUM_POS_LEFT,  AXIS_NUM_ALIGN_RIGHT,  "[axis_sY]");
+    axis_default(obj, data[3], NULL,     0, AXIS_GAUGE_NONE, AXIS_NUM_POS_LEFT,  AXIS_NUM_ALIGN_CENTER, NULL);
+    axis_default(obj, data[4], NULL,  9000, AXIS_GAUGE_NONE, AXIS_NUM_POS_RIGHT, AXIS_NUM_ALIGN_LEFT,   NULL);
+
+    axis_default_set_ref(obj, data[3], oidx, "[axis_sU]");
+    axis_default_set_ref(obj, data[4], oidy, "[axis_sR]"); 
+
+    if (anum < 9)
+      return 0;
+
+    break;
+  case AXIS_TYPE_CROSS:
+    if (anum < 3)
+      return 1;
+
+    axis_default(obj, data[1], &oidx,    0, AXIS_GAUGE_BOTH, AXIS_NUM_POS_RIGHT, AXIS_NUM_ALIGN_CENTER, NULL);
+    axis_default(obj, data[2], &oidy, 9000, AXIS_GAUGE_BOTH, AXIS_NUM_POS_LEFT,  AXIS_NUM_ALIGN_RIGHT, NULL);
+    axis_default_set_adj(obj, data[1], oidy, "[axis_cX]");
+    axis_default_set_adj(obj, data[2], oidx, "[axis_cY]");
+
+    if (anum < 7)
+      return 0;
+
+    break;
+  default:
+    return 1;
   }
+
+  if (axisgrouppos(obj, inst, rval, argc, argv))
+    return 1;
+
   return 0;
 }
 
