@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.18 2009/02/11 06:38:23 hito Exp $
+ * $Id: oaxis.c,v 1.19 2009/02/11 06:56:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -644,6 +644,8 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
       type = -1;
     }
     break;
+  default:
+    type = -1;
   }
 
   return type;
