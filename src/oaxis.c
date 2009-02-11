@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.19 2009/02/11 06:56:00 hito Exp $
+ * $Id: oaxis.c,v 1.20 2009/02/11 08:13:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2645,7 +2645,7 @@ axis_save_groupe(struct objlist *obj, int type, char **inst_array, char **rval)
 
   for (i = 0; i < n; i++) {
     _getobj(obj, "id", inst_array[i], &id);
-    sprintf(buf,"%d%c", id, (i == n - 1) ? '\n' : ' ');
+    snprintf(buf, sizeof(buf), "%d%c", id, (i == n - 1) ? '\n' : ' ');
     s = nstrcat(s, buf);
     if (s == NULL)
       return 1;
