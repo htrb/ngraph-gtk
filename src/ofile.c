@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.60 2009/02/09 01:04:36 hito Exp $
+ * $Id: ofile.c,v 1.61 2009/02/11 09:54:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -552,7 +552,7 @@ opendata(struct objlist *obj,char *inst,
       return NULL;
     }
   } else {
-    /* these initialization are exist to avoid compile warnings. */
+    /* these initialization exist to avoid compile warnings. */
     axposx = 0;
     axposy = 0;
     axlen = 0;

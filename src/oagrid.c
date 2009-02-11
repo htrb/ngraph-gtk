@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.8 2009/02/06 04:29:36 hito Exp $
+ * $Id: oagrid.c,v 1.9 2009/02/11 09:54:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -212,7 +212,7 @@ agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       maxx=axmax;
     }
   } else {
-    /* these initialization are exist to avoid compile warnings. */
+    /* these initialization exist to avoid compile warnings. */
     minx = 0;
     maxx = 0;
   }
@@ -285,7 +285,7 @@ agriddraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       maxy=aymax;
     }
   } else {
-    /* these initialization are exist to avoid compile warnings. */
+    /* these initialization exist to avoid compile warnings. */
     miny = 0;
     maxy = 0;
   }
