@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.17 2009/02/10 16:14:52 hito Exp $
+ * $Id: oaxis.c,v 1.18 2009/02/11 06:38:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,7 @@
 #include "common.h"
 
 #include "ngraph.h"
+#include "nhash.h"
 #include "ioutil.h"
 #include "object.h"
 #include "mathfn.h"
@@ -140,6 +141,68 @@ enum AXIS_NUM_DIR {
 };
 
 
+enum axis_config_type {
+  AXIS_CONFIG_TYPE_NUMERIC,
+  AXIS_CONFIG_TYPE_STRING,
+  AXIS_CONFIG_TYPE_STYLE,
+};
+
+struct axis_config {
+  char *name;
+  enum axis_config_type type;
+};
+
+static struct axis_config AxisConfig[] = {
+  {"R", AXIS_CONFIG_TYPE_NUMERIC},
+  {"G", AXIS_CONFIG_TYPE_NUMERIC},
+  {"B", AXIS_CONFIG_TYPE_NUMERIC},
+  {"type", AXIS_CONFIG_TYPE_NUMERIC},
+  {"type", AXIS_CONFIG_TYPE_NUMERIC},
+  {"direction", AXIS_CONFIG_TYPE_NUMERIC},
+  {"baseline", AXIS_CONFIG_TYPE_NUMERIC},
+  {"width", AXIS_CONFIG_TYPE_NUMERIC},
+  {"arrow", AXIS_CONFIG_TYPE_NUMERIC},
+  {"arrow_length", AXIS_CONFIG_TYPE_NUMERIC},
+  {"wave", AXIS_CONFIG_TYPE_NUMERIC},
+  {"wave_length", AXIS_CONFIG_TYPE_NUMERIC},
+  {"wave_width", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_length1", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_width1", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_length2", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_width2", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_length3", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_width3", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_R", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_G", AXIS_CONFIG_TYPE_NUMERIC},
+  {"gauge_B", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_auto_norm", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_log_pow", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_pt", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_space", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_script_size", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_align", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_no_zero", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_direction", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_shift_p", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_shift_n", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_R", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_G", AXIS_CONFIG_TYPE_NUMERIC},
+  {"num_B", AXIS_CONFIG_TYPE_NUMERIC},
+
+  {"num_head", AXIS_CONFIG_TYPE_STRING},
+  {"num_format", AXIS_CONFIG_TYPE_STRING},
+  {"num_tail", AXIS_CONFIG_TYPE_STRING},
+  {"num_font", AXIS_CONFIG_TYPE_STRING},
+  {"num_jfont", AXIS_CONFIG_TYPE_STRING},
+
+  {"style", AXIS_CONFIG_TYPE_STYLE},
+  {"gauge_style", AXIS_CONFIG_TYPE_STYLE},
+};
+
+static NHASH AxisConfigHash = NULL;
+
 static int 
 axisuniqgroup(struct objlist *obj,char type)
 {
@@ -181,239 +244,49 @@ axisloadconfig(struct objlist *obj,char *inst,char *conf)
   char *f1,*f2;
   int val;
   char *endptr;
-  int len;
+  int len, type;
   struct narray *iarray;
 
-  if ((fp=openconfig(conf))==NULL) return 0;
-  while ((tok=getconfig(fp,&str))!=NULL) {
-    s2=str;
-    if (strcmp(tok,"R")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"R",inst,&val);
+  fp = openconfig(conf);
+  if (fp == NULL)
+    return 0;
+
+  while ((tok = getconfig(fp, &str)) != NULL) {
+    s2 = str;
+    if (nhash_get_int(AxisConfigHash, tok, (void *) &type))
+      continue;
+
+    switch (type) {
+    case AXIS_CONFIG_TYPE_NUMERIC:
+      f1 = getitok2(&s2, &len, " \t,");
+      val = strtol(f1, &endptr, 10);
+      if (endptr[0] == '\0')
+	_putobj(obj, tok, inst, &val);
       memfree(f1);
-    } else if (strcmp(tok,"G")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"G",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"B")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"B",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"type")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"type",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"direction")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"direction",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"baseline")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"baseline",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"width")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"width",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"arrow")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"arrow",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"arrow_length")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"arrow_length",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"wave")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"wave",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"wave_length")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"wave_length",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"wave_width")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"wave_width",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_length1")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_length1",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_width1")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_width1",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_length2")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_length2",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_width2")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_width2",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_length3")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_length3",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_width3")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_width3",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_R")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_R",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_G")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_G",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"gauge_B")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"gauge_B",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_auto_norm")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_auto_norm",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_log_pow")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_log_pow",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_pt")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_pt",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_space")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_space",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_script_size")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_script_size",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_align")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_align",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_no_zero")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_no_zero",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_direction")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_direction",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_shift_p")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_shift_p",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_shift_n")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_shift_n",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_R")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_R",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_G")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_G",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_B")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"num_B",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"num_head")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"num_head",inst,&f2);
+      break;
+    case AXIS_CONFIG_TYPE_STRING:
+      f1 = getitok2(&s2, &len, "");
+      _getobj(obj, tok, inst, &f2);
       memfree(f2);
-      _putobj(obj,"num_head",inst,f1);
-    } else if (strcmp(tok,"num_format")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"num_format",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"num_format",inst,f1);
-    } else if (strcmp(tok,"num_tail")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"num_tail",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"num_tail",inst,f1);
-    } else if (strcmp(tok,"num_font")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"num_font",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"num_font",inst,f1);
-    } else if (strcmp(tok,"num_jfont")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"num_jfont",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"num_jfont",inst,f1);
-    } else if (strcmp(tok,"style")==0) {
-      if ((iarray=arraynew(sizeof(int)))!=NULL) {
-        while ((f1=getitok2(&s2,&len," \t,"))!=NULL) {
-          val=strtol(f1,&endptr,10);
-          if (endptr[0]=='\0') arrayadd(iarray,&val);
-          memfree(f1);
-        }
-        _putobj(obj,"style",inst,iarray);
+      _putobj(obj, tok, inst, f1);
+      break;
+    case AXIS_CONFIG_TYPE_STYLE:
+      iarray = arraynew(sizeof(int));
+      if (iarray) {
+	while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
+	  val = strtol(f1, &endptr, 10);
+	  if (endptr[0] == '\0')
+	    arrayadd(iarray, &val);
+	  memfree(f1);
+	}
+	_putobj(obj, tok, inst, iarray);
       }
-    } else if (strcmp(tok,"gauge_style")==0) {
-      if ((iarray=arraynew(sizeof(int)))!=NULL) {
-        while ((f1=getitok2(&s2,&len," \t,"))!=NULL) {
-          val=strtol(f1,&endptr,10);
-          if (endptr[0]=='\0') arrayadd(iarray,&val);
-          memfree(f1);
-        }
-        _putobj(obj,"gauge_style",inst,iarray);
-      }
+      break;
     }
     memfree(tok);
     memfree(str);
   }
+
   closeconfig(fp);
   return 0;
 }
@@ -694,12 +567,21 @@ check_direction(struct objlist *obj, int type, char **inst_array)
   return 0;
 }
 
+#define FIND_X 1
+#define FIND_Y 2
+#define FIND_U 4
+#define FIND_R 8
+#define FIND_FRAME (FIND_X | FIND_Y | FIND_U | FIND_R)
+#define FIND_CROSS (FIND_X | FIND_Y)
+#define CHECK_FRAME(a) ((a & FIND_FRAME) == FIND_FRAME)
+#define CHECK_CROSS(a) ((a & FIND_CROSS) == FIND_CROSS)
+
 static int
 get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
 {
   char *group, *group2, *inst2;
   char type;
-  int findX, findY, findU, findR, len, id, i;
+  int find_axis, len, id, i;
 
   _getobj(obj, "group", inst, &group);
 
@@ -712,7 +594,7 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
 
   _getobj(obj, "id", inst, &id);
 
-  findX = findY = findU = findR = FALSE;
+  find_axis = 0;
 
   type = group[0];
 
@@ -732,19 +614,19 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
 
     switch (group2[1]) {
     case 'X':
-      findX = TRUE;
+      find_axis |= FIND_X;
       inst_array[0] = inst2;
       break;
     case 'Y':
-      findY = TRUE;
+      find_axis |= FIND_Y;
       inst_array[1] = inst2;
       break;
     case 'U':
-      findU = TRUE;
+      find_axis |= FIND_U;
       inst_array[2] = inst2;
       break;
     case 'R':
-      findR = TRUE;
+      find_axis |= FIND_R;
       inst_array[3] = inst2;
       break;
     }
@@ -753,17 +635,18 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
   switch (type) {
   case 'f':
   case 's':
-    if (findX && findY && findU && findR) {
-      return type;
+    if (! CHECK_FRAME(find_axis)) {
+      type = -1;
     }
     break;
   case 'c':
-    if (findX && findY)
-      return type;
+    if (! CHECK_CROSS(find_axis)) {
+      type = -1;
+    }
     break;
   }
 
-  return -1;
+  return type;
 }
 
 static void
@@ -2722,94 +2605,86 @@ axisdefgrouping(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
+static int
+axis_save_groupe(struct objlist *obj, int type, char **inst_array, char **rval)
+{
+  char *s, *str, buf[64];
+  int i, n, id;
+
+  switch (type) {
+  case 'f':
+    str = "\naxis::grouping 1 ";
+    n = 4;
+    break;
+  case 's':
+    str = "\naxis::grouping 2 ";
+    n = 4;
+    break;
+  case 'c':
+    str = "\naxis::grouping 3 ";
+    n = 2;
+    break;
+  default:
+    /* never reached */
+    return 1;
+  }
+
+  s = nstrnew();
+  if (s == NULL)
+    return 1;
+
+  s = nstrcat(s, *rval);
+  if (s == NULL)
+    return 1;
+
+  s = nstrcat(s, str);
+  if (s == NULL)
+    return 1;
+
+  for (i = 0; i < n; i++) {
+    _getobj(obj, "id", inst_array[i], &id);
+    sprintf(buf,"%d%c", id, (i == n - 1) ? '\n' : ' ');
+    s = nstrcat(s, buf);
+    if (s == NULL)
+      return 1;
+  }
+
+  memfree(*rval);
+  *rval = s;
+
+  return 0;
+}
+
 static int 
 axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i,j,id;
-  char *group,*group2;
+  int i, r, anum, type;
   struct narray *array;
-  int anum;
-  char **adata;
-  char type;
-  int idx,idy,idu,idr;
-  int findX,findY,findU,findR;
-  char *inst2;
-  char buf[12];
-  char *s;
+  char **adata, *inst_array[4];
 
-  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  _getobj(obj,"group",inst,&group);
-  if ((group==NULL) || (group[0]=='a')) return 0;
-  array=(struct narray *)argv[2];
-  anum=arraynum(array);
-  adata=arraydata(array);
-  for (j=0;j<anum;j++)
-    if (strcmp("grouping",adata[j])==0) return 0;
-  _getobj(obj,"id",inst,&id);
-  findX=findY=findU=findR=FALSE;
-  idx = idy = idr = idu = 0;	/* this initialization is added to avoid compile warnings. */
-  type=group[0];
-  for (i=0;i<=id;i++) {
-    inst2=chkobjinst(obj,i);
-    _getobj(obj,"group",inst2,&group2);
-    if ((group2!=NULL) && (group2[0]==type)) {
-      if (strcmp(group+2,group2+2)==0) {
-        if (group2[1]=='X') {
-          findX=TRUE;
-          idx=i;
-        } else if (group2[1]=='Y') {
-          findY=TRUE;
-          idy=i;
-        } else if (group2[1]=='U') {
-          findU=TRUE;
-          idu=i;
-        } else if (group2[1]=='R') {
-          findR=TRUE;
-          idr=i;
-	}
-      }
-    }
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
+
+  array = (struct narray *) argv[2];
+  anum = arraynum(array);
+  adata = arraydata(array);
+  for (i = 0; i < anum; i++) {
+    if (strcmp("grouping", adata[i]) == 0)
+      return 0;
   }
-  if ((type=='f') && findX && findY && findU && findR) {
-    if ((s=nstrnew())==NULL) return 1;
-    if ((s=nstrcat(s,*(char **)rval))==NULL) return 1;
-    if ((s=nstrcat(s,"\naxis::grouping 1"))==NULL) return 1;
-    sprintf(buf," %d",idx);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    sprintf(buf," %d",idy);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    sprintf(buf," %d",idu);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    sprintf(buf," %d\n",idr);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    memfree(*(char **)rval);
-    *(char **)rval=s;
-  } else if ((type=='s') && findX && findY && findU && findR) {
-    if ((s=nstrnew())==NULL) return 1;
-    if ((s=nstrcat(s,*(char **)rval))==NULL) return 1;
-    if ((s=nstrcat(s,"\naxis::grouping 2"))==NULL) return 1;
-    sprintf(buf," %d",idx);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    sprintf(buf," %d",idy);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    sprintf(buf," %d",idu);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    sprintf(buf," %d\n",idr);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    memfree(*(char **)rval);
-    *(char **)rval=s;
-  } else if ((type=='c') && findX && findY) {
-    if ((s=nstrnew())==NULL) return 1;
-    if ((s=nstrcat(s,*(char **)rval))==NULL) return 1;
-    if ((s=nstrcat(s,"\naxis::grouping 3"))==NULL) return 1;
-    sprintf(buf," %d",idx);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    sprintf(buf," %d\n",idy);
-    if ((s=nstrcat(s,buf))==NULL) return 1;
-    memfree(*(char **)rval);
-    *(char **)rval=s;
+
+  type = get_axis_group_type(obj, inst, inst_array);
+
+  r = 0;
+  switch (type) {
+  case 'a':
+    break;
+  case 'f':
+  case 's':
+  case 'c':
+    r = axis_save_groupe(obj, type, inst_array, (char **) rval);
+    break;
   }
-  return 0;
+  return r;
 }
 
 static int 
@@ -2986,8 +2861,23 @@ static struct objtable axis[] = {
 
 #define TBLNUM (sizeof(axis) / sizeof(*axis))
 
-void *addaxis()
+void *addaxis(void)
 /* addaxis() returns NULL on error */
 {
-  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,axis,ERRNUM,axiserrorlist,NULL,NULL);
+  unsigned int i;
+
+  if (AxisConfigHash == NULL) {
+    AxisConfigHash = nhash_new();
+    if (AxisConfigHash == NULL)
+      return NULL;
+
+    for (i = 0; i < sizeof(AxisConfig) / sizeof(*AxisConfig); i++) {
+      if (nhash_set_int(AxisConfigHash, AxisConfig[i].name, AxisConfig[i].type)) {
+	nhash_free(AxisConfigHash);
+	return NULL;
+      }
+    }
+  }
+
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, axis, ERRNUM, axiserrorlist, NULL, NULL);
 }

@@ -2,6 +2,15 @@
 
 	* src/oaxis.c (axischange): check length of axis instead of
 	position.
+	(FIND_X, FIND_Y, FIND_U, FIND_R, FIND_FRAME, FIND_CROSS)
+	(CHECK_FRAME, CHECK_CROSS): add.
+	(get_axis_group_type): use "FIND_X", "FIND_Y", "FIND_U", "FIND_R",
+	"CHECK_FRAME" and "CHECK_CROSS".
+	(axis_save_groupe): add.
+	(axissave): use "axis_save_groupe()" and "get_axis_group_type()".
+	(struct axis_config, AxisConfig, enum axis_config_type): add.
+	(addaxis): initialize "AxisConfigHash".
+	(axisloadconfig): use "AxisConfigHash".
 
 2009-02-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
