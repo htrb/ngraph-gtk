@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.37 2009/02/06 02:58:49 hito Exp $
+ * $Id: x11lgnd.c,v 1.38 2009/02/12 02:08:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2246,7 +2246,6 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
       d->legend[i] = chkobjlastinst(d->obj[i]);
     }
 
-    d->select = -1;
     sub_win_create_popup_menu((struct SubWin *)d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     legend_list_build(d);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(d->text));

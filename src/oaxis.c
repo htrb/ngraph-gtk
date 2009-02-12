@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.21 2009/02/12 01:52:04 hito Exp $
+ * $Id: oaxis.c,v 1.22 2009/02/12 02:08:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -847,7 +847,7 @@ axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 axismatch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int i, type;
+  int i, n, type;
   char *inst_array[4];
   int rval2, match;
 
@@ -855,32 +855,31 @@ axismatch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   type = get_axis_group_type(obj, inst, inst_array);
 
+  n = 0;
   switch (type) {
   case 'a':
     return axismatch2(obj, inst, rval, argc, argv);
     break;
   case 'f':
   case 's':
-    match = FALSE;
-
-    for (i = 0; i < 4; i++) {
-      axismatch2(obj, inst_array[i], (void *)&rval2, argc, argv);
-      match = match || rval2;
-    }
-
-    *(int *)rval = match;
+    n = 4;
     break;
   case 'c':
+    n = 2;
+    break;
+  }
+
+  if (n) {
     match = FALSE;
 
-    for (i = 0; i < 2; i++) {
+    for (i = 0; i < n; i++) {
       axismatch2(obj, inst_array[i], (void *)&rval2, argc, argv);
       match = match || rval2;
     }
 
     * (int *) rval = match;
-    break;
   }
+
   return 0;
 }
 

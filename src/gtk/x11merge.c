@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.21 2009/01/18 07:49:37 hito Exp $
+ * $Id: x11merge.c,v 1.22 2009/02/12 02:08:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -496,7 +496,6 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
     d->obj = chkobject("merge");
     d->num = chkobjlastinst(d->obj);
 
-    d->select = -1;
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
 
     init_dnd(d);

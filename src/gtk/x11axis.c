@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.43 2009/02/12 01:52:05 hito Exp $
+ * $Id: x11axis.c,v 1.44 2009/02/12 02:08:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2986,7 +2986,6 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
     d->obj = chkobject("axis");
     d->num = chkobjlastinst(d->obj);
 
-    d->select = -1;
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     set_combo_cell_renderer_cb(d, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
 

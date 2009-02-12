@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.72 2009/02/06 02:58:48 hito Exp $
+ * $Id: x11file.c,v 1.73 2009/02/12 02:08:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4501,7 +4501,6 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
     d->obj = chkobject("file");
     d->num = chkobjlastinst(d->obj);
 
-    d->select = -1;
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
     set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
