@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.45 2009/02/12 02:48:46 hito Exp $
+ * $Id: x11axis.c,v 1.46 2009/02/12 05:03:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2741,7 +2741,7 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       if (name != NULL) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, name);
       } else {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, ".....");
       }
     } else if (strcmp(Alist[i].name, "min") == 0) {
       getobj(d->obj, "min", row, 0, NULL, &min);
@@ -2978,7 +2978,6 @@ axiswin_delete_axis(struct SubWin *d)
     AxisWinUpdate(TRUE);
     FileWinUpdate(TRUE);
     set_graph_modified();
-    d->num = chkobjlastinst(d->obj);
     d->select = -1;
   }
 }
