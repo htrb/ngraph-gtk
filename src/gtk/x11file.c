@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.73 2009/02/12 02:08:14 hito Exp $
+ * $Id: x11file.c,v 1.74 2009/02/12 02:48:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4060,7 +4060,7 @@ CmFileWinMath(GtkWidget *w, gpointer p)
 }
 
 static gboolean
-ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
+filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
   struct SubWin *d;
   GdkEventKey *e;
@@ -4492,7 +4492,7 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
     d->update = FileWinUpdate;
     d->setup_dialog = FileDialog;
     d->dialog = &DlgFile;
-    d->ev_key = ev_key_down;
+    d->ev_key = filewin_ev_key_down;
 
     dlg = list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
 

@@ -1,5 +1,11 @@
 2009-02-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11axis.c (axiswin_delete_axis)
+	(axis_delete_popup_func, axiswin_ev_key_down): add.
+	(CmAxisWindow): initialize "d->ev_key".
+	(Popup_list): "axis_delete_popup_func()" is called when delete
+	menu is activated.
+
 	* src/oaxis.c (check_direction): also check position of axises.
 
 	* src/gtk/x11axis.c (Alist): "length" column accept nagative

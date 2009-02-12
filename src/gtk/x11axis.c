@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.44 2009/02/12 02:08:14 hito Exp $
+ * $Id: x11axis.c,v 1.45 2009/02/12 02:48:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -69,10 +69,11 @@ static n_list_store Alist[] = {
 #define AXIS_WIN_COL_TYPE 6
 
 static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
+static void axis_delete_popup_func(GtkMenuItem *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL},
-  {GTK_STOCK_DELETE,      G_CALLBACK(list_sub_window_delete), TRUE, NULL},
+  {GTK_STOCK_DELETE,      G_CALLBACK(axis_delete_popup_func), TRUE, NULL},
   {NULL, NULL, 0, NULL},
   {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL},
   {N_("_Hide"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL},
@@ -2962,6 +2963,60 @@ edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_da
   set_graph_modified();
 }
 
+static void 
+axiswin_delete_axis(struct SubWin *d)
+{
+  int sel;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+
+  if ((sel >= 0) && (sel <= d->num)) {
+    AxisDel(sel);
+    AxisWinUpdate(TRUE);
+    FileWinUpdate(TRUE);
+    set_graph_modified();
+    d->num = chkobjlastinst(d->obj);
+    d->select = -1;
+  }
+}
+
+static void
+axis_delete_popup_func(GtkMenuItem *w, gpointer client_data)
+{
+  struct SubWin *d;
+
+  d = (struct SubWin *) client_data;
+  axiswin_delete_axis(d);
+}
+
+static gboolean
+axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
+{
+  struct SubWin *d;
+  GdkEventKey *e;
+
+  g_return_val_if_fail(w != NULL, FALSE);
+  g_return_val_if_fail(event != NULL, FALSE);
+
+  if (Menulock || GlobalLock)
+    return TRUE;
+
+  d = (struct SubWin *) user_data;
+  e = (GdkEventKey *)event;
+
+  switch (e->keyval) {
+  case GDK_Delete:
+    axiswin_delete_axis(d);
+    break;
+  default:
+    return FALSE;
+  }
+  return TRUE;
+}
+
 void
 CmAxisWindow(GtkWidget *w, gpointer client_data)
 {
@@ -2978,6 +3033,7 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
     d->update = AxisWinUpdate;
     d->setup_dialog = AxisDialog;
     d->dialog = &DlgAxis;
+    d->ev_key = axiswin_ev_key_down;
 
     dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
 
