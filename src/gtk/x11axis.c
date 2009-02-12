@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.42 2009/02/10 09:22:29 hito Exp $
+ * $Id: x11axis.c,v 1.43 2009/02/12 01:52:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,7 +59,7 @@ static n_list_store Alist[] = {
   {"x",    G_TYPE_DOUBLE,  TRUE, TRUE,  "x",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",    G_TYPE_DOUBLE,  TRUE, TRUE,  "y",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"dir",  G_TYPE_DOUBLE,  TRUE, TRUE,  "direction", FALSE,                0,          36000, 100, 1500},
-  {"len",  G_TYPE_DOUBLE,  TRUE, TRUE,  "length",    FALSE,                0, SPIN_ENTRY_MAX, 100, 1000},
+  {"len",  G_TYPE_DOUBLE,  TRUE, TRUE,  "length",    FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"^#",   G_TYPE_INT,     TRUE, FALSE, "oid",       FALSE},
 };
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.20 2009/02/11 08:13:13 hito Exp $
+ * $Id: oaxis.c,v 1.21 2009/02/12 01:52:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -534,17 +534,36 @@ axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int
 check_direction(struct objlist *obj, int type, char **inst_array)
 {
-  int i, n, len1, len2, direction, normal_dir[] = {0, 9000, 0, 9000};
+  int i, n, direction, normal_dir[] = {0, 9000, 0, 9000};
 
   switch (type) {
   case 'f':
   case 's':
     for (i = 0; i < 2; i++) {
+      int p1, p2, len1, len2;
+      char *field;
+
       _getobj(obj, "length", inst_array[0 + i], &len1);
       _getobj(obj, "length", inst_array[2 + i], &len2);
 
       if ((len1 > 0 && len2 < 0) || (len1 < 0 && len2 > 0))
 	return 1;
+
+      field = (i == 0) ? "x" : "y";
+
+      _getobj(obj, field, inst_array[1 - i], &p1);
+      _getobj(obj, field, inst_array[3 - i], &p2);
+
+      switch (i) {
+      case 0:
+	if ((len1 < 0 && p2 > p1) || (len1 > 0 && p2 < p1))
+	  return 1;
+	break;
+      case 1:
+	if ((len1 < 0 && p2 < p1) || (len1 > 0 && p2 > p1))
+	  return 1;
+	break;
+      }
     }
 
     n = 4;

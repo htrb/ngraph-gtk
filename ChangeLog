@@ -1,3 +1,10 @@
+2009-02-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (check_direction): also check position of axises.
+
+	* src/gtk/x11axis.c (Alist): "length" column accept nagative
+	value.
+
 2009-02-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oaxis.c (axischange): check length of axis instead of
