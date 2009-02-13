@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.9 2009/01/20 06:18:51 hito Exp $
+ * $Id: object.h,v 1.10 2009/02/13 10:09:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -184,8 +184,8 @@ extern int seputs(char *s);
 extern int seprintf(char *fmt,...);
 
 void error(struct objlist *obj,int code);
-void error2(struct objlist *obj,int code,char *mes);
-void error22(struct objlist *obj,int code,char *mes1,char *mes2);
+void error2(struct objlist *obj,int code, const char *mes);
+void error22(struct objlist *obj,int code, const char *mes1, const char *mes2);
 void error3(struct objlist *obj,int code,int num);
 
 void ignorestdio(struct savedstdio *save);

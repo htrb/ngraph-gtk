@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.33 2009/02/06 02:58:48 hito Exp $
+ * $Id: x11dialg.c,v 1.34 2009/02/13 10:09:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -593,8 +593,7 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 }
 
 int
-SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   double d;
   int ip;
@@ -610,26 +609,11 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
     return -1;
 
   buf = strdup(ctmp);
-
   if (buf == NULL)
     return -1;
 
-  SetTextFromObjPoints(w, Obj, Id, field);
-  ctmp = gtk_entry_get_text(GTK_ENTRY(w));
-
-  if (ctmp && strcmp(ctmp, buf) == 0) {
-    gtk_entry_set_text(GTK_ENTRY(w), buf);
-    free(buf);
-    return 0;
-  }
-
-  gtk_entry_set_text(GTK_ENTRY(w), buf);
-
   array = arraynew(sizeof(int));
-
   ptr = buf;
-
-
   while (1) {
     while (ptr && isspace(*ptr))
       ptr++;
@@ -657,11 +641,27 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id,
 
     ptr = tmp + 1;
   }
-  if (putobj(Obj, field, Id, array) < 0)
-    goto ErrEnd;
+
+  if (get_graph_modified()) {
+    if (putobj(Obj, field, Id, array) < 0)
+      goto ErrEnd;
+  } else {
+    char *str1, *str2;
+
+    sgetobjfield(Obj, Id, field, NULL, &str1, FALSE, FALSE, FALSE);
+    if (putobj(Obj, field, Id, array) < 0) {
+      memfree(str1);
+      goto ErrEnd;
+    }
+    sgetobjfield(Obj, Id, field, NULL, &str2, FALSE, FALSE, FALSE);
+    if (str1 && str2 && strcmp(str1, str2)) {
+      set_graph_modified();
+    }
+    memfree(str2);
+    memfree(str1);
+  }
 
   free(buf);
-  set_graph_modified();
   return 0;
 
 
@@ -710,6 +710,36 @@ SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 int
+chk_sputobjfield(struct objlist *obj, int id, char *field, char *str)
+{
+  if (get_graph_modified()) {
+    if (sputobjfield(obj, id, field, str)) {
+      return 1;
+    }
+  } else {
+    char *ptr, *org;
+
+    sgetobjfield(obj, id, field, NULL, &org, FALSE, FALSE, FALSE);
+
+    if (sputobjfield(obj, id, field, str)) {
+      memfree(org);
+      return 1;
+    }
+
+    sgetobjfield(obj, id, field, NULL, &ptr, FALSE, FALSE, FALSE);
+    if ((ptr == NULL && org) ||
+	(ptr && org == NULL) ||
+	(ptr && org && strcmp(ptr, org))) {
+      set_graph_modified();
+    }
+    memfree(ptr);
+    memfree(org);
+  }
+
+  return 0;
+}
+
+int
 SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id,
 		    char *field)
 {
@@ -755,37 +785,26 @@ int
 SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
 		    char *field)
 {
-  GtkEntry *entry;
   const char *tmp;
-  char *buf, *obuf;
+  char *buf;
 
   if (w == NULL)
     return 0;
 
-  entry = GTK_ENTRY(w);
-  tmp = gtk_entry_get_text(entry);
-
+  tmp = gtk_entry_get_text(GTK_ENTRY(w));
   if (tmp == NULL)
     return -1;
 
-  buf = strdup(tmp);
-
+  buf = nstrdup(tmp);
   if (buf == NULL)
     return -1;
 
-  sgetobjfield(Obj, Id, field, NULL, &obuf, FALSE, FALSE, FALSE);
-
-  if (obuf == NULL || strcmp(buf, obuf)) {
-    if (sputobjfield(Obj, Id, field, buf) != 0) {
-      memfree(obuf);
-      free(buf);
-      return -1;
-    }
-    set_graph_modified();
+  if (chk_sputobjfield(Obj, Id, field, buf)) {
+    memfree(buf);
+    return -1;
   }
 
-  memfree(obuf);
-  free(buf);
+  memfree(buf);
   return 0;
 }
 
@@ -816,13 +835,20 @@ SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id,
     return 0;
 
   val = spin_entry_get_val(w);
-  getobj(Obj, field, Id, 0, NULL, &oval);
 
-  if (val != oval) {
+  if (get_graph_modified()) {
     if (putobj(Obj, field, Id, &val) < 0) {
       return -1;
     }
-    set_graph_modified();
+  } else {
+    getobj(Obj, field, Id, 0, NULL, &oval);
+    if (putobj(Obj, field, Id, &val) < 0) {
+      return -1;
+    }
+    getobj(Obj, field, Id, 0, NULL, &val);
+    if (val != oval) {
+      set_graph_modified();
+    }
   }
 
   return 0;
@@ -884,7 +910,6 @@ int
 SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   unsigned int j;
-  char *buf;
   const char *ptr;
 
   if (w == NULL)
@@ -896,41 +921,22 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     return -1;
   }
 
-  buf = strdup(ptr);
-  if (buf == NULL)
-    return -1;
-
-  SetStyleFromObjField(w, Obj, Id, field);
-  ptr = gtk_entry_get_text(GTK_ENTRY(GTK_BIN(w)->child));
-
-  if (ptr && strcmp(ptr, buf) == 0) {
-    gtk_entry_set_text(GTK_ENTRY(GTK_BIN(w)->child), buf);
-    free(buf);
-    return 0;
-  }
-  gtk_entry_set_text(GTK_ENTRY(GTK_BIN(w)->child), buf);
-
   for (j = 0; j < CLINESTYLE; j++) {
     if (strcmp(ptr, FwLineStyle[j].name) == 0 || 
 	strcmp(ptr, _(FwLineStyle[j].name)) == 0) {
-      if (sputobjfield(Obj, Id, field, FwLineStyle[j].list) != 0) {
-	free(buf);
+      if (chk_sputobjfield(Obj, Id, field, FwLineStyle[j].list) != 0) {
 	return -1;
       }
-      set_graph_modified();
-      return 0;;
+      break;
     }
   }
 
   if (j == CLINESTYLE) {
     if (SetObjPointsFromText(GTK_BIN(w)->child, Obj, Id, field)) {
-      free(buf);
       return -1;
     }
   }
 
-  set_graph_modified();
-  free(buf);
   return 0;
 }
 
@@ -997,8 +1003,7 @@ get_radio_index(GSList *top)
 }
 
 int
-SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int pos, opos;
 
@@ -1103,7 +1108,7 @@ void
 SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, int jfont)
 {
   struct fontmap *fcur;
-  char *obuf, *fontalias;
+  char *fontalias;
 
   if (w == NULL)
     return;
@@ -1123,53 +1128,34 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
   if ((! jfont || ! fcur->twobyte) && (jfont || fcur->twobyte))
     return;
 
-  sgetobjfield(obj, id, name, NULL, &obuf, FALSE, FALSE, FALSE);
-
-  if (obuf == NULL || strcmp(fcur->fontalias, obuf)) {
-    sputobjfield(obj, id, name, fcur->fontalias);
-    set_graph_modified();
-  }
-
-  memfree(obuf);
+  chk_sputobjfield(obj, id, name, fcur->fontalias);
 }
 
 int
 SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field)
 {
   const char *s;
-  char *buf, *obuf;
-  int len;
+  char *buf;
+  int len, r;
 
   s = combo_box_entry_get_text(w);
-  sgetobjfield(obj, id, field, NULL, &obuf, FALSE, FALSE, FALSE);
+  if (s == NULL)
+    return 0;
 
-  if (s == NULL || s[0] == '\0') {
-    if (obuf == NULL)
-      return 0;
-
-    if (sputobjfield(obj, id, field, NULL)) {
-      memfree(obuf);
-      return 1;
-    }
-    set_graph_modified();
+  if (s[0] == '\0') {
+    buf = NULL;
   } else {
     len = strlen(s) + 6;
     buf = (char *) memalloc(len);
     if (buf) {
       snprintf(buf, len, "axis:%s", (s)? s: "");
-      if (obuf == NULL || strcmp(buf, obuf)) {
-	if (sputobjfield(obj, id, field, buf)) {
-	  memfree(obuf);
-	  memfree(buf);
-	  return 1;
-	}
-	set_graph_modified();
-      }
-      memfree(buf);
     }
-  } 
-  memfree(obuf);
-  return 0;
+  }
+
+  r = chk_sputobjfield(obj, id, field, buf);
+
+  memfree(buf);
+  return r;
 }
 
 static void

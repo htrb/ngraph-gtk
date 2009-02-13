@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.22 2009/01/20 06:18:51 hito Exp $
+ * $Id: object.c,v 1.23 2009/02/13 10:09:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -154,7 +154,7 @@ void error(struct objlist *obj,int code)
   GlobalLock=FALSE;
 }
 
-void error2(struct objlist *obj,int code,char *mes)
+void error2(struct objlist *obj,int code, const char *mes)
 {
   if (mes!=NULL) {
     sprintf(errormsg2," `%.64s'.",mes);
@@ -164,7 +164,7 @@ void error2(struct objlist *obj,int code,char *mes)
   error(obj,code);
 }
 
-void error22(struct objlist *obj,int code,char *mes1,char *mes2)
+void error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
 {
   if (mes1!=NULL) {
     sprintf(errormsg1,"%.64s: ",mes1);
@@ -3353,8 +3353,7 @@ char *getvaluestr(struct objlist *obj,char *field,void *val,int cr,int quote)
 }
 
 int 
-getargument(int type,char *arglist, char *val,int *argc,
-	    char ***rargv)
+getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
 {
   struct narray *array;
   int len,alp;

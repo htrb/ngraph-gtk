@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.6 2009/02/05 08:40:14 hito Exp $
+ * $Id: oprm.c,v 1.7 2009/02/13 10:09:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -116,8 +116,7 @@ narray *linestyleconv(int attr,int dottedsize)
   int i,dt[4],num;
   struct narray *array;
 
-  if (attr==0) return NULL;
-  else if (attr==1) {
+  if (attr==1) {
     dt[0]=dottedsize*10;
     dt[1]=dottedsize*10;
     num=2;
@@ -131,6 +130,8 @@ narray *linestyleconv(int attr,int dottedsize)
     dt[2]=dottedsize*10;
     dt[3]=dottedsize*10;
     num=4;
+  } else {
+    return NULL;
   }
   array=arraynew(sizeof(int));
   for (i=0;i<num;i++) arrayadd(array,&(dt[i]));

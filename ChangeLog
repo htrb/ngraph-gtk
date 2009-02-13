@@ -1,3 +1,23 @@
+2009-02-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/object.c (error22): now the type of the argument "mes1" and
+	"mes2" are "const char *".
+	(error2): now the type of the argument "mes" is "const char *".
+
+	* initfile/Ngraph.ini.in (num_script_size): fix
+	typo (from "num_scriptsize" to "num_script_size").
+
+	* src/gtk/x11dialg.c (SetObjPointsFromText): check field of the
+	instance is modified or not after call "sgetobjfield()".
+	(chk_sputobjfield): add.
+	(SetObjFieldFromText, SetObjFieldFromStyle)
+	(SetObjFieldFromFontList, SetObjAxisFieldFromWidget): use
+	"chk_sputobjfield()".
+
+	* src/gtk/gtk_subwin.c (modify_numeric): check field of the
+	instance is modified or not after call "getobj()".
+	(modify_string): use "chk_sputobjfield()".
+
 2009-02-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (axiswin_delete_axis)

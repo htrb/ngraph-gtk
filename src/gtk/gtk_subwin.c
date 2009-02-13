@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.39 2009/02/12 02:08:14 hito Exp $
+ * $Id: gtk_subwin.c,v 1.40 2009/02/13 10:09:50 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -17,6 +17,7 @@
 #include "x11menu.h"
 #include "x11view.h"
 #include "x11gui.h"
+#include "x11dialg.h"
 #include "gtk_liststore.h"
 
 #include "gtk_subwin.h"
@@ -698,7 +699,7 @@ focus(struct SubWin *d, int add)
 static void
 modify_numeric(struct SubWin *d, char *field, int val)
 {
-  int sel, org;
+  int sel, v1, v2;
 
   if (Menulock || GlobalLock)
     return;
@@ -708,11 +709,14 @@ modify_numeric(struct SubWin *d, char *field, int val)
   if (sel < 0 || sel > d->num)
     return;
 
-  getobj(d->obj, field, sel, 0, NULL, &org);
-  if (org == val)
-    return;
+  getobj(d->obj, field, sel, 0, NULL, &v1);
 
-  if (putobj(d->obj, field, sel, &val) >= 0) {
+  if (putobj(d->obj, field, sel, &val) < 0) {
+    return;
+  }
+
+  getobj(d->obj, field, sel, 0, NULL, &v2);
+  if (v1 != v2) {
     d->select = sel;
     d->update(FALSE);
     set_graph_modified();
@@ -723,7 +727,6 @@ static void
 modify_string(struct SubWin *d, char *field, char *str)
 {
   int sel;
-  char *valstr = NULL, *valstr2 = NULL;
 
   if (Menulock || GlobalLock)
     return;
@@ -733,30 +736,11 @@ modify_string(struct SubWin *d, char *field, char *str)
   if (sel < 0 || sel > d->num)
     return;
 
-  sgetobjfield(d->obj, sel, field, NULL, &valstr, FALSE, FALSE, FALSE);
-  if (valstr == NULL)
+  if (chk_sputobjfield(d->obj, sel, field, str))
     return;
-
-  if (sputobjfield(d->obj, sel, field, str)) {
-    goto End;
-  }
-
-  sgetobjfield(d->obj, sel, field, NULL, &valstr2, FALSE, FALSE, FALSE);
-  if (valstr2 == NULL) {
-    goto End;
-  }
-
-  if (strcmp(valstr, valstr2) == 0) {
-    goto End;
-  }
 
   d->select = sel;
   d->update(FALSE);
-  set_graph_modified();
-
- End:
-  memfree(valstr);
-  memfree(valstr2);
 }
 
 static void

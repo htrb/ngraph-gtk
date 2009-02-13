@@ -126,7 +126,7 @@ gauge_length3=300
 gauge_width3=40
 num_pt=2000
 num_space=0
-num_scriptsize=7000
+num_script_size=7000
 num_format=%g
 num_font=Helvetica
 

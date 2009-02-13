@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.22 2009/02/12 02:08:13 hito Exp $
+ * $Id: oaxis.c,v 1.23 2009/02/13 10:09:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -253,35 +253,34 @@ axisloadconfig(struct objlist *obj,char *inst,char *conf)
 
   while ((tok = getconfig(fp, &str)) != NULL) {
     s2 = str;
-    if (nhash_get_int(AxisConfigHash, tok, (void *) &type))
-      continue;
-
-    switch (type) {
-    case AXIS_CONFIG_TYPE_NUMERIC:
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	_putobj(obj, tok, inst, &val);
-      memfree(f1);
-      break;
-    case AXIS_CONFIG_TYPE_STRING:
-      f1 = getitok2(&s2, &len, "");
-      _getobj(obj, tok, inst, &f2);
-      memfree(f2);
-      _putobj(obj, tok, inst, f1);
-      break;
-    case AXIS_CONFIG_TYPE_STYLE:
-      iarray = arraynew(sizeof(int));
-      if (iarray) {
-	while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
-	  val = strtol(f1, &endptr, 10);
-	  if (endptr[0] == '\0')
-	    arrayadd(iarray, &val);
-	  memfree(f1);
+    if (nhash_get_int(AxisConfigHash, tok, (void *) &type) == 0) {
+      switch (type) {
+      case AXIS_CONFIG_TYPE_NUMERIC:
+	f1 = getitok2(&s2, &len, " \t,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  _putobj(obj, tok, inst, &val);
+	memfree(f1);
+	break;
+      case AXIS_CONFIG_TYPE_STRING:
+	f1 = getitok2(&s2, &len, "");
+	_getobj(obj, tok, inst, &f2);
+	memfree(f2);
+	_putobj(obj, tok, inst, f1);
+	break;
+      case AXIS_CONFIG_TYPE_STYLE:
+	iarray = arraynew(sizeof(int));
+	if (iarray) {
+	  while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
+	    val = strtol(f1, &endptr, 10);
+	    if (endptr[0] == '\0')
+	      arrayadd(iarray, &val);
+	    memfree(f1);
+	  }
+	  _putobj(obj, tok, inst, iarray);
 	}
-	_putobj(obj, tok, inst, iarray);
+	break;
       }
-      break;
     }
     memfree(tok);
     memfree(str);
