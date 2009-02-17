@@ -1,5 +1,8 @@
 2009-02-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (f2ddraw): do "fp->datanum = f2dlocal->num" after
+	call "fitout()" when "fp->datanum" is zero.
+
 	* src/gtk/x11opt.c (CHK_STR): add.
 	(save_ext_driver_config, save_script_config)
 	(SetScriptDialogSetupItem, SetDriverDialogSetupItem): use

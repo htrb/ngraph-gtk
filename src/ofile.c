@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.61 2009/02/11 09:54:13 hito Exp $
+ * $Id: ofile.c,v 1.62 2009/02/17 10:11:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4233,7 +4233,7 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   case PLOT_TYPE_FIT:
     field = (char *)argv[1];
     rcode = fitout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, fit, field[0] == 'r');
-    if (field[0] == 'r')
+    if (fp->datanum == 0)
       fp->datanum = f2dlocal->num;
     break;
   default:
