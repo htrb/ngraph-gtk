@@ -4,6 +4,7 @@
 	(save_ext_driver_config, save_script_config)
 	(SetScriptDialogSetupItem, SetDriverDialogSetupItem): use
 	"CHK_STR"
+	(PrefScriptDialogAdd): initialize "fnew->description".
 
 2009-02-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

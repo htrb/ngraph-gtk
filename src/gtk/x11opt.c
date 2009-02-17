@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.42 2009/02/17 08:35:56 hito Exp $
+ * $Id: x11opt.c,v 1.43 2009/02/17 09:22:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -691,27 +691,31 @@ PrefScriptDialogAdd(GtkWidget *w, gpointer client_data)
   }
 
   fnew = (struct script *) memalloc(sizeof(struct script));
-  if (fnew) {
-    fnew->next = NULL;
-    fnew->name = NULL;
-    fnew->script = NULL;
-    fnew->option = NULL;
-    if (fprev == NULL)
-      Menulocal.scriptroot = fnew;
-    else
-      fprev->next = fnew;
-    SetScriptDialog(&DlgSetScript, fnew);
-    if (DialogExecute(d->widget, &DlgSetScript) != IDOK) {
-      if (fprev == NULL)
-	Menulocal.scriptroot = NULL;
-      else
-	fprev->next = NULL;
-      memfree(fnew);
-    }
-    PrefScriptDialogSetupItem(d->widget, d);
+  if (fnew == NULL) {
+    return;
+  }
+
+  fnew->next = NULL;
+  fnew->name = NULL;
+  fnew->script = NULL;
+  fnew->option = NULL;
+  fnew->description = NULL;
+  if (fprev == NULL) {
+    Menulocal.scriptroot = fnew;
   } else {
+    fprev->next = fnew;
+  }
+
+  SetScriptDialog(&DlgSetScript, fnew);
+  if (DialogExecute(d->widget, &DlgSetScript) != IDOK) {
+    if (fprev == NULL) {
+      Menulocal.scriptroot = NULL;
+    } else {
+      fprev->next = NULL;
+    }
     memfree(fnew);
   }
+  PrefScriptDialogSetupItem(d->widget, d);
 }
 
 static gboolean
