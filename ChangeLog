@@ -1,3 +1,54 @@
+2009-02-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (CHK_STR): add.
+	(save_ext_driver_config, save_script_config)
+	(SetScriptDialogSetupItem, SetDriverDialogSetupItem): use
+	"CHK_STR"
+
+2009-02-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11scrip.c (ScriptDialog, ScriptDialogClose)
+	(ScriptDialogSetup, script_list_default_cb)
+	(ScriptDialogSetupItem): remove.
+	(CmScriptExec): add arguments "GtkWidget *w" and "gpointer
+	client_data".
+	(CmScriptExec): don't use  "ScriptDialog".
+
+	* src/gtk/x11opt.c (save_script_config): save description of the
+	script.
+	(SetScriptDialogSetup): change title from "Script:" to "Script
+	file".
+	(SetScriptDialogSetup): add widgets for script description.
+	(set_scrpt_option): add.
+	(SetScriptDialogClose): use "set_scrpt_option()".
+	(SetScriptDialogClose): save description of the script.
+	(PrefScriptDialogSetup): add column for file name and script
+	description.
+	(PrefScriptDialogSetupItem): set file name and script description.
+	(PrefScriptDialogClose): call "update_addin_menu()".
+
+	* src/gtk/x11menu.h (enum MenuID): remove "MenuIdScriptExec".
+
+	* src/gtk/x11menu.c: add global variable "AddinMenu".
+	(show_graphmwnu_cb): set sensitibity of "AddinMenu".
+	(create_addin_menu, update_addin_menu): add.
+	(create_graphmenu): now "Add-In" menu has sub menu.
+
+	* src/gtk/x11graph.c (CmGraphMenu): remove case for
+	"MenuIdScriptExec".
+
+	* src/gtk/x11dialg.h (struct ScriptDialog): remove.
+	(struct SetScriptDialog): add member "description".
+
+	* src/gtk/x11dialg.c: remove unused variable "DlgScript".
+
+	* src/gtk/ox11menu.h (struct script): add member "description".
+
+	* src/gtk/ox11menu.c (menu_config_set_script): set description.
+
+	* initfile/Ngraph.ini.in (script): change format (add description
+	column).
+
 2009-02-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.c (error22): now the type of the argument "mes1" and

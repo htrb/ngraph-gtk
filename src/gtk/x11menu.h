@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.23 2009/02/05 05:09:42 hito Exp $
+ * $Id: x11menu.h,v 1.24 2009/02/17 08:35:56 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -35,7 +35,6 @@ enum MenuID {
   MenuIdGraphSwitch,
   MenuIdOutputDriver,
   MenuIdGraphDirectory,
-  MenuIdScriptExec,
   MenuIdGraphShell,
   MenuIdGraphQuit,
   MenuIdGraphNewFrame,
@@ -283,5 +282,6 @@ void QuitGUI(void);
 void menu_lock(int lock);
 void set_draw_lock(int lock);
 int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
+void update_addin_menu(void);
 
 #endif

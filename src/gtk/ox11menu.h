@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.21 2009/02/06 08:25:14 hito Exp $
+ * $Id: ox11menu.h,v 1.22 2009/02/17 08:35:56 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -80,6 +80,7 @@ struct script
 {
   char *name;
   char *script;
+  char *description;
   char *option;
   struct script *next;
 };

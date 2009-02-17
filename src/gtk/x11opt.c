@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.41 2009/02/06 13:12:47 hito Exp $
+ * $Id: x11opt.c,v 1.42 2009/02/17 08:35:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,6 +58,8 @@
 #define WIN_SIZE_MIN 100
 #define WIN_SIZE_MAX 2048
 #define GRID_MAX 1000
+
+#define CHK_STR(s) ((s == NULL) ? "" : s)
 
 static void
 DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -248,23 +250,9 @@ save_ext_driver_config(struct narray *conf)
 
   pcur = Menulocal.extprinterroot;
   while (pcur) {
-    if (pcur->driver == NULL) {
-      driver = "";
-    } else {
-      driver = pcur->driver;
-    }
-
-    if (pcur->ext == NULL) {
-      ext = "";
-    } else {
-      ext = pcur->ext;
-    }
-
-    if (pcur->option == NULL) {
-      option = "";
-    } else {
-      option = pcur->option;
-    }
+    driver = CHK_STR(pcur->driver);
+    ext = CHK_STR(pcur->ext);
+    option= CHK_STR(pcur->option);
 
     len = strlen(pcur->name) + strlen(driver) + strlen(ext) + strlen(option) + 20;
 
@@ -280,28 +268,20 @@ save_ext_driver_config(struct narray *conf)
 static void
 save_script_config(struct narray *conf)
 {
-  char *buf, *script, *option;
+  char *buf, *script, *option, *description;
   int len;
   struct script *scur;
 
   scur = Menulocal.scriptroot;
   while (scur) {
-    if (scur->script == NULL) {
-      script = "";
-    } else {
-      script = scur->script;
-    }
+    script = CHK_STR(scur->script);
+    option = CHK_STR(scur->option);
+    description = CHK_STR(scur->description);
 
-    if (scur->option == NULL) {
-      option = "";
-    } else {
-      option = scur->option;
-    }
-
-    len = strlen(scur->name) + strlen(script) + strlen(option) + 20;
+    len = strlen(scur->name) + strlen(script) + strlen(description) + strlen(option) + 20;
     buf = (char *) memalloc(len);
     if (buf) {
-      snprintf(buf, len, "script=%s,%s,%s", scur->name, script, option);
+      snprintf(buf, len, "script=%s,%s,%s,%s", scur->name, script, description, option);
       arrayadd(conf, &buf);
     }
     scur = scur->next;
@@ -488,12 +468,10 @@ DefaultDialog(struct DefaultDialog *data)
 static void
 SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 {
-  gtk_entry_set_text(GTK_ENTRY(d->name),
-		     (d->Script->name) ? d->Script->name : "");
-  gtk_entry_set_text(GTK_ENTRY(d->script),
-		     (d->Script->script) ? d->Script->script : "");
-  gtk_entry_set_text(GTK_ENTRY(d->option),
-		     (d->Script->option) ? d->Script->option : "");
+  gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Script->name));
+  gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(d->Script->script));
+  gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(d->Script->option));
+  gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(d->Script->description));
 }
 
 static void
@@ -528,7 +506,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Script:"), TRUE);
+    item_setup(hbox, w, _("_Script file:"), TRUE);
     d->script = w;
 
     w = gtk_button_new_with_mnemonic("_Browse");
@@ -544,15 +522,42 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->option = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(hbox, w, _("_Description:"), TRUE);
+    d->description = w;
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
   }
   SetScriptDialogSetupItem(wi, d);
+}
+
+static int
+set_scrpt_option(GtkWidget *entry, char **opt, char *msg)
+{
+  const char *buf;
+  char *buf2;
+  
+
+  buf = gtk_entry_get_text(GTK_ENTRY(entry));
+  if (msg && strlen(buf) == 0) {
+    MessageBox(TopLevel, msg, NULL, MB_OK);
+    return 1;
+  }
+
+  buf2 = nstrdup(buf);
+  if (buf2) {
+    memfree(*opt);
+    *opt = buf2;
+  }
+
+  return 0;
 }
 
 static void
 SetScriptDialogClose(GtkWidget *w, void *data)
 {
-  const char *buf;
-  char *buf2;
   int ret;
   struct SetScriptDialog *d;
 
@@ -564,30 +569,20 @@ SetScriptDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->name));
-  if (strlen(buf) == 0) {
-    MessageBox(TopLevel, _("Please specify script name."), NULL, MB_OK);
+  if (set_scrpt_option(d->name, &(d->Script->name), _("Please specify script name."))) {
     return;
   }
 
-  buf2 = nstrdup(buf);
-  if (buf2) {
-    memfree(d->Script->name);
-    d->Script->name = buf2;
+  if (set_scrpt_option(d->script, &(d->Script->script), _("Please specify script file name."))) {
+    return;
   }
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->script));
-  buf2 = nstrdup(buf);
-  if (buf2) {
-    memfree(d->Script->script);
-    d->Script->script = buf2;
+  if (set_scrpt_option(d->option, &(d->Script->option), NULL)) {
+    return;
   }
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->option));
-  buf2 = nstrdup(buf);
-  if (buf2) {
-    memfree(d->Script->option);
-    d->Script->option = buf2;
+  if (set_scrpt_option(d->description, &(d->Script->description), _("Please specify script description."))) {
+    return;
   }
 
   d->ret = ret;
@@ -612,6 +607,8 @@ PrefScriptDialogSetupItem(GtkWidget *w, struct PrefScriptDialog *d)
   while (fcur) {
     list_store_append(d->list, &iter);
     list_store_set_string(d->list, &iter, 0, fcur->name);
+    list_store_set_string(d->list, &iter, 1, fcur->script);
+    list_store_set_string(d->list, &iter, 2, fcur->description);
     fcur = fcur->next;
   }
 }
@@ -659,10 +656,11 @@ PrefScriptDialogRemove(GtkWidget *w, gpointer client_data)
   while (fcur) {
     if (j == a) {
       fdel = fcur;
-      if (fprev == NULL)
+      if (fprev == NULL) {
 	Menulocal.scriptroot = fcur->next;
-      else
+      } else {
 	fprev->next = fcur->next;
+      }
       fcur = fcur->next;
       memfree(fdel->name);
       memfree(fdel->script);
@@ -761,7 +759,9 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkTreeSelection *sel;
   struct PrefScriptDialog *d;
   n_list_store list[] = {
-    {N_("Script"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("name"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("file"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("description"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct PrefScriptDialog *) data;
@@ -814,6 +814,7 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 PrefScriptDialogClose(GtkWidget *w, void *data)
 {
+  update_addin_menu();
 }
 
 void
@@ -827,17 +828,10 @@ PrefScriptDialog(struct PrefScriptDialog *data)
 static void
 SetDriverDialogSetupItem(GtkWidget *w, struct SetDriverDialog *d)
 {
-  gtk_entry_set_text(GTK_ENTRY(d->name),
-		     (d->Driver->name) ? d->Driver->name : "");
-
-  gtk_entry_set_text(GTK_ENTRY(d->driver),
-		     (d->Driver->driver) ? d->Driver->driver : "");
-
-  gtk_entry_set_text(GTK_ENTRY(d->option),
-		     (d->Driver->option) ? d->Driver->option : "");
-
-  gtk_entry_set_text(GTK_ENTRY(d->ext),
-		     (d->Driver->ext) ? d->Driver->ext : "");
+  gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Driver->name));
+  gtk_entry_set_text(GTK_ENTRY(d->driver), CHK_STR(d->Driver->driver));
+  gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(d->Driver->option));
+  gtk_entry_set_text(GTK_ENTRY(d->ext), CHK_STR(d->Driver->ext));
 }
 
 static void

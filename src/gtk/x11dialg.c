@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.34 2009/02/13 10:09:50 hito Exp $
+ * $Id: x11dialg.c,v 1.35 2009/02/17 08:35:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -108,7 +108,6 @@ struct SaveDialog DlgSave;
 struct DriverDialog DlgDriver;
 struct PrintDialog DlgPrinter;
 struct OutputDataDialog DlgOutputData;
-struct ScriptDialog DlgScript;
 struct DefaultDialog DlgDefault;
 struct SetScriptDialog DlgSetScript;
 struct PrefScriptDialog DlgPrefScript;
@@ -257,9 +256,6 @@ initdialog(void)
   DlgOutputData.widget = NULL;
   DlgOutputData.focus = NULL;
   DlgOutputData.resource = N_("output data");
-  DlgScript.widget = NULL;
-  DlgScript.focus = NULL;
-  DlgScript.resource = N_("addin");
   DlgDefault.widget = NULL;
   DlgDefault.focus = NULL;
   DlgDefault.resource = N_("save default");

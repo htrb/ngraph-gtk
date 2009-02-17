@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11scrip.h,v 1.2 2009/02/17 08:35:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,4 +21,4 @@
  * 
  */
 
-void CmScriptExec();
+void CmScriptExec(GtkWidget *w, gpointer client_data);

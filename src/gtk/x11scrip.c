@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.9 2009/01/28 01:39:49 hito Exp $
+ * $Id: x11scrip.c,v 1.10 2009/02/17 08:35:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,127 +43,8 @@
 #include "x11scrip.h"
 #include "x11commn.h"
 
-static void
-ScriptDialogSetupItem(GtkWidget *w, struct ScriptDialog *d)
-{
-  int i;
-  struct script *scur;
-  GtkTreeIter iter;
-
-  list_store_clear(d->list);
-  scur = Menulocal.scriptroot;
-
-  i = 0;
-  while (scur != NULL) {
-    list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, scur->name);
-    scur = scur->next;
-    i++;
-  }
-}
-
-static gboolean
-script_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
-{
-  struct ScriptDialog *d;
-  int i;
-
-  d = (struct ScriptDialog *) user_data;
-
-  if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
-
-    i = list_store_get_selected_index(d->list);
-    if (i < 0)
-      return FALSE;
-
-    gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
-
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-static void
-ScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  GtkWidget *w, *swin, *hbox;
-  struct ScriptDialog *d;
-  n_list_store clist[] = {
-    {N_("Addin"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-  };
-
-  d = (struct ScriptDialog *) data;
-  if (makewidget) {
-    w = list_store_create(sizeof(clist) / sizeof(*clist), clist);
-    d->list = w;
-    g_signal_connect(w, "button-press-event", G_CALLBACK(script_list_default_cb), d);
-    g_signal_connect(w, "key-press-event", G_CALLBACK(script_list_default_cb), d);
-
-    swin = gtk_scrolled_window_new(NULL, NULL);
-    gtk_container_add(GTK_CONTAINER(swin), w);
-
-    w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Option:"), TRUE);
-    d->entry = w;
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-
-    gtk_window_set_default_size(GTK_WINDOW(wi), 200, 400);
-  }
-  ScriptDialogSetupItem(wi, d);
-}
-
-static void
-ScriptDialogClose(GtkWidget *w, void *data)
-{
-  struct ScriptDialog *d;
-  struct script *pcur;
-  const char *ptr;
-  int i, n;
-
-  d = (struct ScriptDialog *) data;
-
-  d->execscript = NULL;
-
-  if (d->ret != IDOK)
-    return;
-
-  n = list_store_get_selected_index(d->list);
-
-  if (n < 0)
-    return;
-
-  
-  i = 0;
-  for (pcur = Menulocal.scriptroot; pcur != NULL; pcur = pcur->next) {
-    if (i == n && pcur->script) {
-      d->execscript = nstrdup(pcur->script);
-      break;
-    }
-    i++;
-  }
-
-  ptr = gtk_entry_get_text(GTK_ENTRY(d->entry));
-  strncpy(d->option, ptr, sizeof(d->option) - 1);
-  d->option[sizeof(d->option) - 1] = '\0';
-}
-
 void
-ScriptDialog(struct ScriptDialog *data)
-{
-  data->SetupWindow = ScriptDialogSetup;
-  data->CloseWindow = ScriptDialogClose;
-}
-
-void
-CmScriptExec(void)
+CmScriptExec(GtkWidget *w, gpointer client_data)
 {
   char *name;
   int newid, allocnow = FALSE;
@@ -174,22 +55,24 @@ CmScriptExec(void)
   char mes[256];
   struct objlist *robj, *shell;
   int idn;
+  struct script *fcur;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || GlobalLock || client_data == NULL)
     return;
 
   shell = chkobject("shell");
   if (shell == NULL)
     return;
 
-  ScriptDialog(&DlgScript);
-  if (DialogExecute(TopLevel, &DlgScript) != IDOK)
+  fcur = (struct script *) client_data;
+
+  if (fcur->script == NULL)
     return;
 
-  if (DlgScript.execscript == NULL)
+  name = nstrdup(fcur->script);
+  if (name == NULL) {
     return;
-
-  name = DlgScript.execscript;
+  }
 
   newid = newobj(shell);
   if (newid < 0) {
@@ -205,7 +88,7 @@ CmScriptExec(void)
     return;
   }
 
-  option = DlgScript.option;
+  option = fcur->option;
   while ((s = getitok2(&option, &len, " \t")) != NULL) {
     if (arrayadd(&sarray, &s) == NULL) {
       delobj(shell, newid);

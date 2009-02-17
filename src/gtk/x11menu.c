@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.65 2009/02/03 11:45:24 hito Exp $
+ * $Id: x11menu.c,v 1.66 2009/02/17 08:35:56 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -67,7 +67,7 @@ static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL,
   *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL,
-  *RecentGraph = NULL, *RecentData = NULL;
+  *RecentGraph = NULL, *RecentData = NULL, *AddinMenu = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 
@@ -634,6 +634,9 @@ show_graphmwnu_cb(GtkWidget *w, gpointer user_data)
   if (RecentGraph)
     gtk_widget_set_sensitive(RecentGraph, num > 0);
 
+  if (AddinMenu)
+    gtk_widget_set_sensitive(AddinMenu, Menulocal.scriptroot != NULL);
+
   if (str == NULL)
     str = g_string_new("");
 
@@ -666,6 +669,50 @@ create_recent_graph_menu(GtkWidget *parent, GtkAccelGroup *accel_group)
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(NgraphApp.ghistory[i]));
   }
 }
+
+static void
+create_addin_menu(GtkWidget *parent, GtkAccelGroup *accel_group)
+{
+  GtkWidget *menu, *item;
+  struct script *fcur;
+
+  if (parent == NULL)
+    return;
+
+  menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(parent));
+  if (menu)
+    gtk_widget_destroy(menu);
+
+  menu = gtk_menu_new();
+
+  if (accel_group)
+    gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
+
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
+
+  fcur = Menulocal.scriptroot;
+  while (fcur) {
+    if (fcur->name && fcur->script) {
+      item = gtk_menu_item_new_with_mnemonic(fcur->name);
+      g_signal_connect(item, "activate", G_CALLBACK(CmScriptExec), fcur);
+      gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+      if (fcur->description) {
+	gtk_widget_set_tooltip_text(item, fcur->description);
+	gtk_widget_set_has_tooltip(item, TRUE);
+      }
+    }
+    fcur = fcur->next;
+  }
+
+  gtk_widget_show_all(menu);
+}
+
+void
+update_addin_menu(void)
+{
+  create_addin_menu(AddinMenu, AccelGroup);
+}
+
 
 static void 
 create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
@@ -702,7 +749,12 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("_Current directory"), FALSE, "<Ngraph>/Graph/Current directory", 0, 0, CmGraphMenu, MenuIdGraphDirectory);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
-  create_menu_item(menu, _("_Add-In"), FALSE, "<Ngraph>/Graph/Add-In", GDK_x, GDK_CONTROL_MASK, CmGraphMenu, MenuIdScriptExec);
+
+  item = gtk_menu_item_new_with_mnemonic(_("_Add-In"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+  create_addin_menu(item, accel_group);
+  AddinMenu = item;
+
   create_menu_item(menu, _("_Ngraph shell"), FALSE, "<Ngraph>/Graph/Ngraph shell", 0, 0, CmGraphMenu, MenuIdGraphShell);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, GTK_STOCK_QUIT, TRUE, "<Ngraph>/Graph/Quit",  GDK_q, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphQuit);
@@ -1107,11 +1159,6 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   g_signal_connect(item, "activate", G_CALLBACK(CmReloadWindowConfig), NULL);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  /*
-  item = gtk_check_menu_item_new_with_mnemonic("_Move child window");
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
-  */
-
   item = gtk_check_menu_item_new_with_mnemonic(_("_Status bar"));
   g_signal_connect(item, "toggled", G_CALLBACK(toggle_status_bar), NULL);
   ShowStatusBar = item;
@@ -1171,7 +1218,7 @@ createmenu(GtkMenuBar *parent)
   create_windowmenu(parent, accel_group);
   create_helpmenu(parent, accel_group);
 
-  gtk_window_add_accel_group (GTK_WINDOW(TopLevel), accel_group);
+  gtk_window_add_accel_group(GTK_WINDOW(TopLevel), accel_group);
   AccelGroup = accel_group;
 
   home = get_home();

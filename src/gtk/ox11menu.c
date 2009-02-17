@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.45 2009/02/06 08:25:14 hito Exp $
+ * $Id: ox11menu.c,v 1.46 2009/02/17 08:35:55 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -400,7 +400,7 @@ menu_config_set_prn_driver(char *s2, void *data)
 static int
 menu_config_set_script(char *s2, void *data)
 {
-  char *f[4] = {NULL, NULL, NULL};
+  char *f[] = {NULL, NULL, NULL, NULL};
   int len, i;
   struct script *snew, *scur, **sptr;
 
@@ -409,14 +409,15 @@ menu_config_set_script(char *s2, void *data)
 
   f[0] = getitok2(&s2, &len, ",");
   f[1] = getitok2(&s2, &len, ",");
+  f[2] = getitok2(&s2, &len, ",");
 
   for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-  f[2] = getitok2(&s2, &len, "");
+  f[3] = getitok2(&s2, &len, ",");
 
   if (f[0] && f[1]) {
     snew = (struct script *) memalloc(sizeof(struct script));
     if (snew == NULL) {
-      for (i = 0; i < 3; i++) {
+      for (i = 0; i < sizeof(f) / sizeof(*f); i++) {
 	memfree(f[i]);
       }
       return 1;
@@ -431,9 +432,10 @@ menu_config_set_script(char *s2, void *data)
     scur->next = NULL;
     scur->name = f[0];
     scur->script = f[1];
-    scur->option = f[2];
-  } else { 
-    for (i = 0; i < 3; i++) {
+    scur->description = f[2];
+    scur->option = f[3];
+  } else {
+    for (i = 0; i < sizeof(f) / sizeof(*f); i++) {
       memfree(f[i]);
     }
   }

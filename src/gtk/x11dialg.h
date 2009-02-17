@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.29 2009/02/13 10:09:50 hito Exp $
+ * $Id: x11dialg.h,v 1.30 2009/02/17 08:35:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -662,21 +662,6 @@ struct OutputDataDialog
 };
 void OutputDataDialog(struct OutputDataDialog *data, int div);
 
-struct ScriptDialog
-{
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
-  /****** local member *******/
-  char *execscript;
-  GtkWidget *list, *entry;
-  char option[256];
-};
-void ScriptDialog(struct ScriptDialog *data);
-
 struct DefaultDialog
 {
   GtkWidget *parent, *widget, *focus;
@@ -699,7 +684,7 @@ struct SetScriptDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *name, *script, *option;
+  GtkWidget *name, *script, *option, *description;
   struct script *Script;
 };
 void SetScriptDialog(struct SetScriptDialog *data, struct script *sc);
@@ -903,7 +888,6 @@ extern struct SaveDialog DlgSave;
 extern struct DriverDialog DlgDriver;
 extern struct PrintDialog DlgPrinter;
 extern struct OutputDataDialog DlgOutputData;
-extern struct ScriptDialog DlgScript;
 extern struct DefaultDialog DlgDefault;
 extern struct SetScriptDialog DlgSetScript;
 extern struct PrefScriptDialog DlgPrefScript;
