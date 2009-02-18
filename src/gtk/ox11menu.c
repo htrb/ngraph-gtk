@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.46 2009/02/17 08:35:55 hito Exp $
+ * $Id: ox11menu.c,v 1.47 2009/02/18 06:15:51 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1355,6 +1355,17 @@ mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
+mx_echo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  if (argv[2])
+    PutStdout((char *) argv[2]);
+
+  PutStdout("\n");
+
+  return 0;
+}
+
+static int
 mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   Draw(FALSE);
@@ -1413,6 +1424,7 @@ static struct objtable gtkmenu[] = {
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
   {"print", NVFUNC, NREAD | NEXEC, mx_print, "bi", 0},
+  {"echo", NVFUNC, NREAD | NEXEC, mx_echo, "s", 0},
   {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
