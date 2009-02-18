@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.47 2009/02/18 06:15:51 hito Exp $
+ * $Id: ox11menu.c,v 1.48 2009/02/18 07:54:41 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1413,6 +1413,7 @@ static struct objtable gtkmenu[] = {
   {"menu", NVFUNC, NREAD | NEXEC, menumenu, NULL, 0},
   {"ngp", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"fullpath_ngp", NSTR, NREAD | NWRITE, mxfullpathngp, NULL, 0},
+  {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
   {"modified", NBOOL, NREAD | NWRITE, NULL, NULL, 0},
   {"dpi", NINT, NREAD | NWRITE, mxdpi, NULL, 0},
   {"auto_redraw", NBOOL, NREAD | NWRITE, mxautoredraw, NULL, 0},
@@ -1422,10 +1423,9 @@ static struct objtable gtkmenu[] = {
   {"draw", NVFUNC, NREAD | NEXEC, mxdraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
-  {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, NULL, 0},
+  {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, "", 0},
   {"print", NVFUNC, NREAD | NEXEC, mx_print, "bi", 0},
   {"echo", NVFUNC, NREAD | NEXEC, mx_echo, "s", 0},
-  {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };

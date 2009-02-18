@@ -479,43 +479,44 @@ alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
 object id: 35
-number of fields: 35
+number of fields: 36
 size of instance: 200
-r--              id    int
-r--             oid    int
-rw-            name    char*
-r-x            save    *char( char *[] )
-r--           _list    *char[]
-r--             _GC    int
-rw-      delete_gra    bool
-r-x      disconnect    void( void )
-rw-            dpix    int
-rw-            dpiy    int
-rw-       antialias    enum( none default gray )
----         _output    void( )
----      _charwidth    int( )
----     _charascent    int( )
----    _chardescent    int( )
----          _local    void*
---x            init    void( )
---x            done    void( )
-r-x            menu    void( )
-rw-             ngp    char*
-rw-    fullpath_ngp    char*
-rw-        modified    bool
-rw-             dpi    int
-rw-     auto_redraw    bool
-rw-     redraw_flag    bool
-rw-      redraw_num    int
-r-x          redraw    void( void )
-r-x            draw    void( void )
-r-x           flush    void( void )
-r-x           clear    void( void )
-r-x         focused    *char[]( )
-r-x           print    void( bool int )
-rw- data_head_lines    int
----       _gtklocal    void*
----         _evloop    void( )
+r--               id    int
+r--              oid    int
+rw-             name    char*
+r-x             save    *char( char *[] )
+r--            _list    *char[]
+r--              _GC    int
+rw-       delete_gra    bool
+r-x       disconnect    void( void )
+rw-             dpix    int
+rw-             dpiy    int
+rw-        antialias    enum( none default gray )
+---          _output    void( )
+---       _charwidth    int( )
+---      _charascent    int( )
+---     _chardescent    int( )
+---           _local    void*
+--x             init    void( )
+--x             done    void( )
+r-x             menu    void( )
+rw-              ngp    char*
+rw-     fullpath_ngp    char*
+rw-  data_head_lines    int
+rw-         modified    bool
+rw-              dpi    int
+rw-      auto_redraw    bool
+rw-      redraw_flag    bool
+rw-       redraw_num    int
+r-x           redraw    void( void )
+r-x             draw    void( void )
+r-x            flush    void( void )
+r-x            clear    void( void )
+r-x          focused    *char[]( void )
+r-x            print    void( bool int )
+r-x             echo    void( char * )
+---        _gtklocal    void*
+---          _evloop    void( )
 </pre>
 
 <h3>int オブジェクト</h3>
