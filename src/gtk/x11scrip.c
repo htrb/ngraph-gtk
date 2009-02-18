@@ -1,5 +1,5 @@
 /* 
- * $Id: x11scrip.c,v 1.10 2009/02/17 08:35:56 hito Exp $
+ * $Id: x11scrip.c,v 1.11 2009/02/18 02:22:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,15 +46,10 @@
 void
 CmScriptExec(GtkWidget *w, gpointer client_data)
 {
-  char *name;
-  int newid, allocnow = FALSE;
-  char *option, *s;
-  int len;
-  char *argv[2];
+  char *name, *option, *s, *argv[2], mes[256];
+  int newid, allocnow = FALSE, len, idn;
   struct narray sarray;
-  char mes[256];
   struct objlist *robj, *shell;
-  int idn;
   struct script *fcur;
 
   if (Menulock || GlobalLock || client_data == NULL)
@@ -65,14 +60,12 @@ CmScriptExec(GtkWidget *w, gpointer client_data)
     return;
 
   fcur = (struct script *) client_data;
-
   if (fcur->script == NULL)
     return;
 
   name = nstrdup(fcur->script);
-  if (name == NULL) {
+  if (name == NULL)
     return;
-  }
 
   newid = newobj(shell);
   if (newid < 0) {
