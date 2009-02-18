@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-02-18 11:00+0900\n"
+"POT-Creation-Date: 2009-02-18 11:27+0900\n"
 "PO-Revision-Date: 2009-02-17 12:21+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1953,7 +1953,7 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11scrip.c:105
+#: src/gtk/x11scrip.c:98
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
