@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.66 2009/02/17 08:35:56 hito Exp $
+ * $Id: x11menu.c,v 1.67 2009/02/18 02:00:19 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -696,9 +696,8 @@ create_addin_menu(GtkWidget *parent, GtkAccelGroup *accel_group)
       item = gtk_menu_item_new_with_mnemonic(fcur->name);
       g_signal_connect(item, "activate", G_CALLBACK(CmScriptExec), fcur);
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
-      if (fcur->description) {
+      if (Menulocal.showtip && fcur->description) {
 	gtk_widget_set_tooltip_text(item, fcur->description);
-	gtk_widget_set_has_tooltip(item, TRUE);
       }
     }
     fcur = fcur->next;
