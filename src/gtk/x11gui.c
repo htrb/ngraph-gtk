@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.21 2009/02/06 02:58:49 hito Exp $
+ * $Id: x11gui.c,v 1.22 2009/02/19 09:47:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -377,6 +377,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
     btn = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
     gtk_box_pack_start(GTK_BOX(vbox), btn, FALSE, FALSE, 2);
     btn_ary[i] = btn;
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn), i == *r);
   }
 
   gtk_widget_show_all(dlg);
@@ -408,7 +409,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
 }
 
 int
-DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, char **r)
+DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r)
 {
   GtkWidget *dlg, *combo;
   GtkVBox *vbox;
@@ -442,7 +443,11 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
   for (i = 0; i < anum; i++) {
     combo_box_append_text(combo, d[i]);
   }
-  combo_box_set_active(combo, 0);
+
+  if (sel < 0 || sel >= anum) {
+    sel = 0;
+  }
+  combo_box_set_active(combo, sel);
 
   gtk_box_pack_start(GTK_BOX(vbox), combo, FALSE, FALSE, 2);
 
@@ -468,7 +473,7 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
 }
 
 int
-DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, char **r)
+DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r)
 {
   GtkWidget *dlg, *combo;
   GtkVBox *vbox;
@@ -503,7 +508,10 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
   for (i = 0; i < anum; i++) {
     combo_box_append_text(combo, d[i]);
   }
-  combo_box_set_active(combo, 0);
+
+  if (sel >= 0 && sel < anum) {
+    combo_box_set_active(combo, sel);
+  }
 
   gtk_box_pack_start(GTK_BOX(vbox), combo, FALSE, FALSE, 2);
 
@@ -532,11 +540,11 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
 }
 
 int
-DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int **r)
+DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkVBox *vbox;
-  int data, *i_ary;
+  int data;
   gint res_id;
   char **d;
   int i, anum;
@@ -547,12 +555,6 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
   btn_ary = malloc(anum * sizeof(*btn_ary));
   if (btn_ary == NULL)
     return IDCANCEL;
-
-  i_ary = memalloc(anum * sizeof(int));
-  if (i_ary == NULL) {
-    memfree(btn_ary);
-    return IDCANCEL;
-  }
 
   dlg = gtk_dialog_new_with_buttons(title,
 				    GTK_WINDOW(parent),
@@ -578,26 +580,26 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
     btn_ary[i] = btn;
   }
 
+  for (i = 0; i < anum; i++) {
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn_ary[i]), r[i]);
+  }
+
   gtk_widget_show_all(dlg);
   res_id = gtk_dialog_run(GTK_DIALOG(dlg));
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
     for (i = 0; i < anum; i++) {
-      i_ary[i] = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]));
+      r[i] = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btn_ary[i]));
     }
-    *r = i_ary;
     data = IDOK;
     break;
   default:
     data = IDCANCEL; 
-    memfree(i_ary);
-    *r = NULL;
     break;
   }
 
   free(btn_ary);
-
 
   gtk_widget_destroy(dlg);
   ResetEvent();

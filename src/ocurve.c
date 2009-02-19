@@ -1,5 +1,5 @@
 /* 
- * $Id: ocurve.c,v 1.4 2009/02/05 08:40:14 hito Exp $
+ * $Id: ocurve.c,v 1.5 2009/02/19 09:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -251,6 +251,7 @@ curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 0: case 1:
     if (num<2) {
       arrayfree(array);
+      *(struct narray **) rval = NULL;
       return 0;
     }
     bsize=num+1;
@@ -290,6 +291,7 @@ curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 2:
     if (num<7) {
       arrayfree(array);
+      *(struct narray **) rval = NULL;
       return 0;
     }
     for (i=0;i<7;i++) {
@@ -323,6 +325,7 @@ curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 3:
     if (num<4) {
       arrayfree(array);
+      *(struct narray **) rval = NULL;
       return 0;
     }
     for (i=0;i<4;i++) {
@@ -373,6 +376,7 @@ curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&(bminx),0);
   if (arraynum(array)==0) {
     arrayfree(array);
+    *(struct narray **) rval = NULL;
     return 1;
   }
   *(struct narray **)rval=array;

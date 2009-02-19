@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.62 2009/02/17 10:11:56 hito Exp $
+ * $Id: ofile.c,v 1.63 2009/02/19 09:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4452,6 +4452,7 @@ f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&gx,0);
   if (arraynum(array)==0) {
     arrayfree(array);
+    *(struct narray **) rval = NULL;
     return 1;
   }
   *(struct narray **)rval=array;

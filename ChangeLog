@@ -1,6 +1,60 @@
+2009-02-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (cmdstackfree): call "memfree(stdel->pat)".
+	(cmdstackcat): initialize "stnew->pat".
+	(cmdstackrmlast): call "memfree(stdel->pat)".
+	(cmdexec): set NULL to "st->pat" if "st->pat" will not be used any
+	more.
+
+	* src/gtk/x11opt.c (PrefScriptDialogRemove): call
+	"memfree(sdel->description)".
+
+	* src/gtk/ox11menu.c (menudone): call "memfree(sdel->description)".
+	(mx_get_focused): use "arrayfree2()" instead
+	of "memfree()" to free "*rval".
+
+	* src/gtk/ox11dlg.c (dlggetopenfiles): use "arrayfree2()" instead
+	of "memfree()" to free "*rval".
+
+	* src/oaxis.c (axisbbox): set NULL to "rval" when return value of
+	"set_axis_box()" is NULL.
+
+	* src/otext.c (textbbox): set NULL to "rval" after call "arrayfree()".
+
+	* src/orect.c (rectbbox):  set NULL to "rval" after call "arrayfree()".
+
+	* src/olegend.c (legendbbox):  set NULL to "rval" after call "arrayfree()".
+
+	* src/omerge.c (mergebbox):  set NULL to "rval" after call "arrayfree()".
+
+	* src/omark.c (markbbox):  set NULL to "rval" after call "arrayfree()".
+
+	* src/oline.c (arrowbbox):  set NULL to "rval" after call "arrayfree()".
+
+	* src/ofile.c (f2dgetcoord):  set NULL to "rval" after call "arrayfree()".
+
+	* src/ocurve.c (curvebbox):  set NULL to "rval" after call "arrayfree()".
+
+	* src/oarc.c (arcbbox):  set NULL to "rval" after call "arrayfree()".
+
 2009-02-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/ox11menu.c (mx_echo): add.
+	* src/gtk/ox11dlg.c (dlgcombo_entry): remove.
+	(dlgradio, dlgcombo, dlgcheck): check "select" field.
+	(dlgcheck): now "check" field return array of selected index.
+	(dialog): add field "select".
+
+	* src/gtk/x11gui.c (DialogRadio): initialize state of toggle
+	button by the value of "*r".
+	(DialogCombo, DialogComboEntry): add argument "sel" and activate
+	item related to "sel".
+	(DialogCheck): change type of argument from "int **r" to "int *r".
+	(DialogCheck): initialize state of toggle button by the value of
+	"r[i]".
+
+	* src/gtk/ox11menu.c (mx_get_focused): return 0 when "num" is less
+	than 1.
+	(mx_echo): add.
 	(gtkmenu): add field "echo".
 
 2009-02-17  Ito Hiroyuki  <ZXB01226 at nifty.com>

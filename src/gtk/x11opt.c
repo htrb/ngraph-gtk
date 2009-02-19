@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.43 2009/02/17 09:22:52 hito Exp $
+ * $Id: x11opt.c,v 1.44 2009/02/19 09:47:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -664,6 +664,7 @@ PrefScriptDialogRemove(GtkWidget *w, gpointer client_data)
       fcur = fcur->next;
       memfree(fdel->name);
       memfree(fdel->script);
+      memfree(fdel->description);
       memfree(fdel->option);
       memfree(fdel);
       PrefScriptDialogSetupItem(d->widget, d);

@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.23 2009/02/13 10:09:47 hito Exp $
+ * $Id: oaxis.c,v 1.24 2009/02/19 09:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -749,8 +749,10 @@ axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
     dir = check_direction(obj, type, inst_array);
     array = set_axis_box(array, minx, miny, maxx, maxy, ! dir);
-    if (array == NULL)
+    if (array == NULL) {
+      * (struct narray **) rval = NULL;
       return 1;
+    }
 
     * (struct narray **) rval = array;
     break;
@@ -763,13 +765,12 @@ axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (x1 > maxx) maxx = x1;
     if (y1 > maxy) maxy = y1;
 
-    if (array == NULL && ((array = arraynew(sizeof(int))) == NULL))
-      return 1;
-
     dir = check_direction(obj, type, inst_array);
     array = set_axis_box(array, minx, miny, maxx, maxy, ! dir);
-    if (array == NULL)
+    if (array == NULL) {
+      * (struct narray **) rval = NULL;
       return 1;
+    }
 
     * (struct narray **) rval = array;
     break;

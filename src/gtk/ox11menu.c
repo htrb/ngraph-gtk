@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.48 2009/02/18 07:54:41 hito Exp $
+ * $Id: ox11menu.c,v 1.49 2009/02/19 09:47:32 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -954,6 +954,7 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     scur = scur->next;
     memfree(sdel->name);
     memfree(sdel->script);
+    memfree(sdel->description);
     memfree(sdel->option);
     memfree(sdel);
   }
@@ -1290,18 +1291,20 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   struct focuslist **focus;
   
 
-  memfree(*(struct narray **)rval);
+  arrayfree2(*(struct narray **)rval);
   *(char **)rval = NULL;
 
   d = &(NgraphApp.Viewer);
 
   num = arraynum(d->focusobj);
-  focus = (struct focuslist **) arraydata(d->focusobj);
-
   if (num < 1)
-    return 1;
+    return 0;
 
   oarray = arraynew(sizeof(char *));
+  if (oarray == NULL)
+    return 1;
+
+  focus = (struct focuslist **) arraydata(d->focusobj);
   for (i = 0; i < num; i++) {
     inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
     if (inst) {

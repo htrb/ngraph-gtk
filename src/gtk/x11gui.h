@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.8 2009/01/14 08:44:18 hito Exp $
+ * $Id: x11gui.h,v 1.9 2009/02/19 09:47:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,9 +56,9 @@ void MessageBeep(GtkWidget *parent);
 int MessageBox(GtkWidget *parent, char *message, char *title, int yesno);
 int DialogInput(GtkWidget *parent, char *title, char *mes, char **s);
 int DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *ary, int *r);
-int DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int **r);
-int DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, char **r);
-int DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, char **r);
+int DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r);
+int DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r);
+int DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r);
 int nGetOpenFileNameMulti(GtkWidget * parent,
 			  char *title, char *defext, char **initdir,
 			  char *initfil, char ***file, char *filter, int chd);

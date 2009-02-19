@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.7 2009/02/05 08:40:14 hito Exp $
+ * $Id: orect.c,v 1.8 2009/02/19 09:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -159,6 +159,7 @@ rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayadd(array,&(maxy));
   if (arraynum(array)==0) {
     arrayfree(array);
+    *(struct narray **) rval = NULL;
     return 1;
   }
   *(struct narray **)rval=array;

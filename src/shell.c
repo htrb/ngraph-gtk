@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.17 2009/01/06 08:17:09 hito Exp $
+ * $Id: shell.c,v 1.18 2009/02/19 09:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -712,6 +712,7 @@ void cmdstackfree(struct cmdstack *stroot)
     stdel=stcur;
     stcur=stcur->next;
     prmfree(stdel->prm);
+    memfree(stdel->pat);		/* hito (mem leak of pat) */
     memfree(stdel);
   }
 }
@@ -730,6 +731,7 @@ void *cmdstackcat(struct cmdstack **stroot,int cmdno)
   stnew->next=NULL;
   stnew->prm=NULL;
   stnew->cmd=NULL;
+  stnew->pat=NULL;		/* hito (mem leak of pat) */
   stnew->cmdno=cmdno;
   return stnew;
 }
@@ -775,6 +777,7 @@ void cmdstackrmlast(struct cmdstack **stroot)
   if (stprev==NULL) *stroot=NULL;
   else stprev->next=NULL;
   prmfree(stcur->prm);
+  memfree(stcur->pat);		/* hito (mem leak of pat) */
   memfree(stcur);
 }
 
@@ -2812,6 +2815,7 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
 	casetrue=st->casetrue;
 	pat=st->pat;
+	st->pat = NULL;		/* hito (mem leak of pat) */
 	if (casetrue) cmdcur=cmdcur->done;
 	else {
 	  prm=cmdcur->prm;
@@ -2834,6 +2838,7 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
 	casetrue=st->casetrue;
 	pat=st->pat;
+	st->pat = NULL;		/* hito (mem leak of pat) */
 	cmdstackrmlast(&stroot);
 	if ((st=cmdstackcat(&stroot,CPPATO))==NULL) goto errexit;
 	st->casetrue=casetrue;
@@ -2844,6 +2849,7 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	if ((st=cmdstackgetpo(&stroot))==NULL) goto errexit;
 	casetrue=st->casetrue;
 	pat=st->pat;
+	st->pat = NULL;		/* hito (mem leak of pat) */
 	memfree(pat);
 	cmdstackrmlast(&stroot);
 	cmdcur=cmdcur->next;

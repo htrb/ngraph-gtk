@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_entry_completion.c,v 1.4 2008/07/14 07:42:49 hito Exp $
+ * $Id: gtk_entry_completion.c,v 1.5 2009/02/19 09:47:32 hito Exp $
  */
 
 #include <stdio.h>
@@ -48,7 +48,7 @@ save_history_cb(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpoin
 
   if (v) {
     fprintf(fp, "%s\n", v);
-    free(v);
+    g_free(v);
   }
   return FALSE;
 }

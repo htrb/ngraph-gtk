@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.5 2009/02/05 08:40:14 hito Exp $
+ * $Id: olegend.c,v 1.6 2009/02/19 09:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -176,6 +176,7 @@ legendbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&(minx),0);
   if (arraynum(array)==0) {
     arrayfree(array);
+    *(struct narray **) rval = NULL;
     return 1;
   }
   *(struct narray **)rval=array;
