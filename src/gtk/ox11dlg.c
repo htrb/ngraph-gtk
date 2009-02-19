@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.13 2009/02/19 09:47:32 hito Exp $
+ * $Id: ox11dlg.c,v 1.14 2009/02/19 10:20:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -178,7 +178,11 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   char *title, *caption;
   int locksave, r, *ptr;
-  struct narray *iarray;
+  struct narray *iarray, *sarray;
+
+  sarray = (struct narray *)argv[2];
+  if (arraynum(sarray) == 0)
+    return 1;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
@@ -202,7 +206,7 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     r = -1;
   }
 
-  if (DialogRadio(DLGTopLevel, (title) ? title : "Select", caption, (struct narray *)argv[2], &r) != IDOK) {
+  if (DialogRadio(DLGTopLevel, (title) ? title : "Select", caption, sarray, &r) != IDOK) {
     GlobalLock = locksave;
     return 1;
   }
@@ -218,7 +222,11 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int locksave, *ptr, sel, ret;
   char *r, *title, *caption;
-  struct narray *iarray;
+  struct narray *iarray, *sarray;
+
+  sarray = (struct narray *)argv[2];
+  if (arraynum(sarray) == 0)
+    return 1;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
@@ -246,9 +254,9 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   if (strcmp(argv[1], "combo") == 0) {
-    ret = DialogCombo(DLGTopLevel, (title) ? title : "Select", caption, (struct narray *)argv[2], sel, &r);
+    ret = DialogCombo(DLGTopLevel, (title) ? title : "Select", caption, sarray, sel, &r);
   } else {
-    ret = DialogComboEntry(DLGTopLevel, (title) ? title : "Input", caption, (struct narray *)argv[2], sel, &r);
+    ret = DialogComboEntry(DLGTopLevel, (title) ? title : "Input", caption, sarray, sel, &r);
   }
 
   if (ret != IDOK) {
@@ -265,9 +273,14 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int locksave, *r, i, n, inum;
+  int locksave, *r, i, n, inum, *ptr;;
   struct narray *array, *sarray, *iarray;
   char *title, *caption;
+
+  sarray = (struct narray *)argv[2];
+  n = arraynum(sarray);
+  if (n == 0)
+    return 1;
 
   arrayfree(* (struct narray **) rval);
   *(char **) rval = NULL;
@@ -276,9 +289,6 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (array == NULL) {
     return 1;
   }
-
-  sarray = (struct narray *)argv[2];
-  n = arraynum(sarray);
 
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
@@ -297,17 +307,13 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     arrayfree(array);
     return 1;
   }
+  memset(r, 0, n * sizeof(int));
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
 
-  for (i = 0; i < n; i++) {
-    r[i] = 0;
-  }
-
   inum = arraynum(iarray);
   for (i = 0; i < inum; i++) {
-    int *ptr;
     ptr = (int *) arraynget(iarray, i);
     if (ptr && *ptr >= 0 && *ptr < n)
       r[*ptr] = 1;
@@ -326,12 +332,6 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   memfree(r);
-
-  if (arraynum(array) == 0) {
-    arrayfree(array);
-    GlobalLock = locksave;
-    return 1;
-  }
 
   *(struct narray **) rval = array;
 

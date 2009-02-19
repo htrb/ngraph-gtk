@@ -1,5 +1,8 @@
 2009-02-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11dlg.c (dlgradio, dlgcombo, dlgcheck): return 1 when
+	no arguments are given.
+
 	* src/shell.c (cmdstackfree): call "memfree(stdel->pat)".
 	(cmdstackcat): initialize "stnew->pat".
 	(cmdstackrmlast): call "memfree(stdel->pat)".
