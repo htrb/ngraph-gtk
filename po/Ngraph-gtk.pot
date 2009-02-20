@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-19\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-02-19 19:20+0900\n"
+"POT-Creation-Date: 2009-02-20 19:07+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11dlg.c:386
+#: src/gtk/ox11dlg.c:440
 msgid "Open file"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:435
+#: src/gtk/ox11dlg.c:489
 msgid "Open files"
 msgstr ""
 
-#: src/gtk/ox11dlg.c:486
+#: src/gtk/ox11dlg.c:540
 msgid "Save file"
 msgstr ""
 
