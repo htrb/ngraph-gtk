@@ -1,5 +1,10 @@
 2009-02-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (ViewerEvPaint): call "gdk_draw_drawable()"
+	even if "GlobalLock" id TRUE.
+	(ViewerEvPaint): don't check "chkobjinstoid(Menulocal.GRAobj,
+	Menulocal.GRAoid)".
+
 	* demo/demo.ngp: use dialog::check
 
 	* src/gtk/ox11dlg.c (get_sarray_argument): add.

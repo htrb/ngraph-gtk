@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.105 2009/02/20 14:24:07 hito Exp $
+ * $Id: x11view.c,v 1.106 2009/02/20 14:56:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4304,6 +4304,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   MakeRuler(gc);
 
   if (! GlobalLock) {
+    /* I think it does not need to check chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid). */
     if (d->ShowFrame)
       ShowFocusFrame(gc);
 
