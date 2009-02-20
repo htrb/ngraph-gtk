@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.104 2009/01/29 01:22:32 hito Exp $
+ * $Id: x11view.c,v 1.105 2009/02/20 14:24:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4285,36 +4285,25 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
 
   d = &(NgraphApp.Viewer);
 
-  if ((e && e->count != 0) || GlobalLock)
+  if (e && e->count != 0)
     return TRUE;
-  /*
-  if (region == NULL)
-    region = gdk_region_new();
-  */
+
   gc = gdk_gc_new(e->window);
 
-  if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid)) {
-    /*
-    struct savedstdio save;
-    if (Mxlocal->autoredraw && ! d->ignoreredraw) {
-      ignorestdio(&save);
-      mx_redraw(Menulocal.obj, Menulocal.inst);
-      restorestdio(&save);
-    }
-    */
-    Mxlocal->scrollx = d->hscroll - d->cx;
-    Mxlocal->scrolly = d->vscroll - d->cy;
+  Mxlocal->scrollx = d->hscroll - d->cx;
+  Mxlocal->scrolly = d->vscroll - d->cy;
 
-    if (Mxlocal->pix) {
-      gdk_region_get_clipbox(e->region, &rect);
-      gdk_draw_drawable(e->window, gc, Mxlocal->pix,
-			d->hscroll - d->cx + rect.x,
-			d->vscroll - d->cy + rect.y,
-			rect.x, rect.y,
-			rect.width, rect.height);
-    }
-    MakeRuler(gc);
+  if (Mxlocal->pix) {
+    gdk_region_get_clipbox(e->region, &rect);
+    gdk_draw_drawable(e->window, gc, Mxlocal->pix,
+		      d->hscroll - d->cx + rect.x,
+		      d->vscroll - d->cy + rect.y,
+		      rect.x, rect.y,
+		      rect.width, rect.height);
+  }
+  MakeRuler(gc);
 
+  if (! GlobalLock) {
     if (d->ShowFrame)
       ShowFocusFrame(gc);
 
@@ -4328,9 +4317,8 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
 
     if (d->ShowCross)
       ShowCrossGauge(gc);
-
-    g_object_unref(G_OBJECT(gc));
   }
+  g_object_unref(G_OBJECT(gc));
   if (! PaintLock && region) {
     gdk_region_destroy(region);
     region = NULL;
