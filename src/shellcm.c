@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.12 2009/01/14 02:20:42 hito Exp $
+ * $Id: shellcm.c,v 1.13 2009/02/20 10:00:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -950,7 +950,6 @@ int cmget(struct nshell*nshell,int argc,char **argv)
 int cmput(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
-  char *image;
   int i,j,id,anum,*adata;
   struct narray iarray;
 
@@ -974,18 +973,12 @@ int cmput(struct nshell*nshell,int argc,char **argv)
   }
   for (i=0;i<anum;i++) {
     id=adata[i];
-    if ((image=saveobj(obj,id))==NULL) {
-      arraydel(&iarray);
-      return ERR;
-    }
     for (j=2;j<argc;j++) {
       if (sputfield(obj,id,argv[j])!=0) {
-        restoreobj(obj,id,image); 
         arraydel(&iarray);
         return ERR;
       }
     }
-    memfree(image);
   }
   arraydel(&iarray);
   return 0;

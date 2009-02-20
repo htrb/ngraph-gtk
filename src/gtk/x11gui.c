@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.22 2009/02/19 09:47:32 hito Exp $
+ * $Id: x11gui.c,v 1.23 2009/02/20 10:00:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -374,7 +374,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
-    btn = gtk_radio_button_new_with_label_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
+    btn = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
     gtk_box_pack_start(GTK_BOX(vbox), btn, FALSE, FALSE, 2);
     btn_ary[i] = btn;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn), i == *r);
@@ -575,7 +575,7 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
-    btn = gtk_check_button_new_with_label(d[i]);
+    btn = gtk_check_button_new_with_mnemonic(d[i]);
     gtk_box_pack_start(GTK_BOX(vbox), btn, FALSE, FALSE, 2);
     btn_ary[i] = btn;
   }

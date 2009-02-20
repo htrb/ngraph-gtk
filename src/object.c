@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.23 2009/02/13 10:09:47 hito Exp $
+ * $Id: object.c,v 1.24 2009/02/20 10:00:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2472,8 +2472,9 @@ int copyobj(struct objlist *obj,char *vname,int did,int sid)
   return did;
 }
 
-int _copyobj(struct objlist *obj,int did,int sid)
+static int _copyobj(struct objlist *obj,int did,int sid)
 /* _copyobj() returns id or -1 on error */
+/* this function shoud not be used becase this function do "shallow" copy. */
 {
   char *dinstcur;
   char *sinstcur,*instnext;
@@ -2514,6 +2515,7 @@ int moveobj(struct objlist *obj,int did,int sid)
   }
   if (getobjid(obj,sid)==-1) return -1;
   if (did==sid) return did;
+#if 0
   if ((dinstcur=chkobjinst(obj,did))==NULL) {
     if ((id=_newobj(obj))==-1) return -1;
     if (_copyobj(obj,id,sid)==-1) {
@@ -2531,6 +2533,18 @@ int moveobj(struct objlist *obj,int did,int sid)
       return -1;
     }
   }
+#else
+  dinstcur=chkobjinst(obj,did);
+  if (dinstcur == NULL) {
+    return -1;
+  }
+
+  exchobj(obj,did,sid);
+  if (delobj(obj,sid)==-1) {
+    exchobj(obj,did,sid);
+    return -1;
+  }
+#endif
   obj->curinst=*(int *)(dinstcur+idp);
   return *(int *)(dinstcur+idp);
 }
@@ -2700,7 +2714,8 @@ int exchobj(struct objlist *obj,int id1,int id2)
   return id2;
 }
 
-char *saveobj(struct objlist *obj,int id)
+/* 
+char *saveobj(struct objlist *obj, int id)
 {
   char *instcur,*instnew;
 
@@ -2720,6 +2735,7 @@ char *restoreobj(struct objlist *obj,int id,char *image)
   memfree(image);
   return instcur;
 }
+*/
 
 int chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
 /* spc  0: not found

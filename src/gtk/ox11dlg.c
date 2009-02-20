@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.14 2009/02/19 10:20:47 hito Exp $
+ * $Id: ox11dlg.c,v 1.15 2009/02/20 10:00:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -173,6 +173,60 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
+struct narray *
+get_sarray_argument(struct narray *sarray)
+{
+  int n, i, id;
+  char *ptr, sa[] = "sarray:", *argv[2];
+  struct narray iarray;
+  struct objlist *saobj;
+
+  n = arraynum(sarray);
+  if (n != 1)
+    return sarray;
+
+  ptr = * (char **) arraydata(sarray);
+  if (ptr == NULL)
+    return sarray;
+
+  if (strncmp(ptr, sa, sizeof(sa) / sizeof(*sa) - 1))
+    return sarray;
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(ptr, &saobj, &iarray, FALSE, NULL))
+    return sarray;
+
+  n = arraynum(&iarray);
+  if (n < 1) {
+    arraydel(&iarray);
+    return sarray;
+  }
+
+  id = * (int *) arraynget(&iarray, 0);
+  if (getobj(saobj, "num", id, 0, NULL, &n) == -1) {
+    arraydel(&iarray);
+    return sarray;
+  }
+
+  if (n < 1) {
+    arraydel(&iarray);
+    return sarray;
+  }
+
+  arraydel2(sarray);
+  for (i = 0; i < n; i++) {
+    argv[0] = (char *) & i;
+    argv[1] = NULL;
+    getobj(saobj, "get", id, 1, argv, &ptr);
+    if (arrayadd2(sarray, &ptr) == NULL)
+      break;
+  }
+
+  arraydel(&iarray);
+
+  return sarray;
+}
+
 static int
 dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
@@ -180,7 +234,7 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   int locksave, r, *ptr;
   struct narray *iarray, *sarray;
 
-  sarray = (struct narray *)argv[2];
+  sarray = get_sarray_argument((struct narray *) argv[2]);
   if (arraynum(sarray) == 0)
     return 1;
 
@@ -224,7 +278,7 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   char *r, *title, *caption;
   struct narray *iarray, *sarray;
 
-  sarray = (struct narray *)argv[2];
+  sarray = get_sarray_argument((struct narray *) argv[2]);
   if (arraynum(sarray) == 0)
     return 1;
 
@@ -277,7 +331,7 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   struct narray *array, *sarray, *iarray;
   char *title, *caption;
 
-  sarray = (struct narray *)argv[2];
+  sarray = get_sarray_argument((struct narray *) argv[2]);
   n = arraynum(sarray);
   if (n == 0)
     return 1;

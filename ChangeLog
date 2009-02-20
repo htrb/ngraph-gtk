@@ -1,3 +1,15 @@
+2009-02-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* demo/demo.ngp: use dialog::check
+
+	* src/gtk/ox11dlg.c (get_sarray_argument): add.
+	(dlgradio, dlgcombo, dlgcheck): use "get_sarray_argument()".
+
+	* src/object.c (saveobj, restoreobj): remove.
+	(_copyobj): static function.
+
+	* src/shellcm.c (cmput): never save and restore image of instance.
+
 2009-02-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11dlg.c (dlgradio, dlgcombo, dlgcheck): return 1 when
