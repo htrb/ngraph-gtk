@@ -61,7 +61,7 @@ do
     fi
 
     menu::draw
-    sleep 1
+    sleep 2
     dialog::select=`iexpr "($FILE_INDEX + 1) \\ ${sarray:CAPTION:num}"`
 done
 
