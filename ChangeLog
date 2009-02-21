@@ -287,9 +287,11 @@
 	* src/gtk/x11lgnd.c (LegendTextDialogSetup): set poniter of the
 	widget as "d->focus" instead of call "gtk_widget_grab_focus()".
 
-	* src/gtk/x11graph.c (SaveDialogSetup): 
+	* src/gtk/x11graph.c (SaveDialogSetup): set poniter of the widget
+	as "d->focus" instead of call "gtk_widget_grab_focus()".
 
-	* src/gtk/x11file.c (MarkDialogSetup): 
+	* src/gtk/x11file.c (MarkDialogSetup): set poniter of the widget
+	as "d->focus" instead of call "gtk_widget_grab_focus()".
 
 	* src/gtk/x11dialg.c (initdialog): initialize member "focus" of
 	each instance of struct.
