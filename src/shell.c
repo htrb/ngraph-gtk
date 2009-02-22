@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.18 2009/02/19 09:47:30 hito Exp $
+ * $Id: shell.c,v 1.19 2009/02/22 08:53:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2345,7 +2345,7 @@ int checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
             if (prmcur->str[1]==';') {
 	      cmdcur->cmdno=CPPATO;
 	      /* how is prmcur->prmno ? */
-	      prmcur->prmno=PPNULL; /* is it right?*/
+	      prmcur->prmno=PPNULL; /* is it right? */
 	    } else {
 	      prmcur->prmno=PPEND;
 	    }
