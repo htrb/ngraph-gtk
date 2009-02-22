@@ -132,13 +132,14 @@ exist object:instance_list <BR>
 get object:instance_list [-write -field -id -quote] field=argument ...<BR>
 put object:instance_list field=value ...<BR>
 exe object:instance_list field=argument ...<BR>
-cpy object:source,destination field<BR>
+cpy object:source,destination[,destination,...] field<BR>
 move object:instance1,instance2<BR>
 movetop object:instance<BR>
 movelast object:instance<BR>
 exch object:instance1,instance2<BR>
-object [object1 object2 ...] [-name -version -parent -id -field -size -current -last -instnace -instances]<BR>
-derive object [-instance]<BR>
+object [object1 object2 ...] [-name -version -parent -id -field -size
+-current -last -instnace -instances] [field ...]<BR>
+derive [-instance] object<BR>
 </BLOCKQUOTE>
 評価コマンド (数式expを評価)<BR>
 <BLOCKQUOTE>
