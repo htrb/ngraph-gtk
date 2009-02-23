@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.24 2009/02/17 08:35:56 hito Exp $
+ * $Id: x11menu.h,v 1.25 2009/02/23 06:09:58 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -26,6 +26,8 @@
 
 #include "x11dialg.h"
 #include "ogra2cairo.h"
+
+#define N2GTK_RULER_METRIC(v) (v / 100.0 * 72.0 / 25.4 * 10)
 
 enum MenuID {
   MenuIdGraphLoad,
@@ -126,7 +128,7 @@ struct Viewer
 {
   GtkWidget *Win;
   GdkWindow *win;
-  GtkWidget *menu, *VScroll, *HScroll, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
+  GtkWidget *menu, *VScroll, *HScroll, *VRuler, *HRuler, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
   int ShowFrame, ShowLine, ShowRect, ShowCross;
   int Capture, MoveData;
   enum MouseMode MouseMode;
@@ -251,7 +253,7 @@ extern int FWidth, FHeight;
 extern GtkWidget *TopLevel;
 extern struct narray ChildList;
 extern GdkDisplay *Disp;
-extern GdkColor black, white, gray, red, blue;
+extern GdkColor black, white, gray;
 extern GtkAccelGroup *AccelGroup;
 
 void application(char *file);
@@ -283,5 +285,6 @@ void menu_lock(int lock);
 void set_draw_lock(int lock);
 int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 void update_addin_menu(void);
+void set_widget_visibility(void);
 
 #endif

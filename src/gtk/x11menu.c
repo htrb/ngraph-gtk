@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.67 2009/02/18 02:00:19 hito Exp $
+ * $Id: x11menu.c,v 1.68 2009/02/23 06:09:58 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -379,7 +379,7 @@ static struct command_data Command2_data[] = {
 struct narray ChildList;
 int signaltrap = FALSE;
 
-GdkColor black, white, gray, red, blue;
+GdkColor white, gray;
 
 void
 menu_lock(int lock)
@@ -1474,6 +1474,24 @@ create_toolbar(GtkWidget *box, GtkOrientation o)
   return t;
 }
 
+void
+set_widget_visibility(void)
+{
+  if (Mxlocal->ruler) {
+    gtk_widget_show(NgraphApp.Viewer.HRuler);
+    gtk_widget_show(NgraphApp.Viewer.VRuler);
+  } else {
+    gtk_widget_hide(NgraphApp.Viewer.HRuler);
+    gtk_widget_hide(NgraphApp.Viewer.VRuler);
+  }
+
+  if (Menulocal.statusb) {
+    gtk_widget_show(NgraphApp.Message);
+  } else {
+    gtk_widget_hide(NgraphApp.Message);
+  }
+}
+
 static void
 setupwindow(void)
 {
@@ -1493,25 +1511,42 @@ setupwindow(void)
 
   NgraphApp.Viewer.HScroll = gtk_hscrollbar_new(NULL);
   NgraphApp.Viewer.VScroll = gtk_vscrollbar_new(NULL);
+  NgraphApp.Viewer.HRuler = gtk_hruler_new();
+  NgraphApp.Viewer.VRuler = gtk_vruler_new();
   NgraphApp.Viewer.Win = gtk_drawing_area_new();
 
-  table = gtk_table_new(2, 2, FALSE);
+  gtk_ruler_set_metric(GTK_RULER(NgraphApp.Viewer.HRuler), GTK_CENTIMETERS);
+  gtk_ruler_set_metric(GTK_RULER(NgraphApp.Viewer.VRuler), GTK_CENTIMETERS);
+
+  table = gtk_table_new(3, 3, FALSE);
 
   gtk_table_attach(GTK_TABLE(table),
-		   NgraphApp.Viewer.HScroll,
-		   0, 1, 1, 2,
-		   GTK_FILL, GTK_FILL,
-		   0, 0);
-
-  gtk_table_attach(GTK_TABLE(table),
-		   NgraphApp.Viewer.VScroll,
+		   NgraphApp.Viewer.HRuler,
 		   1, 2, 0, 1,
 		   GTK_FILL, GTK_FILL,
 		   0, 0);
 
   gtk_table_attach(GTK_TABLE(table),
+		   NgraphApp.Viewer.VRuler,
+		   0, 1, 1, 2,
+		   GTK_FILL, GTK_FILL,
+		   0, 0);
+
+  gtk_table_attach(GTK_TABLE(table),
+		   NgraphApp.Viewer.HScroll,
+		   1, 2, 2, 3,
+		   GTK_FILL, GTK_FILL,
+		   0, 0);
+
+  gtk_table_attach(GTK_TABLE(table),
+		   NgraphApp.Viewer.VScroll,
+		   2, 3, 1, 2,
+		   GTK_FILL, GTK_FILL,
+		   0, 0);
+
+  gtk_table_attach(GTK_TABLE(table),
 		   NgraphApp.Viewer.Win,
-		   0, 1, 0, 1,
+		   1, 2, 1, 2,
 		   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL,
 		   0, 0);
 
@@ -1799,11 +1834,8 @@ application(char *file)
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
 
-  set_gdk_color(&black, 0,     0,   0);
   set_gdk_color(&white, 255, 255, 255);
   set_gdk_color(&gray,  0xaa, 0xaa, 0xaa);
-  set_gdk_color(&red,   255,   0,   0);
-  set_gdk_color(&blue,    0,   0, 255);
 
   createicon(TopLevel);
   gtk_window_set_default_icon_list(NgraphApp.iconpix);
@@ -1815,6 +1847,7 @@ application(char *file)
   setupwindow();
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
+  set_widget_visibility();
 
   NgraphApp.FileName = NULL;
 
@@ -1894,6 +1927,7 @@ application(char *file)
 
   ResetEvent();
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
+  set_widget_visibility();
 
   AppMainLoop();
 
@@ -1985,6 +2019,9 @@ SetPoint(int x, int y)
     gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message3);
     gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message3, buf);
   }
+
+  g_object_set(NgraphApp.Viewer.HRuler, "position", N2GTK_RULER_METRIC(x), NULL);
+  g_object_set(NgraphApp.Viewer.VRuler, "position", N2GTK_RULER_METRIC(y), NULL);
 }
 
 void

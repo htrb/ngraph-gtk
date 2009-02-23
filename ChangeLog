@@ -1,3 +1,35 @@
+2009-02-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_redraw): call "draw_paper_frame()" after
+	call "GRAredraw()".
+
+	* src/gtk/x11menu.h (struct Viewer): add member "VRuler" and
+	"HRuler".
+
+	* src/gtk/x11opt.c (ViewerDialogClose): call
+	"set_widget_visibility()".
+
+	* src/gtk/x11menu.c (setupwindow): create GtkHRuler and GtkVRuler.
+	(SetPoint): set position of "NgraphApp.Viewer.HRuler" and
+	"NgraphApp.Viewer.VRuler".
+	(set_widget_visibility): add.
+	(application): call "set_widget_visibility()" after call
+	"gtk_widget_show_all()".
+
+	* src/gtk/x11view.c (MakeRuler): remove.
+	(SetVRuler, SetHRuler): add.
+	(ChangeDPI): call "SetHRuler()" and "SetVRuler()".
+	(ViewerEvHScroll): call "SetVRuler()".
+	(ViewerEvVScroll): call "SetHRuler()".
+	(draw_paper_frame): add.
+	(Draw, create_pix): call "draw_paper_frame()".
+	(ViewerWinSetup): call "ChangeDPI" after initialize "d->cx",
+	"d->cy", "d->hscroll" and "d->vscroll".
+	(ViewerEvPaint): don't call "MakeRuler()".
+
+	* src/gtk/main.c (my_sprintf): dno't change "buf_size" when the
+	return value of "realloc()" is NULL.
+
 2009-02-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerEvPaint): call "gdk_draw_drawable()"

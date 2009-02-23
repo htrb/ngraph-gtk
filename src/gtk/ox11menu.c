@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.49 2009/02/19 09:47:32 hito Exp $
+ * $Id: ox11menu.c,v 1.50 2009/02/23 06:09:58 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1121,6 +1121,7 @@ mx_redraw(struct objlist *obj, char *inst)
   }
 
   GRAredraw(obj, inst, TRUE, n);
+  draw_paper_frame();
   mxflush(obj, inst, NULL, 0, NULL);
 
   if (Mxlocal->win) {

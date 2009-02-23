@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.44 2009/02/19 09:47:32 hito Exp $
+ * $Id: x11opt.c,v 1.45 2009/02/23 06:09:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2045,6 +2045,8 @@ ViewerDialogClose(GtkWidget *w, void *data)
     return;
 
   Mxlocal->grid = spin_entry_get_val(d->grid);
+
+  set_widget_visibility();
 
   d->ret = ret;
 }

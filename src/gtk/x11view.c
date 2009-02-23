@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.106 2009/02/20 14:56:04 hito Exp $
+ * $Id: x11view.c,v 1.107 2009/02/23 06:09:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -135,7 +135,6 @@ static void ViewerPopupMenu(GtkWidget *w, gpointer client_data);
 static void AddInvalidateRect(struct objlist *obj, char *inst);
 static void AddList(struct objlist *obj, char *inst);
 static void DelList(struct objlist *obj, char *inst);
-static void MakeRuler(GdkGC *gc);
 static void ViewUpdate(void);
 static void ViewDelete(void);
 static void ViewCopy(void);
@@ -145,6 +144,8 @@ static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int 
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 static void reorder_object(enum object_move_type type);
 static void move_data_cancel(struct Viewer *d, gboolean show_message);
+static void SetHRuler(struct Viewer *d, int width);
+static void SetVRuler(struct Viewer *d, int height);
 
 
 static double 
@@ -728,7 +729,6 @@ ViewerWinSetup(void)
   OpenGC();
   OpenGRA();
   SetScroller();
-  ChangeDPI(TRUE);
   gdk_window_get_position(d->win, &x, &y);
   gdk_drawable_get_size(d->win, &width, &height);
   d->width = width;
@@ -738,6 +738,9 @@ ViewerWinSetup(void)
 
   d->hscroll = gtk_range_get_value(GTK_RANGE(d->HScroll));
   d->vscroll = gtk_range_get_value(GTK_RANGE(d->VScroll));
+
+  ChangeDPI(TRUE);
+
   g_signal_connect(d->Win, "expose-event", G_CALLBACK(ViewerEvPaint), NULL);
   g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), NULL);
 
@@ -4301,7 +4304,6 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
 		      rect.x, rect.y,
 		      rect.width, rect.height);
   }
-  MakeRuler(gc);
 
   if (! GlobalLock) {
     /* I think it does not need to check chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid). */
@@ -4337,6 +4339,7 @@ ViewerEvVScroll(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer u
   d = &(NgraphApp.Viewer);
 
   dy = value - d->vscroll;
+  d->vscroll = value;
 
   if (dy != 0) {
     gc = gdk_gc_new(d->win);
@@ -4345,10 +4348,9 @@ ViewerEvVScroll(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer u
     gdk_drawable_get_size(d->win, &width, &height);
     gdk_draw_drawable(d->win, gc, d->win, 0, dy, width, height, 0, 0);
     g_object_unref(gc);
+    SetVRuler(d, height);
   }
   gdk_window_invalidate_rect(d->win, NULL, TRUE);
-
-  d->vscroll = value;
 
   return FALSE;
 }
@@ -4364,6 +4366,7 @@ ViewerEvHScroll(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer u
   d = &(NgraphApp.Viewer);
 
   dx = value - d->hscroll;
+  d->hscroll = value;
 
   if (dx != 0) {
     gc = gdk_gc_new(d->win);
@@ -4372,10 +4375,9 @@ ViewerEvHScroll(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer u
     gdk_drawable_get_size(d->win, &width, &height);
     gdk_draw_drawable(d->win, gc, d->win, dx, 0, width, height, 0, 0);
     g_object_unref(gc);
+    SetHRuler(d, width);
   }
   gdk_window_invalidate_rect(d->win, NULL, TRUE);
-
-  d->hscroll = value;
 
   return FALSE;
 }
@@ -4423,88 +4425,25 @@ ViewerWinUpdate(int clear)
 }
 
 static void
-MakeRuler(GdkGC *gc)
+SetHRuler(struct Viewer *d, int width)
 {
-  int Width, Height;
-  int x, y, len;
-  struct Viewer *d;
-  int x1, y1, x2, y2, px, py, plen;
-  int minx, miny, width, height;
+  double x1, x2;
 
-  d = &(NgraphApp.Viewer);
+  x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx));
+  x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width));
 
-  Width = Menulocal.PaperWidth;
-  Height = Menulocal.PaperHeight;
+  gtk_ruler_set_range(GTK_RULER(d->HRuler), x1, x2, 0, x2);
+}
 
-  gdk_gc_set_function(gc, GDK_COPY);
-  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
+static void
+SetVRuler(struct Viewer *d, int height)
+{
+  double y1, y2;
+ 
+  y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy));
+  y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height));
 
-  x1 = mxd2p(0) - Mxlocal->scrollx;
-  y1 = mxd2p(0) - Mxlocal->scrolly;
-
-  x2 = mxd2p(Width) - 1 - Mxlocal->scrollx;
-  y2 = mxd2p(Height) - 1 - Mxlocal->scrolly;
-
-  minx = (x1 < x2) ? x1 : x2;
-  miny = (y1 < y2) ? y1 : y2;
-
-  width = abs(x2 - x1);
-  height = abs(y2 - y1);
-
-  gdk_gc_set_rgb_fg_color(gc, &gray);
-
-  gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
-
-  if (! Mxlocal->ruler)
-    return;
-
-  gdk_gc_set_rgb_fg_color(gc, &gray);
-  for (x = 500; x < Width; x += 500) {
-    if (!(x % 10000)) {
-      gdk_gc_set_rgb_fg_color(gc, &red);
-    }
-
-    if (!(x % 10000)) {
-      len = 225;
-    } else if (!(x % 1000)) {
-      len = 150;
-    } else {
-      len = 75;
-    }
-
-    px = mxd2p(x) - Mxlocal->scrollx;
-    plen = mxd2p(len);
-
-    gdk_draw_line(d->win, gc, px, y1, px, y1 + plen);
-    gdk_draw_line(d->win, gc, px, y2, px, y2 - plen);
-
-    if (!(x % 10000)) {
-      gdk_gc_set_rgb_fg_color(gc, &gray);
-    }
-  }
-  for (y = 500; y < Height; y += 500) {
-    if (!(y % 10000)) {
-      gdk_gc_set_rgb_fg_color(gc, &red);
-    }
-
-    if (!(y % 10000)) {
-      len = 225;
-    } else if (!(y % 1000)) {
-      len = 150;
-    } else {
-      len = 75;
-    }
-
-    py = mxd2p(y) - Mxlocal->scrolly;
-    plen = mxd2p(len);
-
-    gdk_draw_line(d->win, gc, x1, py, x1 + plen, py);
-    gdk_draw_line(d->win, gc, x2, py, x2 - plen, py);
-
-    if (!(y % 10000)) {
-      gdk_gc_set_rgb_fg_color(gc, &gray);
-    }
-  }
+  gtk_ruler_set_range(GTK_RULER(d->VRuler), y1, y2, 0, y2);
 }
 
 static int
@@ -4666,6 +4605,7 @@ create_pix(int w, int h)
   gdk_gc_set_clip_rectangle(Mxlocal->gc, &rect);
   gdk_gc_set_rgb_fg_color(Mxlocal->gc, &white);
   gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, 0, 0, w, h);
+  draw_paper_frame();
 
   Mxlocal->local->cairo = gdk_cairo_create(Mxlocal->pix);
   gra2cairo_set_antialias(Mxlocal->local, Mxlocal->local->antialias);
@@ -4822,6 +4762,10 @@ ChangeDPI(int redraw)
   if (redraw) {
     gdk_window_invalidate_rect(d->win, NULL, TRUE);
   }
+
+  gdk_drawable_get_size(Mxlocal->win, &w, &h);
+  SetHRuler(d, w);
+  SetVRuler(d, h);
 }
 
 void
@@ -4861,6 +4805,25 @@ ReopenGC(void)
 }
 
 void
+draw_paper_frame(void)
+{
+  int w, h;
+
+  if (Mxlocal->gc == NULL)
+    return;
+
+  gdk_gc_set_function(Mxlocal->gc, GDK_COPY);
+  gdk_gc_set_line_attributes(Mxlocal->gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
+
+  w = mxd2p(Menulocal.PaperWidth) - 1;
+  h = mxd2p(Menulocal.PaperHeight) - 1;
+
+  gdk_gc_set_rgb_fg_color(Mxlocal->gc, &gray);
+
+  gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, FALSE, 0, 0, w, h);
+}
+
+void
 Draw(int SelectFile)
 {
   int SShowFrame, SShowLine, SShowRect, SShowCross;
@@ -4895,8 +4858,6 @@ Draw(int SelectFile)
   if (d->ShowCross)
     ShowCrossGauge(gc);
 
-  g_object_unref(G_OBJECT(gc));
-
   SShowFrame = d->ShowFrame;
   SShowLine = d->ShowLine;
   SShowRect = d->ShowRect;
@@ -4923,7 +4884,7 @@ Draw(int SelectFile)
   d->ShowRect = SShowRect;
   d->ShowCross = SShowCross;
 
-  gc = gdk_gc_new(d->win);
+  draw_paper_frame();
 
   if (d->ShowFrame)
     ShowFocusFrame(gc);

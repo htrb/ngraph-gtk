@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.32 2009/01/04 11:56:03 hito Exp $
+ * $Id: main.c,v 1.33 2009/02/23 06:09:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1224,11 +1224,14 @@ my_sprintf(char **str, char *format, ...)
   va_end(arg);
   if (len > buf_size) {
     char *tmp;
-    buf_size = (len / BUF_UNIT + 1) * BUF_UNIT;
-    if ((tmp = realloc(buf, buf_size)) == NULL) {
+    int size;
+    size = (len / BUF_UNIT + 1) * BUF_UNIT;
+    tmp = realloc(buf, size);
+    if (tmp == NULL) {
       return -1;
     }
     buf = tmp;
+    buf_size = size;
     va_start(arg, format);
     len = vsnprintf(buf, buf_size, format, arg) + 1;
     va_end(arg);
