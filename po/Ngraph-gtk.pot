@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-19\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-02-21 10:41+0900\n"
+"POT-Creation-Date: 2009-02-23 15:10+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgid "gray"
 msgstr ""
 
 #: src/gtk/x11axis.c:75 src/gtk/x11file.c:99 src/gtk/x11lgnd.c:76
-#: src/gtk/x11merge.c:70 src/gtk/x11view.c:628
+#: src/gtk/x11merge.c:70 src/gtk/x11view.c:629
 msgid "_Duplicate"
 msgstr ""
 
@@ -336,7 +336,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/gtk/x11commn.c:961 src/gtk/x11opt.c:2100
+#: src/gtk/x11commn.c:961 src/gtk/x11opt.c:2102
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -726,7 +726,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1397 src/gtk/x11file.c:1665 src/gtk/x11view.c:504
+#: src/gtk/x11file.c:1397 src/gtk/x11file.c:1665 src/gtk/x11view.c:505
 msgid "Line No."
 msgstr ""
 
@@ -847,11 +847,11 @@ msgstr ""
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:2841 src/gtk/x11view.c:513
+#: src/gtk/x11file.c:2841 src/gtk/x11view.c:514
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:2845 src/gtk/x11view.c:514
+#: src/gtk/x11file.c:2845 src/gtk/x11view.c:515
 msgid "_Move"
 msgstr ""
 
@@ -1620,11 +1620,11 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2164
+#: src/gtk/x11menu.c:2201
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2214
+#: src/gtk/x11menu.c:2251
 msgid "Question"
 msgstr ""
 
@@ -1849,7 +1849,7 @@ msgstr ""
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:2093 src/gtk/x11print.c:241 src/gtk/x11print.c:846
+#: src/gtk/x11opt.c:2095 src/gtk/x11print.c:241 src/gtk/x11print.c:846
 #: src/gtk/x11print.c:949 src/gtk/x11print.c:1075
 #, c-format
 msgid ""
@@ -1858,7 +1858,7 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11opt.c:2094
+#: src/gtk/x11opt.c:2096
 msgid "Save as .Ngraph.ngp"
 msgstr ""
 
@@ -1915,7 +1915,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4881
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4844
 msgid "Drawing."
 msgstr ""
 
@@ -1952,65 +1952,65 @@ msgstr ""
 msgid "Executing `%.128s'."
 msgstr ""
 
-#: src/gtk/x11view.c:619
+#: src/gtk/x11view.c:620
 msgid "_Left"
 msgstr ""
 
-#: src/gtk/x11view.c:620
+#: src/gtk/x11view.c:621
 msgid "_Vertical center"
 msgstr ""
 
-#: src/gtk/x11view.c:621
+#: src/gtk/x11view.c:622
 msgid "_Right"
 msgstr ""
 
-#: src/gtk/x11view.c:623
+#: src/gtk/x11view.c:624
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11view.c:624
+#: src/gtk/x11view.c:625
 msgid "_Holizontal center"
 msgstr ""
 
-#: src/gtk/x11view.c:625
+#: src/gtk/x11view.c:626
 msgid "_Bottom"
 msgstr ""
 
-#: src/gtk/x11view.c:633
+#: src/gtk/x11view.c:634
 msgid "_Align"
 msgstr ""
 
-#: src/gtk/x11view.c:634
+#: src/gtk/x11view.c:635
 msgid "_Show cross"
 msgstr ""
 
-#: src/gtk/x11view.c:836 src/gtk/x11view.c:847
+#: src/gtk/x11view.c:839 src/gtk/x11view.c:850
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:939
+#: src/gtk/x11view.c:942
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:948
+#: src/gtk/x11view.c:951
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2233
+#: src/gtk/x11view.c:2236
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3356
+#: src/gtk/x11view.c:3359
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4875
+#: src/gtk/x11view.c:4838
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4882
+#: src/gtk/x11view.c:4845
 msgid "Drawing"
 msgstr ""
 
