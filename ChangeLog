@@ -2,6 +2,10 @@
 
 	* src/gtk/ox11menu.c (mx_redraw): call "draw_paper_frame()" after
 	call "GRAredraw()".
+	(check_object_name): add.
+	(mx_get_focused): use "check_object_name()" to check the object is
+	exist in the argument.
+	(gtkmenu): targument type of "focused" is "sa".
 
 	* src/gtk/x11menu.h (struct Viewer): add member "VRuler" and
 	"HRuler".

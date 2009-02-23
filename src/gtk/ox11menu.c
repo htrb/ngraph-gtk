@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.50 2009/02/23 06:09:58 hito Exp $
+ * $Id: ox11menu.c,v 1.51 2009/02/23 09:39:31 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1283,14 +1283,34 @@ mxfullpathngp(struct objlist *obj, char *inst, char *rval, int argc,
 }
 
 static int
+check_object_name(struct objlist *obj, struct narray *array)
+{
+  int i, n;
+  char **adata;
+
+  if (array == NULL)
+    return 0;
+
+  adata = arraydata(array);
+
+  n = arraynum(array);
+  for (i = 0; i < n; i ++) {
+    if (adata[i] && strcmp(obj->name, adata[i]) == 0) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
+static int
 mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int num, i, id;
   char buf[256], *name, *ptr;
-  struct narray *oarray;
+  struct narray *oarray, *sarray;
   struct Viewer *d;
   struct focuslist **focus;
-  
 
   arrayfree2(*(struct narray **)rval);
   *(char **)rval = NULL;
@@ -1305,8 +1325,13 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   if (oarray == NULL)
     return 1;
 
+  sarray = (argc > 2) ? (struct narray *) argv[2] : NULL;
+
   focus = (struct focuslist **) arraydata(d->focusobj);
   for (i = 0; i < num; i++) {
+    if (check_object_name(focus[i]->obj, sarray))
+      continue;
+
     inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
     if (inst) {
       _getobj(focus[i]->obj, "id", inst, &id);
@@ -1427,7 +1452,7 @@ static struct objtable gtkmenu[] = {
   {"draw", NVFUNC, NREAD | NEXEC, mxdraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, mxclear, "", 0},
-  {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, "", 0},
+  {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, "sa", 0},
   {"print", NVFUNC, NREAD | NEXEC, mx_print, "bi", 0},
   {"echo", NVFUNC, NREAD | NEXEC, mx_echo, "s", 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
