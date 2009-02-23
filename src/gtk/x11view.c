@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.107 2009/02/23 06:09:58 hito Exp $
+ * $Id: x11view.c,v 1.108 2009/02/23 07:59:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4452,10 +4452,10 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
   int i, num;
   struct focuslist *focus;
 
-  num = arraynum(focusobj);
-
   if (fobj == NULL)
     return -1;
+
+  num = arraynum(focusobj);
 
   for (i = 0; i < num; i++) {
     focus = *(struct focuslist **) arraynget(focusobj, i);
