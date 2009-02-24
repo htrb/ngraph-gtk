@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.45 2009/02/23 06:09:58 hito Exp $
+ * $Id: x11opt.c,v 1.46 2009/02/24 09:08:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -719,6 +719,86 @@ PrefScriptDialogAdd(GtkWidget *w, gpointer client_data)
   PrefScriptDialogSetupItem(d->widget, d);
 }
 
+static void
+PrefScriptDialogUp(GtkWidget *w, gpointer client_data)
+{
+  struct PrefScriptDialog *d;
+  int a, j;
+  struct script *fcur, *fprev, *tmp;
+
+  d = (struct PrefScriptDialog *) client_data;
+
+  a = list_store_get_selected_index(d->list);
+  if (a < 1)
+    return;
+
+  a--;
+  j = 0;
+  fprev = NULL;
+  fcur = Menulocal.scriptroot;
+  while (fcur) {
+    if (j == a) {
+      if (fcur->next == NULL) {
+	break;
+      } else if (fprev == NULL) {
+	Menulocal.scriptroot = fcur->next;
+      } else {
+	fprev->next = fcur->next;
+      }
+
+      tmp = fcur->next;
+      fcur->next = tmp->next;
+      tmp->next = fcur;
+      break;
+    }
+    fprev = fcur;
+    fcur = fcur->next;
+    j++;
+  }
+  PrefScriptDialogSetupItem(d->widget, d);
+  list_store_select_nth(d->list, a);
+}
+
+static void
+PrefScriptDialogDown(GtkWidget *w, gpointer client_data)
+{
+  struct PrefScriptDialog *d;
+  int a, n, j;
+  struct script *fcur, *fprev, *tmp;
+
+  d = (struct PrefScriptDialog *) client_data;
+
+  a = list_store_get_selected_index(d->list);
+  n = list_store_get_num(d->list);
+  if (a < 0 || a >= n - 1)
+    return;
+
+  j = 0;
+  fprev = NULL;
+  fcur = Menulocal.scriptroot;
+  while (fcur) {
+    if (j == a) {
+      if (fcur->next == NULL) {
+	break;
+      } else if (fprev == NULL) {
+	Menulocal.scriptroot = fcur->next;
+      } else {
+	fprev->next = fcur->next;
+      }
+
+      tmp = fcur->next;
+      fcur->next = tmp->next;
+      tmp->next = fcur;
+      break;
+    }
+    fprev = fcur;
+    fcur = fcur->next;
+    j++;
+  }
+  PrefScriptDialogSetupItem(d->widget, d);
+  list_store_select_nth(d->list, a + 1);
+}
+
 static gboolean
 script_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 {
@@ -745,14 +825,18 @@ script_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 static gboolean 
 scriptlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
-  gboolean n;
+  int a, n;
   struct PrefScriptDialog *d;
 
   d = (struct PrefScriptDialog *) user_data;
 
-  n = gtk_tree_selection_count_selected_rows(sel);
-  gtk_widget_set_sensitive(d->update_b, n);
-  gtk_widget_set_sensitive(d->del_b, n);
+  a = list_store_get_selected_index(d->list);
+  n = list_store_get_num(d->list);
+
+  gtk_widget_set_sensitive(d->update_b, a >= 0);
+  gtk_widget_set_sensitive(d->del_b, a >= 0);
+  gtk_widget_set_sensitive(d->up_b, a > 0);
+  gtk_widget_set_sensitive(d->down_b, a >= 0 && a < n - 1);
 
   return FALSE;
 }
@@ -804,6 +888,18 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     gtk_widget_set_sensitive(w, FALSE);
     d->del_b = w;
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogDown), d);
+    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->down_b = w;
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogUp), d);
+    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->up_b = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
 

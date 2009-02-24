@@ -1,5 +1,10 @@
 2009-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (PrefScriptDialogUp, PrefScriptDialogDown): add
+	(scriptlist_sel_cb): set sensitibity of "d->up_b" and "d->down_b".
+	(PrefScriptDialogSetup): create GtkButton "d->up_b" and
+	"d->down_b".
+
 	* src/gtk/x11view.c (ShowPoints, mouse_up_lgend2): use
 	"POINT_TYPE_DRAW1".
 	(ViewerEvLButtonUp): use "POINT_TYPE_POINT".

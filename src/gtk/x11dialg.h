@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.30 2009/02/17 08:35:56 hito Exp $
+ * $Id: x11dialg.h,v 1.31 2009/02/24 09:08:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -698,7 +698,7 @@ struct PrefScriptDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *list, *update_b, *del_b;
+  GtkWidget *list, *update_b, *del_b, *up_b, *down_b;
 };
 void PrefScriptDialog(struct PrefScriptDialog *data);
 
