@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.25 2009/02/23 06:09:58 hito Exp $
+ * $Id: x11menu.h,v 1.26 2009/02/24 02:40:40 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -91,26 +91,31 @@ enum MenuID {
 enum DrawLockVal {DrawLockNone, DrawLockDraw, DrawLockExpose};
 
 enum PointerType {
-  PointB,
-  LegendB,
-  LineB,
-  CurveB,
-  PolyB,
-  RectB,
-  ArcB,
-  MarkB,
-  TextB,
-  GaussB,
-  AxisB,
-  TrimB,
-  FrameB,
-  SectionB,
-  CrossB,
-  SingleB,
-  DataB,
-  EvalB,
-  ZoomB,
+  PointB   = 0x000001,
+  LegendB  = 0x000002,
+  LineB    = 0x000004,
+  CurveB   = 0x000008,
+  PolyB    = 0x000010,
+  RectB    = 0x000020,
+  ArcB     = 0x000040,
+  MarkB    = 0x000080,
+  TextB    = 0x000100,
+  GaussB   = 0x000200,
+  AxisB    = 0x000400,
+  TrimB    = 0x000800,
+  FrameB   = 0x001000,
+  SectionB = 0x002000,
+  CrossB   = 0x004000,
+  SingleB  = 0x008000,
+  DataB    = 0x010000,
+  EvalB    = 0x020000,
+  ZoomB    = 0x040000,
 };
+
+#define POINT_TYPE_POINT (PointB | LegendB | AxisB)
+#define POINT_TYPE_DRAW1 (ArcB | RectB | GaussB | FrameB | SectionB | CrossB)
+#define POINT_TYPE_DRAW2 (CurveB | LineB | PolyB | SingleB)
+#define POINT_TYPE_TRIM  (TrimB | DataB | EvalB)
 
 enum MouseMode {
   MOUSENONE,

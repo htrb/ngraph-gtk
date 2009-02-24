@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.68 2009/02/23 06:09:58 hito Exp $
+ * $Id: x11menu.c,v 1.69 2009/02/24 02:40:40 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2111,7 +2111,7 @@ SetCursor(unsigned int type)
   struct Viewer *d;
   GdkWindow *win;
 
-  if (NgraphApp.cursor == NULL)
+  if (NgraphApp.cursor == NULL || CursorType == type)
     return;
 
   d = &(NgraphApp.Viewer);

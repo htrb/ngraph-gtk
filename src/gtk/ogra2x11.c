@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.25 2009/02/05 08:40:15 hito Exp $
+ * $Id: ogra2x11.c,v 1.26 2009/02/24 02:40:40 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -173,6 +173,7 @@ gtkevpaint(GtkWidget * w, GdkEventExpose * e, gpointer user_data)
   rect.height = SHRT_MAX;
   gdk_gc_set_clip_rectangle(gtklocal->gc, &rect);
   gdk_draw_drawable(gtklocal->window, gtklocal->gc, gtklocal->win, 0, 0, 0, 0, -1, -1);
+  gdk_gc_set_clip_rectangle(gtklocal->gc, NULL);
 
   return FALSE;
 }

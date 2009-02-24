@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.51 2009/02/23 09:39:31 hito Exp $
+ * $Id: ox11menu.c,v 1.52 2009/02/24 02:40:40 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1222,6 +1222,7 @@ mx_clear(GdkRegion *region)
     color.blue = Menulocal.bg_b * 0xff;
     gdk_gc_set_rgb_fg_color(Mxlocal->gc, &color);
     gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, 0, 0, w, h);
+    gdk_gc_set_clip_region(Mxlocal->gc, NULL);
   }
 }
 

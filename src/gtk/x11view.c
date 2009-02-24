@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.108 2009/02/23 07:59:51 hito Exp $
+ * $Id: x11view.c,v 1.109 2009/02/24 02:40:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1854,8 +1854,7 @@ ShowPoints(GdkGC *gc)
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  if ((d->Mode == RectB) || (d->Mode == ArcB) || (d->Mode == GaussB)
-      || (d->Mode == FrameB) || (d->Mode == SectionB) || (d->Mode == CrossB)) {
+  if (d->Mode & POINT_TYPE_DRAW1) {
 
     if (num == 2) {
       gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
@@ -2489,7 +2488,7 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
     d->FrameOfsX = d->FrameOfsY = 0;
     ShowFocusFrame(dc);
     d->ShowFrame = TRUE;
-    if (d->Mode == LegendB || (d->Mode==PointB && !axis))
+    if (d->Mode == LegendB || (d->Mode == PointB && !axis))
       d->allclear=FALSE;
     UpdateAll();
   }
@@ -2713,14 +2712,7 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
   ShowPoints(dc);
 
-  if (d->Mode == RectB ||
-      d->Mode == ArcB ||
-      d->Mode == GaussB ||
-      d->Mode == FrameB ||
-      d->Mode == SectionB ||
-      d->Mode == CrossB ||
-      d->Mode == SingleB) {
-
+  if ((d->Mode & POINT_TYPE_DRAW1) || d->Mode == SingleB) {
     if (arraynum(d->points) == 3) {
       d->Capture = FALSE;
       ViewerEvLButtonDblClk(state, point, d);
@@ -2767,7 +2759,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
       break;
     case MOUSEPOINT:
       mouse_up_point(state, point, d, dc, zoom);
-      if (d->Mode == PointB || d->Mode == LegendB || d->Mode == AxisB) {
+      if (d->Mode & POINT_TYPE_POINT) {
 	d->allclear = FALSE;
 	UpdateAll();
       }
@@ -3460,7 +3452,6 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
   double zoom;
 
   num = arraynum(d->focusobj);
-
   if (num == 0)
     return GDK_LEFT_PTR;
 
@@ -3671,14 +3662,13 @@ static gboolean
 ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
-  int x, y, dx, dy, vx1, vx2, vy1, vy2, wx, wy, w, h, depth;
-  double cc, nn, val;
-  double zoom, zoom2;
+  int x, y, dx, dy, w, h;
+  double val, zoom;
 
   if (Menulock || GlobalLock || ! d->win)
     return FALSE;
 
-  gdk_window_get_geometry(d->win, &wx, &wy, &w, &h, &depth);
+  gdk_window_get_geometry(d->win, NULL, NULL, &w, &h, NULL);
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -3696,7 +3686,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
   CoordWinSetCoord(dx, dy);
   SetPoint(dx, dy);
-  dc = gdk_gc_new(d->win);
+  dc = Mxlocal->gc;
 
   if (region == NULL) {
     if (d->ShowCross)
@@ -3738,9 +3728,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 	pos == GDK_TOP_RIGHT_CORNER ||
 	pos == GDK_BOTTOM_RIGHT_CORNER ||
 	pos == GDK_CROSSHAIR ||
-	d->Mode == TrimB ||
-	d->Mode == DataB ||
-	d->Mode == EvalB) {
+	(d->Mode & POINT_TYPE_TRIM)) {
 
       if (d->MouseMode == MOUSEDRAG) {
 	ShowFocusFrame(dc);
@@ -3762,6 +3750,8 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
       } else if ((MOUSEZOOM1 <= d->MouseMode)
 		 && (d->MouseMode <= MOUSEZOOM4)) {
+	double cc, nn, zoom2;
+	int vx1, vx2, vy1, vy2;
 
 	ShowFrameRect(dc);
 
@@ -3826,9 +3816,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
       } else if (d->MouseMode == MOUSEPOINT) {
 	update_frame_rect(point, d, dc, zoom);
       }
-    } else if (d->Mode == PointB ||
-	       d->Mode == LegendB ||
-	       d->Mode == AxisB) {
+    } else if (d->Mode & POINT_TYPE_POINT) {
       if (d->MouseMode == MOUSEPOINT) {
 	update_frame_rect(point, d, dc, zoom);
       }
@@ -3841,17 +3829,9 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 	po = *(struct pointslist **) arraylast(d->points);
 
 	if (state & GDK_CONTROL_MASK) {
-	  if (d->Mode == ArcB ||
-	      d->Mode == RectB ||
-	      d->Mode == GaussB ||
-	      d->Mode == FrameB ||
-	      d->Mode == SectionB ||
-	      d->Mode == CrossB) {
+	  if (d->Mode & POINT_TYPE_DRAW1) {
 	    calc_integer_ratio(d->points, &dx, &dy);
-	  } else if (d->Mode == CurveB ||
-		     d->Mode == LineB ||
-		     d->Mode == PolyB ||
-		     d->Mode == SingleB) {
+	  } else if (d->Mode & POINT_TYPE_DRAW2) {
 	    calc_snap_angle(d->points, &dx, &dy);
 	    if (! (state & GDK_SHIFT_MASK)) {
 	      CheckGrid(FALSE, 0, &dx, &dy, NULL);
@@ -3867,7 +3847,6 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
       ShowPoints(dc);
     }
   }
-  g_object_unref(G_OBJECT(dc));
 
   return TRUE;
 }
@@ -4128,7 +4107,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     }
 
     if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG))
-	&& ((d->Mode == PointB) || (d->Mode == LegendB) || (d->Mode == AxisB))) {
+	&& (d->Mode & POINT_TYPE_POINT)) {
       dc = gdk_gc_new(d->win);
       zoom = Menulocal.PaperZoom / 10000.0;
       ShowFocusFrame(dc);
@@ -4291,7 +4270,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   if (e && e->count != 0)
     return TRUE;
 
-  gc = gdk_gc_new(e->window);
+  gc = Mxlocal->gc;
 
   Mxlocal->scrollx = d->hscroll - d->cx;
   Mxlocal->scrolly = d->vscroll - d->cy;
@@ -4321,7 +4300,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     if (d->ShowCross)
       ShowCrossGauge(gc);
   }
-  g_object_unref(G_OBJECT(gc));
+
   if (! PaintLock && region) {
     gdk_region_destroy(region);
     region = NULL;
@@ -4606,6 +4585,7 @@ create_pix(int w, int h)
   gdk_gc_set_rgb_fg_color(Mxlocal->gc, &white);
   gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, 0, 0, w, h);
   draw_paper_frame();
+  gdk_gc_set_clip_rectangle(Mxlocal->gc, NULL);
 
   Mxlocal->local->cairo = gdk_cairo_create(Mxlocal->pix);
   gra2cairo_set_antialias(Mxlocal->local, Mxlocal->local->antialias);
@@ -5628,9 +5608,7 @@ ViewCopy(void)
 
   d = &(NgraphApp.Viewer);
 
-  if (d->MouseMode != MOUSENONE ||
-      (d->Mode != PointB &&
-       d->Mode != LegendB && d->Mode == AxisB))
+  if (d->MouseMode != MOUSENONE || ! (d->Mode & POINT_TYPE_POINT))
     return;
 
   dc = gdk_gc_new(d->win);

@@ -1,3 +1,29 @@
+2009-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ShowPoints, mouse_up_lgend2): use
+	"POINT_TYPE_DRAW1".
+	(ViewerEvLButtonUp): use "POINT_TYPE_POINT".
+	(ViewerEvMouseMove): use "POINT_TYPE_TRIM", "POINT_TYPE_POINT",
+	"POINT_TYPE_DRAW1" and "POINT_TYPE_DRAW2".
+	(ViewerEvKeyDown): use "POINT_TYPE_POINT".
+	(ViewCopy): use "POINT_TYPE_POINT".
+	(ShowPoints): use "POINT_TYPE_DRAW1".
+	(mouse_up_lgend2): use "POINT_TYPE_DRAW1".
+	(ViewerEvMouseMove, ViewerEvPaint): use "Mxlocal->gc" instead of
+	newly created GdkGC.
+
+	* src/gtk/x11menu.h (POINT_TYPE_POINT, POINT_TYPE_DRAW1)
+	(POINT_TYPE_DRAW2, POINT_TYPE_TRIM): add.
+
+	* src/gtk/x11menu.c (SetCursor): do nothing when "type" is same as
+	"CursorType".
+
+	* src/gtk/ox11menu.c (mx_clear): turn off clipping after draw
+	pixmap.
+
+	* src/gtk/ogra2x11.c (gtkevpaint): turn off clipping after draw
+	pixmap.
+
 2009-02-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (mx_redraw): call "draw_paper_frame()" after
