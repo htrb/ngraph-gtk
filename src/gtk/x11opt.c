@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.46 2009/02/24 09:08:04 hito Exp $
+ * $Id: x11opt.c,v 1.47 2009/02/24 09:48:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1171,6 +1171,86 @@ PrefDriverDialogAdd(GtkWidget *w, gpointer client_data)
   }
 }
 
+static void
+PrefDriverDialogUp(GtkWidget *w, gpointer client_data)
+{
+  struct PrefDriverDialog *d;
+  int a, j;
+  struct extprinter *fcur, *fprev, *tmp;
+
+  d = (struct PrefDriverDialog *) client_data;
+
+  a = list_store_get_selected_index(d->list);
+  if (a < 1)
+    return;
+
+  a--;
+  j = 0;
+  fprev = NULL;
+  fcur = Menulocal.extprinterroot;
+  while (fcur) {
+    if (j == a) {
+      if (fcur->next == NULL) {
+	break;
+      } else if (fprev == NULL) {
+	Menulocal.extprinterroot = fcur->next;
+      } else {
+	fprev->next = fcur->next;
+      }
+
+      tmp = fcur->next;
+      fcur->next = tmp->next;
+      tmp->next = fcur;
+      break;
+    }
+    fprev = fcur;
+    fcur = fcur->next;
+    j++;
+  }
+  PrefDriverDialogSetupItem(d->widget, d);
+  list_store_select_nth(d->list, a);
+}
+
+static void
+PrefDriverDialogDown(GtkWidget *w, gpointer client_data)
+{
+  struct PrefDriverDialog *d;
+  int a, n, j;
+  struct extprinter *fcur, *fprev, *tmp;
+
+  d = (struct PrefDriverDialog *) client_data;
+
+  a = list_store_get_selected_index(d->list);
+  n = list_store_get_num(d->list);
+  if (a < 0 || a >= n - 1)
+    return;
+
+  j = 0;
+  fprev = NULL;
+  fcur = Menulocal.extprinterroot;
+  while (fcur) {
+    if (j == a) {
+      if (fcur->next == NULL) {
+	break;
+      } else if (fprev == NULL) {
+	Menulocal.extprinterroot = fcur->next;
+      } else {
+	fprev->next = fcur->next;
+      }
+
+      tmp = fcur->next;
+      fcur->next = tmp->next;
+      tmp->next = fcur;
+      break;
+    }
+    fprev = fcur;
+    fcur = fcur->next;
+    j++;
+  }
+  PrefDriverDialogSetupItem(d->widget, d);
+  list_store_select_nth(d->list, a + 1);
+}
+
 static gboolean
 driver_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 {
@@ -1197,14 +1277,18 @@ driver_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 static gboolean 
 drvlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
-  gboolean n;
+  int a, n;
   struct PrefDriverDialog *d;
 
   d = (struct PrefDriverDialog *) user_data;
 
-  n = gtk_tree_selection_count_selected_rows(sel);
-  gtk_widget_set_sensitive(d->update_b, n);
-  gtk_widget_set_sensitive(d->del_b, n);
+  a = list_store_get_selected_index(d->list);
+  n = list_store_get_num(d->list);
+
+  gtk_widget_set_sensitive(d->update_b, a >= 0);
+  gtk_widget_set_sensitive(d->del_b, a >= 0);
+  gtk_widget_set_sensitive(d->up_b, a > 0);
+  gtk_widget_set_sensitive(d->down_b, a >= 0 && a < n - 1);
 
   return FALSE;
 }
@@ -1254,6 +1338,18 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     gtk_widget_set_sensitive(w, FALSE);
     d->del_b = w;
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogDown), d);
+    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->down_b = w;
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogUp), d);
+    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->up_b = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
@@ -1505,6 +1601,98 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   gtk_widget_destroy (dialog);
 }
 
+static void
+PrefFontDialogUp(GtkWidget *w, gpointer client_data)
+{
+  struct PrefFontDialog *d;
+  int a, j;
+  struct fontmap *fcur, *fprev, *tmp;
+
+  d = (struct PrefFontDialog *) client_data;
+
+  a = list_store_get_selected_index(d->list);
+  if (a < 1)
+    return;
+
+  a--;
+  j = 0;
+  fprev = NULL;
+  fcur = Gra2cairoConf->fontmap_list_root;
+  while (fcur) {
+    if (j == a) {
+      tmp = fcur->next;
+      if (tmp == NULL) {
+	break;
+      } else if (fprev == NULL) {
+	Gra2cairoConf->fontmap_list_root = tmp;
+	tmp->prev = NULL;
+      } else {
+	fprev->next = tmp;
+	tmp->prev = fprev;
+      }
+
+      fcur->next = tmp->next;
+      if (tmp->next)
+	tmp->next->prev = fcur;
+
+      tmp->next = fcur;
+      fcur->prev = tmp;
+      break;
+    }
+    fprev = fcur;
+    fcur = fcur->next;
+    j++;
+  }
+  PrefFontDialogSetupItem(d);
+  list_store_select_nth(d->list, a);
+}
+
+static void
+PrefFontDialogDown(GtkWidget *w, gpointer client_data)
+{
+  struct PrefFontDialog *d;
+  int a, n, j;
+  struct fontmap *fcur, *fprev, *tmp;
+
+  d = (struct PrefFontDialog *) client_data;
+
+  a = list_store_get_selected_index(d->list);
+  n = list_store_get_num(d->list);
+  if (a < 0 || a >= n - 1)
+    return;
+
+  j = 0;
+  fprev = NULL;
+  fcur = Gra2cairoConf->fontmap_list_root;
+  while (fcur) {
+    if (j == a) {
+      if (fcur->next == NULL) {
+	break;
+      } else if (fprev == NULL) {
+	Gra2cairoConf->fontmap_list_root = fcur->next;
+	fcur->next->prev = NULL;
+      } else {
+	fprev->next = fcur->next;
+	fcur->next->prev = fprev;
+      }
+
+      tmp = fcur->next;
+      fcur->next = tmp->next;
+      if (tmp->next)
+	tmp->next->prev = fcur;
+
+      tmp->next = fcur;
+      fcur->prev = tmp;
+      break;
+    }
+    fprev = fcur;
+    fcur = fcur->next;
+    j++;
+  }
+  PrefFontDialogSetupItem(d);
+  list_store_select_nth(d->list, a + 1);
+}
+
 static gboolean
 font_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 {
@@ -1531,14 +1719,18 @@ font_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 static gboolean 
 fontlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
-  gboolean n;
+  int a, n;
   struct PrefFontDialog *d;
 
   d = (struct PrefFontDialog *) user_data;
 
-  n = gtk_tree_selection_count_selected_rows(sel);
-  gtk_widget_set_sensitive(d->update_b, n);
-  gtk_widget_set_sensitive(d->del_b, n);
+  a = list_store_get_selected_index(d->list);
+  n = list_store_get_num(d->list);
+
+  gtk_widget_set_sensitive(d->update_b, a >= 0);
+  gtk_widget_set_sensitive(d->del_b, a >= 0);
+  gtk_widget_set_sensitive(d->up_b, a > 0);
+  gtk_widget_set_sensitive(d->down_b, a >= 0 && a < n - 1);
 
   return FALSE;
 }
@@ -1598,6 +1790,18 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     gtk_widget_set_sensitive(w, FALSE);
     d->del_b = w;
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogDown), d);
+    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->down_b = w;
+
+    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogUp), d);
+    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->up_b = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);

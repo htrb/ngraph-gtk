@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.31 2009/02/24 09:08:04 hito Exp $
+ * $Id: x11dialg.h,v 1.32 2009/02/24 09:48:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -725,7 +725,7 @@ struct PrefDriverDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *list, *update_b, *del_b;
+  GtkWidget *list, *update_b, *del_b, *up_b, *down_b;
 };
 void PrefDriverDialog(struct PrefDriverDialog *data);
 
@@ -738,7 +738,7 @@ struct PrefFontDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *list, *alias, *two_byte, *update_b, *del_b;
+  GtkWidget *list, *alias, *two_byte, *update_b, *del_b, *up_b, *down_b;
 };
 void PrefFontDialog(struct PrefFontDialog *data);
 
