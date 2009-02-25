@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.47 2009/02/24 09:48:14 hito Exp $
+ * $Id: x11opt.c,v 1.48 2009/02/25 09:11:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -597,7 +597,7 @@ SetScriptDialog(struct SetScriptDialog *data, struct script *sc)
 }
 
 static void
-PrefScriptDialogSetupItem(GtkWidget *w, struct PrefScriptDialog *d)
+PrefScriptDialogSetupItem(struct PrefScriptDialog *d)
 {
   struct script *fcur;
   GtkTreeIter iter;
@@ -614,238 +614,37 @@ PrefScriptDialogSetupItem(GtkWidget *w, struct PrefScriptDialog *d)
 }
 
 static void
-PrefScriptDialogUpdate(GtkWidget *w, gpointer client_data)
+script_free(struct script *fdel)
 {
-  struct PrefScriptDialog *d;
-  int a, j;
-  struct script *fcur;
-
-  d = (struct PrefScriptDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-
-  j = 0;
-  fcur = Menulocal.scriptroot;
-  while (fcur) {
-    if (j == a)
-      break;
-    fcur = fcur->next;
-    j++;
-  }
-  if (fcur) {
-    SetScriptDialog(&DlgSetScript, fcur);
-    DialogExecute(d->widget, &DlgSetScript);
-    PrefScriptDialogSetupItem(d->widget, d);
-  }
+  memfree(fdel->name);
+  memfree(fdel->script);
+  memfree(fdel->description);
+  memfree(fdel->option);
+  memfree(fdel);
 }
 
 static void
-PrefScriptDialogRemove(GtkWidget *w, gpointer client_data)
+script_init(struct script *fnew)
 {
-  int a, j;
-  struct script *fcur, *fprev, *fdel;
-  struct PrefScriptDialog *d;
-
-  d = (struct PrefScriptDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-
-  j = 0;
-  fprev = NULL;
-  fcur = Menulocal.scriptroot;
-  while (fcur) {
-    if (j == a) {
-      fdel = fcur;
-      if (fprev == NULL) {
-	Menulocal.scriptroot = fcur->next;
-      } else {
-	fprev->next = fcur->next;
-      }
-      fcur = fcur->next;
-      memfree(fdel->name);
-      memfree(fdel->script);
-      memfree(fdel->description);
-      memfree(fdel->option);
-      memfree(fdel);
-      PrefScriptDialogSetupItem(d->widget, d);
-      break;
-    } else {
-      fprev = fcur;
-      fcur = fcur->next;
-    }
-    j++;
-  }
-}
-
-static void
-PrefScriptDialogAdd(GtkWidget *w, gpointer client_data)
-{
-  struct PrefScriptDialog *d;
-  struct script *fcur, *fprev, *fnew;
-
-  d = (struct PrefScriptDialog *) client_data;
-  fprev = NULL;
-  fcur = Menulocal.scriptroot;
-  while (fcur) {
-    fprev = fcur;
-    fcur = fcur->next;
-  }
-
-  fnew = (struct script *) memalloc(sizeof(struct script));
-  if (fnew == NULL) {
-    return;
-  }
-
   fnew->next = NULL;
   fnew->name = NULL;
   fnew->script = NULL;
   fnew->option = NULL;
   fnew->description = NULL;
-  if (fprev == NULL) {
-    Menulocal.scriptroot = fnew;
-  } else {
-    fprev->next = fnew;
-  }
-
-  SetScriptDialog(&DlgSetScript, fnew);
-  if (DialogExecute(d->widget, &DlgSetScript) != IDOK) {
-    if (fprev == NULL) {
-      Menulocal.scriptroot = NULL;
-    } else {
-      fprev->next = NULL;
-    }
-    memfree(fnew);
-  }
-  PrefScriptDialogSetupItem(d->widget, d);
 }
 
-static void
-PrefScriptDialogUp(GtkWidget *w, gpointer client_data)
-{
-  struct PrefScriptDialog *d;
-  int a, j;
-  struct script *fcur, *fprev, *tmp;
+#define LIST_TYPE   script
+#define LIST_ROOT   Menulocal.scriptroot
+#define SET_DIALOG  DlgSetScript
+#define LIST_FREE   script_free
+#define LIST_INIT   script_init
+#define CREATE_NAME(a, c) a ## Script ## c
+#include "x11opt_proto.h"
 
-  d = (struct PrefScriptDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-  if (a < 1)
-    return;
-
-  a--;
-  j = 0;
-  fprev = NULL;
-  fcur = Menulocal.scriptroot;
-  while (fcur) {
-    if (j == a) {
-      if (fcur->next == NULL) {
-	break;
-      } else if (fprev == NULL) {
-	Menulocal.scriptroot = fcur->next;
-      } else {
-	fprev->next = fcur->next;
-      }
-
-      tmp = fcur->next;
-      fcur->next = tmp->next;
-      tmp->next = fcur;
-      break;
-    }
-    fprev = fcur;
-    fcur = fcur->next;
-    j++;
-  }
-  PrefScriptDialogSetupItem(d->widget, d);
-  list_store_select_nth(d->list, a);
-}
-
-static void
-PrefScriptDialogDown(GtkWidget *w, gpointer client_data)
-{
-  struct PrefScriptDialog *d;
-  int a, n, j;
-  struct script *fcur, *fprev, *tmp;
-
-  d = (struct PrefScriptDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
-  if (a < 0 || a >= n - 1)
-    return;
-
-  j = 0;
-  fprev = NULL;
-  fcur = Menulocal.scriptroot;
-  while (fcur) {
-    if (j == a) {
-      if (fcur->next == NULL) {
-	break;
-      } else if (fprev == NULL) {
-	Menulocal.scriptroot = fcur->next;
-      } else {
-	fprev->next = fcur->next;
-      }
-
-      tmp = fcur->next;
-      fcur->next = tmp->next;
-      tmp->next = fcur;
-      break;
-    }
-    fprev = fcur;
-    fcur = fcur->next;
-    j++;
-  }
-  PrefScriptDialogSetupItem(d->widget, d);
-  list_store_select_nth(d->list, a + 1);
-}
-
-static gboolean
-script_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
-{
-  struct PrefScriptDialog *d;
-  int i;
-
-  d = (struct PrefScriptDialog *) user_data;
-
-  if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
-
-    i = list_store_get_selected_index(d->list);
-    if (i < 0)
-      return FALSE;
-
-    PrefScriptDialogUpdate(NULL, d);
-
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-static gboolean 
-scriptlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
-{
-  int a, n;
-  struct PrefScriptDialog *d;
-
-  d = (struct PrefScriptDialog *) user_data;
-
-  a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
-
-  gtk_widget_set_sensitive(d->update_b, a >= 0);
-  gtk_widget_set_sensitive(d->del_b, a >= 0);
-  gtk_widget_set_sensitive(d->up_b, a > 0);
-  gtk_widget_set_sensitive(d->down_b, a >= 0 && a < n - 1);
-
-  return FALSE;
-}
 
 static void
 PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *swin;
-  GtkTreeSelection *sel;
   struct PrefScriptDialog *d;
   n_list_store list[] = {
     {N_("name"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
@@ -855,61 +654,10 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefScriptDialog *) data;
   if (makewidget) {
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    swin = gtk_scrolled_window_new(NULL, NULL);
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    d->list = w;
-    g_signal_connect(d->list, "button-press-event", G_CALLBACK(script_list_defailt_cb), d);
-    g_signal_connect(d->list, "key-press-event", G_CALLBACK(script_list_defailt_cb), d);
-    gtk_container_add(GTK_CONTAINER(swin), w);
-
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
-    g_signal_connect(sel, "changed", G_CALLBACK(scriptlist_sel_cb), d);
-
-    w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
-
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogAdd), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    w = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogUpdate), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->update_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogRemove), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->del_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogDown), d);
-    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->down_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefScriptDialogUp), d);
-    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->up_b = w;
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-
-    d->show_cancel = FALSE;
-
+    PrefScriptDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
   }
-  PrefScriptDialogSetupItem(wi, d);
+  PrefScriptDialogSetupItem(d);
 }
 
 static void
@@ -1055,7 +803,7 @@ SetDriverDialog(struct SetDriverDialog *data, struct extprinter *prn)
 }
 
 static void
-PrefDriverDialogSetupItem(GtkWidget *w, struct PrefDriverDialog *d)
+PrefDriverDialogSetupItem(struct PrefDriverDialog *d)
 {
   struct extprinter *fcur;
   GtkTreeIter iter;
@@ -1070,234 +818,35 @@ PrefDriverDialogSetupItem(GtkWidget *w, struct PrefDriverDialog *d)
 }
 
 static void
-PrefDriverDialogUpdate(GtkWidget *w, gpointer client_data)
+extprinter_free(struct extprinter *fdel)
 {
-  struct PrefDriverDialog *d;
-  int a, j;
-  struct extprinter *fcur;
-
-  d = (struct PrefDriverDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-
-  j = 0;
-  fcur = Menulocal.extprinterroot;
-  while (fcur) {
-    if (j == a)
-      break;
-    fcur = fcur->next;
-    j++;
-  }
-  if (fcur) {
-    SetDriverDialog(&DlgSetDriver, fcur);
-    DialogExecute(d->widget, &DlgSetDriver);
-    PrefDriverDialogSetupItem(d->widget, d);
-  }
+  memfree(fdel->name);
+  memfree(fdel->driver);
+  memfree(fdel->option);
+  memfree(fdel);
 }
 
 static void
-PrefDriverDialogRemove(GtkWidget *w, gpointer client_data)
+extprinter_init(struct extprinter *fnew)
 {
-  int a, j;
-  struct extprinter *fcur, *fprev, *fdel;
-  struct PrefDriverDialog *d;
-
-  d = (struct PrefDriverDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-
-  j = 0;
-  fprev = NULL;
-  fcur = Menulocal.extprinterroot;
-  while (fcur) {
-    if (j == a) {
-      fdel = fcur;
-      if (fprev == NULL)
-	Menulocal.extprinterroot = fcur->next;
-      else
-	fprev->next = fcur->next;
-      fcur = fcur->next;
-      memfree(fdel->name);
-      memfree(fdel->driver);
-      memfree(fdel->option);
-      memfree(fdel);
-      PrefDriverDialogSetupItem(d->widget, d);
-      break;
-    } else {
-      fprev = fcur;
-      fcur = fcur->next;
-    }
-    j++;
-  }
+  fnew->next = NULL;
+  fnew->name = NULL;
+  fnew->driver = NULL;
+  fnew->option = NULL;
+  fnew->ext = NULL;
 }
 
-static void
-PrefDriverDialogAdd(GtkWidget *w, gpointer client_data)
-{
-  struct extprinter *fcur, *fprev, *fnew;
-  struct PrefDriverDialog *d;
-
-  d = (struct PrefDriverDialog *) client_data;
-
-  fprev = NULL;
-  fcur = Menulocal.extprinterroot;
-
-  while (fcur) {
-    fprev = fcur;
-    fcur = fcur->next;
-  }
-  fnew = (struct extprinter *) memalloc(sizeof(struct extprinter));
-  if (fnew) {
-    fnew->next = NULL;
-    fnew->name = NULL;
-    fnew->driver = NULL;
-    fnew->option = NULL;
-    fnew->ext = NULL;
-    if (fprev == NULL)
-      Menulocal.extprinterroot = fnew;
-    else
-      fprev->next = fnew;
-    SetDriverDialog(&DlgSetDriver, fnew);
-    if (DialogExecute(d->widget, &DlgSetDriver) != IDOK) {
-      if (fprev == NULL)
-	Menulocal.extprinterroot = NULL;
-      else
-	fprev->next = NULL;
-      memfree(fnew);
-    }
-    PrefDriverDialogSetupItem(d->widget, d);
-  } else {
-    memfree(fnew);
-  }
-}
-
-static void
-PrefDriverDialogUp(GtkWidget *w, gpointer client_data)
-{
-  struct PrefDriverDialog *d;
-  int a, j;
-  struct extprinter *fcur, *fprev, *tmp;
-
-  d = (struct PrefDriverDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-  if (a < 1)
-    return;
-
-  a--;
-  j = 0;
-  fprev = NULL;
-  fcur = Menulocal.extprinterroot;
-  while (fcur) {
-    if (j == a) {
-      if (fcur->next == NULL) {
-	break;
-      } else if (fprev == NULL) {
-	Menulocal.extprinterroot = fcur->next;
-      } else {
-	fprev->next = fcur->next;
-      }
-
-      tmp = fcur->next;
-      fcur->next = tmp->next;
-      tmp->next = fcur;
-      break;
-    }
-    fprev = fcur;
-    fcur = fcur->next;
-    j++;
-  }
-  PrefDriverDialogSetupItem(d->widget, d);
-  list_store_select_nth(d->list, a);
-}
-
-static void
-PrefDriverDialogDown(GtkWidget *w, gpointer client_data)
-{
-  struct PrefDriverDialog *d;
-  int a, n, j;
-  struct extprinter *fcur, *fprev, *tmp;
-
-  d = (struct PrefDriverDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
-  if (a < 0 || a >= n - 1)
-    return;
-
-  j = 0;
-  fprev = NULL;
-  fcur = Menulocal.extprinterroot;
-  while (fcur) {
-    if (j == a) {
-      if (fcur->next == NULL) {
-	break;
-      } else if (fprev == NULL) {
-	Menulocal.extprinterroot = fcur->next;
-      } else {
-	fprev->next = fcur->next;
-      }
-
-      tmp = fcur->next;
-      fcur->next = tmp->next;
-      tmp->next = fcur;
-      break;
-    }
-    fprev = fcur;
-    fcur = fcur->next;
-    j++;
-  }
-  PrefDriverDialogSetupItem(d->widget, d);
-  list_store_select_nth(d->list, a + 1);
-}
-
-static gboolean
-driver_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
-{
-  struct PrefDriverDialog *d;
-  int i;
-
-  d = (struct PrefDriverDialog *) user_data;
-
-  if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
-
-    i = list_store_get_selected_index(d->list);
-    if (i < 0)
-      return FALSE;
-
-    PrefDriverDialogUpdate(NULL, d);
-
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-static gboolean 
-drvlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
-{
-  int a, n;
-  struct PrefDriverDialog *d;
-
-  d = (struct PrefDriverDialog *) user_data;
-
-  a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
-
-  gtk_widget_set_sensitive(d->update_b, a >= 0);
-  gtk_widget_set_sensitive(d->del_b, a >= 0);
-  gtk_widget_set_sensitive(d->up_b, a > 0);
-  gtk_widget_set_sensitive(d->down_b, a >= 0 && a < n - 1);
-
-  return FALSE;
-}
+#define LIST_TYPE   extprinter
+#define LIST_ROOT   Menulocal.extprinterroot
+#define SET_DIALOG  DlgSetDriver
+#define LIST_FREE   extprinter_free
+#define LIST_INIT   extprinter_init
+#define CREATE_NAME(a, c) a ## Driver ## c
+#include "x11opt_proto.h"
 
 static void
 PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *swin;
-  GtkTreeSelection *sel;
   struct PrefDriverDialog *d;
   n_list_store list[] = {
     {N_("Driver"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
@@ -1305,60 +854,10 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefDriverDialog *) data;
   if (makewidget) {
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    swin = gtk_scrolled_window_new(NULL, NULL);
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    d->list = w;
-    g_signal_connect(d->list, "button-press-event", G_CALLBACK(driver_list_defailt_cb), d);
-    g_signal_connect(d->list, "key-press-event", G_CALLBACK(driver_list_defailt_cb), d);
-    gtk_container_add(GTK_CONTAINER(swin), w);
-
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
-    g_signal_connect(sel, "changed", G_CALLBACK(drvlist_sel_cb), d);
-
-    w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
-
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogAdd), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    w = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogUpdate), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->update_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogRemove), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->del_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogDown), d);
-    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->down_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefDriverDialogUp), d);
-    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->up_b = w;
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-
-    d->show_cancel = FALSE;
-
+    PrefDriverDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
   }
-  PrefDriverDialogSetupItem(wi, d);
+  PrefDriverDialogSetupItem(d);
 }
 
 static void
@@ -1601,145 +1100,16 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   gtk_widget_destroy (dialog);
 }
 
-static void
-PrefFontDialogUp(GtkWidget *w, gpointer client_data)
-{
-  struct PrefFontDialog *d;
-  int a, j;
-  struct fontmap *fcur, *fprev, *tmp;
-
-  d = (struct PrefFontDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-  if (a < 1)
-    return;
-
-  a--;
-  j = 0;
-  fprev = NULL;
-  fcur = Gra2cairoConf->fontmap_list_root;
-  while (fcur) {
-    if (j == a) {
-      tmp = fcur->next;
-      if (tmp == NULL) {
-	break;
-      } else if (fprev == NULL) {
-	Gra2cairoConf->fontmap_list_root = tmp;
-	tmp->prev = NULL;
-      } else {
-	fprev->next = tmp;
-	tmp->prev = fprev;
-      }
-
-      fcur->next = tmp->next;
-      if (tmp->next)
-	tmp->next->prev = fcur;
-
-      tmp->next = fcur;
-      fcur->prev = tmp;
-      break;
-    }
-    fprev = fcur;
-    fcur = fcur->next;
-    j++;
-  }
-  PrefFontDialogSetupItem(d);
-  list_store_select_nth(d->list, a);
-}
-
-static void
-PrefFontDialogDown(GtkWidget *w, gpointer client_data)
-{
-  struct PrefFontDialog *d;
-  int a, n, j;
-  struct fontmap *fcur, *fprev, *tmp;
-
-  d = (struct PrefFontDialog *) client_data;
-
-  a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
-  if (a < 0 || a >= n - 1)
-    return;
-
-  j = 0;
-  fprev = NULL;
-  fcur = Gra2cairoConf->fontmap_list_root;
-  while (fcur) {
-    if (j == a) {
-      if (fcur->next == NULL) {
-	break;
-      } else if (fprev == NULL) {
-	Gra2cairoConf->fontmap_list_root = fcur->next;
-	fcur->next->prev = NULL;
-      } else {
-	fprev->next = fcur->next;
-	fcur->next->prev = fprev;
-      }
-
-      tmp = fcur->next;
-      fcur->next = tmp->next;
-      if (tmp->next)
-	tmp->next->prev = fcur;
-
-      tmp->next = fcur;
-      fcur->prev = tmp;
-      break;
-    }
-    fprev = fcur;
-    fcur = fcur->next;
-    j++;
-  }
-  PrefFontDialogSetupItem(d);
-  list_store_select_nth(d->list, a + 1);
-}
-
-static gboolean
-font_list_defailt_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
-{
-  struct PrefFontDialog *d;
-  int i;
-
-  d = (struct PrefFontDialog *) user_data;
-
-  if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
-
-    i = list_store_get_selected_index(d->list);
-    if (i < 0)
-      return FALSE;
-
-    PrefFontDialogUpdate(NULL, d);
-
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
-static gboolean 
-fontlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
-{
-  int a, n;
-  struct PrefFontDialog *d;
-
-  d = (struct PrefFontDialog *) user_data;
-
-  a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
-
-  gtk_widget_set_sensitive(d->update_b, a >= 0);
-  gtk_widget_set_sensitive(d->del_b, a >= 0);
-  gtk_widget_set_sensitive(d->up_b, a > 0);
-  gtk_widget_set_sensitive(d->down_b, a >= 0 && a < n - 1);
-
-  return FALSE;
-}
+#define HAVE_UPDATE_FUNC
+#define LIST_TYPE   fontmap
+#define LIST_ROOT   Gra2cairoConf->fontmap_list_root
+#define CREATE_NAME(a, c) a ## Font ## c
+#include "x11opt_proto.h"
 
 static void
 PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *swin;
-  GtkTreeSelection *sel;
+  GtkWidget *w, *vbox;
   struct PrefFontDialog *d;
   n_list_store list[] = {
     {N_("alias"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
@@ -1755,59 +1125,7 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(vbox, w, _("_New alias:"), FALSE);
     d->alias = w;
 
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    swin = gtk_scrolled_window_new(NULL, NULL);
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    list_store_set_sort_all(w);
-    d->list = w;
-    g_signal_connect(d->list, "button-press-event", G_CALLBACK(font_list_defailt_cb), d);
-    g_signal_connect(d->list, "key-press-event", G_CALLBACK(font_list_defailt_cb), d);
-    gtk_container_add(GTK_CONTAINER(swin), w);
-
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
-    g_signal_connect(sel, "changed", G_CALLBACK(fontlist_sel_cb), d);
-
-    w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 4);
-
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogAdd), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    w = gtk_button_new_from_stock(GTK_STOCK_PREFERENCES);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogUpdate), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->update_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogRemove), d);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->del_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogDown), d);
-    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->down_b = w;
-
-    w = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
-    g_signal_connect(w, "clicked", G_CALLBACK(PrefFontDialogUp), d);
-    gtk_box_pack_end(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_widget_set_sensitive(w, FALSE);
-    d->up_b = w;
-
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-
-    d->show_cancel = FALSE;
-
+    PrefFontDialogCreateWidgets(d, vbox, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
   }
   PrefFontDialogSetupItem(d);

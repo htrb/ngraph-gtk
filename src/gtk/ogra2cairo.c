@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.39 2009/02/04 07:23:06 hito Exp $
+ * $Id: ogra2cairo.c,v 1.41 2009/02/25 09:12:37 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -105,6 +105,8 @@ mxd2py(struct gra2cairo_local *local, int y)
 static void
 free_font_map(struct fontmap *fcur)
 {
+  struct fontmap *cur, *prev;
+
   if (fcur == NULL)
     return;
 
@@ -115,14 +117,19 @@ free_font_map(struct fontmap *fcur)
   memfree(fcur->fontalias);
   memfree(fcur->fontname);
 
-  if (fcur->prev) {
-    fcur->prev->next = fcur->next;
-  } else {
-    Gra2cairoConf->fontmap_list_root = fcur->next;
-  }
-
-  if (fcur->next) {
-    fcur->next->prev = fcur->prev;
+  prev = NULL;
+  cur = Gra2cairoConf->fontmap_list_root;
+  while (cur) {
+    if (cur == fcur) {
+      if (prev == NULL) {
+	Gra2cairoConf->fontmap_list_root = cur->next;
+      } else {
+	prev->next = cur->next;
+      }
+      break;
+    }
+    prev = cur;
+    cur = cur->next;
   }
 
   memfree(fcur);
@@ -160,10 +167,8 @@ create_font_map(char *fontalias, char *fontname, int type, int twobyte, struct f
   fnew->next = NULL;
 
   if (fprev) {
-    fnew->prev = fprev;
     fprev->next = fnew;
   } else {
-    fnew->prev = NULL;
     fnew->next = Gra2cairoConf->fontmap_list_root;
     Gra2cairoConf->fontmap_list_root = fnew;
   }

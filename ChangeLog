@@ -1,3 +1,26 @@
+2009-02-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (script_free, script_init, extprinter_free)
+	(extprinter_init): add.
+	(PrefScriptDialogUpdate, PrefScriptDialogRemove)
+	(PrefScriptDialogAdd, PrefScriptDialogUp, PrefScriptDialogDown)
+	(script_list_defailt_cb, script_list_sel_cb)
+	(PrefDriverDialogUpdate, PrefDriverDialogRemove)
+	(driver_list_defailt_cb, driver_list_sel_cb)
+	(PrefDriverDialogAdd, PrefDriverDialogUp, PrefDriverDialogDown)
+	(PrefFontDialogUp, PrefFontDialogDown, font_list_defailt_cb)
+	(font_list_sel_cb) : remove (use "x11opt_proto.h").
+	(PrefScriptDialogSetupItem, PrefDriverDialogSetupItem): remove
+	unused argument.
+
+	* src/gtk/ogra2cairo.c (free_font_map, create_font_map): remove
+	codes related to "fcur->prev" and so on.
+
+	* src/gtk/ogra2cairo.h (struct fontmap): remove member "prev".
+
+	* src/gtk/Makefile.am (libngraph_la_SOURCES): add
+	"x11opt_proto.h".
+
 2009-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (PrefScriptDialogUp, PrefScriptDialogDown)
