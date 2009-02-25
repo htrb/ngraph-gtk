@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.41 2009/02/25 09:12:37 hito Exp $
+ * $Id: ogra2cairo.c,v 1.40 2009/02/25 09:11:24 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -105,7 +105,8 @@ mxd2py(struct gra2cairo_local *local, int y)
 static void
 free_font_map(struct fontmap *fcur)
 {
-  struct fontmap *cur, *prev;
+  struct fontmap *cur, *prev, *next;
+  int i;
 
   if (fcur == NULL)
     return;
