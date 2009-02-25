@@ -1,5 +1,10 @@
 2009-02-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (ViewerEvLButtonDblClk): use
+	"POINT_TYPE_DRAW_ALL".
+
+	* src/gtk/x11menu.h (POINT_TYPE_DRAW_ALL): add
+
 	* src/gtk/x11opt.c (script_free, script_init, extprinter_free)
 	(extprinter_init): add.
 	(PrefScriptDialogUpdate, PrefScriptDialogRemove)

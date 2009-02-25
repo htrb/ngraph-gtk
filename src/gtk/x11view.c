@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.109 2009/02/24 02:40:40 hito Exp $
+ * $Id: x11view.c,v 1.110 2009/02/25 09:40:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3297,42 +3297,34 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   case MarkB:
   case TextB:
     create_legend1(d, dc);
-    if (! KeepMouseMode)
-      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case LineB:
   case CurveB:
   case PolyB:
     create_legend2(d, dc);
-    if (! KeepMouseMode)
-      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case RectB:
   case ArcB:
     create_legend3(d, dc);
-    if (! KeepMouseMode)
-      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case GaussB:
     create_legendx(d, dc);
-    if (! KeepMouseMode)
-      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case SingleB:
     create_single_axis(d, dc);
-    if (! KeepMouseMode)
-      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case FrameB:
   case SectionB:
   case CrossB:
     create_axis(d, dc);
-    if (! KeepMouseMode)
-      gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     break;
   case ZoomB:
     break;
   }
+
+  if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode)
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
+
   g_object_unref(G_OBJECT(dc));
   UpdateAll();
 
