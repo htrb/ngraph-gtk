@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.57 2009/02/26 09:44:42 hito Exp $
+ * $Id: ox11menu.c,v 1.58 2009/02/26 10:21:27 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -424,7 +424,6 @@ mgtkloadconfig(void)
       cfg->data = &scur;
     }
   }
-
 
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
