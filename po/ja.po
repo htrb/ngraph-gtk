@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-02-26 13:08+0900\n"
+"POT-Creation-Date: 2009-02-26 18:08+0900\n"
 "PO-Revision-Date: 2009-02-26 11:42+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1620,11 +1620,11 @@ msgstr "初期状態のウィンドウ配置(_W)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2190
+#: src/gtk/x11menu.c:2191
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2240
+#: src/gtk/x11menu.c:2241
 msgid "Question"
 msgstr "質問:"
 

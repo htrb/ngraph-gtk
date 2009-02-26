@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.111 2009/02/26 08:51:49 hito Exp $
+ * $Id: x11view.c,v 1.112 2009/02/26 09:11:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4781,7 +4781,7 @@ draw_paper_frame(void)
 {
   int w, h;
 
-  if (Menulocal.gc == NULL)
+  if (Menulocal.gc == NULL || Menulocal.pix == NULL)
     return;
 
   gdk_gc_set_function(Menulocal.gc, GDK_COPY);

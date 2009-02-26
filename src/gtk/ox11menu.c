@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.55 2009/02/26 08:51:49 hito Exp $
+ * $Id: ox11menu.c,v 1.56 2009/02/26 09:11:37 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -905,13 +905,9 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (Menulocal.pix)
     g_object_unref(Menulocal.pix);
-
-  Menulocal.obj = NULL;
-
-  if (Menulocal.pix)
-    g_object_unref(Menulocal.pix);
   Menulocal.pix = NULL;
 
+  Menulocal.obj = NULL;
   Menulocal.local = NULL;
 
   return 0;
@@ -1153,6 +1149,9 @@ mx_clear(GdkRegion *region)
   if (Menulocal.pix) {
     gint w, h;
     GdkColor color;
+
+    if (Menulocal.pix == NULL)
+      return;
 
     gdk_drawable_get_size(Menulocal.pix, &w, &h);
 
