@@ -103,20 +103,17 @@ CREATE_NAME(Pref, DialogRemove)(GtkWidget *w, gpointer client_data)
 }
 #endif
 
-static void
-CREATE_NAME(Pref, DialogUp)(GtkWidget *w, gpointer client_data)
+
+static int
+CREATE_NAME(Pref, DialogMoveSub)(struct CREATE_NAME(Pref, Dialog) *d, int a)
 {
-  struct CREATE_NAME(Pref, Dialog) *d;
-  int a, j;
+  int j, n;
   struct LIST_TYPE *fcur, *fprev, *next;
 
-  d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
+  n = list_store_get_num(d->list);
+  if (a < 0 || a >= n - 1)
+    return -1;
 
-  a = list_store_get_selected_index(d->list);
-  if (a < 1)
-    return;
-
-  a--;
   j = 0;
   fprev = NULL;
   fcur = LIST_ROOT;
@@ -141,48 +138,37 @@ CREATE_NAME(Pref, DialogUp)(GtkWidget *w, gpointer client_data)
     j++;
   }
   CREATE_NAME(Pref, DialogSetupItem)(d);
-  list_store_select_nth(d->list, a);
+  return a;
+}
+
+static void
+CREATE_NAME(Pref, DialogUp)(GtkWidget *w, gpointer client_data)
+{
+  struct CREATE_NAME(Pref, Dialog) *d;
+  int a;
+
+  d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
+
+  a = list_store_get_selected_index(d->list);
+  a = CREATE_NAME(Pref, DialogMoveSub)(d, a - 1);
+  if (a >= 0) {
+    list_store_select_nth(d->list, a);
+  }
 }
 
 static void
 CREATE_NAME(Pref, DialogDown)(GtkWidget *w, gpointer client_data)
 {
   struct CREATE_NAME(Pref, Dialog) *d;
-  int a, n, j;
-  struct LIST_TYPE *fcur, *fprev, *next;
+  int a;
 
   d = (struct CREATE_NAME(Pref, Dialog) *) client_data;
 
   a = list_store_get_selected_index(d->list);
-  n = list_store_get_num(d->list);
-  if (a < 0 || a >= n - 1)
-    return;
-
-  j = 0;
-  fprev = NULL;
-  fcur = LIST_ROOT;
-  while (fcur) {
-    if (j == a) {
-      next = fcur->next;
-
-      if (next == NULL) {
-	break;
-      } else if (fprev == NULL) {
-	LIST_ROOT = next;
-      } else {
-	fprev->next = next;
-      }
-
-      fcur->next = next->next;
-      next->next = fcur;
-      break;
-    }
-    fprev = fcur;
-    fcur = fcur->next;
-    j++;
+  a = CREATE_NAME(Pref, DialogMoveSub)(d, a);
+  if (a >= 0) {
+    list_store_select_nth(d->list, a + 1);
   }
-  CREATE_NAME(Pref, DialogSetupItem)(d);
-  list_store_select_nth(d->list, a + 1);
 }
 
 static gboolean
@@ -193,16 +179,39 @@ CREATE_NAME(Pref, ListDefailtCb)(GtkWidget *w, GdkEventAny *e, gpointer user_dat
 
   d = (struct CREATE_NAME(Pref, Dialog) *) user_data;
 
-  if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
+  i = list_store_get_selected_index(d->list);
+  if (i < 0)
+    return FALSE;
 
-    i = list_store_get_selected_index(d->list);
-    if (i < 0)
-      return FALSE;
-
+  if (e->type == GDK_2BUTTON_PRESS) {
     CREATE_NAME(Pref, DialogUpdate)(NULL, d);
-
     return TRUE;
+  } else if (e->type == GDK_KEY_PRESS) {
+    GdkEventKey *ke;
+
+    ke = (GdkEventKey *) e;
+    switch (ke->keyval) {
+    case GDK_Return:
+      CREATE_NAME(Pref, DialogUpdate)(NULL, d);
+      return TRUE;
+      break;
+    case GDK_Up:
+      if (ke->state & GDK_SHIFT_MASK) {
+	CREATE_NAME(Pref, DialogUp)(NULL, d);
+	return TRUE;
+      }
+      break;
+    case GDK_Down:
+      if (ke->state & GDK_SHIFT_MASK) {
+	CREATE_NAME(Pref, DialogDown)(NULL, d);
+	return TRUE;
+      }
+      break;
+    case GDK_Delete:
+      CREATE_NAME(Pref, DialogRemove)(NULL, d);
+      return TRUE;
+      break;
+    }
   }
 
   return FALSE;
