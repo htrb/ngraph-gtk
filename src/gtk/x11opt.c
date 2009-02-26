@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.49 2009/02/26 03:29:13 hito Exp $
+ * $Id: x11opt.c,v 1.50 2009/02/26 04:39:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -235,9 +235,9 @@ save_viewer_config(struct narray *conf)
   add_str_with_int_to_array(conf, "viewer_auto_redraw", Mxlocal->autoredraw);
   add_str_with_int_to_array(conf, "viewer_load_file_on_redraw", Mxlocal->redrawf);
   add_str_with_int_to_array(conf, "viewer_load_file_data_number", Mxlocal->redrawf_num);
-  add_str_with_int_to_array(conf, "viewer_show_ruler", Mxlocal->ruler);
   add_str_with_int_to_array(conf, "viewer_grid", Mxlocal->grid);
 
+  add_str_with_int_to_array(conf, "viewer_show_ruler", Menulocal.ruler);
   add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
 }
 
@@ -1546,7 +1546,7 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   getobj(d->Obj, "dpi", d->Id, 0, NULL, &(d->dpis));
   gtk_range_set_value(GTK_RANGE(d->dpi), d->dpis);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ruler)), Mxlocal->ruler);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ruler)), Menulocal.ruler);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->statusbar)), Menulocal.statusb);
 
   getobj(d->Obj, "antialias", d->Id, 0, NULL, &a);
@@ -1644,7 +1644,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
   }
 
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ruler));
-  Mxlocal->ruler = a;
+  Menulocal.ruler = a;
 
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->statusbar));
   Menulocal.statusb = a;

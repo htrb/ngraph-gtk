@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.52 2009/02/24 02:40:40 hito Exp $
+ * $Id: ox11menu.c,v 1.53 2009/02/26 04:39:12 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -177,6 +177,7 @@ static struct menu_config MenuConfig[] = {
   {"save_with_data",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithdata},
   {"save_with_merge",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
   {"status_bar",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusb},
+  {"viewer_show_ruler",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ruler},
   {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
   {"expand",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expand},
   {"ignore_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ignorepath},
@@ -216,7 +217,6 @@ static struct menu_config MenuConfig[] = {
 
   {"viewer_auto_redraw",		MENU_CONFIG_TYPE_BOOL, NULL, NULL},
   {"viewer_load_file_on_redraw",	MENU_CONFIG_TYPE_BOOL, NULL, NULL},
-  {"viewer_show_ruler",			MENU_CONFIG_TYPE_BOOL, NULL, NULL},
 };
 
 static NHASH MenuConfigHash = NULL;
@@ -693,9 +693,6 @@ set_menu_config_mxlocal(void)
   if (nhash_get_ptr(MenuConfigHash, "viewer_load_file_on_redraw", (void *) &cfg) == 0) {
     cfg->data = &(Mxlocal->redrawf);
   }
-  if (nhash_get_ptr(MenuConfigHash, "viewer_show_ruler", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->ruler);
-  }
 }
 
 static int
@@ -733,6 +730,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   initwindowconfig();
   Menulocal.showtip = TRUE;
   Menulocal.statusb = TRUE;
+  Menulocal.ruler = TRUE;
   Menulocal.scriptconsole = FALSE;
   Menulocal.addinconsole = TRUE;
   Menulocal.changedirectory = 1;
@@ -778,7 +776,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Mxlocal->autoredraw = TRUE;
   Mxlocal->redrawf = TRUE;
   Mxlocal->redrawf_num = 0xff;
-  Mxlocal->ruler = TRUE;
   Mxlocal->grid = 200;
   Mxlocal->data_head_lines = 20;
   Mxlocal->local = local;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.70 2009/02/26 03:29:13 hito Exp $
+ * $Id: x11menu.c,v 1.71 2009/02/26 04:39:12 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1466,7 +1466,7 @@ create_toolbar(GtkWidget *box, GtkOrientation o)
 void
 set_widget_visibility(void)
 {
-  if (Mxlocal->ruler) {
+  if (Menulocal.ruler) {
     gtk_widget_show(NgraphApp.Viewer.HRuler);
     gtk_widget_show(NgraphApp.Viewer.VRuler);
   } else {
