@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.23 2009/02/26 04:39:12 hito Exp $
+ * $Id: ox11menu.h,v 1.24 2009/02/26 05:06:10 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -102,12 +102,9 @@ struct mxlocal
 
 struct menulocal
 {
-  char *editor;
-  char *browser, *help_browser;
+  char *editor, *browser, *help_browser;
   struct objlist *obj;
   char *inst;
-  struct objlist *outputobj;
-  int output;
   struct objlist *GRAobj;
   int GRAoid;
   char *GRAinst;
@@ -129,23 +126,14 @@ struct menulocal
   int dialogheight, dialogwidth, dialogx, dialogy, dialogopen;
   int coordheight, coordwidth, coordx, coordy, coordopen;
   int exwindpi, exwinwidth, exwinheight, exwin_use_external;
-  char *fileopendir;
-  char *graphloaddir;
-  char *expanddir;
-  char *coordwin_font;
-  int expand;
-  int ignorepath;
-  int expandtofullpath;
-  int changedirectory;
-  int savehistory;
+  char *fileopendir, *graphloaddir, *expanddir, *coordwin_font;
+  int expand, ignorepath, expandtofullpath, changedirectory, savehistory;
   int savepath, savewithdata, savewithmerge;
   struct narray *ngpfilelist;
   struct narray *ngpdirlist;
   struct narray *datafilelist;
   int scriptconsole, addinconsole;
-  int statusb, ruler;
-  int showtip;
-  int preserve_width;
+  int statusb, ruler, showtip, preserve_width;
   int hist_size, info_size, bg_r, bg_g, bg_b;
   int focus_frame_type;
 };

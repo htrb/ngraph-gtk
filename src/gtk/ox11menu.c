@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.53 2009/02/26 04:39:12 hito Exp $
+ * $Id: ox11menu.c,v 1.54 2009/02/26 05:06:10 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -698,7 +698,6 @@ set_menu_config_mxlocal(void)
 static int
 menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  struct objlist *robj;
   struct extprinter *pcur, *pdel;
   struct prnprinter *pcur2, *pdel2;
   struct script *scur, *sdel;
@@ -837,15 +836,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   i = 0;
   if (_putobj(obj, "modified", inst, &i))
     goto errexit;
-
-  if (!chkobjfield(obj, "_output")) {
-    Menulocal.output = getobjtblpos(obj, "_output", &robj);
-    if (Menulocal.output == -1)
-      goto errexit;
-    Menulocal.outputobj = robj;
-  } else {
-    Menulocal.output = -1;
-  }
 
   Menulocal.obj = obj;
   Menulocal.inst = inst;
