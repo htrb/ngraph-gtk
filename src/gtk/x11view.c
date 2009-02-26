@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.112 2009/02/26 09:11:37 hito Exp $
+ * $Id: x11view.c,v 1.113 2009/02/26 09:51:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3676,7 +3676,6 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     CheckGrid(TRUE, state, &dx, &dy, NULL);
   }
 
-  CoordWinSetCoord(dx, dy);
   SetPoint(dx, dy);
   dc = Menulocal.gc;
 

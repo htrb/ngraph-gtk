@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.73 2009/02/26 09:44:42 hito Exp $
+ * $Id: x11menu.c,v 1.74 2009/02/26 09:51:45 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2015,6 +2015,8 @@ SetPoint(int x, int y)
 
   g_object_set(NgraphApp.Viewer.HRuler, "position", N2GTK_RULER_METRIC(x), NULL);
   g_object_set(NgraphApp.Viewer.VRuler, "position", N2GTK_RULER_METRIC(y), NULL);
+
+  CoordWinSetCoord(x, y);
 }
 
 void

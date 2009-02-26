@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.c,v 1.11 2009/02/26 09:44:42 hito Exp $
+ * $Id: x11cood.c,v 1.12 2009/02/26 09:51:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -91,9 +91,6 @@ CoordWinSetCoord(int x, int y)
     bufsize = 0;
     return;
   }
-
-  x += Menulocal.LeftMargin;
-  y += Menulocal.TopMargin;
 
   j = 0;
   j += snprintf(d->str + j, bufsize - j, "(X:%6.2f  Y:%6.2f)", x / 100.0, y / 100.0);

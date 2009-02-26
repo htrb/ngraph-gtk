@@ -1,6 +1,9 @@
 2009-02-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11cood.c (CoordWinSetCoord): add affset to coordinate.
+	* src/gtk/x11view.c (ViewerEvMouseMove): don't call
+	"CoordWinSetCoord()".
+
+	* src/gtk/x11menu.c (SetPoint): call "CoordWinSetCoord()".
 
 	* src/gtk/ox11menu.c (set_menu_config_mxlocal): remove.
 	(gtkmenu): remove field "_gtklocal".
