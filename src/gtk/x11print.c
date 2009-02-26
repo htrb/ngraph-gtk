@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.33 2008/12/25 05:12:42 hito Exp $
+ * $Id: x11print.c,v 1.34 2009/02/26 08:51:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -362,7 +362,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_widget_set_sensitive(d->vlabel, FALSE);
     gtk_widget_set_sensitive(d->t2p, FALSE);
 
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Mxlocal->windpi);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.windpi);
     break;
   case MenuIdOutputPDFFile:
     combo_box_append_text(d->version, "--------");

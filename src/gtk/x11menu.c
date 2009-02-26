@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.71 2009/02/26 04:39:12 hito Exp $
+ * $Id: x11menu.c,v 1.72 2009/02/26 08:51:49 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1960,6 +1960,7 @@ application(char *file)
 
   gtk_widget_destroy(TopLevel);
   TopLevel = NULL;
+  Menulocal.win = NULL;
 
   free_markpixmap();
   free_cursor();

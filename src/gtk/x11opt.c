@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.50 2009/02/26 04:39:12 hito Exp $
+ * $Id: x11opt.c,v 1.51 2009/02/26 08:51:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -230,12 +230,12 @@ save_child_geometory_config(struct narray *conf)
 static void
 save_viewer_config(struct narray *conf)
 {
-  add_str_with_int_to_array(conf, "viewer_dpi", Mxlocal->windpi);
-  add_str_with_int_to_array(conf, "antialias", Mxlocal->antialias);
-  add_str_with_int_to_array(conf, "viewer_auto_redraw", Mxlocal->autoredraw);
-  add_str_with_int_to_array(conf, "viewer_load_file_on_redraw", Mxlocal->redrawf);
-  add_str_with_int_to_array(conf, "viewer_load_file_data_number", Mxlocal->redrawf_num);
-  add_str_with_int_to_array(conf, "viewer_grid", Mxlocal->grid);
+  add_str_with_int_to_array(conf, "viewer_dpi", Menulocal.windpi);
+  add_str_with_int_to_array(conf, "antialias", Menulocal.antialias);
+  add_str_with_int_to_array(conf, "viewer_auto_redraw", Menulocal.autoredraw);
+  add_str_with_int_to_array(conf, "viewer_load_file_on_redraw", Menulocal.redrawf);
+  add_str_with_int_to_array(conf, "viewer_load_file_data_number", Menulocal.redrawf_num);
+  add_str_with_int_to_array(conf, "viewer_grid", Menulocal.grid);
 
   add_str_with_int_to_array(conf, "viewer_show_ruler", Menulocal.ruler);
   add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
@@ -313,7 +313,7 @@ save_misc_config(struct narray *conf)
   add_str_with_int_to_array(conf, "history_size", Menulocal.hist_size);
   add_str_with_int_to_array(conf, "preserve_width", Menulocal.preserve_width);
   add_str_with_int_to_array(conf, "infowin_size", Menulocal.info_size);
-  add_str_with_int_to_array(conf, "data_head_lines", Mxlocal->data_head_lines);
+  add_str_with_int_to_array(conf, "data_head_lines", Menulocal.data_head_lines);
 
   buf = (char *) memalloc(BUF_SIZE);
   if (buf) {
@@ -1175,7 +1175,7 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   spin_entry_set_val(d->hist_size, Menulocal.hist_size);
   spin_entry_set_val(d->info_size, Menulocal.info_size);
-  spin_entry_set_val(d->data_head_lines, Mxlocal->data_head_lines);
+  spin_entry_set_val(d->data_head_lines, Menulocal.data_head_lines);
 
   color.red = Menulocal.bg_r * 257;
   color.green = Menulocal.bg_g * 257;
@@ -1558,8 +1558,8 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   getobj(d->Obj, "redraw_flag", d->Id, 0, NULL, &a);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->loadfile)), a);
 
-  spin_entry_set_val(d->data_num, Mxlocal->redrawf_num);
-  spin_entry_set_val(d->grid, Mxlocal->grid);
+  spin_entry_set_val(d->data_num, Menulocal.redrawf_num);
+  spin_entry_set_val(d->grid, Menulocal.grid);
 }
 
 static void
@@ -1652,7 +1652,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
   a = combo_box_get_active(d->antialias);
   if (putobj(d->Obj, "antialias", d->Id, &a) == -1)
     return;
-  Mxlocal->antialias = a;
+  Menulocal.antialias = a;
 
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->redraw));
   a = a ? TRUE : FALSE;
@@ -1668,7 +1668,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
   if (putobj(d->Obj, "redraw_num", d->Id, &a) == -1)
     return;
 
-  Mxlocal->grid = spin_entry_get_val(d->grid);
+  Menulocal.grid = spin_entry_get_val(d->grid);
 
   set_widget_visibility();
 

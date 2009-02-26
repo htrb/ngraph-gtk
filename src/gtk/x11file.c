@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.74 2009/02/12 02:48:46 hito Exp $
+ * $Id: x11file.c,v 1.75 2009/02/26 08:51:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2851,7 +2851,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogEdit), d);
   }
 
-  line = Mxlocal->data_head_lines;
+  line = Menulocal.data_head_lines;
   argv[0] = (char *) &line;
   argv[1] = NULL;
   rcode = getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);

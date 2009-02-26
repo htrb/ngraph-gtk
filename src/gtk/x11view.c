@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.110 2009/02/25 09:40:58 hito Exp $
+ * $Id: x11view.c,v 1.111 2009/02/26 08:51:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1985,7 +1985,7 @@ CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
 	*x = 0;
     }
   }
-  grid = Mxlocal->grid;
+  grid = Menulocal.grid;
   if (!(state & GDK_SHIFT_MASK)) {
     if (ofs) {
       offset = grid / 2;
@@ -3678,7 +3678,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
   CoordWinSetCoord(dx, dy);
   SetPoint(dx, dy);
-  dc = Mxlocal->gc;
+  dc = Menulocal.gc;
 
   if (region == NULL) {
     if (d->ShowCross)
@@ -4104,9 +4104,9 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
       zoom = Menulocal.PaperZoom / 10000.0;
       ShowFocusFrame(dc);
       if (e->state & GDK_SHIFT_MASK) {
-	mv = Mxlocal->grid / 10;
+	mv = Menulocal.grid / 10;
       } else {
-	mv = Mxlocal->grid;
+	mv = Menulocal.grid;
       }
 
       if (e->keyval == GDK_Down) {
@@ -4262,14 +4262,14 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   if (e && e->count != 0)
     return TRUE;
 
-  gc = Mxlocal->gc;
+  gc = Menulocal.gc;
 
-  Mxlocal->scrollx = d->hscroll - d->cx;
-  Mxlocal->scrolly = d->vscroll - d->cy;
+  Menulocal.scrollx = d->hscroll - d->cx;
+  Menulocal.scrolly = d->vscroll - d->cy;
 
-  if (Mxlocal->pix) {
+  if (Menulocal.pix) {
     gdk_region_get_clipbox(e->region, &rect);
-    gdk_draw_drawable(e->window, gc, Mxlocal->pix,
+    gdk_draw_drawable(e->window, gc, Menulocal.pix,
 		      d->hscroll - d->cx + rect.x,
 		      d->vscroll - d->cy + rect.y,
 		      rect.x, rect.y,
@@ -4384,11 +4384,11 @@ ViewerWinUpdate(int clear)
     mx_clear(NULL);
     mx_redraw(Menulocal.obj, Menulocal.inst);
   } else if (region) {
-    Mxlocal->region = region;
-    gra2cairo_clip_region(Mxlocal->local, region);
+    Menulocal.region = region;
+    gra2cairo_clip_region(Menulocal.local, region);
     mx_redraw(Menulocal.obj, Menulocal.inst);
-    gra2cairo_clip_region(Mxlocal->local, NULL);
-    Mxlocal->region = NULL;
+    gra2cairo_clip_region(Menulocal.local, NULL);
+    Menulocal.region = NULL;
   }
   gdk_window_invalidate_rect(d->win, NULL, TRUE);
 
@@ -4559,33 +4559,33 @@ create_pix(int w, int h)
   if (h == 0)
     h = 1;
 
-  if (Mxlocal->local->cairo)
-    cairo_destroy(Mxlocal->local->cairo);
+  if (Menulocal.local->cairo)
+    cairo_destroy(Menulocal.local->cairo);
 
-  Mxlocal->local->cairo = NULL;
+  Menulocal.local->cairo = NULL;
 
-  if (Mxlocal->pix)
-    g_object_unref(Mxlocal->pix);
+  if (Menulocal.pix)
+    g_object_unref(Menulocal.pix);
 
-  Mxlocal->pix = gdk_pixmap_new(NgraphApp.Viewer.Win->window, w, h, -1);
+  Menulocal.pix = gdk_pixmap_new(NgraphApp.Viewer.Win->window, w, h, -1);
   rect.x = 0;
   rect.y = 0;
   rect.width = w;
   rect.height = h;
 
-  gdk_gc_set_clip_rectangle(Mxlocal->gc, &rect);
-  gdk_gc_set_rgb_fg_color(Mxlocal->gc, &white);
-  gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, 0, 0, w, h);
+  gdk_gc_set_clip_rectangle(Menulocal.gc, &rect);
+  gdk_gc_set_rgb_fg_color(Menulocal.gc, &white);
+  gdk_draw_rectangle(Menulocal.pix, Menulocal.gc, TRUE, 0, 0, w, h);
   draw_paper_frame();
-  gdk_gc_set_clip_rectangle(Mxlocal->gc, NULL);
+  gdk_gc_set_clip_rectangle(Menulocal.gc, NULL);
 
-  Mxlocal->local->cairo = gdk_cairo_create(Mxlocal->pix);
-  gra2cairo_set_antialias(Mxlocal->local, Mxlocal->local->antialias);
+  Menulocal.local->cairo = gdk_cairo_create(Menulocal.pix);
+  gra2cairo_set_antialias(Menulocal.local, Menulocal.local->antialias);
 #if 0
-  cairo_set_tolerance(Mxlocal->local->cairo, 0.1);
+  cairo_set_tolerance(Menulocal.local->cairo, 0.1);
 #endif
-  Mxlocal->local->offsetx = 0;
-  Mxlocal->local->offsety = 0;
+  Menulocal.local->offsetx = 0;
+  Menulocal.local->offsety = 0;
 }
 
 void
@@ -4593,14 +4593,14 @@ OpenGC(void)
 {
   int width, height;
 
-  if (Mxlocal->gc)
+  if (Menulocal.gc)
     return;
 
-  Mxlocal->local->pixel_dot_x =
-  Mxlocal->local->pixel_dot_y =
-    Mxlocal->windpi / 25.4 / 100;
-  Mxlocal->local->offsetx = 0;
-  Mxlocal->local->offsety = 0;
+  Menulocal.local->pixel_dot_x =
+  Menulocal.local->pixel_dot_y =
+    Menulocal.windpi / 25.4 / 100;
+  Menulocal.local->offsetx = 0;
+  Menulocal.local->offsety = 0;
 
   width = mxd2p(Menulocal.PaperWidth);
   height = mxd2p(Menulocal.PaperHeight);
@@ -4611,16 +4611,16 @@ OpenGC(void)
   if (height == 0)
     height = 1;
 
-  Mxlocal->win = NgraphApp.Viewer.Win->window;
-  Mxlocal->gc = gdk_gc_new(Mxlocal->win);
+  Menulocal.win = NgraphApp.Viewer.Win->window;
+  Menulocal.gc = gdk_gc_new(Menulocal.win);
   create_pix(width, height);
 
-  Mxlocal->offsetx = 0;
-  Mxlocal->offsety = 0;
+  Menulocal.offsetx = 0;
+  Menulocal.offsety = 0;
 
-  Mxlocal->scrollx = 0;
-  Mxlocal->scrolly = 0;
-  Mxlocal->region = NULL;
+  Menulocal.scrollx = 0;
+  Menulocal.scrolly = 0;
+  Menulocal.region = NULL;
 }
 
 void
@@ -4694,8 +4694,8 @@ ChangeDPI(int redraw)
   width = mxd2p(Menulocal.PaperWidth);
   height = mxd2p(Menulocal.PaperHeight);
 
-  if (Mxlocal->pix) {
-    gdk_drawable_get_size(Mxlocal->pix, &w, &h);
+  if (Menulocal.pix) {
+    gdk_drawable_get_size(Menulocal.pix, &w, &h);
   }else { 
     h = w = 0;
   }
@@ -4718,8 +4718,8 @@ ChangeDPI(int redraw)
   d->vupper = height;
   d->vscroll = YPos;
 
-  Mxlocal->scrollx = -d->cx + XPos;
-  Mxlocal->scrolly = -d->cy + YPos;
+  Menulocal.scrollx = -d->cx + XPos;
+  Menulocal.scrolly = -d->cy + YPos;
 
   if ((obj = chkobject("text")) != NULL) {
     num = chkobjlastinst(obj);
@@ -4735,7 +4735,7 @@ ChangeDPI(int redraw)
     gdk_window_invalidate_rect(d->win, NULL, TRUE);
   }
 
-  gdk_drawable_get_size(Mxlocal->win, &w, &h);
+  gdk_drawable_get_size(Menulocal.win, &w, &h);
   SetHRuler(d, w);
   SetVRuler(d, h);
 }
@@ -4743,16 +4743,16 @@ ChangeDPI(int redraw)
 void
 CloseGC(void)
 {
-  if (Mxlocal->gc == NULL)
+  if (Menulocal.gc == NULL)
     return;
  
-  g_object_unref(G_OBJECT(Mxlocal->gc));
-  Mxlocal->gc = NULL;
+  g_object_unref(G_OBJECT(Menulocal.gc));
+  Menulocal.gc = NULL;
 
-  if (Mxlocal->region != NULL)
-    gdk_region_destroy(Mxlocal->region);
+  if (Menulocal.region != NULL)
+    gdk_region_destroy(Menulocal.region);
 
-  Mxlocal->region = NULL;
+  Menulocal.region = NULL;
 
   UnFocus(TRUE);
 }
@@ -4760,20 +4760,20 @@ CloseGC(void)
 void
 ReopenGC(void)
 {
-  if (Mxlocal->gc) {
-    g_object_unref(G_OBJECT(Mxlocal->gc));
+  if (Menulocal.gc) {
+    g_object_unref(G_OBJECT(Menulocal.gc));
   }
-  Mxlocal->gc = gdk_gc_new(Mxlocal->win);
-  Mxlocal->offsetx = 0;
-  Mxlocal->offsety = 0;
-  Mxlocal->local->pixel_dot_x =
-  Mxlocal->local->pixel_dot_y =
-    Mxlocal->windpi / 25.4 / 100;
+  Menulocal.gc = gdk_gc_new(Menulocal.win);
+  Menulocal.offsetx = 0;
+  Menulocal.offsety = 0;
+  Menulocal.local->pixel_dot_x =
+  Menulocal.local->pixel_dot_y =
+    Menulocal.windpi / 25.4 / 100;
 
-  if (Mxlocal->region != NULL)
-    gdk_region_destroy(Mxlocal->region);
+  if (Menulocal.region != NULL)
+    gdk_region_destroy(Menulocal.region);
 
-  Mxlocal->region = NULL;
+  Menulocal.region = NULL;
 }
 
 void
@@ -4781,18 +4781,18 @@ draw_paper_frame(void)
 {
   int w, h;
 
-  if (Mxlocal->gc == NULL)
+  if (Menulocal.gc == NULL)
     return;
 
-  gdk_gc_set_function(Mxlocal->gc, GDK_COPY);
-  gdk_gc_set_line_attributes(Mxlocal->gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  gdk_gc_set_function(Menulocal.gc, GDK_COPY);
+  gdk_gc_set_line_attributes(Menulocal.gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
   w = mxd2p(Menulocal.PaperWidth) - 1;
   h = mxd2p(Menulocal.PaperHeight) - 1;
 
-  gdk_gc_set_rgb_fg_color(Mxlocal->gc, &gray);
+  gdk_gc_set_rgb_fg_color(Menulocal.gc, &gray);
 
-  gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, FALSE, 0, 0, w, h);
+  gdk_draw_rectangle(Menulocal.pix, Menulocal.gc, FALSE, 0, 0, w, h);
 }
 
 void

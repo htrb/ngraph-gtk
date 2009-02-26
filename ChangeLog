@@ -1,5 +1,16 @@
 2009-02-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+
+	* src/gtk/ox11menu.c (set_menu_config_mxlocal): remove.
+	(gtkmenu): remove field "_gtklocal".
+	(mx_clear): call "draw_paper_frame()" after call
+	"gdk_draw_rectangle()".
+	(menuinit): unref "Menulocal.pix" if "Menulocal.pix" is not NULL.
+
+	* src/gtk/ox11menu.h (struct menulocal): remove unused member
+	"output" and "outputobh".
+	(struct mxlocal): remove mxlocal and use menulocal.
+
 	* src/gtk/x11opt.c (save_viewer_config, ViewerDialogSetupItem)
 	(ViewerDialogSetup, ViewerDialogClose): add codes related to
 	status bar.

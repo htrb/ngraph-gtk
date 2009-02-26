@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.54 2009/02/26 05:06:10 hito Exp $
+ * $Id: ox11menu.c,v 1.55 2009/02/26 08:51:49 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -83,7 +83,6 @@ enum {
 };
 
 struct menulocal Menulocal;
-struct mxlocal *Mxlocal;
 struct savedstdio GtkIOSave;
 
 static int mxflush(struct objlist *obj, char *inst, char *rval, int argc,
@@ -209,14 +208,14 @@ static struct menu_config MenuConfig[] = {
   {"information_win",		MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_dialog_geometry},
   {"coordinate_win",		MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_coord_geometry},
 
-  {"antialias",				MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
-  {"viewer_dpi",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
-  {"viewer_load_file_data_number",	MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
-  {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
-  {"data_head_lines",			MENU_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"antialias",				MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.antialias},
+  {"viewer_dpi",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.windpi},
+  {"viewer_load_file_data_number",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.redrawf_num},
+  {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.grid},
+  {"data_head_lines",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
 
-  {"viewer_auto_redraw",		MENU_CONFIG_TYPE_BOOL, NULL, NULL},
-  {"viewer_load_file_on_redraw",	MENU_CONFIG_TYPE_BOOL, NULL, NULL},
+  {"viewer_auto_redraw",		MENU_CONFIG_TYPE_BOOL, NULL, &Menulocal.autoredraw},
+  {"viewer_load_file_on_redraw",	MENU_CONFIG_TYPE_BOOL, NULL, &Menulocal.redrawf},
 };
 
 static NHASH MenuConfigHash = NULL;
@@ -667,34 +666,6 @@ menuadddrawrable(struct objlist *parent, struct narray *drawrable)
   }
 }
 
-static void
-set_menu_config_mxlocal(void)
-{
-  struct menu_config *cfg;
-
-  if (nhash_get_ptr(MenuConfigHash, "antialias", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->antialias);
-  }
-  if (nhash_get_ptr(MenuConfigHash, "viewer_dpi", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->windpi);
-  }
-  if (nhash_get_ptr(MenuConfigHash, "viewer_load_file_data_number", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->redrawf_num);
-  }
-  if (nhash_get_ptr(MenuConfigHash, "viewer_grid", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->grid);
-  }
-  if (nhash_get_ptr(MenuConfigHash, "data_head_lines", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->data_head_lines);
-  }
-  if (nhash_get_ptr(MenuConfigHash, "viewer_auto_redraw", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->autoredraw);
-  }
-  if (nhash_get_ptr(MenuConfigHash, "viewer_load_file_on_redraw", (void *) &cfg) == 0) {
-    cfg->data = &(Mxlocal->redrawf);
-  }
-}
-
 static int
 menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
@@ -714,15 +685,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     memfree(local);
     return 1;
   }
-
-  Mxlocal = (struct mxlocal *) memalloc(sizeof(struct mxlocal));
-  if (Mxlocal == NULL) {
-    local = gra2cairo_free(obj, inst);
-    memfree(local);
-    return 1;
-  }
-
-  set_menu_config_mxlocal();
 
   Menulocal.menux = Menulocal.menuy
     = Menulocal.menuheight = Menulocal.menuwidth = CW_USEDEFAULT;
@@ -771,16 +733,13 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
 
-  Mxlocal->windpi = DEFAULT_DPI;
-  Mxlocal->autoredraw = TRUE;
-  Mxlocal->redrawf = TRUE;
-  Mxlocal->redrawf_num = 0xff;
-  Mxlocal->grid = 200;
-  Mxlocal->data_head_lines = 20;
-  Mxlocal->local = local;
-
-  if (_putobj(obj, "_gtklocal", inst, Mxlocal))
-    goto errexit;
+  Menulocal.windpi = DEFAULT_DPI;
+  Menulocal.autoredraw = TRUE;
+  Menulocal.redrawf = TRUE;
+  Menulocal.redrawf_num = 0xff;
+  Menulocal.grid = 200;
+  Menulocal.data_head_lines = 20;
+  Menulocal.local = local;
 
   if (mgtkloadconfig())
     goto errexit;
@@ -788,8 +747,8 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (exwinloadconfig())
     goto errexit;
 
-  Mxlocal->local->antialias = Mxlocal->antialias;
-  if (_putobj(obj, "antialias", inst, &(Mxlocal->antialias)))
+  Menulocal.local->antialias = Menulocal.antialias;
+  if (_putobj(obj, "antialias", inst, &(Menulocal.antialias)))
     goto errexit;
 
   numf = arraynum(Menulocal.ngpfilelist);
@@ -812,25 +771,25 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (Menulocal.exwindpi > DPI_MAX)
     Menulocal.exwindpi = DPI_MAX;
 
-  if (Mxlocal->windpi < 1)
-    Mxlocal->windpi = DEFAULT_DPI;
+  if (Menulocal.windpi < 1)
+    Menulocal.windpi = DEFAULT_DPI;
 
-  if (Mxlocal->windpi > DPI_MAX)
-    Mxlocal->windpi = DPI_MAX;
+  if (Menulocal.windpi > DPI_MAX)
+    Menulocal.windpi = DPI_MAX;
 
-  if (_putobj(obj, "dpi", inst, &(Mxlocal->windpi)))
+  if (_putobj(obj, "dpi", inst, &(Menulocal.windpi)))
     goto errexit;
 
-  if (_putobj(obj, "data_head_lines", inst, &(Mxlocal->data_head_lines)))
+  if (_putobj(obj, "data_head_lines", inst, &(Menulocal.data_head_lines)))
     goto errexit;
 
-  if (_putobj(obj, "auto_redraw", inst, &(Mxlocal->autoredraw)))
+  if (_putobj(obj, "auto_redraw", inst, &(Menulocal.autoredraw)))
     goto errexit;
 
-  if (_putobj(obj, "redraw_flag", inst, &(Mxlocal->redrawf)))
+  if (_putobj(obj, "redraw_flag", inst, &(Menulocal.redrawf)))
     goto errexit;
 
-  if (_putobj(obj, "redraw_num", inst, &(Mxlocal->redrawf_num)))
+  if (_putobj(obj, "redraw_num", inst, &(Menulocal.redrawf_num)))
     goto errexit;
 
   i = 0;
@@ -839,10 +798,10 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   Menulocal.obj = obj;
   Menulocal.inst = inst;
-  Mxlocal->pix = NULL;
-  Mxlocal->win = NULL;
-  Mxlocal->gc = NULL;
-  Mxlocal->lock = 0;
+  Menulocal.pix = NULL;
+  Menulocal.win = NULL;
+  Menulocal.gc = NULL;
+  Menulocal.lock = 0;
 
   if (!OpenApplication()) {
     error(obj, ERR_MENU_DISPLAY);
@@ -885,10 +844,8 @@ errexit:
     memfree(sdel);
   }
 
-  if (Mxlocal->pix)
-    g_object_unref(Mxlocal->pix);
-
-  memfree(Mxlocal);
+  if (Menulocal.pix)
+    g_object_unref(Menulocal.pix);
 
   local = gra2cairo_free(obj, inst);
   memfree(local);
@@ -946,10 +903,16 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     memfree(sdel);
   }
 
-  if (Mxlocal->pix)
-    g_object_unref(Mxlocal->pix);
+  if (Menulocal.pix)
+    g_object_unref(Menulocal.pix);
 
   Menulocal.obj = NULL;
+
+  if (Menulocal.pix)
+    g_object_unref(Menulocal.pix);
+  Menulocal.pix = NULL;
+
+  Menulocal.local = NULL;
 
   return 0;
 }
@@ -1027,11 +990,11 @@ menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
-  if (Mxlocal->lock) {
+  if (Menulocal.lock) {
     error(obj, ERR_MENU_RUN);
     return 1;
   }
-  Mxlocal->lock = 1;
+  Menulocal.lock = 1;
 
   savestdio(&GtkIOSave);
 
@@ -1039,7 +1002,7 @@ menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   application(file);
 
   loadstdio(&GtkIOSave);
-  Mxlocal->lock = 0;
+  Menulocal.lock = 0;
   return 0;
 }
 
@@ -1054,7 +1017,7 @@ static int
 mxredrawflag(struct objlist *obj, char *inst, char *rval, int argc,
 	     char **argv)
 {
-  Mxlocal->redrawf = *(int *) argv[2];
+  Menulocal.redrawf = *(int *) argv[2];
   return 0;
 }
 
@@ -1068,7 +1031,7 @@ mxredraw_num(struct objlist *obj, char *inst, char *rval, int argc,
 
   n = (n < 0) ? 0: n;
 
-  Mxlocal->redrawf_num = n;
+  Menulocal.redrawf_num = n;
 
   *(int *) argv[2] = n;
 
@@ -1085,7 +1048,7 @@ mx_data_head_lines(struct objlist *obj, char *inst, char *rval, int argc,
 
   n = (n < 0) ? 0: n;
 
-  Mxlocal->data_head_lines = n;
+  Menulocal.data_head_lines = n;
 
   *(int *) argv[2] = n;
 
@@ -1097,12 +1060,12 @@ mx_redraw(struct objlist *obj, char *inst)
 {
   int n;
 
-  if (Mxlocal->region) {
-    mx_clear(Mxlocal->region);
+  if (Menulocal.region) {
+    mx_clear(Menulocal.region);
   }
 
-  if (Mxlocal->redrawf) {
-    n = Mxlocal->redrawf_num;
+  if (Menulocal.redrawf) {
+    n = Menulocal.redrawf_num;
   } else {
     n = 0;
   }
@@ -1111,8 +1074,8 @@ mx_redraw(struct objlist *obj, char *inst)
   draw_paper_frame();
   mxflush(obj, inst, NULL, 0, NULL);
 
-  if (Mxlocal->win) {
-    gdk_window_invalidate_rect(Mxlocal->win, NULL, TRUE);
+  if (Menulocal.win) {
+    gdk_window_invalidate_rect(Menulocal.win, NULL, TRUE);
   }
 }
 
@@ -1146,9 +1109,9 @@ static int
 mxautoredraw(struct objlist *obj, char *inst, char *rval,
 	     int argc, char **argv)
 {
-  if (!(Mxlocal->autoredraw) && (*(int *) argv[2]))
+  if (!(Menulocal.autoredraw) && (*(int *) argv[2]))
     mx_redraw(obj, inst);
-  Mxlocal->autoredraw = *(int *) argv[2];
+  Menulocal.autoredraw = *(int *) argv[2];
   return 0;
 }
 
@@ -1162,13 +1125,13 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     dpi = 1;
   if (dpi > DPI_MAX)
     dpi = DPI_MAX;
-  Mxlocal->windpi = dpi;
-  Mxlocal->local->pixel_dot_x =
-      Mxlocal->local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
+  Menulocal.windpi = dpi;
+  Menulocal.local->pixel_dot_x =
+      Menulocal.local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
 
-  if (Mxlocal->win) {
-    gdk_window_invalidate_rect(Mxlocal->win, NULL, TRUE);
+  if (Menulocal.win) {
+    gdk_window_invalidate_rect(Menulocal.win, NULL, TRUE);
   }
   return 0;
 }
@@ -1176,9 +1139,9 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 mxflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  if (Mxlocal->local->linetonum && Mxlocal->local->cairo) {
-    cairo_stroke(Mxlocal->local->cairo);
-    Mxlocal->local->linetonum = 0;
+  if (Menulocal.local->linetonum && Menulocal.local->cairo) {
+    cairo_stroke(Menulocal.local->cairo);
+    Menulocal.local->linetonum = 0;
   }
 
   return 0;
@@ -1187,14 +1150,14 @@ mxflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 void
 mx_clear(GdkRegion *region)
 {
-  if (Mxlocal->pix) {
+  if (Menulocal.pix) {
     gint w, h;
     GdkColor color;
 
-    gdk_drawable_get_size(Mxlocal->pix, &w, &h);
+    gdk_drawable_get_size(Menulocal.pix, &w, &h);
 
     if (region) {
-      gdk_gc_set_clip_region(Mxlocal->gc, region);
+      gdk_gc_set_clip_region(Menulocal.gc, region);
     } else {
       GdkRectangle rect;
 
@@ -1202,14 +1165,15 @@ mx_clear(GdkRegion *region)
       rect.y = 0;
       rect.width = w;
       rect.height = h;
-      gdk_gc_set_clip_rectangle(Mxlocal->gc, &rect);
+      gdk_gc_set_clip_rectangle(Menulocal.gc, &rect);
     }
     color.red = Menulocal.bg_r * 0xff;
     color.green = Menulocal.bg_g * 0xff;
     color.blue = Menulocal.bg_b * 0xff;
-    gdk_gc_set_rgb_fg_color(Mxlocal->gc, &color);
-    gdk_draw_rectangle(Mxlocal->pix, Mxlocal->gc, TRUE, 0, 0, w, h);
-    gdk_gc_set_clip_region(Mxlocal->gc, NULL);
+    gdk_gc_set_rgb_fg_color(Menulocal.gc, &color);
+    gdk_draw_rectangle(Menulocal.pix, Menulocal.gc, TRUE, 0, 0, w, h);
+    draw_paper_frame();
+    gdk_gc_set_clip_region(Menulocal.gc, NULL);
   }
 }
 
@@ -1221,8 +1185,8 @@ mxclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   mx_clear(NULL);
 
-  if (Mxlocal->win) {
-    gdk_window_invalidate_rect(Mxlocal->win, NULL, TRUE);
+  if (Menulocal.win) {
+    gdk_window_invalidate_rect(Menulocal.win, NULL, TRUE);
   }
 
 return 0;
@@ -1231,28 +1195,28 @@ return 0;
 int
 mxd2p(int r)
 {
-  return nround(r * Mxlocal->local->pixel_dot_x);
+  return nround(r * Menulocal.local->pixel_dot_x);
 }
 
 int
 mxd2px(int x)
 {
-  return nround(x * Mxlocal->local->pixel_dot_x + Mxlocal->local->offsetx);
-  //  return nround(x * Mxlocal->pixel_dot + Mxlocal->offsetx - Mxlocal->scrollx);
+  return nround(x * Menulocal.local->pixel_dot_x + Menulocal.local->offsetx);
+  //  return nround(x * Menulocal.pixel_dot + Menulocal.offsetx - Menulocal.scrollx);
 }
 
 int
 mxd2py(int y)
 {
-  return nround(y * Mxlocal->local->pixel_dot_y + Mxlocal->local->offsety);
-  //  return nround(y * Mxlocal->pixel_dot + Mxlocal->offsety - Mxlocal->scrolly);
+  return nround(y * Menulocal.local->pixel_dot_y + Menulocal.local->offsety);
+  //  return nround(y * Menulocal.pixel_dot + Menulocal.offsety - Menulocal.scrolly);
 }
 
 int
 mxp2d(int r)
 {
-  return ceil(r / Mxlocal->local->pixel_dot_x);
-  //  return nround(r / Mxlocal->pixel_dot);
+  return ceil(r / Menulocal.local->pixel_dot_x);
+  //  return nround(r / Menulocal.pixel_dot);
 }
 
 static int
@@ -1443,7 +1407,6 @@ static struct objtable gtkmenu[] = {
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, "sa", 0},
   {"print", NVFUNC, NREAD | NEXEC, mx_print, "bi", 0},
   {"echo", NVFUNC, NREAD | NEXEC, mx_echo, "s", 0},
-  {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 

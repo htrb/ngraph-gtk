@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.24 2009/02/26 05:06:10 hito Exp $
+ * $Id: ox11menu.h,v 1.25 2009/02/26 08:51:49 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -85,7 +85,7 @@ struct script
   struct script *next;
 };
 
-struct mxlocal
+struct menulocal
 {
   GdkDrawable *win, *pix;
   GdkGC *gc;
@@ -98,10 +98,6 @@ struct mxlocal
   int lock;
   struct gra2cairo_local *local;
   int antialias;
-};
-
-struct menulocal
-{
   char *editor, *browser, *help_browser;
   struct objlist *obj;
   char *inst;
@@ -139,7 +135,6 @@ struct menulocal
 };
 
 extern struct menulocal Menulocal;
-extern struct mxlocal *Mxlocal;
 
 int mxd2p(int r);
 int mxd2px(int x);
