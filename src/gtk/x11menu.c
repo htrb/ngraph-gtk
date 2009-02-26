@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.69 2009/02/24 02:40:40 hito Exp $
+ * $Id: x11menu.c,v 1.70 2009/02/26 03:29:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -65,9 +65,9 @@ GtkAccelGroup *AccelGroup = NULL;
 static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
-  *ShowLegendWin = NULL, *ShowMergeWin = NULL,
-  *ShowCoodinateWin = NULL, *ShowInfoWin = NULL, *ShowStatusBar = NULL,
-  *RecentGraph = NULL, *RecentData = NULL, *AddinMenu = NULL;
+  *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
+  *ShowInfoWin = NULL, *RecentGraph = NULL, *RecentData = NULL,
+  *AddinMenu = NULL, *ExtDrvOutMenu = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 
@@ -997,6 +997,13 @@ create_image_outputmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_PNG file"), FALSE, "<Ngraph>/Output/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
 }
 
+static void
+show_outputmenu_cb(GtkWidget *w, gpointer user_data)
+{
+  if (ExtDrvOutMenu)
+    gtk_widget_set_sensitive(ExtDrvOutMenu, Menulocal.extprinterroot != NULL);
+}
+
 static void 
 create_outputmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
@@ -1009,6 +1016,7 @@ create_outputmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   menu = gtk_menu_new();
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
+  g_signal_connect(menu, "show", G_CALLBACK(show_outputmenu_cb), NULL);
 
   create_menu_item(menu, _("_Draw"), FALSE, "<Ngraph>/Output/Draw", GDK_d, GDK_CONTROL_MASK, CmOutputMenu, MenuIdViewerDraw);
   create_menu_item(menu, GTK_STOCK_CLEAR, TRUE, "<Ngraph>/Output/Clear", GDK_e, GDK_CONTROL_MASK, CmOutputMenu, MenuIdViewerClear);
@@ -1019,7 +1027,9 @@ create_outputmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_image_outputmenu(item, accel_group);
 
   create_menu_item(menu, _("external _Viewer"), FALSE, "<Ngraph>/Output/External Viewer", 0, 0, CmOutputMenu, MenuIdOutputViewer);
-  create_menu_item(menu, _("external _Driver"), FALSE, "<Ngraph>/Output/External Driver", 0, 0, CmOutputMenu, MenuIdOutputDriver);
+
+  ExtDrvOutMenu = create_menu_item(menu, _("external _Driver"), FALSE, "<Ngraph>/Output/External Driver", 0, 0, CmOutputMenu, MenuIdOutputDriver);
+
   data[0].widget = create_menu_item(menu, _("data _File"), FALSE, "<Ngraph>/Output/Data File", 0, 0, CmOutputMenu, MenuIdPrintDataFile);
 
   set_show_instance_menu_cb(menu, "file", data, sizeof(data) / sizeof(*data));
@@ -1073,8 +1083,6 @@ show_winmwnu_cb(GtkWidget *w, gpointer data)
   gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ShowInfoWin),
 				 NgraphApp.InfoWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.InfoWin.Win));
 
-  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ShowStatusBar), Menulocal.statusb);
-
   Toggle_cb_disable = FALSE;
 }
 
@@ -1087,20 +1095,6 @@ toggle_win_cb(GtkWidget *w, gpointer data)
 
   func = data;
   func(w, NULL);
-}
-
-static void
-toggle_status_bar(GtkWidget *w, gpointer data)
-{
-  if (Toggle_cb_disable) return;
-
-  if (Menulocal.statusb) {
-    Menulocal.statusb = FALSE;
-    gtk_widget_hide(NgraphApp.Message);
-  } else {
-    Menulocal.statusb = TRUE;
-    gtk_widget_show(NgraphApp.Message);
-  }
 }
 
 static GtkWidget * 
@@ -1156,11 +1150,6 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 
   item = gtk_menu_item_new_with_mnemonic(_("default _Window config"));
   g_signal_connect(item, "activate", G_CALLBACK(CmReloadWindowConfig), NULL);
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
-
-  item = gtk_check_menu_item_new_with_mnemonic(_("_Status bar"));
-  g_signal_connect(item, "toggled", G_CALLBACK(toggle_status_bar), NULL);
-  ShowStatusBar = item;
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
   g_signal_connect(menu, "show", G_CALLBACK(show_winmwnu_cb), NULL);

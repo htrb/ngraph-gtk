@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.48 2009/02/25 09:11:24 hito Exp $
+ * $Id: x11opt.c,v 1.49 2009/02/26 03:29:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -172,8 +172,6 @@ save_geometory_config(struct narray *conf)
 	     Menulocal.menuwidth, Menulocal.menuheight);
     arrayadd(conf, &buf);
   }
-
-  add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
 }
 
 static void
@@ -239,6 +237,8 @@ save_viewer_config(struct narray *conf)
   add_str_with_int_to_array(conf, "viewer_load_file_data_number", Mxlocal->redrawf_num);
   add_str_with_int_to_array(conf, "viewer_show_ruler", Mxlocal->ruler);
   add_str_with_int_to_array(conf, "viewer_grid", Mxlocal->grid);
+
+  add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
 }
 
 static void
@@ -823,6 +823,7 @@ extprinter_free(struct extprinter *fdel)
   memfree(fdel->name);
   memfree(fdel->driver);
   memfree(fdel->option);
+  memfree(fdel->ext);
   memfree(fdel);
 }
 
@@ -1546,6 +1547,7 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   gtk_range_set_value(GTK_RANGE(d->dpi), d->dpis);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ruler)), Mxlocal->ruler);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->statusbar)), Menulocal.statusb);
 
   getobj(d->Obj, "antialias", d->Id, 0, NULL, &a);
   combo_box_set_active(d->antialias, a);
@@ -1593,8 +1595,12 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Antialias:"), FALSE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    w = gtk_check_button_new_with_mnemonic(_("_Show ruler"));
+    w = gtk_check_button_new_with_mnemonic(_("show _Ruler"));
     d->ruler = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Show status bar"));
+    d->statusbar = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_Auto redraw"));
@@ -1638,10 +1644,10 @@ ViewerDialogClose(GtkWidget *w, void *data)
   }
 
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ruler));
-  a = a ? TRUE : FALSE;
-  if (Mxlocal->ruler != a)
-    d->Clear = TRUE;
   Mxlocal->ruler = a;
+
+  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->statusbar));
+  Menulocal.statusb = a;
 
   a = combo_box_get_active(d->antialias);
   if (putobj(d->Obj, "antialias", d->Id, &a) == -1)

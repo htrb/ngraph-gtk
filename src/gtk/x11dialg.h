@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.32 2009/02/24 09:48:14 hito Exp $
+ * $Id: x11dialg.h,v 1.33 2009/02/26 03:29:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -783,7 +783,7 @@ struct ViewerDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *dpi, *ruler, *redraw, *loadfile, *grid, *data_num, *antialias;
+  GtkWidget *dpi, *ruler, *statusbar, *redraw, *loadfile, *grid, *data_num, *antialias;
   struct objlist *Obj;
   int Id;
   int Clear;
