@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.72 2009/02/26 08:51:49 hito Exp $
+ * $Id: x11menu.c,v 1.73 2009/02/26 09:44:42 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2003,6 +2003,9 @@ void
 SetPoint(int x, int y)
 {
   char buf[40];
+
+  x += Menulocal.LeftMargin;
+  y += Menulocal.TopMargin;
 
   if (NgraphApp.Message) {
     snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f", x / 100.0, y / 100.0);

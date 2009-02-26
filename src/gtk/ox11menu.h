@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.25 2009/02/26 08:51:49 hito Exp $
+ * $Id: ox11menu.h,v 1.26 2009/02/26 09:44:42 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -67,15 +67,6 @@ struct extprinter
   struct extprinter *next;
 };
 
-struct prnprinter
-{
-  char *name;
-  char *driver;
-  char *option;
-  char *prn;
-  struct prnprinter *next;
-};
-
 struct script
 {
   char *name;
@@ -83,6 +74,15 @@ struct script
   char *description;
   char *option;
   struct script *next;
+};
+
+struct prnprinter
+{
+  char *name;
+  char *driver;
+  char *option;
+  char *prn;
+  struct prnprinter *next;
 };
 
 struct menulocal
@@ -112,7 +112,6 @@ struct menulocal
   int PaperZoom;
   struct narray drawrable;
   struct extprinter *extprinterroot;
-  struct prnprinter *prnprinterroot;
   struct script *scriptroot;
   int menuheight, menuwidth, menux, menuy;
   int fileheight, filewidth, filex, filey, fileopen;

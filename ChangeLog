@@ -1,15 +1,18 @@
 2009-02-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11cood.c (CoordWinSetCoord): add affset to coordinate.
 
 	* src/gtk/ox11menu.c (set_menu_config_mxlocal): remove.
 	(gtkmenu): remove field "_gtklocal".
 	(mx_clear): call "draw_paper_frame()" after call
 	"gdk_draw_rectangle()".
 	(menuinit): unref "Menulocal.pix" if "Menulocal.pix" is not NULL.
+	(menu_config_set_prn_driver): remove.
 
 	* src/gtk/ox11menu.h (struct menulocal): remove unused member
-	"output" and "outputobh".
+	"output", "outputobh", "prnprinterroot".
 	(struct mxlocal): remove mxlocal and use menulocal.
+	(struct prnprinter): remove.
 
 	* src/gtk/x11opt.c (save_viewer_config, ViewerDialogSetupItem)
 	(ViewerDialogSetup, ViewerDialogClose): add codes related to
@@ -20,6 +23,7 @@
 	(create_outputmenu): call "g_signal_connect()" for "Output" menu.
 	(show_winmwnu_cb, create_windowmenu): remove codes related to
 	status bar.
+	(SetPoint): add affset to coordinate.
 
 	* src/gtk/x11opt_proto.h (Pref*DialogMoveSub): add.
 	(Pref*DialogUp, Pref*DialogUp): use Pref*DialogMoveSub.

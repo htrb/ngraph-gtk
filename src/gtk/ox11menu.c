@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.56 2009/02/26 09:11:37 hito Exp $
+ * $Id: ox11menu.c,v 1.57 2009/02/26 09:44:42 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -102,7 +102,6 @@ static int menu_config_set_four_elements(char *s2, void *data);
 static int menu_config_set_window_geometry(char *s2, void *data);
 static int menu_config_set_bgcolor(char *s2, void *data);
 static int menu_config_set_ext_driver(char *s2, void *data);
-static int menu_config_set_prn_driver(char *s2, void *data);
 static int menu_config_set_script(char *s2, void *data);
 
 static int *menu_config_menu_geometry[] = {
@@ -197,7 +196,6 @@ static struct menu_config MenuConfig[] = {
 
   {"background_color",		MENU_CONFIG_TYPE_OTHER, menu_config_set_bgcolor,       NULL},
   {"ext_driver",		MENU_CONFIG_TYPE_OTHER, menu_config_set_ext_driver,    NULL},
-  {"prn_driver",		MENU_CONFIG_TYPE_OTHER, menu_config_set_prn_driver,    NULL},
   {"script",			MENU_CONFIG_TYPE_OTHER, menu_config_set_script,        NULL},
   {"menu_win",			MENU_CONFIG_TYPE_OTHER, menu_config_set_four_elements, menu_config_menu_geometry},
 
@@ -351,52 +349,6 @@ menu_config_set_ext_driver(char *s2, void *data)
 }
 
 static int
-menu_config_set_prn_driver(char *s2, void *data)
-{
-  char *f[4] = {NULL, NULL, NULL, NULL};
-  int len, i;
-  struct prnprinter *pnew, *pcur, **pptr;
-
-  pptr = (struct prnprinter **) data;
-  pcur = *pptr;
-
-  f[0] = getitok2(&s2, &len, ",");
-  f[1] = getitok2(&s2, &len, ",");
-  f[2] = getitok2(&s2, &len, ",");
-
-  for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-
-  f[3] = getitok2(&s2, &len, "");
-
-  if (f[0] && f[1]) {
-    pnew = (struct prnprinter *) memalloc(sizeof(struct prnprinter));
-    if (pnew == NULL) {
-      for (i = 0; i < 4; i++) {
-	memfree(f[i]);
-      }
-      return 1;
-    }
-    if (pcur == NULL) {
-      Menulocal.prnprinterroot = pnew;
-    } else {
-      pcur->next = pnew;
-    }
-    *pptr = pnew;
-    pcur = pnew;
-    pcur->next = NULL;
-    pcur->name = f[0];
-    pcur->driver = f[1];
-    pcur->prn = f[2];
-    pcur->option = f[3];
-  } else {
-    for (i = 0; i < 4; i++) {
-      memfree(f[i]);
-    }
-  }
-  return 0;
-}
-
-static int
 menu_config_set_script(char *s2, void *data)
 {
   char *f[] = {NULL, NULL, NULL, NULL};
@@ -451,7 +403,6 @@ mgtkloadconfig(void)
   char *endptr;
   int len;
   struct extprinter *pcur;
-  struct prnprinter *pcur2;
   struct script *scur;
   struct menu_config *cfg;
 
@@ -460,18 +411,11 @@ mgtkloadconfig(void)
     return 0;
 
   pcur = Menulocal.extprinterroot;
-  pcur2 = Menulocal.prnprinterroot;
   scur = Menulocal.scriptroot;
 
   if (nhash_get_ptr(MenuConfigHash, "ext_driver", (void *) &cfg) == 0) {
     if (cfg) {
       cfg->data = &pcur;
-    }
-  }
-
-  if (nhash_get_ptr(MenuConfigHash, "prn_driver", (void *) &cfg) == 0) {
-    if (cfg) {
-      cfg->data = &pcur2;
     }
   }
 
@@ -670,7 +614,6 @@ static int
 menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct extprinter *pcur, *pdel;
-  struct prnprinter *pcur2, *pdel2;
   struct script *scur, *sdel;
   struct gra2cairo_local *local;
   int i, numf, numd;
@@ -709,8 +652,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.fileopendir = NULL;
   Menulocal.graphloaddir = NULL;
   Menulocal.expand = 1;
-  Menulocal.expanddir = (char *) memalloc(3);
-  strcpy(Menulocal.expanddir, "./");
+  Menulocal.expanddir = nstrdup("./");
   Menulocal.ignorepath = 0;
   Menulocal.expandtofullpath=TRUE;
   Menulocal.savepath = 0;
@@ -721,7 +663,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.datafilelist = arraynew(sizeof(char *));
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.extprinterroot = NULL;
-  Menulocal.prnprinterroot = NULL;
   Menulocal.scriptroot = NULL;
   Menulocal.hist_size = 1000;
   Menulocal.info_size = 1000;
@@ -814,6 +755,7 @@ errexit:
   memfree(Menulocal.editor);
   memfree(Menulocal.browser);
   memfree(Menulocal.help_browser);
+  memfree(Menulocal.coordwin_font);
   pcur = Menulocal.extprinterroot;
   while (pcur) {
     pdel = pcur;
@@ -823,16 +765,6 @@ errexit:
     memfree(pdel->ext);
     memfree(pdel->option);
     memfree(pdel);
-  }
-  pcur2 = Menulocal.prnprinterroot;
-  while (pcur2) {
-    pdel2 = pcur2;
-    pcur2 = pcur2->next;
-    memfree(pdel2->name);
-    memfree(pdel2->driver);
-    memfree(pdel2->option);
-    memfree(pdel2->prn);
-    memfree(pdel2);
   }
   scur = Menulocal.scriptroot;
   while (scur) {
@@ -857,7 +789,6 @@ static int
 menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct extprinter *pcur, *pdel;
-  struct prnprinter *pcur2, *pdel2;
   struct script *scur, *sdel;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
@@ -869,6 +800,7 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   memfree(Menulocal.editor);
   memfree(Menulocal.browser);
   memfree(Menulocal.help_browser);
+  memfree(Menulocal.coordwin_font);
   free(Menulocal.fileopendir);
   free(Menulocal.graphloaddir);
   memfree(Menulocal.expanddir);
@@ -881,16 +813,6 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     memfree(pdel->ext);
     memfree(pdel->option);
     memfree(pdel);
-  }
-  pcur2 = Menulocal.prnprinterroot;
-  while (pcur2) {
-    pdel2 = pcur2;
-    pcur2 = pcur2->next;
-    memfree(pdel2->name);
-    memfree(pdel2->driver);
-    memfree(pdel2->option);
-    memfree(pdel2->prn);
-    memfree(pdel2);
   }
   scur = Menulocal.scriptroot;
   while (scur) {
