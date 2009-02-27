@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.113 2009/02/26 09:51:45 hito Exp $
+ * $Id: x11view.c,v 1.114 2009/02/27 15:48:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -404,7 +404,7 @@ text_dropped(char *str, gint x, gint y, struct Viewer *d)
 
   LegendTextDialog(&DlgLegendText, obj, id);
   r = DialogExecute(TopLevel, &DlgLegendText);
-      
+
   if ((r == IDDELETE) || (r == IDCANCEL)) {
     delobj(obj, id);
   } else {
