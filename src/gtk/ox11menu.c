@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.60 2009/02/28 05:26:03 hito Exp $
+ * $Id: ox11menu.c,v 1.61 2009/02/28 06:40:55 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1169,6 +1169,9 @@ check_object_name(struct objlist *obj, struct narray *array)
     return 0;
 
   n = arraynum(array);
+  if (n == 0)
+    return 0;
+
   for (i = 0; i < n; i ++) {
     if (obj == chkobject(adata[i]))
       return 0;
