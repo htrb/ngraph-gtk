@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.24 2009/02/20 10:00:10 hito Exp $
+ * $Id: object.c,v 1.25 2009/02/28 02:01:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1756,7 +1756,8 @@ int getobjproc(struct objlist *obj,char *vname,void *val)
   return 0;
 }
 
-int _newobj(struct objlist *obj)
+static int 
+_newobj(struct objlist *obj)
 /* _newobj() returns id or -1 on error */
 {
   char *instcur,*instnew,*inst;
@@ -1987,7 +1988,8 @@ int newobj(struct objlist *obj)
   return id;
 }
 
-int _delobj(struct objlist *obj,int delid)
+static int
+_delobj(struct objlist *obj,int delid)
 /* delobj() returns id or -1 on error */
 {
   char *instcur,*instprev,*inst;
@@ -2515,7 +2517,6 @@ int moveobj(struct objlist *obj,int did,int sid)
   }
   if (getobjid(obj,sid)==-1) return -1;
   if (did==sid) return did;
-#if 0
   if ((dinstcur=chkobjinst(obj,did))==NULL) {
     if ((id=_newobj(obj))==-1) return -1;
     if (_copyobj(obj,id,sid)==-1) {
@@ -2533,18 +2534,6 @@ int moveobj(struct objlist *obj,int did,int sid)
       return -1;
     }
   }
-#else
-  dinstcur=chkobjinst(obj,did);
-  if (dinstcur == NULL) {
-    return -1;
-  }
-
-  exchobj(obj,did,sid);
-  if (delobj(obj,sid)==-1) {
-    exchobj(obj,did,sid);
-    return -1;
-  }
-#endif
   obj->curinst=*(int *)(dinstcur+idp);
   return *(int *)(dinstcur+idp);
 }

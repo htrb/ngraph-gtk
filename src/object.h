@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.11 2009/02/20 10:00:10 hito Exp $
+ * $Id: object.h,v 1.12 2009/02/28 02:01:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -282,8 +282,6 @@ int _exeparent(struct objlist *obj,char *vname,char *inst,char *rval,
                int argc,char **argv);
 int _exeobj(struct objlist *obj,char *vname,char *inst,int argc,char **argv);
 int __exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv);
-int _newobj(struct objlist *obj);
-int _delobj(struct objlist *obj,int delid);
 int copyobj(struct objlist *obj,char *vname,int did,int sid);
 int newobj(struct objlist *obj);
 int delobj(struct objlist *obj,int delid);

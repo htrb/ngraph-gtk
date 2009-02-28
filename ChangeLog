@@ -1,3 +1,7 @@
+2009-02-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/object.c (_newobj, _delobj): static.
+
 2009-02-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerEvMouseMove): don't call
