@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.59 2009/02/28 02:01:19 hito Exp $
+ * $Id: ox11menu.c,v 1.60 2009/02/28 05:26:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1157,47 +1157,22 @@ mxfullpathngp(struct objlist *obj, char *inst, char *rval, int argc,
 static int
 check_object_name(struct objlist *obj, struct narray *array)
 {
-  int i, n, len;
-  char *aliasname, *s, **adata, *alias;
+  int i, n;
+  char **adata;
 
   if (array == NULL)
     return 0;
 
   adata = arraydata(array);
 
+  if (adata == NULL)
+    return 0;
+
   n = arraynum(array);
-  if (obj->alias) {
-    alias = memalloc(strlen(obj->alias) + 1);
-  } else {
-    alias = NULL;
-  }
-
   for (i = 0; i < n; i ++) {
-    if (adata[i] == NULL)
-      continue;
-
-    if (strcmp(obj->name, adata[i]) == 0) {
-      memfree(alias);
+    if (obj == chkobject(adata[i]))
       return 0;
-    }
-
-    if (alias == NULL)
-      continue;
-
-    strcpy(alias, obj->alias);
-    s = alias;
-    while ((aliasname = getitok(&s, &len, ":"))) {
-      if (len > 0) {
-	aliasname[len] = '\0';
-	s++;
-      }
-      if (strcmp(aliasname, adata[i]) == 0) {
-	memfree(alias);
-	return 0;
-      }
-    }
   }
-  memfree(alias);
 
   return 1;
 }

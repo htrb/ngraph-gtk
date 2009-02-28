@@ -34,7 +34,7 @@
 
 	* src/gtk/x11opt_proto.h (Pref*DialogMoveSub): add.
 	(Pref*DialogUp, Pref*DialogUp): use Pref*DialogMoveSub.
-	(Pref*ListDefailtCb): responde to "GDK_Up", "GDK_Down" and
+	(Pref*ListDefailtCb): respond to "GDK_Up", "GDK_Down" and
 	"GDK_Delete".
 
 2009-02-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
