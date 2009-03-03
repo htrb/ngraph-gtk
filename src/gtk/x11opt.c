@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.52 2009/03/03 07:47:58 hito Exp $
+ * $Id: x11opt.c,v 1.53 2009/03/03 08:17:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -236,6 +236,7 @@ save_viewer_config(struct narray *conf)
   add_str_with_int_to_array(conf, "viewer_load_file_on_redraw", Menulocal.redrawf);
   add_str_with_int_to_array(conf, "viewer_load_file_data_number", Menulocal.redrawf_num);
   add_str_with_int_to_array(conf, "viewer_grid", Menulocal.grid);
+  add_str_with_int_to_array(conf, "focus_frame_type", Menulocal.focus_frame_type);
 }
 
 static void
@@ -321,8 +322,6 @@ save_misc_config(struct narray *conf)
 	     Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
     arrayadd(conf, &buf);
   }
-
-  add_str_with_int_to_array(conf, "focus_frame_type", Menulocal.focus_frame_type);
 }
 
 static void
@@ -1158,8 +1157,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   combo_box_set_active(d->path, Menulocal.savepath);
 
-  combo_box_set_active(d->fftype, (Menulocal.focus_frame_type == GDK_LINE_SOLID) ? 0 : 1);
-
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->datafile)), Menulocal.savewithdata);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->mergefile)), Menulocal.savewithmerge);
@@ -1289,14 +1286,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->bgcol = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = combo_box_create();
-    combo_box_append_text(w, _("solid"));
-    combo_box_append_text(w, _("dot"));
-    item_setup(hbox, w, _("_Line attribute of focus frame:"), FALSE);
-    d->fftype = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
@@ -1416,9 +1405,6 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   Menulocal.preserve_width =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
-
-  a = combo_box_get_active(d->fftype);
-  Menulocal.focus_frame_type = ((a == 0) ? GDK_LINE_SOLID : GDK_LINE_ON_OFF_DASH);
 
   a = spin_entry_get_val(d->hist_size);
   if (a < HIST_SIZE_MAX && a > 0) 
@@ -1582,6 +1568,8 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 
   spin_entry_set_val(d->data_num, Menulocal.redrawf_num);
   spin_entry_set_val(d->grid, Menulocal.grid);
+
+  combo_box_set_active(d->fftype, (Menulocal.focus_frame_type == GDK_LINE_SOLID) ? 0 : 1);
 }
 
 static void
@@ -1606,6 +1594,14 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     spin_entry_set_range(w, 1, GRID_MAX);
     item_setup(hbox, w, _("_Grid:"), TRUE);
     d->grid = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+    w = combo_box_create();
+    combo_box_append_text(w, _("solid"));
+    combo_box_append_text(w, _("dot"));
+    item_setup(hbox, w, _("_Line attribute of focus frame:"), FALSE);
+    d->fftype = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1677,6 +1673,9 @@ ViewerDialogClose(GtkWidget *w, void *data)
     return;
 
   Menulocal.grid = spin_entry_get_val(d->grid);
+
+  a = combo_box_get_active(d->fftype);
+  Menulocal.focus_frame_type = ((a == 0) ? GDK_LINE_SOLID : GDK_LINE_ON_OFF_DASH);
 
   d->ret = ret;
 }

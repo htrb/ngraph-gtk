@@ -4,7 +4,8 @@
 	(MiscDialogSetupItem, MiscDialogSetup, MiscDialogClose)
 	(ViewerDialogSetupItem, ViewerDialogSetup, ViewerDialogClose):
 	settings for status-bar and ruler are moved from viewer dialog to
-	misc dialog.
+	misc dialog, and setting for line attribute of focus frame is
+	moved from misc dialog to viewer dialog
 
 2009-02-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
