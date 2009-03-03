@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.51 2009/02/26 08:51:49 hito Exp $
+ * $Id: x11opt.c,v 1.52 2009/03/03 07:47:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -78,16 +78,16 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->child_geometry = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
-    w = gtk_check_button_new_with_mnemonic(_("_Font aliases"));
-    d->fonts = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-
     w = gtk_check_button_new_with_mnemonic(_("_Viewer"));
     d->viewer = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_External Viewer"));
     d->external_viewer = w;
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Font aliases"));
+    d->fonts = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_External Driver"));
@@ -236,9 +236,6 @@ save_viewer_config(struct narray *conf)
   add_str_with_int_to_array(conf, "viewer_load_file_on_redraw", Menulocal.redrawf);
   add_str_with_int_to_array(conf, "viewer_load_file_data_number", Menulocal.redrawf_num);
   add_str_with_int_to_array(conf, "viewer_grid", Menulocal.grid);
-
-  add_str_with_int_to_array(conf, "viewer_show_ruler", Menulocal.ruler);
-  add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
 }
 
 static void
@@ -314,6 +311,9 @@ save_misc_config(struct narray *conf)
   add_str_with_int_to_array(conf, "preserve_width", Menulocal.preserve_width);
   add_str_with_int_to_array(conf, "infowin_size", Menulocal.info_size);
   add_str_with_int_to_array(conf, "data_head_lines", Menulocal.data_head_lines);
+
+  add_str_with_int_to_array(conf, "viewer_show_ruler", Menulocal.ruler);
+  add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
 
   buf = (char *) memalloc(BUF_SIZE);
   if (buf) {
@@ -1185,6 +1185,9 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   if (Menulocal.coordwin_font) {
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->coordwin_font), Menulocal.coordwin_font);
   }
+
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ruler)), Menulocal.ruler);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->statusbar)), Menulocal.statusb);
 }
 
 static void
@@ -1268,7 +1271,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
 
 
-
     vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
@@ -1324,6 +1326,22 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_font_button_new();
     item_setup(vbox, w, _("_Font of coordinate window:"), FALSE);
     d->coordwin_font = w;
+
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+
+
+    frame = gtk_frame_new(NULL);
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    w = gtk_check_button_new_with_mnemonic(_("show _Ruler"));
+    d->ruler = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Show status bar"));
+    d->statusbar = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
@@ -1418,6 +1436,11 @@ MiscDialogClose(GtkWidget *w, void *data)
   a = spin_entry_get_val(d->data_head_lines);
   putobj(d->Obj, "data_head_lines", d->Id, &a);
 
+  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ruler));
+  Menulocal.ruler = a;
+
+  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->statusbar));
+  Menulocal.statusb = a;
 
   buf = gtk_font_button_get_font_name(GTK_FONT_BUTTON(d->coordwin_font));
   if (Menulocal.coordwin_font) {
@@ -1432,6 +1455,8 @@ MiscDialogClose(GtkWidget *w, void *data)
     Menulocal.coordwin_font = nstrdup(buf);
     CoordWinSetFont(buf);
   }
+
+  set_widget_visibility();
 
   d->ret = ret;
 }
@@ -1546,9 +1571,6 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   getobj(d->Obj, "dpi", d->Id, 0, NULL, &(d->dpis));
   gtk_range_set_value(GTK_RANGE(d->dpi), d->dpis);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ruler)), Menulocal.ruler);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->statusbar)), Menulocal.statusb);
-
   getobj(d->Obj, "antialias", d->Id, 0, NULL, &a);
   combo_box_set_active(d->antialias, a);
 
@@ -1595,14 +1617,6 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Antialias:"), FALSE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    w = gtk_check_button_new_with_mnemonic(_("show _Ruler"));
-    d->ruler = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    w = gtk_check_button_new_with_mnemonic(_("_Show status bar"));
-    d->statusbar = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
     w = gtk_check_button_new_with_mnemonic(_("_Auto redraw"));
     d->redraw = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
@@ -1643,12 +1657,6 @@ ViewerDialogClose(GtkWidget *w, void *data)
     d->Clear = TRUE;
   }
 
-  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ruler));
-  Menulocal.ruler = a;
-
-  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->statusbar));
-  Menulocal.statusb = a;
-
   a = combo_box_get_active(d->antialias);
   if (putobj(d->Obj, "antialias", d->Id, &a) == -1)
     return;
@@ -1669,8 +1677,6 @@ ViewerDialogClose(GtkWidget *w, void *data)
     return;
 
   Menulocal.grid = spin_entry_get_val(d->grid);
-
-  set_widget_visibility();
 
   d->ret = ret;
 }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-19\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-02-26 18:51+0900\n"
+"POT-Creation-Date: 2009-03-03 16:48+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,7 +86,7 @@ msgstr ""
 msgid "_Background"
 msgstr ""
 
-#: src/gtk/x11axis.c:301 src/gtk/x11opt.c:1286
+#: src/gtk/x11axis.c:301 src/gtk/x11opt.c:1288
 msgid "_Background Color:"
 msgstr ""
 
@@ -336,7 +336,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: src/gtk/x11commn.c:961 src/gtk/x11opt.c:1726
+#: src/gtk/x11commn.c:961 src/gtk/x11opt.c:1732
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -373,11 +373,11 @@ msgstr ""
 msgid "error"
 msgstr ""
 
-#: src/gtk/x11dialg.c:56 src/gtk/x11opt.c:1292
+#: src/gtk/x11dialg.c:56 src/gtk/x11opt.c:1294
 msgid "solid"
 msgstr ""
 
-#: src/gtk/x11dialg.c:57 src/gtk/x11opt.c:1293
+#: src/gtk/x11dialg.c:57 src/gtk/x11opt.c:1295
 msgid "dot"
 msgstr ""
 
@@ -919,7 +919,7 @@ msgstr ""
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:894 src/gtk/x11graph.c:941 src/gtk/x11opt.c:1262
+#: src/gtk/x11graph.c:894 src/gtk/x11graph.c:941 src/gtk/x11opt.c:1265
 msgid "_Ignore file path"
 msgstr ""
 
@@ -927,7 +927,7 @@ msgstr ""
 msgid "_Greek Symbol"
 msgstr ""
 
-#: src/gtk/x11graph.c:1004 src/gtk/x11opt.c:1232
+#: src/gtk/x11graph.c:1004 src/gtk/x11opt.c:1235
 msgid "_Path:"
 msgstr ""
 
@@ -1564,7 +1564,7 @@ msgstr ""
 msgid "_Preference"
 msgstr ""
 
-#: src/gtk/x11menu.c:1050 src/gtk/x11opt.c:85
+#: src/gtk/x11menu.c:1050 src/gtk/x11opt.c:81
 msgid "_Viewer"
 msgstr ""
 
@@ -1572,7 +1572,7 @@ msgstr ""
 msgid "_External viewer"
 msgstr ""
 
-#: src/gtk/x11menu.c:1052 src/gtk/x11opt.c:81
+#: src/gtk/x11menu.c:1052 src/gtk/x11opt.c:89
 msgid "_Font aliases"
 msgstr ""
 
@@ -1653,7 +1653,7 @@ msgstr ""
 msgid "_Child Geometry"
 msgstr ""
 
-#: src/gtk/x11opt.c:89
+#: src/gtk/x11opt.c:85
 msgid "_External Viewer"
 msgstr ""
 
@@ -1753,103 +1753,103 @@ msgstr ""
 msgid "_New alias:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1206
+#: src/gtk/x11opt.c:1209
 msgid "_Editor:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1215
+#: src/gtk/x11opt.c:1218
 msgid "_Check \"change current directory\""
 msgstr ""
 
-#: src/gtk/x11opt.c:1220
+#: src/gtk/x11opt.c:1223
 msgid "_Save file history"
 msgstr ""
 
-#: src/gtk/x11opt.c:1238
+#: src/gtk/x11opt.c:1241
 msgid "include _Data file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1242
+#: src/gtk/x11opt.c:1245
 msgid "include _Merge file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1252
+#: src/gtk/x11opt.c:1255
 msgid "_Expand include file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1258
+#: src/gtk/x11opt.c:1261
 msgid "_Expand directory:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1278
+#: src/gtk/x11opt.c:1280
 msgid "_Preserve line width and style"
 msgstr ""
 
-#: src/gtk/x11opt.c:1294
+#: src/gtk/x11opt.c:1296
 msgid "_Line attribute of focus frame:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1306
+#: src/gtk/x11opt.c:1308
 msgid "_Size of completion history:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1310
+#: src/gtk/x11opt.c:1312
 msgid "_Length of information window:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1314
+#: src/gtk/x11opt.c:1316
 msgid "_Length of data preview:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1325
+#: src/gtk/x11opt.c:1327
 msgid "_Font of coordinate window:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1483
-msgid "use _External previewer"
-msgstr ""
-
-#: src/gtk/x11opt.c:1496
-msgid "Window _Width:"
-msgstr ""
-
-#: src/gtk/x11opt.c:1502
-msgid "Window _Height:"
-msgstr ""
-
-#: src/gtk/x11opt.c:1579
-msgid "_DPI:"
-msgstr ""
-
-#: src/gtk/x11opt.c:1585
-msgid "_Grid:"
-msgstr ""
-
-#: src/gtk/x11opt.c:1595
-msgid "_Antialias:"
-msgstr ""
-
-#: src/gtk/x11opt.c:1598
+#: src/gtk/x11opt.c:1337
 msgid "show _Ruler"
 msgstr ""
 
-#: src/gtk/x11opt.c:1602
+#: src/gtk/x11opt.c:1341
 msgid "_Show status bar"
 msgstr ""
 
-#: src/gtk/x11opt.c:1606
-msgid "_Auto redraw"
+#: src/gtk/x11opt.c:1508
+msgid "use _External previewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:1610
-msgid "_Load files on redraw"
+#: src/gtk/x11opt.c:1521
+msgid "Window _Width:"
+msgstr ""
+
+#: src/gtk/x11opt.c:1527
+msgid "Window _Height:"
+msgstr ""
+
+#: src/gtk/x11opt.c:1601
+msgid "_DPI:"
+msgstr ""
+
+#: src/gtk/x11opt.c:1607
+msgid "_Grid:"
 msgstr ""
 
 #: src/gtk/x11opt.c:1617
+msgid "_Antialias:"
+msgstr ""
+
+#: src/gtk/x11opt.c:1620
+msgid "_Auto redraw"
+msgstr ""
+
+#: src/gtk/x11opt.c:1624
+msgid "_Load files on redraw"
+msgstr ""
+
+#: src/gtk/x11opt.c:1631
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1719 src/gtk/x11print.c:241 src/gtk/x11print.c:846
+#: src/gtk/x11opt.c:1725 src/gtk/x11print.c:241 src/gtk/x11print.c:846
 #: src/gtk/x11print.c:949 src/gtk/x11print.c:1075
 #, c-format
 msgid ""
@@ -1858,7 +1858,7 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11opt.c:1720
+#: src/gtk/x11opt.c:1726
 msgid "Save as .Ngraph.ngp"
 msgstr ""
 

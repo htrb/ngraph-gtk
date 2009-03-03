@@ -1,3 +1,11 @@
+2009-03-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (save_viewer_config, save_misc_config)
+	(MiscDialogSetupItem, MiscDialogSetup, MiscDialogClose)
+	(ViewerDialogSetupItem, ViewerDialogSetup, ViewerDialogClose):
+	settings for status-bar and ruler are moved from viewer dialog to
+	misc dialog.
+
 2009-02-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.c (_newobj, _delobj): static.
