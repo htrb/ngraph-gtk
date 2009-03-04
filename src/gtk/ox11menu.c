@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.61 2009/02/28 06:40:55 hito Exp $
+ * $Id: ox11menu.c,v 1.62 2009/03/04 04:01:14 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -212,7 +212,6 @@ static struct menu_config MenuConfig[] = {
   {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.grid},
   {"data_head_lines",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
 
-  {"viewer_auto_redraw",		MENU_CONFIG_TYPE_BOOL, NULL, &Menulocal.autoredraw},
   {"viewer_load_file_on_redraw",	MENU_CONFIG_TYPE_BOOL, NULL, &Menulocal.redrawf},
 };
 
@@ -674,7 +673,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
 
   Menulocal.windpi = DEFAULT_DPI;
-  Menulocal.autoredraw = TRUE;
   Menulocal.redrawf = TRUE;
   Menulocal.redrawf_num = 0xff;
   Menulocal.grid = 200;
@@ -721,9 +719,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     goto errexit;
 
   if (_putobj(obj, "data_head_lines", inst, &(Menulocal.data_head_lines)))
-    goto errexit;
-
-  if (_putobj(obj, "auto_redraw", inst, &(Menulocal.autoredraw)))
     goto errexit;
 
   if (_putobj(obj, "redraw_flag", inst, &(Menulocal.redrawf)))
@@ -1023,16 +1018,6 @@ mxredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mxautoredraw(struct objlist *obj, char *inst, char *rval,
-	     int argc, char **argv)
-{
-  if (!(Menulocal.autoredraw) && (*(int *) argv[2]))
-    mx_redraw(obj, inst);
-  Menulocal.autoredraw = *(int *) argv[2];
-  return 0;
-}
-
-static int
 mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int dpi;
@@ -1322,7 +1307,6 @@ static struct objtable gtkmenu[] = {
   {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
   {"modified", NBOOL, NREAD | NWRITE, NULL, NULL, 0},
   {"dpi", NINT, NREAD | NWRITE, mxdpi, NULL, 0},
-  {"auto_redraw", NBOOL, NREAD | NWRITE, mxautoredraw, NULL, 0},
   {"redraw_flag", NBOOL, NREAD | NWRITE, mxredrawflag, NULL, 0},
   {"redraw_num", NINT, NREAD | NWRITE, mxredraw_num, NULL, 0},
   {"redraw", NVFUNC, NREAD | NEXEC, mxredraw, "", 0},

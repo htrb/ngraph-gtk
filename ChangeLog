@@ -1,3 +1,30 @@
+2009-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.h (struct ViewerDialog): remove unused member
+	"redraw".
+
+	* src/gtk/ox11menu.h (struct menulocal): remove unused member
+	"autoredraw".
+
+	* src/gtk/x11opt.c (ViewerDialogSetupItem, ViewerDialogClose)
+	(ViewerDialogSetup, save_viewer_config): remove codes related to
+	"Menulocal.autoredraw".
+
+	* src/gtk/ox11menu.c (mxautoredraw): remove.
+	(MenuConfig, menuinit, gtkmenu): remove codes related to
+	"Menulocal.autoredraw".
+
+	* src/gtk/x11opt.c (enum SAVE_CONFIG_TYPE)
+	(SAVE_CONFIG_TYPE_X11MENU, save_config): add.
+	(DefaultDialogClose): use "save_config()" to save configuration.
+	(PrefScriptDialogSetup, PrefDriverDialogSetup)
+	(PrefFontDialogSetup, MiscDialogSetup, ExViewerDialogSetup)
+	(ViewerDialogSetup): add a save button.
+	(PrefScriptDialogClose, PrefDriverDialogClose)
+	(PrefFontDialogClose, MiscDialogClose, ExViewerDialogClose)
+	(ViewerDialogClose): save configuration if the save button is
+	clicked.
+
 2009-03-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (save_viewer_config, save_misc_config)

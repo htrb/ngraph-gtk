@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.53 2009/03/03 08:17:33 hito Exp $
+ * $Id: x11opt.c,v 1.54 2009/03/04 04:01:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,6 +60,24 @@
 #define GRID_MAX 1000
 
 #define CHK_STR(s) ((s == NULL) ? "" : s)
+
+enum SAVE_CONFIG_TYPE {
+  SAVE_CONFIG_TYPE_GEOMETRY        = 0x01,
+  SAVE_CONFIG_TYPE_CHILD_GEOMETRY  = 0x02,
+  SAVE_CONFIG_TYPE_VIEWER          = 0x04,
+  SAVE_CONFIG_TYPE_EXTERNAL_DRIVER = 0x08,
+  SAVE_CONFIG_TYPE_ADDIN_SCRIPT    = 0x10,
+  SAVE_CONFIG_TYPE_MISC            = 0x20,
+  SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x40,
+  SAVE_CONFIG_TYPE_FONTS           = 0x80,
+};
+
+#define SAVE_CONFIG_TYPE_X11MENU (SAVE_CONFIG_TYPE_GEOMETRY		\
+				  | SAVE_CONFIG_TYPE_CHILD_GEOMETRY	\
+				  | SAVE_CONFIG_TYPE_VIEWER		\
+				  | SAVE_CONFIG_TYPE_EXTERNAL_DRIVER	\
+				  | SAVE_CONFIG_TYPE_ADDIN_SCRIPT	\
+				  | SAVE_CONFIG_TYPE_MISC)
 
 static void
 DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -230,13 +248,22 @@ save_child_geometory_config(struct narray *conf)
 static void
 save_viewer_config(struct narray *conf)
 {
+  char *buf;
+
   add_str_with_int_to_array(conf, "viewer_dpi", Menulocal.windpi);
   add_str_with_int_to_array(conf, "antialias", Menulocal.antialias);
-  add_str_with_int_to_array(conf, "viewer_auto_redraw", Menulocal.autoredraw);
   add_str_with_int_to_array(conf, "viewer_load_file_on_redraw", Menulocal.redrawf);
   add_str_with_int_to_array(conf, "viewer_load_file_data_number", Menulocal.redrawf_num);
   add_str_with_int_to_array(conf, "viewer_grid", Menulocal.grid);
   add_str_with_int_to_array(conf, "focus_frame_type", Menulocal.focus_frame_type);
+  add_str_with_int_to_array(conf, "preserve_width", Menulocal.preserve_width);
+
+  buf = (char *) memalloc(BUF_SIZE);
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "background_color=%02x%02x%02x",
+	     Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+    arrayadd(conf, &buf);
+  }
 }
 
 static void
@@ -308,20 +335,13 @@ save_misc_config(struct narray *conf)
 
   add_str_with_int_to_array(conf, "expand", Menulocal.expand);
   add_str_with_int_to_array(conf, "ignore_path", Menulocal.ignorepath);
+
   add_str_with_int_to_array(conf, "history_size", Menulocal.hist_size);
-  add_str_with_int_to_array(conf, "preserve_width", Menulocal.preserve_width);
   add_str_with_int_to_array(conf, "infowin_size", Menulocal.info_size);
   add_str_with_int_to_array(conf, "data_head_lines", Menulocal.data_head_lines);
 
   add_str_with_int_to_array(conf, "viewer_show_ruler", Menulocal.ruler);
   add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
-
-  buf = (char *) memalloc(BUF_SIZE);
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "background_color=%02x%02x%02x",
-	     Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-    arrayadd(conf, &buf);
-  }
 }
 
 static void
@@ -357,12 +377,118 @@ save_font_config(struct narray *conf)
   }
 }
 
+static int
+save_config(int type)
+{
+  struct narray conf;
+
+  if (!CheckIniFile()) {
+    return 1;
+  }
+
+  if (type & SAVE_CONFIG_TYPE_X11MENU) {
+    arrayinit(&conf, sizeof(char *));
+    if (type & SAVE_CONFIG_TYPE_GEOMETRY) {
+      save_geometory_config(&conf);
+    }
+
+    if (type & SAVE_CONFIG_TYPE_CHILD_GEOMETRY) {
+      save_child_geometory_config(&conf);
+    }
+
+    if (type & SAVE_CONFIG_TYPE_VIEWER) {
+      save_viewer_config(&conf);
+    }
+
+    if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
+      save_ext_driver_config(&conf);
+    }
+
+    if (type & SAVE_CONFIG_TYPE_ADDIN_SCRIPT) {
+      save_script_config(&conf);
+    }
+
+    if (type & SAVE_CONFIG_TYPE_MISC) {
+      save_misc_config(&conf);
+    }
+
+    replaceconfig("[x11menu]", &conf);
+    arraydel2(&conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_EXTERNAL_VIEWER) {
+    arrayinit(&conf, sizeof(char *));
+    save_ext_viewer_config(&conf);
+    replaceconfig("[gra2gtk]", &conf);
+    arraydel2(&conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_FONTS) {
+    arrayinit(&conf, sizeof(char *));
+    save_font_config(&conf);
+    replaceconfig("[gra2cairo]", &conf);
+    arraydel2(&conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_X11MENU) {
+    arrayinit(&conf, sizeof(char *));
+
+    if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
+      if (Menulocal.extprinterroot == NULL) {
+	add_str_to_array(&conf, "ext_driver");
+      }
+    }
+
+    if (type & SAVE_CONFIG_TYPE_ADDIN_SCRIPT) {
+      if (Menulocal.scriptroot == NULL) {
+	add_str_to_array(&conf, "script");
+      }
+    }
+
+    if (type & SAVE_CONFIG_TYPE_MISC) {
+      if (Menulocal.editor == NULL) {
+	add_str_to_array(&conf, "editor");
+      }
+      if (Menulocal.coordwin_font == NULL) {
+	add_str_to_array(&conf, "coordwin_font");
+      }
+    }
+
+    removeconfig("[x11menu]", &conf);
+    arraydel2(&conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_FONTS) {
+    arrayinit(&conf, sizeof(char *));
+    if (gra2cairo_get_fontmap_num() == 0) {
+      add_str_to_array(&conf, "font_map");
+    }
+    removeconfig("[gra2cairo]", &conf);
+    arraydel2(&conf);
+  }
+
+  return 0;
+}
+
 static void
 DefaultDialogClose(GtkWidget *win, void *data)
 {
   struct DefaultDialog *d;
-  int ret;
-  struct narray conf;
+  unsigned int i;
+  int ret, type;
+  struct {
+    GtkWidget *btn;
+    enum SAVE_CONFIG_TYPE type;
+  } btns[] = {
+    {NULL, SAVE_CONFIG_TYPE_GEOMETRY},
+    {NULL, SAVE_CONFIG_TYPE_CHILD_GEOMETRY},
+    {NULL, SAVE_CONFIG_TYPE_VIEWER},
+    {NULL, SAVE_CONFIG_TYPE_EXTERNAL_DRIVER},
+    {NULL, SAVE_CONFIG_TYPE_ADDIN_SCRIPT},
+    {NULL, SAVE_CONFIG_TYPE_MISC},
+    {NULL, SAVE_CONFIG_TYPE_EXTERNAL_VIEWER},
+    {NULL, SAVE_CONFIG_TYPE_FONTS},
+  };
 
   d = (struct DefaultDialog *) data;
 
@@ -372,87 +498,27 @@ DefaultDialogClose(GtkWidget *win, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  if (!CheckIniFile()) {
+  btns[0].btn = d->geometry;
+  btns[1].btn = d->child_geometry;
+  btns[2].btn = d->viewer;
+  btns[3].btn = d->external_driver;
+  btns[4].btn = d->addin_script;
+  btns[5].btn = d->misc;
+  btns[6].btn = d->external_viewer;
+  btns[7].btn = d->fonts;
+
+  type = 0;
+
+  for (i = 0; i < sizeof(btns) / sizeof(*btns); i++) {
+    if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(btns[i].btn))) {
+      type |= btns[i].type;
+    }
+  }
+
+  if (save_config(type)) {
     d->ret = ret;
     return;
   }
-
-  arrayinit(&conf, sizeof(char *));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->geometry))) {
-    save_geometory_config(&conf);
-  }
-
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->child_geometry))) {
-    save_child_geometory_config(&conf);
-  }
-
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->viewer))) {
-    save_viewer_config(&conf);
-  }
-
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_driver))) {
-    save_ext_driver_config(&conf);
-  }
-
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->addin_script))) {
-    save_script_config(&conf);
-  }
-
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->misc))) {
-    save_misc_config(&conf);
-  }
-
-  replaceconfig("[x11menu]", &conf);
-  arraydel2(&conf);
-
-
-  arrayinit(&conf, sizeof(char *));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_viewer))) {
-    save_ext_viewer_config(&conf);
-  }
-  replaceconfig("[gra2gtk]", &conf);
-  arraydel2(&conf);
-
-
-  arrayinit(&conf, sizeof(char *));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fonts))) {
-    save_font_config(&conf);
-  }
-  replaceconfig("[gra2cairo]", &conf);
-  arraydel2(&conf);
-
-
-  arrayinit(&conf, sizeof(char *));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->external_driver))) {
-    if (Menulocal.extprinterroot == NULL) {
-      add_str_to_array(&conf, "ext_driver");
-    }
-  }
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->addin_script))) {
-    if (Menulocal.scriptroot == NULL) {
-      add_str_to_array(&conf, "script");
-    }
-  }
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->misc))) {
-    if (Menulocal.editor == NULL) {
-      add_str_to_array(&conf, "editor");
-    }
-    if (Menulocal.coordwin_font == NULL) {
-      add_str_to_array(&conf, "coordwin_font");
-    }
-  }
-  removeconfig("[x11menu]", &conf);
-  arraydel2(&conf);
-
-
-  arrayinit(&conf, sizeof(char *));
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fonts))) {
-    if (gra2cairo_get_fontmap_num() == 0) {
-      add_str_to_array(&conf, "font_map");
-    }
-  }
-  removeconfig("[gra2cairo]", &conf);
-  arraydel2(&conf);
 
   d->ret = ret;
 }
@@ -653,6 +719,7 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefScriptDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
     PrefScriptDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
   }
@@ -662,7 +729,16 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 PrefScriptDialogClose(GtkWidget *w, void *data)
 {
-  update_addin_menu();
+  struct PrefScriptDialog *d;
+
+  d = (struct PrefScriptDialog *) data;
+
+  switch (d->ret) {
+  case IDSAVE:
+    save_config(SAVE_CONFIG_TYPE_ADDIN_SCRIPT);
+  case IDOK:
+    update_addin_menu();
+  }
 }
 
 void
@@ -854,6 +930,7 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefDriverDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
     PrefDriverDialogCreateWidgets(d, NULL, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 400, 300);
   }
@@ -863,6 +940,13 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 PrefDriverDialogClose(GtkWidget *w, void *data)
 {
+  struct PrefDriverDialog *d;
+
+  d = (struct PrefDriverDialog *) data;
+
+  if (d->ret == IDSAVE) {
+    save_config(SAVE_CONFIG_TYPE_EXTERNAL_DRIVER);
+  }
 }
 
 void
@@ -1119,6 +1203,8 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct PrefFontDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = create_text_entry(FALSE, FALSE);
@@ -1134,6 +1220,13 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 PrefFontDialogClose(GtkWidget *w, void *data)
 {
+  struct PrefFontDialog *d;
+
+  d = (struct PrefFontDialog *) data;
+
+  if (d->ret == IDSAVE) {
+    save_config(SAVE_CONFIG_TYPE_FONTS);
+  }
 }
 
 void
@@ -1146,45 +1239,36 @@ PrefFontDialog(struct PrefFontDialog *data)
 static void
 MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 {
-  GdkColor color;
-
   if (Menulocal.editor)
     gtk_entry_set_text(GTK_ENTRY(d->editor), Menulocal.editor);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->directory)), Menulocal.changedirectory);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->history)), Menulocal.savehistory);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->history), Menulocal.savehistory);
 
   combo_box_set_active(d->path, Menulocal.savepath);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->datafile)), Menulocal.savewithdata);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->datafile), Menulocal.savewithdata);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->mergefile)), Menulocal.savewithmerge);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->mergefile), Menulocal.savewithmerge);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->expand)), Menulocal.expand);
-
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->preserve_width)), Menulocal.preserve_width);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->expand), Menulocal.expand);
 
   if (Menulocal.expanddir)
     gtk_entry_set_text(GTK_ENTRY(d->expanddir), Menulocal.expanddir);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ignorepath)), Menulocal.ignorepath);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ignorepath), Menulocal.ignorepath);
 
   spin_entry_set_val(d->hist_size, Menulocal.hist_size);
   spin_entry_set_val(d->info_size, Menulocal.info_size);
   spin_entry_set_val(d->data_head_lines, Menulocal.data_head_lines);
 
-  color.red = Menulocal.bg_r * 257;
-  color.green = Menulocal.bg_g * 257;
-  color.blue = Menulocal.bg_b * 257;
-  gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
-
   if (Menulocal.coordwin_font) {
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->coordwin_font), Menulocal.coordwin_font);
   }
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->ruler)), Menulocal.ruler);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->statusbar)), Menulocal.statusb);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ruler), Menulocal.ruler);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->statusbar), Menulocal.statusb);
 }
 
 static void
@@ -1196,18 +1280,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+
     hbox2 = gtk_hbox_new(FALSE, 4);
 
     vbox2 = gtk_vbox_new(FALSE, 4);
-
-    frame = gtk_frame_new(NULL);
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Editor:"), TRUE);
-    d->editor = w;
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1271,24 +1348,12 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
-    vbox = gtk_vbox_new(FALSE, 4);
-
     hbox = gtk_hbox_new(FALSE, 4);
-    w = gtk_check_button_new_with_mnemonic(_("_Preserve line width and style"));
-    d->preserve_width = w;
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    d->bgcol = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_color_button(wi);
-    item_setup(hbox, w, _("_Background Color:"), FALSE);
-    d->bgcol = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(hbox, w, _("_Editor:"), TRUE);
+    d->editor = w;
+    gtk_container_add(GTK_CONTAINER(frame), hbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1349,11 +1414,10 @@ MiscDialogClose(GtkWidget *w, void *data)
   int a, ret;
   const char *buf;
   char *buf2;
-  GdkColor color;
 
   d = (struct MiscDialog *) data;
 
-  if (d->ret != IDOK)
+  if (d->ret != IDOK && d->ret != IDSAVE)
     return;
 
   ret = d->ret;
@@ -1403,9 +1467,6 @@ MiscDialogClose(GtkWidget *w, void *data)
   Menulocal.ignorepath =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignorepath));
 
-  Menulocal.preserve_width =
-    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
-
   a = spin_entry_get_val(d->hist_size);
   if (a < HIST_SIZE_MAX && a > 0) 
     Menulocal.hist_size = a;
@@ -1413,11 +1474,6 @@ MiscDialogClose(GtkWidget *w, void *data)
   a = spin_entry_get_val(d->info_size);
   if (a < INFOWIN_SIZE_MAX && a > 0) 
     Menulocal.info_size = a;
-
-  gtk_color_button_get_color(GTK_COLOR_BUTTON(d->bgcol), &color);
-  Menulocal.bg_r = color.red / 256;
-  Menulocal.bg_g = color.green / 256;
-  Menulocal.bg_b = color.blue / 256;
 
   a = spin_entry_get_val(d->data_head_lines);
   putobj(d->Obj, "data_head_lines", d->Id, &a);
@@ -1445,6 +1501,10 @@ MiscDialogClose(GtkWidget *w, void *data)
   set_widget_visibility();
 
   d->ret = ret;
+
+  if (d->ret == IDSAVE) {
+    save_config(SAVE_CONFIG_TYPE_MISC);
+  }
 }
 
 void
@@ -1489,6 +1549,8 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct ExViewerDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("use _External previewer"));
@@ -1523,22 +1585,20 @@ static void
 ExViewerDialogClose(GtkWidget *w, void *data)
 {
   struct ExViewerDialog *d;
-  int ret;
 
   d = (struct ExViewerDialog *) data;
 
-  if (d->ret != IDOK)
+  if (d->ret != IDOK && d->ret != IDSAVE)
     return;
-
-  ret = d->ret;
-  d->ret = IDLOOP;
 
   Menulocal.exwindpi = gtk_range_get_value(GTK_RANGE(d->dpi));
   Menulocal.exwinwidth = spin_entry_get_val(d->width);
   Menulocal.exwinheight = spin_entry_get_val(d->height);
   Menulocal.exwin_use_external = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_external));
 
-  d->ret = ret;
+  if (d->ret == IDSAVE) {
+    save_config(SAVE_CONFIG_TYPE_EXTERNAL_VIEWER);
+  }
 }
 
 
@@ -1553,6 +1613,7 @@ static void
 ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 {
   int a;
+  GdkColor color;
 
   getobj(d->Obj, "dpi", d->Id, 0, NULL, &(d->dpis));
   gtk_range_set_value(GTK_RANGE(d->dpi), d->dpis);
@@ -1560,16 +1621,20 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   getobj(d->Obj, "antialias", d->Id, 0, NULL, &a);
   combo_box_set_active(d->antialias, a);
 
-  getobj(d->Obj, "auto_redraw", d->Id, 0, NULL, &a);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->redraw)), a);
-
   getobj(d->Obj, "redraw_flag", d->Id, 0, NULL, &a);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(GTK_TOGGLE_BUTTON(d->loadfile)), a);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->loadfile), a);
 
   spin_entry_set_val(d->data_num, Menulocal.redrawf_num);
   spin_entry_set_val(d->grid, Menulocal.grid);
 
   combo_box_set_active(d->fftype, (Menulocal.focus_frame_type == GDK_LINE_SOLID) ? 0 : 1);
+
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->preserve_width), Menulocal.preserve_width);
+
+  color.red = Menulocal.bg_r * 257;
+  color.green = Menulocal.bg_g * 257;
+  color.blue = Menulocal.bg_b * 257;
+  gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
 }
 
 static void
@@ -1581,6 +1646,8 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct ViewerDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
+
     vbox = gtk_vbox_new(FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1594,6 +1661,12 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     spin_entry_set_range(w, 1, GRID_MAX);
     item_setup(hbox, w, _("_Grid:"), TRUE);
     d->grid = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+    w = create_color_button(wi);
+    item_setup(hbox, w, _("_Background Color:"), FALSE);
+    d->bgcol = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1613,9 +1686,11 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Antialias:"), FALSE);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    w = gtk_check_button_new_with_mnemonic(_("_Auto redraw"));
-    d->redraw = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    hbox = gtk_hbox_new(FALSE, 4);
+    w = gtk_check_button_new_with_mnemonic(_("_Preserve line width and style"));
+    d->preserve_width = w;
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_Load files on redraw"));
     d->loadfile = w;
@@ -1637,10 +1712,11 @@ ViewerDialogClose(GtkWidget *w, void *data)
 {
   struct ViewerDialog *d;
   int ret, dpi, a;
+  GdkColor color;
 
   d = (struct ViewerDialog *) data;
  
- if (d->ret != IDOK)
+ if (d->ret != IDOK && d->ret != IDSAVE)
     return;
 
   ret = d->ret;
@@ -1658,11 +1734,6 @@ ViewerDialogClose(GtkWidget *w, void *data)
     return;
   Menulocal.antialias = a;
 
-  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->redraw));
-  a = a ? TRUE : FALSE;
-  if (putobj(d->Obj, "auto_redraw", d->Id, &a) == -1)
-    return;
-
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->loadfile));
   a = a ? TRUE : FALSE;
   if (putobj(d->Obj, "redraw_flag", d->Id, &a) == -1)
@@ -1672,12 +1743,24 @@ ViewerDialogClose(GtkWidget *w, void *data)
   if (putobj(d->Obj, "redraw_num", d->Id, &a) == -1)
     return;
 
+  Menulocal.preserve_width =
+    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
+
+  gtk_color_button_get_color(GTK_COLOR_BUTTON(d->bgcol), &color);
+  Menulocal.bg_r = color.red / 256;
+  Menulocal.bg_g = color.green / 256;
+  Menulocal.bg_b = color.blue / 256;
+
   Menulocal.grid = spin_entry_get_val(d->grid);
 
   a = combo_box_get_active(d->fftype);
   Menulocal.focus_frame_type = ((a == 0) ? GDK_LINE_SOLID : GDK_LINE_ON_OFF_DASH);
 
   d->ret = ret;
+
+  if (d->ret == IDSAVE) {
+    save_config(SAVE_CONFIG_TYPE_VIEWER);
+  }
 }
 
 
