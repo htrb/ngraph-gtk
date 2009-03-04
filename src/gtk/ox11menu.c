@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.64 2009/03/04 05:18:35 hito Exp $
+ * $Id: ox11menu.c,v 1.63 2009/03/04 05:15:54 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -351,8 +351,7 @@ static int
 menu_config_set_script(char *s2, void *data)
 {
   char *f[] = {NULL, NULL, NULL, NULL};
-  int len;
-  unsigned int i;
+  int len, i;
   struct script *snew, *scur, **sptr;
 
   sptr = (struct script **) data;
