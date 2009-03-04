@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.114 2009/02/27 15:48:33 hito Exp $
+ * $Id: x11view.c,v 1.115 2009/03/04 08:54:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5167,10 +5167,7 @@ ViewUpdate(void)
 
   if (! axis)
     d->allclear = FALSE;
-  /*
-  if (d->Mode == MoveB)
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
-  */
+
   UpdateAll();
   ShowFocusFrame(dc);
   d->ShowFrame = TRUE;
