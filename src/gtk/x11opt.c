@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.54 2009/03/04 04:01:14 hito Exp $
+ * $Id: x11opt.c,v 1.55 2009/03/04 08:32:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1659,7 +1659,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     spin_entry_set_range(w, 1, GRID_MAX);
-    item_setup(hbox, w, _("_Grid:"), TRUE);
+    item_setup(hbox, w, _("_Grid:"), FALSE);
     d->grid = w;
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
@@ -1692,15 +1692,17 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
+    hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_check_button_new_with_mnemonic(_("_Load files on redraw"));
     d->loadfile = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
-
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-    item_setup(vbox, w, _("_Maximum number of data on redraw:"), FALSE);
+    item_setup(hbox, w, _("_Maximum number of data on redraw:"), FALSE);
     d->data_num = w;
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }

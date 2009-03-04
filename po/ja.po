@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-04 12:58+0900\n"
+"POT-Creation-Date: 2009-03-04 17:32+0900\n"
 "PO-Revision-Date: 2009-02-26 11:42+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -336,7 +336,7 @@ msgstr ""
 msgid "Save"
 msgstr "保存"
 
-#: src/gtk/x11commn.c:961 src/gtk/x11opt.c:1814
+#: src/gtk/x11commn.c:961 src/gtk/x11opt.c:1816
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
@@ -1841,15 +1841,15 @@ msgstr "アンチエイリアス(_A):"
 msgid "_Preserve line width and style"
 msgstr "線幅と線種を保持する(_S) "
 
-#: src/gtk/x11opt.c:1695
+#: src/gtk/x11opt.c:1696
 msgid "_Load files on redraw"
 msgstr "再描画時にデータファイル読み込み(_L)"
 
-#: src/gtk/x11opt.c:1702
+#: src/gtk/x11opt.c:1703
 msgid "_Maximum number of data on redraw:"
 msgstr "再描画時の最大データ数(_M):"
 
-#: src/gtk/x11opt.c:1807 src/gtk/x11print.c:241 src/gtk/x11print.c:846
+#: src/gtk/x11opt.c:1809 src/gtk/x11print.c:241 src/gtk/x11print.c:846
 #: src/gtk/x11print.c:949 src/gtk/x11print.c:1075
 #, c-format
 msgid ""
@@ -1860,7 +1860,7 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11opt.c:1808
+#: src/gtk/x11opt.c:1810
 msgid "Save as .Ngraph.ngp"
 msgstr ".Ngraph.ngp として保存"
 
