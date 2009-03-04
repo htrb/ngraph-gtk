@@ -1,5 +1,23 @@
 2009-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2x11.c (gtkloadconfig): print warning when unused
+	parameter is appeared.
+
+	* src/otext.c (textloadconfig): print warning when unused
+	parameter is appeared.
+
+	* src/gtk/ogra2cairo.c (loadconfig): print warning when unused
+	parameter is appeared.
+
+	* src/ofile.c (f2dloadconfig): print warning when unused
+	parameter is appeared.
+
+	* src/gtk/ox11menu.c (mgtkloadconfig): print warning when unused
+	parameter is appeared.
+
+	* src/oaxis.c (axisloadconfig): print warning when unused
+	parameter is appeared.
+
 	* src/gtk/x11dialg.h (struct ViewerDialog): remove unused member
 	"redraw".
 

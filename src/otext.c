@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.10 2009/02/19 09:47:30 hito Exp $
+ * $Id: otext.c,v 1.11 2009/03/04 05:15:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -118,6 +118,8 @@ textloadconfig(struct objlist *obj,char *inst)
       _getobj(obj,"jfont",inst,&f2);
       memfree(f2);
       _putobj(obj,"jfont",inst,f1);
+    } else {
+      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, TEXTCONF);
     }
     memfree(tok);
     memfree(str);

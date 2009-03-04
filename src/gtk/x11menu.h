@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.27 2009/02/25 09:40:58 hito Exp $
+ * $Id: x11menu.h,v 1.28 2009/03/04 05:15:54 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -115,7 +115,8 @@ enum PointerType {
 #define POINT_TYPE_POINT (PointB | LegendB | AxisB)
 #define POINT_TYPE_DRAW1 (ArcB | RectB | GaussB | FrameB | SectionB | CrossB)
 #define POINT_TYPE_DRAW2 (CurveB | LineB | PolyB | SingleB)
-#define POINT_TYPE_DRAW_ALL (POINT_TYPE_DRAW1 | POINT_TYPE_DRAW2)
+#define POINT_TYPE_DRAW3 (TextB | MarkB)
+#define POINT_TYPE_DRAW_ALL (POINT_TYPE_DRAW1 | POINT_TYPE_DRAW2 | POINT_TYPE_DRAW3)
 #define POINT_TYPE_TRIM  (TrimB | DataB | EvalB)
 
 enum MouseMode {

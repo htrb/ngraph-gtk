@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.63 2009/02/19 09:47:30 hito Exp $
+ * $Id: ofile.c,v 1.64 2009/03/04 05:15:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1016,6 +1016,8 @@ f2dloadconfig(struct objlist *obj,char *inst)
 	}
 	break;
       }
+    } else {
+      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, F2DCONF);
     }
     memfree(tok);
     memfree(str);

@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.24 2009/02/19 09:47:30 hito Exp $
+ * $Id: oaxis.c,v 1.25 2009/03/04 05:15:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -281,6 +281,8 @@ axisloadconfig(struct objlist *obj,char *inst,char *conf)
 	}
 	break;
       }
+    } else {
+      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, conf);
     }
     memfree(tok);
     memfree(str);

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.40 2009/02/25 09:11:24 hito Exp $
+ * $Id: ogra2cairo.c,v 1.42 2009/03/04 05:15:54 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -105,8 +105,7 @@ mxd2py(struct gra2cairo_local *local, int y)
 static void
 free_font_map(struct fontmap *fcur)
 {
-  struct fontmap *cur, *prev, *next;
-  int i;
+  struct fontmap *cur, *prev;
 
   if (fcur == NULL)
     return;
@@ -234,6 +233,8 @@ loadconfig(void)
 	memfree(f3);
 	memfree(f4);
       }
+    } else {
+      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, CAIROCONF);
     }
     memfree(tok);
     memfree(str);

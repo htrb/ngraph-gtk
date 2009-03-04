@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.62 2009/03/04 04:01:14 hito Exp $
+ * $Id: ox11menu.c,v 1.64 2009/03/04 05:18:35 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -351,7 +351,8 @@ static int
 menu_config_set_script(char *s2, void *data)
 {
   char *f[] = {NULL, NULL, NULL, NULL};
-  int len, i;
+  int len;
+  unsigned int i;
   struct script *snew, *scur, **sptr;
 
   sptr = (struct script **) data;
@@ -471,6 +472,8 @@ mgtkloadconfig(void)
 	}
 	break;
       }
+    } else {
+      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, MGTKCONF);
     }
     memfree(tok);
     memfree(str);
