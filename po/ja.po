@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-04 17:32+0900\n"
+"POT-Creation-Date: 2009-03-05 11:47+0900\n"
 "PO-Revision-Date: 2009-02-26 11:42+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1620,11 +1620,11 @@ msgstr "初期状態のウィンドウ配置(_W)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2196
+#: src/gtk/x11menu.c:2191
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2246
+#: src/gtk/x11menu.c:2241
 msgid "Question"
 msgstr "質問:"
 
@@ -1917,7 +1917,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4815
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4819
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2008,11 +2008,11 @@ msgstr "データは移動されました."
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:4809
+#: src/gtk/x11view.c:4813
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:4816
+#: src/gtk/x11view.c:4820
 msgid "Drawing"
 msgstr "描画中"
 

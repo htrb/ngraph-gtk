@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-19\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-04 17:32+0900\n"
+"POT-Creation-Date: 2009-03-05 11:47+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1616,11 +1616,11 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2196
+#: src/gtk/x11menu.c:2191
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2246
+#: src/gtk/x11menu.c:2241
 msgid "Question"
 msgstr ""
 
@@ -1911,7 +1911,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4815
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4819
 msgid "Drawing."
 msgstr ""
 
@@ -2002,11 +2002,11 @@ msgstr ""
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4809
+#: src/gtk/x11view.c:4813
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4816
+#: src/gtk/x11view.c:4820
 msgid "Drawing"
 msgstr ""
 

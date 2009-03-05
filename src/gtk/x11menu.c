@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.75 2009/03/05 02:31:59 hito Exp $
+ * $Id: x11menu.c,v 1.77 2009/03/05 02:47:49 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1688,27 +1688,6 @@ save_hist(void)
 
 }
 
-static gboolean 
-change_window_state_cb(GtkWidget *widget, GdkEventWindowState *event, gpointer user_data)
-{
-  if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) {
-    sub_window_minimize(&NgraphApp.FileWin);
-    sub_window_minimize(&NgraphApp.AxisWin);
-    sub_window_minimize(&NgraphApp.LegendWin);
-    sub_window_minimize(&NgraphApp.MergeWin);
-    sub_window_minimize(&NgraphApp.InfoWin);
-    sub_window_minimize(&NgraphApp.CoordWin);
-  } else if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
-    sub_window_restore_state(&NgraphApp.FileWin);
-    sub_window_restore_state(&NgraphApp.AxisWin);
-    sub_window_restore_state(&NgraphApp.LegendWin);
-    sub_window_restore_state(&NgraphApp.MergeWin);
-    sub_window_restore_state(&NgraphApp.InfoWin);
-    sub_window_restore_state(&NgraphApp.CoordWin);
-  }
-  return FALSE;
-}
-
 static void
 init_ngraph_app_struct(void)
 {
@@ -2016,7 +1995,7 @@ SetPoint(struct Viewer *d, int x, int y)
     case MOUSEZOOM2:
     case MOUSEZOOM3:
     case MOUSEZOOM4:
-      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f%)", x / 100.0, y / 100.0, d->Zoom * 100);
+      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f%%)", x / 100.0, y / 100.0, d->Zoom * 100);
       break;
     case MOUSEDRAG:
       snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);

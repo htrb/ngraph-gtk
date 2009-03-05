@@ -2,6 +2,7 @@
 
 	* src/gtk/x11menu.c (SetPoint): add argument "struct Viewer *d".
 	(SetPoint): show parameter when change, zoom or drag object.
+	(change_window_state_cb): remove.
 
 2009-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
