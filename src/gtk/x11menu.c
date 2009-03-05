@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.76 2009/03/05 02:33:30 hito Exp $
+ * $Id: x11menu.c,v 1.75 2009/03/05 02:31:59 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2016,7 +2016,7 @@ SetPoint(struct Viewer *d, int x, int y)
     case MOUSEZOOM2:
     case MOUSEZOOM3:
     case MOUSEZOOM4:
-      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f%%)", x / 100.0, y / 100.0, d->Zoom * 100);
+      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f%)", x / 100.0, y / 100.0, d->Zoom * 100);
       break;
     case MOUSEDRAG:
       snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);
