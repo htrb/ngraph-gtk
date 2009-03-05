@@ -1,3 +1,8 @@
+2009-03-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (SetPoint): add argument "struct Viewer *d".
+	(SetPoint): show parameter when change, zoom or drag object.
+
 2009-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2x11.c (gtkloadconfig): print warning when unused
