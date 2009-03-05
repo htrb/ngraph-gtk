@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.74 2009/02/26 09:51:45 hito Exp $
+ * $Id: x11menu.c,v 1.76 2009/03/05 02:33:30 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2000,15 +2000,31 @@ ChangePage(void)
 }
 
 void
-SetPoint(int x, int y)
+SetPoint(struct Viewer *d, int x, int y)
 {
-  char buf[40];
+  char buf[128];
 
-  x += Menulocal.LeftMargin;
-  y += Menulocal.TopMargin;
+  //  x += Menulocal.LeftMargin;
+  //  y += Menulocal.TopMargin;
 
   if (NgraphApp.Message) {
-    snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f", x / 100.0, y / 100.0);
+    switch (d->MouseMode) {
+    case MOUSECHANGE:
+      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->LineX / 100.0, d->LineY / 100.0);
+      break;
+    case MOUSEZOOM1:
+    case MOUSEZOOM2:
+    case MOUSEZOOM3:
+    case MOUSEZOOM4:
+      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f%%)", x / 100.0, y / 100.0, d->Zoom * 100);
+      break;
+    case MOUSEDRAG:
+      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);
+      break;
+    default:
+      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f", x / 100.0, y / 100.0);
+    }
+
     gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message3);
     gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message3, buf);
   }

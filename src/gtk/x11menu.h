@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.28 2009/03/04 05:15:54 hito Exp $
+ * $Id: x11menu.h,v 1.29 2009/03/05 02:31:59 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -27,7 +27,7 @@
 #include "x11dialg.h"
 #include "ogra2cairo.h"
 
-#define N2GTK_RULER_METRIC(v) (v / 100.0 * 72.0 / 25.4 * 10)
+#define N2GTK_RULER_METRIC(v) ((v) / 100.0 * 72.0 / 25.4 * 10)
 
 enum MenuID {
   MenuIdGraphLoad,
@@ -148,7 +148,7 @@ struct Viewer
   int allclear;
   int cx, cy, width, height;
   int ignoreredraw;
-  double vscroll, hscroll, vupper, hupper;
+  double vscroll, hscroll, vupper, hupper, Zoom;
 };
 
 enum SubWinType {
@@ -272,7 +272,7 @@ void ChangePage();
 void SetCaption(char *file);
 void SetCursor(unsigned int type);
 unsigned int GetCursor(void);
-void SetPoint(int x, int y);
+void SetPoint(struct Viewer *d, int x, int y);
 void SetZoom(double zm);
 void ResetZoom();
 void ResetEvent();

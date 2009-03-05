@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.115 2009/03/04 08:54:15 hito Exp $
+ * $Id: x11view.c,v 1.116 2009/03/05 02:31:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3676,7 +3676,6 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     CheckGrid(TRUE, state, &dx, &dy, NULL);
   }
 
-  SetPoint(dx, dy);
   dc = Menulocal.gc;
 
   if (region == NULL) {
@@ -3771,6 +3770,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 	  CheckGrid(FALSE, state, NULL, NULL, &zoom2);
 
 	SetZoom(zoom2);
+	d->Zoom = zoom2;
 
 	vx1 = d->RefX1 + vx2 * zoom2;
 	vy1 = d->RefY1 + vy2 * zoom2;
@@ -3838,6 +3838,8 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
       ShowPoints(dc);
     }
   }
+
+  SetPoint(d, dx, dy);
 
   return TRUE;
 }
@@ -4397,10 +4399,11 @@ ViewerWinUpdate(int clear)
 static void
 SetHRuler(struct Viewer *d, int width)
 {
-  double x1, x2;
+  double x1, x2, zoom;
 
-  x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx));
-  x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width));
+  zoom = Menulocal.PaperZoom / 10000.0;
+  x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
+  x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
 
   gtk_ruler_set_range(GTK_RULER(d->HRuler), x1, x2, 0, x2);
 }
@@ -4408,10 +4411,11 @@ SetHRuler(struct Viewer *d, int width)
 static void
 SetVRuler(struct Viewer *d, int height)
 {
-  double y1, y2;
+  double y1, y2, zoom;
  
-  y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy));
-  y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height));
+  zoom = Menulocal.PaperZoom / 10000.0;
+  y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
+  y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
 
   gtk_ruler_set_range(GTK_RULER(d->VRuler), y1, y2, 0, y2);
 }
