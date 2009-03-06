@@ -1,6 +1,6 @@
 #!ngraph
-#%creator: Ngraph for GTK+ 
-#%version: 6.03.47.gtk-19
+#%creator: Ngraph for Windows
+#%version: 6.03
 new axis name:cX1
 	axis::hidden=false
 	axis::R=0

@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.117 2009/03/06 08:11:20 hito Exp $
+ * $Id: x11view.c,v 1.118 2009/03/06 10:18:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -194,7 +194,6 @@ graph_dropped(char *fname)
   }
 
   if (load) {
-    reset_graph_modified();
     CmViewerDrawB(NULL, NULL);
     return 0;
   }

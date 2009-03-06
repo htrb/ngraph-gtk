@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-06 16:55+0900\n"
+"POT-Creation-Date: 2009-03-06 19:18+0900\n"
 "PO-Revision-Date: 2009-03-06 16:55+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -39,7 +39,7 @@ msgid "gray"
 msgstr "グレイスケール"
 
 #: src/gtk/x11axis.c:75 src/gtk/x11file.c:99 src/gtk/x11lgnd.c:76
-#: src/gtk/x11merge.c:70 src/gtk/x11view.c:642
+#: src/gtk/x11merge.c:70 src/gtk/x11view.c:641
 msgid "_Duplicate"
 msgstr "複製(_D)"
 
@@ -341,12 +341,12 @@ msgstr "保存"
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1081 src/gtk/x11commn.c:1150
+#: src/gtk/x11commn.c:1081 src/gtk/x11commn.c:1151
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1261
+#: src/gtk/x11commn.c:1263
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -354,24 +354,24 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1491
+#: src/gtk/x11commn.c:1493
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1494
+#: src/gtk/x11commn.c:1496
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1499
+#: src/gtk/x11commn.c:1501
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr "~/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1502
+#: src/gtk/x11commn.c:1504
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1702
+#: src/gtk/x11commn.c:1704
 msgid "error"
 msgstr "エラー"
 
@@ -728,7 +728,7 @@ msgstr "微分式指定(_D)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1398 src/gtk/x11file.c:1666 src/gtk/x11view.c:506
+#: src/gtk/x11file.c:1398 src/gtk/x11file.c:1666 src/gtk/x11view.c:505
 msgid "Line No."
 msgstr "行"
 
@@ -849,11 +849,11 @@ msgstr "ファイル名(_F):"
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:2842 src/gtk/x11view.c:515
+#: src/gtk/x11file.c:2842 src/gtk/x11view.c:514
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:2846 src/gtk/x11view.c:516
+#: src/gtk/x11file.c:2846 src/gtk/x11view.c:515
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -945,7 +945,7 @@ msgstr "合成ファイルを含める(_I)"
 msgid "Load NGP file"
 msgstr "NGP ファイルを開く"
 
-#: src/gtk/x11graph.c:1392
+#: src/gtk/x11graph.c:1388
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for "
 "researchers and engineers."
@@ -1921,7 +1921,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4833
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4832
 msgid "Drawing."
 msgstr "描画中"
 
@@ -1958,65 +1958,65 @@ msgstr "データファイル作成中"
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
 
-#: src/gtk/x11view.c:633
+#: src/gtk/x11view.c:632
 msgid "_Left"
 msgstr "左揃え(_L)"
 
-#: src/gtk/x11view.c:634
+#: src/gtk/x11view.c:633
 msgid "_Vertical center"
 msgstr "垂直中央揃え(_V)"
 
-#: src/gtk/x11view.c:635
+#: src/gtk/x11view.c:634
 msgid "_Right"
 msgstr "右揃え(_R)"
 
-#: src/gtk/x11view.c:637
+#: src/gtk/x11view.c:636
 msgid "_Top"
 msgstr "上端揃え(_T)"
 
-#: src/gtk/x11view.c:638
+#: src/gtk/x11view.c:637
 msgid "_Holizontal center"
 msgstr "水平中央揃え(_H)"
 
-#: src/gtk/x11view.c:639
+#: src/gtk/x11view.c:638
 msgid "_Bottom"
 msgstr "下端揃え(_B)"
 
-#: src/gtk/x11view.c:647
+#: src/gtk/x11view.c:646
 msgid "_Align"
 msgstr "位置合わせ(_A)"
 
-#: src/gtk/x11view.c:648
+#: src/gtk/x11view.c:647
 msgid "_Show cross"
 msgstr "クロスゲージ表示(_S)"
 
-#: src/gtk/x11view.c:852 src/gtk/x11view.c:863
+#: src/gtk/x11view.c:851 src/gtk/x11view.c:862
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:955
+#: src/gtk/x11view.c:954
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:964
+#: src/gtk/x11view.c:963
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2248
+#: src/gtk/x11view.c:2247
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3356
+#: src/gtk/x11view.c:3355
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:4827
+#: src/gtk/x11view.c:4826
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:4834
+#: src/gtk/x11view.c:4833
 msgid "Drawing"
 msgstr "描画中"
 

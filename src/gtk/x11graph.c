@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.36 2009/02/17 08:35:56 hito Exp $
+ * $Id: x11graph.c,v 1.37 2009/03/06 10:18:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1148,13 +1148,11 @@ CmGraphLoad(void)
     ext = getextention(file);
     if (ext && ((strcmp0(ext, "PRM") == 0) || (strcmp0(ext, "prm") == 0))) {
       LoadPrmFile(file);
-      reset_graph_modified();
     } else {
       LoadDialog(&DlgLoad);
       if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
 	LoadNgpFile(file, DlgLoad.ignorepath, DlgLoad.expand,
 		    DlgLoad.exdir, Menulocal.scriptconsole, "-f");
-	reset_graph_modified();
       }
       memfree(DlgLoad.exdir);
     }
@@ -1288,8 +1286,6 @@ CmGraphHistory(GtkWidget *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
     LoadNgpFile(data[fil], DlgLoad.ignorepath, DlgLoad.expand,
 		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
-
-    reset_graph_modified();
   }
   memfree(DlgLoad.exdir);
 }

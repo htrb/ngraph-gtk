@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.8 2009/02/19 09:47:30 hito Exp $
+ * $Id: omerge.c,v 1.9 2009/03/06 10:18:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -301,8 +301,8 @@ mergestore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (fgetline(mergelocal->storefd,&buf)!=0) {
       fclose(mergelocal->storefd);
       mergelocal->storefd=NULL;
-      if ((buf=memalloc(6))==NULL) return 1;
-      strcpy(buf,"[EOF]\n");
+      buf = nstrdup("[EOF]\n");
+      if (buf == NULL) return 1;
       mergelocal->endstore=TRUE;
       *(char **)rval=buf;
       return 0;

@@ -1,5 +1,8 @@
 2009-03-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/omerge.c (mergestore): bug fix: buffer over run. use
+	"nstrdup()" instead of "memalloc()".
+
 	* src/gtk/gtk_liststore.c (create_tree_view): header of the tree
 	view is visible when "n" greater than 1.
 	(list_store_set_sort_all, list_store_set_sort_column): header of

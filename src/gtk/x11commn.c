@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.28 2009/03/06 05:03:39 hito Exp $
+ * $Id: x11commn.c,v 1.29 2009/03/06 10:18:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1115,6 +1115,7 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
     GetPageSettingsFromGRA();
     UpdateAll();
     delobj(obj, newid);
+    reset_graph_modified();
   }
 
   if (Menulocal.expandtofullpath && (!ignorepath))
@@ -1154,6 +1155,7 @@ LoadPrmFile(char *File)
       GetPageSettingsFromGRA();
       UpdateAll();
       ResetStatusBar();
+      reset_graph_modified();
     }
     delobj(obj, id);
   }
