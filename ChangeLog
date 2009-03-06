@@ -1,5 +1,47 @@
 2009-03-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (struct viewer_popup): add member "type".
+	(create_menu): create GtkCheckMenuItem when "popup[i].type" is
+	"POP_UP_MENU_ITEM_TYPE_CHECK".
+	(do_popup): set active state of the menu item when i is
+	"POPUP_ITEM_HIDE".
+	(ViewCross): add argument "dtate".
+
+	* src/gtk/x11merge.c (Popup_list): add initial data for member
+	"type".
+	(POPUP_ITEM_HIDE): add
+	(MergeWinExpose): set active state of the menu item when i is
+	"POPUP_ITEM_HIDE".
+
+	* src/gtk/x11menu.h (enum pop_up_menu_item_type): add.
+
+	* src/gtk/x11lgnd.c (Popup_list): add initial data for member
+	"type".
+	(POPUP_ITEM_HIDE): add
+	(LegendWinExpose): set active state of the menu item when i is
+	"POPUP_ITEM_HIDE".
+
+	* src/gtk/x11file.c (Popup_list): add initial data for member
+	"type".
+	(POPUP_ITEM_HIDE): add
+	(popup_show_cb): set active state of the menu item when i is
+	"POPUP_ITEM_HIDE".
+
+	* src/gtk/x11axis.c (Popup_list): add initial data for member
+	"type".
+	(POPUP_ITEM_HIDE): add.
+	(popup_show_cb): set active state of the menu item when i is
+	"POPUP_ITEM_HIDE".
+
+	* src/gtk/gtk_subwin.h (struct subwin_popup_list): add member "type".
+
+	* src/gtk/gtk_subwin.c (tree_set_hidden_state, set_hidden_state):
+	add.
+	(list_sub_window_hide): use "set_hidden_state()".
+	(tree_sub_window_hide): use "tree_set_hidden_state()"
+	(sub_win_create_popup_menu): create GtkCheckMenuItem when
+	"list[i].type" is "POP_UP_MENU_ITEM_TYPE_CHECK".
+
 	* src/gtk/ox11menu.c (reset_graph_modified, set_graph_modified):
 	call "SetCaption()".
 

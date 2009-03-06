@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.75 2009/02/26 08:51:49 hito Exp $
+ * $Id: x11file.c,v 1.76 2009/03/06 08:11:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -94,25 +94,26 @@ static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
-  {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpenB), TRUE, NULL},
-  {NULL, NULL, 0, NULL},
-  {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL},
-  {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL},
-  {GTK_STOCK_CLOSE,           G_CALLBACK(file_delete_popup_func), TRUE, NULL},
-  {NULL, NULL, 0, NULL},
-  {N_("_Draw"),               G_CALLBACK(file_draw_popup_func), FALSE, NULL},
-  {N_("_Hide"),               G_CALLBACK(list_sub_window_hide), FALSE, NULL},
-  {GTK_STOCK_PROPERTIES,      G_CALLBACK(list_sub_window_update), TRUE, NULL},
-  {GTK_STOCK_EDIT,            G_CALLBACK(file_edit_popup_func), TRUE, NULL},
-  {N_("_Fit"),                G_CALLBACK(file_fit_popup_func), FALSE, NULL},
-  {NULL, NULL, 0, NULL},
-  {GTK_STOCK_GOTO_TOP,        G_CALLBACK(list_sub_window_move_top), TRUE, NULL},
-  {GTK_STOCK_GO_UP,           G_CALLBACK(list_sub_window_move_up), TRUE, NULL},
-  {GTK_STOCK_GO_DOWN,         G_CALLBACK(list_sub_window_move_down), TRUE, NULL},
-  {GTK_STOCK_GOTO_BOTTOM,     G_CALLBACK(list_sub_window_move_last), TRUE, NULL},
+  {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpenB), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_CLOSE,           G_CALLBACK(file_delete_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Draw"),               G_CALLBACK(file_draw_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Show"),               G_CALLBACK(list_sub_window_hide), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_CHECK},
+  {GTK_STOCK_PROPERTIES,      G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_EDIT,            G_CALLBACK(file_edit_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Fit"),                G_CALLBACK(file_fit_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {GTK_STOCK_GOTO_TOP,        G_CALLBACK(list_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GO_UP,           G_CALLBACK(list_sub_window_move_up), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GO_DOWN,         G_CALLBACK(list_sub_window_move_down), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GOTO_BOTTOM,     G_CALLBACK(list_sub_window_move_last), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
+#define POPUP_ITEM_HIDE 7
 #define POPUP_ITEM_FIT 10
 #define POPUP_ITEM_TOP 12
 #define POPUP_ITEM_UP 13
@@ -4135,6 +4136,12 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     case POPUP_ITEM_BOTTOM:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < d->num);
       break;
+    case POPUP_ITEM_HIDE:
+      if (sel >= 0 && sel <= d->num) {
+	int hidden;
+	getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
+      }
     default:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
     }

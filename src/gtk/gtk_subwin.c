@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.40 2009/02/13 10:09:50 hito Exp $
+ * $Id: gtk_subwin.c,v 1.41 2009/03/06 08:11:20 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -765,6 +765,28 @@ hidden(struct SubWin *d)
 }
 
 static void
+set_hidden_state(struct SubWin *d, int hide)
+{
+  int sel;
+  int hidden;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+
+  if ((sel >= 0) && (sel <= d->num)) {
+    getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
+    if (hidden != hide) {
+      putobj(d->obj, "hidden", sel, &hide);
+      d->select = sel;
+      d->update(FALSE);
+      set_graph_modified();
+    }
+  }
+}
+
+static void
 popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
 {
   struct SubWin *d;
@@ -1107,6 +1129,29 @@ tree_hidden(struct LegendWin *d)
     d->legend_type = n;
     d->update(FALSE);
     set_graph_modified();
+  }
+}
+
+static void
+tree_set_hidden_state(struct LegendWin *d, int hide)
+{
+  int n, m, hidden;
+  gboolean sel;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
+
+  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+    getobj(d->obj[n], "hidden", m, 0, NULL, &hidden);
+    if (hidden != hide) {
+      putobj(d->obj[n], "hidden", m, &hide);
+      d->select = m;
+      d->legend_type = n;
+      d->update(FALSE);
+      set_graph_modified();
+    }
   }
 }
 
@@ -1499,7 +1544,10 @@ list_sub_window_update(GtkMenuItem *item, gpointer user_data)
 void 
 list_sub_window_hide(GtkMenuItem *item, gpointer user_data)
 {
-  hidden((struct SubWin *) user_data);
+  int hide;
+
+  hide = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
+  set_hidden_state((struct SubWin *)user_data, ! hide);
 }
 
 void 
@@ -1559,7 +1607,10 @@ tree_sub_window_update(GtkMenuItem *item, gpointer user_data)
 void 
 tree_sub_window_hide(GtkMenuItem *item, gpointer user_data)
 {
-  tree_hidden((struct LegendWin *) user_data);
+  int hide;
+
+  hide = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
+  tree_set_hidden_state((struct LegendWin *)user_data, ! hide);
 }
 
 void 
@@ -1600,15 +1651,23 @@ sub_win_create_popup_menu(struct SubWin *d, int n, struct subwin_popup_list *lis
   menu = gtk_menu_new();
 
   for (i = 0; i < n; i++) {
-    if (list[i].title) {
+    switch (list[i].type) {
+    case POP_UP_MENU_ITEM_TYPE_NORMAL:
       if (list[i].use_stock) {
 	item = gtk_image_menu_item_new_from_stock(list[i].title, list[i].accel_group);
       } else {
 	item = gtk_menu_item_new_with_mnemonic(_(list[i].title));
       }
       g_signal_connect(item, "activate", list[i].func, d);
-    } else {
+      break;
+    case POP_UP_MENU_ITEM_TYPE_CHECK:
+      item = gtk_check_menu_item_new_with_mnemonic(_(list[i].title));
+      g_signal_connect(item, "toggled", list[i].func, d);
+      break;
+    case POP_UP_MENU_ITEM_TYPE_SEPARATOR:
+    default:
       item = gtk_separator_menu_item_new();
+      break;
     }
     d->popup_item[i] = item;
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);

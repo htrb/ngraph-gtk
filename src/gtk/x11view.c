@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.116 2009/03/05 02:31:59 hito Exp $
+ * $Id: x11view.c,v 1.117 2009/03/06 08:11:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -93,6 +93,7 @@ struct viewer_popup
   enum ViewerPopupIdn idn;
   struct viewer_popup *submenu;
   int submenu_item_num;
+  enum pop_up_menu_item_type type;
 };
 
 #define Button1 1
@@ -138,7 +139,7 @@ static void DelList(struct objlist *obj, char *inst);
 static void ViewUpdate(void);
 static void ViewDelete(void);
 static void ViewCopy(void);
-static void ViewCross(void);
+static void ViewCross(int state);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
@@ -585,7 +586,9 @@ create_menu(struct viewer_popup *popup, int n, struct Viewer *d)
   menu = gtk_menu_new();
 
   for (i = 0; i < n; i++) {
-    if (popup[i].title) {
+    switch (popup[i].type) {
+    case POP_UP_MENU_ITEM_TYPE_NORMAL:
+    case POP_UP_MENU_ITEM_TYPE_MENU:
       if (popup[i].use_stock) {
 	item = gtk_image_menu_item_new_from_stock(popup[i].title, NULL);
       } else {
@@ -604,7 +607,17 @@ create_menu(struct viewer_popup *popup, int n, struct Viewer *d)
       } else {
 	g_signal_connect(item, "activate", G_CALLBACK(ViewerPopupMenu), GINT_TO_POINTER(popup[i].idn));
       }
-    } else {
+      break;
+    case POP_UP_MENU_ITEM_TYPE_CHECK:
+      item = gtk_check_menu_item_new_with_mnemonic(_(popup[i].title));
+      g_signal_connect(item, "toggled", G_CALLBACK(ViewerPopupMenu), GINT_TO_POINTER(popup[i].idn));
+
+      if (d) {
+	d->popup_item[j] = item;
+	j++;
+      }
+      break;
+    default:
       item = gtk_separator_menu_item_new();
     }
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
@@ -617,27 +630,27 @@ static GtkWidget *
 create_popup_menu(struct Viewer *d)
 {
   struct viewer_popup align_popup[] = {
-    {N_("_Left"),              FALSE, VIEW_ALIGN_LEFT,    NULL, 0},
-    {N_("_Vertical center"),   FALSE, VIEW_ALIGN_VCENTER, NULL, 0},
-    {N_("_Right"),             FALSE, VIEW_ALIGN_RIGHT,   NULL, 0},
-    {NULL, 0, 0, NULL, 0},
-    {N_("_Top"),               FALSE, VIEW_ALIGN_TOP,     NULL, 0},
-    {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL, 0},
-    {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0},
+    {N_("_Left"),              FALSE, VIEW_ALIGN_LEFT,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("_Vertical center"),   FALSE, VIEW_ALIGN_VCENTER, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("_Right"),             FALSE, VIEW_ALIGN_RIGHT,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+    {N_("_Top"),               FALSE, VIEW_ALIGN_TOP,     NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
   struct viewer_popup popup[] = {
-    {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL, 0},
-    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL, 0},
-    {NULL, 0, 0, NULL, 0},
-    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL, 0},
-    {NULL, 0, 0, NULL, 0},
-    {N_("_Align"),          FALSE, 0, align_popup, sizeof(align_popup) / sizeof(*align_popup)},
-    {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL, 0},
-    {NULL, 0, 0, NULL, 0},
-    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL, 0},
-    {GTK_STOCK_GO_UP,       TRUE,  VIEW_UP,     NULL, 0},
-    {GTK_STOCK_GO_DOWN,     TRUE,  VIEW_DOWN,   NULL, 0},
-    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL, 0},
+    {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+    {N_("_Align"),          FALSE, 0, align_popup, sizeof(align_popup) / sizeof(*align_popup), POP_UP_MENU_ITEM_TYPE_MENU},
+    {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL, 0, POP_UP_MENU_ITEM_TYPE_CHECK},
+    {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {GTK_STOCK_GO_UP,       TRUE,  VIEW_UP,     NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {GTK_STOCK_GO_DOWN,     TRUE,  VIEW_DOWN,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
 
 #define VIEWER_POPUP_ITEM_DUP    0
@@ -3892,6 +3905,7 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   }
 
   gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_CROSS], TRUE);
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[VIEWER_POPUP_ITEM_CROSS]), d->ShowCross);
   switch (d->Mode) {
   case PointB:
   case LegendB:
@@ -4149,7 +4163,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     }
     break;
   case GDK_BackSpace:
-    ViewCross();
+    ViewCross(! d->ShowCross);
     return TRUE;
   default:
     break;
@@ -5653,7 +5667,7 @@ ViewCopy(void)
 }
 
 static void
-ViewCross(void)
+ViewCross(int state)
 {
   GdkGC *dc;
   struct Viewer *d;
@@ -5663,17 +5677,12 @@ ViewCross(void)
 
   d = &(NgraphApp.Viewer);
 
-  dc = gdk_gc_new(d->win);
-
-  if (d->ShowCross) {
+  if (state != d->ShowCross) {
+    dc = gdk_gc_new(d->win);
     ShowCrossGauge(dc);
-    d->ShowCross = FALSE;
-  } else {
-    ShowCrossGauge(dc);
-    d->ShowCross = TRUE;
+    d->ShowCross = state;
+    g_object_unref(G_OBJECT(dc));
   }
-
-  g_object_unref(G_OBJECT(dc));
 }
 
 static void
@@ -5702,7 +5711,7 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
     reorder_object(OBJECT_MOVE_TYPE_DOWN);
     break;
   case VIEW_CROSS:
-    ViewCross();
+    ViewCross(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
     break;
   case VIEW_ALIGN_LEFT:
   case VIEW_ALIGN_HCENTER:

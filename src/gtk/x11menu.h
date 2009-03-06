@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.30 2009/03/06 05:03:39 hito Exp $
+ * $Id: x11menu.h,v 1.31 2009/03/06 08:11:20 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -128,6 +128,13 @@ enum MouseMode {
   MOUSEZOOM3,
   MOUSEZOOM4,
   MOUSECHANGE,
+};
+
+enum pop_up_menu_item_type {
+  POP_UP_MENU_ITEM_TYPE_NORMAL,
+  POP_UP_MENU_ITEM_TYPE_CHECK,
+  POP_UP_MENU_ITEM_TYPE_MENU,
+  POP_UP_MENU_ITEM_TYPE_SEPARATOR,
 };
 
 #define VIEWER_POPUP_ITEM_NUM 9

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.46 2009/02/12 05:03:13 hito Exp $
+ * $Id: x11axis.c,v 1.47 2009/03/06 08:11:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -72,22 +72,23 @@ static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
 static void axis_delete_popup_func(GtkMenuItem *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
-  {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL},
-  {GTK_STOCK_DELETE,      G_CALLBACK(axis_delete_popup_func), TRUE, NULL},
-  {NULL, NULL, 0, NULL},
-  {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL},
-  {N_("_Hide"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL},
-  {GTK_STOCK_CLEAR,       G_CALLBACK(axiswin_scale_clear), TRUE, NULL},
-  {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL},
-  {NULL, NULL, 0, NULL},
-  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL},
-  {GTK_STOCK_GO_UP,       G_CALLBACK(list_sub_window_move_up), TRUE, NULL},
-  {GTK_STOCK_GO_DOWN,     G_CALLBACK(list_sub_window_move_down), TRUE, NULL},
-  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(list_sub_window_move_last), TRUE, NULL},
+  {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_DELETE,      G_CALLBACK(axis_delete_popup_func), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Show"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_CHECK},
+  {GTK_STOCK_CLEAR,       G_CALLBACK(axiswin_scale_clear), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
+  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GO_UP,       G_CALLBACK(list_sub_window_move_up), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GO_DOWN,     G_CALLBACK(list_sub_window_move_down), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(list_sub_window_move_last), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
 
+#define POPUP_ITEM_HIDE 4
 #define POPUP_ITEM_TOP 8
 #define POPUP_ITEM_UP 9
 #define POPUP_ITEM_DOWN 10
@@ -2882,6 +2883,12 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
     case POPUP_ITEM_BOTTOM:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < d->num);
       break;
+    case POPUP_ITEM_HIDE:
+      if (sel >= 0 && sel <= d->num) {
+	int hidden;
+	getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
+      }
     default:
       gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
     }

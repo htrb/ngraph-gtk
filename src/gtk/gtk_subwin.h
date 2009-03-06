@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.h,v 1.11 2009/02/06 08:25:14 hito Exp $
+ * $Id: gtk_subwin.h,v 1.12 2009/03/06 08:11:20 hito Exp $
  */
 
 #ifndef _GTK_SUBWIN_HEADER
@@ -20,6 +20,7 @@ struct subwin_popup_list {
   GCallback func;
   int use_stock;
   GtkAccelGroup *accel_group;
+  enum pop_up_menu_item_type type;
 };
 
 GtkWidget *label_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2);
