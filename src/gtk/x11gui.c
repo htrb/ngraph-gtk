@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.23 2009/02/20 10:00:11 hito Exp $
+ * $Id: x11gui.c,v 1.24 2009/03/06 03:55:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -140,8 +140,6 @@ DialogExecute(GtkWidget *parent, void *dialog)
     g_signal_connect(dlg, "delete-event", G_CALLBACK(dialog_delete_cb), data);
     g_signal_connect(dlg, "destroy", G_CALLBACK(dialog_destroyed_cb), data);
     g_signal_connect(dlg, "key-press-event", G_CALLBACK(dialog_key_down_cb), NULL);
-    // gtk_widget_destroyed(dlg, &(data->widget));
-    /* it seems that gtk_widget_destroyed() is not work well. */
 
     data->parent = parent;
     data->widget = dlg;
@@ -193,8 +191,9 @@ DialogExecute(GtkWidget *parent, void *dialog)
       data->ret = res_id;
     }
 
-    if (data->CloseWindow)
+    if (data->CloseWindow) {
       data->CloseWindow(dlg, data);
+    }
   }
 
   //  gtk_widget_destroy(dlg);

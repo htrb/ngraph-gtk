@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.55 2009/03/04 08:32:44 hito Exp $
+ * $Id: x11opt.c,v 1.56 2009/03/06 03:55:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1280,6 +1280,8 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
+    d->show_cancel = FALSE;
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
     hbox2 = gtk_hbox_new(FALSE, 4);
@@ -1549,6 +1551,8 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct ExViewerDialog *) data;
   if (makewidget) {
+    d->show_cancel = FALSE;
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1646,6 +1650,8 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct ViewerDialog *) data;
   if (makewidget) {
+    d->show_cancel = FALSE;
+    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
     vbox = gtk_vbox_new(FALSE, 4);
