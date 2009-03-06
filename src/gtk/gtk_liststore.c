@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.18 2009/02/26 01:38:16 hito Exp $
+ * $Id: gtk_liststore.c,v 1.19 2009/03/06 09:35:27 hito Exp $
  */
 
 #include <stdlib.h>
@@ -199,6 +199,7 @@ create_tree_view(int n, n_list_store *list, int tree)
     gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
   }
 
+  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tview), n > 1);
   for (i = 0; i < cnum; i++) {
     renderer = gtk_cell_renderer_text_new();
     col = gtk_tree_view_column_new_with_attributes("color", renderer,
@@ -229,6 +230,7 @@ list_store_set_sort_all(GtkWidget *tview)
     gtk_tree_view_column_set_clickable(column, TRUE);
   }
 
+  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tview), TRUE);
   g_list_free(list);
 }
 
@@ -251,6 +253,7 @@ list_store_set_sort_column(GtkWidget *tview, int col)
     gtk_tree_view_column_set_clickable(column, TRUE);
   }
 
+  gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tview), TRUE);
   g_list_free(list);
 }
 

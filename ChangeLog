@@ -1,5 +1,10 @@
 2009-03-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_liststore.c (create_tree_view): header of the tree
+	view is visible when "n" greater than 1.
+	(list_store_set_sort_all, list_store_set_sort_column): header of
+	the tree view is always visible.
+
 	* src/gtk/x11view.c (struct viewer_popup): add member "type".
 	(create_menu): create GtkCheckMenuItem when "popup[i].type" is
 	"POP_UP_MENU_ITEM_TYPE_CHECK".
