@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.27 2009/02/10 10:16:48 hito Exp $
+ * $Id: x11commn.c,v 1.28 2009/03/06 05:03:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -965,7 +965,6 @@ GraphSave(int overwrite)
       AddNgpFileList(file);
       ResetStatusBar();
       SetFileName(file);
-      SetCaption(file);
       reset_graph_modified();
     }
     free(file);
@@ -1056,7 +1055,6 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
     }
 
     SetFileName(File);
-    SetCaption(File);
     changefilename(name);
 
     if (arrayadd(&sarray, &name) == NULL) {
@@ -1156,7 +1154,6 @@ LoadPrmFile(char *File)
       GetPageSettingsFromGRA();
       UpdateAll();
       ResetStatusBar();
-      SetCaption(File);
     }
     delobj(obj, id);
   }

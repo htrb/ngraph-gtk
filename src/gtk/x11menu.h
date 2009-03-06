@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.29 2009/03/05 02:31:59 hito Exp $
+ * $Id: x11menu.h,v 1.30 2009/03/06 05:03:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -266,26 +266,26 @@ extern GtkAccelGroup *AccelGroup;
 void application(char *file);
 
 void AxisWinUpdate(int clear);
-void UpdateAll();
-void UpdateAll2();
-void ChangePage();
-void SetCaption(char *file);
+void UpdateAll(void);
+void UpdateAll2(void);
+void ChangePage(void);
+void SetCaption(void);
 void SetCursor(unsigned int type);
 unsigned int GetCursor(void);
 void SetPoint(struct Viewer *d, int x, int y);
 void SetZoom(double zm);
-void ResetZoom();
-void ResetEvent();
-void WaitForMap();
-void GetWMFrame();
+void ResetZoom(void);
+void ResetEvent(void);
+void WaitForMap(void);
+void GetWMFrame(void);
 void SetStatusBar(char *mes);
 void SetStatusBarXm(gchar * s);
-void ResetStatusBar();
+void ResetStatusBar(void);
 int PutStderr(char *s);
 int PutStdout(char *s);
 void DisplayStatus(char *str);
 void DisplayDialog(char *str);
-int ChkInterrupt();
+int ChkInterrupt(void);
 int InputYN(char *mes);
 void QuitGUI(void);
 void menu_lock(int lock);

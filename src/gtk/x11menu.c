@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.77 2009/03/05 02:47:49 hito Exp $
+ * $Id: x11menu.c,v 1.78 2009/03/06 05:03:39 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1828,7 +1828,7 @@ application(char *file)
   if (create_cursor())
     return;
 
-  SetCaption(NULL);
+  SetCaption();
   SetCursor(GDK_LEFT_PTR);
 
   putstderr = mgtkputstderr;
@@ -2063,30 +2063,16 @@ ResetStatusBar(void)
 }
 
 void
-SetCaption(char *file)
+SetCaption(void)
 {
-  char *fullpath;
-  char *buf;
-  int len;
+  char buf[1024], *file;
 
-  if (file == NULL) {
-    fullpath = NULL;
-    len = 0;
-  } else {
-    fullpath = getfullpath(file);
-    len = strlen(fullpath);
-  }
+  getobj(Menulocal.obj, "ngp", 0, 0, NULL, &file);
 
-  len += 10;
-  buf = memalloc(len);
-  if (buf) {
-    snprintf(buf, len, "Ngraph%s%s",
-	     (fullpath) ? ":" : "",
-	     (fullpath) ? fullpath : "");
-    gtk_window_set_title(GTK_WINDOW(TopLevel), buf);
-    memfree(buf);
-  }
-  memfree(fullpath);
+  snprintf(buf, sizeof(buf), "%s%s - Ngraph",
+	   (get_graph_modified()) ? "*" : "",
+	   (file) ? file : _("Unsaved Graph"));
+  gtk_window_set_title(GTK_WINDOW(TopLevel), buf);
 }
 
 unsigned int

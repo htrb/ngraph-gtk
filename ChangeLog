@@ -1,3 +1,14 @@
+2009-03-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (reset_graph_modified, set_graph_modified):
+	call "SetCaption()".
+
+	* src/gtk/x11menu.c (SetCaption): no argument. use "ngp" field of
+	"menu" object for file name of the window title.
+
+	* src/gtk/x11commn.c (LoadPrmFile, LoadNgpFile, GraphSave): don't
+	call "SetCaption()".
+
 2009-03-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (SetPoint): add argument "struct Viewer *d".
