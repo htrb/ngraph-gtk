@@ -1,5 +1,14 @@
 2009-03-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (LoadPrmFile, LoadNgpFile): call
+	"reset_graph_modified()".
+
+	* src/gtk/x11view.c (graph_dropped): don't call
+	"reset_graph_modified()".
+
+	* src/gtk/x11graph.c (CmGraphLoad): don't call
+	"reset_graph_modified()".
+
 	* src/omerge.c (mergestore): bug fix: buffer over run. use
 	"nstrdup()" instead of "memalloc()".
 
