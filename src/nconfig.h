@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: nconfig.h,v 1.2 2009/03/09 05:20:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,6 +21,9 @@
  * 
  */
 
+#ifndef NCONFIG_HEADER
+#define NCONFIG_HEADER
+
 char *getscriptname(char *file);
 char *searchscript(char *file);
 FILE *openconfig(char *section);
@@ -31,3 +34,4 @@ int removeconfig(char *section,struct narray *conf);
 int writecheckconfig();
 int copyconfig();
 
+#endif

@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.11 2009/03/04 05:15:53 hito Exp $
+ * $Id: otext.c,v 1.12 2009/03/09 05:20:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,6 +34,7 @@
 #include "ngraph.h"
 #include "object.h"
 #include "gra.h"
+#include "oroot.h"
 #include "odraw.h"
 #include "otext.h"
 #include "olegend.h"
@@ -54,144 +55,31 @@ static char *texterrorlist[]={
 
 #define ERRNUM (sizeof(texterrorlist) / sizeof(*texterrorlist))
 
+static struct obj_config TextConfig[] = {
+  {"R", OBJ_CONFIG_TYPE_NUMERIC},
+  {"G", OBJ_CONFIG_TYPE_NUMERIC},
+  {"B", OBJ_CONFIG_TYPE_NUMERIC},
+  {"pt", OBJ_CONFIG_TYPE_NUMERIC},
+  {"space", OBJ_CONFIG_TYPE_NUMERIC},
+  {"direction", OBJ_CONFIG_TYPE_NUMERIC},
+  {"script_size", OBJ_CONFIG_TYPE_NUMERIC},
+  {"raw", OBJ_CONFIG_TYPE_NUMERIC},
+  {"font", OBJ_CONFIG_TYPE_STRING},
+  {"jfont", OBJ_CONFIG_TYPE_STRING},
+};
+
+static NHASH TextConfigHash = NULL;
 
 static int 
 textloadconfig(struct objlist *obj,char *inst)
 {
-  FILE *fp;
-  char *tok,*str,*s2;
-  char *f1,*f2;
-  int val;
-  char *endptr;
-  int len;
-
-  if ((fp=openconfig(TEXTCONF))==NULL) return 0;
-  while ((tok=getconfig(fp,&str))!=NULL) {
-    s2=str;
-    if (strcmp(tok,"R")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"R",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"G")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"G",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"B")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"B",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"pt")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"pt",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"space")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"space",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"direction")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"direction",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"script_size")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"script_size",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"raw")==0) {
-      f1=getitok2(&s2,&len," \t,");
-      val=strtol(f1,&endptr,10);
-      if (endptr[0]=='\0') _putobj(obj,"raw",inst,&val);
-      memfree(f1);
-    } else if (strcmp(tok,"font")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"font",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"font",inst,f1);
-    } else if (strcmp(tok,"jfont")==0) {
-      f1=getitok2(&s2,&len,"");
-      _getobj(obj,"jfont",inst,&f2);
-      memfree(f2);
-      _putobj(obj,"jfont",inst,f1);
-    } else {
-      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, TEXTCONF);
-    }
-    memfree(tok);
-    memfree(str);
-  }
-  closeconfig(fp);
-  return 0;
+  return obj_load_config(obj, inst, TEXTCONF, TextConfigHash);
 }
 
 static int 
 textsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray conf;
-  char *buf;
-  int f1;
-  char *f2;
-
-  arrayinit(&conf,sizeof(char *));
-  _getobj(obj,"R",inst,&f1);
-  if ((buf=(char *)memalloc(14))!=NULL) {
-    sprintf(buf,"R=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"G",inst,&f1);
-  if ((buf=(char *)memalloc(14))!=NULL) {
-    sprintf(buf,"G=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"B",inst,&f1);
-  if ((buf=(char *)memalloc(14))!=NULL) {
-    sprintf(buf,"B=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"pt",inst,&f1);
-  if ((buf=(char *)memalloc(15))!=NULL) {
-    sprintf(buf,"pt=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"space",inst,&f1);
-  if ((buf=(char *)memalloc(18))!=NULL) {
-    sprintf(buf,"space=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"direction",inst,&f1);
-  if ((buf=(char *)memalloc(22))!=NULL) {
-    sprintf(buf,"direction=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"script_size",inst,&f1);
-  if ((buf=(char *)memalloc(24))!=NULL) {
-    sprintf(buf,"script_size=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"font",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(6+strlen(f2)))!=NULL) {
-    sprintf(buf,"font=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"jfont",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(7+strlen(f2)))!=NULL) {
-    sprintf(buf,"jfont=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"raw",inst,&f1);
-  if ((buf=(char *)memalloc(20))!=NULL) {
-    sprintf(buf,"raw=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  replaceconfig(TEXTCONF,&conf);
-  arraydel2(&conf);
-  return 0;
+  return obj_save_config(obj, inst, TEXTCONF, TextConfig, sizeof(TextConfig) / sizeof(*TextConfig));
 }
 
 static int 
@@ -640,5 +528,20 @@ static struct objtable text[] = {
 void *addtext()
 /* addtext() returns NULL on error */
 {
+  unsigned int i;
+
+  if (TextConfigHash == NULL) {
+    TextConfigHash = nhash_new();
+    if (TextConfigHash == NULL)
+      return NULL;
+
+    for (i = 0; i < sizeof(TextConfig) / sizeof(*TextConfig); i++) {
+      if (nhash_set_int(TextConfigHash, TextConfig[i].name, TextConfig[i].type)) {
+	nhash_free(TextConfigHash);
+	return NULL;
+      }
+    }
+  }
+
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,text,ERRNUM,texterrorlist,NULL,NULL);
 }

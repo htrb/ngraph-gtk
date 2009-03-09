@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.64 2009/03/04 05:15:53 hito Exp $
+ * $Id: ofile.c,v 1.65 2009/03/09 05:20:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -139,53 +139,41 @@ char *f2dtypechar[]={
   NULL
 };
 
-enum file_config_type {
-  FILE_CONFIG_TYPE_NUMERIC,
-  FILE_CONFIG_TYPE_MATH,
-  FILE_CONFIG_TYPE_STRING,
-  FILE_CONFIG_TYPE_OTHER,
-};
+static int set_math_config(struct objlist *obj, char *inst, char *field, char *str);
 
-static int set_line_style_config(struct objlist *obj, char *inst, char *field, char *str);
-
-struct file_config {
-  char *name;
-  enum file_config_type type;
-  int (* proc)(struct objlist *, char *, char *, char *);
-};
-static struct file_config FileConfig[] = {
-  {"R",                FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"G",                FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"B",                FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"R2",               FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"G2",               FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"B2",               FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"x",                FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"y",                FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"type",             FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"smooth_x",         FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"smooth_y",         FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"mark_type",        FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"mark_size",        FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"line_width",       FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"line_join",        FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"line_miter_limit", FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"head_skip",        FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"read_step",        FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"final_line",       FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"csv",              FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"data_clip",        FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"interpolation",    FILE_CONFIG_TYPE_NUMERIC, NULL},
-  {"math_x",           FILE_CONFIG_TYPE_MATH,    NULL},
-  {"math_y",           FILE_CONFIG_TYPE_MATH,    NULL},
-  {"func_f",           FILE_CONFIG_TYPE_MATH,    NULL},
-  {"func_g",           FILE_CONFIG_TYPE_MATH,    NULL},
-  {"func_h",           FILE_CONFIG_TYPE_MATH,    NULL},
-  {"remark",           FILE_CONFIG_TYPE_STRING,  NULL},
-  {"ifs",              FILE_CONFIG_TYPE_STRING,  NULL},
-  {"axis_x",           FILE_CONFIG_TYPE_STRING,  NULL},
-  {"axis_y",           FILE_CONFIG_TYPE_STRING,  NULL},
-  {"line_style",       FILE_CONFIG_TYPE_OTHER,   set_line_style_config},
+static struct obj_config FileConfig[] = {
+  {"R",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"G",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"B",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"R2",               OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"G2",               OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"B2",               OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"x",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"y",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"type",             OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"smooth_x",         OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"smooth_y",         OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"mark_type",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"mark_size",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"line_width",       OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"line_join",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"line_miter_limit", OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"head_skip",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"read_step",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"final_line",       OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"csv",              OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"data_clip",        OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"interpolation",    OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"remark",           OBJ_CONFIG_TYPE_STRING,  NULL, NULL},
+  {"ifs",              OBJ_CONFIG_TYPE_STRING,  NULL, NULL},
+  {"axis_x",           OBJ_CONFIG_TYPE_STRING,  NULL, NULL},
+  {"axis_y",           OBJ_CONFIG_TYPE_STRING,  NULL, NULL},
+  {"line_style",       OBJ_CONFIG_TYPE_STYLE,   NULL, NULL},
+  {"math_x",           OBJ_CONFIG_TYPE_OTHER, set_math_config, obj_save_config_string},
+  {"math_y",           OBJ_CONFIG_TYPE_OTHER, set_math_config, obj_save_config_string},
+  {"func_f",           OBJ_CONFIG_TYPE_OTHER, set_math_config, obj_save_config_string},
+  {"func_g",           OBJ_CONFIG_TYPE_OTHER, set_math_config, obj_save_config_string},
+  {"func_h",           OBJ_CONFIG_TYPE_OTHER, set_math_config, obj_save_config_string},
 };
 
 #define MASK_SERACH_METHOD_LINER  0
@@ -883,7 +871,7 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
   memfree(fp);
 }
 
-static int 
+int 
 f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 {
   enum MATH_CODE_ERROR_NO rcode;
@@ -950,269 +938,30 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 }
 
 static int 
-set_line_style_config(struct objlist *obj, char *inst, char *field, char *str)
+set_math_config(struct objlist *obj, char *inst, char *field, char *str)
 {
-  char *f1, *endptr;
-  struct narray *iarray;
-  int len, val;
+  char *f1;
+  int len;
 
-  iarray = arraynew(sizeof(int));
-  if (iarray == NULL)
-    return 1;
-
-  while ((f1 = getitok2(&str, &len," \t,"))) {
-    val = strtol(f1, &endptr,10);
-    if (endptr[0] == '\0')
-      arrayadd(iarray, &val);
+  f1 = getitok2(&str, &len, "");
+  if (f2dputmath(obj, inst, field, f1) == 0) {
+    _putobj(obj, field, inst, f1);
+  } else {
     memfree(f1);
   }
-  _putobj(obj, field, inst, iarray);
   return 0;
 }
 
 static int 
 f2dloadconfig(struct objlist *obj,char *inst)
 {
-  FILE *fp;
-  char *tok,*str,*s2;
-  char *f1,*f2;
-  int val;
-  char *endptr;
-  int len;
-  struct file_config *cfg;
-
-  fp = openconfig(F2DCONF);
-  if (fp == NULL)
-    return 0;
-
-  while ((tok = getconfig(fp, &str))) {
-    s2 = str;
-    if (nhash_get_ptr(FileConfigHash, tok, (void *) &cfg) == 0) {
-      switch (cfg->type) {
-      case FILE_CONFIG_TYPE_NUMERIC:
-	f1 = getitok2(&s2, &len, " \t,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  _putobj(obj, cfg->name, inst, &val);
-	memfree(f1);
-	break;
-      case FILE_CONFIG_TYPE_MATH:
-	f1 = getitok2(&s2, &len, "");
-	if (f2dputmath(obj, inst, cfg->name, f1) == 0) {
-	  _putobj(obj, cfg->name, inst, f1);
-	} else {
-	  memfree(f1);
-	}
-	break;
-      case FILE_CONFIG_TYPE_STRING:
-	f1 = getitok2(&s2, &len, "");
-	_getobj(obj, cfg->name, inst, &f2);
-	memfree(f2);
-	_putobj(obj, cfg->name, inst, f1);
-	break;
-      case FILE_CONFIG_TYPE_OTHER:
-	if (cfg->proc) {
-	  cfg->proc(obj, inst, cfg->name, s2);
-	}
-	break;
-      }
-    } else {
-      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, F2DCONF);
-    }
-    memfree(tok);
-    memfree(str);
-  }
-  closeconfig(fp);
-  return 0;
+  return obj_load_config(obj, inst, F2DCONF, FileConfigHash);
 }
 
 static int 
 f2dsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray conf;
-  char *buf;
-  int f1,i,j,num;
-  char *f2;
-  struct narray *iarray;
-
-  arrayinit(&conf,sizeof(char *));
-  _getobj(obj,"R",inst,&f1);
-  if ((buf=(char *)memalloc(14))!=NULL) {
-    sprintf(buf,"R=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"G",inst,&f1);
-  if ((buf=(char *)memalloc(14))!=NULL) {
-    sprintf(buf,"G=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"B",inst,&f1);
-  if ((buf=(char *)memalloc(14))!=NULL) {
-    sprintf(buf,"B=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"x",inst,&f1);
-  if ((buf=(char *)memalloc(14))!=NULL) {
-    sprintf(buf,"x=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"y",inst,&f1);
-  if ((buf=(char *)memalloc(14))!=NULL) {
-    sprintf(buf,"y=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"type",inst,&f1);
-  if ((buf=(char *)memalloc(17))!=NULL) {
-    sprintf(buf,"type=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"smooth_x",inst,&f1);
-  if ((buf=(char *)memalloc(21))!=NULL) {
-    sprintf(buf,"smooth_x=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"smooth_y",inst,&f1);
-  if ((buf=(char *)memalloc(21))!=NULL) {
-    sprintf(buf,"smooth_y=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"mark_type",inst,&f1);
-  if ((buf=(char *)memalloc(22))!=NULL) {
-    sprintf(buf,"mark_type=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"mark_size",inst,&f1);
-  if ((buf=(char *)memalloc(22))!=NULL) {
-    sprintf(buf,"mark_size=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"line_width",inst,&f1);
-  if ((buf=(char *)memalloc(23))!=NULL) {
-    sprintf(buf,"line_width=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"line_join",inst,&f1);
-  if ((buf=(char *)memalloc(22))!=NULL) {
-    sprintf(buf,"line_join=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"line_miter_limit",inst,&f1);
-  if ((buf=(char *)memalloc(29))!=NULL) {
-    sprintf(buf,"line_miter_limit=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"R2",inst,&f1);
-  if ((buf=(char *)memalloc(15))!=NULL) {
-    sprintf(buf,"R2=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"G2",inst,&f1);
-  if ((buf=(char *)memalloc(15))!=NULL) {
-    sprintf(buf,"G2=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"B2",inst,&f1);
-  if ((buf=(char *)memalloc(15))!=NULL) {
-    sprintf(buf,"B2=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"head_skip",inst,&f1);
-  if ((buf=(char *)memalloc(22))!=NULL) {
-    sprintf(buf,"head_skip=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"read_step",inst,&f1);
-  if ((buf=(char *)memalloc(22))!=NULL) {
-    sprintf(buf,"read_step=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"final_line",inst,&f1);
-  if ((buf=(char *)memalloc(23))!=NULL) {
-    sprintf(buf,"final_line=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"csv",inst,&f1);
-  if ((buf=(char *)memalloc(23))!=NULL) {
-    sprintf(buf,"csv=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"data_clip",inst,&f1);
-  if ((buf=(char *)memalloc(22))!=NULL) {
-    sprintf(buf,"data_clip=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"interpolation",inst,&f1);
-  if ((buf=(char *)memalloc(26))!=NULL) {
-    sprintf(buf,"interpolation=%d",f1);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"math_x",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(8+strlen(f2)))!=NULL) {
-    sprintf(buf,"math_x=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"math_y",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(8+strlen(f2)))!=NULL) {
-    sprintf(buf,"math_y=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"func_f",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(8+strlen(f2)))!=NULL) {
-    sprintf(buf,"func_f=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"func_g",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(8+strlen(f2)))!=NULL) {
-    sprintf(buf,"func_g=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"func_h",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(8+strlen(f2)))!=NULL) {
-    sprintf(buf,"func_h=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"remark",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(8+strlen(f2)))!=NULL) {
-    sprintf(buf,"remark=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"ifs",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(5+strlen(f2)))!=NULL) {
-    sprintf(buf,"ifs=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"axis_x",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(8+strlen(f2)))!=NULL) {
-    sprintf(buf,"axis_x=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"axis_y",inst,&f2);
-  if (f2==NULL) f2="";
-  if ((buf=(char *)memalloc(8+strlen(f2)))!=NULL) {
-    sprintf(buf,"axis_y=%s",f2);
-    arrayadd(&conf,&buf);
-  }
-  _getobj(obj,"line_style",inst,&iarray);
-  num=arraynum(iarray);
-  if ((buf=(char *)memalloc(12+12*num))!=NULL) {
-    j=0;
-    j+=sprintf(buf,"line_style=");
-    for (i=0;i<num;i++)
-      if (i!=num-1) j+=sprintf(buf+j,"%d ",*(int *)arraynget(iarray,i));
-      else j+=sprintf(buf+j,"%d",*(int *)arraynget(iarray,i));
-    arrayadd(&conf,&buf);
-  }
-  replaceconfig(F2DCONF,&conf);
-  arraydel2(&conf);
-  return 0;
+  return obj_save_config(obj, inst, F2DCONF, FileConfig, sizeof(FileConfig) / sizeof(*FileConfig));
 }
 
 static int 
@@ -1261,22 +1010,29 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"stat_maxy",inst,&minmaxstat)) return 1;
   if (_putobj(obj,"data_clip",inst,&dataclip)) return 1;
 
-  s1=s2=s3=s4=NULL;
+  s1 = s2 = s3 = s4 = NULL;
   f2dlocal=NULL;
-  if ((s1=memalloc(4))==NULL) goto errexit;
-  strcpy(s1,"#%'");
-  if (_putobj(obj,"remark",inst,s1)) goto errexit;
-  if ((s2=memalloc(6))==NULL) goto errexit;
-  strcpy(s2," ,\t()");
-  if (_putobj(obj,"ifs",inst,s2)) goto errexit;
-  if ((s3=memalloc(7))==NULL) goto errexit;
-  strcpy(s3,"axis:0");
-  if (_putobj(obj,"axis_x",inst,s3)) goto errexit;
-  if ((s4=memalloc(7))==NULL) goto errexit;
-  strcpy(s4,"axis:1");
-  if (_putobj(obj,"axis_y",inst,s4)) goto errexit;
-  if ((f2dlocal=memalloc(sizeof(struct f2dlocal)))==NULL) goto errexit;
+
+  s1 = nstrdup("#%'");
+  if (s1 == NULL) goto errexit;
+  if (_putobj(obj, "remark", inst, s1)) goto errexit;
+
+  s2 = nstrdup(" ,\t()");
+  if (s2 == NULL) goto errexit;
+  if (_putobj(obj, "ifs", inst, s2)) goto errexit;
+
+  s3 = nstrdup("axis:0");
+  if (s3 == NULL) goto errexit;
+  if (_putobj(obj, "axis_x", inst, s3)) goto errexit;
+
+  s4 = nstrdup("axis:1");
+  if (s4 == NULL) goto errexit;
+  if (_putobj(obj, "axis_y", inst, s4)) goto errexit;
+
+  f2dlocal=memalloc(sizeof(struct f2dlocal));
+  if (f2dlocal == NULL) goto errexit;
   if (_putobj(obj,"_local",inst,f2dlocal)) goto errexit;
+
   f2dlocal->codex=NULL;
   f2dlocal->codey=NULL;
   f2dlocal->codef=NULL;
@@ -1337,6 +1093,8 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 errexit:
   memfree(s1);
   memfree(s2);
+  memfree(s3);
+  memfree(s4);
   memfree(f2dlocal);
   return 1;
 }

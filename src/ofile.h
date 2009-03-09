@@ -27,4 +27,5 @@ enum FILE_OBJ_PLOT_TYPE {
   PLOT_TYPE_FIT,
 };
 
+int f2dputmath(struct objlist *obj,char *inst,char *field,char *math);
 #endif

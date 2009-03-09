@@ -1,3 +1,21 @@
+2009-03-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (enum axis_config_type): remove.
+	(axisloadconfig): use "obj_load_config()".
+
+	* src/otext.c (TextConfig): add.
+	(textloadconfig): use "obj_load_config()".
+	(textsaveconfig): use "obj_save_config()".
+	(addtext): initialize "TextConfigHash".
+
+	* src/ofile.c (f2dinit): use "nstrdup()" instead of "memalloc()".
+	(f2dinit): free "s3" and "s4" when error is occurred.
+	(f2dsaveconfig): use "obj_save_config()".
+	(f2dloadconfig): use "obj_load_config()".
+	(enum file_config_type, struct file_config): remove.
+
+	* src/oaxis.c (axisinit): use "nstrdup()" instead of "memalloc()".
+
 2009-03-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11commn.c (LoadPrmFile, LoadNgpFile): call

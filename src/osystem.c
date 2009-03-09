@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.7 2009/02/05 08:40:14 hito Exp $
+ * $Id: osystem.c,v 1.8 2009/03/09 05:20:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,6 +37,7 @@
 #endif
 
 #include "ngraph.h"
+#include "nstring.h"
 #include "object.h"
 #include "ioutil.h"
 #include "ntime.h"

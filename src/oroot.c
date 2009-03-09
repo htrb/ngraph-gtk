@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.c,v 1.4 2009/02/05 08:40:14 hito Exp $
+ * $Id: oroot.c,v 1.5 2009/03/09 05:20:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,12 +26,14 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 #include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
 #include "oroot.h"
+#include "nconfig.h"
 
 #define NAME "object"
 #define PARENT NULL
@@ -46,6 +48,151 @@ static char *rooterrorlist[]={
 };
 
 #define ERRNUM (sizeof(rooterrorlist) / sizeof(*rooterrorlist))
+
+int 
+obj_load_config(struct objlist *obj, char *inst, char *title, NHASH hash)
+{
+  FILE *fp;
+  char *tok,*str,*s2;
+  char *f1,*f2;
+  int val;
+  char *endptr;
+  int len;
+  struct obj_config *cfg;
+  struct narray *iarray;
+
+  fp = openconfig(title);
+  if (fp == NULL)
+    return 0;
+
+  while ((tok = getconfig(fp, &str))) {
+    s2 = str;
+    if (nhash_get_ptr(hash, tok, (void *) &cfg) == 0) {
+      switch (cfg->type) {
+      case OBJ_CONFIG_TYPE_NUMERIC:
+	f1 = getitok2(&s2, &len, " \t,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  _putobj(obj, cfg->name, inst, &val);
+	memfree(f1);
+	break;
+      case OBJ_CONFIG_TYPE_STRING:
+	f1 = getitok2(&s2, &len, "");
+	_getobj(obj, cfg->name, inst, &f2);
+	memfree(f2);
+	_putobj(obj, cfg->name, inst, f1);
+	break; 
+      case OBJ_CONFIG_TYPE_STYLE:
+	iarray = arraynew(sizeof(int));
+	if (iarray) {
+	  while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
+	    val = strtol(f1, &endptr, 10);
+	    if (endptr[0] == '\0')
+	      arrayadd(iarray, &val);
+	    memfree(f1);
+	  }
+	  _putobj(obj, tok, inst, iarray);
+	}
+	break;
+     case OBJ_CONFIG_TYPE_OTHER:
+	if (cfg->load_proc) {
+	  cfg->load_proc(obj, inst, cfg->name, s2);
+	}
+	break;
+      }
+    } else {
+      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, title);
+    }
+    memfree(tok);
+    memfree(str);
+  }
+  closeconfig(fp);
+  return 0;
+}
+
+static void
+obj_save_config_numeric(struct objlist *obj, char *inst, char *field, struct narray *conf)
+{
+  char buf[1024], *str;
+  int val;
+
+  _getobj(obj, field, inst, &val);
+  snprintf(buf, sizeof(buf), "%s=%d", field, val);
+  str = nstrdup(buf);
+  if (str) {
+    arrayadd(conf, &str);
+  }
+}
+
+void
+obj_save_config_string(struct objlist *obj, char *inst, char *field, struct narray *conf)
+{
+  char *buf, *val;
+  int len;
+
+  _getobj(obj, field, inst, &val);
+  if (val == NULL) val = "";
+
+  len = strlen(field) + strlen(val) + 1;
+  buf = memalloc(len);
+  if (buf) {
+    snprintf(buf, len, "%s=%s", field, val);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+obj_save_config_line_style(struct objlist *obj, char *inst, char *field, struct narray *conf)
+{
+  char *buf;
+  int i, j, num;
+  struct narray *iarray;
+
+  _getobj(obj, field, inst, &iarray);
+  num = arraynum(iarray);
+
+  buf = memalloc(strlen(field) + 2 + 20 * num);
+  if (buf == NULL)
+    return;
+
+  j = 0;
+  j += sprintf(buf, "%s=", field);
+  for (i = 0; i < num; i++) {
+    j += sprintf(buf + j, "%d%s", *(int *) arraynget(iarray, i), (i == num - 1) ? "" : " ");
+  }
+  arrayadd(conf, &buf);
+}
+
+int 
+obj_save_config(struct objlist *obj, char *inst, char *title, struct obj_config *config, unsigned int n)
+{
+  struct narray conf;
+  unsigned int i;
+
+  arrayinit(&conf, sizeof(char *));
+
+  for (i = 0; i < n; i++) {
+    switch (config[i].type) {
+    case OBJ_CONFIG_TYPE_NUMERIC:
+      obj_save_config_numeric(obj, inst, config[i].name, &conf);
+      break;
+    case OBJ_CONFIG_TYPE_STRING:
+      obj_save_config_string(obj, inst, config[i].name, &conf);
+      break;
+    case OBJ_CONFIG_TYPE_STYLE:
+      obj_save_config_line_style(obj, inst, config[i].name, &conf);
+      break;
+    case OBJ_CONFIG_TYPE_OTHER:
+      if (config[i].save_proc) {
+	config[i].save_proc(obj, inst, config[i].name, &conf);
+      }
+      break;
+    }
+  }
+  replaceconfig(title, &conf);
+  arraydel2(&conf);
+  return 0;
+}
 
 static int 
 oinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)

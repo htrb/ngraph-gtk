@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.h,v 1.2 2008/11/25 08:43:32 hito Exp $
+ * $Id: oroot.h,v 1.3 2009/03/09 05:20:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,8 +21,32 @@
  * 
  */
 
+#ifndef OROOT_HEADER
+#define OROOT_HEADER
+
+enum obj_config_type {
+  OBJ_CONFIG_TYPE_NUMERIC,
+  OBJ_CONFIG_TYPE_STRING,
+  OBJ_CONFIG_TYPE_STYLE,
+  OBJ_CONFIG_TYPE_OTHER,
+};
+
+struct obj_config {
+  char *name;
+  enum obj_config_type type;
+  int (* load_proc)(struct objlist *, char *, char *, char *);
+  void (* save_proc)(struct objlist *, char *, char *, struct narray *);
+};
+
+int obj_load_config(struct objlist *obj, char *inst, char *title, NHASH hash);
+int obj_save_config(struct objlist *obj, char *inst, char *title, struct obj_config *config, unsigned int n);
+
+void obj_save_config_string(struct objlist *obj, char *inst, char *field, struct narray *conf);
+
 int oputabs(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 int oputge1(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 int oputangle(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 int oputstyle(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 int oputcolor(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
+
+#endif

@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.25 2009/03/04 05:15:53 hito Exp $
+ * $Id: oaxis.c,v 1.26 2009/03/09 05:20:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -140,65 +140,53 @@ enum AXIS_NUM_DIR {
   AXIS_NUM_POS_PARALLEL2,
 };
 
+static struct obj_config AxisConfig[] = {
+  {"R", OBJ_CONFIG_TYPE_NUMERIC},
+  {"G", OBJ_CONFIG_TYPE_NUMERIC},
+  {"B", OBJ_CONFIG_TYPE_NUMERIC},
+  {"type", OBJ_CONFIG_TYPE_NUMERIC},
+  {"type", OBJ_CONFIG_TYPE_NUMERIC},
+  {"direction", OBJ_CONFIG_TYPE_NUMERIC},
+  {"baseline", OBJ_CONFIG_TYPE_NUMERIC},
+  {"width", OBJ_CONFIG_TYPE_NUMERIC},
+  {"arrow", OBJ_CONFIG_TYPE_NUMERIC},
+  {"arrow_length", OBJ_CONFIG_TYPE_NUMERIC},
+  {"wave", OBJ_CONFIG_TYPE_NUMERIC},
+  {"wave_length", OBJ_CONFIG_TYPE_NUMERIC},
+  {"wave_width", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_length1", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_width1", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_length2", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_width2", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_length3", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_width3", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_R", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_G", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_B", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_auto_norm", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_log_pow", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_pt", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_space", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_script_size", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_align", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_no_zero", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_direction", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_shift_p", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_shift_n", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_R", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_G", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_B", OBJ_CONFIG_TYPE_NUMERIC},
 
-enum axis_config_type {
-  AXIS_CONFIG_TYPE_NUMERIC,
-  AXIS_CONFIG_TYPE_STRING,
-  AXIS_CONFIG_TYPE_STYLE,
-};
+  {"num_head", OBJ_CONFIG_TYPE_STRING},
+  {"num_format", OBJ_CONFIG_TYPE_STRING},
+  {"num_tail", OBJ_CONFIG_TYPE_STRING},
+  {"num_font", OBJ_CONFIG_TYPE_STRING},
+  {"num_jfont", OBJ_CONFIG_TYPE_STRING},
 
-struct axis_config {
-  char *name;
-  enum axis_config_type type;
-};
-
-static struct axis_config AxisConfig[] = {
-  {"R", AXIS_CONFIG_TYPE_NUMERIC},
-  {"G", AXIS_CONFIG_TYPE_NUMERIC},
-  {"B", AXIS_CONFIG_TYPE_NUMERIC},
-  {"type", AXIS_CONFIG_TYPE_NUMERIC},
-  {"type", AXIS_CONFIG_TYPE_NUMERIC},
-  {"direction", AXIS_CONFIG_TYPE_NUMERIC},
-  {"baseline", AXIS_CONFIG_TYPE_NUMERIC},
-  {"width", AXIS_CONFIG_TYPE_NUMERIC},
-  {"arrow", AXIS_CONFIG_TYPE_NUMERIC},
-  {"arrow_length", AXIS_CONFIG_TYPE_NUMERIC},
-  {"wave", AXIS_CONFIG_TYPE_NUMERIC},
-  {"wave_length", AXIS_CONFIG_TYPE_NUMERIC},
-  {"wave_width", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_length1", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_width1", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_length2", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_width2", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_length3", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_width3", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_R", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_G", AXIS_CONFIG_TYPE_NUMERIC},
-  {"gauge_B", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_auto_norm", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_log_pow", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_pt", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_space", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_script_size", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_align", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_no_zero", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_direction", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_shift_p", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_shift_n", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_R", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_G", AXIS_CONFIG_TYPE_NUMERIC},
-  {"num_B", AXIS_CONFIG_TYPE_NUMERIC},
-
-  {"num_head", AXIS_CONFIG_TYPE_STRING},
-  {"num_format", AXIS_CONFIG_TYPE_STRING},
-  {"num_tail", AXIS_CONFIG_TYPE_STRING},
-  {"num_font", AXIS_CONFIG_TYPE_STRING},
-  {"num_jfont", AXIS_CONFIG_TYPE_STRING},
-
-  {"style", AXIS_CONFIG_TYPE_STYLE},
-  {"gauge_style", AXIS_CONFIG_TYPE_STYLE},
+  {"style", OBJ_CONFIG_TYPE_STYLE},
+  {"gauge_style", OBJ_CONFIG_TYPE_STYLE},
 };
 
 static NHASH AxisConfigHash = NULL;
@@ -239,57 +227,7 @@ axisuniqgroup(struct objlist *obj,char type)
 static int 
 axisloadconfig(struct objlist *obj,char *inst,char *conf)
 {
-  FILE *fp;
-  char *tok,*str,*s2;
-  char *f1,*f2;
-  int val;
-  char *endptr;
-  int len, type;
-  struct narray *iarray;
-
-  fp = openconfig(conf);
-  if (fp == NULL)
-    return 0;
-
-  while ((tok = getconfig(fp, &str)) != NULL) {
-    s2 = str;
-    if (nhash_get_int(AxisConfigHash, tok, (void *) &type) == 0) {
-      switch (type) {
-      case AXIS_CONFIG_TYPE_NUMERIC:
-	f1 = getitok2(&s2, &len, " \t,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  _putobj(obj, tok, inst, &val);
-	memfree(f1);
-	break;
-      case AXIS_CONFIG_TYPE_STRING:
-	f1 = getitok2(&s2, &len, "");
-	_getobj(obj, tok, inst, &f2);
-	memfree(f2);
-	_putobj(obj, tok, inst, f1);
-	break;
-      case AXIS_CONFIG_TYPE_STYLE:
-	iarray = arraynew(sizeof(int));
-	if (iarray) {
-	  while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
-	    val = strtol(f1, &endptr, 10);
-	    if (endptr[0] == '\0')
-	      arrayadd(iarray, &val);
-	    memfree(f1);
-	  }
-	  _putobj(obj, tok, inst, iarray);
-	}
-	break;
-      }
-    } else {
-      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, conf);
-    }
-    memfree(tok);
-    memfree(str);
-  }
-
-  closeconfig(fp);
-  return 0;
+  return obj_load_config(obj, inst, conf, AxisConfigHash);
 }
 
 static int 
@@ -301,7 +239,7 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
   int autonorm,num,gnum;
-  char *font,*jfont,*format,*group,*name;
+  char *font,*jfont,*format,*group,*name, buf[256];
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   width=40;
@@ -342,25 +280,35 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"num_shift_n",inst,&sy)) return 1;
   if (_putobj(obj,"num_log_pow",inst,&logpow)) return 1;
   if (_putobj(obj,"num_num",inst,&num)) return 1;
-  format=font=jfont=group=name=NULL;
-  if ((format=memalloc(3))==NULL) goto errexit;
-  strcpy(format,"%g");
+
+  format = font = jfont = group = name = NULL;
+
+  format = nstrdup("%g");
+  if (format == NULL) goto errexit;
   if (_putobj(obj,"num_format",inst,format)) goto errexit;
-  if ((font=memalloc(strlen(fontchar[4])+1))==NULL) goto errexit;
-  strcpy(font,fontchar[4]);
+
+  font = nstrdup(fontchar[4]);
+  if (font == NULL) goto errexit;
   if (_putobj(obj,"num_font",inst,font)) goto errexit;
-  if ((jfont=memalloc(strlen(jfontchar[1])+1))==NULL) goto errexit;
-  strcpy(jfont,jfontchar[1]);
+
+  jfont = nstrdup(jfontchar[1]);
+  if (jfont == NULL) goto errexit;
   if (_putobj(obj,"num_jfont",inst,jfont)) goto errexit;
-  if ((group=memalloc(13))==NULL) goto errexit;
-  gnum=axisuniqgroup(obj,'a');
-  sprintf(group,"a_%d",gnum);
+
+  gnum = axisuniqgroup(obj,'a');
+  snprintf(buf, sizeof(buf), "a_%d",gnum);
+  group = nstrdup(buf);
+  if (group == NULL) goto errexit;
   if (_putobj(obj,"group",inst,group)) goto errexit;
-  if ((name=memalloc(13))==NULL) goto errexit;
-  sprintf(name,"a_%d",gnum);
+
+  snprintf(buf, sizeof(buf), "a_%d",gnum);
+  name = nstrdup(buf);
+  if (name == NULL) goto errexit;
   if (_putobj(obj,"name",inst,name)) goto errexit;
+
   axisloadconfig(obj,inst,"[axis]");
   return 0;
+
 errexit:
   memfree(format);
   memfree(font);
