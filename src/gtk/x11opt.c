@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.56 2009/03/06 03:55:54 hito Exp $
+ * $Id: x11opt.c,v 1.57 2009/03/09 10:21:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,26 +58,6 @@
 #define WIN_SIZE_MIN 100
 #define WIN_SIZE_MAX 2048
 #define GRID_MAX 1000
-
-#define CHK_STR(s) ((s == NULL) ? "" : s)
-
-enum SAVE_CONFIG_TYPE {
-  SAVE_CONFIG_TYPE_GEOMETRY        = 0x01,
-  SAVE_CONFIG_TYPE_CHILD_GEOMETRY  = 0x02,
-  SAVE_CONFIG_TYPE_VIEWER          = 0x04,
-  SAVE_CONFIG_TYPE_EXTERNAL_DRIVER = 0x08,
-  SAVE_CONFIG_TYPE_ADDIN_SCRIPT    = 0x10,
-  SAVE_CONFIG_TYPE_MISC            = 0x20,
-  SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x40,
-  SAVE_CONFIG_TYPE_FONTS           = 0x80,
-};
-
-#define SAVE_CONFIG_TYPE_X11MENU (SAVE_CONFIG_TYPE_GEOMETRY		\
-				  | SAVE_CONFIG_TYPE_CHILD_GEOMETRY	\
-				  | SAVE_CONFIG_TYPE_VIEWER		\
-				  | SAVE_CONFIG_TYPE_EXTERNAL_DRIVER	\
-				  | SAVE_CONFIG_TYPE_ADDIN_SCRIPT	\
-				  | SAVE_CONFIG_TYPE_MISC)
 
 static void
 DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -141,22 +121,6 @@ add_str_to_array(struct narray *conf, char *str)
 }
 
 static void
-add_prm_str_to_array(struct narray *conf, char *str, char *prm)
-{
-  char *buf;
-  int len;
-
-  if (prm) {
-    len = strlen(prm) + strlen(str) + 2;
-    buf = (char *) memalloc(len);
-    if (buf) {
-      snprintf(buf, len, "%s=%s", str, prm);
-      arrayadd(conf, &buf);
-    }
-  }
-}
-
-static void
 add_str_with_int_to_array(struct narray *conf, char *str, int val)
 {
   char *buf;
@@ -169,212 +133,12 @@ add_str_with_int_to_array(struct narray *conf, char *str, int val)
 }
 
 static void
-save_geometory_config(struct narray *conf)
-{
-  ;
-  char *buf;
-  GdkWindowState state;
-  gint x, y, w, h;
-
-  get_window_geometry(TopLevel, &x, &y, &w, &h, &state);
-
-  Menulocal.menux = x;
-  Menulocal.menuy = y;
-  Menulocal.menuwidth = w;
-  Menulocal.menuheight = h;
-
-  buf = (char *) memalloc(BUF_SIZE);    
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "menu_win=%d,%d,%d,%d",
-	     Menulocal.menux, Menulocal.menuy,
-	     Menulocal.menuwidth, Menulocal.menuheight);
-    arrayadd(conf, &buf);
-  }
-}
-
-static void
-add_geometry_to_array(struct narray *conf, char *str, int x, int y, int w, int h, int stat)
-{
-  char *buf;
-
-  buf = (char *) memalloc(BUF_SIZE);    
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d,%d",
-	     str, x, y, w, h, stat);
-    arrayadd(conf, &buf);
-  }
-}
-
-static void
-save_child_geometory_config(struct narray *conf)
-{
-  sub_window_save_geometry(&(NgraphApp.FileWin));
-  add_geometry_to_array(conf, "file_win",
-			Menulocal.filex, Menulocal.filey,
-			Menulocal.filewidth, Menulocal.fileheight,
-			Menulocal.fileopen);
-
-  sub_window_save_geometry(&(NgraphApp.AxisWin));
-  add_geometry_to_array(conf, "axis_win",
-			Menulocal.axisx, Menulocal.axisy,
-			Menulocal.axiswidth, Menulocal.axisheight,
-			Menulocal.axisopen);
-
-  sub_window_save_geometry((struct SubWin *) &(NgraphApp.LegendWin));
-  add_geometry_to_array(conf, "legend_win",
-			Menulocal.legendx, Menulocal.legendy,
-			Menulocal.legendwidth, Menulocal.legendheight,
-			Menulocal.legendopen);
-
-  sub_window_save_geometry(&(NgraphApp.MergeWin));
-  add_geometry_to_array(conf, "merge_win",
-			Menulocal.mergex, Menulocal.mergey,
-			Menulocal.mergewidth, Menulocal.mergeheight,
-			Menulocal.mergeopen);
-
-  sub_window_save_geometry((struct SubWin *) &(NgraphApp.InfoWin));
-  add_geometry_to_array(conf, "information_win",
-			Menulocal.dialogx, Menulocal.dialogy,
-			Menulocal.dialogwidth, Menulocal.dialogheight,
-			Menulocal.dialogopen);
-
-  sub_window_save_geometry((struct SubWin *) &(NgraphApp.CoordWin));
-  add_geometry_to_array(conf, "coordinate_win",
-			Menulocal.coordx, Menulocal.coordy,
-			Menulocal.coordwidth, Menulocal.coordheight,
-			Menulocal.coordopen);
-}
-
-static void
-save_viewer_config(struct narray *conf)
-{
-  char *buf;
-
-  add_str_with_int_to_array(conf, "viewer_dpi", Menulocal.windpi);
-  add_str_with_int_to_array(conf, "antialias", Menulocal.antialias);
-  add_str_with_int_to_array(conf, "viewer_load_file_on_redraw", Menulocal.redrawf);
-  add_str_with_int_to_array(conf, "viewer_load_file_data_number", Menulocal.redrawf_num);
-  add_str_with_int_to_array(conf, "viewer_grid", Menulocal.grid);
-  add_str_with_int_to_array(conf, "focus_frame_type", Menulocal.focus_frame_type);
-  add_str_with_int_to_array(conf, "preserve_width", Menulocal.preserve_width);
-
-  buf = (char *) memalloc(BUF_SIZE);
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "background_color=%02x%02x%02x",
-	     Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-    arrayadd(conf, &buf);
-  }
-}
-
-static void
-save_ext_driver_config(struct narray *conf)
-{
-  char *buf, *driver, *ext, *option;
-  struct extprinter *pcur;
-  int len;
-
-  pcur = Menulocal.extprinterroot;
-  while (pcur) {
-    driver = CHK_STR(pcur->driver);
-    ext = CHK_STR(pcur->ext);
-    option= CHK_STR(pcur->option);
-
-    len = strlen(pcur->name) + strlen(driver) + strlen(ext) + strlen(option) + 20;
-
-    buf = (char *) memalloc(len);
-    if (buf) {
-      snprintf(buf, len, "ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
-      arrayadd(conf, &buf);
-    }
-    pcur = pcur->next;
-  }
-}
-
-static void
-save_script_config(struct narray *conf)
-{
-  char *buf, *script, *option, *description;
-  int len;
-  struct script *scur;
-
-  scur = Menulocal.scriptroot;
-  while (scur) {
-    script = CHK_STR(scur->script);
-    option = CHK_STR(scur->option);
-    description = CHK_STR(scur->description);
-
-    len = strlen(scur->name) + strlen(script) + strlen(description) + strlen(option) + 20;
-    buf = (char *) memalloc(len);
-    if (buf) {
-      snprintf(buf, len, "script=%s,%s,%s,%s", scur->name, script, description, option);
-      arrayadd(conf, &buf);
-    }
-    scur = scur->next;
-  }
-}
-
-static void
-save_misc_config(struct narray *conf)
-{
-  char *buf;
-
-  add_prm_str_to_array(conf, "editor", Menulocal.editor);
-  add_prm_str_to_array(conf, "coordwin_font", Menulocal.coordwin_font);
-
-  add_str_with_int_to_array(conf, "change_directory", Menulocal.changedirectory);
-  add_str_with_int_to_array(conf, "save_history", Menulocal.savehistory);
-  add_str_with_int_to_array(conf, "save_path", Menulocal.savepath);
-  add_str_with_int_to_array(conf, "save_with_data", Menulocal.savewithdata);
-  add_str_with_int_to_array(conf, "save_with_merge", Menulocal.savewithmerge);
-
-  buf = (char *) memalloc(strlen(Menulocal.expanddir) + 20);
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "expand_dir=%s", Menulocal.expanddir);
-    arrayadd(conf, &buf);
-  }
-
-  add_str_with_int_to_array(conf, "expand", Menulocal.expand);
-  add_str_with_int_to_array(conf, "ignore_path", Menulocal.ignorepath);
-
-  add_str_with_int_to_array(conf, "history_size", Menulocal.hist_size);
-  add_str_with_int_to_array(conf, "infowin_size", Menulocal.info_size);
-  add_str_with_int_to_array(conf, "data_head_lines", Menulocal.data_head_lines);
-
-  add_str_with_int_to_array(conf, "viewer_show_ruler", Menulocal.ruler);
-  add_str_with_int_to_array(conf, "status_bar", Menulocal.statusb);
-}
-
-static void
 save_ext_viewer_config(struct narray *conf)
 {
   add_str_with_int_to_array(conf, "win_dpi", Menulocal.exwindpi);
   add_str_with_int_to_array(conf, "win_width", Menulocal.exwinwidth);
   add_str_with_int_to_array(conf, "win_height", Menulocal.exwinheight);
   add_str_with_int_to_array(conf, "use_external_viewer", Menulocal.exwin_use_external);
-}
-
-static void
-save_font_config(struct narray *conf)
-{
-  char *buf;
-  int len;
-  struct fontmap *fcur;
-
-  fcur = Gra2cairoConf->fontmap_list_root;
-  while (fcur) {
-    len = strlen(fcur->fontalias) + strlen(fcur->fontname) + 64;
-    buf = (char *) memalloc(len);
-    if (buf) {
-      snprintf(buf, len,
-	       "font_map=%s,%s,%d,%s",
-	       fcur->fontalias,
-	       gra2cairo_get_font_type_str(fcur->type),
-	       (fcur->twobyte) ? 1 : 0,
-	       fcur->fontname);
-      arrayadd(conf, &buf);
-    }
-    fcur = fcur->next;
-  }
 }
 
 static int
@@ -387,33 +151,7 @@ save_config(int type)
   }
 
   if (type & SAVE_CONFIG_TYPE_X11MENU) {
-    arrayinit(&conf, sizeof(char *));
-    if (type & SAVE_CONFIG_TYPE_GEOMETRY) {
-      save_geometory_config(&conf);
-    }
-
-    if (type & SAVE_CONFIG_TYPE_CHILD_GEOMETRY) {
-      save_child_geometory_config(&conf);
-    }
-
-    if (type & SAVE_CONFIG_TYPE_VIEWER) {
-      save_viewer_config(&conf);
-    }
-
-    if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
-      save_ext_driver_config(&conf);
-    }
-
-    if (type & SAVE_CONFIG_TYPE_ADDIN_SCRIPT) {
-      save_script_config(&conf);
-    }
-
-    if (type & SAVE_CONFIG_TYPE_MISC) {
-      save_misc_config(&conf);
-    }
-
-    replaceconfig("[x11menu]", &conf);
-    arraydel2(&conf);
+    menu_save_config(type);
   }
 
   if (type & SAVE_CONFIG_TYPE_EXTERNAL_VIEWER) {
@@ -424,47 +162,7 @@ save_config(int type)
   }
 
   if (type & SAVE_CONFIG_TYPE_FONTS) {
-    arrayinit(&conf, sizeof(char *));
-    save_font_config(&conf);
-    replaceconfig("[gra2cairo]", &conf);
-    arraydel2(&conf);
-  }
-
-  if (type & SAVE_CONFIG_TYPE_X11MENU) {
-    arrayinit(&conf, sizeof(char *));
-
-    if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
-      if (Menulocal.extprinterroot == NULL) {
-	add_str_to_array(&conf, "ext_driver");
-      }
-    }
-
-    if (type & SAVE_CONFIG_TYPE_ADDIN_SCRIPT) {
-      if (Menulocal.scriptroot == NULL) {
-	add_str_to_array(&conf, "script");
-      }
-    }
-
-    if (type & SAVE_CONFIG_TYPE_MISC) {
-      if (Menulocal.editor == NULL) {
-	add_str_to_array(&conf, "editor");
-      }
-      if (Menulocal.coordwin_font == NULL) {
-	add_str_to_array(&conf, "coordwin_font");
-      }
-    }
-
-    removeconfig("[x11menu]", &conf);
-    arraydel2(&conf);
-  }
-
-  if (type & SAVE_CONFIG_TYPE_FONTS) {
-    arrayinit(&conf, sizeof(char *));
-    if (gra2cairo_get_fontmap_num() == 0) {
-      add_str_to_array(&conf, "font_map");
-    }
-    removeconfig("[gra2cairo]", &conf);
-    arraydel2(&conf);
+    gra2cairo_save_config();
   }
 
   return 0;

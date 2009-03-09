@@ -1,5 +1,35 @@
 2009-03-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11menu.c (enum menu_config_type): add
+	"MENU_CONFIG_TYPE_CHILD_WINDOW", "MENU_CONFIG_TYPE_HISTORY",
+	"MENU_CONFIG_TYPE_COLOR", "MENU_CONFIG_TYPE_SCRIPT" and
+	"MENU_CONFIG_TYPE_DRIVER".
+	(struct child_win_stat, MenuConfigDriver, MenuConfigScript)
+	(MenuConfigMisc, MenuConfigViewer, MenuConfigGeometry)
+	(MenuConfigChildGeometry, MenuConfigArrray, BUF_SIZE)
+	(add_str_with_int_to_array, add_child_geometry_to_array)
+	(add_geometry_to_array, add_color_to_array)
+	(add_prm_str_to_array, save_ext_driver_config)
+	(save_script_config, add_str_to_array, menu_save_config_sub)
+	(menu_save_config): add.
+	(menu_config_set_child_window_geometry): use "struct child_win_stat *"
+	(addmenu): initialize "MenuConfigHash" with "MenuConfigArrray".
+
+	* src/gtk/ox11menu.h (enum SAVE_CONFIG_TYPE)
+	(SAVE_CONFIG_TYPE_X11MENU): add.
+
+	* src/gtk/x11opt.c (CHK_STR, save_font_config, save_misc_config)
+	(save_script_config, save_ext_driver_config, save_viewer_config)
+	(save_child_geometory_config, add_geometry_to_array)
+	(save_geometory_config, add_prm_str_to_array)
+	(SAVE_CONFIG_TYPE_X11MENU, SAVE_CONFIG_TYPE): remove.
+	(save_config): use "menu_save_config()" and
+	"gra2cairo_save_config()".
+
+	* src/nstring.h (CHK_STR): add
+
+	* src/gtk/ogra2cairo.c (gra2cairo_save_config): add.
+
 	* src/oaxis.c (enum axis_config_type): remove.
 	(axisloadconfig): use "obj_load_config()".
 

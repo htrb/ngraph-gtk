@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.26 2009/03/09 05:20:30 hito Exp $
+ * $Id: oaxis.c,v 1.27 2009/03/09 10:21:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2842,7 +2842,7 @@ void *addaxis(void)
       return NULL;
 
     for (i = 0; i < sizeof(AxisConfig) / sizeof(*AxisConfig); i++) {
-      if (nhash_set_int(AxisConfigHash, AxisConfig[i].name, AxisConfig[i].type)) {
+      if (nhash_set_ptr(AxisConfigHash, AxisConfig[i].name, (void *) &AxisConfig[i])) {
 	nhash_free(AxisConfigHash);
 	return NULL;
       }

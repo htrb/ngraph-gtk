@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.65 2009/03/06 05:03:39 hito Exp $
+ * $Id: ox11menu.c,v 1.66 2009/03/09 10:21:49 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -34,6 +34,8 @@
 #include <math.h>
 #include <time.h>
 #include <ctype.h>
+
+#include "gtk_subwin.h"
 
 #include "ngraph.h"
 #include "object.h"
@@ -94,12 +96,15 @@ enum menu_config_type {
   MENU_CONFIG_TYPE_BOOL,
   MENU_CONFIG_TYPE_STRING,
   MENU_CONFIG_TYPE_WINDOW,
+  MENU_CONFIG_TYPE_CHILD_WINDOW,
   MENU_CONFIG_TYPE_HISTORY,
-  MENU_CONFIG_TYPE_OTHER,
+  MENU_CONFIG_TYPE_COLOR,
+  MENU_CONFIG_TYPE_SCRIPT,
+  MENU_CONFIG_TYPE_DRIVER,
 };
 
 static int menu_config_set_four_elements(char *s2, void *data);
-static int menu_config_set_window_geometry(char *s2, void *data);
+static int menu_config_set_child_window_geometry(char *s2, void *data);
 static int menu_config_set_bgcolor(char *s2, void *data);
 static int menu_config_set_ext_driver(char *s2, void *data);
 static int menu_config_set_script(char *s2, void *data);
@@ -111,52 +116,75 @@ static int *menu_config_menu_geometry[] = {
   &Menulocal.menuheight,
 };
 
-static int *menu_config_file_geometry[] = {
-  &(Menulocal.filex),
-  &Menulocal.filey,
-  &Menulocal.filewidth,
-  &Menulocal.fileheight,
-  &Menulocal.fileopen,
+struct child_win_stat {
+  struct SubWin *win;
+  int *stat[5];
 };
 
-static int *menu_config_axis_geometry[] = {
-  &Menulocal.axisx,
-  &Menulocal.axisy,
-  &Menulocal.axiswidth,
-  &Menulocal.axisheight,
-  &Menulocal.axisopen,
+static struct child_win_stat menu_config_file_geometry = {
+  &NgraphApp.FileWin,
+  {
+    &Menulocal.filex,
+    &Menulocal.filey,
+    &Menulocal.filewidth,
+    &Menulocal.fileheight,
+    &Menulocal.fileopen,
+  }
 };
 
-static int *menu_config_legend_geometry[] = {
-  &Menulocal.legendx,
-  &Menulocal.legendy,
-  &Menulocal.legendwidth,
-  &Menulocal.legendheight,
-  &Menulocal.legendopen,
+static struct child_win_stat menu_config_axis_geometry = {
+  &NgraphApp.AxisWin,
+  {
+    &Menulocal.axisx,
+    &Menulocal.axisy,
+    &Menulocal.axiswidth,
+    &Menulocal.axisheight,
+    &Menulocal.axisopen,
+  }
 };
 
-static int *menu_config_merge_geometry[] = {
-  &Menulocal.mergex,
-  &Menulocal.mergey,
-  &Menulocal.mergewidth,
-  &Menulocal.mergeheight,
-  &Menulocal.mergeopen,
+static struct child_win_stat menu_config_legend_geometry = {
+  (struct SubWin *) &NgraphApp.LegendWin,
+  {
+    &Menulocal.legendx,
+    &Menulocal.legendy,
+    &Menulocal.legendwidth,
+    &Menulocal.legendheight,
+    &Menulocal.legendopen,
+  }
 };
 
-static int *menu_config_dialog_geometry[] = {
-  &Menulocal.dialogx,
-  &Menulocal.dialogy,
-  &Menulocal.dialogwidth,
-  &Menulocal.dialogheight,
-  &Menulocal.dialogopen,
+static struct child_win_stat menu_config_merge_geometry = {
+  &NgraphApp.MergeWin,
+  {
+    &Menulocal.mergex,
+    &Menulocal.mergey,
+    &Menulocal.mergewidth,
+    &Menulocal.mergeheight,
+    &Menulocal.mergeopen,
+  }
 };
 
-static int *menu_config_coord_geometry[] = {
-  &Menulocal.coordx,
-  &Menulocal.coordy,
-  &Menulocal.coordwidth,
-  &Menulocal.coordheight,
-  &Menulocal.coordopen,
+static struct child_win_stat menu_config_dialog_geometry = {
+  (struct SubWin *) &NgraphApp.InfoWin,
+  {
+    &Menulocal.dialogx,
+    &Menulocal.dialogy,
+    &Menulocal.dialogwidth,
+    &Menulocal.dialogheight,
+    &Menulocal.dialogopen,
+  }
+};
+
+static struct child_win_stat menu_config_coord_geometry = {
+  (struct SubWin * ) &NgraphApp.CoordWin,
+  {
+    &Menulocal.coordx,
+    &Menulocal.coordy,
+    &Menulocal.coordwidth,
+    &Menulocal.coordheight,
+    &Menulocal.coordopen,
+  }
 };
 
 struct menu_config {
@@ -165,57 +193,321 @@ struct menu_config {
   int (* proc)(char *, void *);
   void *data;
 };
+
 static struct menu_config MenuConfig[] = {
   {"script_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.scriptconsole},
   {"addin_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.addinconsole},
-  {"preserve_width",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.preserve_width},
-  {"change_directory",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
-  {"save_history",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savehistory},
-  {"save_path",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savepath},
-  {"save_with_data",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithdata},
-  {"save_with_merge",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
-  {"status_bar",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusb},
-  {"viewer_show_ruler",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ruler},
   {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
-  {"expand",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expand},
-  {"ignore_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ignorepath},
   {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
-  {"history_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
-  {"infowin_size",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
-  {"focus_frame_type",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.focus_frame_type},
-
-  {"expand_dir",		MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.expanddir},
-  {"editor",			MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.editor},
-  {"browser",			MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.browser},
-  {"help_browser",		MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.help_browser},
-  {"coordwin_font",		MENU_CONFIG_TYPE_STRING, NULL, &Menulocal.coordwin_font},
-
+  {"browser",			MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.browser},
+  {"help_browser",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.help_browser},
   {"ngp_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.ngpfilelist},
   {"ngp_dir_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.ngpdirlist},
   {"data_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.datafilelist},
+  {NULL},
+};
 
-  {"background_color",		MENU_CONFIG_TYPE_OTHER, menu_config_set_bgcolor,       NULL},
-  {"ext_driver",		MENU_CONFIG_TYPE_OTHER, menu_config_set_ext_driver,    NULL},
-  {"script",			MENU_CONFIG_TYPE_OTHER, menu_config_set_script,        NULL},
-  {"menu_win",			MENU_CONFIG_TYPE_OTHER, menu_config_set_four_elements, menu_config_menu_geometry},
+static struct menu_config MenuConfigDriver[] = {
+  {"ext_driver", MENU_CONFIG_TYPE_DRIVER, menu_config_set_ext_driver, NULL},
+  {NULL},
+};
 
-  {"file_win",			MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_file_geometry},
-  {"axis_win",			MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_axis_geometry},
-  {"legend_win",		MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_legend_geometry},
-  {"merge_win",			MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_merge_geometry},
-  {"information_win",		MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_dialog_geometry},
-  {"coordinate_win",		MENU_CONFIG_TYPE_WINDOW, NULL, menu_config_coord_geometry},
+static struct menu_config MenuConfigScript[] = {
+  {"script", MENU_CONFIG_TYPE_SCRIPT, menu_config_set_script, NULL},
+  {NULL},
+};
 
-  {"antialias",				MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.antialias},
+static struct menu_config MenuConfigMisc[] = {
+  {"editor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.editor},
+  {"coordwin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.coordwin_font},
+  {"change_directory",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
+  {"save_history",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savehistory},
+  {"save_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savepath},
+  {"save_with_data",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithdata},
+  {"save_with_merge",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
+  {"expand_dir",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.expanddir},
+  {"expand",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expand},
+  {"ignore_path",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ignorepath},
+  {"history_size",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
+  {"infowin_size",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
+  {"data_head_lines",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
+  {"viewer_show_ruler",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ruler},
+  {"status_bar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusb},
+  {NULL},
+};
+
+static struct menu_config MenuConfigViewer[] = {
   {"viewer_dpi",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.windpi},
+  {"antialias",				MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.antialias},
+  {"viewer_load_file_on_redraw",	MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.redrawf},
   {"viewer_load_file_data_number",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.redrawf_num},
   {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.grid},
-  {"data_head_lines",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
+  {"focus_frame_type",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.focus_frame_type},
+  {"preserve_width",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.preserve_width},
+  {"background_color",			MENU_CONFIG_TYPE_COLOR, menu_config_set_bgcolor, NULL},
+  {NULL},
+};
 
-  {"viewer_load_file_on_redraw",	MENU_CONFIG_TYPE_BOOL, NULL, &Menulocal.redrawf},
+static struct menu_config MenuConfigGeometry[] = {
+  {"menu_win", MENU_CONFIG_TYPE_WINDOW, menu_config_set_four_elements, menu_config_menu_geometry},
+  {NULL},
+};
+
+static struct menu_config MenuConfigChildGeometry[] = {
+  {"file_win",		MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_file_geometry},
+  {"axis_win",		MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_axis_geometry},
+  {"legend_win",	MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_legend_geometry},
+  {"merge_win",		MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_merge_geometry},
+  {"information_win",	MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_dialog_geometry},
+  {"coordinate_win",	MENU_CONFIG_TYPE_CHILD_WINDOW, NULL, &menu_config_coord_geometry},
+  {NULL},
+};
+
+static struct menu_config *MenuConfigArrray[] = {
+  MenuConfig,
+  MenuConfigDriver,
+  MenuConfigScript,
+  MenuConfigMisc,
+  MenuConfigViewer,
+  MenuConfigGeometry,
+  MenuConfigChildGeometry,
+  NULL,
 };
 
 static NHASH MenuConfigHash = NULL;
+
+#define BUF_SIZE 64
+
+static void
+add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
+{
+  char *buf;
+
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "%s=%d", cfg->name, * (int *) cfg->data);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+add_child_geometry_to_array(struct menu_config *cfg, struct narray *conf)
+{
+  char *buf;
+  int **data;
+  struct child_win_stat *stat;
+
+  stat = cfg->data;
+  data = stat->stat;
+
+  buf = (char *) memalloc(BUF_SIZE);    
+  if (buf) {
+    sub_window_save_geometry(stat->win);
+    snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d,%d",
+	     cfg->name, *data[0], *data[1], *data[2], *data[3], *data[4]);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+add_geometry_to_array(struct menu_config *cfg, struct narray *conf)
+{
+  char *buf;
+  GdkWindowState state;
+  gint x, y, w, h;
+
+  get_window_geometry(TopLevel, &x, &y, &w, &h, &state);
+
+  Menulocal.menux = x;
+  Menulocal.menuy = y;
+  Menulocal.menuwidth = w;
+  Menulocal.menuheight = h;
+
+  buf = (char *) memalloc(BUF_SIZE);
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d",
+	     cfg->name,
+	     Menulocal.menux, Menulocal.menuy,
+	     Menulocal.menuwidth, Menulocal.menuheight);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+add_color_to_array(struct menu_config *cfg, struct narray *conf)
+{
+  char *buf;
+  buf = (char *) memalloc(BUF_SIZE);
+  if (buf) {
+    snprintf(buf, BUF_SIZE, "%s=%02x%02x%02x",
+	     cfg->name,
+	     Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+add_prm_str_to_array(struct menu_config *cfg, struct narray *conf)
+{
+  char *buf, *prm;
+  int len;
+
+  prm = CHK_STR(* (char **) cfg->data);
+
+  len = strlen(prm) + strlen(cfg->name) + 2;
+  buf = (char *) memalloc(len);
+  if (buf) {
+    snprintf(buf, len, "%s=%s", cfg->name, prm);
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+save_ext_driver_config(struct narray *conf)
+{
+  char *buf, *driver, *ext, *option;
+  struct extprinter *pcur;
+  int len;
+
+  pcur = Menulocal.extprinterroot;
+  while (pcur) {
+    driver = CHK_STR(pcur->driver);
+    ext = CHK_STR(pcur->ext);
+    option= CHK_STR(pcur->option);
+
+    len = strlen(pcur->name) + strlen(driver) + strlen(ext) + strlen(option) + 20;
+
+    buf = (char *) memalloc(len);
+    if (buf) {
+      snprintf(buf, len, "ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
+      arrayadd(conf, &buf);
+    }
+    pcur = pcur->next;
+  }
+}
+
+static void
+save_script_config(struct narray *conf)
+{
+  char *buf, *script, *option, *description;
+  int len;
+  struct script *scur;
+
+  scur = Menulocal.scriptroot;
+  while (scur) {
+    script = CHK_STR(scur->script);
+    option = CHK_STR(scur->option);
+    description = CHK_STR(scur->description);
+
+    len = strlen(scur->name) + strlen(script) + strlen(description) + strlen(option) + 20;
+    buf = (char *) memalloc(len);
+    if (buf) {
+      snprintf(buf, len, "script=%s,%s,%s,%s", scur->name, script, description, option);
+      arrayadd(conf, &buf);
+    }
+    scur = scur->next;
+  }
+}
+
+static void
+add_str_to_array(struct narray *conf, char *str)
+{
+  char *buf;
+
+  buf = nstrdup(str);
+  if (buf) {
+    arrayadd(conf, &buf);
+  }
+}
+
+static void
+menu_save_config_sub(struct menu_config *cfg, struct narray *conf)
+{
+  int i;
+
+  for (i = 0; cfg[i].name; i++) {
+    switch (cfg[i].type) {
+    case MENU_CONFIG_TYPE_NUMERIC:
+    case MENU_CONFIG_TYPE_BOOL:
+      add_str_with_int_to_array(cfg + i, conf);
+      break;
+    case MENU_CONFIG_TYPE_COLOR:
+      add_color_to_array(cfg + i, conf);
+      break;
+    case MENU_CONFIG_TYPE_STRING:
+      add_prm_str_to_array(cfg + i, conf);
+      break;
+    case MENU_CONFIG_TYPE_WINDOW:
+      add_geometry_to_array(cfg + i, conf);
+      break;
+    case MENU_CONFIG_TYPE_CHILD_WINDOW:
+      add_child_geometry_to_array(cfg + i, conf);
+      break;
+    case MENU_CONFIG_TYPE_SCRIPT:
+      save_script_config(conf);
+      break;
+    case MENU_CONFIG_TYPE_DRIVER:
+      save_ext_driver_config(conf);
+      break;
+    case MENU_CONFIG_TYPE_HISTORY:
+      break;
+    }
+  }
+}
+
+int
+menu_save_config(int type)
+{
+  struct narray conf;
+
+  arrayinit(&conf, sizeof(char *));
+
+  if (type & SAVE_CONFIG_TYPE_GEOMETRY) {
+    menu_save_config_sub(MenuConfigGeometry, &conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_CHILD_GEOMETRY) {
+    menu_save_config_sub(MenuConfigChildGeometry, &conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_VIEWER) {
+    menu_save_config_sub(MenuConfigViewer, &conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
+    menu_save_config_sub(MenuConfigDriver, &conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_ADDIN_SCRIPT) {
+    menu_save_config_sub(MenuConfigScript, &conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_MISC) {
+    menu_save_config_sub(MenuConfigMisc, &conf);
+  }
+
+  replaceconfig(MGTKCONF, &conf);
+  arraydel2(&conf);
+
+  arrayinit(&conf, sizeof(char *));
+
+  if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
+    if (Menulocal.extprinterroot == NULL) {
+      add_str_to_array(&conf, "ext_driver");
+    }
+  }
+
+  if (type & SAVE_CONFIG_TYPE_ADDIN_SCRIPT) {
+    if (Menulocal.scriptroot == NULL) {
+      add_str_to_array(&conf, "script");
+    }
+  }
+
+  removeconfig(MGTKCONF, &conf);
+  arraydel2(&conf);
+
+  return 0;
+}
 
 static int
 menu_config_set_four_elements(char *s2, void *data)
@@ -249,7 +541,7 @@ menu_config_set_four_elements(char *s2, void *data)
 }
 
 static int
-menu_config_set_window_geometry(char *s2, void *data)
+menu_config_set_child_window_geometry(char *s2, void *data)
 {
   int len, i, val, **ary;
   char *endptr, *f[] = {NULL, NULL, NULL, NULL, NULL};
@@ -257,7 +549,7 @@ menu_config_set_window_geometry(char *s2, void *data)
   if (data == NULL)
     return 0;
 
-  ary = (int **) data;
+  ary = ((struct child_win_stat *) data)->stat;
 
   for (i = 0; i < 5; i++) {
     f[i] = getitok2(&s2, &len, " \t,");
@@ -454,8 +746,8 @@ mgtkloadconfig(void)
 	  * (char **) (cfg->data) = f1;
 	}
 	break;
-      case MENU_CONFIG_TYPE_WINDOW:
-	menu_config_set_window_geometry(s2, cfg->data);
+      case MENU_CONFIG_TYPE_CHILD_WINDOW:
+	menu_config_set_child_window_geometry(s2, cfg->data);
 	break;
       case MENU_CONFIG_TYPE_HISTORY:
 	for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
@@ -463,7 +755,10 @@ mgtkloadconfig(void)
 	if (f1)
 	  arrayadd(* (struct narray **) cfg->data, &f1);
 	break;
-      case MENU_CONFIG_TYPE_OTHER:
+      case MENU_CONFIG_TYPE_COLOR:
+      case MENU_CONFIG_TYPE_SCRIPT:
+      case MENU_CONFIG_TYPE_DRIVER:
+      case MENU_CONFIG_TYPE_WINDOW:
 	if (cfg->proc && cfg->proc(s2, cfg->data)) {
 	  memfree(tok);
 	  memfree(str);
@@ -535,8 +830,8 @@ mgtkwindowconfig(void)
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (nhash_get_ptr(MenuConfigHash, tok, (void *) &cfg) == 0) {
-      if(cfg && cfg->type == MENU_CONFIG_TYPE_WINDOW) {
-	menu_config_set_window_geometry(s2, cfg->data);
+      if(cfg && cfg->type == MENU_CONFIG_TYPE_CHILD_WINDOW) {
+	menu_config_set_child_window_geometry(s2, cfg->data);
       }
     }
     memfree(tok);
@@ -1329,17 +1624,20 @@ static struct objtable gtkmenu[] = {
 void *
 addmenu(void)
 {
-  unsigned int i;
+  unsigned int i, j;
+  struct menu_config *cfg;
 
   if (MenuConfigHash == NULL) {
     MenuConfigHash = nhash_new();
     if (MenuConfigHash ==NULL)
       return NULL;
 
-    for (i = 0; i < sizeof(MenuConfig) / sizeof(*MenuConfig); i++) {
-      if (nhash_set_ptr(MenuConfigHash, MenuConfig[i].name, (void *) &MenuConfig[i])) {
-	nhash_free(MenuConfigHash);
-	return NULL;
+    for (i = 0; (cfg = MenuConfigArrray[i]); i++) {
+      for (j = 0; cfg[j].name; j++) {
+	if (nhash_set_ptr(MenuConfigHash, cfg[j].name, (void *) (cfg + j))) {
+	  nhash_free(MenuConfigHash);
+	  return NULL;
+	}
       }
     }
   }

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.27 2009/03/04 04:01:14 hito Exp $
+ * $Id: ox11menu.h,v 1.28 2009/03/09 10:21:49 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -135,6 +135,24 @@ struct menulocal
 
 extern struct menulocal Menulocal;
 
+enum SAVE_CONFIG_TYPE {
+  SAVE_CONFIG_TYPE_GEOMETRY        = 0x01,
+  SAVE_CONFIG_TYPE_CHILD_GEOMETRY  = 0x02,
+  SAVE_CONFIG_TYPE_VIEWER          = 0x04,
+  SAVE_CONFIG_TYPE_EXTERNAL_DRIVER = 0x08,
+  SAVE_CONFIG_TYPE_ADDIN_SCRIPT    = 0x10,
+  SAVE_CONFIG_TYPE_MISC            = 0x20,
+  SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x40,
+  SAVE_CONFIG_TYPE_FONTS           = 0x80,
+};
+
+#define SAVE_CONFIG_TYPE_X11MENU (SAVE_CONFIG_TYPE_GEOMETRY		\
+				  | SAVE_CONFIG_TYPE_CHILD_GEOMETRY	\
+				  | SAVE_CONFIG_TYPE_VIEWER		\
+				  | SAVE_CONFIG_TYPE_EXTERNAL_DRIVER	\
+				  | SAVE_CONFIG_TYPE_ADDIN_SCRIPT	\
+				  | SAVE_CONFIG_TYPE_MISC)
+
 int mxd2p(int r);
 int mxd2px(int x);
 int mxd2py(int y);
@@ -157,5 +175,6 @@ void menuadddrawrable(struct objlist *parent, struct narray *drawrable);
 int get_graph_modified(void);
 void set_graph_modified(void);
 void reset_graph_modified(void);
+int menu_save_config(int type);
 
 #endif

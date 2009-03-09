@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.12 2009/03/09 05:20:30 hito Exp $
+ * $Id: otext.c,v 1.13 2009/03/09 10:21:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -536,7 +536,7 @@ void *addtext()
       return NULL;
 
     for (i = 0; i < sizeof(TextConfig) / sizeof(*TextConfig); i++) {
-      if (nhash_set_int(TextConfigHash, TextConfig[i].name, TextConfig[i].type)) {
+      if (nhash_set_ptr(TextConfigHash, TextConfig[i].name, (void *) &TextConfig[i])) {
 	nhash_free(TextConfigHash);
 	return NULL;
       }

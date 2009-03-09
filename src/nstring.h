@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: nstring.h,v 1.2 2009/03/09 10:21:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,7 +21,11 @@
  * 
  */
 
+#ifndef NSTRING_HEADER
+#define NSTRING_HEADER
+
 #define STRLEN 256
+#define CHK_STR(s) (((s) == NULL) ? "" : (s))
 
 char *nstrnew(void);
 char *nstrdup(const char *src);
@@ -40,3 +44,4 @@ char *getitok2(char **s,int *len,char *ifs);
 char *getitok3(char **s,int *len,char *ifs);
 char *getitok4(char **s,int *len,char *ifs);
 
+#endif
