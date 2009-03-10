@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.66 2009/03/10 02:50:25 hito Exp $
+ * $Id: ofile.c,v 1.67 2009/03/10 04:42:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5774,7 +5774,7 @@ f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       fclose(f2dlocal->storefd);
       f2dlocal->storefd=NULL;
       buf = nstrdup("[EOF]\n");
-      if (buf ==NULL) return 1;
+      if (buf == NULL) return 1;
       f2dlocal->endstore=TRUE;
       *(char **)rval=buf;
       return 0;
