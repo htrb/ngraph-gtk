@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.76 2009/03/06 08:11:20 hito Exp $
+ * $Id: x11file.c,v 1.77 2009/03/10 05:38:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3364,9 +3364,15 @@ CmOptionFileDef(void)
 
   if (Menulock || GlobalLock)
     return;
+
   if ((obj = chkobject("file")) == NULL)
     return;
-  if ((id = newobj(obj)) >= 0) {
+
+  id = newobj(obj);
+  if (id >= 0) {
+    int modified;
+
+    modified = get_graph_modified();
     FileDefDialog(&DlgFileDef, obj, id);
     if (DialogExecute(TopLevel, &DlgFileDef) == IDOK) {
       if (CheckIniFile()) {
@@ -3375,6 +3381,8 @@ CmOptionFileDef(void)
     }
     delobj(obj, id);
     UpdateAll2();
+    if (! modified)
+      reset_graph_modified();
   }
 }
 

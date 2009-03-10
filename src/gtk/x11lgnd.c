@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.39 2009/03/06 08:11:20 hito Exp $
+ * $Id: x11lgnd.c,v 1.40 2009/03/10 05:38:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1856,9 +1856,14 @@ CmOptionTextDef(void)
 
   if (Menulock || GlobalLock)
     return;
+
   if ((obj = chkobject("text")) == NULL)
     return;
-  if ((id = newobj(obj)) >= 0) {
+
+  id = newobj(obj);
+  if (id >= 0) {
+    int modified;
+    modified = get_graph_modified();
     LegendTextDefDialog(&DlgLegendTextDef, obj, id);
     if (DialogExecute(TopLevel, &DlgLegendTextDef) == IDOK) {
       if (CheckIniFile()) {
@@ -1867,6 +1872,8 @@ CmOptionTextDef(void)
     }
     delobj(obj, id);
     UpdateAll2();
+    if (! modified)
+      reset_graph_modified();
   }
 }
 

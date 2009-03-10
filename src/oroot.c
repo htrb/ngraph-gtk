@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.c,v 1.5 2009/03/09 05:20:30 hito Exp $
+ * $Id: oroot.c,v 1.6 2009/03/10 05:38:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -133,7 +133,7 @@ obj_save_config_string(struct objlist *obj, char *inst, char *field, struct narr
   _getobj(obj, field, inst, &val);
   if (val == NULL) val = "";
 
-  len = strlen(field) + strlen(val) + 1;
+  len = strlen(field) + strlen(val) + 2;
   buf = memalloc(len);
   if (buf) {
     snprintf(buf, len, "%s=%s", field, val);

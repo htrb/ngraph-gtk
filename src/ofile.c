@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.67 2009/03/10 04:42:09 hito Exp $
+ * $Id: ofile.c,v 1.68 2009/03/10 05:38:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5133,7 +5133,7 @@ f2dstat(struct objlist *obj,char *inst,char *rval,
   field=argv[1];
   _getobj(obj,"_local",inst,&f2dlocal);
 
-  /* evaluate of mtime must be done before call opendata(). */
+  /* evaluation of mtime must be done before call opendata(). */
 
   if (get_mtime(obj, inst, &mtime))
     return 1;

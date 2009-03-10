@@ -1,5 +1,11 @@
 2009-03-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (CmOptionTextDef): save and restore modified
+	state.
+
+	* src/gtk/x11file.c (CmOptionFileDef): save and restore modified
+	state.
+
 	* src/ofile.c (f2dstore): use "nstrdup()" instead of "memalloc()"
 	to create string "[EOF]\n".
 	(f2dstat, f2dstat2): use "nstrdup()" instead of "memalloc()".
