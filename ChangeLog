@@ -1,3 +1,9 @@
+2009-03-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/nconfig.c (removeconfig): free "buf" when "chamge" is FALSE.
+
+	* src/ioutil.c (fgetline): set NULL to "*buf" when EOF or error.
+
 2009-03-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (enum menu_config_type): add

@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.5 2009/02/05 08:42:16 hito Exp $
+ * $Id: nconfig.c,v 1.6 2009/03/10 01:25:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -456,8 +456,9 @@ int removeconfig(char *section,struct narray *conf)
 match:
   change=FALSE;
   while (fgetline(fp,&buf)==0) {
-    if (buf[0]=='[') goto flush;
-    else {
+    if (buf[0]=='[') {
+      goto flush;
+    } else {
       s=buf;
       out=TRUE;
       if ((tok=getitok(&s,&len," \t=,"))!=NULL) {
@@ -483,6 +484,7 @@ flush:
     unlink(tmpfil);
     free(tmpfil);
     memfree(fil);
+    memfree(buf);
     unlockconfig(dir);
     return TRUE;
   }
