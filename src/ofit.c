@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.14 2009/02/09 01:04:36 hito Exp $
+ * $Id: ofit.c,v 1.15 2009/03/10 02:50:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include <math.h>
 #include "ngraph.h"
+#include "nstring.h"
 #include "ioutil.h"
 #include "object.h"
 #include "mathcode.h"
@@ -655,8 +656,8 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"equation",inst,&equation);
   memfree(equation);
   if (_putobj(obj,"equation",inst,NULL)) return 1;
-  if ((equation=memalloc(6))==NULL) return 1;
-  strcpy(equation,"undef");
+  equation = nstrdup("undef");
+  if (equation == NULL) return 1;
   if (_putobj(obj,"equation",inst,equation)) {
     memfree(equation);
     return 1;

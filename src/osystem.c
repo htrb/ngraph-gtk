@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.8 2009/03/09 05:20:30 hito Exp $
+ * $Id: osystem.c,v 1.9 2009/03/10 02:50:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -78,8 +78,8 @@ sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   expand=TRUE;
   if (_putobj(obj,"expand_file",inst,&expand)) return 1;
-  if ((exdir=memalloc(3))==NULL) return 1;
-  strcpy(exdir,"./");
+  exdir = nstrdup("./");
+  if (exdir == NULL) return 1;
   if (_putobj(obj,"expand_dir",inst,exdir)) return 1;
   if (_putobj(obj,"name",inst,SYSNAME)) return 1;
   if (_putobj(obj,"version",inst,VERSION)) return 1;

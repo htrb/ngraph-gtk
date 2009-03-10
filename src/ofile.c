@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.65 2009/03/09 05:20:30 hito Exp $
+ * $Id: ofile.c,v 1.66 2009/03/10 02:50:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5125,7 +5125,7 @@ f2dstat(struct objlist *obj,char *inst,char *rval,
   double minx,maxx,miny,maxy;
   double sumx,sumxx,sumy,sumyy;
   char *field;
-  char *str;
+  char str[32], *ptr;
   time_t mtime;
 
   memfree(*(char **)rval);
@@ -5311,27 +5311,30 @@ f2dstat(struct objlist *obj,char *inst,char *rval,
     f2dlocal->mtime_stat = mtime;
 
  End:
-  if ((str=memalloc(24))==NULL) return -1;
-  if (strcmp(field,"dnum")==0) {
-    sprintf(str,"%d",dnum);
+  if (strcmp(field, "dnum") == 0) {
+    snprintf(str, sizeof(str), "%d", dnum);
   } else if (strcmp(field,"dminx")==0) {
-    sprintf(str,"%.15e",minx);
+    snprintf(str, sizeof(str), "%.15e", minx);
   } else if (strcmp(field,"dmaxx")==0) {
-    sprintf(str,"%.15e",maxx);
+    snprintf(str, sizeof(str), "%.15e", maxx);
   } else if (strcmp(field,"dminy")==0) {
-    sprintf(str,"%.15e",miny);
+    snprintf(str, sizeof(str), "%.15e", miny);
   } else if (strcmp(field,"dmaxy")==0) {
-    sprintf(str,"%.15e",maxy);
+    snprintf(str, sizeof(str), "%.15e", maxy);
   } else if (strcmp(field,"davx")==0) {
-    sprintf(str,"%.15e",sumx);
+    snprintf(str, sizeof(str), "%.15e", sumx);
   } else if (strcmp(field,"davy")==0) {
-    sprintf(str,"%.15e",sumy);
+    snprintf(str, sizeof(str), "%.15e", sumy);
   } else if (strcmp(field,"dsigx")==0) {
-    sprintf(str,"%.15e",sumxx);
+    snprintf(str, sizeof(str), "%.15e", sumxx);
   } else if (strcmp(field,"dsigy")==0) {
-    sprintf(str,"%.15e",sumyy);
+    snprintf(str, sizeof(str), "%.15e", sumyy);
   }
-  *(char **)rval=str;
+
+  ptr = nstrdup(str);
+  if (ptr == NULL) return -1;
+
+  *(char **)rval = ptr;
 
   return 0;
 }
@@ -5347,7 +5350,7 @@ f2dstat2(struct objlist *obj,char *inst,char *rval,
   double dx,dy,d2,d3;
   int find;
   char *field;
-  char *str;
+  char str[32], *ptr;
 
   memfree(*(char **)rval);
   *(char **)rval=NULL;
@@ -5393,17 +5396,21 @@ f2dstat2(struct objlist *obj,char *inst,char *rval,
   }
   closedata(fp, f2dlocal);
   if (!find) return -1;
-  if ((str=memalloc(24))==NULL) return -1;
+
   if (strcmp(field,"dx")==0) {
-    sprintf(str,"%.15e",dx);
+    snprintf(str, sizeof(str), "%.15e", dx);
   } else if (strcmp(field,"dy")==0) {
-    sprintf(str,"%.15e",dy);
+    snprintf(str, sizeof(str), "%.15e", dy);
   } else if (strcmp(field,"d2")==0) {
-    sprintf(str,"%.15e",d2);
+    snprintf(str, sizeof(str), "%.15e", d2);
   } else if (strcmp(field,"d3")==0) {
-    sprintf(str,"%.15e",d3);
+    snprintf(str, sizeof(str), "%.15e", d3);
   }
-  *(char **)rval=str;
+
+  ptr = nstrdup(str);
+  if (ptr == NULL) return -1;
+
+  *(char **) rval = ptr;
   return 0;
 }
 
@@ -5766,8 +5773,8 @@ f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (fgetline(f2dlocal->storefd,&buf)!=0) {
       fclose(f2dlocal->storefd);
       f2dlocal->storefd=NULL;
-      if ((buf=memalloc(7))==NULL) return 1;
-      strcpy(buf,"[EOF]\n");
+      buf = nstrdup("[EOF]\n");
+      if (buf ==NULL) return 1;
       f2dlocal->endstore=TRUE;
       *(char **)rval=buf;
       return 0;

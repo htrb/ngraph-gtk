@@ -1,5 +1,5 @@
 /* 
- * $Id: ntime.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: ntime.c,v 1.2 2009/03/10 02:50:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "object.h"
+#include "nstring.h"
 #include "ntime.h"
 
 char *weekstr[7]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
@@ -38,62 +39,80 @@ char *monthstr[12]={"Jan","Feb","Mar","Apr","May","Jun",
 char *ndate(time_t *timep,int style)
 {
   struct tm *ltime;
-  char *c;
+  char c[32];
 
   ltime=localtime(timep);
-  if ((c=memalloc(16))==NULL) return NULL;
   switch (style) {
   case 1:
-    sprintf(c,"%d-%d-%d",ltime->tm_mon+1,ltime->tm_mday,1900+ltime->tm_year);
+    snprintf(c, sizeof(c),
+	     "%d-%d-%d",
+	     ltime->tm_mon + 1, ltime->tm_mday, 1900 + ltime->tm_year);
     break;
   case 2:
-    sprintf(c,"%s %d %d",monthstr[ltime->tm_mon],
-                         ltime->tm_mday,1900+ltime->tm_year);
+    snprintf(c, sizeof(c),
+	     "%s %d %d",
+	     monthstr[ltime->tm_mon], ltime->tm_mday, 1900 + ltime->tm_year);
     break;
   case 3:
-    sprintf(c,"%d-%d-%d",ltime->tm_mday,ltime->tm_mon+1,1900+ltime->tm_year);
+    snprintf(c, sizeof(c),
+	     "%d-%d-%d",
+	     ltime->tm_mday, ltime->tm_mon + 1, 1900 + ltime->tm_year);
     break;
   case 4:
-    sprintf(c,"%d/%d/%d",ltime->tm_mon+1,ltime->tm_mday,1900+ltime->tm_year);
+    snprintf(c, sizeof(c),
+	     "%d/%d/%d", ltime->tm_mon + 1, ltime->tm_mday, 1900 + ltime->tm_year);
     break;
   default:
-    sprintf(c,"%s %s %d %d",weekstr[ltime->tm_wday],monthstr[ltime->tm_mon],
-                              ltime->tm_mday,1900+ltime->tm_year);
+    snprintf(c, sizeof(c),
+	     "%s %s %d %d",
+	     weekstr[ltime->tm_wday], monthstr[ltime->tm_mon], ltime->tm_mday, 1900 + ltime->tm_year);
     break;
   }
-  return c;
+
+  return nstrdup(c);
 }
 
 char *ntime(time_t *timep,int style)
 {
   struct tm *ltime;
-  char *c;
+  char c[32];
 
   ltime=localtime(timep);
-  if ((c=memalloc(12))==NULL) return NULL;
   switch (style) {
   case 1:
     if (ltime->tm_hour<12)
-      sprintf(c,"%02d:%02d:%02d am",ltime->tm_hour,
-                                    ltime->tm_min,ltime->tm_sec);
+      snprintf(c, sizeof(c),
+	       "%02d:%02d:%02d am",
+	       ltime->tm_hour, ltime->tm_min, ltime->tm_sec);
     else
-      sprintf(c,"%02d:%02d:%02d pm",ltime->tm_hour-12,
-                                    ltime->tm_min,ltime->tm_sec);
+      snprintf(c, sizeof(c),
+	       "%02d:%02d:%02d pm",
+	       ltime->tm_hour - 12, ltime->tm_min, ltime->tm_sec);
     break;
   case 2:
-    sprintf(c,"%02d:%02d",ltime->tm_hour,ltime->tm_min);
+    snprintf(c, sizeof(c),
+	     "%02d:%02d",
+	     ltime->tm_hour, ltime->tm_min);
     break;
   case 3:
-    if (ltime->tm_hour<12)
-      sprintf(c,"%02d:%02d am",ltime->tm_hour,ltime->tm_min);
-    else
-      sprintf(c,"%02d:%02d pm",ltime->tm_hour-12,ltime->tm_min);
+    if (ltime->tm_hour<12) {
+      snprintf(c, sizeof(c),
+	       "%02d:%02d am",
+	       ltime->tm_hour, ltime->tm_min);
+    } else {
+      snprintf(c, sizeof(c),
+	       "%02d:%02d pm",
+	       ltime->tm_hour - 12, ltime->tm_min);
+    }
     break;
   default:
-    sprintf(c,"%02d:%02d:%02d",ltime->tm_hour,ltime->tm_min,ltime->tm_sec);
+    snprintf(c, sizeof(c),
+	     "%02d:%02d:%02d",
+	     ltime->tm_hour, ltime->tm_min, ltime->tm_sec);
     break;
   }
-  return c;
+
+  return nstrdup(c);
 }
 
 int gettimeval(char *s,time_t *time)

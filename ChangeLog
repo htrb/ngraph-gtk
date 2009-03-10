@@ -1,5 +1,18 @@
 2009-03-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (f2dstore): use "nstrdup()" instead of "memalloc()"
+	to create string "[EOF]\n".
+	(f2dstat, f2dstat2): use "nstrdup()" instead of "memalloc()".
+
+	* src/osystem.c (sysinit): use "nstrdup()" instead of "memalloc()"
+	to create string "./".
+
+	* src/ofit.c (fitfit): use "nstrdup()" instead of "memalloc()" to
+	create string "equation".
+
+	* src/ntime.c (ndate, ntime): use "nstrdup()" instead of
+	"memalloc()".
+
 	* src/nconfig.c (removeconfig): free "buf" when "chamge" is FALSE.
 
 	* src/ioutil.c (fgetline): set NULL to "*buf" when EOF or error.

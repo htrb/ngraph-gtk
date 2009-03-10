@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-20\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-09 19:22+0900\n"
+"POT-Creation-Date: 2009-03-10 11:54+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2074,7 +2074,7 @@ msgstr ""
 msgid "linear"
 msgstr ""
 
-#: src/oaxis.c:82 src/ofit.c:85
+#: src/oaxis.c:82 src/ofit.c:86
 msgid "log"
 msgstr ""
 
@@ -2110,19 +2110,19 @@ msgstr ""
 msgid "parallel2"
 msgstr ""
 
-#: src/ofit.c:82
+#: src/ofit.c:83
 msgid "poly"
 msgstr ""
 
-#: src/ofit.c:83
+#: src/ofit.c:84
 msgid "pow"
 msgstr ""
 
-#: src/ofit.c:84
+#: src/ofit.c:85
 msgid "exp"
 msgstr ""
 
-#: src/ofit.c:86
+#: src/ofit.c:87
 msgid "user"
 msgstr ""
 
