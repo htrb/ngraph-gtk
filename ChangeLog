@@ -1,5 +1,29 @@
 2009-03-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_liststore.c (create_column): set user data with
+	"g_object_set_data()" instead of "g_object_set()".
+
+	* src/gtk/x11file.c (start_editing_type, start_editing): remove unused variable
+	"list".
+
+	* src/gtk/x11axis.c (start_editing): remove unused variable
+	"list".
+
+	* src/gtk/gtk_widget.c (spin_entry_set_range)
+	(spin_entry_set_inc, spin_entry_set_val, spin_entry_get_val)
+	(_create_spin_entry): use "g_object_[gs]et_data()" instead of
+	"gtk_object_[gs]et_user_data()".
+
+	* src/gtk/gtk_subwin.c (numeric_cb, string_cb, start_editing): use
+	"g_object_[gs]et_data()" instead of
+	"gtk_object_[gs]et_user_data()".
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogSetup): use
+	"gtk_widget_set_size_request()" instead of
+	"gtk_drawing_area_size()".
+
+	* src/gtk/x11opt.c (add_str_to_array): remove.
+
 	* src/gtk/x11lgnd.c (CmOptionTextDef): save and restore modified
 	state.
 

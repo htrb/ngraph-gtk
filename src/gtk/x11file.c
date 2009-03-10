@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.77 2009/03/10 05:38:15 hito Exp $
+ * $Id: x11file.c,v 1.78 2009/03/10 07:58:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4293,7 +4293,7 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
 
   list_store_select_iter(GTK_WIDGET(view), &iter);
 
-  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
+  list = (n_list_store *) g_object_get_data(G_OBJECT(renderer), "user-data");
   sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);
@@ -4379,7 +4379,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   GtkTreeView *view;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  n_list_store *list;
   struct SubWin *d;
   GtkComboBox *cbox;
   int lastinst, j, sel, id = 0, is_oid;
@@ -4398,7 +4397,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   list_store_select_iter(GTK_WIDGET(view), &iter);
 
-  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
   sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);

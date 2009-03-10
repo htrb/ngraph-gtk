@@ -93,7 +93,7 @@ spin_entry_set_range(GtkWidget *w, int min, int max)
 {
   enum SPIN_BUTTON_TYPE type;
 
-  type = GPOINTER_TO_INT(gtk_object_get_user_data(GTK_OBJECT(w)));
+  type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
 
   gtk_spin_button_set_range(GTK_SPIN_BUTTON(w),
 			    int2val(type, min),
@@ -106,7 +106,7 @@ spin_entry_set_inc(GtkWidget *w, int inc, int page)
 {
   enum SPIN_BUTTON_TYPE type;
 
-  type = GPOINTER_TO_INT(gtk_object_get_user_data(GTK_OBJECT(w)));
+  type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
 
   gtk_spin_button_set_increments(GTK_SPIN_BUTTON(w),
 				 int2val(type, inc),
@@ -119,7 +119,7 @@ spin_entry_set_val(GtkWidget *entry, int ival)
   gdouble min, max, val;
   enum SPIN_BUTTON_TYPE type;
 
-  type = GPOINTER_TO_INT(gtk_object_get_user_data(GTK_OBJECT(entry)));
+  type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "user-data"));
 
   val = int2val(type, ival);
 
@@ -140,7 +140,7 @@ spin_entry_get_val(GtkWidget *entry)
   gdouble val;
   enum SPIN_BUTTON_TYPE type;
 
-  type = GPOINTER_TO_INT(gtk_object_get_user_data(GTK_OBJECT(entry)));
+  type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "user-data"));
 
   val = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry));
 
@@ -170,7 +170,7 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   if (set_default_action)
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
 
-  gtk_object_set_user_data(GTK_OBJECT(w), GINT_TO_POINTER(type));
+  g_object_set_data(G_OBJECT(w), "user-data", GINT_TO_POINTER(type));
 
   return w;
 }

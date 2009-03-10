@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.47 2009/03/06 08:11:20 hito Exp $
+ * $Id: x11axis.c,v 1.48 2009/03/10 07:58:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2923,7 +2923,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   GtkTreeView *view;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  n_list_store *list;
   struct SubWin *d;
   GtkComboBox *cbox;
   int sel, type;
@@ -2939,7 +2938,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
     return;
 
   list_store_select_iter(GTK_WIDGET(view), &iter);
-  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
   sel = list_store_get_selected_int(GTK_WIDGET(view), AXIS_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);

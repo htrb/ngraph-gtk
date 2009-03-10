@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.57 2009/03/09 10:21:49 hito Exp $
+ * $Id: x11opt.c,v 1.58 2009/03/10 07:58:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -107,17 +107,6 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->external_driver), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->addin_script), FALSE);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->misc), FALSE);
-}
-
-static void
-add_str_to_array(struct narray *conf, char *str)
-{
-  char *buf;
-
-  buf = nstrdup(str);
-  if (buf) {
-    arrayadd(conf, &buf);
-  }
 }
 
 static void

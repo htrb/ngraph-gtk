@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.41 2009/03/06 08:11:20 hito Exp $
+ * $Id: gtk_subwin.c,v 1.42 2009/03/10 07:58:35 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -48,12 +48,15 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
 
+  list = (n_list_store *) g_object_get_data(G_OBJECT(renderer), "user-data");
+  if (list == NULL)
+    return;
+
   if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
     return;
 
   list_store_select_iter(GTK_WIDGET(view), &iter);
 
-  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(renderer));
 
   switch (list->type) {
   case G_TYPE_STRING:
@@ -168,7 +171,9 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
 
-  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
+  list = (n_list_store *) g_object_get_data(G_OBJECT(cell_renderer), "user-data");
+  if (list == NULL)
+    return;
 
   val = strtod(str, &ptr);
   if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
@@ -184,7 +189,7 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
 }
 
 static void
-string_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+string_cb(GtkCellRenderer *renderer, gchar *path, gchar *str, gpointer user_data)
 {
   GtkTreeView *view;
   GtkTreeModel *model;
@@ -199,11 +204,14 @@ string_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
 
+  list = (n_list_store *) g_object_get_data(G_OBJECT(renderer), "user-data");
+  if (list == NULL)
+    return;
+
   if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
     return;
 
   list_store_select_iter(GTK_WIDGET(view), &iter);
-  list = (n_list_store *) gtk_object_get_user_data(GTK_OBJECT(cell_renderer));
 
   if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE)) {
     modify_string(d, list->name, str);

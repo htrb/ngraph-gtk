@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.15 2009/01/08 05:22:22 hito Exp $
+ * $Id: x11lgndx.c,v 1.16 2009/03/10 07:58:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -422,7 +422,8 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_drawing_area_new();
     d->view = w;
-    gtk_drawing_area_size(GTK_DRAWING_AREA(w), VIEW_SIZE, VIEW_SIZE);
+    gtk_widget_set_size_request(w, VIEW_SIZE, VIEW_SIZE);
+
     g_signal_connect(w, "expose-event", G_CALLBACK(LegendGaussDialogPaint), d);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 

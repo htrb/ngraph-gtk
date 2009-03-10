@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.78 2009/03/06 05:03:39 hito Exp $
+ * $Id: x11menu.c,v 1.79 2009/03/10 07:58:35 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1193,8 +1193,6 @@ createmenu(GtkMenuBar *parent)
   int len;
  
   accel_group = gtk_accel_group_new();
-
-  g_object_set_data(G_OBJECT(TopLevel->window), "accel_group", accel_group);
 
   create_graphmenu(parent, accel_group);
   create_filemenu(parent, accel_group);

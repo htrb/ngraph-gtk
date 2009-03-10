@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.19 2009/03/06 09:35:27 hito Exp $
+ * $Id: gtk_liststore.c,v 1.20 2009/03/10 07:58:35 hito Exp $
  */
 
 #include <stdlib.h>
@@ -73,8 +73,8 @@ create_column(n_list_store *list, int i, int j)
 						      list[i].page / 100.0,
 						      0),
 		     "digits", 2,
-		     "user-data", &list[i],
 		     NULL);
+	g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
       } else {
 	g_object_set((GObject *) renderer,
 		     "editable", list[i].editable,
@@ -85,8 +85,9 @@ create_column(n_list_store *list, int i, int j)
 						      list[i].page,
 						      0),
 		     "digits", 0,
-		     "user-data", &list[i],
-		   NULL);
+		     NULL);
+	g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
+
       }
     }
     break;
@@ -97,8 +98,8 @@ create_column(n_list_store *list, int i, int j)
 		 GTK_CELL_RENDERER_MODE_EDITABLE :
 		 GTK_CELL_RENDERER_MODE_INERT,
 		 "sensitive", list[i].editable,
-		 "user-data", &list[i],
 		 NULL);
+    g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
     GTK_CELL_RENDERER_GET_CLASS(renderer)->start_editing = start_editing_obj;
     col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						   "pixbuf", i, NULL);
@@ -111,8 +112,8 @@ create_column(n_list_store *list, int i, int j)
 		 "model", model,
 		 "text-column", 0,
 		 "editable", list[i].editable, 
-		 "user-data", &list[i],
 		 NULL);
+    g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
     col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						   "text", i, NULL);
     break;
@@ -121,8 +122,8 @@ create_column(n_list_store *list, int i, int j)
     renderer = gtk_cell_renderer_text_new();
     g_object_set((GObject *) renderer,
 		 "editable", list[i].editable, 
-		 "user-data", &list[i],
 		 NULL);
+    g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
     if (list[i].color){
       col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						     "text", i,
