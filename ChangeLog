@@ -1,3 +1,18 @@
+2009-03-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerWinSetup): use "value-changed" signal
+	instead of "change-value" signal for "d->HScroll" and
+	"d->VScroll".
+	(ViewerEvVScroll, ViewerEvHScroll): change return value and
+	argument. don't call "gdk_window_get_position()",
+	"gdk_draw_drawable()", "gdk_drawable_get_size()", "gdk_gc_new()"
+	and "g_object_unre()".
+	(scrollbar_scroll_cb, ViewerEvMouseMove, ViewerEvScroll)
+	(ViewerEvKeyDown): don't call "ViewerEvVScroll()" or
+	"ViewerEvHScroll()" after call "range_increment()".
+	(SetHRuler, SetVRuler): change argument. get size of drawable
+	widget inside the function.
+
 2009-03-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_liststore.c (create_column): set user data with

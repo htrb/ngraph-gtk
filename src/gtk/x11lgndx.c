@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.16 2009/03/10 07:58:35 hito Exp $
+ * $Id: x11lgndx.c,v 1.17 2009/03/11 01:37:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -47,7 +47,6 @@
 static double *spx, *spy, *spz;
 static double *spc[6];
 
-static void LegendGaussDialogScaleH(GtkWidget *w, gpointer client_data);
 static void LegendGaussDialogScaleH(GtkWidget *w, gpointer client_data);
 static void LegendGaussDialogDiv(GtkWidget *w, gpointer client_data);
 

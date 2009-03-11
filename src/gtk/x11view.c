@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.118 2009/03/06 10:18:03 hito Exp $
+ * $Id: x11view.c,v 1.119 2009/03/11 01:37:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -118,8 +118,8 @@ static struct narray SelList;
 #define IDEVMOVE        102
 
 static void ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data);
-static gboolean ViewerEvHScroll(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data);
-static gboolean ViewerEvVScroll(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data);
+static void ViewerEvHScroll(GtkRange *range, gpointer user_data);
+static void ViewerEvVScroll(GtkRange *range, gpointer user_data);
 static gboolean ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data);
 static gboolean ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d);
 static gboolean ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d);
@@ -145,8 +145,8 @@ static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int 
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
 static void reorder_object(enum object_move_type type);
 static void move_data_cancel(struct Viewer *d, gboolean show_message);
-static void SetHRuler(struct Viewer *d, int width);
-static void SetVRuler(struct Viewer *d, int height);
+static void SetHRuler(struct Viewer *d);
+static void SetVRuler(struct Viewer *d);
 
 
 static double 
@@ -672,28 +672,22 @@ static gboolean
 scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
   struct Viewer *d;
-  double val;
 
   d = &(NgraphApp.Viewer);
 
   switch (e->direction) {
   case GDK_SCROLL_UP:
   case GDK_SCROLL_LEFT:
-    val = range_increment(w, -SCROLL_INC);
+    range_increment(w, -SCROLL_INC);
     break;
   case GDK_SCROLL_DOWN:
   case GDK_SCROLL_RIGHT:
-    val = range_increment(w, SCROLL_INC);
+     range_increment(w, SCROLL_INC);
     break;
   default:
     return FALSE;
   }
 
-  if (client_data) {
-    ViewerEvHScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
-  } else {
-    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
-  }
   return TRUE;
 }
 
@@ -756,9 +750,9 @@ ViewerWinSetup(void)
   g_signal_connect(d->Win, "expose-event", G_CALLBACK(ViewerEvPaint), NULL);
   g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), NULL);
 
-  g_signal_connect(d->HScroll, "change-value", G_CALLBACK(ViewerEvHScroll), NULL);
-  g_signal_connect(d->VScroll, "change-value", G_CALLBACK(ViewerEvVScroll), NULL);
-  g_signal_connect(d->HScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), GINT_TO_POINTER(1));
+  g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), NULL);
+  g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), NULL);
+  g_signal_connect(d->HScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), NULL);
   g_signal_connect(d->VScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), NULL);
 
   init_dnd(d);
@@ -3667,7 +3661,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
   int x, y, dx, dy, w, h;
-  double val, zoom;
+  double zoom;
 
   if (Menulock || GlobalLock || ! d->win)
     return FALSE;
@@ -3702,19 +3696,15 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   }
 
   if (point->y > h) {
-    val = range_increment(d->VScroll, SCROLL_INC);
-    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    range_increment(d->VScroll, SCROLL_INC);
   } else if (point->y < 0) {
-    val = range_increment(d->VScroll, -SCROLL_INC);
-    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    range_increment(d->VScroll, -SCROLL_INC);
   }
 
   if (point->x > w) {
-    val = range_increment(d->HScroll, SCROLL_INC);
-    ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    range_increment(d->HScroll, SCROLL_INC);
   } else if (point->x < 0) {
-    val = range_increment(d->HScroll, -SCROLL_INC);
-    ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    range_increment(d->HScroll, -SCROLL_INC);
   }
 
 
@@ -3954,26 +3944,21 @@ static gboolean
 ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
   struct Viewer *d;
-  double val;
 
   d = (struct Viewer *) client_data;
 
   switch (e->direction) {
   case GDK_SCROLL_UP:
-    val = range_increment(d->VScroll, -SCROLL_INC);
-    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    range_increment(d->VScroll, -SCROLL_INC);
     return TRUE;
   case GDK_SCROLL_DOWN:
-    val = range_increment(d->VScroll, SCROLL_INC);
-    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+     range_increment(d->VScroll, SCROLL_INC);
     return TRUE;
   case GDK_SCROLL_LEFT:
-    val = range_increment(d->HScroll, -SCROLL_INC);
-    ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    range_increment(d->HScroll, -SCROLL_INC);
     return TRUE;
   case GDK_SCROLL_RIGHT:
-    val = range_increment(d->HScroll, SCROLL_INC);
-    ViewerEvHScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+    range_increment(d->HScroll, SCROLL_INC);
     return TRUE;
   }
   return FALSE;
@@ -4038,7 +4023,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   struct Viewer *d;
   GdkGC *dc;
   int dx = 0, dy = 0, mv, n;
-  double zoom, val;
+  double zoom;
 
   if (Menulock || GlobalLock)
     return FALSE;
@@ -4077,12 +4062,10 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     }
     break;
   case GDK_Page_Up:
-    val = range_increment(d->VScroll, -SCROLL_INC * 4);
-    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+    range_increment(d->VScroll, -SCROLL_INC * 4);
     return TRUE;
   case GDK_Page_Down:
-    val = range_increment(d->VScroll, SCROLL_INC * 4);
-    ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+    range_increment(d->VScroll, SCROLL_INC * 4);
     return TRUE;
   case GDK_Down:
   case GDK_Up:
@@ -4093,20 +4076,16 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     if (n == 0) {
       switch (e->keyval) {
       case GDK_Up:
-	val = range_increment(d->VScroll, -SCROLL_INC);
-	ViewerEvVScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+	range_increment(d->VScroll, -SCROLL_INC);
 	return TRUE;
       case GDK_Down:
-	val = range_increment(d->VScroll, SCROLL_INC);
-	ViewerEvVScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+	range_increment(d->VScroll, SCROLL_INC);
 	return TRUE;
       case GDK_Left:
-	val = range_increment(d->HScroll, -SCROLL_INC);
-	ViewerEvHScroll(NULL, GTK_SCROLL_STEP_UP, val, d);
+	range_increment(d->HScroll, -SCROLL_INC);
 	return TRUE;
       case GDK_Right:
-	val = range_increment(d->HScroll, SCROLL_INC);
-	ViewerEvHScroll(NULL, GTK_SCROLL_STEP_DOWN, val, d);
+	range_increment(d->HScroll, SCROLL_INC);
 	return TRUE;
       }
       return FALSE;
@@ -4314,57 +4293,28 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   return FALSE;
 }
 
-static gboolean
-ViewerEvVScroll(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
+static void
+ViewerEvVScroll(GtkRange *range, gpointer user_data)
 {
   struct Viewer *d;
-  int dy, x, y, width, height;
-  GdkGC *gc;
 
   d = &(NgraphApp.Viewer);
 
-  dy = value - d->vscroll;
-  d->vscroll = value;
-
-  if (dy != 0) {
-    gc = gdk_gc_new(d->win);
-
-    gdk_window_get_position(d->win, &x, &y);
-    gdk_drawable_get_size(d->win, &width, &height);
-    gdk_draw_drawable(d->win, gc, d->win, 0, dy, width, height, 0, 0);
-    g_object_unref(gc);
-    SetVRuler(d, height);
-  }
+  d->vscroll = gtk_range_get_value(range);
+  SetVRuler(d);
   gdk_window_invalidate_rect(d->win, NULL, TRUE);
-
-  return FALSE;
 }
 
-static gboolean
-ViewerEvHScroll(GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data)
+static void
+ViewerEvHScroll(GtkRange *range, gpointer user_data)
 {
   struct Viewer *d;
-  int dx;
-  int x, y, width, height;
-  GdkGC *gc;
 
   d = &(NgraphApp.Viewer);
 
-  dx = value - d->hscroll;
-  d->hscroll = value;
-
-  if (dx != 0) {
-    gc = gdk_gc_new(d->win);
-
-    gdk_window_get_position(d->win, &x, &y);
-    gdk_drawable_get_size(d->win, &width, &height);
-    gdk_draw_drawable(d->win, gc, d->win, dx, 0, width, height, 0, 0);
-    g_object_unref(gc);
-    SetHRuler(d, width);
-  }
+  d->hscroll = gtk_range_get_value(range);
+  SetHRuler(d);
   gdk_window_invalidate_rect(d->win, NULL, TRUE);
-
-  return FALSE;
 }
 
 void
@@ -4410,10 +4360,12 @@ ViewerWinUpdate(int clear)
 }
 
 static void
-SetHRuler(struct Viewer *d, int width)
+SetHRuler(struct Viewer *d)
 {
   double x1, x2, zoom;
+  int width;
 
+  gdk_drawable_get_size(d->win, &width, NULL);
   zoom = Menulocal.PaperZoom / 10000.0;
   x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
@@ -4422,10 +4374,12 @@ SetHRuler(struct Viewer *d, int width)
 }
 
 static void
-SetVRuler(struct Viewer *d, int height)
+SetVRuler(struct Viewer *d)
 {
   double y1, y2, zoom;
- 
+  int height;
+
+  gdk_drawable_get_size(d->win, NULL, &height);
   zoom = Menulocal.PaperZoom / 10000.0;
   y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
   y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
@@ -4751,9 +4705,8 @@ ChangeDPI(int redraw)
     gdk_window_invalidate_rect(d->win, NULL, TRUE);
   }
 
-  gdk_drawable_get_size(Menulocal.win, &w, &h);
-  SetHRuler(d, w);
-  SetVRuler(d, h);
+  SetHRuler(d);
+  SetVRuler(d);
 }
 
 void
