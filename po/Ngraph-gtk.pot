@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-20\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-10 17:16+0900\n"
+"POT-Creation-Date: 2009-03-11 10:37+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -78,7 +78,7 @@ msgid "Axis (_Y):"
 msgstr ""
 
 #: src/gtk/x11axis.c:294 src/gtk/x11axis.c:968 src/gtk/x11axis.c:1599
-#: src/gtk/x11axis.c:1736 src/gtk/x11lgnd.c:623 src/gtk/x11lgndx.c:402
+#: src/gtk/x11axis.c:1736 src/gtk/x11lgnd.c:623 src/gtk/x11lgndx.c:401
 msgid "_Color:"
 msgstr ""
 
@@ -127,11 +127,11 @@ msgid "_Baseline"
 msgstr ""
 
 #: src/gtk/x11axis.c:960 src/gtk/x11file.c:2738 src/gtk/x11lgnd.c:593
-#: src/gtk/x11lgndx.c:378
+#: src/gtk/x11lgndx.c:377
 msgid "Line _Style:"
 msgstr ""
 
-#: src/gtk/x11axis.c:964 src/gtk/x11file.c:2742 src/gtk/x11lgndx.c:384
+#: src/gtk/x11axis.c:964 src/gtk/x11file.c:2742 src/gtk/x11lgndx.c:383
 msgid "_Line Width:"
 msgstr ""
 
@@ -814,11 +814,11 @@ msgstr ""
 msgid "_Size:"
 msgstr ""
 
-#: src/gtk/x11file.c:2750 src/gtk/x11lgnd.c:603 src/gtk/x11lgndx.c:390
+#: src/gtk/x11file.c:2750 src/gtk/x11lgnd.c:603 src/gtk/x11lgndx.c:389
 msgid "_Miter:"
 msgstr ""
 
-#: src/gtk/x11file.c:2754 src/gtk/x11lgnd.c:613 src/gtk/x11lgndx.c:396
+#: src/gtk/x11file.c:2754 src/gtk/x11lgnd.c:613 src/gtk/x11lgndx.c:395
 msgid "_Join:"
 msgstr ""
 
@@ -1056,28 +1056,28 @@ msgstr ""
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:341
+#: src/gtk/x11lgndx.c:340
 #, c-format
 msgid "Legend Gaussian/Lorentzian/Parabola/Sin %d"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:351
+#: src/gtk/x11lgndx.c:350
 msgid "_Sin"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:355
+#: src/gtk/x11lgndx.c:354
 msgid "_Parabola"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:359
+#: src/gtk/x11lgndx.c:358
 msgid "_Lorentz"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:363
+#: src/gtk/x11lgndx.c:362
 msgid "_Gauss"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:408
+#: src/gtk/x11lgndx.c:407
 msgid "_Division:"
 msgstr ""
 
@@ -1915,7 +1915,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4832
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4785
 msgid "Drawing."
 msgstr ""
 
@@ -1984,33 +1984,33 @@ msgstr ""
 msgid "_Show cross"
 msgstr ""
 
-#: src/gtk/x11view.c:851 src/gtk/x11view.c:862
+#: src/gtk/x11view.c:845 src/gtk/x11view.c:856
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:954
+#: src/gtk/x11view.c:948
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:963
+#: src/gtk/x11view.c:957
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2247
+#: src/gtk/x11view.c:2241
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3355
+#: src/gtk/x11view.c:3349
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4826
+#: src/gtk/x11view.c:4779
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4833
+#: src/gtk/x11view.c:4786
 msgid "Drawing"
 msgstr ""
 
