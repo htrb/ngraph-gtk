@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.119 2009/03/11 01:37:17 hito Exp $
+ * $Id: x11view.c,v 1.120 2009/03/11 02:27:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -673,7 +673,7 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
   struct Viewer *d;
 
-  d = &(NgraphApp.Viewer);
+  d = (struct Viewer *) client_data;
 
   switch (e->direction) {
   case GDK_SCROLL_UP:
@@ -747,13 +747,13 @@ ViewerWinSetup(void)
 
   ChangeDPI(TRUE);
 
-  g_signal_connect(d->Win, "expose-event", G_CALLBACK(ViewerEvPaint), NULL);
-  g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), NULL);
+  g_signal_connect(d->Win, "expose-event", G_CALLBACK(ViewerEvPaint), d);
+  g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), d);
 
-  g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), NULL);
-  g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), NULL);
-  g_signal_connect(d->HScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), NULL);
-  g_signal_connect(d->VScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), NULL);
+  g_signal_connect(d->HScroll, "value-changed", G_CALLBACK(ViewerEvHScroll), d);
+  g_signal_connect(d->VScroll, "value-changed", G_CALLBACK(ViewerEvVScroll), d);
+  g_signal_connect(d->HScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), d);
+  g_signal_connect(d->VScroll, "scroll-event", G_CALLBACK(scrollbar_scroll_cb), d);
 
   init_dnd(d);
 
@@ -4229,7 +4229,7 @@ ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
   int x, y;
   int width, height;
 
-  d = &(NgraphApp.Viewer);
+  d = (struct Viewer *) client_data;
 
   x = allocation->x;
   y = allocation->y;
@@ -4250,7 +4250,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   struct Viewer *d;
   GdkRectangle rect;
 
-  d = &(NgraphApp.Viewer);
+  d = (struct Viewer *) client_data;
 
   if (e && e->count != 0)
     return TRUE;
@@ -4298,7 +4298,7 @@ ViewerEvVScroll(GtkRange *range, gpointer user_data)
 {
   struct Viewer *d;
 
-  d = &(NgraphApp.Viewer);
+  d = (struct Viewer *) user_data;
 
   d->vscroll = gtk_range_get_value(range);
   SetVRuler(d);
@@ -4310,7 +4310,7 @@ ViewerEvHScroll(GtkRange *range, gpointer user_data)
 {
   struct Viewer *d;
 
-  d = &(NgraphApp.Viewer);
+  d = (struct Viewer *) user_data;
 
   d->hscroll = gtk_range_get_value(range);
   SetHRuler(d);
