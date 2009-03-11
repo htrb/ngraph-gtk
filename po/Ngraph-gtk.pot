@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-20\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-11 10:37+0900\n"
+"POT-Creation-Date: 2009-03-11 17:48+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -939,11 +939,11 @@ msgstr ""
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1144 src/gtk/x11menu.c:156
+#: src/gtk/x11graph.c:1102 src/gtk/x11menu.c:156
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1388
+#: src/gtk/x11graph.c:1346
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for "
 "researchers and engineers."

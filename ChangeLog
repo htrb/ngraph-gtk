@@ -1,5 +1,10 @@
 2009-03-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11graph.c (CmGraphNewFrame, CmGraphNewSection)
+	(CmGraphNewCross, CmGraphAllClear): remove.
+	(CmGraphNewMenu): clear graph and set NULL to
+	"NgraphApp.FileName". call "reset_graph_modified()".
+
 	* src/gtk/x11view.c (ViewerWinSetup): use "value-changed" signal
 	instead of "change-value" signal for "d->HScroll" and
 	"d->VScroll".

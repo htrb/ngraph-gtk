@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.37 2009/03/06 10:18:03 hito Exp $
+ * $Id: x11graph.c,v 1.38 2009/03/11 08:48:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1051,82 +1051,40 @@ SaveDialog(struct SaveDialog *data, int *sdata, int *smerge)
 }
 
 void
-CmGraphNewFrame(void)
-{
-  if (Menulock || GlobalLock)
-    return;
-  if (!CheckSave())
-    return;
-  DeleteDrawable();
-  CmAxisNewFrame();
-  UpdateAll();
-  CmViewerDraw();
-  InfoWinClear();
-}
-
-void
-CmGraphNewSection(void)
-{
-  if (Menulock || GlobalLock)
-    return;
-  if (!CheckSave())
-    return;
-  DeleteDrawable();
-  CmAxisNewSection();
-  UpdateAll();
-  CmViewerDraw();
-  InfoWinClear();
-}
-
-void
-CmGraphNewCross(void)
-{
-  if (Menulock || GlobalLock)
-    return;
-  if (!CheckSave())
-    return;
-  DeleteDrawable();
-  CmAxisNewCross();
-  UpdateAll();
-  CmViewerDraw();
-  InfoWinClear();
-}
-
-void
-CmGraphAllClear(void)
-{
-  if (Menulock || GlobalLock)
-    return;
-  if (!CheckSave())
-    return;
-  DeleteDrawable();
-  UpdateAll();
-  CmViewerDraw();
-  InfoWinClear();
-}
-
-void
 CmGraphNewMenu(GtkWidget *w, gpointer client_data)
 {
   int sel;
 
+  if (Menulock || GlobalLock)
+    return;
+
+  if (!CheckSave())
+    return;
+
+  DeleteDrawable();
+
   sel = (int) client_data;
   switch (sel) {
   case MenuIdGraphNewFrame:
-    CmGraphNewFrame();
+    CmAxisNewFrame();
     break;
   case MenuIdGraphNewSection:
-    CmGraphNewSection();
+    CmAxisNewSection();
     break;
   case MenuIdGraphNewCross:
-    CmGraphNewCross();
+    CmAxisNewCross();
     break;
   case MenuIdGraphAllClear:
-    CmGraphAllClear();
-    break;
   default:
     break;
   }
+
+  SetFileName(NULL);
+  reset_graph_modified();
+
+  UpdateAll();
+  CmViewerDraw();
+  InfoWinClear();
 }
 
 static void
