@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.31 2009/03/06 08:11:20 hito Exp $
+ * $Id: x11menu.h,v 1.32 2009/03/12 11:57:57 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -244,7 +244,7 @@ struct NgraphApp
   int Interrupt;
   char *FileName;
   GtkWidget *Message;
-  guint Message1, Message2, Message3;
+  guint Message1, Message2;
   GtkWidget *ghistory[MENU_HISTORY_NUM], *fhistory[MENU_HISTORY_NUM];
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list;
   GtkToolItem *viewb[20];

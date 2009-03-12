@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-11 17:48+0900\n"
+"POT-Creation-Date: 2009-03-12 20:58+0900\n"
 "PO-Revision-Date: 2009-03-06 16:55+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1620,15 +1620,15 @@ msgstr "初期状態のウィンドウ配置(_W)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2072
+#: src/gtk/x11menu.c:2052
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
-#: src/gtk/x11menu.c:2175
+#: src/gtk/x11menu.c:2155
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2225
+#: src/gtk/x11menu.c:2205
 msgid "Question"
 msgstr "質問:"
 
@@ -1853,8 +1853,8 @@ msgstr "再描画時にデータファイル読み込み(_L)"
 msgid "_Maximum number of data on redraw:"
 msgstr "再描画時の最大データ数(_M):"
 
-#: src/gtk/x11opt.c:1502 src/gtk/x11print.c:241 src/gtk/x11print.c:846
-#: src/gtk/x11print.c:949 src/gtk/x11print.c:1075
+#: src/gtk/x11opt.c:1502 src/gtk/x11print.c:241 src/gtk/x11print.c:847
+#: src/gtk/x11print.c:950 src/gtk/x11print.c:1076
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1921,35 +1921,35 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4785
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1015 src/gtk/x11view.c:4785
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11print.c:797
+#: src/gtk/x11print.c:798
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:836 src/gtk/x11print.c:847
+#: src/gtk/x11print.c:837 src/gtk/x11print.c:848
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:886
+#: src/gtk/x11print.c:887
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:950
+#: src/gtk/x11print.c:951
 msgid "confirm"
 msgstr "確認"
 
-#: src/gtk/x11print.c:1068 src/gtk/x11print.c:1076
+#: src/gtk/x11print.c:1069 src/gtk/x11print.c:1077
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11print.c:1083
+#: src/gtk/x11print.c:1084
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11print.c:1084
+#: src/gtk/x11print.c:1085
 msgid "Making data file."
 msgstr "データファイル作成中"
 
@@ -1990,7 +1990,7 @@ msgstr "位置合わせ(_A)"
 msgid "_Show cross"
 msgstr "クロスゲージ表示(_S)"
 
-#: src/gtk/x11view.c:845 src/gtk/x11view.c:856
+#: src/gtk/x11view.c:854 src/gtk/x11view.c:856
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
@@ -2004,11 +2004,11 @@ msgstr "データ評価中"
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2241
+#: src/gtk/x11view.c:2239
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3349
+#: src/gtk/x11view.c:3350
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 

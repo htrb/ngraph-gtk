@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.66 2009/03/09 10:21:49 hito Exp $
+ * $Id: ox11menu.c,v 1.67 2009/03/12 11:57:57 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1138,7 +1138,7 @@ mgtkdisplaydialog(char *str)
 void
 mgtkdisplaystatus(char *str)
 {
-  DisplayStatus(str);
+  DisplayDialog(str);
 }
 
 int

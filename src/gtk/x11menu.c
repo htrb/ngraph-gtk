@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.79 2009/03/10 07:58:35 hito Exp $
+ * $Id: x11menu.c,v 1.80 2009/03/12 11:57:57 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1349,7 +1349,7 @@ tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
   str = (char *) data;
 
   if (e->type == GDK_ENTER_NOTIFY) {
-    SetStatusBarXm(str);
+    SetStatusBar(str);
   } else {
     ResetStatusBar();
   }
@@ -1543,7 +1543,6 @@ setupwindow(void)
   NgraphApp.Message = gtk_statusbar_new();
   NgraphApp.Message1 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message1");
   NgraphApp.Message2 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message2");
-  NgraphApp.Message3 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message3");
   gtk_box_pack_start(GTK_BOX(vbox), NgraphApp.Message, FALSE, FALSE, 0);
 
   createcommand1(GTK_TOOLBAR(command1));
@@ -1976,6 +1975,23 @@ ChangePage(void)
   ChangeDPI(TRUE);
 }
 
+static void
+SetStatusBarSub(char *mes, guint id)
+{
+
+  if (NgraphApp.Message) {
+    gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), id, mes);
+  }
+}
+
+static void
+ResetStatusBarSub(guint id)
+{
+  if (NgraphApp.Message) {
+    gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), id);
+  }
+}
+
 void
 SetPoint(struct Viewer *d, int x, int y)
 {
@@ -2002,8 +2018,8 @@ SetPoint(struct Viewer *d, int x, int y)
       snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f", x / 100.0, y / 100.0);
     }
 
-    gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message3);
-    gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message3, buf);
+    ResetStatusBarSub(NgraphApp.Message2);
+    SetStatusBarSub(buf, NgraphApp.Message2);
   }
 
   g_object_set(NgraphApp.Viewer.HRuler, "position", N2GTK_RULER_METRIC(x), NULL);
@@ -2013,51 +2029,15 @@ SetPoint(struct Viewer *d, int x, int y)
 }
 
 void
-SetZoom(double zm)
-{
-  char buf[20];
-
-  if (NgraphApp.Message) {
-    snprintf(buf, sizeof(buf), "%.2f%%", zm * 100);
-    gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message2);
-    gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message2, buf);
-  }
-}
-
-void
-ResetZoom(void)
-{
-  if (NgraphApp.Message) {
-    gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message2);
-    gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message2, "");
-  }
-}
-
-void
 SetStatusBar(char *mes)
 {
-  if (NgraphApp.Message) {
-    gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message1);
-    gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message1, mes);
-  }
-}
-
-void
-SetStatusBarXm(gchar *s)
-{
-  if (NgraphApp.Message) {
-    gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message1);
-    gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message1, s);
-  }
+  SetStatusBarSub(mes, NgraphApp.Message1);
 }
 
 void
 ResetStatusBar(void)
 {
-  if (NgraphApp.Message) {
-    gtk_statusbar_pop(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message1);
-    gtk_statusbar_push(GTK_STATUSBAR(NgraphApp.Message), NgraphApp.Message1, "");
-  }
+  ResetStatusBarSub(NgraphApp.Message1);
 }
 
 void

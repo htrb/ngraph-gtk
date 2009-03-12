@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.120 2009/03/11 02:27:06 hito Exp $
+ * $Id: x11view.c,v 1.121 2009/03/12 11:57:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -842,8 +842,6 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
     goto End;
 
   arrayinit(&dfile, sizeof(int));
-  snprintf(mes, sizeof(mes), _("Searching for data."));
-  SetStatusBar(mes);
 
   if (_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray))
     goto End;
@@ -853,6 +851,8 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 
   sdata = (char **) arraydata(sarray);
 
+  snprintf(mes, sizeof(mes), _("Searching for data."));
+  SetStatusBar(mes);
   ProgressDialogCreate(_("Searching for data."));
 
   for (i = 1; i < snum; i++) {
@@ -2061,8 +2061,6 @@ init_zoom(unsigned int state, struct Viewer *d, GdkGC *dc)
 
   CheckGrid(FALSE, state, NULL, NULL, &zoom2);
 
-  SetZoom(zoom2);
-
   vx1 = d->RefX1 + vx2 * zoom2;
   vy1 = d->RefY1 + vy2 * zoom2;
 
@@ -2520,6 +2518,9 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   vy1 = (mxp2d(point->y - d->cy + d->vscroll)
 	 - Menulocal.TopMargin) / zoom;
 
+  d->MouseX2 = vx1;
+  d->MouseY2 = vy1;
+
   vx1 -= d->RefX1 - d->MouseDX;
   vy1 -= d->RefY1 - d->MouseDY;
 
@@ -2540,7 +2541,6 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   }
 
   zm = nround(zoom2 * 10000);
-  ResetZoom();
 
   if (zm < 1000)
     zm = 1000;
@@ -2775,6 +2775,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
     }
     SetCursor(get_mouse_cursor_type(d, point->x, point->y));
     d->MouseMode = MOUSENONE;
+    SetPoint(d, d->MouseX2, d->MouseY2);
     break;
   case MarkB:
   case TextB:
@@ -3771,7 +3772,6 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 	if ((d->Mode != DataB) && (d->Mode != EvalB))
 	  CheckGrid(FALSE, state, NULL, NULL, &zoom2);
 
-	SetZoom(zoom2);
 	d->Zoom = zoom2;
 
 	vx1 = d->RefX1 + vx2 * zoom2;

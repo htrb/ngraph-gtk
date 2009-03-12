@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-20\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-11 17:48+0900\n"
+"POT-Creation-Date: 2009-03-12 20:58+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1616,15 +1616,15 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2072
+#: src/gtk/x11menu.c:2052
 msgid "Unsaved Graph"
 msgstr ""
 
-#: src/gtk/x11menu.c:2175
+#: src/gtk/x11menu.c:2155
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2225
+#: src/gtk/x11menu.c:2205
 msgid "Question"
 msgstr ""
 
@@ -1849,8 +1849,8 @@ msgstr ""
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1502 src/gtk/x11print.c:241 src/gtk/x11print.c:846
-#: src/gtk/x11print.c:949 src/gtk/x11print.c:1075
+#: src/gtk/x11opt.c:1502 src/gtk/x11print.c:241 src/gtk/x11print.c:847
+#: src/gtk/x11print.c:950 src/gtk/x11print.c:1076
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1915,35 +1915,35 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:736 src/gtk/x11print.c:1014 src/gtk/x11view.c:4785
+#: src/gtk/x11print.c:736 src/gtk/x11print.c:1015 src/gtk/x11view.c:4785
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:797
+#: src/gtk/x11print.c:798
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:836 src/gtk/x11print.c:847
+#: src/gtk/x11print.c:837 src/gtk/x11print.c:848
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:886
+#: src/gtk/x11print.c:887
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:950
+#: src/gtk/x11print.c:951
 msgid "confirm"
 msgstr ""
 
-#: src/gtk/x11print.c:1068 src/gtk/x11print.c:1076
+#: src/gtk/x11print.c:1069 src/gtk/x11print.c:1077
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1083
+#: src/gtk/x11print.c:1084
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1084
+#: src/gtk/x11print.c:1085
 msgid "Making data file."
 msgstr ""
 
@@ -1984,7 +1984,7 @@ msgstr ""
 msgid "_Show cross"
 msgstr ""
 
-#: src/gtk/x11view.c:845 src/gtk/x11view.c:856
+#: src/gtk/x11view.c:854 src/gtk/x11view.c:856
 #, c-format
 msgid "Searching for data."
 msgstr ""
@@ -1998,11 +1998,11 @@ msgstr ""
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2241
+#: src/gtk/x11view.c:2239
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3349
+#: src/gtk/x11view.c:3350
 msgid "Moving data points is canceled."
 msgstr ""
 

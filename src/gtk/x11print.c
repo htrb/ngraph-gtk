@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.34 2009/02/26 08:51:49 hito Exp $
+ * $Id: x11print.c,v 1.35 2009/03/12 11:57:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -736,6 +736,7 @@ CmOutputDriver(void)
     draw_gra(graobj, id, _("Drawing."), TRUE);
     restorestdio(&stdio);
     delobj(graobj, id);
+    ResetStatusBar();
   }
   delobj(g2wobj, g2wid);
 }

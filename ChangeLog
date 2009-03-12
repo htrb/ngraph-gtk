@@ -1,4 +1,28 @@
+2009-03-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.h (struct NgraphApp): remove member "Message3".
+
+	* src/gtk/x11view.c (init_zoom, mouse_up_zoom)
+	(ViewerEvMouseMove): remove "SetZoom()" or "ResetZoom()".
+	(mouse_up_zoom): set coordinate of a mouse to "d->MouseX2" and
+	"d->MouseY2".
+	(ViewerEvLButtonUp): call "SetPoint()" after call "SetCursor()".
+
+	* src/gtk/x11print.c (CmOutputDriver): call "ResetStatusBar()".
+
+	* src/gtk/x11menu.c (SetZoom, ResetZoom): remove.
+
 2009-03-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (tool_button_enter_leave_cb): use
+	"SetStatusBarSub()" instead of "SetStatusBarXm()".
+	(SetStatusBarXm): remove.
+	(ResetZoom, SetZoom, ResetStatusBar): use "SetStatusBarSub()" or
+	"ResetStatusBarSub()".
+	(SetStatusBarSub, ResetStatusBarSub): add.
+
+	* src/gtk/ox11menu.c (mgtkdisplaystatus): use "DisplayDialog()"
+	instead of "DisplayStatus()" "
 
 	* src/gtk/x11graph.c (CmGraphNewFrame, CmGraphNewSection)
 	(CmGraphNewCross, CmGraphAllClear): remove.
