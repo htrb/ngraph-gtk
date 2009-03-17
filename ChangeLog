@@ -1,3 +1,8 @@
+2009-03-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11dlg.c (get_sarray_argument): get data from multi
+	"sarray"s.
+
 2009-03-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.h (struct NgraphApp): remove member "Message3".

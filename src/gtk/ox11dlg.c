@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.15 2009/02/20 10:00:11 hito Exp $
+ * $Id: ox11dlg.c,v 1.16 2009/03/17 03:52:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -176,7 +176,7 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 struct narray *
 get_sarray_argument(struct narray *sarray)
 {
-  int n, i, id;
+  int m, n, i, j, id;
   char *ptr, sa[] = "sarray:", *argv[2];
   struct narray iarray;
   struct objlist *saobj;
@@ -202,24 +202,28 @@ get_sarray_argument(struct narray *sarray)
     return sarray;
   }
 
-  id = * (int *) arraynget(&iarray, 0);
-  if (getobj(saobj, "num", id, 0, NULL, &n) == -1) {
-    arraydel(&iarray);
-    return sarray;
+  for (j = 0; j < n; j++) {
+    id = * (int *) arraynget(&iarray, j);
+    if (getobj(saobj, "num", id, 0, NULL, &m) == -1)
+      continue;
+
+    if (m < 1)
+      continue;
+
+    for (i = 0; i < m; i++) {
+      argv[0] = (char *) & i;
+      argv[1] = NULL;
+      getobj(saobj, "get", id, 1, argv, &ptr);
+
+      if (arrayadd2(sarray, &ptr) == NULL)
+	goto End;
+    }
   }
 
-  if (n < 1) {
-    arraydel(&iarray);
-    return sarray;
-  }
-
-  arraydel2(sarray);
-  for (i = 0; i < n; i++) {
-    argv[0] = (char *) & i;
-    argv[1] = NULL;
-    getobj(saobj, "get", id, 1, argv, &ptr);
-    if (arrayadd2(sarray, &ptr) == NULL)
-      break;
+ End:
+  
+  if (arraynum(sarray) > 1) {
+    arrayndel2(sarray, 0);
   }
 
   arraydel(&iarray);
