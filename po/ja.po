@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-17 12:52+0900\n"
+"POT-Creation-Date: 2009-03-17 20:36+0900\n"
 "PO-Revision-Date: 2009-03-06 16:55+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -14,15 +14,15 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11dlg.c:444
+#: src/gtk/ox11dlg.c:439
 msgid "Open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:493
+#: src/gtk/ox11dlg.c:488
 msgid "Open files"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:544
+#: src/gtk/ox11dlg.c:539
 msgid "Save file"
 msgstr "別名で保存"
 

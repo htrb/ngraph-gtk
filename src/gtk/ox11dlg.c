@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.17 2009/03/17 04:11:34 hito Exp $
+ * $Id: ox11dlg.c,v 1.18 2009/03/17 11:36:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -197,11 +197,6 @@ get_sarray_argument(struct narray *sarray)
     return sarray;
 
   n = arraynum(&iarray);
-  if (n < 1) {
-    arraydel(&iarray);
-    return sarray;
-  }
-
   for (j = 0; j < n; j++) {
     id = * (int *) arraynget(&iarray, j);
     if (getobj(saobj, "num", id, 0, NULL, &m) == -1)
