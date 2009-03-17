@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.16 2009/03/17 03:52:08 hito Exp $
+ * $Id: ox11dlg.c,v 1.17 2009/03/17 04:11:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -221,7 +221,7 @@ get_sarray_argument(struct narray *sarray)
   }
 
  End:
-  
+
   if (arraynum(sarray) > 1) {
     arrayndel2(sarray, 0);
   }
