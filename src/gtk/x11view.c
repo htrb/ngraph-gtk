@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.122 2009/03/18 02:17:26 hito Exp $
+ * $Id: x11view.c,v 1.123 2009/03/18 15:20:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -872,7 +872,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   ProgressDialogFinalize();
   ResetStatusBar();
 
-  ret = update_file_obj_multi(fileobj, &dfile);
+  ret = update_file_obj_multi(fileobj, &dfile, FALSE);
   arraydel(&dfile);
 
  End:

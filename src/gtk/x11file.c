@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.80 2009/03/18 02:30:22 hito Exp $
+ * $Id: x11file.c,v 1.81 2009/03/18 15:20:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3148,7 +3148,7 @@ CmFileOpen(void)
     free(file);
   }
 
-  if (update_file_obj_multi(obj, &farray)) {
+  if (update_file_obj_multi(obj, &farray, TRUE)) {
     FileWinUpdate(TRUE);
   }
   arraydel(&farray);
@@ -3183,7 +3183,7 @@ CmFileClose(void)
 }
 
 int
-update_file_obj_multi(struct objlist *obj, struct narray *farray)
+update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 {
   int i, j, num, *array, id0;
 
@@ -3217,6 +3217,9 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray)
 
       FileDialog(&DlgFile, obj, array[i], i < num - 1);
       ret = DialogExecute(TopLevel, &DlgFile);
+      if (ret == IDCANCEL && new_file) {
+	ret = IDDELETE;
+      }
       if (ret == IDDELETE) {
 	FitDel(obj, array[i]);
 	delobj(obj, array[i]);
@@ -3258,7 +3261,7 @@ CmFileUpdate(void)
     ret = DialogExecute(TopLevel, &DlgSelect);
   }
 
-  if (ret == IDOK && update_file_obj_multi(obj, &farray)) {
+  if (ret == IDOK && update_file_obj_multi(obj, &farray, FALSE)) {
     FileWinUpdate(TRUE);
   }
   arraydel(&farray);

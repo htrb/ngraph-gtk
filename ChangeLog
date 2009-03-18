@@ -58,8 +58,8 @@
 	* src/gtk/gtk_liststore.c (create_column): set user data with
 	"g_object_set_data()" instead of "g_object_set()".
 
-	* src/gtk/x11file.c (start_editing_type, start_editing): remove unused variable
-	"list".
+	* src/gtk/x11file.c (start_editing_type, start_editing): remove
+	unused variable "list".
 
 	* src/gtk/x11axis.c (start_editing): remove unused variable
 	"list".
