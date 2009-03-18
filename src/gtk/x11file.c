@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.79 2009/03/18 02:17:26 hito Exp $
+ * $Id: x11file.c,v 1.80 2009/03/18 02:30:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3276,37 +3276,45 @@ CmFileEdit(void)
 
   if (Menulock || GlobalLock)
     return;
+
   if (Menulocal.editor == NULL)
     return;
+
   if ((obj = chkobject("file")) == NULL)
     return;
+
   last = chkobjlastinst(obj);
-  if (last == -1)
+  if (last == -1) {
     return;
-  else if (last == 0)
+  } else if (last == 0) {
     i = 0;
-  else {
+  } else {
     CopyDialog(&DlgCopy, obj, -1, FileCB);
-    if (DialogExecute(TopLevel, &DlgCopy) == IDOK)
+    if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
       i = DlgCopy.sel;
-    else
+    } else {
       return;
+    }
   }
+
   if (i < 0)
     return;
-  argv[0] = Menulocal.editor;
-  argv[2] = NULL;
+
   if (getobj(obj, "file", i, 0, NULL, &name) == -1)
     return;
-  if (name) {
-    argv[1] = name;
-    if ((pid = fork()) >= 0) {
-      if (pid == 0) {
-	execvp(argv[0], argv);
-	exit(1);
-      } else
-	arrayadd(&ChildList, &pid);
-    }
+
+  if (name == NULL)
+    return;
+
+  argv[0] = Menulocal.editor;
+  argv[1] = name;
+  argv[2] = NULL;
+  pid = fork();
+  if (pid == 0) {
+    execvp(argv[0], argv);
+    exit(1);
+  } else if (pid > 0) {
+    arrayadd(&ChildList, &pid);
   }
 }
 
@@ -3386,24 +3394,20 @@ FileWinFileEdit(struct SubWin *d)
   if (sel < 0 || sel > d->num)
     return;
 
-  argv[0] = Menulocal.editor;
-  argv[2] = NULL;
-
   if (getobj(d->obj, "file", sel, 0, NULL, &name) == -1)
     return;
 
   if (name == NULL)
     return;
 
+  argv[0] = Menulocal.editor;
   argv[1] = name;
+  argv[2] = NULL;
   pid = fork();
-  if (pid < 0)
-    return;
-
   if (pid == 0) {
     execvp(argv[0], argv);
     exit(1);
-  } else {
+  } else if (pid > 0) {
     arrayadd(&ChildList, &pid);
   }
 }
