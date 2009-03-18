@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11file.h,v 1.2 2009/03/18 02:17:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,3 +36,4 @@ void CmFileWindow(GtkWidget *w, gpointer client_data);
 void FileWindowUnmap(GtkWidget *w, gpointer client_data);
 void CmFileWinMath(GtkWidget *w, gpointer p);
 void CmOptionFileDef(void);
+int update_file_obj_multi(struct objlist *obj, struct narray *farray);

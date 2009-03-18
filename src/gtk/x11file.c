@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.78 2009/03/10 07:58:35 hito Exp $
+ * $Id: x11file.c,v 1.79 2009/03/18 02:17:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3115,10 +3115,11 @@ CmFileNew(void)
 void
 CmFileOpen(void)
 {
-  int id, id0, ids, ide, j, perm, type, ret;
-  char *field, *name, *tmp;;
+  int id, ret;
+  char *name, *tmp;;
   char **file = NULL, **ptr;
   struct objlist *obj;
+  struct narray farray;
 
   if (Menulock || GlobalLock)
     return;
@@ -3126,18 +3127,17 @@ CmFileOpen(void)
   if ((obj = chkobject("file")) == NULL)
     return;
 
-  ids = -1;
   ret = nGetOpenFileNameMulti(TopLevel, _("Data open"), NULL,
 			      &(Menulocal.fileopendir), NULL,
 			      &file, NULL, Menulocal.changedirectory);
 
+  arrayinit(&farray, sizeof(int));
   if (ret == IDOK && file) {
     for (ptr = file; *ptr; ptr++) {
       name = *ptr;
       id = newobj(obj);
       if (id >= 0) {
-	if (ids == -1)
-	  ids = id;
+	arrayadd(&farray, &id);
 	tmp = nstrdup(name);
 	changefilename(tmp);
 	AddDataFileList(tmp);
@@ -3148,46 +3148,10 @@ CmFileOpen(void)
     free(file);
   }
 
-  FileWinUpdate(TRUE);
-
-  if (ids != -1) {
-    ide = chkobjlastinst(obj);
-    id0 = -1;
-    id = ids;
-    while (id <= ide) {
-      if (id0 != -1) {
-	for (j = 0; j < chkobjfieldnum(obj); j++) {
-	  field = chkobjfieldname(obj, j);
-	  perm = chkobjperm(obj, field);
-	  type = chkobjfieldtype(obj, field);
-	  if ((strcmp2(field, "name") != 0)
-	      && (strcmp2(field, "file") != 0)
-	      && (strcmp2(field, "fit") != 0)
-	      && ((perm & NREAD) != 0) && ((perm & NWRITE) != 0)
-	      && (type < NVFUNC))
-	    copyobj(obj, field, id, id0);
-	}
-	FitCopy(obj, id, id0);
-	id++;
-      } else {
-	FileDialog(&DlgFile, obj, id, id < ide);
-	ret = DialogExecute(TopLevel, &DlgFile);
-	if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	  FitDel(obj, id);
-	  delobj(obj, id);
-	  ide--;
-	} else if (ret == IDFAPPLY) {
-	  id0 = id;
-	  id++;
-	  set_graph_modified();
-	} else {
-	  id++;
-	  set_graph_modified();
-	}
-      }
-      FileWinUpdate(TRUE);
-    }
+  if (update_file_obj_multi(obj, &farray)) {
+    FileWinUpdate(TRUE);
   }
+  arraydel(&farray);
 }
 
 void
@@ -3218,25 +3182,74 @@ CmFileClose(void)
   arraydel(&farray);
 }
 
+int
+update_file_obj_multi(struct objlist *obj, struct narray *farray)
+{
+  int i, j, num, *array, id0;
+
+  num = arraynum(farray);
+  if (num < 1)
+    return 0;
+
+  array = (int *) arraydata(farray);
+  id0 = -1;
+
+  for (i = 0; i < num; i++) {
+    if (id0 != -1) {
+      for (j = 0; j < chkobjfieldnum(obj); j++) {
+	int perm, type;
+	char *field;
+
+	field = chkobjfieldname(obj, j);
+	perm = chkobjperm(obj, field);
+	type = chkobjfieldtype(obj, field);
+	if (strcmp2(field, "name") &&
+	    strcmp2(field, "file") &&
+	    strcmp2(field, "fit") &&
+	    ((perm & NREAD) && (perm & NWRITE) && (type < NVFUNC))) {
+	  copyobj(obj, field, array[i], array[id0]);
+	}
+      }
+      FitCopy(obj, array[i], array[id0]);
+      set_graph_modified();
+    } else {
+      int ret;
+
+      FileDialog(&DlgFile, obj, array[i], i < num - 1);
+      ret = DialogExecute(TopLevel, &DlgFile);
+      if (ret == IDDELETE) {
+	FitDel(obj, array[i]);
+	delobj(obj, array[i]);
+	set_graph_modified();
+	for (j = i + 1; j < num; j++)
+	  array[j]--;
+      } else if (ret == IDFAPPLY) {
+	id0 = i;
+      }
+    }
+  }
+
+  return 1;
+}
+
 void
 CmFileUpdate(void)
 {
   struct objlist *obj;
-  int i, j;
-  int *array, num;
-  int id0, perm, type, ret;
-  char *field;
+  int ret;
   struct narray farray;
   int last;
 
   if (Menulock || GlobalLock)
     return;
+
   if ((obj = chkobject("file")) == NULL)
     return;
+
   last = chkobjlastinst(obj);
-  if (last == -1)
+  if (last == -1) {
     return;
-  else if (last == 0) {
+  } else if (last == 0) {
     arrayinit(&farray, sizeof(int));
     arrayadd(&farray, &last);
     ret = IDOK;
@@ -3244,39 +3257,8 @@ CmFileUpdate(void)
     SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
     ret = DialogExecute(TopLevel, &DlgSelect);
   }
-  if (ret == IDOK) {
-    num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
-    id0 = -1;
-    for (i = 0; i < num; i++) {
-      if (id0 != -1) {
-	for (j = 0; j < chkobjfieldnum(obj); j++) {
-	  field = chkobjfieldname(obj, j);
-	  perm = chkobjperm(obj, field);
-	  type = chkobjfieldtype(obj, field);
-	  if ((strcmp2(field, "name") != 0)
-	      && (strcmp2(field, "file") != 0)
-	      && (strcmp2(field, "fit") != 0)
-	      && ((perm & NREAD) != 0) && ((perm & NWRITE) != 0)
-	      && (type < NVFUNC))
-	    copyobj(obj, field, array[i], array[id0]);
-	}
-	FitCopy(obj, array[i], array[id0]);
-	set_graph_modified();
-      } else {
-	FileDialog(&DlgFile, obj, array[i], i < num - 1);
-	ret = DialogExecute(TopLevel, &DlgFile);
-	if (ret == IDDELETE) {
-	  FitDel(obj, array[i]);
-	  delobj(obj, array[i]);
-	  set_graph_modified();
-	  for (j = i + 1; j < num; j++)
-	    array[j]--;
-	} else if (ret == IDFAPPLY) {
-	  id0 = i;
-	}
-      }
-    }
+
+  if (ret == IDOK && update_file_obj_multi(obj, &farray)) {
     FileWinUpdate(TRUE);
   }
   arraydel(&farray);

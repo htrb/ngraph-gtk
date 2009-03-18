@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.121 2009/03/12 11:57:57 hito Exp $
+ * $Id: x11view.c,v 1.122 2009/03/18 02:17:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -809,15 +809,14 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   struct objlist *dobj;
   int did, id, limit;
   char *dfield, *dinst;
-  int i, j;
+  int i;
   struct narray *eval;
   int evalnum;
   int minx, miny, maxx, maxy;
   struct savedstdio save;
   char mes[256];
   struct narray dfile;
-  int *ddata, dnum;
-  int ret, ret2;
+  int ret;
 
   ret = FALSE;
   ignorestdio(&save);
@@ -873,25 +872,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   ProgressDialogFinalize();
   ResetStatusBar();
 
-  dnum = arraynum(&dfile);
-  ddata = (int *) arraydata(&dfile);
-
-  for (i = 0; i < dnum; i++) {
-    id = ddata[i];
-    FileDialog(&DlgFile, fileobj, id, i < dnum - 1);
-    ret2 = DialogExecute(TopLevel, &DlgFile);
-    if (ret2 == IDDELETE) {
-      FitDel(fileobj, id);
-      delobj(fileobj, id);
-      set_graph_modified();
-      for (j = i + 1; j < dnum; j++) {
-	if (ddata[j] > id) {
-	  ddata[j] = ddata[j] - 1;
-	}
-      }
-    }
-    ret = TRUE;
-  }
+  ret = update_file_obj_multi(fileobj, &dfile);
   arraydel(&dfile);
 
  End:
