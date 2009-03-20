@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.34 2009/02/26 08:51:49 hito Exp $
+ * $Id: main.c,v 1.35 2009/03/20 15:05:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -111,18 +111,18 @@ void resizeconsole(int col, int row);
 // XtAppContext Application=NULL;
 char *AppName = "Ngraph", *AppClass = "Ngraph", *Home;
 char *License = "\
-This program is free software; you can redistribute it and/or modify\
-it under the terms of the GNU General Public License as published by\
-the Free Software Foundation; either version 2 of the License, or\
+This program is free software; you can redistribute it and/or modify \
+it under the terms of the GNU General Public License as published by \
+the Free Software Foundation; either version 2 of the License, or \
 (at your option) any later version.\n\
 \n\
-This program is distributed in the hope that it will be useful,\
-but WITHOUT ANY WARRANTY; without even the implied warranty of\
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\
+This program is distributed in the hope that it will be useful, \
+but WITHOUT ANY WARRANTY; without even the implied warranty of \
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
 GNU General Public License for more details.\n\
 \n\
-You should have received a copy of the GNU General Public License\
-along with this program; if not, write to the Free Software\
+You should have received a copy of the GNU General Public License \
+along with this program; if not, write to the Free Software \
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\
 ";
 
