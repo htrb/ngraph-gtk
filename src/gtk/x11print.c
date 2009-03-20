@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.35 2009/03/12 11:57:57 hito Exp $
+ * $Id: x11print.c,v 1.36 2009/03/20 05:51:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -344,8 +344,6 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_widget_set_sensitive(d->dlabel, FALSE);
     gtk_widget_set_sensitive(d->dpi, FALSE);
 
-    gtk_widget_set_sensitive(d->dlabel, TRUE);
-    gtk_widget_set_sensitive(d->dpi, TRUE);
     gtk_widget_set_sensitive(d->version, TRUE);
     gtk_widget_set_sensitive(d->vlabel, TRUE);
     gtk_widget_set_sensitive(d->t2p, TRUE);
@@ -373,8 +371,6 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_widget_set_sensitive(d->vlabel, FALSE);
 
     gtk_widget_set_sensitive(d->t2p, TRUE);
-    gtk_widget_set_sensitive(d->dlabel, TRUE);
-    gtk_widget_set_sensitive(d->dpi, TRUE);
     break;
   case MenuIdOutputSVGFile:
     for (i = 0; PsVersion[i]; i++) {

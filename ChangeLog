@@ -1,3 +1,8 @@
+2009-03-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (OutputImageDialogSetupItem): sensitivity of
+	dpi settings is FALSE for ps and pdf output.
+
 2009-03-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ViewerWinFileUpdate): use "update_file_obj_multi()".
