@@ -48,270 +48,278 @@ check_set() {
 
 IGNOREEOF=0
 
-new menu
-system:0:login_shell=menu:0:menu
+if new menu
+then
+    LOGIN_SHELL="menu:0:menu"
+    system:0:login_shell="$LOGIN_SHELL"
+fi
 #
 if [ -f "${NGRAPHHOME}/.Ngraph.ngp" ]; then
-        . "${NGRAPHHOME}/.Ngraph.ngp"
+    . "${NGRAPHHOME}/.Ngraph.ngp"
 elif [ -f "${NGRAPHLIB}/.Ngraph.ngp" ]; then
-        . "${NGRAPHLIB}/.Ngraph.ngp"
+    . "${NGRAPHLIB}/.Ngraph.ngp"
 fi
 #
 LOADSETTINGS=0
 #
 while [ "$1" ]
 do
-	case $1 in
+    case $1 in
 	*.prm|*.PRM|*.ngp|*.NGP)
-		system:0:login_shell="menu:0:menu $1"
-	;;
+	    if [ -n "$LOGIN_SHELL" ]
+	    then
+		system:0:login_shell="$LOGIN_SHELL $1"
+	    else
+		. $1
+	    fi
+	    ;;
 	*.gra|*.GRA)
-		for drawable in `derive -instance draw`
-		do
-			del $drawable:0-!
-		done
-		new merge file:"$1"
-	;;
+	    for drawable in `derive -instance draw`
+	    do
+		del $drawable:0-!
+	    done
+	    new merge file:"$1"
+	    ;;
 	-x)
-		shift
-		XCOLUMN=$1
-	;;
+	    shift
+	    XCOLUMN=$1
+	    ;;
 	-y)
-		shift
-		YCOLUMN=$1
-	;;
+	    shift
+	    YCOLUMN=$1
+	    ;;
 	-X)	XAXIS=0
-	;;
+	    ;;
 	-Y)	YAXIS=1
-	;;
+	    ;;
 	-U)	XAXIS=2
-	;;
+	    ;;
 	-R)	YAXIS=3
-	;;
+	    ;;
 	-d)
-		shift
-		PLOTTYPE=$1
-	;;
+	    shift
+	    PLOTTYPE=$1
+	    ;;
 	-m)
-		shift
-		MARKTYPE=$1
-	;;
+	    shift
+	    MARKTYPE=$1
+	    ;;
 	-o)
-		shift
-		MARKSIZE=$1
-	;;
+	    shift
+	    MARKSIZE=$1
+	    ;;
 	-l)
-		shift
-		LINESTYLE=$1
-	;;
+	    shift
+	    LINESTYLE=$1
+	    ;;
 	-w)
-		shift
-		LINEWIDTH=$1
-	;;
+	    shift
+	    LINEWIDTH=$1
+	    ;;
 	-c)
-		shift
-		COLORR=$1
-		shift
-		COLORG=$1
-		shift
-		COLORB=$1
-	;;
+	    shift
+	    COLORR=$1
+	    shift
+	    COLORG=$1
+	    shift
+	    COLORB=$1
+	    ;;
 	-C)
-		shift
-		COLORR2=$1
-		shift
-		COLORG2=$1
-		shift
-		COLORB2=$1
-	;;
+	    shift
+	    COLORR2=$1
+	    shift
+	    COLORG2=$1
+	    shift
+	    COLORB2=$1
+	    ;;
 	-s)
-		shift
-		HEADSKIP=$1
-	;;
+	    shift
+	    HEADSKIP=$1
+	    ;;
 	-r)
-		shift
-		READSTEP=$1
-	;;
+	    shift
+	    READSTEP=$1
+	    ;;
 	-f)
-		shift
-		FINALLINE=$1
-	;;
+	    shift
+	    FINALLINE=$1
+	    ;;
 	-vx)
-		shift
-		AVERAGEX=$1
-	;;
+	    shift
+	    AVERAGEX=$1
+	    ;;
 	-vy)
-		shift
-		AVERAGEY=$1
-	;;
+	    shift
+	    AVERAGEY=$1
+	    ;;
 	-mx)
-		shift
-		MATHX=$1
-	;;
+	    shift
+	    MATHX=$1
+	    ;;
 	-my)
-		shift
-		MATHY=$1
-	;;
+	    shift
+	    MATHY=$1
+	    ;;
 	-ex)
-		shift
-		axis:0:type=$1
-	;;
+	    shift
+	    axis:0:type=$1
+	    ;;
 	-ey)
-		shift
-		axis:1:type=$1
-	;;
+	    shift
+	    axis:1:type=$1
+	    ;;
 	-zx)
-		shift
-		axis:0:min=$1
-		shift
-		axis:0:max=$1
-		shift
-		axis:0:inc=$1
-	;;
+	    shift
+	    axis:0:min=$1
+	    shift
+	    axis:0:max=$1
+	    shift
+	    axis:0:inc=$1
+	    ;;
 	-zy)
-		shift
-		axis:1:min=$1
-		shift
-		axis:1:max=$1
-		shift
-		axis:1:inc=$1
-	;;
+	    shift
+	    axis:1:min=$1
+	    shift
+	    axis:1:max=$1
+	    shift
+	    axis:1:inc=$1
+	    ;;
 	-g)
-		LOADSETTINGS=1
-	;;
+	    LOADSETTINGS=1
+	    ;;
 	-n)
-		echo '#!ngraph'
-		echo '#%creator:' ${system:0:name}
-		echo '#%version:' ${system:0:version}
-		for i in `derive -instance draw`
-		do
-			get ${i}:0-! -id -field save
-		done
-		get gra:0 -id -field save
-		del system:0
-	;;
+	    echo '#!ngraph'
+	    echo '#%creator:' ${system:0:name}
+	    echo '#%version:' ${system:0:version}
+	    for i in `derive -instance draw`
+	    do
+		get ${i}:0-! -id -field save
+	    done
+	    get gra:0 -id -field save
+	    del system:0
+	    ;;
 	-p)
-		check_file $2
-		clear_viewer
-		. $2
-		SHOW_DIALOG=2
-		if [ -n "$3" ]
-		then
-			SHOW_DIALOG=0
-		fi
-		menu::print false $SHOW_DIALOG
-		del system:0
-	;;
+	    check_file $2
+	    clear_viewer
+	    . $2
+	    SHOW_DIALOG=2
+	    if [ -n "$3" ]
+	    then
+		SHOW_DIALOG=0
+	    fi
+	    menu::print false $SHOW_DIALOG
+	    del system:0
+	    ;;
 	-P)
-		check_file $2
-		clear_viewer
-		. $2
-		new gra2prn name=OUTPUT
-		gra2prn::driver=gra2ps
-		gra2prn::prn=" | lpr"
-		gra::device=gra2prn:OUTPUT
-		gra::open
-		gra::draw
-		gra::close
-		del system:0
-	;;
+	    check_file $2
+	    clear_viewer
+	    . $2
+	    new gra2prn name=OUTPUT
+	    gra2prn::driver=gra2ps
+	    gra2prn::prn=" | lpr"
+	    gra::device=gra2prn:OUTPUT
+	    gra::open
+	    gra::draw
+	    gra::close
+	    del system:0
+	    ;;
 	-png)
-		save_image "$2" png `basename $2 .ngp`.png
-		del system:0
-	;;
+	    save_image "$2" png `basename $2 .ngp`.png
+	    del system:0
+	    ;;
 	-ps)
-		save_image "$2" ps3 `basename $2 .ngp`.ps
-		del system:0
-	;;
+	    save_image "$2" ps3 `basename $2 .ngp`.ps
+	    del system:0
+	    ;;
 	-eps)
-		save_image "$2" eps3 `basename $2 .ngp`.eps
-		del system:0
-	;;
+	    save_image "$2" eps3 `basename $2 .ngp`.eps
+	    del system:0
+	    ;;
 	-pdf)
-		save_image "$2" pdf `basename $2 .ngp`.pdf
-		del system:0
-	;;
+	    save_image "$2" pdf `basename $2 .ngp`.pdf
+	    del system:0
+	    ;;
 	-svg)
-		save_image "$2" svg1.1 `basename $2 .ngp`.svg
-		del system:0
-	;;
+	    save_image "$2" svg1.1 `basename $2 .ngp`.svg
+	    del system:0
+	    ;;
 	-gra)
-		check_file $2
-		clear_viewer
-		. $2
-		new gra2file name=OUTPUT
-		gra2file::file=`basename $2 .ngp`.gra
-		gra::device=gra2file:OUTPUT
-		gra::open
-		gra::draw
-		gra::close
-		del gra
-		del gra2file
-		del system:0
-	;;
+	    check_file $2
+	    clear_viewer
+	    . $2
+	    new gra2file name=OUTPUT
+	    gra2file::file=`basename $2 .ngp`.gra
+	    gra::device=gra2file:OUTPUT
+	    gra::open
+	    gra::draw
+	    gra::close
+	    del gra
+	    del gra2file
+	    del system:0
+	    ;;
 	-h|-help|--help)
-		echo ${system::name} version ${system::version}
-		echo ${system::copyright}
-		echo 'Usage: ngraph [ options ] [ data | NGP | PRM ]'
-		echo 'valid options:'
-		echo ' -x column -y column     data column'
-		echo ' -X -Y -U -R             axis'
-		echo ' -d type                 plot type'
-		echo ' -m type -o size         mark type and size'
-		echo ' -l style -w width       line style and width'
-		echo ' -c R G B -C R G B       plot color (1st and 2nd)'
-		echo ' -s line                 head skip'
-		echo ' -r step                 read step'
-		echo ' -f line                 finale line'
-		echo ' -vx num -vy num         neighbour average'
-		echo ' -mx math -my math       math transformation'
-		echo ' -ex type -ey type       scale type'
-		echo ' -zx min max inc         axis settings'
-		echo ' -zy min max inc         axis settings'
-		echo ' -g                      load settings from data file'
-		echo ' -png                    save png file'
-		echo ' -pdf                    save pdf file'
-		echo ' -ps                     save ps file'
-		echo ' -eps                    save eps file'
-		echo ' -svg                    save svg file'
-		echo ' -gra                    save gra file'
-		echo ' -n                      output ngp-file to stdout'
-		del system:0
-	;;
+	    echo ${system::name} version ${system::version}
+	    echo ${system::copyright}
+	    echo 'Usage: ngraph [ options ] [ data | NGP | PRM ]'
+	    echo 'valid options:'
+	    echo ' -x column -y column     data column'
+	    echo ' -X -Y -U -R             axis'
+	    echo ' -d type                 plot type'
+	    echo ' -m type -o size         mark type and size'
+	    echo ' -l style -w width       line style and width'
+	    echo ' -c R G B -C R G B       plot color (1st and 2nd)'
+	    echo ' -s line                 head skip'
+	    echo ' -r step                 read step'
+	    echo ' -f line                 finale line'
+	    echo ' -vx num -vy num         neighbour average'
+	    echo ' -mx math -my math       math transformation'
+	    echo ' -ex type -ey type       scale type'
+	    echo ' -zx min max inc         axis settings'
+	    echo ' -zy min max inc         axis settings'
+	    echo ' -g                      load settings from data file'
+	    echo ' -png                    save png file'
+	    echo ' -pdf                    save pdf file'
+	    echo ' -ps                     save ps file'
+	    echo ' -eps                    save eps file'
+	    echo ' -svg                    save svg file'
+	    echo ' -gra                    save gra file'
+	    echo ' -n                      output ngp-file to stdout'
+	    del system:0
+	    ;;
 	-v|-version|--version)
-		echo ${system::name} version ${system::version}
-		echo ${system::copyright}
-		del system:0
-	;;
+	    echo ${system::name} version ${system::version}
+	    echo ${system::copyright}
+	    del system:0
+	    ;;
 	*)
-		new file file:$1
-		check_set file x $XCOLUMN
-		check_set file y $YCOLUMN
-		check_set file type $PLOTTYPE
-		check_set file mark_type $MARKTYPE
-		check_set file mark_size $MARKSIZE
-		check_set file line_style $LINESTYLE
-		check_set file line_width $LINEWIDTH
-		check_set file R $COLORR
-		check_set file G $COLORG
-		check_set file B $COLORB
-		check_set file R2 $COLORR2
-		check_set file G2 $COLORG2
-		check_set file B2 $COLORB2
-		check_set file head_skip $HEADSKIP
-		check_set file read_step $READSTEP
-		check_set file final_line $FINALLINE
-		check_set file smooth_x $AVERAGEX
-		check_set file smooth_y $AVERAGEY
-		check_set file math_x $MATHX
-		check_set file math_y $MATHY
-		check_set file axis_x "$XAXIS" axis
-		check_set file axis_y "$YAXIS" axis
-		if [ $LOADSETTINGS = 1 ]; then
-			file::load_settings
-		fi
-	esac
-	shift
+	    new file file:$1
+	    check_set file x $XCOLUMN
+	    check_set file y $YCOLUMN
+	    check_set file type $PLOTTYPE
+	    check_set file mark_type $MARKTYPE
+	    check_set file mark_size $MARKSIZE
+	    check_set file line_style $LINESTYLE
+	    check_set file line_width $LINEWIDTH
+	    check_set file R $COLORR
+	    check_set file G $COLORG
+	    check_set file B $COLORB
+	    check_set file R2 $COLORR2
+	    check_set file G2 $COLORG2
+	    check_set file B2 $COLORB2
+	    check_set file head_skip $HEADSKIP
+	    check_set file read_step $READSTEP
+	    check_set file final_line $FINALLINE
+	    check_set file smooth_x $AVERAGEX
+	    check_set file smooth_y $AVERAGEY
+	    check_set file math_x $MATHX
+	    check_set file math_y $MATHY
+	    check_set file axis_x "$XAXIS" axis
+	    check_set file axis_y "$YAXIS" axis
+	    if [ $LOADSETTINGS = 1 ]; then
+		file::load_settings
+	    fi
+    esac
+    shift
 done
 
 for i in check_file clear_viewer save_image check_set LOADSETTINGS
