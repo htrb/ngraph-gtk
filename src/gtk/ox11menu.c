@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.68 2009/03/23 08:54:48 hito Exp $
+ * $Id: ox11menu.c,v 1.69 2009/03/23 11:58:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1561,6 +1561,19 @@ mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
+static void
+SetCaption(int modified)
+{
+  char buf[1024], *file;
+
+  getobj(Menulocal.obj, "ngp", 0, 0, NULL, &file);
+
+  snprintf(buf, sizeof(buf), "%s%s - Ngraph",
+	   (modified) ? "*" : "",
+	   (file) ? file : _("Unsaved Graph"));
+  gtk_window_set_title(GTK_WINDOW(TopLevel), buf);
+}
+
 static int
 mxmodified(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
@@ -1570,9 +1583,8 @@ mxmodified(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 0;
 
   modified = * (int *) argv[2];
-  //  modified = ();
 
-  Draw(FALSE);
+  SetCaption(modified);
   return 0;
 }
 
@@ -1589,28 +1601,26 @@ get_graph_modified(void)
   return a;
 }
 
-void
-set_graph_modified(void)
+static void
+graph_modified_sub(int a)
 {
-  int a = 1;
-
   if (Menulocal.obj == NULL)
     return;
 
   putobj(Menulocal.obj, "modified", 0, &a);
-  SetCaption();
+  SetCaption(a);
+}
+
+void
+set_graph_modified(void)
+{
+  graph_modified_sub(1);
 }
 
 void
 reset_graph_modified(void)
 {
-  int a = 0;
-
-  if (Menulocal.obj == NULL)
-    return;
-
-  putobj(Menulocal.obj, "modified", 0, &a);
-  SetCaption();
+  graph_modified_sub(0);
 }
 
 static struct objtable gtkmenu[] = {

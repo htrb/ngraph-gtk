@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.80 2009/03/12 11:57:57 hito Exp $
+ * $Id: x11menu.c,v 1.81 2009/03/23 11:58:39 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1825,7 +1825,7 @@ application(char *file)
   if (create_cursor())
     return;
 
-  SetCaption();
+  reset_graph_modified();
   SetCursor(GDK_LEFT_PTR);
 
   putstderr = mgtkputstderr;
@@ -2038,19 +2038,6 @@ void
 ResetStatusBar(void)
 {
   ResetStatusBarSub(NgraphApp.Message1);
-}
-
-void
-SetCaption(void)
-{
-  char buf[1024], *file;
-
-  getobj(Menulocal.obj, "ngp", 0, 0, NULL, &file);
-
-  snprintf(buf, sizeof(buf), "%s%s - Ngraph",
-	   (get_graph_modified()) ? "*" : "",
-	   (file) ? file : _("Unsaved Graph"));
-  gtk_window_set_title(GTK_WINDOW(TopLevel), buf);
 }
 
 unsigned int

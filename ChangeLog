@@ -1,5 +1,13 @@
 2009-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11menu.c (SetCaption, graph_modified_sub): add.
+	(set_graph_modified, reset_graph_modified): use
+	"graph_modified_sub()".
+	(gtkmenu): field "modified" use function "mxmodified".
+	(mxmodified): add.
+
+	* src/gtk/x11menu.c (SetCaption): remove.
+
 	* src/ofile.c (f2dload_sub): add.
 	(f2dload, f2dloaddum): use "f2dload_sub()".
 

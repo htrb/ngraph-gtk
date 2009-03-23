@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.32 2009/03/12 11:57:57 hito Exp $
+ * $Id: x11menu.h,v 1.33 2009/03/23 11:58:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -276,7 +276,6 @@ void AxisWinUpdate(int clear);
 void UpdateAll(void);
 void UpdateAll2(void);
 void ChangePage(void);
-void SetCaption(void);
 void SetCursor(unsigned int type);
 unsigned int GetCursor(void);
 void SetPoint(struct Viewer *d, int x, int y);
