@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.81 2009/03/18 15:20:34 hito Exp $
+ * $Id: x11file.c,v 1.82 2009/03/23 08:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2225,9 +2225,7 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
   lastinst = chkobjlastinst(aobj);
   for (j = 0; j <= lastinst; j++) {
     getobj(aobj, "group", j, 0, NULL, &name);
-    if (name == NULL) {
-      name = "";
-    }
+    name = CHK_STR(name);
     combo_box_append_text(d->xaxis, name);
     combo_box_append_text(d->yaxis, name);
   }
@@ -4396,9 +4394,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   lastinst = chkobjlastinst(aobj);
   for (j = 0; j <= lastinst; j++) {
     getobj(aobj, "group", j, 0, NULL, &name);
-    if (name == NULL) {
-      name = "";
-    }
+    name = CHK_STR(name);
     combo_box_append_text(GTK_WIDGET(cbox), name);
   }
 

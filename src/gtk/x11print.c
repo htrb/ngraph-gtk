@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.36 2009/03/20 05:51:27 hito Exp $
+ * $Id: x11print.c,v 1.37 2009/03/23 08:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -75,7 +75,6 @@ static void
 DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
 {
   int a, i, j;
-  char *s;
   struct extprinter *pcur;
   struct DriverDialog *d;
   char buf[1024];
@@ -103,12 +102,7 @@ DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
 	gtk_entry_set_text(GTK_ENTRY(d->file), "");
       }
 
-      if (pcur->option)
-	s = pcur->option;
-      else
-	s = "";
-
-      gtk_entry_set_text(GTK_ENTRY(d->option), s);
+      gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(pcur->option));
       break;
     }
     pcur = pcur->next;

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.67 2009/03/12 11:57:57 hito Exp $
+ * $Id: ox11menu.c,v 1.68 2009/03/23 08:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1561,6 +1561,21 @@ mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 }
 
+static int
+mxmodified(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int modified;
+
+  if (argv[2] == NULL)
+    return 0;
+
+  modified = * (int *) argv[2];
+  //  modified = ();
+
+  Draw(FALSE);
+  return 0;
+}
+
 int
 get_graph_modified(void)
 {
@@ -1605,7 +1620,7 @@ static struct objtable gtkmenu[] = {
   {"ngp", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"fullpath_ngp", NSTR, NREAD | NWRITE, mxfullpathngp, NULL, 0},
   {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
-  {"modified", NBOOL, NREAD | NWRITE, NULL, NULL, 0},
+  {"modified", NBOOL, NREAD | NWRITE, mxmodified, NULL, 0},
   {"dpi", NINT, NREAD | NWRITE, mxdpi, NULL, 0},
   {"redraw_flag", NBOOL, NREAD | NWRITE, mxredrawflag, NULL, 0},
   {"redraw_num", NINT, NREAD | NWRITE, mxredraw_num, NULL, 0},

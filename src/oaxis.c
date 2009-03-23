@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.27 2009/03/09 10:21:48 hito Exp $
+ * $Id: oaxis.c,v 1.28 2009/03/23 08:54:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2239,7 +2239,7 @@ axisautoscale(struct objlist *obj,char *inst,char *rval,
   room=*(int *)argv[3];
 
   if (axisautoscalefile(obj,inst,fileobj,&min,&max))
-    return 1;
+    return 0;
 
   axischangescale(obj,inst,&min,&max,&inc,room);
   _getobj(obj,"min",inst,&omin);

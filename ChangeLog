@@ -1,3 +1,21 @@
+2009-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2dload_sub): add.
+	(f2dload, f2dloaddum): use "f2dload_sub()".
+
+	* src/gtk/x11file.c (FileDialogSetupItemCommon,start_editing): use
+	"CHK_STR()".
+
+	* src/gtk/x11axis.c (AxisDialogSetup, AxisCB)
+	(AxisDialogSetupItem, AxisPosDialogSetupItem): use "CHK_STR()".
+
+	* src/gtk/x11print.c (DriverDialogSelectCB): use "CHK_STR()".
+
+	* src/gtk/ox11dlg.c (dlgconfirm): use "CHK_STR()".
+
+	* src/oaxis.c (axisautoscale): return 0 even if the return value
+	of axisautoscalefile() is not 0.
+
 2009-03-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (OutputImageDialogSetupItem): sensitivity of

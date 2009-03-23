@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.68 2009/03/10 05:38:13 hito Exp $
+ * $Id: ofile.c,v 1.69 2009/03/23 08:54:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5785,15 +5785,44 @@ f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 }
 
+static int
+f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand)
+{
+  struct objlist *sys;
+  char *exdir, *file2;
+  int len;
+  char *file, *fullname, *oldfile;
+
+  sys = getobject("system");
+  getobj(sys, "expand_file", 0, 0, NULL, expand);
+
+  if ((file = getitok2(&s, &len, " \t")) == NULL)
+    return 1;
+
+  getobj(sys, "expand_dir", 0, 0, NULL, &exdir);
+
+  file2 = getfilename(CHK_STR(exdir), "/", file);
+  memfree(file);
+
+  fullname = getfullpath(file2);
+  if (fullname == NULL) {
+    memfree(file2);
+    return 1;
+  }
+  memfree(file2);
+  _getobj(obj, "file", inst, &oldfile);
+  memfree(oldfile);
+  _putobj(obj, "file", inst, fullname);
+  return 0;
+}
+
 static int 
 f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct objlist *sys;
   int expand;
-  char *exdir,*file2;
   char *s;
   int len;
-  char *file,*fullname,*oldfile,*mes;
+  char *fullname, *mes;
   time_t ftime;
   int mkdata;
   char buf[257];
@@ -5801,22 +5830,9 @@ f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   FILE *fp;
   HANDLE fd;
 
-  sys=getobject("system");
-  getobj(sys,"expand_file",0,0,NULL,&expand);
-  s=(char *)argv[2];
-  if ((file=getitok2(&s,&len," \t"))==NULL) return 1;
-  getobj(sys,"expand_dir",0,0,NULL,&exdir);
-  if (exdir==NULL) exdir="";
-  file2=getfilename(exdir,"/",file);
-  memfree(file);
-  if ((fullname=getfullpath(file2))==NULL) {
-    memfree(file2);
+  if (f2dload_sub(obj, inst, argv[2], &expand))
     return 1;
-  }
-  memfree(file2);
-  _getobj(obj,"file",inst,&oldfile);
-  memfree(oldfile);
-  _putobj(obj,"file",inst,fullname);
+
   if (expand) {
     if (gettimeval(s,&ftime)) return 1;
     if (access(fullname,04)!=0) mkdata=TRUE;
@@ -5890,30 +5906,9 @@ f2dstoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 f2dloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct objlist *sys;
   int expand;
-  char *exdir,*file2;
-  char *s;
-  int len;
-  char *file,*fullname,*oldfile;
 
-  sys=getobject("system");
-  getobj(sys,"expand_file",0,0,NULL,&expand);
-  s=(char *)argv[2];
-  if ((file=getitok2(&s,&len," \t"))==NULL) return 1;
-  getobj(sys,"expand_dir",0,0,NULL,&exdir);
-  if (exdir==NULL) exdir="";
-  file2=getfilename(exdir,"/",file);
-  memfree(file);
-  if ((fullname=getfullpath(file2))==NULL) {
-    memfree(file2);
-    return 1;
-  }
-  memfree(file2);
-  _getobj(obj,"file",inst,&oldfile);
-  memfree(oldfile);
-  _putobj(obj,"file",inst,fullname);
-  return 0;
+  return f2dload_sub(obj, inst, argv[2], &expand);
 }
 
 static int 

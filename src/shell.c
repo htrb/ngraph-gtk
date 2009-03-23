@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.19 2009/02/22 08:53:58 hito Exp $
+ * $Id: shell.c,v 1.20 2009/03/23 08:54:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3897,7 +3897,7 @@ void sherror2(int code,char *mes)
 
 void sherror3(char *cmd,int code,char *mes)
 {
-  if (cmd==NULL) cmd="";
+  cmd = CHK_STR(cmd);
   if (mes!=NULL) {
     printfstderr("shell: %.64s: %.64s `%.64s'.\n",
                    cmd,cmderrorlist[code-100],mes);
@@ -3908,7 +3908,7 @@ void sherror3(char *cmd,int code,char *mes)
 
 void sherror4(char *cmd,int code)
 {
-  if (cmd==NULL) cmd="";
+  cmd = CHK_STR(cmd);
   printfstderr("shell: %.64s: %.64s\n",cmd,cmderrorlist[code-100]);
 }
 

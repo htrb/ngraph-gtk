@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.48 2009/03/10 07:58:35 hito Exp $
+ * $Id: x11axis.c,v 1.49 2009/03/23 08:54:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -113,8 +113,7 @@ AxisCB(struct objlist *obj, int id)
     return NULL;
   getobj(obj, "direction", id, 0, NULL, &dir);
   getobj(obj, "group", id, 0, NULL, &name);
-  if (name == NULL)
-    name = "";
+  name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
   snprintf(s, CB_BUF_SIZE, "%-10s %.6s dir:%d", name, valstr, dir);
   memfree(valstr);
@@ -151,8 +150,7 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
 
   for (j = 0; j <= lastinst; j++) {
     getobj(aobj, "group", j, 0, NULL, &name);
-    if (name == NULL)
-      name = "";
+    name = CHK_STR(name);
 
     combo_box_append_text(d->axisx, name);
     combo_box_append_text(d->axisy, name);
@@ -1096,8 +1094,7 @@ AxisPosDialogSetupItem(GtkWidget *w, struct AxisPosDialog *d, int id)
   combo_box_clear(d->adjust);
   for (j = 0; j <= lastinst; j++) {
     getobj(d->Obj, "group", j, 0, NULL, &name);
-    if (name == NULL)
-      name = "";
+    name = CHK_STR(name);
     combo_box_append_text(d->adjust, name);
   }
 
@@ -1883,8 +1880,7 @@ AxisDialogSetupItem(GtkWidget *w, struct AxisDialog *d, int id)
   lastinst = chkobjlastinst(d->Obj);
   for (j = 0; j <= lastinst; j++) {
     getobj(d->Obj, "group", j, 0, NULL, &name);
-    if (name == NULL)
-      name = "";
+    name =CHK_STR(name);
     combo_box_append_text(d->ref, name);
   }
 
@@ -2076,8 +2072,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct AxisDialog *) data;
   getobj(d->Obj, "group", d->Id, 0, NULL, &group);
-  if (group == NULL)
-    group = "";
+  group = CHK_STR(group);
   snprintf(title, sizeof(title), _("Axis %d %s"), d->Id, group);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
