@@ -1,6 +1,11 @@
 2009-03-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/oprm.c (remarkconv): use "greektable_num()".
+
 	* src/gra.c (greektable_num): add.
+	(FONTTBL_NUM): add.
+	(GREEK_TBL_NUM): add.
+	(GRAinputold): check index if "fonttbl[]".
 
 2009-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
