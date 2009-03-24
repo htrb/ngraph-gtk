@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.13 2009/02/20 10:00:10 hito Exp $
+ * $Id: shellcm.c,v 1.14 2009/03/24 07:24:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -195,7 +195,7 @@ int cmexit(struct nshell *nshell,int argc,char **argv)
 }
 
 #if USE_HASH
-int
+static int
 printexp(struct nhash *h, void *data)
 {
   printfstdout("%.256s\n", h->key);
@@ -564,7 +564,8 @@ int cmunset(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-void objdisp(struct objlist *root,struct objlist *parent,int *tab)
+static void 
+objdisp(struct objlist *root,struct objlist *parent,int *tab)
 {
   int i;
   struct objlist *objcur;
@@ -582,7 +583,8 @@ void objdisp(struct objlist *root,struct objlist *parent,int *tab)
   (*tab)--;
 }
 
-void dispfield(struct objlist *obj,char *name)
+static void 
+dispfield(struct objlist *obj,char *name)
 {
   int j,ftype;
   char perm[4],type[10];
@@ -722,7 +724,8 @@ int cmobject(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-void dispparent(struct objlist *parent,int noinst)
+static void 
+dispparent(struct objlist *parent,int noinst)
 {
   struct objlist *ocur;
 
@@ -1137,7 +1140,7 @@ int cmexe(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int
+static int
 str_calc(char *str, double *val, int *r)
 {
   int rcode, ecode = 0, i;

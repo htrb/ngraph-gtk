@@ -1,5 +1,5 @@
 /* 
- * $Id: shellux.c,v 1.4 2009/01/06 08:08:29 hito Exp $
+ * $Id: shellux.c,v 1.5 2009/03/24 07:24:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -140,7 +140,8 @@ int cmsleep(struct nshell *nshell,int argc,char **argv)
 
 #endif
 
-int testexpand(int pre,int *oppo,int *numpo,
+static int 
+testexpand(int pre,int *oppo,int *numpo,
                int numbuf[],char *numbufc[],char opbuf[],int prebuf[])
 {
   int argnum;

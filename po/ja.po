@@ -6,13 +6,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-03-23 21:03+0900\n"
+"POT-Creation-Date: 2009-03-24 16:27+0900\n"
 "PO-Revision-Date: 2009-03-06 16:55+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: src/gtk/ox11menu.c:1573
+msgid "Unsaved Graph"
+msgstr "新規グラフ"
 
 #: src/gtk/ox11dlg.c:437
 msgid "Open file"
@@ -2208,9 +2212,6 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
-
-#~ msgid "Unsaved Graph"
-#~ msgstr "新規グラフ"
 
 #~ msgid "_Hide"
 #~ msgstr "非表示(_H)"
