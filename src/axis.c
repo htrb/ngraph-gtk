@@ -1,5 +1,5 @@
 /* 
- * $Id: axis.c,v 1.2 2008/08/20 02:15:25 hito Exp $
+ * $Id: axis.c,v 1.3 2009/03/24 10:29:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,17 +34,20 @@
 #define FALSE 0
 
 
-double scale(double x)
+double 
+scale(double x)
 {
   return pow(10.0,cutdown(log10(fabs(x))));
 }
 
-double roundmin(double min,double sc)
+double 
+roundmin(double min,double sc)
 {
   return nraise(min/sc)*sc;
 }
 
-void getaxispositionfirst(struct axislocal *alocal)
+static void 
+getaxispositionfirst(struct axislocal *alocal)
 {
   double min,max,inc;
   int numlim1,numlim2,numlim3;
@@ -142,7 +145,8 @@ void getaxispositionfirst(struct axislocal *alocal)
   alocal->count=0;
 }
 
-int getaxisposition(struct axislocal *alocal,double *po)
+int 
+getaxisposition(struct axislocal *alocal,double *po)
 {
   int rcode;
   double dd;
@@ -197,7 +201,8 @@ int getaxisposition(struct axislocal *alocal,double *po)
   return rcode;
 }
 
-int getaxispositionini(struct axislocal *alocal,
+int 
+getaxispositionini(struct axislocal *alocal,
                  int type,double min,double max,double inc,int div,int tighten)
 {
   double po;

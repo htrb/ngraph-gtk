@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.17 2009/03/24 09:55:53 hito Exp $
+ * $Id: gra.c,v 1.18 2009/03/24 10:27:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,9 +42,7 @@
 #define TRUE 1
 #define FALSE 0
 
-#define GRAClimit 10
-
-struct GRAC {
+static struct GRAC {
   int open,init;
   char *objname;
   char *outputname;
@@ -93,7 +91,7 @@ struct GRAC {
 
   int oldFR,oldFG,oldFB,oldBR,oldBG,oldBB;
 
-} GRAClist[GRAClimit+1]= {
+} GRAClist[]= {
   {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
    FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
    FALSE,0,NULL,1,0,0,0,
@@ -184,7 +182,16 @@ struct GRAC {
    0,0,0,0,0,0},
 };
 
-int _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
+#define GRAClimit ((int) (sizeof(GRAClist) / sizeof(*GRAClist) - 1))
+
+static void GRAcmatchtod(double x,double y,struct cmatchtype *data);
+static int GRAinview(int GC,int x,int y);
+static int GRArectclip(int GC,int *x0,int *y0,int *x1,int *y1);
+static int GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1);
+
+
+int 
+_GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
                    struct narray **list,void *local)
 {
   int i;
@@ -208,7 +215,8 @@ int _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
   return i;
 }
 
-int _GRAopen(char *objname,char *outputname,
+int 
+_GRAopen(char *objname,char *outputname,
              struct objlist *obj,char *inst,
              int output,int charwidth,int charascent,int chardescent,
              struct narray **list,void *local)
@@ -234,7 +242,8 @@ int _GRAopen(char *objname,char *outputname,
   return i;
 }
 
-int GRAopen(char *objname,char *outputname,
+int 
+GRAopen(char *objname,char *outputname,
             struct objlist *obj,char *inst,
             int output,int charwidth,int charascent,int chardescent,
             struct narray **list,void *local)
@@ -272,7 +281,8 @@ int GRAopen(char *objname,char *outputname,
   return i;
 }
 
-int GRAreopen(int GC)
+int 
+GRAreopen(int GC)
 {
   char code;
   int cpar[6];
@@ -304,7 +314,8 @@ int GRAreopen(int GC)
   return 0;
 }
 
-int GRAopened(int GC)
+int 
+GRAopened(int GC)
 {
   if (GC<0) return -1;
   if (GC>=GRAClimit) return -1;
@@ -312,7 +323,8 @@ int GRAopened(int GC)
   return GC;
 }
 
-void _GRAclose(int GC)
+void 
+_GRAclose(int GC)
 {
   if (GC<0) return;
   if (GC>=GRAClimit) return;
@@ -322,7 +334,8 @@ void _GRAclose(int GC)
   GRAClist[GC]=GRAClist[GRAClimit];
 }
 
-void GRAclose(int GC)
+void 
+GRAclose(int GC)
 {
   int GC2,i;
 
@@ -344,7 +357,8 @@ void GRAclose(int GC)
   GRAClist[GC]=GRAClist[GRAClimit];
 }
 
-void GRAaddlist2(int GC,char *draw)
+static void 
+GRAaddlist2(int GC,char *draw)
 {
   struct narray **array;
 
@@ -358,7 +372,8 @@ void GRAaddlist2(int GC,char *draw)
   }
 }
 
-void GRAinslist2(int GC,char *draw,int n)
+static void 
+GRAinslist2(int GC,char *draw,int n)
 {
   struct narray **array;
 
@@ -372,7 +387,8 @@ void GRAinslist2(int GC,char *draw,int n)
   }
 }
 
-void GRAaddlist(int GC,struct objlist *obj,char *inst,
+void 
+GRAaddlist(int GC,struct objlist *obj,char *inst,
                 char *objname,char *field)
 {
   int oid;
@@ -384,7 +400,8 @@ void GRAaddlist(int GC,struct objlist *obj,char *inst,
   GRAaddlist2(GC,draw);
 }
 
-void GRAinslist(int GC,struct objlist *obj,char *inst,
+void 
+GRAinslist(int GC,struct objlist *obj,char *inst,
                 char *objname,char *field,int n)
 {
   int oid;
@@ -396,7 +413,8 @@ void GRAinslist(int GC,struct objlist *obj,char *inst,
   GRAinslist2(GC,draw,n);
 }
 
-void GRAdellist(int GC,int n)
+void 
+GRAdellist(int GC,int n)
 {
   struct narray **array;
 
@@ -410,7 +428,8 @@ void GRAdellist(int GC,int n)
   }
 }
 
-struct objlist *GRAgetlist(int GC,int *oid,char **field,int n)
+struct objlist *
+GRAgetlist(int GC,int *oid,char **field,int n)
 {
   struct narray **array;
   char **sdata;
@@ -426,7 +445,8 @@ struct objlist *GRAgetlist(int GC,int *oid,char **field,int n)
   return getobjlist(sdata[n],oid,field,NULL);
 }
 
-void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
+void 
+_GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
                 int addn,struct objlist *obj,char *inst,char *field)
 {
   int i;
@@ -464,12 +484,8 @@ void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
   }
 }
 
-void GRAredraw(struct objlist *obj,char *inst,int setredrawf,int redraw_num)
-{
-  GRAredraw2(obj,inst,setredrawf,redraw_num,-1,NULL,NULL,NULL);
-}
-
-void GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redraw_num,
+static void 
+GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redraw_num,
                 int addn,struct objlist *aobj,char *ainst,char *afield)
 {
   struct narray *sarray;
@@ -522,7 +538,14 @@ void GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redraw_num,
   if (GC==-1) _exeobj(gobj,"close",ginst,0,NULL);
 }
 
-int GRAdraw(int GC,char code,int *cpar,char *cstr)
+void 
+GRAredraw(struct objlist *obj,char *inst,int setredrawf,int redraw_num)
+{
+  GRAredraw2(obj,inst,setredrawf,redraw_num,-1,NULL,NULL,NULL);
+}
+
+int 
+GRAdraw(int GC,char code,int *cpar,char *cstr)
 {
   char *argv[7];
   double zoom;
@@ -649,7 +672,8 @@ int GRAdraw(int GC,char code,int *cpar,char *cstr)
   }
 }
 
-int GRAcharwidth(unsigned int ch, char *font,int size)
+static int 
+GRAcharwidth(unsigned int ch, char *font,int size)
 {
   char *argv[7];
   int i, idp;
@@ -676,7 +700,8 @@ int GRAcharwidth(unsigned int ch, char *font,int size)
   return *(int *)(GRAClist[i].inst+idp);
 }
 
-int GRAcharascent(char *font,int size)
+static int 
+GRAcharascent(char *font,int size)
 {
   char *argv[6];
   int i, idp;
@@ -702,7 +727,8 @@ int GRAcharascent(char *font,int size)
   return *(int *)(GRAClist[i].inst+idp);
 }
 
-int GRAchardescent(char *font,int size)
+static int 
+GRAchardescent(char *font,int size)
 {
   char *argv[6];
   int i, idp;
@@ -728,7 +754,8 @@ int GRAchardescent(char *font,int size)
   return *(int *)(GRAClist[i].inst+idp);
 }
 
-int GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
+int 
+GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
 {
   char code;
   int cpar[6], r;
@@ -750,7 +777,8 @@ int GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
   return (r && GRAClist[GC].output != -1) ? ERROPEN: 0;
 }
 
-void GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom)
+void 
+GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom)
 {
   *leftm=GRAClist[GC].leftm;
   *topm=GRAClist[GC].topm;
@@ -759,7 +787,8 @@ void GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom)
   *zoom=GRAClist[GC].zoom*10000;
 }
 
-void GRAdirect(int GC,int cpar[])
+static void 
+GRAdirect(int GC,int cpar[])
 {
   char code;
 
@@ -767,7 +796,8 @@ void GRAdirect(int GC,int cpar[])
   GRAdraw(GC,code,cpar,NULL);
 }
 
-int GRAend(int GC)
+int 
+GRAend(int GC)
 {
   char code;
   int cpar[1];
@@ -777,7 +807,8 @@ int GRAend(int GC)
   return GRAdraw(GC,code,cpar,NULL);
 }
 
-void GRAremark(int GC,char *s)
+static void 
+GRAremark(int GC,char *s)
 {
   char code;
   int cpar[1];
@@ -792,7 +823,8 @@ void GRAremark(int GC,char *s)
   GRAdraw(GC,code,cpar,cstr);
 }
 
-void GRAview(int GC,int x1,int y1,int x2,int y2,int clip)
+void 
+GRAview(int GC,int x1,int y1,int x2,int y2,int clip)
 {
   char code;
   int cpar[6];
@@ -809,7 +841,8 @@ void GRAview(int GC,int x1,int y1,int x2,int y2,int clip)
   GRAdraw(GC,code,cpar,NULL);
 }
 
-void GRAlinestyle(int GC,int num,int *type,int width,int cap,int join,
+void 
+GRAlinestyle(int GC,int num,int *type,int width,int cap,int join,
                   int miter)
 {
   char code;
@@ -829,7 +862,8 @@ void GRAlinestyle(int GC,int num,int *type,int width,int cap,int join,
   memfree(cpar);
 }
 
-void GRAcolor(int GC,int fr,int fg,int fb)
+void 
+GRAcolor(int GC,int fr,int fg,int fb)
 {
   char code;
   int cpar[4];
@@ -848,7 +882,8 @@ void GRAcolor(int GC,int fr,int fg,int fb)
   GRAdraw(GC,code,cpar,NULL);
 }
 
-void GRAtextstyle(int GC,char *font,int size,int space,int dir)
+void 
+GRAtextstyle(int GC,char *font,int size,int space,int dir)
 {
   char code;
   int cpar[4];
@@ -867,7 +902,8 @@ void GRAtextstyle(int GC,char *font,int size,int space,int dir)
   GRAdraw(GC,code,cpar,NULL);
 }
 
-void GRAmoveto(int GC,int x,int y)
+void 
+GRAmoveto(int GC,int x,int y)
 {
   char code;
   int cpar[3];
@@ -881,7 +917,8 @@ void GRAmoveto(int GC,int x,int y)
   GRAClist[GC].cpy=y;
 }
 
-void GRAmoverel(int GC,int x,int y)
+static void 
+GRAmoverel(int GC,int x,int y)
 {
   char code;
   int cpar[3];
@@ -900,7 +937,8 @@ void GRAmoverel(int GC,int x,int y)
   }
 }
 
-void GRAline(int GC,int x0,int y0,int x1,int y1)
+void 
+GRAline(int GC,int x0,int y0,int x1,int y1)
 {
   char code;
   int cpar[5];
@@ -916,7 +954,8 @@ void GRAline(int GC,int x0,int y0,int x1,int y1)
   }
 }
 
-void GRAlineto(int GC,int x,int y)
+void 
+GRAlineto(int GC,int x,int y)
 {
   char code;
   int cpar[3],x0,y0,x1,y1;
@@ -949,7 +988,8 @@ void GRAlineto(int GC,int x,int y)
   GRAClist[GC].cpy=y;
 }
 
-void GRAcircle(int GC,int x,int y,int rx,int ry,int cs,int ce,int fil)
+void 
+GRAcircle(int GC,int x,int y,int rx,int ry,int cs,int ce,int fil)
 {
   char code;
   int cpar[8];
@@ -966,7 +1006,8 @@ void GRAcircle(int GC,int x,int y,int rx,int ry,int cs,int ce,int fil)
   GRAdraw(GC,code,cpar,NULL);
 }
 
-void GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil)
+void 
+GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil)
 {
   char code;
   int cpar[6];
@@ -983,7 +1024,8 @@ void GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil)
   }
 }
 
-void GRAputpixel(int GC,int x,int y)
+static void 
+GRAputpixel(int GC,int x,int y)
 {
   char code;
   int cpar[3];
@@ -997,7 +1039,8 @@ void GRAputpixel(int GC,int x,int y)
   }
 }
 
-void GRAdrawpoly(int GC,int num,int *point,int fil)
+void 
+GRAdrawpoly(int GC,int num,int *point,int fil)
 {
   char code;
   int i,*cpar,num2;
@@ -1019,7 +1062,8 @@ void GRAdrawpoly(int GC,int num,int *point,int fil)
   memfree(cpar);
 }
 
-void GRAlines(int GC,int num,int *point)
+void 
+GRAlines(int GC,int num,int *point)
 {
   char code;
   int i,*cpar;
@@ -1033,7 +1077,8 @@ void GRAlines(int GC,int num,int *point)
   memfree(cpar);
 }
 
-void GRAmark(int GC,int type,int x0,int y0,int size,
+void 
+GRAmark(int GC,int type,int x0,int y0,int size,
              int fr,int fg,int fb,int br,int bg,int bb)
 {
   int x1,y1,x2,y2,r;
@@ -1612,7 +1657,8 @@ void GRAmark(int GC,int type,int x0,int y0,int size,
   }
 }
 
-void GRAouttext(int GC,char *s)
+void 
+GRAouttext(int GC,char *s)
 {
   char code;
   int cpar[1];
@@ -1624,7 +1670,8 @@ void GRAouttext(int GC,char *s)
   GRAdraw(GC,code,cpar,cstr);
 }
 
-void GRAoutkanji(int GC,char *s)
+static void 
+GRAoutkanji(int GC,char *s)
 {
   char code;
   int cpar[1];
@@ -1636,10 +1683,11 @@ void GRAoutkanji(int GC,char *s)
   GRAdraw(GC,code,cpar,cstr);
 }
 
-char *GRAexpandobj(char **s);
-char *GRAexpandmath(char **s);
+static char *GRAexpandobj(char **s);
+static char *GRAexpandmath(char **s);
 
-char *GRAexpandobj(char **s)
+static char *
+GRAexpandobj(char **s)
 {
   struct objlist *obj;
   int i,j,anum,*id;
@@ -1716,7 +1764,8 @@ errexit:
   return NULL;
 }
 
-char *GRAexpandmath(char **s)
+static char *
+GRAexpandmath(char **s)
 {
   int j;
   char *str,*ret;
@@ -1779,7 +1828,8 @@ errexit:
   return NULL;
 }
 
-char *GRAexpandpf(char **s)
+static char *
+GRAexpandpf(char **s)
 {
   int i,j,len,len1,len2,err;
   char *str,*format,*format2,*s2,*ret,*ret2;
@@ -1917,7 +1967,8 @@ errexit:
   return NULL;
 }
 
-char *GRAexpandtext(char *s)
+static char *
+GRAexpandtext(char *s)
 {
   int i,j,len;
   char *str;
@@ -1990,7 +2041,8 @@ char *GRAexpandtext(char *s)
   return str;
 }
 
-void GRAdrawtext(int GC,char *s,char *font,char *jfont,
+void 
+GRAdrawtext(int GC,char *s,char *font,char *jfont,
 				 int size,int space,int dir,int scriptsize)
 {
   char *c,*tok;
@@ -2231,7 +2283,8 @@ errexit:
   memfree(jfont3);
 }
 
-void GRAdrawtextraw(int GC,char *s,char *font,char *jfont,
+void 
+GRAdrawtextraw(int GC,char *s,char *font,char *jfont,
                     int size,int space,int dir)
 {
   char *c;
@@ -2283,7 +2336,8 @@ errexit:
   memfree(str);
 }
 
-void GRAtextextent(char *s,char *font,char *jfont,
+void 
+GRAtextextent(char *s,char *font,char *jfont,
                    int size,int space,int scriptsize,
                    int *gx0,int *gy0,int *gx1,int *gy1,int raw)
 {
@@ -2549,7 +2603,8 @@ errexit:
   memfree(jfont3);
 }
 
-void GRAtextextentraw(char *s,char *font,char *jfont,
+void 
+GRAtextextentraw(char *s,char *font,char *jfont,
                    int size,int space,int *gx0,int *gy0,int *gx1,int *gy1)
 {
   char *c;
@@ -2625,7 +2680,8 @@ errexit:
 }
 
 
-int getintpar(char *s,int num,int cpar[])
+static int 
+getintpar(char *s,int num,int cpar[])
 {
   int i,pos1,pos2;
   char s2[256];
@@ -2650,7 +2706,8 @@ int getintpar(char *s,int num,int cpar[])
   return TRUE;
 }
 
-void GRAinputdraw(int GC,int leftm,int topm,int rate,
+static void 
+GRAinputdraw(int GC,int leftm,int topm,int rate,
                   char code,int *cpar,char *cstr)
 {
   int i;
@@ -2704,7 +2761,8 @@ void GRAinputdraw(int GC,int leftm,int topm,int rate,
   if (code!='\0') GRAdraw(GC,code,cpar,cstr);
 }
 
-int GRAinput(int GC,char *s,int leftm,int topm,int rate)
+int 
+GRAinput(int GC,char *s,int leftm,int topm,int rate)
 {
   int pos,num,i;
   char code;
@@ -2754,7 +2812,7 @@ static char *fonttbl[]={
    "Courier","CourierBold","CourierItalic","CourierBoldItalic",
    "Symbol"};
 
-#define FONT_SYMBOL (sizeof(fonttbl) / sizeof(*fonttbl) - 1)
+#define FONTTBL_NUM ((int) (sizeof(fonttbl) / sizeof(*fonttbl)))
 
 struct greektbltype greektable[]={
  {0x21,0101}, {0x22,0102}, {0x23,0107}, {0x24,0104}, {0x25,0105}, {0x26,0132},
@@ -2766,6 +2824,14 @@ struct greektbltype greektable[]={
  {0x47,0150}, {0x48,0161}, {0x49,0151}, {0x4A,0153}, {0x4B,0154}, {0x4C,0155},
  {0x4D,0156}, {0x4E,0170}, {0x4F,0157}, {0x50,0160}, {0x51,0162}, {0x52,0163},
  {0x53,0164}, {0x54,0165}, {0x55,0146}, {0x56,0143}, {0x57,0171}, {0x58,0167}};
+
+#define GREEK_TBL_NUM ((int) (sizeof(greektable) / sizeof(*greektable)))
+
+int
+greektable_num(void)
+{
+  return GREEK_TBL_NUM;
+}
 
 int 
 GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
@@ -2845,7 +2911,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
           if (i!=j) {
             code2='F';
             cpar2[0]=-1;
-            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[FONT_SYMBOL]);
+            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[FONTTBL_NUM - 1]);
             code2='H';
             cpar2[0]=3;
             cpar2[1]=GRAClist[GC].mergept;
@@ -2858,16 +2924,20 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
             for (k=j;k<i;k+=2) {
               jiscode=njms2jis(((unsigned char)cstr[k] << 8)
                                +(unsigned char)cstr[k+1]);
-              for (h=0;h<48;h++) if (greektable[h].jis==(jiscode & 0xff))
-                break;
-              if (h!=48) cstr2[m++]=greektable[h].symbol;
+              for (h = 0; h < GREEK_TBL_NUM; h++) {
+		if (greektable[h].jis == (jiscode & 0xff))
+		  break;
+	      }
+              if (h != GREEK_TBL_NUM) {
+		cstr2[m++] = greektable[h].symbol;
+	      }
             }
             cstr2[m]='\0';
             GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr2);
             j=i;
             code2='F';
             cpar2[0]=-1;
-	    if (GRAClist[GC].mergefont <= FONT_SYMBOL) {
+	    if (GRAClist[GC].mergefont < FONTTBL_NUM) {
 	      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,
 			   fonttbl[GRAClist[GC].mergefont]);
 	    }
@@ -2998,7 +3068,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
     code2='F';
     cpar2[0]=-1;
     GRAClist[GC].mergefont=cpar[1]*4+cpar[2];
-    if (cpar[1]*4+cpar[2] < FONT_SYMBOL) {
+    if (cpar[1]*4+cpar[2] < FONTTBL_NUM) {
       GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[cpar[1]*4+cpar[2]]);
     }
     if (cpar[6] == 1) {

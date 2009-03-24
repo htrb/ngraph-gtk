@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.h,v 1.3 2009/03/24 09:55:53 hito Exp $
+ * $Id: gra.h,v 1.4 2009/03/24 10:27:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -87,13 +87,9 @@ int GRAreopen(int GC);
 int GRAopened(int GC);
 void _GRAclose(int GC);
 void GRAclose(int GC);
-void GRAaddlist2(int GC,char *draw);
-void GRAinslist2(int GC,char *draw,int n);
 void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redrawf,
                 int addn,struct objlist *obj,char *inst,char *field);
 void GRAredraw(struct objlist *obj,char *inst,int setredrawf,int redrawf);
-void GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redrawf,
-                int addn,struct objlist *aobj,char *ainst,char *afield);
 void GRAaddlist(int GC,struct objlist *obj,char *inst,
                 char *objname,char *field);
 void GRAinslist(int GC,struct objlist *obj,char *inst,
@@ -103,29 +99,21 @@ struct objlist *GRAgetlist(int GC,int *oid,char **field,int n);
 int GRAdraw(int GC,char code,int *cpar,char *cstr);
 int GRAinit(int GC,int leftm,int topm,int width,int height,int zoom);
 void GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom);
-void GRAdirect(int GC,int cpar[]);
 int GRAend(int GC);
-void GRAremark(int GC,char *s);
 void GRAview(int GC,int x1,int y1,int x2,int y2,int clip);
 void GRAwindow(int GC,double minx,double miny,double maxx,double maxy);
 void GRAlinestyle(int GC,int num,int *type,
                   int width,int cap,int join,int miter);
 void GRAcolor(int GC,int fr,int fg,int fb);
 void GRAmoveto(int GC,int x,int y);
-void GRAmoverel(int GC,int x,int y);
 void GRAline(int GC,int x0,int y0,int x1,int y1);
 void GRAlineto(int GC,int x,int y);
 void GRAcircle(int GC,int x,int y,int rx,int ry,int cs,int ce,int fil);
 void GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil);
-void GRAputpixel(int GC,int x,int y);
 void GRAdrawpoly(int GC,int num,int *point,int fil);
 void GRAlines(int GC,int num,int *point);
 void GRAmark(int GC,int type,int x0,int y0,int size,
               int fr,int fg,int fb,int br,int bg,int bb);
-void GRAtextstyle(int GC,char *font,int size,int space,int dir);
-void GRAouttext(int GC,char *s);
-void GRAoutkanji(int GC,char *s);
-char *GRAexpandtext(char *s);
 void GRAdrawtext(int GC,char *s,char *font,char *jfont,
                  int size,int space,int dir,int scriptsize);
 void GRAdrawtextraw(int GC,char *s,char *font,char *jfont,
@@ -135,9 +123,6 @@ void GRAtextextent(char *s,char *font,char *jfont,
                  int *gx0,int *gy0,int *gx1,int *gy1,int raw);
 void GRAtextextentraw(char *s,char *font,char *jfont,
                  int size,int space,int *gx0,int *gy0,int *gx1,int *gy1);
-int GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1);
-int GRArectclip(int GC,int *x0,int *y0,int *x1,int *y1);
-int GRAinview(int GC,int x,int y);
 int GRAinput(int GC,char *s,int leftm,int topm,int rate);
 int GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek);
 void GRAcurvefirst(int GC,int num,int *dashlist,
@@ -149,9 +134,11 @@ void GRAdashlinetod(int GC,double x1,double y1);
 void GRAcmatchfirst(int pointx,int pointy,int err,
                    clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
                    struct cmatchtype *data,int bbox,double x0,double y0);
-void GRAcmatchtod(double x,double y,struct cmatchtype *data);
 int GRAcmatch(double c[],double x0,double y0,struct cmatchtype *data);
 void GRAinitbbox(struct GRAbbox *bbox);
 void GRAendbbox(struct GRAbbox *bbox);
 int GRAboundingbox(char code,int *cpar,char *cstr,void *local);
+void GRAtextstyle(int GC,char *font,int size,int space,int dir);
+void GRAouttext(int GC,char *s);
+int greektable_num(void);
 

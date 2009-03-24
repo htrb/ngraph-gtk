@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.8 2009/03/24 08:17:32 hito Exp $
+ * $Id: oprm.c,v 1.9 2009/03/24 10:27:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -192,13 +192,16 @@ remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
       addfontcontrol(s2,&j,fchange,jchange,fff,ffb,ffj,script);
       code=njms2jis(((unsigned char)s[i] << 8)+(unsigned char)s[i+1]);
       if (((code>>8)==0x26) && greek) {
-        for (k=0;k<48;k++) if (greektable[k].jis==(code & 0xff)) break;
-        if (k!=48)
+        for (k = 0; k < greektable_num(); k++) {
+	  if (greektable[k].jis==(code & 0xff)) 
+	    break;
+	}
+        if (k != greektable_num()) {
           j+=sprintf(s2+j,"%%F{%s}%c%%F{%s}%%J{%s}",
                      fontchar[12],greektable[k].symbol,
                      fontchar[fff[script]+ffb[script]],
                      jfontchar[ffj[script]]);
-        else {
+	} else {
           s2[j]=s[i];
           s2[j+1]=s[i+1];
           j+=2;

@@ -1,3 +1,7 @@
+2009-03-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (greektable_num): add.
+
 2009-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (SetCaption, graph_modified_sub): add.
