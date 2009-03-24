@@ -1,5 +1,5 @@
 /* 
- * $Id: spline.c,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: spline.c,v 1.2 2009/03/24 07:53:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,8 +28,8 @@
 #include "mathfn.h"
 #include "spline.h"
 
-int splinecheck(double d[],double mu[],double ram[],double x[],double y[],
-                int num)
+static int 
+splinecheck(double d[],double mu[],double ram[],double x[],double y[], int num)
 {
   double h1,h2;
   int i;
@@ -44,8 +44,8 @@ int splinecheck(double d[],double mu[],double ram[],double x[],double y[],
   return 0;
 }
 
-void splinesetval(double d[],double mu[],double ram[],double x[],double y[],
-                  int num)
+static void 
+splinesetval(double d[],double mu[],double ram[],double x[],double y[], int num)
 {
   double h1,h2,y1,y2;
   int i;
@@ -65,8 +65,8 @@ void splinesetval(double d[],double mu[],double ram[],double x[],double y[],
   ram[num-1]=0;
 }
 
-int splinesolv(double d[],double mu[],double ram[],double x[],double y[],
-               int num,double *xx)
+static int 
+splinesolv(double d[],double mu[],double ram[],double x[],double y[], int num,double *xx)
 {
   int i;
   double h;
@@ -85,8 +85,8 @@ int splinesolv(double d[],double mu[],double ram[],double x[],double y[],
   return 0;
 }
 
-int splinesolv2(double d[],double mu[],double ram[],double x[],double y[],
-               int num,double *xx)
+static int 
+splinesolv2(double d[],double mu[],double ram[],double x[],double y[], int num,double *xx)
 {
   int i;
   double h;
@@ -140,8 +140,9 @@ int splineperiod(double d[],double mu[],double ram[],double x[],double y[],
   return 0;
 }
 
-int splineboundary(double d[],double mu[],double ram[],double x[],double y[],
-                   int num,int bc0,int bc1,double df0,double df1)
+static int 
+splineboundary(double d[],double mu[],double ram[],double x[],double y[],
+	       int num,int bc0,int bc1,double df0,double df1)
 {
   vector b,coe;
   matrix m;
@@ -191,7 +192,8 @@ int splineboundary(double d[],double mu[],double ram[],double x[],double y[],
   return 0;
 }
 
-int spline(double x[],double y[],double c1[],double c2[],double c3[],
+int 
+spline(double x[],double y[],double c1[],double c2[],double c3[],
            int num,int bc0,int bc1,double df0,double df1)
 {
   int i;
@@ -214,7 +216,8 @@ int spline(double x[],double y[],double c1[],double c2[],double c3[],
   return 0;
 }
 
-void bspline(int edge,double x[],double c[])
+void 
+bspline(int edge,double x[],double c[])
 {
   if (edge==0) {
       c[0]=(x[0]+4*x[1]+x[2])/6;
@@ -244,7 +247,8 @@ void bspline(int edge,double x[],double c[])
   }
 }
 
-void splinedif(double d,double c[],
+void 
+splinedif(double d,double c[],
                double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
   *dx=2*c[1]+6*d*c[2];
@@ -253,7 +257,8 @@ void splinedif(double d,double c[],
   *ddy=6*c[5];
 }
 
-void splinedifxy(double d,double c[],
+void 
+splinedifxy(double d,double c[],
                  double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
   *dx=0;
@@ -262,7 +267,8 @@ void splinedifxy(double d,double c[],
   *ddy=6*c[3]*c[3]*c[3]*c[2];
 }
 
-void bsplinedif(double d,double c[],
+void 
+bsplinedif(double d,double c[],
                 double *dx,double *dy,double *ddx,double *ddy,void *local)
 {
   *dx=2*c[2]+6*d*c[3];
@@ -271,14 +277,16 @@ void bsplinedif(double d,double c[],
   *ddy=6*c[7];
 }
 
-void splineint(double d,double c[],double x0,double y0,double *x,double *y,
+void 
+splineint(double d,double c[],double x0,double y0,double *x,double *y,
                void *local)
 {
   *x=x0+d*(c[0]+d*(c[1]+d*c[2]));
   *y=y0+d*(c[3]+d*(c[4]+d*c[5]));
 }
 
-void splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
+void 
+splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
                  void *local)
 {
   double dd;
@@ -288,7 +296,8 @@ void splineintxy(double d,double c[],double x0,double y0,double *x,double *y,
   *y=y0+dd*(c[0]+dd*(c[1]+dd*c[2]));
 }
 
-void bsplineint(double d,double c[],double x0,double y0,double *x,double *y,
+void 
+bsplineint(double d,double c[],double x0,double y0,double *x,double *y,
                 void *local)
 {
   *x=c[0]+d*(c[1]+d*(c[2]+d*c[3]));

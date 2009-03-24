@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.14 2009/03/24 07:24:19 hito Exp $
+ * $Id: shellcm.c,v 1.15 2009/03/24 07:56:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -53,7 +53,8 @@
 
 #define ERR 128
 
-int cmcd(struct nshell *nshell,int argc,char **argv)
+int 
+cmcd(struct nshell *nshell,int argc,char **argv)
 {
   char *home;
 
@@ -73,7 +74,8 @@ int cmcd(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int cmecho(struct nshell *nshell,int argc,char **argv)
+int 
+cmecho(struct nshell *nshell,int argc,char **argv)
 {
   int i, nbr;
 
@@ -92,6 +94,7 @@ int cmecho(struct nshell *nshell,int argc,char **argv)
 }
 
 int 
+
 cmseq(struct nshell *nshell, int argc, char **argv)
 {
   int i, f, l;
@@ -155,7 +158,8 @@ cmseq(struct nshell *nshell, int argc, char **argv)
   return 0;
 }
 
-int cmeval(struct nshell *nshell,int argc,char **argv)
+int 
+cmeval(struct nshell *nshell,int argc,char **argv)
 {
   char *s;
   int i,rcode;
@@ -171,7 +175,8 @@ int cmeval(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int cmexit(struct nshell *nshell,int argc,char **argv)
+int 
+cmexit(struct nshell *nshell,int argc,char **argv)
 {
   int a;
   char *endptr;
@@ -203,7 +208,8 @@ printexp(struct nhash *h, void *data)
 }
 #endif
 
-int cmexport(struct nshell *nshell,int argc,char **argv)
+int 
+cmexport(struct nshell *nshell,int argc,char **argv)
 {
   int i;
 #if USE_HASH
@@ -234,7 +240,8 @@ int cmexport(struct nshell *nshell,int argc,char **argv)
 #endif
 }
 
-int cmpwd(struct nshell *nshell,int argc,char **argv)
+int 
+cmpwd(struct nshell *nshell,int argc,char **argv)
 {
   char *s;
 
@@ -284,7 +291,8 @@ print_func(struct nhash *h, void *data)
   return 0;
 }
 
-int cmset(struct nshell *nshell,int argc,char **argv)
+int 
+cmset(struct nshell *nshell,int argc,char **argv)
 {
 #if USE_HASH
   char *s;
@@ -470,7 +478,8 @@ int cmset(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int cmshift(struct nshell *nshell,int argc,char **argv)
+int 
+cmshift(struct nshell *nshell,int argc,char **argv)
 {
   int i,a;
   char *arg,*endptr;
@@ -498,7 +507,8 @@ int cmshift(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int cmtype(struct nshell *nshell,int argc,char **argv)
+int 
+cmtype(struct nshell *nshell,int argc,char **argv)
 {
   struct prmlist *prm2;
   struct cmdlist *cmdcur;
@@ -548,7 +558,8 @@ int cmtype(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int cmunset(struct nshell *nshell,int argc,char **argv)
+int 
+cmunset(struct nshell *nshell,int argc,char **argv)
 {
   int i;
 
@@ -656,7 +667,8 @@ dispfield(struct objlist *obj,char *name)
   printfstdout("\n");
 }
 
-int cmobject(struct nshell *nshell,int argc,char **argv)
+int 
+cmobject(struct nshell *nshell,int argc,char **argv)
 {
   struct objlist *obj;
   int i,j,tab;
@@ -740,7 +752,8 @@ dispparent(struct objlist *parent,int noinst)
   }
 }
 
-int cmderive(struct nshell *nshell,int argc,char **argv)
+int 
+cmderive(struct nshell *nshell,int argc,char **argv)
 {
   struct objlist *obj;
   int i,noinst;
@@ -771,7 +784,8 @@ int cmderive(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int cmnew(struct nshell *nshell,int argc,char **argv)
+int 
+cmnew(struct nshell *nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
@@ -800,7 +814,8 @@ int cmnew(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-int cmdel(struct nshell*nshell,int argc,char **argv)
+int 
+cmdel(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
@@ -844,7 +859,8 @@ int cmdel(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int cmexist(struct nshell*nshell,int argc,char **argv)
+int 
+cmexist(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
@@ -868,7 +884,8 @@ int cmexist(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int cmget(struct nshell*nshell,int argc,char **argv)
+int 
+cmget(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
@@ -950,7 +967,8 @@ int cmget(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int cmput(struct nshell*nshell,int argc,char **argv)
+int 
+cmput(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   int i,j,id,anum,*adata;
@@ -987,7 +1005,8 @@ int cmput(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int cmcpy(struct nshell*nshell,int argc,char **argv)
+int 
+cmcpy(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
@@ -1035,7 +1054,8 @@ int cmcpy(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int cmmove(struct nshell*nshell,int argc,char **argv)
+int 
+cmmove(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
@@ -1068,7 +1088,8 @@ int cmmove(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int cmmovetop(struct nshell*nshell,int argc,char **argv)
+int 
+cmmovetop(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
@@ -1103,7 +1124,8 @@ int cmmovetop(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int cmexe(struct nshell*nshell,int argc,char **argv)
+int 
+cmexe(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
@@ -1198,7 +1220,8 @@ str_calc(char *str, double *val, int *r)
   return 0;
 }
 
-int cmdexpr(struct nshell*nshell,int argc,char **argv)
+int 
+cmdexpr(struct nshell*nshell,int argc,char **argv)
 {
   int rcode,ecode;
   double vd;
@@ -1234,7 +1257,8 @@ int cmdexpr(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-int cmread(struct nshell *nshell,int argc,char **argv)
+int 
+cmread(struct nshell *nshell,int argc,char **argv)
 {
   int c,i,len;
   char *s,*po,*s2,*ifs;

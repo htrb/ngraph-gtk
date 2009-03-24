@@ -1,5 +1,5 @@
 /* 
- * $Id: shellux.c,v 1.5 2009/03/24 07:24:19 hito Exp $
+ * $Id: shellux.c,v 1.6 2009/03/24 07:56:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,12 +46,14 @@
 #define TRUE  1
 #define FALSE 0
 
-int cmtrue(struct nshell *nshell,int argc,char **argv)
+int 
+cmtrue(struct nshell *nshell,int argc,char **argv)
 {
   return 0;
 }
 
-int cmfalse(struct nshell *nshell,int argc,char **argv)
+int 
+cmfalse(struct nshell *nshell,int argc,char **argv)
 {
   return 1;
 }
@@ -60,14 +62,16 @@ int cmfalse(struct nshell *nshell,int argc,char **argv)
 
 int timeout;
 
-void cmsleeptimeout(int sig)
+static void 
+cmsleeptimeout(int sig)
 {
   signal(sig,SIG_IGN);
   timeout=TRUE;
   signal(SIGALRM,cmsleeptimeout);
 }
 
-int cmsleep(struct nshell *nshell,int argc,char **argv)
+int 
+cmsleep(struct nshell *nshell,int argc,char **argv)
 {
   int a;
   char *arg,*endptr;
@@ -264,7 +268,8 @@ testexpand(int pre,int *oppo,int *numpo,
   return TRUE;
 }
 
-int cmtest(struct nshell *nshell,int argc,char **argv)
+int 
+cmtest(struct nshell *nshell,int argc,char **argv)
 {
   int prebuf[20];
   int numbuf[20];
