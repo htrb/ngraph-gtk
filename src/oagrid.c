@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.9 2009/02/11 09:54:13 hito Exp $
+ * $Id: oagrid.c,v 1.10 2009/03/24 09:15:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -511,7 +511,8 @@ static struct objtable agrid[] = {
 
 #define TBLNUM (sizeof(agrid) / sizeof(*agrid))
 
-void *addagrid()
+void *
+addagrid(void)
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,agrid,ERRNUM,agriderrorlist,NULL,NULL);
 }

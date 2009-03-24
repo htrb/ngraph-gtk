@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.12 2009/02/28 02:01:18 hito Exp $
+ * $Id: object.h,v 1.13 2009/03/24 09:12:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -150,10 +150,6 @@ struct loopproc {
 #define ERROVALUE  22
 #define ERROVERWRITE 23
 
-extern char errormsg1[256];
-extern char errormsg2[256];
-extern char errormsg[256];
-
 extern int (*getstdin)(void);
 extern int (*putstdout)(char *s);
 extern int (*putstderr)(char *s);
@@ -178,8 +174,6 @@ struct savedstdio {
 
 extern struct savedstdio stdiosave;
 
-extern int vinterrupt(void);
-extern int vinputyn(char *mes);
 extern int seputs(char *s);
 extern int seprintf(char *fmt,...);
 
@@ -201,7 +195,6 @@ void arrayinit(struct narray *array,unsigned int base);
 struct narray *arraynew(unsigned int base);
 void *arraydata(struct narray *array);
 unsigned int arraynum(struct narray *array);
-unsigned int arraybase(struct narray *array);
 void arraydel(struct narray *array);
 void arraydel2(struct narray *array);
 void arrayfree(struct narray *array);
@@ -221,13 +214,11 @@ void arrayuniq_int(struct narray *array);
 
 int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);
-char **arg_add2(char ***arg,int argc,...);
 void arg_del(char **arg);
 
 void registerevloop(char *objname,char *evname,
                     struct objlist *obj,int idn,char *inst,void *local);
 void unregisterevloop(struct objlist *obj,int idn,char *inst);
-void unregisterallevloop(void);
 void eventloop(void);
 
 struct objlist *chkobjroot(void);
@@ -237,7 +228,6 @@ void *addobject(char *name,char *alias,char *parentname,
 void hideinstance(struct objlist *obj);
 void recoverinstance(struct objlist *obj);
 struct objlist *chkobject(char *name);
-void *chkobjectlocal(struct objlist *obj);
 int chkobjectid(struct objlist *obj);
 char *chkobjectname(struct objlist *obj);
 char *chkobjectalias(struct objlist *obj);
@@ -249,12 +239,9 @@ int chkobjlastinst(struct objlist *obj);
 int chkobjcurinst(struct objlist *obj);
 int chkobjoffset(struct objlist *obj,char *name);
 int chkobjoffset2(struct objlist *obj,int tblpos);
-int chkobjtblpos(struct objlist *obj,char *name,struct objlist **robj);
 char *chkobjinstoid(struct objlist *obj,int oid);
 char *chkobjinst(struct objlist *obj,int id);
-int chkobjid(struct objlist *obj,int id);
 int chkobjoid(struct objlist *obj,int oid);
-int chkobjname(struct objlist *obj,int *id,char *name);
 int chkobjfieldnum(struct objlist *obj);
 char *chkobjfieldname(struct objlist *obj,int num);
 int chkobjfield(struct objlist *obj,char *name);
@@ -265,15 +252,10 @@ char *chkobjarglist(struct objlist *obj,char *name);
 struct objlist *getobject(char *name);
 char *getobjver(char *name);
 char *getobjectname(struct objlist *obj);
-int getobjcurinst(struct objlist *obj);
-int getobjlastinst(struct objlist *obj);
 int getobjoffset(struct objlist *obj,char *name);
 int getobjtblpos(struct objlist *obj,char *name,struct objlist **robj);
 char *getobjinstoid(struct objlist *obj,int oid);
 char *getobjinst(struct objlist *obj,int id);
-int getobjname(struct objlist *obj,int *id,char *name);
-int getobjid(struct objlist *obj,int id);
-int getobjoid(struct objlist *obj,int oid);
 int getobjfield(struct objlist *obj,char *name);
 
 int _putobj(struct objlist *obj,char *vname,char *inst,void *val);
@@ -285,7 +267,6 @@ int __exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv);
 int copyobj(struct objlist *obj,char *vname,int did,int sid);
 int newobj(struct objlist *obj);
 int delobj(struct objlist *obj,int delid);
-void delchildobj(struct objlist *parent);
 int putobj(struct objlist *obj,char *vname,int id,void *val);
 int getobj(struct objlist *obj,char *vname,int id,
            int argc,char **argv,void *val);
@@ -297,41 +278,35 @@ int movedownobj(struct objlist *obj,int id);
 int movelastobj(struct objlist *obj,int id);
 int exchobj(struct objlist *obj,int id1,int id2);
 
-int chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc);
-int getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc);
 int chkobjilist(char *s,struct objlist **obj,struct narray *iarray,
                 int def,int *spc);
 int getobjilist(char *s,struct objlist **obj,struct narray *iarray,
                 int def,int *spc);
 int chkobjilist2(char **s,struct objlist **obj,struct narray *iarray,
                  int def);
-int getobjilist2(char **s,struct objlist **obj,struct narray *iarray,
-                 int def);
 char *mkobjlist(struct objlist *obj,char *objname,int id,char *field,int oid);
 struct objlist *getobjlist(char *list,int *id,char **field,int *oid);
 char *chgobjlist(char *olist);
 char *getvaluestr(struct objlist *obj,char *field,void *val,int cr,int quote);
-int getargument(int type,char *arglist, char *val,int *argc,char ***rargv);
-void freeargument(int type,char *arglist,int argc,char **argv,int full);
 int isobject(char **s);
 
 int schkobjfield(struct objlist *obj,int id,char *field,char *arg,
                  char **valstr,int limittype,int cr,int quote);
 int sgetobjfield(struct objlist *obj,int id,char *field,char *arg,
                  char **valstr,int limittype,int cr,int quote);
-int schkfield(struct objlist *obj,int id,char *arg,char **valstr,
-              int limittype,int cr,int quote);
 int sgetfield(struct objlist *obj,int id,char *arg,char **valstr,
               int limittype,int cr,int quote);
 struct narray *sgetobj(char *arg,int limittype,int cr,int quote);
 int sputobjfield(struct objlist *obj,int id,char *field,char *arg);
 int sputfield(struct objlist *obj,int id,char *arg);
 int sputobj(char *arg);
-int sexeobjfield(struct objlist *obj,int id,char *field,char *arg);
 int sexefield(struct objlist *obj,int id,char *arg);
 int sexeobj(char *arg);
-char *getuniqname(struct objlist *obj,char *prefix,char sep);
 int has_eventloop(void);
 void obj_do_tighten(struct objlist *obj, char *inst, char *field);
+int getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def);
+void delchildobj(struct objlist *parent);
+int vinterrupt(void);
+int vinputyn(char *mes);
 
 #endif

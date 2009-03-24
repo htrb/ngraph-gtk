@@ -1,5 +1,5 @@
 /* 
- * $Id: ntime.c,v 1.2 2009/03/10 02:50:25 hito Exp $
+ * $Id: ntime.c,v 1.3 2009/03/24 09:16:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,7 +36,8 @@ char *weekstr[7]={"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 char *monthstr[12]={"Jan","Feb","Mar","Apr","May","Jun",
                     "Jul","Aug","Sep","Oct","Nov","Dec"};
 
-char *ndate(time_t *timep,int style)
+char *
+ndate(time_t *timep,int style)
 {
   struct tm *ltime;
   char c[32];
@@ -72,7 +73,8 @@ char *ndate(time_t *timep,int style)
   return nstrdup(c);
 }
 
-char *ntime(time_t *timep,int style)
+char *
+ntime(time_t *timep,int style)
 {
   struct tm *ltime;
   char c[32];
@@ -115,7 +117,8 @@ char *ntime(time_t *timep,int style)
   return nstrdup(c);
 }
 
-int gettimeval(char *s,time_t *time)
+int 
+gettimeval(char *s,time_t *time)
 {
   char *endptr;
   struct tm tm;
@@ -144,7 +147,8 @@ int gettimeval(char *s,time_t *time)
   return 0;
 }
 
-int gettimeval2(char *s,time_t *time)
+int 
+gettimeval2(char *s,time_t *time)
 {
   char *endptr;
   struct tm tm;

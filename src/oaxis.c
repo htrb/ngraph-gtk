@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.28 2009/03/23 08:54:47 hito Exp $
+ * $Id: oaxis.c,v 1.29 2009/03/24 09:14:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -84,7 +84,7 @@ char *axistypechar[4]={
   NULL
 };
 
-char *axisgaugechar[]={
+static char *axisgaugechar[]={
   N_("none"),
   N_("both"),
   N_("left"),
@@ -99,7 +99,7 @@ enum AXIS_GAUGE {
   AXIS_GAUGE_RIGHT,
 };
 
-char *axisnumchar[]={
+static char *axisnumchar[]={
   N_("none"),
   N_("left"),
   N_("right"),
@@ -112,7 +112,7 @@ enum AXIS_NUM_POS {
   AXIS_NUM_POS_RIGHT,
 };
 
-char *anumalignchar[]={
+static char *anumalignchar[]={
   N_("center"),
   N_("left"),
   N_("right"),
@@ -127,7 +127,7 @@ enum AXIS_NUM_ALIGN {
   AXIS_NUM_ALIGN_POINT,
 };
 
-char *anumdirchar[]={
+static char *anumdirchar[]={
   N_("normal"),
   N_("parallel"),
   N_("parallel2"),
@@ -2831,7 +2831,8 @@ static struct objtable axis[] = {
 
 #define TBLNUM (sizeof(axis) / sizeof(*axis))
 
-void *addaxis(void)
+void *
+addaxis(void)
 /* addaxis() returns NULL on error */
 {
   unsigned int i;

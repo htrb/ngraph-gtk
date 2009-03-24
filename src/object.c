@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.25 2009/02/28 02:01:18 hito Exp $
+ * $Id: object.c,v 1.26 2009/03/24 09:12:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -63,9 +63,9 @@ static struct objlist *objroot=NULL;
 static struct loopproc *looproot=NULL, *loopnext=NULL;
 
 static struct objlist *errobj=NULL;
-char errormsg1[256]={'\0'};
-char errormsg2[256]={'\0'};
-char errormsg[256]={'\0'};
+static char errormsg1[256]={'\0'};
+static char errormsg2[256]={'\0'};
+static char errormsg[256]={'\0'};
 static int errcode=0;
 int GlobalLock=FALSE;
 
@@ -85,7 +85,7 @@ static NHASH ObjHash = NULL;
 
 #define ERRNUM 25
 
-char *errorlist[ERRNUM]={
+static char *errorlist[ERRNUM]={
      "",
      "no heap space.",
      "parent object not found",
@@ -112,7 +112,10 @@ char *errorlist[ERRNUM]={
      "instance exist. cannot overwrite object",
 };
 
-void error(struct objlist *obj,int code)
+static int chkobjtblpos(struct objlist *obj,char *name, struct objlist **robj);
+
+void 
+error(struct objlist *obj,int code)
 {
   char *objname;
   char **errtable;
@@ -154,7 +157,8 @@ void error(struct objlist *obj,int code)
   GlobalLock=FALSE;
 }
 
-void error2(struct objlist *obj,int code, const char *mes)
+void 
+error2(struct objlist *obj,int code, const char *mes)
 {
   if (mes!=NULL) {
     sprintf(errormsg2," `%.64s'.",mes);
@@ -164,7 +168,8 @@ void error2(struct objlist *obj,int code, const char *mes)
   error(obj,code);
 }
 
-void error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
+void 
+error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
 {
   if (mes1!=NULL) {
     sprintf(errormsg1,"%.64s: ",mes1);
@@ -179,33 +184,39 @@ void error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
   error(obj,code);
 }
 
-void error3(struct objlist *obj,int code,int num)
+void 
+error3(struct objlist *obj,int code,int num)
 {
   sprintf(errormsg2," `%d'.",num);
   error(obj,code);
 }
 
-int vgetchar(void)
+static int 
+vgetchar(void)
 {
   return EOF;
 }
 
-int vputs(char *s)
+static int 
+vputs(char *s)
 {
   return 0;
 }
 
-int vnprintf(char *fmt,...)
+static int 
+vnprintf(char *fmt,...)
 {
   return 0;
 }
 
-int seputs(char *s)
+int 
+seputs(char *s)
 {
   return fputs(s,stderr);
 }
 
-int seprintf(char *fmt,...)
+int 
+seprintf(char *fmt,...)
 {
   int code;
   va_list ap;
@@ -216,31 +227,37 @@ int seprintf(char *fmt,...)
   return code;
 }
 
-int vinterrupt(void)
+int 
+vinterrupt(void)
 {
   return FALSE;
 }
 
-int vinputyn(char *mes)
+int 
+vinputyn(char *mes)
 {
   return FALSE;
 }
 
-void vdisplaydialog(char *str)
+static void 
+vdisplaydialog(char *str)
 {
 }
 
-void vdisplaywindow(char *str)
+static void 
+vdisplaywindow(char *str)
 {
 }
 
-void vdisplaystatus(char *str)
+static void 
+vdisplaystatus(char *str)
 {
 }
 
 struct savedstdio stdiosave;
 
-void ignorestdio(struct savedstdio *save)
+void 
+ignorestdio(struct savedstdio *save)
 {
   if (save==NULL) savestdio(&stdiosave);
   else savestdio(save);
@@ -253,13 +270,15 @@ void ignorestdio(struct savedstdio *save)
   ndisplaystatus=vdisplaystatus;
 }
 
-void restorestdio(struct savedstdio *save)
+void 
+restorestdio(struct savedstdio *save)
 {
   if (save==NULL) loadstdio(&stdiosave);
   else loadstdio(save);
 }
 
-void savestdio(struct savedstdio *save)
+void 
+savestdio(struct savedstdio *save)
 {
   save->getstdin=getstdin;
   save->putstdout=putstdout;
@@ -272,7 +291,8 @@ void savestdio(struct savedstdio *save)
   save->ndisplaystatus=ndisplaystatus;
 }
 
-void loadstdio(struct savedstdio *save)
+void 
+loadstdio(struct savedstdio *save)
 {
   getstdin=save->getstdin;
   putstdout=save->putstdout;
@@ -296,7 +316,8 @@ extern int _heapchk(void);
 #define _HEAPOK 2
 #endif
 
-void *memalloc(size_t size)
+void *
+memalloc(size_t size)
 {
   void *po;
 #ifdef DEBUG
@@ -320,7 +341,8 @@ void *memalloc(size_t size)
   return po;
 }
 
-void *memrealloc(void *ptr,size_t size)
+void *
+memrealloc(void *ptr,size_t size)
 {
   void *po;
 #ifdef DEBUG
@@ -366,7 +388,8 @@ void *memrealloc(void *ptr,size_t size)
   return po;
 }
 
-void memfree(void *ptr)
+void 
+memfree(void *ptr)
 {
 #ifdef DEBUG
   struct plist *plcur,*plprev;
@@ -400,7 +423,8 @@ void memfree(void *ptr)
 
 #define ALLOCSIZE 32
 
-void arrayinit(struct narray *array,unsigned int base)
+void 
+arrayinit(struct narray *array,unsigned int base)
 {
   if (array==NULL) return;
   array->base=base;
@@ -409,7 +433,8 @@ void arrayinit(struct narray *array,unsigned int base)
   array->data=NULL;
 }
 
-struct narray *arraynew(unsigned int base)
+struct narray *
+arraynew(unsigned int base)
 {
   struct narray *array;
 
@@ -418,25 +443,29 @@ struct narray *arraynew(unsigned int base)
   return array;
 }
 
-void *arraydata(struct narray *array)
+void *
+arraydata(struct narray *array)
 {
   if (array==NULL) return NULL;
   return array->data;
 }
 
-unsigned int arraynum(struct narray *array)
+unsigned int 
+arraynum(struct narray *array)
 {
   if (array==NULL) return 0;
   return array->num;
 }
 
-unsigned int arraybase(struct narray *array)
+static unsigned int 
+arraybase(struct narray *array)
 {
   if (array==NULL) return 0;
   return array->base;
 }
 
-void arraydel(struct narray *array)
+void 
+arraydel(struct narray *array)
 {
   if (array==NULL) return;
   memfree(array->data);
@@ -445,7 +474,8 @@ void arraydel(struct narray *array)
   array->num=0;
 }
 
-void arraydel2(struct narray *array)
+void 
+arraydel2(struct narray *array)
 {
   unsigned int i;
   char **data;
@@ -459,14 +489,16 @@ void arraydel2(struct narray *array)
   array->num=0;
 }
 
-void arrayfree(struct narray *array)
+void 
+arrayfree(struct narray *array)
 {
   if (array==NULL) return;
   memfree(array->data);
   memfree(array);
 }
 
-void arrayfree2(struct narray *array)
+void 
+arrayfree2(struct narray *array)
 {
   unsigned int i;
   char **data;
@@ -478,7 +510,8 @@ void arrayfree2(struct narray *array)
   memfree(array);
 }
 
-struct narray *arrayadd(struct narray *array,void *val)
+struct narray *
+arrayadd(struct narray *array,void *val)
 {
   int size,base;
   char *data;
@@ -498,7 +531,8 @@ struct narray *arrayadd(struct narray *array,void *val)
   return array;
 }
 
-struct narray *arrayadd2(struct narray *array,char **val)
+struct narray *
+arrayadd2(struct narray *array,char **val)
 {
   int size;
   char **data;
@@ -532,7 +566,8 @@ struct narray *arrayadd2(struct narray *array,char **val)
   return array;
 }
 
-struct narray *arrayins(struct narray *array,void *val,unsigned int idx)
+struct narray *
+arrayins(struct narray *array,void *val,unsigned int idx)
 {
   unsigned int i;
   int size,base;
@@ -556,7 +591,8 @@ struct narray *arrayins(struct narray *array,void *val,unsigned int idx)
   return array;
 }
 
-struct narray *arrayins2(struct narray *array, char **val, unsigned int idx)
+struct narray *
+arrayins2(struct narray *array, char **val, unsigned int idx)
 {
   unsigned int i;
   int size;
@@ -596,7 +632,8 @@ struct narray *arrayins2(struct narray *array, char **val, unsigned int idx)
   return array;
 }
 
-struct narray *arrayndel(struct narray *array,unsigned int idx)
+struct narray *
+arrayndel(struct narray *array,unsigned int idx)
 {
   int base;
   char *data;
@@ -616,7 +653,8 @@ struct narray *arrayndel(struct narray *array,unsigned int idx)
   return array;
 }
 
-struct narray *arrayndel2(struct narray *array,unsigned int idx)
+struct narray *
+arrayndel2(struct narray *array,unsigned int idx)
 {
   char **data;
 
@@ -635,7 +673,8 @@ struct narray *arrayndel2(struct narray *array,unsigned int idx)
   return array;
 }
 
-struct narray *arrayput(struct narray *array,void *val,unsigned int idx)
+struct narray *
+arrayput(struct narray *array,void *val,unsigned int idx)
 {
   int base;
   char *data;
@@ -674,7 +713,8 @@ arrayput2(struct narray *array, char **val, unsigned int idx)
   return array;
 }
 
-void *arraynget(struct narray *array,unsigned int idx)
+void *
+arraynget(struct narray *array,unsigned int idx)
 {
   int base;
   char *data;
@@ -686,7 +726,8 @@ void *arraynget(struct narray *array,unsigned int idx)
   return data+idx*base;
 }
 
-void *arraylast(struct narray *array)
+void *
+arraylast(struct narray *array)
 {
   int base;
   char *data;
@@ -746,7 +787,8 @@ arrayuniq_int(struct narray *array)
 
 #define ARGBUFNUM 32
 
-int getargc(char **arg)
+int 
+getargc(char **arg)
 {
   int i;
 
@@ -755,7 +797,8 @@ int getargc(char **arg)
   return i;
 }
 
-char **arg_add(char ***arg,void *ptr)
+char **
+arg_add(char ***arg,void *ptr)
 {
   int i,num;
   char **arg2;
@@ -777,7 +820,8 @@ char **arg_add(char ***arg,void *ptr)
   return *arg;
 }
 
-char **arg_add2(char ***arg,int argc,...)
+static char **
+arg_add2(char ***arg,int argc,...)
 {
   va_list ap;
   int i;
@@ -794,7 +838,8 @@ char **arg_add2(char ***arg,int argc,...)
   return *arg;
 }
 
-void arg_del(char **arg)
+void 
+arg_del(char **arg)
 {
   int i,argc;
 
@@ -804,7 +849,8 @@ void arg_del(char **arg)
   memfree(arg);
 }
 
-void registerevloop(char *objname,char *evname,
+void 
+registerevloop(char *objname,char *evname,
                     struct objlist *obj,int idn,char *inst,
                     void *local)
 {
@@ -827,7 +873,8 @@ void registerevloop(char *objname,char *evname,
   lpnew->local=local;
 }
 
-void unregisterevloop(struct objlist *obj,int idn,char *inst)
+void 
+unregisterevloop(struct objlist *obj,int idn,char *inst)
 {
   struct loopproc *lpcur,*lpdel,*lpprev;
 
@@ -848,7 +895,8 @@ void unregisterevloop(struct objlist *obj,int idn,char *inst)
   }
 }
 
-void unregisterallevloop()
+static void 
+unregisterallevloop(void)
 {
   struct loopproc *lpcur,*lpdel;
 
@@ -867,7 +915,8 @@ has_eventloop(void) {
   return looproot != NULL;
 }
 
-void eventloop()
+void 
+eventloop(void)
 {
   static int ineventloop = FALSE;
   struct loopproc *lpcur;
@@ -891,7 +940,8 @@ void eventloop()
   ineventloop=FALSE;
 }
 
-struct objlist *chkobjroot()
+struct objlist *
+chkobjroot()
 {
   return objroot;
 }
@@ -927,7 +977,8 @@ add_obj_to_hash(char *name, char *alias, void *obj)
 }
 #endif
 
-void *addobject(char *name,char *alias,char *parentname,char *ver,
+void *
+addobject(char *name,char *alias,char *parentname,char *ver,
                 int tblnum,struct objtable *table,
                 int errnum,char **errtable,void *local,DoneProc doneproc)
 /* addobject() returns NULL on error */
@@ -1042,7 +1093,8 @@ void *addobject(char *name,char *alias,char *parentname,char *ver,
   return objnew;
 }
 
-void hideinstance(struct objlist *obj)
+void 
+hideinstance(struct objlist *obj)
 {
   char *instcur,*instprev;
   int nextp,idp;
@@ -1072,7 +1124,8 @@ void hideinstance(struct objlist *obj)
   obj->lastinst=-1;
 }
 
-void recoverinstance(struct objlist *obj)
+void 
+recoverinstance(struct objlist *obj)
 {
   char *instcur,*instprev;
   int nextp,idp;
@@ -1103,7 +1156,8 @@ void recoverinstance(struct objlist *obj)
   obj->lastinst2=-1;
 }
 
-struct objlist *chkobject(char *name)
+struct objlist *
+chkobject(char *name)
 /* chkobject() returns NULL when the named object is not found */
 {
 #if USE_HASH
@@ -1136,43 +1190,50 @@ struct objlist *chkobject(char *name)
 #endif
 }
 
-char *chkobjectname(struct objlist *obj)
+char *
+chkobjectname(struct objlist *obj)
 {
   if (obj==NULL) return NULL;
   return obj->name;
 }
 
-char *chkobjectalias(struct objlist *obj)
+char *
+chkobjectalias(struct objlist *obj)
 {
   if (obj==NULL) return NULL;
   return obj->alias;
 }
 
-void *chkobjectlocal(struct objlist *obj)
+static void *
+chkobjectlocal(struct objlist *obj)
 {
   if (obj==NULL) return NULL;
   return obj->local;
 }
 
-int chkobjectid(struct objlist *obj)
+int 
+chkobjectid(struct objlist *obj)
 {
   if (obj==NULL) return -1;
   return obj->id;
 }
 
-char *chkobjver(struct objlist *obj)
+char *
+chkobjver(struct objlist *obj)
 {
   if (obj==NULL) return NULL;
   return obj->ver;
 }
 
-struct objlist *chkobjparent(struct objlist *obj)
+struct objlist *
+chkobjparent(struct objlist *obj)
 {
   if (obj==NULL) return NULL;
   return obj->parent;
 }
 
-int chkobjchild(struct objlist *parent,struct objlist *child)
+int 
+chkobjchild(struct objlist *parent,struct objlist *child)
 {
   struct objlist *p;
 
@@ -1184,25 +1245,29 @@ int chkobjchild(struct objlist *parent,struct objlist *child)
   return FALSE;
 }
 
-int chkobjsize(struct objlist *obj)
+int 
+chkobjsize(struct objlist *obj)
 {
   if (obj==NULL) return 0;
   return obj->size;
 }
 
-int chkobjlastinst(struct objlist *obj)
+int 
+chkobjlastinst(struct objlist *obj)
 {
   if (obj==NULL) return -1;
   return obj->lastinst;
 }
 
-int chkobjcurinst(struct objlist *obj)
+int 
+chkobjcurinst(struct objlist *obj)
 {
   if (obj==NULL) return -1;
   return obj->curinst;
 }
 
-int chkobjoffset(struct objlist *obj,char *name)
+int 
+chkobjoffset(struct objlist *obj,char *name)
 /* chkobjoffset() returns -1 on error */
 {
 #if USE_HASH
@@ -1229,12 +1294,14 @@ int chkobjoffset(struct objlist *obj,char *name)
 #endif
 }
 
-int chkobjoffset2(struct objlist *obj,int tblpos)
+int 
+chkobjoffset2(struct objlist *obj,int tblpos)
 {
   return obj->table[tblpos].offset;
 }
 
-char *chkobjinstoid(struct objlist *obj,int oid)
+char *
+chkobjinstoid(struct objlist *obj,int oid)
 /* chkobjinstoid() returns NULL when instance is not found */
 {
   int oidp,nextp;
@@ -1255,7 +1322,8 @@ char *chkobjinstoid(struct objlist *obj,int oid)
   return NULL;
 }
 
-int chkobjtblpos(struct objlist *obj,char *name,
+static int 
+chkobjtblpos(struct objlist *obj,char *name,
                  struct objlist **robj)
 /* chkobjtblpos() returns -1 on error */
 {
@@ -1291,7 +1359,8 @@ int chkobjtblpos(struct objlist *obj,char *name,
 #endif
 }
 
-char *chkobjinst(struct objlist *obj,int id)
+char *
+chkobjinst(struct objlist *obj,int id)
 /* chkobjinst() returns NULL if instance is not found */
 {
   int i,nextp;
@@ -1315,7 +1384,8 @@ char *chkobjinst(struct objlist *obj,int id)
   return instcur;
 }
 
-char *chkobjlast(struct objlist *obj)
+char *
+chkobjlast(struct objlist *obj)
 /* chkobjlast() returns NULL if instance is not found */
 {
   char *instcur,*instprev;
@@ -1334,7 +1404,8 @@ char *chkobjlast(struct objlist *obj)
   return instcur;
 }
 
-char *chkobjprev(struct objlist *obj,int id,char **inst,char **prev)
+static char *
+chkobjprev(struct objlist *obj,int id,char **inst,char **prev)
 /* chkobjprev() returns NULL if instance is not found */
 {
   char *instcur,*instprev;
@@ -1364,14 +1435,16 @@ char *chkobjprev(struct objlist *obj,int id,char **inst,char **prev)
   return instcur;
 }
 
-int chkobjid(struct objlist *obj,int id)
+static int 
+chkobjid(struct objlist *obj,int id)
 /* chkobjid() returns -1 on error */
 {
   if ((id>obj->lastinst) || (id<0)) return -1;
   else return id;
 }
 
-int chkobjoid(struct objlist *obj,int oid)
+int 
+chkobjoid(struct objlist *obj,int oid)
 /* chkobjoid() returns -1 on error */
 {
   int oidp,idp,nextp;
@@ -1393,7 +1466,8 @@ int chkobjoid(struct objlist *obj,int oid)
   return -1;
 }
 
-int chkobjname(struct objlist *obj,int *id,char *name)
+static int 
+chkobjname(struct objlist *obj,int *id,char *name)
 /* chkobjname() returns -1 when named object is not found*/
 {
   int i,id2;
@@ -1415,7 +1489,8 @@ int chkobjname(struct objlist *obj,int *id,char *name)
   return -1;
 }
 
-int chkobjfieldnum(struct objlist *obj)
+int 
+chkobjfieldnum(struct objlist *obj)
 {
   struct objlist *objcur,*objcur2;
   char *name;
@@ -1445,7 +1520,8 @@ match:
   return num;
 }
 
-char *chkobjfieldname(struct objlist *obj,int num)
+char *
+chkobjfieldname(struct objlist *obj,int num)
 {
   struct objlist *objcur,*objcur2,*objcur3;
   char *name;
@@ -1475,7 +1551,8 @@ match:
   return NULL;
 }
 
-int chkobjfield(struct objlist *obj,char *name)
+int 
+chkobjfield(struct objlist *obj,char *name)
 {
 #if USE_HASH
   struct objlist *objcur;
@@ -1499,7 +1576,8 @@ int chkobjfield(struct objlist *obj,char *name)
 #endif
 }
 
-int chkobjperm(struct objlist *obj,char *name)
+int 
+chkobjperm(struct objlist *obj,char *name)
 /* chkobjperm() returns 0 on error */
 {
   struct objlist *robj;
@@ -1509,7 +1587,8 @@ int chkobjperm(struct objlist *obj,char *name)
   return robj->table[idn].attrib;
 }
 
-int chkobjfieldtype(struct objlist *obj,char *name)
+int 
+chkobjfieldtype(struct objlist *obj,char *name)
 /* chkobjperm() returns VOID on error */
 {
   struct objlist *robj;
@@ -1519,7 +1598,8 @@ int chkobjfieldtype(struct objlist *obj,char *name)
   return robj->table[idn].type;
 }
 
-void *chkobjproc(struct objlist *obj,char *name)
+static void *
+chkobjproc(struct objlist *obj,char *name)
 {
   int namen;
   struct objlist *robj;
@@ -1528,7 +1608,8 @@ void *chkobjproc(struct objlist *obj,char *name)
   return robj->table[namen].proc;
 }
 
-char *chkobjarglist(struct objlist *obj,char *name)
+char *
+chkobjarglist(struct objlist *obj,char *name)
 {
   int namen,type;
   struct objlist *robj;
@@ -1580,7 +1661,8 @@ char *chkobjarglist(struct objlist *obj,char *name)
   return arglist;
 }
 
-struct objlist *getobject(char *name)
+struct objlist *
+getobject(char *name)
 /* getobject() returns NULL when the named object is not found */
 {
   struct objlist *obj;
@@ -1589,7 +1671,8 @@ struct objlist *getobject(char *name)
   return obj;
 }
 
-char *getobjver(char *name)
+char *
+getobjver(char *name)
 /* getobjver() returns NULL when the named object is not found */
 {
   struct objlist *obj;
@@ -1598,7 +1681,8 @@ char *getobjver(char *name)
   return obj->ver;
 }
 
-int getobjcurinst(struct objlist *obj)
+static int 
+getobjcurinst(struct objlist *obj)
 {
   if (obj->curinst==-1) {
     error(obj,ERROBJCINST);
@@ -1607,7 +1691,8 @@ int getobjcurinst(struct objlist *obj)
   return obj->curinst;
 }
 
-int getobjlastinst(struct objlist *obj)
+static int 
+getobjlastinst(struct objlist *obj)
 {
   if (obj->lastinst==-1) {
     error(obj,ERRNOINST);
@@ -1616,7 +1701,8 @@ int getobjlastinst(struct objlist *obj)
   return obj->lastinst;
 }
 
-int getobjoffset(struct objlist *obj,char *name)
+int 
+getobjoffset(struct objlist *obj,char *name)
 /* getoffset() returns -1 on error */
 {
   int offset;
@@ -1632,7 +1718,8 @@ int getobjoffset(struct objlist *obj,char *name)
   return offset;
 }
 
-int getobjtblpos(struct objlist *obj,char *name,struct objlist **robj)
+int 
+getobjtblpos(struct objlist *obj,char *name,struct objlist **robj)
 /* getoffset() returns -1 on error */
 {
   int tblnum;
@@ -1648,7 +1735,8 @@ int getobjtblpos(struct objlist *obj,char *name,struct objlist **robj)
   return tblnum;
 }
 
-char *getobjinst(struct objlist *obj,int id)
+char *
+getobjinst(struct objlist *obj,int id)
 /* getobjinst() returns NULL if instance is not found */
 {
   char *instcur;
@@ -1664,7 +1752,8 @@ char *getobjinst(struct objlist *obj,int id)
   return instcur;
 }
 
-char *getobjprev(struct objlist *obj,int id,char **inst,char **prev)
+static char *
+getobjprev(struct objlist *obj,int id,char **inst,char **prev)
 /* getobjprev() returns NULL if instance is not found */
 {
   if (obj==NULL) {
@@ -1678,7 +1767,8 @@ char *getobjprev(struct objlist *obj,int id,char **inst,char **prev)
   return *inst;
 }
 
-char *getobjinstoid(struct objlist *obj,int oid)
+char *
+getobjinstoid(struct objlist *obj,int oid)
 {
   char *inst;
 
@@ -1693,7 +1783,8 @@ char *getobjinstoid(struct objlist *obj,int oid)
   return inst;
 }
 
-int getobjname(struct objlist *obj,int *id,char *name)
+static int 
+getobjname(struct objlist *obj,int *id,char *name)
 /* getobjname() returns -1 when named instance is not found */
 {
   int i,id2;
@@ -1716,7 +1807,8 @@ int getobjname(struct objlist *obj,int *id,char *name)
   return -1;
 }
 
-int getobjid(struct objlist *obj,int id)
+static int 
+getobjid(struct objlist *obj,int id)
 /* getobjid() returns -1 on error */
 {
   if ((id>obj->lastinst) || (id<0)) {
@@ -1725,7 +1817,8 @@ int getobjid(struct objlist *obj,int id)
   } else return id;
 }
 
-int getobjoid(struct objlist *obj,int oid)
+static int 
+getobjoid(struct objlist *obj,int oid)
 /* getobjoid() returns -1 on error */
 {
   int id;
@@ -1736,7 +1829,8 @@ int getobjoid(struct objlist *obj,int oid)
   } else return id;
 }
 
-int getobjfield(struct objlist *obj,char *name)
+int 
+getobjfield(struct objlist *obj,char *name)
 {
   if (chkobjfield(obj,name)==-1) {
     error2(obj,ERRVALFOUND,name);
@@ -1744,7 +1838,8 @@ int getobjfield(struct objlist *obj,char *name)
   } else return 0;
 }
 
-int getobjproc(struct objlist *obj,char *vname,void *val)
+static int 
+getobjproc(struct objlist *obj,char *vname,void *val)
 {
   struct objlist *robj;
   int idn;
@@ -1849,7 +1944,8 @@ _newobj(struct objlist *obj)
   return id;
 }
 
-int newobj(struct objlist *obj)
+int 
+newobj(struct objlist *obj)
 /* newobj() returns id or -1 on error */
 {
   struct objlist *robj;
@@ -2015,7 +2111,8 @@ _delobj(struct objlist *obj,int delid)
   return 0;
 }
 
-int delobj(struct objlist *obj,int delid)
+int 
+delobj(struct objlist *obj,int delid)
 /* delobj() returns id or -1 on error */
 {
   struct objlist *robj,*objcur;
@@ -2093,7 +2190,8 @@ int delobj(struct objlist *obj,int delid)
   return 0;
 }
 
-void delchildobj(struct objlist *parent)
+void 
+delchildobj(struct objlist *parent)
 {
   struct objlist *ocur;
   int i,instnum;
@@ -2109,7 +2207,8 @@ void delchildobj(struct objlist *parent)
   }
 }
 
-int _putobj(struct objlist *obj,char *vname,char *inst,void *val)
+int 
+_putobj(struct objlist *obj,char *vname,char *inst,void *val)
 {
   struct objlist *robj;
   int idp,idn;
@@ -2137,7 +2236,8 @@ int _putobj(struct objlist *obj,char *vname,char *inst,void *val)
   return 0;
 }
 
-int putobj(struct objlist *obj,char *vname,int id,void *val)
+int 
+putobj(struct objlist *obj,char *vname,int id,void *val)
 /* putobj() returns id or -1 on error */
 {
   struct objlist *robj;
@@ -2211,7 +2311,8 @@ int putobj(struct objlist *obj,char *vname,int id,void *val)
   return id;
 }
 
-int _getobj(struct objlist *obj,char *vname,char *inst,void *val)
+int 
+_getobj(struct objlist *obj,char *vname,char *inst,void *val)
 {
   struct objlist *robj;
   int idp,idn;
@@ -2237,7 +2338,8 @@ int _getobj(struct objlist *obj,char *vname,char *inst,void *val)
   return 0;
 }
 
-int getobj(struct objlist *obj,char *vname,int id,
+int 
+getobj(struct objlist *obj,char *vname,int id,
            int argc,char **argv,void *val)
 /* getobj() returns id or -1 on error */
 {
@@ -2293,7 +2395,8 @@ int getobj(struct objlist *obj,char *vname,int id,
   return id;
 }
 
-int _exeparent(struct objlist *obj,char *vname,char *inst,char *rval,
+int 
+_exeparent(struct objlist *obj,char *vname,char *inst,char *rval,
                int argc,char **argv)
 /* _exeparent() returns errorlevel or -1 on error */
 {
@@ -2313,7 +2416,8 @@ int _exeparent(struct objlist *obj,char *vname,char *inst,char *rval,
   return rcode;
 }
 
-int __exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv)
+int 
+__exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv)
 /* __exeobj() returns errorlevel or -1 on error */
 {
   int rcode,idp;
@@ -2326,7 +2430,8 @@ int __exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv)
   return rcode;
 }
 
-int _exeobj(struct objlist *obj,char *vname,char *inst,int argc,char **argv)
+int 
+_exeobj(struct objlist *obj,char *vname,char *inst,int argc,char **argv)
 /* _exeobj() returns errorlevel or -1 on error */
 {
   struct objlist *robj;
@@ -2355,7 +2460,8 @@ int _exeobj(struct objlist *obj,char *vname,char *inst,int argc,char **argv)
   return rcode;
 }
 
-int exeobj(struct objlist *obj,char *vname,int id,int argc,char **argv)
+int 
+exeobj(struct objlist *obj,char *vname,int id,int argc,char **argv)
 /* exeobj() returns errorlevel or -1 on error */
 {
   struct objlist *robj;
@@ -2393,7 +2499,8 @@ int exeobj(struct objlist *obj,char *vname,int id,int argc,char **argv)
   return rcode;
 }
 
-int copyobj(struct objlist *obj,char *vname,int did,int sid)
+int 
+copyobj(struct objlist *obj,char *vname,int did,int sid)
 {
   struct objlist *robj;
   unsigned int i;
@@ -2474,7 +2581,8 @@ int copyobj(struct objlist *obj,char *vname,int did,int sid)
   return did;
 }
 
-static int _copyobj(struct objlist *obj,int did,int sid)
+static int 
+_copyobj(struct objlist *obj,int did,int sid)
 /* _copyobj() returns id or -1 on error */
 /* this function shoud not be used becase this function do "shallow" copy. */
 {
@@ -2505,7 +2613,8 @@ static int _copyobj(struct objlist *obj,int did,int sid)
   return did;
 }
 
-int moveobj(struct objlist *obj,int did,int sid)
+int 
+moveobj(struct objlist *obj,int did,int sid)
 /* moveobj() returns id or -1 on error */
 {
   char *dinstcur;
@@ -2538,7 +2647,8 @@ int moveobj(struct objlist *obj,int did,int sid)
   return *(int *)(dinstcur+idp);
 }
 
-int moveupobj(struct objlist *obj,int id)
+int 
+moveupobj(struct objlist *obj,int id)
 /* moveupobj() returns id or -1 on error */
 {
   char *instcur,*instprev,*instcur2,*instprev2;
@@ -2568,7 +2678,8 @@ int moveupobj(struct objlist *obj,int id)
   return id-1;
 }
 
-int movetopobj(struct objlist *obj,int id)
+int 
+movetopobj(struct objlist *obj,int id)
 /* movetopobj() returns id or -1 on error */
 {
   char *instcur,*instprev;
@@ -2601,7 +2712,8 @@ int movetopobj(struct objlist *obj,int id)
   return 0;
 }
 
-int movedownobj(struct objlist *obj,int id)
+int 
+movedownobj(struct objlist *obj,int id)
 /* movedownobj() returns id or -1 on error */
 {
   char *instcur,*instprev;
@@ -2631,7 +2743,8 @@ int movedownobj(struct objlist *obj,int id)
   return id+1;
 }
 
-int movelastobj(struct objlist *obj,int id)
+int 
+movelastobj(struct objlist *obj,int id)
 /* movelastobj() returns id or -1 on error */
 {
   char *instcur,*instprev,*lastinst;
@@ -2666,7 +2779,8 @@ int movelastobj(struct objlist *obj,int id)
   return lid;
 }
 
-int exchobj(struct objlist *obj,int id1,int id2)
+int 
+exchobj(struct objlist *obj,int id1,int id2)
 /* exchobj() returns id or -1 on error */
 {
   char *instcur1,*instprev1;
@@ -2726,7 +2840,8 @@ char *restoreobj(struct objlist *obj,int id,char *image)
 }
 */
 
-int chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
+static int 
+chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
 /* spc  0: not found
         1: specified by id
         2: specified by oid
@@ -2851,7 +2966,8 @@ errexit:
   return -1;
 }
 
-int getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
+static int 
+getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
 /* spc  0: not found
         1: specified by id
         2: specified by oid
@@ -2979,7 +3095,8 @@ errexit:
   return -1;
 }
 
-int chkobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
+int 
+chkobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
 {
   char *oname,*ilist;
   int len;
@@ -3003,7 +3120,8 @@ int chkobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *
   return 0;
 }
 
-int getobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
+int 
+getobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
 {
   char *oname,*ilist;
   int len;
@@ -3028,7 +3146,8 @@ int getobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *
   return 0;
 }
 
-int chkobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
+int 
+chkobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
 {
   char *oname,*ilist;
   int len,num,spc;
@@ -3060,7 +3179,8 @@ int chkobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
   return 0;
 }
 
-int getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
+int 
+getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
 {
   char *oname,*ilist;
   int len,num,spc;
@@ -3095,7 +3215,8 @@ int getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
   return 0;
 }
 
-char *mkobjlist(struct objlist *obj,char *objname,int id,char *field,int oid)
+char *
+mkobjlist(struct objlist *obj,char *objname,int id,char *field,int oid)
 {
   char ids[11];
   char *s;
@@ -3120,7 +3241,8 @@ char *mkobjlist(struct objlist *obj,char *objname,int id,char *field,int oid)
   return s;
 }
 
-struct objlist *getobjlist(char *list,int *id,char **field,int *oid)
+struct objlist *
+getobjlist(char *list,int *id,char **field,int *oid)
 {
   char *objname;
   char *ids,*ids2;
@@ -3156,7 +3278,8 @@ struct objlist *getobjlist(char *list,int *id,char **field,int *oid)
   return obj;
 }
 
-char *chgobjlist(char *olist)
+char *
+chgobjlist(char *olist)
 {
   char *list,*objname,*newlist;
   char *ids,*ids2;
@@ -3199,7 +3322,8 @@ char *chgobjlist(char *olist)
   return newlist;
 }
 
-char *getvaluestr(struct objlist *obj,char *field,void *val,int cr,int quote)
+char *
+getvaluestr(struct objlist *obj,char *field,void *val,int cr,int quote)
 {
   struct narray *array;
   void *po;
@@ -3357,7 +3481,7 @@ char *getvaluestr(struct objlist *obj,char *field,void *val,int cr,int quote)
   return s;
 }
 
-int 
+static int 
 getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
 {
   struct narray *array;
@@ -3592,7 +3716,8 @@ errexit:
   return err;
 }
 
-void freeargument(int type,char *arglist,int argc,char **argv,int full)
+static void 
+freeargument(int type,char *arglist,int argc,char **argv,int full)
 {
   int i;
 
@@ -3620,7 +3745,8 @@ void freeargument(int type,char *arglist,int argc,char **argv,int full)
   }
 }
 
-int isobject(char **s)
+int 
+isobject(char **s)
 {
   char *po;
   int i;
@@ -3637,7 +3763,8 @@ int isobject(char **s)
   return TRUE;
 }
 
-int schkobjfield(struct objlist *obj,int id,char *field, char *arg,
+int 
+schkobjfield(struct objlist *obj,int id,char *field, char *arg,
                  char **valstr,int limittype,int cr,int quote)
 {
   int err;
@@ -3679,7 +3806,8 @@ int schkobjfield(struct objlist *obj,int id,char *field, char *arg,
   } else return -2;
 }
 
-int sgetobjfield(struct objlist *obj,int id,char *field,char *arg,
+int 
+sgetobjfield(struct objlist *obj,int id,char *field,char *arg,
                  char **valstr,int limittype,int cr,int quote)
 {
   int err;
@@ -3727,7 +3855,8 @@ int sgetobjfield(struct objlist *obj,int id,char *field,char *arg,
   } else return -2;
 }
 
-int schkfield(struct objlist *obj,int id,char *arg,char **valstr,
+static int 
+schkfield(struct objlist *obj,int id,char *arg,char **valstr,
               int limittype,int cr,int quote)
 {
   int err;
@@ -3750,7 +3879,8 @@ int schkfield(struct objlist *obj,int id,char *arg,char **valstr,
   return err;
 }
 
-int sgetfield(struct objlist *obj,int id,char *arg,char **valstr,
+int 
+sgetfield(struct objlist *obj,int id,char *arg,char **valstr,
               int limittype,int cr,int quote)
 {
   int err;
@@ -3774,7 +3904,8 @@ int sgetfield(struct objlist *obj,int id,char *arg,char **valstr,
   return err;
 }
 
-struct narray *sgetobj(char *arg,int limittype,int cr,int quote)
+struct narray *
+sgetobj(char *arg,int limittype,int cr,int quote)
 {
   struct objlist *obj;
   int i,anum,*id;
@@ -3805,7 +3936,8 @@ struct narray *sgetobj(char *arg,int limittype,int cr,int quote)
   return sarray;
 }
 
-int sputobjfield(struct objlist *obj,int id,char *field,char *arg)
+int 
+sputobjfield(struct objlist *obj,int id,char *field,char *arg)
 {
   char *val;
   char *arglist;
@@ -3846,7 +3978,8 @@ int sputobjfield(struct objlist *obj,int id,char *field,char *arg)
   }
 }
 
-int sputfield(struct objlist *obj,int id,char *arg)
+int 
+sputfield(struct objlist *obj,int id,char *arg)
 {
   char *field;
   char *s;
@@ -3867,7 +4000,8 @@ int sputfield(struct objlist *obj,int id,char *arg)
   return err;
 }
 
-int sputobj(char *arg)
+int 
+sputobj(char *arg)
 {
   struct objlist *obj;
   int i,anum,*id;
@@ -3886,7 +4020,8 @@ int sputobj(char *arg)
   return 0;
 }
 
-int sexeobjfield(struct objlist *obj,int id,char *field,char *arg)
+static int 
+sexeobjfield(struct objlist *obj,int id,char *field,char *arg)
 {
   char *val;
   int err,type;
@@ -3919,7 +4054,8 @@ int sexeobjfield(struct objlist *obj,int id,char *field,char *arg)
   return rcode;
 }
 
-int sexefield(struct objlist *obj,int id,char *arg)
+int 
+sexefield(struct objlist *obj,int id,char *arg)
 {
   char *field;
   int rcode;
@@ -3941,7 +4077,8 @@ int sexefield(struct objlist *obj,int id,char *arg)
   return rcode;
 }
 
-int sexeobj(char *arg)
+int 
+sexeobj(char *arg)
 {
   struct objlist *obj;
   int i,anum,*id;
@@ -3995,7 +4132,8 @@ obj_do_tighten(struct objlist *obj, char *inst, char *field)
   arraydel(&iarray);
 }
 
-char *getuniqname(struct objlist *obj,char *prefix,char sep)
+static char *
+getuniqname(struct objlist *obj,char *prefix,char sep)
 {
   int i,j,len;
   char *iname;

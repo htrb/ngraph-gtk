@@ -1,5 +1,5 @@
 /* 
- * $Id: axis.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: axis.h,v 1.2 2009/03/24 09:14:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,5 +43,5 @@ int getaxispositionini(struct axislocal *alocal,
 int getaxisposition(struct axislocal *alocal,double *po);
 double scale(double x);
 double roundmin(double min,double sc);
-extern char *axistypechar[4];
+extern char *axistypechar[];
 

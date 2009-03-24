@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.7 2009/02/19 09:47:30 hito Exp $
+ * $Id: oarc.c,v 1.8 2009/03/24 09:15:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -357,7 +357,8 @@ static struct objtable arc[] = {
 
 #define TBLNUM (sizeof(arc) / sizeof(*arc))
 
-void *addarc()
+void *
+addarc(void)
 /* addarc() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,arc,ERRNUM,arcerrorlist,NULL,NULL);
