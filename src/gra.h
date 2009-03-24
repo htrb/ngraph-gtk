@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.h,v 1.2 2008/09/18 01:35:10 hito Exp $
+ * $Id: gra.h,v 1.3 2009/03/24 09:55:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,7 +25,7 @@ struct greektbltype {
   unsigned int jis,symbol;
 };
 
-extern struct greektbltype greektable[48];
+extern struct greektbltype greektable[];
 
 struct GRAbbox {
   int set;

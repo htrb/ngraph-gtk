@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.4 2009/02/09 01:04:36 hito Exp $
+ * $Id: mathcode.c,v 1.5 2009/03/24 09:55:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,7 +39,7 @@
 
 #define OPENUM 65
 
-char *matherrorchar[10]={
+char *matherrorchar[]={
  "noerr",
  "err",
  "nan",
@@ -52,7 +52,7 @@ char *matherrorchar[10]={
  NULL
 };
 
-struct {
+static struct {
   char *op;
   char code;
   char arg;
@@ -550,7 +550,8 @@ errexit:
   return rcode;
 }
 
-void mathexpand(int pre,int *oppo,int *numpo,int *ifpo,int *forpo,
+static void 
+mathexpand(int pre,int *oppo,int *numpo,int *ifpo,int *forpo,
      double numbuf[],char numstat[],
      char opbuf[],char prebuf[],char argbuf[],char noexpand[],char fnoexpand[],
      double memory[],char memorystat[],
@@ -1007,7 +1008,8 @@ void mathexpand(int pre,int *oppo,int *numpo,int *ifpo,int *forpo,
   }
 }
 
-int calculate(char *code,
+int 
+calculate(char *code,
               int first,
               double x,char xstat,
               double y,char ystat,

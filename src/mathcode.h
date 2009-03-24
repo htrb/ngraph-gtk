@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.h,v 1.3 2009/02/09 01:04:36 hito Exp $
+ * $Id: mathcode.h,v 1.4 2009/03/24 09:55:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,7 +21,7 @@
  * 
  */
 
-extern char *matherrorchar[10];
+extern char *matherrorchar[];
 
 #define MEMORYNUM 20
 

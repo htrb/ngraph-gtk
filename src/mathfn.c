@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.c,v 1.4 2008/10/06 03:45:19 hito Exp $
+ * $Id: mathfn.c,v 1.5 2009/03/24 09:55:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,27 +33,30 @@
 #define TRUE 1
 #define FALSE 0
 
-int randinit=FALSE;
+static int randinit=FALSE;
 /*
 int randm[521];
 int randj;
 */
 
-double cutdown(double x)
+double 
+cutdown(double x)
 {
   if (x>=0) return (int )x;
   else if ((x-(int )x)==0.0) return (int )x;
   else return (int )(x-1);
 }
 
-double nraise(double x)
+double 
+nraise(double x)
 {
   if (x<0) return (int )x;
   else if ((x-(int )x)==0.0) return (int )x;
   else return (int )(x+1);
 }
 
-int mjd(int year,int month,int day)
+int 
+mjd(int year,int month,int day)
 {
   int d,d1,d2,d3,d4;
 
@@ -65,7 +68,8 @@ int mjd(int year,int month,int day)
   return d1+d2-d3+d4+day+1721088-2400000;
 }
 
-int nround(double x)
+int 
+nround(double x)
 {
   int ix;
   double dx;
@@ -110,7 +114,8 @@ void randomize(int seed)
   randj=0;
 }*/
 
-double frand(double a)
+double 
+frand(double a)
 {
   if (!randinit) {
     randinit=TRUE;
@@ -131,7 +136,8 @@ double frand(double a)
 */
 }
 
-int matinv(int dim,matrix m,matrix mi)
+int 
+matinv(int dim,matrix m,matrix mi)
 {
   int i,j,k;
   double max;
@@ -170,7 +176,8 @@ int matinv(int dim,matrix m,matrix mi)
   return 0;
 }
 
-int matsolv(int dim,matrix a,vector b,vector x)
+int 
+matsolv(int dim,matrix a,vector b,vector x)
 {
   matrix ai;
   int i,j;
@@ -185,7 +192,8 @@ int matsolv(int dim,matrix a,vector b,vector x)
   return 0;
 }
 
-int gamma2(double x,double *val)
+int 
+gamma2(double x,double *val)
 {
   double m,s,x1,xx;
   int i;
@@ -236,7 +244,8 @@ int gamma2(double x,double *val)
   return 0;
 }
 
-int exp1(double x,double *val)
+int 
+exp1(double x,double *val)
 {
   double x2,xx,xx2,qexp1,qexp2;
   int i,n;
@@ -313,7 +322,8 @@ int exp1(double x,double *val)
   return 0;
 }
 
-int icgamma(double mu,double x,double *val)
+int 
+icgamma(double mu,double x,double *val)
 {
   double a,u,p0,p1,q0,q1;
   int i,i2,i3;
@@ -378,7 +388,8 @@ int icgamma(double mu,double x,double *val)
   return 0;
 }
 
-int erfc1(double x,double *val)
+int 
+erfc1(double x,double *val)
 {
   int i,i2,sg;
   double x2,x3,sum,h,h2;
@@ -432,7 +443,8 @@ int erfc1(double x,double *val)
   return 0;
 }
 
-double qinv3(double y)
+double 
+qinv3(double y)
 {
   double n,sum,y2,y3,i;
 
@@ -450,7 +462,8 @@ double qinv3(double y)
   return sum;
 }
 
-double qinv2(double y)
+double 
+qinv2(double y)
 {
   int n,i;
   double a;
@@ -463,7 +476,8 @@ double qinv2(double y)
   return 1/(y+a);
 }
 
-int qinv1(double x,double *val)
+int 
+qinv1(double x,double *val)
 {
   double x2,m2,c0,c1,y0,y1;
 
@@ -492,7 +506,8 @@ int qinv1(double x,double *val)
   return 0;
 }
 
-int beta(double p,double q,double *val)
+int 
+beta(double p,double q,double *val)
 {
   double a,b,c;
 
@@ -504,7 +519,8 @@ int beta(double p,double q,double *val)
   return 0;
 }
 
-int jbessel(int n,double x,double *val)
+int 
+jbessel(int n,double x,double *val)
 {
   int n2,m,l,i;
   double x2,t1,t2,t3,s,j;
@@ -563,7 +579,8 @@ int jbessel(int n,double x,double *val)
   return 0;
 }
 
-int ybessel(int n,double x,double *val)
+int 
+ybessel(int n,double x,double *val)
 {
   int n2,m,i,l;
   double x2,t1,t2,t3,s,ss,w,j0,j1,y0,y1,y2;
@@ -640,7 +657,8 @@ int ybessel(int n,double x,double *val)
   return 0;
 }
 
-int legendre(int n,double x,double *val)
+int 
+legendre(int n,double x,double *val)
 {
   double l1,l2,tmp1,tmp2;
   int i;
@@ -664,7 +682,8 @@ int legendre(int n,double x,double *val)
   return 0;
 }
 
-int laguer(int n,double alp,double x,double *val)
+int 
+laguer(int n,double alp,double x,double *val)
 {
   int i;
   double l1,l2,tmp1,tmp2;
@@ -688,7 +707,8 @@ int laguer(int n,double alp,double x,double *val)
   return 0;
 }
 
-int hermite(int n,double x,double *val)
+int 
+hermite(int n,double x,double *val)
 {
   double l1,l2;
   int i;
@@ -711,7 +731,8 @@ int hermite(int n,double x,double *val)
   return 0;
 }
 
-int chebyshev(int n,double x,double *val)
+int 
+chebyshev(int n,double x,double *val)
 {
   double l1,l2,tmp1;
   int i;
@@ -734,7 +755,8 @@ int chebyshev(int n,double x,double *val)
   return 0;
 }
 
-void HSB2RGB(double h,double s,double b,int *R,int *G,int *B)
+void 
+HSB2RGB(double h,double s,double b,int *R,int *G,int *B)
 {
   double th,s3;
 

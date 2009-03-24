@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.14 2009/03/10 01:25:33 hito Exp $
+ * $Id: ioutil.c,v 1.15 2009/03/24 09:55:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -68,7 +68,8 @@ char_type_buf_init(void)
 #endif
 
 #ifndef WINDOWS
-void changefilename(char *name)
+void 
+changefilename(char *name)
 {
   int i;
 
@@ -86,7 +87,8 @@ void changefilename(char *name)
 */
 }
 #else
-void changefilename(char *name)
+void 
+changefilename(char *name)
 {
   int i;
 /*  char disk[4];
@@ -116,7 +118,8 @@ void changefilename(char *name)
 */
 }
 
-void unchangefilename(char *name)
+static void 
+unchangefilename(char *name)
 {
   int i;
 
@@ -126,7 +129,8 @@ void unchangefilename(char *name)
 }
 #endif
 
-void pathresolv(char *name)
+static void 
+pathresolv(char *name)
 {
   int j,k;
 
@@ -155,7 +159,8 @@ void pathresolv(char *name)
 }
 
 #ifndef WINDOWS
-char *getfullpath(char *name)
+char *
+getfullpath(char *name)
 {
   char *s,*cwd;
   int top,j;
@@ -188,7 +193,8 @@ char *getfullpath(char *name)
   return s;
 }
 #else
-char *getfullpath(char *name)
+char *
+getfullpath(char *name)
 {
   char buf[MAXPATH],*s;
 
@@ -202,7 +208,8 @@ char *getfullpath(char *name)
 }
 #endif
 
-char *getrelativepath(char *name)
+char *
+getrelativepath(char *name)
 {
   char *s,*cwd,*cwd2;
   int i,j,depth,top;
@@ -264,7 +271,8 @@ char *getrelativepath(char *name)
 } /* dummy */
 #endif
 
-char *getbasename(char *name)
+char *
+getbasename(char *name)
 {
   char *s;
   int i;
@@ -278,7 +286,8 @@ char *getbasename(char *name)
   return s;
 }
 
-char *getextention(char *name)
+char *
+getextention(char *name)
 {
   int i;
 
@@ -289,7 +298,8 @@ char *getextention(char *name)
   return NULL;
 }
 
-char *getfilename(char *dir,char *sep,char *file)
+char *
+getfilename(char *dir,char *sep,char *file)
 {
   char *s;
   unsigned int dir_len;
@@ -311,7 +321,8 @@ char *getfilename(char *dir,char *sep,char *file)
   return s;
 }
 
-int findfilename(char *dir,char *sep,char *file)
+int 
+findfilename(char *dir,char *sep,char *file)
 {
   char *s;
   int find;
@@ -327,7 +338,8 @@ int findfilename(char *dir,char *sep,char *file)
   return find;
 }
 
-char *ngetcwd()
+char *
+ngetcwd(void)
 {
   char *buf,*s;
   size_t size;
@@ -350,7 +362,8 @@ char *ngetcwd()
 
 #ifndef WINDOWS
 
-char *nsearchpath(char *path,char *name,int shellscript)
+char *
+nsearchpath(char *path,char *name,int shellscript)
 {
   char *cmdname,*tok;
   int len;
@@ -385,7 +398,8 @@ char *nsearchpath(char *path,char *name,int shellscript)
   return NULL;
 }
 
-int nselectdir(char *dir,struct dirent *ent)
+static int 
+nselectdir(char *dir,struct dirent *ent)
 {
   char *s;
   struct stat sbuf;
@@ -400,7 +414,8 @@ int nselectdir(char *dir,struct dirent *ent)
   return 0;
 }
 
-int nselectfile(char *dir,struct dirent *ent)
+static int 
+nselectfile(char *dir,struct dirent *ent)
 {
   char *s;
   struct stat sbuf;
@@ -417,9 +432,8 @@ int nselectfile(char *dir,struct dirent *ent)
 
 #else
 
-#define ADDEXENUM 6
 
-char *addexechar[ADDEXENUM]={
+static char *addexechar[]={
   ".com",
   ".exe",
   ".bat",
@@ -428,7 +442,10 @@ char *addexechar[ADDEXENUM]={
   ".BAT",
 };
 
-char *nsearchpath(char *path,char *name,int shellscript)
+#define ADDEXENUM (sizeof(addexechar) / sizeof(*addexechar))
+
+char *
+nsearchpath(char *path,char *name,int shellscript)
 {
   char *cmdname,*tok;
   int i,k,len,len0;
@@ -516,7 +533,8 @@ char *nsearchpath(char *path,char *name,int shellscript)
 
 #endif
 
-int nscandir(char *dir,char ***namelist,
+static int 
+nscandir(char *dir,char ***namelist,
              int (*select)(char *dir,struct dirent *ent),
              int (*compar)())
 {
@@ -557,12 +575,14 @@ int nscandir(char *dir,char ***namelist,
   return alloc;
 }
 
-int nalphasort(char **a,char **b)
+static int 
+nalphasort(char **a,char **b)
 {
   return strcmp(*a,*b);
 }
 
-int nglob2(char *path,int po,int *num,char ***list)
+static int 
+nglob2(char *path,int po,int *num,char ***list)
 {
   int i,j,p1,escape,scannum,len,err;
   char *s,*s1,*s2,*s3,*path2;
@@ -649,7 +669,8 @@ int nglob2(char *path,int po,int *num,char ***list)
   return 0;
 }
 
-int nglob(char *path,char ***namelist)
+int 
+nglob(char *path,char ***namelist)
 {
   int num;
   char *s;
@@ -774,7 +795,8 @@ fgetnline(FILE *fp, char *buf, int len)
   return 0;
 }
 
-int nfgetc(FILE *fp)
+int 
+nfgetc(FILE *fp)
 {
   int ch;
 
@@ -784,7 +806,8 @@ int nfgetc(FILE *fp)
   return ch;
 }
 
-FILE *nfopen(char *filename, const char *mode)
+FILE *
+nfopen(char *filename, const char *mode)
 {
   FILE *fp;
 
@@ -798,37 +821,44 @@ FILE *nfopen(char *filename, const char *mode)
 
 #ifndef WINDOWS
 
-int nisatty(int fd)
+int 
+nisatty(int fd)
 {
   return isatty(fd);
 }
 
-int nopen(char *path,int access,int mode)
+int 
+nopen(char *path,int access,int mode)
 {
   return open(path,access,mode);
 }
 
-void nclose(int fd)
+void 
+nclose(int fd)
 {
   close(fd);
 }
 
-void nlseek(int fd,long offset,int fromwhere)
+void 
+nlseek(int fd,long offset,int fromwhere)
 {
   lseek(fd,offset,fromwhere);
 }
 
-int nread(int fd,char *buf,unsigned len)
+int 
+nread(int fd,char *buf,unsigned len)
 {
   return read(fd,buf,len);
 }
 
-int nwrite(int fd,char *buf,unsigned len)
+int 
+nwrite(int fd,char *buf,unsigned len)
 {
   return write(fd,buf,len);
 }
 
-int nredirect(int fd,int newfd)
+int 
+nredirect(int fd,int newfd)
 {
   int savefd;
 
@@ -838,30 +868,35 @@ int nredirect(int fd,int newfd)
   return savefd;
 }
 
-void nredirect2(int fd,int savefd)
+void 
+nredirect2(int fd,int savefd)
 {
   dup2(savefd,fd);
   close(savefd);
 }
 
-int stdinfd(void)
+int 
+stdinfd(void)
 {
   return 0;
 }
 
-int stdoutfd(void)
+int 
+stdoutfd(void)
 {
   return 1;
 }
 
-int stderrfd(void)
+int 
+stderrfd(void)
 {
   return 2;
 }
 
 #else
 
-int nisatty(HANDLE fd)
+int 
+nisatty(HANDLE fd)
 {
   DWORD flag;
 
@@ -869,7 +904,8 @@ int nisatty(HANDLE fd)
   return FALSE;
 }
 
-HANDLE nopen(char *path,int access,int mode)
+HANDLE 
+nopen(char *path,int access,int mode)
 {
   DWORD fdwAccess,fdwCreate;
   LONG DistanceToMove;
@@ -899,12 +935,14 @@ HANDLE nopen(char *path,int access,int mode)
   return fd;
 }
 
-void nclose(HANDLE fd)
+void 
+nclose(HANDLE fd)
 {
   CloseHandle(fd);
 }
 
-void nlseek(HANDLE fd,long offset,int fromwhere)
+void 
+nlseek(HANDLE fd,long offset,int fromwhere)
 {
   LONG DistanceToMove;
   DWORD dwMoveMethod;
@@ -916,7 +954,8 @@ void nlseek(HANDLE fd,long offset,int fromwhere)
   SetFilePointer(fd,offset,&DistanceToMove,dwMoveMethod);
 }
 
-int nread(HANDLE fd,char *buf,unsigned len)
+int 
+nread(HANDLE fd,char *buf,unsigned len)
 {
   DWORD len2;
   int i,j;
@@ -932,7 +971,8 @@ int nread(HANDLE fd,char *buf,unsigned len)
   return 0;
 }
 
-int nwrite(HANDLE fd,char *buf,unsigned len)
+int 
+nwrite(HANDLE fd,char *buf,unsigned len)
 {
   DWORD len2;
   int i,j,num;
@@ -952,7 +992,8 @@ int nwrite(HANDLE fd,char *buf,unsigned len)
   return len2-num;
 }
 
-HANDLE nredirect(int fd,HANDLE newfd)
+HANDLE 
+nredirect(int fd,HANDLE newfd)
 {
   HANDLE savefd;
 
@@ -973,7 +1014,8 @@ HANDLE nredirect(int fd,HANDLE newfd)
   return savefd;
 }
 
-void nredirect2(int fd,HANDLE savefd)
+void 
+nredirect2(int fd,HANDLE savefd)
 {
   HANDLE oldfd;
 
@@ -996,17 +1038,20 @@ void nredirect2(int fd,HANDLE savefd)
   }
 }
 
-HANDLE stdinfd(void)
+HANDLE 
+stdinfd(void)
 {
   return GetStdHandle(STD_INPUT_HANDLE);
 }
 
-HANDLE stdoutfd(void)
+HANDLE 
+stdoutfd(void)
 {
   return GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
-HANDLE stderrfd(void)
+HANDLE 
+stderrfd(void)
 {
   return GetStdHandle(STD_ERROR_HANDLE);
 }

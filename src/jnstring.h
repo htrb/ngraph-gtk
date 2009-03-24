@@ -1,5 +1,5 @@
 /* 
- * $Id: jnstring.h,v 1.1 2008/08/05 08:46:00 hito Exp $
+ * $Id: jnstring.h,v 1.2 2009/03/24 09:55:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,6 @@
  * 
  */
 
-void njms2euc(char *s);
-void neuc2jms(char *s);
 unsigned int njms2jis(unsigned int code);
-unsigned int njis2jms(unsigned int code);
 int niskanji(unsigned char code);
 int niskanji2(char *s,int pos);

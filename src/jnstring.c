@@ -1,5 +1,5 @@
 /* 
- * $Id: jnstring.c,v 1.3 2009/02/09 03:01:14 hito Exp $
+ * $Id: jnstring.c,v 1.4 2009/03/24 09:55:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,42 +31,8 @@
 #define TRUE  1
 #define FALSE 0
 
-void njms2euc(char *s)
-{
-  unsigned int i, n;
-  unsigned int jis;
-
-  n = strlen(s);
-  for (i=0;i<n;i++) {
-    if (niskanji((unsigned char)s[i])) {
-      if (i+1<n) {
-        jis=njms2jis(((unsigned char)s[i] << 8)+(unsigned char)s[i+1]);
-        s[i]=(jis >> 8) | 0x80;
-        s[i+1]=(jis & 0xff) | 0x80; 
-      } else s[i]=' ';
-      i++;
-    }
-  }
-}
-
-void neuc2jms(char *s)
-{
-  unsigned int i, n;
-  unsigned int jms;
-
-  n = strlen(s);
-  for (i=0;i<n;i++) {
-    if ((s[i] & 0x80) && (s[i+1] & 0x80)) {
-      jms=njis2jms((((unsigned char)s[i] << 8)
-                    +(unsigned char)s[i+1]) & 0x7f7f);
-      s[i]=jms >> 8;
-      s[i+1]=jms & 0xff;
-      i++;
-    }
-  }
-}
-
-unsigned int njms2jis(unsigned int code)
+unsigned int 
+njms2jis(unsigned int code)
 {
   unsigned char dh,dl;
 
@@ -84,7 +50,10 @@ unsigned int njms2jis(unsigned int code)
   return ((unsigned int)(dh << 8))+dl;
 }
 
-unsigned int njis2jms(unsigned int code)
+#if 0
+
+static unsigned int 
+njis2jms(unsigned int code)
 {
   unsigned char dh,dl;
 
@@ -105,14 +74,55 @@ unsigned int njis2jms(unsigned int code)
   return ((unsigned int)(dh << 8))+dl;
 }
 
-int niskanji(unsigned char code)
+static void 
+njms2euc(char *s)
+{
+  unsigned int i, n;
+  unsigned int jis;
+
+  n = strlen(s);
+  for (i=0;i<n;i++) {
+    if (niskanji((unsigned char)s[i])) {
+      if (i+1<n) {
+        jis=njms2jis(((unsigned char)s[i] << 8)+(unsigned char)s[i+1]);
+        s[i]=(jis >> 8) | 0x80;
+        s[i+1]=(jis & 0xff) | 0x80; 
+      } else s[i]=' ';
+      i++;
+    }
+  }
+}
+
+static void 
+neuc2jms(char *s)
+{
+  unsigned int i, n;
+  unsigned int jms;
+
+  n = strlen(s);
+  for (i=0;i<n;i++) {
+    if ((s[i] & 0x80) && (s[i+1] & 0x80)) {
+      jms=njis2jms((((unsigned char)s[i] << 8)
+                    +(unsigned char)s[i+1]) & 0x7f7f);
+      s[i]=jms >> 8;
+      s[i+1]=jms & 0xff;
+      i++;
+    }
+  }
+}
+
+#endif
+
+int 
+niskanji(unsigned char code)
 {
   if ((0x81 <= code && code <= 0x9f) ||
       (0xe0 <= code && code <= 0xff)) return TRUE;
   return FALSE;
 }
 
-int niskanji2(char *s,int pos)
+int 
+niskanji2(char *s,int pos)
 {
   int k;
 

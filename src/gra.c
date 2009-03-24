@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.16 2009/02/05 06:59:32 hito Exp $
+ * $Id: gra.c,v 1.17 2009/03/24 09:55:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2746,7 +2746,7 @@ errexit:
   return FALSE;
 }
 
-char *fonttbl[21]={
+static char *fonttbl[]={
    "Times","TimesBold","TimesItalic","TimesBoldItalic",
    "Helvetica","HelveticaBold","HelveticaOblique","HelveticaBoldOblique",
    "Mincho","Mincho","Mincho","Mincho",
@@ -2754,7 +2754,9 @@ char *fonttbl[21]={
    "Courier","CourierBold","CourierItalic","CourierBoldItalic",
    "Symbol"};
 
-struct greektbltype greektable[48]={
+#define FONT_SYMBOL (sizeof(fonttbl) / sizeof(*fonttbl) - 1)
+
+struct greektbltype greektable[]={
  {0x21,0101}, {0x22,0102}, {0x23,0107}, {0x24,0104}, {0x25,0105}, {0x26,0132},
  {0x27,0110}, {0x28,0121}, {0x29,0111}, {0x2A,0113}, {0x2B,0114}, {0x2C,0115},
  {0x2D,0116}, {0x2E,0130}, {0x2F,0117},
@@ -2765,7 +2767,8 @@ struct greektbltype greektable[48]={
  {0x4D,0156}, {0x4E,0170}, {0x4F,0157}, {0x50,0160}, {0x51,0162}, {0x52,0163},
  {0x53,0164}, {0x54,0165}, {0x55,0146}, {0x56,0143}, {0x57,0171}, {0x58,0167}};
 
-int GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
+int 
+GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
 {
   int pos,num,i,j,k,h,m;
   char code,code2;
@@ -2842,7 +2845,7 @@ int GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
           if (i!=j) {
             code2='F';
             cpar2[0]=-1;
-            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[20]);
+            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[FONT_SYMBOL]);
             code2='H';
             cpar2[0]=3;
             cpar2[1]=GRAClist[GC].mergept;
@@ -2864,8 +2867,10 @@ int GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
             j=i;
             code2='F';
             cpar2[0]=-1;
-            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,
-                         fonttbl[GRAClist[GC].mergefont]);
+	    if (GRAClist[GC].mergefont <= FONT_SYMBOL) {
+	      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,
+			   fonttbl[GRAClist[GC].mergefont]);
+	    }
             code2='H';
             cpar2[0]=3;
             cpar2[1]=GRAClist[GC].mergept;
@@ -2993,9 +2998,14 @@ int GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
     code2='F';
     cpar2[0]=-1;
     GRAClist[GC].mergefont=cpar[1]*4+cpar[2];
-    GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[cpar[1]*4+cpar[2]]);
-    if (cpar[6]==1) cpar[6]=9000;
-    else if (cpar[6]<0) cpar[6]=abs(cpar[6]);
+    if (cpar[1]*4+cpar[2] < FONT_SYMBOL) {
+      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[cpar[1]*4+cpar[2]]);
+    }
+    if (cpar[6] == 1) {
+      cpar[6]=9000;
+    } else if (cpar[6]<0) {
+      cpar[6]=abs(cpar[6]);
+    }
     code2='H';
     cpar2[0]=3;
     cpar2[1]=cpar[3]*100;
@@ -3020,7 +3030,8 @@ int GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
   return TRUE;
 }
 
-int GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1)
+static int 
+GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1)
 {
   int a,xl,yl,xg,yg;
   int minx,miny,maxx,maxy;
@@ -3069,7 +3080,8 @@ int GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1)
   return 0;
 }
 
-int GRArectclip(int GC,int *x0,int *y0,int *x1,int *y1)
+static int 
+GRArectclip(int GC,int *x0,int *y0,int *x1,int *y1)
 {
   int xl,yl,xg,yg;
   int minx,miny,maxx,maxy;
@@ -3110,7 +3122,8 @@ int GRArectclip(int GC,int *x0,int *y0,int *x1,int *y1)
   return 0;
 }
 
-int GRAinview(int GC,int x,int y)
+static int 
+GRAinview(int GC,int x,int y)
 {
   int minx,miny,maxx,maxy;
 
@@ -3132,7 +3145,8 @@ int GRAinview(int GC,int x,int y)
   else return 1;
 }
 
-void GRAcurvefirst(int GC,int num,int *dashlist,
+void 
+GRAcurvefirst(int GC,int num,int *dashlist,
       clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
                    double x0,double y0)
 {
@@ -3163,7 +3177,8 @@ void GRAcurvefirst(int GC,int num,int *dashlist,
   GRAmoveto(GC,gx0,gy0);
 }
 
-int GRAcurve(int GC,double c[],double x0,double y0)
+int 
+GRAcurve(int GC,double c[],double x0,double y0)
 {
   double d,dx,dy,ddx,ddy,dd,x,y;
 
@@ -3184,7 +3199,8 @@ int GRAcurve(int GC,double c[],double x0,double y0)
   return TRUE;
 }
 
-void GRAdashlinetod(int GC,double x,double y)
+void 
+GRAdashlinetod(int GC,double x,double y)
 {
   double dx,dy,dd,len,len2,x1,y1,x2,y2;
   int gx,gy,gx1,gy1,gx2,gy2;
@@ -3237,7 +3253,8 @@ void GRAdashlinetod(int GC,double x,double y)
   GRAClist[GC].y0=y;
 }
 
-void GRAcmatchfirst(int pointx,int pointy,int err,
+void 
+GRAcmatchfirst(int pointx,int pointy,int err,
                     clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
                     struct cmatchtype *data,int bbox,double x0,double y0)
 {
@@ -3260,7 +3277,8 @@ void GRAcmatchfirst(int pointx,int pointy,int err,
   data->match=FALSE;
 }
 
-void GRAcmatchtod(double x,double y,struct cmatchtype *data)
+static void 
+GRAcmatchtod(double x,double y,struct cmatchtype *data)
 {
   double x1,y1,x2,y2;
   int gx1,gy1,gx2,gy2;
@@ -3325,7 +3343,8 @@ void GRAcmatchtod(double x,double y,struct cmatchtype *data)
   data->y0=y;
 }
 
-int GRAcmatch(double c[],double x0,double y0,struct cmatchtype *data)
+int 
+GRAcmatch(double c[],double x0,double y0,struct cmatchtype *data)
 {
   double d,dx,dy,ddx,ddy,dd,x,y;
 
@@ -3346,7 +3365,8 @@ int GRAcmatch(double c[],double x0,double y0,struct cmatchtype *data)
   return TRUE;
 }
 
-void setbbminmax(struct GRAbbox *bbox,int x1,int y1,int x2,int y2,int lw)
+static void 
+setbbminmax(struct GRAbbox *bbox,int x1,int y1,int x2,int y2,int lw)
 {
   int x,y;
 
@@ -3382,7 +3402,8 @@ void setbbminmax(struct GRAbbox *bbox,int x1,int y1,int x2,int y2,int lw)
   }
 }
 
-void GRAinitbbox(struct GRAbbox *bbox)
+void 
+GRAinitbbox(struct GRAbbox *bbox)
 {
   bbox->set=FALSE;
   bbox->minx=0;
@@ -3404,12 +3425,14 @@ void GRAinitbbox(struct GRAbbox *bbox)
   bbox->loadfont=FALSE;
 }
 
-void GRAendbbox(struct GRAbbox *bbox)
+void 
+GRAendbbox(struct GRAbbox *bbox)
 {
   memfree(bbox->fontalias);
 }
 
-int GRAboundingbox(char code,int *cpar,char *cstr,void *local)
+int 
+GRAboundingbox(char code,int *cpar,char *cstr,void *local)
 {
   unsigned int i, n;
   int lw, j;
