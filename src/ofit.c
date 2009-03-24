@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.15 2009/03/10 02:50:25 hito Exp $
+ * $Id: ofit.c,v 1.16 2009/03/24 08:26:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -79,7 +79,7 @@ static char *fiterrorlist[]={
 
 #define ERRNUM (sizeof(fiterrorlist) / sizeof(*fiterrorlist))
 
-char *fittypechar[]={
+static char *fittypechar[]={
   N_("poly"),
   N_("pow"),
   N_("exp"),
@@ -878,7 +878,8 @@ static struct objtable fit[] = {
 
 #define TBLNUM (sizeof(fit) / sizeof(*fit))
 
-void *addfit()
+void *
+addfit(void)
 /* addfit() returns NULL on error */
 {
   MathErrorCodeArray[MCNOERR] = 0;

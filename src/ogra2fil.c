@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2fil.c,v 1.3 2009/02/05 08:40:14 hito Exp $
+ * $Id: ogra2fil.c,v 1.4 2009/03/24 08:24:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -142,7 +142,8 @@ static struct objtable gra2f[] = {
 
 #define TBLNUM (sizeof(gra2f) / sizeof(*gra2f))
 
-void *addgra2file()
+void *
+addgra2file(void)
 /* addgra2file() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,gra2f,ERRNUM,gra2ferrorlist,NULL,NULL);

@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.c,v 1.7 2009/03/23 08:54:47 hito Exp $
+ * $Id: oroot.c,v 1.8 2009/03/24 08:16:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -396,7 +396,8 @@ static struct objtable objectroot[] = {
 
 #define TBLNUM (sizeof(objectroot) / sizeof(*objectroot))
 
-void *addobjectroot()
+void *
+addobjectroot(void)
 /* addobjectroot() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,objectroot,ERRNUM,rooterrorlist,NULL,NULL);

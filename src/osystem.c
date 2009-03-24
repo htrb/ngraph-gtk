@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.9 2009/03/10 02:50:25 hito Exp $
+ * $Id: osystem.c,v 1.10 2009/03/24 08:14:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -361,7 +361,8 @@ static struct objtable nsystem[] = {
 
 #define TBLNUM (sizeof(nsystem) / sizeof(*nsystem))
 
-void *addsystem()
+void *
+addsystem()
 /* addsystem() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,VERSION,TBLNUM,nsystem,ERRNUM,syserrorlist,NULL,NULL);

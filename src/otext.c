@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.13 2009/03/09 10:21:48 hito Exp $
+ * $Id: otext.c,v 1.14 2009/03/24 08:14:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -525,7 +525,8 @@ static struct objtable text[] = {
 
 #define TBLNUM (sizeof(text) / sizeof(*text))
 
-void *addtext()
+void *
+addtext()
 /* addtext() returns NULL on error */
 {
   unsigned int i;

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.69 2009/03/23 08:54:47 hito Exp $
+ * $Id: ofile.c,v 1.70 2009/03/24 08:29:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -88,7 +88,7 @@
 
 static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
-char *f2derrorlist[]={
+static char *f2derrorlist[]={
   "file is not specified.",
   "I/O error: open file",
   "syntax error in math.",
@@ -115,7 +115,7 @@ char *f2derrorlist[]={
 
 #define ERRNUM (sizeof(f2derrorlist) / sizeof(*f2derrorlist))
 
-char *f2dtypechar[]={
+static char *f2dtypechar[]={
   N_("mark"),
   N_("line"),
   N_("polygon"),
@@ -871,7 +871,7 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
   memfree(fp);
 }
 
-int 
+static int 
 f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 {
   enum MATH_CODE_ERROR_NO rcode;
@@ -1449,7 +1449,7 @@ getdata_skip_step(struct f2ddata *fp)
 }
 
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
-int
+static int
 search_mask(int *mask, int n, int *index, int line)
 {
   int i;
@@ -6508,7 +6508,8 @@ static struct objtable file2d[] = {
 
 #define TBLNUM (sizeof(file2d) / sizeof(*file2d))
 
-void *addfile()
+void *
+addfile(void)
 /* addfile() returns NULL on error */
 {
   unsigned int i;

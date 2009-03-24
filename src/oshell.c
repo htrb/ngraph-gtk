@@ -1,5 +1,5 @@
 /* 
- * $Id: oshell.c,v 1.5 2009/02/05 08:40:14 hito Exp $
+ * $Id: oshell.c,v 1.6 2009/03/24 08:15:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -239,7 +239,8 @@ static struct objtable shell[] = {
 
 #define TBLNUM (sizeof(shell) / sizeof(*shell))
 
-void *addshell()
+void *
+addshell(void)
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,shell,ERRNUM,sherrorlist,NULL,NULL);
 }

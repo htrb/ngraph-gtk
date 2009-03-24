@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.6 2009/02/19 09:47:30 hito Exp $
+ * $Id: olegend.c,v 1.7 2009/03/24 08:22:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -279,7 +279,8 @@ static struct objtable legend[] = {
 
 #define TBLNUM (sizeof(legend) / sizeof(*legend))
 
-void *addlegend()
+void *
+addlegend(void)
 /* addlegend() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,legend,ERRNUM,legenderrorlist,NULL,NULL);

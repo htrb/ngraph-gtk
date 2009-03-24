@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2prn.c,v 1.3 2009/02/05 08:40:14 hito Exp $
+ * $Id: ogra2prn.c,v 1.4 2009/03/24 08:24:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -192,7 +192,8 @@ static struct objtable gra2p[] = {
 
 #define TBLNUM (sizeof(gra2p) / sizeof(*gra2p))
 
-void *addgra2prn()
+void *
+addgra2prn(void)
 /* addgra2prn() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,gra2p,ERRNUM,gra2perrorlist,NULL,NULL);

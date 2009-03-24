@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.8 2009/02/19 09:47:30 hito Exp $
+ * $Id: orect.c,v 1.9 2009/03/24 08:16:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -375,7 +375,8 @@ static struct objtable rect[] = {
 
 #define TBLNUM (sizeof(rect) / sizeof(*rect))
 
-void *addrectangle()
+void *
+addrectangle(void)
 /* addrectangle() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,rect,ERRNUM,recterrorlist,NULL,NULL);

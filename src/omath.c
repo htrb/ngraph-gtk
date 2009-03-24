@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.6 2009/02/09 01:04:36 hito Exp $
+ * $Id: omath.c,v 1.7 2009/03/24 08:21:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -398,7 +398,8 @@ static struct objtable math[] = {
 
 #define TBLNUM (sizeof(math) / sizeof(*math))
 
-void *addmath()
+void *
+addmath(void)
 /* addmath() returns NULL on error */
 {
   MathErrorCodeArray[MCNOERR] = 0;

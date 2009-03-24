@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.8 2009/02/19 09:47:30 hito Exp $
+ * $Id: omark.c,v 1.9 2009/03/24 08:22:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -307,7 +307,8 @@ static struct objtable mark[] = {
 
 #define TBLNUM (sizeof(mark) / sizeof(*mark))
 
-void *addmark()
+void *
+addmark(void)
 /* addmark() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,mark,ERRNUM,markerrorlist,NULL,NULL);

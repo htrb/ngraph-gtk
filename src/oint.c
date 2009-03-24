@@ -1,5 +1,5 @@
 /* 
- * $Id: oint.c,v 1.3 2009/02/05 08:40:14 hito Exp $
+ * $Id: oint.c,v 1.4 2009/03/24 08:23:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -67,7 +67,8 @@ static struct objtable oint[] = {
 
 #define TBLNUM (sizeof(oint) / sizeof(*oint))
 
-void *addint()
+void *
+addint(void)
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,oint,ERRNUM,interrorlist,NULL,NULL);
 }

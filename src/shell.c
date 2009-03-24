@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.20 2009/03/23 08:54:47 hito Exp $
+ * $Id: shell.c,v 1.21 2009/03/24 08:13:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -195,7 +195,11 @@ int security=FALSE;
 char writebuf[WRITEBUFSIZE];
 int writepo;
 
-void unlinkfile(char **file)
+static HANDLE storeshhandle(struct nshell *nshell,HANDLE fd, char **readbuf,int *readbyte,int *readpo);
+static void restoreshhandle(struct nshell *nshell,HANDLE fd, char *readbuf,int readbyte,int readpo);
+
+static void 
+unlinkfile(char **file)
 {
   if (*file!=NULL) {
     unlink(*file);
@@ -206,7 +210,8 @@ void unlinkfile(char **file)
 
 #ifndef WINDOWS
 
-void shellevloop(int sig)
+static void 
+shellevloop(int sig)
 {
   struct itimerval tval;
 
@@ -220,7 +225,8 @@ void shellevloop(int sig)
   signal(SIGALRM,shellevloop);
 }
 
-int shgetstdin()
+static int 
+shgetstdin(void)
 {
   char buf[2];
   int byte;
@@ -247,7 +253,8 @@ int shgetstdin()
   return buf[0];
 }
 
-int shget(struct nshell *nshell)
+static int 
+shget(struct nshell *nshell)
 {
   char buf[2];
   int byte;
@@ -307,7 +314,8 @@ int shget(struct nshell *nshell)
   return buf[0];
 }
 
-int shputstdout(char *s)
+static int 
+shputstdout(char *s)
 {
   int len;
 
@@ -317,7 +325,8 @@ int shputstdout(char *s)
   return len+1;
 }
 
-int shputstderr(char *s)
+static int 
+shputstderr(char *s)
 {
   int len;
 
@@ -327,7 +336,8 @@ int shputstderr(char *s)
   return len+1;
 }
 
-int shprintfstdout(char *fmt,...)
+static int 
+shprintfstdout(char *fmt,...)
 {
   int len;
   char buf[1024];
@@ -340,7 +350,8 @@ int shprintfstdout(char *fmt,...)
   return len;
 }
 
-int shprintfstderr(char *fmt,...)
+static int 
+shprintfstderr(char *fmt,...)
 {
   int len;
   char buf[1024];
@@ -676,7 +687,8 @@ check_cpcmd(char *name)
   return i;
 }
 
-void prmfree(struct prmlist *prmroot)
+static void 
+prmfree(struct prmlist *prmroot)
 {
   struct prmlist *prmcur,*prmdel;
 
@@ -690,7 +702,8 @@ void prmfree(struct prmlist *prmroot)
   }
 }
 
-void cmdfree(struct cmdlist *cmdroot)
+static void 
+cmdfree(struct cmdlist *cmdroot)
 {
   struct cmdlist *cmdcur,*cmddel;
 
@@ -703,7 +716,8 @@ void cmdfree(struct cmdlist *cmdroot)
   }
 }
 
-void cmdstackfree(struct cmdstack *stroot)
+static void 
+cmdstackfree(struct cmdstack *stroot)
 {
   struct cmdstack *stcur,*stdel;
 
@@ -717,7 +731,8 @@ void cmdstackfree(struct cmdstack *stroot)
   }
 }
 
-void *cmdstackcat(struct cmdstack **stroot,int cmdno)
+static void *
+cmdstackcat(struct cmdstack **stroot,int cmdno)
 {
   struct cmdstack *stcur,*stnew;
 
@@ -736,7 +751,8 @@ void *cmdstackcat(struct cmdstack **stroot,int cmdno)
   return stnew;
 }
 
-struct cmdstack *cmdstackgetpo(struct cmdstack **stroot)
+static struct cmdstack *
+cmdstackgetpo(struct cmdstack **stroot)
 {
   struct cmdstack *stcur,*stprev;
 
@@ -749,7 +765,8 @@ struct cmdstack *cmdstackgetpo(struct cmdstack **stroot)
   return stprev;
 }
 
-int cmdstackgetlast(struct cmdstack **stroot)
+static int 
+cmdstackgetlast(struct cmdstack **stroot)
 {
   struct cmdstack *stcur,*stprev;
 
@@ -763,7 +780,8 @@ int cmdstackgetlast(struct cmdstack **stroot)
   else return stprev->cmdno;
 }
 
-void cmdstackrmlast(struct cmdstack **stroot)
+static void 
+cmdstackrmlast(struct cmdstack **stroot)
 {
   struct cmdstack *stcur,*stprev;
 
@@ -889,8 +907,8 @@ addval(struct nshell *nshell,char *name,char *val)
 #endif
 }
 
-char *saveval(struct nshell *nshell,char *name,char *val,
-              struct vallist **newvalroot)
+static char *
+saveval(struct nshell *nshell,char *name,char *val, struct vallist **newvalroot)
 /* saveval() returns NULL on error */
 {
 #if USE_HASH
@@ -977,7 +995,8 @@ delete_save_val(struct nhash *hash, void *data)
   return 0;
 }
 
-void restoreval(struct nshell *nshell,struct vallist *newvalroot)
+static void 
+restoreval(struct nshell *nshell,struct vallist *newvalroot)
 /* restoreval() returns NULL on error */
 {
 #if USE_HASH
@@ -1045,7 +1064,8 @@ void restoreval(struct nshell *nshell,struct vallist *newvalroot)
 #endif
 }
 
-char *addexp(struct nshell *nshell,char *name)
+char *
+addexp(struct nshell *nshell,char *name)
 /* addexp() returns NULL on error */
 {
 #if USE_HASH
@@ -1079,7 +1099,8 @@ char *addexp(struct nshell *nshell,char *name)
 #endif
 }
 
-int delval(struct nshell *nshell,char *name)
+int 
+delval(struct nshell *nshell,char *name)
 {
 #if USE_HASH
   struct vallist *val;
@@ -1116,7 +1137,8 @@ int delval(struct nshell *nshell,char *name)
 #endif
 }
 
-char *getval(struct nshell *nshell,char *name)
+char *
+getval(struct nshell *nshell,char *name)
 {
 #if USE_HASH
   struct vallist *val;
@@ -1138,7 +1160,8 @@ char *getval(struct nshell *nshell,char *name)
 #endif
 }
 
-int getexp(struct nshell *nshell,char *name)
+static int 
+getexp(struct nshell *nshell,char *name)
 {
 #if USE_HASH
   int i, r;
@@ -1157,7 +1180,8 @@ int getexp(struct nshell *nshell,char *name)
 #endif
 }
 
-char *newfunc(struct nshell *nshell,char *name)
+static char *
+newfunc(struct nshell *nshell,char *name)
 /* newfunc() returns NULL on error */
 {
 #if USE_HASH
@@ -1216,7 +1240,8 @@ char *newfunc(struct nshell *nshell,char *name)
 #endif
 }
 
-char *addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
+static char *
+addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
 /* addfunc() returns NULL on error */
 {
 #if USE_HASH
@@ -1339,7 +1364,8 @@ char *addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
 #endif
 }
 
-struct cmdlist *getfunc(struct nshell *nshell,char *name)
+struct cmdlist *
+getfunc(struct nshell *nshell,char *name)
 {
 #if USE_HASH
   struct vallist *val;
@@ -1361,7 +1387,8 @@ struct cmdlist *getfunc(struct nshell *nshell,char *name)
 #endif
 }
 
-char *gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
+static char *
+gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
 {
   int i;
   char *po,*spo;
@@ -1416,9 +1443,10 @@ char *gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
   return spo;
 }
 
-int getcmdline(struct nshell *nshell,
-               struct cmdlist **rcmdroot,struct cmdlist *cmd,
-               char *str,int *istr)
+static int 
+getcmdline(struct nshell *nshell,
+	   struct cmdlist **rcmdroot,struct cmdlist *cmd,
+	   char *str,int *istr)
 /* getcmdline() returns
      -2: unexpected eof detected
      -1: fatal error
@@ -1574,7 +1602,8 @@ errexit:
   return err;
 }
 
-char *quotation(struct nshell *nshell,char *s,int quote)
+static char *
+quotation(struct nshell *nshell,char *s,int quote)
 {
   int i,j,num;
   char *snew,*ifs;
@@ -1596,7 +1625,8 @@ char *quotation(struct nshell *nshell,char *s,int quote)
   return snew;
 }
 
-char *unquotation(char *s,int *quoted)
+static char *
+unquotation(char *s,int *quoted)
 {
   int escape,quote,i,j;
   char *snew,*po;
@@ -1631,7 +1661,8 @@ char *unquotation(char *s,int *quoted)
   return snew;
 }
 
-char *fnexpand(struct nshell *nshell,char *str)
+static char *
+fnexpand(struct nshell *nshell,char *str)
 {
   int escape,expand,noexpand,quote,i,j,len,num;
   char *po;
@@ -1699,7 +1730,8 @@ errexit:
   return NULL;
 }
 
-int wordsplit(struct prmlist *prmcur)
+static int 
+wordsplit(struct prmlist *prmcur)
 {
   int i,num;
   char *po;
@@ -1737,7 +1769,8 @@ errexit:
   return -1;
 }
 
-char *wordunsplit(char *str)
+static char *
+wordunsplit(char *str)
 {
   int i,j;
   char *po;
@@ -1751,8 +1784,8 @@ char *wordunsplit(char *str)
   return po;
 }
 
-char *expand(struct nshell *nshell,char *str,int *quote,int *bquote,
-             int ifsexp)
+static char *
+expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
 {
   char *po;
   int quote2,bquote2,escape;
@@ -2123,7 +2156,8 @@ errexit:
   return NULL;
 }
 
-int checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
+static int 
+checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
 /* checkcmd() returns
      -1: fatal error
       0: noerror
@@ -2383,8 +2417,9 @@ int checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
   return 0;
 }
 
-int syntax(struct nshell *nshell,
-           struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
+static int 
+syntax(struct nshell *nshell,
+       struct cmdlist *cmdroot,int *needcmd,struct cmdstack **sx)
 /* syntax() returns
      -1: fatal error
       0: noerror
@@ -2680,7 +2715,8 @@ msleep(int ms)
   return nanosleep(&ts, NULL);
 }
 
-int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
+int 
+cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 {
   struct cmdlist *cmdcur,*cmdnew,*cmd;
   struct prmlist *prmcur,*prmprev,*prm,*prmnewroot;
@@ -3674,7 +3710,8 @@ int cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   return err;
 }
 
-int cmdexecute(struct nshell *nshell,char *cline)
+int 
+cmdexecute(struct nshell *nshell,char *cline)
 /* return
      -2: unexpected eof detected
      -1: fatal error
@@ -3734,14 +3771,16 @@ int cmdexecute(struct nshell *nshell,char *cline)
   return rcode;
 }
 
-void setshhandle(struct nshell *nshell,HANDLE fd)
+void 
+setshhandle(struct nshell *nshell,HANDLE fd)
 {
   nshell->fd=fd;
   nshell->readbyte=0;
   nshell->readpo=0;
 }
 
-HANDLE storeshhandle(struct nshell *nshell,HANDLE fd,
+static HANDLE 
+storeshhandle(struct nshell *nshell,HANDLE fd,
                      char **readbuf,int *readbyte,int *readpo)
 {
   HANDLE sfd;
@@ -3757,7 +3796,8 @@ HANDLE storeshhandle(struct nshell *nshell,HANDLE fd,
   return sfd;
 }
 
-void restoreshhandle(struct nshell *nshell,HANDLE fd,
+static void 
+restoreshhandle(struct nshell *nshell,HANDLE fd,
                      char *readbuf,int readbyte,int readpo)
 {
   memfree(nshell->readbuf);
@@ -3768,12 +3808,14 @@ void restoreshhandle(struct nshell *nshell,HANDLE fd,
 }
 
 
-HANDLE getshhandle(struct nshell *nshell)
+HANDLE 
+getshhandle(struct nshell *nshell)
 {
   return nshell->fd;
 }
 
-struct nshell *newshell()
+struct nshell *
+newshell(void)
 {
   struct nshell *nshell;
   char *name,**env,*tok;
@@ -3840,7 +3882,8 @@ del_vallist(struct nhash *h, void *data)
   return 0;
 }
 
-void delshell(struct nshell *nshell)
+void 
+delshell(struct nshell *nshell)
 {
 #if ! USE_HASH
   struct vallist *valcur, *valdel;
@@ -3881,12 +3924,14 @@ void delshell(struct nshell *nshell)
   return;
 }
 
-void sherror(int code)
+void 
+sherror(int code)
 {
   printfstderr("shell: %.64s\n",cmderrorlist[code-100]);
 }
 
-void sherror2(int code,char *mes)
+void 
+sherror2(int code,char *mes)
 {
   if (mes!=NULL) {
     printfstderr("shell: %.64s `%.64s'.\n",cmderrorlist[code-100],mes);
@@ -3895,7 +3940,8 @@ void sherror2(int code,char *mes)
   }
 }
 
-void sherror3(char *cmd,int code,char *mes)
+void 
+sherror3(char *cmd,int code,char *mes)
 {
   cmd = CHK_STR(cmd);
   if (mes!=NULL) {
@@ -3906,13 +3952,15 @@ void sherror3(char *cmd,int code,char *mes)
   }
 }
 
-void sherror4(char *cmd,int code)
+void 
+sherror4(char *cmd,int code)
 {
   cmd = CHK_STR(cmd);
   printfstderr("shell: %.64s: %.64s\n",cmd,cmderrorlist[code-100]);
 }
 
-void shellsavestdio(struct nshell *nshell)
+void 
+shellsavestdio(struct nshell *nshell)
 {
   nshell->sgetstdin=getstdin;
   nshell->sputstdout=putstdout;
@@ -3922,14 +3970,16 @@ void shellsavestdio(struct nshell *nshell)
   printfstdout=shprintfstdout;
 }
 
-void shellrestorestdio(struct nshell *nshell)
+void 
+shellrestorestdio(struct nshell *nshell)
 {
   getstdin=nshell->sgetstdin;
   putstdout=nshell->sputstdout;
   printfstdout=nshell->sprintfstdout;
 }
 
-int setshelloption(struct nshell *nshell,char *opt)
+int 
+setshelloption(struct nshell *nshell,char *opt)
 {
   int flag;
 
@@ -3959,7 +4009,8 @@ int setshelloption(struct nshell *nshell,char *opt)
   return 0;
 }
 
-int getshelloption(struct nshell *nshell,char opt)
+int 
+getshelloption(struct nshell *nshell,char opt)
 {
   switch (opt) {
   case 's':
@@ -3978,14 +4029,16 @@ int getshelloption(struct nshell *nshell,char opt)
   return 0;
 }
 
-void setshellargument(struct nshell *nshell,int argc,char **argv)
+void 
+setshellargument(struct nshell *nshell,int argc,char **argv)
 {
   arg_del(nshell->argv);
   nshell->argc=argc;
   nshell->argv=argv;
 }
 
-void ngraphenvironment(struct nshell *nshell)
+void 
+ngraphenvironment(struct nshell *nshell)
 {
   char *sver,*lib,*home;
   struct objlist *sobj;

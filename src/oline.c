@@ -1,5 +1,5 @@
 /* 
- * $Id: oline.c,v 1.6 2009/02/19 09:47:30 hito Exp $
+ * $Id: oline.c,v 1.7 2009/03/24 08:22:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -374,7 +374,8 @@ static struct objtable arrow[] = {
 
 #define TBLNUM (sizeof(arrow) / sizeof(*arrow))
 
-void *addline()
+void *
+addline(void)
 /* addarrow() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,arrow,ERRNUM,arrowerrorlist,NULL,NULL);

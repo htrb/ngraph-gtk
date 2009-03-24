@@ -1,5 +1,5 @@
 /* 
- * $Id: odarray.c,v 1.3 2009/02/05 08:40:14 hito Exp $
+ * $Id: odarray.c,v 1.4 2009/03/24 08:34:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -170,7 +170,8 @@ static struct objtable odarray[] = {
 
 #define TBLNUM (sizeof(odarray) / sizeof(*odarray))
 
-void *adddarray()
+void *
+adddarray(void)
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,odarray,ERRNUM,darrayerrorlist,NULL,NULL);
 }

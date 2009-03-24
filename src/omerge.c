@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.9 2009/03/06 10:18:02 hito Exp $
+ * $Id: omerge.c,v 1.10 2009/03/24 08:21:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -635,7 +635,8 @@ static struct objtable merge[] = {
 
 #define TBLNUM (sizeof(merge) / sizeof(*merge))
 
-void *addmerge()
+void *
+addmerge(void)
 /* addmerge() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,merge,ERRNUM,mergeerrorlist,NULL,NULL);

@@ -1,5 +1,5 @@
 /* 
- * $Id: ocurve.c,v 1.5 2009/02/19 09:47:30 hito Exp $
+ * $Id: ocurve.c,v 1.6 2009/03/24 08:34:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,7 +43,7 @@
 
 #define ERRSPL  100
 
-char *curveerrorlist[]={
+static char *curveerrorlist[]={
   "error: spline interpolation."
 };
 
@@ -593,7 +593,8 @@ static struct objtable curve[] = {
 
 #define TBLNUM (sizeof(curve) / sizeof(*curve))
 
-void *addcurve()
+void *
+addcurve(void)
 /* addcurve() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,curve,ERRNUM,curveerrorlist,NULL,NULL);

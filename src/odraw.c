@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.7 2009/02/05 07:58:29 hito Exp $
+ * $Id: odraw.c,v 1.8 2009/03/24 08:33:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -239,7 +239,8 @@ static struct objtable draw[] = {
 
 #define TBLNUM (sizeof(draw) / sizeof(*draw))
 
-void *adddraw()
+void *
+adddraw(void)
 /* adddraw() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,draw,ERRNUM,drawerrorlist,NULL,NULL);

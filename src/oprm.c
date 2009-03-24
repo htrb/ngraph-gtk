@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.7 2009/02/13 10:09:47 hito Exp $
+ * $Id: oprm.c,v 1.8 2009/03/24 08:17:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1718,7 +1718,8 @@ static struct objtable prm[] = {
 
 #define TBLNUM (sizeof(prm) / sizeof(*prm))
 
-void *addprm()
+void *
+addprm(void)
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,prm,ERRNUM,prmerrorlist,NULL,NULL);
 }

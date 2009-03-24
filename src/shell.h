@@ -1,7 +1,7 @@
 #ifndef _SHELL_HEADER
 #define _SHELL_HEADER
 /* 
- * $Id: shell.h,v 1.7 2009/01/06 08:08:29 hito Exp $
+ * $Id: shell.h,v 1.8 2009/03/24 08:13:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -145,21 +145,13 @@ int check_cpcmd(char *name);
 int init_cmd_tbl(void);
 
 
-char *gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape);
-char *unquotation(char *s,int *quoted);
 char *addval(struct nshell *nshell,char *name,char *val);
 char *addexp(struct nshell *nshell,char *name);
 int delval(struct nshell *nshell,char *name);
 char *getval(struct nshell *nshell,char *name);
-int getexp(struct nshell *nshell,char *name);
 struct cmdlist *getfunc(struct nshell *nshell,char *name);
-void cmdfree(struct cmdlist *cmdroot);
 void setshhandle(struct nshell *shell,HANDLE fd);
-HANDLE storeshhandle(struct nshell *nshell,HANDLE fd,
-                     char **readbuf,int *readbyte,int *readpo);
-void restoreshhandle(struct nshell *nshell,HANDLE fd,
-                     char *readbuf,int readbyte,int readpo);
-HANDLE getshhandle(struct nshell *shell);
+HANDLE getshhandle(struct nshell *nshell);
 int cmdexecute(struct nshell *nshell,char *cline);
 struct nshell *newshell(void);
 void delshell(struct nshell *nshell);

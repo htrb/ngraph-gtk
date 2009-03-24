@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2.c,v 1.3 2009/02/05 08:40:14 hito Exp $
+ * $Id: ogra2.c,v 1.4 2009/03/24 08:24:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -143,7 +143,8 @@ static struct objtable gra2[] = {
 
 #define TBLNUM (sizeof(gra2) / sizeof(*gra2))
 
-void *addgra2()
+void *
+addgra2(void)
 /* addgra2() returns NULL on error */
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,gra2,ERRNUM,gra2errorlist,NULL,NULL);

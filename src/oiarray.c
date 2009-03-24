@@ -1,5 +1,5 @@
 /* 
- * $Id: oiarray.c,v 1.3 2009/02/05 08:40:14 hito Exp $
+ * $Id: oiarray.c,v 1.4 2009/03/24 08:23:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -168,7 +168,8 @@ static struct objtable oiarray[] = {
 
 #define TBLNUM (sizeof(oiarray) / sizeof(*oiarray))
 
-void *addiarray()
+void *
+addiarray(void)
 {
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,oiarray,ERRNUM,iarrayerrorlist,NULL,NULL);
 }
