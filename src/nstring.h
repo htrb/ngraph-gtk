@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.h,v 1.2 2009/03/09 10:21:48 hito Exp $
+ * $Id: nstring.h,v 1.3 2009/03/24 09:23:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,7 +41,5 @@ int strcmp2(char *s1,char *s2);
 int wildmatch(char *pat,char *s,int flags);
 char *getitok(char **s,int *len,char *ifs);
 char *getitok2(char **s,int *len,char *ifs);
-char *getitok3(char **s,int *len,char *ifs);
-char *getitok4(char **s,int *len,char *ifs);
 
 #endif

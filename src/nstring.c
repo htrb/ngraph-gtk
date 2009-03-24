@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.c,v 1.4 2008/08/22 10:14:53 hito Exp $
+ * $Id: nstring.c,v 1.5 2009/03/24 09:23:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,7 +36,8 @@
 #define TRUE 1
 #define FALSE 0
 
-char *nstrnew(void)
+char *
+nstrnew(void)
 {
   char *po;
 
@@ -64,7 +65,8 @@ nstrdup(const char *src)
 }
 
 
-char *nstrccat(char *po,char ch)
+char *
+nstrccat(char *po,char ch)
 {
   size_t len,num;
   char *po2;
@@ -104,7 +106,8 @@ nstraddchar(char *po, int len, char ch)
   return po;
 }
 
-char *nstrcat(char *po,char *s)
+char *
+nstrcat(char *po,char *s)
 {
   size_t i, len;
 
@@ -123,7 +126,8 @@ char *nstrcat(char *po,char *s)
   return po;
 }
 
-char *nstrncat(char *po,char *s,size_t n)
+char *
+nstrncat(char *po,char *s,size_t n)
 {
   size_t i;
 
@@ -134,7 +138,8 @@ char *nstrncat(char *po,char *s,size_t n)
   return po;
 }
 
-int strcmp0(const char *s1, const char *s2)
+int 
+strcmp0(const char *s1, const char *s2)
 {
   const char *s3,*s4;
 
@@ -149,7 +154,8 @@ int strcmp0(const char *s1, const char *s2)
   return 1;
 }
 
-int strcmp2(char *s1,char *s2)
+int 
+strcmp2(char *s1,char *s2)
 {
   int len1,len2,len,c;
 
@@ -165,7 +171,8 @@ int strcmp2(char *s1,char *s2)
   } else return c;
 }
 
-int wildmatch2(char *pat,char *s,int flags)
+static int 
+wildmatch2(char *pat,char *s,int flags)
 {
   char *spo,*patpo,*po;
 
@@ -222,7 +229,8 @@ int wildmatch2(char *pat,char *s,int flags)
   }
 }
 
-int wildmatch(char *pat,char *s,int flags)
+int 
+wildmatch(char *pat,char *s,int flags)
 {
   if ((s==NULL) || (pat==NULL)) return 0;
   if (flags & WILD_PERIOD) {
@@ -233,7 +241,8 @@ int wildmatch(char *pat,char *s,int flags)
   } else return wildmatch2(pat,s,flags);
 }
 
-char *getitok(char **s,int *len,char *ifs)
+char *
+getitok(char **s,int *len,char *ifs)
 {
   char *po,*spo;
   int i;
@@ -252,7 +261,8 @@ char *getitok(char **s,int *len,char *ifs)
   return spo;
 }
 
-char *getitok2(char **s, int *len, char *ifs)
+char *
+getitok2(char **s, int *len, char *ifs)
 {
   char *po,*s2;
 
@@ -266,7 +276,8 @@ char *getitok2(char **s, int *len, char *ifs)
   return po;
 }
 
-char *getitok3(char **s,int *len,char *ifs)
+static char *
+getitok3(char **s,int *len,char *ifs)
 {
   char *po,*spo;
   int i,quote;
@@ -297,7 +308,8 @@ char *getitok3(char **s,int *len,char *ifs)
   return spo;
 }
 
-char *getitok4(char **s,int *len,char *ifs)
+static char *
+getitok4(char **s,int *len,char *ifs)
 {
   char *po,*s2;
 

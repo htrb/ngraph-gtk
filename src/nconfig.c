@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.6 2009/03/10 01:25:34 hito Exp $
+ * $Id: nconfig.c,v 1.7 2009/03/24 09:23:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,7 +56,8 @@
 #define TRUE  1
 #define FALSE 0
 
-char *getscriptname(char *file)
+char *
+getscriptname(char *file)
 {
   struct objlist *sys;
   char *homedir,*s;
@@ -67,7 +68,8 @@ char *getscriptname(char *file)
   return s;
 }
 
-char *searchscript(char *file)
+char *
+searchscript(char *file)
 {
   struct objlist *sys;
   char *libdir,*homedir,*s;
@@ -84,13 +86,15 @@ char *searchscript(char *file)
   return s;
 }
 
-int configlocked(char *dir)
+static int 
+configlocked(char *dir)
 {
   if (findfilename(dir,CONFSEP,LOCK)) return TRUE;
   else return FALSE;
 }
 
-void lockconfig(char *dir)
+static void 
+lockconfig(char *dir)
 {
   char *file;
   FILE *fp;
@@ -106,7 +110,8 @@ void lockconfig(char *dir)
   memfree(file);
 }
 
-void unlockconfig(char *dir)
+static void 
+unlockconfig(char *dir)
 {
   char *file;
 
@@ -116,7 +121,8 @@ void unlockconfig(char *dir)
   memfree(file);
 }
 
-FILE *openconfig(char *section)
+FILE *
+openconfig(char *section)
 {
   struct objlist *sys;
   char *libdir,*s,*homedir,*homeconf,*libconf,*buf;
@@ -179,7 +185,8 @@ FILE *openconfig(char *section)
   return NULL;
 }
 
-char *getconfig(FILE *fp,char **val)
+char *
+getconfig(FILE *fp,char **val)
 {
   char *s,*tok,*buf;
   int len;
@@ -210,12 +217,14 @@ char *getconfig(FILE *fp,char **val)
   }
 }
 
-void closeconfig(FILE *fp)
+void 
+closeconfig(FILE *fp)
 {
   fclose(fp);
 }
 
-int replaceconfig(char *section,struct narray *conf)
+int 
+replaceconfig(char *section,struct narray *conf)
 {
   int i,j,num,num2,out,len,len2;
   char **data;
@@ -390,7 +399,8 @@ flush:
   return TRUE;
 }
 
-int removeconfig(char *section,struct narray *conf)
+int 
+removeconfig(char *section,struct narray *conf)
 {
   int i,num,out,len,len2,change;
   char **data;
@@ -547,7 +557,8 @@ flush:
   return TRUE;
 }
 
-int writecheckconfig()
+int 
+writecheckconfig(void)
 {
 /* write OK in home : 1 */
 /* write OK in lib: 2 */
@@ -604,7 +615,8 @@ int writecheckconfig()
   return -dir;
 }
 
-int copyconfig()
+int 
+copyconfig(void)
 /* copy configuration file from libdir to home dir */
 {
   struct objlist *sys;
