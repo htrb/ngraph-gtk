@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.71 2009/03/26 02:31:52 hito Exp $
+ * $Id: ofile.c,v 1.72 2009/03/26 02:54:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5789,12 +5789,15 @@ f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int
-f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand)
+f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand, char **fullname)
 {
   struct objlist *sys;
   char *exdir, *file2;
   int len;
-  char *file, *fullname, *oldfile;
+  char *file, *oldfile;
+
+  if (s == NULL)
+    return 1;
 
   sys = getobject("system");
   getobj(sys, "expand_file", 0, 0, NULL, expand);
@@ -5807,8 +5810,8 @@ f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand)
   file2 = getfilename(CHK_STR(exdir), "/", file);
   memfree(file);
 
-  fullname = getfullpath(file2);
-  if (fullname == NULL) {
+  *fullname = getfullpath(file2);
+  if (*fullname == NULL) {
     memfree(file2);
     return 1;
   }
@@ -5833,11 +5836,13 @@ f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   FILE *fp;
   HANDLE fd;
 
-  if (f2dload_sub(obj, inst, argv[2], &expand))
+  s = (char *) argv[2];
+
+  if (f2dload_sub(obj, inst, s, &expand, &fullname))
     return 1;
 
   if (expand) {
-    if (gettimeval(s,&ftime)) return 1;
+    if (gettimeval(s, &ftime)) return 1;
     if (access(fullname,04)!=0) mkdata=TRUE;
     else {
       if ((mes=memalloc(strlen(fullname)+256))==NULL) return 1;
@@ -5910,8 +5915,9 @@ static int
 f2dloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int expand;
+  char *fullname;
 
-  return f2dload_sub(obj, inst, argv[2], &expand);
+  return f2dload_sub(obj, inst, argv[2], &expand, &fullname);
 }
 
 static int 
