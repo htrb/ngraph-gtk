@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2.c,v 1.4 2009/03/24 08:24:56 hito Exp $
+ * $Id: ogra2.c,v 1.5 2009/03/26 02:31:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -103,6 +103,7 @@ gra2clear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static int 
 gra2disconnect(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
@@ -130,6 +131,7 @@ gra2disconnect(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayfree2(sarray);
   return 0;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 static struct objtable gra2[] = {
   {"init",NVFUNC,NEXEC,gra2init,NULL,0},

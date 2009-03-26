@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.18 2009/03/24 10:27:31 hito Exp $
+ * $Id: gra.c,v 1.19 2009/03/26 02:31:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,7 +42,7 @@
 #define TRUE 1
 #define FALSE 0
 
-static struct GRAC {
+struct GRAC {
   int open,init;
   char *objname;
   char *outputname;
@@ -91,95 +91,32 @@ static struct GRAC {
 
   int oldFR,oldFG,oldFB,oldBR,oldBG,oldBB;
 
-} GRAClist[]= {
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
-  {FALSE,FALSE,NULL,NULL,NULL,NULL,-1,-1,-1,-1,NULL,NULL,NULL,
-   FALSE,0,0,SHRT_MAX,SHRT_MAX,1,0,0,SHRT_MAX,SHRT_MAX,0,0,1,
-   FALSE,0,NULL,1,0,0,0,
-   FALSE,0,0,0,
-   FALSE,NULL,0,0,0,
-   0,0,10000,0,0,0,0,
-   0,0,0,TRUE,NULL,NULL,NULL,NULL,NULL,NULL,0,0,
-   0,0,0,0,0,0},
+};
+
+#define GRAC_INIT_VAL {FALSE, FALSE, NULL, NULL, NULL, NULL,		\
+      -1, -1, -1, -1, NULL, NULL, NULL,					\
+      FALSE, 0, 0, SHRT_MAX, SHRT_MAX, 1, 0, 0, SHRT_MAX, SHRT_MAX,	\
+      0, 0, 1,								\
+      FALSE, 0, NULL, 1, 0, 0, 0,					\
+      FALSE, 0, 0, 0, 							\
+      FALSE, NULL, 0, 0, 0,						\
+      0, 0, 10000, 0, 0, 0, 0, 						\
+      0, 0, 0, TRUE, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0,		\
+      0, 0, 0, 0, 0, 0}
+    
+
+static struct GRAC GRAClist[]= {
+  GRAC_INIT_VAL, /*  1 */
+  GRAC_INIT_VAL, /*  2 */
+  GRAC_INIT_VAL, /*  3 */
+  GRAC_INIT_VAL, /*  4 */
+  GRAC_INIT_VAL, /*  5 */
+  GRAC_INIT_VAL, /*  6 */
+  GRAC_INIT_VAL, /*  7 */
+  GRAC_INIT_VAL, /*  8 */
+  GRAC_INIT_VAL, /*  9 */
+  GRAC_INIT_VAL, /* 10 */
+  GRAC_INIT_VAL, /* 11 */
 };
 
 #define GRAClimit ((int) (sizeof(GRAClist) / sizeof(*GRAClist) - 1))
@@ -787,6 +724,7 @@ GRAregion(int GC,int *leftm,int *topm,int *width,int *height,int *zoom)
   *zoom=GRAClist[GC].zoom*10000;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static void 
 GRAdirect(int GC,int cpar[])
 {
@@ -795,6 +733,7 @@ GRAdirect(int GC,int cpar[])
   code='X';
   GRAdraw(GC,code,cpar,NULL);
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 int 
 GRAend(int GC)
@@ -807,6 +746,7 @@ GRAend(int GC)
   return GRAdraw(GC,code,cpar,NULL);
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static void 
 GRAremark(int GC,char *s)
 {
@@ -822,6 +762,7 @@ GRAremark(int GC,char *s)
   else cstr=s;
   GRAdraw(GC,code,cpar,cstr);
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 void 
 GRAview(int GC,int x1,int y1,int x2,int y2,int clip)
@@ -2813,6 +2754,7 @@ static char *fonttbl[]={
    "Symbol"};
 
 #define FONTTBL_NUM ((int) (sizeof(fonttbl) / sizeof(*fonttbl)))
+#define FONTTBL_SYMBOL (FONTTBL_NUM - 1)
 
 struct greektbltype greektable[]={
  {0x21,0101}, {0x22,0102}, {0x23,0107}, {0x24,0104}, {0x25,0105}, {0x26,0132},
@@ -2831,6 +2773,16 @@ int
 greektable_num(void)
 {
   return GREEK_TBL_NUM;
+}
+
+static char *
+get_gra_font(int i)
+{
+  if (i < 0 || i >= FONTTBL_NUM) {
+    i = 0;
+  }
+
+  return fonttbl[i];
 }
 
 int 
@@ -2911,7 +2863,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
           if (i!=j) {
             code2='F';
             cpar2[0]=-1;
-            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[FONTTBL_NUM - 1]);
+            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[FONTTBL_SYMBOL]);
             code2='H';
             cpar2[0]=3;
             cpar2[1]=GRAClist[GC].mergept;
@@ -2937,10 +2889,8 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
             j=i;
             code2='F';
             cpar2[0]=-1;
-	    if (GRAClist[GC].mergefont < FONTTBL_NUM) {
-	      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,
-			   fonttbl[GRAClist[GC].mergefont]);
-	    }
+	    GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,
+			 get_gra_font(GRAClist[GC].mergefont));
             code2='H';
             cpar2[0]=3;
             cpar2[1]=GRAClist[GC].mergept;
@@ -3068,9 +3018,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
     code2='F';
     cpar2[0]=-1;
     GRAClist[GC].mergefont=cpar[1]*4+cpar[2];
-    if (cpar[1]*4+cpar[2] < FONTTBL_NUM) {
-      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[cpar[1]*4+cpar[2]]);
-    }
+    GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,get_gra_font(cpar[1]*4+cpar[2]));
     if (cpar[6] == 1) {
       cpar[6]=9000;
     } else if (cpar[6]<0) {

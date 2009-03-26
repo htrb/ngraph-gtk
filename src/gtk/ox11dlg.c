@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.19 2009/03/23 08:54:48 hito Exp $
+ * $Id: ox11dlg.c,v 1.20 2009/03/26 02:31:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -55,12 +55,6 @@ static char *dlgerrorlist[] = {
 
 GtkWidget *DLGTopLevel = NULL;
 
-static gboolean
-dialogclose(GtkWidget *w, GdkEvent  *event, gpointer user_data)
-{
-  return TRUE;
-}
-
 static int
 dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
@@ -75,7 +69,6 @@ dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (DLGTopLevel == NULL) {
     DLGTopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    //    g_signal_connect(DLGTopLevel, "delete", dialogclose, NULL);
   }
   return 0;
 }

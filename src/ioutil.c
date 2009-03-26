@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.15 2009/03/24 09:55:53 hito Exp $
+ * $Id: ioutil.c,v 1.16 2009/03/26 02:31:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -398,6 +398,7 @@ nsearchpath(char *path,char *name,int shellscript)
   return NULL;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static int 
 nselectdir(char *dir,struct dirent *ent)
 {
@@ -429,6 +430,7 @@ nselectfile(char *dir,struct dirent *ent)
   if ((sbuf.st_mode & S_IFMT)==S_IFREG) return 1;
   return 0;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 #else
 

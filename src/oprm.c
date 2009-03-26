@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.9 2009/03/24 10:27:31 hito Exp $
+ * $Id: oprm.c,v 1.10 2009/03/26 02:31:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -507,7 +507,6 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int atype,aid2[4],posx,posy;
   char format[10],*EOD;
   char *filename;
-  unsigned int ch;
   time_t ftime;
   struct utimbuf tm;
   int mkdata;
@@ -1661,6 +1660,8 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     while (prmloadline(obj,file,fp,buf,FALSE)==0) {
       if (buf[0]=='[') {
         if ((s2=strchr(buf,']'))!=NULL) {
+	  int ch;
+
           if ((filename=memalloc(s2-buf))==NULL) goto errexit;
           strncpy(filename,buf+1,s2-buf-1);
           filename[s2-buf-1]='\0';
@@ -1679,11 +1680,11 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           i=0;
           do {
             ch=nfgetc(fp);
-            if (ch==(unsigned int)EOD[i]) i++;
+            if (ch==EOD[i]) i++;
             else {
               if (mkdata) for (j=0;j<i;j++) fputc(EOD[j],fp2);
               i=0;
-              if (ch==(unsigned int)EOD[i]) i++;
+              if (ch==EOD[i]) i++;
               else if (mkdata && (ch!=EOF)) fputc(ch,fp2);
             }
           } while ((ch!=EOF) && (i<7));

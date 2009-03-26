@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.43 2009/03/09 10:21:49 hito Exp $
+ * $Id: ogra2cairo.c,v 1.44 2009/03/26 02:31:52 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -57,10 +57,12 @@ static char *FontFaceStr[] = {
   "bold_oblique",
 };
 
+#define FONT_FACE_NUM ((int) (sizeof(FontFaceStr) / sizeof(*FontFaceStr)))
+
 static int
 check_type(int type)
 {
-  if (type < 0 || type >= sizeof(FontFaceStr) / sizeof(*FontFaceStr)) {
+  if (type < 0 || type >= FONT_FACE_NUM) {
     type = NORMAL;
   }
   return type;

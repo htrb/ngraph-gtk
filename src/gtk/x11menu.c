@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.81 2009/03/23 11:58:39 hito Exp $
+ * $Id: x11menu.c,v 1.82 2009/03/26 02:31:53 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2121,7 +2121,8 @@ DisplayStatus(char *str)
 int
 PutStdout(char *s)
 {
-  gssize len, rlen, wlen;
+  gssize len;
+  gsize rlen, wlen;
   char *ustr;
 
   len = strlen(s);
@@ -2134,7 +2135,8 @@ PutStdout(char *s)
 int
 PutStderr(char *s)
 {
-  gssize len, rlen, wlen;
+  gssize len;
+  gsize rlen, wlen;
   char *ustr;
 
   len = strlen(s);

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.27 2009/03/04 05:15:54 hito Exp $
+ * $Id: ogra2x11.c,v 1.28 2009/03/26 02:31:53 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -91,8 +91,6 @@ static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);;
 static gboolean gtkevpaint(GtkWidget * w, GdkEventExpose * e,
 			   gpointer user_data);
-static void gtkevsize(GtkWidget * w, GtkRequisition * reqest,
-		      gpointer call_data);
 static int gtkinit(struct objlist *obj, char *inst, char *rval, int argc,
 		   char **argv);
 static int gtkdone(struct objlist *obj, char *inst, char *rval, int argc,
@@ -199,15 +197,6 @@ gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
     }
   }
   return FALSE;
-}
-
-static void
-gtkevsize(GtkWidget * w, GtkRequisition * reqest, gpointer user_data)
-{
-  struct gtklocal *gtklocal;
-
-  gtklocal = (struct gtklocal *) user_data;
-  gtkchangedpi(gtklocal);
 }
 
 static gboolean
@@ -323,8 +312,6 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
 
   g_signal_connect(gtklocal->mainwin, "key-press-event", G_CALLBACK(ev_key_down), gtklocal);
-
-  //  g_signal_connect(gtklocal->mainwin, "size-request", G_CALLBACK(gtkevsize), gtklocal);
 
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 

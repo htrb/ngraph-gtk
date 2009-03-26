@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.c,v 1.8 2009/03/24 08:16:33 hito Exp $
+ * $Id: oroot.c,v 1.9 2009/03/26 02:31:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -273,6 +273,7 @@ oputstyle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static void 
 ochgobjlist(char **olist)
 {
@@ -319,6 +320,7 @@ ochgobjlist(char **olist)
   *olist=mkobjlist(obj,NULL,id,field,FALSE);
   return;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 static int 
 osave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)

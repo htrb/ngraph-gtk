@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.26 2009/03/24 09:12:15 hito Exp $
+ * $Id: object.c,v 1.27 2009/03/26 02:31:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -244,10 +244,12 @@ vdisplaydialog(char *str)
 {
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static void 
 vdisplaywindow(char *str)
 {
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 static void 
 vdisplaystatus(char *str)
@@ -895,6 +897,7 @@ unregisterevloop(struct objlist *obj,int idn,char *inst)
   }
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static void 
 unregisterallevloop(void)
 {
@@ -909,6 +912,7 @@ unregisterallevloop(void)
   looproot=NULL;
   loopnext=NULL;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 int 
 has_eventloop(void) {
@@ -1204,12 +1208,14 @@ chkobjectalias(struct objlist *obj)
   return obj->alias;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static void *
 chkobjectlocal(struct objlist *obj)
 {
   if (obj==NULL) return NULL;
   return obj->local;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 int 
 chkobjectid(struct objlist *obj)
@@ -1598,6 +1604,7 @@ chkobjfieldtype(struct objlist *obj,char *name)
   return robj->table[idn].type;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static void *
 chkobjproc(struct objlist *obj,char *name)
 {
@@ -1607,6 +1614,7 @@ chkobjproc(struct objlist *obj,char *name)
   if ((namen=chkobjtblpos(obj,name,&robj))==-1) return NULL;
   return robj->table[namen].proc;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 char *
 chkobjarglist(struct objlist *obj,char *name)
@@ -1838,6 +1846,7 @@ getobjfield(struct objlist *obj,char *name)
   } else return 0;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static int 
 getobjproc(struct objlist *obj,char *vname,void *val)
 {
@@ -1850,6 +1859,7 @@ getobjproc(struct objlist *obj,char *vname,void *val)
   *(Proc *)val=proc;
   return 0;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 static int 
 _newobj(struct objlist *obj)
@@ -4132,6 +4142,7 @@ obj_do_tighten(struct objlist *obj, char *inst, char *field)
   arraydel(&iarray);
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static char *
 getuniqname(struct objlist *obj,char *prefix,char sep)
 {
@@ -4172,3 +4183,4 @@ match:
   }
   return name;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */

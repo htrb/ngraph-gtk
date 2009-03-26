@@ -1,5 +1,5 @@
 /* 
- * $Id: jnstring.c,v 1.4 2009/03/24 09:55:53 hito Exp $
+ * $Id: jnstring.c,v 1.5 2009/03/26 02:31:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,8 +50,7 @@ njms2jis(unsigned int code)
   return ((unsigned int)(dh << 8))+dl;
 }
 
-#if 0
-
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static unsigned int 
 njis2jms(unsigned int code)
 {
@@ -110,8 +109,7 @@ neuc2jms(char *s)
     }
   }
 }
-
-#endif
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 int 
 niskanji(unsigned char code)

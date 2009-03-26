@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.21 2009/03/24 08:13:48 hito Exp $
+ * $Id: shell.c,v 1.22 2009/03/26 02:31:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -325,6 +325,7 @@ shputstdout(char *s)
   return len+1;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static int 
 shputstderr(char *s)
 {
@@ -335,6 +336,7 @@ shputstderr(char *s)
   write(stderrfd(),"\n",1);
   return len+1;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 static int 
 shprintfstdout(char *fmt,...)
@@ -350,6 +352,7 @@ shprintfstdout(char *fmt,...)
   return len;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 static int 
 shprintfstderr(char *fmt,...)
 {
@@ -363,6 +366,7 @@ shprintfstderr(char *fmt,...)
   write(stderrfd(),buf,len);
   return len;
 }
+#endif /* COMPILE_UNUSED_FUNCTIONS */
 
 #else
 

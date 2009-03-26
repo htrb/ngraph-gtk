@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.58 2009/03/10 07:58:35 hito Exp $
+ * $Id: x11opt.c,v 1.59 2009/03/26 02:31:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -675,6 +675,8 @@ create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
     "Bold Oblique",
   };
 
+#define TYPE_NUM ((int) (sizeof(type) / sizeof(*type)))
+
   dialog = gtk_font_selection_dialog_new(_("Font"));
 
 #ifdef JAPANESE
@@ -692,7 +694,7 @@ create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
     len = strlen(fcur->fontname) + 64;
     buf = malloc(len);
     if (buf) {
-      t = (fcur->type < 0 || fcur->type >= sizeof(type) / sizeof(*type)) ? 0 : fcur->type;
+      t = (fcur->type < 0 || fcur->type >= TYPE_NUM) ? 0 : fcur->type;
 
       snprintf(buf, len, "%s %s 16", fcur->fontname, type[t]);
       gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(dialog), buf);

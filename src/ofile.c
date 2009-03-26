@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.70 2009/03/24 08:29:18 hito Exp $
+ * $Id: ofile.c,v 1.71 2009/03/26 02:31:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -310,7 +310,8 @@ static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
 static void 
 check_ifs_init(struct f2ddata *fp)
 {
-  unsigned char *ifs, *remark;
+  char *ifs, *remark;
+  int i;
 
   ifs = fp->ifs;
   remark = fp->remark;
@@ -318,12 +319,14 @@ check_ifs_init(struct f2ddata *fp)
   memset(fp->ifs_buf, 0, sizeof(fp->ifs_buf));
   if (ifs) {
     for (; *ifs; ifs++) {
-      fp->ifs_buf[*ifs] |= 1;
+      i = *ifs;
+      fp->ifs_buf[i] |= 1;
     }
   }
   if (remark) {
     for (; *remark; remark++) {
-      fp->ifs_buf[*remark] |= 2;
+      i = *remark;
+      fp->ifs_buf[i] |= 2;
     }
   }
 }

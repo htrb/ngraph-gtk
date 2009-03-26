@@ -1,3 +1,31 @@
+2009-03-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAC_INIT_VAL): add.
+	(GRAClist): use "GRAC_INIT_VAL".
+	(get_gra_font): add.
+	(GRAinputold): use "get_gra_font()".
+
+	* src/shell.c (shputstderr, shprintfstderr): comment out.
+
+	* src/ogra2.c (gra2disconnect): comment out.
+
+	* src/object.c (vdisplaywindow, unregisterallevloop)
+	(chkobjectlocal, chkobjproc, getobjproc, getuniqname): comment
+	out.
+
+	* src/nstring.c (getitok3, getitok4): comment out.
+
+	* src/ioutil.c (nselectdir, nselectfile): comment out.
+
+	* src/gra.c (GRAdirect, GRAremark): comment out.
+
+	* src/gtk/ox11dlg.c (dialogclose): remove.
+
+	* src/gtk/ogra2cairo.c (FONT_FACE_NUM): add.
+	(check_type): use "FONT_FACE_NUM".
+
+	* src/gtk/ogra2x11.c (gtkevsize): remove.
+
 2009-03-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oprm.c (remarkconv): use "greektable_num()".
@@ -5,7 +33,7 @@
 	* src/gra.c (greektable_num): add.
 	(FONTTBL_NUM): add.
 	(GREEK_TBL_NUM): add.
-	(GRAinputold): check index if "fonttbl[]".
+	(GRAinputold): check index of "fonttbl[]".
 
 2009-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
