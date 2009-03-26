@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.49 2009/03/23 08:54:48 hito Exp $
+ * $Id: x11axis.c,v 1.50 2009/03/26 08:03:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1306,7 +1306,7 @@ NumDialogCopy(struct NumDialog *d)
 static void
 NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *frame;
+  GtkWidget *w, *hbox, *vbox, *vbox2, *frame;
   struct NumDialog *d;
 
   d = (struct NumDialog *) data;
@@ -1327,15 +1327,15 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-    item_setup(hbox, w, _("_Begin:"), TRUE);
+    item_setup(hbox, w, _("_Begin:"), FALSE);
     d->begin = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-    item_setup(hbox, w, _("_Step:"), TRUE);
+    item_setup(hbox, w, _("_Step:"), FALSE);
     d->step = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_NUM, TRUE, TRUE);
-    item_setup(hbox, w, _("_Num:"), TRUE);
+    item_setup(hbox, w, _("_Num:"), FALSE);
     d->numnum = w;
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -1346,76 +1346,60 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = gtk_check_button_new_with_mnemonic(_("_Add plus"));
-    d->add_plus = w;
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-
 
     w = combo_box_create();
-    item_setup(hbox, w, _("_Fraction:"), FALSE);
+    item_setup(vbox, w, _("_Fraction:"), FALSE);
     d->fraction = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
+    hbox = gtk_hbox_new(TRUE, 4);
+    vbox2 = gtk_vbox_new(FALSE, 4);
 
     w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Head:"), TRUE);
+    item_setup(vbox2, w, _("_Head:"), TRUE);
     d->head = w;
 
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Tail:"), TRUE);
-    d->tail = w;
-
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-
     w = combo_box_create();
-    item_setup(hbox, w, _("_Align:"), FALSE);
+    item_setup(vbox2, w, _("_Align:"), TRUE);
     d->align = w;
 
-    w = combo_box_create();
-    item_setup(hbox, w, _("_Direction:"), FALSE);
-    d->direction = w;
-
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    item_setup(hbox, w, _("shift (_P):"), TRUE);
+    item_setup(vbox2, w, _("shift (_P):"), TRUE);
     d->shiftp = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    item_setup(hbox, w, _("shift (_N):"), TRUE);
+    item_setup(vbox2, w, _("shift (_N):"), TRUE);
     d->shiftn = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
+    item_setup(vbox2, w, _("_Auto normalization:"), TRUE);
+    d->norm = w;
+
+    gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 4);
 
 
-    hbox = gtk_hbox_new(FALSE, 4);
+    vbox2 = gtk_vbox_new(FALSE, 4);
+
+    w = create_text_entry(TRUE, TRUE);
+    item_setup(vbox2, w, _("_Tail:"), TRUE);
+    d->tail = w;
+
+    w = combo_box_create();
+    item_setup(vbox2, w, _("_Direction:"), TRUE);
+    d->direction = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Log power"));
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), w, TRUE, TRUE, 4);
     d->log_power = w;
 
+    w = gtk_check_button_new_with_mnemonic(_("_Add plus"));
+    d->add_plus = w;
+    gtk_box_pack_start(GTK_BOX(vbox2), w, TRUE, TRUE, 4);
+
     w = gtk_check_button_new_with_mnemonic(_("no _Zero"));
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), w, TRUE, TRUE, 4);
     d->no_zero = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-    item_setup(hbox, w, _("_Auto normalization:"), FALSE);
-    d->norm = w;
+    gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
     gtk_container_add(GTK_CONTAINER(frame), vbox);

@@ -1,5 +1,7 @@
 2009-03-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11axis.c (NumDialogSetup): arrange widgets.
+
 	* src/oprm.c (prmload): use "R_OK", "W_OK", "X_OK" for "access()".
 
 	* src/omerge.c (mergeload): use "R_OK", "W_OK", "X_OK" for
