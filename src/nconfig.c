@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.7 2009/03/24 09:23:28 hito Exp $
+ * $Id: nconfig.c,v 1.8 2009/03/26 06:25:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -609,7 +609,7 @@ writecheckconfig(void)
     dir=2;
     s=libconf;
   } else return 0;
-  ret=access(s,02);
+  ret=access(s,W_OK);
   memfree(s);
   if (ret==0) return dir;
   return -dir;

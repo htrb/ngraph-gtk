@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.16 2009/03/26 02:31:52 hito Exp $
+ * $Id: ioutil.c,v 1.17 2009/03/26 06:25:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -329,7 +329,7 @@ findfilename(char *dir,char *sep,char *file)
   struct stat buf;
 
   if ((s=getfilename(dir,sep,file))==NULL) return FALSE;
-  if ((access(s,04)==0) && (stat(s,&buf)==0)) {
+  if ((access(s,R_OK)==0) && (stat(s,&buf)==0)) {
     if ((buf.st_mode & S_IFMT)==S_IFREG) find=TRUE;
     else find=FALSE;
   }
@@ -381,16 +381,16 @@ nsearchpath(char *path,char *name,int shellscript)
         len++;
       }
       strcpy(cmdname+len,name);
-      if ((!shellscript && (access(cmdname,01)==0))
-      || (shellscript && (access(cmdname,04)==0))) return cmdname;
+      if ((!shellscript && (access(cmdname,X_OK)==0))
+      || (shellscript && (access(cmdname,R_OK)==0))) return cmdname;
     }
     if (tok==NULL) {
       memfree(cmdname);
       return NULL;
     }
   } else {
-    if (!((!shellscript && (access(name,01)==0))
-    || (shellscript && (access(name,04)==0)))) return NULL;
+    if (!((!shellscript && (access(name,X_OK)==0))
+    || (shellscript && (access(name,R_OK)==0)))) return NULL;
     if ((cmdname=memalloc(strlen(name)+1))==NULL) return NULL;
     strcpy(cmdname,name);
     return cmdname;
@@ -485,7 +485,7 @@ nsearchpath(char *path,char *name,int shellscript)
             len+=strlen(name);
             strcpy(cmdname+len,addexechar[k]);
             unchangefilename(cmdname);
-            if (access(cmdname,04)==0) {
+            if (access(cmdname,R_OK)==0) {
               memfree(path2);
               return cmdname;
             }
@@ -500,7 +500,7 @@ nsearchpath(char *path,char *name,int shellscript)
           strcpy(cmdname+len,name);
           len+=strlen(name);
           unchangefilename(cmdname);
-          if (access(cmdname,04)==0) {
+          if (access(cmdname,R_OK)==0) {
             memfree(path2);
             return cmdname;
           }
@@ -518,13 +518,13 @@ nsearchpath(char *path,char *name,int shellscript)
       for (k=0;k<ADDEXENUM;k++) {
         strcpy(cmdname+len,addexechar[k]);
         unchangefilename(cmdname);
-        if (access(cmdname,04)==0) {
+        if (access(cmdname,R_OK)==0) {
           return cmdname;
         }
       }
     } else {
       unchangefilename(cmdname);
-      if (access(cmdname,04)==0) {
+      if (access(cmdname,R_OK)==0) {
         return cmdname;
       }
     }
@@ -607,7 +607,7 @@ nglob2(char *path,int po,int *num,char ***list)
     }
   }
   if (path[i]=='\0') {
-    if (access(path,04)==0) {
+    if (access(path,R_OK)==0) {
       if ((s=memalloc(strlen(path)+1))==NULL) return -1;
       strcpy(s,path);
       if (arg_add(list,s)==NULL) return -1;

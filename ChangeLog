@@ -1,5 +1,21 @@
 2009-03-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/oprm.c (prmload): use "R_OK", "W_OK", "X_OK" for "access()".
+
+	* src/omerge.c (mergeload): use "R_OK", "W_OK", "X_OK" for
+	"access()".
+
+	* src/ofile.c (f2dload): use "R_OK", "W_OK", "X_OK" for
+	"access()".
+
+	* src/nconfig.c (writecheckconfig): use "R_OK", "W_OK", "X_OK" for
+	"access()".
+
+	* src/ioutil.c (findfilename, nsearchpath, nglob2): use "R_OK",
+	"W_OK", "X_OK" for "access()".
+
+	* src/ofile.c (f2dload): use "R_OK", "W_OK", "X_OK" for "access()".
+
 	* src/gra.c (GRAC_INIT_VAL): add.
 	(GRAClist): use "GRAC_INIT_VAL".
 	(get_gra_font): add.

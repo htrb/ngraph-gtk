@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.73 2009/03/26 02:57:15 hito Exp $
+ * $Id: ofile.c,v 1.74 2009/03/26 06:25:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3083,8 +3083,9 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
     }
     if (num!=0) {
-      if (intp==0) spcond=SPLCND2NDDIF;
-      else {
+      if (intp==0) {
+	spcond=SPLCND2NDDIF;
+      } else {
         spcond=SPLCNDPERIODIC;
         if ((x[num-1]!=x[0]) || (y[num-1]!=y[0])) {
           if (dataadd(x[0],y[0],count,r[0],g[0],b[0],&num,
@@ -5789,12 +5790,11 @@ f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int
-f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand, char **fullname)
+f2dload_sub(struct objlist *obj, char *inst, char **s, int *expand, char **fullname)
 {
   struct objlist *sys;
-  char *exdir, *file2;
+  char *exdir, *file2, *file, *oldfile, *fname;
   int len;
-  char *file, *oldfile, *fname;
 
   if (s == NULL)
     return 1;
@@ -5803,7 +5803,7 @@ f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand, char **fullna
   if (expand)
     getobj(sys, "expand_file", 0, 0, NULL, expand);
 
-  if ((file = getitok2(&s, &len, " \t")) == NULL)
+  if ((file = getitok2(s, &len, " \t")) == NULL)
     return 1;
 
   getobj(sys, "expand_dir", 0, 0, NULL, &exdir);
@@ -5820,9 +5820,12 @@ f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand, char **fullna
     *fullname = fname;
 
   memfree(file2);
+
   _getobj(obj, "file", inst, &oldfile);
   memfree(oldfile);
-  _putobj(obj, "file", inst, fullname);
+
+  _putobj(obj, "file", inst, fname);
+
   return 0;
 }
 
@@ -5830,46 +5833,59 @@ static int
 f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int expand;
-  char *s;
-  int len;
-  char *fullname, *mes;
-  time_t ftime;
+  char *s, *fullname, *mes;
   int mkdata;
-  char buf[257];
-  struct utimbuf tm;
-  FILE *fp;
-  HANDLE fd;
+  time_t ftime;
 
-  s = (char *) argv[2];
+  s = argv[2];
 
-  if (f2dload_sub(obj, inst, s, &expand, &fullname))
+  if (f2dload_sub(obj, inst, &s, &expand, &fullname))
     return 1;
 
-  if (expand) {
-    if (gettimeval(s, &ftime)) return 1;
-    if (access(fullname,04)!=0) mkdata=TRUE;
-    else {
-      if ((mes=memalloc(strlen(fullname)+256))==NULL) return 1;
-      sprintf(mes,"`%s' Overwrite existing file?",fullname);
-      mkdata=inputyn(mes);
-      memfree(mes);
-    }
-    if (mkdata) {
-      if ((fp=nfopen(fullname,"wt"))==NULL) {
-        error2(obj,ERROPEN,fullname);
-        return 1;
-      }
-      fd=stdinfd();
-      while ((len=nread(fd,buf,256))>0) {
-        buf[len]='\0';
-        fputs(buf,fp);
-      }
-      fclose(fp);
-      tm.actime=ftime;
-      tm.modtime=ftime;
-      utime(fullname,&tm);
-    }
+  if (! expand)
+    return 0;
+
+  if (gettimeval(s, &ftime))
+    return 1;
+
+  if (access(fullname, R_OK) != 0) {
+    mkdata = TRUE;
+  } else {
+    int len;
+
+    len = strlen(fullname) + 256;
+    mes = memalloc(len);
+    if (mes == NULL)
+      return 1;
+
+    snprintf(mes, len, "`%s' Overwrite existing file?", fullname);
+    mkdata = inputyn(mes);
+    memfree(mes);
   }
+
+  if (mkdata) {
+    int len;
+    struct utimbuf tm;
+    FILE *fp;
+    HANDLE fd;
+    char buf[257];
+
+    fp = nfopen(fullname, "wt");
+    if (fp == NULL) {
+      error2(obj, ERROPEN, fullname);
+      return 1;
+    }
+    fd = stdinfd();
+    while ((len = nread(fd, buf, sizeof(buf) - 1)) > 0) {
+      buf[len] = '\0';
+      fputs(buf, fp);
+    }
+    fclose(fp);
+    tm.actime = ftime;
+    tm.modtime = ftime;
+    utime(fullname, &tm);
+  }
+
   return 0;
 }
 
@@ -5918,7 +5934,8 @@ f2dstoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 f2dloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  return f2dload_sub(obj, inst, argv[2], NULL, NULL);
+  char *s = argv[2];
+  return f2dload_sub(obj, inst, &s, NULL, NULL);
 }
 
 static int 

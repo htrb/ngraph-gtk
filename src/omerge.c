@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.10 2009/03/24 08:21:50 hito Exp $
+ * $Id: omerge.c,v 1.11 2009/03/26 06:25:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -338,7 +338,7 @@ mergeload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     memfree(file);
     return 1;
   }
-  if (access(file,04)!=0) mkdata=TRUE;
+  if (access(file,R_OK)!=0) mkdata=TRUE;
   else {
     if ((mes=memalloc(strlen(file)+256))==NULL) {
       memfree(file);

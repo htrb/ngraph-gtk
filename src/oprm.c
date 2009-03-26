@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.10 2009/03/26 02:31:52 hito Exp $
+ * $Id: oprm.c,v 1.11 2009/03/26 06:25:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1666,7 +1666,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           strncpy(filename,buf+1,s2-buf-1);
           filename[s2-buf-1]='\0';
           filename=pathconv(filename,ignorepath);
-          if (access(filename,04)!=0) mkdata=TRUE;
+          if (access(filename,R_OK)!=0) mkdata=TRUE;
           else {
             sprintf(buf2,"`%s' Overwrite existing file?",filename);
             mkdata=inputyn(buf2);
