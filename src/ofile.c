@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.72 2009/03/26 02:54:35 hito Exp $
+ * $Id: ofile.c,v 1.73 2009/03/26 02:57:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5794,13 +5794,14 @@ f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand, char **fullna
   struct objlist *sys;
   char *exdir, *file2;
   int len;
-  char *file, *oldfile;
+  char *file, *oldfile, *fname;
 
   if (s == NULL)
     return 1;
 
   sys = getobject("system");
-  getobj(sys, "expand_file", 0, 0, NULL, expand);
+  if (expand)
+    getobj(sys, "expand_file", 0, 0, NULL, expand);
 
   if ((file = getitok2(&s, &len, " \t")) == NULL)
     return 1;
@@ -5810,11 +5811,14 @@ f2dload_sub(struct objlist *obj, char *inst, char *s, int *expand, char **fullna
   file2 = getfilename(CHK_STR(exdir), "/", file);
   memfree(file);
 
-  *fullname = getfullpath(file2);
-  if (*fullname == NULL) {
+  fname = getfullpath(file2);
+  if (fname == NULL) {
     memfree(file2);
     return 1;
   }
+  if (fullname)
+    *fullname = fname;
+
   memfree(file2);
   _getobj(obj, "file", inst, &oldfile);
   memfree(oldfile);
@@ -5914,10 +5918,7 @@ f2dstoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 f2dloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int expand;
-  char *fullname;
-
-  return f2dload_sub(obj, inst, argv[2], &expand, &fullname);
+  return f2dload_sub(obj, inst, argv[2], NULL, NULL);
 }
 
 static int 
