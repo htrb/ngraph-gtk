@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2wmf.c,v 1.4 2008/08/05 02:45:16 hito Exp $
+ * $Id: gra2wmf.c,v 1.5 2009/03/29 02:13:18 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -626,7 +626,7 @@ void getboundingbox(char code,int *cpar,char *cstr)
   int i,lw;
   double x,y,csin,ccos;
   int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
-  int c1,c2,exchange;
+  int c1,c2;
   char ch;
 
   switch (code) {
@@ -874,13 +874,11 @@ void draw(char code,int *cpar,char *cstr)
   int i,R,G,B;
   double Theta1,Theta2;
   POINT *Points;
-  LOGBRUSH lBrush;
   int italic;
   char *fontname;
   struct fontmap *fcur;
   double fontdir;
   double x0,y0,fontwidth;
-  RECT rect;
 
   DC=DDC;
   if (DC<0) return;
