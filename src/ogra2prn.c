@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2prn.c,v 1.5 2009/03/31 05:39:22 hito Exp $
+ * $Id: ogra2prn.c,v 1.6 2009/03/31 06:41:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -90,6 +90,18 @@ gra2pdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static FILE *
+mytempfile(char *pfx, char **name)
+{
+  int fd;
+
+  fd = n_mkstemp(NULL, pfx, name);
+  if (fd < 0) {
+    return NULL;
+  }
+  return fdopen(fd, "w+");
+}
+
 static int 
 gra2p_output(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
@@ -98,7 +110,7 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
   struct objlist *sys;
   char code;
   int *cpar;
-  int i, fd;
+  int i;
   char *cstr;
   char *graf,*sname,*sver;
   char *pfx;
@@ -118,15 +130,7 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
     if (getobj(sys,"temp_prefix",0,0,NULL,&pfx)) return 1;
     if (gra2plocal->fname) free(gra2plocal->fname);
 
-    fd = n_mkstemp(NULL, pfx, &(gra2plocal->fname));
-    if (fd < 0) {
-      error2(obj,ERRFOPEN,gra2plocal->fname);
-      free(gra2plocal->fname);
-      gra2plocal->fname=NULL;
-      return 1;
-    }
-
-    gra2plocal->fil = fdopen(fd, "w+");
+    gra2plocal->fil = mytempfile(pfx, &gra2plocal->fname);
     if (gra2plocal->fil == NULL) {
       error2(obj,ERRFOPEN,gra2plocal->fname);
       free(gra2plocal->fname);

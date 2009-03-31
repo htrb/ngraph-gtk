@@ -7,7 +7,8 @@
 
 	* src/ioutil.c (n_mkstemp): add.
 
-	* src/ogra2prn.c (gra2p_output): use "n_mkstemp()".
+	* src/ogra2prn.c (mytempfile): add.
+	(gra2p_output): use "mytempfile()".
 
 	* src/nconfig.c (replaceconfig_match, removeconfig_match, make_backup): add.
 	(replaceconfig): use "replaceconfig_match()" and "make_backup()".
