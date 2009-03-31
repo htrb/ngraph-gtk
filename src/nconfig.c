@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.8 2009/03/26 06:25:15 hito Exp $
+ * $Id: nconfig.c,v 1.9 2009/03/31 05:39:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -223,25 +223,104 @@ closeconfig(FILE *fp)
   fclose(fp);
 }
 
+static int
+make_backup(char *homedir, char *libdir, char *fil, FILE *fptmp)
+{
+  FILE *fp;
+  char *buf, *bak;
+
+  if (! findfilename(homedir, CONFSEP, CONF)) {
+    bak = getfilename(libdir, CONFSEP, CONFBAK);
+    if (bak && findfilename(libdir, CONFSEP, CONFBAK)) {
+      unlink(bak);
+    }
+  } else {
+    bak = getfilename(homedir, CONFSEP, CONFBAK);
+    if (bak && findfilename(homedir, CONFSEP, CONFBAK)) {
+      unlink(bak);
+    }
+  }
+  if (bak) {
+    rename(fil,  bak);
+    memfree(bak);
+  }
+
+  fp = fopen(fil, "wt");
+  if (fp == NULL) {
+    return FALSE;
+  }
+  rewind(fptmp);
+
+  while (fgetline(fptmp, &buf) == 0) {
+    fputs(buf, fp);
+    fputs("\n", fp);
+    memfree(buf);
+  }
+
+  fclose(fp);
+  return TRUE;
+}
+
+static void
+replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *conf)
+{
+  char *s, *s2, *buf, *tok, *tok2, **data;
+  int out, len, len2, i, j, num, num2;
+
+  num = arraynum(conf);
+  data = arraydata(conf);
+
+  while (fgetline(fp, &buf) == 0) {
+    if (buf[0]=='[') {
+      return;
+    } else {
+      s = buf;
+      out = FALSE;
+      tok = getitok(&s, &len, " \t=,");
+      if (tok != NULL) {
+        for (i = 0; i < num; i++) {
+          s2 = data[i];
+	  tok2 = getitok(&s2, &len2, " \t=,");
+          if (tok2 && (len == len2 && strncmp(tok, tok2, len) == 0)) {
+            out = TRUE;
+            num2 = arraynum(conf);
+            for (j = 0; j < num2; j++) {
+	      if (i == *(int *)arraynget(iconf, j))
+		break;
+	    }
+            if (j == num2) {
+              fputs(data[i], fptmp);
+              fputs("\n", fptmp);
+              arrayadd(iconf, &i);
+            }
+          }
+        }
+      }
+      if (! out && buf && buf[0] != '\0') {
+        fputs(buf, fptmp);
+        fputs("\n", fptmp);
+      }
+    }
+    memfree(buf);
+  }
+}
+
 int 
 replaceconfig(char *section,struct narray *conf)
 {
-  int i,j,num,num2,out,len,len2;
+  int i,j,num,num2, r;
   char **data;
   struct objlist *sys;
-  char *libdir,*homedir,*dir,*fil,*bak,*tmpfil,*s,*s2,*tok,*tok2,*buf,*pfx;
+  char *libdir,*homedir,*dir,*fil,*buf,*pfx;
   FILE *fp,*fptmp;
   struct narray iconf;
 
-  num=arraynum(conf);
-  if (num==0) return TRUE;
-  data=arraydata(conf);
+  if (arraynum(conf) == 0) return TRUE;
   if ((sys=getobject("system"))==NULL) return FALSE;
   if (getobj(sys,"temp_prefix",0,0,NULL,&pfx)) return FALSE;
   if ((sys=getobject("system"))==NULL) return FALSE;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return FALSE;
   if (getobj(sys,"lib_dir",0,0,NULL,&libdir)==-1) return FALSE;
-
   if (!findfilename(homedir,CONFSEP,CONF)) {
     if (!findfilename(libdir,CONFSEP,CONF)) return FALSE;
     if ((fil=getfilename(libdir,CONFSEP,CONF))==NULL) return FALSE;
@@ -251,39 +330,27 @@ replaceconfig(char *section,struct narray *conf)
     dir=homedir;
   }
   lockconfig(dir);
-
-  tmpfil = tempnam(NULL, pfx);
-  if (tmpfil == NULL)  {
-    memfree(fil);
-    unlockconfig(dir);
-    return FALSE;
-  }
-
-  fptmp=fopen(tmpfil,"wt");
+  fptmp = tmpfile();
   if (fptmp == NULL) {
-    free(tmpfil);
     unlockconfig(dir);
     return FALSE;
   }
-
   fp = fopen(fil,"rt");
   if (fp == NULL) {
-    free(tmpfil);
     fclose(fptmp);
     memfree(fil);
     unlockconfig(dir);
     return FALSE;
   }
-
   arrayinit(&iconf,sizeof(int));
   while (fgetline(fp,&buf)==0) {
     if (strcmp0(buf,section)==0) {
       fputs(buf,fptmp);
       fputs("\n",fptmp);
       memfree(buf);
-      goto match;
-    }
-    else {
+      replaceconfig_match(fp, fptmp, &iconf, conf);
+      goto flush;
+    } else {
       fputs(buf,fptmp);
       fputs("\n",fptmp);
     }
@@ -293,43 +360,10 @@ replaceconfig(char *section,struct narray *conf)
   fputs("\n",fptmp);
   fputs(section,fptmp);
   fputs("\n",fptmp);
-  goto flush;
-
-match:
-  while (fgetline(fp,&buf)==0) {
-    if (buf[0]=='[') goto flush;
-    else {
-      s=buf;
-      out=FALSE;
-      tok=getitok(&s,&len," \t=,");
-      if (tok != NULL) {
-        for (i=0;i<num;i++) {
-          s2=data[i];
-	  tok2=getitok(&s2,&len2," \t=,");
-          if ((tok2 != NULL) && ((len==len2) && (strncmp(tok,tok2,len)==0))) {
-            out=TRUE;
-            num2=arraynum(&iconf);
-            for (j = 0; j < num2; j++) {
-	      if (i == *(int *)arraynget(&iconf, j))
-		break;
-	    }
-            if (j == num2) {
-              fputs(data[i],fptmp);
-              fputs("\n",fptmp);
-              arrayadd(&iconf,&i);
-            }
-          }
-        }
-      }
-      if ((!out) && (buf!=NULL) && (buf[0]!='\0')) {
-        fputs(buf,fptmp);
-        fputs("\n",fptmp);
-      }
-    }
-    memfree(buf);
-  }
 
 flush:
+  data = arraydata(conf);
+  num = arraynum(conf);
   for (i=0;i<num;i++) {
     num2=arraynum(&iconf);
     for (j=0;j<num2;j++) if (i==*(int *)arraynget(&iconf,j)) break;
@@ -352,65 +386,65 @@ flush:
 
   arraydel(&iconf);
   fclose(fp);
-  fclose(fptmp);
 
   /* make backup */
-  if (!findfilename(homedir,CONFSEP,CONF)) {
-    if ((bak=getfilename(libdir,CONFSEP,CONFBAK))!=NULL) {
-      if (findfilename(libdir,CONFSEP,CONFBAK)) unlink(bak);
-    }
-  } else {
-    if ((bak=getfilename(homedir,CONFSEP,CONFBAK))!=NULL) {
-      if (findfilename(homedir,CONFSEP,CONFBAK)) unlink(bak);
-    }
-  }
-  if (bak!=NULL) {
-    rename(fil,bak);
-    memfree(bak);
-  }
 
-  if ((fp=fopen(fil,"wt"))==NULL) {
-    memfree(fil);
-    unlockconfig(dir);
-    return FALSE;
-  }
-  if ((fptmp=fopen(tmpfil,"rt"))==NULL) {
-    memfree(fil);
-    fclose(fp);
-    fclose(fptmp);
-    unlink(tmpfil);
-    free(tmpfil);
-    unlockconfig(dir);
-    return FALSE;
-  }
+  r = make_backup(homedir, libdir, fil, fptmp);
 
-  while (fgetline(fptmp,&buf)==0) {
-    fputs(buf,fp);
-    fputs("\n",fp);
+  fclose(fptmp);
+  memfree(fil);
+  unlockconfig(dir);
+  return r;
+}
+
+static int
+removeconfig_match(FILE *fp, FILE *fptmp, struct narray *conf)
+{
+  char *s, *s2, *buf, *tok, **data;
+  int out, len, len2, i, num, change;
+
+  num = arraynum(conf);
+  data = arraydata(conf);
+
+  change = FALSE;
+  while (fgetline(fp, &buf) == 0) {
+    if (buf[0] == '[') {
+      break;
+    } else {
+      s = buf;
+      out = TRUE;
+      tok = getitok(&s, &len, " \t=,");
+      if (tok != NULL) {
+        for (i = 0; i < num; i++) {
+          s2 = data[i];
+          len2 = strlen(data[i]);
+          if (len == len2 && strncmp(tok, s2, len) == 0)
+	    out = FALSE;
+        }
+      }
+      if (! out)
+	change = TRUE;
+      if (out && buf) {
+        fputs(buf, fptmp);
+        fputs("\n", fptmp);
+      }
+    }
     memfree(buf);
   }
 
-  fclose(fp);
-  fclose(fptmp);
-  unlink(tmpfil);
-  free(tmpfil);
-  memfree(fil);
-  unlockconfig(dir);
-  return TRUE;
+  return change;
 }
 
 int 
 removeconfig(char *section,struct narray *conf)
 {
-  int i,num,out,len,len2,change;
-  char **data;
+  int change,r;
   struct objlist *sys;
-  char *libdir,*homedir,*dir,*fil,*bak,*tmpfil,*s,*s2,*tok,*buf,*pfx;
+  char *libdir,*homedir,*dir,*fil,*buf,*pfx;
   FILE *fp,*fptmp;
 
-  num=arraynum(conf);
-  if (num==0) return TRUE;
-  data=arraydata(conf);
+  change=FALSE;
+  if (arraynum(conf) == 0) return TRUE;
   if ((sys=getobject("system"))==NULL) return FALSE;
   if (getobj(sys,"temp_prefix",0,0,NULL,&pfx)) return FALSE;
   if ((sys=getobject("system"))==NULL) return FALSE;
@@ -425,20 +459,15 @@ removeconfig(char *section,struct narray *conf)
     dir=homedir;
   }
   lockconfig(dir);
-  if ((tmpfil=tempnam(NULL,pfx))==NULL) {
+  fptmp = tmpfile();
+  if (fptmp == NULL) {
     unlockconfig(dir);
     return FALSE;
   }
-  if ((fptmp=fopen(tmpfil,"wt"))==NULL) {
-    free(tmpfil);
-    unlockconfig(dir);
-    return FALSE;
-  }
-  if ((fp=fopen(fil,"rt"))==NULL) {
-    free(tmpfil);
+  fp = fopen(fil,"rt");
+  if (fp == NULL) {
     fclose(fptmp);
     memfree(fil);
-    fclose(fp);
     unlockconfig(dir);
     return FALSE;
   }
@@ -447,42 +476,11 @@ removeconfig(char *section,struct narray *conf)
       fputs(buf,fptmp);
       fputs("\n",fptmp);
       memfree(buf);
-      goto match;
+      change = removeconfig_match(fp, fptmp, conf);
+      goto flush;
     } else {
       fputs(buf,fptmp);
       fputs("\n",fptmp);
-    }
-    memfree(buf);
-  }
-/* section not found */
-  fclose(fp);
-  fclose(fptmp);
-  unlink(tmpfil);
-  free(tmpfil);
-  memfree(fil);
-  unlockconfig(dir);
-  return TRUE;
-
-match:
-  change=FALSE;
-  while (fgetline(fp,&buf)==0) {
-    if (buf[0]=='[') {
-      goto flush;
-    } else {
-      s=buf;
-      out=TRUE;
-      if ((tok=getitok(&s,&len," \t=,"))!=NULL) {
-        for (i=0;i<num;i++) {
-          s2=data[i];
-          len2=strlen(data[i]);
-          if ((len==len2) && (strncmp(tok,s2,len)==0)) out=FALSE;
-        }
-      }
-      if (!out) change=TRUE;
-      if (out && (buf!=NULL)) {
-        fputs(buf,fptmp);
-        fputs("\n",fptmp);
-      }
     }
     memfree(buf);
   }
@@ -491,8 +489,6 @@ flush:
   if (!change) {
     fclose(fp);
     fclose(fptmp);
-    unlink(tmpfil);
-    free(tmpfil);
     memfree(fil);
     memfree(buf);
     unlockconfig(dir);
@@ -510,51 +506,14 @@ flush:
   }
 
   fclose(fp);
-  fclose(fptmp);
 
   /* make backup */
-  if (!findfilename(homedir,CONFSEP,CONF)) {
-    if ((bak=getfilename(libdir,CONFSEP,CONFBAK))!=NULL) {
-      if (findfilename(libdir,CONFSEP,CONFBAK)) unlink(bak);
-    }
-  } else {
-    if ((bak=getfilename(homedir,CONFSEP,CONFBAK))!=NULL) {
-      if (findfilename(homedir,CONFSEP,CONFBAK)) unlink(bak);
-    }
-  }
-  if (bak!=NULL) {
-    rename(fil,bak);
-    memfree(bak);
-  }
+  r = make_backup(homedir, libdir, fil, fptmp);
 
-  if ((fp=fopen(fil,"wt"))==NULL) {
-    memfree(fil);
-    unlockconfig(dir);
-    return FALSE;
-  }
-  if ((fptmp=fopen(tmpfil,"rt"))==NULL) {
-    memfree(fil);
-    fclose(fp);
-    fclose(fptmp);
-    unlink(tmpfil);
-    free(tmpfil);
-    unlockconfig(dir);
-    return FALSE;
-  }
-
-  while (fgetline(fptmp,&buf)==0) {
-    fputs(buf,fp);
-    fputs("\n",fp);
-    memfree(buf);
-  }
-
-  fclose(fp);
   fclose(fptmp);
-  unlink(tmpfil);
-  free(tmpfil);
   memfree(fil);
   unlockconfig(dir);
-  return TRUE;
+  return r;
 }
 
 int 

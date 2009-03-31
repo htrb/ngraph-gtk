@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2prn.c,v 1.4 2009/03/24 08:24:05 hito Exp $
+ * $Id: ogra2prn.c,v 1.5 2009/03/31 05:39:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,7 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <stdio.h>
+#include <string.h>
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -97,7 +98,7 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
   struct objlist *sys;
   char code;
   int *cpar;
-  int i;
+  int i, fd;
   char *cstr;
   char *graf,*sname,*sver;
   char *pfx;
@@ -111,26 +112,35 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
   cstr=argv[5];
 
   if (code=='I') {
-    if (gra2plocal->fil!=NULL) fclose(gra2plocal->fil);
+    if (gra2plocal->fil) fclose(gra2plocal->fil);
     gra2plocal->fil=NULL;
     if ((sys=getobject("system"))==NULL) return 1;
     if (getobj(sys,"temp_prefix",0,0,NULL,&pfx)) return 1;
-    if (gra2plocal->fname!=NULL) free(gra2plocal->fname);
-    if ((gra2plocal->fname=tempnam(NULL,pfx))==NULL) return 1;
-    changefilename(gra2plocal->fname);
-    if ((gra2plocal->fil=nfopen(gra2plocal->fname,"wt"))==NULL) {
+    if (gra2plocal->fname) free(gra2plocal->fname);
+
+    fd = n_mkstemp(NULL, pfx, &(gra2plocal->fname));
+    if (fd < 0) {
       error2(obj,ERRFOPEN,gra2plocal->fname);
       free(gra2plocal->fname);
       gra2plocal->fname=NULL;
       return 1;
     }
+
+    gra2plocal->fil = fdopen(fd, "w+");
+    if (gra2plocal->fil == NULL) {
+      error2(obj,ERRFOPEN,gra2plocal->fname);
+      free(gra2plocal->fname);
+      gra2plocal->fname = NULL;
+      return 1;
+    }
+
     if (getobj(sys,"name",0,0,NULL,&sname)) return 1;
     if (getobj(sys,"version",0,0,NULL,&sver)) return 1;
     if (getobj(sys,"GRAF",0,0,NULL,&graf)) return 1;
     fprintf(gra2plocal->fil,"%s\n",graf);
     fprintf(gra2plocal->fil,"%%Creator: %s ver %s\n",sname,sver);
   }
-  if (gra2plocal->fil!=NULL) {
+  if (gra2plocal->fil) {
       fputc(code,gra2plocal->fil);
       if (cpar[0]==-1) {
         for (i=0;cstr[i]!='\0';i++)
@@ -171,10 +181,10 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
   return 0;
 
 errexit:
-  if (gra2plocal->fname!=NULL) {
+  if (gra2plocal->fname) {
     unlink(gra2plocal->fname);
     free(gra2plocal->fname);
-    gra2plocal->fname=NULL;
+    gra2plocal->fname = NULL;
   }
   return 1;
 }

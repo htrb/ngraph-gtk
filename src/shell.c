@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.22 2009/03/26 02:31:52 hito Exp $
+ * $Id: shell.c,v 1.23 2009/03/31 05:39:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -317,12 +317,21 @@ shget(struct nshell *nshell)
 static int 
 shputstdout(char *s)
 {
-  int len;
+  int len, r;
 
-  len=strlen(s);
-  write(stdoutfd(),s,len);
-  write(stdoutfd(),"\n",1);
-  return len+1;
+  len = strlen(s);
+
+  r = write(stdoutfd(), s, len);
+  if (r < 0)
+    return 0;
+
+  len = r;
+
+  r = write(stdoutfd(), "\n", 1);
+  if (r >= 0)
+    len += r;
+
+  return len;
 }
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
@@ -341,15 +350,16 @@ shputstderr(char *s)
 static int 
 shprintfstdout(char *fmt,...)
 {
-  int len;
+  int len, r;
   char buf[1024];
   va_list ap;
 
   va_start(ap,fmt);
   len=vsprintf(buf,fmt,ap);
   va_end(ap);
-  write(stdoutfd(),buf,len);
-  return len;
+  r = write(stdoutfd(),buf,len);
+
+  return (r < 0) ? 0 : r;
 }
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
@@ -1460,7 +1470,7 @@ getcmdline(struct nshell *nshell,
   struct cmdlist *cmdroot,*cmdcur;
   struct prmlist *prmcur,*prmnew;
   int quote,quote2,bquote,bquote2,escape,escape2;
-  int cend,l,len;
+  int cend,l;
   char *spo,*po,*prompt,*tok,*tok2;
   char *ignoreeof,*endptr;
   int ch;
@@ -1556,6 +1566,8 @@ getcmdline(struct nshell *nshell,
     }
     tok2=tok;
     do {
+      int len;
+
       spo=gettok(&tok2,&len,&quote,&bquote,&cend,&escape);
       if (quote2 || bquote2 || escape2) {
         l=strlen(prmcur->str);
@@ -1852,9 +1864,9 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
         if (se==NULL) {
           /* command substitution */
           if ((sys=getobject("system"))==NULL) goto errexit;
-          if ((tmpfil=tempnam(getval(nshell,"TMPDIR"),TEMPPFX))==NULL)
-            goto errexit;
-          sout=nopen(tmpfil,O_CREAT|O_TRUNC|O_RDWR,NFMODE);
+	  sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
+	  if (sout < 0)
+	    goto errexit;
           sout2=nredirect(1,sout);
           rcode=cmdexecute(nshell,sb);
           if ((rcode!=0) && (rcode!=1)) {
@@ -2264,9 +2276,9 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                 /* get << contents */
 
                 if ((sys=getobject("system"))==NULL) return -1;
-                if ((tmpfil=tempnam(getval(nshell,"TMPDIR"),TEMPPFX))==NULL)
-                  return -1;
-                sout=nopen(tmpfil,O_CREAT | O_TRUNC | O_RDWR,NFMODE);
+		sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
+		if (sout < 0)
+		  return -1;
                 if ((quoted) && !nisatty(nshell->fd)) {
                   eoflen=strlen(eof);
                   match=0;
@@ -3243,11 +3255,11 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    else if (istdin==PPSI2) {
 	      sin=nopen(fstdin,O_RDONLY,NFMODE);
 	      if (!quoted) {
-		if ((tmpfil2=tempnam(getval(nshell,"TMPDIR"),TEMPPFX))==NULL) {
+		fd = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil2);
+		if (fd < 0) {
 		  nclose(sin);
 		  goto errexit;
 		}
-		fd=nopen(tmpfil2,O_CREAT | O_TRUNC | O_RDWR,NFMODE);
 		do {
 		  if ((s=nstrnew())==NULL) {
 		    nclose(sin);
@@ -3307,9 +3319,9 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    /* pipe */
 	  } else if (pipef) {
 	    if ((sys=getobject("system"))==NULL) goto errexit;
-	    if ((tmpfil=tempnam(getval(nshell,"TMPDIR"),TEMPPFX))==NULL)
+	    sout = n_mkstemp(getval(nshell,"TMPDIR"), TEMPPFX, &tmpfil);
+	    if (sout < 0)
 	      goto errexit;
-	    sout=nopen(tmpfil,O_CREAT | O_TRUNC | O_RDWR,NFMODE);
 	    unlinkfile(&((cmdcur->next)->pipefile));
 	    (cmdcur->next)->pipefile=tmpfil;
 	  }

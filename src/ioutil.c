@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.17 2009/03/26 06:25:15 hito Exp $
+ * $Id: ioutil.c,v 1.18 2009/03/31 05:39:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1073,3 +1073,37 @@ set_progress(int pos, char *msg, double fraction)
     ShowProgressFunc(pos, msg, fraction);
 }
 
+int
+n_mkstemp(char *dir, char *templ, char **name)
+{
+  char postfix[] = "XXXXXX", *buf;
+  int len = sizeof(postfix), fd;
+
+  dir = (dir) ? dir : P_tmpdir;
+  dir = (dir) ? dir : ".";
+
+  if (dir)
+    len += strlen(dir);
+
+  if (templ)
+    len += strlen(templ);
+
+  buf = malloc(len);
+  if (buf == NULL) {
+    *name = NULL;
+    return -1;
+  }
+
+  len++;
+  snprintf(buf, len, "%s/%s%s", dir, CHK_STR(templ), postfix);
+  fd = mkstemp(buf);
+
+  if (fd < 0) {
+    free(buf);
+    buf = NULL;
+  }
+
+  *name = buf;
+
+  return fd;
+}

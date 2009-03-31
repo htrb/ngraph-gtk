@@ -1,3 +1,19 @@
+2009-03-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (shputstdout, shprintfstdout): check return value of
+	"write()".
+	(expand, checkcmd, cmdexec): use "n_mkstemp()" instead of
+	"tempnam()".
+
+	* src/ioutil.c (n_mkstemp): add.
+
+	* src/ogra2prn.c (gra2p_output): use "n_mkstemp()".
+
+	* src/nconfig.c (replaceconfig_match, removeconfig_match, make_backup): add.
+	(replaceconfig): use "replaceconfig_match()" and "make_backup()".
+	(removeconfig): use "removeconfig_match()" and "make_backup()".
+	(replaceconfig, removeconfig): use "tmpfile()" instead of "tempnam()".
+
 2009-03-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* driver/wmfapi.h (_HPEN): type of "Index" is int.
