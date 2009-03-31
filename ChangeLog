@@ -24,8 +24,6 @@
 
 2009-03-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* driver/wmfapi.h (_HPEN): type of "Index" is int.
-
 	* driver/gra2wmf.c (getboundingbox): remove unused variable
 	"exchange".
 	(draw): remove unused variables "lBrush" and "rect".

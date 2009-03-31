@@ -1,6 +1,6 @@
 /**
  *
- * $Id: wmfapi.h,v 1.2 2009/03/29 02:13:18 hito Exp $
+ * $Id: wmfapi.h,v 1.3 2009/03/31 09:10:51 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -11,7 +11,10 @@
 /**
  *
  * $Log: wmfapi.h,v $
- * Revision 1.2  2009/03/29 02:13:18  hito
+ * Revision 1.3  2009/03/31 09:10:51  hito
+ * *** empty log message ***
+ *
+ * Revision 1.2  2009-03-29 02:13:18  hito
  * *** empty log message ***
  *
  * Revision 1.1.1.1  2008-05-29 09:37:33  hito
@@ -102,7 +105,7 @@ typedef struct _HGDIOBJ {
 
 typedef struct _HPEN {
   unsigned int Type;
-  int Index;
+  unsigned int Index;
   HDC Dc;
   LOGPEN Pen;
 } *HPEN;

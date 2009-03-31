@@ -1,6 +1,6 @@
 /**
  *
- * $Id: wmfapi.c,v 1.2 2008/06/10 13:41:41 hito Exp $
+ * $Id: wmfapi.c,v 1.3 2009/03/31 09:10:51 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <limits.h>
 
 #include "wmfapi.h"
 
@@ -27,7 +28,7 @@ typedef struct tagREC {
     WORD  rdParm[10];
 } REC;
 
-int RECN,MAXREC;
+unsigned int RECN,MAXREC;
 
 #define ALLOCSIZE 512
 
@@ -50,9 +51,9 @@ void tbldone(void)
   tbl.data=NULL;
 }
 
-int tbladd(void)
+unsigned int tbladd(void)
 {
-  int i,size;
+  unsigned int i,size;
   char *data;
 
   for (i=0;i<tbl.num;i++) {
@@ -74,7 +75,7 @@ int tbladd(void)
   return tbl.num-1;
 }
 
-void tbldel(int po)
+void tbldel(unsigned int po)
 {
   if (po<tbl.num) tbl.data[po]=0;
 }
@@ -323,7 +324,7 @@ HFONT CreateFontIndirect(LOGFONT *lplf)
 
   if ((font=malloc(sizeof(struct _HFONT)))!=NULL) {
     font->Type=TYPEFONT;
-    font->Index=-1;
+    font->Index=UINT_MAX;
     font->Dc=-1;
     font->Font=*lplf;
   }
@@ -346,7 +347,7 @@ HBRUSH CreateBrushIndirect(LOGBRUSH *lplb)
 
   if ((brush=malloc(sizeof(struct _HBRUSH)))!=NULL) {
     brush->Type=TYPEBRUSH;
-    brush->Index=-1;
+    brush->Index=UINT_MAX;
     brush->Dc=-1;
     brush->Brush=*lplb;
   }
@@ -360,7 +361,7 @@ HPEN CreatePen(INT fnPenStyle,INT nWidth,COLORREF crColor)
   if ((pen=malloc(sizeof(struct _HPEN)))!=NULL) {
     if (nWidth<1) nWidth=1;
     pen->Type=TYPEPEN;
-    pen->Index=-1;
+    pen->Index=UINT_MAX;
     pen->Dc=-1;
     pen->Pen.lopnStyle=fnPenStyle;
     pen->Pen.lopnWidth.x=nWidth;
@@ -381,7 +382,7 @@ HGDIOBJ SelectObject(HDC hdc,void *hgdiobj)
   switch (((HGDIOBJ)hgdiobj)->Type) {
     case TYPEPEN:
       pen=(HPEN)hgdiobj;
-      if (pen->Index==-1) {
+      if (pen->Index==UINT_MAX) {
         pen->Index=tbladd();
         pen->Dc=hdc;
         r.rdSize=3+5;
@@ -402,7 +403,7 @@ HGDIOBJ SelectObject(HDC hdc,void *hgdiobj)
       break;
     case TYPEBRUSH:
       brush=(HBRUSH)hgdiobj;
-      if (brush->Index==-1) {
+      if (brush->Index==UINT_MAX) {
         brush->Index=tbladd();
         brush->Dc=hdc;
         r.rdSize=3+4;
@@ -423,7 +424,7 @@ HGDIOBJ SelectObject(HDC hdc,void *hgdiobj)
       break;
     case TYPEFONT:
       font=(HFONT)hgdiobj;
-      if (font->Index==-1) {
+      if (font->Index==UINT_MAX) {
         font->Index=tbladd();
         font->Dc=hdc;
         r.rdSize=3+25;
@@ -466,7 +467,7 @@ BOOL DeleteObject(void *hObject)
 
   if (hObject!=NULL) {
     obj=(HGDIOBJ)hObject;
-    if (obj->Index!=-1) {
+    if (obj->Index!=UINT_MAX) {
       r.rdSize=4;
       r.rdFunction=0x01f0;
       r.rdParm[0]=obj->Index;
