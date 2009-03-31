@@ -19,6 +19,8 @@
 	(replaceconfig): use "replaceconfig_match()" and "make_backup()".
 	(removeconfig): use "removeconfig_match()" and "make_backup()".
 	(replaceconfig, removeconfig): use "tmpfile()" instead of "tempnam()".
+	(lockconfig): call "msleep()" while checking "configlocked()".
+
 
 2009-03-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

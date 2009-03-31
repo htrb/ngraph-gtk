@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.10 2009/03/31 08:20:11 hito Exp $
+ * $Id: nconfig.c,v 1.11 2009/03/31 08:52:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,6 +34,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"
+#include "shell.h"
 #include "nconfig.h"
 #ifndef WINDOWS
 #include <unistd.h>
@@ -99,7 +100,9 @@ lockconfig(char *dir)
   char *file;
   FILE *fp;
 
-  while (configlocked(dir)) ;
+  while (configlocked(dir)) {
+    msleep(100);
+  }
   if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return;
   if ((fp=fopen(file,"wt"))==NULL) {
     memfree(file);
@@ -191,30 +194,27 @@ getconfig(FILE *fp,char **val)
   char *s,*tok,*buf;
   int len;
 
-  while (TRUE) {
-    if (fgetline(fp,&buf)!=0) return NULL;
-    else {
-      if (buf[0]=='[') {
-        memfree(buf);
-        return NULL;
-      } else {
-        s=buf;
-        if ((tok=getitok2(&s,&len,"="))!=NULL) {
-          if (s[0]=='=') s++;
-          if ((*val=memalloc(strlen(s)+1))==NULL) {
-            memfree(buf);
-            memfree(tok);
-            return NULL;
-          }
-          strcpy(*val,s);
-          memfree(buf);
-          return tok;
-        }
-        memfree(buf);
-        memfree(tok);
-      }
+  while (fgetline(fp, &buf) == 0) {
+    if (buf[0] == '[') {
+      memfree(buf);
+      return NULL;
     }
+
+    s = buf;
+    tok = getitok2(&s, &len, "=");
+    if (tok) {
+      s += (s[0] == '=') ? 1 : 0;
+      *val = nstrdup(s);
+      if (*val == NULL) {
+	memfree(tok);
+	tok = NULL;
+      }
+      memfree(buf);
+      return tok;
+    }
+    memfree(buf);
   }
+  return NULL;
 }
 
 void 
