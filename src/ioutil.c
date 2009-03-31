@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.18 2009/03/31 05:39:22 hito Exp $
+ * $Id: ioutil.c,v 1.19 2009/03/31 08:20:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1088,13 +1088,13 @@ n_mkstemp(char *dir, char *templ, char **name)
   if (templ)
     len += strlen(templ);
 
+  len++;
   buf = malloc(len);
   if (buf == NULL) {
     *name = NULL;
     return -1;
   }
 
-  len++;
   snprintf(buf, len, "%s/%s%s", dir, CHK_STR(templ), postfix);
   fd = mkstemp(buf);
 

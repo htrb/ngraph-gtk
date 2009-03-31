@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.59 2009/03/26 02:31:53 hito Exp $
+ * $Id: x11opt.c,v 1.60 2009/03/31 08:20:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -751,6 +751,8 @@ set_font_from_font_selection_dialog(GtkWidget *w, struct PrefFontDialog *d, stru
   style = pango_font_description_get_style(pdesc);
   family = pango_font_description_get_family(pdesc);
 
+  g_free(fname);
+
   if (family == NULL) {
     pango_font_description_free(pdesc);
     return;
@@ -815,6 +817,7 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
     return;
 
   fcur = gra2cairo_get_fontmap(fontalias);
+  free(fontalias);
   if (fcur == NULL)
     return;
 
@@ -836,6 +839,7 @@ PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
 
   fontalias = list_store_get_selected_string(d->list, 0);
   gra2cairo_remove_fontmap(fontalias);
+  free(fontalias);
   PrefFontDialogSetupItem(d);
 }
 

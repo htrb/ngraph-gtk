@@ -306,3 +306,4 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
 #undef LIST_INIT
 #undef SET_DIALOG
 #undef CREATE_NAME
+#undef HAVE_UPDATE_FUNC

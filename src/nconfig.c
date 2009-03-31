@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.9 2009/03/31 05:39:22 hito Exp $
+ * $Id: nconfig.c,v 1.10 2009/03/31 08:20:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -272,6 +272,8 @@ replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *
 
   while (fgetline(fp, &buf) == 0) {
     if (buf[0]=='[') {
+      fputs(buf, fptmp);
+      memfree(buf);
       return;
     } else {
       s = buf;
@@ -283,7 +285,7 @@ replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *
 	  tok2 = getitok(&s2, &len2, " \t=,");
           if (tok2 && (len == len2 && strncmp(tok, tok2, len) == 0)) {
             out = TRUE;
-            num2 = arraynum(conf);
+            num2 = arraynum(iconf);
             for (j = 0; j < num2; j++) {
 	      if (i == *(int *)arraynget(iconf, j))
 		break;
@@ -373,11 +375,6 @@ flush:
     }
   }
   fputs("\n",fptmp);
-  if (buf!=NULL) {
-    fputs(buf,fptmp);
-    fputs("\n",fptmp);
-    memfree(buf);
-  }
   while (fgetline(fp,&buf)==0) {
     fputs(buf,fptmp);
     fputs("\n",fptmp);
@@ -409,6 +406,8 @@ removeconfig_match(FILE *fp, FILE *fptmp, struct narray *conf)
   change = FALSE;
   while (fgetline(fp, &buf) == 0) {
     if (buf[0] == '[') {
+      fputs(buf, fptmp);
+      memfree(buf);
       break;
     } else {
       s = buf;
@@ -490,14 +489,8 @@ flush:
     fclose(fp);
     fclose(fptmp);
     memfree(fil);
-    memfree(buf);
     unlockconfig(dir);
     return TRUE;
-  }
-  if (buf!=NULL) {
-    fputs(buf,fptmp);
-    fputs("\n",fptmp);
-    memfree(buf);
   }
   while (fgetline(fp,&buf)==0) {
     fputs(buf,fptmp);

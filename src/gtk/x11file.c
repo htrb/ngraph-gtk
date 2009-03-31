@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.82 2009/03/23 08:54:48 hito Exp $
+ * $Id: x11file.c,v 1.83 2009/03/31 08:20:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1511,6 +1511,7 @@ FileMoveDialogClose(GtkWidget *w, void *data)
     return;
   }
 
+  set_graph_modified();
   ret = d->ret;
   d->ret = IDLOOP;
   exeobj(d->Obj, "move_data_adjust", d->Id, 0, NULL);
@@ -1536,9 +1537,11 @@ FileMoveDialogClose(GtkWidget *w, void *data)
 
     ptr = list_store_get_string(d->list, &iter, 1); 
     x = strtod(ptr, &endptr);
+    free(ptr);
 
     ptr = list_store_get_string(d->list, &iter, 2); 
     y = strtod(ptr, &endptr);
+    free(ptr);
 
     if (move == NULL)
       move = arraynew(sizeof(int));
@@ -1571,6 +1574,7 @@ FileMoveDialogClose(GtkWidget *w, void *data)
 
     state = list_store_iter_next(d->list, &iter);
   }
+
   putobj(d->Obj, "move_data", d->Id, move);
   putobj(d->Obj, "move_data_x", d->Id, movex);
   putobj(d->Obj, "move_data_y", d->Id, movey);

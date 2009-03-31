@@ -1,5 +1,10 @@
 2009-03-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (FileMoveDialogClose): free "ptr".
+	(FileMoveDialogClose): call "set_graph_modified()".
+
+	* src/gtk/x11opt.c (PrefFontDialogUpdate): free "fontalias".
+
 	* src/shell.c (shputstdout, shprintfstdout): check return value of
 	"write()".
 	(expand, checkcmd, cmdexec): use "n_mkstemp()" instead of
