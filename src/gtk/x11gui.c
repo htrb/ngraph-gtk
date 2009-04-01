@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.24 2009/03/06 03:55:54 hito Exp $
+ * $Id: x11gui.c,v 1.25 2009/04/01 03:37:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -793,7 +793,7 @@ nGetOpenFileNameMulti(GtkWidget * parent,
 		      char *title, char *defext, char **initdir,
 		      char *initfil, char ***file, char *filter, int chd)
 {
-  int ret;
+  int ret, r;
   
   FileSelection.title = title;
   FileSelection.initdir = initdir;
@@ -809,7 +809,7 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   if (ret == IDOK) {
     *file = FileSelection.file;
     if (FileSelection.chdir && initdir) {
-      chdir(*initdir);
+      r = chdir(*initdir);
     }
   } else {
     *file = NULL;
@@ -823,7 +823,7 @@ nGetOpenFileName(GtkWidget * parent,
 		 char *title, char *defext, char **initdir, char *initfil,
 		 char **file, char *filter, int exist, int chd)
 {
-  int ret;
+  int ret, r;
   
   FileSelection.title = title;
   FileSelection.initdir = initdir;
@@ -844,7 +844,7 @@ nGetOpenFileName(GtkWidget * parent,
     *file = FileSelection.file[0];
     free(FileSelection.file);
     if (FileSelection.chdir && initdir) {
-      chdir(*initdir);
+      r = chdir(*initdir);
     }
   } else {
     *file = NULL;
@@ -859,7 +859,7 @@ nGetSaveFileName(GtkWidget * parent,
 		 char *title, char *defext, char **initdir, char *initfil,
 		 char **file, char *filter, int chd)
 {
-  int ret;
+  int ret, r;
 
   FileSelection.title = title;
   FileSelection.initdir = initdir;
@@ -876,7 +876,7 @@ nGetSaveFileName(GtkWidget * parent,
     *file = FileSelection.file[0];
     free(FileSelection.file);
     if (FileSelection.chdir && initdir) {
-      chdir(*initdir);
+      r = chdir(*initdir);
     }
   } else {
     *file = NULL;
