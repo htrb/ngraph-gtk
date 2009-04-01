@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2ps.c,v 1.3 2008/08/05 02:45:16 hito Exp $
+ * $Id: gra2ps.c,v 1.4 2009/04/01 02:51:39 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -698,7 +698,7 @@ void getboundingbox(char code,int *cpar,char *cstr)
     break;
   case 'R':
     for (i=0;i<(cpar[1]-1);i++)
-      setbbminmax(cpar[i*2+2],cpar[i*2+3],cpar[i*2+4],cpar[i*2+5],lw);
+      setbbminmax(cpar[i*2+2],cpar[i*2+3],cpar[i*2+4],cpar[i*2+5],TRUE);
     break;
   case 'D':
     if (cpar[2]==0) lw=TRUE;

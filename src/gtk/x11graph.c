@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.38 2009/03/11 08:48:10 hito Exp $
+ * $Id: x11graph.c,v 1.39 2009/04/01 02:51:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1309,10 +1309,7 @@ about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
 
   pid = fork();
   if (pid == 0) {
-    char buf[1024];
-    snprintf(buf, sizeof(buf), "%s %s", Menulocal.browser, link);
-    system(buf);
-    exit(0);
+    execlp(Menulocal.browser, Menulocal.browser, link, (char *) NULL);
   }
 }
 
@@ -1358,10 +1355,16 @@ CmHelpHelp(void)
   if (Menulocal.help_browser == NULL)
     return;
 
+
   pid = fork();
   if (pid == 0) {
-    system(Menulocal.help_browser);
-    exit(0);
+    char *ptr, *s;
+    int len;
+
+    ptr = Menulocal.help_browser;
+    s = getitok2(&ptr, &len, " ");
+    while (*ptr == ' ') ptr++;
+    execlp(s, s, ptr, (char *) NULL);
   }
 }
 

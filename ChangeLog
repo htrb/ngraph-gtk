@@ -1,3 +1,8 @@
+2009-04-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (CmHelpHelp, about_link_activated_cb): use
+	"execlp()" instead of "system()".
+
 2009-03-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileMoveDialogClose): free "ptr".
