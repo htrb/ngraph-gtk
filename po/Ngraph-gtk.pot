@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-22\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-01 12:45+0900\n"
+"POT-Creation-Date: 2009-04-01 19:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,6 +42,34 @@ msgstr ""
 
 #: src/gtk/ogra2cairo.c:43
 msgid "gray"
+msgstr ""
+
+#: src/gtk/x11axis.c:54 src/gtk/x11opt.c:402 src/gtk/x11opt.c:893
+msgid "name"
+msgstr ""
+
+#: src/gtk/x11axis.c:55
+msgid "min"
+msgstr ""
+
+#: src/gtk/x11axis.c:56
+msgid "max"
+msgstr ""
+
+#: src/gtk/x11axis.c:57
+msgid "inc"
+msgstr ""
+
+#: src/gtk/x11axis.c:58 src/gtk/x11file.c:71
+msgid "type"
+msgstr ""
+
+#: src/gtk/x11axis.c:61
+msgid "dir"
+msgstr ""
+
+#: src/gtk/x11axis.c:62
+msgid "len"
 msgstr ""
 
 #: src/gtk/x11axis.c:75 src/gtk/x11file.c:99 src/gtk/x11lgnd.c:76
@@ -629,6 +657,42 @@ msgstr ""
 msgid "_All"
 msgstr ""
 
+#: src/gtk/x11file.c:66 src/gtk/x11merge.c:53 src/gtk/x11opt.c:403
+msgid "file"
+msgstr ""
+
+#: src/gtk/x11file.c:69
+msgid "ax"
+msgstr ""
+
+#: src/gtk/x11file.c:70
+msgid "ay"
+msgstr ""
+
+#: src/gtk/x11file.c:72
+msgid "size"
+msgstr ""
+
+#: src/gtk/x11file.c:73
+msgid "width"
+msgstr ""
+
+#: src/gtk/x11file.c:74
+msgid "skip"
+msgstr ""
+
+#: src/gtk/x11file.c:75
+msgid "step"
+msgstr ""
+
+#: src/gtk/x11file.c:76
+msgid "final"
+msgstr ""
+
+#: src/gtk/x11file.c:77
+msgid "num"
+msgstr ""
+
 #: src/gtk/x11file.c:100
 msgid "duplicate _Behind"
 msgstr ""
@@ -959,6 +1023,14 @@ msgstr ""
 
 #: src/gtk/x11gui.c:736
 msgid "_Change current directory"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:63
+msgid "object"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:64
+msgid "property"
 msgstr ""
 
 #: src/gtk/x11lgnd.c:572
@@ -1628,6 +1700,18 @@ msgstr ""
 msgid "Question"
 msgstr ""
 
+#: src/gtk/x11merge.c:54
+msgid "top"
+msgstr ""
+
+#: src/gtk/x11merge.c:55 src/oaxis.c:90 src/oaxis.c:104 src/oaxis.c:117
+msgid "left"
+msgstr ""
+
+#: src/gtk/x11merge.c:56
+msgid "zoom"
+msgstr ""
+
 #: src/gtk/x11merge.c:123
 #, c-format
 msgid "Merge %d"
@@ -1699,14 +1783,6 @@ msgstr ""
 
 #: src/gtk/x11opt.c:336
 msgid "Please specify script description."
-msgstr ""
-
-#: src/gtk/x11opt.c:402 src/gtk/x11opt.c:893
-msgid "name"
-msgstr ""
-
-#: src/gtk/x11opt.c:403
-msgid "file"
 msgstr ""
 
 #: src/gtk/x11opt.c:404
@@ -2080,10 +2156,6 @@ msgstr ""
 
 #: src/oaxis.c:83
 msgid "inverse"
-msgstr ""
-
-#: src/oaxis.c:90 src/oaxis.c:104 src/oaxis.c:117
-msgid "left"
 msgstr ""
 
 #: src/oaxis.c:91 src/oaxis.c:105 src/oaxis.c:118

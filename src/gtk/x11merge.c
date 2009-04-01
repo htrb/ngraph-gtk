@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.23 2009/03/06 08:11:20 hito Exp $
+ * $Id: x11merge.c,v 1.24 2009/04/01 10:35:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,13 +48,13 @@
 #include "x11view.h"
 
 static n_list_store Mlist[] = {
-  {"",     G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",      FALSE},
-  {"#",    G_TYPE_INT,     TRUE, FALSE, "id",          FALSE},
-  {"file", G_TYPE_STRING,  TRUE, TRUE,  "file",        FALSE},
-  {"top",  G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"left ", G_TYPE_DOUBLE, TRUE, TRUE,  "left_margin", FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"zoom", G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom",        FALSE,                0, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",   G_TYPE_INT,     TRUE, FALSE, "oid",         FALSE},
+  {"",         G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",      FALSE},
+  {"#",        G_TYPE_INT,     TRUE, FALSE, "id",          FALSE},
+  {N_("file"), G_TYPE_STRING,  TRUE, TRUE,  "file",        FALSE},
+  {N_("top"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("left"), G_TYPE_DOUBLE, TRUE, TRUE,  "left_margin", FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom",        FALSE,                0, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid",         FALSE},
 };
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))

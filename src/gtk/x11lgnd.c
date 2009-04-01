@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.40 2009/03/10 05:38:15 hito Exp $
+ * $Id: x11lgnd.c,v 1.41 2009/04/01 10:35:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,13 +58,13 @@
 #define CB_BUF_SIZE 128
 
 static n_list_store Llist[] = {
-  {"",         G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
-  {"#",        G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
-  {"object",   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
-  {"property", G_TYPE_STRING,  TRUE, FALSE, "property", FALSE},
-  {"x",        G_TYPE_DOUBLE,  TRUE, FALSE, "x",        FALSE},
-  {"y",        G_TYPE_DOUBLE,  TRUE, FALSE, "y",        FALSE},
-  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
+  {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
+  {"#",            G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
+  {N_("object"),   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
+  {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property", FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"x",            G_TYPE_DOUBLE,  TRUE, FALSE, "x",        FALSE},
+  {"y",            G_TYPE_DOUBLE,  TRUE, FALSE, "y",        FALSE},
+  {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
 };
 
 #define LEGEND_WIN_COL_NUM (sizeof(Llist)/sizeof(*Llist))
@@ -2066,23 +2066,24 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	getobj(d->obj[type], "text", row, 0, NULL, &text);
 	{
 	  char *tmp;
-	  buf[0] = '\0';
 #ifdef JAPANESE
 /* SJIS ---> UTF-8 */
 	  tmp = sjis_to_utf8(text);
 	  if (tmp) {
-	    g_utf8_strncpy(buf, tmp, 25);
+	    tree_store_set_string(GTK_WIDGET(d->text), iter, i, tmp);
 	    free(tmp);
 	  }
 #else
-	  g_utf8_strncpy(buf, text, 25);
+	  tree_store_set_string(GTK_WIDGET(d->text), iter, i, text);
 #endif
-	  tmp = g_utf8_offset_to_pointer(buf, 25);
-	  *tmp = '\0';
 	}
 	break;
+      default:
+	buf[0] = '\0';
       }
-      tree_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
+      if (type != LegendTypeText) {
+	tree_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
+      }
     } else if (strcmp(Llist[i].name, "x") == 0) {
       tree_store_set_double(GTK_WIDGET(d->text), iter, i, x0 / 100.0);
     } else if (strcmp(Llist[i].name, "y") == 0) {

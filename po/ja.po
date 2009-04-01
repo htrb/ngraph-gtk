@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-01 12:45+0900\n"
-"PO-Revision-Date: 2009-03-06 16:55+0900\n"
+"POT-Creation-Date: 2009-04-01 19:24+0900\n"
+"PO-Revision-Date: 2009-04-01 19:25+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -41,6 +41,34 @@ msgstr "デフォルト"
 #: src/gtk/ogra2cairo.c:43
 msgid "gray"
 msgstr "グレイスケール"
+
+#: src/gtk/x11axis.c:54 src/gtk/x11opt.c:402 src/gtk/x11opt.c:893
+msgid "name"
+msgstr "名前"
+
+#: src/gtk/x11axis.c:55
+msgid "min"
+msgstr "最小"
+
+#: src/gtk/x11axis.c:56
+msgid "max"
+msgstr "最大"
+
+#: src/gtk/x11axis.c:57
+msgid "inc"
+msgstr "増分"
+
+#: src/gtk/x11axis.c:58 src/gtk/x11file.c:71
+msgid "type"
+msgstr "タイプ"
+
+#: src/gtk/x11axis.c:61
+msgid "dir"
+msgstr "方向"
+
+#: src/gtk/x11axis.c:62
+msgid "len"
+msgstr "長さ"
 
 #: src/gtk/x11axis.c:75 src/gtk/x11file.c:99 src/gtk/x11lgnd.c:76
 #: src/gtk/x11merge.c:70 src/gtk/x11view.c:641
@@ -631,6 +659,42 @@ msgstr "画像ファイル出力"
 msgid "_All"
 msgstr "全て(_A)"
 
+#: src/gtk/x11file.c:66 src/gtk/x11merge.c:53 src/gtk/x11opt.c:403
+msgid "file"
+msgstr "ファイル"
+
+#: src/gtk/x11file.c:69
+msgid "ax"
+msgstr "x軸"
+
+#: src/gtk/x11file.c:70
+msgid "ay"
+msgstr "y軸"
+
+#: src/gtk/x11file.c:72
+msgid "size"
+msgstr "サイズ"
+
+#: src/gtk/x11file.c:73
+msgid "width"
+msgstr "幅"
+
+#: src/gtk/x11file.c:74
+msgid "skip"
+msgstr "スキップ"
+
+#: src/gtk/x11file.c:75
+msgid "step"
+msgstr "ステップ"
+
+#: src/gtk/x11file.c:76
+msgid "final"
+msgstr "最終行"
+
+#: src/gtk/x11file.c:77
+msgid "num"
+msgstr "データ数"
+
 #: src/gtk/x11file.c:100
 msgid "duplicate _Behind"
 msgstr "直後に複製(_B)"
@@ -964,6 +1028,14 @@ msgstr "全てのファイル"
 #: src/gtk/x11gui.c:736
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
+
+#: src/gtk/x11lgnd.c:63
+msgid "object"
+msgstr "オブジェクト"
+
+#: src/gtk/x11lgnd.c:64
+msgid "property"
+msgstr "プロパティ"
 
 #: src/gtk/x11lgnd.c:572
 msgid "_Line width:"
@@ -1632,6 +1704,18 @@ msgstr "エラー:"
 msgid "Question"
 msgstr "質問:"
 
+#: src/gtk/x11merge.c:54
+msgid "top"
+msgstr "上"
+
+#: src/gtk/x11merge.c:55 src/oaxis.c:90 src/oaxis.c:104 src/oaxis.c:117
+msgid "left"
+msgstr "左"
+
+#: src/gtk/x11merge.c:56
+msgid "zoom"
+msgstr "ズーム"
+
 #: src/gtk/x11merge.c:123
 #, c-format
 msgid "Merge %d"
@@ -1704,14 +1788,6 @@ msgstr "スクリプトファイル名を設定してください."
 #: src/gtk/x11opt.c:336
 msgid "Please specify script description."
 msgstr "スクリプトの説明を設定してください."
-
-#: src/gtk/x11opt.c:402 src/gtk/x11opt.c:893
-msgid "name"
-msgstr "名前"
-
-#: src/gtk/x11opt.c:403
-msgid "file"
-msgstr "ファイル"
 
 #: src/gtk/x11opt.c:404
 msgid "description"
@@ -2087,10 +2163,6 @@ msgstr "対数"
 #: src/oaxis.c:83
 msgid "inverse"
 msgstr "逆数"
-
-#: src/oaxis.c:90 src/oaxis.c:104 src/oaxis.c:117
-msgid "left"
-msgstr "左"
 
 #: src/oaxis.c:91 src/oaxis.c:105 src/oaxis.c:118
 msgid "right"

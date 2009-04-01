@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.83 2009/03/31 08:20:12 hito Exp $
+ * $Id: x11file.c,v 1.84 2009/04/01 10:35:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -63,18 +63,18 @@
 static n_list_store Flist[] = {
   {"",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",     FALSE},
   {"#",		G_TYPE_INT,     TRUE, FALSE, "id",         FALSE},
-  {"file",	G_TYPE_STRING,  TRUE, TRUE,  "file",       TRUE},
+  {N_("file"),	G_TYPE_STRING,  TRUE, TRUE,  "file",       TRUE},
   {"x   ",	G_TYPE_INT,     TRUE, TRUE,  "x",          FALSE,  0, 999, 1, 10},
   {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",          FALSE,  0, 999, 1, 10},
-  {"ax",	G_TYPE_ENUM,    TRUE, TRUE,  "axis_x",     FALSE},
-  {"ay",	G_TYPE_ENUM,    TRUE, TRUE,  "axis_y",     FALSE},
-  {"type",	G_TYPE_OBJECT,  TRUE, TRUE,  "type",       FALSE},
-  {"size",	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0, SPIN_ENTRY_MAX, 100, 1000},
-  {"width",	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0, SPIN_ENTRY_MAX, 10,   100},
-  {"skip",	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  FALSE,  0, INT_MAX,         1,    10},
-  {"step",	G_TYPE_INT,     TRUE, TRUE,  "read_step",  FALSE,  1, INT_MAX,         1,    10},
-  {"final",	G_TYPE_INT,     TRUE, TRUE,  "final_line", FALSE, -1, INT_MAX,         1,    10},
-  {"num",	G_TYPE_INT,     TRUE, FALSE, "data_num",   FALSE},
+  {N_("ax"),	G_TYPE_ENUM,    TRUE, TRUE,  "axis_x",     FALSE},
+  {N_("ay"),	G_TYPE_ENUM,    TRUE, TRUE,  "axis_y",     FALSE},
+  {N_("type"),	G_TYPE_OBJECT,  TRUE, TRUE,  "type",       FALSE},
+  {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0, SPIN_ENTRY_MAX, 10,   100},
+  {N_("skip"),	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  FALSE,  0, INT_MAX,         1,    10},
+  {N_("step"),	G_TYPE_INT,     TRUE, TRUE,  "read_step",  FALSE,  1, INT_MAX,         1,    10},
+  {N_("final"),	G_TYPE_INT,     TRUE, TRUE,  "final_line", FALSE, -1, INT_MAX,         1,    10},
+  {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, "data_num",   FALSE},
   {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid",        FALSE},
 };
 

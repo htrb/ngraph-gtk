@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.20 2009/03/10 07:58:35 hito Exp $
+ * $Id: gtk_liststore.c,v 1.21 2009/04/01 10:35:33 hito Exp $
  */
 
 #include <stdlib.h>
@@ -122,6 +122,7 @@ create_column(n_list_store *list, int i, int j)
     renderer = gtk_cell_renderer_text_new();
     g_object_set((GObject *) renderer,
 		 "editable", list[i].editable, 
+		 "ellipsize", list[i].ellipsize, 
 		 NULL);
     g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
     if (list[i].color){

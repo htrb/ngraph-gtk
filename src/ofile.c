@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.74 2009/03/26 06:25:15 hito Exp $
+ * $Id: ofile.c,v 1.75 2009/04/01 10:35:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1467,6 +1467,11 @@ search_mask(int *mask, int n, int *index, int line)
       if (mask[i] >= line)
 	break;
     }
+  }
+
+  if (i == n) {
+    *index = n;
+    return FALSE;
   }
 
   if (mask[i] > line) {
