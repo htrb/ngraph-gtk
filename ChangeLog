@@ -1,3 +1,9 @@
+2009-04-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (relative_move): add.
+	(draw_str, gra2cairo_output): use "relative_move()" instead of
+	"cairo_rel_move_to ()".
+
 2009-04-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11merge.c (Mlist): gettextize.
