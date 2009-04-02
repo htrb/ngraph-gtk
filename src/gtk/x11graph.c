@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.40 2009/04/01 03:37:30 hito Exp $
+ * $Id: x11graph.c,v 1.41 2009/04/02 09:53:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -835,6 +835,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
+    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 4, -1);
     item_setup(GTK_WIDGET(hbox), w, _("_Dir:"), TRUE);
     d->dir = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);

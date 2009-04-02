@@ -1,5 +1,8 @@
 2009-04-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11graph.c (DirectoryDialogSetup): change size of the
+	"d->dir".
+
 	* src/gtk/ogra2cairo.c (relative_move): add.
 	(draw_str, gra2cairo_output): use "relative_move()" instead of
 	"cairo_rel_move_to()".
