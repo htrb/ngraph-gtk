@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.47.gtk-22\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-01 19:24+0900\n"
+"POT-Creation-Date: 2009-04-02 11:47+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,15 +32,15 @@ msgstr ""
 msgid "Save file"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:41 src/odraw.c:101 src/oaxis.c:88 src/oaxis.c:103
+#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:88 src/oaxis.c:103
 msgid "none"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:42
+#: src/gtk/ogra2cairo.c:43
 msgid "default"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:43
+#: src/gtk/ogra2cairo.c:44
 msgid "gray"
 msgstr ""
 
@@ -1925,8 +1925,8 @@ msgstr ""
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1508 src/gtk/x11print.c:235 src/gtk/x11print.c:837
-#: src/gtk/x11print.c:940 src/gtk/x11print.c:1066
+#: src/gtk/x11opt.c:1508 src/gtk/x11print.c:235 src/gtk/x11print.c:836
+#: src/gtk/x11print.c:939 src/gtk/x11print.c:1065
 #, c-format
 msgid ""
 "`%s'\n"
@@ -1991,35 +1991,35 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:726 src/gtk/x11print.c:1005 src/gtk/x11view.c:4766
+#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:4766
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:788
+#: src/gtk/x11print.c:787
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:827 src/gtk/x11print.c:838
+#: src/gtk/x11print.c:826 src/gtk/x11print.c:837
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:877
+#: src/gtk/x11print.c:876
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:941
+#: src/gtk/x11print.c:940
 msgid "confirm"
 msgstr ""
 
-#: src/gtk/x11print.c:1059 src/gtk/x11print.c:1067
+#: src/gtk/x11print.c:1058 src/gtk/x11print.c:1066
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1074
+#: src/gtk/x11print.c:1073
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1075
+#: src/gtk/x11print.c:1074
 msgid "Making data file."
 msgstr ""
 
