@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.37 2009/03/23 08:54:48 hito Exp $
+ * $Id: x11print.c,v 1.38 2009/04/02 01:24:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -742,7 +742,6 @@ CmOutputViewer(int select_file)
 
   FileAutoScale();
   AdjustAxis();
-
 
   if (Menulocal.exwin_use_external) {
     struct objlist *menuobj;

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.44 2009/03/26 02:31:52 hito Exp $
+ * $Id: ogra2cairo.c,v 1.45 2009/04/02 01:24:38 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -8,6 +8,7 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <ctype.h>
 
