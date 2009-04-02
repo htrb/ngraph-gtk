@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.45 2009/04/02 01:24:38 hito Exp $
+ * $Id: ogra2cairo.c,v 1.46 2009/04/02 02:23:26 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -697,6 +697,16 @@ loadfont(char *fontalias)
 }
 
 static void
+relative_move(cairo_t *cr, double x, double y)
+{
+  if (cairo_has_current_point(cr)) {
+    cairo_rel_move_to(cr, x, y);
+  } else {
+    cairo_move_to(cr, x, y);
+  }
+}
+
+static void
 draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *font, int size, int space, int *fw, int *ah, int *dh)
 {
   PangoAttribute *attr;
@@ -754,7 +764,7 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *fon
     y = - local->fontcos * baseline;
 
     cairo_get_current_point(local->cairo, &cx, &cy);
-    cairo_rel_move_to(local->cairo, x, y);
+    relative_move(local->cairo, x, y);
 
     cairo_save(local->cairo);
     cairo_rotate(local->cairo, -local->fontdir * G_PI / 180.);
@@ -767,7 +777,7 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *fon
     } else {
       pango_cairo_show_layout(local->cairo, local->layout);
       cairo_restore(local->cairo);
-      cairo_rel_move_to(local->cairo, w * local->fontcos - x, - w * local->fontsin - y);
+      relative_move(local->cairo, w * local->fontcos - x, - w * local->fontsin - y);
     }
   }
 
@@ -919,7 +929,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     cairo_move_to(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]));
     break;
   case 'N':
-    cairo_rel_move_to(local->cairo, mxd2pw(local, cpar[1]), mxd2ph(local, cpar[2]));
+    relative_move(local->cairo, mxd2pw(local, cpar[1]), mxd2ph(local, cpar[2]));
     break;
   case 'L':
     cairo_new_path(local->cairo);
