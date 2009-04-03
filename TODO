@@ -1,4 +1,7 @@
 * コードの整理
+* fit::calc の追加
+* omath.c の整理
+
 * Color selection dialog のパレット設定保存、読込
 
 * Symbol font 対応の強化

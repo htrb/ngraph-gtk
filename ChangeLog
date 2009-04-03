@@ -1,3 +1,15 @@
+2009-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (fitfit): use loop to initialize values related to
+	parameters "%0?" and "parameter0?".
+	(fitcalc): add.
+	(fit): add member "calc".
+
+	* src/omath.c (mparam): bug fix: fix calculation of "m".
+	(struct mlocal): now member "idpm" is array.
+	(msettbl): use loop to set value related to "mlocal->idpm[]".
+	(minit): use loop to set value to "mlocal->idpm[]".
+
 2009-04-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (DirectoryDialogSetup): change width of

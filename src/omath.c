@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.7 2009/03/24 08:21:50 hito Exp $
+ * $Id: omath.c,v 1.8 2009/04/03 09:43:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -77,55 +77,22 @@ struct mlocal {
   int idpx;
   int idpy;
   int idpz;
-  int idpm0;
-  int idpm1;
-  int idpm2;
-  int idpm3;
-  int idpm4;
-  int idpm5;
-  int idpm6;
-  int idpm7;
-  int idpm8;
-  int idpm9;
-  int idpm10;
-  int idpm11;
-  int idpm12;
-  int idpm13;
-  int idpm14;
-  int idpm15;
-  int idpm16;
-  int idpm17;
-  int idpm18;
-  int idpm19;
+  int idpm[MEMORYNUM];
   int idpr;
 };
 
 static void 
 msettbl(char *inst,struct mlocal *mlocal)
 {
+  int i;
+
   *(double *)(inst+mlocal->idpx)=mlocal->x;
   *(double *)(inst+mlocal->idpy)=mlocal->y;
   *(double *)(inst+mlocal->idpz)=mlocal->z;
-  *(double *)(inst+mlocal->idpm0)=mlocal->memory[0];
-  *(double *)(inst+mlocal->idpm1)=mlocal->memory[1];
-  *(double *)(inst+mlocal->idpm2)=mlocal->memory[2];
-  *(double *)(inst+mlocal->idpm3)=mlocal->memory[3];
-  *(double *)(inst+mlocal->idpm4)=mlocal->memory[4];
-  *(double *)(inst+mlocal->idpm5)=mlocal->memory[5];
-  *(double *)(inst+mlocal->idpm6)=mlocal->memory[6];
-  *(double *)(inst+mlocal->idpm7)=mlocal->memory[7];
-  *(double *)(inst+mlocal->idpm8)=mlocal->memory[8];
-  *(double *)(inst+mlocal->idpm9)=mlocal->memory[9];
-  *(double *)(inst+mlocal->idpm10)=mlocal->memory[10];
-  *(double *)(inst+mlocal->idpm11)=mlocal->memory[11];
-  *(double *)(inst+mlocal->idpm12)=mlocal->memory[12];
-  *(double *)(inst+mlocal->idpm13)=mlocal->memory[13];
-  *(double *)(inst+mlocal->idpm14)=mlocal->memory[14];
-  *(double *)(inst+mlocal->idpm15)=mlocal->memory[15];
-  *(double *)(inst+mlocal->idpm16)=mlocal->memory[16];
-  *(double *)(inst+mlocal->idpm17)=mlocal->memory[17];
-  *(double *)(inst+mlocal->idpm18)=mlocal->memory[18];
-  *(double *)(inst+mlocal->idpm19)=mlocal->memory[19];
+
+  for (i = 0; i < MEMORYNUM; i++) {
+    *(double *)(inst + mlocal->idpm[i]) = mlocal->memory[i];
+  }
   *(int *)(inst+mlocal->idpr)=mlocal->rcode;
 }
 
@@ -151,6 +118,7 @@ static int
 minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   struct mlocal *mlocal;
+  int i;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   if ((mlocal=memalloc(sizeof(struct mlocal)))==NULL) goto errexit;
@@ -172,26 +140,13 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   mlocal->idpx=chkobjoffset(obj,"x");
   mlocal->idpy=chkobjoffset(obj,"y");
   mlocal->idpz=chkobjoffset(obj,"z");
-  mlocal->idpm0=chkobjoffset(obj,"m00");
-  mlocal->idpm1=chkobjoffset(obj,"m01");
-  mlocal->idpm2=chkobjoffset(obj,"m02");
-  mlocal->idpm3=chkobjoffset(obj,"m03");
-  mlocal->idpm4=chkobjoffset(obj,"m04");
-  mlocal->idpm5=chkobjoffset(obj,"m05");
-  mlocal->idpm6=chkobjoffset(obj,"m06");
-  mlocal->idpm7=chkobjoffset(obj,"m07");
-  mlocal->idpm8=chkobjoffset(obj,"m08");
-  mlocal->idpm9=chkobjoffset(obj,"m09");
-  mlocal->idpm10=chkobjoffset(obj,"m10");
-  mlocal->idpm11=chkobjoffset(obj,"m11");
-  mlocal->idpm12=chkobjoffset(obj,"m12");
-  mlocal->idpm13=chkobjoffset(obj,"m13");
-  mlocal->idpm14=chkobjoffset(obj,"m14");
-  mlocal->idpm15=chkobjoffset(obj,"m15");
-  mlocal->idpm16=chkobjoffset(obj,"m16");
-  mlocal->idpm17=chkobjoffset(obj,"m17");
-  mlocal->idpm18=chkobjoffset(obj,"m18");
-  mlocal->idpm19=chkobjoffset(obj,"m19");
+
+  for (i = 0; i < MEMORYNUM; i++) {
+    char mstr[] = "m00";
+
+    mstr[sizeof(mstr) - 2] += i;
+    mlocal->idpm[i] = chkobjoffset(obj, mstr);
+  }
   mlocal->idpr=chkobjoffset(obj,"status");
   msettbl(inst,mlocal);
   return 0;
@@ -277,17 +232,25 @@ mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int m;
   struct mlocal *mlocal;
 
-  _getobj(obj,"_local",inst,&mlocal);
-  arg=argv[1];
-  if (arg[0]=='x') mlocal->x=*(double *)(argv[2]);
-  else if (arg[0]=='y') mlocal->y=*(double *)(argv[2]);
-  else if (arg[0]=='z') mlocal->z=*(double *)(argv[2]);
-  else if (arg[0]=='m') {
-    m=arg[1]-'0';
-    mlocal->memory[m]=*(double *)(argv[2]);
-    mlocal->memorystat[m]=MNOERR;
+  _getobj(obj, "_local", inst, &mlocal);
+  arg = argv[1];
+  switch (arg[0]) {
+  case 'x':
+    mlocal->x = * (double *) argv[2];
+    break;
+  case 'y':
+    mlocal->y = * (double *) argv[2];
+    break;
+  case 'z':
+    mlocal->z = * (double *) argv[2];
+    break;
+  case 'm':
+    m = (arg[1] - '0') * 10 + arg[2] - '0';
+    mlocal->memory[m] = * (double *) argv[2];
+    mlocal->memorystat[m] = MNOERR;
+    break;
   }
-  msettbl(inst,mlocal);
+  msettbl(inst, mlocal);
   return 0;
 }
 

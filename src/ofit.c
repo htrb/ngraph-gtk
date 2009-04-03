@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.16 2009/03/24 08:26:16 hito Exp $
+ * $Id: ofit.c,v 1.17 2009/04/03 09:43:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -669,16 +669,13 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"number",inst,&num)) return 1;
   if (_putobj(obj,"error",inst,&derror)) return 1;
   if (_putobj(obj,"correlation",inst,&correlation)) return 1;
-  if (_putobj(obj,"%00",inst,&pp)) return 1;
-  if (_putobj(obj,"%01",inst,&pp)) return 1;
-  if (_putobj(obj,"%02",inst,&pp)) return 1;
-  if (_putobj(obj,"%03",inst,&pp)) return 1;
-  if (_putobj(obj,"%04",inst,&pp)) return 1;
-  if (_putobj(obj,"%05",inst,&pp)) return 1;
-  if (_putobj(obj,"%06",inst,&pp)) return 1;
-  if (_putobj(obj,"%07",inst,&pp)) return 1;
-  if (_putobj(obj,"%08",inst,&pp)) return 1;
-  if (_putobj(obj,"%09",inst,&pp)) return 1;
+
+  for (i = 0; i < 10; i++) {
+    char prm[] = "%00";
+
+    prm[sizeof(prm) - 2] += i;
+    if (_putobj(obj, prm, inst, &pp)) return 1;
+  }
 
   _getobj(obj,"_local",inst,&fitlocal);
   _getobj(obj,"type",inst,&type);
@@ -691,16 +688,14 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"derivative",inst,&deriv);
   _getobj(obj,"converge",inst,&converge);
   _getobj(obj, "id", inst, &(fitlocal->id));
-  _getobj(obj,"parameter0",inst,&(fitlocal->coe[0]));
-  _getobj(obj,"parameter1",inst,&(fitlocal->coe[1]));
-  _getobj(obj,"parameter2",inst,&(fitlocal->coe[2]));
-  _getobj(obj,"parameter3",inst,&(fitlocal->coe[3]));
-  _getobj(obj,"parameter4",inst,&(fitlocal->coe[4]));
-  _getobj(obj,"parameter5",inst,&(fitlocal->coe[5]));
-  _getobj(obj,"parameter6",inst,&(fitlocal->coe[6]));
-  _getobj(obj,"parameter7",inst,&(fitlocal->coe[7]));
-  _getobj(obj,"parameter8",inst,&(fitlocal->coe[8]));
-  _getobj(obj,"parameter9",inst,&(fitlocal->coe[9]));
+
+  for (i = 0; i < 10; i++) {
+    char prm[] = "parameter0";
+
+    prm[sizeof(prm) - 2] += i;
+    _getobj(obj, prm, inst, &(fitlocal->coe[i]));
+  }
+
   _getobj(obj,"display",inst,&disp);
 
   if (through && (type == FIT_TYPE_USER)) {
@@ -796,16 +791,14 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"number",inst,&(fitlocal->num))) return 1;
   if (_putobj(obj,"error",inst,&(fitlocal->derror))) return 1;
   if (_putobj(obj,"correlation",inst,&(fitlocal->correlation))) return 1;
-  if (_putobj(obj,"%00",inst,&(fitlocal->coe[0]))) return 1;
-  if (_putobj(obj,"%01",inst,&(fitlocal->coe[1]))) return 1;
-  if (_putobj(obj,"%02",inst,&(fitlocal->coe[2]))) return 1;
-  if (_putobj(obj,"%03",inst,&(fitlocal->coe[3]))) return 1;
-  if (_putobj(obj,"%04",inst,&(fitlocal->coe[4]))) return 1;
-  if (_putobj(obj,"%05",inst,&(fitlocal->coe[5]))) return 1;
-  if (_putobj(obj,"%06",inst,&(fitlocal->coe[6]))) return 1;
-  if (_putobj(obj,"%07",inst,&(fitlocal->coe[7]))) return 1;
-  if (_putobj(obj,"%08",inst,&(fitlocal->coe[8]))) return 1;
-  if (_putobj(obj,"%09",inst,&(fitlocal->coe[9]))) return 1;
+
+  for (i = 0; i < 10; i++) {
+    char prm[] = "%00";
+
+    prm[sizeof(prm) - 2] += i;
+    if (_putobj(obj, prm, inst, &(fitlocal->coe[i]))) return 1;
+  }
+
   _getobj(obj,"equation",inst,&equation);
   if (_putobj(obj,"equation",inst,fitlocal->equation)) return 1;
   memfree(equation);
@@ -813,6 +806,48 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static int 
+fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  char *equation, *ptr;
+  double x, y;
+  struct objlist *mathobj;
+  int id, r;
+
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  x = * (double *) argv[2];
+
+  _getobj(obj, "equation", inst, &equation);
+  if (equation == NULL)
+    return 1;
+
+  mathobj = chkobject("math");
+  if (mathobj == NULL)
+    return 1;
+
+  id = newobj(mathobj);
+  if (id < 0)
+    return 1;
+
+  ptr = nstrdup(equation);
+  if (ptr == NULL) {
+    delobj(mathobj, id);
+    return 1;
+  }
+
+  putobj(mathobj, "formula", id, ptr);
+  putobj(mathobj, "x", id, &x);
+
+  r = getobj(mathobj, "calc", id, 0, NULL, &y);
+
+  delobj(mathobj, id);
+
+  if (r == 0)
+    * (double *) rval = y;
+
+  return r;
+}
 
 static struct objtable fit[] = {
   {"init",NVFUNC,NEXEC,fitinit,NULL,0},
@@ -873,6 +908,7 @@ static struct objtable fit[] = {
   {"display",NBOOL,NREAD|NWRITE,NULL,NULL,0},
 
   {"fit",NVFUNC,NREAD|NEXEC,fitfit,"da",0},
+  {"calc",NDFUNC,NREAD|NEXEC,fitcalc,"d",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 
