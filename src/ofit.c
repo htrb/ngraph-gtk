@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.19 2009/04/03 15:12:21 hito Exp $
+ * $Id: ofit.c,v 1.20 2009/04/03 15:48:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -803,12 +803,15 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  char *equation, *ptr;
+  char *equation, *ptr, buf[32];
   double x, y;
   struct objlist *mathobj;
   int id, r;
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  memfree(*(char **)rval);
+  *(char **)rval=NULL;
 
   x = * (double *) argv[2];
 
@@ -834,8 +837,11 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   putobj(mathobj, "x", id, &x);
 
   r = getobj(mathobj, "calc", id, 0, NULL, &y);
-  if (r >= 0)
-    * (double *) rval = y;
+  if (r >= 0) {
+    snprintf(buf, sizeof(buf), "%.15e", y);
+    ptr = nstrdup(buf);
+    * (char **) rval = ptr;
+  }
 
   delobj(mathobj, id);
 
@@ -901,7 +907,7 @@ static struct objtable fit[] = {
   {"display",NBOOL,NREAD|NWRITE,NULL,NULL,0},
 
   {"fit",NVFUNC,NREAD|NEXEC,fitfit,"da",0},
-  {"calc",NDFUNC,NREAD|NEXEC,fitcalc,"d",0},
+  {"calc",NSFUNC,NREAD|NEXEC,fitcalc,"d",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 
