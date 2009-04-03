@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.27 2009/03/26 02:31:52 hito Exp $
+ * $Id: object.c,v 1.28 2009/04/03 15:12:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3791,7 +3791,7 @@ schkobjfield(struct objlist *obj,int id,char *field, char *arg,
   argv2=NULL;
   type=chkobjfieldtype(obj,field);
   if (limittype) {
-    if ((type>NVFUNC) && (type!=NSFUNC) && (type!=NSAFUNC)) {
+    if ((type>NVFUNC) && (type!=NSFUNC) && (type!=NSAFUNC) && (type!=NDFUNC)) {
       return -1;
     }
   }

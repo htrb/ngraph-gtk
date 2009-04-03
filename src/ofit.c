@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.18 2009/04/03 10:11:44 hito Exp $
+ * $Id: ofit.c,v 1.19 2009/04/03 15:12:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -834,13 +834,12 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   putobj(mathobj, "x", id, &x);
 
   r = getobj(mathobj, "calc", id, 0, NULL, &y);
+  if (r >= 0)
+    * (double *) rval = y;
 
   delobj(mathobj, id);
 
-  if (r == 0)
-    * (double *) rval = y;
-
-  return r;
+  return (r < 0);
 }
 
 static struct objtable fit[] = {
