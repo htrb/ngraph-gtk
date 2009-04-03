@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.17 2009/04/03 09:43:31 hito Exp $
+ * $Id: ofit.c,v 1.18 2009/04/03 10:11:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -646,7 +646,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   double x,y,x0,y0,converge,wt;
   struct narray *darray;
   double *data,*wdata;
-  char *equation,*func;
+  char *equation,*func,prm[32];
   int dnum,num,err,err2,err3,rcode;
   double derror,correlation,pp;
   int ecode;
@@ -671,9 +671,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"correlation",inst,&correlation)) return 1;
 
   for (i = 0; i < 10; i++) {
-    char prm[] = "%00";
-
-    prm[sizeof(prm) - 2] += i;
+    snprintf(prm, sizeof(prm), "%%%02d", i);
     if (_putobj(obj, prm, inst, &pp)) return 1;
   }
 
@@ -690,9 +688,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj, "id", inst, &(fitlocal->id));
 
   for (i = 0; i < 10; i++) {
-    char prm[] = "parameter0";
-
-    prm[sizeof(prm) - 2] += i;
+    snprintf(prm, sizeof(prm), "parameter%d", i);
     _getobj(obj, prm, inst, &(fitlocal->coe[i]));
   }
 
@@ -793,9 +789,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"correlation",inst,&(fitlocal->correlation))) return 1;
 
   for (i = 0; i < 10; i++) {
-    char prm[] = "%00";
-
-    prm[sizeof(prm) - 2] += i;
+    snprintf(prm, sizeof(prm), "%%%02d", i);
     if (_putobj(obj, prm, inst, &(fitlocal->coe[i]))) return 1;
   }
 

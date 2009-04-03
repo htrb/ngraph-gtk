@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.8 2009/04/03 09:43:31 hito Exp $
+ * $Id: omath.c,v 1.9 2009/04/03 10:11:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,6 +26,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 #include "ngraph.h"
@@ -118,6 +119,7 @@ static int
 minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   struct mlocal *mlocal;
+  char mstr[32];
   int i;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -142,9 +144,7 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   mlocal->idpz=chkobjoffset(obj,"z");
 
   for (i = 0; i < MEMORYNUM; i++) {
-    char mstr[] = "m00";
-
-    mstr[sizeof(mstr) - 2] += i;
+    snprintf(mstr, sizeof(mstr), "m%02d", i);
     mlocal->idpm[i] = chkobjoffset(obj, mstr);
   }
   mlocal->idpr=chkobjoffset(obj,"status");
