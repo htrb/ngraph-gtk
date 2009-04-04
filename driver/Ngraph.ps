@@ -7,7 +7,7 @@
 %%BoundingBox:
 %%EndComments
 %
-% Ngraph.ps 2.03.16
+% Ngraph.ps 2.03.20
 %
 %%BeginProlog
 %
@@ -56,6 +56,31 @@ NgraphDict begin
   setmiterlimit
   setfont
  } bind def
+/viewc {
+ mark
+ currentfont
+ currentmiterlimit
+ currentlinejoin
+ currentlinecap
+ currentlinewidth
+ currentdash
+ currentrgbcolor
+ currentgray
+ grestore gsave
+ counttomark dup 6 add exch roll
+ pop
+ 5 3 roll
+ translate
+ 1 eq { 0 0 box clip newpath } { pop pop } ifelse
+ setgray
+ setrgbcolor
+ setdash
+ setlinewidth
+ setlinecap
+ setlinejoin
+ setmiterlimit
+ setfont
+} bind def
 /F { findfont exch makefont setfont } bind def
 /lsty {
   setmiterlimit

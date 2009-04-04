@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.5 2009/03/24 09:55:53 hito Exp $
+ * $Id: mathcode.c,v 1.6 2009/04/04 06:18:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -127,7 +127,7 @@ static struct {
 /*
 used character code:
 
-=XYZ#|*+-/\^()!,"@
+=XYZ#|+-/*\^(){}[]!,"@&%$~?_`
 8x
 9x
 b0 b1 b2 b3
@@ -570,7 +570,7 @@ mathexpand(int pre,int *oppo,int *numpo,int *ifpo,int *forpo,
     if (strchr("+-*/\\^",opbuf[*oppo])!=NULL) argnum=2;
     else argnum=argbuf[*oppo];
     if (opbuf[*oppo]=='?') {
-      if (numbuf[*numpo-2]!=0) {
+      if ((numstat[*numpo-2]==MNOERR) && (numbuf[*numpo-2]!=0)) {
         numbuf[*numpo-2]=numbuf[*numpo-1];
         numstat[*numpo-2]=numstat[*numpo-1];
       } else {
@@ -619,6 +619,9 @@ mathexpand(int pre,int *oppo,int *numpo,int *ifpo,int *forpo,
               else if (x<-230) numbuf[*numpo-1]=0;
               else numbuf[*numpo-1]=exp(x);
             }
+            break;
+          case '`':
+            numbuf[*numpo]=numbuf[*numpo];
             break;
           case '+': 
             numbuf[*numpo-1]=numbuf[*numpo-1]+numbuf[*numpo];
@@ -1317,6 +1320,7 @@ calculate(char *code,
           po++;
           numeric=TRUE;
           break;
+        case '`':
         case '&':
           if (numeric) return MSERR;
           oppo++;

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2ps.c,v 1.4 2009/04/01 02:51:39 hito Exp $
+ * $Id: gra2ps.c,v 1.5 2009/04/04 06:18:47 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -39,7 +39,7 @@
 #define CONFSEP "/"
 #define NSTRLEN 256
 #define LINETOLIMIT 500
-#define VERSION "2.03.18"
+#define VERSION "2.03.20"
 
 #define TRUE  1
 #define FALSE 0
@@ -946,8 +946,12 @@ void draw(char code,int *cpar,char *cstr)
     printfstderr("%c%s\n",'%',cstr);
     break;
   case 'V':
-    printfstdout("%d %d %d %d %d view\n",
-    cpar[1],cpar[2],cpar[3]-cpar[1],cpar[4]-cpar[2],cpar[5]);
+   if (color)
+     printfstdout("%d %d %d %d %d viewc\n",
+     cpar[1],cpar[2],cpar[3]-cpar[1],cpar[4]-cpar[2],cpar[5]);
+   else
+     printfstdout("%d %d %d %d %d view\n",
+     cpar[1],cpar[2],cpar[3]-cpar[1],cpar[4]-cpar[2],cpar[5]);
     break;
   case 'A':
     if (cpar[1]==0) printfstdout("[] 0 ");
