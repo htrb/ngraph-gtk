@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.6 2009/04/04 06:18:49 hito Exp $
+ * $Id: mathcode.c,v 1.7 2009/04/05 23:34:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1061,6 +1061,7 @@ calculate(char *code,
     po=0;
     while (code[po]!='_') {
         if ((code[po]=='-') && !numeric) code[po]='&';
+	if ((code[po]=='+') && !numeric) code[po]='`';
         switch (code[po]) {
         case '#':
           if (numeric) return MSERR;
