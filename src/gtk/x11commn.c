@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.30 2009/04/06 01:26:27 hito Exp $
+ * $Id: x11commn.c,v 1.31 2009/04/06 02:29:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1500,19 +1500,17 @@ CheckIniFile(void)
 
   ret = writecheckconfig();
   if (ret == 0) {
-    MessageBox(TopLevel, _("Ngraph.ini is not found."), "Ngraph.ini", MB_OK);
+    MessageBox(TopLevel, _("Ngraph.ini is not found."), "Ngraph.ini", MB_ERROR);
     return FALSE;
   } else if ((ret == -1) || (ret == -3)) {
-    MessageBox(TopLevel, _("Ngraph.ini is write protected."),
-	       "Ngraph.ini", MB_OK);
+    MessageBox(TopLevel, _("Ngraph.ini is write protected."), "Ngraph.ini", MB_ERROR);
     return FALSE;
   } else if ((ret == -2) || (ret == 2)) {
     char buf[256];
     snprintf(buf, sizeof(buf), _("Install `Ngraph.ini' to ~/%s ?"), HOME_DIR);
     if (MessageBox(TopLevel, buf, "Ngraph.ini", MB_YESNO) == IDYES) {
       if (!copyconfig()) {
-	MessageBox(TopLevel, _("Ngraph.ini could not be copied."),
-		   "Ngraph.ini", MB_OK);
+	MessageBox(TopLevel, _("Ngraph.ini could not be copied."), "Ngraph.ini", MB_ERROR);
 	return FALSE;
       }
     } else {
@@ -1711,7 +1709,7 @@ ErrorMessage(void)
 
   ptr = g_locale_to_utf8(strerror(errno), -1, NULL, NULL, NULL);
   if (ptr) {
-    MessageBox(TopLevel, ptr, _("error"), MB_OK);
+    MessageBox(TopLevel, ptr, _("error"), MB_ERROR);
     g_free(ptr);
   }
 }
