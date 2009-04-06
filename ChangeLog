@@ -1,3 +1,21 @@
+2009-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (CmGraphHistory, DirectoryDialogClose):
+	remove argument of "ErrorMessage()".
+
+	* src/gtk/x11file.c (FitDialogSave): check return value of
+	"nopen()".
+	(FitDialogSave): call "ErrorMessage()" instead of "MessageBox()".
+
+	* src/gtk/x11commn.c (SaveDrawrable): check return value of
+	"nopen()".
+	(SaveDrawrable): call "ErrorMessage()" instead of "MessageBox()".
+	(SaveDrawrable): return "error" instead of "! error".
+	(GraphSave): call "reset_graph_modified()", "changefilename()",
+	"AddNgpFileList()" and "SetFileName()" only when success
+	"SaveDrawrable()".
+	(ErrorMessage): argument of function is now "void".
+
 2009-04-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/mathcode.c (mathexpand, calculate): new upstream

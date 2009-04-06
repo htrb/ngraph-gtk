@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.84 2009/04/01 10:35:33 hito Exp $
+ * $Id: x11file.c,v 1.85 2009/04/06 01:26:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -799,12 +799,17 @@ FitDialogSave(struct FitDialog *d)
       return;
   }
 
-  if ((ngpfile = getscriptname(FITSAVE)) == NULL)
+  ngpfile = getscriptname(FITSAVE);
+  if (ngpfile == NULL)
     return;
 
   error = FALSE;
 
   hFile = nopen(ngpfile, O_CREAT | O_TRUNC | O_RDWR, NFMODE);
+  if (hFile < 0) {
+    error = TRUE;
+    goto End;
+  }
 
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "save", i, 0, NULL, &s);
@@ -815,8 +820,11 @@ FitDialogSave(struct FitDialog *d)
       error = TRUE;
   }
   nclose(hFile);
+
+ End:
   if (error)
-    MessageBox(TopLevel, _("I/O error: Write"), "Error:", MB_OK);
+    ErrorMessage();
+
   memfree(ngpfile);
 }
 

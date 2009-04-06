@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.h,v 1.6 2009/02/05 05:34:56 hito Exp $
+ * $Id: x11commn.h,v 1.7 2009/04/06 01:26:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,4 +58,4 @@ void ExtTextOut(GdkDisplay *disp, GtkWindow *win, GdkGC gc,
 void ProgressDialogCreate(char *title);
 void ProgressDialogSetTitle(char *title);
 void ProgressDialogFinalize(void);
-void ErrorMessage(int n);
+void ErrorMessage(void);

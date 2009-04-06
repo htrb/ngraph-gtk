@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.29 2009/03/06 10:18:03 hito Exp $
+ * $Id: x11commn.c,v 1.30 2009/04/06 01:26:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -868,7 +868,13 @@ SaveDrawrable(char *name, int storedata, int storemerge)
   char *inst, *ver, *sysname, *s, *opt, comment[COMMENT_BUF_SIZE];
 
   error = FALSE;
+
   hFile = nopen(name, O_CREAT | O_TRUNC | O_RDWR, NFMODE);
+  if (hFile < 0) {
+    error = TRUE;
+    goto End;
+  }
+
   sysobj = chkobject("system");
   inst = chkobjinst(sysobj, 0);
   _getobj(sysobj, "name", inst, &sysname);
@@ -901,16 +907,19 @@ SaveDrawrable(char *name, int storedata, int storemerge)
     }
   }
   nclose(hFile);
+
+ End:
   if (error)
-    MessageBox(TopLevel, _("I/O error: Write"), NULL, MB_OK);
-  return !error;
+    ErrorMessage();
+
+  return error;
 }
 
 int
 GraphSave(int overwrite)
 {
   char mes[256], buf[COMMENT_BUF_SIZE];
-  int i, path, error;
+  int i, path;
   struct objlist *obj;
   int sdata, smerge;
   int ret;
@@ -918,7 +927,6 @@ GraphSave(int overwrite)
   char *initfil;
   char *file;
 
-  error = FALSE;
   if (NgraphApp.FileName != NULL) {
     initfil = NgraphApp.FileName;
     if ((ext = getextention(initfil)) != NULL) {
@@ -960,17 +968,19 @@ GraphSave(int overwrite)
       }
       snprintf(mes, sizeof(mes), _("Saving `%.128s'."), file);
       SetStatusBar(mes);
-      error = !SaveDrawrable(file, sdata, smerge);
-      changefilename(file);
-      AddNgpFileList(file);
+      if(SaveDrawrable(file, sdata, smerge)) {
+	ret = IDCANCEL;
+      } else {
+	reset_graph_modified();
+	changefilename(file);
+	AddNgpFileList(file);
+	SetFileName(file);
+      }
       ResetStatusBar();
-      SetFileName(file);
-      reset_graph_modified();
     }
     free(file);
   }
-  if (error)
-    ret = IDCANCEL;
+
   return ret;
 }
 
@@ -1695,11 +1705,11 @@ ProgressDialogFinalize(void)
 }
 
 void
-ErrorMessage(int n)
+ErrorMessage(void)
 {
   char *ptr;
 
-  ptr = g_locale_to_utf8(strerror(n), -1, NULL, NULL, NULL);
+  ptr = g_locale_to_utf8(strerror(errno), -1, NULL, NULL, NULL);
   if (ptr) {
     MessageBox(TopLevel, ptr, _("error"), MB_OK);
     g_free(ptr);
