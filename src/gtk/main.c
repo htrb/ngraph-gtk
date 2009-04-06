@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.35 2009/03/20 15:05:13 hito Exp $
+ * $Id: main.c,v 1.36 2009/04/06 08:15:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -146,7 +146,7 @@ char *Documenter[] = {
 
 static int OpenDisplay = FALSE;
 
-static void * (* obj_add_func_ary[]) (void) = {
+static void * ( * obj_add_func_ary[]) (void) = {
   addshell,
   addgra,
   addgra2,

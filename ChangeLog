@@ -1,10 +1,29 @@
 2009-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (LegendWinLegendUpdate): remove argument of
+	function "UnFocus()".
+
+	* src/gtk/x11view.c (clear_focus_obj): remove unused arguments.
+	(UnFocus): remove unused argument "init_cursor".
+	(CloseGC, Clear, CmViewerButtonArm, Focus): remove argument of
+	function "UnFocus()".
+
+	* src/gtk/x11commn.c (axis_move_each_obj): add.
+	(AxisMove): use "axis_move_each_obj()".
+
+	* src/gtk/x11axis.c (AxisWinAxisTop, AxisWinAxisLast)
+	(AxisWinAxisUp, AxisWinAxisDown): add.
+	(axiswin_ev_key_down): call "AxisWinAxisTop()",
+	"AxisWinAxisLast()", "AxisWinAxisUp()" and "AxisWinAxisDown()".
+	(Popup_list): set "AxisWinAxisTop()", "AxisWinAxisLast()",
+	"AxisWinAxisUp()" and "AxisWinAxisDown()" to related member.
+
 	* src/ofit.c (enum FitError, display_equation): add.
 	(fitpoly, fituser, fitfit): use "FitError".
 	(fitpoly, fituser): use "snprintf()" instead of "printf()".
 	(fitpoly, fituser): call "display_equation()".
 	(fitpoly, fituser): return "enum FitError".
+	(fitfit): change type of "type" from "int" to "enum FIT_OBJ_TYPE".
 
 	* demo/demo2.ngp.in: use "fit::calc" for legend text.
 

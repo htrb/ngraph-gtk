@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.51 2009/04/01 10:35:33 hito Exp $
+ * $Id: x11axis.c,v 1.52 2009/04/06 08:15:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -70,6 +70,10 @@ static n_list_store Alist[] = {
 
 static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
 static void axis_delete_popup_func(GtkMenuItem *w, gpointer client_data);
+static void AxisWinAxisTop(GtkWidget *w, gpointer client_data);
+static void AxisWinAxisUp(GtkWidget *w, gpointer client_data);
+static void AxisWinAxisDown(GtkWidget *w, gpointer client_data);
+static void AxisWinAxisLast(GtkWidget *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -80,10 +84,10 @@ static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_CLEAR,       G_CALLBACK(axiswin_scale_clear), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_UP,       G_CALLBACK(list_sub_window_move_up), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_DOWN,     G_CALLBACK(list_sub_window_move_down), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(list_sub_window_move_last), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(AxisWinAxisTop), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GO_UP,       G_CALLBACK(AxisWinAxisUp), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GO_DOWN,     G_CALLBACK(AxisWinAxisDown), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(AxisWinAxisLast), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
@@ -2975,6 +2979,94 @@ axis_delete_popup_func(GtkMenuItem *w, gpointer client_data)
   axiswin_delete_axis(d);
 }
 
+static void
+AxisWinAxisTop(GtkWidget *w, gpointer client_data)
+{
+  int sel;
+  struct SubWin *d;
+
+  d = (struct SubWin *) client_data;
+
+  if (Menulock || GlobalLock) return;
+  UnFocus();
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+
+  if ((sel  >=  0) && (sel <= d->num)) {
+    movetopobj(d->obj, sel);
+    d->select = 0;
+    AxisMove(sel,0);
+    AxisWinUpdate(FALSE);
+    FileWinUpdate(FALSE);
+    set_graph_modified();
+  }
+}
+
+static void
+AxisWinAxisLast(GtkWidget *w, gpointer client_data)
+{
+  int sel;
+  struct SubWin *d;
+
+  d = (struct SubWin *) client_data;
+
+  if (Menulock || GlobalLock) return;
+  UnFocus();
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+
+  if ((sel >= 0) && (sel <= d->num)) {
+    movelastobj(d->obj, sel);
+    d->select = d->num;
+    AxisMove(sel, d->num);
+    AxisWinUpdate(FALSE);
+    FileWinUpdate(FALSE);
+    set_graph_modified();
+  }
+}
+
+static void 
+AxisWinAxisUp(GtkWidget *w, gpointer client_data)
+{
+  int sel;
+  struct SubWin *d;
+
+  d = (struct SubWin *) client_data;
+
+  if (Menulock || GlobalLock) return;
+  UnFocus();
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+
+  if ((sel >= 1) && (sel <= d->num)) {
+    moveupobj(d->obj, sel);
+    d->select = sel - 1;
+    AxisMove(sel, sel - 1);
+    AxisWinUpdate(FALSE);
+    FileWinUpdate(FALSE);
+    set_graph_modified();
+  }
+}
+
+static void 
+AxisWinAxisDown(GtkWidget *w, gpointer client_data)
+{
+  int sel;
+  struct SubWin *d;
+
+  d = (struct SubWin *) client_data;
+
+  if (Menulock || GlobalLock) return;
+  UnFocus();
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+
+  if (sel >= 0 && sel <= d->num-1) {
+    movedownobj(d->obj, sel);
+    d->select = sel + 1;
+    AxisMove(sel, sel + 1);
+    AxisWinUpdate(FALSE);
+    FileWinUpdate(FALSE);
+    set_graph_modified();
+  }
+}
+
 static gboolean
 axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
@@ -2993,6 +3085,30 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   switch (e->keyval) {
   case GDK_Delete:
     axiswin_delete_axis(d);
+    break;
+  case GDK_Home:
+    if (e->state & GDK_SHIFT_MASK)
+      AxisWinAxisTop(w, d);
+    else
+      return FALSE;
+    break;
+  case GDK_End:
+    if (e->state & GDK_SHIFT_MASK)
+      AxisWinAxisLast(w, d);
+    else
+      return FALSE;
+    break;
+  case GDK_Up:
+    if (e->state & GDK_SHIFT_MASK)
+      AxisWinAxisUp(w, d);
+    else
+      return FALSE;
+    break;
+  case GDK_Down:
+    if (e->state & GDK_SHIFT_MASK)
+      AxisWinAxisDown(w, d);
+    else
+      return FALSE;
     break;
   default:
     return FALSE;

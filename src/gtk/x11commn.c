@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.31 2009/04/06 02:29:17 hito Exp $
+ * $Id: x11commn.c,v 1.32 2009/04/06 08:15:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -408,66 +408,53 @@ AxisDel(int id)
   }
 }
 
-void
-AxisMove(int id1, int id2)
+static void
+axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
 {
-  struct objlist *obj, *aobj;
-  int i, spc, aid;
+  struct objlist *aobj;
+  int spc, aid;
   char *axis, *axis2;
   struct narray iarray;
   int anum, len;
 
+  if ((getobj(obj, axis_str, i, 0, NULL, &axis) >= 0) && (axis != NULL)) {
+    arrayinit(&iarray, sizeof(int));
+    if (!getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
+      anum = arraynum(&iarray);
+      if ((anum > 0) && (spc == 1)) {
+	aid = *(int *) arraylast(&iarray);
+	if (aid == id1)
+	  aid = id2;
+	else {
+	  if (aid > id1)
+	    aid--;
+	  if (aid >= id2)
+	    aid++;
+	}
+	len = strlen(chkobjectname(aobj)) + 10;
+	axis2 = (char *) memalloc(len);
+	if (axis2) {
+	  snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid);
+	  putobj(obj, axis_str, i, axis2);
+	}
+      }
+      arraydel(&iarray);
+    }
+  }
+}
+
+void
+AxisMove(int id1, int id2)
+{
+  struct objlist *obj;
+  int i;
+
   if ((obj = getobject("file")) == NULL)
     return;
+
   for (i = 0; i <= chkobjlastinst(obj); i++) {
-    if ((getobj(obj, "axis_x", i, 0, NULL, &axis) >= 0) && (axis != NULL)) {
-      arrayinit(&iarray, sizeof(int));
-      if (!getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
-	anum = arraynum(&iarray);
-	if ((anum > 0) && (spc == 1)) {
-	  aid = *(int *) arraylast(&iarray);
-	  if (aid == id1)
-	    aid = id2;
-	  else {
-	    if (aid > id1)
-	      aid--;
-	    if (aid >= id2)
-	      aid++;
-	  }
-	  len = strlen(chkobjectname(aobj)) + 10;
-	  axis2 = (char *) memalloc(len);
-	  if (axis2) {
-	    snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid);
-	    putobj(obj, "axis_x", i, axis2);
-	  }
-	}
-	arraydel(&iarray);
-      }
-    }
-    if ((getobj(obj, "axis_y", i, 0, NULL, &axis) >= 0) && (axis != NULL)) {
-      arrayinit(&iarray, sizeof(int));
-      if (!getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
-	anum = arraynum(&iarray);
-	if ((anum > 0) && (spc == 1)) {
-	  aid = *(int *) arraylast(&iarray);
-	  if (aid == id1)
-	    aid = id2;
-	  else {
-	    if (aid > id1)
-	      aid--;
-	    if (aid >= id2)
-	      aid++;
-	  }
-	  len = strlen(chkobjectname(aobj)) + 10;
-	  axis2 = (char *) memalloc(len);
-	  if (axis2) {
-	    snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid);
-	    putobj(obj, "axis_y", i, axis2);
-	  }
-	}
-	arraydel(&iarray);
-      }
-    }
+    axis_move_each_obj("axis_x", i, obj, id1, id2);
+    axis_move_each_obj("axis_y", i, obj, id1, id2);
   }
 }
 
@@ -872,43 +859,41 @@ SaveDrawrable(char *name, int storedata, int storemerge)
   hFile = nopen(name, O_CREAT | O_TRUNC | O_RDWR, NFMODE);
   if (hFile < 0) {
     error = TRUE;
-    goto End;
-  }
+  } else {
+    sysobj = chkobject("system");
+    inst = chkobjinst(sysobj, 0);
+    _getobj(sysobj, "name", inst, &sysname);
+    _getobj(sysobj, "version", inst, &ver);
 
-  sysobj = chkobject("system");
-  inst = chkobjinst(sysobj, 0);
-  _getobj(sysobj, "name", inst, &sysname);
-  _getobj(sysobj, "version", inst, &ver);
+    len = snprintf(comment, sizeof(comment),
+		   "#!ngraph\n#%%creator: %s %s \n#%%version: %s\n",
+		   sysname, PLATFORM, ver);
+    if (nwrite(hFile, comment, len) != len)
+      error = TRUE;
 
-  len = snprintf(comment, sizeof(comment),
-		 "#!ngraph\n#%%creator: %s %s \n#%%version: %s\n",
-		 sysname, PLATFORM, ver);
-  if (nwrite(hFile, comment, len) != len)
-    error = TRUE;
-
-  if ((drawobj = chkobject("draw")) != NULL) {
-    SaveParent(hFile, drawobj, storedata, storemerge);
-    if ((graobj = chkobject("gra")) != NULL) {
-      id = ValidGRA();
-      if (id != -1) {
-	arrayinit(&sarray, sizeof(char *));
-	opt = "device";
-	arrayadd(&sarray, &opt);
-	arg[0] = (char *) &sarray;
-	arg[1] = NULL;
-	getobj(graobj, "save", id, 1, arg, &s);
-	arraydel(&sarray);
-	len = strlen(s);
-	if (nwrite(hFile, s, strlen(s)) != len)
+    if ((drawobj = chkobject("draw")) != NULL) {
+      SaveParent(hFile, drawobj, storedata, storemerge);
+      if ((graobj = chkobject("gra")) != NULL) {
+	id = ValidGRA();
+	if (id != -1) {
+	  arrayinit(&sarray, sizeof(char *));
+	  opt = "device";
+	  arrayadd(&sarray, &opt);
+	  arg[0] = (char *) &sarray;
+	  arg[1] = NULL;
+	  getobj(graobj, "save", id, 1, arg, &s);
+	  arraydel(&sarray);
+	  len = strlen(s);
+	  if (nwrite(hFile, s, len) != len)
+	    error = TRUE;
+	} else {
 	  error = TRUE;
-      } else {
-	error = TRUE;
+	}
       }
     }
+    nclose(hFile);
   }
-  nclose(hFile);
 
- End:
   if (error)
     ErrorMessage();
 

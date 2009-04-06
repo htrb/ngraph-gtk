@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.21 2009/04/06 06:29:47 hito Exp $
+ * $Id: ofit.c,v 1.22 2009/04/06 08:15:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -726,7 +726,8 @@ static int
 fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct fitlocal *fitlocal;
-  int i,type,through,dimension,deriv,disp;
+  int i,through,dimension,deriv,disp;
+  enum FIT_OBJ_TYPE type;
   double x,y,x0,y0,converge,wt;
   struct narray *darray;
   double *data,*wdata;
@@ -783,8 +784,11 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     error(obj,ERRTHROUGH);
     return 1;
   }
-  darray=(struct narray *)(argv[2]);
-  if (arraynum(darray)<1) return FitError_Small;
+
+  darray = (struct narray *) (argv[2]);
+  if (arraynum(darray) < 1)
+    return FitError_Small;
+
   data=arraydata(darray);
   anum=arraynum(darray)-1;
   dnum=nround(data[0]);
@@ -807,17 +811,25 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (weight)
       wt = wdata[i];
     err=FALSE;
-    if (type == FIT_TYPE_POW) {
+    switch (type) {
+    case  FIT_TYPE_POW:
       if (y<=0) err=TRUE;
       else y=log(y);
       if (x<=0) err=TRUE;
       else x=log(x);
-    } else if (type == FIT_TYPE_EXP) {
+      break;
+    case FIT_TYPE_EXP:
       if (y<=0) err=TRUE;
       else y=log(y);
-    } else if (type == FIT_TYPE_LOG) {
+      break;
+    case FIT_TYPE_LOG:
       if (x<=0) err=TRUE;
       else x=log(x);
+      break;
+    case FIT_TYPE_POLY:
+    case FIT_TYPE_USER:
+      /* nothing to do */
+      break;
     }
     if (err) err2=TRUE;
     else if (weight && (wt <= 0)) {
@@ -836,17 +848,27 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (err3) error(obj,ERRNEGATIVEWEIGHT);
   if (through) {
     err=FALSE;
-    if (type == FIT_TYPE_POW) {
+    switch (type) {
+    case FIT_TYPE_POW:
       if (y0<=0) err=TRUE;
       else y0=log(y0);
       if (x0<=0) err=TRUE;
       else x0=log(x0);
-    } else if (type == FIT_TYPE_EXP) {
+      break;
+    case FIT_TYPE_EXP:
       if (y0<=0) err=TRUE;
       else y0=log(y0);
-    } else if (type == FIT_TYPE_LOG) {
+      break;
+    case FIT_TYPE_LOG:
       if (x0<=0) err=TRUE;
       else x0=log(x0);
+      break;
+    case FIT_TYPE_POLY:
+      /* nothing to do */
+      break;
+    case FIT_TYPE_USER:
+      /* never reached */
+      break;
     }
     if (err) {
       error(obj,ERRPOINT);
