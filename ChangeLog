@@ -1,5 +1,11 @@
 2009-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofit.c (enum FitError, display_equation): add.
+	(fitpoly, fituser, fitfit): use "FitError".
+	(fitpoly, fituser): use "snprintf()" instead of "printf()".
+	(fitpoly, fituser): call "display_equation()".
+	(fitpoly, fituser): return "enum FitError".
+
 	* demo/demo2.ngp.in: use "fit::calc" for legend text.
 
 	* src/gtk/x11graph.c (CmGraphHistory, DirectoryDialogClose):

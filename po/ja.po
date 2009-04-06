@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-06 10:28+0900\n"
+"POT-Creation-Date: 2009-04-06 11:41+0900\n"
 "PO-Revision-Date: 2009-04-01 19:25+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -390,16 +390,16 @@ msgstr "Ngraph.ini が見つかりません."
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1511
+#: src/gtk/x11commn.c:1510
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr "~/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1514
+#: src/gtk/x11commn.c:1513
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1714
+#: src/gtk/x11commn.c:1712
 msgid "error"
 msgstr "エラー"
 

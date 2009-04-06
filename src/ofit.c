@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.20 2009/04/03 15:48:27 hito Exp $
+ * $Id: ofit.c,v 1.21 2009/04/06 06:29:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -203,17 +203,40 @@ fitput(struct objlist *obj,char *inst,char *rval,
   return 0;
 }
 
-static int 
+enum FitError {
+  /* FitError_Interrupt = -7, */
+  /* FitError_Convergence = -6, */
+  FitError_Range    = -5,	/* range check */
+  FitError_Syntax   = -4,	/* syntax error */
+  FitError_Eqaution = -3,	/* eqaution is not specified */
+  FitError_Matrix   = -2,	/* singular matrix */
+  FitError_Small    = -1,	/* too small data */
+  FitError_Success  =  0,	/* no error */
+  FitError_Fatal    =  1,	/* fatal error */
+};
+
+static void
+display_equation(char *equation)
+{
+  if (equation == NULL)
+    return;
+
+  ndisplaydialog("\nEquation:\n");
+  ndisplaydialog(equation);
+  ndisplaydialog("\n");
+}
+
+enum FitError 
 fitpoly(struct fitlocal *fitlocal,
-            int type,int dimension,int through,double x0,double y0,
-            double *data,int num,int disp,int weight,double *wdata)
+	enum FIT_OBJ_TYPE type,int dimension,int through,double x0,double y0,
+	double *data,int num,int disp,int weight,double *wdata)
 /*
   return
-         -5: range check
-         -2: singular matrix
-         -1: too small data
-          0: no error
-          1: fatail error
+         FitError_Range
+         FitError_Matrix
+         FitError_Small
+         FitError_Success
+         FitError_Fatal
 */
 {
   int i,j,k,dim;
@@ -240,21 +263,21 @@ fitpoly(struct fitlocal *fitlocal,
     y1=data[k*2+1];
     x1[0]=1;
     for (i=1;i<dim;i++) {
-      if ((fabs(x1[i-1])>1e100) || (fabs(data[k*2])>1e100)) return -5;
+      if ((fabs(x1[i-1])>1e100) || (fabs(data[k*2])>1e100)) return FitError_Range;
       x1[i]=x1[i-1]*data[k*2];
-      if (fabs(x1[i])>1e100) return -5;
+      if (fabs(x1[i])>1e100) return FitError_Range;
     }
     yy+=wt*y1*y1;
-    if (fabs(yy)>1e100) return -5;
+    if (fabs(yy)>1e100) return FitError_Range;
     for (i=0;i<dim;i++) {
-      if (fabs(y1)>1e100) return -5;
+      if (fabs(y1)>1e100) return FitError_Range;
       b[i]+=wt*y1*x1[i];
-      if (fabs(b[i])>1e100) return -5;
+      if (fabs(b[i])>1e100) return FitError_Range;
     }
     for (i=0;i<dim;i++)
       for (j=0;j<dim;j++) {
         m[i][j]=m[i][j]+wt*x1[i]*x1[j];
-        if (fabs(m[i][j])>1e100) return -5;
+        if (fabs(m[i][j])>1e100) return FitError_Range;
       }
   }
   if (through) {
@@ -283,24 +306,55 @@ fitpoly(struct fitlocal *fitlocal,
   fitlocal->derror=derror;
   fitlocal->correlation=correlation;
   fitlocal->num=num;
-  if ((equation=memalloc(512))==NULL) return 1;
+
+#define EQUATION_BUF_SIZE 512
+  if ((equation=memalloc(EQUATION_BUF_SIZE))==NULL) return 1;
   equation[0]='\0';
   j=0;
-  if (type == FIT_TYPE_POLY) {
-    for (i=dim-1;i>1;i--) j+=sprintf(equation+j,"%.15e*X^%d+",coe[i],i);
-    j+=sprintf(equation+j,"%.15e*X+%.15e",coe[1],coe[0]);
-  } else if (type == FIT_TYPE_POW) sprintf(equation,"exp(%.15e)*X^%.15e",coe[0],coe[1]);
-  else if (type == FIT_TYPE_EXP) sprintf(equation,"exp(%.15e*X+%.15e)",coe[1],coe[0]);
-  else if (type == FIT_TYPE_LOG) sprintf(equation,"%.15e*Ln(X)+%.15e",coe[1],coe[0]);
-  fitlocal->equation=equation;
+
+  switch (type) {
+  case FIT_TYPE_POLY:
+    for (i = dim - 1; i > 0; i--) 
+      j += snprintf(equation + j, EQUATION_BUF_SIZE - j,
+		    (i == dim - 1) ? "%.15e*X^%d" : "%+.15e*X^%d",
+		    coe[i], i);
+    snprintf(equation + j, EQUATION_BUF_SIZE - j, "%+.15e", coe[0]);
+    break;
+  case FIT_TYPE_POW:
+    sprintf(equation, "exp(%.15e)*X^%.15e", coe[0], coe[1]);
+    break;
+  case FIT_TYPE_EXP:
+    sprintf(equation, "exp(%.15e*X%+.15e)", coe[1], coe[0]);
+    break;
+  case  FIT_TYPE_LOG:
+    sprintf(equation, "%.15e*Ln(X)%+.15e", coe[1], coe[0]);
+    break;
+  case FIT_TYPE_USER:
+    /* never reached */
+    break;
+  }
+  fitlocal->equation = equation;
 
   if (disp) {
     i=0;
     i += sprintf(buf + i, "--------\nfit:%d (^%d)\n", fitlocal->id, fitlocal->oid);
-    if (type == FIT_TYPE_POLY) i+=sprintf(buf+i,"Eq: %%0i*X^i (i=0-%d)\n\n",dim-1);
-    else if (type == FIT_TYPE_POW) i += sprintf(buf + i,"Eq: exp(%%00)*X^%%01\n\n");
-    else if (type == FIT_TYPE_EXP) i += sprintf(buf + i,"Eq: exp(%%01*X+%%00)\n\n");
-    else if (type == FIT_TYPE_USER) i += sprintf(buf + i,"Eq: %%01*Ln(X)+%%00\n\n");
+    switch (type) {
+    case FIT_TYPE_POLY:
+      i += sprintf(buf+i,"Eq: %%0i*X^i (i=0-%d)\n\n",dim-1);
+      break;
+    case FIT_TYPE_POW:
+      i += sprintf(buf + i,"Eq: exp(%%00)*X^%%01\n\n");
+      break;
+    case FIT_TYPE_EXP:
+      i += sprintf(buf + i,"Eq: exp(%%01*X+%%00)\n\n");
+      break;
+    case FIT_TYPE_LOG:
+      i += sprintf(buf + i,"Eq: %%01*Ln(X)+%%00\n\n");
+      break;
+    case FIT_TYPE_USER:
+      /* never reached */
+      break;
+    }
     for (j=0;j<dim;j++)
       i+=sprintf(buf+i,"       %%0%d = %+.7e\n",j,coe[j]);
     i+=sprintf(buf+i,"\n");
@@ -313,28 +367,29 @@ fitpoly(struct fitlocal *fitlocal,
     ndisplaydialog(buf);
   }
 
+  display_equation(equation);
+
   return 0;
 }
 
-static int 
+enum FitError 
 fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
-            int deriv,double converge,double *data,int num,int disp,
-            int weight,double *wdata)
+	int deriv,double converge,double *data,int num,int disp,
+	int weight,double *wdata)
 /*
   return
-         -7: interrupt
-         -6: convergence
-         -5: range check
-         -4: syntax error
-         -3: eqaution is not specified
-         -2: singular matrix
-         -1: too small data
-          0: no error
-          1: fatal error
-
+         FitError_Interrupt
+         FitError_Convergence
+         FitError_Range
+         FitError_syntax
+         FitError_Eqaution
+         FitError_Matrix
+         FitError_Small
+         FitError_Success
+         FitError_Fatal
 */
 {
-  int ecode;
+  int ecode, prev_char, equation_length;
   int *needdata;
   int tbl[10],dim,n,count,rcode,err,err2,err3;
   double yy,y,y1,y2,y3,sy,spx,spy,dxx,dxxc,xx,derror,correlation;
@@ -351,14 +406,14 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   double sum2;
   double lambda,s0;
 */
-  if (num<1) return -1;
-  if (fitlocal->codef==NULL) return -3;
-  if (fitlocal->needdata==NULL) return -3;
+  if (num<1) return FitError_Small;
+  if (fitlocal->codef==NULL) return FitError_Eqaution;
+  if (fitlocal->needdata==NULL) return FitError_Eqaution;
   dim=arraynum(fitlocal->needdata);
   needdata=arraydata(fitlocal->needdata);
   if (deriv) {
     for (i=0;i<dim;i++) {
-      if (fitlocal->codedf[needdata[i]]==NULL) return -3;
+      if (fitlocal->codedf[needdata[i]]==NULL) return FitError_Eqaution;
     }
   }
   for (i=0;i<dim;i++) tbl[i]=needdata[i];
@@ -385,10 +440,10 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
                     0,0,0,0,0,0,0,0,0,0,0,0,
                     par,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                     NULL,NULL,NULL,0,NULL,NULL,NULL,0,&y1);
-    if (rcode==MSERR) return -4;
+    if (rcode==MSERR) return FitError_Syntax;
     else if (rcode!=MNOERR) err=TRUE;
     if (!err) {
-      if (fabs(yy)>1e100) return -5;
+      if (fabs(yy)>1e100) return FitError_Range;
       y2=spy-y1;
       if ((fabs(y2)>1e50) || (fabs(spy)>1e50)) err=TRUE;
     }
@@ -429,7 +484,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
                       0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                       par,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                       NULL,NULL,NULL,0,NULL,NULL,NULL,0,&y1);
-      if (rcode==MSERR) return -4;
+      if (rcode==MSERR) return FitError_Syntax;
       else if (rcode!=MNOERR) err=TRUE;
       if (deriv) {
         for (j=0;j<dim;j++) {
@@ -437,7 +492,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
                           0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                       par,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                           NULL,NULL,NULL,0,NULL,NULL,NULL,0,&(x2[j]));
-          if (rcode==MSERR) return -4;
+          if (rcode==MSERR) return FitError_Syntax;
           else if (rcode!=MNOERR) err=TRUE;
         }
       } else {
@@ -450,13 +505,13 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
                           0,0,0,0,0,0,0,0,0,0,0,0,0,0,
                      par2,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                           NULL,NULL,NULL,0,NULL,NULL,NULL,0,&(x2[j]));
-          if (rcode==MSERR) return -4;
+          if (rcode==MSERR) return FitError_Syntax;
           else if (rcode!=MNOERR) err=TRUE;
           x2[j]=(x2[j]-y1)/dxx;
         }
       }
       if (!err) {
-        if ((fabs(yy)>1e100) || (fabs(y3)>1e100)) return -5;
+        if ((fabs(yy)>1e100) || (fabs(y3)>1e100)) return FitError_Range;
         y2=spy-y1;
         if ((fabs(y2)>1e50) || (fabs(spy)>1e50)) err=TRUE;
       }
@@ -543,7 +598,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
                         0,0,0,0,0,0,0,0,0,0,0,0,
                      par2,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                         NULL,NULL,NULL,0,NULL,NULL,NULL,0,&y1);
-        if (rcode==MSERR) return -4;
+        if (rcode==MSERR) return FitError_Syntax;
         else if (rcode!=MNOERR) err=TRUE;
         if (!err) {
           if (fabs(yy)>1e100) goto repeat;
@@ -562,12 +617,12 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
       }
 repeat:
       lambda*=10;
-      if (lambda>1e100) return -6;
+      if (lambda>1e100) return FitError_Convergence;
     }
 
     lambda/=10;
 */
-    if (matsolv(dim,m,b,parerr)) return -2;
+    if (matsolv(dim,m,b,parerr)) return FitError_Matrix;
 
     dxxc=0;
     xx=0;
@@ -608,32 +663,61 @@ errexit:
     fitlocal->correlation=correlation;
     fitlocal->num=n;
     pnum=0;
-    for (i=0;func[i]!='\0';i++)
+    for (i=0;func[i]!='\0';i++) {
       if (func[i]=='%') {
         pnum++;
         i+=2;
       }
-    if ((equation=memalloc(strlen(func)+25*pnum+1))==NULL) return 1;
-    j=0;
-    for (i=0;func[i]!='\0';i++)
-      if (func[i]!='%') {
-        equation[j]=func[i];
-        j++;
-      } else {
-        if (isdigit(func[i+1]) && isdigit(func[i+2]) && isdigit(func[i+3])) {
-          pnum=(func[i+1]-'0')*100+(func[i+2]-'0')*10+(func[i+3]-'0');
-          i+=3;
-        } else if (isdigit(func[i+1]) && isdigit(func[i+2])) {
-          pnum=(func[i+1]-'0')*10+(func[i+2]-'0');
-          i+=2;
+    }
+    equation_length = strlen(func) + 25 * pnum + 1;
+    equation=memalloc(equation_length);
+    if (equation == NULL)
+      return 1;
+    j = 0;
+    prev_char = '\0';
+    for (i = 0; func[i] != '\0'; i++) {
+      double val;
+      char *format;
+
+      switch (func[i]) {
+      case '%':
+        if (isdigit(func[i + 1]) && isdigit(func[i + 2]) && isdigit(func[i + 3])) {
+          pnum = (func[i + 1] - '0') * 100 + (func[i + 2] - '0') * 10 + (func[i + 3] - '0');
+          i += 3;
+        } else if (isdigit(func[i + 1]) && isdigit(func[i + 2])) {
+          pnum = (func[i + 1] - '0') * 10 + (func[i + 2] - '0');
+          i += 2;
         } else {
-          pnum=(func[i+1]-'0');
-          i+=1;
+          pnum = (func[i + 1] - '0');
+          i += 1;
         }
-        j+=sprintf(equation+j,"%.15e",par[pnum]);
+
+	val = par[pnum];
+	switch (prev_char) {
+	case '-':
+	  val = - val;
+	  /* fall-through */
+	case '+':
+	  j--;
+	  format = "%+.15e";
+	  break;
+	default:
+	  format = "%.15e";
+	}
+	prev_char = '\0';
+	j += snprintf(equation + j, equation_length - j, format, val);
+	break;
+      case ' ':
+	break;
+      default:
+        equation[j] = toupper(func[i]);
+	prev_char = func[i];
+        j++;
       }
-    equation[j]='\0';
-    fitlocal->equation=equation;
+    }
+    equation[j] = '\0';
+    fitlocal->equation = equation;
+    display_equation(equation);
   }
   return ecode;
 }
@@ -647,7 +731,8 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *darray;
   double *data,*wdata;
   char *equation,*func,prm[32];
-  int dnum,num,err,err2,err3,rcode;
+  int dnum,num,err,err2,err3;
+  enum FitError rcode;
   double derror,correlation,pp;
   int ecode;
   int weight,anum;
@@ -699,7 +784,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
   darray=(struct narray *)(argv[2]);
-  if (arraynum(darray)<1) return -1;
+  if (arraynum(darray)<1) return FitError_Small;
   data=arraydata(darray);
   anum=arraynum(darray)-1;
   dnum=nround(data[0]);
@@ -772,14 +857,34 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     rcode=fitpoly(fitlocal,type,dimension,through,x0,y0,data,num,disp,weight,wdata);
   else
     rcode=fituser(obj,fitlocal,func,deriv,converge,data,num,disp,weight,wdata);
-  if (rcode==1) return 1;
-  else if (rcode==-1) ecode=ERRSMLDATA;
-  else if (rcode==-2) ecode=ERRSINGULAR;
-  else if (rcode==-3) ecode=ERRNOEQS;
-  else if (rcode==-4) ecode=ERRSYNTAX;
-  else if (rcode==-5) ecode=ERRRANGE;
-  else if (rcode==-6) ecode=ERRCONVERGE;
-  else ecode=0;
+
+  switch (rcode) {
+  case FitError_Fatal:
+    return 1;
+    break;
+  case FitError_Small:
+    ecode = ERRSMLDATA;
+    break;
+  case FitError_Matrix:
+    ecode = ERRSINGULAR;
+    break;
+  case FitError_Eqaution:
+    ecode = ERRNOEQS;
+    break;
+  case FitError_Syntax:
+    ecode = ERRSYNTAX;
+    break;
+  case FitError_Range:
+    ecode = ERRRANGE;
+    break;
+    /*
+      case FitError_Convergence:
+      ecode = ERRCONVERGE;
+      break;
+    */
+  default:
+    ecode = 0;
+  }
   if (ecode!=0) {
     error(obj,ecode);
     return 1;
