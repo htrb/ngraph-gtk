@@ -1,5 +1,7 @@
 2009-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* demo/demo2.ngp.in: use "fit::calc" for legend text.
+
 	* src/gtk/x11graph.c (CmGraphHistory, DirectoryDialogClose):
 	remove argument of "ErrorMessage()".
 

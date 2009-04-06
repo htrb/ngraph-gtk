@@ -1,6 +1,6 @@
 #!ngraph
-#%creator: Ngraph for Windows
-#%version: 6.03
+#%creator: Ngraph for GTK+ 
+#%version: 6.03.48.gtk-23
 new axis name:cX1
 	axis::hidden=false
 	axis::R=0
@@ -229,7 +229,7 @@ new fit
 	fit::through_point=false
 	fit::point_x=0.000000000000000e+00
 	fit::point_y=0.000000000000000e+00
-	fit::equation='3.334342264725757e+01*EXP(-(((X--1.323840682693712e+00)*1.167633670539841e+00)^2))+7.533588819881532e+00*EXP(-(((X-1.423928452598031e+00)*1.482809609014574e+00)^2))+-1.391372284014658e+00'
+	fit::equation='3.334342264725757e+01*EXP(-(((X--1.323840682693712e+00)*1.167633670539841e+00)^2))+7.533588819881534e+00*EXP(-(((X-1.423928452598031e+00)*1.482809609014573e+00)^2))+-1.391372284014659e+00'
 	fit::poly_dimension=5
 	fit::weight_func=
 	fit::user_func='%01*EXP(-(((X-%02)*%03)^2))+%04*EXP(-(((X-%05)*%06)^2))+%00'
@@ -310,7 +310,7 @@ new fit
 	fit::through_point=false
 	fit::point_x=0.000000000000000e+00
 	fit::point_y=0.000000000000000e+00
-	fit::equation='3.228016431016132e+01*EXP(-(((X--1.324333233615322e+00)*1.229080100751822e+00)^2))+6.052084367385485e+00*EXP(-(((X-1.465076470890410e+00)*1.601264690141756e+00)^2))+-5.392649863736253e-02'
+	fit::equation='3.228016431016133e+01*EXP(-(((X--1.324333233615322e+00)*1.229080100751821e+00)^2))+6.052084367385491e+00*EXP(-(((X-1.465076470890410e+00)*1.601264690141752e+00)^2))+-5.392649863737123e-02'
 	fit::poly_dimension=5
 	fit::weight_func=
 	fit::user_func='%01*EXP(-(((X-%02)*%03)^2))+%04*EXP(-(((X-%05)*%06)^2))+%00'
@@ -390,7 +390,7 @@ new rectangle
 	rectangle::redraw_flag=true
 	rectangle::x1=13718
 	rectangle::y1=4859
-	rectangle::x2=18375
+	rectangle::x2=20575
 	rectangle::y2=7093
 	rectangle::fill=true
 	rectangle::frame=true
@@ -409,7 +409,7 @@ new rectangle
 	rectangle::redraw_flag=true
 	rectangle::x1=13718
 	rectangle::y1=9859
-	rectangle::x2=18390
+	rectangle::x2=20590
 	rectangle::y2=12093
 	rectangle::fill=true
 	rectangle::frame=true
@@ -598,7 +598,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='peak-1: %pf{%+#.4g %{fit:0:%02}}'
+	text::text='peak-1: (%pf{%+#.4g %{fit:0:%02}},  %pf{%+#.4g %{fit:0:calc %{fit:0:%02}}})'
 	text::x=14000
 	text::y=6164
 	text::pt=1600
@@ -616,7 +616,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='peak-2: %pf{%+#.4g %{fit:0:%05}}'
+	text::text='peak-2: (%pf{%+#.4g %{fit:0:%05}},  %pf{%+#.4g %{fit:0:calc %{fit:0:%05}}})'
 	text::x=14000
 	text::y=6840
 	text::pt=1600
@@ -634,7 +634,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='peak-1: %pf{%+#.4g %{fit:1:%02}}'
+	text::text='peak-1: (%pf{%+#.4g %{fit:1:%02}},  %pf{%+#.4g %{fit:1:calc %{fit:1:%02}}})'
 	text::x=14000
 	text::y=11164
 	text::pt=1600
@@ -652,7 +652,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='peak-2: %pf{%+#.4g %{fit:1:%05}}'
+	text::text='peak-2: (%pf{%+#.4g %{fit:1:%05}},  %pf{%+#.4g %{fit:1:calc %{fit:1:%05}}})'
 	text::x=14000
 	text::y=11840
 	text::pt=1600
