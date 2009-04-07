@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.9 2009/04/03 10:11:44 hito Exp $
+ * $Id: omath.c,v 1.10 2009/04/07 04:08:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -245,9 +245,11 @@ mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     mlocal->z = * (double *) argv[2];
     break;
   case 'm':
-    m = (arg[1] - '0') * 10 + arg[2] - '0';
-    mlocal->memory[m] = * (double *) argv[2];
-    mlocal->memorystat[m] = MNOERR;
+    m = atoi(arg + 1);
+    if (m >= 0 && m < MEMORYNUM) {
+      mlocal->memory[m] = * (double *) argv[2];
+      mlocal->memorystat[m] = MNOERR;
+    }
     break;
   }
   msettbl(inst, mlocal);
