@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-06 17:18+0900\n"
+"POT-Creation-Date: 2009-04-07 15:43+0900\n"
 "PO-Revision-Date: 2009-04-01 19:25+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -937,79 +937,79 @@ msgstr "新規作成"
 msgid "Data open"
 msgstr "データを開く"
 
-#: src/gtk/x11graph.c:167
+#: src/gtk/x11graph.c:166
 msgid "paper _Width:"
 msgstr "用紙幅(_W):"
 
-#: src/gtk/x11graph.c:172
+#: src/gtk/x11graph.c:171
 msgid "paper _Height:"
 msgstr "用紙高さ(_H):"
 
-#: src/gtk/x11graph.c:181
+#: src/gtk/x11graph.c:180
 msgid "_Paper:"
 msgstr "用紙(_P):"
 
-#: src/gtk/x11graph.c:195
+#: src/gtk/x11graph.c:194
 msgid "_Left margin:"
 msgstr "左マージン(_L)<:"
 
-#: src/gtk/x11graph.c:200
+#: src/gtk/x11graph.c:199
 msgid "_Top margin:"
 msgstr "上マージン(_T):"
 
-#: src/gtk/x11graph.c:208
+#: src/gtk/x11graph.c:207
 msgid "paper _Zoom:"
 msgstr "拡大率(_Z):"
 
-#: src/gtk/x11graph.c:671
+#: src/gtk/x11graph.c:670
 msgid "Object"
 msgstr "オブジェクト"
 
-#: src/gtk/x11graph.c:682
+#: src/gtk/x11graph.c:681
 msgid "_Draw Order"
 msgstr "描画順(_D)"
 
-#: src/gtk/x11graph.c:708
+#: src/gtk/x11graph.c:707
 msgid "_Insert"
 msgstr "挿入(_I)"
 
-#: src/gtk/x11graph.c:748
+#: src/gtk/x11graph.c:747
 msgid "_Objects"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11graph.c:838 src/gtk/x11graph.c:891
+#: src/gtk/x11graph.c:837 src/gtk/x11graph.c:890
 msgid "_Dir:"
 msgstr "ディレクトリ(_D):"
 
-#: src/gtk/x11graph.c:886
+#: src/gtk/x11graph.c:885
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
-#: src/gtk/x11graph.c:894 src/gtk/x11graph.c:941 src/gtk/x11opt.c:1034
+#: src/gtk/x11graph.c:893 src/gtk/x11graph.c:940 src/gtk/x11opt.c:1034
 msgid "_Ignore file path"
 msgstr "パス情報無視(_I)"
 
-#: src/gtk/x11graph.c:945
+#: src/gtk/x11graph.c:944
 msgid "_Greek Symbol"
 msgstr "全角ギリシア -> シンボル(_G)"
 
-#: src/gtk/x11graph.c:1004 src/gtk/x11opt.c:1004
+#: src/gtk/x11graph.c:1003 src/gtk/x11opt.c:1004
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:1007
+#: src/gtk/x11graph.c:1006
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1011
+#: src/gtk/x11graph.c:1010
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1102 src/gtk/x11menu.c:156
+#: src/gtk/x11graph.c:1101 src/gtk/x11menu.c:156
 msgid "Load NGP file"
 msgstr "NGP ファイルを開く"
 
-#: src/gtk/x11graph.c:1344
+#: src/gtk/x11graph.c:1343
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for "
 "researchers and engineers."
@@ -1700,6 +1700,11 @@ msgstr "エラー:"
 msgid "Question"
 msgstr "質問:"
 
+#: src/gtk/x11menu.c:2251
+#, c-format
+msgid "Executing `%.128s'."
+msgstr "実行中 `%.128s'."
+
 #: src/gtk/x11merge.c:54
 msgid "top"
 msgstr "上"
@@ -2024,11 +2029,6 @@ msgstr "データファイル作成中"
 #: src/gtk/x11print.c:1074
 msgid "Making data file."
 msgstr "データファイル作成中"
-
-#: src/gtk/x11scrip.c:98
-#, c-format
-msgid "Executing `%.128s'."
-msgstr "実行中 `%.128s'."
 
 #: src/gtk/x11view.c:632
 msgid "_Left"
