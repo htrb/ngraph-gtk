@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-23\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-06 17:18+0900\n"
+"POT-Creation-Date: 2009-04-07 15:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -935,79 +935,79 @@ msgstr ""
 msgid "Data open"
 msgstr ""
 
-#: src/gtk/x11graph.c:167
+#: src/gtk/x11graph.c:166
 msgid "paper _Width:"
 msgstr ""
 
-#: src/gtk/x11graph.c:172
+#: src/gtk/x11graph.c:171
 msgid "paper _Height:"
 msgstr ""
 
-#: src/gtk/x11graph.c:181
+#: src/gtk/x11graph.c:180
 msgid "_Paper:"
 msgstr ""
 
-#: src/gtk/x11graph.c:195
+#: src/gtk/x11graph.c:194
 msgid "_Left margin:"
 msgstr ""
 
-#: src/gtk/x11graph.c:200
+#: src/gtk/x11graph.c:199
 msgid "_Top margin:"
 msgstr ""
 
-#: src/gtk/x11graph.c:208
+#: src/gtk/x11graph.c:207
 msgid "paper _Zoom:"
 msgstr ""
 
-#: src/gtk/x11graph.c:671
+#: src/gtk/x11graph.c:670
 msgid "Object"
 msgstr ""
 
-#: src/gtk/x11graph.c:682
+#: src/gtk/x11graph.c:681
 msgid "_Draw Order"
 msgstr ""
 
-#: src/gtk/x11graph.c:708
+#: src/gtk/x11graph.c:707
 msgid "_Insert"
 msgstr ""
 
-#: src/gtk/x11graph.c:748
+#: src/gtk/x11graph.c:747
 msgid "_Objects"
 msgstr ""
 
-#: src/gtk/x11graph.c:838 src/gtk/x11graph.c:891
+#: src/gtk/x11graph.c:837 src/gtk/x11graph.c:890
 msgid "_Dir:"
 msgstr ""
 
-#: src/gtk/x11graph.c:886
+#: src/gtk/x11graph.c:885
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:894 src/gtk/x11graph.c:941 src/gtk/x11opt.c:1034
+#: src/gtk/x11graph.c:893 src/gtk/x11graph.c:940 src/gtk/x11opt.c:1034
 msgid "_Ignore file path"
 msgstr ""
 
-#: src/gtk/x11graph.c:945
+#: src/gtk/x11graph.c:944
 msgid "_Greek Symbol"
 msgstr ""
 
-#: src/gtk/x11graph.c:1004 src/gtk/x11opt.c:1004
+#: src/gtk/x11graph.c:1003 src/gtk/x11opt.c:1004
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:1007
+#: src/gtk/x11graph.c:1006
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1011
+#: src/gtk/x11graph.c:1010
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1102 src/gtk/x11menu.c:156
+#: src/gtk/x11graph.c:1101 src/gtk/x11menu.c:156
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1344
+#: src/gtk/x11graph.c:1343
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for "
 "researchers and engineers."
@@ -1696,6 +1696,11 @@ msgstr ""
 msgid "Question"
 msgstr ""
 
+#: src/gtk/x11menu.c:2251
+#, c-format
+msgid "Executing `%.128s'."
+msgstr ""
+
 #: src/gtk/x11merge.c:54
 msgid "top"
 msgstr ""
@@ -2017,11 +2022,6 @@ msgstr ""
 
 #: src/gtk/x11print.c:1074
 msgid "Making data file."
-msgstr ""
-
-#: src/gtk/x11scrip.c:98
-#, c-format
-msgid "Executing `%.128s'."
 msgstr ""
 
 #: src/gtk/x11view.c:632

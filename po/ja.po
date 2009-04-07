@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Ngraph-gtk 6.03.30\n"
+"Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2009-04-07 15:43+0900\n"
-"PO-Revision-Date: 2009-04-01 19:25+0900\n"
+"PO-Revision-Date: 2009-04-07 16:08+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
