@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.82 2009/03/26 02:31:53 hito Exp $
+ * $Id: x11menu.c,v 1.83 2009/04/07 06:36:55 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -40,7 +40,6 @@
 #include "x11info.h"
 #include "x11cood.h"
 #include "x11gui.h"
-#include "x11scrip.h"
 #include "x11merge.h"
 #include "x11commn.h"
 #include "x11lgnd.h"
@@ -70,6 +69,7 @@ static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *AddinMenu = NULL, *ExtDrvOutMenu = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
+static void script_exec(GtkWidget *w, gpointer client_data);
 
 struct command_data {
   void (*func)(GtkWidget *, gpointer);
@@ -694,7 +694,7 @@ create_addin_menu(GtkWidget *parent, GtkAccelGroup *accel_group)
   while (fcur) {
     if (fcur->name && fcur->script) {
       item = gtk_menu_item_new_with_mnemonic(fcur->name);
-      g_signal_connect(item, "activate", G_CALLBACK(CmScriptExec), fcur);
+      g_signal_connect(item, "activate", G_CALLBACK(script_exec), fcur);
       gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
       if (Menulocal.showtip && fcur->description) {
 	gtk_widget_set_tooltip_text(item, fcur->description);
@@ -2194,6 +2194,86 @@ InputYN(char *mes)
   ret = MessageBox(TopLevel, mes, _("Question"), MB_YESNO);
   UpdateAll2();
   return (ret == IDYES) ? TRUE : FALSE;
+}
+
+static void
+script_exec(GtkWidget *w, gpointer client_data)
+{
+  char *name, *option, *s, *argv[2], mes[256];
+  int newid, allocnow = FALSE, len, idn;
+  struct narray sarray;
+  struct objlist *robj, *shell;
+  struct script *fcur;
+
+  if (Menulock || GlobalLock || client_data == NULL)
+    return;
+
+  shell = chkobject("shell");
+  if (shell == NULL)
+    return;
+
+  fcur = (struct script *) client_data;
+  if (fcur->script == NULL)
+    return;
+
+  name = nstrdup(fcur->script);
+  if (name == NULL)
+    return;
+
+  newid = newobj(shell);
+  if (newid < 0) {
+    memfree(name);
+    return;
+  }
+
+  arrayinit(&sarray, sizeof(char *));
+  if (arrayadd(&sarray, &name) == NULL) {
+    delobj(shell, newid);
+    memfree(name);
+    arraydel2(&sarray);
+    return;
+  }
+
+  option = fcur->option;
+  while ((s = getitok2(&option, &len, " \t")) != NULL) {
+    if (arrayadd(&sarray, &s) == NULL) {
+      delobj(shell, newid);
+      memfree(s);
+      arraydel2(&sarray);
+      return;
+    }
+  }
+
+  if (Menulocal.addinconsole) {
+    allocnow = AllocConsole();
+  }
+
+  snprintf(mes, sizeof(mes), _("Executing `%.128s'."), name);
+  SetStatusBar(mes);
+
+  menu_lock(TRUE);
+
+  idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
+  registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
+  argv[0] = (char *) &sarray;
+  argv[1] = NULL;
+  exeobj(shell, "shell", newid, 1, argv);
+  unregisterevloop(robj, idn, Menulocal.inst);
+
+  menu_lock(FALSE);
+
+  ResetStatusBar();
+  arraydel2(&sarray);
+
+  if (Menulocal.addinconsole) {
+    FreeConsole(allocnow);
+  }
+
+  GetPageSettingsFromGRA();
+  UpdateAll2();
+
+  delobj(shell, newid);
+  gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
 }
 
 static void

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.42 2009/04/06 01:26:27 hito Exp $
+ * $Id: x11graph.c,v 1.43 2009/04/07 06:36:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,7 +49,6 @@
 #include "x11axis.h"
 #include "x11print.h"
 #include "x11commn.h"
-#include "x11scrip.h"
 #include "x11info.h"
 
 #define PAPER_SIZE_MIN 1000
