@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.35 2009/02/17 08:35:56 hito Exp $
+ * $Id: x11dialg.c,v 1.36 2009/04/08 09:41:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -392,7 +392,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     s = d->cb(d->Obj, i);
     list_store_append(d->list, &iter);
     list_store_set_int(d->list, &iter, 0, i);
-    list_store_set_string(d->list, &iter, 1, (s) ? s: "");
+    list_store_set_string(d->list, &iter, 1, CHK_STR(s));
     memfree(s);
   }
 
@@ -525,7 +525,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     s = d->cb(d->Obj, i);
     list_store_append(d->list, &iter);
     list_store_set_int(d->list, &iter, 0, i);
-    list_store_set_string(d->list, &iter, 1, (s) ? s: "");
+    list_store_set_string(d->list, &iter, 1, CHK_STR(s));
     memfree(s);
   }
 
@@ -1131,7 +1131,7 @@ int
 SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field)
 {
   const char *s;
-  char *buf;
+  char *buf, format[] = "axis:%s";
   int len, r;
 
   s = combo_box_entry_get_text(w);
@@ -1141,10 +1141,10 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
   if (s[0] == '\0') {
     buf = NULL;
   } else {
-    len = strlen(s) + 6;
+    len = strlen(s) + sizeof(format);
     buf = (char *) memalloc(len);
     if (buf) {
-      snprintf(buf, len, "axis:%s", (s)? s: "");
+      snprintf(buf, len, format, CHK_STR(s));
     }
   }
 
@@ -1161,13 +1161,13 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
   int r, g, b;
   char buf[64];
 
-  snprintf(buf, sizeof(buf), "%sR%s", (prefix)? prefix: "", (postfix)? postfix: "");
+  snprintf(buf, sizeof(buf), "%sR%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &r);
 
-  snprintf(buf, sizeof(buf), "%sG%s", (prefix)? prefix: "", (postfix)? postfix: "");
+  snprintf(buf, sizeof(buf), "%sG%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &g);
 
-  snprintf(buf, sizeof(buf), "%sB%s", (prefix)? prefix: "", (postfix)? postfix: "");
+  snprintf(buf, sizeof(buf), "%sB%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &b);
 
   color.red = (r & 0xff) * 257;
@@ -1201,7 +1201,7 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
   g = (color.green >> 8);
   b = (color.blue >> 8);
 
-  snprintf(buf, sizeof(buf), "%sR%s", (prefix)? prefix: "", (postfix)? postfix: "");
+  snprintf(buf, sizeof(buf), "%sR%s", CHK_STR(prefix), CHK_STR(postfix));
 
   getobj(obj, buf, id, 0, NULL, &o);
   if (o != r) {
@@ -1212,7 +1212,7 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
   }
 
 
-  snprintf(buf, sizeof(buf), "%sG%s", (prefix)? prefix: "", (postfix)? postfix: "");
+  snprintf(buf, sizeof(buf), "%sG%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &o);
   if (o != g) {
     if (putobj(obj, buf, id, &g) == -1) {
@@ -1221,7 +1221,7 @@ _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *pos
     set_graph_modified();
   }
 
-  snprintf(buf, sizeof(buf), "%sB%s", (prefix)? prefix: "", (postfix)? postfix: "");
+  snprintf(buf, sizeof(buf), "%sB%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &o);
   if (o != b) {
     if (putobj(obj, buf, id, &b) == -1) {

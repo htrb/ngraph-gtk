@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.20 2009/03/26 02:31:53 hito Exp $
+ * $Id: ox11dlg.c,v 1.21 2009/04/08 09:41:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -118,10 +118,7 @@ dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   mes = (char *)argv[2];
   locksave = GlobalLock;
   GlobalLock = TRUE;
-  if (mes == NULL) {
-    mes="";
-  }
-  rcode = MessageBox(DLGTopLevel, mes, (title) ? title : "Confirm", MB_OK);
+  rcode = MessageBox(DLGTopLevel, CHK_STR(mes), (title) ? title : "Confirm", MB_OK);
   GlobalLock = locksave;
 
   return 0;

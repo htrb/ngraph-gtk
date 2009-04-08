@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.42 2009/04/06 08:15:30 hito Exp $
+ * $Id: x11lgnd.c,v 1.43 2009/04/08 09:41:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -196,13 +196,13 @@ LegendTextCB(struct objlist *obj, int id)
     {
       char *tmp;
       tmp = sjis_to_utf8(text);
-      len = snprintf(s, CB_BUF_SIZE, "%s", (tmp) ? tmp : "");
+      len = snprintf(s, CB_BUF_SIZE, "%s", CHK_STR(tmp));
       if (tmp) {
 	free(tmp);
       }
     }
 #else
-    len = snprintf(s, CB_BUF_SIZE, "%s", text);
+    len = snprintf(s, CB_BUF_SIZE, "%s", CHK_STR(text));
 #endif
   }
   return s;
@@ -2038,7 +2038,7 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	  x0 = points[0];
 	  y0 = points[1];
 	}
-	snprintf(buf, sizeof(buf), "points:%-3d%s", arraynum(array) / 2, (ex)? ex: "");
+	snprintf(buf, sizeof(buf), "points:%-3d%s", arraynum(array) / 2, CHK_STR(ex));
 	break;
       case LegendTypeRect:
 	getobj(d->obj[type], "x1", row, 0, NULL, &x0);

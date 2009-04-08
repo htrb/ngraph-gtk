@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.86 2009/04/06 08:15:30 hito Exp $
+ * $Id: x11file.c,v 1.87 2009/04/08 09:41:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -231,7 +231,7 @@ MathDialogSetupItem(GtkWidget *w, struct MathDialog *d)
     getobj(d->Obj, field, i, 0, NULL, &math);
     list_store_append(d->list, &iter);
     list_store_set_int(d->list, &iter, 0, i);
-    list_store_set_string(d->list, &iter, 1, (math) ? math : "");
+    list_store_set_string(d->list, &iter, 1, CHK_STR(math));
   }
 
   if (d->Mode >= 0 && d->Mode < MATH_FNC_NUM)
@@ -494,7 +494,7 @@ FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, (s)? s: "");
+    list_store_set_string(d->list, &iter, 0, CHK_STR(s));
   }
   /*
   if (makewidget) {
