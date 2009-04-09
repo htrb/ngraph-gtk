@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.124 2009/04/06 08:15:30 hito Exp $
+ * $Id: x11view.c,v 1.125 2009/04/09 10:11:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -759,6 +759,7 @@ ViewerWinSetup(void)
 
   gtk_widget_add_events(d->Win,
 			GDK_POINTER_MOTION_MASK |
+			GDK_POINTER_MOTION_HINT_MASK |
 			GDK_BUTTON_RELEASE_MASK |
 			GDK_BUTTON_PRESS_MASK |
 			GDK_KEY_PRESS_MASK |
@@ -1945,7 +1946,6 @@ ShowCrossGauge(GdkGC *gc)
   gdk_gc_set_function(gc, GDK_XOR);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
-  gdk_window_get_position(d->win, &x, &y);
   gdk_drawable_get_size(d->win, &width, &height);
 
   zoom = Menulocal.PaperZoom / 10000.0;
@@ -3824,7 +3824,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
   SetPoint(d, dx, dy);
 
-  return TRUE;
+  return FALSE;
 }
 
 static gboolean
@@ -3837,7 +3837,10 @@ ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data)
 
   point.x = e->x;
   point.y = e->y;
-  return ViewerEvMouseMove(e->state, &point, d);
+  ViewerEvMouseMove(e->state, &point, d);
+  gdk_event_request_motions(e); /* handles is_hint events */
+
+  return FALSE;
 }
 
 static void

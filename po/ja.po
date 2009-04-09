@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-07 16:09+0900\n"
+"POT-Creation-Date: 2009-04-09 18:27+0900\n"
 "PO-Revision-Date: 2009-04-07 16:08+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -18,15 +18,15 @@ msgstr ""
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
-#: src/gtk/ox11dlg.c:430
+#: src/gtk/ox11dlg.c:427
 msgid "Open file"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:479
+#: src/gtk/ox11dlg.c:476
 msgid "Open files"
 msgstr "ファイルを開く"
 
-#: src/gtk/ox11dlg.c:530
+#: src/gtk/ox11dlg.c:527
 msgid "Save file"
 msgstr "別名で保存"
 
@@ -1998,7 +1998,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:4766
+#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:4769
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2062,33 +2062,33 @@ msgstr "位置合わせ(_A)"
 msgid "_Show cross"
 msgstr "クロスゲージ表示(_S)"
 
-#: src/gtk/x11view.c:853 src/gtk/x11view.c:855
+#: src/gtk/x11view.c:854 src/gtk/x11view.c:856
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:929
+#: src/gtk/x11view.c:930
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:938
+#: src/gtk/x11view.c:939
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2220
+#: src/gtk/x11view.c:2221
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3331
+#: src/gtk/x11view.c:3332
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:4760
+#: src/gtk/x11view.c:4763
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:4767
+#: src/gtk/x11view.c:4770
 msgid "Drawing"
 msgstr "描画中"
 
