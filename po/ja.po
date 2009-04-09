@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-09 18:27+0900\n"
+"POT-Creation-Date: 2009-04-09 19:11+0900\n"
 "PO-Revision-Date: 2009-04-07 16:08+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2076,11 +2076,11 @@ msgstr "データ評価中"
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2221
+#: src/gtk/x11view.c:2220
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3332
+#: src/gtk/x11view.c:3331
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 

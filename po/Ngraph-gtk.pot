@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-23\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-09 18:27+0900\n"
+"POT-Creation-Date: 2009-04-09 19:11+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2070,11 +2070,11 @@ msgstr ""
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2221
+#: src/gtk/x11view.c:2220
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3332
+#: src/gtk/x11view.c:3331
 msgid "Moving data points is canceled."
 msgstr ""
 
