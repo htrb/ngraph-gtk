@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.c,v 1.83 2009/04/07 06:36:55 hito Exp $
+ * $Id: x11menu.c,v 1.84 2009/04/10 10:14:14 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1339,6 +1339,7 @@ free_cursor(void)
     NgraphApp.cursor[i] = NULL;
   }
   free(NgraphApp.cursor);
+  NgraphApp.cursor = NULL;
 }
 
 static gboolean

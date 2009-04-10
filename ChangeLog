@@ -7,6 +7,8 @@
 	(ViewerEvMouseMove): use "mouse_move_drag()", "mouse_move_zoom()",
 	"mouse_move_change()", "mouse_move_scroll()" and
 	"mouse_move_draw()".
+	(get_mouse_cursor_type): return "GDK_TCROSS" when "d->MoveData" is
+	TRUE.
 
 2009-04-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

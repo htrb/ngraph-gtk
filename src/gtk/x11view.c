@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.127 2009/04/10 08:51:44 hito Exp $
+ * $Id: x11view.c,v 1.128 2009/04/10 10:14:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3429,6 +3429,9 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
   struct narray *abbox;
   struct focuslist **focus;
   double zoom;
+
+  if (d->MoveData)
+    return GDK_TCROSS;
 
   num = arraynum(d->focusobj);
   if (num == 0)
