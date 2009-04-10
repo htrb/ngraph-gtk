@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.125 2009/04/09 10:11:50 hito Exp $
+ * $Id: x11view.c,v 1.126 2009/04/10 07:07:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3830,14 +3830,19 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 static gboolean
 ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data)
 {
-  struct Viewer *d;
   TPoint point;
+#if 0
+  static guint32 etime = 0;
 
-  d = (struct Viewer *) client_data;
+  if (e->time - etime < 100)
+    return FALSE;
+
+  etime = e->time;
+#endif
 
   point.x = e->x;
   point.y = e->y;
-  ViewerEvMouseMove(e->state, &point, d);
+  ViewerEvMouseMove(e->state, &point, (struct Viewer *) client_data);
   gdk_event_request_motions(e); /* handles is_hint events */
 
   return FALSE;
