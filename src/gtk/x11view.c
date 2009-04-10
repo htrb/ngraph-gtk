@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.128 2009/04/10 10:14:14 hito Exp $
+ * $Id: x11view.c,v 1.129 2009/04/10 15:41:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3938,17 +3938,19 @@ do_popup(GdkEventButton *event, struct Viewer *d)
       struct focuslist *focus;
       int id, last_id;
 
-      focus = *(struct focuslist **) arraynget(d->focusobj, 0);
-      id = chkobjoid(focus->obj, focus->oid);
-      last_id = chkobjlastinst(focus->obj);
+      focus = * (struct focuslist **) arraynget(d->focusobj, 0);
+      if (chkobjchild(chkobject("legend"), focus->obj)) {
+	id = chkobjoid(focus->obj, focus->oid);
+	last_id = chkobjlastinst(focus->obj);
 
-      if (id > 0) {
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_TOP], TRUE);
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_UP], TRUE);
-      }
-      if (id < last_id) {
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DOWN], TRUE);
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
+	if (id > 0) {
+	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_TOP], TRUE);
+	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_UP], TRUE);
+	}
+	if (id < last_id) {
+	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DOWN], TRUE);
+	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
+	}
       }
     }
   default:

@@ -1,3 +1,8 @@
+2009-04-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (do_popup): check if the focused object is
+	child of the "legend" object when "num == 1" .
+
 2009-04-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ShowPoints): draw arc and rectangle when
