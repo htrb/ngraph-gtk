@@ -1,3 +1,13 @@
+2009-04-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ShowPoints): draw arc and rectangle when
+	"num" is greater or equal to 2.
+	(mouse_move_drag, mouse_move_zoom, mouse_move_change)
+	(mouse_move_scroll, mouse_move_draw): add.
+	(ViewerEvMouseMove): use "mouse_move_drag()", "mouse_move_zoom()",
+	"mouse_move_change()", "mouse_move_scroll()" and
+	"mouse_move_draw()".
+
 2009-04-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ShowCrossGauge): don't call

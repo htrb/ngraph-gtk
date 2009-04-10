@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.126 2009/04/10 07:07:40 hito Exp $
+ * $Id: x11view.c,v 1.127 2009/04/10 08:51:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1843,8 +1843,7 @@ ShowPoints(GdkGC *gc)
   zoom = Menulocal.PaperZoom / 10000.0;
 
   if (d->Mode & POINT_TYPE_DRAW1) {
-
-    if (num == 2) {
+    if (num >= 2) {
       gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
       x1 = mxd2p(po[0]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
@@ -3638,17 +3637,157 @@ calc_integer_ratio(struct narray *points, int *dx, int *dy)
   *dy = y;
 }
 
+static void
+mouse_move_drag(GdkGC *dc, unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+{
+  int x, y;
+
+  ShowFocusFrame(dc);
+  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
+		- Menulocal.LeftMargin) / zoom;
+
+  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
+		- Menulocal.TopMargin) / zoom;
+
+  x = d->MouseX2 - d->MouseX1;
+  y = d->MouseY2 - d->MouseY1;
+
+  CheckGrid(FALSE, state, &x, &y, NULL);
+
+  d->FrameOfsX = x;
+  d->FrameOfsY = y;
+
+  ShowFocusFrame(dc);
+}
+
+static void
+mouse_move_zoom(GdkGC *dc, unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+{
+  double cc, nn, zoom2;
+  int vx1, vx2, vy1, vy2;
+
+  ShowFrameRect(dc);
+
+  vx1 = (mxp2d(point->x - d->cx + d->hscroll)
+	 - Menulocal.LeftMargin) / zoom;
+
+  vy1 = (mxp2d(point->y - d->cy + d->vscroll)
+	 - Menulocal.TopMargin) / zoom;
+
+  vx1 -= d->RefX1 - d->MouseDX;
+  vy1 -= d->RefY1 - d->MouseDY;
+
+  vx2 = (d->RefX2 - d->RefX1);
+  vy2 = (d->RefY2 - d->RefY1);
+
+  cc = vx1 * vx2 + vy1 * vy2;
+  nn = vx2 * vx2 + vy2 * vy2;
+
+  if ((nn == 0) || (cc < 0)) {
+    zoom2 = 0;
+  } else {
+    zoom2 = cc / nn;
+  }
+
+  if ((d->Mode != DataB) && (d->Mode != EvalB))
+    CheckGrid(FALSE, state, NULL, NULL, &zoom2);
+
+  d->Zoom = zoom2;
+
+  vx1 = d->RefX1 + vx2 * zoom2;
+  vy1 = d->RefY1 + vy2 * zoom2;
+
+  d->MouseX1 = d->RefX1;
+  d->MouseY1 = d->RefY1;
+
+  d->MouseX2 = vx1;
+  d->MouseY2 = vy1;
+
+  ShowFrameRect(dc);
+}
+
+static void
+mouse_move_change(GdkGC *dc, unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+{
+  int x, y;
+
+  ShowFocusLine(dc, d->ChangePoint);
+
+  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
+		- Menulocal.LeftMargin) / zoom;
+
+  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
+		- Menulocal.TopMargin) / zoom;
+
+  x = d->MouseX2 - d->MouseX1;
+  y = d->MouseY2 - d->MouseY1;
+
+  if ((d->Mode != DataB) && (d->Mode != EvalB)) {
+    CheckGrid(FALSE, state, &x, &y, NULL);
+  }
+
+  d->LineX = x;
+  d->LineY = y;
+
+  ShowFocusLine(dc, d->ChangePoint);
+}
+
+static void
+mouse_move_scroll(TPoint *point, struct Viewer *d)
+{
+  int h, w;
+
+  gdk_window_get_geometry(d->win, NULL, NULL, &w, &h, NULL);
+  if (point->y > h) {
+    range_increment(d->VScroll, SCROLL_INC);
+  } else if (point->y < 0) {
+    range_increment(d->VScroll, -SCROLL_INC);
+  }
+
+  if (point->x > w) {
+    range_increment(d->HScroll, SCROLL_INC);
+  } else if (point->x < 0) {
+    range_increment(d->HScroll, -SCROLL_INC);
+  }
+}
+
+static void
+mouse_move_draw(GdkGC *dc, unsigned int state, TPoint *point, int *dx, int *dy, struct Viewer *d)
+{
+  ShowPoints(dc);
+
+  if (arraynum(d->points) != 0) {
+    struct pointslist *po;
+    po = *(struct pointslist **) arraylast(d->points);
+
+    if (state & GDK_CONTROL_MASK) {
+      if (d->Mode & POINT_TYPE_DRAW1) {
+	calc_integer_ratio(d->points, dx, dy);
+      } else if (d->Mode & POINT_TYPE_DRAW2) {
+	calc_snap_angle(d->points, dx, dy);
+	if (! (state & GDK_SHIFT_MASK)) {
+	  CheckGrid(FALSE, 0, dx, dy, NULL);
+	}
+      }
+    }
+
+    if (po != NULL) {
+      po->x = *dx;
+      po->y = *dy;
+    }
+  }
+  ShowPoints(dc);
+}
+
 static gboolean
 ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
-  int x, y, dx, dy, w, h;
+  int dx, dy;
   double zoom;
 
   if (Menulock || GlobalLock || ! d->win)
     return FALSE;
-
-  gdk_window_get_geometry(d->win, NULL, NULL, &w, &h, NULL);
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -3666,29 +3805,16 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
   dc = Menulocal.gc;
 
-  if (region == NULL) {
-    if (d->ShowCross)
-      ShowCrossGauge(dc);
+  if (region == NULL && d->ShowCross) {
+    ShowCrossGauge(dc);
 
     d->CrossX = dx;
     d->CrossY = dy;
 
-    if (d->ShowCross)
-      ShowCrossGauge(dc);
+    ShowCrossGauge(dc);
   }
 
-  if (point->y > h) {
-    range_increment(d->VScroll, SCROLL_INC);
-  } else if (point->y < 0) {
-    range_increment(d->VScroll, -SCROLL_INC);
-  }
-
-  if (point->x > w) {
-    range_increment(d->HScroll, SCROLL_INC);
-  } else if (point->x < 0) {
-    range_increment(d->HScroll, -SCROLL_INC);
-  }
-
+  mouse_move_scroll(point, d);
 
   if (! d->Capture) {
     set_mouse_cursor_hover(d, point->x, point->y);
@@ -3704,121 +3830,31 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 	pos == GDK_CROSSHAIR ||
 	(d->Mode & POINT_TYPE_TRIM)) {
 
-      if (d->MouseMode == MOUSEDRAG) {
-	ShowFocusFrame(dc);
-	d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		      - Menulocal.LeftMargin) / zoom;
-
-	d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		      - Menulocal.TopMargin) / zoom;
-
-	x = d->MouseX2 - d->MouseX1;
-	y = d->MouseY2 - d->MouseY1;
-
-	CheckGrid(FALSE, state, &x, &y, NULL);
-
-	d->FrameOfsX = x;
-	d->FrameOfsY = y;
-
-	ShowFocusFrame(dc);
-
-      } else if ((MOUSEZOOM1 <= d->MouseMode)
-		 && (d->MouseMode <= MOUSEZOOM4)) {
-	double cc, nn, zoom2;
-	int vx1, vx2, vy1, vy2;
-
-	ShowFrameRect(dc);
-
-	vx1 = (mxp2d(point->x - d->cx + d->hscroll)
-	       - Menulocal.LeftMargin) / zoom;
-
-	vy1 = (mxp2d(point->y - d->cy + d->vscroll)
-	       - Menulocal.TopMargin) / zoom;
-
-	vx1 -= d->RefX1 - d->MouseDX;
-	vy1 -= d->RefY1 - d->MouseDY;
-
-	vx2 = (d->RefX2 - d->RefX1);
-	vy2 = (d->RefY2 - d->RefY1);
-
-	cc = vx1 * vx2 + vy1 * vy2;
-	nn = vx2 * vx2 + vy2 * vy2;
-
-	if ((nn == 0) || (cc < 0)) {
-	  zoom2 = 0;
-	} else {
-	  zoom2 = cc / nn;
-	}
-
-	if ((d->Mode != DataB) && (d->Mode != EvalB))
-	  CheckGrid(FALSE, state, NULL, NULL, &zoom2);
-
-	d->Zoom = zoom2;
-
-	vx1 = d->RefX1 + vx2 * zoom2;
-	vy1 = d->RefY1 + vy2 * zoom2;
-
-	d->MouseX1 = d->RefX1;
-	d->MouseY1 = d->RefY1;
-
-	d->MouseX2 = vx1;
-	d->MouseY2 = vy1;
-
-	ShowFrameRect(dc);
-
-      } else if (d->MouseMode == MOUSECHANGE) {
-	ShowFocusLine(dc, d->ChangePoint);
-
-	d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		      - Menulocal.LeftMargin) / zoom;
-
-	d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		      - Menulocal.TopMargin) / zoom;
-
-	x = d->MouseX2 - d->MouseX1;
-	y = d->MouseY2 - d->MouseY1;
-
-	if ((d->Mode != DataB) && (d->Mode != EvalB)) {
-	  CheckGrid(FALSE, state, &x, &y, NULL);
-	}
-
-	d->LineX = x;
-	d->LineY = y;
-
-	ShowFocusLine(dc, d->ChangePoint);
-
-      } else if (d->MouseMode == MOUSEPOINT) {
+      switch (d->MouseMode) {
+      case MOUSEDRAG:
+	mouse_move_drag(dc, state, point, zoom, d);
+	break;
+      case MOUSEZOOM1:
+      case MOUSEZOOM2:
+      case MOUSEZOOM3:
+      case MOUSEZOOM4:
+	mouse_move_zoom(dc, state, point, zoom, d);
+	break;
+      case MOUSECHANGE:
+	mouse_move_change(dc, state, point, zoom, d);
+	break;
+      case MOUSEPOINT:
 	update_frame_rect(point, d, dc, zoom);
+	break;
+      case MOUSENONE:
+	break;
       }
     } else if (d->Mode & POINT_TYPE_POINT) {
       if (d->MouseMode == MOUSEPOINT) {
 	update_frame_rect(point, d, dc, zoom);
       }
     } else {
-
-      ShowPoints(dc);
-
-      if (arraynum(d->points) != 0) {
-	struct pointslist *po;
-	po = *(struct pointslist **) arraylast(d->points);
-
-	if (state & GDK_CONTROL_MASK) {
-	  if (d->Mode & POINT_TYPE_DRAW1) {
-	    calc_integer_ratio(d->points, &dx, &dy);
-	  } else if (d->Mode & POINT_TYPE_DRAW2) {
-	    calc_snap_angle(d->points, &dx, &dy);
-	    if (! (state & GDK_SHIFT_MASK)) {
-	      CheckGrid(FALSE, 0, &dx, &dy, NULL);
-	    }
-	  }
-	}
-
-	if (po != NULL) {
-	  po->x = dx;
-	  po->y = dy;
-	}
-      }
-      ShowPoints(dc);
+      mouse_move_draw(dc, state, point, &dx, &dy, d);
     }
   }
 
