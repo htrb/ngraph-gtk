@@ -706,66 +706,67 @@ alias:
 version: 1.00.01
 parent: object
 object id: 20
-number of fields: 58
-size of instance: 440
-r--              id    int
-r--             oid    int
-rw-            name    char*
-r-x            save    *char( char *[] )
---x            init    void( )
---x            done    void( )
----            next    void*
-rw-         profile    char*
-rw-            type    enum( poly pow exp log user )
-rw-             min    double
-rw-             max    double
-rw-             div    int
-rw-   interpolation    bool
-rw-   through_point    bool
-rw-         point_x    double
-rw-         point_y    double
-rw-        equation    char*
-rw-  poly_dimension    int
-rw-     weight_func    char*
-rw-       user_func    char*
-rw-      derivative    bool
-rw-     derivative0    char*
-rw-     derivative1    char*
-rw-     derivative2    char*
-rw-     derivative3    char*
-rw-     derivative4    char*
-rw-     derivative5    char*
-rw-     derivative6    char*
-rw-     derivative7    char*
-rw-     derivative8    char*
-rw-     derivative9    char*
-rw-        converge    double
-rw-      parameter0    double
-rw-      parameter1    double
-rw-      parameter2    double
-rw-      parameter3    double
-rw-      parameter4    double
-rw-      parameter5    double
-rw-      parameter6    double
-rw-      parameter7    double
-rw-      parameter8    double
-rw-      parameter9    double
-r--             %00    double
-r--             %01    double
-r--             %02    double
-r--             %03    double
-r--             %04    double
-r--             %05    double
-r--             %06    double
-r--             %07    double
-r--             %08    double
-r--             %09    double
-r--          number    int
-r--           error    double
-r--     correlation    double
-rw-         display    bool
-r-x             fit    void( double[] )
----          _local    void*
+number of fields: 59
+size of instance: 448
+r--               id    int
+r--              oid    int
+rw-             name    char*
+r-x             save    *char( char *[] )
+--x             init    void( )
+--x             done    void( )
+---             next    void*
+rw-          profile    char*
+rw-             type    enum( poly pow exp log user )
+rw-              min    double
+rw-              max    double
+rw-              div    int
+rw-    interpolation    bool
+rw-    through_point    bool
+rw-          point_x    double
+rw-          point_y    double
+rw-         equation    char*
+rw-   poly_dimension    int
+rw-      weight_func    char*
+rw-        user_func    char*
+rw-       derivative    bool
+rw-      derivative0    char*
+rw-      derivative1    char*
+rw-      derivative2    char*
+rw-      derivative3    char*
+rw-      derivative4    char*
+rw-      derivative5    char*
+rw-      derivative6    char*
+rw-      derivative7    char*
+rw-      derivative8    char*
+rw-      derivative9    char*
+rw-         converge    double
+rw-       parameter0    double
+rw-       parameter1    double
+rw-       parameter2    double
+rw-       parameter3    double
+rw-       parameter4    double
+rw-       parameter5    double
+rw-       parameter6    double
+rw-       parameter7    double
+rw-       parameter8    double
+rw-       parameter9    double
+r--              %00    double
+r--              %01    double
+r--              %02    double
+r--              %03    double
+r--              %04    double
+r--              %05    double
+r--              %06    double
+r--              %07    double
+r--              %08    double
+r--              %09    double
+r--           number    int
+r--            error    double
+r--      correlation    double
+rw-          display    bool
+r-x              fit    void( double[] )
+r-x             calc    *char( double )
+---           _local    void*
 </pre>
 
 <h3>prm オブジェクト</h3>
