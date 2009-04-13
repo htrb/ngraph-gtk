@@ -1,3 +1,8 @@
+2009-04-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (ToFullPath): use loop to modify "file" field
+	of "file" and "merge" object.
+
 2009-04-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (do_popup): check if the focused object is

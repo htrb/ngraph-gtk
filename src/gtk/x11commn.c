@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.32 2009/04/06 08:15:30 hito Exp $
+ * $Id: x11commn.c,v 1.33 2009/04/13 00:58:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -417,30 +417,32 @@ axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
   struct narray iarray;
   int anum, len;
 
-  if ((getobj(obj, axis_str, i, 0, NULL, &axis) >= 0) && (axis != NULL)) {
-    arrayinit(&iarray, sizeof(int));
-    if (!getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
-      anum = arraynum(&iarray);
-      if ((anum > 0) && (spc == 1)) {
-	aid = *(int *) arraylast(&iarray);
-	if (aid == id1)
-	  aid = id2;
-	else {
-	  if (aid > id1)
-	    aid--;
-	  if (aid >= id2)
-	    aid++;
-	}
-	len = strlen(chkobjectname(aobj)) + 10;
-	axis2 = (char *) memalloc(len);
-	if (axis2) {
-	  snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid);
-	  putobj(obj, axis_str, i, axis2);
-	}
-      }
-      arraydel(&iarray);
+  if (getobj(obj, axis_str, i, 0, NULL, &axis) < 0 || axis == NULL)
+    return;
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(axis, &aobj, &iarray, FALSE, &spc))
+    return;
+
+  anum = arraynum(&iarray);
+  if (anum > 0 && spc == 1) {
+    aid = *(int *) arraylast(&iarray);
+    if (aid == id1) {
+      aid = id2;
+    } else {
+      if (aid > id1)
+	aid--;
+      if (aid >= id2)
+	aid++;
+    }
+    len = strlen(chkobjectname(aobj)) + 10;
+    axis2 = (char *) memalloc(len);
+    if (axis2) {
+      snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid);
+      putobj(obj, axis_str, i, axis2);
     }
   }
+  arraydel(&iarray);
 }
 
 void
@@ -974,20 +976,18 @@ ToFullPath(void)
 {
   struct objlist *obj;
   int i;
-  char *file,*file2;
+  unsigned int j;
+  char *file, *file2, *objname[] = {"file", "merge"};
 
-  if ((obj=chkobject("file"))!=NULL) {
-    for (i=0;i<=chkobjlastinst(obj);i++) {
-      getobj(obj,"file",i,0,NULL,&file);
-      file2=getfullpath(file);
-      putobj(obj,"file",i,file2);
-    }
-  }
-  if ((obj=chkobject("merge"))!=NULL) {
-    for (i=0;i<=chkobjlastinst(obj);i++) {
-      getobj(obj,"file",i,0,NULL,&file);
-      file2=getfullpath(file);
-      putobj(obj,"file",i,file2);
+  for (j = 0; j < sizeof(objname) / sizeof(*objname); j++) {
+    obj = chkobject(objname[j]);
+    if (obj == NULL)
+      continue;
+
+    for (i = 0; i <= chkobjlastinst(obj); i++) {
+      getobj(obj, "file", i, 0, NULL, &file);
+      file2 = getfullpath(file);
+      putobj(obj, "file", i, file2);
     }
   }
 }
@@ -1116,7 +1116,7 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
   if (Menulocal.expandtofullpath && (!ignorepath))
     ToFullPath();
 
-  ignorepath=FALSE;
+  ignorepath = FALSE;
 
   putobj(sys, "ignore_path", 0, &ignorepath);
   InfoWinClear();
