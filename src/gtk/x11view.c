@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.129 2009/04/10 15:41:01 hito Exp $
+ * $Id: x11view.c,v 1.130 2009/04/13 10:03:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,7 @@
 #include "ngraph.h"
 #include "object.h"
 #include "gra.h"
+#include "olegend.h"
 #include "mathfn.h"
 #include "ioutil.h"
 #include "nstring.h"
@@ -1678,6 +1679,27 @@ AlignFocusedObj(int align)
 }
 
 static void
+show_focus_line_arc(GdkGC *gc, int change, double zoom, struct objlist *obj, char *inst, struct Viewer *d)
+{
+  int x, y, rx, ry, a1, a2;
+
+  if (arc_get_angle(obj, inst, change, d->LineX, d->LineY, &a1, &a2))
+    return;
+
+  _getobj(obj, "x", inst, &x);
+  _getobj(obj, "y", inst, &y);
+  _getobj(obj, "rx", inst, &rx);
+  _getobj(obj, "ry", inst, &ry);
+
+  rx = mxd2p(rx * zoom);
+  ry = mxd2p(ry * zoom);
+  x = mxd2p(x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
+  y = mxd2p(y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+
+  gdk_draw_arc(d->win, gc, FALSE, x - rx, y - ry, rx * 2, ry * 2, a1 / 100.0 * 64, a2 / 100.0 * 64);
+}
+
+static void
 ShowFocusLine(GdkGC *gc, int change)
 {
   int j, num;
@@ -1717,6 +1739,11 @@ ShowFocusLine(GdkGC *gc, int change)
 
       if (focus[0]->obj == chkobject("rectangle"))
 	frame = TRUE;
+
+      if (focus[0]->obj == chkobject("arc")) {
+	show_focus_line_arc(gc, change, zoom, focus[0]->obj, inst, d);
+	goto End;
+      }
 
       if (focus[0]->obj == chkobject("axis")) {
 	_getobj(focus[0]->obj, "group", inst, &group);
@@ -1819,6 +1846,8 @@ ShowFocusLine(GdkGC *gc, int change)
       }
     }
   }
+
+ End:
   gdk_gc_set_function(gc, GDK_COPY);
   restorestdio(&save);
 }

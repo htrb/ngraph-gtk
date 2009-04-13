@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.8 2009/03/24 09:15:13 hito Exp $
+ * $Id: oarc.c,v 1.9 2009/04/13 10:03:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,6 +26,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include "ngraph.h"
@@ -218,6 +219,17 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&maxx,0);
   arrayins(array,&miny,0);
   arrayins(array,&minx,0);
+
+  if (angle2 - angle1 < 36000) {
+    arrayadd(array, &x1);
+    arrayadd(array, &y1);
+  }
+
+  x = x0 + rx * cos(angle2 * MPI / 18000);
+  y = y0 - ry * sin(angle2 * MPI / 18000);
+  arrayadd(array, &x);
+  arrayadd(array, &y);
+
   if (arraynum(array)==0) {
     arrayfree(array);
     *(struct narray **) rval = NULL;
@@ -243,6 +255,31 @@ arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"bbox",inst,&array);
   arrayfree(array);
   if (_putobj(obj,"bbox",inst,NULL)) return 1;
+  return 0;
+}
+
+static int 
+arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int a1, a2;
+  int point, px, py;
+  struct narray *array;
+  
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
+
+  point = * (int *) argv[2];
+  px = * (int *) argv[3];
+  py = * (int *) argv[4];
+
+  if (arc_get_angle(obj, inst, point, px, py, &a1, &a2) == 0) {
+    if (_putobj(obj, "angle1", inst, &a1)) return 1;
+    if (_putobj(obj, "angle2", inst, &a2)) return 1;
+
+    _getobj(obj, "bbox", inst, &array);
+    arrayfree(array);
+    if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  }
+
   return 0;
 }
 
@@ -351,6 +388,7 @@ static struct objtable arc[] = {
   {"draw",NVFUNC,NREAD|NEXEC,arcdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,arcbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0},
+  {"change",NVFUNC,NREAD|NEXEC,arcchange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},
 };
