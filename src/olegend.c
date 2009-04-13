@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.9 2009/04/13 10:26:46 hito Exp $
+ * $Id: olegend.c,v 1.10 2009/04/13 10:34:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -353,7 +353,7 @@ arc_get_angle(struct objlist *obj, char *inst, int point, int px, int py, int *a
   if (a2 < 0)
     a2 += 360;
 
-  if (a2 > 360)
+  if (a2 > 360 || a2 < 5)
     a2 = 360;
 
   a1 *= 100;
