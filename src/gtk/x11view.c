@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.132 2009/04/14 08:09:26 hito Exp $
+ * $Id: x11view.c,v 1.134 2009/04/14 08:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,7 +35,6 @@
 #include "oarc.h"
 #include "mathfn.h"
 #include "ioutil.h"
-#include "axis.h"
 #include "nstring.h"
 
 #include "gtk_liststore.h"
@@ -2773,8 +2772,8 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
     ShowFocusFrame(dc);
-    if (d->Mode == LegendB || (d->Mode==PointB && !axis))
-      d->allclear=FALSE;
+    if (d->Mode == LegendB || (d->Mode == PointB && !axis))
+      d->allclear = FALSE;
     UpdateAll();
   } else {
     d->FrameOfsX = d->FrameOfsY = 0;

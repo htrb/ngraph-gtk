@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.11 2009/04/14 08:09:25 hito Exp $
+ * $Id: oarc.c,v 1.12 2009/04/14 08:37:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -221,8 +221,6 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&miny,0);
   arrayins(array,&minx,0);
 
-#define P_OFST 400
-
   x = x0 - rx;
   y = y0 - ry;
   arrayadd(array, &x);
@@ -238,12 +236,12 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     arrayadd(array, &y);
   }
 
-  if (arraynum(array)==0) {
+  if (arraynum(array) == 0) {
     arrayfree(array);
     *(struct narray **) rval = NULL;
     return 1;
   }
-  *(struct narray **)rval=array;
+  *(struct narray **) rval = array;
   return 0;
 }
 
