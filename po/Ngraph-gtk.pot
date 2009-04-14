@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-23\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-13 21:24+0900\n"
+"POT-Creation-Date: 2009-04-14 10:19+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1573
+#: src/gtk/ox11menu.c:1546
 msgid "Unsaved Graph"
 msgstr ""
 
@@ -73,7 +73,7 @@ msgid "len"
 msgstr ""
 
 #: src/gtk/x11axis.c:79 src/gtk/x11file.c:99 src/gtk/x11lgnd.c:76
-#: src/gtk/x11merge.c:70 src/gtk/x11view.c:643
+#: src/gtk/x11merge.c:70 src/gtk/x11view.c:769
 msgid "_Duplicate"
 msgstr ""
 
@@ -790,7 +790,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1406 src/gtk/x11file.c:1678 src/gtk/x11view.c:507
+#: src/gtk/x11file.c:1406 src/gtk/x11file.c:1678 src/gtk/x11view.c:633
 msgid "Line No."
 msgstr ""
 
@@ -911,11 +911,11 @@ msgstr ""
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:2852 src/gtk/x11view.c:516
+#: src/gtk/x11file.c:2852 src/gtk/x11view.c:642
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:2856 src/gtk/x11view.c:517
+#: src/gtk/x11file.c:2856 src/gtk/x11view.c:643
 msgid "_Move"
 msgstr ""
 
@@ -1992,7 +1992,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:4849
+#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:4942
 msgid "Drawing."
 msgstr ""
 
@@ -2024,65 +2024,65 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11view.c:634
+#: src/gtk/x11view.c:760
 msgid "_Left"
 msgstr ""
 
-#: src/gtk/x11view.c:635
+#: src/gtk/x11view.c:761
 msgid "_Vertical center"
 msgstr ""
 
-#: src/gtk/x11view.c:636
+#: src/gtk/x11view.c:762
 msgid "_Right"
 msgstr ""
 
-#: src/gtk/x11view.c:638
+#: src/gtk/x11view.c:764
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11view.c:639
+#: src/gtk/x11view.c:765
 msgid "_Holizontal center"
 msgstr ""
 
-#: src/gtk/x11view.c:640
+#: src/gtk/x11view.c:766
 msgid "_Bottom"
 msgstr ""
 
-#: src/gtk/x11view.c:648
+#: src/gtk/x11view.c:774
 msgid "_Align"
 msgstr ""
 
-#: src/gtk/x11view.c:649
+#: src/gtk/x11view.c:775
 msgid "_Show cross"
 msgstr ""
 
-#: src/gtk/x11view.c:856 src/gtk/x11view.c:858
+#: src/gtk/x11view.c:982 src/gtk/x11view.c:984
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:932
+#: src/gtk/x11view.c:1058
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:941
+#: src/gtk/x11view.c:1067
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2249
+#: src/gtk/x11view.c:2346
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3364
+#: src/gtk/x11view.c:3461
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:4843
+#: src/gtk/x11view.c:4936
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:4850
+#: src/gtk/x11view.c:4943
 msgid "Drawing"
 msgstr ""
 
