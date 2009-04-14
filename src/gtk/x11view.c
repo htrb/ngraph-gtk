@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.134 2009/04/14 08:38:53 hito Exp $
+ * $Id: x11view.c,v 1.133 2009/04/14 08:37:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,6 +35,7 @@
 #include "oarc.h"
 #include "mathfn.h"
 #include "ioutil.h"
+#include "axis.h"
 #include "nstring.h"
 
 #include "gtk_liststore.h"
