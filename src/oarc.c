@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.10 2009/04/14 01:14:32 hito Exp $
+ * $Id: oarc.c,v 1.11 2009/04/14 08:09:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,6 +35,7 @@
 #include "mathfn.h"
 #include "oroot.h"
 #include "olegend.h"
+#include "oarc.h"
 
 #define NAME "arc"
 #define PARENT "legend"
@@ -220,15 +221,22 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&miny,0);
   arrayins(array,&minx,0);
 
-  if (angle2 - angle1 < 36000) {
-    arrayadd(array, &x1);
-    arrayadd(array, &y1);
-  }
+#define P_OFST 400
 
-  x = x0 + rx * cos(angle2 * MPI / 18000);
-  y = y0 - ry * sin(angle2 * MPI / 18000);
+  x = x0 - rx;
+  y = y0 - ry;
   arrayadd(array, &x);
   arrayadd(array, &y);
+
+  arrayadd(array, &x1);
+  arrayadd(array, &y1);
+
+  if (angle2 - angle1 < 36000) {
+    x = x0 + rx * cos(angle2 * MPI / 18000);
+    y = y0 - ry * sin(angle2 * MPI / 18000);
+    arrayadd(array, &x);
+    arrayadd(array, &y);
+  }
 
   if (arraynum(array)==0) {
     arrayfree(array);
@@ -261,17 +269,39 @@ arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int point, a1, a2;
+  int point, a1, a2, rx, ry, ret;
   struct narray *array;
-  
+
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
   point = * (int *) argv[2];
   a1 = * (int *) argv[3];
   a2 = * (int *) argv[4];
 
-  if (_putobj(obj, "angle1", inst, &a1)) return 1;
-  if (_putobj(obj, "angle2", inst, &a2)) return 1;
+  ret = 1;
+  switch (point) {
+  case ARC_POINT_TYPE_R:
+    _getobj(obj, "rx", inst, &rx);
+    _getobj(obj, "ry", inst, &ry);
+    rx -= a1;
+    ry -= a2;
+
+    if (rx > 0)
+      ret = _putobj(obj, "rx", inst, &rx);
+
+    if (ry > 0)
+      ret = _putobj(obj, "ry", inst, &ry);
+
+    break;
+  case ARC_POINT_TYPE_ANGLE1:
+  case ARC_POINT_TYPE_ANGLE2:
+    ret = _putobj(obj, "angle1", inst, &a1);
+    ret = _putobj(obj, "angle2", inst, &a2);
+    break;
+  }
+
+  if (ret)
+    return 1;
 
   _getobj(obj, "bbox", inst, &array);
   arrayfree(array);

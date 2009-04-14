@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.131 2009/04/14 01:14:33 hito Exp $
+ * $Id: x11view.c,v 1.132 2009/04/14 08:09:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,6 +32,7 @@
 #include "object.h"
 #include "gra.h"
 #include "olegend.h"
+#include "oarc.h"
 #include "mathfn.h"
 #include "ioutil.h"
 #include "axis.h"
@@ -261,6 +262,12 @@ arc_get_angle(struct objlist *obj, char *inst, int round, int point, int px, int
   int x, y, rx, ry, a1, a2;
   double dx, dy, r, angle, v;
 
+  if (inst == NULL)
+    return 1;
+
+  if (point != ARC_POINT_TYPE_ANGLE1 && point != ARC_POINT_TYPE_ANGLE2)
+    return 1;
+
   _getobj(obj, "x", inst, &x);
   _getobj(obj, "y", inst, &y);
   _getobj(obj, "rx", inst, &rx);
@@ -268,7 +275,7 @@ arc_get_angle(struct objlist *obj, char *inst, int round, int point, int px, int
   _getobj(obj, "angle1", inst, &a1);
   _getobj(obj, "angle2", inst, &a2);
 
-  if (inst == NULL || rx < 1 || ry < 1 || point < 0 || point > 1)
+  if (rx < 1 || ry < 1)
     return 1;
 
   dx = 1.0 * (px - x) / rx;
@@ -320,12 +327,12 @@ arc_get_angle(struct objlist *obj, char *inst, int round, int point, int px, int
   a2 /= 100;
 
   switch (point) {
-  case 0:
+  case ARC_POINT_TYPE_ANGLE1:
     v = angle - a1;
     a1 = angle;
     a2 -= v;
     break;
-  case 1:
+  case ARC_POINT_TYPE_ANGLE2:
     a2 = angle - a1;
     break;
   }
@@ -333,8 +340,11 @@ arc_get_angle(struct objlist *obj, char *inst, int round, int point, int px, int
   if (a1 < 0)
     a1 += 360;
 
-  if (a2 < 0)
+  if (a2 < 0) {
     a2 += 360;
+  } else if (a2 > 360) {
+    a2 -= 360;
+  }
 
   if (a2 > 360 || a2 < 5)
     a2 = 360;
@@ -1804,20 +1814,32 @@ show_focus_line_arc(GdkGC *gc, unsigned int state, int change, double zoom, stru
 {
   int x, y, rx, ry, a1, a2;
 
-  if (arc_get_angle(obj, inst, state & GDK_CONTROL_MASK, change, d->MouseX2, d->MouseY2, &a1, &a2))
-    return;
-
   _getobj(obj, "x", inst, &x);
   _getobj(obj, "y", inst, &y);
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
+  _getobj(obj, "angle1", inst, &a1);
+  _getobj(obj, "angle2", inst, &a2);
 
-  rx = mxd2p(rx * zoom);
-  ry = mxd2p(ry * zoom);
-  x = coord_conv_x(x, zoom, d);
-  y = coord_conv_y(y, zoom, d);
+  switch (change) {
+  case ARC_POINT_TYPE_R:
+    ry -= d->LineY;
+    rx -= d->LineX;
+    break;
+  case ARC_POINT_TYPE_ANGLE1:
+  case ARC_POINT_TYPE_ANGLE2:
+    if (arc_get_angle(obj, inst, state & GDK_CONTROL_MASK, change, d->MouseX2, d->MouseY2, &a1, &a2))
+      return;
+    break;
+  }
 
-  gdk_draw_arc(d->win, gc, FALSE, x - rx, y - ry, rx * 2, ry * 2, a1 / 100.0 * 64, a2 / 100.0 * 64);
+  if (rx > 0 && ry > 0) {
+    rx = mxd2p(rx * zoom);
+    ry = mxd2p(ry * zoom);
+    x = coord_conv_x(x, zoom, d);
+    y = coord_conv_y(y, zoom, d);
+    gdk_draw_arc(d->win, gc, FALSE, x - rx, y - ry, rx * 2, ry * 2, a1 / 100.0 * 64, a2 / 100.0 * 64);
+  }
 }
 
 static void
@@ -2731,7 +2753,8 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
       obj = focus->obj;
       inst = chkobjinstoid(focus->obj, focus->oid);
 
-      if (obj == chkobject("arc")) {
+      if (obj == chkobject("arc") &&
+	  (d->ChangePoint == ARC_POINT_TYPE_ANGLE1 || d->ChangePoint == ARC_POINT_TYPE_ANGLE2)) {
 	if (arc_get_angle(obj, inst, state & GDK_CONTROL_MASK, d->ChangePoint, d->MouseX2, d->MouseY2, &dx, &dy))
 	  inst = NULL;
       } else if (obj == chkobject("axis")) {

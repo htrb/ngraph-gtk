@@ -18,6 +18,8 @@
 	(ShowFocusLine): add argument "state".
 	(mouse_up_change): check if the focused object is "arc".
 
+	* src/oarc.h: add.
+
 	* src/oarc.c (arcbbox): add points to modify angle.
 	(arcchange): add.
 	(arc): add "change" field.
