@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.12 2009/04/14 08:37:25 hito Exp $
+ * $Id: oarc.c,v 1.13 2009/04/14 09:11:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -221,14 +221,17 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&miny,0);
   arrayins(array,&minx,0);
 
+  /* ARC_POINT_TYPE_R */
   x = x0 - rx;
   y = y0 - ry;
   arrayadd(array, &x);
   arrayadd(array, &y);
 
+  /* ARC_POINT_TYPE_ANGLE1 */
   arrayadd(array, &x1);
   arrayadd(array, &y1);
 
+  /* ARC_POINT_TYPE_ANGLE2 */
   if (angle2 - angle1 < 36000) {
     x = x0 + rx * cos(angle2 * MPI / 18000);
     y = y0 - ry * sin(angle2 * MPI / 18000);
