@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.9 2009/04/13 10:03:55 hito Exp $
+ * $Id: oarc.c,v 1.10 2009/04/14 01:14:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -261,24 +261,21 @@ arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int a1, a2;
-  int point, px, py;
+  int point, a1, a2;
   struct narray *array;
   
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
   point = * (int *) argv[2];
-  px = * (int *) argv[3];
-  py = * (int *) argv[4];
+  a1 = * (int *) argv[3];
+  a2 = * (int *) argv[4];
 
-  if (arc_get_angle(obj, inst, point, px, py, &a1, &a2) == 0) {
-    if (_putobj(obj, "angle1", inst, &a1)) return 1;
-    if (_putobj(obj, "angle2", inst, &a2)) return 1;
+  if (_putobj(obj, "angle1", inst, &a1)) return 1;
+  if (_putobj(obj, "angle2", inst, &a2)) return 1;
 
-    _getobj(obj, "bbox", inst, &array);
-    arrayfree(array);
-    if (_putobj(obj, "bbox", inst, NULL)) return 1;
-  }
+  _getobj(obj, "bbox", inst, &array);
+  arrayfree(array);
+  if (_putobj(obj, "bbox", inst, NULL)) return 1;
 
   return 0;
 }

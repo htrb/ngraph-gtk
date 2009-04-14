@@ -1,5 +1,5 @@
 /* 
- * $Id: axis.c,v 1.3 2009/03/24 10:29:24 hito Exp $
+ * $Id: axis.c,v 1.4 2009/04/14 01:14:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,7 @@
 #include <math.h>
 #include <string.h>
 #include "mathfn.h"
+#include "object.h"
 #include "axis.h"
 
 #define TRUE  1
@@ -249,5 +250,3 @@ getaxispositionini(struct axislocal *alocal,
   getaxispositionfirst(alocal);
   return 0;
 }
-
-

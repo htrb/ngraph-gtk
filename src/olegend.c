@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.10 2009/04/13 10:34:17 hito Exp $
+ * $Id: olegend.c,v 1.11 2009/04/14 01:14:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -266,105 +266,6 @@ legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"bbox",inst,&array);
   arrayfree(array);
   if (_putobj(obj,"bbox",inst,NULL)) return 1;
-  return 0;
-}
-
-int
-arc_get_angle(struct objlist *obj, char *inst, int point, int px, int py, int *angle1, int *angle2)
-{
-  int x, y, rx, ry, a1, a2;
-  double dx, dy, r, angle, v;
-
-  _getobj(obj, "x", inst, &x);
-  _getobj(obj, "y", inst, &y);
-  _getobj(obj, "rx", inst, &rx);
-  _getobj(obj, "ry", inst, &ry);
-  _getobj(obj, "angle1", inst, &a1);
-  _getobj(obj, "angle2", inst, &a2);
-
-  if (rx < 1 || ry < 1 || point < 0 || point > 1)
-    return 1;
-
-  switch (point) {
-  case 0:
-    px += x + rx * cos(a1 * MPI / 18000);
-    py += y - ry * sin(a1 * MPI / 18000);
-    break;
-  case 1:
-    px += x + rx * cos((a1 + a2) * MPI / 18000);
-    py += y - ry * sin((a1 + a2) * MPI / 18000);
-    break;
-  }
-
-  dx = 1.0 * (px - x) / rx;
-  dy = 1.0 * (y - py) / ry;
-  r = sqrt(dx * dx + dy * dy);
-
-  if (dx == 0 && dy == 0)
-    return 1;
-
-  if (dx >= 0 && dy >= 0) {
-    if (dx > dy) {
-      angle = acos(dx / r) / MPI * 180;
-    } else { 
-      angle = asin(dy / r) / MPI * 180;
-    }
-  } else if (dx < 0 && dy >= 0) {
-    if (-dx > dy) {
-      angle = acos(-dx / r) / MPI * 180;
-    } else { 
-      angle = asin(dy / r) / MPI * 180;
-    }
-    angle = 180 - angle;
-  } else if (dx < 0 && dy < 0) {
-    if (-dx > -dy) {
-      angle = acos(-dx / r) / MPI * 180;
-    } else { 
-      angle = asin(-dy / r) / MPI * 180;
-    }
-    angle += 180;
-  } else {
-    if (dx > -dy) {
-      angle = acos(dx / r) / MPI * 180;
-    } else { 
-      angle = asin(-dy / r) / MPI * 180;
-    }
-    angle = 360 - angle;
-  }
-
-
-  a1 /= 100;
-  a2 /= 100;
-
-  switch (point) {
-  case 0:
-    v = angle - a1;
-    a1 = angle;
-    a2 -= v;
-    break;
-  case 1:
-    a2 = angle - a1;
-    break;
-  }
-
-  if (a1 < 0)
-    a1 += 360;
-
-  if (a2 < 0)
-    a2 += 360;
-
-  if (a2 > 360 || a2 < 5)
-    a2 = 360;
-
-  a1 *= 100;
-  a2 *= 100;
-
-  if (angle1)
-    *angle1 = a1;
-
-  if (angle2)
-    *angle2 = a2;
-
   return 0;
 }
 

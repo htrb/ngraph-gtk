@@ -1,17 +1,29 @@
+2009-04-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mxd2p, mxd2px, mxd2py, mxp2d): remove.
+
+	* src/gtk/x11view.c (mxd2p, mxp2d coord_conv_x, coord_conv_y)
+	(draw_frame_rect, draw_focus_line): add.
+	(GetFocusFrame, ShowFocusFrame, show_focus_line_arc)
+	(draw_frame_rect, ShowFocusLine, ShowPoints, ShowFrameRect)
+	(ShowCrossGauge, get_mouse_cursor_type): use "coord_conv_x()" and
+	"coord_conv_y()".
+	(ShowFocusLine): use "draw_frame_rect()" and "draw_focus_line()".
+
 2009-04-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (arc_get_angle, show_focus_line_arc): add.
+	(ShowFocusLine): call "show_focus_line_arc()" when focused object
+	is "arc".
+	(ShowFocusLine): add argument "state".
+	(mouse_up_change): check if the focused object is "arc".
 
 	* src/oarc.c (arcbbox): add points to modify angle.
 	(arcchange): add.
 	(arc): add "change" field.
 
-	* src/olegend.c (arc_get_angle): add.
-
 	* src/gtk/ogra2cairo.c (gra2cairo_output): do nothing when "a1 ==
 	a2" in the case of "code" ic "C".
-
-	* src/gtk/x11view.c (show_focus_line_arc): add.
-	(ShowFocusLine): call "show_focus_line_arc()" when focused object
-	is "arc".
 
 	* src/gtk/x11commn.c (ToFullPath): use loop to modify "file" field
 	of "file" and "merge" object.

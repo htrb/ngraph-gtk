@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.70 2009/04/13 00:58:43 hito Exp $
+ * $Id: ox11menu.c,v 1.71 2009/04/14 01:14:33 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1393,33 +1393,6 @@ mxclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
 return 0;
-}
-
-int
-mxd2p(int r)
-{
-  return nround(r * Menulocal.local->pixel_dot_x);
-}
-
-int
-mxd2px(int x)
-{
-  return nround(x * Menulocal.local->pixel_dot_x + Menulocal.local->offsetx);
-  //  return nround(x * Menulocal.pixel_dot + Menulocal.offsetx - Menulocal.scrollx);
-}
-
-int
-mxd2py(int y)
-{
-  return nround(y * Menulocal.local->pixel_dot_y + Menulocal.local->offsety);
-  //  return nround(y * Menulocal.pixel_dot + Menulocal.offsety - Menulocal.scrolly);
-}
-
-int
-mxp2d(int r)
-{
-  return ceil(r / Menulocal.local->pixel_dot_x);
-  //  return nround(r / Menulocal.pixel_dot);
 }
 
 static int

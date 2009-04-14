@@ -1,6 +1,6 @@
 
 /* 
- * $Id: x11view.c,v 1.130 2009/04/13 10:03:57 hito Exp $
+ * $Id: x11view.c,v 1.131 2009/04/14 01:14:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,6 +34,7 @@
 #include "olegend.h"
 #include "mathfn.h"
 #include "ioutil.h"
+#include "axis.h"
 #include "nstring.h"
 
 #include "gtk_liststore.h"
@@ -150,6 +151,35 @@ static void SetHRuler(struct Viewer *d);
 static void SetVRuler(struct Viewer *d);
 
 
+static int
+mxd2p(int r)
+{
+  return nround(r * Menulocal.local->pixel_dot_x);
+}
+
+#if 0
+static int
+mxd2px(int x)
+{
+  return nround(x * Menulocal.local->pixel_dot_x + Menulocal.local->offsetx);
+  //  return nround(x * Menulocal.pixel_dot + Menulocal.offsetx - Menulocal.scrollx);
+}
+
+static int
+mxd2py(int y)
+{
+  return nround(y * Menulocal.local->pixel_dot_y + Menulocal.local->offsety);
+  //  return nround(y * Menulocal.pixel_dot + Menulocal.offsety - Menulocal.scrolly);
+}
+#endif
+
+static int
+mxp2d(int r)
+{
+  return ceil(r / Menulocal.local->pixel_dot_x);
+  //  return nround(r / Menulocal.pixel_dot);
+}
+
 static double 
 range_increment(GtkWidget *w, double inc)
 {
@@ -220,6 +250,103 @@ new_merge_obj(char *name, struct objlist *obj)
   } else {
     set_graph_modified();
   }
+
+  return 0;
+}
+
+
+static int
+arc_get_angle(struct objlist *obj, char *inst, int round, int point, int px, int py, int *angle1, int *angle2)
+{
+  int x, y, rx, ry, a1, a2;
+  double dx, dy, r, angle, v;
+
+  _getobj(obj, "x", inst, &x);
+  _getobj(obj, "y", inst, &y);
+  _getobj(obj, "rx", inst, &rx);
+  _getobj(obj, "ry", inst, &ry);
+  _getobj(obj, "angle1", inst, &a1);
+  _getobj(obj, "angle2", inst, &a2);
+
+  if (inst == NULL || rx < 1 || ry < 1 || point < 0 || point > 1)
+    return 1;
+
+  dx = 1.0 * (px - x) / rx;
+  dy = 1.0 * (y - py) / ry;
+  r = sqrt(dx * dx + dy * dy);
+
+  if (dx == 0 && dy == 0)
+    return 1;
+
+  if (dx >= 0 && dy >= 0) {
+    if (dx > dy) {
+      angle = acos(dx / r) / MPI * 180;
+    } else { 
+      angle = asin(dy / r) / MPI * 180;
+    }
+  } else if (dx < 0 && dy >= 0) {
+    if (-dx > dy) {
+      angle = acos(-dx / r) / MPI * 180;
+    } else { 
+      angle = asin(dy / r) / MPI * 180;
+    }
+    angle = 180 - angle;
+  } else if (dx < 0 && dy < 0) {
+    if (-dx > -dy) {
+      angle = acos(-dx / r) / MPI * 180;
+    } else { 
+      angle = asin(-dy / r) / MPI * 180;
+    }
+    angle += 180;
+  } else {
+    if (dx > -dy) {
+      angle = acos(dx / r) / MPI * 180;
+    } else { 
+      angle = asin(-dy / r) / MPI * 180;
+    }
+    angle = 360 - angle;
+  }
+
+  angle = nround(angle);
+
+  if (round) {
+    int tmp;
+
+    tmp = angle / 15;
+    angle = tmp * 15;
+  }
+
+  a1 /= 100;
+  a2 /= 100;
+
+  switch (point) {
+  case 0:
+    v = angle - a1;
+    a1 = angle;
+    a2 -= v;
+    break;
+  case 1:
+    a2 = angle - a1;
+    break;
+  }
+
+  if (a1 < 0)
+    a1 += 360;
+
+  if (a2 < 0)
+    a2 += 360;
+
+  if (a2 > 360 || a2 < 5)
+    a2 = 360;
+
+  a1 *= 100;
+  a2 *= 100;
+
+  if (angle1)
+    *angle1 = a1;
+
+  if (angle2)
+    *angle2 = a2;
 
   return 0;
 }
@@ -1406,6 +1533,18 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy)
   restorestdio(&save);
 }
 
+static int 
+coord_conv_x(int x, double zoom, struct Viewer *d)
+{
+  return mxd2p(x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
+}
+
+static int 
+coord_conv_y(int y, double zoom, struct Viewer *d)
+{
+  return mxd2p(y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+}
+
 static void
 GetFocusFrame(int *minx, int *miny, int *maxx, int *maxy, int ofsx, int ofsy)
 {
@@ -1418,17 +1557,11 @@ GetFocusFrame(int *minx, int *miny, int *maxx, int *maxy, int ofsx, int ofsy)
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  *minx =
-    mxd2p((x1 + ofsx) * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
+  *minx = coord_conv_x((x1 + ofsx), zoom, d);
+  *miny = coord_conv_y((y1 + ofsy), zoom, d);
 
-  *miny =
-    mxd2p((y1 + ofsy) * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
-
-  *maxx =
-    mxd2p((x2 + ofsx) * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-
-  *maxy =
-    mxd2p((y2 + ofsy) * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+  *maxx = coord_conv_x((x2 + ofsx), zoom, d);
+  *maxy = coord_conv_y((y2 + ofsy), zoom, d);
 }
 
 static void
@@ -1504,18 +1637,10 @@ ShowFocusFrame(GdkGC *gc)
 	bbox = (int *) arraydata(abbox);
 
 	if (bboxnum >= 4) {
-	  x1 =
-	    mxd2p((bbox[0] + d->FrameOfsX) * zoom +
-		  Menulocal.LeftMargin) - d->hscroll + d->cx;
-	  y1 =
-	    mxd2p((bbox[1] + d->FrameOfsY) * zoom +
-		  Menulocal.TopMargin) - d->vscroll + d->cy;
-	  x2 =
-	    mxd2p((bbox[2] + d->FrameOfsX) * zoom +
-		  Menulocal.LeftMargin) - d->hscroll + d->cx;
-	  y2 =
-	    mxd2p((bbox[3] + d->FrameOfsY) * zoom +
-		  Menulocal.TopMargin) - d->vscroll + d->cy;
+	  x1 = coord_conv_x((bbox[0] + d->FrameOfsX), zoom, d);
+	  y1 = coord_conv_y((bbox[1] + d->FrameOfsY), zoom, d);
+	  x2 = coord_conv_x((bbox[2] + d->FrameOfsX), zoom, d);
+	  y2 = coord_conv_y((bbox[3] + d->FrameOfsY), zoom, d);
 
 	  minx = (x1 < x2) ? x1 : x2;
 	  miny = (y1 < y2) ? y1 : y2;
@@ -1538,12 +1663,8 @@ ShowFocusFrame(GdkGC *gc)
       bbox = (int *) arraydata(abbox);
 
       for (j = 4; j < bboxnum; j += 2) {
-	x1 =
-	  mxd2p((bbox[j] + d->FrameOfsX) * zoom +
-		Menulocal.LeftMargin) - d->hscroll + d->cx;
-	y1 =
-	  mxd2p((bbox[j + 1] + d->FrameOfsY) * zoom +
-		Menulocal.TopMargin) - d->vscroll + d->cy;
+	x1 = coord_conv_x((bbox[j] + d->FrameOfsX), zoom, d);
+	y1 = coord_conv_y((bbox[j + 1] + d->FrameOfsY), zoom, d);
 
 	gdk_draw_rectangle(d->win, gc, TRUE,
 			   x1 - FOCUS_RECT_SIZE / 2,
@@ -1679,11 +1800,11 @@ AlignFocusedObj(int align)
 }
 
 static void
-show_focus_line_arc(GdkGC *gc, int change, double zoom, struct objlist *obj, char *inst, struct Viewer *d)
+show_focus_line_arc(GdkGC *gc, unsigned int state, int change, double zoom, struct objlist *obj, char *inst, struct Viewer *d)
 {
   int x, y, rx, ry, a1, a2;
 
-  if (arc_get_angle(obj, inst, change, d->LineX, d->LineY, &a1, &a2))
+  if (arc_get_angle(obj, inst, state & GDK_CONTROL_MASK, change, d->MouseX2, d->MouseY2, &a1, &a2))
     return;
 
   _getobj(obj, "x", inst, &x);
@@ -1693,27 +1814,91 @@ show_focus_line_arc(GdkGC *gc, int change, double zoom, struct objlist *obj, cha
 
   rx = mxd2p(rx * zoom);
   ry = mxd2p(ry * zoom);
-  x = mxd2p(x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-  y = mxd2p(y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+  x = coord_conv_x(x, zoom, d);
+  y = coord_conv_y(y, zoom, d);
 
   gdk_draw_arc(d->win, gc, FALSE, x - rx, y - ry, rx * 2, ry * 2, a1 / 100.0 * 64, a2 / 100.0 * 64);
 }
 
 static void
-ShowFocusLine(GdkGC *gc, int change)
+draw_frame_rect(GdkGC *gc, int change, double zoom, int *bbox, struct Viewer *d)
 {
-  int j, num;
+  
+  int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+  int minx, miny, height, width;
+
+  switch (change) {
+  case 0:
+    x1 = coord_conv_x(bbox[4] + d->LineX, zoom, d);
+    y1 = coord_conv_y(bbox[5] + d->LineY, zoom, d);
+    x2 = coord_conv_x(bbox[8], zoom, d);
+    y2 = coord_conv_y(bbox[9], zoom, d);
+    break;
+  case 1:
+    x1 = coord_conv_x(bbox[4], zoom, d);
+    y1 = coord_conv_y(bbox[5] + d->LineY, zoom, d);
+    x2 = coord_conv_x(bbox[8] + d->LineX, zoom, d);
+    y2 = coord_conv_y(bbox[9], zoom, d);
+    break;
+  case 2:
+    x1 = coord_conv_x(bbox[4], zoom, d);
+    y1 = coord_conv_y(bbox[5], zoom, d);
+    x2 = coord_conv_x(bbox[8] + d->LineX, zoom, d);
+    y2 = coord_conv_y(bbox[9] + d->LineY, zoom, d);
+    break;
+  case 3:
+    x1 = coord_conv_x(bbox[4] + d->LineX, zoom, d);
+    y1 = coord_conv_y(bbox[5], zoom, d);
+    x2 = coord_conv_x(bbox[8], zoom, d);
+    y2 = coord_conv_y(bbox[9] + d->LineY, zoom, d);
+    break;
+  }
+  minx = (x1 < x2) ? x1 : x2;
+  miny = (y1 < y2) ? y1 : y2;
+
+  width = abs(x2 - x1);
+  height = abs(y2 - y1);
+
+  gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
+}
+
+static void
+draw_focus_line(GdkGC *gc, int change, double zoom, int bboxnum, int *bbox, struct Viewer *d)
+{
+  int j, ofsx, ofsy, x0, y0, x1, y1;
+
+  for (j = 4; j < bboxnum; j += 2) {
+    if (change == (j - 4) / 2) {
+      ofsx = d->LineX;
+      ofsy = d->LineY;
+    } else {
+      ofsx = 0;
+      ofsy = 0;
+    }
+
+    x1 = coord_conv_x(bbox[j] + ofsx, zoom, d);
+    y1 = coord_conv_y(bbox[j + 1] + ofsy, zoom, d);
+    if (j != 4) {
+      gdk_draw_line(d->win, gc, x0, y0, x1, y1);
+    }
+    x0 = x1;
+    y0 = y1;
+  }
+}
+
+static void
+ShowFocusLine(GdkGC *gc, unsigned int state, int change)
+{
+  int num;
   struct focuslist **focus;
   struct narray *abbox;
   int bboxnum;
   int *bbox;
-  int x0 = 0, y0 = 0, x1 = 0, y1 = 0, x2 = 0, y2 = 0, ofsx, ofsy;
   char *inst;
   struct savedstdio save;
   double zoom;
   int frame;
   char *group;
-  int minx, miny, height, width;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
@@ -1727,124 +1912,37 @@ ShowFocusLine(GdkGC *gc, int change)
   focus = (struct focuslist **) arraydata(d->focusobj);
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  if (num == 1) {
-    if ((inst = chkobjinstoid(focus[0]->obj, focus[0]->oid)) != NULL) {
-      _exeobj(focus[0]->obj, "bbox", inst, 0, NULL);
-      _getobj(focus[0]->obj, "bbox", inst, &abbox);
+  if (num != 1)
+    goto End;
 
-      bboxnum = arraynum(abbox);
-      bbox = (int *) arraydata(abbox);
+  inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
+  if (inst == NULL)
+    goto End;
 
-      frame = FALSE;
+  _exeobj(focus[0]->obj, "bbox", inst, 0, NULL);
+  _getobj(focus[0]->obj, "bbox", inst, &abbox);
 
-      if (focus[0]->obj == chkobject("rectangle"))
-	frame = TRUE;
+  bboxnum = arraynum(abbox);
+  bbox = (int *) arraydata(abbox);
 
-      if (focus[0]->obj == chkobject("arc")) {
-	show_focus_line_arc(gc, change, zoom, focus[0]->obj, inst, d);
-	goto End;
-      }
+  frame = FALSE;
 
-      if (focus[0]->obj == chkobject("axis")) {
-	_getobj(focus[0]->obj, "group", inst, &group);
-	if ((group != NULL) && (group[0] != 'a')) {
-	  frame = TRUE;
-	}
-      }
-
-      if (!frame) {
-	for (j = 4; j < bboxnum; j += 2) {
-	  if (change == (j - 4) / 2) {
-	    ofsx = d->LineX;
-	    ofsy = d->LineY;
-	  } else {
-	    ofsx = 0;
-	    ofsy = 0;
-	  }
-
-	  x1 = mxd2p((bbox[j] + ofsx) * zoom + Menulocal.LeftMargin)
-	    - d->hscroll + d->cx;
-
-	  y1 = mxd2p((bbox[j + 1] + ofsy) * zoom + Menulocal.TopMargin)
-	    - d->vscroll + d->cy;
-	  if (j != 4) {
-	    gdk_draw_line(d->win, gc, x0, y0, x1, y1);
-	  }
-	  x0 = x1;
-	  y0 = y1;
-	}
-      } else {
-	if (change == 0) {
-	  x1 =
-	    mxd2p((bbox[4] + d->LineX) * zoom +
-		  Menulocal.LeftMargin) - d->hscroll + d->cx;
-
-	  y1 =
-	    mxd2p((bbox[5] + d->LineY) * zoom +
-		  Menulocal.TopMargin) - d->vscroll + d->cy;
-
-	  x2 =
-	    mxd2p((bbox[8]) * zoom + Menulocal.LeftMargin) -
-	    d->hscroll + d->cx;
-
-	  y2 =
-	    mxd2p((bbox[9]) * zoom + Menulocal.TopMargin) -
-	    d->vscroll + d->cy;
-	} else if (change == 1) {
-	  x1 = mxd2p((bbox[4]) * zoom + Menulocal.LeftMargin)
-	    - d->hscroll + d->cx;
-
-	  y1 =
-	    mxd2p((bbox[5] + d->LineY) * zoom +
-		  Menulocal.TopMargin) - d->vscroll + d->cy;
-
-	  x2 =
-	    mxd2p((bbox[8] + d->LineX) * zoom +
-		  Menulocal.LeftMargin) - d->hscroll + d->cx;
-
-	  y2 =
-	    mxd2p((bbox[9]) * zoom + Menulocal.TopMargin) -
-	    d->vscroll + d->cy;
-	} else if (change == 2) {
-	  x1 = mxd2p((bbox[4]) * zoom + Menulocal.LeftMargin)
-	    - d->hscroll + d->cx;
-
-	  y1 = mxd2p((bbox[5]) * zoom + Menulocal.TopMargin)
-	    - d->vscroll + d->cy;
-
-	  x2 =
-	    mxd2p((bbox[8] + d->LineX) * zoom +
-		  Menulocal.LeftMargin) - d->hscroll + d->cx;
-
-	  y2 =
-	    mxd2p((bbox[9] + d->LineY) * zoom +
-		  Menulocal.TopMargin) - d->vscroll + d->cy;
-	} else if (change == 3) {
-	  x1 =
-	    mxd2p((bbox[4] + d->LineX) * zoom +
-		  Menulocal.LeftMargin) - d->hscroll + d->cx;
-
-	  y1 =
-	    mxd2p((bbox[5]) * zoom + Menulocal.TopMargin) -
-	    d->vscroll + d->cy;
-
-	  x2 =
-	    mxd2p((bbox[8]) * zoom + Menulocal.LeftMargin) -
-	    d->hscroll + d->cx;
-
-	  y2 =
-	    mxd2p((bbox[9] + d->LineY) * zoom +
-		  Menulocal.TopMargin) - d->vscroll + d->cy;
-	}
-	minx = (x1 < x2) ? x1 : x2;
-	miny = (y1 < y2) ? y1 : y2;
-
-	width = abs(x2 - x1);
-	height = abs(y2 - y1);
-
-	gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
-      }
+  if (focus[0]->obj == chkobject("rectangle")) {
+    frame = TRUE;
+  } else if (focus[0]->obj == chkobject("arc")) {
+    show_focus_line_arc(gc, state, change, zoom, focus[0]->obj, inst, d);
+    goto End;
+  } else if (focus[0]->obj == chkobject("axis")) {
+    _getobj(focus[0]->obj, "group", inst, &group);
+    if (group && group[0] != 'a') {
+      frame = TRUE;
     }
+  }
+
+  if (!frame) {
+    draw_focus_line(gc, change, zoom, bboxnum, bbox, d);
+  } else {
+    draw_frame_rect(gc, change, zoom, bbox, d);
   }
 
  End:
@@ -1875,10 +1973,10 @@ ShowPoints(GdkGC *gc)
     if (num >= 2) {
       gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
-      x1 = mxd2p(po[0]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-      y1 = mxd2p(po[0]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
-      x2 = mxd2p(po[1]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-      y2 = mxd2p(po[1]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+      x1 = coord_conv_x(po[0]->x, zoom, d);
+      y1 = coord_conv_y(po[0]->y, zoom, d);
+      x2 = coord_conv_x(po[1]->x, zoom, d);
+      y2 = coord_conv_y(po[1]->y, zoom, d);
 
       minx = (x1 < x2) ? x1 : x2;
       miny = (y1 < y2) ? y1 : y2;
@@ -1895,8 +1993,8 @@ ShowPoints(GdkGC *gc)
   } else {
     gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
     for (i = 0; i < num; i++) {
-      x1 = mxd2p(po[i]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-      y1 = mxd2p(po[i]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+      x1 = coord_conv_x(po[i]->x, zoom, d);
+      y1 = coord_conv_y(po[i]->y, zoom, d);
 
       gdk_draw_line(d->win, gc,
 		    x1 - (POINT_LENGTH - 1), y1,
@@ -1908,15 +2006,15 @@ ShowPoints(GdkGC *gc)
 
     gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
     if (num >= 1) {
-      x1 = mxd2p(po[0]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-      y1 = mxd2p(po[0]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+      x1 = coord_conv_x(po[0]->x, zoom, d);
+      y1 = coord_conv_y(po[0]->y, zoom, d);
 
       x0 = x1;
       y0 = y1;
     }
     for (i = 1; i < num; i++) {
-      x1 = mxd2p(po[i]->x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-      y1 = mxd2p(po[i]->y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+      x1 = coord_conv_x(po[i]->x, zoom, d);
+      y1 = coord_conv_y(po[i]->y, zoom, d);
 
       gdk_draw_line(d->win, gc, x0, y0, x1, y1);
 
@@ -1944,11 +2042,11 @@ ShowFrameRect(GdkGC *gc)
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
-    x1 = mxd2p(d->MouseX1 * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-    y1 = mxd2p(d->MouseY1 * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+    x1 = coord_conv_x(d->MouseX1, zoom, d);
+    y1 = coord_conv_y(d->MouseY1, zoom, d);
 
-    x2 = mxd2p(d->MouseX2 * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-    y2 = mxd2p(d->MouseY2 * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+    x2 = coord_conv_x(d->MouseX2, zoom, d);
+    y2 = coord_conv_y(d->MouseY2, zoom, d);
 
     minx = (x1 < x2) ? x1 : x2;
     miny = (y1 < y2) ? y1 : y2;
@@ -1978,8 +2076,8 @@ ShowCrossGauge(GdkGC *gc)
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  x = mxd2p(d->CrossX * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
-  y = mxd2p(d->CrossY * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+  x = coord_conv_x(d->CrossX, zoom, d);
+  y = coord_conv_y(d->CrossY, zoom, d);
 
   gdk_draw_line(d->win, gc, x, 0, x, height);
   gdk_draw_line(d->win, gc, 0, y, width, y);
@@ -2129,7 +2227,7 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
     d->ShowFrame = FALSE;
     d->ShowLine = TRUE;
     d->LineX = d->LineY = 0;
-    ShowFocusLine(dc, d->ChangePoint);
+    ShowFocusLine(dc, state, d->ChangePoint);
     SetCursor(cursor);
     break;
   case GDK_FLEUR:
@@ -2603,7 +2701,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
   axis = FALSE;
 
-  ShowFocusLine(dc, d->ChangePoint);
+  ShowFocusLine(dc, state, d->ChangePoint);
   d->ShowLine = FALSE;
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
@@ -2626,16 +2724,20 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
       argv[2] = (char *) &dy;
       argv[3] = NULL;
 
+      PaintLock = TRUE;
+
       focus = *(struct focuslist **) arraynget(d->focusobj, 0);
 
       obj = focus->obj;
+      inst = chkobjinstoid(focus->obj, focus->oid);
 
-      if (obj == chkobject("axis")) {
+      if (obj == chkobject("arc")) {
+	if (arc_get_angle(obj, inst, state & GDK_CONTROL_MASK, d->ChangePoint, d->MouseX2, d->MouseY2, &dx, &dy))
+	  inst = NULL;
+      } else if (obj == chkobject("axis")) {
 	axis = TRUE;
       }
-      PaintLock = TRUE;
 
-      inst = chkobjinstoid(focus->obj, focus->oid);
       if (inst) {
 	AddInvalidateRect(obj, inst);
 	_exeobj(obj, "change", inst, 3, argv);
@@ -3511,12 +3613,8 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
   bbox = (int *) arraydata(abbox);
 
   for (j = 4; j < bboxnum; j += 2) {
-    x1 =
-      mxd2p((bbox[j] + d->FrameOfsX) * zoom +
-	    Menulocal.LeftMargin) - d->hscroll + d->cx;
-    y1 =
-      mxd2p((bbox[j + 1] + d->FrameOfsY) * zoom +
-	    Menulocal.TopMargin) - d->vscroll + d->cy;
+    x1 = coord_conv_x((bbox[j] + d->FrameOfsX), zoom, d);
+    y1 = coord_conv_y((bbox[j + 1] + d->FrameOfsY), zoom, d);
 
     if (x > x1 - FOCUS_RECT_SIZE / 2 &&
 	x < x1 + FOCUS_RECT_SIZE / 2 &&
@@ -3743,7 +3841,7 @@ mouse_move_change(GdkGC *dc, unsigned int state, TPoint *point, double zoom, str
 {
   int x, y;
 
-  ShowFocusLine(dc, d->ChangePoint);
+  ShowFocusLine(dc, state, d->ChangePoint);
 
   d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
 		- Menulocal.LeftMargin) / zoom;
@@ -3761,7 +3859,7 @@ mouse_move_change(GdkGC *dc, unsigned int state, TPoint *point, double zoom, str
   d->LineX = x;
   d->LineY = y;
 
-  ShowFocusLine(dc, d->ChangePoint);
+  ShowFocusLine(dc, state, d->ChangePoint);
 }
 
 static void
@@ -4336,7 +4434,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     ShowPoints(gc);
 
     if (d->ShowLine)
-      ShowFocusLine(gc, d->ChangePoint);
+      ShowFocusLine(gc, 0, d->ChangePoint);
 
     if (d->ShowRect)
       ShowFrameRect(gc);
@@ -4850,7 +4948,7 @@ Draw(int SelectFile)
     ShowFocusFrame(gc);
 
   if (d->ShowLine)
-    ShowFocusLine(gc, d->ChangePoint);
+    ShowFocusLine(gc, 0, d->ChangePoint);
 
   if (d->ShowRect)
     ShowFrameRect(gc);
@@ -4890,7 +4988,7 @@ Draw(int SelectFile)
     ShowFocusFrame(gc);
 
   if (d->ShowLine)
-    ShowFocusLine(gc, d->ChangePoint);
+    ShowFocusLine(gc, 0, d->ChangePoint);
 
   if (d->ShowRect)
     ShowFrameRect(gc);

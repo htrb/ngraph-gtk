@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.28 2009/03/09 10:21:49 hito Exp $
+ * $Id: ox11menu.h,v 1.29 2009/04/14 01:14:33 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -153,10 +153,6 @@ enum SAVE_CONFIG_TYPE {
 				  | SAVE_CONFIG_TYPE_ADDIN_SCRIPT	\
 				  | SAVE_CONFIG_TYPE_MISC)
 
-int mxd2p(int r);
-int mxd2px(int x);
-int mxd2py(int y);
-int mxp2d(int r);
 unsigned long RGB(int R, int G, int B);
 void mx_redraw(struct objlist *obj, char *inst);
 void mx_clear(GdkRegion *region);
