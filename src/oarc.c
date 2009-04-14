@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.13 2009/04/14 09:11:45 hito Exp $
+ * $Id: oarc.c,v 1.14 2009/04/14 09:16:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -299,6 +299,8 @@ arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     ret = _putobj(obj, "angle1", inst, &a1);
     ret = _putobj(obj, "angle2", inst, &a2);
     break;
+  default:
+    return 1;
   }
 
   if (ret)

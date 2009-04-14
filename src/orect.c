@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.9 2009/03/24 08:16:55 hito Exp $
+ * $Id: orect.c,v 1.10 2009/04/14 09:16:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -211,18 +211,25 @@ rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   miny=(y1<y2) ? &y1 : &y2;
   maxx=(x1>x2) ? &x1 : &x2;
   maxy=(y1>y2) ? &y1 : &y2;
-  if (point==0) {
+  switch (point) {
+  case 0:
     (*minx)+=x;
     (*miny)+=y;
-  } else if (point==1) {
+    break;
+  case 1:
     (*maxx)+=x;
     (*miny)+=y;
-  } else if (point==2) {
+    break;
+  case 2:
     (*maxx)+=x;
     (*maxy)+=y;
-  } else if (point==3) {
+    break;
+  case 3:
     (*minx)+=x;
     (*maxy)+=y;
+    break;
+  default:
+    return 1;
   }
   if (_putobj(obj,"x1",inst,&x1)) return 1;
   if (_putobj(obj,"y1",inst,&y1)) return 1;
