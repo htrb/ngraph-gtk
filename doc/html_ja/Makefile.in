@@ -550,7 +550,7 @@ uninstall-am: uninstall-htmljaDATA
 	uninstall-htmljaDATA
 
 
-object.html: ../../src/ngraph
+object.html: ../../src/ngraph object.html.in objlist.nsc
 	cat object.html.in > object.html
 	../../src/ngraph -i objlist.nsc >> object.html
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

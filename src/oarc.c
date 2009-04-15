@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.15 2009/04/15 05:03:57 hito Exp $
+ * $Id: oarc.c,v 1.16 2009/04/15 07:53:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -319,17 +319,16 @@ arcrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int tmp, angle, rx, ry, a, use_pivot;
   struct narray *array;
  
-  angle = *(int *) argv[2];
-  angle %= 36000;
-  if (angle < 0)
-    angle += 36000;
-
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
   _getobj(obj, "angle1", inst, &a);
 
   use_pivot = * (int *) argv[2];
   angle = *(int *) argv[3];
+
+  angle %= 36000;
+  if (angle < 0)
+    angle += 36000;
 
   switch (angle) {
   case 9000:

@@ -8,7 +8,7 @@ htmljadir = $(docdir)/html_ja
 
 htmlja_DATA = ${HTML_FILE}
 
-object.html: ../../src/ngraph
+object.html: ../../src/ngraph object.html.in objlist.nsc
 	cat object.html.in > object.html
 	../../src/ngraph -i objlist.nsc >> object.html
 
