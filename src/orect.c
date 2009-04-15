@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.10 2009/04/14 09:16:49 hito Exp $
+ * $Id: orect.c,v 1.11 2009/04/15 05:03:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,6 +26,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "ngraph.h"
 #include "object.h"
@@ -163,6 +164,62 @@ rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
   *(struct narray **)rval=array;
+  return 0;
+}
+
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+
+static int 
+rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int angle, x1, y1, x2, y2, nx1, ny1, nx2, ny2, px, py, use_pivot;
+  struct narray *array;
+ 
+  _getobj(obj, "x1", inst, &x1);
+  _getobj(obj, "y1", inst, &y1);
+  _getobj(obj, "x2", inst, &x2);
+  _getobj(obj, "y2", inst, &y2);
+
+  px = (x1 + x2) / 2;
+  py = (y1 + y2) / 2;
+
+  use_pivot = * (int *) argv[2];
+  if (use_pivot) {
+    px = *(int *) argv[4];
+    py = *(int *) argv[5];
+  }
+
+  angle = *(int *) argv[3];
+  angle %= 36000;
+  if (angle < 0)
+    angle += 36000;
+
+  switch (angle) {
+  case 9000:
+  case 18000:
+  case 27000:
+    rotate(px, py, angle, &x1, &y1);
+    rotate(px, py, angle, &x2, &y2);
+
+    nx1 = MIN(x1, x2);
+    ny1 = MIN(y1, y2);
+    nx2 = MAX(x1, x2);
+    ny2 = MAX(y1, y2);
+
+    _putobj(obj, "x1", inst, &nx1);
+    _putobj(obj, "y1", inst, &ny1);
+    _putobj(obj, "x2", inst, &nx2);
+    _putobj(obj, "y2", inst, &ny2);
+    break;
+  default:
+    return 1;
+  }
+
+  _getobj(obj, "bbox", inst, &array);
+  arrayfree(array);
+  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+
   return 0;
 }
 
@@ -375,6 +432,7 @@ static struct objtable rect[] = {
 
   {"bbox",NIAFUNC,NREAD|NEXEC,rectbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,rectmove,"ii",0},
+  {"rotate",NVFUNC,NREAD|NEXEC,rectrotate,"iiii",0},
   {"change",NVFUNC,NREAD|NEXEC,rectchange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,rectmatch,"iiiii",0},

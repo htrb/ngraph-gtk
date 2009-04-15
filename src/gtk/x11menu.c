@@ -1,5 +1,6 @@
+/* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.84 2009/04/10 10:14:14 hito Exp $
+ * $Id: x11menu.c,v 1.85 2009/04/15 05:03:58 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2004,7 +2005,11 @@ SetPoint(struct Viewer *d, int x, int y)
   if (NgraphApp.Message) {
     switch (d->MouseMode) {
     case MOUSECHANGE:
-      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->LineX / 100.0, d->LineY / 100.0);
+      if (d->Angle >= 0) {
+	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%6.2f°)", x / 100.0, y / 100.0, d->Angle / 100.0);
+      } else {
+	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->LineX / 100.0, d->LineY / 100.0);
+      }
       break;
     case MOUSEZOOM1:
     case MOUSEZOOM2:

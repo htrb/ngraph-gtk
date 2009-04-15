@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.11 2009/04/14 01:14:32 hito Exp $
+ * $Id: olegend.c,v 1.12 2009/04/15 05:03:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,6 +26,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include "ngraph.h"
@@ -204,6 +205,61 @@ legendmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+void
+rotate(int px, int py, int angle, int *x, int *y)
+{
+  int x0, y0;
+  double t;
+
+  t = - angle / 100.0 * MPI / 180;
+
+  x0 = *x - px;
+  y0 = *y - py;
+
+  *x = nround(px + x0 * cos(t) - y0 * sin(t));
+  *y = nround(py + x0 * sin(t) + y0 * cos(t));
+}
+
+int 
+legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct narray *points, *array;
+  int i, num, *pdata, angle, px, py, start, use_pivot;
+
+  _getobj(obj, "points", inst, &points);
+  num = arraynum(points);
+  pdata = arraydata(points);
+
+  if (num < 4)
+    return 0;
+
+  use_pivot = * (int *) argv[2];
+  angle = *(int *) argv[3];
+
+  if (use_pivot) {
+    px = *(int *) argv[4];
+    py = *(int *) argv[5];
+    start = 0;
+  } else {
+    px = pdata[0];
+    py = pdata[1];
+    start = 1;
+  }
+
+  angle %= 36000;
+  if (angle < 0)
+    angle += 36000;
+
+  for (i = start; i < num / 2; i++) {
+    rotate(px, py, angle, &pdata[i * 2], &pdata[i * 2 + 1]);
+  }
+
+  _getobj(obj, "bbox", inst, &array);
+  arrayfree(array);
+  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+
+  return 0;
+}
 
 int 
 legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)

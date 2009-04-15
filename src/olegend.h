@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.h,v 1.3 2009/04/14 01:14:32 hito Exp $
+ * $Id: olegend.h,v 1.4 2009/04/15 05:03:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -24,6 +24,8 @@
 int legendgeometry(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
 int legendbbox(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
 int legendmove(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
+int legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 int legendchange(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
 int legendzoom(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
 int legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
+void rotate(int px, int py, int angle, int *x, int *y);

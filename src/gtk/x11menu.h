@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.33 2009/03/23 11:58:39 hito Exp $
+ * $Id: x11menu.h,v 1.34 2009/04/15 05:03:58 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -137,7 +137,7 @@ enum pop_up_menu_item_type {
   POP_UP_MENU_ITEM_TYPE_SEPARATOR,
 };
 
-#define VIEWER_POPUP_ITEM_NUM 9
+#define VIEWER_POPUP_ITEM_NUM 10
 struct Viewer
 {
   GtkWidget *Win;
@@ -151,7 +151,7 @@ struct Viewer
   int FrameOfsX, FrameOfsY;
   int MouseX1, MouseY1, MouseX2, MouseY2, MouseDX, MouseDY;
   int RefX1, RefY1, RefX2, RefY2, ChangePoint;
-  int LineX, LineY, CrossX, CrossY;
+  int LineX, LineY, CrossX, CrossY, Angle;
   int allclear;
   int cx, cy, width, height;
   int ignoreredraw;

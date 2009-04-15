@@ -1,3 +1,45 @@
+2009-04-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (SetPoint): show the value of "s->Angle" when "d->Angle"
+	is greater or equal to 0.
+
+	* src/gtk/x11menu.h (struct Viewer): add member "Angle".
+
+	* src/gtk/x11view.c (show_focus_line_arc): add argument "clear"
+	and save previous state when "clear" is TRUE.
+	(ShowFocusLine): add argument "clear".
+	(mouse_move_change): second argument of "ShowFocusLine()" is TRUE
+	at the first time to call "ShowFocusLine()".
+	(enum ViewerPopupIdn): add "VIEW_ROTATE_CLOCKWISE" and "VIEW_ROTATE_COUNTER_CLOCKWISE".
+	(create_popup_menu): add.
+	(create_popup_menu): add item "_Rotate".
+	(VIEWER_POPUP_ITEM_ROTATE): add.
+	(RotateFocusedObj): add.
+	(do_popup): set sensitivity of "d->popup_item[VIEWER_POPUP_ITEM_ROTATE]".
+	(ViewerPopupMenu): add case for "VIEW_ROTATE_CLOCKWISE" and "VIEW_ROTATE_CONTER_CLOCKWISE"
+
+	* src/orect.c (rectrotate): add.
+
+	* src/otext.c (textrotate): add.
+	(text): add field "rotate".
+
+	* src/orect.c (rectrotate): add.
+	(rect): add field "rotate".
+
+	* src/opolygon.c (opoly): add field "rotate".
+
+	* src/omark.c (markrotate): add.
+	(mark): add field "rotate".
+
+	* src/oline.c (arrow): add field "rotate".
+
+	* src/olegend.c (rotate, legendrotate): add.
+
+	* src/ocurve.c (curve): add field "rotate".
+
+	* src/oarc.c (arcrotate): add.
+	(arc): add field "rotate".
+
 2009-04-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (mxd2p, mxd2px, mxd2py, mxp2d): remove.

@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.14 2009/04/14 09:16:49 hito Exp $
+ * $Id: oarc.c,v 1.15 2009/04/15 05:03:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -314,6 +314,61 @@ arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
+arcrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int tmp, angle, rx, ry, a, use_pivot;
+  struct narray *array;
+ 
+  angle = *(int *) argv[2];
+  angle %= 36000;
+  if (angle < 0)
+    angle += 36000;
+
+  _getobj(obj, "rx", inst, &rx);
+  _getobj(obj, "ry", inst, &ry);
+  _getobj(obj, "angle1", inst, &a);
+
+  use_pivot = * (int *) argv[2];
+  angle = *(int *) argv[3];
+
+  switch (angle) {
+  case 9000:
+  case 27000:
+    tmp = rx;
+    rx = ry;
+    ry = tmp;
+    _putobj(obj, "rx", inst, &rx);
+    _putobj(obj, "ry", inst, &ry);
+  case 18000:
+    a += angle;
+    break;
+  default:
+    return 1;
+  }
+
+  a %= 36000;
+  _putobj(obj, "angle1", inst, &a);
+
+  if (use_pivot) {
+    int x, y, px, py;
+
+    px = *(int *) argv[4];
+    py = *(int *) argv[5];
+    _getobj(obj, "x", inst, &x);
+    _getobj(obj, "y", inst, &y);
+    rotate(px, py, angle, &x, &y);
+    _putobj(obj, "x", inst, &x);
+    _putobj(obj, "y", inst, &y);
+  }
+
+  _getobj(obj, "bbox", inst, &array);
+  arrayfree(array);
+  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+
+  return 0;
+}
+
+static int 
 arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
@@ -417,7 +472,8 @@ static struct objtable arc[] = {
   {"style",NIARRAY,NREAD|NWRITE,oputstyle,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,arcdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,arcbbox,"",0},
-  {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0},
+  {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0}, 
+  {"rotate",NVFUNC,NREAD|NEXEC,arcrotate,"iiii",0},
   {"change",NVFUNC,NREAD|NEXEC,arcchange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},

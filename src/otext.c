@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.14 2009/03/24 08:14:37 hito Exp $
+ * $Id: otext.c,v 1.15 2009/04/15 05:03:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -409,6 +409,43 @@ textmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
+textrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int dir, angle, use_pivot;
+  struct narray *array;
+ 
+  _getobj(obj, "direction", inst, &dir);
+
+  use_pivot = * (int *) argv[2];
+  angle = *(int *) argv[3];
+
+  dir += angle;
+  dir %= 36000;
+  if (dir < 0)
+    dir += 36000;
+
+  if (use_pivot) {
+    int px, py, x, y;
+
+    px = *(int *) argv[4];
+    py = *(int *) argv[5];
+    _getobj(obj, "x", inst, &x);
+    _getobj(obj, "y", inst, &y);
+    rotate(px, py, angle, &x, &y);
+    _putobj(obj, "x", inst, &x);
+    _putobj(obj, "y", inst, &y);
+  }
+
+  _putobj(obj, "direction", inst, &dir);
+
+  _getobj(obj, "bbox", inst, &array);
+  arrayfree(array);
+  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+
+  return 0;
+}
+
+static int 
 textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y,pt,space,refx,refy;
@@ -518,6 +555,7 @@ static struct objtable text[] = {
   {"printf",NSFUNC,NREAD|NEXEC,textprintf,"sa",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,textbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,textmove,"ii",0},
+  {"rotate",NVFUNC,NREAD|NEXEC,textrotate,"iiii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,textzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,textmatch,"iiiii",0},
   {"save_config",NVFUNC,NREAD|NEXEC,textsaveconfig,NULL,0},

@@ -1,6 +1,6 @@
-
+/* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11view.c,v 1.133 2009/04/14 08:37:26 hito Exp $
+ * $Id: x11view.c,v 1.136 2009/04/15 05:05:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,7 +35,6 @@
 #include "oarc.h"
 #include "mathfn.h"
 #include "ioutil.h"
-#include "axis.h"
 #include "nstring.h"
 
 #include "gtk_liststore.h"
@@ -80,6 +79,8 @@ enum ViewerPopupIdn {
   VIEW_ALIGN_TOP,
   VIEW_ALIGN_VCENTER,
   VIEW_ALIGN_BOTTOM,
+  VIEW_ROTATE_CLOCKWISE,
+  VIEW_ROTATE_COUNTER_CLOCKWISE,
 };
 
 enum object_move_type {
@@ -775,6 +776,10 @@ create_popup_menu(struct Viewer *d)
     {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
+  struct viewer_popup rotate_popup[] = {
+    {N_("_90° cloclwise"),         FALSE, VIEW_ROTATE_CLOCKWISE,        NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("9_0° counter-cloclwise"), FALSE, VIEW_ROTATE_COUNTER_CLOCKWISE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  };
   struct viewer_popup popup[] = {
     {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -782,6 +787,7 @@ create_popup_menu(struct Viewer *d)
     {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
     {N_("_Align"),          FALSE, 0, align_popup, sizeof(align_popup) / sizeof(*align_popup), POP_UP_MENU_ITEM_TYPE_MENU},
+    {N_("_Rotate"),         FALSE, 0, rotate_popup, sizeof(rotate_popup) / sizeof(*rotate_popup), POP_UP_MENU_ITEM_TYPE_MENU},
     {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL, 0, POP_UP_MENU_ITEM_TYPE_CHECK},
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
     {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -794,11 +800,12 @@ create_popup_menu(struct Viewer *d)
 #define VIEWER_POPUP_ITEM_DEL    1
 #define VIEWER_POPUP_ITEM_PROP   2
 #define VIEWER_POPUP_ITEM_ALIGN  3
-#define VIEWER_POPUP_ITEM_CROSS  4
-#define VIEWER_POPUP_ITEM_TOP    5
-#define VIEWER_POPUP_ITEM_UP     6
-#define VIEWER_POPUP_ITEM_DOWN   7
-#define VIEWER_POPUP_ITEM_BOTTOM 8
+#define VIEWER_POPUP_ITEM_ROTATE 4
+#define VIEWER_POPUP_ITEM_CROSS  5
+#define VIEWER_POPUP_ITEM_TOP    6
+#define VIEWER_POPUP_ITEM_UP     7
+#define VIEWER_POPUP_ITEM_DOWN   8
+#define VIEWER_POPUP_ITEM_BOTTOM 9
 
 #if VIEWER_POPUP_ITEM_BOTTOM + 1 != VIEWER_POPUP_ITEM_NUM
 #error invarid array size (struct Viewer.popup_item)
@@ -861,6 +868,7 @@ ViewerWinSetup(void)
   d->FrameOfsY = 0;
   d->LineX = 0;
   d->LineY = 0;
+  d->Angle = -1;
   d->CrossX = 0;
   d->CrossY = 0;
   d->ShowFrame = FALSE;
@@ -1718,31 +1726,7 @@ AlignFocusedObj(int align)
     minx = 0;
     miny = 0;
   } else {
-    maxx = maxy = INT_MIN;
-    minx = miny = INT_MAX;
-
-    for (i = 0; i < num; i++) {
-      inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
-      if (inst == NULL) {
-	continue;
-      }
-      _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
-      _getobj(focus[i]->obj, "bbox", inst, &abbox);
-
-      bboxnum = arraynum(abbox);
-      bbox = (int *) arraydata(abbox);
-
-      if (bboxnum >= 4) {
-	if (bbox[0] < minx)
-	  minx = bbox[0];
-	if (bbox[1] < miny)
-	  miny = bbox[1];
-	if (bbox[2] > maxx)
-	  maxx = bbox[2];
-	if (bbox[3] > maxy)
-	  maxy = bbox[3];
-      }
-    }
+    GetLargeFrame(&minx, &miny, &maxx, &maxy);
   }
 
   if (maxx < minx || maxy < miny)
@@ -1798,10 +1782,9 @@ AlignFocusedObj(int align)
     if (focus[i]->obj == chkobject("axis")) {
       d->allclear = TRUE;
     }
+
     AddInvalidateRect(focus[i]->obj, inst);
-      
     _exeobj(focus[i]->obj, "move", inst, 2, argv);
-      
     set_graph_modified();
     AddInvalidateRect(focus[i]->obj, inst);
   }
@@ -1810,9 +1793,71 @@ AlignFocusedObj(int align)
 }
 
 static void
-show_focus_line_arc(GdkGC *gc, unsigned int state, int change, double zoom, struct objlist *obj, char *inst, struct Viewer *d)
+RotateFocusedObj(int direction)
+{
+  int i, num, minx, miny, maxx, maxy, angle;
+  int use_pivot, px, py;
+  struct focuslist **focus;
+  char *argv[5];
+  char *inst;
+  struct Viewer *d;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  d = &(NgraphApp.Viewer);
+
+  num = arraynum(d->focusobj);
+
+  if (num < 1) {
+    return;
+  }
+
+  angle = (direction == VIEW_ROTATE_CLOCKWISE) ? 27000 : 9000;
+
+  focus = (struct focuslist **) arraydata(d->focusobj);
+
+  PaintLock = TRUE;
+
+  argv[0] = (char *) &use_pivot;
+  argv[1] = (char *) &angle;
+  argv[2] = (char *) &px;
+  argv[3] = (char *) &py;
+  argv[4] = NULL;
+
+  if (num == 1) {
+    use_pivot = 0;
+    px = 0;
+    py = 0;
+  } else {
+    GetLargeFrame(&minx, &miny, &maxx, &maxy);
+    use_pivot = 1;
+    px = (minx + maxx) / 2;
+    py = (miny + maxy) / 2;
+  }
+
+  for (i = 0; i < num; i++) {
+    inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    if (chkobjfield(focus[i]->obj, "rotate") == 0) {
+      AddInvalidateRect(focus[i]->obj, inst);
+      _exeobj(focus[i]->obj, "rotate", inst, 4, argv);
+      set_graph_modified();
+      AddInvalidateRect(focus[i]->obj, inst);
+    }
+  }
+
+  PaintLock = FALSE;
+  UpdateAll();
+}
+
+static void
+show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double zoom, struct objlist *obj, char *inst, struct Viewer *d)
 {
   int x, y, rx, ry, a1, a2;
+  static unsigned int prev_state = 0;
 
   _getobj(obj, "x", inst, &x);
   _getobj(obj, "y", inst, &y);
@@ -1828,8 +1873,17 @@ show_focus_line_arc(GdkGC *gc, unsigned int state, int change, double zoom, stru
     break;
   case ARC_POINT_TYPE_ANGLE1:
   case ARC_POINT_TYPE_ANGLE2:
+    if (clear) {
+      unsigned int tmp;
+      tmp = state;
+      state = prev_state;
+      prev_state = tmp;
+    } else {
+      prev_state = state;
+    }
     if (arc_get_angle(obj, inst, state & GDK_CONTROL_MASK, change, d->MouseX2, d->MouseY2, &a1, &a2))
       return;
+    d->Angle = (change == ARC_POINT_TYPE_ANGLE1) ? a1 : (a1 + a2) % 36000;
     break;
   }
 
@@ -1909,7 +1963,7 @@ draw_focus_line(GdkGC *gc, int change, double zoom, int bboxnum, int *bbox, stru
 }
 
 static void
-ShowFocusLine(GdkGC *gc, unsigned int state, int change)
+ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
 {
   int num;
   struct focuslist **focus;
@@ -1952,7 +2006,7 @@ ShowFocusLine(GdkGC *gc, unsigned int state, int change)
   if (focus[0]->obj == chkobject("rectangle")) {
     frame = TRUE;
   } else if (focus[0]->obj == chkobject("arc")) {
-    show_focus_line_arc(gc, state, change, zoom, focus[0]->obj, inst, d);
+    show_focus_line_arc(gc, clear, state, change, zoom, focus[0]->obj, inst, d);
     goto End;
   } else if (focus[0]->obj == chkobject("axis")) {
     _getobj(focus[0]->obj, "group", inst, &group);
@@ -2245,11 +2299,12 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
     break;
   case GDK_CROSSHAIR:
     d->MouseMode = MOUSECHANGE;
+    d->Angle = -1;
     ShowFocusFrame(dc);
     d->ShowFrame = FALSE;
     d->ShowLine = TRUE;
     d->LineX = d->LineY = 0;
-    ShowFocusLine(dc, state, d->ChangePoint);
+    ShowFocusLine(dc, FALSE, state, d->ChangePoint);
     SetCursor(cursor);
     break;
   case GDK_FLEUR:
@@ -2723,7 +2778,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
   axis = FALSE;
 
-  ShowFocusLine(dc, state, d->ChangePoint);
+  ShowFocusLine(dc, FALSE, state, d->ChangePoint);
   d->ShowLine = FALSE;
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
@@ -3864,7 +3919,7 @@ mouse_move_change(GdkGC *dc, unsigned int state, TPoint *point, double zoom, str
 {
   int x, y;
 
-  ShowFocusLine(dc, state, d->ChangePoint);
+  ShowFocusLine(dc, TRUE, state, d->ChangePoint);
 
   d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
 		- Menulocal.LeftMargin) / zoom;
@@ -3882,7 +3937,7 @@ mouse_move_change(GdkGC *dc, unsigned int state, TPoint *point, double zoom, str
   d->LineX = x;
   d->LineY = y;
 
-  ShowFocusLine(dc, state, d->ChangePoint);
+  ShowFocusLine(dc, FALSE, state, d->ChangePoint);
 }
 
 static void
@@ -4083,6 +4138,7 @@ do_popup(GdkEventButton *event, struct Viewer *d)
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DEL], TRUE);
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_PROP], TRUE);
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ALIGN], TRUE);
+      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], TRUE);
     }
     if (num == 1) {
       struct focuslist *focus;
@@ -4101,6 +4157,8 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DOWN], TRUE);
 	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
 	}
+      } else {
+	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], FALSE);
       }
     }
   default:
@@ -4457,7 +4515,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     ShowPoints(gc);
 
     if (d->ShowLine)
-      ShowFocusLine(gc, 0, d->ChangePoint);
+      ShowFocusLine(gc, FALSE, 0, d->ChangePoint);
 
     if (d->ShowRect)
       ShowFrameRect(gc);
@@ -4971,7 +5029,7 @@ Draw(int SelectFile)
     ShowFocusFrame(gc);
 
   if (d->ShowLine)
-    ShowFocusLine(gc, 0, d->ChangePoint);
+    ShowFocusLine(gc, FALSE, 0, d->ChangePoint);
 
   if (d->ShowRect)
     ShowFrameRect(gc);
@@ -5011,7 +5069,7 @@ Draw(int SelectFile)
     ShowFocusFrame(gc);
 
   if (d->ShowLine)
-    ShowFocusLine(gc, 0, d->ChangePoint);
+    ShowFocusLine(gc, FALSE, 0, d->ChangePoint);
 
   if (d->ShowRect)
     ShowFrameRect(gc);
@@ -5852,6 +5910,10 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
   case VIEW_ALIGN_VCENTER:
   case VIEW_ALIGN_BOTTOM:
     AlignFocusedObj((int) client_data);
+    break;
+  case VIEW_ROTATE_CLOCKWISE:
+  case VIEW_ROTATE_COUNTER_CLOCKWISE:
+    RotateFocusedObj((int) client_data);
     break;
   }
 }

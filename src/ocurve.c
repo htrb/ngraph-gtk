@@ -1,5 +1,5 @@
 /* 
- * $Id: ocurve.c,v 1.6 2009/03/24 08:34:34 hito Exp $
+ * $Id: ocurve.c,v 1.7 2009/04/15 05:03:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -586,6 +586,7 @@ static struct objtable curve[] = {
 
   {"bbox",NIAFUNC,NREAD|NEXEC,curvebbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,legendmove,"ii",0},
+  {"rotate",NVFUNC,NREAD|NEXEC,legendrotate,"iiii",0},
   {"change",NVFUNC,NREAD|NEXEC,legendchange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,legendzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,curvematch,"iiiii",0},
