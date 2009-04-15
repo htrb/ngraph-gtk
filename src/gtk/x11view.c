@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11view.c,v 1.136 2009/04/15 05:05:11 hito Exp $
+ * $Id: x11view.c,v 1.135 2009/04/15 05:03:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4158,7 +4158,7 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
 	}
       } else {
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], FALSE);
+	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], );
       }
     }
   default:
