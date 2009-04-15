@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11view.c,v 1.135 2009/04/15 05:03:58 hito Exp $
+ * $Id: x11view.c,v 1.137 2009/04/15 05:44:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -777,8 +777,8 @@ create_popup_menu(struct Viewer *d)
     {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
   struct viewer_popup rotate_popup[] = {
-    {N_("_90° cloclwise"),         FALSE, VIEW_ROTATE_CLOCKWISE,        NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("9_0° counter-cloclwise"), FALSE, VIEW_ROTATE_COUNTER_CLOCKWISE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("_90 degree cloclwise"),         FALSE, VIEW_ROTATE_CLOCKWISE,        NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("9_0 degree counter-cloclwise"), FALSE, VIEW_ROTATE_COUNTER_CLOCKWISE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
   struct viewer_popup popup[] = {
     {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -4158,7 +4158,7 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
 	}
       } else {
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], );
+	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], FALSE);
       }
     }
   default:
