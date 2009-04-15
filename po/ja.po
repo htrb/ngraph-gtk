@@ -11,345 +11,345 @@ msgstr ""
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=EUC-JP\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/gtk/ox11menu.c:1546
 msgid "Unsaved Graph"
-msgstr "¿·µ¬¥°¥é¥Õ"
+msgstr "æ–°è¦ã‚°ãƒ©ãƒ•"
 
 #: src/gtk/ox11dlg.c:427
 msgid "Open file"
-msgstr "¥Õ¥¡¥¤¥ë¤ò³«¤¯"
+msgstr "ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã"
 
 #: src/gtk/ox11dlg.c:476
 msgid "Open files"
-msgstr "¥Õ¥¡¥¤¥ë¤ò³«¤¯"
+msgstr "ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã"
 
 #: src/gtk/ox11dlg.c:527
 msgid "Save file"
-msgstr "ÊÌÌ¾¤ÇÊİÂ¸"
+msgstr "åˆ¥åã§ä¿å­˜"
 
 #: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:88 src/oaxis.c:103
 msgid "none"
-msgstr "¤Ê¤·"
+msgstr "ãªã—"
 
 #: src/gtk/ogra2cairo.c:43
 msgid "default"
-msgstr "¥Ç¥Õ¥©¥ë¥È"
+msgstr "ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ"
 
 #: src/gtk/ogra2cairo.c:44
 msgid "gray"
-msgstr "¥°¥ì¥¤¥¹¥±¡¼¥ë"
+msgstr "ã‚°ãƒ¬ã‚¤ã‚¹ã‚±ãƒ¼ãƒ«"
 
 #: src/gtk/x11axis.c:54 src/gtk/x11opt.c:402 src/gtk/x11opt.c:893
 msgid "name"
-msgstr "Ì¾Á°"
+msgstr "åå‰"
 
 #: src/gtk/x11axis.c:55
 msgid "min"
-msgstr "ºÇ¾®"
+msgstr "æœ€å°"
 
 #: src/gtk/x11axis.c:56
 msgid "max"
-msgstr "ºÇÂç"
+msgstr "æœ€å¤§"
 
 #: src/gtk/x11axis.c:57
 msgid "inc"
-msgstr "ÁıÊ¬"
+msgstr "å¢—åˆ†"
 
 #: src/gtk/x11axis.c:58 src/gtk/x11file.c:71
 msgid "type"
-msgstr "¥¿¥¤¥×"
+msgstr "ã‚¿ã‚¤ãƒ—"
 
 #: src/gtk/x11axis.c:61
 msgid "dir"
-msgstr "Êı¸ş"
+msgstr "æ–¹å‘"
 
 #: src/gtk/x11axis.c:62
 msgid "len"
-msgstr "Ä¹¤µ"
+msgstr "é•·ã•"
 
 #: src/gtk/x11axis.c:79 src/gtk/x11file.c:99 src/gtk/x11lgnd.c:76
 #: src/gtk/x11merge.c:70 src/gtk/x11view.c:778
 msgid "_Duplicate"
-msgstr "Ê£À½(_D)"
+msgstr "è¤‡è£½(_D)"
 
 #: src/gtk/x11axis.c:82 src/gtk/x11lgnd.c:80
 msgid "_Focus"
-msgstr "¥Õ¥©¡¼¥«¥¹(_F)"
+msgstr "ãƒ•ã‚©ãƒ¼ã‚«ã‚¹(_F)"
 
 #: src/gtk/x11axis.c:83 src/gtk/x11file.c:104 src/gtk/x11lgnd.c:81
 #: src/gtk/x11merge.c:74
 msgid "_Show"
-msgstr "É½¼¨(_S)"
+msgstr "è¡¨ç¤º(_S)"
 
 #: src/gtk/x11axis.c:231
 #, c-format
 msgid "_Style %d:"
-msgstr "Àş¼ï %d(_S):"
+msgstr "ç·šç¨® %d(_S):"
 
 #: src/gtk/x11axis.c:236 src/gtk/x11axis.c:1729
 #, c-format
 msgid "_Width %d:"
-msgstr "ÀşÉı %d(_W):"
+msgstr "ç·šå¹… %d(_W):"
 
 #: src/gtk/x11axis.c:253
 #, c-format
 msgid "Grid %d"
-msgstr "¥°¥ê¥Ã¥É %d"
+msgstr "ã‚°ãƒªãƒƒãƒ‰ %d"
 
 #: src/gtk/x11axis.c:268
 msgid "Axis (_X):"
-msgstr "_X ¼´:"
+msgstr "_X è»¸:"
 
 #: src/gtk/x11axis.c:273
 msgid "Axis (_Y):"
-msgstr "_Y ¼´:"
+msgstr "_Y è»¸:"
 
 #: src/gtk/x11axis.c:296 src/gtk/x11axis.c:970 src/gtk/x11axis.c:1584
 #: src/gtk/x11axis.c:1721 src/gtk/x11lgnd.c:623 src/gtk/x11lgndx.c:401
 msgid "_Color:"
-msgstr "¿§(_C):"
+msgstr "è‰²(_C):"
 
 #: src/gtk/x11axis.c:299
 msgid "_Background"
-msgstr "ÇØ·Ê¿§(_B) "
+msgstr "èƒŒæ™¯è‰²(_B) "
 
 #: src/gtk/x11axis.c:304 src/gtk/x11opt.c:1367
 msgid "_Background Color:"
-msgstr "ÇØ·Ê¿§(_B):"
+msgstr "èƒŒæ™¯è‰²(_B):"
 
 #: src/gtk/x11axis.c:526 src/gtk/x11axis.c:750
 msgid "Graph _Width:"
-msgstr "Éı(_W):"
+msgstr "å¹…(_W):"
 
 #: src/gtk/x11axis.c:530 src/gtk/x11axis.c:754
 msgid "Graph _Height:"
-msgstr "¹â¤µ(_H):"
+msgstr "é«˜ã•(_H):"
 
 #: src/gtk/x11axis.c:541 src/gtk/x11axis.c:765
 msgid "_X axis"
-msgstr "_X ¼´"
+msgstr "_X è»¸"
 
 #: src/gtk/x11axis.c:555 src/gtk/x11axis.c:779
 msgid "_Y axis"
-msgstr "_Y ¼´"
+msgstr "_Y è»¸"
 
 #: src/gtk/x11axis.c:569
 msgid "_U axis"
-msgstr "_U ¼´"
+msgstr "_U è»¸"
 
 #: src/gtk/x11axis.c:583
 msgid "_R axis"
-msgstr "_R ¼´"
+msgstr "_R è»¸"
 
 #: src/gtk/x11axis.c:597 src/gtk/x11menu.c:893
 msgid "_Grid"
-msgstr "¥°¥ê¥Ã¥É(_G)"
+msgstr "ã‚°ãƒªãƒƒãƒ‰(_G)"
 
 #: src/gtk/x11axis.c:878 src/gtk/x11merge.c:148
 msgid "_Zoom:"
-msgstr "¥º¡¼¥à(_Z):"
+msgstr "ã‚ºãƒ¼ãƒ (_Z):"
 
 #: src/gtk/x11axis.c:954
 msgid "_Baseline"
-msgstr "¼´´ğÀşÉÁ²è(_B)"
+msgstr "è»¸åŸºç·šæç”»(_B)"
 
 #: src/gtk/x11axis.c:962 src/gtk/x11file.c:2748 src/gtk/x11lgnd.c:593
 #: src/gtk/x11lgndx.c:377
 msgid "Line _Style:"
-msgstr "Àş¼ï(_S):"
+msgstr "ç·šç¨®(_S):"
 
 #: src/gtk/x11axis.c:966 src/gtk/x11file.c:2752 src/gtk/x11lgndx.c:383
 msgid "_Line Width:"
-msgstr "ÀşÉı(_W):"
+msgstr "ç·šå¹…(_W):"
 
 #: src/gtk/x11axis.c:979 src/gtk/x11lgnd.c:904
 msgid "_Arrow:"
-msgstr "Ìğ°õ(_A):"
+msgstr "çŸ¢å°(_A):"
 
 #: src/gtk/x11axis.c:984
 msgid "_Arrow length:"
-msgstr "Ä¹¤µ(_A):"
+msgstr "é•·ã•(_A):"
 
 #: src/gtk/x11axis.c:989
 msgid "_Arrow width:"
-msgstr "Éı(_A):"
+msgstr "å¹…(_A):"
 
 #: src/gtk/x11axis.c:998
 msgid "_Wave:"
-msgstr "ÇÈ·¿(_W):"
+msgstr "æ³¢å‹(_W):"
 
 #: src/gtk/x11axis.c:1002
 msgid "_Wave length:"
-msgstr "Ä¹¤µ(_W):"
+msgstr "é•·ã•(_W):"
 
 #: src/gtk/x11axis.c:1007
 msgid "_Wave width:"
-msgstr "ÀşÉı(_W):"
+msgstr "ç·šå¹…(_W):"
 
 #: src/gtk/x11axis.c:1164
 msgid "_Length:"
-msgstr "Ä¹¤µ(_L):"
+msgstr "é•·ã•(_L):"
 
 #: src/gtk/x11axis.c:1168 src/gtk/x11axis.c:1391 src/gtk/x11lgnd.c:1246
 msgid "_Direction:"
-msgstr "Êı¸ş(_D):"
+msgstr "æ–¹å‘(_D):"
 
 #: src/gtk/x11axis.c:1179
 msgid "_Adjust:"
-msgstr "¸òº¹¼´(_A):"
+msgstr "äº¤å·®è»¸(_A):"
 
 #: src/gtk/x11axis.c:1183
 msgid "Adjust _Position:"
-msgstr "¸òº¹°ÌÃÖ(_P):"
+msgstr "äº¤å·®ä½ç½®(_P):"
 
 #: src/gtk/x11axis.c:1326
 msgid "_Numbering:"
-msgstr "°ÌÃÖ(_N):"
+msgstr "ä½ç½®(_N):"
 
 #: src/gtk/x11axis.c:1334
 msgid "_Begin:"
-msgstr "³«»ÏÅÀ(_B):"
+msgstr "é–‹å§‹ç‚¹(_B):"
 
 #: src/gtk/x11axis.c:1338
 msgid "_Step:"
-msgstr "´Ö³Ö(_S):"
+msgstr "é–“éš”(_S):"
 
 #: src/gtk/x11axis.c:1342
 msgid "_Num:"
-msgstr "¸Ä¿ô(_N):"
+msgstr "å€‹æ•°(_N):"
 
 #: src/gtk/x11axis.c:1355
 msgid "_Fraction:"
-msgstr "¾®¿ôÉô·å¿ô(_F):"
+msgstr "å°æ•°éƒ¨æ¡æ•°(_F):"
 
 #: src/gtk/x11axis.c:1362
 msgid "_Head:"
-msgstr "ÀèÆ¬(_H):"
+msgstr "å…ˆé ­(_H):"
 
 #: src/gtk/x11axis.c:1366
 msgid "_Align:"
-msgstr "°ÌÃÖ¹ç¤ï¤»(_A):"
+msgstr "ä½ç½®åˆã‚ã›(_A):"
 
 #: src/gtk/x11axis.c:1370
 msgid "shift (_P):"
-msgstr "ÊÂ¹Ô¥·¥Õ¥ÈÎÌ(_P):"
+msgstr "ä¸¦è¡Œã‚·ãƒ•ãƒˆé‡(_P):"
 
 #: src/gtk/x11axis.c:1374
 msgid "shift (_N):"
-msgstr "¿âÄ¾¥·¥Õ¥ÈÎÌ(_N):"
+msgstr "å‚ç›´ã‚·ãƒ•ãƒˆé‡(_N):"
 
 #: src/gtk/x11axis.c:1378
 msgid "_Auto normalization:"
-msgstr "¼«Æ°¥¹¥±¡¼¥ë(_A):"
+msgstr "è‡ªå‹•ã‚¹ã‚±ãƒ¼ãƒ«(_A):"
 
 #: src/gtk/x11axis.c:1387
 msgid "_Tail:"
-msgstr "¸åÂ³(_T):"
+msgstr "å¾Œç¶š(_T):"
 
 #: src/gtk/x11axis.c:1394
 msgid "_Log power"
-msgstr "¥Ù¥­·Á¼°(¥í¥°)(_L)"
+msgstr "ãƒ™ã‚­å½¢å¼(ãƒ­ã‚°)(_L)"
 
 #: src/gtk/x11axis.c:1398
 msgid "_Add plus"
-msgstr "+ÄÉ²Ã(_A)"
+msgstr "+è¿½åŠ (_A)"
 
 #: src/gtk/x11axis.c:1402
 msgid "no _Zero"
-msgstr "¥¼¥íÈóÉ½¼¨(_Z)"
+msgstr "ã‚¼ãƒ­éè¡¨ç¤º(_Z)"
 
 #: src/gtk/x11axis.c:1555
 msgid "_Point:"
-msgstr "¥İ¥¤¥ó¥È(_P):"
+msgstr "ãƒã‚¤ãƒ³ãƒˆ(_P):"
 
 #: src/gtk/x11axis.c:1559 src/gtk/x11lgnd.c:1213
 msgid "_Space:"
-msgstr "Ê¸»ú´Ö(_S):"
+msgstr "æ–‡å­—é–“(_S):"
 
 #: src/gtk/x11axis.c:1563
 msgid "_Script size:"
-msgstr "¥¹¥¯¥ê¥×¥È¥µ¥¤¥º(_S):"
+msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚µã‚¤ã‚º(_S):"
 
 #: src/gtk/x11axis.c:1570 src/gtk/x11lgnd.c:1226
 msgid "_Font:"
-msgstr "±ÑÊ¸¥Õ¥©¥ó¥È(_F):"
+msgstr "è‹±æ–‡ãƒ•ã‚©ãƒ³ãƒˆ(_F):"
 
 #: src/gtk/x11axis.c:1577 src/gtk/x11lgnd.c:1235
 msgid "_Jfont:"
-msgstr "Ë®Ê¸¥Õ¥©¥ó¥È(_J):"
+msgstr "é‚¦æ–‡ãƒ•ã‚©ãƒ³ãƒˆ(_J):"
 
 #: src/gtk/x11axis.c:1697
 msgid "_Gauge:"
-msgstr "°ÌÃÖ(_G):"
+msgstr "ä½ç½®(_G):"
 
 #: src/gtk/x11axis.c:1701 src/gtk/x11axis.c:2078 src/gtk/x11file.c:1128
 msgid "_Min:"
-msgstr "ºÇ¾®ÃÍ(_M):"
+msgstr "æœ€å°å€¤(_M):"
 
 #: src/gtk/x11axis.c:1705 src/gtk/x11axis.c:2084 src/gtk/x11file.c:1132
 msgid "_Max:"
-msgstr "ºÇÂçÃÍ(_M):"
+msgstr "æœ€å¤§å€¤(_M):"
 
 #: src/gtk/x11axis.c:1717
 msgid "_Style:"
-msgstr "Àş¼ï(_S):"
+msgstr "ç·šç¨®(_S):"
 
 #: src/gtk/x11axis.c:1734
 #, c-format
 msgid "_Length %d:"
-msgstr "Ä¹¤µ %d(_L):"
+msgstr "é•·ã• %d(_L):"
 
 #: src/gtk/x11axis.c:2064
 #, c-format
 msgid "Axis %d %s"
-msgstr "¼´ %d %s"
+msgstr "è»¸ %d %s"
 
 #: src/gtk/x11axis.c:2090
 msgid "_Inc:"
-msgstr "ÁıÊ¬(_I):"
+msgstr "å¢—åˆ†(_I):"
 
 #: src/gtk/x11axis.c:2096
 msgid "_Scale:"
-msgstr "¥¹¥±¡¼¥ëË¡(_S):"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«æ³•(_S):"
 
 #: src/gtk/x11axis.c:2113
 msgid "_File"
-msgstr "¥Õ¥¡¥¤¥ë(_F)"
+msgstr "ãƒ•ã‚¡ã‚¤ãƒ«(_F)"
 
 #: src/gtk/x11axis.c:2119 src/gtk/x11file.c:1137 src/gtk/x11print.c:296
 msgid "_Div:"
-msgstr "Ê¬³ä¿ô(_D):"
+msgstr "åˆ†å‰²æ•°(_D):"
 
 #: src/gtk/x11axis.c:2123
 msgid "_Ref:"
-msgstr "»²¾È¼´(_R):"
+msgstr "å‚ç…§è»¸(_R):"
 
 #: src/gtk/x11axis.c:2134
 msgid "_Baseline ..."
-msgstr "¼´´ğÀş(_B)..."
+msgstr "è»¸åŸºç·š(_B)..."
 
 #: src/gtk/x11axis.c:2138
 msgid "_Gauge ..."
-msgstr "ÌÜÀ¹Àş(_G)..."
+msgstr "ç›®ç››ç·š(_G)..."
 
 #: src/gtk/x11axis.c:2142
 msgid "_Numbering ..."
-msgstr "ÌÜÀ¹¿ô»ú(_N)..."
+msgstr "ç›®ç››æ•°å­—(_N)..."
 
 #: src/gtk/x11axis.c:2146
 msgid "_Font ..."
-msgstr "¥Õ¥©¥ó¥È(_F)..."
+msgstr "ãƒ•ã‚©ãƒ³ãƒˆ(_F)..."
 
 #: src/gtk/x11axis.c:2150
 msgid "_Position ..."
-msgstr "°ÌÃÖ(_P)..."
+msgstr "ä½ç½®(_P)..."
 
 #: src/gtk/x11commn.c:928
 msgid "Save NGP file"
-msgstr "NGP ¥Õ¥¡¥¤¥ë¤ÎÊİÂ¸"
+msgstr "NGP ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜"
 
 #: src/gtk/x11commn.c:939
 #, c-format
@@ -357,767 +357,767 @@ msgid ""
 "A file named `%s'already exists.\n"
 "Do you want to replace it?"
 msgstr ""
-"'%s' ¤È¤¤¤¦¥Õ¥¡¥¤¥ë¤Ï´û¤ËÂ¸ºß¤·¤Æ¤¤¤Ş¤¹¡£\n"
-"¾å½ñ¤­¤·¤Æ¤â¤è¤í¤·¤¤¤Ç¤¹¤«?"
+"'%s' ã¨ã„ã†ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ—¢ã«å­˜åœ¨ã—ã¦ã„ã¾ã™ã€‚\n"
+"ä¸Šæ›¸ãã—ã¦ã‚‚ã‚ˆã‚ã—ã„ã§ã™ã‹?"
 
 #: src/gtk/x11commn.c:940 src/gtk/x11menu.c:161
 msgid "Save"
-msgstr "ÊİÂ¸"
+msgstr "ä¿å­˜"
 
 #: src/gtk/x11commn.c:956 src/gtk/x11opt.c:1515
 #, c-format
 msgid "Saving `%.128s'."
-msgstr "ÊİÂ¸Ãæ `%.128s'."
+msgstr "ä¿å­˜ä¸­ `%.128s'."
 
 #: src/gtk/x11commn.c:1076 src/gtk/x11commn.c:1146
 #, c-format
 msgid "Loading `%.128s'."
-msgstr "ÆÉ¹şÃæ `%.128s'."
+msgstr "èª­è¾¼ä¸­ `%.128s'."
 
 #: src/gtk/x11commn.c:1258
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
-"¤³¤Î¥°¥é¥Õ¤ÏÊÑ¹¹¤µ¤ì¤Æ¤¤¤Ş¤¹.\n"
-"ÊİÂ¸¤·¤Ş¤¹¤«?"
+"ã“ã®ã‚°ãƒ©ãƒ•ã¯å¤‰æ›´ã•ã‚Œã¦ã„ã¾ã™.\n"
+"ä¿å­˜ã—ã¾ã™ã‹?"
 
 #: src/gtk/x11commn.c:1488
 msgid "Ngraph.ini is not found."
-msgstr "Ngraph.ini ¤¬¸«¤Ä¤«¤ê¤Ş¤»¤ó."
+msgstr "Ngraph.ini ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“."
 
 #: src/gtk/x11commn.c:1491
 msgid "Ngraph.ini is write protected."
-msgstr "Ngraph.ini ¤Ë½ñ¤­¹ş¤á¤Ş¤»¤ó¤Ç¤·¤¿."
+msgstr "Ngraph.ini ã«æ›¸ãè¾¼ã‚ã¾ã›ã‚“ã§ã—ãŸ."
 
 #: src/gtk/x11commn.c:1495
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
-msgstr "~/%s ¤Ë 'Ngraph.ini' ¤ò¥¤¥ó¥¹¥È¡¼¥ë¤·¤Ş¤¹¤«?"
+msgstr "~/%s ã« 'Ngraph.ini' ã‚’ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«ã—ã¾ã™ã‹?"
 
 #: src/gtk/x11commn.c:1498
 msgid "Ngraph.ini could not be copied."
-msgstr "Ngraph.ini ¤ò¥³¥Ô¡¼¤Ç¤­¤Ş¤»¤ó¤Ç¤·¤¿."
+msgstr "Ngraph.ini ã‚’ã‚³ãƒ”ãƒ¼ã§ãã¾ã›ã‚“ã§ã—ãŸ."
 
 #: src/gtk/x11commn.c:1697
 msgid "error"
-msgstr "¥¨¥é¡¼"
+msgstr "ã‚¨ãƒ©ãƒ¼"
 
 #: src/gtk/x11dialg.c:56 src/gtk/x11opt.c:1373
 msgid "solid"
-msgstr "¼ÂÀş"
+msgstr "å®Ÿç·š"
 
 #: src/gtk/x11dialg.c:57 src/gtk/x11opt.c:1374
 msgid "dot"
-msgstr "ÅÀÀş"
+msgstr "ç‚¹ç·š"
 
 #: src/gtk/x11dialg.c:58
 msgid "short dash"
-msgstr "Ã»º¿Àş"
+msgstr "çŸ­é–ç·š"
 
 #: src/gtk/x11dialg.c:59
 msgid "dash"
-msgstr "º¿Àş"
+msgstr "é–ç·š"
 
 #: src/gtk/x11dialg.c:60
 msgid "dot dash"
-msgstr "°ìÅÀº¿Àş"
+msgstr "ä¸€ç‚¹é–ç·š"
 
 #: src/gtk/x11dialg.c:61
 msgid "2-dot dash"
-msgstr "ÆóÅÀº¿Àş"
+msgstr "äºŒç‚¹é–ç·š"
 
 #: src/gtk/x11dialg.c:62
 msgid "dot 2-dash"
-msgstr "°ìÅÀÆóº¿Àş"
+msgstr "ä¸€ç‚¹äºŒé–ç·š"
 
 #: src/gtk/x11dialg.c:67
 msgid "auto"
-msgstr "¼«Æ°"
+msgstr "è‡ªå‹•"
 
 #: src/gtk/x11dialg.c:129
 msgid "data"
-msgstr "¥Ç¡¼¥¿"
+msgstr "ãƒ‡ãƒ¼ã‚¿"
 
 #: src/gtk/x11dialg.c:132 src/gtk/x11dialg.c:138 src/gtk/x11dialg.c:222
 msgid "mark selection"
-msgstr "¥Ş¡¼¥¯ÁªÂò"
+msgstr "ãƒãƒ¼ã‚¯é¸æŠ"
 
 #: src/gtk/x11dialg.c:135
 msgid "data default"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë½é´ü¾õÂÖ"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«åˆæœŸçŠ¶æ…‹"
 
 #: src/gtk/x11dialg.c:141
 msgid "evaluation"
-msgstr "¥Ç¡¼¥¿É¾²Á"
+msgstr "ãƒ‡ãƒ¼ã‚¿è©•ä¾¡"
 
 #: src/gtk/x11dialg.c:144 src/gtk/x11file.c:381
 msgid "math"
-msgstr "ÊÑ´¹¿ô¼°"
+msgstr "å¤‰æ›æ•°å¼"
 
 #: src/gtk/x11dialg.c:147
 msgid "math text"
-msgstr "¿ô¼°ÆşÎÏ"
+msgstr "æ•°å¼å…¥åŠ›"
 
 #: src/gtk/x11dialg.c:150 src/ofile.c:138
 msgid "fit"
-msgstr "¥Õ¥£¥Ã¥È"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆ"
 
 #: src/gtk/x11dialg.c:153
 msgid "fit load"
-msgstr "¥Õ¥£¥Ã¥ÈÀßÄêÆÉ¹ş"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆè¨­å®šèª­è¾¼"
 
 #: src/gtk/x11dialg.c:156
 msgid "fit save"
-msgstr "¥Õ¥£¥Ã¥ÈÀßÄêÊİÂ¸"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆè¨­å®šä¿å­˜"
 
 #: src/gtk/x11dialg.c:159
 msgid "data move"
-msgstr "°ÜÆ°"
+msgstr "ç§»å‹•"
 
 #: src/gtk/x11dialg.c:162
 msgid "data mask"
-msgstr "¥Ş¥¹¥¯"
+msgstr "ãƒã‚¹ã‚¯"
 
 #: src/gtk/x11dialg.c:165
 msgid "data load"
-msgstr "ÆÉ¤ß¹ş¤ß"
+msgstr "èª­ã¿è¾¼ã¿"
 
 #: src/gtk/x11dialg.c:168
 msgid "data math"
-msgstr "¿ô¼°ÊÑ´¹"
+msgstr "æ•°å¼å¤‰æ›"
 
 #: src/gtk/x11dialg.c:171
 msgid "Frame/Section Graph"
-msgstr "Êı´ã¥°¥é¥Õ"
+msgstr "æ–¹çœ¼ã‚°ãƒ©ãƒ•"
 
 #: src/gtk/x11dialg.c:174 src/gtk/x11menu.c:336
 msgid "Cross Graph"
-msgstr "¸òº¹¥°¥é¥Õ"
+msgstr "äº¤å·®ã‚°ãƒ©ãƒ•"
 
 #: src/gtk/x11dialg.c:177
 msgid "axis"
-msgstr "¼´"
+msgstr "è»¸"
 
 #: src/gtk/x11dialg.c:180
 msgid "grid"
-msgstr "¥°¥ê¥Ã¥É"
+msgstr "ã‚°ãƒªãƒƒãƒ‰"
 
 #: src/gtk/x11dialg.c:183
 msgid "Scale Zoom"
-msgstr "¥¹¥±¡¼¥ë¥º¡¼¥à"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«ã‚ºãƒ¼ãƒ "
 
 #: src/gtk/x11dialg.c:186
 msgid "Axis Baseine"
-msgstr "¼´´ğÀş"
+msgstr "è»¸åŸºç·š"
 
 #: src/gtk/x11dialg.c:189
 msgid "Axis Position"
-msgstr "°ÌÃÖ"
+msgstr "ä½ç½®"
 
 #: src/gtk/x11dialg.c:192
 msgid "Axis Numbering"
-msgstr "ÌÜÀ¹¿ô»ú"
+msgstr "ç›®ç››æ•°å­—"
 
 #: src/gtk/x11dialg.c:195
 msgid "Axis Font"
-msgstr "¥Õ¥©¥ó¥È"
+msgstr "ãƒ•ã‚©ãƒ³ãƒˆ"
 
 #: src/gtk/x11dialg.c:198
 msgid "Axis Gauge"
-msgstr "ÌÜÀ¹Àş"
+msgstr "ç›®ç››ç·š"
 
 #: src/gtk/x11dialg.c:201
 msgid "merge"
-msgstr "¹çÀ®"
+msgstr "åˆæˆ"
 
 #: src/gtk/x11dialg.c:204
 msgid "legend curve"
-msgstr "¶ÊÀş"
+msgstr "æ›²ç·š"
 
 #: src/gtk/x11dialg.c:207
 msgid "legend polygon"
-msgstr "Â¿³Ñ·Á"
+msgstr "å¤šè§’å½¢"
 
 #: src/gtk/x11dialg.c:210
 msgid "legend line"
-msgstr "Ä¾Àş"
+msgstr "ç›´ç·š"
 
 #: src/gtk/x11dialg.c:213
 msgid "legend rectangle"
-msgstr "»Í³Ñ·Á"
+msgstr "å››è§’å½¢"
 
 #: src/gtk/x11dialg.c:216
 msgid "legend arc"
-msgstr "±ß"
+msgstr "å††"
 
 #: src/gtk/x11dialg.c:219
 msgid "legend mark"
-msgstr "¥Ş¡¼¥¯"
+msgstr "ãƒãƒ¼ã‚¯"
 
 #: src/gtk/x11dialg.c:225
 msgid "legend text"
-msgstr "¥Æ¥­¥¹¥È"
+msgstr "ãƒ†ã‚­ã‚¹ãƒˆ"
 
 #: src/gtk/x11dialg.c:228
 msgid "textdefault"
-msgstr "¥ì¥¸¥§¥ó¥É¥Æ¥­¥¹¥È½é´ü¾õÂÖ"
+msgstr "ãƒ¬ã‚¸ã‚§ãƒ³ãƒ‰ãƒ†ã‚­ã‚¹ãƒˆåˆæœŸçŠ¶æ…‹"
 
 #: src/gtk/x11dialg.c:231
 msgid "legend gauss"
-msgstr "¥¬¥¦¥¹´Ø¿ôÅù"
+msgstr "ã‚¬ã‚¦ã‚¹é–¢æ•°ç­‰"
 
 #: src/gtk/x11dialg.c:234
 msgid "page"
-msgstr "ÍÑ»æ"
+msgstr "ç”¨ç´™"
 
 #: src/gtk/x11dialg.c:237
 msgid "drawobj"
-msgstr "ÉÁ²è¥ª¥Ö¥¸¥§¥¯¥È"
+msgstr "æç”»ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ"
 
 #: src/gtk/x11dialg.c:240
 msgid "directory"
-msgstr "¸½ºß¤Î¥Ç¥£¥ì¥¯¥È¥ê"
+msgstr "ç¾åœ¨ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª"
 
 #: src/gtk/x11dialg.c:243
 msgid "load"
-msgstr "ÆÉ¹ş"
+msgstr "èª­è¾¼"
 
 #: src/gtk/x11dialg.c:246
 msgid "loadprm"
-msgstr "PRM ¥Õ¥¡¥¤¥ëÆÉ¹ş"
+msgstr "PRM ãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼"
 
 #: src/gtk/x11dialg.c:249
 msgid "save"
-msgstr "ÊİÂ¸"
+msgstr "ä¿å­˜"
 
 #: src/gtk/x11dialg.c:252
 msgid "driver"
-msgstr "¥É¥é¥¤¥Ğ"
+msgstr "ãƒ‰ãƒ©ã‚¤ãƒ"
 
 #: src/gtk/x11dialg.c:255
 msgid "print"
-msgstr "°õºş"
+msgstr "å°åˆ·"
 
 #: src/gtk/x11dialg.c:258
 msgid "output data"
-msgstr "¥Ç¡¼¥¿½ĞÎÏ"
+msgstr "ãƒ‡ãƒ¼ã‚¿å‡ºåŠ›"
 
 #: src/gtk/x11dialg.c:261
 msgid "save default"
-msgstr "½é´ü¾õÂÖ¤È¤·¤Æ¥»¡¼¥Ö"
+msgstr "åˆæœŸçŠ¶æ…‹ã¨ã—ã¦ã‚»ãƒ¼ãƒ–"
 
 #: src/gtk/x11dialg.c:264
 msgid "Add-in script"
-msgstr "¥¹¥¯¥ê¥×¥ÈÀßÄê"
+msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆè¨­å®š"
 
 #: src/gtk/x11dialg.c:267
 msgid "Add-in script setup"
-msgstr "¥¹¥¯¥ê¥×¥È"
+msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆ"
 
 #: src/gtk/x11dialg.c:270
 msgid "External driver"
-msgstr "³°Éô¥É¥é¥¤¥ĞÀßÄê"
+msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒè¨­å®š"
 
 #: src/gtk/x11dialg.c:273
 msgid "External driver setup"
-msgstr "³°Éô¥É¥é¥¤¥Ğ"
+msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒ"
 
 #: src/gtk/x11dialg.c:276 src/gtk/x11opt.c:680
 msgid "Font"
-msgstr "¥Õ¥©¥ó¥È"
+msgstr "ãƒ•ã‚©ãƒ³ãƒˆ"
 
 #: src/gtk/x11dialg.c:279
 msgid "Miscellaneous"
-msgstr "¤½¤ÎÂ¾"
+msgstr "ãã®ä»–"
 
 #: src/gtk/x11dialg.c:282
 msgid "External viewer"
-msgstr "³°Éô¥Ó¥å¡¼¥¢"
+msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢"
 
 #: src/gtk/x11dialg.c:285 src/gtk/x11menu.c:196
 msgid "Viewer"
-msgstr "¥Ó¥å¡¼¥¢"
+msgstr "ãƒ“ãƒ¥ãƒ¼ã‚¢"
 
 #: src/gtk/x11dialg.c:288
 msgid "multi select"
-msgstr "Ê£¿ôÁªÂò"
+msgstr "è¤‡æ•°é¸æŠ"
 
 #: src/gtk/x11dialg.c:291
 msgid "single select"
-msgstr "Ã±°ìÁªÂò"
+msgstr "å˜ä¸€é¸æŠ"
 
 #: src/gtk/x11dialg.c:294
 msgid "output image"
-msgstr "²èÁü¥Õ¥¡¥¤¥ë½ĞÎÏ"
+msgstr "ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«å‡ºåŠ›"
 
 #: src/gtk/x11dialg.c:374
 msgid "_All"
-msgstr "Á´¤Æ(_A)"
+msgstr "å…¨ã¦(_A)"
 
 #: src/gtk/x11file.c:66 src/gtk/x11merge.c:53 src/gtk/x11opt.c:403
 msgid "file"
-msgstr "¥Õ¥¡¥¤¥ë"
+msgstr "ãƒ•ã‚¡ã‚¤ãƒ«"
 
 #: src/gtk/x11file.c:69
 msgid "ax"
-msgstr "x¼´"
+msgstr "xè»¸"
 
 #: src/gtk/x11file.c:70
 msgid "ay"
-msgstr "y¼´"
+msgstr "yè»¸"
 
 #: src/gtk/x11file.c:72
 msgid "size"
-msgstr "¥µ¥¤¥º"
+msgstr "ã‚µã‚¤ã‚º"
 
 #: src/gtk/x11file.c:73
 msgid "width"
-msgstr "Éı"
+msgstr "å¹…"
 
 #: src/gtk/x11file.c:74
 msgid "skip"
-msgstr "¥¹¥­¥Ã¥×"
+msgstr "ã‚¹ã‚­ãƒƒãƒ—"
 
 #: src/gtk/x11file.c:75
 msgid "step"
-msgstr "¥¹¥Æ¥Ã¥×"
+msgstr "ã‚¹ãƒ†ãƒƒãƒ—"
 
 #: src/gtk/x11file.c:76
 msgid "final"
-msgstr "ºÇ½ª¹Ô"
+msgstr "æœ€çµ‚è¡Œ"
 
 #: src/gtk/x11file.c:77
 msgid "num"
-msgstr "¥Ç¡¼¥¿¿ô"
+msgstr "ãƒ‡ãƒ¼ã‚¿æ•°"
 
 #: src/gtk/x11file.c:100
 msgid "duplicate _Behind"
-msgstr "Ä¾¸å¤ËÊ£À½(_B)"
+msgstr "ç›´å¾Œã«è¤‡è£½(_B)"
 
 #: src/gtk/x11file.c:103 src/gtk/x11file.c:1220 src/gtk/x11menu.c:1021
 msgid "_Draw"
-msgstr "ÉÁ²è(_D)"
+msgstr "æç”»(_D)"
 
 #: src/gtk/x11file.c:107 src/gtk/x11file.c:2840
 msgid "_Fit"
-msgstr "¥Õ¥£¥Ã¥È(_F)"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆ(_F)"
 
 #: src/gtk/x11file.c:143
 msgid "_Math X:"
-msgstr "X ÊÑ´¹¼°(_M):"
+msgstr "X å¤‰æ›å¼(_M):"
 
 #: src/gtk/x11file.c:143
 msgid "_Math Y:"
-msgstr "Y ÊÑ´¹¼°(_M):"
+msgstr "Y å¤‰æ›å¼(_M):"
 
 #: src/gtk/x11file.c:150
 msgid "_Math:"
-msgstr "¼°(_M):"
+msgstr "å¼(_M):"
 
 #: src/gtk/x11file.c:389
 msgid "_X math"
-msgstr "_X ÊÑ´¹¼°"
+msgstr "_X å¤‰æ›å¼"
 
 #: src/gtk/x11file.c:390
 msgid "_Y math"
-msgstr "_Y ÊÑ´¹¼°"
+msgstr "_Y å¤‰æ›å¼"
 
 #: src/gtk/x11file.c:482
 msgid "Fit setting"
-msgstr "¥Õ¥£¥Ã¥ÈÀßÄê"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆè¨­å®š"
 
 #: src/gtk/x11file.c:543
 msgid "_Profile:"
-msgstr "¥×¥í¥Õ¥£¡¼¥ë(_P):"
+msgstr "ãƒ—ãƒ­ãƒ•ã‚£ãƒ¼ãƒ«(_P):"
 
 #: src/gtk/x11file.c:663
 msgid "Setting file not found."
-msgstr "ÀßÄê¥Õ¥¡¥¤¥ë¤¬¸«¤Ä¤«¤ê¤Ş¤»¤ó."
+msgstr "è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“."
 
 #: src/gtk/x11file.c:698
 msgid "No settings."
-msgstr "ÀßÄê¤¬¤¢¤ê¤Ş¤»¤ó."
+msgstr "è¨­å®šãŒã‚ã‚Šã¾ã›ã‚“."
 
 #: src/gtk/x11file.c:730
 msgid "Overwrite existing setting?"
-msgstr "´ûÂ¸¤ÎÀßÄê¤Ë¾å½ñ¤­¤·¤Ş¤¹¤«?"
+msgstr "æ—¢å­˜ã®è¨­å®šã«ä¸Šæ›¸ãã—ã¾ã™ã‹?"
 
 #: src/gtk/x11file.c:938
 msgid "Fitting Results"
-msgstr "¥Õ¥£¥Ã¥È·ë²Ì"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆçµæœ"
 
 #: src/gtk/x11file.c:1065
 #, c-format
 msgid "Fit %d"
-msgstr "¥Õ¥£¥Ã¥È %d"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆ %d"
 
 #: src/gtk/x11file.c:1074 src/gtk/x11file.c:2776
 msgid "_Load"
-msgstr "ÆÉ¹ş(_L)"
+msgstr "èª­è¾¼(_L)"
 
 #: src/gtk/x11file.c:1081 src/gtk/x11file.c:2699
 msgid "_Type:"
-msgstr "¼ïÎà(_T):"
+msgstr "ç¨®é¡(_T):"
 
 #: src/gtk/x11file.c:1084
 msgid "_Through"
-msgstr "ÄÌ²áÅÀ(_T)"
+msgstr "é€šéç‚¹(_T)"
 
 #: src/gtk/x11file.c:1106
 msgid "_Dim:"
-msgstr "Â¿¹à¼°¼¡¸µ(_D):"
+msgstr "å¤šé …å¼æ¬¡å…ƒ(_D):"
 
 #: src/gtk/x11file.c:1113
 msgid "_Weight:"
-msgstr "½Å¤ßÉÕ¤±(_W):"
+msgstr "é‡ã¿ä»˜ã‘(_W):"
 
 #: src/gtk/x11file.c:1143
 msgid "_Interpolation"
-msgstr "Êä´°(_I)"
+msgstr "è£œå®Œ(_I)"
 
 #: src/gtk/x11file.c:1155
 msgid "_Formula:"
-msgstr "¥Õ¥£¥Ã¥È¼°(_F):"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆå¼(_F):"
 
 #: src/gtk/x11file.c:1163
 msgid "_Converge (%):"
-msgstr "¼ıÂ«(%) (_C):"
+msgstr "åæŸ(%) (_C):"
 
 #: src/gtk/x11file.c:1166
 msgid "_Derivatives"
-msgstr "ÈùÊ¬¼°»ØÄê(_D)"
+msgstr "å¾®åˆ†å¼æŒ‡å®š(_D)"
 
 #: src/gtk/x11file.c:1216
 msgid "_Result"
-msgstr "¥Õ¥£¥Ã¥È·ë²Ì(_R)"
+msgstr "ãƒ•ã‚£ãƒƒãƒˆçµæœ(_R)"
 
 #: src/gtk/x11file.c:1406 src/gtk/x11file.c:1678 src/gtk/x11view.c:642
 msgid "Line No."
-msgstr "¹Ô"
+msgstr "è¡Œ"
 
 #: src/gtk/x11file.c:1430 src/gtk/x11file.c:1693
 msgid "_Line:"
-msgstr "¿·µ¬¹Ô(_L):"
+msgstr "æ–°è¦è¡Œ(_L):"
 
 #: src/gtk/x11file.c:1844
 msgid "_Head skip:"
-msgstr "ÀèÆ¬¥¹¥­¥Ã¥×¹Ô(_H):"
+msgstr "å…ˆé ­ã‚¹ã‚­ãƒƒãƒ—è¡Œ(_H):"
 
 #: src/gtk/x11file.c:1848
 msgid "_Read step:"
-msgstr "ÆÉ¹ş¥¹¥Æ¥Ã¥×¹Ô(_S):"
+msgstr "èª­è¾¼ã‚¹ãƒ†ãƒƒãƒ—è¡Œ(_S):"
 
 #: src/gtk/x11file.c:1853
 msgid "_Final line:"
-msgstr "ºÇ½ª¹Ô(_F):"
+msgstr "æœ€çµ‚è¡Œ(_F):"
 
 #: src/gtk/x11file.c:1862
 msgid "_Remark:"
-msgstr "¥³¥á¥ó¥È¹Ô(_R):"
+msgstr "ã‚³ãƒ¡ãƒ³ãƒˆè¡Œ(_R):"
 
 #: src/gtk/x11file.c:1866
 msgid "_Ifs:"
-msgstr "¶èÀÚÊ¸»ú(_I):"
+msgstr "åŒºåˆ‡æ–‡å­—(_I):"
 
 #: src/gtk/x11file.c:1869
 msgid "_CSV"
-msgstr "CSV·Á¼°"
+msgstr "CSVå½¢å¼"
 
 #: src/gtk/x11file.c:2016
 msgid "_X smooth:"
-msgstr "_X ÎÙÀÜÊ¿¶Ñ:"
+msgstr "_X éš£æ¥å¹³å‡:"
 
 #: src/gtk/x11file.c:2020
 msgid "_X math:"
-msgstr "_X ÊÑ´¹¿ô¼°:"
+msgstr "_X å¤‰æ›æ•°å¼:"
 
 #: src/gtk/x11file.c:2029
 msgid "_Y smooth:"
-msgstr "_Y ÎÙÀÜÊ¿¶Ñ:"
+msgstr "_Y éš£æ¥å¹³å‡:"
 
 #: src/gtk/x11file.c:2033
 msgid "_Y math:"
-msgstr "_Y ÊÑ´¹¿ô¼°:"
+msgstr "_Y å¤‰æ›æ•°å¼:"
 
 #: src/gtk/x11file.c:2658
 msgid "_X column:"
-msgstr "_X ¥«¥é¥à:"
+msgstr "_X ã‚«ãƒ©ãƒ :"
 
 #: src/gtk/x11file.c:2664
 msgid "_X axis:"
-msgstr "_X ¼´:"
+msgstr "_X è»¸:"
 
 #: src/gtk/x11file.c:2674
 msgid "_Y column:"
-msgstr "_Y ¥«¥é¥à:"
+msgstr "_Y ã‚«ãƒ©ãƒ :"
 
 #: src/gtk/x11file.c:2680
 msgid "_Y axis:"
-msgstr "_Y ¼´:"
+msgstr "_Y è»¸:"
 
 #: src/gtk/x11file.c:2707 src/gtk/x11lgnd.c:1164
 msgid "_Mark:"
-msgstr "¥Ş¡¼¥¯(_M):"
+msgstr "ãƒãƒ¼ã‚¯(_M):"
 
 #: src/gtk/x11file.c:2712
 msgid "_Curve:"
-msgstr "¶ÊÀş(_C):"
+msgstr "æ›²ç·š(_C):"
 
 #: src/gtk/x11file.c:2727
 msgid "_Color 1:"
-msgstr "¿§ 1(_C):"
+msgstr "è‰² 1(_C):"
 
 #: src/gtk/x11file.c:2731
 msgid "_Color 2:"
-msgstr "¿§ 2(_C):"
+msgstr "è‰² 2(_C):"
 
 #: src/gtk/x11file.c:2734
 msgid "_Clip"
-msgstr "¥¯¥ê¥Ã¥×(_C)"
+msgstr "ã‚¯ãƒªãƒƒãƒ—(_C)"
 
 #: src/gtk/x11file.c:2756 src/gtk/x11lgnd.c:1169
 msgid "_Size:"
-msgstr "¥µ¥¤¥º(_S):"
+msgstr "ã‚µã‚¤ã‚º(_S):"
 
 #: src/gtk/x11file.c:2760 src/gtk/x11lgnd.c:603 src/gtk/x11lgndx.c:389
 msgid "_Miter:"
-msgstr "¥Ş¥¤¥¿¡¼(_M):"
+msgstr "ãƒã‚¤ã‚¿ãƒ¼(_M):"
 
 #: src/gtk/x11file.c:2764 src/gtk/x11lgnd.c:613 src/gtk/x11lgndx.c:395
 msgid "_Join:"
-msgstr "¥¸¥ç¥¤¥ó(_J):"
+msgstr "ã‚¸ãƒ§ã‚¤ãƒ³(_J):"
 
 #: src/gtk/x11file.c:2772
 msgid "_Math"
-msgstr "ÊÑ´¹¿ô¼°(_M) "
+msgstr "å¤‰æ›æ•°å¼(_M) "
 
 #: src/gtk/x11file.c:2798
 #, c-format
 msgid "Data %d"
-msgstr "¥Ç¡¼¥¿ %d"
+msgstr "ãƒ‡ãƒ¼ã‚¿ %d"
 
 #: src/gtk/x11file.c:2802
 msgid "_Apply all"
-msgstr "Á´¤Æ¤ËÅ¬ÍÑ(_A)"
+msgstr "å…¨ã¦ã«é©ç”¨(_A)"
 
 #: src/gtk/x11file.c:2809
 msgid "_Copy all"
-msgstr "Á´¤Æ¥³¥Ô¡¼(_C)"
+msgstr "å…¨ã¦ã‚³ãƒ”ãƒ¼(_C)"
 
 #: src/gtk/x11file.c:2815 src/gtk/x11merge.c:134 src/gtk/x11print.c:157
 msgid "_File:"
-msgstr "¥Õ¥¡¥¤¥ëÌ¾(_F):"
+msgstr "ãƒ•ã‚¡ã‚¤ãƒ«å(_F):"
 
 #: src/gtk/x11file.c:2818
 msgid "_Load settings"
-msgstr "¥Õ¥¡¥¤¥ë¤«¤éÀßÄêÆÉ¹ş(_L)"
+msgstr "ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰è¨­å®šèª­è¾¼(_L)"
 
 #: src/gtk/x11file.c:2852 src/gtk/x11view.c:651
 msgid "_Mask"
-msgstr "¥Ş¥¹¥¯(_M)"
+msgstr "ãƒã‚¹ã‚¯(_M)"
 
 #: src/gtk/x11file.c:2856 src/gtk/x11view.c:652
 msgid "_Move"
-msgstr "°ÜÆ°(_M)"
+msgstr "ç§»å‹•(_M)"
 
 #: src/gtk/x11file.c:2860
 msgid "_Edit"
-msgstr "ÊÔ½¸(_E)"
+msgstr "ç·¨é›†(_E)"
 
 #: src/gtk/x11file.c:2877
 msgid "This file contain invalid UTF-8 strings."
-msgstr "¥Õ¥¡¥¤¥ë¤ËÉÔÀµ¤Ê UTF-8 Ê¸»úÎó¤¬´Ş¤Ş¤ì¤Æ¤¤¤Ş¤¹."
+msgstr "ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¸æ­£ãª UTF-8 æ–‡å­—åˆ—ãŒå«ã¾ã‚Œã¦ã„ã¾ã™."
 
 #: src/gtk/x11file.c:3098
 msgid "Data new"
-msgstr "¿·µ¬ºîÀ®"
+msgstr "æ–°è¦ä½œæˆ"
 
 #: src/gtk/x11file.c:3140
 msgid "Data open"
-msgstr "¥Ç¡¼¥¿¤ò³«¤¯"
+msgstr "ãƒ‡ãƒ¼ã‚¿ã‚’é–‹ã"
 
 #: src/gtk/x11graph.c:166
 msgid "paper _Width:"
-msgstr "ÍÑ»æÉı(_W):"
+msgstr "ç”¨ç´™å¹…(_W):"
 
 #: src/gtk/x11graph.c:171
 msgid "paper _Height:"
-msgstr "ÍÑ»æ¹â¤µ(_H):"
+msgstr "ç”¨ç´™é«˜ã•(_H):"
 
 #: src/gtk/x11graph.c:180
 msgid "_Paper:"
-msgstr "ÍÑ»æ(_P):"
+msgstr "ç”¨ç´™(_P):"
 
 #: src/gtk/x11graph.c:194
 msgid "_Left margin:"
-msgstr "º¸¥Ş¡¼¥¸¥ó(_L)<:"
+msgstr "å·¦ãƒãƒ¼ã‚¸ãƒ³(_L)<:"
 
 #: src/gtk/x11graph.c:199
 msgid "_Top margin:"
-msgstr "¾å¥Ş¡¼¥¸¥ó(_T):"
+msgstr "ä¸Šãƒãƒ¼ã‚¸ãƒ³(_T):"
 
 #: src/gtk/x11graph.c:207
 msgid "paper _Zoom:"
-msgstr "³ÈÂçÎ¨(_Z):"
+msgstr "æ‹¡å¤§ç‡(_Z):"
 
 #: src/gtk/x11graph.c:670
 msgid "Object"
-msgstr "¥ª¥Ö¥¸¥§¥¯¥È"
+msgstr "ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ"
 
 #: src/gtk/x11graph.c:681
 msgid "_Draw Order"
-msgstr "ÉÁ²è½ç(_D)"
+msgstr "æç”»é †(_D)"
 
 #: src/gtk/x11graph.c:707
 msgid "_Insert"
-msgstr "ÁŞÆş(_I)"
+msgstr "æŒ¿å…¥(_I)"
 
 #: src/gtk/x11graph.c:747
 msgid "_Objects"
-msgstr "¥ª¥Ö¥¸¥§¥¯¥È(_O)"
+msgstr "ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ(_O)"
 
 #: src/gtk/x11graph.c:837 src/gtk/x11graph.c:890
 msgid "_Dir:"
-msgstr "¥Ç¥£¥ì¥¯¥È¥ê(_D):"
+msgstr "ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª(_D):"
 
 #: src/gtk/x11graph.c:885
 msgid "_Expand included file"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤ÎÅ¸³«(¥Ç¡¼¥¿¹ş NGP ¥Õ¥¡¥¤¥ë) (_E)"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã®å±•é–‹(ãƒ‡ãƒ¼ã‚¿è¾¼ NGP ãƒ•ã‚¡ã‚¤ãƒ«) (_E)"
 
 #: src/gtk/x11graph.c:893 src/gtk/x11graph.c:940 src/gtk/x11opt.c:1034
 msgid "_Ignore file path"
-msgstr "¥Ñ¥¹¾ğÊóÌµ»ë(_I)"
+msgstr "ãƒ‘ã‚¹æƒ…å ±ç„¡è¦–(_I)"
 
 #: src/gtk/x11graph.c:944
 msgid "_Greek Symbol"
-msgstr "Á´³Ñ¥®¥ê¥·¥¢ -> ¥·¥ó¥Ü¥ë(_G)"
+msgstr "å…¨è§’ã‚®ãƒªã‚·ã‚¢ -> ã‚·ãƒ³ãƒœãƒ«(_G)"
 
 #: src/gtk/x11graph.c:1003 src/gtk/x11opt.c:1004
 msgid "_Path:"
-msgstr "¥Ñ¥¹¾ğÊó(_P):"
+msgstr "ãƒ‘ã‚¹æƒ…å ±(_P):"
 
 #: src/gtk/x11graph.c:1006
 msgid "_Include data file"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤ò´Ş¤á¤ë(_I)"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å«ã‚ã‚‹(_I)"
 
 #: src/gtk/x11graph.c:1010
 msgid "_Include merge file"
-msgstr "¹çÀ®¥Õ¥¡¥¤¥ë¤ò´Ş¤á¤ë(_I)"
+msgstr "åˆæˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’å«ã‚ã‚‹(_I)"
 
 #: src/gtk/x11graph.c:1101 src/gtk/x11menu.c:156
 msgid "Load NGP file"
-msgstr "NGP ¥Õ¥¡¥¤¥ë¤ò³«¤¯"
+msgstr "NGP ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã"
 
 #: src/gtk/x11graph.c:1343
 msgid ""
 "Ngraph is the program creating scientific 2-dimensinal graphs for "
 "researchers and engineers."
 msgstr ""
-"Ngraph ¤ÏÍı¹©·Ï³ØÀ¸¡¢¸¦µæ¼Ô¡¢µ»½Ñ¼Ô¤Î¤¿¤á¤Ëºî¤é¤ì¤¿£²¼¡¸µ¥°¥é¥ÕºîÀ®¥×¥í¥°¥é¥à"
-"¤Ç¤¹¡£"
+"Ngraph ã¯ç†å·¥ç³»å­¦ç”Ÿã€ç ”ç©¶è€…ã€æŠ€è¡“è€…ã®ãŸã‚ã«ä½œã‚‰ã‚ŒãŸï¼’æ¬¡å…ƒã‚°ãƒ©ãƒ•ä½œæˆãƒ—ãƒ­ã‚°ãƒ©ãƒ "
+"ã§ã™ã€‚"
 
 #: src/gtk/x11gui.c:643 src/gtk/x11gui.c:751
 msgid "All"
-msgstr "Á´¤Æ¤Î¥Õ¥¡¥¤¥ë"
+msgstr "å…¨ã¦ã®ãƒ•ã‚¡ã‚¤ãƒ«"
 
 #: src/gtk/x11gui.c:736
 msgid "_Change current directory"
-msgstr "¥«¥ì¥ó¥È¥Ç¥£¥ì¥¯¥È¥ê¤ò°ÜÆ°(_C)"
+msgstr "ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ç§»å‹•(_C)"
 
 #: src/gtk/x11lgnd.c:63
 msgid "object"
-msgstr "¥ª¥Ö¥¸¥§¥¯¥È"
+msgstr "ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ"
 
 #: src/gtk/x11lgnd.c:64
 msgid "property"
-msgstr "¥×¥í¥Ñ¥Æ¥£"
+msgstr "ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£"
 
 #: src/gtk/x11lgnd.c:572
 msgid "_Line width:"
-msgstr "ÀşÉı(_W):"
+msgstr "ç·šå¹…(_W):"
 
 #: src/gtk/x11lgnd.c:582
 msgid "_Points:"
-msgstr "ºÂÉ¸(_P):"
+msgstr "åº§æ¨™(_P):"
 
 #: src/gtk/x11lgnd.c:633
 msgid "_Color2:"
-msgstr "¿§2(_C):"
+msgstr "è‰²2(_C):"
 
 #: src/gtk/x11lgnd.c:645
 #, c-format
 msgid "Legend curve %d"
-msgstr "¶ÊÀş %d"
+msgstr "æ›²ç·š %d"
 
 #: src/gtk/x11lgnd.c:668
 msgid "_Interpolation:"
-msgstr "Êä´°Ë¡(_I):"
+msgstr "è£œå®Œæ³•(_I):"
 
 #: src/gtk/x11lgnd.c:710
 #, c-format
 msgid "Legend polygon %d"
-msgstr "Â¿³Ñ·Á %d"
+msgstr "å¤šè§’å½¢ %d"
 
 #: src/gtk/x11lgnd.c:741
 msgid "_Fill:"
-msgstr "ÅÉ¤ê¤Ä¤Ö¤·(_F):"
+msgstr "å¡—ã‚Šã¤ã¶ã—(_F):"
 
 #: src/gtk/x11lgnd.c:866
 #, c-format
 msgid "Legend line %d"
-msgstr "Ä¾Àş %d"
+msgstr "ç›´ç·š %d"
 
 #: src/gtk/x11lgnd.c:956
 #, c-format
 msgid "Legend rectangle %d"
-msgstr "»Í³Ñ·Á %d"
+msgstr "å››è§’å½¢ %d"
 
 #: src/gtk/x11lgnd.c:978
 msgid "_Width:"
-msgstr "Éı(_W):"
+msgstr "å¹…(_W):"
 
 #: src/gtk/x11lgnd.c:982
 msgid "_Height:"
-msgstr "¹â¤µ(_H):"
+msgstr "é«˜ã•(_H):"
 
 #: src/gtk/x11lgnd.c:997 src/gtk/x11lgnd.c:1089
 msgid "_Fill"
-msgstr "ÅÉ¤ê¤Ä¤Ö¤·(_F)"
+msgstr "å¡—ã‚Šã¤ã¶ã—(_F)"
 
 #: src/gtk/x11lgnd.c:1003
 msgid "_Frame"
-msgstr "¥Õ¥ì¡¼¥à(_F)"
+msgstr "ãƒ•ãƒ¬ãƒ¼ãƒ (_F)"
 
 #: src/gtk/x11lgnd.c:1032
 #, c-format
 msgid "Legend arc %d"
-msgstr "±ß %d"
+msgstr "å†† %d"
 
 #: src/gtk/x11lgnd.c:1065
 msgid "_Pieslice"
-msgstr "Àğ·¿(_P)"
+msgstr "æ‰‡å‹(_P)"
 
 #: src/gtk/x11lgnd.c:1070
 msgid "_Angle1:"
-msgstr "³«»Ï³Ñ(_A):"
+msgstr "é–‹å§‹è§’(_A):"
 
 #: src/gtk/x11lgnd.c:1074
 msgid "_Angle2:"
-msgstr "±ß¸Ì³Ñ(_A):"
+msgstr "å††å¼§è§’(_A):"
 
 #: src/gtk/x11lgnd.c:1131
 #, c-format
 msgid "Legend mark %d"
-msgstr "¥Ş¡¼¥¯ %d"
+msgstr "ãƒãƒ¼ã‚¯ %d"
 
 #: src/gtk/x11lgnd.c:1209
 msgid "_Pt:"
-msgstr "¥İ¥¤¥ó¥È(_P):"
+msgstr "ãƒã‚¤ãƒ³ãƒˆ(_P):"
 
 #: src/gtk/x11lgnd.c:1218
 msgid "_Script:"
-msgstr "¥¹¥¯¥ê¥×¥È¥µ¥¤¥º(_S):"
+msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚µã‚¤ã‚º(_S):"
 
 #: src/gtk/x11lgnd.c:1249
 msgid "_Raw"
@@ -1126,161 +1126,161 @@ msgstr "_Raw"
 #: src/gtk/x11lgnd.c:1264
 #, c-format
 msgid "Legend text %d"
-msgstr "¥Æ¥­¥¹¥È %d"
+msgstr "ãƒ†ã‚­ã‚¹ãƒˆ %d"
 
 #: src/gtk/x11lgnd.c:1291
 msgid "_Text:"
-msgstr "¥Æ¥­¥¹¥È(_T):"
+msgstr "ãƒ†ã‚­ã‚¹ãƒˆ(_T):"
 
 #: src/gtk/x11lgndx.c:340
 #, c-format
 msgid "Legend Gaussian/Lorentzian/Parabola/Sin %d"
-msgstr "¥¬¥¦¥¹´Ø¿ô/¥í¡¼¥ì¥ó¥Ä´Ø¿ô/ÁĞ¶ÊÀş/»°³Ñ´Ø¿ô %d"
+msgstr "ã‚¬ã‚¦ã‚¹é–¢æ•°/ãƒ­ãƒ¼ãƒ¬ãƒ³ãƒ„é–¢æ•°/åŒæ›²ç·š/ä¸‰è§’é–¢æ•° %d"
 
 #: src/gtk/x11lgndx.c:350
 msgid "_Sin"
-msgstr "»°³Ñ´Ø¿ô(_S)"
+msgstr "ä¸‰è§’é–¢æ•°(_S)"
 
 #: src/gtk/x11lgndx.c:354
 msgid "_Parabola"
-msgstr "ÁĞ¶ÊÀş(_P)"
+msgstr "åŒæ›²ç·š(_P)"
 
 #: src/gtk/x11lgndx.c:358
 msgid "_Lorentz"
-msgstr "¥í¡¼¥ì¥ó¥Ä´Ø¿ô(_L)"
+msgstr "ãƒ­ãƒ¼ãƒ¬ãƒ³ãƒ„é–¢æ•°(_L)"
 
 #: src/gtk/x11lgndx.c:362
 msgid "_Gauss"
-msgstr "¥¬¥¦¥¹´Ø¿ô(_G)"
+msgstr "ã‚¬ã‚¦ã‚¹é–¢æ•°(_G)"
 
 #: src/gtk/x11lgndx.c:407
 msgid "_Division:"
-msgstr "Ê¬³ä¿ô(_D):"
+msgstr "åˆ†å‰²æ•°(_D):"
 
 #: src/gtk/x11menu.c:104 src/gtk/x11menu.c:245
 msgid "Data"
-msgstr "¥Ç¡¼¥¿ÁªÂò"
+msgstr "ãƒ‡ãƒ¼ã‚¿é¸æŠ"
 
 #: src/gtk/x11menu.c:106
 msgid "Activate Data Window"
-msgstr "Data Window¤ò¥¢¥¯¥Æ¥£¥Ö¤Ë¤¹¤ë"
+msgstr "Data Windowã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹"
 
 #: src/gtk/x11menu.c:111 src/gtk/x11menu.c:237
 msgid "Axis"
-msgstr "¼´"
+msgstr "è»¸"
 
 #: src/gtk/x11menu.c:113
 msgid "Activate Axis Window"
-msgstr "Axis Window¤ò¥¢¥¯¥Æ¥£¥Ö¤Ë¤¹¤ë"
+msgstr "Axis Windowã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹"
 
 #: src/gtk/x11menu.c:118 src/gtk/x11menu.c:229
 msgid "Legend"
-msgstr "¥ì¥¸¥§¥ó¥É"
+msgstr "ãƒ¬ã‚¸ã‚§ãƒ³ãƒ‰"
 
 #: src/gtk/x11menu.c:120
 msgid "Activate Legend Window"
-msgstr "Legend Window¤ò¥¢¥¯¥Æ¥£¥Ö¤Ë¤¹¤ë"
+msgstr "Legend Windowã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹"
 
 #: src/gtk/x11menu.c:125
 msgid "Merge"
-msgstr "¹çÀ®"
+msgstr "åˆæˆ"
 
 #: src/gtk/x11menu.c:127
 msgid "Activate Merge Window"
-msgstr "Merge Window¤ò¥¢¥¯¥Æ¥£¥Ö¤Ë¤¹¤ë"
+msgstr "Merge Windowã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹"
 
 #: src/gtk/x11menu.c:132
 msgid "Coordinate"
-msgstr "ºÂÉ¸"
+msgstr "åº§æ¨™"
 
 #: src/gtk/x11menu.c:134
 msgid "Activate Coordinate Window"
-msgstr "Coordinate Window¤ò¥¢¥¯¥Æ¥£¥Ö¤Ë¤¹¤ë"
+msgstr "Coordinate Windowã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹"
 
 #: src/gtk/x11menu.c:139
 msgid "Information"
-msgstr "¾ğÊó"
+msgstr "æƒ…å ±"
 
 #: src/gtk/x11menu.c:141
 msgid "Activate Information Window"
-msgstr "Information Window¤ò¥¢¥¯¥Æ¥£¥Ö¤Ë¤¹¤ë"
+msgstr "Information Windowã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹"
 
 #: src/gtk/x11menu.c:147
 msgid "Open"
-msgstr "³«¤¯"
+msgstr "é–‹ã"
 
 #: src/gtk/x11menu.c:148
 msgid "Open Data"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤ò³«¤¯"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã"
 
 #: src/gtk/x11menu.c:149
 msgid "Open Data file"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤ò³«¤¯"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã"
 
 #: src/gtk/x11menu.c:154
 msgid "Load"
-msgstr "NGP¥Õ¥¡¥¤¥ëÆÉ¹ş"
+msgstr "NGPãƒ•ã‚¡ã‚¤ãƒ«èª­è¾¼"
 
 #: src/gtk/x11menu.c:155
 msgid "Load NGP"
-msgstr "NGP¥Õ¥¡¥¤¥ë¤ÎÆÉ¤ß¹ş¤ß"
+msgstr "NGPãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿"
 
 #: src/gtk/x11menu.c:162
 msgid "Save NGP"
-msgstr "NGP¥Õ¥¡¥¤¥ëÊİÂ¸"
+msgstr "NGPãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜"
 
 #: src/gtk/x11menu.c:163
 msgid "Save NGP file "
-msgstr "NGP¥Õ¥¡¥¤¥ë¤ØÊİÂ¸"
+msgstr "NGPãƒ•ã‚¡ã‚¤ãƒ«ã¸ä¿å­˜"
 
 #: src/gtk/x11menu.c:168
 msgid "Clear"
-msgstr "¥¹¥±¡¼¥ë¥¯¥ê¥¢"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«ã‚¯ãƒªã‚¢"
 
 #: src/gtk/x11menu.c:169 src/gtk/x11menu.c:170
 msgid "Clear Scale"
-msgstr "¥¹¥±¡¼¥ë¤Î¥¯¥ê¥¢"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«ã®ã‚¯ãƒªã‚¢"
 
 #: src/gtk/x11menu.c:175 src/gtk/x11menu.c:176
 msgid "Draw"
-msgstr "ÉÁ²è"
+msgstr "æç”»"
 
 #: src/gtk/x11menu.c:177
 msgid "Draw on Viewer Window"
-msgstr "¥Ó¥å¡¼¥¢¤ËÉÁ²è"
+msgstr "ãƒ“ãƒ¥ãƒ¼ã‚¢ã«æç”»"
 
 #: src/gtk/x11menu.c:182 src/gtk/x11menu.c:183
 msgid "Clear Image"
-msgstr "¥¯¥ê¥¢"
+msgstr "ã‚¯ãƒªã‚¢"
 
 #: src/gtk/x11menu.c:184
 msgid "Clear Viewer Window"
-msgstr "¥¹¥±¡¼¥ë¤Î¥¯¥ê¥¢"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«ã®ã‚¯ãƒªã‚¢"
 
 #: src/gtk/x11menu.c:189 src/gtk/x11menu.c:190 src/gtk/x11menu.c:191
 #: src/gtk/x11print.c:672
 msgid "Print"
-msgstr "°õºş"
+msgstr "å°åˆ·"
 
 #: src/gtk/x11menu.c:197
 msgid "Ex. Viewer"
-msgstr "³°Éô¥Ó¥å¡¼¥¢"
+msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢"
 
 #: src/gtk/x11menu.c:198
 msgid "Open External Viewer"
-msgstr "³°Éô¥Ó¥å¡¼¥¢"
+msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢"
 
 #: src/gtk/x11menu.c:204
 msgid "Math"
-msgstr "ÊÑ´¹¼°"
+msgstr "å¤‰æ›å¼"
 
 #: src/gtk/x11menu.c:205
 msgid "Math Transformation"
-msgstr "ÊÑ´¹¼°¤Î°ì³çÆşÎÏ"
+msgstr "å¤‰æ›å¼ã®ä¸€æ‹¬å…¥åŠ›"
 
 #: src/gtk/x11menu.c:206
 msgid "Set Math Transformation"
-msgstr "ÊÑ´¹¼°¤Î°ì³çÆşÎÏ"
+msgstr "å¤‰æ›å¼ã®ä¸€æ‹¬å…¥åŠ›"
 
 #: src/gtk/x11menu.c:211
 msgid "Undo"
@@ -1288,619 +1288,619 @@ msgstr "Undo"
 
 #: src/gtk/x11menu.c:212
 msgid "Scale Undo"
-msgstr "¥¹¥±¡¼¥ëundo"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«undo"
 
 #: src/gtk/x11menu.c:213
 msgid "Undo Scale Settings"
-msgstr "¥¹¥±¡¼¥ëÀßÄê¤Îundo"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«è¨­å®šã®undo"
 
 #: src/gtk/x11menu.c:221
 msgid "Point"
-msgstr "ÁªÂò"
+msgstr "é¸æŠ"
 
 #: src/gtk/x11menu.c:222
 msgid "Pointer"
-msgstr "ÁªÂò"
+msgstr "é¸æŠ"
 
 #: src/gtk/x11menu.c:223
 msgid ""
 "Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"
-msgstr "¼´¤ÎÁªÂò (+SHIFT:Ê£¿ôÁªÂò / +CONTROL:¿åÊ¿/¿âÄ¾°ÜÆ° +SHIFT:ÈùÆ°)"
+msgstr "è»¸ã®é¸æŠ (+SHIFT:è¤‡æ•°é¸æŠ / +CONTROL:æ°´å¹³/å‚ç›´ç§»å‹• +SHIFT:å¾®å‹•)"
 
 #: src/gtk/x11menu.c:230
 msgid "Legend Pointer"
-msgstr "LegendÁªÂò"
+msgstr "Legendé¸æŠ"
 
 #: src/gtk/x11menu.c:231
 msgid ""
 "Legend Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: "
 "Fine)"
-msgstr "Legend¤ÎÁªÂò (+SHIFT:Ê£¿ôÁªÂò / +CONTROL:¿åÊ¿/¿âÄ¾°ÜÆ° +SHIFT:ÈùÆ°)"
+msgstr "Legendã®é¸æŠ (+SHIFT:è¤‡æ•°é¸æŠ / +CONTROL:æ°´å¹³/å‚ç›´ç§»å‹• +SHIFT:å¾®å‹•)"
 
 #: src/gtk/x11menu.c:238
 msgid "Axis Pointer"
-msgstr "¼´ÁªÂò"
+msgstr "è»¸é¸æŠ"
 
 #: src/gtk/x11menu.c:239
 msgid ""
 "Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: "
 "Fine)"
-msgstr "¼´¤ÎÁªÂò (+SHIFT:Ê£¿ôÁªÂò / +CONTROL:¿åÊ¿/¿âÄ¾°ÜÆ° +SHIFT:ÈùÆ°)"
+msgstr "è»¸ã®é¸æŠ (+SHIFT:è¤‡æ•°é¸æŠ / +CONTROL:æ°´å¹³/å‚ç›´ç§»å‹• +SHIFT:å¾®å‹•)"
 
 #: src/gtk/x11menu.c:246 src/gtk/x11menu.c:247
 msgid "Data Pointer"
-msgstr "¥Ç¡¼¥¿¤ÎÁªÂò"
+msgstr "ãƒ‡ãƒ¼ã‚¿ã®é¸æŠ"
 
 #: src/gtk/x11menu.c:254 src/gtk/x11menu.c:255
 msgid "Line"
-msgstr "Ä¾Àş"
+msgstr "ç›´ç·š"
 
 #: src/gtk/x11menu.c:256
 msgid "New Legend Line (+SHIFT: Fine +CONTROL: snap angle)"
-msgstr "Ä¾Àş¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:³ÑÅÙ¤ò¥¹¥Ê¥Ã¥×)"
+msgstr "ç›´ç·šã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:è§’åº¦ã‚’ã‚¹ãƒŠãƒƒãƒ—)"
 
 #: src/gtk/x11menu.c:262 src/gtk/x11menu.c:263
 msgid "Curve"
-msgstr "¶ÊÀş"
+msgstr "æ›²ç·š"
 
 #: src/gtk/x11menu.c:264
 msgid "New Legend Curve (+SHIFT: Fine +CONTROL: snap angle)"
-msgstr "¶ÊÀş¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:³ÑÅÙ¤ò¥¹¥Ê¥Ã¥×)"
+msgstr "æ›²ç·šã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:è§’åº¦ã‚’ã‚¹ãƒŠãƒƒãƒ—)"
 
 #: src/gtk/x11menu.c:271 src/gtk/x11menu.c:272
 msgid "Polygon"
-msgstr "Â¿³Ñ·Á"
+msgstr "å¤šè§’å½¢"
 
 #: src/gtk/x11menu.c:273
 msgid "New Legend Polygon (+SHIFT: Fine +CONTROL: snap angle)"
-msgstr "Â¿³Ñ·Á¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:³ÑÅÙ¤ò¥¹¥Ê¥Ã¥×)"
+msgstr "å¤šè§’å½¢ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:è§’åº¦ã‚’ã‚¹ãƒŠãƒƒãƒ—)"
 
 #: src/gtk/x11menu.c:279 src/gtk/x11menu.c:280
 msgid "Rectangle"
-msgstr "»Í³Ñ·Á"
+msgstr "å››è§’å½¢"
 
 #: src/gtk/x11menu.c:281
 msgid ""
 "New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"
-msgstr "»Í³Ñ·Á¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:ÀµÊı·Á¤Ş¤¿¤Ï½Ä²£¤¬À°¿ôÈæ¤Î¶ë·Á)"
+msgstr "å››è§’å½¢ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:æ­£æ–¹å½¢ã¾ãŸã¯ç¸¦æ¨ªãŒæ•´æ•°æ¯”ã®çŸ©å½¢)"
 
 #: src/gtk/x11menu.c:287 src/gtk/x11menu.c:288
 msgid "Arc"
-msgstr "±ß"
+msgstr "å††"
 
 #: src/gtk/x11menu.c:289
 msgid "New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"
-msgstr "±ß¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:¿¿±ß¤Ş¤¿¤Ï½Ä²£¤¬À°¿ôÈæ¤ÎÂÊ±ß)"
+msgstr "å††ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:çœŸå††ã¾ãŸã¯ç¸¦æ¨ªãŒæ•´æ•°æ¯”ã®æ¥•å††)"
 
 #: src/gtk/x11menu.c:295 src/gtk/x11menu.c:296
 msgid "Mark"
-msgstr "¥Ş¡¼¥¯"
+msgstr "ãƒãƒ¼ã‚¯"
 
 #: src/gtk/x11menu.c:297
 msgid "New Legend Mark (+SHIFT: Fine)"
-msgstr "¥Ş¡¼¥¯¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+msgstr "ãƒãƒ¼ã‚¯ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #: src/gtk/x11menu.c:303 src/gtk/x11menu.c:304
 msgid "Text"
-msgstr "¥Æ¥­¥¹¥È"
+msgstr "ãƒ†ã‚­ã‚¹ãƒˆ"
 
 #: src/gtk/x11menu.c:305
 msgid "New Legend Text (+SHIFT: Fine)"
-msgstr "¥Æ¥­¥¹¥È¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+msgstr "ãƒ†ã‚­ã‚¹ãƒˆã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #: src/gtk/x11menu.c:311
 msgid "Gauss"
-msgstr "¥¬¥¦¥¹´Ø¿ô"
+msgstr "ã‚¬ã‚¦ã‚¹é–¢æ•°"
 
 #: src/gtk/x11menu.c:312
 msgid "Gaussian"
-msgstr "¥¬¥¦¥¹´Ø¿ô"
+msgstr "ã‚¬ã‚¦ã‚¹é–¢æ•°"
 
 #: src/gtk/x11menu.c:313
 msgid "New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"
-msgstr "¥¬¥¦¥¹´Ø¿ôÅù¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:½Ä²£¤òÀ°¿ôÈæ¤Ë¤¹¤ë)"
+msgstr "ã‚¬ã‚¦ã‚¹é–¢æ•°ç­‰ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:ç¸¦æ¨ªã‚’æ•´æ•°æ¯”ã«ã™ã‚‹)"
 
 #: src/gtk/x11menu.c:319
 msgid "Frame axis"
-msgstr "¥Õ¥ì¡¼¥à¥°¥é¥Õ"
+msgstr "ãƒ•ãƒ¬ãƒ¼ãƒ ã‚°ãƒ©ãƒ•"
 
 #: src/gtk/x11menu.c:320
 msgid "Frame Graph"
-msgstr "¥Õ¥ì¡¼¥à¥°¥é¥Õ"
+msgstr "ãƒ•ãƒ¬ãƒ¼ãƒ ã‚°ãƒ©ãƒ•"
 
 #: src/gtk/x11menu.c:321
 msgid "New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"
-msgstr "¥Õ¥ì¡¼¥à¥°¥é¥Õ¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:½Ä²£¤òÀ°¿ôÈæ¤Ë¤¹¤ë)"
+msgstr "ãƒ•ãƒ¬ãƒ¼ãƒ ã‚°ãƒ©ãƒ•ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:ç¸¦æ¨ªã‚’æ•´æ•°æ¯”ã«ã™ã‚‹)"
 
 #: src/gtk/x11menu.c:327
 msgid "Section axis"
-msgstr "Êı´ã¥°¥é¥Õ"
+msgstr "æ–¹çœ¼ã‚°ãƒ©ãƒ•"
 
 #: src/gtk/x11menu.c:328
 msgid "Section Graph"
-msgstr "Êı´ã¥°¥é¥Õ"
+msgstr "æ–¹çœ¼ã‚°ãƒ©ãƒ•"
 
 #: src/gtk/x11menu.c:329
 msgid "New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"
-msgstr "Êı´ã¥°¥é¥Õ¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:½Ä²£¤òÀ°¿ôÈæ¤Ë¤¹¤ë)"
+msgstr "æ–¹çœ¼ã‚°ãƒ©ãƒ•ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:ç¸¦æ¨ªã‚’æ•´æ•°æ¯”ã«ã™ã‚‹)"
 
 #: src/gtk/x11menu.c:335
 msgid "Cross axis"
-msgstr "¸òº¹¥°¥é¥Õ"
+msgstr "äº¤å·®ã‚°ãƒ©ãƒ•"
 
 #: src/gtk/x11menu.c:337
 msgid "New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"
-msgstr "¸òº¹¥°¥é¥Õ¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL: ½Ä²£¤òÀ°¿ôÈæ¤Ë¤¹¤ë)"
+msgstr "äº¤å·®ã‚°ãƒ©ãƒ•ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL: ç¸¦æ¨ªã‚’æ•´æ•°æ¯”ã«ã™ã‚‹)"
 
 #: src/gtk/x11menu.c:343
 msgid "Single axis"
-msgstr "Ã±ÂÎ¼´"
+msgstr "å˜ä½“è»¸"
 
 #: src/gtk/x11menu.c:344
 msgid "Single Axis"
-msgstr "Ã±ÂÎ¼´"
+msgstr "å˜ä½“è»¸"
 
 #: src/gtk/x11menu.c:345
 msgid "New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"
-msgstr "Ã±ÂÎ¼´¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ° +CONTROL:³ÑÅÙ¤ò¥¹¥Ê¥Ã¥×)"
+msgstr "å˜ä½“è»¸ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹• +CONTROL:è§’åº¦ã‚’ã‚¹ãƒŠãƒƒãƒ—)"
 
 #: src/gtk/x11menu.c:352
 msgid "Trimming"
-msgstr "¼´¥È¥ê¥ß¥ó¥°"
+msgstr "è»¸ãƒˆãƒªãƒŸãƒ³ã‚°"
 
 #: src/gtk/x11menu.c:353
 msgid "Axis Trimming"
-msgstr "¼´¥È¥ê¥ß¥ó¥°"
+msgstr "è»¸ãƒˆãƒªãƒŸãƒ³ã‚°"
 
 #: src/gtk/x11menu.c:354
 msgid "Axis Trimming (+SHIFT: Fine)"
-msgstr "¼´¥¹¥±¡¼¥ë¤Î¥È¥ê¥ß¥ó¥° (+SHIFT:ÈùÆ°)"
+msgstr "è»¸ã‚¹ã‚±ãƒ¼ãƒ«ã®ãƒˆãƒªãƒŸãƒ³ã‚° (+SHIFT:å¾®å‹•)"
 
 #: src/gtk/x11menu.c:360
 msgid "Evaluate"
-msgstr "¥Ç¡¼¥¿É¾²Á"
+msgstr "ãƒ‡ãƒ¼ã‚¿è©•ä¾¡"
 
 #: src/gtk/x11menu.c:361
 msgid "Evaluate Data"
-msgstr "¥Ç¡¼¥¿É¾²Á"
+msgstr "ãƒ‡ãƒ¼ã‚¿è©•ä¾¡"
 
 #: src/gtk/x11menu.c:362
 msgid "Evaluate Data Point"
-msgstr "¥Ç¡¼¥¿ÅÀ¤ÎÉ¾²Á"
+msgstr "ãƒ‡ãƒ¼ã‚¿ç‚¹ã®è©•ä¾¡"
 
 #: src/gtk/x11menu.c:368
 msgid "Zoom"
-msgstr "¥Ó¥å¡¼¥¢¥º¡¼¥à"
+msgstr "ãƒ“ãƒ¥ãƒ¼ã‚¢ã‚ºãƒ¼ãƒ "
 
 #: src/gtk/x11menu.c:369
 msgid "Viewer Zoom"
-msgstr "¥Ó¥å¡¼¥¢¥º¡¼¥à"
+msgstr "ãƒ“ãƒ¥ãƒ¼ã‚¢ã‚ºãƒ¼ãƒ "
 
 #: src/gtk/x11menu.c:370
 msgid "Viewer Zoom-In (+CONTROL: Zomm-Out +SHIFT: Centering)"
-msgstr "¥Ó¥å¡¼¥¢¤Î¥º¡¼¥à¥¤¥ó (+CONTROL:¥º¡¼¥à¥¢¥¦¥È +SHIFT:¥»¥ó¥¿¥ê¥ó¥°)"
+msgstr "ãƒ“ãƒ¥ãƒ¼ã‚¢ã®ã‚ºãƒ¼ãƒ ã‚¤ãƒ³ (+CONTROL:ã‚ºãƒ¼ãƒ ã‚¢ã‚¦ãƒˆ +SHIFT:ã‚»ãƒ³ã‚¿ãƒªãƒ³ã‚°)"
 
 #: src/gtk/x11menu.c:569 src/gtk/x11menu.c:848
 msgid "_Frame graph"
-msgstr "¥Õ¥ì¡¼¥à¥°¥é¥Õ(_F)"
+msgstr "ãƒ•ãƒ¬ãƒ¼ãƒ ã‚°ãƒ©ãƒ•(_F)"
 
 #: src/gtk/x11menu.c:570 src/gtk/x11menu.c:849
 msgid "_Section graph"
-msgstr "Êı´ã¥°¥é¥Õ(_S)"
+msgstr "æ–¹çœ¼ã‚°ãƒ©ãƒ•(_S)"
 
 #: src/gtk/x11menu.c:571 src/gtk/x11menu.c:850
 msgid "_Cross graph"
-msgstr "¸òº¹¥°¥é¥Õ(_C)"
+msgstr "äº¤å·®ã‚°ãƒ©ãƒ•(_C)"
 
 #: src/gtk/x11menu.c:572
 msgid "_All clear"
-msgstr "Á´¤Æ¥¯¥ê¥¢(_A)"
+msgstr "å…¨ã¦ã‚¯ãƒªã‚¢(_A)"
 
 #: src/gtk/x11menu.c:721
 msgid "_Graph"
-msgstr "¥°¥é¥Õ(_G)"
+msgstr "ã‚°ãƒ©ãƒ•(_G)"
 
 #: src/gtk/x11menu.c:729
 msgid "_New graph"
-msgstr "¿·µ¬ºîÀ®(_N)"
+msgstr "æ–°è¦ä½œæˆ(_N)"
 
 #: src/gtk/x11menu.c:733
 msgid "_Load graph"
-msgstr "³«¤¯(_L)"
+msgstr "é–‹ã(_L)"
 
 #: src/gtk/x11menu.c:735
 msgid "_Recent graphs"
-msgstr "ºÇ¶á»ÈÍÑ¤·¤¿¥°¥é¥Õ(_R)"
+msgstr "æœ€è¿‘ä½¿ç”¨ã—ãŸã‚°ãƒ©ãƒ•(_R)"
 
 #: src/gtk/x11menu.c:744
 msgid "_Draw order"
-msgstr "ÉÁ²è½ç(_D)"
+msgstr "æç”»é †(_D)"
 
 #: src/gtk/x11menu.c:746
 msgid "pa_Ge"
-msgstr "ÍÑ»æ(_G)"
+msgstr "ç”¨ç´™(_G)"
 
 #: src/gtk/x11menu.c:749
 msgid "_Current directory"
-msgstr "¸½ºß¤Î¥Ç¥£¥ì¥¯¥È¥ê(_C)"
+msgstr "ç¾åœ¨ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª(_C)"
 
 #: src/gtk/x11menu.c:752
 msgid "_Add-In"
-msgstr "¥¢¥É¥¤¥ó(_I)"
+msgstr "ã‚¢ãƒ‰ã‚¤ãƒ³(_I)"
 
 #: src/gtk/x11menu.c:757
 msgid "_Ngraph shell"
-msgstr "Ngraph¥·¥§¥ë(_N)"
+msgstr "Ngraphã‚·ã‚§ãƒ«(_N)"
 
 #: src/gtk/x11menu.c:815
 msgid "_Data"
-msgstr "¥Ç¡¼¥¿(_D)"
+msgstr "ãƒ‡ãƒ¼ã‚¿(_D)"
 
 #: src/gtk/x11menu.c:826
 msgid "_Recent data"
-msgstr "ºÇ¶á»ÈÍÑ¤·¤¿¥Ç¡¼¥¿(_R)"
+msgstr "æœ€è¿‘ä½¿ç”¨ã—ãŸãƒ‡ãƒ¼ã‚¿(_R)"
 
 #: src/gtk/x11menu.c:851
 msgid "Single _Axis"
-msgstr "Ã±°ì¼´(_A)"
+msgstr "å˜ä¸€è»¸(_A)"
 
 #: src/gtk/x11menu.c:877
 msgid "_Axis"
-msgstr "¼´(_A)"
+msgstr "è»¸(_A)"
 
 #: src/gtk/x11menu.c:890
 msgid "Scale _Zoom"
-msgstr "¥¹¥±¡¼¥ë¥º¡¼¥à(_Z)"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«ã‚ºãƒ¼ãƒ (_Z)"
 
 #: src/gtk/x11menu.c:891
 msgid "Scale _Clear"
-msgstr "¥¹¥±¡¼¥ë¥¯¥ê¥¢(_C)"
+msgstr "ã‚¹ã‚±ãƒ¼ãƒ«ã‚¯ãƒªã‚¢(_C)"
 
 #: src/gtk/x11menu.c:929
 msgid "_Legend"
-msgstr "¥ì¥¸¥§¥ó¥É(_L)"
+msgstr "ãƒ¬ã‚¸ã‚§ãƒ³ãƒ‰(_L)"
 
 #: src/gtk/x11menu.c:936
 msgid "_Line"
-msgstr "Ä¾Àş(_L)"
+msgstr "ç›´ç·š(_L)"
 
 #: src/gtk/x11menu.c:939
 msgid "_Curve"
-msgstr "¶ÊÀş(_C)"
+msgstr "æ›²ç·š(_C)"
 
 #: src/gtk/x11menu.c:942
 msgid "_Polygon"
-msgstr "Â¿³Ñ·Á(_P)"
+msgstr "å¤šè§’å½¢(_P)"
 
 #: src/gtk/x11menu.c:945
 msgid "_Rectangle"
-msgstr "»Í³Ñ·Á(_R)"
+msgstr "å››è§’å½¢(_R)"
 
 #: src/gtk/x11menu.c:948
 msgid "_Arc"
-msgstr "±ß(_A)"
+msgstr "å††(_A)"
 
 #: src/gtk/x11menu.c:951
 msgid "_Mark"
-msgstr "¥Ş¡¼¥¯(_M)"
+msgstr "ãƒãƒ¼ã‚¯(_M)"
 
 #: src/gtk/x11menu.c:954
 msgid "_Text"
-msgstr "¥Æ¥­¥¹¥È(_T)"
+msgstr "ãƒ†ã‚­ã‚¹ãƒˆ(_T)"
 
 #: src/gtk/x11menu.c:969
 msgid "_Merge"
-msgstr "¹çÀ®(_M)"
+msgstr "åˆæˆ(_M)"
 
 #: src/gtk/x11menu.c:992
 msgid "_GRA file"
-msgstr "_GRA ¥Õ¥¡¥¤¥ë"
+msgstr "_GRA ãƒ•ã‚¡ã‚¤ãƒ«"
 
 #: src/gtk/x11menu.c:993
 msgid "_PS file"
-msgstr "_PS ¥Õ¥¡¥¤¥ë"
+msgstr "_PS ãƒ•ã‚¡ã‚¤ãƒ«"
 
 #: src/gtk/x11menu.c:994
 msgid "_EPS file"
-msgstr "_EPS ¥Õ¥¡¥¤¥ë"
+msgstr "_EPS ãƒ•ã‚¡ã‚¤ãƒ«"
 
 #: src/gtk/x11menu.c:995
 msgid "_PDF file"
-msgstr "_PDF ¥Õ¥¡¥¤¥ë"
+msgstr "_PDF ãƒ•ã‚¡ã‚¤ãƒ«"
 
 #: src/gtk/x11menu.c:996
 msgid "_SVG file"
-msgstr "_SVG ¥Õ¥¡¥¤¥ë"
+msgstr "_SVG ãƒ•ã‚¡ã‚¤ãƒ«"
 
 #: src/gtk/x11menu.c:997
 msgid "_PNG file"
-msgstr "_PNG ¥Õ¥¡¥¤¥ë"
+msgstr "_PNG ãƒ•ã‚¡ã‚¤ãƒ«"
 
 #: src/gtk/x11menu.c:1013
 msgid "_Output"
-msgstr "½ĞÎÏ(_O)"
+msgstr "å‡ºåŠ›(_O)"
 
 #: src/gtk/x11menu.c:1025
 msgid "_Export image"
-msgstr "²èÁü¤Ë¥¨¥¯¥¹¥İ¡¼¥È(_E)"
+msgstr "ç”»åƒã«ã‚¨ã‚¯ã‚¹ãƒãƒ¼ãƒˆ(_E)"
 
 #: src/gtk/x11menu.c:1029
 msgid "external _Viewer"
-msgstr "³°Éô¥Ó¥å¡¼¥¢(_V)"
+msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢(_V)"
 
 #: src/gtk/x11menu.c:1031
 msgid "external _Driver"
-msgstr "³°Éô¥É¥é¥¤¥Ğ(_D)"
+msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒ(_D)"
 
 #: src/gtk/x11menu.c:1033
 msgid "data _File"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë(_F)"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«(_F)"
 
 #: src/gtk/x11menu.c:1043
 msgid "_Preference"
-msgstr "ÀßÄê(_P)"
+msgstr "è¨­å®š(_P)"
 
 #: src/gtk/x11menu.c:1050 src/gtk/x11opt.c:79
 msgid "_Viewer"
-msgstr "¥Ó¥å¡¼¥¢(_V)"
+msgstr "ãƒ“ãƒ¥ãƒ¼ã‚¢(_V)"
 
 #: src/gtk/x11menu.c:1051
 msgid "_External viewer"
-msgstr "³°Éô¥Ó¥å¡¼¥¢(_E)"
+msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢(_E)"
 
 #: src/gtk/x11menu.c:1052 src/gtk/x11opt.c:87
 msgid "_Font aliases"
-msgstr "¥Õ¥©¥ó¥ÈÊÌÌ¾(_F)"
+msgstr "ãƒ•ã‚©ãƒ³ãƒˆåˆ¥å(_F)"
 
 #: src/gtk/x11menu.c:1053
 msgid "External _Driver"
-msgstr "³°Éô¥É¥é¥¤¥Ğ(_D)"
+msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒ(_D)"
 
 #: src/gtk/x11menu.c:1054
 msgid "_Addin script"
-msgstr "¥¢¥É¥¤¥ó¥¹¥¯¥ê¥×¥È(_A)"
+msgstr "ã‚¢ãƒ‰ã‚¤ãƒ³ã‚¹ã‚¯ãƒªãƒ—ãƒˆ(_A)"
 
 #: src/gtk/x11menu.c:1055 src/gtk/x11opt.c:99
 msgid "_Miscellaneous"
-msgstr "¤½¤ÎÂ¾(_M)"
+msgstr "ãã®ä»–(_M)"
 
 #: src/gtk/x11menu.c:1057
 msgid "save as default (_Settings)"
-msgstr "½é´ü¾õÂÖ¤È¤·¤Æ¥»¡¼¥Ö(³Æ¼ïÀßÄê)(_S)"
+msgstr "åˆæœŸçŠ¶æ…‹ã¨ã—ã¦ã‚»ãƒ¼ãƒ–(å„ç¨®è¨­å®š)(_S)"
 
 #: src/gtk/x11menu.c:1058
 msgid "save as default (_Graph)"
-msgstr "½é´ü¾õÂÖ¤È¤·¤Æ¥»¡¼¥Ö(¥°¥é¥Õ)(_G)"
+msgstr "åˆæœŸçŠ¶æ…‹ã¨ã—ã¦ã‚»ãƒ¼ãƒ–(ã‚°ãƒ©ãƒ•)(_G)"
 
 #: src/gtk/x11menu.c:1060
 msgid "_Data file default"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë½é´ü¾õÂÖ(_D)"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«åˆæœŸçŠ¶æ…‹(_D)"
 
 #: src/gtk/x11menu.c:1061
 msgid "_Legend text default"
-msgstr "¥ì¥¸¥§¥ó¥É¥Æ¥­¥¹¥È½é´ü¾õÂÖ(_T)"
+msgstr "ãƒ¬ã‚¸ã‚§ãƒ³ãƒ‰ãƒ†ã‚­ã‚¹ãƒˆåˆæœŸçŠ¶æ…‹(_T)"
 
 #: src/gtk/x11menu.c:1123
 msgid "_Window"
-msgstr "¥¦¥£¥ó¥É¥¦(_W)"
+msgstr "ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦(_W)"
 
 #: src/gtk/x11menu.c:1151
 msgid "default _Window config"
-msgstr "½é´ü¾õÂÖ¤Î¥¦¥£¥ó¥É¥¦ÇÛÃÖ(_W)"
+msgstr "åˆæœŸçŠ¶æ…‹ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦é…ç½®(_W)"
 
 #: src/gtk/x11menu.c:1164
 msgid "_Help"
-msgstr "¥Ø¥ë¥×(_H)"
+msgstr "ãƒ˜ãƒ«ãƒ—(_H)"
 
 #: src/gtk/x11menu.c:2145
 msgid "Error:"
-msgstr "¥¨¥é¡¼:"
+msgstr "ã‚¨ãƒ©ãƒ¼:"
 
 #: src/gtk/x11menu.c:2195
 msgid "Question"
-msgstr "¼ÁÌä:"
+msgstr "è³ªå•:"
 
 #: src/gtk/x11menu.c:2252
 #, c-format
 msgid "Executing `%.128s'."
-msgstr "¼Â¹ÔÃæ `%.128s'."
+msgstr "å®Ÿè¡Œä¸­ `%.128s'."
 
 #: src/gtk/x11merge.c:54
 msgid "top"
-msgstr "¾å"
+msgstr "ä¸Š"
 
 #: src/gtk/x11merge.c:55 src/oaxis.c:90 src/oaxis.c:104 src/oaxis.c:117
 msgid "left"
-msgstr "º¸"
+msgstr "å·¦"
 
 #: src/gtk/x11merge.c:56
 msgid "zoom"
-msgstr "¥º¡¼¥à"
+msgstr "ã‚ºãƒ¼ãƒ "
 
 #: src/gtk/x11merge.c:123
 #, c-format
 msgid "Merge %d"
-msgstr "¹çÀ® %d"
+msgstr "åˆæˆ %d"
 
 #: src/gtk/x11merge.c:140
 msgid "_Top Margin:"
-msgstr "¾å¥Ş¡¼¥¸¥ó(_T):"
+msgstr "ä¸Šãƒãƒ¼ã‚¸ãƒ³(_T):"
 
 #: src/gtk/x11merge.c:144
 msgid "_Left Margin:"
-msgstr "º¸¥Ş¡¼¥¸¥ó(_L):"
+msgstr "å·¦ãƒãƒ¼ã‚¸ãƒ³(_L):"
 
 #: src/gtk/x11merge.c:155
 msgid "GreekSymbol"
-msgstr "Á´³Ñ¥®¥ê¥·¥¢ -> ¥·¥ó¥Ü¥ë(_G)"
+msgstr "å…¨è§’ã‚®ãƒªã‚·ã‚¢ -> ã‚·ãƒ³ãƒœãƒ«(_G)"
 
 #: src/gtk/x11merge.c:227
 msgid "Merge open"
-msgstr "¹çÀ®¥Õ¥¡¥¤¥ë¤ò³«¤¯"
+msgstr "åˆæˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã"
 
 #: src/gtk/x11opt.c:71
 msgid "_Geometry"
-msgstr "¥¦¥£¥ó¥É¥¦¤Î¥µ¥¤¥º¤È°ÌÃÖ(_G)"
+msgstr "ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚µã‚¤ã‚ºã¨ä½ç½®(_G)"
 
 #: src/gtk/x11opt.c:75
 msgid "_Child Geometry"
-msgstr "»Ò¥¦¥£¥ó¥É¥¦¤Î¥µ¥¤¥º¤È°ÌÃÖ(_C)"
+msgstr "å­ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚µã‚¤ã‚ºã¨ä½ç½®(_C)"
 
 #: src/gtk/x11opt.c:83
 msgid "_External Viewer"
-msgstr "³°Éô¥Ó¥å¡¼¥¢¡¼ÀßÄê(_E)"
+msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢ãƒ¼è¨­å®š(_E)"
 
 #: src/gtk/x11opt.c:91
 msgid "_External Driver"
-msgstr "³°Éô¥É¥é¥¤¥ĞÀßÄê(_E)"
+msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒè¨­å®š(_E)"
 
 #: src/gtk/x11opt.c:95
 msgid "_Addin Script"
-msgstr "¥¢¥É¥¤¥óÀßÄê(_A)"
+msgstr "ã‚¢ãƒ‰ã‚¤ãƒ³è¨­å®š(_A)"
 
 #: src/gtk/x11opt.c:236
 msgid "Add-in Script"
-msgstr "¥¢¥É¥¤¥ó¥¹¥¯¥ê¥×¥È"
+msgstr "ã‚¢ãƒ‰ã‚¤ãƒ³ã‚¹ã‚¯ãƒªãƒ—ãƒˆ"
 
 #: src/gtk/x11opt.c:253 src/gtk/x11opt.c:474
 msgid "_Name:"
-msgstr "Ì¾¾Î(_N): "
+msgstr "åç§°(_N): "
 
 #: src/gtk/x11opt.c:261
 msgid "_Script file:"
-msgstr "¥¹¥¯¥ê¥×¥È¥Õ¥¡¥¤¥ë(_S):"
+msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ•ã‚¡ã‚¤ãƒ«(_S):"
 
 #: src/gtk/x11opt.c:273 src/gtk/x11opt.c:494 src/gtk/x11print.c:151
 msgid "_Option:"
-msgstr "¥ª¥×¥·¥ç¥ó(_O):"
+msgstr "ã‚ªãƒ—ã‚·ãƒ§ãƒ³(_O):"
 
 #: src/gtk/x11opt.c:280
 msgid "_Description:"
-msgstr "ÀâÌÀ(_D):"
+msgstr "èª¬æ˜(_D):"
 
 #: src/gtk/x11opt.c:324
 msgid "Please specify script name."
-msgstr "¥¹¥¯¥ê¥×¥ÈÌ¾¤òÀßÄê¤·¤Æ¤¯¤À¤µ¤¤."
+msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆåã‚’è¨­å®šã—ã¦ãã ã•ã„."
 
 #: src/gtk/x11opt.c:328
 msgid "Please specify script file name."
-msgstr "¥¹¥¯¥ê¥×¥È¥Õ¥¡¥¤¥ëÌ¾¤òÀßÄê¤·¤Æ¤¯¤À¤µ¤¤."
+msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¨­å®šã—ã¦ãã ã•ã„."
 
 #: src/gtk/x11opt.c:336
 msgid "Please specify script description."
-msgstr "¥¹¥¯¥ê¥×¥È¤ÎÀâÌÀ¤òÀßÄê¤·¤Æ¤¯¤À¤µ¤¤."
+msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆã®èª¬æ˜ã‚’è¨­å®šã—ã¦ãã ã•ã„."
 
 #: src/gtk/x11opt.c:404
 msgid "description"
-msgstr "ÀâÌÀ"
+msgstr "èª¬æ˜"
 
 #: src/gtk/x11opt.c:455
 msgid "External Driver"
-msgstr "³°Éô¥É¥é¥¤¥Ğ"
+msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒ"
 
 #: src/gtk/x11opt.c:482 src/gtk/x11print.c:144
 msgid "_Driver:"
-msgstr "¥É¥é¥¤¥Ğ(_D):"
+msgstr "ãƒ‰ãƒ©ã‚¤ãƒ(_D):"
 
 #: src/gtk/x11opt.c:500
 msgid "_Extension:"
-msgstr "³ÈÄ¥»Ò(_E):"
+msgstr "æ‹¡å¼µå­(_E):"
 
 #: src/gtk/x11opt.c:525
 msgid "Please specify driver name."
-msgstr "¥É¥é¥¤¥Ğ¤ò»ØÄê¤·¤Æ¤¯¤À¤µ¤¤."
+msgstr "ãƒ‰ãƒ©ã‚¤ãƒã‚’æŒ‡å®šã—ã¦ãã ã•ã„."
 
 #: src/gtk/x11opt.c:615
 msgid "Driver"
-msgstr "¥É¥é¥¤¥Ğ"
+msgstr "ãƒ‰ãƒ©ã‚¤ãƒ"
 
 #: src/gtk/x11opt.c:684
 msgid "_Jfont"
-msgstr "Ë®Ê¸¥Õ¥©¥ó¥È(_J)"
+msgstr "é‚¦æ–‡ãƒ•ã‚©ãƒ³ãƒˆ(_J)"
 
 #: src/gtk/x11opt.c:858
 msgid "Please specify a new alias name."
-msgstr "¥Õ¥©¥ó¥ÈÊÌÌ¾¤ò»ØÄê¤·¤Æ¤¯¤À¤µ¤¤."
+msgstr "ãƒ•ã‚©ãƒ³ãƒˆåˆ¥åã‚’æŒ‡å®šã—ã¦ãã ã•ã„."
 
 #: src/gtk/x11opt.c:866
 msgid "Alias name already exists."
-msgstr "¥Õ¥©¥ó¥ÈÊÌÌ¾¤¬´û¤ËÂ¸ºß¤·¤Ş¤¹."
+msgstr "ãƒ•ã‚©ãƒ³ãƒˆåˆ¥åãŒæ—¢ã«å­˜åœ¨ã—ã¾ã™."
 
 #: src/gtk/x11opt.c:892
 msgid "alias"
-msgstr "ÊÌÌ¾"
+msgstr "åˆ¥å"
 
 #: src/gtk/x11opt.c:894
 msgid "style"
-msgstr "¥¹¥¿¥¤¥ë"
+msgstr "ã‚¹ã‚¿ã‚¤ãƒ«"
 
 #: src/gtk/x11opt.c:904
 msgid "_New alias:"
-msgstr "¿·µ¬ÊÌÌ¾(_N):"
+msgstr "æ–°è¦åˆ¥å(_N):"
 
 #: src/gtk/x11opt.c:987
 msgid "_Check \"change current directory\""
-msgstr "\"¥«¥ì¥ó¥È¥Ç¥£¥ì¥¯¥È¥ê¤ò°ÜÆ°\"¤ò¥Á¥§¥Ã¥¯(_C)"
+msgstr "\"ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’ç§»å‹•\"ã‚’ãƒã‚§ãƒƒã‚¯(_C)"
 
 #: src/gtk/x11opt.c:992
 msgid "_Save file history"
-msgstr "½ªÎ»»ş¤Ë¥Õ¥¡¥¤¥ëÍúÎò¤òÊİÂ¸(_S)"
+msgstr "çµ‚äº†æ™‚ã«ãƒ•ã‚¡ã‚¤ãƒ«å±¥æ­´ã‚’ä¿å­˜(_S)"
 
 #: src/gtk/x11opt.c:1010
 msgid "include _Data file"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤ò´Ş¤á¤ë(_D)"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å«ã‚ã‚‹(_D)"
 
 #: src/gtk/x11opt.c:1014
 msgid "include _Merge file"
-msgstr "¹çÀ®¥Õ¥¡¥¤¥ë¤ò´Ş¤á¤ë(_M)"
+msgstr "åˆæˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’å«ã‚ã‚‹(_M)"
 
 #: src/gtk/x11opt.c:1024
 msgid "_Expand include file"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ë¤ÎÅ¸³«(_E)"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã®å±•é–‹(_E)"
 
 #: src/gtk/x11opt.c:1030
 msgid "_Expand directory:"
-msgstr "Å¸³«¥Ç¥£¥ì¥¯¥È¥ê(_E):"
+msgstr "å±•é–‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª(_E):"
 
 #: src/gtk/x11opt.c:1048
 msgid "_Editor:"
-msgstr "¥¨¥Ç¥£¥¿¡¼(_E):"
+msgstr "ã‚¨ãƒ‡ã‚£ã‚¿ãƒ¼(_E):"
 
 #: src/gtk/x11opt.c:1057
 msgid "_Size of completion history:"
-msgstr "Êä´°ÍúÎò¤Î¥µ¥¤¥º(_S):"
+msgstr "è£œå®Œå±¥æ­´ã®ã‚µã‚¤ã‚º(_S):"
 
 #: src/gtk/x11opt.c:1061
 msgid "_Length of information window:"
-msgstr "information window ¤Î¹Ô¿ô(_L):"
+msgstr "information window ã®è¡Œæ•°(_L):"
 
 #: src/gtk/x11opt.c:1065
 msgid "_Length of data preview:"
-msgstr "¥Ç¡¼¥¿¥×¥ì¥Ó¥å¡¼¤Î¹Ô¿ô(_L):"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ—ãƒ¬ãƒ“ãƒ¥ãƒ¼ã®è¡Œæ•°(_L):"
 
 #: src/gtk/x11opt.c:1076
 msgid "_Font of coordinate window:"
-msgstr "coordinate window ¤Î¥Õ¥©¥ó¥È(_F):"
+msgstr "coordinate window ã®ãƒ•ã‚©ãƒ³ãƒˆ(_F):"
 
 #: src/gtk/x11opt.c:1086
 msgid "show _Ruler"
-msgstr "¥ë¡¼¥é¡¼É½¼¨(_R)"
+msgstr "ãƒ«ãƒ¼ãƒ©ãƒ¼è¡¨ç¤º(_R)"
 
 #: src/gtk/x11opt.c:1090
 msgid "_Show status bar"
-msgstr "¥¹¥Æ¡¼¥¿¥¹¥Ğ¡¼É½¼¨(_S)"
+msgstr "ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒãƒ¼è¡¨ç¤º(_S)"
 
 #: src/gtk/x11opt.c:1253
 msgid "use _External previewer"
-msgstr "³°Éô¥×¥í¥°¥é¥à¤ò»ÈÍÑ¤¹¤ë(_E)"
+msgstr "å¤–éƒ¨ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã‚’ä½¿ç”¨ã™ã‚‹(_E)"
 
 #: src/gtk/x11opt.c:1266
 msgid "Window _Width:"
-msgstr "Éı(_W):"
+msgstr "å¹…(_W):"
 
 #: src/gtk/x11opt.c:1272
 msgid "Window _Height:"
-msgstr "¹â¤µ(_H):"
+msgstr "é«˜ã•(_H):"
 
 #: src/gtk/x11opt.c:1355
 msgid "_DPI:"
@@ -1908,27 +1908,27 @@ msgstr "_DPI:"
 
 #: src/gtk/x11opt.c:1361
 msgid "_Grid:"
-msgstr "¥°¥ê¥Ã¥É(_G):"
+msgstr "ã‚°ãƒªãƒƒãƒ‰(_G):"
 
 #: src/gtk/x11opt.c:1375
 msgid "_Line attribute of focus frame:"
-msgstr "¥Õ¥©¡¼¥«¥¹¥Õ¥ì¡¼¥à¤ÎÀş¼ï(_L):"
+msgstr "ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ãƒ•ãƒ¬ãƒ¼ãƒ ã®ç·šç¨®(_L):"
 
 #: src/gtk/x11opt.c:1385
 msgid "_Antialias:"
-msgstr "¥¢¥ó¥Á¥¨¥¤¥ê¥¢¥¹(_A):"
+msgstr "ã‚¢ãƒ³ãƒã‚¨ã‚¤ãƒªã‚¢ã‚¹(_A):"
 
 #: src/gtk/x11opt.c:1389
 msgid "_Preserve line width and style"
-msgstr "ÀşÉı¤ÈÀş¼ï¤òÊİ»ı¤¹¤ë(_S) "
+msgstr "ç·šå¹…ã¨ç·šç¨®ã‚’ä¿æŒã™ã‚‹(_S) "
 
 #: src/gtk/x11opt.c:1395
 msgid "_Load files on redraw"
-msgstr "ºÆÉÁ²è»ş¤Ë¥Ç¡¼¥¿¥Õ¥¡¥¤¥ëÆÉ¤ß¹ş¤ß(_L)"
+msgstr "å†æç”»æ™‚ã«ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿(_L)"
 
 #: src/gtk/x11opt.c:1402
 msgid "_Maximum number of data on redraw:"
-msgstr "ºÆÉÁ²è»ş¤ÎºÇÂç¥Ç¡¼¥¿¿ô(_M):"
+msgstr "å†æç”»æ™‚ã®æœ€å¤§ãƒ‡ãƒ¼ã‚¿æ•°(_M):"
 
 #: src/gtk/x11opt.c:1508 src/gtk/x11print.c:235 src/gtk/x11print.c:836
 #: src/gtk/x11print.c:939 src/gtk/x11print.c:1065
@@ -1938,459 +1938,459 @@ msgid ""
 "\n"
 "Overwrite existing file?"
 msgstr ""
-"'%s' ¤È¤¤¤¦¥Õ¥¡¥¤¥ë¤Ï´û¤ËÂ¸ºß¤·¤Ş¤¹.\n"
-"¾å½ñ¤­¤·¤Æ¤â¤è¤í¤·¤¤¤Ç¤¹¤«?"
+"'%s' ã¨ã„ã†ãƒ•ã‚¡ã‚¤ãƒ«ã¯æ—¢ã«å­˜åœ¨ã—ã¾ã™.\n"
+"ä¸Šæ›¸ãã—ã¦ã‚‚ã‚ˆã‚ã—ã„ã§ã™ã‹?"
 
 #: src/gtk/x11opt.c:1509
 msgid "Save as .Ngraph.ngp"
-msgstr ".Ngraph.ngp ¤È¤·¤ÆÊİÂ¸"
+msgstr ".Ngraph.ngp ã¨ã—ã¦ä¿å­˜"
 
 #: src/gtk/x11print.c:120
 msgid "External Driver Output"
-msgstr "³°Éô¥É¥é¥¤¥Ğ½ĞÎÏ"
+msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒå‡ºåŠ›"
 
 #: src/gtk/x11print.c:244
 msgid "Overwrite existing file?"
-msgstr "´ûÂ¸¤Î¥Õ¥¡¥¤¥ë¤Ë¾å½ñ¤­¤·¤Ş¤¹¤«?"
+msgstr "æ—¢å­˜ã®ãƒ•ã‚¡ã‚¤ãƒ«ã«ä¸Šæ›¸ãã—ã¾ã™ã‹?"
 
 #: src/gtk/x11print.c:345
 msgid "_PostScript Version:"
-msgstr "¥İ¥¹¥È¥¹¥¯¥ê¥×¥È¥ì¥Ù¥ë(_P):"
+msgstr "ãƒã‚¹ãƒˆã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ¬ãƒ™ãƒ«(_P):"
 
 #: src/gtk/x11print.c:381
 msgid "_SVG Version:"
-msgstr "_SVG ¥Ğ¡¼¥¸¥ç¥ó"
+msgstr "_SVG ãƒãƒ¼ã‚¸ãƒ§ãƒ³"
 
 #: src/gtk/x11print.c:396
 msgid "_Convert texts to paths"
-msgstr "¥Æ¥­¥¹¥È¤ò¥Ñ¥¹¤ËÊÑ´¹(_C)"
+msgstr "ãƒ†ã‚­ã‚¹ãƒˆã‚’ãƒ‘ã‚¹ã«å¤‰æ›(_C)"
 
 #: src/gtk/x11print.c:413
 msgid "Cairo PS Output"
-msgstr "Cairo PS ½ĞÎÏ"
+msgstr "Cairo PS å‡ºåŠ›"
 
 #: src/gtk/x11print.c:416
 msgid "Cairo EPS Output"
-msgstr "Cairo EPS ½ĞÎÏ"
+msgstr "Cairo EPS å‡ºåŠ›"
 
 #: src/gtk/x11print.c:419
 msgid "Cairo PNG Output"
-msgstr "Cairo PNG ½ĞÎÏ"
+msgstr "Cairo PNG å‡ºåŠ›"
 
 #: src/gtk/x11print.c:422
 msgid "Cairo PDF Output"
-msgstr "Cairo PDF ½ĞÎÏ"
+msgstr "Cairo PDF å‡ºåŠ›"
 
 #: src/gtk/x11print.c:425
 msgid "Cairo SVG Output"
-msgstr "Cairo SVG ½ĞÎÏ"
+msgstr "Cairo SVG å‡ºåŠ›"
 
 #: src/gtk/x11print.c:547
 msgid "Printing."
-msgstr "°õºşÃæ"
+msgstr "å°åˆ·ä¸­"
 
 #: src/gtk/x11print.c:671
 #, c-format
 msgid "Printing error: %s"
-msgstr "°õºş¥¨¥é¡¼: %s"
+msgstr "å°åˆ·ã‚¨ãƒ©ãƒ¼: %s"
 
 #: src/gtk/x11print.c:720
 msgid "Spawning external driver."
-msgstr "³°Éô¥É¥é¥¤¥Ğ¤Ë½ĞÎÏÃæ"
+msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒã«å‡ºåŠ›ä¸­"
 
 #: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:4964
 msgid "Drawing."
-msgstr "ÉÁ²èÃæ"
+msgstr "æç”»ä¸­"
 
 #: src/gtk/x11print.c:787
 msgid "Spawning external viewer."
-msgstr "³°Éô¥Ó¥å¡¼¥¢¤Ë½ĞÎÏÃæ"
+msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢ã«å‡ºåŠ›ä¸­"
 
 #: src/gtk/x11print.c:826 src/gtk/x11print.c:837
 msgid "GRA file"
-msgstr "¹çÀ®¥Õ¥¡¥¤¥ë¤ÎÊİÂ¸"
+msgstr "åˆæˆãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜"
 
 #: src/gtk/x11print.c:876
 msgid "Making GRA file."
-msgstr "¹çÀ®¥Õ¥¡¥¤¥ëºîÀ®Ãæ"
+msgstr "åˆæˆãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆä¸­"
 
 #: src/gtk/x11print.c:940
 msgid "confirm"
-msgstr "³ÎÇ§"
+msgstr "ç¢ºèª"
 
 #: src/gtk/x11print.c:1058 src/gtk/x11print.c:1066
 msgid "Data file"
-msgstr "¥Ç¡¼¥¿¤ÎÊİÂ¸"
+msgstr "ãƒ‡ãƒ¼ã‚¿ã®ä¿å­˜"
 
 #: src/gtk/x11print.c:1073
 msgid "Making data file"
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ëºîÀ®Ãæ"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆä¸­"
 
 #: src/gtk/x11print.c:1074
 msgid "Making data file."
-msgstr "¥Ç¡¼¥¿¥Õ¥¡¥¤¥ëºîÀ®Ãæ"
+msgstr "ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆä¸­"
 
 #: src/gtk/x11view.c:769
 msgid "_Left"
-msgstr "º¸Â·¤¨(_L)"
+msgstr "å·¦æƒãˆ(_L)"
 
 #: src/gtk/x11view.c:770
 msgid "_Vertical center"
-msgstr "¿âÄ¾Ãæ±ûÂ·¤¨(_V)"
+msgstr "å‚ç›´ä¸­å¤®æƒãˆ(_V)"
 
 #: src/gtk/x11view.c:771
 msgid "_Right"
-msgstr "±¦Â·¤¨(_R)"
+msgstr "å³æƒãˆ(_R)"
 
 #: src/gtk/x11view.c:773
 msgid "_Top"
-msgstr "¾åÃ¼Â·¤¨(_T)"
+msgstr "ä¸Šç«¯æƒãˆ(_T)"
 
 #: src/gtk/x11view.c:774
 msgid "_Holizontal center"
-msgstr "¿åÊ¿Ãæ±ûÂ·¤¨(_H)"
+msgstr "æ°´å¹³ä¸­å¤®æƒãˆ(_H)"
 
 #: src/gtk/x11view.c:775
 msgid "_Bottom"
-msgstr "²¼Ã¼Â·¤¨(_B)"
+msgstr "ä¸‹ç«¯æƒãˆ(_B)"
 
 #: src/gtk/x11view.c:783
 msgid "_Align"
-msgstr "°ÌÃÖ¹ç¤ï¤»(_A)"
+msgstr "ä½ç½®åˆã‚ã›(_A)"
 
 #: src/gtk/x11view.c:784
 msgid "_Show cross"
-msgstr "¥¯¥í¥¹¥²¡¼¥¸É½¼¨(_S)"
+msgstr "ã‚¯ãƒ­ã‚¹ã‚²ãƒ¼ã‚¸è¡¨ç¤º(_S)"
 
 #: src/gtk/x11view.c:991 src/gtk/x11view.c:993
 #, c-format
 msgid "Searching for data."
-msgstr "¥Ç¡¼¥¿¸¡º÷Ãæ"
+msgstr "ãƒ‡ãƒ¼ã‚¿æ¤œç´¢ä¸­"
 
 #: src/gtk/x11view.c:1067
 #, c-format
 msgid "Evaluating."
-msgstr "¥Ç¡¼¥¿É¾²ÁÃæ"
+msgstr "ãƒ‡ãƒ¼ã‚¿è©•ä¾¡ä¸­"
 
 #: src/gtk/x11view.c:1076
 msgid "Evaluating"
-msgstr "¥Ç¡¼¥¿É¾²ÁÃæ"
+msgstr "ãƒ‡ãƒ¼ã‚¿è©•ä¾¡ä¸­"
 
 #: src/gtk/x11view.c:2367
 msgid "Data points are moved."
-msgstr "¥Ç¡¼¥¿¤Ï°ÜÆ°¤µ¤ì¤Ş¤·¤¿."
+msgstr "ãƒ‡ãƒ¼ã‚¿ã¯ç§»å‹•ã•ã‚Œã¾ã—ãŸ."
 
 #: src/gtk/x11view.c:3483
 msgid "Moving data points is canceled."
-msgstr "¥Ç¡¼¥¿¤Î°ÜÆ°¤Ï¥­¥ã¥ó¥»¥ë¤µ¤ì¤Ş¤·¤¿."
+msgstr "ãƒ‡ãƒ¼ã‚¿ã®ç§»å‹•ã¯ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã•ã‚Œã¾ã—ãŸ."
 
 #: src/gtk/x11view.c:4958
 msgid "Scaling"
-msgstr "¼´¥¹¥±¡¼¥ëÀßÄêÃæ"
+msgstr "è»¸ã‚¹ã‚±ãƒ¼ãƒ«è¨­å®šä¸­"
 
 #: src/gtk/x11view.c:4965
 msgid "Drawing"
-msgstr "ÉÁ²èÃæ"
+msgstr "æç”»ä¸­"
 
 #: src/odraw.c:56
 msgid "unchange"
-msgstr "ÊÑ¹¹¤·¤Ê¤¤"
+msgstr "å¤‰æ›´ã—ãªã„"
 
 #: src/odraw.c:57
 msgid "full"
-msgstr "¥Õ¥ë¥Ñ¥¹"
+msgstr "ãƒ•ãƒ«ãƒ‘ã‚¹"
 
 #: src/odraw.c:58
 msgid "relative"
-msgstr "ÁêÂĞ¥Ñ¥¹"
+msgstr "ç›¸å¯¾ãƒ‘ã‚¹"
 
 #: src/odraw.c:59
 msgid "base"
-msgstr "¥Õ¥¡¥¤¥ëÌ¾¤Î¤ß"
+msgstr "ãƒ•ã‚¡ã‚¤ãƒ«åã®ã¿"
 
 #: src/odraw.c:71
 msgid "miter"
-msgstr "³Ñ·ë¹ç"
+msgstr "è§’çµåˆ"
 
 #: src/odraw.c:72
 msgid "round"
-msgstr "´İ·ë¹ç"
+msgstr "ä¸¸çµåˆ"
 
 #: src/odraw.c:73
 msgid "bevel"
-msgstr "¼Ğ·ë¹ç"
+msgstr "æ–œçµåˆ"
 
 #: src/odraw.c:102
 msgid "end"
-msgstr "½ªÅÀ"
+msgstr "çµ‚ç‚¹"
 
 #: src/odraw.c:103
 msgid "begin"
-msgstr "»ÏÅÀ"
+msgstr "å§‹ç‚¹"
 
 #: src/odraw.c:104 src/oaxis.c:89
 msgid "both"
-msgstr "Î¾Êı"
+msgstr "ä¸¡æ–¹"
 
 #: src/odraw.c:109
 msgid "spline"
-msgstr "¥¹¥×¥é¥¤¥ó"
+msgstr "ã‚¹ãƒ—ãƒ©ã‚¤ãƒ³"
 
 #: src/odraw.c:110
 msgid "spline_close"
-msgstr "ÊÄ¥¹¥×¥é¥¤¥ó"
+msgstr "é–‰ã‚¹ãƒ—ãƒ©ã‚¤ãƒ³"
 
 #: src/odraw.c:111
 msgid "bspline"
-msgstr "B¥¹¥×¥é¥¤¥ó"
+msgstr "Bã‚¹ãƒ—ãƒ©ã‚¤ãƒ³"
 
 #: src/odraw.c:112
 msgid "bspline_close"
-msgstr "ÊÄB¥¹¥×¥é¥¤¥ó"
+msgstr "é–‰Bã‚¹ãƒ—ãƒ©ã‚¤ãƒ³"
 
 #: src/oaxis.c:81
 msgid "linear"
-msgstr "Àş·Á"
+msgstr "ç·šå½¢"
 
 #: src/oaxis.c:82 src/ofit.c:86
 msgid "log"
-msgstr "ÂĞ¿ô"
+msgstr "å¯¾æ•°"
 
 #: src/oaxis.c:83
 msgid "inverse"
-msgstr "µÕ¿ô"
+msgstr "é€†æ•°"
 
 #: src/oaxis.c:91 src/oaxis.c:105 src/oaxis.c:118
 msgid "right"
-msgstr "±¦"
+msgstr "å³"
 
 #: src/oaxis.c:116
 msgid "center"
-msgstr "Ãæ±û"
+msgstr "ä¸­å¤®"
 
 #: src/oaxis.c:119
 msgid "point"
-msgstr "¾®¿ôÅÀ"
+msgstr "å°æ•°ç‚¹"
 
 #: src/oaxis.c:131
 msgid "normal"
-msgstr "¿åÊ¿"
+msgstr "æ°´å¹³"
 
 #: src/oaxis.c:132
 msgid "parallel"
-msgstr "¼´¤ÈÊ¿¹Ô"
+msgstr "è»¸ã¨å¹³è¡Œ"
 
 #: src/oaxis.c:133
 msgid "parallel2"
-msgstr "¼´¤ÈÊ¿¹Ô2"
+msgstr "è»¸ã¨å¹³è¡Œ2"
 
 #: src/ofit.c:83
 msgid "poly"
-msgstr "Â¿¹à¼°"
+msgstr "å¤šé …å¼"
 
 #: src/ofit.c:84
 msgid "pow"
-msgstr "¤Ù¤­´Ø¿ô"
+msgstr "ã¹ãé–¢æ•°"
 
 #: src/ofit.c:85
 msgid "exp"
-msgstr "»Ø¿ô´Ø¿ô"
+msgstr "æŒ‡æ•°é–¢æ•°"
 
 #: src/ofit.c:87
 msgid "user"
-msgstr "¥æ¡¼¥¶ÄêµÁ"
+msgstr "ãƒ¦ãƒ¼ã‚¶å®šç¾©"
 
 #: src/ofile.c:119
 msgid "mark"
-msgstr "¥Ş¡¼¥¯"
+msgstr "ãƒãƒ¼ã‚¯"
 
 #: src/ofile.c:120
 msgid "line"
-msgstr "Ä¾Àş"
+msgstr "ç›´ç·š"
 
 #: src/ofile.c:121
 msgid "polygon"
-msgstr "Â¿³Ñ·Á"
+msgstr "å¤šè§’å½¢"
 
 #: src/ofile.c:122
 msgid "curve"
-msgstr "¶ÊÀş"
+msgstr "æ›²ç·š"
 
 #: src/ofile.c:123
 msgid "diagonal"
-msgstr "ÂĞ³ÑÀş"
+msgstr "å¯¾è§’ç·š"
 
 #: src/ofile.c:124
 msgid "arrow"
-msgstr "Ìğ°õ"
+msgstr "çŸ¢å°"
 
 #: src/ofile.c:125
 msgid "rectangle"
-msgstr "¶ë·Á"
+msgstr "çŸ©å½¢"
 
 #: src/ofile.c:126
 msgid "rectangle_fill"
-msgstr "ÅÉ¤ê¤Ä¤Ö¤·¶ë·Á"
+msgstr "å¡—ã‚Šã¤ã¶ã—çŸ©å½¢"
 
 #: src/ofile.c:127
 msgid "rectangle_solid_fill"
-msgstr "¼Â¶ë·Á"
+msgstr "å®ŸçŸ©å½¢"
 
 #: src/ofile.c:128
 msgid "errorbar_x"
-msgstr "X ¸íº¹ËÀ"
+msgstr "X èª¤å·®æ£’"
 
 #: src/ofile.c:129
 msgid "errorbar_y"
-msgstr "Y ¸íº¹ËÀ"
+msgstr "Y èª¤å·®æ£’"
 
 #: src/ofile.c:130
 msgid "staircase_x"
-msgstr "X ³¬ÃÊ"
+msgstr "X éšæ®µ"
 
 #: src/ofile.c:131
 msgid "staircase_y"
-msgstr "Y ³¬ÃÊ"
+msgstr "Y éšæ®µ"
 
 #: src/ofile.c:132
 msgid "bar_x"
-msgstr "X ËÀ"
+msgstr "X æ£’"
 
 #: src/ofile.c:133
 msgid "bar_y"
-msgstr "Y ËÀ"
+msgstr "Y æ£’"
 
 #: src/ofile.c:134
 msgid "bar_fill_x"
-msgstr "ÅÉ¤ê¤Ä¤Ö¤·²£ËÀ"
+msgstr "å¡—ã‚Šã¤ã¶ã—æ¨ªæ£’"
 
 #: src/ofile.c:135
 msgid "bar_fill_y"
-msgstr "ÅÉ¤ê¤Ä¤Ö¤·½ÄËÀ"
+msgstr "å¡—ã‚Šã¤ã¶ã—ç¸¦æ£’"
 
 #: src/ofile.c:136
 msgid "bar_solid_fill_x"
-msgstr "¼Â²£ËÀ"
+msgstr "å®Ÿæ¨ªæ£’"
 
 #: src/ofile.c:137
 msgid "bar_solid_fill_y"
-msgstr "¼Â½ÄËÀ"
+msgstr "å®Ÿç¸¦æ£’"
 
 #: src/ogra.c:409
 #, c-format
 msgid "drawing %s (%.1f%%)"
-msgstr "%s ÉÁ²èÃæ (%.1f%%)"
+msgstr "%s æç”»ä¸­ (%.1f%%)"
 
 #~ msgid "I/O error: Write"
-#~ msgstr "I/O ¥¨¥é¡¼: ½ñ¤­¹ş¤ß"
+#~ msgstr "I/O ã‚¨ãƒ©ãƒ¼: æ›¸ãè¾¼ã¿"
 
 #~ msgid "_Hide"
-#~ msgstr "ÈóÉ½¼¨(_H)"
+#~ msgstr "éè¡¨ç¤º(_H)"
 
 #~ msgid "_Auto redraw"
-#~ msgstr "¼«Æ°ºÆÉÁ²è(_A)"
+#~ msgstr "è‡ªå‹•å†æç”»(_A)"
 
 #~ msgid "addin"
-#~ msgstr "¥¢¥É¥¤¥ó"
+#~ msgstr "ã‚¢ãƒ‰ã‚¤ãƒ³"
 
 #~ msgid "Script"
-#~ msgstr "¥¹¥¯¥ê¥×¥È"
+#~ msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆ"
 
 #~ msgid "Addin"
-#~ msgstr "¥¢¥É¥¤¥ó"
+#~ msgstr "ã‚¢ãƒ‰ã‚¤ãƒ³"
 
 #~ msgid "prefscript"
-#~ msgstr "¥¹¥¯¥ê¥×¥È"
+#~ msgstr "ã‚¹ã‚¯ãƒªãƒ—ãƒˆ"
 
 #~ msgid "setdriver"
-#~ msgstr "¥É¥é¥¤¥Ğ"
+#~ msgstr "ãƒ‰ãƒ©ã‚¤ãƒ"
 
 #~ msgid "prefdriver"
-#~ msgstr "¥É¥é¥¤¥Ğ"
+#~ msgstr "ãƒ‰ãƒ©ã‚¤ãƒ"
 
 #~ msgid "preffont"
-#~ msgstr "¥Õ¥©¥ó¥È"
+#~ msgstr "ãƒ•ã‚©ãƒ³ãƒˆ"
 
 #~ msgid "misc"
-#~ msgstr "³Æ¼ïÀßÄê"
+#~ msgstr "å„ç¨®è¨­å®š"
 
 #~ msgid "extviewer"
-#~ msgstr "³°Éô¥Ó¥å¡¼¥¢"
+#~ msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢"
 
 #~ msgid "viewer"
-#~ msgstr "¥Ó¥å¡¼¥¢"
+#~ msgstr "ãƒ“ãƒ¥ãƒ¼ã‚¢"
 
 #~ msgid "_JFont"
-#~ msgstr "±ÑÊ¸¥Õ¥©¥ó¥È(_F):"
+#~ msgstr "è‹±æ–‡ãƒ•ã‚©ãƒ³ãƒˆ(_F):"
 
 #~ msgid "Color selection"
-#~ msgstr "¿§¤ÎÁªÂò"
+#~ msgstr "è‰²ã®é¸æŠ"
 
 #~ msgid "Printing"
-#~ msgstr "°õºşÃæ"
+#~ msgstr "å°åˆ·ä¸­"
 
 #~ msgid "New Frame Graph (+SHIFT: Fine)"
-#~ msgstr "¥Õ¥ì¡¼¥à¥°¥é¥Õ¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+#~ msgstr "ãƒ•ãƒ¬ãƒ¼ãƒ ã‚°ãƒ©ãƒ•ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #~ msgid "New Section Graph (+SHIFT: Fine)"
-#~ msgstr "Êı´ã¥°¥é¥Õ¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+#~ msgstr "æ–¹çœ¼ã‚°ãƒ©ãƒ•ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #~ msgid "New Cross Graph (+SHIFT: Fine)"
-#~ msgstr "¸òº¹¥°¥é¥Õ¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+#~ msgstr "äº¤å·®ã‚°ãƒ©ãƒ•ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #~ msgid "New Single Axis (+SHIFT: Fine)"
-#~ msgstr "Ã±ÂÎ¼´¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+#~ msgstr "å˜ä½“è»¸ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #~ msgid "New Legend Line (+SHIFT: Fine)"
-#~ msgstr "Ä¾Àş¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+#~ msgstr "ç›´ç·šã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #~ msgid "New Legend Curve (+SHIFT: Fine)"
-#~ msgstr "¶ÊÀş¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+#~ msgstr "æ›²ç·šã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #~ msgid "New Legend Arc (+SHIFT: Fine)"
-#~ msgstr "±ß¤Î¿·µ¬ºîÀ® (+SHIFT:ÈùÆ°)"
+#~ msgstr "å††ã®æ–°è¦ä½œæˆ (+SHIFT:å¾®å‹•)"
 
 #~ msgid "Pointer (+SHIFT: Multi select)"
-#~ msgstr "ÁªÂò (+SHIFT:Ê£¿ôÁªÂò)"
+#~ msgstr "é¸æŠ (+SHIFT:è¤‡æ•°é¸æŠ)"
 
 #~ msgid "Legend Pointer (+SHIFT: Multi select)"
-#~ msgstr "Legend¤ÎÁªÂò (+SHIFT:Ê£¿ôÁªÂò)"
+#~ msgstr "Legendã®é¸æŠ (+SHIFT:è¤‡æ•°é¸æŠ)"
 
 #~ msgid "Axis Pointer (+SHIFT: Multi select)"
-#~ msgstr "¼´¤ÎÁªÂò (+SHIFT:Ê£¿ôÁªÂò)"
+#~ msgstr "è»¸ã®é¸æŠ (+SHIFT:è¤‡æ•°é¸æŠ)"
 
 #~ msgid "Move"
-#~ msgstr "°ÜÆ°(_M)"
+#~ msgstr "ç§»å‹•(_M)"
 
 #~ msgid "Move object"
-#~ msgstr "¥ª¥Ö¥¸¥§¥¯¥È¤Î°ÜÆ°"
+#~ msgstr "ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç§»å‹•"
 
 #~ msgid "Move object (+CONTROL: Horizontal/Vertical +SHIFT: Fine)"
-#~ msgstr "¥ª¥Ö¥¸¥§¥¯¥È¤Î°ÜÆ° (+CONTROL:¿åÊ¿/¿âÄ¾°ÜÆ° +SHIFT:ÈùÆ°)"
+#~ msgstr "ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç§»å‹• (+CONTROL:æ°´å¹³/å‚ç›´ç§»å‹• +SHIFT:å¾®å‹•)"
 
 #~ msgid "Pick a Clolor"
-#~ msgstr "¿§¤ÎÁªÂò"
+#~ msgstr "è‰²ã®é¸æŠ"
 
 #~ msgid "_Print:"
-#~ msgstr "¥¹¥×¡¼¥é(_P):"
+#~ msgstr "ã‚¹ãƒ—ãƒ¼ãƒ©(_P):"
 
 #~ msgid "Spawning external driver"
-#~ msgstr "³°Éô¥É¥é¥¤¥Ğ¤Ë½ĞÎÏÃæ"
+#~ msgstr "å¤–éƒ¨ãƒ‰ãƒ©ã‚¤ãƒã«å‡ºåŠ›ä¸­"
 
 #~ msgid "Spawning external viewer"
-#~ msgstr "³°Éô¥Ó¥å¡¼¥¢¤Ë½ĞÎÏÃæ"
+#~ msgstr "å¤–éƒ¨ãƒ“ãƒ¥ãƒ¼ã‚¢ã«å‡ºåŠ›ä¸­"
 
 #~ msgid "Making GRA file"
-#~ msgstr "¹çÀ®¥Õ¥¡¥¤¥ëºîÀ®Ãæ"
+#~ msgstr "åˆæˆãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆä¸­"
 
 #~ msgid "Interrupt"
-#~ msgstr "Ãæ»ß"
+#~ msgstr "ä¸­æ­¢"
 
 #~ msgid "Interrupt Drawing, etc."
-#~ msgstr "ÉÁ²è¤ÎÃæ»ß"
+#~ msgstr "æç”»ã®ä¸­æ­¢"
 
 #~ msgid "_Clear"
-#~ msgstr "¥¯¥ê¥¢(_C)"
+#~ msgstr "ã‚¯ãƒªã‚¢(_C)"
 
 #~ msgid "_Store in memory"
-#~ msgstr "¥á¥â¥ê¤ËÊİÂ¸(_S)"
+#~ msgstr "ãƒ¡ãƒ¢ãƒªã«ä¿å­˜(_S)"
