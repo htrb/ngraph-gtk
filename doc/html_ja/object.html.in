@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Object</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#0000FF" VLINK="#0000FF">
+<A NAME="TOP">&nbsp;</A>
+<h1><A HREF="./ngraph.html">Ngraphオブジェクト</A></h1>
+<UL>
+<LI><A HREF="#OBJECT">概要</A>
+<LI><A HREF="#OBJECTLIST">Ngraphオブジェクト一覧</A>
+</UL>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="OBJECT">&nbsp;</A>
+<h2><A HREF="#TOP">概要</A></h2>
+<BR>
+<BLOCKQUOTE>
+Ngraphで描画されるグラフはNgraphオブジェクトの集合から成り立っています。<BR>
+Ngraphでのグラフの作成は, グラフを構成するNgraphオブジェクトのフィールド値を設定することにより行われます。<BR>
+フィールド値の設定は, メニューやダイアログボックスでの指定, あるいは *.ngp ファイルに記述されしたスクリプトをインタープリタで実行して行われます。<BR>
+<BR>
+<UL>
+<LI>オブジェクトの一覧を表示するには[Graph]-[Ngraph shell]でスクリプト・インタープリタを起動し、object コマンドを実行して見る事ができます。
+<LI>オブジェクトのフィールドを表示するには object object_name と object コマンドの引数にオブジェクト名を指定します。
+</UL>
+<BR>
+Ngraphオブジェクト階層<BR>
+<BR>
+<PRE>
+object
+        system
+        shell
+        gra
+        gra2
+                gra2null
+                gra2file
+                gra2prn
+                gra2cairo
+                        gra2cairofile
+                        gra2gtkprint
+                        gra2gtk
+                        gra2gdk
+                        menu
+        int
+        double
+        string
+        iarray
+        darray
+        sarray
+        math
+        fit
+        prm
+        draw
+                axisgrid
+                axis
+                file
+                merge
+                legend
+                        rectangle
+                        line
+                        curve
+                        arc
+                        polygon
+                        mark
+                        text
+        dialog
+</PRE>
+</BLOCKQUOTE>
+
+<BR>
+<HR>
+<BR>
+
+
+
+<A NAME="OBJECTLIST">&nbsp;</A>
+<h2><A HREF="#TOP">Ngraphオブジェクト一覧</A></h2>
+<BR>
+各オブジェクトのフィールド一覧を示します。<BR>
+各オブジェクトのフィールドは
+<UL><PRE>permission     field_name   field_type</PRE></UL>
+の形式で表示されています。
+<BR>

@@ -1,0 +1,19 @@
+#! /usr/bin/ngraph -i 
+
+FILE="tmp"
+
+for obj in `object`
+do
+    echo '<h3>'$obj' オブジェクト</h3>'
+    echo '<pre>'
+    object $obj | grep -v -e "current instance:" -e "last instance id:"
+    echo '</pre>'
+    echo
+done
+
+echo '<br>'
+echo '<hr>'
+echo '<br>'
+echo '</body></html>'
+
+del system
