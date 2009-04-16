@@ -1,3 +1,16 @@
+2009-04-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (do_popup): popup item related to change order
+	of instances is also sesensitive when the focused instances is
+	"merge" object.
+	(reorder_object): reorder instances when the focused instance is
+	"merge" object.
+
+	* src/oaxis.c (axis_get_box): add.
+	(axisbbox2): use "axis_get_box()".
+	(axisrotate2, axisrotate): add.
+	(axis): add field "rotate".
+
 2009-04-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (SetPoint): show the value of "s->Angle" when "d->Angle"

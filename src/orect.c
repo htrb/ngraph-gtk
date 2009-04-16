@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.12 2009/04/15 07:53:07 hito Exp $
+ * $Id: orect.c,v 1.13 2009/04/16 11:30:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -181,7 +181,12 @@ rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj, "x2", inst, &x2);
   _getobj(obj, "y2", inst, &y2);
 
-  use_pivot = * (int *) argv[2];
+  angle = *(int *) argv[2];
+  angle %= 36000;
+  if (angle < 0)
+    angle += 36000;
+
+  use_pivot = * (int *) argv[3];
   if (use_pivot) {
     px = *(int *) argv[4];
     py = *(int *) argv[5];
@@ -189,11 +194,6 @@ rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     px = (x1 + x2) / 2;
     py = (y1 + y2) / 2;
   }
-
-  angle = *(int *) argv[3];
-  angle %= 36000;
-  if (angle < 0)
-    angle += 36000;
 
   switch (angle) {
   case 9000:

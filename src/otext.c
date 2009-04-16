@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.15 2009/04/15 05:03:57 hito Exp $
+ * $Id: otext.c,v 1.16 2009/04/16 11:30:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -416,8 +416,8 @@ textrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
  
   _getobj(obj, "direction", inst, &dir);
 
-  use_pivot = * (int *) argv[2];
-  angle = *(int *) argv[3];
+  angle = *(int *) argv[2];
+  use_pivot = * (int *) argv[3];
 
   dir += angle;
   dir %= 36000;

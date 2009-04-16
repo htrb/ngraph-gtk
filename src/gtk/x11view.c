@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.138 2009/04/16 05:50:19 hito Exp $
+ * $Id: x11view.c,v 1.139 2009/04/16 11:30:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1816,8 +1816,8 @@ RotateFocusedObj(int direction)
 
   PaintLock = TRUE;
 
-  argv[0] = (char *) &use_pivot;
-  argv[1] = (char *) &angle;
+  argv[0] = (char *) &angle;
+  argv[1] = (char *) &use_pivot;
   argv[2] = (char *) &px;
   argv[3] = (char *) &py;
   argv[4] = NULL;
@@ -4142,7 +4142,7 @@ do_popup(GdkEventButton *event, struct Viewer *d)
       int id, last_id;
 
       focus = * (struct focuslist **) arraynget(d->focusobj, 0);
-      if (chkobjchild(chkobject("legend"), focus->obj)) {
+      if (chkobjchild(chkobject("legend"), focus->obj) || chkobjchild(chkobject("merge"), focus->obj)) {
 	id = chkobjoid(focus->obj, focus->oid);
 	last_id = chkobjlastinst(focus->obj);
 
@@ -4154,7 +4154,8 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DOWN], TRUE);
 	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
 	}
-      } else {
+      }
+      if (chkobjfield(focus->obj, "rotate")) {
 	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], FALSE);
       }
     }
@@ -5470,7 +5471,7 @@ reorder_object(enum object_move_type type)
   focus = *(struct focuslist **) arraynget(d->focusobj, 0);
   obj = focus->obj;
 
-  if (! chkobjchild(chkobject("legend"), obj))
+  if (! chkobjchild(chkobject("legend"), obj) && ! chkobjchild(chkobject("merge"), obj))
     return;
 
   inst = chkobjinstoid(obj, focus->oid);

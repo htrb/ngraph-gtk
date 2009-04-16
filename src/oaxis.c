@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.29 2009/03/24 09:14:52 hito Exp $
+ * $Id: oaxis.c,v 1.31 2009/04/16 11:32:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -439,43 +439,62 @@ axisdirection(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return axisgeometry(obj, inst, rval, argc, argv);
 }
 
+static void
+axis_get_box(struct objlist *obj,char *inst, int *pos)
+{
+  int minx, miny, maxx, maxy;
+  int x0, y0, x1, y1, length, direction;
+  double dir;
+
+  _getobj(obj, "x", inst, &x0);
+  _getobj(obj, "y", inst, &y0);
+  _getobj(obj, "length", inst, &length);
+  _getobj(obj, "direction", inst, &direction);
+
+  dir = direction / 18000.0 * MPI;
+  x1 = x0 + nround(length * cos(dir));
+  y1 = y0 - nround(length * sin(dir));
+  maxx = minx = x0;
+  maxy = miny = y0;
+
+  if (x1 < minx) minx = x1;
+  if (x1 > maxx) maxx = x1;
+  if (y1 < miny) miny = y1;
+  if (y1 > maxy) maxy = y1;
+
+  pos[0] = minx;
+  pos[1] = miny;
+  pos[2] = maxx;
+  pos[3] = maxy;
+  pos[4] = x0;
+  pos[5] = y0;
+  pos[6] = x1;
+  pos[7] = y1;
+#define POS_ARRAY_SIZE 8
+}
+
 
 static int 
 axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int minx,miny,maxx,maxy;
-  int x0,y0,x1,y1,length,direction;
-  double dir;
+  int i, pos[POS_ARRAY_SIZE];
   struct narray *array;
 
   array=*(struct narray **)rval;
   if (arraynum(array)!=0) return 0;
-  _getobj(obj,"x",inst,&x0);
-  _getobj(obj,"y",inst,&y0);
-  _getobj(obj,"length",inst,&length);
-  _getobj(obj,"direction",inst,&direction);
   if ((array==NULL) && ((array=arraynew(sizeof(int)))==NULL)) return 1;
-  dir=direction/18000.0*MPI;
-  x1=x0+nround(length*cos(dir));
-  y1=y0-nround(length*sin(dir));
-  maxx=minx=x0;
-  maxy=miny=y0;
-  arrayadd(array,&x0);
-  arrayadd(array,&y0);
-  arrayadd(array,&x1);
-  arrayadd(array,&y1);
-  if (x1<minx) minx=x1;
-  if (x1>maxx) maxx=x1;
-  if (y1<miny) miny=y1;
-  if (y1>maxy) maxy=y1;
-  arrayins(array,&(maxy),0);
-  arrayins(array,&(maxx),0);
-  arrayins(array,&(miny),0);
-  arrayins(array,&(minx),0);
+
+  axis_get_box(obj, inst, pos);
+
+  for (i = 0; i < POS_ARRAY_SIZE; i++) {
+    arrayadd(array, pos + i);
+  }
+
   if (arraynum(array)==0) {
     arrayfree(array);
     return 1;
   }
+
   *(struct narray **)rval=array;
   return 0;
 }
@@ -873,6 +892,91 @@ axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 'c':
     axismove2(obj, inst_array[0], rval, argc, argv);
     axismove2(obj, inst_array[1], rval, argc, argv);
+    break;
+  }
+  return 0;
+}
+
+static int
+axisrotate2(struct objlist *obj, char *inst, int px, int py, int angle)
+{
+  int x, y, dir;
+  struct narray *array;
+
+  _getobj(obj, "x", inst, &x);
+  _getobj(obj, "y", inst, &y);
+  _getobj(obj, "direction", inst, &dir);
+
+  rotate(px, py, angle, &x, &y);
+  dir += angle;
+  dir %= 36000;
+
+  if (_putobj(obj, "x", inst, &x)) return 1;
+  if (_putobj(obj, "y", inst, &y)) return 1;
+  if (_putobj(obj, "direction", inst, &dir)) return 1;
+
+  _getobj(obj, "bbox", inst, &array);
+  arrayfree(array);
+  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  return 0;
+}
+
+
+static int 
+axisrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int i, type, angle, use_pivot, px, py, pos[POS_ARRAY_SIZE];
+  char *inst_array[4];
+
+  angle = *(int *) argv[2];
+  use_pivot = * (int *) argv[3];
+  px = *(int *) argv[4];
+  py = *(int *) argv[5];
+
+  angle %= 36000;
+  if (angle < 0)
+    angle += 36000;
+
+  type = get_axis_group_type(obj, inst, inst_array);
+
+  switch (type) {
+  case 'a':
+    if (! use_pivot) {
+      axis_get_box(obj, inst, pos);
+      px = (pos[0] + pos[2]) / 2;
+      py = (pos[1] + pos[3]) / 2;
+    }
+    return axisrotate2(obj, inst, px, py, angle);
+    break;
+  case 'f':
+  case 's':
+    if (! use_pivot) {
+      px = 0;
+      for (i = 0; i < 4; i++) {
+	axis_get_box(obj, inst_array[i], pos);
+	px += (pos[0] + pos[2]) / 2;
+	py += (pos[1] + pos[3]) / 2;
+      }
+      px /= 4;
+      py /= 4;
+    }
+    for (i = 0; i < 4; i++) {
+      axisrotate2(obj, inst_array[i], px, py, angle);
+    }
+    break;
+  case 'c':
+    if (! use_pivot) {
+      px = 0;
+      for (i = 0; i < 2; i++) {
+	axis_get_box(obj, inst_array[i], pos);
+	px += (pos[0] + pos[2]) / 2;
+	py += (pos[1] + pos[3]) / 2;
+      }
+      px /= 2;
+      py /= 2;
+    }
+    axisrotate2(obj, inst_array[0], px, py, angle);
+    axisrotate2(obj, inst_array[1], px, py, angle);
     break;
   }
   return 0;
@@ -2817,6 +2921,7 @@ static struct objtable axis[] = {
   {"draw",NVFUNC,NREAD|NEXEC,axisdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,axisbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,axismove,"ii",0},
+  {"rotate",NVFUNC,NREAD|NEXEC,axisrotate,"iiii",0},
   {"change",NVFUNC,NREAD|NEXEC,axischange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,axiszoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,axismatch,"iiiii",0},

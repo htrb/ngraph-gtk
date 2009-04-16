@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.13 2009/04/15 07:53:07 hito Exp $
+ * $Id: olegend.c,v 1.14 2009/04/16 11:30:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -233,7 +233,8 @@ legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (num < 4)
     return 0;
 
-  use_pivot = * (int *) argv[2];
+  angle = *(int *) argv[2];
+  use_pivot = * (int *) argv[3];
   if (use_pivot) {
     px = *(int *) argv[4];
     py = *(int *) argv[5];
@@ -243,8 +244,6 @@ legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     py = pdata[1];
     start = 1;
   }
-
-  angle = *(int *) argv[3];
 
   for (i = start; i < num / 2; i++) {
     rotate(px, py, angle, &pdata[i * 2], &pdata[i * 2 + 1]);

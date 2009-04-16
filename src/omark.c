@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.10 2009/04/15 05:03:57 hito Exp $
+ * $Id: omark.c,v 1.11 2009/04/16 11:30:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -163,13 +163,13 @@ markrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int angle, use_pivot, px, py, x, y;
   struct narray *array;
  
-  use_pivot = * (int *) argv[2];
-  if (! use_pivot)
-    return 0;
-
-  angle = *(int *) argv[3];
+  angle = *(int *) argv[2];
+  use_pivot = * (int *) argv[3];
   px = *(int *) argv[4];
   py = *(int *) argv[5];
+
+  if (! use_pivot)
+    return 0;
 
   _getobj(obj, "x", inst, &x);
   _getobj(obj, "y", inst, &y);
