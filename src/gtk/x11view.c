@@ -1,6 +1,5 @@
-/* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11view.c,v 1.137 2009/04/15 05:44:02 hito Exp $
+ * $Id: x11view.c,v 1.138 2009/04/16 05:50:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -258,10 +257,10 @@ new_merge_obj(char *name, struct objlist *obj)
 
 
 static int
-arc_get_angle(struct objlist *obj, char *inst, int round, int point, int px, int py, int *angle1, int *angle2)
+arc_get_angle(struct objlist *obj, char *inst, unsigned int round, int point, int px, int py, int *angle1, int *angle2)
 {
   int x, y, rx, ry, a1, a2;
-  double dx, dy, r, angle, v;
+  double dx, dy, r, angle;
 
   if (inst == NULL)
     return 1;
@@ -315,43 +314,41 @@ arc_get_angle(struct objlist *obj, char *inst, int round, int point, int px, int
     angle = 360 - angle;
   }
 
-  angle = nround(angle);
 
-  if (round) {
+  if (round  & GDK_CONTROL_MASK) {
     int tmp;
 
+    angle = nround(angle);
     tmp = angle / 15;
     angle = tmp * 15;
+  } else if (! (round & GDK_SHIFT_MASK)) {
+    angle = nround(angle);
   }
 
-  a1 /= 100;
-  a2 /= 100;
+  angle *= 100;
 
   switch (point) {
   case ARC_POINT_TYPE_ANGLE1:
-    v = angle - a1;
+    a2 += a1;
     a1 = angle;
-    a2 -= v;
+    a2 -= a1;
     break;
   case ARC_POINT_TYPE_ANGLE2:
     a2 = angle - a1;
     break;
   }
 
+  a1 %= 36000;
   if (a1 < 0)
-    a1 += 360;
+    a1 += 36000;
 
+  a2 %= 36000;
   if (a2 < 0) {
-    a2 += 360;
-  } else if (a2 > 360) {
-    a2 -= 360;
+    a2 += 36000;
   }
 
-  if (a2 > 360 || a2 < 5)
-    a2 = 360;
-
-  a1 *= 100;
-  a2 *= 100;
+  if (a2 < 500)
+    a2 = 36000;
 
   if (angle1)
     *angle1 = a1;
@@ -1881,7 +1878,7 @@ show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double
     } else {
       prev_state = state;
     }
-    if (arc_get_angle(obj, inst, state & GDK_CONTROL_MASK, change, d->MouseX2, d->MouseY2, &a1, &a2))
+    if (arc_get_angle(obj, inst, state, change, d->MouseX2, d->MouseY2, &a1, &a2))
       return;
     d->Angle = (change == ARC_POINT_TYPE_ANGLE1) ? a1 : (a1 + a2) % 36000;
     break;
@@ -2810,7 +2807,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
       if (obj == chkobject("arc") &&
 	  (d->ChangePoint == ARC_POINT_TYPE_ANGLE1 || d->ChangePoint == ARC_POINT_TYPE_ANGLE2)) {
-	if (arc_get_angle(obj, inst, state & GDK_CONTROL_MASK, d->ChangePoint, d->MouseX2, d->MouseY2, &dx, &dy))
+	if (arc_get_angle(obj, inst, state, d->ChangePoint, d->MouseX2, d->MouseY2, &dx, &dy))
 	  inst = NULL;
       } else if (obj == chkobject("axis")) {
 	axis = TRUE;
