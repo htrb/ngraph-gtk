@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.31 2009/04/16 11:32:26 hito Exp $
+ * $Id: oaxis.c,v 1.30 2009/04/16 11:30:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -470,14 +470,16 @@ axis_get_box(struct objlist *obj,char *inst, int *pos)
   pos[5] = y0;
   pos[6] = x1;
   pos[7] = y1;
-#define POS_ARRAY_SIZE 8
+#define POS_ARRAY_SIZE 8;
 }
 
 
 static int 
 axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i, pos[POS_ARRAY_SIZE];
+  int minx,miny,maxx,maxy;
+  int i,x0,y0,x1,y1,length,direction, pos[POS_ARRAY_SIZE];
+  double dir;
   struct narray *array;
 
   array=*(struct narray **)rval;
