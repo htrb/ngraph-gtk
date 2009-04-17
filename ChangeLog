@@ -1,3 +1,11 @@
+2009-04-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oagrid.c (struct axis_prm, struct axis_pos)
+	(struct grid_prm, get_grid_prm, draw_grid_line, draw_background)
+	(ANGLE_ROTATION, calc_intersection): add.
+	(agriddraw): use "get_grid_prm()", "draw_grid_line()" and
+	"draw_background()".
+
 2009-04-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (do_popup): popup item related to change order
