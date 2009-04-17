@@ -2,7 +2,7 @@
 
 	* src/oagrid.c (struct axis_prm, struct axis_pos)
 	(struct grid_prm, get_grid_prm, draw_grid_line, draw_background)
-	(ANGLE_ROTATION, calc_intersection): add.
+	(calc_intersection): add.
 	(agriddraw): use "get_grid_prm()", "draw_grid_line()" and
 	"draw_background()".
 

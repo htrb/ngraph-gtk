@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.12 2009/04/17 09:06:33 hito Exp $
+ * $Id: oagrid.c,v 1.13 2009/04/17 09:25:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -102,14 +102,8 @@ struct axis_prm {
   double min, max;
 };
 
-#define ANGLE_ROTATION 1
-
 struct axis_pos {
   int dir, len, x, y;
-#if ANGLE_ROTATION
-#else
-  int dir2;
-#endif
 };
 
 struct grid_prm {
@@ -118,7 +112,6 @@ struct grid_prm {
   int *sdata1, *sdata2, *sdata3;
 };
 
-#if ANGLE_ROTATION
 static int
 calc_intersection(double x1, double y1, int dir1, double x2, double y2, int dir2, int *ix, int *iy)
 {
@@ -156,7 +149,6 @@ calc_intersection(double x1, double y1, int dir1, double x2, double y2, int dir2
 
   return 0;
 }
-#endif
 
 static int
 get_grid_prm(struct objlist *obj, char *axisy,
@@ -223,16 +215,6 @@ get_grid_prm(struct objlist *obj, char *axisy,
   if (pos->dir < 0)
     pos->dir += 36000;
 
-#if ANGLE_ROTATION
-#else
-  if (pos->dir % 9000 != 0) {
-    error(obj,  ERRAXISDIR);
-    return 1;
-  }
-
-  pos->dir2 = pos->dir / 9000;
-#endif
-
   if (prm->amin == prm->amax)
     return 0;
 
@@ -252,9 +234,6 @@ get_grid_prm(struct objlist *obj, char *axisy,
 
   return 0;
 }
-
-
-#if ANGLE_ROTATION
 
 static int
 draw_grid_line(struct objlist *obj, int GC,
@@ -320,102 +299,6 @@ draw_grid_line(struct objlist *obj, int GC,
   return 0;
 }
 
-#else
-
-static int
-draw_grid_line(struct objlist *obj, int GC,
-	       struct axis_prm *a1_prm, struct axis_pos *a1_pos,
-	       struct axis_pos *a2_pos, struct grid_prm *gprm)
-{
-  int g, rcode, snum, wid, *sdata;
-  double po;
-  int x0, y0, x1, y1;
-  struct axislocal alocal;
-
-  if (getaxispositionini(&alocal, a1_prm->type, a1_prm->amin, a1_prm->amax, a1_prm->inc, a1_prm->div, TRUE)) {
-    error(obj, ERRMINMAX);
-    return 1;
-  }
-
-  while ((rcode = getaxisposition(&alocal, &po)) != -2) {
-    if (rcode < 1) {
-      continue;
-    }
-
-    if (rcode == 1) {
-      snum = gprm->snum1;
-      sdata = gprm->sdata1;
-      wid = gprm->wid1;
-    } else if (rcode == 2) {
-      snum = gprm->snum2;
-      sdata = gprm->sdata2;
-      wid = gprm->wid2;
-    } else {
-      snum = gprm->snum3;
-      sdata = gprm->sdata3;
-      wid = gprm->wid3;
-    }
-
-    if (wid == 0)
-      continue;
-
-    GRAlinestyle(GC, snum, sdata, wid, 0, 0, 1000);
-
-    switch (a1_pos->dir2) {
-    case 0:
-      g = a1_pos->x + (po - a1_prm->min) * a1_pos->len / (a1_prm->max - a1_prm->min);
-      break;
-    case 1:
-      g = a1_pos->y - (po - a1_prm->min) * a1_pos->len / (a1_prm->max - a1_prm->min);
-      break;
-    case 2:
-      g = a1_pos->x - (po - a1_prm->min) * a1_pos->len / (a1_prm->max - a1_prm->min);
-      break;
-    case 3:
-      g = a1_pos->y + (po - a1_prm->min) * a1_pos->len / (a1_prm->max - a1_prm->min);
-      break;
-    default:
-      /* never reached */
-      g = 0;
-    }
-
-    switch (a2_pos->dir2) {
-    case 0:
-      x0 = a2_pos->x;
-      y0 = g;
-      x1 = a2_pos->x + a2_pos->len;
-      y1 = g;
-      break;
-    case 1:
-      x0 = g;
-      y0 = a2_pos->y;
-      x1 = g;
-      y1 = a2_pos->y - a2_pos->len;
-      break;
-    case 2:
-      x0 = a2_pos->x;
-      y0 = g;
-      x1 = a2_pos->x - a2_pos->len;
-      y1 = g;
-      break;
-    case 3:
-      x0 = g;
-      y0 = a2_pos->y;
-      x1 = g;
-      y1 = a2_pos->y + a2_pos->len;
-      break;
-    default:
-      /* never reached */
-      x0 = x1 = y0 = y1 = 0;
-    }
-    GRAline(GC, x0, y0, x1, y1);
-  }
-  return 0;
-}
-
-#endif
-
-#if ANGLE_ROTATION
 static int
 draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
 {
@@ -455,57 +338,6 @@ draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, st
 
   return 0;
 }
-
-#else
-
-static int
-draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
-{
-  int gx0, gy0, gx1, gy1, x1, y1, br, bg, bb, pos[8];
-  double dir;
-
-  _getobj(obj, "BR", inst, &br);
-  _getobj(obj, "BG", inst, &bg);
-  _getobj(obj, "BB", inst, &bb);
-  GRAcolor(GC, br, bg, bb);
-
-  dir = ax->dir / 18000.0 * MPI;
-
-  gx0 = ax->x;
-  gx1 = ax->x;
-  x1 = ax->x + nround(ax->len * cos(dir));
-  if (x1 < gx0) gx0 = x1;
-  if (x1 > gx1) gx1 = x1;
-
-  gy0 = ax->y;
-  gy1 = ax->y;
-  y1 = ax->y - nround(ax->len * sin(dir));
-  if (y1 < gy0) gy0 = y1;
-  if (y1 > gy1) gy1 = y1;
-
-  dir = ay->dir / 18000.0 * MPI;
-
-  x1 = ay->x;
-  if (x1 < gx0) gx0 = x1;
-  if (x1 > gx1) gx1 = x1;
-
-  x1 = ay->x + nround(ay->len * cos(dir));
-  if (x1 < gx0) gx0 = x1;
-  if (x1 > gx1) gx1 = x1;
-
-  y1 = ay->y;
-  if (y1 < gy0) gy0 = y1;
-  if (y1 > gy1) gy1 = y1;
-
-  y1 = ay->y - nround(ay->len * sin(dir));
-  if (y1 < gy0) gy0 = y1;
-  if (y1 > gy1) gy1 = y1;
-
-  GRArectangle(GC, gx0, gy0, gx1, gy1, 1);
-
-  return 0;
-}
-#endif
 
 static int 
 agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
@@ -562,14 +394,6 @@ agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     error(obj, ERRAXISDIR);
     return 1;
   }
-
-#if ANGLE_ROTATION
-#else
-  if (((ax_pos.dir2 + ay_pos.dir2) % 2) == 0) {
-    error(obj, ERRAXISDIR);
-    return 1;
-  }
-#endif
 
   if (ax_prm.amin == ax_prm.amax || ay_prm.amin == ay_prm.amax)
     goto exit;
