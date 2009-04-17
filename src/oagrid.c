@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.11 2009/04/17 08:23:05 hito Exp $
+ * $Id: oagrid.c,v 1.12 2009/04/17 09:06:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -416,7 +416,7 @@ draw_grid_line(struct objlist *obj, int GC,
 #endif
 
 #if ANGLE_ROTATION
-static void
+static int
 draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
 {
   int r, br, bg, bb, pos[8];
@@ -440,7 +440,7 @@ draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, st
 			ay->x, ay->y, ax->dir,
 			pos + 0, pos + 1);
   if (r)
-    return;
+    return 1;
 
   pos[2] = pos[0] + cosx;
   pos[3] = pos[1] - sinx;
@@ -452,11 +452,13 @@ draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, st
   pos[7] = pos[1] - siny;
 
   GRAdrawpoly(GC, 4, pos, 1);
+
+  return 0;
 }
 
 #else
 
-static void
+static int
 draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
 {
   int gx0, gy0, gx1, gy1, x1, y1, br, bg, bb, pos[8];
@@ -500,6 +502,8 @@ draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, st
   if (y1 > gy1) gy1 = y1;
 
   GRArectangle(GC, gx0, gy0, gx1, gy1, 1);
+
+  return 0;
 }
 #endif
 
@@ -553,8 +557,10 @@ agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   GRAregion(GC, &lm, &tm, &w, &h, &zoom);
   GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, clip);
-  if (back) {
-    draw_background(obj, inst, GC, &ax_pos, &ay_pos);
+
+  if (back && draw_background(obj, inst, GC, &ax_pos, &ay_pos)) {
+    error(obj, ERRAXISDIR);
+    return 1;
   }
 
 #if ANGLE_ROTATION
