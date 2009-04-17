@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.13 2009/04/17 09:25:55 hito Exp $
+ * $Id: oagrid.c,v 1.14 2009/04/17 15:53:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -104,6 +104,7 @@ struct axis_prm {
 
 struct axis_pos {
   int dir, len, x, y;
+  double len_x, len_y;
 };
 
 struct grid_prm {
@@ -113,12 +114,18 @@ struct grid_prm {
 };
 
 static int
-calc_intersection(double x1, double y1, int dir1, double x2, double y2, int dir2, int *ix, int *iy)
+calc_intersection(int x1, int y1, int dir1, int x2, int y2, int dir2, int *ix, int *iy)
 {
   double x, y, a, b;;
 
   if (dir1 == dir2 || dir1 - dir2 == 18000 || dir1 - dir2 == -18000)
     return 1;
+
+  if (x1 == x2 && y1 == y2) {
+    *ix = x1;
+    *iy = y1;
+    return 0;
+  }
 
   dir1 = -dir1;
   dir2 = -dir2;
@@ -215,6 +222,9 @@ get_grid_prm(struct objlist *obj, char *axisy,
   if (pos->dir < 0)
     pos->dir += 36000;
 
+  pos->len_x = pos->len * cos(pos->dir / 18000.0 * MPI);
+  pos->len_y = pos->len * sin(pos->dir / 18000.0 * MPI);
+
   if (prm->amin == prm->amax)
     return 0;
 
@@ -241,7 +251,7 @@ draw_grid_line(struct objlist *obj, int GC,
 	       struct axis_pos *a2_pos, struct grid_prm *gprm)
 {
   int r, rcode, snum, wid, *sdata;
-  double po, dir1, dir2, cos1, sin1, cos2, sin2;;
+  double po;;
   int x0, y0, x, y;
   struct axislocal alocal;
 
@@ -258,14 +268,6 @@ draw_grid_line(struct objlist *obj, int GC,
     error(obj, ERRAXISDIR);
     return 1;
   }
-
-  dir1 = a1_pos->dir / 18000.0 * MPI;
-  dir2 = a2_pos->dir / 18000.0 * MPI;
-
-  cos1 = a1_pos->len * cos(dir1);
-  sin1 = a1_pos->len * sin(dir1);
-  cos2 = a2_pos->len * cos(dir2);
-  sin2 = a2_pos->len * sin(dir2);
 
   while ((rcode = getaxisposition(&alocal, &po)) != -2) {
     if (rcode < 1) {
@@ -291,10 +293,10 @@ draw_grid_line(struct objlist *obj, int GC,
 
     GRAlinestyle(GC, snum, sdata, wid, 0, 0, 1000);
 
-    x0 = x + (po - a1_prm->min) * cos1 / (a1_prm->max - a1_prm->min);
-    y0 = y - (po - a1_prm->min) * sin1 / (a1_prm->max - a1_prm->min);
+    x0 = x + (po - a1_prm->min) * a1_pos->len_x / (a1_prm->max - a1_prm->min);
+    y0 = y - (po - a1_prm->min) * a1_pos->len_y / (a1_prm->max - a1_prm->min);
 
-    GRAline(GC, x0, y0, x0 + cos2, y0 - sin2);
+    GRAline(GC, x0, y0, x0 + a2_pos->len_x, y0 - a2_pos->len_y);
   }
   return 0;
 }
@@ -303,21 +305,11 @@ static int
 draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
 {
   int r, br, bg, bb, pos[8];
-  double dirx, diry, cosx, sinx, cosy, siny;
 
   _getobj(obj, "BR", inst, &br);
   _getobj(obj, "BG", inst, &bg);
   _getobj(obj, "BB", inst, &bb);
   GRAcolor(GC, br, bg, bb);
-
-  dirx = ax->dir / 18000.0 * MPI;
-  diry = ay->dir / 18000.0 * MPI;
-
-  cosx = ax->len * cos(dirx);
-  sinx = ax->len * sin(dirx);
-
-  cosy = ay->len * cos(diry);
-  siny = ay->len * sin(diry);
 
   r = calc_intersection(ax->x, ax->y, ay->dir,
 			ay->x, ay->y, ax->dir,
@@ -325,14 +317,14 @@ draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, st
   if (r)
     return 1;
 
-  pos[2] = pos[0] + cosx;
-  pos[3] = pos[1] - sinx;
+  pos[2] = pos[0] + ax->len_x;
+  pos[3] = pos[1] - ax->len_y;
 
-  pos[4] = pos[2] + cosy;
-  pos[5] = pos[3] - siny;
+  pos[4] = pos[2] + ay->len_x;
+  pos[5] = pos[3] - ay->len_y;
 
-  pos[6] = pos[0] + cosy;
-  pos[7] = pos[1] - siny;
+  pos[6] = pos[0] + ay->len_x;
+  pos[7] = pos[1] - ay->len_y;
 
   GRAdrawpoly(GC, 4, pos, 1);
 
