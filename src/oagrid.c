@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.14 2009/04/17 15:53:48 hito Exp $
+ * $Id: oagrid.c,v 1.15 2009/04/18 02:21:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -107,10 +107,12 @@ struct axis_pos {
   double len_x, len_y;
 };
 
+#define GRID_PRM_NUM 3
+
 struct grid_prm {
-  int wid1, wid2, wid3;
-  int snum1, snum2, snum3;
-  int *sdata1, *sdata2, *sdata3;
+  int wid[GRID_PRM_NUM];
+  int snum[GRID_PRM_NUM];
+  int *sdata[GRID_PRM_NUM];
 };
 
 static int
@@ -270,22 +272,16 @@ draw_grid_line(struct objlist *obj, int GC,
   }
 
   while ((rcode = getaxisposition(&alocal, &po)) != -2) {
-    if (rcode < 1) {
-      continue;
-    }
-
-    if (rcode == 1) {
-      snum = gprm->snum1;
-      sdata = gprm->sdata1;
-      wid = gprm->wid1;
-    } else if (rcode == 2) {
-      snum = gprm->snum2;
-      sdata = gprm->sdata2;
-      wid = gprm->wid2;
-    } else {
-      snum = gprm->snum3;
-      sdata = gprm->sdata3;
-      wid = gprm->wid3;
+    switch (rcode) {
+    case 1:
+    case 2:
+    case 3:
+      snum = gprm->snum[rcode - 1];
+      sdata = gprm->sdata[rcode - 1];
+      wid = gprm->wid[rcode - 1];
+      break;
+    default:
+      wid = 0;
     }
 
     if (wid == 0)
@@ -335,9 +331,8 @@ static int
 agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int GC, clip, zoom, back;
-  int fr, fg, fb, lm, tm, w, h, r;
+  int i, fr, fg, fb, lm, tm, w, h, r;
   char *axisx, *axisy;
-  struct narray *st1, *st2, *st3;
   struct axis_prm ax_prm,  ay_prm;
   struct axis_pos ax_pos,  ay_pos;
   struct grid_prm gprm;
@@ -353,21 +348,22 @@ agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   _getobj(obj, "B", inst, &fb);
   _getobj(obj, "axis_x", inst, &axisx);
   _getobj(obj, "axis_y", inst, &axisy);
-  _getobj(obj, "width1", inst, &gprm.wid1);
-  _getobj(obj, "style1", inst, &st1);
-  _getobj(obj, "width2", inst, &gprm.wid2);
-  _getobj(obj, "style2", inst, &st2);
-  _getobj(obj, "width3", inst, &gprm.wid3);
-  _getobj(obj, "style3", inst, &st3);
   _getobj(obj, "clip", inst, &clip);
   _getobj(obj, "background", inst, &back);
 
-  gprm.snum1 = arraynum(st1);
-  gprm.sdata1 = arraydata(st1);
-  gprm.snum2 = arraynum(st2);
-  gprm.sdata2 = arraydata(st2);
-  gprm.snum3 = arraynum(st3);
-  gprm.sdata3 = arraydata(st3);
+  for (i = 0; i < GRID_PRM_NUM; i++) {
+    char buf[32];
+    struct narray *st;
+
+    snprintf(buf, sizeof(buf), "width%d", i + 1);
+    _getobj(obj, buf, inst, &gprm.wid[i]);
+
+    snprintf(buf, sizeof(buf), "style%d", i + 1);
+    _getobj(obj, buf, inst, &st);
+   
+    gprm.snum[i] = arraynum(st);
+    gprm.sdata[i] = arraydata(st);
+  }
 
   r = get_grid_prm(obj, axisx, &ax_prm, &ax_pos);
   if (r) {
