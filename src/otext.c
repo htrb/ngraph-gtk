@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.16 2009/04/16 11:30:01 hito Exp $
+ * $Id: otext.c,v 1.17 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -124,7 +124,6 @@ textgeometry(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   char *field;
-  struct narray *array; 
 
   field=(char *)(argv[1]);
   if (strcmp(field,"pt") == 0) {
@@ -138,9 +137,10 @@ textgeometry(struct objlist *obj,char *inst,char *rval,
       *(int *)(argv[2])=TEXT_OBJ_SCRIPT_SIZE_MAX;
     }
   }
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -393,7 +393,6 @@ static int
 textmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y;
-  struct narray *array;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"x",inst,&x);
@@ -402,9 +401,10 @@ textmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y+=*(int *)argv[3];
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -412,7 +412,6 @@ static int
 textrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int dir, angle, use_pivot;
-  struct narray *array;
  
   _getobj(obj, "direction", inst, &dir);
 
@@ -438,9 +437,8 @@ textrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   _putobj(obj, "direction", inst, &dir);
 
-  _getobj(obj, "bbox", inst, &array);
-  arrayfree(array);
-  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  if (clear_bbox(obj, inst))
+    return 1;
 
   return 0;
 }
@@ -450,7 +448,6 @@ textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y,pt,space,refx,refy;
   double zoom;
-  struct narray *array;
 
   zoom=(*(int *)argv[2])/10000.0;
   refx=(*(int *)argv[3]);
@@ -471,9 +468,10 @@ textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"pt",inst,&pt)) return 1;
   if (_putobj(obj,"space",inst,&space)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 

@@ -1,3 +1,38 @@
+2009-04-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/orect.c (rectrotate, rectmove, rectchange, rectzoom)
+	(rectgeometry): use "clear_bbox()".
+	(set_position, get_position): add.
+	(rectdraw): use "get_position()".
+	(rectrotate, rectmove, rectchange, rectzoom): use "set_position()".
+
+	* src/otext.c (textgeometry, textmove, textrotate, textzoom): use
+	"clear_bbox()".
+
+	* src/opolygon.c (polygeometry): use "clear_bbox()".
+
+	* src/omerge.c (mergefile, mergemove, mergezoom, mergegeometry):
+	use "clear_bbox()".
+
+	* src/omark.c (markmove, markrotate, markzoom, markgeometry): use
+	"clear_bbox()".
+
+	* src/oline.c (arrowput): use "clear_bbox()".
+
+	* src/olegend.c (legendgeometry, legendmove, legendrotate)
+	(legendchange, legendzoom): use "clear_bbox()".
+
+	* src/ocurve.c (curvegeometry): use "clear_bbox()".
+
+	* src/oaxis.c (axisgeometry, axismove2, axisrotate2)
+	(axischange2, axischange, axiszoom2, axisadjust, set_group_pos):
+	use "clear_bbox()".
+
+	* src/oarc.c (arcgeometry, arcmove, arcchange, arcrotate)
+	(arczoom): use "clear_bbox()".
+
+	* src/odraw.c (clear_bbox): add.
+
 2009-04-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oagrid.c (struct axis_prm, struct axis_pos)

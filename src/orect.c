@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.13 2009/04/16 11:30:01 hito Exp $
+ * $Id: orect.c,v 1.14 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,6 +32,7 @@
 #include "object.h"
 #include "gra.h"
 #include "oroot.h"
+#include "odraw.h"
 #include "olegend.h"
 
 #define NAME "rectangle"
@@ -66,6 +67,26 @@ rectdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static int
+set_position(struct objlist *obj, char *inst, int x1, int y1, int x2, int y2)
+{
+  if (_putobj(obj, "x1", inst, &x1)) return 1;
+  if (_putobj(obj, "y1", inst, &y1)) return 1;
+  if (_putobj(obj, "x2", inst, &x2)) return 1;
+  if (_putobj(obj, "y2", inst, &y2)) return 1;
+
+  return 0;
+}
+
+static void
+get_position(struct objlist *obj, char *inst, int *x1, int *y1, int *x2, int *y2)
+{
+  _getobj(obj, "x1", inst, x1);
+  _getobj(obj, "y1", inst, y1);
+  _getobj(obj, "x2", inst, x2);
+  _getobj(obj, "y2", inst, y2);
+}
+
 static int 
 rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
@@ -84,15 +105,14 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"R2",inst,&br);
   _getobj(obj,"G2",inst,&bg);
   _getobj(obj,"B2",inst,&bb);
-  _getobj(obj,"x1",inst,&x1);
-  _getobj(obj,"y1",inst,&y1);
-  _getobj(obj,"x2",inst,&x2);
-  _getobj(obj,"y2",inst,&y2);
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
   _getobj(obj,"fill",inst,&ifill);
   _getobj(obj,"frame",inst,&iframe);
   _getobj(obj,"clip",inst,&clip);
+
+  get_position(obj, inst, &x1, &y1, &x2, &y2);
+
   snum=arraynum(style);
   sdata=arraydata(style);
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
@@ -124,13 +144,13 @@ rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   array=*(struct narray **)rval;
   if (arraynum(array)!=0) return 0;
-  _getobj(obj,"x1",inst,&x1);
-  _getobj(obj,"y1",inst,&y1);
-  _getobj(obj,"x2",inst,&x2);
-  _getobj(obj,"y2",inst,&y2);
+
+  get_position(obj, inst, &x1, &y1, &x2, &y2);
+
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"fill",inst,&fill);
   _getobj(obj,"frame",inst,&frame);
+
   if ((array==NULL) && ((array=arraynew(sizeof(int)))==NULL)) return 1;
   minx=(x1<x2) ? x1 : x2;
   miny=(y1<y2) ? y1 : y2;
@@ -174,12 +194,8 @@ static int
 rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int angle, x1, y1, x2, y2, nx1, ny1, nx2, ny2, px, py, use_pivot;
-  struct narray *array;
  
-  _getobj(obj, "x1", inst, &x1);
-  _getobj(obj, "y1", inst, &y1);
-  _getobj(obj, "x2", inst, &x2);
-  _getobj(obj, "y2", inst, &y2);
+  get_position(obj, inst, &x1, &y1, &x2, &y2);
 
   angle = *(int *) argv[2];
   angle %= 36000;
@@ -207,18 +223,16 @@ rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     nx2 = MAX(x1, x2);
     ny2 = MAX(y1, y2);
 
-    _putobj(obj, "x1", inst, &nx1);
-    _putobj(obj, "y1", inst, &ny1);
-    _putobj(obj, "x2", inst, &nx2);
-    _putobj(obj, "y2", inst, &ny2);
+    if (set_position(obj, inst, x1, y1, x2, y2))
+      return 1;
+
     break;
   default:
     return 1;
   }
 
-  _getobj(obj, "bbox", inst, &array);
-  arrayfree(array);
-  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  if (clear_bbox(obj, inst))
+    return 1;
 
   return 0;
 }
@@ -227,24 +241,22 @@ static int
 rectmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
-  struct narray *array;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  _getobj(obj,"x1",inst,&x1);
-  _getobj(obj,"y1",inst,&y1);
-  _getobj(obj,"x2",inst,&x2);
-  _getobj(obj,"y2",inst,&y2);
+
+  get_position(obj, inst, &x1, &y1, &x2, &y2);
+
   x1+=*(int *)argv[2];
   x2+=*(int *)argv[2];
   y1+=*(int *)argv[3];
   y2+=*(int *)argv[3];
-  if (_putobj(obj,"x1",inst,&x1)) return 1;
-  if (_putobj(obj,"y1",inst,&y1)) return 1;
-  if (_putobj(obj,"x2",inst,&x2)) return 1;
-  if (_putobj(obj,"y2",inst,&y2)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (set_position(obj, inst, x1, y1, x2, y2))
+    return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -253,17 +265,16 @@ rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
   int point,x,y;
-  struct narray *array;
   int *minx,*miny,*maxx,*maxy;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  _getobj(obj,"x1",inst,&x1);
-  _getobj(obj,"y1",inst,&y1);
-  _getobj(obj,"x2",inst,&x2);
-  _getobj(obj,"y2",inst,&y2);
+
+  get_position(obj, inst, &x1, &y1, &x2, &y2);
+
   point=*(int *)argv[2];
   x=*(int *)argv[3];
   y=*(int *)argv[4];
+
   minx=(x1<x2) ? &x1 : &x2;
   miny=(y1<y2) ? &y1 : &y2;
   maxx=(x1>x2) ? &x1 : &x2;
@@ -288,13 +299,12 @@ rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   default:
     return 1;
   }
-  if (_putobj(obj,"x1",inst,&x1)) return 1;
-  if (_putobj(obj,"y1",inst,&y1)) return 1;
-  if (_putobj(obj,"x2",inst,&x2)) return 1;
-  if (_putobj(obj,"y2",inst,&y2)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+  if (set_position(obj, inst, x1, y1, x2, y2))
+    return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -303,19 +313,19 @@ rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,snum,*sdata,refx,refy,x1,y1,x2,y2,width,preserve_width;
   double zoom;
-  struct narray *array,*style;
+  struct narray *style;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   zoom=(*(int *)argv[2])/10000.0;
   refx=(*(int *)argv[3]);
   refy=(*(int *)argv[4]);
   preserve_width = (*(int *)argv[5]);
-  _getobj(obj,"x1",inst,&x1);
-  _getobj(obj,"y1",inst,&y1);
-  _getobj(obj,"x2",inst,&x2);
-  _getobj(obj,"y2",inst,&y2);
+
+  get_position(obj, inst, &x1, &y1, &x2, &y2);
+
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
+
   snum=arraynum(style);
   sdata=arraydata(style);
   x1=(x1-refx)*zoom+refx;
@@ -338,14 +348,15 @@ rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     y2 = y1 + 1;
   }
 
-  if (_putobj(obj,"x1",inst,&x1)) return 1;
-  if (_putobj(obj,"y1",inst,&y1)) return 1;
-  if (_putobj(obj,"x2",inst,&x2)) return 1;
-  if (_putobj(obj,"y2",inst,&y2)) return 1;
-  if (_putobj(obj,"width",inst,&width)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+  if (set_position(obj, inst, x1, y1, x2, y2))
+    return 1;
+
+  if (_putobj(obj,"width",inst,&width))
+    return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -402,12 +413,11 @@ rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 rectgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray *array;
-
   if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 

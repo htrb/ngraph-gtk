@@ -1,5 +1,5 @@
 /* 
- * $Id: oline.c,v 1.8 2009/04/15 05:03:57 hito Exp $
+ * $Id: oline.c,v 1.9 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -77,7 +77,6 @@ arrowput(struct objlist *obj,char *inst,char *rval,
              int argc,char **argv)
 {
   char *field;
-  struct narray *array;
 
   field=argv[1];
   if (strcmp(field,"width")==0) {
@@ -89,9 +88,10 @@ arrowput(struct objlist *obj,char *inst,char *rval,
     if (*(int *)(argv[2])<10000) *(int *)(argv[2])=10000;
     else if (*(int *)(argv[2])>200000) *(int *)(argv[2])=200000;
   }
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 

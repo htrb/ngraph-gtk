@@ -1,5 +1,5 @@
 /* 
- * $Id: opolygon.c,v 1.5 2009/04/15 05:03:57 hito Exp $
+ * $Id: opolygon.c,v 1.6 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -187,12 +187,11 @@ polydraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 polygeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray *array;
-
   if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 

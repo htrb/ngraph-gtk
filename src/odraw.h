@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.h,v 1.3 2009/03/24 08:33:31 hito Exp $
+ * $Id: odraw.h,v 1.4 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,7 +42,7 @@ extern char *jfontchar[];
 extern char *intpchar[];
 extern char *arrowchar[];
 
-int pathsave(struct objlist *obj,char *inst,char *rval,
-             int argc,char **argv);
+int pathsave(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
+int clear_bbox(struct objlist *obj, char *inst);
 
 #endif

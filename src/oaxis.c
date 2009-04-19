@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.30 2009/04/16 11:30:01 hito Exp $
+ * $Id: oaxis.c,v 1.32 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -415,11 +415,9 @@ axisput(struct objlist *obj,char *inst,char *rval,
 static int 
 axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray *array;
+  if (clear_bbox(obj, inst))
+    return 1;
 
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
   return 0;
 }
 
@@ -470,16 +468,14 @@ axis_get_box(struct objlist *obj,char *inst, int *pos)
   pos[5] = y0;
   pos[6] = x1;
   pos[7] = y1;
-#define POS_ARRAY_SIZE 8;
+#define POS_ARRAY_SIZE 8
 }
 
 
 static int 
 axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int minx,miny,maxx,maxy;
-  int i,x0,y0,x1,y1,length,direction, pos[POS_ARRAY_SIZE];
-  double dir;
+  int i, pos[POS_ARRAY_SIZE];
   struct narray *array;
 
   array=*(struct narray **)rval;
@@ -546,13 +542,14 @@ check_direction(struct objlist *obj, int type, char **inst_array)
     return 1;
   }
 
+  /*
   for (i = 0; i < n; i++) {
     _getobj(obj, "direction", inst_array[i], &direction);
     if (direction != normal_dir[i]) {
       return 1;
     }
   }
-
+  */
   return 0;
 }
 
@@ -858,7 +855,6 @@ static int
 axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y;
-  struct narray *array;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"x",inst,&x);
@@ -867,9 +863,10 @@ axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y+=*(int *)argv[3];
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -903,7 +900,6 @@ static int
 axisrotate2(struct objlist *obj, char *inst, int px, int py, int angle)
 {
   int x, y, dir;
-  struct narray *array;
 
   _getobj(obj, "x", inst, &x);
   _getobj(obj, "y", inst, &y);
@@ -917,9 +913,9 @@ axisrotate2(struct objlist *obj, char *inst, int px, int py, int angle)
   if (_putobj(obj, "y", inst, &y)) return 1;
   if (_putobj(obj, "direction", inst, &dir)) return 1;
 
-  _getobj(obj, "bbox", inst, &array);
-  arrayfree(array);
-  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -990,7 +986,6 @@ axischange2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int len,dir,x,y;
   double x2,y2;
   int point,x0,y0;
-  struct narray *array;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"x",inst,&x);
@@ -1023,9 +1018,10 @@ axischange2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"length",inst,&len)) return 1;
   if (_putobj(obj,"direction",inst,&dir)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -1194,7 +1190,6 @@ axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *inst_array[4];
   int type, point, x0, y0, len;
-  struct narray *array;
 
   type = get_axis_group_type(obj, inst, inst_array);
 
@@ -1247,10 +1242,7 @@ axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       break;
     }
 
-    _getobj(obj, "bbox", inst, &array);
-    arrayfree(array);
-
-    if (_putobj(obj, "bbox", inst, NULL))
+    if (clear_bbox(obj, inst))
       return 1;
 
     break;
@@ -1263,7 +1255,6 @@ axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y,len,refx,refy,preserve_width;
   double zoom;
-  struct narray *array;
   int pt,space,wid1,wid2,wid3,len1,len2,len3,wid,wlen,wwid;
   struct narray *style,*gstyle;
   int i,snum,*sdata,gsnum,*gsdata;
@@ -1325,9 +1316,10 @@ axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"gauge_width2",inst,&wid2)) return 1;
   if (_putobj(obj,"gauge_length3",inst,&len3)) return 1;
   if (_putobj(obj,"gauge_width3",inst,&wid3)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -2072,7 +2064,7 @@ axisadjust(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int ad;
   struct objlist *aobj;
   int anum,id;
-  struct narray iarray,*array;
+  struct narray iarray;
   char *inst1;
   double min,max,inc,dir,po,dir1,x;
   int type,posx,posy,len,idir,posx1,posy1,div;
@@ -2144,9 +2136,10 @@ axisadjust(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   posy1=nround(posy1-x*sin(dir));
   if (_putobj(obj,"x",inst,&posx1)) return 1;
   if (_putobj(obj,"y",inst,&posy1)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -2482,7 +2475,6 @@ axisgrouping(struct objlist *obj,char *inst,char *rval,
 static void
 set_group_pos(struct objlist *obj, int id, int x, int y, int len, int dir)
 {
-  struct narray *array;
   char *inst2;
 
   inst2 = chkobjinst(obj, id);
@@ -2493,9 +2485,9 @@ set_group_pos(struct objlist *obj, int id, int x, int y, int len, int dir)
   _putobj(obj, "x", inst2, &x);
   _putobj(obj, "y", inst2, &y);
   _putobj(obj, "length", inst2, &len);
-  _getobj(obj, "bbox", inst2, &array);
-  arrayfree(array);
-  _putobj(obj, "bbox", inst2, NULL);
+
+  if (clear_bbox(obj, inst2))
+    return;
 }
 
 static int 

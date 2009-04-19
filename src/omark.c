@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.11 2009/04/16 11:30:01 hito Exp $
+ * $Id: omark.c,v 1.12 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,7 @@
 #include "object.h"
 #include "gra.h"
 #include "oroot.h"
+#include "odraw.h"
 #include "olegend.h"
 
 #define NAME "mark"
@@ -142,7 +143,6 @@ static int
 markmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y;
-  struct narray *array;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"x",inst,&x);
@@ -151,9 +151,10 @@ markmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y+=*(int *)argv[3];
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -161,7 +162,6 @@ static int
 markrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int angle, use_pivot, px, py, x, y;
-  struct narray *array;
  
   angle = *(int *) argv[2];
   use_pivot = * (int *) argv[3];
@@ -177,9 +177,8 @@ markrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
 
-  _getobj(obj, "bbox", inst, &array);
-  arrayfree(array);
-  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  if (clear_bbox(obj, inst))
+    return 1;
 
   return 0;
 }
@@ -189,7 +188,7 @@ markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,x,y,size,refx,refy,width,snum,*sdata,preserve_width;
   double zoom;
-  struct narray *array,*style;
+  struct narray *style;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   zoom=(*(int *)argv[2])/10000.0;
@@ -221,9 +220,10 @@ markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"size",inst,&size)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -232,7 +232,6 @@ markgeometry(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   char *field;
-  struct narray *array;
   int val;
 
   field = (char *) (argv[1]);
@@ -247,10 +246,7 @@ markgeometry(struct objlist *obj,char *inst,char *rval,
   }
   * (int *) (argv[2]) = val;
 
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-
-  if (_putobj(obj,"bbox",inst,NULL))
+  if (clear_bbox(obj, inst))
     return 1;
 
   return 0;

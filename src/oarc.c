@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.17 2009/04/16 11:30:01 hito Exp $
+ * $Id: oarc.c,v 1.18 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,6 +34,7 @@
 #include "gra.h"
 #include "mathfn.h"
 #include "oroot.h"
+#include "odraw.h"
 #include "olegend.h"
 #include "oarc.h"
 
@@ -120,7 +121,6 @@ arcgeometry(struct objlist *obj,char *inst,char *rval,
 {
   char *field;
   int val;
-  struct narray *array;
 
   field = (char *) (argv[1]);
   val = * (int *) (argv[2]);
@@ -149,10 +149,7 @@ arcgeometry(struct objlist *obj,char *inst,char *rval,
   }
   * (int *)(argv[2]) = val;
 
-  _getobj(obj,"bbox", inst, &array);
-  arrayfree(array);
-
-  if (_putobj(obj,"bbox",inst,NULL))
+  if (clear_bbox(obj, inst))
     return 1;
 
   return 0;
@@ -252,7 +249,6 @@ static int
 arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x,y;
-  struct narray *array;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"x",inst,&x);
@@ -261,9 +257,10 @@ arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y+=*(int *)argv[3];
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -271,7 +268,6 @@ static int
 arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int point, a1, a2, rx, ry, ret;
-  struct narray *array;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
@@ -306,9 +302,8 @@ arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (ret)
     return 1;
 
-  _getobj(obj, "bbox", inst, &array);
-  arrayfree(array);
-  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  if (clear_bbox(obj, inst))
+    return 1;
 
   return 0;
 }
@@ -317,7 +312,6 @@ static int
 arcrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int tmp, angle, rx, ry, a, use_pivot;
-  struct narray *array;
  
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
@@ -360,9 +354,8 @@ arcrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     _putobj(obj, "y", inst, &y);
   }
 
-  _getobj(obj, "bbox", inst, &array);
-  arrayfree(array);
-  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  if (clear_bbox(obj, inst))
+    return 1;
 
   return 0;
 }
@@ -372,7 +365,7 @@ arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
   double zoom;
-  struct narray *array,*style;
+  struct narray *style;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   zoom=(*(int *)argv[2])/10000.0;
@@ -411,9 +404,10 @@ arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"rx",inst,&rx)) return 1;
   if (_putobj(obj,"ry",inst,&ry)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 

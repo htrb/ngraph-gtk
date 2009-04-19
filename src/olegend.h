@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.h,v 1.4 2009/04/15 05:03:57 hito Exp $
+ * $Id: olegend.h,v 1.5 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,3 +29,4 @@ int legendchange(struct objlist *obj,char *inst,char *rval, int argc,char **argv
 int legendzoom(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
 int legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 void rotate(int px, int py, int angle, int *x, int *y);
+

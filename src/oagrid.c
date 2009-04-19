@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.15 2009/04/18 02:21:07 hito Exp $
+ * $Id: oagrid.c,v 1.16 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -383,17 +383,13 @@ agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 1;
   }
 
-  if (ax_prm.amin == ax_prm.amax || ay_prm.amin == ay_prm.amax)
-    goto exit;
+  if (ax_prm.amin != ax_prm.amax && ay_prm.amin != ay_prm.amax) {
+    GRAcolor(GC, fr, fg, fb);
+    if (draw_grid_line(obj, GC, &ax_prm, &ax_pos, &ay_pos, &gprm) == 0) {
+      draw_grid_line(obj, GC, &ay_prm, &ay_pos, &ax_pos, &gprm);
+    }
+  }
 
-  GRAcolor(GC, fr, fg, fb);
-
-  if (draw_grid_line(obj, GC, &ax_prm, &ax_pos, &ay_pos, &gprm))
-    goto exit;
-
-  draw_grid_line(obj, GC, &ay_prm, &ay_pos, &ax_pos, &gprm);
-
- exit:
   GRAaddlist(GC, obj, inst, (char *) argv[0], (char *) argv[1]);
   return 0;
 }

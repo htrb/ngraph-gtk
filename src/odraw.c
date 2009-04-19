@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.8 2009/03/24 08:33:31 hito Exp $
+ * $Id: odraw.c,v 1.9 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -220,6 +220,19 @@ errexit:
   memfree(*(char **)rval);
   *(char **)rval=NULL;
   return 1;
+}
+
+int
+clear_bbox(struct objlist *obj, char *inst)
+{
+  struct narray *array;
+
+  _getobj(obj, "bbox", inst, &array);
+  arrayfree(array);
+  if (_putobj(obj, "bbox", inst, NULL))
+    return 1;
+
+  return 0;
 }
 
 static struct objtable draw[] = {

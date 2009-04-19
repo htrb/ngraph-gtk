@@ -1,5 +1,5 @@
 /* 
- * $Id: ocurve.c,v 1.7 2009/04/15 05:03:57 hito Exp $
+ * $Id: ocurve.c,v 1.8 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -561,12 +561,12 @@ curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 curvegeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray *array;
+  if (* (int *) (argv[2]) < 1)
+    * (int *)(argv[2]) = 1;
 
-  if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 

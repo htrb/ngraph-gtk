@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.14 2009/04/16 11:30:01 hito Exp $
+ * $Id: olegend.c,v 1.15 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,6 +32,7 @@
 #include "ngraph.h"
 #include "mathfn.h"
 #include "object.h"
+#include "odraw.h"
 #include "olegend.h"
 
 #define NAME "legend"
@@ -64,11 +65,9 @@ int
 legendgeometry(struct objlist *obj,char *inst,char *rval,
                    int argc,char **argv)
 {
-  struct narray *array;
+  if (clear_bbox(obj, inst))
+    return 1;
 
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
   return 0;
 }
 
@@ -188,7 +187,7 @@ legendbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 int 
 legendmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray *points,*array;
+  struct narray *points;
   int i,num,*pdata;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -199,9 +198,10 @@ legendmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (i%2==0) pdata[i]+=*(int *)argv[2];
     else pdata[i]+=*(int *)argv[3];
   }
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -223,7 +223,7 @@ rotate(int px, int py, int angle, int *x, int *y)
 int 
 legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray *points, *array;
+  struct narray *points;
   int i, num, *pdata, angle, px, py, start, use_pivot;
 
   _getobj(obj, "points", inst, &points);
@@ -249,9 +249,8 @@ legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     rotate(px, py, angle, &pdata[i * 2], &pdata[i * 2 + 1]);
   }
 
-  _getobj(obj, "bbox", inst, &array);
-  arrayfree(array);
-  if (_putobj(obj, "bbox", inst, NULL)) return 1;
+  if (clear_bbox(obj, inst))
+    return 1;
 
   return 0;
 }
@@ -259,7 +258,7 @@ legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 int 
 legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray *points,*array;
+  struct narray *points;
   int num,*pdata;
   int point,x,y;
 
@@ -274,16 +273,17 @@ legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     pdata[point*2]+=x;
     pdata[point*2+1]+=y;
   }
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
 int 
 legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct narray *points,*array,*style;
+  struct narray *points,*style;
   int i,num,width,snum,*pdata,*sdata,preserve_width;
   int refx,refy;
   double zoom;
@@ -314,9 +314,10 @@ legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     width = 1;
 
   if (_putobj(obj,"width",inst,&width)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 

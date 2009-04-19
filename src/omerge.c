@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.11 2009/03/26 06:25:15 hito Exp $
+ * $Id: omerge.c,v 1.12 2009/04/19 06:46:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -205,7 +205,6 @@ mergefile(struct objlist *obj,char *inst,char *rval,
   struct objlist *sys;
   int ignorepath;
   char *file,*file2;
-  struct narray *array;
 
   sys=getobject("system");
   getobj(sys,"ignore_path",0,0,NULL,&ignorepath);
@@ -214,9 +213,10 @@ mergefile(struct objlist *obj,char *inst,char *rval,
   file2=getbasename(file);
   memfree(file);
   argv[2]=file2;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -510,7 +510,6 @@ static int
 mergemove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int lm,tm;
-  struct narray *array;
 
   _getobj(obj,"left_margin",inst,&lm);
   _getobj(obj,"top_margin",inst,&tm);
@@ -518,9 +517,10 @@ mergemove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   tm+=*(int *)argv[3];
   if (_putobj(obj,"left_margin",inst,&lm)) return 1;
   if (_putobj(obj,"top_margin",inst,&tm)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -530,7 +530,6 @@ mergezoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int lm,tm,zm;
   double zoom;
   int refx,refy;
-  struct narray *array;
 
   zoom=(*(int *)argv[2])/10000.0;
   refx=(*(int *)argv[3]);
@@ -544,9 +543,10 @@ mergezoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"left_margin",inst,&lm)) return 1;
   if (_putobj(obj,"top_margin",inst,&tm)) return 1;
   if (_putobj(obj,"zoom",inst,&zm)) return 1;
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
@@ -592,15 +592,15 @@ mergegeometry(struct objlist *obj,char *inst,char *rval,
                  int argc,char **argv)
 {
   char *field;
-  struct narray *array;
 
   field=(char *)(argv[1]);
   if (strcmp(field,"zoom")==0) {
     if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
   }
-  _getobj(obj,"bbox",inst,&array);
-  arrayfree(array);
-  if (_putobj(obj,"bbox",inst,NULL)) return 1;
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
   return 0;
 }
 
