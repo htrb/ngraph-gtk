@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.32 2009/04/19 06:46:13 hito Exp $
+ * $Id: oaxis.c,v 1.33 2009/04/19 06:56:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -542,14 +542,13 @@ check_direction(struct objlist *obj, int type, char **inst_array)
     return 1;
   }
 
-  /*
   for (i = 0; i < n; i++) {
     _getobj(obj, "direction", inst_array[i], &direction);
     if (direction != normal_dir[i]) {
       return 1;
     }
   }
-  */
+
   return 0;
 }
 
