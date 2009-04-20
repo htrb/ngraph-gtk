@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.75 2009/04/01 10:35:32 hito Exp $
+ * $Id: ofile.c,v 1.76 2009/04/20 02:29:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -185,7 +185,7 @@ static NHASH FileConfigHash = NULL;
 
 #define DXBUFSIZE 101
 
-#if HAVE_IS_FINITE
+#if HAVE_ISFINITE
 #define check_infinite(v) (! isfinite(v))
 #elsif HAVE_FINITE
 #define check_infinite(v) (! finite(v))

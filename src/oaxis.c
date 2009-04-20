@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.33 2009/04/19 06:56:01 hito Exp $
+ * $Id: oaxis.c,v 1.34 2009/04/20 02:29:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -488,7 +488,7 @@ axisbbox2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     arrayadd(array, pos + i);
   }
 
-  if (arraynum(array)==0) {
+  if (arraynum(array) == 0) {
     arrayfree(array);
     return 1;
   }
