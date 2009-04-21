@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.139 2009/04/16 11:30:02 hito Exp $
+ * $Id: x11view.c,v 1.140 2009/04/21 01:46:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -150,6 +150,8 @@ static void reorder_object(enum object_move_type type);
 static void move_data_cancel(struct Viewer *d, gboolean show_message);
 static void SetHRuler(struct Viewer *d);
 static void SetVRuler(struct Viewer *d);
+static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
+static void clear_focus_obj(struct narray *focusobj);
 
 
 static int
@@ -1261,32 +1263,6 @@ Trimming(int x1, int y1, int x2, int y2)
   }
   arraydel(&farray);
 }
-
-static int
-add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
-{
-  struct focuslist *focus;
-
-  if (check_focused_obj(focusobj, obj, oid) >= 0)
-    return FALSE;
-    
-  focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
-  if (! focus)
-    return FALSE;
-
-  focus->obj = obj;
-  focus->oid = oid;
-  arrayadd(focusobj, &focus);
-
-  return TRUE;
-}
-
-static void
-clear_focus_obj(struct narray *focusobj)
-{
-  arraydel2(focusobj);
-}
-
 
 static int
 Match(char *objname, int x1, int y1, int x2, int y2, int err)
@@ -4623,6 +4599,9 @@ SetVRuler(struct Viewer *d)
   gtk_ruler_set_range(GTK_RULER(d->VRuler), y1, y2, 0, y2);
 }
 
+#define CHECK_FOCUSED_OBJ_ERROR -1
+#define CHECK_FOCUSED_OBJ_NOT_FOUND -2
+
 static int
 check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
 {
@@ -4630,7 +4609,7 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
   struct focuslist *focus;
 
   if (fobj == NULL)
-    return -1;
+    return CHECK_FOCUSED_OBJ_ERROR;
 
   num = arraynum(focusobj);
 
@@ -4643,7 +4622,34 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
       return i;
     }
   }
-  return -1;
+  return CHECK_FOCUSED_OBJ_NOT_FOUND;
+}
+
+static int
+add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
+{
+  struct focuslist *focus;
+  int r;
+
+  r = check_focused_obj(focusobj, obj, oid);
+  if (r != CHECK_FOCUSED_OBJ_NOT_FOUND)
+    return FALSE;
+    
+  focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
+  if (! focus)
+    return FALSE;
+
+  focus->obj = obj;
+  focus->oid = oid;
+  arrayadd(focusobj, &focus);
+
+  return TRUE;
+}
+
+static void
+clear_focus_obj(struct narray *focusobj)
+{
+  arraydel2(focusobj);
 }
 
 void
