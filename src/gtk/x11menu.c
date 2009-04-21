@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.85 2009/04/15 05:03:58 hito Exp $
+ * $Id: x11menu.c,v 1.86 2009/04/21 14:17:59 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -67,7 +67,8 @@ static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
   *ShowInfoWin = NULL, *RecentGraph = NULL, *RecentData = NULL,
-  *AddinMenu = NULL, *ExtDrvOutMenu = NULL;
+  *AddinMenu = NULL, *ExtDrvOutMenu = NULL, *EditCut = NULL, *EditCopy = NULL,
+  *EditPaste = NULL, *EditDelete = NULL, *RotateCW = NULL, *RotateCCW = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
@@ -530,7 +531,6 @@ find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro
   return TRUE;
 }
 
-
 static GtkWidget * 
 create_menu_item(GtkWidget *menu, gchar *label, gboolean use_stock,
 		 gchar *accel_path, guint accel_key, GdkModifierType accel_mods,
@@ -622,7 +622,7 @@ set_show_instance_menu_cb(GtkWidget *menu, char *name, struct show_instance_menu
 }
 
 static void
-show_graphmwnu_cb(GtkWidget *w, gpointer user_data)
+show_graph_menu_cb(GtkWidget *w, gpointer user_data)
 {
   GtkWidget *label;
   char **data;
@@ -725,7 +725,7 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   menu = gtk_menu_new();
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
-  g_signal_connect(menu, "show", G_CALLBACK(show_graphmwnu_cb), NULL);
+  g_signal_connect(menu, "show", G_CALLBACK(show_graph_menu_cb), NULL);
 
   item = gtk_menu_item_new_with_mnemonic(_("_New graph"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
@@ -760,8 +760,96 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, GTK_STOCK_QUIT, TRUE, "<Ngraph>/Graph/Quit",  GDK_q, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphQuit);
 }
 
+void
+paste_menuitem_sensitive(int state)
+{
+  if (! state) { 
+    gtk_widget_set_sensitive(EditPaste, FALSE);
+    return;
+  }
+
+  switch (NgraphApp.Viewer.Mode) {
+  case PointB:
+  case LegendB:
+    gtk_widget_set_sensitive(EditPaste, TRUE);
+    break;
+  default:
+    gtk_widget_set_sensitive(EditPaste, FALSE);
+  }
+}
+
 static void
-show_filemwnu_cb(GtkWidget *w, gpointer user_data)
+show_edit_menu_cb(GtkWidget *w, gpointer user_data)
+{
+  int num, type;
+  GtkClipboard *clip;
+  gboolean state, state2;
+  struct objlist *axis = NULL;
+  struct focuslist **focus;
+
+
+  num = check_focused_obj_type(&NgraphApp.Viewer, &type);
+
+  focus = (struct focuslist **) arraydata(NgraphApp.Viewer.focusobj);
+
+  if (num < 1) {
+    state2 = state = FALSE;
+  } else if (num == 1 && focus[0]->obj == axis) {
+    state = FALSE;
+    state2 = TRUE;
+  } else {
+    state2 = state = TRUE;
+  }
+
+  state = (! (type & FOCUS_OBJ_TYPE_AXIS) && (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_LEGEND)));
+  state2 = (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
+
+  gtk_widget_set_sensitive(EditCut, state);
+  gtk_widget_set_sensitive(EditCopy, state);
+  gtk_widget_set_sensitive(EditDelete, num > 0);
+  gtk_widget_set_sensitive(RotateCW, state2);
+  gtk_widget_set_sensitive(RotateCCW, state2);
+
+  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+  state = gtk_clipboard_wait_is_text_available(clip);
+  paste_menuitem_sensitive(state);
+}
+
+static void 
+create_editmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
+{
+  GtkWidget *item, *menu;
+
+  item = gtk_menu_item_new_with_mnemonic(_("_Edit"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
+
+  menu = gtk_menu_new();
+  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
+
+  g_signal_connect(menu, "show", G_CALLBACK(show_edit_menu_cb), NULL);
+  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
+
+  EditCut    = create_menu_item(menu,  GTK_STOCK_CUT,    TRUE, "<Ngraph>/Edit/Cut",
+				GDK_x, GDK_CONTROL_MASK, CmEditMenuCB, MenuIdEditCut);
+  EditCopy   = create_menu_item(menu,  GTK_STOCK_COPY,   TRUE, "<Ngraph>/Edit/Copy",
+				GDK_c, GDK_CONTROL_MASK, CmEditMenuCB, MenuIdEditCopy);
+  EditPaste  = create_menu_item(menu,  GTK_STOCK_PASTE,  TRUE, "<Ngraph>/Edit/Paste",
+				GDK_v, GDK_CONTROL_MASK, CmEditMenuCB, MenuIdEditPaste);
+  EditDelete = create_menu_item(menu,  GTK_STOCK_DELETE, TRUE, "<Ngraph>/Edit/Delete",
+				0,     0,                CmEditMenuCB, MenuIdEditDelete);
+
+  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+
+  RotateCW  = create_menu_item(menu, _("rotate _90 degree cloclwise"), TRUE, "<Ngraph>/Edit/RotateCW",
+			       0, 0, CmEditMenuCB, MenuIdEditRotateCW);
+  RotateCCW = create_menu_item(menu, _("rotate 9_0 degree counter-cloclwise"), TRUE, "<Ngraph>/Edit/RotateCCW",
+			       0, 0, CmEditMenuCB, MenuIdEditRotateCCW);
+}
+
+static void
+show_file_menu_cb(GtkWidget *w, gpointer user_data)
 {
   GtkWidget *label;
   char **data;
@@ -817,7 +905,7 @@ create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
 
   menu = gtk_menu_new();
-  g_signal_connect(menu, "show", G_CALLBACK(show_filemwnu_cb), NULL);
+  g_signal_connect(menu, "show", G_CALLBACK(show_file_menu_cb), NULL);
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
 
@@ -1063,7 +1151,7 @@ create_preferencemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 }
 
 static void
-show_winmwnu_cb(GtkWidget *w, gpointer data)
+show_win_menu_cb(GtkWidget *w, gpointer data)
 {
   Toggle_cb_disable = TRUE;
 
@@ -1153,7 +1241,7 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   g_signal_connect(item, "activate", G_CALLBACK(CmReloadWindowConfig), NULL);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  g_signal_connect(menu, "show", G_CALLBACK(show_winmwnu_cb), NULL);
+  g_signal_connect(menu, "show", G_CALLBACK(show_win_menu_cb), NULL);
 
 }
 
@@ -1196,6 +1284,7 @@ createmenu(GtkMenuBar *parent)
   accel_group = gtk_accel_group_new();
 
   create_graphmenu(parent, accel_group);
+  create_editmenu(parent, accel_group);
   create_filemenu(parent, accel_group);
   create_axismenu(parent, accel_group);
   create_legendmenu(parent, accel_group);

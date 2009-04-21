@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.29 2009/04/03 15:48:27 hito Exp $
+ * $Id: object.c,v 1.30 2009/04/21 14:17:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1018,6 +1018,9 @@ addobject(char *name,char *alias,char *parentname,char *ver,
     error2(NULL,ERRPARENT,parentname);
     return NULL;
   }
+  if (parent)
+    parent->have_child = TRUE;
+
   if ((objnew=memalloc(sizeof(struct objlist)))==NULL) return NULL;
 
 #if USE_HASH
@@ -1053,6 +1056,7 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->errnum=errnum;
   objnew->errtable=errtable;
   objnew->parent=parent;
+  objnew->have_child=FALSE;
   objnew->root=NULL;
   objnew->root2=NULL;
   objnew->local=local;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.h,v 1.8 2009/04/06 08:15:30 hito Exp $
+ * $Id: x11view.h,v 1.9 2009/04/21 14:17:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,11 +28,20 @@
 #define FILE_TYPE_MERGE 1
 #define FILE_TYPE_DATA  2
 
+#define ROTATE_CLOCKWISE 0
+#define ROTATE_COUNTERCLOCKWISE 1
+
 struct focuslist
 {
   struct objlist *obj;
   int oid;
   int ofsx, ofsy;
+};
+
+enum FOCU_OBJ_TYPE {
+  FOCUS_OBJ_TYPE_AXIS   = 0x01,
+  FOCUS_OBJ_TYPE_MERGE  = 0x02,
+  FOCUS_OBJ_TYPE_LEGEND = 0x04,
 };
 
 void ViewerWinSetup(void);
@@ -53,3 +62,4 @@ void CmViewerButtonArm(GtkToolItem *w, gpointer client_data);
 gboolean CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 int data_dropped(char **filenames, int num, int file_type);
 void draw_paper_frame(void);
+void CmEditMenuCB(GtkToolItem *w, gpointer client_data);

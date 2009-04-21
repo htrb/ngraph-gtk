@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.34 2009/04/15 05:03:58 hito Exp $
+ * $Id: x11menu.h,v 1.35 2009/04/21 14:17:59 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -43,6 +43,12 @@ enum MenuID {
   MenuIdGraphNewSection,
   MenuIdGraphNewCross,
   MenuIdGraphAllClear,
+  MenuIdEditCut,
+  MenuIdEditCopy,
+  MenuIdEditPaste,
+  MenuIdEditDelete,
+  MenuIdEditRotateCW,
+  MenuIdEditRotateCCW,
   MenuIdFileNew,
   MenuIdFileOpen,
   MenuIdFileUpdate,
@@ -137,7 +143,7 @@ enum pop_up_menu_item_type {
   POP_UP_MENU_ITEM_TYPE_SEPARATOR,
 };
 
-#define VIEWER_POPUP_ITEM_NUM 10
+#define VIEWER_POPUP_ITEM_NUM 13
 struct Viewer
 {
   GtkWidget *Win;
@@ -299,5 +305,7 @@ void set_draw_lock(int lock);
 int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 void update_addin_menu(void);
 void set_widget_visibility(void);
+int check_focused_obj_type(struct Viewer *d, int *type);
+void paste_menuitem_sensitive(int state);
 
 #endif

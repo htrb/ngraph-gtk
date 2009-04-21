@@ -1,5 +1,8 @@
 2009-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.h (ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE)
+	(enum FOCU_OBJ_TYPE): add.
+
 	* src/gtk/x11view.c (enum ViewerPopupIdn): add "VIEW_CUT",
 	"VIEW_PASTE" add "VIEW_DUP".
 	(CopyFocusedObjects, CutFocusedObjects, check_last_insts)

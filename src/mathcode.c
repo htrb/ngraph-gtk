@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.7 2009/04/05 23:34:18 hito Exp $
+ * $Id: mathcode.c,v 1.8 2009/04/21 14:17:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -127,7 +127,7 @@ static struct {
 /*
 used character code:
 
-=XYZ#|+-/*\^(){}[]!,"@&%$~?_`
+=XYZ#|*+-/\^(){}[]!,"@&%$~?_`
 8x
 9x
 b0 b1 b2 b3

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.140 2009/04/21 01:46:20 hito Exp $
+ * $Id: x11view.c,v 1.141 2009/04/21 14:17:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,6 +25,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <math.h>
 
 #include "ngraph.h"
@@ -66,7 +67,10 @@ struct pointslist
 enum ViewerPopupIdn {
   VIEW_UPDATE = 1,
   VIEW_DELETE,
+  VIEW_CUT,
   VIEW_COPY,
+  VIEW_PASTE,
+  VIEW_DUP,
   VIEW_TOP,
   VIEW_LAST,
   VIEW_UP,
@@ -136,11 +140,8 @@ static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_
 static gboolean ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static gboolean ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static void ViewerPopupMenu(GtkWidget *w, gpointer client_data);
-static void AddInvalidateRect(struct objlist *obj, char *inst);
-static void AddList(struct objlist *obj, char *inst);
 static void DelList(struct objlist *obj, char *inst);
 static void ViewUpdate(void);
-static void ViewDelete(void);
 static void ViewCopy(void);
 static void ViewCross(int state);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
@@ -150,8 +151,14 @@ static void reorder_object(enum object_move_type type);
 static void move_data_cancel(struct Viewer *d, gboolean show_message);
 static void SetHRuler(struct Viewer *d);
 static void SetVRuler(struct Viewer *d);
-static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
 static void clear_focus_obj(struct narray *focusobj);
+static void ViewDelete(void);
+static int text_dropped(const char *str, gint x, gint y, struct Viewer *d);
+static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
+static void ShowFocusFrame(GdkGC *gc);
+static void AddInvalidateRect(struct objlist *obj, char *inst);
+static void AddList(struct objlist *obj, char *inst);
+static void RotateFocusedObj(int direction);
 
 
 static int
@@ -193,6 +200,245 @@ range_increment(GtkWidget *w, double inc)
   gtk_range_set_value(GTK_RANGE(w), val);
 
   return val;
+}
+
+static char SCRIPT_IDN[] = "#! ngraph\n";
+#define SCRIPT_IDN_LEN (sizeof(SCRIPT_IDN) - 1)
+
+static int
+CopyFocusedObjects(void)
+{
+  struct narray *focus_array;
+  struct focuslist **focus;
+  struct objlist *axis, *text;
+  char *str, *s, *ptr;
+  int i, r, n, id, num;
+  GtkClipboard* clipboard;
+
+  focus_array = NgraphApp.Viewer.focusobj;
+  n = arraynum(focus_array);
+
+  if (n < 1)
+    return 1;
+
+  focus = (struct focuslist **) arraydata(focus_array);
+
+  str = nstrnew();
+  if (str == NULL)
+    return 1;
+
+  axis = chkobject("axis");
+  text = chkobject("text");
+  str = nstrcat(str, SCRIPT_IDN);
+  num = 0;
+  for (i = 0; i < n; i++) {
+    if (focus[i]->obj == axis)
+      continue;
+
+    id = chkobjoid(focus[i]->obj, focus[i]->oid);
+    if (id < 0)
+      continue;
+
+    r = getobj(focus[i]->obj, "save", id, 0, NULL, &s);
+    if (r < 0 || s == NULL)
+      return 1;
+
+#ifdef JAPANESE
+    if (focus[i]->obj == text) {
+      char *tmp;
+
+      tmp = sjis_to_utf8(s);
+      if (tmp == NULL)
+	continue;
+
+      ptr = nstrcat(str, tmp);
+      memfree(tmp);
+    } else {
+      ptr = nstrcat(str, s);
+    }
+#else
+    ptr = nstrcat(str, s);
+#endif
+    if (ptr) {
+      str = ptr;
+    } else {
+      memfree(str);
+      return 1;
+    }
+    num++;
+  }
+  if (num > 0) {
+    clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+    gtk_clipboard_set_text(clipboard, str, -1);
+    paste_menuitem_sensitive(TRUE);
+  }
+  memfree(str);
+
+  return 0;
+}
+
+static int
+CutFocusedObjects(void)
+{
+  if (CopyFocusedObjects())
+    return 1;
+
+  ViewDelete();
+  return 0;
+}
+
+static void
+check_last_insts(struct objlist *parent, struct narray *array)
+{
+  struct objlist *ocur;
+  int instnum;
+
+  ocur = parent;
+  while (ocur) {
+    if (chkobjparent(ocur) == parent) {
+      instnum = chkobjlastinst(ocur);
+      arrayadd(array, &instnum);
+      if (ocur->have_child)
+	check_last_insts(ocur, array);
+    }
+    ocur=ocur->next;
+  }
+  return;
+}
+
+static void
+focus_new_insts(struct objlist *parent, struct narray *array)
+{
+  struct objlist *ocur, *text;
+  int i, instnum, prev_instnum, oid;
+  char *inst;
+
+  text = chkobject("text");
+  ocur = parent;
+  while (ocur) {
+    if (chkobjparent(ocur) == parent) {
+      instnum = chkobjlastinst(ocur);
+      prev_instnum = * (int *) arraynget(array, 0);
+      arrayndel(array, 0);
+      for (i = prev_instnum + 1; i <= instnum; i++) {
+#ifdef JAPANESE
+	if (ocur == text) {
+	  char *tmp, *str;
+	  getobj(ocur, "text", i, 0, NULL, &str);
+	  tmp = utf8_to_sjis(str);
+	  if (tmp) {
+	    putobj(ocur, "text", i, tmp);
+	  }
+	}
+#endif
+	getobj(ocur, "oid", i, 0, NULL, &oid);
+	add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
+	inst = chkobjinst(ocur, i);
+	AddList(ocur, inst);
+	AddInvalidateRect(ocur, inst);
+      }
+      if (ocur->have_child)
+	focus_new_insts(ocur, array);
+    }
+    ocur=ocur->next;
+  }
+  return;
+}
+
+
+static void 
+paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
+{
+  int fd, id, sec, r, len;
+  char *tmpfile, *arg[2], *inst;
+  struct narray sarray, idarray;
+  struct objlist *shell;
+  GdkGC *dc;
+
+  if (text == NULL)
+    return;
+
+  if (strncmp(text, SCRIPT_IDN, SCRIPT_IDN_LEN)) {
+    text_dropped(text, 0, 0, &NgraphApp.Viewer);
+    return;
+  }
+
+  shell = chkobject("shell");
+  if (shell == NULL)
+    return;
+
+  id = newobj(shell);
+  if (id < 0)
+    return;
+
+  fd = n_mkstemp(NULL, "nclip", &tmpfile);
+  if (fd < 0) {
+    delobj(shell, id);
+    return;
+  }
+
+  arrayinit(&sarray, sizeof(char *));
+  if (arrayadd(&sarray, &tmpfile) == NULL) {
+    unlink(tmpfile);
+    memfree(tmpfile);
+    return;
+  }
+
+  len = strlen(text);
+  r = write(fd, text, len);
+  close(fd);
+
+  if (r != len) {
+    unlink(tmpfile);
+    memfree(tmpfile);
+    delobj(shell, id);
+    arraydel(&sarray);
+    return;
+  }
+
+  inst = chkobjinst(shell, id);
+
+  sec = FALSE;
+  arg[0] = (char *) &sec;
+  arg[1] = NULL;
+  _exeobj(shell, "security", inst, 1, arg);
+
+  arrayinit(&idarray, sizeof(int));
+  check_last_insts(chkobject("draw"), &idarray);
+
+  UnFocus();
+
+  arg[0] = (char *) &sarray;
+  arg[1] = NULL;
+  _exeobj(shell, "shell", inst, 1, arg);
+  delobj(shell, id);
+  arraydel(&sarray);
+
+  focus_new_insts(chkobject("draw"), &idarray);
+  arraydel(&idarray);
+
+  unlink(tmpfile);
+  memfree(tmpfile);
+
+  if (arraynum(NgraphApp.Viewer.focusobj) > 0) {
+    set_graph_modified();
+    dc = gdk_gc_new(NgraphApp.Viewer.win);
+    NgraphApp.Viewer.allclear = FALSE;
+    UpdateAll();
+    ShowFocusFrame(dc);
+    NgraphApp.Viewer.ShowFrame = TRUE;
+    g_object_unref(G_OBJECT(dc));
+    gtk_widget_grab_focus(NgraphApp.Viewer.Win);
+  }
+}
+
+static void
+PasteObjectsFromClipboard(void)
+{
+  GtkClipboard *clip;
+
+  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+  gtk_clipboard_request_text(clip, paste_cb, NULL);
 }
 
 static int
@@ -462,7 +708,7 @@ data_dropped(char **filenames, int num, int file_type)
 }
 
 static int
-text_dropped(char *str, gint x, gint y, struct Viewer *d)
+text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 {
   char *inst, *tmp, *ptr;
   double zoom = Menulocal.PaperZoom / 10000.0;
@@ -537,7 +783,7 @@ text_dropped(char *str, gint x, gint y, struct Viewer *d)
   _putobj(obj, "x", inst, &x1);
   _putobj(obj, "y", inst, &y1);
   _putobj(obj, "text", inst, tmp);
-  
+
   PaintLock= TRUE;
 
   LegendTextDialog(&DlgLegendText, obj, id);
@@ -780,7 +1026,10 @@ create_popup_menu(struct Viewer *d)
     {N_("9_0 degree counter-cloclwise"), FALSE, VIEW_ROTATE_COUNTER_CLOCKWISE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
   struct viewer_popup popup[] = {
-    {N_("_Duplicate"),      FALSE, VIEW_COPY,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {GTK_STOCK_CUT,         TRUE,  VIEW_CUT,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {GTK_STOCK_COPY,        TRUE,  VIEW_COPY,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {GTK_STOCK_PASTE,       TRUE,  VIEW_PASTE,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("_Duplicate"),      FALSE, VIEW_DUP,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
     {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -795,16 +1044,19 @@ create_popup_menu(struct Viewer *d)
     {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
 
-#define VIEWER_POPUP_ITEM_DUP    0
-#define VIEWER_POPUP_ITEM_DEL    1
-#define VIEWER_POPUP_ITEM_PROP   2
-#define VIEWER_POPUP_ITEM_ALIGN  3
-#define VIEWER_POPUP_ITEM_ROTATE 4
-#define VIEWER_POPUP_ITEM_CROSS  5
-#define VIEWER_POPUP_ITEM_TOP    6
-#define VIEWER_POPUP_ITEM_UP     7
-#define VIEWER_POPUP_ITEM_DOWN   8
-#define VIEWER_POPUP_ITEM_BOTTOM 9
+#define VIEWER_POPUP_ITEM_CUT     0
+#define VIEWER_POPUP_ITEM_COPY    1
+#define VIEWER_POPUP_ITEM_PASTE   2
+#define VIEWER_POPUP_ITEM_DUP     3
+#define VIEWER_POPUP_ITEM_DEL     4
+#define VIEWER_POPUP_ITEM_PROP    5
+#define VIEWER_POPUP_ITEM_ALIGN   6
+#define VIEWER_POPUP_ITEM_ROTATE  7
+#define VIEWER_POPUP_ITEM_CROSS   8
+#define VIEWER_POPUP_ITEM_TOP     9
+#define VIEWER_POPUP_ITEM_UP     10
+#define VIEWER_POPUP_ITEM_DOWN   11
+#define VIEWER_POPUP_ITEM_BOTTOM 12
 
 #if VIEWER_POPUP_ITEM_BOTTOM + 1 != VIEWER_POPUP_ITEM_NUM
 #error invarid array size (struct Viewer.popup_item)
@@ -1786,7 +2038,7 @@ RotateFocusedObj(int direction)
     return;
   }
 
-  angle = (direction == VIEW_ROTATE_CLOCKWISE) ? 27000 : 9000;
+  angle = (direction == ROTATE_CLOCKWISE) ? 27000 : 9000;
 
   focus = (struct focuslist **) arraydata(d->focusobj);
 
@@ -4080,11 +4332,52 @@ popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer
   *y += cy;
 }
 
+int
+check_focused_obj_type(struct Viewer *d, int *type)
+{
+  int num, i, t;
+  static struct objlist *axis, *merge, *legend;
+  struct focuslist *focus;  
+
+  num = arraynum(d->focusobj);
+
+  if (axis == NULL)
+    axis = chkobject("axis");
+
+  if (merge == NULL)
+    merge = chkobject("merge");
+
+  if (legend == NULL)
+    legend = chkobject("legend");
+
+  if (num < 1)
+    return num;
+
+  t = 0;
+  for (i = 0; i < num; i++) {
+    focus = *(struct focuslist **) arraynget(d->focusobj, i);
+    if (chkobjchild(legend, focus->obj)) {
+      t |= FOCUS_OBJ_TYPE_LEGEND;
+    } else if (chkobjchild(axis, focus->obj)) {
+      t |= FOCUS_OBJ_TYPE_AXIS;
+    } else if (chkobjchild(merge, focus->obj)) {
+      t |= FOCUS_OBJ_TYPE_MERGE;
+    }
+  }
+
+  if (type)
+    *type = t;
+
+  return num;
+}
+
 static void
 do_popup(GdkEventButton *event, struct Viewer *d)
 {
-  int button, event_time, i, num;
+  int button, event_time, i, num, type;
   GtkMenuPositionFunc func = NULL;
+  GtkClipboard *clip;
+  gboolean state;
 
   if (event) {
     button = event->button;
@@ -4101,24 +4394,36 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 
   gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_CROSS], TRUE);
   gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[VIEWER_POPUP_ITEM_CROSS]), d->ShowCross);
+
+  num = check_focused_obj_type(d, &type);
+
   switch (d->Mode) {
   case PointB:
   case LegendB:
+    clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+    state = gtk_clipboard_wait_is_text_available(clip);
+    gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_PASTE], state);
   case AxisB:
-    num = arraynum(d->focusobj);
     if (num > 0) {
+      if (! (type & FOCUS_OBJ_TYPE_AXIS) &&
+	  (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_MERGE))) {
+	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_CUT], TRUE);
+	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_COPY], TRUE);
+      }
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DUP], TRUE);
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DEL], TRUE);
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_PROP], TRUE);
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ALIGN], TRUE);
-      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], TRUE);
+      if (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_AXIS))) {
+	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], TRUE);
+      }
     }
     if (num == 1) {
       struct focuslist *focus;
       int id, last_id;
 
       focus = * (struct focuslist **) arraynget(d->focusobj, 0);
-      if (chkobjchild(chkobject("legend"), focus->obj) || chkobjchild(chkobject("merge"), focus->obj)) {
+      if (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_MERGE)) {
 	id = chkobjoid(focus->obj, focus->oid);
 	last_id = chkobjlastinst(focus->obj);
 
@@ -4130,9 +4435,6 @@ do_popup(GdkEventButton *event, struct Viewer *d)
 	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DOWN], TRUE);
 	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
 	}
-      }
-      if (chkobjfield(focus->obj, "rotate")) {
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], FALSE);
       }
     }
   default:
@@ -5889,8 +6191,17 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
   case VIEW_DELETE:
     ViewDelete();
     break;
-  case VIEW_COPY:
+  case VIEW_DUP:
     ViewCopy();
+    break;
+  case VIEW_CUT:
+    CutFocusedObjects();
+    break;
+  case VIEW_COPY:
+    CopyFocusedObjects();
+    break;
+  case VIEW_PASTE:
+    PasteObjectsFromClipboard();
     break;
   case VIEW_TOP:
     reorder_object(OBJECT_MOVE_TYPE_TOP);
@@ -5916,8 +6227,10 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
     AlignFocusedObj((int) client_data);
     break;
   case VIEW_ROTATE_CLOCKWISE:
+    RotateFocusedObj(ROTATE_CLOCKWISE);
+    break;
   case VIEW_ROTATE_COUNTER_CLOCKWISE:
-    RotateFocusedObj((int) client_data);
+    RotateFocusedObj(ROTATE_COUNTERCLOCKWISE);
     break;
   }
 }
@@ -5927,6 +6240,31 @@ CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_da
 {
   KeepMouseMode = (event->state & GDK_SHIFT_MASK);
   return FALSE;
+}
+
+void
+CmEditMenuCB(GtkToolItem *w, gpointer client_data)
+{
+  switch ((int) client_data) {
+  case MenuIdEditCut:
+    CutFocusedObjects();
+    break;
+  case MenuIdEditCopy:
+    CopyFocusedObjects();
+    break;
+  case MenuIdEditPaste:
+    PasteObjectsFromClipboard();
+    break;
+  case MenuIdEditDelete:
+    ViewDelete();
+    break;
+  case MenuIdEditRotateCW:
+    RotateFocusedObj(ROTATE_CLOCKWISE);
+    break;
+  case MenuIdEditRotateCCW:
+    RotateFocusedObj(ROTATE_COUNTERCLOCKWISE);
+    break;
+  }
 }
 
 void
