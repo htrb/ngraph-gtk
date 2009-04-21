@@ -1,3 +1,30 @@
+2009-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (enum ViewerPopupIdn): add "VIEW_CUT",
+	"VIEW_PASTE" add "VIEW_DUP".
+	(CopyFocusedObjects, CutFocusedObjects, check_last_insts)
+	(focus_new_insts, paste_cb, PasteObjectsFromClipboard): add.
+	(create_popup_menu): add cut, copy and paste menu item.
+	(check_focused_obj_type): add.
+	(do_popup): use "check_focused_obj_type()".
+	(ViewerPopupMenu): add case for "VIEW_CUT", "VIEW_PASTE" add
+	"VIEW_DUP".
+	(CmEditMenuCB): add.
+
+	* src/gtk/x11menu.h (enum MenuID): add "MenuIdEditCut",
+	"MenuIdEditCopy", "MenuIdEditPaste", "MenuIdEditDelete",
+	"MenuIdEditRotateCW" and "MenuIdEditRotateCCW".
+
+	* src/gtk/x11menu.c (paste_menuitem_sensitive)
+	(show_edit_menu_cb, create_editmenu): add.
+	(createmenu): call "create_editmenu()".
+
+	* src/object.h (struct objlist): add member "have_child".
+
+	* src/object.c (addobject): set "parent->have_child" as TRUE when
+	"parent" in not NULL.
+	(addobject): initialize "objnew->have_child" as FALSE.
+
 2009-04-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/orect.c (rectrotate, rectmove, rectchange, rectzoom)
