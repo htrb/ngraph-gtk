@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.14 2009/04/21 14:17:58 hito Exp $
+ * $Id: object.h,v 1.15 2009/04/22 01:27:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -74,8 +74,8 @@ struct objlist {
     void *root2;
     int lastinst2;
     struct objlist *parent;
-    struct objlist *next;
-    int idp,oidp,nextp,have_child;
+    struct objlist *next, *child;
+    int idp,oidp,nextp;
     void *local;
     DoneProc doneproc;
 };

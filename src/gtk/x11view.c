@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.141 2009/04/21 14:17:59 hito Exp $
+ * $Id: x11view.c,v 1.142 2009/04/22 01:27:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -232,8 +232,10 @@ CopyFocusedObjects(void)
   str = nstrcat(str, SCRIPT_IDN);
   num = 0;
   for (i = 0; i < n; i++) {
-    if (focus[i]->obj == axis)
-      continue;
+    if (focus[i]->obj == axis) {
+      memfree(str);
+      return 1;
+    }
 
     id = chkobjoid(focus[i]->obj, focus[i]->oid);
     if (id < 0)
@@ -270,7 +272,6 @@ CopyFocusedObjects(void)
   if (num > 0) {
     clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text(clipboard, str, -1);
-    paste_menuitem_sensitive(TRUE);
   }
   memfree(str);
 
@@ -298,7 +299,7 @@ check_last_insts(struct objlist *parent, struct narray *array)
     if (chkobjparent(ocur) == parent) {
       instnum = chkobjlastinst(ocur);
       arrayadd(array, &instnum);
-      if (ocur->have_child)
+      if (ocur->child)
 	check_last_insts(ocur, array);
     }
     ocur=ocur->next;
@@ -337,7 +338,7 @@ focus_new_insts(struct objlist *parent, struct narray *array)
 	AddList(ocur, inst);
 	AddInvalidateRect(ocur, inst);
       }
-      if (ocur->have_child)
+      if (ocur->child)
 	focus_new_insts(ocur, array);
     }
     ocur=ocur->next;
@@ -438,7 +439,9 @@ PasteObjectsFromClipboard(void)
   GtkClipboard *clip;
 
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-  gtk_clipboard_request_text(clip, paste_cb, NULL);
+  if (gtk_clipboard_wait_is_text_available(clip)) {
+    gtk_clipboard_request_text(clip, paste_cb, NULL);
+  }
 }
 
 static int
@@ -1581,6 +1584,7 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
       r++;
     }
   }
+
   restorestdio(&save);
   return r;
 }
@@ -2020,7 +2024,7 @@ AlignFocusedObj(int align)
 static void
 RotateFocusedObj(int direction)
 {
-  int i, num, minx, miny, maxx, maxy, angle;
+  int i, num, minx, miny, maxx, maxy, angle, type;
   int use_pivot, px, py;
   struct focuslist **focus;
   char *argv[5];
@@ -2032,9 +2036,8 @@ RotateFocusedObj(int direction)
 
   d = &(NgraphApp.Viewer);
 
-  num = arraynum(d->focusobj);
-
-  if (num < 1) {
+  num = check_focused_obj_type(d, &type);
+  if (num < 1 || (type & FOCUS_OBJ_TYPE_MERGE)) {
     return;
   }
 
@@ -5024,8 +5027,9 @@ Focus(struct objlist *fobj, int id, int add)
     break;
   }
 
-  if (arraynum(d->focusobj) == 0)
+  if (arraynum(d->focusobj) == 0) {
     UnFocus();
+  }
 
   dc = gdk_gc_new(d->win);
   d->allclear = FALSE;
@@ -5037,7 +5041,6 @@ Focus(struct objlist *fobj, int id, int add)
 
   restorestdio(&save);
 }
-
 
 void
 UnFocus(void)

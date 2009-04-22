@@ -1,3 +1,12 @@
+2009-04-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/object.h (struct objlist): add member "child".
+
+	* src/object.c (addobject): set "parent->child" if "parent" in not
+	NULL.
+	(addobject): initialize "objnew->child" as NULL.
+	(addobject): change the order of object list.
+
 2009-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.h (ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE)
@@ -18,15 +27,9 @@
 	"MenuIdEditCopy", "MenuIdEditPaste", "MenuIdEditDelete",
 	"MenuIdEditRotateCW" and "MenuIdEditRotateCCW".
 
-	* src/gtk/x11menu.c (paste_menuitem_sensitive)
-	(show_edit_menu_cb, create_editmenu): add.
+	* src/gtk/x11menu.c (show_edit_menu_cb, hide_edit_menu_cb)
+	(create_editmenu): add.
 	(createmenu): call "create_editmenu()".
-
-	* src/object.h (struct objlist): add member "have_child".
-
-	* src/object.c (addobject): set "parent->have_child" as TRUE when
-	"parent" in not NULL.
-	(addobject): initialize "objnew->have_child" as FALSE.
 
 2009-04-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

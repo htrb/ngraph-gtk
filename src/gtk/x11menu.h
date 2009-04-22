@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.35 2009/04/21 14:17:59 hito Exp $
+ * $Id: x11menu.h,v 1.36 2009/04/22 01:27:13 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -306,6 +306,5 @@ int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist 
 void update_addin_menu(void);
 void set_widget_visibility(void);
 int check_focused_obj_type(struct Viewer *d, int *type);
-void paste_menuitem_sensitive(int state);
 
 #endif

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.30 2009/04/21 14:17:58 hito Exp $
+ * $Id: object.c,v 1.31 2009/04/22 01:27:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -987,40 +987,26 @@ addobject(char *name,char *alias,char *parentname,char *ver,
                 int errnum,char **errtable,void *local,DoneProc doneproc)
 /* addobject() returns NULL on error */
 {
-  struct objlist *objcur,*objprev,*objnew,*parent,*objdel;
-  int i,offset,id;
+  struct objlist *objcur,*objprev,*objnew,*parent, *ptr;
+  int i,offset;
   NHASH tbl_hash = NULL;
+  static int id = 0;
 
-  id=0;
-  objcur=objroot;
-  objprev=NULL;
-  while (objcur!=NULL) {
-    if (strcmp0(objcur->name,name)==0) {
-      if (objcur->lastinst!=-1) {
-        error2(NULL,ERROVERWRITE,name);
-        return NULL;
-      }
-      objdel=objcur;
-      objcur=objcur->next;
-      memfree(objdel);
-      break;
-    }
-    objprev=objcur;
-    objcur=objcur->next;
-    id++;
-    if (id==OBJ_MAX) {
-      error3(NULL,ERROBJNUM,id);
-      return NULL;
-    }
+  if (id >= OBJ_MAX) {
+    error3(NULL, ERROBJNUM, id);
+    return NULL;
+  }
+
+  objcur = chkobject(name);
+  if (objcur) {
+    error2(NULL,ERROVERWRITE,name);
+    return NULL;
   }
   if (parentname==NULL) parent=NULL;
   else if ((parent=chkobject(parentname))==NULL) {
     error2(NULL,ERRPARENT,parentname);
     return NULL;
   }
-  if (parent)
-    parent->have_child = TRUE;
-
   if ((objnew=memalloc(sizeof(struct objlist)))==NULL) return NULL;
 
 #if USE_HASH
@@ -1036,9 +1022,36 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   }
 #endif
 
-  if (objprev==NULL) objroot=objnew;
-  else objprev->next=objnew;
-  objnew->next=objcur;
+  objprev = NULL;
+  if (parent) {
+    if (parent->child) {
+      ptr = parent->child;
+      while (ptr && chkobjparent(ptr) == parent) {
+	objprev = ptr;
+ 	ptr = ptr->next;
+      }
+      while (objprev->child) {
+	ptr = objprev->child;
+	while (ptr) {
+	  objprev = ptr;
+	  ptr = objprev->next;
+	}
+      }
+    } else {
+      objprev = parent;
+      parent->child = objnew;
+    }
+  }
+
+  if (objprev == NULL) {
+    objroot=objnew;
+  } else if (objprev->next) {
+    objnew->next = objprev->next;
+    objprev->next = objnew;
+  } else {
+    objprev->next = objnew;
+    objnew->next = NULL;
+  }
   objnew->id=id;
   objnew->curinst=-1;
   objnew->lastinst=-1;
@@ -1056,7 +1069,7 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->errnum=errnum;
   objnew->errtable=errtable;
   objnew->parent=parent;
-  objnew->have_child=FALSE;
+  objnew->child=NULL;
   objnew->root=NULL;
   objnew->root2=NULL;
   objnew->local=local;
@@ -1097,6 +1110,8 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->idp=chkobjoffset(objnew,"id");
   objnew->oidp=chkobjoffset(objnew,"oid");
   objnew->nextp=chkobjoffset(objnew,"next");
+
+  id++;
 
   return objnew;
 }
@@ -1171,6 +1186,9 @@ chkobject(char *name)
 #if USE_HASH
   struct objlist *obj;
   int r;
+
+  if (ObjHash == NULL)
+    return NULL;
 
   r = nhash_get_ptr(ObjHash, name, (void **) &obj);
   if (r)

@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.86 2009/04/21 14:17:59 hito Exp $
+ * $Id: x11menu.c,v 1.87 2009/04/22 01:27:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -760,24 +760,6 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, GTK_STOCK_QUIT, TRUE, "<Ngraph>/Graph/Quit",  GDK_q, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphQuit);
 }
 
-void
-paste_menuitem_sensitive(int state)
-{
-  if (! state) { 
-    gtk_widget_set_sensitive(EditPaste, FALSE);
-    return;
-  }
-
-  switch (NgraphApp.Viewer.Mode) {
-  case PointB:
-  case LegendB:
-    gtk_widget_set_sensitive(EditPaste, TRUE);
-    break;
-  default:
-    gtk_widget_set_sensitive(EditPaste, FALSE);
-  }
-}
-
 static void
 show_edit_menu_cb(GtkWidget *w, gpointer user_data)
 {
@@ -812,7 +794,26 @@ show_edit_menu_cb(GtkWidget *w, gpointer user_data)
 
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   state = gtk_clipboard_wait_is_text_available(clip);
-  paste_menuitem_sensitive(state);
+
+  switch (NgraphApp.Viewer.Mode) {
+  case PointB:
+  case LegendB:
+    gtk_widget_set_sensitive(EditPaste, state);
+    break;
+  default:
+    gtk_widget_set_sensitive(EditPaste, FALSE);
+  }
+}
+
+static void
+hide_edit_menu_cb(GtkWidget *w, gpointer user_data)
+{
+  gtk_widget_set_sensitive(EditCut, TRUE);
+  gtk_widget_set_sensitive(EditCopy, TRUE);
+  gtk_widget_set_sensitive(EditPaste, TRUE);
+  gtk_widget_set_sensitive(EditDelete, TRUE);
+  gtk_widget_set_sensitive(RotateCW, TRUE);
+  gtk_widget_set_sensitive(RotateCCW, TRUE);
 }
 
 static void 
@@ -828,6 +829,8 @@ create_editmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
 
   g_signal_connect(menu, "show", G_CALLBACK(show_edit_menu_cb), NULL);
+  g_signal_connect(menu, "hide", G_CALLBACK(hide_edit_menu_cb), NULL);
+
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
 
