@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.143 2009/04/22 01:54:52 hito Exp $
+ * $Id: x11view.c,v 1.144 2009/04/22 03:45:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -445,7 +445,7 @@ PasteObjectsFromClipboard(void)
 
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   if (gtk_clipboard_wait_is_text_available(clip)) {
-    int x, y;
+    gint x, y;
     gtk_clipboard_request_text(clip, paste_cb, NULL);
     gtk_widget_get_pointer(d->Win, &x, &y);
     set_mouse_cursor_hover(d, x, y);
