@@ -1,5 +1,16 @@
 2009-04-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (CmEditMenuCB): add case for
+	"MenuIdAlignLeft", "MenuIdAlignVCenter", "MenuIdAlignRight",
+	"MenuIdAlignTop", "MenuIdAlignHCenter" and "MenuIdAlignHBottom".
+
+	* src/gtk/x11menu.h (enum MenuID): add "MenuIdAlignLeft",
+	"MenuIdAlignVCenter", "MenuIdAlignRight", "MenuIdAlignTop",
+	"MenuIdAlignHCenter" and "MenuIdAlignHBottom".
+
+	* src/gtk/x11menu.c (hide_edit_menu_cb, create_alignmenu): add.
+	(create_editmenu): call "create_alignmenu()".
+
 	* src/object.h (struct objlist): add member "child".
 
 	* src/object.c (addobject): set "parent->child" if "parent" in not

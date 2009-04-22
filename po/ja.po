@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-22 10:55+0900\n"
-"PO-Revision-Date: 2009-04-21 18:54+0900\n"
+"POT-Creation-Date: 2009-04-22 12:50+0900\n"
+"PO-Revision-Date: 2009-04-22 12:50+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1533,11 +1533,11 @@ msgid "_Ngraph shell"
 msgstr "Ngraphシェル(_N)"
 
 #: src/gtk/x11menu.c:848
-msgid "rotate _90 degree cloclwise"
+msgid "rotate _90 degree clockwise"
 msgstr "_90° 時計回り回転"
 
 #: src/gtk/x11menu.c:850
-msgid "rotate 9_0 degree counter-cloclwise"
+msgid "rotate 9_0 degree counter-clockwise"
 msgstr "9_0° 反時計回り回転"
 
 #: src/gtk/x11menu.c:907
@@ -2063,11 +2063,11 @@ msgid "_Bottom"
 msgstr "下端揃え(_B)"
 
 #: src/gtk/x11view.c:1036
-msgid "_90 degree cloclwise"
+msgid "_90 degree clockwise"
 msgstr "_90° 時計回り"
 
 #: src/gtk/x11view.c:1037
-msgid "9_0 degree counter-cloclwise"
+msgid "9_0 degree counter-clockwise"
 msgstr "9_0° 反時計回り"
 
 #: src/gtk/x11view.c:1048

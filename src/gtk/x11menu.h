@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.36 2009/04/22 01:27:13 hito Exp $
+ * $Id: x11menu.h,v 1.37 2009/04/22 04:56:22 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -47,6 +47,12 @@ enum MenuID {
   MenuIdEditCopy,
   MenuIdEditPaste,
   MenuIdEditDelete,
+  MenuIdAlignLeft,
+  MenuIdAlignVCenter,
+  MenuIdAlignRight,
+  MenuIdAlignTop,
+  MenuIdAlignHCenter,
+  MenuIdAlignHBottom,
   MenuIdEditRotateCW,
   MenuIdEditRotateCCW,
   MenuIdFileNew,

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.144 2009/04/22 03:45:55 hito Exp $
+ * $Id: x11view.c,v 1.145 2009/04/22 04:56:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1033,8 +1033,8 @@ create_popup_menu(struct Viewer *d)
     {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
   struct viewer_popup rotate_popup[] = {
-    {N_("_90 degree cloclwise"),         FALSE, VIEW_ROTATE_CLOCKWISE,        NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("9_0 degree counter-cloclwise"), FALSE, VIEW_ROTATE_COUNTER_CLOCKWISE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("_90 degree clockwise"),         FALSE, VIEW_ROTATE_CLOCKWISE,        NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("9_0 degree counter-clockwise"), FALSE, VIEW_ROTATE_COUNTER_CLOCKWISE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
   struct viewer_popup popup[] = {
     {GTK_STOCK_CUT,         TRUE,  VIEW_CUT,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -6268,6 +6268,24 @@ CmEditMenuCB(GtkToolItem *w, gpointer client_data)
     break;
   case MenuIdEditDelete:
     ViewDelete();
+    break;
+  case MenuIdAlignLeft:
+    AlignFocusedObj(VIEW_ALIGN_LEFT);
+    break;
+  case MenuIdAlignVCenter:
+    AlignFocusedObj(VIEW_ALIGN_VCENTER);
+    break;
+  case MenuIdAlignRight:
+    AlignFocusedObj(VIEW_ALIGN_RIGHT);
+    break;
+  case MenuIdAlignTop:
+    AlignFocusedObj(VIEW_ALIGN_TOP);
+    break;
+  case MenuIdAlignHCenter:
+    AlignFocusedObj(VIEW_ALIGN_HCENTER);
+    break;
+  case MenuIdAlignHBottom:
+    AlignFocusedObj(VIEW_ALIGN_BOTTOM);
     break;
   case MenuIdEditRotateCW:
     RotateFocusedObj(ROTATE_CLOCKWISE);

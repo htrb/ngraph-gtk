@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.87 2009/04/22 01:27:13 hito Exp $
+ * $Id: x11menu.c,v 1.88 2009/04/22 04:56:22 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -66,9 +66,9 @@ static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
-  *ShowInfoWin = NULL, *RecentGraph = NULL, *RecentData = NULL,
-  *AddinMenu = NULL, *ExtDrvOutMenu = NULL, *EditCut = NULL, *EditCopy = NULL,
-  *EditPaste = NULL, *EditDelete = NULL, *RotateCW = NULL, *RotateCCW = NULL;
+  *ShowInfoWin = NULL, *RecentGraph = NULL, *RecentData = NULL, *AddinMenu = NULL,
+  *ExtDrvOutMenu = NULL, *EditCut = NULL, *EditCopy = NULL, *EditPaste = NULL,
+  *EditDelete = NULL, *RotateCW = NULL, *RotateCCW = NULL, *EditAlign = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
@@ -789,6 +789,7 @@ show_edit_menu_cb(GtkWidget *w, gpointer user_data)
   gtk_widget_set_sensitive(EditCut, state);
   gtk_widget_set_sensitive(EditCopy, state);
   gtk_widget_set_sensitive(EditDelete, num > 0);
+  gtk_widget_set_sensitive(EditAlign, num > 0);
   gtk_widget_set_sensitive(RotateCW, state2);
   gtk_widget_set_sensitive(RotateCCW, state2);
 
@@ -812,8 +813,29 @@ hide_edit_menu_cb(GtkWidget *w, gpointer user_data)
   gtk_widget_set_sensitive(EditCopy, TRUE);
   gtk_widget_set_sensitive(EditPaste, TRUE);
   gtk_widget_set_sensitive(EditDelete, TRUE);
+  gtk_widget_set_sensitive(EditAlign, TRUE);
   gtk_widget_set_sensitive(RotateCW, TRUE);
   gtk_widget_set_sensitive(RotateCCW, TRUE);
+}
+
+static void 
+create_alignmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
+{
+  GtkWidget *menu;
+
+  menu = gtk_menu_new();
+  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
+
+  create_menu_item(menu, _("_Left"),            FALSE, "<Ngraph>/Edit/Align/Frame graph",   0, 0, CmEditMenuCB, MenuIdAlignLeft);
+  create_menu_item(menu, _("_Vertical center"), FALSE, "<Ngraph>/Edit/Align/Section graph", 0, 0, CmEditMenuCB, MenuIdAlignVCenter);
+  create_menu_item(menu, _("_Right"),           FALSE, "<Ngraph>/Edit/Align/Cross graph",   0, 0, CmEditMenuCB, MenuIdAlignRight);
+
+  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+
+  create_menu_item(menu, _("_Top"),               FALSE, "<Ngraph>/Edit/Align/Single Axis", 0, 0, CmEditMenuCB, MenuIdAlignTop);
+  create_menu_item(menu, _("_Holizontal center"), FALSE, "<Ngraph>/Edit/Align/Single Axis", 0, 0, CmEditMenuCB, MenuIdAlignHCenter);
+  create_menu_item(menu, _("_Bottom"),            FALSE, "<Ngraph>/Edit/Align/Single Axis", 0, 0, CmEditMenuCB, MenuIdAlignHBottom);
 }
 
 static void 
@@ -845,9 +867,14 @@ create_editmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
 
-  RotateCW  = create_menu_item(menu, _("rotate _90 degree cloclwise"), TRUE, "<Ngraph>/Edit/RotateCW",
+  item = gtk_menu_item_new_with_mnemonic(_("_Align"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+  create_alignmenu(item, accel_group);
+  EditAlign = item;
+
+  RotateCW  = create_menu_item(menu, _("rotate _90 degree clockwise"), TRUE, "<Ngraph>/Edit/RotateCW",
 			       0, 0, CmEditMenuCB, MenuIdEditRotateCW);
-  RotateCCW = create_menu_item(menu, _("rotate 9_0 degree counter-cloclwise"), TRUE, "<Ngraph>/Edit/RotateCCW",
+  RotateCCW = create_menu_item(menu, _("rotate 9_0 degree counter-clockwise"), TRUE, "<Ngraph>/Edit/RotateCCW",
 			       0, 0, CmEditMenuCB, MenuIdEditRotateCCW);
 }
 
