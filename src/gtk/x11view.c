@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.142 2009/04/22 01:27:13 hito Exp $
+ * $Id: x11view.c,v 1.143 2009/04/22 01:54:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -159,6 +159,7 @@ static void ShowFocusFrame(GdkGC *gc);
 static void AddInvalidateRect(struct objlist *obj, char *inst);
 static void AddList(struct objlist *obj, char *inst);
 static void RotateFocusedObj(int direction);
+static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 
 
 static int
@@ -294,15 +295,14 @@ check_last_insts(struct objlist *parent, struct narray *array)
   struct objlist *ocur;
   int instnum;
 
-  ocur = parent;
-  while (ocur) {
-    if (chkobjparent(ocur) == parent) {
-      instnum = chkobjlastinst(ocur);
-      arrayadd(array, &instnum);
-      if (ocur->child)
-	check_last_insts(ocur, array);
+  ocur = parent->child;
+  while (chkobjparent(ocur) == parent) {
+    instnum = chkobjlastinst(ocur);
+    arrayadd(array, &instnum);
+    if (ocur->child) {
+      check_last_insts(ocur, array);
     }
-    ocur=ocur->next;
+    ocur = ocur->next;
   }
   return;
 }
@@ -315,33 +315,32 @@ focus_new_insts(struct objlist *parent, struct narray *array)
   char *inst;
 
   text = chkobject("text");
-  ocur = parent;
-  while (ocur) {
-    if (chkobjparent(ocur) == parent) {
-      instnum = chkobjlastinst(ocur);
-      prev_instnum = * (int *) arraynget(array, 0);
-      arrayndel(array, 0);
-      for (i = prev_instnum + 1; i <= instnum; i++) {
+  ocur = parent->child;
+  while (chkobjparent(ocur) == parent) {
+    instnum = chkobjlastinst(ocur);
+    prev_instnum = * (int *) arraynget(array, 0);
+    arrayndel(array, 0);
+    for (i = prev_instnum + 1; i <= instnum; i++) {
 #ifdef JAPANESE
-	if (ocur == text) {
-	  char *tmp, *str;
-	  getobj(ocur, "text", i, 0, NULL, &str);
-	  tmp = utf8_to_sjis(str);
-	  if (tmp) {
-	    putobj(ocur, "text", i, tmp);
-	  }
+      if (ocur == text) {
+	char *tmp, *str;
+	getobj(ocur, "text", i, 0, NULL, &str);
+	tmp = utf8_to_sjis(str);
+	if (tmp) {
+	  putobj(ocur, "text", i, tmp);
 	}
-#endif
-	getobj(ocur, "oid", i, 0, NULL, &oid);
-	add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
-	inst = chkobjinst(ocur, i);
-	AddList(ocur, inst);
-	AddInvalidateRect(ocur, inst);
       }
-      if (ocur->child)
-	focus_new_insts(ocur, array);
+#endif
+      getobj(ocur, "oid", i, 0, NULL, &oid);
+      add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
+      inst = chkobjinst(ocur, i);
+      AddList(ocur, inst);
+      AddInvalidateRect(ocur, inst);
     }
-    ocur=ocur->next;
+    if (ocur->child) {
+      focus_new_insts(ocur, array);
+    }
+    ocur = ocur->next;
   }
   return;
 }
@@ -437,10 +436,19 @@ static void
 PasteObjectsFromClipboard(void)
 {
   GtkClipboard *clip;
+  struct Viewer *d;
+
+  d = &NgraphApp.Viewer;
+
+  if (d->Mode != PointB && d->Mode != LegendB)
+    return;
 
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   if (gtk_clipboard_wait_is_text_available(clip)) {
+    int x, y;
     gtk_clipboard_request_text(clip, paste_cb, NULL);
+    gtk_widget_get_pointer(d->Win, &x, &y);
+    set_mouse_cursor_hover(d, x, y);
   }
 }
 

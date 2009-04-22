@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.31 2009/04/22 01:27:12 hito Exp $
+ * $Id: object.c,v 1.32 2009/04/22 01:54:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1012,12 +1012,14 @@ addobject(char *name,char *alias,char *parentname,char *ver,
 #if USE_HASH
   if (add_obj_to_hash(name, alias, objnew)) {
     memfree(objnew);
+    error2(NULL,ERRHEAP,name);
     return NULL;
   }
 
   tbl_hash = nhash_new();
   if (tbl_hash == NULL) {
     memfree(objnew);
+    error2(NULL,ERRHEAP,name);
     return NULL;
   }
 #endif
@@ -1102,6 +1104,7 @@ addobject(char *name,char *alias,char *parentname,char *ver,
     if (nhash_set_int(tbl_hash, table[i].name, i)) {
       memfree(objnew);
       nhash_free(tbl_hash);
+      error2(NULL,ERRHEAP,name);
       return NULL;
     }
 #endif
