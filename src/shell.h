@@ -1,7 +1,7 @@
 #ifndef _SHELL_HEADER
 #define _SHELL_HEADER
 /* 
- * $Id: shell.h,v 1.8 2009/03/24 08:13:48 hito Exp $
+ * $Id: shell.h,v 1.9 2009/04/23 07:23:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -22,9 +22,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
-
-extern char **mainenviron;
-extern int security;
 
 #define SHELLBUFSIZE 4096
 
@@ -167,4 +164,6 @@ void setshellargument(struct nshell *nshell,int argc,char **argv);
 int printfconsole(char *fmt,...);
 void ngraphenvironment(struct nshell *nshell);
 int msleep(int ms);
+void set_security(int state);
+void set_environ(char **environ);
 #endif

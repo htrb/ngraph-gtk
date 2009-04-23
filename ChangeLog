@@ -1,5 +1,9 @@
 2009-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/oshell.c (cmdsecurity): use "set_security()".
+
+	* src/shell.c (set_security, set_environ): add.
+
 	* src/gtk/x11commn.c (LoadNgpFile): check execution of
 	"shell::shell" for loding graph is success or not.
 

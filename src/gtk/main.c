@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.36 2009/04/06 08:15:30 hito Exp $
+ * $Id: main.c,v 1.37 2009/04/23 07:23:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,9 +59,6 @@ static char **attempt_shell_completion(char *text, int start, int end);
 #ifndef DATADIR
 #define DATADIR "/usr/local/lib/Ngraph"
 #endif
-
-
-char **mainenviron;
 
 static char *systemname;
 static int consolefdout, consolefdin, consoleac = FALSE;
@@ -496,7 +493,7 @@ main(int argc, char **argv, char **environ)
   OpenDisplay = gtk_init_check(&argc, &argv);
   g_set_application_name(AppName);
 
-  mainenviron = environ;
+  set_environ(environ);
 
   if (init_cmd_tbl()) {
     exit(1);

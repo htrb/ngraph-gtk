@@ -1,5 +1,5 @@
 /* 
- * $Id: oshell.c,v 1.6 2009/03/24 08:15:18 hito Exp $
+ * $Id: oshell.c,v 1.7 2009/04/23 07:23:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -225,7 +225,7 @@ errexit:
 static int 
 cmdsecurity(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  security=*(int *)argv[2];
+  set_security(*(int *)argv[2]);
   return 0;
 }
 

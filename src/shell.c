@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.23 2009/03/31 05:39:22 hito Exp $
+ * $Id: shell.c,v 1.24 2009/04/23 07:23:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -186,9 +186,8 @@ char *cmderrorlist[] = {
 
 #define ERRNUM (sizeof(cmderrorlist) / sizeof(*cmderrorlist))
 
-extern char **mainenviron;
-extern HANDLE consolefd;
-int security=FALSE;
+static char **MainEnviron;
+static int Security=FALSE;
 
 #define WRITEBUFSIZE 4096
 
@@ -197,6 +196,18 @@ int writepo;
 
 static HANDLE storeshhandle(struct nshell *nshell,HANDLE fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,HANDLE fd, char *readbuf,int readbyte,int readpo);
+
+void
+set_environ(char **environ)
+{
+  MainEnviron = environ;
+}
+
+void
+set_security(int state)
+{
+  Security = state;
+}
 
 static void 
 unlinkfile(char **file)
@@ -3246,8 +3257,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	  }
 #endif
 
-	  environ=mainenviron;
-	  mainenviron=(char **)newenviron;
+	  environ=MainEnviron;
+	  MainEnviron=(char **)newenviron;
 	  newenviron=NULL;
 	  sout=sin=NOHANDLE;
 	  if (istdin!=PPNO) {
@@ -3309,7 +3320,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 
 	  /* redirect : stdout */
 	  if (istdout!=PPNO) {
-	    if (security) {
+	    if (Security) {
 	      sherror(ERRSECURITY);
 	      goto errexit;
 	    }
@@ -3591,7 +3602,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		sherror2(ERRCFOUND,prmcur->str);
 		goto errexit;
 	      } else {
-		if (security) {
+		if (Security) {
 		  sherror(ERRSECURITY);
 		  goto errexit;
 		}
@@ -3611,7 +3622,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  goto errexit;
 		}
 		if (pid==0) {
-		  errlevel=execve(cmdname,(char **)argv,mainenviron);
+		  errlevel=execve(cmdname,(char **)argv,MainEnviron);
 		  printfstderr("shell: %.64s: %.64s",
 			       argv[0],strerror(errno));
 		  exit(errlevel);
@@ -3626,7 +3637,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  }
 		}
 #else
-		pid=spawnve(P_NOWAIT,cmdname,(char **)argv,mainenviron);
+		pid=spawnve(P_NOWAIT,cmdname,(char **)argv,MainEnviron);
 		if (pid==-1)
 		  printfstderr("shell: %.64s: %.64s",
 			       argv[0],strerror(errno));
@@ -3667,8 +3678,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    sin2=NOHANDLE;
 	  }
 	  unlinkfile(&tmpfil2);
-	  arg_del(mainenviron);
-	  mainenviron=environ;
+	  arg_del(MainEnviron);
+	  MainEnviron=environ;
 	  environ=NULL;
 	}
 	restoreval(nshell,newvalroot);
@@ -3700,8 +3711,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   memfree(cmdname);
   arg_del(newenviron);
   if (environ!=NULL) {
-    arg_del(mainenviron);
-    mainenviron=environ;
+    arg_del(MainEnviron);
+    MainEnviron=environ;
   }
   if (newvalroot!=NULL) restoreval(nshell,newvalroot);
   if (sout2!=NOHANDLE) nredirect2(1,sout2);
@@ -3849,7 +3860,7 @@ newshell(void)
   nshell->exproot = NULL;
 #endif
 
-  env = mainenviron;
+  env = MainEnviron;
 
   i=0;
   while (env[i]) {
