@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-24\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-23 11:52+0900\n"
+"POT-Creation-Date: 2009-04-23 16:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgid "len"
 msgstr ""
 
 #: src/gtk/x11axis.c:79 src/gtk/x11file.c:99 src/gtk/x11lgnd.c:76
-#: src/gtk/x11merge.c:70 src/gtk/x11view.c:1048
+#: src/gtk/x11merge.c:70 src/gtk/x11view.c:1050
 msgid "_Duplicate"
 msgstr ""
 
@@ -790,7 +790,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1406 src/gtk/x11file.c:1678 src/gtk/x11view.c:905
+#: src/gtk/x11file.c:1406 src/gtk/x11file.c:1678 src/gtk/x11view.c:907
 msgid "Line No."
 msgstr ""
 
@@ -911,11 +911,11 @@ msgstr ""
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:2852 src/gtk/x11view.c:914
+#: src/gtk/x11file.c:2852 src/gtk/x11view.c:916
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:2856 src/gtk/x11view.c:915
+#: src/gtk/x11file.c:2856 src/gtk/x11view.c:917
 msgid "_Move"
 msgstr ""
 
@@ -1528,31 +1528,31 @@ msgstr ""
 msgid "_Ngraph shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:833 src/gtk/x11view.c:1032
+#: src/gtk/x11menu.c:833 src/gtk/x11view.c:1034
 msgid "_Left"
 msgstr ""
 
-#: src/gtk/x11menu.c:834 src/gtk/x11view.c:1033
+#: src/gtk/x11menu.c:834 src/gtk/x11view.c:1035
 msgid "_Vertical center"
 msgstr ""
 
-#: src/gtk/x11menu.c:835 src/gtk/x11view.c:1034
+#: src/gtk/x11menu.c:835 src/gtk/x11view.c:1036
 msgid "_Right"
 msgstr ""
 
-#: src/gtk/x11menu.c:839 src/gtk/x11view.c:1036
+#: src/gtk/x11menu.c:839 src/gtk/x11view.c:1038
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11menu.c:840 src/gtk/x11view.c:1037
+#: src/gtk/x11menu.c:840 src/gtk/x11view.c:1039
 msgid "_Holizontal center"
 msgstr ""
 
-#: src/gtk/x11menu.c:841 src/gtk/x11view.c:1038
+#: src/gtk/x11menu.c:841 src/gtk/x11view.c:1040
 msgid "_Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:873 src/gtk/x11view.c:1053
+#: src/gtk/x11menu.c:873 src/gtk/x11view.c:1055
 msgid "_Align"
 msgstr ""
 
@@ -1748,7 +1748,7 @@ msgstr ""
 msgid "_Toolbox"
 msgstr ""
 
-#: src/gtk/x11menu.c:1344 src/gtk/x11view.c:1055
+#: src/gtk/x11menu.c:1344 src/gtk/x11view.c:1057
 msgid "cross _Gauge"
 msgstr ""
 
@@ -2052,7 +2052,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:5341
+#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:5349
 msgid "Drawing."
 msgstr ""
 
@@ -2084,45 +2084,45 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11view.c:1041
+#: src/gtk/x11view.c:1043
 msgid "_90 degree clockwise"
 msgstr ""
 
-#: src/gtk/x11view.c:1042
+#: src/gtk/x11view.c:1044
 msgid "9_0 degree counter-clockwise"
 msgstr ""
 
-#: src/gtk/x11view.c:1054
+#: src/gtk/x11view.c:1056
 msgid "_Rotate"
 msgstr ""
 
-#: src/gtk/x11view.c:1266 src/gtk/x11view.c:1268
+#: src/gtk/x11view.c:1268 src/gtk/x11view.c:1270
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1342
+#: src/gtk/x11view.c:1344
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1351
+#: src/gtk/x11view.c:1353
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2663
+#: src/gtk/x11view.c:2668
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3779
+#: src/gtk/x11view.c:3784
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5335
+#: src/gtk/x11view.c:5343
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5342
+#: src/gtk/x11view.c:5350
 msgid "Drawing"
 msgstr ""
 
