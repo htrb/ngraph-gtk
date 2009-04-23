@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-24\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-22 18:55+0900\n"
+"POT-Creation-Date: 2009-04-23 11:52+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgid "len"
 msgstr ""
 
 #: src/gtk/x11axis.c:79 src/gtk/x11file.c:99 src/gtk/x11lgnd.c:76
-#: src/gtk/x11merge.c:70 src/gtk/x11view.c:1042
+#: src/gtk/x11merge.c:70 src/gtk/x11view.c:1048
 msgid "_Duplicate"
 msgstr ""
 
@@ -369,35 +369,35 @@ msgstr ""
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1076 src/gtk/x11commn.c:1146
+#: src/gtk/x11commn.c:1074 src/gtk/x11commn.c:1149
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1258
+#: src/gtk/x11commn.c:1261
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1488
+#: src/gtk/x11commn.c:1491
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1491
+#: src/gtk/x11commn.c:1494
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1495
+#: src/gtk/x11commn.c:1498
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1498
+#: src/gtk/x11commn.c:1501
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1697
+#: src/gtk/x11commn.c:1700
 msgid "error"
 msgstr ""
 
@@ -790,7 +790,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1406 src/gtk/x11file.c:1678 src/gtk/x11view.c:899
+#: src/gtk/x11file.c:1406 src/gtk/x11file.c:1678 src/gtk/x11view.c:905
 msgid "Line No."
 msgstr ""
 
@@ -911,11 +911,11 @@ msgstr ""
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:2852 src/gtk/x11view.c:908
+#: src/gtk/x11file.c:2852 src/gtk/x11view.c:914
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:2856 src/gtk/x11view.c:909
+#: src/gtk/x11file.c:2856 src/gtk/x11view.c:915
 msgid "_Move"
 msgstr ""
 
@@ -1528,31 +1528,31 @@ msgstr ""
 msgid "_Ngraph shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:833 src/gtk/x11view.c:1026
+#: src/gtk/x11menu.c:833 src/gtk/x11view.c:1032
 msgid "_Left"
 msgstr ""
 
-#: src/gtk/x11menu.c:834 src/gtk/x11view.c:1027
+#: src/gtk/x11menu.c:834 src/gtk/x11view.c:1033
 msgid "_Vertical center"
 msgstr ""
 
-#: src/gtk/x11menu.c:835 src/gtk/x11view.c:1028
+#: src/gtk/x11menu.c:835 src/gtk/x11view.c:1034
 msgid "_Right"
 msgstr ""
 
-#: src/gtk/x11menu.c:839 src/gtk/x11view.c:1030
+#: src/gtk/x11menu.c:839 src/gtk/x11view.c:1036
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11menu.c:840 src/gtk/x11view.c:1031
+#: src/gtk/x11menu.c:840 src/gtk/x11view.c:1037
 msgid "_Holizontal center"
 msgstr ""
 
-#: src/gtk/x11menu.c:841 src/gtk/x11view.c:1032
+#: src/gtk/x11menu.c:841 src/gtk/x11view.c:1038
 msgid "_Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:873 src/gtk/x11view.c:1047
+#: src/gtk/x11menu.c:873 src/gtk/x11view.c:1053
 msgid "_Align"
 msgstr ""
 
@@ -1748,7 +1748,7 @@ msgstr ""
 msgid "_Toolbox"
 msgstr ""
 
-#: src/gtk/x11menu.c:1344 src/gtk/x11view.c:1049
+#: src/gtk/x11menu.c:1344 src/gtk/x11view.c:1055
 msgid "cross _Gauge"
 msgstr ""
 
@@ -1756,15 +1756,15 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2368
+#: src/gtk/x11menu.c:2367
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2418
+#: src/gtk/x11menu.c:2417
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:2475
+#: src/gtk/x11menu.c:2474
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
@@ -2052,7 +2052,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:5332
+#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:5341
 msgid "Drawing."
 msgstr ""
 
@@ -2084,45 +2084,45 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11view.c:1035
+#: src/gtk/x11view.c:1041
 msgid "_90 degree clockwise"
 msgstr ""
 
-#: src/gtk/x11view.c:1036
+#: src/gtk/x11view.c:1042
 msgid "9_0 degree counter-clockwise"
 msgstr ""
 
-#: src/gtk/x11view.c:1048
+#: src/gtk/x11view.c:1054
 msgid "_Rotate"
 msgstr ""
 
-#: src/gtk/x11view.c:1260 src/gtk/x11view.c:1262
+#: src/gtk/x11view.c:1266 src/gtk/x11view.c:1268
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1336
+#: src/gtk/x11view.c:1342
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1345
+#: src/gtk/x11view.c:1351
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2657
+#: src/gtk/x11view.c:2663
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3773
+#: src/gtk/x11view.c:3779
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5326
+#: src/gtk/x11view.c:5335
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5333
+#: src/gtk/x11view.c:5342
 msgid "Drawing"
 msgstr ""
 

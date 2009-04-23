@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.146 2009/04/23 02:49:54 hito Exp $
+ * $Id: x11view.c,v 1.148 2009/04/23 06:41:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -319,22 +319,24 @@ focus_new_insts(struct objlist *parent, struct narray *array)
     instnum = chkobjlastinst(ocur);
     prev_instnum = * (int *) arraynget(array, 0);
     arrayndel(array, 0);
-    for (i = prev_instnum + 1; i <= instnum; i++) {
+    if (chkobjfield(ocur, "bbox") == 0) {
+      for (i = prev_instnum + 1; i <= instnum; i++) {
 #ifdef JAPANESE
-      if (ocur == text) {
-	char *tmp, *str;
-	getobj(ocur, "text", i, 0, NULL, &str);
-	tmp = utf8_to_sjis(str);
-	if (tmp) {
-	  putobj(ocur, "text", i, tmp);
+	if (ocur == text) {
+	  char *tmp, *str;
+	  getobj(ocur, "text", i, 0, NULL, &str);
+	  tmp = utf8_to_sjis(str);
+	  if (tmp) {
+	    putobj(ocur, "text", i, tmp);
+	  }
 	}
-      }
 #endif
-      getobj(ocur, "oid", i, 0, NULL, &oid);
-      add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
-      inst = chkobjinst(ocur, i);
-      AddList(ocur, inst);
-      AddInvalidateRect(ocur, inst);
+	getobj(ocur, "oid", i, 0, NULL, &oid);
+	add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
+	inst = chkobjinst(ocur, i);
+	AddList(ocur, inst);
+	AddInvalidateRect(ocur, inst);
+      }
     }
     if (ocur->child) {
       focus_new_insts(ocur, array);
@@ -409,7 +411,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 
   arg[0] = (char *) &sarray;
   arg[1] = NULL;
-  r = _exeobj(shell, "shell", inst, 1, arg);
+  _exeobj(shell, "shell", inst, 1, arg);
   arraydel(&sarray);
 
   sec = FALSE;
@@ -419,9 +421,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 
   delobj(shell, id);
 
-  if (r == 0) {
-    focus_new_insts(chkobject("draw"), &idarray);
-  }
+  focus_new_insts(chkobject("draw"), &idarray);
   arraydel(&idarray);
 
   unlink(tmpfile);
@@ -1716,6 +1716,9 @@ AddInvalidateRect(struct objlist *obj, char *inst)
   GdkRectangle rect;
 
   d = &(NgraphApp.Viewer);
+  if (chkobjfield(obj, "bbox"))
+    return;
+
   _exeobj(obj, "bbox", inst, 0, NULL);
   _getobj(obj, "bbox", inst, &abbox);
   bboxnum = arraynum(abbox);
@@ -4946,6 +4949,9 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
 {
   struct focuslist *focus;
   int r;
+
+  if (chkobjfield(obj, "bbox")) 
+    return FALSE;
 
   r = check_focused_obj(focusobj, obj, oid);
   if (r != CHECK_FOCUSED_OBJ_NOT_FOUND)
