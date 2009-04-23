@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.38 2009/04/23 09:44:52 hito Exp $
+ * $Id: x11dialg.h,v 1.39 2009/04/23 10:18:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -146,7 +146,7 @@ struct MathDialog
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
   void (*CloseWindow) (GtkWidget *w, void *data);
   /****** local member *******/
-  GtkWidget *list, *func[MATH_FNC_NUM], *edit_btn;
+  GtkWidget *list, *func[MATH_FNC_NUM];
   struct objlist *Obj;
   int Mode;
 };

@@ -1,10 +1,9 @@
 2009-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11dialg.h (struct MathDialog): add member "edit_btn".
-
-	* src/gtk/x11file.c (math_dialog_select_cb): add.
-	(MathDialogSetup): use "math_dialog_select_cb" for "changed"
-	signal of GtkTreeSelection.
+	* src/gtk/x11file.c (set_btn_sensitivity_cb)
+	(set_sensitivity_by_selection): add.
+	(MathDialogSetup, FileMoveDialogSetup, FileMaskDialogSetup): call
+	"set_sensitivity_by_selection()"
 
 	* src/oshell.c (cmdsecurity): use "set_security()".
 
