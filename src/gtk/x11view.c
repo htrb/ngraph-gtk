@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.148 2009/04/23 06:41:13 hito Exp $
+ * $Id: x11view.c,v 1.149 2009/04/23 09:44:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -202,7 +202,7 @@ range_increment(GtkWidget *w, double inc)
   return val;
 }
 
-static char SCRIPT_IDN[] = "#! ngraph\n";
+static char SCRIPT_IDN[] = "#! ngraph\n# clipboard\n\n";
 #define SCRIPT_IDN_LEN (sizeof(SCRIPT_IDN) - 1)
 
 static int

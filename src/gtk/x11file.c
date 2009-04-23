@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.88 2009/04/23 02:49:54 hito Exp $
+ * $Id: x11file.c,v 1.89 2009/04/23 09:44:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -371,10 +371,25 @@ math_dialog_butten_pressed_cb(GtkWidget *w, GdkEventButton *e, gpointer user_dat
   return TRUE;
 }
 
+static gboolean 
+math_dialog_select_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+  int n;
+  struct MathDialog *d;
+
+  d = (struct MathDialog *) user_data;
+
+  n = gtk_tree_selection_count_selected_rows(sel);
+  gtk_widget_set_sensitive(d->edit_btn, n > 0);
+
+  return FALSE;
+}
+
 static void
 MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *swin, *vbox, *hbox;
+  GtkTreeSelection *sel;
   struct MathDialog *d;
   static n_list_store list[] = {
     {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
@@ -404,6 +419,9 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "button-press-event", G_CALLBACK(math_dialog_butten_pressed_cb), d);
     d->list = w;
 
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+    g_signal_connect(sel, "changed", G_CALLBACK(math_dialog_select_cb), d);
+
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(swin), w);
 
@@ -429,6 +447,8 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(MathDialogList), d);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+    d->edit_btn = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
 
