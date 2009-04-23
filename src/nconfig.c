@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.11 2009/03/31 08:52:53 hito Exp $
+ * $Id: nconfig.c,v 1.12 2009/04/23 02:49:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -261,7 +261,7 @@ make_backup(char *homedir, char *libdir, char *fil, FILE *fptmp)
   return TRUE;
 }
 
-static void
+static char *
 replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *conf)
 {
   char *s, *s2, *buf, *tok, *tok2, **data;
@@ -272,39 +272,38 @@ replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *
 
   while (fgetline(fp, &buf) == 0) {
     if (buf[0]=='[') {
+      return buf;;
+    }
+
+    s = buf;
+    out = FALSE;
+    tok = getitok(&s, &len, " \t=,");
+    if (tok) {
+      for (i = 0; i < num; i++) {
+	s2 = data[i];
+	tok2 = getitok(&s2, &len2, " \t=,");
+	if (tok2 && (len == len2 && strncmp(tok, tok2, len) == 0)) {
+	  out = TRUE;
+	  num2 = arraynum(iconf);
+	  for (j = 0; j < num2; j++) {
+	    if (i == *(int *)arraynget(iconf, j))
+	      break;
+	  }
+	  if (j == num2) {
+	    fputs(data[i], fptmp);
+	    fputs("\n", fptmp);
+	    arrayadd(iconf, &i);
+	  }
+	}
+      }
+    }
+    if (! out && buf && buf[0] != '\0') {
       fputs(buf, fptmp);
-      memfree(buf);
-      return;
-    } else {
-      s = buf;
-      out = FALSE;
-      tok = getitok(&s, &len, " \t=,");
-      if (tok != NULL) {
-        for (i = 0; i < num; i++) {
-          s2 = data[i];
-	  tok2 = getitok(&s2, &len2, " \t=,");
-          if (tok2 && (len == len2 && strncmp(tok, tok2, len) == 0)) {
-            out = TRUE;
-            num2 = arraynum(iconf);
-            for (j = 0; j < num2; j++) {
-	      if (i == *(int *)arraynget(iconf, j))
-		break;
-	    }
-            if (j == num2) {
-              fputs(data[i], fptmp);
-              fputs("\n", fptmp);
-              arrayadd(iconf, &i);
-            }
-          }
-        }
-      }
-      if (! out && buf && buf[0] != '\0') {
-        fputs(buf, fptmp);
-        fputs("\n", fptmp);
-      }
+      fputs("\n", fptmp);
     }
     memfree(buf);
   }
+  return NULL;
 }
 
 int 
@@ -350,7 +349,7 @@ replaceconfig(char *section,struct narray *conf)
       fputs(buf,fptmp);
       fputs("\n",fptmp);
       memfree(buf);
-      replaceconfig_match(fp, fptmp, &iconf, conf);
+      buf = replaceconfig_match(fp, fptmp, &iconf, conf);
       goto flush;
     } else {
       fputs(buf,fptmp);
@@ -375,6 +374,11 @@ flush:
     }
   }
   fputs("\n",fptmp);
+  if (buf!=NULL) {
+    fputs(buf,fptmp);
+    fputs("\n",fptmp);
+    memfree(buf);
+  }
   while (fgetline(fp,&buf)==0) {
     fputs(buf,fptmp);
     fputs("\n",fptmp);

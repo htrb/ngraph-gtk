@@ -1,3 +1,65 @@
+2009-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (LoadNgpFile): check execution of
+	"shell::shell" for loding graph is success or not.
+
+	* src/gtk/x11view.c (create_popup_menu): change title of a
+	menuitem from "Show cross" to "cross Gauge".
+	(ViewerEvKeyDown): change case from " GDK_KP_Space" to "
+	GDK_space". remove case for "GDK_BackSpace".
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem): remove codes related to
+	widgets visibility.
+	(MiscDialogSetup): remove codes related to widgets visibility and
+	change order of widgets.
+	(MiscDialogClose): remove codes related to
+	widgets visibility.
+
+	* src/gtk/x11menu.h (enum MenuID): add "MenuIdToggleStatusBar",
+	"MenuIdToggleRuler", "MenuIdToggleScrollbar",
+	"MenuIdToggleCToolbar", "MenuIdTogglePToolbar",
+	MenuIdToggleCrossGauge", "MenuIdAxisUndo" and "MenuIdFileMath".
+	(struct Viewer): add "PToolbar" and "CToolbar", remove
+	"ShowCross".
+
+	* src/gtk/x11menu.c (create_filemenu): add menu item for "Math
+	Transformation".
+	(create_axismenu): add menu item for "Scale Undo".
+	(show_win_menu_cb): set active state for "ToggleStatusBar",
+	"ToggleRuler", "ToggleScrollbar", "ToggleCToobar", "TogglePToobar"
+	and "ToggleCrossGauge".
+	(toggle_view_cb): add.
+	(create_windowmenu): create menu some items to show and hide
+	widgets.
+	(create_windowmenu): now the title of this menu is "View".
+	(createmenu): reorder menus.
+	(create_toolbar): add argument "hbox" and set GtkHandleBox to the
+	variable.
+	(set_widget_visibility): add argment "cross" and set visibility of
+	some other widgets and cross gauge.
+	(setupwindow): add argment to call "create_toolbar()".x
+	(application): save settings for widgets visibility.
+
+	* src/gtk/x11file.c (CmFileMenu): add case for "MenuIdFileMath".
+
+	* src/gtk/x11dialg.h (struct MiscDialog): remove member "ruler"
+	and "statusbar".
+
+	* src/gtk/x11axis.c (CmAxisMenu): add case for "MenuIdAxisUndo".
+
+	* src/gtk/ox11menu.h (struct menulocal): add member "scrollbar",
+	"ctoolbar", "show_cross" and "ptoolbar".
+	(enum SAVE_CONFIG_TYPE): add "SAVE_CONFIG_TYPE_TOGGLE_VIEW".
+
+	* src/gtk/ox11menu.c (MenuConfigToggleView): add.
+	(MenuConfigArrray): add "MenuConfigToggleView".
+	(menu_save_config): add codes for "SAVE_CONFIG_TYPE_TOGGLE_VIEW".
+
+	* src/nconfig.c (replaceconfig_match): return "buf" when next
+	section was found.
+	(replaceconfig): print "buf" after print configurations if "buf"
+	is not NULL.
+
 2009-04-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (CmEditMenuCB): add case for

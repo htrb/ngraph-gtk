@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.29 2009/04/14 01:14:33 hito Exp $
+ * $Id: ox11menu.h,v 1.30 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -128,7 +128,7 @@ struct menulocal
   struct narray *ngpdirlist;
   struct narray *datafilelist;
   int scriptconsole, addinconsole;
-  int statusb, ruler, showtip, preserve_width;
+  int statusb, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
   int hist_size, info_size, bg_r, bg_g, bg_b;
   int focus_frame_type;
 };
@@ -136,14 +136,15 @@ struct menulocal
 extern struct menulocal Menulocal;
 
 enum SAVE_CONFIG_TYPE {
-  SAVE_CONFIG_TYPE_GEOMETRY        = 0x01,
-  SAVE_CONFIG_TYPE_CHILD_GEOMETRY  = 0x02,
-  SAVE_CONFIG_TYPE_VIEWER          = 0x04,
-  SAVE_CONFIG_TYPE_EXTERNAL_DRIVER = 0x08,
-  SAVE_CONFIG_TYPE_ADDIN_SCRIPT    = 0x10,
-  SAVE_CONFIG_TYPE_MISC            = 0x20,
-  SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x40,
-  SAVE_CONFIG_TYPE_FONTS           = 0x80,
+  SAVE_CONFIG_TYPE_GEOMETRY        = 0x0001,
+  SAVE_CONFIG_TYPE_CHILD_GEOMETRY  = 0x0002,
+  SAVE_CONFIG_TYPE_VIEWER          = 0x0004,
+  SAVE_CONFIG_TYPE_EXTERNAL_DRIVER = 0x0008,
+  SAVE_CONFIG_TYPE_ADDIN_SCRIPT    = 0x0010,
+  SAVE_CONFIG_TYPE_MISC            = 0x0020,
+  SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x0040,
+  SAVE_CONFIG_TYPE_FONTS           = 0x0080,
+  SAVE_CONFIG_TYPE_TOGGLE_VIEW     = 0x0100,
 };
 
 #define SAVE_CONFIG_TYPE_X11MENU (SAVE_CONFIG_TYPE_GEOMETRY		\

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.60 2009/03/31 08:20:12 hito Exp $
+ * $Id: x11opt.c,v 1.61 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -959,9 +959,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   if (Menulocal.coordwin_font) {
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->coordwin_font), Menulocal.coordwin_font);
   }
-
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ruler), Menulocal.ruler);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->statusbar), Menulocal.statusb);
 }
 
 static void
@@ -982,18 +979,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
-    d->directory = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
     hbox = gtk_hbox_new(FALSE, 4);
-    w = gtk_check_button_new_with_mnemonic(_("_Save file history"));
-    d->history = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
+    w = create_text_entry(FALSE, TRUE);
+    item_setup(hbox, w, _("_Editor:"), TRUE);
+    d->editor = w;
+    gtk_container_add(GTK_CONTAINER(frame), hbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
@@ -1017,6 +1007,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1043,12 +1034,20 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
+    vbox = gtk_vbox_new(FALSE, 4);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
+    d->directory = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Editor:"), TRUE);
-    d->editor = w;
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
+    w = gtk_check_button_new_with_mnemonic(_("_Save file history"));
+    d->history = w;
+    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+
 
     frame = gtk_frame_new(NULL);
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1075,22 +1074,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_font_button_new();
     item_setup(vbox, w, _("_Font of coordinate window:"), FALSE);
     d->coordwin_font = w;
-
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-
-
-    frame = gtk_frame_new(NULL);
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    w = gtk_check_button_new_with_mnemonic(_("show _Ruler"));
-    d->ruler = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
-    w = gtk_check_button_new_with_mnemonic(_("_Show status bar"));
-    d->statusbar = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
 
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
@@ -1173,12 +1156,6 @@ MiscDialogClose(GtkWidget *w, void *data)
   a = spin_entry_get_val(d->data_head_lines);
   putobj(d->Obj, "data_head_lines", d->Id, &a);
 
-  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ruler));
-  Menulocal.ruler = a;
-
-  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->statusbar));
-  Menulocal.statusb = a;
-
   buf = gtk_font_button_get_font_name(GTK_FONT_BUTTON(d->coordwin_font));
   if (Menulocal.coordwin_font) {
     if (strcmp(Menulocal.coordwin_font, buf)) {
@@ -1192,8 +1169,6 @@ MiscDialogClose(GtkWidget *w, void *data)
     Menulocal.coordwin_font = nstrdup(buf);
     CoordWinSetFont(buf);
   }
-
-  set_widget_visibility();
 
   d->ret = ret;
 

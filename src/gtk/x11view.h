@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.h,v 1.9 2009/04/21 14:17:59 hito Exp $
+ * $Id: x11view.h,v 1.10 2009/04/23 02:49:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -63,3 +63,4 @@ gboolean CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointe
 int data_dropped(char **filenames, int num, int file_type);
 void draw_paper_frame(void);
 void CmEditMenuCB(GtkToolItem *w, gpointer client_data);
+void ViewCross(int state);

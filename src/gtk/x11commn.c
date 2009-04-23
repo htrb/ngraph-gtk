@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.33 2009/04/13 00:58:43 hito Exp $
+ * $Id: x11commn.c,v 1.34 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1000,7 +1000,7 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
   char *expanddir;
   struct objlist *obj, *aobj;
   char *name;
-  int i, newid, allocnow = FALSE;
+  int i, r, newid, allocnow = FALSE;
   char *s;
   int len;
   char *argv[2];
@@ -1049,7 +1049,6 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
       return;
     }
 
-    SetFileName(File);
     changefilename(name);
 
     if (arrayadd(&sarray, &name) == NULL) {
@@ -1072,7 +1071,6 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
 
     argv[0] = (char *) &sarray;
     argv[1] = NULL;
-    AddNgpFileList(name);
     snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
     SetStatusBar(mes);
 
@@ -1080,7 +1078,7 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
     idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
     registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
 
-    _exeobj(obj, "shell", inst, 1, argv);
+    r = _exeobj(obj, "shell", inst, 1, argv);
 
     unregisterevloop(robj, idn, Menulocal.inst);
     menu_lock(FALSE);
@@ -1090,14 +1088,19 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
     argv[1] = NULL;
     _exeobj(obj, "security", inst, 1, argv);
 
-    if ((aobj = getobject("axis")) != NULL) {
-      for (i = 0; i <= chkobjlastinst(aobj); i++)
-	exeobj(aobj, "tight", i, 0, NULL);
-    }
+    if (r == 0) {
+      if ((aobj = getobject("axis")) != NULL) {
+	for (i = 0; i <= chkobjlastinst(aobj); i++)
+	  exeobj(aobj, "tight", i, 0, NULL);
+      }
 
-    if ((aobj = getobject("axisgrid")) != NULL) {
-      for (i = 0; i <= chkobjlastinst(aobj); i++)
-	exeobj(aobj, "tight", i, 0, NULL);
+      if ((aobj = getobject("axisgrid")) != NULL) {
+	for (i = 0; i <= chkobjlastinst(aobj); i++)
+	  exeobj(aobj, "tight", i, 0, NULL);
+      }
+
+      SetFileName(File);
+      AddNgpFileList(name);
     }
 
     AxisNameToGroup();

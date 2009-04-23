@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.36 2009/03/04 04:01:14 hito Exp $
+ * $Id: x11dialg.h,v 1.37 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -753,8 +753,7 @@ struct MiscDialog
   /****** local member *******/
   GtkWidget *editor, *directory, *history, *path, *datafile,
     *expand, *expanddir, *ignorepath, *mergefile, *coordwin_font,
-    *hist_size, *info_size, *data_head_lines,
-    *ruler, *statusbar;
+    *hist_size, *info_size, *data_head_lines;
   struct objlist *Obj;
   int Id;
 };

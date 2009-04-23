@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.52 2009/04/06 08:15:30 hito Exp $
+ * $Id: x11axis.c,v 1.53 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2596,6 +2596,9 @@ CmAxisMenu(GtkMenuItem *menuitem, gpointer client_data)
     break;
   case MenuIdAxisClear:
     CmAxisClear(NULL, NULL);
+    break;
+  case MenuIdAxisUndo:
+    CmAxisWinScaleUndo(NULL, NULL);
     break;
   }
 }

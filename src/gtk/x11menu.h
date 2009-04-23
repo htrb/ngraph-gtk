@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.37 2009/04/22 04:56:22 hito Exp $
+ * $Id: x11menu.h,v 1.38 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -60,10 +60,12 @@ enum MenuID {
   MenuIdFileUpdate,
   MenuIdFileClose,
   MenuIdFileEdit,
+  MenuIdFileMath,
   MenuIdAxisUpdate,
   MenuIdAxisDel,
   MenuIdAxisZoom,
   MenuIdAxisClear,
+  MenuIdAxisUndo,
   MenuIdAxisNewFrame,
   MenuIdAxisNewSection,
   MenuIdAxisNewCross,
@@ -96,6 +98,12 @@ enum MenuID {
   MenuIdOptionSaveNgp,
   MenuIdOptionFileDef,
   MenuIdOptionTextDef,
+  MenuIdToggleStatusBar,
+  MenuIdToggleRuler,
+  MenuIdToggleScrollbar,
+  MenuIdToggleCToolbar,
+  MenuIdTogglePToolbar,
+  MenuIdToggleCrossGauge,
   MenuIdHelpAbout,
   MenuIdHelpHelp,
 };
@@ -154,8 +162,9 @@ struct Viewer
 {
   GtkWidget *Win;
   GdkWindow *win;
-  GtkWidget *menu, *VScroll, *HScroll, *VRuler, *HRuler, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
-  int ShowFrame, ShowLine, ShowRect, ShowCross;
+  GtkWidget *menu, *VScroll, *HScroll, *VRuler, *HRuler,
+    *PToolbar, *CToolbar, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
+  int ShowFrame, ShowLine, ShowRect;
   int Capture, MoveData;
   enum MouseMode MouseMode;
   enum PointerType Mode;
@@ -310,7 +319,6 @@ void menu_lock(int lock);
 void set_draw_lock(int lock);
 int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 void update_addin_menu(void);
-void set_widget_visibility(void);
 int check_focused_obj_type(struct Viewer *d, int *type);
 
 #endif

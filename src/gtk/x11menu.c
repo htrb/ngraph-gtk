@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.88 2009/04/22 04:56:22 hito Exp $
+ * $Id: x11menu.c,v 1.89 2009/04/23 02:49:54 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -68,10 +68,13 @@ static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
   *ShowInfoWin = NULL, *RecentGraph = NULL, *RecentData = NULL, *AddinMenu = NULL,
   *ExtDrvOutMenu = NULL, *EditCut = NULL, *EditCopy = NULL, *EditPaste = NULL,
-  *EditDelete = NULL, *RotateCW = NULL, *RotateCCW = NULL, *EditAlign = NULL;
+  *EditDelete = NULL, *RotateCW = NULL, *RotateCCW = NULL, *EditAlign = NULL,
+  *ToggleStatusBar = NULL, *ToggleScrollbar = NULL, *ToggleRuler = NULL,
+  *TogglePToobar = NULL, *ToggleCToobar = NULL, *ToggleCrossGauge = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
+static void set_widget_visibility(int cross);
 
 struct command_data {
   void (*func)(GtkWidget *, gpointer);
@@ -863,7 +866,7 @@ create_editmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   EditPaste  = create_menu_item(menu,  GTK_STOCK_PASTE,  TRUE, "<Ngraph>/Edit/Paste",
 				GDK_v, GDK_CONTROL_MASK, CmEditMenuCB, MenuIdEditPaste);
   EditDelete = create_menu_item(menu,  GTK_STOCK_DELETE, TRUE, "<Ngraph>/Edit/Delete",
-				0,     0,                CmEditMenuCB, MenuIdEditDelete);
+				0, 0,                    CmEditMenuCB, MenuIdEditDelete);
 
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
 
@@ -929,7 +932,7 @@ static void
 create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
   GtkWidget *item, *menu;
-  static struct show_instance_menu_data data[4];
+  static struct show_instance_menu_data data[5];
 
   item = gtk_menu_item_new_with_mnemonic(_("_Data"));
   gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
@@ -951,6 +954,7 @@ create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   data[0].widget = create_menu_item(menu, GTK_STOCK_PROPERTIES, TRUE, "<Ngraph>/Data/Property", 0, 0, CmFileMenu, MenuIdFileUpdate);
   data[1].widget = create_menu_item(menu, GTK_STOCK_CLOSE, TRUE, "<Ngraph>/Data/Close", 0, 0, CmFileMenu, MenuIdFileClose);
   data[2].widget = create_menu_item(menu, GTK_STOCK_EDIT, TRUE, "<Ngraph>/Data/Edit", 0, 0, CmFileMenu, MenuIdFileEdit);
+  data[3].widget = create_menu_item(menu, _("_Math Transformation"), FALSE, "<Ngraph>/Data/Math", 0, 0, CmFileMenu, MenuIdFileMath);
 
   set_show_instance_menu_cb(menu, "file", data, sizeof(data) / sizeof(*data));
 }
@@ -991,7 +995,7 @@ static void
 create_axismenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
   GtkWidget *item, *menu;
-  static struct show_instance_menu_data data[5];
+  static struct show_instance_menu_data data[6];
 
   item = gtk_menu_item_new_with_mnemonic(_("_Axis"));
   gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
@@ -1008,6 +1012,7 @@ create_axismenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   data[1].widget = create_menu_item(menu, GTK_STOCK_DELETE, TRUE, "<Ngraph>/Axis/Delete", 0, 0, CmAxisMenu, MenuIdAxisDel);
   data[2].widget = create_menu_item(menu, _("Scale _Zoom"), FALSE, "<Ngraph>/Axis/Scale Zoom", 0, 0, CmAxisMenu, MenuIdAxisZoom);
   data[3].widget = create_menu_item(menu, _("Scale _Clear"), FALSE, "<Ngraph>/Axis/Scale Clear", GDK_c, GDK_SHIFT_MASK | GDK_CONTROL_MASK, CmAxisMenu, MenuIdAxisClear);
+  data[4].widget = create_menu_item(menu, _("Scale _Undo"), FALSE, "<Ngraph>/Axis/Scale Undo", 0, 0, CmAxisMenu, MenuIdAxisUndo);
 
   item = gtk_menu_item_new_with_mnemonic(_("_Grid"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
@@ -1202,6 +1207,13 @@ show_win_menu_cb(GtkWidget *w, gpointer data)
   gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ShowInfoWin),
 				 NgraphApp.InfoWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.InfoWin.Win));
 
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ToggleStatusBar), Menulocal.statusb);
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ToggleRuler), Menulocal.ruler);
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ToggleScrollbar), Menulocal.scrollbar);
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ToggleCToobar), Menulocal.ctoolbar);
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(TogglePToobar), Menulocal.ptoolbar);
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(ToggleCrossGauge), Menulocal.show_cross);
+
   Toggle_cb_disable = FALSE;
 }
 
@@ -1234,12 +1246,47 @@ create_toggle_menu_item(GtkWidget *menu, gchar *label, gchar *accel_path, guint 
   return menuitem;
 }
 
+static void
+toggle_view_cb(GtkWidget *w, gpointer data)
+{
+  int type, cross;
+
+  if (Toggle_cb_disable)
+    return;
+
+  type = (int) data;
+
+  cross = Menulocal.show_cross;
+
+  switch (type) {
+  case MenuIdToggleStatusBar:
+    Menulocal.statusb = ! Menulocal.statusb;
+   break;
+  case MenuIdToggleRuler:
+    Menulocal.ruler = ! Menulocal.ruler;
+    break;
+  case MenuIdToggleScrollbar:
+    Menulocal.scrollbar = ! Menulocal.scrollbar;
+    break;
+  case MenuIdToggleCToolbar:
+    Menulocal.ctoolbar = ! Menulocal.ctoolbar;
+    break;
+  case MenuIdTogglePToolbar:
+    Menulocal.ptoolbar = ! Menulocal.ptoolbar;
+    break;
+  case MenuIdToggleCrossGauge:
+    cross = ! Menulocal.show_cross;
+    break;
+  }
+  set_widget_visibility(cross);
+}
+
 static void 
 create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
   GtkWidget *item, *menu;
 
-  item = gtk_menu_item_new_with_mnemonic(_("_Window"));
+  item = gtk_menu_item_new_with_mnemonic(_("_View"));
   gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
 
   menu = gtk_menu_new();
@@ -1271,8 +1318,34 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   g_signal_connect(item, "activate", G_CALLBACK(CmReloadWindowConfig), NULL);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  g_signal_connect(menu, "show", G_CALLBACK(show_win_menu_cb), NULL);
+  item = gtk_separator_menu_item_new();
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
+  item = create_toggle_menu_item(menu, _("_Status bar"), "<Ngraph>/Window/Status bar",
+				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleStatusBar));
+  ToggleStatusBar = item;
+
+  item = create_toggle_menu_item(menu, _("_Ruler"), "<Ngraph>/Window/Ruler",
+				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleRuler));
+  ToggleRuler = item;
+
+  item = create_toggle_menu_item(menu, _("_Scrollbar"), "<Ngraph>/Window/Scrollbar",
+				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleScrollbar));
+  ToggleScrollbar = item;
+
+  item = create_toggle_menu_item(menu, _("_Command toolbar"), "<Ngraph>/Window/Command toolbar",
+				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleCToolbar));
+  ToggleCToobar = item;
+
+  item = create_toggle_menu_item(menu, _("_Toolbox"), "<Ngraph>/Window/Toolbox",
+				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdTogglePToolbar));
+  TogglePToobar = item;
+
+  item = create_toggle_menu_item(menu, _("cross _Gauge"), "<Ngraph>/Window/cross Gauge",
+				 GDK_plus, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleCrossGauge));
+  ToggleCrossGauge = item;
+
+  g_signal_connect(menu, "show", G_CALLBACK(show_win_menu_cb), NULL);
 }
 
 static void 
@@ -1315,13 +1388,13 @@ createmenu(GtkMenuBar *parent)
 
   create_graphmenu(parent, accel_group);
   create_editmenu(parent, accel_group);
+  create_windowmenu(parent, accel_group);
   create_filemenu(parent, accel_group);
   create_axismenu(parent, accel_group);
   create_legendmenu(parent, accel_group);
   create_mergemenu(parent, accel_group);
   create_outputmenu(parent, accel_group);
   create_preferencemenu(parent, accel_group);
-  create_windowmenu(parent, accel_group);
   create_helpmenu(parent, accel_group);
 
   gtk_window_add_accel_group(GTK_WINDOW(TopLevel), accel_group);
@@ -1557,7 +1630,7 @@ detach_toolbar(GtkHandleBox *handlebox, GtkWidget *widget, gpointer user_data)
 }
 
 static GtkWidget *
-create_toolbar(GtkWidget *box, GtkOrientation o)
+create_toolbar(GtkWidget *box, GtkOrientation o, GtkWidget **hbox)
 {
   GtkWidget *t, *w;
   GtkPositionType p;
@@ -1579,11 +1652,13 @@ create_toolbar(GtkWidget *box, GtkOrientation o)
   gtk_container_add(GTK_CONTAINER(w), t);
   gtk_box_pack_start(GTK_BOX(box), w, FALSE, FALSE, 0);
 
+  *hbox = w;
+
   return t;
 }
 
-void
-set_widget_visibility(void)
+static void
+set_widget_visibility(int cross)
 {
   if (Menulocal.ruler) {
     gtk_widget_show(NgraphApp.Viewer.HRuler);
@@ -1598,6 +1673,28 @@ set_widget_visibility(void)
   } else {
     gtk_widget_hide(NgraphApp.Message);
   }
+
+  if (Menulocal.scrollbar) {
+    gtk_widget_show(NgraphApp.Viewer.HScroll);
+    gtk_widget_show(NgraphApp.Viewer.VScroll);
+  } else {
+    gtk_widget_hide(NgraphApp.Viewer.HScroll);
+    gtk_widget_hide(NgraphApp.Viewer.VScroll);
+  }
+
+  if (Menulocal.ctoolbar) {
+    gtk_widget_show(NgraphApp.Viewer.CToolbar);
+  } else {
+    gtk_widget_hide(NgraphApp.Viewer.CToolbar);
+  }
+
+  if (Menulocal.ptoolbar) {
+    gtk_widget_show(NgraphApp.Viewer.PToolbar);
+  } else {
+    gtk_widget_hide(NgraphApp.Viewer.PToolbar);
+  }
+
+  ViewCross(cross);
 }
 
 static void
@@ -1614,8 +1711,8 @@ setupwindow(void)
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
   createmenu(GTK_MENU_BAR(menubar));
 
-  command1 = create_toolbar(vbox, GTK_ORIENTATION_HORIZONTAL);
-  command2 = create_toolbar(hbox, GTK_ORIENTATION_VERTICAL);
+  command1 = create_toolbar(vbox, GTK_ORIENTATION_HORIZONTAL, &NgraphApp.Viewer.CToolbar);
+  command2 = create_toolbar(hbox, GTK_ORIENTATION_VERTICAL, &NgraphApp.Viewer.PToolbar);
 
   NgraphApp.Viewer.HScroll = gtk_hscrollbar_new(NULL);
   NgraphApp.Viewer.VScroll = gtk_vscrollbar_new(NULL);
@@ -1933,7 +2030,7 @@ application(char *file)
   setupwindow();
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
-  set_widget_visibility();
+  set_widget_visibility(Menulocal.show_cross);
 
   NgraphApp.FileName = NULL;
 
@@ -2013,7 +2110,7 @@ application(char *file)
 
   ResetEvent();
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
-  set_widget_visibility();
+  set_widget_visibility(Menulocal.show_cross);
 
   AppMainLoop();
 
@@ -2022,6 +2119,7 @@ application(char *file)
   sigaction(SIGINT, &act, NULL);
 
   save_hist();
+  menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW);
 
   signaltrap = FALSE;
   arraydel(&ChildList);

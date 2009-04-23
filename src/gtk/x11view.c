@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.145 2009/04/22 04:56:22 hito Exp $
+ * $Id: x11view.c,v 1.147 2009/04/23 02:51:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -143,7 +143,6 @@ static void ViewerPopupMenu(GtkWidget *w, gpointer client_data);
 static void DelList(struct objlist *obj, char *inst);
 static void ViewUpdate(void);
 static void ViewCopy(void);
-static void ViewCross(int state);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
 static int check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid);
 static int get_mouse_cursor_type(struct Viewer *d, int x, int y);
@@ -398,21 +397,27 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 
   inst = chkobjinst(shell, id);
 
-  sec = FALSE;
-  arg[0] = (char *) &sec;
-  arg[1] = NULL;
-  _exeobj(shell, "security", inst, 1, arg);
-
   arrayinit(&idarray, sizeof(int));
   check_last_insts(chkobject("draw"), &idarray);
 
   UnFocus();
 
+  sec = TRUE;
+  arg[0] = (char *) &sec;
+  arg[1] = NULL;
+  _exeobj(shell, "security", inst, 1, arg);
+
   arg[0] = (char *) &sarray;
   arg[1] = NULL;
   _exeobj(shell, "shell", inst, 1, arg);
-  delobj(shell, id);
   arraydel(&sarray);
+
+  sec = FALSE;
+  arg[0] = (char *) &sec;
+  arg[1] = NULL;
+  _exeobj(shell, "security", inst, 1, arg);
+
+  delobj(shell, id);
 
   focus_new_insts(chkobject("draw"), &idarray);
   arraydel(&idarray);
@@ -1047,7 +1052,7 @@ create_popup_menu(struct Viewer *d)
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
     {N_("_Align"),          FALSE, 0, align_popup, sizeof(align_popup) / sizeof(*align_popup), POP_UP_MENU_ITEM_TYPE_MENU},
     {N_("_Rotate"),         FALSE, 0, rotate_popup, sizeof(rotate_popup) / sizeof(*rotate_popup), POP_UP_MENU_ITEM_TYPE_MENU},
-    {N_("_Show cross"),     FALSE, VIEW_CROSS,  NULL, 0, POP_UP_MENU_ITEM_TYPE_CHECK},
+    {N_("cross _Gauge"),     FALSE, VIEW_CROSS,  NULL, 0, POP_UP_MENU_ITEM_TYPE_CHECK},
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
     {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {GTK_STOCK_GO_UP,       TRUE,  VIEW_UP,     NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -1136,7 +1141,6 @@ ViewerWinSetup(void)
   d->ShowFrame = FALSE;
   d->ShowLine = FALSE;
   d->ShowRect = FALSE;
-  d->ShowCross = FALSE;
   d->allclear = TRUE;
   d->ignoreredraw = FALSE;
   region = NULL;
@@ -4249,7 +4253,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
   dc = Menulocal.gc;
 
-  if (region == NULL && d->ShowCross) {
+  if (region == NULL && Menulocal.show_cross) {
     ShowCrossGauge(dc);
 
     d->CrossX = dx;
@@ -4404,7 +4408,7 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   }
 
   gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_CROSS], TRUE);
-  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[VIEWER_POPUP_ITEM_CROSS]), d->ShowCross);
+  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[VIEWER_POPUP_ITEM_CROSS]), Menulocal.show_cross);
 
   num = check_focused_obj_type(d, &type);
 
@@ -4562,12 +4566,12 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     }
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     return FALSE;
-  case GDK_KP_Space:
+  case GDK_space:
     CmViewerDrawB(NULL, NULL);
     return TRUE;
-  case GDK_Delete:
-    ViewDelete();
-    return TRUE;
+ case GDK_Delete:
+   ViewDelete();
+   return TRUE;
   case GDK_Return:
     ViewUpdate();
     return TRUE;
@@ -4665,9 +4669,6 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
       return TRUE;
     }
     break;
-  case GDK_BackSpace:
-    ViewCross(! d->ShowCross);
-    return TRUE;
   default:
     break;
   }
@@ -4807,7 +4808,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     if (d->ShowRect)
       ShowFrameRect(gc);
 
-    if (d->ShowCross)
+    if (Menulocal.show_cross)
       ShowCrossGauge(gc);
   }
 
@@ -5351,15 +5352,15 @@ Draw(int SelectFile)
   if (d->ShowRect)
     ShowFrameRect(gc);
 
-  if (d->ShowCross)
+  if (Menulocal.show_cross)
     ShowCrossGauge(gc);
 
   SShowFrame = d->ShowFrame;
   SShowLine = d->ShowLine;
   SShowRect = d->ShowRect;
-  SShowCross = d->ShowCross;
+  SShowCross = Menulocal.show_cross;
 
-  d->ShowFrame = d->ShowLine = d->ShowRect = d->ShowCross = FALSE;
+  d->ShowFrame = d->ShowLine = d->ShowRect = Menulocal.show_cross = FALSE;
   ReopenGC();
   if (region)
     gdk_region_destroy(region);
@@ -5378,7 +5379,7 @@ Draw(int SelectFile)
   d->ShowFrame = SShowFrame;
   d->ShowLine = SShowLine;
   d->ShowRect = SShowRect;
-  d->ShowCross = SShowCross;
+  Menulocal.show_cross = SShowCross;
 
   draw_paper_frame();
 
@@ -5391,7 +5392,7 @@ Draw(int SelectFile)
   if (d->ShowRect)
     ShowFrameRect(gc);
 
-  if (d->ShowCross)
+  if (Menulocal.show_cross)
     ShowCrossGauge(gc);
 
   g_object_unref(G_OBJECT(gc));
@@ -5760,8 +5761,6 @@ ViewDelete(void)
 
   SetCursor(GDK_LEFT_PTR);
 }
-
-
 
 static void
 reorder_object(enum object_move_type type)
@@ -6173,7 +6172,7 @@ ViewCopy(void)
   g_object_unref(G_OBJECT(dc));
 }
 
-static void
+void
 ViewCross(int state)
 {
   GdkGC *dc;
@@ -6184,10 +6183,10 @@ ViewCross(int state)
 
   d = &(NgraphApp.Viewer);
 
-  if (state != d->ShowCross) {
+  if (state != Menulocal.show_cross) {
     dc = gdk_gc_new(d->win);
     ShowCrossGauge(dc);
-    d->ShowCross = state;
+    Menulocal.show_cross = state;
     g_object_unref(G_OBJECT(dc));
   }
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.71 2009/04/14 01:14:33 hito Exp $
+ * $Id: ox11menu.c,v 1.72 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -231,8 +231,6 @@ static struct menu_config MenuConfigMisc[] = {
   {"history_size",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
   {"infowin_size",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
   {"data_head_lines",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
-  {"viewer_show_ruler",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ruler},
-  {"status_bar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusb},
   {NULL},
 };
 
@@ -246,6 +244,15 @@ static struct menu_config MenuConfigViewer[] = {
   {"preserve_width",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.preserve_width},
   {"background_color",			MENU_CONFIG_TYPE_COLOR, menu_config_set_bgcolor, NULL},
   {NULL},
+};
+
+static struct menu_config MenuConfigToggleView[] = {
+  {"viewer_show_ruler",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ruler},
+  {"status_bar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.statusb},
+  {"scrollbar",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.scrollbar},
+  {"command_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ctoolbar},
+  {"pointer_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ptoolbar},
+  {"cross_gauge",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.show_cross},
 };
 
 static struct menu_config MenuConfigGeometry[] = {
@@ -269,6 +276,7 @@ static struct menu_config *MenuConfigArrray[] = {
   MenuConfigScript,
   MenuConfigMisc,
   MenuConfigViewer,
+  MenuConfigToggleView,
   MenuConfigGeometry,
   MenuConfigChildGeometry,
   NULL,
@@ -472,6 +480,10 @@ menu_save_config(int type)
 
   if (type & SAVE_CONFIG_TYPE_VIEWER) {
     menu_save_config_sub(MenuConfigViewer, &conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_TOGGLE_VIEW) {
+    menu_save_config_sub(MenuConfigToggleView, &conf);
   }
 
   if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
@@ -931,6 +943,10 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.showtip = TRUE;
   Menulocal.statusb = TRUE;
   Menulocal.ruler = TRUE;
+  Menulocal.scrollbar = TRUE;
+  Menulocal.ptoolbar = TRUE;
+  Menulocal.ctoolbar = TRUE;
+  Menulocal.show_cross = FALSE;
   Menulocal.scriptconsole = FALSE;
   Menulocal.addinconsole = TRUE;
   Menulocal.changedirectory = 1;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.87 2009/04/08 09:41:33 hito Exp $
+ * $Id: x11file.c,v 1.88 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3355,6 +3355,9 @@ CmFileMenu(GtkMenuItem *w, gpointer client_data)
     break;
   case MenuIdFileEdit:
     CmFileEdit();
+    break;
+  case MenuIdFileMath:
+    CmFileWinMath(NULL, NULL);
     break;
   }
 }
