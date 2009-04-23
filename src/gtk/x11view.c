@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.147 2009/04/23 02:51:43 hito Exp $
+ * $Id: x11view.c,v 1.146 2009/04/23 02:49:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -409,7 +409,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 
   arg[0] = (char *) &sarray;
   arg[1] = NULL;
-  _exeobj(shell, "shell", inst, 1, arg);
+  r = _exeobj(shell, "shell", inst, 1, arg);
   arraydel(&sarray);
 
   sec = FALSE;
@@ -419,7 +419,9 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 
   delobj(shell, id);
 
-  focus_new_insts(chkobject("draw"), &idarray);
+  if (r == 0) {
+    focus_new_insts(chkobject("draw"), &idarray);
+  }
   arraydel(&idarray);
 
   unlink(tmpfile);
