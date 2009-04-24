@@ -1,3 +1,14 @@
+2009-04-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (struct command_data): add member "button",
+	(createcommand1, createcommand2): set pointer of the GtkToolItem
+	to "cdata->button" when "cdata->button" is not NULL.
+
+	* src/gtk/x11file.c (set_btn_sensitivity_delete_cb)
+	(set_btn_sensitivity_insert_cb, set_sensitivity_by_row_num): add.
+	(MathDialogSetup, FileMoveDialogSetup, FileMaskDialogSetup): call
+	"set_sensitivity_by_row_num()".
+
 2009-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (set_btn_sensitivity_cb)

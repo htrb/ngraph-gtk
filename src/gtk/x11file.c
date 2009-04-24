@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.90 2009/04/23 10:18:22 hito Exp $
+ * $Id: x11file.c,v 1.91 2009/04/24 01:24:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -371,14 +371,41 @@ math_dialog_butten_pressed_cb(GtkWidget *w, GdkEventButton *e, gpointer user_dat
   return TRUE;
 }
 
-static gboolean 
-set_btn_sensitivity_cb(GtkTreeSelection *sel, gpointer user_data)
+static void
+set_btn_sensitivity_delete_cb(GtkTreeModel *tree_model, GtkTreePath *path, gpointer user_data)
 {
   int n;
   GtkWidget *w;
 
   w = GTK_WIDGET(user_data);
+  n = gtk_tree_model_iter_n_children(tree_model, NULL);
+  gtk_widget_set_sensitive(w, n > 0);
+}
 
+static void
+set_btn_sensitivity_insert_cb(GtkTreeModel *tree_model, GtkTreePath *path, GtkTreeIter *iter, gpointer user_data)
+{
+  set_btn_sensitivity_delete_cb(tree_model, path, user_data);
+}
+
+static void
+set_sensitivity_by_row_num(GtkWidget *tree, GtkWidget *btn)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree));;
+  g_signal_connect(model, "row-deleted", G_CALLBACK(set_btn_sensitivity_delete_cb), btn);
+  g_signal_connect(model, "row-inserted", G_CALLBACK(set_btn_sensitivity_insert_cb), btn);
+  gtk_widget_set_sensitive(btn, FALSE);
+}
+
+static gboolean 
+set_btn_sensitivity_selection_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+  int n;
+  GtkWidget *w;
+
+  w = GTK_WIDGET(user_data);
   n = gtk_tree_selection_count_selected_rows(sel);
   gtk_widget_set_sensitive(w, n > 0);
 
@@ -391,7 +418,7 @@ set_sensitivity_by_selection(GtkWidget *tree, GtkWidget *btn)
   GtkTreeSelection *sel;
 
   sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));;
-  g_signal_connect(sel, "changed", G_CALLBACK(set_btn_sensitivity_cb), btn);
+  g_signal_connect(sel, "changed", G_CALLBACK(set_btn_sensitivity_selection_cb), btn);
   gtk_widget_set_sensitive(btn, FALSE);
 }
 
@@ -448,6 +475,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    set_sensitivity_by_row_num(d->list, w);
 
     w = gtk_button_new_from_stock(GTK_STOCK_EDIT);
     g_signal_connect(w, "clicked", G_CALLBACK(MathDialogList), d);
@@ -1483,6 +1511,7 @@ FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
+    set_sensitivity_by_row_num(d->list, w);
 
     hbox = gtk_hbox_new(FALSE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
@@ -1738,6 +1767,7 @@ FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
+    set_sensitivity_by_row_num(d->list, w);
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
 

@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.89 2009/04/23 02:49:54 hito Exp $
+ * $Id: x11menu.c,v 1.90 2009/04/24 01:24:35 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -70,19 +70,12 @@ static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ExtDrvOutMenu = NULL, *EditCut = NULL, *EditCopy = NULL, *EditPaste = NULL,
   *EditDelete = NULL, *RotateCW = NULL, *RotateCCW = NULL, *EditAlign = NULL,
   *ToggleStatusBar = NULL, *ToggleScrollbar = NULL, *ToggleRuler = NULL,
-  *TogglePToobar = NULL, *ToggleCToobar = NULL, *ToggleCrossGauge = NULL;
+  *TogglePToobar = NULL, *ToggleCToobar = NULL, *ToggleCrossGauge = NULL,
+  *MathBtn = NULL, *AxisUndoBtn = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
 static void set_widget_visibility(int cross);
-
-struct command_data {
-  void (*func)(GtkWidget *, gpointer);
-  gchar *label, *tip, *caption;
-  const char **xpm;
-  int type;
-  GtkWidget *img;
-};
 
 GdkCursorType Cursor[] = {
   GDK_LEFT_PTR,
@@ -103,6 +96,15 @@ GdkCursorType Cursor[] = {
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
 
+struct command_data {
+  void (*func)(GtkWidget *, gpointer);
+  gchar *label, *tip, *caption;
+  const char **xpm;
+  int type;
+  GtkWidget *img;
+  GtkWidget **button;
+};
+
 static struct command_data Command1_data[] = {
   {
     CmFileWindow,
@@ -110,6 +112,9 @@ static struct command_data Command1_data[] = {
     "Data Window",
     N_("Activate Data Window"), 
     Filewin_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmAxisWindow,
@@ -117,6 +122,9 @@ static struct command_data Command1_data[] = {
     "Axis Window",
     N_("Activate Axis Window"), 
     Axiswin_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmLegendWindow,
@@ -124,6 +132,9 @@ static struct command_data Command1_data[] = {
     "Legend Window",
     N_("Activate Legend Window"), 
     Legendwin_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmMergeWindow,
@@ -131,6 +142,9 @@ static struct command_data Command1_data[] = {
     "Merge Window",
     N_("Activate Merge Window"), 
     Mergewin_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmCoordinateWindow,
@@ -138,6 +152,9 @@ static struct command_data Command1_data[] = {
     "Coordinate Window",
     N_("Activate Coordinate Window"), 
     Coordwin_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmInformationWindow,
@@ -145,6 +162,9 @@ static struct command_data Command1_data[] = {
     "Information Window",
     N_("Activate Information Window"), 
     Infowin_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {NULL},
   {
@@ -153,6 +173,9 @@ static struct command_data Command1_data[] = {
     N_("Open Data"),
     N_("Open Data file"), 
     Fileopen_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmGraphLoadB,
@@ -160,6 +183,9 @@ static struct command_data Command1_data[] = {
     N_("Load NGP"),
     N_("Load NGP file"), 
     Load_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmGraphSaveB,
@@ -167,6 +193,9 @@ static struct command_data Command1_data[] = {
     N_("Save NGP"),
     N_("Save NGP file "), 
     Save_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmAxisClear,
@@ -174,6 +203,9 @@ static struct command_data Command1_data[] = {
     N_("Clear Scale"),
     N_("Clear Scale"), 
     Scale_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmViewerDrawB,
@@ -181,6 +213,9 @@ static struct command_data Command1_data[] = {
     N_("Draw"),
     N_("Draw on Viewer Window"), 
     Draw_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmViewerClearB,
@@ -188,6 +223,9 @@ static struct command_data Command1_data[] = {
     N_("Clear Image"),
     N_("Clear Viewer Window"), 
     Clear_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmOutputPrinterB,
@@ -195,6 +233,9 @@ static struct command_data Command1_data[] = {
     N_("Print"),
     N_("Print"), 
     Print_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {
     CmOutputViewerB,
@@ -202,6 +243,9 @@ static struct command_data Command1_data[] = {
     N_("Ex. Viewer"),
     N_("Open External Viewer"), 
     Preview_xpm,
+    0,
+    NULL,
+    NULL,
   },
   {NULL},
   {
@@ -210,6 +254,9 @@ static struct command_data Command1_data[] = {
     N_("Math Transformation"),
     N_("Set Math Transformation"), 
     Math_xpm,
+    0,
+    NULL,
+    &MathBtn,
   },
   {
     CmAxisWinScaleUndo,
@@ -217,6 +264,9 @@ static struct command_data Command1_data[] = {
     N_("Scale Undo"),
     N_("Undo Scale Settings"), 
     Scaleundo_xpm,
+    0,
+    NULL,
+    &AxisUndoBtn,
   },
 }; 
 
@@ -228,6 +278,8 @@ static struct command_data Command2_data[] = {
     N_("Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
     Point_xpm,
     PointB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -236,6 +288,8 @@ static struct command_data Command2_data[] = {
     N_("Legend Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     Legendpoint_xpm,
     LegendB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -244,6 +298,8 @@ static struct command_data Command2_data[] = {
     N_("Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     Axispoint_xpm,
     AxisB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -252,6 +308,8 @@ static struct command_data Command2_data[] = {
     N_("Data Pointer"),
     Datapoint_xpm,
     DataB,
+    NULL,
+    NULL,
   },
   {NULL},
   {
@@ -261,6 +319,8 @@ static struct command_data Command2_data[] = {
     N_("New Legend Line (+SHIFT: Fine +CONTROL: snap angle)"), 
     Line_xpm,
     LineB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -278,6 +338,8 @@ static struct command_data Command2_data[] = {
     N_("New Legend Polygon (+SHIFT: Fine +CONTROL: snap angle)"), 
     Polygon_xpm,
     PolyB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -286,6 +348,8 @@ static struct command_data Command2_data[] = {
     N_("New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"), 
     Rect_xpm,
     RectB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -294,6 +358,8 @@ static struct command_data Command2_data[] = {
     N_("New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"), 
     Arc_xpm,
     ArcB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -302,6 +368,8 @@ static struct command_data Command2_data[] = {
     N_("New Legend Mark (+SHIFT: Fine)"), 
     Mark_xpm,
     MarkB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -310,6 +378,8 @@ static struct command_data Command2_data[] = {
     N_("New Legend Text (+SHIFT: Fine)"), 
     Text_xpm,
     TextB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -318,6 +388,8 @@ static struct command_data Command2_data[] = {
     N_("New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Gauss_xpm,
     GaussB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -326,6 +398,8 @@ static struct command_data Command2_data[] = {
     N_("New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Frame_xpm,
     FrameB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -334,6 +408,8 @@ static struct command_data Command2_data[] = {
     N_("New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Section_xpm,
     SectionB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -342,6 +418,8 @@ static struct command_data Command2_data[] = {
     N_("New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Cross_xpm,
     CrossB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -350,6 +428,8 @@ static struct command_data Command2_data[] = {
     N_("New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"), 
     Single_xpm,
     SingleB,
+    NULL,
+    NULL,
   },
   {NULL},
   {
@@ -359,6 +439,8 @@ static struct command_data Command2_data[] = {
     N_("Axis Trimming (+SHIFT: Fine)"), 
     Trimming_xpm,
     TrimB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -367,6 +449,8 @@ static struct command_data Command2_data[] = {
     N_("Evaluate Data Point"), 
     Eval_xpm,
     EvalB,
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -375,6 +459,8 @@ static struct command_data Command2_data[] = {
     N_("Viewer Zoom-In (+CONTROL: Zomm-Out +SHIFT: Centering)"), 
     Zoom_xpm,
     ZoomB,
+    NULL,
+    NULL,
   },
 };
 
@@ -1556,24 +1642,28 @@ createcommand1(GtkToolbar *parent)
 {
   GtkToolItem *b;
   unsigned int i;
+  struct command_data *cdata;
 
   for (i = 0; i < COMMAND1_NUM; i++) {
-    if (Command1_data[i].label) {
-      b = gtk_tool_button_new(Command1_data[i].img, _(Command1_data[i].label));
+    cdata = &Command1_data[i];
+    if (cdata->label) {
+      b = gtk_tool_button_new(cdata->img, _(cdata->label));
+      if (cdata->button)
+	*cdata->button = GTK_WIDGET(b);
 
       if (Menulocal.showtip)
-	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(Command1_data[i].tip));
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(cdata->tip));
 
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "enter-notify-event",
 		       G_CALLBACK(tool_button_enter_leave_cb),
-		       _(Command1_data[i].caption));
+		       _(cdata->caption));
 
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "leave-notify-event",
 		       G_CALLBACK(tool_button_enter_leave_cb), NULL);
 
-      g_signal_connect(b, "clicked", G_CALLBACK(Command1_data[i].func), NULL);
+      g_signal_connect(b, "clicked", G_CALLBACK(cdata->func), NULL);
     } else {
       b = gtk_separator_tool_item_new();
     }
@@ -1587,19 +1677,23 @@ createcommand2(GtkToolbar *parent)
   GtkToolItem *b;
   GSList *list = NULL;
   unsigned int i, j;
+  struct command_data *cdata;
 
   j = 0;
   for (i = 0; i < COMMAND2_NUM; i++) {
-    if (Command2_data[i].label) {
+    cdata = &Command1_data[i];
+    if (cdata->label) {
       b = gtk_radio_tool_button_new(list);
+      if (cdata->button)
+	*cdata->button = GTK_WIDGET(b);
 
       if (Menulocal.showtip)
-	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(Command2_data[i].tip));
+	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(cdata->tip));
 
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "enter-notify-event",
 		       G_CALLBACK(tool_button_enter_leave_cb),
-		       _(Command2_data[i].caption));
+		       _(cdata->caption));
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "leave-notify-event",
 		       G_CALLBACK(tool_button_enter_leave_cb), NULL);
@@ -1609,10 +1703,10 @@ createcommand2(GtkToolbar *parent)
 
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(b));
 
-      gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(b), Command2_data[i].img);
-      gtk_tool_button_set_label(GTK_TOOL_BUTTON(b), _(Command2_data[i].label));
+      gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(b), cdata->img);
+      gtk_tool_button_set_label(GTK_TOOL_BUTTON(b), _(cdata->label));
 
-      g_signal_connect(b, "clicked", G_CALLBACK(CmViewerButtonArm), GINT_TO_POINTER(Command2_data[i].type));
+      g_signal_connect(b, "clicked", G_CALLBACK(CmViewerButtonArm), GINT_TO_POINTER(cdata->type));
 
       NgraphApp.viewb[j] = b;
       j++;
