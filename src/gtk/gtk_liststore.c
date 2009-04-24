@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.21 2009/04/01 10:35:33 hito Exp $
+ * $Id: gtk_liststore.c,v 1.22 2009/04/24 07:20:33 hito Exp $
  */
 
 #include <stdlib.h>
@@ -169,10 +169,12 @@ create_tree_view(int n, n_list_store *list, int tree)
     } else {
       tarray[i] = list[i].type;
     }
+    list[i].edited_id = 0;
   }
 
   for (i = 0; i < cnum; i++) {
     tarray[i + n] = G_TYPE_STRING;
+    list[i].edited_id = 0;
   }
 
   if (tree) {

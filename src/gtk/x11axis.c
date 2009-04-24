@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.53 2009/04/23 02:49:54 hito Exp $
+ * $Id: x11axis.c,v 1.54 2009/04/24 07:20:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -27,10 +27,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
+#include "mathfn.h"
 
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"
@@ -67,6 +69,8 @@ static n_list_store Alist[] = {
 #define AXIS_WIN_COL_OID (AXIS_WIN_COL_NUM - 1)
 #define AXIS_WIN_COL_ID 1
 #define AXIS_WIN_COL_TYPE 6
+#define AXIS_WIN_COL_X 7
+#define AXIS_WIN_COL_Y 8
 
 static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
 static void axis_delete_popup_func(GtkMenuItem *w, gpointer client_data);
@@ -2954,6 +2958,90 @@ edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_da
   set_graph_modified();
 }
 
+enum CHANGE_DIR {
+  CHANGE_DIR_X,
+  CHANGE_DIR_Y,
+};
+
+static void
+pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
+{
+  int x, y, pos1, pos2;
+  double val;
+  char *ptr, *argv[3];
+
+  if (str == NULL || id < 0)
+    return;
+
+  switch (dir) {
+  case CHANGE_DIR_X:
+    getobj(obj, "x", id, 0, NULL, &pos1);
+    break;
+  case CHANGE_DIR_Y:
+    getobj(obj, "y", id, 0, NULL, &pos1);
+    break;
+  }
+
+  val = strtod(str, &ptr);
+  if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
+    return;
+  }
+
+  pos2 = nround(val * 100);
+
+  if (pos1 == pos2)
+    return;
+
+  switch (dir) {
+  case CHANGE_DIR_X:
+    x = (pos2 - pos1);
+    y = 0;
+    break;
+  case CHANGE_DIR_Y:
+    x = 0;
+    y = (pos2 - pos1);
+    break;
+  }
+ 
+  argv[0] = (char *) &x;
+  argv[1] = (char *) &y;
+  argv[2] = NULL;
+  exeobj(obj, "move_group", id, 2, argv);
+
+  set_graph_modified();
+  AxisWinUpdate(TRUE);
+}
+
+static void
+pos_x_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  struct SubWin *d;
+  int sel;
+
+  menu_lock(FALSE);
+
+  d = (struct SubWin *) user_data;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+
+  pos_edited_common(d->obj, sel, str, CHANGE_DIR_X);
+}
+
+static void
+pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  struct SubWin *d;
+  int sel;
+
+  menu_lock(FALSE);
+
+  d = (struct SubWin *) user_data;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+
+  pos_edited_common(d->obj, sel, str, CHANGE_DIR_Y);
+}
+
 static void 
 axiswin_delete_axis(struct SubWin *d)
 {
@@ -3146,6 +3234,8 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
 
     sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     set_combo_cell_renderer_cb(d, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
+    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_X, Alist, G_CALLBACK(pos_x_edited));
+    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_Y, Alist, G_CALLBACK(pos_y_edited));
 
     sub_window_show(d);
     sub_window_set_geometry(d, TRUE);

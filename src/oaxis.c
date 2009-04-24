@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.34 2009/04/20 02:29:04 hito Exp $
+ * $Id: oaxis.c,v 1.35 2009/04/24 07:20:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -190,6 +190,8 @@ static struct obj_config AxisConfig[] = {
 };
 
 static NHASH AxisConfigHash = NULL;
+
+static int get_axis_group_type(struct objlist *obj, char *inst, char **inst_array, int check_all);
 
 static int 
 axisuniqgroup(struct objlist *obj,char type)
@@ -415,8 +417,32 @@ axisput(struct objlist *obj,char *inst,char *rval,
 static int 
 axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  if (clear_bbox(obj, inst))
-    return 1;
+  char *inst_array[4];
+  int i, type;
+
+  type = get_axis_group_type(obj, inst, inst_array, TRUE);
+
+  switch (type) {
+  case 'a':
+    if (clear_bbox(obj, inst))
+      return 1;
+    break;
+  case 'f':
+  case 's':
+    for (i = 0; i < 4; i++) {
+      if (clear_bbox(obj, inst_array[i])) {
+	return 1;
+      }
+    }
+    break;
+  case 'c':
+    for (i = 0; i < 2; i++) {
+      if (clear_bbox(obj, inst_array[i])) {
+	return 1;
+      }
+    }
+    break;
+  }
 
   return 0;
 }
@@ -562,7 +588,7 @@ check_direction(struct objlist *obj, int type, char **inst_array)
 #define CHECK_CROSS(a) ((a & FIND_CROSS) == FIND_CROSS)
 
 static int
-get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
+get_axis_group_type(struct objlist *obj, char *inst, char **inst_array, int check_all)
 {
   char *group, *group2, *inst2;
   char type;
@@ -577,7 +603,11 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
   if (len < 3)
     return 'a';
 
-  _getobj(obj, "id", inst, &id);
+  if (check_all) {
+    id = chkobjlastinst(obj);
+  } else {
+    _getobj(obj, "id", inst, &id);
+  }
 
   find_axis = 0;
 
@@ -615,25 +645,25 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array)
       inst_array[3] = inst2;
       break;
     }
+
+    switch (type) {
+    case 'f':
+    case 's':
+      if (CHECK_FRAME(find_axis)) {
+	return type;
+      }
+      break;
+    case 'c':
+      if (CHECK_CROSS(find_axis)) {
+	return type;
+      }
+      break;
+    default:
+      return 'a';
+    }
   }
 
-  switch (type) {
-  case 'f':
-  case 's':
-    if (! CHECK_FRAME(find_axis)) {
-      type = -1;
-    }
-    break;
-  case 'c':
-    if (! CHECK_CROSS(find_axis)) {
-      type = -1;
-    }
-    break;
-  default:
-    type = -1;
-  }
-
-  return type;
+  return -1;
 }
 
 static void
@@ -696,7 +726,7 @@ axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (arraynum(array) != 0)
     return 0;
 
-  type = get_axis_group_type(obj, inst, inst_array);
+  type = get_axis_group_type(obj, inst, inst_array, FALSE);
 
   switch (type) {
   case 'a':
@@ -820,7 +850,7 @@ axismatch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   *(int *)rval = FALSE;
 
-  type = get_axis_group_type(obj, inst, inst_array);
+  type = get_axis_group_type(obj, inst, inst_array, FALSE);
 
   n = 0;
   switch (type) {
@@ -872,10 +902,11 @@ axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i, type;
+  int i, type, group;
   char *inst_array[4];
 
-  type = get_axis_group_type(obj, inst, inst_array);
+  group = (strcmp(argv[1], "move_group") == 0);
+  type = get_axis_group_type(obj, inst, inst_array, group);
 
   switch (type) {
   case 'a':
@@ -934,7 +965,7 @@ axisrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (angle < 0)
     angle += 36000;
 
-  type = get_axis_group_type(obj, inst, inst_array);
+  type = get_axis_group_type(obj, inst, inst_array, FALSE);
 
   switch (type) {
   case 'a':
@@ -1190,7 +1221,7 @@ axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *inst_array[4];
   int type, point, x0, y0, len;
 
-  type = get_axis_group_type(obj, inst, inst_array);
+  type = get_axis_group_type(obj, inst, inst_array, FALSE);
 
   point= * (int *) argv[2];
   x0 = * (int *) argv[3];
@@ -1328,7 +1359,7 @@ axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int i, type;
   char *inst_array[4];
 
-  type = get_axis_group_type(obj, inst, inst_array);
+  type = get_axis_group_type(obj, inst, inst_array, FALSE);
 
   switch (type) {
   case 'a':
@@ -2673,7 +2704,7 @@ axisdefgrouping(struct objlist *obj,char *inst,char *rval,
 }
 
 static int
-axis_save_groupe(struct objlist *obj, int type, char **inst_array, char **rval)
+axis_save_group(struct objlist *obj, int type, char **inst_array, char **rval)
 {
   char *s, *str, buf[64];
   int i, n, id;
@@ -2739,7 +2770,7 @@ axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 0;
   }
 
-  type = get_axis_group_type(obj, inst, inst_array);
+  type = get_axis_group_type(obj, inst, inst_array, FALSE);
 
   r = 0;
   switch (type) {
@@ -2748,7 +2779,7 @@ axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 'f':
   case 's':
   case 'c':
-    r = axis_save_groupe(obj, type, inst_array, (char **) rval);
+    r = axis_save_group(obj, type, inst_array, (char **) rval);
     break;
   }
   return r;
@@ -2914,6 +2945,7 @@ static struct objtable axis[] = {
   {"draw",NVFUNC,NREAD|NEXEC,axisdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,axisbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,axismove,"ii",0},
+  {"move_group",NVFUNC,NREAD|NEXEC,axismove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,axisrotate,"iiii",0},
   {"change",NVFUNC,NREAD|NEXEC,axischange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,axiszoom,"iiii",0},

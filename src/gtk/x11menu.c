@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.90 2009/04/24 01:24:35 hito Exp $
+ * $Id: x11menu.c,v 1.91 2009/04/24 07:20:33 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -177,6 +177,7 @@ static struct command_data Command1_data[] = {
     NULL,
     NULL,
   },
+  {NULL},
   {
     CmGraphLoadB,
     N_("Load"),
@@ -197,6 +198,7 @@ static struct command_data Command1_data[] = {
     NULL,
     NULL,
   },
+  {NULL},
   {
     CmAxisClear,
     N_("Clear"),
@@ -1681,7 +1683,7 @@ createcommand2(GtkToolbar *parent)
 
   j = 0;
   for (i = 0; i < COMMAND2_NUM; i++) {
-    cdata = &Command1_data[i];
+    cdata = &Command2_data[i];
     if (cdata->label) {
       b = gtk_radio_tool_button_new(list);
       if (cdata->button)

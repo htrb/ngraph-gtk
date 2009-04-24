@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.h,v 1.12 2009/03/06 08:11:20 hito Exp $
+ * $Id: gtk_subwin.h,v 1.13 2009/04/24 07:20:33 hito Exp $
  */
 
 #ifndef _GTK_SUBWIN_HEADER
@@ -12,6 +12,8 @@
 #include "ogra2cairo.h"
 #include "x11menu.h"
 #include "ox11menu.h"
+
+#define COL_ID 1
 
 typedef void (* list_sub_window_set_val_func) (struct SubWin *d, GtkTreeIter *iter, int i);
 
@@ -35,6 +37,7 @@ void sub_window_hide(struct SubWin *d);
 void sub_window_show(struct SubWin *d);
 void sub_window_toggle_visibility(struct SubWin *d);
 
+void set_editable_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback end);
 void set_combo_cell_renderer_cb(struct SubWin *d, int col, n_list_store *list, GCallback start, GCallback end);
 void set_obj_cell_renderer_cb(struct SubWin *d, int col, n_list_store *list, GCallback start);
 

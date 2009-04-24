@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.42 2009/03/10 07:58:35 hito Exp $
+ * $Id: gtk_subwin.c,v 1.43 2009/04/24 07:20:33 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -22,7 +22,6 @@
 
 #include "gtk_subwin.h"
 
-#define COL_ID 1
 #define DOUBLE_CLICK_PERIOD 250
 
 static int SaveWindowState = FALSE;
@@ -42,6 +41,8 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   struct SubWin *d;
 
   menu_lock(TRUE);
+
+  UnFocus();
 
   d = (struct SubWin *) user_data;
 
@@ -244,17 +245,44 @@ set_cell_renderer_cb(struct SubWin *d, int n, n_list_store *list, GtkWidget *w)
       break;
     case G_TYPE_DOUBLE:
     case G_TYPE_INT:
-      g_signal_connect(rend, "edited", G_CALLBACK(numeric_cb), d);
+      list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(numeric_cb), d);
       g_signal_connect(rend, "editing-started", G_CALLBACK(start_editing), d);
       g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), NULL);
       break;
     case G_TYPE_STRING:
-      g_signal_connect(rend, "edited", G_CALLBACK(string_cb), d);
+      list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(string_cb), d);
       g_signal_connect(rend, "editing-started", G_CALLBACK(start_editing), d);
       g_signal_connect(rend, "editing-canceled", G_CALLBACK(cancel_editing), NULL);
       break;
     }
   }
+}
+
+void
+set_editable_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback end)
+{
+  GtkTreeViewColumn *col;
+  GtkCellRenderer *rend;
+  GtkTreeView *view;
+  GList *glist;
+
+  view = GTK_TREE_VIEW(d->text);
+
+  if (list == NULL || end == NULL || i < 0)
+    return;
+
+  if (! list[i].editable)
+    return;
+
+  col = gtk_tree_view_get_column(view, i);
+  glist = gtk_tree_view_column_get_cell_renderers(col);
+  rend = GTK_CELL_RENDERER(glist->data);
+  g_list_free(glist);
+
+  if (list[i].edited_id) {
+    g_signal_handler_disconnect(rend, list[i].edited_id);
+  }
+  list[i].edited_id = g_signal_connect(rend, "edited", G_CALLBACK(end), d);
 }
 
 void
@@ -677,8 +705,11 @@ update(struct SubWin *d)
 
   if (Menulock || GlobalLock)
     return;
+
+  UnFocus();
+
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
- 
+
   if ((sel >= 0) && (sel <= d->num)) {
     d->setup_dialog(d->dialog, d->obj, sel, -1);
     d->select = sel;

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.8 2009/04/01 10:35:33 hito Exp $
+ * $Id: gtk_liststore.h,v 1.9 2009/04/24 07:20:33 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
@@ -13,6 +13,7 @@ typedef struct _list_store {
   gboolean color;
   int min, max, inc, page;
   PangoEllipsizeMode ellipsize;
+  gulong edited_id;
 } n_list_store;
 
 GtkWidget *list_store_create(int n, n_list_store *list);
