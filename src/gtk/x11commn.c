@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.34 2009/04/23 02:49:54 hito Exp $
+ * $Id: x11commn.c,v 1.35 2009/04/25 06:23:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -377,7 +377,7 @@ void
 AxisDel(int id)
 {
   struct objlist *obj;
-  int i, lastinst;
+  int i, lastinst, *id_array, n;
   char *group, *group2;
   char type;
   char *inst, *inst2;
@@ -396,16 +396,28 @@ AxisDel(int id)
   lastinst = chkobjlastinst(obj);
   type = group[0];
   strcpy(group3, group);
+
+  id_array = memalloc(sizeof(*id_array) * (lastinst + 1));
+  if (id_array == NULL)
+    return;
+
+  n = 0;
   for (i = lastinst; i >= 0; i--) {
     inst2 = chkobjinst(obj, i);
     _getobj(obj, "group", inst2, &group2);
     if ((group2 != NULL) && (group2[0] == type)) {
       if (strcmp(group3 + 2, group2 + 2) == 0) {
 	AxisDel2(i);
-	delobj(obj, i);
+	id_array[n] = i;
+	n++;
       }
     }
   }
+
+  for (i = 0; i < n; i++) {
+    delobj(obj, id_array[i]);
+  }
+  memfree(id_array);
 }
 
 static void

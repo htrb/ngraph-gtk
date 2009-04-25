@@ -1,3 +1,20 @@
+2009-04-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (Focus): check if "man" is valid id.
+
+	* src/gtk/x11commn.c (AxisDel): call "delobj()" after check all
+	instances.
+
+	* src/gtk/x11axis.c (axis_list_set_val): display "name" field
+	instead of "group".
+
+	* src/odraw.c (clear_bbox): check if "inst" is NULL.
+
+	* src/oaxis.c (INST_ARRAY_NUM): add.
+	(axisdone): change "group" field of other instances belong to the
+	same group.
+	(get_axis_group_type): initialize "inst_array".
+
 2009-04-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (enum CHANGE_DIR, pos_edited_common)
@@ -16,12 +33,9 @@
 	* src/gtk/gtk_liststore.c (create_tree_view): initialize
 	"list[i].edited_id".
 
-	* src/oaxis.c (axisgeometry): clear all bbox of instances related
+	* src/oaxis.c (axisgeometry): clear all bbox of instances belong
 	to the group.
 	(get_axis_group_type): add argument "check_all".
-	(axismove): last argument of "get_axis_group_type()" is TRUE when
-	the field is "move_group".
-	(axis): add field "move_group".
 
 	* src/gtk/x11menu.c (struct command_data): add member "button",
 	(createcommand1, createcommand2): set pointer of the GtkToolItem

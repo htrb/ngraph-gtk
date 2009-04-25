@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.149 2009/04/23 09:44:52 hito Exp $
+ * $Id: x11view.c,v 1.150 2009/04/25 06:23:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5029,6 +5029,9 @@ Focus(struct objlist *fobj, int id, int add)
 
     if (chkobjchild(chkobject("axis"), dobj)) {
       getobj(fobj, "group_manager", id, 0, NULL, &man);
+      if (man < 0)
+	continue;
+
       getobj(fobj, "oid", man, 0, NULL, &did);
     }
 

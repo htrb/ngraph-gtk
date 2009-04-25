@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.54 2009/04/24 07:20:33 hito Exp $
+ * $Id: x11axis.c,v 1.55 2009/04/25 06:23:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -53,7 +53,7 @@
 static n_list_store Alist[] = {
   {"",         G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",    FALSE},
   {"#",        G_TYPE_INT,     TRUE, FALSE, "id",        FALSE},
-  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, "group",     FALSE},
+  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, "name",      FALSE},
   {N_("min"),  G_TYPE_STRING,  TRUE, TRUE,  "min",       FALSE},
   {N_("max"),  G_TYPE_STRING,  TRUE, TRUE,  "max",       FALSE},
   {N_("inc"),  G_TYPE_STRING,  TRUE, TRUE,  "inc",       FALSE},
@@ -2726,10 +2726,10 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
   char buf[256];
 
   for (i = 0; i < AXIS_WIN_COL_NUM; i++) {
-    if (strcmp(Alist[i].name, "group") == 0) {
+    if (strcmp(Alist[i].name, "name") == 0) {
       char *name;
-      getobj(d->obj, "group", row, 0, NULL, &name);
-      if (name != NULL) {
+      getobj(d->obj, "name", row, 0, NULL, &name);
+      if (name) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, name);
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, ".....");
@@ -2966,7 +2966,7 @@ enum CHANGE_DIR {
 static void
 pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
 {
-  int x, y, pos1, pos2;
+  int x, y, pos1, pos2, man;
   double val;
   char *ptr, *argv[3];
 
@@ -3006,10 +3006,14 @@ pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
   argv[0] = (char *) &x;
   argv[1] = (char *) &y;
   argv[2] = NULL;
-  exeobj(obj, "move_group", id, 2, argv);
 
-  set_graph_modified();
-  AxisWinUpdate(TRUE);
+  getobj(obj, "group_manager", id, 0, NULL, &man);
+  if (man >= 0) {
+    exeobj(obj, "move", man, 2, argv);
+
+    set_graph_modified();
+    AxisWinUpdate(TRUE);
+  }
 }
 
 static void

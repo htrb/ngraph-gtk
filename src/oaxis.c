@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.35 2009/04/24 07:20:32 hito Exp $
+ * $Id: oaxis.c,v 1.36 2009/04/25 06:22:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,6 +50,8 @@
 #define TRUE  1
 #define FALSE 0
 
+#define INST_ARRAY_NUM 4
+
 #define ERRAXISTYPE 100
 #define ERRAXISHEAD 101
 #define ERRAXISGAUGE 102
@@ -77,7 +79,7 @@ enum AXIS_TYPE {
   AXIS_TYPE_CROSS,
 };
 
-char *axistypechar[4]={
+char *axistypechar[]={
   N_("linear"),
   N_("log"),
   N_("inverse"),
@@ -323,7 +325,28 @@ errexit:
 static int 
 axisdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
+  char *inst_array[INST_ARRAY_NUM];
+  int i;
+
+  get_axis_group_type(obj, inst, inst_array, TRUE);
+  for (i = 0; i < INST_ARRAY_NUM; i++) {
+    if (inst_array[i] && inst_array[i] != inst) {
+      char buf[64], *group;
+      int gnum;
+
+      gnum = axisuniqgroup(obj,'a');
+      snprintf(buf, sizeof(buf), "a_%d",gnum);
+      group = nstrdup(buf);
+      if (group == NULL)
+	break;
+
+      if (_putobj(obj, "group", inst_array[i], group))
+	break;
+    }
+  }
+
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+
   return 0;
 }
 
@@ -417,31 +440,17 @@ axisput(struct objlist *obj,char *inst,char *rval,
 static int 
 axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  char *inst_array[4];
-  int i, type;
+  char *inst_array[INST_ARRAY_NUM];
+  int i;
 
-  type = get_axis_group_type(obj, inst, inst_array, TRUE);
+  get_axis_group_type(obj, inst, inst_array, TRUE);
 
-  switch (type) {
-  case 'a':
-    if (clear_bbox(obj, inst))
-      return 1;
-    break;
-  case 'f':
-  case 's':
-    for (i = 0; i < 4; i++) {
+  for (i = 0; i < INST_ARRAY_NUM; i++) {
+    if (inst_array[i]) {
       if (clear_bbox(obj, inst_array[i])) {
 	return 1;
       }
     }
-    break;
-  case 'c':
-    for (i = 0; i < 2; i++) {
-      if (clear_bbox(obj, inst_array[i])) {
-	return 1;
-      }
-    }
-    break;
   }
 
   return 0;
@@ -594,6 +603,12 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array, int chec
   char type;
   int find_axis, len, id, i;
 
+  inst_array[0] = inst;
+
+  for (i = 1; i < INST_ARRAY_NUM; i++) {
+    inst_array[i] = NULL;
+  }
+
   _getobj(obj, "group", inst, &group);
 
   if (group  ==  NULL || group[0]  ==  'a')
@@ -717,7 +732,7 @@ static int
 axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i, type, dir;
-  char *inst_array[4];
+  char *inst_array[INST_ARRAY_NUM];
   struct narray *array;
   int minx,miny,maxx,maxy;
   int x0,y0,x1,y1;
@@ -845,7 +860,7 @@ static int
 axismatch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int i, n, type;
-  char *inst_array[4];
+  char *inst_array[INST_ARRAY_NUM];
   int rval2, match;
 
   *(int *)rval = FALSE;
@@ -902,27 +917,21 @@ axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i, type, group;
-  char *inst_array[4];
+  int i;
+  char *inst_array[INST_ARRAY_NUM];
 
-  group = (strcmp(argv[1], "move_group") == 0);
-  type = get_axis_group_type(obj, inst, inst_array, group);
+  if (* (int *) argv[2] == 0 && * (int *) argv[3] == 0)
+    return 0;
 
-  switch (type) {
-  case 'a':
-    return axismove2(obj, inst, rval, argc, argv);
-    break;
-  case 'f':
-  case 's':
-    for (i = 0; i < 4; i++) {
+  if (get_axis_group_type(obj, inst, inst_array, FALSE) < 0)
+    return 1;
+
+  for (i = 0; i < INST_ARRAY_NUM; i++) {
+    if (inst_array[i]) {
       axismove2(obj, inst_array[i], rval, argc, argv);
     }
-    break;
-  case 'c':
-    axismove2(obj, inst_array[0], rval, argc, argv);
-    axismove2(obj, inst_array[1], rval, argc, argv);
-    break;
   }
+
   return 0;
 }
 
@@ -954,7 +963,7 @@ static int
 axisrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i, type, angle, use_pivot, px, py, pos[POS_ARRAY_SIZE];
-  char *inst_array[4];
+  char *inst_array[INST_ARRAY_NUM];
 
   angle = *(int *) argv[2];
   use_pivot = * (int *) argv[3];
@@ -1218,7 +1227,7 @@ axis_change_point3(struct objlist *obj, int type, char **inst_array, int x0, int
 static int 
 axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  char *inst_array[4];
+  char *inst_array[INST_ARRAY_NUM];
   int type, point, x0, y0, len;
 
   type = get_axis_group_type(obj, inst, inst_array, FALSE);
@@ -1356,25 +1365,16 @@ axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int i, type;
-  char *inst_array[4];
+  int i;
+  char *inst_array[INST_ARRAY_NUM];
 
-  type = get_axis_group_type(obj, inst, inst_array, FALSE);
+  if (get_axis_group_type(obj, inst, inst_array, FALSE) < 0)
+    return 1;
 
-  switch (type) {
-  case 'a':
-    return axiszoom2(obj, inst, rval, argc, argv);
-    break;
-  case 'f':
-  case 's':
-    for (i = 0; i < 4; i++) {
+  for (i = 0; i < INST_ARRAY_NUM; i++) {
+    if (inst_array[i]) {
       axiszoom2(obj, inst_array[i], rval, argc, argv);
     }
-    break;
-  case 'c':
-    axiszoom2(obj, inst_array[0], rval, argc, argv);
-    axiszoom2(obj, inst_array[1], rval, argc, argv);
-    break;
   }
   return 0;
 }
@@ -2758,7 +2758,7 @@ axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i, r, anum, type;
   struct narray *array;
-  char **adata, *inst_array[4];
+  char **adata, *inst_array[INST_ARRAY_NUM];
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
@@ -2945,7 +2945,6 @@ static struct objtable axis[] = {
   {"draw",NVFUNC,NREAD|NEXEC,axisdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,axisbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,axismove,"ii",0},
-  {"move_group",NVFUNC,NREAD|NEXEC,axismove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,axisrotate,"iiii",0},
   {"change",NVFUNC,NREAD|NEXEC,axischange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,axiszoom,"iiii",0},
