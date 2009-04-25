@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-24\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-24 15:05+0900\n"
+"POT-Creation-Date: 2009-04-25 11:47+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 msgid "Save file"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:88 src/oaxis.c:103
+#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:90 src/oaxis.c:105
 msgid "none"
 msgstr ""
 
@@ -349,55 +349,55 @@ msgstr ""
 msgid "_Position ..."
 msgstr ""
 
-#: src/gtk/x11commn.c:928
+#: src/gtk/x11commn.c:940
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:939
+#: src/gtk/x11commn.c:951
 #, c-format
 msgid ""
 "A file named `%s'already exists.\n"
 "Do you want to replace it?"
 msgstr ""
 
-#: src/gtk/x11commn.c:940 src/gtk/x11menu.c:193
+#: src/gtk/x11commn.c:952 src/gtk/x11menu.c:193
 msgid "Save"
 msgstr ""
 
-#: src/gtk/x11commn.c:956 src/gtk/x11opt.c:1490
+#: src/gtk/x11commn.c:968 src/gtk/x11opt.c:1490
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1074 src/gtk/x11commn.c:1149
+#: src/gtk/x11commn.c:1086 src/gtk/x11commn.c:1161
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1261
+#: src/gtk/x11commn.c:1273
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1491
+#: src/gtk/x11commn.c:1503
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1494
+#: src/gtk/x11commn.c:1506
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1498
+#: src/gtk/x11commn.c:1510
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1501
+#: src/gtk/x11commn.c:1513
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1700
+#: src/gtk/x11commn.c:1712
 msgid "error"
 msgstr ""
 
@@ -1773,7 +1773,7 @@ msgstr ""
 msgid "top"
 msgstr ""
 
-#: src/gtk/x11merge.c:55 src/oaxis.c:90 src/oaxis.c:104 src/oaxis.c:117
+#: src/gtk/x11merge.c:55 src/oaxis.c:92 src/oaxis.c:106 src/oaxis.c:119
 msgid "left"
 msgstr ""
 
@@ -2052,7 +2052,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:5349
+#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:5352
 msgid "Drawing."
 msgstr ""
 
@@ -2118,11 +2118,11 @@ msgstr ""
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5343
+#: src/gtk/x11view.c:5346
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5350
+#: src/gtk/x11view.c:5353
 msgid "Drawing"
 msgstr ""
 
@@ -2162,7 +2162,7 @@ msgstr ""
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:104 src/oaxis.c:89
+#: src/odraw.c:104 src/oaxis.c:91
 msgid "both"
 msgstr ""
 
@@ -2182,39 +2182,39 @@ msgstr ""
 msgid "bspline_close"
 msgstr ""
 
-#: src/oaxis.c:81
+#: src/oaxis.c:83
 msgid "linear"
 msgstr ""
 
-#: src/oaxis.c:82 src/ofit.c:86
+#: src/oaxis.c:84 src/ofit.c:86
 msgid "log"
 msgstr ""
 
-#: src/oaxis.c:83
+#: src/oaxis.c:85
 msgid "inverse"
 msgstr ""
 
-#: src/oaxis.c:91 src/oaxis.c:105 src/oaxis.c:118
+#: src/oaxis.c:93 src/oaxis.c:107 src/oaxis.c:120
 msgid "right"
 msgstr ""
 
-#: src/oaxis.c:116
+#: src/oaxis.c:118
 msgid "center"
 msgstr ""
 
-#: src/oaxis.c:119
+#: src/oaxis.c:121
 msgid "point"
 msgstr ""
 
-#: src/oaxis.c:131
+#: src/oaxis.c:133
 msgid "normal"
 msgstr ""
 
-#: src/oaxis.c:132
+#: src/oaxis.c:134
 msgid "parallel"
 msgstr ""
 
-#: src/oaxis.c:133
+#: src/oaxis.c:135
 msgid "parallel2"
 msgstr ""
 

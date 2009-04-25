@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-24 15:05+0900\n"
+"POT-Creation-Date: 2009-04-25 11:47+0900\n"
 "PO-Revision-Date: 2009-04-22 17:57+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -30,7 +30,7 @@ msgstr "ファイルを開く"
 msgid "Save file"
 msgstr "別名で保存"
 
-#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:88 src/oaxis.c:103
+#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:90 src/oaxis.c:105
 msgid "none"
 msgstr "なし"
 
@@ -347,11 +347,11 @@ msgstr "フォント(_F)..."
 msgid "_Position ..."
 msgstr "位置(_P)..."
 
-#: src/gtk/x11commn.c:928
+#: src/gtk/x11commn.c:940
 msgid "Save NGP file"
 msgstr "NGP ファイルの保存"
 
-#: src/gtk/x11commn.c:939
+#: src/gtk/x11commn.c:951
 #, c-format
 msgid ""
 "A file named `%s'already exists.\n"
@@ -360,21 +360,21 @@ msgstr ""
 "'%s' というファイルは既に存在しています。\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11commn.c:940 src/gtk/x11menu.c:193
+#: src/gtk/x11commn.c:952 src/gtk/x11menu.c:193
 msgid "Save"
 msgstr "保存"
 
-#: src/gtk/x11commn.c:956 src/gtk/x11opt.c:1490
+#: src/gtk/x11commn.c:968 src/gtk/x11opt.c:1490
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1074 src/gtk/x11commn.c:1149
+#: src/gtk/x11commn.c:1086 src/gtk/x11commn.c:1161
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1261
+#: src/gtk/x11commn.c:1273
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -382,24 +382,24 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1491
+#: src/gtk/x11commn.c:1503
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1494
+#: src/gtk/x11commn.c:1506
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1498
+#: src/gtk/x11commn.c:1510
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr "~/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1501
+#: src/gtk/x11commn.c:1513
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1700
+#: src/gtk/x11commn.c:1712
 msgid "error"
 msgstr "エラー"
 
@@ -1777,7 +1777,7 @@ msgstr "実行中 `%.128s'."
 msgid "top"
 msgstr "上"
 
-#: src/gtk/x11merge.c:55 src/oaxis.c:90 src/oaxis.c:104 src/oaxis.c:117
+#: src/gtk/x11merge.c:55 src/oaxis.c:92 src/oaxis.c:106 src/oaxis.c:119
 msgid "left"
 msgstr "左"
 
@@ -2058,7 +2058,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:5349
+#: src/gtk/x11print.c:726 src/gtk/x11print.c:1004 src/gtk/x11view.c:5352
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2124,11 +2124,11 @@ msgstr "データは移動されました."
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5343
+#: src/gtk/x11view.c:5346
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5350
+#: src/gtk/x11view.c:5353
 msgid "Drawing"
 msgstr "描画中"
 
@@ -2168,7 +2168,7 @@ msgstr "終点"
 msgid "begin"
 msgstr "始点"
 
-#: src/odraw.c:104 src/oaxis.c:89
+#: src/odraw.c:104 src/oaxis.c:91
 msgid "both"
 msgstr "両方"
 
@@ -2188,39 +2188,39 @@ msgstr "Bスプライン"
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
-#: src/oaxis.c:81
+#: src/oaxis.c:83
 msgid "linear"
 msgstr "線形"
 
-#: src/oaxis.c:82 src/ofit.c:86
+#: src/oaxis.c:84 src/ofit.c:86
 msgid "log"
 msgstr "対数"
 
-#: src/oaxis.c:83
+#: src/oaxis.c:85
 msgid "inverse"
 msgstr "逆数"
 
-#: src/oaxis.c:91 src/oaxis.c:105 src/oaxis.c:118
+#: src/oaxis.c:93 src/oaxis.c:107 src/oaxis.c:120
 msgid "right"
 msgstr "右"
 
-#: src/oaxis.c:116
+#: src/oaxis.c:118
 msgid "center"
 msgstr "中央"
 
-#: src/oaxis.c:119
+#: src/oaxis.c:121
 msgid "point"
 msgstr "小数点"
 
-#: src/oaxis.c:131
+#: src/oaxis.c:133
 msgid "normal"
 msgstr "水平"
 
-#: src/oaxis.c:132
+#: src/oaxis.c:134
 msgid "parallel"
 msgstr "軸と平行"
 
-#: src/oaxis.c:133
+#: src/oaxis.c:135
 msgid "parallel2"
 msgstr "軸と平行2"
 
