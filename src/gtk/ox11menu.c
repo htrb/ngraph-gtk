@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.72 2009/04/23 02:49:54 hito Exp $
+ * $Id: ox11menu.c,v 1.73 2009/04/26 03:17:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1080,6 +1080,7 @@ errexit:
     scur = scur->next;
     memfree(sdel->name);
     memfree(sdel->script);
+    memfree(sdel->description);
     memfree(sdel->option);
     memfree(sdel);
   }

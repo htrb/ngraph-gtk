@@ -1,5 +1,8 @@
 2009-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ox11menu.c (menuinit): free "sdel->description" when
+	error is occurred.
+
 	* src/oaxis.c (check_group): add.
 	(axisuniqgroup): use "check_group()".
 
