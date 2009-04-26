@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.36 2009/04/25 06:22:59 hito Exp $
+ * $Id: oaxis.c,v 1.37 2009/04/26 01:20:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -195,36 +195,46 @@ static NHASH AxisConfigHash = NULL;
 
 static int get_axis_group_type(struct objlist *obj, char *inst, char **inst_array, int check_all);
 
+static int
+check_group(struct objlist *obj, char type, int nextp, char **inst, int *num)
+{
+  int n;
+  char *group, *endptr;
+
+  _getobj(obj, "group", *inst, &group);
+  if (group && group[0] == type) {
+    n = strtol(group + 2, &endptr, 10);
+    if (*num == n)
+      return 1;
+  }
+  *inst = * (char **) (*inst + nextp);
+  return 0;
+}
+
 static int 
 axisuniqgroup(struct objlist *obj,char type)
 {
   int num;
-  char *inst,*group,*endptr;
+  char *inst;
   int nextp;
 
-  nextp=obj->nextp;
-  num=0;
+  nextp = obj->nextp;
+  num = 0;
   do {
     num++;
-    inst=obj->root;
-    while (inst!=NULL) {
-      _getobj(obj,"group",inst,&group);
-      if ((group!=NULL) && (group[0]==type)) {
-        if (num==strtol(group+2,&endptr,10)) break;
-      }
-      inst=*(char **)(inst+nextp);
+    inst = obj->root;
+    while (inst) {
+      if (check_group(obj, type, nextp, &inst, &num))
+	break;
     }
-    if (inst==NULL) {
-      inst=obj->root2;
-      while (inst!=NULL) {
-        _getobj(obj,"group",inst,&group);
-        if ((group!=NULL) && (group[0]==type)) {
-          if (num==strtol(group+2,&endptr,10)) break;
-        }
-        inst=*(char **)(inst+nextp);
+    if (inst == NULL) {
+      inst = obj->root2;
+      while (inst) {
+	if (check_group(obj, type, nextp, &inst, &num))
+	  break;
       }
     }
-  } while (inst!=NULL);
+  } while (inst);
   return num;
 }
 

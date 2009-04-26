@@ -1,3 +1,8 @@
+2009-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (check_group): add.
+	(axisuniqgroup): use "check_group()".
+
 2009-04-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (Focus): check if "man" is valid id.
