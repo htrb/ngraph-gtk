@@ -88,7 +88,7 @@
 	"ToggleRuler", "ToggleScrollbar", "ToggleCToobar", "TogglePToobar"
 	and "ToggleCrossGauge".
 	(toggle_view_cb): add.
-	(create_windowmenu): create menu some items to show and hide
+	(create_windowmenu): create some menu items to show and hide
 	widgets.
 	(create_windowmenu): now the title of this menu is "View".
 	(createmenu): reorder menus.
