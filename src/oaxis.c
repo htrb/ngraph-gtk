@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.39 2009/04/26 14:52:13 hito Exp $
+ * $Id: oaxis.c,v 1.40 2009/04/26 23:14:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -206,7 +206,7 @@ check_group(struct objlist *obj, char type, char *inst, int num)
     if (group && group[0] == type) {
       n = strtol(group + 2, &endptr, 10);
       if (num == n)
-	return inst;
+	break;
     }
     inst = * (char **) (inst + obj->nextp);
   }
