@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.32 2009/04/22 01:54:50 hito Exp $
+ * $Id: object.c,v 1.33 2009/04/26 02:04:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1047,6 +1047,7 @@ addobject(char *name,char *alias,char *parentname,char *ver,
 
   if (objprev == NULL) {
     objroot=objnew;
+    objnew->next = NULL;
   } else if (objprev->next) {
     objnew->next = objprev->next;
     objprev->next = objnew;

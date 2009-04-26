@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.150 2009/04/25 06:23:00 hito Exp $
+ * $Id: x11view.c,v 1.151 2009/04/26 02:04:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4369,9 +4369,6 @@ check_focused_obj_type(struct Viewer *d, int *type)
 
   if (legend == NULL)
     legend = chkobject("legend");
-
-  if (num < 1)
-    return num;
 
   t = 0;
   for (i = 0; i < num; i++) {

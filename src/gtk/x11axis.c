@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.55 2009/04/25 06:23:00 hito Exp $
+ * $Id: x11axis.c,v 1.56 2009/04/26 02:04:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -53,7 +53,7 @@
 static n_list_store Alist[] = {
   {"",         G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",    FALSE},
   {"#",        G_TYPE_INT,     TRUE, FALSE, "id",        FALSE},
-  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, "name",      FALSE},
+  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, "group",      FALSE},
   {N_("min"),  G_TYPE_STRING,  TRUE, TRUE,  "min",       FALSE},
   {N_("max"),  G_TYPE_STRING,  TRUE, TRUE,  "max",       FALSE},
   {N_("inc"),  G_TYPE_STRING,  TRUE, TRUE,  "inc",       FALSE},
@@ -2726,9 +2726,9 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
   char buf[256];
 
   for (i = 0; i < AXIS_WIN_COL_NUM; i++) {
-    if (strcmp(Alist[i].name, "name") == 0) {
+    if (strcmp(Alist[i].name, "group") == 0) {
       char *name;
-      getobj(d->obj, "name", row, 0, NULL, &name);
+      getobj(d->obj, "group", row, 0, NULL, &name);
       if (name) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, name);
       } else {

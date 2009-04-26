@@ -10,9 +10,6 @@
 	* src/gtk/x11commn.c (AxisDel): call "delobj()" after check all
 	instances.
 
-	* src/gtk/x11axis.c (axis_list_set_val): display "name" field
-	instead of "group".
-
 	* src/odraw.c (clear_bbox): check if "inst" is NULL.
 
 	* src/oaxis.c (INST_ARRAY_NUM): add.

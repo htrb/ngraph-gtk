@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.37 2009/04/26 01:20:12 hito Exp $
+ * $Id: oaxis.c,v 1.38 2009/04/26 02:04:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -341,7 +341,7 @@ axisdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   get_axis_group_type(obj, inst, inst_array, TRUE);
   for (i = 0; i < INST_ARRAY_NUM; i++) {
     if (inst_array[i] && inst_array[i] != inst) {
-      char buf[64], *group;
+      char buf[64], *group, *group2;
       int gnum;
 
       gnum = axisuniqgroup(obj,'a');
@@ -350,6 +350,8 @@ axisdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if (group == NULL)
 	break;
 
+      _getobj(obj, "group", inst_array[i], &group2);
+      memfree(group2);
       if (_putobj(obj, "group", inst_array[i], group))
 	break;
     }
@@ -2428,31 +2430,29 @@ axistight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
   return 0;
 }
 
-#define BUF_SIZE 16
+#define BUF_SIZE 64
 static void
 set_group(struct objlist *obj, int gnum, int id, char axis, char type)
 {
-  char *group,*group2;
-  char *inst2;
+  char *group, *group2, *inst2, buf[BUF_SIZE];
 
   inst2 = chkobjinst(obj, id);
   if (inst2 == NULL) {
     return;
   }
 
-  group = memalloc(BUF_SIZE);
+  snprintf(buf, sizeof(buf), "%c%c%d", type, axis, gnum);
+  group = nstrdup(buf);
   if (group) {
     _getobj(obj, "group", inst2, &group2);
     memfree(group2);
-    snprintf(group, BUF_SIZE, "%c%c%d", type, axis, gnum);
     _putobj(obj, "group", inst2, group);
   }
 
-  group = memalloc(BUF_SIZE);
+  group = nstrdup(buf);
   if (group) {
     _getobj(obj, "name", inst2, &group2);
     memfree(group2);
-    snprintf(group, BUF_SIZE, "%c%c%d", type, axis, gnum);
     _putobj(obj, "name", inst2, group);
   }
 }
@@ -2607,19 +2607,19 @@ axis_default(struct objlist *obj, int id, int *oid, int dir,
 static void
 axis_default_set(struct objlist *obj, int id, int oid, char *field, char *conf)
 {
-  char *inst2, *ref, *ref2;
+  char *inst2, *ref, *ref2, buf[BUF_SIZE];
 
   inst2 = chkobjinst(obj, id);
   if (inst2 == NULL)
     return;
 
-  ref = memalloc(BUF_SIZE);
+  snprintf(buf, sizeof(buf), "axis:^%d", oid);
+  ref = nstrdup(buf);
   if (ref == NULL)
     return;
 
   _getobj(obj, field, inst2, &ref2);
   memfree(ref2);
-  snprintf(ref, BUF_SIZE, "axis:^%d", oid);
   _putobj(obj, field, inst2, ref);
 
   axisloadconfig(obj, inst2, conf);
