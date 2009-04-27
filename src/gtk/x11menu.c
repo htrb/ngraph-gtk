@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.94 2009/04/27 09:36:43 hito Exp $
+ * $Id: x11menu.c,v 1.93 2009/04/27 09:32:49 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1122,13 +1122,10 @@ create_legendsubmenu(GtkWidget *parent, char *label, legend_cb_func func, GtkAcc
   gtk_menu_set_accel_group (GTK_MENU(submenu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu), submenu);
 
-  if (label[0] == '_')
-    label++;
-
-  snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Property", label);
+  snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Property", label + 1);
   create_menu_item(submenu, GTK_STOCK_PROPERTIES, TRUE, buf, 0, 0, func, MenuIdLegendUpdate);
 
-  snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Delete", label);
+  snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Delete", label + 1);
   create_menu_item(submenu, GTK_STOCK_DELETE, TRUE, buf, 0, 0, func, MenuIdLegendDel);
 
   return menu;
