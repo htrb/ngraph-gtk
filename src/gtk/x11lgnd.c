@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.45 2009/04/27 06:51:03 hito Exp $
+ * $Id: x11lgnd.c,v 1.46 2009/04/27 09:15:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -726,17 +726,17 @@ LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 5);
     points_setup(d, hbox);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
 
     hbox = gtk_hbox_new(FALSE, 5);
     style_setup(d, hbox);
     width_setup(d,  hbox);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
 
     hbox = gtk_hbox_new(FALSE, 5);
     miter_setup(d, hbox);
     join_setup(d, hbox);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
 
     hbox = gtk_hbox_new(FALSE, 5);
     color_setup(d, hbox);
@@ -744,7 +744,7 @@ LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     item_setup(hbox, w, _("_Fill:"), FALSE);
     d->fill_rule = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 2);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 2);
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 2);
 
     d->prop_cb = LegendLineCB;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.57 2009/04/27 02:57:51 hito Exp $
+ * $Id: x11axis.c,v 1.58 2009/04/27 09:15:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1700,21 +1700,23 @@ GaugeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
     frame = gtk_frame_new(NULL);
-    hbox = gtk_hbox_new(FALSE, 4);
+    vbox = gtk_vbox_new(FALSE, 4);
 
     w = combo_box_create();
-    item_setup(hbox, w, _("_Gauge:"), FALSE);
+    item_setup(vbox, w, _("_Gauge:"), FALSE);
     d->gauge = w;
 
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Min:"), TRUE);
+    w = create_text_entry(FALSE, TRUE);
+    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 3, -1);
+    item_setup(vbox, w, _("_Min:"), TRUE);
     d->min = w;
 
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Max:"), TRUE);
+    w = create_text_entry(FALSE, TRUE);
+    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 3, -1);
+    item_setup(vbox, w, _("_Max:"), TRUE);
     d->max = w;
 
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
 

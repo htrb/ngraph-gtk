@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-04-27 17:29+0900\n"
+"POT-Creation-Date: 2009-04-27 18:18+0900\n"
 "PO-Revision-Date: 2009-04-22 17:57+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -89,7 +89,7 @@ msgstr "表示(_S)"
 msgid "_Style %d:"
 msgstr "線種 %d(_S):"
 
-#: src/gtk/x11axis.c:245 src/gtk/x11axis.c:1738
+#: src/gtk/x11axis.c:245 src/gtk/x11axis.c:1740
 #, c-format
 msgid "_Width %d:"
 msgstr "線幅 %d(_W):"
@@ -108,7 +108,7 @@ msgid "Axis (_Y):"
 msgstr "_Y 軸:"
 
 #: src/gtk/x11axis.c:305 src/gtk/x11axis.c:979 src/gtk/x11axis.c:1593
-#: src/gtk/x11axis.c:1730 src/gtk/x11lgnd.c:627 src/gtk/x11lgndx.c:401
+#: src/gtk/x11axis.c:1732 src/gtk/x11lgnd.c:627 src/gtk/x11lgndx.c:401
 msgid "_Color:"
 msgstr "色(_C):"
 
@@ -285,65 +285,65 @@ msgstr "邦文フォント(_J):"
 msgid "_Gauge:"
 msgstr "位置(_G):"
 
-#: src/gtk/x11axis.c:1710 src/gtk/x11axis.c:2087 src/gtk/x11file.c:1185
+#: src/gtk/x11axis.c:1711 src/gtk/x11axis.c:2089 src/gtk/x11file.c:1185
 msgid "_Min:"
 msgstr "最小値(_M):"
 
-#: src/gtk/x11axis.c:1714 src/gtk/x11axis.c:2093 src/gtk/x11file.c:1189
+#: src/gtk/x11axis.c:1716 src/gtk/x11axis.c:2095 src/gtk/x11file.c:1189
 msgid "_Max:"
 msgstr "最大値(_M):"
 
-#: src/gtk/x11axis.c:1726
+#: src/gtk/x11axis.c:1728
 msgid "_Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1743
+#: src/gtk/x11axis.c:1745
 #, c-format
 msgid "_Length %d:"
 msgstr "長さ %d(_L):"
 
-#: src/gtk/x11axis.c:2073
+#: src/gtk/x11axis.c:2075
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
 
-#: src/gtk/x11axis.c:2099
+#: src/gtk/x11axis.c:2101
 msgid "_Inc:"
 msgstr "増分(_I):"
 
-#: src/gtk/x11axis.c:2105
+#: src/gtk/x11axis.c:2107
 msgid "_Scale:"
 msgstr "スケール法(_S):"
 
-#: src/gtk/x11axis.c:2122
+#: src/gtk/x11axis.c:2124
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: src/gtk/x11axis.c:2128 src/gtk/x11file.c:1194 src/gtk/x11print.c:296
+#: src/gtk/x11axis.c:2130 src/gtk/x11file.c:1194 src/gtk/x11print.c:296
 msgid "_Div:"
 msgstr "分割数(_D):"
 
-#: src/gtk/x11axis.c:2132
+#: src/gtk/x11axis.c:2134
 msgid "_Ref:"
 msgstr "参照軸(_R):"
 
-#: src/gtk/x11axis.c:2143
+#: src/gtk/x11axis.c:2145
 msgid "_Baseline ..."
 msgstr "軸基線(_B)..."
 
-#: src/gtk/x11axis.c:2147
+#: src/gtk/x11axis.c:2149
 msgid "_Gauge ..."
 msgstr "目盛線(_G)..."
 
-#: src/gtk/x11axis.c:2151
+#: src/gtk/x11axis.c:2153
 msgid "_Numbering ..."
 msgstr "目盛数字(_N)..."
 
-#: src/gtk/x11axis.c:2155
+#: src/gtk/x11axis.c:2157
 msgid "_Font ..."
 msgstr "フォント(_F)..."
 
-#: src/gtk/x11axis.c:2159
+#: src/gtk/x11axis.c:2161
 msgid "_Position ..."
 msgstr "位置(_P)..."
 
