@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.35 2009/04/25 06:23:00 hito Exp $
+ * $Id: x11commn.c,v 1.36 2009/04/27 07:37:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -473,7 +473,7 @@ AxisMove(int id1, int id2)
 }
 
 static void
-AxisNameToGroup(void)
+AxisNameToGroup(void)		/* this function may exist for compatibility with older version. */
 {
   int idx, idy, idu, idr;
   int findX, findY, findU, findR, graphtype;
