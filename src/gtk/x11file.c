@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.91 2009/04/24 01:24:35 hito Exp $
+ * $Id: x11file.c,v 1.92 2009/04/27 02:57:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -80,7 +80,11 @@ static n_list_store Flist[] = {
 
 #define FILE_WIN_COL_NUM (sizeof(Flist)/sizeof(*Flist))
 #define FILE_WIN_COL_OID (FILE_WIN_COL_NUM - 1)
-#define FILE_WIN_COL_ID 1
+#define FILE_WIN_COL_HIDDEN 0
+#define FILE_WIN_COL_ID     1
+#define FILE_WIN_COL_FILE   2
+#define FILE_WIN_COL_X      3
+#define FILE_WIN_COL_Y      4
 #define FILE_WIN_COL_X_AXIS 5
 #define FILE_WIN_COL_Y_AXIS 6
 #define FILE_WIN_COL_TYPE   7
@@ -4045,9 +4049,11 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
   char buf[256], *color;
   struct narray *mask, *move;
   char *file, *bfile, *axis;
+  GdkPixbuf *pixbuf = NULL;
 
   for (i = 0; i < FILE_WIN_COL_NUM; i++) {
-    if (strcmp(Flist[i].name, "file") == 0) {
+    switch (i) {
+    case FILE_WIN_COL_FILE:
       getobj(d->obj, "mask", row, 0, NULL, &mask);
       getobj(d->obj, "move_data", row, 0, NULL, &move);
       getobj(d->obj, "file", row, 0, NULL, &file);
@@ -4064,31 +4070,36 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
       }
       list_store_set_string(GTK_WIDGET(d->text), iter, FILE_WIN_COL_NUM, color);
-    } else if (strcmp(Flist[i].name, "type") == 0) {
-      GdkPixbuf *pixbuf = NULL;
-
+      break;
+    case FILE_WIN_COL_TYPE:
       pixbuf = draw_type_pixbuf(d->obj, row);
       if (pixbuf) {
 	list_store_set_pixbuf(GTK_WIDGET(d->text), iter, i, pixbuf);
 	g_object_unref(pixbuf);
       }
-    } else if (strncmp(Flist[i].name, "axis_", 5) == 0) {
+      break;
+    case FILE_WIN_COL_X_AXIS:
+    case FILE_WIN_COL_Y_AXIS:
       axis = get_axis_obj_str(d->obj, row, Flist[i].name);
       if (axis) {
 	len = snprintf(buf, sizeof(buf), "%3s", axis);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
 	free(axis);
       }
-    } else if (strcmp(Flist[i].name, "hidden") == 0) {
+      break;
+    case FILE_WIN_COL_HIDDEN:
       getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Flist[i].type, &cx);
-    } else if (Flist[i].type == G_TYPE_DOUBLE) {
-      getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
-      list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
-    } else {
-      getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
-      list_store_set_val(GTK_WIDGET(d->text), iter, i, Flist[i].type, &cx);
+      break;
+    default:
+      if (Flist[i].type == G_TYPE_DOUBLE) {
+	getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
+	list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
+      } else {
+	getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
+	list_store_set_val(GTK_WIDGET(d->text), iter, i, Flist[i].type, &cx);
+      }
     }
   }
 }

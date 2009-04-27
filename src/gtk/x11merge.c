@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.24 2009/04/01 10:35:33 hito Exp $
+ * $Id: x11merge.c,v 1.25 2009/04/27 02:57:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,7 +59,9 @@ static n_list_store Mlist[] = {
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))
 #define MERG_WIN_COL_OID (MERG_WIN_COL_NUM - 1)
-#define MERG_WIN_COL_ID 1
+#define MERG_WIN_COL_HIDDEN 0
+#define MERG_WIN_COL_ID     1
+#define MERG_WIN_COL_FILE   2
 
 static void MergeWinMergeOpen(GtkMenuItem *w, gpointer client_data);
 static gboolean MergeWinExpose(GtkWidget *w, GdkEvent *event, gpointer client_data);
@@ -349,7 +351,8 @@ merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
   char *file, *bfile;
 
   for (i = 0; i < MERG_WIN_COL_NUM; i++) {
-    if (strcmp(Mlist[i].name, "file") == 0) {
+    switch (i) {
+    case MERG_WIN_COL_FILE:
       getobj(d->obj, "file", row, 0, NULL, &file);
       bfile = getbasename(file);
       if (bfile != NULL) {
@@ -358,16 +361,20 @@ merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
       }
-    } else if (strcmp(Mlist[i].name, "hidden") == 0) {
+      break;
+    case MERG_WIN_COL_HIDDEN:
       getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Mlist[i].type, &cx);
-    } else if (Mlist[i].type == G_TYPE_DOUBLE) {
-      getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
-      list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
-    } else {
-      getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
-      list_store_set_val(GTK_WIDGET(d->text), iter, i, Mlist[i].type, &cx);
+      break;
+    default:
+      if (Mlist[i].type == G_TYPE_DOUBLE) {
+	getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
+	list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
+      } else {
+	getobj(d->obj, Mlist[i].name, row, 0, NULL, &cx);
+	list_store_set_val(GTK_WIDGET(d->text), iter, i, Mlist[i].type, &cx);
+      }
     }
   }
 }

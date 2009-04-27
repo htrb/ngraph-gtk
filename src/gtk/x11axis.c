@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.56 2009/04/26 02:04:36 hito Exp $
+ * $Id: x11axis.c,v 1.57 2009/04/27 02:57:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -67,10 +67,15 @@ static n_list_store Alist[] = {
 
 #define AXIS_WIN_COL_NUM (sizeof(Alist)/sizeof(*Alist))
 #define AXIS_WIN_COL_OID (AXIS_WIN_COL_NUM - 1)
-#define AXIS_WIN_COL_ID 1
-#define AXIS_WIN_COL_TYPE 6
-#define AXIS_WIN_COL_X 7
-#define AXIS_WIN_COL_Y 8
+#define AXIS_WIN_COL_HIDDEN 0
+#define AXIS_WIN_COL_ID     1
+#define AXIS_WIN_COL_NAME   2
+#define AXIS_WIN_COL_MIN    3
+#define AXIS_WIN_COL_MAX    4
+#define AXIS_WIN_COL_INC    5
+#define AXIS_WIN_COL_TYPE   6
+#define AXIS_WIN_COL_X      7
+#define AXIS_WIN_COL_Y      8
 
 static void axiswin_scale_clear(GtkMenuItem *item, gpointer user_data);
 static void axis_delete_popup_func(GtkMenuItem *w, gpointer client_data);
@@ -2723,20 +2728,22 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
   int cx, len;
   unsigned int i;
   double min, max, inc;
-  char buf[256];
+  char buf[256], *valstr;
 
   for (i = 0; i < AXIS_WIN_COL_NUM; i++) {
-    if (strcmp(Alist[i].name, "group") == 0) {
-      char *name;
-      getobj(d->obj, "group", row, 0, NULL, &name);
-      if (name) {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, name);
+    switch (i) {
+    case AXIS_WIN_COL_NAME:
+      getobj(d->obj, "group", row, 0, NULL, &valstr);
+      if (valstr) {
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, valstr);
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, ".....");
       }
-    } else if (strcmp(Alist[i].name, "min") == 0) {
+      break;
+    case AXIS_WIN_COL_MIN:
       getobj(d->obj, "min", row, 0, NULL, &min);
-    } else if (strcmp(Alist[i].name, "max") == 0) {
+      break;
+    case AXIS_WIN_COL_MAX:
       getobj(d->obj, "max", row, 0, NULL, &max);
       if ((min == 0) && (max == 0)) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i - 1, "---------");
@@ -2748,12 +2755,13 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 	len = snprintf(buf, sizeof(buf), "%+.2e", max);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
       }
-    } else if (strcmp(Alist[i].name, "type") == 0) {
-      char *valstr;
+      break;
+    case AXIS_WIN_COL_TYPE:
       sgetobjfield(d->obj, row, "type", NULL, &valstr, FALSE, FALSE, FALSE);
       list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
       memfree(valstr);
-    } else if (strcmp(Alist[i].name, "inc") == 0) {
+      break;
+    case AXIS_WIN_COL_INC:
       getobj(d->obj, "inc", row, 0, NULL, &inc);
       if (inc == 0) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "---------");
@@ -2761,16 +2769,20 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 	len = snprintf(buf, sizeof(buf), "%+.2e", inc);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
       }
-    } else if (strcmp(Alist[i].name, "hidden") == 0) {
+      break;
+    case AXIS_WIN_COL_HIDDEN:
       getobj(d->obj, Alist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Alist[i].type, &cx);
-    } else if (Alist[i].type == G_TYPE_DOUBLE) {
-      getobj(d->obj, Alist[i].name, row, 0, NULL, &cx);
-      list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
-    } else {
-      getobj(d->obj, Alist[i].name, row, 0, NULL, &cx);
-      list_store_set_val(GTK_WIDGET(d->text), iter, i, Alist[i].type, &cx);
+      break;
+    default:
+      if (Alist[i].type == G_TYPE_DOUBLE) {
+	getobj(d->obj, Alist[i].name, row, 0, NULL, &cx);
+	list_store_set_double(GTK_WIDGET(d->text), iter, i, cx / 100.0);
+      } else {
+	getobj(d->obj, Alist[i].name, row, 0, NULL, &cx);
+	list_store_set_val(GTK_WIDGET(d->text), iter, i, Alist[i].type, &cx);
+      }
     }
   }
 }

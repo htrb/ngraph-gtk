@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.43 2009/04/08 09:41:33 hito Exp $
+ * $Id: x11lgnd.c,v 1.44 2009/04/27 02:57:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -69,8 +69,12 @@ static n_list_store Llist[] = {
 
 #define LEGEND_WIN_COL_NUM (sizeof(Llist)/sizeof(*Llist))
 #define LEGEND_WIN_COL_OID (LEGEND_WIN_COL_NUM - 1)
-#define LEGEND_WIN_COL_ID 1
-#define LEGEND_WIN_COL_NAME 2
+#define LEGEND_WIN_COL_HIDDEN 0
+#define LEGEND_WIN_COL_ID     1
+#define LEGEND_WIN_COL_NAME   2
+#define LEGEND_WIN_COL_PROP   3
+#define LEGEND_WIN_COL_X      4
+#define LEGEND_WIN_COL_Y      5
 
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),      G_CALLBACK(tree_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -2013,13 +2017,16 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
   struct narray *array;
 
   for (i = 0; i < LEGEND_WIN_COL_NUM; i++) {
-    if (strcmp(Llist[i].name, "object") == 0) {
+    switch (i) {
+    case LEGEND_WIN_COL_NAME:
       tree_store_set_string(GTK_WIDGET(d->text), iter, i, legendlist[type]);
-    } else if (strcmp(Llist[i].name, "hidden") == 0) {
+      break;
+    case LEGEND_WIN_COL_HIDDEN:
       getobj(d->obj[type], Llist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
       tree_store_set_boolean(GTK_WIDGET(d->text), iter, i, cx);
-    } else if (strcmp(Llist[i].name, "property") == 0) {
+      break;
+    case LEGEND_WIN_COL_PROP:
       ex = NULL;
       switch (type) {
       case LegendTypeLine:
@@ -2084,11 +2091,14 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
       if (type != LegendTypeText) {
 	tree_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
       }
-    } else if (strcmp(Llist[i].name, "x") == 0) {
+      break;
+    case LEGEND_WIN_COL_X:
       tree_store_set_double(GTK_WIDGET(d->text), iter, i, x0 / 100.0);
-    } else if (strcmp(Llist[i].name, "y") == 0) {
+      break;
+    case LEGEND_WIN_COL_Y:
       tree_store_set_double(GTK_WIDGET(d->text), iter, i, y0 / 100.0);
-    } else {
+      break;
+    default:
       getobj(d->obj[type], Llist[i].name, row, 0, NULL, &cx);
       tree_store_set_val(GTK_WIDGET(d->text), iter, i, Llist[i].type, &cx);
     }
