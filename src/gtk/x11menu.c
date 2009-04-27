@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.91 2009/04/24 07:20:33 hito Exp $
+ * $Id: x11menu.c,v 1.92 2009/04/27 08:13:09 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1381,22 +1381,22 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
 
-  item = create_toggle_menu_item(menu, "_Data Window", "<Ngraph>/Window/Data Window", GDK_F3, 0, G_CALLBACK(toggle_win_cb), CmFileWindow);
+  item = create_toggle_menu_item(menu, "_Data Window", "<Ngraph>/View/Data Window", GDK_F3, 0, G_CALLBACK(toggle_win_cb), CmFileWindow);
   ShowFileWin = item;
 
-  item = create_toggle_menu_item(menu, "_Axis Window", "<Ngraph>/Window/Axis Window", GDK_F4, 0, G_CALLBACK(toggle_win_cb), CmAxisWindow);
+  item = create_toggle_menu_item(menu, "_Axis Window", "<Ngraph>/View/Axis Window", GDK_F4, 0, G_CALLBACK(toggle_win_cb), CmAxisWindow);
   ShowAxisWin = item;
 
-  item = create_toggle_menu_item(menu, "_Legend Window", "<Ngraph>/Window/Legend Window", GDK_F5, 0, G_CALLBACK(toggle_win_cb), CmLegendWindow);
+  item = create_toggle_menu_item(menu, "_Legend Window", "<Ngraph>/View/Legend Window", GDK_F5, 0, G_CALLBACK(toggle_win_cb), CmLegendWindow);
   ShowLegendWin = item;
 
-  item = create_toggle_menu_item(menu, "_Merge Window", "<Ngraph>/Window/Merge Window", GDK_F6, 0, G_CALLBACK(toggle_win_cb), CmMergeWindow);
+  item = create_toggle_menu_item(menu, "_Merge Window", "<Ngraph>/View/Merge Window", GDK_F6, 0, G_CALLBACK(toggle_win_cb), CmMergeWindow);
   ShowMergeWin = item;
 
-  item = create_toggle_menu_item(menu, "_Coordinate Window", "<Ngraph>/Window/Coordinate Window", GDK_F7, 0, G_CALLBACK(toggle_win_cb), CmCoordinateWindow);
+  item = create_toggle_menu_item(menu, "_Coordinate Window", "<Ngraph>/View/Coordinate Window", GDK_F7, 0, G_CALLBACK(toggle_win_cb), CmCoordinateWindow);
   ShowCoodinateWin = item;
 
-  item = create_toggle_menu_item(menu, "_Information Window", "<Ngraph>/Window/Information Window", GDK_F8, 0, G_CALLBACK(toggle_win_cb), CmInformationWindow);
+  item = create_toggle_menu_item(menu, "_Information Window", "<Ngraph>/View/Information Window", GDK_F8, 0, G_CALLBACK(toggle_win_cb), CmInformationWindow);
   ShowInfoWin = item;
 
   item = gtk_separator_menu_item_new();
@@ -1409,27 +1409,27 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   item = gtk_separator_menu_item_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
-  item = create_toggle_menu_item(menu, _("_Status bar"), "<Ngraph>/Window/Status bar",
+  item = create_toggle_menu_item(menu, _("_Status bar"), "<Ngraph>/View/Status bar",
 				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleStatusBar));
   ToggleStatusBar = item;
 
-  item = create_toggle_menu_item(menu, _("_Ruler"), "<Ngraph>/Window/Ruler",
+  item = create_toggle_menu_item(menu, _("_Ruler"), "<Ngraph>/View/Ruler",
 				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleRuler));
   ToggleRuler = item;
 
-  item = create_toggle_menu_item(menu, _("_Scrollbar"), "<Ngraph>/Window/Scrollbar",
+  item = create_toggle_menu_item(menu, _("_Scrollbar"), "<Ngraph>/View/Scrollbar",
 				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleScrollbar));
   ToggleScrollbar = item;
 
-  item = create_toggle_menu_item(menu, _("_Command toolbar"), "<Ngraph>/Window/Command toolbar",
+  item = create_toggle_menu_item(menu, _("_Command toolbar"), "<Ngraph>/View/Command toolbar",
 				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleCToolbar));
   ToggleCToobar = item;
 
-  item = create_toggle_menu_item(menu, _("_Toolbox"), "<Ngraph>/Window/Toolbox",
+  item = create_toggle_menu_item(menu, _("_Toolbox"), "<Ngraph>/View/Toolbox",
 				 0, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdTogglePToolbar));
   TogglePToobar = item;
 
-  item = create_toggle_menu_item(menu, _("cross _Gauge"), "<Ngraph>/Window/cross Gauge",
+  item = create_toggle_menu_item(menu, _("cross _Gauge"), "<Ngraph>/View/cross Gauge",
 				 GDK_plus, 0, G_CALLBACK(toggle_view_cb), GINT_TO_POINTER(MenuIdToggleCrossGauge));
   ToggleCrossGauge = item;
 
@@ -2209,6 +2209,10 @@ application(char *file)
   set_widget_visibility(Menulocal.show_cross);
 
   AppMainLoop();
+
+#if 0
+  gtk_accel_map_save(KEYMAP_FILE);
+#endif
 
   act.sa_handler = SIG_DFL;
   act.sa_flags = 0;

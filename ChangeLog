@@ -1,5 +1,8 @@
 2009-04-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (create_windowmenu): chang accel path of
+	"View" menu.
+
 	* src/gtk/gtk_subwin.c (numeric_cb, string_cb): do nothing when
 	"d->type" is "TypeLegendWin".
 
