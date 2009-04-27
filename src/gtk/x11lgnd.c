@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.44 2009/04/27 02:57:51 hito Exp $
+ * $Id: x11lgnd.c,v 1.45 2009/04/27 06:51:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -62,8 +62,8 @@ static n_list_store Llist[] = {
   {"#",            G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
   {N_("object"),   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
   {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property", FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-  {"x",            G_TYPE_DOUBLE,  TRUE, FALSE, "x",        FALSE},
-  {"y",            G_TYPE_DOUBLE,  TRUE, FALSE, "y",        FALSE},
+  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
 };
 
@@ -2238,6 +2238,112 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   }
 }
 
+enum CHANGE_DIR {
+  CHANGE_DIR_X,
+  CHANGE_DIR_Y,
+};
+
+static void
+pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, enum CHANGE_DIR dir)
+{
+  struct LegendWin *d;
+  int depth, col, *ary, inc;
+  GtkTreePath *tree_path;
+  double prev, val;
+  char *tmp, *ptr;
+
+  menu_lock(FALSE);
+
+  if (str == NULL || path == NULL)
+    return;
+
+  switch (dir) {
+  case CHANGE_DIR_X:
+    col = LEGEND_WIN_COL_X;
+    break;
+  case CHANGE_DIR_Y:
+    col = LEGEND_WIN_COL_Y;
+    break;
+  default:
+    return;
+  }
+
+  d = (struct LegendWin *) user_data;
+
+  tree_path = gtk_tree_path_new_from_string(path);
+  if (tree_path == NULL)
+    return;
+
+  depth = gtk_tree_path_get_depth(tree_path);
+  if (depth < 2) {
+    gtk_tree_path_free(tree_path);
+    return;
+  }
+
+  ary = gtk_tree_path_get_indices(tree_path);
+
+  val = strtod(str, &ptr);
+  if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
+    gtk_tree_path_free(tree_path);
+    return;
+  }
+
+  tmp = tree_store_path_get_string(GTK_WIDGET(d->text), tree_path, col);
+  if (tmp == NULL) {
+    gtk_tree_path_free(tree_path);
+    return;
+  }
+
+  prev = strtod(tmp, &ptr);
+  if (prev != prev || prev == HUGE_VAL || prev == - HUGE_VAL || ptr[0] != '\0') {
+    gtk_tree_path_free(tree_path);
+    g_free(tmp);
+    return;
+  }
+
+  g_free(tmp);
+
+  if (ary[0] >= 0 && ary[0] < LEGENDNUM && ary[1] >= 0 && ary[1] <= d->legend[ary[0]]) {
+    int x, y;
+    char *argv[3];
+
+    inc = nround((val - prev) * 100);
+    switch (dir) {
+    case CHANGE_DIR_X:
+      x = inc;
+      y = 0;
+      break;
+    case CHANGE_DIR_Y:
+      x = 0;
+      y = inc;
+      break;
+    }
+    argv[0] = (char *) &x;
+    argv[1] = (char *) &y;
+    argv[2] = NULL;
+
+    if (inc != 0 ) {
+      exeobj(d->obj[ary[0]], "move", ary[1], 2, argv);
+      LegendWinUpdate(FALSE);
+    }
+  }
+
+  gtk_tree_path_free(tree_path);
+  return;
+}
+
+static void
+pos_x_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  pos_edited(cell_renderer, path, str, user_data, CHANGE_DIR_X);
+}
+
+static void
+pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  pos_edited(cell_renderer, path, str, user_data, CHANGE_DIR_Y);
+}
+
 void
 CmLegendWindow(GtkWidget *w, gpointer client_data)
 {
@@ -2275,6 +2381,9 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
     legend_list_build(d);
     gtk_tree_view_expand_all(GTK_TREE_VIEW(d->text));
     gtk_widget_show_all(dlg);
+
+    set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_X, Llist, G_CALLBACK(pos_x_edited));
+    set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_Y, Llist, G_CALLBACK(pos_y_edited));
 
     sub_window_show((struct SubWin *) d);
     sub_window_set_geometry((struct SubWin *)d, TRUE);

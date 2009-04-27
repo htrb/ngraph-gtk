@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.43 2009/04/24 07:20:33 hito Exp $
+ * $Id: gtk_subwin.c,v 1.44 2009/04/27 06:51:03 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -61,7 +61,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   switch (list->type) {
   case G_TYPE_STRING:
-    if (GTK_IS_ENTRY(editable)) {
+    if (d->type != TypeLegendWin && GTK_IS_ENTRY(editable)) {
       int sel;
 
       sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -145,7 +145,7 @@ toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
     m = ary[1];
     gtk_tree_path_free(gpth);
 
-    if (m >= 0 && m <= ld->legend[n]) {
+    if (n >= 0 && n < LEGENDNUM && m >= 0 && m <= ld->legend[n]) {
       hide = gtk_cell_renderer_toggle_get_active(cell_renderer);
       putobj(ld->obj[n], "hidden", m, &hide);
       hide = ! hide;
@@ -168,6 +168,9 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   menu_lock(FALSE);
 
   d = (struct SubWin *) user_data;
+
+  if (d->type == TypeLegendWin)
+    return;
 
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
@@ -201,6 +204,9 @@ string_cb(GtkCellRenderer *renderer, gchar *path, gchar *str, gpointer user_data
   menu_lock(FALSE);
 
   d = (struct SubWin *) user_data;
+
+  if (d->type == TypeLegendWin)
+    return;
 
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
@@ -991,7 +997,7 @@ tree_copy(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     id = newobj(d->obj[n]);
     if (id >= 0) {
       obj_copy(d->obj[n], id, m);
@@ -1015,7 +1021,7 @@ tree_delete(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     delobj(d->obj[n], m);
     d->legend[n]--;
     update = FALSE;
@@ -1046,7 +1052,7 @@ tree_move_top(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     movetopobj(d->obj[n], m);
     d->select = 0;
     d->legend_type = n;
@@ -1066,7 +1072,7 @@ tree_move_last(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     movelastobj(d->obj[n], m);
     d->select = d->legend[n];
     d->legend_type = n;
@@ -1086,7 +1092,7 @@ tree_move_up(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 1 && m <= d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 1 && m <= d->legend[n]) {
     moveupobj(d->obj[n], m);
     d->select = m - 1;
     d->legend_type = n;
@@ -1106,7 +1112,7 @@ tree_move_down(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m < d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m < d->legend[n]) {
     movedownobj(d->obj[n], m);
     d->select = m + 1;
     d->legend_type = n;
@@ -1126,7 +1132,7 @@ tree_update(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     d->setup_dialog(d->dialog, d->obj[n], n, m);
   }
 }
@@ -1144,7 +1150,7 @@ tree_focus(struct LegendWin *d, int add)
 
   if (m < 0) {
     tree_store_selected_toggle_expand(GTK_WIDGET(d->text));
-  } else if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  } else if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     Focus(d->obj[n], m, add);
   }
 }
@@ -1160,7 +1166,7 @@ tree_hidden(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     getobj(d->obj[n], "hidden", m, 0, NULL, &hidden);
     hidden = hidden ? FALSE : TRUE;
     putobj(d->obj[n], "hidden", m, &hidden);
@@ -1182,7 +1188,7 @@ tree_set_hidden_state(struct LegendWin *d, int hide)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
-  if (sel && n >=0 && m >= 0 && m <= d->legend[n]) {
+  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     getobj(d->obj[n], "hidden", m, 0, NULL, &hidden);
     if (hidden != hide) {
       putobj(d->obj[n], "hidden", m, &hide);

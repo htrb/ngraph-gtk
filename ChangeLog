@@ -1,12 +1,15 @@
 2009-04-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11merge.c (MERG_WIN_COL_HIDDEN, MERG_WIN_COL_FILE):
-	add.
-	(merge_list_set_val): use "case" instead of "strcmp()".
+	* src/gtk/gtk_subwin.c (numeric_cb, string_cb): do nothing when
+	"d->type" is "TypeLegendWin".
 
 	* src/gtk/x11lgnd.c (LEGEND_WIN_COL_HIDDEN, LEGEND_WIN_COL_PROP)
 	(LEGEND_WIN_COL_X, LEGEND_WIN_COL_Y): add.
 	(legend_list_set_val): use "case" instead of "strcmp()".
+	(enum CHANGE_DIR, pos_edited, pos_x_edited, pos_y_edited): add.
+	(CmLegendWindow): call "set_editable_cell_renderer_cb()" for
+	"LEGEND_WIN_COL_X" snd "LEGEND_WIN_COL_Y".
+	(Llist):  colum "x" and "y" is editable.
 
 	* src/gtk/x11file.c (FILE_WIN_COL_HIDDEN, FILE_WIN_COL_FILE)
 	(FILE_WIN_COL_X, FILE_WIN_COL_Y): add.
@@ -15,6 +18,12 @@
 	* src/gtk/x11axis.c (AXIS_WIN_COL_HIDDEN, AXIS_WIN_COL_NAME)
 	(AXIS_WIN_COL_MIN, AXIS_WIN_COL_MAX, AXIS_WIN_COL_INC): add.
 	(axis_list_set_val): use "case" instead of "strcmp()".
+
+	* src/gtk/x11merge.c (MERG_WIN_COL_HIDDEN, MERG_WIN_COL_FILE):
+	add.
+	(merge_list_set_val): use "case" instead of "strcmp()".
+
+	* src/gtk/gtk_liststore.h (tree_store_path_get_string): add.
 
 2009-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

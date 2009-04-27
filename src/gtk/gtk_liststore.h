@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.9 2009/04/24 07:20:33 hito Exp $
+ * $Id: gtk_liststore.h,v 1.10 2009/04/27 06:51:03 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
@@ -78,5 +78,5 @@ void tree_store_selected_toggle_expand(GtkWidget *w);
 #define tree_store_iter_next list_store_iter_next
 #define tree_store_get_selected_iter list_store_get_selected_iter
 #define tree_store_set_selection_mode list_store_set_selection_mode
-
+#define tree_store_path_get_string list_store_path_get_string
 #endif
