@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.92 2009/04/27 08:13:09 hito Exp $
+ * $Id: x11menu.c,v 1.94 2009/04/27 09:36:43 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1115,12 +1115,15 @@ create_legendsubmenu(GtkWidget *parent, char *label, legend_cb_func func, GtkAcc
   GtkWidget *menu, *submenu;
   char buf[256];
 
-  menu = gtk_menu_item_new_with_mnemonic(label);
+  menu = gtk_menu_item_new_with_mnemonic(_(label));
   gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(menu));
 
   submenu = gtk_menu_new();
   gtk_menu_set_accel_group (GTK_MENU(submenu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu), submenu);
+
+  if (label[0] == '_')
+    label++;
 
   snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Property", label);
   create_menu_item(submenu, GTK_STOCK_PROPERTIES, TRUE, buf, 0, 0, func, MenuIdLegendUpdate);
@@ -1145,25 +1148,26 @@ create_legendmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
 
-  data[0].widget = create_legendsubmenu(menu, _("_Line"), CmLineMenu, accel_group);
+  /* an under score must be placed top of the menu title. */
+  data[0].widget = create_legendsubmenu(menu, N_("_Line"), CmLineMenu, accel_group);
   data[0].obj = chkobject("line");
 
-  data[1].widget = create_legendsubmenu(menu, _("_Curve"), CmCurveMenu, accel_group);
+  data[1].widget = create_legendsubmenu(menu, N_("_Curve"), CmCurveMenu, accel_group);
   data[1].obj = chkobject("curve");
 
-  data[2].widget = create_legendsubmenu(menu, _("_Polygon"), CmPolygonMenu, accel_group);
+  data[2].widget = create_legendsubmenu(menu, N_("_Polygon"), CmPolygonMenu, accel_group);
   data[2].obj = chkobject("polygon");
 
-  data[3].widget = create_legendsubmenu(menu, _("_Rectangle"), CmRectangleMenu, accel_group);
+  data[3].widget = create_legendsubmenu(menu, N_("_Rectangle"), CmRectangleMenu, accel_group);
   data[3].obj = chkobject("rectangle");
 
-  data[4].widget = create_legendsubmenu(menu, _("_Arc"), CmArcMenu, accel_group);
+  data[4].widget = create_legendsubmenu(menu, N_("_Arc"), CmArcMenu, accel_group);
   data[4].obj = chkobject("arc");
 
-  data[5].widget = create_legendsubmenu(menu, _("_Mark"), CmMarkMenu, accel_group);
+  data[5].widget = create_legendsubmenu(menu, N_("_Mark"), CmMarkMenu, accel_group);
   data[5].obj = chkobject("mark");
 
-  data[6].widget = create_legendsubmenu(menu, _("_Text"), CmTextMenu, accel_group);
+  data[6].widget = create_legendsubmenu(menu, N_("_Text"), CmTextMenu, accel_group);
   data[6].obj = chkobject("text");
 
   data[7].obj = NULL;
