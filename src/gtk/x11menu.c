@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.93 2009/04/27 09:32:49 hito Exp $
+ * $Id: x11menu.c,v 1.95 2009/04/28 05:59:39 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -858,12 +858,12 @@ show_edit_menu_cb(GtkWidget *w, gpointer user_data)
   GtkClipboard *clip;
   gboolean state, state2;
   struct objlist *axis = NULL;
-  struct focuslist **focus;
+  struct FocusObj **focus;
 
 
   num = check_focused_obj_type(&NgraphApp.Viewer, &type);
 
-  focus = (struct focuslist **) arraydata(NgraphApp.Viewer.focusobj);
+  focus = (struct FocusObj **) arraydata(NgraphApp.Viewer.focusobj);
 
   if (num < 1) {
     state2 = state = FALSE;
@@ -1122,10 +1122,13 @@ create_legendsubmenu(GtkWidget *parent, char *label, legend_cb_func func, GtkAcc
   gtk_menu_set_accel_group (GTK_MENU(submenu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(menu), submenu);
 
-  snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Property", label + 1);
+  if (label[0] == '_')
+    label++;
+
+  snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Property", label);
   create_menu_item(submenu, GTK_STOCK_PROPERTIES, TRUE, buf, 0, 0, func, MenuIdLegendUpdate);
 
-  snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Delete", label + 1);
+  snprintf(buf, sizeof(buf), "<Ngraph>/Legend/%s/Delete", label);
   create_menu_item(submenu, GTK_STOCK_DELETE, TRUE, buf, 0, 0, func, MenuIdLegendDel);
 
   return menu;
@@ -2316,6 +2319,8 @@ void
 SetPoint(struct Viewer *d, int x, int y)
 {
   char buf[128];
+  struct Point *po;
+  unsigned int num;
 
   //  x += Menulocal.LeftMargin;
   //  y += Menulocal.TopMargin;
@@ -2329,7 +2334,7 @@ SetPoint(struct Viewer *d, int x, int y)
 	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->LineX / 100.0, d->LineY / 100.0);
       }
       break;
-    case MOUSEZOOM1:
+      case MOUSEZOOM1:
     case MOUSEZOOM2:
     case MOUSEZOOM3:
     case MOUSEZOOM4:
@@ -2339,7 +2344,13 @@ SetPoint(struct Viewer *d, int x, int y)
       snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);
       break;
     default:
-      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f", x / 100.0, y / 100.0);
+      num =  arraynum(d->points);
+      po = (num > 1) ? (* (struct Point **) arraynget(d->points, num - 2)) : NULL;
+      if (d->Capture && po) {
+	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, (x - po->x) / 100.0, (y - po->y) / 100.0);
+      } else {
+	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f", x / 100.0, y / 100.0);
+      }
     }
 
     ResetStatusBarSub(NgraphApp.Message2);

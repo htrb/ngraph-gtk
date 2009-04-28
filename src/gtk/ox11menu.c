@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.73 2009/04/26 03:17:39 hito Exp $
+ * $Id: ox11menu.c,v 1.74 2009/04/28 05:59:39 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1460,7 +1460,7 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   char buf[256], *name, *ptr;
   struct narray *oarray, *sarray;
   struct Viewer *d;
-  struct focuslist **focus;
+  struct FocusObj **focus;
 
   arrayfree2(*(struct narray **)rval);
   *(char **)rval = NULL;
@@ -1477,7 +1477,7 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 
   sarray = (argc > 2) ? (struct narray *) argv[2] : NULL;
 
-  focus = (struct focuslist **) arraydata(d->focusobj);
+  focus = (struct FocusObj **) arraydata(d->focusobj);
   for (i = 0; i < num; i++) {
     if (check_object_name(focus[i]->obj, sarray))
       continue;

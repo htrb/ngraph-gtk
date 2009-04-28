@@ -1,3 +1,13 @@
+2009-04-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.h (struct FocusObj): change name of the struct
+	from "focuslist".
+	(struct Point): moved from x11view.c and change name of the struct
+	from "pointslist".
+
+	* src/gtk/x11menu.c (SetPoint): show width and hight when
+	"d->Capture" is TRUE.
+
 2009-04-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_windowmenu): chang accel path of

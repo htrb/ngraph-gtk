@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.h,v 1.10 2009/04/23 02:49:55 hito Exp $
+ * $Id: x11view.h,v 1.11 2009/04/28 05:59:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,11 +31,15 @@
 #define ROTATE_CLOCKWISE 0
 #define ROTATE_COUNTERCLOCKWISE 1
 
-struct focuslist
+struct Point
+{
+  int x, y;
+};
+
+struct FocusObj
 {
   struct objlist *obj;
   int oid;
-  int ofsx, ofsy;
 };
 
 enum FOCU_OBJ_TYPE {

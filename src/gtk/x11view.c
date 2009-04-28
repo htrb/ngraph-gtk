@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.151 2009/04/26 02:04:36 hito Exp $
+ * $Id: x11view.c,v 1.152 2009/04/28 05:59:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,11 +58,6 @@
 #define ID_BUF_SIZE 16
 #define SCROLL_INC 20
 #define POINT_ERROR 4
-
-struct pointslist
-{
-  int x, y;
-};
 
 enum ViewerPopupIdn {
   VIEW_UPDATE = 1,
@@ -209,7 +204,7 @@ static int
 CopyFocusedObjects(void)
 {
   struct narray *focus_array;
-  struct focuslist **focus;
+  struct FocusObj **focus;
   struct objlist *axis, *text;
   char *str, *s, *ptr;
   int i, r, n, id, num;
@@ -221,7 +216,7 @@ CopyFocusedObjects(void)
   if (n < 1)
     return 1;
 
-  focus = (struct focuslist **) arraydata(focus_array);
+  focus = (struct FocusObj **) arraydata(focus_array);
 
   str = nstrnew();
   if (str == NULL)
@@ -1131,8 +1126,8 @@ ViewerWinSetup(void)
   d->Capture = FALSE;
   d->MoveData = FALSE;
   d->MouseMode = MOUSENONE;
-  d->focusobj = arraynew(sizeof(struct focuslist *));
-  d->points = arraynew(sizeof(struct pointslist *));
+  d->focusobj = arraynew(sizeof(struct FocusObj *));
+  d->points = arraynew(sizeof(struct Point *));
   d->FrameOfsX = 0;
   d->FrameOfsY = 0;
   d->LineX = 0;
@@ -1743,7 +1738,7 @@ static void
 GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy)
 {
   int i, num;
-  struct focuslist **focus;
+  struct FocusObj **focus;
   struct narray *abbox;
   int bboxnum, *bbox;
   char *inst;
@@ -1756,7 +1751,7 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy)
   *minx = *miny = *maxx = *maxy = 0;
 
   num = arraynum(d->focusobj);
-  focus = (struct focuslist **) arraydata(d->focusobj);
+  focus = (struct FocusObj **) arraydata(d->focusobj);
 
   inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
   if (inst) {
@@ -1832,7 +1827,7 @@ static void
 ShowFocusFrame(GdkGC *gc)
 {
   int i, j, num;
-  struct focuslist **focus;
+  struct FocusObj **focus;
   struct narray *abbox;
   int bboxnum;
   int *bbox;
@@ -1853,7 +1848,7 @@ ShowFocusFrame(GdkGC *gc)
   gdk_gc_set_function(gc, GDK_XOR);
 
   num = arraynum(d->focusobj);
-  focus = (struct focuslist **) arraydata(d->focusobj);
+  focus = (struct FocusObj **) arraydata(d->focusobj);
 
   if (num > 0) {
     GetFocusFrame(&x1, &y1, &x2, &y2, d->FrameOfsX, d->FrameOfsY);
@@ -1947,7 +1942,7 @@ static void
 AlignFocusedObj(int align)
 {
   int i, num, bboxnum, *bbox, minx, miny, maxx, maxy, dx, dy;
-  struct focuslist **focus;
+  struct FocusObj **focus;
   struct narray *abbox;
   char *argv[4];
   char *inst;
@@ -1964,7 +1959,7 @@ AlignFocusedObj(int align)
     return;
   }
 
-  focus = (struct focuslist **) arraydata(d->focusobj);
+  focus = (struct FocusObj **) arraydata(d->focusobj);
 
   if (num == 1) {
     maxx = Menulocal.PaperWidth;;
@@ -2043,7 +2038,7 @@ RotateFocusedObj(int direction)
 {
   int i, num, minx, miny, maxx, maxy, angle, type;
   int use_pivot, px, py;
-  struct focuslist **focus;
+  struct FocusObj **focus;
   char *argv[5];
   char *inst;
   struct Viewer *d;
@@ -2060,7 +2055,7 @@ RotateFocusedObj(int direction)
 
   angle = (direction == ROTATE_CLOCKWISE) ? 27000 : 9000;
 
-  focus = (struct focuslist **) arraydata(d->focusobj);
+  focus = (struct FocusObj **) arraydata(d->focusobj);
 
   PaintLock = TRUE;
 
@@ -2211,7 +2206,7 @@ static void
 ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
 {
   int num;
-  struct focuslist **focus;
+  struct FocusObj **focus;
   struct narray *abbox;
   int bboxnum;
   int *bbox;
@@ -2230,7 +2225,7 @@ ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
   num = arraynum(d->focusobj);
 
-  focus = (struct focuslist **) arraydata(d->focusobj);
+  focus = (struct FocusObj **) arraydata(d->focusobj);
   zoom = Menulocal.PaperZoom / 10000.0;
 
   if (num != 1)
@@ -2275,7 +2270,7 @@ static void
 ShowPoints(GdkGC *gc)
 {
   int i, num, x0 = 0, y0 = 0, x1, y1, x2, y2;
-  struct pointslist **po;
+  struct Point **po;
   double zoom;
   struct Viewer *d;
   int minx, miny, height, width;
@@ -2286,7 +2281,7 @@ ShowPoints(GdkGC *gc)
   gdk_gc_set_function(gc, GDK_XOR);
 
   num = arraynum(d->points);
-  po = (struct pointslist **) arraydata(d->points);
+  po = (struct Point **) arraydata(d->points);
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -2721,7 +2716,7 @@ static void
 mouse_down_set_points(unsigned int state, struct Viewer *d, GdkGC *dc, int n)
 {
   int x1, y1, i;
-  struct pointslist *po;
+  struct Point *po;
 
   if (d->Capture)
     return;
@@ -2732,7 +2727,7 @@ mouse_down_set_points(unsigned int state, struct Viewer *d, GdkGC *dc, int n)
   CheckGrid(TRUE, state, &x1, &y1, NULL);
 
   for (i = 0; i < n; i++) {
-    po = (struct pointslist *) memalloc(sizeof(struct pointslist));
+    po = (struct Point *) memalloc(sizeof(struct Point));
     if (po) {
       po->x = x1;
       po->y = y1;
@@ -2870,7 +2865,7 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
 {
   int i, dx, dy, num, axis;
   char *argv[5], *inst;
-  struct focuslist *focus;
+  struct FocusObj *focus;
   struct objlist *obj;
 
   axis = FALSE;
@@ -2901,7 +2896,7 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
       argv[2] = NULL;
 
       for (i = num - 1; i >= 0; i--) {
-	focus = *(struct focuslist **) arraynget(d->focusobj, i);
+	focus = *(struct FocusObj **) arraynget(d->focusobj, i);
 	obj = focus->obj;
 
 	if (obj == chkobject("axis"))
@@ -2933,7 +2928,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   int vx1, vy1, vx2, vy2, zm, i, num, axis;
   double cc, nn, zoom2;
   char *argv[5], *inst;
-  struct focuslist *focus;
+  struct FocusObj *focus;
   struct objlist *obj;
 
   axis = FALSE;
@@ -2985,7 +2980,7 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
     PaintLock = TRUE;
 
     for (i = num - 1; i >= 0; i--) {
-      focus = *(struct focuslist **) arraynget(d->focusobj, i);
+      focus = *(struct FocusObj **) arraynget(d->focusobj, i);
       obj = focus->obj;
 
       if (obj == chkobject("axis"))
@@ -3018,7 +3013,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 {
   int dx, dy, axis;
   char *argv[5], *inst;
-  struct focuslist *focus;
+  struct FocusObj *focus;
   struct objlist *obj;
 
   axis = FALSE;
@@ -3048,7 +3043,7 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
       PaintLock = TRUE;
 
-      focus = *(struct focuslist **) arraynget(d->focusobj, 0);
+      focus = *(struct FocusObj **) arraynget(d->focusobj, 0);
 
       obj = focus->obj;
       inst = chkobjinstoid(focus->obj, focus->oid);
@@ -3087,7 +3082,7 @@ static void
 mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
 {
   int x1, y1, num;
-  struct pointslist *po;
+  struct Point *po;
 
   d->Capture = FALSE;
   ShowPoints(dc);
@@ -3105,7 +3100,7 @@ mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
   num = arraynum(d->points);
   if (num >= 1) {
-    po = *(struct pointslist **) arraynget(d->points, 0);
+    po = *(struct Point **) arraynget(d->points, 0);
     po->x = x1;
     po->y = y1;
   }
@@ -3119,7 +3114,7 @@ static void
 mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
 {
   int num, x1, y1;
-  struct pointslist *po;
+  struct Point *po;
 
   ShowPoints(dc);
 
@@ -3137,11 +3132,11 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   num = arraynum(d->points);
 
   if (num >= 2) {
-    po = *(struct pointslist **) arraynget(d->points, num - 2);
+    po = *(struct Point **) arraynget(d->points, num - 2);
   }
 
   if ((num < 2) || (po->x != x1) || (po->y != y1)) {
-    po = (struct pointslist *) memalloc(sizeof(struct pointslist));
+    po = (struct Point *) memalloc(sizeof(struct Point));
     if (po) {
       po->x = x1;
       po->y = y1;
@@ -3240,7 +3235,7 @@ create_legend1(struct Viewer *d, GdkGC *dc)
   int id, num, x1, y1, ret;
   char *inst;
   struct objlist *obj = NULL;
-  struct pointslist *po;
+  struct Point *po;
 
   d->Capture = FALSE;
   num = arraynum(d->points);
@@ -3255,7 +3250,7 @@ create_legend1(struct Viewer *d, GdkGC *dc)
     id = newobj(obj);
     if (id >= 0) {
       if (num >= 1) {
-	po = *(struct pointslist **) arraynget(d->points, 0);
+	po = *(struct Point **) arraynget(d->points, 0);
 	x1 = po->x;
 	y1 = po->y;
       }
@@ -3295,7 +3290,7 @@ create_legend2(struct Viewer *d, GdkGC *dc)
   int i, id, num, ret = IDCANCEL;
   char *inst;
   struct objlist *obj = NULL;
-  struct pointslist *po;
+  struct Point *po;
   struct narray *parray;
 
   d->Capture = FALSE;
@@ -3317,7 +3312,7 @@ create_legend2(struct Viewer *d, GdkGC *dc)
 	parray = arraynew(sizeof(int));
 
 	for (i = 0; i < num - 1; i++) {
-	  po = *(struct pointslist **) arraynget(d->points, i);
+	  po = *(struct Point **) arraynget(d->points, i);
 	  arrayadd(parray, &(po->x));
 	  arrayadd(parray, &(po->y));
 	}
@@ -3361,12 +3356,12 @@ create_legend3(struct Viewer *d, GdkGC *dc)
   int id, num, x1, y1, x2, y2, ret = IDCANCEL;
   char *inst;
   struct objlist *obj = NULL;
-  struct pointslist **pdata;
+  struct Point **pdata;
 
   d->Capture = FALSE;
 
   num = arraynum(d->points);
-  pdata = (struct pointslist **) arraydata(d->points);
+  pdata = (struct Point **) arraydata(d->points);
 
   if (num >= 3) {
     if (d->Mode == RectB) {
@@ -3437,11 +3432,11 @@ create_legendx(struct Viewer *d, GdkGC *dc)
   int id, num, x1, y1, x2, y2, ret = IDCANCEL;
   char *inst;
   struct objlist *obj = NULL;
-  struct pointslist **pdata;
+  struct Point **pdata;
 
   d->Capture = FALSE;
   num = arraynum(d->points);
-  pdata = (struct pointslist **) arraydata(d->points);
+  pdata = (struct Point **) arraydata(d->points);
 
   if (num >= 3) {
     obj = chkobject("curve");
@@ -3493,12 +3488,12 @@ create_single_axis(struct Viewer *d, GdkGC *dc)
   double fx1, fy1;
   char *inst;
   struct objlist *obj = NULL;
-  struct pointslist **pdata;
+  struct Point **pdata;
 
   d->Capture = FALSE;
 
   num = arraynum(d->points);
-  pdata = (struct pointslist **) arraydata(d->points);
+  pdata = (struct Point **) arraydata(d->points);
 
   if (num >= 3) {
     obj = chkobject("axis");
@@ -3563,12 +3558,12 @@ create_axis(struct Viewer *d, GdkGC *dc)
     num, x1, y1, x2, y2, lenx, leny, ret = IDCANCEL;
   char *inst, *argv[2], *ref;
   struct objlist *obj = NULL, *obj2;
-  struct pointslist **pdata;
+  struct Point **pdata;
   struct narray group;
 
   d->Capture = FALSE;
   num = arraynum(d->points);
-  pdata = (struct pointslist **) arraydata(d->points);
+  pdata = (struct Point **) arraydata(d->points);
 
   if (num >= 3) {
     obj = chkobject("axis");
@@ -3789,7 +3784,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 {
   GdkGC *dc;
   int num;
-  struct pointslist *po;
+  struct Point *po;
   double zoom;
 
   if (Menulock || GlobalLock)
@@ -3815,7 +3810,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 	  arraydel2(d->points);
 	  d->Capture = FALSE;
 	} else {
-	  po = *(struct pointslist **) arraylast(d->points);
+	  po = *(struct Point **) arraylast(d->points);
 	  if (po != NULL) {
 	    d->MouseX1 = (mxp2d(d->hscroll + point->x - d->cx)
 			  - Menulocal.LeftMargin) / zoom;
@@ -3881,7 +3876,7 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
   int j, x1, y1, x2, y2, num, cursor, bboxnum, *bbox;
   char *inst;
   struct narray *abbox;
-  struct focuslist **focus;
+  struct FocusObj **focus;
   double zoom;
 
   if (d->MoveData)
@@ -3922,7 +3917,7 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
   if (num > 1)
     return cursor;
 
-  focus = (struct focuslist **) arraydata(d->focusobj);
+  focus = (struct FocusObj **) arraydata(d->focusobj);
   inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
   if (inst == NULL)
     return cursor;
@@ -3978,7 +3973,7 @@ update_frame_rect(TPoint *point, struct Viewer *d, GdkGC *dc, double zoom)
 static void
 calc_snap_angle(struct narray *points, int *dx, int *dy)
 {
-  struct pointslist *po2;
+  struct Point *po2;
   int x, y, w, h, n;
   double angle, l;
 
@@ -3989,7 +3984,7 @@ calc_snap_angle(struct narray *points, int *dx, int *dy)
   if (n < 2)
     return;
 
-  po2 = *(struct pointslist **) arraynget(points, n - 2);
+  po2 = *(struct Point **) arraynget(points, n - 2);
 
   w = x - po2->x;
   h = y - po2->y;
@@ -4057,13 +4052,13 @@ calc_snap_angle(struct narray *points, int *dx, int *dy)
 static void
 calc_integer_ratio(struct narray *points, int *dx, int *dy)
 {
-  struct pointslist *po2;
+  struct Point *po2;
   int x, y, w, h;
 
   x = *dx;
   y = *dy;
 
-  po2 = *(struct pointslist **) arraynget(points, 0);
+  po2 = *(struct Point **) arraynget(points, 0);
 
   if (pow == NULL)
     return;
@@ -4210,8 +4205,8 @@ mouse_move_draw(GdkGC *dc, unsigned int state, TPoint *point, int *dx, int *dy, 
   ShowPoints(dc);
 
   if (arraynum(d->points) != 0) {
-    struct pointslist *po;
-    po = *(struct pointslist **) arraylast(d->points);
+    struct Point *po;
+    po = *(struct Point **) arraylast(d->points);
 
     if (state & GDK_CONTROL_MASK) {
       if (d->Mode & POINT_TYPE_DRAW1) {
@@ -4357,7 +4352,7 @@ check_focused_obj_type(struct Viewer *d, int *type)
 {
   int num, i, t;
   static struct objlist *axis, *merge, *legend;
-  struct focuslist *focus;  
+  struct FocusObj *focus;  
 
   num = arraynum(d->focusobj);
 
@@ -4372,7 +4367,7 @@ check_focused_obj_type(struct Viewer *d, int *type)
 
   t = 0;
   for (i = 0; i < num; i++) {
-    focus = *(struct focuslist **) arraynget(d->focusobj, i);
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (chkobjchild(legend, focus->obj)) {
       t |= FOCUS_OBJ_TYPE_LEGEND;
     } else if (chkobjchild(axis, focus->obj)) {
@@ -4436,10 +4431,10 @@ do_popup(GdkEventButton *event, struct Viewer *d)
       }
     }
     if (num == 1) {
-      struct focuslist *focus;
+      struct FocusObj *focus;
       int id, last_id;
 
-      focus = * (struct focuslist **) arraynget(d->focusobj, 0);
+      focus = * (struct FocusObj **) arraynget(d->focusobj, 0);
       if (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_MERGE)) {
 	id = chkobjoid(focus->obj, focus->oid);
 	last_id = chkobjlastinst(focus->obj);
@@ -4683,7 +4678,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   struct Viewer *d;
   GdkGC *dc;
   int num, i, dx, dy;
-  struct focuslist *focus;
+  struct FocusObj *focus;
   char *inst;
   struct objlist *obj;
   char *argv[4];
@@ -4722,7 +4717,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     axis = FALSE;
     PaintLock = TRUE;
     for (i = num - 1; i >= 0; i--) {
-      focus = *(struct focuslist **) arraynget(d->focusobj, i);
+      focus = *(struct FocusObj **) arraynget(d->focusobj, i);
       obj = focus->obj;
       if (obj == chkobject("axis"))
 	axis = TRUE;
@@ -4849,7 +4844,7 @@ void
 ViewerWinUpdate(int clear)
 {
   int i, num;
-  struct focuslist **focus;
+  struct FocusObj **focus;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
@@ -4863,7 +4858,7 @@ ViewerWinUpdate(int clear)
   }
   CheckPage();
   num = arraynum(d->focusobj);
-  focus = (struct focuslist **) arraydata(d->focusobj);
+  focus = (struct FocusObj **) arraydata(d->focusobj);
   for (i = num - 1; i >= 0; i--) {
     if (chkobjoid(focus[i]->obj, focus[i]->oid) == -1)
       arrayndel2(d->focusobj, i);
@@ -4922,7 +4917,7 @@ static int
 check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
 {
   int i, num;
-  struct focuslist *focus;
+  struct FocusObj *focus;
 
   if (fobj == NULL)
     return CHECK_FOCUSED_OBJ_ERROR;
@@ -4930,7 +4925,7 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
   num = arraynum(focusobj);
 
   for (i = 0; i < num; i++) {
-    focus = *(struct focuslist **) arraynget(focusobj, i);
+    focus = *(struct FocusObj **) arraynget(focusobj, i);
     if (focus == NULL)
       continue;
 
@@ -4944,7 +4939,7 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
 static int
 add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
 {
-  struct focuslist *focus;
+  struct FocusObj *focus;
   int r;
 
   if (chkobjfield(obj, "bbox")) 
@@ -4954,7 +4949,7 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   if (r != CHECK_FOCUSED_OBJ_NOT_FOUND)
     return FALSE;
     
-  focus = (struct focuslist *) memalloc(sizeof(struct focuslist));
+  focus = (struct FocusObj *) memalloc(sizeof(struct FocusObj));
   if (! focus)
     return FALSE;
 
@@ -5468,7 +5463,7 @@ static void
 ViewUpdate(void)
 {
   int i, id, id2, did, num;
-  struct focuslist *focus;
+  struct FocusObj *focus;
   struct objlist *obj, *dobj = NULL, *aobj;
   char *inst, *inst2, *dinst, *dfield;
   int ret, section;
@@ -5500,7 +5495,7 @@ ViewUpdate(void)
   PaintLock = TRUE;
 
   for (i = num - 1; i >= 0; i--) {
-    focus = *(struct focuslist **) arraynget(d->focusobj, i);
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL)
       continue;
 
@@ -5712,7 +5707,7 @@ static void
 ViewDelete(void)
 {
   int i, id, num;
-  struct focuslist *focus;
+  struct FocusObj *focus;
   struct objlist *obj;
   char *inst;
   GdkGC *dc;
@@ -5740,7 +5735,7 @@ ViewDelete(void)
   num = arraynum(d->focusobj);
 
   for (i = num - 1; i >= 0; i--) {
-    focus = *(struct focuslist **) arraynget(d->focusobj, i);
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     obj = focus->obj;
 
     inst = chkobjinstoid(obj, focus->oid);
@@ -5774,7 +5769,7 @@ static void
 reorder_object(enum object_move_type type)
 {
   int id, num;
-  struct focuslist *focus;
+  struct FocusObj *focus;
   struct objlist *obj;
   char *inst;
   struct Viewer *d;
@@ -5794,7 +5789,7 @@ reorder_object(enum object_move_type type)
   if (num != 1)
     return;
 
-  focus = *(struct focuslist **) arraynget(d->focusobj, 0);
+  focus = *(struct FocusObj **) arraynget(d->focusobj, 0);
   obj = focus->obj;
 
   if (! chkobjchild(chkobject("legend"), obj) && ! chkobjchild(chkobject("merge"), obj))
@@ -5843,7 +5838,7 @@ ncopyobj(struct objlist *obj, int id1, int id2)
 }
 
 static void
-ViewCopyAxis(struct objlist *obj, int id, struct focuslist *focus, char *inst)
+ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, char *inst)
 {
   int j, id2, did;
   struct objlist *dobj, *aobj;
@@ -6116,7 +6111,7 @@ static void
 ViewCopy(void)
 {
   int i, id, id2, num;
-  struct focuslist *focus;
+  struct FocusObj *focus;
   struct objlist *obj;
   char *inst, *inst2;
   GdkGC *dc;
@@ -6142,7 +6137,7 @@ ViewCopy(void)
   num = arraynum(d->focusobj);
 
   for (i = 0; i < num; i++) {
-    focus = *(struct focuslist **) arraynget(d->focusobj, i);
+    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL)
       continue;
 
