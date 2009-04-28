@@ -1,7 +1,12 @@
 2009-04-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/gtk_subwin.c (ev_button_down): return FALSE when
-	"event->button" is 3.
+	* src/gtk/gtk_subwin.c (ev_button_down_tree): remove.
+	(ev_button_down): don't respond to right button click.
+	(ev_button_down): call "tree_update()" when "d->type" is
+	"TypeLegendWin".
+	(ev_button_up): add.
+	(list_sub_window_create, tree_sub_window_create): call back
+	function for "button-release-event" is "ev_button_up()".
 
 	* src/gtk/x11view.h (struct FocusObj): change name of the struct
 	from "focuslist".

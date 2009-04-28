@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.45 2009/04/28 10:12:36 hito Exp $
+ * $Id: gtk_subwin.c,v 1.46 2009/04/28 13:55:09 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -27,6 +27,7 @@
 static int SaveWindowState = FALSE;
 
 static void hidden(struct SubWin *d);
+static void tree_update(struct LegendWin *d);
 static void tree_hidden(struct LegendWin *d);
 static void modify_numeric(struct SubWin *d, char *field, int val);
 static void modify_string(struct SubWin *d, char *field, char *str);
@@ -875,14 +876,15 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 
   if (Menulock || GlobalLock) return FALSE;
 
+  g_return_val_if_fail(w != NULL, FALSE);
+  g_return_val_if_fail(event != NULL, FALSE);
+
   tdif = event->time - time;
   time = event->time;
 
+  /* following check is necessary for editable column. */
   if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
     return TRUE;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
 
   d = (struct SubWin *) user_data;
 
@@ -892,16 +894,36 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
   switch (event->button) {
   case 1:
     if (event->type == GDK_2BUTTON_PRESS) {
-      update(d);
+      if (d->type == TypeLegendWin) {
+	tree_update((struct LegendWin *) d);
+      } else {
+	update(d);
+      }
       return TRUE;
     }
     break;
-  case 2:
-    break;
+  }
+
+  return FALSE;
+}
+
+static gboolean
+ev_button_up(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
+{
+  struct SubWin *d;
+
+  if (Menulock || GlobalLock) return FALSE;
+
+  g_return_val_if_fail(w != NULL, FALSE);
+  g_return_val_if_fail(event != NULL, FALSE);
+
+  d = (struct SubWin *) user_data;
+
+  switch (event->button) {
   case 3:
     if (d->popup) {
       do_popup(event, d);
-      return FALSE;
+      return TRUE;
     }
     break;
   }
@@ -1201,49 +1223,6 @@ tree_set_hidden_state(struct LegendWin *d, int hide)
 }
 
 static gboolean
-ev_button_down_tree(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
-{
-  struct LegendWin *d;
-  static guint32 time = 0;
-  int tdif;
-
-  if (Menulock || GlobalLock) return FALSE;
-
-  tdif = event->time - time;
-  time = event->time;
-
-  if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
-    return TRUE;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  d = (struct LegendWin *) user_data;
-
-  if (d->ev_button && d->ev_button(w, event, user_data))
-    return TRUE;
-
-  switch (event->button) {
-  case 1:
-    if (event->type == GDK_2BUTTON_PRESS) {
-      tree_update(d);
-      return TRUE;
-    }
-    break;
-  case 2:
-    break;
-  case 3:
-    if (d->popup) {
-      do_popup(event, (struct SubWin *)d);
-      return TRUE;
-    }
-    break;
-  }
-
-  return FALSE;
-}
-
-static gboolean
 ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
   struct LegendWin *d;
@@ -1477,6 +1456,7 @@ list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store
   set_cell_renderer_cb(d, lisu_num, list, lstor);
 
   g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), d);
+  g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), d);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), d);
 
   return sub_window_create(d, title, lstor, xpm, xpm2, FALSE);
@@ -1492,7 +1472,8 @@ tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_st
 
   set_cell_renderer_cb((struct SubWin *)d, lisu_num, list, lstor);
 
-  g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down_tree), d);
+  g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), d);
+  g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), d);
   g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down_tree), d);
 
   return sub_window_create((struct SubWin *)d, title, lstor, xpm, xpm2, FALSE);
