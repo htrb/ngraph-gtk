@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.44 2009/04/27 06:51:03 hito Exp $
+ * $Id: gtk_subwin.c,v 1.45 2009/04/28 10:12:36 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -901,7 +901,7 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
   case 3:
     if (d->popup) {
       do_popup(event, d);
-      return TRUE;
+      return FALSE;
     }
     break;
   }
