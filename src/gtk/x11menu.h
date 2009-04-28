@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.38 2009/04/23 02:49:54 hito Exp $
+ * $Id: x11menu.h,v 1.39 2009/04/28 14:07:32 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -198,9 +198,9 @@ struct SubWin
   void (* update)(int);
   void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
   void *dialog;
-  struct objlist *obj;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
+  struct objlist *obj;
 };
 
 
@@ -216,9 +216,9 @@ struct LegendWin
   void (* update)(int);
   void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
   void *dialog;
-  struct objlist *obj[LEGENDNUM];
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
+  struct objlist *obj[LEGENDNUM];
   /* Private member */
   int legend_type;
   int legend[LEGENDNUM];
@@ -234,9 +234,9 @@ struct InfoWin
   void (* update)(int);
   void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
   void *dialog;
-  struct objlist *obj;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
+  struct objlist *obj;
   /* Private member */
   char *str;
 };
@@ -251,9 +251,9 @@ struct CoordWin
   void (* update)(int);
   void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
   void *dialog;
-  struct objlist *obj;
   gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
   gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
+  struct objlist *obj;
   /* Private member */
   char *str;
 };
