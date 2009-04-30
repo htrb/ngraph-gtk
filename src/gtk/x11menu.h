@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.39 2009/04/28 14:07:32 hito Exp $
+ * $Id: x11menu.h,v 1.40 2009/04/30 05:04:57 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -188,18 +188,21 @@ enum SubWinType {
   TypeCoordWin,
 };
 
+#define SUBWIN_PROTOTYPE enum SubWinType type;\
+  GtkWidget *Win, *swin, *popup, **popup_item;\
+  GdkWindowState window_state;\
+  GObject *text;\
+  int select, num, can_focus;\
+  void (* update)(int);\
+  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);\
+  void *dialog;\
+  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);\
+  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);\
+
+
 struct SubWin
 {
-  enum SubWinType type;
-  GtkWidget *Win, *swin, *popup, **popup_item;
-  GdkWindowState window_state;
-  GObject *text;
-  int select, num, can_focus;
-  void (* update)(int);
-  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
-  void *dialog;
-  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
-  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
+  SUBWIN_PROTOTYPE;
   struct objlist *obj;
 };
 
@@ -208,16 +211,7 @@ struct SubWin
 
 struct LegendWin
 {
-  enum SubWinType type;
-  GtkWidget *Win, *swin, *popup, **popup_item;
-  GdkWindowState window_state;
-  GObject *text;
-  int select, num, can_focus;
-  void (* update)(int);
-  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
-  void *dialog;
-  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
-  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
+  SUBWIN_PROTOTYPE;
   struct objlist *obj[LEGENDNUM];
   /* Private member */
   int legend_type;
@@ -226,33 +220,7 @@ struct LegendWin
 
 struct InfoWin
 {
-  enum SubWinType type;
-  GtkWidget *Win, *swin, *popup, **popup_item;
-  GdkWindowState window_state;
-  GObject *text;
-  int select, num, can_focus;
-  void (* update)(int);
-  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
-  void *dialog;
-  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
-  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
-  struct objlist *obj;
-  /* Private member */
-  char *str;
-};
-
-struct CoordWin
-{
-  enum SubWinType type;
-  GtkWidget *Win, *swin, *popup, **popup_item;
-  GdkWindowState window_state;
-  GObject *text;
-  int select, num, can_focus;
-  void (* update)(int);
-  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);
-  void *dialog;
-  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
-  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
+  SUBWIN_PROTOTYPE;
   struct objlist *obj;
   /* Private member */
   char *str;
@@ -277,7 +245,7 @@ struct NgraphApp
   struct SubWin AxisWin;
   struct LegendWin LegendWin;
   struct SubWin MergeWin;
-  struct CoordWin CoordWin;
+  struct InfoWin CoordWin;
   struct InfoWin InfoWin;
 };
 

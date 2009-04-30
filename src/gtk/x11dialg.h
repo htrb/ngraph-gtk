@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.39 2009/04/23 10:18:22 hito Exp $
+ * $Id: x11dialg.h,v 1.40 2009/04/30 05:04:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -75,24 +75,22 @@ int putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix);
 int putobj_color2(GtkWidget *w, struct objlist *obj, int id);
 int chk_sputobjfield(struct objlist *obj, int id, char *field, char *str);
 
+#define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;\
+  GtkVBox *vbox;\
+  int ret, show_buttons, show_cancel;\
+  char *resource;\
+  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);\
+  void (*CloseWindow) (GtkWidget *w, void *data);\
+
+
 struct DialogType
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
 };
 
 struct MarkDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *toggle[MARK_TYPE_NUM];
   int Type, cb_respond;
@@ -101,12 +99,7 @@ void MarkDialog(struct MarkDialog *data, int type);
 
 struct FileDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *file, *load_settings, *fit, *fitid, *xcol, *xaxis, *ycol, *yaxis,
     *type, *mark_btn, *curve, *col1, *col2, *clip, *style, *size, *miter, *join,
@@ -122,12 +115,7 @@ void FileDialog(void *data, struct objlist *obj, int id, int candel);
 
 struct EvalDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *list;
   struct narray *sel;
@@ -139,12 +127,7 @@ void EvalDialog(struct EvalDialog *data,
 
 struct MathDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *list, *func[MATH_FNC_NUM];
   struct objlist *Obj;
@@ -154,12 +137,7 @@ void MathDialog(struct MathDialog *data, struct objlist *obj);
 
 struct MathTextDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *list, *label;
   char *Text, *math;
@@ -171,12 +149,7 @@ void MathTextDialog(struct MathTextDialog *data, char *text, int mode);
 
 struct FitDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *type, *through_point, *x, *y, *dim, *weight,
     *min, *max, *div, *interpolation, *formula, *converge,
@@ -190,12 +163,7 @@ void FitDialog(struct FitDialog *data, struct objlist *obj, int id);
 
 struct FitLoadDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *list;
   struct objlist *Obj;
@@ -206,12 +174,7 @@ void FitLoadDialog(struct FitLoadDialog *data, struct objlist *obj, int sid);
 
 struct FitSaveDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *profile;
   struct objlist *Obj;
@@ -222,12 +185,7 @@ void FitSaveDialog(struct FitSaveDialog *data, struct objlist *obj, int sid);
 
 struct FileMoveDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *line, *x, *y, *list;
   struct objlist *Obj;
@@ -237,12 +195,7 @@ void FileMoveDialog(struct FileMoveDialog *data, struct objlist *obj, int id);
 
 struct FileMaskDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *line, *list;
   struct objlist *Obj;
@@ -252,12 +205,7 @@ void FileMaskDialog(struct FileMaskDialog *data, struct objlist *obj, int id);
 
 struct FileLoadDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *headskip, *readstep, *finalline, *remark, *ifs, *csv;
   struct objlist *Obj;
@@ -267,12 +215,7 @@ void FileLoadDialog(struct FileLoadDialog *data, struct objlist *obj, int id);
 
 struct FileMathDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *xsmooth, *xmath, *ysmooth, *ymath, *fmath, *gmath, *hmath;
   struct objlist *Obj;
@@ -282,12 +225,7 @@ void FileMathDialog(struct FileMathDialog *data, struct objlist *obj, int id);
 
 struct SectionDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *x, *y, *w, *h, *xid, *yid, *rid, *uid, *gid,
     *width, *height, *xaxis, *yaxis, *uaxis, *raxis, *grid;
@@ -304,12 +242,7 @@ void SectionDialog(struct SectionDialog *data,
 
 struct CrossDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *x, *y, *w, *h, *xid, *yid, *width, *height, *xaxis, *yaxis;
   int X, Y, LenX, LenY, X0, Y0, LenX0, LenY0;
@@ -324,12 +257,7 @@ void CrossDialog(struct CrossDialog *data,
 
 struct AxisDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *min, *max, *inc, *div, *scale, *ref, *clear;
   struct objlist *Obj;
@@ -341,12 +269,7 @@ void AxisDialog(void *data, struct objlist *obj, int id, int candel);
 
 struct AxisBaseDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *style, *width, *color, *arrow, *arrowlen, *arrowwid,
     *wave, *wavelen, *wavewid, *baseline;
@@ -358,12 +281,7 @@ void AxisBaseDialog(struct AxisBaseDialog *data, struct objlist *obj, int id);
 
 struct AxisPosDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *x, *y, *len, *direction, *adjust, *adjustpos;
   struct objlist *Obj;
@@ -373,12 +291,7 @@ void AxisPosDialog(struct AxisPosDialog *data, struct objlist *obj, int id);
 
 struct AxisFontDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *space, *pt, *script, *font, *jfont, *color;
   struct objlist *Obj;
@@ -390,12 +303,7 @@ void AxisFontDialog(struct AxisFontDialog *data, struct objlist *obj, int id);
 #define GAUGE_STYLE_NUM 3
 struct GaugeDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   struct objlist *Obj;
   GtkWidget *length[GAUGE_STYLE_NUM], *width[GAUGE_STYLE_NUM],
@@ -409,12 +317,7 @@ void GaugeDialog(struct GaugeDialog *data, struct objlist *obj, int id);
 
 struct GridDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   struct objlist *Obj;
   GtkWidget *style[GRID_DIALOG_STYLE_NUM], *width[GRID_DIALOG_STYLE_NUM],
@@ -426,12 +329,7 @@ void GridDialog(struct GridDialog *data, struct objlist *obj, int id);
 
 struct ZoomDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *zoom_entry;
   int zoom;
@@ -440,12 +338,7 @@ void ZoomDialog(struct ZoomDialog *data);
 
 struct NumDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *num, *begin, *ster, *numnum, *head, *fraction, *add_plus, *tail,
     *align, *direction, *shiftp, *shiftn, *log_power, *no_zero, *norm, *step;
@@ -456,12 +349,7 @@ void NumDialog(struct NumDialog *data, struct objlist *obj, int id);
 
 struct MergeDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *file, *topmargin, *leftmargin, *zoom, *greeksymbol;
   struct objlist *Obj;
@@ -471,12 +359,7 @@ void MergeDialog(void *data, struct objlist *obj, int id, int Sub_id);
 
 struct LegendDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   char *(* prop_cb) (struct objlist *obj, int id);
   GtkWidget *style, *points, *interpolation, *width, *miter, *join,
@@ -507,12 +390,7 @@ void LegendTextDialog(struct LegendDialog *data,
 
 struct LegendGaussDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GSList *func_list, *dir_list;
   GtkWidget *style, *div, *color, *width, *miter, *join, *sch, *scv, *view;
@@ -531,12 +409,7 @@ void LegendGaussDialog(struct LegendGaussDialog *data,
 
 struct PageDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *leftmargin, *topmargin, *paperwidth, *paperheight, *paperzoom, *paper;
 };
@@ -544,12 +417,7 @@ void PageDialog(struct PageDialog *data);
 
 struct SwitchDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *drawlist, *objlist, *top, *up, *down, *bottom, *del, *ins, *add;
   int btn_lock;
@@ -560,12 +428,7 @@ void SwitchDialog(struct SwitchDialog *data);
 
 struct DirectoryDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *dir;
 };
@@ -573,12 +436,7 @@ void DirectoryDialog(struct DirectoryDialog *data);
 
 struct LoadDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *expand_file, *ignore_path, *dir;
   int expand;
@@ -590,12 +448,7 @@ void LoadDialog(struct LoadDialog *data);
 
 struct PrmDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *ignore_path, *greek_symbol;
   struct objlist *Obj;
@@ -605,12 +458,7 @@ void PrmDialog(struct PrmDialog *data, struct objlist *obj, int id);
 
 struct SaveDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *path, *include_data, *include_merge;
   int Path;
@@ -620,12 +468,7 @@ void SaveDialog(struct SaveDialog *data, int *sdata, int *smerge);
 
 struct DriverDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *driver, *file, *option;
   struct objlist *Obj;
@@ -635,12 +478,7 @@ void DriverDialog(struct DriverDialog *data, struct objlist *obj, int id);
 
 struct PrintDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *driver, *print, *option;
   struct objlist *Obj;
@@ -650,12 +488,7 @@ void PrintDialog(struct PrintDialog *data, struct objlist *obj, int id);
 
 struct OutputDataDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *div_entry;
   int div;
@@ -664,12 +497,7 @@ void OutputDataDialog(struct OutputDataDialog *data, int div);
 
 struct DefaultDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *geometry, *child_geometry, *viewer, *external_driver, *addin_script, *misc, *external_viewer, *fonts;
 };
@@ -677,12 +505,7 @@ void DefaultDialog(struct DefaultDialog *data);
 
 struct SetScriptDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *name, *script, *option, *description;
   struct script *Script;
@@ -691,12 +514,7 @@ void SetScriptDialog(struct SetScriptDialog *data, struct script *sc);
 
 struct PrefScriptDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *list, *update_b, *del_b, *up_b, *down_b;
 };
@@ -704,12 +522,7 @@ void PrefScriptDialog(struct PrefScriptDialog *data);
 
 struct SetDriverDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *name, *driver, *option, *ext;
   struct extprinter *Driver;
@@ -718,12 +531,7 @@ void SetDriverDialog(struct SetDriverDialog *data, struct extprinter *prn);
 
 struct PrefDriverDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *list, *update_b, *del_b, *up_b, *down_b;
 };
@@ -731,12 +539,7 @@ void PrefDriverDialog(struct PrefDriverDialog *data);
 
 struct PrefFontDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *list, *alias, *two_byte, *update_b, *del_b, *up_b, *down_b;
 };
@@ -744,12 +547,7 @@ void PrefFontDialog(struct PrefFontDialog *data);
 
 struct MiscDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *editor, *directory, *history, *path, *datafile,
     *expand, *expanddir, *ignorepath, *mergefile, *coordwin_font,
@@ -761,12 +559,7 @@ void MiscDialog(struct MiscDialog *data, struct objlist *obj, int id);
 
 struct ExViewerDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *dpi, *width, *height, *use_external;
   struct objlist *Obj;
@@ -776,12 +569,7 @@ void ExViewerDialog(struct ExViewerDialog *data);
 
 struct ViewerDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *dpi, *loadfile, *grid, *data_num, *antialias, *fftype,
     *bgcol, *preserve_width;
@@ -794,12 +582,7 @@ void ViewerDialog(struct ViewerDialog *data, struct objlist *obj, int id);
 
 struct SelectDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   struct narray *sel, *isel;
   struct objlist *Obj;
@@ -814,12 +597,7 @@ void SelectDialog(struct SelectDialog *data,
 
 struct CopyDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   struct objlist *Obj;
   int Id;
@@ -834,12 +612,7 @@ void CopyDialog(struct CopyDialog *data,
 
 struct OutputImageDialog
 {
-  GtkWidget *parent, *widget, *focus;
-  GtkVBox *vbox;
-  int ret, show_buttons, show_cancel;
-  char *resource;
-  void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);
-  void (*CloseWindow) (GtkWidget *w, void *data);
+  DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *version, *t2p, *dpi, *vlabel, *dlabel;
   int Version, text2path, Dpi, DlgType;

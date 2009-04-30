@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.c,v 1.12 2009/02/26 09:51:45 hito Exp $
+ * $Id: x11cood.c,v 1.13 2009/04/30 05:04:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -69,7 +69,7 @@ CoordWinSetCoord(int x, int y)
   char *argv[3];
   double a;
   char *name;
-  struct CoordWin *d;
+  struct InfoWin *d;
 
   d = &(NgraphApp.CoordWin);
 
@@ -141,7 +141,7 @@ CoordWinUnmap(Widget w, XtPointer client_data, XtPointer call_data)
 void
 CmCoordinateWindow(GtkWidget *w, gpointer client_data)
 {
-  struct CoordWin *d;
+  struct InfoWin *d;
 
   d = &(NgraphApp.CoordWin);
 

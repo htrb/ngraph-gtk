@@ -1,3 +1,17 @@
+2009-04-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.h (SUBWIN_PROTOTYPE): add.
+	(struct SubWin, struct LegendWin, struct InfoWin): use
+	"SUBWIN_PROTOTYPE".
+	(struct CoordWin): remove.
+
+	* src/gtk/x11dialg.h (DIALOG_PROTOTYPE): add.  use
+	"DIALOG_PROTOTYPE" for all struct which inherit "DialogType"
+	struct.
+
+	* src/gtk/x11cood.c (CoordWinSetCoord, CoordWinUpdate): use
+	"struct InfoWin" instead of "struct CoordWin".
+
 2009-04-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (ev_button_down_tree): remove.
