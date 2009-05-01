@@ -1,5 +1,55 @@
 2009-05-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.h (enum FOCU_OBJ_TYPE): add
+	"FOCUS_OBJ_TYPE_TEXT".
+
+	* src/gtk/x11view.c (enum ViewerPopupIdn): add
+	"VIEW_FLIP_HORIZONTAL" and "VIEW_FLIP_VERTICAL".
+	(create_popup_menu): add.
+	(create_popup_menu): add flip menu.
+	(VIEWER_POPUP_ITEM_FLIP): add.
+	(execute_selected_instances): add.
+	(RotateFocusedObj): use "execute_selected_instances()".
+	(FlipFocusedObj): add.
+	(do_popup): set sensitivity of flip menu.
+	(ViewerPopupMenu): add case for "VIEW_FLIP_HORIZONTAL" and
+	"VIEW_FLIP_VERTICAL".
+	(CmEditMenuCB): add case for "MenuIdEditFlipHorizontally" and
+	"MenuIdEditFlipVertically".
+
+	* src/gtk/x11menu.h (enum MenuID): add
+	"MenuIdEditFlipHorizontally" and "MenuIdEditFlipVertically".
+
+	* src/gtk/x11menu.c (show_edit_menu_cb): set sensitivity of
+	"FlipH" and "FlipV".
+	(create_editmenu): add flip menu.
+
+	* src/orect.c (rectflip): add.
+	(rect): add new field "flip".
+
+	* src/opolygon.c (opoly): add new field "flip".
+
+	* src/omark.c (markflip): add.
+	(mark): add new field "flip".
+
+	* src/oline.c (arrow): add new field "flip".
+
+	* src/olegend.h (enum FLIP_DIRECTION): add.
+
+	* src/olegend.c (flip, legendflip): add.
+
+	* src/ocurve.c (curve): add new field "flip".
+
+	* src/oaxis.c (axisbbox2, get_axis_box): remove unused arguments
+	"argc" and "argv".
+	(get_axis_group_box): add.
+	(axisbbox, axisrotate): use "get_axis_group_box()".
+	(axisflip2, axisflip): add.
+	(axis): add new field "flip".
+
+	* src/oarc.c (arcflip): add.
+	(arc): add new field "flip".
+
 	* addin/append.nsc: hide and recover axisgrid.
 
 2009-04-30  Ito Hiroyuki  <ZXB01226 at nifty.com>

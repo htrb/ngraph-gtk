@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.18 2009/04/19 06:46:13 hito Exp $
+ * $Id: oarc.c,v 1.19 2009/05/01 09:15:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -312,7 +312,7 @@ static int
 arcrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int tmp, angle, rx, ry, a, use_pivot;
- 
+
   _getobj(obj, "rx", inst, &rx);
   _getobj(obj, "ry", inst, &ry);
   _getobj(obj, "angle1", inst, &a);
@@ -350,6 +350,52 @@ arcrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     _getobj(obj, "x", inst, &x);
     _getobj(obj, "y", inst, &y);
     rotate(px, py, angle, &x, &y);
+    _putobj(obj, "x", inst, &x);
+    _putobj(obj, "y", inst, &y);
+  }
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
+  return 0;
+}
+
+static int 
+arcflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int rx, ry, a1, a2, use_pivot;
+  enum FLIP_DIRECTION dir;
+
+  _getobj(obj, "rx", inst, &rx);
+  _getobj(obj, "ry", inst, &ry);
+  _getobj(obj, "angle1", inst, &a1);
+  _getobj(obj, "angle2", inst, &a2);
+
+  dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
+
+  switch (dir) {
+  case FLIP_DIRECTION_VERTICAL:
+    a1 = - a1 - a2;
+    break;
+  case FLIP_DIRECTION_HORIZONTAL:
+    a1 = 18000 - a1 - a2;
+    break;
+  }
+
+  a1 %= 36000;
+  if (a1 < 0)
+    a1 += 36000;
+
+  _putobj(obj, "angle1", inst, &a1);
+
+  use_pivot = * (int *) argv[3];
+  if (use_pivot) {
+    int x, y, p;
+
+    p = *(int *) argv[4];
+    _getobj(obj, "x", inst, &x);
+    _getobj(obj, "y", inst, &y);
+    flip(p, dir, &x, &y);
     _putobj(obj, "x", inst, &x);
     _putobj(obj, "y", inst, &y);
   }
@@ -467,6 +513,7 @@ static struct objtable arc[] = {
   {"bbox",NIAFUNC,NREAD|NEXEC,arcbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0}, 
   {"rotate",NVFUNC,NREAD|NEXEC,arcrotate,"iiii",0},
+  {"flip",NVFUNC,NREAD|NEXEC,arcflip,"iii",0},
   {"change",NVFUNC,NREAD|NEXEC,arcchange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},

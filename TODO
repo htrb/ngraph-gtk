@@ -1,7 +1,5 @@
 * コードの整理
 
-* オブジェクトの反転機能
-
 * axis を cut & paste できないか？
 
 * GtkAction, GtkUIManager へ移行

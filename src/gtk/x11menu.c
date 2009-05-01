@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.95 2009/04/28 05:59:39 hito Exp $
+ * $Id: x11menu.c,v 1.96 2009/05/01 09:15:59 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -66,12 +66,13 @@ static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
-  *ShowInfoWin = NULL, *RecentGraph = NULL, *RecentData = NULL, *AddinMenu = NULL,
-  *ExtDrvOutMenu = NULL, *EditCut = NULL, *EditCopy = NULL, *EditPaste = NULL,
-  *EditDelete = NULL, *RotateCW = NULL, *RotateCCW = NULL, *EditAlign = NULL,
-  *ToggleStatusBar = NULL, *ToggleScrollbar = NULL, *ToggleRuler = NULL,
-  *TogglePToobar = NULL, *ToggleCToobar = NULL, *ToggleCrossGauge = NULL,
-  *MathBtn = NULL, *AxisUndoBtn = NULL;
+  *ShowInfoWin = NULL, *RecentGraph = NULL, *RecentData = NULL,
+  *AddinMenu = NULL, *ExtDrvOutMenu = NULL, *EditCut = NULL,
+  *EditCopy = NULL, *EditPaste = NULL, *EditDelete = NULL,
+  *RotateCW = NULL, *RotateCCW = NULL, *FlipH = NULL, *FlipV = NULL,
+  *EditAlign = NULL, *ToggleStatusBar = NULL, *ToggleScrollbar = NULL,
+  *ToggleRuler = NULL, *TogglePToobar = NULL, *ToggleCToobar = NULL,
+  *ToggleCrossGauge = NULL, *MathBtn = NULL, *AxisUndoBtn = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
@@ -856,7 +857,7 @@ show_edit_menu_cb(GtkWidget *w, gpointer user_data)
 {
   int num, type;
   GtkClipboard *clip;
-  gboolean state, state2;
+  gboolean state, state2, state3;
   struct objlist *axis = NULL;
   struct FocusObj **focus;
 
@@ -876,6 +877,7 @@ show_edit_menu_cb(GtkWidget *w, gpointer user_data)
 
   state = (! (type & FOCUS_OBJ_TYPE_AXIS) && (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_LEGEND)));
   state2 = (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
+  state3 = (! (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_TEXT)) && (type & (FOCUS_OBJ_TYPE_AXIS | FOCUS_OBJ_TYPE_LEGEND)));
 
   gtk_widget_set_sensitive(EditCut, state);
   gtk_widget_set_sensitive(EditCopy, state);
@@ -883,6 +885,8 @@ show_edit_menu_cb(GtkWidget *w, gpointer user_data)
   gtk_widget_set_sensitive(EditAlign, num > 0);
   gtk_widget_set_sensitive(RotateCW, state2);
   gtk_widget_set_sensitive(RotateCCW, state2);
+  gtk_widget_set_sensitive(FlipH, state3);
+  gtk_widget_set_sensitive(FlipV, state3);
 
   clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
   state = gtk_clipboard_wait_is_text_available(clip);
@@ -967,6 +971,11 @@ create_editmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 			       0, 0, CmEditMenuCB, MenuIdEditRotateCW);
   RotateCCW = create_menu_item(menu, _("rotate 9_0 degree counter-clockwise"), TRUE, "<Ngraph>/Edit/RotateCCW",
 			       0, 0, CmEditMenuCB, MenuIdEditRotateCCW);
+
+  FlipH  = create_menu_item(menu, _("flip _Horizontally"), TRUE, "<Ngraph>/Edit/FlipHorizontally",
+			       0, 0, CmEditMenuCB, MenuIdEditFlipHorizontally);
+  FlipV = create_menu_item(menu, _("flip _Vertically"), TRUE, "<Ngraph>/Edit/FlipVertically",
+			       0, 0, CmEditMenuCB, MenuIdEditFlipVertically);
 }
 
 static void

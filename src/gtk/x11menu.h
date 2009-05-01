@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.40 2009/04/30 05:04:57 hito Exp $
+ * $Id: x11menu.h,v 1.41 2009/05/01 09:15:59 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -55,6 +55,8 @@ enum MenuID {
   MenuIdAlignHBottom,
   MenuIdEditRotateCW,
   MenuIdEditRotateCCW,
+  MenuIdEditFlipHorizontally,
+  MenuIdEditFlipVertically,
   MenuIdFileNew,
   MenuIdFileOpen,
   MenuIdFileUpdate,
@@ -157,7 +159,7 @@ enum pop_up_menu_item_type {
   POP_UP_MENU_ITEM_TYPE_SEPARATOR,
 };
 
-#define VIEWER_POPUP_ITEM_NUM 13
+#define VIEWER_POPUP_ITEM_NUM 14
 struct Viewer
 {
   GtkWidget *Win;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.152 2009/04/28 05:59:39 hito Exp $
+ * $Id: x11view.c,v 1.153 2009/05/01 09:15:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -79,6 +79,8 @@ enum ViewerPopupIdn {
   VIEW_ALIGN_BOTTOM,
   VIEW_ROTATE_CLOCKWISE,
   VIEW_ROTATE_COUNTER_CLOCKWISE,
+  VIEW_FLIP_HORIZONTAL,
+  VIEW_FLIP_VERTICAL,
 };
 
 enum object_move_type {
@@ -1034,10 +1036,17 @@ create_popup_menu(struct Viewer *d)
     {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
+
   struct viewer_popup rotate_popup[] = {
     {N_("_90 degree clockwise"),         FALSE, VIEW_ROTATE_CLOCKWISE,        NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {N_("9_0 degree counter-clockwise"), FALSE, VIEW_ROTATE_COUNTER_CLOCKWISE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
+
+  struct viewer_popup flip_popup[] = {
+    {N_("flip _Horizontally"), FALSE, VIEW_FLIP_HORIZONTAL, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("flip _Vertically"),   FALSE, VIEW_FLIP_VERTICAL,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  };
+
   struct viewer_popup popup[] = {
     {GTK_STOCK_CUT,         TRUE,  VIEW_CUT,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {GTK_STOCK_COPY,        TRUE,  VIEW_COPY,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -1047,8 +1056,9 @@ create_popup_menu(struct Viewer *d)
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
     {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-    {N_("_Align"),          FALSE, 0, align_popup, sizeof(align_popup) / sizeof(*align_popup), POP_UP_MENU_ITEM_TYPE_MENU},
+    {N_("_Align"),          FALSE, 0, align_popup,  sizeof(align_popup) / sizeof(*align_popup), POP_UP_MENU_ITEM_TYPE_MENU},
     {N_("_Rotate"),         FALSE, 0, rotate_popup, sizeof(rotate_popup) / sizeof(*rotate_popup), POP_UP_MENU_ITEM_TYPE_MENU},
+    {N_("_Flip"),           FALSE, 0, flip_popup,   sizeof(rotate_popup) / sizeof(*rotate_popup), POP_UP_MENU_ITEM_TYPE_MENU},
     {N_("cross _Gauge"),     FALSE, VIEW_CROSS,  NULL, 0, POP_UP_MENU_ITEM_TYPE_CHECK},
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
     {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -1065,11 +1075,12 @@ create_popup_menu(struct Viewer *d)
 #define VIEWER_POPUP_ITEM_PROP    5
 #define VIEWER_POPUP_ITEM_ALIGN   6
 #define VIEWER_POPUP_ITEM_ROTATE  7
-#define VIEWER_POPUP_ITEM_CROSS   8
-#define VIEWER_POPUP_ITEM_TOP     9
-#define VIEWER_POPUP_ITEM_UP     10
-#define VIEWER_POPUP_ITEM_DOWN   11
-#define VIEWER_POPUP_ITEM_BOTTOM 12
+#define VIEWER_POPUP_ITEM_FLIP    8
+#define VIEWER_POPUP_ITEM_CROSS   9
+#define VIEWER_POPUP_ITEM_TOP    10
+#define VIEWER_POPUP_ITEM_UP     11
+#define VIEWER_POPUP_ITEM_DOWN   12
+#define VIEWER_POPUP_ITEM_BOTTOM 13
 
 #if VIEWER_POPUP_ITEM_BOTTOM + 1 != VIEWER_POPUP_ITEM_NUM
 #error invarid array size (struct Viewer.popup_item)
@@ -2034,13 +2045,32 @@ AlignFocusedObj(int align)
 }
 
 static void
+execute_selected_instances(struct FocusObj **focus, int num, int argc, char **argv, char *field)
+{
+  char *inst;
+  int i;
+
+  for (i = 0; i < num; i++) {
+    inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
+    if (inst == NULL) {
+      continue;
+    }
+    if (chkobjfield(focus[i]->obj, field) == 0) {
+      AddInvalidateRect(focus[i]->obj, inst);
+      _exeobj(focus[i]->obj, field, inst, argc, argv);
+      set_graph_modified();
+      AddInvalidateRect(focus[i]->obj, inst);
+    }
+  }
+}
+
+static void
 RotateFocusedObj(int direction)
 {
-  int i, num, minx, miny, maxx, maxy, angle, type;
+  int num, minx, miny, maxx, maxy, angle, type;
   int use_pivot, px, py;
   struct FocusObj **focus;
   char *argv[5];
-  char *inst;
   struct Viewer *d;
 
   if (Menulock || GlobalLock)
@@ -2076,18 +2106,50 @@ RotateFocusedObj(int direction)
     py = (miny + maxy) / 2;
   }
 
-  for (i = 0; i < num; i++) {
-    inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
-    if (inst == NULL) {
-      continue;
-    }
-    if (chkobjfield(focus[i]->obj, "rotate") == 0) {
-      AddInvalidateRect(focus[i]->obj, inst);
-      _exeobj(focus[i]->obj, "rotate", inst, 4, argv);
-      set_graph_modified();
-      AddInvalidateRect(focus[i]->obj, inst);
-    }
+  execute_selected_instances(focus, num, 4, argv, "rotate");
+
+  PaintLock = FALSE;
+  UpdateAll();
+}
+
+static void
+FlipFocusedObj(enum FLIP_DIRECTION dir)
+{
+  int num, minx, miny, maxx, maxy, type;
+  int use_pivot, p;
+  struct FocusObj **focus;
+  char *argv[4];
+  struct Viewer *d;
+
+  if (Menulock || GlobalLock)
+    return;
+
+  d = &(NgraphApp.Viewer);
+
+  num = check_focused_obj_type(d, &type);
+  if (num < 1 || (type & FOCUS_OBJ_TYPE_MERGE)) {
+    return;
   }
+
+  focus = (struct FocusObj **) arraydata(d->focusobj);
+
+  PaintLock = TRUE;
+
+  argv[0] = (char *) &dir;
+  argv[1] = (char *) &use_pivot;
+  argv[2] = (char *) &p;
+  argv[3] = NULL;
+
+  if (num == 1) {
+    use_pivot = 0;
+    p = 0;
+  } else {
+    GetLargeFrame(&minx, &miny, &maxx, &maxy);
+    use_pivot = 1;
+    p = (dir == FLIP_DIRECTION_HORIZONTAL) ? (minx + maxx) / 2 : (miny + maxy) / 2;
+  }
+
+  execute_selected_instances(focus, num, 3, argv, "flip");
 
   PaintLock = FALSE;
   UpdateAll();
@@ -4351,7 +4413,7 @@ int
 check_focused_obj_type(struct Viewer *d, int *type)
 {
   int num, i, t;
-  static struct objlist *axis, *merge, *legend;
+  static struct objlist *axis, *merge, *legend, *text;
   struct FocusObj *focus;  
 
   num = arraynum(d->focusobj);
@@ -4365,11 +4427,17 @@ check_focused_obj_type(struct Viewer *d, int *type)
   if (legend == NULL)
     legend = chkobject("legend");
 
+  if (text == NULL)
+    text = chkobject("text");
+
   t = 0;
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);
     if (chkobjchild(legend, focus->obj)) {
       t |= FOCUS_OBJ_TYPE_LEGEND;
+      if (chkobjchild(text, focus->obj)) {
+	t |= FOCUS_OBJ_TYPE_TEXT;
+      }
     } else if (chkobjchild(axis, focus->obj)) {
       t |= FOCUS_OBJ_TYPE_AXIS;
     } else if (chkobjchild(merge, focus->obj)) {
@@ -4428,6 +4496,9 @@ do_popup(GdkEventButton *event, struct Viewer *d)
       gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ALIGN], TRUE);
       if (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_AXIS))) {
 	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], TRUE);
+      }
+      if (! (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_TEXT)) && (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_AXIS))) {
+	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_FLIP], TRUE);
       }
     }
     if (num == 1) {
@@ -6245,6 +6316,12 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
   case VIEW_ROTATE_COUNTER_CLOCKWISE:
     RotateFocusedObj(ROTATE_COUNTERCLOCKWISE);
     break;
+  case VIEW_FLIP_HORIZONTAL:
+    FlipFocusedObj(FLIP_DIRECTION_HORIZONTAL);
+    break;
+  case VIEW_FLIP_VERTICAL:
+    FlipFocusedObj(FLIP_DIRECTION_VERTICAL);
+    break;
   }
 }
 
@@ -6294,6 +6371,12 @@ CmEditMenuCB(GtkToolItem *w, gpointer client_data)
     break;
   case MenuIdEditRotateCCW:
     RotateFocusedObj(ROTATE_COUNTERCLOCKWISE);
+    break;
+  case MenuIdEditFlipHorizontally:
+    FlipFocusedObj(FLIP_DIRECTION_HORIZONTAL);
+    break;
+  case MenuIdEditFlipVertically:
+    FlipFocusedObj(FLIP_DIRECTION_VERTICAL);
     break;
   }
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.h,v 1.5 2009/04/19 06:46:13 hito Exp $
+ * $Id: olegend.h,v 1.6 2009/05/01 09:15:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,6 +21,14 @@
  * 
  */
 
+#ifndef OLEGEND_HEADER
+#define OLEGEND_HEADER
+
+enum FLIP_DIRECTION {
+  FLIP_DIRECTION_HORIZONTAL,
+  FLIP_DIRECTION_VERTICAL,
+};
+
 int legendgeometry(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
 int legendbbox(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
 int legendmove(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
@@ -29,4 +37,7 @@ int legendchange(struct objlist *obj,char *inst,char *rval, int argc,char **argv
 int legendzoom(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
 int legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 void rotate(int px, int py, int angle, int *x, int *y);
+void flip(int pivot, enum FLIP_DIRECTION dir, int *x, int *y);
+int legendflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 
+#endif

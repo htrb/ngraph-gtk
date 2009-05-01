@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.14 2009/04/19 06:46:13 hito Exp $
+ * $Id: orect.c,v 1.15 2009/05/01 09:15:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -238,6 +238,38 @@ rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
+rectflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int x1, y1, x2, y2, p, use_pivot;
+  enum FLIP_DIRECTION dir;
+
+  dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
+  use_pivot = * (int *) argv[3];
+
+  if (! use_pivot)
+    return 0;
+
+  _getobj(obj, "x1", inst, &x1);
+  _getobj(obj, "y1", inst, &y1);
+  _getobj(obj, "x2", inst, &x2);
+  _getobj(obj, "y2", inst, &y2);
+
+  p = *(int *) argv[4];
+  flip(p, dir, &x1, &y1);
+  flip(p, dir, &x2, &y2);
+
+  _putobj(obj, "x1", inst, &x1);
+  _putobj(obj, "y1", inst, &y1);
+  _putobj(obj, "x2", inst, &x2);
+  _putobj(obj, "y2", inst, &y2);
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
+  return 0;
+}
+
+static int 
 rectmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
@@ -443,6 +475,7 @@ static struct objtable rect[] = {
   {"bbox",NIAFUNC,NREAD|NEXEC,rectbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,rectmove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,rectrotate,"iiii",0},
+  {"flip",NVFUNC,NREAD|NEXEC,rectflip,"iii",0},
   {"change",NVFUNC,NREAD|NEXEC,rectchange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,rectmatch,"iiiii",0},

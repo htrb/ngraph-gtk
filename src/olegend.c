@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.15 2009/04/19 06:46:13 hito Exp $
+ * $Id: olegend.c,v 1.16 2009/05/01 09:15:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -220,6 +220,19 @@ rotate(int px, int py, int angle, int *x, int *y)
   *y = nround(py + x0 * sin(t) + y0 * cos(t));
 }
 
+void
+flip(int pivot, enum FLIP_DIRECTION dir, int *x, int *y)
+{
+  switch (dir) {
+  case FLIP_DIRECTION_VERTICAL:
+    *y = pivot * 2 - *y;
+    break;
+  case FLIP_DIRECTION_HORIZONTAL:
+    *x = pivot * 2 - *x;
+    break;
+  }
+}
+
 int 
 legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
@@ -247,6 +260,41 @@ legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   for (i = start; i < num / 2; i++) {
     rotate(px, py, angle, &pdata[i * 2], &pdata[i * 2 + 1]);
+  }
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
+  return 0;
+}
+
+int 
+legendflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct narray *points;
+  int i, num, *pdata, p, start, use_pivot;
+  enum FLIP_DIRECTION dir;
+
+  _getobj(obj, "points", inst, &points);
+  num = arraynum(points);
+  pdata = arraydata(points);
+
+  if (num < 4)
+    return 0;
+
+  dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
+  use_pivot = * (int *) argv[3];
+
+  if (use_pivot) {
+    p = *(int *) argv[4];
+    start = 0;
+  } else {
+    p = (dir == FLIP_DIRECTION_HORIZONTAL) ? pdata[0] : pdata[1];
+    start = 1;
+  }
+
+  for (i = start; i < num / 2; i++) {
+    flip(p, dir, &pdata[i * 2], &pdata[i * 2 + 1]);
   }
 
   if (clear_bbox(obj, inst))

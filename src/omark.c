@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.12 2009/04/19 06:46:13 hito Exp $
+ * $Id: omark.c,v 1.13 2009/05/01 09:15:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -184,6 +184,33 @@ markrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
+markflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int x, y, p, use_pivot;
+  enum FLIP_DIRECTION dir;
+
+  dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
+  use_pivot = * (int *) argv[3];
+
+  if (! use_pivot)
+    return 0;
+
+  _getobj(obj, "x", inst, &x);
+  _getobj(obj, "y", inst, &y);
+
+  p = *(int *) argv[4];
+  flip(p, dir, &x, &y);
+
+  _putobj(obj, "x", inst, &x);
+  _putobj(obj, "y", inst, &y);
+
+  if (clear_bbox(obj, inst))
+    return 1;
+
+  return 0;
+}
+
+static int 
 markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int i,x,y,size,refx,refy,width,snum,*sdata,preserve_width;
@@ -325,6 +352,7 @@ static struct objtable mark[] = {
   {"bbox",NIAFUNC,NREAD|NEXEC,markbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,markmove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,markrotate,"iiii",0},
+  {"flip",NVFUNC,NREAD|NEXEC,markflip,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,markzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,markmatch,"iiiii",0},
 };

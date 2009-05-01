@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.h,v 1.11 2009/04/28 05:59:40 hito Exp $
+ * $Id: x11view.h,v 1.12 2009/05/01 09:15:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,6 +46,7 @@ enum FOCU_OBJ_TYPE {
   FOCUS_OBJ_TYPE_AXIS   = 0x01,
   FOCUS_OBJ_TYPE_MERGE  = 0x02,
   FOCUS_OBJ_TYPE_LEGEND = 0x04,
+  FOCUS_OBJ_TYPE_TEXT   = 0x08,
 };
 
 void ViewerWinSetup(void);
