@@ -1,7 +1,14 @@
-* �����ɤ�����
+* コードの整理
 
-* Color selection dialog �Υѥ�å�������¸���ɹ�
+* オブジェクトの反転機能
 
-* Symbol font �б��ζ���
+* axis を cut & paste できないか？
 
-* ���������ɤ� utf-8 ����Ѥ����ʰ�Ū�ʹ�ݲ�
+* GtkAction, GtkUIManager へ移行
+
+
+* Color selection dialog のパレット設定保存、読込
+
+* Symbol font 対応の強化
+
+* 内部コードに utf-8 を採用した簡易的な国際化

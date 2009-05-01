@@ -16,8 +16,8 @@ else
 fi
 if [ "$FILE" ]
 then
-  # hide exsisting 'axis' and 'file' instances
-  system:0:hide_instance axis file
+  # hide exsisting 'axis', 'axisgrid' and 'file' instances
+  system:0:hide_instance axis axisgrid file
   # execute file
   new shell
   shell::shell "$FILE"
@@ -28,7 +28,7 @@ then
    exe ${i}:0-! tight
   done
   # recover hidden instances
-  system:0:recover_instance axis file
+  system:0:recover_instance axis axisgrid file
   # delete closed GRA instance
   if [ ${gra::GC} = -1 ]
   then

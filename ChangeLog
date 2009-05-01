@@ -1,3 +1,7 @@
+2009-05-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/append.nsc: hide and recover axisgrid.
+
 2009-04-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.h (SUBWIN_PROTOTYPE): add.
