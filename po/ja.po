@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2009-05-01 17:59+0900\n"
-"PO-Revision-Date: 2009-05-01 18:00+0900\n"
+"PO-Revision-Date: 2009-05-01 18:20+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -2112,7 +2112,7 @@ msgstr "回転(_R)"
 
 #: src/gtk/x11view.c:1061
 msgid "_Flip"
-msgstr "フリップ(_F)"
+msgstr "反転(_F)"
 
 #: src/gtk/x11view.c:1274 src/gtk/x11view.c:1276
 #, c-format
