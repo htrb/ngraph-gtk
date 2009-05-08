@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.76 2009/04/20 02:29:04 hito Exp $
+ * $Id: ofile.c,v 1.77 2009/05/08 01:45:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -185,6 +185,16 @@ static NHASH FileConfigHash = NULL;
 
 #define DXBUFSIZE 101
 
+#define USE_BUF_PTR  1
+#define USE_RING_BUF 2
+#define BUF_TYPE     USE_BUF_PTR
+
+#define USE_MEMMOVE 1
+
+#if BUF_TYPE == USE_RING_BUF
+#define RING_BUF_INC(i) (((i) < DXBUFSIZE) ? ((i) + 1) : 0)
+#endif
+
 #if HAVE_ISFINITE
 #define check_infinite(v) (! isfinite(v))
 #elsif HAVE_FINITE
@@ -268,7 +278,12 @@ struct f2ddata {
   int ignore,negative;
   int colr,colg,colb;
   int msize,mtype;
-  struct f2ddata_buf *buf;
+  struct f2ddata_buf buf[DXBUFSIZE];
+#if BUF_TYPE == USE_BUF_PTR
+  struct f2ddata_buf *buf_ptr[DXBUFSIZE];
+#elif BUF_TYPE == USE_RING_BUF
+  int ringbuf_top;
+#endif
   int bufnum,bufpo;
   int smooth,smoothx,smoothy;
   int masknum;
@@ -306,6 +321,16 @@ struct f2dlocal {
 
 static int set_data_progress(struct f2ddata *fp);
 static int getminmaxdata(struct f2ddata *fp, struct f2dlocal *local);
+
+#if BUF_TYPE == USE_RING_BUF
+int 
+ring_buf_index(struct f2ddata *fp, int i)
+{
+  int n;
+  n = fp->ringbuf_top + i;
+  return (n < DXBUFSIZE) ? n : n % DXBUFSIZE;
+}
+#endif
 
 static void 
 check_ifs_init(struct f2ddata *fp)
@@ -592,17 +617,18 @@ opendata(struct objlist *obj,char *inst,
   fp->obj=obj;
   fp->id=fid;
   fp->prev_datanum = prev_datanum;
-  fp->buf = memalloc(sizeof(*fp->buf) * DXBUFSIZE);
-  if (fp->buf == NULL) {
-    fclose(fp->fd);
-    memfree(fp);
-    return NULL;
+#if BUF_TYPE == USE_BUF_PTR
+  for (i = 0; i < DXBUFSIZE; i++) {
+    fp->buf_ptr[i] = &fp->buf[i];
   }
+#elif BUF_TYPE == USE_RING_BUF
+  fp->ringbuf_top = 0;
+#endif
   fp->bufnum=0;
   fp->bufpo=0;
   fp->masknum=arraynum(mask);
   fp->mask=arraydata(mask);
-#if  MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
+#if MASK_SERACH_METHOD == MASK_SERACH_METHOD_CONST
   fp->mask_index = 0;
 #endif
 
@@ -865,7 +891,6 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
   }
   arraydel(&(fp->fileopen));
   fclose(fp->fd);
-  memfree(fp->buf);
   if ((inst=chkobjinst(fp->obj,fp->id))!=NULL)
     _putobj(fp->obj,"data_num",inst,&(fp->datanum));
 
@@ -1749,7 +1774,13 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
     }
   }
 
+#if BUF_TYPE == USE_BUF_PTR
+  buf = fp->buf_ptr[fp->bufnum];
+#elif BUF_TYPE == USE_RING_BUF
+  buf = &fp->buf[ring_buf_index(fp, fp->bufnum)];
+#else
   buf = &fp->buf[fp->bufnum];
+#endif
   buf->colr = fp->color[0];
   buf->colg = fp->color[1];
   buf->colb = fp->color[2];
@@ -1839,6 +1870,10 @@ getdata(struct f2ddata *fp)
   char *statx,*staty;
   double *gdata;
   char *gstat;
+  struct f2ddata_buf *buf;
+#if BUF_TYPE == USE_RING_BUF
+  int n;
+#endif
 
   gdata = (double *) memalloc(sizeof(double) * (FILE_OBJ_MAXCOL + 1));
   gstat = (char *) memalloc(sizeof(char) * (FILE_OBJ_MAXCOL + 1));
@@ -1940,6 +1975,99 @@ getdata(struct f2ddata *fp)
   numx=numy=num2=num3=0;
   if (fp->bufpo+fp->smooth>=fp->bufnum) num=fp->bufnum-1;
   else num=fp->bufpo+fp->smooth;
+
+#if BUF_TYPE == USE_BUF_PTR
+  for (i = 0; i <= num; i++) {
+    buf = fp->buf_ptr[i];
+    if (buf->dxstat == MNOERR &&
+	i >= fp->bufpo - smx &&
+	i <= fp->bufpo + smx) {
+      sumx += buf->dx;
+      numx++;
+    }
+    if (buf->dystat == MNOERR &&
+	i >= fp->bufpo - smy &&
+	i <= fp->bufpo + smy) {
+      sumy += buf->dy;
+      numy++;
+    }
+    if (buf->d2stat == MNOERR &&
+	i >= fp->bufpo - sm2 &&
+	i <= fp->bufpo + sm2) {
+      sum2 += buf->d2;
+      num2++;
+    }
+    if (buf->d3stat == MNOERR &&
+	i >= fp->bufpo - sm3 &&
+	i <= fp->bufpo + sm3) {
+      sum3 += buf->d3;
+      num3++;
+    }
+  }
+
+  buf = fp->buf_ptr[fp->bufpo];
+  if (numx != 0)
+    fp->dx = sumx / numx;
+  fp->dxstat = buf->dxstat;
+
+  if (numy != 0)
+    fp->dy=sumy/numy;
+  fp->dystat = buf->dystat;
+
+  if (num2 != 0)
+    fp->d2 = sum2/num2;
+  fp->d2stat = buf->d2stat;
+
+  if (num3 != 0)
+    fp->d3 = sum3 / num3;
+  fp->d3stat = buf->d3stat;
+
+  fp->dline = buf->line;
+  fp->colr = buf->colr;
+  fp->colg = buf->colg;
+  fp->colb = buf->colb;
+  fp->msize = buf->marksize;
+  fp->mtype = buf->marktype;
+#elif BUF_TYPE == USE_RING_BUF
+  for (i=0;i<=num;i++) {
+    n = ring_buf_index(fp, i);
+    if ((fp->buf[n].dxstat==MNOERR)
+     && (i>=fp->bufpo-smx) && (i<=fp->bufpo+smx)) {
+      sumx+=fp->buf[n].dx;
+      numx++;
+    }
+    if ((fp->buf[n].dystat==MNOERR)
+     && (i>=fp->bufpo-smy) && (i<=fp->bufpo+smy)) {
+      sumy+=fp->buf[n].dy;
+      numy++;
+    }
+    if ((fp->buf[n].d2stat==MNOERR)
+     && (i>=fp->bufpo-sm2) && (i<=fp->bufpo+sm2)) {
+      sum2+=fp->buf[n].d2;
+      num2++;
+    }
+    if ((fp->buf[n].d3stat==MNOERR)
+     && (i>=fp->bufpo-sm3) && (i<=fp->bufpo+sm3)) {
+      sum3+=fp->buf[n].d3;
+      num3++;
+    }
+  }
+  n = ring_buf_index(fp, fp->bufpo);
+  if (numx!=0) fp->dx=sumx/numx;
+  fp->dxstat=fp->buf[n].dxstat;
+  if (numy!=0) fp->dy=sumy/numy;
+  fp->dystat=fp->buf[n].dystat;
+  if (num2!=0) fp->d2=sum2/num2;
+  fp->d2stat=fp->buf[n].d2stat;
+  if (num3!=0) fp->d3=sum3/num3;
+  fp->d3stat=fp->buf[n].d3stat;
+  fp->dline=fp->buf[n].line;
+  fp->colr=fp->buf[n].colr;
+  fp->colg=fp->buf[n].colg;
+  fp->colb=fp->buf[n].colb;
+  fp->msize=fp->buf[n].marksize;
+  fp->mtype=fp->buf[n].marktype;
+#else  /* BUF_TYPE */
   for (i=0;i<=num;i++) {
     if ((fp->buf[i].dxstat==MNOERR)
      && (i>=fp->bufpo-smx) && (i<=fp->bufpo+smx)) {
@@ -1976,7 +2104,7 @@ getdata(struct f2ddata *fp)
   fp->colb=fp->buf[fp->bufpo].colb;
   fp->msize=fp->buf[fp->bufpo].marksize;
   fp->mtype=fp->buf[fp->bufpo].marktype;
-
+#endif	/* BUF_TYPE */
   switch (fp->type) {
   case TYPE_NORMAL:
     if (fp->dxstat==MNOERR && fp->dystat==MNOERR)
@@ -1998,17 +2126,44 @@ getdata(struct f2ddata *fp)
   if (fp->bufpo<fp->smooth) {
     fp->bufpo++;
   } else {
-#if 0
-    for (i=0;i<fp->bufnum-1;i++) {
-      fp->buf[i]=fp->buf[i+1];
+#if BUF_TYPE == USE_BUF_PTR
+#if USE_MEMMOVE
+    if (fp->bufnum > 0) {
+      struct f2ddata_buf *tmp;
+      fp->bufnum--;
+      tmp = fp->buf_ptr[0];
+      memmove(fp->buf_ptr, fp->buf_ptr + 1, sizeof(*fp->buf_ptr) * fp->bufnum);
+      fp->buf_ptr[fp->bufnum] = tmp;
     }
-    fp->bufnum--;
-#else
+#else  /* USE_MEMMOVE */
+    if (fp->bufnum > 0) {
+      struct f2ddata_buf *tmp;
+      tmp = fp->buf_ptr[0];
+      fp->bufnum--;
+      for (i = 0; i < fp->bufnum; i++) {
+	fp->buf_ptr[i] = fp->buf_ptr[i + 1];
+      }
+      fp->buf_ptr[fp->bufnum] = tmp;
+    }
+#endif	/* USE_MEMMOVE */
+#elif BUF_TYPE == USE_RING_BUF
+    if (fp->bufnum > 0) {
+      fp->bufnum--;
+      fp->ringbuf_top = RING_BUF_INC(fp->ringbuf_top);
+    }
+#else  /* BUF_TYPE */
+#if USE_MEMMOVE
     if (fp->bufnum > 0) {
       fp->bufnum--;
       memmove(fp->buf, fp->buf + 1, sizeof(*fp->buf) * fp->bufnum);
     }
-#endif
+#else  /* USE_MEMMOVE */
+    for (i=0;i<fp->bufnum-1;i++) {
+      fp->buf[i]=fp->buf[i+1];
+    }
+    fp->bufnum--;
+#endif	/* USE_MEMMOVE */
+#endif	/* BUF_TYPE */
   }
   memfree(gdata);
   memfree(gstat);

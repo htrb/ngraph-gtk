@@ -1,3 +1,12 @@
+2009-05-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (USE_BUF_PTR, USE_RING_BUF, BUF_TYPE, USE_MEMMOVE)
+	(RING_BUF_INC, ring_buf_index): add.
+	(struct f2ddata): add new member "buf_ptr" or "ringbuf_top".
+	(struct f2ddata): now "buf" is array.
+	(opendata): initialize "buf_ptr" or "ringbuf_top".
+	(getdata): use array of pointer or ring buffer.
+
 2009-05-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.h (enum FOCU_OBJ_TYPE): add
