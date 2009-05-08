@@ -68,7 +68,7 @@
 	"SUBWIN_PROTOTYPE".
 	(struct CoordWin): remove.
 
-	* src/gtk/x11dialg.h (DIALOG_PROTOTYPE): add.  use
+	* src/gtk/x11dialg.h (DIALOG_PROTOTYPE): add. use
 	"DIALOG_PROTOTYPE" for all struct which inherit "DialogType"
 	struct.
 
@@ -99,7 +99,7 @@
 	"View" menu.
 	(create_legendmenu): do not gettextize menu title.
 	(create_legendsubmenu): gettextize "label".
-	(create_legendsubmenu): remove under scale from "label" for accel
+	(create_legendsubmenu): remove under score from "label" for accel
 	path string.
 
 	* src/gtk/gtk_subwin.c (numeric_cb, string_cb): do nothing when
