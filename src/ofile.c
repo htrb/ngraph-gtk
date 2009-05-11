@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.77 2009/05/08 01:45:38 hito Exp $
+ * $Id: ofile.c,v 1.78 2009/05/11 02:20:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2127,42 +2127,36 @@ getdata(struct f2ddata *fp)
     fp->bufpo++;
   } else {
 #if BUF_TYPE == USE_BUF_PTR
+    if (fp->bufnum > 0) {
+      struct f2ddata_buf *tmp;
+
+      fp->bufnum--;
+      tmp = fp->buf_ptr[0];
 #if USE_MEMMOVE
-    if (fp->bufnum > 0) {
-      struct f2ddata_buf *tmp;
-      fp->bufnum--;
-      tmp = fp->buf_ptr[0];
       memmove(fp->buf_ptr, fp->buf_ptr + 1, sizeof(*fp->buf_ptr) * fp->bufnum);
-      fp->buf_ptr[fp->bufnum] = tmp;
-    }
-#else  /* USE_MEMMOVE */
-    if (fp->bufnum > 0) {
-      struct f2ddata_buf *tmp;
-      tmp = fp->buf_ptr[0];
-      fp->bufnum--;
+#else
       for (i = 0; i < fp->bufnum; i++) {
 	fp->buf_ptr[i] = fp->buf_ptr[i + 1];
       }
+#endif
       fp->buf_ptr[fp->bufnum] = tmp;
     }
-#endif	/* USE_MEMMOVE */
 #elif BUF_TYPE == USE_RING_BUF
     if (fp->bufnum > 0) {
       fp->bufnum--;
       fp->ringbuf_top = RING_BUF_INC(fp->ringbuf_top);
     }
 #else  /* BUF_TYPE */
-#if USE_MEMMOVE
     if (fp->bufnum > 0) {
       fp->bufnum--;
+#if USE_MEMMOVE
       memmove(fp->buf, fp->buf + 1, sizeof(*fp->buf) * fp->bufnum);
+#else
+      for (i = 0; i < fp->bufnum; i++) {
+	fp->buf[i] = fp->buf[i + 1];
+      }
+#endif
     }
-#else  /* USE_MEMMOVE */
-    for (i=0;i<fp->bufnum-1;i++) {
-      fp->buf[i]=fp->buf[i+1];
-    }
-    fp->bufnum--;
-#endif	/* USE_MEMMOVE */
 #endif	/* BUF_TYPE */
   }
   memfree(gdata);
