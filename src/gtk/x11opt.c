@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.61 2009/04/23 02:49:54 hito Exp $
+ * $Id: x11opt.c,v 1.62 2009/05/11 06:22:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1146,11 +1146,11 @@ MiscDialogClose(GtkWidget *w, void *data)
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignorepath));
 
   a = spin_entry_get_val(d->hist_size);
-  if (a < HIST_SIZE_MAX && a > 0) 
+  if (a <= HIST_SIZE_MAX && a > 0) 
     Menulocal.hist_size = a;
 
   a = spin_entry_get_val(d->info_size);
-  if (a < INFOWIN_SIZE_MAX && a > 0) 
+  if (a <= INFOWIN_SIZE_MAX && a > 0) 
     Menulocal.info_size = a;
 
   a = spin_entry_get_val(d->data_head_lines);

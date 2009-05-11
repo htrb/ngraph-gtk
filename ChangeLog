@@ -1,3 +1,8 @@
+2009-05-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (MenuConfigToggleView): add "{NULL}" at the
+	end of the array.
+
 2009-05-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (USE_BUF_PTR, USE_RING_BUF, BUF_TYPE, USE_MEMMOVE)

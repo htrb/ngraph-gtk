@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.74 2009/04/28 05:59:39 hito Exp $
+ * $Id: ox11menu.c,v 1.75 2009/05/11 06:22:51 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -253,6 +253,7 @@ static struct menu_config MenuConfigToggleView[] = {
   {"command_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ctoolbar},
   {"pointer_toolbar",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ptoolbar},
   {"cross_gauge",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.show_cross},
+  {NULL},
 };
 
 static struct menu_config MenuConfigGeometry[] = {
