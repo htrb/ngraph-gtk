@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.59 2009/05/12 09:00:10 hito Exp $
+ * $Id: x11axis.c,v 1.60 2009/05/12 09:25:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1836,9 +1836,15 @@ AxisDialogSetupItem(GtkWidget *w, struct AxisDialog *d, int id)
   combo_box_clear(d->max);
   combo_box_clear(d->inc);
 
+  getobj(d->Obj, "min", id, 0, NULL, &min);
+  getobj(d->Obj, "max", id, 0, NULL, &max);
+  getobj(d->Obj, "inc", id, 0, NULL, &inc);
+
   getobj(d->Obj, "scale_history", d->Id, 0, NULL, &array);
   if (array) {
-    pmin = pmax = pinc = 0;
+    pmin = min;
+    pmax = max;
+    pinc = inc;
     num = arraynum(array) / 3;
     data = (double *) arraydata(array);
     for (j = 0; j < num; j++) {
@@ -1861,10 +1867,6 @@ AxisDialogSetupItem(GtkWidget *w, struct AxisDialog *d, int id)
       pinc = data[2 + j * 3];
     }
   }
-
-  getobj(d->Obj, "min", id, 0, NULL, &min);
-  getobj(d->Obj, "max", id, 0, NULL, &max);
-  getobj(d->Obj, "inc", id, 0, NULL, &inc);
 
   if ((min == 0) && (max == 0) && (inc == 0)) {
     combo_box_entry_set_text(d->min, "0");
