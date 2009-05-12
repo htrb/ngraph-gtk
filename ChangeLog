@@ -1,5 +1,11 @@
 2009-05-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11axis.c (AxisDialogSetupItem): add item to combo boxs
+	when the value is different from previous one.
+	(axis_prm_edited_common, min_edited, max_edited, inc_edited): add.
+	(CmAxisWindow): call "set_editable_cell_renderer_cb()" for
+	"AXIS_WIN_COL_MIN", "AXIS_WIN_COL_MAX" and "AXIS_WIN_COL_INC".
+
 	* src/oaxis.c (axisbbox2): check "inst".
 	(get_axis_box): this function returns int.
 	(get_axis_box): check return value of "axisbbox2()".
@@ -9,6 +15,8 @@
 	(axisrotate2, axisflip2): check "inst".
 	(axisrotate, axisflip): check return value of
 	"get_axis_group_box()".
+	(AXIS_HISTORY_NUM): add.
+	(axisscalepush): use "AXIS_HISTORY_NUM".
 
 2009-05-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -127,7 +135,7 @@
 	(legend_list_set_val): use "case" instead of "strcmp()".
 	(enum CHANGE_DIR, pos_edited, pos_x_edited, pos_y_edited): add.
 	(CmLegendWindow): call "set_editable_cell_renderer_cb()" for
-	"LEGEND_WIN_COL_X" snd "LEGEND_WIN_COL_Y".
+	"LEGEND_WIN_COL_X" and "LEGEND_WIN_COL_Y".
 	(Llist):  colum "x" and "y" is editable.
 
 	* src/gtk/x11file.c (FILE_WIN_COL_HIDDEN, FILE_WIN_COL_FILE)
@@ -171,7 +179,7 @@
 	* src/gtk/x11axis.c (enum CHANGE_DIR, pos_edited_common)
 	(pos_x_edited, pos_y_edited): add.
 	(CmAxisWindow): call "set_editable_cell_renderer_cb()" for
-	"AXIS_WIN_COL_X" snd "AXIS_WIN_COL_Y".
+	"AXIS_WIN_COL_X" and "AXIS_WIN_COL_Y".
 
 	* src/gtk/gtk_subwin.c (start_editing): call "UnFocus()".
 	(set_cell_renderer_cb): set "list[i].edited_id" when

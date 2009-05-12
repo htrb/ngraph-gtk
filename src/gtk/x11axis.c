@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.58 2009/04/27 09:15:46 hito Exp $
+ * $Id: x11axis.c,v 1.59 2009/05/12 09:00:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1824,7 +1824,7 @@ AxisDialogSetupItem(GtkWidget *w, struct AxisDialog *d, int id)
 {
   char *valstr;
   int i, j;
-  double min, max, inc;
+  double min, max, inc, pmin, pmax, pinc;
   int div, lastinst;
   char *name;
   struct narray *array;
@@ -1837,18 +1837,28 @@ AxisDialogSetupItem(GtkWidget *w, struct AxisDialog *d, int id)
   combo_box_clear(d->inc);
 
   getobj(d->Obj, "scale_history", d->Id, 0, NULL, &array);
-  if (array != NULL) {
+  if (array) {
+    pmin = pmax = pinc = 0;
     num = arraynum(array) / 3;
     data = (double *) arraydata(array);
     for (j = 0; j < num; j++) {
-      snprintf(buf, sizeof(buf), "%.15g", data[0 + j * 3]);
-      combo_box_append_text(d->min, buf);
+      if (data[0 + j * 3] != pmin) {
+	snprintf(buf, sizeof(buf), "%.15g", data[0 + j * 3]);
+	combo_box_append_text(d->min, buf);
+      }
+      pmin = data[0 + j * 3];
 
-      snprintf(buf, sizeof(buf), "%.15g", data[1 + j * 3]);
-      combo_box_append_text(d->max, buf);
+      if (data[1 + j * 3] != pmax) {
+	snprintf(buf, sizeof(buf), "%.15g", data[1 + j * 3]);
+	combo_box_append_text(d->max, buf);
+      }
+      pmax = data[1 + j * 3];
 
-      snprintf(buf, sizeof(buf), "%.15g", data[2 + j * 3]);
-      combo_box_append_text(d->inc, buf);
+      if (data[2 + j * 3] != pinc) {
+	snprintf(buf, sizeof(buf), "%.15g", data[2 + j * 3]);
+	combo_box_append_text(d->inc, buf);
+      }
+      pinc = data[2 + j * 3];
     }
   }
 
@@ -3060,6 +3070,45 @@ pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
   pos_edited_common(d->obj, sel, str, CHANGE_DIR_Y);
 }
 
+static void
+axis_prm_edited_common(struct SubWin *d, char *field, gchar *str)
+{
+  int sel;
+
+  menu_lock(FALSE);
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+
+  if (sel < 0 || sel > d->num)
+    return;
+
+  exeobj(d->obj, "scale_push", sel, 0, NULL);
+
+  if (chk_sputobjfield(d->obj, sel, field, str))
+    return;
+
+  d->select = sel;
+  d->update(FALSE);
+}
+
+static void
+min_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  axis_prm_edited_common((struct SubWin *) user_data, "min", str);
+}
+
+static void
+max_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  axis_prm_edited_common((struct SubWin *) user_data, "max", str);
+}
+
+static void
+inc_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  axis_prm_edited_common((struct SubWin *) user_data, "inc", str);
+}
+
 static void 
 axiswin_delete_axis(struct SubWin *d)
 {
@@ -3254,6 +3303,9 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
     set_combo_cell_renderer_cb(d, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
     set_editable_cell_renderer_cb(d, AXIS_WIN_COL_X, Alist, G_CALLBACK(pos_x_edited));
     set_editable_cell_renderer_cb(d, AXIS_WIN_COL_Y, Alist, G_CALLBACK(pos_y_edited));
+    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MIN, Alist, G_CALLBACK(min_edited));
+    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
+    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
 
     sub_window_show(d);
     sub_window_set_geometry(d, TRUE);

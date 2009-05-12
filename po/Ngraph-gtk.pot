@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-24\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-05-11 15:22+0900\n"
+"POT-Creation-Date: 2009-05-12 18:01+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 msgid "Save file"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:90 src/oaxis.c:105
+#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:92 src/oaxis.c:107
 msgid "none"
 msgstr ""
 
@@ -287,11 +287,11 @@ msgstr ""
 msgid "_Gauge:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1711 src/gtk/x11axis.c:2089 src/gtk/x11file.c:1185
+#: src/gtk/x11axis.c:1711 src/gtk/x11axis.c:2099 src/gtk/x11file.c:1185
 msgid "_Min:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1716 src/gtk/x11axis.c:2095 src/gtk/x11file.c:1189
+#: src/gtk/x11axis.c:1716 src/gtk/x11axis.c:2105 src/gtk/x11file.c:1189
 msgid "_Max:"
 msgstr ""
 
@@ -304,48 +304,48 @@ msgstr ""
 msgid "_Length %d:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2075
+#: src/gtk/x11axis.c:2085
 #, c-format
 msgid "Axis %d %s"
 msgstr ""
 
-#: src/gtk/x11axis.c:2101
+#: src/gtk/x11axis.c:2111
 msgid "_Inc:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2107
+#: src/gtk/x11axis.c:2117
 msgid "_Scale:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2124
+#: src/gtk/x11axis.c:2134
 msgid "_File"
 msgstr ""
 
-#: src/gtk/x11axis.c:2130 src/gtk/x11file.c:1194 src/gtk/x11print.c:296
+#: src/gtk/x11axis.c:2140 src/gtk/x11file.c:1194 src/gtk/x11print.c:296
 msgid "_Div:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2134
+#: src/gtk/x11axis.c:2144
 msgid "_Ref:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2145
+#: src/gtk/x11axis.c:2155
 msgid "_Baseline ..."
 msgstr ""
 
-#: src/gtk/x11axis.c:2149
+#: src/gtk/x11axis.c:2159
 msgid "_Gauge ..."
 msgstr ""
 
-#: src/gtk/x11axis.c:2153
+#: src/gtk/x11axis.c:2163
 msgid "_Numbering ..."
 msgstr ""
 
-#: src/gtk/x11axis.c:2157
+#: src/gtk/x11axis.c:2167
 msgid "_Font ..."
 msgstr ""
 
-#: src/gtk/x11axis.c:2161
+#: src/gtk/x11axis.c:2171
 msgid "_Position ..."
 msgstr ""
 
@@ -1781,7 +1781,7 @@ msgstr ""
 msgid "top"
 msgstr ""
 
-#: src/gtk/x11merge.c:55 src/oaxis.c:92 src/oaxis.c:106 src/oaxis.c:119
+#: src/gtk/x11merge.c:55 src/oaxis.c:94 src/oaxis.c:108 src/oaxis.c:121
 msgid "left"
 msgstr ""
 
@@ -2174,7 +2174,7 @@ msgstr ""
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:104 src/oaxis.c:91
+#: src/odraw.c:104 src/oaxis.c:93
 msgid "both"
 msgstr ""
 
@@ -2194,39 +2194,39 @@ msgstr ""
 msgid "bspline_close"
 msgstr ""
 
-#: src/oaxis.c:83
+#: src/oaxis.c:85
 msgid "linear"
 msgstr ""
 
-#: src/oaxis.c:84 src/ofit.c:86
+#: src/oaxis.c:86 src/ofit.c:86
 msgid "log"
 msgstr ""
 
-#: src/oaxis.c:85
+#: src/oaxis.c:87
 msgid "inverse"
 msgstr ""
 
-#: src/oaxis.c:93 src/oaxis.c:107 src/oaxis.c:120
+#: src/oaxis.c:95 src/oaxis.c:109 src/oaxis.c:122
 msgid "right"
 msgstr ""
 
-#: src/oaxis.c:118
+#: src/oaxis.c:120
 msgid "center"
 msgstr ""
 
-#: src/oaxis.c:121
+#: src/oaxis.c:123
 msgid "point"
 msgstr ""
 
-#: src/oaxis.c:133
+#: src/oaxis.c:135
 msgid "normal"
 msgstr ""
 
-#: src/oaxis.c:134
+#: src/oaxis.c:136
 msgid "parallel"
 msgstr ""
 
-#: src/oaxis.c:135
+#: src/oaxis.c:137
 msgid "parallel2"
 msgstr ""
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-05-11 15:22+0900\n"
+"POT-Creation-Date: 2009-05-12 18:01+0900\n"
 "PO-Revision-Date: 2009-05-01 18:20+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -30,7 +30,7 @@ msgstr "ファイルを開く"
 msgid "Save file"
 msgstr "別名で保存"
 
-#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:90 src/oaxis.c:105
+#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:92 src/oaxis.c:107
 msgid "none"
 msgstr "なし"
 
@@ -285,11 +285,11 @@ msgstr "邦文フォント(_J):"
 msgid "_Gauge:"
 msgstr "位置(_G):"
 
-#: src/gtk/x11axis.c:1711 src/gtk/x11axis.c:2089 src/gtk/x11file.c:1185
+#: src/gtk/x11axis.c:1711 src/gtk/x11axis.c:2099 src/gtk/x11file.c:1185
 msgid "_Min:"
 msgstr "最小値(_M):"
 
-#: src/gtk/x11axis.c:1716 src/gtk/x11axis.c:2095 src/gtk/x11file.c:1189
+#: src/gtk/x11axis.c:1716 src/gtk/x11axis.c:2105 src/gtk/x11file.c:1189
 msgid "_Max:"
 msgstr "最大値(_M):"
 
@@ -302,48 +302,48 @@ msgstr "線種(_S):"
 msgid "_Length %d:"
 msgstr "長さ %d(_L):"
 
-#: src/gtk/x11axis.c:2075
+#: src/gtk/x11axis.c:2085
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
 
-#: src/gtk/x11axis.c:2101
+#: src/gtk/x11axis.c:2111
 msgid "_Inc:"
 msgstr "増分(_I):"
 
-#: src/gtk/x11axis.c:2107
+#: src/gtk/x11axis.c:2117
 msgid "_Scale:"
 msgstr "スケール法(_S):"
 
-#: src/gtk/x11axis.c:2124
+#: src/gtk/x11axis.c:2134
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: src/gtk/x11axis.c:2130 src/gtk/x11file.c:1194 src/gtk/x11print.c:296
+#: src/gtk/x11axis.c:2140 src/gtk/x11file.c:1194 src/gtk/x11print.c:296
 msgid "_Div:"
 msgstr "分割数(_D):"
 
-#: src/gtk/x11axis.c:2134
+#: src/gtk/x11axis.c:2144
 msgid "_Ref:"
 msgstr "参照軸(_R):"
 
-#: src/gtk/x11axis.c:2145
+#: src/gtk/x11axis.c:2155
 msgid "_Baseline ..."
 msgstr "軸基線(_B)..."
 
-#: src/gtk/x11axis.c:2149
+#: src/gtk/x11axis.c:2159
 msgid "_Gauge ..."
 msgstr "目盛線(_G)..."
 
-#: src/gtk/x11axis.c:2153
+#: src/gtk/x11axis.c:2163
 msgid "_Numbering ..."
 msgstr "目盛数字(_N)..."
 
-#: src/gtk/x11axis.c:2157
+#: src/gtk/x11axis.c:2167
 msgid "_Font ..."
 msgstr "フォント(_F)..."
 
-#: src/gtk/x11axis.c:2161
+#: src/gtk/x11axis.c:2171
 msgid "_Position ..."
 msgstr "位置(_P)..."
 
@@ -1785,7 +1785,7 @@ msgstr "実行中 `%.128s'."
 msgid "top"
 msgstr "上"
 
-#: src/gtk/x11merge.c:55 src/oaxis.c:92 src/oaxis.c:106 src/oaxis.c:119
+#: src/gtk/x11merge.c:55 src/oaxis.c:94 src/oaxis.c:108 src/oaxis.c:121
 msgid "left"
 msgstr "左"
 
@@ -2180,7 +2180,7 @@ msgstr "終点"
 msgid "begin"
 msgstr "始点"
 
-#: src/odraw.c:104 src/oaxis.c:91
+#: src/odraw.c:104 src/oaxis.c:93
 msgid "both"
 msgstr "両方"
 
@@ -2200,39 +2200,39 @@ msgstr "Bスプライン"
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
-#: src/oaxis.c:83
+#: src/oaxis.c:85
 msgid "linear"
 msgstr "線形"
 
-#: src/oaxis.c:84 src/ofit.c:86
+#: src/oaxis.c:86 src/ofit.c:86
 msgid "log"
 msgstr "対数"
 
-#: src/oaxis.c:85
+#: src/oaxis.c:87
 msgid "inverse"
 msgstr "逆数"
 
-#: src/oaxis.c:93 src/oaxis.c:107 src/oaxis.c:120
+#: src/oaxis.c:95 src/oaxis.c:109 src/oaxis.c:122
 msgid "right"
 msgstr "右"
 
-#: src/oaxis.c:118
+#: src/oaxis.c:120
 msgid "center"
 msgstr "中央"
 
-#: src/oaxis.c:121
+#: src/oaxis.c:123
 msgid "point"
 msgstr "小数点"
 
-#: src/oaxis.c:133
+#: src/oaxis.c:135
 msgid "normal"
 msgstr "水平"
 
-#: src/oaxis.c:134
+#: src/oaxis.c:136
 msgid "parallel"
 msgstr "軸と平行"
 
-#: src/oaxis.c:135
+#: src/oaxis.c:137
 msgid "parallel2"
 msgstr "軸と平行2"
 

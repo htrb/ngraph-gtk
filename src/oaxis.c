@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.43 2009/05/12 07:37:48 hito Exp $
+ * $Id: oaxis.c,v 1.44 2009/05/12 09:00:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,6 +49,8 @@
 #define OVERSION  "1.00.00"
 #define TRUE  1
 #define FALSE 0
+
+#define AXIS_HISTORY_NUM 30
 
 #define INST_ARRAY_NUM 4
 
@@ -2971,10 +2973,10 @@ axisscalepush(struct objlist *obj,char *inst,char *rval,int argc,
   num=arraynum(array);
   data=arraydata(array);
   if ((num>=3) && (data[0]==min) && (data[1]==max) && (data[2]==inc)) return 0;
-  if (num>30) {
-    arrayndel(array,29);
-    arrayndel(array,28);
-    arrayndel(array,27);
+  if (num > AXIS_HISTORY_NUM) {
+    arrayndel(array, AXIS_HISTORY_NUM - 1);
+    arrayndel(array, AXIS_HISTORY_NUM - 2);
+    arrayndel(array, AXIS_HISTORY_NUM - 3);
   }
   arrayins(array,&inc,0);
   arrayins(array,&max,0);
