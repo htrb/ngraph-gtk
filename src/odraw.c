@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.10 2009/04/25 06:22:59 hito Exp $
+ * $Id: odraw.c,v 1.11 2009/05/12 04:25:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -230,8 +230,11 @@ clear_bbox(struct objlist *obj, char *inst)
   if (inst == NULL)
     return 1;
 
-  _getobj(obj, "bbox", inst, &array);
+  if (_getobj(obj, "bbox", inst, &array))
+    return 1;
+
   arrayfree(array);
+
   if (_putobj(obj, "bbox", inst, NULL))
     return 1;
 

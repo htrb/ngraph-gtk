@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.41 2009/05/01 09:15:58 hito Exp $
+ * $Id: oaxis.c,v 1.42 2009/05/12 04:25:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1003,8 +1003,8 @@ axisrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (! use_pivot) {
     get_axis_group_box(obj, inst_array, type, &minx, &miny, &maxx, &maxy);
-    px = (minx + maxy) / 2;
-    py = (minx + maxy) / 2;
+    px = (minx + maxx) / 2;
+    py = (miny + maxy) / 2;
   }
 
   for (i = 0; i < n; i++) {
@@ -1016,16 +1016,27 @@ axisrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int
 axisflip2(struct objlist *obj, char *inst, int px, int py, enum FLIP_DIRECTION dir)
 {
-  int x, y, a, p;
+  int x, y, a, p, g_dir, n_dir, n_align;
 
   _getobj(obj, "x", inst, &x);
   _getobj(obj, "y", inst, &y);
   _getobj(obj, "direction", inst, &a);
+  _getobj(obj, "gauge", inst, &g_dir);
+  _getobj(obj, "num", inst, &n_dir);
+  _getobj(obj, "num_align", inst, &n_align);
 
   switch (dir) {
   case FLIP_DIRECTION_HORIZONTAL:
     a = 18000 - a;
     p = px;
+    switch (n_align) {
+    case AXIS_NUM_ALIGN_LEFT:
+      n_align = AXIS_NUM_ALIGN_RIGHT;
+      break;
+    case AXIS_NUM_ALIGN_RIGHT:
+      n_align= AXIS_NUM_ALIGN_LEFT;
+      break;
+    }
     break;
   case FLIP_DIRECTION_VERTICAL:
     a = -a;
@@ -1033,6 +1044,24 @@ axisflip2(struct objlist *obj, char *inst, int px, int py, enum FLIP_DIRECTION d
     break;
   default:
     p = 0;
+  }
+
+  switch (g_dir) {
+  case AXIS_GAUGE_LEFT:
+    g_dir = AXIS_GAUGE_RIGHT;
+    break;
+  case AXIS_GAUGE_RIGHT:
+    g_dir = AXIS_GAUGE_LEFT;
+    break;
+  };
+
+  switch (n_dir) {
+  case AXIS_NUM_POS_LEFT:
+    n_dir = AXIS_NUM_POS_RIGHT;
+    break;
+  case AXIS_NUM_POS_RIGHT:
+    n_dir = AXIS_NUM_POS_LEFT;
+    break;
   }
 
   a %= 36000;
@@ -1043,6 +1072,9 @@ axisflip2(struct objlist *obj, char *inst, int px, int py, enum FLIP_DIRECTION d
   if (_putobj(obj, "x", inst, &x)) return 1;
   if (_putobj(obj, "y", inst, &y)) return 1;
   if (_putobj(obj, "direction", inst, &a)) return 1;
+  if (_putobj(obj, "gauge", inst, &g_dir)) return 1;
+  if (_putobj(obj, "num", inst, &n_dir)) return 1;
+  if (_putobj(obj, "num_align", inst, &n_align)) return 1;
 
   if (clear_bbox(obj, inst))
     return 1;
@@ -1080,8 +1112,8 @@ axisflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (! use_pivot) {
     get_axis_group_box(obj, inst_array, type, &minx, &miny, &maxx, &maxy);
-    px = (minx + maxy) / 2;
-    py = (minx + maxy) / 2;
+    px = (minx + maxx) / 2;
+    py = (miny + maxy) / 2;
   }
 
   for (i = 0; i < n; i++) {
