@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.46 2009/04/27 09:15:46 hito Exp $
+ * $Id: x11lgnd.c,v 1.47 2009/05/12 10:28:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -144,10 +144,11 @@ LegendLineCB(struct objlist *obj, int id)
   getobj(obj, "points", id, 0, NULL, &array);
   num = arraynum(array);
   data = (int *) arraydata(array);
-  if (num < 2)
+  if (num < 2) {
     snprintf(s, CB_BUF_SIZE, "------");
-  else
+  } else {
     snprintf(s, CB_BUF_SIZE, "(X:%.2f Y:%.2f)-", data[0] / 100.0, data[1] / 100.0);
+  }
   return s;
 }
 
@@ -186,28 +187,18 @@ static char *
 LegendTextCB(struct objlist *obj, int id)
 {
   char *text, *s;
-  int len;
-
-  s = (char *) memalloc(CB_BUF_SIZE);
-  if (s == NULL)
-    return NULL;
 
   getobj(obj, "text", id, 0, NULL, &text);
 
-  if (text != NULL) {
+  if (text) {
 #ifdef JAPANESE
 /* SJIS ---> UTF-8 */
-    {
-      char *tmp;
-      tmp = sjis_to_utf8(text);
-      len = snprintf(s, CB_BUF_SIZE, "%s", CHK_STR(tmp));
-      if (tmp) {
-	free(tmp);
-      }
-    }
+    s = sjis_to_utf8(text);
 #else
-    len = snprintf(s, CB_BUF_SIZE, "%s", CHK_STR(text));
+    s = nstrdup(text);
 #endif
+  } else {
+    s = nstrdup("");
   }
   return s;
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.60 2009/05/12 09:25:23 hito Exp $
+ * $Id: x11axis.c,v 1.61 2009/05/12 10:28:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -126,6 +126,32 @@ AxisCB(struct objlist *obj, int id)
     return NULL;
   getobj(obj, "direction", id, 0, NULL, &dir);
   getobj(obj, "group", id, 0, NULL, &name);
+  name = CHK_STR(name);
+  sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
+  snprintf(s, CB_BUF_SIZE, "%-10s %.6s dir:%d", name, valstr, dir);
+  memfree(valstr);
+  return s;
+}
+
+char *
+AxisHistoryCB(struct objlist *obj, int id)
+{
+  char *s, *valstr, *name;
+  int dir, num;
+  struct narray *array;
+
+  if ((s = (char *) memalloc(CB_BUF_SIZE)) == NULL)
+    return NULL;
+
+  getobj(obj, "scale_history", id, 0, NULL, &array);
+
+  num = arraynum(array) / 3;
+  if (num == 0)
+    return NULL;
+
+  getobj(obj, "group", id, 0, NULL, &name);
+  getobj(obj, "direction", id, 0, NULL, &dir);
+
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
   snprintf(s, CB_BUF_SIZE, "%-10s %.6s dir:%d", name, valstr, dir);
@@ -2468,7 +2494,7 @@ CmAxisDel(void)
 
   CopyDialog(&DlgCopy, obj, -1, AxisCB);
 
-  if (DialogExecute(TopLevel, &DlgCopy) == IDOK) {
+  if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
     AxisDel(DlgCopy.sel);
     set_graph_modified();
     AxisWinUpdate(TRUE);
@@ -2493,8 +2519,9 @@ CmAxisUpdate(void)
     i = DlgCopy.sel;
     if (i < 0)
       return;
-  } else
+  } else {
     return;
+  }
   AxisDialog(&DlgAxis, obj, i, TRUE);
   if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
     AxisDel(i);
@@ -2865,7 +2892,7 @@ CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
+  SelectDialog(&DlgSelect, obj, AxisHistoryCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     array = (int *) arraydata(&farray);

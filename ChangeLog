@@ -5,6 +5,20 @@
 	(axis_prm_edited_common, min_edited, max_edited, inc_edited): add.
 	(CmAxisWindow): call "set_editable_cell_renderer_cb()" for
 	"AXIS_WIN_COL_MIN", "AXIS_WIN_COL_MAX" and "AXIS_WIN_COL_INC".
+	(AxisHistoryCB): add.
+	(AxisWinExpose): use "AxisHistoryCB()".
+	(CmAxisDel): check "DlgCopy.sel".
+
+	* src/gtk/x11lgnd.c (LegendTextCB): return whole string.
+
+	* src/gtk/x11dialg.c (SelectDialogSetup, CopyDialogSetup):
+	"PangoEllipsizeMode" of "property" column is
+	"PANGO_ELLIPSIZE_END".
+	(SelectDialogSetup, CopyDialogSetup): append item only when return
+	value of a function "d->cb()" is not NULL.
+	(SelectDialogClose): save value of "id" column.
+	(CopyDialogClose): set value of "id" column of the selected row to
+	"d->sel".
 
 	* src/oaxis.c (axisbbox2): check "inst".
 	(get_axis_box): this function returns int.

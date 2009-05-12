@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.36 2009/04/08 09:41:33 hito Exp $
+ * $Id: x11dialg.c,v 1.37 2009/05/12 10:28:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -355,8 +355,8 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *swin, *w, *hbox;
   GtkTreeIter iter;
   n_list_store list[] = {
-    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
-    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
+    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END, 0},
   } ;
 
   d = (struct SelectDialog *) data;
@@ -390,10 +390,12 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
     s = d->cb(d->Obj, i);
-    list_store_append(d->list, &iter);
-    list_store_set_int(d->list, &iter, 0, i);
-    list_store_set_string(d->list, &iter, 1, CHK_STR(s));
-    memfree(s);
+    if (s) {
+      list_store_append(d->list, &iter);
+      list_store_set_int(d->list, &iter, 0, i);
+      list_store_set_string(d->list, &iter, 1, CHK_STR(s));
+      memfree(s);
+    }
   }
 
   /*
@@ -434,7 +436,6 @@ select_tree_selection_foreach_cb(GtkTreeModel *model, GtkTreePath *path,
 static void
 SelectDialogClose(GtkWidget *w, void *data)
 {
-  int i;
   struct SelectDialog *d;
 
   d = (struct SelectDialog *) data;
@@ -444,8 +445,15 @@ SelectDialogClose(GtkWidget *w, void *data)
     gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
     gtk_tree_selection_selected_foreach(gsel, select_tree_selection_foreach_cb, data);
   } else if (d->ret == IDSALL) {
-    for (i = 0; i <= chkobjlastinst(d->Obj); i++)
-      arrayadd(d->sel, &i);
+    int r, id;
+    GtkTreeIter iter;
+
+    r = list_store_get_iter_first(d->list, &iter);
+    while (r) {
+      id = list_store_get_int(d->list, &iter, 0);
+      arrayadd(d->sel, &id);
+      r = list_store_iter_next(d->list, &iter);
+    }
     d->ret = IDOK;
   }
 }
@@ -497,9 +505,9 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *swin, *w;
   GtkTreeIter iter;
   n_list_store copy_list[] = {
-    {"id",       G_TYPE_INT, TRUE, FALSE, NULL, FALSE},
-    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-  } ;
+    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
+    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END, 0},
+  };
 
   d = (struct CopyDialog *) data;
   if (makewidget) {
@@ -523,10 +531,12 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   for (i = 0; i <= chkobjlastinst(d->Obj); i++) {
     s = d->cb(d->Obj, i);
-    list_store_append(d->list, &iter);
-    list_store_set_int(d->list, &iter, 0, i);
-    list_store_set_string(d->list, &iter, 1, CHK_STR(s));
-    memfree(s);
+    if (s) {
+      list_store_append(d->list, &iter);
+      list_store_set_int(d->list, &iter, 0, i);
+      list_store_set_string(d->list, &iter, 1, CHK_STR(s));
+      memfree(s);
+    }
   }
 
   if (chkobjlastinst(d->Obj) == 0) {
@@ -549,13 +559,14 @@ static void
 CopyDialogClose(GtkWidget *w, void *data)
 {
   struct CopyDialog *d;
+  
 
   d = (struct CopyDialog *) data;
 
   if (d->ret == IDCANCEL)
     return;
 
-  d->sel = list_store_get_selected_index(d->list);
+  d->sel = list_store_get_selected_int(d->list, 0);
 }
 
 void
