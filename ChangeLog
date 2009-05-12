@@ -1,3 +1,15 @@
+2009-05-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (axisbbox2): check "inst".
+	(get_axis_box): this function returns int.
+	(get_axis_box): check return value of "axisbbox2()".
+	(get_axis_group_box): this function returns int.
+	(get_axis_group_box): check return value of "get_axis_box()".
+	(axisbbox): check return value of "get_axis_group_box()".
+	(axisrotate2, axisflip2): check "inst".
+	(axisrotate, axisflip): check return value of
+	"get_axis_group_box()".
+
 2009-05-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (MenuConfigToggleView): add "{NULL}" at the
