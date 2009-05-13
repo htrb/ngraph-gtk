@@ -21,10 +21,10 @@
 <a name="SCRIPT">&nbsp;</a>
 <h2><a href="#TOP">概要</a></h2>
 <br>
-<div>
+<p>
 Ngraph はスクリプト言語(Ngraph スクリプト)のインタープリタを備えています。
 グラフの設定(実際には各オブジェクトOBJECTのフィールド値)もNgraph スクリプト形式で保存されます。<br>
-</div>
+</p>
 
 <br>
 <hr>
@@ -35,61 +35,70 @@ Ngraph はスクリプト言語(Ngraph スクリプト)のインタープリタ�
 <a name="SCRIPT_SYNTAX">&nbsp;</a>
 <h2><a href="#TOP">スクリプトの文法</a></h2>
 <br>
-<div>
-Ngraph スクリプトの文法は， UNIX の sh (シェル) からジョブ制御機能を取り去り, オブジェクト操作命令を追加したものになっています。<br>
-shと同等の文法・コマンドは以下の通りです(sh の文法の詳細については UNIX のマニュアルを参照してください)。<br>
-<br>
-コマンド<br>
-<div>
+<p>Ngraph スクリプトの文法は， UNIX の sh (シェル) からジョブ制御機能を取り去り, オブジェクト操作命令を追加したものになっています。</p>
+<p>shと同等の文法・コマンドは以下の通りです(sh の文法の詳細については UNIX のマニュアルを参照してください)。</p>
+<h3>コマンド<h3>
+<p>
 name1=val1 name2=val2 ... command arg1 arg2 arg3 ...
-</div>
-コメント<br>
-<div>
+</p>
+<h3>コメント</h3>
+<p>
 # comment
-</div>
-制御構造 (for,  case,  if,  while,  until 文)<br>
-<div>
+</p>
+
+<h3>制御構造</h3>
+<p>
+(for,  case,  if,  while,  until 文)
+</p>
+<p>
 for name [in word] do list done<br>
 case word in [patterm [|pattern] ...list;;] ... esac<br>
 if list then list [elif list then list]...[else list] fi<br>
 while list do list done<br>
 until list do list done<br>
-</div>
-関数定義 ({}は常に必要)<br>
-<div>
+</p>
+<h3>関数定義</h3>
+<p>
 name() { list; }
-</div>
-ファイル名置換<br>
-<div>
+</p>
+<p> ({}は常に必要)</p>
+
+<h3>ファイル名置換</h3>>
+<p>
 *?[]
-</div>
-コマンド置換<br>
-<div>
+</p>
+
+<h3>コマンド置換</h3>>
+<p>
 `command`
-</div>
-変数定義<br>
-<div>
+</p>
+
+<h3>変数定義</h3>>
+<p>
 name=value [ name=value ] ...
-</div>
-変数置換<br>
-<div>
+</p>
+
+<h3>変数置換</h3>>
+<p>
 $# $? $num $* $@<br>
 ${name}<br>
 ${name:-word}<br>
 ${name:=word}<br>
 ${name:?word}<br>
 ${name:+word}<br>
-</div>
-リダイレクト・パイプ<br>
-<div>
+</p>
+
+<h3>リダイレクト・パイプ</h3>
+<p>
 &lt; file<br>
 &lt;&lt; word<br>
 &gt; file<br>
 &gt;&gt; file<br>
 command | command<br>
-</div>
-特殊コマンド<br>
-<div>
+</p>
+
+<h3>特殊コマンド</h3>
+<p>
 :<br>
 . file<br>
 break [n]<br>
@@ -111,21 +120,23 @@ true<br>
 false<br>
 read [val]<br>
 seq [LAST | FIRST LAST | FIRST INCR LAST]<br>
-</div>
+</p>
 <br>
 <br>
-独自に追加した文法・コマンドは以下の通りです。<br>
+<p>独自に追加した文法・コマンドは以下の通りです。</p>
 <br>
-オブジェクト定義 (objectのinstance_listのfieldにvalueを設定)<br>
-<div>
+<h3>オブジェクト定義</h3>
+<p>(objectのinstance_listのfieldにvalueを設定)</p>
+<p>
 object:instance_list:field=value
-</div>
-オブジェクト置換 (objectのinstance_listのfieldの値)<br>
-<div>
+</p>
+<h3>オブジェクト置換</h3>
+<p> (objectのinstance_listのfieldの値)</p>
+<p>
 ${object:instance_list:field=argument}
-</div>
-オブジェクト操作コマンド<br>
-<div>
+</p>
+<h3>オブジェクト操作コマンド</h3>
+<p>
 new object [field=value,  ...]<br>
 del object:instance_list <br>
 exist object:instance_list <br>
@@ -140,13 +151,14 @@ exch object:instance1,instance2<br>
 object [object1 object2 ... [-name -version -parent -id -field -size
 -current -last -instnace -instances] [field ...]]<br>
 derive [-instance] object<br>
-</div>
-評価コマンド (数式expを評価)<br>
-<div>
+</p>
+
+<h3>評価コマンド</h3>
+<p> (数式expを評価)</p>
+<p>
 dexpr exp<br>
 iexpr exp<br>
-</div>
-</div>
+</p>
 
 <br>
 <hr>

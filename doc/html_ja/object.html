@@ -1,38 +1,38 @@
-<HTML>
-<HEAD>
+<html>
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<TITLE>Object</TITLE>
-</HEAD>
-<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" ALINK="#0000FF" VLINK="#0000FF">
-<A NAME="TOP">&nbsp;</A>
-<h1><A HREF="./ngraph.html">Ngraphオブジェクト</A></h1>
-<UL>
-<LI><A HREF="#OBJECT">概要</A>
-<LI><A HREF="#OBJECTLIST">Ngraphオブジェクト一覧</A>
-</UL>
+<title>Object</title>
+</head>
+<body>
+<a name="TOP">&nbsp;</a>
+<h1><a href="./ngraph.html">Ngraphオブジェクト</a></h1>
+<ul>
+<li><a href="#OBJECT">概要</a>
+<li><a href="#OBJECTLIST">Ngraphオブジェクト一覧</a>
+</ul>
 
-<BR>
-<HR>
-<BR>
+<br>
+<hr>
+<br>
 
 
 
-<A NAME="OBJECT">&nbsp;</A>
-<h2><A HREF="#TOP">概要</A></h2>
-<BR>
-<BLOCKQUOTE>
-Ngraphで描画されるグラフはNgraphオブジェクトの集合から成り立っています。<BR>
-Ngraphでのグラフの作成は, グラフを構成するNgraphオブジェクトのフィールド値を設定することにより行われます。<BR>
-フィールド値の設定は, メニューやダイアログボックスでの指定, あるいは *.ngp ファイルに記述されしたスクリプトをインタープリタで実行して行われます。<BR>
-<BR>
-<UL>
-<LI>オブジェクトの一覧を表示するには[Graph]-[Ngraph shell]でスクリプト・インタープリタを起動し、object コマンドを実行して見る事ができます。
-<LI>オブジェクトのフィールドを表示するには object object_name と object コマンドの引数にオブジェクト名を指定します。
-</UL>
-<BR>
-Ngraphオブジェクト階層<BR>
-<BR>
-<PRE>
+<a name="OBJECT">&nbsp;</a>
+<h2><a href="#TOP">概要</a></h2>
+<br>
+<div>
+Ngraphで描画されるグラフはNgraphオブジェクトの集合から成り立っています。<br>
+Ngraphでのグラフの作成は, グラフを構成するNgraphオブジェクトのフィールド値を設定することにより行われます。<br>
+フィールド値の設定は, メニューやダイアログボックスでの指定, あるいは *.ngp ファイルに記述されしたスクリプトをインタープリタで実行して行われます。<br>
+<br>
+<ul>
+<li>オブジェクトの一覧を表示するには[Graph]-[Ngraph shell]でスクリプト・インタープリタを起動し、object コマンドを実行して見る事ができます。
+<li>オブジェクトのフィールドを表示するには object object_name と object コマンドの引数にオブジェクト名を指定します。
+</ul>
+<br>
+Ngraphオブジェクト階層<br>
+<br>
+<pre>
 object
         system
         shell
@@ -70,23 +70,23 @@ object
                         mark
                         text
         dialog
-</PRE>
-</BLOCKQUOTE>
+</pre>
+</div>
 
-<BR>
-<HR>
-<BR>
+<br>
+<hr>
+<br>
 
 
 
-<A NAME="OBJECTLIST">&nbsp;</A>
-<h2><A HREF="#TOP">Ngraphオブジェクト一覧</A></h2>
-<BR>
-各オブジェクトのフィールド一覧を示します。<BR>
+<a name="OBJECTLIST">&nbsp;</a>
+<h2><a href="#TOP">Ngraphオブジェクト一覧</a></h2>
+<br>
+各オブジェクトのフィールド一覧を示します。<br>
 各オブジェクトのフィールドは
-<UL><PRE>permission     field_name   field_type</PRE></UL>
+<ul><pre>permission     field_name   field_type</pre></ul>
 の形式で表示されています。
-<BR>
+<br>
 <h3>object オブジェクト</h3>
 <pre>
 object: object
