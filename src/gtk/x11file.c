@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.92 2009/04/27 02:57:51 hito Exp $
+ * $Id: x11file.c,v 1.93 2009/05/13 09:11:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4133,7 +4133,12 @@ CmFileWinMath(GtkWidget *w, gpointer p)
 
   if (Menulock || GlobalLock)
     return;
+
   obj = chkobject("file");
+
+  if (chkobjlastinst(obj) < 0)
+    return;
+
   MathDialog(&DlgMath, obj);
   DialogExecute(TopLevel, &DlgMath);
 }

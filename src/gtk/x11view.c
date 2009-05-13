@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.153 2009/05/01 09:15:59 hito Exp $
+ * $Id: x11view.c,v 1.154 2009/05/13 09:11:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1521,7 +1521,7 @@ Trimming(int x1, int y1, int x2, int y2)
 	rcode2 = getobj(obj, "coordinate", id, 2, argv, &max);
 
 	if ((rcode1 != -1) && (rcode2 != -1)) {
-	  exeobj(obj, "scale_push", id, 0, NULL);
+	  axis_scale_push(obj, id);
 	  room = 1;
 	  argv[0] = (char *) &min;
 	  argv[1] = (char *) &max;

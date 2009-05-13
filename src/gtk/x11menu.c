@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.97 2009/05/13 01:31:39 hito Exp $
+ * $Id: x11menu.c,v 1.98 2009/05/13 09:11:24 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -497,6 +497,12 @@ menu_lock(int lock)
   if (TopLevel) {
     gtk_widget_set_sensitive(TopLevel, ! Menulock);
   }
+}
+
+void
+set_axis_undo_button_sensitivity(int state)
+{
+  gtk_widget_set_sensitive(AxisUndoBtn, state);
 }
 
 void 
@@ -1925,6 +1931,8 @@ setupwindow(void)
 
   createcommand1(GTK_TOOLBAR(command1));
   createcommand2(GTK_TOOLBAR(command2));
+
+  set_axis_undo_button_sensitivity(FALSE);
 
   gtk_container_add(GTK_CONTAINER(TopLevel), vbox);
 }

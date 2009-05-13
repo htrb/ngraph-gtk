@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.62 2009/05/13 01:31:39 hito Exp $
+ * $Id: x11axis.c,v 1.63 2009/05/13 09:11:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -113,6 +113,17 @@ static struct subwin_popup_list Popup_list[] = {
 
 static gboolean AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
 static void axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
+
+void
+axis_scale_push(struct objlist *obj, int id)
+{
+  int n;
+
+  exeobj(obj, "scale_push", id, 0, NULL);
+
+  n = check_axis_history(obj);
+  set_axis_undo_button_sensitivity(n > 0);
+}
 
 char *
 AxisCB(struct objlist *obj, int id)
@@ -2239,7 +2250,7 @@ AxisDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  exeobj(d->Obj, "scale_push", d->Id, 0, NULL);
+  axis_scale_push(d->Obj, d->Id);
 
   if (SetObjFieldFromWidget(d->min, d->Obj, d->Id, "min"))
     return;
@@ -2597,7 +2608,7 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
   if ((sel >= 0) && (sel <= d->num)) {
     d->setup_dialog(d->dialog, d->obj, sel, -1);
     d->select = sel;
-    exeobj(obj, "scale_push", sel, 0, NULL);
+    axis_scale_push(obj, sel);
     exeobj(obj, "clear", sel, 0, NULL);
     d->update(FALSE);
   }
@@ -2622,7 +2633,7 @@ CmAxisClear(GtkWidget *w, gpointer p)
     num = arraynum(&farray);
     array = (int *) arraydata(&farray);
     for (i = 0; i < num; i++) {
-      exeobj(obj, "scale_push", array[i], 0, NULL);
+      axis_scale_push(obj, array[i]);
       exeobj(obj, "clear", array[i], 0, NULL);
       set_graph_modified();
     }
@@ -2876,7 +2887,7 @@ CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
   char *argv[1];
   struct objlist *obj;
   struct narray farray;
-  int i, num, *array;
+  int i, n, num, *array;
 
   if (Menulock || GlobalLock)
     return;
@@ -2894,6 +2905,8 @@ CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
       exeobj(obj, "scale_pop", array[i], 0, argv);
       set_graph_modified();
     }
+    n = check_axis_history(obj);
+    set_axis_undo_button_sensitivity(n > 0);
     AxisWinUpdate(TRUE);
   }
   arraydel(&farray);
@@ -3104,7 +3117,7 @@ axis_prm_edited_common(struct SubWin *d, char *field, gchar *str)
   if (sel < 0 || sel > d->num)
     return;
 
-  exeobj(d->obj, "scale_push", sel, 0, NULL);
+  axis_scale_push(d->obj, sel);
 
   if (chk_sputobjfield(d->obj, sel, field, str))
     return;

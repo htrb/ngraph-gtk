@@ -1,15 +1,27 @@
 2009-05-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (Trimming): use "axis_scale_push()" instead of
+	"exeobj()".
+
+	* src/gtk/x11axis.c (check_axis_history): add.
+	(CmAxisWinScaleUndo): call "check_axis_history()" instead of
+	"chkobjlastinst()".
+	(axis_scale_push): add.
+	(AxisDialogClose, axiswin_scale_clear, CmAxisClear)
+	(axis_prm_edited_common): use "axis_scale_push()" instead of
+	"exeobj()".
+	(CmAxisWinScaleUndo): call "set_axis_undo_button_sensitivity()".
+
 	* src/gtk/x11menu.c (hide_instance_menu_cb): add.
 	(set_show_instance_menu_cb): add arguments "show_cb" and
 	"hide_cb".
 	(show_axis_menu_cb, hide_axis_menu_cb): add.
 	(create_axismenu): add 5th and 6th arguments to call
 	"set_show_instance_menu_cb()".
+	(set_axis_undo_button_sensitivity): add.
+	(setupwindow): call "set_axis_undo_button_sensitivity()".
 
-	* src/gtk/x11axis.c (check_axis_history): add.
-	(CmAxisWinScaleUndo): call "check_axis_history()" instead of
-	"chkobjlastinst()".
+	* src/gtk/x11file.c (CmFileWinMath): check number of instance.
 
 2009-05-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

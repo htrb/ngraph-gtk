@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.41 2009/05/01 09:15:59 hito Exp $
+ * $Id: x11menu.h,v 1.42 2009/05/13 09:11:24 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -290,5 +290,6 @@ void set_draw_lock(int lock);
 int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 void update_addin_menu(void);
 int check_focused_obj_type(struct Viewer *d, int *type);
+void set_axis_undo_button_sensitivity(int state);
 
 #endif
