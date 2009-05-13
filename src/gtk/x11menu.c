@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.96 2009/05/01 09:15:59 hito Exp $
+ * $Id: x11menu.c,v 1.97 2009/05/13 01:31:39 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -72,7 +72,8 @@ static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *RotateCW = NULL, *RotateCCW = NULL, *FlipH = NULL, *FlipV = NULL,
   *EditAlign = NULL, *ToggleStatusBar = NULL, *ToggleScrollbar = NULL,
   *ToggleRuler = NULL, *TogglePToobar = NULL, *ToggleCToobar = NULL,
-  *ToggleCrossGauge = NULL, *MathBtn = NULL, *AxisUndoBtn = NULL;
+  *ToggleCrossGauge = NULL, *MathBtn = NULL, *AxisUndoBtn = NULL,
+  *AxisUndoMenuItem = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
@@ -699,7 +700,20 @@ show_instance_menu_cb(GtkWidget *widget, gpointer user_data)
 }
 
 static void
-set_show_instance_menu_cb(GtkWidget *menu, char *name, struct show_instance_menu_data *data, int n)
+hide_instance_menu_cb(GtkWidget *widget, gpointer user_data)
+{
+  struct show_instance_menu_data *data;
+  int i;
+
+  data = (struct show_instance_menu_data *) user_data;
+
+  for (i = 0; data[i].obj; i++) {
+    gtk_widget_set_sensitive(data[i].widget, TRUE);
+  }
+}
+
+static void
+set_show_instance_menu_cb(GtkWidget *menu, char *name, struct show_instance_menu_data *data, int n, GCallback show_cb, GCallback hide_cb)
 {
   int i;
   struct objlist *obj;
@@ -710,7 +724,15 @@ set_show_instance_menu_cb(GtkWidget *menu, char *name, struct show_instance_menu
   }
   data[i].obj = NULL;
   data[i].widget = NULL;
-  g_signal_connect(menu, "show", G_CALLBACK(show_instance_menu_cb), data);
+
+  if (show_cb == NULL)
+    show_cb = G_CALLBACK(show_instance_menu_cb);
+
+  if (hide_cb == NULL)
+    hide_cb = G_CALLBACK(hide_instance_menu_cb);
+
+  g_signal_connect(menu, "show", show_cb, data);
+  g_signal_connect(menu, "hide", hide_cb, data);
 }
 
 static void
@@ -1053,7 +1075,7 @@ create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   data[2].widget = create_menu_item(menu, GTK_STOCK_EDIT, TRUE, "<Ngraph>/Data/Edit", 0, 0, CmFileMenu, MenuIdFileEdit);
   data[3].widget = create_menu_item(menu, _("_Math Transformation"), FALSE, "<Ngraph>/Data/Math", 0, 0, CmFileMenu, MenuIdFileMath);
 
-  set_show_instance_menu_cb(menu, "file", data, sizeof(data) / sizeof(*data));
+  set_show_instance_menu_cb(menu, "file", data, sizeof(data) / sizeof(*data), NULL, NULL);
 }
 
 static void 
@@ -1085,14 +1107,42 @@ create_axisgridmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
   data[0].widget = create_menu_item(menu, GTK_STOCK_PROPERTIES, TRUE, "<Ngraph>/Axis/Grid/Property", 0, 0, CmGridMenu, MenuIdAxisGridUpdate);
   data[1].widget = create_menu_item(menu, GTK_STOCK_DELETE, TRUE, "<Ngraph>/Axis/Grid/Delete", 0, 0, CmGridMenu, MenuIdAxisGridDel);
 
-  set_show_instance_menu_cb(menu, "axisgrid", data, sizeof(data) / sizeof(*data));
+  set_show_instance_menu_cb(menu, "axisgrid", data, sizeof(data) / sizeof(*data), NULL, NULL);
+}
+
+static void
+show_axis_menu_cb(GtkWidget *widget, gpointer user_data)
+{
+  static struct objlist *axis = NULL;
+
+  if (axis == NULL)
+    axis = chkobject("axis");
+
+  show_instance_menu_cb(widget, user_data);
+
+  if (axis)
+    gtk_widget_set_sensitive(AxisUndoMenuItem, check_axis_history(axis));
+}
+
+static void
+hide_axis_menu_cb(GtkWidget *widget, gpointer user_data)
+{
+  static struct objlist *axis = NULL;
+
+  if (axis == NULL)
+    axis = chkobject("axis");
+
+  hide_instance_menu_cb(widget, user_data);
+
+  if (axis)
+    gtk_widget_set_sensitive(AxisUndoMenuItem, TRUE);
 }
 
 static void 
 create_axismenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
   GtkWidget *item, *menu;
-  static struct show_instance_menu_data data[6];
+  static struct show_instance_menu_data data[5];
 
   item = gtk_menu_item_new_with_mnemonic(_("_Axis"));
   gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
@@ -1109,13 +1159,14 @@ create_axismenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   data[1].widget = create_menu_item(menu, GTK_STOCK_DELETE, TRUE, "<Ngraph>/Axis/Delete", 0, 0, CmAxisMenu, MenuIdAxisDel);
   data[2].widget = create_menu_item(menu, _("Scale _Zoom"), FALSE, "<Ngraph>/Axis/Scale Zoom", 0, 0, CmAxisMenu, MenuIdAxisZoom);
   data[3].widget = create_menu_item(menu, _("Scale _Clear"), FALSE, "<Ngraph>/Axis/Scale Clear", GDK_c, GDK_SHIFT_MASK | GDK_CONTROL_MASK, CmAxisMenu, MenuIdAxisClear);
-  data[4].widget = create_menu_item(menu, _("Scale _Undo"), FALSE, "<Ngraph>/Axis/Scale Undo", 0, 0, CmAxisMenu, MenuIdAxisUndo);
+
+  AxisUndoMenuItem = create_menu_item(menu, _("Scale _Undo"), FALSE, "<Ngraph>/Axis/Scale Undo", 0, 0, CmAxisMenu, MenuIdAxisUndo);
 
   item = gtk_menu_item_new_with_mnemonic(_("_Grid"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
   create_axisgridmenu(item, accel_group);
 
-  set_show_instance_menu_cb(menu, "axis", data, sizeof(data) / sizeof(*data));
+  set_show_instance_menu_cb(menu, "axis", data, sizeof(data) / sizeof(*data), G_CALLBACK(show_axis_menu_cb), G_CALLBACK(hide_axis_menu_cb));
 }
 
 static GtkWidget *
@@ -1202,7 +1253,7 @@ create_mergemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   data[0].widget = create_menu_item(menu, GTK_STOCK_PROPERTIES, TRUE, "<Ngraph>/Merge/Property", 0, 0, CmMergeMenu, MenuIdMergeUpdate);
   data[1].widget = create_menu_item(menu, GTK_STOCK_CLOSE, TRUE, "<Ngraph>/Merge/Close", 0, 0, CmMergeMenu, MenuIdMergeClose);
 
-  set_show_instance_menu_cb(menu, "merge", data, sizeof(data) / sizeof(*data));
+  set_show_instance_menu_cb(menu, "merge", data, sizeof(data) / sizeof(*data), NULL, NULL);
 }
 
 static void 
@@ -1257,7 +1308,7 @@ create_outputmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 
   data[0].widget = create_menu_item(menu, _("data _File"), FALSE, "<Ngraph>/Output/Data File", 0, 0, CmOutputMenu, MenuIdPrintDataFile);
 
-  set_show_instance_menu_cb(menu, "file", data, sizeof(data) / sizeof(*data));
+  set_show_instance_menu_cb(menu, "file", data, sizeof(data) / sizeof(*data), NULL, NULL);
 }
 
 static void 

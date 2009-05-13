@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11axis.h,v 1.2 2009/05/13 01:31:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,3 +33,4 @@ void CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data);
 void CmAxisWindow(GtkWidget *w, gpointer client_data);
 void AxisWindowUnmap(GtkWidget *w, gpointer client_data);
 void CmGridMenu(GtkMenuItem *w, gpointer client_data);
+int  check_axis_history(struct objlist *obj);

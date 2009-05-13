@@ -1,3 +1,16 @@
+2009-05-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (hide_instance_menu_cb): add.
+	(set_show_instance_menu_cb): add arguments "show_cb" and
+	"hide_cb".
+	(show_axis_menu_cb, hide_axis_menu_cb): add.
+	(create_axismenu): add 5th and 6th arguments to call
+	"set_show_instance_menu_cb()".
+
+	* src/gtk/x11axis.c (check_axis_history): add.
+	(CmAxisWinScaleUndo): call "check_axis_history()" instead of
+	"chkobjlastinst()".
+
 2009-05-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (AxisDialogSetupItem): add item to combo boxs

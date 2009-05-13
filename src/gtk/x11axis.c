@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.61 2009/05/12 10:28:03 hito Exp $
+ * $Id: x11axis.c,v 1.62 2009/05/13 01:31:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2850,31 +2850,24 @@ AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
   return FALSE;
 }
 
-/*
-void
-AxisWindowUnmap(GtkWidget *w, gpointer client_data)
+int 
+check_axis_history(struct objlist *obj)
 {
-  struct AxisWin *d;
-  Position x, y, x0, y0;
-  Dimension w0, h0;
+  struct narray *array;
+  int num, n, i;
 
-  d = &(NgraphApp.AxisWin);
-  if (d->Win != NULL) {
-    XtVaGetValues(d->Win, XmNx, &x, XmNy, &y,
-		  XmNwidth, &w0, XmNheight, &h0, NULL);
-    menulocal.axiswidth = w0;
-    menulocal.axisheight = h0;
-    XtTranslateCoords(TopLevel, 0, 0, &x0, &y0);
-    menulocal.axisx = x - x0;
-    menulocal.axisy = y - y0;
-    XtDestroyGtkWidget(d->Win);
-    d->Win = NULL;
-    d->text = NULL;
-    XmToggleButtonSetState(XtNameToGtkWidget
-			   (TopLevel, "*windowmenu.button_1"), False, False);
+  n = chkobjlastinst(obj);
+  if (n < 0)
+    return 0;
+
+  num = 0;
+  for (i = 0; i <= n; i++) {
+    getobj(obj, "scale_history", i, 0, NULL, &array);
+    num += arraynum(array) / 3;
   }
+
+  return num;
 }
-*/
 
 void
 CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
@@ -2890,7 +2883,7 @@ CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
   d = &(NgraphApp.AxisWin);
   if ((obj = chkobject("axis")) == NULL)
     return;
-  if (chkobjlastinst(obj) == -1)
+  if (check_axis_history(obj) == 0)
     return;
   SelectDialog(&DlgSelect, obj, AxisHistoryCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
