@@ -1,5 +1,8 @@
 2009-05-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* initfile/.Ngraph: change directory when "ngp" or "prm" file is
+	specified.
+
 	* src/gtk/x11graph.c (DirectoryDialogSetup): use
 	"GtkFileChooserButton" instead of "GtkEntry".
 
