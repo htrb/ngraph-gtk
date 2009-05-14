@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.h,v 1.4 2009/03/24 07:24:19 hito Exp $
+ * $Id: shellcm.h,v 1.5 2009/05/14 10:25:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -23,6 +23,8 @@
 
 int cmcd(struct nshell *nshell,int argc,char **argv);
 int cmecho(struct nshell *nshell,int argc,char **argv);
+int cmbasename(struct nshell *nshell,int argc,char **argv);
+int cmdirname(struct nshell *nshell,int argc,char **argv);
 int cmeval(struct nshell *nshell,int argc,char **argv);
 int cmexit(struct nshell *nshell,int argc,char **argv);
 int cmexport(struct nshell *nshell,int argc,char **argv);

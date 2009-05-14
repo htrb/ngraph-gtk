@@ -66,6 +66,11 @@ while [ "$1" ]
 do
     case $1 in
 	*.prm|*.PRM|*.ngp|*.NGP)
+	    path=`dirname "$1"`
+	    if [ -d "$path" ]
+	    then
+		cd "$path"
+	    fi
 	    if [ -n "$LOGIN_SHELL" ]
 	    then
 		system:0:login_shell="$LOGIN_SHELL $1"

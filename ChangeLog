@@ -1,3 +1,18 @@
+2009-05-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (DirectoryDialogSetup): use
+	"GtkFileChooserButton" instead of "GtkEntry".
+
+	* src/gtk/x11file.c (file_select): add.
+	(FileDialogSetup): add "GtkButton" or entry icon for file
+	selection.
+
+	* src/gtk/x11dialg.h (struct FileDialog): add member "file_btn".
+
+	* src/shell.c (cmdtable): add commands "basename" and "dirname".
+
+	* src/shellcm.c (cmdirname, cmbasename): add.
+
 2009-05-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (Trimming): use "axis_scale_push()" instead of

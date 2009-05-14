@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.93 2009/05/13 09:11:24 hito Exp $
+ * $Id: x11file.c,v 1.94 2009/05/14 10:25:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2588,7 +2588,6 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
   name = strdup(tmp);
   if (name == NULL)
     return;
-
   if ((pid = fork()) >= 0) {
     argv[1] = name;
     if (pid) {
@@ -2846,6 +2845,38 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
 }
 
+#define USE_ENTRY_ICON (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 16))
+
+static void
+#if USE_ENTRY_ICON
+file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
+#else
+file_select(GtkButton *w, gpointer user_data)
+#endif
+{
+  struct FileDialog *d;
+  GtkWidget *fdialog;
+
+  d = (struct FileDialog *) user_data;
+
+  fdialog = gtk_file_chooser_dialog_new(_("data file"),
+					GTK_WINDOW(d->widget),
+					GTK_FILE_CHOOSER_ACTION_OPEN,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					NULL);
+
+  gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(fdialog), gtk_entry_get_text(GTK_ENTRY(d->file)));
+  if (gtk_dialog_run(GTK_DIALOG(fdialog)) == GTK_RESPONSE_ACCEPT) {
+    char *filename;
+
+    filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(fdialog));
+    gtk_entry_set_text(GTK_ENTRY(d->file), filename);
+    g_free (filename);
+  }
+  gtk_widget_destroy(fdialog);
+}
+
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -2875,6 +2906,16 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = create_text_entry(TRUE, TRUE);
     item_setup(hbox, w, _("_File:"), TRUE);
     d->file = w;
+
+#if USE_ENTRY_ICON
+    gtk_entry_set_icon_from_stock(GTK_ENTRY(d->file), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+    g_signal_connect(w, "icon-release", G_CALLBACK(file_select), d);
+#else
+    w = gtk_button_new_from_stock(GTK_STOCK_OPEN);
+    g_signal_connect(w, "clicked", G_CALLBACK(file_select), d);
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    d->file_btn = w;
+#endif
 
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);

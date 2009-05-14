@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.43 2009/04/07 06:36:55 hito Exp $
+ * $Id: x11graph.c,v 1.44 2009/05/14 10:25:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -832,16 +832,17 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct DirectoryDialog *) data;
   if (makewidget) {
     hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
-    gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 4, -1);
-    item_setup(GTK_WIDGET(hbox), w, _("_Dir:"), TRUE);
+
+    w = gtk_file_chooser_button_new(_("directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
     d->dir = w;
+    item_setup(GTK_WIDGET(hbox), w, _("_Dir:"), FALSE);
+
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
   }
 
   cwd = ngetcwd();
   if (cwd) {
-    gtk_entry_set_text(GTK_ENTRY(d->dir), cwd);
+    gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), cwd);
     memfree(cwd);
   }
 }
@@ -850,19 +851,22 @@ static void
 DirectoryDialogClose(GtkWidget *w, void *data)
 {
   struct DirectoryDialog *d;
-  const char *s;
+  char *s;
 
   d = (struct DirectoryDialog *) data;
   if (d->ret == IDCANCEL)
     return;
 
-  s = gtk_entry_get_text(GTK_ENTRY(d->dir));
+  s = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
 
   if (s && strlen(s) > 0) {
     if (chdir(s)) {
       ErrorMessage();
     }
   }
+
+  if (s)
+    g_free(s);
 }
 
 void

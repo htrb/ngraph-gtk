@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.15 2009/03/24 07:56:05 hito Exp $
+ * $Id: shellcm.c,v 1.16 2009/05/14 10:25:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -30,6 +30,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <libgen.h>
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -94,7 +95,41 @@ cmecho(struct nshell *nshell,int argc,char **argv)
 }
 
 int 
+cmbasename(struct nshell *nshell,int argc,char **argv)
+{
+  int len, ext_len;
 
+  if (argc < 2) {
+    return 1;
+  } else if (argc == 2) {
+    len = strlen(argv[1]);
+  } else {
+    len = strlen(argv[1]);
+    ext_len = strlen(argv[2]);
+
+    if (ext_len < len && strcmp(argv[1] + len - ext_len, argv[2]) == 0) {
+      len -= ext_len;
+    }
+  }
+
+  printfstdout("%.*s\n", len, argv[1]);
+
+  return 0;
+}
+
+int 
+cmdirname(struct nshell *nshell,int argc,char **argv)
+{
+  if (argc < 2) {
+    return 1;
+  }
+
+  putstdout(dirname(argv[1]));
+
+  return 0;
+}
+
+int 
 cmseq(struct nshell *nshell, int argc, char **argv)
 {
   int i, f, l;

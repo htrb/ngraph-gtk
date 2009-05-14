@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.24 2009/04/23 07:23:36 hito Exp $
+ * $Id: shell.c,v 1.25 2009/05/14 10:25:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -574,6 +574,8 @@ int shprintfstderr(char *fmt,...)
 struct cmdtabletype cmdtable[] = {
                   {"cd",cmcd},
                   {"echo",cmecho},
+                  {"basename",cmbasename},
+                  {"dirname",cmdirname},
                   {"seq",cmseq},
                   {"eval",cmeval},
                   {"exit",cmexit} ,

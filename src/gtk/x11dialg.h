@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.40 2009/04/30 05:04:57 hito Exp $
+ * $Id: x11dialg.h,v 1.41 2009/05/14 10:25:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -101,7 +101,7 @@ struct FileDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *file, *load_settings, *fit, *fitid, *xcol, *xaxis, *ycol, *yaxis,
+  GtkWidget *file, *file_btn, *load_settings, *fit, *fitid, *xcol, *xaxis, *ycol, *yaxis,
     *type, *mark_btn, *curve, *col1, *col2, *clip, *style, *size, *miter, *join,
     *comment_box, *fit_box, *button_box, *width, *apply_all;
   GtkTextBuffer *comment;
