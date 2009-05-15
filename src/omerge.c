@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.12 2009/04/19 06:46:13 hito Exp $
+ * $Id: omerge.c,v 1.13 2009/05/15 14:30:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -76,16 +76,22 @@ mergeinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int zm, greek, n;
   struct mergelocal *mergelocal;
+  char *ext;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   zm=10000;
   greek=TRUE;
   n = 0;
+
+  ext = nstrdup("gra");
+
   if (_putobj(obj,"zoom",inst,&zm)) return 1;
   if (_putobj(obj,"symbol_greek",inst,&greek)) return 1;
   if (_putobj(obj,"line_num",inst,&n)) return 1;
+  if (_putobj(obj,"ext",inst,ext)) return 1;
   if ((mergelocal=memalloc(sizeof(struct mergelocal)))==NULL) goto errexit;
   if (_putobj(obj,"_local",inst,mergelocal)) goto errexit;
+
   mergelocal->storefd=NULL;
   mergelocal->endstore=FALSE;
   return 0;
@@ -630,7 +636,8 @@ static struct objtable merge[] = {
   {"zooming",NVFUNC,NREAD|NEXEC,mergezoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,mergematch,"iiiii",0},
 
-  {"_local",NPOINTER,0,NULL,NULL,0}
+  {"ext",NSTR,NREAD,NULL,NULL,0},
+  {"_local",NPOINTER,0,NULL,NULL,0},
 };
 
 #define TBLNUM (sizeof(merge) / sizeof(*merge))

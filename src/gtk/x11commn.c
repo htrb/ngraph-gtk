@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.36 2009/04/27 07:37:45 hito Exp $
+ * $Id: x11commn.c,v 1.37 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -917,7 +917,7 @@ SaveDrawrable(char *name, int storedata, int storemerge)
 int
 GraphSave(int overwrite)
 {
-  char mes[256], buf[COMMENT_BUF_SIZE];
+  char mes[256];
   int i, path;
   struct objlist *obj;
   int sdata, smerge;
@@ -939,7 +939,7 @@ GraphSave(int overwrite)
   if ((initfil == NULL) || (! overwrite || (access(initfil, 04) == -1))) {
     ret = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
 			   &(Menulocal.graphloaddir), initfil,
-			   &file, "*.ngp", Menulocal.changedirectory);
+			   &file, "*.ngp", overwrite, Menulocal.changedirectory);
   } else {
     file = strdup(initfil);
     if (file == NULL)
@@ -947,13 +947,6 @@ GraphSave(int overwrite)
     ret = IDOK;
   }
   if (ret == IDOK) {
-    if ((!overwrite) && (access(file, 04) == 0)) {
-      snprintf(buf, sizeof(buf), _("A file named `%s'already exists.\nDo you want to replace it?"), file);
-      if (MessageBox(TopLevel, buf, _("Save"), MB_YESNO) != IDYES) {
-	free(file);
-	return IDCANCEL;
-      }
-    }
     SaveDialog(&DlgSave, &sdata, &smerge);
     if ((ret = DialogExecute(TopLevel, &DlgSave)) == IDOK) {
       path = DlgSave.Path;

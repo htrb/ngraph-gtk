@@ -1,3 +1,58 @@
+2009-05-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (DriverDialogSelectCB): set value to
+	"d->ext".
+	(DriverDialogBrowseCB): set filter when "d->ext" is not NULL.
+	(DriverDialogClose): use "d->widget" for first argument of
+	"MessageBox()".
+	(DriverDialog): initialize "data->ext".
+	(CmPrintGRAFile, CmOutputImage, CmPrintDataFile): remove check of
+	confirmation about overwriting an existing file.
+
+	* src/gtk/x11opt.c (SetDriverDialogBrowse, SetDriverDialogClose)
+	(PrefFontDialogAdd): use "d->widget" for first argument of
+	"MessageBox()" and "nGetOpenFileName()".
+
+	* src/gtk/x11merge.c (MergeDialogSetup): use "create_file_entry()"
+	instead of "create_text_entry()".
+
+	* src/gtk/x11gui.c (struct nGetOpenFileData): add member
+	"overwrite".
+	(FileSelectionDialog): check "parent".
+	(FileSelectionDialog): call
+	"gtk_file_chooser_set_do_overwrite_confirmation()" when "type" is
+	"GTK_FILE_CHOOSER_ACTION_SAVE".
+	(FileSelectionDialog): hide "data->chdir_cb" when "data->initdir"
+	is NULL.
+	(nGetSaveFileName): add argument "overwrite".
+
+	* src/gtk/x11file.c (FitDialogLoadConfig, FitDialogLoad)
+	(FitDialogSave): use "d->widget" for first argument of
+	"DialogExecute".
+	(FileDialogSetup): use "create_file_entry()" instead of
+	"create_text_entry()".
+	(FileWinFit): use "d->Win" for first argument of "DialogExecute".
+
+	* src/gtk/x11dialg.h (struct DriverDialog): add member "ext".
+
+	* src/gtk/x11commn.c (GraphSave): remove check of confirmation
+	about overwriting an existing file.
+
+	* src/gtk/x11axis.c (AxisDialogFile): use "d->widget" for first
+	argument of "DialogExecute".
+
+	* src/gtk/gtk_widget.c (get_parent_window)
+	(entry_icon_file_select, create_file_entry): add.
+
+	* src/gtk/gtk_subwin.c (file_select): add.
+	(start_editing): call gtk_entry_set_icon_from_stock when
+	"list->name" is "file".
+
+	* src/gtk/gtk_common.h (USE_ENTRY_ICON): add.
+
+	* src/omerge.c (merge): add field "ext".
+	(mergeinit): initialize field "ext". 
+
 2009-05-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/.Ngraph: change directory when "ngp" or "prm" file is
@@ -5,12 +60,6 @@
 
 	* src/gtk/x11graph.c (DirectoryDialogSetup): use
 	"GtkFileChooserButton" instead of "GtkEntry".
-
-	* src/gtk/x11file.c (file_select): add.
-	(FileDialogSetup): add "GtkButton" or entry icon for file
-	selection.
-
-	* src/gtk/x11dialg.h (struct FileDialog): add member "file_btn".
 
 	* src/shell.c (cmdtable): add commands "basename" and "dirname".
 

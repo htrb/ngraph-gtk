@@ -1,11 +1,12 @@
 /* 
- * $Id: gtk_subwin.c,v 1.46 2009/04/28 13:55:09 hito Exp $
+ * $Id: gtk_subwin.c,v 1.47 2009/05/15 14:30:07 hito Exp $
  */
 
 #include "gtk_common.h"
 
 #include <stdlib.h>
 #include <math.h>
+#include <libgen.h>
 
 #include "ngraph.h"
 #include "object.h"
@@ -31,6 +32,45 @@ static void tree_update(struct LegendWin *d);
 static void tree_hidden(struct LegendWin *d);
 static void modify_numeric(struct SubWin *d, char *field, int val);
 static void modify_string(struct SubWin *d, char *field, char *str);
+
+#if USE_ENTRY_ICON
+static void
+file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
+{
+  struct SubWin *d;
+  int sel;
+  char *buf, *file, *ext;
+
+  d = (struct SubWin *) user_data;
+
+  sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  if (sel < 0 || sel > d->num)
+    return;
+
+  buf = NULL;
+  ext = NULL;
+  if (chkobjfield(d->obj, "ext") == 0) {
+    int len;
+
+    getobj(d->obj, "ext", sel, 0, NULL, &ext);
+    if (ext) {
+      len = strlen(ext) + 3;
+      buf = memalloc(len);
+      if (buf) {
+	snprintf(buf, len, "*.%s", ext);
+      }
+    }
+  }
+
+  if (nGetOpenFileName(d->Win, _("Open"), ext, NULL, gtk_entry_get_text(w),
+		       &file, buf, TRUE, Menulocal.changedirectory) == IDOK && file) {
+    gtk_entry_set_text(w, file);
+    modify_string(d, "file", file);
+    free (file);
+  }
+  memfree(buf);
+}
+#endif
 
 static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
@@ -76,6 +116,12 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
       } else {
 	char *valstr;
 
+#if USE_ENTRY_ICON
+	if (strcmp(list->name, "file") == 0) {
+	  gtk_entry_set_icon_from_stock(GTK_ENTRY(editable), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+	  g_signal_connect(editable, "icon-release", G_CALLBACK(file_select), d);
+	}
+#endif
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
 	gtk_entry_set_text(GTK_ENTRY(editable), valstr);
 	memfree(valstr);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.63 2009/05/13 09:11:24 hito Exp $
+ * $Id: x11axis.c,v 1.64 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2024,7 +2024,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 
   SelectDialog(&DlgSelect, fobj, FileCB, (struct narray *) &farray, NULL);
 
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
+  if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
     array = (int *) arraydata(&farray);
     anum = chkobjlastinst(d->Obj);

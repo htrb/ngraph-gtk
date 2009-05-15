@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.25 2009/04/01 03:37:30 hito Exp $
+ * $Id: x11gui.c,v 1.26 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -47,12 +47,13 @@ struct nGetOpenFileData
   int ret;
   char *title;
   char **initdir;
-  char *initfil;
+  const char *initfil;
   int chdir;
   char *filter;
   char *ext;
   char **file;
   int mustexist;
+  int overwrite;
   int multi;
   int changedir;
 };
@@ -718,7 +719,7 @@ fsok(GtkWidget *dlg)
 }
 
 static int
-FileSelectionDialog(GtkWidget * parent, int type, char *stock)
+FileSelectionDialog(GtkWidget *parent, int type, char *stock)
 {
   struct nGetOpenFileData *data;
   GtkWidget *dlg, *rc;
@@ -726,9 +727,9 @@ FileSelectionDialog(GtkWidget * parent, int type, char *stock)
 
   data = &FileSelection;
 
-  data->parent = parent;
+  data->parent = (parent) ? parent : TopLevel;
   dlg = gtk_file_chooser_dialog_new(data->title,
-				    GTK_WINDOW(parent),
+				    GTK_WINDOW(data->parent),
 				    type,
 				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				    stock, GTK_RESPONSE_ACCEPT,
@@ -745,7 +746,6 @@ FileSelectionDialog(GtkWidget * parent, int type, char *stock)
     gtk_file_filter_set_name(filter, data->filter);
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
 
-
     filter = gtk_file_filter_new();
     gtk_file_filter_add_pattern(filter, "*.*");
     gtk_file_filter_set_name(filter, _("All"));
@@ -757,22 +757,30 @@ FileSelectionDialog(GtkWidget * parent, int type, char *stock)
   }
   gtk_widget_show_all(dlg);
 
-  if (data->changedir) {
+  if (data->changedir && data->initdir) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->chdir_cb), data->chdir);
   } else {
     gtk_widget_hide(data->chdir_cb);
   }
 
   if (data->initfil) {
-    char *tmp, *name;
-    tmp = strdup(data->initfil);
-    name = basename(tmp);
     if (type == GTK_FILE_CHOOSER_ACTION_SAVE) {
-      gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), name);
+      char *ptr, *name;
+      ptr = nstrdup(data->initfil);
+      if (ptr) {
+	name = basename(ptr);
+	if (name) {
+	  gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), name);
+	}
+	memfree(ptr);
+      }
     } else {
-      gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), name);
+      gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), data->initfil);
     }
-    free(tmp);
+  }
+
+  if (type == GTK_FILE_CHOOSER_ACTION_SAVE) {
+    gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dlg), ! data->overwrite);
   }
 
   data->ret = IDCANCEL;
@@ -791,7 +799,7 @@ FileSelectionDialog(GtkWidget * parent, int type, char *stock)
 int
 nGetOpenFileNameMulti(GtkWidget * parent,
 		      char *title, char *defext, char **initdir,
-		      char *initfil, char ***file, char *filter, int chd)
+		      const char *initfil, char ***file, char *filter, int chd)
 {
   int ret, r;
   
@@ -803,6 +811,7 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   FileSelection.chdir = chd;
   FileSelection.ext = defext;
   FileSelection.mustexist = TRUE;
+  FileSelection.overwrite = FALSE;
   FileSelection.multi = TRUE;
   FileSelection.changedir = TRUE;
   ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OPEN);
@@ -819,8 +828,8 @@ nGetOpenFileNameMulti(GtkWidget * parent,
 }
 
 int
-nGetOpenFileName(GtkWidget * parent,
-		 char *title, char *defext, char **initdir, char *initfil,
+nGetOpenFileName(GtkWidget *parent,
+		 char *title, char *defext, char **initdir, const char *initfil,
 		 char **file, char *filter, int exist, int chd)
 {
   int ret, r;
@@ -833,8 +842,10 @@ nGetOpenFileName(GtkWidget * parent,
   FileSelection.chdir = chd;
   FileSelection.ext = defext;
   FileSelection.mustexist = exist;
+  FileSelection.overwrite = FALSE;
   FileSelection.multi = FALSE;
   FileSelection.changedir = TRUE;
+
   ret = FileSelectionDialog(parent,
 			    (exist) ?
 			    GTK_FILE_CHOOSER_ACTION_OPEN :
@@ -850,14 +861,13 @@ nGetOpenFileName(GtkWidget * parent,
     *file = NULL;
   }
 
-
   return ret;
 }
 
 int
 nGetSaveFileName(GtkWidget * parent,
-		 char *title, char *defext, char **initdir, char *initfil,
-		 char **file, char *filter, int chd)
+		 char *title, char *defext, char **initdir, const char *initfil,
+		 char **file, char *filter, int overwrite, int chd)
 {
   int ret, r;
 
@@ -869,6 +879,7 @@ nGetSaveFileName(GtkWidget * parent,
   FileSelection.chdir = chd;
   FileSelection.ext = defext;
   FileSelection.mustexist = FALSE;
+  FileSelection.overwrite = overwrite;
   FileSelection.multi = FALSE;
   FileSelection.changedir = TRUE;
   ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_SAVE);

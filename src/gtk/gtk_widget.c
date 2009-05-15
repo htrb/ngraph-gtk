@@ -6,6 +6,9 @@
 
 #include "gtk_common.h"
 #include "gtk_widget.h"
+#include "ox11menu.h"
+#include "x11menu.h"
+#include "x11gui.h"
 
 GtkWidget *
 item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
@@ -21,6 +24,71 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
 
   return label;
 }
+
+GtkWidget *
+get_parent_window(GtkWidget *w)
+{
+  GtkWidget *ptr;
+
+  ptr = w;
+  while (ptr && ! G_TYPE_CHECK_INSTANCE_TYPE(ptr, GTK_TYPE_WINDOW)) {
+    ptr = gtk_widget_get_parent(ptr);
+  }
+  return (ptr) ? ptr : TopLevel;
+}
+
+
+#if USE_ENTRY_ICON
+static void
+entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
+{
+  struct objlist *obj;
+  char *file, *buf, *ext;
+
+  obj = (struct objlist *) user_data;
+  if (obj == NULL)
+    return;
+
+  buf = NULL;
+  ext = NULL;
+  if (chkobjfield(obj, "ext") == 0 && chkobjlastinst(obj) >= 0) {
+    int len;
+
+    getobj(obj, "ext", 0, 0, NULL, &ext);
+    if (ext) {
+      len = strlen(ext) + 3;
+      buf = memalloc(len);
+      if (buf) {
+	snprintf(buf, len, "*.%s", ext);
+      }
+    }
+  }
+
+  if (nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL,
+		       gtk_entry_get_text(w),
+		       &file, buf, TRUE, Menulocal.changedirectory) == IDOK && file) {
+    gtk_entry_set_text(w, file);
+    free (file);
+  }
+  memfree(buf);
+}
+#endif
+
+GtkWidget *
+create_file_entry(struct objlist *obj)
+{
+  GtkWidget *w;
+
+  w = create_text_entry(TRUE, TRUE);
+
+#if USE_ENTRY_ICON
+  gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
+  g_signal_connect(w, "icon-release", G_CALLBACK(entry_icon_file_select), obj);
+#endif
+
+  return w;
+}
+
 
 GtkWidget *
 create_text_entry(int set_default_size, int set_default_action)

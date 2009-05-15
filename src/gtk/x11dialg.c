@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.37 2009/05/12 10:28:03 hito Exp $
+ * $Id: x11dialg.c,v 1.38 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,10 +35,6 @@
 #include <limits.h>
 #include <ctype.h>
 
-#include "gtk_liststore.h"
-#include "gtk_combo.h"
-#include "gtk_widget.h"
-
 #include "ngraph.h"
 #include "object.h"
 #include "mathfn.h"
@@ -49,6 +45,10 @@
 #include "x11menu.h"
 #include "x11gui.h"
 #include "x11dialg.h"
+
+#include "gtk_liststore.h"
+#include "gtk_combo.h"
+#include "gtk_widget.h"
 
 void ResetEvent();
 

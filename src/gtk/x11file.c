@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.94 2009/05/14 10:25:27 hito Exp $
+ * $Id: x11file.c,v 1.95 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -717,7 +717,7 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
   if (lastid == d->Lastid) {
     if ((file = searchscript(FITSAVE)) == NULL) {
       if (errmes)
-	MessageBox(TopLevel, _("Setting file not found."), FITSAVE, MB_OK);
+	MessageBox(d->widget, _("Setting file not found."), FITSAVE, MB_OK);
       return FALSE;
     }
     if ((shell = chkobject("shell")) == NULL)
@@ -752,7 +752,7 @@ FitDialogLoad(struct FitDialog *d)
     return;
   lastid = chkobjlastinst(d->Obj);
   if ((d->Lastid < 0) || (lastid == d->Lastid)) {
-    MessageBox(TopLevel, _("No settings."), FITSAVE, MB_OK);
+    MessageBox(d->widget, _("No settings."), FITSAVE, MB_OK);
     return;
   }
   FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
@@ -784,7 +784,7 @@ FitDialogSave(struct FitDialog *d)
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     if (strcmp(s, DlgFitSave.Profile) == 0) {
-      if (MessageBox(TopLevel, _("Overwrite existing setting?"), "Confirm",
+      if (MessageBox(d->widget, _("Overwrite existing setting?"), "Confirm",
 		     MB_YESNO) != IDYES) {
 	return;
       }
@@ -2845,38 +2845,6 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
 }
 
-#define USE_ENTRY_ICON (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 16))
-
-static void
-#if USE_ENTRY_ICON
-file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
-#else
-file_select(GtkButton *w, gpointer user_data)
-#endif
-{
-  struct FileDialog *d;
-  GtkWidget *fdialog;
-
-  d = (struct FileDialog *) user_data;
-
-  fdialog = gtk_file_chooser_dialog_new(_("data file"),
-					GTK_WINDOW(d->widget),
-					GTK_FILE_CHOOSER_ACTION_OPEN,
-					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-					NULL);
-
-  gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(fdialog), gtk_entry_get_text(GTK_ENTRY(d->file)));
-  if (gtk_dialog_run(GTK_DIALOG(fdialog)) == GTK_RESPONSE_ACCEPT) {
-    char *filename;
-
-    filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(fdialog));
-    gtk_entry_set_text(GTK_ENTRY(d->file), filename);
-    g_free (filename);
-  }
-  gtk_widget_destroy(fdialog);
-}
-
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -2903,19 +2871,9 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(TRUE, TRUE);
+    w = create_file_entry(d->Obj);
     item_setup(hbox, w, _("_File:"), TRUE);
     d->file = w;
-
-#if USE_ENTRY_ICON
-    gtk_entry_set_icon_from_stock(GTK_ENTRY(d->file), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
-    g_signal_connect(w, "icon-release", G_CALLBACK(file_select), d);
-#else
-    w = gtk_button_new_from_stock(GTK_STOCK_OPEN);
-    g_signal_connect(w, "clicked", G_CALLBACK(file_select), d);
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    d->file_btn = w;
-#endif
 
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
@@ -2923,8 +2881,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogOption), d);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
     FileDialogSetupCommon(wi, d);
-
-
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     view = gtk_text_view_new_with_buffer(NULL);
@@ -3789,7 +3745,7 @@ FileWinFit(struct SubWin *d)
 
   FitDialog(&DlgFit, fitobj, fitid);
 
-  ret = DialogExecute(TopLevel, &DlgFit);
+  ret = DialogExecute(d->Win, &DlgFit);
   if (ret == IDDELETE) {
     delobj(fitobj, fitid);
     putobj(d->obj, "fit", sel, NULL);

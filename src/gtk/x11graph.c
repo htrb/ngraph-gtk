@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.44 2009/05/14 10:25:27 hito Exp $
+ * $Id: x11graph.c,v 1.45 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -35,10 +35,6 @@
 #include "nstring.h"
 #include "odraw.h"
 
-#include "gtk_liststore.h"
-#include "gtk_combo.h"
-#include "gtk_widget.h"
-
 #include "main.h"
 #include "x11dialg.h"
 #include "ox11menu.h"
@@ -50,6 +46,10 @@
 #include "x11print.h"
 #include "x11commn.h"
 #include "x11info.h"
+
+#include "gtk_liststore.h"
+#include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #define PAPER_SIZE_MIN 1000
 

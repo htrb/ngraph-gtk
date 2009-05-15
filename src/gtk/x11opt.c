@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.62 2009/05/11 06:22:51 hito Exp $
+ * $Id: x11opt.c,v 1.63 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -452,7 +452,7 @@ SetDriverDialogBrowse(GtkWidget *w, gpointer client_data)
   struct SetDriverDialog *d;
 
   d = (struct SetDriverDialog *) client_data;
-  if (nGetOpenFileName(TopLevel, _("External Driver"), NULL, NULL,
+  if (nGetOpenFileName(d->widget, _("External Driver"), NULL, NULL,
 		       NULL, &file, "*", TRUE, FALSE) == IDOK) {
     gtk_entry_set_text(GTK_ENTRY(d->driver), file);
   }
@@ -522,7 +522,7 @@ SetDriverDialogClose(GtkWidget *w, void *data)
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->name));
   if (strlen(buf) == 0) {
-    MessageBox(TopLevel, _("Please specify driver name."), NULL, MB_OK);
+    MessageBox(d->widget, _("Please specify driver name."), NULL, MB_OK);
     return;
   }
 
@@ -855,7 +855,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 
   alias = get_font_alias(d);
   if (alias == NULL) {
-    MessageBox(TopLevel, _("Please specify a new alias name."), NULL, MB_OK);
+    MessageBox(d->widget, _("Please specify a new alias name."), NULL, MB_OK);
     return;
   }
 
@@ -863,7 +863,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   free(alias);
 
   if (fmap) {
-    MessageBox(TopLevel, _("Alias name already exists."), NULL, MB_OK);
+    MessageBox(d->widget, _("Alias name already exists."), NULL, MB_OK);
     return;
   }
 

@@ -1096,8 +1096,8 @@ alias:
 version: 1.00.00
 parent: draw
 object id: 26
-number of fields: 35
-size of instance: 224
+number of fields: 36
+size of instance: 232
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1132,6 +1132,7 @@ r-x             bbox    int[]( void )
 r-x             move    void( int int )
 r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
+r--              ext    char*
 ---           _local    void*
 </pre>
 

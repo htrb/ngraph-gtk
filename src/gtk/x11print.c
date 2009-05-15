@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.38 2009/04/02 01:24:38 hito Exp $
+ * $Id: x11print.c,v 1.39 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,15 +28,15 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "gtk_liststore.h"
-#include "gtk_combo.h"
-#include "gtk_widget.h"
-
 #include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
 #include "ioutil.h"
 #include "mathcode.h"
+
+#include "gtk_liststore.h"
+#include "gtk_combo.h"
+#include "gtk_widget.h"
 
 #include "x11gui.h"
 #include "x11dialg.h"
@@ -90,16 +90,20 @@ DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
   i = 0;
   while (pcur != NULL) {
     if (i == a) {
-      if (pcur->ext && (pcur->ext[0] != '\0') && NgraphApp.FileName) {
-	strncpy(buf, NgraphApp.FileName, sizeof(buf) - 1);
-	if (strchr(buf, '.') != NULL) {
-	  for (j = strlen(buf) - 1; buf[j] != '.'; j--);
-	  buf[j] = '\0';
+      if (pcur->ext && pcur->ext[0] != '\0') {
+	if (NgraphApp.FileName) {
+	  strncpy(buf, NgraphApp.FileName, sizeof(buf) - 1);
+	  if (strchr(buf, '.') != NULL) {
+	    for (j = strlen(buf) - 1; buf[j] != '.'; j--);
+	    buf[j] = '\0';
+	  }
+	  strncat(buf, pcur->ext, sizeof(buf) - strlen(buf) - 1);
+	  gtk_entry_set_text(GTK_ENTRY(d->file), buf);
 	}
-	strncat(buf, pcur->ext, sizeof(buf) - strlen(buf) - 1);
-	gtk_entry_set_text(GTK_ENTRY(d->file), buf);
+	d->ext = pcur->ext;
       } else {
 	gtk_entry_set_text(GTK_ENTRY(d->file), "");
+	d->ext = NULL;
       }
 
       gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(pcur->option));
@@ -113,15 +117,27 @@ DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
 static void
 DriverDialogBrowseCB(GtkWidget *wi, gpointer client_data)
 {
-  char *file;
+  char *file, *buf;
+  int len;
   struct DriverDialog *d;
 
   d = (struct DriverDialog *) client_data;
-  if (nGetSaveFileName(TopLevel, _("External Driver Output"), NULL, NULL,
-		       NULL, &file, "*", Menulocal.changedirectory) == IDOK) {
 
+  if (d->ext) {
+    len = strlen(d->ext) + 2;
+    buf = memalloc(len);
+    if (buf) {
+      snprintf(buf, len, "*%s", d->ext);
+    }
+  } else {
+    buf = NULL;
+  }
+
+  if (nGetSaveFileName(d->widget, _("External Driver Output"), NULL, NULL,
+		       NULL, &file, buf, TRUE, Menulocal.changedirectory) == IDOK) {
     gtk_entry_set_text(GTK_ENTRY(d->file), file);
   }
+  memfree(buf);
   free(file);
 }
 
@@ -233,7 +249,7 @@ DriverDialogClose(GtkWidget *w, void *data)
       buf = (char *) memalloc(len2);
       if (buf) {
 	snprintf(buf, len2, _("`%s'\n\nOverwrite existing file?"), file);
-	if (MessageBox(TopLevel, buf, "Driver", MB_YESNO) != IDYES) {
+	if (MessageBox(d->widget, buf, "Driver", MB_YESNO) != IDYES) {
 	  memfree(buf);
 	  memfree(option);
 	  d->ret = IDCANCEL;
@@ -241,7 +257,7 @@ DriverDialogClose(GtkWidget *w, void *data)
 	}
 	memfree(buf);
       } else {
-	if (MessageBox(TopLevel, _("Overwrite existing file?"),
+	if (MessageBox(d->widget, _("Overwrite existing file?"),
 		       "Driver", MB_YESNO) != IDNO) {
 	  memfree(option);
 	  d->ret = IDCANCEL;
@@ -274,6 +290,7 @@ DriverDialog(struct DriverDialog *data, struct objlist *obj, int id)
   data->CloseWindow = DriverDialogClose;
   data->Obj = obj;
   data->Id = id;
+  data->ext = NULL;
 }
 
 static void
@@ -816,7 +833,7 @@ CmPrintGRAFile(void)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid, ret;
-  char *g2winst, *tmp, *file, buf[MESSAGE_BUF_SIZE], *filebuf;
+  char *g2winst, *tmp, *file, *filebuf;
 
   if (Menulock || GlobalLock)
     return;
@@ -824,21 +841,13 @@ CmPrintGRAFile(void)
   tmp = get_base_ngp_name();
 
   ret = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp,
-			 &filebuf, "*.gra", Menulocal.changedirectory);
+			 &filebuf, "*.gra", FALSE, Menulocal.changedirectory);
 
   if (tmp)
     free(tmp);
 
   if (ret != IDOK)
     return;
-
-  if (access(filebuf, 04) == 0) {
-    snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), filebuf);
-    if (MessageBox(TopLevel, buf, _("GRA file"), MB_YESNO) != IDYES) {
-      free(filebuf);
-      return;
-    }
-  }
 
   file = nstrdup(filebuf);
   free(filebuf);
@@ -886,7 +895,7 @@ CmOutputImage(int type)
   char *g2winst;
   int ret, format, t2p, dpi;
   char *ext_name, *ext_str, *ext;
-  char *file, *filebuf, *tmp, buf[MESSAGE_BUF_SIZE];
+  char *file, *filebuf, *tmp;
 
   if (Menulock || GlobalLock)
     return;
@@ -927,20 +936,12 @@ CmOutputImage(int type)
   tmp = get_base_ngp_name();
 
   ret = nGetSaveFileName(TopLevel, ext_name, ext_str, NULL, tmp,
-			 &filebuf, ext, Menulocal.changedirectory);
+			 &filebuf, ext, FALSE, Menulocal.changedirectory);
   if (tmp)
     free(tmp);
 
   if (ret != IDOK) {
     return;
-  }
-
-  if (access(filebuf, 04) == 0) {
-    snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), filebuf);
-    if (MessageBox(TopLevel, buf, _("confirm"), MB_YESNO) != IDYES) {
-      free(filebuf);
-      return;
-    }
   }
 
   file = nstrdup(filebuf);
@@ -1012,7 +1013,7 @@ CmPrintDataFile(void)
   struct narray farray;
   struct objlist *obj;
   int i, num, onum, type, div, curve = FALSE, *array, append;
-  char buf[MESSAGE_BUF_SIZE], *file;
+  char *file;
   char *argv[4];
 
   if (Menulock || GlobalLock)
@@ -1056,18 +1057,9 @@ CmPrintDataFile(void)
   }
 
   if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
-		       &file, "*", Menulocal.changedirectory) != IDOK) {
+		       &file, NULL, FALSE, Menulocal.changedirectory) != IDOK) {
     arraydel(&farray);
     return;
-  }
-
-  if (access(file, 04) == 0) {
-    snprintf(buf, sizeof(buf), _("`%s'\n\nOverwrite existing file?"), file);
-    if (MessageBox(TopLevel, buf, _("Data file"), MB_YESNO) != IDYES) {
-      free(file);
-      arraydel(&farray);
-      return;
-    }
   }
 
   ProgressDialogCreate(_("Making data file"));

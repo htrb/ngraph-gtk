@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.21 2009/04/08 09:41:33 hito Exp $
+ * $Id: ox11dlg.c,v 1.22 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -526,7 +526,7 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   }
   ret = nGetSaveFileName(DLGTopLevel, _("Save file"),
 			 NULL, NULL, initfile,
-			 &file, filter, TRUE);
+			 &file, filter, FALSE, TRUE);
   if (ret == IDOK) {
     file2 = nstrdup(file);
     if (file2) {

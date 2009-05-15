@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.25 2009/04/27 02:57:51 hito Exp $
+ * $Id: x11merge.c,v 1.26 2009/05/15 14:30:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -132,7 +132,7 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "merge");
 
     hbox = gtk_hbox_new(FALSE, 2);
-    w = create_text_entry(FALSE, TRUE);
+    w = create_file_entry(d->Obj);
     item_setup(hbox, w, _("_File:"), TRUE);
     d->file = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
