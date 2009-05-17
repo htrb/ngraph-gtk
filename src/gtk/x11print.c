@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.39 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11print.c,v 1.40 2009/05/17 01:51:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -172,7 +172,7 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->file = w;
     item_setup(hbox, w, _("_File:"), TRUE);
 
-    w = gtk_button_new_with_mnemonic("_Browse");
+    w = gtk_button_new_with_mnemonic(_("_Browse"));
     g_signal_connect(w, "clicked", G_CALLBACK(DriverDialogBrowseCB), d);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 

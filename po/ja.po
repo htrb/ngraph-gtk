@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-05-17 10:23+0900\n"
-"PO-Revision-Date: 2009-05-01 18:20+0900\n"
+"POT-Creation-Date: 2009-05-17 10:44+0900\n"
+"PO-Revision-Date: 2009-05-17 10:45+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -2006,6 +2006,10 @@ msgstr ".Ngraph.ngp として保存"
 #: src/gtk/x11print.c:136
 msgid "External Driver Output"
 msgstr "外部ドライバ出力"
+
+#: src/gtk/x11print.c:175
+msgid "_Browse"
+msgstr "閲覧(_B) "
 
 #: src/gtk/x11print.c:260
 msgid "Overwrite existing file?"
