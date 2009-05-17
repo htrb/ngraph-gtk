@@ -1,3 +1,14 @@
+2009-05-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (AxisPosDialogSetup): use
+	"create_direction_entry()" instead of "create_spin_entry_type()".
+
+	* src/gtk/x11lgnd.c (legend_dialog_setup_sub): use
+	"create_direction_entry()" instead of "create_spin_entry_type()".
+
+	* src/gtk/gtk_widget.c (direction_icon_released)
+	(create_direction_entry): add.
+
 2009-05-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (DriverDialogSelectCB): set value to

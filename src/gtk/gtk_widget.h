@@ -29,6 +29,7 @@ void spin_entry_set_inc(GtkWidget *w, int inc, int page);
 GtkWidget *create_color_button(GtkWidget *win);
 GtkWidget *create_text_entry(int set_default_size, int set_default_action);
 GtkWidget *create_file_entry(struct objlist *obj);
+GtkWidget *create_direction_entry(void);
 GtkWidget *item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand);
 GtkWidget *get_parent_window(GtkWidget *w);
 

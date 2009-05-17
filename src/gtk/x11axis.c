@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.64 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11axis.c,v 1.65 2009/05/17 01:35:57 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1210,7 +1210,7 @@ AxisPosDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Length:"), TRUE);
     d->len = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);
+    w = create_direction_entry();
     item_setup(hbox, w, _("_Direction:"), FALSE);
     d->direction = w;
 
