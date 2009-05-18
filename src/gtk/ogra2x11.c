@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.28 2009/03/26 02:31:53 hito Exp $
+ * $Id: ogra2x11.c,v 1.29 2009/05/18 05:23:20 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -137,6 +137,7 @@ gtkloadconfig(struct gtklocal *gtklocal)
       if (endptr[0] == '\0')
 	gtklocal->winheight = val;
       memfree(f1);
+    } else if (strcmp(tok, "use_external_viewer") == 0) {
     } else {
       fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, GRA2GTKCONF);
     }

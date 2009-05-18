@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.75 2009/05/11 06:22:51 hito Exp $
+ * $Id: ox11menu.c,v 1.76 2009/05/18 05:23:20 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -220,6 +220,7 @@ static struct menu_config MenuConfigScript[] = {
 static struct menu_config MenuConfigMisc[] = {
   {"editor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.editor},
   {"coordwin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.coordwin_font},
+  {"file_preview_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.file_preview_font},
   {"change_directory",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
   {"save_history",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savehistory},
   {"save_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savepath},
@@ -919,11 +920,75 @@ menuadddrawrable(struct objlist *parent, struct narray *drawrable)
   }
 }
 
-static int
-menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+static void
+menulocal_finalize(void)
 {
   struct extprinter *pcur, *pdel;
   struct script *scur, *sdel;
+  int i, j;
+  struct menu_config *cfg;
+
+  for (i = 0; (cfg = MenuConfigArrray[i]); i++) {
+    for (j = 0; cfg[j].name; j++) {
+      if (cfg[i].type == MENU_CONFIG_TYPE_STRING) {
+	memfree(* (char **) cfg[i].data);
+	* (char **) cfg[i].data = NULL;
+      }
+    }
+  }
+
+  pcur = Menulocal.extprinterroot;
+  while (pcur) {
+    pdel = pcur;
+    pcur = pcur->next;
+    memfree(pdel->name);
+    memfree(pdel->driver);
+    memfree(pdel->ext);
+    memfree(pdel->option);
+    memfree(pdel);
+  }
+  Menulocal.extprinterroot = NULL;
+
+  scur = Menulocal.scriptroot;
+  while (scur) {
+    sdel = scur;
+    scur = scur->next;
+    memfree(sdel->name);
+    memfree(sdel->script);
+    memfree(sdel->description);
+    memfree(sdel->option);
+    memfree(sdel);
+  }
+  Menulocal.scriptroot = NULL;
+
+  if (Menulocal.pix)
+    g_object_unref(Menulocal.pix);
+  Menulocal.pix = NULL;
+
+  arraydel2(&Menulocal.drawrable);
+
+  arrayfree2(Menulocal.ngpfilelist);
+  Menulocal.ngpfilelist = NULL;
+
+  arrayfree2(Menulocal.ngpdirlist);
+  Menulocal.ngpdirlist = NULL;
+
+  arrayfree2(Menulocal.datafilelist);
+  Menulocal.datafilelist = NULL;
+
+  free(Menulocal.fileopendir);
+  Menulocal.fileopendir = NULL;
+
+  free(Menulocal.graphloaddir);
+  Menulocal.graphloaddir = NULL;
+
+  Menulocal.obj = NULL;
+  Menulocal.local = NULL;
+}
+
+static int
+menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
   struct gra2cairo_local *local;
   int i, numf, numd;
   char *dum;
@@ -938,6 +1003,8 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 1;
   }
 
+  memset(&Menulocal, 0, sizeof(Menulocal));
+
   Menulocal.menux = Menulocal.menuy
     = Menulocal.menuheight = Menulocal.menuwidth = CW_USEDEFAULT;
   initwindowconfig();
@@ -951,32 +1018,16 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.scriptconsole = FALSE;
   Menulocal.addinconsole = TRUE;
   Menulocal.changedirectory = 1;
-  Menulocal.editor = NULL;
-  Menulocal.browser = NULL;
-  Menulocal.coordwin_font = NULL;
-  Menulocal.help_browser = NULL;
   set_paper_type(21000, 29700);
-  Menulocal.LeftMargin = 0;
-  Menulocal.TopMargin = 0;
   Menulocal.PaperZoom = 10000;
   Menulocal.exwindpi = DEFAULT_DPI;
-  Menulocal.exwinwidth = 0;
-  Menulocal.exwinheight = 0;
-  Menulocal.fileopendir = NULL;
-  Menulocal.graphloaddir = NULL;
   Menulocal.expand = 1;
   Menulocal.expanddir = nstrdup("./");
-  Menulocal.ignorepath = 0;
   Menulocal.expandtofullpath = TRUE;
-  Menulocal.savepath = 0;
-  Menulocal.savewithdata = 0;
-  Menulocal.savewithmerge = 0;
   Menulocal.ngpfilelist = arraynew(sizeof(char *));
   Menulocal.ngpdirlist = arraynew(sizeof(char *));
   Menulocal.datafilelist = arraynew(sizeof(char *));
   Menulocal.GRAobj = chkobject("gra");
-  Menulocal.extprinterroot = NULL;
-  Menulocal.scriptroot = NULL;
   Menulocal.hist_size = 1000;
   Menulocal.info_size = 1000;
   Menulocal.bg_r = 0xff;
@@ -1061,33 +1112,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return 0;
 
 errexit:
-  memfree(Menulocal.editor);
-  memfree(Menulocal.browser);
-  memfree(Menulocal.help_browser);
-  memfree(Menulocal.coordwin_font);
-  pcur = Menulocal.extprinterroot;
-  while (pcur) {
-    pdel = pcur;
-    pcur = pcur->next;
-    memfree(pdel->name);
-    memfree(pdel->driver);
-    memfree(pdel->ext);
-    memfree(pdel->option);
-    memfree(pdel);
-  }
-  scur = Menulocal.scriptroot;
-  while (scur) {
-    sdel = scur;
-    scur = scur->next;
-    memfree(sdel->name);
-    memfree(sdel->script);
-    memfree(sdel->description);
-    memfree(sdel->option);
-    memfree(sdel);
-  }
-
-  if (Menulocal.pix)
-    g_object_unref(Menulocal.pix);
+  menulocal_finalize();
 
   local = gra2cairo_free(obj, inst);
   memfree(local);
@@ -1098,49 +1123,10 @@ errexit:
 static int
 menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  struct extprinter *pcur, *pdel;
-  struct script *scur, *sdel;
-
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
-  arraydel2(&(Menulocal.drawrable));
-  arrayfree2(Menulocal.ngpfilelist);
-  arrayfree2(Menulocal.ngpdirlist);
-  arrayfree2(Menulocal.datafilelist);
-  memfree(Menulocal.editor);
-  memfree(Menulocal.browser);
-  memfree(Menulocal.help_browser);
-  memfree(Menulocal.coordwin_font);
-  free(Menulocal.fileopendir);
-  free(Menulocal.graphloaddir);
-  memfree(Menulocal.expanddir);
-  pcur = Menulocal.extprinterroot;
-  while (pcur) {
-    pdel = pcur;
-    pcur = pcur->next;
-    memfree(pdel->name);
-    memfree(pdel->driver);
-    memfree(pdel->ext);
-    memfree(pdel->option);
-    memfree(pdel);
-  }
-  scur = Menulocal.scriptroot;
-  while (scur) {
-    sdel = scur;
-    scur = scur->next;
-    memfree(sdel->name);
-    memfree(sdel->script);
-    memfree(sdel->description);
-    memfree(sdel->option);
-    memfree(sdel);
-  }
 
-  if (Menulocal.pix)
-    g_object_unref(Menulocal.pix);
-  Menulocal.pix = NULL;
-
-  Menulocal.obj = NULL;
-  Menulocal.local = NULL;
+  menulocal_finalize();
 
   return 0;
 }

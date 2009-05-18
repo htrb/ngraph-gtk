@@ -1,3 +1,30 @@
+2009-05-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (set_font): add.
+	(MiscDialogClose): use "set_font()".
+	(MiscDialogSetupItem, MiscDialogSetup): initialize and setup
+	"d->file_preview_font".
+
+	* src/gtk/x11dialg.h (struct FileDialog): add member
+	"comment_view".
+	(struct MiscDialog): add member "file_preview_font".
+
+	* src/gtk/x11file.c (FileDialogSetup): call
+	"gtk_widget_modify_font" if "Menulocal.file_preview_font" is not
+	NULL.
+
+	* src/gtk/ox11menu.h (struct menulocal): add member
+	"file_preview_font".
+
+	* src/gtk/ox11menu.c (MenuConfigMisc): add config
+	"file_preview_font".
+	(menulocal_finalize): add.
+	(menuinit, menudone): use "menulocal_finalize()".
+	(menuinit): call "memset()" to initialize "Menulocal".
+
+	* src/gtk/ogra2x11.c (gtkloadconfig): check string
+	"use_external_viewer".
+
 2009-05-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (AxisPosDialogSetup): use

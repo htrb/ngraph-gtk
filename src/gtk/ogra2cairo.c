@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.47 2009/04/13 10:03:56 hito Exp $
+ * $Id: ogra2cairo.c,v 1.48 2009/05/18 05:23:20 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -518,7 +518,6 @@ gra2cairo_free(struct objlist *obj, char *inst)
 static int 
 gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
 

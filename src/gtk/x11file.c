@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.95 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11file.c,v 1.96 2009/05/18 05:23:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2887,6 +2887,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
     d->comment = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+    d->comment_view = view;
     gtk_container_add(GTK_CONTAINER(swin), view);
 
     w = gtk_frame_new(NULL);
@@ -2928,6 +2929,14 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gboolean valid;
     const gchar *ptr;
 
+    if (Menulocal.file_preview_font) {
+      PangoFontDescription *desc;
+
+      desc = pango_font_description_from_string(Menulocal.file_preview_font);
+      gtk_widget_modify_font(d->comment_view, NULL);
+      gtk_widget_modify_font(d->comment_view, desc);
+      pango_font_description_free(desc);
+    }
     valid = g_utf8_validate(s, -1, &ptr);
     if (valid) {
       gtk_text_buffer_set_text(d->comment, s, -1);

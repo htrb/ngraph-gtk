@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.63 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11opt.c,v 1.64 2009/05/18 05:23:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -261,7 +261,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Script file:"), TRUE);
     d->script = w;
 
-    w = gtk_button_new_with_mnemonic("_Browse");
+    w = gtk_button_new_with_mnemonic(_("_Browse"));
     g_signal_connect(w, "clicked", G_CALLBACK(SetScriptDialogBrowse), d);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
@@ -482,7 +482,7 @@ SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Driver:"), TRUE);
     d->driver = w;
 
-    w = gtk_button_new_with_mnemonic("_Browse");
+    w = gtk_button_new_with_mnemonic(_("_Browse"));
     g_signal_connect(w, "clicked", G_CALLBACK(SetDriverDialogBrowse), d);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
@@ -959,6 +959,10 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   if (Menulocal.coordwin_font) {
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->coordwin_font), Menulocal.coordwin_font);
   }
+
+  if (Menulocal.file_preview_font) {
+    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->file_preview_font), Menulocal.file_preview_font);
+  }
 }
 
 static void
@@ -1075,6 +1079,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(vbox, w, _("_Font of coordinate window:"), FALSE);
     d->coordwin_font = w;
 
+    w = gtk_font_button_new();
+    item_setup(vbox, w, _("font of data _Preview:"), FALSE);
+    d->file_preview_font = w;
+
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
@@ -1083,6 +1091,28 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, FALSE, FALSE, 4);
   }
   MiscDialogSetupItem(wi, d);
+}
+
+static int
+set_font(char **cfg, GtkWidget *btn)
+{
+  const char *buf;
+
+  buf = gtk_font_button_get_font_name(GTK_FONT_BUTTON(btn));
+  if (buf && *cfg) {
+    if (strcmp(*cfg, buf)) {
+      memfree(*cfg);
+    } else {
+      buf = NULL;
+    }
+  }
+
+  if (buf) {
+    *cfg = nstrdup(buf);
+    return 1;
+  }
+
+  return 0;
 }
 
 static void
@@ -1156,19 +1186,11 @@ MiscDialogClose(GtkWidget *w, void *data)
   a = spin_entry_get_val(d->data_head_lines);
   putobj(d->Obj, "data_head_lines", d->Id, &a);
 
-  buf = gtk_font_button_get_font_name(GTK_FONT_BUTTON(d->coordwin_font));
-  if (Menulocal.coordwin_font) {
-    if (strcmp(Menulocal.coordwin_font, buf)) {
-      memfree(Menulocal.coordwin_font);
-    } else {
-      buf = NULL;
-    }
+  if (set_font(&Menulocal.coordwin_font, d->coordwin_font)) {
+    CoordWinSetFont(Menulocal.coordwin_font);
   }
 
-  if (buf) {
-    Menulocal.coordwin_font = nstrdup(buf);
-    CoordWinSetFont(buf);
-  }
+  set_font(&Menulocal.file_preview_font, d->file_preview_font);
 
   d->ret = ret;
 

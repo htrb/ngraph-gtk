@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.30 2009/04/23 02:49:54 hito Exp $
+ * $Id: ox11menu.h,v 1.31 2009/05/18 05:23:20 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -121,7 +121,7 @@ struct menulocal
   int dialogheight, dialogwidth, dialogx, dialogy, dialogopen;
   int coordheight, coordwidth, coordx, coordy, coordopen;
   int exwindpi, exwinwidth, exwinheight, exwin_use_external;
-  char *fileopendir, *graphloaddir, *expanddir, *coordwin_font;
+  char *fileopendir, *graphloaddir, *expanddir, *coordwin_font, *file_preview_font;
   int expand, ignorepath, expandtofullpath, changedirectory, savehistory;
   int savepath, savewithdata, savewithmerge;
   struct narray *ngpfilelist;

@@ -1,7 +1,5 @@
 * コードの整理
 
-* undo 出来る軸の数のチェック
-
 * axis を cut & paste できないか？
 
 * GtkAction, GtkUIManager へ移行
