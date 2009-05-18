@@ -1,5 +1,9 @@
 2009-05-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11axis.c (file_button_show): add.
+	(AxisDialogSetup): call "g_signal_connect()" for "show" signal of
+	"File" button.
+
 	* src/gtk/x11opt.c (set_font): add.
 	(MiscDialogClose): use "set_font()".
 	(MiscDialogSetupItem, MiscDialogSetup): initialize and setup

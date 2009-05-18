@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.65 2009/05/17 01:35:57 hito Exp $
+ * $Id: x11axis.c,v 1.66 2009/05/18 06:51:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2111,6 +2111,24 @@ AxisDialogCopy(struct AxisDialog *d)
 }
 
 static void
+file_button_show(GtkWidget *widget, gpointer user_data)
+{
+  static struct objlist *file = NULL;
+  int n;
+
+  if (file == NULL) {
+    file = chkobject("file");
+  }
+
+  if (file == NULL)
+    return;
+
+  n = chkobjlastinst(file);
+
+  gtk_widget_set_sensitive(widget, n >= 0);
+}
+
+static void
 AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *hbox2, *vbox, *frame;
@@ -2172,6 +2190,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox2 = gtk_hbox_new(FALSE, 4);
     w = gtk_button_new_with_mnemonic(_("_File"));
     g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogFile), d);
+    g_signal_connect(w, "show", G_CALLBACK(file_button_show), NULL);
     gtk_box_pack_start(GTK_BOX(hbox2), w, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
 
