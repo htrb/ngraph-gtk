@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.37 2009/04/23 07:23:37 hito Exp $
+ * $Id: main.c,v 1.38 2009/05/18 10:10:34 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -463,6 +463,76 @@ nforegroundconsole()
 {
 }
 
+static void
+#ifdef HAVE_LIBREADLINE
+load_config(struct objlist *sys, char *inst, int *allocconsole, int *history_size)
+#else
+load_config(struct objlist *sys, char *inst, int *allocconsole)
+#endif
+{
+  FILE *fp;
+  char *tok, *str, *s2, *f1, *endptr;
+  int len;
+  long val;
+
+  if ((fp = openconfig(SYSCONF)) != NULL) {
+    while ((tok = getconfig(fp, &str)) != NULL) {
+      s2 = str;
+      if (strcmp(tok, "login_shell") == 0) {
+	f1 = getitok2(&s2, &len, " \t,");
+	if (_putobj(sys, "login_shell", inst, f1))
+	  exit(1);
+      } else if (strcmp(tok, "create_object") == 0) {
+	while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
+	  struct objlist *obj;
+	  obj = getobject(f1);
+	  if (obj) {
+	    newobj(obj);
+	  }
+	  memfree(f1);
+	}
+      } else if (strcmp(tok, "alloc_console") == 0) {
+	f1 = getitok2(&s2, &len, " \t,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0') {
+	  if (val == 0)
+	    *allocconsole = FALSE;
+	  else
+	    *allocconsole = TRUE;
+	}
+	memfree(f1);
+      } else if (strcmp(tok, "console_size") == 0) {
+	f1 = getitok2(&s2, &len, " \x09,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  consolecol = val;
+	memfree(f1);
+	f1 = getitok2(&s2, &len, " \x09,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0')
+	  consolerow = val;
+	memfree(f1);
+#ifdef HAVE_LIBREADLINE
+      } else if (strcmp(tok, "history_size") == 0) {
+	f1 = getitok2(&s2, &len, " \t,");
+	val = strtol(f1, &endptr, 10);
+	if (endptr[0] == '\0' && val > 0) {
+	  *history_size = val;
+	}
+	memfree(f1);
+#endif
+      } else if (strcmp(tok, "terminal") == 0) {
+	terminal = getitok2(&s2, &len, "");
+      } else {
+	fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, SYSCONF);
+      }
+      memfree(tok);
+      memfree(str);
+    }
+    closeconfig(fp);
+  }
+}
+
 int
 main(int argc, char **argv, char **environ)
 {
@@ -473,10 +543,7 @@ main(int argc, char **argv, char **environ)
   int i;
   char *sarg[2];
   struct narray sarray;
-  FILE *fp;
-  char *tok, *str, *s2;
-  char *f1, *endptr;
-  int len, val, id;
+  int len, id;
   int allocnow, allocconsole = FALSE;
   struct narray iarray;
   char *arg;
@@ -579,57 +646,8 @@ main(int argc, char **argv, char **environ)
   }
 
   loginshell = NULL;
-  if ((fp = openconfig(SYSCONF)) != NULL) {
-    while ((tok = getconfig(fp, &str)) != NULL) {
-      s2 = str;
-      if (strcmp(tok, "login_shell") == 0) {
-	f1 = getitok2(&s2, &len, " \t,");
-	if (_putobj(sys, "login_shell", inst, f1))
-	  exit(1);
-      } else if (strcmp(tok, "create_object") == 0) {
-	while ((f1 = getitok2(&s2, &len, " \t,")) != NULL) {
-	  newobj(getobject(f1));
-	  memfree(f1);
-	}
-      } else if (strcmp(tok, "alloc_console") == 0) {
-	f1 = getitok2(&s2, &len, " \t,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0') {
-	  if (val == 0)
-	    allocconsole = FALSE;
-	  else
-	    allocconsole = TRUE;
-	}
-	memfree(f1);
-      } else if (strcmp(tok, "console_size") == 0) {
-	f1 = getitok2(&s2, &len, " \x09,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  consolecol = val;
-	memfree(f1);
-	f1 = getitok2(&s2, &len, " \x09,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0')
-	  consolerow = val;
-	memfree(f1);
 #ifdef HAVE_LIBREADLINE
-      } else if (strcmp(tok, "history_size") == 0) {
-	f1 = getitok2(&s2, &len, " \t,");
-	val = strtol(f1, &endptr, 10);
-	if (endptr[0] == '\0' && val > 0) {
-	  history_size = val;
-	}
-	memfree(f1);
-#endif
-      } else if (strcmp(tok, "terminal") == 0) {
-	terminal = getitok2(&s2, &len, "");
-      }
-      memfree(tok);
-      memfree(str);
-    }
-    closeconfig(fp);
-  }
-#ifdef HAVE_LIBREADLINE
+  load_config(sys, inst, &allocconsole, &history_size);
   rl_readline_name = "ngraph";
   rl_completer_word_break_characters = " \t\n\"'@><;|&({}`";
   rl_attempted_completion_function = (CPPFunction *) attempt_shell_completion;
@@ -642,6 +660,8 @@ main(int argc, char **argv, char **environ)
   }
   using_history();
   stifle_history(history_size);
+#else
+  load_config(sys, inst, &allocconsole);
 #endif
 
   putstderr = putconsole;

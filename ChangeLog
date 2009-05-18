@@ -1,5 +1,11 @@
 2009-05-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2cairo.c (gra2cairo): change permission of fields
+	"init" and "done".
+
+	* src/gtk/main.c (load_config): add.
+	(load_config): bug fix: check return value of "getobject".
+
 	* src/gtk/x11axis.c (file_button_show): add.
 	(AxisDialogSetup): call "g_signal_connect()" for "show" signal of
 	"File" button.

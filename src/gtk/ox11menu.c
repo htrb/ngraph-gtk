@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.76 2009/05/18 05:23:20 hito Exp $
+ * $Id: ox11menu.c,v 1.77 2009/05/18 10:10:34 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -895,6 +895,8 @@ exwinloadconfig(void)
       if (endptr[0] == '\0')
 	Menulocal.exwin_use_external = val;
       memfree(f1);
+    } else {
+      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, G2WINCONF);
     }
     memfree(tok);
     memfree(str);
