@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-05-18 13:29+0900\n"
+"POT-Creation-Date: 2009-05-18 16:02+0900\n"
 "PO-Revision-Date: 2009-05-18 13:29+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -285,11 +285,11 @@ msgstr "邦文フォント(_J):"
 msgid "_Gauge:"
 msgstr "位置(_G):"
 
-#: src/gtk/x11axis.c:1748 src/gtk/x11axis.c:2138 src/gtk/x11file.c:1185
+#: src/gtk/x11axis.c:1748 src/gtk/x11axis.c:2156 src/gtk/x11file.c:1185
 msgid "_Min:"
 msgstr "最小値(_M):"
 
-#: src/gtk/x11axis.c:1753 src/gtk/x11axis.c:2144 src/gtk/x11file.c:1189
+#: src/gtk/x11axis.c:1753 src/gtk/x11axis.c:2162 src/gtk/x11file.c:1189
 msgid "_Max:"
 msgstr "最大値(_M):"
 
@@ -302,48 +302,48 @@ msgstr "線種(_S):"
 msgid "_Length %d:"
 msgstr "長さ %d(_L):"
 
-#: src/gtk/x11axis.c:2124
+#: src/gtk/x11axis.c:2142
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
 
-#: src/gtk/x11axis.c:2150
+#: src/gtk/x11axis.c:2168
 msgid "_Inc:"
 msgstr "増分(_I):"
 
-#: src/gtk/x11axis.c:2156
+#: src/gtk/x11axis.c:2174
 msgid "_Scale:"
 msgstr "スケール法(_S):"
 
-#: src/gtk/x11axis.c:2173
+#: src/gtk/x11axis.c:2191
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: src/gtk/x11axis.c:2179 src/gtk/x11file.c:1194 src/gtk/x11print.c:313
+#: src/gtk/x11axis.c:2198 src/gtk/x11file.c:1194 src/gtk/x11print.c:313
 msgid "_Div:"
 msgstr "分割数(_D):"
 
-#: src/gtk/x11axis.c:2183
+#: src/gtk/x11axis.c:2202
 msgid "_Ref:"
 msgstr "参照軸(_R):"
 
-#: src/gtk/x11axis.c:2194
+#: src/gtk/x11axis.c:2213
 msgid "_Baseline ..."
 msgstr "軸基線(_B)..."
 
-#: src/gtk/x11axis.c:2198
+#: src/gtk/x11axis.c:2217
 msgid "_Gauge ..."
 msgstr "目盛線(_G)..."
 
-#: src/gtk/x11axis.c:2202
+#: src/gtk/x11axis.c:2221
 msgid "_Numbering ..."
 msgstr "目盛数字(_N)..."
 
-#: src/gtk/x11axis.c:2206
+#: src/gtk/x11axis.c:2225
 msgid "_Font ..."
 msgstr "フォント(_F)..."
 
-#: src/gtk/x11axis.c:2210
+#: src/gtk/x11axis.c:2229
 msgid "_Position ..."
 msgstr "位置(_P)..."
 
@@ -912,15 +912,15 @@ msgstr "移動(_M)"
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:2943
+#: src/gtk/x11file.c:2944
 msgid "This file contain invalid UTF-8 strings."
 msgstr "ファイルに不正な UTF-8 文字列が含まれています."
 
-#: src/gtk/x11file.c:3164
+#: src/gtk/x11file.c:3165
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:3206
+#: src/gtk/x11file.c:3207
 msgid "Data open"
 msgstr "データを開く"
 
