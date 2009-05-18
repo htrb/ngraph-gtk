@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-24\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-05-18 14:23+0900\n"
+"POT-Creation-Date: 2009-05-18 13:29+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -912,15 +912,15 @@ msgstr ""
 msgid "_Edit"
 msgstr ""
 
-#: src/gtk/x11file.c:2944
+#: src/gtk/x11file.c:2943
 msgid "This file contain invalid UTF-8 strings."
 msgstr ""
 
-#: src/gtk/x11file.c:3165
+#: src/gtk/x11file.c:3164
 msgid "Data new"
 msgstr ""
 
-#: src/gtk/x11file.c:3207
+#: src/gtk/x11file.c:3206
 msgid "Data open"
 msgstr ""
 
