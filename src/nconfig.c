@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.12 2009/04/23 02:49:53 hito Exp $
+ * $Id: nconfig.c,v 1.13 2009/05/19 02:30:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -195,9 +195,14 @@ getconfig(FILE *fp,char **val)
   int len;
 
   while (fgetline(fp, &buf) == 0) {
-    if (buf[0] == '[') {
+    switch (buf[0]) {
+    case '[':
       memfree(buf);
       return NULL;
+    case ';':
+    case '#':
+      memfree(buf);
+      continue;
     }
 
     s = buf;

@@ -1,3 +1,8 @@
+2009-05-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/nconfig.c (getconfig): treat the line as comment when the
+	first caractor of the line is "#" or ";".
+
 2009-05-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.c (gra2cairo): change permission of fields
