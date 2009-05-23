@@ -1,3 +1,8 @@
+2009-05-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (pos_edited): call "set_graph_modified()"
+	after "exeobj()".
+
 2009-05-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/nconfig.c (getconfig): treat the line as comment when the

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.48 2009/05/17 01:35:57 hito Exp $
+ * $Id: x11lgnd.c,v 1.49 2009/05/23 10:34:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2315,6 +2315,7 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
 
     if (inc != 0 ) {
       exeobj(d->obj[ary[0]], "move", ary[1], 2, argv);
+      set_graph_modified();
       LegendWinUpdate(FALSE);
     }
   }
