@@ -1,3 +1,8 @@
+2009-05-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_graphmenu): use "GTK_STOCK_PAGE_SETUP"
+	when version of GTK++ is greater than 2.14.
+
 2009-05-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (pos_edited): call "set_graph_modified()"
