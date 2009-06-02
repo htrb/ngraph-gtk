@@ -1,5 +1,5 @@
 /* 
- * $Id: shellux.c,v 1.6 2009/03/24 07:56:05 hito Exp $
+ * $Id: shellux.c,v 1.7 2009/06/02 04:24:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -65,9 +65,7 @@ int timeout;
 static void 
 cmsleeptimeout(int sig)
 {
-  signal(sig,SIG_IGN);
   timeout=TRUE;
-  signal(SIGALRM,cmsleeptimeout);
 }
 
 int 
@@ -88,13 +86,14 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
   }
   if (has_eventloop()) {
     timeout=FALSE;
-    signal(SIGALRM,cmsleeptimeout);
+    set_signal(SIGALRM, 0, cmsleeptimeout);
     alarm(a);
     while (!timeout) {
       eventloop();
       msleep(10);
     }
     alarm(0);
+    set_signal(SIGALRM, 0, SIG_IGN);
   } else {
     sleep(a);
   }

@@ -1,3 +1,39 @@
+2009-06-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (cmdexec): use "WEXITSTATUS" to get return status of
+	external command.
+
+	* src/gtk/x11menu.c (application): call "SaveHistory()".
+	(AppMainLoop): don't call "SaveHistory()".
+
+2009-06-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (set_signal, set_shellevloop, reset_shellevloop):
+	add.
+	(shellevloop): use pthread.
+	(shgetstdin, shget): use "set_shellevloop()" and
+	"reset_shellevloop()".
+	(childhandler, set_childhandler, unset_childhandler): add.
+	(cmdexec): call "unset_childhandler()" and "set_childhandler()"
+	before and after execute command.
+
+	* src/gtk/x11menu.c (term_signal_handler): add.
+	(childhandler): remove.
+	(AppMainLoop): check type of "Hide_window".
+	(application): use "set_signal()".
+	(application): trap "SIGTERM" while GUI is active.
+
+	* src/gtk/x11file.c (FitDialogClose): delete unused fit objects
+	not only in the case of "d->ret" is "IDOK" but "IDCANCEL" and
+	"IDDELETE".
+	(FileDialogFit): call "set_graph_modified()" if necessary.
+	(FileDialogEdit, CmFileEdit, FileWinFileEdit): don't call
+	"arrayadd()" for "ChildList".
+
+	* src/terminal.c (sig_handler): call "waitpid()".
+
+	* src/shellux.c (cmsleep): use "set_signal()".
+
 2009-05-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_graphmenu): use "GTK_STOCK_PAGE_SETUP"
@@ -2044,7 +2080,7 @@
 2009-01-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/terminal.c (main): use named pipe.
-	(main): use "pause()" to waite termination.
+	(main): use "pause()" to wait termination.
 
 	* src/gtk/main.c: global variables "terminal", "consolesave",
 	"consolefd[]" and "consolepid" are static.
@@ -3529,7 +3565,6 @@
 	(OutputImageDialog, CmOutputImage): add.
 	(CmOutputMenu): add case MenuIdOutputPSFile, MenuIdOutputEPSFile,
 	MenuIdOutputPDFFile, MenuIdOutputPNGFile and MenuIdOutputSVGFile.
-
 
 2008-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

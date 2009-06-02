@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.38 2009/05/18 10:10:34 hito Exp $
+ * $Id: main.c,v 1.39 2009/06/02 04:24:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -555,6 +555,8 @@ main(int argc, char **argv, char **environ)
 #if EOF == -1
   char_type_buf_init();
 #endif
+
+  set_childhandler();
 
   gtk_set_locale();
   OpenDisplay = gtk_init_check(&argc, &argv);

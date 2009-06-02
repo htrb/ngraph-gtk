@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.38 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11dialg.c,v 1.39 2009/06/02 04:24:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -23,15 +23,10 @@
 
 #include "gtk_common.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <math.h>
-#include <time.h>
 #include <limits.h>
 #include <ctype.h>
 

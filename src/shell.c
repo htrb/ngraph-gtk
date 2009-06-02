@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.25 2009/05/14 10:25:26 hito Exp $
+ * $Id: shell.c,v 1.26 2009/06/02 04:24:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -221,39 +221,129 @@ unlinkfile(char **file)
 
 #ifndef WINDOWS
 
+int
+set_signal(int signal, int flags, void (*handler)(int))
+{
+  static struct sigaction act;
+
+  memset(&act, 0, sizeof(act));
+  act.sa_handler = handler;
+  act.sa_flags = (flags | SA_RESTART);
+  sigemptyset(&act.sa_mask);
+
+  return sigaction(signal, &act, NULL);
+}
+
+static void
+childhandler(int sig)
+{
+  pid_t child_pid;
+
+  do {
+    child_pid = waitpid(-1, NULL, WNOHANG);
+  } while (child_pid > 0);
+}
+
+void
+set_childhandler(void)
+{
+  set_signal(SIGCHLD, SA_NOCLDSTOP, childhandler);
+}
+
+void
+unset_childhandler(void)
+{
+  set_signal(SIGCHLD, 0, SIG_DFL);
+}
+
+#define USE_THREAD HAVE_LIBPTHREAD
+#if USE_THREAD
+
+#include <pthread.h>
+
+static int EvLoopActive = FALSE;
+static pthread_t EvLoopThread;
+
+static void *
+shellevloop(void *ptr)
+{
+  EvLoopActive = TRUE;
+  while (EvLoopActive) {
+    eventloop();
+    msleep(10);
+  }
+
+  return NULL;
+}
+
 static void 
-shellevloop(int sig)
+set_shellevloop(int sig)
+{
+  if (! has_eventloop())
+    return;
+
+  if (EvLoopActive)
+    return;
+
+  if (pthread_create(&EvLoopThread, NULL, shellevloop, NULL) == 0) {
+    while (! EvLoopActive) {
+      msleep(10);
+    }
+  }
+}
+
+static void 
+reset_shellevloop(void)
+{
+  if (EvLoopActive) {
+    EvLoopActive = FALSE;
+    pthread_join(EvLoopThread, NULL);
+  }
+}
+
+#else  /* USE_THREAD */
+
+static void 
+set_shellevloop(int sig)
 {
   struct itimerval tval;
 
-  signal(sig,SIG_IGN);
+  set_signal(sig, 0, SIG_IGN);
   eventloop();
   tval.it_interval.tv_sec=0;
   tval.it_interval.tv_usec=0;
   tval.it_value.tv_sec=0;
   tval.it_value.tv_usec=100000;
   setitimer(ITIMER_REAL,&tval,NULL);
-  signal(SIGALRM,shellevloop);
+  set_signal(SIGALRM, 0, set_shellevloop);
 }
 
+static void 
+reset_shellevloop(void)
+{
+  struct itimerval tval;
+
+  tval.it_interval.tv_sec=0;
+  tval.it_interval.tv_usec=0;
+  tval.it_value.tv_sec=0;
+  tval.it_value.tv_usec=0;
+  setitimer(ITIMER_REAL,&tval,NULL);
+  set_signal(SIGALRM, 0, SIG_IGN);
+}
+
+#endif	/* USE_THREAD */
 static int 
 shgetstdin(void)
 {
   char buf[2];
   int byte;
-  struct itimerval tval;
 
   if (nisatty(stdinfd())) {
-    shellevloop(SIGALRM);
+    set_shellevloop(SIGALRM);
     do {
       byte=read(stdinfd(),buf,1);
     } while (byte<0);
-    tval.it_interval.tv_sec=0;
-    tval.it_interval.tv_usec=0;
-    tval.it_value.tv_sec=0;
-    tval.it_value.tv_usec=0;
-    setitimer(ITIMER_REAL,&tval,NULL);
-    signal(SIGALRM,SIG_IGN);
+    reset_shellevloop();
   } else {
     do {
       byte=read(stdinfd(),buf,1);
@@ -269,13 +359,12 @@ shget(struct nshell *nshell)
 {
   char buf[2];
   int byte;
-  struct itimerval tval;
 #ifdef HAVE_LIBREADLINE
   static char *str_ptr = NULL, *line_str = NULL;
 #endif
 
   if (nisatty(nshell->fd)) {
-    shellevloop(SIGALRM);
+    set_shellevloop(SIGALRM);
 #ifdef HAVE_LIBREADLINE
     if(str_ptr == NULL){
       str_ptr = line_str = readline(Prompt);
@@ -309,12 +398,7 @@ shget(struct nshell *nshell)
       byte=read(nshell->fd,buf,1);
     } while (byte<0);
 #endif
-    tval.it_interval.tv_sec=0;
-    tval.it_interval.tv_usec=0;
-    tval.it_value.tv_sec=0;
-    tval.it_value.tv_usec=0;
-    setitimer(ITIMER_REAL,&tval,NULL);
-    signal(SIGALRM,SIG_IGN);
+    reset_shellevloop();
   } else {
     do {
       byte=read(nshell->fd,buf,1);
@@ -3619,6 +3703,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  prm=prm->next;
 		}
 #ifndef WINDOWS
+		unset_childhandler();
 		if ((pid=fork())<0) {
 		  sherror2(ERRSYSTEM,"fork");
 		  goto errexit;
@@ -3637,7 +3722,9 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  } else {
 		    waitpid(pid, &errlevel, 0);
 		  }
+		  errlevel = WIFEXITED(errlevel) ? WEXITSTATUS(errlevel) : 1;
 		}
+		set_childhandler();
 #else
 		pid=spawnve(P_NOWAIT,cmdname,(char **)argv,MainEnviron);
 		if (pid==-1)
@@ -3660,7 +3747,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		cmdname=NULL;
 	      }
 	    }
-	    nshell->status=errlevel;
+	    nshell->status = errlevel;
 	    lastc=cmdstackgetlast(&stroot);
 	    if ((lastc!=CPIF) && (lastc!=CPELIF)
 		&& (lastc!=CPWHILE) && (lastc!=CPUNTIL)

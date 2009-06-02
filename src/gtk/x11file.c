@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.96 2009/05/18 05:23:20 hito Exp $
+ * $Id: x11file.c,v 1.97 2009/06/02 04:24:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1314,9 +1314,9 @@ FitDialogClose(GtkWidget *w, void *data)
     d->ret = IDLOOP;
     return;
   case IDDELETE:
-    return;
+    break;
   case IDCANCEL:
-    return;
+    break;
   default:
     d->ret = IDLOOP;
     return;
@@ -1324,12 +1324,14 @@ FitDialogClose(GtkWidget *w, void *data)
 
   ret = d->ret;
   d->ret = IDLOOP;
-  if (!FitDialogApply(w, d))
+  if (d->ret == IDOK && ! FitDialogApply(w, d)) {
     return;
+  }
   d->ret = ret;
   lastid = chkobjlastinst(d->Obj);
-  for (i = lastid; i > d->Lastid; i--)
+  for (i = lastid; i > d->Lastid; i--) {
     delobj(d->Obj, i);
+  }
 }
 
 void
@@ -2464,9 +2466,13 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
   case IDDELETE:
     delobj(fitobj, fitid);
     putobj(d->Obj, "fit", d->Id, NULL);
+    if (! create)
+      set_graph_modified();
     break;
   case IDOK:
     combo_box_set_active(d->type, PLOT_TYPE_FIT);
+    if (create)
+      set_graph_modified();
     break;
   }
 
@@ -2590,9 +2596,7 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
     return;
   if ((pid = fork()) >= 0) {
     argv[1] = name;
-    if (pid) {
-      arrayadd(&ChildList, &pid);
-    } else {
+    if (pid == 0) {
       execvp(argv[0], argv);
       exit(1);
     }
@@ -3393,8 +3397,6 @@ CmFileEdit(void)
   if (pid == 0) {
     execvp(argv[0], argv);
     exit(1);
-  } else if (pid > 0) {
-    arrayadd(&ChildList, &pid);
   }
 }
 
@@ -3490,8 +3492,6 @@ FileWinFileEdit(struct SubWin *d)
   if (pid == 0) {
     execvp(argv[0], argv);
     exit(1);
-  } else if (pid > 0) {
-    arrayadd(&ChildList, &pid);
   }
 }
 

@@ -1,12 +1,11 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.99 2009/05/26 08:24:10 hito Exp $
+ * $Id: x11menu.c,v 1.100 2009/06/02 04:24:47 hito Exp $
  */
 
 #include "gtk_common.h"
 
 #include <sys/types.h>
-#include <sys/wait.h>
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -62,7 +61,8 @@ struct NgraphApp NgraphApp;
 GtkWidget *TopLevel = NULL;
 GtkAccelGroup *AccelGroup = NULL;
 
-static int Hide_window = FALSE, Toggle_cb_disable = FALSE, DrawLock = FALSE;
+static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
+static int Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
@@ -471,9 +471,6 @@ static struct command_data Command2_data[] = {
 #define COMMAND1_NUM (sizeof(Command1_data) / sizeof(*Command1_data))
 #define COMMAND2_NUM (sizeof(Command2_data) / sizeof(*Command2_data))
 
-struct narray ChildList;
-int signaltrap = FALSE;
-
 GdkColor white, gray;
 
 void
@@ -514,46 +511,34 @@ set_draw_lock(int lock)
 static void
 kill_signal_handler(int sig)
 {
-  Hide_window = TRUE;
+  Hide_window = APP_QUIT;
 }
 
 static void
-childhandler(int sig)
+term_signal_handler(int sig)
 {
-  int i, num;
-  pid_t *data;
-  struct sigaction act;
-
-  if (!signaltrap)
-    return;
-
-  act.sa_handler = SIG_IGN;
-  act.sa_flags = 0;
-  sigemptyset(&act.sa_mask);
-
-  sigaction(sig, &act, NULL);
-  data = arraydata(&ChildList);
-  num = arraynum(&ChildList);
-  for (i = num - 1; i >= 0; i--) {
-    if (waitpid(-data[i], NULL, WNOHANG | WUNTRACED) > 0)
-      arrayndel(&ChildList, i);
-  }
-  act.sa_handler = childhandler;
-  sigaction(sig, &act, NULL);
+  Hide_window = APP_QUIT_FORCE;
 }
 
 void
 AppMainLoop(void)
 {
-  Hide_window = FALSE;
+  Hide_window = APP_CONTINUE;
   while (TRUE) {
     NgraphApp.Interrupt = FALSE;
     gtk_main_iteration();
-    if (Hide_window && ! gtk_events_pending()) {
-      Hide_window = FALSE;
-      if(CheckSave()) {
-	SaveHistory();
+    if (Hide_window != APP_CONTINUE && ! gtk_events_pending()) {
+      int state = Hide_window;
+
+      Hide_window = APP_CONTINUE;
+      switch (state) {
+      case APP_QUIT:
+	if (CheckSave()) {
+	  return;
+	}
 	break;
+      case APP_QUIT_FORCE:
+	return;
       }
     }
   }
@@ -2037,7 +2022,7 @@ load_hist(void)
 }
 
 static void
-save_hist(void)
+save_entry_history(void)
 {
   struct objlist *sysobj;
   char *inst, *home, *filename;
@@ -2146,7 +2131,6 @@ application(char *file)
   struct objlist *aobj;
   int x, y, width, height, w, h;
   GdkScreen *screen;
-  struct sigaction act;
 
   if (TopLevel)
     return;
@@ -2268,17 +2252,8 @@ application(char *file)
 
   CmViewerDrawB(NgraphApp.Viewer.Win, NULL);
 
-  arrayinit(&ChildList, sizeof(pid_t));
-  signaltrap = TRUE;
-
-  act.sa_handler = childhandler;
-  act.sa_flags = 0;
-  sigemptyset(&act.sa_mask);
-  sigaction(SIGCHLD, &act, NULL);
-
-  act.sa_handler = kill_signal_handler;
-  act.sa_flags = 0;
-  sigaction(SIGINT, &act, NULL);
+  set_signal(SIGINT, 0, kill_signal_handler);
+  set_signal(SIGTERM, 0, term_signal_handler);
 
   ResetEvent();
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
@@ -2290,15 +2265,12 @@ application(char *file)
   gtk_accel_map_save(KEYMAP_FILE);
 #endif
 
-  act.sa_handler = SIG_DFL;
-  act.sa_flags = 0;
-  sigaction(SIGINT, &act, NULL);
+  set_signal(SIGTERM, 0, SIG_DFL);
+  set_signal(SIGINT, 0, SIG_DFL);
 
-  save_hist();
+  SaveHistory();
+  save_entry_history();
   menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW);
-
-  signaltrap = FALSE;
-  arraydel(&ChildList);
 
   ViewerWinClose();
 

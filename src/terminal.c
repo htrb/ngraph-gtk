@@ -4,6 +4,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <signal.h>
@@ -14,6 +15,11 @@
 static void
 sig_handler(int sig)
 {
+  pid_t child_pid;
+
+  do {
+    child_pid = waitpid(-1, NULL, WNOHANG);
+  } while (child_pid > 0);
 }
 
 static void
