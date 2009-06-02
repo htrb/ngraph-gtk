@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.39 2009/06/02 04:24:47 hito Exp $
+ * $Id: main.c,v 1.40 2009/06/02 09:56:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -445,7 +445,7 @@ nfreeconsole(void)
       close(consolefd[2]);
     }
 
-    kill(consolepid, SIGCHLD);
+    kill(consolepid, SIGTERM);
     consolepid = -1;
 
     close(consolefdin);

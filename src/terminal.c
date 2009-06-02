@@ -15,11 +15,6 @@
 static void
 sig_handler(int sig)
 {
-  pid_t child_pid;
-
-  do {
-    child_pid = waitpid(-1, NULL, WNOHANG);
-  } while (child_pid > 0);
 }
 
 static void
@@ -28,7 +23,7 @@ my_signal(int signum, void (* sighandler))
   struct sigaction act;
 
   act.sa_handler = sighandler;
-  act.sa_flags = 0;
+  act.sa_flags = SA_RESTART;
   sigemptyset(&act.sa_mask);
   sigaction(signum, &act, NULL);
 }
@@ -38,6 +33,9 @@ main(int argc,char **argv)
 {
   int fdi, fdo, len;
   char *ptr, buf[256] = {0};
+#ifdef HAVE_SIGSUSPEND
+  sigset_t sig_mask;
+#endif
 
   if (argc < 3) {
     goto End;
@@ -86,15 +84,26 @@ main(int argc,char **argv)
   unlink(argv[1]);
   unlink(argv[2]);
 
-  my_signal(SIGINT, SIG_IGN);
+  my_signal(SIGTERM, sig_handler);
 
+#ifdef HAVE_SIGSUSPEND
+
+  sigemptyset(&sig_mask);
+  sigaddset(&sig_mask, SIGINT);
+#ifdef SIGWINCH
+  sigaddset(&sig_mask, SIGWINCH);
+#endif
+  sigsuspend(&sig_mask);
+
+#else  /* HAVE_SIGSUSPEND */
+
+  my_signal(SIGINT, SIG_IGN);
 #ifdef SIGWINCH
   my_signal(SIGWINCH, SIG_IGN);
 #endif
-
-  my_signal(SIGCHLD, sig_handler);
-
   pause();
+
+#endif /* HAVE_SIGSUSPEND */
 
   return 0;
 

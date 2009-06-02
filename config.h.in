@@ -103,6 +103,9 @@
 /* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION
 
+/* Define to 1 if you have the `sigsuspend' function. */
+#undef HAVE_SIGSUSPEND
+
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
 

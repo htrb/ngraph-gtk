@@ -1,9 +1,5 @@
 * コードの整理
 
-* 手動で menu オブジェクトを起動したときの SIGCHLD シグナルの扱い検討
-
-* signal の取り扱い見直し
-
 * axis を cut & paste できないか？
 
 * GtkAction, GtkUIManager へ移行

@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.26 2009/06/02 04:24:46 hito Exp $
+ * $Id: shell.c,v 1.27 2009/06/02 09:56:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3706,6 +3706,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		unset_childhandler();
 		if ((pid=fork())<0) {
 		  sherror2(ERRSYSTEM,"fork");
+		  set_childhandler();
 		  goto errexit;
 		}
 		if (pid==0) {

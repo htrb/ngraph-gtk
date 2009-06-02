@@ -1,7 +1,13 @@
 2009-06-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/shell.c (cmdexec): use "WEXITSTATUS" to get return status of
-	external command.
+	* src/gtk/main.c (nfreeconsole): send "SIGTERM" instead of
+	"SIGCHLD".
+
+	* src/terminal.c (main): use "sigsuspend()" if available.
+	(main): trap "SIGTERM" instead of "SIGCHLD".
+
+	* src/shell.c (cmdexec): bug fix: use "WEXITSTATUS" to get return
+	status of external command.
 
 	* src/gtk/x11menu.c (application): call "SaveHistory()".
 	(AppMainLoop): don't call "SaveHistory()".
@@ -23,14 +29,12 @@
 	(application): use "set_signal()".
 	(application): trap "SIGTERM" while GUI is active.
 
-	* src/gtk/x11file.c (FitDialogClose): delete unused fit objects
-	not only in the case of "d->ret" is "IDOK" but "IDCANCEL" and
-	"IDDELETE".
+	* src/gtk/x11file.c (FitDialogClose): bug fix: delete unused fit
+	objects not only in the case of "d->ret" is "IDOK" but "IDCANCEL"
+	and "IDDELETE".
 	(FileDialogFit): call "set_graph_modified()" if necessary.
 	(FileDialogEdit, CmFileEdit, FileWinFileEdit): don't call
 	"arrayadd()" for "ChildList".
-
-	* src/terminal.c (sig_handler): call "waitpid()".
 
 	* src/shellux.c (cmsleep): use "set_signal()".
 

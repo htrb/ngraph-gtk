@@ -56,7 +56,7 @@ AC_FUNC_STRTOD
 AC_FUNC_UTIME_NULL
 AC_FUNC_VPRINTF
 AC_FUNC_MMAP
-AC_CHECK_FUNCS([sigaction alarm dup2 getcwd mkdir pow sqrt strchr strdup strerror strncasecmp strstr strtol utime isfinite finite])
+AC_CHECK_FUNCS([sigaction sigsuspend alarm dup2 getcwd mkdir pow sqrt strchr strdup strerror strncasecmp strstr strtol utime isfinite finite])
 
 ALL_LINGUAS="ja"
 AM_GNU_GETTEXT([external])
