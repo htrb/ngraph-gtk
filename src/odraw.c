@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.11 2009/05/12 04:25:13 hito Exp $
+ * $Id: odraw.c,v 1.12 2009/06/03 09:00:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -45,7 +45,7 @@
 #define ERRGCOPEN 101
 
 
-char *drawerrorlist[]={
+static char *drawerrorlist[]={
   "illegal graphics context",
   "grahics context is not opened"
 };

@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.27 2009/06/02 09:56:41 hito Exp $
+ * $Id: shell.c,v 1.28 2009/06/03 09:00:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -144,7 +144,7 @@ static char *Prompt;
 
 #define TEMPPFX "NGS"
 
-char *cmderrorlist[] = {
+static char *cmderrorlist[] = {
   "unexpected EOF.",
   "bad substitution.",
   "syntax error near unexpected token",
@@ -191,8 +191,8 @@ static int Security=FALSE;
 
 #define WRITEBUFSIZE 4096
 
-char writebuf[WRITEBUFSIZE];
-int writepo;
+static char writebuf[WRITEBUFSIZE];
+static int writepo;
 
 static HANDLE storeshhandle(struct nshell *nshell,HANDLE fd, char **readbuf,int *readbyte,int *readpo);
 static void restoreshhandle(struct nshell *nshell,HANDLE fd, char *readbuf,int readbyte,int readpo);
@@ -256,8 +256,7 @@ unset_childhandler(void)
   set_signal(SIGCHLD, 0, SIG_DFL);
 }
 
-#define USE_THREAD HAVE_LIBPTHREAD
-#if USE_THREAD
+#ifdef HAVE_LIBPTHREAD
 
 #include <pthread.h>
 
@@ -301,7 +300,7 @@ reset_shellevloop(void)
   }
 }
 
-#else  /* USE_THREAD */
+#else  /* HAVE_LIBPTHREAD */
 
 static void 
 set_shellevloop(int sig)
@@ -331,7 +330,7 @@ reset_shellevloop(void)
   set_signal(SIGALRM, 0, SIG_IGN);
 }
 
-#endif	/* USE_THREAD */
+#endif	/* HAVE_LIBPTHREAD */
 static int 
 shgetstdin(void)
 {

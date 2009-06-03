@@ -1,5 +1,5 @@
 /* 
- * $Id: opolygon.c,v 1.7 2009/05/01 09:15:58 hito Exp $
+ * $Id: opolygon.c,v 1.8 2009/06/03 09:00:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,11 +48,11 @@ static char *polyfillmode[]={
   NULL,
 };
 
-#define ERRNUM (sizeof(polyfillmode) / sizeof(*polyfillmode))
-
-char *polyerrorlist[ERRNUM]={
+static char *polyerrorlist[]={
   ""
 };
+
+#define ERRNUM (sizeof(polyerrorlist) / sizeof(*polyerrorlist))
 
 static int 
 polyinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)

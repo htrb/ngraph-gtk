@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.33 2009/04/26 02:04:35 hito Exp $
+ * $Id: object.c,v 1.34 2009/06/03 09:00:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -83,9 +83,7 @@ void (*ndisplaystatus)(char *str);
 static NHASH ObjHash = NULL;
 #endif
 
-#define ERRNUM 25
-
-static char *errorlist[ERRNUM]={
+static char *errorlist[]={
      "",
      "no heap space.",
      "parent object not found",
@@ -111,6 +109,8 @@ static char *errorlist[ERRNUM]={
      "illegal type of object argument",
      "instance exist. cannot overwrite object",
 };
+
+#define ERRNUM (sizeof(errorlist) / sizeof(*errorlist))
 
 static int chkobjtblpos(struct objlist *obj,char *name, struct objlist **robj);
 
