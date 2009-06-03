@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.49 2009/05/18 10:10:34 hito Exp $
+ * $Id: ogra2cairo.c,v 1.50 2009/06/03 10:35:20 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1019,17 +1019,20 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 		    mxd2px(local, cpar[i * 2 + 3]),
 		    mxd2py(local, cpar[i * 2 + 4]));
     }
-
-    if (cpar[2] == 1) {
-      cairo_set_fill_rule(local->cairo, CAIRO_FILL_RULE_EVEN_ODD);
-    } else {
-      cairo_set_fill_rule(local->cairo, CAIRO_FILL_RULE_WINDING);
-    }
     cairo_close_path(local->cairo);
-    if (cpar[2]) {
-      cairo_fill(local->cairo);
-    } else {
+
+    switch (cpar[2]) {
+    case 0:
       cairo_stroke(local->cairo);
+      break;
+    case 1:
+      cairo_set_fill_rule(local->cairo, CAIRO_FILL_RULE_EVEN_ODD);
+      cairo_fill(local->cairo);
+      break;
+    case 2:
+      cairo_set_fill_rule(local->cairo, CAIRO_FILL_RULE_WINDING);
+      cairo_fill(local->cairo);
+      break;
     }
     break;
   case 'F':

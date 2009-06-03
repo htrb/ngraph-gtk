@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.19 2009/03/26 02:31:51 hito Exp $
+ * $Id: gra.c,v 1.20 2009/06/03 10:35:19 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2634,8 +2634,12 @@ getintpar(char *s,int num,int cpar[])
           ((s[pos1]==' ') || (s[pos1]=='\t') || (s[pos1]==','))) pos1++;
     if (s[pos1]=='\0') return FALSE;
     pos2=0;
-    while ((s[pos1]!='\0') &&
-           (s[pos1]!=' ') && (s[pos1]!='\t') && (s[pos1]!=',')) {
+    while (s[pos1] != '\0' && s[pos1] != ' '  &&
+	   s[pos1] != '\t' && s[pos1] != ',') {
+
+      if (pos2 >= (int) sizeof(s2) - 1)
+	return FALSE;
+
       s2[pos2]=s[pos1];
       pos2++;
       pos1++;
@@ -2647,7 +2651,7 @@ getintpar(char *s,int num,int cpar[])
   return TRUE;
 }
 
-static void 
+static int 
 GRAinputdraw(int GC,int leftm,int topm,int rate,
                   char code,int *cpar,char *cstr)
 {
@@ -2657,10 +2661,17 @@ GRAinputdraw(int GC,int leftm,int topm,int rate,
   if (GRAClist[GC].mergezoom==0) r=1;
   else r=((double )rate)/GRAClist[GC].mergezoom;
   switch (code) {
-  case '%': case 'G':
+  case '%':
   case 'O': case 'Q': case 'F': case 'S': case 'K':
     break;
+  case 'G':
+    if (cpar[0] != 3)
+      return FALSE;
+    break;
   case 'I':
+    if (cpar[0] != 5)
+      return FALSE;
+
     GRAClist[GC].mergeleft=cpar[1];
     GRAClist[GC].mergetop=cpar[2];
     GRAClist[GC].mergezoom=cpar[5];
@@ -2673,39 +2684,84 @@ GRAinputdraw(int GC,int leftm,int topm,int rate,
     code='\0';
     break;
   case 'V':
+    if (cpar[0] != 5)
+      return FALSE;
+
     cpar[1]=(int )(((cpar[1]-GRAClist[GC].mergeleft)*r)+leftm);
     cpar[2]=(int )(((cpar[2]-GRAClist[GC].mergetop)*r)+topm);
     cpar[3]=(int )(((cpar[3]-GRAClist[GC].mergeleft)*r)+leftm);
     cpar[4]=(int )(((cpar[4]-GRAClist[GC].mergetop)*r)+topm);
     break;
   case 'A':
+    if (cpar[0] != cpar[1] + 5)
+      return FALSE;
+
     cpar[2]=(int )(cpar[2]*r);
     for (i=0;i<cpar[1];i++) cpar[i+5]=(int )(cpar[i+5]*r);
     break;
-  case 'M': case 'N': case 'T': case 'P': case 'H':
+  case 'H':
+    if (cpar[0] != 3)
+      return FALSE;
+
     cpar[1]=(int )(cpar[1]*r);
     cpar[2]=(int )(cpar[2]*r);
     break;
-  case 'L': case 'C': case 'B':
+  case 'M': case 'N': case 'T': case 'P':
+    if (cpar[0] != 2)
+      return FALSE;
+
+    cpar[1]=(int )(cpar[1]*r);
+    cpar[2]=(int )(cpar[2]*r);
+    break;
+  case 'L':
+    if (cpar[0] != 4)
+      return FALSE;
+
+    cpar[1]=(int )(cpar[1]*r);
+    cpar[2]=(int )(cpar[2]*r);
+    cpar[3]=(int )(cpar[3]*r);
+    cpar[4]=(int )(cpar[4]*r);
+    break;
+  case 'C':
+    if (cpar[0] != 7)
+      return FALSE;
+
+    cpar[1]=(int )(cpar[1]*r);
+    cpar[2]=(int )(cpar[2]*r);
+    cpar[3]=(int )(cpar[3]*r);
+    cpar[4]=(int )(cpar[4]*r);
+    break;
+  case 'B':
+    if (cpar[0] != 5)
+      return FALSE;
+
     cpar[1]=(int )(cpar[1]*r);
     cpar[2]=(int )(cpar[2]*r);
     cpar[3]=(int )(cpar[3]*r);
     cpar[4]=(int )(cpar[4]*r);
     break;
   case 'R':
+    if (cpar[0] != cpar[1] * 2 + 2)
+      return FALSE;
+
     for (i=0;i<(2*(cpar[1]));i++) cpar[i+2]=(int )(cpar[i+2]*r);
     break;
   case 'D':
+    if (cpar[0] != cpar[1] * 2 + 2)
+      return FALSE;
+
     for (i=0;i<(2*(cpar[1]));i++) cpar[i+3]=(int )(cpar[i+3]*r);
     break;
   }
   if (code!='\0') GRAdraw(GC,code,cpar,cstr);
+
+  return TRUE;
 }
 
 int 
 GRAinput(int GC,char *s,int leftm,int topm,int rate)
 {
-  int pos,num,i;
+  int pos,num,i,r;
   char code;
   int *cpar;
   char *cstr;
@@ -2728,16 +2784,17 @@ GRAinput(int GC,char *s,int leftm,int topm,int rate)
     num++;
     if ((cpar=memalloc(sizeof(int)*num))==NULL) return FALSE;
     if (!getintpar(s+pos+1,num,cpar)) goto errexit;
+    if (num != cpar[0] + 1) goto errexit;
   } else {
     if ((cpar=memalloc(sizeof(int)))==NULL) return FALSE;
     cpar[0]=-1;
     if ((cstr=memalloc(strlen(s)-pos))==NULL) goto errexit;
     strcpy(cstr,s+pos+1);
   }
-  GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
+  r = GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
   memfree(cpar);
   memfree(cstr);
-  return TRUE;
+  return r;
 
 errexit:
   memfree(cpar);

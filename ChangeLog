@@ -1,5 +1,10 @@
 2009-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gra.c (getintpar): check size of "s2".
+	(GRAinputdraw): check number of the parameter and return success
+	or not.
+	(GRAinput): return the return value of "GRAinputdraw()".
+
 	* src/gtk/x11menu.c (AppMainLoop): return 1 when terminated.
 	(application): delete instance of "system" object when return
 	value od "AppMainLoop()" is 1.
