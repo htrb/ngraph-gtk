@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.77 2009/05/18 10:10:34 hito Exp $
+ * $Id: ox11menu.c,v 1.78 2009/06/03 07:45:24 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1203,6 +1203,7 @@ static int
 menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   char *file;
+  int r;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
@@ -1215,11 +1216,11 @@ menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   savestdio(&GtkIOSave);
 
   file = (char *) argv[2];
-  application(file);
+  r = application(file);
 
   loadstdio(&GtkIOSave);
   Menulocal.lock = 0;
-  return 0;
+  return r;
 }
 
 static int

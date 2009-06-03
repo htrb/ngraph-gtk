@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.100 2009/06/02 04:24:47 hito Exp $
+ * $Id: x11menu.c,v 1.101 2009/06/03 07:45:24 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -520,7 +520,7 @@ term_signal_handler(int sig)
   Hide_window = APP_QUIT_FORCE;
 }
 
-void
+static int
 AppMainLoop(void)
 {
   Hide_window = APP_CONTINUE;
@@ -534,14 +534,15 @@ AppMainLoop(void)
       switch (state) {
       case APP_QUIT:
 	if (CheckSave()) {
-	  return;
+	  return 0;
 	}
 	break;
       case APP_QUIT_FORCE:
-	return;
+	return 1;
       }
     }
   }
+  return 0;
 }
 
 void
@@ -2124,16 +2125,16 @@ init_ngraph_app_struct(void)
   NgraphApp.Interrupt = FALSE;
 }
 
-void
+int
 application(char *file)
 {
-  int i;
+  int i, terminated;
   struct objlist *aobj;
   int x, y, width, height, w, h;
   GdkScreen *screen;
 
   if (TopLevel)
-    return;
+    return 1;
 
   init_ngraph_app_struct();
 
@@ -2197,7 +2198,7 @@ application(char *file)
   create_markpixmap(TopLevel);
 
   if (create_cursor())
-    return;
+    return 1;
 
   reset_graph_modified();
   SetCursor(GDK_LEFT_PTR);
@@ -2259,7 +2260,7 @@ application(char *file)
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   set_widget_visibility(Menulocal.show_cross);
 
-  AppMainLoop();
+  terminated = AppMainLoop();
 
 #if 0
   gtk_accel_map_save(KEYMAP_FILE);
@@ -2309,6 +2310,12 @@ application(char *file)
   free_cursor();
 
   ResetEvent();
+
+  if (terminated) {
+    delobj(getobject("system"), 0);
+  }
+
+  return 0;
 }
 
 void
