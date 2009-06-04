@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.20 2009/06/03 10:35:19 hito Exp $
+ * $Id: gra.c,v 1.21 2009/06/04 00:59:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2784,7 +2784,6 @@ GRAinput(int GC,char *s,int leftm,int topm,int rate)
     num++;
     if ((cpar=memalloc(sizeof(int)*num))==NULL) return FALSE;
     if (!getintpar(s+pos+1,num,cpar)) goto errexit;
-    if (num != cpar[0] + 1) goto errexit;
   } else {
     if ((cpar=memalloc(sizeof(int)))==NULL) return FALSE;
     cpar[0]=-1;
