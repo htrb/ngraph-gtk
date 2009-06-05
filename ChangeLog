@@ -1,7 +1,7 @@
 2009-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (getintpar): check size of "s2".
-	(GRAinputdraw): check number of the parameter and return success
+	(GRAinputdraw): check number of the parameters and return success
 	or not.
 	(GRAinput): return the return value of "GRAinputdraw()".
 
