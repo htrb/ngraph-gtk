@@ -1,3 +1,8 @@
+2009-06-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (pagelist, PageDialogSetup): gettextize paper
+	size strings.
+
 2009-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (getintpar): check size of "s2".

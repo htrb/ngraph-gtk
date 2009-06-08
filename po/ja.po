@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-06-05 15:23+0900\n"
-"PO-Revision-Date: 2009-06-08 12:58+0900\n"
+"POT-Creation-Date: 2009-06-08 13:26+0900\n"
+"PO-Revision-Date: 2009-06-08 13:34+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -923,6 +923,26 @@ msgstr "新規作成"
 #: src/gtk/x11file.c:3211
 msgid "Data open"
 msgstr "データを開く"
+
+#: src/gtk/x11graph.c:64
+msgid "Custom"
+msgstr "任意"
+
+#: src/gtk/x11graph.c:73
+msgid "Letter P (215.90x279.40)"
+msgstr "レター P (215.90x279.40)"
+
+#: src/gtk/x11graph.c:74
+msgid "Letter L (279.40x215.90)"
+msgstr "レター L (279.40x215.90)"
+
+#: src/gtk/x11graph.c:75
+msgid "Legal  P (215.90x355.60)"
+msgstr "リーガル P (215.90x355.60)"
+
+#: src/gtk/x11graph.c:76
+msgid "Legal  L (355.60x215.90)"
+msgstr "リーガル L (355.60x215.90)"
 
 #: src/gtk/x11graph.c:166
 msgid "paper _Width:"

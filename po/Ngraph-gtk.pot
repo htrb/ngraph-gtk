@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-26\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-06-05 15:23+0900\n"
+"POT-Creation-Date: 2009-06-08 13:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -922,6 +922,26 @@ msgstr ""
 
 #: src/gtk/x11file.c:3211
 msgid "Data open"
+msgstr ""
+
+#: src/gtk/x11graph.c:64
+msgid "Custom"
+msgstr ""
+
+#: src/gtk/x11graph.c:73
+msgid "Letter P (215.90x279.40)"
+msgstr ""
+
+#: src/gtk/x11graph.c:74
+msgid "Letter L (279.40x215.90)"
+msgstr ""
+
+#: src/gtk/x11graph.c:75
+msgid "Legal  P (215.90x355.60)"
+msgstr ""
+
+#: src/gtk/x11graph.c:76
+msgid "Legal  L (355.60x215.90)"
 msgstr ""
 
 #: src/gtk/x11graph.c:166

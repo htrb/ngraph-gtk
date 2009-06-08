@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.46 2009/05/18 06:51:22 hito Exp $
+ * $Id: x11graph.c,v 1.47 2009/06/08 04:50:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,7 +61,7 @@ struct pagelisttype
 };
 
 static struct pagelisttype pagelist[] = {
-  {"Custom",                   "custom",              PAPER_ID_CUSTOM, TRUE,  0,     0},
+  {N_("Custom"),                   "custom",              PAPER_ID_CUSTOM, TRUE,  0,     0},
   {"A3 P (297.00x420.00)",     GTK_PAPER_NAME_A3,     PAPER_ID_A3,     FALSE, 29700, 42000},
   {"A4 P (210.00x297.00)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     FALSE, 21000, 29700},
   {"A4 L (297.00x210.00)",     GTK_PAPER_NAME_A4,     PAPER_ID_A4,     TRUE,  29700, 21000},
@@ -70,10 +70,10 @@ static struct pagelisttype pagelist[] = {
   {"B4 P (257.00x364.00)",     "iso_b4",              PAPER_ID_B4,     FALSE, 25700, 36400},
   {"B5 P (182.00x257.00)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     FALSE, 18200, 25700},
   {"B5 L (257.00x182.00)",     GTK_PAPER_NAME_B5,     PAPER_ID_B5,     TRUE,  25700, 18200},
-  {"Letter P (215.90x279.40)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, FALSE, 21590, 27940},
-  {"Letter L (279.40x215.90)", GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, TRUE,  27940, 21590},
-  {"Legal  P (215.90x355.60)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  FALSE, 21590, 35560},
-  {"Legal  L (355.60x215.90)", GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  TRUE,  35560, 21590},
+  {N_("Letter P (215.90x279.40)"), GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, FALSE, 21590, 27940},
+  {N_("Letter L (279.40x215.90)"), GTK_PAPER_NAME_LETTER, PAPER_ID_LETTER, TRUE,  27940, 21590},
+  {N_("Legal  P (215.90x355.60)"), GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  FALSE, 21590, 35560},
+  {N_("Legal  L (355.60x215.90)"), GTK_PAPER_NAME_LEGAL,  PAPER_ID_LEGAL,  TRUE,  35560, 21590},
 };
 
 #define PAGELISTNUM (sizeof(pagelist) / sizeof(*pagelist))
@@ -182,7 +182,7 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "changed", G_CALLBACK(PageDialogPage), d);
 
     for (j = 0; j < PAGELISTNUM; j++) {
-      combo_box_append_text(d->paper, pagelist[j].paper);
+      combo_box_append_text(d->paper, _(pagelist[j].paper));
     }
 
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
