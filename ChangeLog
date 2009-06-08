@@ -7,7 +7,7 @@
 
 	* src/gtk/x11menu.c (AppMainLoop): return 1 when terminated.
 	(application): delete instance of "system" object when return
-	value od "AppMainLoop()" is 1.
+	value of "AppMainLoop()" is 1.
 
 2009-06-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

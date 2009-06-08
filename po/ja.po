@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2009-06-05 15:23+0900\n"
-"PO-Revision-Date: 2009-05-18 13:29+0900\n"
+"PO-Revision-Date: 2009-06-08 12:58+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -938,7 +938,7 @@ msgstr "用紙(_P):"
 
 #: src/gtk/x11graph.c:194
 msgid "_Left margin:"
-msgstr "左マージン(_L)<:"
+msgstr "左マージン(_L):"
 
 #: src/gtk/x11graph.c:199
 msgid "_Top margin:"
