@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.47 2009/06/08 04:50:01 hito Exp $
+ * $Id: x11graph.c,v 1.48 2009/06/09 06:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <libgen.h>
 
 #include "ngraph.h"
 #include "object.h"
@@ -1212,43 +1213,48 @@ CmGraphQuit(void)
 }
 
 void
-CmGraphHistory(GtkWidget *w, gpointer client_data)
+CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
 {
-  int fil, num, num2;
-  char **data, **data2;
-  struct narray *ngpfilelist, *ngpdirlist;
+  char *uri, pstr[] = "file://", *fname, *ptr, *path;
 
   if (Menulock || GlobalLock)
     return;
 
-  fil = (int) client_data;
-  ngpfilelist = Menulocal.ngpfilelist;
-  ngpdirlist = Menulocal.ngpdirlist;
-  num = arraynum(ngpfilelist);
-  data = (char **) arraydata(ngpfilelist);
-  num2 = arraynum(ngpdirlist);
-  data2 = (char **) arraydata(ngpdirlist);
-
-  if ((fil < 0) || (fil >= num) || (data[fil] == NULL))
+  uri = gtk_recent_chooser_get_current_uri(w);
+  fname = strstr(uri, pstr);
+  if (fname == NULL) {
+    free(uri);
     return;
-
-  if (!CheckSave())
-    return;
-
-  if ((fil >= 0) && (fil < num2) && data2[fil] && (data2[0] != '\0')) {
-    if (chdir(data2[fil])) {
-      ErrorMessage();
-      return;
-    }
   }
+  fname += sizeof(pstr) - 1;
+
+  if (!CheckSave()) {
+    free(uri);
+    return;
+  }
+
+  path = nstrdup(fname);
+  if (path == NULL) {
+    free(uri);
+    return;
+  }
+
+  ptr = dirname(path);
+  if (chdir(ptr)) {
+    ErrorMessage();
+    memfree(path);
+    return;
+  }
+  memfree(path);
 
   LoadDialog(&DlgLoad);
 
   if (DialogExecute(TopLevel, &DlgLoad) == IDOK) {
-    LoadNgpFile(data[fil], DlgLoad.ignorepath, DlgLoad.expand,
+    LoadNgpFile(fname, DlgLoad.ignorepath, DlgLoad.expand,
 		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
   }
   memfree(DlgLoad.exdir);
+  free(uri);
 }
 
 void

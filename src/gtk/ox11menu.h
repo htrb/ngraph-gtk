@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.31 2009/05/18 05:23:20 hito Exp $
+ * $Id: ox11menu.h,v 1.32 2009/06/09 06:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -124,8 +124,7 @@ struct menulocal
   char *fileopendir, *graphloaddir, *expanddir, *coordwin_font, *file_preview_font;
   int expand, ignorepath, expandtofullpath, changedirectory, savehistory;
   int savepath, savewithdata, savewithmerge;
-  struct narray *ngpfilelist;
-  struct narray *ngpdirlist;
+  GtkRecentManager *ngpfilelist;
   struct narray *datafilelist;
   int scriptconsole, addinconsole;
   int statusb, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;

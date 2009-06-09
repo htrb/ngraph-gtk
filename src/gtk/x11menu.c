@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.101 2009/06/03 07:45:24 hito Exp $
+ * $Id: x11menu.c,v 1.102 2009/06/09 06:38:53 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -66,7 +66,7 @@ static int Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
-  *ShowInfoWin = NULL, *RecentGraph = NULL, *RecentData = NULL,
+  *ShowInfoWin = NULL, *RecentData = NULL,
   *AddinMenu = NULL, *ExtDrvOutMenu = NULL, *EditCut = NULL,
   *EditCopy = NULL, *EditPaste = NULL, *EditDelete = NULL,
   *RotateCW = NULL, *RotateCCW = NULL, *FlipH = NULL, *FlipV = NULL,
@@ -730,51 +730,33 @@ set_show_instance_menu_cb(GtkWidget *menu, char *name, struct show_instance_menu
 static void
 show_graph_menu_cb(GtkWidget *w, gpointer user_data)
 {
-  GtkWidget *label;
-  char **data;
-  int num, i;
-  static GString *str = NULL;
-
-  num = arraynum(Menulocal.ngpfilelist);
-  data = (char **) arraydata(Menulocal.ngpfilelist);
-
-  if (RecentGraph)
-    gtk_widget_set_sensitive(RecentGraph, num > 0);
-
   if (AddinMenu)
     gtk_widget_set_sensitive(AddinMenu, Menulocal.scriptroot != NULL);
-
-  if (str == NULL)
-    str = g_string_new("");
-
-  for (i = 0; i < MENU_HISTORY_NUM; i++) {
-    if (i < num) {
-      label = gtk_bin_get_child(GTK_BIN(NgraphApp.ghistory[i]));
-      g_string_printf(str, "_%d: %s", i, data[i]);
-      add_underscore(str);
-      gtk_label_set_text_with_mnemonic(GTK_LABEL(label), str->str);
-      gtk_widget_show(GTK_WIDGET(NgraphApp.ghistory[i]));
-    } else {
-      gtk_widget_hide(GTK_WIDGET(NgraphApp.ghistory[i]));
-    }
-  }
 }
 
 static void
-create_recent_graph_menu(GtkWidget *parent, GtkAccelGroup *accel_group)
+create_recent_graph_menu(GtkWidget *parent)
 {
-  int i;
-  GtkWidget *menu;
+  GtkWidget *recent;
+  GtkRecentFilter *filter;
 
-  menu = gtk_menu_new();
-  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
+  recent = gtk_recent_chooser_menu_new_for_manager(Menulocal.ngpfilelist);
 
-  for (i = 0; i < MENU_HISTORY_NUM; i++) {
-    NgraphApp.ghistory[i] = gtk_menu_item_new_with_label("");
-    g_signal_connect(NgraphApp.ghistory[i], "activate", G_CALLBACK(CmGraphHistory),  (gpointer) i);
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(NgraphApp.ghistory[i]));
-  }
+  filter = gtk_recent_filter_new();
+  gtk_recent_filter_add_application(filter, AppName);
+
+  gtk_recent_chooser_menu_set_show_numbers(GTK_RECENT_CHOOSER_MENU(recent), TRUE);
+
+  gtk_recent_chooser_set_show_tips(GTK_RECENT_CHOOSER(recent), TRUE);
+  gtk_recent_chooser_set_show_icons(GTK_RECENT_CHOOSER(recent), FALSE);
+  gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(recent), GTK_RECENT_SORT_MRU);
+  gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recent), TRUE);
+  gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(recent), 10);
+  gtk_recent_chooser_add_filter(GTK_RECENT_CHOOSER(recent), filter);
+
+  g_signal_connect(recent, "item-activated", G_CALLBACK(CmGraphHistory), NULL);
+
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), recent);
 }
 
 static void
@@ -840,9 +822,8 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_Load graph"), FALSE, "<Ngraph>/Graph/Load graph", GDK_r, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphLoad);
 
   item = gtk_menu_item_new_with_mnemonic(_("_Recent graphs"));
+  create_recent_graph_menu(item);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
-  create_recent_graph_menu(item, accel_group);
-  RecentGraph = item;
 
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);

@@ -57,8 +57,6 @@ merge_win=-100000,-100000,-100000,-100000,0
 coordinate_win=-100000,-100000,-100000,-100000,1
 information_win=-100000,-100000,-100000,-100000,0
 history_size=1000
-ngp_history=DATADIRDEF/demo/demo.ngp
-ngp_dir_history=DATADIRDEF/demo
 
 [gra2cairo]
 font_map=Times,normal,0,Times New Roman

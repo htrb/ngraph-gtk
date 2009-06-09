@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.37 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11commn.c,v 1.38 2009/06/09 06:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,6 +58,8 @@
 static GtkWidget *ProgressDiaog = NULL;
 static GtkProgressBar *ProgressBar, *ProgressBar2;
 static unsigned int SaveCursor;
+
+static void AddNgpFileList(char *file);
 
 void
 OpenGRA(void)
@@ -1274,49 +1276,29 @@ CheckSave(void)
   return TRUE;
 }
 
-void
+static void
 AddNgpFileList(char *file)
 {
-  int i, j, num, num2;
-  char **data, **data2;
-  char *s, *cwd;
-  struct narray *ngpfilelist, *ngpdirlist;
+  char *full_name, *uri, protocol[] = "file://";
+  int len;
 
-  if ((file == NULL) || (file[0] == '\0'))
+  full_name = getfullpath(file);
+  if (full_name == NULL)
     return;
-  ngpfilelist = Menulocal.ngpfilelist;
-  ngpdirlist = Menulocal.ngpdirlist;
-  num = arraynum(ngpfilelist);
-  num2 = arraynum(ngpdirlist);
-  if (num != num2)
+
+  len = strlen(full_name) + sizeof(protocol);
+  uri = memalloc(len);
+  if (uri == NULL) {
+    memfree(full_name);
     return;
-  data = (char **) arraydata(ngpfilelist);
-  data2 = (char **) arraydata(ngpdirlist);
-  for (i = 0; i < num; i++)
-    if (strcmp0(data[i], file) == 0)
-      break;
-  if (i == num) {
-    if (num >= 10) {
-      arrayndel2(ngpfilelist, num - 1);
-      arrayndel2(ngpdirlist, num - 1);
-    }
-    arrayins2(ngpfilelist, &file, 0);
-    cwd = ngetcwd();
-    arrayins(ngpdirlist, &cwd, 0);
-  } else {
-    s = data[i];
-    for (j = i - 1; j >= 0; j--)
-      data[j + 1] = data[j];
-    data[0] = s;
-    s = data2[i];
-    for (j = i - 1; j >= 0; j--)
-      data2[j + 1] = data2[j];
-    cwd = ngetcwd();
-    memfree(s);
-    data2[0] = cwd;
   }
-  num = arraynum(ngpfilelist);
-  data = (char **) arraydata(ngpfilelist);
+
+  snprintf(uri, len, "%s%s", protocol, full_name);
+  memfree(full_name);
+
+  gtk_recent_manager_add_item(Menulocal.ngpfilelist, uri);
+
+  memfree(uri);
 }
 
 void
@@ -1345,8 +1327,6 @@ AddDataFileList(char *file)
       data[j + 1] = data[j];
     data[0] = s;
   }
-  num = arraynum(datafilelist);
-  data = (char **) arraydata(datafilelist);
 }
 
 void
@@ -1518,45 +1498,15 @@ SaveHistory(void)
 {
   struct narray conf;
   char *buf;
-  int i, num, num2, len;
-  char **data, ngp_dir_history[] = "ngp_dir_history=",
-    ngp_history[] = "ngp_history=", data_history[] = "data_history=";
+  int i, num, len;
+  char **data, data_history[] = "data_history=";
 
   if (!Menulocal.savehistory)
     return;
   if (!CheckIniFile())
     return;
   arrayinit(&conf, sizeof(char *));
-  num = arraynum(Menulocal.ngpfilelist);
-  data = (char **) arraydata(Menulocal.ngpfilelist);
 
-  for (i = 0; i < num; i++) {
-    if (data[i]) {
-      len = sizeof(ngp_history) + strlen(data[i]);
-      buf = memalloc(len);
-      if (buf) {
-	snprintf(buf, len, "%s%s", ngp_history, data[i]);
-	arrayadd(&conf, &buf);
-      }
-    }
-  }
-  num2 = arraynum(Menulocal.ngpdirlist);
-  data = (char **) arraydata(Menulocal.ngpdirlist);
-  for (i = 0; i < num; i++) {
-    if ((i >= num2) || (data[i] == NULL)) {
-      buf = nstrdup(ngp_dir_history);
-      if (buf) {
-	arrayadd(&conf, &buf);
-      }
-    } else {
-      len = sizeof(ngp_dir_history) + strlen(data[i]);
-      buf = memalloc(len);
-      if (buf) {
-	snprintf(buf, len, "%s%s", ngp_dir_history, data[i]);
-	arrayadd(&conf, &buf);
-      }
-    }
-  }
   num = arraynum(Menulocal.datafilelist);
   data = (char **) arraydata(Menulocal.datafilelist);
   for (i = 0; i < num; i++) {
@@ -1573,12 +1523,6 @@ SaveHistory(void)
 
   arraydel2(&conf);
   arrayinit(&conf, sizeof(char *));
-  if (arraynum(Menulocal.ngpfilelist) == 0) {
-    buf = nstrdup(ngp_history);
-    if (buf) {
-      arrayadd(&conf, &buf);
-    }
-  }
   if (arraynum(Menulocal.datafilelist) == 0) {
     buf = nstrdup(data_history);
     if (buf) {

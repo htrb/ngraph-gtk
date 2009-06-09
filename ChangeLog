@@ -1,3 +1,24 @@
+2009-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (show_graph_menu_cb): remove code related to
+	"ngp_history" and "ngp_dir_history".
+	(create_recent_graph_menu): use "GtkRecentChooserMenu".
+
+	* src/gtk/x11graph.c (CmGraphHistory): use "GtkRecentChooser".
+
+	* src/gtk/x11commn.c (AddNgpFileList): static function.
+	(AddNgpFileList): use "GtkRecentManager".
+	(SaveHistory): don't save "ngp_history" and "ngp_dir_history".
+
+	* src/gtk/ox11menu.c (MenuConfig): remove "ngp_history" and
+	"ngp_dir_history".
+	(menulocal_finalize, menuinit): remove code related to
+	"ngp_history" and "ngp_dir_history".
+	(menuinit): "Menulocal.ngpfilelist" is "GtkRecentManager *".
+
+	* initfile/Ngraph.ini.in (viewer_load_file_data_number): remove
+	"ngp_history" and "ngp_dir_history".
+
 2009-06-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (pagelist, PageDialogSetup): gettextize paper

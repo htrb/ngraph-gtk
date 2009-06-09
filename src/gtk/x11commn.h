@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.h,v 1.7 2009/04/06 01:26:27 hito Exp $
+ * $Id: x11commn.h,v 1.8 2009/06/09 06:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,7 +43,6 @@ void DeleteDrawable(void);
 void FileAutoScale(void);
 int CheckSave(void);
 void AddMathList(char *math);
-void AddNgpFileList(char *file);
 void AddDataFileList(char *file);
 void SetFileName(char *name);
 int CheckIniFile(void);

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.78 2009/06/03 07:45:24 hito Exp $
+ * $Id: ox11menu.c,v 1.79 2009/06/09 06:38:53 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -201,8 +201,6 @@ static struct menu_config MenuConfig[] = {
   {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
   {"browser",			MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.browser},
   {"help_browser",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.help_browser},
-  {"ngp_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.ngpfilelist},
-  {"ngp_dir_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.ngpdirlist},
   {"data_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.datafilelist},
   {NULL},
 };
@@ -969,11 +967,7 @@ menulocal_finalize(void)
 
   arraydel2(&Menulocal.drawrable);
 
-  arrayfree2(Menulocal.ngpfilelist);
   Menulocal.ngpfilelist = NULL;
-
-  arrayfree2(Menulocal.ngpdirlist);
-  Menulocal.ngpdirlist = NULL;
 
   arrayfree2(Menulocal.datafilelist);
   Menulocal.datafilelist = NULL;
@@ -992,8 +986,7 @@ static int
 menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
-  int i, numf, numd;
-  char *dum;
+  int i;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv)) {
     return 1;
@@ -1026,8 +1019,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.expand = 1;
   Menulocal.expanddir = nstrdup("./");
   Menulocal.expandtofullpath = TRUE;
-  Menulocal.ngpfilelist = arraynew(sizeof(char *));
-  Menulocal.ngpdirlist = arraynew(sizeof(char *));
+  Menulocal.ngpfilelist = gtk_recent_manager_get_default();
   Menulocal.datafilelist = arraynew(sizeof(char *));
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;
@@ -1056,20 +1048,6 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.local->antialias = Menulocal.antialias;
   if (_putobj(obj, "antialias", inst, &(Menulocal.antialias)))
     goto errexit;
-
-  numf = arraynum(Menulocal.ngpfilelist);
-  numd = arraynum(Menulocal.ngpdirlist);
-  dum = NULL;
-
-  if (numd > numf) {
-    for (i = numf; i < numd; i++) {
-      arrayndel2(Menulocal.ngpdirlist, i);
-    }
-  } else if (numd < numf) {
-    for (i = numd; i < numf; i++) {
-      arrayadd(Menulocal.ngpdirlist, &dum);
-    }
-  }
 
   if (Menulocal.exwindpi < 1)
     Menulocal.exwindpi = DEFAULT_DPI;
