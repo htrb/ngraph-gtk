@@ -190,7 +190,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = README.Debian changelog compat control copyright dirs docs menu rules watch
+EXTRA_DIST = README.Debian changelog compat control copyright dirs docs	\
+	menu rules watch mime ngraph.applications			\
+	application-x-ngraph.png application-x-ngraph-graphic.png	\
+	application-x-ngraph-script.png ngraph.mime ngraph.key ngraph	\
+	ngraph.desktop ngraph.xml
+
 all: all-am
 
 .SUFFIXES:

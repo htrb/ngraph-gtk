@@ -62,7 +62,18 @@ install: build
 
 	# Add here commands to install the package into debian/ngraph-gtk.
 	$(MAKE) DESTDIR=$(CURDIR)/debian/ngraph-gtk install
-
+	install -d root -g root  $(CURDIR)/debian/ngraph-gtk/usr/share/pixmaps/ \
+		$(CURDIR)/debian/ngraph-gtk/usr/share/application-registry/ \
+		$(CURDIR)/debian/ngraph-gtk/usr/share/mime-info/ \
+		$(CURDIR)/debian/ngraph-gtk/usr/share/menu/ \
+		$(CURDIR)/debian/ngraph-gtk/usr/share/applications/ \
+		$(CURDIR)/debian/ngraph-gtk/usr/share/mime/packages/
+	install -o root -g root -m 644 $(CURDIR)/debian/ngraph $(CURDIR)/debian/ngraph-gtk/usr/share/menu/
+	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.desktop $(CURDIR)/debian/ngraph-gtk/usr/share/applications/
+	install -o root -g root -m 644 $(CURDIR)/debian/*.png $(CURDIR)/debian/ngraph-gtk/usr/share/pixmaps/
+	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.applications $(CURDIR)/debian/ngraph-gtk/usr/share/application-registry/
+	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.{mime,key} $(CURDIR)/debian/ngraph-gtk/usr/share/mime-info/
+	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.xml $(CURDIR)/debian/ngraph-gtk/usr/share/mime/packages/
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -77,11 +88,11 @@ binary-arch: build install
 	dh_installexamples
 #	dh_install
 	dh_installmenu
-#	dh_installdebconf	
+#	dh_installdebconf
 #	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installpam
-#	dh_installmime
+	dh_installmime
 #	dh_python
 #	dh_installinit
 #	dh_installcron

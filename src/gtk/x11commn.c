@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.38 2009/06/09 06:38:53 hito Exp $
+ * $Id: x11commn.c,v 1.39 2009/06/10 01:47:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1281,6 +1281,15 @@ AddNgpFileList(char *file)
 {
   char *full_name, *uri, protocol[] = "file://";
   int len;
+  GtkRecentData recent_data = {
+    NULL,
+    AppName,
+    "application/x-ngraph",
+    AppName,
+    "ngraph %f",
+    NULL,
+    FALSE,
+  };
 
   full_name = getfullpath(file);
   if (full_name == NULL)
@@ -1296,7 +1305,7 @@ AddNgpFileList(char *file)
   snprintf(uri, len, "%s%s", protocol, full_name);
   memfree(full_name);
 
-  gtk_recent_manager_add_item(Menulocal.ngpfilelist, uri);
+  gtk_recent_manager_add_full(Menulocal.ngpfilelist, uri, &recent_data);
 
   memfree(uri);
 }
