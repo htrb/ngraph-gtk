@@ -1,9 +1,9 @@
-?package(ngraph):					\
-	needs="X11"					\
-	section="Applications/Graphics"			\
-	title="Ngraph"			   		\
-	command="/usr/bin/ngraph"			\
-	hints="GNOME"					\
-	icon="/usr/share/pixmaps/ngraph.png"		\
-	longtitle="Ngraph"				\
+?package(ngraph):						\
+	needs="X11"						\
+	section="Applications/Graphics"				\
+	title="Ngraph"						\
+	command="/usr/bin/ngraph"				\
+	hints="GNOME"						\
+	icon="/usr/share/pixmaps/application-x-ngraph.png"	\
+	longtitle="Ngraph"					\
 	description="create scientific 2-dimensinal graphs"
