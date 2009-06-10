@@ -31,6 +31,9 @@ _ngraph()
 	    COMPREPLY=( $( compgen -W "`seq 0 89`" -- $cur ) )
 	    return 0
 	    ;;
+	-x|-y|-o|-l|-w|-c|-C|-s|-r|-f|-vx|-vy|-mx|-my|-zx|-zy)
+	    return 0
+	    ;;
     esac
 
     case "$cur" in
@@ -46,3 +49,93 @@ _ngraph()
     esac
 }
 [ "${have:-}" ] && complete -F _ngraph $filenames ngraph
+
+
+have ngp2 &&
+_ngp2()
+{
+    local cur
+
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    case "$cur" in
+        -*)
+            COMPREPLY=( $( compgen -W '-I -a -A -c \
+		-ps -ps3 -ps2 -eps -eps3 -eps2 \
+		-wmf -pdf -svg -svg1.1 -svg1.2 -png' -- $cur ) ) 
+            ;;
+	*)
+	    _filedir 'ngp'
+	    ;;
+    esac
+}
+[ "${have:-}" ] && complete -F _ngp2 $filenames ngp2
+
+
+have gra2ps &&
+_gra2ps()
+{
+    local cur
+
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case "$prev" in
+        -o)
+            _filedir '@(ps|eps)'
+	    return 0
+            ;;
+	-i)
+            _filedir 'ps'
+	    return 0
+            ;;
+	-p)
+	    COMPREPLY=( $( compgen -W 'a3 a4 b4 a5 b5 letter legal' -- $cur ) )
+	    return 0
+	    ;;
+	-s)
+	    return 0
+	    ;;
+    esac
+
+    case "$cur" in
+        -*)
+            COMPREPLY=( $( compgen -W '-o -i -c -e -p -l -r' -- $cur ) ) 
+            ;;
+	*)
+	    _filedir 'gra'
+	    ;;
+    esac
+}
+[ "${have:-}" ] && complete -F _gra2ps $filenames gra2ps
+
+have gra2wmf &&
+_gra2wmf()
+{
+    local cur
+
+    COMPREPLY=()
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case "$prev" in
+        -o)
+            _filedir 'wmf'
+	    return 0
+            ;;
+	-d)
+	    return 0
+	    ;;
+    esac
+
+    case "$cur" in
+        -*)
+            COMPREPLY=( $( compgen -W '-o -d' -- $cur ) ) 
+            ;;
+	*)
+	    _filedir 'gra'
+	    ;;
+    esac
+}
+[ "${have:-}" ] && complete -F _gra2wmf $filenames gra2wmf
