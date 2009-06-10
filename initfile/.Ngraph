@@ -282,13 +282,15 @@ do
 	    echo ' -zx min max inc         axis settings'
 	    echo ' -zy min max inc         axis settings'
 	    echo ' -g                      load settings from data file'
-	    echo ' -png                    save png file'
-	    echo ' -pdf                    save pdf file'
-	    echo ' -ps                     save ps file'
-	    echo ' -eps                    save eps file'
-	    echo ' -svg                    save svg file'
-	    echo ' -gra                    save gra file'
+	    echo ' -png ngp_file           save png file'
+	    echo ' -pdf ngp_file           save pdf file'
+	    echo ' -ps  ngp_file           save ps file'
+	    echo ' -eps ngp_file           save eps file'
+	    echo ' -svg ngp_file           save svg file'
+	    echo ' -gra ngp_file           save gra file'
 	    echo ' -n                      output ngp-file to stdout'
+	    echo ' -h, --help              Show this help message'
+	    echo ' -v, --version           Show version of Ngraph'
 	    del system:0
 	    ;;
 	-v|-version|--version)

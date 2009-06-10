@@ -74,6 +74,7 @@ install: build
 	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.applications $(CURDIR)/debian/ngraph-gtk/usr/share/application-registry/
 	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.{mime,key} $(CURDIR)/debian/ngraph-gtk/usr/share/mime-info/
 	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.xml $(CURDIR)/debian/ngraph-gtk/usr/share/mime/packages/
+	install -D -o root -g root -m 644 $(CURDIR)/debian/ngraph.bash $(CURDIR)/debian/ngraph-gtk/etc/bash_completion.d/ngraph
 
 # Build architecture-independent files here.
 binary-indep: build install

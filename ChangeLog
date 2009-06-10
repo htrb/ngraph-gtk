@@ -1,3 +1,10 @@
+2009-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* debian/rules: add mime types and bash completion settings.
+
+	* src/ofile.c (markout): the argument "type" is not used in this
+	function.
+
 2009-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (show_graph_menu_cb): remove code related to

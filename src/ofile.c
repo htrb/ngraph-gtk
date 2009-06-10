@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.78 2009/05/11 02:20:18 hito Exp $
+ * $Id: ofile.c,v 1.79 2009/06/10 05:23:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3110,8 +3110,7 @@ dataadd(double dx,double dy,double dz,
 
 static int 
 markout(struct objlist *obj,struct f2ddata *fp,int GC,
-	int fr2,int fg2,int fb2,
-	int type,int width,int snum,int *style)
+	int fr2,int fg2,int fb2, int width,int snum,int *style)
 {
   int emerr,emserr,emnonum,emig,emng;
   int gx,gy;
@@ -4114,7 +4113,7 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   GRAview(GC, 0, 0, w*10000.0/zoom, h*10000.0/zoom, clip);
   switch (type) {
   case PLOT_TYPE_MARK:
-    rcode = markout(obj, fp, GC, fr2, fg2, fb2, mtype, lwidth, snum, style);
+    rcode = markout(obj, fp, GC, fr2, fg2, fb2, lwidth, snum, style);
     break;
   case PLOT_TYPE_LINE:
     rcode = lineout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, FALSE);
