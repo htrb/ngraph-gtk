@@ -11,7 +11,7 @@ _ngraph()
     prev=${COMP_WORDS[COMP_CWORD-1]}
 
     case "$prev" in
-        -png|-pdf|-ps|-eps|-svg|-gra)
+        -png|-pdf|-ps|-eps|-svg|-gra|-p)
             _filedir 'ngp'
 	    return 0
             ;;
@@ -31,7 +31,7 @@ _ngraph()
 	    COMPREPLY=( $( compgen -W "`seq 0 89`" -- $cur ) )
 	    return 0
 	    ;;
-	-x|-y|-o|-l|-w|-c|-C|-s|-r|-f|-vx|-vy|-mx|-my|-zx|-zy)
+	-x|-y|-o|-l|-w|-cr|-cg|-cb|-CR|-CG|-CB|-s|-r|-f|-vx|-vy|-mx|-my|-minx|-maxx|-incx|-miny|-maxy|-incy)
 	    return 0
 	    ;;
     esac
@@ -39,9 +39,9 @@ _ngraph()
     case "$cur" in
         -*)
             COMPREPLY=( $( compgen -W '-h --help --version \
-		-x -y -X -Y -d -m -o -l -w -c -C -s -r -f \
-		-vx -vy -mx -my -ex -ey -zx -zy -g \
-		-png -pdf -ps -eps -svg -gra -n' -- $cur ) ) 
+		-x -y -X -Y -d -m -o -l -w -cr -cg -cb -CR -CG -CB -s -r -f \
+		-vx -vy -mx -my -ex -ey -minx -maxx -incx -miny -maxy -incy -g \
+		-png -pdf -ps -eps -svg -gra -n -p -dialog' -- $cur ) ) 
             ;;
 	*)
 	    _filedir

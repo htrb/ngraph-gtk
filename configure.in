@@ -79,6 +79,6 @@ AC_CONFIG_FILES([Makefile src/Makefile src/gtk/Makefile driver/Makefile \
 			  doc/html_ja/tutorial/Makefile \
 			  doc/html_ja/img/Makefile \
 			  doc/html_ja/dialogs/Makefile
-			  debian/Makefile])
+			  debian/Makefile zsh/Makefile])
 AM_CONFIG_HEADER([config.h])
 AC_OUTPUT

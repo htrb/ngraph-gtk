@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-26\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-06-09 18:14+0900\n"
+"POT-Creation-Date: 2009-06-11 13:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1267,7 +1267,7 @@ msgid "Clear Viewer Window"
 msgstr ""
 
 #: src/gtk/x11menu.c:236 src/gtk/x11menu.c:237 src/gtk/x11menu.c:238
-#: src/gtk/x11print.c:689
+#: src/gtk/x11print.c:691
 msgid "Print"
 msgstr ""
 
@@ -2067,44 +2067,44 @@ msgstr ""
 msgid "Cairo SVG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:564
+#: src/gtk/x11print.c:566
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:688
+#: src/gtk/x11print.c:690
 #, c-format
 msgid "Printing error: %s"
 msgstr ""
 
-#: src/gtk/x11print.c:737
+#: src/gtk/x11print.c:739
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:743 src/gtk/x11print.c:1005 src/gtk/x11view.c:5415
+#: src/gtk/x11print.c:745 src/gtk/x11print.c:1007 src/gtk/x11view.c:5415
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:804
+#: src/gtk/x11print.c:806
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:843
+#: src/gtk/x11print.c:845
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:885
+#: src/gtk/x11print.c:887
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:1059
+#: src/gtk/x11print.c:1061
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1065
+#: src/gtk/x11print.c:1067
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1066
+#: src/gtk/x11print.c:1068
 msgid "Making data file."
 msgstr ""
 

@@ -1,0 +1,6 @@
+#compdef gra2wmf
+
+_arguments \
+    '*:file:_files -g "*.gra(-.)"' \
+    '-o[output file]:file:_files -g "*.wmf(-.)"' \
+    '-d[dpi (96-2540)]:integer'

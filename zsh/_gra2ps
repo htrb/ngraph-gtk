@@ -1,0 +1,12 @@
+#compdef gra2ps
+
+_arguments \
+    '*:file:_files -g "*.gra(-.)"' \
+    '-o[output file]:file:_files -g "*.(ps|eps)(-.)"' \
+    '-i[include file]:file:_files -g "*.ps(-.)"' \
+    '-c[color output]' \
+    '-e[EPSF output]' \
+    '-p[page type]:page size:(a3 a4 b4 a5 b5 letterlegal)' \
+    '-l[landscape]' \
+    '-r[rotate by 90 degree]' \
+    '-s[slant angle (degree)]:integer'

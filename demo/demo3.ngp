@@ -1,4 +1,3 @@
-#! ngraph
 new axis name:frameX
 	axis::hidden=false
 	axis::R=0

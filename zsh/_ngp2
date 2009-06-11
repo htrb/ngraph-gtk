@@ -1,0 +1,20 @@
+#compdef ngp2
+
+_arguments \
+    '*:file:_files -g "*.ngp(-.)"' \
+    '-I[ignore path]' \
+    '-a[auto scale]' \
+    '-A[clear scale and auto scale]' \
+    '-c[change directory]' \
+    '-ps[output PostScript level 3]' \
+    '-ps3[output PostScript level 3]' \
+    '-ps2[output PostScript level 2]' \
+    '-eps[output Encapsulated PostScript level 3]' \
+    '-eps3[output Encapsulated PostScript level 3]' \
+    '-eps2[output Encapsulated PostScript level 2]' \
+    '-wmf[output Windows meta file]' \
+    '-pdf[output Portable Document Format]' \
+    '-svg[output Scalable Vector Graphics version 1.1]' \
+    '-svg1.1[output Scalable Vector Graphics version 1.1]' \
+    '-svg1.2[output Scalable Vector Graphics version 1.2]' \
+    '-png[output Portable Network Graphics]'

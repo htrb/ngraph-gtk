@@ -1,4 +1,3 @@
-#! ngraph
 new axisgrid
 	axisgrid::hidden=false
 	axisgrid::R=0
