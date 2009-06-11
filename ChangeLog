@@ -14,7 +14,7 @@
 	before call "gdk_window_invalidate_rect()".
 
 	* initfile/.Ngraph: add new option -cr, -cg, -cb, -CR, -CG, -CB,
-	-incx, -maxx, -minx, -incy, -maxy, -miny, and -dialog.
+	-incx, -maxx, -minx, -incy, -maxy, -miny, -L and -dialog.
 	option -c, -C, -zx and -zy are obsolete.
 
 2009-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>

@@ -11,7 +11,7 @@ _ngraph()
     prev=${COMP_WORDS[COMP_CWORD-1]}
 
     case "$prev" in
-        -png|-pdf|-ps|-eps|-svg|-gra|-p)
+        -png|-pdf|-ps|-eps|-svg|-gra|-p|-L)
             _filedir 'ngp'
 	    return 0
             ;;
@@ -39,7 +39,7 @@ _ngraph()
     case "$cur" in
         -*)
             COMPREPLY=( $( compgen -W '-h --help --version \
-		-x -y -X -Y -d -m -o -l -w -cr -cg -cb -CR -CG -CB -s -r -f \
+		-L -x -y -X -Y -d -m -o -l -w -cr -cg -cb -CR -CG -CB -s -r -f \
 		-vx -vy -mx -my -ex -ey -minx -maxx -incx -miny -maxy -incy -g \
 		-png -pdf -ps -eps -svg -gra -n -p -dialog' -- $cur ) ) 
             ;;
@@ -60,7 +60,7 @@ _ngp2()
     cur=${COMP_WORDS[COMP_CWORD]}
     case "$cur" in
         -*)
-            COMPREPLY=( $( compgen -W '-I -a -A -c \
+            COMPREPLY=( $( compgen -W '-h --help -I -a -A -c \
 		-ps -ps3 -ps2 -eps -eps3 -eps2 \
 		-wmf -pdf -svg -svg1.1 -svg1.2 -png' -- $cur ) ) 
             ;;

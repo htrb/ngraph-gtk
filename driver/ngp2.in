@@ -1,8 +1,7 @@
 #! DEMODIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.9 2009/06/02 04:24:44 hito Exp $
+# $Id: ngp2.in,v 1.10 2009/06/11 06:42:40 hito Exp $
 
 IGN_PATH=0
-GRA2PS_OPTION=""
 AUTO_SCALE=0
 OPTION="-gra"
 CHDIR=0
@@ -75,6 +74,7 @@ show_usage() {
     echo "    -svg, -svg1.1 output Scalable Vector Graphics version 1.1"
     echo "    -svg1.2       output Scalable Vector Graphics version 1.2"
     echo "    -png          output Portable Network Graphics"
+    echo "    -h --help     show this usage"
     echo
 
     del system
@@ -103,15 +103,7 @@ do
 	    CHDIR=1
 	    shift
 	    ;;
-	-r|-l)
-	    GRA2PS_OPTION="$GRA2PS_OPTION $1"
-	    shift
-	    ;;
-	-p)
-	    GRA2PS_OPTION="$GRA2PS_OPTION $1 $2"
-	    shift 2
-	    ;;
-	-h)
+	-h|--help)
 	    show_usage
 	    ;;
 	-*)

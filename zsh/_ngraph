@@ -2,6 +2,7 @@
 
 _arguments \
     ':file:_files' \
+    '-L[load ngp file]:file:_files -g "*.ngp(-.)"' \
     '-x[set data column of x axis]:integer' \
     '-y[set data column of y axis]:integer' \
     '-X[set X axis as x axis]' \

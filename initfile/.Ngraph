@@ -5,6 +5,7 @@ usage() {
     echo ${system::copyright}
     echo 'Usage: ngraph [ options ] [ data | NGP | PRM ]'
     echo 'valid options:'
+    echo ' -L ngp_file             load ngp file'
     echo ' -x column -y column     data column'
     echo ' -X -Y -U -R             axis'
     echo ' -d type                 plot type'
@@ -43,9 +44,13 @@ usage() {
 }
 
 check_file() {
-    if [ ! -f "$1" ]
+    if [ -z "$1" ]
     then
 	echo "${system::name}: missing file operand"
+	del system:0
+    elif [ ! -f "$1" ]
+    then
+	echo "${system::name}: can't find the file $1."
 	del system:0
     fi
 }
@@ -90,6 +95,7 @@ check_set() {
 }
 
 load_graph() {
+    check_file $1
     path=`dirname "$1"`
     if [ -d "$path" ]
     then
@@ -136,6 +142,10 @@ do
 		fi
 	    done
 	    new merge file:"$1"
+	    ;;
+	-L)
+	    shift
+	    load_graph $1
 	    ;;
 	-x)
 	    shift
