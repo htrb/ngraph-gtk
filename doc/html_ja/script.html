@@ -216,13 +216,13 @@ Ngraph を起動する時のコマンドラインオプションの形式は
 配布状態のスタートアップスクリプト(.Ngraph)で有効なコマンドラインオプションは以下の通りです。
 <dl>
 <dt>-x num
-<dd>X軸のデータカラムを num にします。</dd>
+<dd>x 軸のデータカラムを num にします。</dd>
 <dt>-y num
-<dd>Y軸のデータカラムを num にします。</dd>
+<dd>y 軸のデータカラムを num にします。</dd>
 <dt>-X -U
-<dd>データの X 軸をそれぞれ X, U 軸にします。
+<dd>データの x 軸をそれぞれ X, U 軸にします。
 <dt>-Y -R
-<dd>データの Y 軸をそれぞれ Y, R 軸にします。
+<dd>データの y 軸をそれぞれ Y, R 軸にします。
 <dt>-d type
 <dd>プロットタイプを type にします。</dd>
 <dt>-m num
@@ -233,9 +233,9 @@ Ngraph を起動する時のコマンドラインオプションの形式は
 <dd>線種を style にします(-l "100 100" の様に指定)。</dd>
 <dt>-w num
 <dd>線幅を num にします。</dd>
-<dt>-c R G B
+<dt>-cr R -cg G -cb B
 <dd>プロット色を R G B にします。</dd>
-<dt>-C R G B
+<dt>-CR R -CG G -CB B
 <dd>第二プロット色を R G B にします。</dd>
 <dt>-s num
 <dd>先頭スキップ行を num にします。</dd>
@@ -244,27 +244,28 @@ Ngraph を起動する時のコマンドラインオプションの形式は
 <dt>-f num
 <dd>最終行数を num にします。</dd>
 <dt>-vx num
-<dd>隣接平均数を num にします。</dd>
+<dd>x 隣接平均数を num にします。</dd>
 <dt>-vy num
-<dd>隣接平均数を num にします。</dd>
+<dd>y 隣接平均数を num にします。</dd>
 <dt>-mx math
-<dd>変換数式を math にします。</dd>
+<dd>x 変換数式を math にします。</dd>
 <dt>-my math
-<dd>変換数式を math にします。</dd>
+<dd>y 変換数式を math にします。</dd>
 <dt>-ex type
-<dd>X軸のスケール方法を type (linear, log, inverse) にします。</dd>
+<dd>x 軸のスケール方法を type (linear, log, inverse) にします。</dd>
 <dt>-ey type
-<dd>Y軸のスケール方法を type (linear, log, inverse) にします。</dd>
-<dt>-zx min max inc
-<dd>X軸のスケールを min, max, inc にします。</dd>
-<dt>-zy min max inc
-<dd>Y軸のスケールを min, max, inc にします。</dd>
+<dd>y 軸のスケール方法を type (linear, log, inverse) にします。</dd>
+<dt>-minx min -maxx max -incx inc
+<dd>x 軸のスケールを min, max, inc にします。</dd>
+<dt>-miny min -maxy max -incy inc
+<dd>y 軸のスケールを min, max, inc にします。</dd>
 <dt>-g
 <dd>データファイルから設定を読み込みます。</dd>
-<dt>-png -pdf -ps -eps -svg
+<dt>-png ngp_file -pdf ngp_file -ps ngp_file -eps ngp_file -svg ngp_file
+     -gra ngp_file
 <dd>ngp ファイルをそれぞれの画像ファイルに変換します。
-<dt> -p
-<dd> ngp ファイルを印刷します。
+<dt> -p ngp_file
+<dd> ngp_file を印刷します。
 <dt> -P
 <dd> ngp ファイルを外部ドライバを利用して印刷します。
 </dl>
