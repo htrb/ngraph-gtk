@@ -215,8 +215,8 @@ do
 	    COLORB2=$1
 	    ;;
 	-c)
-	    echo warning: option $1 is obsolete
-	    echo          use -cr -cg -cb option
+	    echo "warning: option $1 is obsolete"
+	    echo '         use -cr -cg and -cb option'
 	    shift
 	    COLORR=$1
 	    shift
@@ -225,8 +225,8 @@ do
 	    COLORB=$1
 	    ;;
 	-C)
-	    echo warning: option $1 is obsolete
-	    echo          use -CR -CG -CB option
+	    echo "warning: option $1 is obsolete"
+	    echo '         use -CR -CG and -CB option'
 	    shift
 	    COLORR2=$1
 	    shift
@@ -295,8 +295,8 @@ do
 	    put axis:$YAXIS inc=$1
 	    ;;
 	-zx)
-	    echo warning: option $1 is obsolete
-	    echo          use -minx -maxx -incx option
+	    echo "warning: option $1 is obsolete"
+	    echo '         use -minx -maxx and -incx option'
 	    shift
 	    put axis:$XAXIS min=$1
 	    shift
@@ -305,8 +305,8 @@ do
 	    put axis:$XAXIS inc=$1
 	    ;;
 	-zy)
-	    echo warning: option $1 is obsolete
-	    echo          use -miny -maxy -incy option
+	    echo "warning: option $1 is obsolete"
+	    echo '         use -miny -maxy and -incy option'
 	    shift
 	    put axis:$YAXIS min=$1
 	    shift
