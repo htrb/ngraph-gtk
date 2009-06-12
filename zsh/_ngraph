@@ -13,7 +13,7 @@ _arguments \
        diagonal arrow rectangle rectangle_fill rectangle_solid_fill \
        errorbar_x errorbar_y staircase_x staircase_y bar_x bar_y \
        bar_fill_x bar_fill_y bar_solid_fill_x bar_solid_fill_y fit)' \
-    '-m[set mark type]:integer' \
+    '-m[set mark type (0 - 89)]:integer' \
     '-o[set mark size]:integer' \
     '-l[set line style]:string' \
     '-w[set line width]:integer' \

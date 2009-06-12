@@ -9,7 +9,8 @@ usage() {
     echo ' -x column -y column     data column'
     echo ' -X -Y -U -R             axis'
     echo ' -d type                 plot type'
-    echo ' -m type -o size         mark type and size'
+    echo ' -m type                 mark type (0 - 89)'
+    echo ' -o size                 mark size'
     echo ' -l style -w width       line style and width'
 #   echo ' -c R G B -C R G B       plot color (1st and 2nd)'	# obsolete
     echo ' -CR r -CG g -CB b       1st plot color'
@@ -215,6 +216,7 @@ do
 	    ;;
 	-c)
 	    echo warning: option $1 is obsolete
+	    echo          use -cr -cg -cb option
 	    shift
 	    COLORR=$1
 	    shift
@@ -224,6 +226,7 @@ do
 	    ;;
 	-C)
 	    echo warning: option $1 is obsolete
+	    echo          use -CR -CG -CB option
 	    shift
 	    COLORR2=$1
 	    shift
@@ -293,6 +296,7 @@ do
 	    ;;
 	-zx)
 	    echo warning: option $1 is obsolete
+	    echo          use -minx -maxx -incx option
 	    shift
 	    put axis:$XAXIS min=$1
 	    shift
@@ -302,6 +306,7 @@ do
 	    ;;
 	-zy)
 	    echo warning: option $1 is obsolete
+	    echo          use -miny -maxy -incy option
 	    shift
 	    put axis:$YAXIS min=$1
 	    shift
