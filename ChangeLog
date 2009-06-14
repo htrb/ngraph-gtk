@@ -1,3 +1,9 @@
+2009-06-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/osystem.c (systemp): use "n_mkstemp()".
+
+	* src/ioutil.c (n_mkstemp): set and restore umask.
+
 2009-06-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* zsh/_ngraph: add.

@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.10 2009/03/24 08:14:59 hito Exp $
+ * $Id: osystem.c,v 1.11 2009/06/14 02:41:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -57,6 +57,7 @@
 #define FALSE 0
 
 #define ERRNODIR   100
+#define ERRTMPFILE 101
 
 
 void resizeconsole(int col,int row);
@@ -64,6 +65,7 @@ extern int consolecol,consolerow;
 
 static char *syserrorlist[]={
   "no such directory"
+  "can't create temporary file"
 };
 
 #define ERRNUM (sizeof(syserrorlist) / sizeof(*syserrorlist))
@@ -224,8 +226,9 @@ sysdate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 systemp(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  char *pfx,*tmpfil;
+  char *pfx, *tmpfil;
   struct narray *array;
+  int fd;
 
   free(*(char **)rval);
   *(char **)rval=NULL;
@@ -238,7 +241,14 @@ systemp(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 1;
     }
   }
-  if ((tmpfil=tempnam(NULL,pfx))==NULL) return 1;
+
+  fd = n_mkstemp(NULL, pfx, &tmpfil);
+  if (fd < 0) {
+    error(obj, ERRTMPFILE);
+    return 1;
+  }
+  close(fd);
+
   arrayadd2(array,&tmpfil);
   *(char **)rval=tmpfil;
   return 0;

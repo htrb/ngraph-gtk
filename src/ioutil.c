@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.19 2009/03/31 08:20:11 hito Exp $
+ * $Id: ioutil.c,v 1.20 2009/06/14 02:41:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1078,6 +1078,7 @@ n_mkstemp(char *dir, char *templ, char **name)
 {
   char postfix[] = "XXXXXX", *buf;
   int len = sizeof(postfix), fd;
+  mode_t mask_prev;
 
   dir = (dir) ? dir : P_tmpdir;
   dir = (dir) ? dir : ".";
@@ -1096,7 +1097,9 @@ n_mkstemp(char *dir, char *templ, char **name)
   }
 
   snprintf(buf, len, "%s/%s%s", dir, CHK_STR(templ), postfix);
+  mask_prev = umask(S_IRWXG |  S_IRWXO);
   fd = mkstemp(buf);
+  umask(mask_prev);
 
   if (fd < 0) {
     free(buf);
