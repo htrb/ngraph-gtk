@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.97 2009/06/02 04:24:47 hito Exp $
+ * $Id: x11file.c,v 1.98 2009/06/15 07:38:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -862,7 +862,7 @@ FitDialogSave(struct FitDialog *d)
 
   error = FALSE;
 
-  hFile = nopen(ngpfile, O_CREAT | O_TRUNC | O_RDWR, NFMODE);
+  hFile = nopen(ngpfile, O_CREAT | O_TRUNC | O_RDWR, NFMODE_NORMAL_FILE);
   if (hFile < 0) {
     error = TRUE;
   } else {

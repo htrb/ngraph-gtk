@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.39 2009/06/10 01:47:41 hito Exp $
+ * $Id: x11commn.c,v 1.40 2009/06/15 07:38:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -872,7 +872,7 @@ SaveDrawrable(char *name, int storedata, int storemerge)
 
   error = FALSE;
 
-  hFile = nopen(name, O_CREAT | O_TRUNC | O_RDWR, NFMODE);
+  hFile = nopen(name, O_CREAT | O_TRUNC | O_RDWR, NFMODE_NORMAL_FILE);
   if (hFile < 0) {
     error = TRUE;
   } else {

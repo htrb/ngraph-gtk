@@ -1,5 +1,13 @@
 2009-06-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (SaveDrawrable): use "NFMODE_NORMAL_FILE"
+	instead of "NFMODE".
+
+	* src/gtk/x11file.c (FitDialogSave): use "NFMODE_NORMAL_FILE"
+	instead of "NFMODE".
+
+	* src/ioutil.h (NFMODE_NORMAL_FILE): add.
+
 	* src/osystem.c (sysdone): delete temporaryf files if exist.
 
 2009-06-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
