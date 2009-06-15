@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.11 2009/06/14 02:41:29 hito Exp $
+ * $Id: osystem.c,v 1.12 2009/06/15 04:52:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -102,7 +102,7 @@ static int
 sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   struct objlist *objcur;
-  int i;
+  int i, n;
   char *s;
   struct narray *array;
   struct objlist *objectcur,*objectdel;
@@ -137,6 +137,15 @@ sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"temp_file",inst,&s);
   memfree(s);
   _getobj(obj,"temp_list",inst,&array);
+  n = arraynum(array);
+  if (n > 0) {
+    char **data;
+
+    data = arraydata(array);
+    for (i = 0; i < n; i++) {
+      unlink(data[i]);
+    }
+  }
   arrayfree2(array);
 
   objectcur=chkobjroot();
