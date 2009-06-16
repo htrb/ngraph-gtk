@@ -1,5 +1,5 @@
 Source: ngraph-gtk
-Section: X11
+Section: graphics
 Priority: extra
 Maintainer: Ito Hiroyuki <ZXB01226@nifty.com>
 Build-Depends: debhelper (>= 7), autotools-dev

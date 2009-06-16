@@ -4,6 +4,6 @@
 	title="Ngraph"						\
 	command="/usr/bin/ngraph"				\
 	hints="GNOME"						\
-	icon="/usr/share/pixmaps/application-x-ngraph.png"	\
+	icon="/usr/share/pixmaps/application-x-ngraph.xpm"	\
 	longtitle="Ngraph"					\
 	description="create scientific 2-dimensinal graphs"
