@@ -1,9 +1,9 @@
-?package(ngraph):						\
+?package(ngraph-gtk):						\
 	needs="X11"						\
 	section="Applications/Graphics"				\
 	title="Ngraph"						\
 	command="/usr/bin/ngraph"				\
 	hints="GNOME"						\
-	icon="/usr/share/pixmaps/application-x-ngraph.xpm"	\
+	icon="/usr/share/pixmaps/ngraph.xpm"				\
 	longtitle="Ngraph"					\
 	description="create scientific 2-dimensinal graphs"

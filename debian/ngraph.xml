@@ -2,18 +2,18 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
 	<mime-type type="application/x-ngraph">
 		<sub-class-of type="text/plain"/>
-		<comment>Ngaph</comment>
+		<comment>Ngraph</comment>
 		<glob pattern="*.ngp"/>
 	</mime-type>
 	<mime-type type="application/x-ngraph-graphic">
 		<sub-class-of type="text/plain"/>
-		<comment>Ngaph graphic file</comment>
+		<comment>Ngraph graphic file</comment>
 		<comment xml:lang="ja">Ngraph のグラフィックデータファイル</comment>
 		<glob pattern="*.gra"/>
 	</mime-type>
 	<mime-type type="application/x-ngraph-script">
 		<sub-class-of type="text/plain"/>
-		<comment>Ngaph script file</comment>
+		<comment>Ngraph script file</comment>
 		<comment xml:lang="ja">Ngraph script のファイル</comment>
 		<glob pattern="*.nsc"/>
 	</mime-type>

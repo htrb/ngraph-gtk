@@ -3,4 +3,4 @@
   section="Applications/Graphics" \
   title="ngraph-gtk" \
   command="/usr/bin/ngraph" \
-  icon="/usr/share/pixmaps/application-x-ngraph.xpm"
+  icon="/usr/share/pixmaps/ngraph.xpm"

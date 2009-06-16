@@ -70,7 +70,7 @@ install: build
 		$(CURDIR)/debian/ngraph-gtk/usr/share/mime/packages/
 	install -o root -g root -m 644 $(CURDIR)/debian/ngraph $(CURDIR)/debian/ngraph-gtk/usr/share/menu/
 	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.desktop $(CURDIR)/debian/ngraph-gtk/usr/share/applications/
-	install -o root -g root -m 644 $(CURDIR)/debian/*.xpm $(CURDIR)/debian/ngraph-gtk/usr/share/pixmaps/
+	install -o root -g root -m 644 $(CURDIR)/debian/*.{png,xpm} $(CURDIR)/debian/ngraph-gtk/usr/share/pixmaps/
 	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.applications $(CURDIR)/debian/ngraph-gtk/usr/share/application-registry/
 	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.{mime,key} $(CURDIR)/debian/ngraph-gtk/usr/share/mime-info/
 	install -o root -g root -m 644 $(CURDIR)/debian/ngraph.xml $(CURDIR)/debian/ngraph-gtk/usr/share/mime/packages/
