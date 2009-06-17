@@ -1,6 +1,6 @@
 ?package(ngraph-gtk): \
   needs="X11" \
   section="Applications/Graphics" \
-  title="ngraph-gtk" \
+  title="Ngraph" \
   command="/usr/bin/ngraph" \
   icon="/usr/share/pixmaps/ngraph.xpm"
