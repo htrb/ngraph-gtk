@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = nfft$(EXEEXT)
+pkglib_PROGRAMS = fft$(EXEEXT)
 subdir = addin
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -52,18 +52,18 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgdatadir)" \
-	"$(DESTDIR)$(pkgdatadir)"
-binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(bin_PROGRAMS)
-am_nfft_OBJECTS = nfft-fft.$(OBJEXT)
-nfft_OBJECTS = $(am_nfft_OBJECTS)
-nfft_LDADD = $(LDADD)
-nfft_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(nfft_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+am__installdirs = "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(pkglibdir)" \
+	"$(DESTDIR)$(pkglibdir)"
+pkglibPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(pkglib_PROGRAMS)
+am_fft_OBJECTS = fft-fft.$(OBJEXT)
+fft_OBJECTS = $(am_fft_OBJECTS)
+fft_LDADD = $(LDADD)
+fft_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(fft_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-pkgdataSCRIPT_INSTALL = $(INSTALL_SCRIPT)
-SCRIPTS = $(pkgdata_SCRIPTS)
+pkglibSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+SCRIPTS = $(pkglib_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -76,16 +76,16 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(nfft_SOURCES)
-DIST_SOURCES = $(nfft_SOURCES)
+SOURCES = $(fft_SOURCES)
+DIST_SOURCES = $(fft_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-pkgdataDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(pkgdata_DATA)
+pkglibDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(pkglib_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -228,13 +228,13 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-pkgdata_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
+pkglib_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
 		math.nsc text-in.nsc
 
-pkgdata_SCRIPTS = calc.tcl fft.tcl fitrslt.tcl legend.tcl
-EXTRA_DIST = ${pkgdata_DATA} ${pkgdata_SCRIPTS}
-nfft_SOURCES = fft.c
-nfft_CFLAGS = -D_FORTIFY_SOURCE
+pkglib_SCRIPTS = calc.tcl fft.tcl fitrslt.tcl legend.tcl
+EXTRA_DIST = ${pkgdata_DATA} ${pkgdata_SCRIPTS} fft.nsc.in
+fft_SOURCES = fft.c
+fft_CFLAGS = -D_FORTIFY_SOURCE
 all: all-am
 
 .SUFFIXES:
@@ -268,55 +268,55 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-binPROGRAMS: $(bin_PROGRAMS)
+install-pkglibPROGRAMS: $(pkglib_PROGRAMS)
 	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	test -z "$(pkglibdir)" || $(MKDIR_P) "$(DESTDIR)$(pkglibdir)"
+	@list='$(pkglib_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
 	     || test -f $$p1 \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(pkglibPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(pkglibdir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(pkglibPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(pkglibdir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
-uninstall-binPROGRAMS:
+uninstall-pkglibPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	@list='$(pkglib_PROGRAMS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(pkglibdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(pkglibdir)/$$f"; \
 	done
 
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+clean-pkglibPROGRAMS:
+	@list='$(pkglib_PROGRAMS)'; for p in $$list; do \
 	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
-nfft$(EXEEXT): $(nfft_OBJECTS) $(nfft_DEPENDENCIES) 
-	@rm -f nfft$(EXEEXT)
-	$(nfft_LINK) $(nfft_OBJECTS) $(nfft_LDADD) $(LIBS)
-install-pkgdataSCRIPTS: $(pkgdata_SCRIPTS)
+fft$(EXEEXT): $(fft_OBJECTS) $(fft_DEPENDENCIES) 
+	@rm -f fft$(EXEEXT)
+	$(fft_LINK) $(fft_OBJECTS) $(fft_LDADD) $(LIBS)
+install-pkglibSCRIPTS: $(pkglib_SCRIPTS)
 	@$(NORMAL_INSTALL)
-	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
-	@list='$(pkgdata_SCRIPTS)'; for p in $$list; do \
+	test -z "$(pkglibdir)" || $(MKDIR_P) "$(DESTDIR)$(pkglibdir)"
+	@list='$(pkglib_SCRIPTS)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  if test -f $$d$$p; then \
 	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	    echo " $(pkgdataSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(pkgdatadir)/$$f'"; \
-	    $(pkgdataSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	    echo " $(pkglibSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(pkglibdir)/$$f'"; \
+	    $(pkglibSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(pkglibdir)/$$f"; \
 	  else :; fi; \
 	done
 
-uninstall-pkgdataSCRIPTS:
+uninstall-pkglibSCRIPTS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(pkgdata_SCRIPTS)'; for p in $$list; do \
+	@list='$(pkglib_SCRIPTS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	  echo " rm -f '$(DESTDIR)$(pkgdatadir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(pkglibdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(pkglibdir)/$$f"; \
 	done
 
 mostlyclean-compile:
@@ -325,7 +325,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nfft-fft.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fft-fft.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -348,41 +348,41 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-nfft-fft.o: fft.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nfft_CFLAGS) $(CFLAGS) -MT nfft-fft.o -MD -MP -MF $(DEPDIR)/nfft-fft.Tpo -c -o nfft-fft.o `test -f 'fft.c' || echo '$(srcdir)/'`fft.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/nfft-fft.Tpo $(DEPDIR)/nfft-fft.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fft.c' object='nfft-fft.o' libtool=no @AMDEPBACKSLASH@
+fft-fft.o: fft.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fft_CFLAGS) $(CFLAGS) -MT fft-fft.o -MD -MP -MF $(DEPDIR)/fft-fft.Tpo -c -o fft-fft.o `test -f 'fft.c' || echo '$(srcdir)/'`fft.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/fft-fft.Tpo $(DEPDIR)/fft-fft.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fft.c' object='fft-fft.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nfft_CFLAGS) $(CFLAGS) -c -o nfft-fft.o `test -f 'fft.c' || echo '$(srcdir)/'`fft.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fft_CFLAGS) $(CFLAGS) -c -o fft-fft.o `test -f 'fft.c' || echo '$(srcdir)/'`fft.c
 
-nfft-fft.obj: fft.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nfft_CFLAGS) $(CFLAGS) -MT nfft-fft.obj -MD -MP -MF $(DEPDIR)/nfft-fft.Tpo -c -o nfft-fft.obj `if test -f 'fft.c'; then $(CYGPATH_W) 'fft.c'; else $(CYGPATH_W) '$(srcdir)/fft.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/nfft-fft.Tpo $(DEPDIR)/nfft-fft.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fft.c' object='nfft-fft.obj' libtool=no @AMDEPBACKSLASH@
+fft-fft.obj: fft.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fft_CFLAGS) $(CFLAGS) -MT fft-fft.obj -MD -MP -MF $(DEPDIR)/fft-fft.Tpo -c -o fft-fft.obj `if test -f 'fft.c'; then $(CYGPATH_W) 'fft.c'; else $(CYGPATH_W) '$(srcdir)/fft.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/fft-fft.Tpo $(DEPDIR)/fft-fft.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fft.c' object='fft-fft.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(nfft_CFLAGS) $(CFLAGS) -c -o nfft-fft.obj `if test -f 'fft.c'; then $(CYGPATH_W) 'fft.c'; else $(CYGPATH_W) '$(srcdir)/fft.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fft_CFLAGS) $(CFLAGS) -c -o fft-fft.obj `if test -f 'fft.c'; then $(CYGPATH_W) 'fft.c'; else $(CYGPATH_W) '$(srcdir)/fft.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-pkgdataDATA: $(pkgdata_DATA)
+install-pkglibDATA: $(pkglib_DATA)
 	@$(NORMAL_INSTALL)
-	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
-	@list='$(pkgdata_DATA)'; for p in $$list; do \
+	test -z "$(pkglibdir)" || $(MKDIR_P) "$(DESTDIR)$(pkglibdir)"
+	@list='$(pkglib_DATA)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f=$(am__strip_dir) \
-	  echo " $(pkgdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pkgdatadir)/$$f'"; \
-	  $(pkgdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	  echo " $(pkglibDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pkglibdir)/$$f'"; \
+	  $(pkglibDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pkglibdir)/$$f"; \
 	done
 
-uninstall-pkgdataDATA:
+uninstall-pkglibDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(pkgdata_DATA)'; for p in $$list; do \
+	@list='$(pkglib_DATA)'; for p in $$list; do \
 	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(pkgdatadir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(pkglibdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(pkglibdir)/$$f"; \
 	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -462,7 +462,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(pkgdatadir)"; do \
+	for dir in "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(pkglibdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -491,7 +491,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libtool clean-pkglibPROGRAMS \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -509,11 +510,12 @@ info: info-am
 
 info-am:
 
-install-data-am: install-pkgdataDATA install-pkgdataSCRIPTS
+install-data-am:
 
 install-dvi: install-dvi-am
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-pkglibDATA install-pkglibPROGRAMS \
+	install-pkglibSCRIPTS
 
 install-html: install-html-am
 
@@ -545,26 +547,30 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-pkgdataDATA \
-	uninstall-pkgdataSCRIPTS
+uninstall-am: uninstall-pkglibDATA uninstall-pkglibPROGRAMS \
+	uninstall-pkglibSCRIPTS
 
 .MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool ctags distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+	clean-libtool clean-pkglibPROGRAMS ctags distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-pkgdataDATA \
-	install-pkgdataSCRIPTS install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-pkgdataDATA uninstall-pkgdataSCRIPTS
+	install-pdf install-pdf-am install-pkglibDATA \
+	install-pkglibPROGRAMS install-pkglibSCRIPTS install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-pkglibDATA uninstall-pkglibPROGRAMS \
+	uninstall-pkglibSCRIPTS
 
+
+fft.nsc: fft.nsc.in Makefile
+	sh ../pathconv.sh $(docdir) $(pkglibdir) $(demodir) fft.nsc.in
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

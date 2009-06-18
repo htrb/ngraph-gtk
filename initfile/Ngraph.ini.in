@@ -1,7 +1,7 @@
 [Ngraph]
-# terminal=gnome-terminal -x nterminal
-# terminal=rxvt -e nterminal
-terminal=xterm -e nterminal
+# terminal=gnome-terminal -x LIBDIRDEF/terminal
+# terminal=rxvt -e LIBDIRDEF/terminal
+terminal=xterm -e LIBDIRDEF/terminal
 alloc_console=0
 history_size=1000
 

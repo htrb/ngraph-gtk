@@ -1,3 +1,4 @@
 #define DOCDIR   "DOCDIRDEF"
-#define DATADIR  "DATADIRDEF"
+#define DATADIR  "LIBDIRDEF"
+#define CONFDIR  "CONFDIRDEF"
 #define HOME_DIR ".Ngraph"

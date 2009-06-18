@@ -173,7 +173,7 @@ iexpr exp<br>
 Ngraph は実行時に<br>
 <ol>
  <li> ~/.Ngraph
- <li> /etc/Ngraph-gtk
+ <li> CONFDIRDEF
 </ol>
 をこの順番で検索し, はじめに見つかったスタートアップスクリプトファイル
 (Ngraph.nsc) を自動的に読み込みます。<br>

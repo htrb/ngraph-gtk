@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2wmf.c,v 1.6 2009/03/31 09:10:51 hito Exp $
+ * $Id: gra2wmf.c,v 1.7 2009/06/18 11:32:06 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -1383,8 +1383,8 @@ int main(int argc,char **argv)
     if ((libdir=(char *)malloc(strlen(lib)+1))==NULL) exit(1);
     strcpy(libdir,lib);
   } else {
-    if ((libdir=(char *)malloc(strlen(DATADIR)+1))==NULL) exit(1);
-    strcpy(libdir,DATADIR);
+    if ((libdir=(char *)malloc(strlen(CONFDIR)+1))==NULL) exit(1);
+    strcpy(libdir,CONFDIR);
   }
   if ((home=getenv("NGRAPHHOME"))!=NULL) {
     if ((homedir=(char *)malloc(strlen(home)+1))==NULL) exit(1);

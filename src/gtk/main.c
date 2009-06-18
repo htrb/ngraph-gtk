@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.40 2009/06/02 09:56:44 hito Exp $
+ * $Id: main.c,v 1.41 2009/06/18 11:32:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,9 +56,11 @@ static char **attempt_shell_completion(char *text, int start, int end);
 #endif
 
 #define SYSCONF "[Ngraph]"
-#ifndef DATADIR
-#define DATADIR "/usr/local/lib/Ngraph"
+#ifndef LIBDIR
+#define LIBDIR "/usr/local/lib/Ngraph"
 #endif
+
+#define INIT_SCRIPT "Ngraph.nsc"
 
 static char *systemname;
 static int consolefdout, consolefdin, consoleac = FALSE;
@@ -536,7 +538,7 @@ load_config(struct objlist *sys, char *inst, int *allocconsole)
 int
 main(int argc, char **argv, char **environ)
 {
-  char *homedir, *libdir, *home, *inifile, *loginshell;
+  char *homedir, *libdir, *confdir, *home, *inifile, *loginshell;
   char *inst;
   struct objlist *sys, *obj, *lobj;
   unsigned int j;
@@ -587,12 +589,16 @@ main(int argc, char **argv, char **environ)
   if ((lib = getenv("NGRAPHLIB")) != NULL) {
     libdir = nstrdup(lib);
   } else {
-    libdir = nstrdup(DATADIR);
+    libdir = nstrdup(LIBDIR);
   }
 #else
-  libdir = nstrdup(DATADIR);
+  libdir = nstrdup(LIBDIR);
 #endif
   if (libdir == NULL)
+    exit(1);
+
+  confdir = nstrdup(CONFDIR);
+  if (confdir == NULL)
     exit(1);
 
   /*
@@ -609,7 +615,7 @@ main(int argc, char **argv, char **environ)
       exit(1);
     snprintf(homedir, len, "%s/%s", home, HOME_DIR);
   } else {
-    homedir = nstrdup(libdir);
+    homedir = nstrdup(confdir);
     if (homedir == NULL)
       exit(1);
   }
@@ -631,9 +637,13 @@ main(int argc, char **argv, char **environ)
   if (inst == NULL)
     exit(1);
 
+  if (_putobj(sys, "conf_dir", inst, confdir))
+    exit(1);
   if (_putobj(sys, "lib_dir", inst, libdir))
     exit(1);
   if (_putobj(sys, "home_dir", inst, homedir))
+    exit(1);
+  if (_getobj(sys, "conf_dir", inst, &confdir) == -1)
     exit(1);
   if (_getobj(sys, "lib_dir", inst, &libdir) == -1)
     exit(1);
@@ -707,10 +717,10 @@ main(int argc, char **argv, char **environ)
     changefilename(inifile);
   }
   if (inifile == NULL) {
-    if (findfilename(homedir, CONFTOP, systemname))
-      inifile = getfilename(homedir, CONFTOP, systemname);
-    else if (findfilename(libdir, CONFTOP, systemname))
-      inifile = getfilename(libdir, CONFTOP, systemname);
+    if (findfilename(homedir, CONFTOP, INIT_SCRIPT))
+      inifile = getfilename(homedir, CONFTOP, INIT_SCRIPT);
+    else if (findfilename(confdir, CONFTOP, INIT_SCRIPT))
+      inifile = getfilename(confdir, CONFTOP, INIT_SCRIPT);
   }
   if (inifile) {
     arrayinit(&sarray, sizeof(char *));

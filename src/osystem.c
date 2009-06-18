@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.12 2009/06/15 04:52:03 hito Exp $
+ * $Id: osystem.c,v 1.13 2009/06/18 11:32:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -120,6 +120,8 @@ sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
     objcur=objcur->next;
   }
+  _getobj(obj,"conf_dir",inst,&s);
+  memfree(s);
   _getobj(obj,"lib_dir",inst,&s);
   memfree(s);
   _getobj(obj,"home_dir",inst,&s);
@@ -366,6 +368,7 @@ static struct objtable nsystem[] = {
   {"expand_dir",NSTR,NREAD|NWRITE,NULL,NULL,0},
   {"GRAF",NSTR,NREAD,NULL,NULL,0},
   {"temp_prefix",NSTR,NREAD,NULL,NULL,0},
+  {"conf_dir",NSTR,NREAD,NULL,NULL,0},
   {"lib_dir",NSTR,NREAD,NULL,NULL,0},
   {"home_dir",NSTR,NREAD,NULL,NULL,0},
   {"time",NSFUNC,NREAD|NEXEC,systime,"i",0},

@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.13 2009/05/19 02:30:00 hito Exp $
+ * $Id: nconfig.c,v 1.14 2009/06/18 11:32:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -77,7 +77,7 @@ searchscript(char *file)
 
   if ((sys=getobject("system"))==NULL) return NULL;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return NULL;
-  if (getobj(sys,"lib_dir",0,0,NULL,&libdir)==-1) return NULL;
+  if (getobj(sys,"conf_dir",0,0,NULL,&libdir)==-1) return NULL;
   if (!findfilename(homedir,CONFTOP,file)) {
     if (!findfilename(libdir,CONFTOP,file)) return NULL;
     if ((s=getfilename(libdir,CONFTOP,file))==NULL) return NULL;
@@ -134,7 +134,7 @@ openconfig(char *section)
 
   if ((sys=getobject("system"))==NULL) return NULL;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return NULL;
-  if (getobj(sys,"lib_dir",0,0,NULL,&libdir)==-1) return NULL;
+  if (getobj(sys,"conf_dir",0,0,NULL,&libdir)==-1) return NULL;
   homeconf=libconf=NULL;
   if (findfilename(homedir,CONFSEP,CONF)) {
     if ((homeconf=getfilename(homedir,CONFSEP,CONF))!=NULL) {
@@ -326,7 +326,7 @@ replaceconfig(char *section,struct narray *conf)
   if (getobj(sys,"temp_prefix",0,0,NULL,&pfx)) return FALSE;
   if ((sys=getobject("system"))==NULL) return FALSE;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return FALSE;
-  if (getobj(sys,"lib_dir",0,0,NULL,&libdir)==-1) return FALSE;
+  if (getobj(sys,"conf_dir",0,0,NULL,&libdir)==-1) return FALSE;
   if (!findfilename(homedir,CONFSEP,CONF)) {
     if (!findfilename(libdir,CONFSEP,CONF)) return FALSE;
     if ((fil=getfilename(libdir,CONFSEP,CONF))==NULL) return FALSE;
@@ -457,7 +457,7 @@ removeconfig(char *section,struct narray *conf)
   if (getobj(sys,"temp_prefix",0,0,NULL,&pfx)) return FALSE;
   if ((sys=getobject("system"))==NULL) return FALSE;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return FALSE;
-  if (getobj(sys,"lib_dir",0,0,NULL,&libdir)==-1) return FALSE;
+  if (getobj(sys,"conf_dir",0,0,NULL,&libdir)==-1) return FALSE;
   if (!findfilename(homedir,CONFSEP,CONF)) {
     if (!findfilename(libdir,CONFSEP,CONF)) return FALSE;
     if ((fil=getfilename(libdir,CONFSEP,CONF))==NULL) return FALSE;
@@ -535,7 +535,7 @@ writecheckconfig(void)
 
   if ((sys=getobject("system"))==NULL) return 0;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return 0;
-  if (getobj(sys,"lib_dir",0,0,NULL,&libdir)==-1) return 0;
+  if (getobj(sys,"conf_dir",0,0,NULL,&libdir)==-1) return 0;
   homeconf=libconf=NULL;
   if (findfilename(homedir,CONFSEP,CONF)) {
     if ((homeconf=getfilename(homedir,CONFSEP,CONF))!=NULL) {
@@ -589,7 +589,7 @@ copyconfig(void)
 
   if ((sys=getobject("system"))==NULL) return FALSE;
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return FALSE;
-  if (getobj(sys,"lib_dir",0,0,NULL,&libdir)==-1) return FALSE;
+  if (getobj(sys,"conf_dir",0,0,NULL,&libdir)==-1) return FALSE;
 
   r = stat(homedir, &sbuf);
   if (r && errno == ENOENT) {

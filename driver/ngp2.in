@@ -1,5 +1,5 @@
-#! DEMODIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.10 2009/06/11 06:42:40 hito Exp $
+#! CONFDIRDEF/ngraph -i
+# $Id: ngp2.in,v 1.11 2009/06/18 11:32:06 hito Exp $
 
 IGN_PATH=0
 AUTO_SCALE=0

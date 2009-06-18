@@ -2,7 +2,7 @@
 # fft.nsc written by S. ISHIZAKA. 1999/07
 #
 SCRIPT=${system:0:temp_file}
-wish $NGRAPHLIB/fft.tcl /usr/lib/Ngraph-gtk/fft "$SCRIPT"
+wish $NGRAPHLIB/fft.tcl LIBDIRDEF/fft "$SCRIPT"
 if [ -f "$SCRIPT" ];
 then
   new shell

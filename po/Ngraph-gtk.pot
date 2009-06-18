@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-26\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-06-11 13:59+0900\n"
+"POT-Creation-Date: 2009-06-18 10:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -353,7 +353,7 @@ msgstr ""
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:963 src/gtk/x11opt.c:1512
+#: src/gtk/x11commn.c:963 src/gtk/x11opt.c:1513
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -2015,7 +2015,7 @@ msgstr ""
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1505 src/gtk/x11print.c:251
+#: src/gtk/x11opt.c:1506 src/gtk/x11print.c:251
 #, c-format
 msgid ""
 "`%s'\n"
@@ -2023,7 +2023,7 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11opt.c:1506
+#: src/gtk/x11opt.c:1507
 msgid "Save as .Ngraph.ngp"
 msgstr ""
 

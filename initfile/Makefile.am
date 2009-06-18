@@ -1,6 +1,8 @@
-pkgdata_DATA = .Ngraph .Ngraph.ngp .fit.ngp Ngraph.ini accel_map
+ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 
-EXTRA_DIST = ${pkgdata_DATA} Ngraph.ini.in
+ngraphconf_DATA = Ngraph.nsc Ngraph.ngp fit.ngp Ngraph.ini accel_map
+
+EXTRA_DIST = ${ngraphconf_DATA} Ngraph.ini.in
 
 Ngraph.ini: Ngraph.ini.in Makefile
-	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(demodir) Ngraph.ini.in
+	sh ../pathconv.sh $(docdir) $(pkglibdir) $(ngraphconfdir) Ngraph.ini.in

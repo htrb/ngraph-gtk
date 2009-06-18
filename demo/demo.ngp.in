@@ -47,7 +47,7 @@ do
     done
     gra:$ID:clear
 
-    . DEMODIRDEF/${demo}.ngp
+    . DOCDIRDEF/${demo}.ngp
     ID2=${gra::id}
     if [ $ID != $ID2 ]
     then

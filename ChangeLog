@@ -1,3 +1,40 @@
+2009-06-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.c (main): initialize system::conf_dir.
+	(main): search "conf_dir" instead of "lib_dir".
+
+	* src/gtk/dir_defs.h.in (CONFDIR): add.
+
+	* src/shell.c (ngraphenvironment): add new environment variable
+	"NGRAPHCONF".
+
+	* src/osystem.c (nsystem): add new field "conf_dir".
+
+	* src/nconfig.c (searchscript, openconfig, replaceconfig)
+	(removeconfig, writecheckconfig, copyconfig): search "conf_dir"
+	instead of "lib_dir".
+
+	* src/ioutil.h (CONFSEP): change from "/." to "/".
+
+	* src/Makefile.am (pkglib_PROGRAMS): "terminal" is installed in
+	"$pkglibdir".
+
+	* initfile/Ngraph.ini.in: specify full path of "nterminal".
+
+	* initfile/Makefile.am (ngraphconfdir): configration files are
+	installed in "$(sysconfdir)/$(PACKAGE)".
+
+	* initfile/fit.ngp: change file name from ".fit.ngp"
+
+	* initfile/Ngraph.nsc: change file name from ".Ngraph"
+
+	* initfile/Ngraph.ngp: change file name from ".Ngraph.ngp"
+
+	* driver/Makefile.am (ngraphconfdir): configration files are
+	installed in "$(sysconfdir)/$(PACKAGE)".
+
+	* addin/Makefile.am (pkglib_DATA): install addins to $pkglibdir.
+
 2009-06-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11commn.c (SaveDrawrable): use "NFMODE_NORMAL_FILE"

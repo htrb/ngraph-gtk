@@ -1,5 +1,6 @@
+ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 
-zshdir = $(pkgdatadir)/zsh
+zshdir = $(ngraphconfdir)/zsh
 
 zsh_DATA = _ngraph _gra2ps _gra2wmf _ngp2
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.28 2009/06/03 09:00:48 hito Exp $
+ * $Id: shell.c,v 1.29 2009/06/18 11:32:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4156,18 +4156,20 @@ setshellargument(struct nshell *nshell,int argc,char **argv)
 void 
 ngraphenvironment(struct nshell *nshell)
 {
-  char *sver,*lib,*home;
+  char *sver,*lib,*home,*conf;
   struct objlist *sobj;
   char *systemname;
   char *pathset;
 
   sobj=chkobject("system");
   getobj(sobj,"name",0,0,NULL,&systemname);
+  getobj(sobj,"conf_dir",0,0,NULL,&conf);
   getobj(sobj,"lib_dir",0,0,NULL,&lib);
   getobj(sobj,"home_dir",0,0,NULL,&home);
   sver=getobjver("system");
   addval(nshell,"NGRAPH",systemname);
   addval(nshell,"VERSION",sver);
+  addval(nshell,"NGRAPHCONF",conf);
   addval(nshell,"NGRAPHLIB",lib);
   addval(nshell,"NGRAPHHOME",home);
   if (getval(nshell,"PS1")==NULL) addval(nshell,"PS1","Ngraph$ ");

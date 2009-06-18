@@ -173,7 +173,7 @@ new file
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
 	file::data_clip=true
-	file::file='DEMODIRDEF/demo2.dat'
+	file::file='DOCDIRDEF/demo2.dat'
 
 new file
 	file::hidden=false
@@ -217,7 +217,7 @@ new file
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
 	file::data_clip=true
-	file::file='DEMODIRDEF/demo2.dat'
+	file::file='DOCDIRDEF/demo2.dat'
 
 new fit
 	fit::profile=
@@ -297,7 +297,7 @@ new file
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
 	file::data_clip=true
-	file::file='DEMODIRDEF/demo2.dat'
+	file::file='DOCDIRDEF/demo2.dat'
 	file::fit='fit:^'${fit::oid}
 
 new fit
@@ -378,7 +378,7 @@ new file
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
 	file::data_clip=true
-	file::file='DEMODIRDEF/demo2.dat'
+	file::file='DOCDIRDEF/demo2.dat'
 	file::fit='fit:^'${fit::oid}
 
 new rectangle

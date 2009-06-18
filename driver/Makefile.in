@@ -53,7 +53,7 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(pkgdatadir)"
+	"$(DESTDIR)$(ngraphconfdir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_gra2ps_OBJECTS = gra2ps-gra2ps.$(OBJEXT)
@@ -91,8 +91,8 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-pkgdataDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(pkgdata_DATA)
+ngraphconfDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(ngraphconf_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -235,7 +235,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-pkgdata_DATA = gra2ps.ini Ngraph.ps gra2wmf.ini
+ngraphconfdir = $(sysconfdir)/$(PACKAGE)
+ngraphconf_DATA = gra2ps.ini Ngraph.ps gra2wmf.ini
 EXTRA_DIST = dir_defs.h.in ngp2.in ${pkgdata_DATA}
 bin_SCRIPTS = ngp2
 gra2ps_SOURCES = gra2ps.c dir_defs.h
@@ -407,22 +408,22 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-pkgdataDATA: $(pkgdata_DATA)
+install-ngraphconfDATA: $(ngraphconf_DATA)
 	@$(NORMAL_INSTALL)
-	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
-	@list='$(pkgdata_DATA)'; for p in $$list; do \
+	test -z "$(ngraphconfdir)" || $(MKDIR_P) "$(DESTDIR)$(ngraphconfdir)"
+	@list='$(ngraphconf_DATA)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  f=$(am__strip_dir) \
-	  echo " $(pkgdataDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pkgdatadir)/$$f'"; \
-	  $(pkgdataDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	  echo " $(ngraphconfDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(ngraphconfdir)/$$f'"; \
+	  $(ngraphconfDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(ngraphconfdir)/$$f"; \
 	done
 
-uninstall-pkgdataDATA:
+uninstall-ngraphconfDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(pkgdata_DATA)'; for p in $$list; do \
+	@list='$(ngraphconf_DATA)'; for p in $$list; do \
 	  f=$(am__strip_dir) \
-	  echo " rm -f '$(DESTDIR)$(pkgdatadir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(ngraphconfdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(ngraphconfdir)/$$f"; \
 	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -502,7 +503,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkgdatadir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(ngraphconfdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -549,7 +550,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-pkgdataDATA
+install-data-am: install-ngraphconfDATA
 
 install-dvi: install-dvi-am
 
@@ -586,7 +587,7 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
-	uninstall-pkgdataDATA
+	uninstall-ngraphconfDATA
 
 .MAKE: install-am install-strip
 
@@ -597,17 +598,17 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 	install-binPROGRAMS install-binSCRIPTS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-pkgdataDATA install-ps install-ps-am install-strip \
+	install-info-am install-man install-ngraphconfDATA install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-binSCRIPTS uninstall-pkgdataDATA
+	uninstall-binSCRIPTS uninstall-ngraphconfDATA
 
 
 dir_defs.h: dir_defs.h.in Makefile
-	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(demodir) dir_defs.h.in
+	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(ngraphconfdir) dir_defs.h.in
 
 ngp2: ngp2.in Makefile
 	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(bindir) ngp2.in

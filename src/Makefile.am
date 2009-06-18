@@ -1,6 +1,6 @@
 SUBDIRS = gtk
 
-bin_PROGRAMS = ngraph nterminal
+bin_PROGRAMS = ngraph
 
 ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	ioutil.c ioutil.h jnstring.c jnstring.h mathcode.c mathcode.h	\
@@ -14,7 +14,8 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
 	gettext.h common.h nhash.h nhash.c
 
-nterminal_SOURCES = terminal.c
+pkglib_PROGRAMS = terminal
+terminal_SOURCES = terminal.c
 
 ngraph_LDADD = $(GTK_LIBS) gtk/libngraph.la
 

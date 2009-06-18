@@ -119,10 +119,10 @@ then
     system:0:login_shell="$LOGIN_SHELL"
 fi
 #
-if [ -f "${NGRAPHHOME}/.Ngraph.ngp" ]; then
-    . "${NGRAPHHOME}/.Ngraph.ngp"
-elif [ -f "${NGRAPHLIB}/.Ngraph.ngp" ]; then
-    . "${NGRAPHLIB}/.Ngraph.ngp"
+if [ -f "${NGRAPHHOME}/Ngraph.ngp" ]; then
+    . "${NGRAPHHOME}/Ngraph.ngp"
+elif [ -f "${NGRAPHLIB}/Ngraph.ngp" ]; then
+    . "${NGRAPHLIB}/Ngraph.ngp"
 fi
 #
 LOADSETTINGS=0

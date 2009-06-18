@@ -18,8 +18,10 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11print.c x11print.h x11view.c x11view.h gtk_widget.c		\
 	gtk_widget.h dir_defs.h
 
+ngraphconfdir = $(sysconfdir)/$(PACKAGE)
+
 dir_defs.h: dir_defs.h.in Makefile
-	sh ../../pathconv.sh $(docdir) $(pkgdatadir) $(demodir) dir_defs.h.in
+	sh ../../pathconv.sh $(docdir) $(pkglibdir) $(ngraphconfdir) dir_defs.h.in
 
 libngraph_la_LDFLAGS = -static
 

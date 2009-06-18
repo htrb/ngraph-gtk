@@ -200,7 +200,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-zshdir = $(pkgdatadir)/zsh
+ngraphconfdir = $(sysconfdir)/$(PACKAGE)
+zshdir = $(ngraphconfdir)/zsh
 zsh_DATA = _ngraph _gra2ps _gra2wmf _ngp2
 EXTRA_DIST = ${zsh_DATA}
 all: all-am

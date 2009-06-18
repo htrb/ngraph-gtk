@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.h,v 1.6 2009/06/15 07:38:43 hito Exp $
+ * $Id: ioutil.h,v 1.7 2009/06/18 11:32:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,7 +28,7 @@
 #define DIRSEP '/'
 #define PATHSEP ":"
 #define CONFSEP "/"
-#define CONFTOP "/."
+#define CONFTOP "/"
 typedef int HANDLE;
 #define NOHANDLE -1
 #define NFMODE (S_IRUSR | S_IWUSR)

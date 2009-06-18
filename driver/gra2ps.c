@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2ps.c,v 1.5 2009/04/04 06:18:47 hito Exp $
+ * $Id: gra2ps.c,v 1.6 2009/06/18 11:32:06 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -1248,8 +1248,8 @@ int main(int argc,char **argv)
     if ((libdir=(char *)malloc(strlen(lib)+1))==NULL) exit(1);
     strcpy(libdir,lib);
   } else {
-    if ((libdir=(char *)malloc(strlen(DATADIR)+1))==NULL) exit(1);
-    strcpy(libdir,DATADIR);
+    if ((libdir=(char *)malloc(strlen(CONFDIR)+1))==NULL) exit(1);
+    strcpy(libdir,CONFDIR);
   }
   if ((home=getenv("NGRAPHHOME"))!=NULL) {
     if ((homedir=(char *)malloc(strlen(home)+1))==NULL) exit(1);

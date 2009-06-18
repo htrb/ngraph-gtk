@@ -594,7 +594,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -636,7 +636,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -678,7 +678,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -720,7 +720,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:0'
 	file::axis_y='axis:1'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -762,7 +762,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:4'
 	file::axis_y='axis:5'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -804,7 +804,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:4'
 	file::axis_y='axis:5'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -846,7 +846,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:4'
 	file::axis_y='axis:5'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -888,7 +888,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:4'
 	file::axis_y='axis:5'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -930,7 +930,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:4'
 	file::axis_y='axis:5'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new file
 	file::hidden=false
@@ -972,7 +972,7 @@ new file
 	file::move_data_y=
 	file::axis_x='axis:4'
 	file::axis_y='axis:5'
-	file::file='DEMODIRDEF/demo4.dat'
+	file::file='DOCDIRDEF/demo4.dat'
 
 new line
 	line::hidden=false

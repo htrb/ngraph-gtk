@@ -1,4 +1,6 @@
-pkgdata_DATA = gra2ps.ini Ngraph.ps gra2wmf.ini
+ngraphconfdir = $(sysconfdir)/$(PACKAGE)
+
+ngraphconf_DATA = gra2ps.ini Ngraph.ps gra2wmf.ini
 
 EXTRA_DIST = dir_defs.h.in ngp2.in ${pkgdata_DATA}
 
@@ -11,7 +13,7 @@ gra2ps_SOURCES = gra2ps.c dir_defs.h
 gra2wmf_SOURCES = gra2wmf.c wmfapi.c wmfapi.h dir_defs.h
 
 dir_defs.h: dir_defs.h.in Makefile
-	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(demodir) dir_defs.h.in
+	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(ngraphconfdir) dir_defs.h.in
 
 ngp2: ngp2.in Makefile
 	sh ../pathconv.sh $(docdir) $(pkgdatadir) $(bindir) ngp2.in
