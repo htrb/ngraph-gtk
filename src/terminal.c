@@ -38,16 +38,16 @@ main(int argc,char **argv)
 #endif
 
   if (argc < 3) {
-    goto End;
+    return 1;
   }
 
   if (! isatty(0) || ! isatty(1)) {
-    goto End;
+    return 1;
   }
 
   ptr = ttyname(0);
   if (ptr == NULL) {
-    goto End;
+    return 1;
   }
 
   fdo = open(argv[1], O_WRONLY);
@@ -69,20 +69,17 @@ main(int argc,char **argv)
   len = strlen(ptr) + 1;
   if (write(fdo, ptr, len) < 0) {
     close(fdo);
-    goto End;;
+    return 1;
   }
 
   len = snprintf(buf, sizeof(buf) - 1, "%d", getpid()) + 1;
   if (write(fdo, buf, len) < 0) {
     close(fdo);
-    goto End;;
+    return 1;;
   }
   
   close(fdo);
   close(fdi);
-
-  unlink(argv[1]);
-  unlink(argv[2]);
 
   my_signal(SIGTERM, sig_handler);
 
@@ -106,11 +103,4 @@ main(int argc,char **argv)
 #endif /* HAVE_SIGSUSPEND */
 
   return 0;
-
-
- End:
-  unlink(argv[1]);
-  unlink(argv[2]);
-
-  return 1;
 }

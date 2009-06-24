@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.41 2009/06/18 11:32:11 hito Exp $
+ * $Id: main.c,v 1.42 2009/06/24 07:00:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,6 +25,7 @@
 
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -276,15 +277,61 @@ resizeconsole(int col, int row)
 {
 }
 
+static void
+reset_fifo(char *fifo_in, char *fifo_out)
+{
+  int fdi, fdo;
+
+  fdi = open(fifo_in, O_WRONLY);
+  fdo = open(fifo_out, O_RDONLY);
+  if (fdi >= 0)
+    close(fdi);
+
+  if (fdo >= 0)
+    close(fdo);
+}
+
+static int
+exec_console(char *fifo_in, char *fifo_out)
+{
+  char **argv;
+  pid_t pid;
+
+  pid = fork();
+  if (pid == -1) {
+    unlink(fifo_in);
+    unlink(fifo_out);
+    return 1;
+  } else if (pid == 0) {
+    pid = fork();
+    if (pid == 0) {
+      char buf[256], *s, *s2;
+      int len;
+
+      snprintf(buf, sizeof(buf), "%s %s %s", terminal, fifo_in, fifo_out);
+      argv = NULL;
+      s = buf;
+      while ((s2 = getitok2(&s, &len, " \t")) != NULL) {
+	arg_add(&argv, s2);
+      }
+      execvp(argv[0], argv);
+    } else if (pid != -1) {
+      int status;
+
+      waitpid(pid, &status, 0);
+    }
+    reset_fifo(fifo_in, fifo_out);
+    exit(0);
+  }
+  return 0;
+}
+
 int
 nallocconsole(void)
 {
-  int fd[3] = {-1, -1, -1}, fdi, fdo, len;
+  int fd[3] = {-1, -1, -1}, fdi, fdo;
   unsigned int i;
-  pid_t pid;
   char buf[256], ttyname[256], fifo_in[1024], fifo_out[1024];
-  char *s, *s2;
-  char **argv;
   struct objlist *sys;
   char *sysname;
   char *version;
@@ -307,28 +354,19 @@ nallocconsole(void)
     return FALSE;
   }
 
-  if ((pid = fork()) == -1) {
-    unlink(fifo_in);
-    unlink(fifo_out);
+  if (exec_console(fifo_in, fifo_out))
     return FALSE;
-  } else if (pid == 0) {
-    snprintf(buf, sizeof(buf), "%s %s %s", terminal, fifo_in, fifo_out);
-    argv = NULL;
-    s = buf;
-    while ((s2 = getitok2(&s, &len, " \t")) != NULL) {
-      arg_add(&argv, s2);
-    }
-    execvp(argv[0], argv);
-    exit(1);
-  }
+
   fdi = open(fifo_in, O_RDONLY);
   fdo = open(fifo_out, O_WRONLY);
+  unlink(fifo_in);
+  unlink(fifo_out);
 
   sys = chkobject("system");
   getobj(sys, "name", 0, 0, NULL, &sysname);
   getobj(sys, "version", 0, 0, NULL, &version);
   snprintf(buf, sizeof(buf), "%c]2;Ngraph shell%c%s version %s. Script interpreter.\n",
-	  0x1b, 0x07, sysname, version);
+	   0x1b, 0x07, sysname, version);
 
   if (write(fdo, buf, strlen(buf) + 1) < 0) {
     close(fdi);
