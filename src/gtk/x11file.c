@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.98 2009/06/15 07:38:44 hito Exp $
+ * $Id: x11file.c,v 1.99 2009/06/26 09:30:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1324,7 +1324,7 @@ FitDialogClose(GtkWidget *w, void *data)
 
   ret = d->ret;
   d->ret = IDLOOP;
-  if (d->ret == IDOK && ! FitDialogApply(w, d)) {
+  if (ret == IDOK && ! FitDialogApply(w, d)) {
     return;
   }
   d->ret = ret;

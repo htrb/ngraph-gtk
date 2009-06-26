@@ -1,3 +1,8 @@
+2009-06-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FitDialogClose): check "ret" instead of
+	"d->ret" with "IDOK".
+
 2009-06-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.c (reset_fifo, exec_console): add.
