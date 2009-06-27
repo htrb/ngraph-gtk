@@ -3,7 +3,7 @@ pkglib_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
 
 pkglib_SCRIPTS = calc.tcl fft.tcl fitrslt.tcl legend.tcl
 
-EXTRA_DIST = ${pkgdata_DATA} ${pkgdata_SCRIPTS} fft.nsc.in
+EXTRA_DIST = ${pkglib_DATA} ${pkglib_SCRIPTS} fft.nsc.in
 
 pkglib_PROGRAMS = fft
 

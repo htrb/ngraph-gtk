@@ -2,7 +2,7 @@ ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 
 ngraphconf_DATA = gra2ps.ini Ngraph.ps gra2wmf.ini
 
-EXTRA_DIST = dir_defs.h.in ngp2.in ${pkgdata_DATA}
+EXTRA_DIST = dir_defs.h.in ngp2.in ${ngraphconf_DATA}
 
 bin_PROGRAMS = gra2ps gra2wmf
 
