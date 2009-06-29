@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.22 2009/04/06 08:15:29 hito Exp $
+ * $Id: ofit.c,v 1.23 2009/06/29 11:56:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -365,9 +365,10 @@ fitpoly(struct fitlocal *fitlocal,
     else
       i+=sprintf(buf+i,"|r| or |R| = -------------\n");
     ndisplaydialog(buf);
+
+    display_equation(equation);
   }
 
-  display_equation(equation);
 
   return 0;
 }
@@ -717,7 +718,9 @@ errexit:
     }
     equation[j] = '\0';
     fitlocal->equation = equation;
-    display_equation(equation);
+    if (disp) {
+      display_equation(equation);
+    }
   }
   return ecode;
 }

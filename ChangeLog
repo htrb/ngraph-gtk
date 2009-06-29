@@ -1,3 +1,8 @@
+2009-06-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (fitpoly, fituser): call "display_equation()" only
+	when "disp" is true.
+
 2009-06-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FitDialogClose): check "ret" instead of
