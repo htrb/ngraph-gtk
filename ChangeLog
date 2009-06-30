@@ -1,3 +1,13 @@
+2009-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairofile.c (gra2cairofile_output): call
+	"gra2cairo_finalize_path()" before call
+	"cairo_surface_write_to_png()".
+
+	* src/gtk/ogra2cairo.c (gra2cairo_finalize_path): add.
+	(gra2cairo_free, gra2cairo_flush, gra2cairo_output): use
+	"gra2cairo_finalize_path()".
+
 2009-06-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (fitpoly, fituser): call "display_equation()" only

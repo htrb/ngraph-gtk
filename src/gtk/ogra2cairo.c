@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.50 2009/06/03 10:35:20 hito Exp $
+ * $Id: ogra2cairo.c,v 1.51 2009/06/30 03:35:46 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -481,6 +481,17 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   return 1;
 }
 
+void
+gra2cairo_finalize_path(struct gra2cairo_local *local)
+{
+  double x, y;
+
+  cairo_get_current_point(local->cairo, &x, &y);
+  cairo_stroke(local->cairo);
+  cairo_move_to(local->cairo, x, y);
+  local->linetonum = 0;
+}
+
 struct gra2cairo_local *
 gra2cairo_free(struct objlist *obj, char *inst)
 {
@@ -493,8 +504,7 @@ gra2cairo_free(struct objlist *obj, char *inst)
 
   if (local->cairo) {
     if (local->linetonum) {
-      cairo_stroke(local->cairo);
-      local->linetonum = 0;
+      gra2cairo_finalize_path(local);
     }
     cairo_destroy(local->cairo);
   }
@@ -810,8 +820,7 @@ gra2cairo_flush(struct objlist *obj, char *inst, char *rval, int argc, char **ar
     return -1;
 
   if (local->linetonum) {
-    cairo_stroke(local->cairo);
-    local->linetonum = 0;
+    gra2cairo_finalize_path(local);
   }
 
   return check_cairo_status(local->cairo);
@@ -839,10 +848,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     return -1;
 
   if (local->linetonum && code != 'T') {
-    cairo_get_current_point(local->cairo, &x, &y);
-    cairo_stroke(local->cairo);
-    cairo_move_to(local->cairo, x, y);
-    local->linetonum = 0;
+    gra2cairo_finalize_path(local);
   }
   switch (code) {
   case 'I':
