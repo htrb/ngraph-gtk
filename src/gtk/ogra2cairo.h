@@ -55,6 +55,6 @@ void gra2cairo_remove_fontmap(char *fontalias);
 void gra2cairo_add_fontmap(const char *fontalias, const char *fontname, int type, int two_byte);
 int gra2cairo_get_fontmap_num(void);
 void gra2cairo_save_config(void);
-void gra2cairo_finalize_path(struct gra2cairo_local *local);
+void gra2cairo_draw_path(struct gra2cairo_local *local);
 
 #endif

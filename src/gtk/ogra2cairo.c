@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.51 2009/06/30 03:35:46 hito Exp $
+ * $Id: ogra2cairo.c,v 1.52 2009/06/30 12:06:06 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -482,7 +482,7 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 }
 
 void
-gra2cairo_finalize_path(struct gra2cairo_local *local)
+gra2cairo_draw_path(struct gra2cairo_local *local)
 {
   double x, y;
 
@@ -504,7 +504,7 @@ gra2cairo_free(struct objlist *obj, char *inst)
 
   if (local->cairo) {
     if (local->linetonum) {
-      gra2cairo_finalize_path(local);
+      gra2cairo_draw_path(local);
     }
     cairo_destroy(local->cairo);
   }
@@ -820,7 +820,7 @@ gra2cairo_flush(struct objlist *obj, char *inst, char *rval, int argc, char **ar
     return -1;
 
   if (local->linetonum) {
-    gra2cairo_finalize_path(local);
+    gra2cairo_draw_path(local);
   }
 
   return check_cairo_status(local->cairo);
@@ -848,7 +848,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     return -1;
 
   if (local->linetonum && code != 'T') {
-    gra2cairo_finalize_path(local);
+    gra2cairo_draw_path(local);
   }
   switch (code) {
   case 'I':
