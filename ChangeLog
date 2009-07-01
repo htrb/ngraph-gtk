@@ -1,3 +1,14 @@
+2009-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (DriverDialogClose): use "check_overwrite()".
+
+	* src/gtk/x11gui.c (FileSelectionDialog): don't call
+	"gtk_file_chooser_set_do_overwrite_confirmation()".
+	(FileSelectionDialog): call "check_overwrite()" when "type" is "
+	GTK_FILE_CHOOSER_ACTION_SAVE" and "data->overwrite" is false.
+
+	* src/gtk/x11commn.c (check_overwrite): add.
+
 2009-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairofile.c (gra2cairofile_output): call

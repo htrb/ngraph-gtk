@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.26 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11gui.c,v 1.27 2009/07/01 09:50:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -779,14 +779,25 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
     }
   }
 
-  if (type == GTK_FILE_CHOOSER_ACTION_SAVE) {
-    gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dlg), ! data->overwrite);
-  }
-
   data->ret = IDCANCEL;
 
-  if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
-    fsok(dlg);
+  while (1) {
+    if (gtk_dialog_run(GTK_DIALOG(dlg)) == GTK_RESPONSE_ACCEPT) {
+      fsok(dlg);
+      if (data->ret == IDOK) {
+	if (type == GTK_FILE_CHOOSER_ACTION_SAVE && ! data->overwrite) {
+	  if (check_overwrite(dlg, FileSelection.file[0]) == 0) {
+	    break;
+	  } else {
+	    data->ret = IDCANCEL;
+	  }
+	}
+      } else if (data->ret == IDCANCEL) {
+	break;
+      }
+    } else {
+      break;
+    }
   }
 
   gtk_widget_destroy(dlg);

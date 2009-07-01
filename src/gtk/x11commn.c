@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.40 2009/06/15 07:38:44 hito Exp $
+ * $Id: x11commn.c,v 1.41 2009/07/01 09:50:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -52,6 +52,7 @@
 #include "x11commn.h"
 #include "x11info.h"
 
+#define MESSAGE_BUF_SIZE 4096
 #define COMMENT_BUF_SIZE 1024
 #define CB_BUF_SIZE 128
 
@@ -914,6 +915,28 @@ SaveDrawrable(char *name, int storedata, int storemerge)
     ErrorMessage();
 
   return error;
+}
+
+int
+check_overwrite(GtkWidget *parent, const char *filename)
+{
+  int len2, r;
+  char *buf;
+
+  if (filename == NULL || access(filename, W_OK))
+    return 0;
+
+  len2 = strlen(filename);
+  len2 += MESSAGE_BUF_SIZE;
+  buf = (char *) memalloc(len2);
+  if (buf == NULL)
+    return 1;
+
+  snprintf(buf, len2, _("`%s'\n\nOverwrite existing file?"), filename);
+  r = MessageBox(parent, buf, "Driver", MB_YESNO);
+  memfree(buf);
+
+  return r != IDYES;
 }
 
 int

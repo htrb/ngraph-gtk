@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.h,v 1.8 2009/06/09 06:38:53 hito Exp $
+ * $Id: x11commn.h,v 1.9 2009/07/01 09:50:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,3 +58,4 @@ void ProgressDialogCreate(char *title);
 void ProgressDialogSetTitle(char *title);
 void ProgressDialogFinalize(void);
 void ErrorMessage(void);
+int check_overwrite(GtkWidget *parent, const char *filename);

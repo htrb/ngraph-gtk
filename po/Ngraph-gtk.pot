@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-27\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-06-26 21:29+0900\n"
+"POT-Creation-Date: 2009-07-01 16:25+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -321,7 +321,7 @@ msgstr ""
 msgid "_File"
 msgstr ""
 
-#: src/gtk/x11axis.c:2198 src/gtk/x11file.c:1194 src/gtk/x11print.c:313
+#: src/gtk/x11axis.c:2198 src/gtk/x11file.c:1194 src/gtk/x11print.c:291
 msgid "_Div:"
 msgstr ""
 
@@ -349,44 +349,52 @@ msgstr ""
 msgid "_Position ..."
 msgstr ""
 
-#: src/gtk/x11commn.c:942
+#: src/gtk/x11commn.c:935 src/gtk/x11opt.c:1505
+#, c-format
+msgid ""
+"`%s'\n"
+"\n"
+"Overwrite existing file?"
+msgstr ""
+
+#: src/gtk/x11commn.c:965
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:963 src/gtk/x11opt.c:1512
+#: src/gtk/x11commn.c:986 src/gtk/x11opt.c:1512
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1081 src/gtk/x11commn.c:1156
+#: src/gtk/x11commn.c:1104 src/gtk/x11commn.c:1179
 #, c-format
 msgid "Loading `%.128s'."
 msgstr ""
 
-#: src/gtk/x11commn.c:1268
+#: src/gtk/x11commn.c:1291
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1485
+#: src/gtk/x11commn.c:1508
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1488
+#: src/gtk/x11commn.c:1511
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1492
+#: src/gtk/x11commn.c:1515
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1495
+#: src/gtk/x11commn.c:1518
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1658
+#: src/gtk/x11commn.c:1681
 msgid "error"
 msgstr ""
 
@@ -1267,7 +1275,7 @@ msgid "Clear Viewer Window"
 msgstr ""
 
 #: src/gtk/x11menu.c:236 src/gtk/x11menu.c:237 src/gtk/x11menu.c:238
-#: src/gtk/x11print.c:691
+#: src/gtk/x11print.c:669
 msgid "Print"
 msgstr ""
 
@@ -2015,14 +2023,6 @@ msgstr ""
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1505 src/gtk/x11print.c:251
-#, c-format
-msgid ""
-"`%s'\n"
-"\n"
-"Overwrite existing file?"
-msgstr ""
-
 #: src/gtk/x11opt.c:1506
 msgid "Save as .Ngraph.ngp"
 msgstr ""
@@ -2031,80 +2031,76 @@ msgstr ""
 msgid "External Driver Output"
 msgstr ""
 
-#: src/gtk/x11print.c:260
-msgid "Overwrite existing file?"
-msgstr ""
-
-#: src/gtk/x11print.c:362
+#: src/gtk/x11print.c:340
 msgid "_PostScript Version:"
 msgstr ""
 
-#: src/gtk/x11print.c:398
+#: src/gtk/x11print.c:376
 msgid "_SVG Version:"
 msgstr ""
 
-#: src/gtk/x11print.c:413
+#: src/gtk/x11print.c:391
 msgid "_Convert texts to paths"
 msgstr ""
 
-#: src/gtk/x11print.c:430
+#: src/gtk/x11print.c:408
 msgid "Cairo PS Output"
 msgstr ""
 
-#: src/gtk/x11print.c:433
+#: src/gtk/x11print.c:411
 msgid "Cairo EPS Output"
 msgstr ""
 
-#: src/gtk/x11print.c:436
+#: src/gtk/x11print.c:414
 msgid "Cairo PNG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:439
+#: src/gtk/x11print.c:417
 msgid "Cairo PDF Output"
 msgstr ""
 
-#: src/gtk/x11print.c:442
+#: src/gtk/x11print.c:420
 msgid "Cairo SVG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:566
+#: src/gtk/x11print.c:544
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:690
+#: src/gtk/x11print.c:668
 #, c-format
 msgid "Printing error: %s"
 msgstr ""
 
-#: src/gtk/x11print.c:739
+#: src/gtk/x11print.c:717
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:745 src/gtk/x11print.c:1007 src/gtk/x11view.c:5415
+#: src/gtk/x11print.c:723 src/gtk/x11print.c:985 src/gtk/x11view.c:5415
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:806
+#: src/gtk/x11print.c:784
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:845
+#: src/gtk/x11print.c:823
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:887
+#: src/gtk/x11print.c:865
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:1061
+#: src/gtk/x11print.c:1039
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1067
+#: src/gtk/x11print.c:1045
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1068
+#: src/gtk/x11print.c:1046
 msgid "Making data file."
 msgstr ""
 

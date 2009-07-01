@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.41 2009/06/11 05:17:41 hito Exp $
+ * $Id: x11print.c,v 1.42 2009/07/01 09:50:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -193,11 +193,11 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 DriverDialogClose(GtkWidget *w, void *data)
 {
-  int a, i, j, len1, len2;
+  int a, i, j, len, len1, len2;
   struct extprinter *pcur;
   struct DriverDialog *d;
   const char *s, *file;
-  char *buf, *driver, *option;
+  char *driver, *option;
 
   d = (struct DriverDialog *) data;
 
@@ -235,7 +235,8 @@ DriverDialogClose(GtkWidget *w, void *data)
     len2 = strlen(file);
   }
 
-  option = memalloc(len1 + len2 + 7);
+  len = len1 + len2 + 7;
+  option = memalloc(len);
   if (option == NULL) {
     d->ret = IDCANCEL;
     return;
@@ -243,37 +244,14 @@ DriverDialogClose(GtkWidget *w, void *data)
 
   j = 0;
   option[j] = '\0';
-  if (len2 != 0) {
-    if (access(file, 04) == 0) {
-      len2 += MESSAGE_BUF_SIZE;
-      buf = (char *) memalloc(len2);
-      if (buf) {
-	snprintf(buf, len2, _("`%s'\n\nOverwrite existing file?"), file);
-	if (MessageBox(d->widget, buf, "Driver", MB_YESNO) != IDYES) {
-	  memfree(buf);
-	  memfree(option);
-	  d->ret = IDCANCEL;
-	  return;
-	}
-	memfree(buf);
-      } else {
-	if (MessageBox(d->widget, _("Overwrite existing file?"),
-		       "Driver", MB_YESNO) != IDNO) {
-	  memfree(option);
-	  d->ret = IDCANCEL;
-	  return;
-	}
-      }
+  if (file) {
+    if (check_overwrite(d->widget, file)) {
+      memfree(option);
+      d->ret = IDCANCEL;
+      return;
     }
-    option[j++] = '-';
-    option[j++] = 'o';
-    option[j++] = ' ';
-    option[j++] = '\'';
-    strcpy(option + j, file);
-    j = strlen(option);
-    option[j++] = '\'';
-    option[j++] = ' ';
-    option[j] = '\0';
+
+    snprintf(option, len, "-o '%s' ", file);
     changefilename(option);
   }
 
