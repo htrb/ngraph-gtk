@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.99 2009/06/26 09:30:00 hito Exp $
+ * $Id: x11file.c,v 1.100 2009/07/02 06:46:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3167,7 +3167,7 @@ CmFileNew(void)
   if ((obj = chkobject("file")) == NULL)
     return;
   if (nGetOpenFileName(TopLevel, _("Data new"), NULL, NULL,
-		       NULL, &file, NULL, FALSE,
+		       NULL, &file, FALSE,
 		       Menulocal.changedirectory) == IDOK)
   {
     if ((id = newobj(obj)) >= 0) {
@@ -3210,7 +3210,7 @@ CmFileOpen(void)
 
   ret = nGetOpenFileNameMulti(TopLevel, _("Data open"), NULL,
 			      &(Menulocal.fileopendir), NULL,
-			      &file, NULL, Menulocal.changedirectory);
+			      &file, Menulocal.changedirectory);
 
   arrayinit(&farray, sizeof(int));
   if (ret == IDOK && file) {

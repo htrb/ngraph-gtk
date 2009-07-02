@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.102 2009/06/09 06:38:53 hito Exp $
+ * $Id: x11menu.c,v 1.103 2009/07/02 06:46:07 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1245,9 +1245,9 @@ create_image_outputmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_GRA file"), FALSE, "<Ngraph>/Output/GRA File", 0, 0, CmOutputMenu, MenuIdOutputGRAFile);
   create_menu_item(menu, _("_PS file"),  FALSE, "<Ngraph>/Output/PS File",  0, 0, CmOutputMenu, MenuIdOutputPSFile);
   create_menu_item(menu, _("_EPS file"), FALSE, "<Ngraph>/Output/EPS File", 0, 0, CmOutputMenu, MenuIdOutputEPSFile);
-  create_menu_item(menu, _("_PDF file"), FALSE, "<Ngraph>/Output/PDF File", 0, 0, CmOutputMenu, MenuIdOutputPDFFile);
+  create_menu_item(menu, _("P_DF file"), FALSE, "<Ngraph>/Output/PDF File", 0, 0, CmOutputMenu, MenuIdOutputPDFFile);
   create_menu_item(menu, _("_SVG file"), FALSE, "<Ngraph>/Output/SVG File", 0, 0, CmOutputMenu, MenuIdOutputSVGFile);
-  create_menu_item(menu, _("_PNG file"), FALSE, "<Ngraph>/Output/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
+  create_menu_item(menu, _("P_NG file"), FALSE, "<Ngraph>/Output/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
 }
 
 static void

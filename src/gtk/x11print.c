@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.42 2009/07/01 09:50:09 hito Exp $
+ * $Id: x11print.c,v 1.43 2009/07/02 06:46:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -117,27 +117,15 @@ DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
 static void
 DriverDialogBrowseCB(GtkWidget *wi, gpointer client_data)
 {
-  char *file, *buf;
-  int len;
+  char *file;
   struct DriverDialog *d;
 
   d = (struct DriverDialog *) client_data;
 
-  if (d->ext) {
-    len = strlen(d->ext) + 2;
-    buf = memalloc(len);
-    if (buf) {
-      snprintf(buf, len, "*%s", d->ext);
-    }
-  } else {
-    buf = NULL;
-  }
-
-  if (nGetSaveFileName(d->widget, _("External Driver Output"), NULL, NULL,
-		       NULL, &file, buf, TRUE, Menulocal.changedirectory) == IDOK) {
+  if (nGetSaveFileName(d->widget, _("External Driver Output"), d->ext, NULL,
+		       NULL, &file, TRUE, Menulocal.changedirectory) == IDOK) {
     gtk_entry_set_text(GTK_ENTRY(d->file), file);
   }
-  memfree(buf);
   free(file);
 }
 
@@ -821,7 +809,7 @@ CmPrintGRAFile(void)
   tmp = get_base_ngp_name();
 
   ret = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp,
-			 &filebuf, "*.gra", FALSE, Menulocal.changedirectory);
+			 &filebuf, FALSE, Menulocal.changedirectory);
 
   if (tmp)
     free(tmp);
@@ -874,7 +862,7 @@ CmOutputImage(int type)
   int id, g2wid, g2woid;
   char *g2winst;
   int ret, format, t2p, dpi;
-  char *ext_name, *ext_str, *ext;
+  char *title, *ext_str;
   char *file, *filebuf, *tmp;
 
   if (Menulock || GlobalLock)
@@ -882,41 +870,34 @@ CmOutputImage(int type)
 
   switch (type) {
   case MenuIdOutputPSFile:
-    ext_name = "PostScript (*.ps)";
+    title = "Save as PostScript";
     ext_str = "ps";
-    ext = "*.ps";
     break;
   case MenuIdOutputEPSFile:
-    ext_name = "Encapsulated PostScript (*.eps)";
+    title = "Save as Encapsulated PostScript";
     ext_str = "eps";
-    ext = "*.eps";
     break;
   case MenuIdOutputPDFFile:
-    ext_name = "PDF (*.pdf)";
+    title = "Save as Portable Document Format (PDF)";
     ext_str = "pdf";
-    ext = "*.pdf";
     break;
   case MenuIdOutputPNGFile:
-    ext_name = "PNG (*.png)";
+    title = "Save as Portable Network Graphics (PNG)";
     ext_str = "png";
-    ext = "*.png";
     break;
   case MenuIdOutputSVGFile:
-    ext_name = "SVG (*.svg)";
+    title = "Save as Scalable Vector Graphics (SVG)";
     ext_str = "svg";
-    ext = "*.svg";
     break;
   default:
     /* not reachable */
-    ext_name = NULL;
+    title = NULL;
     ext_str = NULL;
-    ext = NULL;
   }
 
   tmp = get_base_ngp_name();
-
-  ret = nGetSaveFileName(TopLevel, ext_name, ext_str, NULL, tmp,
-			 &filebuf, ext, FALSE, Menulocal.changedirectory);
+  ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
+			 &filebuf, FALSE, Menulocal.changedirectory);
   if (tmp)
     free(tmp);
 
@@ -1037,7 +1018,7 @@ CmPrintDataFile(void)
   }
 
   if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
-		       &file, NULL, FALSE, Menulocal.changedirectory) != IDOK) {
+		       &file, FALSE, Menulocal.changedirectory) != IDOK) {
     arraydel(&farray);
     return;
   }

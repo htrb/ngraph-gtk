@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.26 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11merge.c,v 1.27 2009/07/02 06:46:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -227,7 +227,7 @@ CmMergeOpen(void)
     return;
 
   if (nGetOpenFileName(TopLevel, _("Merge open"), "gra", NULL, NULL, &name,
-		       "*.gra", TRUE, Menulocal.changedirectory) != IDOK || ! name)
+		       TRUE, Menulocal.changedirectory) != IDOK || ! name)
     return;
 
   id = newobj(obj);

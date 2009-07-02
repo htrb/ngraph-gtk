@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.10 2009/05/15 14:30:07 hito Exp $
+ * $Id: x11gui.h,v 1.11 2009/07/02 06:46:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,12 +61,12 @@ int DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *ar
 int DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r);
 int nGetOpenFileNameMulti(GtkWidget * parent,
 			  char *title, char *defext, char **initdir,
-			  const char *initfil, char ***file, char *filter, int chd);
+			  const char *initfil, char ***file, int chd);
 int nGetOpenFileName(GtkWidget * parent, char *title, char *defext,
-		     char **initdir, const char *initfil, char **file, char *filter,
+		     char **initdir, const char *initfil, char **file,
 		     int exist, int chd);
 int nGetSaveFileName(GtkWidget * parent, char *title, char *defext,
-		     char **initdir, const char *initfil, char **file, char *filter,
+		     char **initdir, const char *initfil, char **file,
 		     int overwrite, int chdir);
 void get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h, GdkWindowState *state);
 void set_sensitivity_by_check_instance(GtkWidget *widget, gpointer user_data);

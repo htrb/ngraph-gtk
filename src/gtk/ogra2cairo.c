@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.52 2009/06/30 12:06:06 hito Exp $
+ * $Id: ogra2cairo.c,v 1.53 2009/07/02 06:46:07 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -185,7 +185,6 @@ void
 gra2cairo_save_config(void)
 {
   char *buf;
-  int len;
   struct fontmap *fcur;
   struct narray conf;
 
@@ -199,15 +198,15 @@ gra2cairo_save_config(void)
   } else {
     fcur = Gra2cairoConf->fontmap_list_root;
     while (fcur) {
-      len = strlen(fcur->fontalias) + strlen(fcur->fontname) + 64;
-      buf = (char *) memalloc(len);
+      char *ptr;
+      ptr = g_strdup_printf("font_map=%s,%s,%d,%s",
+			    fcur->fontalias,
+			    gra2cairo_get_font_type_str(fcur->type),
+			    (fcur->twobyte) ? 1 : 0,
+			    fcur->fontname);
+      buf = nstrdup(ptr);
+      g_free(ptr);
       if (buf) {
-	snprintf(buf, len,
-		 "font_map=%s,%s,%d,%s",
-		 fcur->fontalias,
-		 gra2cairo_get_font_type_str(fcur->type),
-		 (fcur->twobyte) ? 1 : 0,
-	       fcur->fontname);
 	arrayadd(&conf, &buf);
       }
       fcur = fcur->next;

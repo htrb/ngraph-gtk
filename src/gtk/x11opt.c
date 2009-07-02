@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.64 2009/05/18 05:23:20 hito Exp $
+ * $Id: x11opt.c,v 1.65 2009/07/02 06:46:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -234,7 +234,7 @@ SetScriptDialogBrowse(GtkWidget *w, gpointer client_data)
 
   d = (struct SetScriptDialog *) client_data;
   if (nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL,
-		       NULL, &file, "*.nsc", TRUE, FALSE) == IDOK) {
+		       NULL, &file, TRUE, FALSE) == IDOK) {
     gtk_entry_set_text(GTK_ENTRY(d->script), file);
   }
   free(file);
@@ -453,7 +453,7 @@ SetDriverDialogBrowse(GtkWidget *w, gpointer client_data)
 
   d = (struct SetDriverDialog *) client_data;
   if (nGetOpenFileName(d->widget, _("External Driver"), NULL, NULL,
-		       NULL, &file, "*", TRUE, FALSE) == IDOK) {
+		       NULL, &file, TRUE, FALSE) == IDOK) {
     gtk_entry_set_text(GTK_ENTRY(d->driver), file);
   }
   free(file);

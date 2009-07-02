@@ -43,34 +43,23 @@ static void
 entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
   struct objlist *obj;
-  char *file, *buf, *ext;
+  char *file, *ext;
 
   obj = (struct objlist *) user_data;
   if (obj == NULL)
     return;
 
-  buf = NULL;
   ext = NULL;
   if (chkobjfield(obj, "ext") == 0 && chkobjlastinst(obj) >= 0) {
-    int len;
-
     getobj(obj, "ext", 0, 0, NULL, &ext);
-    if (ext) {
-      len = strlen(ext) + 3;
-      buf = memalloc(len);
-      if (buf) {
-	snprintf(buf, len, "*.%s", ext);
-      }
-    }
   }
 
   if (nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL,
 		       gtk_entry_get_text(w),
-		       &file, buf, TRUE, Menulocal.changedirectory) == IDOK && file) {
+		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     gtk_entry_set_text(w, file);
     free (file);
   }
-  memfree(buf);
 }
 #endif
 

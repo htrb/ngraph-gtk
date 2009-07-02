@@ -1,3 +1,46 @@
+2009-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (DriverDialogBrowseCB, CmPrintGRAFile)
+	(CmOutputImage, CmPrintDataFile): change the arguments of the
+	function "nGetSaveFileName()".
+
+	* src/gtk/x11opt.c (SetScriptDialogBrowse)
+	(SetDriverDialogBrowse): change the arguments of the function
+	"nGetOpenFileName()".
+
+	* src/gtk/x11merge.c (CmMergeOpen): change the arguments of the
+	function "nGetOpenFileName()".
+
+	* src/gtk/x11gui.c (file_dialog_set_current_neme): add.
+	(FileSelectionDialog): use "file_dialog_set_current_neme()".
+	(nGetOpenFileNameMulti, nGetOpenFileName, nGetSaveFileName):
+	remove the argument "filter".
+	(struct nGetOpenFileData): remove member "filter".
+
+	* src/gtk/x11graph.c (CmGraphLoad): change the
+	arguments of the function "nGetOpenFileName()".
+
+	* src/gtk/x11file.c (CmFileNew, CmFileOpen): change the arguments
+	of the functions "nGetOpenFileName()" and
+	"nGetOpenFileNameMulti()".
+
+	* src/gtk/x11commn.c (GraphSave): change the arguments of the
+	function "nGetSaveFileName()".
+
+	* src/gtk/ox11dlg.c (dlggetopenfile, dlggetopenfiles)
+	(dlggetsavefile): change the arguments of the functions
+	"nGetOpenFileName()", "nGetOpenFileNameMulti()" and
+	"nGetSaveFileName()".
+
+	* src/gtk/ogra2cairo.c (gra2cairo_save_config): use
+	"g_strdup_printf()" instead of "snprintf()".
+
+	* src/gtk/gtk_widget.c (entry_icon_file_select): change the
+	arguments of the function "nGetOpenFileName()".
+
+	* src/gtk/gtk_subwin.c (file_select): change the arguments of the
+	function "nGetOpenFileName()".
+
 2009-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (DriverDialogClose): use "check_overwrite()".

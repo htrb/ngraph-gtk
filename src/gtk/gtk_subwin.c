@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.47 2009/05/15 14:30:07 hito Exp $
+ * $Id: gtk_subwin.c,v 1.48 2009/07/02 06:46:07 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -39,7 +39,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 {
   struct SubWin *d;
   int sel;
-  char *buf, *file, *ext;
+  char *file, *ext;
 
   d = (struct SubWin *) user_data;
 
@@ -47,28 +47,17 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
   if (sel < 0 || sel > d->num)
     return;
 
-  buf = NULL;
   ext = NULL;
   if (chkobjfield(d->obj, "ext") == 0) {
-    int len;
-
     getobj(d->obj, "ext", sel, 0, NULL, &ext);
-    if (ext) {
-      len = strlen(ext) + 3;
-      buf = memalloc(len);
-      if (buf) {
-	snprintf(buf, len, "*.%s", ext);
-      }
-    }
   }
 
   if (nGetOpenFileName(d->Win, _("Open"), ext, NULL, gtk_entry_get_text(w),
-		       &file, buf, TRUE, Menulocal.changedirectory) == IDOK && file) {
+		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     gtk_entry_set_text(w, file);
     modify_string(d, "file", file);
     free (file);
   }
-  memfree(buf);
 }
 #endif
 

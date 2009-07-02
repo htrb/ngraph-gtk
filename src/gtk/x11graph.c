@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.48 2009/06/09 06:38:53 hito Exp $
+ * $Id: x11graph.c,v 1.49 2009/07/02 06:46:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1104,7 +1104,7 @@ CmGraphLoad(void)
 
   if (nGetOpenFileName(TopLevel,
 		       _("Load NGP file"), "ngp", &(Menulocal.graphloaddir),
-		       NULL, &file, "*.ngp", TRUE,
+		       NULL, &file, TRUE,
 		       Menulocal.changedirectory) == IDOK) {
 
     ext = getextention(file);

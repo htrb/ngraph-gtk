@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.22 2009/05/15 14:30:07 hito Exp $
+ * $Id: ox11dlg.c,v 1.23 2009/07/02 06:46:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -425,8 +425,8 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
     initfile = d[1];
   }
   ret = nGetOpenFileName(DLGTopLevel, _("Open file"),
-			 NULL, NULL, initfile,
-			 &file, filter, TRUE, TRUE);
+			 filter, NULL, initfile,
+			 &file, TRUE, TRUE);
   if (ret == IDOK) {
     file2 = nstrdup(file);
     if (file2) {
@@ -474,8 +474,7 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
     initfile = d[1];
   }
   ret = nGetOpenFileNameMulti(DLGTopLevel, _("Open files"),
-			      NULL, NULL, initfile,
-			      &file, filter, TRUE);
+			      filter, NULL, initfile, &file, TRUE);
   if (ret == IDOK) {
     farray = arraynew(sizeof(char *));
     for (i = 0; file[i]; i++) {
@@ -525,8 +524,8 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
     initfile = d[1];
   }
   ret = nGetSaveFileName(DLGTopLevel, _("Save file"),
-			 NULL, NULL, initfile,
-			 &file, filter, FALSE, TRUE);
+			 filter, NULL, initfile,
+			 &file, FALSE, TRUE);
   if (ret == IDOK) {
     file2 = nstrdup(file);
     if (file2) {
