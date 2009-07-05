@@ -1,5 +1,5 @@
 #! CONFDIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.11 2009/06/18 11:32:06 hito Exp $
+# $Id: ngp2.in,v 1.12 2009/07/05 06:14:31 hito Exp $
 
 IGN_PATH=0
 AUTO_SCALE=0
@@ -14,7 +14,7 @@ clear_viewer() {
 	del ${i}:0-!
     done
 
-    if exist gra:viewer > $NULL_DEVICE
+    if exist -q gra:viewer
     then
 	del gra:viewer
     fi
@@ -22,15 +22,26 @@ clear_viewer() {
 
 save_image() {
     new gra2cairofile name=OUTPUT
-    new gra
-    gra2cairofile::format=$1
-    gra2cairofile::file=$2
-    gra::device=gra2cairofile:OUTPUT
-    gra::open
-    gra::draw
-    gra::close
-    del gra
-    del gra2cairofile
+    new gra name=OUTPUT
+    gra2cairofile:OUTPUT:format=$1
+    gra2cairofile:OUTPUT:file=$2
+    gra:OUTPUT:device=gra2cairofile:OUTPUT
+
+    if exist -q gra:viewer
+    then
+	cpy gra:viewer,OUTPUT draw_obj left_margin top_margin zoom paper_width paper_height
+    fi
+
+    if exist -q fit
+    then
+	fit:0-!:display=false
+    fi
+
+    gra:OUTPUT:open
+    gra:OUTPUT:draw
+    gra:OUTPUT:close
+    del gra:OUTPUT
+    del gra2cairofile:OUTPUT
 }
 
 save_gra() {
@@ -131,7 +142,7 @@ do
 	NGP_NAME=`basename "$NGP_FILE" .ngp`
 	PATH_NAME=`dirname $NGP_FILE`
 
-	if exist menu > $NULL_DEVICE
+	if exist -q menu
 	then
 	    menu::fullpath_ngp="$NGP_FILE"
 	fi
@@ -161,9 +172,9 @@ do
 	    cd $PATH_NAME
 	fi
 
-	if exist axis > $NULL_DEVICE
+	if exist -q axis
 	then
-	    if exist file > $NULL_DEVICE
+	    if exist -q file
 	    then
 		case "$AUTO_SCALE" in
 		    2)
@@ -235,7 +246,7 @@ done
 
 echo
 
-if exist menu > $NULL_DEVICE
+if exist -q menu
 then
     del menu
 fi

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.43 2009/07/02 06:46:07 hito Exp $
+ * $Id: x11print.c,v 1.44 2009/07/05 06:14:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -181,7 +181,7 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 static void
 DriverDialogClose(GtkWidget *w, void *data)
 {
-  int a, i, j, len, len1, len2;
+  int a, i;
   struct extprinter *pcur;
   struct DriverDialog *d;
   const char *s, *file;
@@ -192,7 +192,6 @@ DriverDialogClose(GtkWidget *w, void *data)
   if (d->ret == IDCANCEL)
     return;
 
-  
   a = combo_box_get_active(d->driver);
   pcur = Menulocal.extprinterroot;
   i = 0;
@@ -211,40 +210,19 @@ DriverDialogClose(GtkWidget *w, void *data)
   s = gtk_entry_get_text(GTK_ENTRY(d->option));
   file = gtk_entry_get_text(GTK_ENTRY(d->file));
 
-  if (s == NULL) {
-    len1 = 0;
-  } else {
-    len1 = strlen(s);
+  option = NULL;
+
+  if (s || file) {
+    char *ptr;
+
+    ptr = g_strdup_printf("%s%s%s%s",
+		  (file) ? "-o '" : "",
+		  CHK_STR(file),
+		  (file) ? "' " : "",
+		  CHK_STR(s));
+    option = nstrdup(ptr);
+    g_free(ptr);
   }
-
-  if (file == NULL) {
-    len2 = 0;
-  } else {
-    len2 = strlen(file);
-  }
-
-  len = len1 + len2 + 7;
-  option = memalloc(len);
-  if (option == NULL) {
-    d->ret = IDCANCEL;
-    return;
-  }
-
-  j = 0;
-  option[j] = '\0';
-  if (file) {
-    if (check_overwrite(d->widget, file)) {
-      memfree(option);
-      d->ret = IDCANCEL;
-      return;
-    }
-
-    snprintf(option, len, "-o '%s' ", file);
-    changefilename(option);
-  }
-
-  if (len1 != 0)
-    strcat(option, s);
 
   putobj(d->Obj, "option", d->Id, option);
 }

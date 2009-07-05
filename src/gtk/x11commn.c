@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.42 2009/07/02 06:46:07 hito Exp $
+ * $Id: x11commn.c,v 1.43 2009/07/05 06:14:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -920,21 +920,15 @@ SaveDrawrable(char *name, int storedata, int storemerge)
 int
 check_overwrite(GtkWidget *parent, const char *filename)
 {
-  int len2, r;
+  int r;
   char *buf;
 
   if (filename == NULL || access(filename, W_OK))
     return 0;
 
-  len2 = strlen(filename);
-  len2 += MESSAGE_BUF_SIZE;
-  buf = (char *) memalloc(len2);
-  if (buf == NULL)
-    return 1;
-
-  snprintf(buf, len2, _("`%s'\n\nOverwrite existing file?"), filename);
+  buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), filename);
   r = MessageBox(parent, buf, "Driver", MB_YESNO);
-  memfree(buf);
+  g_free(buf);
 
   return r != IDYES;
 }
@@ -1302,8 +1296,7 @@ CheckSave(void)
 static void
 AddNgpFileList(char *file)
 {
-  char *full_name, *uri, protocol[] = "file://";
-  int len;
+  char *full_name, *uri;
   GtkRecentData recent_data = {
     NULL,
     AppName,
@@ -1318,19 +1311,9 @@ AddNgpFileList(char *file)
   if (full_name == NULL)
     return;
 
-  len = strlen(full_name) + sizeof(protocol);
-  uri = memalloc(len);
-  if (uri == NULL) {
-    memfree(full_name);
-    return;
-  }
-
-  snprintf(uri, len, "%s%s", protocol, full_name);
-  memfree(full_name);
-
+  uri = g_strdup_printf("file://%s", full_name);
   gtk_recent_manager_add_full(Menulocal.ngpfilelist, uri, &recent_data);
-
-  memfree(uri);
+  g_free(uri);
 }
 
 void
@@ -1530,7 +1513,7 @@ SaveHistory(void)
 {
   struct narray conf;
   char *buf;
-  int i, num, len;
+  int i, num;
   char **data, data_history[] = "data_history=";
 
   if (!Menulocal.savehistory)
@@ -1543,10 +1526,12 @@ SaveHistory(void)
   data = (char **) arraydata(Menulocal.datafilelist);
   for (i = 0; i < num; i++) {
     if (data[i]) {
-      len = sizeof(data_history) + strlen(data[i]);
-      buf = memalloc(len);
+      char *ptr;
+
+      ptr = g_strdup_printf("%s%s", data_history, data[i]);
+      buf = nstrdup(ptr);
+      g_free(ptr);
       if (buf) {
-	snprintf(buf, len, "%s%s", data_history, data[i]);
 	arrayadd(&conf, &buf);
       }
     }

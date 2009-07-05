@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.79 2009/06/09 06:38:53 hito Exp $
+ * $Id: ox11menu.c,v 1.80 2009/07/05 06:14:40 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -357,15 +357,14 @@ add_color_to_array(struct menu_config *cfg, struct narray *conf)
 static void
 add_prm_str_to_array(struct menu_config *cfg, struct narray *conf)
 {
-  char *buf, *prm;
-  int len;
+  char *buf, *prm, *ptr;
 
   prm = CHK_STR(* (char **) cfg->data);
 
-  len = strlen(prm) + strlen(cfg->name) + 2;
-  buf = (char *) memalloc(len);
+  ptr = g_strdup_printf("%s=%s", cfg->name, prm);
+  buf = nstrdup(ptr);
+  g_free(ptr);
   if (buf) {
-    snprintf(buf, len, "%s=%s", cfg->name, prm);
     arrayadd(conf, &buf);
   }
 }
@@ -373,9 +372,8 @@ add_prm_str_to_array(struct menu_config *cfg, struct narray *conf)
 static void
 save_ext_driver_config(struct narray *conf)
 {
-  char *buf, *driver, *ext, *option;
+  char *ptr, *buf, *driver, *ext, *option;
   struct extprinter *pcur;
-  int len;
 
   pcur = Menulocal.extprinterroot;
   while (pcur) {
@@ -383,11 +381,10 @@ save_ext_driver_config(struct narray *conf)
     ext = CHK_STR(pcur->ext);
     option= CHK_STR(pcur->option);
 
-    len = strlen(pcur->name) + strlen(driver) + strlen(ext) + strlen(option) + 20;
-
-    buf = (char *) memalloc(len);
+    ptr = g_strdup_printf("ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
+    buf = nstrdup(ptr);
+    g_free(ptr);
     if (buf) {
-      snprintf(buf, len, "ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
       arrayadd(conf, &buf);
     }
     pcur = pcur->next;
@@ -397,8 +394,7 @@ save_ext_driver_config(struct narray *conf)
 static void
 save_script_config(struct narray *conf)
 {
-  char *buf, *script, *option, *description;
-  int len;
+  char *buf, *ptr, *script, *option, *description;
   struct script *scur;
 
   scur = Menulocal.scriptroot;
@@ -407,10 +403,10 @@ save_script_config(struct narray *conf)
     option = CHK_STR(scur->option);
     description = CHK_STR(scur->description);
 
-    len = strlen(scur->name) + strlen(script) + strlen(description) + strlen(option) + 20;
-    buf = (char *) memalloc(len);
+    ptr = g_strdup_printf("script=%s,%s,%s,%s", scur->name, script, description, option);
+    buf = nstrdup(ptr);
+    g_free(ptr);
     if (buf) {
-      snprintf(buf, len, "script=%s,%s,%s,%s", scur->name, script, description, option);
       arrayadd(conf, &buf);
     }
     scur = scur->next;
@@ -1584,7 +1580,7 @@ reset_graph_modified(void)
 static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
   {"done", NVFUNC, NEXEC, menudone, NULL, 0},
-  {"menu", NVFUNC, NREAD | NEXEC, menumenu, NULL, 0},
+  {"menu", NVFUNC, NREAD | NEXEC, menumenu, "s", 0},
   {"ngp", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"fullpath_ngp", NSTR, NREAD | NWRITE, mxfullpathngp, NULL, 0},
   {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},

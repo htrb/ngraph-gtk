@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.34 2009/06/03 09:00:48 hito Exp $
+ * $Id: object.c,v 1.35 2009/07/05 06:14:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4100,8 +4100,8 @@ sexefield(struct objlist *obj,int id,char *arg)
 
   s=arg;
   if ((s==NULL)
-  || (strchr(":= \t",s[0])!=NULL)
-  || ((field=getitok2(&s,&len,":= \t"))==NULL)) {
+      || (strchr(":= \t",s[0])!=NULL)
+      || ((field=getitok2(&s,&len,":= \t"))==NULL)) {
     if (len==-1) return -1;
     error2(obj,ERRFIELD,arg);
     return -1;

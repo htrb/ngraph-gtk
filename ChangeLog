@@ -1,3 +1,44 @@
+2009-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (DriverDialogClose): use "g_strdup_printf()"
+	instead of "snprintf()".
+
+	* src/gtk/x11opt.c (create_font_selection_dialog): use
+	"g_strdup_printf()" instead of "snprintf()".
+
+	* src/gtk/x11menu.c (createmenu): use "g_strdup_printf()" instead
+	of "snprintf()".
+	(load_hist_file, save_hist_file): add.
+	(save_entry_history): use "save_hist_file()".
+	(load_hist): use "load_hist_file()".
+
+	* src/gtk/x11dialg.c (SetObjAxisFieldFromWidget): use
+	"g_strdup_printf()" instead of "snprintf()".
+
+	* src/gtk/x11commn.c (check_overwrite, AddNgpFileList)
+	(SaveHistory): use "g_strdup_printf()" instead of "snprintf()".
+
+	* src/gtk/ox11menu.c (add_prm_str_to_array)
+	(save_ext_driver_config, save_script_config): use
+	"g_strdup_printf()" instead of "snprintf()".
+	(menu): "arglist" of "menu" field is "s".
+
+	* src/gtk/main.c (main, obj_member_completion_function): use
+	"g_strdup_printf()" instead of "snprintf()".
+
+	* src/shellcm.c (cmbasename): call "basename(3)" to duplicated
+	string.
+	(cmdirname): use duplicated string.
+	(cmexist): add "-q" option.
+
+	* driver/ngp2.in: use "-q" option for exist command.
+	(save_image): copy settings of "gra" object.
+	(save_image): set "display" field of "fit" object as false if
+	exist.
+
+	* initfile/Ngraph.nsc: use "-q" option for exist command.
+	(load_graph): argument of "$LOGIN_SHELL" id full-path filename.
+
 2009-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (DriverDialogBrowseCB, CmPrintGRAFile)

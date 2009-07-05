@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.c,v 1.6 2009/03/26 02:31:52 hito Exp $
+ * $Id: nstring.c,v 1.7 2009/07/05 06:14:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -323,5 +323,4 @@ getitok4(char **s,int *len,char *ifs)
   po[*len]='\0';
   return po;
 }
-
 #endif /* COMPILE_UNUSED_FUNCTIONS */

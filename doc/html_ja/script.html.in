@@ -141,11 +141,11 @@ ${object:instance_list:field=argument}
 <p>
 new object [field=value,  ...]<br>
 del object:instance_list <br>
-exist object:instance_list <br>
+exist [-q] object:instance_list <br>
 get object:instance_list [-write -field -id -quote] field=argument ...<br>
 put object:instance_list field=value ...<br>
 exe object:instance_list field=argument ...<br>
-cpy object:source,destination[,destination,...] field<br>
+cpy object:source,destination[,destination,...] field ...<br>
 move object:instance1,instance2<br>
 movetop object:instance<br>
 movelast object:instance<br>

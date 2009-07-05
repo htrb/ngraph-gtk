@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.103 2009/07/02 06:46:07 hito Exp $
+ * $Id: x11menu.c,v 1.104 2009/07/05 06:14:40 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1511,7 +1511,6 @@ createmenu(GtkMenuBar *parent)
 {
   GtkAccelGroup *accel_group;
   char *home, *filename;
-  int len;
  
   accel_group = gtk_accel_group_new();
 
@@ -1533,17 +1532,11 @@ createmenu(GtkMenuBar *parent)
   if (home == NULL)
     return;
 
-  len = strlen(home) + strlen(KEYMAP_FILE) + 2;
-  filename = malloc(len);
-
-  if (filename == NULL)
-    return;
-
-  snprintf(filename, len, "%s/%s", home, KEYMAP_FILE);
+  filename = g_strdup_printf("%s/%s", home, KEYMAP_FILE);
   if (access(filename, R_OK) == 0) {
     gtk_accel_map_load(filename);
   }
-  free(filename);
+  g_free(filename);
 }
 
 static void
@@ -1968,10 +1961,29 @@ set_gdk_color(GdkColor *col, int r, int g, int b)
 }
 
 static void
+load_hist_file(GtkEntryCompletion *list, char *home, char *name)
+{
+  char *filename;
+
+  filename = g_strdup_printf("%s/%s", home, name);
+  entry_completion_load(list, filename, Menulocal.hist_size);
+  g_free(filename);
+}
+
+static void
+save_hist_file(GtkEntryCompletion *list, char *home, char *name)
+{
+  char *filename;
+
+  filename = g_strdup_printf("%s/%s", home, name);
+  entry_completion_save(list, filename, Menulocal.hist_size);
+  g_free(filename);
+}
+
+static void
 load_hist(void)
 {
-  char *home, *filename;
-  int len;
+  char *home;
 
   NgraphApp.legend_text_list = entry_completion_create();
   NgraphApp.x_math_list = entry_completion_create();
@@ -1982,64 +1994,30 @@ load_hist(void)
   if (home == NULL)
     return;
 
-  len = strlen(home) + 64;
-  filename = malloc(len);
-
-  if (filename == NULL)
-    return;
-
-  snprintf(filename, len, "%s/%s", home, TEXT_HISTORY);
-  entry_completion_load(NgraphApp.legend_text_list, filename, Menulocal.hist_size);
-
-  snprintf(filename, len, "%s/%s", home, MATH_X_HISTORY);
-  entry_completion_load(NgraphApp.x_math_list, filename, Menulocal.hist_size);
-
-  snprintf(filename, len, "%s/%s", home, MATH_Y_HISTORY);
-  entry_completion_load(NgraphApp.y_math_list, filename, Menulocal.hist_size);
-
-  snprintf(filename, len, "%s/%s", home, FUNCTION_HISTORY);
-  entry_completion_load(NgraphApp.func_list, filename, Menulocal.hist_size);
-
-  free(filename);
+  load_hist_file(NgraphApp.legend_text_list, home, TEXT_HISTORY);
+  load_hist_file(NgraphApp.x_math_list, home, MATH_X_HISTORY);
+  load_hist_file(NgraphApp.y_math_list, home, MATH_Y_HISTORY);
+  load_hist_file(NgraphApp.func_list, home, FUNCTION_HISTORY);
 }
 
 static void
 save_entry_history(void)
 {
-  struct objlist *sysobj;
-  char *inst, *home, *filename;
-  int len;
+  char *home;
 
-  sysobj = chkobject("system");
-  inst = chkobjinst(sysobj, 0);
-  _getobj(sysobj, "home_dir", inst, &home);
+  home = get_home();
+  if (home == NULL)
+    return;
 
-  if (home) {
-    len = strlen(home) + 64;
-    filename = malloc(len);
-
-    if (filename) {
-      snprintf(filename, len, "%s/%s", home, TEXT_HISTORY);
-      entry_completion_save(NgraphApp.legend_text_list, filename, Menulocal.hist_size);
-
-      snprintf(filename, len, "%s/%s", home, MATH_X_HISTORY);
-      entry_completion_save(NgraphApp.x_math_list, filename, Menulocal.hist_size);
-
-      snprintf(filename, len, "%s/%s", home, MATH_Y_HISTORY);
-      entry_completion_save(NgraphApp.y_math_list, filename, Menulocal.hist_size);
-
-      snprintf(filename, len, "%s/%s", home, FUNCTION_HISTORY);
-      entry_completion_save(NgraphApp.func_list, filename, Menulocal.hist_size);
-
-      free(filename);
-    }
-  }
+  save_hist_file(NgraphApp.legend_text_list, home, TEXT_HISTORY);
+  save_hist_file(NgraphApp.x_math_list, home, MATH_X_HISTORY);
+  save_hist_file(NgraphApp.y_math_list, home, MATH_Y_HISTORY);
+  save_hist_file(NgraphApp.func_list, home, FUNCTION_HISTORY);
 
   g_object_unref(NgraphApp.legend_text_list);
   g_object_unref(NgraphApp.x_math_list);
   g_object_unref(NgraphApp.y_math_list);
   g_object_unref(NgraphApp.func_list);
-
 }
 
 static void

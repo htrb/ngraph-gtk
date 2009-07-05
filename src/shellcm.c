@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.16 2009/05/14 10:25:26 hito Exp $
+ * $Id: shellcm.c,v 1.17 2009/07/05 06:14:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -98,21 +98,31 @@ int
 cmbasename(struct nshell *nshell,int argc,char **argv)
 {
   int len, ext_len;
+  char *bname, *tmp;
 
   if (argc < 2) {
     return 1;
-  } else if (argc == 2) {
-    len = strlen(argv[1]);
+  }
+
+  tmp = nstrdup(argv[1]);
+  if (tmp == NULL)
+    return 1;
+
+  bname = basename(tmp);
+
+  if (argc == 2) {
+    len = strlen(bname);
   } else {
-    len = strlen(argv[1]);
+    len = strlen(bname);
     ext_len = strlen(argv[2]);
 
-    if (ext_len < len && strcmp(argv[1] + len - ext_len, argv[2]) == 0) {
-      len -= ext_len;
+    if (ext_len < len && strcmp(bname + len - ext_len, argv[2]) == 0) {
+      bname[len - ext_len] = '\0';
     }
   }
 
-  printfstdout("%.*s\n", len, argv[1]);
+  printfstdout("%s\n", bname);
+  memfree(tmp);
 
   return 0;
 }
@@ -120,11 +130,19 @@ cmbasename(struct nshell *nshell,int argc,char **argv)
 int 
 cmdirname(struct nshell *nshell,int argc,char **argv)
 {
+  char *tmp;
+
   if (argc < 2) {
     return 1;
   }
 
-  putstdout(dirname(argv[1]));
+  tmp = nstrdup(argv[1]);
+  if (tmp == NULL)
+    return 1;
+
+  putstdout(dirname(tmp));
+
+  memfree(tmp);
 
   return 0;
 }
@@ -899,22 +917,36 @@ cmexist(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;
   struct narray iarray;
-  int anum;
+  int anum, quiet = FALSE;
+  char *objname;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
     return ERROBJARG;
-  } else if (argc>2) {
+  } else if (argc == 3) {
+    if (strcmp(argv[1], "-q")) {
+      sherror4(argv[0],ERRVALUE);
+      return ERRVALUE;
+    } else {
+      quiet = TRUE;
+      objname = argv[2];
+    }
+  } else if (argc>3) {
     sherror4(argv[0],ERRMANYARG);
     return ERRMANYARG;
+  } else {
+    objname = argv[1];
   }
+
   arrayinit(&iarray,sizeof(int));
-  if (chkobjilist(argv[1],&obj,&iarray,TRUE,NULL)) anum=0;
+  if (chkobjilist(objname,&obj,&iarray,TRUE,NULL)) anum=0;
   else {
     anum=arraynum(&iarray);
     arraydel(&iarray);
   }
-  printfstdout("%d\n",anum);
+  if (! quiet)
+    printfstdout("%d\n",anum);
+
   if (anum==0) return ERRNONEINST;
   return 0;
 }

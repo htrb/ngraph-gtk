@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.39 2009/06/02 04:24:47 hito Exp $
+ * $Id: x11dialg.c,v 1.40 2009/07/05 06:14:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1137,8 +1137,8 @@ int
 SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field)
 {
   const char *s;
-  char *buf, format[] = "axis:%s";
-  int len, r;
+  char *buf;
+  int r;
 
   s = combo_box_entry_get_text(w);
   if (s == NULL)
@@ -1147,16 +1147,14 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
   if (s[0] == '\0') {
     buf = NULL;
   } else {
-    len = strlen(s) + sizeof(format);
-    buf = (char *) memalloc(len);
-    if (buf) {
-      snprintf(buf, len, format, CHK_STR(s));
-    }
+    buf = g_strdup_printf("axis:%s", CHK_STR(s));
   }
 
   r = chk_sputobjfield(obj, id, field, buf);
 
-  memfree(buf);
+  if (buf)
+    g_free(buf);
+
   return r;
 }
 

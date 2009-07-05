@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-02 13:57+0900\n"
+"POT-Creation-Date: 2009-07-04 10:01+0900\n"
 "PO-Revision-Date: 2009-07-02 13:58+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1531
+#: src/gtk/ox11menu.c:1527
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
@@ -42,7 +42,7 @@ msgstr "デフォルト"
 msgid "gray"
 msgstr "グレイスケール"
 
-#: src/gtk/x11axis.c:56 src/gtk/x11opt.c:402 src/gtk/x11opt.c:893
+#: src/gtk/x11axis.c:56 src/gtk/x11opt.c:402 src/gtk/x11opt.c:889
 msgid "name"
 msgstr "名前"
 
@@ -116,7 +116,7 @@ msgstr "色(_C):"
 msgid "_Background"
 msgstr "背景色(_B) "
 
-#: src/gtk/x11axis.c:350 src/gtk/x11opt.c:1364
+#: src/gtk/x11axis.c:350 src/gtk/x11opt.c:1360
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
@@ -319,7 +319,7 @@ msgstr "スケール法(_S):"
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: src/gtk/x11axis.c:2198 src/gtk/x11file.c:1194 src/gtk/x11print.c:279
+#: src/gtk/x11axis.c:2198 src/gtk/x11file.c:1194 src/gtk/x11print.c:257
 msgid "_Div:"
 msgstr "分割数(_D):"
 
@@ -347,7 +347,7 @@ msgstr "フォント(_F)..."
 msgid "_Position ..."
 msgstr "位置(_P)..."
 
-#: src/gtk/x11commn.c:935 src/gtk/x11opt.c:1505
+#: src/gtk/x11commn.c:929 src/gtk/x11opt.c:1501
 #, c-format
 msgid ""
 "`%s'\n"
@@ -357,21 +357,21 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11commn.c:965
+#: src/gtk/x11commn.c:959
 msgid "Save NGP file"
 msgstr "NGP ファイルの保存"
 
-#: src/gtk/x11commn.c:986 src/gtk/x11opt.c:1512
+#: src/gtk/x11commn.c:980 src/gtk/x11opt.c:1508
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1104 src/gtk/x11commn.c:1179
+#: src/gtk/x11commn.c:1098 src/gtk/x11commn.c:1173
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1291
+#: src/gtk/x11commn.c:1285
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -379,32 +379,32 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1508
+#: src/gtk/x11commn.c:1491
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1511
+#: src/gtk/x11commn.c:1494
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1515
+#: src/gtk/x11commn.c:1498
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr "~/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1518
+#: src/gtk/x11commn.c:1501
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1681
+#: src/gtk/x11commn.c:1666
 msgid "error"
 msgstr "エラー"
 
-#: src/gtk/x11dialg.c:51 src/gtk/x11opt.c:1370
+#: src/gtk/x11dialg.c:51 src/gtk/x11opt.c:1366
 msgid "solid"
 msgstr "実線"
 
-#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1371
+#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1367
 msgid "dot"
 msgstr "点線"
 
@@ -1002,7 +1002,7 @@ msgstr "ディレクトリ(_D):"
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
-#: src/gtk/x11graph.c:898 src/gtk/x11graph.c:945 src/gtk/x11opt.c:1029
+#: src/gtk/x11graph.c:898 src/gtk/x11graph.c:945 src/gtk/x11opt.c:1025
 msgid "_Ignore file path"
 msgstr "パス情報無視(_I)"
 
@@ -1010,7 +1010,7 @@ msgstr "パス情報無視(_I)"
 msgid "_Greek Symbol"
 msgstr "全角ギリシア -> シンボル(_G)"
 
-#: src/gtk/x11graph.c:1008 src/gtk/x11opt.c:998
+#: src/gtk/x11graph.c:1008 src/gtk/x11opt.c:994
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
@@ -1034,15 +1034,15 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: src/gtk/x11gui.c:644 src/gtk/x11gui.c:776
+#: src/gtk/x11gui.c:643 src/gtk/x11gui.c:775
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:753
+#: src/gtk/x11gui.c:752
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:764
+#: src/gtk/x11gui.c:763
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
@@ -1284,7 +1284,7 @@ msgid "Clear Viewer Window"
 msgstr "スケールのクリア"
 
 #: src/gtk/x11menu.c:236 src/gtk/x11menu.c:237 src/gtk/x11menu.c:238
-#: src/gtk/x11print.c:657
+#: src/gtk/x11print.c:635
 msgid "Print"
 msgstr "印刷"
 
@@ -1794,15 +1794,15 @@ msgstr "クロスゲージ(_G)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2511
+#: src/gtk/x11menu.c:2489
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2561
+#: src/gtk/x11menu.c:2539
 msgid "Question"
 msgstr "質問:"
 
-#: src/gtk/x11menu.c:2618
+#: src/gtk/x11menu.c:2596
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
@@ -1924,115 +1924,115 @@ msgstr "ドライバ"
 msgid "_Jfont"
 msgstr "邦文フォント(_J)"
 
-#: src/gtk/x11opt.c:858
+#: src/gtk/x11opt.c:854
 msgid "Please specify a new alias name."
 msgstr "フォント別名を指定してください."
 
-#: src/gtk/x11opt.c:866
+#: src/gtk/x11opt.c:862
 msgid "Alias name already exists."
 msgstr "フォント別名が既に存在します."
 
-#: src/gtk/x11opt.c:892
+#: src/gtk/x11opt.c:888
 msgid "alias"
 msgstr "別名"
 
-#: src/gtk/x11opt.c:894
+#: src/gtk/x11opt.c:890
 msgid "style"
 msgstr "スタイル"
 
-#: src/gtk/x11opt.c:904
+#: src/gtk/x11opt.c:900
 msgid "_New alias:"
 msgstr "新規別名(_N):"
 
-#: src/gtk/x11opt.c:988
+#: src/gtk/x11opt.c:984
 msgid "_Editor:"
 msgstr "エディター(_E):"
 
-#: src/gtk/x11opt.c:1004
+#: src/gtk/x11opt.c:1000
 msgid "include _Data file"
 msgstr "データファイルを含める(_D)"
 
-#: src/gtk/x11opt.c:1008
+#: src/gtk/x11opt.c:1004
 msgid "include _Merge file"
 msgstr "合成ファイルを含める(_M)"
 
-#: src/gtk/x11opt.c:1019
+#: src/gtk/x11opt.c:1015
 msgid "_Expand include file"
 msgstr "データファイルの展開(_E)"
 
-#: src/gtk/x11opt.c:1025
+#: src/gtk/x11opt.c:1021
 msgid "_Expand directory:"
 msgstr "展開ディレクトリ(_E):"
 
-#: src/gtk/x11opt.c:1043
+#: src/gtk/x11opt.c:1039
 msgid "_Check \"change current directory\""
 msgstr "\"カレントディレクトリを移動\"をチェック(_C)"
 
-#: src/gtk/x11opt.c:1048
+#: src/gtk/x11opt.c:1044
 msgid "_Save file history"
 msgstr "終了時にファイル履歴を保存(_S)"
 
-#: src/gtk/x11opt.c:1060
+#: src/gtk/x11opt.c:1056
 msgid "_Size of completion history:"
 msgstr "補完履歴のサイズ(_S):"
 
-#: src/gtk/x11opt.c:1064
+#: src/gtk/x11opt.c:1060
 msgid "_Length of information window:"
 msgstr "information window の行数(_L):"
 
-#: src/gtk/x11opt.c:1068
+#: src/gtk/x11opt.c:1064
 msgid "_Length of data preview:"
 msgstr "データプレビューの行数(_L):"
 
-#: src/gtk/x11opt.c:1079
+#: src/gtk/x11opt.c:1075
 msgid "_Font of coordinate window:"
 msgstr "coordinate window のフォント(_F):"
 
-#: src/gtk/x11opt.c:1083
+#: src/gtk/x11opt.c:1079
 msgid "font of data _Preview:"
 msgstr "データプレビューのフォント(_P):"
 
-#: src/gtk/x11opt.c:1250
+#: src/gtk/x11opt.c:1246
 msgid "use _External previewer"
 msgstr "外部プログラムを使用する(_E)"
 
-#: src/gtk/x11opt.c:1263
+#: src/gtk/x11opt.c:1259
 msgid "Window _Width:"
 msgstr "幅(_W):"
 
-#: src/gtk/x11opt.c:1269
+#: src/gtk/x11opt.c:1265
 msgid "Window _Height:"
 msgstr "高さ(_H):"
 
-#: src/gtk/x11opt.c:1352
+#: src/gtk/x11opt.c:1348
 msgid "_DPI:"
 msgstr "_DPI:"
 
-#: src/gtk/x11opt.c:1358
+#: src/gtk/x11opt.c:1354
 msgid "_Grid:"
 msgstr "グリッド(_G):"
 
-#: src/gtk/x11opt.c:1372
+#: src/gtk/x11opt.c:1368
 msgid "_Line attribute of focus frame:"
 msgstr "フォーカスフレームの線種(_L):"
 
-#: src/gtk/x11opt.c:1382
+#: src/gtk/x11opt.c:1378
 msgid "_Antialias:"
 msgstr "アンチエイリアス(_A):"
 
-#: src/gtk/x11opt.c:1386
+#: src/gtk/x11opt.c:1382
 msgid "_Preserve line width and style"
 msgstr "線幅と線種を保持する(_S) "
 
-#: src/gtk/x11opt.c:1392
+#: src/gtk/x11opt.c:1388
 msgid "_Load files on redraw"
 msgstr "再描画時にデータファイル読み込み(_L)"
 
-#: src/gtk/x11opt.c:1399
+#: src/gtk/x11opt.c:1395
 msgid "_Maximum number of data on redraw:"
 msgstr "再描画時の最大データ数(_M):"
 
-#: src/gtk/x11opt.c:1506
+#: src/gtk/x11opt.c:1502
 msgid "Save as .Ngraph.ngp"
 msgstr ".Ngraph.ngp として保存"
 
@@ -2040,76 +2040,76 @@ msgstr ".Ngraph.ngp として保存"
 msgid "External Driver Output"
 msgstr "外部ドライバ出力"
 
-#: src/gtk/x11print.c:328
+#: src/gtk/x11print.c:306
 msgid "_PostScript Version:"
 msgstr "ポストスクリプトレベル(_P):"
 
-#: src/gtk/x11print.c:364
+#: src/gtk/x11print.c:342
 msgid "_SVG Version:"
 msgstr "_SVG バージョン"
 
-#: src/gtk/x11print.c:379
+#: src/gtk/x11print.c:357
 msgid "_Convert texts to paths"
 msgstr "テキストをパスに変換(_C)"
 
-#: src/gtk/x11print.c:396
+#: src/gtk/x11print.c:374
 msgid "Cairo PS Output"
 msgstr "Cairo PS 出力"
 
-#: src/gtk/x11print.c:399
+#: src/gtk/x11print.c:377
 msgid "Cairo EPS Output"
 msgstr "Cairo EPS 出力"
 
-#: src/gtk/x11print.c:402
+#: src/gtk/x11print.c:380
 msgid "Cairo PNG Output"
 msgstr "Cairo PNG 出力"
 
-#: src/gtk/x11print.c:405
+#: src/gtk/x11print.c:383
 msgid "Cairo PDF Output"
 msgstr "Cairo PDF 出力"
 
-#: src/gtk/x11print.c:408
+#: src/gtk/x11print.c:386
 msgid "Cairo SVG Output"
 msgstr "Cairo SVG 出力"
 
-#: src/gtk/x11print.c:532
+#: src/gtk/x11print.c:510
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:656
+#: src/gtk/x11print.c:634
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:705
+#: src/gtk/x11print.c:683
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:711 src/gtk/x11print.c:966 src/gtk/x11view.c:5415
+#: src/gtk/x11print.c:689 src/gtk/x11print.c:944 src/gtk/x11view.c:5415
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11print.c:772
+#: src/gtk/x11print.c:750
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:811
+#: src/gtk/x11print.c:789
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:853
+#: src/gtk/x11print.c:831
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:1020
+#: src/gtk/x11print.c:998
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11print.c:1026
+#: src/gtk/x11print.c:1004
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11print.c:1027
+#: src/gtk/x11print.c:1005
 msgid "Making data file."
 msgstr "データファイル作成中"
 

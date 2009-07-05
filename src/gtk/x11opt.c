@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.65 2009/07/02 06:46:07 hito Exp $
+ * $Id: x11opt.c,v 1.66 2009/07/05 06:14:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -688,18 +688,14 @@ create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
 #endif
 
   if (fcur) {
-    int len, t;
+    int t;
     char *buf;
 
-    len = strlen(fcur->fontname) + 64;
-    buf = malloc(len);
-    if (buf) {
-      t = (fcur->type < 0 || fcur->type >= TYPE_NUM) ? 0 : fcur->type;
+    t = (fcur->type < 0 || fcur->type >= TYPE_NUM) ? 0 : fcur->type;
+    buf = g_strdup_printf("%s %s 16", fcur->fontname, type[t]);
+    gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(dialog), buf);
+    g_free(buf);
 
-      snprintf(buf, len, "%s %s 16", fcur->fontname, type[t]);
-      gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(dialog), buf);
-      free(buf);
-    }
 #ifdef JAPANESE
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->two_byte), fcur->twobyte);
 #endif

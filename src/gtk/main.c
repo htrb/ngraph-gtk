@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.42 2009/06/24 07:00:39 hito Exp $
+ * $Id: main.c,v 1.43 2009/07/05 06:14:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -583,13 +583,13 @@ main(int argc, char **argv, char **environ)
   int i;
   char *sarg[2];
   struct narray sarray;
-  int len, id;
+  int id;
   int allocnow, allocconsole = FALSE;
   struct narray iarray;
   char *arg;
 #ifdef HAVE_LIBREADLINE
   int history_size = HIST_SIZE;
-  char *history_file;
+  char *history_file = NULL;
 #endif
 
 #if EOF == -1
@@ -647,11 +647,13 @@ main(int argc, char **argv, char **environ)
   } else 
   */
   if ((home = getenv("HOME")) != NULL) {
-    len = strlen(home) + strlen(HOME_DIR) + 2;
-    homedir = memalloc(len);
+    char *ptr;
+
+    ptr = g_strdup_printf("%s/%s", home, HOME_DIR);
+    homedir = nstrdup(ptr);
+    g_free(ptr);
     if (homedir == NULL)
       exit(1);
-    snprintf(homedir, len, "%s/%s", home, HOME_DIR);
   } else {
     homedir = nstrdup(confdir);
     if (homedir == NULL)
@@ -702,10 +704,9 @@ main(int argc, char **argv, char **environ)
   rl_completer_word_break_characters = " \t\n\"'@><;|&({}`";
   rl_attempted_completion_function = (CPPFunction *) attempt_shell_completion;
   rl_completion_entry_function = NULL;
-  len = sizeof(char) * (strlen(homedir) + strlen(HIST_FILE) + 2);
-  history_file = malloc(len);
-  if (history_file != NULL) {
-    snprintf(history_file, len, "%s/%s", homedir, HIST_FILE);
+
+  history_file = g_strdup_printf("%s/%s", homedir, HIST_FILE);
+  if (history_file) {
     read_history(history_file);
   }
   using_history();
@@ -808,6 +809,7 @@ main(int argc, char **argv, char **environ)
 #ifdef HAVE_LIBREADLINE
   if (history_file != NULL) {
     write_history(history_file);
+    g_free(history_file);
   }
 #endif
   if (consoleac && (consolepid != -1))
@@ -938,14 +940,8 @@ obj_member_completion_function(const char *text, int state)
 
   if (list && list[list_index]) {
     char *t;
-    int len;
 
-    len = first_char_loc + strlen(list[list_index]) + 1;
-    t = malloc(len);
-    if (t == NULL)
-      return NULL;
-
-    snprintf(t, len, "%.*s%s", first_char_loc, text, list[list_index]);
+    t = g_strdup_printf("%.*s%s", first_char_loc, text, list[list_index]);
     list_index++;
     return (t);
   } else {
