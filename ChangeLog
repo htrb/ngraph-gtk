@@ -1,5 +1,7 @@
 2009-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* initfile/Ngraph.nsc: use "NGRAPHCONF" instead of "NGRAPHLIB".
+
 	* src/gtk/x11print.c (DriverDialogClose): use "g_strdup_printf()"
 	instead of "snprintf()".
 

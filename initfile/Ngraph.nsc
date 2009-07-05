@@ -122,8 +122,8 @@ fi
 #
 if [ -f "${NGRAPHHOME}/Ngraph.ngp" ]; then
     . "${NGRAPHHOME}/Ngraph.ngp"
-elif [ -f "${NGRAPHLIB}/Ngraph.ngp" ]; then
-    . "${NGRAPHLIB}/Ngraph.ngp"
+elif [ -f "${NGRAPHCONF}/Ngraph.ngp" ]; then
+    . "${NGRAPHCONF}/Ngraph.ngp"
 fi
 #
 LOADSETTINGS=0
