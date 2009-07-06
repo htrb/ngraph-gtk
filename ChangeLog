@@ -1,3 +1,12 @@
+2009-07-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (paste_cb): don't use temporary file and use
+	"eval_script()".
+
+	* src/shell.c (getcmdline): type of argument "str" is "const char *".
+	(eval_script): add.
+	(cmdexecute): type of argument "cline" is "const char *".
+
 2009-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/Ngraph.nsc: use "NGRAPHCONF" instead of "NGRAPHLIB".
@@ -170,7 +179,7 @@
 
 	* src/ioutil.h (NFMODE_NORMAL_FILE): add.
 
-	* src/osystem.c (sysdone): delete temporaryf files if exist.
+	* src/osystem.c (sysdone): delete temporary files if exist.
 
 2009-06-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

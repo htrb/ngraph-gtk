@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.29 2009/06/18 11:32:10 hito Exp $
+ * $Id: shell.c,v 1.30 2009/07/06 00:36:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -734,6 +734,24 @@ struct cmdstack {
 };
 
 static NHASH CmdTblHash, CpCmdTblHash;
+
+int 
+eval_script(const char *script, int security)
+{
+  struct nshell *nshell;
+
+  nshell = newshell();
+  if (nshell == NULL)
+    return 1;
+
+  set_security(security);
+  ngraphenvironment(nshell);
+  cmdexecute(nshell, script);
+  set_security(FALSE);
+  delshell(nshell);
+
+  return 0;
+}
 
 int 
 init_cmd_tbl(void)
@@ -1556,7 +1574,7 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
 static int 
 getcmdline(struct nshell *nshell,
 	   struct cmdlist **rcmdroot,struct cmdlist *cmd,
-	   char *str,int *istr)
+	   const char *str,int *istr)
 /* getcmdline() returns
      -2: unexpected eof detected
      -1: fatal error
@@ -3827,7 +3845,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 }
 
 int 
-cmdexecute(struct nshell *nshell,char *cline)
+cmdexecute(struct nshell *nshell, const char *cline)
 /* return
      -2: unexpected eof detected
      -1: fatal error

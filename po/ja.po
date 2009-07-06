@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-05 20:21+0900\n"
+"POT-Creation-Date: 2009-07-06 08:14+0900\n"
 "PO-Revision-Date: 2009-07-02 13:58+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -71,7 +71,7 @@ msgid "len"
 msgstr "長さ"
 
 #: src/gtk/x11axis.c:88 src/gtk/x11file.c:103 src/gtk/x11lgnd.c:80
-#: src/gtk/x11merge.c:72 src/gtk/x11view.c:1054
+#: src/gtk/x11merge.c:72 src/gtk/x11view.c:1008
 msgid "_Duplicate"
 msgstr "複製(_D)"
 
@@ -789,7 +789,7 @@ msgstr "微分式指定(_D)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1465 src/gtk/x11file.c:1739 src/gtk/x11view.c:904
+#: src/gtk/x11file.c:1465 src/gtk/x11file.c:1739 src/gtk/x11view.c:858
 msgid "Line No."
 msgstr "行"
 
@@ -910,11 +910,11 @@ msgstr "ファイル名(_F):"
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:2915 src/gtk/x11view.c:913
+#: src/gtk/x11file.c:2915 src/gtk/x11view.c:867
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:2919 src/gtk/x11view.c:914
+#: src/gtk/x11file.c:2919 src/gtk/x11view.c:868
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -1558,31 +1558,31 @@ msgstr "アドイン(_I)"
 msgid "_Ngraph shell"
 msgstr "Ngraphシェル(_N)"
 
-#: src/gtk/x11menu.c:924 src/gtk/x11view.c:1031
+#: src/gtk/x11menu.c:924 src/gtk/x11view.c:985
 msgid "_Left"
 msgstr "左揃え(_L)"
 
-#: src/gtk/x11menu.c:925 src/gtk/x11view.c:1032
+#: src/gtk/x11menu.c:925 src/gtk/x11view.c:986
 msgid "_Vertical center"
 msgstr "垂直中央揃え(_V)"
 
-#: src/gtk/x11menu.c:926 src/gtk/x11view.c:1033
+#: src/gtk/x11menu.c:926 src/gtk/x11view.c:987
 msgid "_Right"
 msgstr "右揃え(_R)"
 
-#: src/gtk/x11menu.c:930 src/gtk/x11view.c:1035
+#: src/gtk/x11menu.c:930 src/gtk/x11view.c:989
 msgid "_Top"
 msgstr "上端揃え(_T)"
 
-#: src/gtk/x11menu.c:931 src/gtk/x11view.c:1036
+#: src/gtk/x11menu.c:931 src/gtk/x11view.c:990
 msgid "_Holizontal center"
 msgstr "水平中央揃え(_H)"
 
-#: src/gtk/x11menu.c:932 src/gtk/x11view.c:1037
+#: src/gtk/x11menu.c:932 src/gtk/x11view.c:991
 msgid "_Bottom"
 msgstr "下端揃え(_B)"
 
-#: src/gtk/x11menu.c:964 src/gtk/x11view.c:1059
+#: src/gtk/x11menu.c:964 src/gtk/x11view.c:1013
 msgid "_Align"
 msgstr "位置合わせ(_A)"
 
@@ -1594,11 +1594,11 @@ msgstr "_90° 時計回り回転"
 msgid "rotate 9_0 degree counter-clockwise"
 msgstr "9_0° 反時計回り回転"
 
-#: src/gtk/x11menu.c:974 src/gtk/x11view.c:1046
+#: src/gtk/x11menu.c:974 src/gtk/x11view.c:1000
 msgid "flip _Horizontally"
 msgstr "水平反転(_H)"
 
-#: src/gtk/x11menu.c:976 src/gtk/x11view.c:1047
+#: src/gtk/x11menu.c:976 src/gtk/x11view.c:1001
 msgid "flip _Vertically"
 msgstr "垂直反転(_V)"
 
@@ -1786,7 +1786,7 @@ msgstr "コマンドツールバー(_C)"
 msgid "_Toolbox"
 msgstr "ツールボックス(_T) "
 
-#: src/gtk/x11menu.c:1473 src/gtk/x11view.c:1062
+#: src/gtk/x11menu.c:1473 src/gtk/x11view.c:1016
 msgid "cross _Gauge"
 msgstr "クロスゲージ(_G)"
 
@@ -2085,7 +2085,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:689 src/gtk/x11print.c:944 src/gtk/x11view.c:5415
+#: src/gtk/x11print.c:689 src/gtk/x11print.c:944 src/gtk/x11view.c:5369
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2113,49 +2113,49 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11view.c:1041
+#: src/gtk/x11view.c:995
 msgid "_90 degree clockwise"
 msgstr "_90° 時計回り"
 
-#: src/gtk/x11view.c:1042
+#: src/gtk/x11view.c:996
 msgid "9_0 degree counter-clockwise"
 msgstr "9_0° 反時計回り"
 
-#: src/gtk/x11view.c:1060
+#: src/gtk/x11view.c:1014
 msgid "_Rotate"
 msgstr "回転(_R)"
 
-#: src/gtk/x11view.c:1061
+#: src/gtk/x11view.c:1015
 msgid "_Flip"
 msgstr "反転(_F)"
 
-#: src/gtk/x11view.c:1274 src/gtk/x11view.c:1276
+#: src/gtk/x11view.c:1228 src/gtk/x11view.c:1230
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1350
+#: src/gtk/x11view.c:1304
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1359
+#: src/gtk/x11view.c:1313
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2725
+#: src/gtk/x11view.c:2679
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3841
+#: src/gtk/x11view.c:3795
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5409
+#: src/gtk/x11view.c:5363
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5416
+#: src/gtk/x11view.c:5370
 msgid "Drawing"
 msgstr "描画中"
 

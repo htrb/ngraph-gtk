@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.154 2009/05/13 09:11:24 hito Exp $
+ * $Id: x11view.c,v 1.155 2009/07/06 00:37:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,6 +36,7 @@
 #include "mathfn.h"
 #include "ioutil.h"
 #include "nstring.h"
+#include "shell.h"
 
 #include "gtk_liststore.h"
 #include "strconv.h"
@@ -347,11 +348,9 @@ focus_new_insts(struct objlist *parent, struct narray *array)
 static void 
 paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 {
-  int fd, id, sec, r, len;
-  char *tmpfile, *arg[2], *inst;
-  struct narray sarray, idarray;
-  struct objlist *shell;
+  struct narray idarray;
   GdkGC *dc;
+  struct objlist *draw_obj;
 
   if (text == NULL)
     return;
@@ -361,68 +360,19 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
     return;
   }
 
-  shell = chkobject("shell");
-  if (shell == NULL)
+  draw_obj = chkobject("draw");
+  if (draw_obj == NULL)
     return;
-
-  id = newobj(shell);
-  if (id < 0)
-    return;
-
-  fd = n_mkstemp(NULL, "nclip", &tmpfile);
-  if (fd < 0) {
-    delobj(shell, id);
-    return;
-  }
-
-  arrayinit(&sarray, sizeof(char *));
-  if (arrayadd(&sarray, &tmpfile) == NULL) {
-    unlink(tmpfile);
-    memfree(tmpfile);
-    return;
-  }
-
-  len = strlen(text);
-  r = write(fd, text, len);
-  close(fd);
-
-  if (r != len) {
-    unlink(tmpfile);
-    memfree(tmpfile);
-    delobj(shell, id);
-    arraydel(&sarray);
-    return;
-  }
-
-  inst = chkobjinst(shell, id);
 
   arrayinit(&idarray, sizeof(int));
-  check_last_insts(chkobject("draw"), &idarray);
+  check_last_insts(draw_obj, &idarray);
 
   UnFocus();
 
-  sec = TRUE;
-  arg[0] = (char *) &sec;
-  arg[1] = NULL;
-  _exeobj(shell, "security", inst, 1, arg);
+  eval_script(text, TRUE);
 
-  arg[0] = (char *) &sarray;
-  arg[1] = NULL;
-  _exeobj(shell, "shell", inst, 1, arg);
-  arraydel(&sarray);
-
-  sec = FALSE;
-  arg[0] = (char *) &sec;
-  arg[1] = NULL;
-  _exeobj(shell, "security", inst, 1, arg);
-
-  delobj(shell, id);
-
-  focus_new_insts(chkobject("draw"), &idarray);
+  focus_new_insts(draw_obj, &idarray);
   arraydel(&idarray);
-
-  unlink(tmpfile);
-  memfree(tmpfile);
 
   if (arraynum(NgraphApp.Viewer.focusobj) > 0) {
     set_graph_modified();
