@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-28\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-06 08:14+0900\n"
+"POT-Creation-Date: 2009-07-06 10:05+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgid "len"
 msgstr ""
 
 #: src/gtk/x11axis.c:88 src/gtk/x11file.c:103 src/gtk/x11lgnd.c:80
-#: src/gtk/x11merge.c:72 src/gtk/x11view.c:1008
+#: src/gtk/x11merge.c:72 src/gtk/x11view.c:1004
 msgid "_Duplicate"
 msgstr ""
 
@@ -787,7 +787,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1465 src/gtk/x11file.c:1739 src/gtk/x11view.c:858
+#: src/gtk/x11file.c:1465 src/gtk/x11file.c:1739 src/gtk/x11view.c:854
 msgid "Line No."
 msgstr ""
 
@@ -908,11 +908,11 @@ msgstr ""
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:2915 src/gtk/x11view.c:867
+#: src/gtk/x11file.c:2915 src/gtk/x11view.c:863
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:2919 src/gtk/x11view.c:868
+#: src/gtk/x11file.c:2919 src/gtk/x11view.c:864
 msgid "_Move"
 msgstr ""
 
@@ -1554,31 +1554,31 @@ msgstr ""
 msgid "_Ngraph shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:924 src/gtk/x11view.c:985
+#: src/gtk/x11menu.c:924 src/gtk/x11view.c:981
 msgid "_Left"
 msgstr ""
 
-#: src/gtk/x11menu.c:925 src/gtk/x11view.c:986
+#: src/gtk/x11menu.c:925 src/gtk/x11view.c:982
 msgid "_Vertical center"
 msgstr ""
 
-#: src/gtk/x11menu.c:926 src/gtk/x11view.c:987
+#: src/gtk/x11menu.c:926 src/gtk/x11view.c:983
 msgid "_Right"
 msgstr ""
 
-#: src/gtk/x11menu.c:930 src/gtk/x11view.c:989
+#: src/gtk/x11menu.c:930 src/gtk/x11view.c:985
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11menu.c:931 src/gtk/x11view.c:990
+#: src/gtk/x11menu.c:931 src/gtk/x11view.c:986
 msgid "_Holizontal center"
 msgstr ""
 
-#: src/gtk/x11menu.c:932 src/gtk/x11view.c:991
+#: src/gtk/x11menu.c:932 src/gtk/x11view.c:987
 msgid "_Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:964 src/gtk/x11view.c:1013
+#: src/gtk/x11menu.c:964 src/gtk/x11view.c:1009
 msgid "_Align"
 msgstr ""
 
@@ -1590,11 +1590,11 @@ msgstr ""
 msgid "rotate 9_0 degree counter-clockwise"
 msgstr ""
 
-#: src/gtk/x11menu.c:974 src/gtk/x11view.c:1000
+#: src/gtk/x11menu.c:974 src/gtk/x11view.c:996
 msgid "flip _Horizontally"
 msgstr ""
 
-#: src/gtk/x11menu.c:976 src/gtk/x11view.c:1001
+#: src/gtk/x11menu.c:976 src/gtk/x11view.c:997
 msgid "flip _Vertically"
 msgstr ""
 
@@ -1782,7 +1782,7 @@ msgstr ""
 msgid "_Toolbox"
 msgstr ""
 
-#: src/gtk/x11menu.c:1473 src/gtk/x11view.c:1016
+#: src/gtk/x11menu.c:1473 src/gtk/x11view.c:1012
 msgid "cross _Gauge"
 msgstr ""
 
@@ -2081,7 +2081,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:689 src/gtk/x11print.c:944 src/gtk/x11view.c:5369
+#: src/gtk/x11print.c:689 src/gtk/x11print.c:944 src/gtk/x11view.c:5365
 msgid "Drawing."
 msgstr ""
 
@@ -2109,49 +2109,49 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11view.c:995
+#: src/gtk/x11view.c:991
 msgid "_90 degree clockwise"
 msgstr ""
 
-#: src/gtk/x11view.c:996
+#: src/gtk/x11view.c:992
 msgid "9_0 degree counter-clockwise"
 msgstr ""
 
-#: src/gtk/x11view.c:1014
+#: src/gtk/x11view.c:1010
 msgid "_Rotate"
 msgstr ""
 
-#: src/gtk/x11view.c:1015
+#: src/gtk/x11view.c:1011
 msgid "_Flip"
 msgstr ""
 
-#: src/gtk/x11view.c:1228 src/gtk/x11view.c:1230
+#: src/gtk/x11view.c:1224 src/gtk/x11view.c:1226
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1304
+#: src/gtk/x11view.c:1300
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1313
+#: src/gtk/x11view.c:1309
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2679
+#: src/gtk/x11view.c:2675
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3795
+#: src/gtk/x11view.c:3791
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5363
+#: src/gtk/x11view.c:5359
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5370
+#: src/gtk/x11view.c:5366
 msgid "Drawing"
 msgstr ""
 
