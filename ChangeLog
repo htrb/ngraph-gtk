@@ -1,11 +1,12 @@
 2009-07-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11view.c (paste_cb): don't use temporary file and use
+	* src/gtk/x11view.c (paste_cb): don't use a temporary file and use
 	"eval_script()".
 
-	* src/shell.c (getcmdline): type of argument "str" is "const char *".
+	* src/shell.c (getcmdline): the type of argument "str" is "const
+	char *".
 	(eval_script): add.
-	(cmdexecute): type of argument "cline" is "const char *".
+	(cmdexecute): the type of argument "cline" is "const char *".
 
 2009-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -42,12 +43,12 @@
 	(cmdirname): use duplicated string.
 	(cmexist): add "-q" option.
 
-	* driver/ngp2.in: use "-q" option for exist command.
+	* driver/ngp2.in: use "-q" option for "exist" command.
 	(save_image): copy settings of "gra" object.
 	(save_image): set "display" field of "fit" object as false if
 	exist.
 
-	* initfile/Ngraph.nsc: use "-q" option for exist command.
+	* initfile/Ngraph.nsc: use "-q" option for "exist" command.
 	(load_graph): argument of "$LOGIN_SHELL" id full-path filename.
 
 2009-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>

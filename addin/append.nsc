@@ -11,7 +11,7 @@ then
   FILE=$*
 else
   new dialog
-  FILE=${dialog::get_open_file:'*.ngp'}
+  FILE=${dialog::get_open_file:'ngp'}
   del dialog
 fi
 if [ "$FILE" ]

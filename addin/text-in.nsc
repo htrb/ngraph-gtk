@@ -22,7 +22,7 @@ then
   while file:0:getdata
   do
     name=`iexpr $name+1`
-    if exist text:in$name >/dev/null
+    if exist -q text:in$name
     then
       put text:in$name name:in$name
     else

@@ -136,6 +136,7 @@ do
     case $1 in
 	*.prm|*.PRM|*.ngp|*.NGP)
 	    load_graph "$1"
+	    break
 	    ;;
 	*.gra|*.GRA)
 	    for drawable in `derive -instance draw`
@@ -150,6 +151,7 @@ do
 	-L)
 	    shift
 	    load_graph "$1"
+	    break
 	    ;;
 	-x)
 	    shift
@@ -401,6 +403,7 @@ do
 	    usage
 	    ;;
 	*)
+	    check_file "$1"
 	    new file file:"$1"
 	    check_set file x $XCOLUMN
 	    check_set file y $YCOLUMN

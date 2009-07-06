@@ -119,9 +119,9 @@ sleep<br>
 true<br>
 false<br>
 read [val]<br>
-seq [LAST | FIRST LAST | FIRST INCR LAST]<br>
-basename NAME [SUFFIX]<br>
-dirname<br>
+seq [last | first last | first incr last]<br>
+basename name [suffix]<br>
+dirname name<br>
 </p>
 <br>
 <br>
