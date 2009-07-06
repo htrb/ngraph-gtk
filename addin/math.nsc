@@ -13,9 +13,7 @@ then
 	result=`get text -field printf:"%G $result"`
 	del text
 	dialog::message:"$MATH=$result"
-	menu::echo:"$0: $MATH=$result"
-    else
-	dialog::message:"error: $MATH"
+	menu::echo:"Math: $MATH=$result"
     fi
 fi
 del dialog
