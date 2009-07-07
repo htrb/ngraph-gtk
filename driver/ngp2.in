@@ -1,5 +1,5 @@
 #! CONFDIRDEF/ngraph -i
-# $Id: ngp2.in,v 1.13 2009/07/06 06:37:58 hito Exp $
+# $Id: ngp2.in,v 1.14 2009/07/07 11:44:06 hito Exp $
 
 IGN_PATH=0
 AUTO_SCALE=0
@@ -32,7 +32,7 @@ save_image() {
 	cpy gra:viewer,OUTPUT draw_obj left_margin top_margin zoom paper_width paper_height
     fi
 
-    if exist -q fit
+    if exist -q fit:0
     then
 	fit:0-!:display=false
     fi
@@ -142,7 +142,7 @@ do
 	NGP_NAME=`basename "$NGP_FILE" .ngp`
 	PATH_NAME=`dirname $NGP_FILE`
 
-	if exist -q menu
+	if exist -q menu:0
 	then
 	    menu::fullpath_ngp="$NGP_FILE"
 	fi
@@ -172,9 +172,9 @@ do
 	    cd $PATH_NAME
 	fi
 
-	if exist -q axis
+	if exist -q axis:0
 	then
-	    if exist -q file
+	    if exist -q file:0
 	    then
 		case "$AUTO_SCALE" in
 		    2)
@@ -245,9 +245,9 @@ done
 
 echo
 
-if exist -q menu
+if exist -q menu:0
 then
-    del menu
+    del menu:0
 fi
 
 del system:0

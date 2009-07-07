@@ -1,4 +1,16 @@
+2009-07-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (tree_hidden): don't execute "d->update()"
+	but call "gtk_tree_store_set()".
+	(toggle_cb): use "tree_hidden()".
+
+	* src/object.c (sexefield): don't remove space character.
+	(sexeobjfield): remove space character only when "arglist" is "s".
+
 2009-07-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (AddNgpFileList): free "full_name" after call
+	"g_strdup_printf()".
 
 	* src/gtk/x11view.c (paste_cb): don't use a temporary file and use
 	"eval_script()".

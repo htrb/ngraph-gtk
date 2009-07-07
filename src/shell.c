@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.30 2009/07/06 00:36:59 hito Exp $
+ * $Id: shell.c,v 1.31 2009/07/07 11:44:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -363,10 +363,11 @@ shget(struct nshell *nshell)
 #endif
 
   if (nisatty(nshell->fd)) {
-    set_shellevloop(SIGALRM);
 #ifdef HAVE_LIBREADLINE
     if(str_ptr == NULL){
+      set_shellevloop(SIGALRM);
       str_ptr = line_str = readline(Prompt);
+      reset_shellevloop();
       if(str_ptr == NULL){
 	byte = 0;
       } else if(strlen(str_ptr) > 0) {
@@ -393,11 +394,12 @@ shget(struct nshell *nshell)
       }
     }
 #else
+    set_shellevloop(SIGALRM);
     do {
       byte=read(nshell->fd,buf,1);
     } while (byte<0);
-#endif
     reset_shellevloop();
+#endif
   } else {
     do {
       byte=read(nshell->fd,buf,1);

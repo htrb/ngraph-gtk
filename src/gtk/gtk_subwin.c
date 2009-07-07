@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.48 2009/07/02 06:46:07 hito Exp $
+ * $Id: gtk_subwin.c,v 1.49 2009/07/07 11:44:09 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -156,7 +156,7 @@ toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
   if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE)) {
     hidden(d);
   } else {
-#if 0
+#if 1
     tree_hidden((struct LegendWin *) user_data);
 #else
     int hide, n, m, dep, *ary;
@@ -1216,6 +1216,7 @@ static void
 tree_hidden(struct LegendWin *d)
 {
   int n, m, hidden;
+  GtkTreeIter iter;
   gboolean sel;
 
   if (Menulock || GlobalLock)
@@ -1223,13 +1224,18 @@ tree_hidden(struct LegendWin *d)
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
+  if (! tree_store_get_selected_iter(GTK_WIDGET(d->text), &iter))
+      return;
+
   if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
     getobj(d->obj[n], "hidden", m, 0, NULL, &hidden);
     hidden = hidden ? FALSE : TRUE;
     putobj(d->obj[n], "hidden", m, &hidden);
     d->select = m;
     d->legend_type = n;
-    d->update(FALSE);
+    //    d->update(FALSE);
+    gtk_tree_store_set(GTK_TREE_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(d->text))),
+		       &iter, 0, ! hidden, -1);
     set_graph_modified();
   }
 }
