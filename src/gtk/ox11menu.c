@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.80 2009/07/05 06:14:40 hito Exp $
+ * $Id: ox11menu.c,v 1.81 2009/07/08 10:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -34,6 +34,9 @@
 #include <math.h>
 #include <time.h>
 #include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "gtk_subwin.h"
 
@@ -60,6 +63,13 @@
 #include "x11graph.h"
 #include "x11print.h"
 
+#include "x11merge.h"
+#include "x11lgnd.h"
+#include "x11axis.h"
+#include "x11file.h"
+#include "x11cood.h"
+#include "x11info.h"
+
 #define NAME "menu"
 #define ALIAS "winmenu:gtkmenu"
 #define PARENT "gra2cairo"
@@ -70,18 +80,16 @@
 
 static char *menuerrorlist[] = {
   "already running.",
-  "not enough color cell.",
-  "cannot create font. Check `windowfont' resource.",
   "cannot open display.",
+  "cannot open the file"
 };
 
 #define ERRNUM (sizeof(menuerrorlist) / sizeof(*menuerrorlist))
 
 enum {
   ERR_MENU_RUN = 100,
-  ERR_MENU_COLOR,
-  ERR_MENU_FONT,
   ERR_MENU_DISPLAY,
+  ERR_MENU_OPEN_FILE,
 };
 
 struct menulocal Menulocal;
@@ -218,6 +226,7 @@ static struct menu_config MenuConfigScript[] = {
 static struct menu_config MenuConfigMisc[] = {
   {"editor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.editor},
   {"coordwin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.coordwin_font},
+  {"infowin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.infowin_font},
   {"file_preview_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.file_preview_font},
   {"change_directory",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
   {"save_history",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savehistory},
@@ -1509,6 +1518,73 @@ mx_echo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
+mx_cat(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  static char buf[1024];
+  int fd, len, use_stdin = TRUE;
+
+  if (argv[2]) {
+    fd = nopen(argv[2], O_RDONLY, 0);
+    if (fd == -1) {
+      error(obj, ERR_MENU_OPEN_FILE);
+      return 1;
+    }
+    use_stdin = FALSE;
+  } else {
+    fd = stdinfd();
+  }
+
+  while ((len = nread(fd, buf, sizeof(buf) - 1)) > 0) {
+    buf[len] = '\0';
+    PutStdout(buf);
+  }
+
+  if (! use_stdin) {
+    nclose(fd);
+  }
+
+  return 0;
+}
+
+static int
+mx_clear_info(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  InfoWinClear();
+  return 0;
+}
+
+static int
+mx_toggle_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int win;
+
+  win = * (int *) (argv[2]);
+
+  switch (win) {
+  case 0:
+    CmFileWindow(NULL, NULL);
+    break;
+  case 1:
+    CmAxisWindow(NULL, NULL);
+    break;
+  case 2:
+    CmLegendWindow(NULL, NULL);
+    break;
+  case 3:
+    CmMergeWindow(NULL, NULL);
+    break;
+  case 4:
+    CmCoordinateWindow(NULL, NULL);
+    break;
+  case 5:
+    CmInformationWindow(NULL, NULL);
+    break;
+  }
+
+  return 0;
+}
+
+static int
 mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   Draw(FALSE);
@@ -1595,6 +1671,9 @@ static struct objtable gtkmenu[] = {
   {"focused", NSAFUNC, NREAD | NEXEC, mx_get_focused, "sa", 0},
   {"print", NVFUNC, NREAD | NEXEC, mx_print, "bi", 0},
   {"echo", NVFUNC, NREAD | NEXEC, mx_echo, "s", 0},
+  {"cat", NVFUNC, NREAD | NEXEC, mx_cat, "s", 0},
+  {"clear_info", NVFUNC, NREAD | NEXEC, mx_clear_info, "", 0},
+  {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 

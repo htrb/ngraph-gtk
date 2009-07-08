@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-28\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-06 16:21+0900\n"
+"POT-Creation-Date: 2009-07-08 13:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1527
+#: src/gtk/ox11menu.c:1603
 msgid "Unsaved Graph"
 msgstr ""
 
@@ -44,7 +44,7 @@ msgstr ""
 msgid "gray"
 msgstr ""
 
-#: src/gtk/x11axis.c:56 src/gtk/x11opt.c:402 src/gtk/x11opt.c:889
+#: src/gtk/x11axis.c:56 src/gtk/x11opt.c:403 src/gtk/x11opt.c:890
 msgid "name"
 msgstr ""
 
@@ -118,7 +118,7 @@ msgstr ""
 msgid "_Background"
 msgstr ""
 
-#: src/gtk/x11axis.c:350 src/gtk/x11opt.c:1360
+#: src/gtk/x11axis.c:350 src/gtk/x11opt.c:1373
 msgid "_Background Color:"
 msgstr ""
 
@@ -349,7 +349,7 @@ msgstr ""
 msgid "_Position ..."
 msgstr ""
 
-#: src/gtk/x11commn.c:929 src/gtk/x11opt.c:1501
+#: src/gtk/x11commn.c:929 src/gtk/x11opt.c:1514
 #, c-format
 msgid ""
 "`%s'\n"
@@ -361,7 +361,7 @@ msgstr ""
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:980 src/gtk/x11opt.c:1508
+#: src/gtk/x11commn.c:980 src/gtk/x11opt.c:1521
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -398,11 +398,11 @@ msgstr ""
 msgid "error"
 msgstr ""
 
-#: src/gtk/x11dialg.c:51 src/gtk/x11opt.c:1366
+#: src/gtk/x11dialg.c:51 src/gtk/x11opt.c:1379
 msgid "solid"
 msgstr ""
 
-#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1367
+#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1380
 msgid "dot"
 msgstr ""
 
@@ -618,7 +618,7 @@ msgstr ""
 msgid "External driver setup"
 msgstr ""
 
-#: src/gtk/x11dialg.c:271 src/gtk/x11opt.c:680
+#: src/gtk/x11dialg.c:271 src/gtk/x11opt.c:681
 msgid "Font"
 msgstr ""
 
@@ -650,7 +650,7 @@ msgstr ""
 msgid "_All"
 msgstr ""
 
-#: src/gtk/x11file.c:66 src/gtk/x11merge.c:53 src/gtk/x11opt.c:403
+#: src/gtk/x11file.c:66 src/gtk/x11merge.c:53 src/gtk/x11opt.c:404
 msgid "file"
 msgstr ""
 
@@ -1000,7 +1000,7 @@ msgstr ""
 msgid "_Expand included file"
 msgstr ""
 
-#: src/gtk/x11graph.c:898 src/gtk/x11graph.c:945 src/gtk/x11opt.c:1025
+#: src/gtk/x11graph.c:898 src/gtk/x11graph.c:945 src/gtk/x11opt.c:1030
 msgid "_Ignore file path"
 msgstr ""
 
@@ -1008,7 +1008,7 @@ msgstr ""
 msgid "_Greek Symbol"
 msgstr ""
 
-#: src/gtk/x11graph.c:1008 src/gtk/x11opt.c:994
+#: src/gtk/x11graph.c:1008 src/gtk/x11opt.c:999
 msgid "_Path:"
 msgstr ""
 
@@ -1714,7 +1714,7 @@ msgstr ""
 msgid "_Preference"
 msgstr ""
 
-#: src/gtk/x11menu.c:1303 src/gtk/x11opt.c:79
+#: src/gtk/x11menu.c:1303 src/gtk/x11opt.c:80
 msgid "_Viewer"
 msgstr ""
 
@@ -1722,7 +1722,7 @@ msgstr ""
 msgid "_External viewer"
 msgstr ""
 
-#: src/gtk/x11menu.c:1305 src/gtk/x11opt.c:87
+#: src/gtk/x11menu.c:1305 src/gtk/x11opt.c:88
 msgid "_Font aliases"
 msgstr ""
 
@@ -1734,7 +1734,7 @@ msgstr ""
 msgid "_Addin script"
 msgstr ""
 
-#: src/gtk/x11menu.c:1308 src/gtk/x11opt.c:99
+#: src/gtk/x11menu.c:1308 src/gtk/x11opt.c:100
 msgid "_Miscellaneous"
 msgstr ""
 
@@ -1836,199 +1836,203 @@ msgstr ""
 msgid "Merge open"
 msgstr ""
 
-#: src/gtk/x11opt.c:71
+#: src/gtk/x11opt.c:72
 msgid "_Geometry"
 msgstr ""
 
-#: src/gtk/x11opt.c:75
+#: src/gtk/x11opt.c:76
 msgid "_Child Geometry"
 msgstr ""
 
-#: src/gtk/x11opt.c:83
+#: src/gtk/x11opt.c:84
 msgid "_External Viewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:91
+#: src/gtk/x11opt.c:92
 msgid "_External Driver"
 msgstr ""
 
-#: src/gtk/x11opt.c:95
+#: src/gtk/x11opt.c:96
 msgid "_Addin Script"
 msgstr ""
 
-#: src/gtk/x11opt.c:236
+#: src/gtk/x11opt.c:237
 msgid "Add-in Script"
 msgstr ""
 
-#: src/gtk/x11opt.c:253 src/gtk/x11opt.c:474
+#: src/gtk/x11opt.c:254 src/gtk/x11opt.c:475
 msgid "_Name:"
 msgstr ""
 
-#: src/gtk/x11opt.c:261
+#: src/gtk/x11opt.c:262
 msgid "_Script file:"
 msgstr ""
 
-#: src/gtk/x11opt.c:264 src/gtk/x11opt.c:485 src/gtk/x11print.c:163
+#: src/gtk/x11opt.c:265 src/gtk/x11opt.c:486 src/gtk/x11print.c:163
 msgid "_Browse"
 msgstr ""
 
-#: src/gtk/x11opt.c:273 src/gtk/x11opt.c:494 src/gtk/x11print.c:155
+#: src/gtk/x11opt.c:274 src/gtk/x11opt.c:495 src/gtk/x11print.c:155
 msgid "_Option:"
 msgstr ""
 
-#: src/gtk/x11opt.c:280
+#: src/gtk/x11opt.c:281
 msgid "_Description:"
 msgstr ""
 
-#: src/gtk/x11opt.c:324
+#: src/gtk/x11opt.c:325
 msgid "Please specify script name."
 msgstr ""
 
-#: src/gtk/x11opt.c:328
+#: src/gtk/x11opt.c:329
 msgid "Please specify script file name."
 msgstr ""
 
-#: src/gtk/x11opt.c:336
+#: src/gtk/x11opt.c:337
 msgid "Please specify script description."
 msgstr ""
 
-#: src/gtk/x11opt.c:404
+#: src/gtk/x11opt.c:405
 msgid "description"
 msgstr ""
 
-#: src/gtk/x11opt.c:455
+#: src/gtk/x11opt.c:456
 msgid "External Driver"
 msgstr ""
 
-#: src/gtk/x11opt.c:482 src/gtk/x11print.c:148
+#: src/gtk/x11opt.c:483 src/gtk/x11print.c:148
 msgid "_Driver:"
 msgstr ""
 
-#: src/gtk/x11opt.c:500
+#: src/gtk/x11opt.c:501
 msgid "_Extension:"
 msgstr ""
 
-#: src/gtk/x11opt.c:525
+#: src/gtk/x11opt.c:526
 msgid "Please specify driver name."
 msgstr ""
 
-#: src/gtk/x11opt.c:615
+#: src/gtk/x11opt.c:616
 msgid "Driver"
 msgstr ""
 
-#: src/gtk/x11opt.c:684
+#: src/gtk/x11opt.c:685
 msgid "_Jfont"
 msgstr ""
 
-#: src/gtk/x11opt.c:854
+#: src/gtk/x11opt.c:855
 msgid "Please specify a new alias name."
 msgstr ""
 
-#: src/gtk/x11opt.c:862
+#: src/gtk/x11opt.c:863
 msgid "Alias name already exists."
 msgstr ""
 
-#: src/gtk/x11opt.c:888
+#: src/gtk/x11opt.c:889
 msgid "alias"
 msgstr ""
 
-#: src/gtk/x11opt.c:890
+#: src/gtk/x11opt.c:891
 msgid "style"
 msgstr ""
 
-#: src/gtk/x11opt.c:900
+#: src/gtk/x11opt.c:901
 msgid "_New alias:"
 msgstr ""
 
-#: src/gtk/x11opt.c:984
+#: src/gtk/x11opt.c:989
 msgid "_Editor:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1000
+#: src/gtk/x11opt.c:1005
 msgid "include _Data file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1004
+#: src/gtk/x11opt.c:1009
 msgid "include _Merge file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1015
+#: src/gtk/x11opt.c:1020
 msgid "_Expand include file"
 msgstr ""
 
-#: src/gtk/x11opt.c:1021
+#: src/gtk/x11opt.c:1026
 msgid "_Expand directory:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1039
+#: src/gtk/x11opt.c:1044
 msgid "_Check \"change current directory\""
 msgstr ""
 
-#: src/gtk/x11opt.c:1044
+#: src/gtk/x11opt.c:1049
 msgid "_Save file history"
 msgstr ""
 
-#: src/gtk/x11opt.c:1056
+#: src/gtk/x11opt.c:1061
 msgid "_Size of completion history:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1060
+#: src/gtk/x11opt.c:1065
 msgid "_Length of information window:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1064
+#: src/gtk/x11opt.c:1069
 msgid "_Length of data preview:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1075
-msgid "_Font of coordinate window:"
+#: src/gtk/x11opt.c:1080
+msgid "font of _Coordinate window:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1079
+#: src/gtk/x11opt.c:1084
+msgid "font of _Information window:"
+msgstr ""
+
+#: src/gtk/x11opt.c:1088
 msgid "font of data _Preview:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1246
+#: src/gtk/x11opt.c:1259
 msgid "use _External previewer"
 msgstr ""
 
-#: src/gtk/x11opt.c:1259
+#: src/gtk/x11opt.c:1272
 msgid "Window _Width:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1265
+#: src/gtk/x11opt.c:1278
 msgid "Window _Height:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1348
+#: src/gtk/x11opt.c:1361
 msgid "_DPI:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1354
+#: src/gtk/x11opt.c:1367
 msgid "_Grid:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1368
+#: src/gtk/x11opt.c:1381
 msgid "_Line attribute of focus frame:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1378
+#: src/gtk/x11opt.c:1391
 msgid "_Antialias:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1382
+#: src/gtk/x11opt.c:1395
 msgid "_Preserve line width and style"
 msgstr ""
 
-#: src/gtk/x11opt.c:1388
+#: src/gtk/x11opt.c:1401
 msgid "_Load files on redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1395
+#: src/gtk/x11opt.c:1408
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1502
+#: src/gtk/x11opt.c:1515
 msgid "Save as .Ngraph.ngp"
 msgstr ""
 

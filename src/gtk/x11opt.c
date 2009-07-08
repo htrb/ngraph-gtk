@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.66 2009/07/05 06:14:40 hito Exp $
+ * $Id: x11opt.c,v 1.67 2009/07/08 10:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -51,6 +51,7 @@
 #include "x11opt.h"
 #include "x11commn.h"
 #include "x11cood.h"
+#include "x11info.h"
 
 #define BUF_SIZE 64
 #define MESSAGE_BUF_SIZE 4096
@@ -956,6 +957,10 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->coordwin_font), Menulocal.coordwin_font);
   }
 
+  if (Menulocal.infowin_font) {
+    gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->infowin_font), Menulocal.infowin_font);
+  }
+
   if (Menulocal.file_preview_font) {
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->file_preview_font), Menulocal.file_preview_font);
   }
@@ -1072,8 +1077,12 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = gtk_font_button_new();
-    item_setup(vbox, w, _("_Font of coordinate window:"), FALSE);
+    item_setup(vbox, w, _("font of _Coordinate window:"), FALSE);
     d->coordwin_font = w;
+
+    w = gtk_font_button_new();
+    item_setup(vbox, w, _("font of _Information window:"), FALSE);
+    d->infowin_font = w;
 
     w = gtk_font_button_new();
     item_setup(vbox, w, _("font of data _Preview:"), FALSE);
@@ -1184,6 +1193,10 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   if (set_font(&Menulocal.coordwin_font, d->coordwin_font)) {
     CoordWinSetFont(Menulocal.coordwin_font);
+  }
+
+  if (set_font(&Menulocal.infowin_font, d->infowin_font)) {
+    InfoWinSetFont(Menulocal.infowin_font);
   }
 
   set_font(&Menulocal.file_preview_font, d->file_preview_font);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11info.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: x11info.h,v 1.2 2009/07/08 10:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,3 +26,4 @@ void InfoWinUpdate(int clear);
 void InfoWinDrawInfoText(const char *str);
 void CmInformationWindow(GtkWidget *w, gpointer data);
 void InfoWinUnmap(GtkWidget *w, gpointer client_data, gpointer call_data);
+void InfoWinSetFont(char *font);

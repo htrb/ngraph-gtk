@@ -479,7 +479,7 @@ alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
 object id: 35
-number of fields: 34
+number of fields: 37
 size of instance: 184
 r--               id    int
 r--              oid    int
@@ -514,6 +514,9 @@ r-x            clear    void( void )
 r-x          focused    *char[]( char *[] )
 r-x            print    void( bool int )
 r-x             echo    void( char * )
+r-x              cat    void( char * )
+r-x       clear_info    void( void )
+r-x    toggle_window    void( int )
 ---          _evloop    void( )
 </pre>
 

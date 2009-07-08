@@ -1,5 +1,5 @@
 /* 
- * $Id: x11info.c,v 1.6 2009/01/08 04:18:00 hito Exp $
+ * $Id: x11info.c,v 1.7 2009/07/08 10:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,6 +43,19 @@ create_win(void)
   d ->type = TypeInfoWin;
 
   return text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm, Infowin48_xpm);
+}
+
+void
+InfoWinSetFont(char *font)
+{
+  if (NgraphApp.InfoWin.text && font) {
+    PangoFontDescription *desc;
+
+    desc = pango_font_description_from_string(font);
+    gtk_widget_modify_font(GTK_WIDGET(NgraphApp.InfoWin.text), NULL);
+    gtk_widget_modify_font(GTK_WIDGET(NgraphApp.InfoWin.text), desc);
+    pango_font_description_free(desc);
+  }
 }
 
 void
@@ -144,5 +157,6 @@ CmInformationWindow(GtkWidget *w, gpointer data)
 
     sub_window_show((struct SubWin *) d);
     sub_window_set_geometry((struct SubWin *) d, TRUE);
+    InfoWinSetFont(Menulocal.infowin_font);
   }
 }
