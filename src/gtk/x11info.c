@@ -1,5 +1,5 @@
 /* 
- * $Id: x11info.c,v 1.7 2009/07/08 10:13:03 hito Exp $
+ * $Id: x11info.c,v 1.8 2009/07/09 02:05:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,11 +38,19 @@ static GtkWidget *
 create_win(void)
 {
   struct InfoWin *d;
+  GtkWidget *w;
 
   d = &(NgraphApp.InfoWin);
   d ->type = TypeInfoWin;
 
-  return text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm, Infowin48_xpm);
+  w = text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm, Infowin48_xpm);
+
+  if (w) {
+    InfoWinSetFont(Menulocal.infowin_font);
+    sub_window_set_geometry((struct SubWin *) d, TRUE);
+  }
+
+  return w;
 }
 
 void
@@ -154,9 +162,8 @@ CmInformationWindow(GtkWidget *w, gpointer data)
     GtkWidget *dlg;
 
     dlg = create_win();
-
-    sub_window_show((struct SubWin *) d);
-    sub_window_set_geometry((struct SubWin *) d, TRUE);
-    InfoWinSetFont(Menulocal.infowin_font);
+    if (dlg) {
+      sub_window_show((struct SubWin *) d);
+    }
   }
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.81 2009/07/08 10:13:03 hito Exp $
+ * $Id: ox11menu.c,v 1.82 2009/07/09 02:05:30 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -80,8 +80,9 @@
 
 static char *menuerrorlist[] = {
   "already running.",
-  "cannot open display.",
-  "cannot open the file"
+  "cannot open the display.",
+  "cannot open the file",
+  "the GUI is not active",
 };
 
 #define ERRNUM (sizeof(menuerrorlist) / sizeof(*menuerrorlist))
@@ -90,6 +91,7 @@ enum {
   ERR_MENU_RUN = 100,
   ERR_MENU_DISPLAY,
   ERR_MENU_OPEN_FILE,
+  ERR_MENU_GUI,
 };
 
 struct menulocal Menulocal;
@@ -1096,7 +1098,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   return 0;
 
-errexit:
+ errexit:
   menulocal_finalize();
 
   local = gra2cairo_free(obj, inst);
@@ -1108,6 +1110,11 @@ errexit:
 static int
 menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  if (Menulocal.lock) {
+    error(obj, ERR_MENU_RUN);
+    return 1;
+  }
+
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
 
@@ -1190,6 +1197,7 @@ menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
+
   if (Menulocal.lock) {
     error(obj, ERR_MENU_RUN);
     return 1;
@@ -1301,6 +1309,11 @@ mx_dellist(struct objlist *obj, char *inst, int deln)
 static int
 mxredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
   mx_redraw(obj, inst);
   return 0;
 }
@@ -1309,6 +1322,11 @@ static int
 mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int dpi;
+
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
 
   dpi = abs(*(int *) argv[2]);
   if (dpi < 1)
@@ -1329,6 +1347,11 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 mxflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
   if (Menulocal.local->linetonum && Menulocal.local->cairo) {
     cairo_stroke(Menulocal.local->cairo);
     Menulocal.local->linetonum = 0;
@@ -1373,6 +1396,11 @@ mx_clear(GdkRegion *region)
 static int
 mxclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
 
@@ -1434,6 +1462,11 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   struct narray *oarray, *sarray;
   struct Viewer *d;
   struct FocusObj **focus;
+
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
 
   arrayfree2(*(struct narray **)rval);
   *(char **)rval = NULL;
@@ -1509,6 +1542,11 @@ mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 mx_echo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
   if (argv[2])
     PutStdout((char *) argv[2]);
 
@@ -1522,6 +1560,11 @@ mx_cat(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   static char buf[1024];
   int fd, len, use_stdin = TRUE;
+
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
 
   if (argv[2]) {
     fd = nopen(argv[2], O_RDONLY, 0);
@@ -1549,7 +1592,100 @@ mx_cat(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 mx_clear_info(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
   InfoWinClear();
+  return 0;
+}
+
+static struct _subwin_data {
+  struct SubWin *w;
+  void (*init)(GtkWidget *, gpointer);
+} SubwinData[] = {
+  {
+    &NgraphApp.FileWin,
+    CmFileWindow,
+  },
+  {
+    &NgraphApp.AxisWin,
+    CmAxisWindow,
+  },
+  {
+    (struct SubWin *) &NgraphApp.LegendWin,
+    CmLegendWindow,
+  },
+  {
+    &NgraphApp.MergeWin,
+    CmMergeWindow,
+  },
+  {
+    (struct SubWin *) &NgraphApp.CoordWin,
+    CmCoordinateWindow,
+  },
+  {
+    (struct SubWin *) &NgraphApp.InfoWin,
+    CmInformationWindow,
+  },
+};
+
+static void
+subwindow_show(struct _subwin_data *win)
+{
+  if (win->w->Win) {
+    sub_window_show(win->w);
+  } else {
+    win->init(NULL, NULL);
+  }
+}
+
+static void
+subwindow_hide(struct _subwin_data *win)
+{
+  if (win->w->Win) {
+    sub_window_hide(win->w);
+  }
+}
+
+static int
+mx_show_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  unsigned int win;
+
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
+  win = * (unsigned int *) (argv[2]);
+
+  if (win >= sizeof(SubwinData) / sizeof(*SubwinData))
+    return 0;
+
+  subwindow_show(&SubwinData[win]);
+
+  return 0;
+}
+
+static int
+mx_hide_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  unsigned int win;
+
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
+  win = * (unsigned int *) (argv[2]);
+
+  if (win >= sizeof(SubwinData) / sizeof(*SubwinData))
+    return 0;
+
+  subwindow_hide(&SubwinData[win]);
+
   return 0;
 }
 
@@ -1557,6 +1693,11 @@ static int
 mx_toggle_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int win;
+
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
 
   win = * (int *) (argv[2]);
 
@@ -1587,6 +1728,11 @@ mx_toggle_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv
 static int
 mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
+
   Draw(FALSE);
   return 0;
 }
@@ -1609,8 +1755,10 @@ mxmodified(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int modified;
 
-  if (argv[2] == NULL)
-    return 0;
+  if (TopLevel == NULL) {
+    error(obj, ERR_MENU_GUI);
+    return 1;
+  }
 
   modified = * (int *) argv[2];
 
@@ -1673,6 +1821,8 @@ static struct objtable gtkmenu[] = {
   {"echo", NVFUNC, NREAD | NEXEC, mx_echo, "s", 0},
   {"cat", NVFUNC, NREAD | NEXEC, mx_cat, "s", 0},
   {"clear_info", NVFUNC, NREAD | NEXEC, mx_clear_info, "", 0},
+  {"show_window", NVFUNC, NREAD | NEXEC, mx_show_win, "i", 0},
+  {"hide_window", NVFUNC, NREAD | NEXEC, mx_hide_win, "i", 0},
   {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };

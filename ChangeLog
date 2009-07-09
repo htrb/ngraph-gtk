@@ -1,3 +1,17 @@
+2009-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (menudone): return "1" when GUI is active.
+	(mxredraw, mxdpi, mxflush, mx_get_focused, mx_echo, mx_cat)
+	(mx_clear_info, mx_toggle_win, mxdraw, mxclear): do nothing when
+	GUI is not active.
+	(menuerrorlist): add error message ("the GUI is not active").
+	(SubwinData, _subwin_data, subwindow_show, subwindow_hide)
+	(mx_show_win, mx_hide_win): add.
+	(gtkmenu): add new field "show_window" and "hide_window".
+
+	* src/gtk/x11info.c (create_win): initialize font and geometry
+	settings.
+
 2009-07-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
