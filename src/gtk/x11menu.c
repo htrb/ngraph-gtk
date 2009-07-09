@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.104 2009/07/05 06:14:40 hito Exp $
+ * $Id: x11menu.c,v 1.105 2009/07/09 12:40:31 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1410,6 +1410,12 @@ toggle_view_cb(GtkWidget *w, gpointer data)
   set_widget_visibility(cross);
 }
 
+static void
+clear_information(GtkMenuItem *w, gpointer user_data)
+{
+  InfoWinClear();
+}
+
 static void 
 create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
@@ -1445,6 +1451,13 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 
   item = gtk_menu_item_new_with_mnemonic(_("default _Window config"));
   g_signal_connect(item, "activate", G_CALLBACK(CmReloadWindowConfig), NULL);
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+
+  item = gtk_separator_menu_item_new();
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+
+  item = gtk_menu_item_new_with_mnemonic(_("_Clear information window"));
+  g_signal_connect(item, "activate", G_CALLBACK(clear_information), NULL);
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
   item = gtk_separator_menu_item_new();

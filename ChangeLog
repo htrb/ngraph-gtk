@@ -1,5 +1,8 @@
 2009-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (clear_information): add.
+	(create_windowmenu): add menu item "_Clear information window".
+
 	* src/gtk/ox11menu.c (menudone): return "1" when GUI is active.
 	(mxredraw, mxdpi, mxflush, mx_get_focused, mx_echo, mx_cat)
 	(mx_clear_info, mx_toggle_win, mxdraw, mxclear): do nothing when

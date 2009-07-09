@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-09 11:05+0900\n"
-"PO-Revision-Date: 2009-07-08 13:19+0900\n"
+"POT-Creation-Date: 2009-07-09 17:44+0900\n"
+"PO-Revision-Date: 2009-07-09 17:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1758,51 +1758,55 @@ msgstr "データファイル初期状態(_D)"
 msgid "_Legend text default"
 msgstr "レジェンドテキスト初期状態(_T)"
 
-#: src/gtk/x11menu.c:1418
+#: src/gtk/x11menu.c:1424
 msgid "_View"
 msgstr "表示(_V)"
 
-#: src/gtk/x11menu.c:1446
+#: src/gtk/x11menu.c:1452
 msgid "default _Window config"
 msgstr "初期状態のウィンドウ配置(_W)"
 
-#: src/gtk/x11menu.c:1453
+#: src/gtk/x11menu.c:1459
+msgid "_Clear information window"
+msgstr "Information Window をクリア(_C)"
+
+#: src/gtk/x11menu.c:1466
 msgid "_Status bar"
 msgstr "ステータスバー(_S)"
 
-#: src/gtk/x11menu.c:1457
+#: src/gtk/x11menu.c:1470
 msgid "_Ruler"
 msgstr "ルーラー(_R)"
 
-#: src/gtk/x11menu.c:1461
+#: src/gtk/x11menu.c:1474
 msgid "_Scrollbar"
 msgstr "スクロールバー(_S)"
 
-#: src/gtk/x11menu.c:1465
+#: src/gtk/x11menu.c:1478
 msgid "_Command toolbar"
 msgstr "コマンドツールバー(_C)"
 
-#: src/gtk/x11menu.c:1469
+#: src/gtk/x11menu.c:1482
 msgid "_Toolbox"
 msgstr "ツールボックス(_T) "
 
-#: src/gtk/x11menu.c:1473 src/gtk/x11view.c:1012
+#: src/gtk/x11menu.c:1486 src/gtk/x11view.c:1012
 msgid "cross _Gauge"
 msgstr "クロスゲージ(_G)"
 
-#: src/gtk/x11menu.c:1485
+#: src/gtk/x11menu.c:1498
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2489
+#: src/gtk/x11menu.c:2502
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2539
+#: src/gtk/x11menu.c:2552
 msgid "Question"
 msgstr "質問:"
 
-#: src/gtk/x11menu.c:2596
+#: src/gtk/x11menu.c:2609
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
