@@ -1,0 +1,31 @@
+#! /usr/bin/ngraph
+
+if echo $LANG | grep -q "UTF-8"
+then
+    LOCALE=$LANG
+else
+    LOCALE=C
+fi
+
+DATE=`date +%m`
+
+set +e
+new dialog
+dialog::title="Calendar"
+dialog::caption="select MONTH"
+DATE=`get dialog: -field integer_entry:"1 12 1 $DATE"`
+RVAL=$?
+del dialog
+set -e
+
+if [ $RVAL != 0 ]
+then
+    exit
+fi
+
+YEAR=`date +%Y`
+MONTH=`iexpr $DATE`
+
+menu::show_window 5
+LANG=$LOCALE /usr/bin/cal -3 $MONTH $YEAR | menu::cat
+menu::echo
