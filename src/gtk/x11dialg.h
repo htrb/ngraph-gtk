@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.44 2009/07/08 10:13:03 hito Exp $
+ * $Id: x11dialg.h,v 1.45 2009/07/10 14:12:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -105,6 +105,7 @@ struct FileDialog
     *type, *mark_btn, *curve, *col1, *col2, *clip, *style, *size, *miter, *join,
     *comment_box, *fit_box, *button_box, *width, *apply_all, *comment_view;
   GtkTextBuffer *comment;
+  GtkTextTag *comment_num_tag;
   struct objlist *Obj;
   int Id;
   struct MarkDialog mark;

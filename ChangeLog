@@ -1,5 +1,17 @@
 2009-07-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (count_line_number_str, set_line_number_tag)
+	(create_text_tag): add.
+	(FileDialogSetup): initialize "d->comment_num_tag" and set tag for
+	line number.
+
+	* src/gtk/x11dialg.h (struct FileDialog): add member
+	"comment_num_tag".
+
+	* addin/Makefile.am (pkglib_DATA): add "cal.nsc".
+
+	* addin/cal.nsc: add.
+
 	* src/gtk/x11gui.c (DialogSpinEntry): add.
 
 	* src/gtk/ox11dlg.c (dlgspin): add.

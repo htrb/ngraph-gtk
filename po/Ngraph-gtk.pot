@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-28\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-10 13:56+0900\n"
+"POT-Creation-Date: 2009-07-10 21:39+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -694,7 +694,7 @@ msgstr ""
 msgid "_Draw"
 msgstr ""
 
-#: src/gtk/x11file.c:111 src/gtk/x11file.c:2903
+#: src/gtk/x11file.c:111 src/gtk/x11file.c:2967
 msgid "_Fit"
 msgstr ""
 
@@ -887,48 +887,48 @@ msgstr ""
 msgid "_Math"
 msgstr ""
 
-#: src/gtk/x11file.c:2862
+#: src/gtk/x11file.c:2925
 #, c-format
 msgid "Data %d"
 msgstr ""
 
-#: src/gtk/x11file.c:2866
+#: src/gtk/x11file.c:2929
 msgid "_Apply all"
 msgstr ""
 
-#: src/gtk/x11file.c:2873
+#: src/gtk/x11file.c:2936
 msgid "_Copy all"
 msgstr ""
 
-#: src/gtk/x11file.c:2879 src/gtk/x11merge.c:136 src/gtk/x11print.c:161
+#: src/gtk/x11file.c:2942 src/gtk/x11merge.c:136 src/gtk/x11print.c:161
 msgid "_File:"
 msgstr ""
 
-#: src/gtk/x11file.c:2882
+#: src/gtk/x11file.c:2945
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:2915 src/gtk/x11view.c:863
+#: src/gtk/x11file.c:2979 src/gtk/x11view.c:863
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:2919 src/gtk/x11view.c:864
+#: src/gtk/x11file.c:2983 src/gtk/x11view.c:864
 msgid "_Move"
 msgstr ""
 
-#: src/gtk/x11file.c:2923 src/gtk/x11menu.c:940
+#: src/gtk/x11file.c:2987 src/gtk/x11menu.c:940
 msgid "_Edit"
 msgstr ""
 
-#: src/gtk/x11file.c:2948
+#: src/gtk/x11file.c:3015
 msgid "This file contain invalid UTF-8 strings."
 msgstr ""
 
-#: src/gtk/x11file.c:3169
+#: src/gtk/x11file.c:3236
 msgid "Data new"
 msgstr ""
 
-#: src/gtk/x11file.c:3211
+#: src/gtk/x11file.c:3278
 msgid "Data open"
 msgstr ""
 

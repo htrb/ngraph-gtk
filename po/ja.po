@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-10 13:56+0900\n"
+"POT-Creation-Date: 2009-07-10 21:39+0900\n"
 "PO-Revision-Date: 2009-07-09 17:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -696,7 +696,7 @@ msgstr "直後に複製(_B)"
 msgid "_Draw"
 msgstr "描画(_D)"
 
-#: src/gtk/x11file.c:111 src/gtk/x11file.c:2903
+#: src/gtk/x11file.c:111 src/gtk/x11file.c:2967
 msgid "_Fit"
 msgstr "フィット(_F)"
 
@@ -889,48 +889,48 @@ msgstr "ジョイン(_J):"
 msgid "_Math"
 msgstr "変換数式(_M) "
 
-#: src/gtk/x11file.c:2862
+#: src/gtk/x11file.c:2925
 #, c-format
 msgid "Data %d"
 msgstr "データ %d"
 
-#: src/gtk/x11file.c:2866
+#: src/gtk/x11file.c:2929
 msgid "_Apply all"
 msgstr "全てに適用(_A)"
 
-#: src/gtk/x11file.c:2873
+#: src/gtk/x11file.c:2936
 msgid "_Copy all"
 msgstr "全てコピー(_C)"
 
-#: src/gtk/x11file.c:2879 src/gtk/x11merge.c:136 src/gtk/x11print.c:161
+#: src/gtk/x11file.c:2942 src/gtk/x11merge.c:136 src/gtk/x11print.c:161
 msgid "_File:"
 msgstr "ファイル名(_F):"
 
-#: src/gtk/x11file.c:2882
+#: src/gtk/x11file.c:2945
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:2915 src/gtk/x11view.c:863
+#: src/gtk/x11file.c:2979 src/gtk/x11view.c:863
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:2919 src/gtk/x11view.c:864
+#: src/gtk/x11file.c:2983 src/gtk/x11view.c:864
 msgid "_Move"
 msgstr "移動(_M)"
 
-#: src/gtk/x11file.c:2923 src/gtk/x11menu.c:940
+#: src/gtk/x11file.c:2987 src/gtk/x11menu.c:940
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:2948
+#: src/gtk/x11file.c:3015
 msgid "This file contain invalid UTF-8 strings."
 msgstr "ファイルに不正な UTF-8 文字列が含まれています."
 
-#: src/gtk/x11file.c:3169
+#: src/gtk/x11file.c:3236
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:3211
+#: src/gtk/x11file.c:3278
 msgid "Data open"
 msgstr "データを開く"
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.100 2009/07/02 06:46:07 hito Exp $
+ * $Id: x11file.c,v 1.101 2009/07/10 14:12:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2849,6 +2849,69 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
 }
 
+static int
+count_line_number_str(const char *str)
+{
+  int i, n;
+
+  if (str == NULL)
+    return 0;
+
+  n = 0;
+  for (i = 0; str[i] != '\0' && str[i] != '\n'; i++) {
+    if (str[i] != ' ') {
+      n = i + 2;
+      break;
+    }
+  }
+
+  return n;
+}
+
+static void
+set_line_number_tag(GtkTextBuffer *buf, GtkTextTag *tag, int n)
+{
+  GtkTextIter start, end;
+
+  if (tag == NULL || n == 0)
+    return;
+
+  gtk_text_buffer_get_iter_at_offset(buf, &start, 0);
+  do {
+    end = start;
+    if (! gtk_text_iter_forward_chars(&end, n))
+      break;
+    gtk_text_buffer_apply_tag (buf, tag, &start, &end);
+
+    if (! gtk_text_iter_forward_line(&start))
+      break;
+  } while (1);
+}
+
+static GtkTextTag *
+create_text_tag(GtkWidget *view, GtkTextBuffer *buf)
+{
+  GtkTextTag *tag;
+  GdkColor fg, bg;
+
+  bg.red = 0xCC00;
+  bg.green = 0xCC00;
+  bg.blue = 0xCC00;
+
+  fg.red = 0x00;
+  fg.green = 0x00;
+  fg.blue = 0x00;
+
+  tag =  gtk_text_buffer_create_tag(buf,
+				    "line_number",
+				    // "weight", PANGO_WEIGHT_BOLD,
+				    "foreground-gdk", &fg,
+				    "background-gdk", &bg,
+				    NULL);
+  return tag;
+}
+
+
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -2891,6 +2954,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
     d->comment = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+    d->comment_num_tag = create_text_tag(view, d->comment);
     d->comment_view = view;
     gtk_container_add(GTK_CONTAINER(swin), view);
 
@@ -2943,7 +3007,10 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     valid = g_utf8_validate(s, -1, &ptr);
     if (valid) {
+      int n;
       gtk_text_buffer_set_text(d->comment, s, -1);
+      n = count_line_number_str(s);
+      set_line_number_tag(d->comment, d->comment_num_tag, n);
     } else {
       gtk_text_buffer_set_text(d->comment, _("This file contain invalid UTF-8 strings."), -1);
     }

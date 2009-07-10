@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.79 2009/06/10 05:23:56 hito Exp $
+ * $Id: ofile.c,v 1.80 2009/07/10 14:12:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4660,7 +4660,7 @@ f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   p = ceil(log10(line + 1));
 
   for (cline = 0; cline < line; cline++) {
-    n = sprintf(buf, "%*d: ", p, cline + 1);
+    n = sprintf(buf, "%*d ", p, cline + 1);
 
     if (fgetnline(fd, buf + n, sizeof(buf) - n))
       break;
