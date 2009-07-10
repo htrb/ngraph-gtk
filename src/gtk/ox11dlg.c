@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.24 2009/07/10 04:56:38 hito Exp $
+ * $Id: ox11dlg.c,v 1.25 2009/07/10 05:56:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -334,7 +334,7 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   type = argv[1][0];
   switch (type) {
-  case 'd':
+  case 'f':
     min = * (double *) argv[2];
     max = * (double *) argv[3];
     inc = * (double *) argv[4];
@@ -359,7 +359,7 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   switch (type) {
-  case 'd':
+  case 'f':
     ptr = g_strdup_printf("%.15e", r);
     *(char **)rval = nstrdup(ptr);
     g_free(ptr);
