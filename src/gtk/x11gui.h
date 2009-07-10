@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.11 2009/07/02 06:46:07 hito Exp $
+ * $Id: x11gui.h,v 1.12 2009/07/10 04:56:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,6 +59,7 @@ int DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *ar
 int DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r);
 int DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r);
 int DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r);
+int DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, double max, double inc, double *r);
 int nGetOpenFileNameMulti(GtkWidget * parent,
 			  char *title, char *defext, char **initdir,
 			  const char *initfil, char ***file, int chd);

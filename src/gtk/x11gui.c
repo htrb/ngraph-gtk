@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.28 2009/07/02 06:46:07 hito Exp $
+ * $Id: x11gui.c,v 1.29 2009/07/10 04:56:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <libgen.h>
+#include <math.h>
 
 #include "object.h"
 #include "nstring.h"
@@ -525,6 +526,66 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
     } else {
       *r = NULL;
     }
+    data = IDOK;
+    break;
+  default:
+    data = IDCANCEL; 
+    break;
+  }
+
+  gtk_widget_destroy(dlg);
+  ResetEvent();
+
+  return data;
+}
+
+int
+DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, double max, double inc, double *r)
+{
+  GtkWidget *dlg, *spin;
+  GtkVBox *vbox;
+  int data, n;
+  gint res_id;
+  double prec;
+
+  dlg = gtk_dialog_new_with_buttons(title,
+				    GTK_WINDOW(parent),
+				    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+				    GTK_STOCK_OK, GTK_RESPONSE_OK,
+				    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				    NULL);
+  gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
+  gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
+  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+
+  if (caption) {
+    GtkWidget *label;
+    label = gtk_label_new(caption);
+    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+  }
+
+  if (inc == 0)
+    inc = 1;
+
+  spin = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
+  gtk_box_pack_start(GTK_BOX(vbox), spin, FALSE, FALSE, 2);
+  gtk_entry_set_activates_default(GTK_ENTRY(spin), TRUE);
+
+  prec = log10(fabs(inc));
+  if (prec < 0) {
+    n = ceil(- prec);
+  } else {
+    n = 0;
+  }
+  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), n);
+
+  gtk_widget_show_all(dlg);
+  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+
+  switch (res_id) {
+  case GTK_RESPONSE_OK:
+    *r = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spin));
     data = IDOK;
     break;
   default:

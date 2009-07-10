@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.23 2009/07/02 06:46:07 hito Exp $
+ * $Id: ox11dlg.c,v 1.24 2009/07/10 04:56:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -312,6 +312,74 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
+dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int locksave, ret, type;
+  char *title, *caption, *ptr;
+  double min, max, inc, r;
+
+  locksave = GlobalLock;
+  GlobalLock = TRUE;
+
+  free(*(char **)rval);
+  *(char **)rval = NULL;
+
+  if (_getobj(obj, "title", inst, &title)) {
+    title = NULL;
+  }
+
+  if (_getobj(obj, "caption", inst, &caption)) {
+    caption = NULL;
+  }
+
+  type = argv[1][0];
+  switch (type) {
+  case 'd':
+    min = * (double *) argv[2];
+    max = * (double *) argv[3];
+    inc = * (double *) argv[4];
+    r = * (double *) argv[5];
+    break;
+  case'i':
+    min = * (int *) argv[2];
+    max = * (int *) argv[3];
+    inc = * (int *) argv[4];
+    r = * (int *) argv[5];
+    break;
+  default:
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  ret = DialogSpinEntry(DLGTopLevel, (title) ? title : "Input", caption, min, max, inc, &r);
+
+  if (ret != IDOK) {
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  switch (type) {
+  case 'd':
+    ptr = g_strdup_printf("%.15e", r);
+    *(char **)rval = nstrdup(ptr);
+    g_free(ptr);
+    break;
+  case'i':
+    ptr = g_strdup_printf("%d", (int) r);
+    *(char **)rval = nstrdup(ptr);
+    g_free(ptr);
+    break;
+  default:
+    GlobalLock = locksave;
+    return 1;
+  }
+
+  GlobalLock = locksave;
+
+  return 0;
+}
+
+static int
 dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int locksave, *r, i, n, inum, *ptr;;
@@ -552,6 +620,8 @@ static struct objtable dialog[] = {
   {"check", NIAFUNC, NREAD | NEXEC, dlgcheck, "sa", 0},
   {"combo", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
   {"combo_entry", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
+  {"float_entry", NSFUNC, NREAD | NEXEC, dlgspin, "dddd", 0},
+  {"integer_entry", NSFUNC, NREAD | NEXEC, dlgspin, "iiii", 0},
   {"beep", NVFUNC, NREAD | NEXEC, dlgbeep, NULL, 0},
   {"get_open_file", NSFUNC, NREAD | NEXEC, dlggetopenfile, "sa", 0},
   {"get_open_files", NSAFUNC, NREAD | NEXEC, dlggetopenfiles, "sa", 0},

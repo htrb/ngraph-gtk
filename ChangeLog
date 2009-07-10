@@ -1,3 +1,10 @@
+2009-07-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (DialogSpinEntry): add.
+
+	* src/gtk/ox11dlg.c (dlgspin): add.
+	(dialog): add new field "float_entry" and "integer_entry".
+
 2009-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (clear_information): add.
