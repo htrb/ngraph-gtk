@@ -1,35 +1,11 @@
 /**
  *
- * $Id: wmfapi.h,v 1.3 2009/03/31 09:10:51 hito Exp $
+ * $Id: wmfapi.h,v 1.4 2009/07/13 09:59:00 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
  * Original author: Satoshi ISHIZAKA
  *                  isizaka@msa.biglobe.ne.jp
- **/
-
-/**
- *
- * $Log: wmfapi.h,v $
- * Revision 1.3  2009/03/31 09:10:51  hito
- * *** empty log message ***
- *
- * Revision 1.2  2009-03-29 02:13:18  hito
- * *** empty log message ***
- *
- * Revision 1.1.1.1  2008-05-29 09:37:33  hito
- * inital version.
- *
- * Revision 1.1.1.1  2008-05-29 08:47:24  hito
- * initial version.
- *
- * Revision 1.1.1.1  2008-05-26 06:03:45  hito
- * initial version
- *
- * Revision 1.1  2003/08/15 12:57:56  isizaka
- * Initial revision
- *
- *
  **/
 
 typedef unsigned char BYTE;
