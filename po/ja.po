@@ -1344,7 +1344,8 @@ msgstr "選択"
 msgid ""
 "Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/"
 "Vertical +SHIFT: Fine)"
-msgstr "Legend, 軸の選択 (+SHIFT:複数選択 / +CONTROL:水平/垂直移動 +SHIFT:微動)"
+msgstr ""
+"Legend, 軸の選択 (+SHIFT:複数選択 / +CONTROL:水平/垂直移動 +SHIFT:微動)"
 
 #: src/gtk/x11menu.c:291
 msgid "Legend Pointer"

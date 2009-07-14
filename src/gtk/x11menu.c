@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.105 2009/07/09 12:40:31 hito Exp $
+ * $Id: x11menu.c,v 1.106 2009/07/14 09:07:23 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -279,7 +279,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Point"),
     N_("Pointer"),
-    N_("Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
+    N_("Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
     Point_xpm,
     PointB,
     NULL,
