@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-14 17:17+0900\n"
-"PO-Revision-Date: 2009-07-14 16:40+0900\n"
+"POT-Creation-Date: 2009-07-14 18:02+0900\n"
+"PO-Revision-Date: 2009-07-14 18:06+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1342,8 +1342,9 @@ msgstr "選択"
 
 #: src/gtk/x11menu.c:282
 msgid ""
-"Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"
-msgstr "軸の選択 (+SHIFT:複数選択 / +CONTROL:水平/垂直移動 +SHIFT:微動)"
+"Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/"
+"Vertical +SHIFT: Fine)"
+msgstr "Legend, 軸の選択 (+SHIFT:複数選択 / +CONTROL:水平/垂直移動 +SHIFT:微動)"
 
 #: src/gtk/x11menu.c:291
 msgid "Legend Pointer"
@@ -1353,7 +1354,7 @@ msgstr "Legend選択"
 msgid ""
 "Legend Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: "
 "Fine)"
-msgstr "Legendの選択 (+SHIFT:複数選択 / +CONTROL:水平/垂直移動 +SHIFT:微動)"
+msgstr "Legend の選択 (+SHIFT:複数選択 / +CONTROL:水平/垂直移動 +SHIFT:微動)"
 
 #: src/gtk/x11menu.c:301
 msgid "Axis Pointer"
@@ -2367,6 +2368,11 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#~ msgid ""
+#~ "Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: "
+#~ "Fine)"
+#~ msgstr "軸の選択 (+SHIFT:複数選択 / +CONTROL:水平/垂直移動 +SHIFT:微動)"
 
 #~ msgid "Overwrite existing file?"
 #~ msgstr "既存のファイルに上書きしますか?"
