@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-10 21:39+0900\n"
-"PO-Revision-Date: 2009-07-09 17:47+0900\n"
+"POT-Creation-Date: 2009-07-14 17:17+0900\n"
+"PO-Revision-Date: 2009-07-14 16:40+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -755,7 +755,7 @@ msgstr "読込(_L)"
 
 #: src/gtk/x11file.c:1138 src/gtk/x11file.c:2763
 msgid "_Type:"
-msgstr "種類(_T):"
+msgstr "タイプ(_T):"
 
 #: src/gtk/x11file.c:1141
 msgid "_Through"
@@ -933,6 +933,18 @@ msgstr "新規作成"
 #: src/gtk/x11file.c:3278
 msgid "Data open"
 msgstr "データを開く"
+
+#: src/gtk/x11file.c:4310 src/gtk/x11file.c:4369
+msgid "Color 1"
+msgstr "色 1"
+
+#: src/gtk/x11file.c:4310 src/gtk/x11file.c:4375
+msgid "Color 2"
+msgstr "色 2"
+
+#: src/gtk/x11file.c:4310
+msgid "Type"
+msgstr "タイプ"
 
 #: src/gtk/x11graph.c:65
 msgid "Custom"

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.101 2009/07/10 14:12:26 hito Exp $
+ * $Id: x11file.c,v 1.102 2009/07/14 08:20:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4307,10 +4307,11 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 static void
 create_type_combo_box(GtkWidget *cbox, struct objlist *obj)
 {
-  char **enumlist, **curvelist;
-  int i, j, count;
+  char **enumlist, **curvelist, *item_ary[] = {N_("Color 1"), N_("Color 2"), N_("Type")};
+  unsigned int i;
+  int j, count;
   GtkTreeStore *list;
-  GtkTreeIter iter, child;
+  GtkTreeIter parent;
 
   count = combo_box_get_num(cbox);
   if (count > 0)
@@ -4319,8 +4320,16 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj)
   enumlist = (char **) chkobjarglist(obj, "type");
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
+
+  for (i = 0; i < sizeof(item_ary) / sizeof(*item_ary); i++) {
+    gtk_tree_store_append(list, &parent, NULL);
+    gtk_tree_store_set(list, &parent, 0, NULL, 1, _(item_ary[i]), -1);
+  }
+
   for (i = 0; enumlist[i]; i++) {
-    gtk_tree_store_append(list, &iter, NULL);
+    GtkTreeIter iter, child;
+
+    gtk_tree_store_append(list, &iter, &parent);
     gtk_tree_store_set(list, &iter, 0, NULL, 1, _(enumlist[i]), -1);
 
     if (strcmp(enumlist[i], "mark") == 0) {
@@ -4342,10 +4351,76 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj)
   }
 }
 
+enum FILE_COLOR_TYPE {
+  FILE_COLOR_TYPE_1,
+  FILE_COLOR_TYPE_2,
+};
+
+static int
+select_color(struct objlist *obj, int id, enum  FILE_COLOR_TYPE type)
+{
+  GtkWidget *dlg, *sel;
+  int r, g, b, response;
+  GdkColor color;
+  char *title;
+
+  switch (type) {
+  case FILE_COLOR_TYPE_1:
+    title = _("Color 1");
+    getobj(obj, "R", id, 0, NULL, &r);
+    getobj(obj, "G", id, 0, NULL, &g);
+    getobj(obj, "B", id, 0, NULL, &b);
+    break;
+  case FILE_COLOR_TYPE_2:
+    title = _("Color 2");
+    getobj(obj, "R2", id, 0, NULL, &r);
+    getobj(obj, "G2", id, 0, NULL, &g);
+    getobj(obj, "B2", id, 0, NULL, &b);
+    break;
+  default:
+    return 1;
+  }
+
+  color.red = (r & 0xff) * 257;
+  color.green = (g & 0xff) * 257;
+  color.blue = (b & 0xff) * 257;
+
+  dlg = gtk_color_selection_dialog_new(title);
+  sel = gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg));
+
+  gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
+  gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
+
+  response = gtk_dialog_run(GTK_DIALOG(dlg));
+  gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(sel), &color);
+  gtk_widget_destroy(dlg);
+
+  if (response != GTK_RESPONSE_OK)
+    return 1;
+
+  r = (color.red >> 8);
+  g = (color.green >> 8);
+  b = (color.blue >> 8);
+
+  switch (type) {
+  case FILE_COLOR_TYPE_1:
+    putobj(obj, "R", id, &r);
+    putobj(obj, "G", id, &g);
+    putobj(obj, "B", id, &b);
+    break;
+  case FILE_COLOR_TYPE_2:
+    putobj(obj, "R2", id, &r);
+    putobj(obj, "G2", id, &g);
+    putobj(obj, "B2", id, &b);
+  }
+
+  return 0;
+}
+
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, type, mark_type, curve_type, a, b, *ary, found, depth;
+  int sel, type, mark_type, curve_type, a, b, c, *ary, found, depth;
   struct objlist *obj;
   struct SubWin *d;
   GtkTreeStore *list;
@@ -4371,44 +4446,62 @@ select_type(GtkComboBox *w, gpointer user_data)
   path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
   ary = gtk_tree_path_get_indices(path);
   depth = gtk_tree_path_get_depth(path);
-  a = ary[0];
-  if (depth > 1) {
+  a = b = c = -1;
+
+  switch (depth) {
+  case 3:
+    c = ary[2];
+  case 2:
     b = ary[1];
-  } else {
-    b = -1;
+  case 1:
+    a = ary[0];
+    break;
+  default:
+    return;
   }
+
   gtk_tree_path_free(path);
 
   switch (a) {
-  case PLOT_TYPE_MARK:
-    getobj(obj, "mark_type", sel, 0, NULL, &mark_type);
-
-    if (b < 0)
-      b = mark_type;
-
-    if (a == type && b == mark_type)
+  case 0:
+  case 1:
+    if (select_color(obj, sel, a))
       return;
-
-    putobj(obj, "mark_type", sel, &b);
-
     break;
-  case PLOT_TYPE_CURVE:
-    getobj(obj, "interpolation", sel, 0, NULL, &curve_type);
-
-    if (b < 0)
-      b = curve_type;
-
-    if (a == type && b == curve_type)
+  case 2:
+    switch (b) {
+    case -1:
       return;
+    case PLOT_TYPE_MARK:
+      getobj(obj, "mark_type", sel, 0, NULL, &mark_type);
 
-    putobj(obj, "interpolation", sel, &b);
+      if (c < 0)
+	c = mark_type;
+
+      if (b == type && c == mark_type)
+	return;
+
+      putobj(obj, "mark_type", sel, &c);
+
+      break;
+    case PLOT_TYPE_CURVE:
+      getobj(obj, "interpolation", sel, 0, NULL, &curve_type);
+
+      if (c < 0)
+	c = curve_type;
+
+      if (b == type && c == curve_type)
+	return;
+
+      putobj(obj, "interpolation", sel, &c);
+      break;
+    default:
+      if (b == type)
+	return;
+    }
+    putobj(obj, "type", sel, &b);
     break;
-  default:
-    if (a == type)
-      return;
   }
-
-  putobj(obj, "type", sel, &a);
 
   d->select = sel;
   d->update(FALSE);
