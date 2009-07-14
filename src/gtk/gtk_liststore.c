@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.22 2009/04/24 07:20:33 hito Exp $
+ * $Id: gtk_liststore.c,v 1.23 2009/07/14 08:53:40 hito Exp $
  */
 
 #include <stdlib.h>
@@ -135,6 +135,8 @@ create_column(n_list_store *list, int i, int j)
 						     "text", i, NULL);
     }
     gtk_tree_view_column_set_resizable(col, TRUE);
+    if (list[i].ellipsize != PANGO_ELLIPSIZE_NONE)
+      gtk_tree_view_column_set_expand(col, TRUE);
   }
   return col;
 }

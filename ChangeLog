@@ -1,5 +1,8 @@
 2009-07-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_liststore.c (create_column): set "expand" property
+	as TRUE when ellipsize mode is not "PANGO_ELLIPSIZE_NONE".
+
 	* src/gtk/x11file.c (enum  FILE_COLOR_TYPE, select_color): add.
 	(select_type): set not only "type" but color.
 	(create_type_combo_box): add color setting combo item.
