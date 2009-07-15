@@ -1,9 +1,18 @@
+2009-07-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (select_type): use 3rd column of the combo-box
+	to specify which type of item is selected.
+	(start_editing_type): don't activate the combo-box item.
+
+	* src/gtk/gtk_liststore.c (start_editing_obj): add column to the
+	model.
+
 2009-07-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_liststore.c (create_column): set "expand" property
 	as TRUE when ellipsize mode is not "PANGO_ELLIPSIZE_NONE".
 
-	* src/gtk/x11file.c (enum  FILE_COLOR_TYPE, select_color): add.
+	* src/gtk/x11file.c (enum FILE_COMBO_ITEM, select_color): add.
 	(select_type): set not only "type" but color.
 	(create_type_combo_box): add color setting combo item.
 

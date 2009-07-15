@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-28\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-14 18:02+0900\n"
+"POT-Creation-Date: 2009-07-15 11:20+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -932,15 +932,15 @@ msgstr ""
 msgid "Data open"
 msgstr ""
 
-#: src/gtk/x11file.c:4310 src/gtk/x11file.c:4369
+#: src/gtk/x11file.c:4333 src/gtk/x11file.c:4383
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4310 src/gtk/x11file.c:4375
+#: src/gtk/x11file.c:4341 src/gtk/x11file.c:4389
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:4310
+#: src/gtk/x11file.c:4346
 msgid "Type"
 msgstr ""
 

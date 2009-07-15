@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.23 2009/07/14 08:53:40 hito Exp $
+ * $Id: gtk_liststore.c,v 1.24 2009/07/15 02:20:03 hito Exp $
  */
 
 #include <stdlib.h>
@@ -16,7 +16,7 @@ start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, con
   GtkCellRenderer *rend;
   GtkWidget *cbox;
 
-  model = GTK_TREE_MODEL(gtk_tree_store_new(2, G_TYPE_OBJECT, G_TYPE_STRING));
+  model = GTK_TREE_MODEL(gtk_tree_store_new(3, G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_INT));
   cbox = gtk_combo_box_new_with_model(model);
 
   rend = gtk_cell_renderer_pixbuf_new();
