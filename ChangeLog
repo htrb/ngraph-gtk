@@ -1,3 +1,9 @@
+2009-07-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/omark.c (MODIFY_MARK_TYPE, rotate_cw, v_flip, h_flip): add.
+	(markrotate, markflip): modify mark type when "MODIFY_MARK_TYPE"
+	is TRUE.
+
 2009-07-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (select_type): use 3rd column of the combo-box

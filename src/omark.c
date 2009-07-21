@@ -1,5 +1,5 @@
 /* 
- * $Id: omark.c,v 1.13 2009/05/01 09:15:58 hito Exp $
+ * $Id: omark.c,v 1.14 2009/07/21 09:26:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,6 +39,8 @@
 #define OVERSION  "1.00.00"
 #define TRUE  1
 #define FALSE 0
+
+#define MODIFY_MARK_TYPE 0
 
 static char *markerrorlist[]={
   ""
@@ -158,15 +160,206 @@ markmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+#if MODIFY_MARK_TYPE
+
+static int
+rotate_cw(int mark) {
+  switch (mark) {
+  case 6:
+  case 16:
+  case 26:
+  case 74:
+    return mark + 3;
+  case 7:
+  case 17:
+  case 27:
+  case 72:
+  case 78:
+  case 75:
+    return mark + 1;
+  case 8:
+  case 9:
+  case 18:
+  case 19:
+  case 28:
+  case 29:
+  case 76:
+  case 77:
+    return mark - 2;
+  case 30:
+  case 31:
+  case 32:
+  case 33:
+  case 34:
+  case 35:
+  case 36:
+  case 37:
+    return mark + 30;
+  case 38:
+  case 39:
+  case 48:
+  case 49:
+    return mark + 20;
+  case 40:
+  case 41:
+  case 42:
+  case 43:
+  case 44:
+  case 45:
+  case 46:
+  case 47:
+    return mark + 10;
+  case 50:
+  case 51:
+  case 52:
+  case 53:
+  case 54:
+  case 55:
+  case 58:
+  case 59:
+  case 60:
+  case 61:
+  case 62:
+  case 63:
+  case 64:
+  case 65:
+    return mark - 20;
+  case 56:
+  case 66:
+  case 68:
+    return mark - 19;
+  case 57:
+  case 67:
+  case 69:
+    return mark - 21;
+  case 73:
+  case 79:
+    return mark - 1;
+  default:
+    return mark;
+  }
+}
+
+static int
+v_flip(int mark) {
+  switch (mark) {
+  case 8:
+  case 18:
+  case 28:
+  case 48:
+  case 56:
+  case 66:
+  case 74:
+    return mark + 1;
+  case 9:
+  case 19:
+  case 29:
+  case 49:
+  case 57:
+  case 67:
+  case 75:
+    return mark - 1;
+  case 30:
+  case 31:
+  case 32:
+  case 33:
+  case 34:
+  case 35:
+  case 36:
+  case 37:
+    return mark + 10;
+  case 40:
+  case 41:
+  case 42:
+  case 43:
+  case 44:
+  case 45:
+  case 46:
+  case 47:
+    return mark - 10;
+  default:
+    return mark;
+  }
+}
+
+static int
+h_flip(int mark) {
+  switch (mark) {
+  case 6:
+  case 16:
+  case 26:
+  case 36:
+  case 46:
+  case 68:
+  case 76:
+    return mark + 1;
+  case 7:
+  case 17:
+  case 27:
+  case 37:
+  case 47:
+  case 69:
+  case 77:
+    return mark - 1;
+  case 50:
+  case 51:
+  case 52:
+  case 53:
+  case 54:
+  case 55:
+  case 56:
+  case 57:
+    return mark + 10;
+  case 60:
+  case 61:
+  case 62:
+  case 63:
+  case 64:
+  case 65:
+  case 66:
+  case 67:
+    return mark - 10;
+  default:
+    return mark;
+  }
+}
+
+#endif	/* MODIFY_MARK_TYPE */
+
 static int 
 markrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int angle, use_pivot, px, py, x, y;
- 
+#if MODIFY_MARK_TYPE
+  int type;
+#endif
+
   angle = *(int *) argv[2];
   use_pivot = * (int *) argv[3];
   px = *(int *) argv[4];
   py = *(int *) argv[5];
+
+  angle = *(int *) argv[2];
+
+#if MODIFY_MARK_TYPE
+  angle %= 36000;
+  if (angle < 0)
+    angle += 36000;
+
+  _getobj(obj, "type", inst, &type);
+
+  switch (angle) {
+  case 9000:
+    type = rotate_cw(type);
+  case 18000:
+    type = rotate_cw(type);
+  case 27000:
+    type = rotate_cw(type);
+    break;
+  }
+
+  _putobj(obj, "type", inst, &type);
+#endif
 
   if (! use_pivot)
     return 0;
@@ -188,9 +381,27 @@ markflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int x, y, p, use_pivot;
   enum FLIP_DIRECTION dir;
+#if MODIFY_MARK_TYPE
+  int type;
+#endif
 
   dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
   use_pivot = * (int *) argv[3];
+
+#if MODIFY_MARK_TYPE
+  _getobj(obj, "type", inst, &type);
+
+  switch (dir) {
+  case FLIP_DIRECTION_VERTICAL:
+    type = v_flip(type);
+    break;
+  case FLIP_DIRECTION_HORIZONTAL:
+    type = h_flip(type);
+    break;
+  }
+
+  _putobj(obj, "type", inst, &type);
+#endif
 
   if (! use_pivot)
     return 0;
