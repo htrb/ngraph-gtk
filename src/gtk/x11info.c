@@ -1,5 +1,5 @@
 /* 
- * $Id: x11info.c,v 1.8 2009/07/09 02:05:30 hito Exp $
+ * $Id: x11info.c,v 1.9 2009/07/22 14:53:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -163,7 +163,7 @@ CmInformationWindow(GtkWidget *w, gpointer data)
 
     dlg = create_win();
     if (dlg) {
-      sub_window_show((struct SubWin *) d);
+      sub_window_show_all((struct SubWin *) d);
     }
   }
 }

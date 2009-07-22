@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.103 2009/07/15 02:20:03 hito Exp $
+ * $Id: x11file.c,v 1.104 2009/07/22 14:53:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4766,7 +4766,7 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
 
     init_dnd(d);
 
-    sub_window_show(d);
+    sub_window_show_all(d);
     sub_window_set_geometry(d, TRUE);
   }
 }

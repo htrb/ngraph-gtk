@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.49 2009/05/23 10:34:24 hito Exp $
+ * $Id: x11lgnd.c,v 1.50 2009/07/22 14:53:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2377,7 +2377,7 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
     set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_X, Llist, G_CALLBACK(pos_x_edited));
     set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_Y, Llist, G_CALLBACK(pos_y_edited));
 
-    sub_window_show((struct SubWin *) d);
+    sub_window_show_all((struct SubWin *) d);
     sub_window_set_geometry((struct SubWin *)d, TRUE);
   }
 }

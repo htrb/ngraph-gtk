@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.28 2009/07/14 08:53:40 hito Exp $
+ * $Id: x11merge.c,v 1.29 2009/07/22 14:53:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -514,7 +514,7 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
 
     init_dnd(d);
 
-    sub_window_show(d);
+    sub_window_show_all(d);
     sub_window_set_geometry(d, TRUE);
  }
 }

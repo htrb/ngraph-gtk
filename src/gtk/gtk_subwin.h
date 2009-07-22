@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.h,v 1.13 2009/04/24 07:20:33 hito Exp $
+ * $Id: gtk_subwin.h,v 1.14 2009/07/22 14:53:31 hito Exp $
  */
 
 #ifndef _GTK_SUBWIN_HEADER
@@ -35,6 +35,7 @@ void sub_window_set_geometry(struct SubWin *d, int resize);
 void sub_window_save_geometry(struct SubWin *d);
 void sub_window_hide(struct SubWin *d);
 void sub_window_show(struct SubWin *d);
+void sub_window_show_all(struct SubWin *d);
 void sub_window_toggle_visibility(struct SubWin *d);
 
 void set_editable_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback end);

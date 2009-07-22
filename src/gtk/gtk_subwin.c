@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.49 2009/07/07 11:44:09 hito Exp $
+ * $Id: gtk_subwin.c,v 1.50 2009/07/22 14:53:31 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -548,12 +548,20 @@ sub_window_hide(struct SubWin *d)
 {
   if (d->Win) {
     sub_window_save_geometry(d);
-    gtk_widget_hide_all(d->Win);
+    gtk_widget_hide(d->Win);
   }
 }
 
 void
 sub_window_show(struct SubWin *d)
+{
+  if (d->Win) {
+    gtk_widget_show(d->Win);
+  }
+}
+
+void
+sub_window_show_all(struct SubWin *d)
 {
   if (d->Win) {
     gtk_widget_show_all(d->Win);

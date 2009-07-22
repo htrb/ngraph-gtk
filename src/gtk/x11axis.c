@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.67 2009/07/14 08:53:40 hito Exp $
+ * $Id: x11axis.c,v 1.68 2009/07/22 14:53:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3361,7 +3361,7 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
     set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
     set_editable_cell_renderer_cb(d, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
 
-    sub_window_show(d);
+    sub_window_show_all(d);
     sub_window_set_geometry(d, TRUE);
   }
 }
