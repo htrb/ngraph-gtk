@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.25 2009/07/10 05:56:09 hito Exp $
+ * $Id: ox11dlg.c,v 1.26 2009/07/23 05:19:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,6 +58,8 @@ GtkWidget *DLGTopLevel = NULL;
 static int
 dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
+  int pos = -1;
+
  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
   }
@@ -70,6 +72,10 @@ dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (DLGTopLevel == NULL) {
     DLGTopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   }
+
+  _putobj(obj, "x", inst, &pos);
+  _putobj(obj, "y", inst, &pos);
+
   return 0;
 }
 
@@ -128,7 +134,7 @@ static int
 dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   char *mes, *title;
-  int locksave;
+  int locksave, x, y, r;
   char *inputbuf;
   char *s;
 
@@ -147,8 +153,18 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     _getobj(obj, "caption", inst, &mes);
   }
 
-  if (DialogInput(DLGTopLevel, (title) ? title : "Input", mes, &inputbuf) == IDOK &&
-      inputbuf != NULL) {
+  if (_getobj(obj, "x", inst, &x)) {
+    x = -1;
+  }
+
+  if (_getobj(obj, "y", inst, &y)) {
+    y = -1;
+  }
+
+  r = DialogInput(DLGTopLevel, (title) ? title : "Input", mes, &inputbuf, &x, &y);
+  _putobj(obj, "x", inst, &x);
+  _putobj(obj, "y", inst, &y);
+  if (r == IDOK && inputbuf != NULL) {
     s = nstrdup(inputbuf);
     free(inputbuf);
     *(char **)rval = s;
@@ -218,7 +234,7 @@ static int
 dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   char *title, *caption;
-  int locksave, r, *ptr;
+  int locksave, r, *ptr, x, y, ret;
   struct narray *iarray, *sarray;
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
@@ -240,6 +256,14 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     iarray = NULL;
   }
 
+  if (_getobj(obj, "x", inst, &x)) {
+    x = -1;
+  }
+
+  if (_getobj(obj, "y", inst, &y)) {
+    y = -1;
+  }
+
   ptr = (int *) arraylast(iarray);
   if (ptr) {
     r = *ptr;
@@ -247,7 +271,10 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     r = -1;
   }
 
-  if (DialogRadio(DLGTopLevel, (title) ? title : "Select", caption, sarray, &r) != IDOK) {
+  ret = DialogRadio(DLGTopLevel, (title) ? title : "Select", caption, sarray, &r, &x, &y);
+  _putobj(obj, "x", inst, &x);
+  _putobj(obj, "y", inst, &y);
+  if (ret != IDOK) {
     GlobalLock = locksave;
     return 1;
   }
@@ -261,7 +288,7 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int locksave, *ptr, sel, ret;
+  int locksave, *ptr, sel, ret, x, y;
   char *r, *title, *caption;
   struct narray *iarray, *sarray;
 
@@ -287,6 +314,14 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     iarray = NULL;
   }
 
+  if (_getobj(obj, "x", inst, &x)) {
+    x = -1;
+  }
+
+  if (_getobj(obj, "y", inst, &y)) {
+    y = -1;
+  }
+
   ptr = (int *) arraylast(iarray);
   if (ptr) {
     sel = *ptr;
@@ -295,11 +330,13 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   if (strcmp(argv[1], "combo") == 0) {
-    ret = DialogCombo(DLGTopLevel, (title) ? title : "Select", caption, sarray, sel, &r);
+    ret = DialogCombo(DLGTopLevel, (title) ? title : "Select", caption, sarray, sel, &r, &x, &y);
   } else {
-    ret = DialogComboEntry(DLGTopLevel, (title) ? title : "Input", caption, sarray, sel, &r);
+    ret = DialogComboEntry(DLGTopLevel, (title) ? title : "Input", caption, sarray, sel, &r, &x, &y);
   }
 
+  _putobj(obj, "x", inst, &x);
+  _putobj(obj, "y", inst, &y);
   if (ret != IDOK) {
     GlobalLock = locksave;
     return 1;
@@ -314,7 +351,7 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int locksave, ret, type;
+  int locksave, ret, type, x, y;
   char *title, *caption, *ptr;
   double min, max, inc, r;
 
@@ -330,6 +367,14 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (_getobj(obj, "caption", inst, &caption)) {
     caption = NULL;
+  }
+
+  if (_getobj(obj, "x", inst, &x)) {
+    x = -1;
+  }
+
+  if (_getobj(obj, "y", inst, &y)) {
+    y = -1;
   }
 
   type = argv[1][0];
@@ -351,8 +396,10 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 1;
   }
 
-  ret = DialogSpinEntry(DLGTopLevel, (title) ? title : "Input", caption, min, max, inc, &r);
+  ret = DialogSpinEntry(DLGTopLevel, (title) ? title : "Input", caption, min, max, inc, &r, &x, &y);
 
+  _putobj(obj, "x", inst, &x);
+  _putobj(obj, "y", inst, &y);
   if (ret != IDOK) {
     GlobalLock = locksave;
     return 1;
@@ -382,7 +429,7 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int locksave, *r, i, n, inum, *ptr;;
+  int locksave, *r, i, n, inum, *ptr, x, y, ret;
   struct narray *array, *sarray, *iarray;
   char *title, *caption;
 
@@ -411,6 +458,14 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     iarray = NULL;
   }
 
+  if (_getobj(obj, "x", inst, &x)) {
+    x = -1;
+  }
+
+  if (_getobj(obj, "y", inst, &y)) {
+    y = -1;
+  }
+
   r = memalloc(n * sizeof(int));
   if (r == NULL) {
     arrayfree(array);
@@ -428,7 +483,10 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
       r[*ptr] = 1;
   }
 
-  if (DialogCheck(DLGTopLevel, (title) ? title : "Check", caption, sarray, r) != IDOK) {
+  ret = DialogCheck(DLGTopLevel, (title) ? title : "Check", caption, sarray, r, &x, &y);
+  _putobj(obj, "x", inst, &x);
+  _putobj(obj, "y", inst, &y);
+  if (ret != IDOK) {
     arrayfree(array);
     memfree(r);
     GlobalLock = locksave;
@@ -610,6 +668,8 @@ static struct objtable dialog[] = {
   {"init", NVFUNC, NEXEC, dlginit, NULL, 0},
   {"done", NVFUNC, NEXEC, dlgdone, NULL, 0},
   {"next", NPOINTER, 0, NULL, NULL, 0},
+  {"x", NINT, NREAD | NWRITE, NULL, NULL, 0},
+  {"y", NINT, NREAD | NWRITE, NULL, NULL, 0},
   {"title", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"caption", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"select", NIARRAY, NREAD | NWRITE, NULL, NULL, 0},
@@ -620,7 +680,7 @@ static struct objtable dialog[] = {
   {"check", NIAFUNC, NREAD | NEXEC, dlgcheck, "sa", 0},
   {"combo", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
   {"combo_entry", NSFUNC, NREAD | NEXEC, dlgcombo, "sa", 0},
-  {"float_entry", NSFUNC, NREAD | NEXEC, dlgspin, "dddd", 0},
+  {"double_entry", NSFUNC, NREAD | NEXEC, dlgspin, "dddd", 0},
   {"integer_entry", NSFUNC, NREAD | NEXEC, dlgspin, "iiii", 0},
   {"beep", NVFUNC, NREAD | NEXEC, dlgbeep, NULL, 0},
   {"get_open_file", NSFUNC, NREAD | NEXEC, dlggetopenfile, "sa", 0},

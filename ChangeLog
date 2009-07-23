@@ -1,3 +1,15 @@
+2009-07-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (set_dialog_position, get_dialog_position):
+	add.
+	(DialogInput, DialogRadio, DialogCombo, DialogComboEntry)
+	(DialogSpinEntry, DialogCheck): add add argument "x" and "y".
+
+	* src/gtk/ox11dlg.c (dlginit): initialize "x" and "y" field.
+	(dlginput, dlgradio, dlgcombo, dlgspin, dlgcheck): add argument
+	"x" and "y" to create dialog window.
+	(dialog): add field "x" and "y".
+
 2009-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (CmAxisWindow): call "sub_window_show_all()"
@@ -64,7 +76,7 @@
 	* src/gtk/x11gui.c (DialogSpinEntry): add.
 
 	* src/gtk/ox11dlg.c (dlgspin): add.
-	(dialog): add new field "float_entry" and "integer_entry".
+	(dialog): add new field "double_entry" and "integer_entry".
 
 2009-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

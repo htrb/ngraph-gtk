@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.29 2009/07/10 04:56:38 hito Exp $
+ * $Id: x11gui.c,v 1.30 2009/07/23 05:19:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -212,6 +212,30 @@ MessageBeep(GtkWidget * parent)
   ResetEvent();
 }
 
+static void
+set_dialog_position(GtkWidget *w, const int *x, const int *y)
+{
+  if (x == NULL || y == NULL || *x < 0 || *y < 0)
+    return;
+
+  gtk_window_move(GTK_WINDOW(w), *x, *y);
+}
+
+static void
+get_dialog_position(GtkWidget *w, int *x, int *y)
+{
+  if (x == NULL || y == NULL)
+    return;
+
+  gtk_window_get_position(GTK_WINDOW(w), x, y);
+
+  if (*x < 0)
+    *x = 0;
+
+  if (*y < 0)
+    *y = 0;
+}
+
 int
 MessageBox(GtkWidget * parent, char *message, char *title, int mode)
 {
@@ -293,7 +317,7 @@ MessageBox(GtkWidget * parent, char *message, char *title, int mode)
 }
 
 int
-DialogInput(GtkWidget * parent, char *title, char *mes, char **s)
+DialogInput(GtkWidget * parent, char *title, char *mes, char **s, int *x, int *y)
 {
   GtkWidget *dlg, *text;
   GtkVBox *vbox;
@@ -319,6 +343,7 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s)
   text = create_text_entry(FALSE, TRUE);
   gtk_box_pack_start(GTK_BOX(vbox), text, FALSE, FALSE, 5);
 
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = gtk_dialog_run(GTK_DIALOG(dlg));
 
@@ -332,6 +357,7 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s)
     break;
   }
 
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   ResetEvent();
 
@@ -339,7 +365,7 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s)
 }
 
 int
-DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r)
+DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r, int *x, int *y)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkVBox *vbox;
@@ -380,6 +406,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn), i == *r);
   }
 
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = gtk_dialog_run(GTK_DIALOG(dlg));
 
@@ -402,6 +429,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   free(btn_ary);
 
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   ResetEvent();
 
@@ -409,7 +437,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
 }
 
 int
-DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r)
+DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r, int *x, int *y)
 {
   GtkWidget *dlg, *combo;
   GtkVBox *vbox;
@@ -451,6 +479,7 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   gtk_box_pack_start(GTK_BOX(vbox), combo, FALSE, FALSE, 2);
 
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = gtk_dialog_run(GTK_DIALOG(dlg));
 
@@ -466,6 +495,7 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
     break;
   }
 
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   ResetEvent();
 
@@ -473,7 +503,7 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
 }
 
 int
-DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r)
+DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r, int *x, int *y)
 {
   GtkWidget *dlg, *combo;
   GtkVBox *vbox;
@@ -515,6 +545,7 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
 
   gtk_box_pack_start(GTK_BOX(vbox), combo, FALSE, FALSE, 2);
 
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = gtk_dialog_run(GTK_DIALOG(dlg));
 
@@ -533,6 +564,7 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
     break;
   }
 
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   ResetEvent();
 
@@ -540,7 +572,7 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
 }
 
 int
-DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, double max, double inc, double *r)
+DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, double max, double inc, double *r, int *x, int *y)
 {
   GtkWidget *dlg, *spin;
   GtkVBox *vbox;
@@ -580,6 +612,7 @@ DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, doubl
   }
   gtk_spin_button_set_digits(GTK_SPIN_BUTTON(spin), n);
 
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = gtk_dialog_run(GTK_DIALOG(dlg));
 
@@ -593,6 +626,7 @@ DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, doubl
     break;
   }
 
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   ResetEvent();
 
@@ -600,7 +634,7 @@ DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, doubl
 }
 
 int
-DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r)
+DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r, int *x, int *y)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkVBox *vbox;
@@ -644,6 +678,7 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn_ary[i]), r[i]);
   }
 
+  set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
   res_id = gtk_dialog_run(GTK_DIALOG(dlg));
 
@@ -661,6 +696,7 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   free(btn_ary);
 
+  get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
   ResetEvent();
 

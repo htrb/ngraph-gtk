@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.12 2009/07/10 04:56:38 hito Exp $
+ * $Id: x11gui.h,v 1.13 2009/07/23 05:19:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -54,12 +54,12 @@ typedef struct _tpoint {
 int DialogExecute(GtkWidget *parent, void *dialog);
 void MessageBeep(GtkWidget *parent);
 int MessageBox(GtkWidget *parent, char *message, char *title, int yesno);
-int DialogInput(GtkWidget *parent, char *title, char *mes, char **s);
-int DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *ary, int *r);
-int DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r);
-int DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r);
-int DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r);
-int DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, double max, double inc, double *r);
+int DialogInput(GtkWidget *parent, char *title, char *mes, char **s, int *x, int *y);
+int DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *ary, int *r, int *x, int *y);
+int DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r, int *x, int *y);
+int DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r, int *x, int *y);
+int DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r, int *x, int *y);
+int DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, double max, double inc, double *r, int *x, int *y);
 int nGetOpenFileNameMulti(GtkWidget * parent,
 			  char *title, char *defext, char **initdir,
 			  const char *initfil, char ***file, int chd);
