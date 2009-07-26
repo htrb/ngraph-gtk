@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.156 2009/07/26 13:01:40 hito Exp $
+ * $Id: x11view.c,v 1.157 2009/07/26 14:46:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -575,8 +575,7 @@ arc_get_angle(struct objlist *obj, char *inst, unsigned int round, int point, in
 static int
 new_file_obj(char *name, struct objlist *obj, int *id0)
 {
-  char *field;
-  int id, j, perm, type, ret;
+  int id, ret;
 
   id = newobj(obj);
   if (id < 0) {
