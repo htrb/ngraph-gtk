@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.104 2009/07/22 14:53:31 hito Exp $
+ * $Id: x11file.c,v 1.105 2009/07/26 13:01:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -781,9 +781,12 @@ FitDialogSave(struct FitDialog *d)
   if (DialogExecute(d->widget, &DlgFitSave) != IDOK)
     return;
 
+  if (DlgFitSave.Profile == NULL || DlgFitSave.Profile[0] == '\0')
+    return;
+
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
-    if (strcmp(s, DlgFitSave.Profile) == 0) {
+    if (s && strcmp(s, DlgFitSave.Profile) == 0) {
       if (MessageBox(d->widget, _("Overwrite existing setting?"), "Confirm",
 		     MB_YESNO) != IDYES) {
 	return;
@@ -2493,30 +2496,39 @@ FileDialogCopy(struct FileDialog *d)
     FileDialogSetupItem(d->widget, d, FALSE, sel);
 }
 
+void 
+copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename)
+{
+  int perm, type, j;
+  char *field;
+
+  for (j = 0; j < chkobjfieldnum(obj); j++) {
+    field = chkobjfieldname(obj, j);
+    if (field == NULL) {
+      continue;
+    }
+    perm = chkobjperm(obj, field);
+    type = chkobjfieldtype(obj, field);
+    if (strcmp2(field, "name") && strcmp2(field, "fit") &&
+	(! copy_filename || strcmp2(field, "file")) &&
+	((perm & NREAD) != 0) && ((perm & NWRITE) != 0) && (type < NVFUNC))
+      copyobj(obj, field, id, sel);
+  }
+  FitCopy(obj, id, sel);
+  set_graph_modified();
+}
+
 static void
 FileDialogCopyAll(struct FileDialog *d)
 {
   int sel;
-  int j, perm, type;
-  char *field;
 
   sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
   if (sel == -1) 
     return;
 
-  for (j = 0; j < chkobjfieldnum(d->Obj); j++) {
-    field = chkobjfieldname(d->Obj, j);
-    perm = chkobjperm(d->Obj, field);
-    type = chkobjfieldtype(d->Obj, field);
-    if ((strcmp2(field, "name") != 0) && (strcmp2(field, "file") != 0)
-	&& (strcmp2(field, "fit") != 0)
-	&& ((perm & NREAD) != 0) && ((perm & NWRITE) != 0)
-	&& (type < NVFUNC))
-      copyobj(d->Obj, field, d->Id, sel);
-  }
-  FitCopy(d->Obj, d->Id, sel);
+  copy_file_obj_field(d->Obj, d->Id, sel, FALSE);
   FileDialogSetupItem(d->widget, d, FALSE, d->Id);
-  set_graph_modified();
 }
 
 static void
@@ -3184,7 +3196,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
   struct narray *datafilelist;
   int ret;
   char *name;
-  int len, id;
+  int id;
   struct objlist *obj;
 
   if (Menulock || GlobalLock)
@@ -3202,10 +3214,8 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
   if ((obj = chkobject("file")) == NULL)
     return;
   if ((id = newobj(obj)) >= 0) {
-    len = strlen(data[fil]);
-    name = (char *) memalloc(len + 1);
+    name = nstrdup(data[fil]);
     if (name) {
-      strcpy(name, data[fil]);
       putobj(obj, "file", id, name);
       FileDialog(&DlgFile, obj, id, FALSE);
       ret = DialogExecute(TopLevel, &DlgFile);
@@ -3344,22 +3354,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 
   for (i = 0; i < num; i++) {
     if (id0 != -1) {
-      for (j = 0; j < chkobjfieldnum(obj); j++) {
-	int perm, type;
-	char *field;
-
-	field = chkobjfieldname(obj, j);
-	perm = chkobjperm(obj, field);
-	type = chkobjfieldtype(obj, field);
-	if (strcmp2(field, "name") &&
-	    strcmp2(field, "file") &&
-	    strcmp2(field, "fit") &&
-	    ((perm & NREAD) && (perm & NWRITE) && (type < NVFUNC))) {
-	  copyobj(obj, field, array[i], array[id0]);
-	}
-      }
-      FitCopy(obj, array[i], array[id0]);
-      set_graph_modified();
+      copy_file_obj_field(obj, array[i], array[id0], FALSE);
     } else {
       int ret;
 
@@ -3611,9 +3606,7 @@ file_delete_popup_func(GtkMenuItem *w, gpointer client_data)
 static int
 file_obj_copy(struct SubWin *d)
 {
-  int sel;
-  int j, id, perm, type;
-  char *field;
+  int sel, id;
 
   if (Menulock || GlobalLock)
     return -1;
@@ -3628,19 +3621,8 @@ file_obj_copy(struct SubWin *d)
   if (id < 0)
     return -1;
 
-  for (j = 0; j < chkobjfieldnum(d->obj); j++) {
-    field = chkobjfieldname(d->obj, j);
-    perm = chkobjperm(d->obj, field);
-    type = chkobjfieldtype(d->obj, field);
-    if ((strcmp2(field, "name") != 0) 
-	&& (strcmp2(field, "fit") != 0) && ((perm & NREAD) != 0)
-	&& ((perm & NWRITE) != 0) && (type < NVFUNC)) {
-      copyobj(d->obj, field, id, sel);
-    }
-  }
-  FitCopy(d->obj, id, sel);
+  copy_file_obj_field(d->obj, id, sel, TRUE);
   d->num++;
-  set_graph_modified();
 
   return id;
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.53 2009/07/02 06:46:07 hito Exp $
+ * $Id: ogra2cairo.c,v 1.54 2009/07/26 13:01:40 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -398,6 +398,9 @@ gra2cairo_update_fontmap(const char *fontalias, const char *fontname, int type, 
 {
   struct fontmap *fcur;
 
+  if (fontname == NULL || fontalias == NULL)
+    return;
+
   if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fcur))
       return;
 
@@ -483,12 +486,14 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
 void
 gra2cairo_draw_path(struct gra2cairo_local *local)
 {
-  double x, y;
+  if (local->linetonum) {
+    double x, y;
 
-  cairo_get_current_point(local->cairo, &x, &y);
-  cairo_stroke(local->cairo);
-  cairo_move_to(local->cairo, x, y);
-  local->linetonum = 0;
+    cairo_get_current_point(local->cairo, &x, &y);
+    cairo_stroke(local->cairo);
+    cairo_move_to(local->cairo, x, y);
+    local->linetonum = 0;
+  }
 }
 
 struct gra2cairo_local *
@@ -502,9 +507,7 @@ gra2cairo_free(struct objlist *obj, char *inst)
     return NULL;
 
   if (local->cairo) {
-    if (local->linetonum) {
-      gra2cairo_draw_path(local);
-    }
+    gra2cairo_draw_path(local);
     cairo_destroy(local->cairo);
   }
 
@@ -818,9 +821,7 @@ gra2cairo_flush(struct objlist *obj, char *inst, char *rval, int argc, char **ar
   if (local->cairo == NULL)
     return -1;
 
-  if (local->linetonum) {
-    gra2cairo_draw_path(local);
-  }
+  gra2cairo_draw_path(local);
 
   return check_cairo_status(local->cairo);
 }
@@ -846,7 +847,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
   if (local->cairo == NULL)
     return -1;
 
-  if (local->linetonum && code != 'T') {
+  if (code != 'T') {
     gra2cairo_draw_path(local);
   }
   switch (code) {

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.155 2009/07/06 00:37:00 hito Exp $
+ * $Id: x11view.c,v 1.156 2009/07/26 13:01:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -586,18 +586,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0)
   AddDataFileList(name);
   putobj(obj, "file", id, name);
   if (*id0 != -1) {
-    for (j = 0; j < chkobjfieldnum(obj); j++) {
-      field = chkobjfieldname(obj, j);
-      perm = chkobjperm(obj, field);
-      type = chkobjfieldtype(obj, field);
-      if ((strcmp2(field, "name") != 0)
-	  && (strcmp2(field, "file") != 0)
-	  && (strcmp2(field, "fit") != 0)
-	  && ((perm & NREAD) != 0) && ((perm & NWRITE) != 0)
-	  && (type < NVFUNC))
-	copyobj(obj, field, id, *id0);
-    }
-    FitCopy(obj, id, *id0);
+    copy_file_obj_field(obj, id, *id0, FALSE);
   } else {
     FileDialog(&DlgFile, obj, id, 0);
     ret = DialogExecute(TopLevel, &DlgFile);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.44 2009/07/07 11:44:09 hito Exp $
+ * $Id: x11commn.c,v 1.45 2009/07/26 13:01:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -398,7 +398,8 @@ AxisDel(int id)
   }
   lastinst = chkobjlastinst(obj);
   type = group[0];
-  strcpy(group3, group);
+  strncpy(group3, group, sizeof(group) - 1);
+  group3[sizeof(group3) - 1] = '\0';
 
   id_array = memalloc(sizeof(*id_array) * (lastinst + 1));
   if (id_array == NULL)

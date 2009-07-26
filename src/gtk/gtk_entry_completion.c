@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_entry_completion.c,v 1.5 2009/02/19 09:47:32 hito Exp $
+ * $Id: gtk_entry_completion.c,v 1.6 2009/07/26 13:01:40 hito Exp $
  */
 
 #include <stdio.h>
@@ -136,7 +136,7 @@ entry_completion_append(GtkEntryCompletion *comp, const char *str)
   GtkTreeIter iter;
   char *v = NULL;
 
-  if (strlen(str) == 0)
+  if (str == NULL || strlen(str) == 0)
     return;
 
   model = gtk_entry_completion_get_model(comp);

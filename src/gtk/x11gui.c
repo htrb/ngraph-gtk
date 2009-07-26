@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.30 2009/07/23 05:19:00 hito Exp $
+ * $Id: x11gui.c,v 1.31 2009/07/26 13:01:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -721,7 +721,7 @@ fsok(GtkWidget *dlg)
   struct nGetOpenFileData *data;
   char *file, *file2, **farray;
   const char *filter_name;
-  int i, k, len, n, l;
+  int i, k, len, n;
   struct stat buf;
   GSList *top, *list;
   GtkFileFilter *filter;
@@ -764,14 +764,12 @@ fsok(GtkWidget *dlg)
       len = 0;
     }
 
-    l = strlen(file);
-    file2 = malloc(l + len + 1);
+    if (len) {
+      file2 = g_strdup_printf("%s.%s", file, data->ext);
+    } else {
+      file2 = strdup(file);
+    }
     if (file2) {
-      strcpy(file2, file);
-      if (len != 0) {
-	file2[l] = '.';
-	strcpy(file2 + l + 1, data->ext);
-      }
       if (data->mustexist) {
 	if ((stat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG) 
 	    || (access(file2, R_OK) != 0)) {

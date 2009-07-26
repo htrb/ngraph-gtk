@@ -1,4 +1,36 @@
+2009-07-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (copy_file_obj_field): add
+	(FitDialogSave): check "DlgFitSave.Profile" and
+	"DlgFitSave.Profile[0]".
+	(FitDialogSave): check arguments of "strcmp()".
+	(CmFileHistory): use "nstrdup()" instead of "memalloc()" and
+	"strcpy()".
+	(FileDialogCopyAll, update_file_obj_multi, file_obj_copy): use
+	"copy_file_obj_field()".
+
+	* src/gtk/x11gui.c (fsok): use "g_strdup_printf()" or "strdup()"
+	instead of "malloc()" and "strcpy()".
+
+	* src/gtk/x11commn.c (AxisDel): use "strncpy()" instead of
+	"strcpy()".
+
+	* src/gtk/ogra2cairofile.c (gra2cairofile_output): don't check
+	"local->linetonum" before call "gra2cairo_draw_path()".
+
+	* src/gtk/ogra2cairo.c (gra2cairo_update_fontmap): check arguments
+	"fontname" and "fontalias".
+	(gra2cairo_draw_path): check "local->linetonum".
+	(gra2cairo_free, gra2cairo_flush, gra2cairo_output): don't check
+	"local->linetonum" before call "gra2cairo_draw_path()".
+
+	* src/gtk/gtk_entry_completion.c (entry_completion_append): check
+	argument "str".
+
 2009-07-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FitDialogSave): bug fix: check and argument
+	of "strcmp()".
 
 	* src/gtk/x11gui.c (set_dialog_position, get_dialog_position):
 	add.

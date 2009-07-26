@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.14 2009/06/30 12:06:06 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.15 2009/07/26 13:01:40 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -227,9 +227,7 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
   case 'E':
     _getobj(obj, "format", inst, &format);
     if (local->cairo && format == TYPE_PNG) {
-      if (local->linetonum) {
-	gra2cairo_draw_path(local);
-      }
+      gra2cairo_draw_path(local);
 
       _getobj(obj, "file", inst, &fname);
       if (fname == NULL)
