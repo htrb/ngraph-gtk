@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.15 2009/04/22 01:27:12 hito Exp $
+ * $Id: object.h,v 1.16 2009/07/27 01:15:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -308,5 +308,6 @@ int getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def);
 void delchildobj(struct objlist *parent);
 int vinterrupt(void);
 int vinputyn(char *mes);
+int copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field);
 
 #endif

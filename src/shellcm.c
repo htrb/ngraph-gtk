@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.17 2009/07/05 06:14:39 hito Exp $
+ * $Id: shellcm.c,v 1.18 2009/07/27 01:15:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1078,8 +1078,6 @@ cmcpy(struct nshell*nshell,int argc,char **argv)
   struct objlist *obj;
   struct narray iarray;
   int i,j,anum,sid,did,*adata;
-  char *field;
-  int perm,type;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
@@ -1097,24 +1095,18 @@ cmcpy(struct nshell*nshell,int argc,char **argv)
   for (i=1;i<anum;i++) {
     sid=adata[0];
     did=adata[i];
-    if (argc==2) {
-      for (j=0;j<chkobjfieldnum(obj);j++) {
-        field=chkobjfieldname(obj,j);
-        perm=chkobjperm(obj,field);
-        type=chkobjfieldtype(obj,field);
-        if (((perm&NREAD)!=0) && ((perm&NWRITE)!=0) && (type<NVFUNC)) {
-          if (copyobj(obj,field,did,sid)==-1) {
-            arraydel(&iarray);
-            return ERR;
-          }
-        }
+    if (argc == 2) {
+      if (copy_obj_field(obj, did, sid, NULL)) {
+	arraydel(&iarray);
+	return ERR;
       }
     } else {
-      for (j=2;j<argc;j++) 
-        if (copyobj(obj,argv[j],did,sid)==-1) {
+      for (j = 2; j < argc; j++) {
+        if (copyobj(obj, argv[j], did, sid)==-1) {
           arraydel(&iarray);
           return ERR;
         }
+      }
     }
   }
   arraydel(&iarray);

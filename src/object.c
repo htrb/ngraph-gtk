@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.36 2009/07/07 11:44:08 hito Exp $
+ * $Id: object.c,v 1.37 2009/07/27 01:15:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4167,6 +4167,40 @@ obj_do_tighten(struct objlist *obj, char *inst, char *field)
     }
   }
   arraydel(&iarray);
+}
+
+int 
+copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field)
+{
+  int perm, type, ignore, j;
+  char *field, **ptr;
+
+  for (j = 0; j < chkobjfieldnum(obj); j++) {
+    field = chkobjfieldname(obj, j);
+    if (field == NULL) {
+      continue;
+    }
+    perm = chkobjperm(obj, field);
+    type = chkobjfieldtype(obj, field);
+    ignore = FALSE;
+    for (ptr = ignore_field; ptr && *ptr; ptr++) {
+      if (strcmp2(field, *ptr) == 0) {
+	ignore = TRUE;
+	break;
+      }
+    }
+
+    if (ignore)
+      continue;
+
+    if ((perm & NREAD) && (perm & NWRITE) && (type < NVFUNC)) {
+      if (copyobj(obj, field, dist, src) == -1) {
+	return 1;
+      }
+    }
+  }
+
+  return 0;
 }
 
 #ifdef COMPILE_UNUSED_FUNCTIONS

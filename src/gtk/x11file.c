@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.105 2009/07/26 13:01:40 hito Exp $
+ * $Id: x11file.c,v 1.106 2009/07/27 01:15:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2499,21 +2499,16 @@ FileDialogCopy(struct FileDialog *d)
 void 
 copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename)
 {
-  int perm, type, j;
-  char *field;
+  char *field[] = {"name", "fit", NULL, NULL};
 
-  for (j = 0; j < chkobjfieldnum(obj); j++) {
-    field = chkobjfieldname(obj, j);
-    if (field == NULL) {
-      continue;
-    }
-    perm = chkobjperm(obj, field);
-    type = chkobjfieldtype(obj, field);
-    if (strcmp2(field, "name") && strcmp2(field, "fit") &&
-	(! copy_filename || strcmp2(field, "file")) &&
-	((perm & NREAD) != 0) && ((perm & NWRITE) != 0) && (type < NVFUNC))
-      copyobj(obj, field, id, sel);
+  if (! copy_filename) {
+    int i;
+    i = sizeof(field) / sizeof(*field) - 2;
+    field[i] = "file";
   }
+
+  copy_obj_field(obj, id, sel, field);
+
   FitCopy(obj, id, sel);
   set_graph_modified();
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.51 2009/07/26 13:01:40 hito Exp $
+ * $Id: gtk_subwin.c,v 1.52 2009/07/27 01:15:27 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -623,19 +623,9 @@ cb_destroy(GtkWidget *w, gpointer user_data)
 static void
 obj_copy(struct objlist *obj, int dest, int src)
 {
-  int j, perm, type;
-  char *field;
+  char *field[] = {"name", NULL};
 
-  for (j = 0; j < chkobjfieldnum(obj); j++) {
-    field = chkobjfieldname(obj, j);
-    if (field == NULL) {
-      continue;
-    }
-    perm = chkobjperm(obj, field);
-    type = chkobjfieldtype(obj, field);
-    if (strcmp2(field, "name") && (perm & NREAD) && (perm & NWRITE) && (type < NVFUNC))
-      copyobj(obj, field, dest, src);
-  }
+  copy_obj_field(obj, dest, src, field);
 }
 
 static void 

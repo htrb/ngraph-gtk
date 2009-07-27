@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.45 2009/07/26 13:01:40 hito Exp $
+ * $Id: x11commn.c,v 1.46 2009/07/27 01:15:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -692,8 +692,8 @@ FitCopy(struct objlist *obj, int did, int sid)
   int fitid;
   struct narray iarray;
   struct narray iarray2;
-  int j, id2, perm, type, idnum, idnum2;
-  char *field;
+  int id2, idnum, idnum2;
+  char *field[] = {"name", "equation", NULL};
   int fitoid;
   char *inst;
 
@@ -718,16 +718,7 @@ FitCopy(struct objlist *obj, int did, int sid)
 	} else
 	  id2 = newobj(fitobj);
 	if (id2 >= 0) {
-	  for (j = 0; j < chkobjfieldnum(fitobj); j++) {
-	    field = chkobjfieldname(fitobj, j);
-	    perm = chkobjperm(fitobj, field);
-	    type = chkobjfieldtype(fitobj, field);
-	    if ((strcmp2(field, "name") != 0)
-		&& (strcmp2(field, "equation") != 0)
-		&& ((perm & NREAD) != 0) && ((perm & NWRITE) != 0)
-		&& (type < NVFUNC))
-	      copyobj(fitobj, field, id2, fitid);
-	  }
+	  copy_obj_field(fitobj, id2, fitid, field);
 	  inst = getobjinst(fitobj, id2);
 	  _getobj(fitobj, "oid", inst, &fitoid);
 	  if ((fit = mkobjlist(fitobj, NULL, fitoid, NULL, TRUE)) != NULL) {

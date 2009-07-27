@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.157 2009/07/26 14:46:52 hito Exp $
+ * $Id: x11view.c,v 1.158 2009/07/27 01:15:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -573,7 +573,7 @@ arc_get_angle(struct objlist *obj, char *inst, unsigned int round, int point, in
 }
 
 static int
-new_file_obj(char *name, struct objlist *obj, int *id0)
+new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 {
   int id, ret;
 
@@ -587,7 +587,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0)
   if (*id0 != -1) {
     copy_file_obj_field(obj, id, *id0, FALSE);
   } else {
-    FileDialog(&DlgFile, obj, id, 0);
+    FileDialog(&DlgFile, obj, id, multi);
     ret = DialogExecute(TopLevel, &DlgFile);
     if ((ret == IDDELETE) || (ret == IDCANCEL)) {
       FitDel(obj, id);
@@ -646,7 +646,7 @@ data_dropped(char **filenames, int num, int file_type)
     if (type == FILE_TYPE_MERGE) {
       ret = new_merge_obj(name, mobj);
     } else {
-      ret = new_file_obj(name, obj, &id0);
+      ret = new_file_obj(name, obj, &id0, i < num - 1);
     }
 
     if (ret) {
@@ -5833,17 +5833,7 @@ reorder_object(enum object_move_type type)
 static void
 ncopyobj(struct objlist *obj, int id1, int id2)
 {
-  int j;
-  char *field;
-  int perm, type;
-
-  for (j = 0; j < chkobjfieldnum(obj); j++) {
-    field = chkobjfieldname(obj, j);
-    perm = chkobjperm(obj, field);
-    type = chkobjfieldtype(obj, field);
-    if (((perm & NREAD) != 0) && ((perm & NWRITE) != 0) && (type < NVFUNC))
-      copyobj(obj, field, id1, id2);
-  }
+  copy_obj_field(obj, id1, id2, NULL);
 }
 
 static void

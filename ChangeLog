@@ -1,3 +1,20 @@
+2009-07-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ncopyobj): use "copy_obj_field()".
+	(new_file_obj): add argument "multi".
+	(data_dropped): "Apply All" button is active when "i" is lesser
+	than "num - 1".
+
+	* src/gtk/x11file.c (copy_file_obj_field): use "copy_obj_field()".
+
+	* src/gtk/x11commn.c (FitCopy): use "copy_obj_field()".
+
+	* src/gtk/gtk_subwin.c (obj_copy): use "copy_obj_field()".
+
+	* src/shellcm.c (cmcpy): use "copy_obj_field()".
+
+	* src/object.c (copy_obj_field): add.
+
 2009-07-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (copy_file_obj_field): add
