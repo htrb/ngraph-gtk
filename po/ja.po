@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-07-27 11:38+0900\n"
-"PO-Revision-Date: 2009-07-14 18:06+0900\n"
+"POT-Creation-Date: 2009-08-04 18:18+0900\n"
+"PO-Revision-Date: 2009-08-04 18:16+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "ファイルを開く"
 msgid "Save file"
 msgstr "別名で保存"
 
-#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:92 src/oaxis.c:107
+#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:98 src/oaxis.c:113
 msgid "none"
 msgstr "なし"
 
@@ -1829,7 +1829,7 @@ msgstr "実行中 `%.128s'."
 msgid "top"
 msgstr "上"
 
-#: src/gtk/x11merge.c:55 src/oaxis.c:94 src/oaxis.c:108 src/oaxis.c:121
+#: src/gtk/x11merge.c:55 src/oaxis.c:100 src/oaxis.c:114 src/oaxis.c:127
 msgid "left"
 msgstr "左"
 
@@ -2217,7 +2217,7 @@ msgstr "終点"
 msgid "begin"
 msgstr "始点"
 
-#: src/odraw.c:104 src/oaxis.c:93
+#: src/odraw.c:104 src/oaxis.c:99
 msgid "both"
 msgstr "両方"
 
@@ -2249,29 +2249,37 @@ msgstr "対数"
 msgid "inverse"
 msgstr "逆数"
 
-#: src/oaxis.c:95 src/oaxis.c:109 src/oaxis.c:122
+#: src/oaxis.c:101 src/oaxis.c:115 src/oaxis.c:128
 msgid "right"
 msgstr "右"
 
-#: src/oaxis.c:120
+#: src/oaxis.c:126
 msgid "center"
 msgstr "中央"
 
-#: src/oaxis.c:123
+#: src/oaxis.c:129
 msgid "point"
 msgstr "小数点"
 
-#: src/oaxis.c:135
+#: src/oaxis.c:141
 msgid "normal"
 msgstr "水平"
 
-#: src/oaxis.c:136
+#: src/oaxis.c:142
 msgid "parallel"
 msgstr "軸と平行"
 
-#: src/oaxis.c:137
+#: src/oaxis.c:143
 msgid "parallel2"
 msgstr "軸と平行2"
+
+#: src/oaxis.c:144
+msgid "normal1"
+msgstr "軸と直交"
+
+#: src/oaxis.c:145
+msgid "normal2"
+msgstr "軸と直交2"
 
 #: src/ofit.c:83
 msgid "poly"
@@ -2369,6 +2377,12 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#~ msgid "horizontal"
+#~ msgstr "水平"
+
+#~ msgid "vertical"
+#~ msgstr "垂直"
 
 #~ msgid ""
 #~ "Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: "

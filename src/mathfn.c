@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.c,v 1.5 2009/03/24 09:55:53 hito Exp $
+ * $Id: mathfn.c,v 1.6 2009/08/04 10:41:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <math.h>
+#include <float.h>
 #include "mathfn.h"
 
 #define TRUE 1
@@ -38,6 +39,16 @@ static int randinit=FALSE;
 int randm[521];
 int randj;
 */
+
+int
+compare_double(double x, double y)
+{
+  if (x) {
+    return fabs(x - y) <= fabs(DBL_EPSILON * x);
+  } else {
+    return fabs(x - y) <= fabs(DBL_EPSILON * y);
+  }
+}
 
 double 
 cutdown(double x)

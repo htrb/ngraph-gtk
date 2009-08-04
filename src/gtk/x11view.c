@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.158 2009/07/27 01:15:27 hito Exp $
+ * $Id: x11view.c,v 1.159 2009/08/04 10:41:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5382,7 +5382,8 @@ Draw(int SelectFile)
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
     d->ignoreredraw = TRUE;
     _exeobj(Menulocal.GRAobj, "clear", Menulocal.GRAinst, 0, NULL);
-    //    ResetEvent();    /* XmUpdateDisplay(d->Win); */
+    //    ResetEvent();
+    /* XmUpdateDisplay(d->Win); */
     _exeobj(Menulocal.GRAobj, "draw", Menulocal.GRAinst, 0, NULL);
     _exeobj(Menulocal.GRAobj, "flush", Menulocal.GRAinst, 0, NULL);
     d->ignoreredraw = FALSE;

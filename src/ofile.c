@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.80 2009/07/10 14:12:25 hito Exp $
+ * $Id: ofile.c,v 1.81 2009/08/04 10:41:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1862,7 +1862,7 @@ getdata(struct f2ddata *fp)
   char st;
   double sumx,sumy,sum2,sum3;
   int numx,numy,num2,num3,num,smx,smy,sm2,sm3;
-  int filenum,*openfile,*needx,*needy;;
+  int filenum,*openfile,*needx,*needy;
   struct narray filedatax,filedatay;
   struct narray filestatx,filestaty;
   unsigned int fnumx,fnumy,j;

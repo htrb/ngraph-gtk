@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.h,v 1.3 2008/10/03 07:13:51 hito Exp $
+ * $Id: mathfn.h,v 1.4 2009/08/04 10:41:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,4 +49,5 @@ int chebyshev(int n,double x,double *val);
 int mjd(int year,int month,int day);
 void HSB2RGB(double h,double s,double b,int *R,int *G,int *B);
 int bsearch_int(int *ary, int n, int val, int *idx);
+int compare_double(double x, double y);
 

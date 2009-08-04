@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.16 2009/04/19 06:46:13 hito Exp $
+ * $Id: oagrid.c,v 1.17 2009/08/04 10:41:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -253,7 +253,7 @@ draw_grid_line(struct objlist *obj, int GC,
 	       struct axis_pos *a2_pos, struct grid_prm *gprm)
 {
   int r, rcode, snum, wid, *sdata;
-  double po;;
+  double po;
   int x0, y0, x, y;
   struct axislocal alocal;
 

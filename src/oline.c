@@ -1,5 +1,5 @@
 /* 
- * $Id: oline.c,v 1.10 2009/05/01 09:15:58 hito Exp $
+ * $Id: oline.c,v 1.11 2009/08/04 10:41:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -163,7 +163,7 @@ arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   alen2=alen-10;
   if (alen2<0) alen2=0;
   awidth=width*(double )headwidth/20000;
-  if ((head==2) || (head==3)) {
+  if ((head==ARROW_POSITION_BEGIN) || (head==ARROW_POSITION_BOTH)) {
     dx=x0-x1;
     dy=y0-y1;
     len=sqrt(dx*dx+dy*dy);
@@ -178,7 +178,7 @@ arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     ap[4]=nround(ax0+dy/len*awidth);
     ap[5]=nround(ay0-dx/len*awidth);
   }
-  if ((head==1) || (head==3)) {
+  if ((head==ARROW_POSITION_END) || (head==ARROW_POSITION_BOTH)) {
     dx=x3-x2;
     dy=y3-y2;
     len=sqrt(dx*dx+dy*dy);
@@ -205,11 +205,11 @@ arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     y=points2[i*2+1];
     GRAlineto(GC,x,y);
   }
-  if ((head==2) || (head==3)) {
+  if ((head==ARROW_POSITION_BEGIN) || (head==ARROW_POSITION_BOTH)) {
     GRAlinestyle(GC,0,NULL,1,0,join,miter);
     GRAdrawpoly(GC,3,ap,1);
   }
-  if ((head==1) || (head==3)) {
+  if ((head==ARROW_POSITION_END) || (head==ARROW_POSITION_BOTH)) {
     GRAlinestyle(GC,0,NULL,1,0,join,miter);
     GRAdrawpoly(GC,3,ap2,1);
   }
@@ -275,7 +275,7 @@ arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   alen2=alen-10;
   if (alen2<0) alen2=0;
   awidth=width*(double )headwidth/20000;
-  if ((head==2) || (head==3)) {
+  if ((head==ARROW_POSITION_BEGIN) || (head==ARROW_POSITION_BOTH)) {
     dx=x0-x1;
     dy=y0-y1;
     len=sqrt(dx*dx+dy*dy);
@@ -288,7 +288,7 @@ arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     ap[4]=nround(ax0+dy/len*awidth);
     ap[5]=nround(ay0-dx/len*awidth);
   }
-  if ((head==1) || (head==3)) {
+  if ((head==ARROW_POSITION_END) || (head==ARROW_POSITION_BOTH)) {
     dx=x3-x2;
     dy=y3-y2;
     len=sqrt(dx*dx+dy*dy);
@@ -316,7 +316,7 @@ arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (y<miny) miny=y;
     if (y>maxy) maxy=y;
   }
-  if ((head==2) || (head==3)) {
+  if ((head==ARROW_POSITION_BEGIN) || (head==ARROW_POSITION_BOTH)) {
     for (i=0;i<3;i++) {
       if (ap[i*2]<minx) minx=ap[i*2];
       if (ap[i*2]>maxx) maxx=ap[i*2];
@@ -324,7 +324,7 @@ arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if (ap[i*2+1]>maxy) maxy=ap[i*2+1];
     }
   }
-  if ((head==1) || (head==3)) {
+  if ((head==ARROW_POSITION_END) || (head==ARROW_POSITION_BOTH)) {
     for (i=0;i<3;i++) {
       if (ap2[i*2]<minx) minx=ap2[i*2];
       if (ap2[i*2]>maxx) maxx=ap2[i*2];

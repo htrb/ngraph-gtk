@@ -89,11 +89,11 @@ direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *eve
   val += (val < 0) ? 360 : 0;
 
   switch (pos) {
-  case GTK_ENTRY_ICON_PRIMARY:
+  case GTK_ENTRY_ICON_SECONDARY:
     val -= val % 90;
     val += 90;
     break;
-  case GTK_ENTRY_ICON_SECONDARY:
+  case GTK_ENTRY_ICON_PRIMARY:
     rest = val % 90;
     if (rest == 0) {
       val -= 90;
@@ -117,8 +117,8 @@ create_direction_entry(void)
 #if USE_ENTRY_ICON
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-  gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, GTK_STOCK_GO_UP);
-  gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_GO_DOWN);
+  gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_GO_UP);
+  gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, GTK_STOCK_GO_DOWN);
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
 #else
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);

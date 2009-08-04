@@ -1,5 +1,5 @@
 /* 
- * $Id: axis.c,v 1.4 2009/04/14 01:14:32 hito Exp $
+ * $Id: axis.c,v 1.5 2009/08/04 10:41:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -147,7 +147,7 @@ getaxispositionfirst(struct axislocal *alocal)
 }
 
 int 
-getaxisposition(struct axislocal *alocal,double *po)
+getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
 {
   int rcode;
   double dd;
@@ -179,8 +179,8 @@ getaxisposition(struct axislocal *alocal,double *po)
     if (alocal->atype==AXISLOGNORM) 
       *po=alocal->posm+log10(1.0+alocal->counts*alocal->dposs);
     else if (alocal->atype==AXISLOGSMALL)
-      *po=log10(pow(10.0,alocal->posm)
-         +alocal->counts*alocal->dposs*pow(10.0,alocal->posl)*alocal->dposm);
+      *po=log10(pow(10.0, alocal->posm)
+		+ alocal->counts * alocal->dposs * pow(10.0, alocal->posl) * alocal->dposm);
     else *po=alocal->posm+alocal->counts*alocal->dposs;
     alocal->counts++;
   }
@@ -210,13 +210,17 @@ getaxispositionini(struct axislocal *alocal,
   int rcode;
   int num;
 
-  if (min==max) return -1;
-  if (inc==0) return -1;
+  if (compare_double(min, max)) return -1;
+  if (compare_double(inc, 0)) return -1;
   if (type==1) {
     if ((min<=0) || (max<=0)) return -1;
-    if (fabs(inc)==10) alocal->atype=AXISLOGNORM;
-    else if (fabs(inc)==1) alocal->atype=AXISLOGSMALL;
-    else alocal->atype=AXISLOGBIG;
+    if (compare_double(fabs(inc), 10)) {
+      alocal->atype=AXISLOGNORM;
+    } else if (compare_double(fabs(inc), 1)) {
+      alocal->atype=AXISLOGSMALL;
+    } else {
+      alocal->atype=AXISLOGBIG;
+    }
     alocal->min=log10(min);
     alocal->max=log10(max);
     alocal->inc=log10(fabs(inc));

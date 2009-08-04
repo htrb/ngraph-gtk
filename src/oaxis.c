@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.44 2009/05/12 09:00:07 hito Exp $
+ * $Id: oaxis.c,v 1.45 2009/08/04 10:41:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -88,6 +88,12 @@ char *axistypechar[]={
   NULL
 };
 
+enum AXIS_SCALE_TYPE {
+  AXIS_TYPE_LINEAR,
+  AXIS_TYPE_LOG,
+  AXIS_TYPE_INVERSE,
+};
+
 static char *axisgaugechar[]={
   N_("none"),
   N_("both"),
@@ -135,6 +141,9 @@ static char *anumdirchar[]={
   N_("normal"),
   N_("parallel"),
   N_("parallel2"),
+  N_("normal1"),
+  N_("normal2"),
+  //  N_("vertical"),
   NULL
 };
 
@@ -142,6 +151,9 @@ enum AXIS_NUM_DIR {
   AXIS_NUM_POS_NORMAL,
   AXIS_NUM_POS_PARALLEL1,
   AXIS_NUM_POS_PARALLEL2,
+  AXIS_NUM_POS_NORMAL1,
+  AXIS_NUM_POS_NORMAL2,
+  AXIS_NUM_POS_VERTICAL,
 };
 
 static struct obj_config AxisConfig[] = {
@@ -625,7 +637,7 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array, int chec
 
   _getobj(obj, "group", inst, &group);
 
-  if (group  ==  NULL || group[0]  ==  'a')
+  if (group == NULL || group[0] == 'a')
     return 'a';
 
   len = strlen(group);
@@ -1540,6 +1552,868 @@ numformat(char *num,char *format,double a)
   }
 }
 
+static void
+get_num_pos_horizontal(int align, int plen, int fx0, int fy0, int fx1, int fy1, int *x, int *y)
+{
+  switch (align) {
+  case AXIS_NUM_ALIGN_CENTER:
+    *x = (fx0 + fx1) / 2;
+    break;
+  case AXIS_NUM_ALIGN_LEFT:
+    *x = fx0;
+    break;
+  case AXIS_NUM_ALIGN_RIGHT:
+    *x = fx1;
+    break;
+  case AXIS_NUM_ALIGN_POINT:
+    *x = fx1 + plen / 2;
+    break;
+  default:
+    /* never reached */
+    *x = 0;
+  }
+  *y = (fy0 + fy1) / 2;
+}
+
+static void
+get_num_pos_parallel(int align, int plen, double nndir, int fx0, int fy0, int fx1, int fy1, int *x, int *y)
+{
+  int px0, py0;
+
+  switch (align) {
+  case AXIS_NUM_ALIGN_CENTER:
+    px0 = (fx0 + fx1) / 2;
+    break;
+  case AXIS_NUM_ALIGN_LEFT:
+    px0 = fx0;
+    break;
+  case AXIS_NUM_ALIGN_RIGHT:
+    px0 = fx1;
+    break;
+  case AXIS_NUM_ALIGN_POINT:
+    px0 = fx1 + plen / 2;
+    break;
+  default:
+    /* never reached */
+    px0 = 0;
+  }
+  py0 = (fy0 + fy1) / 2;
+
+  *x =  cos(nndir) * px0 + sin(nndir) * py0;
+  *y = -sin(nndir) * px0 + cos(nndir) * py0;
+}
+
+static void
+get_num_pos_normal(int side, int align, int plen, double nndir, int fx0, int fy0, int fx1, int fy1, int *x, int *y)
+{
+  int px0, py0;
+
+  switch (align) {
+  case AXIS_NUM_ALIGN_CENTER:
+    px0 = (fx0 + fx1) / 2;
+    break;
+  case AXIS_NUM_ALIGN_LEFT:
+    px0 = fx1;
+    break;
+  case AXIS_NUM_ALIGN_RIGHT:
+    px0 = fx0;
+    break;
+  case AXIS_NUM_ALIGN_POINT:
+    px0 = fx0 + plen / 2;
+    break;
+  default:
+    /* never reached */
+    px0 = 0;
+  }
+  py0 = (fy0 + fy1) / 2;
+
+  *x =  cos(nndir) * px0 + sin(nndir) * py0;
+  *y = -sin(nndir) * px0 + cos(nndir) * py0;
+}
+
+
+struct font_config {
+  char *font, *jfont;
+  int pt, space, scriptsize;
+};
+
+struct axis_config {
+  int type;
+  double min;
+  double max;
+  double inc;
+  int div;
+  int x0;
+  int y0;
+  int length;
+  int direction;
+  int width;
+  double dir;
+};
+
+
+void
+get_num_ofst_horizontal(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
+			int hx0, int hy0, int hx1, int hy1,
+			int *x1, int *y1, int *x2, int *y2, int *len)
+{
+  int fx0,fy0,px0,px1,py0,py1;
+  double t;
+
+  if (side==AXIS_NUM_POS_LEFT) {
+    if (aconf->direction<9000) {
+      px0=hx1;
+      py0=hy1;
+    } else if (aconf->direction<18000) {
+      px0=hx1;
+      py0=hy0;
+    } else if (aconf->direction<27000) {
+      px0=hx0;
+      py0=hy0;
+    } else {
+      px0=hx0;
+      py0=hy1;
+    }
+  } else {
+    if (aconf->direction<9000) {
+      px0=hx0;
+      py0=hy0;
+    } else if (aconf->direction<18000) {
+      px0=hx0;
+      py0=hy1;
+    } else if (aconf->direction<27000) {
+      px0=hx1;
+      py0=hy1;
+    } else {
+      px0=hx1;
+      py0=hy0;
+    }
+  }
+
+  switch (align) {
+  case AXIS_NUM_ALIGN_CENTER:
+    px1=(hx0+hx1)/2;
+    break;
+  case AXIS_NUM_ALIGN_LEFT:
+    px1=hx0;
+    break;
+  case AXIS_NUM_ALIGN_RIGHT:
+    px1=hx1;
+    break;
+  case AXIS_NUM_ALIGN_POINT:
+    px1=ilenmax+plen/2;
+    break;
+  default:
+    /* never reached */
+    px1 = 0;
+  }
+  py1=(hy0+hy1)/2;
+  fx0=px1-px0;
+  fy0=py1-py0;
+  t=cos(aconf->dir)*fx0-sin(aconf->dir)*fy0;
+  *x1=fx0-t*cos(aconf->dir);
+  *y1=fy0+t*sin(aconf->dir);
+  if (side==AXIS_NUM_POS_LEFT) {
+    if (aconf->direction<9000) px1=hx1;
+    else if (aconf->direction<18000) px1=hx1;
+    else if (aconf->direction<27000) px1=hx0;
+    else px1=hx0;
+  } else {
+    if (aconf->direction<9000) px1=hx0;
+    else if (aconf->direction<18000) px1=hx0;
+    else if (aconf->direction<27000) px1=hx1;
+    else px1=hx1;
+  }
+  py1=(hy0+hy1)/2;
+  fx0=px1-px0;
+  fy0=py1-py0;
+  t=cos(aconf->dir)*fx0-sin(aconf->dir)*fy0;
+  *x2=fx0-t*cos(aconf->dir);
+  *y2=fy0+t*sin(aconf->dir);
+  *len=abs(hx1-hx0);
+}
+
+void
+get_num_ofst_parallel(struct axis_config *aconf, int side,
+			int hx0, int hy0, int hx1, int hy1,
+			int *x1, int *y1, int *x2, int *y2, int *len)
+{
+  int py1;
+
+  py1=(hy0+hy1)/2;
+  if (side==AXIS_NUM_POS_LEFT) py1*=-1;
+  *x1=-py1*sin(aconf->dir);
+  *y1=-py1*cos(aconf->dir);
+  *x2=-py1*sin(aconf->dir);
+  *y2=-py1*cos(aconf->dir);
+  *len=abs(hx1-hx0);
+}
+
+void
+get_num_ofst_normal1(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
+			int hx0, int hy0, int hx1, int hy1,
+			int *x1, int *y1, int *x2, int *y2, int *len)
+{
+  int py1;
+
+  switch (side) {
+  case AXIS_NUM_POS_LEFT:
+    switch (align) {
+    case AXIS_NUM_ALIGN_CENTER:
+      py1 = (hx1 - hx0) / 2;
+      break;
+    case AXIS_NUM_ALIGN_LEFT:
+      py1 = hx1 - hx0;
+      break;
+    case AXIS_NUM_ALIGN_RIGHT:
+      py1 = 0;
+      break;
+    case AXIS_NUM_ALIGN_POINT:
+      py1 = plen / 2;
+      break;
+    default:
+      /* never reached */
+      py1 = 0;
+    }
+    break;
+  case AXIS_NUM_POS_RIGHT:
+    switch (align) {
+    case AXIS_NUM_ALIGN_CENTER:
+      py1 = (hx0 - hx1) / 2;
+      break;
+    case AXIS_NUM_ALIGN_LEFT:
+      py1 = 0;
+      break;
+    case AXIS_NUM_ALIGN_RIGHT:
+      py1 = hx0 - hx1;
+      break;
+    case AXIS_NUM_ALIGN_POINT:
+      py1 = hx0 - hx1 + plen / 2;
+      break;
+    default:
+      /* never reached */
+      py1 = 0;
+    }
+    break;
+  default:
+    /* never reached */
+    py1 = 0;
+  }
+  *x1 = -py1 * sin(aconf->dir);
+  *y1 = -py1 * cos(aconf->dir);
+  *x2 = *y2 = 0;
+  *len = abs(hx1 - hx0);
+}
+
+void
+get_num_ofst_normal2(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
+			int hx0, int hy0, int hx1, int hy1,
+			int *x1, int *y1, int *x2, int *y2, int *len)
+{
+  int py1;
+
+  switch (side) {
+  case AXIS_NUM_POS_LEFT:
+    switch (align) {
+    case AXIS_NUM_ALIGN_CENTER:
+      py1 = (hx1 - hx0) / 2;
+      break;
+    case AXIS_NUM_ALIGN_LEFT:
+      py1 = hx1 - hx0;
+      break;
+    case AXIS_NUM_ALIGN_RIGHT:
+      py1 = 0;
+      break;
+    case AXIS_NUM_ALIGN_POINT:
+      py1 = hx1 - ilenmax - plen / 2;
+      break;
+    default:
+      /* never reached */
+      py1 = 0;
+    }
+    break;
+  case AXIS_NUM_POS_RIGHT:
+    switch (align) {
+    case AXIS_NUM_ALIGN_CENTER:
+      py1 = (hx0 - hx1) / 2;
+      break;
+    case AXIS_NUM_ALIGN_LEFT:
+      py1 = 0;
+      break;
+    case AXIS_NUM_ALIGN_RIGHT:
+      py1 = hx0 - hx1;
+      break;
+    case AXIS_NUM_ALIGN_POINT:
+      py1 = hx0 - ilenmax - plen / 2;
+      break;
+    default:
+      /* never reached */
+      py1 = 0;
+    }
+    break;
+  default:
+    /* never reached */
+    py1 = 0;
+  }
+  *x1 = -py1 * sin(aconf->dir);
+  *y1 = -py1 * cos(aconf->dir);
+  *x2 = *y2 = 0;
+  *len = abs(hx1 - hx0);
+}
+
+
+static int
+draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal, int GC,
+	       int side, int align, int ilenmax, int plen, struct axis_config *aconf,
+	       struct font_config *font, int step, int nnum, int numcount, int begin,
+	       int x1, int y1, int autonorm,
+	       int nozero, int logpow, char *num, char *format, double norm,
+	       char *head, int headlen, char *tail, int taillen,
+	       int hx0, int hy0, int hx1, int hy1, double min1, double max1)
+{
+  int fx0,fy0,fx1,fy1,px0,px1,py0,py1;
+  int dlx,dly,dlx2,dly2,maxlen;
+  int rcode;
+  int gx0,gy0;
+  double nndir;
+  double po;
+  int numlen,i;
+  char *text, ch;
+  int sx, sy, ndir, ndirection, cstep;
+
+  _getobj(obj,"num_shift_p",inst,&sx);
+  _getobj(obj,"num_shift_n",inst,&sy);
+  _getobj(obj,"num_direction",inst,&ndir);
+
+  switch (ndir) {
+  case AXIS_NUM_POS_NORMAL:
+    ndirection = 0;
+    break;
+  case AXIS_NUM_POS_NORMAL1:
+    ndirection = aconf->direction + 9000;
+    break;
+  case AXIS_NUM_POS_NORMAL2:
+    ndirection = aconf->direction + 27000;
+    break;
+  case AXIS_NUM_POS_PARALLEL1:
+    ndirection = aconf->direction;
+    break;
+  case AXIS_NUM_POS_PARALLEL2:
+    ndirection = aconf->direction + 18000;
+    break;
+  case AXIS_NUM_POS_VERTICAL:
+    ndirection = 9000;
+    break;
+  default:
+    /* never reached */
+    ndirection = 0;
+  }
+  if (ndirection > 36000)
+    ndirection -= 36000;
+  nndir=ndirection/18000.0*MPI;
+
+  if (side==AXIS_NUM_POS_RIGHT) sy*=-1;
+
+  switch (ndir) {
+  case AXIS_NUM_POS_NORMAL:
+    get_num_ofst_horizontal(aconf, align, side, ilenmax, plen, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
+   break;
+  case AXIS_NUM_POS_PARALLEL1:
+  case AXIS_NUM_POS_PARALLEL2:
+    get_num_ofst_parallel(aconf, side, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
+    break;
+  case AXIS_NUM_POS_NORMAL1:
+    get_num_ofst_normal1(aconf, align, side, ilenmax, plen, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
+    break;
+  case AXIS_NUM_POS_NORMAL2:
+    get_num_ofst_normal2(aconf, align, side, ilenmax, plen, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
+    break;
+  default:
+    /* never reached */
+    dlx = 0;
+    dly = 0;
+    dlx2 = 0;
+    dly2 = 0;
+    maxlen = 0;
+  }
+
+  if (getaxispositionini(alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0)
+    return 1;
+
+  if (begin<=0)
+    begin=1;
+
+  cstep = step - begin + 1;
+  numcount = 0;
+
+  while ((rcode=getaxisposition(alocal,&po))!=-2) {
+    if (rcode>=2) {
+      gx0=aconf->x0+(po-min1)*aconf->length/(max1-min1)*cos(aconf->dir);
+      gy0=aconf->y0-(po-min1)*aconf->length/(max1-min1)*sin(aconf->dir);
+      gx0=gx0-sy*sin(aconf->dir)+sx*cos(aconf->dir)+dlx;
+      gy0=gy0-sy*cos(aconf->dir)-sx*sin(aconf->dir)+dly;
+      if ((cstep==step) || ((alocal->atype==AXISLOGSMALL) && (rcode==3))) {
+	numcount++;
+	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
+	  if ((!logpow
+	       && ((alocal->atype==AXISLOGBIG) || (alocal->atype==AXISLOGNORM)))
+              || (alocal->atype==AXISLOGSMALL))
+	    numformat(num,format,pow(10.0,po));
+	  else if (alocal->atype==AXISINVERSE)
+	    numformat(num,format,1.0/po);
+	  else
+	    numformat(num,format,po/norm);
+	  numlen=strlen(num);
+	  if ((text=memalloc(numlen+headlen+taillen+5))==NULL)
+	    return 1;
+	  text[0]='\0';
+	  if (headlen!=0) strcpy(text,head);
+	  if (logpow
+              && ((alocal->atype==AXISLOGBIG) || (alocal->atype==AXISLOGNORM)))
+	    strcat(text,"10^");
+	  if (numlen!=0) strcat(text,num);
+	  if (logpow
+              && ((alocal->atype==AXISLOGBIG) || (alocal->atype==AXISLOGNORM)))
+	    strcat(text,"@");
+	  if (taillen!=0) strcat(text,tail);
+	  if (align==AXIS_NUM_ALIGN_POINT) {
+	    for (i=headlen;i<headlen+numlen;i++) if (text[i]=='.') break;
+	    ch=text[i];
+	    text[i]='\0';
+	    GRAtextextent(text,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+			  &fx0,&fy0,&fx1,&fy1,FALSE);
+	    if (abs(fx1-fx0)>ilenmax) ilenmax=abs(fx1-fx0);
+	    text[i]=ch;
+	    GRAtextextent(text,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+			  &px0,&py0,&px1,&py1,FALSE);
+	    if (py0<fy0) fy0=py0;
+	    if (py1>fy1) fy1=py1;
+	  } else {
+	    GRAtextextent(text,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+			  &fx0,&fy0,&fx1,&fy1,FALSE);
+	  }
+	  switch (ndir) {
+	  case AXIS_NUM_POS_NORMAL:
+	    get_num_pos_horizontal(align, plen, fx0, fy0, fx1, fy1, &px1, &py1);
+	    break;
+	  case AXIS_NUM_POS_PARALLEL1:
+	  case AXIS_NUM_POS_PARALLEL2:
+	    get_num_pos_parallel(align, plen, nndir, fx0, fy0, fx1, fy1, &px1, &py1);
+	    break;
+	  case AXIS_NUM_POS_NORMAL1:
+	    get_num_pos_normal(side, align, plen, nndir, fx0, fy0, fx1, fy1, &px1, &py1);
+	    break;
+	  case AXIS_NUM_POS_NORMAL2:
+	    get_num_pos_normal(side, align, plen, nndir, fx1, fy0, fx0, fy1, &px1, &py1);
+	    break;
+	  default:
+	    px1 = 0;
+	    py1 = 0;
+	  }
+	  GRAmoveto(GC,gx0-px1,gy0-py1);
+	  GRAdrawtext(GC,text,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
+	  memfree(text);
+	}
+
+	if ((alocal->atype==AXISLOGSMALL) && (rcode==3)) {
+	  cstep=step-begin;
+	} else {
+	  cstep=0;
+	}
+      }
+      cstep++;
+    }
+  }
+
+  if (norm!=1) {
+    if (norm/pow(10.0,cutdown(log10(norm)))==1) {
+      //          sprintf(num,"[%%F{Symbol}%c%%F{%s}10^%+d@]", (char )0xb4,font,(int )cutdown(log10(norm)));
+      sprintf(num,"[\\xd710^%+d@]", (int )cutdown(log10(norm)));
+    } else {
+      //          sprintf(num,"[%g%%F{Symbol}%c%%F{%s}10^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (char )0xb4,font,(int )cutdown(log10(norm)));
+      sprintf(num,"[%g\\xd710^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (int )cutdown(log10(norm)));
+    }
+    GRAtextextent(num,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+		  &fx0,&fy0,&fx1,&fy1,FALSE);
+
+    if (abs(fy1-fy0)>maxlen)
+      maxlen=abs(fy1-fy0);
+
+    gx0=aconf->x0+(aconf->length+maxlen*1.2)*cos(aconf->dir);
+    gy0=aconf->y0-(aconf->length+maxlen*1.2)*sin(aconf->dir);
+    gx0=gx0-sy*sin(aconf->dir)+sx*cos(aconf->dir)+dlx2;
+    gy0=gy0-sy*cos(aconf->dir)-sx*sin(aconf->dir)+dly2;
+    switch (ndir) {
+    case AXIS_NUM_POS_NORMAL:
+      if (side==AXIS_NUM_POS_LEFT) {
+	if ((aconf->direction>4500) && (aconf->direction<=22500)) px1=fx1;
+	else px1=fx0;
+      } else {
+	if ((aconf->direction>13500) && (aconf->direction<=31500)) px1=fx1;
+	else px1=fx0;
+      }
+      py1=(fy0+fy1)/2;
+      break;
+    case AXIS_NUM_POS_PARALLEL1:
+    case AXIS_NUM_POS_PARALLEL2:
+      if (ndir==AXIS_NUM_POS_PARALLEL1) px0=fx0;
+      else px0=fx1;
+      py0=(fy0+fy1)/2;
+      px1=cos(nndir)*px0+sin(nndir)*py0;
+      py1=-sin(nndir)*px0+cos(nndir)*py0;
+      break;
+    case AXIS_NUM_POS_NORMAL1:
+    case AXIS_NUM_POS_NORMAL2:
+      if (side==AXIS_NUM_POS_LEFT) {
+	if (ndir==AXIS_NUM_POS_NORMAL1) {
+	  px0=fx0;
+	} else {
+	  px0=fx1;
+	}
+      } else {
+	if (ndir==AXIS_NUM_POS_NORMAL1) {
+	  px0=fx1;
+	} else {
+	  px0=fx0;
+	}
+      }
+      py0=(fy0+fy1)/2;
+      px1=cos(nndir)*px0+sin(nndir)*py0;
+      py1=-sin(nndir)*px0+cos(nndir)*py0;
+      break;
+    }
+    GRAmoveto(GC,gx0-px1,gy0-py1);
+    GRAdrawtext(GC,num,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
+  }
+
+  return 0;
+}
+
+static int
+numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, int x1, int y1)
+{
+  int fr,fg,fb;
+  int side, begin,step,nnum,numcount,cstep;
+  int autonorm,align,nozero;
+  char *format,*head,*tail,num[256],*text;
+  int headlen,taillen,numlen;
+  int logpow;
+  double po,min1,max1;
+  double norm;
+  int n,count;
+  int rcode, i;
+  int hx0,hy0,hx1,hy1,fx0,fy0,fx1,fy1;
+  int ilenmax,flenmax,plen;
+  struct font_config font;
+  struct axislocal alocal;
+
+  _getobj(obj,"num",inst,&side);
+  if (side == AXIS_NUM_POS_NONE)
+    return 0;
+
+  _getobj(obj,"num_R",inst,&fr);
+  _getobj(obj,"num_G",inst,&fg);
+  _getobj(obj,"num_B",inst,&fb);
+  _getobj(obj,"num_pt",inst,&font.pt);
+  _getobj(obj,"num_space",inst,&font.space);
+  _getobj(obj,"num_script_size",inst,&font.scriptsize);
+  _getobj(obj,"num_begin",inst,&begin);
+  _getobj(obj,"num_step",inst,&step);
+  _getobj(obj,"num_num",inst,&nnum);
+  _getobj(obj,"num_auto_norm",inst,&autonorm);
+  _getobj(obj,"num_head",inst,&head);
+  _getobj(obj,"num_format",inst,&format);
+  _getobj(obj,"num_tail",inst,&tail);
+  _getobj(obj,"num_log_pow",inst,&logpow);
+  _getobj(obj,"num_align",inst,&align);
+  _getobj(obj,"num_no_zero",inst,&nozero);
+  _getobj(obj,"num_font",inst,&font.font);
+  _getobj(obj,"num_jfont",inst,&font.jfont);
+
+  GRAcolor(GC,fr,fg,fb);
+
+  if (head!=NULL) headlen=strlen(head);
+  else headlen=0;
+  if (tail!=NULL) taillen=strlen(tail);
+  else taillen=0;
+
+  if (aconf->type==1) {
+    min1=log10(aconf->min);
+    max1=log10(aconf->max);
+  } else if (aconf->type==2) {
+    min1=1/aconf->min;
+    max1=1/aconf->max;
+  } else {
+    min1=aconf->min;
+    max1=aconf->max;
+  }
+
+  if (getaxispositionini(&alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0) {
+    error(obj,ERRMINMAX);
+    return 1;
+  }
+
+  count=0;
+  while ((rcode=getaxisposition(&alocal,&po))!=-2) {
+    if (rcode>=2) count++;
+  }
+
+  if (alocal.atype==AXISINVERSE) {
+    if (step==0) {
+      if (count==0) n=1;
+      else n=nround(pow(10.0,(double )(int )(log10((double )count))));
+      if (n!=1) n--;
+      if (count>=18*n) step=9*n;
+      else if (count>=6*n) step=3*n;
+      else step=n;
+    }
+    if (begin==0) begin=1;
+  } else if (alocal.atype==AXISLOGSMALL) {
+    if (step==0) step=1;
+    if (begin==0) begin=1;
+  } else {
+    if (step==0) {
+      if (count==0) n=1;
+      else n=nround(pow(10.0,(double )(int )(log10(count*0.5))));
+      if (count>=10*n) step=5*n;
+      else if (count>=5*n) step=2*n;
+      else step=n;
+    }
+    if (begin==0)
+      begin=nround(fabs((roundmin(alocal.posst,alocal.dposl)
+			 -roundmin(alocal.posst,alocal.dposm))/alocal.dposm))
+	% step+1;
+  }
+
+  norm=1;
+  if (alocal.atype==AXISNORMAL) {
+    if ((fabs(alocal.dposm)>=pow(10.0,(double )autonorm))
+	|| (fabs(alocal.dposm)<=pow(10.0,(double )-autonorm)))
+      norm=fabs(alocal.dposm);
+  }
+
+  if (getaxispositionini(&alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0)
+    return 1;
+  GRAtextextent(".",font.font, font.jfont, font.pt, font.space, font.scriptsize,&fx0,&fy0,&fx1,&fy1,FALSE);
+  plen=abs(fx1-fx0);
+  hx0=hy0=hx1=hy1=0;
+  flenmax=ilenmax=0;
+  if (begin<=0) begin=1;
+  cstep=step-begin+1;
+  numcount=0;
+  while ((rcode=getaxisposition(&alocal,&po))!=-2) {
+    if (rcode>=2) {
+      if ((cstep==step) || ((alocal.atype==AXISLOGSMALL) && (rcode==3))) {
+	numcount++;
+	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
+	  if ((!logpow
+	       && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
+	      || (alocal.atype==AXISLOGSMALL))
+	    numformat(num,format,pow(10.0,po));
+	  else if (alocal.atype==AXISINVERSE)
+	    numformat(num,format,1.0/po);
+	  else
+	    numformat(num,format,po/norm);
+	  numlen=strlen(num);
+	  if ((text=memalloc(numlen+headlen+taillen+5))==NULL) return 1;
+	  text[0]='\0';
+	  if (headlen!=0) strcpy(text,head);
+	  if (logpow
+	      && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
+	    strcat(text,"10^");
+	  if (numlen!=0) strcat(text,num);
+	  if (logpow
+	      && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
+	    strcat(text,"@");
+	  if (taillen!=0) strcat(text,tail);
+	  if (align==AXIS_NUM_ALIGN_POINT) {
+	    for (i=headlen;i<headlen+numlen;i++) if (text[i]=='.') break;
+	    if (text[i]=='.') {
+	      GRAtextextent(text+i+1,font.font, font.jfont, font.pt, font.space, font.scriptsize,
+			    &fx0,&fy0,&fx1,&fy1,FALSE);
+	      if (fy0<hy0) hy0=fy0;
+	      if (fy1>hy1) hy1=fy1;
+	      if (abs(fx1-fx0)>flenmax) flenmax=abs(fx1-fx0);
+	    }
+	    text[i]='\0';
+	    GRAtextextent(text,font.font, font.jfont, font.pt, font.space, font.scriptsize,
+			  &fx0,&fy0,&fx1,&fy1,FALSE);
+	    if (abs(fx1-fx0)>ilenmax) ilenmax=abs(fx1-fx0);
+	    if (fy0<hy0) hy0=fy0;
+	    if (fy1>hy1) hy1=fy1;
+	  } else {
+	    GRAtextextent(text,font.font, font.jfont, font.pt, font.space, font.scriptsize,
+			  &fx0,&fy0,&fx1,&fy1,FALSE);
+	    if (fx0<hx0) hx0=fx0;
+	    if (fx1>hx1) hx1=fx1;
+	    if (fy0<hy0) hy0=fy0;
+	    if (fy1>hy1) hy1=fy1;
+	  }
+	  memfree(text);
+	}
+	if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) cstep=step-begin;
+	else cstep=0;
+      }
+      cstep++;
+    }
+  }
+  if (align==AXIS_NUM_ALIGN_POINT) {
+    hx0=0;
+    hx1=flenmax+ilenmax+plen/2;
+  }
+
+  if ((abs(hx0-hx1)!=0) && (abs(hy0-hy1)!=0)) {
+    draw_numbering(obj, inst, &alocal, GC,
+		   side, align, ilenmax, plen, aconf, &font, step, nnum, numcount, begin,
+		   x1, y1, autonorm, nozero, logpow, num, format, norm,
+		   head, headlen, tail, taillen, hx0,hy0,hx1,hy1,min1,max1);
+  }
+
+  return 0;
+}
+
+
+static int
+draw_gauge(struct objlist *obj,char *inst, int GC, struct axis_config *aconf)
+{
+  int fr,fg,fb;
+  struct narray *style;
+  int snum,*sdata;
+  struct axislocal alocal;
+  double po,gmin,gmax,min1,max1,min2,max2;
+  int len1,wid1,len2,wid2,len3,wid3,len,wid;
+  int limit;
+  int rcode;
+  int gx0,gy0,gx1,gy1;
+  int gauge;
+
+  _getobj(obj,"gauge",inst,&gauge);
+  if (gauge == AXIS_GAUGE_NONE)
+    return 0;
+
+  _getobj(obj,"gauge_R",inst,&fr);
+  _getobj(obj,"gauge_G",inst,&fg);
+  _getobj(obj,"gauge_B",inst,&fb);
+  _getobj(obj,"gauge_min",inst,&gmin);
+  _getobj(obj,"gauge_max",inst,&gmax);
+  _getobj(obj,"gauge_style",inst,&style);
+  _getobj(obj,"gauge_length1",inst,&len1);
+  _getobj(obj,"gauge_width1",inst,&wid1);
+  _getobj(obj,"gauge_length2",inst,&len2);
+  _getobj(obj,"gauge_width2",inst,&wid2);
+  _getobj(obj,"gauge_length3",inst,&len3);
+  _getobj(obj,"gauge_width3",inst,&wid3);
+
+  snum=arraynum(style);
+  sdata=arraydata(style);
+
+  GRAcolor(GC,fr,fg,fb);
+
+  if (getaxispositionini(&alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0) {
+    error(obj,ERRMINMAX);
+    return 1;
+  }
+
+  if ((gmin!=0) || (gmax!=0)) limit=TRUE;
+  else limit=FALSE;
+
+  switch (aconf->type) {
+  case AXIS_TYPE_LOG:
+    min1=log10(aconf->min);
+    max1=log10(aconf->max);
+    if (limit && (gmin>0) && (gmax>0)) {
+      min2=log10(gmin);
+      max2=log10(gmax);
+    } else limit=FALSE;
+    break;
+  case AXIS_TYPE_INVERSE:
+    min1=1/aconf->min;
+    max1=1/aconf->max;
+    if (limit && (gmin*gmax>0)) {
+      min2=1/gmin;
+      max2=1/gmax;
+    } else limit=FALSE;
+    break;
+  default:
+    min1=aconf->min;
+    max1=aconf->max;
+    if (limit) {
+      min2=gmin;
+      max2=gmax;
+    }
+  }
+
+  while ((rcode=getaxisposition(&alocal,&po))!=-2) {
+    if ((rcode>=0) && (!limit || ((min2-po)*(max2-po)<=0))) {
+      gx0=aconf->x0+(po-min1)*aconf->length/(max1-min1)*cos(aconf->dir);
+      gy0=aconf->y0-(po-min1)*aconf->length/(max1-min1)*sin(aconf->dir);
+      if (rcode==1) {
+	len=len1;
+	wid=wid1;
+      } else if (rcode==2) {
+	len=len2;
+	wid=wid2;
+      } else {
+	len=len3;
+	wid=wid3;
+      }
+      GRAlinestyle(GC,snum,sdata,wid,0,0,1000);
+      if ((gauge==1) || (gauge==2)) {
+	gx1=gx0-len*sin(aconf->dir);
+	gy1=gy0-len*cos(aconf->dir);
+	GRAline(GC,gx0,gy0,gx1,gy1);
+      }
+      if ((gauge==1) || (gauge==3)) {
+	gx1=gx0+len*sin(aconf->dir);
+	gy1=gy0+len*cos(aconf->dir);
+	GRAline(GC,gx0,gy0,gx1,gy1);
+      }
+    }
+  }
+
+  return 0;
+}
+
+static int
+get_axis_parameter(struct objlist *obj, char *inst,  struct axis_config *aconf)
+{
+  _getobj(obj, "min",  inst, &aconf->min);
+  _getobj(obj, "max",  inst, &aconf->max);
+  _getobj(obj, "inc",  inst, &aconf->inc);
+  _getobj(obj, "div",  inst, &aconf->div);
+  _getobj(obj, "type", inst, &aconf->type);
+
+  return 0;
+}
+
+static int
+get_reference_parameter(struct objlist *obj, char *inst,  struct axis_config *aconf)
+{
+  char *axis, *inst1;
+  struct objlist *aobj;
+  int anum, id;
+  struct narray iarray;
+
+  _getobj(obj,"reference",inst, &axis);
+  if (axis == NULL)
+    return 1;
+
+  arrayinit(&iarray,sizeof(int));
+  if (getobjilist(axis,&aobj,&iarray,FALSE,NULL))
+    return 1;
+
+  anum=arraynum(&iarray);
+  if (anum>0) {
+    id=*(int *)arraylast(&iarray);
+    arraydel(&iarray);
+    if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
+      get_axis_parameter(aobj, inst1, aconf);
+    }
+  }
+
+  return 0;
+}
+
 static int 
 axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
@@ -1547,43 +2421,19 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int fr,fg,fb,lm,tm,w,h;
   int arrow,alength,awidth;
   int wave,wlength,wwidth;
-  int x0,y0,x1,y1,direction,length,width;
+  int x1,y1;
   int bline;
-  double min,max,inc;
   struct narray *style;
   int snum,*sdata;
-  int div,type;
-  double alen,awid,dx,dy,dir;
+  double alen,awid,dx,dy;
   int ap[6];
   double wx[5],wxc1[5],wxc2[5],wxc3[5];
   double wy[5],wyc1[5],wyc2[5],wyc3[5];
   double ww[5],c[6];
   int i;
   int clip,zoom;
-  char *axis;
-  struct axislocal alocal;
-  double po,gmin,gmax,min1,max1,min2,max2;
-  int gauge,len1,wid1,len2,wid2,len3,wid3,len,wid;
-  struct narray iarray;
-  struct objlist *aobj;
-  int anum,id;
-  char *inst1;
-  int limit;
-  int rcode;
-  int gx0,gy0,gx1,gy1;
-  int logpow,scriptsize;
-  int side,pt,space,begin,step,nnum,numcount,cstep,ndir;
-  int autonorm,align,sx,sy,nozero;
-  char *format,*head,*tail,*font,*jfont,num[256],*text;
-  int headlen,taillen,numlen;
-  int dlx,dly,dlx2,dly2,maxlen,ndirection;
-  int n,count;
-  double norm;
-  double t,nndir;
-  int hx0,hy0,hx1,hy1,fx0,fy0,fx1,fy1,px0,px1,py0,py1;
-  int ilenmax,flenmax,plen;
-  char ch;
   int hidden,hidden2;
+  struct axis_config aconf;
 
   _getobj(obj,"hidden",inst,&hidden);
   hidden2=FALSE;
@@ -1596,12 +2446,12 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"R",inst,&fr);
   _getobj(obj,"G",inst,&fg);
   _getobj(obj,"B",inst,&fb);
-  _getobj(obj,"x",inst,&x0);
-  _getobj(obj,"y",inst,&y0);
-  _getobj(obj,"direction",inst,&direction);
+  _getobj(obj,"x",inst,&aconf.x0);
+  _getobj(obj,"y",inst,&aconf.y0);
+  _getobj(obj,"direction",inst,&aconf.direction);
   _getobj(obj,"baseline",inst,&bline);
-  _getobj(obj,"length",inst,&length);
-  _getobj(obj,"width",inst,&width);
+  _getobj(obj,"length",inst,&aconf.length);
+  _getobj(obj,"width",inst,&aconf.width);
   _getobj(obj,"style",inst,&style);
   _getobj(obj,"arrow",inst,&arrow);
   _getobj(obj,"arrow_length",inst,&alength);
@@ -1613,36 +2463,36 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   snum=arraynum(style);
   sdata=arraydata(style);
 
-  dir=direction/18000.0*MPI;
-  x1=x0+nround(length*cos(dir));
-  y1=y0-nround(length*sin(dir));
+  aconf.dir=aconf.direction/18000.0*MPI;
+  x1=aconf.x0+nround(aconf.length*cos(aconf.dir));
+  y1=aconf.y0-nround(aconf.length*sin(aconf.dir));
 
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
   GRAcolor(GC,fr,fg,fb);
 
   if (bline) {
-    GRAlinestyle(GC,snum,sdata,width,2,0,1000);
-    GRAline(GC,x0,y0,x1,y1);
+    GRAlinestyle(GC,snum,sdata,aconf.width,2,0,1000);
+    GRAline(GC,aconf.x0,aconf.y0,x1,y1);
   }
 
-  alen=width*(double )alength/10000;
-  awid=width*(double )awidth/20000;
-  if ((arrow==2) || (arrow==3)) {
-    dx=-cos(dir);
-    dy=sin(dir);
-    ap[0]=nround(x0-dy*awid);
-    ap[1]=nround(y0+dx*awid);
-    ap[2]=nround(x0+dx*alen);
-    ap[3]=nround(y0+dy*alen);
-    ap[4]=nround(x0+dy*awid);
-    ap[5]=nround(y0-dx*awid);
+  alen=aconf.width*(double )alength/10000;
+  awid=aconf.width*(double )awidth/20000;
+  if ((arrow==ARROW_POSITION_BEGIN) || (arrow==ARROW_POSITION_BOTH)) {
+    dx=-cos(aconf.dir);
+    dy=sin(aconf.dir);
+    ap[0]=nround(aconf.x0-dy*awid);
+    ap[1]=nround(aconf.y0+dx*awid);
+    ap[2]=nround(aconf.x0+dx*alen);
+    ap[3]=nround(aconf.y0+dy*alen);
+    ap[4]=nround(aconf.x0+dy*awid);
+    ap[5]=nround(aconf.y0-dx*awid);
     GRAlinestyle(GC,0,NULL,1,0,0,1000);
     GRAdrawpoly(GC,3,ap,1);
   }
-  if ((arrow==1) || (arrow==3)) {
-    dx=cos(dir);
-    dy=-sin(dir);
+  if ((arrow==ARROW_POSITION_END) || (arrow==ARROW_POSITION_BOTH)) {
+    dx=cos(aconf.dir);
+    dy=-sin(aconf.dir);
     ap[0]=nround(x1-dy*awid);
     ap[1]=nround(y1+dx*awid);
     ap[2]=nround(x1+dx*alen);
@@ -1653,23 +2503,23 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     GRAdrawpoly(GC,3,ap,1);
   }
   for (i=0;i<5;i++) ww[i]=i;
-  if ((wave==2) || (wave==3)) {
-    dx=cos(dir);
-    dy=sin(dir);
-    wx[0]=nround(x0-dy*wlength);
-    wx[1]=nround(x0-dy*0.5*wlength-dx*0.25*wlength);
-    wx[2]=x0;
-    wx[3]=nround(x0+dy*0.5*wlength+dx*0.25*wlength);
-    wx[4]=nround(x0+dy*wlength);
+  if ((wave==ARROW_POSITION_BEGIN) || (wave==ARROW_POSITION_BOTH)) {
+    dx=cos(aconf.dir);
+    dy=sin(aconf.dir);
+    wx[0]=nround(aconf.x0-dy*wlength);
+    wx[1]=nround(aconf.x0-dy*0.5*wlength-dx*0.25*wlength);
+    wx[2]=aconf.x0;
+    wx[3]=nround(aconf.x0+dy*0.5*wlength+dx*0.25*wlength);
+    wx[4]=nround(aconf.x0+dy*wlength);
     if (spline(ww,wx,wxc1,wxc2,wxc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
       error(obj,ERRAXISSPL);
       goto exit;
     }
-    wy[0]=nround(y0-dx*wlength);
-    wy[1]=nround(y0-dx*0.5*wlength+dy*0.25*wlength);
-    wy[2]=y0;
-    wy[3]=nround(y0+dx*0.5*wlength-dy*0.25*wlength);
-    wy[4]=nround(y0+dx*wlength);
+    wy[0]=nround(aconf.y0-dx*wlength);
+    wy[1]=nround(aconf.y0-dx*0.5*wlength+dy*0.25*wlength);
+    wy[2]=aconf.y0;
+    wy[3]=nround(aconf.y0+dx*0.5*wlength-dy*0.25*wlength);
+    wy[4]=nround(aconf.y0+dx*wlength);
     if (spline(ww,wy,wyc1,wyc2,wyc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
       error(obj,ERRAXISSPL);
       goto exit;
@@ -1686,9 +2536,9 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if (!GRAcurve(GC,c,wx[i],wy[i])) break;
     }
   }
-  if ((wave==1) || (wave==3)) {
-    dx=cos(dir);
-    dy=sin(dir);
+  if ((wave==ARROW_POSITION_END) || (wave==ARROW_POSITION_BOTH)) {
+    dx=cos(aconf.dir);
+    dy=sin(aconf.dir);
     wx[0]=nround(x1-dy*wlength);
     wx[1]=nround(x1-dy*0.5*wlength-dx*0.25*wlength);
     wx[2]=x1;
@@ -1720,494 +2570,19 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
   }
 
-  _getobj(obj,"min",inst,&min);
-  _getobj(obj,"max",inst,&max);
-  _getobj(obj,"inc",inst,&inc);
-  _getobj(obj,"div",inst,&div);
-  _getobj(obj,"type",inst,&type);
-
-  if ((min==0) && (max==0) && (inc==0)) {
-    _getobj(obj,"reference",inst,&axis);
-    if (axis!=NULL) {
-      arrayinit(&iarray,sizeof(int));
-      if (getobjilist(axis,&aobj,&iarray,FALSE,NULL)) goto numbering;
-      anum=arraynum(&iarray);
-      if (anum>0) {
-        id=*(int *)arraylast(&iarray);
-        arraydel(&iarray);
-        if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-           _getobj(aobj,"min",inst1,&min);
-           _getobj(aobj,"max",inst1,&max);
-           _getobj(aobj,"inc",inst1,&inc);
-           _getobj(aobj,"div",inst1,&div);
-           _getobj(aobj,"type",inst1,&type);
-        }
-      }
-    }
+  get_axis_parameter(obj, inst, &aconf);
+  if (aconf.min == 0 && aconf.max == 0 && aconf.inc == 0) {
+    get_reference_parameter(obj, inst, &aconf);
   }
 
-  if ((min==max) || (inc==0)) goto numbering;
-
-  dir=direction/18000.0*MPI;
-
-  _getobj(obj,"gauge",inst,&gauge);
-
-  if (gauge!=0) {
-    _getobj(obj,"gauge_R",inst,&fr);
-    _getobj(obj,"gauge_G",inst,&fg);
-    _getobj(obj,"gauge_B",inst,&fb);
-    _getobj(obj,"gauge_min",inst,&gmin);
-    _getobj(obj,"gauge_max",inst,&gmax);
-    _getobj(obj,"gauge_style",inst,&style);
-    _getobj(obj,"gauge_length1",inst,&len1);
-    _getobj(obj,"gauge_width1",inst,&wid1);
-    _getobj(obj,"gauge_length2",inst,&len2);
-    _getobj(obj,"gauge_width2",inst,&wid2);
-    _getobj(obj,"gauge_length3",inst,&len3);
-    _getobj(obj,"gauge_width3",inst,&wid3);
-
-    snum=arraynum(style);
-    sdata=arraydata(style);
-
-    GRAcolor(GC,fr,fg,fb);
-
-    if (getaxispositionini(&alocal,type,min,max,inc,div,FALSE)!=0) {
-      error(obj,ERRMINMAX);
-      goto exit;
-    }
-
-    if ((gmin!=0) || (gmax!=0)) limit=TRUE;
-    else limit=FALSE;
-
-    if (type==1) {
-      min1=log10(min);
-      max1=log10(max);
-      if (limit && (gmin>0) && (gmax>0)) {
-        min2=log10(gmin);
-        max2=log10(gmax);
-      } else limit=FALSE;
-    } else if (type==2) {
-      min1=1/min;
-      max1=1/max;
-      if (limit && (gmin*gmax>0)) {
-        min2=1/gmin;
-        max2=1/gmax;
-      } else limit=FALSE;
-    } else {
-      min1=min;
-      max1=max;
-      if (limit) {
-        min2=gmin;
-        max2=gmax;
-      }
-    }
-
-    while ((rcode=getaxisposition(&alocal,&po))!=-2) {
-      if ((rcode>=0) && (!limit || ((min2-po)*(max2-po)<=0))) {
-        gx0=x0+(po-min1)*length/(max1-min1)*cos(dir);
-        gy0=y0-(po-min1)*length/(max1-min1)*sin(dir);
-        if (rcode==1) {
-          len=len1;
-          wid=wid1;
-        } else if (rcode==2) {
-          len=len2;
-          wid=wid2;
-        } else {
-          len=len3;
-          wid=wid3;
-        }
-        GRAlinestyle(GC,snum,sdata,wid,0,0,1000);
-        if ((gauge==1) || (gauge==2)) {
-          gx1=gx0-len*sin(dir);
-          gy1=gy0-len*cos(dir);
-          GRAline(GC,gx0,gy0,gx1,gy1);
-        }
-        if ((gauge==1) || (gauge==3)) {
-          gx1=gx0+len*sin(dir);
-          gy1=gy0+len*cos(dir);
-          GRAline(GC,gx0,gy0,gx1,gy1);
-        }
-      }
-    }
+  if (aconf.min != aconf.max && aconf.inc != 0 &&
+      draw_gauge(obj, inst, GC, &aconf)) {
+    goto exit;
   }
 
-numbering:
-
-  _getobj(obj,"min",inst,&min);
-  _getobj(obj,"max",inst,&max);
-  _getobj(obj,"inc",inst,&inc);
-  _getobj(obj,"div",inst,&div);
-  _getobj(obj,"type",inst,&type);
-
-  if ((min==max) || (inc==0)) goto exit;
-
-  _getobj(obj,"num",inst,&side);
-
-  if (side!=0) {
-    _getobj(obj,"num_R",inst,&fr);
-    _getobj(obj,"num_G",inst,&fg);
-    _getobj(obj,"num_B",inst,&fb);
-    _getobj(obj,"num_pt",inst,&pt);
-    _getobj(obj,"num_space",inst,&space);
-    _getobj(obj,"num_script_size",inst,&scriptsize);
-    _getobj(obj,"num_begin",inst,&begin);
-    _getobj(obj,"num_step",inst,&step);
-    _getobj(obj,"num_num",inst,&nnum);
-    _getobj(obj,"num_auto_norm",inst,&autonorm);
-    _getobj(obj,"num_head",inst,&head);
-    _getobj(obj,"num_format",inst,&format);
-    _getobj(obj,"num_tail",inst,&tail);
-    _getobj(obj,"num_log_pow",inst,&logpow);
-    _getobj(obj,"num_align",inst,&align);
-    _getobj(obj,"num_shift_p",inst,&sx);
-    _getobj(obj,"num_shift_n",inst,&sy);
-    _getobj(obj,"num_direction",inst,&ndir);
-    _getobj(obj,"num_no_zero",inst,&nozero);
-    _getobj(obj,"num_font",inst,&font);
-    _getobj(obj,"num_jfont",inst,&jfont);
-
-    GRAcolor(GC,fr,fg,fb);
-
-    if (side==2) sy*=-1;
-
-    if (head!=NULL) headlen=strlen(head);
-    else headlen=0;
-    if (tail!=NULL) taillen=strlen(tail);
-    else taillen=0;
-
-    switch (ndir) {
-    case 0:
-      ndirection = 0;
-      break;
-    case 1:
-      ndirection = direction;
-      break;
-    case 2:
-      ndirection = direction + 18000;
-      if (ndirection > 36000)
-	ndirection -= 36000;
-      break;
-    default:
-      /* never reached */
-      ndirection = 0;
-    }
-    nndir=ndirection/18000.0*MPI;
-
-    if (type==1) {
-      min1=log10(min);
-      max1=log10(max);
-    } else if (type==2) {
-      min1=1/min;
-      max1=1/max;
-    } else {
-      min1=min;
-      max1=max;
-    }
-
-    if (getaxispositionini(&alocal,type,min,max,inc,div,FALSE)!=0) {
-      error(obj,ERRMINMAX);
-      goto exit;
-    }
-
-    count=0;
-    while ((rcode=getaxisposition(&alocal,&po))!=-2) {
-      if (rcode>=2) count++;
-    }
-
-    if (alocal.atype==AXISINVERSE) {
-      if (step==0) {
-        if (count==0) n=1;
-        else n=nround(pow(10.0,(double )(int )(log10((double )count))));
-        if (n!=1) n--;
-        if (count>=18*n) step=9*n;
-        else if (count>=6*n) step=3*n;
-        else step=n;
-      }
-      if (begin==0) begin=1;
-    } else if (alocal.atype==AXISLOGSMALL) {
-      if (step==0) step=1;
-      if (begin==0) begin=1;
-    } else {
-      if (step==0) {
-        if (count==0) n=1;
-        else n=nround(pow(10.0,(double )(int )(log10(count*0.5))));
-        if (count>=10*n) step=5*n;
-        else if (count>=5*n) step=2*n;
-        else step=n;
-      }
-      if (begin==0)
-        begin=nround(fabs((roundmin(alocal.posst,alocal.dposl)
-                        -roundmin(alocal.posst,alocal.dposm))/alocal.dposm))
-             % step+1;
-    }
-
-    norm=1;
-    if (alocal.atype==AXISNORMAL) {
-      if ((fabs(alocal.dposm)>=pow(10.0,(double )autonorm))
-       || (fabs(alocal.dposm)<=pow(10.0,(double )-autonorm)))
-        norm=fabs(alocal.dposm);
-    }
-
-    if (getaxispositionini(&alocal,type,min,max,inc,div,FALSE)!=0)
-      goto exit;
-    GRAtextextent(".",font,jfont,pt,space,scriptsize,&fx0,&fy0,&fx1,&fy1,FALSE);
-    plen=abs(fx1-fx0);
-    hx0=hy0=hx1=hy1=0;
-    flenmax=ilenmax=0;
-    if (begin<=0) begin=1;
-    cstep=step-begin+1;
-    numcount=0;
-    while ((rcode=getaxisposition(&alocal,&po))!=-2) {
-      if (rcode>=2) {
-        if ((cstep==step) || ((alocal.atype==AXISLOGSMALL) && (rcode==3))) {
-          numcount++;
-          if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
-            if ((!logpow
-            && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-            || (alocal.atype==AXISLOGSMALL))
-              numformat(num,format,pow(10.0,po));
-            else if (alocal.atype==AXISINVERSE)
-              numformat(num,format,1.0/po);
-            else
-              numformat(num,format,po/norm);
-            numlen=strlen(num);
-            if ((text=memalloc(numlen+headlen+taillen+5))==NULL) goto exit;
-            text[0]='\0';
-            if (headlen!=0) strcpy(text,head);
-            if (logpow
-            && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-              strcat(text,"10^");
-            if (numlen!=0) strcat(text,num);
-            if (logpow
-            && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-              strcat(text,"@");
-            if (taillen!=0) strcat(text,tail);
-            if (align==3) {
-              for (i=headlen;i<headlen+numlen;i++) if (text[i]=='.') break;
-              if (text[i]=='.') {
-                GRAtextextent(text+i+1,font,jfont,pt,space,scriptsize,
-                              &fx0,&fy0,&fx1,&fy1,FALSE);
-                if (fy0<hy0) hy0=fy0;
-                if (fy1>hy1) hy1=fy1;
-                if (abs(fx1-fx0)>flenmax) flenmax=abs(fx1-fx0);
-              }
-              text[i]='\0';
-              GRAtextextent(text,font,jfont,pt,space,scriptsize,
-                                &fx0,&fy0,&fx1,&fy1,FALSE);
-              if (abs(fx1-fx0)>ilenmax) ilenmax=abs(fx1-fx0);
-              if (fy0<hy0) hy0=fy0;
-              if (fy1>hy1) hy1=fy1;
-            } else {
-              GRAtextextent(text,font,jfont,pt,space,scriptsize,
-                            &fx0,&fy0,&fx1,&fy1,FALSE);
-              if (fx0<hx0) hx0=fx0;
-              if (fx1>hx1) hx1=fx1;
-              if (fy0<hy0) hy0=fy0;
-              if (fy1>hy1) hy1=fy1;
-            }
-            memfree(text);
-          }
-          if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) cstep=step-begin;
-          else cstep=0;
-	}
-        cstep++;
-      }
-    }
-    if (align==3) {
-      hx0=0;
-      hx1=flenmax+ilenmax+plen/2;
-    }
-
-    if ((abs(hx0-hx1)!=0) && (abs(hy0-hy1)!=0)) {
-
-      if (ndir==0) {
-        if (side==1) {
-          if (direction<9000) {
-            px0=hx1;
-            py0=hy1;
-          } else if (direction<18000) {
-            px0=hx1;
-            py0=hy0;
-          } else if (direction<27000) {
-            px0=hx0;
-            py0=hy0;
-          } else {
-            px0=hx0;
-            py0=hy1;
-          }
-        } else {
-          if (direction<9000) {
-            px0=hx0;
-            py0=hy0;
-          } else if (direction<18000) {
-            px0=hx0;
-            py0=hy1;
-          } else if (direction<27000) {
-            px0=hx1;
-            py0=hy1;
-          } else {
-            px0=hx1;
-            py0=hy0;
-          }
-        }
-        if (align==0) px1=(hx0+hx1)/2;
-        else if (align==1) px1=hx0;
-        else if (align==2) px1=hx1;
-        else if (align==3) px1=ilenmax+plen/2;
-        py1=(hy0+hy1)/2;
-        fx0=px1-px0;
-        fy0=py1-py0;
-        t=cos(dir)*fx0-sin(dir)*fy0;
-        dlx=fx0-t*cos(dir);
-        dly=fy0+t*sin(dir);
-        if (side==1) {
-          if (direction<9000) px1=hx1;
-          else if (direction<18000) px1=hx1;
-          else if (direction<27000) px1=hx0;
-          else px1=hx0;
-        } else {
-          if (direction<9000) px1=hx0;
-          else if (direction<18000) px1=hx0;
-          else if (direction<27000) px1=hx1;
-          else px1=hx1;
-        }
-        py1=(hy0+hy1)/2;
-        fx0=px1-px0;
-        fy0=py1-py0;
-        t=cos(dir)*fx0-sin(dir)*fy0;
-        dlx2=fx0-t*cos(dir);
-        dly2=fy0+t*sin(dir);
-        maxlen=abs(hx1-hx0);
-      } else if ((ndir==1) || (ndir==2)) {
-        py1=(hy0+hy1)/2;
-        if (side==1) py1*=-1;
-        dlx=-py1*sin(dir);
-        dly=-py1*cos(dir);
-        dlx2=-py1*sin(dir);
-        dly2=-py1*cos(dir);
-        maxlen=abs(hx1-hx0);
-      } else {
-	/* never reached */
-        dlx = 0;
-        dly = 0;
-        dlx2 = 0;
-        dly2 = 0;
-        maxlen = 0;
-      }
-      if (getaxispositionini(&alocal,type,min,max,inc,div,FALSE)!=0)
-        goto exit;
-      if (begin<=0) begin=1;
-      cstep=step-begin+1;
-      numcount=0;
-      while ((rcode=getaxisposition(&alocal,&po))!=-2) {
-        if (rcode>=2) {
-          gx0=x0+(po-min1)*length/(max1-min1)*cos(dir);
-          gy0=y0-(po-min1)*length/(max1-min1)*sin(dir);
-          gx0=gx0-sy*sin(dir)+sx*cos(dir)+dlx;
-          gy0=gy0-sy*cos(dir)-sx*sin(dir)+dly;
-          if ((cstep==step) || ((alocal.atype==AXISLOGSMALL) && (rcode==3))) {
-            numcount++;
-            if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
-              if ((!logpow
-              && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-              || (alocal.atype==AXISLOGSMALL))
-                numformat(num,format,pow(10.0,po));
-              else if (alocal.atype==AXISINVERSE)
-                numformat(num,format,1.0/po);
-              else
-                numformat(num,format,po/norm);
-              numlen=strlen(num);
-              if ((text=memalloc(numlen+headlen+taillen+5))==NULL)
-                goto exit;
-              text[0]='\0';
-              if (headlen!=0) strcpy(text,head);
-              if (logpow
-              && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-                strcat(text,"10^");
-              if (numlen!=0) strcat(text,num);
-              if (logpow
-              && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-                strcat(text,"@");
-              if (taillen!=0) strcat(text,tail);
-              if (align==3) {
-                for (i=headlen;i<headlen+numlen;i++) if (text[i]=='.') break;
-                ch=text[i];
-                text[i]='\0';
-                GRAtextextent(text,font,jfont,pt,space,scriptsize,
-                              &fx0,&fy0,&fx1,&fy1,FALSE);
-                if (abs(fx1-fx0)>ilenmax) ilenmax=abs(fx1-fx0);
-                text[i]=ch;
-                GRAtextextent(text,font,jfont,pt,space,scriptsize,
-                              &px0,&py0,&px1,&py1,FALSE);
-                if (py0<fy0) fy0=py0;
-                if (py1>fy1) fy1=py1;
-              } else {
-                GRAtextextent(text,font,jfont,pt,space,scriptsize,
-                              &fx0,&fy0,&fx1,&fy1,FALSE);
-              }
-              if (ndir==0) {
-                if (align==0) px1=(fx0+fx1)/2;
-				else if (align==1) px1=fx0;
-                else if (align==2) px1=fx1;
-                else if (align==3) px1=fx1+plen/2;
-                py1=(fy0+fy1)/2;
-              } else if ((ndir==1) || (ndir==2)) {
-                if (align==0) px0=(fx0+fx1)/2;
-                else if (align==1) px0=fx0;
-				else if (align==2) px0=fx1;
-                else if (align==3) px0=fx1+plen/2;
-                py0=(fy0+fy1)/2;
-                px1=cos(nndir)*px0+sin(nndir)*py0;
-				py1=-sin(nndir)*px0+cos(nndir)*py0;
-              }
-              GRAmoveto(GC,gx0-px1,gy0-py1);
-              GRAdrawtext(GC,text,font,jfont,pt,space,ndirection,scriptsize);
-			  memfree(text);
-            }
-            if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) cstep=step-begin;
-            else cstep=0;
-          }
-          cstep++;
-        }
-      }
-
-      if (norm!=1) {
-        if (norm/pow(10.0,cutdown(log10(norm)))==1) {
-	  //          sprintf(num,"[%%F{Symbol}%c%%F{%s}10^%+d@]", (char )0xb4,font,(int )cutdown(log10(norm)));
-          sprintf(num,"[\\xd710^%+d@]", (int )cutdown(log10(norm)));
-        } else {
-	  //          sprintf(num,"[%g%%F{Symbol}%c%%F{%s}10^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (char )0xb4,font,(int )cutdown(log10(norm)));
-          sprintf(num,"[%g\\xd710^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (int )cutdown(log10(norm)));
-        }
-        GRAtextextent(num,font,jfont,pt,space,scriptsize,
-                      &fx0,&fy0,&fx1,&fy1,FALSE);
-        if (abs(fy1-fy0)>maxlen) maxlen=abs(fy1-fy0);
-        gx0=x0+(length+maxlen*1.2)*cos(dir);
-        gy0=y0-(length+maxlen*1.2)*sin(dir);
-        gx0=gx0-sy*sin(dir)+sx*cos(dir)+dlx2;
-        gy0=gy0-sy*cos(dir)-sx*sin(dir)+dly2;
-        if (ndir==0) {
-          if (side==1) {
-            if ((direction>4500) && (direction<=22500)) px1=fx1;
-            else px1=fx0;
-          } else {
-            if ((direction>13500) && (direction<=31500)) px1=fx1;
-            else px1=fx0;
-          }
-          py1=(fy0+fy1)/2;
-        } else {
-          if (ndir==1) px0=fx0;
-          else px0=fx1;
-          py0=(fy0+fy1)/2;
-          px1=cos(nndir)*px0+sin(nndir)*py0;
-          py1=-sin(nndir)*px0+cos(nndir)*py0;
-        }
-        GRAmoveto(GC,gx0-px1,gy0-py1);
-        GRAdrawtext(GC,num,font,jfont,pt,space,ndirection,scriptsize);
-      }
-
-    }
-
+  get_axis_parameter(obj, inst, &aconf);
+  if (aconf.min != aconf.max && aconf.inc != 0) {
+    numbering(obj, inst, GC, &aconf, x1, y1);
   }
 
 exit:
