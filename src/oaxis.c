@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.45 2009/08/04 10:41:47 hito Exp $
+ * $Id: oaxis.c,v 1.46 2009/08/05 03:39:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -141,7 +141,7 @@ static char *anumdirchar[]={
   N_("normal"),
   N_("parallel"),
   N_("parallel2"),
-  N_("normal1"),
+  //  N_("normal1"),
   N_("normal2"),
   //  N_("vertical"),
   NULL

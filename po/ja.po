@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-04 18:18+0900\n"
+"POT-Creation-Date: 2009-08-05 11:58+0900\n"
 "PO-Revision-Date: 2009-08-04 18:16+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2273,10 +2273,6 @@ msgstr "軸と平行"
 msgid "parallel2"
 msgstr "軸と平行2"
 
-#: src/oaxis.c:144
-msgid "normal1"
-msgstr "軸と直交"
-
 #: src/oaxis.c:145
 msgid "normal2"
 msgstr "軸と直交2"
@@ -2377,6 +2373,9 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#~ msgid "normal1"
+#~ msgstr "軸と直交"
 
 #~ msgid "horizontal"
 #~ msgstr "水平"

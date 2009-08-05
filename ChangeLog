@@ -7,8 +7,7 @@
 	ARROW_POSITION_TYPE".
 
 	* src/oaxis.c (enum AXIS_SCALE_TYPE): add.
-	(anumdirchar, enum AXIS_NUM_DIR): add member "normal1" and
-	"normal2".
+	(anumdirchar, enum AXIS_NUM_DIR): add member "normal2".
 	(get_num_pos_horizontal, get_num_pos_parallel)
 	(get_num_pos_normal, struct font_config, struct axis_config)
 	(get_num_ofst_horizontal, get_num_ofst_parallel)
