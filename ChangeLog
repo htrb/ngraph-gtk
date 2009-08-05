@@ -1,5 +1,8 @@
 2009-08-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (LoadPrmFile): set modified flag when load
+	PRM file.
+
 	* src/oaxis.c (draw_wave, draw_arrow): add.
 	(axisdraw): use "draw_wave()" and "draw_arrow()".
 

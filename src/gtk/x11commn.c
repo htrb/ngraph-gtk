@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.46 2009/07/27 01:15:27 hito Exp $
+ * $Id: x11commn.c,v 1.47 2009/08/05 05:32:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1169,7 +1169,7 @@ LoadPrmFile(char *File)
       GetPageSettingsFromGRA();
       UpdateAll();
       ResetStatusBar();
-      reset_graph_modified();
+      set_graph_modified();
     }
     delobj(obj, id);
   }
