@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.46 2009/08/05 03:39:24 hito Exp $
+ * $Id: oaxis.c,v 1.47 2009/08/05 04:54:54 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1639,20 +1639,16 @@ struct font_config {
 
 struct axis_config {
   int type;
-  double min;
-  double max;
-  double inc;
+  double min, max, inc;
   int div;
-  int x0;
-  int y0;
-  int length;
-  int direction;
-  int width;
-  double dir;
+  int x0, y0, x1, y1;		/* start and atop position of baseline */
+  int length, width;
+  int direction;		/* direction in degree multiplied 100 */
+  double dir;			/* direction in radian */
 };
 
 
-void
+static void
 get_num_ofst_horizontal(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
 			int hx0, int hy0, int hx1, int hy1,
 			int *x1, int *y1, int *x2, int *y2, int *len)
@@ -1733,10 +1729,10 @@ get_num_ofst_horizontal(struct axis_config *aconf, int align, int side, int ilen
   *len=abs(hx1-hx0);
 }
 
-void
+static void
 get_num_ofst_parallel(struct axis_config *aconf, int side,
-			int hx0, int hy0, int hx1, int hy1,
-			int *x1, int *y1, int *x2, int *y2, int *len)
+		      int hx0, int hy0, int hx1, int hy1,
+		      int *x1, int *y1, int *x2, int *y2, int *len)
 {
   int py1;
 
@@ -1749,7 +1745,7 @@ get_num_ofst_parallel(struct axis_config *aconf, int side,
   *len=abs(hx1-hx0);
 }
 
-void
+static void
 get_num_ofst_normal1(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
 			int hx0, int hy0, int hx1, int hy1,
 			int *x1, int *y1, int *x2, int *y2, int *len)
@@ -1805,7 +1801,7 @@ get_num_ofst_normal1(struct axis_config *aconf, int align, int side, int ilenmax
   *len = abs(hx1 - hx0);
 }
 
-void
+static void
 get_num_ofst_normal2(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
 			int hx0, int hy0, int hx1, int hy1,
 			int *x1, int *y1, int *x2, int *y2, int *len)
@@ -1861,22 +1857,20 @@ get_num_ofst_normal2(struct axis_config *aconf, int align, int side, int ilenmax
   *len = abs(hx1 - hx0);
 }
 
-
 static int
-draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal, int GC,
-	       int side, int align, int ilenmax, int plen, struct axis_config *aconf,
-	       struct font_config *font, int step, int nnum, int numcount, int begin,
-	       int x1, int y1, int autonorm,
-	       int nozero, int logpow, char *num, char *format, double norm,
+draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
+	       int GC, int side, int align, int ilenmax, int plen,
+	       struct axis_config *aconf, struct font_config *font, int step,
+	       int nnum, int numcount, int begin, int autonorm, int nozero,
+	       int logpow, char *num, char *format, double norm,
 	       char *head, int headlen, char *tail, int taillen,
-	       int hx0, int hy0, int hx1, int hy1, double min1, double max1)
+	       int hx0, int hy0, int hx1, int hy1)
 {
   int fx0,fy0,fx1,fy1,px0,px1,py0,py1;
   int dlx,dly,dlx2,dly2,maxlen;
   int rcode;
   int gx0,gy0;
-  double nndir;
-  double po;
+  double nndir, po, min1, max1;
   int numlen,i;
   char *text, ch;
   int sx, sy, ndir, ndirection, cstep;
@@ -1884,6 +1878,20 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal, int GC
   _getobj(obj,"num_shift_p",inst,&sx);
   _getobj(obj,"num_shift_n",inst,&sy);
   _getobj(obj,"num_direction",inst,&ndir);
+
+  switch (aconf->type) {
+  case AXIS_TYPE_LOG:
+    min1=log10(aconf->min);
+    max1=log10(aconf->max);
+    break;
+  case AXIS_TYPE_INVERSE:
+    min1=1/aconf->min;
+    max1=1/aconf->max;
+    break;
+  default:
+    min1=aconf->min;
+    max1=aconf->max;
+  }
 
   switch (ndir) {
   case AXIS_NUM_POS_NORMAL:
@@ -2090,7 +2098,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal, int GC
 }
 
 static int
-numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, int x1, int y1)
+numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf)
 {
   int fr,fg,fb;
   int side, begin,step,nnum,numcount,cstep;
@@ -2098,7 +2106,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   char *format,*head,*tail,num[256],*text;
   int headlen,taillen,numlen;
   int logpow;
-  double po,min1,max1;
+  double po;
   double norm;
   int n,count;
   int rcode, i;
@@ -2132,21 +2140,8 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 
   GRAcolor(GC,fr,fg,fb);
 
-  if (head!=NULL) headlen=strlen(head);
-  else headlen=0;
-  if (tail!=NULL) taillen=strlen(tail);
-  else taillen=0;
-
-  if (aconf->type==1) {
-    min1=log10(aconf->min);
-    max1=log10(aconf->max);
-  } else if (aconf->type==2) {
-    min1=1/aconf->min;
-    max1=1/aconf->max;
-  } else {
-    min1=aconf->min;
-    max1=aconf->max;
-  }
+  headlen = (head) ? strlen(head) : 0;
+  taillen = (tail) ? strlen(tail) : 0;
 
   if (getaxispositionini(&alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0) {
     error(obj,ERRMINMAX);
@@ -2160,24 +2155,46 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 
   if (alocal.atype==AXISINVERSE) {
     if (step==0) {
-      if (count==0) n=1;
-      else n=nround(pow(10.0,(double )(int )(log10((double )count))));
-      if (n!=1) n--;
-      if (count>=18*n) step=9*n;
-      else if (count>=6*n) step=3*n;
-      else step=n;
+      if (count==0) {
+	n=1;
+      } else {
+	n=nround(pow(10.0,(double )(int )(log10((double )count))));
+      }
+
+      if (n!=1)
+	n--;
+
+      if (count>=18*n) {
+	step=9*n;
+      } else if (count>=6*n) {
+	step=3*n;
+      } else {
+	step=n;
+      }
     }
-    if (begin==0) begin=1;
+
+    if (begin==0)
+      begin=1;
   } else if (alocal.atype==AXISLOGSMALL) {
-    if (step==0) step=1;
-    if (begin==0) begin=1;
+    if (step==0)
+      step=1;
+
+    if (begin==0)
+      begin=1;
   } else {
     if (step==0) {
-      if (count==0) n=1;
-      else n=nround(pow(10.0,(double )(int )(log10(count*0.5))));
-      if (count>=10*n) step=5*n;
-      else if (count>=5*n) step=2*n;
-      else step=n;
+      if (count==0) {
+	n=1;
+      } else {
+	n=nround(pow(10.0,(double )(int )(log10(count*0.5))));
+      }
+      if (count>=10*n) {
+	step=5*n;
+      } else if (count>=5*n) {
+	step=2*n;
+      } else {
+	step=n;
+      }
     }
     if (begin==0)
       begin=nround(fabs((roundmin(alocal.posst,alocal.dposl)
@@ -2202,61 +2219,63 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   cstep=step-begin+1;
   numcount=0;
   while ((rcode=getaxisposition(&alocal,&po))!=-2) {
-    if (rcode>=2) {
-      if ((cstep==step) || ((alocal.atype==AXISLOGSMALL) && (rcode==3))) {
-	numcount++;
-	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
-	  if ((!logpow
-	       && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-	      || (alocal.atype==AXISLOGSMALL))
-	    numformat(num,format,pow(10.0,po));
-	  else if (alocal.atype==AXISINVERSE)
-	    numformat(num,format,1.0/po);
-	  else
-	    numformat(num,format,po/norm);
-	  numlen=strlen(num);
-	  if ((text=memalloc(numlen+headlen+taillen+5))==NULL) return 1;
-	  text[0]='\0';
-	  if (headlen!=0) strcpy(text,head);
-	  if (logpow
-	      && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-	    strcat(text,"10^");
-	  if (numlen!=0) strcat(text,num);
-	  if (logpow
-	      && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-	    strcat(text,"@");
-	  if (taillen!=0) strcat(text,tail);
-	  if (align==AXIS_NUM_ALIGN_POINT) {
-	    for (i=headlen;i<headlen+numlen;i++) if (text[i]=='.') break;
-	    if (text[i]=='.') {
-	      GRAtextextent(text+i+1,font.font, font.jfont, font.pt, font.space, font.scriptsize,
-			    &fx0,&fy0,&fx1,&fy1,FALSE);
-	      if (fy0<hy0) hy0=fy0;
-	      if (fy1>hy1) hy1=fy1;
-	      if (abs(fx1-fx0)>flenmax) flenmax=abs(fx1-fx0);
-	    }
-	    text[i]='\0';
-	    GRAtextextent(text,font.font, font.jfont, font.pt, font.space, font.scriptsize,
+    if (rcode < 2)
+      continue;
+
+    if ((cstep==step) || ((alocal.atype==AXISLOGSMALL) && (rcode==3))) {
+      numcount++;
+      if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
+	if ((!logpow
+	     && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
+	    || (alocal.atype==AXISLOGSMALL))
+	  numformat(num,format,pow(10.0,po));
+	else if (alocal.atype==AXISINVERSE)
+	  numformat(num,format,1.0/po);
+	else
+	  numformat(num,format,po/norm);
+	numlen=strlen(num);
+	if ((text=memalloc(numlen+headlen+taillen+5))==NULL) return 1;
+	text[0]='\0';
+	if (headlen!=0) strcpy(text,head);
+	if (logpow
+	    && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
+	  strcat(text,"10^");
+	if (numlen!=0) strcat(text,num);
+	if (logpow
+	    && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
+	  strcat(text,"@");
+	if (taillen!=0) strcat(text,tail);
+	if (align==AXIS_NUM_ALIGN_POINT) {
+	  for (i=headlen;i<headlen+numlen;i++) if (text[i]=='.') break;
+	  if (text[i]=='.') {
+	    GRAtextextent(text+i+1,font.font, font.jfont, font.pt, font.space, font.scriptsize,
 			  &fx0,&fy0,&fx1,&fy1,FALSE);
-	    if (abs(fx1-fx0)>ilenmax) ilenmax=abs(fx1-fx0);
 	    if (fy0<hy0) hy0=fy0;
 	    if (fy1>hy1) hy1=fy1;
-	  } else {
-	    GRAtextextent(text,font.font, font.jfont, font.pt, font.space, font.scriptsize,
-			  &fx0,&fy0,&fx1,&fy1,FALSE);
-	    if (fx0<hx0) hx0=fx0;
-	    if (fx1>hx1) hx1=fx1;
-	    if (fy0<hy0) hy0=fy0;
-	    if (fy1>hy1) hy1=fy1;
+	    if (abs(fx1-fx0)>flenmax) flenmax=abs(fx1-fx0);
 	  }
-	  memfree(text);
+	  text[i]='\0';
+	  GRAtextextent(text,font.font, font.jfont, font.pt, font.space, font.scriptsize,
+			&fx0,&fy0,&fx1,&fy1,FALSE);
+	  if (abs(fx1-fx0)>ilenmax) ilenmax=abs(fx1-fx0);
+	  if (fy0<hy0) hy0=fy0;
+	  if (fy1>hy1) hy1=fy1;
+	} else {
+	  GRAtextextent(text,font.font, font.jfont, font.pt, font.space, font.scriptsize,
+			&fx0,&fy0,&fx1,&fy1,FALSE);
+	  if (fx0<hx0) hx0=fx0;
+	  if (fx1>hx1) hx1=fx1;
+	  if (fy0<hy0) hy0=fy0;
+	  if (fy1>hy1) hy1=fy1;
 	}
-	if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) cstep=step-begin;
-	else cstep=0;
+	memfree(text);
       }
-      cstep++;
+      if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) cstep=step-begin;
+      else cstep=0;
     }
+    cstep++;
   }
+
   if (align==AXIS_NUM_ALIGN_POINT) {
     hx0=0;
     hx1=flenmax+ilenmax+plen/2;
@@ -2264,14 +2283,13 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 
   if ((abs(hx0-hx1)!=0) && (abs(hy0-hy1)!=0)) {
     draw_numbering(obj, inst, &alocal, GC,
-		   side, align, ilenmax, plen, aconf, &font, step, nnum, numcount, begin,
-		   x1, y1, autonorm, nozero, logpow, num, format, norm,
-		   head, headlen, tail, taillen, hx0,hy0,hx1,hy1,min1,max1);
+		   side, align, ilenmax, plen, aconf, &font, step, nnum,
+		   numcount, begin, autonorm, nozero, logpow, num, format,
+		   norm, head, headlen, tail, taillen, hx0, hy0, hx1, hy1);
   }
 
   return 0;
 }
-
 
 static int
 draw_gauge(struct objlist *obj,char *inst, int GC, struct axis_config *aconf)
@@ -2414,35 +2432,159 @@ get_reference_parameter(struct objlist *obj, char *inst,  struct axis_config *ac
   return 0;
 }
 
+static int
+draw_wave(struct objlist *obj, char *inst, struct axis_config *aconf, int GC)
+{
+  int wave, wwidth, wlength, i;
+  double wx[5],wxc1[5],wxc2[5],wxc3[5];
+  double wy[5],wyc1[5],wyc2[5],wyc3[5];
+  double ww[5],c[6];
+  double dx, dy;
+
+  _getobj(obj,"wave",inst,&wave);
+  _getobj(obj,"wave_length",inst,&wlength);
+  _getobj(obj,"wave_width",inst,&wwidth);
+
+  for (i=0;i<5;i++) ww[i]=i;
+  if ((wave==ARROW_POSITION_BEGIN) || (wave==ARROW_POSITION_BOTH)) {
+    dx=cos(aconf->dir);
+    dy=sin(aconf->dir);
+    wx[0]=nround(aconf->x0-dy*wlength);
+    wx[1]=nround(aconf->x0-dy*0.5*wlength-dx*0.25*wlength);
+    wx[2]=aconf->x0;
+    wx[3]=nround(aconf->x0+dy*0.5*wlength+dx*0.25*wlength);
+    wx[4]=nround(aconf->x0+dy*wlength);
+    if (spline(ww,wx,wxc1,wxc2,wxc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
+      error(obj,ERRAXISSPL);
+      return 1;
+    }
+    wy[0]=nround(aconf->y0-dx*wlength);
+    wy[1]=nround(aconf->y0-dx*0.5*wlength+dy*0.25*wlength);
+    wy[2]=aconf->y0;
+    wy[3]=nround(aconf->y0+dx*0.5*wlength-dy*0.25*wlength);
+    wy[4]=nround(aconf->y0+dx*wlength);
+    if (spline(ww,wy,wyc1,wyc2,wyc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
+      error(obj,ERRAXISSPL);
+      return 1;
+    }
+    GRAlinestyle(GC,0,NULL,wwidth,0,0,1000);
+    GRAcurvefirst(GC,0,NULL,NULL,NULL,splinedif,splineint,NULL,wx[0],wy[0]);
+    for (i=0;i<4;i++) {
+      c[0]=wxc1[i];
+      c[1]=wxc2[i];
+      c[2]=wxc3[i];
+      c[3]=wyc1[i];
+      c[4]=wyc2[i];
+      c[5]=wyc3[i];
+      if (!GRAcurve(GC,c,wx[i],wy[i])) break;
+    }
+  }
+
+  if ((wave==ARROW_POSITION_END) || (wave==ARROW_POSITION_BOTH)) {
+    dx=cos(aconf->dir);
+    dy=sin(aconf->dir);
+    wx[0]=nround(aconf->x1-dy*wlength);
+    wx[1]=nround(aconf->x1-dy*0.5*wlength-dx*0.25*wlength);
+    wx[2]=aconf->x1;
+    wx[3]=nround(aconf->x1+dy*0.5*wlength+dx*0.25*wlength);
+    wx[4]=nround(aconf->x1+dy*wlength);
+    if (spline(ww,wx,wxc1,wxc2,wxc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
+      error(obj,ERRAXISSPL);
+      return 1;
+    }
+    wy[0]=nround(aconf->y1-dx*wlength);
+    wy[1]=nround(aconf->y1-dx*0.5*wlength+dy*0.25*wlength);
+    wy[2]=aconf->y1;
+    wy[3]=nround(aconf->y1+dx*0.5*wlength-dy*0.25*wlength);
+    wy[4]=nround(aconf->y1+dx*wlength);
+    if (spline(ww,wy,wyc1,wyc2,wyc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
+      error(obj,ERRAXISSPL);
+      return 1;
+    }
+    GRAlinestyle(GC,0,NULL,wwidth,0,0,1000);
+    GRAcurvefirst(GC,0,NULL,NULL,NULL,splinedif,splineint,NULL,wx[0],wy[0]);
+    for (i=0;i<4;i++) {
+      c[0]=wxc1[i];
+      c[1]=wxc2[i];
+      c[2]=wxc3[i];
+      c[3]=wyc1[i];
+      c[4]=wyc2[i];
+      c[5]=wyc3[i];
+      if (!GRAcurve(GC,c,wx[i],wy[i])) break;
+    }
+  }
+
+  return 0;
+}
+
+static int
+draw_arrow(struct objlist *obj, char *inst, struct axis_config *aconf, int GC)
+{
+  int arrow,alength,awidth;
+  double alen,awid,dx,dy;
+  int ap[6];
+
+  _getobj(obj,"arrow",inst,&arrow);
+  _getobj(obj,"arrow_length",inst,&alength);
+  _getobj(obj,"arrow_width",inst,&awidth);
+
+  alen=aconf->width*(double )alength/10000;
+  awid=aconf->width*(double )awidth/20000;
+
+  if ((arrow==ARROW_POSITION_BEGIN) || (arrow==ARROW_POSITION_BOTH)) {
+    dx=-cos(aconf->dir);
+    dy=sin(aconf->dir);
+    ap[0]=nround(aconf->x0-dy*awid);
+    ap[1]=nround(aconf->y0+dx*awid);
+    ap[2]=nround(aconf->x0+dx*alen);
+    ap[3]=nround(aconf->y0+dy*alen);
+    ap[4]=nround(aconf->x0+dy*awid);
+    ap[5]=nround(aconf->y0-dx*awid);
+    GRAlinestyle(GC,0,NULL,1,0,0,1000);
+    GRAdrawpoly(GC,3,ap,1);
+  }
+
+  if ((arrow==ARROW_POSITION_END) || (arrow==ARROW_POSITION_BOTH)) {
+    dx=cos(aconf->dir);
+    dy=-sin(aconf->dir);
+    ap[0]=nround(aconf->x1-dy*awid);
+    ap[1]=nround(aconf->y1+dx*awid);
+    ap[2]=nround(aconf->x1+dx*alen);
+    ap[3]=nround(aconf->y1+dy*alen);
+    ap[4]=nround(aconf->x1+dy*awid);
+    ap[5]=nround(aconf->y1-dx*awid);
+    GRAlinestyle(GC,0,NULL,1,0,0,1000);
+    GRAdrawpoly(GC,3,ap,1);
+  }
+
+  return 0;
+}
+
 static int 
 axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int fr,fg,fb,lm,tm,w,h;
-  int arrow,alength,awidth;
-  int wave,wlength,wwidth;
-  int x1,y1;
-  int bline;
+  int fr, fg, fb, lm, tm, w, h, bline;
   struct narray *style;
-  int snum,*sdata;
-  double alen,awid,dx,dy;
-  int ap[6];
-  double wx[5],wxc1[5],wxc2[5],wxc3[5];
-  double wy[5],wyc1[5],wyc2[5],wyc3[5];
-  double ww[5],c[6];
-  int i;
-  int clip,zoom;
-  int hidden,hidden2;
+  int snum, *sdata;
+  int clip, zoom;
+  int hidden, hidden2;
   struct axis_config aconf;
 
   _getobj(obj,"hidden",inst,&hidden);
   hidden2=FALSE;
   _putobj(obj,"hidden",inst,&hidden2);
-  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
+  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv))
+    return 1;
   _putobj(obj,"hidden",inst,&hidden);
+
   _getobj(obj,"GC",inst,&GC);
-  if (GC<0) return 0;
-  if (hidden) goto exit;
+  if (GC<0)
+    return 0;
+
+  if (hidden)
+    goto exit;
+
   _getobj(obj,"R",inst,&fr);
   _getobj(obj,"G",inst,&fg);
   _getobj(obj,"B",inst,&fb);
@@ -2453,19 +2595,14 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"length",inst,&aconf.length);
   _getobj(obj,"width",inst,&aconf.width);
   _getobj(obj,"style",inst,&style);
-  _getobj(obj,"arrow",inst,&arrow);
-  _getobj(obj,"arrow_length",inst,&alength);
-  _getobj(obj,"arrow_width",inst,&awidth);
-  _getobj(obj,"wave",inst,&wave);
-  _getobj(obj,"wave_length",inst,&wlength);
-  _getobj(obj,"wave_width",inst,&wwidth);
   _getobj(obj,"clip",inst,&clip);
+
   snum=arraynum(style);
   sdata=arraydata(style);
 
   aconf.dir=aconf.direction/18000.0*MPI;
-  x1=aconf.x0+nround(aconf.length*cos(aconf.dir));
-  y1=aconf.y0-nround(aconf.length*sin(aconf.dir));
+  aconf.x1=aconf.x0+nround(aconf.length*cos(aconf.dir));
+  aconf.y1=aconf.y0-nround(aconf.length*sin(aconf.dir));
 
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
@@ -2473,102 +2610,13 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (bline) {
     GRAlinestyle(GC,snum,sdata,aconf.width,2,0,1000);
-    GRAline(GC,aconf.x0,aconf.y0,x1,y1);
+    GRAline(GC,aconf.x0,aconf.y0,aconf.x1,aconf.y1);
   }
 
-  alen=aconf.width*(double )alength/10000;
-  awid=aconf.width*(double )awidth/20000;
-  if ((arrow==ARROW_POSITION_BEGIN) || (arrow==ARROW_POSITION_BOTH)) {
-    dx=-cos(aconf.dir);
-    dy=sin(aconf.dir);
-    ap[0]=nround(aconf.x0-dy*awid);
-    ap[1]=nround(aconf.y0+dx*awid);
-    ap[2]=nround(aconf.x0+dx*alen);
-    ap[3]=nround(aconf.y0+dy*alen);
-    ap[4]=nround(aconf.x0+dy*awid);
-    ap[5]=nround(aconf.y0-dx*awid);
-    GRAlinestyle(GC,0,NULL,1,0,0,1000);
-    GRAdrawpoly(GC,3,ap,1);
-  }
-  if ((arrow==ARROW_POSITION_END) || (arrow==ARROW_POSITION_BOTH)) {
-    dx=cos(aconf.dir);
-    dy=-sin(aconf.dir);
-    ap[0]=nround(x1-dy*awid);
-    ap[1]=nround(y1+dx*awid);
-    ap[2]=nround(x1+dx*alen);
-    ap[3]=nround(y1+dy*alen);
-    ap[4]=nround(x1+dy*awid);
-    ap[5]=nround(y1-dx*awid);
-    GRAlinestyle(GC,0,NULL,1,0,0,1000);
-    GRAdrawpoly(GC,3,ap,1);
-  }
-  for (i=0;i<5;i++) ww[i]=i;
-  if ((wave==ARROW_POSITION_BEGIN) || (wave==ARROW_POSITION_BOTH)) {
-    dx=cos(aconf.dir);
-    dy=sin(aconf.dir);
-    wx[0]=nround(aconf.x0-dy*wlength);
-    wx[1]=nround(aconf.x0-dy*0.5*wlength-dx*0.25*wlength);
-    wx[2]=aconf.x0;
-    wx[3]=nround(aconf.x0+dy*0.5*wlength+dx*0.25*wlength);
-    wx[4]=nround(aconf.x0+dy*wlength);
-    if (spline(ww,wx,wxc1,wxc2,wxc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
-      error(obj,ERRAXISSPL);
-      goto exit;
-    }
-    wy[0]=nround(aconf.y0-dx*wlength);
-    wy[1]=nround(aconf.y0-dx*0.5*wlength+dy*0.25*wlength);
-    wy[2]=aconf.y0;
-    wy[3]=nround(aconf.y0+dx*0.5*wlength-dy*0.25*wlength);
-    wy[4]=nround(aconf.y0+dx*wlength);
-    if (spline(ww,wy,wyc1,wyc2,wyc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
-      error(obj,ERRAXISSPL);
-      goto exit;
-    }
-    GRAlinestyle(GC,0,NULL,wwidth,0,0,1000);
-    GRAcurvefirst(GC,0,NULL,NULL,NULL,splinedif,splineint,NULL,wx[0],wy[0]);
-    for (i=0;i<4;i++) {
-      c[0]=wxc1[i];
-      c[1]=wxc2[i];
-      c[2]=wxc3[i];
-      c[3]=wyc1[i];
-      c[4]=wyc2[i];
-      c[5]=wyc3[i];
-      if (!GRAcurve(GC,c,wx[i],wy[i])) break;
-    }
-  }
-  if ((wave==ARROW_POSITION_END) || (wave==ARROW_POSITION_BOTH)) {
-    dx=cos(aconf.dir);
-    dy=sin(aconf.dir);
-    wx[0]=nround(x1-dy*wlength);
-    wx[1]=nround(x1-dy*0.5*wlength-dx*0.25*wlength);
-    wx[2]=x1;
-    wx[3]=nround(x1+dy*0.5*wlength+dx*0.25*wlength);
-    wx[4]=nround(x1+dy*wlength);
-    if (spline(ww,wx,wxc1,wxc2,wxc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
-      error(obj,ERRAXISSPL);
-      goto exit;
-    }
-    wy[0]=nround(y1-dx*wlength);
-    wy[1]=nround(y1-dx*0.5*wlength+dy*0.25*wlength);
-    wy[2]=y1;
-    wy[3]=nround(y1+dx*0.5*wlength-dy*0.25*wlength);
-    wy[4]=nround(y1+dx*wlength);
-    if (spline(ww,wy,wyc1,wyc2,wyc3,5,SPLCND2NDDIF,SPLCND2NDDIF,0,0)) {
-      error(obj,ERRAXISSPL);
-      goto exit;
-    }
-    GRAlinestyle(GC,0,NULL,wwidth,0,0,1000);
-    GRAcurvefirst(GC,0,NULL,NULL,NULL,splinedif,splineint,NULL,wx[0],wy[0]);
-    for (i=0;i<4;i++) {
-      c[0]=wxc1[i];
-      c[1]=wxc2[i];
-      c[2]=wxc3[i];
-      c[3]=wyc1[i];
-      c[4]=wyc2[i];
-      c[5]=wyc3[i];
-      if (!GRAcurve(GC,c,wx[i],wy[i])) break;
-    }
-  }
+  draw_arrow(obj, inst, &aconf, GC);
+
+  if (draw_wave(obj, inst, &aconf, GC))
+    goto exit;
 
   get_axis_parameter(obj, inst, &aconf);
   if (aconf.min == 0 && aconf.max == 0 && aconf.inc == 0) {
@@ -2582,7 +2630,7 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   get_axis_parameter(obj, inst, &aconf);
   if (aconf.min != aconf.max && aconf.inc != 0) {
-    numbering(obj, inst, GC, &aconf, x1, y1);
+    numbering(obj, inst, GC, &aconf);
   }
 
 exit:

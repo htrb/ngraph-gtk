@@ -1,3 +1,8 @@
+2009-08-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (draw_wave, draw_arrow): add.
+	(axisdraw): use "draw_wave()" and "draw_arrow()".
+
 2009-08-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (direction_icon_released)
