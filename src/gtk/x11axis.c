@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.68 2009/07/22 14:53:31 hito Exp $
+ * $Id: x11axis.c,v 1.69 2009/08/06 01:38:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -128,31 +128,27 @@ axis_scale_push(struct objlist *obj, int id)
 char *
 AxisCB(struct objlist *obj, int id)
 {
-  char *s;
+  char *s, *valstr, *name, *tmp;;
   int dir;
-  char *valstr;
-  char *name;
 
-  if ((s = (char *) memalloc(CB_BUF_SIZE)) == NULL)
-    return NULL;
   getobj(obj, "direction", id, 0, NULL, &dir);
   getobj(obj, "group", id, 0, NULL, &name);
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  snprintf(s, CB_BUF_SIZE, "%-10s %.6s dir:%d", name, valstr, dir);
+  tmp = g_strdup_printf("%-10s %.6s dir:%d", name, valstr, dir);
   memfree(valstr);
+  s = nstrdup(tmp);
+  g_free(tmp);
+
   return s;
 }
 
 char *
 AxisHistoryCB(struct objlist *obj, int id)
 {
-  char *s, *valstr, *name;
+  char *s, *valstr, *name, *tmp;
   int dir, num;
   struct narray *array;
-
-  if ((s = (char *) memalloc(CB_BUF_SIZE)) == NULL)
-    return NULL;
 
   getobj(obj, "scale_history", id, 0, NULL, &array);
 
@@ -165,21 +161,25 @@ AxisHistoryCB(struct objlist *obj, int id)
 
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  snprintf(s, CB_BUF_SIZE, "%-10s %.6s dir:%d", name, valstr, dir);
+  tmp = g_strdup_printf("%-10s %.6s dir:%d", name, valstr, dir);
   memfree(valstr);
+  s = nstrdup(tmp);
+  g_free(tmp);
+
   return s;
 }
 
 static char *
 GridCB(struct objlist *obj, int id)
 {
-  char *s, *s1, *s2;
+  char *s, *s1, *s2, *tmp;
 
-  if ((s = (char *) memalloc(CB_BUF_SIZE)) == NULL)
-    return NULL;
   getobj(obj, "axis_x", id, 0, NULL, &s1);
   getobj(obj, "axis_y", id, 0, NULL, &s2);
-  snprintf(s, CB_BUF_SIZE, "%.8s %.8s", (s1)? s1: "-----", (s2)? s2: "-----");
+  tmp = g_strdup_printf("%.8s %.8s", (s1)? s1: "-----", (s2)? s2: "-----");
+  s = nstrdup(tmp);
+  g_free(tmp);
+
   return s;
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.106 2009/07/27 01:15:27 hito Exp $
+ * $Id: x11file.c,v 1.107 2009/08/06 01:38:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -682,16 +682,11 @@ FitDialogSetupItem(GtkWidget *w, struct FitDialog *d, int id)
 static char *
 FitCB(struct objlist *obj, int id)
 {
-  char *valstr, *s;
-
-  s = (char *) memalloc(CB_BUF_SIZE);
-  if (s == NULL)
-    return NULL;
+  char *valstr;
 
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  snprintf(s, CB_BUF_SIZE, "%.100s", valstr);
-  memfree(valstr);
-  return s;
+
+  return valstr;
 }
 
 static void

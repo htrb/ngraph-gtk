@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.47 2009/08/05 05:32:10 hito Exp $
+ * $Id: x11commn.c,v 1.48 2009/08/06 01:38:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -54,7 +54,6 @@
 
 #define MESSAGE_BUF_SIZE 4096
 #define COMMENT_BUF_SIZE 1024
-#define CB_BUF_SIZE 128
 
 static GtkWidget *ProgressDiaog = NULL;
 static GtkProgressBar *ProgressBar, *ProgressBar2;
@@ -987,8 +986,8 @@ GraphSave(int overwrite)
   return ret;
 }
 
-void 
-ToFullPath(void)
+static void
+change_filename(char * (*func)(char *))
 {
   struct objlist *obj;
   int i;
@@ -1002,11 +1001,51 @@ ToFullPath(void)
 
     for (i = 0; i <= chkobjlastinst(obj); i++) {
       getobj(obj, "file", i, 0, NULL, &file);
-      file2 = getfullpath(file);
+      if (file == NULL)
+	continue;
+
+      file2 = func(file);
+      if (file2 == NULL)
+	return;
+
+      if (strcmp(file, file2) == 0) {
+	memfree(file2);
+	continue;
+      }
+
+      set_graph_modified();
       putobj(obj, "file", i, file2);
     }
   }
 }
+
+static void
+ToFullPath(void)
+{
+  change_filename(getfullpath);
+}
+
+static char *
+get_basename(char *file)
+{
+  char *ptr, *file2;
+
+  ptr = g_path_get_basename(file);
+  if (ptr == NULL)
+    return NULL;
+
+  file2 = nstrdup(ptr);
+  g_free(ptr);
+
+  return file2;
+}
+
+static void
+ToBasename(void)
+{
+  change_filename(get_basename);
+}
+
 
 void
 LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
@@ -1016,7 +1055,7 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
   char *expanddir;
   struct objlist *obj, *aobj;
   char *name;
-  int i, r, newid, allocnow = FALSE;
+  int i, r, newid, allocnow = FALSE, tmp;
   char *s;
   int len;
   char *argv[2];
@@ -1038,7 +1077,9 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
 
   putobj(sys, "expand_dir", 0, expanddir);
   putobj(sys, "expand_file", 0, &expand);
-  putobj(sys, "ignore_path", 0, &ignorepath);
+
+  tmp = FALSE;
+  putobj(sys, "ignore_path", 0, &tmp);
 
   if ((obj = chkobject("shell")) == NULL)
     return;
@@ -1052,7 +1093,6 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
       if (arrayadd(&sarray, &s) == NULL) {
 	memfree(s);
 	arraydel2(&sarray);
-	putobj(sys, "ignore_path", 0, &ignorepath);
 	return;
       }
     }
@@ -1061,7 +1101,6 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
 
     if (name == NULL) {
       arraydel2(&sarray);
-      putobj(sys, "ignore_path", 0, &ignorepath);
       return;
     }
 
@@ -1070,8 +1109,6 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
     if (arrayadd(&sarray, &name) == NULL) {
       memfree(name);
       arraydel2(&sarray);
-      ignorepath = FALSE;
-      putobj(sys, "ignore_path", 0, &ignorepath);
       return;
     }
 
@@ -1132,12 +1169,12 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
     reset_graph_modified();
   }
 
-  if (Menulocal.expandtofullpath && (!ignorepath))
+  if (ignorepath) {
+    ToBasename();
+  } else if (Menulocal.expandtofullpath) {
     ToFullPath();
+  }
 
-  ignorepath = FALSE;
-
-  putobj(sys, "ignore_path", 0, &ignorepath);
   InfoWinClear();
 }
 
@@ -1383,18 +1420,17 @@ FreeConsole(int allocnow)
 char *
 FileCB(struct objlist *obj, int id)
 {
-  char *valstr, *file, *s;
-
-  s = (char *) memalloc(CB_BUF_SIZE);
-  if (s == NULL)
-    return NULL;
+  char *valstr, *file, *s, *tmp;
 
   getobj(obj, "file", id, 0, NULL, &file);
   valstr = getbasename(file);
-  snprintf(s, CB_BUF_SIZE, "%.100s", (valstr) ? valstr : "....................");
+  tmp = g_strdup_printf("%s", (valstr) ? valstr : "....................");
   if (valstr != NULL) {
     memfree(valstr);
   }
+  s = nstrdup(tmp);
+  g_free(tmp);
+
   return s;
 }
 

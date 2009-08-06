@@ -1,5 +1,18 @@
 2009-08-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11opt.c (MiscDialogSetup): set label to some frames.
+
+	* src/gtk/x11file.c (FitCB): just return "valstr".
+
+	* src/gtk/x11commn.c (FileCB): use "g_strdup_printf()".
+	(change_filename, get_basename, ToBasename): add.
+	(ToFullPath): use "change_filename()".
+	(LoadNgpFile): "system::ignore_path" is always FALSE.
+	(LoadNgpFile): call "ToBasename()" when "ignorepath" is TRUE.
+
+	* src/gtk/x11axis.c (AxisCB, AxisHistoryCB, GridCB): use
+	"g_strdup_printf()".
+
 	* src/gtk/x11commn.c (LoadPrmFile): set modified flag when load
 	PRM file.
 

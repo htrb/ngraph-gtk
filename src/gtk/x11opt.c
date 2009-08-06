@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.67 2009/07/08 10:13:03 hito Exp $
+ * $Id: x11opt.c,v 1.68 2009/08/06 01:38:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -993,6 +993,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(NULL);
+    gtk_frame_set_label(GTK_FRAME(frame), _("Save graph"));
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = combo_box_create();
@@ -1015,6 +1016,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(NULL);
+    gtk_frame_set_label(GTK_FRAME(frame), _("Load graph"));
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_Expand include file"));
