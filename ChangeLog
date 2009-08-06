@@ -1,3 +1,7 @@
+2009-08-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (SetFileName): use copy of "str".
+
 2009-08-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (MiscDialogSetup): set label to some frames.

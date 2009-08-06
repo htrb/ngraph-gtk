@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.48 2009/08/06 01:38:23 hito Exp $
+ * $Id: x11commn.c,v 1.49 2009/08/06 05:54:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1048,7 +1048,7 @@ ToBasename(void)
 
 
 void
-LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
+LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
 	    int console, char *option)
 {
   struct objlist *sys;
@@ -1081,136 +1081,141 @@ LoadNgpFile(char *File, int ignorepath, int expand, char *exdir,
   tmp = FALSE;
   putobj(sys, "ignore_path", 0, &tmp);
 
-  if ((obj = chkobject("shell")) == NULL)
+  obj = chkobject("shell");
+  if (obj == NULL)
     return;
 
   newid = newobj(obj);
+  if (newid < 0)
+    return;
 
-  if (newid >= 0) {
-    inst = chkobjinst(obj, newid);
-    arrayinit(&sarray, sizeof(char *));
-    while ((s = getitok2(&option, &len, " \t")) != NULL) {
-      if (arrayadd(&sarray, &s) == NULL) {
-	memfree(s);
-	arraydel2(&sarray);
-	return;
-      }
-    }
-
-    name = nstrdup(File);
-
-    if (name == NULL) {
+  inst = chkobjinst(obj, newid);
+  arrayinit(&sarray, sizeof(char *));
+  while ((s = getitok2(&option, &len, " \t")) != NULL) {
+    if (arrayadd(&sarray, &s) == NULL) {
+      memfree(s);
       arraydel2(&sarray);
       return;
     }
+  }
 
-    changefilename(name);
+  name = nstrdup(file);
 
-    if (arrayadd(&sarray, &name) == NULL) {
-      memfree(name);
-      arraydel2(&sarray);
-      return;
-    }
-
-    DeleteDrawable();
-
-    if (console)
-      allocnow = AllocConsole();
-
-    sec = TRUE;
-    argv[0] = (char *) &sec;
-    argv[1] = NULL;
-    _exeobj(obj, "security", inst, 1, argv);
-
-    argv[0] = (char *) &sarray;
-    argv[1] = NULL;
-    snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
-    SetStatusBar(mes);
-
-    menu_lock(TRUE);
-    idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
-    registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
-
-    r = _exeobj(obj, "shell", inst, 1, argv);
-
-    unregisterevloop(robj, idn, Menulocal.inst);
-    menu_lock(FALSE);
-
-    sec = FALSE;
-    argv[0] = (char *) &sec;
-    argv[1] = NULL;
-    _exeobj(obj, "security", inst, 1, argv);
-
-    if (r == 0) {
-      if ((aobj = getobject("axis")) != NULL) {
-	for (i = 0; i <= chkobjlastinst(aobj); i++)
-	  exeobj(aobj, "tight", i, 0, NULL);
-      }
-
-      if ((aobj = getobject("axisgrid")) != NULL) {
-	for (i = 0; i <= chkobjlastinst(aobj); i++)
-	  exeobj(aobj, "tight", i, 0, NULL);
-      }
-
-      SetFileName(File);
-      AddNgpFileList(name);
-    }
-
-    AxisNameToGroup();
-    ResetStatusBar();
+  if (name == NULL) {
     arraydel2(&sarray);
+    return;
+  }
 
-    if (console)
-      FreeConsole(allocnow);
+  changefilename(name);
 
-    GetPageSettingsFromGRA();
-    UpdateAll();
-    delobj(obj, newid);
+  if (arrayadd(&sarray, &name) == NULL) {
+    memfree(name);
+    arraydel2(&sarray);
+    return;
+  }
+
+  DeleteDrawable();
+
+  if (console)
+    allocnow = AllocConsole();
+
+  sec = TRUE;
+  argv[0] = (char *) &sec;
+  argv[1] = NULL;
+  _exeobj(obj, "security", inst, 1, argv);
+
+  argv[0] = (char *) &sarray;
+  argv[1] = NULL;
+  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
+  SetStatusBar(mes);
+
+  menu_lock(TRUE);
+  idn = getobjtblpos(Menulocal.obj, "_evloop", &robj);
+  registerevloop(chkobjectname(Menulocal.obj), "_evloop", robj, idn, Menulocal.inst, NULL);
+
+  r = _exeobj(obj, "shell", inst, 1, argv);
+
+  unregisterevloop(robj, idn, Menulocal.inst);
+  menu_lock(FALSE);
+
+  sec = FALSE;
+  argv[0] = (char *) &sec;
+  argv[1] = NULL;
+  _exeobj(obj, "security", inst, 1, argv);
+
+  if (r == 0) {
+    if ((aobj = getobject("axis")) != NULL) {
+      for (i = 0; i <= chkobjlastinst(aobj); i++)
+	exeobj(aobj, "tight", i, 0, NULL);
+    }
+
+    if ((aobj = getobject("axisgrid")) != NULL) {
+      for (i = 0; i <= chkobjlastinst(aobj); i++)
+	exeobj(aobj, "tight", i, 0, NULL);
+    }
+
+    SetFileName(file);
+    AddNgpFileList(name);
     reset_graph_modified();
+
+    if (ignorepath) {
+      ToBasename();
+    } else if (Menulocal.expandtofullpath) {
+      ToFullPath();
+    }
+    InfoWinClear();
   }
 
-  if (ignorepath) {
-    ToBasename();
-  } else if (Menulocal.expandtofullpath) {
-    ToFullPath();
-  }
+  AxisNameToGroup();
+  ResetStatusBar();
+  arraydel2(&sarray);
 
-  InfoWinClear();
+  if (console)
+    FreeConsole(allocnow);
+
+  GetPageSettingsFromGRA();
+  UpdateAll();
+  delobj(obj, newid);
 }
 
 void
-LoadPrmFile(char *File)
+LoadPrmFile(char *file)
 {
   struct objlist *obj;
   char *name;
   int id;
   char mes[256];
 
-  if ((obj = chkobject("prm")) == NULL)
+  obj = chkobject("prm");
+  if (obj == NULL)
     return;
-  if ((id = newobj(obj)) >= 0) {
-    name = nstrdup(File);
-    if (name == NULL) {
-      delobj(obj, id);
-      return;
-    }
-    SetFileName(name);
-    changefilename(name);
-    putobj(obj, "file", id, name);
-    PrmDialog(&DlgPrm, obj, id);
-    if (DialogExecute(TopLevel, &DlgPrm) == IDOK) {
-      snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
-      SetStatusBar(mes);
-      DeleteDrawable();
-      exeobj(obj, "load", id, 0, NULL);
-      GetPageSettingsFromGRA();
-      UpdateAll();
-      ResetStatusBar();
-      set_graph_modified();
-    }
+
+  id = newobj(obj);
+  if (id < 0)
+    return;
+
+  name = nstrdup(file);
+  if (name == NULL) {
     delobj(obj, id);
+    return;
   }
-  InfoWinClear();
+  changefilename(name);
+  putobj(obj, "file", id, name);
+  PrmDialog(&DlgPrm, obj, id);
+  if (DialogExecute(TopLevel, &DlgPrm) == IDOK) {
+    snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
+    SetStatusBar(mes);
+    DeleteDrawable();
+    exeobj(obj, "load", id, 0, NULL);
+    GetPageSettingsFromGRA();
+    UpdateAll();
+    ResetStatusBar();
+    SetFileName(file);
+    set_graph_modified();
+    InfoWinClear();
+  }
+  delobj(obj, id);
+
 }
 
 void
@@ -1375,10 +1380,11 @@ AddDataFileList(char *file)
 }
 
 void
-SetFileName(char *name)
+SetFileName(char *str)
 {
-  char *ngp;
+  char *ngp, *name;
 
+  name = nstrdup(str);
   memfree(NgraphApp.FileName);
   if (name == NULL) {
     NgraphApp.FileName = NULL;
@@ -1386,6 +1392,7 @@ SetFileName(char *name)
   } else {
     NgraphApp.FileName = getfullpath(name);
     ngp = getfullpath(name);
+    memfree(name);
   }
   putobj(Menulocal.obj, "fullpath_ngp", 0, ngp);
 }
