@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.h,v 1.5 2009/08/04 10:41:47 hito Exp $
+ * $Id: odraw.h,v 1.6 2009/08/07 02:52:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,6 +36,13 @@ enum ARROW_POSITION_TYPE {
   ARROW_POSITION_END,
   ARROW_POSITION_BEGIN,
   ARROW_POSITION_BOTH,
+};
+
+enum SAVE_PATH_TYPE {
+  SAVE_PATH_UNCHANGE,
+  SAVE_PATH_FULL,
+  SAVE_PATH_RELATIVE,
+  SAVE_PATH_BASE,
 };
 
 #define INTERPOLATION_TYPE_NUM (INTERPOLATION_TYPE_BSPLINE_CLOSE + 1)

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.49 2009/08/06 05:54:11 hito Exp $
+ * $Id: x11commn.c,v 1.50 2009/08/07 02:52:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,6 +60,9 @@ static GtkProgressBar *ProgressBar, *ProgressBar2;
 static unsigned int SaveCursor;
 
 static void AddNgpFileList(char *file);
+static void ToFullPath(void);
+static void ToBasename(void);
+static void ToRalativePath(void);
 
 void
 OpenGRA(void)
@@ -934,7 +937,7 @@ GraphSave(int overwrite)
   int ret;
   char *ext;
   char *initfil;
-  char *file;
+  char *file, *prev_wd, *current_wd;
 
   if (NgraphApp.FileName != NULL) {
     initfil = NgraphApp.FileName;
@@ -946,17 +949,31 @@ GraphSave(int overwrite)
     initfil = NULL;
     overwrite = FALSE;
   }
+  prev_wd = current_wd = NULL;
   if ((initfil == NULL) || (! overwrite || (access(initfil, 04) == -1))) {
+    prev_wd = ngetcwd();
     ret = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
 			   &(Menulocal.graphloaddir), initfil,
 			   &file, overwrite, Menulocal.changedirectory);
+    current_wd = ngetcwd();
+    if (prev_wd && current_wd && strcmp(prev_wd, current_wd) == 0) {
+      memfree(prev_wd);
+      memfree(current_wd);
+      prev_wd = NULL;
+      current_wd = NULL;
+    }
   } else {
     file = strdup(initfil);
     if (file == NULL)
       return IDCANCEL;
     ret = IDOK;
   }
+
   if (ret == IDOK) {
+    if (prev_wd && chdir(prev_wd)) {
+      ErrorMessage();
+    }
+
     SaveDialog(&DlgSave, &sdata, &smerge);
     if ((ret = DialogExecute(TopLevel, &DlgSave)) == IDOK) {
       path = DlgSave.Path;
@@ -973,15 +990,33 @@ GraphSave(int overwrite)
       if(SaveDrawrable(file, sdata, smerge)) {
 	ret = IDCANCEL;
       } else {
-	reset_graph_modified();
+	switch (path) {
+	case SAVE_PATH_BASE:
+	  ToBasename();
+	  break;
+	case SAVE_PATH_RELATIVE:
+	  ToRalativePath();
+	  break;
+	case SAVE_PATH_FULL:
+	  ToFullPath();
+	  break;
+	}
 	changefilename(file);
 	AddNgpFileList(file);
 	SetFileName(file);
+	reset_graph_modified();
       }
       ResetStatusBar();
     }
     free(file);
+
+    if (current_wd && chdir(current_wd)) {
+      ErrorMessage();
+    }
   }
+
+  memfree(prev_wd);
+  memfree(current_wd);
 
   return ret;
 }
@@ -1023,6 +1058,12 @@ static void
 ToFullPath(void)
 {
   change_filename(getfullpath);
+}
+
+static void
+ToRalativePath(void)
+{
+  change_filename(getrelativepath);
 }
 
 static char *

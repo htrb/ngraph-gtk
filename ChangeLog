@@ -1,6 +1,21 @@
+2009-08-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (FileSelectionDialog): call
+	"file_dialog_set_current_neme()" only when "type" is
+	"GTK_FILE_CHOOSER_ACTION_SAVE".
+
 2009-08-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/object.c (sexeobjfield): check "arglist" before call
+	"strcmp()".
+
+	* src/odraw.h (enum SAVE_PATH_TYPE): add.
+
 	* src/gtk/x11commn.c (SetFileName): use copy of "str".
+	(ToRalativePath): add.
+	(GraphSave): save and restore previous workind directory.
+	(GraphSave): change "file::file" and "merge::file" depend on the
+	value of "path".
 
 2009-08-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

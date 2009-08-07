@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.c,v 1.12 2009/02/04 07:28:46 hito Exp $
+ * $Id: nhash.c,v 1.13 2009/08/07 02:52:40 hito Exp $
  */
 
 #include <stdlib.h>
@@ -81,6 +81,9 @@ create_hash_with_hkey(NHASH hash, const char *key, int hkey)
   char *k;
   struct nhash *h, *ptr, *prev = NULL;
 
+  if (key == NULL)
+    return NULL;
+
   ptr = hash[hkey];
 
   if (ptr == NULL) {
@@ -133,6 +136,10 @@ struct nhash *
 create_hash(NHASH hash, const char *key)
 {
   int hkey;
+
+  if (key == NULL)
+    return NULL;
+
   hkey = nhash_hkey(key);
   return create_hash_with_hkey(hash, key, hkey);
 }

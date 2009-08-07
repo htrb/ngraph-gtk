@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.37 2009/07/27 01:15:24 hito Exp $
+ * $Id: object.c,v 1.38 2009/08/07 02:52:40 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4074,7 +4074,7 @@ sexeobjfield(struct objlist *obj,int id,char *field,char *arg)
     arglist="";
     type=NVOID;
   }
-  if (strcmp(arglist, "s"))
+  if (arglist && strcmp(arglist, "s"))
     while ((val[0]==' ') || (val[0]=='\t')) val++;
   err=getargument(type,arglist,val,&argc2,&argv2);
   if (err==1) {

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.31 2009/07/26 13:01:40 hito Exp $
+ * $Id: x11gui.c,v 1.32 2009/08/07 02:52:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -897,11 +897,9 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
       break;
 
     fsok(dlg);
-    if (data->ret == IDOK) {
+    if (data->ret == IDOK && type == GTK_FILE_CHOOSER_ACTION_SAVE) {
       file_dialog_set_current_neme(dlg, FileSelection.file[0]);
-      if (type == GTK_FILE_CHOOSER_ACTION_SAVE &&
-	  ! data->overwrite &&
-	  check_overwrite(dlg, FileSelection.file[0])) {
+      if (! data->overwrite && check_overwrite(dlg, FileSelection.file[0])) {
 	data->ret = IDCANCEL;
 	continue;
       }
@@ -921,7 +919,7 @@ nGetOpenFileNameMulti(GtkWidget * parent,
 		      char *title, char *defext, char **initdir,
 		      const char *initfil, char ***file, int chd)
 {
-  int ret, r;
+  int ret;
   
   FileSelection.title = title;
   FileSelection.initdir = initdir;
@@ -936,8 +934,8 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OPEN);
   if (ret == IDOK) {
     *file = FileSelection.file;
-    if (FileSelection.chdir && initdir) {
-      r = chdir(*initdir);
+    if (FileSelection.chdir && initdir && chdir(*initdir)) {
+      ErrorMessage();
     }
   } else {
     *file = NULL;
@@ -951,7 +949,7 @@ nGetOpenFileName(GtkWidget *parent,
 		 char *title, char *defext, char **initdir, const char *initfil,
 		 char **file, int exist, int chd)
 {
-  int ret, r;
+  int ret;
   
   FileSelection.title = title;
   FileSelection.initdir = initdir;
@@ -972,8 +970,8 @@ nGetOpenFileName(GtkWidget *parent,
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     free(FileSelection.file);
-    if (FileSelection.chdir && initdir) {
-      r = chdir(*initdir);
+    if (FileSelection.chdir && initdir && chdir(*initdir)) {
+      ErrorMessage();
     }
   } else {
     *file = NULL;
@@ -987,7 +985,7 @@ nGetSaveFileName(GtkWidget * parent,
 		 char *title, char *defext, char **initdir, const char *initfil,
 		 char **file, int overwrite, int chd)
 {
-  int ret, r;
+  int ret;
 
   FileSelection.title = title;
   FileSelection.initdir = initdir;
@@ -1003,8 +1001,8 @@ nGetSaveFileName(GtkWidget * parent,
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     free(FileSelection.file);
-    if (FileSelection.chdir && initdir) {
-      r = chdir(*initdir);
+    if (FileSelection.chdir && initdir && chdir(*initdir)) {
+      ErrorMessage();
     }
   } else {
     *file = NULL;
