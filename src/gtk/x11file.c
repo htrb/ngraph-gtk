@@ -1,5 +1,5 @@
 /* 
- * $Id: x11file.c,v 1.107 2009/08/06 01:38:23 hito Exp $
+ * $Id: x11file.c,v 1.108 2009/08/07 08:34:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4372,7 +4372,12 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
   color.blue = (b & 0xff) * 257;
 
   dlg = gtk_color_selection_dialog_new(title);
+
+#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 14))
   sel = gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg));
+#else
+  sel = GTK_COLOR_SELECTION_DIALOG(dlg)->colorsel;
+#endif
 
   gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
   gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);

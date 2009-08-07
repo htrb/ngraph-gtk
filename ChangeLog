@@ -1,5 +1,7 @@
 2009-08-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (select_color): check version ob GTK.
+
 	* src/gtk/x11gui.c (FileSelectionDialog): call
 	"file_dialog_set_current_neme()" only when "type" is
 	"GTK_FILE_CHOOSER_ACTION_SAVE".
