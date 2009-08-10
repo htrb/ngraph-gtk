@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.52 2009/07/27 01:15:27 hito Exp $
+ * $Id: gtk_subwin.c,v 1.53 2009/08/10 04:59:37 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1451,6 +1451,8 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
   g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
   g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
   g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), NULL);
+
+  gtk_widget_show_all(swin);
 
   d->select = -1;
 
