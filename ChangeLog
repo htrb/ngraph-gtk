@@ -1,7 +1,7 @@
 2009-08-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAexpandtext): output '-' character when the string
-	is '\-'.
+	is '\-' (because 0xad "soft hyphen" is not printable usually).
 	(GRAexpandtext): output no character when the string is '\x00'.
 
 	* src/gtk/gtk_subwin.c (sub_window_create): call
