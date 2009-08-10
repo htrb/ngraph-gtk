@@ -1,5 +1,9 @@
 2009-08-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gra.c (GRAexpandtext): output '-' character when the string
+	is '\-'.
+	(GRAexpandtext): output no character when the string is '\x00'.
+
 	* src/gtk/gtk_subwin.c (sub_window_create): call
 	"gtk_widget_show_all()" for "swin".
 

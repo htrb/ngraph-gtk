@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.21 2009/06/04 00:59:40 hito Exp $
+ * $Id: gra.c,v 1.22 2009/08/10 09:38:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1938,16 +1938,22 @@ GRAexpandtext(char *s)
         if ((str=nstrccat(str,' '))==NULL) return NULL;
         j+=2;
       } else if (s[j+1]=='-') {
+#if 0
         if ((str=nstrccat(str,'\\'))==NULL) return NULL;
         if ((str=nstrccat(str,'x'))==NULL) return NULL;
         if ((str=nstrccat(str,'A'))==NULL) return NULL;
         if ((str=nstrccat(str,'D'))==NULL) return NULL;
+#else
+	if ((str=nstrccat(str, '-'))==NULL) return NULL;
+#endif
         j+=2;
       } else if ((s[j+1]=='x') && isxdigit(s[j+2]) && isxdigit(s[j+3])) {
-        if ((str=nstrccat(str,'\\'))==NULL) return NULL;
-        if ((str=nstrccat(str,'x'))==NULL) return NULL;
-        if ((str=nstrccat(str,toupper(s[j+2])))==NULL) return NULL;
-        if ((str=nstrccat(str,toupper(s[j+3])))==NULL) return NULL;
+	if (s[j + 2] != '0' || s[j + 3] != '0') {
+	  if ((str=nstrccat(str,'\\'))==NULL) return NULL;
+	  if ((str=nstrccat(str,'x'))==NULL) return NULL;
+	  if ((str=nstrccat(str,toupper(s[j+2])))==NULL) return NULL;
+	  if ((str=nstrccat(str,toupper(s[j+3])))==NULL) return NULL;
+	}
         j+=4;
       } else if (strchr("\\%@^_",s[j+1])!=NULL) {
         if ((str=nstrccat(str,'\\'))==NULL) return NULL;
