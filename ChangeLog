@@ -1,5 +1,14 @@
 2009-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11dialg.h (struct FitDialog): add member "func_label".
+
+	* src/gtk/x11file.c (FitDialogSetup): add eiuation label.
+	(FitDialogSetup): improve the placement of widgets.
+	(FitDialogSetup): maximum number of "d->dim" is 9.
+	(FitDialogSetup): maximum number of "d->div" is 65535.
+	(FitDialogSetSensitivity): set equation label string.
+	(set_fitdialog_sensitivity): add.
+
 	* src/ofit.c (fituser): show "dxxc" in tne progress dialog.
 
 2009-08-10  Ito Hiroyuki  <ZXB01226 at nifty.com>

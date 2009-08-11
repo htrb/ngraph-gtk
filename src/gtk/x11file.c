@@ -1,5 +1,6 @@
+// -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.108 2009/08/07 08:34:35 hito Exp $
+ * $Id: x11file.c,v 1.109 2009/08/11 06:24:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1074,10 +1075,20 @@ FitDialogDraw(GtkWidget *w, gpointer client_data)
 }
 
 static void
+set_fitdialog_sensitivity(struct FitDialog *d, int type, int through)
+{
+  gtk_widget_set_sensitive(d->dim_box, type == 0);
+  gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
+  gtk_widget_set_sensitive(d->through_box, through);
+  gtk_widget_set_sensitive(d->through_point, TRUE);
+}
+
+static void
 FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
 {
   struct FitDialog *d;
-  int type, through, deriv, intp;
+  int type, through, deriv, intp, dim;
+  char buf[1024];
 
   d = (struct FitDialog *) user_data;
 
@@ -1087,15 +1098,26 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
 
   switch (type) {
   case FIT_TYPE_POLY:
+    dim = combo_box_get_active(d->dim);
+
+    snprintf(buf, sizeof(buf), "Eq: <i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
+    gtk_label_set_markup(GTK_LABEL(d->func_label), buf);
+    set_fitdialog_sensitivity(d, type, through);
+    break;
   case FIT_TYPE_POW:
+    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: <i>a·</i>X<i><sup>b</sup></i>");
+    set_fitdialog_sensitivity(d, type, through);
+    break;
   case FIT_TYPE_EXP:
+    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: <i>e</i><sup><i>(a·</i>X<i>+b)</i></sup>");
+    set_fitdialog_sensitivity(d, type, through);
+    break;
   case FIT_TYPE_LOG:
-    gtk_widget_set_sensitive(d->dim_box, type == 0);
-    gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
-    gtk_widget_set_sensitive(d->through_box, through);
-    gtk_widget_set_sensitive(d->through_point, TRUE);
+    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: <i>a·Ln(</i>X<i>)+b</i>");
+    set_fitdialog_sensitivity(d, type, through);
     break;
   case FIT_TYPE_USER:
+    gtk_label_set_text(GTK_LABEL(d->func_label), "");
     deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
 
     gtk_widget_set_sensitive(d->dim_box, FALSE);
@@ -1136,6 +1158,32 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Type:"), FALSE);
     d->type = w;
 
+    hbox2 = gtk_hbox_new(FALSE, 4);
+    w = combo_box_create();
+    item_setup(hbox2, w, _("_Dim:"), FALSE);
+    d->dim = w;
+    gtk_box_pack_start(GTK_BOX(hbox), hbox2, FALSE, FALSE, 4);
+    d->dim_box = hbox2;
+
+    w = gtk_label_new("");
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    d->func_label = w;
+
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    hbox2 = gtk_hbox_new(FALSE, 4);
+    w = create_text_entry(TRUE, TRUE);
+    item_setup(hbox2, w, _("_Weight:"), TRUE);
+    d->weight = w;
+    d->weight_box = hbox2;
+
+    gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+    hbox = gtk_hbox_new(FALSE, 4);
+
     w = gtk_check_button_new_with_mnemonic(_("_Through"));
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->through_point = w;
@@ -1150,24 +1198,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->y = w;
 
     d->through_box = hbox2;
-
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 4);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    hbox2 = gtk_hbox_new(FALSE, 4);
-    w = combo_box_create();
-    item_setup(hbox2, w, _("_Dim:"), FALSE);
-    d->dim = w;
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, FALSE, FALSE, 4);
-    d->dim_box = hbox2;
-
-    hbox2 = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox2, w, _("_Weight:"), TRUE);
-    d->weight = w;
-    d->weight_box = hbox2;
 
     gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
@@ -1188,7 +1218,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->max = w;
 
     hbox2 = gtk_hbox_new(FALSE, 4);
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
+    w = create_spin_entry(1, 65535, 1, TRUE, TRUE);
     item_setup(hbox2, w, _("_Div:"), TRUE);
     d->div = w;
     d->div_box = hbox2;
@@ -1261,7 +1291,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->type, _(enumlist[i]));
     }
 
-    for (i = 0; i < FIT_PARM_NUM; i++) {
+    for (i = 0; i < FIT_PARM_NUM - 1; i++) {
       snprintf(mes, sizeof(mes), "%d", i + 1);
       combo_box_append_text(d->dim, mes);
     }
@@ -1278,6 +1308,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
+    g_signal_connect(d->dim, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->type, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->through_point, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
