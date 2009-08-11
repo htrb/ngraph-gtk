@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.109 2009/08/11 06:24:44 hito Exp $
+ * $Id: x11file.c,v 1.110 2009/08/11 06:39:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1100,7 +1100,7 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   case FIT_TYPE_POLY:
     dim = combo_box_get_active(d->dim);
 
-    snprintf(buf, sizeof(buf), "Eq: <i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
+    snprintf(buf, sizeof(buf), "Equation: <i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
     gtk_label_set_markup(GTK_LABEL(d->func_label), buf);
     set_fitdialog_sensitivity(d, type, through);
     break;
