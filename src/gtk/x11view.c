@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.159 2009/08/04 10:41:48 hito Exp $
+ * $Id: x11view.c,v 1.160 2009/08/11 09:00:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -833,9 +833,76 @@ EvalDialogSetupItem(GtkWidget *w, struct EvalDialog *d)
 }
 
 static void
+eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
+{
+  GtkTreeView *tv;
+  GtkClipboard *clip;
+  GtkTreeSelection *sel;
+  GtkTreeIter iter;
+  GtkTreeModel *model;
+  GList *list, *ptr;
+  char buf[1024], *str;
+
+  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+
+  tv = GTK_TREE_VIEW(user_data);
+  sel = gtk_tree_view_get_selection(tv);
+  list = gtk_tree_selection_get_selected_rows(sel, &model);
+
+  str = nstrnew();
+  if (str == NULL)
+    return;
+
+  for (ptr = g_list_first(list); ptr; ptr = g_list_next(ptr)) {
+    gboolean found;
+    int id, ln;
+    char *x, *y;
+
+    found = gtk_tree_model_get_iter(model, &iter, ptr->data);
+    if (! found)
+      continue;
+
+    gtk_tree_model_get(model, &iter, 0, &id, 1, &ln, 2, &x, 3, &y, -1);
+
+    if (x && y) {
+      snprintf(buf, sizeof(buf), "%d\t%d\t%s\t%s\n", id, ln, x, y);
+    }
+
+    g_free(x);
+    g_free(y);
+
+    str = nstrcat(str, buf);
+    if (str == NULL)
+      return;
+  }
+
+  gtk_clipboard_set_text(clip, str, -1);
+  memfree(str);
+
+  g_list_foreach(list, free_tree_path_cb, NULL);
+  g_list_free(list);
+
+}
+
+static gboolean 
+eval_data_sel_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+  int n;
+  GtkWidget *w;
+
+  w = GTK_WIDGET(user_data);
+
+  n = gtk_tree_selection_count_selected_rows(sel);
+  gtk_widget_set_sensitive(w, n);
+
+  return FALSE;
+}
+
+static void
 EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *swin, *hbox;
+  GtkTreeSelection *sel;
   struct EvalDialog *d;
   n_list_store list[] = {
     {"#",           G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
@@ -866,6 +933,15 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
     g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_COPY);
+    g_signal_connect(w, "clicked", G_CALLBACK(eval_dialog_copy_selected), d->list);
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    gtk_widget_set_sensitive(w, FALSE);
+
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
+    g_signal_connect(sel, "changed", G_CALLBACK(eval_data_sel_cb), w);
+
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
     d->show_cancel = FALSE;

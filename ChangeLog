@@ -1,5 +1,20 @@
 2009-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (math_dialog_key_pressed_cb): use
+	"gtk_tree_selection_count_selected_rows()" to check rows are
+	selected or not.
+
+	* src/gtk/x11dialg.c (multi_list_default_cb): use
+	"gtk_tree_selection_count_selected_rows()" to check rows are
+	selected or not.
+
+	* src/gtk/x11view.c (eval_dialog_copy_selected)
+	(eval_data_sel_cb): add.
+	(EvalDialogSetup): add "Copy" button.
+
+	* src/gtk/x11dialg.c (multi_list_default_cb): remove redundant
+	call of "gtk_tree_view_get_selection()".
+
 	* src/gtk/x11dialg.h (struct FitDialog): add member "func_label".
 
 	* src/gtk/x11file.c (FitDialogSetup): add eiuation label.

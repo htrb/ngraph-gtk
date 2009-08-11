@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.49 2009/07/02 06:46:07 hito Exp $
+ * $Id: x11graph.c,v 1.50 2009/08/11 09:00:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -687,7 +687,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->drawlist = w;
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
 
-    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));;
+    sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(w));
     g_signal_connect(sel, "changed", G_CALLBACK(drawlist_sel_cb), d);
 
 

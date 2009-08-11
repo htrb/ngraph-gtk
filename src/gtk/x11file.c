@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.110 2009/08/11 06:39:10 hito Exp $
+ * $Id: x11file.c,v 1.111 2009/08/11 09:00:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -340,7 +340,7 @@ math_dialog_key_pressed_cb(GtkWidget *w, GdkEventKey *e, gpointer user_data)
 {
   struct MathDialog *d;
   GtkTreeSelection *gsel;
-  GList *list;
+  int n;
 
   d = (struct MathDialog *) user_data;
 
@@ -348,13 +348,10 @@ math_dialog_key_pressed_cb(GtkWidget *w, GdkEventKey *e, gpointer user_data)
     return FALSE;
 
   gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-  list = gtk_tree_selection_get_selected_rows(gsel, NULL);
 
-  if (list == NULL)
+  n = gtk_tree_selection_count_selected_rows(gsel);
+  if (n < 1)
     return FALSE;
-
-  g_list_foreach(list, free_tree_path_cb, NULL);
-  g_list_free(list);
 
   MathDialogList(NULL, d);
 

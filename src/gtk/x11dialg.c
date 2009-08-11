@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.40 2009/07/05 06:14:40 hito Exp $
+ * $Id: x11dialg.c,v 1.41 2009/08/11 09:00:56 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -294,7 +294,7 @@ multi_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
 {
   GtkTreeSelection *sel;
   struct SelectDialog *d;
-  GList *list;
+  int n;
 
   d = (struct SelectDialog *) user_data;
 
@@ -302,14 +302,9 @@ multi_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
       (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
-    list = gtk_tree_selection_get_selected_rows(sel, NULL);
-
-    list = gtk_tree_selection_get_selected_rows(sel, NULL);
-    if (list == NULL)
-      return FALSE;
-
-    g_list_foreach(list, free_tree_path_cb, NULL);
-    g_list_free(list);
+    n = gtk_tree_selection_count_selected_rows(sel);
+    if (n < 1)
+    return FALSE;
 
     gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
 
