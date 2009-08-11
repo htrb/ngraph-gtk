@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.160 2009/08/11 09:00:56 hito Exp $
+ * $Id: x11view.c,v 1.161 2009/08/11 10:14:43 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -356,7 +356,10 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
     return;
 
   if (strncmp(text, SCRIPT_IDN, SCRIPT_IDN_LEN)) {
-    text_dropped(text, 0, 0, &NgraphApp.Viewer);
+    gint w, h;
+
+    gdk_window_get_geometry(NgraphApp.Viewer.Win->window, NULL, NULL, &w, &h, NULL);
+    text_dropped(text, w / 2, h / 2, &NgraphApp.Viewer);
     return;
   }
 
@@ -730,8 +733,11 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   }
 
   inst = chkobjinst(obj, id);
-  x1 = (mxp2d(x + d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
-  y1 = (mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
+  x1 = (mxp2d(x + d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom / 100;
+  y1 = (mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom / 100;
+
+  x1 *= 100;
+  y1 *= 100;
 
   _putobj(obj, "x", inst, &x1);
   _putobj(obj, "y", inst, &y1);
@@ -865,7 +871,7 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
     gtk_tree_model_get(model, &iter, 0, &id, 1, &ln, 2, &x, 3, &y, -1);
 
     if (x && y) {
-      snprintf(buf, sizeof(buf), "%d\t%d\t%s\t%s\n", id, ln, x, y);
+      snprintf(buf, sizeof(buf), "%d %d %s %s\n", id, ln, x, y);
     }
 
     g_free(x);

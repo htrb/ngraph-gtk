@@ -1,5 +1,11 @@
 2009-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (eval_dialog_copy_selected)
+	(eval_data_sel_cb): add.
+	(EvalDialogSetup): add "Copy" button.
+	(paste_cb): place pasted text to center of the widget.
+	(text_dropped): position of the text is multiple of 100.
+
 	* src/gtk/x11file.c (math_dialog_key_pressed_cb): use
 	"gtk_tree_selection_count_selected_rows()" to check rows are
 	selected or not.
@@ -7,10 +13,6 @@
 	* src/gtk/x11dialg.c (multi_list_default_cb): use
 	"gtk_tree_selection_count_selected_rows()" to check rows are
 	selected or not.
-
-	* src/gtk/x11view.c (eval_dialog_copy_selected)
-	(eval_data_sel_cb): add.
-	(EvalDialogSetup): add "Copy" button.
 
 	* src/gtk/x11dialg.c (multi_list_default_cb): remove redundant
 	call of "gtk_tree_view_get_selection()".
