@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.112 2009/08/12 02:58:17 hito Exp $
+ * $Id: x11file.c,v 1.113 2009/08/12 05:53:09 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -676,9 +676,15 @@ FitDialogSetupItem(GtkWidget *w, struct FitDialog *d, int id)
 static char *
 FitCB(struct objlist *obj, int id)
 {
-  char *valstr;
+  char *valstr, *profile;
 
-  sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
+  getobj(obj, "profile", id, 0, NULL, &profile);
+
+  if (profile == NULL) {
+    sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
+  } else {
+    valstr = NULL;
+  }
 
   return valstr;
 }
@@ -688,7 +694,8 @@ FitDialogCopy(  struct FitDialog *d)
 {
   int sel;
 
-  if ((sel = CopyClick(d->widget, d->Obj, d->Id, FitCB)) != -1)
+  sel = CopyClick(d->widget, d->Obj, d->Id, FitCB);
+  if (sel != -1)
     FitDialogSetupItem(d->widget, d, sel);
 }
 
@@ -761,7 +768,7 @@ copy_settings_to_fitobj(struct FitDialog *d, char *profile)
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     if (s && strcmp(s, profile) == 0) {
-      if (MessageBox(d->widget, _("Overwrite existing setting?"), "Confirm",
+      if (MessageBox(d->widget, _("Overwrite existing profile?"), "Confirm",
 		     MB_YESNO) != IDYES) {
 	return 1;
       }
@@ -839,13 +846,19 @@ copy_settings_to_fitobj(struct FitDialog *d, char *profile)
 static int
 delete_fitobj(struct FitDialog *d, char *profile)
 {
-  int i;
-  char *s;
+  int i, r;
+  char *s, *ptr;
+
+  if (profile == NULL)
+    return 1;
 
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     if (s && strcmp(s, profile) == 0) {
-      if (MessageBox(d->widget, _("Delete existing setting?"), "Confirm", MB_YESNO) != IDYES) {
+      ptr = g_strdup_printf(_("Delete the profile '%s'?"), profile);
+      r = MessageBox(d->widget, ptr, "Confirm", MB_YESNO);
+      g_free(ptr);
+      if (r != IDYES) {
 	return 1;
       }
       break;
@@ -853,7 +866,9 @@ delete_fitobj(struct FitDialog *d, char *profile)
   }
 
   if (i > chkobjlastinst(d->Obj)) {
-    MessageBox(d->widget, _("The profile is not exist."), "Confirm", MB_OK);
+    ptr = g_strdup_printf(_("The profile '%s' is not exist."), profile);
+    MessageBox(d->widget, ptr, "Confirm", MB_OK);
+    g_free(ptr);
     return 1;
   }
 
@@ -866,7 +881,7 @@ static void
 FitDialogSave(struct FitDialog *d)
 {
   int i, r, len;
-  char *s, *ngpfile;
+  char *s, *ngpfile, *ptr;
   int error;
   HANDLE hFile;
 
@@ -899,7 +914,6 @@ FitDialogSave(struct FitDialog *d)
       memfree(DlgFitSave.Profile);
       return;
     }
-    memfree(DlgFitSave.Profile);
     break;
   }
 
@@ -927,8 +941,23 @@ FitDialogSave(struct FitDialog *d)
     nclose(hFile);
   }
 
-  if (error)
+  if (error) {
     ErrorMessage();
+  } else {
+    switch (r) {
+    case IDOK:
+      ptr = g_strdup_printf(_("The profile '%s' is saved."), DlgFitSave.Profile);
+      MessageBox(d->widget, ptr, "Confirm", MB_OK);
+      g_free(ptr);
+      break;
+    case IDDELETE:
+      ptr = g_strdup_printf(_("The profile '%s' is deleted."), DlgFitSave.Profile);
+      MessageBox(d->widget, ptr, "Confirm", MB_OK);
+      g_free(ptr);
+      memfree(DlgFitSave.Profile);
+      break;
+    }
+  }
 
   memfree(ngpfile);
 }

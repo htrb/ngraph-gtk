@@ -9,6 +9,7 @@
 	(copy_settings_to_fitobj, delete_fitobj): add.
 	(FitDialogSave): use "copy_settings_to_fitobj()" and
 	"delete_fitobj()".
+	(FitCB): return "type" only when "profile" is NULL.
 
 2009-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
