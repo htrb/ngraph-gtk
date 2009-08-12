@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.69 2009/08/06 01:38:23 hito Exp $
+ * $Id: x11axis.c,v 1.70 2009/08/12 07:12:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -306,7 +306,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
     g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axisgrid");
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Axis"));
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
@@ -325,7 +325,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Style"));
     vbox = gtk_vbox_new(FALSE, 4);
 
     for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
@@ -1364,7 +1364,7 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
     g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Range"));
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
@@ -1394,7 +1394,7 @@ NumDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Format"));
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = combo_box_create();
@@ -1736,7 +1736,7 @@ GaugeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
     g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Range"));
     vbox = gtk_vbox_new(FALSE, 4);
 
     w = combo_box_create();
@@ -1757,7 +1757,7 @@ GaugeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Style"));
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
@@ -2148,7 +2148,7 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
     g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "axis");
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Scale"));
     vbox = gtk_vbox_new(FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);

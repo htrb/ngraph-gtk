@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.113 2009/08/12 05:53:09 hito Exp $
+ * $Id: x11file.c,v 1.114 2009/08/12 07:12:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1280,7 +1280,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Action"));
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
@@ -1307,7 +1307,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->interpolation = w;
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Draw X range"));
     gtk_container_add(GTK_CONTAINER(frame), hbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
@@ -1336,10 +1336,10 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox2 = gtk_vbox_new(FALSE, 4);
     vbox3 = gtk_vbox_new(FALSE, 4);
     for (i = 0; i < FIT_PARM_NUM; i++) {
-      char p[] = "_P0", dd[] = "_D0";
+      char p[] = "%0_0:", dd[] = "dF/d(%0_0):";
     
-      p[sizeof(p) - 2] += i;
-      dd[sizeof(dd) - 2] += i;
+      p[sizeof(p) - 3] += i;
+      dd[sizeof(dd) - 4] += i;
 
       hbox = gtk_hbox_new(FALSE, 4);
       w = create_text_entry(TRUE, TRUE);
@@ -1359,7 +1359,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
     d->usr_deriv_box = vbox3;
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("User definition"));
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
     d->usr_def_frame = frame;

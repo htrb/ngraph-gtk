@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-12 14:53+0900\n"
+"POT-Creation-Date: 2009-08-12 16:03+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,12 +101,20 @@ msgstr ""
 msgid "Grid %d"
 msgstr ""
 
+#: src/gtk/x11axis.c:309 src/gtk/x11menu.c:123 src/gtk/x11menu.c:300
+msgid "Axis"
+msgstr ""
+
 #: src/gtk/x11axis.c:314
 msgid "Axis (_X):"
 msgstr ""
 
 #: src/gtk/x11axis.c:319
 msgid "Axis (_Y):"
+msgstr ""
+
+#: src/gtk/x11axis.c:328 src/gtk/x11axis.c:1760
+msgid "Style"
 msgstr ""
 
 #: src/gtk/x11axis.c:342 src/gtk/x11axis.c:1016 src/gtk/x11axis.c:1630
@@ -207,6 +215,10 @@ msgstr ""
 msgid "Adjust _Position:"
 msgstr ""
 
+#: src/gtk/x11axis.c:1367 src/gtk/x11axis.c:1739
+msgid "Range"
+msgstr ""
+
 #: src/gtk/x11axis.c:1372
 msgid "_Numbering:"
 msgstr ""
@@ -221,6 +233,10 @@ msgstr ""
 
 #: src/gtk/x11axis.c:1388
 msgid "_Num:"
+msgstr ""
+
+#: src/gtk/x11axis.c:1397
+msgid "Format"
 msgstr ""
 
 #: src/gtk/x11axis.c:1401
@@ -307,6 +323,10 @@ msgstr ""
 #: src/gtk/x11axis.c:2142
 #, c-format
 msgid "Axis %d %s"
+msgstr ""
+
+#: src/gtk/x11axis.c:2151
+msgid "Scale"
 msgstr ""
 
 #: src/gtk/x11axis.c:2168
@@ -787,8 +807,16 @@ msgstr ""
 msgid "_Through"
 msgstr ""
 
+#: src/gtk/x11file.c:1283
+msgid "Action"
+msgstr ""
+
 #: src/gtk/x11file.c:1306
 msgid "_Interpolation"
+msgstr ""
+
+#: src/gtk/x11file.c:1310
+msgid "Draw X range"
 msgstr ""
 
 #: src/gtk/x11file.c:1318
@@ -801,6 +829,10 @@ msgstr ""
 
 #: src/gtk/x11file.c:1329
 msgid "_Derivatives"
+msgstr ""
+
+#: src/gtk/x11file.c:1362
+msgid "User definition"
 msgstr ""
 
 #: src/gtk/x11file.c:1379
@@ -1213,10 +1245,6 @@ msgstr ""
 
 #: src/gtk/x11menu.c:115
 msgid "Activate Data Window"
-msgstr ""
-
-#: src/gtk/x11menu.c:123 src/gtk/x11menu.c:300
-msgid "Axis"
 msgstr ""
 
 #: src/gtk/x11menu.c:125

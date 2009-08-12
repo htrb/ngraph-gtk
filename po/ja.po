@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-12 14:53+0900\n"
-"PO-Revision-Date: 2009-08-12 13:19+0900\n"
+"POT-Creation-Date: 2009-08-12 16:03+0900\n"
+"PO-Revision-Date: 2009-08-12 16:03+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -99,6 +99,10 @@ msgstr "線幅 %d(_W):"
 msgid "Grid %d"
 msgstr "グリッド %d"
 
+#: src/gtk/x11axis.c:309 src/gtk/x11menu.c:123 src/gtk/x11menu.c:300
+msgid "Axis"
+msgstr "軸"
+
 #: src/gtk/x11axis.c:314
 msgid "Axis (_X):"
 msgstr "_X 軸:"
@@ -106,6 +110,10 @@ msgstr "_X 軸:"
 #: src/gtk/x11axis.c:319
 msgid "Axis (_Y):"
 msgstr "_Y 軸:"
+
+#: src/gtk/x11axis.c:328 src/gtk/x11axis.c:1760
+msgid "Style"
+msgstr "スタイル"
 
 #: src/gtk/x11axis.c:342 src/gtk/x11axis.c:1016 src/gtk/x11axis.c:1630
 #: src/gtk/x11axis.c:1769 src/gtk/x11lgnd.c:618 src/gtk/x11lgndx.c:401
@@ -205,6 +213,10 @@ msgstr "交差軸(_A):"
 msgid "Adjust _Position:"
 msgstr "交差位置(_P):"
 
+#: src/gtk/x11axis.c:1367 src/gtk/x11axis.c:1739
+msgid "Range"
+msgstr "範囲"
+
 #: src/gtk/x11axis.c:1372
 msgid "_Numbering:"
 msgstr "位置(_N):"
@@ -220,6 +232,10 @@ msgstr "間隔(_S):"
 #: src/gtk/x11axis.c:1388
 msgid "_Num:"
 msgstr "個数(_N):"
+
+#: src/gtk/x11axis.c:1397
+msgid "Format"
+msgstr "フォーマット"
 
 #: src/gtk/x11axis.c:1401
 msgid "_Fraction:"
@@ -306,6 +322,10 @@ msgstr "長さ %d(_L):"
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
+
+#: src/gtk/x11axis.c:2151
+msgid "Scale"
+msgstr "スケール"
 
 #: src/gtk/x11axis.c:2168
 msgid "_Inc:"
@@ -789,9 +809,17 @@ msgstr "重み付け(_W):"
 msgid "_Through"
 msgstr "通過点(_T)"
 
+#: src/gtk/x11file.c:1283
+msgid "Action"
+msgstr "動作"
+
 #: src/gtk/x11file.c:1306
 msgid "_Interpolation"
 msgstr "補完(_I)"
+
+#: src/gtk/x11file.c:1310
+msgid "Draw X range"
+msgstr "描画範囲(X)"
 
 #: src/gtk/x11file.c:1318
 msgid "_Formula:"
@@ -804,6 +832,10 @@ msgstr "収束(%) (_C):"
 #: src/gtk/x11file.c:1329
 msgid "_Derivatives"
 msgstr "微分式指定(_D)"
+
+#: src/gtk/x11file.c:1362
+msgid "User definition"
+msgstr "ユーザ定義"
 
 #: src/gtk/x11file.c:1379
 msgid "_Result"
@@ -1218,10 +1250,6 @@ msgstr "データ選択"
 #: src/gtk/x11menu.c:115
 msgid "Activate Data Window"
 msgstr "Data Windowをアクティブにする"
-
-#: src/gtk/x11menu.c:123 src/gtk/x11menu.c:300
-msgid "Axis"
-msgstr "軸"
 
 #: src/gtk/x11menu.c:125
 msgid "Activate Axis Window"
