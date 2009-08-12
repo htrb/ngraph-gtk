@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.111 2009/08/11 09:00:56 hito Exp $
+ * $Id: x11file.c,v 1.112 2009/08/12 02:58:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -509,22 +509,6 @@ MathDialog(struct MathDialog *data, struct objlist *obj)
   data->Mode = 0;
 }
 
-static gboolean
-fit_load_dialog_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
-{
-  struct FitLoadDialog *d;
-
-  d = (struct FitLoadDialog *) user_data;
-
-  if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)) {
-    gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
-    return TRUE;
-  }
-
-  return FALSE;
-}
-
 static void
 FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -532,25 +516,19 @@ FitLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
   struct FitLoadDialog *d;
   int i;
   GtkWidget *w;
-  GtkTreeIter iter;
-  n_list_store list[] = {
-    {N_("Fit setting"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-  };
 
   d = (struct FitLoadDialog *) data;
   if (makewidget) {
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
+    w = combo_box_create();
     d->list = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "button-press-event", G_CALLBACK(fit_load_dialog_default_cb), d);
-    g_signal_connect(w, "key-press-event", G_CALLBACK(fit_load_dialog_default_cb), d);
   }
-  list_store_clear(d->list);
+  combo_box_clear(d->list);
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
-    list_store_append(d->list, &iter);
-    list_store_set_string(d->list, &iter, 0, CHK_STR(s));
+    combo_box_append_text(d->list, CHK_STR(s));
   }
+  combo_box_set_active(d->list, 0);
   /*
   if (makewidget) {
     XtManageChild(d->widget);
@@ -568,7 +546,7 @@ FitLoadDialogClose(GtkWidget *w, void *data)
   d = (struct FitLoadDialog *) data;
   if (d->ret == IDCANCEL)
     return;
-  d->sel = list_store_get_selected_index(d->list);
+  d->sel = combo_box_get_active(d->list);
 }
 
 void
@@ -591,6 +569,10 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct FitSaveDialog *) data;
   if (makewidget) {
+    gtk_dialog_add_buttons(GTK_DIALOG(wi),
+			   GTK_STOCK_DELETE, IDDELETE,
+			   NULL);
+
     w = combo_box_entry_create();
     gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
 
@@ -603,8 +585,9 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
   j = 0;
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
-    combo_box_append_text(d->profile, (s)? s: "&");
+    combo_box_append_text(d->profile, CHK_STR(s));
   }
+  combo_box_entry_set_text(d->profile, "");
 }
 
 static void
@@ -615,13 +598,26 @@ FitSaveDialogClose(GtkWidget *w, void *data)
 
   d = (struct FitSaveDialog *) data;
 
-  if (d->ret != IDOK)
+  if (d->ret != IDOK && d->ret != IDDELETE)
     return;
 
   s = combo_box_entry_get_text(d->profile);
   if (s) {
-    d->Profile = nstrdup(s);
+    char *ptr;
+
+    ptr = nstrdup(s);
+    g_strstrip(ptr);
+    if (ptr[0] != '\0') {
+      d->Profile = ptr;
+      return;
+    }
+    memfree(ptr);
   }
+
+  MessageBox(d->widget, _("Please specify the profile."), NULL, MB_OK);
+
+  d->ret = IDLOOP;
+  return;
 }
 
 void
@@ -756,33 +752,18 @@ FitDialogLoad(struct FitDialog *d)
   }
 }
 
-static void
-FitDialogSave(struct FitDialog *d)
+static int
+copy_settings_to_fitobj(struct FitDialog *d, char *profile)
 {
-  int i, id, len;
+  int i, id, num;
   char *s;
-  char *ngpfile;
-  int error;
-  HANDLE hFile;
-  int num;
-
-  if (!FitDialogLoadConfig(d, FALSE))
-    return;
-
-  FitSaveDialog(&DlgFitSave, d->Obj, d->Lastid + 1);
-
-  if (DialogExecute(d->widget, &DlgFitSave) != IDOK)
-    return;
-
-  if (DlgFitSave.Profile == NULL || DlgFitSave.Profile[0] == '\0')
-    return;
 
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
-    if (s && strcmp(s, DlgFitSave.Profile) == 0) {
+    if (s && strcmp(s, profile) == 0) {
       if (MessageBox(d->widget, _("Overwrite existing setting?"), "Confirm",
 		     MB_YESNO) != IDYES) {
-	return;
+	return 1;
       }
       break;
     }
@@ -794,50 +775,50 @@ FitDialogSave(struct FitDialog *d)
     id = i;
   }
 
-  if (putobj(d->Obj, "profile", id, DlgFitSave.Profile) == -1)
-    return;
+  if (putobj(d->Obj, "profile", id, profile) == -1)
+    return 1;
 
   if (SetObjFieldFromWidget(d->type, d->Obj, id, "type"))
-    return;
+    return 1;
 
   num = combo_box_get_active(d->dim);
   num++;
   if (num > 0 && putobj(d->Obj, "poly_dimension", id, &num) == -1)
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->weight, d->Obj, id, "weight_func"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget
       (d->through_point, d->Obj, id, "through_point"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->x, d->Obj, id, "point_x"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->y, d->Obj, id, "point_y"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->min, d->Obj, id, "min"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->max, d->Obj, id, "max"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->div, d->Obj, id, "div"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->interpolation, d->Obj, id,
 			    "interpolation"))
-    return;
+    return 1;
   if (SetObjFieldFromWidget(d->formula, d->Obj, id, "user_func"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->derivatives, d->Obj, id, "derivative"))
-    return;
+    return 1;
 
   if (SetObjFieldFromWidget(d->converge, d->Obj, id, "converge"))
-    return;
+    return 1;
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "parameter0", dd[] = "derivative0";
@@ -846,15 +827,86 @@ FitDialogSave(struct FitDialog *d)
     dd[sizeof(dd) - 2] += i;
 
     if (SetObjFieldFromWidget(d->p[i], d->Obj, id, p))
-      return;
+      return 1;
 
     if (SetObjFieldFromWidget(d->d[i], d->Obj, id, dd))
+      return 1;
+  }
+
+  return 0;
+}
+
+static int
+delete_fitobj(struct FitDialog *d, char *profile)
+{
+  int i;
+  char *s;
+
+  for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
+    getobj(d->Obj, "profile", i, 0, NULL, &s);
+    if (s && strcmp(s, profile) == 0) {
+      if (MessageBox(d->widget, _("Delete existing setting?"), "Confirm", MB_YESNO) != IDYES) {
+	return 1;
+      }
+      break;
+    }
+  }
+
+  if (i > chkobjlastinst(d->Obj)) {
+    MessageBox(d->widget, _("The profile is not exist."), "Confirm", MB_OK);
+    return 1;
+  }
+
+  delobj(d->Obj, i);
+
+  return 0;
+}
+
+static void
+FitDialogSave(struct FitDialog *d)
+{
+  int i, r, len;
+  char *s, *ngpfile;
+  int error;
+  HANDLE hFile;
+
+  if (!FitDialogLoadConfig(d, FALSE))
+    return;
+
+  FitSaveDialog(&DlgFitSave, d->Obj, d->Lastid + 1);
+
+  r = DialogExecute(d->widget, &DlgFitSave);
+  if (r != IDOK && r != IDDELETE)
+    return;
+
+  if (DlgFitSave.Profile == NULL)
+    return;
+
+  if (DlgFitSave.Profile[0] == '\0') {
+    memfree(DlgFitSave.Profile);
+    return;
+  }
+
+  switch (r) {
+  case IDOK:
+    if (copy_settings_to_fitobj(d, DlgFitSave.Profile)) {
+      memfree(DlgFitSave.Profile);
       return;
+    }
+    break;
+  case IDDELETE:
+    if (delete_fitobj(d, DlgFitSave.Profile)) {
+      memfree(DlgFitSave.Profile);
+      return;
+    }
+    memfree(DlgFitSave.Profile);
+    break;
   }
 
   ngpfile = getscriptname(FITSAVE);
-  if (ngpfile == NULL)
+  if (ngpfile == NULL) {
     return;
+  }
 
   error = FALSE;
 

@@ -1,3 +1,15 @@
+2009-08-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (fit_load_dialog_default_cb): remove.
+	(FitLoadDialogSetup): use "GtkComboBox" instead of "GtkTreeView".
+	(FitSaveDialogSetup): add delete button.
+	(FitSaveDialogClose): call "g_strstrip()" for the profile.
+	(FitSaveDialogClose): show confirm message when the profile is not
+	specified.
+	(copy_settings_to_fitobj, delete_fitobj): add.
+	(FitDialogSave): use "copy_settings_to_fitobj()" and
+	"delete_fitobj()".
+
 2009-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (eval_dialog_copy_selected)

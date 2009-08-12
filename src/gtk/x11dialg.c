@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.41 2009/08/11 09:00:56 hito Exp $
+ * $Id: x11dialg.c,v 1.42 2009/08/12 02:58:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -148,6 +148,7 @@ initdialog(void)
   DlgFitLoad.resource = N_("fit load");
   DlgFitSave.widget = NULL;
   DlgFitSave.focus = NULL;
+  DlgFitSave.Profile = NULL;
   DlgFitSave.resource = N_("fit save");
   DlgFileMove.widget = NULL;
   DlgFileMove.focus = NULL;
