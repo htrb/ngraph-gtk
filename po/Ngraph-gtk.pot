@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-13 17:52+0900\n"
+"POT-Creation-Date: 2009-08-13 18:18+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1094,15 +1094,15 @@ msgid ""
 "researchers and engineers."
 msgstr ""
 
-#: src/gtk/x11gui.c:740 src/gtk/x11gui.c:870
+#: src/gtk/x11gui.c:741 src/gtk/x11gui.c:871
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:847
+#: src/gtk/x11gui.c:848
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:858
+#: src/gtk/x11gui.c:859
 #, c-format
 msgid "%s file (*.%s)"
 msgstr ""
@@ -1393,7 +1393,7 @@ msgid "Clear Viewer Window"
 msgstr ""
 
 #: src/gtk/x11menu.c:236 src/gtk/x11menu.c:237 src/gtk/x11menu.c:238
-#: src/gtk/x11print.c:635
+#: src/gtk/x11print.c:634
 msgid "Print"
 msgstr ""
 
@@ -2198,44 +2198,44 @@ msgstr ""
 msgid "Cairo SVG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:510
+#: src/gtk/x11print.c:509
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:634
+#: src/gtk/x11print.c:633
 #, c-format
 msgid "Printing error: %s"
 msgstr ""
 
-#: src/gtk/x11print.c:683
+#: src/gtk/x11print.c:682
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:689 src/gtk/x11print.c:944 src/gtk/x11view.c:5435
+#: src/gtk/x11print.c:688 src/gtk/x11print.c:943 src/gtk/x11view.c:5435
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:750
+#: src/gtk/x11print.c:749
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:789
+#: src/gtk/x11print.c:788
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:831
+#: src/gtk/x11print.c:830
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:998
+#: src/gtk/x11print.c:997
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1004
+#: src/gtk/x11print.c:1003
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1005
+#: src/gtk/x11print.c:1004
 msgid "Making data file."
 msgstr ""
 

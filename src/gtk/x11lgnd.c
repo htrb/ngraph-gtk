@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.53 2009/08/13 08:52:01 hito Exp $
+ * $Id: x11lgnd.c,v 1.54 2009/08/13 09:29:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2079,7 +2079,8 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	getobj(d->obj[type], "type", row, 0, NULL, &mark);
 	getobj(d->obj[type], "size", row, 0, NULL, &size);
 	if (mark >= 0 && mark < MarkCharSize) {
-	  snprintf(buf, sizeof(buf), _("type:%-2d %s size:%-5.2f"), mark, MarkChar[mark], size / 100.0);
+	  char *mc = MarkChar[mark];
+	  snprintf(buf, sizeof(buf), _("%s%stype:%-2d size:%-5.2f"), mc, (mc[0]) ? " " : "", mark, size / 100.0);
 	} else {
 	  snprintf(buf, sizeof(buf), _("type:%-2d size:%-5.2f"), mark, size / 100.0);
 	}
