@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.51 2009/08/13 04:46:15 hito Exp $
+ * $Id: x11lgnd.c,v 1.52 2009/08/13 05:48:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,8 +60,8 @@
 static n_list_store Llist[] = {
   {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
   {"#",            G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
-  {N_("object"),   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
-  {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property", FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  //  {N_("object"),   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
+  {N_("object/property"), G_TYPE_STRING,  TRUE, FALSE, "property", FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {N_("lw/pt"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
@@ -72,11 +72,10 @@ static n_list_store Llist[] = {
 #define LEGEND_WIN_COL_OID (LEGEND_WIN_COL_NUM - 1)
 #define LEGEND_WIN_COL_HIDDEN 0
 #define LEGEND_WIN_COL_ID     1
-#define LEGEND_WIN_COL_NAME   2
-#define LEGEND_WIN_COL_PROP   3
-#define LEGEND_WIN_COL_X      4
-#define LEGEND_WIN_COL_Y      5
-#define LEGEND_WIN_COL_WIDTH  6
+#define LEGEND_WIN_COL_PROP   2
+#define LEGEND_WIN_COL_X      3
+#define LEGEND_WIN_COL_Y      4
+#define LEGEND_WIN_COL_WIDTH  5
 
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),      G_CALLBACK(tree_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -103,8 +102,16 @@ static struct subwin_popup_list Popup_list[] = {
 static gboolean LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
 static void LegendDialogCopy(struct LegendDialog *d);
 
-static char *legendlist[LEGENDNUM] =
-  { "line", "curve", "polygon", "rectangle", "arc", "mark", "text" };
+static char *legendlist[LEGENDNUM] = {
+  N_("line"),
+  N_("curve"),
+  N_("polygon"),
+  N_("rectangle"),
+  N_("arc"),
+  N_("mark"),
+  N_("text"),
+};
+
 static struct LegendDialog *Ldlg[] = {
   &DlgLegendCurve,
   &DlgLegendPoly,
@@ -2025,9 +2032,6 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 
   for (i = 0; i < LEGEND_WIN_COL_NUM; i++) {
     switch (i) {
-    case LEGEND_WIN_COL_NAME:
-      tree_store_set_string(GTK_WIDGET(d->text), iter, i, legendlist[type]);
-      break;
     case LEGEND_WIN_COL_HIDDEN:
       getobj(d->obj[type], Llist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
@@ -2038,7 +2042,7 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
       switch (type) {
       case LegendTypeLine:
 	sgetobjfield(d->obj[type], row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
-	snprintf(buf2, sizeof(buf2), " arrow:%s", valstr);
+	snprintf(buf2, sizeof(buf2), _(" arrow:%s"), _(valstr));
 	memfree(valstr);
 	ex = buf2;
       case LegendTypeCurve:
@@ -2052,14 +2056,14 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	  x0 = points[0];
 	  y0 = points[1];
 	}
-	snprintf(buf, sizeof(buf), "points:%-3d%s", arraynum(array) / 2, CHK_STR(ex));
+	snprintf(buf, sizeof(buf), _("points:%-3d%s"), arraynum(array) / 2, CHK_STR(ex));
 	break;
       case LegendTypeRect:
 	getobj(d->obj[type], "x1", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y1", row, 0, NULL, &y0);
 	getobj(d->obj[type], "x2", row, 0, NULL, &x2);
 	getobj(d->obj[type], "y2", row, 0, NULL, &y2);
-	snprintf(buf, sizeof(buf), "w:%.2f h:%.2f", abs(x0 - x2) / 100.0, abs(y0 - y2) / 100.0);
+	snprintf(buf, sizeof(buf), _("w:%.2f h:%.2f"), abs(x0 - x2) / 100.0, abs(y0 - y2) / 100.0);
 	break;
       case LegendTypeArc:
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
@@ -2074,9 +2078,9 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	getobj(d->obj[type], "type", row, 0, NULL, &mark);
 	getobj(d->obj[type], "size", row, 0, NULL, &size);
 	if (mark >= 0 && mark < MarkCharSize) {
-	  snprintf(buf, sizeof(buf), "type:%-2d %s size:%-5.2f", mark, MarkChar[mark], size / 100.0);
+	  snprintf(buf, sizeof(buf), _("type:%-2d %s size:%-5.2f"), mark, MarkChar[mark], size / 100.0);
 	} else {
-	  snprintf(buf, sizeof(buf), "type:%-2d size:%-5.2f", mark, size / 100.0);
+	  snprintf(buf, sizeof(buf), _("type:%-2d size:%-5.2f"), mark, size / 100.0);
 	}
 	break;
       case LegendTypeText:
@@ -2137,7 +2141,7 @@ legend_list_build(struct LegendWin *d)
   tree_store_clear(GTK_WIDGET(d->text));
   for (k = 0; k < LEGENDNUM; k++) {
     tree_store_append(GTK_WIDGET(d->text), &iter, NULL);
-    tree_store_set_string(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_NAME, legendlist[k]);
+    tree_store_set_string(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_PROP, _(legendlist[k]));
     d->legend[k] = chkobjlastinst(d->obj[k]);
     tree_store_set_int(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_ID, d->legend[k] + 1);
     for (i = 0; i <= d->legend[k]; i++) {
@@ -2162,7 +2166,7 @@ legend_list_set(struct LegendWin *d)
   tree_store_get_iter_first(GTK_WIDGET(d->text), &iter);
 
   for (k = 0; k < LEGENDNUM; k++) {
-    tree_store_set_string(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_NAME, legendlist[k]);
+    tree_store_set_string(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_PROP, _(legendlist[k]));
     d->legend[k] = chkobjlastinst(d->obj[k]);
     tree_store_set_int(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_ID, d->legend[k] + 1);
 

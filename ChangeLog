@@ -7,8 +7,13 @@
 	(legend_list_set_val): add mark character and mark size for the
 	case of "LegendTypeMark".
 	(MarkChar, MarkCharSize): add.
-	(Llist): add column "lw/pt".
+	(Llist): add column "lw/pt", remove column "object" and change
+	column from "property" to "object/property".
 	(LEGEND_WIN_COL_WIDTH): add.
+	(legend_list_set_val): gettextize some strings.
+	(legend_list_set_val): remove case for "LEGEND_WIN_COL_NAME".
+	(legend_list_build, legend_list_set): set strings to
+	"LEGEND_WIN_COL_PROP" column.
 
 2009-08-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
