@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.32 2009/08/07 02:52:41 hito Exp $
+ * $Id: x11gui.c,v 1.33 2009/08/13 09:11:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -600,6 +600,7 @@ DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, doubl
     inc = 1;
 
   spin = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), TRUE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
   gtk_box_pack_start(GTK_BOX(vbox), spin, FALSE, FALSE, 2);
   gtk_entry_set_activates_default(GTK_ENTRY(spin), TRUE);

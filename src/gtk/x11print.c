@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.44 2009/07/05 06:14:40 hito Exp $
+ * $Id: x11print.c,v 1.45 2009/08/13 09:11:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -359,7 +359,7 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
     w = gtk_spin_button_new_with_range(1, DPI_MAX, 1);
-    gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), FALSE);
+    gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), TRUE);
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
     d->dpi = w;
     d->dlabel = item_setup(GTK_WIDGET(d->vbox), w, "DPI:", FALSE);
@@ -432,7 +432,6 @@ OutputImageDialogClose(GtkWidget *w, void *data)
     }
     break;
   case MenuIdOutputPNGFile:
-    d->Dpi = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(d->dpi));
     d->Version = TYPE_PNG;
     break;
   case MenuIdOutputPDFFile:
