@@ -1,5 +1,21 @@
 2009-08-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (pos_edited, width_edited): use "str_calc()"
+	instead of "strtod()".
+
+	* src/gtk/x11axis.c (pos_edited_common): use "str_calc()" instead
+	of "strtod()".
+
+	* src/gtk/gtk_widget.c (spin_change_value_cb): add.
+	(_create_spin_entry): call "g_signal_connect()" for "input"
+	signal.
+	(_create_spin_entry): second argument of
+	"gtk_spin_button_set_numeric()" is FALSE.
+
+	* src/gtk/gtk_subwin.c (start_editing): second argument of
+	"gtk_spin_button_set_numeric()" is FALSE.
+	(numeric_cb): use "str_calc()" instead of "strtod()".
+
 	* src/gtk/x11lgnd.c (width_edited): add.
 	(CmLegendWindow): call "set_editable_cell_renderer_cb()" for
 	"LEGEND_WIN_COL_WIDTH".

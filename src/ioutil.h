@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.h,v 1.7 2009/06/18 11:32:10 hito Exp $
+ * $Id: ioutil.h,v 1.8 2009/08/13 08:52:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,8 +21,12 @@
  * 
  */
 
+#ifndef IOUTIL_HEADER
+#define IOUTIL_HEADER
+
 #include <sys/stat.h>
 #include <dirent.h>
+#include <stdio.h>
 
 #ifndef WINDOWS
 #define DIRSEP '/'
@@ -76,3 +80,5 @@ HANDLE stderrfd(void);
 void set_progress_func(void (* func)(int, char *, double));
 void set_progress(int pos, char *msg, double fraction);
 int n_mkstemp(char *dir, char *templ, char **name);
+
+#endif

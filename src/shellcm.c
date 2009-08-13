@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.18 2009/07/27 01:15:24 hito Exp $
+ * $Id: shellcm.c,v 1.19 2009/08/13 08:52:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1221,13 +1221,17 @@ cmexe(struct nshell*nshell,int argc,char **argv)
   return 0;
 }
 
-static int
-str_calc(char *str, double *val, int *r)
+int
+str_calc(const char *str, double *val, int *r)
 {
   int rcode, ecode = 0, i;
   char *code;
   double memory[MEMORYNUM];
   char memorystat[MEMORYNUM];
+
+  if (str == NULL || val == NULL) {
+    return ERRMILLEGAL;
+  }
 
   rcode = mathcode(str, &code, NULL, NULL, NULL, NULL, 
 		   FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
@@ -1274,10 +1278,13 @@ str_calc(char *str, double *val, int *r)
     return ecode;
   }
 
-  *r = rcode;
+  if (r) {
+    *r = rcode;
+  }
 
   return 0;
 }
+
 
 int 
 cmdexpr(struct nshell*nshell,int argc,char **argv)

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.52 2009/08/13 05:48:30 hito Exp $
+ * $Id: x11lgnd.c,v 1.53 2009/08/13 08:52:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,6 +37,7 @@
 #include "jnstring.h"
 #include "nstring.h"
 #include "mathfn.h"
+#include "shellcm.h"
 
 #include "gtk_liststore.h"
 #include "gtk_entry_completion.h"
@@ -2273,7 +2274,7 @@ static void
 pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, enum CHANGE_DIR dir)
 {
   struct LegendWin *d;
-  int depth, col, *ary, inc;
+  int depth, col, *ary, inc, ecode;
   GtkTreePath *tree_path;
   double prev, val;
   char *tmp, *ptr;
@@ -2294,6 +2295,11 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
     return;
   }
 
+  ecode = str_calc(str, &val, NULL);
+  if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
+    return;
+  }
+
   d = (struct LegendWin *) user_data;
 
   tree_path = gtk_tree_path_new_from_string(path);
@@ -2307,12 +2313,6 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   }
 
   ary = gtk_tree_path_get_indices(tree_path);
-
-  val = strtod(str, &ptr);
-  if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
-    gtk_tree_path_free(tree_path);
-    return;
-  }
 
   tmp = tree_store_path_get_string(GTK_WIDGET(d->text), tree_path, col);
   if (tmp == NULL) {
@@ -2363,15 +2363,19 @@ static void
 width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, enum CHANGE_DIR dir)
 {
   struct LegendWin *d;
-  int depth, *ary;
+  int depth, *ary, ecode;
   GtkTreePath *tree_path;
   double val;
-  char *ptr;
 
   menu_lock(FALSE);
 
   if (str == NULL || path == NULL)
     return;
+
+  ecode = str_calc(str, &val, NULL);
+  if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
+    return;
+  }
 
   d = (struct LegendWin *) user_data;
 
@@ -2386,12 +2390,6 @@ width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
   }
 
   ary = gtk_tree_path_get_indices(tree_path);
-
-  val = strtod(str, &ptr);
-  if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
-    gtk_tree_path_free(tree_path);
-    return;
-  }
 
   if (ary[0] >= 0 && ary[0] < LEGENDNUM && ary[1] >= 0 && ary[1] <= d->legend[ary[0]]) {
     int w, prev;

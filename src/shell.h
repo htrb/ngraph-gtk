@@ -1,7 +1,7 @@
 #ifndef _SHELL_HEADER
 #define _SHELL_HEADER
 /* 
- * $Id: shell.h,v 1.11 2009/07/06 00:36:59 hito Exp $
+ * $Id: shell.h,v 1.12 2009/08/13 08:52:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -22,6 +22,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
+
+#include "ioutil.h"
 
 #define SHELLBUFSIZE 4096
 

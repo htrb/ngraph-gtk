@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.8 2009/04/21 14:17:58 hito Exp $
+ * $Id: mathcode.c,v 1.9 2009/08/13 08:52:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -151,7 +151,7 @@ mathcode_error(struct objlist *obj, enum MATH_CODE_ERROR_NO rcode, int *ecode) {
 }
 
 enum MATH_CODE_ERROR_NO 
-mathcode(char *str,char **code,
+mathcode(const char *str,char **code,
 	 struct narray *needdata,struct narray *needfile,
 	 int *maxdim,int *twopass,
 	 int datax,int datay,int dataz,

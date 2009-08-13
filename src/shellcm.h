@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.h,v 1.5 2009/05/14 10:25:26 hito Exp $
+ * $Id: shellcm.h,v 1.6 2009/08/13 08:52:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -20,6 +20,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
+
+#ifndef SHELLCM_HEADER
+#define SHELLCM_HEADER
+#include "shell.h"
 
 int cmcd(struct nshell *nshell,int argc,char **argv);
 int cmecho(struct nshell *nshell,int argc,char **argv);
@@ -49,3 +53,7 @@ int cmexe(struct nshell *nshell,int argc,char **argv);
 int cmdexpr(struct nshell *nshell,int argc,char **argv);
 int cmread(struct nshell *nshell,int argc,char **argv);
 int cmseq(struct nshell *nshell, int argc, char **argv);
+
+int str_calc(const char *str, double *val, int *r);
+
+#endif

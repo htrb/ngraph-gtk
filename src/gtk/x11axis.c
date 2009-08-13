@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.70 2009/08/12 07:12:50 hito Exp $
+ * $Id: x11axis.c,v 1.71 2009/08/13 08:52:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,6 +33,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
+#include "shellcm.h"
 
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"
@@ -3044,9 +3045,9 @@ enum CHANGE_DIR {
 static void
 pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
 {
-  int x, y, pos1, pos2, man;
+  int x, y, pos1, pos2, man, ecode;
   double val;
-  char *ptr, *argv[3];
+  char *argv[3];
 
   if (str == NULL || id < 0)
     return;
@@ -3060,8 +3061,8 @@ pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
     break;
   }
 
-  val = strtod(str, &ptr);
-  if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
+  ecode = str_calc(str, &val, NULL);
+  if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
     return;
   }
 

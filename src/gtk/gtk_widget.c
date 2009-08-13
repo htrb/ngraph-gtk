@@ -1,8 +1,10 @@
 #include <stdlib.h>
+#include <math.h>
 
 #include "mathfn.h"
 #include "object.h"
 #include "otext.h"
+#include "shellcm.h"
 
 #include "gtk_common.h"
 #include "gtk_widget.h"
@@ -248,10 +250,30 @@ spin_entry_get_val(GtkWidget *entry)
   enum SPIN_BUTTON_TYPE type;
 
   type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "user-data"));
-
   val = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry));
 
   return val2int(type, val);
+}
+
+static int
+spin_change_value_cb(GtkSpinButton *spinbutton, GtkScrollType  arg1, gpointer user_data)
+{
+  const char *str;
+  double val;
+  int ecode;
+
+  str = gtk_entry_get_text(GTK_ENTRY(spinbutton));
+  if (str == NULL)
+    return 0;
+
+  ecode = str_calc(str, &val, NULL);
+  if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
+    return 0;
+  }
+
+  gtk_spin_button_set_value(spinbutton, val);
+
+  return 0;
 }
 
 static GtkWidget *
@@ -260,17 +282,15 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
 		   gboolean wrap, int set_default_size, int set_default_action)
 {
   GtkWidget *w;
-  int digits;
 
   w = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_entry_set_alignment(GTK_ENTRY(w), 1.0);
 
   gtk_spin_button_set_increments(GTK_SPIN_BUTTON(w), inc, page);
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
-  gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), TRUE);
-
-  digits = (numeric) ? 0: 2;
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), digits);
-
+  gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), FALSE);
+  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), (numeric) ? 2 : 0);
+ 
   if (set_default_size)
     gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
 
@@ -278,6 +298,8 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
 
   g_object_set_data(G_OBJECT(w), "user-data", GINT_TO_POINTER(type));
+
+  g_signal_connect(w, "input", G_CALLBACK(spin_change_value_cb), NULL);
 
   return w;
 }

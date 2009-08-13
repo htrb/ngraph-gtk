@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.53 2009/08/10 04:59:37 hito Exp $
+ * $Id: gtk_subwin.c,v 1.54 2009/08/13 08:52:01 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -12,6 +12,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
+#include "shellcm.h"
 
 #include "main.h"
 #include "ox11menu.h"
@@ -120,10 +121,10 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   case G_TYPE_DOUBLE:
   case G_TYPE_INT:
     if (GTK_IS_SPIN_BUTTON(editable)) {
+      gtk_entry_set_alignment(GTK_ENTRY(editable), 1.0);
+      gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(editable), FALSE);
       if (list->max == 36000)
 	gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(editable), TRUE);
-
-      gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(editable), TRUE);
     }
     break;
   }
@@ -199,13 +200,13 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   struct SubWin *d;
   n_list_store *list;
   double val;
-  char *ptr;
+  int ecode;
 
   menu_lock(FALSE);
 
   d = (struct SubWin *) user_data;
 
-  if (d->type == TypeLegendWin)
+  if (str == NULL || d->type == TypeLegendWin)
     return;
 
   view = GTK_TREE_VIEW(d->text);
@@ -215,8 +216,8 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   if (list == NULL)
     return;
 
-  val = strtod(str, &ptr);
-  if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
+  ecode = str_calc(str, &val, NULL);
+  if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
     return;
   }
 
