@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48.gtk-30\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-13 18:18+0900\n"
+"POT-Creation-Date: 2009-08-13 18:29+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1257,12 +1257,12 @@ msgstr ""
 msgid "w:%.2f h:%.2f"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2082
+#: src/gtk/x11lgnd.c:2083
 #, c-format
-msgid "type:%-2d %s size:%-5.2f"
+msgid "%s%stype:%-2d size:%-5.2f"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2084
+#: src/gtk/x11lgnd.c:2085
 #, c-format
 msgid "type:%-2d size:%-5.2f"
 msgstr ""
