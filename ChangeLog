@@ -1,5 +1,11 @@
 2009-08-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11gui.c (DialogSpinEntry): call
+	"gtk_spin_button_set_numeric()".
+
+	* src/gtk/x11print.c (OutputImageDialogSetup): second argument of
+	"gtk_spin_button_set_numeric()" is TRUE.
+
 	* src/gtk/x11lgnd.c (pos_edited, width_edited): use "str_calc()"
 	instead of "strtod()".
 
