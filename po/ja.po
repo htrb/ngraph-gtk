@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-13 17:52+0900\n"
+"POT-Creation-Date: 2009-08-13 18:18+0900\n"
 "PO-Revision-Date: 2009-08-13 15:48+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1098,15 +1098,15 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: src/gtk/x11gui.c:740 src/gtk/x11gui.c:870
+#: src/gtk/x11gui.c:741 src/gtk/x11gui.c:871
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:847
+#: src/gtk/x11gui.c:848
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:858
+#: src/gtk/x11gui.c:859
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
@@ -1397,7 +1397,7 @@ msgid "Clear Viewer Window"
 msgstr "スケールのクリア"
 
 #: src/gtk/x11menu.c:236 src/gtk/x11menu.c:237 src/gtk/x11menu.c:238
-#: src/gtk/x11print.c:635
+#: src/gtk/x11print.c:634
 msgid "Print"
 msgstr "印刷"
 
@@ -2203,44 +2203,44 @@ msgstr "Cairo PDF 出力"
 msgid "Cairo SVG Output"
 msgstr "Cairo SVG 出力"
 
-#: src/gtk/x11print.c:510
+#: src/gtk/x11print.c:509
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:634
+#: src/gtk/x11print.c:633
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:683
+#: src/gtk/x11print.c:682
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:689 src/gtk/x11print.c:944 src/gtk/x11view.c:5435
+#: src/gtk/x11print.c:688 src/gtk/x11print.c:943 src/gtk/x11view.c:5435
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11print.c:750
+#: src/gtk/x11print.c:749
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:789
+#: src/gtk/x11print.c:788
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:831
+#: src/gtk/x11print.c:830
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:998
+#: src/gtk/x11print.c:997
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11print.c:1004
+#: src/gtk/x11print.c:1003
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11print.c:1005
+#: src/gtk/x11print.c:1004
 msgid "Making data file."
 msgstr "データファイル作成中"
 
