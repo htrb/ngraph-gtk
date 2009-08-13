@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.50 2009/07/22 14:53:31 hito Exp $
+ * $Id: x11lgnd.c,v 1.51 2009/08/13 04:46:15 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -64,6 +64,7 @@ static n_list_store Llist[] = {
   {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property", FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("lw/pt"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
   {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
 };
 
@@ -75,6 +76,7 @@ static n_list_store Llist[] = {
 #define LEGEND_WIN_COL_PROP   3
 #define LEGEND_WIN_COL_X      4
 #define LEGEND_WIN_COL_Y      5
+#define LEGEND_WIN_COL_WIDTH  6
 
 static struct subwin_popup_list Popup_list[] = {
   {N_("_Duplicate"),      G_CALLBACK(tree_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -124,6 +126,20 @@ enum LegendType {
   LegendTypeMark,
   LegendTypeText,
 };
+
+static char *MarkChar[] = {
+  "●",  "○", "○", "◎", "⦿", "",  "◑", "◐", "◓", "◒",
+  "■",  "⬜", "⬜", "⧈", "▣", "",  "◨", "◧", "⬒", "⬓",
+  "◆",  "◇", "◇", "",  "◈", "",  "⬗", "⬖", "⬘", "⬙",
+  "▲",  "△", "△", "",  "",  "",  "◮", "◭", "⧗", "⧖",
+  "▼",  "▽", "▽", "",  "",  "",  "⧩", "⧨", "",  "",
+  "◀",  "◁", "◁", "",  "",  "",  "",  "",  "⧓", "⋈",
+  "▶",  "▷", "▷", "",  "",  "",  "",  "",  "⧒", "⧑",
+  "＋", "×", "∗", "⚹", "",  "",  "",  "",  "―", "|",
+  "◎",  "⨁", "⨂", "⧈", "⊞", "⊠", "",  "",  "",  "·",
+};
+
+#define MarkCharSize ((int) (sizeof(MarkChar) / sizeof(*MarkChar)))
 
 struct lwidget {
   GtkWidget *w;
@@ -2002,7 +2018,7 @@ legend_list_must_rebuild(struct LegendWin *d)
 static void
 legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 {
-  int cx, x0, y0, x2, y2, mark, *points;
+  int cx, x0, y0, x2, y2, mark, size, *points, w;
   unsigned int i = 0;
   char *valstr, *text, *ex, buf[256], buf2[256];
   struct narray *array;
@@ -2056,7 +2072,12 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y", row, 0, NULL, &y0);
 	getobj(d->obj[type], "type", row, 0, NULL, &mark);
-	snprintf(buf, sizeof(buf), "type:%d", mark);
+	getobj(d->obj[type], "size", row, 0, NULL, &size);
+	if (mark >= 0 && mark < MarkCharSize) {
+	  snprintf(buf, sizeof(buf), "type:%-2d %s size:%-5.2f", mark, MarkChar[mark], size / 100.0);
+	} else {
+	  snprintf(buf, sizeof(buf), "type:%-2d size:%-5.2f", mark, size / 100.0);
+	}
 	break;
       case LegendTypeText:
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
@@ -2088,6 +2109,16 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
       break;
     case LEGEND_WIN_COL_Y:
       tree_store_set_double(GTK_WIDGET(d->text), iter, i, y0 / 100.0);
+      break;
+    case LEGEND_WIN_COL_WIDTH:
+      switch (type) {
+      case LegendTypeText:
+	getobj(d->obj[type], "pt", row, 0, NULL, &w);
+	break;
+      default:
+	getobj(d->obj[type], "width", row, 0, NULL, &w);
+      }
+      tree_store_set_double(GTK_WIDGET(d->text), iter, i, w / 100.0);
       break;
     default:
       getobj(d->obj[type], Llist[i].name, row, 0, NULL, &cx);
@@ -2325,6 +2356,68 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
 }
 
 static void
+width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, enum CHANGE_DIR dir)
+{
+  struct LegendWin *d;
+  int depth, *ary;
+  GtkTreePath *tree_path;
+  double val;
+  char *ptr;
+
+  menu_lock(FALSE);
+
+  if (str == NULL || path == NULL)
+    return;
+
+  d = (struct LegendWin *) user_data;
+
+  tree_path = gtk_tree_path_new_from_string(path);
+  if (tree_path == NULL)
+    return;
+
+  depth = gtk_tree_path_get_depth(tree_path);
+  if (depth < 2) {
+    gtk_tree_path_free(tree_path);
+    return;
+  }
+
+  ary = gtk_tree_path_get_indices(tree_path);
+
+  val = strtod(str, &ptr);
+  if (val != val || val == HUGE_VAL || val == - HUGE_VAL || ptr[0] != '\0') {
+    gtk_tree_path_free(tree_path);
+    return;
+  }
+
+  if (ary[0] >= 0 && ary[0] < LEGENDNUM && ary[1] >= 0 && ary[1] <= d->legend[ary[0]]) {
+    int w, prev;
+    struct objlist *obj, *textobj;
+    char *field;
+
+    obj = d->obj[ary[0]];
+
+    textobj = chkobject("text");
+    if (obj == NULL || textobj == NULL)
+      goto End;
+
+    field = (obj == textobj) ? "pt" : "width";
+
+    w = nround(val * 100);
+    getobj(obj, field, ary[1], 0, NULL, &prev);
+    if (prev != w) {
+      putobj(obj, field, ary[1], &w);
+      set_graph_modified();
+      LegendWinUpdate(FALSE);
+    }
+  }
+
+ End:
+  gtk_tree_path_free(tree_path);
+
+  return;
+}
+
+static void
 pos_x_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
 {
   pos_edited(cell_renderer, path, str, user_data, CHANGE_DIR_X);
@@ -2376,6 +2469,7 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
 
     set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_X, Llist, G_CALLBACK(pos_x_edited));
     set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_Y, Llist, G_CALLBACK(pos_y_edited));
+    set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_WIDTH, Llist, G_CALLBACK(width_edited));
 
     sub_window_show_all((struct SubWin *) d);
     sub_window_set_geometry((struct SubWin *)d, TRUE);

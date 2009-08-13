@@ -1,3 +1,15 @@
+2009-08-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (width_edited): add.
+	(CmLegendWindow): call "set_editable_cell_renderer_cb()" for
+	"LEGEND_WIN_COL_WIDTH".
+	(legend_list_set_val): add case for "LEGEND_WIN_COL_WIDTH".
+	(legend_list_set_val): add mark character and mark size for the
+	case of "LegendTypeMark".
+	(MarkChar, MarkCharSize): add.
+	(Llist): add column "lw/pt".
+	(LEGEND_WIN_COL_WIDTH): add.
+
 2009-08-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (fit_load_dialog_default_cb): remove.
