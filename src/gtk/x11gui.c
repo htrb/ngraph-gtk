@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.33 2009/08/13 09:11:02 hito Exp $
+ * $Id: x11gui.c,v 1.34 2009/08/14 06:34:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,6 +37,7 @@
 #include "gtk_widget.h"
 #include "gtk_combo.h"
 
+#include "ox11menu.h"
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "x11menu.h"
@@ -115,7 +116,10 @@ DialogExecute(GtkWidget *parent, void *dialog)
 {
   GtkWidget *dlg;
   struct DialogType *data;
-  gint res_id;
+  gint res_id, lockstate;
+
+  lockstate = GlobalLock;
+  GlobalLock = TRUE;
 
   data = (struct DialogType *) dialog;
 
@@ -201,6 +205,8 @@ DialogExecute(GtkWidget *parent, void *dialog)
   //  data->widget = NULL;
   gtk_widget_hide_all(dlg);
   ResetEvent();
+
+  GlobalLock = lockstate;
 
   return data->ret;
 }

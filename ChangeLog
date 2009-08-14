@@ -1,3 +1,13 @@
+2009-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (DialogExecute): set "GlobalLock" as TRUE, save
+	and restore "GlobalLock".
+
+	* src/gtk/x11view.c (init_dnd): use
+	"gtk_target_list_add_text_targets()" to add text target.
+	(drag_drop_cb): do nothing when "GlobalLock" is TRUE.
+	(drag_drop_cb): always call "gtk_drag_finish()".
+
 2009-08-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (DialogSpinEntry): call

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.161 2009/08/11 10:14:43 hito Exp $
+ * $Id: x11view.c,v 1.162 2009/08/14 06:34:31 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -769,6 +769,9 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
   int num, r;
   struct Viewer *d;
 
+  if (GlobalLock)
+    goto End;;
+
   d = (struct Viewer *) user_data;
 
   switch (info) {
@@ -796,9 +799,11 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
     }
 
     g_strfreev(filenames);
-    gtk_drag_finish(context, TRUE, FALSE, time);
     break;
   }
+
+ End:
+  gtk_drag_finish(context, TRUE, FALSE, time);
 }
 
 
@@ -808,12 +813,16 @@ init_dnd(struct Viewer *d)
   GtkWidget *widget;
   GtkTargetEntry target[] = {
     {"text/uri-list", 0, DROP_TYPE_FILE},
-    {"text/plain", 0, DROP_TYPE_TEXT},
   };
+  GtkTargetList *list;
 
   widget = d->Win;
 
   gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL, target, sizeof(target) / sizeof(*target), GDK_ACTION_COPY);
+
+  list = gtk_drag_dest_get_target_list(widget);
+  gtk_target_list_add_text_targets(list, DROP_TYPE_TEXT);
+
   g_signal_connect(widget, "drag-data-received", G_CALLBACK(drag_drop_cb), d);
 }
 
