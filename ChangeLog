@@ -28,7 +28,7 @@
 	(legend_list_set_val): add case for "LEGEND_WIN_COL_WIDTH".
 	(legend_list_set_val): add mark character and mark size for the
 	case of "LegendTypeMark".
-	(MarkChar, MarkCharSize): add.
+	(MarkChar, MarkCharNum): add.
 	(Llist): add column "lw/pt", remove column "object" and change
 	column from "property" to "object/property".
 	(LEGEND_WIN_COL_WIDTH): add.

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.54 2009/08/13 09:29:07 hito Exp $
+ * $Id: x11lgnd.c,v 1.55 2009/08/14 02:35:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -136,18 +136,18 @@ enum LegendType {
 };
 
 static char *MarkChar[] = {
-  "●",  "○", "○", "◎", "⦿", "",  "◑", "◐", "◓", "◒",
-  "■",  "⬜", "⬜", "⧈", "▣", "",  "◨", "◧", "⬒", "⬓",
-  "◆",  "◇", "◇", "",  "◈", "",  "⬗", "⬖", "⬘", "⬙",
-  "▲",  "△", "△", "",  "",  "",  "◮", "◭", "⧗", "⧖",
-  "▼",  "▽", "▽", "",  "",  "",  "⧩", "⧨", "",  "",
-  "◀",  "◁", "◁", "",  "",  "",  "",  "",  "⧓", "⋈",
-  "▶",  "▷", "▷", "",  "",  "",  "",  "",  "⧒", "⧑",
-  "＋", "×", "∗", "⚹", "",  "",  "",  "",  "―", "|",
-  "◎",  "⨁", "⨂", "⧈", "⊞", "⊠", "",  "",  "",  "·",
+  "●", "○", "○", "◎", "⦿", "",  "◑",  "◐",  "◓",  "◒",
+  "■", "⬜", "⬜", "⧈", "▣",  "",  "◨",  "◧",  "⬒", "⬓",
+  "◆", "◇", "◇", "",   "◈",  "",  "⬗", "⬖", "⬘", "⬙",
+  "▲", "△", "△", "",   "",   "",  "◮",  "◭",  "⧗",  "⧖",
+  "▼", "▽", "▽", "",   "",   "",  "⧩", "⧨", "",   "",
+  "◀", "◁", "◁", "",   "",   "",  "",   "",   "⧓",  "⋈",
+  "▶", "▷", "▷", "",   "",   "",  "",   "",   "⧒",  "⧑",
+  "＋", "×",  "∗",  "⚹",  "",   "",  "",   "",   "―", "|",
+  "◎", "⨁", "⨂", "⧈", "⊞",  "⊠", "",   "",   "",   "·",
 };
 
-#define MarkCharSize ((int) (sizeof(MarkChar) / sizeof(*MarkChar)))
+#define MarkCharNum ((int) (sizeof(MarkChar) / sizeof(*MarkChar)))
 
 struct lwidget {
   GtkWidget *w;
@@ -2078,7 +2078,7 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	getobj(d->obj[type], "y", row, 0, NULL, &y0);
 	getobj(d->obj[type], "type", row, 0, NULL, &mark);
 	getobj(d->obj[type], "size", row, 0, NULL, &size);
-	if (mark >= 0 && mark < MarkCharSize) {
+	if (mark >= 0 && mark < MarkCharNum) {
 	  char *mc = MarkChar[mark];
 	  snprintf(buf, sizeof(buf), _("%s%stype:%-2d size:%-5.2f"), mc, (mc[0]) ? " " : "", mark, size / 100.0);
 	} else {
