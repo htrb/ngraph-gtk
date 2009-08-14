@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.163 2009/08/14 10:10:26 hito Exp $
+ * $Id: x11view.c,v 1.164 2009/08/14 10:34:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -752,20 +752,22 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     delobj(obj, id);
   } else {
     GdkGC *dc;
+    int oid;
 
     UnFocus();
 
-    add_focus_obj(NgraphApp.Viewer.focusobj, obj, id);
+    getobj(obj, "oid", id, 0, NULL, &oid);
+    add_focus_obj(NgraphApp.Viewer.focusobj, obj, oid);
     d->allclear = FALSE;
     AddList(obj, inst);
     AddInvalidateRect(obj, inst);
+
     set_graph_modified();
-
-    dc = gdk_gc_new(NgraphApp.Viewer.win);
+    dc = gdk_gc_new(d->win);
     ShowFocusFrame(dc);
-    NgraphApp.Viewer.ShowFrame = TRUE;
+    d->ShowFrame = TRUE;
     g_object_unref(G_OBJECT(dc));
-
+    gtk_widget_grab_focus(d->Win);
     UpdateAll();
   }
   PaintLock = FALSE;
@@ -5034,7 +5036,6 @@ check_focused_obj(struct narray *focusobj, struct objlist *fobj, int oid)
     return CHECK_FOCUSED_OBJ_ERROR;
 
   num = arraynum(focusobj);
-
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(focusobj, i);
     if (focus == NULL)
@@ -5059,7 +5060,7 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   r = check_focused_obj(focusobj, obj, oid);
   if (r != CHECK_FOCUSED_OBJ_NOT_FOUND)
     return FALSE;
-    
+
   focus = (struct FocusObj *) memalloc(sizeof(struct FocusObj));
   if (! focus)
     return FALSE;
