@@ -7,6 +7,8 @@
 	"gtk_target_list_add_text_targets()" to add text target.
 	(drag_drop_cb): do nothing when "GlobalLock" is TRUE.
 	(drag_drop_cb): always call "gtk_drag_finish()".
+	(paste_cb): call "UpdateAll()" after call "ShowFocusFrame()".
+	(text_dropped): focus newly created text.
 
 2009-08-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

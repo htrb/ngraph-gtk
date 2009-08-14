@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.162 2009/08/14 06:34:31 hito Exp $
+ * $Id: x11view.c,v 1.163 2009/08/14 10:10:26 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -381,11 +381,11 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
     set_graph_modified();
     dc = gdk_gc_new(NgraphApp.Viewer.win);
     NgraphApp.Viewer.allclear = FALSE;
-    UpdateAll();
     ShowFocusFrame(dc);
     NgraphApp.Viewer.ShowFrame = TRUE;
     g_object_unref(G_OBJECT(dc));
     gtk_widget_grab_focus(NgraphApp.Viewer.Win);
+    UpdateAll();
   }
 }
 
@@ -751,10 +751,21 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   if ((r == IDDELETE) || (r == IDCANCEL)) {
     delobj(obj, id);
   } else {
+    GdkGC *dc;
+
+    UnFocus();
+
+    add_focus_obj(NgraphApp.Viewer.focusobj, obj, id);
     d->allclear = FALSE;
     AddList(obj, inst);
     AddInvalidateRect(obj, inst);
     set_graph_modified();
+
+    dc = gdk_gc_new(NgraphApp.Viewer.win);
+    ShowFocusFrame(dc);
+    NgraphApp.Viewer.ShowFrame = TRUE;
+    g_object_unref(G_OBJECT(dc));
+
     UpdateAll();
   }
   PaintLock = FALSE;
