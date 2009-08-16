@@ -83,7 +83,7 @@
 
 	* src/gtk/x11dialg.h (struct FitDialog): add member "func_label".
 
-	* src/gtk/x11file.c (FitDialogSetup): add eiuation label.
+	* src/gtk/x11file.c (FitDialogSetup): add equation label.
 	(FitDialogSetup): improve the placement of widgets.
 	(FitDialogSetup): maximum number of "d->dim" is 9.
 	(FitDialogSetup): maximum number of "d->div" is 65535.
