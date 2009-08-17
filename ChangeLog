@@ -1,9 +1,17 @@
 2009-08-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_widget.c (_create_spin_entry): fix argument of
+	"gtk_spin_button_set_digits()".
+
+	* src/gtk/x11dialg.c (get_style_string): add.
+	(SetStyleFromObjField): use "get_style_string()".
+
 	* src/gtk/x11lgnd.c (legend_list_set_val): don't display size for
 	mark object.
 	(legend_list_set_val): show mark size in "LEGEND_WIN_COL_WIDTH" column.
+	(legend_list_set_val): show some fileds in "LEGEND_WIN_COL_PROP" column.
 	(width_edited): edit "size" field for mark object.
+	(get_points): add.
 
 2009-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

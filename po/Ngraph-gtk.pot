@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ngraph-gtk 6.03.48.gtk-31\n"
+"Project-Id-Version: Ngraph-gtk 6.03.48.gtk-32\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-17 13:36+0900\n"
+"POT-Creation-Date: 2009-08-17 16:12+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1242,27 +1242,57 @@ msgstr ""
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2046
+#: src/gtk/x11lgnd.c:2045
 #, c-format
-msgid " arrow:%s"
+msgid "points:%-3d %s%s%s%s"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2060
-#, c-format
-msgid "points:%-3d%s"
+#: src/gtk/x11lgnd.c:2047 src/gtk/x11lgnd.c:2118
+msgid "style:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2067
-#, c-format
-msgid "w:%.2f h:%.2f"
+#: src/gtk/x11lgnd.c:2048 src/gtk/x11lgnd.c:2103 src/gtk/x11lgnd.c:2119
+msgid "custom"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2082
+#: src/gtk/x11lgnd.c:2074
+#, c-format
+msgid "arrow:%s"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:2081
+#, c-format
+msgid "interpolation:%s"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:2088
+#, c-format
+msgid "fill:%s"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:2100
+#, c-format
+msgid "w:%.2f h:%.2f  style:%s%s%s"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:2104
+msgid "  fill"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:2105
+msgid "  frame"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:2118
+msgid "fill"
+msgstr ""
+
+#: src/gtk/x11lgnd.c:2127
 #, c-format
 msgid "%s%stype:%-2d"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2084
+#: src/gtk/x11lgnd.c:2129
 #, c-format
 msgid "type:%-2d"
 msgstr ""
@@ -2456,4 +2486,16 @@ msgstr ""
 #: src/ogra.c:409
 #, c-format
 msgid "drawing %s (%.1f%%)"
+msgstr ""
+
+#: src/opolygon.c:47
+msgid "empty"
+msgstr ""
+
+#: src/opolygon.c:48
+msgid "even_odd_rule"
+msgstr ""
+
+#: src/opolygon.c:49
+msgid "winding_rule"
 msgstr ""
