@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.114 2009/08/12 07:12:50 hito Exp $
+ * $Id: x11file.c,v 1.115 2009/08/17 04:12:33 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1178,20 +1178,20 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   case FIT_TYPE_POLY:
     dim = combo_box_get_active(d->dim);
 
-    snprintf(buf, sizeof(buf), "Equation: <i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
+    snprintf(buf, sizeof(buf), "Equation: Y=<i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
     gtk_label_set_markup(GTK_LABEL(d->func_label), buf);
     set_fitdialog_sensitivity(d, type, through);
     break;
   case FIT_TYPE_POW:
-    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: <i>a·</i>X<i><sup>b</sup></i>");
+    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: Y=<i>a·</i>X<i><sup>b</sup></i>");
     set_fitdialog_sensitivity(d, type, through);
     break;
   case FIT_TYPE_EXP:
-    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: <i>e</i><sup><i>(a·</i>X<i>+b)</i></sup>");
+    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: Y=<i>e</i><sup><i>(a·</i>X<i>+b)</i></sup>");
     set_fitdialog_sensitivity(d, type, through);
     break;
   case FIT_TYPE_LOG:
-    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: <i>a·Ln(</i>X<i>)+b</i>");
+    gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: Y=<i>a·Ln(</i>X<i>)+b</i>");
     set_fitdialog_sensitivity(d, type, through);
     break;
   case FIT_TYPE_USER:
