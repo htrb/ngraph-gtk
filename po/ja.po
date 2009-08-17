@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-15 13:20+0900\n"
-"PO-Revision-Date: 2009-08-13 18:31+0900\n"
+"POT-Creation-Date: 2009-08-17 13:31+0900\n"
+"PO-Revision-Date: 2009-08-17 13:32+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1116,8 +1116,8 @@ msgid "object/property"
 msgstr "オブジェクト/プロパティ"
 
 #: src/gtk/x11lgnd.c:68
-msgid "lw/pt"
-msgstr "線幅/ポイント"
+msgid "lw/size"
+msgstr "線幅/サイズ"
 
 #: src/gtk/x11lgnd.c:107 src/ofile.c:120
 msgid "line"
@@ -2462,6 +2462,9 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#~ msgid "lw/pt"
+#~ msgstr "線幅/ポイント"
 
 #~ msgid "type:%-2d %s size:%-5.2f"
 #~ msgstr "タイプ:%-2d %s サイズ:%-5.2f"

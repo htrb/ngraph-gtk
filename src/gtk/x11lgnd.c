@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.55 2009/08/14 02:35:30 hito Exp $
+ * $Id: x11lgnd.c,v 1.56 2009/08/17 04:36:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -65,7 +65,7 @@ static n_list_store Llist[] = {
   {N_("object/property"), G_TYPE_STRING,  TRUE, FALSE, "property", FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("lw/pt"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("lw/size"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
   {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
 };
 
@@ -2026,7 +2026,7 @@ legend_list_must_rebuild(struct LegendWin *d)
 static void
 legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 {
-  int cx, x0, y0, x2, y2, mark, size, *points, w;
+  int cx, x0, y0, x2, y2, mark, *points, w;
   unsigned int i = 0;
   char *valstr, *text, *ex, buf[256], buf2[256];
   struct narray *array;
@@ -2077,12 +2077,11 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y", row, 0, NULL, &y0);
 	getobj(d->obj[type], "type", row, 0, NULL, &mark);
-	getobj(d->obj[type], "size", row, 0, NULL, &size);
 	if (mark >= 0 && mark < MarkCharNum) {
 	  char *mc = MarkChar[mark];
-	  snprintf(buf, sizeof(buf), _("%s%stype:%-2d size:%-5.2f"), mc, (mc[0]) ? " " : "", mark, size / 100.0);
+	  snprintf(buf, sizeof(buf), _("%s%stype:%-2d"), mc, (mc[0]) ? " " : "", mark);
 	} else {
-	  snprintf(buf, sizeof(buf), _("type:%-2d size:%-5.2f"), mark, size / 100.0);
+	  snprintf(buf, sizeof(buf), _("type:%-2d"), mark);
 	}
 	break;
       case LegendTypeText:
@@ -2120,6 +2119,9 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
       switch (type) {
       case LegendTypeText:
 	getobj(d->obj[type], "pt", row, 0, NULL, &w);
+	break;
+      case LegendTypeMark:
+	getobj(d->obj[type], "size", row, 0, NULL, &w);
 	break;
       default:
 	getobj(d->obj[type], "width", row, 0, NULL, &w);
@@ -2394,16 +2396,23 @@ width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
 
   if (ary[0] >= 0 && ary[0] < LEGENDNUM && ary[1] >= 0 && ary[1] <= d->legend[ary[0]]) {
     int w, prev;
-    struct objlist *obj, *textobj;
+    struct objlist *obj, *textobj, *markobj;
     char *field;
 
     obj = d->obj[ary[0]];
 
     textobj = chkobject("text");
-    if (obj == NULL || textobj == NULL)
+    markobj = chkobject("mark");
+    if (obj == NULL || textobj == NULL || markobj == NULL)
       goto End;
 
-    field = (obj == textobj) ? "pt" : "width";
+    if (obj == textobj) {
+      field = "pt";
+    } else if (obj == markobj) {
+      field = "size";
+    } else {
+      field = "width";
+    }
 
     w = nround(val * 100);
     getobj(obj, field, ary[1], 0, NULL, &prev);

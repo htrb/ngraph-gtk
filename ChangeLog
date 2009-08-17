@@ -1,3 +1,10 @@
+2009-08-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (legend_list_set_val): don't display size for
+	mark object.
+	(legend_list_set_val): show mark size in "LEGEND_WIN_COL_WIDTH" column.
+	(width_edited): edit "size" field for mark object.
+
 2009-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (DialogExecute): set "GlobalLock" as TRUE, save
