@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-17 13:36+0900\n"
-"PO-Revision-Date: 2009-08-17 13:38+0900\n"
+"POT-Creation-Date: 2009-08-17 16:03+0900\n"
+"PO-Revision-Date: 2009-08-17 16:04+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1246,27 +1246,57 @@ msgstr "テキスト %d"
 msgid "_Text:"
 msgstr "テキスト(_T):"
 
-#: src/gtk/x11lgnd.c:2046
+#: src/gtk/x11lgnd.c:2045
 #, c-format
-msgid " arrow:%s"
-msgstr " 矢印:%s"
+msgid "points:%-3d %s%s%s%s"
+msgstr "点:%-3d %s%s%s%s"
 
-#: src/gtk/x11lgnd.c:2060
+#: src/gtk/x11lgnd.c:2047 src/gtk/x11lgnd.c:2118
+msgid "style:"
+msgstr "線種:"
+
+#: src/gtk/x11lgnd.c:2048 src/gtk/x11lgnd.c:2103 src/gtk/x11lgnd.c:2119
+msgid "custom"
+msgstr "任意"
+
+#: src/gtk/x11lgnd.c:2074
 #, c-format
-msgid "points:%-3d%s"
-msgstr "点:%-3d%s"
+msgid "arrow:%s"
+msgstr "矢印:%s"
 
-#: src/gtk/x11lgnd.c:2067
+#: src/gtk/x11lgnd.c:2081
 #, c-format
-msgid "w:%.2f h:%.2f"
-msgstr "幅:%.2f 高さ:%.2f"
+msgid "interpolation:%s"
+msgstr "補完法:%s"
 
-#: src/gtk/x11lgnd.c:2082
+#: src/gtk/x11lgnd.c:2088
+#, c-format
+msgid "fill:%s"
+msgstr "塗りつぶし:%s"
+
+#: src/gtk/x11lgnd.c:2100
+#, c-format
+msgid "w:%.2f h:%.2f  style:%s%s%s"
+msgstr "幅:%.2f 高さ:%.2f  線種:%s%s%s"
+
+#: src/gtk/x11lgnd.c:2104
+msgid "  fill"
+msgstr "  塗りつぶし"
+
+#: src/gtk/x11lgnd.c:2105
+msgid "  frame"
+msgstr "  フレーム"
+
+#: src/gtk/x11lgnd.c:2118
+msgid "fill"
+msgstr "塗りつぶし"
+
+#: src/gtk/x11lgnd.c:2127
 #, c-format
 msgid "%s%stype:%-2d"
 msgstr "%s%sタイプ:%-2d"
 
-#: src/gtk/x11lgnd.c:2084
+#: src/gtk/x11lgnd.c:2129
 #, c-format
 msgid "type:%-2d"
 msgstr "タイプ:%-2d"
@@ -2462,6 +2492,18 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#: src/opolygon.c:47
+msgid "empty"
+msgstr "なし"
+
+#: src/opolygon.c:48
+msgid "even_odd_rule"
+msgstr "偶奇"
+
+#: src/opolygon.c:49
+msgid "winding_rule"
+msgstr "ワインディング"
 
 #~ msgid "type:%-2d size:%-5.2f"
 #~ msgstr "タイプ:%-2d サイズ:%-5.2f"
