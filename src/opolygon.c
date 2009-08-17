@@ -1,5 +1,5 @@
 /* 
- * $Id: opolygon.c,v 1.8 2009/06/03 09:00:48 hito Exp $
+ * $Id: opolygon.c,v 1.9 2009/08/17 07:09:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,6 +25,8 @@
 #include "config.h"
 #endif
 
+#include "common.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -42,9 +44,9 @@
 #define FALSE 0
 
 static char *polyfillmode[]={
-  "empty",
-  "even_odd_rule",
-  "winding_rule",
+  N_("empty"),
+  N_("even_odd_rule"),
+  N_("winding_rule"),
   NULL,
 };
 

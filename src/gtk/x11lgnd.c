@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.56 2009/08/17 04:36:28 hito Exp $
+ * $Id: x11lgnd.c,v 1.57 2009/08/17 07:09:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2024,12 +2024,40 @@ legend_list_must_rebuild(struct LegendWin *d)
 }
 
 static void
+get_points(char *buf, int len, struct objlist *obj, int id, int *x, int *y, int style, char *ex)
+{
+  int *points;
+  const char *str;
+  struct narray *array;
+
+  getobj(obj, "points", id, 0, NULL, &array);
+  points = (int *) arraydata(array);
+  if (arraynum(array) < 2) {
+    *x = 0;
+    *y = 0;
+  } else {
+    *x = points[0];
+    *y = points[1];
+  }
+
+  str = get_style_string(obj, id, "style");
+
+  snprintf(buf, len, _("points:%-3d %s%s%s%s"),
+	   arraynum(array) / 2,
+	   (style) ? _("style:") : "",
+	   (style) ? ((str) ? _(str) : _("custom")) : "",
+	   (style) ? "  " : "",
+	   CHK_STR(ex));
+}
+
+static void
 legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 {
-  int cx, x0, y0, x2, y2, mark, *points, w;
+  int cx, x0, y0, x2, y2, mark, w, frame;
   unsigned int i = 0;
   char *valstr, *text, *ex, buf[256], buf2[256];
-  struct narray *array;
+  char **enumlist;
+  const char *str;
 
   for (i = 0; i < LEGEND_WIN_COL_NUM; i++) {
     switch (i) {
@@ -2043,35 +2071,52 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
       switch (type) {
       case LegendTypeLine:
 	sgetobjfield(d->obj[type], row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
-	snprintf(buf2, sizeof(buf2), _(" arrow:%s"), _(valstr));
+	snprintf(buf2, sizeof(buf2), _("arrow:%s"), _(valstr));
 	memfree(valstr);
-	ex = buf2;
+	get_points(buf, sizeof(buf), d->obj[type], row, &x0, &y0, TRUE, buf2);
+	break;
       case LegendTypeCurve:
+	getobj(d->obj[type], "interpolation", row, 0, NULL, &w);
+	enumlist = (char **) chkobjarglist(d->obj[type], "interpolation");
+	snprintf(buf2, sizeof(buf2), _("interpolation:%s"), _(enumlist[w]));
+	get_points(buf, sizeof(buf), d->obj[type], row, &x0, &y0, TRUE, buf2);
+	break;
       case LegendTypePoly:
-	getobj(d->obj[type], "points", row, 0, NULL, &array);
-	points = (int *) arraydata(array);
-	if (arraynum(array) < 2) {
-	  x0 = 0;
-	  y0 = 0;
-	} else {
-	  x0 = points[0];
-	  y0 = points[1];
+	getobj(d->obj[type], "fill", row, 0, NULL, &w);
+	if (w) {
+	  enumlist = (char **) chkobjarglist(d->obj[type], "fill");
+	  snprintf(buf2, sizeof(buf2), _("fill:%s"), _(enumlist[w]));
 	}
-	snprintf(buf, sizeof(buf), _("points:%-3d%s"), arraynum(array) / 2, CHK_STR(ex));
+	get_points(buf, sizeof(buf), d->obj[type], row, &x0, &y0, w == 0, (w) ? buf2 : NULL);
 	break;
       case LegendTypeRect:
+	getobj(d->obj[type], "fill", row, 0, NULL, &w);
+	getobj(d->obj[type], "frame", row, 0, NULL, &frame);
+	str = get_style_string(d->obj[type], row, "style");
 	getobj(d->obj[type], "x1", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y1", row, 0, NULL, &y0);
 	getobj(d->obj[type], "x2", row, 0, NULL, &x2);
 	getobj(d->obj[type], "y2", row, 0, NULL, &y2);
-	snprintf(buf, sizeof(buf), _("w:%.2f h:%.2f"), abs(x0 - x2) / 100.0, abs(y0 - y2) / 100.0);
+	snprintf(buf, sizeof(buf), _("w:%.2f h:%.2f  style:%s%s%s"),
+		 abs(x0 - x2) / 100.0,
+		 abs(y0 - y2) / 100.0,
+		 (str) ? _(str) : _("custom"),
+		 (w) ? _("  fill") : "",
+		 (frame) ? _("  frame") : ""
+		 );
 	break;
       case LegendTypeArc:
+	getobj(d->obj[type], "fill", row, 0, NULL, &w);
+	str = get_style_string(d->obj[type], row, "style");
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);
 	getobj(d->obj[type], "y", row, 0, NULL, &y0);
 	getobj(d->obj[type], "rx", row, 0, NULL, &x2);
 	getobj(d->obj[type], "ry", row, 0, NULL, &y2);
-	snprintf(buf, sizeof(buf), "rx:%.2f ry:%.2f", x2 / 100.0, y2 / 100.0);
+	snprintf(buf, sizeof(buf), "rx:%.2f ry:%.2f  %s%s",
+		 x2 / 100.0,
+		 y2 / 100.0,
+		 (w) ? _("fill") : _("style:"),
+		 (w) ? "" : ((str) ? _(str) : _("custom")));
 	break;
       case LegendTypeMark:
 	getobj(d->obj[type], "x", row, 0, NULL, &x0);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.42 2009/08/12 02:58:17 hito Exp $
+ * $Id: x11dialg.c,v 1.43 2009/08/17 07:09:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -938,16 +938,42 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return 0;
 }
 
+const char *
+get_style_string(struct objlist *obj, int id, char *field)
+{
+  unsigned int j;
+  int i;
+  struct narray *array;
+  int stylenum;
+  int *style, a;
+  char *s;
+
+  getobj(obj, field, id, 0, NULL, &array);
+  stylenum = arraynum(array);
+  style = (int *) arraydata(array);
+  for (j = 0; j < CLINESTYLE; j++) {
+    if (stylenum == FwLineStyle[j].num) {
+      s = FwLineStyle[j].list;
+      for (i = 0; i < FwLineStyle[j].num; i++) {
+	a = strtol(s, &s, 10);
+	if (style[i] != a)
+	  break;
+      }
+      if (i == FwLineStyle[j].num)
+	return FwLineStyle[j].name;
+    }
+  }
+
+  return NULL;
+}
+
 void
 SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   unsigned int j;
-  int i;
   GtkEntry *entry;
-  struct narray *array;
-  int stylenum;
-  int *style, a, count;
-  char *s;
+  int count;
+  const char *s;
 
   if (w == NULL)
     return;
@@ -961,26 +987,12 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     }
   }
 
-  getobj(Obj, field, Id, 0, NULL, &array);
-  stylenum = arraynum(array);
-  style = (int *) arraydata(array);
-  for (j = 0; j < CLINESTYLE; j++) {
-    if (stylenum == FwLineStyle[j].num) {
-      s = FwLineStyle[j].list;
-      for (i = 0; i < FwLineStyle[j].num; i++) {
-	a = strtol(s, &s, 10);
-	if (style[i] != a)
-	  break;
-      }
-      if (i == FwLineStyle[j].num)
-	goto match;
-    }
+  s = get_style_string(Obj, Id, field);
+  if (s) {
+    gtk_entry_set_text(entry, _(s));
+  } else {
+    SetTextFromObjPoints(GTK_WIDGET(entry), Obj, Id, field);
   }
-  SetTextFromObjPoints(GTK_WIDGET(entry), Obj, Id, field);
-  return;
-
-match:
-  gtk_entry_set_text(entry, _(FwLineStyle[j].name));
 }
 
 int 

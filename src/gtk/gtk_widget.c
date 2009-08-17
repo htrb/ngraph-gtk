@@ -289,7 +289,7 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   gtk_spin_button_set_increments(GTK_SPIN_BUTTON(w), inc, page);
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
   gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), FALSE);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), (numeric) ? 2 : 0);
+  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), (numeric) ? 0 : 2);
  
   if (set_default_size)
     gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
