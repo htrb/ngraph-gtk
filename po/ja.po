@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-08-17 13:31+0900\n"
-"PO-Revision-Date: 2009-08-17 13:32+0900\n"
+"POT-Creation-Date: 2009-08-17 13:36+0900\n"
+"PO-Revision-Date: 2009-08-17 13:38+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1261,15 +1261,15 @@ msgstr "点:%-3d%s"
 msgid "w:%.2f h:%.2f"
 msgstr "幅:%.2f 高さ:%.2f"
 
-#: src/gtk/x11lgnd.c:2083
+#: src/gtk/x11lgnd.c:2082
 #, c-format
-msgid "%s%stype:%-2d size:%-5.2f"
-msgstr "%s%sタイプ:%-2d サイズ:%-5.2f"
+msgid "%s%stype:%-2d"
+msgstr "%s%sタイプ:%-2d"
 
-#: src/gtk/x11lgnd.c:2085
+#: src/gtk/x11lgnd.c:2084
 #, c-format
-msgid "type:%-2d size:%-5.2f"
-msgstr "タイプ:%-2d サイズ:%-5.2f"
+msgid "type:%-2d"
+msgstr "タイプ:%-2d"
 
 #: src/gtk/x11lgndx.c:340
 #, c-format
@@ -2462,6 +2462,9 @@ msgstr "実縦棒"
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr "%s 描画中 (%.1f%%)"
+
+#~ msgid "type:%-2d size:%-5.2f"
+#~ msgstr "タイプ:%-2d サイズ:%-5.2f"
 
 #~ msgid "lw/pt"
 #~ msgstr "線幅/ポイント"
