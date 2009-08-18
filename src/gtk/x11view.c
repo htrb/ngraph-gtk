@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.164 2009/08/14 10:34:41 hito Exp $
+ * $Id: x11view.c,v 1.165 2009/08/18 10:52:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -864,14 +864,15 @@ static void
 eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
 {
   GtkTreeView *tv;
-  GtkClipboard *clip;
+  GtkClipboard *clip1, *clip2;
   GtkTreeSelection *sel;
   GtkTreeIter iter;
   GtkTreeModel *model;
   GList *list, *ptr;
   char buf[1024], *str;
 
-  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+  clip1 = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
+  clip2 = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
 
   tv = GTK_TREE_VIEW(user_data);
   sel = gtk_tree_view_get_selection(tv);
@@ -904,7 +905,8 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
       return;
   }
 
-  gtk_clipboard_set_text(clip, str, -1);
+  gtk_clipboard_set_text(clip1, str, -1);
+  gtk_clipboard_set_text(clip2, str, -1);
   memfree(str);
 
   g_list_foreach(list, free_tree_path_cb, NULL);

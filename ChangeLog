@@ -1,3 +1,8 @@
+2009-08-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (eval_dialog_copy_selected): save text to not
+	only "CLIPBOARD" but "PRIMARY".
+
 2009-08-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (_create_spin_entry): fix argument of
