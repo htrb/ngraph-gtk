@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.170 2009/08/19 06:59:53 hito Exp $
+ * $Id: x11view.c,v 1.171 2009/08/19 07:11:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2832,7 +2832,8 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
     }
   }
 
-  MessageBox(TopLevel, _("Data points are moved."), "Confirm", MB_OK);
+  if (selnum > 0)
+    MessageBox(TopLevel, _("Data points are moved."), "Confirm", MB_OK);
 
  ErrEnd:
   move_data_cancel(d, FALSE);

@@ -1,12 +1,16 @@
 2009-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11view.c (drag_drop_cb): check the drop is success or not.
+	* src/gtk/x11view.c (drag_drop_cb): check the drop is success or
+	not.
 	(text_dropped): use "CheckGrid()".
 	(enum EvalDialogColType, eval_dialog_set_parent_cal)
 	(mask_selected_data): add.
 	(EvalDialogSetupItem, eval_dialog_copy_selected)
-	(EvalDialogSetup, select_data_cb): use "GtkTreeStore" instead of "GtkListStore".
+	(EvalDialogSetup, select_data_cb): use "GtkTreeStore" instead of
+	"GtkListStore".
 	(Evaluate): use "mask_selected_data".
+	(mouse_down_move_data): don't return but "goto ErrEnd;" when
+	"fileobj" is NULL.
 
 2009-08-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
