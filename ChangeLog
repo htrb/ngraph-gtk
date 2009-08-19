@@ -1,3 +1,8 @@
+2009-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (drag_drop_cb): check the drop is success or not.
+	(text_dropped): use "CheckGrid()".
+
 2009-08-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (eval_dialog_copy_selected): save text to not

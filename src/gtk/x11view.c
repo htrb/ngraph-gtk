@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.166 2009/08/19 01:32:27 hito Exp $
+ * $Id: x11view.c,v 1.167 2009/08/19 02:17:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -157,6 +157,7 @@ static void AddInvalidateRect(struct objlist *obj, char *inst);
 static void AddList(struct objlist *obj, char *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
+static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom);
 
 
 static int
@@ -733,11 +734,10 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   }
 
   inst = chkobjinst(obj, id);
-  x1 = (mxp2d(x + d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom / 100;
-  y1 = (mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom / 100;
+  x1 = (mxp2d(x + d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
+  y1 = (mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
 
-  x1 *= 100;
-  y1 *= 100;
+  CheckGrid(FALSE, 0, &x1, &y1, NULL);
 
   _putobj(obj, "x", inst, &x1);
   _putobj(obj, "y", inst, &y1);
@@ -779,9 +779,10 @@ static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
   gchar **filenames, *fname, *str;
-  int num, r;
+  int num, r, success;
   struct Viewer *d;
 
+  success = FALSE;
   if (GlobalLock)
     goto End;;
 
@@ -791,8 +792,9 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
   case DROP_TYPE_TEXT:
     str = (gchar *) gtk_selection_data_get_text(data);
     if (str) {
-      text_dropped(str, x, y, d);
+      r = text_dropped(str, x, y, d);
       g_free(str);
+      success = (! r);
     }
     break;
   case DROP_TYPE_FILE:
@@ -807,8 +809,10 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
       g_free(fname);
     }
 
-    if (r) {
-      data_dropped(filenames, num, FILE_TYPE_AUTO);
+    if (r && data_dropped(filenames, num, FILE_TYPE_AUTO) == 0) {
+      success = TRUE;
+    } else {
+      success = TRUE;
     }
 
     g_strfreev(filenames);
@@ -816,7 +820,7 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
   }
 
  End:
-  gtk_drag_finish(context, TRUE, FALSE, time);
+  gtk_drag_finish(context, success, FALSE, time);
 }
 
 
