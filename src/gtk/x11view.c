@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.168 2009/08/19 06:44:16 hito Exp $
+ * $Id: x11view.c,v 1.169 2009/08/19 06:59:21 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2737,7 +2737,7 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
 
   fileobj = chkobject("file");
   if (fileobj == NULL)
-    return;
+      goto ErrEnd;
 
   selnum = arraynum(&SelList);
 
