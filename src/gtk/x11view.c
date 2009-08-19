@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.167 2009/08/19 02:17:23 hito Exp $
+ * $Id: x11view.c,v 1.168 2009/08/19 06:44:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -106,6 +106,14 @@ struct viewer_popup
 #define Button3 3
 #define Button4 4
 #define Button5 5
+
+enum EvalDialogColType {
+  EVAL_DIALOG_COL_TYPE_ID,
+  EVAL_DIALOG_COL_TYPE_LN,
+  EVAL_DIALOG_COL_TYPE_X,
+  EVAL_DIALOG_COL_TYPE_Y,
+  EVAL_DIALOG_COL_TYPE_N,
+};
 
 #define POINT_LENGTH 5
 #define FOCUS_FRAME_OFST 5
@@ -844,24 +852,51 @@ init_dnd(struct Viewer *d)
 }
 
 static void
+eval_dialog_set_parent_cal(GtkWidget *w, GtkTreeIter *iter, int id, int n)
+{
+  tree_store_set_int(w, iter, EVAL_DIALOG_COL_TYPE_ID, id);
+  tree_store_set_int(w, iter, EVAL_DIALOG_COL_TYPE_LN, n);
+  tree_store_set_int(w, iter, EVAL_DIALOG_COL_TYPE_N, -1);
+}
+
+static void
 EvalDialogSetupItem(GtkWidget *w, struct EvalDialog *d)
 {
-  int i;
-  GtkTreeIter iter;
+  int i, id, n;
+  GtkTreeIter iter, parent;
   char buf[64];
 
-  list_store_clear(d->list);
+  tree_store_clear(d->list);
+
+  id = -1;
   for (i = 0; i < d->Num; i++) {
-    list_store_append(d->list, &iter);
-    list_store_set_int(d->list, &iter, 0, EvalList[i].id);
-    list_store_set_int(d->list, &iter, 1, EvalList[i].line);
+    if (id != EvalList[i].id) {
+      if (id >= 0) {
+	eval_dialog_set_parent_cal(d->list, &parent, id, n);
+      }
+      tree_store_append(d->list, &parent, NULL);
+      id = EvalList[i].id;
+      n = 0;
+    }
+
+    tree_store_append(d->list, &iter, &parent);
+    tree_store_set_int(d->list, &iter, EVAL_DIALOG_COL_TYPE_ID, EvalList[i].id);
+    tree_store_set_int(d->list, &iter, EVAL_DIALOG_COL_TYPE_LN, EvalList[i].line);
 
     snprintf(buf, sizeof(buf), "%+.15e", EvalList[i].x);
-    list_store_set_string(d->list, &iter, 2, buf);
+    tree_store_set_string(d->list, &iter, EVAL_DIALOG_COL_TYPE_X, buf);
 
     snprintf(buf, sizeof(buf), "%+.15e", EvalList[i].y);
-    list_store_set_string(d->list, &iter, 3, buf);
+    tree_store_set_string(d->list, &iter, EVAL_DIALOG_COL_TYPE_Y, buf);
+
+    tree_store_set_int(d->list, &iter, EVAL_DIALOG_COL_TYPE_N, i);
+
+    n++;
   }
+
+  eval_dialog_set_parent_cal(d->list, &parent, id, n);
+
+  gtk_tree_view_expand_all(GTK_TREE_VIEW(d->list));
 }
 
 static void
@@ -892,25 +927,39 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
     if (! found)
       continue;
 
-    gtk_tree_model_get(model, &iter, 0, &id, 1, &ln, 2, &x, 3, &y, -1);
+    if (gtk_tree_path_get_depth(ptr->data) < 2) {
+      gtk_tree_model_get(model, &iter,
+			 EVAL_DIALOG_COL_TYPE_ID, &id,
+			 EVAL_DIALOG_COL_TYPE_LN, &ln,
+			 -1);
+      snprintf(buf, sizeof(buf), "%d %d\n", id, ln);
+    } else {
+      gtk_tree_model_get(model, &iter,
+			 EVAL_DIALOG_COL_TYPE_ID, &id,
+			 EVAL_DIALOG_COL_TYPE_LN, &ln,
+			 EVAL_DIALOG_COL_TYPE_X,  &x,
+			 EVAL_DIALOG_COL_TYPE_Y,  &y,
+			 -1);
 
-    if (x && y) {
-      snprintf(buf, sizeof(buf), "%d %d %s %s\n", id, ln, x, y);
+      if (x && y) {
+	snprintf(buf, sizeof(buf), "%d %d %s %s\n", id, ln, x, y);
+      }
+
+      g_free(x);
+      g_free(y);
     }
-
-    g_free(x);
-    g_free(y);
-
     str = nstrcat(str, buf);
     if (str == NULL)
       return;
   }
 
-  clip = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
-  gtk_clipboard_set_text(clip, str, -1);
+  if (str[0] != '\0') {
+    clip = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
+    gtk_clipboard_set_text(clip, str, -1);
 
-  clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-  gtk_clipboard_set_text(clip, str, -1);
+    clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+    gtk_clipboard_set_text(clip, str, -1);
+  }
 
   memfree(str);
 
@@ -939,10 +988,11 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkTreeSelection *sel;
   struct EvalDialog *d;
   n_list_store list[] = {
-    {"#",           G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
-    {_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
-    {"X",           G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-    {"Y",           G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {"#",           G_TYPE_INT,    TRUE,  FALSE, NULL, FALSE},
+    {_("Line No."), G_TYPE_INT,    TRUE,  FALSE, NULL, FALSE},
+    {"X",           G_TYPE_STRING, TRUE,  FALSE, NULL, FALSE},
+    {"Y",           G_TYPE_STRING, TRUE,  FALSE, NULL, FALSE},
+    {"N",           G_TYPE_INT,    FALSE, FALSE, NULL, FALSE},
   };
 
 
@@ -954,8 +1004,8 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 			   NULL);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+    w = tree_store_create(sizeof(list) / sizeof(*list), list);
+    tree_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
     d->list = w;
     gtk_container_add(GTK_CONTAINER(swin), w);
 
@@ -965,7 +1015,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
-    g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
+    g_signal_connect(w, "clicked", G_CALLBACK(tree_store_select_all_cb), d->list);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
     w = gtk_button_new_from_stock(GTK_STOCK_COPY);
@@ -989,13 +1039,18 @@ static void
 select_data_cb(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
 {
   struct EvalDialog *d;
-  int *ptr, a;
+  int a;
+
+  a = gtk_tree_path_get_depth(path);
+  if (a < 2)
+    return;
 
   d = (struct EvalDialog *) data;
 
-  ptr = gtk_tree_path_get_indices(path);
-  a = ptr[0];
-  arrayadd(d->sel, &a);
+  gtk_tree_model_get(model, iter, EVAL_DIALOG_COL_TYPE_N, &a, -1);
+  if (a >= 0) {
+    arrayadd(d->sel, &a);
+  }
 }
 
 static void
@@ -1350,6 +1405,41 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
 }
 
 static void
+mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
+{
+  int masknum, i, j, sel;
+  struct narray *mask;
+
+  for (i = 0; i < selnum; i++) {
+    sel = *(int *) arraynget(sel_list, i);
+    getobj(fileobj, "mask", EvalList[sel].id, 0, NULL, &mask);
+
+    if (mask == NULL) {
+      mask = arraynew(sizeof(int));
+      putobj(fileobj, "mask", EvalList[sel].id, mask);
+    }
+
+    masknum = arraynum(mask);
+
+    if (masknum == 0 || (* (int *) arraynget(mask, masknum - 1)) < EvalList[sel].line) {
+      arrayadd(mask, &(EvalList[sel].line));
+      exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
+      set_graph_modified();
+    } else if ((* (int *) arraynget(mask, 0)) > EvalList[sel].line) {
+      arrayins(mask, &(EvalList[sel].line), 0);
+      exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
+      set_graph_modified();
+    } else {
+      if (bsearch_int(arraydata(mask), masknum, EvalList[sel].line, &j) == 0) {
+	arrayins(mask, &(EvalList[sel].line), j);
+	exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
+	set_graph_modified();
+      }
+    }
+  }
+}
+
+static void
 Evaluate(int x1, int y1, int x2, int y2, int err)
 {
   struct objlist *fileobj;
@@ -1368,9 +1458,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
   double line, dx, dy;
   char mes[256];
   int ret;
-  int selnum, sel;
-  int masknum;
-  struct narray *mask;
+  int selnum;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
@@ -1443,33 +1531,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
     selnum = arraynum(&SelList);
 
     if (ret == IDEVMASK) {
-      for (i = 0; i < selnum; i++) {
-	sel = *(int *) arraynget(&SelList, i);
-	getobj(fileobj, "mask", EvalList[sel].id, 0, NULL, &mask);
-
-	if (mask == NULL) {
-	  mask = arraynew(sizeof(int));
-	  putobj(fileobj, "mask", EvalList[sel].id, mask);
-	}
-
-	masknum = arraynum(mask);
-
-	if (masknum == 0 || (* (int *) arraynget(mask, masknum - 1)) < EvalList[sel].line) {
-	  arrayadd(mask, &(EvalList[sel].line));
-	  exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
-	  set_graph_modified();
-	} else if ((* (int *) arraynget(mask, 0)) > EvalList[sel].line) {
-	  arrayins(mask, &(EvalList[sel].line), 0);
-	  exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
-	  set_graph_modified();
-	} else {
-	  if (bsearch_int(arraydata(mask), masknum, EvalList[sel].line, &j) == 0) {
-	    arrayins(mask, &(EvalList[sel].line), j);
-	    exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
-	    set_graph_modified();
-	  }
-	}
-      }
+      mask_selected_data(fileobj, selnum, &SelList);
       arraydel(&SelList);
     } else if ((ret == IDEVMOVE) && (selnum > 0)) {
       SetCursor(GDK_TCROSS);

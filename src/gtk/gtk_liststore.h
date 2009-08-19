@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.h,v 1.10 2009/04/27 06:51:03 hito Exp $
+ * $Id: gtk_liststore.h,v 1.11 2009/08/19 06:44:16 hito Exp $
  */
 
 #ifndef _GTK_LISTSTORE_HEADER
@@ -79,4 +79,7 @@ void tree_store_selected_toggle_expand(GtkWidget *w);
 #define tree_store_get_selected_iter list_store_get_selected_iter
 #define tree_store_set_selection_mode list_store_set_selection_mode
 #define tree_store_path_get_string list_store_path_get_string
+#define tree_store_set_sort_all list_store_set_sort_all
+#define tree_store_set_sort_column list_store_set_sort_column
+#define tree_store_select_all_cb list_store_select_all_cb
 #endif
