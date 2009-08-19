@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.115 2009/08/17 04:12:33 hito Exp $
+ * $Id: x11file.c,v 1.116 2009/08/19 08:32:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3962,6 +3962,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
 		 -1, -1, NULL, local);
   if (ggc < 0) {
     _GRAclose(ggc);
+    g_object_unref(G_OBJECT(pix));
     return NULL;
   }
   GRAview(ggc, 0, 0, width, height, 0);

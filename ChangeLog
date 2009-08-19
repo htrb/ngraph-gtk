@@ -1,5 +1,8 @@
 2009-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (draw_type_pixbuf): call "g_object_unref()"
+	for "pix" when "ggc" is lesser than 0.
+
 	* src/gtk/x11view.c (drag_drop_cb): check the drop is success or
 	not.
 	(text_dropped): use "CheckGrid()".
