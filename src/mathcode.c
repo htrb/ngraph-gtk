@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.9 2009/08/13 08:52:00 hito Exp $
+ * $Id: mathcode.c,v 1.10 2009/09/05 02:00:25 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -590,7 +590,7 @@ mathexpand(int pre,int *oppo,int *numpo,int *ifpo,int *forpo,
           switch (opbuf[*oppo]) {
           case '!': 
             if ((numbuf[*numpo]-(int )numbuf[*numpo]!=0)
-            || (numbuf[*numpo]>69) || (numbuf[*numpo]<0)) 
+            || (numbuf[*numpo]>169) || (numbuf[*numpo]<0)) 
               numstat[*numpo]=MERR;
             else {
               x=1;

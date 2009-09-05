@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.50 2009/08/07 02:52:41 hito Exp $
+ * $Id: x11commn.c,v 1.51 2009/09/05 02:00:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -927,12 +927,47 @@ check_overwrite(GtkWidget *parent, const char *filename)
   return r != IDYES;
 }
 
+static int
+get_save_opt(int *sdata, int *smerge, int *path)
+{
+  int ret, fnum, mnum, i;
+  struct objlist *fobj, *mobj;
+
+  *path = SAVE_PATH_UNCHANGE;
+  *sdata = FALSE;
+  *smerge = FALSE;
+
+  fobj = chkobject("file");
+  mobj = chkobject("merge");
+
+  fnum = (fobj) ? chkobjlastinst(fobj) : -1;
+  mnum = (mobj) ? chkobjlastinst(mobj) : -1;
+
+  if (fnum < 0 && mnum < 0)
+    return TRUE;
+
+  SaveDialog(&DlgSave, sdata, smerge);
+  ret = DialogExecute(TopLevel, &DlgSave);
+  if (ret != IDOK)
+    return FALSE;
+
+  *path = DlgSave.Path;
+  for (i = 0; i <= fnum; i++) {
+    putobj(fobj, "save_path", i, path);
+  }
+
+  for (i = 0; i <= mnum; i++) {
+    putobj(mobj, "save_path", i, path);
+  }
+
+  return TRUE;
+}
+
 int
 GraphSave(int overwrite)
 {
   char mes[256];
-  int i, path;
-  struct objlist *obj;
+  int path;
   int sdata, smerge;
   int ret;
   char *ext;
@@ -974,17 +1009,7 @@ GraphSave(int overwrite)
       ErrorMessage();
     }
 
-    SaveDialog(&DlgSave, &sdata, &smerge);
-    if ((ret = DialogExecute(TopLevel, &DlgSave)) == IDOK) {
-      path = DlgSave.Path;
-      if ((obj = chkobject("file")) != NULL) {
-	for (i = 0; i <= chkobjlastinst(obj); i++)
-	  putobj(obj, "save_path", i, &path);
-      }
-      if ((obj = chkobject("merge")) != NULL) {
-	for (i = 0; i <= chkobjlastinst(obj); i++)
-	  putobj(obj, "save_path", i, &path);
-      }
+    if (get_save_opt(&sdata, &smerge, &path)) {
       snprintf(mes, sizeof(mes), _("Saving `%.128s'."), file);
       SetStatusBar(mes);
       if(SaveDrawrable(file, sdata, smerge)) {

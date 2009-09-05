@@ -1,3 +1,13 @@
+2009-09-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/mathcode.c (mathexpand): maximum value of the operand for
+	operator '!' is 169 (not 69).
+
+2009-08-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (get_save_opt): add.
+	(GraphSave): use "get_save_opt()".
+
 2009-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (draw_type_pixbuf): call "g_object_unref()"
