@@ -15,8 +15,6 @@
 
 @SET_MAKE@
 
-
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -36,8 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-pkglib_PROGRAMS = fft$(EXEEXT)
-subdir = addin
+subdir = src/math
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -55,37 +52,17 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(pkglibdir)" \
-	"$(DESTDIR)$(pkglibdir)"
-PROGRAMS = $(pkglib_PROGRAMS)
-am_fft_OBJECTS = fft-fft.$(OBJEXT)
-fft_OBJECTS = $(am_fft_OBJECTS)
-fft_LDADD = $(LDADD)
-fft_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(fft_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-SCRIPTS = $(pkglib_SCRIPTS)
+LTLIBRARIES = $(noinst_LTLIBRARIES)
+libmath_la_LIBADD =
+am_libmath_la_OBJECTS = libmath_la-math_function.lo \
+	libmath_la-math_operator.lo libmath_la-math_constant.lo \
+	libmath_la-math_expression.lo libmath_la-math_parser.lo \
+	libmath_la-math_basic_function.lo libmath_la-math_equation.lo \
+	libmath_la-math_scanner.lo
+libmath_la_OBJECTS = $(am_libmath_la_OBJECTS)
+libmath_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libmath_la_CFLAGS) \
+	$(CFLAGS) $(libmath_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -99,9 +76,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(fft_SOURCES)
-DIST_SOURCES = $(fft_SOURCES)
-DATA = $(pkglib_DATA)
+SOURCES = $(libmath_la_SOURCES)
+DIST_SOURCES = $(libmath_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -245,13 +221,18 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-pkglib_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
-		math.nsc text-in.nsc cal.nsc
+noinst_LTLIBRARIES = libmath.la
+libmath_la_SOURCES = math_function.c math_function.h math_operator.c	\
+	math_operator.h math_constant.c math_constant.h			\
+	math_expression.c math_parser.c math_scanner.h			\
+	parse_bin_expression.h math_basic_function.c math_equation.c	\
+	math_expression.h math_parser.h math_equation.h math_scanner.c
 
-pkglib_SCRIPTS = calc.tcl fft.tcl fitrslt.tcl legend.tcl
-EXTRA_DIST = ${pkglib_DATA} ${pkglib_SCRIPTS} fft.nsc.in
-fft_SOURCES = fft.c
-fft_CFLAGS = -D_FORTIFY_SOURCE
+EXTRA_DIST = math_operator.h.in math_operator.rb math_constant.h.in	\
+	math_constant.rb math_function.h.in math_function.rb
+
+libmath_la_LDFLAGS = -static
+libmath_la_CFLAGS = -I.. -D_FORTIFY_SOURCE
 all: all-am
 
 .SUFFIXES:
@@ -265,9 +246,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu addin/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/math/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu addin/Makefile
+	  $(AUTOMAKE) --gnu src/math/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -286,86 +267,17 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-pkglibPROGRAMS: $(pkglib_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	test -z "$(pkglibdir)" || $(MKDIR_P) "$(DESTDIR)$(pkglibdir)"
-	@list='$(pkglib_PROGRAMS)'; test -n "$(pkglibdir)" || list=; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p || test -f $$p1; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(pkglibdir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(pkglibdir)$$dir" || exit $$?; \
-	    } \
-	; done
 
-uninstall-pkglibPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(pkglib_PROGRAMS)'; test -n "$(pkglibdir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(pkglibdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(pkglibdir)" && rm -f $$files
-
-clean-pkglibPROGRAMS:
-	@list='$(pkglib_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-fft$(EXEEXT): $(fft_OBJECTS) $(fft_DEPENDENCIES) 
-	@rm -f fft$(EXEEXT)
-	$(fft_LINK) $(fft_OBJECTS) $(fft_LDADD) $(LIBS)
-install-pkglibSCRIPTS: $(pkglib_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	test -z "$(pkglibdir)" || $(MKDIR_P) "$(DESTDIR)$(pkglibdir)"
-	@list='$(pkglib_SCRIPTS)'; test -n "$(pkglibdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(pkglibdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(pkglibdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-pkglibSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(pkglib_SCRIPTS)'; test -n "$(pkglibdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(pkglibdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(pkglibdir)" && rm -f $$files
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
+libmath.la: $(libmath_la_OBJECTS) $(libmath_la_DEPENDENCIES) 
+	$(libmath_la_LINK)  $(libmath_la_OBJECTS) $(libmath_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -373,7 +285,14 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fft-fft.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_basic_function.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_constant.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_equation.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_expression.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_function.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_operator.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_scanner.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -396,45 +315,67 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-fft-fft.o: fft.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fft_CFLAGS) $(CFLAGS) -MT fft-fft.o -MD -MP -MF $(DEPDIR)/fft-fft.Tpo -c -o fft-fft.o `test -f 'fft.c' || echo '$(srcdir)/'`fft.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fft-fft.Tpo $(DEPDIR)/fft-fft.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fft.c' object='fft-fft.o' libtool=no @AMDEPBACKSLASH@
+libmath_la-math_function.lo: math_function.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_function.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_function.Tpo -c -o libmath_la-math_function.lo `test -f 'math_function.c' || echo '$(srcdir)/'`math_function.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_function.Tpo $(DEPDIR)/libmath_la-math_function.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_function.c' object='libmath_la-math_function.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fft_CFLAGS) $(CFLAGS) -c -o fft-fft.o `test -f 'fft.c' || echo '$(srcdir)/'`fft.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_function.lo `test -f 'math_function.c' || echo '$(srcdir)/'`math_function.c
 
-fft-fft.obj: fft.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fft_CFLAGS) $(CFLAGS) -MT fft-fft.obj -MD -MP -MF $(DEPDIR)/fft-fft.Tpo -c -o fft-fft.obj `if test -f 'fft.c'; then $(CYGPATH_W) 'fft.c'; else $(CYGPATH_W) '$(srcdir)/fft.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fft-fft.Tpo $(DEPDIR)/fft-fft.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fft.c' object='fft-fft.obj' libtool=no @AMDEPBACKSLASH@
+libmath_la-math_operator.lo: math_operator.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_operator.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_operator.Tpo -c -o libmath_la-math_operator.lo `test -f 'math_operator.c' || echo '$(srcdir)/'`math_operator.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_operator.Tpo $(DEPDIR)/libmath_la-math_operator.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_operator.c' object='libmath_la-math_operator.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fft_CFLAGS) $(CFLAGS) -c -o fft-fft.obj `if test -f 'fft.c'; then $(CYGPATH_W) 'fft.c'; else $(CYGPATH_W) '$(srcdir)/fft.c'; fi`
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_operator.lo `test -f 'math_operator.c' || echo '$(srcdir)/'`math_operator.c
+
+libmath_la-math_constant.lo: math_constant.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_constant.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_constant.Tpo -c -o libmath_la-math_constant.lo `test -f 'math_constant.c' || echo '$(srcdir)/'`math_constant.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_constant.Tpo $(DEPDIR)/libmath_la-math_constant.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_constant.c' object='libmath_la-math_constant.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_constant.lo `test -f 'math_constant.c' || echo '$(srcdir)/'`math_constant.c
+
+libmath_la-math_expression.lo: math_expression.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_expression.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_expression.Tpo -c -o libmath_la-math_expression.lo `test -f 'math_expression.c' || echo '$(srcdir)/'`math_expression.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_expression.Tpo $(DEPDIR)/libmath_la-math_expression.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_expression.c' object='libmath_la-math_expression.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_expression.lo `test -f 'math_expression.c' || echo '$(srcdir)/'`math_expression.c
+
+libmath_la-math_parser.lo: math_parser.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_parser.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_parser.Tpo -c -o libmath_la-math_parser.lo `test -f 'math_parser.c' || echo '$(srcdir)/'`math_parser.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_parser.Tpo $(DEPDIR)/libmath_la-math_parser.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_parser.c' object='libmath_la-math_parser.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_parser.lo `test -f 'math_parser.c' || echo '$(srcdir)/'`math_parser.c
+
+libmath_la-math_basic_function.lo: math_basic_function.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_basic_function.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_basic_function.Tpo -c -o libmath_la-math_basic_function.lo `test -f 'math_basic_function.c' || echo '$(srcdir)/'`math_basic_function.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_basic_function.Tpo $(DEPDIR)/libmath_la-math_basic_function.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_basic_function.c' object='libmath_la-math_basic_function.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_basic_function.lo `test -f 'math_basic_function.c' || echo '$(srcdir)/'`math_basic_function.c
+
+libmath_la-math_equation.lo: math_equation.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_equation.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_equation.Tpo -c -o libmath_la-math_equation.lo `test -f 'math_equation.c' || echo '$(srcdir)/'`math_equation.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_equation.Tpo $(DEPDIR)/libmath_la-math_equation.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_equation.c' object='libmath_la-math_equation.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_equation.lo `test -f 'math_equation.c' || echo '$(srcdir)/'`math_equation.c
+
+libmath_la-math_scanner.lo: math_scanner.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_scanner.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_scanner.Tpo -c -o libmath_la-math_scanner.lo `test -f 'math_scanner.c' || echo '$(srcdir)/'`math_scanner.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_scanner.Tpo $(DEPDIR)/libmath_la-math_scanner.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_scanner.c' object='libmath_la-math_scanner.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_scanner.lo `test -f 'math_scanner.c' || echo '$(srcdir)/'`math_scanner.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-pkglibDATA: $(pkglib_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(pkglibdir)" || $(MKDIR_P) "$(DESTDIR)$(pkglibdir)"
-	@list='$(pkglib_DATA)'; test -n "$(pkglibdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pkglibdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pkglibdir)" || exit $$?; \
-	done
-
-uninstall-pkglibDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(pkglib_DATA)'; test -n "$(pkglibdir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(pkglibdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(pkglibdir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -520,11 +461,8 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(DATA)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(pkglibdir)" "$(DESTDIR)$(pkglibdir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -552,7 +490,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-pkglibPROGRAMS \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
@@ -579,8 +517,7 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-pkglibDATA install-pkglibPROGRAMS \
-	install-pkglibSCRIPTS
+install-exec-am:
 
 install-html: install-html-am
 
@@ -620,30 +557,38 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-pkglibDATA uninstall-pkglibPROGRAMS \
-	uninstall-pkglibSCRIPTS
+uninstall-am:
 
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-pkglibPROGRAMS ctags distclean \
+	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-pkglibDATA \
-	install-pkglibPROGRAMS install-pkglibSCRIPTS install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-pkglibDATA uninstall-pkglibPROGRAMS \
-	uninstall-pkglibSCRIPTS
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
 
-fft.nsc: fft.nsc.in Makefile
-	sh ../pathconv.sh $(docdir) $(pkglibdir) $(demodir) fft.nsc.in
+math_operator.c: math_operator.h
+
+math_operator.h: math_operator.h.in math_operator.rb
+	ruby math_operator.rb math_operator.h.in math_operator
+
+math_constant.c: math_constant.h
+
+math_constant.h: math_constant.h.in math_constant.rb
+	ruby math_constant.rb math_constant.h.in math_constant
+
+math_function.c: math_function.h math_operator.h
+
+math_function.h: math_function.h.in math_function.rb
+	ruby math_function.rb math_function.h.in math_function
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

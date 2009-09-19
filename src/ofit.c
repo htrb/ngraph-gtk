@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.24 2009/08/11 01:55:33 hito Exp $
+ * $Id: ofit.c,v 1.25 2009/09/19 13:21:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -491,7 +491,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
         for (j=0;j<dim;j++) {
           rcode=calculate(fitlocal->codedf[tbl[j]],1,spx,MNOERR,0,0,0,0,
                           0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                      par,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+			  par,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                           NULL,NULL,NULL,0,NULL,NULL,NULL,0,&(x2[j]));
           if (rcode==MSERR) return FitError_Syntax;
           else if (rcode!=MNOERR) err=TRUE;
@@ -504,7 +504,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
           par2[tbl[j]]+=dxx;
           rcode=calculate(fitlocal->codef,1,spx,MNOERR,0,0,0,0,
                           0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                     par2,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
+			  par2,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                           NULL,NULL,NULL,0,NULL,NULL,NULL,0,&(x2[j]));
           if (rcode==MSERR) return FitError_Syntax;
           else if (rcode!=MNOERR) err=TRUE;

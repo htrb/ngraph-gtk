@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.19 2009/08/13 08:52:00 hito Exp $
+ * $Id: shellcm.c,v 1.20 2009/09/19 13:21:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,10 +49,15 @@
 #include "shell.h"
 #include "shellcm.h"
 
+#include "math/math_equation.h"
+
 #define TRUE  1
 #define FALSE 0
 
 #define ERR 128
+
+#define USE_NEW_MATH_CODE 1
+
 
 int 
 cmcd(struct nshell *nshell,int argc,char **argv)
@@ -1224,6 +1229,32 @@ cmexe(struct nshell*nshell,int argc,char **argv)
 int
 str_calc(const char *str, double *val, int *r)
 {
+#if USE_NEW_MATH_CODE
+  int rcode;
+  MathEquation *eq;
+  MathValue value;
+
+  if (str == NULL || val == NULL) {
+    return ERRMILLEGAL;
+  }
+
+  eq = math_equation_basic_new();
+  if (eq == NULL) {
+    return ERRMILLEGAL; 	/* fix me */
+  }
+
+  if (math_equation_parse(eq, str)) {
+    math_equation_free(eq);
+    return ERRMSYNTAX;
+  }
+ 
+  rcode = math_equation_calculate(eq, &value);
+
+  *val = value.val;
+
+  math_equation_free(eq);
+  
+#else
   int rcode, ecode = 0, i;
   char *code;
   double memory[MEMORYNUM];
@@ -1277,6 +1308,7 @@ str_calc(const char *str, double *val, int *r)
   if (ecode) {
     return ecode;
   }
+#endif
 
   if (r) {
     *r = rcode;
@@ -1301,6 +1333,7 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
   if ((s=nstrnew())==NULL) return ERR;
   for (i=1;i<argc;i++)
     if ((s=nstrcat(s,argv[i]))==NULL) return ERR;
+
 
   ecode = str_calc(s, &vd, &rcode);
   memfree(s);

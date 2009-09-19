@@ -1,4 +1,4 @@
-SUBDIRS = gtk
+SUBDIRS = gtk math
 
 bin_PROGRAMS = ngraph
 
@@ -17,6 +17,6 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 pkglib_PROGRAMS = terminal
 terminal_SOURCES = terminal.c
 
-ngraph_LDADD = $(GTK_LIBS) gtk/libngraph.la
+ngraph_LDADD = $(GTK_LIBS) gtk/libngraph.la math/libmath.la
 
 ngraph_CFLAGS =  -I.. -D_FORTIFY_SOURCE

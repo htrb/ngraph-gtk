@@ -1,5 +1,5 @@
 /* 
- * $Id: nhash.h,v 1.5 2009/02/04 07:28:46 hito Exp $
+ * $Id: nhash.h,v 1.6 2009/09/19 13:21:44 hito Exp $
  */
 
 #ifndef NHASH_HEADER
@@ -19,6 +19,7 @@ typedef struct nhash **NHASH;
 NHASH nhash_new(void);
 void nhash_free(NHASH hash);
 void nhash_free_with_memfree_ptr(NHASH hash);
+void nhash_clear(NHASH hash);
 int nhash_set_int(NHASH hash, const char *key, int val);
 int nhash_set_ptr(NHASH hash, const char *key, void *val);
 int nhash_get_int(NHASH hash, const char *key, int *val);
