@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.81 2009/08/04 10:41:47 hito Exp $
+ * $Id: ofile.c,v 1.82 2009/09/19 11:12:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1576,8 +1576,9 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
 	staty[i] = MNONUM;
       }
     }
-    if (filenum)
+    if (filenum) {
       getdata_get_other_files(fp, fnumx, fnumy, needx, needy, datax, datay, statx, staty, filenum, openfile);
+    }
   }
 
   d2 = d3 = 0;
