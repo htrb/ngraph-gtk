@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.38 2009/08/07 02:52:40 hito Exp $
+ * $Id: object.c,v 1.39 2009/09/29 10:49:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -51,6 +51,8 @@
 #endif
 #endif
 
+#include "math/math_equation.h"
+
 #define USE_HASH 1
 
 #define TRUE  1
@@ -58,6 +60,8 @@
 
 #define OBJ_MAX 100
 #define INST_MAX 32767
+
+#define USE_NEW_MATH_CODE 1
 
 static struct objlist *objroot=NULL;
 static struct loopproc *looproot=NULL, *loopnext=NULL;
@@ -3527,10 +3531,12 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
   double vd;
   char **argv,*p;
   int rcode;
-  char *code;
   int i,err;
+#if ! USE_NEW_MATH_CODE 
+  char *code;
   double memory[MEMORYNUM];
   char memorystat[MEMORYNUM];
+#endif
   char **enumlist;
   char *oname,*os;
   int olen;
@@ -3623,6 +3629,25 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         if (arg_add(&argv,p)==NULL) goto errexit;
       }
     } else if ((arglist[alp]=='i') || (arglist[alp]=='d')) {
+#if USE_NEW_MATH_CODE 
+      MathEquation *eq;
+      MathValue val;
+
+      eq = math_equation_basic_new();
+      if (eq == NULL) {
+        err=3;
+        goto errexit;
+      }
+      rcode = math_equation_parse(eq, s2);
+      if (rcode!=MCNOERR) {
+	math_equation_free(eq);
+        err=3;
+        goto errexit;
+      }
+      rcode = math_equation_calculate(eq, &val);
+      vd = val.val;
+	math_equation_free(eq);
+#else
       rcode=mathcode(s2,&code,NULL,NULL,NULL,NULL,
                      FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
       if (rcode!=MCNOERR) {
@@ -3640,6 +3665,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
                       NULL,NULL,NULL,
                       NULL,NULL,NULL,0,NULL,NULL,NULL,0,&vd);
       memfree(code);
+#endif
       if (rcode!=MNOERR) {
         err=3;
         goto errexit;

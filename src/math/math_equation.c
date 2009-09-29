@@ -36,7 +36,12 @@ add_to_ary(MathValue *buf, int *num, int *size, const MathValue *val)
       *size = (n + 1) * BUF_UNIT;
   }
 
-  buf[*num] = *val;
+  if (val) {
+    buf[*num] = *val;
+  } else {
+    buf[*num].val = 0;
+    buf[*num].type = MATH_VALUE_NORMAL;
+  }
   (*num)++;
 
   return buf;
@@ -195,7 +200,7 @@ math_equation_clear(MathEquation *eq)
 int
 math_equation_parse(MathEquation *eq, const char *str)
 {
-  if (eq == NULL || str == NULL)
+  if (eq == NULL)
     return 1;
 
   if (eq->cnum > 0 && eq->cbuf == NULL)
@@ -218,10 +223,14 @@ math_equation_parse(MathEquation *eq, const char *str)
 
   init_parameter(eq);
 
-  eq->exp = math_parser_parse(str, eq);
+  if (str) {
+    eq->exp = math_parser_parse(str, eq);
+    if (eq->exp == NULL)
+      return 1;
+  } else {
+    eq->exp = NULL;
+  }
   eq->opt_exp = NULL;
-  if (eq->exp == NULL)
-    return 1;
 
   if (eq->pos_func_num > 0) {
     eq->pos_func_buf = memalloc(eq->pos_func_num * sizeof(*eq->pos_func_buf));
@@ -230,8 +239,6 @@ math_equation_parse(MathEquation *eq, const char *str)
       return 1;
     }
   }
-
-  math_equation_clear(eq);
 
   return 0;
 }
@@ -323,7 +330,7 @@ math_equation_calculate(MathEquation *eq, MathValue *val)
 {
   int r;
 
-  if ((eq == NULL) ||
+  if ((eq == NULL) || (eq->exp == NULL) ||
       (eq->cnum > 0 && eq->cbuf == NULL) ||
       (eq->vnum > 0 && eq->vbuf == NULL)) {
     return 1;
@@ -591,8 +598,18 @@ math_equation_remove_func(MathEquation *eq, const char *name)
   r = nhash_get_ptr(eq->function, name, (void *) &ptr);
   if (r == 0) {
     free_func_prm(ptr);
+    nhash_del(eq->function, name);
+
+    if (eq->exp) {
+      math_expression_free(eq->exp);
+      eq->exp = NULL;
+    }
+
+    if (eq->opt_exp) {
+      math_expression_free(eq->opt_exp);
+      eq->opt_exp = NULL;
+    }
   }
-  nhash_del(eq->function, name);
 }
 
 struct math_function_parameter *
@@ -725,7 +742,7 @@ math_equation_add_const(MathEquation *eq, const char *name, const MathValue *val
     }
 
     nhash_set_int(eq->constant, name, i);
-  } else if (eq->cbuf && i < eq->cnum) {
+  } else if (eq->cbuf && i < eq->cnum && val) {
     eq->cbuf[i] = *val;
   }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.22 2009/08/10 09:38:52 hito Exp $
+ * $Id: gra.c,v 1.23 2009/09/29 10:49:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,8 +39,12 @@
 #include "gra.h"
 #include "ogra.h"
 
+#include "math/math_equation.h"
+
 #define TRUE 1
 #define FALSE 0
+
+#define USE_NEW_MATH_CODE 1
 
 struct GRAC {
   int open,init;
@@ -1708,14 +1712,19 @@ errexit:
 static char *
 GRAexpandmath(char **s)
 {
-  int j;
   char *str,*ret;
   int quote;
   int rcode;
+#if USE_NEW_MATH_CODE 
+  MathValue val;
+  MathEquation *code;
+#else
+  int j;
   char *code;
-  double vd;
   double memory[MEMORYNUM];
   char memorystat[MEMORYNUM];
+#endif
+  double vd;
 
   *s=*s+2;
   str=NULL;
@@ -1744,6 +1753,20 @@ GRAexpandmath(char **s)
   }
   if ((*s)[0]!=']') goto errexit;
   (*s)++;
+#if USE_NEW_MATH_CODE 
+  code = math_equation_basic_new();
+  if (code == NULL)
+    goto errexit;
+
+  if (math_equation_parse(code, str)) {
+    math_equation_free(code);
+    goto errexit;
+  }
+
+  rcode = math_equation_calculate(code, &val);
+  vd = val.val;
+
+#else
   rcode=mathcode(str,&code,NULL,NULL,NULL,NULL,
                  FALSE,FALSE,FALSE,FALSE,FALSE,
                  FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
@@ -1759,6 +1782,7 @@ GRAexpandmath(char **s)
                   NULL,NULL,NULL,
                   NULL,NULL,NULL,0,NULL,NULL,NULL,0,&vd);
   memfree(code);
+#endif
   if (rcode!=MNOERR) goto errexit;
   memfree(str);
   if ((str=memalloc(24))==NULL) goto errexit;

@@ -1560,7 +1560,7 @@ int
 math_expression_calculate(MathExpression *exp, MathValue *val)
 {
   MathExpression *ptr;
-  MathValue v;
+  MathValue v = {0, MATH_VALUE_NORMAL};
 
   if (exp == NULL) {
     return 1;
