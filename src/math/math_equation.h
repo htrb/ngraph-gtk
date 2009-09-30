@@ -14,10 +14,14 @@ struct _math_value {
   double val;
   enum {
     MATH_VALUE_NORMAL = 0,
+    MATH_VALUE_ERROR  = 1,
     MATH_VALUE_NAN    = 2,
     MATH_VALUE_UNDEF  = 3,
+    MATH_VALUE_SYNTAX = 4,
     MATH_VALUE_CONT   = 5,
     MATH_VALUE_BREAK  = 6,
+    MATH_VALUE_NONUM  = 7,
+    MATH_VALUE_MEOF   = 8,
   } type;
 };
 
@@ -73,6 +77,7 @@ int math_equation_set_parameter_data(MathEquation *eq, int type, MathValue *data
 
 int math_equation_add_pos_func(MathEquation *eq);
 struct math_function_parameter *math_equation_start_user_func_definition(MathEquation *eq, const char *name);
+int math_equation_register_user_func_definition(MathEquation *eq, const char *name, MathExpression *exp);
 int math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum);
 struct math_function_parameter *math_equation_add_func(MathEquation *eq, const char *name, struct math_function_parameter *prm);
 struct math_function_parameter *math_equation_get_func(MathEquation *eq, const char *name);

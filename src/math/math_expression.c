@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include <limits.h>
@@ -62,9 +63,11 @@ MathExpression *
 math_function_expression_new(MathEquation *eq, const char *name)
 {
   MathExpression *func;
+  struct math_function_parameter *prm;
 
-  if (math_equation_get_func(eq, name)) {
-    /* already defined */
+  prm = math_equation_get_func(eq, name);
+  if (prm && prm->base_usr == NULL) {
+    /* embedded function */
     return NULL;
   }
 
@@ -192,6 +195,14 @@ func_set_arg_buf(MathExpression *func)
     }
 
     func->u.func.fprm->arg_type = arg_type_buf;
+  } else {
+    list = func->u.func.arg_list;
+    for (i = 0; list; i++) {
+      if (register_arg(func, list->name, list->type)) {
+	return 1;
+      }
+      list = list->next;
+    }
   }
 
   func->u.func.argc = n;
@@ -230,7 +241,12 @@ math_function_expression_set_function(MathEquation *eq, MathExpression *func, co
     return 1;
   }
 
+  if (math_equation_register_user_func_definition(eq, name, func)) {
+    return 1;
+  }
+
   func->u.func.fprm->base_usr = func;
+  func->u.func.fprm->opt_usr = NULL;
   math_equation_finish_user_func_definition(eq, &vnum, &anum);
   func->u.func.local_num = vnum;
   func->u.func.local_array_num = anum;
@@ -241,7 +257,7 @@ math_function_expression_set_function(MathEquation *eq, MathExpression *func, co
 MathExpression *
 math_parameter_expression_new(MathEquation *eq, char *name)
 {
-  int ofst, i, type, n, id, index;
+  int ofst, i, type, n, id, id_pre, id_post, index;
   MathExpression *exp;
   MathEquationParametar *prm;
 
@@ -267,11 +283,20 @@ math_parameter_expression_new(MathEquation *eq, char *name)
   if (n < prm->min_length || n > prm->max_length)
     return NULL;
 
-  id = 0;
-  for (i = 0; i < n; i++) {
-    id *= 10;
-    id += name[ofst + i] - '0';
+  id_pre = id_post = 0;
+  for (i = 0; i < prm->min_length - 1; i++) {
+    id_pre *= 10;
+    id_pre += name[ofst + i] - '0';
   }
+  for (; i < n; i++) {
+    id_post *= 10;
+    id_post += name[ofst + i] - '0';
+  }
+  for (i = 0; i < prm->max_length - prm->min_length + 1; i++) {
+    id_pre *= 10;
+  }
+
+  id = id_pre + id_post;
 
   index = math_equation_use_parameter(eq, type, id);
   if (index < 0)
@@ -765,6 +790,11 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
   int use_array;
 
   type = exp->fprm->arg_type;
+
+  if (exp->fprm->argc > 0 && exp->argc != exp->fprm->argc) {
+    fprintf(stderr, "wrong number of argument for the function \"%s()\"\n", exp->fprm->name);
+    return 1;
+  }
 
   use_array = 0;
   n = exp->argc;

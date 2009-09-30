@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-09-29 11:24+0900\n"
+"POT-Creation-Date: 2009-09-29 21:17+0900\n"
 "PO-Revision-Date: 2009-08-17 16:04+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -476,7 +476,7 @@ msgstr "変換数式"
 msgid "math text"
 msgstr "数式入力"
 
-#: src/gtk/x11dialg.c:145 src/ofile.c:142
+#: src/gtk/x11dialg.c:145 src/ofile.c:143
 msgid "fit"
 msgstr "フィット"
 
@@ -1119,19 +1119,19 @@ msgstr "オブジェクト/プロパティ"
 msgid "lw/size"
 msgstr "線幅/サイズ"
 
-#: src/gtk/x11lgnd.c:107 src/ofile.c:124
+#: src/gtk/x11lgnd.c:107 src/ofile.c:125
 msgid "line"
 msgstr "直線"
 
-#: src/gtk/x11lgnd.c:108 src/ofile.c:126
+#: src/gtk/x11lgnd.c:108 src/ofile.c:127
 msgid "curve"
 msgstr "曲線"
 
-#: src/gtk/x11lgnd.c:109 src/ofile.c:125
+#: src/gtk/x11lgnd.c:109 src/ofile.c:126
 msgid "polygon"
 msgstr "多角形"
 
-#: src/gtk/x11lgnd.c:110 src/ofile.c:129
+#: src/gtk/x11lgnd.c:110 src/ofile.c:130
 msgid "rectangle"
 msgstr "四角形"
 
@@ -1139,7 +1139,7 @@ msgstr "四角形"
 msgid "arc"
 msgstr "円"
 
-#: src/gtk/x11lgnd.c:112 src/ofile.c:123
+#: src/gtk/x11lgnd.c:112 src/ofile.c:124
 msgid "mark"
 msgstr "マーク"
 
@@ -2432,59 +2432,59 @@ msgstr "指数関数"
 msgid "user"
 msgstr "ユーザ定義"
 
-#: src/ofile.c:127
+#: src/ofile.c:128
 msgid "diagonal"
 msgstr "対角線"
 
-#: src/ofile.c:128
+#: src/ofile.c:129
 msgid "arrow"
 msgstr "矢印"
 
-#: src/ofile.c:130
+#: src/ofile.c:131
 msgid "rectangle_fill"
 msgstr "塗りつぶし矩形"
 
-#: src/ofile.c:131
+#: src/ofile.c:132
 msgid "rectangle_solid_fill"
 msgstr "実矩形"
 
-#: src/ofile.c:132
+#: src/ofile.c:133
 msgid "errorbar_x"
 msgstr "X 誤差棒"
 
-#: src/ofile.c:133
+#: src/ofile.c:134
 msgid "errorbar_y"
 msgstr "Y 誤差棒"
 
-#: src/ofile.c:134
+#: src/ofile.c:135
 msgid "staircase_x"
 msgstr "X 階段"
 
-#: src/ofile.c:135
+#: src/ofile.c:136
 msgid "staircase_y"
 msgstr "Y 階段"
 
-#: src/ofile.c:136
+#: src/ofile.c:137
 msgid "bar_x"
 msgstr "X 棒"
 
-#: src/ofile.c:137
+#: src/ofile.c:138
 msgid "bar_y"
 msgstr "Y 棒"
 
-#: src/ofile.c:138
+#: src/ofile.c:139
 msgid "bar_fill_x"
 msgstr "塗りつぶし横棒"
 
-#: src/ofile.c:139
+#: src/ofile.c:140
 msgid "bar_fill_y"
 msgstr "塗りつぶし縦棒"
 
-#: src/ofile.c:140
+#: src/ofile.c:141
 msgid "bar_solid_fill_x"
 msgstr "実横棒"
 
-#: src/ofile.c:141
+#: src/ofile.c:142
 msgid "bar_solid_fill_y"
 msgstr "実縦棒"
 

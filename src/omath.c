@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.11 2009/09/29 10:49:30 hito Exp $
+ * $Id: omath.c,v 1.12 2009/09/30 23:27:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -171,6 +171,9 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     goto errexit;
   }
 
+  math_equation_parse(mlocal->code, "def f(x,y,z){0};");
+  math_equation_parse(mlocal->code, "def g(x,y,z){0};");
+  math_equation_parse(mlocal->code, "def h(x,y,z){0};");
 #else
   mlocal->code=NULL;
   mlocal->ufcodef=NULL;
@@ -277,21 +280,25 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       }
     }
   } else {
-    math_equation_remove_func(mlocal->code, argv[1]);
     if (math) {
       ptr = create_func_def_str(argv[1], math);
-      if (ptr == NULL) {
-	return 1;
-      }
-      if (math_equation_parse(mlocal->code, ptr)) {
-	return 1;
-      }
-      if (math_equation_optimize(mlocal->code)) {
-	return 1;
-      }
-
-
+    } else {
+      ptr = create_func_def_str(argv[1], "0");
     }
+    if (ptr == NULL) {
+      return 1;
+    }
+    if (math_equation_parse(mlocal->code, ptr)) {
+      return 1;
+    }
+    if (math_equation_optimize(mlocal->code)) {
+      return 1;
+    }
+    memfree(ptr);
+
+    _getobj(obj, "formula", inst, &ptr);
+    math_equation_parse(mlocal->code, ptr);
+    math_equation_optimize(mlocal->code);
   }
 #else
   if (math!=NULL) {

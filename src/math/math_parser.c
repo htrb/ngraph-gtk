@@ -762,6 +762,27 @@ parse_block_expression(const char **str, MathEquation *eq)
   return exp;
 }
 
+static void
+free_func_prm(struct math_function_parameter *prm)
+{
+  if (prm == NULL)
+    return;
+
+  if (prm->arg_type) {
+    memfree(prm->arg_type);
+  }
+
+  if (prm->opt_usr) {
+    math_expression_free(prm->opt_usr);
+  }
+
+  if (prm->name) {
+    memfree(prm->name);
+  }
+
+  memfree(prm);
+}
+
 MathExpression *
 parse_func_def_expression(const char **str, MathEquation *eq)
 {
@@ -788,7 +809,7 @@ parse_func_def_expression(const char **str, MathEquation *eq)
   /* get parameters */
   if (parse_parameter_list(str, eq, exp)) {
     math_equation_finish_user_func_definition(eq, NULL, NULL);
-    math_equation_remove_func(eq, fname->data.sym);
+    free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
     math_expression_free(exp);
     return NULL;
@@ -796,7 +817,7 @@ parse_func_def_expression(const char **str, MathEquation *eq)
 
   if (math_function_expression_register_arg(exp)) {
     math_equation_finish_user_func_definition(eq, NULL, NULL);
-    math_equation_remove_func(eq, fname->data.sym);
+    free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
     math_expression_free(exp);
   }
@@ -805,7 +826,7 @@ parse_func_def_expression(const char **str, MathEquation *eq)
   block = parse_block_expression(str, eq);
   if (block == NULL) {
     math_equation_finish_user_func_definition(eq, NULL, NULL);
-    math_equation_remove_func(eq, fname->data.sym);
+    free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
     math_expression_free(exp);
     return NULL;
@@ -813,7 +834,7 @@ parse_func_def_expression(const char **str, MathEquation *eq)
 
   if (math_function_expression_set_function(eq, exp, fname->data.sym, block)) {
     math_equation_finish_user_func_definition(eq, NULL, NULL);
-    math_equation_remove_func(eq, fname->data.sym);
+    free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
     math_expression_free(exp);
     return NULL;

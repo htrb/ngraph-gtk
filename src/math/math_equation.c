@@ -5,6 +5,7 @@
 #include "math_equation.h"
 
 #include "object.h"
+#include "nstring.h"
 
 #define BUF_UNIT 64
 
@@ -215,6 +216,7 @@ math_equation_parse(MathEquation *eq, const char *str)
 
   if (eq->opt_exp) {
     math_expression_free(eq->opt_exp);
+    eq->opt_exp = NULL;
   }
 
   if (eq->exp) {
@@ -230,7 +232,6 @@ math_equation_parse(MathEquation *eq, const char *str)
   } else {
     eq->exp = NULL;
   }
-  eq->opt_exp = NULL;
 
   if (eq->pos_func_num > 0) {
     eq->pos_func_buf = memalloc(eq->pos_func_num * sizeof(*eq->pos_func_buf));
@@ -426,6 +427,8 @@ math_equation_use_parameter(MathEquation *eq, int type, int val)
     return -1;
   }
 
+  
+
   return add_parameter_data(ptr, val);
 }
 
@@ -527,18 +530,28 @@ math_equation_add_pos_func(MathEquation *eq)
 }
 
 static void
-free_func_prm(struct math_function_parameter *ptr)
+free_func_prm_sub(struct math_function_parameter *ptr)
 {
   memfree(ptr->name);
 
-  if (ptr->opt_usr)
+  if (ptr->opt_usr) {
     math_expression_free(ptr->opt_usr);
+    ptr->opt_usr = NULL;
+  }
 
-  if (ptr->base_usr)
+  if (ptr->base_usr) {
     math_expression_free(ptr->base_usr);
+    ptr->base_usr = NULL;
+  }
 
   memfree(ptr->arg_type);
+}
 
+static void
+free_func_prm(struct math_function_parameter *ptr)
+{
+
+  free_func_prm_sub(ptr);
   memfree(ptr);
 }
 
@@ -572,6 +585,7 @@ optimize_func_cb(struct nhash *hash, void *ptr)
   fprm = (struct math_function_parameter *) hash->val.p;
   if (fprm->opt_usr) {
     math_expression_free(fprm->opt_usr);
+    fprm->opt_usr = NULL;
   }
 
   if (fprm->base_usr) {
@@ -615,28 +629,83 @@ math_equation_remove_func(MathEquation *eq, const char *name)
 struct math_function_parameter *
 math_equation_start_user_func_definition(MathEquation *eq, const char *name)
 {
-  struct math_function_parameter fprm, *ptr;
+  struct math_function_parameter *fprm;
 
   if (eq == NULL || eq->func_def)
     return NULL;
 
-  fprm.argc = 0;
-  fprm.side_effect = 1;
-  fprm.positional = 0;
-  fprm.func = math_equation_call_user_func;
-  fprm.base_usr = NULL;
-  fprm.opt_usr = NULL;
-  fprm.arg_type = NULL;
-
-  ptr = math_equation_add_func(eq, name, &fprm);
-  if (ptr == NULL)
+  fprm = malloc(sizeof(*fprm));
+  if (fprm == NULL)
     return NULL;
+
+  fprm->argc = 0;
+  fprm->side_effect = 1;
+  fprm->positional = 0;
+  fprm->func = math_equation_call_user_func;
+  fprm->base_usr = NULL;
+  fprm->opt_usr = NULL;
+  fprm->arg_type = NULL;
+  fprm->name = nstrdup(name);
+
+  if (fprm->name == NULL) {
+    memfree(fprm);
+    return NULL;
+  }
 
   eq->local_vnum = 0;
   eq->local_array_num = 0;
   eq->func_def = 1;
 
-  return ptr;
+  return fprm;
+}
+
+int
+math_equation_register_user_func_definition(MathEquation *eq, const char *name, MathExpression *exp)
+{
+  struct math_function_parameter *fprm;
+  int r;
+
+  if (eq == NULL || ! eq->func_def || name == NULL || exp == NULL)
+    return 1;
+
+  fprm = math_equation_get_func(eq, name);
+  if (fprm == NULL) {
+    r = nhash_set_ptr(eq->function, name, exp->u.func.fprm);
+    return r;
+  }
+
+#if 0
+  if (fprm->argc != exp->u.func.fprm->argc) {
+    return 1;
+  }
+
+  if (fprm->argc > 0) {
+    enum MATH_FUNCTION_ARG_TYPE *arg_type1, *arg_type2;
+
+    arg_type1 = fprm->arg_type;
+    arg_type2 = exp->u.func.fprm->arg_type;
+
+    if (arg_type1 && arg_type2) {
+      int i;
+      for (i = 0; i < fprm->argc; i++) {
+	if (arg_type1[i] != arg_type2[i]) {
+	  return 1;
+	}
+      }
+    } else if ((arg_type1 && arg_type2 == NULL) ||
+	       (arg_type1 == NULL && arg_type2)) {
+      return 1;
+    }
+  }
+#endif
+
+  free_func_prm_sub(fprm);
+  memcpy(fprm, exp->u.func.fprm, sizeof(*fprm));
+
+  memfree(exp->u.func.fprm);
+  exp->u.func.fprm = fprm;
+
+  return 0;
 }
 
 int
@@ -681,7 +750,7 @@ math_equation_add_func(MathEquation *eq, const char *name, struct math_function_
     return NULL;
 
   memcpy(ptr, prm, sizeof(*ptr));
-  ptr->name = strdup(name);
+  ptr->name = nstrdup(name);
 
   if (ptr->name == NULL) {
     memfree(ptr);

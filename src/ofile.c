@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.83 2009/09/29 10:49:30 hito Exp $
+ * $Id: ofile.c,v 1.84 2009/09/30 23:27:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,6 +58,7 @@
 #include "math/math_equation.h"
 
 #define USE_NEW_MATH_CODE 1
+#define MATH_CONST_SIZE 16
 
 #define NAME "file"
 #define ALIAS "data"
@@ -247,8 +248,7 @@ struct f2ddata {
   MathValue memoryx[MEMORYNUM], memoryy[MEMORYNUM],
     memory2[MEMORYNUM], memory3[MEMORYNUM],
     minx, maxx, miny, maxy;
-  int minx_id, maxx_id, miny_id, maxy_id, sumx_id,
-    sumy_id, sumxx_id, sumyy_id, sumxy_id, num_id;
+  int *const_id;
 #else
   char *codex,*codey,*codef,*codeg,*codeh;
   struct narray *needfilex,*needfiley;
@@ -317,6 +317,7 @@ struct f2dlocal {
 #if USE_NEW_MATH_CODE
   MathEquation *codex, *codey, *code2, *code3;
   MathValue minx, maxx, miny, maxy;
+  int const_id[MATH_CONST_SIZE];
 #else
   char *codex;
   char *codey;
@@ -728,7 +729,9 @@ opendata(struct objlist *obj,char *inst,
 
   fp->codex=f2dlocal->codex;
   fp->codey=f2dlocal->codey;
-#if ! USE_NEW_MATH_CODE
+#if USE_NEW_MATH_CODE
+  fp->const_id = f2dlocal->const_id;
+#else
   fp->codef=f2dlocal->codef;
   fp->codeg=f2dlocal->codeg;
   fp->codeh=f2dlocal->codeh;
@@ -1052,6 +1055,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 
 	f2dlocal->maxdimx = prm->id_max;
       }
+      f2dlocal->need2passx = TRUE;
 #else
       memfree(f2dlocal->codex);
       f2dlocal->codex=code;
@@ -1075,6 +1079,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 
 	f2dlocal->maxdimy = prm->id_max;
       }
+      f2dlocal->need2passy = TRUE;
 #else
       memfree(f2dlocal->codey);
       f2dlocal->codey=code;
@@ -1103,22 +1108,16 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
       if (buf == NULL)
 	return 1;
 
-      math_equation_remove_func(f2dlocal->codex, fname);
       if (math_equation_parse(f2dlocal->codex, buf)) {
-	math_equation_parse(f2dlocal->codex, default_func);
 	math_equation_parse(f2dlocal->codex, math_x);
 	return 1;
       }
 
-      math_equation_remove_func(f2dlocal->codey, fname);
       if (math_equation_parse(f2dlocal->codey, buf)) {
-	math_equation_parse(f2dlocal->codey, default_func);
 	math_equation_parse(f2dlocal->codey, math_y);
 	return 1;
       }
     } else {
-      math_equation_remove_func(f2dlocal->codex, fname);
-      math_equation_remove_func(f2dlocal->codey, fname);
       math_equation_parse(f2dlocal->codex, default_func);
       math_equation_parse(f2dlocal->codey, default_func);
     }
@@ -1174,12 +1173,32 @@ f2dsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return obj_save_config(obj, inst, F2DCONF, FileConfig, sizeof(FileConfig) / sizeof(*FileConfig));
 }
 
+enum {
+  MATH_CONST_NUM,
+  MATH_CONST_MINX,
+  MATH_CONST_MAXX,
+  MATH_CONST_MINY,
+  MATH_CONST_MAXY,
+  MATH_CONST_SUMX,
+  MATH_CONST_SUMY,
+  MATH_CONST_SUMXX,
+  MATH_CONST_SUMYY,
+  MATH_CONST_SUMXY,
+  MATH_CONST_AVX,
+  MATH_CONST_AVY,
+  MATH_CONST_SGX,
+  MATH_CONST_SGY,
+  MATH_CONST_FIRST,
+  MATH_CONST_D,
+};
+
 static MathEquation *
-create_math_equation(int use_prm, int use_fprm, int usr_func, int use_fobj_func)
+create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int use_fobj_func)
 {
   MathEquation *code;
   unsigned int i;
-  char *file_constant[] = {
+  int f_id;
+  char *file_constant[MATH_CONST_SIZE] = {
     "NUM",
     "MINX",
     "MAXX",
@@ -1189,6 +1208,11 @@ create_math_equation(int use_prm, int use_fprm, int usr_func, int use_fobj_func)
     "SUMY",
     "SUMXX",
     "SUMYY",
+    "SUMXY",
+    "AVX",
+    "AVY",
+    "SGX",
+    "SGY",
     "FIRST",
     "%D",
   };
@@ -1205,7 +1229,7 @@ create_math_equation(int use_prm, int use_fprm, int usr_func, int use_fobj_func)
   }
 
   if (use_fprm) {
-    if (math_equation_add_parameter(code, 'F', 2, 5, MATH_EQUATION_PARAMETAR_USE_INDEX)) {
+    if (math_equation_add_parameter(code, 'F', 3, 5, MATH_EQUATION_PARAMETAR_USE_INDEX)) {
       math_equation_free(code);
       return NULL;;
     }
@@ -1222,9 +1246,13 @@ create_math_equation(int use_prm, int use_fprm, int usr_func, int use_fobj_func)
   }
 
   for (i = 0; i < sizeof(file_constant) / sizeof(*file_constant); i++) {
-    if (math_equation_add_const(code, file_constant[i], NULL) < 0) {
+    f_id = math_equation_add_const(code, file_constant[i], NULL);
+    if (f_id < 0) {
       math_equation_free(code);
       return NULL;
+    }
+    if (id) {
+      id[i] = f_id;
     }
   }
 
@@ -1308,10 +1336,10 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"_local",inst,f2dlocal)) goto errexit;
 
 #if USE_NEW_MATH_CODE
-  f2dlocal->codex = create_math_equation(TRUE, TRUE, TRUE, TRUE);
-  f2dlocal->codey = create_math_equation(TRUE, TRUE, TRUE, TRUE);
-  f2dlocal->code2 = create_math_equation(TRUE, TRUE, TRUE, TRUE);
-  f2dlocal->code3 = create_math_equation(TRUE, TRUE, TRUE, TRUE);
+  f2dlocal->codex = create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE);
+  f2dlocal->codey = create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE);
+  f2dlocal->code2 = create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE);
+  f2dlocal->code3 = create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE);
   if (f2dlocal->codex == NULL ||
       f2dlocal->codey == NULL ||
       f2dlocal->code2 == NULL ||
@@ -1494,8 +1522,11 @@ f2dput(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
-	     char *ifs,int csv)
+#if USE_NEW_MATH_CODE
+getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, int csv)
+#else
+getdataarray(char *buf,int maxdim,double *count,double *data,char *stat, char *ifs,int csv)
+#endif
 {
 /*
    return: 0 no error
@@ -1510,8 +1541,13 @@ getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
 
   (*count)++;
   dim=0;
+#if USE_NEW_MATH_CODE
+  data[dim].val = *count;
+  data[dim].type = MATH_VALUE_NORMAL;
+#else
   data[dim]=*count;
   stat[dim]=MNOERR;
+#endif
   po=buf;
   while (*po!='\0') {
     if (dim>=maxdim) return 0;
@@ -1558,7 +1594,7 @@ getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
       for (;(*po!='\0') && CHECK_IFS(ifs, *po);po++);
       if (*po=='\0') break;
 #if 0
-      for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2));po2++)
+      for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2);po2++)
         *po2=toupper(*po2);
       for (i=0;i<po2-po;i++) if (*(po+i)=='D') *(po+i)='e';
 #else
@@ -1587,12 +1623,22 @@ getdataarray(char *buf,int maxdim,double *count,double *data,char *stat,
     }
     po=po2;
     dim++;
+#if USE_NEW_MATH_CODE
+    data[dim].val = val;
+    data[dim].type = st;
+#else
     data[dim]=val;
     stat[dim]=st;
+#endif
   }
   for (i=dim+1;i<=maxdim;i++) {
+#if USE_NEW_MATH_CODE
+    data[i].val = 0;
+    data[i].type = MATH_VALUE_NONUM;
+#else
     data[i]=0;
     stat[i]=MNONUM;
+#endif
   }
   return 1;
 }
@@ -1654,9 +1700,15 @@ set_data_progress(struct f2ddata *fp)
 }
 
 static void
+#if USE_NEW_MATH_CODE
+getdata_get_other_files(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
+			MathValue *datax, MathValue *datay, int filenum, int *openfile)
+#else
 getdata_get_other_files(struct f2ddata *fp, int fnumx, int fnumy,
 	     int *needx, int *needy, double *datax, double *datay,
-	     char *statx, char *staty, int filenum, int *openfile){
+	     char *statx, char *staty, int filenum, int *openfile)
+#endif
+{
   int *idata,inum,argc;
   char *argv[2];
   int i,j,k;
@@ -1699,8 +1751,13 @@ getdata_get_other_files(struct f2ddata *fp, int fnumx, int fnumy,
 	    n = needx[j] % 1000;
 	    for (k = 0; k < inum; k++) {
 	      if (idata[k] == n) {
+#if USE_NEW_MATH_CODE
+		datax[j].val = ddata[k];
+		datax[j].type = nround(ddata[k + inum]);
+#else
 		datax[j] = ddata[k];
 		statx[j] = nround(ddata[k + inum]);
+#endif
 	      }
 	    }
 	  }
@@ -1710,8 +1767,13 @@ getdata_get_other_files(struct f2ddata *fp, int fnumx, int fnumy,
 	    n = needy[j] % 1000;
 	    for (k = 0; k < inum; k++){
 	      if (idata[k] == n) {
+#if USE_NEW_MATH_CODE
+		datay[j].val = ddata[k];
+		datay[j].type = nround(ddata[k + inum]);
+#else
 		datay[j] = ddata[k];
 		staty[j] = nround(ddata[k + inum]);
+#endif
 	      }
 	    }
 	  }
@@ -1794,39 +1856,63 @@ set_var(MathEquation *eq, MathValue *x, MathValue *y)
 }
 
 static int
-set_const(MathEquation *eq, struct f2ddata *fp)
+set_const(MathEquation *eq, struct f2ddata *fp, int first)
 {
   MathValue val;
 
-  math_equation_set_const(eq, fp->minx_id, &fp->minx);
-  math_equation_set_const(eq, fp->miny_id, &fp->miny);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_MINX], &fp->minx);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_MINY], &fp->miny);
 
-  math_equation_set_const(eq, fp->maxx_id, &fp->maxx);
-  math_equation_set_const(eq, fp->maxy_id, &fp->maxy);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_MAXX], &fp->maxx);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_MAXY], &fp->maxy);
 
   val.val = fp->num;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->num_id, &val);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_NUM], &val);
 
   val.val = fp->sumx;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->sumx_id, &val);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMX], &val);
 
   val.val = fp->sumy;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->sumy_id, &val);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMY], &val);
 
   val.val = fp->sumxx;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->sumxx_id, &val);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMXX], &val);
 
   val.val = fp->sumyy;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->sumyy_id, &val);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMYY], &val);
 
   val.val = fp->sumxy;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->sumxy_id, &val);
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMXY], &val);
+
+  val.val = fp->sumx / fp->num;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_AVX], &val);
+
+  val.val = fp->sumy / fp->num;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_AVY], &val);
+
+  val.val = sqrt(fp->sumxx / fp->num - (fp->sumx / fp->num) * (fp->sumx / fp->num));
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_SGX], &val);
+
+  val.val = sqrt(fp->sumyy / fp->num - (fp->sumy / fp->num) * (fp->sumy / fp->num));
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_SGY], &val);
+
+  val.val = fp->id;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_D], &val);
+
+  val.val = first;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_FIRST], &val);
 
   math_equation_optimize(eq);
   
@@ -1834,9 +1920,13 @@ set_const(MathEquation *eq, struct f2ddata *fp)
 }
 
 static int
+#if USE_NEW_MATH_CODE
+getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, MathValue *datax, MathValue *datay,
+	     MathValue *gdata, int filenum, int *openfile)
+#else
 getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, double *datax, double *datay,
-	     char *statx, char *staty, double *gdata, char *gstat,
-	     int filenum, int *openfile)
+	     char *statx, char *staty, double *gdata, char *gstat, int filenum, int *openfile)
+#endif
 {
   int i,j;
   int masked,moved,moven;
@@ -1884,51 +1974,74 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
     for (i = 0; i < fnumx; i++) {
       if (needx[i] / 1000 == fp->id) {
 	j = needx[i] % 1000;
+#if USE_NEW_MATH_CODE
+	datax[i] = gdata[j];
+#else
 	datax[i] = gdata[j];
 	statx[i] = gstat[j];
+#endif
       } else {
+#if USE_NEW_MATH_CODE
+	datax[i].val = 0;
+	datax[i].type = MNONUM;
+#else
 	datax[i] = 0;
 	statx[i] = MNONUM;
+#endif
       }
     }
     for (i = 0; i < fnumy; i++) {
       if (needy[i] / 1000 == fp->id) {
 	j = needy[i] % 1000;
+#if USE_NEW_MATH_CODE
+	datay[i] = gdata[j];
+#else
 	datay[i] = gdata[j];
 	staty[i] = gstat[j];
+#endif
       } else {
+#if USE_NEW_MATH_CODE
+	datay[i].val = 0;
+	datay[i].type = MNONUM;
+#else
 	datay[i] = 0;
 	staty[i] = MNONUM;
+#endif
       }
     }
     if (filenum) {
+#if USE_NEW_MATH_CODE
+      getdata_get_other_files(fp, fnumx, fnumy, needx, needy, datax, datay, filenum, openfile);
+#else
       getdata_get_other_files(fp, fnumx, fnumy, needx, needy, datax, datay, statx, staty, filenum, openfile);
+#endif
     }
   }
 
 #if USE_NEW_MATH_CODE
   d2.val = d3.val = 0;
   d2.type = d3.type = MATH_VALUE_UNDEF;
-  dx.val = gdata[fp->x];
-  dx.type = gstat[fp->x];
+  dx = gdata[fp->x];
   switch (fp->type) {
   case TYPE_DIAGONAL:
-    dy.val = gdata[fp->x + 1];
-    dy.type = gstat[fp->x + 1];
+    dy = gdata[fp->x + 1];
     break;
   default:
-    dy.val = gdata[fp->y];
-    dy.type = gstat[fp->y];
+    dy = gdata[fp->y];
   }
 
   dx2 = dx;
   dy2 = dy;
   if (fp->codex->exp) {
     set_var(fp->codex, &dx2, &dy2);
+    math_equation_set_parameter_data(fp->codex, 0, gdata);
+    math_equation_set_parameter_data(fp->codex, 'F', datax);
     math_equation_calculate(fp->codex, &dx);
   }
   if (fp->codey->exp) {
     set_var(fp->codey, &dx2, &dy2);
+    math_equation_set_parameter_data(fp->codey, 0, gdata);
+    math_equation_set_parameter_data(fp->codey, 'F', datay);
     math_equation_calculate(fp->codey, &dy);
   }
 
@@ -2207,9 +2320,13 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
 }
 
 static int
+#if USE_NEW_MATH_CODE
+getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
+	     MathValue *datax, MathValue *datay, MathValue *gdata, int filenum, int *openfile)
+#else
 getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, double *datax, double *datay,
-	     char *statx, char *staty, double *gdata, char *gstat,
-	     int filenum, int *openfile)
+	     char *statx, char *staty, double *gdata, char *gstat, int filenum, int *openfile)
+#endif
 {
   char *buf;
   int i, rcode;
@@ -2238,14 +2355,21 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
     if (buf[i] == '\0' || (fp->remark && CHECK_REMARK(fp->ifs_buf, buf[i]))) {
       memfree(buf);
     } else {
+#if USE_NEW_MATH_CODE
+      rcode = getdataarray(buf, fp->maxdim, &fp->count, gdata, fp->ifs_buf, fp->csv);
+#else
       rcode = getdataarray(buf, fp->maxdim, &(fp->count), gdata, gstat, fp->ifs_buf, fp->csv);
+#endif
       memfree(buf);
       if (rcode==-1) {
 	return -1;
       }
+#if USE_NEW_MATH_CODE
+      getdata_sub2(fp, fnumx, fnumy, needx, needy, datax, datay, gdata, filenum, openfile);
+#else
       getdata_sub2(fp, fnumx, fnumy, needx, needy, datax, datay,
-		   statx, staty, gdata, gstat,
-		   filenum, openfile);
+		   statx, staty, gdata, gstat, filenum, openfile);
+#endif
     }
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
@@ -2261,34 +2385,46 @@ getdata(struct f2ddata *fp)
 */
 {
   int i,rcode;
-  double dx,dy;
-  char st;
   double sumx,sumy,sum2,sum3;
   int numx,numy,num2,num3,num,smx,smy,sm2,sm3;
   int filenum,*openfile,*needx,*needy;
   struct narray filedatax,filedatay;
-  struct narray filestatx,filestaty;
   unsigned int fnumx,fnumy,j;
-  double *datax,*datay;
-  char *statx,*staty;
-  double *gdata;
-  char *gstat;
   struct f2ddata_buf *buf;
 #if BUF_TYPE == USE_RING_BUF
   int n;
 #endif
 #if USE_NEW_MATH_CODE
+  MathValue *datax,*datay;
   MathEquationParametar *prm;
+  MathValue *gdata;
+  static MathValue math_value_zero = {0, 0};
+#else
+  double *datax,*datay;
+  char *statx,*staty;
+  double dx,dy;
+  char st;
+  struct narray filestatx,filestaty;
+  double *gdata;
+  char *gstat;
 #endif
 
+#if USE_NEW_MATH_CODE
+  gdata = memalloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
+  if (gdata == NULL) {
+   memfree(gdata);
+   return -1;
+  }
+#else
   gdata = (double *) memalloc(sizeof(double) * (FILE_OBJ_MAXCOL + 1));
   gstat = (char *) memalloc(sizeof(char) * (FILE_OBJ_MAXCOL + 1));
-
   if (gdata == NULL || gstat == NULL) {
    memfree(gdata);
    memfree(gstat);
    return -1;
   }
+#endif
+
   fp->dx=fp->dy=fp->d2=fp->d3=0;
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
   filenum=arraynum(&(fp->fileopen));
@@ -2298,10 +2434,31 @@ getdata(struct f2ddata *fp)
   prm = math_equation_get_parameter(fp->codex, 'F');
   fnumx = prm->id_num;
   needx = prm->id;
+  arrayinit(&filedatax, sizeof(MathValue));
+  for (j = 0; j < fnumx; j++) {
+    arrayadd(&filedatax, &math_value_zero);
+  }
+  if (arraynum(&filedatax) < fnumx) {
+    fnumx = arraynum(&filedatax);
+  }
+  datax = arraydata(&filedatax);
+
+  prm = math_equation_get_parameter(fp->codey, 'F');
+  fnumy = prm->id_num;
+  needy = prm->id;
+  arrayinit(&filedatay, sizeof(MathValue));
+  for (j = 0; j < fnumy; j++) {
+    arrayadd(&filedatay, &math_value_zero);
+  }
+  if (arraynum(&filedatay) < fnumy) {
+    fnumy = arraynum(&filedatay);
+  }
+  datay = arraydata(&filedatay);
+
+  rcode = getdata_sub1(fp, fnumx, fnumy, needx, needy, datax, datay, gdata, filenum, openfile);
 #else
   fnumx=arraynum(fp->needfilex);
   needx=arraydata(fp->needfilex);
-#endif
   arrayinit(&filedatax,sizeof(double));
   arrayinit(&filestatx,sizeof(char));
   for (j=0;j<fnumx;j++) {
@@ -2315,14 +2472,8 @@ getdata(struct f2ddata *fp)
   datax=arraydata(&filedatax);
   statx=arraydata(&filestatx);
 
-#if USE_NEW_MATH_CODE
-  prm = math_equation_get_parameter(fp->codey, 'F');
-  fnumy = prm->id_num;
-  needy = prm->id;
-#else
   fnumy=arraynum(fp->needfiley);
   needy=arraydata(fp->needfiley);
-#endif
   arrayinit(&filedatay,sizeof(double));
   arrayinit(&filestaty,sizeof(char));
   for (j=0;j<fnumy;j++) {
@@ -2339,21 +2490,30 @@ getdata(struct f2ddata *fp)
   rcode = getdata_sub1(fp, fnumx, fnumy, needx, needy, datax, datay,
 		       statx, staty, gdata, gstat,
 		       filenum, openfile);
+#endif
+
+
   if (rcode) {
     memfree(gdata);
+#if ! USE_NEW_MATH_CODE
     memfree(gstat);
+#endif
     return rcode;
   }
 
   arraydel(&filedatax);
-  arraydel(&filestatx);
   arraydel(&filedatay);
+#if ! USE_NEW_MATH_CODE
+  arraydel(&filestatx);
   arraydel(&filestaty);
+#endif
   if ((fp->bufnum==0) || (fp->bufpo>=fp->bufnum)) {
     fp->dx=fp->dy=fp->d2=fp->d3=0;
     fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MEOF;
     memfree(gdata);
+#if ! USE_NEW_MATH_CODE
     memfree(gstat);
+#endif
     return 1;
   }
   switch (fp->type) {
@@ -2580,7 +2740,9 @@ getdata(struct f2ddata *fp)
 #endif	/* BUF_TYPE */
   }
   memfree(gdata);
+#if ! USE_NEW_MATH_CODE
   memfree(gstat);
+#endif
   return 0;
 }
 
@@ -2599,26 +2761,34 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
   char *buf;
   int i,step,rcode;
 #if USE_NEW_MATH_CODE
-  MathValue val;
+  MathValue val, *gdata, dx2, dy2;
 #else
-  double val;
-  char st;
-#endif
-  double dx2,dy2;
-  char dx2stat,dy2stat;
-  int masked;
-  int find;
   double *gdata;
   char *gstat;
+  double val;
+  char st;
+  double dx2,dy2;
+  char dx2stat,dy2stat;
+#endif
+  int masked;
+  int find;
 
+#if USE_NEW_MATH_CODE
+  gdata = memalloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
+  if (gdata == NULL) {
+    memfree(gdata);
+   return -1;
+  }
+#else
   gdata = (double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1));
   gstat = (char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1));
-
   if (gdata == NULL || gstat  == NULL) {
     memfree(gdata);
     memfree(gstat);
    return -1;
   }
+#endif
+
   *dd=0;
   *ddstat=MUNDEF;
   find=FALSE;
@@ -2633,14 +2803,20 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
     }
     if (rcode==-1) {
       memfree(gdata);
+#if ! USE_NEW_MATH_CODE
       memfree(gstat);
+#endif
       return -1;
     }
     fp->line++;
     for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
     if ((buf[i]!='\0')
     && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
+#if USE_NEW_MATH_CODE
+      rcode = getdataarray(buf, maxdim, &fp->count, gdata, fp->ifs_buf, fp->csv);
+#else
       rcode=getdataarray(buf,maxdim,&(fp->count),gdata,gstat,fp->ifs_buf,fp->csv);
+#endif
       memfree(buf);
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
       for (j=0;j<fp->masknum;j++)
@@ -2654,22 +2830,28 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
 #endif
       if (rcode==-1) {
 	memfree(gdata);
+#if ! USE_NEW_MATH_CODE
 	memfree(gstat);
+#endif
 	return -1;
       }
       *dd=0;
       *ddstat=MUNDEF;
-      dx2=gdata[fp->x];
-      dx2stat=gstat[fp->x];
-      dy2=gdata[fp->y];
-      dy2stat=gstat[fp->y];
 #if USE_NEW_MATH_CODE
+      dx2 = gdata[fp->x];
+      dy2 = gdata[fp->y];
       if (code->exp) {
+	set_var(fp->codey, &dx2, &dy2);
+	math_equation_set_parameter_data(fp->codey, 0, gdata);
 	math_equation_calculate(code, &val);
         *dd = val.val;
         *ddstat = val.type;
       }
 #else
+      dx2=gdata[fp->x];
+      dx2stat=gstat[fp->x];
+      dy2=gdata[fp->y];
+      dy2stat=gstat[fp->y];
       if (code!=NULL) {
         st=calculate(code,1,
                      dx2,dx2stat,dy2,dy2stat,0,MNOERR,
@@ -2698,7 +2880,9 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
         }
         if (rcode==-1) {
           memfree(gdata);
+#if ! USE_NEW_MATH_CODE
           memfree(gstat);
+#endif
           return -1;
         }
         fp->line++;
@@ -2712,7 +2896,9 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
   memfree(gdata);
+#if ! USE_NEW_MATH_CODE
   memfree(gstat);
+#endif
   if (!find) {
     *dd=0;
     *ddstat=MEOF;
@@ -2722,7 +2908,11 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
 }
 
 static int 
+#if USE_NEW_MATH_CODE
+getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
+#else
 getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
+#endif
 /*
   return -1: fatal error
 		  0: no error
@@ -2758,7 +2948,11 @@ getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
     for (i=0;(buf[i]!='\0') && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
     if ((buf[i]!='\0')
     && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i]))) {
+#if USE_NEW_MATH_CODE
+      rcode = getdataarray(buf, maxdim, &fp->count, data, fp->ifs_buf, fp->csv);
+#else
       rcode=getdataarray(buf,maxdim,&(fp->count),data,stat,fp->ifs_buf,fp->csv);
+#endif
       memfree(buf);
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
       for (j=0;j<fp->masknum;j++)
@@ -2773,37 +2967,77 @@ getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
       if (rcode==-1) return -1;
       dx=dy=d2=d3=0;
       dxstat=dystat=d2stat=d3stat=MUNDEF;
+#if USE_NEW_MATH_CODE
+      dx = data[fp->x].val;
+      dxstat = data[fp->x].type;;
+#else
       dx=data[fp->x];
       dxstat=stat[fp->x];
+#endif
 
       switch (fp->type) {
       case TYPE_DIAGONAL:
+#if USE_NEW_MATH_CODE
+        dy = data[fp->x + 1].val;
+        dystat = data[fp->x + 1].type;
+#else
         dy=data[fp->x+1];
         dystat=stat[fp->x+1];
+#endif
 	break;
       default:
+#if USE_NEW_MATH_CODE
+        dy = data[fp->y].val;
+        dystat = data[fp->y].type;
+#else
         dy=data[fp->y];
         dystat=stat[fp->y];
+#endif
       }
 
       switch (fp->type) {
       case TYPE_NORMAL:
 	break;
       case TYPE_DIAGONAL:
+#if USE_NEW_MATH_CODE
+	d2 = data[fp->y].val;
+        d2stat = data[fp->y].type;
+        d3 = data[fp->y + 1].val;
+        d3stat = data[fp->y + 1].type;
+#else
         d2=data[fp->y];
         d2stat=stat[fp->y];
         d3=data[fp->y+1];
         d3stat=stat[fp->y+1];
+#endif
 	break;
       case TYPE_ERR_X:
+#if USE_NEW_MATH_CODE
+        d2 = data[fp->x].val + data[fp->x + 1].val;
+        if (data[fp->x].type < data[fp->x + 1].type) d2stat = data[fp->x].type;
+        else d2stat = data[fp->x + 1].type;
+        fp->d3 = data[fp->x].val + data[fp->x + 2].val;
+        if (data[fp->x].type < data[fp->x + 2].type) d3stat = data[fp->x].type;
+        else d3stat = data[fp->x + 2].type;
+#else
         d2=data[fp->x]+data[fp->x+1];
         if (stat[fp->x]<stat[fp->x+1]) d2stat=stat[fp->x];
         else d2stat=stat[fp->x+1];
         fp->d3=data[fp->x]+data[fp->x+2];
         if (stat[fp->x]<stat[fp->x+2]) d3stat=stat[fp->x];
         else d3stat=stat[fp->x+2];
+#endif
 	break;
       case TYPE_ERR_Y:
+#if USE_NEW_MATH_CODE
+        d2 = data[fp->y].val + data[fp->y + 1].val;
+        if (data[fp->y].type < data[fp->y + 1].type) d2stat = data[fp->y].type;
+        else d2stat = data[fp->y + 1].type;
+	d3 = data[fp->y].val + data[fp->y + 2].val;
+        if (data[fp->y].type < data[fp->y + 2].type) d3stat = data[fp->y].type;
+        else d3stat = data[fp->y + 2].type;
+	break;
+#else
         d2=data[fp->y]+data[fp->y+1];
         if (stat[fp->y]<stat[fp->y+1]) d2stat=stat[fp->y];
         else d2stat=stat[fp->y+1];
@@ -2811,11 +3045,16 @@ getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
         if (stat[fp->y]<stat[fp->y+2]) d3stat=stat[fp->y];
         else d3stat=stat[fp->y+2];
 	break;
+#endif
       }
       if (masked) {
         dxstat=dystat=d2stat=d3stat=MSCONT;
         for (i=0;i<=maxdim;i++)
+#if USE_NEW_MATH_CODE
+          data[i].type = MATH_VALUE_CONT;
+#else
           stat[i]=MSCONT;
+#endif
       }
       fp->dx=dx;
       fp->dy=dy;
@@ -2888,8 +3127,12 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 */
 {
   int rcode;
+#if USE_NEW_MATH_CODE
+  MathValue *gdata = NULL;
+#else
   double *gdata = NULL;
   char *gstat = NULL;
+#endif
 
   if (check_mtime(fp, local) == 0) {
     return 0;
@@ -2900,12 +3143,21 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
     return 1;
   }
 
+
+#if USE_NEW_MATH_CODE
+  gdata = memalloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
+  if (gdata == NULL) {
+   memfree(gdata);
+   return -1;
+  }
+#else
   if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
   || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
-    memfree(gdata);
-    memfree(gstat);
-    return -1;
+   memfree(gdata);
+   memfree(gstat);
+   return -1;
   }
+#endif
 
 #if USE_NEW_MATH_CODE
   fp->minx.type = MUNDEF;
@@ -2924,43 +3176,61 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   fp->sumyy=0;
   fp->sumxy=0;
   fp->num=0;
-  while ((rcode=getdataraw(fp,fp->maxdim,gdata,gstat))==0) {
+#if USE_NEW_MATH_CODE
+  while (
+	 (rcode = getdataraw(fp, fp->maxdim, gdata)) == 0
+#else
+	 (rcode=getdataraw(fp,fp->maxdim,gdata,gstat))==0
+#endif
+	 ) {
     switch (fp->type) {
     case TYPE_NORMAL:
     case TYPE_DIAGONAL:
 #if USE_NEW_MATH_CODE
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
-        if ((fp->minx.type == MATH_VALUE_UNDEF) || (fp->minx.val > fp->dx)) fp->minx.val = fp->dx;
-        if ((fp->maxx.type == MATH_VALUE_UNDEF) || (fp->maxx.val < fp->dx)) fp->maxx.val = fp->dx;
-        fp->minx.type = MATH_VALUE_NORMAL;
-        fp->maxx.type = MATH_VALUE_NORMAL;
-        if ((fp->miny.type == MATH_VALUE_UNDEF) || (fp->miny.val > fp->dy)) fp->miny.val = fp->dy;
-        if ((fp->maxy.type == MATH_VALUE_UNDEF) || (fp->maxy.val < fp->dy)) fp->maxy.val = fp->dy;
-        fp->miny.type = MATH_VALUE_NORMAL;
-        fp->maxy.type = MATH_VALUE_NORMAL;
-        fp->sumx += fp->dx;
-        fp->sumxx +=  (fp->dx) * (fp->dx);
-        fp->sumy += fp->dy;
-        fp->sumyy += (fp->dy) * (fp->dy);
-        fp->sumxy += (fp->dx) * (fp->dy);
-        fp->num++;
+	if ((fp->minx.type == MATH_VALUE_UNDEF) || (fp->minx.val > fp->dx)) {
+	  fp->minx.val = fp->dx;
+	}
+	if ((fp->maxx.type == MATH_VALUE_UNDEF) || (fp->maxx.val < fp->dx)) {
+	  fp->maxx.val = fp->dx;
+	}
+	fp->minx.type = MATH_VALUE_NORMAL;
+	fp->maxx.type = MATH_VALUE_NORMAL;
+
+	if ((fp->miny.type == MATH_VALUE_UNDEF) || (fp->miny.val > fp->dy)) {
+	  fp->miny.val = fp->dy;
+	}
+	if ((fp->maxy.type == MATH_VALUE_UNDEF) || (fp->maxy.val < fp->dy)) {
+	  fp->maxy.val = fp->dy;
+	}
+	fp->miny.type = MATH_VALUE_NORMAL;
+	fp->maxy.type = MATH_VALUE_NORMAL;
+
+	fp->sumx += fp->dx;
+	fp->sumxx +=  (fp->dx) * (fp->dx);
+
+	fp->sumy += fp->dy;
+	fp->sumyy += (fp->dy) * (fp->dy);
+	fp->sumxy += (fp->dx) * (fp->dy);
+
+	fp->num++;
       }
 #else
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
-        if ((fp->minxstat==MUNDEF) || (fp->minx>fp->dx)) fp->minx=fp->dx;
-        if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->dx)) fp->maxx=fp->dx;
-        fp->minxstat=MNOERR;
-        fp->maxxstat=MNOERR;
-        if ((fp->minystat==MUNDEF) || (fp->miny>fp->dy)) fp->miny=fp->dy;
-        if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->dy)) fp->maxy=fp->dy;
-        fp->minystat=MNOERR;
-        fp->maxystat=MNOERR;
-        fp->sumx+=fp->dx;
-        fp->sumxx+= (fp->dx)*(fp->dx);
-        fp->sumy+=fp->dy;
-        fp->sumyy+=(fp->dy)*(fp->dy);
-        fp->sumxy+=(fp->dx)*(fp->dy);
-        fp->num++;
+	if ((fp->minxstat==MUNDEF) || (fp->minx>fp->dx)) fp->minx=fp->dx;
+	if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->dx)) fp->maxx=fp->dx;
+	fp->minxstat=MNOERR;
+	fp->maxxstat=MNOERR;
+	if ((fp->minystat==MUNDEF) || (fp->miny>fp->dy)) fp->miny=fp->dy;
+	if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->dy)) fp->maxy=fp->dy;
+	fp->minystat=MNOERR;
+	fp->maxystat=MNOERR;
+	fp->sumx+=fp->dx;
+	fp->sumxx+= (fp->dx)*(fp->dx);
+	fp->sumy+=fp->dy;
+	fp->sumyy+=(fp->dy)*(fp->dy);
+	fp->sumxy+=(fp->dx)*(fp->dy);
+	fp->num++;
       }
 #endif
 
@@ -2968,19 +3238,31 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 	break;
 #if USE_NEW_MATH_CODE
       if ((fp->d2stat == MATH_VALUE_NORMAL) && (fp->d3stat == MATH_VALUE_NORMAL)) {
-	if ((fp->minx.type == MATH_VALUE_UNDEF) || (fp->minx.val > fp->d2)) fp->minx.val = fp->d2;
-	if ((fp->maxx.type == MATH_VALUE_UNDEF) || (fp->maxx.val < fp->d2)) fp->maxx.val = fp->d2;
+	if ((fp->minx.type == MATH_VALUE_UNDEF) || (fp->minx.val > fp->d2)) {
+	  fp->minx.val = fp->d2;
+	}
+	if ((fp->maxx.type == MATH_VALUE_UNDEF) || (fp->maxx.val < fp->d2)) {
+	  fp->maxx.val = fp->d2;
+	}
 	fp->minx.type = MATH_VALUE_NORMAL;
 	fp->maxx.type = MATH_VALUE_NORMAL;
-	if ((fp->miny.type == MATH_VALUE_UNDEF) || (fp->miny.val > fp->d3)) fp->miny.val = fp->d3;
-	if ((fp->maxy.type == MATH_VALUE_UNDEF) || (fp->maxy.val < fp->d3)) fp->maxx.val = fp->d3;
+
+	if ((fp->miny.type == MATH_VALUE_UNDEF) || (fp->miny.val > fp->d3)) {
+	  fp->miny.val = fp->d3;
+	}
+	if ((fp->maxy.type == MATH_VALUE_UNDEF) || (fp->maxy.val < fp->d3)) {
+	  fp->maxx.val = fp->d3;
+	}
 	fp->miny.type = MATH_VALUE_NORMAL;
 	fp->maxy.type = MATH_VALUE_NORMAL;
+
 	fp->sumx += fp->d2;
 	fp->sumxx += (fp->d2) * (fp->d2);
+
 	fp->sumy += fp->d3;
 	fp->sumyy += (fp->d3) * (fp->d3);
 	fp->sumxy += (fp->d2) * (fp->d3);
+
 	fp->num++;
       }
 #else
@@ -3002,35 +3284,35 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
       }
 #endif
       break;
-      case TYPE_ERR_X:
+    case TYPE_ERR_X:
 #if USE_NEW_MATH_CODE
 #else
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
-       && (fp->dystat==MNOERR)) {
-        if ((fp->minxstat==MUNDEF) || (fp->minx>fp->d2)) fp->minx=fp->d2;
-        if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->d2)) fp->maxx=fp->d2;
-        fp->minxstat=MNOERR;
-        fp->maxxstat=MNOERR;
-        if ((fp->minxstat==MUNDEF) || (fp->minx>fp->d3)) fp->minx=fp->d3;
-        if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->d3)) fp->maxx=fp->d3;
-        fp->minxstat=MNOERR;
-        fp->maxxstat=MNOERR;
-        if ((fp->minystat==MUNDEF) || (fp->miny>fp->dy)) fp->miny=fp->dy;
-        if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->dy)) fp->maxy=fp->dy;
-        fp->minystat=MNOERR;
-        fp->maxystat=MNOERR;
-        fp->sumx+=fp->d2;
-        fp->sumxx+=(fp->d2)*(fp->d2);
-        fp->sumy+=fp->dy;
-        fp->sumyy+=(fp->dy)*(fp->dy);
-        fp->sumxy+=(fp->d2)*(fp->dy);
-        fp->num++;
-        fp->sumx+=fp->d3;
-        fp->sumxx+=(fp->d3)*(fp->d3);
-        fp->sumy+=fp->dy;
-        fp->sumyy+=(fp->dy)*(fp->dy);
-        fp->sumxy+=(fp->d3)*(fp->dy);
-        fp->num++;
+	  && (fp->dystat==MNOERR)) {
+	if ((fp->minxstat==MUNDEF) || (fp->minx>fp->d2)) fp->minx=fp->d2;
+	if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->d2)) fp->maxx=fp->d2;
+	fp->minxstat=MNOERR;
+	fp->maxxstat=MNOERR;
+	if ((fp->minxstat==MUNDEF) || (fp->minx>fp->d3)) fp->minx=fp->d3;
+	if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->d3)) fp->maxx=fp->d3;
+	fp->minxstat=MNOERR;
+	fp->maxxstat=MNOERR;
+	if ((fp->minystat==MUNDEF) || (fp->miny>fp->dy)) fp->miny=fp->dy;
+	if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->dy)) fp->maxy=fp->dy;
+	fp->minystat=MNOERR;
+	fp->maxystat=MNOERR;
+	fp->sumx+=fp->d2;
+	fp->sumxx+=(fp->d2)*(fp->d2);
+	fp->sumy+=fp->dy;
+	fp->sumyy+=(fp->dy)*(fp->dy);
+	fp->sumxy+=(fp->d2)*(fp->dy);
+	fp->num++;
+	fp->sumx+=fp->d3;
+	fp->sumxx+=(fp->d3)*(fp->d3);
+	fp->sumy+=fp->dy;
+	fp->sumyy+=(fp->dy)*(fp->dy);
+	fp->sumxy+=(fp->d3)*(fp->dy);
+	fp->num++;
       }
 #endif
       break;
@@ -3038,42 +3320,42 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 #if USE_NEW_MATH_CODE
 #else
       if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
-       && (fp->dxstat==MNOERR)) {
-        if ((fp->minystat==MUNDEF) || (fp->miny>fp->d2)) fp->miny=fp->d2;
-        if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->d2)) fp->maxy=fp->d2;
-        fp->minystat=MNOERR;
-        fp->maxystat=MNOERR;
-        if ((fp->minystat==MUNDEF) || (fp->miny>fp->d3)) fp->miny=fp->d3;
-        if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->d3)) fp->maxx=fp->d3;
-        fp->minystat=MNOERR;
-        fp->maxystat=MNOERR;
-        if ((fp->minxstat==MUNDEF) || (fp->minx>fp->dx)) fp->minx=fp->dx;
-        if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->dx)) fp->maxx=fp->dx;
-        fp->minxstat=MNOERR;
-        fp->maxxstat=MNOERR;
-        fp->sumx+=fp->dx;
-        fp->sumxx+=(fp->dx)*(fp->dx);
-        fp->sumy+=fp->d2;
-        fp->sumyy+=(fp->d2)*(fp->d2);
-        fp->sumxy+=(fp->dx)*(fp->d2);
-        fp->num++;
-        fp->sumx+=fp->dx;
-        fp->sumxx+=(fp->dx)*(fp->dx);
-        fp->sumy+=fp->d3;
-        fp->sumyy+=(fp->d3)*(fp->d3);
-        fp->sumxy+=(fp->dx)*(fp->d3);
-        fp->num++;
+	  && (fp->dxstat==MNOERR)) {
+	if ((fp->minystat==MUNDEF) || (fp->miny>fp->d2)) fp->miny=fp->d2;
+	if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->d2)) fp->maxy=fp->d2;
+	fp->minystat=MNOERR;
+	fp->maxystat=MNOERR;
+	if ((fp->minystat==MUNDEF) || (fp->miny>fp->d3)) fp->miny=fp->d3;
+	if ((fp->maxystat==MUNDEF) || (fp->maxy<fp->d3)) fp->maxx=fp->d3;
+	fp->minystat=MNOERR;
+	fp->maxystat=MNOERR;
+	if ((fp->minxstat==MUNDEF) || (fp->minx>fp->dx)) fp->minx=fp->dx;
+	if ((fp->maxxstat==MUNDEF) || (fp->maxx<fp->dx)) fp->maxx=fp->dx;
+	fp->minxstat=MNOERR;
+	fp->maxxstat=MNOERR;
+	fp->sumx+=fp->dx;
+	fp->sumxx+=(fp->dx)*(fp->dx);
+	fp->sumy+=fp->d2;
+	fp->sumyy+=(fp->d2)*(fp->d2);
+	fp->sumxy+=(fp->dx)*(fp->d2);
+	fp->num++;
+	fp->sumx+=fp->dx;
+	fp->sumxx+=(fp->dx)*(fp->dx);
+	fp->sumy+=fp->d3;
+	fp->sumyy+=(fp->d3)*(fp->d3);
+	fp->sumxy+=(fp->dx)*(fp->d3);
+	fp->num++;
       }
 #endif
       break;
     }
   }
-  fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
+fp->dx=fp->dy=fp->d2=fp->d3=0;
+fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
   fp->dline=0;
   memfree(gdata);
-  memfree(gstat);
 #if ! USE_NEW_MATH_CODE
+  memfree(gstat);
   local->minxstat = fp->minxstat;
   local->maxxstat = fp->maxxstat;
   local->minystat = fp->minystat;
@@ -4394,7 +4676,8 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
     if (weight!=NULL) {
 #if USE_NEW_MATH_CODE
       MathEquationParametar *prm;
-      code = create_math_equation(FALSE, FALSE, FALSE, FALSE);
+
+      code = create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
       if (code == NULL) {
 	return 1;
       }
@@ -4457,7 +4740,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
     max=fp->axmax2;
   } else if (min==max) return 0;
 #if USE_NEW_MATH_CODE
-  code = create_math_equation(FALSE, FALSE, FALSE, FALSE);
+  code = create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
   if (code == NULL) {
     return 1;
   }
@@ -4647,7 +4930,7 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
-  set_const(fp->codex, fp);
+  set_const(fp->codex, fp, TRUE);
   GRAregion(GC, &lm, &tm, &w, &h, &zoom);
   GRAview(GC, 0, 0, w*10000.0/zoom, h*10000.0/zoom, clip);
   switch (type) {
@@ -4959,10 +5242,10 @@ f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     maxy+=err;
   }
 
-  set_const(fp->codex, fp);
-  set_const(fp->codey, fp);
-  //  set_const(fp->code2, fp);
-  //  set_const(fp->code3, fp);
+  set_const(fp->codex, fp, TRUE);
+  set_const(fp->codey, fp, TRUE);
+  //  set_const(fp->code2, fp, FALSE);
+  //  set_const(fp->code3, fp, FALSE);
   while (getdata(fp)==0) {
     switch (fp->type) {
     case TYPE_NORMAL:
@@ -5725,20 +6008,34 @@ f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *darray;
   int i,num,*data,maxdim;
   double d;
+#if USE_NEW_MATH_CODE
+  MathValue *gdata = NULL;
+#else
   double *gdata = NULL;
   char *gstat = NULL;
+#endif
 
+#if USE_NEW_MATH_CODE
+  gdata = memalloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
+  if (gdata == NULL) {
+   memfree(gdata);
+   return -1;
+  }
+#else
   if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
   || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
    memfree(gdata);
    memfree(gstat);
    return -1;
   }
+#endif
   _getobj(obj,"_local",inst,&f2dlocal);
   fp=f2dlocal->data;
   if (fp==NULL) {
     memfree(gdata);
+#if ! USE_NEW_MATH_CODE
     memfree(gstat);
+#endif
     return 0;
   }
   darray=*(struct narray **)rval;
@@ -5748,35 +6045,63 @@ f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   num=arraynum(iarray);
   data=arraydata(iarray);
   maxdim=-1;
-  for (i=0;i<num;i++) if (data[i]>maxdim) maxdim=data[i];
+  for (i=0;i<num;i++) {
+    if (data[i]>maxdim) {
+      maxdim=data[i];
+    }
+  }
   if (maxdim==-1) {
     memfree(gdata);
+#if ! USE_NEW_MATH_CODE
     memfree(gstat);
+#endif
     return 0;
   }
   if (maxdim>FILE_OBJ_MAXCOL) maxdim=FILE_OBJ_MAXCOL;
+#if USE_NEW_MATH_CODE
+  rcode = getdataraw(fp, maxdim, gdata);
+#else
   rcode=getdataraw(fp,maxdim,gdata,gstat);
+#endif
   if (rcode!=0) {
     closedata(fp, f2dlocal);
     f2dlocal->data=NULL;
     memfree(gdata);
+#if ! USE_NEW_MATH_CODE
     memfree(gstat);
+#endif
     return 1;
   }
   darray=arraynew(sizeof(double));
   for (i=0;i<num;i++) {
-    if (data[i]>FILE_OBJ_MAXCOL) d=0;
-    else d=gdata[data[i]];
+    if (data[i]>FILE_OBJ_MAXCOL) {
+      d=0;
+    } else {
+#if USE_NEW_MATH_CODE
+      d = gdata[data[i]].val;
+#else
+      d=gdata[data[i]];
+#endif
+    }
     arrayadd(darray,&d);
   }
   for (i=0;i<num;i++) {
-    if (data[i]>FILE_OBJ_MAXCOL) d=MNONUM;
-    else d=gstat[data[i]];
+    if (data[i]>FILE_OBJ_MAXCOL) {
+      d=MNONUM;
+    } else {
+#if USE_NEW_MATH_CODE
+      d = gdata[data[i]].type;
+#else
+      d=gstat[data[i]];
+#endif
+    }
     arrayadd(darray,&d);
   }
   *(struct narray **)rval=darray;
   memfree(gdata);
+#if ! USE_NEW_MATH_CODE
   memfree(gstat);
+#endif
   return 0;
 }
 
@@ -5877,10 +6202,10 @@ f2dstat(struct objlist *obj,char *inst,char *rval,
   minx=maxx=miny=maxy=0;
   sumx=sumxx=sumy=sumyy=0;
 
-  set_const(fp->codex, fp);
-  set_const(fp->codey, fp);
-  //  set_const(fp->code2, fp);
-  //  set_const(fp->code3, fp);
+  set_const(fp->codex, fp, TRUE);
+  set_const(fp->codey, fp, TRUE);
+  //  set_const(fp->code2, fp, FALSE);
+  //  set_const(fp->code3, fp, FALSE);
   while ((rcode=getdata(fp))==0) {
     switch (fp->type) {
     case TYPE_NORMAL:
@@ -6078,10 +6403,10 @@ f2dstat2(struct objlist *obj,char *inst,char *rval,
   dx=dy=d2=d3=0;
   find=FALSE;
 
-  set_const(fp->codex, fp);
-  set_const(fp->codey, fp);
-  //  set_const(fp->code2, fp);
-  //  set_const(fp->code3, fp);
+  set_const(fp->codex, fp, TRUE);
+  set_const(fp->codey, fp, TRUE);
+  //  set_const(fp->code2, fp, FALSE);
+  //  set_const(fp->code3, fp, FALSE);
   while ((rcode=getdata(fp))==0) {
     if (fp->dline==line) {
       switch (fp->type) {
@@ -6168,10 +6493,10 @@ f2dboundings(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
   minystat=MUNDEF;
   maxystat=MUNDEF;
   minx=maxx=miny=maxy=0;
-  set_const(fp->codex, fp);
-  set_const(fp->codey, fp);
-  //  set_const(fp->code2, fp);
-  //  set_const(fp->code3, fp);
+  set_const(fp->codex, fp, TRUE);
+  set_const(fp->codey, fp, TRUE);
+  //  set_const(fp->code2, fp, FALSE);
+  //  set_const(fp->code3, fp, FALSE);
   while ((rcode=getdata(fp))==0) {
     switch (fp->type) {
     case TYPE_NORMAL:
@@ -6986,10 +7311,10 @@ f2doutputfile(struct objlist *obj,char *inst,char *rval,
     return 1;
   }
 
-  set_const(fp->codex, fp);
-  set_const(fp->codey, fp);
-  //  set_const(fp->code2, fp);
-  //  set_const(fp->code3, fp);
+  set_const(fp->codex, fp, TRUE);
+  set_const(fp->codey, fp, TRUE);
+  //  set_const(fp->code2, fp, FALSE);
+  //  set_const(fp->code3, fp, FALSE);
   _getobj(obj,"type",inst,&type);
   if (type==3) {
     _getobj(obj,"interpolation",inst,&intp);
