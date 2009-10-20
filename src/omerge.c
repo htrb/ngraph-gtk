@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.13 2009/05/15 14:30:05 hito Exp $
+ * $Id: omerge.c,v 1.14 2009/10/20 07:05:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -239,7 +239,7 @@ mergetime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (file==NULL) return 0;
   if (stat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
-  *(char **)rval=ntime(&(buf.st_mtime),style);
+  *(char **)rval=ntime((time_t *)&(buf.st_mtime),style);
   return 0;
 }
 
@@ -256,7 +256,7 @@ mergedate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (file==NULL) return 0;
   if (stat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
-  *(char **)rval=ndate(&(buf.st_mtime),style);
+  *(char **)rval=ndate((time_t *)&(buf.st_mtime),style);
   return 0;
 }
 

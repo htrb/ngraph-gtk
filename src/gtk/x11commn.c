@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.51 2009/09/05 02:00:27 hito Exp $
+ * $Id: x11commn.c,v 1.52 2009/10/20 07:05:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -388,19 +388,24 @@ AxisDel(int id)
   char *inst, *inst2;
   char group3[20];
 
-  if ((obj = chkobject("axis")) == NULL)
+  obj = chkobject("axis");
+  if (obj == NULL)
     return;
-  if ((inst = chkobjinst(obj, id)) == NULL)
+
+  inst = chkobjinst(obj, id);
+  if (inst == NULL)
     return;
+
   _getobj(obj, "group", inst, &group);
-  if ((group == NULL) || (group[0] == 'a')) {
+  if (group == NULL || group[0] == 'a') {
     AxisDel2(id);
     delobj(obj, id);
     return;
   }
+
   lastinst = chkobjlastinst(obj);
   type = group[0];
-  strncpy(group3, group, sizeof(group) - 1);
+  strncpy(group3, group, sizeof(group3) - 1);
   group3[sizeof(group3) - 1] = '\0';
 
   id_array = memalloc(sizeof(*id_array) * (lastinst + 1));
@@ -411,7 +416,7 @@ AxisDel(int id)
   for (i = lastinst; i >= 0; i--) {
     inst2 = chkobjinst(obj, i);
     _getobj(obj, "group", inst2, &group2);
-    if ((group2 != NULL) && (group2[0] == type)) {
+    if (group2 && group2[0] == type) {
       if (strcmp(group3 + 2, group2 + 2) == 0) {
 	AxisDel2(i);
 	id_array[n] = i;

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.171 2009/08/19 07:11:30 hito Exp $
+ * $Id: x11view.c,v 1.172 2009/10/20 07:05:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4742,15 +4742,17 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_Escape:
     if (d->MoveData) {
       move_data_cancel(d, TRUE);
+    } else {
+      UnFocus();
     }
     gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
     return FALSE;
   case GDK_space:
     CmViewerDrawB(NULL, NULL);
     return TRUE;
- case GDK_Delete:
-   ViewDelete();
-   return TRUE;
+  case GDK_Delete:
+    ViewDelete();
+    return TRUE;
   case GDK_Return:
     ViewUpdate();
     return TRUE;

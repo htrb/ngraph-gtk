@@ -1,3 +1,22 @@
+2009-10-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shell.c (expand): new upstream release (6.3.51).
+
+	* src/ofile.c (f2dtime, f2ddate): new upstream release (6.3.51).
+
+	* src/omerge.c (mergedate, mergetime): new upstream
+	release (6.3.51).
+
+2009-10-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (AxisDel): fix 3rd argument of
+	"strncpy()" (from "sizeof(group)" to "sizeof(group3)").
+
+2009-10-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvKeyDown): call "UnFocus()" when the
+	escape key is pressed.
+
 2009-09-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/mathcode.c (mathexpand): maximum value of the operand for

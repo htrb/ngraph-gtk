@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.84 2009/09/30 23:27:23 hito Exp $
+ * $Id: ofile.c,v 1.85 2009/10/20 07:05:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5818,7 +5818,7 @@ f2dtime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (file==NULL) return 0;
   if (stat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
-  *(char **)rval=ntime(&(buf.st_mtime),style);
+  *((char **)rval)=ntime((time_t *)&(buf.st_mtime),style);
   return 0;
 }
 
@@ -5835,7 +5835,7 @@ f2ddate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (file==NULL) return 0;
   if (stat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
-  *(char **)rval=ndate(&(buf.st_mtime),style);
+  *(char **)rval=ndate((time_t *)&(buf.st_mtime),style);
   return 0;
 }
 

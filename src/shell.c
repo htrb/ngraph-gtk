@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.31 2009/07/07 11:44:08 hito Exp $
+ * $Id: shell.c,v 1.32 2009/10/20 07:05:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -47,6 +47,10 @@
  *        ${parameter:=word}
  *        ${parameter:?word}
  *        ${parameter:+word}
+ *        ${parameter#word}
+ *        ${parameter##word}
+ *        ${parameter%word}
+ *        ${parameter%%word}
  *
  *    object replacement
  *        object:namelist:field=value
@@ -1921,9 +1925,9 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
 {
   char *po;
   int quote2,bquote2,escape;
-  int i,j,num;
+  int i,j,k,num;
   unsigned int u, n;
-  char *c1,*name,*val,ch,valf,*ifs;
+  char *c1,*c2,*name,*val,ch,valf,valf2,*ifs;
   char *s,*sb,*se;
   HANDLE sout,sout2;
   int rcode,dummy;
@@ -2104,8 +2108,8 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
       /* check variable */
       } else if (po[i+1]=='{') {
         for (j=i+2;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
-        if ((po[j]=='\0') || (strchr(":-=?+}",po[j])==NULL) || (po[j-1]=='{'))
-        {
+        if ((po[j]=='\0') || (strchr(":-=?+#%}",po[j])==NULL)
+                          || (po[j-1]=='{')) {
           sherror(ERRBADSUB);
           goto errexit;
         }
@@ -2136,11 +2140,22 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             val=getval(nshell,name);
             quote2=*quote;
             bquote2=*bquote;
+            valf2=' ';
             if (po[j]==':') {
-              valf=':';
+              valf2=':';
               j++;
-            } else valf=po[j];
-            if (strchr("-=?+",po[j])==NULL) {
+            }
+	    if (strchr("-=?+",po[j])!=NULL) {
+              valf=po[j];
+              j++;
+            } else if (strchr("#%",po[j])!=NULL) {
+              if (po[j]==po[j+1]) {
+                valf2=po[j];
+                j++;
+              }
+              valf=po[j];
+              j++;
+            } else {
               sherror(ERRBADSUB);
               goto errexit;
             }
@@ -2191,20 +2206,21 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
         arrayfree2(sarray);
       /* variable substitution */
       } else {
-        ch=se[0];
         c1=NULL;
-        switch (ch) {
+        switch (valf) {
         case '-':
-          if ((val!=NULL) && ((valf!=':') || (val[0]!='\0'))) c1=val;
-          else {
-            if ((c1=expand(nshell,se+1,&quote2,&bquote2,TRUE))==NULL)
+          if ((val!=NULL) && ((valf2!=':') || (val[0]!='\0'))) {
+            if ((c1=quotation(nshell,val,quote2))==NULL) goto errexit;
+	  } else {
+            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
               goto errexit;
           }
           break;
         case '=':
-          if ((val!=NULL) && ((valf!=':') || (val[0]!='\0'))) c1=val;
-          else {
-            if ((c1=expand(nshell,se+1,&quote2,&bquote2,TRUE))==NULL)
+          if ((val!=NULL) && ((valf2!=':') || (val[0]!='\0'))) {
+            if ((c1=quotation(nshell,val,quote2))==NULL) goto errexit;
+          } else {
+            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
               goto errexit;
             memfree(se);
             if ((se=unquotation(c1,&dummy))==NULL) goto errexit;
@@ -2212,32 +2228,87 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           }
           break;
         case '?':
-          if ((val!=NULL) && ((valf!=':') || (val[0]!='\0'))) c1=val;
-          else {
-            if ((c1=expand(nshell,se+1,&quote2,&bquote2,TRUE))==NULL)
+          if ((val!=NULL) && ((valf2!=':') || (val[0]!='\0'))) {
+            if ((c1=quotation(nshell,val,quote2))==NULL) goto errexit;
+          } else {
+            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
               goto errexit;
             printfstdout("%.256s: %.256s\n",name,c1);
             goto errexit;
           }
           break;
         case '+':
-          if ((val!=NULL) && ((valf!=':') || (val[0]!='\0'))) {
-            if ((c1=expand(nshell,se+1,&quote2,&bquote2,TRUE))==NULL)
+          if ((val!=NULL) && ((valf2!=':') || (val[0]!='\0'))) {
+            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
               goto errexit;
-          } else c1=NULL;
+          }
+          break;
+        case '#':
+          if ((val!=NULL) && (val[0]!='\0')) {
+            if ((c2=nstrnew())==NULL) goto errexit;
+            if ((c2=nstrcat(c2,val))==NULL) goto errexit;
+            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL) {
+              memfree(c2);
+              goto errexit;
+            }
+            if (valf2=='#') {
+              for (k=strlen(c2);k>=0;k--) {
+                ch=c2[k];
+                c2[k]='\0';
+                if (wildmatch(c1,c2,WILD_PATHNAME)) {
+                  c2[k]=ch;
+                  break;
+                }
+                c2[k]=ch;
+              }
+            } else {
+              for (k=0;k<=strlen(c2);k++) {
+                ch=c2[k];
+                c2[k]='\0';
+                if (wildmatch(c1,c2,WILD_PATHNAME)) {
+                  c2[k]=ch;
+                  break;
+                }
+                c2[k]=ch;
+              }
+            } 
+            if (k>strlen(c2)) k=0;
+            memfree(c1);
+            c1=quotation(nshell,c2+k,quote2);
+            memfree(c2);
+            if (c1==NULL) goto errexit;
+          }
+          break;
+        case '%':
+          if ((val!=NULL) && (val[0]!='\0')) {
+            if ((c2=nstrnew())==NULL) goto errexit;
+            if ((c2=nstrcat(c2,val))==NULL) goto errexit;
+            if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL) {
+              memfree(c2);
+              goto errexit;
+            }
+            if (valf2=='%') {
+              for (k=0;k<=strlen(c2)-1;k++) {
+                if (wildmatch(c1,c2+k,WILD_PATHNAME|WILD_PERIOD)) break;
+              }
+            } else {
+              for (k=strlen(c2);k>=0;k--) {
+                if (wildmatch(c1,c2+k,WILD_PATHNAME|WILD_PERIOD)) break;
+              }
+            }
+            if (k<0) k=strlen(c2);
+            c2[k]='\0';
+            memfree(c1);
+            c1=quotation(nshell,c2,quote2);
+            memfree(c2);
+            if (c1==NULL) goto errexit;
+          }
           break;
         }
         if (c1!=NULL) {
-          if (c1!=val) {
-            s=nstrcat(s,c1);
-            memfree(c1);
-            if (s==NULL) goto errexit;
-          } else {
-            memfree(se);
-            se=quotation(nshell,c1,quote2);
-            if (se==NULL) goto errexit;
-            if ((s=nstrcat(s,se))==NULL) goto errexit;
-          }
+          s=nstrcat(s,c1);
+          memfree(c1);
+          if (s==NULL) goto errexit;
         }
         *quote=quote2;
         *bquote=bquote2;

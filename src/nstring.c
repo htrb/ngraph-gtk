@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.c,v 1.7 2009/07/05 06:14:39 hito Exp $
+ * $Id: nstring.c,v 1.8 2009/10/20 07:05:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -234,6 +234,7 @@ wildmatch(char *pat,char *s,int flags)
 {
   if ((s==NULL) || (pat==NULL)) return 0;
   if (flags & WILD_PERIOD) {
+    /* "." and ".." should not match "*" */
     if (s[0]=='.') {
       if (pat[0]=='.') return wildmatch2(pat+1,s+1,flags);
       else return 0;
