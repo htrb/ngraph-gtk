@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.87 2009/10/22 01:11:01 hito Exp $
+ * $Id: ofile.c,v 1.88 2009/10/22 10:25:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -216,10 +216,12 @@ static NHASH FileConfigHash = NULL;
 
 struct f2ddata_buf {
   double dx, dy, d2, d3;
-  char dxstat, dystat, d2stat, d3stat;
   int colr, colg, colb, marksize, marktype, line;
 #if NEW_MATH_CODE
   int colr2, colg2, colb2;
+  int dxstat, dystat, d2stat, d3stat;
+#else
+  char dxstat, dystat, d2stat, d3stat;
 #endif
 };
 
@@ -259,6 +261,7 @@ struct f2ddata {
   int fnumx, fnumy;
   int *needx, *needy;
   int br, bg, bb;
+  int dxstat,dystat,d2stat,d3stat;
 #else
   char *codex,*codey,*codef,*codeg,*codeh;
   struct narray *needfilex,*needfiley;
@@ -288,10 +291,10 @@ struct f2ddata {
   char difstat3[10];
   double minx,maxx,miny,maxy;
   char minxstat,maxxstat,minystat,maxystat;
+  char dxstat,dystat,d2stat,d3stat;
 #endif
   int color[3];
   double dx,dy,d2,d3;
-  char dxstat,dystat,d2stat,d3stat;
   int maxdim;
   int need2pass;
   double sumx,sumy,sumxx,sumyy,sumxy;
@@ -2307,9 +2310,7 @@ set_const(MathEquation *eq, struct f2ddata *fp, int first)
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, fp->const_id[MATH_CONST_FIRST], &val);
 
-  math_equation_optimize(eq);
-
-  return 0;
+  return math_equation_optimize(eq);
 }
 
 static int
@@ -5365,10 +5366,20 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
 #if NEW_MATH_CODE
   code = create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
   if (code == NULL) {
+    math_equation_free(code);
     return 1;
   }
+
   rcode = math_equation_parse(code, equation);
-  math_equation_optimize(code);
+  if (rcode) {
+    math_equation_free(code);
+    return 1;
+  }
+
+  rcode = math_equation_optimize(code);
+  if (rcode) {
+    return 1;
+  }
 #else
   rcode=mathcode(equation,&code,NULL,NULL,NULL,NULL,
                  TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,
@@ -5559,8 +5570,11 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   }
 
 #if NEW_MATH_CODE
-  set_const(fp->codex[0], fp, TRUE);
-  set_const(fp->codey[0], fp, TRUE);
+  if (set_const(fp->codex[0], fp, FALSE))
+    return 1;
+
+  if (set_const(fp->codey[0], fp, FALSE))
+    return 1;
 #endif
 
   GRAregion(GC, &lm, &tm, &w, &h, &zoom);
@@ -5588,8 +5602,14 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   case PLOT_TYPE_RECTANGLE_FILL:
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
 #if NEW_MATH_CODE
-    set_const(fp->codex[1], fp, FALSE);
-    set_const(fp->codey[2], fp, FALSE);
+    rcode = set_const(fp->codex[1], fp, FALSE);
+    if (rcode)
+      break;
+
+    rcode = set_const(fp->codey[2], fp, FALSE);
+    if (rcode)
+      break;
+
     rcode = rectout(obj, fp, GC, lwidth, snum, style, type);
 #else
     rcode = rectout(obj, fp, GC, fr2, fg2, fb2, lwidth, snum, style, type);
@@ -5597,15 +5617,25 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
     break;
   case PLOT_TYPE_ERRORBAR_X:
 #if NEW_MATH_CODE
-    set_const(fp->codex[1], fp, TRUE);
-    set_const(fp->codex[2], fp, FALSE);
+    rcode = set_const(fp->codex[1], fp, FALSE);
+    if (rcode)
+      break;
+
+    rcode = set_const(fp->codex[2], fp, FALSE);
+    if (rcode)
+      break;
 #endif
     rcode = errorbarout(obj, fp, GC, lwidth, snum, style, type);
     break;
   case PLOT_TYPE_ERRORBAR_Y:
 #if NEW_MATH_CODE
-    set_const(fp->codey[1], fp, TRUE);
-    set_const(fp->codey[2], fp, FALSE);
+    rcode = set_const(fp->codey[1], fp, FALSE);
+    if (rcode)
+      break;
+
+    rcode = set_const(fp->codey[2], fp, FALSE);
+    if (rcode)
+      break;
 #endif
     rcode = errorbarout(obj, fp, GC, lwidth, snum, style, type);
     break;
@@ -5855,15 +5885,28 @@ f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 #if NEW_MATH_CODE
-static void
+static int
 set_const_all(struct f2ddata *fp)
 {
-  set_const(fp->codex[0], fp, TRUE);
-  set_const(fp->codey[0], fp, TRUE);
-  set_const(fp->codex[1], fp, FALSE);
-  set_const(fp->codex[2], fp, FALSE);
-  set_const(fp->codey[1], fp, FALSE);
-  set_const(fp->codey[2], fp, FALSE);
+  if (set_const(fp->codex[0], fp, TRUE))
+    return 1;
+
+  if (set_const(fp->codey[0], fp, TRUE))
+    return 1;
+
+  if (set_const(fp->codex[1], fp, FALSE))
+    return 1;
+
+  if (set_const(fp->codex[2], fp, FALSE))
+    return 1;
+
+  if (set_const(fp->codey[1], fp, FALSE))
+    return 1;
+
+  if (set_const(fp->codey[2], fp, FALSE))
+    return 1;
+
+  return 0;
 }
 #endif
 
@@ -5912,7 +5955,8 @@ f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 
 #if NEW_MATH_CODE
-  set_const_all(fp);
+  if (set_const_all(fp))
+    return 1;
 #endif
   while (getdata(fp)==0) {
     switch (fp->type) {
@@ -6880,7 +6924,8 @@ f2dstat(struct objlist *obj,char *inst,char *rval,
   sumx=sumxx=sumy=sumyy=0;
 
 #if NEW_MATH_CODE
-  set_const_all(fp);
+  if (set_const_all(fp))
+    return 1;
 #endif
   while ((rcode=getdata(fp))==0) {
     switch (fp->type) {
@@ -7080,7 +7125,8 @@ f2dstat2(struct objlist *obj,char *inst,char *rval,
   find=FALSE;
 
 #if NEW_MATH_CODE
-  set_const_all(fp);
+  if (set_const_all(fp))
+    return 1;
 #endif
   while ((rcode=getdata(fp))==0) {
     if (fp->dline==line) {
@@ -7170,7 +7216,8 @@ f2dboundings(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
   minx=maxx=miny=maxy=0;
 
 #if NEW_MATH_CODE
-  set_const_all(fp);
+  if (set_const_all(fp))
+    return 1;
 #endif
   while ((rcode=getdata(fp))==0) {
     switch (fp->type) {
@@ -7987,7 +8034,8 @@ f2doutputfile(struct objlist *obj,char *inst,char *rval,
   }
 
 #if NEW_MATH_CODE
-  set_const_all(fp);
+  if (set_const_all(fp))
+    return 1;
 #endif
   _getobj(obj,"type",inst,&type);
   if (type==3) {

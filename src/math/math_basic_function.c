@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
+#include <error.h>
 #include "math_equation.h"
 #include "math_function.h"
 
@@ -16,9 +17,17 @@
 int
 math_func_atanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  double v;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-  rval->val = atanh(exp->buf[0].val.val);
+  v = exp->buf[0].val.val;
+  if (v > 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = atanh(v);
   return 0;
 }
 
@@ -34,9 +43,17 @@ math_func_asinh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_acosh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  double v;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-  rval->val = acosh(exp->buf[0].val.val);
+  v = exp->buf[0].val.val;
+  if (v < 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = acosh(v);
   return 0;
 }
 
@@ -119,9 +136,17 @@ math_func_cosh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_sqrt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  double v;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-  rval->val = sqrt(exp->buf[0].val.val);
+  v = exp->buf[0].val.val;
+  if (v < 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = sqrt(v);
   return 0;
 }
 
@@ -146,27 +171,48 @@ math_func_atan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_acos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  double v;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-  rval->val = acos(exp->buf[0].val.val);
+  if (v < 1 || v > 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = acos(v);
   return 0;
 }
 
 int
 math_func_asin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  double v;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-  rval->val = asin(exp->buf[0].val.val);
+  if (v < 1 || v > 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = asin(v);
   return 0;
 }
 
 int
 math_func_log(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  double v;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-  rval->val = log10(exp->buf[0].val.val);
+  v = exp->buf[0].val.val;
+  if (v <= 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  rval->val = log10(v);
   return 0;
 }
 
@@ -282,9 +328,16 @@ math_func_sqr(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_ln(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  double v;
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-  rval->val = log(exp->buf[0].val.val);
+  v = exp->buf[0].val.val;
+  if (v <= 0) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+  rval->val = log(v);
   return 0;
 }
 
@@ -479,17 +532,20 @@ math_func_icgam(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *r
   x = expl->buf[1].val.val;
 
   if (x < 0 || mu < 0) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
   }
 
   if (mu == 0) {
     if (exp1(-x, &val)) {
+      rval->type = MATH_VALUE_ERROR;
       return -1;
     } else {
       val = -val;
     }
   } else if (x == 0) {
     if (gamma2(mu, &val)) {
+      rval->type = MATH_VALUE_ERROR;
       return -1;
     }
   } else {
@@ -498,6 +554,7 @@ math_func_icgam(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *r
       i = 0;
       do {
 	if (i == 56) {
+	  rval->type = MATH_VALUE_ERROR;
 	  return -1;
 	}
 	i++;
@@ -508,6 +565,7 @@ math_func_icgam(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *r
     u = exp(-x + mu * log(x));
     if (x <= 1) {
       if (gamma2(mu, &p1)) {
+	rval->type = MATH_VALUE_ERROR;
 	return -1;
       }
       p0 = 1;
@@ -681,11 +739,8 @@ math_func_qinv(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
 
   x = expl->buf[0].val.val;
 
-  if (x <= 0) {
-    return -1;
-  }
-
-  if (x >= 1) {
+  if (x <= 0 || x >= 1) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
   }
 
@@ -743,18 +798,22 @@ math_func_beta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   q = exp->buf[1].val.val;
 
   if (gamma2(p, &a)) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
   }
 
   if (gamma2(q, &b)) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
   }
 
   if (gamma2(p + q, &c)) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
   }
 
   if (fabs(c) < 1E-300) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
   }
 
@@ -777,8 +836,10 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   alp = exp->buf[1].val.val;
   x = exp->buf[2].val.val;
 
-  if (n < 0)
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
+  }
 
   l1 = 1;
   if (n == 0) {
@@ -926,8 +987,10 @@ math_func_tn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
-  if (n < 0)
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
+  }
 
   l1 = 1;
   if (n == 0) {
@@ -963,8 +1026,10 @@ math_func_hn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
-  if (n < 0)
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
+  }
 
   l1 = 1;
   if (n == 0) {
@@ -1069,8 +1134,10 @@ math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
-  if (n < 0)
+  if (n < 0) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
+  }
 
   l1 = 1;
   if (n == 0) {
@@ -1109,8 +1176,10 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   x2 = fabs(x);
   n2 = abs(n);
-  if ((n2 > 1000) || (x2 > 1000) || (x2 <= 1E-300))
+  if ((n2 > 1000) || (x2 > 1000) || (x2 <= 1E-300)) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
+  }
 
   if (x2 <= 2E-5) {
     t1 = x2 * 0.5;
@@ -1119,8 +1188,10 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     if (n2 != 0) {
       j1 = t1 - 0.5 * t1 * t1 * t1;
       y1 = (j1 * y0 - 2 / MPI / x2) / j0;
-      if (n2 >= -65 / log10(t1))
+      if (n2 >= -65 / log10(t1)) {
+	rval->type = MATH_VALUE_ERROR;
 	return -1;
+      }
       for (i = 2; i <= n2; i++) {
 	y2 = 2 * (i - 1) / x2 * y1 - y0;
 	y0 = y1;
@@ -1175,6 +1246,7 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 	  w = y1 * 1E-10;
 	  y2 = 2 * (i - 1) / x2 * w - y0 * 1E-10;
 	  if (fabs(y2) >= 1E65) {
+	    rval->type = MATH_VALUE_ERROR;
 	    return -1;
 	  }
 	  y2 *= 1E10;
@@ -1219,8 +1291,10 @@ math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   x2 = fabs(x);
   n2 = abs(n);
-  if (n2 > 1000 || x2 > 1000)
+  if (n2 > 1000 || x2 > 1000) {
+    rval->type = MATH_VALUE_ERROR;
     return -1;
+  }
 
   if (x2 <= 2E-5) {
     t1 = x2 * 0.5;

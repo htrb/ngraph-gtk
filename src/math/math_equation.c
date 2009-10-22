@@ -327,7 +327,7 @@ math_equation_optimize(MathEquation *eq)
 
   eq->opt_exp = math_expression_optimize(eq->exp, &err);
 
-  return 0;
+  return err;
 }
 
 int 

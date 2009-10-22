@@ -3,7 +3,7 @@
 	* src/ofile.c (struct f2dlocal): add member "total_line",
 	(f2dinit): initialize "f2dlocal->total_line".
 	(set_final_line): add.
-	(check_mtime): call "set_final_line()".
+	(check_mtime, getminmaxdata): call "set_final_line()".
 
 2009-10-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
