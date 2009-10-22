@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.86 2009/10/22 00:07:11 hito Exp $
+ * $Id: ofile.c,v 1.87 2009/10/22 01:11:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2784,7 +2784,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
 #endif
   fp->bufnum++;
 
-  if (fp->rstep)
+  if (fp->rstep > 1)
     return getdata_skip_step(fp);
 
   return 0;
@@ -3549,7 +3549,7 @@ getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 #endif
       datanum++;
 
-      if (fp->rstep && getdata_skip_step(fp))
+      if (fp->rstep > 1 && getdata_skip_step(fp))
 	return -1;
 
       fp->datanum++;
