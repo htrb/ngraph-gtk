@@ -1,3 +1,92 @@
+2009-10-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shellcm.c (str_calc): add code for new math code.
+
+	* src/omath.c (mlocalclear, minit, mdone): add code for new math
+	code.
+	(create_func_def_str): add.
+	(mformula, mcalc): add code for new math code.
+
+	* src/ofit.c (fitdone, fitput, fituser): add code for new math
+	code.
+
+	* src/ofile.c (struct f2ddata_buf): add members "colr2", "colg2"
+	and "colb2" when "NEW_MATH_CODE" is true.
+	(struct f2ddata): add some members when "NEW_MATH_CODE" is true.
+	(struct f2dload): add some members when "NEW_MATH_CODE" is true.
+	(file_color, file_rgb_sub, file_rgb, file_rgb2, file_hsb_sub)
+	(file_hsb, file_hsb2, file_marksize, file_marktype, struct funcs)
+	(add_file_func): add.
+	(opendata, reopendata, f2dputmath): add code for new math code.
+	(create_func_def_str, set_user_fnc, set_equation, put_func): add.
+	(create_math_equation): add.
+	(f2dinit, f2ddone, getdataarray, getdata_get_other_files): add
+	code for new math code.
+	(set_var, set_const, file_calculate, set_const_all): add.
+	(getdata_sub2, getdata_sub1, getdata, getdata2, getdataraw)
+	(getminmaxdata, markout, rectout, barout, fitout, f2ddraw)
+	(f2devaluate, f2dgetdataraw, f2dstat, f2dstat2, f2dboundings)
+	(f2doutputfile): add code for new math code.
+
+	* src/object.c (getargument): add code for new math code.
+
+	* src/gra.c (GRAexpandmath): add code for new math code.
+
+	* src/gtk/x11file.c (FitDialogResult): add code for new math code.
+
+	* src/math/parse_bin_expression.h: add.
+
+	* src/math/math_scanner.h: add.
+
+	* src/math/math_scanner.c: add.
+
+	* src/math/math_parser.h: add.
+
+	* src/math/math_parser.c: add.
+
+	* src/math/math_operator.rb: add.
+
+	* src/math/math_operator.h.in: add.
+
+	* src/math/math_operator.h: add.
+
+	* src/math/math_operator.c: add.
+
+	* src/math/math_function.rb: add.
+
+	* src/math/math_function.h.in: add.
+
+	* src/math/math_function.h: add.
+
+	* src/math/math_function.c: add.
+
+	* src/math/math_expression.h: add.
+
+	* src/math/math_expression.c: add.
+
+	* src/math/math_error.h: add.
+
+	* src/math/math_equation.h: add.
+
+	* src/math/math_equation.c: add.
+
+	* src/math/math_constant.rb: add.
+
+	* src/math/math_constant.h.in: add.
+
+	* src/math/math_constant.h: add.
+
+	* src/math/math_constant.c: add.
+
+	* src/math/math_basic_function.c: add.
+
+	* src/math/Makefile.am: add.
+
+	* configure.in: add macro for new math code.
+
+	* src/gtk/x11axis.c (axiswin_scale_clear): call
+	"set_graph_modified()" after call "exeobj()".
+
 2009-10-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (expand): new upstream release (6.3.51).

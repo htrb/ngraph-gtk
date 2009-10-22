@@ -178,7 +178,9 @@ math_equation_clear(MathEquation *eq)
 {
   int i;
 
-  if (eq->pos_func_num > 0 && eq->pos_func_buf) {
+  memset(eq->memory, 0, sizeof(eq->memory));
+
+  if (eq->pos_func_buf) {
     for (i = 0; i < eq->pos_func_num; i++) {
       eq->pos_func_buf[i].val = 0;
       eq->pos_func_buf[i].type = MATH_VALUE_UNDEF;
@@ -201,11 +203,13 @@ math_equation_clear(MathEquation *eq)
 int
 math_equation_parse(MathEquation *eq, const char *str)
 {
+  int err;
+
   if (eq == NULL)
-    return 1;
+    return MATH_ERROR_UNKNOWN;
 
   if (eq->cnum > 0 && eq->cbuf == NULL)
-    return 1;
+    return MATH_ERROR_UNKNOWN;
 
   if (eq->pos_func_buf) {
     memfree(eq->pos_func_buf);
@@ -226,9 +230,7 @@ math_equation_parse(MathEquation *eq, const char *str)
   init_parameter(eq);
 
   if (str) {
-    eq->exp = math_parser_parse(str, eq);
-    if (eq->exp == NULL)
-      return 1;
+    eq->exp = math_parser_parse(str, eq, &err);
   } else {
     eq->exp = NULL;
   }
@@ -237,11 +239,11 @@ math_equation_parse(MathEquation *eq, const char *str)
     eq->pos_func_buf = memalloc(eq->pos_func_num * sizeof(*eq->pos_func_buf));
     if (eq->pos_func_buf == NULL) {
       math_expression_free(eq->exp);
-      return 1;
+      return MATH_ERROR_MEMORY;
     }
   }
 
-  return 0;
+  return err;
 }
 
 static void
@@ -302,6 +304,8 @@ math_equation_free(MathEquation *eq)
 int 
 math_equation_optimize(MathEquation *eq)
 {
+  int err;
+
   if ((eq == NULL) ||
       (eq->exp == NULL) ||
       (eq->cnum > 0 && eq->cbuf == NULL) ||
@@ -321,7 +325,7 @@ math_equation_optimize(MathEquation *eq)
     math_expression_free(eq->opt_exp);
   }
 
-  eq->opt_exp = math_expression_optimize(eq->exp);
+  eq->opt_exp = math_expression_optimize(eq->exp, &err);
 
   return 0;
 }
@@ -334,6 +338,8 @@ math_equation_calculate(MathEquation *eq, MathValue *val)
   if ((eq == NULL) || (eq->exp == NULL) ||
       (eq->cnum > 0 && eq->cbuf == NULL) ||
       (eq->vnum > 0 && eq->vbuf == NULL)) {
+    if (val)
+      val->type = MATH_VALUE_ERROR;
     return 1;
   }
 
@@ -444,18 +450,14 @@ math_equation_set_parameter_data(MathEquation *eq, int type, MathValue *data)
 
   ptr = eq->parameter;
   while (ptr) {
-    if (ptr->type == type)
-      break;
+    if (ptr->type == type) {
+      ptr->data = data;
+      return 0;
+    }
     ptr = ptr->next;
   }
 
-  if (ptr == NULL) {
-    return 1;
-  }
-
-  ptr->data = data;
-
-  return 0;
+  return 1;
 }
 
 MathEquationParametar *
@@ -519,9 +521,15 @@ free_parameter(MathEquation *eq)
 }
 
 int 
-math_equation_add_pos_func(MathEquation *eq)
+math_equation_add_pos_func(MathEquation *eq, struct math_function_parameter *fprm)
 {
   int n;
+
+  if (! fprm->positional)
+    return -1;
+
+  if (eq->func_def)
+    return MATH_ERROR_INVALID_FUNC;
 
   n = eq->pos_func_num;
   eq->pos_func_num++;
@@ -581,6 +589,7 @@ static int
 optimize_func_cb(struct nhash *hash, void *ptr)
 {
   struct math_function_parameter *fprm;
+  int err;
 
   fprm = (struct math_function_parameter *) hash->val.p;
   if (fprm->opt_usr) {
@@ -589,7 +598,13 @@ optimize_func_cb(struct nhash *hash, void *ptr)
   }
 
   if (fprm->base_usr) {
-    fprm->opt_usr = math_expression_optimize(fprm->base_usr);
+    fprm->opt_usr = math_expression_optimize(fprm->base_usr, &err);
+  }
+
+  if (fprm->opt_usr && fprm->opt_usr->u.func.exp->type == MATH_EXPRESSION_TYPE_DOBLE) {
+    fprm->side_effect = 0;
+  } else {
+    fprm->side_effect = 1;
   }
 
   return 0;
@@ -1220,7 +1235,10 @@ math_equation_add_array(MathEquation *eq, const char *name)
     r = nhash_get_int(eq->local_array, name, &i);
     if (r) {
       i = eq->local_array_num;
-      nhash_set_int(eq->local_array, name, i);
+      if (nhash_set_int(eq->local_array, name, i)) {
+	/* error: cannot allocate enough memory */
+	return -1;
+      }
       eq->local_array_num++;
     }
   } else {
@@ -1234,7 +1252,10 @@ math_equation_add_array(MathEquation *eq, const char *name)
 	return -1;
       }
 
-      nhash_set_int(eq->array, name, i);
+      if (nhash_set_int(eq->array, name, i)) {
+	/* error: cannot allocate enough memory */
+	return -1;
+      }
     }
   }
 
@@ -1329,3 +1350,135 @@ math_equation_get_array(MathEquation *eq, int array)
   return &eq->array_buf[array];
 }
 
+void 
+math_equation_set_user_data(MathEquation *eq, void *user_data)
+{
+  if (eq) {
+    eq->user_data = user_data;
+  }
+}
+
+void *
+math_equation_get_user_data(MathEquation *eq)
+{
+  return (eq) ? eq->user_data : NULL;
+}
+
+static int
+check_const_sub(MathExpression *exp, int *constant, int n)
+{
+  int i, r;
+
+  if (exp == NULL)
+    return 0;
+
+  switch (exp->type) {
+  case MATH_EXPRESSION_TYPE_OR:
+  case MATH_EXPRESSION_TYPE_AND:
+  case MATH_EXPRESSION_TYPE_EQ:
+  case MATH_EXPRESSION_TYPE_NE:
+  case MATH_EXPRESSION_TYPE_ADD:
+  case MATH_EXPRESSION_TYPE_SUB:
+  case MATH_EXPRESSION_TYPE_MUL:
+  case MATH_EXPRESSION_TYPE_DIV:
+  case MATH_EXPRESSION_TYPE_MOD:
+  case MATH_EXPRESSION_TYPE_POW:
+  case MATH_EXPRESSION_TYPE_GT:
+  case MATH_EXPRESSION_TYPE_GE:
+  case MATH_EXPRESSION_TYPE_LT:
+  case MATH_EXPRESSION_TYPE_LE:
+    r = check_const_sub(exp->u.bin.left, constant, n);
+    if (r)
+      return r;
+
+    r = check_const_sub(exp->u.bin.right, constant, n);
+    break;
+  case MATH_EXPRESSION_TYPE_ASSIGN:
+    r = check_const_sub(exp->u.bin.right, constant, n);
+    break;
+  case MATH_EXPRESSION_TYPE_FUNC:
+    r = check_const_sub(exp->u.func.exp, constant, n);
+    break;
+  case MATH_EXPRESSION_TYPE_FUNC_CALL:
+    for (i = 0; i < exp->u.func_call.argc; i++) {
+      r = check_const_sub(exp->u.func_call.argv[i], constant, n);
+      if (r)
+	return r;
+    }
+    r = 0;
+    break;
+  case MATH_EXPRESSION_TYPE_MINUS:
+  case MATH_EXPRESSION_TYPE_FACT:
+    r = check_const_sub(exp->u.unary.operand, constant, n);
+    break;
+  case MATH_EXPRESSION_TYPE_CONST:
+    for (i = 0; i < n; i++) {
+      if (constant[i] == exp->u.index)
+	return 1;
+    }
+    r = 0;
+    break;
+  case MATH_EXPRESSION_TYPE_CONST_DEF:
+  case MATH_EXPRESSION_TYPE_ARRAY:
+  case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
+  case MATH_EXPRESSION_TYPE_VARIABLE:
+  case MATH_EXPRESSION_TYPE_DOBLE:
+  case MATH_EXPRESSION_TYPE_PRM:
+  case MATH_EXPRESSION_TYPE_EOEQ:
+    r = 0;
+    break;
+  }
+
+  return r;
+}
+
+struct search_const {
+  int *constant, n, r;
+};
+
+static int 
+check_counst_in_func(struct nhash *hash, void *ptr)
+{
+  int r;
+  struct math_function_parameter *fprm;
+  struct search_const *sc;
+
+  fprm = (struct math_function_parameter *) hash->val.p;
+  sc = (struct search_const *) ptr;
+
+  r = check_const_sub(fprm->base_usr, sc->constant, sc->n);
+  sc->r = r;
+
+  return r;
+}
+
+
+int
+math_equation_check_const(MathEquation *eq, int *constant, int n)
+{
+  int r;
+  struct search_const sc;
+  MathExpression *exp;
+
+  if (eq == NULL || constant == NULL)
+    return 0;
+
+  sc.constant = constant;
+  sc.n = n;
+  nhash_each(eq->function, check_counst_in_func, &sc);
+
+  if (sc.r) {
+   return sc.r;
+  }
+
+  r = 0;
+  exp = eq->exp;
+  while (exp) {
+    r = check_const_sub(exp, constant, n);
+    if (r)
+      break;
+    exp = exp->next;
+  }
+
+  return r;
+}

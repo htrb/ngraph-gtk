@@ -29,7 +29,7 @@ endif
 ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 	cp -f /usr/share/misc/config.guess config.guess
 endif
-	./configure $(CROSS) --enable-japanese --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --sysconfdir=/etc CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+	./configure $(CROSS) --enable-japanese --enable-new_math --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --sysconfdir=/etc CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
 
 
 build: build-stamp

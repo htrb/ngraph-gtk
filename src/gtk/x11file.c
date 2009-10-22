@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.116 2009/08/19 08:32:04 hito Exp $
+ * $Id: x11file.c,v 1.117 2009/10/22 00:07:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,6 +49,8 @@
 #include "ofile.h"
 #include "ofit.h"
 
+#include "math_equation.h"
+
 #include "x11bitmp.h"
 #include "x11gui.h"
 #include "x11dialg.h"
@@ -70,11 +72,11 @@ static n_list_store Flist[] = {
   {N_("ax"),	G_TYPE_ENUM,    TRUE, TRUE,  "axis_x",     FALSE},
   {N_("ay"),	G_TYPE_ENUM,    TRUE, TRUE,  "axis_y",     FALSE},
   {N_("type"),	G_TYPE_OBJECT,  TRUE, TRUE,  "type",       FALSE},
-  {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0, SPIN_ENTRY_MAX, 10,   100},
-  {N_("skip"),	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  FALSE,  0, INT_MAX,         1,    10},
-  {N_("step"),	G_TYPE_INT,     TRUE, TRUE,  "read_step",  FALSE,  1, INT_MAX,         1,    10},
-  {N_("final"),	G_TYPE_INT,     TRUE, TRUE,  "final_line", FALSE, -1, INT_MAX,         1,    10},
+  {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0,       SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0,       SPIN_ENTRY_MAX, 10,   100},
+  {N_("skip"),	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  FALSE,  0,       INT_MAX,         1,    10},
+  {N_("step"),	G_TYPE_INT,     TRUE, TRUE,  "read_step",  FALSE,  1,       INT_MAX,         1,    10},
+  {N_("final"),	G_TYPE_INT,     TRUE, TRUE,  "final_line", FALSE,  INT_MIN, INT_MAX,    1,    10},
   {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, "data_num",   FALSE},
   {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid",        FALSE},
 };
@@ -148,7 +150,6 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
   static char *label[] = {N_("_Math X:"), N_("_Math Y:"), "_F(X,Y,Z):", "_G(X,Y,Z):", "_H(X,Y,Z):"};
 
   d = (struct MathTextDialog *) data;
-  d->math = NULL;
   if (makewidget) {
     hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(TRUE, TRUE);
@@ -181,6 +182,9 @@ MathTextDialogClose(GtkWidget *w, void *data)
 {
   struct MathTextDialog *d;
   const char *p;
+  char *obuf, *ptr;
+  int r, id;
+  GList *id_ptr;
 
   d = (struct MathTextDialog *) data;
 
@@ -188,7 +192,28 @@ MathTextDialogClose(GtkWidget *w, void *data)
     return;
 
   p = gtk_entry_get_text(GTK_ENTRY(d->list));
-  d->math = strdup(p);
+  ptr = nstrdup(p);
+  if (ptr == NULL)
+    return;
+
+  for (id_ptr = d->id_list; id_ptr; id_ptr = id_ptr->next) {
+    r = list_store_path_get_int(d->tree, id_ptr->data, 0, &id);
+    if (r)
+      continue;
+
+    sgetobjfield(d->Obj, id, FieldStr[d->Mode], NULL, &obuf, FALSE, FALSE, FALSE);
+    if (obuf == NULL || strcmp(obuf, ptr)) {
+      if (sputobjfield(d->Obj, id, FieldStr[d->Mode], ptr)) {
+	memfree(ptr);
+	d->ret = IDLOOP;
+	return;
+      }
+      set_graph_modified();
+    }
+    memfree(obuf);
+  }
+  memfree(ptr);
+
   switch (d->Mode) {
   case TYPE_MATH_X:
     entry_completion_append(NgraphApp.x_math_list, p);
@@ -206,15 +231,18 @@ MathTextDialogClose(GtkWidget *w, void *data)
 }
 
 void
-MathTextDialog(struct MathTextDialog *data, char *text, int mode)
+MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree)
 {
   if (mode < 0 || mode >= MATH_FNC_NUM)
     mode = 0;
 
   data->SetupWindow = MathTextDialogSetup;
   data->CloseWindow = MathTextDialogClose;
+  data->tree = tree;
   data->Text = text;
   data->Mode = mode;
+  data->Obj = obj;
+  data->id_list = list;
 }
 
 static void
@@ -266,7 +294,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
 {
   struct MathDialog *d;
   int a, *ary, r;
-  char *field = NULL, *buf, *obuf;
+  char *field = NULL, *buf;
   GtkTreeSelection *gsel;
   GtkTreePath *path;
   GList *list, *data;
@@ -301,23 +329,10 @@ MathDialogList(GtkButton *w, gpointer client_data)
   if (buf == NULL)
     goto END;
 
-  MathTextDialog(&DlgMathText, buf, d->Mode);
+  MathTextDialog(&DlgMathText, buf, d->Mode, d->Obj, list, d->list);
 
-  if (DialogExecute(d->widget, &DlgMathText) == IDOK) {
-    for (data = list; data; data = data->next) {
-      r = list_store_path_get_int(d->list, data->data, 0, &a);
-      if (r)
-	continue;
+  DialogExecute(d->widget, &DlgMathText);
 
-      sgetobjfield(d->Obj, a, field, NULL, &obuf, FALSE, FALSE, FALSE);
-      if (obuf == NULL || strcmp(obuf, DlgMathText.math)) {
-	sputobjfield(d->Obj, a, field, DlgMathText.math);
-	set_graph_modified();
-      }
-      memfree(obuf);
-    }
-    free(DlgMathText.math);
-  }
   memfree(buf);
 
   MathDialogSetupItem(d->widget, d);
@@ -967,9 +982,16 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
 {
   struct FitDialog *d;
   double derror, correlation, coe[10];
-  char *equation, *math, *code, *inst, buf[1024];
-  int i, j, dim, dimension, maxdim, need2pass, *needdata, tbl[10], type, num;
+  char *equation, *math, *inst, buf[1024];
+  int i, j, dim, dimension, tbl[10], type, num;
+#if NEW_MATH_CODE
+  MathEquation *code;
+  MathEquationParametar *prm;
+#else
+  char *code;
   struct narray needarray;
+  int *needdata, maxdim, need2pass;
+#endif
 
   d = (struct FitDialog *) client_data;
 
@@ -1041,6 +1063,22 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
     }
   } else {
+#if NEW_MATH_CODE
+    code = math_equation_basic_new();
+    if (code == NULL)
+      return;
+
+    if (math_equation_parse(code, math)) {
+      math_equation_free(code);
+      return;
+    }
+    prm = math_equation_get_parameter(code, 0);
+    dim = prm->id_num;
+    for (i = 0; i < dim; i++) {
+      tbl[i] = prm->id[i];
+    }
+    math_equation_free(code);
+#else
     arrayinit(&needarray, sizeof(int));
     mathcode(math, &code, &needarray, NULL, &maxdim, &need2pass,
 	     TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
@@ -1052,7 +1090,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       tbl[i] = needdata[i];
     }
     arraydel(&needarray);
-
+#endif
     i = 0;
     i += snprintf(buf + i, sizeof(buf) - i, "Eq: User defined\n\n");
 

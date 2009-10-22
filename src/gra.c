@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.23 2009/09/29 10:49:30 hito Exp $
+ * $Id: gra.c,v 1.24 2009/10/22 00:07:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -43,8 +43,6 @@
 
 #define TRUE 1
 #define FALSE 0
-
-#define USE_NEW_MATH_CODE 1
 
 struct GRAC {
   int open,init;
@@ -1715,7 +1713,7 @@ GRAexpandmath(char **s)
   char *str,*ret;
   int quote;
   int rcode;
-#if USE_NEW_MATH_CODE 
+#if NEW_MATH_CODE 
   MathValue val;
   MathEquation *code;
 #else
@@ -1753,7 +1751,7 @@ GRAexpandmath(char **s)
   }
   if ((*s)[0]!=']') goto errexit;
   (*s)++;
-#if USE_NEW_MATH_CODE 
+#if NEW_MATH_CODE 
   code = math_equation_basic_new();
   if (code == NULL)
     goto errexit;

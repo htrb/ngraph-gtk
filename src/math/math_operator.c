@@ -2,21 +2,21 @@
 #include "math_operator.h"
 
 static struct ope_str ope_str[] = {
-  {"^=", 2, MATH_OPERATOR_TYPE_POW_ASSIGN},
-  {"\\=", 2, MATH_OPERATOR_TYPE_MOD_ASSIGN},
-  {"/=", 2, MATH_OPERATOR_TYPE_DIV_ASSIGN},
-  {"*=", 2, MATH_OPERATOR_TYPE_MUL_ASSIGN},
-  {"+=", 2, MATH_OPERATOR_TYPE_PLUS_ASSIGN},
-  {"-=", 2, MATH_OPERATOR_TYPE_MINUS_ASSIGN},
+  {"^:", 2, MATH_OPERATOR_TYPE_POW_ASSIGN},
+  {"\\:", 2, MATH_OPERATOR_TYPE_MOD_ASSIGN},
+  {"/:", 2, MATH_OPERATOR_TYPE_DIV_ASSIGN},
+  {"*:", 2, MATH_OPERATOR_TYPE_MUL_ASSIGN},
+  {"+:", 2, MATH_OPERATOR_TYPE_PLUS_ASSIGN},
+  {"-:", 2, MATH_OPERATOR_TYPE_MINUS_ASSIGN},
   {"&&", 2, MATH_OPERATOR_TYPE_AND},
   {"||", 2, MATH_OPERATOR_TYPE_OR},
-  {"!=", 2, MATH_OPERATOR_TYPE_NE},
-  {"==", 2, MATH_OPERATOR_TYPE_EQ},
-  {">=", 2, MATH_OPERATOR_TYPE_GE},
-  {"<=", 2, MATH_OPERATOR_TYPE_LE},
+  {"!:", 2, MATH_OPERATOR_TYPE_NE},
+  {"::", 2, MATH_OPERATOR_TYPE_EQ},
+  {">:", 2, MATH_OPERATOR_TYPE_GE},
+  {"<:", 2, MATH_OPERATOR_TYPE_LE},
   {"<", 1, MATH_OPERATOR_TYPE_LT},
   {">", 1, MATH_OPERATOR_TYPE_GT},
-  {"=", 1, MATH_OPERATOR_TYPE_ASSIGN},
+  {":", 1, MATH_OPERATOR_TYPE_ASSIGN},
   {"!", 1, MATH_OPERATOR_TYPE_FACT},
   {"^", 1, MATH_OPERATOR_TYPE_POW},
   {"\\", 1, MATH_OPERATOR_TYPE_MOD},
@@ -85,10 +85,10 @@ static char ope_char[256] = {
   0,
   0,
   0,
-  0,
+  1,  // ':'
   0,
   1,  // '<'
-  1,  // '='
+  0,
   1,  // '>'
   0,
   0,

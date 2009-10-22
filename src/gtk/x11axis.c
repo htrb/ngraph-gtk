@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.71 2009/08/13 08:52:01 hito Exp $
+ * $Id: x11axis.c,v 1.72 2009/10/22 00:07:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2630,6 +2630,7 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
     d->select = sel;
     axis_scale_push(obj, sel);
     exeobj(obj, "clear", sel, 0, NULL);
+    set_graph_modified();
     d->update(FALSE);
   }
 }

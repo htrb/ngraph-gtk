@@ -1,18 +1,23 @@
 #include <stdlib.h>
 #include <math.h>
-#include "math_expression.h"
+#include "math_equation.h"
 #include "math_function.h"
 
 #define MPI 3.14159265358979323846
 #define MEXP1 2.71828182845905
 #define MEULER 0.57721566490153286
 
-#define MEMORY_NUM 8192
-static MathValue MemoryBuf[MEMORY_NUM];
+#define MATH_CHECK_ARG(rval, v) if (v.val.type != MATH_VALUE_NORMAL) {	\
+    *rval = v.val;							\
+    return 0;								\
+  }
+
 
 int
 math_func_atanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = atanh(exp->buf[0].val.val);
   return 0;
 }
@@ -20,6 +25,8 @@ math_func_atanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_asinh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = asinh(exp->buf[0].val.val);
   return 0;
 }
@@ -27,6 +34,8 @@ math_func_asinh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_acosh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = acosh(exp->buf[0].val.val);
   return 0;
 }
@@ -35,6 +44,9 @@ int
 math_func_gauss(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   if (exp->buf[0].val.val >= 0) {
     val = (int) (exp->buf[0].val.val);
   } else if (exp->buf[0].val.val - (int) exp->buf[0].val.val == 0) {
@@ -51,6 +63,9 @@ int
 math_func_round(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   double val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   if (fabs(exp->buf[0].val.val - (int) exp->buf[0].val.val) >= 0.5) {
     if (exp->buf[0].val.val >= 0) {
       val = exp->buf[0].val.val - (exp->buf[0].val.val - (int) exp->buf[0].val.val) + 1;
@@ -68,6 +83,8 @@ math_func_round(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_tanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = tanh(exp->buf[0].val.val);
   return 0;
 }
@@ -75,6 +92,8 @@ math_func_tanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_sign(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = (exp->buf[0].val.val < 0) ? -1 : 1;
   return 0;
 }
@@ -82,6 +101,8 @@ math_func_sign(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_frac(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = exp->buf[0].val.val - (int) exp->buf[0].val.val;
   return 0;
 }
@@ -89,6 +110,8 @@ math_func_frac(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_cosh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = cosh(exp->buf[0].val.val);
   return 0;
 }
@@ -96,6 +119,8 @@ math_func_cosh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_sqrt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = sqrt(exp->buf[0].val.val);
   return 0;
 }
@@ -103,6 +128,8 @@ math_func_sqrt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_sinh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = sinh(exp->buf[0].val.val);
   return 0;
 }
@@ -110,6 +137,8 @@ math_func_sinh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_atan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = atan(exp->buf[0].val.val);
   return 0;
 }
@@ -117,6 +146,8 @@ math_func_atan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_acos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = acos(exp->buf[0].val.val);
   return 0;
 }
@@ -124,6 +155,8 @@ math_func_acos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_asin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = asin(exp->buf[0].val.val);
   return 0;
 }
@@ -131,6 +164,8 @@ math_func_asin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_log(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = log10(exp->buf[0].val.val);
   return 0;
 }
@@ -138,6 +173,8 @@ math_func_log(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_tan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = tan(exp->buf[0].val.val);
   return 0;
 }
@@ -145,6 +182,8 @@ math_func_tan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_sin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = sin(exp->buf[0].val.val);
   return 0;
 }
@@ -152,6 +191,8 @@ math_func_sin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_cos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = cos(exp->buf[0].val.val);
   return 0;
 }
@@ -159,6 +200,8 @@ math_func_cos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_abs(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = fabs(exp->buf[0].val.val);
   return 0;
 }
@@ -166,6 +209,8 @@ math_func_abs(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_exp(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, expl->buf[0]);
+
   rval->val = exp(expl->buf[0].val.val);
   return 0;
 }
@@ -173,6 +218,8 @@ math_func_exp(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rva
 int
 math_func_int(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = (int) exp->buf[0].val.val;
   return 0;
 }
@@ -190,6 +237,7 @@ math_func_max(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 
   max = exp->buf[0].val.val;
   for (i = 1; i < exp->argc; i++) {
+    MATH_CHECK_ARG(rval, exp->buf[i]);
     if (exp->buf[i].val.val > max) {
       max = exp->buf[i].val.val;
     }
@@ -212,6 +260,7 @@ math_func_min(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 
   min = exp->buf[0].val.val;
   for (i = 1; i < exp->argc; i++) {
+    MATH_CHECK_ARG(rval, exp->buf[i]);
     if (exp->buf[i].val.val < min) {
       min = exp->buf[i].val.val;
     }
@@ -224,6 +273,8 @@ math_func_min(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_sqr(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val =  exp->buf[0].val.val * exp->buf[0].val.val;
   return 0;
 }
@@ -231,6 +282,8 @@ math_func_sqr(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_ln(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = log(exp->buf[0].val.val);
   return 0;
 }
@@ -238,6 +291,8 @@ math_func_ln(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_theta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val = (exp->buf[0].val.val >= 0) ? 1 : 0;
   return 0;
 }
@@ -245,6 +300,8 @@ math_func_theta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 int
 math_func_delta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val =  (exp->buf[0].val.val == 0) ? 1 : 0;
   return 0;
 }
@@ -415,6 +472,9 @@ math_func_icgam(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *r
   double a, u, p0, p1, q0, q1, mu, x, val;
   int i, i2, i3;
 
+  MATH_CHECK_ARG(rval, expl->buf[0]);
+  MATH_CHECK_ARG(rval, expl->buf[1]);
+
   mu = expl->buf[0].val.val;
   x = expl->buf[1].val.val;
 
@@ -498,6 +558,8 @@ math_func_icgam(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *r
 int
 math_func_gamma(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   return gamma2(exp->buf[0].val.val, &rval->val);
 }
 
@@ -506,6 +568,8 @@ math_func_erfc(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
 {
   int i, i2, sg;
   double x, x2, x3, sum, h, h2, val;
+
+  MATH_CHECK_ARG(rval, expl->buf[0]);
 
   x = expl->buf[0].val.val;
 
@@ -613,6 +677,8 @@ math_func_qinv(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
 {
   double x, x2, m2, c0, c1, y0, y1, val;
 
+  MATH_CHECK_ARG(rval, expl->buf[0]);
+
   x = expl->buf[0].val.val;
 
   if (x <= 0) {
@@ -659,6 +725,8 @@ math_func_qinv(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
 int
 math_func_rand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   rval->val =  (rand() / ((double) RAND_MAX + 1)) * exp->buf[0].val.val;
   return 0;
 }
@@ -667,6 +735,9 @@ int
 math_func_beta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   double p, q, a, b, c;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
 
   p = exp->buf[0].val.val;
   q = exp->buf[1].val.val;
@@ -697,6 +768,10 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 {
   int i, n;
   double l1, l2, tmp1, tmp2, val, x, alp;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+  MATH_CHECK_ARG(rval, exp->buf[2]);
 
   n = exp->buf[0].val.val;
   alp = exp->buf[1].val.val;
@@ -733,6 +808,10 @@ math_func_mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 {
   int d, d1, d2, d3, d4;
 
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+  MATH_CHECK_ARG(rval, exp->buf[2]);
+
   d = (14 - exp->buf[1].val.val) / 12;
   d1 = (exp->buf[0].val.val - d) * 365.25;
   d2 = (exp->buf[1].val.val + d * 12 - 2) * 30.59;
@@ -747,6 +826,9 @@ math_func_mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_xor(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val = ((exp->buf[0].val.val != 0) ^ (exp->buf[1].val.val != 0)) ? 1 : 0;
   return 0;
 }
@@ -754,6 +836,9 @@ math_func_xor(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_neq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val = (exp->buf[0].val.val != exp->buf[1].val.val);
   return 0;
 }
@@ -761,6 +846,9 @@ math_func_neq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_and(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val = (exp->buf[0].val.val && exp->buf[1].val.val);
   return 0;
 }
@@ -768,6 +856,9 @@ math_func_and(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_not(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val = ! exp->buf[0].val.val;
   return 0;
 }
@@ -775,6 +866,9 @@ math_func_not(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_lt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val = (exp->buf[0].val.val < exp->buf[1].val.val);
   return 0;
 }
@@ -782,6 +876,9 @@ math_func_lt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_le(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val = (exp->buf[0].val.val <= exp->buf[1].val.val);
   return 0;
 }
@@ -789,6 +886,9 @@ math_func_le(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_or(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val = (exp->buf[0].val.val || exp->buf[1].val.val);
   return 0;
 }
@@ -796,6 +896,9 @@ math_func_or(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_ge(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val =  (exp->buf[0].val.val >= exp->buf[1].val.val);
   return 0;
 }
@@ -803,6 +906,9 @@ math_func_ge(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_eq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   rval->val = ( exp->buf[0].val.val == exp->buf[1].val.val);
 
   return 0;
@@ -813,6 +919,9 @@ math_func_tn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   double l1, l2, tmp1, x, val;
   int i, n;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
 
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
@@ -848,6 +957,9 @@ math_func_hn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   double l1, l2, val, x;
   int i, n;
 
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
@@ -879,27 +991,29 @@ math_func_hn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_gt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  rval->val =  (exp->buf[0].val.val >= exp->buf[1].val.val);
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
 
+  rval->val = (exp->buf[0].val.val >= exp->buf[1].val.val);
   return 0;
 }
 
 int
 math_func_if(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int v;
+  int n;
 
-  v = exp->buf[0].val.val;
-  return math_expression_calculate(exp->buf[(v) ? 1 : 2 ].exp, rval);
+  n = (exp->buf[0].val.type == MATH_VALUE_NORMAL && exp->buf[0].val.val) ? 1 : 2;
+  return math_expression_calculate(exp->buf[n].exp, rval);
 }
 
 int
 math_func_unless(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int v;
+  int n;
 
-  v = exp->buf[0].val.val;
-  return math_expression_calculate(exp->buf[(v) ? 2 : 1 ].exp, rval);
+  n = (exp->buf[0].val.type == MATH_VALUE_NORMAL && exp->buf[0].val.val) ? 2 : 1;
+  return math_expression_calculate(exp->buf[n].exp, rval);
 }
 
 #define CHECK_VAL_TYPE(R,V,T) (R)->val = ((V).val.type == T);	\
@@ -949,6 +1063,9 @@ math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   double l1, l2, tmp1, tmp2, val;
   int i, n, x;
 
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
@@ -983,6 +1100,9 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n2, m, i, l, n;
   double x2, t1, t2, t3, s, ss, w, j0, j1, y0, y1, y2, x, val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
 
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
@@ -1091,6 +1211,9 @@ math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   int n2, m, l, i, n;
   double x2, t1, t2, t3, s, j, x;
 
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
@@ -1180,6 +1303,7 @@ math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 int
 math_func_ei(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+  MATH_CHECK_ARG(rval, exp->buf[0]);
   return exp1(exp->buf[0].val.val, &rval->val);
 }
 
@@ -1188,12 +1312,16 @@ math_func_rm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n;
 
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   n = exp->buf[0].val.val;
 
-  if (n < 0 || n >= MEMORY_NUM)
+  if (n < 0 || n >= MATH_EQUATION_MEMORY_NUM) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
-  *rval = MemoryBuf[n];
+  *rval = eq->memory[n];
 
   return 0;
 }
@@ -1203,12 +1331,16 @@ math_func_m(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int n;
 
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
   n = exp->buf[0].val.val;
 
-  if (n < 0 || n >= MEMORY_NUM)
+  if (n < 0 || n >= MATH_EQUATION_MEMORY_NUM) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
-  rval->val = MemoryBuf[n].val = exp->buf[1].val.val;
+  *rval = eq->memory[n] = exp->buf[1].val;
 
   return 0;
 }
@@ -1222,14 +1354,22 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 
   argv = exp->buf;
 
+  MATH_CHECK_ARG(rval, argv[0]);
+  MATH_CHECK_ARG(rval, argv[1]);
+  MATH_CHECK_ARG(rval, argv[2]);
+  MATH_CHECK_ARG(rval, argv[3]);
+
   n = argv[0].val.val;
-  MemoryBuf[n].type= MATH_VALUE_NORMAL;
-  if (n < 0 || n >= MEMORY_NUM || (argv[2].val.val - argv[1].val.val) * argv[3].val.val <= 0)
+  if (n < 0 || n >= MATH_EQUATION_MEMORY_NUM || (argv[2].val.val - argv[1].val.val) * argv[3].val.val <= 0) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
+  
+  eq->memory[n].type= MATH_VALUE_NORMAL;
 
   rval->val = 0;
   for (v = argv[1].val.val; (argv[3].val.val < 0) ?  (v >= argv[2].val.val) : (v <= argv[2].val.val); v += argv[3].val.val) {
-    MemoryBuf[n].val = v;
+    eq->memory[n].val = v;
     r = math_expression_calculate(argv[4].exp, rval);
     if(r)
       return r;
@@ -1241,16 +1381,22 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 static int
 compare_double(const void *p1, const void *p2)
 {
-  double v1, v2;
+  MathValue *v1, *v2;
 
-  v1 = * (double *) p1;
-  v2 = * (double *) p2;
+  v1 = (MathValue *) p1;
+  v2 = (MathValue *) p2;
 
-  if (v1 > v2) {
+  if (v1->type == MATH_VALUE_NORMAL && v2->type == MATH_VALUE_NORMAL) {
+    if (v1->val > v2->val) {
+      return 1;
+    } else if (v1->val < v2->val) {
+      return -1;
+    }
+  } else if (v1->type != MATH_VALUE_NORMAL && v2->type == MATH_VALUE_NORMAL) {
     return 1;
-  } else if (v1 < v2) {
+  } else if (v1->type == MATH_VALUE_NORMAL && v2->type != MATH_VALUE_NORMAL) {
     return -1;
-  } 
+  }
 
   return 0;
 }
@@ -1258,16 +1404,22 @@ compare_double(const void *p1, const void *p2)
 static int
 rcompare_double(const void *p1, const void *p2)
 {
-  double v1, v2;
+  MathValue *v1, *v2;
 
-  v1 = * (double *) p1;
-  v2 = * (double *) p2;
+  v1 = (MathValue *) p1;
+  v2 = (MathValue *) p2;
 
-  if (v1 > v2) {
+  if (v1->type == MATH_VALUE_NORMAL && v2->type == MATH_VALUE_NORMAL) {
+    if (v1->val > v2->val) {
+      return -1;
+    } else if (v1->val < v2->val) {
+      return 1;
+    }
+  } else if (v1->type != MATH_VALUE_NORMAL && v2->type == MATH_VALUE_NORMAL) {
     return -1;
-  } else if (v1 < v2) {
+  } else if (v1->type == MATH_VALUE_NORMAL && v2->type != MATH_VALUE_NORMAL) {
     return 1;
-  } 
+  }
 
   return 0;
 }
@@ -1284,6 +1436,7 @@ math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
@@ -1291,7 +1444,7 @@ math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     return 0;
   }
 
-  qsort(ary->data, ary->num, sizeof(double), compare_double);
+  qsort(ary->data, ary->num, sizeof(MathValue), compare_double);
 
   return 0;
 }
@@ -1308,6 +1461,7 @@ math_func_rsort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
@@ -1332,6 +1486,7 @@ math_func_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   ary = math_equation_get_array(eq, id);
 
   if (ary == NULL) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
@@ -1343,12 +1498,14 @@ math_func_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 int
 math_func_sum(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  MathValue *ptr;
-
-  ptr = eq->pos_func_buf + exp->pos_id;
-
-  ptr->val += exp->buf[0].val.val;
-  *rval = *ptr;
+  if (exp->buf[0].val.type == MATH_VALUE_NORMAL) {
+    MathValue *ptr = eq->pos_func_buf + exp->pos_id;
+    ptr->val += exp->buf[0].val.val;
+    ptr->type = MATH_VALUE_NORMAL;
+    *rval = *ptr;
+  } else {
+    *rval = exp->buf[0].val;
+  }
 
   return 0;
 }
@@ -1356,12 +1513,14 @@ math_func_sum(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 int
 math_func_dif(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  MathValue *ptr;
-
-  ptr = eq->pos_func_buf + exp->pos_id;
-
-  rval->val = exp->buf[0].val.val - ptr->val;
-  *ptr = exp->buf[0].val;
+  if (exp->buf[0].val.type == MATH_VALUE_NORMAL) {
+    MathValue *ptr = eq->pos_func_buf + exp->pos_id;
+    rval->val = exp->buf[0].val.val - ptr->val;
+    rval->type = ptr->type;
+    *ptr = exp->buf[0].val;
+  } else {
+    *rval = exp->buf[0].val;
+  }
 
   return 0;
 }

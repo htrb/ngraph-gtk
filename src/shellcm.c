@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.21 2009/09/30 23:27:23 hito Exp $
+ * $Id: shellcm.c,v 1.22 2009/10/22 00:07:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -55,9 +55,6 @@
 #define FALSE 0
 
 #define ERR 128
-
-#define USE_NEW_MATH_CODE 1
-
 
 int 
 cmcd(struct nshell *nshell,int argc,char **argv)
@@ -1229,8 +1226,8 @@ cmexe(struct nshell*nshell,int argc,char **argv)
 int
 str_calc(const char *str, double *val, int *r)
 {
-#if USE_NEW_MATH_CODE
-  int rcode;
+#if NEW_MATH_CODE
+  int ecode, rcode;
   static MathEquation *eq = NULL;
   MathValue value;
 
@@ -1241,21 +1238,18 @@ str_calc(const char *str, double *val, int *r)
   if (eq == NULL) {
     eq = math_equation_basic_new();
     if (eq == NULL) {
-      return ERRMILLEGAL; 	/* fix me */
+      return ERRMEMORY;
     }
   }
 
   if (math_equation_parse(eq, str)) {
-    math_equation_free(eq);
     return ERRMSYNTAX;
   }
  
   rcode = math_equation_calculate(eq, &value);
+  ecode = (rcode) ? ERRMFAT : 0;
 
   *val = value.val;
-
-  //  math_equation_free(eq);
-  
 #else
   int rcode, ecode = 0, i;
   char *code;
@@ -1307,10 +1301,11 @@ str_calc(const char *str, double *val, int *r)
     ecode = ERRMFAT;
   }
 
+#endif
+
   if (ecode) {
     return ecode;
   }
-#endif
 
   if (r) {
     *r = rcode;

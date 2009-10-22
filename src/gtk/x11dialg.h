@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.47 2009/08/17 07:09:46 hito Exp $
+ * $Id: x11dialg.h,v 1.48 2009/10/22 00:07:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -141,11 +141,13 @@ struct MathTextDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *list, *label;
-  char *Text, *math;
+  GtkWidget *list, *label, *tree;
+  GList *id_list;
+  struct objlist *Obj;
+  char *Text;
   int Mode;
 };
-void MathTextDialog(struct MathTextDialog *data, char *text, int mode);
+void MathTextDialog(struct MathTextDialog *data, char *text, int mode, struct objlist *obj, GList *list, GtkWidget *tree);
 
 #define FIT_PARM_NUM 10
 

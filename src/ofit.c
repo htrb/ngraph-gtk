@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.26 2009/09/29 10:49:30 hito Exp $
+ * $Id: ofit.c,v 1.27 2009/10/22 00:07:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,8 +60,6 @@
 #define ERRNEGATIVEWEIGHT 112
 #define ERRCONVERGE 113
 
-#define USE_NEW_MATH_CODE 1
-
 static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
 static char *fiterrorlist[]={
@@ -94,7 +92,7 @@ static char *fittypechar[]={
 
 struct fitlocal {
   int id, oid;
-#if USE_NEW_MATH_CODE 
+#if NEW_MATH_CODE 
   MathEquation *codedf[10];
   MathEquation *codef;
 #else
@@ -131,7 +129,7 @@ fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if ((fitlocal=memalloc(sizeof(struct fitlocal)))==NULL) return 1;
   fitlocal->codef=NULL;
   for (i=0;i<10;i++) fitlocal->codedf[i]=NULL;
-#if ! USE_NEW_MATH_CODE 
+#if ! NEW_MATH_CODE 
   fitlocal->needdata=NULL;
 #endif
   fitlocal->equation=NULL;
@@ -152,7 +150,7 @@ fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"_local",inst,&fitlocal);
   memfree(fitlocal->equation);
-#if USE_NEW_MATH_CODE 
+#if NEW_MATH_CODE 
   math_equation_free(fitlocal->codef);
   for (i = 0; i < 10; i++)
     math_equation_free(fitlocal->codedf[i]);
@@ -169,13 +167,14 @@ fitput(struct objlist *obj,char *inst,char *rval,
            int argc,char **argv)
 {
   char *field;
-  enum MATH_CODE_ERROR_NO rcode;
   char *math;
   struct fitlocal *fitlocal;
   char *equation;
-#if USE_NEW_MATH_CODE 
+#if NEW_MATH_CODE 
   MathEquation *code;
+  int rcode;
 #else
+  enum MATH_CODE_ERROR_NO rcode;
   int maxdim,need2pass;
   char *code;
   struct narray *needdata;
@@ -189,7 +188,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
   } else if ((strcmp(field,"user_func")==0)
           || ((strncmp(field,"derivative",10)==0) && (field[10]!='\0'))) {
     math=(char *)(argv[2]);
-#if USE_NEW_MATH_CODE 
+#if NEW_MATH_CODE 
     if (math!=NULL) {
       MathEquationParametar *prm;
 
@@ -207,7 +206,9 @@ fitput(struct objlist *obj,char *inst,char *rval,
 	return 1;
       }
 
-      if (math_equation_parse(code, math)) {
+      rcode = math_equation_parse(code, math);
+      if (rcode) {
+	error(obj, ERRSYNTAX);
 	math_equation_free(code);
 	return 1;
       }
@@ -468,7 +469,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   int tbl[10],dim,n,count,rcode,err,err2,err3;
   double yy,y,y1,y2,y3,sy,spx,spy,dxx,dxxc,xx,derror,correlation;
   double b[10],x2[10],parerr[10];
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
   MathValue par[10], par2[10], var;
   MathEquationParametar *prm;
 #else
@@ -489,7 +490,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   if (num<1) return FitError_Small;
   if (fitlocal->codef==NULL) return FitError_Eqaution;
 
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
   prm = math_equation_get_parameter(fitlocal->codef, 0);
   dim = prm->id_num;
   needdata = prm->id;
@@ -577,7 +578,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
       spx=data[k*2];
       spy=data[k*2+1];
       err=FALSE;
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
       var.val = spx;
       var.type = MNOERR;
       math_equation_set_parameter_data(fitlocal->codef, 0, par);
@@ -594,7 +595,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
       else if (rcode!=MNOERR) err=TRUE;
       if (deriv) {
         for (j=0;j<dim;j++) {
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
 	  var.val = spx;
 	  var.type = MNOERR;
 	  math_equation_set_parameter_data(fitlocal->codedf[tbl[j]], 0, par);
@@ -613,7 +614,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
       } else {
         for (j=0;j<dim;j++) {
           for (i=0;i<10;i++) par2[i]=par[i];
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
           dxx = par2[j].val * converge * 1e-6;
           if (dxx == 0) dxx = 1e-6;
           par2[tbl[j]].val += dxx;
@@ -754,7 +755,7 @@ repeat:
     dxxc=0;
     xx=0;
     for (i=0;i<dim;i++) {
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
       dxxc += parerr[i] * parerr[i];
       par[tbl[i]].val += parerr[i];
       xx += par[tbl[i]].val * par[tbl[i]].val;
@@ -776,7 +777,7 @@ repeat:
     i+=sprintf(buf+i,"Eq: User defined\n");
     i+=sprintf(buf+i,"    %s\n\n", func);
     for (j=0;j<dim;j++) {
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
       i += sprintf(buf+i,"       %%0%d = %+.7e\n",tbl[j], par[tbl[j]].val);
 #else
       i+=sprintf(buf+i,"       %%0%d = %+.7e\n",tbl[j],par[tbl[j]]);
@@ -795,7 +796,7 @@ repeat:
 
 errexit:
   if ((ecode==0) || (ecode==-5)) {
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
     for (i = 0; i < 10; i++) fitlocal->coe[i] = par[i].val;
 #else
     for (i=0;i<10;i++) fitlocal->coe[i]=par[i];
@@ -834,7 +835,7 @@ errexit:
           i += 1;
         }
 
-#if USE_NEW_MATH_CODE
+#if NEW_MATH_CODE
 	val = par[pnum].val;
 #else
 	val = par[pnum];

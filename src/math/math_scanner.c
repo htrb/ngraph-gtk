@@ -9,16 +9,19 @@
 #include "math_scanner.h"
 
 static struct math_token *create_token(const char *str, enum MATH_TOKEN_TYPE type);
-static struct math_token *get_array_prefix(const char *str,  const char ** rstr);
-static struct math_token *get_bracket(const char *str,  const char ** rstr);
-static struct math_token *get_unknown(const char *str,  const char ** rstr);
-static struct math_token *get_symbol(const char *str,  const char ** rstr);
+static struct math_token *get_array_prefix(const char *str, const char ** rstr);
+static struct math_token *get_bracket(const char *str, const char ** rstr);
+static struct math_token *get_unknown(const char *str, const char ** rstr);
+static struct math_token *get_symbol(const char *str, const char ** rstr);
 static struct math_token *get_paren(const char *str, const char ** rstr);
-static struct math_token *get_curly(const char *str,  const char ** rstr);
-static struct math_token *get_comma(const char *str,  const char ** rstr);
-static struct math_token *get_eoeq(const char *str,  const char ** rstr);
-static struct math_token *get_ope(const char *str,  const char ** rstr);
-static struct math_token *get_num(const char *str,  const char ** rstr);
+static struct math_token *get_curly(const char *str, const char ** rstr);
+static struct math_token *get_comma(const char *str, const char ** rstr);
+static struct math_token *get_eoeq(const char *str, const char ** rstr);
+static struct math_token *get_ope(const char *str, const char ** rstr);
+static struct math_token *get_num(const char *str, const char ** rstr);
+
+#define EOEQ_CHAR_OPT '='
+#define EOEQ_CHAR ';'
 
 struct reserved {
   char *name;
@@ -87,9 +90,9 @@ math_scanner_get_token(const char *str, const char **rstr)
     str++;
 
   c = str[0];
-  if (c == ';' || c == '\0') {
+  if (c == EOEQ_CHAR_OPT || c == EOEQ_CHAR || c == '\0') {
     return get_eoeq(str, rstr);
-  } else if (isdigit(c) || c == '.') {
+  } else  if (isdigit(c) || c == '.') {
     return get_num(str, rstr);
   } else if (math_scanner_is_ope(c)) {
     return get_ope(str, rstr);
@@ -105,7 +108,9 @@ math_scanner_get_token(const char *str, const char **rstr)
     return get_comma(str, rstr);
   } else if (c == '@') {
     return get_array_prefix(str, rstr);
-  }
+  } else if (c == EOEQ_CHAR_OPT || c == EOEQ_CHAR || c == '\0') {
+    return get_eoeq(str, rstr);
+  } 
 
   return get_unknown(str, rstr);
 }

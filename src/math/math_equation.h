@@ -6,9 +6,11 @@ typedef struct _math_parameter MathEquationParametar;
 typedef struct _math_array MathEquationArray;
 typedef struct _math_value MathValue;
 
+#include "math_error.h"
 #include "nhash.h"
 
 #define MATH_EQUATION_ARRAY_INDEX_MAX 65535
+#define MATH_EQUATION_MEMORY_NUM 20
 
 struct _math_value {
   double val;
@@ -40,10 +42,12 @@ struct _math_equation {
   NHASH local_variable, local_array;
   int local_vnum, local_array_num, func_def;
   MathValue *cbuf, *vbuf, *pos_func_buf;
+  MathValue memory[MATH_EQUATION_MEMORY_NUM];
   int stack_ofst, stack_end, vbuf_size;
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
   MathEquationArray *array_buf;
+  void *user_data;
 };
 
 struct _math_parameter {
@@ -75,7 +79,7 @@ int math_equation_use_parameter(MathEquation *eq, int type, int val);
 int math_equation_add_parameter(MathEquation *eq, int type, int min, int max, int use_index);
 int math_equation_set_parameter_data(MathEquation *eq, int type, MathValue *data);
 
-int math_equation_add_pos_func(MathEquation *eq);
+int math_equation_add_pos_func(MathEquation *eq, struct math_function_parameter *fprm);
 struct math_function_parameter *math_equation_start_user_func_definition(MathEquation *eq, const char *name);
 int math_equation_register_user_func_definition(MathEquation *eq, const char *name, MathExpression *exp);
 int math_equation_finish_user_func_definition(MathEquation *eq, int *vnum, int *anum);
@@ -101,5 +105,10 @@ int math_equation_add_array(MathEquation *eq, const char *name);
 int math_equation_set_array_val(MathEquation *eq, int array, int index, const MathValue *val);
 int math_equation_get_array_val(MathEquation *eq, int array, int index, MathValue *val);
 MathEquationArray *math_equation_get_array(MathEquation *eq, int array);
+
+void math_equation_set_user_data(MathEquation *eq, void *user_data);
+void *math_equation_get_user_data(MathEquation *eq);
+
+int math_equation_check_const(MathEquation *eq, int *constant, int n);
 
 #endif

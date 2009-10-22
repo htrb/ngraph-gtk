@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.10 2009/09/05 02:00:25 hito Exp $
+ * $Id: mathcode.c,v 1.11 2009/10/22 00:07:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -51,6 +51,8 @@ char *matherrorchar[]={
  "eof",
  NULL
 };
+
+#if ! NEW_MATH_CODE
 
 static struct {
   char *op;
@@ -1550,3 +1552,4 @@ calculate(char *code,
     return numstat[0];
 }
 
+#endif

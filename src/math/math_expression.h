@@ -116,26 +116,27 @@ struct _math_expression {
   } u;
 };
 
-MathExpression *math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq);
-MathExpression *math_eoeq_expression_new(MathEquation *eq);
-MathExpression *math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand);
-MathExpression *math_array_argument_expression_new(MathEquation *eq, const char *name);
-MathExpression *math_unary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *operand);
-MathExpression *math_binary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *left, MathExpression *right);
-MathExpression *math_assign_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *left, MathExpression *right, enum MATH_OPERATOR_TYPE op);
-MathExpression *math_double_expression_new(MathEquation *eq, const MathValue *val);
-MathExpression *math_constant_expression_new(MathEquation *eq, const char *name);
-MathExpression *math_variable_expression_new(MathEquation *eq, const char *name);
-MathExpression *math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *fprm, int argc, MathExpression **argv, int pos_id);
-MathExpression *math_parameter_expression_new(MathEquation *eq, char *name);
-MathExpression *math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpression *exp);
-MathExpression *math_function_expression_new(MathEquation *eq, const char *name);
+MathExpression *math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, int *err);
+MathExpression *math_eoeq_expression_new(MathEquation *eq, int *err);
+MathExpression *math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand, int *err);
+MathExpression *math_array_argument_expression_new(MathEquation *eq, const char *name, int *err);
+MathExpression *math_unary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *operand, int *err);
+MathExpression *math_binary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *left, MathExpression *right, int *err);
+MathExpression *math_assign_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *left, MathExpression *right, enum MATH_OPERATOR_TYPE op, int *err);
+MathExpression *math_double_expression_new(MathEquation *eq, const MathValue *val, int *err);
+MathExpression *math_constant_expression_new(MathEquation *eq, const char *name, int *err);
+MathExpression *math_variable_expression_new(MathEquation *eq, const char *name, int *err);
+MathExpression *math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *fprm,
+					      int argc, MathExpression **argv, int pos_id, int *err);
+MathExpression *math_parameter_expression_new(MathEquation *eq, char *name, int *err);
+MathExpression *math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpression *exp, int *err);
+MathExpression *math_function_expression_new(MathEquation *eq, const char *name, int *err);
 
 int math_function_expression_add_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_TYPE type);
 int math_function_expression_set_function(MathEquation *eq, MathExpression *func, const char *name, MathExpression *exp);
 int math_function_expression_register_arg(MathExpression *func);
 
-MathExpression *math_expression_optimize(MathExpression *exp);
+MathExpression *math_expression_optimize(MathExpression *exp, int *err);
 void math_expression_free(MathExpression *exp);
 int math_expression_calculate(MathExpression *exp, MathValue *val);
 

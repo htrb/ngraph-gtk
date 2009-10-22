@@ -12,21 +12,30 @@
 #include "math_function.h"
 
 static int calc(MathExpression *exp, MathValue *val);
-static MathExpression *optimize(MathExpression *exp);
+static MathExpression *optimize(MathExpression *exp, int *err);
 
-#define CALC_EXPRESSION(e, v)			\
+#define CALC_EXPRESSION(e, v)				\
   ((e->type == MATH_EXPRESSION_TYPE_DOBLE) ?		\
-   (v = e->u.value, 0) :			\
+   ((v = e->u.value), 0) :				\
    calc(e, &v))
 
+#define MATH_CHECK_VAL(rval, v) if (v.type != MATH_VALUE_NORMAL) {	\
+    *rval = v;								\
+    break;								\
+  }
+
 MathExpression *
-math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq)
+math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, int *err)
 {
   MathExpression *exp;
 
   exp = memalloc(sizeof(*exp));
-  if (exp == NULL)
+  if (exp == NULL) {
+    if (err) {
+      *err =MATH_ERROR_MEMORY;
+    }
     return NULL;
+  }
 
   exp->type = type;
   exp->next = NULL;
@@ -36,7 +45,7 @@ math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq)
 }
 
 MathExpression *
-math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpression *exp)
+math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpression *exp, int *err)
 {
   MathExpression *cdef;
 
@@ -45,7 +54,7 @@ math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpres
     return NULL;
   }
 
-  cdef = math_expression_new(MATH_EXPRESSION_TYPE_CONST_DEF, eq);
+  cdef = math_expression_new(MATH_EXPRESSION_TYPE_CONST_DEF, eq, err);
   if (cdef == NULL)
     return NULL;
 
@@ -60,7 +69,7 @@ math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpres
 }
 
 MathExpression *
-math_function_expression_new(MathEquation *eq, const char *name)
+math_function_expression_new(MathEquation *eq, const char *name, int *err)
 {
   MathExpression *func;
   struct math_function_parameter *prm;
@@ -71,7 +80,7 @@ math_function_expression_new(MathEquation *eq, const char *name)
     return NULL;
   }
 
-  func = math_expression_new(MATH_EXPRESSION_TYPE_FUNC, eq);
+  func = math_expression_new(MATH_EXPRESSION_TYPE_FUNC, eq, err);
   if (func == NULL)
     return NULL;
 
@@ -255,7 +264,7 @@ math_function_expression_set_function(MathEquation *eq, MathExpression *func, co
 }
 
 MathExpression *
-math_parameter_expression_new(MathEquation *eq, char *name)
+math_parameter_expression_new(MathEquation *eq, char *name, int *err)
 {
   int ofst, i, type, n, id, id_pre, id_post, index;
   MathExpression *exp;
@@ -270,18 +279,24 @@ math_parameter_expression_new(MathEquation *eq, char *name)
   }
 
   prm = math_equation_get_parameter(eq, type);
-  if (prm == NULL)
+  if (prm == NULL) {
+    *err = MATH_ERROR_INVALID_PRM;
     return NULL;
+  }
 
   for (i = ofst; isdigit(name[i]); i++);
 
-  if (name[i] != '\0' || i == ofst)
+  if (name[i] != '\0' || i == ofst) {
+    *err = MATH_ERROR_INVALID_PRM;
     return NULL;
+  }
 
   n = i - ofst;
 
-  if (n < prm->min_length || n > prm->max_length)
+  if (n < prm->min_length || n > prm->max_length) {
+    *err = MATH_ERROR_INVALID_PRM;
     return NULL;
+  }
 
   id_pre = id_post = 0;
   for (i = 0; i < prm->min_length - 1; i++) {
@@ -299,12 +314,15 @@ math_parameter_expression_new(MathEquation *eq, char *name)
   id = id_pre + id_post;
 
   index = math_equation_use_parameter(eq, type, id);
-  if (index < 0)
+  if (index < 0) {
+    *err = MATH_ERROR_MEMORY;
     return NULL;
+  }
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_PRM, eq);
-  if (exp == NULL)
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_PRM, eq, err);
+  if (exp == NULL) {
     return NULL;
+  }
 
   exp->u.prm.type = type;
   exp->u.prm.prm = prm;
@@ -315,7 +333,7 @@ math_parameter_expression_new(MathEquation *eq, char *name)
 }
 
 MathExpression *
-math_constant_expression_new(MathEquation *eq, const char *name)
+math_constant_expression_new(MathEquation *eq, const char *name, int *err)
 {
   MathExpression *exp;
   MathValue val;
@@ -326,7 +344,7 @@ math_constant_expression_new(MathEquation *eq, const char *name)
     return NULL;
   }
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_CONST, eq);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_CONST, eq, err);
   if (exp == NULL) {
     return NULL;
   }
@@ -337,18 +355,19 @@ math_constant_expression_new(MathEquation *eq, const char *name)
 }
 
 MathExpression *
-math_variable_expression_new(MathEquation *eq, const char *name)
+math_variable_expression_new(MathEquation *eq, const char *name, int *err)
 {
   MathExpression *exp;
   int i;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_VARIABLE, eq);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_VARIABLE, eq, err);
   if (exp == NULL) {
     return NULL;
   }
 
   i = math_equation_add_var(eq, name);
   if (i < 0) {
+    *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
     return NULL;
   }
@@ -359,18 +378,19 @@ math_variable_expression_new(MathEquation *eq, const char *name)
 }
 
 MathExpression *
-math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand)
+math_array_expression_new(MathEquation *eq, const char *name, MathExpression *operand, int *err)
 {
   MathExpression *exp;
   int i;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_ARRAY, eq);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_ARRAY, eq, err);
   if (exp == NULL) {
     return NULL;
   }
 
   i = math_equation_add_array(eq, name);
   if (i < 0) {
+    *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
     return NULL;
   }
@@ -382,18 +402,19 @@ math_array_expression_new(MathEquation *eq, const char *name, MathExpression *op
 }
 
 MathExpression *
-math_array_argument_expression_new(MathEquation *eq, const char *name)
+math_array_argument_expression_new(MathEquation *eq, const char *name, int *err)
 {
   MathExpression *exp;
   int i;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT, eq);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT, eq, err);
   if (exp == NULL) {
     return NULL;
   }
 
   i = math_equation_add_array(eq, name);
   if (i < 0) {
+    *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
     return NULL;
   }
@@ -422,7 +443,7 @@ check_argument(struct math_function_parameter *fprm, int argc, MathExpression **
 }
 
 MathExpression *
-math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *fprm, int argc, MathExpression **argv, int pos_id)
+math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *fprm, int argc, MathExpression **argv, int pos_id, int *err)
 {
   MathExpression *exp;
   MathFunctionArgument *buf;
@@ -435,7 +456,7 @@ math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *
   if (buf == NULL)
     return NULL;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_FUNC_CALL, eq);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_FUNC_CALL, eq, err);
   if (exp == NULL) {
     memfree(buf);
     return NULL;
@@ -451,11 +472,11 @@ math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *
 }
 
 MathExpression *
-math_binary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *left, MathExpression *right)
+math_binary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *left, MathExpression *right, int *err)
 {
   MathExpression *exp;
 
-  exp = math_expression_new(type, eq);
+  exp = math_expression_new(type, eq, err);
   if (exp == NULL)
     return NULL;
 
@@ -466,11 +487,12 @@ math_binary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, Mat
 }
 
 MathExpression *
-math_assign_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *left, MathExpression *right, enum MATH_OPERATOR_TYPE op)
+math_assign_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq,
+			   MathExpression *left, MathExpression *right, enum MATH_OPERATOR_TYPE op, int *err)
 {
   MathExpression *exp;
 
-  exp = math_expression_new(type, eq);
+  exp = math_expression_new(type, eq, err);
   if (exp == NULL)
     return NULL;
 
@@ -482,11 +504,11 @@ math_assign_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, Mat
 }
 
 MathExpression *
-math_unary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *operand)
+math_unary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, MathExpression *operand, int *err)
 {
   MathExpression *exp;
 
-  exp = math_expression_new(type, eq);
+  exp = math_expression_new(type, eq, err);
   if (exp == NULL)
     return NULL;
 
@@ -496,11 +518,11 @@ math_unary_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, Math
 }
 
 MathExpression *
-math_double_expression_new(MathEquation *eq, const MathValue *val)
+math_double_expression_new(MathEquation *eq, const MathValue *val, int *err)
 {
   MathExpression *exp;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_DOBLE, eq);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_DOBLE, eq, err);
   if (exp == NULL)
     return NULL;
 
@@ -510,11 +532,11 @@ math_double_expression_new(MathEquation *eq, const MathValue *val)
 }
 
 MathExpression *
-math_eoeq_expression_new(MathEquation *eq)
+math_eoeq_expression_new(MathEquation *eq, int *err)
 {
   MathExpression *exp;
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_EOEQ, eq);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_EOEQ, eq, err);
   return exp;
 }
 
@@ -792,7 +814,7 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
   type = exp->fprm->arg_type;
 
   if (exp->fprm->argc > 0 && exp->argc != exp->fprm->argc) {
-    fprintf(stderr, "wrong number of argument for the function \"%s()\"\n", exp->fprm->name);
+    val->type = MATH_VALUE_ERROR;
     return 1;
   }
 
@@ -803,6 +825,7 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
       switch (type[i]) {
       case MATH_FUNCTION_ARG_TYPE_ARRAY:
 	if (exp->argv[i]->type != MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT) {
+	  val->type = MATH_VALUE_ERROR;
 	  return 1;
 	}
 	use_array = 1;
@@ -810,12 +833,14 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 	break;
       case MATH_FUNCTION_ARG_TYPE_PROC:
 	if (exp->argv[i]->type == MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT) {
+	  val->type = MATH_VALUE_ERROR;
 	  return 1;
 	}
 	exp->buf[i].exp = exp->argv[i];
 	break;
       case MATH_FUNCTION_ARG_TYPE_DOUBLE:
 	if (exp->argv[i]->type == MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT) {
+	  val->type = MATH_VALUE_ERROR;
 	  return 1;
 	}
 	if (CALC_EXPRESSION(exp->argv[i], exp->buf[i].val))
@@ -831,7 +856,7 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 }
 
 static MathExpression *
-reduce_expression(MathExpression *exp)
+reduce_expression(MathExpression *exp, int *err)
 {
 #if 1
   MathValue val;
@@ -844,7 +869,7 @@ reduce_expression(MathExpression *exp)
     return NULL;
   }
 
-  rexp = math_double_expression_new(exp->equation, &val);
+  rexp = math_double_expression_new(exp->equation, &val, NULL);
   math_expression_free(exp);
 
   return rexp;
@@ -854,18 +879,18 @@ reduce_expression(MathExpression *exp)
 }
 
 static MathExpression *
-optimize_usr_function(MathExpression *exp)
+optimize_usr_function(MathExpression *exp, int *err)
 {
   MathExpression *new_exp;
 
-  new_exp = math_expression_new(MATH_EXPRESSION_TYPE_FUNC, exp->equation);
+  new_exp = math_expression_new(MATH_EXPRESSION_TYPE_FUNC, exp->equation, NULL);
   if (new_exp == NULL)
     return NULL;
 
   new_exp->u.func.argc = exp->u.func.argc;
   new_exp->u.func.local_num = exp->u.func.local_num;
   new_exp->u.func.local_array_num = exp->u.func.local_array_num;
-  new_exp->u.func.exp = math_expression_optimize(exp->u.func.exp);
+  new_exp->u.func.exp = math_expression_optimize(exp->u.func.exp, err);
   new_exp->u.func.fprm = exp->u.func.fprm;
   new_exp->u.func.arg_list = NULL;
 
@@ -889,7 +914,7 @@ free_arg_array(int argc, MathExpression **argv)
 }
 
 static MathExpression *
-optimize_func_call(MathExpression *exp)
+optimize_func_call(MathExpression *exp, int *err)
 {
   MathExpression **argv, *new_exp;
   int can_reduce, i, error;
@@ -902,7 +927,7 @@ optimize_func_call(MathExpression *exp)
 
   error = 0;
   for (i = 0; i < exp->u.func_call.argc; i++) {
-    argv[i] = optimize(exp->u.func_call.argv[i]);
+    argv[i] = optimize(exp->u.func_call.argv[i], err);
     if (argv[i] == NULL) {
       error = 1;
     } else if (argv[i]->type != MATH_EXPRESSION_TYPE_DOBLE) {
@@ -916,10 +941,11 @@ optimize_func_call(MathExpression *exp)
   }
 
   new_exp = math_func_call_expression_new(exp->equation,
-					exp->u.func_call.fprm,
-					exp->u.func_call.argc,
-					argv,
-					exp->u.func_call.pos_id);
+					  exp->u.func_call.fprm,
+					  exp->u.func_call.argc,
+					  argv,
+					  exp->u.func_call.pos_id,
+					  &error);
 
   if (new_exp == NULL) {
     free_arg_array(exp->u.func_call.argc, argv);
@@ -927,29 +953,29 @@ optimize_func_call(MathExpression *exp)
   }
 
   if (can_reduce && ! exp->u.func_call.fprm->side_effect) {
-    new_exp = reduce_expression(new_exp);
+    new_exp = reduce_expression(new_exp, err);
   }
 
   return new_exp;
 }
 
 static MathExpression *
-optimize_or_expression(MathExpression *exp)
+optimize_or_expression(MathExpression *exp, int *err)
 {
   MathExpression *left, *right, *new_exp;
 
-  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL);
+  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL, err);
   if (new_exp == NULL)
     return NULL;
 
-  left = optimize(exp->u.bin.left);
+  left = optimize(exp->u.bin.left, err);
   new_exp->u.bin.left = left;
   if (left == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
 
-  right = optimize(exp->u.bin.right);
+  right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
   if (right == NULL) { 
     math_expression_free(new_exp);
@@ -958,7 +984,7 @@ optimize_or_expression(MathExpression *exp)
 
   if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
       right->type == MATH_EXPRESSION_TYPE_DOBLE) {
-    new_exp = reduce_expression(new_exp);
+    new_exp = reduce_expression(new_exp, err);
   } else if (left->type == MATH_EXPRESSION_TYPE_DOBLE) {
     if (left->u.value.val == 0.0) {
       math_expression_free(new_exp);
@@ -974,22 +1000,22 @@ optimize_or_expression(MathExpression *exp)
 }
 
 static MathExpression *
-optimize_and_expression(MathExpression *exp)
+optimize_and_expression(MathExpression *exp, int *err)
 {
   MathExpression *left, *right, *new_exp;
 
-  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL);
+  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL, err);
   if (new_exp == NULL)
     return NULL;
 
-  left = optimize(exp->u.bin.left);
+  left = optimize(exp->u.bin.left, err);
   new_exp->u.bin.left = left;
   if (left == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
 
-  right = optimize(exp->u.bin.right);
+  right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
   if (right == NULL) { 
     math_expression_free(new_exp);
@@ -998,7 +1024,7 @@ optimize_and_expression(MathExpression *exp)
 
   if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
       right->type == MATH_EXPRESSION_TYPE_DOBLE) {
-    new_exp = reduce_expression(new_exp);
+    new_exp = reduce_expression(new_exp, err);
   } else if (left->type == MATH_EXPRESSION_TYPE_DOBLE) {
     if (left->u.value.val == 0.0) {
       new_exp->u.bin.left = NULL;
@@ -1014,22 +1040,22 @@ optimize_and_expression(MathExpression *exp)
 }
 
 static MathExpression *
-optimize_bin_expression(MathExpression *exp)
+optimize_bin_expression(MathExpression *exp, int *err)
 {
   MathExpression *left, *right, *new_exp;
 
-  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL);
+  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL, err);
   if (new_exp == NULL)
     return NULL;
 
-  left = optimize(exp->u.bin.left);
+  left = optimize(exp->u.bin.left, err);
   new_exp->u.bin.left = left;
   if (left == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
 
-  right = optimize(exp->u.bin.right);
+  right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
   if (right == NULL) { 
     math_expression_free(new_exp);
@@ -1038,28 +1064,28 @@ optimize_bin_expression(MathExpression *exp)
 
   if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
       right->type == MATH_EXPRESSION_TYPE_DOBLE) {
-    new_exp = reduce_expression(new_exp);
+    new_exp = reduce_expression(new_exp, err);
   }
   return new_exp;
 }
 
 static MathExpression *
-optimize_assign_expression(MathExpression *exp)
+optimize_assign_expression(MathExpression *exp, int *err)
 {
   MathExpression *left, *right, *new_exp;
 
-  new_exp = math_assign_expression_new(exp->type, exp->equation, NULL, NULL, exp->u.assign.op);
+  new_exp = math_assign_expression_new(exp->type, exp->equation, NULL, NULL, exp->u.assign.op, err);
   if (new_exp == NULL)
     return NULL;
 
-  left = optimize(exp->u.assign.left);
+  left = optimize(exp->u.assign.left, err);
   new_exp->u.assign.left = left;
   if (left == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
 
-  right = optimize(exp->u.assign.right);
+  right = optimize(exp->u.assign.right, err);
   new_exp->u.assign.right = right;
   if (right == NULL) { 
     math_expression_free(new_exp);
@@ -1068,28 +1094,28 @@ optimize_assign_expression(MathExpression *exp)
 
   if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
       right->type == MATH_EXPRESSION_TYPE_DOBLE) {
-    new_exp = reduce_expression(new_exp);
+    new_exp = reduce_expression(new_exp, err);
   }
   return new_exp;
 }
 
 static MathExpression *
-optimize_mul_expression(MathExpression *exp)
+optimize_mul_expression(MathExpression *exp, int *err)
 {
   MathExpression *left, *right, *new_exp;
 
-  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL);
+  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL, err);
   if (new_exp == NULL)
     return NULL;
 
-  left = optimize(exp->u.bin.left);
+  left = optimize(exp->u.bin.left, err);
   new_exp->u.bin.left = left;
   if (left == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
 
-  right = optimize(exp->u.bin.right);
+  right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
   if (right == NULL) { 
     math_expression_free(new_exp);
@@ -1098,7 +1124,7 @@ optimize_mul_expression(MathExpression *exp)
 
   if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
       right->type == MATH_EXPRESSION_TYPE_DOBLE) {
-    new_exp = reduce_expression(new_exp);
+    new_exp = reduce_expression(new_exp, err);
   } else if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
 	     left->u.value.val == 1.0) {
     new_exp->u.bin.right = NULL;
@@ -1115,22 +1141,22 @@ optimize_mul_expression(MathExpression *exp)
 }
 
 static MathExpression *
-optimize_div_expression(MathExpression *exp)
+optimize_div_expression(MathExpression *exp, int *err)
 {
   MathExpression *left, *right, *new_exp;
 
-  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL);
+  new_exp = math_binary_expression_new(exp->type, exp->equation, NULL, NULL, err);
   if (new_exp == NULL)
     return NULL;
 
-  left = optimize(exp->u.bin.left);
+  left = optimize(exp->u.bin.left, err);
   new_exp->u.bin.left = left;
   if (left == NULL) {
     math_expression_free(new_exp);
     return NULL;
   }
 
-  right = optimize(exp->u.bin.right);
+  right = optimize(exp->u.bin.right, err);
   new_exp->u.bin.right = right;
   if (right == NULL) { 
     math_expression_free(new_exp);
@@ -1139,7 +1165,7 @@ optimize_div_expression(MathExpression *exp)
 
   if (left->type == MATH_EXPRESSION_TYPE_DOBLE &&
       right->type == MATH_EXPRESSION_TYPE_DOBLE) {
-    new_exp = reduce_expression(new_exp);
+    new_exp = reduce_expression(new_exp, err);
   } else if (right->type == MATH_EXPRESSION_TYPE_DOBLE) {
     if (right->u.value.val == 1.0) {
       new_exp->u.bin.left = NULL;
@@ -1155,15 +1181,15 @@ optimize_div_expression(MathExpression *exp)
 }
 
 static MathExpression *
-optimize_una_expression(MathExpression *exp)
+optimize_una_expression(MathExpression *exp, int *err)
 {
   MathExpression *operand, *new_exp;
 
-  new_exp = math_unary_expression_new(exp->type, exp->equation, NULL);
+  new_exp = math_unary_expression_new(exp->type, exp->equation, NULL, err);
   if (new_exp == NULL)
     return NULL;
 
-  operand = optimize(exp->u.unary.operand);
+  operand = optimize(exp->u.unary.operand, err);
   new_exp->u.unary.operand = operand;
   if (operand == NULL) {
     math_expression_free(new_exp);
@@ -1171,22 +1197,22 @@ optimize_una_expression(MathExpression *exp)
   }
 
   if (operand->type == MATH_EXPRESSION_TYPE_DOBLE) {
-    new_exp = reduce_expression(new_exp);
+    new_exp = reduce_expression(new_exp, err);
   }
 
   return new_exp;
 }
 
 static MathExpression *
-optimize_array_expression(MathExpression *exp)
+optimize_array_expression(MathExpression *exp, int *err)
 {
   MathExpression *operand, *new_exp;
 
-  new_exp = math_expression_new(exp->type, exp->equation);
+  new_exp = math_expression_new(exp->type, exp->equation, err);
   if (new_exp == NULL)
     return NULL;
 
-  operand = optimize(exp->u.array.operand);
+  operand = optimize(exp->u.array.operand, err);
   new_exp->u.array.operand = operand;
   new_exp->u.array.index = exp->u.array.index;
   if (operand == NULL) {
@@ -1198,16 +1224,16 @@ optimize_array_expression(MathExpression *exp)
 }
 
 static MathExpression *
-optimize(MathExpression *exp)
+optimize(MathExpression *exp, int *err)
 {
   MathExpression *new_exp;
 
   switch (exp->type) {
   case MATH_EXPRESSION_TYPE_OR: 
-    new_exp = optimize_or_expression(exp);
+    new_exp = optimize_or_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_AND:
-    new_exp = optimize_and_expression(exp);
+    new_exp = optimize_and_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_EQ:
   case MATH_EXPRESSION_TYPE_NE:
@@ -1219,44 +1245,44 @@ optimize(MathExpression *exp)
   case MATH_EXPRESSION_TYPE_GE:
   case MATH_EXPRESSION_TYPE_LT:
   case MATH_EXPRESSION_TYPE_LE:
-    new_exp = optimize_bin_expression(exp);
+    new_exp = optimize_bin_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_ASSIGN:
-    new_exp = optimize_assign_expression(exp);
+    new_exp = optimize_assign_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_MUL:
-    new_exp = optimize_mul_expression(exp);
+    new_exp = optimize_mul_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_DIV:
-    new_exp = optimize_div_expression(exp);
+    new_exp = optimize_div_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_MINUS:
   case MATH_EXPRESSION_TYPE_FACT:
-    new_exp = optimize_una_expression(exp);
+    new_exp = optimize_una_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_FUNC_CALL:
-    new_exp = optimize_func_call(exp);
+    new_exp = optimize_func_call(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_FUNC:
-    new_exp = optimize_usr_function(exp);
+    new_exp = optimize_usr_function(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_DOBLE:
-    new_exp = math_double_expression_new(exp->equation, &exp->u.value);
+    new_exp = math_double_expression_new(exp->equation, &exp->u.value, err);
     break;
   case MATH_EXPRESSION_TYPE_CONST:
-    new_exp = math_expression_new(exp->type, exp->equation);
+    new_exp = math_expression_new(exp->type, exp->equation, err);
     if (new_exp) {
       new_exp->u.index = exp->u.index;
-      new_exp = reduce_expression(new_exp);
+      new_exp = reduce_expression(new_exp, err);
     }
     break;
   case MATH_EXPRESSION_TYPE_VARIABLE:
-    new_exp = math_expression_new(exp->type, exp->equation);
+    new_exp = math_expression_new(exp->type, exp->equation, err);
     if (new_exp)
       new_exp->u.index = exp->u.index;
     break;
   case MATH_EXPRESSION_TYPE_PRM:
-    new_exp = math_expression_new(exp->type, exp->equation);
+    new_exp = math_expression_new(exp->type, exp->equation, err);
     if (new_exp) {
       new_exp->u.prm.type = exp->u.prm.type;
       new_exp->u.prm.index = exp->u.prm.index;
@@ -1265,13 +1291,13 @@ optimize(MathExpression *exp)
     }
     break;
   case MATH_EXPRESSION_TYPE_EOEQ:
-    new_exp = math_eoeq_expression_new(exp->equation);
+    new_exp = math_eoeq_expression_new(exp->equation, err);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY:
-    new_exp = optimize_array_expression(exp);
+    new_exp = optimize_array_expression(exp, err);
     break;
   case MATH_EXPRESSION_TYPE_ARRAY_ARGUMENT:
-    new_exp = math_expression_new(exp->type, exp->equation);
+    new_exp = math_expression_new(exp->type, exp->equation, err);
     if (new_exp) {
       new_exp->u.array.index = exp->u.array.index;
     }
@@ -1284,14 +1310,16 @@ optimize(MathExpression *exp)
 }
 
 MathExpression *
-math_expression_optimize(MathExpression *exp)
+math_expression_optimize(MathExpression *exp, int *err)
 {
   MathExpression *prev, *rexp, *top;
+  
+  *err = MATH_ERROR_NONE;
 
   top = prev = NULL;
   while (exp) {
-    rexp = optimize(exp);
-    if (rexp == NULL) {
+    rexp = optimize(exp, err);
+    if (rexp == NULL || *err != MATH_ERROR_NONE) {
       math_expression_free(top);
       return NULL;
     }
@@ -1371,12 +1399,14 @@ calc(MathExpression *exp, MathValue *val)
 {
   MathValue left, right, operand;
 
+  val->type = MATH_VALUE_NORMAL;
+
   switch (exp->type) {
   case MATH_EXPRESSION_TYPE_OR:
     if (CALC_EXPRESSION(exp->u.bin.left, left)) {
       return 1;
     }
-    if (left.val) {
+    if (left.type == MATH_VALUE_NORMAL && left.val) {
       *val = left;
       break;
     }
@@ -1390,7 +1420,7 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.left, left)) {
       return 1;
     }
-    if (! left.val) {
+    if (left.type != MATH_VALUE_NORMAL || ! left.val) {
       *val = left;
       break;
     }
@@ -1407,6 +1437,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = (left.val == right.val);
     break;
   case MATH_EXPRESSION_TYPE_NE:
@@ -1416,6 +1448,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = (left.val != right.val);
     break;
   case MATH_EXPRESSION_TYPE_ADD:
@@ -1425,6 +1459,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = left.val + right.val;
     break;
   case MATH_EXPRESSION_TYPE_SUB:
@@ -1434,6 +1470,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = left.val - right.val;
     break;
   case MATH_EXPRESSION_TYPE_MUL:
@@ -1443,6 +1481,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = left.val * right.val;
     break;
   case MATH_EXPRESSION_TYPE_DIV:
@@ -1452,8 +1492,12 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
-    if (right.val == 0)
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    if (right.val == 0) {
+      val->type = MATH_VALUE_ERROR;
       return 1;
+    }
     val->val = left.val / right.val;
     break;
   case MATH_EXPRESSION_TYPE_MOD:
@@ -1463,8 +1507,12 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
-    if (right.val == 0)
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
+    if (right.val == 0) {
+      val->type = MATH_VALUE_ERROR;
       return 1;
+    }
     val->val = fmod(left.val, right.val);
     break;
   case MATH_EXPRESSION_TYPE_POW:
@@ -1474,6 +1522,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = pow(left.val, right.val);
     break;
   case MATH_EXPRESSION_TYPE_GT:
@@ -1483,6 +1533,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = (left.val > right.val);
     break;
   case MATH_EXPRESSION_TYPE_GE:
@@ -1492,6 +1544,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = (left.val >= right.val);
     break;
   case MATH_EXPRESSION_TYPE_LT:
@@ -1501,6 +1555,8 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = (left.val < right.val);
     break;
   case MATH_EXPRESSION_TYPE_LE:
@@ -1510,12 +1566,15 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.bin.right, right)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, left);
+    MATH_CHECK_VAL(val, right);
     val->val = (left.val <= right.val);
     break;
   case MATH_EXPRESSION_TYPE_MINUS:
     if (CALC_EXPRESSION(exp->u.unary.operand, operand)) {
       return 1;
     }
+    MATH_CHECK_VAL(val, operand);
     val->val = - operand.val;
     break;
   case MATH_EXPRESSION_TYPE_FACT:
@@ -1523,8 +1582,12 @@ calc(MathExpression *exp, MathValue *val)
       return 1;
     }
 
-    if (operand.val < 0 || operand.val > INT_MAX)
+    MATH_CHECK_VAL(val, operand);
+
+    if (operand.val < 0 || operand.val > INT_MAX) {
+      val->type = MATH_VALUE_ERROR;
       return 1;
+    }
 
     val->val = factorial(operand.val);
     break;
@@ -1549,10 +1612,12 @@ calc(MathExpression *exp, MathValue *val)
     }
     if (exp->u.assign.left->type == MATH_EXPRESSION_TYPE_VARIABLE) {
       if (math_equation_set_var(exp->equation, exp->u.assign.left->u.index, &right)) {
+	val->type = MATH_VALUE_ERROR;
 	return 1;
       }
     } else {
       if (set_val_to_array(exp->u.assign.left, &right, exp->u.assign.op)) {
+	val->type = MATH_VALUE_ERROR;
 	return 1;
       }
     }
@@ -1563,12 +1628,16 @@ calc(MathExpression *exp, MathValue *val)
     if (CALC_EXPRESSION(exp->u.array.operand, operand)) {
       return 1;
     }
-    if (math_equation_get_array_val(exp->equation, exp->u.array.index, operand.val, val))
+    if (math_equation_get_array_val(exp->equation, exp->u.array.index, operand.val, val)) {
+      val->type = MATH_VALUE_ERROR;
       return 1;
+    }
     break;
   case MATH_EXPRESSION_TYPE_PRM:
-    if (exp->u.prm.prm->data == NULL)
+    if (exp->u.prm.prm->data == NULL) {
+      val->type = MATH_VALUE_ERROR;
       return 1;
+    }
     *val = exp->u.prm.prm->data[exp->u.prm.index];
     break;
   case MATH_EXPRESSION_TYPE_EOEQ:
@@ -1590,7 +1659,7 @@ int
 math_expression_calculate(MathExpression *exp, MathValue *val)
 {
   MathExpression *ptr;
-  MathValue v = {0, MATH_VALUE_NORMAL};
+  MathValue v;
 
   if (exp == NULL) {
     return 1;
@@ -1598,6 +1667,8 @@ math_expression_calculate(MathExpression *exp, MathValue *val)
 
   ptr = exp;
   while (ptr) {
+    v.val = 0;
+    v.type = MATH_VALUE_NORMAL;
     if (calc(ptr, &v)) {
       return 1;
     }

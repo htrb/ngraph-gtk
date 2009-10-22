@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.39 2009/09/29 10:49:30 hito Exp $
+ * $Id: object.c,v 1.40 2009/10/22 00:07:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,8 +60,6 @@
 
 #define OBJ_MAX 100
 #define INST_MAX 32767
-
-#define USE_NEW_MATH_CODE 1
 
 static struct objlist *objroot=NULL;
 static struct loopproc *looproot=NULL, *loopnext=NULL;
@@ -3532,7 +3530,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
   char **argv,*p;
   int rcode;
   int i,err;
-#if ! USE_NEW_MATH_CODE 
+#if ! NEW_MATH_CODE 
   char *code;
   double memory[MEMORYNUM];
   char memorystat[MEMORYNUM];
@@ -3629,7 +3627,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         if (arg_add(&argv,p)==NULL) goto errexit;
       }
     } else if ((arglist[alp]=='i') || (arglist[alp]=='d')) {
-#if USE_NEW_MATH_CODE 
+#if NEW_MATH_CODE 
       MathEquation *eq;
       MathValue val;
 

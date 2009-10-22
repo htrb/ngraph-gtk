@@ -243,38 +243,7 @@ Ngraph で欠損データを指定する方法を示します。例として，2
 <h2><a href="#TOP">データプロット形式error_bar_xのデータファイル</a></h2>
 <br>
 <div>
-データプロット形式error_bar_xを用いて誤差棒をプロットすることができます。<br>
-<br>
-例えば次のようなデータを考えます。
-<br>
-<br>
-<table border="1" CELLPADDING="3" CELLSPACING="0">
- <tr><td>X</td><td>Y</td><td>Error(Y)</td></tr>
- <tr><td>1.0</td><td>2.0</td><td>+/-0.5</td></tr>
- <tr><td>2.0</td><td>3.0</td><td>+/-1.0</td></tr>
-</table><br>
-<br>
-このとき, 次のようなデータファイルを作り, (X) columnを1, (Y) column を2にします。
-<br>
-<br>
-<table border="1" CELLPADDING="3" CELLSPACING="0">
- <tr><td>1.0</td><td>2.0</td><td>-0.5</td><td>+0.5</td></tr>
- <tr><td>2.0</td><td>3.0</td><td>-1.0</td><td>+1.0</td></tr>
-</table><br>
-<br>
-Y, Yの誤差下限, Yの誤差上限 の3つのカラムは連続していなければなりません。<br>
-</div>
-
-<br>
-<hr>
-<br>
-
-
-<a name="DATAFILE_ERRBARY">&nbsp;</a>
-<h2><a href="#TOP">データプロット形式error_bar_yのデータファイル</a></h2>
-<br>
-<div>
-データプロット形式error_bar_yを用いて誤差棒をプロットすることができます。
+データプロット形式error_bar_xを用いて誤差棒をプロットすることができます。
 <br>
 <br>
 例えば次のようなデータを考えます。
@@ -295,6 +264,37 @@ Y, Yの誤差下限, Yの誤差上限 の3つのカラムは連続していな�
 </table><br>
 <br>
 X, Xの誤差下限, Xの誤差上限 の3つのカラムは連続していなければなりません。<br>
+</div>
+
+<br>
+<hr>
+<br>
+
+
+<a name="DATAFILE_ERRBARY">&nbsp;</a>
+<h2><a href="#TOP">データプロット形式error_bar_yのデータファイル</a></h2>
+<br>
+<div>
+データプロット形式error_bar_yを用いて誤差棒をプロットすることができます。<br>
+<br>
+例えば次のようなデータを考えます。
+<br>
+<br>
+<table border="1" CELLPADDING="3" CELLSPACING="0">
+ <tr><td>X</td><td>Y</td><td>Error(Y)</td></tr>
+ <tr><td>1.0</td><td>2.0</td><td>+/-0.5</td></tr>
+ <tr><td>2.0</td><td>3.0</td><td>+/-1.0</td></tr>
+</table><br>
+<br>
+このとき, 次のようなデータファイルを作り, (X) columnを1, (Y) column を2にします。
+<br>
+<br>
+<table border="1" CELLPADDING="3" CELLSPACING="0">
+ <tr><td>1.0</td><td>2.0</td><td>-0.5</td><td>+0.5</td></tr>
+ <tr><td>2.0</td><td>3.0</td><td>-1.0</td><td>+1.0</td></tr>
+</table><br>
+<br>
+Y, Yの誤差下限, Yの誤差上限 の3つのカラムは連続していなければなりません。<br>
 </div>
 
 <br>

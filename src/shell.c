@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.32 2009/10/20 07:05:36 hito Exp $
+ * $Id: shell.c,v 1.33 2009/10/22 00:07:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -185,6 +185,7 @@ static char *cmderrorlist[] = {
   "deep nest.",
   "syntax error.",
   "security check.",
+  "cannot allocate enough memory.",
   "unknown error.",
 };
 

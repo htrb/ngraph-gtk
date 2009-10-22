@@ -20,9 +20,9 @@ MathValue MATH_VALUE_ZERO = {0.0, MATH_VALUE_NORMAL};
 static struct math_token *st_look_ahead_token[3];
 static int st_look_ahead_token_exists = 0;
 
-static MathExpression * parse_expression(const char **str, MathEquation *eq);
-static MathExpression * parse_expression_list(const char **str, MathEquation *eq, int inside_block);
-static MathExpression * parse_unary_expression(const char **str, MathEquation *eq);
+static MathExpression * parse_expression(const char **str, MathEquation *eq, int *err);
+static MathExpression * parse_expression_list(const char **str, MathEquation *eq, int inside_block, int *err);
+static MathExpression * parse_unary_expression(const char **str, MathEquation *eq, int *err);
 
 
 static struct math_token *
@@ -80,29 +80,31 @@ unget_token(struct math_token *token)
 }
 
 static MathExpression *
-parse_array_expression(const char **str, MathEquation *eq, const char *name)
+parse_array_expression(const char **str, MathEquation *eq, const char *name, int *err)
 {
   struct math_token *token;
   MathExpression *operand, *exp;
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     return NULL;
   }
   math_scanner_free_token(token);
 
-  operand = parse_expression(str, eq);
+  operand = parse_expression(str, eq, err);
   if (operand == NULL)
     return NULL;
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     math_expression_free(operand);
     return NULL;
   }
 
   if (token->type != MATH_TOKEN_TYPE_RB) {
-    fprintf(stderr, "syntax error, missing ']'.\n the error is found at: '%s'\n", token->ptr);
+    *err = MATH_ERROR_MISS_RB;
     math_scanner_free_token(token);
     math_expression_free(operand);
     return NULL;
@@ -110,7 +112,7 @@ parse_array_expression(const char **str, MathEquation *eq, const char *name)
 
   math_scanner_free_token(token);
 
-  exp = math_array_expression_new(eq, name, operand);
+  exp = math_array_expression_new(eq, name, operand, err);
   if (exp == NULL) {
     math_expression_free(operand);
     return NULL;
@@ -120,7 +122,7 @@ parse_array_expression(const char **str, MathEquation *eq, const char *name)
 }
 
 static MathExpression *
-parse_primary_expression(const char **str, MathEquation *eq)
+parse_primary_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *token, *token2;
   MathExpression *exp;
@@ -128,6 +130,7 @@ parse_primary_expression(const char **str, MathEquation *eq)
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     return NULL;
   }
 
@@ -135,47 +138,47 @@ parse_primary_expression(const char **str, MathEquation *eq)
   case MATH_TOKEN_TYPE_NUMERIC:
     val.val = token->data.val.dnum;
     val.type = MATH_VALUE_NORMAL;
-    exp = math_double_expression_new(eq, &val);
+    exp = math_double_expression_new(eq, &val, err);
     break;
   case MATH_TOKEN_TYPE_SYMBOL:
     token2 = my_get_token(str);
     unget_token(token2);
     if (token2->type == MATH_TOKEN_TYPE_LB) {
-      exp = parse_array_expression(str, eq, token->data.sym);
+      exp = parse_array_expression(str, eq, token->data.sym, err);
       if (exp == NULL) {
 	math_scanner_free_token(token);
 	return NULL;
       }
     } else {
-      exp = math_constant_expression_new(eq, token->data.sym);
+      exp = math_constant_expression_new(eq, token->data.sym, err);
       if (exp == NULL) {
 	if (token->data.sym[0] == '%') {
-	  exp = math_parameter_expression_new(eq, token->data.sym);
+	  exp = math_parameter_expression_new(eq, token->data.sym, err);
 	  if (exp == NULL) {
-	    fprintf(stderr, "syntax error, invalid parameter '%s'.\n the error is found at: '%s'\n", token->data.sym, token->ptr);
 	    math_scanner_free_token(token);
 	    return NULL;
 	  }
 	} else {
-	  exp = math_variable_expression_new(eq, token->data.sym);
+	  exp = math_variable_expression_new(eq, token->data.sym, err);
 	}
       }
     }
     break;
   case MATH_TOKEN_TYPE_LP:
     math_scanner_free_token(token);
-    exp = parse_expression(str, eq);
+    exp = parse_expression(str, eq, err);
     if (exp == NULL)
       return NULL;
 
     token = my_get_token(str);
     if (token == NULL) {
+      *err = MATH_ERROR_MEMORY;
       math_expression_free(exp);
       return NULL;
     }
 
     if (token->type != MATH_TOKEN_TYPE_RP) {
-      fprintf(stderr, "syntax error, missing ')'.\n the error is found at: '%s'\n", token->ptr);
+      *err = MATH_ERROR_MISS_RP;
       math_scanner_free_token(token);
       math_expression_free(exp);
       return NULL;
@@ -183,7 +186,7 @@ parse_primary_expression(const char **str, MathEquation *eq)
     break;
   case MATH_TOKEN_TYPE_EOEQ:
   default:
-    fprintf(stderr, "syntax error, unexpected token [%d].\n the error is found at: '%s'\n", token->type, token->ptr);
+    *err = MATH_ERROR_UNEXP_TOKEN;
     math_scanner_free_token(token);
     return NULL;
   }
@@ -204,7 +207,7 @@ free_arg_list(MathExpression **argv)
 }
 
 static MathExpression *
-get_argument(const char **str, MathEquation *eq, struct math_function_parameter *fprm, int i)
+get_argument(const char **str, MathEquation *eq, struct math_function_parameter *fprm, int i, int *err)
 {
   struct math_token *token;
   MathExpression *exp;
@@ -212,21 +215,22 @@ get_argument(const char **str, MathEquation *eq, struct math_function_parameter 
   if (fprm->arg_type && i < fprm->argc && fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
     token = my_get_token(str);
     if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
+      *err = MATH_ERROR_INVARID_FDEF;
       math_scanner_free_token(token);
       /* invarid argument */
       return NULL;
     }
-    exp = math_array_argument_expression_new(eq, token->data.sym);
+    exp = math_array_argument_expression_new(eq, token->data.sym, err);
     math_scanner_free_token(token);
   } else {
-    exp = parse_expression(str, eq);
+    exp = parse_expression(str, eq, err);
   }
 
   return exp;
 }
 
 static int
-parse_argument_list(const char **str, MathEquation *eq, struct math_function_parameter *fprm, MathExpression **argv, int argc)
+parse_argument_list(const char **str, MathEquation *eq, struct math_function_parameter *fprm, MathExpression **argv, int argc, int *err)
 {
   struct math_token *token;
   int i, n;
@@ -239,7 +243,7 @@ parse_argument_list(const char **str, MathEquation *eq, struct math_function_par
   }
 
   n = 0;
-  exp = get_argument(str, eq, fprm, n);
+  exp = get_argument(str, eq, fprm, n, err);
   if (exp == NULL) {
     return -1;
   }
@@ -249,6 +253,7 @@ parse_argument_list(const char **str, MathEquation *eq, struct math_function_par
   for (i = 1; ; i++) {
     token = my_get_token(str);
     if (token == NULL) {
+      *err = MATH_ERROR_MEMORY;
       free_arg_list(argv);
       return -1;
     }
@@ -260,7 +265,7 @@ parse_argument_list(const char **str, MathEquation *eq, struct math_function_par
     math_scanner_free_token(token);
 
     n++;
-    exp = get_argument(str, eq, fprm, n);
+    exp = get_argument(str, eq, fprm, n, err);
     if (exp == NULL) {
       free_arg_list(argv);
       return -1;
@@ -278,16 +283,16 @@ parse_argument_list(const char **str, MathEquation *eq, struct math_function_par
 }
 
 static MathExpression *
-create_math_func(const char **str, MathEquation *eq, char *name)
+create_math_func(const char **str, MathEquation *eq, char *name, int *err)
 {
   struct math_function_parameter *fprm;
-  int i, arg_max, argc;
+  int i, arg_max, argc, pos_id;
   MathExpression **argv, *exp;
   struct math_token *token2;
 
   fprm = math_equation_get_func(eq, name);
   if (fprm == NULL) {
-    fprintf(stderr, "syntax error, unknown function '%s()'.\n", name);
+    *err = MATH_ERROR_UNKNOWN_FUNC;
     return NULL;
   }
 
@@ -295,10 +300,11 @@ create_math_func(const char **str, MathEquation *eq, char *name)
 
   argv = calloc(arg_max + 1, sizeof(*argv));
   if (argv == NULL) {
+    *err = MATH_ERROR_MEMORY;
     return NULL;
   }
 
-  argc = parse_argument_list(str, eq, fprm, argv, arg_max);
+  argc = parse_argument_list(str, eq, fprm, argv, arg_max, err);
   if (argc < 0) {
     memfree(argv);
     return NULL;
@@ -306,7 +312,7 @@ create_math_func(const char **str, MathEquation *eq, char *name)
 
   token2 = my_get_token(str);
   if (token2->type != MATH_TOKEN_TYPE_RP) {
-    fprintf(stderr, "syntax error, missing ')'.\n the error is found at: '%s'\n", token2->ptr);
+    *err = MATH_ERROR_MISS_RP;
     free_arg_list(argv);
     memfree(argv);
     math_scanner_free_token(token2);
@@ -316,7 +322,7 @@ create_math_func(const char **str, MathEquation *eq, char *name)
 
   if (argc < fprm->argc) {
     for (i = argc; i < fprm->argc; i++) {
-      argv[i] = math_double_expression_new(eq, &MATH_VALUE_ZERO);
+      argv[i] = math_double_expression_new(eq, &MATH_VALUE_ZERO, err);
       if (argv[i] == NULL) {
 	free_arg_list(argv);
 	free(argv);
@@ -325,13 +331,21 @@ create_math_func(const char **str, MathEquation *eq, char *name)
     }
     argc = fprm->argc;
   } else if ((fprm->argc >= 0 && argc > fprm->argc) || argc > ARG_MAX) {
-    fprintf(stderr, "syntax error, wrong number of arguments (%d for %d) '%s()'.\n", argc, fprm->argc, name);
+    *err = MATH_ERROR_ARG_NUM;
     free_arg_list(argv);
     memfree(argv);
     return NULL;
   }
 
-  exp = math_func_call_expression_new(eq, fprm, argc, argv, math_equation_add_pos_func(eq));
+  pos_id = math_equation_add_pos_func(eq, fprm);
+  if (pos_id == MATH_ERROR_INVALID_FUNC) {
+    *err = MATH_ERROR_INVALID_FUNC;
+    free_arg_list(argv);
+    memfree(argv);
+    return NULL;
+  }
+
+  exp = math_func_call_expression_new(eq, fprm, argc, argv, pos_id, err);
   if (exp == NULL) {
     free_arg_list(argv);
     memfree(argv);
@@ -342,7 +356,7 @@ create_math_func(const char **str, MathEquation *eq, char *name)
 }
 
 static MathExpression *
-parse_func_expression(const char **str, MathEquation *eq)
+parse_func_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *token1, *token2;
   MathExpression *exp;
@@ -361,19 +375,19 @@ parse_func_expression(const char **str, MathEquation *eq)
     }
     switch (token2->type) {
     case MATH_TOKEN_TYPE_LP:
-      exp = create_math_func(str, eq, token1->data.sym);
+      exp = create_math_func(str, eq, token1->data.sym, err);
       math_scanner_free_token(token2);
       math_scanner_free_token(token1);
       break;
     default:
       unget_token(token2);
       unget_token(token1);
-      exp = parse_primary_expression(str, eq);
+      exp = parse_primary_expression(str, eq, err);
     }
     break;
   default:
     unget_token(token1);
-    exp = parse_primary_expression(str, eq);
+    exp = parse_primary_expression(str, eq, err);
   }
 
   return exp;
@@ -381,12 +395,12 @@ parse_func_expression(const char **str, MathEquation *eq)
 
 
 static MathExpression *
-parse_factorial_expression(const char **str, MathEquation *eq)
+parse_factorial_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *operand, *exp;
 
-  exp = parse_func_expression(str, eq);
+  exp = parse_func_expression(str, eq, err);
   if (exp == NULL) {
     return NULL;
   }
@@ -394,6 +408,7 @@ parse_factorial_expression(const char **str, MathEquation *eq)
   for (;;) {
     token = my_get_token(str);
     if (token == NULL) {
+      *err = MATH_ERROR_MEMORY;
       math_expression_free(exp);
       return NULL;
     }
@@ -405,7 +420,7 @@ parse_factorial_expression(const char **str, MathEquation *eq)
 	math_scanner_free_token(token);
 
 	operand = exp;
-	exp = math_unary_expression_new(MATH_EXPRESSION_TYPE_FACT, eq, operand);
+	exp = math_unary_expression_new(MATH_EXPRESSION_TYPE_FACT, eq, operand, err);
 	if (exp == NULL) {
 	  return NULL;
 	}
@@ -426,18 +441,19 @@ parse_factorial_expression(const char **str, MathEquation *eq)
 }
 
 static MathExpression *
-parse_power_expression(const char **str, MathEquation *eq)
+parse_power_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *left, *right, *exp;
 
-  exp = parse_factorial_expression(str, eq);
+  exp = parse_factorial_expression(str, eq, err);
   if (exp == NULL) {
     return NULL;
   }
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
     return NULL;
   }
@@ -446,13 +462,13 @@ parse_power_expression(const char **str, MathEquation *eq)
   case MATH_TOKEN_TYPE_OPERATOR:
     switch (token->data.op) {
     case MATH_OPERATOR_TYPE_POW:
-      right = parse_unary_expression(str, eq);
+      right = parse_unary_expression(str, eq, err);
       if (right == NULL) {
 	math_scanner_free_token(token);
 	return NULL;
       }
       left = exp;
-      exp = math_binary_expression_new(MATH_EXPRESSION_TYPE_POW, eq, left, right);
+      exp = math_binary_expression_new(MATH_EXPRESSION_TYPE_POW, eq, left, right, err);
       if (exp == NULL) {
 	math_expression_free(left);
 	math_expression_free(right);
@@ -476,13 +492,14 @@ parse_power_expression(const char **str, MathEquation *eq)
 }
 
 static MathExpression *
-parse_unary_expression(const char **str, MathEquation *eq)
+parse_unary_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *exp, *operand;
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     return NULL;
   }
 
@@ -490,15 +507,15 @@ parse_unary_expression(const char **str, MathEquation *eq)
   case MATH_TOKEN_TYPE_OPERATOR:
     switch (token->data.op) {
     case MATH_OPERATOR_TYPE_PLUS:
-      exp = parse_unary_expression(str, eq);
+      exp = parse_unary_expression(str, eq, err);
       break;
     case MATH_OPERATOR_TYPE_MINUS:
-      operand = parse_unary_expression(str, eq);
+      operand = parse_unary_expression(str, eq, err);
       if (operand == NULL) {
 	math_scanner_free_token(token);
 	return NULL;
       }
-      exp = math_unary_expression_new(MATH_EXPRESSION_TYPE_MINUS, eq, operand);
+      exp = math_unary_expression_new(MATH_EXPRESSION_TYPE_MINUS, eq, operand, err);
       if (exp == NULL) {
 	math_scanner_free_token(token);
 	math_expression_free(operand);
@@ -506,7 +523,7 @@ parse_unary_expression(const char **str, MathEquation *eq)
       }
       break;
     default:
-      fprintf(stderr, "syntax error, unexpected operator [%d].\n the error is found at: '%s'\n", token->data.op, token->ptr);
+      *err = MATH_ERROR_UNEXP_OPE;
       math_scanner_free_token(token);
       return NULL;
     }
@@ -514,7 +531,7 @@ parse_unary_expression(const char **str, MathEquation *eq)
     break;
   default:
     unget_token(token);
-    exp = parse_power_expression(str, eq);
+    exp = parse_power_expression(str, eq, err);
   }
 
   return exp;
@@ -550,7 +567,8 @@ static MathExpression *
 CREATE_PARSER_FUNC(or, and, MATH_OPERATOR_TYPE_OR, MATH_EXPRESSION_TYPE_OR);
 
 static MathExpression *
-parse_variable_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_TYPE op, MathExpression *lexp, MathExpression *rexp)
+parse_variable_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_TYPE op,
+				 MathExpression *lexp, MathExpression *rexp, int *err)
 {
   MathExpression *exp, *bin;
 
@@ -558,42 +576,42 @@ parse_variable_assign_expression(const char **str, MathEquation *eq, enum MATH_O
   case MATH_OPERATOR_TYPE_ASSIGN:
     break;
   case MATH_OPERATOR_TYPE_POW_ASSIGN:
-    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_POW, eq, lexp, rexp);
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_POW, eq, lexp, rexp, err);
     if (bin == NULL)
       goto ErrEnd;
 
     rexp = bin;
     break;
   case MATH_OPERATOR_TYPE_MOD_ASSIGN:
-    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_MOD, eq, lexp, rexp);
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_MOD, eq, lexp, rexp, err);
     if (bin == NULL)
       goto ErrEnd;
 
     rexp = bin;
     break;
   case MATH_OPERATOR_TYPE_DIV_ASSIGN:
-    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_DIV, eq, lexp, rexp);
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_DIV, eq, lexp, rexp, err);
     if (bin == NULL)
       goto ErrEnd;
 
     rexp = bin;
     break;
   case MATH_OPERATOR_TYPE_MUL_ASSIGN:
-    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_MUL, eq, lexp, rexp);
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_MUL, eq, lexp, rexp, err);
     if (bin == NULL)
       goto ErrEnd;
 
     rexp = bin;
     break;
   case MATH_OPERATOR_TYPE_PLUS_ASSIGN:
-    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_ADD, eq, lexp, rexp);
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_ADD, eq, lexp, rexp, err);
     if (bin == NULL)
       goto ErrEnd;
 
     rexp = bin;
     break;
   case MATH_OPERATOR_TYPE_MINUS_ASSIGN:
-    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_SUB, eq, lexp, rexp);
+    bin = math_binary_expression_new(MATH_EXPRESSION_TYPE_SUB, eq, lexp, rexp, err);
     if (bin == NULL)
       goto ErrEnd;
 
@@ -603,7 +621,7 @@ parse_variable_assign_expression(const char **str, MathEquation *eq, enum MATH_O
     return NULL;
   }
 
-  exp = math_expression_new(MATH_EXPRESSION_TYPE_VARIABLE, eq);
+  exp = math_expression_new(MATH_EXPRESSION_TYPE_VARIABLE, eq, err);
   if (exp == NULL) {
     math_expression_free(bin);
     return NULL;
@@ -611,7 +629,7 @@ parse_variable_assign_expression(const char **str, MathEquation *eq, enum MATH_O
 
   exp->u.index = lexp->u.index;
 
-  lexp = math_assign_expression_new(MATH_EXPRESSION_TYPE_ASSIGN, eq, exp, rexp, op);
+  lexp = math_assign_expression_new(MATH_EXPRESSION_TYPE_ASSIGN, eq, exp, rexp, op, err);
   if (lexp == NULL) {
     math_expression_free(exp);
     math_expression_free(bin);
@@ -627,20 +645,20 @@ parse_variable_assign_expression(const char **str, MathEquation *eq, enum MATH_O
 }
 
 static MathExpression *
-parse_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_TYPE op, MathExpression *lexp)
+parse_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_TYPE op, MathExpression *lexp, int *err)
 {
   MathExpression *exp, *rexp;
 
-  rexp = parse_expression(str, eq);
+  rexp = parse_expression(str, eq, err);
   if (rexp == NULL) {
     math_expression_free(lexp);
     return NULL;
   }
 
   if (lexp->type == MATH_EXPRESSION_TYPE_VARIABLE && op != MATH_OPERATOR_TYPE_ASSIGN) {
-    exp = parse_variable_assign_expression(str, eq, op, lexp, rexp);
+    exp = parse_variable_assign_expression(str, eq, op, lexp, rexp, err);
   } else {
-    exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_ASSIGN, eq, lexp, rexp, op);
+    exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_ASSIGN, eq, lexp, rexp, op, err);
     if (exp == NULL) {
       math_expression_free(lexp);
       math_expression_free(rexp);
@@ -651,13 +669,14 @@ parse_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_T
 }
 
 static int
-parse_parameter_list(const char **str, MathEquation *eq, MathExpression *func)
+parse_parameter_list(const char **str, MathEquation *eq, MathExpression *func, int *err)
 {
   struct math_token *token;
   enum MATH_FUNCTION_ARG_TYPE type;
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     return 1;
   }
 
@@ -676,6 +695,7 @@ parse_parameter_list(const char **str, MathEquation *eq, MathExpression *func)
   for (;;) {
     token = my_get_token(str);
     if (token == NULL) {
+      *err = MATH_ERROR_MEMORY;
       return 1;
     }
 
@@ -700,6 +720,7 @@ parse_parameter_list(const char **str, MathEquation *eq, MathExpression *func)
 
     token = my_get_token(str);
     if (token == NULL) {
+      *err = MATH_ERROR_MEMORY;
       return 1;
     }
 
@@ -712,6 +733,7 @@ parse_parameter_list(const char **str, MathEquation *eq, MathExpression *func)
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     return 1;
   }
 
@@ -725,7 +747,7 @@ parse_parameter_list(const char **str, MathEquation *eq, MathExpression *func)
 }
 
 static MathExpression *
-parse_block_expression(const char **str, MathEquation *eq)
+parse_block_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *exp;
@@ -748,7 +770,7 @@ parse_block_expression(const char **str, MathEquation *eq)
   }
   unget_token(token);
 
-  exp = parse_expression_list(str, eq, 1);
+  exp = parse_expression_list(str, eq, 1, err);
   if (exp == NULL)
     return NULL;
 
@@ -784,7 +806,7 @@ free_func_prm(struct math_function_parameter *prm)
 }
 
 MathExpression *
-parse_func_def_expression(const char **str, MathEquation *eq)
+parse_func_def_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *fname;
   MathExpression *exp, *block;
@@ -800,14 +822,14 @@ parse_func_def_expression(const char **str, MathEquation *eq)
     return NULL;
   }
 
-  exp = math_function_expression_new(eq, fname->data.sym);
+  exp = math_function_expression_new(eq, fname->data.sym, err);
   if (exp == NULL) {
     math_scanner_free_token(fname);
     return NULL;
   }
 
   /* get parameters */
-  if (parse_parameter_list(str, eq, exp)) {
+  if (parse_parameter_list(str, eq, exp, err)) {
     math_equation_finish_user_func_definition(eq, NULL, NULL);
     free_func_prm(exp->u.func.fprm);
     math_scanner_free_token(fname);
@@ -823,7 +845,7 @@ parse_func_def_expression(const char **str, MathEquation *eq)
   }
 
   /* get block */
-  block = parse_block_expression(str, eq);
+  block = parse_block_expression(str, eq, err);
   if (block == NULL) {
     math_equation_finish_user_func_definition(eq, NULL, NULL);
     free_func_prm(exp->u.func.fprm);
@@ -846,7 +868,7 @@ parse_func_def_expression(const char **str, MathEquation *eq)
 }
 
 MathExpression *
-parse_const_def_expression(const char **str, MathEquation *eq)
+parse_const_def_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *cname, *token;
   MathExpression *exp, *cdef;
@@ -864,6 +886,7 @@ parse_const_def_expression(const char **str, MathEquation *eq)
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     return NULL;
   }
 
@@ -873,13 +896,13 @@ parse_const_def_expression(const char **str, MathEquation *eq)
   }
   math_scanner_free_token(token);
 
-  exp = parse_expression(str, eq);
+  exp = parse_expression(str, eq, err);
   if (exp == NULL) {
     math_scanner_free_token(cname);
     return NULL;
   }
 
-  cdef = math_constant_definition_expression_new(eq, cname->data.sym, exp);
+  cdef = math_constant_definition_expression_new(eq, cname->data.sym, exp, err);
   if (cdef == NULL) {
     math_expression_free(exp);
     math_scanner_free_token(cname);
@@ -892,12 +915,12 @@ parse_const_def_expression(const char **str, MathEquation *eq)
 }
 
 static MathExpression *
-parse_expression(const char **str, MathEquation *eq)
+parse_expression(const char **str, MathEquation *eq, int *err)
 {
   struct math_token *token;
   MathExpression *exp;
 
-  exp = parse_or_expression(str, eq);
+  exp = parse_or_expression(str, eq, err);
   if (exp == NULL)
     return NULL;
 
@@ -911,6 +934,7 @@ parse_expression(const char **str, MathEquation *eq)
 
   token = my_get_token(str);
   if (token == NULL) {
+    *err = MATH_ERROR_MEMORY;
     math_expression_free(exp);
     return NULL;
   }
@@ -925,11 +949,11 @@ parse_expression(const char **str, MathEquation *eq)
     case MATH_OPERATOR_TYPE_MUL_ASSIGN:
     case MATH_OPERATOR_TYPE_PLUS_ASSIGN:
     case MATH_OPERATOR_TYPE_MINUS_ASSIGN:
-      exp = parse_assign_expression(str, eq, token->data.op, exp);
+      exp = parse_assign_expression(str, eq, token->data.op, exp, err);
       math_scanner_free_token(token);
       break;
     default:
-      fprintf(stderr, "syntax error, unexpected operator [%d].\n the error is found at: '%s'\n", token->data.op, token->ptr);
+      *err = MATH_ERROR_UNEXP_OPE;
       math_scanner_free_token(token);
       math_expression_free(exp);
       return NULL;
@@ -943,7 +967,7 @@ parse_expression(const char **str, MathEquation *eq)
     unget_token(token);
     break;
   default:
-    fprintf(stderr, "syntax error, unexpected token [%d].\n the error is found at: '%s'\n", token->type, token->ptr);
+    *err = MATH_ERROR_UNEXP_TOKEN;
     math_scanner_free_token(token);
     math_expression_free(exp);
     return NULL;
@@ -955,7 +979,7 @@ parse_expression(const char **str, MathEquation *eq)
 }
 
 static MathExpression *
-parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
+parse_expression_list(const char ** str, MathEquation *eq, int inside_block, int *err)
 {
   struct math_token *token;
   MathExpression *exp, *prev, *top;
@@ -964,6 +988,7 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
   for (;;) {
     token = my_get_token(str);
     if (token == NULL) {
+      *err = MATH_ERROR_MEMORY;
       math_expression_free(top);
       return NULL;
     }
@@ -972,11 +997,11 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
     case MATH_TOKEN_TYPE_DEF:
       math_scanner_free_token(token);
       if (inside_block) {
-	fprintf(stderr, "syntax error, nested function definition.\n");
+	*err = MATH_ERROR_FDEF_NEST;
 	math_expression_free(top);
 	return NULL;
       }
-      exp = parse_func_def_expression(str, eq);
+      exp = parse_func_def_expression(str, eq, err);
       if (exp == NULL) {
 	math_expression_free(top);
 	return NULL;
@@ -984,7 +1009,7 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
       continue;
     case MATH_TOKEN_TYPE_CONST:
       math_scanner_free_token(token);
-      exp = parse_const_def_expression(str, eq);
+      exp = parse_const_def_expression(str, eq, err);
       if (exp == NULL) {
 	math_expression_free(top);
 	return NULL;
@@ -994,7 +1019,7 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
       math_scanner_free_token(token);
       if (*str[0] == '\0') {
 	if (inside_block) {
-	  fprintf(stderr, "syntax error, unexpected end of equation, expecting '}'.\n");
+	  *err = MATH_ERROR_EOEQ;
 	  math_expression_free(top);
 	  return NULL;
 	}
@@ -1006,13 +1031,13 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
 	unget_token(token);
 	goto End;
       }
-      fprintf(stderr, "syntax error, unexpected token [%d].\n the error is found at: '%s'\n", token->type, token->ptr);
+      *err = MATH_ERROR_UNEXP_TOKEN;
       math_scanner_free_token(token);
       math_expression_free(top);
       return NULL;
     default:
       unget_token(token);
-      exp = parse_expression(str, eq);
+      exp = parse_expression(str, eq, err);
    }
 
     if (exp == NULL) {
@@ -1032,6 +1057,7 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
 
     token = my_get_token(str);
     if (token == NULL) {
+      *err = MATH_ERROR_MEMORY;
       math_expression_free(top);
       return NULL;
     }
@@ -1041,7 +1067,7 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
 	unget_token(token);
 	goto End;
       }
-      fprintf(stderr, "syntax error, unexpected token [%d].\n the error is found at: '%s'\n", token->type, token->ptr);
+      *err = MATH_ERROR_UNEXP_TOKEN;
       math_scanner_free_token(token);
       math_expression_free(top);
       return NULL;
@@ -1054,14 +1080,16 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block)
 }
 
 MathExpression *
-math_parser_parse(const char *line, MathEquation *eq)
+math_parser_parse(const char *line, MathEquation *eq, int *err)
 {
   const char *ptr = line;
   MathExpression *exp;
   int i;
 
+  *err = MATH_ERROR_NONE;
+
   st_look_ahead_token_exists = 0;
-  exp = parse_expression_list(&ptr, eq, 0);
+  exp = parse_expression_list(&ptr, eq, 0, err);
 
   for (i = 0; i < st_look_ahead_token_exists; i++) {
     math_scanner_free_token(st_look_ahead_token[i]);
