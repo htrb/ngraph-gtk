@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.89 2009/10/23 12:00:42 hito Exp $
+ * $Id: ofile.c,v 1.90 2009/10/23 12:15:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -509,11 +509,11 @@ file_hsb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
   if (color2) {
     fp->color2[0] = r;
     fp->color2[1] = g;
-    fp->color2[2] = b;
+    fp->color2[2] = bb;
   } else {
     fp->color[0] = r;
     fp->color[1] = g;
-    fp->color[2] = b;
+    fp->color[2] = bb;
   }
 
   return 0;
