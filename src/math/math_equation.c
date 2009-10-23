@@ -465,7 +465,7 @@ math_equation_get_parameter(MathEquation *eq, int type)
 {
   MathEquationParametar *ptr;
 
-  if (eq->parameter == NULL) {
+  if (eq == NULL || eq->parameter == NULL) {
     return NULL;
   }
 

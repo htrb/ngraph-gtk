@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.88 2009/10/22 10:25:11 hito Exp $
+ * $Id: ofile.c,v 1.89 2009/10/23 12:00:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1055,10 +1055,12 @@ opendata(struct objlist *obj,char *inst,
 #if NEW_MATH_CODE
     MathEquationParametar *prm;
 
-    if (fp->codex[0]) {
+    if (fp->codex[0] && fp->codex[0]->exp) {
       prm = math_equation_get_parameter(fp->codex[0], 'F');
-      fp->fnumx = prm->id_num;
-      fp->needx = prm->id;
+      if (prm) {
+	fp->fnumx = prm->id_num;
+	fp->needx = prm->id;
+      }
     }
     for (i = 0; i < fp->fnumx; i++) {
       id = fp->needx[i] / 1000;
@@ -1083,10 +1085,12 @@ opendata(struct objlist *obj,char *inst,
       }
     }
 
-    if (fp->codey[0]) {
+    if (fp->codey[0] && fp->codey[0]->exp) {
       prm = math_equation_get_parameter(fp->codey[0], 'F');
-      fp->fnumy = prm->id_num;
-      fp->needy = prm->id;
+      if (prm) {
+	fp->fnumy = prm->id_num;
+	fp->needy = prm->id;
+      }
     }
     for (i = 0; i < fp->fnumy; i++) {
       id = fp->needy[i] / 1000;
@@ -2244,7 +2248,7 @@ set_const(MathEquation *eq, struct f2ddata *fp, int first)
   MathValue val;
 
   if (eq == NULL || eq->exp == NULL)
-    return 1;
+    return 0;
 
   math_equation_clear(eq);
 
@@ -5306,7 +5310,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
 	return 1;
       }
       prm = math_equation_get_parameter(code, 0);
-      maxdim = prm->id_max;
+      maxdim = (prm) ? prm->id_max : 0;
 #else
       needdata=arraynew(sizeof(int));
       rcode=mathcode(weight,&code,needdata,NULL,&maxdim,&need2pass,
