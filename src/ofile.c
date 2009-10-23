@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.90 2009/10/23 12:15:46 hito Exp $
+ * $Id: ofile.c,v 1.91 2009/10/23 12:29:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -403,14 +403,18 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   rval->val = exp->buf[1].val.val;
 
   fp = (struct f2ddata *) math_equation_get_user_data(eq);
-  if (fp == NULL)
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   color = exp->buf[0].val.val;
   val = exp->buf[1].val.val;
 
-  if (val < 0 || val > 255)
+  if (val < 0 || val > 255) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   switch (color) {
   case 0:
@@ -430,6 +434,7 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
     fp->color2[0] = fp->color2[1] = fp->color2[2] = val;
     break;
   default:
+    rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
@@ -445,8 +450,10 @@ file_rgb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
   rval->val = exp->buf[2].val.val;
 
   fp = (struct f2ddata *) math_equation_get_user_data(eq);
-  if (fp == NULL)
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   r = exp->buf[0].val.val * 255;
   g = exp->buf[1].val.val * 255;
@@ -454,8 +461,10 @@ file_rgb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
 
   if (r < 0 || r > 255 ||
       g < 0 || g > 255 ||
-      b < 0 || b > 255)
+      b < 0 || b > 255) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   if (color2) {
     fp->color2[0] = r;
@@ -492,8 +501,10 @@ file_hsb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
   rval->val = exp->buf[2].val.val;
 
   fp = (struct f2ddata *) math_equation_get_user_data(eq);
-  if (fp == NULL)
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   h = exp->buf[0].val.val;
   s = exp->buf[1].val.val;
@@ -501,8 +512,10 @@ file_hsb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
 
   if (h < 0 || h > 1 ||
       s < 0 || s > 1 ||
-      b < 0 || b > 1)
+      b < 0 || b > 1) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   HSB2RGB(h, s, b, &r, &g, &bb);
 
@@ -540,12 +553,16 @@ file_marksize(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   rval->val = exp->buf[0].val.val;
 
   fp = (struct f2ddata *) math_equation_get_user_data(eq);
-  if (fp == NULL)
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   size = exp->buf[0].val.val;
-  if (size < 0 || size > 65536)
+  if (size < 0 || size > 65536) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   fp->marksize = size;
 
@@ -561,12 +578,16 @@ file_marktype(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   rval->val = exp->buf[0].val.val;
 
   fp = (struct f2ddata *) math_equation_get_user_data(eq);
-  if (fp == NULL)
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   type = exp->buf[0].val.val;
-  if (type < 0 || type > 89)
+  if (type < 0 || type > 89) {
+    rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
 
   fp->marktype = type;
 
