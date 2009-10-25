@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.27 2009/10/22 00:07:11 hito Exp $
+ * $Id: ofit.c,v 1.28 2009/10/25 12:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1079,10 +1079,17 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  char *equation, *ptr, buf[32];
-  double x, y;
+#if NEW_MATH_CODE
+  static MathEquation *eq = NULL;
+  MathValue val;
+#else
   struct objlist *mathobj;
-  int id, r;
+  int id;
+  double y;
+#endif
+  int r;
+  char *equation, *ptr, buf[32];
+  double x;
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
 
@@ -1093,8 +1100,41 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   _getobj(obj, "equation", inst, &equation);
   if (equation == NULL)
-    return 1;
+    return 0;
 
+#if NEW_MATH_CODE
+  eq = math_equation_basic_new();
+  if (eq == NULL) {
+    return 1;
+  }
+
+  if (math_equation_add_var(eq, "X") != 0) {
+    math_equation_free(eq);
+    return 1;
+  }
+
+  val.val = x;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_var(eq, 0, &val);
+
+  if (math_equation_parse(eq, equation)) {
+    math_equation_free(eq);
+    return 1;
+  }
+ 
+  r = math_equation_calculate(eq, &val);
+  math_equation_free(eq);
+  
+  if (r) {
+    return 1;
+  }
+
+  snprintf(buf, sizeof(buf), "%.15e", val.val);
+  ptr = nstrdup(buf);
+  * (char **) rval = ptr;
+
+  return 0;
+#else
   mathobj = chkobject("math");
   if (mathobj == NULL)
     return 1;
@@ -1122,6 +1162,7 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   delobj(mathobj, id);
 
   return (r < 0);
+#endif
 }
 
 static struct objtable fit[] = {

@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.13 2009/10/22 00:07:11 hito Exp $
+ * $Id: omath.c,v 1.14 2009/10/25 12:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -169,9 +169,9 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     goto errexit;
   }
 
-  math_equation_parse(mlocal->code, "def f(x,y,z){0};");
-  math_equation_parse(mlocal->code, "def g(x,y,z){0};");
-  math_equation_parse(mlocal->code, "def h(x,y,z){0};");
+  math_equation_parse(mlocal->code, "def f(x,y,z){0}");
+  math_equation_parse(mlocal->code, "def g(x,y,z){0}");
+  math_equation_parse(mlocal->code, "def h(x,y,z){0}");
 #else
   mlocal->code=NULL;
   mlocal->ufcodef=NULL;
@@ -225,7 +225,7 @@ mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static char *
 create_func_def_str(char *name, char *code)
 {
-  char func_def[] = "def %s(x,y,z) {%s;};0;";
+  char func_def[] = "def %s(x,y,z) {%s;}";
   int nlen, clen, len;
   char *ptr;
 

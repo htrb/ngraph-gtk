@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.91 2009/10/23 12:29:08 hito Exp $
+ * $Id: ofile.c,v 1.92 2009/10/25 12:47:30 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1272,7 +1272,7 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 static char *
 create_func_def_str(const char *name, const char *code)
 {
-  char func_def[] = "def %s(x,y,z) {%s;};0;";
+  char func_def[] = "def %s(x,y,z) {%s;}";
   int nlen, clen, len;
   char *ptr;
 
