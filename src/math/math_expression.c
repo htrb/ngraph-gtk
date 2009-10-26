@@ -19,11 +19,6 @@ static MathExpression *optimize(MathExpression *exp, int *err);
    ((v = e->u.value), 0) :				\
    calc(e, &v))
 
-#define MATH_CHECK_VAL(rval, v) if (v.type != MATH_VALUE_NORMAL) {	\
-    *rval = v;								\
-    break;								\
-  }
-
 MathExpression *
 math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, int *err)
 {
@@ -1392,7 +1387,10 @@ set_val_to_array(MathExpression *exp, MathValue *val, enum MATH_OPERATOR_TYPE op
   return 0;
 }
 
-#define BREAK_IF_VAL_IS_NOT_NORMAL(LV, RV) if (RV.type != MATH_VALUE_NORMAL) {LV = RV; break;}
+#define MATH_CHECK_VAL(rval, v) if (v.type != MATH_VALUE_NORMAL) {	\
+    *rval = v;								\
+    break;								\
+  }
 
 static int
 calc(MathExpression *exp, MathValue *val)

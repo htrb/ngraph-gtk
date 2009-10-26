@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.14 2009/10/25 12:47:30 hito Exp $
+ * $Id: omath.c,v 1.15 2009/10/26 10:11:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -91,19 +91,19 @@ struct mlocal {
 static void 
 msettbl(char *inst,struct mlocal *mlocal)
 {
-#if ! NEW_MATH_CODE 
   int i;
-#endif
 
   *(double *)(inst+mlocal->idpx)=mlocal->x;
   *(double *)(inst+mlocal->idpy)=mlocal->y;
   *(double *)(inst+mlocal->idpz)=mlocal->z;
 
-#if ! NEW_MATH_CODE 
   for (i = 0; i < MEMORYNUM; i++) {
+#if NEW_MATH_CODE 
+    *(double *)(inst + mlocal->idpm[i]) = mlocal->code->memory[i].val;
+#else
     *(double *)(inst + mlocal->idpm[i]) = mlocal->memory[i];
-  }
 #endif
+  }
   *(int *)(inst+mlocal->idpr)=mlocal->rcode;
 }
 
@@ -264,6 +264,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (strcmp("formula",argv[1])==0) {
     if (math) {
       if (math_equation_parse(mlocal->code, math)) {
+	error(obj, ERRSYNTAX);
 	return 1;
       }
       if (math_equation_optimize(mlocal->code)) {
@@ -287,6 +288,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 1;
     }
     if (math_equation_parse(mlocal->code, ptr)) {
+      error(obj, ERRSYNTAX);
       return 1;
     }
     if (math_equation_optimize(mlocal->code)) {
@@ -350,9 +352,7 @@ static int
 mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *arg;
-#if ! NEW_MATH_CODE 
   int m;
-#endif
   struct mlocal *mlocal;
 
   _getobj(obj, "_local", inst, &mlocal);
@@ -367,15 +367,18 @@ mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 'z':
     mlocal->z = * (double *) argv[2];
     break;
-#if ! NEW_MATH_CODE 
   case 'm':
     m = atoi(arg + 1);
     if (m >= 0 && m < MEMORYNUM) {
+#if NEW_MATH_CODE 
+      mlocal->code->memory[m].val = * (double *) argv[2];
+      mlocal->code->memory[m].type = MATH_VALUE_NORMAL;
+#else
       mlocal->memory[m] = * (double *) argv[2];
       mlocal->memorystat[m] = MNOERR;
+#endif
     }
     break;
-#endif
   }
   msettbl(inst, mlocal);
   return 0;
@@ -433,8 +436,9 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   math_equation_set_var(mlocal->code, 2, &val);
 
   math_equation_set_parameter_data(mlocal->code, 0, data);
-  mlocal->rcode = math_equation_calculate(mlocal->code, &val);
+  math_equation_calculate(mlocal->code, &val);
   mlocal->val = val.val;
+  mlocal->rcode = val.type;
 #else
   data = memalloc(sizeof(double) * (num + 1));
   datastat = memalloc(sizeof(char) * (num + 1));
@@ -496,7 +500,6 @@ static struct objtable math[] = {
   {"x",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"y",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"z",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-#if ! NEW_MATH_CODE 
   {"m00",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"m01",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"m02",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
@@ -517,7 +520,6 @@ static struct objtable math[] = {
   {"m17",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"m18",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"m19",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-#endif
   {"status",NENUM,NREAD,NULL,matherrorchar,0},
   {"calc",NDFUNC,NREAD|NEXEC,mcalc,"da",0},
   {"clear",NVFUNC,NREAD|NEXEC,mclear,NULL,0},
