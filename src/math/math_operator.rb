@@ -1,3 +1,5 @@
+#! /usr/bin/ruby
+
 N = 256
 
 ope = []

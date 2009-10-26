@@ -19,11 +19,11 @@ struct _math_value {
     MATH_VALUE_ERROR  = 1,
     MATH_VALUE_NAN    = 2,
     MATH_VALUE_UNDEF  = 3,
-    MATH_VALUE_SYNTAX = 4,
+    //    MATH_VALUE_SYNTAX = 4,
     MATH_VALUE_CONT   = 5,
     MATH_VALUE_BREAK  = 6,
     MATH_VALUE_NONUM  = 7,
-    MATH_VALUE_MEOF   = 8,
+    //    MATH_VALUE_MEOF   = 8,
   } type;
 };
 

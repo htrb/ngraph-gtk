@@ -1,8 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-
-#include "object.h"
-
 #include "math_expression.h"
 #include "math_equation.h"
 #include "math_function.h"
@@ -84,6 +81,7 @@ static struct funcs func_ary[] = {
 int
 math_add_basic_function(MathEquation *eq) {
   unsigned int i;
+  int r;
   enum MATH_FUNCTION_ARG_TYPE *ptr;
 
   for (i = 0; i < sizeof(func_ary) / sizeof(*func_ary); i++) {
@@ -91,7 +89,7 @@ math_add_basic_function(MathEquation *eq) {
     case 3:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = memalloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
+      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
       if (ptr == NULL) {
         return 1;
       }
@@ -103,7 +101,7 @@ math_add_basic_function(MathEquation *eq) {
     case 11:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = memalloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
       }
@@ -113,7 +111,7 @@ math_add_basic_function(MathEquation *eq) {
     case 23:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = memalloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
       }
@@ -123,7 +121,7 @@ math_add_basic_function(MathEquation *eq) {
     case 24:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = memalloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
       }
@@ -133,7 +131,7 @@ math_add_basic_function(MathEquation *eq) {
     case 44:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = memalloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 5);
+      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 5);
       if (ptr == NULL) {
         return 1;
       }
@@ -147,7 +145,7 @@ math_add_basic_function(MathEquation *eq) {
     case 53:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = memalloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
+      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
       if (ptr == NULL) {
         return 1;
       }
@@ -158,7 +156,7 @@ math_add_basic_function(MathEquation *eq) {
       break;
     }
     if (math_equation_add_func(eq, func_ary[i].name, &func_ary[i].prm) == NULL)
-      return 1;
+      return r;
   }
   return 0;
 }

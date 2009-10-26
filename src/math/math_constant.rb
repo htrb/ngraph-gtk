@@ -1,3 +1,5 @@
+#! /usr/bin/ruby
+
 const_str = [];
 IO.foreach(ARGV[0]) { |l|
   l.chomp!
