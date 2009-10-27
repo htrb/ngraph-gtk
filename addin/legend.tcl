@@ -302,7 +302,7 @@ proc makescript { f i gx gy height } {
     puts $f [format "rectangle::x1=%d" $gx]
     puts $f [format "rectangle::y1=%d" [expr int($gy+$height*2/3-$height/2)]]
     puts $f [format "rectangle::x2=%d" [expr $gx+$width]]
-    puts $f [format "rectangle::y2=%d" [expr in($gy+$height*2/3+$height/2)]]
+    puts $f [format "rectangle::y2=%d" [expr int($gy+$height*2/3+$height/2)]]
     if { ($type=="rectangle") || ($type=="bar_x") || ($type=="bar_y") } {
       puts $f "rectangle::fill=false"
       puts $f [format "rectangle::R=%d" $R]
@@ -429,6 +429,8 @@ proc savescript {} {
     puts $f "rectangle::B2=0"
     puts $f "rectangle::fill=true"
     puts $f "rectangle::frame=true"
+    puts $f "movetop rectangle:!"
+    puts $f "movetop rectangle:!"
     puts $f "del int:textlen"
     puts $f "del int:texttot"
     puts $f "del iarray:textbbox"

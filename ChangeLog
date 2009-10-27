@@ -1,3 +1,9 @@
+2009-10-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/legend.tcl (savescript): move frame rectangle to the top
+	of the instances.
+	(makescript): bug fix: fix typo "in" to "int".
+
 2009-10-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (struct f2dlocal): add member "total_line",
