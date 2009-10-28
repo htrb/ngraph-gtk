@@ -5,7 +5,7 @@ HTML_FILE = addin.html copyrigh.html data.html gra.html intro.html	\
 	script.html text.html tutorial.html
 
 EXTRA_DIST = ${HTML_FILE} object.html.in objlist.nsc intro.html.in	\
-        script.html.in
+        script.html.in math.html.in ngraph.html.in
 
 htmljadir = $(docdir)/html_ja
 
@@ -20,5 +20,11 @@ intro.html: intro.html.in Makefile
 
 script.html: script.html.in Makefile
 	sh ../../pathconv.sh $(docdir) $(pkgdatadir) $(ngraphconfdir) script.html.in
+
+math.html: math.html.in Makefile
+	cpp -P math.html.in > math.html
+
+ngraph.html: ngraph.html.in Makefile
+	cpp -P ngraph.html.in > ngraph.html
 
 SUBDIRS = tutorial img dialogs

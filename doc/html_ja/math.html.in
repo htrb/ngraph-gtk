@@ -1,6 +1,4 @@
-
-
-
+#include "../../config.h"
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -19,7 +17,7 @@
 <li><a href="#FORMULA_FUNC">数式変換の関数</a>
 <li><a href="#OP_PRECEDENCE">数式変換の関数・演算子の優先順位</a>
 <li><a href="#OP_EXAMPLE">数式変換の使用例</a>
-
+#if NEW_MATH_CODE
 <li><a href="#NEW_TRANSFORM">GTK 版で追加された機能、変更点</a>
 <li><a href="#NEW_FORMULA_LITERAL">数値リテラル</a>
 <li><a href="#NEW_FORMULA_CONST">定数</a>
@@ -30,7 +28,7 @@
 <li><a href="#NEW_FORMULA_OP">演算子</a>
 <li><a href="#NEW_FORMULA_FUNC">関数</a>
 <li><a href="#NEW_OP_PRECEDENCE">演算子の優先順位</a>
-
+#endif
 </ul>
 
 <br>
@@ -219,7 +217,7 @@
 <b>特殊関数</b>
 <table border=1>
 <tr><td>RAND(x)</td><td>0≦RAND(x)＜x (x＞0のとき)の乱数</td></tr>
-<tr><td>THETA(x)</td><td>階段関数(x≧0 のとき 1, それ以外は 0 )</td></tr>
+<tr><td>THETA(x)</td><td>階段関数(x≧0 のとき 1,  それ以外は 0 )</td></tr>
 <tr><td>DELTA(x)</td><td>クロネッカーのδ(x=0 のとき 1, それ以外は 0)</td></tr>
 <tr><td>GAMMA(x)</td><td>ガンマ関数 Γ(x)</td></tr>
 <tr><td>ICGAM(m,x)</td><td>不完全ガンマ関数 Γ(μ,x)</td></tr>
@@ -236,7 +234,7 @@
 <tr><td>MJD(year,month,day)</td><td>修正ユリウス日(year, month, day はグレゴリオ暦)</td></tr>
 </table>
 <br>
-<b>論理関数 0を偽, それ以外を真とする。</b>
+<b>論理関数 0 を偽, それ以外を真とする。</b>
 <table border=1>
 <tr><td>EQ(x,y)</td><td>x＝y のとき真(=1)</td></tr>
 <tr><td>NEQ(x,y)</td><td>x≠y のとき真(=1)</td></tr>
@@ -284,10 +282,10 @@
 <table border=1>
 <tr><td>高</td><td>E (指数表記)</td></tr>
 <tr><td>↑</td><td>() (括弧)</td></tr>
-<tr><td> </td><td>- (負の符号)</td></tr>
-<tr><td> </td><td>関数</td></tr>
-<tr><td> </td><td>^ !</td></tr>
-<tr><td> </td><td>* / \</td></tr>
+<tr><td>  </td><td>- (負の符号)</td></tr>
+<tr><td>  </td><td>関数</td></tr>
+<tr><td>  </td><td>^ !</td></tr>
+<tr><td>  </td><td>* / \</td></tr>
 <tr><td>↓</td><td>+ - </td></tr>
 <tr><td>低</td><td>= </td></tr>
 </table>
@@ -304,7 +302,7 @@
 <li><b>= 使用例</b>
 <br>
 <br>
-= は式の終端を示しますが、さらに続けて別の式を書くことができます。
+=  は式の終端を示しますが、さらに続けて別の式を書くことができます。
 式の値は一番最後の式の値になります。
 例えば、長い式が何度も現れるときメモリ関数と組み合わせて
 <p>
@@ -353,7 +351,7 @@ X変換式: X-DIF(X)*0.5 (これは { X(n-1)+X(n) }*0.5 になります)<br>
 Y変換式: DIF(Y)/DIF(X) (これは { Y(n)-Y(n-1) } / { X(n)-X(n-1) } になります)
 </p>
 <p>
-DIF() は現在のデータと一つ前のデータとの差分を返しますから、Y-DIF(Y) とすることで一つ前のデータを取り出すことができます。
+DIF()  は現在のデータと一つ前のデータとの差分を返しますから、Y-DIF(Y) とすることで一つ前のデータを取り出すことができます。
 同様に Y-DIF(Y)-DIF(Y-DIF(Y)) で2つ前のデータを取り出すことができます。
  Y-DIF(Y)-DIF(Y-DIF(Y))-DIF(Y-DIF(Y)-DIF(Y-DIF(Y)))は3つ前のデータです．
 </p>
@@ -406,17 +404,17 @@ IF(AND(GE(x,a),LE(x,b)),INTEG(0.5*(2*Y-DIF(Y))*DIF(X)),0)
 <li><b>関数 IF() 使用例</b>
 <br>
 <br>
-IF(x,ex1,ex2) は x が真(<>0)のとき ex1 を，偽(=0)のとき ex2 を返す関数です。
+IF(x,ex1,ex2)  は x が真(<>0)のとき ex1 を，偽(=0)のとき ex2 を返す関数です。
 x には論理関数を使うと便利です。例えば次の式
 <p>
 IF( LT(x,0), 0, SQRT(x) )
 </p>
-は x<0 のとき 0、x>=0 のとき√x を返す関数になります。また必ず ex1, ex2 どちらか一方しか評価されません。
+は x<0 のとき 0、x>=0 のとき√x を返す関数になります。また必ず  ex1, ex2 どちらか一方しか評価されません。
 例えば
 <p>
 IF( EQ(%00,1), M(0,値), ...式... )
 </p>
-のような使い方をしたとき M(0,値) は EQ(%00,1) が真のとき(すなわちデータの最初)だけ実行されるので、メモリ関数の初期化に使えます。
+のような使い方をしたとき  M(0,値) は EQ(%00,1) が真のとき(すなわちデータの最初)だけ実行されるので、メモリ関数の初期化に使えます。
 <br>
 <br>
 
@@ -443,7 +441,7 @@ COLOR(3,%03)=Y
 
 <hr>
 
-
+#if NEW_MATH_CODE
 <a name="NEW_TRANSFORM">&nbsp;</a>
 <h1><a href="#TOP">GTK 版で追加された機能、変更点</a></h1>
 
@@ -497,7 +495,7 @@ COLOR(3,%03)=Y
 <tr><td>E, X, Y 以外のアルファベット一文字</td><td>ユーザが自由に使用できます (代入されていない変数は 0 に初期化されています) 。</td></tr>
 </table>
 </div>
-
+ 
 <br>
 <hr>
 <br>
@@ -546,7 +544,7 @@ COLOR(3,%03)=Y
 </tr>
 </table>
 </div>
-
+ 
 <br>
 <hr>
 <br>
@@ -596,7 +594,7 @@ COLOR(3,%03)=Y
 <tr><td>MAX(a,b,c,...)</td><td>引数のうちもっとも大きな値 (引数の数は 64 個まで)</td></tr>
 </table>
 <br>
-<b>論理関数 0を偽, それ以外を真とする。</b>
+<b>論理関数 0 を偽, それ以外を真とする。</b>
 <table border=1>
 <tr><td>ISNORMAL(x)</td><td>x が通常の数値の場合真</td></tr>
 <tr><td>ISBREAK(x)</td><td>x が BREAK の場合真</td></tr>
@@ -629,18 +627,18 @@ COLOR(3,%03)=Y
 <table border=1>
 <tr><td>高</td><td>!</td></tr>
 <tr><td>↑</td><td>^</td></tr>
-<tr><td> </td><td>+ - (正負の符号)</td></tr>
-<tr><td> </td><td>* / \</td></tr>
-<tr><td> </td><td>+ -</td></tr>
-<tr><td> </td><td>&lt; &lt: &gt; &gt;:</td></tr>
-<tr><td> </td><td>:: !:</td></tr>
-<tr><td> </td><td>&amp;&amp;</td></tr>
+<tr><td>  </td><td>+ - (正負の符号)</td></tr>
+<tr><td>  </td><td>* / \</td></tr>
+<tr><td>  </td><td>+ -</td></tr>
+<tr><td>  </td><td>&lt; &lt: &gt; &gt;:</td></tr>
+<tr><td>  </td><td>:: !:</td></tr>
+<tr><td>  </td><td>&amp;&amp;</td></tr>
 <tr><td>↓</td><td>||</td></tr>
 <tr><td>低</td><td>= </td></tr>
 </table>
 </div>
 
-
+#endif
 
 <br>
 <hr>

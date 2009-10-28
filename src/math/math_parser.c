@@ -158,8 +158,17 @@ parse_primary_expression(const char **str, MathEquation *eq, int *err)
 	    math_scanner_free_token(token);
 	    return NULL;
 	  }
+#if 1				/* length of a variable expression is 1. */
+	} else if (strlen(token->data.sym) == 1) {
+	  exp = math_variable_expression_new(eq, token->data.sym, err);
+	} else {
+	  *err = MATH_ERROR_UNEXP_TOKEN;
+	  math_scanner_free_token(token);
+	  return NULL;
+#else				/* length of a variable expression is not fixed. */
 	} else {
 	  exp = math_variable_expression_new(eq, token->data.sym, err);
+#endif
 	}
       }
     }

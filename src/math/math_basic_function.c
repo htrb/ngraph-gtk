@@ -1514,6 +1514,8 @@ math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
     return 1;
   }
 
+  rval->val = ary->num;
+
   if (ary->num < 2) {
     return 0;
   }
@@ -1538,6 +1540,8 @@ math_func_rsort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
+
+  rval->val = ary->num;
 
   if (ary->num < 2) {
     return 0;
