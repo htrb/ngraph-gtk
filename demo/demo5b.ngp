@@ -15,7 +15,7 @@ do
     put mark size:1600
     put mark style:
     put mark width:100
-    put mark type:`iexpr $i *10 + $j`
+    put mark type:`iexpr $i * 10 + $j`
   done
 done
 #
