@@ -86,6 +86,10 @@ ${name:-word}<br>
 ${name:=word}<br>
 ${name:?word}<br>
 ${name:+word}<br>
+${name#word}<br>
+${namew##word}<br>
+${name&#37;word}<br>
+${par&#37;&#37;word}<br>
 </p>
 
 <h3>リダイレクト・パイプ</h3>
