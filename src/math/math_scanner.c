@@ -452,10 +452,11 @@ get_num(const char *str,  const char ** rstr)
   } else if (str[0] == '0' && str[1] == 'b') {
     str += 2;
     ptr = get_bin(str, &val);
+  } else if (str[0] == '0' && str[1] == 'o') {
+    str += 2;
+    ptr = get_oct(str, &val);
   } else if (str[0] == '0' && (str[1] == '.' || str[1] == 'E' || str[1] == 'D')) {
     ptr = get_dec(str, &val);
-  } else if (str[0] == '0') {
-    ptr = get_oct(str, &val);
   } else {
     ptr = get_dec(str, &val);
   }
