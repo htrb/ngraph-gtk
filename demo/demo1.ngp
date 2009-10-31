@@ -312,7 +312,7 @@ new file
 	file::type=mark
 	file::interpolation=spline
 	file::fit=
-	file::math_x='COLOR(0,255/1.2*%03)=COLOR(1,255*%03/1.2)=COLOR(2,255*%03/1.2)=x'
+	file::math_x='COLOR(0,255*%03/1.6)=COLOR(1,255*%03/1.6)=COLOR(2,255*%03/1.6)=x'
 	file::math_y='y+1'
 	file::func_f=
 	file::func_g=
