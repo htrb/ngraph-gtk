@@ -53,6 +53,7 @@ struct _math_equation {
       int arg_num;
       struct math_function_parameter *fprm;
     } func;
+    int const_id;
   } err_info;
   void *user_data;
 };
@@ -94,13 +95,14 @@ struct math_function_parameter *math_equation_add_func(MathEquation *eq, const c
 struct math_function_parameter *math_equation_get_func(MathEquation *eq, const char *name);
 void math_equation_remove_func(MathEquation *eq, const char *name);
 
-int math_equation_add_const_definition(MathEquation *eq, const char *name, MathExpression *exp);
+int math_equation_add_const_definition(MathEquation *eq, const char *name, MathExpression *exp, int *err);
 
 int math_equation_add_const(MathEquation *eq, const char *name, const MathValue *val);
 int math_equation_set_const_by_name(MathEquation *eq, const char *name, const MathValue *val);
 int math_equation_set_const(MathEquation *eq, int idx, const MathValue *val);
 int math_equation_get_const_by_name(MathEquation *eq, const char *name, MathValue *val);
 int math_equation_get_const(MathEquation *eq, int idx, MathValue *val);
+char *math_equation_get_const_name(MathEquation *eq, int idx);
 
 int math_equation_add_var(MathEquation *eq, const char *name);
 int math_equation_set_var(MathEquation *eq, int idx, const MathValue *val);
@@ -121,5 +123,7 @@ int math_equation_check_const(MathEquation *eq, int *constant, int n);
 void math_equation_set_parse_error(MathEquation *eq, const char *ptr);
 void math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function_parameter *fprm, int arg_num);
 void math_equation_set_func_error(MathEquation *eq, struct math_function_parameter *fprm);
+void math_equation_set_const_error(MathEquation *eq, int id);
+
 
 #endif

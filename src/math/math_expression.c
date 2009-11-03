@@ -43,19 +43,24 @@ MathExpression *
 math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpression *exp, int *err)
 {
   MathExpression *cdef;
+  int id;
 
-  if (math_equation_get_const_by_name(eq, name, NULL) >= 0) {
+  id = math_equation_get_const_by_name(eq, name, NULL);
+  if (id >= 0) {
     /* already defined */
+    *err = MATH_ERROR_CONST_EXIST;
+    math_equation_set_const_error(eq, id);
     return NULL;
   }
 
   cdef = math_expression_new(MATH_EXPRESSION_TYPE_CONST_DEF, eq, err);
-  if (cdef == NULL)
+  if (cdef == NULL) {
     return NULL;
+  }
 
   cdef->u.const_def.operand = exp;
 
-  if (math_equation_add_const_definition(eq, name, cdef) < 0) {
+  if (math_equation_add_const_definition(eq, name, cdef, err) < 0) {
     memfree(cdef);
     return NULL;
   }

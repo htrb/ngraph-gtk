@@ -193,6 +193,15 @@ math_equation_set_parse_error(MathEquation *eq, const char *ptr)
 }
 
 void
+math_equation_set_const_error(MathEquation *eq, int id)
+{
+  if (eq == NULL)
+    return;
+
+  eq->err_info.const_id = id;
+}
+
+void
 math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function_parameter *fprm, int arg_num)
 {
   if (eq == NULL)
@@ -844,7 +853,7 @@ math_equation_add_const(MathEquation *eq, const char *name, const MathValue *val
 }
 
 int 
-math_equation_add_const_definition(MathEquation *eq, const char *name, MathExpression *exp)
+math_equation_add_const_definition(MathEquation *eq, const char *name, MathExpression *exp, int *err)
 {
   int i, r;
   MathValue val;
@@ -855,17 +864,22 @@ math_equation_add_const_definition(MathEquation *eq, const char *name, MathExpre
   r = nhash_get_int(eq->constant, name, &i);
   if (r == 0) {
     /* error: the constant is already exist */
+    *err = MATH_ERROR_CONST_EXIST;
+    eq->err_info.const_id = i;
     return -1;
   }
 
 
   if (math_expression_calculate(exp->u.const_def.operand, &val)) {
+    *err = MATH_ERROR_CALCULATION;
     return -1;
   }
 
   i = math_equation_add_const(eq, name, &val);
-  if (i < 0)
+  if (i < 0) {
+    *err = MATH_ERROR_MEMORY;
     return -1;
+  }
 
   exp->u.const_def.id = i;
 
@@ -1010,6 +1024,22 @@ math_equation_get_var_name(MathEquation *eq, int idx)
   v.name = NULL;
 
   nhash_each(eq->variable, search_val_cb, &v);
+
+  return v.name;
+}
+
+char *
+math_equation_get_const_name(MathEquation *eq, int idx)
+{
+  struct search_val v;
+
+  if (eq == NULL)
+    return NULL;
+
+  v.val = idx;
+  v.name = NULL;
+
+  nhash_each(eq->constant, search_val_cb, &v);
 
   return v.name;
 }

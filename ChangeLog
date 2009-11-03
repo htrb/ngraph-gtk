@@ -1,5 +1,15 @@
 2009-11-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/math/math_expression.c (math_constant_definition_expression_new):
+	set error id to "*err" when the constant is already defined.
+
+	* src/math/math_error.c (ERR_MSG_CONST_EXIST)
+	(ERR_MSG_CALCULATION): add.
+
+	* src/math/math_equation.c (math_equation_set_const_error)
+	(math_equation_get_const_name): add.
+	(math_equation_add_const_definition): add argument "int *err".
+
 	* src/math/math_error.c (check_error_position)
 	(math_err_get_error_message, ERR_MSG_FUNC_NEST)
 	(ERR_MSG_UNEXP_OP, ERR_MSG_UNEXP_TOK, ERR_MSG_ARG_NUM)

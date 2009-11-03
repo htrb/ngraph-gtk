@@ -12,11 +12,13 @@
 #define ERR_MSG_MISS_RC   "unexpected end of equation, expecting '}'."
 #define ERR_MSG_MISS_RB   "unexpected end of equation, expecting ']'."
 #define ERR_MSG_UNKNOWN_F "unknown function."
-#define ERR_MSG_INVARID_F "invarid function definition."
-#define ERR_MSG_INVARID_P "invarid parameter."
-#define ERR_MSG_MEMORY    "cannnot allocate enough memory."
+#define ERR_MSG_INVARID_F "invalid function definition."
+#define ERR_MSG_INVARID_P "invalid parameter."
+#define ERR_MSG_MEMORY    "cannot allocate enough memory."
 #define ERR_MSG_UNKNOWN   "unknown error."
-#define ERR_MSG_POS_FUNC  "the function annot be used in a user function."
+#define ERR_MSG_POS_FUNC  "the function cannot be used in a user function."
+#define ERR_MSG_CONST_EXIST "the constant is already defined."
+#define ERR_MSG_CALCULATION "calculation error."
 
 static char *
 check_error_position(MathEquation *eq, const char *code)
@@ -57,7 +59,7 @@ check_error_position(MathEquation *eq, const char *code)
 char *
 math_err_get_error_message(MathEquation *eq, const char *code, int err)
 {
-  char *code_buf = NULL, *buf = NULL;
+  char *code_buf = NULL, *buf = NULL, *ptr;
 
   switch (err) {
   case MATH_ERROR_NONE:
@@ -158,6 +160,17 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
     } else {
       buf = strdup(ERR_MSG_POS_FUNC);
     }
+    break;
+  case MATH_ERROR_CONST_EXIST:
+    ptr = math_equation_get_const_name(eq, eq->err_info.const_id);
+    if (ptr) {
+      buf = g_strdup_printf("%s '%s'", ERR_MSG_CONST_EXIST, ptr);
+    } else {
+      buf = strdup(ERR_MSG_CONST_EXIST);
+    }
+    break;
+  case MATH_ERROR_CALCULATION:
+    buf = strdup(ERR_MSG_CALCULATION);
     break;
   default:
     buf = strdup(ERR_MSG_UNKNOWN);
