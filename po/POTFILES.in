@@ -15,6 +15,7 @@ src/gtk/x11merge.c
 src/gtk/x11opt.c
 src/gtk/x11print.c
 src/gtk/x11view.c
+src/math/math_error.c
 src/odraw.c
 src/oaxis.c
 src/ofit.c

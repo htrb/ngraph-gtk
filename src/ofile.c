@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.93 2009/11/03 08:16:58 hito Exp $
+ * $Id: ofile.c,v 1.94 2009/11/03 12:34:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1290,14 +1290,18 @@ create_func_def_str(const char *name, const char *code)
 }
 
 static int
-set_user_fnc(MathEquation **eq, const char *str, const char *fname)
+set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_msg)
 {
-  int r1, r2, r3;
+  int r;
   char *buf, default_func[] = "def f(x,y,z){0}";
   //                     01234
 
-  if (eq[0] == NULL || eq[1] == NULL || eq[2] == NULL)
+  if (err_msg)
+    *err_msg = NULL;
+
+  if (eq[0] == NULL || eq[1] == NULL || eq[2] == NULL) {
     return 0;
+  }
 
   default_func[4] = fname[0];
 
@@ -1306,18 +1310,33 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname)
     if (buf == NULL)
       return MATH_ERROR_MEMORY;
 
-    r1 = math_equation_parse(eq[0], buf);
-    r2 = math_equation_parse(eq[1], buf);
-    r3 = math_equation_parse(eq[2], buf);
-    memfree(buf);
-
-    if (r1 || r2 || r3) {
-      math_equation_parse(eq[0], default_func);
-      math_equation_parse(eq[1], default_func);
-      math_equation_parse(eq[2], default_func);
-
-      return r1;
+    r = math_equation_parse(eq[0], buf);
+    if (r) {
+      if (err_msg) {
+	*err_msg = math_err_get_error_message(eq[0], buf, r);
+      }
+      memfree(buf);
+      return r;
     }
+
+    r = math_equation_parse(eq[1], buf);
+    if (r) {
+      if (err_msg) {
+	*err_msg = math_err_get_error_message(eq[0], buf, r);
+      }
+      memfree(buf);
+      return r;
+    }
+
+    r = math_equation_parse(eq[2], buf);
+    if (r) {
+      if (err_msg) {
+	*err_msg = math_err_get_error_message(eq[0], buf, r);
+      }
+      memfree(buf);
+      return r;
+    }
+    memfree(buf);
   } else {
     math_equation_parse(eq[0], default_func);
     math_equation_parse(eq[1], default_func);
@@ -1328,9 +1347,13 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname)
 }
 
 static int
-set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const char *g, const char *h, const char *str)
+set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const char *g, const char *h, const char *str, char **err_msg)
 {
   int i, rcode;
+
+  if (err_msg) {
+    *err_msg = NULL;
+  }
 
   for (i = 0; i < 3; i++) {
     if (eq[i]) {
@@ -1338,9 +1361,6 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
     }
     eq[i] = NULL;
   }
-
-  if (str == NULL)
-    return 0;
 
   for (i = 0; i < 3; i++) {
     eq[i] = create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE);
@@ -1350,25 +1370,32 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
     return MATH_ERROR_MEMORY;
 
   if (f) {
-    rcode = set_user_fnc(eq, f, "f");
+    rcode = set_user_fnc(eq, f, "f", err_msg);
     if (rcode)
       return rcode;
   }
   if (g) {
-    rcode = set_user_fnc(eq, g, "g");
+    rcode = set_user_fnc(eq, g, "g", err_msg);
     if (rcode)
       return rcode;
   }
   if (h) {
-    rcode = set_user_fnc(eq, g, "h");
+    rcode = set_user_fnc(eq, g, "h", err_msg);
     if (rcode)
       return rcode;
   }
 
+  if (str == NULL)
+    return 0;
+
   for (i = 0; i < 3; i++) {
     rcode = math_equation_parse(eq[i], str);
-    if (rcode)
+    if (rcode) {
+      if (err_msg) {
+	*err_msg = math_err_get_error_message(eq[i], str, rcode);
+      }
       return rcode;
+    }
   }
 
   return rcode;
@@ -1379,7 +1406,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, int type, c
 {
   int rcode;
   char *x, *y, *f, *g, *h;
-  char default_func[] = "def f(x,y,z){0}", fname[] = "F";
+  char default_func[] = "def f(x,y,z){0}", fname[] = "F", *err_msg;
   //                     01234
 
   default_func[4] = type;
@@ -1394,57 +1421,46 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, int type, c
   switch (type) {
   case 'x':
     f2dlocal->need2passx = FALSE;
-    rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, eq);
-    if (rcode) {
-      char *err_msg;
-
-      err_msg = math_err_get_error_message(f2dlocal->codex[0], eq, rcode);
-      if (err_msg) {
-	error2(obj, ERRSYNTAX, err_msg);
-	free(err_msg);
-      }
+    rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, eq, &err_msg);
+    if (err_msg) {
+      error22(obj, ERRUNKNOWN, err_msg, NULL);
+      free(err_msg);
     }
     f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
     break;
   case 'y':
     f2dlocal->need2passy = FALSE;
-    rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, eq);
-    if (rcode) {
-      char *err_msg;
-
-      err_msg = math_err_get_error_message(f2dlocal->codey[0], eq, rcode);
-      if (err_msg) {
-	error2(obj, ERRSYNTAX, err_msg);
-	free(err_msg);
-      }
+    rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, eq, &err_msg);
+    if (err_msg) {
+      error22(obj, ERRUNKNOWN, err_msg, NULL);
+      free(err_msg);
     }
     f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
     break;
   case 'f':
   case 'g':
   case 'h':
-    rcode = set_user_fnc(f2dlocal->codex, eq, fname);
+    switch (type) {
+    case 'f':
+      f = eq;
+      break;
+    case 'g':
+      g = eq;
+      break;
+    case 'h':
+      h = eq;
+      break;
+    }
+    rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
+    rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, &err_msg);
+    if (err_msg) {
+      error22(obj, ERRUNKNOWN, err_msg, NULL);
+      free(err_msg);
+    }
+
     if (rcode) {
-      char *err_msg;
-
-      err_msg = math_err_get_error_message(f2dlocal->codex[0], eq, rcode);
-      if (err_msg) {
-	error2(obj, ERRSYNTAX, err_msg);
-	free(err_msg);
-      }
-    }
-    rcode = set_user_fnc(f2dlocal->codey, eq, fname);
-
-    if (x) {
-      math_equation_parse(f2dlocal->codex[0], x);
-      math_equation_parse(f2dlocal->codex[1], x);
-      math_equation_parse(f2dlocal->codex[2], x);
-    }
-
-    if (y) {
-      math_equation_parse(f2dlocal->codey[0], y);
-      math_equation_parse(f2dlocal->codey[1], y);
-      math_equation_parse(f2dlocal->codey[2], y);
+      set_user_fnc(f2dlocal->codex, NULL, fname, NULL);
+      set_user_fnc(f2dlocal->codey, NULL, fname, NULL);
     }
 
     f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);

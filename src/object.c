@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.40 2009/10/22 00:07:11 hito Exp $
+ * $Id: object.c,v 1.41 2009/11/03 12:34:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -65,9 +65,10 @@ static struct objlist *objroot=NULL;
 static struct loopproc *looproot=NULL, *loopnext=NULL;
 
 static struct objlist *errobj=NULL;
-static char errormsg1[256]={'\0'};
-static char errormsg2[256]={'\0'};
-static char errormsg[256]={'\0'};
+
+#define ERR_MSG_BUF_SIZE 1024
+static char errormsg1[ERR_MSG_BUF_SIZE]={'\0'};
+static char errormsg2[ERR_MSG_BUF_SIZE]={'\0'};
 static int errcode=0;
 int GlobalLock=FALSE;
 
@@ -133,29 +134,28 @@ error(struct objlist *obj,int code)
   if (obj==NULL) objname="kernel";
   else objname=obj->name;
   if (code==ERRUNKNOWN)
-    printfstderr("%.64s: %.64s%.64s%.64s\n",
-                 objname,errormsg1,errormsg,errormsg2);
+    printfstderr("%.64s: %.128s%.128s\n",
+                 objname,errormsg1,errormsg2);
   else if (code<100) {
     errtable=errorlist;
     errnum=ERRNUM;
     if ((errtable==NULL) || (code>=errnum))
-      printfstderr("%.64s: %.64s(%d)%.64s\n",objname,errormsg1,code,errormsg2);
+      printfstderr("%.64s: %.128s(%d)%.128s\n",objname,errormsg1,code,errormsg2);
     else
-      printfstderr("%.64s: %.64s%.64s%.64s\n",
+      printfstderr("%.64s: %.128s%.128s%.128s\n",
                    objname,errormsg1,errtable[code],errormsg2);
   } else {
     errtable=obj->errtable;
     errnum=obj->errnum;
     code=code-100;
     if ((errtable==NULL) || (code>=errnum))
-      printfstderr("%.64s: %.64s(%d)%.64s\n",objname,errormsg1,code,errormsg2);
+      printfstderr("%.64s: %.128s(%d)%.128s\n",objname,errormsg1,code,errormsg2);
     else
-      printfstderr("%.64s: %.64s%.64s%.64s\n",
+      printfstderr("%.64s: %.128s%.128s%.128s\n",
                    objname,errormsg1,errtable[code],errormsg2);
   }
   errormsg1[0]='\0';
   errormsg2[0]='\0';
-  errormsg[0]='\0';
   GlobalLock=FALSE;
 }
 
@@ -163,7 +163,7 @@ void
 error2(struct objlist *obj,int code, const char *mes)
 {
   if (mes!=NULL) {
-    sprintf(errormsg2," `%.64s'.",mes);
+    snprintf(errormsg2, sizeof(errormsg2), " `%.128s'.",mes);
   } else {
     sprintf(errormsg2,".");
   }
@@ -174,12 +174,12 @@ void
 error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
 {
   if (mes1!=NULL) {
-    sprintf(errormsg1,"%.64s: ",mes1);
+    snprintf(errormsg1, sizeof(errormsg1), "%.128s: ",mes1);
   } else {
     errormsg1[0]='\0';
   }
   if (mes2!=NULL) {
-    sprintf(errormsg2," `%.64s'.",mes2);
+    snprintf(errormsg2, sizeof(errormsg2), " `%.128s'.",mes2);
   } else {
     sprintf(errormsg2,".");
   }
@@ -189,7 +189,7 @@ error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
 void 
 error3(struct objlist *obj,int code,int num)
 {
-  sprintf(errormsg2," `%d'.",num);
+  snprintf(errormsg2, sizeof(errormsg2), " `%d'.",num);
   error(obj,code);
 }
 
