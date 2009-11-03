@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2009-11-03 21:28+0900\n"
-"PO-Revision-Date: 2009-11-03 21:29+0900\n"
+"PO-Revision-Date: 2009-11-03 22:02+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -2322,63 +2322,63 @@ msgstr "描画中"
 
 #: src/math/math_error.c:8
 msgid "syntax error, function definition cannot be nested."
-msgstr "構文エラー: 関数定義はネストできません."
+msgstr "構文エラー, 関数定義はネストできません."
 
 #: src/math/math_error.c:9
 msgid "syntax error, unexpected operator."
-msgstr "構文エラー: 予期しない演算子です."
+msgstr "構文エラー, 予期しない演算子です."
 
 #: src/math/math_error.c:10
 msgid "syntax error, unexpected token."
-msgstr "構文エラー: 予期しないトークンです."
+msgstr "構文エラー, 予期しないトークンです."
 
 #: src/math/math_error.c:11
 msgid "syntax error, wrong number of arguments."
-msgstr "構文エラー: 引数の数が間違っています."
+msgstr "構文エラー, 引数の数が間違っています."
 
 #: src/math/math_error.c:12
 msgid "syntax error, unexpected end of equation, expecting ')'."
-msgstr "構文エラー: 予期しない数式の終わりです. ')' がありません."
+msgstr "構文エラー, 予期しない数式の終わりです. ')' がありません."
 
 #: src/math/math_error.c:13
 msgid "syntax error, unexpected end of equation, expecting '}'."
-msgstr "構文エラー: 予期しない数式の終わりです. '}' がありません."
+msgstr "構文エラー, 予期しない数式の終わりです. '}' がありません."
 
 #: src/math/math_error.c:14
 msgid "syntax error, unexpected end of equation, expecting ']'."
-msgstr "構文エラー: 予期しない数式の終わりです. ']' がありません."
+msgstr "構文エラー, 予期しない数式の終わりです. ']' がありません."
 
 #: src/math/math_error.c:15
 msgid "syntax error, invalid function definition."
-msgstr "構文エラー: 不正な関数定義です."
+msgstr "構文エラー, 不正な関数定義です."
 
 #: src/math/math_error.c:16
 msgid "error, invalid parameter."
-msgstr "数式エラー: 不正なパラメータです."
+msgstr "数式エラー, 不正なパラメータです."
 
 #: src/math/math_error.c:17
 msgid "error, unknown function."
-msgstr "数式エラー: 未定義の関数です."
+msgstr "数式エラー, 未定義の関数です."
 
 #: src/math/math_error.c:18
 msgid "error, cannot allocate enough memory."
-msgstr "エラー: 十分なメモリーを確保できませんでした."
+msgstr "エラー, 十分なメモリーを確保できませんでした."
 
 #: src/math/math_error.c:19
 msgid "error, unknown error."
-msgstr "数式エラー: 未知のエラーです."
+msgstr "数式エラー, 未知のエラーです."
 
 #: src/math/math_error.c:20
 msgid "error, the function cannot be used in a user function."
-msgstr "数式エラー: この関数はユーザー関数中では使用できません."
+msgstr "数式エラー, この関数はユーザー関数中では使用できません."
 
 #: src/math/math_error.c:21
 msgid "error, the constant is already defined."
-msgstr "数式エラー: この定数は既に存在します."
+msgstr "数式エラー, この定数は既に存在します."
 
 #: src/math/math_error.c:22
 msgid "error, calculation error."
-msgstr "エラー: 計算エラー."
+msgstr "エラー, 計算エラー."
 
 #: src/math/math_error.c:73 src/math/math_error.c:81 src/math/math_error.c:99
 #: src/math/math_error.c:107 src/math/math_error.c:115
