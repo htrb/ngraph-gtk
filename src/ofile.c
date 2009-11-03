@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.92 2009/10/25 12:47:30 hito Exp $
+ * $Id: ofile.c,v 1.93 2009/11/03 08:16:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1304,7 +1304,7 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname)
   if (str) {
     buf = create_func_def_str(fname, str);
     if (buf == NULL)
-      return 1;
+      return MATH_ERROR_MEMORY;
 
     r1 = math_equation_parse(eq[0], buf);
     r2 = math_equation_parse(eq[1], buf);
@@ -1316,7 +1316,7 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname)
       math_equation_parse(eq[1], default_func);
       math_equation_parse(eq[2], default_func);
 
-      return 1;
+      return r1;
     }
   } else {
     math_equation_parse(eq[0], default_func);
@@ -1347,7 +1347,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
   }
 
   if (eq[0] == NULL || eq[1] == NULL || eq[2] == NULL)
-    return 1;
+    return MATH_ERROR_MEMORY;
 
   if (f) {
     rcode = set_user_fnc(eq, f, "f");
@@ -1395,17 +1395,44 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, int type, c
   case 'x':
     f2dlocal->need2passx = FALSE;
     rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, eq);
+    if (rcode) {
+      char *err_msg;
+
+      err_msg = math_err_get_error_message(f2dlocal->codex[0], eq, rcode);
+      if (err_msg) {
+	error2(obj, ERRSYNTAX, err_msg);
+	free(err_msg);
+      }
+    }
     f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
     break;
   case 'y':
     f2dlocal->need2passy = FALSE;
     rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, eq);
+    if (rcode) {
+      char *err_msg;
+
+      err_msg = math_err_get_error_message(f2dlocal->codey[0], eq, rcode);
+      if (err_msg) {
+	error2(obj, ERRSYNTAX, err_msg);
+	free(err_msg);
+      }
+    }
     f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
     break;
   case 'f':
   case 'g':
   case 'h':
     rcode = set_user_fnc(f2dlocal->codex, eq, fname);
+    if (rcode) {
+      char *err_msg;
+
+      err_msg = math_err_get_error_message(f2dlocal->codex[0], eq, rcode);
+      if (err_msg) {
+	error2(obj, ERRSYNTAX, err_msg);
+	free(err_msg);
+      }
+    }
     rcode = set_user_fnc(f2dlocal->codey, eq, fname);
 
     if (x) {
@@ -1434,7 +1461,9 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, int type, c
 static int 
 f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 {
-#if ! NEW_MATH_CODE
+#if NEW_MATH_CODE
+  int rcode;
+#else
   enum MATH_CODE_ERROR_NO rcode;
   int maxdim,need2pass;
   char *code;
@@ -1445,8 +1474,8 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
   _getobj(obj,"_local",inst,&f2dlocal);
 
 #if NEW_MATH_CODE
-  if (put_func(obj, inst, f2dlocal, field[5], math)) {
-    error(obj, ERRSYNTAX);
+  rcode = put_func(obj, inst, f2dlocal, field[5], math);
+  if (rcode) {
     return 1;
   }
 #endif

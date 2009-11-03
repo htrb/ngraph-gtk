@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.22 2009/10/22 00:07:11 hito Exp $
+ * $Id: shellcm.c,v 1.23 2009/11/03 08:16:58 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1224,12 +1224,16 @@ cmexe(struct nshell*nshell,int argc,char **argv)
 }
 
 int
-str_calc(const char *str, double *val, int *r)
+str_calc(const char *str, double *val, int *r, char **err_msg)
 {
 #if NEW_MATH_CODE
   int ecode, rcode;
   static MathEquation *eq = NULL;
   MathValue value;
+
+  if (err_msg) {
+    *err_msg = NULL;
+  }
 
   if (str == NULL || val == NULL) {
     return ERRMILLEGAL;
@@ -1242,7 +1246,11 @@ str_calc(const char *str, double *val, int *r)
     }
   }
 
-  if (math_equation_parse(eq, str)) {
+  ecode = math_equation_parse(eq, str);
+  if (ecode) {
+    if (err_msg) {
+      *err_msg = math_err_get_error_message(eq, str, ecode);
+    }
     return ERRMSYNTAX;
   }
  
@@ -1255,6 +1263,10 @@ str_calc(const char *str, double *val, int *r)
   char *code;
   double memory[MEMORYNUM];
   char memorystat[MEMORYNUM];
+
+  if (err_msg) {
+    *err_msg = NULL;
+  }
 
   if (str == NULL || val == NULL) {
     return ERRMILLEGAL;
@@ -1322,6 +1334,9 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
   double vd;
   int i;
   char *s;
+#if NEW_MATH_CODE
+  char *err_msg;
+#endif
 
   if (argc<1) {
     sherror4(argv[0],ERRSMLARG);
@@ -1332,11 +1347,20 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
     if ((s=nstrcat(s,argv[i]))==NULL) return ERR;
 
 
-  ecode = str_calc(s, &vd, &rcode);
+  ecode = str_calc(s, &vd, &rcode, &err_msg);
   memfree(s);
 
   if (ecode) {
+#if NEW_MATH_CODE
+    if (err_msg) {
+      printfstderr("shell: %s\n", err_msg);
+      free(err_msg);
+    } else {
+      sherror4(argv[0],ecode);
+    }
+#else
     sherror4(argv[0],ecode);
+#endif
     return ecode;
   }
 

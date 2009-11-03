@@ -1,3 +1,51 @@
+2009-11-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_error.c (check_error_position)
+	(math_err_get_error_message, ERR_MSG_FUNC_NEST)
+	(ERR_MSG_UNEXP_OP, ERR_MSG_UNEXP_TOK, ERR_MSG_ARG_NUM)
+	(ERR_MSG_MISS_RP, ERR_MSG_MISS_RC, ERR_MSG_MISS_RB)
+	(ERR_MSG_UNKNOWN_F, ERR_MSG_INVARID_F, ERR_MSG_INVARID_P)
+	(ERR_MSG_MEMORY, ERR_MSG_UNKNOWN, ERR_MSG_POS_FUNC): add.
+
+	* src/math/math_parser.c (parse_array_expression)
+	(parse_primary_expression, get_argument, create_math_func)
+	(parse_unary_expression, parse_expression)
+	(parse_expression_list): call "math_equation_set_parse_error()",
+	"math_equation_set_func_arg_num_error()" or
+	"math_equation_set_func_error()" when parse error.
+
+	* src/math/math_equation.h (_struct _math_equation): add member
+	"err_info".
+
+	* src/math/math_equation.c (math_equation_new): use "memset()" to
+	initialize struct.
+	(math_equation_set_parse_error)
+	(math_equation_set_func_arg_num_error)
+	(math_equation_set_func_error): add.
+	(math_equation_parse): initialize "eq->err_info".
+
+	* src/gtk/x11lgnd.c (width_edited, pos_edited): add 4th argument
+	for the function "str_calc()".
+	(width_edited, pos_edited): show message on a error.
+
+	* src/gtk/x11axis.c (pos_edited_common): add 4th argument for the
+	function "str_calc()".
+	(pos_edited_common): show message on a error.
+
+	* src/gtk/gtk_widget.c (spin_change_value_cb): add 4th argument
+	for the function "str_calc()".
+	(spin_change_value_cb): show message on a error.
+
+	* src/gtk/gtk_subwin.c (numeric_cb): add 4th argument for the
+	function "str_calc()".
+
+	* src/shellcm.c (str_calc): add argument "char **err_msg".
+	(str_calc): set error message when "*err_msg" is not NULL.
+	(cmdexpr): show error message created in new math code.
+
+	* src/ofile.c (put_func): show message on a error.
+	(f2dputmath): don't show error message.
+
 2009-10-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/legend.tcl (savescript): move frame rectangle to the top

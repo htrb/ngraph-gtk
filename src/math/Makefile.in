@@ -58,7 +58,7 @@ am_libmath_la_OBJECTS = libmath_la-math_function.lo \
 	libmath_la-math_operator.lo libmath_la-math_constant.lo \
 	libmath_la-math_expression.lo libmath_la-math_parser.lo \
 	libmath_la-math_basic_function.lo libmath_la-math_equation.lo \
-	libmath_la-math_scanner.lo
+	libmath_la-math_scanner.lo libmath_la-math_error.lo
 libmath_la_OBJECTS = $(am_libmath_la_OBJECTS)
 libmath_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libmath_la_CFLAGS) \
@@ -228,13 +228,13 @@ libmath_la_SOURCES = math_function.c math_function.h math_operator.c	\
 	math_expression.c math_parser.c math_scanner.h			\
 	parse_bin_expression.h math_basic_function.c math_equation.c	\
 	math_expression.h math_parser.h math_equation.h math_scanner.c	\
-	math_error.h
+	math_error.h math_error.c
 
 EXTRA_DIST = math_operator.h.in math_operator.rb math_constant.h.in	\
 	math_constant.rb math_function.h.in math_function.rb
 
 libmath_la_LDFLAGS = -static
-libmath_la_CFLAGS = -I.. -D_FORTIFY_SOURCE
+libmath_la_CFLAGS = $(GTK_CFLAGS) -I.. -D_FORTIFY_SOURCE
 all: all-am
 
 .SUFFIXES:
@@ -290,6 +290,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_basic_function.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_constant.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_equation.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_error.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_expression.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_function.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_operator.Plo@am__quote@
@@ -372,6 +373,13 @@ libmath_la-math_scanner.lo: math_scanner.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_scanner.c' object='libmath_la-math_scanner.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_scanner.lo `test -f 'math_scanner.c' || echo '$(srcdir)/'`math_scanner.c
+
+libmath_la-math_error.lo: math_error.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_error.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_error.Tpo -c -o libmath_la-math_error.lo `test -f 'math_error.c' || echo '$(srcdir)/'`math_error.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_error.Tpo $(DEPDIR)/libmath_la-math_error.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_error.c' object='libmath_la-math_error.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_error.lo `test -f 'math_error.c' || echo '$(srcdir)/'`math_error.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

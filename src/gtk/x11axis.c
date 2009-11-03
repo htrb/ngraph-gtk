@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.72 2009/10/22 00:07:12 hito Exp $
+ * $Id: x11axis.c,v 1.73 2009/11/03 08:16:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3048,7 +3048,7 @@ pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
 {
   int x, y, pos1, pos2, man, ecode;
   double val;
-  char *argv[3];
+  char *argv[3], *err_msg;
 
   if (str == NULL || id < 0)
     return;
@@ -3062,8 +3062,12 @@ pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
     break;
   }
 
-  ecode = str_calc(str, &val, NULL);
+  ecode = str_calc(str, &val, NULL, &err_msg);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
+    if (err_msg) {
+      MessageBox(TopLevel, err_msg, "error", MB_ERROR);
+      free(err_msg);
+    }
     return;
   }
 

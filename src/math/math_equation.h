@@ -47,6 +47,13 @@ struct _math_equation {
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;
   MathEquationArray *array_buf;
+  union {
+    const char *pos;
+    struct {
+      int arg_num;
+      struct math_function_parameter *fprm;
+    } func;
+  } err_info;
   void *user_data;
 };
 
@@ -110,5 +117,9 @@ void math_equation_set_user_data(MathEquation *eq, void *user_data);
 void *math_equation_get_user_data(MathEquation *eq);
 
 int math_equation_check_const(MathEquation *eq, int *constant, int n);
+
+void math_equation_set_parse_error(MathEquation *eq, const char *ptr);
+void math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function_parameter *fprm, int arg_num);
+void math_equation_set_func_error(MathEquation *eq, struct math_function_parameter *fprm);
 
 #endif

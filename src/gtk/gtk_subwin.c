@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.54 2009/08/13 08:52:01 hito Exp $
+ * $Id: gtk_subwin.c,v 1.55 2009/11/03 08:16:59 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -216,7 +216,7 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   if (list == NULL)
     return;
 
-  ecode = str_calc(str, &val, NULL);
+  ecode = str_calc(str, &val, NULL, NULL);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
     return;
   }

@@ -133,31 +133,14 @@ math_equation_new(void)
   if (eq == NULL)
     return NULL;
 
+  memset(eq, 0, sizeof(*eq));
+
   eq->constant = nhash_new();
   eq->function = nhash_new();
   eq->variable = nhash_new();
   eq->array = nhash_new();
   eq->local_array = nhash_new();
   eq->local_variable = nhash_new();
-
-  eq->const_def = NULL;
-  eq->pos_func_buf = NULL;
-  eq->pos_func_num = 0;
-  eq->cbuf = NULL;
-  eq->vbuf = NULL;
-  eq->cnum = 0;
-  eq->vnum = 0;
-  eq->vbuf_size = 0;
-  eq->stack_ofst = 0;
-  eq->stack_end = 0;
-  eq->exp = NULL;
-  eq->opt_exp = NULL;
-  eq->parameter = NULL;
-  eq->array_num = 0;
-  eq->array_buf = NULL;
-  eq->local_vnum = 0;
-  eq->local_array_num = 0;
-  eq->func_def =0;
 
   if (eq->function == NULL ||
       eq->constant == NULL ||
@@ -200,6 +183,31 @@ math_equation_clear(MathEquation *eq)
   }
 }
 
+void
+math_equation_set_parse_error(MathEquation *eq, const char *ptr)
+{
+  if (eq == NULL)
+    return;
+
+  eq->err_info.pos = ptr;
+}
+
+void
+math_equation_set_func_arg_num_error(MathEquation *eq, struct math_function_parameter *fprm, int arg_num)
+{
+  if (eq == NULL)
+    return;
+
+  eq->err_info.func.fprm = fprm;
+  eq->err_info.func.arg_num = arg_num;
+}
+
+void
+math_equation_set_func_error(MathEquation *eq, struct math_function_parameter *fprm)
+{
+  math_equation_set_func_arg_num_error(eq, fprm, 0);
+}
+
 int
 math_equation_parse(MathEquation *eq, const char *str)
 {
@@ -207,6 +215,8 @@ math_equation_parse(MathEquation *eq, const char *str)
 
   if (eq == NULL)
     return MATH_ERROR_UNKNOWN;
+
+  memset(&eq->err_info, 0, sizeof(eq->err_info));
 
   if (eq->cnum > 0 && eq->cbuf == NULL)
     return MATH_ERROR_UNKNOWN;
