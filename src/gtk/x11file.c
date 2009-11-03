@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.117 2009/10/22 00:07:12 hito Exp $
+ * $Id: x11file.c,v 1.118 2009/11/03 01:18:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4515,9 +4515,9 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
     return 1;
   }
 
-  color.red = (r & 0xff) * 257;
-  color.green = (g & 0xff) * 257;
-  color.blue = (b & 0xff) * 257;
+  color.red = (r & 0xffU) * 257;
+  color.green = (g & 0xffU) * 257;
+  color.blue = (b & 0xffU) * 257;
 
   dlg = gtk_color_selection_dialog_new(title);
 

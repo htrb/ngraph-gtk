@@ -1,5 +1,5 @@
 /* 
- * $Id: jnstring.c,v 1.5 2009/03/26 02:31:52 hito Exp $
+ * $Id: jnstring.c,v 1.6 2009/11/03 01:18:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,7 +37,7 @@ njms2jis(unsigned int code)
   unsigned char dh,dl;
 
   dh=code >> 8;
-  dl=code & 0xff;
+  dl=code & 0xffU;
   if (dh<=0x9f) dh-=0x70;
   else dh-=0xb0;
   dh=dh<<1;
@@ -57,7 +57,7 @@ njis2jms(unsigned int code)
   unsigned char dh,dl;
 
   dh=code >> 8;
-  dl=code & 0xff;
+  dl=code & 0xffU;
   if (dh & 0x1) dl+=0x1f;
   else dl+=0x7d;
   if (dl>=0x7f) dl++;
@@ -85,7 +85,7 @@ njms2euc(char *s)
       if (i+1<n) {
         jis=njms2jis(((unsigned char)s[i] << 8)+(unsigned char)s[i+1]);
         s[i]=(jis >> 8) | 0x80;
-        s[i+1]=(jis & 0xff) | 0x80; 
+        s[i+1]=(jis & 0xffU) | 0x80; 
       } else s[i]=' ';
       i++;
     }
@@ -104,7 +104,7 @@ neuc2jms(char *s)
       jms=njis2jms((((unsigned char)s[i] << 8)
                     +(unsigned char)s[i+1]) & 0x7f7f);
       s[i]=jms >> 8;
-      s[i+1]=jms & 0xff;
+      s[i+1]=jms & 0xffU;
       i++;
     }
   }
@@ -115,7 +115,7 @@ int
 niskanji(unsigned char code)
 {
   if ((0x81 <= code && code <= 0x9f) ||
-      (0xe0 <= code && code <= 0xff)) return TRUE;
+      (0xe0 <= code && code <= 0xffU)) return TRUE;
   return FALSE;
 }
 

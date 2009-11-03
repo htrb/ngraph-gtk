@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.24 2009/10/22 00:07:11 hito Exp $
+ * $Id: gra.c,v 1.25 2009/11/03 01:18:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2961,7 +2961,7 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
               jiscode=njms2jis(((unsigned char)cstr[k] << 8)
                                +(unsigned char)cstr[k+1]);
               for (h = 0; h < GREEK_TBL_NUM; h++) {
-		if (greektable[h].jis == (jiscode & 0xff))
+		if (greektable[h].jis == (jiscode & 0xffU))
 		  break;
 	      }
               if (h != GREEK_TBL_NUM) {
@@ -3645,7 +3645,7 @@ GRAboundingbox(char code,int *cpar,char *cstr,void *local)
         ch=cstr[i];
         i++;
       }
-      w=GRAcharwidth((unsigned int) (ch & 0xff),bbox->fontalias,bbox->pt);
+      w=GRAcharwidth((unsigned int) (ch & 0xffU),bbox->fontalias,bbox->pt);
       h=GRAcharascent(bbox->fontalias,bbox->pt);
       d=GRAchardescent(bbox->fontalias,bbox->pt);
       x=0;

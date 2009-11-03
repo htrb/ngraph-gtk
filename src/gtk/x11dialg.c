@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.43 2009/08/17 07:09:46 hito Exp $
+ * $Id: x11dialg.c,v 1.44 2009/11/03 01:18:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1182,9 +1182,9 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
   snprintf(buf, sizeof(buf), "%sB%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &b);
 
-  color.red = (r & 0xff) * 257;
-  color.green = (g & 0xff) * 257;
-  color.blue = (b & 0xff) * 257;
+  color.red = (r & 0xffU) * 257;
+  color.green = (g & 0xffU) * 257;
+  color.blue = (b & 0xffU) * 257;
 
   gtk_color_button_set_color(GTK_COLOR_BUTTON(w), &color);
 }

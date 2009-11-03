@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.11 2009/03/26 06:25:15 hito Exp $
+ * $Id: oprm.c,v 1.12 2009/11/03 01:18:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -193,7 +193,7 @@ remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
       code=njms2jis(((unsigned char)s[i] << 8)+(unsigned char)s[i+1]);
       if (((code>>8)==0x26) && greek) {
         for (k = 0; k < greektable_num(); k++) {
-	  if (greektable[k].jis==(code & 0xff)) 
+	  if (greektable[k].jis==(code & 0xffU)) 
 	    break;
 	}
         if (k != greektable_num()) {

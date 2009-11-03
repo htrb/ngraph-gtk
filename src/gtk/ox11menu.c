@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.82 2009/07/09 02:05:30 hito Exp $
+ * $Id: ox11menu.c,v 1.83 2009/11/03 01:18:52 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -599,9 +599,9 @@ menu_config_set_bgcolor(char *s2, void *data)
   f1 = getitok2(&s2, &len, " \t,");
   val = strtol(f1, &endptr, 16);
   if (endptr[0] == '\0') {
-    Menulocal.bg_r = (val >> 16) & 0xff;
-    Menulocal.bg_g = (val >> 8) & 0xff;
-    Menulocal.bg_b = val & 0xff;
+    Menulocal.bg_r = (val >> 16) & 0xffU;
+    Menulocal.bg_g = (val >> 8) & 0xffU;
+    Menulocal.bg_b = val & 0xffU;
   }
   memfree(f1);
   return 0;
@@ -1031,9 +1031,9 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;
   Menulocal.info_size = 1000;
-  Menulocal.bg_r = 0xff;
-  Menulocal.bg_g = 0xff;
-  Menulocal.bg_b = 0xff;
+  Menulocal.bg_r = 0xffU;
+  Menulocal.bg_g = 0xffU;
+  Menulocal.bg_b = 0xffU;
   Menulocal.focus_frame_type = GDK_LINE_ON_OFF_DASH;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
@@ -1041,7 +1041,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   Menulocal.windpi = DEFAULT_DPI;
   Menulocal.redrawf = TRUE;
-  Menulocal.redrawf_num = 0xff;
+  Menulocal.redrawf_num = 0xffU;
   Menulocal.grid = 200;
   Menulocal.data_head_lines = 20;
   Menulocal.local = local;
@@ -1383,9 +1383,9 @@ mx_clear(GdkRegion *region)
       rect.height = h;
       gdk_gc_set_clip_rectangle(Menulocal.gc, &rect);
     }
-    color.red = Menulocal.bg_r * 0xff;
-    color.green = Menulocal.bg_g * 0xff;
-    color.blue = Menulocal.bg_b * 0xff;
+    color.red = Menulocal.bg_r * 0xffU;
+    color.green = Menulocal.bg_g * 0xffU;
+    color.blue = Menulocal.bg_b * 0xffU;
     gdk_gc_set_rgb_fg_color(Menulocal.gc, &color);
     gdk_draw_rectangle(Menulocal.pix, Menulocal.gc, TRUE, 0, 0, w, h);
     draw_paper_frame();

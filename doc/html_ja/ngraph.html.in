@@ -70,7 +70,9 @@
 <ul>
 <li><a href="./math.html#TRANSFORM">概要</a>
 <li><a href="./math.html#MATH">数式変換</a>
+<li><a href="./math.html#FORMULA_LITERAL">数値リテラル</a>
 <li><a href="./math.html#FORMULA_CONST">数式変換の定数</a>
+<li><a href="./math.html#FORMULA_PAR">数式変換のパラメータ</a>
 <li><a href="./math.html#FORMULA_VAR">数式変換の変数</a>
 <li><a href="./math.html#FORMULA_OP">数式変換の演算子</a>
 <li><a href="./math.html#FORMULA_FUNC">数式変換の関数</a>
@@ -78,8 +80,8 @@
 <li><a href="./math.html#OP_EXAMPLE">数式変換の使用例</a>
 #if NEW_MATH_CODE
 <li><a href="./math.html#NEW_TRANSFORM">GTK 版で追加された機能、変更点</a>
+<li><a href="./math.html#NEW_FORMULA_LITERAL">数値リテラル</a>
 <li><a href="./math.html#NEW_FORMULA_CONST">数式変換の定数</a>
-<li><a href="./math.html#NEW_FORMULA_PAR">数式変換のパラメータ</a>
 <li><a href="./math.html#NEW_FORMULA_VAR">数式変換の変数</a>
 <li><a href="./math.html#NEW_FORMULA_ARRAY">数式変換の配列</a>
 <li><a href="./math.html#NEW_FORMULA_USR_FUNC">ユーザ定義関数</a>

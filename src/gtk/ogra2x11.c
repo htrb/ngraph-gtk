@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.29 2009/05/18 05:23:20 hito Exp $
+ * $Id: ogra2x11.c,v 1.30 2009/11/03 01:18:52 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -262,9 +262,9 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   gtklocal->winwidth = WINWIDTH;
   gtklocal->winheight = WINHEIGHT;
   gtklocal->windpi = DEFAULT_DPI;
-  gtklocal->bg_r = 0xff;
-  gtklocal->bg_g = 0xff;
-  gtklocal->bg_b = 0xff;
+  gtklocal->bg_r = 0xffU;
+  gtklocal->bg_g = 0xffU;
+  gtklocal->bg_b = 0xffU;
   gtklocal->local = local;
 
   if (gtkloadconfig(gtklocal))
@@ -429,9 +429,9 @@ gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   gdk_drawable_get_size(local->win, &w, &h);
 
-  color.red = local->bg_r * 0xff;
-  color.green = local->bg_g * 0xff;
-  color.blue = local->bg_b * 0xff;
+  color.red = local->bg_r * 0xffU;
+  color.green = local->bg_g * 0xffU;
+  color.blue = local->bg_b * 0xffU;
   gdk_gc_set_rgb_fg_color(local->gc, &color);
   gdk_draw_rectangle(local->win, local->gc, TRUE, 0, 0, w, h);
   gdk_window_invalidate_rect(local->window, NULL, TRUE);
@@ -564,9 +564,9 @@ gtkchangedpi(struct gtklocal *gtklocal)
     pixmap = gdk_pixmap_new(gtklocal->window, width, height, -1);
     gtklocal->win = pixmap;
 
-    color.red = gtklocal->bg_r * 0xff;
-    color.green = gtklocal->bg_g * 0xff;
-    color.blue = gtklocal->bg_b * 0xff;
+    color.red = gtklocal->bg_r * 0xffU;
+    color.green = gtklocal->bg_g * 0xffU;
+    color.blue = gtklocal->bg_b * 0xffU;
 
     gdk_gc_set_rgb_fg_color(gtklocal->gc, &color);
     gdk_draw_rectangle(pixmap, gtklocal->gc, TRUE, 0, 0, width, height);

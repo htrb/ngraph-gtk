@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.54 2009/07/26 13:01:40 hito Exp $
+ * $Id: ogra2cairo.c,v 1.55 2009/11/03 01:18:52 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1149,8 +1149,8 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   struct fontmap *fcur;
   //  XFontStruct *fontstruct;
 
-  ch[0] = (*(unsigned int *)(argv[3]) & 0xff);
-  ch[1] = (*(unsigned int *)(argv[3]) & 0xff00) >> 8;
+  ch[0] = (*(unsigned int *)(argv[3]) & 0xffU);
+  ch[1] = (*(unsigned int *)(argv[3]) & 0xff00U) >> 8;
   ch[2] = '\0';
 
   size = (*(int *)(argv[4])) / 72.0 * 25.4;
