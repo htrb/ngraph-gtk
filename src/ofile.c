@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.94 2009/11/03 12:34:58 hito Exp $
+ * $Id: ofile.c,v 1.95 2009/11/04 03:39:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1402,13 +1402,14 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
 }
 
 static int
-put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, int type, char *eq)
+put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field, char *eq)
 {
-  int rcode;
+  int rcode, type;
   char *x, *y, *f, *g, *h;
   char default_func[] = "def f(x,y,z){0}", fname[] = "F", *err_msg;
   //                     01234
 
+  type = field[5];
   default_func[4] = type;
   fname[0] = toupper(type);
 
@@ -1423,7 +1424,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, int type, c
     f2dlocal->need2passx = FALSE;
     rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, eq, &err_msg);
     if (err_msg) {
-      error22(obj, ERRUNKNOWN, err_msg, NULL);
+      error22(obj, ERRUNKNOWN, field, err_msg);
       free(err_msg);
     }
     f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
@@ -1432,7 +1433,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, int type, c
     f2dlocal->need2passy = FALSE;
     rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, eq, &err_msg);
     if (err_msg) {
-      error22(obj, ERRUNKNOWN, err_msg, NULL);
+      error22(obj, ERRUNKNOWN, field, err_msg);
       free(err_msg);
     }
     f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
@@ -1454,7 +1455,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, int type, c
     rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
     rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, &err_msg);
     if (err_msg) {
-      error22(obj, ERRUNKNOWN, err_msg, NULL);
+      error22(obj, ERRUNKNOWN, field, err_msg);
       free(err_msg);
     }
 
@@ -1490,7 +1491,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
   _getobj(obj,"_local",inst,&f2dlocal);
 
 #if NEW_MATH_CODE
-  rcode = put_func(obj, inst, f2dlocal, field[5], math);
+  rcode = put_func(obj, inst, f2dlocal, field, math);
   if (rcode) {
     return 1;
   }

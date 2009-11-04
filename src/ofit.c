@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.28 2009/10/25 12:47:30 hito Exp $
+ * $Id: ofit.c,v 1.29 2009/11/04 03:39:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -208,7 +208,14 @@ fitput(struct objlist *obj,char *inst,char *rval,
 
       rcode = math_equation_parse(code, math);
       if (rcode) {
-	error(obj, ERRSYNTAX);
+	char *err_msg;
+	err_msg = math_err_get_error_message(code, math, rcode);
+	if (err_msg) {
+	  error22(obj, ERRUNKNOWN, field, err_msg);
+	  free(err_msg);
+	} else {
+	  error(obj, ERRSYNTAX);
+	}
 	math_equation_free(code);
 	return 1;
       }

@@ -1,3 +1,10 @@
+2009-11-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (put_func): change 5th argument from "int type" to
+	"char *field".
+
+	* src/ofit.c (fitput): use "math_err_get_error_message()".
+
 2009-11-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_expression.c (math_constant_definition_expression_new):
