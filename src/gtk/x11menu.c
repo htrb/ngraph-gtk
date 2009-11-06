@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.106 2009/07/14 09:07:23 hito Exp $
+ * $Id: x11menu.c,v 1.107 2009/11/06 03:50:14 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -460,7 +460,7 @@ static struct command_data Command2_data[] = {
     NULL,
     N_("Zoom"),
     N_("Viewer Zoom"),
-    N_("Viewer Zoom-In (+CONTROL: Zomm-Out +SHIFT: Centering)"), 
+    N_("Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"), 
     Zoom_xpm,
     ZoomB,
     NULL,
@@ -928,7 +928,7 @@ create_alignmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
 
   create_menu_item(menu, _("_Top"),               FALSE, "<Ngraph>/Edit/Align/Single Axis", 0, 0, CmEditMenuCB, MenuIdAlignTop);
-  create_menu_item(menu, _("_Holizontal center"), FALSE, "<Ngraph>/Edit/Align/Single Axis", 0, 0, CmEditMenuCB, MenuIdAlignHCenter);
+  create_menu_item(menu, _("_Horizontal center"), FALSE, "<Ngraph>/Edit/Align/Single Axis", 0, 0, CmEditMenuCB, MenuIdAlignHCenter);
   create_menu_item(menu, _("_Bottom"),            FALSE, "<Ngraph>/Edit/Align/Single Axis", 0, 0, CmEditMenuCB, MenuIdAlignHBottom);
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.172 2009/10/20 07:05:37 hito Exp $
+ * $Id: x11view.c,v 1.173 2009/11/06 03:50:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1136,7 +1136,7 @@ create_popup_menu(struct Viewer *d)
     {N_("_Right"),             FALSE, VIEW_ALIGN_RIGHT,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
     {N_("_Top"),               FALSE, VIEW_ALIGN_TOP,     NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("_Holizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
+    {N_("_Horizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
     {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
   };
 
@@ -1186,7 +1186,7 @@ create_popup_menu(struct Viewer *d)
 #define VIEWER_POPUP_ITEM_BOTTOM 13
 
 #if VIEWER_POPUP_ITEM_BOTTOM + 1 != VIEWER_POPUP_ITEM_NUM
-#error invarid array size (struct Viewer.popup_item)
+#error invalid array size (struct Viewer.popup_item)
 #endif
   return create_menu(popup, sizeof(popup) / sizeof(*popup), d);
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.41 2009/11/03 12:34:58 hito Exp $
+ * $Id: object.c,v 1.42 2009/11/06 03:50:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -106,9 +106,9 @@ static char *errorlist[]={
      "instance does not exist.",
      "illegal object identifier",
      "illegal instance identifier",
-     "illegal field identifile",
+     "illegal field identifier",
      "extra object arguments",
-     "not enouph object argument",
+     "not enough object argument",
      "illegal type of object argument",
      "instance exist. cannot overwrite object",
 };
@@ -2622,7 +2622,7 @@ copyobj(struct objlist *obj,char *vname,int did,int sid)
 static int 
 _copyobj(struct objlist *obj,int did,int sid)
 /* _copyobj() returns id or -1 on error */
-/* this function shoud not be used becase this function do "shallow" copy. */
+/* this function should not be used because this function do "shallow" copy. */
 {
   char *dinstcur;
   char *sinstcur,*instnext;

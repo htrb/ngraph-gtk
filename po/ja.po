@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-11-03 21:28+0900\n"
-"PO-Revision-Date: 2009-11-03 22:02+0900\n"
+"POT-Creation-Date: 2009-11-06 12:51+0900\n"
+"PO-Revision-Date: 2009-11-06 12:51+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1092,7 +1092,7 @@ msgstr "NGP ファイルを開く"
 
 #: src/gtk/x11graph.c:1353
 msgid ""
-"Ngraph is the program creating scientific 2-dimensinal graphs for "
+"Ngraph is the program creating scientific 2-dimensional graphs for "
 "researchers and engineers."
 msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
@@ -1648,7 +1648,7 @@ msgid "Viewer Zoom"
 msgstr "ビューアズーム"
 
 #: src/gtk/x11menu.c:463
-msgid "Viewer Zoom-In (+CONTROL: Zomm-Out +SHIFT: Centering)"
+msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr "ビューアのズームイン (+CONTROL:ズームアウト +SHIFT:センタリング)"
 
 #: src/gtk/x11menu.c:655 src/gtk/x11menu.c:1067
@@ -1720,7 +1720,7 @@ msgid "_Top"
 msgstr "上端揃え(_T)"
 
 #: src/gtk/x11menu.c:931 src/gtk/x11view.c:1139
-msgid "_Holizontal center"
+msgid "_Horizontal center"
 msgstr "水平中央揃え(_H)"
 
 #: src/gtk/x11menu.c:932 src/gtk/x11view.c:1140

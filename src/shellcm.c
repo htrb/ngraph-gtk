@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.23 2009/11/03 08:16:58 hito Exp $
+ * $Id: shellcm.c,v 1.24 2009/11/06 03:50:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -594,11 +594,11 @@ cmtype(struct nshell *nshell,int argc,char **argv)
     || (strcmp0("break",argv[j])==0)
     || (strcmp0("continue",argv[j])==0)
     || (strcmp0("return",argv[j])==0)) {
-      printfstdout("%.256s is a shell builtin.\n",argv[j]);
+      printfstdout("%.256s is a shell built in.\n",argv[j]);
     } else {
       proc = check_cmd(argv[j]);
       if (proc) {
-        printfstdout("%.256s is a shell builtin.\n",argv[j]);
+        printfstdout("%.256s is a shell built in.\n",argv[j]);
       } else {
         cmdname=nsearchpath(getval(nshell,"PATH"),argv[j],FALSE);
         if (cmdname==NULL) {
@@ -1368,7 +1368,7 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
     putstdout("nan");
     return ERR;
   } else if (rcode==MUNDEF) {
-    putstdout("undifined");
+    putstdout("undefined");
     return ERR;
   }
 

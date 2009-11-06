@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.95 2009/11/04 03:39:37 hito Exp $
+ * $Id: ofile.c,v 1.96 2009/11/06 03:50:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -99,7 +99,7 @@ static char *f2derrorlist[]={
   "file is not specified.",
   "I/O error: open file",
   "syntax error in math.",
-  "not allowd function in math.",
+  "not allowed function in math.",
   "sum() or dif(): deep nest in math.",
   "`axis' is not specified.",
   "no instance for axis",
@@ -5494,7 +5494,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
           return -1;
         }
         count++;
-      } else if (interpolation) { /* redundant conditoon ? */
+      } else if (interpolation) { /* redundant condition ? */
         if (num>=2) {
           spcond=SPLCND2NDDIF;
           if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)

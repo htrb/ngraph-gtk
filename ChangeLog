@@ -228,7 +228,7 @@
 	mark object.
 	(legend_list_set_val): show mark size in "LEGEND_WIN_COL_WIDTH"
 	column.
-	(legend_list_set_val): show some fileds in "LEGEND_WIN_COL_PROP"
+	(legend_list_set_val): show some fields in "LEGEND_WIN_COL_PROP"
 	column.
 	(width_edited): edit "size" field of mark object.
 	(get_points): add.
@@ -325,7 +325,7 @@
 	(FitDialogSetSensitivity): set equation label string.
 	(set_fitdialog_sensitivity): add.
 
-	* src/ofit.c (fituser): show "dxxc" in tne progress dialog.
+	* src/ofit.c (fituser): show "dxxc" in the progress dialog.
 
 2009-08-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -353,7 +353,7 @@
 
 	* src/gtk/x11commn.c (SetFileName): use copy of "str".
 	(ToRalativePath): add.
-	(GraphSave): save and restore previous workind directory.
+	(GraphSave): save and restore previous working directory.
 	(GraphSave): change "file::file" and "merge::file" depend on the
 	value of "path".
 
@@ -1030,7 +1030,7 @@
 
 2009-05-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11axis.c (AxisDialogSetupItem): add item to combo boxs
+	* src/gtk/x11axis.c (AxisDialogSetupItem): add item to combo boxes
 	when the value is different from previous one.
 	(axis_prm_edited_common, min_edited, max_edited, inc_edited): add.
 	(CmAxisWindow): call "set_editable_cell_renderer_cb()" for
@@ -1159,12 +1159,12 @@
 	(struct Point): moved from x11view.c and change name of the struct
 	from "pointslist".
 
-	* src/gtk/x11menu.c (SetPoint): show width and hight when
+	* src/gtk/x11menu.c (SetPoint): show width and height when
 	"d->Capture" is TRUE.
 
 2009-04-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.c (create_windowmenu): chang accel path of
+	* src/gtk/x11menu.c (create_windowmenu): change accel path of
 	"View" menu.
 	(create_legendmenu): do not gettextize menu title.
 	(create_legendsubmenu): gettextize "label".
@@ -1295,7 +1295,7 @@
 	(createmenu): reorder menus.
 	(create_toolbar): add argument "hbox" and set GtkHandleBox to the
 	variable.
-	(set_widget_visibility): add argment "cross" and set visibility of
+	(set_widget_visibility): add argument "cross" and set visibility of
 	some other widgets and cross gauge.
 	(setupwindow): add argment to call "create_toolbar()".x
 	(application): save settings for widgets visibility.
@@ -2326,7 +2326,7 @@
 
 	* src/oaxis.c (check_direction): also check position of axises.
 
-	* src/gtk/x11axis.c (Alist): "length" column accept nagative
+	* src/gtk/x11axis.c (Alist): "length" column accept negative
 	value.
 
 2009-02-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -2438,7 +2438,7 @@
 	when "with_view_port" is TRUE.
 	(label_sub_window_create): add.
 
-	* src/omath.c (mformula): use "switch" to cheack "rcode".
+	* src/omath.c (mformula): use "switch" to check "rcode".
 
 	* src/ofile.c (mathcode_error): add.
 	(f2dputmath, fitout): use "mathcode_error()".
@@ -2471,7 +2471,7 @@
 	equal to zero and less than 36000.
 
 	* src/oaxis.c (axisdirection): add.
-	(axis): "axisdirection()" is called wheh field "direction" is
+	(axis): "axisdirection()" is called when field "direction" is
 	changed.
 
 	* src/odraw.h (enum INTERPOLATION_TYPE): add.
@@ -2702,7 +2702,7 @@
 	"d->menu".
 	(Evaluate): cursor type is "GDK_TCROSS" when move data mode.
 	(mouse_down_move_data): check return value of "getobj()" and
-	"getobjlist()" and goto "ErrEnd" when these functions rturn FALSE.
+	"getobjlist()" and goto "ErrEnd" when these functions return FALSE.
 	(move_data_cancel): add argument "show_message".
 	(mouse_down_move_data): check return value of "arraynget()".
 	(do_popup): check id of focused object when "num == 1".
@@ -2740,7 +2740,7 @@
 
 	* src/gtk/x11gui.c (GetColor): remove.
 
-	* src/gtk/x11menu.c (application): change coror of "gray" from
+	* src/gtk/x11menu.c (application): change color of "gray" from
 	"#7f7f7f" to "#aaaaaa".
 
 2009-01-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -2986,7 +2986,7 @@
 	(numeric_cb, string_cb):  use "menu_lock()" to lock
 	gui.
 
-	* src/shellux.c (cmsleep): call "sleep()" while wating timeout.
+	* src/shellux.c (cmsleep): call "sleep()" while waiting timeout.
 
 2008-12-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -3671,7 +3671,7 @@
 	* src/ofile.c (opendata): check mtime of the file.
 	(file2d): add field "mtime".
 
-	* src/gtk/x11commn.c (FileAutoScale): return when fail to allcate
+	* src/gtk/x11commn.c (FileAutoScale): return when fail to allocate
 	memory.
 
 	* src/ofile.c (f2dbounding): return 1 when error is occurred.

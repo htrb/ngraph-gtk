@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.12 2009/06/03 09:00:48 hito Exp $
+ * $Id: odraw.c,v 1.13 2009/11/06 03:50:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -47,7 +47,7 @@
 
 static char *drawerrorlist[]={
   "illegal graphics context",
-  "grahics context is not opened"
+  "graphics context is not opened"
 };
 
 #define ERRNUM (sizeof(drawerrorlist) / sizeof(*drawerrorlist))

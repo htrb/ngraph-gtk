@@ -416,7 +416,7 @@ show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
 
   gtk_color_button_get_color(button, &col);
 
-  dlg = gtk_color_selection_dialog_new(_("Pick a Clolor"));
+  dlg = gtk_color_selection_dialog_new(_("Pick a Color"));
   gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(user_data));
   sel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg)->colorsel);
 

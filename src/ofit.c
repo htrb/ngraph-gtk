@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.29 2009/11/04 03:39:37 hito Exp $
+ * $Id: ofit.c,v 1.30 2009/11/06 03:50:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -64,7 +64,7 @@ static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
 static char *fiterrorlist[]={
   "syntax error.",
-  "not allowd function.",
+  "not allowed function.",
   "sum() or dif(): deep nest.",
   "too many parameters.",
   "illegal data -> ignored.",
@@ -289,7 +289,7 @@ enum FitError {
   /* FitError_Convergence = -6, */
   FitError_Range    = -5,	/* range check */
   FitError_Syntax   = -4,	/* syntax error */
-  FitError_Eqaution = -3,	/* eqaution is not specified */
+  FitError_Equation = -3,	/* equation is not specified */
   FitError_Matrix   = -2,	/* singular matrix */
   FitError_Small    = -1,	/* too small data */
   FitError_Success  =  0,	/* no error */
@@ -464,7 +464,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
          FitError_Convergence
          FitError_Range
          FitError_syntax
-         FitError_Eqaution
+         FitError_Equation
          FitError_Matrix
          FitError_Small
          FitError_Success
@@ -495,7 +495,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   double lambda,s0;
 */
   if (num<1) return FitError_Small;
-  if (fitlocal->codef==NULL) return FitError_Eqaution;
+  if (fitlocal->codef==NULL) return FitError_Equation;
 
 #if NEW_MATH_CODE
   prm = math_equation_get_parameter(fitlocal->codef, 0);
@@ -503,7 +503,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   needdata = prm->id;
   if (deriv) {
     for (i = 0; i < dim; i++) {
-      if (fitlocal->codedf[needdata[i]] == NULL) return FitError_Eqaution;
+      if (fitlocal->codedf[needdata[i]] == NULL) return FitError_Equation;
     }
   }
   for (i = 0; i < dim; i++) tbl[i] = needdata[i];
@@ -512,13 +512,13 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
     par[i].val = fitlocal->coe[i];
   }
 #else
-  if (fitlocal->needdata==NULL) return FitError_Eqaution;
+  if (fitlocal->needdata==NULL) return FitError_Equation;
 
   dim=arraynum(fitlocal->needdata);
   needdata=arraydata(fitlocal->needdata);
   if (deriv) {
     for (i=0;i<dim;i++) {
-      if (fitlocal->codedf[needdata[i]]==NULL) return FitError_Eqaution;
+      if (fitlocal->codedf[needdata[i]]==NULL) return FitError_Equation;
     }
   }
   for (i=0;i<dim;i++) tbl[i]=needdata[i];
@@ -1046,7 +1046,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case FitError_Matrix:
     ecode = ERRSINGULAR;
     break;
-  case FitError_Eqaution:
+  case FitError_Equation:
     ecode = ERRNOEQS;
     break;
   case FitError_Syntax:

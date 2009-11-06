@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.15 2009/10/26 10:11:10 hito Exp $
+ * $Id: omath.c,v 1.16 2009/11/06 03:50:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -52,10 +52,10 @@ static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
 static char *matherrorlist[]={
   "syntax error.",
-  "not allowd function.",
+  "not allowed function.",
   "sum() or dif(): deep nest.",
   "illegal argument",
-  "not enouph argument."
+  "not enough argument."
 };
 
 #define ERRNUM (sizeof(matherrorlist) / sizeof(*matherrorlist))

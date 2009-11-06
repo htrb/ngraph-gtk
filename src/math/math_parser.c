@@ -229,10 +229,10 @@ get_argument(const char **str, MathEquation *eq, struct math_function_parameter 
   if (fprm->arg_type && i < fprm->argc && fprm->arg_type[i] == MATH_FUNCTION_ARG_TYPE_ARRAY) {
     token = my_get_token(str);
     if (token->type != MATH_TOKEN_TYPE_SYMBOL) {
-      *err = MATH_ERROR_INVARID_FDEF;
+      *err = MATH_ERROR_INVALID_FDEF;
       math_equation_set_parse_error(eq, token->ptr);
       math_scanner_free_token(token);
-      /* invarid argument */
+      /* invalid argument */
       return NULL;
     }
     exp = math_array_argument_expression_new(eq, token->data.sym, err);

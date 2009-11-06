@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.33 2009/10/22 00:07:11 hito Exp $
+ * $Id: shell.c,v 1.34 2009/11/06 03:50:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -157,7 +157,7 @@ static char *cmderrorlist[] = {
   "command not found",
   "system call",
   "extra arguments.",
-  "not enouph argument.",
+  "not enough argument.",
   "too many arguments.",
   "cannot open file",
   "Use \"exit\" to leave the shell.",

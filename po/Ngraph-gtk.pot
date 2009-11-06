@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-33\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-11-03 21:28+0900\n"
+"POT-Creation-Date: 2009-11-06 12:51+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1090,7 +1090,7 @@ msgstr ""
 
 #: src/gtk/x11graph.c:1353
 msgid ""
-"Ngraph is the program creating scientific 2-dimensinal graphs for "
+"Ngraph is the program creating scientific 2-dimensional graphs for "
 "researchers and engineers."
 msgstr ""
 
@@ -1643,7 +1643,7 @@ msgid "Viewer Zoom"
 msgstr ""
 
 #: src/gtk/x11menu.c:463
-msgid "Viewer Zoom-In (+CONTROL: Zomm-Out +SHIFT: Centering)"
+msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr ""
 
 #: src/gtk/x11menu.c:655 src/gtk/x11menu.c:1067
@@ -1715,7 +1715,7 @@ msgid "_Top"
 msgstr ""
 
 #: src/gtk/x11menu.c:931 src/gtk/x11view.c:1139
-msgid "_Holizontal center"
+msgid "_Horizontal center"
 msgstr ""
 
 #: src/gtk/x11menu.c:932 src/gtk/x11view.c:1140

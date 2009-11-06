@@ -12,8 +12,8 @@
 #define ERR_MSG_MISS_RP		N_("syntax error, unexpected end of equation, expecting ')'.")
 #define ERR_MSG_MISS_RC		N_("syntax error, unexpected end of equation, expecting '}'.")
 #define ERR_MSG_MISS_RB		N_("syntax error, unexpected end of equation, expecting ']'.")
-#define ERR_MSG_INVARID_F	N_("syntax error, invalid function definition.")
-#define ERR_MSG_INVARID_P	N_("error, invalid parameter.")
+#define ERR_MSG_INVALID_F	N_("syntax error, invalid function definition.")
+#define ERR_MSG_INVALID_P	N_("error, invalid parameter.")
 #define ERR_MSG_UNKNOWN_F	N_("error, unknown function.")
 #define ERR_MSG_MEMORY		N_("error, cannot allocate enough memory.")
 #define ERR_MSG_UNKNOWN		N_("error, unknown error.")
@@ -125,12 +125,12 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
       buf = strdup(_(ERR_MSG_UNKNOWN_F));
     }
     break;
-  case MATH_ERROR_INVARID_FDEF:
+  case MATH_ERROR_INVALID_FDEF:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVARID_F), code_buf);
+      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVALID_F), code_buf);
     } else {
-      buf = strdup(_(ERR_MSG_INVARID_F));
+      buf = strdup(_(ERR_MSG_INVALID_F));
     }
     break;
   case MATH_ERROR_UNEXP_TOKEN:
@@ -144,9 +144,9 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_INVALID_PRM:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
-      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVARID_P), code_buf);
+      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVALID_P), code_buf);
     } else {
-      buf = strdup(_(ERR_MSG_INVARID_P));
+      buf = strdup(_(ERR_MSG_INVALID_P));
     }
     break;
   case MATH_ERROR_MEMORY:
