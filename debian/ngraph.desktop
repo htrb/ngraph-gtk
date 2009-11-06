@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=Ngaph
-Comment=create scientific 2-dimensinal graphs
+Name=Ngraph
+Comment=create scientific 2-dimensional graphs
 Comment[ja]=科学技術用 2D グラフ作成
 TryExec=ngraph
 Exec=ngraph

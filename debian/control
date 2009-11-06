@@ -12,6 +12,6 @@ Depends: libatk1.0-0, libc6, libcairo2 (>= 1.8.0), libglib2.0-0 (>= 2.20.0), lib
 # Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: tcl, tk
 Suggests: ttf-mscorefonts-installer
-Description: create scientific 2-dimensinal graphs
- Ngraph is the program creating scientific 2-dimensinal graphs for
+Description: create scientific 2-dimensional graphs
+ Ngraph is the program creating scientific 2-dimensional graphs for
  researchers and engineers. Graphs can be exported to postscript.

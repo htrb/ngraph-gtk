@@ -6,4 +6,4 @@
 	hints="GNOME"						\
 	icon="/usr/share/pixmaps/ngraph.xpm"				\
 	longtitle="Ngraph"					\
-	description="create scientific 2-dimensinal graphs"
+	description="create scientific 2-dimensional graphs"

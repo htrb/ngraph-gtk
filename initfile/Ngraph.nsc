@@ -18,7 +18,7 @@ usage() {
     echo ' -s line                 head skip'
     echo ' -r step                 read step'
     echo ' -f line                 finale line'
-    echo ' -vx num -vy num         neighbour average'
+    echo ' -vx num -vy num         neighbor average'
     echo ' -mx math -my math       math transformation'
     echo ' -ex type -ey type       scale type'
 #   echo ' -zx min max inc         axis settings'		# obsolete

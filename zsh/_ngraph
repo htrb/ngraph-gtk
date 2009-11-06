@@ -17,25 +17,25 @@ _arguments \
     '-o[set mark size]:integer' \
     '-l[set line style]:string' \
     '-w[set line width]:integer' \
-    '-cr[red elemeent of plot color 1]:integer' \
-    '-cg[green elemeent of plot color 1]:integer' \
-    '-cb[blue elemeent of plot color 1]:integer' \
-    '-CR[red elemeent of plot color 2]:integer' \
-    '-CG[green elemeent of plot color 2]:integer' \
-    '-CB[blue elemeent of plot color 2]:integer' \
+    '-cr[red element of plot color 1]:integer' \
+    '-cg[green element of plot color 1]:integer' \
+    '-cb[blue element of plot color 1]:integer' \
+    '-CR[red element of plot color 2]:integer' \
+    '-CG[green element of plot color 2]:integer' \
+    '-CB[blue element of plot color 2]:integer' \
     '-s[set number of head skip]:lines' \
     '-r[set number of read step]:lines' \
     '-f[set number of finale line]:lines' \
-    '-vx[set number of neighbour average for x]:integer' \
-    '-vy[set number of neighbour average for y]:integer' \
+    '-vx[set number of neighbor average for x]:integer' \
+    '-vy[set number of neighbor average for y]:integer' \
     '-mx[set math transformation for x]:string' \
     '-my[set math transformation for y]:string' \
     '-ex[set scale type of x axis]:type of axis:(linear log inverse)' \
     '-ey[set scale type of y axis]:type of axis:(linear log inverse)' \
-    '-minx[set minimun of x axis]:double' \
+    '-minx[set minimum of x axis]:double' \
     '-maxx[set maximum of x axis]:double' \
     '-incx[set increment of x axis]:double' \
-    '-miny[set minimun of y axis]:double' \
+    '-miny[set minimum of y axis]:double' \
     '-maxy[set maximum of y axis]:double' \
     '-incy[set increment of y axis]:double' \
     '-g[load settings from data file]' \

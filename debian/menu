@@ -4,6 +4,6 @@
   command="/usr/bin/ngraph" \
   icon="/usr/share/pixmaps/ngraph.xpm" \
   title="Ngraph" \
-  longtitle="create scientific 2-dimensinal graphs" \
-  description="Ngraph is the program creating scientific 2-dimensinal graphs for \
+  longtitle="create scientific 2-dimensional graphs" \
+  description="Ngraph is the program creating scientific 2-dimensional graphs for \
                researchers and engineers. Graphs can be exported to postscript."
