@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.34 2009/08/14 06:34:31 hito Exp $
+ * $Id: x11gui.c,v 1.35 2009/11/06 11:09:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -114,7 +114,7 @@ dialog_delete_cb(GtkWidget *w, GdkEvent *e, gpointer user_data)
 int
 DialogExecute(GtkWidget *parent, void *dialog)
 {
-  GtkWidget *dlg;
+  GtkWidget *dlg, *win_ptr;
   struct DialogType *data;
   gint res_id, lockstate;
 
@@ -172,6 +172,8 @@ DialogExecute(GtkWidget *parent, void *dialog)
   data->ret = IDLOOP;
 
   gtk_widget_show_all(dlg);
+  win_ptr = get_current_window();
+  set_current_window(dlg);
   if (data->focus)
     gtk_widget_grab_focus(data->focus);
 
@@ -203,6 +205,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
   //  gtk_widget_destroy(dlg);
   //  data->widget = NULL;
+  set_current_window(win_ptr);
   gtk_widget_hide_all(dlg);
   ResetEvent();
 
@@ -268,6 +271,10 @@ MessageBox(GtkWidget * parent, char *message, char *title, int mode)
     dlg_button = GTK_BUTTONS_OK;
     dlg_type = GTK_MESSAGE_INFO;
   }
+
+  if (parent == NULL)
+    parent = get_current_window();
+
   dlg = gtk_message_dialog_new(GTK_WINDOW(parent),
 			       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 			       dlg_type,

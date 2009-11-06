@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.68 2009/08/06 01:38:23 hito Exp $
+ * $Id: x11opt.c,v 1.69 2009/11/06 11:09:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -295,7 +295,7 @@ set_scrpt_option(GtkWidget *entry, char **opt, char *msg)
 
   buf = gtk_entry_get_text(GTK_ENTRY(entry));
   if (msg && strlen(buf) == 0) {
-    MessageBox(TopLevel, msg, NULL, MB_OK);
+    MessageBox(NULL, msg, NULL, MB_OK);
     return 1;
   }
 
@@ -1514,7 +1514,7 @@ CmOptionSaveNgp(void)
 
   if (access(ngpfile, 04) == 0) {
     snprintf(mes, sizeof(mes), _("`%s'\n\nOverwrite existing file?"), ngpfile);
-    if (MessageBox(TopLevel, mes, _("Save as .Ngraph.ngp"), MB_YESNO) != IDYES) {
+    if (MessageBox(NULL, mes, _("Save as .Ngraph.ngp"), MB_YESNO) != IDYES) {
       memfree(ngpfile);
       return;
     }

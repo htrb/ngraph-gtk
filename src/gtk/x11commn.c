@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.52 2009/10/20 07:05:37 hito Exp $
+ * $Id: x11commn.c,v 1.53 2009/11/06 11:09:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1770,7 +1770,7 @@ ErrorMessage(void)
 
   ptr = g_locale_to_utf8(strerror(errno), -1, NULL, NULL, NULL);
   if (ptr) {
-    MessageBox(TopLevel, ptr, _("error"), MB_ERROR);
+    MessageBox(NULL, ptr, _("error"), MB_ERROR);
     g_free(ptr);
   }
 }

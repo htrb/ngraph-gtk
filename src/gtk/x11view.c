@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.173 2009/11/06 03:50:14 hito Exp $
+ * $Id: x11view.c,v 1.174 2009/11/06 11:09:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2833,7 +2833,7 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
   }
 
   if (selnum > 0)
-    MessageBox(TopLevel, _("Data points are moved."), "Confirm", MB_OK);
+    MessageBox(NULL, _("Data points are moved."), "Confirm", MB_OK);
 
  ErrEnd:
   move_data_cancel(d, FALSE);
@@ -3949,7 +3949,7 @@ move_data_cancel(struct Viewer *d, gboolean show_message)
   SetCursor(GDK_LEFT_PTR);
 
   if (show_message)
-    MessageBox(TopLevel, _("Moving data points is canceled."), "Confirm", MB_OK);
+    MessageBox(NULL, _("Moving data points is canceled."), "Confirm", MB_OK);
 }
 
 static gboolean

@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.107 2009/11/06 03:50:14 hito Exp $
+ * $Id: x11menu.c,v 1.108 2009/11/06 11:09:55 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -61,6 +61,7 @@ struct NgraphApp NgraphApp;
 GtkWidget *TopLevel = NULL;
 GtkAccelGroup *AccelGroup = NULL;
 
+static GtkWidget *CurrentWindow = NULL;
 static enum {APP_CONTINUE, APP_QUIT, APP_QUIT_FORCE} Hide_window = APP_CONTINUE;
 static int Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
@@ -472,6 +473,18 @@ static struct command_data Command2_data[] = {
 #define COMMAND2_NUM (sizeof(Command2_data) / sizeof(*Command2_data))
 
 GdkColor white, gray;
+
+void
+set_current_window(GtkWidget *w)
+{
+  CurrentWindow = w;
+}
+
+GtkWidget *
+get_current_window(void)
+{
+  return (CurrentWindow) ? CurrentWindow : TopLevel;
+}
 
 void
 menu_lock(int lock)
@@ -2133,7 +2146,7 @@ application(char *file)
 
   load_hist();
 
-  TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  CurrentWindow = TopLevel = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(TopLevel), AppName);
 
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
@@ -2275,7 +2288,7 @@ application(char *file)
   NgraphApp.FileName = NULL;
 
   gtk_widget_destroy(TopLevel);
-  TopLevel = NULL;
+  CurrentWindow = TopLevel = NULL;
   Menulocal.win = NULL;
 
   free_markpixmap();
@@ -2499,7 +2512,7 @@ PutStderr(char *s)
 
   len = strlen(s);
   ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
-  MessageBox(TopLevel, ustr, _("Error:"), MB_ERROR);
+  MessageBox(NULL, ustr, _("Error:"), MB_ERROR);
   g_free(ustr);
   UpdateAll2();
   return len + 1;
@@ -2549,7 +2562,7 @@ InputYN(char *mes)
 {
   int ret;
 
-  ret = MessageBox(TopLevel, mes, _("Question"), MB_YESNO);
+  ret = MessageBox((CurrentWindow) ? CurrentWindow : TopLevel, mes, _("Question"), MB_YESNO);
   UpdateAll2();
   return (ret == IDYES) ? TRUE : FALSE;
 }

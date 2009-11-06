@@ -1,5 +1,23 @@
 2009-11-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (mouse_down_move_data, move_data_cancel):
+	first argument of "MessageBox()" is NULL.
+
+	* src/gtk/x11print.c (CmOutputPrinter): first argument of
+	"MessageBox()" is NULL.
+
+	* src/gtk/x11opt.c (set_scrpt_option, CmOptionSaveNgp): first
+	argument of "MessageBox()" is NULL.
+
+	* src/gtk/x11menu.c: (static GtkWidget *CurrentWindow)
+	(set_current_window, get_current_window): add
+	(PutStderr): first argument of "MessageBox()" is NULL.
+
+	* src/gtk/x11gui.c (DialogExecute): save and restore current window.
+	(MessageBox): use "get_current_window()" as parent if "parent" is NULL.
+
+	* src/gtk/x11commn.c (ErrorMessage): first argument of "MessageBox()" is NULL.
+
 	* src/math/math_error.c (math_err_get_error_message): convert
 	error message from utf-8 to locale.
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.45 2009/08/13 09:11:02 hito Exp $
+ * $Id: x11print.c,v 1.46 2009/11/06 11:09:55 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -631,7 +631,7 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   if (res == GTK_PRINT_OPERATION_RESULT_ERROR) {
     snprintf(buf, sizeof(buf), _("Printing error: %s"), error->message);
-    MessageBox(TopLevel, buf, _("Print"), MB_ERROR);
+    MessageBox(NULL, buf, _("Print"), MB_ERROR);
     g_error_free(error);
   } else if (res == GTK_PRINT_OPERATION_RESULT_APPLY) {
     if (PrintSettings)
