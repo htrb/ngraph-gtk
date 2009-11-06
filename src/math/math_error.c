@@ -180,5 +180,12 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   if (code_buf)
     free(code_buf);
 
+  if (buf) {
+    gsize len;
+    ptr = g_locale_from_utf8(buf, -1, NULL, &len, NULL);
+    free(buf);
+    buf = ptr;
+  }
+
   return buf;
 }

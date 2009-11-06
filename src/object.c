@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.42 2009/11/06 03:50:12 hito Exp $
+ * $Id: object.c,v 1.43 2009/11/06 10:25:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3644,7 +3644,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
       }
       rcode = math_equation_calculate(eq, &val);
       vd = val.val;
-	math_equation_free(eq);
+      math_equation_free(eq);
 #else
       rcode=mathcode(s2,&code,NULL,NULL,NULL,NULL,
                      FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);

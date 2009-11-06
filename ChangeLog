@@ -1,5 +1,8 @@
 2009-11-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/math/math_error.c (math_err_get_error_message): convert
+	error message from utf-8 to locale.
+
 	* src/gtk/x11lgnd.c (pos_edited, width_edited): don't show error
 	message.
 
