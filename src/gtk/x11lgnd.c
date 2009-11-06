@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.58 2009/11/03 08:16:59 hito Exp $
+ * $Id: x11lgnd.c,v 1.59 2009/11/06 05:49:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2325,7 +2325,7 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   int depth, col, *ary, inc, ecode;
   GtkTreePath *tree_path;
   double prev, val;
-  char *tmp, *ptr, *err_msg;
+  char *tmp, *ptr;
 
   menu_lock(FALSE);
 
@@ -2343,12 +2343,8 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
     return;
   }
 
-  ecode = str_calc(str, &val, NULL, &err_msg);
+  ecode = str_calc(str, &val, NULL, NULL);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
-    if (err_msg) {
-      MessageBox(TopLevel, err_msg, "error", MB_ERROR);
-      free(err_msg);
-    }
     return;
   }
 
@@ -2418,19 +2414,14 @@ width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
   int depth, *ary, ecode;
   GtkTreePath *tree_path;
   double val;
-  char *err_msg;
 
   menu_lock(FALSE);
 
   if (str == NULL || path == NULL)
     return;
 
-  ecode = str_calc(str, &val, NULL, &err_msg);
+  ecode = str_calc(str, &val, NULL, NULL);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
-    if (err_msg) {
-      MessageBox(TopLevel, err_msg, "error", MB_ERROR);
-      free(err_msg);
-    }
     return;
   }
 

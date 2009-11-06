@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.73 2009/11/03 08:16:59 hito Exp $
+ * $Id: x11axis.c,v 1.74 2009/11/06 05:49:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3044,30 +3044,26 @@ enum CHANGE_DIR {
 };
 
 static void
-pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
+pos_edited_common(struct SubWin *d, int id, char *str, enum CHANGE_DIR dir)
 {
   int x, y, pos1, pos2, man, ecode;
   double val;
-  char *argv[3], *err_msg;
+  char *argv[3];
 
   if (str == NULL || id < 0)
     return;
 
   switch (dir) {
   case CHANGE_DIR_X:
-    getobj(obj, "x", id, 0, NULL, &pos1);
+    getobj(d->obj, "x", id, 0, NULL, &pos1);
     break;
   case CHANGE_DIR_Y:
-    getobj(obj, "y", id, 0, NULL, &pos1);
+    getobj(d->obj, "y", id, 0, NULL, &pos1);
     break;
   }
 
-  ecode = str_calc(str, &val, NULL, &err_msg);
+  ecode = str_calc(str, &val, NULL, NULL);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
-    if (err_msg) {
-      MessageBox(TopLevel, err_msg, "error", MB_ERROR);
-      free(err_msg);
-    }
     return;
   }
 
@@ -3091,9 +3087,9 @@ pos_edited_common(struct objlist *obj, int id, char *str, enum CHANGE_DIR dir)
   argv[1] = (char *) &y;
   argv[2] = NULL;
 
-  getobj(obj, "group_manager", id, 0, NULL, &man);
+  getobj(d->obj, "group_manager", id, 0, NULL, &man);
   if (man >= 0) {
-    exeobj(obj, "move", man, 2, argv);
+    exeobj(d->obj, "move", man, 2, argv);
 
     set_graph_modified();
     AxisWinUpdate(TRUE);
@@ -3112,7 +3108,7 @@ pos_x_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
 
-  pos_edited_common(d->obj, sel, str, CHANGE_DIR_X);
+  pos_edited_common(d, sel, str, CHANGE_DIR_X);
 }
 
 static void
@@ -3127,7 +3123,7 @@ pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
 
-  pos_edited_common(d->obj, sel, str, CHANGE_DIR_Y);
+  pos_edited_common(d, sel, str, CHANGE_DIR_Y);
 }
 
 static void

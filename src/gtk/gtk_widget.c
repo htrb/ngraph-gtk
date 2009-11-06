@@ -256,24 +256,23 @@ spin_entry_get_val(GtkWidget *entry)
 }
 
 static int
-spin_change_value_cb(GtkSpinButton *spinbutton, GtkScrollType  arg1, gpointer user_data)
+spin_change_value_cb(GtkSpinButton *spinbutton, GtkScrollType arg1, gpointer user_data)
 {
   const char *str;
-  double val;
+  double oval, val;
   int ecode;
-  char *err_msg;
 
   str = gtk_entry_get_text(GTK_ENTRY(spinbutton));
   if (str == NULL)
     return 0;
 
-  ecode = str_calc(str, &val, NULL, &err_msg);
+  oval = gtk_spin_button_get_value(spinbutton);
+
+  ecode = str_calc(str, &val, NULL, NULL);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
-    MessageBox(GTK_WIDGET(spinbutton), err_msg, "error", MB_ERROR);
-    free(err_msg);
+    gtk_spin_button_set_value(spinbutton, oval);
     return 0;
   }
-
   gtk_spin_button_set_value(spinbutton, val);
 
   return 0;

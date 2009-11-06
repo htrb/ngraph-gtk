@@ -1,3 +1,18 @@
+2009-11-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (pos_edited, width_edited): don't show error
+	message.
+
+	* src/gtk/x11axis.c (pos_edited_common): don't show error message.
+	(pos_edited_common): change first argument (from "struct
+	objlist *" to "struct SubWin*").
+
+	* src/gtk/gtk_widget.c (spin_change_value_cb): don't show error
+	message (because Gtk+ shows following error message).
+	Gtk-WARNING **: GtkEntry - did not receive focus-out-event. If you
+	connect a handler to this signal, it must return FALSE so the
+	entry gets the event as well
+
 2009-11-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (put_func): change 5th argument from "int type" to
