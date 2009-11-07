@@ -266,14 +266,14 @@ spin_change_value_cb(GtkSpinButton *spinbutton, GtkScrollType arg1, gpointer use
   if (str == NULL)
     return 0;
 
-  oval = gtk_spin_button_get_value(spinbutton);
+  oval = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinbutton));
 
   ecode = str_calc(str, &val, NULL, NULL);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
-    gtk_spin_button_set_value(spinbutton, oval);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinbutton), oval);
     return 0;
   }
-  gtk_spin_button_set_value(spinbutton, val);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinbutton), val);
 
   return 0;
 }

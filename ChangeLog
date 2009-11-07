@@ -1,3 +1,9 @@
+2009-11-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (get_save_opt): return "IDOK" or "IDCANCEL".
+	(GraphSave): return "IDCANCEL" when "get_save_opt()" returns
+	"IDCANCEL".
+
 2009-11-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_down_move_data, move_data_cancel):

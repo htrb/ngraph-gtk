@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.53 2009/11/06 11:09:55 hito Exp $
+ * $Id: x11commn.c,v 1.54 2009/11/07 01:17:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -949,12 +949,12 @@ get_save_opt(int *sdata, int *smerge, int *path)
   mnum = (mobj) ? chkobjlastinst(mobj) : -1;
 
   if (fnum < 0 && mnum < 0)
-    return TRUE;
+    return IDCANCEL;
 
   SaveDialog(&DlgSave, sdata, smerge);
   ret = DialogExecute(TopLevel, &DlgSave);
   if (ret != IDOK)
-    return FALSE;
+    return IDCANCEL;
 
   *path = DlgSave.Path;
   for (i = 0; i <= fnum; i++) {
@@ -965,7 +965,7 @@ get_save_opt(int *sdata, int *smerge, int *path)
     putobj(mobj, "save_path", i, path);
   }
 
-  return TRUE;
+  return IDOK;
 }
 
 int
@@ -1014,7 +1014,8 @@ GraphSave(int overwrite)
       ErrorMessage();
     }
 
-    if (get_save_opt(&sdata, &smerge, &path)) {
+    ret = get_save_opt(&sdata, &smerge, &path);
+    if (ret == IDOK) {
       snprintf(mes, sizeof(mes), _("Saving `%.128s'."), file);
       SetStatusBar(mes);
       if(SaveDrawrable(file, sdata, smerge)) {
