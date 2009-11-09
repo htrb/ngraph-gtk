@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.43 2009/11/06 10:25:24 hito Exp $
+ * $Id: object.c,v 1.44 2009/11/09 11:47:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2391,7 +2391,7 @@ getobj(struct objlist *obj,char *vname,int id,
   idp=chkobjoffset2(robj,idn);
   if ((instcur=getobjinst(obj,id))==NULL) return -1;
   if (((robj->table[idn].attrib & NREAD)==0)
-  || ( (robj->table[idn].type>=NVFUNC)
+  || ((robj->table[idn].type>=NVFUNC)
    && ((robj->table[idn].attrib & NEXEC)==0))) {
     error2(obj,ERRPERMISSION,vname);
     return -1;
@@ -2513,7 +2513,7 @@ exeobj(struct objlist *obj,char *vname,int id,int argc,char **argv)
   if ((instcur=getobjinst(obj,id))==NULL) return -1;
   if ((robj->table[idn].type<NVFUNC)
   || ((robj->table[idn].attrib & NREAD)==0)
-  || ( (robj->table[idn].type>=NVFUNC)
+  || ((robj->table[idn].type>=NVFUNC)
    && ((robj->table[idn].attrib & NEXEC)==0))) {
     error2(obj,ERRPERMISSION,vname);
     return -1;

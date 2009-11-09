@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.25 2009/11/03 01:18:51 hito Exp $
+ * $Id: gra.c,v 1.26 2009/11/09 11:47:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2068,10 +2068,11 @@ GRAdrawtext(int GC,char *s,char *font,char *jfont,
   do {
     if ((str=nstrnew())==NULL) goto errexit;
     kanji=niskanji((unsigned char)c[j]);
-    while ( (j<len)
-    && ((strchr("\n\r\b_^@%",c[j])==NULL) || niskanji2(c,j))
-    && ( (kanji && niskanji((unsigned char)c[j]))
-      || (!kanji && !niskanji((unsigned char)c[j])) || (!kanji && (c[j]=='\\')) ) ) {
+    while ((j < len) &&
+	   ((strchr("\n\r\b_^@%",c[j])==NULL) || niskanji2(c,j)) &&
+	   ((kanji && niskanji((unsigned char)c[j])) ||
+	    (!kanji && !niskanji((unsigned char)c[j])) ||
+	    (!kanji && (c[j]=='\\')))) {
       if (kanji) {
         if (((str=nstrccat(str,c[j]))==NULL)
          || ((str=nstrccat(str,c[j+1]))==NULL)) goto errexit;
@@ -2271,9 +2272,9 @@ GRAdrawtextraw(int GC,char *s,char *font,char *jfont,
   do {
     if ((str=nstrnew())==NULL) goto errexit;
     kanji=niskanji((unsigned char)c[j]);
-    while ( (j<len)
-    && ( (kanji && niskanji((unsigned char)c[j]))
-      || (!kanji && !niskanji((unsigned char)c[j])) || (!kanji && (c[j]=='\\')) ) ) {
+    while ((j<len)
+    && ((kanji && niskanji((unsigned char)c[j]))
+      || (!kanji && !niskanji((unsigned char)c[j])) || (!kanji && (c[j]=='\\')))) {
       if (kanji) {
         if (((str=nstrccat(str,c[j]))==NULL)
          || ((str=nstrccat(str,c[j+1]))==NULL)) goto errexit;
@@ -2369,8 +2370,8 @@ GRAtextextent(char *s,char *font,char *jfont,
     if ((str=nstrnew())==NULL) goto errexit;
     kanji=niskanji((unsigned char)c[j]);
     while ((j<len) && ((strchr("\n\b\r_^@%",c[j])==NULL) || niskanji2(c,j))
-    && ( (kanji && niskanji((unsigned char)c[j]))
-      || (!kanji && !niskanji((unsigned char)c[j])) || (!kanji && (c[j]=='\\')) ) ) {
+    && ((kanji && niskanji((unsigned char)c[j]))
+      || (!kanji && !niskanji((unsigned char)c[j])) || (!kanji && (c[j]=='\\')))) {
       if (kanji) {
         if (((str=nstrccat(str,c[j]))==NULL)
          || ((str=nstrccat(str,c[j+1]))==NULL))
@@ -2596,8 +2597,8 @@ GRAtextextentraw(char *s,char *font,char *jfont,
     if ((str=nstrnew())==NULL) goto errexit;
     kanji=niskanji((unsigned char)c[j]);
     while ((j<len)
-    && ( (kanji && niskanji((unsigned char)c[j]))
-      || (!kanji && !niskanji((unsigned char)c[j])) || (!kanji && (c[j]=='\\')) )) {
+    && ((kanji && niskanji((unsigned char)c[j]))
+      || (!kanji && !niskanji((unsigned char)c[j])) || (!kanji && (c[j]=='\\')))) {
       if (kanji) {
         if (((str=nstrccat(str,c[j]))==NULL)
          || ((str=nstrccat(str,c[j+1]))==NULL))

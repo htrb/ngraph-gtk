@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.15 2009/05/01 09:15:58 hito Exp $
+ * $Id: orect.c,v 1.16 2009/11/09 11:47:14 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -426,10 +426,10 @@ rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((bminx<=minx) && (minx<=bmaxx)
        && (bminy<=miny) && (miny<=bmaxy)) *(int *)rval=TRUE;
     } else {
-      if (( ((bminx-err<=minx) && (minx<=bminx+err))
+      if ((((bminx-err<=minx) && (minx<=bminx+err))
          || ((bmaxx-err<=minx) && (minx<=bmaxx+err)))
        && (bminy-err<=miny) && (miny<=bmaxy+err)) *(int *)rval=TRUE;
-      if (( ((bminy-err<=miny) && (miny<=bminy+err))
+      if ((((bminy-err<=miny) && (miny<=bminy+err))
          || ((bmaxy-err<=miny) && (miny<=bmaxy+err)))
        && (bminx-err<=minx) && (minx<=bmaxx+err)) *(int *)rval=TRUE;
     }
