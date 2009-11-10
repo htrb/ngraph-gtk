@@ -1,3 +1,7 @@
+2009-11-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_parser.c (parse_const_def_expression): set serror code.
+
 2009-11-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11commn.c (get_save_opt): return "IDOK" or "IDCANCEL".

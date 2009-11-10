@@ -900,6 +900,8 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
   }
 
   if (cname->type != MATH_TOKEN_TYPE_SYMBOL) {
+    *err = MATH_ERROR_UNEXP_TOKEN;
+    math_equation_set_parse_error(eq, token->ptr);
     math_scanner_free_token(cname);
     return NULL;
   }
@@ -911,6 +913,8 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
   }
 
   if (token->type != MATH_TOKEN_TYPE_OPERATOR || token->data.op == MATH_OPERATOR_TYPE_EQ) {
+    *err = MATH_ERROR_UNEXP_TOKEN;
+    math_equation_set_parse_error(eq, token->ptr);
     math_scanner_free_token(token);
     return NULL;
   }
@@ -918,6 +922,7 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
 
   exp = parse_expression(str, eq, err);
   if (exp == NULL) {
+    *err = MATH_ERROR_MEMORY;
     math_scanner_free_token(cname);
     return NULL;
   }
