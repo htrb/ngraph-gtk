@@ -1,6 +1,10 @@
 2009-11-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/math/math_parser.c (parse_const_def_expression): set serror code.
+	* src/math/math_parser.c (parse_const_def_expression): set serror
+	code.
+	(parse_const_def_expression): fix dondition from "token->data.op
+	== MATH_OPERATOR_TYPE_EQ" to "token->data.op !=
+	MATH_OPERATOR_TYPE_ASSIGN"
 
 2009-11-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

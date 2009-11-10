@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_error.h,v 1.4 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #ifndef MATH_ERROR_HEADER
 #define MATH_ERROR_HEADER
 

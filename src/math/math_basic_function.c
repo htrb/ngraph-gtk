@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_basic_function.c,v 1.5 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #include <stdlib.h>
 #include <math.h>
 #include <error.h>

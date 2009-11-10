@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_scanner.h,v 1.2 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #ifndef MATH_SCANNER_HEADER
 #define MATH_SCANNER_HEADER
 

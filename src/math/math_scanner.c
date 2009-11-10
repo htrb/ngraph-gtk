@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_scanner.c,v 1.4 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>

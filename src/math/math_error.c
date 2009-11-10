@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_error.c,v 1.7 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
@@ -5,6 +10,7 @@
 #include "common.h"
 #include "math_equation.h"
 
+#define ERR_MSG_EOEQ		N_("syntax error, unexpected end of equation.")
 #define ERR_MSG_FUNC_NEST	N_("syntax error, function definition cannot be nested.")
 #define ERR_MSG_UNEXP_OP	N_("syntax error, unexpected operator.")
 #define ERR_MSG_UNEXP_TOK	N_("syntax error, unexpected token.")
@@ -66,6 +72,7 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
   case MATH_ERROR_NONE:
     break;
   case MATH_ERROR_EOEQ:
+    buf = strdup(_(ERR_MSG_EOEQ));
     break;
   case MATH_ERROR_FDEF_NEST:
     code_buf = check_error_position(eq, code);

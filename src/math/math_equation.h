@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_equation.h,v 1.7 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #ifndef MATH_EQUATION_HEADER
 #define MATH_EQUATION_HEADER
 

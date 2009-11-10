@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_expression.c,v 1.8 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

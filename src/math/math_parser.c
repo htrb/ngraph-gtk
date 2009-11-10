@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_parser.c,v 1.9 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -912,7 +917,7 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
     return NULL;
   }
 
-  if (token->type != MATH_TOKEN_TYPE_OPERATOR || token->data.op == MATH_OPERATOR_TYPE_EQ) {
+  if (token->type != MATH_TOKEN_TYPE_OPERATOR || token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
     *err = MATH_ERROR_UNEXP_TOKEN;
     math_equation_set_parse_error(eq, token->ptr);
     math_scanner_free_token(token);
@@ -922,7 +927,6 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
 
   exp = parse_expression(str, eq, err);
   if (exp == NULL) {
-    *err = MATH_ERROR_MEMORY;
     math_scanner_free_token(cname);
     return NULL;
   }

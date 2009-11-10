@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_parser.h,v 1.3 2009/11/10 04:12:20 hito Exp $
+ * 
+ */
+
 #ifndef MATH_PARSER_HEADER
 #define MATH_PARSER_HEADER
 
