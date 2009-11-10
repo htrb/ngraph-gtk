@@ -1,8 +1,3 @@
-/* 
- * $Id: math_parser.c,v 1.9 2009/11/10 04:12:20 hito Exp $
- * 
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

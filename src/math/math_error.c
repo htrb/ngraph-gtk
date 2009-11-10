@@ -1,8 +1,3 @@
-/* 
- * $Id: math_error.c,v 1.7 2009/11/10 04:12:20 hito Exp $
- * 
- */
-
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
