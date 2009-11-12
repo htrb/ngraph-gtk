@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.96 2009/11/06 03:50:13 hito Exp $
+ * $Id: ofile.c,v 1.97 2009/11/12 01:36:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1426,6 +1426,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
     if (err_msg) {
       error22(obj, ERRUNKNOWN, field, err_msg);
       free(err_msg);
+      set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
     }
     f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
     break;
@@ -1435,6 +1436,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
     if (err_msg) {
       error22(obj, ERRUNKNOWN, field, err_msg);
       free(err_msg);
+      set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, NULL);
     }
     f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
     break;
@@ -1443,25 +1445,26 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
   case 'h':
     switch (type) {
     case 'f':
-      f = eq;
+      rcode = set_equation(f2dlocal, f2dlocal->codex, eq, g, h, x, NULL);
+      rcode = set_equation(f2dlocal, f2dlocal->codey, eq, g, h, y, &err_msg);
       break;
     case 'g':
-      g = eq;
+      rcode = set_equation(f2dlocal, f2dlocal->codex, f, eq, h, x, NULL);
+      rcode = set_equation(f2dlocal, f2dlocal->codey, f, eq, h, y, &err_msg);
       break;
     case 'h':
-      h = eq;
+      rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, eq, x, NULL);
+      rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, eq, y, &err_msg);
       break;
     }
-    rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
-    rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, &err_msg);
     if (err_msg) {
       error22(obj, ERRUNKNOWN, field, err_msg);
       free(err_msg);
     }
 
     if (rcode) {
-      set_user_fnc(f2dlocal->codex, NULL, fname, NULL);
-      set_user_fnc(f2dlocal->codey, NULL, fname, NULL);
+      rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
+      rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, NULL);
     }
 
     f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);

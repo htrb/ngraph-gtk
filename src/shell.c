@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.34 2009/11/06 03:50:13 hito Exp $
+ * $Id: shell.c,v 1.35 2009/11/12 01:36:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -142,6 +142,7 @@ static char *Prompt;
 #include "shellcm.h"
 #include "shellux.h"
 #include "mathcode.h"
+#include "math/math_equation.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -4270,5 +4271,108 @@ ngraphenvironment(struct nshell *nshell)
   if (getval(nshell,"IGNOREEOF")==NULL) addval(nshell,"IGNOREEOF","10");
   pathset="PATH=$NGRAPHLIB\\"PATHSEP"$NGRAPHHOME\\"PATHSEP".\\"PATHSEP"$PATH";
   cmdexecute(nshell,pathset);
+}
+
+int
+str_calc(const char *str, double *val, int *r, char **err_msg)
+{
+#if NEW_MATH_CODE
+  int ecode, rcode;
+  static MathEquation *eq = NULL;
+  MathValue value;
+
+  if (err_msg) {
+    *err_msg = NULL;
+  }
+
+  if (str == NULL || val == NULL) {
+    return ERRMILLEGAL;
+  }
+
+  if (eq == NULL) {
+    eq = math_equation_basic_new();
+    if (eq == NULL) {
+      return ERRMEMORY;
+    }
+  }
+
+  ecode = math_equation_parse(eq, str);
+  if (ecode) {
+    if (err_msg) {
+      *err_msg = math_err_get_error_message(eq, str, ecode);
+    }
+    return ERRMSYNTAX;
+  }
+ 
+  rcode = math_equation_calculate(eq, &value);
+  ecode = (rcode) ? ERRMFAT : 0;
+
+  *val = value.val;
+#else
+  int rcode, ecode = 0, i;
+  char *code;
+  double memory[MEMORYNUM];
+  char memorystat[MEMORYNUM];
+
+  if (err_msg) {
+    *err_msg = NULL;
+  }
+
+  if (str == NULL || val == NULL) {
+    return ERRMILLEGAL;
+  }
+
+  rcode = mathcode(str, &code, NULL, NULL, NULL, NULL, 
+		   FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+		   FALSE, FALSE, FALSE, FALSE, FALSE);
+
+  if (rcode != MCNOERR) {
+    switch (rcode) {
+    case MCSYNTAX:
+      ecode = ERRMSYNTAX;
+      break;
+    case MCILLEGAL:
+      ecode = ERRMILLEGAL;
+      break;
+    case MCNEST:
+      ecode = ERRMNEST;
+      break;
+    default:
+      ecode = ERRUNKNOWNSH;
+    }
+    return ecode;
+  }
+  for (i = 0; i < MEMORYNUM; i++) {
+    memory[i] = 0;
+    memorystat[i] = MNOERR;
+  }
+  rcode = calculate(code, 1, 
+		    0, MNOERR, 0, MNOERR, 0, MNOERR, 
+		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+		    NULL, NULL, 
+		    memory, memorystat, 
+		    NULL, NULL, 
+		    NULL, NULL, 
+		    NULL, NULL, NULL, 
+		    NULL, NULL, NULL, 0, NULL, NULL, NULL, 0, val);
+  memfree(code);
+
+  if (rcode == MSERR) {
+    ecode = ERRMSYNTAX;
+  } else if (rcode == MERR) {
+    ecode = ERRMFAT;
+  }
+
+#endif
+
+  if (ecode) {
+    return ecode;
+  }
+
+  if (r) {
+    *r = rcode;
+  }
+
+  return 0;
 }
 

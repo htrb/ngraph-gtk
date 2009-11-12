@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.44 2009/11/09 11:47:14 hito Exp $
+ * $Id: object.c,v 1.45 2009/11/12 01:36:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,6 +38,7 @@
 #include "mathcode.h"
 #include "mathfn.h"
 #include "nhash.h"
+#include "shell.h"
 
 #ifdef WINDOWS
 #include <math.h>
@@ -3628,23 +3629,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
       }
     } else if ((arglist[alp]=='i') || (arglist[alp]=='d')) {
 #if NEW_MATH_CODE 
-      MathEquation *eq;
-      MathValue val;
-
-      eq = math_equation_basic_new();
-      if (eq == NULL) {
-        err=3;
-        goto errexit;
-      }
-      rcode = math_equation_parse(eq, s2);
-      if (rcode!=MCNOERR) {
-	math_equation_free(eq);
-        err=3;
-        goto errexit;
-      }
-      rcode = math_equation_calculate(eq, &val);
-      vd = val.val;
-      math_equation_free(eq);
+      str_calc(s2, &vd, &rcode, NULL);
 #else
       rcode=mathcode(s2,&code,NULL,NULL,NULL,NULL,
                      FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
@@ -4269,3 +4254,4 @@ match:
   return name;
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
+

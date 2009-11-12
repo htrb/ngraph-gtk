@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.26 2009/11/09 11:47:14 hito Exp $
+ * $Id: gra.c,v 1.27 2009/11/12 01:36:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1713,10 +1713,7 @@ GRAexpandmath(char **s)
   char *str,*ret;
   int quote;
   int rcode;
-#if NEW_MATH_CODE 
-  MathValue val;
-  MathEquation *code;
-#else
+#if ! NEW_MATH_CODE 
   int j;
   char *code;
   double memory[MEMORYNUM];
@@ -1752,18 +1749,7 @@ GRAexpandmath(char **s)
   if ((*s)[0]!=']') goto errexit;
   (*s)++;
 #if NEW_MATH_CODE 
-  code = math_equation_basic_new();
-  if (code == NULL)
-    goto errexit;
-
-  if (math_equation_parse(code, str)) {
-    math_equation_free(code);
-    goto errexit;
-  }
-
-  rcode = math_equation_calculate(code, &val);
-  vd = val.val;
-
+  str_calc(str, &vd, &rcode, NULL);
 #else
   rcode=mathcode(str,&code,NULL,NULL,NULL,NULL,
                  FALSE,FALSE,FALSE,FALSE,FALSE,

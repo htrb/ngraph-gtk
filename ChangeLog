@@ -1,3 +1,21 @@
+2009-11-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/omath.c (parse_original_formula): add.
+	(mformula): use "parse_original_formula()".
+
+2009-11-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shellcm.c (str_calc): remove.
+
+	* src/shell.c (str_calc): add.
+
+	* src/object.c (getargument): use "str_calc()".
+
+	* src/gra.c (GRAexpandmath): use "str_calc()".
+
+	* src/ofile.c (put_func): restore old equation when new equation
+	causes error.
+
 2009-11-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_parser.c (parse_const_def_expression): set serror

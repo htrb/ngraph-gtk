@@ -1,5 +1,5 @@
 /* 
- * $Id: math_equation.c,v 1.9 2009/11/10 04:12:20 hito Exp $
+ * $Id: math_equation.c,v 1.10 2009/11/12 01:36:47 hito Exp $
  * 
  */
 
@@ -108,8 +108,8 @@ MathEquation *
 math_equation_basic_new(void)
 {
   MathEquation *eq;
-  eq = math_equation_new();
 
+  eq = math_equation_new();
   if (eq == NULL) {
     return NULL;
   }

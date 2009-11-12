@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.16 2009/11/06 03:50:13 hito Exp $
+ * $Id: omath.c,v 1.17 2009/11/12 01:36:45 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -243,13 +243,42 @@ create_func_def_str(char *name, char *code)
 }
 #endif
 
+static void
+parse_original_formula(struct objlist *obj,char *inst, struct mlocal *mlocal)
+{
+  char *ptr;
+  MathEquationParametar *prm;
+
+  _getobj(obj, "formula", inst, &ptr);
+  math_equation_parse(mlocal->code, ptr);
+  math_equation_optimize(mlocal->code);
+
+  prm = math_equation_get_parameter(mlocal->code, 0);
+  if (prm == NULL) {
+    mlocal->maxdim = 0;
+  } else {
+    mlocal->maxdim = prm->id_max;
+  }
+}
+
+/* 
+   # following procedure causes error.
+
+   new math
+   math::formula="const A:1;A"
+   get math: calc                  # calc:1.000000000000000e+00
+   math::formula="const A=1;A"
+   get math: formula               # formula:const A:1;A
+   get math: calc                  # calc:0.000000000000000e+00
+ */
 static int 
 mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *math;
   struct mlocal *mlocal;
 #if NEW_MATH_CODE 
-  char *ptr;
+  int rcode;
+  char *ptr, *err_msg;
   MathEquationParametar *prm;
 #else
   enum MATH_CODE_ERROR_NO rcode;
@@ -263,11 +292,16 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"_local",inst,&mlocal);
   if (strcmp("formula",argv[1])==0) {
     if (math) {
-      if (math_equation_parse(mlocal->code, math)) {
-	error(obj, ERRSYNTAX);
+      rcode = math_equation_parse(mlocal->code, math);
+      if (rcode) {
+	err_msg = math_err_get_error_message(mlocal->code, math, rcode);
+	error22(obj, ERRUNKNOWN, argv[1], err_msg);
+	memfree(err_msg);
+	parse_original_formula(obj, inst, mlocal);
 	return 1;
       }
       if (math_equation_optimize(mlocal->code)) {
+	parse_original_formula(obj, inst, mlocal);
 	return 1;
       }
 
@@ -287,18 +321,21 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (ptr == NULL) {
       return 1;
     }
-    if (math_equation_parse(mlocal->code, ptr)) {
-      error(obj, ERRSYNTAX);
+    rcode = math_equation_parse(mlocal->code, ptr);
+    if (rcode) {
+      err_msg = math_err_get_error_message(mlocal->code, math, rcode);
+      error22(obj, ERRUNKNOWN, argv[1], err_msg);
+      memfree(err_msg);
+      parse_original_formula(obj, inst, mlocal);
       return 1;
     }
     if (math_equation_optimize(mlocal->code)) {
+      parse_original_formula(obj, inst, mlocal);
       return 1;
     }
     memfree(ptr);
 
-    _getobj(obj, "formula", inst, &ptr);
-    math_equation_parse(mlocal->code, ptr);
-    math_equation_optimize(mlocal->code);
+    parse_original_formula(obj, inst, mlocal);
   }
 #else
   if (math!=NULL) {

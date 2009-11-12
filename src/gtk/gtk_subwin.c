@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.55 2009/11/03 08:16:59 hito Exp $
+ * $Id: gtk_subwin.c,v 1.56 2009/11/12 01:36:46 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -12,7 +12,6 @@
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
-#include "shellcm.h"
 
 #include "main.h"
 #include "ox11menu.h"

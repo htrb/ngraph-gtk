@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.74 2009/11/06 05:49:18 hito Exp $
+ * $Id: x11axis.c,v 1.75 2009/11/12 01:36:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,7 +33,6 @@
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
-#include "shellcm.h"
 
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"

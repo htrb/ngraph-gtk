@@ -4,7 +4,6 @@
 #include "mathfn.h"
 #include "object.h"
 #include "otext.h"
-#include "shellcm.h"
 
 #include "gtk_common.h"
 #include "gtk_widget.h"
