@@ -1,5 +1,5 @@
 /* 
- * $Id: strconv.c,v 1.3 2008/06/23 02:18:25 hito Exp $
+ * $Id: strconv.c,v 1.4 2009/11/14 12:18:41 hito Exp $
  */
 
 #ifdef HAVE_CONFIG_H
@@ -94,12 +94,12 @@ iso8859_to_utf8(char *src)
 char *
 sjis_to_utf8(char *src)
 {
-  return str2utf8(src, "shift-jis", "utf-8//TRANSLIT");
+  return str2utf8(src, "CP932", "utf-8//TRANSLIT");
 }
 
 char *
 utf8_to_sjis(char *src)
 {
-  return str2utf8(src, "utf-8", "shift-jis//TRANSLIT");
+  return str2utf8(src, "utf-8", "CP932//TRANSLIT");
 }
 

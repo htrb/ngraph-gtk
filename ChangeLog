@@ -1,3 +1,11 @@
+2009-11-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_parser.c (parse_primary_expression)
+	(parse_const_def_expression): "*err" is "MATH_ERROR_EOEQ" when the
+	type of the token is "MATH_TOKEN_TYPE_EOEQ".
+
+	* src/gtk/strconv.c (utf8_to_sjis, sjis_to_utf8): use "CP932" instead of "shift-jis"
+
 2009-11-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/omath.c (parse_original_formula): add.

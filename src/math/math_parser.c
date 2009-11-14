@@ -1,3 +1,8 @@
+/* 
+ * $Id: math_parser.c,v 1.10 2009/11/14 12:18:42 hito Exp $
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -198,6 +203,9 @@ parse_primary_expression(const char **str, MathEquation *eq, int *err)
     }
     break;
   case MATH_TOKEN_TYPE_EOEQ:
+    *err = MATH_ERROR_EOEQ;
+    math_scanner_free_token(token);
+    break;
   default:
     *err = MATH_ERROR_UNEXP_TOKEN;
     math_equation_set_parse_error(eq, token->ptr);
@@ -913,9 +921,14 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
   }
 
   if (token->type != MATH_TOKEN_TYPE_OPERATOR || token->data.op != MATH_OPERATOR_TYPE_ASSIGN) {
-    *err = MATH_ERROR_UNEXP_TOKEN;
-    math_equation_set_parse_error(eq, token->ptr);
-    math_scanner_free_token(token);
+    if (token->type == MATH_TOKEN_TYPE_EOEQ) {
+      *err = MATH_ERROR_EOEQ;
+      math_scanner_free_token(token);
+    } else {
+      *err = MATH_ERROR_UNEXP_TOKEN;
+      math_equation_set_parse_error(eq, token->ptr);
+      math_scanner_free_token(token);
+    }
     return NULL;
   }
   math_scanner_free_token(token);
