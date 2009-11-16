@@ -1,5 +1,5 @@
 /* 
- * $Id: math_parser.c,v 1.11 2009/11/16 09:13:06 hito Exp $
+ * $Id: math_parser.c,v 1.12 2009/11/16 12:46:08 hito Exp $
  * 
  */
 
@@ -323,7 +323,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
 
   arg_max = (fprm->argc< 0) ? ARG_MAX : fprm->argc;
 
-  argv = calloc(arg_max + 1, sizeof(*argv));
+  argv = g_malloc0((arg_max + 1) * sizeof(*argv));
   if (argv == NULL) {
     *err = MATH_ERROR_MEMORY;
     return NULL;

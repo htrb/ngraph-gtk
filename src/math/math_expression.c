@@ -1,5 +1,5 @@
 /* 
- * $Id: math_expression.c,v 1.9 2009/11/16 09:13:06 hito Exp $
+ * $Id: math_expression.c,v 1.10 2009/11/16 12:46:08 hito Exp $
  * 
  */
 
@@ -925,7 +925,7 @@ optimize_func_call(MathExpression *exp, int *err)
   int can_reduce, i, error;
 
   can_reduce = 1;
-  argv = calloc(exp->u.func_call.argc, sizeof(*argv));
+  argv = g_malloc0(exp->u.func_call.argc * sizeof(*argv));
   if (argv == NULL) {
     return NULL;
   }
