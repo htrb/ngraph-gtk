@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.46 2009/11/16 09:13:04 hito Exp $
+ * $Id: object.c,v 1.47 2009/11/16 12:59:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,14 +44,6 @@
 
 #ifdef WINDOWS
 #include <math.h>
-#endif
-
-#ifdef DEBUG
-#ifdef WINDOWS
-#include <dos.h>
-#else
-#include <unistd.h>
-#endif
 #endif
 
 #include "math/math_equation.h"

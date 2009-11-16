@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.22 2009/11/16 09:13:03 hito Exp $
+ * $Id: ioutil.c,v 1.23 2009/11/16 12:59:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -545,7 +545,7 @@ nscandir(char *dir,char ***namelist,
   unsigned int allocn=256,alloc=0;
 
   if ((dp=opendir(dir))==NULL) return -1;
-  if ((po=malloc(allocn*sizeof(char *)))==NULL) return -1;
+  if ((po=g_malloc(allocn*sizeof(char *)))==NULL) return -1;
   while ((ent=readdir(dp))!=NULL) {
     if ((select!=NULL) && ((*select)(dir,ent)==0)) continue;
 #ifndef WINDOWS
@@ -561,7 +561,7 @@ nscandir(char *dir,char ***namelist,
       }
       po=po2;
     }
-    if ((po[alloc]=malloc(strlen(ent->d_name)+1))==NULL) {
+    if ((po[alloc]=g_malloc(strlen(ent->d_name)+1))==NULL) {
       for (i=0;i<alloc;i++) g_free(po[i]);
       g_free(po);
       return -1;
@@ -1088,7 +1088,7 @@ n_mkstemp(char *dir, char *templ, char **name)
     len += strlen(templ);
 
   len++;
-  buf = malloc(len);
+  buf = g_malloc(len);
   if (buf == NULL) {
     *name = NULL;
     return -1;

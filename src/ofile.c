@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.98 2009/11/16 09:13:04 hito Exp $
+ * $Id: ofile.c,v 1.99 2009/11/16 12:59:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1425,7 +1425,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
     rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, eq, &err_msg);
     if (err_msg) {
       error22(obj, ERRUNKNOWN, field, err_msg);
-      free(err_msg);
+      g_free(err_msg);
       set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
     }
     f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);

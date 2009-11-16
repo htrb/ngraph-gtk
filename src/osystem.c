@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.14 2009/11/16 09:13:04 hito Exp $
+ * $Id: osystem.c,v 1.15 2009/11/16 12:59:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -106,10 +106,6 @@ sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *array;
   struct objlist *objectcur,*objectdel;
 
-#ifdef DEBUG
-  struct plist *plcur;
-#endif
-
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   objcur=chkobjroot();
   while (objcur!=NULL) {
@@ -164,19 +160,7 @@ sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
   g_free(inst);
   g_free(argv);
-#ifdef DEBUG
-  i=0;
-  plcur=g_mallocroot;
-  while (plcur!=NULL) {
-    i++;
-    printfconsole("g_malloc: +%p\n",plcur->val);
-    plcur=plcur->next;
-  }
-  if (i!=0) {
-    printfconsole("g_malloc remain: %d\n",i);
-    sleep(30);
-  }
-#endif
+
   exit(0);
   return 0;
 }

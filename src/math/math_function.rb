@@ -86,7 +86,7 @@ EOF
     case #{arg[0]}:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * #{arg[1].length});
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * #{arg[1].length});
       if (ptr == NULL) {
         return 1;
       }

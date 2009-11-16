@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.57 2009/11/16 09:13:05 hito Exp $
+ * $Id: gtk_subwin.c,v 1.58 2009/11/16 12:59:20 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -57,7 +57,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     entry_set_filename(GTK_WIDGET(w), file);
     modify_string(d, "file", file);
-    free (file);
+    g_free(file);
   }
 }
 #endif
