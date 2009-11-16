@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2nul.c,v 1.5 2009/03/24 08:24:05 hito Exp $
+ * $Id: ogra2nul.c,v 1.6 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,8 +41,6 @@
 #define NAME "gra2null"
 #define PARENT "gra2"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRCONF 100
 

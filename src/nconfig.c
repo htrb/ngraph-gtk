@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.14 2009/06/18 11:32:10 hito Exp $
+ * $Id: nconfig.c,v 1.15 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
+#include <glib.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -54,8 +55,13 @@
 #endif
 #define LOCK "Ngraph.lock"
 
+#ifndef TRUE
 #define TRUE  1
+#endif
+
+#ifndef FALSE
 #define FALSE 0
+#endif
 
 char *
 getscriptname(char *file)
@@ -105,12 +111,12 @@ lockconfig(char *dir)
   }
   if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return;
   if ((fp=fopen(file,"wt"))==NULL) {
-    memfree(file);
+    g_free(file);
     return;
   }
   fputs("Ngraph.ini is locked",fp);
   fclose(fp);
-  memfree(file);
+  g_free(file);
 }
 
 static void 
@@ -121,7 +127,7 @@ unlockconfig(char *dir)
   if (!findfilename(dir,CONFSEP,LOCK)) return;
   if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return;
   unlink(file);
-  memfree(file);
+  g_free(file);
 }
 
 FILE *
@@ -139,7 +145,7 @@ openconfig(char *section)
   if (findfilename(homedir,CONFSEP,CONF)) {
     if ((homeconf=getfilename(homedir,CONFSEP,CONF))!=NULL) {
       if (stat(homeconf,&homestat)!=0) {
-        memfree(homeconf);
+        g_free(homeconf);
         homeconf=NULL;
       }
     }
@@ -147,7 +153,7 @@ openconfig(char *section)
   if (findfilename(libdir,CONFSEP,CONF)) {
     if ((libconf=getfilename(libdir,CONFSEP,CONF))!=NULL) {
       if (stat(libconf,&libstat)!=0) {
-        memfree(libconf);
+        g_free(libconf);
         libconf=NULL;
       }
     }
@@ -158,14 +164,14 @@ openconfig(char *section)
       s=homeconf;
     } else if (homestat.st_mtime>=libstat.st_mtime) {
       s=homeconf;
-      memfree(libconf);
+      g_free(libconf);
     } else {
       s=libconf;
-      memfree(homeconf);
+      g_free(homeconf);
     }
 #else
     s=homeconf;
-    memfree(libconf);
+    g_free(libconf);
 #endif
   } else if (libconf) {
     s=libconf;
@@ -173,16 +179,16 @@ openconfig(char *section)
     return NULL;
   }
   if ((fp=nfopen(s,"rt"))==NULL) {
-    memfree(s);
+    g_free(s);
     return NULL;
   }
-  memfree(s);
+  g_free(s);
   while (fgetline(fp,&buf)==0) {
     if (strcmp0(buf,section)==0) {
-      memfree(buf);
+      g_free(buf);
       return fp;
     }
-    memfree(buf);
+    g_free(buf);
   }
   fclose(fp);
   return NULL;
@@ -197,11 +203,11 @@ getconfig(FILE *fp,char **val)
   while (fgetline(fp, &buf) == 0) {
     switch (buf[0]) {
     case '[':
-      memfree(buf);
+      g_free(buf);
       return NULL;
     case ';':
     case '#':
-      memfree(buf);
+      g_free(buf);
       continue;
     }
 
@@ -209,15 +215,15 @@ getconfig(FILE *fp,char **val)
     tok = getitok2(&s, &len, "=");
     if (tok) {
       s += (s[0] == '=') ? 1 : 0;
-      *val = nstrdup(s);
+      *val = g_strdup(s);
       if (*val == NULL) {
-	memfree(tok);
+	g_free(tok);
 	tok = NULL;
       }
-      memfree(buf);
+      g_free(buf);
       return tok;
     }
-    memfree(buf);
+    g_free(buf);
   }
   return NULL;
 }
@@ -247,7 +253,7 @@ make_backup(char *homedir, char *libdir, char *fil, FILE *fptmp)
   }
   if (bak) {
     rename(fil,  bak);
-    memfree(bak);
+    g_free(bak);
   }
 
   fp = fopen(fil, "wt");
@@ -259,7 +265,7 @@ make_backup(char *homedir, char *libdir, char *fil, FILE *fptmp)
   while (fgetline(fptmp, &buf) == 0) {
     fputs(buf, fp);
     fputs("\n", fp);
-    memfree(buf);
+    g_free(buf);
   }
 
   fclose(fp);
@@ -306,7 +312,7 @@ replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *
       fputs(buf, fptmp);
       fputs("\n", fptmp);
     }
-    memfree(buf);
+    g_free(buf);
   }
   return NULL;
 }
@@ -344,7 +350,7 @@ replaceconfig(char *section,struct narray *conf)
   fp = fopen(fil,"rt");
   if (fp == NULL) {
     fclose(fptmp);
-    memfree(fil);
+    g_free(fil);
     unlockconfig(dir);
     return FALSE;
   }
@@ -353,14 +359,14 @@ replaceconfig(char *section,struct narray *conf)
     if (strcmp0(buf,section)==0) {
       fputs(buf,fptmp);
       fputs("\n",fptmp);
-      memfree(buf);
+      g_free(buf);
       buf = replaceconfig_match(fp, fptmp, &iconf, conf);
       goto flush;
     } else {
       fputs(buf,fptmp);
       fputs("\n",fptmp);
     }
-    memfree(buf);
+    g_free(buf);
   }
 /* section not found */
   fputs("\n",fptmp);
@@ -382,12 +388,12 @@ flush:
   if (buf!=NULL) {
     fputs(buf,fptmp);
     fputs("\n",fptmp);
-    memfree(buf);
+    g_free(buf);
   }
   while (fgetline(fp,&buf)==0) {
     fputs(buf,fptmp);
     fputs("\n",fptmp);
-    memfree(buf);
+    g_free(buf);
   }
 
   arraydel(&iconf);
@@ -398,7 +404,7 @@ flush:
   r = make_backup(homedir, libdir, fil, fptmp);
 
   fclose(fptmp);
-  memfree(fil);
+  g_free(fil);
   unlockconfig(dir);
   return r;
 }
@@ -416,7 +422,7 @@ removeconfig_match(FILE *fp, FILE *fptmp, struct narray *conf)
   while (fgetline(fp, &buf) == 0) {
     if (buf[0] == '[') {
       fputs(buf, fptmp);
-      memfree(buf);
+      g_free(buf);
       break;
     } else {
       s = buf;
@@ -437,7 +443,7 @@ removeconfig_match(FILE *fp, FILE *fptmp, struct narray *conf)
         fputs("\n", fptmp);
       }
     }
-    memfree(buf);
+    g_free(buf);
   }
 
   return change;
@@ -475,7 +481,7 @@ removeconfig(char *section,struct narray *conf)
   fp = fopen(fil,"rt");
   if (fp == NULL) {
     fclose(fptmp);
-    memfree(fil);
+    g_free(fil);
     unlockconfig(dir);
     return FALSE;
   }
@@ -483,28 +489,28 @@ removeconfig(char *section,struct narray *conf)
     if (strcmp0(buf,section)==0) {
       fputs(buf,fptmp);
       fputs("\n",fptmp);
-      memfree(buf);
+      g_free(buf);
       change = removeconfig_match(fp, fptmp, conf);
       goto flush;
     } else {
       fputs(buf,fptmp);
       fputs("\n",fptmp);
     }
-    memfree(buf);
+    g_free(buf);
   }
 
 flush:
   if (!change) {
     fclose(fp);
     fclose(fptmp);
-    memfree(fil);
+    g_free(fil);
     unlockconfig(dir);
     return TRUE;
   }
   while (fgetline(fp,&buf)==0) {
     fputs(buf,fptmp);
     fputs("\n",fptmp);
-    memfree(buf);
+    g_free(buf);
   }
 
   fclose(fp);
@@ -513,7 +519,7 @@ flush:
   r = make_backup(homedir, libdir, fil, fptmp);
 
   fclose(fptmp);
-  memfree(fil);
+  g_free(fil);
   unlockconfig(dir);
   return r;
 }
@@ -540,7 +546,7 @@ writecheckconfig(void)
   if (findfilename(homedir,CONFSEP,CONF)) {
     if ((homeconf=getfilename(homedir,CONFSEP,CONF))!=NULL) {
       if (stat(homeconf,&homestat)!=0) {
-        memfree(homeconf);
+        g_free(homeconf);
         homeconf=NULL;
       }
     }
@@ -548,7 +554,7 @@ writecheckconfig(void)
   if (findfilename(libdir,CONFSEP,CONF)) {
     if ((libconf=getfilename(libdir,CONFSEP,CONF))!=NULL) {
       if (stat(libconf,&libstat)!=0) {
-        memfree(libconf);
+        g_free(libconf);
         libconf=NULL;
       }
     }
@@ -560,18 +566,18 @@ writecheckconfig(void)
     } else if (homestat.st_mtime>=libstat.st_mtime) {
       dir=1;
       s=homeconf;
-      memfree(libconf);
+      g_free(libconf);
     } else {
       dir=3;
       s=homeconf;
-      memfree(libconf);
+      g_free(libconf);
     }
   } else if (libconf!=NULL) {
     dir=2;
     s=libconf;
   } else return 0;
   ret=access(s,W_OK);
-  memfree(s);
+  g_free(s);
   if (ret==0) return dir;
   return -dir;
 }
@@ -605,9 +611,9 @@ copyconfig(void)
       if (findfilename(homedir,CONFSEP,CONFBAK)) unlink(bak);
       if ((homename=getfilename(homedir,CONFSEP,CONF))!=NULL) {
         rename(homename,bak);
-        memfree(homename);
+        g_free(homename);
       }
-      memfree(bak);
+      g_free(bak);
     }
   }
   if (!findfilename(libdir,CONFSEP,CONF)) return FALSE;
@@ -615,13 +621,13 @@ copyconfig(void)
   homename = getfilename(homedir,CONFSEP,CONF);
   libname = getfilename(libdir,CONFSEP,CONF);
   if (homename == NULL || libname == NULL) {
-    memfree(homename);
-    memfree(libname);
+    g_free(homename);
+    g_free(libname);
     return FALSE;
   }
   if (strcmp0(homename,libname)==0) {
-    memfree(homename);
-    memfree(libname);
+    g_free(homename);
+    g_free(libname);
     return FALSE;
   }
 
@@ -629,18 +635,18 @@ copyconfig(void)
     return FALSE;
   }
   if ((libfp=fopen(libname,"rt"))==NULL) {
-    memfree(homename);
+    g_free(homename);
     fclose(homefp);
-    memfree(libname);
+    g_free(libname);
     fclose(libfp);
     return FALSE;
   }
-  memfree(homename);
-  memfree(libname);
+  g_free(homename);
+  g_free(libname);
   while (fgetline(libfp,&buf)==0) {
     fputs(buf,homefp);
     fputs("\n",homefp);
-    memfree(buf);
+    g_free(buf);
   }
   fclose(libfp);
   fclose(homefp);

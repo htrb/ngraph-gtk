@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.25 2009/11/12 01:36:45 hito Exp $
+ * $Id: shellcm.c,v 1.26 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -50,9 +50,6 @@
 #include "shellcm.h"
 
 #include "math/math_equation.h"
-
-#define TRUE  1
-#define FALSE 0
 
 #define ERR 128
 
@@ -106,7 +103,7 @@ cmbasename(struct nshell *nshell,int argc,char **argv)
     return 1;
   }
 
-  tmp = nstrdup(argv[1]);
+  tmp = g_strdup(argv[1]);
   if (tmp == NULL)
     return 1;
 
@@ -124,7 +121,7 @@ cmbasename(struct nshell *nshell,int argc,char **argv)
   }
 
   printfstdout("%s\n", bname);
-  memfree(tmp);
+  g_free(tmp);
 
   return 0;
 }
@@ -138,13 +135,13 @@ cmdirname(struct nshell *nshell,int argc,char **argv)
     return 1;
   }
 
-  tmp = nstrdup(argv[1]);
+  tmp = g_strdup(argv[1]);
   if (tmp == NULL)
     return 1;
 
   putstdout(dirname(tmp));
 
-  memfree(tmp);
+  g_free(tmp);
 
   return 0;
 }
@@ -225,7 +222,7 @@ cmeval(struct nshell *nshell,int argc,char **argv)
     if ((s=nstrccat(s,' '))==NULL) return ERR;
   }
   rcode=cmdexecute(nshell,s);
-  memfree(s);
+  g_free(s);
   if ((rcode!=0) && (rcode!=1)) return ERR;
   return 0;
 }
@@ -302,7 +299,7 @@ cmpwd(struct nshell *nshell,int argc,char **argv)
 
   if ((s=ngetcwd())==NULL) return ERR;
   putstdout(s);
-  memfree(s);
+  g_free(s);
   return 0;
 }
 
@@ -377,23 +374,23 @@ cmset(struct nshell *nshell,int argc,char **argv)
     }
     if (j != argc) { 
       argv2 = NULL;
-      s = nstrdup(nshell->argv[0]);
+      s = g_strdup(nshell->argv[0]);
       if (s == NULL)
 	return ERR;
 
       if (arg_add(&argv2, s) == NULL) {
-        memfree(s);
+        g_free(s);
         arg_del(argv2);
         return ERR;
       }
 
       for (; j < argc; j++) {
-	s = nstrdup(argv[j]);
+	s = g_strdup(argv[j]);
         if (s == NULL)
 	  return ERR;
 
         if (arg_add(&argv2, s) == NULL) {
-          memfree(s);
+          g_free(s);
           arg_del(argv2);
           return ERR;
         }
@@ -487,18 +484,18 @@ cmset(struct nshell *nshell,int argc,char **argv)
     }
     if (j!=argc) { 
       argv2=NULL;
-      if ((s=memalloc(strlen((nshell->argv)[0])+1))==NULL) return ERR;
+      if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL) return ERR;
       strcpy(s,(nshell->argv)[0]);
       if (arg_add(&argv2,s)==NULL) {
-        memfree(s);
+        g_free(s);
         arg_del(argv2);
         return ERR;
       }
       for (;j<argc;j++) {
-        if ((s=memalloc(strlen(argv[j])+1))==NULL) return ERR;
+        if ((s=g_malloc(strlen(argv[j])+1))==NULL) return ERR;
         strcpy(s,argv[j]);
         if (arg_add(&argv2,s)==NULL) {
-          memfree(s);
+          g_free(s);
           arg_del(argv2);
           return ERR;
         }
@@ -554,7 +551,7 @@ cmshift(struct nshell *nshell,int argc,char **argv)
   if (a<0) a=0;
   if ((a+1)>=nshell->argc) a=nshell->argc-1;
   for (i=a+1;i<nshell->argc;i++) {
-    memfree(nshell->argv[i-a]);
+    g_free(nshell->argv[i-a]);
     nshell->argv[i-a]=nshell->argv[i];
     nshell->argv[i]=NULL;
   }
@@ -606,7 +603,7 @@ cmtype(struct nshell *nshell,int argc,char **argv)
         } else {
           printfstdout("%.256s is %.256s.\n",argv[j],cmdname);
 	}
-        memfree(cmdname);
+        g_free(cmdname);
       }
     }
   }
@@ -1009,7 +1006,7 @@ cmget(struct nshell*nshell,int argc,char **argv)
           if (multi && !noid) printfstdout("%d: ",id);
           if (!nofield) printfstdout("%.256s:",field);
           putstdout(valstr);
-          memfree(valstr);
+          g_free(valstr);
         }
       }
     } else {
@@ -1024,10 +1021,10 @@ cmget(struct nshell*nshell,int argc,char **argv)
           if (!nofield) {
             field=getitok2(&field,&len,":=");
             printfstdout("%.256s:",field);
-            memfree(field);
+            g_free(field);
           }
           putstdout(valstr);
-          memfree(valstr);
+          g_free(valstr);
         }
       }
     }
@@ -1244,13 +1241,13 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
 
 
   ecode = str_calc(s, &vd, &rcode, &err_msg);
-  memfree(s);
+  g_free(s);
 
   if (ecode) {
 #if NEW_MATH_CODE
     if (err_msg) {
       printfstderr("shell: %s\n", err_msg);
-      free(err_msg);
+      g_free(err_msg);
     } else {
       sherror4(argv[0],ecode);
     }
@@ -1293,13 +1290,13 @@ cmread(struct nshell *nshell,int argc,char **argv)
     for (i=1;i<argc;i++) {
       if ((s2=getitok2(&po,&len,ifs))!=NULL) {
         addval(nshell,argv[i],s2);
-        memfree(s2);
+        g_free(s2);
       } else {
         addval(nshell,argv[i],"");
       }
     }
   }
-  memfree(s);
+  g_free(s);
   if (c==EOF) return ERR;
   else return 0;
 }

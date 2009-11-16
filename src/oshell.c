@@ -1,5 +1,5 @@
 /* 
- * $Id: oshell.c,v 1.7 2009/04/23 07:23:36 hito Exp $
+ * $Id: oshell.c,v 1.8 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <string.h>
+#include <glib.h>
 #ifndef WINDOWS
 #else
 #include <windows.h>
@@ -43,8 +44,6 @@
 #define PARENT "object"
 #define OVERSION   "1.00.00"
 #define MAXCLINE 256
-#define TRUE  1
-#define FALSE 0
 
 #define ERRRUN 100
 #define ERRNOCL 101
@@ -70,9 +69,9 @@ cmdinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct nshell *nshell;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  if ((shlocal=memalloc(sizeof(struct shlocal)))==NULL) return 1;
+  if ((shlocal=g_malloc(sizeof(struct shlocal)))==NULL) return 1;
   if (_putobj(obj,"_local",inst,shlocal)) {
-    memfree(shlocal);
+    g_free(shlocal);
     return 1;
   }
   if ((nshell=newshell())==NULL) return 1;
@@ -151,20 +150,20 @@ cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 
   argv2=NULL;
-  if ((s=memalloc(strlen(((char **)argv)[1])+1))==NULL) goto errexit;
+  if ((s=g_malloc(strlen(((char **)argv)[1])+1))==NULL) goto errexit;
   strcpy(s,((char **)argv)[1]);
   if (arg_add(&argv2,s)==NULL) {
-    memfree(s);
+    g_free(s);
     arg_del(argv2);
     goto errexit;
   }
 
   for (;i<snum;i++) {
     if (sdata[i]!=NULL) {
-      if ((s=memalloc(strlen(sdata[i])+1))==NULL) goto errexit;
+      if ((s=g_malloc(strlen(sdata[i])+1))==NULL) goto errexit;
       strcpy(s,sdata[i]);
       if (arg_add(&argv2,s)==NULL) {
-        memfree(s);
+        g_free(s);
         arg_del(argv2);
         goto errexit;
       }
@@ -180,11 +179,11 @@ cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     filename2=nsearchpath(getval(nshell,"PATH"),filename,TRUE);
     if (filename2!=NULL) {
       if ((fd=nopen(filename2,O_RDONLY,NFMODE))==NOHANDLE) {
-        memfree(filename2);
+        g_free(filename2);
         error2(obj,ERRFILEFIND,filename);
         goto errexit;
       }
-      memfree(filename2);
+      g_free(filename2);
       setshhandle(nshell,fd);
     } else {
       error2(obj,ERRFILEFIND,filename);

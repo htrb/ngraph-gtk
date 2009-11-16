@@ -1,5 +1,5 @@
 /* 
- * $Id: math_scanner.c,v 1.4 2009/11/10 04:12:20 hito Exp $
+ * $Id: math_scanner.c,v 1.5 2009/11/16 09:13:06 hito Exp $
  * 
  */
 
@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <limits.h>
+#include <glib.h>
 
 #include "object.h"
 
@@ -75,11 +76,11 @@ math_scanner_free_token(struct math_token *token)
   case MATH_TOKEN_TYPE_UNKNOWN:
     break;
   case MATH_TOKEN_TYPE_SYMBOL:
-    memfree(token->data.sym);
+    g_free(token->data.sym);
     break;
   }
 
-  memfree(token);
+  g_free(token);
 }
 
 struct math_token *
@@ -248,7 +249,7 @@ get_symbol(const char *str,  const char ** rstr)
 
   for (n = (str[0] == '%') ? 1 : 0; isalnum(str[n]) || str[n] == '_'; n++);
 
-  buf = malloc(n + 1);
+  buf = g_malloc(n + 1);
   if (buf == NULL)
     return NULL;
 
@@ -259,16 +260,16 @@ get_symbol(const char *str,  const char ** rstr)
 
   type = check_reserved(buf);
   if (type != MATH_TOKEN_TYPE_UNKNOWN) {
-    memfree(buf);
+    g_free(buf);
     tok = create_token(str, type);
     if (tok == NULL) {
-      memfree(buf);
+      g_free(buf);
       return NULL;
     }
   } else {
     tok = create_token(str, MATH_TOKEN_TYPE_SYMBOL);
     if (tok == NULL) {
-      memfree(buf);
+      g_free(buf);
       return NULL;
     }
     tok->data.sym = buf;
@@ -484,7 +485,7 @@ create_token(const char *str, enum MATH_TOKEN_TYPE type)
 {
   struct math_token *tok;
 
-  tok = malloc(sizeof(*tok));
+  tok = g_malloc(sizeof(*tok));
   if (tok == NULL) {
     return NULL;
   }

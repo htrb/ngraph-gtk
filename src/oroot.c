@@ -1,5 +1,5 @@
 /* 
- * $Id: oroot.c,v 1.9 2009/03/26 02:31:52 hito Exp $
+ * $Id: oroot.c,v 1.10 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <glib.h>
 #include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
@@ -38,8 +39,6 @@
 #define NAME "object"
 #define PARENT NULL
 #define OVERSION "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRILNAME 100
 
@@ -74,12 +73,12 @@ obj_load_config(struct objlist *obj, char *inst, char *title, NHASH hash)
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  _putobj(obj, cfg->name, inst, &val);
-	memfree(f1);
+	g_free(f1);
 	break;
       case OBJ_CONFIG_TYPE_STRING:
 	f1 = getitok2(&s2, &len, "");
 	_getobj(obj, cfg->name, inst, &f2);
-	memfree(f2);
+	g_free(f2);
 	_putobj(obj, cfg->name, inst, f1);
 	break; 
       case OBJ_CONFIG_TYPE_STYLE:
@@ -89,7 +88,7 @@ obj_load_config(struct objlist *obj, char *inst, char *title, NHASH hash)
 	    val = strtol(f1, &endptr, 10);
 	    if (endptr[0] == '\0')
 	      arrayadd(iarray, &val);
-	    memfree(f1);
+	    g_free(f1);
 	  }
 	  _putobj(obj, tok, inst, iarray);
 	}
@@ -103,8 +102,8 @@ obj_load_config(struct objlist *obj, char *inst, char *title, NHASH hash)
     } else {
       fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, title);
     }
-    memfree(tok);
-    memfree(str);
+    g_free(tok);
+    g_free(str);
   }
   closeconfig(fp);
   return 0;
@@ -118,7 +117,7 @@ obj_save_config_numeric(struct objlist *obj, char *inst, char *field, struct nar
 
   _getobj(obj, field, inst, &val);
   snprintf(buf, sizeof(buf), "%s=%d", field, val);
-  str = nstrdup(buf);
+  str = g_strdup(buf);
   if (str) {
     arrayadd(conf, &str);
   }
@@ -134,7 +133,7 @@ obj_save_config_string(struct objlist *obj, char *inst, char *field, struct narr
   val = CHK_STR(val);
 
   len = strlen(field) + strlen(val) + 2;
-  buf = memalloc(len);
+  buf = g_malloc(len);
   if (buf) {
     snprintf(buf, len, "%s=%s", field, val);
     arrayadd(conf, &buf);
@@ -151,7 +150,7 @@ obj_save_config_line_style(struct objlist *obj, char *inst, char *field, struct 
   _getobj(obj, field, inst, &iarray);
   num = arraynum(iarray);
 
-  buf = memalloc(strlen(field) + 2 + 20 * num);
+  buf = g_malloc(strlen(field) + 2 + 20 * num);
   if (buf == NULL)
     return;
 
@@ -289,34 +288,34 @@ ochgobjlist(char **olist)
   ids=getitok2(&list,&len,":");
   field=list;
   if ((objname==NULL) || (ids==NULL)) {
-    memfree(objname);
-    memfree(ids);
-    memfree(*olist);
+    g_free(objname);
+    g_free(ids);
+    g_free(*olist);
     *olist=NULL;
     return;
   }
   obj=chkobject(objname);
-  memfree(objname);
+  g_free(objname);
   if (ids[0]!='^') {
-    memfree(ids);
+    g_free(ids);
     return;
   }
   ids2=ids+1;
   id=strtol(ids2,&endptr,0);
   if ((ids2[0]=='\0') || (endptr[0]!='\0')) {
-    memfree(ids);
-    memfree(*olist);
+    g_free(ids);
+    g_free(*olist);
     *olist=NULL;
     return;
   }
-  memfree(ids);
+  g_free(ids);
   if ((inst=getobjinstoid(obj,id))==NULL) {
-    memfree(*olist);
+    g_free(*olist);
     *olist=NULL;
     return;
   }
   _getobj(obj,"id",inst,&id);
-  memfree(*olist);
+  g_free(*olist);
   *olist=mkobjlist(obj,NULL,id,field,FALSE);
   return;
 }
@@ -333,7 +332,7 @@ osave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int anum;
   char **adata;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   array=(struct narray *)argv[2];
   anum=arraynum(array);
@@ -366,7 +365,7 @@ osave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           list=chgobjlist(list);
           if ((valstr=getvaluestr(obj2,field,&list,FALSE,TRUE))==NULL)
             goto errexit;
-          memfree(list);
+          g_free(list);
         } else {
           if (_getobj(obj2,field,inst,(void *)buf)) goto errexit;
           if ((valstr=getvaluestr(obj2,field,buf,FALSE,TRUE))==NULL)
@@ -374,15 +373,15 @@ osave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         }
         if ((s=nstrcat(s,valstr))==NULL) goto errexit;
         if ((s=nstrccat(s,'\n'))==NULL) goto errexit;
-        memfree(valstr);
+        g_free(valstr);
       }
     }
   }
   *(char **)rval=s;
   return 0;
 errexit:
-  memfree(s);
-  memfree(valstr);
+  g_free(s);
+  g_free(valstr);
   return 1;
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.35 2009/11/06 11:09:55 hito Exp $
+ * $Id: x11gui.c,v 1.36 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -362,7 +362,7 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s, int *x, int *y
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
-    *s = strdup(gtk_entry_get_text(GTK_ENTRY(text)));
+    *s = g_strdup(gtk_entry_get_text(GTK_ENTRY(text)));
     data = IDOK;
     break;
   default:
@@ -390,7 +390,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
   d = arraydata(array);
   anum = arraynum(array);
 
-  btn_ary = malloc(anum * sizeof(*btn_ary));
+  btn_ary = g_malloc(anum * sizeof(*btn_ary));
   if (btn_ary == NULL)
     return IDCANCEL;
 
@@ -440,7 +440,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
   }
 
 
-  free(btn_ary);
+  g_free(btn_ary);
 
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
@@ -500,7 +500,7 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
   case GTK_RESPONSE_OK:
     i = combo_box_get_active(combo);
     if (i >= 0)
-      *r = nstrdup(d[i]);
+      *r = g_strdup(d[i]);
     data = IDOK;
     break;
   default:
@@ -566,7 +566,7 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
   case GTK_RESPONSE_OK:
     s = combo_box_entry_get_text(combo);
     if (s) {
-      *r = nstrdup(s);
+      *r = g_strdup(s);
     } else {
       *r = NULL;
     }
@@ -660,7 +660,7 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
   d = arraydata(array);
   anum = arraynum(array);
 
-  btn_ary = malloc(anum * sizeof(*btn_ary));
+  btn_ary = g_malloc(anum * sizeof(*btn_ary));
   if (btn_ary == NULL)
     return IDCANCEL;
 
@@ -708,7 +708,7 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
     break;
   }
 
-  free(btn_ary);
+  g_free(btn_ary);
 
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
@@ -756,7 +756,7 @@ fsok(GtkWidget *dlg)
   }
 
   n = g_slist_length(top);
-  farray = malloc(sizeof(*farray) * (n + 1));
+  farray = g_malloc(sizeof(*farray) * (n + 1));
   if (farray == NULL) {
     free_str_list(top);
     return;
@@ -781,7 +781,7 @@ fsok(GtkWidget *dlg)
     if (len) {
       file2 = g_strdup_printf("%s.%s", file, data->ext);
     } else {
-      file2 = strdup(file);
+      file2 = g_strdup(file);
     }
     if (file2) {
       if (data->mustexist) {
@@ -789,14 +789,14 @@ fsok(GtkWidget *dlg)
 	    || (access(file2, R_OK) != 0)) {
 	  gdk_beep();
 	  error22(NULL, 0, "I/O error", file2);
-	  free(file2);
+	  g_free(file2);
 	  continue;
 	}
       } else {
 	if ((stat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
 	  gdk_beep();
 	  error22(NULL, 0, "I/O error", file2);
-	  free(file2);
+	  g_free(file2);
 	  continue;
 	}
       }
@@ -813,12 +813,12 @@ fsok(GtkWidget *dlg)
     if (data->chdir && data->initdir) {
       char *dir, *tmp, *tmp2;
 
-      free(*(data->initdir));
-      tmp = strdup(farray[0]);
+      g_free(*(data->initdir));
+      tmp = g_strdup(farray[0]);
       dir = dirname(tmp);
-      tmp2 = strdup(dir);
+      tmp2 = g_strdup(dir);
       *(data->initdir) = tmp2;
-      free(tmp);
+      g_free(tmp);
     }
   }
   farray[k] = NULL;
@@ -834,12 +834,12 @@ file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
   if (dlg == NULL || full_name == NULL)
     return;
 
-  ptr = nstrdup(full_name);
+  ptr = g_strdup(full_name);
   name = basename(ptr);
   if (name) {
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), name);
   }
-  memfree(ptr);
+  g_free(ptr);
 }
 
 static int
@@ -983,7 +983,7 @@ nGetOpenFileName(GtkWidget *parent,
 			    GTK_STOCK_OPEN);
   if (ret == IDOK) {
     *file = FileSelection.file[0];
-    free(FileSelection.file);
+    g_free(FileSelection.file);
     if (FileSelection.chdir && initdir && chdir(*initdir)) {
       ErrorMessage();
     }
@@ -1014,7 +1014,7 @@ nGetSaveFileName(GtkWidget * parent,
   ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_SAVE);
   if (ret == IDOK) {
     *file = FileSelection.file[0];
-    free(FileSelection.file);
+    g_free(FileSelection.file);
     if (FileSelection.chdir && initdir && chdir(*initdir)) {
       ErrorMessage();
     }

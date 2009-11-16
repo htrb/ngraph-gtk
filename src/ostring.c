@@ -1,5 +1,5 @@
 /* 
- * $Id: ostring.c,v 1.3 2009/02/05 08:40:14 hito Exp $
+ * $Id: ostring.c,v 1.4 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,8 +33,6 @@
 #define NAME "string"
 #define PARENT "object"
 #define OVERSION "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRILNAME 100
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.75 2009/11/12 01:36:46 hito Exp $
+ * $Id: x11axis.c,v 1.76 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -128,17 +128,15 @@ axis_scale_push(struct objlist *obj, int id)
 char *
 AxisCB(struct objlist *obj, int id)
 {
-  char *s, *valstr, *name, *tmp;;
+  char *s, *valstr, *name;;
   int dir;
 
   getobj(obj, "direction", id, 0, NULL, &dir);
   getobj(obj, "group", id, 0, NULL, &name);
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  tmp = g_strdup_printf("%-10s %.6s dir:%d", name, valstr, dir);
-  memfree(valstr);
-  s = nstrdup(tmp);
-  g_free(tmp);
+  s = g_strdup_printf("%-10s %.6s dir:%d", name, valstr, dir);
+  g_free(valstr);
 
   return s;
 }
@@ -146,7 +144,7 @@ AxisCB(struct objlist *obj, int id)
 char *
 AxisHistoryCB(struct objlist *obj, int id)
 {
-  char *s, *valstr, *name, *tmp;
+  char *s, *valstr, *name;
   int dir, num;
   struct narray *array;
 
@@ -161,10 +159,8 @@ AxisHistoryCB(struct objlist *obj, int id)
 
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  tmp = g_strdup_printf("%-10s %.6s dir:%d", name, valstr, dir);
-  memfree(valstr);
-  s = nstrdup(tmp);
-  g_free(tmp);
+  s = g_strdup_printf("%-10s %.6s dir:%d", name, valstr, dir);
+  g_free(valstr);
 
   return s;
 }
@@ -172,13 +168,11 @@ AxisHistoryCB(struct objlist *obj, int id)
 static char *
 GridCB(struct objlist *obj, int id)
 {
-  char *s, *s1, *s2, *tmp;
+  char *s, *s1, *s2;
 
   getobj(obj, "axis_x", id, 0, NULL, &s1);
   getobj(obj, "axis_y", id, 0, NULL, &s2);
-  tmp = g_strdup_printf("%.8s %.8s", (s1)? s1: "-----", (s2)? s2: "-----");
-  s = nstrdup(tmp);
-  g_free(tmp);
+  s = g_strdup_printf("%.8s %.8s", (s1)? s1: "-----", (s2)? s2: "-----");
 
   return s;
 }
@@ -212,14 +206,14 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
   if (valstr[i] == ':')
     i++;
   combo_box_entry_set_text(d->axisx, valstr + i);
-  memfree(valstr);
+  g_free(valstr);
 
   sgetobjfield(d->Obj, id, "axis_y", NULL, &valstr, FALSE, FALSE, FALSE);
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
   if (valstr[i] == ':')
     i++;
   combo_box_entry_set_text(d->axisy, valstr + i);
-  memfree(valstr);
+  g_free(valstr);
 
   for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
     char width[] = "width1", style[] = "style1"; 
@@ -506,12 +500,12 @@ SectionDialogGrid(GtkWidget *w, gpointer client_data)
   d = (struct SectionDialog *) client_data;
   if (*(d->IDG) == -1) {
     if ((*(d->IDG) = newobj(d->Obj2)) >= 0) {
-      if ((ref = (char *) memalloc(ID_BUF_SIZE)) != NULL) {
+      if ((ref = (char *) g_malloc(ID_BUF_SIZE)) != NULL) {
 	getobj(d->Obj, "oid", d->IDX, 0, NULL, &oidx);
 	snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidx);
 	putobj(d->Obj2, "axis_x", *(d->IDG), ref);
       }
-      if ((ref = (char *) memalloc(ID_BUF_SIZE)) != NULL) {
+      if ((ref = (char *) g_malloc(ID_BUF_SIZE)) != NULL) {
 	getobj(d->Obj, "oid", d->IDY, 0, NULL, &oidy);
 	snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
 	putobj(d->Obj2, "axis_y", *(d->IDG), ref);
@@ -1154,7 +1148,7 @@ AxisPosDialogSetupItem(GtkWidget *w, struct AxisPosDialog *d, int id)
     i++;
 
   combo_box_entry_set_text(d->adjust, valstr + i);
-  memfree(valstr);
+  g_free(valstr);
 
   SetWidgetFromObjField(d->adjustpos, d->Obj, id, "adjust_position");
 }
@@ -1500,7 +1494,7 @@ NumDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromWidget(d->head, d->Obj, d->Id, "num_head"))
     return;
 
-  format = (char *) memalloc(FORMAT_LENGTH);
+  format = (char *) g_malloc(FORMAT_LENGTH);
   if (format == NULL)
     return;
 
@@ -1937,7 +1931,7 @@ AxisDialogSetupItem(GtkWidget *w, struct AxisDialog *d, int id)
   if (valstr[i] == ':')
     i++;
   combo_box_entry_set_text(d->ref, valstr + i);
-  memfree(valstr);
+  g_free(valstr);
 }
 
 static void
@@ -2032,7 +2026,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
     if ((num > 0) && (anum != 0)) {
       int len;
       len = 6 * num + 6;
-      buf = memalloc(len);;
+      buf = g_malloc(len);;
       if (buf) {
 	j = 0;
 	j += snprintf(buf + j, len - j, "file:");
@@ -2052,19 +2046,19 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 
 	if (getobj(d->Obj, "type", d->Id, 0, NULL, &type) == -1) {
 	  arraydel(&farray);
-	  memfree(buf);
+	  g_free(buf);
 	  return;
 	}
 
 	a = combo_box_get_active(d->scale);
 	if (a >= 0 && (putobj(d->Obj, "type", d->Id, &a) == -1)) {
 	  arraydel(&farray);
-	  memfree(buf);
+	  g_free(buf);
 	  return;
 	}
 
 	getobj(d->Obj, "get_auto_scale", d->Id, 2, argv2, &result);
-	memfree(buf);
+	g_free(buf);
 
 	if (arraynum(result) == 3) {
 	  snprintf(s, sizeof(s), "%.15g", *(double *) arraynget(result, 0));
@@ -2402,12 +2396,12 @@ CmAxisNewSection(void)
   arraydel(&group);
   if (idg >= 0) {
     getobj(obj, "oid", idx, 0, NULL, &oidx);
-    if ((ref = (char *) memalloc(ID_BUF_SIZE)) != NULL) {
+    if ((ref = (char *) g_malloc(ID_BUF_SIZE)) != NULL) {
       snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidx);
       putobj(obj2, "axis_x", idg, ref);
     }
     getobj(obj, "oid", idy, 0, NULL, &oidy);
-    if ((ref = (char *) memalloc(ID_BUF_SIZE)) != NULL) {
+    if ((ref = (char *) g_malloc(ID_BUF_SIZE)) != NULL) {
       snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
       putobj(obj2, "axis_y", idg, ref);
     }
@@ -2831,7 +2825,7 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
     case AXIS_WIN_COL_TYPE:
       sgetobjfield(d->obj, row, "type", NULL, &valstr, FALSE, FALSE, FALSE);
       list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
-      memfree(valstr);
+      g_free(valstr);
       break;
     case AXIS_WIN_COL_INC:
       getobj(d->obj, "inc", row, 0, NULL, &inc);

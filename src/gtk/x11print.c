@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.46 2009/11/06 11:09:55 hito Exp $
+ * $Id: x11print.c,v 1.47 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -126,7 +126,7 @@ DriverDialogBrowseCB(GtkWidget *wi, gpointer client_data)
 		       NULL, &file, TRUE, Menulocal.changedirectory) == IDOK) {
     gtk_entry_set_text(GTK_ENTRY(d->file), file);
   }
-  free(file);
+  g_free(file);
 }
 
 static void
@@ -197,7 +197,7 @@ DriverDialogClose(GtkWidget *w, void *data)
   i = 0;
   while (pcur != NULL) {
     if (i == a && pcur->driver) {
-      driver = nstrdup(pcur->driver);
+      driver = g_strdup(pcur->driver);
       if (driver) {
 	putobj(d->Obj, "driver", d->Id, driver);
       }
@@ -213,15 +213,11 @@ DriverDialogClose(GtkWidget *w, void *data)
   option = NULL;
 
   if (s || file) {
-    char *ptr;
-
-    ptr = g_strdup_printf("%s%s%s%s",
+    option = g_strdup_printf("%s%s%s%s",
 		  (file) ? "-o '" : "",
 		  CHK_STR(file),
 		  (file) ? "' " : "",
 		  CHK_STR(s));
-    option = nstrdup(ptr);
-    g_free(ptr);
   }
 
   putobj(d->Obj, "option", d->Id, option);
@@ -534,7 +530,7 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
   }
   putobj(graobj, "draw_obj", id, drawrable);
 
-  device = (char *) memalloc(DEVICE_BUF_SIZE);
+  device = (char *) g_malloc(DEVICE_BUF_SIZE);
   snprintf(device, DEVICE_BUF_SIZE, "%s:^%d", dev_name, dev_oid);
   putobj(graobj, "device", id, device);
 }
@@ -761,7 +757,7 @@ get_base_ngp_name(void)
   if (NgraphApp.FileName == NULL)
     return NULL;
 
-  tmp = strdup(NgraphApp.FileName);
+  tmp = g_strdup(NgraphApp.FileName);
   if (tmp == NULL)
     return NULL;
 
@@ -778,7 +774,7 @@ CmPrintGRAFile(void)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid, ret;
-  char *g2winst, *tmp, *file, *filebuf;
+  char *g2winst, *tmp, *file;
 
   if (Menulock || GlobalLock)
     return;
@@ -786,16 +782,14 @@ CmPrintGRAFile(void)
   tmp = get_base_ngp_name();
 
   ret = nGetSaveFileName(TopLevel, _("GRA file"), "gra", NULL, tmp,
-			 &filebuf, FALSE, Menulocal.changedirectory);
+			 &file, FALSE, Menulocal.changedirectory);
 
   if (tmp)
-    free(tmp);
+    g_free(tmp);
 
   if (ret != IDOK)
     return;
 
-  file = nstrdup(filebuf);
-  free(filebuf);
   if (file == NULL) {
     return;
   }
@@ -807,18 +801,18 @@ CmPrintGRAFile(void)
   AdjustAxis();
 
   if ((graobj = chkobject("gra")) == NULL) {
-    memfree(file);
+    g_free(file);
     return;
   }
 
   if ((g2wobj = chkobject("gra2file")) == NULL) {
-    memfree(file);
+    g_free(file);
     return;
   }
 
   g2wid = newobj(g2wobj);
   if (g2wid < 0) {
-    memfree(file);
+    g_free(file);
     return;
   }
 
@@ -840,7 +834,7 @@ CmOutputImage(int type)
   char *g2winst;
   int ret, format, t2p, dpi;
   char *title, *ext_str;
-  char *file, *filebuf, *tmp;
+  char *file, *tmp;
 
   if (Menulock || GlobalLock)
     return;
@@ -874,16 +868,14 @@ CmOutputImage(int type)
 
   tmp = get_base_ngp_name();
   ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
-			 &filebuf, FALSE, Menulocal.changedirectory);
+			 &file, FALSE, Menulocal.changedirectory);
   if (tmp)
-    free(tmp);
+    g_free(tmp);
 
   if (ret != IDOK) {
     return;
   }
 
-  file = nstrdup(filebuf);
-  free(filebuf);
   if (file == NULL) {
     return;
   }
@@ -891,7 +883,7 @@ CmOutputImage(int type)
   OutputImageDialog(&DlgImageOut, type);
   ret = DialogExecute(TopLevel, &DlgImageOut);
   if (ret != IDOK) {
-    memfree(file);
+    g_free(file);
     return;
   }
 
@@ -903,19 +895,19 @@ CmOutputImage(int type)
 
   graobj = chkobject("gra");
   if (graobj == NULL) {
-    memfree(file);
+    g_free(file);
     return;
   }
 
   g2wobj = chkobject("gra2cairofile");
   if (g2wobj == NULL) {
-    memfree(file);
+    g_free(file);
     return;
   }
 
   g2wid = newobj(g2wobj);
   if (g2wid < 0) {
-    memfree(file);
+    g_free(file);
     return;
   }
 
@@ -1020,7 +1012,7 @@ CmPrintDataFile(void)
   gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
 
   arraydel(&farray);
-  free(file);
+  g_free(file);
 }
 
 void

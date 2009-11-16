@@ -1,5 +1,5 @@
 /* 
- * $Id: orect.c,v 1.16 2009/11/09 11:47:14 hito Exp $
+ * $Id: orect.c,v 1.17 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,8 +38,6 @@
 #define NAME "rectangle"
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 static char *recterrorlist[]={
   ""
@@ -186,9 +184,6 @@ rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   *(struct narray **)rval=array;
   return 0;
 }
-
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
 
 static int 
 rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)

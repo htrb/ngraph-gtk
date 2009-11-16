@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.83 2009/11/03 01:18:52 hito Exp $
+ * $Id: ox11menu.c,v 1.84 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -302,7 +302,7 @@ add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
 {
   char *buf;
 
-  buf = (char *) memalloc(BUF_SIZE);    
+  buf = (char *) g_malloc(BUF_SIZE);    
   if (buf) {
     snprintf(buf, BUF_SIZE, "%s=%d", cfg->name, * (int *) cfg->data);
     arrayadd(conf, &buf);
@@ -319,7 +319,7 @@ add_child_geometry_to_array(struct menu_config *cfg, struct narray *conf)
   stat = cfg->data;
   data = stat->stat;
 
-  buf = (char *) memalloc(BUF_SIZE);    
+  buf = (char *) g_malloc(BUF_SIZE);    
   if (buf) {
     sub_window_save_geometry(stat->win);
     snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d,%d",
@@ -342,7 +342,7 @@ add_geometry_to_array(struct menu_config *cfg, struct narray *conf)
   Menulocal.menuwidth = w;
   Menulocal.menuheight = h;
 
-  buf = (char *) memalloc(BUF_SIZE);
+  buf = (char *) g_malloc(BUF_SIZE);
   if (buf) {
     snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d",
 	     cfg->name,
@@ -356,7 +356,7 @@ static void
 add_color_to_array(struct menu_config *cfg, struct narray *conf)
 {
   char *buf;
-  buf = (char *) memalloc(BUF_SIZE);
+  buf = (char *) g_malloc(BUF_SIZE);
   if (buf) {
     snprintf(buf, BUF_SIZE, "%s=%02x%02x%02x",
 	     cfg->name,
@@ -368,13 +368,11 @@ add_color_to_array(struct menu_config *cfg, struct narray *conf)
 static void
 add_prm_str_to_array(struct menu_config *cfg, struct narray *conf)
 {
-  char *buf, *prm, *ptr;
+  char *buf, *prm;
 
   prm = CHK_STR(* (char **) cfg->data);
 
-  ptr = g_strdup_printf("%s=%s", cfg->name, prm);
-  buf = nstrdup(ptr);
-  g_free(ptr);
+  buf = g_strdup_printf("%s=%s", cfg->name, prm);
   if (buf) {
     arrayadd(conf, &buf);
   }
@@ -383,7 +381,7 @@ add_prm_str_to_array(struct menu_config *cfg, struct narray *conf)
 static void
 save_ext_driver_config(struct narray *conf)
 {
-  char *ptr, *buf, *driver, *ext, *option;
+  char *buf, *driver, *ext, *option;
   struct extprinter *pcur;
 
   pcur = Menulocal.extprinterroot;
@@ -392,9 +390,7 @@ save_ext_driver_config(struct narray *conf)
     ext = CHK_STR(pcur->ext);
     option= CHK_STR(pcur->option);
 
-    ptr = g_strdup_printf("ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
-    buf = nstrdup(ptr);
-    g_free(ptr);
+    buf = g_strdup_printf("ext_driver=%s,%s,%s,%s", pcur->name, driver, ext, option);
     if (buf) {
       arrayadd(conf, &buf);
     }
@@ -405,7 +401,7 @@ save_ext_driver_config(struct narray *conf)
 static void
 save_script_config(struct narray *conf)
 {
-  char *buf, *ptr, *script, *option, *description;
+  char *buf, *script, *option, *description;
   struct script *scur;
 
   scur = Menulocal.scriptroot;
@@ -414,9 +410,7 @@ save_script_config(struct narray *conf)
     option = CHK_STR(scur->option);
     description = CHK_STR(scur->description);
 
-    ptr = g_strdup_printf("script=%s,%s,%s,%s", scur->name, script, description, option);
-    buf = nstrdup(ptr);
-    g_free(ptr);
+    buf = g_strdup_printf("script=%s,%s,%s,%s", scur->name, script, description, option);
     if (buf) {
       arrayadd(conf, &buf);
     }
@@ -429,7 +423,7 @@ add_str_to_array(struct narray *conf, char *str)
 {
   char *buf;
 
-  buf = nstrdup(str);
+  buf = g_strdup(str);
   if (buf) {
     arrayadd(conf, &buf);
   }
@@ -554,7 +548,7 @@ menu_config_set_four_elements(char *s2, void *data)
 
  End:
   for (i = 0; i < 4; i++) {
-    memfree(f[i]);
+    g_free(f[i]);
   }
   return 0;
 }
@@ -585,7 +579,7 @@ menu_config_set_child_window_geometry(char *s2, void *data)
 
  End:
   for (i = 0; i < 5; i++) {
-    memfree(f[i]);
+    g_free(f[i]);
   }
   return 0;
 }
@@ -603,7 +597,7 @@ menu_config_set_bgcolor(char *s2, void *data)
     Menulocal.bg_g = (val >> 8) & 0xffU;
     Menulocal.bg_b = val & 0xffU;
   }
-  memfree(f1);
+  g_free(f1);
   return 0;
 }
 
@@ -631,10 +625,10 @@ menu_config_set_ext_driver(char *s2, void *data)
   f[3] = getitok2(&s2, &len, "");
 
   if (f[0] && f[1]) {
-    pnew = (struct extprinter *) memalloc(sizeof(struct extprinter));
+    pnew = (struct extprinter *) g_malloc(sizeof(struct extprinter));
     if (pnew == NULL) {
       for (i = 0; i < 4; i++) {
-	memfree(f[i]);
+	g_free(f[i]);
       }
       return 1;
     }
@@ -652,7 +646,7 @@ menu_config_set_ext_driver(char *s2, void *data)
     pcur->option = f[3];
   } else {
     for (i = 0; i < 4; i++) {
-      memfree(f[i]);
+      g_free(f[i]);
     }
   }
   return 0;
@@ -677,10 +671,10 @@ menu_config_set_script(char *s2, void *data)
   f[3] = getitok2(&s2, &len, ",");
 
   if (f[0] && f[1]) {
-    snew = (struct script *) memalloc(sizeof(struct script));
+    snew = (struct script *) g_malloc(sizeof(struct script));
     if (snew == NULL) {
       for (i = 0; i < sizeof(f) / sizeof(*f); i++) {
-	memfree(f[i]);
+	g_free(f[i]);
       }
       return 1;
     }
@@ -698,7 +692,7 @@ menu_config_set_script(char *s2, void *data)
     scur->option = f[3];
   } else {
     for (i = 0; i < sizeof(f) / sizeof(*f); i++) {
-      memfree(f[i]);
+      g_free(f[i]);
     }
   }
   return 0;
@@ -747,7 +741,7 @@ mgtkloadconfig(void)
 	  if (endptr[0] == '\0')
 	    * (int *) (cfg->data) = val;
 	}
-	memfree(f1);
+	g_free(f1);
 	break;
       case MENU_CONFIG_TYPE_BOOL:
 	f1 = getitok2(&s2, &len, " \t,");
@@ -756,12 +750,12 @@ mgtkloadconfig(void)
 	  if (endptr[0] == '\0')
 	    * (int *) (cfg->data) = (val != 0);
 	}
-	memfree(f1);
+	g_free(f1);
 	break;
       case MENU_CONFIG_TYPE_STRING:
 	f1 = getitok2(&s2, &len, "");
 	if (f1) {
-	  memfree(* (char **) (cfg->data));
+	  g_free(* (char **) (cfg->data));
 	  * (char **) (cfg->data) = f1;
 	}
 	break;
@@ -779,8 +773,8 @@ mgtkloadconfig(void)
       case MENU_CONFIG_TYPE_DRIVER:
       case MENU_CONFIG_TYPE_WINDOW:
 	if (cfg->proc && cfg->proc(s2, cfg->data)) {
-	  memfree(tok);
-	  memfree(str);
+	  g_free(tok);
+	  g_free(str);
 	  closeconfig(fp);
 	  return 1;
 	}
@@ -789,8 +783,8 @@ mgtkloadconfig(void)
     } else {
       fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, MGTKCONF);
     }
-    memfree(tok);
-    memfree(str);
+    g_free(tok);
+    g_free(str);
   }
   closeconfig(fp);
   return 0;
@@ -853,8 +847,8 @@ mgtkwindowconfig(void)
 	menu_config_set_child_window_geometry(s2, cfg->data);
       }
     }
-    memfree(tok);
-    memfree(str);
+    g_free(tok);
+    g_free(str);
   }
   closeconfig(fp);
   return 0;
@@ -881,30 +875,30 @@ exwinloadconfig(void)
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	Menulocal.exwindpi = val;
-      memfree(f1);
+      g_free(f1);
     } else if (strcmp(tok, "win_width") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	Menulocal.exwinwidth = val;
-      memfree(f1);
+      g_free(f1);
     } else if (strcmp(tok, "win_height") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	Menulocal.exwinheight = val;
-      memfree(f1);
+      g_free(f1);
     } else if (strcmp(tok, "use_external_viewer") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	Menulocal.exwin_use_external = val;
-      memfree(f1);
+      g_free(f1);
     } else {
       fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, G2WINCONF);
     }
-    memfree(tok);
-    memfree(str);
+    g_free(tok);
+    g_free(str);
   }
   closeconfig(fp);
   return 0;
@@ -938,7 +932,7 @@ menulocal_finalize(void)
   for (i = 0; (cfg = MenuConfigArrray[i]); i++) {
     for (j = 0; cfg[j].name; j++) {
       if (cfg[i].type == MENU_CONFIG_TYPE_STRING) {
-	memfree(* (char **) cfg[i].data);
+	g_free(* (char **) cfg[i].data);
 	* (char **) cfg[i].data = NULL;
       }
     }
@@ -948,11 +942,11 @@ menulocal_finalize(void)
   while (pcur) {
     pdel = pcur;
     pcur = pcur->next;
-    memfree(pdel->name);
-    memfree(pdel->driver);
-    memfree(pdel->ext);
-    memfree(pdel->option);
-    memfree(pdel);
+    g_free(pdel->name);
+    g_free(pdel->driver);
+    g_free(pdel->ext);
+    g_free(pdel->option);
+    g_free(pdel);
   }
   Menulocal.extprinterroot = NULL;
 
@@ -960,11 +954,11 @@ menulocal_finalize(void)
   while (scur) {
     sdel = scur;
     scur = scur->next;
-    memfree(sdel->name);
-    memfree(sdel->script);
-    memfree(sdel->description);
-    memfree(sdel->option);
-    memfree(sdel);
+    g_free(sdel->name);
+    g_free(sdel->script);
+    g_free(sdel->description);
+    g_free(sdel->option);
+    g_free(sdel);
   }
   Menulocal.scriptroot = NULL;
 
@@ -979,10 +973,10 @@ menulocal_finalize(void)
   arrayfree2(Menulocal.datafilelist);
   Menulocal.datafilelist = NULL;
 
-  free(Menulocal.fileopendir);
+  g_free(Menulocal.fileopendir);
   Menulocal.fileopendir = NULL;
 
-  free(Menulocal.graphloaddir);
+  g_free(Menulocal.graphloaddir);
   Menulocal.graphloaddir = NULL;
 
   Menulocal.obj = NULL;
@@ -1001,7 +995,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (_getobj(obj, "_local", inst, &local)) {
     local = gra2cairo_free(obj, inst);
-    memfree(local);
+    g_free(local);
     return 1;
   }
 
@@ -1024,7 +1018,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.PaperZoom = 10000;
   Menulocal.exwindpi = DEFAULT_DPI;
   Menulocal.expand = 1;
-  Menulocal.expanddir = nstrdup("./");
+  Menulocal.expanddir = g_strdup("./");
   Menulocal.expandtofullpath = TRUE;
   Menulocal.ngpfilelist = gtk_recent_manager_get_default();
   Menulocal.datafilelist = arraynew(sizeof(char *));
@@ -1102,7 +1096,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   menulocal_finalize();
 
   local = gra2cairo_free(obj, inst);
-  memfree(local);
+  g_free(local);
 
   return 1;
 }
@@ -1458,7 +1452,7 @@ static int
 mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int num, i, id;
-  char buf[256], *name, *ptr;
+  char *name, *ptr;
   struct narray *oarray, *sarray;
   struct Viewer *d;
   struct FocusObj **focus;
@@ -1492,8 +1486,7 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
     if (inst) {
       _getobj(focus[i]->obj, "id", inst, &id);
       name = chkobjectname(focus[i]->obj);
-      snprintf(buf, sizeof(buf), "%s:%d", name, id);
-      ptr = nstrdup(buf);
+      ptr = g_strdup_printf("%s:%d", name, id);
       if (ptr) {
 	arrayadd(oarray, &ptr);
       }

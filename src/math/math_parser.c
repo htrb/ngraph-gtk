@@ -1,5 +1,5 @@
 /* 
- * $Id: math_parser.c,v 1.10 2009/11/14 12:18:42 hito Exp $
+ * $Id: math_parser.c,v 1.11 2009/11/16 09:13:06 hito Exp $
  * 
  */
 
@@ -8,6 +8,7 @@
 #include <math.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <glib.h>
 
 #include "object.h"
 
@@ -330,7 +331,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
 
   argc = parse_argument_list(str, eq, fprm, argv, arg_max, err);
   if (argc < 0) {
-    memfree(argv);
+    g_free(argv);
     return NULL;
   }
 
@@ -339,7 +340,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
     *err = MATH_ERROR_MISS_RP;
     math_equation_set_parse_error(eq, token->ptr);
     free_arg_list(argv);
-    memfree(argv);
+    g_free(argv);
     math_scanner_free_token(token);
     return NULL;
   }
@@ -350,7 +351,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
       argv[i] = math_double_expression_new(eq, &MATH_VALUE_ZERO, err);
       if (argv[i] == NULL) {
 	free_arg_list(argv);
-	free(argv);
+	g_free(argv);
 	return NULL;
       }
     }
@@ -359,7 +360,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
     *err = MATH_ERROR_ARG_NUM;
     math_equation_set_func_arg_num_error(eq, fprm, argc);
     free_arg_list(argv);
-    memfree(argv);
+    g_free(argv);
     return NULL;
   }
 
@@ -368,14 +369,14 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
     *err = MATH_ERROR_INVALID_FUNC;
     math_equation_set_func_error(eq, fprm);
     free_arg_list(argv);
-    memfree(argv);
+    g_free(argv);
     return NULL;
   }
 
   exp = math_func_call_expression_new(eq, fprm, argc, argv, pos_id, err);
   if (exp == NULL) {
     free_arg_list(argv);
-    memfree(argv);
+    g_free(argv);
     return NULL;
   }
 
@@ -819,7 +820,7 @@ free_func_prm(struct math_function_parameter *prm)
     return;
 
   if (prm->arg_type) {
-    memfree(prm->arg_type);
+    g_free(prm->arg_type);
   }
 
   if (prm->opt_usr) {
@@ -827,10 +828,10 @@ free_func_prm(struct math_function_parameter *prm)
   }
 
   if (prm->name) {
-    memfree(prm->name);
+    g_free(prm->name);
   }
 
-  memfree(prm);
+  g_free(prm);
 }
 
 MathExpression *

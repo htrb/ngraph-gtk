@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.30 2009/11/03 01:18:52 hito Exp $
+ * $Id: ogra2x11.c,v 1.31 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -124,25 +124,25 @@ gtkloadconfig(struct gtklocal *gtklocal)
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	gtklocal->windpi = val;
-      memfree(f1);
+      g_free(f1);
     } else if (strcmp(tok, "win_width") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	gtklocal->winwidth = val;
-      memfree(f1);
+      g_free(f1);
     } else if (strcmp(tok, "win_height") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
       val = strtol(f1, &endptr, 10);
       if (endptr[0] == '\0')
 	gtklocal->winheight = val;
-      memfree(f1);
+      g_free(f1);
     } else if (strcmp(tok, "use_external_viewer") == 0) {
     } else {
       fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, GRA2GTKCONF);
     }
-    memfree(tok);
-    memfree(str);
+    g_free(tok);
+    g_free(str);
   }
   closeconfig(fp);
   return 0;
@@ -239,7 +239,7 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
 
-  gtklocal = memalloc(sizeof(*gtklocal));
+  gtklocal = g_malloc(sizeof(*gtklocal));
   if (gtklocal == NULL)
     goto errexit;
 
@@ -368,13 +368,13 @@ errexit:
     }
 
     if (gtklocal->mainwin) {
-      memfree(gtklocal->title);
+      g_free(gtklocal->title);
     }
-    memfree(gtklocal);
+    g_free(gtklocal);
   }
 
   local = gra2cairo_free(obj, inst);
-  memfree(local);
+  g_free(local);
 
   return 1;
 }
@@ -409,7 +409,7 @@ gtkdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (idn != -1)
     unregisterevloop(robj, idn, inst);
 
-  memfree(gtklocal->title);
+  g_free(gtklocal->title);
 
   return 0;
 }

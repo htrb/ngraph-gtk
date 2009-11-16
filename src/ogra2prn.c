@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2prn.c,v 1.6 2009/03/31 06:41:32 hito Exp $
+ * $Id: ogra2prn.c,v 1.7 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -30,6 +30,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
+#include <glib.h>
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -45,8 +46,6 @@
 #define PARENT "gra2"
 #define OVERSION  "1.00.00"
 
-#define TRUE  1
-#define FALSE 0
 
 #define ERRFOPEN 100
 
@@ -67,14 +66,14 @@ gra2pinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct gra2plocal *gra2plocal;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  if ((gra2plocal=memalloc(sizeof(struct gra2plocal)))==NULL) goto errexit;
+  if ((gra2plocal=g_malloc(sizeof(struct gra2plocal)))==NULL) goto errexit;
   if (_putobj(obj,"_local",inst,gra2plocal)) goto errexit;
   gra2plocal->fname=NULL;
   gra2plocal->fil=NULL;
   return 0;
 
 errexit:
-  memfree(gra2plocal);
+  g_free(gra2plocal);
   return 1;
 }
 
@@ -85,7 +84,7 @@ gra2pdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"_local",inst,&gra2plocal);
-  if (gra2plocal->fname!=NULL) free(gra2plocal->fname);
+  if (gra2plocal->fname!=NULL) g_free(gra2plocal->fname);
   if (gra2plocal->fil!=NULL) fclose(gra2plocal->fil);
   return 0;
 }
@@ -128,12 +127,12 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
     gra2plocal->fil=NULL;
     if ((sys=getobject("system"))==NULL) return 1;
     if (getobj(sys,"temp_prefix",0,0,NULL,&pfx)) return 1;
-    if (gra2plocal->fname) free(gra2plocal->fname);
+    if (gra2plocal->fname) g_free(gra2plocal->fname);
 
     gra2plocal->fil = mytempfile(pfx, &gra2plocal->fname);
     if (gra2plocal->fil == NULL) {
       error2(obj,ERRFOPEN,gra2plocal->fname);
-      free(gra2plocal->fname);
+      g_free(gra2plocal->fname);
       gra2plocal->fname = NULL;
       return 1;
     }
@@ -170,15 +169,15 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
         if ((s=nstrcat(s,"' "))==NULL) goto errexit;
         if ((s=nstrcat(s,prn))==NULL) goto errexit;
         if ((nshell=newshell())==NULL) {
-        memfree(s);
+        g_free(s);
         goto errexit;
       }
       ngraphenvironment(nshell);
       cmdexecute(nshell,s);
       delshell(nshell);
-      memfree(s);
+      g_free(s);
       unlink(gra2plocal->fname);
-      free(gra2plocal->fname);
+      g_free(gra2plocal->fname);
       gra2plocal->fname=NULL;
     }
   }
@@ -187,7 +186,7 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
 errexit:
   if (gra2plocal->fname) {
     unlink(gra2plocal->fname);
-    free(gra2plocal->fname);
+    g_free(gra2plocal->fname);
     gra2plocal->fname = NULL;
   }
   return 1;

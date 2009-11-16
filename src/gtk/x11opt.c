@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.69 2009/11/06 11:09:55 hito Exp $
+ * $Id: x11opt.c,v 1.70 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -115,7 +115,7 @@ add_str_with_int_to_array(struct narray *conf, char *str, int val)
 {
   char *buf;
 
-  buf = (char *) memalloc(BUF_SIZE);    
+  buf = (char *) g_malloc(BUF_SIZE);    
   if (buf) {
     snprintf(buf, BUF_SIZE, "%s=%d", str, val);
     arrayadd(conf, &buf);
@@ -236,9 +236,9 @@ SetScriptDialogBrowse(GtkWidget *w, gpointer client_data)
   d = (struct SetScriptDialog *) client_data;
   if (nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL,
 		       NULL, &file, TRUE, FALSE) == IDOK) {
-    gtk_entry_set_text(GTK_ENTRY(d->script), file);
+    entry_set_filename(d->script, file);
   }
-  free(file);
+  g_free(file);
 }
 
 static void
@@ -299,11 +299,29 @@ set_scrpt_option(GtkWidget *entry, char **opt, char *msg)
     return 1;
   }
 
-  buf2 = nstrdup(buf);
+  buf2 = g_strdup(buf);
   if (buf2) {
-    memfree(*opt);
+    g_free(*opt);
     *opt = buf2;
   }
+
+  return 0;
+}
+
+static int
+set_scrpt_file(GtkWidget *entry, char **opt, char *msg)
+{
+  char *buf;
+
+  buf = entry_get_filename(entry);
+  if (msg && strlen(buf) == 0) {
+    MessageBox(NULL, msg, NULL, MB_OK);
+    g_free(buf);
+    return 1;
+  }
+
+  g_free(*opt);
+  *opt = buf;
 
   return 0;
 }
@@ -326,7 +344,7 @@ SetScriptDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  if (set_scrpt_option(d->script, &(d->Script->script), _("Please specify script file name."))) {
+  if (set_scrpt_file(d->script, &(d->Script->script), _("Please specify script file name."))) {
     return;
   }
 
@@ -369,11 +387,11 @@ PrefScriptDialogSetupItem(struct PrefScriptDialog *d)
 static void
 script_free(struct script *fdel)
 {
-  memfree(fdel->name);
-  memfree(fdel->script);
-  memfree(fdel->description);
-  memfree(fdel->option);
-  memfree(fdel);
+  g_free(fdel->name);
+  g_free(fdel->script);
+  g_free(fdel->description);
+  g_free(fdel->option);
+  g_free(fdel);
 }
 
 static void
@@ -455,9 +473,9 @@ SetDriverDialogBrowse(GtkWidget *w, gpointer client_data)
   d = (struct SetDriverDialog *) client_data;
   if (nGetOpenFileName(d->widget, _("External Driver"), NULL, NULL,
 		       NULL, &file, TRUE, FALSE) == IDOK) {
-    gtk_entry_set_text(GTK_ENTRY(d->driver), file);
+    entry_set_filename(d->driver, file);
   }
-  free(file);
+  g_free(file);
 }
 
 static void
@@ -527,30 +545,27 @@ SetDriverDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  buf2 = nstrdup(buf);
+  buf2 = g_strdup(buf);
   if (buf2) {
-    memfree(d->Driver->name);
+    g_free(d->Driver->name);
     d->Driver->name = buf2;
   }
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->driver));
-  buf2 = nstrdup(buf);
-  if (buf2) {
-    memfree(d->Driver->driver);
-    d->Driver->driver = buf2;
-  }
+  buf2 = entry_get_filename(d->driver);
+  g_free(d->Driver->driver);
+  d->Driver->driver = buf2;
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->ext));
-  buf2 = nstrdup(buf);
+  buf2 = g_strdup(buf);
   if (buf2) {
-    memfree(d->Driver->ext);
+    g_free(d->Driver->ext);
     d->Driver->ext = buf2;
   }
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->option));
-  buf2 = nstrdup(buf);
+  buf2 = g_strdup(buf);
   if (buf2) {
-    memfree(d->Driver->option);
+    g_free(d->Driver->option);
     d->Driver->option = buf2;
   }
 
@@ -583,11 +598,11 @@ PrefDriverDialogSetupItem(struct PrefDriverDialog *d)
 static void
 extprinter_free(struct extprinter *fdel)
 {
-  memfree(fdel->name);
-  memfree(fdel->driver);
-  memfree(fdel->option);
-  memfree(fdel->ext);
-  memfree(fdel);
+  g_free(fdel->name);
+  g_free(fdel->driver);
+  g_free(fdel->option);
+  g_free(fdel->ext);
+  g_free(fdel);
 }
 
 static void
@@ -712,7 +727,7 @@ get_font_alias(struct PrefFontDialog *d)
   char *tmp, *ptr;
 
   alias = gtk_entry_get_text(GTK_ENTRY(d->alias));
-  tmp = strdup(alias);
+  tmp = g_strdup(alias);
 
   if (tmp == NULL)
     return NULL;
@@ -725,7 +740,7 @@ get_font_alias(struct PrefFontDialog *d)
   }
 
   if (tmp[0] == '\0') {
-    free(tmp);
+    g_free(tmp);
     tmp = NULL;
   }
 
@@ -792,7 +807,7 @@ set_font_from_font_selection_dialog(GtkWidget *w, struct PrefFontDialog *d, stru
     alias = get_font_alias(d);
     if (alias) {
       gra2cairo_add_fontmap(alias, family, type, two_byte);
-      free(alias);
+      g_free(alias);
     }
   }
   pango_font_description_free(pdesc);
@@ -814,7 +829,7 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
     return;
 
   fcur = gra2cairo_get_fontmap(fontalias);
-  free(fontalias);
+  g_free(fontalias);
   if (fcur == NULL)
     return;
 
@@ -836,7 +851,7 @@ PrefFontDialogRemove(GtkWidget *w, gpointer client_data)
 
   fontalias = list_store_get_selected_string(d->list, 0);
   gra2cairo_remove_fontmap(fontalias);
-  free(fontalias);
+  g_free(fontalias);
   PrefFontDialogSetupItem(d);
 }
 
@@ -857,7 +872,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   }
 
   fmap = gra2cairo_get_fontmap(alias);
-  free(alias);
+  g_free(alias);
 
   if (fmap) {
     MessageBox(d->widget, _("Alias name already exists."), NULL, MB_OK);
@@ -1108,14 +1123,14 @@ set_font(char **cfg, GtkWidget *btn)
   buf = gtk_font_button_get_font_name(GTK_FONT_BUTTON(btn));
   if (buf && *cfg) {
     if (strcmp(*cfg, buf)) {
-      memfree(*cfg);
+      g_free(*cfg);
     } else {
       buf = NULL;
     }
   }
 
   if (buf) {
-    *cfg = nstrdup(buf);
+    *cfg = g_strdup(buf);
     return 1;
   }
 
@@ -1140,14 +1155,14 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->editor));
   if (buf) {
-    buf2 = nstrdup(buf);
+    buf2 = g_strdup(buf);
     if (buf2) {
       changefilename(buf2);
-      memfree(Menulocal.editor);
+      g_free(Menulocal.editor);
     }
     Menulocal.editor = buf2;
   } else {
-    memfree(Menulocal.editor);
+    g_free(Menulocal.editor);
     Menulocal.editor = NULL;
   }
 
@@ -1172,9 +1187,9 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->expanddir));
   if (buf) {
-    buf2 = nstrdup(buf);
+    buf2 = g_strdup(buf);
     if (buf2) {
-      memfree(Menulocal.expanddir);
+      g_free(Menulocal.expanddir);
       Menulocal.expanddir = buf2;
     }
   }
@@ -1515,7 +1530,7 @@ CmOptionSaveNgp(void)
   if (access(ngpfile, 04) == 0) {
     snprintf(mes, sizeof(mes), _("`%s'\n\nOverwrite existing file?"), ngpfile);
     if (MessageBox(NULL, mes, _("Save as .Ngraph.ngp"), MB_YESNO) != IDYES) {
-      memfree(ngpfile);
+      g_free(ngpfile);
       return;
     }
   }
@@ -1524,7 +1539,7 @@ CmOptionSaveNgp(void)
   SetStatusBar(mes);
   SaveDrawrable(ngpfile, FALSE, FALSE);
   ResetStatusBar();
-  memfree(ngpfile);
+  g_free(ngpfile);
   return;
 }
 

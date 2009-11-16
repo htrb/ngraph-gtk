@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.11 2009/10/22 00:07:11 hito Exp $
+ * $Id: mathcode.c,v 1.12 2009/11/16 09:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,9 +33,6 @@
 #include "nstring.h"
 #include "mathfn.h"
 #include "mathcode.h"
-
-#define TRUE 1
-#define FALSE 0
 
 #define OPENUM 65
 
@@ -175,7 +172,7 @@ mathcode(const char *str,char **code,
   if (minmax) *twopass=FALSE;
   if (column) *maxdim=0;
   if ((ncode=arraynew(1))==NULL) goto errexit;
-  if ((s=memalloc(strlen(str)+2))==NULL) goto errexit;
+  if ((s=g_malloc(strlen(str)+2))==NULL) goto errexit;
   strcpy(s,str);
 
   j=0;
@@ -539,13 +536,13 @@ mathcode(const char *str,char **code,
   if (arrayadd(ncode,&ch)==NULL) goto errexit;
   len=arraynum(ncode);
   *code=arraydata(ncode);
-  memfree(ncode);
-  memfree(s);
+  g_free(ncode);
+  g_free(s);
   return MCNOERR;
 
 errexit:
   arrayfree(ncode);
-  memfree(s);
+  g_free(s);
   arraydel(needdata);
   arraydel(needfile);
   *code=NULL;

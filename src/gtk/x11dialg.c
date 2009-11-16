@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.44 2009/11/03 01:18:53 hito Exp $
+ * $Id: x11dialg.c,v 1.45 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -385,7 +385,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
       list_store_append(d->list, &iter);
       list_store_set_int(d->list, &iter, 0, i);
       list_store_set_string(d->list, &iter, 1, CHK_STR(s));
-      memfree(s);
+      g_free(s);
     }
   }
 
@@ -526,7 +526,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
       list_store_append(d->list, &iter);
       list_store_set_int(d->list, &iter, 0, i);
       list_store_set_string(d->list, &iter, 1, CHK_STR(s));
-      memfree(s);
+      g_free(s);
     }
   }
 
@@ -606,7 +606,7 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   if (ctmp == NULL)
     return -1;
 
-  buf = strdup(ctmp);
+  buf = g_strdup(ctmp);
   if (buf == NULL)
     return -1;
 
@@ -648,24 +648,24 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
     sgetobjfield(Obj, Id, field, NULL, &str1, FALSE, FALSE, FALSE);
     if (putobj(Obj, field, Id, array) < 0) {
-      memfree(str1);
+      g_free(str1);
       goto ErrEnd;
     }
     sgetobjfield(Obj, Id, field, NULL, &str2, FALSE, FALSE, FALSE);
     if (str1 && str2 && strcmp(str1, str2)) {
       set_graph_modified();
     }
-    memfree(str2);
-    memfree(str1);
+    g_free(str2);
+    g_free(str1);
   }
 
-  free(buf);
+  g_free(buf);
   return 0;
 
 
  ErrEnd:
   if (buf)
-    free(buf);
+    g_free(buf);
 
   if (array)
     arrayfree(array);
@@ -704,7 +704,7 @@ SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id,
   gtk_entry_set_text(entry, str);
 
  END:
-  memfree(str);
+  g_free(str);
 }
 
 int
@@ -720,7 +720,7 @@ chk_sputobjfield(struct objlist *obj, int id, char *field, char *str)
     sgetobjfield(obj, id, field, NULL, &org, FALSE, FALSE, FALSE);
 
     if (sputobjfield(obj, id, field, str)) {
-      memfree(org);
+      g_free(org);
       return 1;
     }
 
@@ -730,8 +730,8 @@ chk_sputobjfield(struct objlist *obj, int id, char *field, char *str)
 	(ptr && org && strcmp(ptr, org))) {
       set_graph_modified();
     }
-    memfree(ptr);
-    memfree(org);
+    g_free(ptr);
+    g_free(org);
   }
 
   return 0;
@@ -793,16 +793,25 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
   if (tmp == NULL)
     return -1;
 
-  buf = nstrdup(tmp);
+  if (strcmp(field, "file") == 0) {
+    buf = g_filename_from_utf8(tmp, -1, NULL, NULL, NULL);
+    if (buf == NULL) {
+      MessageBox(NULL, _("Couldn't convert filename from UTF-8."), NULL, MB_OK);
+      return -1;
+    }
+  } else {
+    buf = g_strdup(tmp);
+  }
+
   if (buf == NULL)
     return -1;
 
   if (chk_sputobjfield(Obj, Id, field, buf)) {
-    memfree(buf);
+    g_free(buf);
     return -1;
   }
 
-  memfree(buf);
+  g_free(buf);
   return 0;
 }
 
@@ -819,8 +828,29 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
   entry = GTK_ENTRY(w);
 
   sgetobjfield(Obj, Id, field, NULL, &buf, FALSE, FALSE, FALSE);
-  gtk_entry_set_text(entry, buf);
-  memfree(buf);
+  
+  if (buf == NULL) {
+    gtk_entry_set_text(entry, "");
+    return;
+  }
+
+  if (strcmp(field, "file") == 0) {
+    char *ptr;
+
+    ptr = g_filename_to_utf8(buf, -1, NULL, NULL, NULL);
+    if (ptr == NULL) {
+      MessageBox(NULL, _("Couldn't convert filename to UTF-8."), NULL, MB_OK);
+      return;
+    }
+
+    g_free(buf);
+    buf = g_strdup(ptr);
+
+    g_free(ptr);
+  }
+
+  gtk_entry_set_text(entry, CHK_STR(buf));
+  g_free(buf);
 }
 
 int
@@ -1129,11 +1159,11 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
     return;
 
   if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fcur)) {
-    free(fontalias);
+    g_free(fontalias);
     return;
   }
 
-  free(fontalias);
+  g_free(fontalias);
 
   if ((! jfont || ! fcur->twobyte) && (jfont || fcur->twobyte))
     return;

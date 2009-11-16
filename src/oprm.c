@@ -1,5 +1,5 @@
 /* 
- * $Id: oprm.c,v 1.12 2009/11/03 01:18:51 hito Exp $
+ * $Id: oprm.c,v 1.13 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -36,6 +36,7 @@
 #include <sys/types.h>
 #include <utime.h>
 #include <time.h>
+#include <glib.h>
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -53,9 +54,6 @@
 #define NAME "prm"
 #define PARENT "object"
 #define OVERSION  "1.00.00"
-
-#define TRUE  1
-#define FALSE 0
 
 #define ERROPEN 100
 #define ERRREAD 101
@@ -99,7 +97,7 @@ pathconv(char *s,int ignorepath)
   if (s[0]=='\0') return NULL;
   if (ignorepath) {
     file=getbasename(s);
-    memfree(s);
+    g_free(s);
   } else file=s;
   changefilename(file);
   for (i=0;file[i]!='\0';i++) {
@@ -171,7 +169,7 @@ remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
   int file,line,col;
   unsigned int code;
 
-  if ((s2=memalloc(strlen(s)+200))==NULL) return NULL;
+  if ((s2=g_malloc(strlen(s)+200))==NULL) return NULL;
   j=0;
   script=0;
   for (i=0;i<2;i++) {
@@ -346,7 +344,7 @@ mathconv(char *math)
   int f,g,fb[50],gb[50];
   char *m;
 
-  if ((m=memalloc(strlen(math)+100))==NULL) return NULL;
+  if ((m=g_malloc(strlen(math)+100))==NULL) return NULL;
   j=0;
   f=g=0;
   for (i=0;math[i]!='\0';i++) {
@@ -413,7 +411,7 @@ mathconv(char *math)
   }
   m[j]='\0';
   if (m[0]=='\0') {
-    memfree(m);
+    g_free(m);
     m=NULL;
   }
   return m;
@@ -561,7 +559,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     fnameid[i]=fid;
     if (i==0) fidroot=fid;
     if (prmloadline(obj,file,fp,buf,TRUE)!=0) goto errexit;
-    if ((s=memalloc(strlen(buf)+1))==NULL) goto errexit;
+    if ((s=g_malloc(strlen(buf)+1))==NULL) goto errexit;
     strcpy(s,buf);
     s=pathconv(s,ignorepath);
     putobj(fobj,"file",fid,s);
@@ -580,7 +578,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         anameid[0]=aid;
         getobj(aobj,"oid",aid,0,NULL,&(anameoid[0]));
       }
-      if ((s=memalloc(30))==NULL) goto errexit;
+      if ((s=g_malloc(30))==NULL) goto errexit;
       sprintf(s,"axis:%d",anameid[0]);
     } else {
       if (anameid[2]==-1) {
@@ -588,7 +586,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         anameid[2]=aid;
         getobj(aobj,"oid",aid,0,NULL,&(anameoid[2]));
       }
-      if ((s=memalloc(30))==NULL) goto errexit;
+      if ((s=g_malloc(30))==NULL) goto errexit;
       sprintf(s,"axis:%d",anameid[2]);
     }
     putobj(fobj,"axis_x",fid,s);
@@ -598,7 +596,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         anameid[1]=aid;
         getobj(aobj,"oid",aid,0,NULL,&(anameoid[1]));
       }
-      if ((s=memalloc(30))==NULL) goto errexit;
+      if ((s=g_malloc(30))==NULL) goto errexit;
       sprintf(s,"axis:%d",anameid[1]);
     } else {
       if (anameid[3]==-1) {
@@ -606,7 +604,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         anameid[3]=aid;
         getobj(aobj,"oid",aid,0,NULL,&(anameoid[3]));
       }
-      if ((s=memalloc(30))==NULL) goto errexit;
+      if ((s=g_malloc(30))==NULL) goto errexit;
       sprintf(s,"axis:%d",anameid[3]);
     }
     putobj(fobj,"axis_y",fid,s);
@@ -664,7 +662,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((fitid=newobj(fitobj))==-1) goto errexit;
       getobj(fitobj,"oid",fitid,0,NULL,&nameid);
       if (d5==51) fitnameid[i]=fitid;
-      if ((s=memalloc(30))==NULL) goto errexit;
+      if ((s=g_malloc(30))==NULL) goto errexit;
       sprintf(s,"fit:^%d",nameid);
       putobj(fobj,"fit",fid,s);
       if (d5<=47) {
@@ -1022,7 +1020,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if ((strlen(buf)!=0)
     && ((s=remarkconv(buf,fff[j],ffj[j],ffb[j],fnameid,file,greek))!=NULL)) {
       if ((tid=newobj(tobj))==-1) {
-        memfree(s);
+        g_free(s);
         goto errexit;
       }
       putobj(tobj,"text",tid,s);
@@ -1050,10 +1048,10 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((i==3) || (i==5)) d3=9000;
       else d3=0;
       putobj(tobj,"direction",tid,&d3);
-      if ((s=memalloc(strlen(fontchar[fff[j]+ffb[j]])+1))==NULL) goto errexit;
+      if ((s=g_malloc(strlen(fontchar[fff[j]+ffb[j]])+1))==NULL) goto errexit;
       strcpy(s,fontchar[fff[j]+ffb[j]]);
       putobj(tobj,"font",tid,s);
-      if ((s=memalloc(strlen(jfontchar[ffj[j]])+1))==NULL) goto errexit;
+      if ((s=g_malloc(strlen(jfontchar[ffj[j]])+1))==NULL) goto errexit;
       strcpy(s,jfontchar[ffj[j]]);
       putobj(tobj,"jfont",tid,s);
       putobj(tobj,"pt",tid,&(ffs[j]));
@@ -1073,7 +1071,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if ((strlen(buf)!=0)
     && ((s=remarkconv(buf,fff[2],ffj[2],ffb[2],fnameid,file,greek))!=NULL)) {
       if ((tid=newobj(tobj))==-1) {
-        memfree(s);
+        g_free(s);
         goto errexit;
       }
       putobj(tobj,"text",tid,s);
@@ -1086,10 +1084,10 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       putobj(tobj,"y",tid,&d2);
       d3*=9000;
       putobj(tobj,"direction",tid,&d3);
-      if ((s=memalloc(strlen(fontchar[fff[2]+ffb[2]])+1))==NULL) goto errexit;
+      if ((s=g_malloc(strlen(fontchar[fff[2]+ffb[2]])+1))==NULL) goto errexit;
       strcpy(s,fontchar[fff[2]+ffb[2]]);
       putobj(tobj,"font",tid,s);
-      if ((s=memalloc(strlen(jfontchar[ffj[2]])+1))==NULL) goto errexit;
+      if ((s=g_malloc(strlen(jfontchar[ffj[2]])+1))==NULL) goto errexit;
       strcpy(s,jfontchar[ffj[2]]);
       putobj(tobj,"jfont",tid,s);
       putobj(tobj,"pt",tid,&(ffs[2]));
@@ -1433,7 +1431,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       putobj(aobj,"inc",aid,&ainc);
     }
     if ((graphtype==1) && (i>1)) {
-      if ((s=memalloc(30))==NULL) goto errexit;
+      if ((s=g_malloc(30))==NULL) goto errexit;
       if (i==2) sprintf(s,"axis:^%d",anameoid[0]);
       else sprintf(s,"axis:^%d",anameoid[1]);
       putobj(aobj,"reference",aid,s);
@@ -1528,15 +1526,15 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         format[j++]='f';
       } else format[j++]='g';
       format[j]='\0';
-      if ((s=memalloc(strlen(format)+1))==NULL)
+      if ((s=g_malloc(strlen(format)+1))==NULL)
         goto errexit;
       strcpy(s,format);
       putobj(aobj,"num_format",aid,s);
-      if ((s=memalloc(strlen(fontchar[fff[3+i]+ffb[3+i]])+1))==NULL)
+      if ((s=g_malloc(strlen(fontchar[fff[3+i]+ffb[3+i]])+1))==NULL)
         goto errexit;
       strcpy(s,fontchar[fff[3+i]+ffb[3+i]]);
       putobj(aobj,"num_font",aid,s);
-      if ((s=memalloc(strlen(jfontchar[ffj[3+i]])+1))==NULL) goto errexit;
+      if ((s=g_malloc(strlen(jfontchar[ffj[3+i]])+1))==NULL) goto errexit;
       strcpy(s,jfontchar[ffj[3+i]]);
       putobj(aobj,"num_jfont",aid,s);
       putobj(aobj,"num_pt",aid,&(ffs[3+i]));
@@ -1555,10 +1553,10 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (graphtype==0) {
     if ((agdid=newobj(agdobj))==-1) goto errexit;
-    if ((s=memalloc(30))==NULL) goto errexit;
+    if ((s=g_malloc(30))==NULL) goto errexit;
     sprintf(s,"axis:^%d",anameoid[0]);
     putobj(agdobj,"axis_x",agdid,s);
-    if ((s=memalloc(30))==NULL) goto errexit;
+    if ((s=g_malloc(30))==NULL) goto errexit;
     sprintf(s,"axis:^%d",anameoid[1]);
     putobj(agdobj,"axis_y",agdid,s);
     iarray=linestyleconv(la1,15);
@@ -1600,12 +1598,12 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     exeobj(aobj,"grouping",aid2[3],1,argv2);
     arraydel(&group);
   } else if (graphtype==2) {
-    if ((s=memalloc(30))==NULL) goto errexit;
+    if ((s=g_malloc(30))==NULL) goto errexit;
     sprintf(s,"axis:^%d",anameoid[1]);
     putobj(aobj,"adjust_axis",aid2[0],s);
     putobj(aobj,"adjust_position",aid2[0],&sccros[1]);
     exeobj(aobj,"adjust",aid2[0],0,NULL);
-    if ((s=memalloc(30))==NULL) goto errexit;
+    if ((s=g_malloc(30))==NULL) goto errexit;
     sprintf(s,"axis:^%d",anameoid[0]);
     putobj(aobj,"adjust_axis",aid2[1],s);
     putobj(aobj,"adjust_position",aid2[1],&sccros[0]);
@@ -1634,7 +1632,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (prmloadline(obj,file,fp,buf,TRUE)!=0) goto errexit;
     if (strlen(buf)!=0) {
       if ((mgid=newobj(mgobj))==-1) goto errexit;
-      if ((s=memalloc(strlen(buf)+1))==NULL) goto errexit;
+      if ((s=g_malloc(strlen(buf)+1))==NULL) goto errexit;
       strcpy(s,buf);
       s=pathconv(s,ignorepath);
       putobj(mgobj,"file",mgid,s);
@@ -1662,7 +1660,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         if ((s2=strchr(buf,']'))!=NULL) {
 	  int ch;
 
-          if ((filename=memalloc(s2-buf))==NULL) goto errexit;
+          if ((filename=g_malloc(s2-buf))==NULL) goto errexit;
           strncpy(filename,buf+1,s2-buf-1);
           filename[s2-buf-1]='\0';
           filename=pathconv(filename,ignorepath);
@@ -1696,7 +1694,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
               utime(filename,&tm);
             }
           }
-          memfree(filename);
+          g_free(filename);
         }
       }
     }

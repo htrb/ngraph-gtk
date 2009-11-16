@@ -1,5 +1,5 @@
 /* 
- * $Id: jnstring.c,v 1.6 2009/11/03 01:18:51 hito Exp $
+ * $Id: jnstring.c,v 1.7 2009/11/16 09:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,10 +26,8 @@
 #endif
 
 #include <string.h>
+#include <glib.h>
 #include "jnstring.h"
-
-#define TRUE  1
-#define FALSE 0
 
 unsigned int 
 njms2jis(unsigned int code)

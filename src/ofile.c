@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.97 2009/11/12 01:36:45 hito Exp $
+ * $Id: ofile.c,v 1.98 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -30,6 +30,8 @@
 #include <utime.h>
 #include <time.h>
 #include <errno.h>
+#include <glib.h>
+
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -65,8 +67,6 @@
 #define PARENT		"draw"
 #define OVERSION	"1.00.00"
 #define F2DCONF		"[file]"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRFILE		100
 #define ERROPEN		101
@@ -872,18 +872,18 @@ opendata(struct objlist *obj,char *inst,
     axmax2 = 0;
     axmin2 = 0;
   }
-  if ((fp=memalloc(sizeof(struct f2ddata)))==NULL) return NULL;
+  if ((fp=g_malloc(sizeof(struct f2ddata)))==NULL) return NULL;
   fp->file=file;
   if ((fp->fd=nfopen(file,"rt"))==NULL) {
     error2(obj,ERROPEN,file);
-    memfree(fp);
+    g_free(fp);
     return NULL;
   }
 
   if (fstat(fileno(fp->fd), &stat_buf)) {
     error2(obj,ERROPEN,file);
     fclose(fp->fd);
-    memfree(fp);
+    g_free(fp);
     return NULL;
   }
   fp->mtime = stat_buf.st_mtime;
@@ -1265,7 +1265,7 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 
   f2dlocal->num = fp->datanum;
 
-  memfree(fp);
+  g_free(fp);
 }
 
 #if NEW_MATH_CODE
@@ -1280,7 +1280,7 @@ create_func_def_str(const char *name, const char *code)
   clen = strlen(code);
 
   len = nlen + clen + sizeof(func_def);
-  ptr = memalloc(len);
+  ptr = g_malloc(len);
   if (ptr == NULL)
     return NULL;
 
@@ -1315,7 +1315,7 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_m
       if (err_msg) {
 	*err_msg = math_err_get_error_message(eq[0], buf, r);
       }
-      memfree(buf);
+      g_free(buf);
       return r;
     }
 
@@ -1324,7 +1324,7 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_m
       if (err_msg) {
 	*err_msg = math_err_get_error_message(eq[0], buf, r);
       }
-      memfree(buf);
+      g_free(buf);
       return r;
     }
 
@@ -1333,10 +1333,10 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_m
       if (err_msg) {
 	*err_msg = math_err_get_error_message(eq[0], buf, r);
       }
-      memfree(buf);
+      g_free(buf);
       return r;
     }
-    memfree(buf);
+    g_free(buf);
   } else {
     math_equation_parse(eq[0], default_func);
     math_equation_parse(eq[1], default_func);
@@ -1435,7 +1435,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
     rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, eq, &err_msg);
     if (err_msg) {
       error22(obj, ERRUNKNOWN, field, err_msg);
-      free(err_msg);
+      g_free(err_msg);
       set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, NULL);
     }
     f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
@@ -1459,7 +1459,7 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
     }
     if (err_msg) {
       error22(obj, ERRUNKNOWN, field, err_msg);
-      free(err_msg);
+      g_free(err_msg);
     }
 
     if (rcode) {
@@ -1533,7 +1533,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 	f2dlocal->maxdimx = prm->id_max;
       }
 #else
-      memfree(f2dlocal->codex);
+      g_free(f2dlocal->codex);
       f2dlocal->codex=code;
       f2dlocal->maxdimx=maxdim;
       arrayfree(f2dlocal->needfilex);
@@ -1552,7 +1552,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
 	f2dlocal->maxdimy = prm->id_max;
       }
 #else
-      memfree(f2dlocal->codey);
+      g_free(f2dlocal->codey);
       f2dlocal->codey=code;
       f2dlocal->maxdimy=maxdim;
       f2dlocal->need2passy=need2pass;
@@ -1572,15 +1572,15 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
     } else code=NULL;
     switch (field[5]) {
     case 'f':
-      memfree(f2dlocal->codef);
+      g_free(f2dlocal->codef);
       f2dlocal->codef=code;
       break;
     case 'g':
-      memfree(f2dlocal->codeg);
+      g_free(f2dlocal->codeg);
       f2dlocal->codeg=code;
       break;
     case 'h':
-      memfree(f2dlocal->codeh);
+      g_free(f2dlocal->codeh);
       f2dlocal->codeh=code;
       break;
     }
@@ -1599,7 +1599,7 @@ set_math_config(struct objlist *obj, char *inst, char *field, char *str)
   if (f2dputmath(obj, inst, field, f1) == 0) {
     _putobj(obj, field, inst, f1);
   } else {
-    memfree(f1);
+    g_free(f1);
   }
   return 0;
 }
@@ -1767,23 +1767,23 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   s1 = s2 = s3 = s4 = NULL;
   f2dlocal=NULL;
 
-  s1 = nstrdup("#%'");
+  s1 = g_strdup("#%'");
   if (s1 == NULL) goto errexit;
   if (_putobj(obj, "remark", inst, s1)) goto errexit;
 
-  s2 = nstrdup(" ,\t()");
+  s2 = g_strdup(" ,\t()");
   if (s2 == NULL) goto errexit;
   if (_putobj(obj, "ifs", inst, s2)) goto errexit;
 
-  s3 = nstrdup("axis:0");
+  s3 = g_strdup("axis:0");
   if (s3 == NULL) goto errexit;
   if (_putobj(obj, "axis_x", inst, s3)) goto errexit;
 
-  s4 = nstrdup("axis:1");
+  s4 = g_strdup("axis:1");
   if (s4 == NULL) goto errexit;
   if (_putobj(obj, "axis_y", inst, s4)) goto errexit;
 
-  f2dlocal=memalloc(sizeof(struct f2dlocal));
+  f2dlocal=g_malloc(sizeof(struct f2dlocal));
   if (f2dlocal == NULL) goto errexit;
   memset(f2dlocal, 0, sizeof(struct f2dlocal));
   if (_putobj(obj,"_local",inst,f2dlocal)) goto errexit;
@@ -1867,11 +1867,11 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 
 errexit:
-  memfree(s1);
-  memfree(s2);
-  memfree(s3);
-  memfree(s4);
-  memfree(f2dlocal);
+  g_free(s1);
+  g_free(s2);
+  g_free(s3);
+  g_free(s4);
+  g_free(f2dlocal);
   return 1;
 }
 
@@ -1891,11 +1891,11 @@ f2ddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   math_equation_free(f2dlocal->codey[1]);
   math_equation_free(f2dlocal->codey[2]);
 #else
-  memfree(f2dlocal->codex);
-  memfree(f2dlocal->codey);
-  memfree(f2dlocal->codef);
-  memfree(f2dlocal->codeg);
-  memfree(f2dlocal->codeh);
+  g_free(f2dlocal->codex);
+  g_free(f2dlocal->codey);
+  g_free(f2dlocal->codef);
+  g_free(f2dlocal->codeg);
+  g_free(f2dlocal->codeh);
   arrayfree(f2dlocal->needfilex);
   arrayfree(f2dlocal->needfiley);
 #endif
@@ -1920,7 +1920,7 @@ f2dfile(struct objlist *obj,char *inst,char *rval,
   if (!ignorepath) return 0;
   file=(char *)(argv[2]);
   file2=getbasename(file);
-  memfree(file);
+  g_free(file);
   argv[2]=file2;
   num2=0;
   _putobj(obj,"data_num",inst,&num2);
@@ -1933,7 +1933,7 @@ f2dbasename(struct objlist *obj,char *inst,char *rval,
 {
   char *file,*file2;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
@@ -2117,7 +2117,7 @@ hskipdata(struct f2ddata *fp)
       fp->eof=TRUE;
       return 0;
     }
-    memfree(buf);
+    g_free(buf);
     fp->line++;
     skip++;
   }
@@ -2251,10 +2251,10 @@ getdata_skip_step(struct f2ddata *fp)
     rcode = fgetline(fp->fd, &buf);
     if (rcode == 1) {
       fp->eof = TRUE;
-      memfree(buf);
+      g_free(buf);
       break;
     } else if (rcode == -1) {
-      memfree(buf);
+      g_free(buf);
       return -1;
     }
     fp->line++;
@@ -2262,7 +2262,7 @@ getdata_skip_step(struct f2ddata *fp)
     if (buf[i] != '\0'
 	&& (fp->remark == NULL || ! CHECK_REMARK(fp->ifs_buf, buf[i])))
       step++;
-    memfree(buf);
+    g_free(buf);
   }
 
   return 0;
@@ -2899,14 +2899,14 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
     for (i = 0; buf[i] != '\0' && CHECK_IFS(fp->ifs_buf, buf[i]); i++);
 
     if (buf[i] == '\0' || (fp->remark && CHECK_REMARK(fp->ifs_buf, buf[i]))) {
-      memfree(buf);
+      g_free(buf);
     } else {
 #if NEW_MATH_CODE
       rcode = getdataarray(buf, fp->maxdim, &fp->count, gdata, fp->ifs_buf, fp->csv);
 #else
       rcode = getdataarray(buf, fp->maxdim, &(fp->count), gdata, gstat, fp->ifs_buf, fp->csv);
 #endif
-      memfree(buf);
+      g_free(buf);
       if (rcode==-1) {
 	return -1;
       }
@@ -2955,11 +2955,11 @@ getdata(struct f2ddata *fp)
 #endif
 
 #if ! NEW_MATH_CODE
-  gdata = (double *) memalloc(sizeof(double) * (FILE_OBJ_MAXCOL + 1));
-  gstat = (char *) memalloc(sizeof(char) * (FILE_OBJ_MAXCOL + 1));
+  gdata = (double *) g_malloc(sizeof(double) * (FILE_OBJ_MAXCOL + 1));
+  gstat = (char *) g_malloc(sizeof(char) * (FILE_OBJ_MAXCOL + 1));
   if (gdata == NULL || gstat == NULL) {
-   memfree(gdata);
-   memfree(gstat);
+   g_free(gdata);
+   g_free(gstat);
    return -1;
   }
 #endif
@@ -3032,8 +3032,8 @@ getdata(struct f2ddata *fp)
 
   if (rcode) {
 #if ! NEW_MATH_CODE
-    memfree(gdata);
-    memfree(gstat);
+    g_free(gdata);
+    g_free(gstat);
 #endif
     return rcode;
   }
@@ -3048,8 +3048,8 @@ getdata(struct f2ddata *fp)
     fp->dx=fp->dy=fp->d2=fp->d3=0;
     fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MEOF;
 #if ! NEW_MATH_CODE
-    memfree(gdata);
-    memfree(gstat);
+    g_free(gdata);
+    g_free(gstat);
 #endif
     return 1;
   }
@@ -3292,8 +3292,8 @@ getdata(struct f2ddata *fp)
 #endif	/* BUF_TYPE */
   }
 #if ! NEW_MATH_CODE
-  memfree(gdata);
-  memfree(gstat);
+  g_free(gdata);
+  g_free(gstat);
 #endif
   return 0;
 }
@@ -3326,17 +3326,17 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
   int find;
 
 #if NEW_MATH_CODE
-  gdata = memalloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
+  gdata = g_malloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
   if (gdata == NULL) {
-    memfree(gdata);
+    g_free(gdata);
    return -1;
   }
 #else
-  gdata = (double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1));
-  gstat = (char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1));
+  gdata = (double *)g_malloc(sizeof(double)*(FILE_OBJ_MAXCOL+1));
+  gstat = (char *)g_malloc(sizeof(char)*(FILE_OBJ_MAXCOL+1));
   if (gdata == NULL || gstat  == NULL) {
-    memfree(gdata);
-    memfree(gstat);
+    g_free(gdata);
+    g_free(gstat);
    return -1;
   }
 #endif
@@ -3354,9 +3354,9 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
       break;
     }
     if (rcode==-1) {
-      memfree(gdata);
+      g_free(gdata);
 #if ! NEW_MATH_CODE
-      memfree(gstat);
+      g_free(gstat);
 #endif
       return -1;
     }
@@ -3369,7 +3369,7 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
 #else
       rcode=getdataarray(buf,maxdim,&(fp->count),gdata,gstat,fp->ifs_buf,fp->csv);
 #endif
-      memfree(buf);
+      g_free(buf);
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
@@ -3381,9 +3381,9 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
       masked = search_mask(fp->mask, fp->masknum, &(fp->mask_index), fp->line);
 #endif
       if (rcode==-1) {
-	memfree(gdata);
+	g_free(gdata);
 #if ! NEW_MATH_CODE
-	memfree(gstat);
+	g_free(gstat);
 #endif
 	return -1;
       }
@@ -3429,9 +3429,9 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
           break;
         }
         if (rcode==-1) {
-          memfree(gdata);
+          g_free(gdata);
 #if ! NEW_MATH_CODE
-          memfree(gstat);
+          g_free(gstat);
 #endif
           return -1;
         }
@@ -3440,14 +3440,14 @@ getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
         if ((buf[i]!='\0')
         && ((fp->remark==NULL) || ! CHECK_REMARK(fp->ifs_buf, buf[i])))
           step++;
-        memfree(buf);
+        g_free(buf);
       }
-    } else memfree(buf);
+    } else g_free(buf);
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
-  memfree(gdata);
+  g_free(gdata);
 #if ! NEW_MATH_CODE
-  memfree(gstat);
+  g_free(gstat);
 #endif
   if (!find) {
     *dd=0;
@@ -3503,7 +3503,7 @@ getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 #else
       rcode=getdataarray(buf,maxdim,&(fp->count),data,stat,fp->ifs_buf,fp->csv);
 #endif
-      memfree(buf);
+      g_free(buf);
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
       for (j=0;j<fp->masknum;j++)
         if ((fp->mask)[j]==fp->line) break;
@@ -3629,7 +3629,7 @@ getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
 
       fp->datanum++;
 
-    } else memfree(buf);
+    } else g_free(buf);
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
   if (datanum==0) {
@@ -3714,16 +3714,16 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 
 
 #if NEW_MATH_CODE
-  gdata = memalloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
+  gdata = g_malloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
   if (gdata == NULL) {
-   memfree(gdata);
+   g_free(gdata);
    return -1;
   }
 #else
-  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
-   memfree(gdata);
-   memfree(gstat);
+  if (((gdata=(double *)g_malloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
+  || ((gstat=(char *)g_malloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
+   g_free(gdata);
+   g_free(gstat);
    return -1;
   }
 #endif
@@ -4010,9 +4010,9 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   fp->dx=fp->dy=fp->d2=fp->d3=0;
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
   fp->dline=0;
-  memfree(gdata);
+  g_free(gdata);
 #if ! NEW_MATH_CODE
-  memfree(gstat);
+  g_free(gstat);
   local->minxstat = fp->minxstat;
   local->maxxstat = fp->maxxstat;
   local->minystat = fp->minystat;
@@ -4485,42 +4485,42 @@ dataadd(double dx,double dy,double dz,
   int bz;
 
   if (*size==0) {
-    if (((*x=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)
-     || ((*y=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)
-     || ((*z=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)
-     || ((*r=memalloc(sizeof(int)*SPBUFFERSZ))==NULL)
-     || ((*g=memalloc(sizeof(int)*SPBUFFERSZ))==NULL)
-     || ((*b=memalloc(sizeof(int)*SPBUFFERSZ))==NULL)
-     || ((*c1=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)
-     || ((*c2=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)
-     || ((*c3=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)
-     || ((*c4=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)
-     || ((*c5=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)
-     || ((*c6=memalloc(sizeof(double)*SPBUFFERSZ))==NULL)) {
-      memfree(*x);  memfree(*y);  memfree(*z);
-      memfree(*r);  memfree(*g);  memfree(*b);
-      memfree(*c1); memfree(*c2); memfree(*c3);
-      memfree(*c4); memfree(*c5); memfree(*c6);
+    if (((*x=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
+     || ((*y=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
+     || ((*z=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
+     || ((*r=g_malloc(sizeof(int)*SPBUFFERSZ))==NULL)
+     || ((*g=g_malloc(sizeof(int)*SPBUFFERSZ))==NULL)
+     || ((*b=g_malloc(sizeof(int)*SPBUFFERSZ))==NULL)
+     || ((*c1=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
+     || ((*c2=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
+     || ((*c3=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
+     || ((*c4=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
+     || ((*c5=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
+     || ((*c6=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)) {
+      g_free(*x);  g_free(*y);  g_free(*z);
+      g_free(*r);  g_free(*g);  g_free(*b);
+      g_free(*c1); g_free(*c2); g_free(*c3);
+      g_free(*c4); g_free(*c5); g_free(*c6);
       return NULL;
     }
   } else if ((*size%SPBUFFERSZ)==0) {
     bz=*size/SPBUFFERSZ+1;
-    if (((xb=memrealloc(*x,sizeof(double)*SPBUFFERSZ*bz))==NULL)
-     || ((yb=memrealloc(*y,sizeof(double)*SPBUFFERSZ*bz))==NULL)
-     || ((zb=memrealloc(*z,sizeof(double)*SPBUFFERSZ*bz))==NULL)
-     || ((rb=memrealloc(*r,sizeof(int)*SPBUFFERSZ*bz))==NULL)
-     || ((gb=memrealloc(*g,sizeof(int)*SPBUFFERSZ*bz))==NULL)
-     || ((bb=memrealloc(*b,sizeof(int)*SPBUFFERSZ*bz))==NULL)
-     || ((c1b=memrealloc(*c1,sizeof(double)*SPBUFFERSZ*bz))==NULL)
-     || ((c2b=memrealloc(*c2,sizeof(double)*SPBUFFERSZ*bz))==NULL)
-     || ((c3b=memrealloc(*c3,sizeof(double)*SPBUFFERSZ*bz))==NULL)
-     || ((c4b=memrealloc(*c4,sizeof(double)*SPBUFFERSZ*bz))==NULL)
-     || ((c5b=memrealloc(*c5,sizeof(double)*SPBUFFERSZ*bz))==NULL)
-     || ((c6b=memrealloc(*c6,sizeof(double)*SPBUFFERSZ*bz))==NULL)) {
-      memfree(*x);  memfree(*y);  memfree(*z);
-      memfree(*r);  memfree(*g);  memfree(*b);
-      memfree(*c1); memfree(*c2); memfree(*c3);
-      memfree(*c4); memfree(*c5); memfree(*c6);
+    if (((xb=g_realloc(*x,sizeof(double)*SPBUFFERSZ*bz))==NULL)
+     || ((yb=g_realloc(*y,sizeof(double)*SPBUFFERSZ*bz))==NULL)
+     || ((zb=g_realloc(*z,sizeof(double)*SPBUFFERSZ*bz))==NULL)
+     || ((rb=g_realloc(*r,sizeof(int)*SPBUFFERSZ*bz))==NULL)
+     || ((gb=g_realloc(*g,sizeof(int)*SPBUFFERSZ*bz))==NULL)
+     || ((bb=g_realloc(*b,sizeof(int)*SPBUFFERSZ*bz))==NULL)
+     || ((c1b=g_realloc(*c1,sizeof(double)*SPBUFFERSZ*bz))==NULL)
+     || ((c2b=g_realloc(*c2,sizeof(double)*SPBUFFERSZ*bz))==NULL)
+     || ((c3b=g_realloc(*c3,sizeof(double)*SPBUFFERSZ*bz))==NULL)
+     || ((c4b=g_realloc(*c4,sizeof(double)*SPBUFFERSZ*bz))==NULL)
+     || ((c5b=g_realloc(*c5,sizeof(double)*SPBUFFERSZ*bz))==NULL)
+     || ((c6b=g_realloc(*c6,sizeof(double)*SPBUFFERSZ*bz))==NULL)) {
+      g_free(*x);  g_free(*y);  g_free(*z);
+      g_free(*r);  g_free(*g);  g_free(*b);
+      g_free(*c1); g_free(*c2); g_free(*c3);
+      g_free(*c4); g_free(*c5); g_free(*c6);
       return NULL;
     } else {
       *x=xb;   *y=yb;   *z=zb;
@@ -4648,10 +4648,10 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
             }
             if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
              || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-              memfree(x);  memfree(y);  memfree(z);
-              memfree(r);  memfree(g);  memfree(b);
-              memfree(c1); memfree(c2); memfree(c3);
-              memfree(c4); memfree(c5); memfree(c6);
+              g_free(x);  g_free(y);  g_free(z);
+              g_free(r);  g_free(g);  g_free(b);
+              g_free(c1); g_free(c2); g_free(c3);
+              g_free(c4); g_free(c5); g_free(c6);
               error(obj,ERRSPL);
               return -1;
             }
@@ -4664,10 +4664,10 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
               if (!GRAcurve(GC,c,x[j],y[j])) break;
             }
           }
-          memfree(x);  memfree(y);  memfree(z);
-          memfree(r);  memfree(g);  memfree(b);
-          memfree(c1); memfree(c2); memfree(c3);
-          memfree(c4); memfree(c5); memfree(c6);
+          g_free(x);  g_free(y);  g_free(z);
+          g_free(r);  g_free(g);  g_free(b);
+          g_free(c1); g_free(c2); g_free(c3);
+          g_free(c4); g_free(c5); g_free(c6);
           num=0;
           count=0;
           x=y=z=c1=c2=c3=c4=c5=c6=NULL;
@@ -4688,10 +4688,10 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
       if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
        || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-        memfree(x);  memfree(y);  memfree(z);
-        memfree(r);  memfree(g);  memfree(b);
-        memfree(c1); memfree(c2); memfree(c3);
-        memfree(c4); memfree(c5); memfree(c6);
+        g_free(x);  g_free(y);  g_free(z);
+        g_free(r);  g_free(g);  g_free(b);
+        g_free(c1); g_free(c2); g_free(c3);
+        g_free(c4); g_free(c5); g_free(c6);
         error(obj,ERRSPL);
         return -1;
       }
@@ -4704,10 +4704,10 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
         if (!GRAcurve(GC,c,x[j],y[j])) break;
       }
     }
-    memfree(x);  memfree(y);  memfree(z);
-    memfree(r);  memfree(g);  memfree(b);
-    memfree(c1); memfree(c2); memfree(c3);
-    memfree(c4); memfree(c5); memfree(c6);
+    g_free(x);  g_free(y);  g_free(z);
+    g_free(r);  g_free(g);  g_free(b);
+    g_free(c1); g_free(c2); g_free(c3);
+    g_free(c4); g_free(c5); g_free(c6);
     break;
   case INTERPOLATION_TYPE_BSPLINE:
     first=TRUE;
@@ -5415,7 +5415,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
 #if NEW_MATH_CODE
       math_equation_free(code);
 #else
-      memfree(code);
+      g_free(code);
       arrayfree(needdata);
 #endif
     }
@@ -5492,7 +5492,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
 #if NEW_MATH_CODE
 	  math_equation_free(code);
 #else
-          memfree(code);
+          g_free(code);
 #endif
           return -1;
         }
@@ -5502,14 +5502,14 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
           spcond=SPLCND2NDDIF;
           if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
            || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-            memfree(x);  memfree(y);  memfree(z);
-            memfree(r);  memfree(g);  memfree(b);
-            memfree(c1); memfree(c2); memfree(c3);
-            memfree(c4); memfree(c5); memfree(c6);
+            g_free(x);  g_free(y);  g_free(z);
+            g_free(r);  g_free(g);  g_free(b);
+            g_free(c1); g_free(c2); g_free(c3);
+            g_free(c4); g_free(c5); g_free(c6);
 #if NEW_MATH_CODE
 	    math_equation_free(code);
 #else
-            memfree(code);
+            g_free(code);
 #endif
             error(obj,ERRSPL);
             return -1;
@@ -5522,10 +5522,10 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
             if (!GRAcurve(GC,c,x[j],y[j])) break;
           }
         }
-        memfree(x);  memfree(y);  memfree(z);
-        memfree(r);  memfree(g);  memfree(b);
-        memfree(c1); memfree(c2); memfree(c3);
-        memfree(c4); memfree(c5); memfree(c6);
+        g_free(x);  g_free(y);  g_free(z);
+        g_free(r);  g_free(g);  g_free(b);
+        g_free(c1); g_free(c2); g_free(c3);
+        g_free(c4); g_free(c5); g_free(c6);
         num=0;
         count=0;
         x=y=z=c1=c2=c3=c4=c5=c6=NULL;
@@ -5547,17 +5547,17 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
 #if NEW_MATH_CODE
   math_equation_free(code);
 #else
-  memfree(code);
+  g_free(code);
 #endif
   if (interpolation) {
     if (num!=0) {
       spcond=SPLCND2NDDIF;
       if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
        || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-        memfree(x);  memfree(y);  memfree(z);
-        memfree(r);  memfree(g);  memfree(b);
-        memfree(c1); memfree(c2); memfree(c3);
-        memfree(c4); memfree(c5); memfree(c6);
+        g_free(x);  g_free(y);  g_free(z);
+        g_free(r);  g_free(g);  g_free(b);
+        g_free(c1); g_free(c2); g_free(c3);
+        g_free(c4); g_free(c5); g_free(c6);
         error(obj,ERRSPL);
         return -1;
       }
@@ -5569,10 +5569,10 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
         if (!GRAcurve(GC,c,x[j],y[j])) break;
       }
     }
-    memfree(x);  memfree(y);  memfree(z);
-    memfree(r);  memfree(g);  memfree(b);
-    memfree(c1); memfree(c2); memfree(c3);
-    memfree(c4); memfree(c5); memfree(c6);
+    g_free(x);  g_free(y);  g_free(z);
+    g_free(r);  g_free(g);  g_free(b);
+    g_free(c1); g_free(c2); g_free(c3);
+    g_free(c4); g_free(c5); g_free(c6);
   }
   return 0;
 }
@@ -6163,7 +6163,7 @@ f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *buf,*buf2;
   char *po,*po2;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   _getobj(obj,"ifs",inst,&ifs);
@@ -6198,9 +6198,9 @@ f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
             } else {
               for (po2=po;(*po2!='\0') && (strchr(ifs,*po2)==NULL) && (*po2!=' ');po2++);
               if (ccol==col) {
-                if ((buf2=memalloc(po2-po+1))==NULL) {
+                if ((buf2=g_malloc(po2-po+1))==NULL) {
                   fclose(fd);
-                  memfree(buf);
+                  g_free(buf);
                   return 1;
                 }
                 strncpy(buf2,po,po2-po);
@@ -6218,9 +6218,9 @@ f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
             if (*po=='\0') break;
             for (po2=po;(*po2!='\0') && (strchr(ifs,*po2)==NULL);po2++);
             if (ccol==col) {
-              if ((buf2=memalloc(po2-po+1))==NULL) {
+              if ((buf2=g_malloc(po2-po+1))==NULL) {
                 fclose(fd);
-                memfree(buf);
+                g_free(buf);
                 return 1;
               }
               strncpy(buf2,po,po2-po);
@@ -6230,10 +6230,10 @@ f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
             } else po=po2;
           }
         }
-        memfree(buf);
+        g_free(buf);
       }
       break;
-    } else memfree(buf);
+    } else g_free(buf);
   }
   fclose(fd);
   return 0;
@@ -6246,7 +6246,7 @@ f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *file, buf[256], *s;
   FILE *fd;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
 
   *(char **) rval = NULL;
 
@@ -6322,7 +6322,7 @@ f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   sgetobjfield(obj, id, "remark", NULL, &rem, FALSE, FALSE, FALSE);
   if (rem && strchr(rem, po[0]))
     po++;
-  memfree(rem);
+  g_free(rem);
 
   while (po[0]!='\0') {
     for (;(po[0]!='\0') && (strchr(" \t",po[0])!=NULL);po++);
@@ -6565,7 +6565,7 @@ f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 	for (i=3;(po[i]!='\0') && (strchr(" \t",po[i])==NULL);i++);
 	if (i>3) {
-	  if ((s=memalloc(i-2))!=NULL) {
+	  if ((s=g_malloc(i-2))!=NULL) {
 	    strncpy(s,po+3,i-3);
 	    s[i-3]='\0';
 	  } else {
@@ -6582,11 +6582,11 @@ f2dsettings(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     } else err=TRUE;
     if (err) {
       error2(obj,ERRILOPTION,buf);
-      memfree(buf);
+      g_free(buf);
       return 1;
     }
   }
-  memfree(buf);
+  g_free(buf);
   return 0;
 }
 
@@ -6598,7 +6598,7 @@ f2dtime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct stat buf;
   int style;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
@@ -6615,7 +6615,7 @@ f2ddate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct stat buf;
   int style;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
@@ -6811,25 +6811,25 @@ f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 #endif
 
 #if NEW_MATH_CODE
-  gdata = memalloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
+  gdata = g_malloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
   if (gdata == NULL) {
-   memfree(gdata);
+   g_free(gdata);
    return -1;
   }
 #else
-  if (((gdata=(double *)memalloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
-  || ((gstat=(char *)memalloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
-   memfree(gdata);
-   memfree(gstat);
+  if (((gdata=(double *)g_malloc(sizeof(double)*(FILE_OBJ_MAXCOL+1)))==NULL)
+  || ((gstat=(char *)g_malloc(sizeof(char)*(FILE_OBJ_MAXCOL+1)))==NULL)) {
+   g_free(gdata);
+   g_free(gstat);
    return -1;
   }
 #endif
   _getobj(obj,"_local",inst,&f2dlocal);
   fp=f2dlocal->data;
   if (fp==NULL) {
-    memfree(gdata);
+    g_free(gdata);
 #if ! NEW_MATH_CODE
-    memfree(gstat);
+    g_free(gstat);
 #endif
     return 0;
   }
@@ -6846,9 +6846,9 @@ f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
   }
   if (maxdim==-1) {
-    memfree(gdata);
+    g_free(gdata);
 #if ! NEW_MATH_CODE
-    memfree(gstat);
+    g_free(gstat);
 #endif
     return 0;
   }
@@ -6861,9 +6861,9 @@ f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (rcode!=0) {
     closedata(fp, f2dlocal);
     f2dlocal->data=NULL;
-    memfree(gdata);
+    g_free(gdata);
 #if ! NEW_MATH_CODE
-    memfree(gstat);
+    g_free(gstat);
 #endif
     return 1;
   }
@@ -6893,9 +6893,9 @@ f2dgetdataraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     arrayadd(darray,&d);
   }
   *(struct narray **)rval=darray;
-  memfree(gdata);
+  g_free(gdata);
 #if ! NEW_MATH_CODE
-  memfree(gstat);
+  g_free(gstat);
 #endif
   return 0;
 }
@@ -6949,7 +6949,7 @@ f2dstat(struct objlist *obj,char *inst,char *rval,
   char str[32], *ptr;
   time_t mtime;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   field=argv[1];
   _getobj(obj,"_local",inst,&f2dlocal);
@@ -7157,7 +7157,7 @@ f2dstat(struct objlist *obj,char *inst,char *rval,
     snprintf(str, sizeof(str), "%.15e", sumyy);
   }
 
-  ptr = nstrdup(str);
+  ptr = g_strdup(str);
   if (ptr == NULL) return -1;
 
   *(char **)rval = ptr;
@@ -7178,7 +7178,7 @@ f2dstat2(struct objlist *obj,char *inst,char *rval,
   char *field;
   char str[32], *ptr;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   field=argv[1];
   line=*(int *)(argv[2]);
@@ -7238,7 +7238,7 @@ f2dstat2(struct objlist *obj,char *inst,char *rval,
     snprintf(str, sizeof(str), "%.15e", d3);
   }
 
-  ptr = nstrdup(str);
+  ptr = g_strdup(str);
   if (ptr == NULL) return -1;
 
   *(char **) rval = ptr;
@@ -7551,13 +7551,13 @@ f2dsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
   arrayfree(array2);
   if ((s=nstrcat(s,*(char **)rval))==NULL) {
-    memfree(*(char **)rval);
+    g_free(*(char **)rval);
     *(char **)rval=NULL;
     return 1;
   }
   if ((s=nstrccat(s,'\t'))==NULL) return 1;
   if ((s=nstrcat(s,"file::fit='fit:^'${fit::oid}\n"))==NULL) return 1;
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=s;
   return 0;
 }
@@ -7571,7 +7571,7 @@ f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *buf;
   char *argv2[2];
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"_local",inst,&f2dlocal);
   if (f2dlocal->endstore) {
@@ -7592,24 +7592,24 @@ f2dstore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     _getobj(obj,"time",inst,&time);
     if ((base=getbasename(file))==NULL) return 1;
     if ((f2dlocal->storefd=nfopen(file,"rt"))==NULL) {
-      memfree(base);
+      g_free(base);
       return 1;
     }
-    if ((buf=memalloc(strlen(file)+50))==NULL) {
+    if ((buf=g_malloc(strlen(file)+50))==NULL) {
       fclose(f2dlocal->storefd);
       f2dlocal->storefd=NULL;
-      memfree(base);
+      g_free(base);
       return 1;
     }
     sprintf(buf,"file::load_data '%s' '%s %s' <<'[EOF]'",base,date,time);
-    memfree(base);
+    g_free(base);
     *(char **)rval=buf;
     return 0;
   } else {
     if (fgetline(f2dlocal->storefd,&buf)!=0) {
       fclose(f2dlocal->storefd);
       f2dlocal->storefd=NULL;
-      buf = nstrdup("[EOF]\n");
+      buf = g_strdup("[EOF]\n");
       if (buf == NULL) return 1;
       f2dlocal->endstore=TRUE;
       *(char **)rval=buf;
@@ -7641,20 +7641,20 @@ f2dload_sub(struct objlist *obj, char *inst, char **s, int *expand, char **fulln
   getobj(sys, "expand_dir", 0, 0, NULL, &exdir);
 
   file2 = getfilename(CHK_STR(exdir), "/", file);
-  memfree(file);
+  g_free(file);
 
   fname = getfullpath(file2);
   if (fname == NULL) {
-    memfree(file2);
+    g_free(file2);
     return 1;
   }
   if (fullname)
     *fullname = fname;
 
-  memfree(file2);
+  g_free(file2);
 
   _getobj(obj, "file", inst, &oldfile);
-  memfree(oldfile);
+  g_free(oldfile);
 
   _putobj(obj, "file", inst, fname);
 
@@ -7686,13 +7686,13 @@ f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     int len;
 
     len = strlen(fullname) + 256;
-    mes = memalloc(len);
+    mes = g_malloc(len);
     if (mes == NULL)
       return 1;
 
     snprintf(mes, len, "`%s' Overwrite existing file?", fullname);
     mkdata = inputyn(mes);
-    memfree(mes);
+    g_free(mes);
   }
 
   if (mkdata) {
@@ -7730,7 +7730,7 @@ f2dstoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *buf;
   char *argv2[2];
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"_local",inst,&f2dlocal);
   if (f2dlocal->endstore) {
@@ -7750,13 +7750,13 @@ f2dstoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     _getobj(obj,"date",inst,&date);
     _getobj(obj,"time",inst,&time);
     if ((base=getbasename(file))==NULL) return 1;
-    if ((buf=memalloc(strlen(file)+50))==NULL) {
+    if ((buf=g_malloc(strlen(file)+50))==NULL) {
       f2dlocal->storefd=NULL;
-      memfree(base);
+      g_free(base);
       return 1;
     }
     sprintf(buf,"file::load_dummy '%s' '%s %s'\n",base,date,time);
-    memfree(base);
+    g_free(base);
     *(char **)rval=buf;
     f2dlocal->endstore=TRUE;
     return 0;
@@ -7820,10 +7820,10 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
             }
             if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
              || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-              memfree(x);  memfree(y);  memfree(z);
-              memfree(r);  memfree(g);  memfree(b);
-              memfree(c1); memfree(c2); memfree(c3);
-              memfree(c4); memfree(c5); memfree(c6);
+              g_free(x);  g_free(y);  g_free(z);
+              g_free(r);  g_free(g);  g_free(b);
+              g_free(c1); g_free(c2); g_free(c3);
+              g_free(c4); g_free(c5); g_free(c6);
               error(obj,ERRSPL);
               return -1;
             }
@@ -7838,10 +7838,10 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
               }
             }
           }
-          memfree(x);  memfree(y);  memfree(z);
-          memfree(r);  memfree(g);  memfree(b);
-          memfree(c1); memfree(c2); memfree(c3);
-          memfree(c4); memfree(c5); memfree(c6);
+          g_free(x);  g_free(y);  g_free(z);
+          g_free(r);  g_free(g);  g_free(b);
+          g_free(c1); g_free(c2); g_free(c3);
+          g_free(c4); g_free(c5); g_free(c6);
           num=0;
           count=0;
           x=y=z=c1=c2=c3=c4=c5=c6=NULL;
@@ -7861,10 +7861,10 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
       }
       if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
        || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-        memfree(x);  memfree(y);  memfree(z);
-        memfree(r);  memfree(g);  memfree(b);
-        memfree(c1); memfree(c2); memfree(c3);
-        memfree(c4); memfree(c5); memfree(c6);
+        g_free(x);  g_free(y);  g_free(z);
+        g_free(r);  g_free(g);  g_free(b);
+        g_free(c1); g_free(c2); g_free(c3);
+        g_free(c4); g_free(c5); g_free(c6);
         error(obj,ERRSPL);
         return -1;
       }
@@ -7879,10 +7879,10 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
         }
       }
     }
-    memfree(x);  memfree(y);  memfree(z);
-    memfree(r);  memfree(g);  memfree(b);
-    memfree(c1); memfree(c2); memfree(c3);
-    memfree(c4); memfree(c5); memfree(c6);
+    g_free(x);  g_free(y);  g_free(z);
+    g_free(r);  g_free(g);  g_free(b);
+    g_free(c1); g_free(c2); g_free(c3);
+    g_free(c4); g_free(c5); g_free(c6);
     break;
   case INTERPOLATION_TYPE_BSPLINE:
     first=TRUE;

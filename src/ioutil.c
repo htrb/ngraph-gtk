@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.21 2009/06/15 04:55:59 hito Exp $
+ * $Id: ioutil.c,v 1.22 2009/11/16 09:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <ctype.h>
+#include <glib.h>
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -45,9 +46,6 @@
 #include "nstring.h"
 #include "jnstring.h"
 #include "ioutil.h"
-
-#define TRUE  1
-#define FALSE 0
 
 static void (* ShowProgressFunc)(int, char *, double) = NULL;
 
@@ -168,25 +166,25 @@ getfullpath(char *name)
   if (name==NULL) return NULL;
   changefilename(name);
   if ((name[0]==DIRSEP) && (name[1]==DIRSEP)) {
-    if ((s=memalloc(strlen(name)+1))==NULL) return NULL;
+    if ((s=g_malloc(strlen(name)+1))==NULL) return NULL;
     strcpy(s,name);
   } else {
     if (isalpha(name[0]) && name[1]==':') top=2;
     else top=0;
     if (name[top]==DIRSEP) {
-      if ((s=memalloc(strlen(name)+1))==NULL) return NULL;
+      if ((s=g_malloc(strlen(name)+1))==NULL) return NULL;
       strcpy(s,name+top);
     } else {
       if ((cwd=ngetcwd())==NULL) return NULL;
-      if ((s=memalloc(strlen(cwd)+strlen(name)+2))==NULL) {
-        memfree(cwd);
+      if ((s=g_malloc(strlen(cwd)+strlen(name)+2))==NULL) {
+        g_free(cwd);
         return NULL;
       }
       strcpy(s,cwd);
       j=strlen(cwd);
       if ((cwd[0]!='\0') && (cwd[strlen(cwd)-1]!=DIRSEP)) s[j++]=DIRSEP;
       strcpy(s+j,name+top);
-      memfree(cwd);
+      g_free(cwd);
     }
   }
   pathresolv(s);
@@ -201,7 +199,7 @@ getfullpath(char *name)
   if (name==NULL) return NULL;
   unchangefilename(name);
   if (GetFullPathName(name,MAXPATH,buf,&s)==0) return NULL;
-  if ((s=memalloc(strlen(buf)+1))==NULL) return NULL;
+  if ((s=g_malloc(strlen(buf)+1))==NULL) return NULL;
   strcpy(s,buf);
   changefilename(s);
   return s;
@@ -217,7 +215,7 @@ getrelativepath(char *name)
   if (name==NULL) return NULL;
   changefilename(name);
   if ((name[0]==DIRSEP) && (name[1]==DIRSEP)) {
-    if ((s=memalloc(strlen(name)+1))==NULL) return NULL;
+    if ((s=g_malloc(strlen(name)+1))==NULL) return NULL;
     strcpy(s,name);
     pathresolv(s);
   } else {
@@ -234,9 +232,9 @@ getrelativepath(char *name)
       for (j=2;cwd[j]!='\0';j++) cwd[j-2]=cwd[j];
       cwd[j-2]='\0';
 #endif
-      if ((cwd2=memalloc(strlen(cwd)+2))==NULL) return NULL;
+      if ((cwd2=g_malloc(strlen(cwd)+2))==NULL) return NULL;
       strcpy(cwd2,cwd);
-      memfree(cwd);
+      g_free(cwd);
       i=strlen(cwd2);
       if ((i==0) || (cwd2[i-1]!=DIRSEP)) {
         cwd2[i]=DIRSEP;
@@ -249,7 +247,7 @@ getrelativepath(char *name)
       depth=0;
       for (j=strlen(cwd2);j!=i;j--)
         if (!niskanji2(cwd2,j) && (cwd2[j]==DIRSEP)) depth++;
-      memfree(cwd2);
+      g_free(cwd2);
       if ((s=nstrnew())==NULL) return NULL;
       if (depth==0) {
         if ((s=nstrcat(s,"./"))==NULL) return NULL;
@@ -259,7 +257,7 @@ getrelativepath(char *name)
       }
       if ((s=nstrcat(s,name+i+top+1))==NULL) return NULL;
     } else {
-      if ((s=memalloc(strlen(name)+1))==NULL) return NULL;
+      if ((s=g_malloc(strlen(name)+1))==NULL) return NULL;
       strcpy(s,name);
       pathresolv(s);
     }
@@ -281,7 +279,7 @@ getbasename(char *name)
   changefilename(name);
   for (i=strlen(name);(name[i]!=DIRSEP) && (name[i]!=':') && (i!=0);i--);
   if ((name[i]==DIRSEP) || (name[i]==':')) i++;
-  if ((s=memalloc(strlen(name)-i+1))==NULL) return NULL;
+  if ((s=g_malloc(strlen(name)-i+1))==NULL) return NULL;
   strcpy(s,name+i);
   return s;
 }
@@ -306,7 +304,7 @@ getfilename(char *dir,char *sep,char *file)
 
   dir_len = strlen(dir);
 
-  s = memalloc(dir_len + strlen(sep) + strlen(file) + 1);
+  s = g_malloc(dir_len + strlen(sep) + strlen(file) + 1);
   if (s == NULL)
     return NULL;
 
@@ -334,7 +332,7 @@ findfilename(char *dir,char *sep,char *file)
     else find=FALSE;
   }
   else find=FALSE;
-  memfree(s);
+  g_free(s);
   return find;
 }
 
@@ -347,13 +345,13 @@ ngetcwd(void)
   size=0;
   buf=NULL;
   do {
-    memfree(buf);
+    g_free(buf);
     size+=256;
-    if ((buf=memalloc(size))==NULL) return NULL;
+    if ((buf=g_malloc(size))==NULL) return NULL;
     s=getcwd(buf,size);
   } while ((s==NULL) && (size<=10240));
   if (size>10240) {
-    memfree(buf);
+    g_free(buf);
     return NULL;
   }
   changefilename(s);
@@ -373,8 +371,8 @@ nsearchpath(char *path,char *name,int shellscript)
   cmdname=NULL;
   if (strchr(name,DIRSEP)==NULL) {
     while ((tok=getitok(&path,&len,PATHSEP))!=NULL) {
-      memfree(cmdname);
-      if ((cmdname=memalloc(strlen(name)+len+2))==NULL) return NULL;
+      g_free(cmdname);
+      if ((cmdname=g_malloc(strlen(name)+len+2))==NULL) return NULL;
       strncpy(cmdname,tok,len);
       if (cmdname[len-1]!=DIRSEP) {
         cmdname[len]=DIRSEP;
@@ -385,13 +383,13 @@ nsearchpath(char *path,char *name,int shellscript)
       || (shellscript && (access(cmdname,R_OK)==0))) return cmdname;
     }
     if (tok==NULL) {
-      memfree(cmdname);
+      g_free(cmdname);
       return NULL;
     }
   } else {
     if (!((!shellscript && (access(name,X_OK)==0))
     || (shellscript && (access(name,R_OK)==0)))) return NULL;
-    if ((cmdname=memalloc(strlen(name)+1))==NULL) return NULL;
+    if ((cmdname=g_malloc(strlen(name)+1))==NULL) return NULL;
     strcpy(cmdname,name);
     return cmdname;
   }
@@ -410,7 +408,7 @@ nselectdir(char *dir,struct dirent *ent)
   if (s[strlen(s)+1]!='/') s=nstrccat(s,'/');
   s=nstrcat(s,ent->d_name);
   stat(s,&sbuf);
-  memfree(s);
+  g_free(s);
   if ((sbuf.st_mode & S_IFMT)==S_IFDIR) return 1;
   return 0;
 }
@@ -426,7 +424,7 @@ nselectfile(char *dir,struct dirent *ent)
   if (s[strlen(s)+1]!='/') s=nstrccat(s,'/');
   s=nstrcat(s,ent->d_name);
   stat(s,&sbuf);
-  memfree(s);
+  g_free(s);
   if ((sbuf.st_mode & S_IFMT)==S_IFREG) return 1;
   return 0;
 }
@@ -462,15 +460,15 @@ nsearchpath(char *path,char *name,int shellscript)
   if (strchr(name,DIRSEP)==NULL) {
     if (path==NULL) pathlen=0;
     else pathlen=strlen(path);
-    if ((path2=memalloc(pathlen+4))==NULL) return NULL;
+    if ((path2=g_malloc(pathlen+4))==NULL) return NULL;
     strcpy(path2,".;");
     if (path!=NULL) strcat(path2,path);
     path3=path2;
     while ((tok=getitok(&path3,&len0,PATHSEP))!=NULL) {
       if (tok[0]!='\0') {
-        memfree(cmdname);
-        if ((cmdname=memalloc(strlen(name)+len0+6))==NULL) {
-          memfree(path2);
+        g_free(cmdname);
+        if ((cmdname=g_malloc(strlen(name)+len0+6))==NULL) {
+          g_free(path2);
           return NULL;
         }
         if ((strchr(name,'.')==NULL) && !shellscript) {
@@ -486,7 +484,7 @@ nsearchpath(char *path,char *name,int shellscript)
             strcpy(cmdname+len,addexechar[k]);
             unchangefilename(cmdname);
             if (access(cmdname,R_OK)==0) {
-              memfree(path2);
+              g_free(path2);
               return cmdname;
             }
           }
@@ -501,15 +499,15 @@ nsearchpath(char *path,char *name,int shellscript)
           len+=strlen(name);
           unchangefilename(cmdname);
           if (access(cmdname,R_OK)==0) {
-            memfree(path2);
+            g_free(path2);
             return cmdname;
           }
         }
       }
     }
-    if (tok==NULL) memfree(path2);
+    if (tok==NULL) g_free(path2);
   } else {
-    if ((cmdname=memalloc(strlen(name)+6))==NULL) memfree(path2);
+    if ((cmdname=g_malloc(strlen(name)+6))==NULL) g_free(path2);
     strcpy(cmdname,name);
     changefilename(cmdname);
     len=strlen(cmdname);
@@ -529,7 +527,7 @@ nsearchpath(char *path,char *name,int shellscript)
       }
     }
   }
-  memfree(cmdname);
+  g_free(cmdname);
   return NULL;
 }
 
@@ -554,18 +552,18 @@ nscandir(char *dir,char ***namelist,
     if (ent->d_ino==0) continue;
 #endif
     if (allocn==alloc) {
-      if ((po2=realloc(po,(allocn+=256)*sizeof(char *)))==NULL) {
+      if ((po2=g_realloc(po,(allocn+=256)*sizeof(char *)))==NULL) {
         for (i=0;i<alloc;i++) {
-	  free(po[i]);
+	  g_free(po[i]);
 	}
-        free(po);
+        g_free(po);
         return -1;
       }
       po=po2;
     }
     if ((po[alloc]=malloc(strlen(ent->d_name)+1))==NULL) {
-      for (i=0;i<alloc;i++) free(po[i]);
-      free(po);
+      for (i=0;i<alloc;i++) g_free(po[i]);
+      g_free(po);
       return -1;
     }
     strcpy(po[alloc],ent->d_name);
@@ -608,20 +606,20 @@ nglob2(char *path,int po,int *num,char ***list)
   }
   if (path[i]=='\0') {
     if (access(path,R_OK)==0) {
-      if ((s=memalloc(strlen(path)+1))==NULL) return -1;
+      if ((s=g_malloc(strlen(path)+1))==NULL) return -1;
       strcpy(s,path);
       if (arg_add(list,s)==NULL) return -1;
       (*num)++;
     }
   } else {
     for (;(path[i]!='\0') && (path[i]!=DIRSEP);i++) ;
-    s1 = memalloc(p1 + 1);
-    s2 = memalloc(i - p1 + 1);
-    s3 = memalloc(strlen(path) - i + 1);
+    s1 = g_malloc(p1 + 1);
+    s2 = g_malloc(i - p1 + 1);
+    s3 = g_malloc(strlen(path) - i + 1);
     if (s1 == NULL || s2 == NULL || s3 == NULL) {
-      memfree(s1);
-      memfree(s2);
-      memfree(s3);
+      g_free(s1);
+      g_free(s2);
+      g_free(s3);
       return -1;
     }
     strncpy(s1,path,p1);
@@ -634,12 +632,12 @@ nglob2(char *path,int po,int *num,char ***list)
     for (i=0;i<scannum;i++) {
       if (wildmatch(s2,namelist[i],WILD_PATHNAME | WILD_PERIOD)) {
         len=strlen(namelist[i]);
-        if ((path2=memalloc(strlen(s1)+len+strlen(s3)+1))!=NULL) {
+        if ((path2=g_malloc(strlen(s1)+len+strlen(s3)+1))!=NULL) {
           strcpy(path2,s1);
           strcat(path2,namelist[i]);
           err=FALSE;
           if (s3[0]=='\0') {
-            if ((s=memalloc(strlen(path2)+1))!=NULL) {
+            if ((s=g_malloc(strlen(path2)+1))!=NULL) {
               strcpy(s,path2);
               if (arg_add(list,s)!=NULL) {
                 (*num)++;
@@ -650,23 +648,23 @@ nglob2(char *path,int po,int *num,char ***list)
             if (nglob2(path2,p1+len,num,list)==-1) err=TRUE;
           }
           if (err) {
-            memfree(path2);
-            for (j=i;j<scannum;j++) free(namelist[j]);
-            if (scannum>0) free(namelist);
-            memfree(s1);
-            memfree(s2);
-            memfree(s3);
+            g_free(path2);
+            for (j=i;j<scannum;j++) g_free(namelist[j]);
+            if (scannum>0) g_free(namelist);
+            g_free(s1);
+            g_free(s2);
+            g_free(s3);
             return -1;
           }
-          memfree(path2);
+          g_free(path2);
         }
       }
-      free(namelist[i]);
+      g_free(namelist[i]);
     }
-    if (scannum>0) free(namelist);
-    memfree(s1);
-    memfree(s2);
-    memfree(s3);
+    if (scannum>0) g_free(namelist);
+    g_free(s1);
+    g_free(s2);
+    g_free(s3);
   }
   return 0;
 }
@@ -684,7 +682,7 @@ nglob(char *path,char ***namelist)
     return -1;
   }
   if (num==0) {
-    if ((s=memalloc(strlen(path)+1))==NULL) return -1;
+    if ((s=g_malloc(strlen(path)+1))==NULL) return -1;
     strcpy(s,path);
     if (arg_add(namelist,s)==NULL) return -1;
     return 1;
@@ -792,7 +790,7 @@ fgetnline(FILE *fp, char *buf, int len)
   strncpy(buf, ptr, len);
   buf[len - 1] = '\0';
 
-  memfree(ptr);
+  g_free(ptr);
 
   return 0;
 }
@@ -982,7 +980,7 @@ nwrite(HANDLE fd,char *buf,unsigned len)
 
   num=0;
   for (i=0;i<len;i++) if (buf[i]=='\n') num++;
-  buf2=memalloc(len+num);
+  buf2=g_malloc(len+num);
   if (buf2==NULL) return 0;
   j=0;
   for (i=0;i<len;i++) {
@@ -990,7 +988,7 @@ nwrite(HANDLE fd,char *buf,unsigned len)
     buf2[j++]=buf[i];
   }
   WriteFile(fd,buf2,j,&len2,NULL);
-  memfree(buf2);
+  g_free(buf2);
   return len2-num;
 }
 
@@ -1102,7 +1100,7 @@ n_mkstemp(char *dir, char *templ, char **name)
   umask(mask_prev);
 
   if (fd < 0) {
-    free(buf);
+    g_free(buf);
     buf = NULL;
   }
 

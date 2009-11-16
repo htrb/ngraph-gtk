@@ -78,7 +78,7 @@ am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-osystem.$(OBJEXT) ngraph-otext.$(OBJEXT) \
 	ngraph-shell.$(OBJEXT) ngraph-shellcm.$(OBJEXT) \
 	ngraph-shellux.$(OBJEXT) ngraph-spline.$(OBJEXT) \
-	ngraph-nhash.$(OBJEXT)
+	ngraph-nhash.$(OBJEXT) ngraph-strconv.$(OBJEXT)
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 am__DEPENDENCIES_1 =
 ngraph_DEPENDENCIES = $(am__DEPENDENCIES_1) gtk/libngraph.la \
@@ -297,11 +297,11 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	omerge.c opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c	\
 	oshell.c ostring.c osystem.c otext.c otext.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	gettext.h common.h nhash.h nhash.c
+	gettext.h common.h nhash.h nhash.c strconv.c strconv.h
 
 terminal_SOURCES = terminal.c
 ngraph_LDADD = $(GTK_LIBS) gtk/libngraph.la math/libmath.la
-ngraph_CFLAGS = -I.. -D_FORTIFY_SOURCE
+ngraph_CFLAGS = $(GTK_CFLAGS) -I.. -D_FORTIFY_SOURCE
 all: all-recursive
 
 .SUFFIXES:
@@ -480,6 +480,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shellcm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shellux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-spline.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-strconv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/terminal.Po@am__quote@
 
 .c.o:
@@ -1132,6 +1133,20 @@ ngraph-nhash.obj: nhash.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nhash.c' object='ngraph-nhash.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-nhash.obj `if test -f 'nhash.c'; then $(CYGPATH_W) 'nhash.c'; else $(CYGPATH_W) '$(srcdir)/nhash.c'; fi`
+
+ngraph-strconv.o: strconv.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-strconv.o -MD -MP -MF $(DEPDIR)/ngraph-strconv.Tpo -c -o ngraph-strconv.o `test -f 'strconv.c' || echo '$(srcdir)/'`strconv.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ngraph-strconv.Tpo $(DEPDIR)/ngraph-strconv.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='strconv.c' object='ngraph-strconv.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-strconv.o `test -f 'strconv.c' || echo '$(srcdir)/'`strconv.c
+
+ngraph-strconv.obj: strconv.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-strconv.obj -MD -MP -MF $(DEPDIR)/ngraph-strconv.Tpo -c -o ngraph-strconv.obj `if test -f 'strconv.c'; then $(CYGPATH_W) 'strconv.c'; else $(CYGPATH_W) '$(srcdir)/strconv.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ngraph-strconv.Tpo $(DEPDIR)/ngraph-strconv.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='strconv.c' object='ngraph-strconv.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-strconv.obj `if test -f 'strconv.c'; then $(CYGPATH_W) 'strconv.c'; else $(CYGPATH_W) '$(srcdir)/strconv.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

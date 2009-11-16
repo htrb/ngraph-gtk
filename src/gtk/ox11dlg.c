@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.27 2009/07/26 13:01:40 hito Exp $
+ * $Id: ox11dlg.c,v 1.28 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -136,12 +136,11 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   char *mes, *title;
   int locksave, x, y, r;
   char *inputbuf;
-  char *s;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
   mes = (char *)argv[2];
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval = NULL;
   inputbuf = NULL;
 
@@ -165,11 +164,9 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (r == IDOK && inputbuf != NULL) {
-    s = nstrdup(inputbuf);
-    free(inputbuf);
-    *(char **)rval = s;
+    *(char **)rval = inputbuf;
   } else {
-    free(inputbuf);
+    g_free(inputbuf);
     GlobalLock = locksave;
     return 1;
   }
@@ -299,7 +296,7 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   locksave = GlobalLock;
   GlobalLock = TRUE;
 
-  free(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval = NULL;
 
   if (_getobj(obj, "title", inst, &title)) {
@@ -352,13 +349,13 @@ static int
 dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int locksave, ret, type, x, y;
-  char *title, *caption, *ptr;
+  char *title, *caption;
   double min, max, inc, r;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
 
-  free(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval = NULL;
 
   if (_getobj(obj, "title", inst, &title)) {
@@ -407,14 +404,10 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   switch (type) {
   case 'f':
-    ptr = g_strdup_printf("%.15e", r);
-    *(char **)rval = nstrdup(ptr);
-    g_free(ptr);
+    *(char **)rval = g_strdup_printf("%.15e", r);
     break;
   case'i':
-    ptr = g_strdup_printf("%d", (int) r);
-    *(char **)rval = nstrdup(ptr);
-    g_free(ptr);
+    *(char **)rval = g_strdup_printf("%d", (int) r);
     break;
   default:
     GlobalLock = locksave;
@@ -466,7 +459,7 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     y = -1;
   }
 
-  r = memalloc(n * sizeof(int));
+  r = g_malloc(n * sizeof(int));
   if (r == NULL) {
     arrayfree(array);
     return 1;
@@ -488,7 +481,7 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   _putobj(obj, "y", inst, &y);
   if (ret != IDOK) {
     arrayfree(array);
-    memfree(r);
+    g_free(r);
     GlobalLock = locksave;
     return 1;
   }
@@ -498,7 +491,7 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
       arrayadd(array, &i);
   }
 
-  memfree(r);
+  g_free(r);
 
   *(struct narray **) rval = array;
 
@@ -529,11 +522,11 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
   char *filter = NULL, *initfile = NULL;
   int locksave;
   int ret;
-  char *file, *file2;
+  char *file;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
   d = arraydata(array);
@@ -554,13 +547,12 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
 			 filter, NULL, initfile,
 			 &file, TRUE, TRUE);
   if (ret == IDOK) {
-    file2 = nstrdup(file);
-    if (file2) {
-      changefilename(file2);
-      *(char **)rval = file2;
+    if (file) {
+      changefilename(file);
+      *(char **)rval = file;
     }
   }
-  free(file);
+
   GlobalLock = locksave;
   return (ret == IDOK)? 0 : 1;
 }
@@ -604,14 +596,12 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
   if (ret == IDOK) {
     farray = arraynew(sizeof(char *));
     for (i = 0; file[i]; i++) {
-      name = nstrdup(file[i]);
-      free(file[i]);
-      changefilename(name);
+      changefilename(file[i]);
       arrayadd(farray, &name);
     }
     *(struct narray **)rval = farray;
   }
-  free(file);
+  g_free(file);
 
   GlobalLock = locksave;
 
@@ -628,11 +618,11 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   char *filter = NULL, *initfile = NULL;
   int locksave;
   int ret;
-  char *file, *file2;
+  char *file;
 
   locksave = GlobalLock;
   GlobalLock = TRUE;
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
   d = arraydata(array);
@@ -653,13 +643,12 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
 			 filter, NULL, initfile,
 			 &file, FALSE, TRUE);
   if (ret == IDOK) {
-    file2 = nstrdup(file);
-    if (file2) {
-      changefilename(file2);
-      *(char **)rval = file2;
+    if (file) {
+      changefilename(file);
+      *(char **)rval = file;
     }
   }
-  free(file);
+
   GlobalLock = locksave;
   return (ret == IDOK)?0:1;
 }

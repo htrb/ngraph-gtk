@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.19 2009/05/01 09:15:58 hito Exp $
+ * $Id: oarc.c,v 1.20 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -41,8 +41,6 @@
 #define NAME "arc"
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 static char *arcerrorlist[]={
  ""

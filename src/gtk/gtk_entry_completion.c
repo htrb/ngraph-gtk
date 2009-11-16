@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_entry_completion.c,v 1.6 2009/07/26 13:01:40 hito Exp $
+ * $Id: gtk_entry_completion.c,v 1.7 2009/11/16 09:13:05 hito Exp $
  */
 
 #include <stdio.h>
@@ -74,7 +74,7 @@ add_completion(GtkListStore *list, FILE *fp)
   gtk_list_store_append(list, &iter);
   gtk_list_store_set(list, &iter, 0, buf, -1);
 
-  memfree(buf);
+  g_free(buf);
 
   return FALSE;
 }

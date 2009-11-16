@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.43 2009/07/05 06:14:40 hito Exp $
+ * $Id: main.c,v 1.44 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -529,7 +529,7 @@ load_config(struct objlist *sys, char *inst, int *allocconsole)
 	  if (obj) {
 	    newobj(obj);
 	  }
-	  memfree(f1);
+	  g_free(f1);
 	}
       } else if (strcmp(tok, "alloc_console") == 0) {
 	f1 = getitok2(&s2, &len, " \t,");
@@ -540,18 +540,18 @@ load_config(struct objlist *sys, char *inst, int *allocconsole)
 	  else
 	    *allocconsole = TRUE;
 	}
-	memfree(f1);
+	g_free(f1);
       } else if (strcmp(tok, "console_size") == 0) {
 	f1 = getitok2(&s2, &len, " \x09,");
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  consolecol = val;
-	memfree(f1);
+	g_free(f1);
 	f1 = getitok2(&s2, &len, " \x09,");
 	val = strtol(f1, &endptr, 10);
 	if (endptr[0] == '\0')
 	  consolerow = val;
-	memfree(f1);
+	g_free(f1);
 #ifdef HAVE_LIBREADLINE
       } else if (strcmp(tok, "history_size") == 0) {
 	f1 = getitok2(&s2, &len, " \t,");
@@ -559,15 +559,15 @@ load_config(struct objlist *sys, char *inst, int *allocconsole)
 	if (endptr[0] == '\0' && val > 0) {
 	  *history_size = val;
 	}
-	memfree(f1);
+	g_free(f1);
 #endif
       } else if (strcmp(tok, "terminal") == 0) {
 	terminal = getitok2(&s2, &len, "");
       } else {
 	fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, SYSCONF);
       }
-      memfree(tok);
-      memfree(str);
+      g_free(tok);
+      g_free(str);
     }
     closeconfig(fp);
   }
@@ -625,23 +625,23 @@ main(int argc, char **argv, char **environ)
 
 #if 0
   if ((lib = getenv("NGRAPHLIB")) != NULL) {
-    libdir = nstrdup(lib);
+    libdir = g_strdup(lib);
   } else {
-    libdir = nstrdup(LIBDIR);
+    libdir = g_strdup(LIBDIR);
   }
 #else
-  libdir = nstrdup(LIBDIR);
+  libdir = g_strdup(LIBDIR);
 #endif
   if (libdir == NULL)
     exit(1);
 
-  confdir = nstrdup(CONFDIR);
+  confdir = g_strdup(CONFDIR);
   if (confdir == NULL)
     exit(1);
 
   /*
   if ((home = getenv("NGRAPHHOME")) != NULL) {
-    if ((homedir = (char *) memalloc(strlen(home) + 1)) == NULL)
+    if ((homedir = (char *) g_malloc(strlen(home) + 1)) == NULL)
       exit(1);
     strcpy(homedir, home);
   } else 
@@ -650,12 +650,12 @@ main(int argc, char **argv, char **environ)
     char *ptr;
 
     ptr = g_strdup_printf("%s/%s", home, HOME_DIR);
-    homedir = nstrdup(ptr);
+    homedir = g_strdup(ptr);
     g_free(ptr);
     if (homedir == NULL)
       exit(1);
   } else {
-    homedir = nstrdup(confdir);
+    homedir = g_strdup(confdir);
     if (homedir == NULL)
       exit(1);
   }
@@ -749,7 +749,7 @@ main(int argc, char **argv, char **environ)
       break;
     }
     i++;
-    inifile = strdup(argv[i]);
+    inifile = g_strdup(argv[i]);
     if (inifile == NULL) {
       exit(1);
     }
@@ -772,7 +772,7 @@ main(int argc, char **argv, char **environ)
     sarg[1] = NULL;
     exeobj(obj, "shell", id, 1, sarg);
     arraydel(&sarray);
-    memfree(inifile);
+    g_free(inifile);
   }
   if (getobj(sys, "login_shell", 0, 0, NULL, &loginshell))
     exit(1);
@@ -801,7 +801,7 @@ main(int argc, char **argv, char **environ)
 	nfreeconsole();
       }
     }
-    memfree(loginshell);
+    g_free(loginshell);
     if (getobj(sys, "login_shell", 0, 0, NULL, &loginshell)) {
       exit(1);
     }
@@ -814,7 +814,7 @@ main(int argc, char **argv, char **environ)
 #endif
   if (consoleac && (consolepid != -1))
     nfreeconsole();
-  memfree(terminal);
+  g_free(terminal);
   delobj(getobject("system"), 0);
   return 0;
 }
@@ -893,13 +893,14 @@ obj_member_completion_function(const char *text, int state)
     static char *obj, *instances, *member, *val;
 
     if (list)
-      free(list);
+      g_free(list);
 
     list = (char **) NULL;
 
     first_char_loc = 0;
 
-    if ((obj = strdup(text)) == NULL)
+    obj = g_strdup(text);
+    if (obj == NULL)
       return NULL;
 
     if ((instances = strchr(obj, ':'))
@@ -908,13 +909,13 @@ obj_member_completion_function(const char *text, int state)
       instances++;
       member++;
     } else {
-      free(obj);
+      g_free(obj);
       return NULL;
     }
 
     objcur = getobject(obj);
     if (objcur == NULL) {
-      free(obj);
+      g_free(obj);
       return NULL;
     }
 
@@ -935,7 +936,7 @@ obj_member_completion_function(const char *text, int state)
     }
 
     list_index = 0;
-    free(obj);
+    g_free(obj);
   }
 
   if (list && list[list_index]) {
@@ -955,7 +956,7 @@ get_obj_member_list(struct objlist *objcur, char *member)
   char **list = (char **) NULL;
   int i, j, len;
 
-  if ((list = malloc(sizeof(*list) * (chkobjfieldnum(objcur) + 1))) == NULL)
+  if ((list = g_malloc(sizeof(*list) * (chkobjfieldnum(objcur) + 1))) == NULL)
     return NULL;
 
   len = strlen(member);
@@ -981,7 +982,8 @@ get_obj_enum_list(struct objlist *objcur, char *member, char *val)
   enumlist = (char **) chkobjarglist(objcur, member);
   for (i = 0; enumlist[i] != NULL; i++);
 
-  if ((list = malloc((sizeof(*list)) * (i + 1))) == NULL)
+  list = g_malloc((sizeof(*list)) * (i + 1));
+  if (list == NULL)
     return NULL;
 
   len = strlen(val);
@@ -1006,7 +1008,8 @@ get_obj_bool_list(struct objlist *objcur, char *member, char *val)
   if (chkobjfieldtype(objcur, member) != NBOOL)
     return NULL;
 
-  if ((list = malloc(sizeof(boollist))) == NULL)
+  list = g_malloc(sizeof(boollist));
+  if (list == NULL)
     return NULL;
 
   len = strlen(val);
@@ -1042,7 +1045,8 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
   if (strstr(member, "font") == NULL)
     return NULL;
 
-  if ((list = malloc((sizeof(*list)) * (Gra2cairoConf->font_num + 1))) == NULL)
+  list = g_malloc((sizeof(*list)) * (Gra2cairoConf->font_num + 1));
+  if (list == NULL)
     return NULL;
 
   twobyte = (strstr(member, "jfont") != NULL);
@@ -1082,7 +1086,7 @@ my_completion_function(const char *text, int state, char **func(const char *))
   /* If we don't have any state, make some. */
   if (!state) {
     if (list)
-      free(list);
+      g_free(list);
 
     list = (char **) NULL;
 
@@ -1093,7 +1097,7 @@ my_completion_function(const char *text, int state, char **func(const char *))
   }
 
   if (list && list[list_index]) {
-    char *t = strdup(list[list_index]);
+    char *t = g_strdup(list[list_index]);
     if (t == NULL)
       return NULL;
 
@@ -1124,7 +1128,7 @@ obj_name_matching(const char *text)
   struct objlist *objcur;
   char **list;
 
-  list = malloc((get_obj_num() + 1) * sizeof(*list));
+  list = g_malloc((get_obj_num() + 1) * sizeof(*list));
 
   if (list == NULL)
     return NULL;
@@ -1138,7 +1142,7 @@ obj_name_matching(const char *text)
   }
 
   if (j == 0) {
-    free(list);
+    g_free(list);
     list = NULL;
   } else {
     list[j] = NULL;
@@ -1159,10 +1163,7 @@ cmd_name_matching(const char *text)
   file_list = get_exec_file_list();
   file_len = mylist_num(file_list);
 
-  list =
-    malloc((CMDNUM + CPCMDNUM + get_obj_num() + file_len +
-	    1) * sizeof(*list));
-
+  list = g_malloc((CMDNUM + CPCMDNUM + get_obj_num() + file_len + 1) * sizeof(*list));
   if (list == NULL)
     return NULL;
 
@@ -1194,7 +1195,7 @@ cmd_name_matching(const char *text)
   }
 
   if (j == 0) {
-    free(list);
+    g_free(list);
     list = NULL;
   } else {
     list[j] = NULL;
@@ -1221,7 +1222,7 @@ get_exec_file_list(void)
   if ((path_env = getenv("PATH")) == NULL)
     return NULL;
 
-  if ((path = path_ptr = strdup(path_env)) == NULL)
+  if ((path = path_ptr = g_strdup(path_env)) == NULL)
     return NULL;
 
   while ((next_ptr = strchr(path_ptr, ':')) != NULL) {
@@ -1232,7 +1233,7 @@ get_exec_file_list(void)
     list = mylist_cat(list, list_next);
     path_ptr = next_ptr;
   }
-  free(path);
+  g_free(path);
   return list;
 }
 
@@ -1278,7 +1279,7 @@ my_sprintf(char **str, char *format, ...)
   static char *buf = NULL;
   int len;
 
-  if (buf == NULL && (buf = malloc(buf_size)) == NULL) {
+  if (buf == NULL && (buf = g_malloc(buf_size)) == NULL) {
     return -1;
   }
 
@@ -1289,7 +1290,7 @@ my_sprintf(char **str, char *format, ...)
     char *tmp;
     int size;
     size = (len / BUF_UNIT + 1) * BUF_UNIT;
-    tmp = realloc(buf, size);
+    tmp = g_realloc(buf, size);
     if (tmp == NULL) {
       return -1;
     }
@@ -1310,7 +1311,7 @@ mylist_add(struct mylist *parent, const char *text)
   int len;
 
   len = strlen(text) + 1;
-  if ((list = malloc(sizeof(struct mylist) + len)) == NULL)
+  if ((list = g_malloc(sizeof(struct mylist) + len)) == NULL)
     return NULL;
 
   memcpy(list->str, text, len);
@@ -1328,7 +1329,7 @@ mylist_free(struct mylist *list)
   struct mylist *tmp;
   while (list != NULL) {
     tmp = list->next;
-    free(list);
+    g_free(list);
     list = tmp;
   }
 }

@@ -1,4 +1,15 @@
+2009-11-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/nstring.c (nstrdup): remove (use g_strdup instead).
+
+	* src/object.c (memalloc, memrealloc, memfree): remove (use
+	g_malloc, g_realloc and g_free instead).
+
 2009-11-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/strconv.h: moved from "src/gtk/strconv.c".
+
+	* src/strconv.c: moved from "src/gtk/strconv.c".
 
 	* src/math/math_parser.c (parse_primary_expression)
 	(parse_const_def_expression): "*err" is "MATH_ERROR_EOEQ" when the

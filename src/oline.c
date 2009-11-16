@@ -1,5 +1,5 @@
 /* 
- * $Id: oline.c,v 1.11 2009/08/04 10:41:47 hito Exp $
+ * $Id: oline.c,v 1.12 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "object.h"
 #include "gra.h"
@@ -39,8 +41,6 @@
 #define NAME "line"
 #define PARENT "legend"
 #define OVERSION  "1.00.01"
-#define TRUE  1
-#define FALSE 0
 
 static char *arrowerrorlist[]={
   "",
@@ -132,7 +132,7 @@ arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   num=arraynum(points)/2;
   pdata=arraydata(points);
 
-  if ((points2=memalloc(sizeof(int)*num*2))==NULL) return 1;
+  if ((points2=g_malloc(sizeof(int)*num*2))==NULL) return 1;
   j=0;
   x1=y1=0;
   for (i=0;i<num;i++) {
@@ -148,7 +148,7 @@ arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
   num=j;
   if (num<2) {
-    memfree(points2);
+    g_free(points2);
     return 0;
   }
   x0=points2[0];
@@ -213,7 +213,7 @@ arrowdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     GRAlinestyle(GC,0,NULL,1,0,join,miter);
     GRAdrawpoly(GC,3,ap2,1);
   }
-  memfree(points2);
+  g_free(points2);
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
@@ -243,7 +243,7 @@ arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"arrow_width",inst,&headwidth);
   num=arraynum(points)/2;
   pdata=arraydata(points);
-  if ((points2=memalloc(sizeof(int)*num*2))==NULL) return 1;
+  if ((points2=g_malloc(sizeof(int)*num*2))==NULL) return 1;
   j=0;
   x1=y1=0;
   for (i=0;i<num;i++) {
@@ -259,7 +259,7 @@ arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
   num2=j;
   if (num2<2) {
-    memfree(points2);
+    g_free(points2);
     return 0;
   }
   x0=points2[0];
@@ -270,7 +270,7 @@ arrowbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   y2=points2[2*num2-3];
   x3=points2[2*num2-2];
   y3=points2[2*num2-1];
-  memfree(points2);
+  g_free(points2);
   alen=width*(double )headlen/10000;
   alen2=alen-10;
   if (alen2<0) alen2=0;

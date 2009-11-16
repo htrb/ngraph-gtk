@@ -1,5 +1,5 @@
 /* 
- * $Id: x11cood.c,v 1.14 2009/07/22 14:53:31 hito Exp $
+ * $Id: x11cood.c,v 1.15 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -82,8 +82,8 @@ CoordWinSetCoord(int x, int y)
   l = 45 * (num + 1);
 
   if (l > bufsize) {
-    memfree(d->str);
-    d->str = (char *) memalloc(l);
+    g_free(d->str);
+    d->str = (char *) g_malloc(l);
     bufsize = l;
   }
 

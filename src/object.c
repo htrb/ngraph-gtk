@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.45 2009/11/12 01:36:45 hito Exp $
+ * $Id: object.c,v 1.46 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,6 +32,8 @@
 #include <stdarg.h>
 #include <string.h>
 #include <limits.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
@@ -55,9 +57,6 @@
 #include "math/math_equation.h"
 
 #define USE_HASH 1
-
-#define TRUE  1
-#define FALSE 0
 
 #define OBJ_MAX 100
 #define INST_MAX 32767
@@ -310,122 +309,6 @@ loadstdio(struct savedstdio *save)
   ndisplaystatus=save->ndisplaystatus;
 }
 
-
-#ifdef DEBUG
-struct plist *memallocroot=NULL;
-int allocnum=0;
-#endif
-
-#ifdef HEAPCHK
-extern int _heapchk(void);
-#define _HEAPOK 2
-#endif
-
-void *
-memalloc(size_t size)
-{
-  void *po;
-#ifdef DEBUG
-  struct plist *plnew;
-#endif
-
-#ifdef HEAPCHK
-  if (_heapchk()!=_HEAPOK) exit(1);
-#endif
-  if (size==0) po=NULL;
-  else po=malloc(size);
-  if ((po==NULL) && (size!=0)) error(NULL,ERRHEAP);
-#ifdef DEBUG
-  if (po!=NULL) {
-    plnew=malloc(sizeof(struct plist));
-    plnew->next=memallocroot;
-    plnew->val=po;
-    memallocroot=plnew;
-  }
-#endif
-  return po;
-}
-
-void *
-memrealloc(void *ptr,size_t size)
-{
-  void *po;
-#ifdef DEBUG
-  struct plist *plcur,*plprev;
-  struct plist *plnew;
-#endif
-
-#ifdef HEAPCHK
-  if (_heapchk()!=_HEAPOK) exit(1);
-#endif
-  if (size==0)
-    po=NULL;
-  else
-    po=realloc(ptr,size);
-  if ((po == NULL) && (size != 0))
-    error(NULL,ERRHEAP);
-
-#ifdef DEBUG
-  if (po != NULL) {
-    if (ptr != NULL) {
-      plcur=memallocroot;
-      plprev=NULL;
-      while (plcur!=NULL) {
-        if (plcur->val==ptr) break;
-        plprev=plcur;
-        plcur=plcur->next;
-      }
-      if (plcur==NULL) {
-        printfconsole("*%p\n",ptr);
-	sleep(30);
-        exit(1);
-      }
-      if (plprev==NULL) memallocroot=plcur->next;
-      else plprev->next=plcur->next;
-      free(plcur);
-    }
-    plnew=malloc(sizeof(struct plist));
-    plnew->next=memallocroot;
-    plnew->val=po;
-    memallocroot=plnew;
-  }
-#endif
-  return po;
-}
-
-void 
-memfree(void *ptr)
-{
-#ifdef DEBUG
-  struct plist *plcur,*plprev;
-
-  if (ptr != NULL) {
-    plcur = memallocroot;
-    plprev = NULL;
-    while (plcur != NULL) {
-      if (plcur->val == ptr) break;
-      plprev = plcur;
-      plcur = plcur->next;
-    }
-    if (plcur == NULL) {
-      printfconsole("*%p\n", ptr);
-      sleep(30);
-      exit(1);
-    }
-    if (plprev == NULL) {
-      memallocroot=plcur->next;
-    } else {
-      plprev->next=plcur->next;
-    }
-    free(plcur);
-  }
-#endif
-#ifdef HEAPCHK
-  if (_heapchk()!=_HEAPOK) exit(1);
-#endif
-  if (ptr!=NULL) free(ptr);
-}
-
 #define ALLOCSIZE 32
 
 void 
@@ -443,7 +326,7 @@ arraynew(unsigned int base)
 {
   struct narray *array;
 
-  if ((array=memalloc(sizeof(struct narray)))==NULL) return NULL;
+  if ((array=g_malloc(sizeof(struct narray)))==NULL) return NULL;
   arrayinit(array,base);
   return array;
 }
@@ -473,7 +356,7 @@ void
 arraydel(struct narray *array)
 {
   if (array==NULL) return;
-  memfree(array->data);
+  g_free(array->data);
   array->data=NULL;
   array->size=0;
   array->num=0;
@@ -487,8 +370,8 @@ arraydel2(struct narray *array)
 
   if (array==NULL) return;
   data=array->data;
-  for (i=0;i<array->num;i++) memfree(data[i]);
-  memfree(array->data);
+  for (i=0;i<array->num;i++) g_free(data[i]);
+  g_free(array->data);
   array->data=NULL;
   array->size=0;
   array->num=0;
@@ -498,8 +381,8 @@ void
 arrayfree(struct narray *array)
 {
   if (array==NULL) return;
-  memfree(array->data);
-  memfree(array);
+  g_free(array->data);
+  g_free(array);
 }
 
 void 
@@ -510,9 +393,9 @@ arrayfree2(struct narray *array)
 
   if (array==NULL) return;
   data=array->data;
-  for (i=0;i<array->num;i++) memfree(data[i]);
-  memfree(array->data);
-  memfree(array);
+  for (i=0;i<array->num;i++) g_free(data[i]);
+  g_free(array->data);
+  g_free(array);
 }
 
 struct narray *
@@ -524,7 +407,7 @@ arrayadd(struct narray *array,void *val)
   if (array==NULL) return NULL;
   if (array->num==array->size) {
     size=array->size+ALLOCSIZE;
-    if ((data=memrealloc(array->data,array->base*size))==NULL) {
+    if ((data=g_realloc(array->data,array->base*size))==NULL) {
       return NULL;
     }
     array->size=size;
@@ -548,7 +431,7 @@ arrayadd2(struct narray *array,char **val)
   if (*val == NULL) {
     return NULL;
   } else {
-    s = memalloc(strlen(*val) + 1);
+    s = g_malloc(strlen(*val) + 1);
     if (s == NULL) {
       arraydel2(array);
       return NULL;
@@ -557,7 +440,7 @@ arrayadd2(struct narray *array,char **val)
   }
   if (array->num == array->size) {
     size = array->size+ALLOCSIZE;
-    data=memrealloc(array->data,array->base*size);
+    data=g_realloc(array->data,array->base*size);
     if (data == NULL) {
       return NULL;
     }
@@ -582,7 +465,7 @@ arrayins(struct narray *array,void *val,unsigned int idx)
   if (idx>array->num) return NULL;
   if (array->num==array->size) {
     size=array->size+ALLOCSIZE;
-    if ((data=memrealloc(array->data,array->base*size))==NULL) {
+    if ((data=g_realloc(array->data,array->base*size))==NULL) {
       return NULL;
     }
     array->size=size;
@@ -611,7 +494,7 @@ arrayins2(struct narray *array, char **val, unsigned int idx)
   if (*val == NULL) {
     return NULL;
   } else {
-    s = memalloc(strlen(*val) + 1);
+    s = g_malloc(strlen(*val) + 1);
     if (s == NULL) {
       arraydel2(array);
       return NULL;
@@ -620,7 +503,7 @@ arrayins2(struct narray *array, char **val, unsigned int idx)
   }
   if (array->num == array->size) {
     size = array->size+ALLOCSIZE;
-    data = memrealloc(array->data,array->base*size);
+    data = g_realloc(array->data,array->base*size);
     if (data == NULL) {
       return NULL;
     }
@@ -666,7 +549,7 @@ arrayndel2(struct narray *array,unsigned int idx)
   if (array==NULL) return NULL;
   if (idx>=array->num) return NULL;
   data=(char **)array->data;
-  memfree(data[idx]);
+  g_free(data[idx]);
 #if 0
   for (i=idx+1;i<array->num;i++)
     data[i-1]=data[i];
@@ -705,7 +588,7 @@ arrayput2(struct narray *array, char **val, unsigned int idx)
   if (*val == NULL){
     return NULL;
   } else {
-    s = memalloc(strlen(*val) + 1);
+    s = g_malloc(strlen(*val) + 1);
     if (s == NULL) {
       arraydel2(array);
       return NULL;
@@ -713,7 +596,7 @@ arrayput2(struct narray *array, char **val, unsigned int idx)
     strcpy(s, *val);
   }
   data = (char **)array->data;
-  memfree(data[idx]);
+  g_free(data[idx]);
   data[idx] = s;
   return array;
 }
@@ -809,14 +692,14 @@ arg_add(char ***arg,void *ptr)
   char **arg2;
 
   if (*arg==NULL) {
-    if ((*arg=memalloc(ARGBUFNUM*sizeof(void *)))==NULL) 
+    if ((*arg=g_malloc(ARGBUFNUM*sizeof(void *)))==NULL) 
       return NULL;
     (*arg)[0]=NULL;
   }
   i=getargc(*arg);
   num=i/ARGBUFNUM;
   if (i%ARGBUFNUM==ARGBUFNUM-1) {
-    if ((arg2=memrealloc(*arg,ARGBUFNUM*sizeof(void *)*(num+2)))==NULL) 
+    if ((arg2=g_realloc(*arg,ARGBUFNUM*sizeof(void *)*(num+2)))==NULL) 
       return NULL;
     *arg=arg2;
   }
@@ -832,7 +715,7 @@ arg_add2(char ***arg,int argc,...)
   int i;
 
   if (*arg==NULL) {
-    if ((*arg=memalloc(ARGBUFNUM*sizeof(void *)))==NULL) 
+    if ((*arg=g_malloc(ARGBUFNUM*sizeof(void *)))==NULL) 
       return NULL;
     (*arg)[0]=NULL;
   }
@@ -850,8 +733,8 @@ arg_del(char **arg)
 
   if (arg==NULL) return;
   argc=getargc(arg);
-  for (i=0;i<argc;i++) memfree(arg[i]);
-  memfree(arg);
+  for (i=0;i<argc;i++) g_free(arg[i]);
+  g_free(arg);
 }
 
 void 
@@ -862,7 +745,7 @@ registerevloop(char *objname,char *evname,
   struct loopproc *lpcur,*lpnew;
 
   if (obj==NULL) return;
-  if ((lpnew=memalloc(sizeof(struct loopproc)))==NULL) return;
+  if ((lpnew=g_malloc(sizeof(struct loopproc)))==NULL) return;
   lpcur=looproot;
   if (lpcur==NULL) looproot=lpnew;
   else {
@@ -892,7 +775,7 @@ unregisterevloop(struct objlist *obj,int idn,char *inst)
       if (lpprev==NULL) looproot=lpcur->next;
       else lpprev->next=lpdel->next;
       lpcur=lpcur->next;
-      memfree(lpdel);
+      g_free(lpdel);
     } else {
       lpprev=lpcur;
       lpcur=lpcur->next;
@@ -910,7 +793,7 @@ unregisterallevloop(void)
   while (lpcur!=NULL) {
     lpdel=lpcur;
     lpcur=lpcur->next;
-    memfree(lpdel);
+    g_free(lpdel);
   }
   looproot=NULL;
   loopnext=NULL;
@@ -973,10 +856,10 @@ add_obj_to_hash(char *name, char *alias, void *obj)
     s = alias;
     while ((aliasname = getitok2(&s, &len, ":"))) {
       if (nhash_set_ptr(ObjHash, aliasname, obj)) {
-	memfree(aliasname);
+	g_free(aliasname);
 	return 1;
       }
-      memfree(aliasname);
+      g_free(aliasname);
     }
   }
 
@@ -1010,18 +893,18 @@ addobject(char *name,char *alias,char *parentname,char *ver,
     error2(NULL,ERRPARENT,parentname);
     return NULL;
   }
-  if ((objnew=memalloc(sizeof(struct objlist)))==NULL) return NULL;
+  if ((objnew=g_malloc(sizeof(struct objlist)))==NULL) return NULL;
 
 #if USE_HASH
   if (add_obj_to_hash(name, alias, objnew)) {
-    memfree(objnew);
+    g_free(objnew);
     error2(NULL,ERRHEAP,name);
     return NULL;
   }
 
   tbl_hash = nhash_new();
   if (tbl_hash == NULL) {
-    memfree(objnew);
+    g_free(objnew);
     error2(NULL,ERRHEAP,name);
     return NULL;
   }
@@ -1106,7 +989,7 @@ addobject(char *name,char *alias,char *parentname,char *ver,
     if (table[i].attrib & NEXEC) table[i].attrib&=~NWRITE;
 #if USE_HASH
     if (nhash_set_int(tbl_hash, table[i].name, i)) {
-      memfree(objnew);
+      g_free(objnew);
       nhash_free(tbl_hash);
       error2(NULL,ERRHEAP,name);
       return NULL;
@@ -1914,7 +1797,7 @@ _newobj(struct objlist *obj)
       return -1;
     }
   }
-  instnew=memalloc(obj->size);
+  instnew=g_malloc(obj->size);
   if (instnew==NULL) return -1;
   objcur=obj;
   while (objcur!=NULL) {
@@ -2023,7 +1906,7 @@ newobj(struct objlist *obj)
     return -1;
   }
 
-  instnew = memalloc(obj->size);
+  instnew = g_malloc(obj->size);
   if (instnew == NULL)
     return -1;
 
@@ -2099,14 +1982,14 @@ newobj(struct objlist *obj)
   if (robj->table[initn].proc) {
     argv = NULL;
     if (arg_add2(&argv, 2, obj->name, "init") == NULL) {
-      memfree(argv);
+      g_free(argv);
       return -1;
     }
     argc = getargc(argv);
     rcode = robj->table[initn].proc(robj, instnew, instnew + initp, argc, argv);
-    memfree(argv);
+    g_free(argv);
     if (rcode != 0) {
-      memfree(instnew);
+      g_free(instnew);
       return -1;
     }
   }
@@ -2145,7 +2028,7 @@ _delobj(struct objlist *obj,int delid)
       inst=*(char **)(inst+nextp);
     }
   }
-  memfree(instcur);
+  g_free(instcur);
   obj->lastinst--;
   return 0;
 }
@@ -2178,12 +2061,12 @@ delobj(struct objlist *obj,int delid)
   if (robj->table[donen].proc!=NULL) {
     argv=NULL;
     if (arg_add2(&argv,2,obj->name,"done")==NULL) {
-      memfree(argv);
+      g_free(argv);
       return -1;
     }
     argc=getargc(argv);
     rcode=robj->table[donen].proc(robj,instcur,instcur+donep,argc,argv);
-    memfree(argv);
+    g_free(argv);
     if (rcode!=0) return -1;
   }
   if ((nextp=obj->nextp)==-1) obj->root=NULL;
@@ -2206,7 +2089,7 @@ delobj(struct objlist *obj,int delid)
       case NSTR:
       case NOBJ:
       case NSFUNC:
-        memfree(*(char **)(instcur+offset));
+        g_free(*(char **)(instcur+offset));
         break;
       case NIARRAY: case NIAFUNC:
       case NDARRAY: case NDAFUNC:
@@ -2223,7 +2106,7 @@ delobj(struct objlist *obj,int delid)
     }
     objcur=objcur->parent;
   }
-  memfree(instcur);
+  g_free(instcur);
   obj->lastinst--;
   obj->curinst=-1;
   return 0;
@@ -2298,13 +2181,13 @@ putobj(struct objlist *obj,char *vname,int id,void *val)
   if ((robj->table[idn].type<NVFUNC) && (robj->table[idn].proc!=NULL)) {
     argv=NULL;
     if (arg_add2(&argv,3,obj->name,vname,val)==NULL) {
-      memfree(argv);
+      g_free(argv);
       return -1;
     }
     argc=getargc(argv);
     rcode=robj->table[idn].proc(robj,instcur,instcur+idp,argc,argv);
     val=argv[2];
-    memfree(argv);
+    g_free(argv);
     if (rcode!=0) return -1;
   }
 
@@ -2313,7 +2196,7 @@ putobj(struct objlist *obj,char *vname,int id,void *val)
   case NPOINTER:
   case NOBJ:
   case NSFUNC:
-    memfree(*(char **)(instcur+idp));
+    g_free(*(char **)(instcur+idp));
     break;
   case NIARRAY: case NIAFUNC:
   case NDARRAY: case NDAFUNC:
@@ -2400,18 +2283,18 @@ getobj(struct objlist *obj,char *vname,int id,
   if ((robj->table[idn].type>=NVFUNC) && (robj->table[idn].proc!=NULL)) {
     argv2=NULL;
     if (arg_add2(&argv2,2,obj->name,vname)==NULL) {
-      memfree(argv2);
+      g_free(argv2);
       return -1;
     }
     for (i=0;i<argc;i++) {
       if (arg_add(&argv2,((char **)argv)[i])==NULL) {
-        memfree(argv2);
+        g_free(argv2);
         return -1;
       }
     }
     argc2=getargc(argv2);
     rcode=robj->table[idn].proc(robj,instcur,instcur+idp,argc2,argv2);
-    memfree(argv2);
+    g_free(argv2);
     if (rcode!=0) return -1;
   }
   switch (robj->table[idn].type) {
@@ -2484,17 +2367,17 @@ _exeobj(struct objlist *obj,char *vname,char *inst,int argc,char **argv)
   if (robj->table[idn].proc!=NULL) {
     argv2=NULL;
     if (arg_add2(&argv2,2,obj->name,vname)==NULL) {
-      memfree(argv2);
+      g_free(argv2);
       return -1;
     }
     for (i=0;i<argc;i++)
       if (arg_add(&argv2,((char **)argv)[i])==NULL) {
-        memfree(argv2);
+        g_free(argv2);
         return -1;
       }
     argc2=getargc(argv2);
     rcode=robj->table[idn].proc(robj,inst,inst+idp,argc2,argv2);
-    memfree(argv2);
+    g_free(argv2);
   } else rcode=0;
   return rcode;
 }
@@ -2522,17 +2405,17 @@ exeobj(struct objlist *obj,char *vname,int id,int argc,char **argv)
   if (robj->table[idn].proc!=NULL) {
     argv2=NULL;
     if (arg_add2(&argv2,2,obj->name,vname)==NULL) {
-      memfree(argv2);
+      g_free(argv2);
       return -1;
     }
     for (i=0;i<argc;i++)
       if (arg_add(&argv2,((char **)argv)[i])==NULL) {
-        memfree(argv2);
+        g_free(argv2);
         return -1;
       }
     argc2=getargc(argv2);
     rcode=robj->table[idn].proc(robj,instcur,instcur+idp,argc2,argv2);
-    memfree(argv2);
+    g_free(argv2);
   } else rcode=0;
   obj->curinst=id;
   return rcode;
@@ -2573,7 +2456,7 @@ copyobj(struct objlist *obj,char *vname,int did,int sid)
     if (*(char **)po==NULL) {
       if (putobj(obj,vname,did,NULL)==-1) return -1;
     } else {
-      if ((s=memalloc(strlen(*(char **)po)+1))==NULL) return -1;
+      if ((s=g_malloc(strlen(*(char **)po)+1))==NULL) return -1;
       strcpy(s,*(char **)po);
       if (putobj(obj,vname,did,s)==-1) return -1;
     }
@@ -2862,7 +2745,7 @@ char *saveobj(struct objlist *obj, int id)
   char *instcur,*instnew;
 
   if ((instcur=getobjinst(obj,id))==NULL) return NULL;
-  if ((instnew=memalloc(obj->size))==NULL) return NULL;
+  if ((instnew=g_malloc(obj->size))==NULL) return NULL;
   memcpy(instnew,instcur,obj->size);
   return instnew;
 }
@@ -2874,7 +2757,7 @@ char *restoreobj(struct objlist *obj,int id,char *image)
   if (obj==NULL) return NULL;
   if ((instcur=getobjinst(obj,id))==NULL) return NULL;
   memcpy(instcur,image,obj->size);
-  memfree(image);
+  g_free(image);
   return instcur;
 }
 */
@@ -2905,7 +2788,7 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
     }
   } else {
     while ((s=getitok2(&ilist,&len," \t,"))!=NULL) {
-      memfree(tok);
+      g_free(tok);
       tok=s;
       iname=NULL;
       if (s[0]=='@') {
@@ -2996,11 +2879,11 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
       }
     }
   }
-  memfree(tok);
+  g_free(tok);
   return num;
 
 errexit:
-  memfree(tok);
+  g_free(tok);
   arraydel(iarray);
   return -1;
 }
@@ -3031,7 +2914,7 @@ getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
     }
   } else {
     while ((s=getitok2(&ilist,&len," \t,"))!=NULL) {
-      memfree(tok);
+      g_free(tok);
       tok=s;
       iname=NULL;
       if (s[0]=='@') {
@@ -3125,11 +3008,11 @@ getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
       }
     }
   }
-  memfree(tok);
+  g_free(tok);
   return num;
 
 errexit:
-  memfree(tok);
+  g_free(tok);
   arraydel(iarray);
   return -1;
 }
@@ -3147,10 +3030,10 @@ chkobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
     return ERRILOBJ;
   }
   if ((*obj=chkobject(oname))==NULL) {
-    memfree(oname);
+    g_free(oname);
     return -1;
   }
-  memfree(oname);
+  g_free(oname);
   if (s[0]==':') s++;
   ilist=s;
   if (def && (chkobjlastinst(*obj)==-1)) return -1;
@@ -3173,10 +3056,10 @@ getobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
     return ERRILOBJ;
   }
   if ((*obj=getobject(oname))==NULL) {
-    memfree(oname);
+    g_free(oname);
     return -1;
   }
-  memfree(oname);
+  g_free(oname);
   if (s[0]==':') s++;
   ilist=s;
   if (def && (getobjlastinst(*obj)==-1)) return -1;
@@ -3196,10 +3079,10 @@ chkobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
     return ERRILOBJ;
   }
   if ((*obj=chkobject(oname))==NULL) {
-    memfree(oname);
+    g_free(oname);
     return -1;
   }
-  memfree(oname);
+  g_free(oname);
   if (def && (chkobjlastinst(*obj)==-1)) return -1;
   if ((*s)[0]=='\0') {
     return ERRILOBJ;
@@ -3212,7 +3095,7 @@ chkobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
     }
   }
   num=chkilist(*obj,ilist,iarray,def,&spc);
-  memfree(ilist);
+  g_free(ilist);
   if (num==-1) return -1;
   if (((*s)[0]!='\0') && ((*s)[0]==':')) (*s)++;
   return 0;
@@ -3230,10 +3113,10 @@ getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
     return ERRILOBJ;
   }
   if ((*obj=getobject(oname))==NULL) {
-    memfree(oname);
+    g_free(oname);
     return -1;
   }
-  memfree(oname);
+  g_free(oname);
   if (def && (getobjlastinst(*obj)==-1)) return -1;
   if ((*s)[0]=='\0') {
     error2(NULL,ERRILOBJ,*s);
@@ -3248,7 +3131,7 @@ getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def)
     }
   }
   num=getilist(*obj,ilist,iarray,def,&spc);
-  memfree(ilist);
+  g_free(ilist);
   if (num==-1) return -1;
   if (((*s)[0]!='\0') && ((*s)[0]==':')) (*s)++;
   return 0;
@@ -3266,7 +3149,7 @@ mkobjlist(struct objlist *obj,char *objname,int id,char *field,int oid)
   else sprintf(ids,"%d",id);
   if (field!=NULL) flen=strlen(field);
   else flen=0;
-  if ((s=memalloc(strlen(objname)+strlen(ids)+flen+3))==NULL)
+  if ((s=g_malloc(strlen(objname)+strlen(ids)+flen+3))==NULL)
     return NULL;
   strcpy(s,objname);
   len=strlen(s);
@@ -3293,13 +3176,13 @@ getobjlist(char *list,int *id,char **field,int *oid)
   ids=getitok2(&list,&len,":");
   *field=getitok(&list,&len,":");
   if ((objname==NULL) || (ids==NULL) || (*field==NULL)) {
-    memfree(objname);
-    memfree(ids);
+    g_free(objname);
+    g_free(ids);
     *field=NULL;
     return NULL;
   }
   obj=chkobject(objname);
-  memfree(objname);
+  g_free(objname);
   if (ids[0]=='^') {
     if (oid!=NULL) *oid=TRUE;
     ids2=ids+1;
@@ -3309,11 +3192,11 @@ getobjlist(char *list,int *id,char **field,int *oid)
   }
   *id=strtol(ids2,&endptr,0);
   if ((ids2[0]=='\0') || (endptr[0]!='\0') || (chkobjoffset(obj,*field)==-1)) {
-    memfree(ids);
+    g_free(ids);
     *field=NULL;
     return NULL;
   }
-  memfree(ids);
+  g_free(ids);
   return obj;
 }
 
@@ -3331,33 +3214,33 @@ chgobjlist(char *olist)
   objname=getitok2(&list,&len,":");
   ids=getitok2(&list,&len,":");
   if ((objname==NULL) || (ids==NULL)) {
-    memfree(objname);
-    memfree(ids);
+    g_free(objname);
+    g_free(ids);
     return NULL;
   }
   if (ids[0]!='^') {
-    memfree(objname);
-    memfree(ids);
-    if ((newlist=memalloc(strlen(olist)+1))==NULL) return NULL;
+    g_free(objname);
+    g_free(ids);
+    if ((newlist=g_malloc(strlen(olist)+1))==NULL) return NULL;
     strcpy(newlist,olist);
     return newlist;
   }
   ids2=ids+1;
   id=strtol(ids2,&endptr,0);
   if ((ids2[0]=='\0') || (endptr[0]!='\0')) {
-    memfree(objname);
-    memfree(ids);
+    g_free(objname);
+    g_free(ids);
     return NULL;
   }
-  memfree(ids);
+  g_free(ids);
   obj=chkobject(objname);
   if ((inst=chkobjinstoid(obj,id))==NULL) {
-    memfree(objname);
+    g_free(objname);
     return NULL;
   }
   _getobj(obj,"id",inst,&id);
   newlist=mkobjlist(obj,objname,id,NULL,FALSE);
-  memfree(objname);
+  g_free(objname);
   return newlist;
 }
 
@@ -3439,7 +3322,7 @@ getvaluestr(struct objlist *obj,char *field,void *val,int cr,int quote)
     break;
   }
   if (cr) len++;
-  if ((s=memalloc(len+1))==NULL) return NULL;
+  if ((s=g_malloc(len+1))==NULL) return NULL;
   j=0;
   switch (type) {
   case NBOOL: case NBFUNC:
@@ -3579,8 +3462,8 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
       for (;(list[0]!='\0') && (strchr(" \t\n\r",list[0])!=NULL);list++);
     }
     if (s==NULL) break;
-    memfree(s2);
-    if ((s2=memalloc(len+1))==NULL) goto errexit;
+    g_free(s2);
+    if ((s2=g_malloc(len+1))==NULL) goto errexit;
     strncpy(s2,s,len);
     s2[len]='\0';
     if ((arglist!=NULL) && (arglist[alp]=='\0')) {
@@ -3588,7 +3471,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
       goto errexit;
     }
     if (arglist==NULL) {
-      if ((p=memalloc(strlen(s2)+1))==NULL) goto errexit;
+      if ((p=g_malloc(strlen(s2)+1))==NULL) goto errexit;
       strcpy(p,s2);
       if (arg_add(&argv,p)==NULL) goto errexit;
     } else if (arglist[alp]=='o') {
@@ -3602,7 +3485,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         goto errexit;
       }
       obj2=chkobject(oname);
-      memfree(oname);
+      g_free(oname);
       if ((obj2==NULL) || (os[0]!=':')) {
         err=3;
         goto errexit;
@@ -3613,7 +3496,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         err=3;
         goto errexit;
       }
-      if ((p=memalloc(strlen(s2)+1))==NULL) goto errexit;
+      if ((p=g_malloc(strlen(s2)+1))==NULL) goto errexit;
       strcpy(p,s2);
       if (arg_add(&argv,p)==NULL) goto errexit;
     } else if (arglist[alp]=='s') {
@@ -3623,7 +3506,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         }
         if (arrayadd2(array,&s2)==NULL) goto errexit;
       } else {
-        if ((p=memalloc(strlen(s2)+1))==NULL) goto errexit;
+        if ((p=g_malloc(strlen(s2)+1))==NULL) goto errexit;
         strcpy(p,s2);
         if (arg_add(&argv,p)==NULL) goto errexit;
       }
@@ -3647,7 +3530,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
                       NULL,NULL,
                       NULL,NULL,NULL,
                       NULL,NULL,NULL,0,NULL,NULL,NULL,0,&vd);
-      memfree(code);
+      g_free(code);
 #endif
       if (rcode!=MNOERR) {
         err=3;
@@ -3661,7 +3544,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
           }
           if (arrayadd(array,&vi)==NULL) goto errexit;
         } else {
-          if ((p=memalloc(sizeof(int)))==NULL) goto errexit;
+          if ((p=g_malloc(sizeof(int)))==NULL) goto errexit;
           *(int *)(p)=nround(vd);
           if (arg_add(&argv,p)==NULL) goto errexit;
         }
@@ -3672,7 +3555,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
           }
           if (arrayadd(array,&vd)==NULL) goto errexit;
         } else {
-          if ((p=memalloc(sizeof(double)))==NULL) goto errexit;
+          if ((p=g_malloc(sizeof(double)))==NULL) goto errexit;
           *(double *)(p)=vd;
           if (arg_add(&argv,p)==NULL) goto errexit;
         }
@@ -3696,7 +3579,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         err=3;
         goto errexit;
       } else {
-        if ((p=memalloc(sizeof(int)))==NULL) goto errexit;
+        if ((p=g_malloc(sizeof(int)))==NULL) goto errexit;
         *(int *)(p)=vi;
         if (arg_add(&argv,p)==NULL) goto errexit;
       }
@@ -3710,7 +3593,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         err=3;
         goto errexit;
       } else {
-        if ((p=memalloc(sizeof(int)))==NULL) goto errexit;
+        if ((p=g_malloc(sizeof(int)))==NULL) goto errexit;
         *(int *)(p)=vi;
         if (arg_add(&argv,p)==NULL) goto errexit;
       }
@@ -3741,20 +3624,20 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
       err=3;
       goto errexit;
     }
-    memfree(argv[0]);
-    if ((p=memalloc(sizeof(int)))==NULL) goto errexit;
+    g_free(argv[0]);
+    if ((p=g_malloc(sizeof(int)))==NULL) goto errexit;
     *(int *)(p)=i;
     argv[0] = p;
   }
 
   *argc=getargc(argv);
-  memfree(s2);
+  g_free(s2);
   *rargv=argv;
   return 0;
 
 errexit:
   arrayfree(array);
-  memfree(s2);
+  g_free(s2);
   arg_del(argv);
   *argc=-1;
   *rargv=NULL;
@@ -3768,8 +3651,8 @@ freeargument(int type,char *arglist,int argc,char **argv,int full)
 
   if (argv!=NULL) {
     if (arglist==NULL) {
-      for (i=0;i<argc;i++) memfree(argv[i]);
-      memfree(argv);
+      for (i=0;i<argc;i++) g_free(argv[i]);
+      g_free(argv);
     } else if (full) {
       if ((type!=NENUM) && (argc>0)
       && (arglist[0]!='\0') && (arglist[1]=='a')) {
@@ -3777,15 +3660,15 @@ freeargument(int type,char *arglist,int argc,char **argv,int full)
           arrayfree((struct narray *)(argv[0]));
         else if (arglist[0]=='s')
           arrayfree2((struct narray *)(argv[0]));
-      } else for (i=0;i<argc;i++) memfree(argv[i]);
-      memfree(argv);
+      } else for (i=0;i<argc;i++) g_free(argv[i]);
+      g_free(argv);
     } else {
       if ((type==NENUM) || (arglist[0]=='\0') || (arglist[1]!='a')) {
         for (i=0;i<argc;i++)
           if ((type==NENUM) || (strchr("bcid",arglist[i])!=NULL))
-            memfree(argv[i]);
+            g_free(argv[i]);
       }
-      memfree(argv);
+      g_free(argv);
     }
   }
 }
@@ -3920,7 +3803,7 @@ schkfield(struct objlist *obj,int id,char *arg,char **valstr,
   if (s[0]!='\0') s++;
   while ((s[0]==' ') || (s[0]=='\t')) s++;
   err=schkobjfield(obj,id,field,s,valstr,limittype,cr,quote);
-  memfree(field);
+  g_free(field);
   return err;
 }
 
@@ -3945,7 +3828,7 @@ sgetfield(struct objlist *obj,int id,char *arg,char **valstr,
   if (s[0]!='\0') s++;
   while ((s[0]==' ') || (s[0]=='\t')) s++;
   err=sgetobjfield(obj,id,field,s,valstr,limittype,cr,quote);
-  memfree(field);
+  g_free(field);
   return err;
 }
 
@@ -4041,7 +3924,7 @@ sputfield(struct objlist *obj,int id,char *arg)
   }
   if (s[0]!='\0') s++;
   err=sputobjfield(obj,id,field,s);
-  memfree(field);
+  g_free(field);
   return err;
 }
 
@@ -4119,7 +4002,7 @@ sexefield(struct objlist *obj,int id,char *arg)
   }
   if (s[0]!='\0') s++;
   rcode=sexeobjfield(obj,id,field,s);
-  memfree(field);
+  g_free(field);
   return rcode;
 }
 
@@ -4166,11 +4049,11 @@ obj_do_tighten(struct objlist *obj, char *inst, char *field)
     if (anum > 0) {
       id = * (int *) arraylast(&iarray);
       if (getobj(dobj, "oid", id, 0, NULL, &oid) != -1) {
-	dest2 = (char *) memalloc(strlen(chkobjectname(dobj)) + 10);
+	dest2 = (char *) g_malloc(strlen(chkobjectname(dobj)) + 10);
 	if (dest2) {
 	  sprintf(dest2, "%s:^%d", chkobjectname(dobj), oid);
 	  _putobj(obj, field, inst, dest2);
-	  memfree(dest);
+	  g_free(dest);
 	}
       }
     }
@@ -4226,7 +4109,7 @@ getuniqname(struct objlist *obj,char *prefix,char sep)
   if (prefix==NULL) len=0;
   else len=strlen(prefix);
   if (sep!='\0') len++;
-  if ((name=memalloc(len+11))==NULL) return NULL;
+  if ((name=g_malloc(len+11))==NULL) return NULL;
   for (i=0;i<10;i++) c[i]=0;
   while (TRUE) {
 match:

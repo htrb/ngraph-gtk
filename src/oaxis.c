@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.47 2009/08/05 04:54:54 hito Exp $
+ * $Id: oaxis.c,v 1.48 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -27,6 +27,7 @@
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
+#include <glib.h>
 
 #include "common.h"
 
@@ -47,8 +48,6 @@
 #define NAME "axis"
 #define PARENT "draw"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define AXIS_HISTORY_NUM 30
 
@@ -303,26 +302,26 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   format = font = jfont = group = name = NULL;
 
-  format = nstrdup("%g");
+  format = g_strdup("%g");
   if (format == NULL) goto errexit;
   if (_putobj(obj,"num_format",inst,format)) goto errexit;
 
-  font = nstrdup(fontchar[4]);
+  font = g_strdup(fontchar[4]);
   if (font == NULL) goto errexit;
   if (_putobj(obj,"num_font",inst,font)) goto errexit;
 
-  jfont = nstrdup(jfontchar[1]);
+  jfont = g_strdup(jfontchar[1]);
   if (jfont == NULL) goto errexit;
   if (_putobj(obj,"num_jfont",inst,jfont)) goto errexit;
 
   gnum = axisuniqgroup(obj,'a');
   snprintf(buf, sizeof(buf), "a_%d",gnum);
-  group = nstrdup(buf);
+  group = g_strdup(buf);
   if (group == NULL) goto errexit;
   if (_putobj(obj,"group",inst,group)) goto errexit;
 
   snprintf(buf, sizeof(buf), "a_%d",gnum);
-  name = nstrdup(buf);
+  name = g_strdup(buf);
   if (name == NULL) goto errexit;
   if (_putobj(obj,"name",inst,name)) goto errexit;
 
@@ -330,11 +329,11 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 
 errexit:
-  memfree(format);
-  memfree(font);
-  memfree(jfont);
-  memfree(group);
-  memfree(name);
+  g_free(format);
+  g_free(font);
+  g_free(jfont);
+  g_free(group);
+  g_free(name);
   return 1;
 }
 
@@ -352,12 +351,12 @@ axisdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
       gnum = axisuniqgroup(obj,'a');
       snprintf(buf, sizeof(buf), "a_%d",gnum);
-      group = nstrdup(buf);
+      group = g_strdup(buf);
       if (group == NULL)
 	break;
 
       _getobj(obj, "group", inst_array[i], &group2);
-      memfree(group2);
+      g_free(group2);
       if (_putobj(obj, "group", inst_array[i], group))
 	break;
     }
@@ -1972,7 +1971,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	  else
 	    numformat(num,format,po/norm);
 	  numlen=strlen(num);
-	  if ((text=memalloc(numlen+headlen+taillen+5))==NULL)
+	  if ((text=g_malloc(numlen+headlen+taillen+5))==NULL)
 	    return 1;
 	  text[0]='\0';
 	  if (headlen!=0) strcpy(text,head);
@@ -2020,7 +2019,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	  }
 	  GRAmoveto(GC,gx0-px1,gy0-py1);
 	  GRAdrawtext(GC,text,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
-	  memfree(text);
+	  g_free(text);
 	}
 
 	if ((alocal->atype==AXISLOGSMALL) && (rcode==3)) {
@@ -2234,7 +2233,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf)
 	else
 	  numformat(num,format,po/norm);
 	numlen=strlen(num);
-	if ((text=memalloc(numlen+headlen+taillen+5))==NULL) return 1;
+	if ((text=g_malloc(numlen+headlen+taillen+5))==NULL) return 1;
 	text[0]='\0';
 	if (headlen!=0) strcpy(text,head);
 	if (logpow
@@ -2268,7 +2267,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf)
 	  if (fy0<hy0) hy0=fy0;
 	  if (fy1>hy1) hy1=fy1;
 	}
-	memfree(text);
+	g_free(text);
       }
       if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) cstep=step-begin;
       else cstep=0;
@@ -2993,17 +2992,17 @@ set_group(struct objlist *obj, int gnum, int id, char axis, char type)
   }
 
   snprintf(buf, sizeof(buf), "%c%c%d", type, axis, gnum);
-  group = nstrdup(buf);
+  group = g_strdup(buf);
   if (group) {
     _getobj(obj, "group", inst2, &group2);
-    memfree(group2);
+    g_free(group2);
     _putobj(obj, "group", inst2, group);
   }
 
-  group = nstrdup(buf);
+  group = g_strdup(buf);
   if (group) {
     _getobj(obj, "name", inst2, &group2);
-    memfree(group2);
+    g_free(group2);
     _putobj(obj, "name", inst2, group);
   }
 }
@@ -3165,12 +3164,12 @@ axis_default_set(struct objlist *obj, int id, int oid, char *field, char *conf)
     return;
 
   snprintf(buf, sizeof(buf), "axis:^%d", oid);
-  ref = nstrdup(buf);
+  ref = g_strdup(buf);
   if (ref == NULL)
     return;
 
   _getobj(obj, field, inst2, &ref2);
-  memfree(ref2);
+  g_free(ref2);
   _putobj(obj, field, inst2, ref);
 
   axisloadconfig(obj, inst2, conf);
@@ -3308,7 +3307,7 @@ axis_save_group(struct objlist *obj, int type, char **inst_array, char **rval)
       return 1;
   }
 
-  memfree(*rval);
+  g_free(*rval);
   *rval = s;
 
   return 0;

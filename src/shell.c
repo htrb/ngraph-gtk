@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.35 2009/11/12 01:36:45 hito Exp $
+ * $Id: shell.c,v 1.36 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -112,6 +112,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <glib.h>
 #ifndef WINDOWS
 
 #ifdef HAVE_LIBREADLINE
@@ -143,9 +144,6 @@ static char *Prompt;
 #include "shellux.h"
 #include "mathcode.h"
 #include "math/math_equation.h"
-
-#define FALSE 0
-#define TRUE 1
 
 #define TEMPPFX "NGS"
 
@@ -220,7 +218,7 @@ unlinkfile(char **file)
 {
   if (*file!=NULL) {
     unlink(*file);
-    free(*file);
+    g_free(*file);
     *file=NULL;
   }
 }
@@ -390,7 +388,7 @@ shget(struct nshell *nshell)
     }
     if(str_ptr != NULL){
       if(*line_str == '\0'){
-	free(str_ptr);
+	g_free(str_ptr);
 	str_ptr = line_str = NULL;
 	buf[0] = '\0';
 	byte = 1;
@@ -833,8 +831,8 @@ prmfree(struct prmlist *prmroot)
   while (prmcur!=NULL) {
     prmdel=prmcur;
     prmcur=prmcur->next;
-    memfree(prmdel->str);
-    memfree(prmdel);
+    g_free(prmdel->str);
+    g_free(prmdel);
   }
 }
 
@@ -848,7 +846,7 @@ cmdfree(struct cmdlist *cmdroot)
     prmfree(cmdcur->prm);
     cmddel=cmdcur;
     cmdcur=cmdcur->next;
-    memfree(cmddel);
+    g_free(cmddel);
   }
 }
 
@@ -862,8 +860,8 @@ cmdstackfree(struct cmdstack *stroot)
     stdel=stcur;
     stcur=stcur->next;
     prmfree(stdel->prm);
-    memfree(stdel->pat);		/* hito (mem leak of pat) */
-    memfree(stdel);
+    g_free(stdel->pat);		/* hito (mem leak of pat) */
+    g_free(stdel);
   }
 }
 
@@ -872,7 +870,7 @@ cmdstackcat(struct cmdstack **stroot,int cmdno)
 {
   struct cmdstack *stcur,*stnew;
 
-  if ((stnew=memalloc(sizeof(struct cmdstack)))==NULL) return NULL;
+  if ((stnew=g_malloc(sizeof(struct cmdstack)))==NULL) return NULL;
   stcur=*stroot;
   if (stcur==NULL) *stroot=stnew;
   else {
@@ -931,8 +929,8 @@ cmdstackrmlast(struct cmdstack **stroot)
   if (stprev==NULL) *stroot=NULL;
   else stprev->next=NULL;
   prmfree(stcur->prm);
-  memfree(stcur->pat);		/* hito (mem leak of pat) */
-  memfree(stcur);
+  g_free(stcur->pat);		/* hito (mem leak of pat) */
+  g_free(stcur);
 }
 
 static struct vallist *
@@ -940,21 +938,21 @@ create_vallist(char *name, char *val)
 {
   struct vallist *valnew;
 
-  valnew = memalloc(sizeof(* valnew));
+  valnew = g_malloc(sizeof(* valnew));
   if (valnew == NULL)
     return NULL;
 
-  valnew->name = nstrdup(name);
+  valnew->name = g_strdup(name);
   if (valnew->name == NULL) {
-    memfree(valnew);
+    g_free(valnew);
     return NULL;
   }
 
   if (val) {
-    valnew->val = nstrdup(val);
+    valnew->val = g_strdup(val);
     if (valnew->val == NULL) {
-      memfree(valnew->name);
-      memfree(valnew);
+      g_free(valnew->name);
+      g_free(valnew);
       return NULL;
     }
   } else {
@@ -970,12 +968,12 @@ free_vallist(struct vallist *val)
   if (val == NULL)
     return;
 
-  memfree(val->name);
+  g_free(val->name);
   if (val->func)
     cmdfree(val->val);
   else
-    memfree(val->val);
-  memfree(val);
+    g_free(val->val);
+  g_free(val);
 }
 
 char *
@@ -1005,14 +1003,14 @@ addval(struct nshell *nshell,char *name,char *val)
 #else
   struct vallist *valcur,*valprev,*valnew;
 
-  if ((valnew=memalloc(sizeof(struct vallist)))==NULL) return NULL;
-  if ((valnew->name=memalloc(strlen(name)+1))==NULL) {
-    memfree(valnew);
+  if ((valnew=g_malloc(sizeof(struct vallist)))==NULL) return NULL;
+  if ((valnew->name=g_malloc(strlen(name)+1))==NULL) {
+    g_free(valnew);
     return NULL;
   }
-  if ((valnew->val=memalloc(strlen(val)+1))==NULL) {
-    memfree(valnew->name);
-    memfree(valnew);
+  if ((valnew->val=g_malloc(strlen(val)+1))==NULL) {
+    g_free(valnew->name);
+    g_free(valnew);
     return NULL;
   }
   valnew->func=FALSE;
@@ -1032,10 +1030,10 @@ addval(struct nshell *nshell,char *name,char *val)
     valnew->next=NULL;
   } else if (strcmp0(name,valcur->name)==0) {
     valnew->next=valcur->next;
-    memfree(valcur->name);
+    g_free(valcur->name);
     if (valcur->func) cmdfree(valcur->val);
-    else memfree(valcur->val);
-    memfree(valcur);
+    else g_free(valcur->val);
+    g_free(valcur);
   } else {
     valnew->next=valcur;
   }
@@ -1076,14 +1074,14 @@ saveval(struct nshell *nshell,char *name,char *val, struct vallist **newvalroot)
 #else
   struct vallist *valcur,*valprev,*valnew;
 
-  if ((valnew=memalloc(sizeof(struct vallist)))==NULL) return NULL;
-  if ((valnew->name=memalloc(strlen(name)+1))==NULL) {
-    memfree(valnew);
+  if ((valnew=g_malloc(sizeof(struct vallist)))==NULL) return NULL;
+  if ((valnew->name=g_malloc(strlen(name)+1))==NULL) {
+    g_free(valnew);
     return NULL;
   }
-  if ((valnew->val=memalloc(strlen(val)+1))==NULL) {
-    memfree(valnew->name);
-    memfree(valnew);
+  if ((valnew->val=g_malloc(strlen(val)+1))==NULL) {
+    g_free(valnew->name);
+    g_free(valnew);
     return NULL;
   }
   valnew->func=FALSE;
@@ -1165,9 +1163,9 @@ restoreval(struct nshell *nshell,struct vallist *newvalroot)
     if (valcur->arg==1) {
       if (valprev==NULL) nshell->valroot=valcur->next;
       else valprev->next=valcur->next;
-      memfree(valcur->name);
-      memfree(valcur->val);
-      memfree(valcur);
+      g_free(valcur->name);
+      g_free(valcur->val);
+      g_free(valcur);
     } else valprev=valcur;
     valcur=valnext;
   }
@@ -1186,10 +1184,10 @@ restoreval(struct nshell *nshell,struct vallist *newvalroot)
       else valprev2->next=valcur;
       valcur->next=NULL;
     } else if (strcmp0(valcur->name,valcur2->name)==0) {
-      memfree(valcur->name);
+      g_free(valcur->name);
       if (valcur->func) cmdfree(valcur->val);
-      else memfree(valcur->val);
-      memfree(valcur);
+      else g_free(valcur->val);
+      g_free(valcur);
     } else {
       if (valprev2==NULL) nshell->valroot=valcur;
       else valprev2->next=valcur;
@@ -1222,9 +1220,9 @@ addexp(struct nshell *nshell,char *name)
     valprev=valcur;
     valcur=valcur->next;
   }
-  if ((valnew=memalloc(sizeof(struct vallist)))==NULL) return NULL;
-  if ((valnew->val=memalloc(strlen(name)+1))==NULL) {
-    memfree(valnew);
+  if ((valnew=g_malloc(sizeof(struct vallist)))==NULL) return NULL;
+  if ((valnew->val=g_malloc(strlen(name)+1))==NULL) {
+    g_free(valnew);
     return NULL;
   }
   if (valprev==NULL) nshell->exproot=valnew;
@@ -1260,10 +1258,10 @@ delval(struct nshell *nshell,char *name)
     if (strcmp0(valcur->name,name)==0) {
       if (valprev==NULL) nshell->valroot=valcur->next;
       else valprev->next=valcur->next;
-      memfree(valcur->name);
+      g_free(valcur->name);
       if (valcur->func) cmdfree(valcur->val);
-      else memfree(valcur->val);
-      memfree(valcur);
+      else g_free(valcur->val);
+      g_free(valcur);
       return TRUE;
     }
     valprev=valcur;
@@ -1343,9 +1341,9 @@ newfunc(struct nshell *nshell,char *name)
 #else
   struct vallist *valcur,*valprev,*valnew;
 
-  if ((valnew=memalloc(sizeof(struct vallist)))==NULL) return NULL;
-  if ((valnew->name=memalloc(strlen(name)+1))==NULL) {
-    memfree(valnew);
+  if ((valnew=g_malloc(sizeof(struct vallist)))==NULL) return NULL;
+  if ((valnew->name=g_malloc(strlen(name)+1))==NULL) {
+    g_free(valnew);
     return NULL;
   }
   valnew->func=TRUE;
@@ -1365,10 +1363,10 @@ newfunc(struct nshell *nshell,char *name)
     valnew->next=NULL;
   } else if (strcmp0(name,valcur->name)==0) {
     valnew->next=valcur->next;
-    memfree(valcur->name);
+    g_free(valcur->name);
     if (valcur->func) cmdfree(valcur->val);
-    else memfree(valcur->val);
-    memfree(valcur);
+    else g_free(valcur->val);
+    g_free(valcur);
   } else {
     valnew->next=valcur;
   }
@@ -1402,7 +1400,7 @@ addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
     cmdcur = cmdcur->next;
   }
 
-  cmdnew = memalloc(sizeof(* cmdnew));
+  cmdnew = g_malloc(sizeof(* cmdnew));
   if (cmdnew == NULL) {
     delval(nshell, name);
     return NULL;
@@ -1421,7 +1419,7 @@ addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
   prmprev = NULL;
 
   while (prmcur) {
-    prmnew = memalloc(sizeof(* prmnew));
+    prmnew = g_malloc(sizeof(* prmnew));
     if (prmnew == NULL) {
       delval(nshell, name);
       return NULL;
@@ -1434,7 +1432,7 @@ addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
     *prmnew = *prmcur;
     prmnew->next = NULL;
     if (prmcur->str) {
-      snew = nstrdup(prmcur->str);
+      snew = g_strdup(prmcur->str);
       if (snew == NULL) {
 	delval(nshell, name);
 	return NULL;
@@ -1461,7 +1459,7 @@ addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
         cmdprev=cmdcur;
         cmdcur=cmdcur->next;
       }
-      if ((cmdnew=memalloc(sizeof(struct cmdlist)))==NULL) {
+      if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) {
         delval(nshell,name);
         return NULL;
       }
@@ -1473,7 +1471,7 @@ addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
       prmcur=val->prm;
       prmprev=NULL;
       while (prmcur!=NULL) {
-        if ((prmnew=memalloc(sizeof(struct prmlist)))==NULL) {
+        if ((prmnew=g_malloc(sizeof(struct prmlist)))==NULL) {
           delval(nshell,name);
           return NULL;
         }
@@ -1482,7 +1480,7 @@ addfunc(struct nshell *nshell,char *name,struct cmdlist *val)
         *prmnew=*prmcur;
         prmnew->next=NULL;
         if (prmcur->str!=NULL) {
-          if ((snew=memalloc(strlen(prmcur->str)+1))==NULL) {
+          if ((snew=g_malloc(strlen(prmcur->str)+1))==NULL) {
             delval(nshell,name);
             return NULL;
           }
@@ -1609,7 +1607,7 @@ getcmdline(struct nshell *nshell,
   tok=NULL;
   eofcount=0;
   do {
-    memfree(tok);
+    g_free(tok);
     tok=NULL;
     if (str==NULL) {
       if ((tok=nstrnew())==NULL) goto errexit;
@@ -1680,7 +1678,7 @@ getcmdline(struct nshell *nshell,
         goto errexit;
       }
       for (i=*istr;(str[i]!='\0') && (str[i]!='\n');i++);
-      if ((tok=memalloc(i-*istr+1))==NULL) goto errexit;
+      if ((tok=g_malloc(i-*istr+1))==NULL) goto errexit;
       strncpy(tok,str+*istr,i-*istr);
       tok[i-*istr]='\0';
       if (str[i]=='\n') *istr=i+1;
@@ -1694,31 +1692,31 @@ getcmdline(struct nshell *nshell,
       if (quote2 || bquote2 || escape2) {
         l=strlen(prmcur->str);
         if (quote2 || bquote2) l++;
-        if ((po=memalloc(len+l+1))==NULL) goto errexit;
+        if ((po=g_malloc(len+l+1))==NULL) goto errexit;
         strcpy(po,prmcur->str);
         if (quote2 || bquote2) *(po+l-1)='\n';
         if (spo!=NULL) strncpy(po+l,spo,len);
         *(po+len+l)='\0';
-        memfree(prmcur->str);
+        g_free(prmcur->str);
         prmcur->str=po;
       } else if (spo!=NULL) {
         if (cmdroot==NULL) {
-          if ((cmdcur=memalloc(sizeof(struct cmdlist)))==NULL) goto errexit;
+          if ((cmdcur=g_malloc(sizeof(struct cmdlist)))==NULL) goto errexit;
           cmdroot=cmdcur;
           cmdcur->next=NULL;
           cmdcur->prm=NULL;
         }
-        if ((prmnew=memalloc(sizeof(struct prmlist)))==NULL) goto errexit;
+        if ((prmnew=g_malloc(sizeof(struct prmlist)))==NULL) goto errexit;
         if (cmdcur->prm==NULL) cmdcur->prm=prmnew;
         else prmcur->next=prmnew;
         prmcur=prmnew;
         prmcur->next=NULL;
-        if ((prmcur->str=memalloc(len+1))==NULL) goto errexit;
+        if ((prmcur->str=g_malloc(len+1))==NULL) goto errexit;
         strncpy(prmcur->str,spo,len);
         prmcur->str[len]='\0';
       }
       if (cend) {
-        if ((cmdcur->next=memalloc(sizeof(struct cmdlist)))==NULL)
+        if ((cmdcur->next=g_malloc(sizeof(struct cmdlist)))==NULL)
           goto errexit;
         cmdcur=cmdcur->next;
         cmdcur->next=NULL;
@@ -1730,12 +1728,12 @@ getcmdline(struct nshell *nshell,
     } while ((spo!=NULL) && (!escape) && (!quote) && (!bquote));
   } while (quote || bquote || escape || (cmdroot==NULL));
   *rcmdroot=cmdroot;
-  memfree(tok);
+  g_free(tok);
   return 0;
 
 errexit:
   cmdfree(cmdroot);
-  memfree(tok);
+  g_free(tok);
   *rcmdroot=NULL;
   return err;
 }
@@ -1749,7 +1747,7 @@ quotation(struct nshell *nshell,char *s,int quote)
   ifs=getval(nshell,"IFS");
   num=0;
   for (i=0;s[i]!='\0';i++) if (strchr("\"\\'$",s[i])!=NULL) num++;
-  if ((snew=memalloc(strlen(s)+num+1))==NULL) return NULL;
+  if ((snew=g_malloc(strlen(s)+num+1))==NULL) return NULL;
   j=0;
   for (i=0;s[i]!='\0';i++) { 
     if ((quote!='"') && (ifs!=NULL) && (ifs[0]!='\0') 
@@ -1769,7 +1767,7 @@ unquotation(char *s,int *quoted)
   int escape,quote,i,j;
   char *snew,*po;
 
-  if ((snew=memalloc(strlen(s)+1))==NULL) return NULL;
+  if ((snew=g_malloc(strlen(s)+1))==NULL) return NULL;
   *quoted=FALSE;
   po=s;
   escape=FALSE;
@@ -1842,7 +1840,7 @@ fnexpand(struct nshell *nshell,char *str)
       }
       expand=FALSE;
       if (po[i]==(char )0x01) for (;po[i+1]==(char )0x01;i++);
-      memfree(s);
+      g_free(s);
       if ((s=nstrnew())==NULL) goto errexit;
     } else if ((quote=='"') || (quote=='\'')) {
       if (po[i]==quote) quote='\0';
@@ -1855,16 +1853,16 @@ fnexpand(struct nshell *nshell,char *str)
     }
   }
 
-  memfree(s);
-  memfree(po);
+  g_free(s);
+  g_free(po);
   len=strlen(s2);
   if ((len!=0) && (s2[len-1]==(char )0x01)) s2[len-1]='\0';
   return s2;
 
 errexit:
-  memfree(s);
-  memfree(po);
-  memfree(s2);
+  g_free(s);
+  g_free(po);
+  g_free(s2);
   return NULL;
 }
 
@@ -1887,7 +1885,7 @@ wordsplit(struct prmlist *prmcur)
     } else if (po[i]==(char )0x01) {
       prmcur->str=s;
       if ((s=nstrnew())==NULL) goto errexit;
-      if ((prmnew=memalloc(sizeof(struct prmlist)))==NULL) goto errexit;
+      if ((prmnew=g_malloc(sizeof(struct prmlist)))==NULL) goto errexit;
       prmnew->str=NULL;
       prmnew->next=prmcur->next;
       prmnew->prmno=prmcur->prmno;
@@ -1898,12 +1896,12 @@ wordsplit(struct prmlist *prmcur)
   }
   prmcur->str=s;
   num++;
-  memfree(po);
+  g_free(po);
   return num;
 
 errexit:
-  memfree(s);
-  memfree(po);
+  g_free(s);
+  g_free(po);
   return -1;
 }
 
@@ -1994,14 +1992,14 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           if ((rcode!=0) && (rcode!=1)) {
             nredirect2(1,sout2);
             unlink(tmpfil);
-            free(tmpfil);
+            g_free(tmpfil);
             goto errexit;
           }
-          memfree(sb);
+          g_free(sb);
           if ((sb=nstrnew())==NULL) {
             nredirect2(1,sout2);
             unlink(tmpfil);
-            free(tmpfil);
+            g_free(tmpfil);
             goto errexit;
           }
           nlseek(stdoutfd(),0L,SEEK_SET);
@@ -2010,7 +2008,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             if ((sb=nstrcat(sb,writebuf))==NULL) {
               nredirect2(1,sout2);
               unlink(tmpfil);
-              free(tmpfil);
+              g_free(tmpfil);
               goto errexit;
             }
           }
@@ -2018,10 +2016,10 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           unlink(tmpfil);
           if (byte==-1) {
             sherror2(ERRREAD,tmpfil);
-            free(tmpfil);
+            g_free(tmpfil);
             goto errexit;
           }
-          free(tmpfil);
+          g_free(tmpfil);
 	  n = strlen(sb);
           for (u = 0; u < n; u++) {
 	    if (sb[u] == '\n') {
@@ -2032,9 +2030,9 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           sb[j+1]='\0';
           if ((c1=quotation(nshell,sb,*quote))==NULL) goto errexit;
           s=nstrcat(s,c1);
-          memfree(c1);
+          g_free(c1);
           if (s==NULL) goto errexit;
-          memfree(sb);
+          g_free(sb);
           sb=NULL;
         }
       } else if (se==NULL) {
@@ -2054,8 +2052,8 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
     && (*quote!='\'') && (se==NULL)) {
       if (isdigit(po[i+1])) {
         for (j=i+1;(po[j]!='\0') && isdigit(po[j]);j++);
-        memfree(name);
-        if ((name=memalloc(j-i))==NULL) goto errexit;
+        g_free(name);
+        if ((name=g_malloc(j-i))==NULL) goto errexit;
         strncpy(name,po+i+1,j-i-1);
         name[j-i-1]='\0';
         num=atoi(name);
@@ -2063,24 +2061,24 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           if ((c1=quotation(nshell,(nshell->argv)[num],*quote))==NULL)
             goto errexit;
           s=nstrcat(s,c1);
-          memfree(c1);
+          g_free(c1);
           if (s==NULL) goto errexit;
         }
         i=j-1;
       } else if (strchr("#?",po[i+1])!=NULL) {
         switch (po[i+1]) {
-        case '#': memfree(name);
-                  if ((name=memalloc(12))==NULL) goto errexit;
+        case '#': g_free(name);
+                  if ((name=g_malloc(12))==NULL) goto errexit;
                   sprintf(name,"%d",nshell->argc-1);
                   break;
-        case '?': memfree(name);
-                  if ((name=memalloc(12))==NULL) goto errexit;
+        case '?': g_free(name);
+                  if ((name=g_malloc(12))==NULL) goto errexit;
                   sprintf(name,"%d",nshell->status);
                   break;
         }
         if ((c1=quotation(nshell,name,*quote))==NULL) goto errexit;
         s=nstrcat(s,c1);
-        memfree(c1);
+        g_free(c1);
         if (s==NULL) goto errexit;
         i++;
       } else if (strchr("*@",po[i+1])!=NULL) {
@@ -2091,7 +2089,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           if ((c1=quotation(nshell,(nshell->argv)[j],*quote))==NULL)
             goto errexit;
           s=nstrcat(s,c1);
-          memfree(c1);
+          g_free(c1);
           if (s==NULL) goto errexit;
           if (j!=(nshell->argc-1)) {
             if ((*quote=='"') && (po[i+1]=='*')) {
@@ -2116,15 +2114,15 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           goto errexit;
         }
         if (po[j]=='}') {
-          memfree(name);
-          if ((name=memalloc(j-i-1))==NULL) goto errexit;
+          g_free(name);
+          if ((name=g_malloc(j-i-1))==NULL) goto errexit;
           strncpy(name,po+i+2,j-i-2);
           name[j-i-2]='\0';
           val=getval(nshell,name);
           if (val!=NULL) {
             if ((c1=quotation(nshell,val,*quote))==NULL) goto errexit;
             s=nstrcat(s,c1);
-            memfree(c1);
+            g_free(c1);
             if (s==NULL) goto errexit;
           }
           i=j;
@@ -2135,8 +2133,8 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             if ((se=nstrnew())==NULL) goto errexit;
             i+=2;
           } else {
-            memfree(name);
-            if ((name=memalloc(j-i-1))==NULL) goto errexit;
+            g_free(name);
+            if ((name=g_malloc(j-i-1))==NULL) goto errexit;
             strncpy(name,po+i+2,j-i-2);
             name[j-i-2]='\0';
             val=getval(nshell,name);
@@ -2168,8 +2166,8 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
       } else {
         /* simple variable substitution */
         for (j=i+1;(po[j]!='\0') && (isalnum(po[j]) || (po[j]=='_'));j++);
-        memfree(name);
-        if ((name=memalloc(j-i))==NULL) goto errexit;
+        g_free(name);
+        if ((name=g_malloc(j-i))==NULL) goto errexit;
         strncpy(name,po+i+1,j-i-1);
         name[j-i-1]='\0';
         if (name[0]=='\0') val="$";
@@ -2177,7 +2175,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
         if (val!=NULL) {
           if ((c1=quotation(nshell,val,*quote))==NULL) goto errexit;
           s=nstrcat(s,c1);
-          memfree(c1);
+          g_free(c1);
           if (s==NULL) goto errexit;
         }
         i=j-1;
@@ -2187,10 +2185,10 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
       if (valf=='o') {
       /* object replacement */
         if ((tmp=unquotation(se,&dummy))==NULL) goto errexit;
-        memfree(se);
+        g_free(se);
         se=NULL;
         sarray=sgetobj(tmp,FALSE,FALSE,FALSE);
-        memfree(tmp);
+        g_free(tmp);
         sdata=arraydata(sarray);
         snum=arraynum(sarray);
         for (j=0;j<snum;j++) {
@@ -2199,7 +2197,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             goto errexit;
           }
           s=nstrcat(s,c1);
-          memfree(c1);
+          g_free(c1);
           if (s==NULL) {
             arrayfree2(sarray);
             goto errexit;
@@ -2224,7 +2222,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           } else {
             if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL)
               goto errexit;
-            memfree(se);
+            g_free(se);
             if ((se=unquotation(c1,&dummy))==NULL) goto errexit;
             if (addval(nshell,name,se)==NULL) goto errexit;
           }
@@ -2250,7 +2248,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             if ((c2=nstrnew())==NULL) goto errexit;
             if ((c2=nstrcat(c2,val))==NULL) goto errexit;
             if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL) {
-              memfree(c2);
+              g_free(c2);
               goto errexit;
             }
             if (valf2=='#') {
@@ -2275,9 +2273,9 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
               }
             } 
             if (k>strlen(c2)) k=0;
-            memfree(c1);
+            g_free(c1);
             c1=quotation(nshell,c2+k,quote2);
-            memfree(c2);
+            g_free(c2);
             if (c1==NULL) goto errexit;
           }
           break;
@@ -2286,7 +2284,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             if ((c2=nstrnew())==NULL) goto errexit;
             if ((c2=nstrcat(c2,val))==NULL) goto errexit;
             if ((c1=expand(nshell,se,&quote2,&bquote2,TRUE))==NULL) {
-              memfree(c2);
+              g_free(c2);
               goto errexit;
             }
             if (valf2=='%') {
@@ -2300,21 +2298,21 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             }
             if (k<0) k=strlen(c2);
             c2[k]='\0';
-            memfree(c1);
+            g_free(c1);
             c1=quotation(nshell,c2,quote2);
-            memfree(c2);
+            g_free(c2);
             if (c1==NULL) goto errexit;
           }
           break;
         }
         if (c1!=NULL) {
           s=nstrcat(s,c1);
-          memfree(c1);
+          g_free(c1);
           if (s==NULL) goto errexit;
         }
         *quote=quote2;
         *bquote=bquote2;
-        memfree(se);
+        g_free(se);
         se=NULL;
       }
     /* check quotation */
@@ -2348,16 +2346,16 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
     goto errexit;
   }
 
-  memfree(name);
-  memfree(sb);
-  memfree(se);
+  g_free(name);
+  g_free(sb);
+  g_free(se);
   return s;
 
 errexit:
-  memfree(name);
-  memfree(sb);
-  memfree(se);
-  memfree(s);
+  g_free(name);
+  g_free(sb);
+  g_free(se);
+  g_free(s);
   return NULL;
 }
 
@@ -2387,7 +2385,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
       else cmdprev->next=cmdcur->next;
       cmddel=cmdcur;
       cmdcur=cmdcur->next;
-      memfree(cmddel);
+      g_free(cmddel);
     } else {
       /* remove zero length parameter */
       prmcur=cmdcur->prm;
@@ -2411,7 +2409,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
       cmdcur->cmdno=cmd;
       if ((cmd!=CPNO) && (cmd!=CPCASE) && (cmd!=CPPATI) && (cmd!=CPPATO) 
       && (cmd!=CPFOR) && (cmd!=CPFN) && ((cmdcur->prm)->next!=NULL)) {
-        if ((cmdnew=memalloc(sizeof(struct cmdlist)))==NULL) return -1;
+        if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
         cmdnew->next=cmdcur->next;
         cmdcur->next=cmdnew;
         cmdnew->prm=(cmdcur->prm)->next;
@@ -2429,7 +2427,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
             if (prmprev->next!=NULL) {
               prmcur=prmprev->next;
               prmprev->next=NULL;
-              if ((cmdnew=memalloc(sizeof(struct cmdlist)))==NULL) return -1;
+              if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
               cmdnew->next=cmdcur->next;
               cmdcur->next=cmdnew;
               cmdnew->prm=prmcur;
@@ -2458,7 +2456,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                 prmcur->prmno=PPSI2;
                 if ((eof=unquotation((prmcur->next)->str,&quoted))==NULL)
                   return -1;
-                memfree((prmcur->next)->str);
+                g_free((prmcur->next)->str);
                 (prmcur->next)->str=eof;
                 (prmcur->next)->quoted=quoted;
 
@@ -2539,15 +2537,15 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                       len=strlen(s);
                       s[len]='\n';
                       nwrite(sout,s,len+1);
-                      memfree(s);
+                      g_free(s);
                     } else {
-                      memfree(s);
+                      g_free(s);
                       break;
                     }
                   } while (ch!=EOF);
                 }
                 nclose(sout);
-                memfree((prmcur->next)->str);
+                g_free((prmcur->next)->str);
                 (prmcur->next)->str=tmpfil;
               }
             } else {
@@ -2570,7 +2568,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                 sherror2(ERRUEXPTOK,prmcur->str);
                 return 2;
               }
-              if ((cmdnew=memalloc(sizeof(struct cmdlist)))==NULL) return -1;
+              if ((cmdnew=g_malloc(sizeof(struct cmdlist)))==NULL) return -1;
               cmdnew->next=cmdcur->next;
               cmdcur->next=cmdnew;
               cmdnew->prm=prmcur->next;
@@ -2896,7 +2894,7 @@ set_env_val(struct nhash *h, void *data)
   }
 
   len = strlen(valcur->name); 
-  s = memalloc(len + strlen(val) + 2);
+  s = g_malloc(len + strlen(val) + 2);
   if (s == NULL)
     return 1;
 
@@ -2904,7 +2902,7 @@ set_env_val(struct nhash *h, void *data)
   s[len] = '=';
   strcpy(s + len + 1, val);
   if (arg_add(arg->newenviron, s) == NULL) {
-    memfree(s);
+    g_free(s);
     return 1;
   }
   return 0;
@@ -3091,7 +3089,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	casetrue=st->casetrue;
 	pat=st->pat;
 	st->pat = NULL;		/* hito (mem leak of pat) */
-	memfree(pat);
+	g_free(pat);
 	cmdstackrmlast(&stroot);
 	cmdcur=cmdcur->next;
 	break;
@@ -3108,7 +3106,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	  prmprev=NULL;
 	  prmcur=prmcur->next;
 	  while (prmcur!=NULL) {
-	    if ((prm=memalloc(sizeof(struct prmlist)))==NULL) goto errexit;
+	    if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) goto errexit;
 	    if (prmprev==NULL) prmnewroot=prm;
 	    else prmprev->next=prm;
 	    prm->next=NULL;
@@ -3125,7 +3123,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    if (str[0]!='\0') {
 	      if ((prm->str=fnexpand(nshell,str))==NULL) goto errexit;
 	    } else {
-	      memfree(str);
+	      g_free(str);
 	      prm->str=NULL;
 	    }
 	    if ((num=wordsplit(prm))==-1) goto errexit;
@@ -3144,8 +3142,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	      else prmprev->next=prmcur->next;
 	      prm=prmcur;
 	      prmcur=prmcur->next;
-	      memfree(prm->str);
-	      memfree(prm);
+	      g_free(prm->str);
+	      g_free(prm);
 	    } else {
 	      prmprev=prmcur;
 	      prmcur=prmcur->next;
@@ -3180,8 +3178,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    }
 	    if (addval(nshell,stcur->val,prmcur->str)==NULL) goto errexit;
 	    stcur->prm=prmcur->next;
-	    memfree(prmcur->str);
-	    memfree(prmcur);
+	    g_free(prmcur->str);
+	    g_free(prmcur);
 	  } else {
 	    stcur->ival++;
 	    if (stcur->ival<nshell->argc) {
@@ -3248,17 +3246,17 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    if ((str=expand(nshell,prmcur->str,&quote,&bquote,FALSE))==NULL)
 	      goto errexit;
 	    if (quote || bquote) {
-	      memfree(str);
+	      g_free(str);
 	      sherror(ERRUEXPEOF);
 	      goto errexit;
 	    }
 	    prmcur->quoted=FALSE;
 	  } else {
-	    if ((str=memalloc(strlen(prmcur->str)+1))==NULL) goto errexit;
+	    if ((str=g_malloc(strlen(prmcur->str)+1))==NULL) goto errexit;
 	    strcpy(str,prmcur->str);
 	  }
 	  if ((prmcur->prmno!=PPNO) || (str[0]!='\0')) {
-	    if ((prm=memalloc(sizeof(struct prmlist)))==NULL) goto errexit;
+	    if ((prm=g_malloc(sizeof(struct prmlist)))==NULL) goto errexit;
 	    if (prmprev==NULL) prmnewroot=prm;
 	    else prmprev->next=prm;
 	    prm->next=NULL;
@@ -3281,7 +3279,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	      prm->str=str;
 	      prmprev=prm;
 	    }
-	  } else memfree(str);
+	  } else g_free(str);
 	  prmcur=prmcur->next;
 	}
 
@@ -3297,35 +3295,35 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    else prmprev->next=prmcur->next;
 	    prm=prmcur;
 	    prmcur=prmcur->next;
-	    memfree(prm->str);
-	    memfree(prm);
+	    g_free(prm->str);
+	    g_free(prm);
 	  } else if ((prmcur->prmno==PPSI1) || (prmcur->prmno==PPSI2)
 		     || (prmcur->prmno==PPSO1) || (prmcur->prmno==PPSO2)) {
 	    if (prmprev==NULL) prmnewroot=prmcur->next;
 	    else prmprev->next=prmcur->next;
 	    prm=prmcur;
 	    prmcur=prmcur->next;
-	    memfree(prm->str);
-	    memfree(prm);
+	    g_free(prm->str);
+	    g_free(prm);
 	    switch (prmcur->prmno) {
 	    case PPSI1:
-	      memfree(fstdin);
+	      g_free(fstdin);
 	      fstdin=prmcur->str;
 	      istdin=PPSI1;
 	      break;
 	    case PPSI2:
-	      memfree(fstdin);
+	      g_free(fstdin);
 	      fstdin=prmcur->str;
 	      istdin=PPSI2;
 	      quoted=prmcur->quoted;
 	      break;
 	    case PPSO1:
-	      memfree(fstdout);
+	      g_free(fstdout);
 	      fstdout=prmcur->str;
 	      istdout=PPSO1;
 	      break;
 	    case PPSO2:
-	      memfree(fstdout);
+	      g_free(fstdout);
 	      fstdout=prmcur->str;
 	      istdout=PPSO2;
 	      break;
@@ -3334,22 +3332,22 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    else prmprev->next=prmcur->next;
 	    prm=prmcur;
 	    prmcur=prmcur->next;
-	    memfree(prm);
+	    g_free(prm);
 	  } else if (prmcur->prmno==PPPIPE) {
 	    pipef=TRUE;
 	    if (prmprev==NULL) prmnewroot=prmcur->next;
 	    else prmprev->next=prmcur->next;
 	    prm=prmcur;
 	    prmcur=prmcur->next;
-	    memfree(prm->str);
-	    memfree(prm);
+	    g_free(prm->str);
+	    g_free(prm);
 	  } else if (prmcur->prmno==PPEND) {
 	    if (prmprev==NULL) prmnewroot=prmcur->next;
 	    else prmprev->next=prmcur->next;
 	    prm=prmcur;
 	    prmcur=prmcur->next;
-	    memfree(prm->str);
-	    memfree(prm);
+	    g_free(prm->str);
+	    g_free(prm);
 	  } else if ((prmcur->prmno!=PPSETV) && (prmcur->prmno!=PPSETO)) {
 	    pnum++;
 	    prmprev=prmcur;
@@ -3366,34 +3364,34 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	while (prmcur!=NULL) {
 	  if (prmcur->prmno==PPSETV) {
 	    po=strchr(prmcur->str,'=');
-	    if ((name=memalloc(po-prmcur->str+1))==NULL) goto errexit;
+	    if ((name=g_malloc(po-prmcur->str+1))==NULL) goto errexit;
 	    strncpy(name,prmcur->str,po-prmcur->str);
 	    name[po-prmcur->str]='\0';
-	    if ((val=memalloc(strlen(prmcur->str)-(po-prmcur->str)))==NULL) {
-	      memfree(name);
+	    if ((val=g_malloc(strlen(prmcur->str)-(po-prmcur->str)))==NULL) {
+	      g_free(name);
 	      goto errexit;
 	    }
 	    strcpy(val,po+1);
 	    if (pnum==0) po=addval(nshell,name,val);
 	    else po=saveval(nshell,name,val,&newvalroot);
-	    memfree(name);
-	    memfree(val);
+	    g_free(name);
+	    g_free(val);
 	    if (po==NULL) goto errexit;
-	    memfree(prmcur->str);
+	    g_free(prmcur->str);
 	    if (prmprev==NULL) prmnewroot=prmcur->next;
 	    else prmprev->next=prmcur->next;
 	    prm=prmcur;
 	    prmcur=prmcur->next;
-	    memfree(prm);
+	    g_free(prm);
 	  } else if (prmcur->prmno==PPSETO) {
 	    /* set object */
 	    if (sputobj(prmcur->str)==-1) goto errexit;
-	    memfree(prmcur->str);
+	    g_free(prmcur->str);
 	    if (prmprev==NULL) prmnewroot=prmcur->next;
 	    else prmprev->next=prmcur->next;
 	    prm=prmcur;
 	    prmcur=prmcur->next;
-	    memfree(prm);
+	    g_free(prm);
 	  } else {
 	    prmprev=prmcur;
 	    prmcur=prmcur->next;
@@ -3422,12 +3420,12 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	      len=strlen(valcur->name);
 	      if (getexp(nshell,valcur->name) || valcur->arg) val=valcur->val;
 	      else val=getenv(valcur->name);
-	      if ((s=memalloc(len+strlen(val)+2))==NULL) goto errexit;
+	      if ((s=g_malloc(len+strlen(val)+2))==NULL) goto errexit;
 	      strcpy(s,valcur->name);
 	      s[len]='=';
 	      strcpy(s+len+1,val);
 	      if (arg_add(&newenviron,s)==NULL) {
-		memfree(s);
+		g_free(s);
 		goto errexit;
 	      }
 	    }
@@ -3471,7 +3469,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  quote=bquote='\0';
 		  str=s;
 		  s=expand(nshell,str,&quote,&bquote,FALSE);
-		  memfree(str);
+		  g_free(str);
 		  if (s==NULL) {
 		    nclose(sin);
 		    nclose(fd);
@@ -3484,7 +3482,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		    len++;
 		  }
 		  nwrite(fd,s,len);
-		  memfree(s);
+		  g_free(s);
 		} while (ch!=EOF);
 		nclose(sin);
 		nclose(fd);
@@ -3536,24 +3534,24 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	    cmdstackfree(st);
 	    if ((rcode!=0) || (st!=NULL) || (needcmd)) goto errexit;
 	    argvnew=NULL;
-	    if ((s=memalloc(strlen((nshell->argv)[0])+1))==NULL)
+	    if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
 	      goto errexit;
 	    strcpy(s,(nshell->argv)[0]);
 	    if (arg_add(&argvnew,s)==NULL) {
-	      memfree(s);
+	      g_free(s);
 	      arg_del(argvnew);
 	      goto errexit;
 	    }
 	    prmcur=prmcur->next;
 	    while (prmcur!=NULL) {
-	      if ((s=memalloc(strlen(prmcur->str)+1))==NULL) {
-		memfree(s);
+	      if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
+		g_free(s);
 		arg_del(argvnew);
 		goto errexit;
 	      }
 	      strcpy(s,prmcur->str);
 	      if (arg_add(&argvnew,s)==NULL) {
-		memfree(s);
+		g_free(s);
 		arg_del(argvnew);
 		goto errexit;
 	      }
@@ -3577,24 +3575,24 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	      cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,TRUE);
 	      if (cmdname!=NULL) {
 		argvnew=NULL;
-		if ((s=memalloc(strlen((nshell->argv)[0])+1))==NULL)
+		if ((s=g_malloc(strlen((nshell->argv)[0])+1))==NULL)
 		  goto errexit;
 		strcpy(s,(nshell->argv)[0]);
 		if (arg_add(&argvnew,s)==NULL) {
-		  memfree(s);
+		  g_free(s);
 		  arg_del(argvnew);
 		  goto errexit;
 		}
 		prmcur=prmcur->next;
 		while (prmcur!=NULL) {
-		  if ((s=memalloc(strlen(prmcur->str)+1))==NULL) {
-		    memfree(s);
+		  if ((s=g_malloc(strlen(prmcur->str)+1))==NULL) {
+		    g_free(s);
 		    arg_del(argvnew);
 		    goto errexit;
 		  }
 		  strcpy(s,prmcur->str);
 		  if (arg_add(&argvnew,s)==NULL) {
-		    memfree(s);
+		    g_free(s);
 		    arg_del(argvnew);
 		    goto errexit;
 		  }
@@ -3603,7 +3601,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		argcnew=getargc(argvnew);
 
 		sin=nopen(cmdname,O_RDONLY,NFMODE);
-		memfree(cmdname);
+		g_free(cmdname);
 		cmdname=NULL;
 		if (sin==NOHANDLE) {
 		  sherror2(ERROPEN,cmdname);
@@ -3727,7 +3725,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	      len+=strlen(prm->str)+1;
 	      prm=prm->next;
 	    }
-	    if ((str=memalloc(len))==NULL) goto errexit;
+	    if ((str=g_malloc(len))==NULL) goto errexit;
 	    str[0]='\0';
 	    prm=prmcur;
 	    while (prm!=NULL) {
@@ -3736,7 +3734,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	      prm=prm->next;
 	    }
 	    errlevel=sexeobj(str);
-	    memfree(str);
+	    g_free(str);
 	    if (errlevel==-1) goto errexit;
 	    nshell->status=errlevel;
 	    nshell->status=errlevel;
@@ -3767,13 +3765,13 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	      prm = prmnewroot;
 	      while (prm) {
 		if (arg_add(&argv, prm->str) == NULL) {
-		  memfree(argv);
+		  g_free(argv);
 		  goto errexit;
 		}
 		prm = prm->next;
 	      }
 	      errlevel = proc(nshell, pnum, (char **)argv);
-	      memfree(argv);
+	      g_free(argv);
 	    } else {
 	      cmdname=nsearchpath(getval(nshell,"PATH"),prmcur->str,FALSE);
 	      if (cmdname==NULL) {
@@ -3789,7 +3787,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		prm=prmnewroot;
 		while (prm!=NULL) {
 		  if (arg_add(&argv,prm->str)==NULL) {
-		    memfree(argv);
+		    g_free(argv);
 		    goto errexit;
 		  }
 		  prm=prm->next;
@@ -3835,8 +3833,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  nsetconsolemode();
 		}
 #endif
-		memfree(argv);
-		memfree(cmdname);
+		g_free(argv);
+		g_free(cmdname);
 		cmdname=NULL;
 	      }
 	    }
@@ -3869,8 +3867,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 
 	prmfree(prmnewroot);
 	prmnewroot=NULL;
-	memfree(fstdout);
-	memfree(fstdin);
+	g_free(fstdout);
+	g_free(fstdin);
 	fstdout=fstdin=NULL;
 	unlinkfile(&(cmdcur->pipefile));
 	cmdcur=cmdcur->next;
@@ -3888,9 +3886,9 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
  errexit:
   cmdstackfree(stroot);
   prmfree(prmnewroot);
-  memfree(fstdout);
-  memfree(fstdin);
-  memfree(cmdname);
+  g_free(fstdout);
+  g_free(fstdin);
+  g_free(cmdname);
   arg_del(newenviron);
   if (environ!=NULL) {
     arg_del(MainEnviron);
@@ -3998,7 +3996,7 @@ storeshhandle(struct nshell *nshell,HANDLE fd,
   *readbuf=nshell->readbuf;
   *readbyte=nshell->readbyte;
   *readpo=nshell->readpo;
-  nshell->readbuf=memalloc(SHELLBUFSIZE);
+  nshell->readbuf=g_malloc(SHELLBUFSIZE);
   nshell->readbyte=0;
   nshell->readpo=0;
   nshell->fd=fd;
@@ -4009,7 +4007,7 @@ static void
 restoreshhandle(struct nshell *nshell,HANDLE fd,
                      char *readbuf,int readbyte,int readpo)
 {
-  memfree(nshell->readbuf);
+  g_free(nshell->readbuf);
   nshell->fd=fd;
   nshell->readbuf=readbuf;
   nshell->readbyte=readbyte;
@@ -4030,7 +4028,7 @@ newshell(void)
   char *name,**env,*tok;
   int i,len;
 
-  nshell = memalloc(sizeof(struct nshell));
+  nshell = g_malloc(sizeof(struct nshell));
   if (nshell == NULL)
     return NULL;
 
@@ -4050,11 +4048,11 @@ newshell(void)
     name=getitok2(&tok,&len,"=");
     if (tok[0]=='=') tok++;
     if (addval(nshell,name,tok)==NULL) {
-      memfree(name);
+      g_free(name);
       delshell(nshell);
       return NULL;
     }
-    memfree(name);
+    g_free(name);
     i++;
   }
 
@@ -4072,7 +4070,7 @@ newshell(void)
   nshell->optione=TRUE;
   nshell->optionv=FALSE;
   nshell->optionx=FALSE;
-  nshell->readbuf=memalloc(SHELLBUFSIZE);
+  nshell->readbuf=g_malloc(SHELLBUFSIZE);
   nshell->readbyte=0;
   nshell->readpo=0;
   nshell->deleted = 0;
@@ -4107,12 +4105,12 @@ delshell(struct nshell *nshell)
 #else
   valcur=nshell->valroot;
   while (valcur!=NULL) {
-    memfree(valcur->name);
+    g_free(valcur->name);
     if (valcur->func) cmdfree(valcur->val);
-    else memfree(valcur->val);
+    else g_free(valcur->val);
     valdel=valcur;
     valcur=valcur->next;
-    memfree(valdel);
+    g_free(valdel);
   }
 #endif
 
@@ -4121,15 +4119,15 @@ delshell(struct nshell *nshell)
 #else
   expcur=nshell->exproot;
   while (expcur!=NULL) {
-    memfree(expcur->val);
+    g_free(expcur->val);
     expdel=expcur;
     expcur=expcur->next;
-    memfree(expdel);
+    g_free(expdel);
   }
 #endif
   arg_del(nshell->argv);
-  memfree(nshell->readbuf);
-  memfree(nshell);
+  g_free(nshell->readbuf);
+  g_free(nshell);
   return;
 }
 
@@ -4355,7 +4353,7 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
 		    NULL, NULL, 
 		    NULL, NULL, NULL, 
 		    NULL, NULL, NULL, 0, NULL, NULL, NULL, 0, val);
-  memfree(code);
+  g_free(code);
 
   if (rcode == MSERR) {
     ecode = ERRMSYNTAX;

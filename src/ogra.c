@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra.c,v 1.10 2009/02/05 08:40:14 hito Exp $
+ * $Id: ogra.c,v 1.11 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
@@ -37,8 +39,6 @@
 #define NAME "gra"
 #define PARENT "object"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 static char *GRAerrorlist[]={
   "unable to open device",
@@ -101,7 +101,7 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
       }
     }
   }
-  memfree(device);
+  g_free(device);
   return 0;
 }
 
@@ -228,7 +228,7 @@ oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (!_getobj(dobj,"oid",dinst,&oid)) {
       if ((dev=mkobjlist(dobj,NULL,oid,"_output",TRUE))!=NULL)
       if (_putobj(obj,"_device",inst,dev)) {
-        memfree(dev);
+        g_free(dev);
         return 1;
       }
     }

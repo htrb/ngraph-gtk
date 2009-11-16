@@ -8,6 +8,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
+#include <glib.h>
 
 #ifdef HAVE_GETTEXT
 

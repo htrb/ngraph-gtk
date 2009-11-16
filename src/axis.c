@@ -1,5 +1,5 @@
 /* 
- * $Id: axis.c,v 1.5 2009/08/04 10:41:47 hito Exp $
+ * $Id: axis.c,v 1.6 2009/11/16 09:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -30,10 +30,6 @@
 #include "mathfn.h"
 #include "object.h"
 #include "axis.h"
-
-#define TRUE  1
-#define FALSE 0
-
 
 double 
 scale(double x)

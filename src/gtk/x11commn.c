@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.54 2009/11/07 01:17:42 hito Exp $
+ * $Id: x11commn.c,v 1.55 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -120,9 +120,9 @@ OpenGRA(void)
     drawrable = NULL;
   }
   putobj(Menulocal.GRAobj, "draw_obj", id, drawrable);
-  device = nstrdup("menu:0");
+  device = g_strdup("menu:0");
   putobj(Menulocal.GRAobj, "device", id, device);
-  name = nstrdup(name_str);
+  name = g_strdup(name_str);
   putobj(Menulocal.GRAobj, "name", id, name);
   getobj(Menulocal.GRAobj, "open", id, 0, NULL, &(Menulocal.GC));
 }
@@ -364,12 +364,12 @@ AxisDel2(int id)
       int len;
 
       len = strlen(chkobjectname(aobj)) + 10;
-      axis2 = memalloc(len);
+      axis2 = g_malloc(len);
       if (axis2) {
 	snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid1);
 	putobj(obj, "axis_x", i, axis2);
       }
-      axis2 = memalloc(len);
+      axis2 = g_malloc(len);
       if (axis2) {
 	snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid2);
 	putobj(obj, "axis_y", i, axis2);
@@ -408,7 +408,7 @@ AxisDel(int id)
   strncpy(group3, group, sizeof(group3) - 1);
   group3[sizeof(group3) - 1] = '\0';
 
-  id_array = memalloc(sizeof(*id_array) * (lastinst + 1));
+  id_array = g_malloc(sizeof(*id_array) * (lastinst + 1));
   if (id_array == NULL)
     return;
 
@@ -428,7 +428,7 @@ AxisDel(int id)
   for (i = 0; i < n; i++) {
     delobj(obj, id_array[i]);
   }
-  memfree(id_array);
+  g_free(id_array);
 }
 
 static void
@@ -459,7 +459,7 @@ axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
 	aid++;
     }
     len = strlen(chkobjectname(aobj)) + 10;
-    axis2 = (char *) memalloc(len);
+    axis2 = (char *) g_malloc(len);
     if (axis2) {
       snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid);
       putobj(obj, axis_str, i, axis2);
@@ -730,7 +730,7 @@ FitCopy(struct objlist *obj, int did, int sid)
 	  _getobj(fitobj, "oid", inst, &fitoid);
 	  if ((fit = mkobjlist(fitobj, NULL, fitoid, NULL, TRUE)) != NULL) {
 	    if (putobj(obj, "fit", did, fit) == -1)
-	      memfree(fit);
+	      g_free(fit);
 	  }
 	}
       }
@@ -997,13 +997,13 @@ GraphSave(int overwrite)
 			   &file, overwrite, Menulocal.changedirectory);
     current_wd = ngetcwd();
     if (prev_wd && current_wd && strcmp(prev_wd, current_wd) == 0) {
-      memfree(prev_wd);
-      memfree(current_wd);
+      g_free(prev_wd);
+      g_free(current_wd);
       prev_wd = NULL;
       current_wd = NULL;
     }
   } else {
-    file = strdup(initfil);
+    file = g_strdup(initfil);
     if (file == NULL)
       return IDCANCEL;
     ret = IDOK;
@@ -1039,15 +1039,15 @@ GraphSave(int overwrite)
       }
       ResetStatusBar();
     }
-    free(file);
+    g_free(file);
 
     if (current_wd && chdir(current_wd)) {
       ErrorMessage();
     }
   }
 
-  memfree(prev_wd);
-  memfree(current_wd);
+  g_free(prev_wd);
+  g_free(current_wd);
 
   return ret;
 }
@@ -1075,7 +1075,7 @@ change_filename(char * (*func)(char *))
 	return;
 
       if (strcmp(file, file2) == 0) {
-	memfree(file2);
+	g_free(file2);
 	continue;
       }
 
@@ -1100,16 +1100,13 @@ ToRalativePath(void)
 static char *
 get_basename(char *file)
 {
-  char *ptr, *file2;
+  char *ptr;
 
   ptr = g_path_get_basename(file);
   if (ptr == NULL)
     return NULL;
 
-  file2 = nstrdup(ptr);
-  g_free(ptr);
-
-  return file2;
+  return ptr;
 }
 
 static void
@@ -1142,7 +1139,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   if (sys == NULL)
     return;
 
-  expanddir = nstrdup(exdir);
+  expanddir = g_strdup(exdir);
 
   if (expanddir == NULL)
     return;
@@ -1165,13 +1162,13 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   arrayinit(&sarray, sizeof(char *));
   while ((s = getitok2(&option, &len, " \t")) != NULL) {
     if (arrayadd(&sarray, &s) == NULL) {
-      memfree(s);
+      g_free(s);
       arraydel2(&sarray);
       return;
     }
   }
 
-  name = nstrdup(file);
+  name = g_strdup(file);
 
   if (name == NULL) {
     arraydel2(&sarray);
@@ -1181,7 +1178,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   changefilename(name);
 
   if (arrayadd(&sarray, &name) == NULL) {
-    memfree(name);
+    g_free(name);
     arraydel2(&sarray);
     return;
   }
@@ -1266,7 +1263,7 @@ LoadPrmFile(char *file)
   if (id < 0)
     return;
 
-  name = nstrdup(file);
+  name = g_strdup(file);
   if (name == NULL) {
     delobj(obj, id);
     return;
@@ -1318,7 +1315,7 @@ FileAutoScale(void)
     return;
 
   len = 6 * (lastinst + 1) + 6;
-  buf = (char *) memalloc(len);
+  buf = (char *) g_malloc(len);
   if (buf == NULL) {
     error(NULL, ERRHEAP);
     return;
@@ -1366,7 +1363,7 @@ FileAutoScale(void)
       exeobj(aobj, "auto_scale", i, 2, argv2);
     }
   }
-  memfree(buf);
+  g_free(buf);
 }
 
 void
@@ -1418,7 +1415,7 @@ AddNgpFileList(char *file)
     return;
 
   uri = g_strdup_printf("file://%s", full_name);
-  memfree(full_name);
+  g_free(full_name);
   gtk_recent_manager_add_full(Menulocal.ngpfilelist, uri, &recent_data);
   g_free(uri);
 }
@@ -1456,15 +1453,15 @@ SetFileName(char *str)
 {
   char *ngp, *name;
 
-  name = nstrdup(str);
-  memfree(NgraphApp.FileName);
+  name = g_strdup(str);
+  g_free(NgraphApp.FileName);
   if (name == NULL) {
     NgraphApp.FileName = NULL;
     ngp = NULL;
   } else {
     NgraphApp.FileName = getfullpath(name);
     ngp = getfullpath(name);
-    memfree(name);
+    g_free(name);
   }
   putobj(Menulocal.obj, "fullpath_ngp", 0, ngp);
 }
@@ -1499,16 +1496,14 @@ FreeConsole(int allocnow)
 char *
 FileCB(struct objlist *obj, int id)
 {
-  char *valstr, *file, *s, *tmp;
+  char *valstr, *file, *s;
 
   getobj(obj, "file", id, 0, NULL, &file);
   valstr = getbasename(file);
-  tmp = g_strdup_printf("%s", (valstr) ? valstr : "....................");
+  s = g_strdup_printf("%s", (valstr) ? valstr : "....................");
   if (valstr != NULL) {
-    memfree(valstr);
+    g_free(valstr);
   }
-  s = nstrdup(tmp);
-  g_free(tmp);
 
   return s;
 }
@@ -1634,11 +1629,7 @@ SaveHistory(void)
   data = (char **) arraydata(Menulocal.datafilelist);
   for (i = 0; i < num; i++) {
     if (data[i]) {
-      char *ptr;
-
-      ptr = g_strdup_printf("%s%s", data_history, data[i]);
-      buf = nstrdup(ptr);
-      g_free(ptr);
+      buf = g_strdup_printf("%s%s", data_history, data[i]);
       if (buf) {
 	arrayadd(&conf, &buf);
       }
@@ -1649,7 +1640,7 @@ SaveHistory(void)
   arraydel2(&conf);
   arrayinit(&conf, sizeof(char *));
   if (arraynum(Menulocal.datafilelist) == 0) {
-    buf = nstrdup(data_history);
+    buf = g_strdup(data_history);
     if (buf) {
       arrayadd(&conf, &buf);
     }

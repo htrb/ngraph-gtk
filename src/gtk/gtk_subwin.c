@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.56 2009/11/12 01:36:46 hito Exp $
+ * $Id: gtk_subwin.c,v 1.57 2009/11/16 09:13:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -20,6 +20,7 @@
 #include "x11gui.h"
 #include "x11dialg.h"
 #include "gtk_liststore.h"
+#include "gtk_widget.h"
 
 #include "gtk_subwin.h"
 
@@ -54,7 +55,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 
   if (nGetOpenFileName(d->Win, _("Open"), ext, NULL, gtk_entry_get_text(w),
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
-    gtk_entry_set_text(w, file);
+    entry_set_filename(GTK_WIDGET(w), file);
     modify_string(d, "file", file);
     free (file);
   }
@@ -113,7 +114,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 #endif
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
 	gtk_entry_set_text(GTK_ENTRY(editable), valstr);
-	memfree(valstr);
+	g_free(valstr);
       }
     }
     break;
@@ -615,7 +616,7 @@ cb_destroy(GtkWidget *w, gpointer user_data)
   d->popup = NULL;
 
   if (d->popup_item)
-    free(d->popup_item);
+    g_free(d->popup_item);
 
   d->popup_item = NULL;
 }
@@ -818,8 +819,22 @@ modify_string(struct SubWin *d, char *field, char *str)
   if (sel < 0 || sel > d->num)
     return;
 
-  if (chk_sputobjfield(d->obj, sel, field, str))
-    return;
+  if (str && strcmp(field, "file") == 0) {
+    char *ptr;
+
+    ptr = g_filename_from_utf8(str, -1, NULL, NULL, NULL);
+    if (ptr == NULL) {
+      return;
+    }
+
+    if (chk_sputobjfield(d->obj, sel, field, ptr))
+      return;
+
+    g_free(ptr);
+  } else {
+    if (chk_sputobjfield(d->obj, sel, field, str))
+      return;
+  }
 
   d->select = sel;
   d->update(FALSE);
@@ -1714,9 +1729,9 @@ sub_win_create_popup_menu(struct SubWin *d, int n, struct subwin_popup_list *lis
   int i = 0;
 
   if (d->popup_item)
-    free(d->popup_item);
+    g_free(d->popup_item);
 
-  d->popup_item = malloc(sizeof(GtkWidget *) * n);
+  d->popup_item = g_malloc(sizeof(GtkWidget *) * n);
 
   menu = gtk_menu_new();
 

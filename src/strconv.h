@@ -1,5 +1,5 @@
 /* 
- * $Id: strconv.h,v 1.1 2008/05/29 09:37:33 hito Exp $
+ * $Id: strconv.h,v 1.1 2009/11/16 09:13:04 hito Exp $
  */
 
 char *iso8859_to_utf8(char *src);

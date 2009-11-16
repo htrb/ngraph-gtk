@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.17 2009/04/19 06:46:13 hito Exp $
+ * $Id: otext.c,v 1.18 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,9 +26,14 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
+#include <glib.h>
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef USE_UTF8
+#include <glib.h>
 #endif
 
 #include "ngraph.h"
@@ -41,16 +46,17 @@
 #include "mathfn.h"
 #include "nstring.h"
 #include "nconfig.h"
+#include "strconv.h"
 
 #define NAME "text"
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
 #define TEXTCONF "[text]"
-#define TRUE  1
-#define FALSE 0
+
+#define ERR_INVALID_STR   100
 
 static char *texterrorlist[]={
-  ""
+  "invalid string."
 };
 
 #define ERRNUM (sizeof(texterrorlist) / sizeof(*texterrorlist))
@@ -94,18 +100,18 @@ textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"pt",inst,&pt)) return 1;
   if (_putobj(obj,"script_size",inst,&scriptsize)) return 1;
 
-  font = memalloc(strlen(fontchar[4]) + 1);
-  jfont = memalloc(strlen(jfontchar[1]) + 1);
+  font = g_malloc(strlen(fontchar[4]) + 1);
+  jfont = g_malloc(strlen(jfontchar[1]) + 1);
   if (font == NULL || jfont == NULL) {
-    memfree(font);
-    memfree(jfont);
+    g_free(font);
+    g_free(jfont);
     return 1;
   }
   strcpy(font,fontchar[4]);
   strcpy(jfont,jfontchar[1]);
   if (_putobj(obj,"font",inst,font) || _putobj(obj,"jfont",inst,jfont)) {
-    memfree(font);
-    memfree(jfont);
+    g_free(font);
+    g_free(jfont);
     return 1;
   }
   textloadconfig(obj,inst);
@@ -196,7 +202,7 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   double vd;
   char *endptr;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   array=(struct narray *)argv[2];
   argv2=arraydata(array);
@@ -219,13 +225,13 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (format[po]=='%') {
       for (i = 1; format[po+i] != '\0' && strchr("diouxXeEfgGcs%",format[po+i]) == NULL; i++) {
 	if (strchr("$*qjzZtLh", format[i])) {
-          memfree(ret);
+          g_free(ret);
           return 1;
 	}
       }
       if (format[po+i]!='\0') {
-        if ((format2=memalloc(i+2))==NULL) {
-          memfree(ret);
+        if ((format2=g_malloc(i+2))==NULL) {
+          g_free(ret);
           return 1;
         }
         strncpy(format2,format+po,i+1);
@@ -258,10 +264,10 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 		vll=strtoll(argv2[arg],&endptr,10);
 	      }
 	      arg++;
-	      if ((buf=memalloc(len))!=NULL) {
+	      if ((buf=g_malloc(len))!=NULL) {
 		sprintf(buf,format2,vll);
 		ret=nstrcat(ret,buf);
-		memfree(buf);
+		g_free(buf);
 	      }
 	    }else {
 	      vi=0;
@@ -269,10 +275,10 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 		vi=strtol(argv2[arg],&endptr,10);
 	      }
 	      arg++;
-	      if ((buf=memalloc(len))!=NULL) {
+	      if ((buf=g_malloc(len))!=NULL) {
 		sprintf(buf,format2,vi);
 		ret=nstrcat(ret,buf);
-		memfree(buf);
+		g_free(buf);
 	      }
 	    }
             break;
@@ -285,10 +291,10 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
               vd=strtod(argv2[arg],&endptr);
             }
             arg++;
-            if ((buf=memalloc(len))!=NULL) {
+            if ((buf=g_malloc(len))!=NULL) {
               sprintf(buf,format2,vd);
               ret=nstrcat(ret,buf);
-              memfree(buf);
+              g_free(buf);
             }
             break;
           case 's':
@@ -296,10 +302,10 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 	      break;
 	    }
             if ((arg<argc2) && (argv2[arg]!=NULL)) {
-              if ((buf=memalloc(len+strlen(argv2[arg])))!=NULL) {
+              if ((buf=g_malloc(len+strlen(argv2[arg])))!=NULL) {
                 sprintf(buf,format2,argv2[arg]);
                 ret=nstrcat(ret,buf);
-                memfree(buf);
+                g_free(buf);
               }
             }
             arg++;
@@ -309,17 +315,17 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 	      break;
 	    }
             if ((arg<argc2) && (argv2[arg]!=NULL)) {
-              if ((buf=memalloc(len+strlen(argv2[arg])))!=NULL) {
+              if ((buf=g_malloc(len+strlen(argv2[arg])))!=NULL) {
                 sprintf(buf,format2,argv2[arg][0]);
                 ret=nstrcat(ret,buf);
-                memfree(buf);
+                g_free(buf);
               }
             }
             arg++;
             break;
           }
         }
-        memfree(format2);
+        g_free(format2);
         if (ret==NULL) return 1;
         po+=i+1;
       } else po++;
@@ -532,12 +538,54 @@ textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static int 
+text_set_text(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+#if USE_UTF8
+  char *str, *ptr;
+  gsize len;
+
+  str = argv[2];
+
+  if (str == NULL)
+    return 0;
+
+  if (g_utf8_validate(str, -1, NULL))
+    return textgeometry(obj, inst, rval, argc, argv);
+
+  ptr = sjis_to_utf8(str);
+  if (ptr) {
+    g_free(str);
+    argv[2] = ptr;
+    return textgeometry(obj, inst, rval, argc, argv);
+  }
+
+  ptr = g_locale_to_utf8(str, -1, NULL, &len, NULL);
+  if (ptr) {
+    char *tmp;
+    g_free(str);
+    tmp = g_strdup(ptr);
+    g_free(ptr);
+    if (tmp == NULL)
+      return 1;
+
+    argv[2] = tmp;
+    return textgeometry(obj, inst, rval, argc, argv);
+  }
+
+  error(obj, ERR_INVALID_STR);
+  return 1;
+#else
+  return textgeometry(obj, inst, rval, argc, argv);
+#endif
+}
+
 static struct objtable text[] = {
   {"init",NVFUNC,NEXEC,textinit,NULL,0},
   {"done",NVFUNC,NEXEC,textdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
 
-  {"text",NSTR,NREAD|NWRITE,textgeometry,NULL,0},
+  {"text",NSTR,NREAD|NWRITE,text_set_text,NULL,0},
   {"x",NINT,NREAD|NWRITE,textgeometry,NULL,0},
   {"y",NINT,NREAD|NWRITE,textgeometry,NULL,0},
   {"pt",NINT,NREAD|NWRITE,textgeometry,NULL,0},

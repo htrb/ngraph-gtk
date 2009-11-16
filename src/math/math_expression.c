@@ -1,5 +1,5 @@
 /* 
- * $Id: math_expression.c,v 1.8 2009/11/10 04:12:20 hito Exp $
+ * $Id: math_expression.c,v 1.9 2009/11/16 09:13:06 hito Exp $
  * 
  */
 
@@ -9,9 +9,9 @@
 #include <math.h>
 #include <limits.h>
 #include <ctype.h>
+#include <glib.h>
 
 #include "nhash.h"
-#include "object.h"
 
 #include "math_expression.h"
 #include "math_function.h"
@@ -29,7 +29,7 @@ math_expression_new(enum MATH_EXPRESSION_TYPE type, MathEquation *eq, int *err)
 {
   MathExpression *exp;
 
-  exp = memalloc(sizeof(*exp));
+  exp = g_malloc(sizeof(*exp));
   if (exp == NULL) {
     if (err) {
       *err =MATH_ERROR_MEMORY;
@@ -66,7 +66,7 @@ math_constant_definition_expression_new(MathEquation *eq, char *name, MathExpres
   cdef->u.const_def.operand = exp;
 
   if (math_equation_add_const_definition(eq, name, cdef, err) < 0) {
-    memfree(cdef);
+    g_free(cdef);
     return NULL;
   }
 
@@ -106,14 +106,14 @@ create_arg(const char *name, enum MATH_FUNCTION_ARG_TYPE type)
 {
   struct math_func_arg_list *ptr;
 
-  ptr = memalloc(sizeof(*ptr));
+  ptr = g_malloc(sizeof(*ptr));
   if (ptr == NULL) {
     return NULL;
   }
 
-  ptr->name = strdup(name);
+  ptr->name = g_strdup(name);
   if (ptr->name == NULL) {
-    memfree(ptr);
+    g_free(ptr);
     return NULL;
   }
 
@@ -193,7 +193,7 @@ func_set_arg_buf(MathExpression *func)
   }
 
   if (have_array) {
-    arg_type_buf = memalloc(sizeof(*arg_type_buf) * n);
+    arg_type_buf = g_malloc(sizeof(*arg_type_buf) * n);
     if (arg_type_buf == NULL)
       return 1;
 
@@ -201,7 +201,7 @@ func_set_arg_buf(MathExpression *func)
     for (i = 0; list; i++) {
       arg_type_buf[i] = list->type;
       if (register_arg(func, list->name, list->type)) {
-	free(arg_type_buf);
+	g_free(arg_type_buf);
 	return 1;
       }
 
@@ -232,8 +232,8 @@ free_arg_list(struct math_func_arg_list *list)
 
   while (list) {
     next = list->next;
-    memfree(list->name);
-    memfree(list);
+    g_free(list->name);
+    g_free(list);
     list = next;
   }
 }
@@ -457,13 +457,13 @@ math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *
   if (check_argument(fprm, argc, argv))
     return NULL;
 
-  buf = memalloc(sizeof(*buf) * argc);
+  buf = g_malloc(sizeof(*buf) * argc);
   if (buf == NULL)
     return NULL;
 
   exp = math_expression_new(MATH_EXPRESSION_TYPE_FUNC_CALL, eq, err);
   if (exp == NULL) {
-    memfree(buf);
+    g_free(buf);
     return NULL;
   }
 
@@ -586,8 +586,8 @@ math_expression_free_sub(MathExpression *exp)
     for (i = 0; i < exp->u.func_call.argc; i++) {
       math_expression_free(exp->u.func_call.argv[i]);
     }
-    memfree(exp->u.func_call.argv);
-    memfree(exp->u.func_call.buf);
+    g_free(exp->u.func_call.argv);
+    g_free(exp->u.func_call.buf);
     break;
   case MATH_EXPRESSION_TYPE_MINUS:
   case MATH_EXPRESSION_TYPE_FACT:
@@ -606,7 +606,7 @@ math_expression_free_sub(MathExpression *exp)
     break;
   }
 
-  memfree(exp);
+  g_free(exp);
 }
 
 void
@@ -915,7 +915,7 @@ free_arg_array(int argc, MathExpression **argv)
     math_expression_free(argv[i]);
   }
 
-  memfree(argv);
+  g_free(argv);
 }
 
 static MathExpression *

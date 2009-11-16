@@ -1,5 +1,5 @@
 /* 
- * $Id: oint.c,v 1.4 2009/03/24 08:23:13 hito Exp $
+ * $Id: oint.c,v 1.5 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,8 +33,6 @@
 #define NAME "int"
 #define PARENT "object"
 #define OVERSION "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRILNAME 100
 

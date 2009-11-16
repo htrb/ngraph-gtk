@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2.c,v 1.5 2009/03/26 02:31:52 hito Exp $
+ * $Id: ogra2.c,v 1.6 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -27,14 +27,14 @@
 
 #include <stdlib.h>
 #include <ctype.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "object.h"
 
 #define NAME "gra2"
 #define PARENT "object"
 #define OVERSION "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRLOCK 100
 
@@ -80,7 +80,7 @@ gra2done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;
     if (GC!=-1) _exeobj(gobj,"close",ginst,0,NULL);
     if (!_getobj(gobj,"_device",ginst,&device)) {
-      memfree(device);
+      g_free(device);
       _putobj(gobj,"_device",ginst,NULL);
     }
     if (deletegra) {
@@ -123,7 +123,7 @@ gra2disconnect(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;
       if (GC!=-1) _exeobj(gobj,"close",ginst,0,NULL);
       if (!_getobj(gobj,"_device",ginst,&device)) {
-        memfree(device);
+        g_free(device);
         _putobj(gobj,"_device",ginst,NULL);
       }
     }

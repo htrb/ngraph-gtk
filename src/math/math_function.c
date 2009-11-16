@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <glib.h>
 #include "math_expression.h"
 #include "math_equation.h"
 #include "math_function.h"
@@ -89,7 +90,7 @@ math_add_basic_function(MathEquation *eq) {
     case 3:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
       if (ptr == NULL) {
         return 1;
       }
@@ -101,7 +102,7 @@ math_add_basic_function(MathEquation *eq) {
     case 11:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
       }
@@ -111,7 +112,7 @@ math_add_basic_function(MathEquation *eq) {
     case 23:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
       }
@@ -121,7 +122,7 @@ math_add_basic_function(MathEquation *eq) {
     case 24:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
       }
@@ -131,7 +132,7 @@ math_add_basic_function(MathEquation *eq) {
     case 44:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 5);
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 5);
       if (ptr == NULL) {
         return 1;
       }
@@ -145,7 +146,7 @@ math_add_basic_function(MathEquation *eq) {
     case 53:
       if (func_ary[i].prm.arg_type)
         break;
-      ptr = malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
       if (ptr == NULL) {
         return 1;
       }

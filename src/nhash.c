@@ -1,10 +1,11 @@
 /* 
- * $Id: nhash.c,v 1.14 2009/09/19 13:21:44 hito Exp $
+ * $Id: nhash.c,v 1.15 2009/11/16 09:13:04 hito Exp $
  */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <glib.h>
 
 #include "object.h"
 #include "nhash.h"
@@ -16,7 +17,7 @@ nhash_new(void)
 {
   struct nhash **hash;
 
-  hash = calloc(HASH_SIZE, sizeof(struct nhash *));
+  hash = g_malloc0(HASH_SIZE * sizeof(struct nhash *));
 
   return hash;
 }
@@ -31,11 +32,11 @@ free_hash_list(struct nhash *hash, int free_ptr)
 
   l = hash->l;
   r = hash->r;
-  free(hash->key);
+  g_free(hash->key);
   if (free_ptr) {
-    memfree(hash->val.p);
+    g_free(hash->val.p);
   }
-  free(hash);
+  g_free(hash);
   free_hash_list(l, free_ptr);
   free_hash_list(r, free_ptr);
 }
@@ -48,7 +49,7 @@ nhash_free(NHASH hash)
   for (i = 0; i < HASH_SIZE; i++) {
     free_hash_list(hash[i], 0);
   }
-  free(hash);
+  g_free(hash);
 }
 
 void
@@ -59,7 +60,7 @@ nhash_free_with_memfree_ptr(NHASH hash)
   for (i = 0; i < HASH_SIZE; i++) {
     free_hash_list(hash[i], 1);
   }
-  free(hash);
+  g_free(hash);
 }
 
 void
@@ -120,9 +121,9 @@ create_hash_with_hkey(NHASH hash, const char *key, int hkey)
     }
   }
 
-  k = strdup(key);
+  k = g_strdup(key);
   if (k == NULL) {
-    free(h);
+    g_free(h);
     return NULL;
   }
 
@@ -380,8 +381,8 @@ nhash_del_sub(NHASH hash, struct nhash *h, int hkey)
       }
     }
   }
-  free(h->key);
-  free(h);
+  g_free(h->key);
+  g_free(h);
 }
 
 void

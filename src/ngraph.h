@@ -1,5 +1,5 @@
 /* 
- * $Id: ngraph.h,v 1.3 2009/01/04 02:19:38 hito Exp $
+ * $Id: ngraph.h,v 1.4 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -20,6 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
+
+#include <glib.h>
 
 int printfconsole(char *fmt,...);
 int putconsole(char *s);

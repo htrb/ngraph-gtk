@@ -1,5 +1,5 @@
 /* 
- * $Id: osarray.c,v 1.4 2009/03/24 08:16:33 hito Exp $
+ * $Id: osarray.c,v 1.5 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,14 +28,14 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "object.h"
 
 #define NAME "sarray"
 #define PARENT "object"
 #define OVERSION "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRILNAME 100
 
@@ -77,13 +77,13 @@ sarrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char **po;
   char *buf;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
   po=(char **)arraynget(array,num);
   if (po==NULL) return 1;
-  if ((buf=memalloc(strlen(*po)+1))==NULL) return 1;
+  if ((buf=g_malloc(strlen(*po)+1))==NULL) return 1;
   strcpy(buf,*po);
   *(char **)rval=buf;
   return 0;

@@ -1,5 +1,5 @@
 /* 
- * $Id: olegend.c,v 1.16 2009/05/01 09:15:58 hito Exp $
+ * $Id: olegend.c,v 1.17 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,8 +38,6 @@
 #define NAME "legend"
 #define PARENT "draw"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 static char *legenderrorlist[]={
   "",

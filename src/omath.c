@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.17 2009/11/12 01:36:45 hito Exp $
+ * $Id: omath.c,v 1.18 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "object.h"
 #include "mathcode.h"
@@ -39,8 +41,6 @@
 #define NAME "math"
 #define PARENT "object"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRSYNTAX 100
 #define ERRILLEGAL 101
@@ -137,7 +137,7 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int i;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  if ((mlocal=memalloc(sizeof(struct mlocal)))==NULL) goto errexit;
+  if ((mlocal=g_malloc(sizeof(struct mlocal)))==NULL) goto errexit;
   if (_putobj(obj,"_local",inst,mlocal)) goto errexit;
   mlocal->x=0;
   mlocal->y=0;
@@ -199,7 +199,7 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 
 errexit:
-  memfree(mlocal);
+  g_free(mlocal);
   return 1;
 }
 
@@ -213,10 +213,10 @@ mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 #if NEW_MATH_CODE 
   math_equation_free(mlocal->code);
 #else
-  memfree(mlocal->code);
-  memfree(mlocal->ufcodef);
-  memfree(mlocal->ufcodeg);
-  memfree(mlocal->ufcodeh);
+  g_free(mlocal->code);
+  g_free(mlocal->ufcodef);
+  g_free(mlocal->ufcodeg);
+  g_free(mlocal->ufcodeh);
 #endif
   return 0;
 }
@@ -233,7 +233,7 @@ create_func_def_str(char *name, char *code)
   clen = strlen(code);
 
   len = nlen + clen + sizeof(func_def);
-  ptr = memalloc(len);
+  ptr = g_malloc(len);
   if (ptr == NULL)
     return NULL;
 
@@ -296,7 +296,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if (rcode) {
 	err_msg = math_err_get_error_message(mlocal->code, math, rcode);
 	error22(obj, ERRUNKNOWN, argv[1], err_msg);
-	memfree(err_msg);
+	g_free(err_msg);
 	parse_original_formula(obj, inst, mlocal);
 	return 1;
       }
@@ -325,7 +325,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (rcode) {
       err_msg = math_err_get_error_message(mlocal->code, math, rcode);
       error22(obj, ERRUNKNOWN, argv[1], err_msg);
-      memfree(err_msg);
+      g_free(err_msg);
       parse_original_formula(obj, inst, mlocal);
       return 1;
     }
@@ -333,7 +333,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       parse_original_formula(obj, inst, mlocal);
       return 1;
     }
-    memfree(ptr);
+    g_free(ptr);
 
     parse_original_formula(obj, inst, mlocal);
   }
@@ -366,17 +366,17 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   } else code=NULL;
   _getobj(obj,"_local",inst,&mlocal);
   if (strcmp("formula",argv[1])==0) {
-    memfree(mlocal->code);
+    g_free(mlocal->code);
     mlocal->code=code;
     mlocal->maxdim=maxdim;
   } else if (strcmp("f",argv[1])==0) {
-    memfree(mlocal->ufcodef);
+    g_free(mlocal->ufcodef);
     mlocal->ufcodef=code;
   } else if (strcmp("g",argv[1])==0) {
-    memfree(mlocal->ufcodeg);
+    g_free(mlocal->ufcodeg);
     mlocal->ufcodeg=code;
   } else if (strcmp("h",argv[1])==0) {
-    memfree(mlocal->ufcodeh);
+    g_free(mlocal->ufcodeh);
     mlocal->ufcodeh=code;
   }
   mlocalclear(mlocal,FALSE);
@@ -447,10 +447,10 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 
 #if NEW_MATH_CODE 
-  data = memalloc(sizeof(MathValue) * (num + 1));
+  data = g_malloc(sizeof(MathValue) * (num + 1));
 
   if (data == NULL) {
-    memfree(data);
+    g_free(data);
     return 1;
   }
 
@@ -477,12 +477,12 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   mlocal->val = val.val;
   mlocal->rcode = val.type;
 #else
-  data = memalloc(sizeof(double) * (num + 1));
-  datastat = memalloc(sizeof(char) * (num + 1));
+  data = g_malloc(sizeof(double) * (num + 1));
+  datastat = g_malloc(sizeof(char) * (num + 1));
 
   if (data == NULL || datastat == NULL) {
-    memfree(data);
-    memfree(datastat);
+    g_free(data);
+    g_free(datastat);
     return 1;
   }
   data[0]=0;
@@ -502,9 +502,9 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
                   mlocal->ufcodef,mlocal->ufcodeg,mlocal->ufcodeh,
                   0,NULL,NULL,NULL,0,
                   &(mlocal->val));
-  memfree(datastat);
+  g_free(datastat);
 #endif
-  memfree(data);
+  g_free(data);
   msettbl(inst,mlocal);
   *(double *)rval=mlocal->val;
   if (mlocal->rcode==MSERR) {

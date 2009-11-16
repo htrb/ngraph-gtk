@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.13 2009/06/18 11:32:10 hito Exp $
+ * $Id: osystem.c,v 1.14 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <glib.h>
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -53,8 +54,6 @@
 #else
 #define WEB "http:\/\/homepage3.nifty.com\/slokar\/ngraph\/ngraph-gtk.html"
 #endif
-#define TRUE  1
-#define FALSE 0
 
 #define ERRNODIR   100
 #define ERRTMPFILE 101
@@ -80,7 +79,7 @@ sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   expand=TRUE;
   if (_putobj(obj,"expand_file",inst,&expand)) return 1;
-  exdir = nstrdup("./");
+  exdir = g_strdup("./");
   if (exdir == NULL) return 1;
   if (_putobj(obj,"expand_dir",inst,exdir)) return 1;
   if (_putobj(obj,"name",inst,SYSNAME)) return 1;
@@ -92,7 +91,7 @@ sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"temp_prefix",inst,TEMPN)) return 1;
   if ((wd=ngetcwd())==NULL) return 1;
   if (_putobj(obj,"cwd",inst,wd)) {
-    memfree(wd);
+    g_free(wd);
     return 1;
   }
   return 0;
@@ -121,23 +120,23 @@ sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     objcur=objcur->next;
   }
   _getobj(obj,"conf_dir",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"lib_dir",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"home_dir",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"cwd",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"login_shell",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"time",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"date",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"expand_dir",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"temp_file",inst,&s);
-  memfree(s);
+  g_free(s);
   _getobj(obj,"temp_list",inst,&array);
   n = arraynum(array);
   if (n > 0) {
@@ -161,20 +160,20 @@ sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (objectdel->table_hash)
       nhash_free(objectdel->table_hash);
 
-    memfree(objectdel);
+    g_free(objectdel);
   }
-  memfree(inst);
-  memfree(argv);
+  g_free(inst);
+  g_free(argv);
 #ifdef DEBUG
   i=0;
-  plcur=memallocroot;
+  plcur=g_mallocroot;
   while (plcur!=NULL) {
     i++;
-    printfconsole("memalloc: +%p\n",plcur->val);
+    printfconsole("g_malloc: +%p\n",plcur->val);
     plcur=plcur->next;
   }
   if (i!=0) {
-    printfconsole("memalloc remain: %d\n",i);
+    printfconsole("g_malloc remain: %d\n",i);
     sleep(30);
   }
 #endif
@@ -203,7 +202,7 @@ syscwd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
   }
   if ((wd=ngetcwd())==NULL) return 1;
-  memfree(argv[2]);
+  g_free(argv[2]);
   argv[2]=wd;
   return 0;
 }
@@ -216,7 +215,7 @@ systime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   t=time(NULL);
   style=*(int *)(argv[2]);
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=ntime(&t,style);
   return 0;
 }
@@ -229,7 +228,7 @@ sysdate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   t=time(NULL);
   style=*(int *)(argv[2]);
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=ndate(&t,style);
   return 0;
 }
@@ -241,7 +240,7 @@ systemp(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *array;
   int fd;
 
-  free(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"temp_prefix",inst,&pfx);
   _getobj(obj,"temp_list",inst,&array);
@@ -292,7 +291,7 @@ sysunlink(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     _putobj(obj,"temp_list",inst,NULL);
   }
   _getobj(obj,"temp_file",inst,&tmpfil);
-  free(tmpfil);
+  g_free(tmpfil);
   _putobj(obj,"temp_file",inst,NULL);
   return 0;
 }

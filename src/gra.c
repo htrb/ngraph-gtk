@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.27 2009/11/12 01:36:45 hito Exp $
+ * $Id: gra.c,v 1.28 2009/11/16 09:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,6 +31,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <glib.h>
+
 #include "object.h"
 #include "nstring.h"
 #include "jnstring.h"
@@ -40,9 +42,6 @@
 #include "ogra.h"
 
 #include "math/math_equation.h"
-
-#define TRUE 1
-#define FALSE 0
 
 struct GRAC {
   int open,init;
@@ -228,9 +227,9 @@ GRAreopen(int GC)
 
   if (GC<0) return ERRILGC;
   if (GC>=GRAClimit) return ERRILGC;
-  memfree(GRAClist[GC].linedash);
-  memfree(GRAClist[GC].gdashlist);
-  memfree(GRAClist[GC].textfont);
+  g_free(GRAClist[GC].linedash);
+  g_free(GRAClist[GC].gdashlist);
+  g_free(GRAClist[GC].textfont);
   GRAClist[GC].linedashn=0;
   GRAClist[GC].linedash=NULL;
   GRAClist[GC].gdashlist=NULL;
@@ -267,9 +266,9 @@ _GRAclose(int GC)
 {
   if (GC<0) return;
   if (GC>=GRAClimit) return;
-  memfree(GRAClist[GC].linedash);
-  memfree(GRAClist[GC].gdashlist);
-  memfree(GRAClist[GC].textfont);
+  g_free(GRAClist[GC].linedash);
+  g_free(GRAClist[GC].gdashlist);
+  g_free(GRAClist[GC].textfont);
   GRAClist[GC]=GRAClist[GRAClimit];
 }
 
@@ -290,9 +289,9 @@ GRAclose(int GC)
       _putobj(GRAClist[GC].obj,"_GC",GRAClist[GC].inst,&i);
     }
   }
-  memfree(GRAClist[GC].linedash);
-  memfree(GRAClist[GC].gdashlist);
-  memfree(GRAClist[GC].textfont);
+  g_free(GRAClist[GC].linedash);
+  g_free(GRAClist[GC].gdashlist);
+  g_free(GRAClist[GC].textfont);
   GRAClist[GC]=GRAClist[GRAClimit];
 }
 
@@ -534,9 +533,9 @@ GRAdraw(int GC,char code,int *cpar,char *cstr)
     GRAClist[GC].linejoin=cpar[4];
     GRAClist[GC].linemiter=cpar[5];
     GRAClist[GC].linedashn=cpar[1];
-    memfree(GRAClist[GC].linedash);
+    g_free(GRAClist[GC].linedash);
     if (cpar[1]!=0) {
-      if ((GRAClist[GC].linedash=memalloc(sizeof(int)*cpar[1]))!=NULL)
+      if ((GRAClist[GC].linedash=g_malloc(sizeof(int)*cpar[1]))!=NULL)
         memcpy(GRAClist[GC].linedash,&(cpar[6]),sizeof(int)*cpar[1]);
     } else GRAClist[GC].linedash=NULL;
     if (zoomf) {
@@ -556,8 +555,8 @@ GRAdraw(int GC,char code,int *cpar,char *cstr)
   case 'F':
     if ((GRAClist[GC].textfont!=NULL)
     && (strcmp(GRAClist[GC].textfont,cstr)==0)) return 0;
-    memfree(GRAClist[GC].textfont);
-    if ((GRAClist[GC].textfont=memalloc(strlen(cstr)+1))==NULL) return 0;
+    g_free(GRAClist[GC].textfont);
+    if ((GRAClist[GC].textfont=g_malloc(strlen(cstr)+1))==NULL) return 0;
     strcpy(GRAClist[GC].textfont,cstr);
     GRAClist[GC].textf=FALSE;
     break;
@@ -792,7 +791,7 @@ GRAlinestyle(int GC,int num,int *type,int width,int cap,int join,
   int *cpar;
   int i;
 
-  if ((cpar=memalloc(sizeof(int)*(6+num)))==NULL) return;
+  if ((cpar=g_malloc(sizeof(int)*(6+num)))==NULL) return;
   code='A';
   cpar[0]=5+num;
   cpar[1]=num;
@@ -802,7 +801,7 @@ GRAlinestyle(int GC,int num,int *type,int width,int cap,int join,
   cpar[5]=miter;
   for (i=0;i<num;i++) cpar[6+i]=type[i];
   GRAdraw(GC,code,cpar,NULL);
-  memfree(cpar);
+  g_free(cpar);
 }
 
 void 
@@ -991,7 +990,7 @@ GRAdrawpoly(int GC,int num,int *point,int fil)
   if (num<1) return;
   if ((point[0]!=point[num*2-2]) || (point[1]!=point[num*2-1])) num2=num+1;
   else num2=num;
-  if ((cpar=memalloc(sizeof(int)*(3+2*num2)))==NULL) return;
+  if ((cpar=g_malloc(sizeof(int)*(3+2*num2)))==NULL) return;
   code='D';
   cpar[0]=2+2*num2;
   cpar[1]=num2;
@@ -1002,7 +1001,7 @@ GRAdrawpoly(int GC,int num,int *point,int fil)
     cpar[2*num+4]=point[1];
   }
   GRAdraw(GC,code,cpar,NULL);
-  memfree(cpar);
+  g_free(cpar);
 }
 
 void 
@@ -1011,13 +1010,13 @@ GRAlines(int GC,int num,int *point)
   char code;
   int i,*cpar;
 
-  if ((cpar=memalloc(sizeof(int)*(2+2*num)))==NULL) return;
+  if ((cpar=g_malloc(sizeof(int)*(2+2*num)))==NULL) return;
   code='R';
   cpar[0]=2+2*num;
   cpar[1]=num;
   for (i=0;i<2*num;i++) cpar[i+2]=point[i];
   GRAdraw(GC,code,cpar,NULL);
-  memfree(cpar);
+  g_free(cpar);
 }
 
 void 
@@ -1659,12 +1658,12 @@ GRAexpandobj(char **s)
     if (!quote && ((*s)[0]=='%') && ((*s)[1]=='{')) {
       ret=GRAexpandobj(s);
       arg=nstrcat(arg,ret);
-      memfree(ret);
+      g_free(ret);
       if (arg==NULL) goto errexit;
     } else if (!quote && ((*s)[0]=='%') && ((*s)[1]=='[')) {
       ret=GRAexpandmath(s);
       arg=nstrcat(arg,ret);
-      memfree(ret);
+      g_free(ret);
       if (str==NULL) goto errexit;
     } else if (!quote && ((*s)[0]=='\\')) {
       quote=TRUE;
@@ -1684,26 +1683,26 @@ GRAexpandobj(char **s)
       if ((ret[j]=='%') || (ret[j]=='\\')
        || (ret[j]=='_') || (ret[j]=='^') || (ret[j]=='@')) {
         if ((str=nstrccat(str,'\\'))==NULL) {
-          memfree(ret);
+          g_free(ret);
           goto errexit;
         }
       }
       if ((str=nstrccat(str,ret[j]))==NULL) {
-        memfree(ret);
+        g_free(ret);
         goto errexit;
       }
     }
-    memfree(ret);
+    g_free(ret);
   }
   arraydel(&iarray);
-  memfree(field);
-  memfree(arg);
+  g_free(field);
+  g_free(arg);
   return str;
 errexit:
   arraydel(&iarray);
-  memfree(str);
-  memfree(field);
-  memfree(arg);
+  g_free(str);
+  g_free(field);
+  g_free(arg);
   return NULL;
 }
 
@@ -1730,12 +1729,12 @@ GRAexpandmath(char **s)
     if (!quote && ((*s)[0]=='%') && ((*s)[1]=='{')) {
       ret=GRAexpandobj(s);
       str=nstrcat(str,ret);
-      memfree(ret);
+      g_free(ret);
       if (str==NULL) goto errexit;
     } else if (!quote && ((*s)[0]=='%') && ((*s)[1]=='[')) {
       ret=GRAexpandmath(s);
       str=nstrcat(str,ret);
-      memfree(ret);
+      g_free(ret);
       if (str==NULL) goto errexit;
     } else if (!quote && ((*s)[0]=='\\')) {
       quote=TRUE;
@@ -1765,15 +1764,15 @@ GRAexpandmath(char **s)
                   NULL,NULL,
                   NULL,NULL,NULL,
                   NULL,NULL,NULL,0,NULL,NULL,NULL,0,&vd);
-  memfree(code);
+  g_free(code);
 #endif
   if (rcode!=MNOERR) goto errexit;
-  memfree(str);
-  if ((str=memalloc(24))==NULL) goto errexit;
+  g_free(str);
+  if ((str=g_malloc(24))==NULL) goto errexit;
   sprintf(str,"%.15e",vd);
   return str;
 errexit:
-  memfree(str);
+  g_free(str);
   return NULL;
 }
 
@@ -1803,12 +1802,12 @@ GRAexpandpf(char **s)
     if (!quote && ((*s)[0]=='%') && ((*s)[1]=='{')) {
       ret2=GRAexpandobj(s);
       str=nstrcat(str,ret2);
-      memfree(ret2);
+      g_free(ret2);
       if (str==NULL) goto errexit;
     } else if (!quote && ((*s)[0]=='%') && ((*s)[1]=='[')) {
       ret2=GRAexpandmath(s);
       str=nstrcat(str,ret2);
-      memfree(ret2);
+      g_free(ret2);
       if (str==NULL) goto errexit;
     } else if (!quote && ((*s)[0]=='\\')) {
       quote=TRUE;
@@ -1829,7 +1828,7 @@ GRAexpandpf(char **s)
       }
     }
     if (format[i]!='\0') {
-      if ((format2=memalloc(i+2))==NULL) goto errexit;
+      if ((format2=g_malloc(i+2))==NULL) goto errexit;
       strncpy(format2,format,i+1);
       format2[i+1]='\0';
       len1=len2=0;
@@ -1854,17 +1853,17 @@ GRAexpandpf(char **s)
         case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
 	  if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
 	    vll = strtoll(str, &endptr, 10);
-	    if ((buf=memalloc(len))!=NULL) {
+	    if ((buf=g_malloc(len))!=NULL) {
 	      sprintf(buf,format2,vll);
 	      ret=nstrcat(ret,buf);
-	      memfree(buf);
+	      g_free(buf);
 	    }
 	  }else {
 	    vi=strtol(str,&endptr,10);
-	    if ((buf=memalloc(len))!=NULL) {
+	    if ((buf=g_malloc(len))!=NULL) {
 	      sprintf(buf,format2,vi);
 	      ret=nstrcat(ret,buf);
-	      memfree(buf);
+	      g_free(buf);
 	    }
 	  }
           break;
@@ -1873,46 +1872,46 @@ GRAexpandpf(char **s)
 	    break;
 	  }
 	  vd=strtod(str,&endptr);
-	  if ((buf=memalloc(len))!=NULL) {
+	  if ((buf=g_malloc(len))!=NULL) {
 	    sprintf(buf,format2,vd);
 	    ret=nstrcat(ret,buf);
-	    memfree(buf);
+	    g_free(buf);
 	  }
           break;
         case 's':
 	  if (i > 1 && format2[i - 1] == 'l') {
 	    break;
 	  }
-          if ((buf=memalloc(len+strlen(str)))!=NULL) {
+          if ((buf=g_malloc(len+strlen(str)))!=NULL) {
             sprintf(buf,format2,str);
             ret=nstrcat(ret,buf);
-            memfree(buf);
+            g_free(buf);
           }
           break;
         case 'c':
 	  if (i > 1 && format2[i - 1] == 'l') {
 	    break;
 	  }
-          if ((buf=memalloc(len+strlen(str)))!=NULL) {
+          if ((buf=g_malloc(len+strlen(str)))!=NULL) {
             sprintf(buf,format2,str[0]);
             ret=nstrcat(ret,buf);
-            memfree(buf);
+            g_free(buf);
           }
         }
       }
-      memfree(format2);
+      g_free(format2);
       if (ret==NULL) goto errexit;
     }
   }
 
-  memfree(str);
-  memfree(format);
+  g_free(str);
+  g_free(format);
   return ret;
 
 errexit:
-  memfree(ret);
-  memfree(str);
-  memfree(format);
+  g_free(ret);
+  g_free(str);
+  g_free(format);
   return NULL;
 }
 
@@ -1974,19 +1973,19 @@ GRAexpandtext(char *s)
       s2=s+j;
       snew=GRAexpandobj(&s2);
       if ((str=nstrcat(str,snew))==NULL) return NULL;
-      memfree(snew);
+      g_free(snew);
       j=(s2-s);
     } else if ((s[j]=='%') && (s[j+1]=='[')) {
       s2=s+j;
       snew=GRAexpandmath(&s2);
       if ((str=nstrcat(str,snew))==NULL) return NULL;
-      memfree(snew);
+      g_free(snew);
       j=(s2-s);
     } else if ((s[j]=='%') && (s[j+1]=='p') && (s[j+2]=='f') && (s[j+3]=='{')) {
       s2=s+j;
       snew=GRAexpandpf(&s2);
       if ((str=nstrcat(str,snew))==NULL) return NULL;
-      memfree(snew);
+      g_free(snew);
       j=(s2-s);
     } else if (j<len) {
       if ((str=nstrccat(str,s[j]))==NULL) return NULL;
@@ -2027,9 +2026,9 @@ GRAdrawtext(int GC,char *s,char *font,char *jfont,
   if (s==NULL) return;
   if ((c=GRAexpandtext(s))==NULL) goto errexit;
   if (c[0]=='\0') goto errexit;
-  if ((font2=memalloc(strlen(font)+1))==NULL) goto errexit;
+  if ((font2=g_malloc(strlen(font)+1))==NULL) goto errexit;
   strcpy(font2,font);
-  if ((jfont2=memalloc(strlen(jfont)+1))==NULL) goto errexit;
+  if ((jfont2=g_malloc(strlen(jfont)+1))==NULL) goto errexit;
   strcpy(jfont2,jfont);
   size2=size;
   space2=space;
@@ -2093,7 +2092,7 @@ GRAdrawtext(int GC,char *s,char *font,char *jfont,
         GRAouttext(GC,str);
       }
     }
-    memfree(str);
+    g_free(str);
     str=NULL;
 
     if (c[j]=='\n') {
@@ -2101,8 +2100,8 @@ GRAdrawtext(int GC,char *s,char *font,char *jfont,
       y0+=(int )(cs*size*25.4/72.0);
       if (scriptf!=0) {
         scriptf=0;
-        memfree(font2);
-        memfree(jfont2);
+        g_free(font2);
+        g_free(jfont2);
         font2=font3;
         jfont2=jfont3;
         font3=NULL;
@@ -2141,9 +2140,9 @@ GRAdrawtext(int GC,char *s,char *font,char *jfont,
       case '^':
       case '_':
         if (scriptf==0) {
-          if ((font3=memalloc(strlen(font2)+1))==NULL) goto errexit;
+          if ((font3=g_malloc(strlen(font2)+1))==NULL) goto errexit;
           strcpy(font3,font2);
-          if ((jfont3=memalloc(strlen(jfont2)+1))==NULL) goto errexit;
+          if ((jfont3=g_malloc(strlen(jfont2)+1))==NULL) goto errexit;
           strcpy(jfont3,jfont2);
           size3=size2;
           space3=space2;
@@ -2171,8 +2170,8 @@ GRAdrawtext(int GC,char *s,char *font,char *jfont,
         if (scriptf!=0) {
           scriptf=0;
           GRAmoverel(GC,-scmovex,-scmovey);
-          memfree(font2);
-          memfree(jfont2);
+          g_free(font2);
+          g_free(jfont2);
           font2=font3;
           jfont2=jfont3;
           font3=NULL;
@@ -2189,38 +2188,38 @@ GRAdrawtext(int GC,char *s,char *font,char *jfont,
       if ((c[j+1]!='\0') && (strchr("FJSPXY",toupper(c[j+1]))!=NULL) && (c[j+2]=='{')) {
         for (i=j+3;(c[i]!='\0') && (c[i]!='}');i++);
         if (c[i]=='}') {
-          if ((tok=memalloc(i-j-2))==NULL) goto errexit;
+          if ((tok=g_malloc(i-j-2))==NULL) goto errexit;
           strncpy(tok,c+j+3,i-j-3);
           tok[i-j-3]='\0';
           if (tok[0]!='\0') {
             switch (toupper(c[j+1])) {
             case 'F':
-              memfree(font2);
+              g_free(font2);
               font2=tok;
               break;
             case 'J':
-              memfree(jfont2);
+              g_free(jfont2);
               jfont2=tok;
               break;
             case 'S':
               val=strtol(tok,&endptr,10);
               if (endptr[0]=='\0') size2=val*100;
-              memfree(tok);
+              g_free(tok);
               break;
             case 'P':
               val=strtol(tok,&endptr,10);
               if (endptr[0]=='\0') space2=val*100;
-              memfree(tok);
+              g_free(tok);
               break;
             case 'X':
               val=strtol(tok,&endptr,10);
               if (endptr[0]=='\0') GRAmoverel(GC,(int )(val*100*25.4/72.0),0);
-              memfree(tok);
+              g_free(tok);
               break;
             case 'Y':
               val=strtol(tok,&endptr,10);
               if (endptr[0]=='\0') GRAmoverel(GC,0,(int )(val*100*25.4/72.0));
-              memfree(tok);
+              g_free(tok);
               break;
             }
           }
@@ -2231,12 +2230,12 @@ GRAdrawtext(int GC,char *s,char *font,char *jfont,
   } while (j<len);
 
 errexit:
-  memfree(str);
-  memfree(c);
-  memfree(font2);
-  memfree(jfont2);
-  memfree(font3);
-  memfree(jfont3);
+  g_free(str);
+  g_free(c);
+  g_free(font2);
+  g_free(jfont2);
+  g_free(font3);
+  g_free(jfont3);
 }
 
 void 
@@ -2284,12 +2283,12 @@ GRAdrawtextraw(int GC,char *s,char *font,char *jfont,
         GRAouttext(GC,str);
       }
     }
-    memfree(str);
+    g_free(str);
     str=NULL;
   } while (j<len);
 
 errexit:
-  memfree(str);
+  g_free(str);
 }
 
 void 
@@ -2323,9 +2322,9 @@ GRAtextextent(char *s,char *font,char *jfont,
   if (s==NULL) return;
   if ((c=GRAexpandtext(s))==NULL) goto errexit;
   if (c[0]=='\0') goto errexit;
-  if ((font2=memalloc(strlen(font)+1))==NULL) goto errexit;
+  if ((font2=g_malloc(strlen(font)+1))==NULL) goto errexit;
   strcpy(font2,font);
-  if ((jfont2=memalloc(strlen(jfont)+1))==NULL) goto errexit;
+  if ((jfont2=g_malloc(strlen(jfont)+1))==NULL) goto errexit;
   strcpy(jfont2,jfont);
   size2=size;
   space2=space;
@@ -2427,15 +2426,15 @@ GRAtextextent(char *s,char *font,char *jfont,
       if (y0+d>*gy1) *gy1=y0+d;
       x0+=w;
     }
-    memfree(str);
+    g_free(str);
     str=NULL;
 
     if (c[j]=='\n') {
       y0+=(int )(size*25.4/72.0);
       if (scriptf!=0) {
         scriptf=0;
-        memfree(font2);
-        memfree(jfont2);
+        g_free(font2);
+        g_free(jfont2);
         font2=font3;
         jfont2=jfont3;
         font3=NULL;
@@ -2466,9 +2465,9 @@ GRAtextextent(char *s,char *font,char *jfont,
       case '^':
       case '_':
         if (scriptf==0) {
-          if ((font3=memalloc(strlen(font2)+1))==NULL) goto errexit;
+          if ((font3=g_malloc(strlen(font2)+1))==NULL) goto errexit;
           strcpy(font3,font2);
-          if ((jfont3=memalloc(strlen(jfont2)+1))==NULL) goto errexit;
+          if ((jfont3=g_malloc(strlen(jfont2)+1))==NULL) goto errexit;
           strcpy(jfont3,jfont2);
           size3=size2;
           space3=space2;
@@ -2492,8 +2491,8 @@ GRAtextextent(char *s,char *font,char *jfont,
         if (scriptf!=0) {
           scriptf=0;
           y0-=scmovey;
-          memfree(font2);
-          memfree(jfont2);
+          g_free(font2);
+          g_free(jfont2);
           font2=font3;
           jfont2=jfont3;
           font3=NULL;
@@ -2509,38 +2508,38 @@ GRAtextextent(char *s,char *font,char *jfont,
       if ((c[j+1]!='\0') && (strchr("FJSPXY",toupper(c[j+1]))!=NULL) && (c[j+2]=='{')) {
         for (i=j+3;(c[i]!='\0') && (c[i]!='}');i++);
         if (c[i]=='}') {
-          if ((tok=memalloc(i-j-2))==NULL) goto errexit;
+          if ((tok=g_malloc(i-j-2))==NULL) goto errexit;
           strncpy(tok,c+j+3,i-j-3);
           tok[i-j-3]='\0';
           if (tok[0]!='\0') {
             switch (toupper(c[j+1])) {
             case 'F':
-              memfree(font2);
+              g_free(font2);
               font2=tok;
               break;
             case 'J':
-              memfree(jfont2);
+              g_free(jfont2);
               jfont2=tok;
               break;
             case 'S':
               val=strtol(tok,&endptr,10);
               if (endptr[0]=='\0') size2=val*100;
-              memfree(tok);
+              g_free(tok);
               break;
             case 'P':
               val=strtol(tok,&endptr,10);
               if (endptr[0]=='\0') space2=val*100;
-              memfree(tok);
+              g_free(tok);
               break;
             case 'X':
               val=strtol(tok,&endptr,10);
               if (endptr[0]=='\0') x0+=(int )(val*100*25.4/72.0);
-              memfree(tok);
+              g_free(tok);
               break;
             case 'Y':
               val=strtol(tok,&endptr,10);
               if (endptr[0]=='\0') y0+=(int )(val*100*25.4/72.0);
-              memfree(tok);
+              g_free(tok);
               break;
             }
           }
@@ -2551,12 +2550,12 @@ GRAtextextent(char *s,char *font,char *jfont,
   } while (j<len);
 
 errexit:
-  memfree(str);
-  memfree(c);
-  memfree(font2);
-  memfree(jfont2);
-  memfree(font3);
-  memfree(jfont3);
+  g_free(str);
+  g_free(c);
+  g_free(font2);
+  g_free(jfont2);
+  g_free(font3);
+  g_free(jfont3);
 }
 
 void 
@@ -2627,12 +2626,12 @@ GRAtextextentraw(char *s,char *font,char *jfont,
       if (y0-h>*gy1) *gy1=y0-h;
       x0+=w;
     }
-    memfree(str);
+    g_free(str);
     str=NULL;
   } while (j<len);
 
 errexit:
-  memfree(str);
+  g_free(str);
 }
 
 
@@ -2797,22 +2796,22 @@ GRAinput(int GC,char *s,int leftm,int topm,int rate)
   if (strchr("%FSK",code)==NULL) {
     if (!getintpar(s+pos+1,1,&num)) return FALSE;
     num++;
-    if ((cpar=memalloc(sizeof(int)*num))==NULL) return FALSE;
+    if ((cpar=g_malloc(sizeof(int)*num))==NULL) return FALSE;
     if (!getintpar(s+pos+1,num,cpar)) goto errexit;
   } else {
-    if ((cpar=memalloc(sizeof(int)))==NULL) return FALSE;
+    if ((cpar=g_malloc(sizeof(int)))==NULL) return FALSE;
     cpar[0]=-1;
-    if ((cstr=memalloc(strlen(s)-pos))==NULL) goto errexit;
+    if ((cstr=g_malloc(strlen(s)-pos))==NULL) goto errexit;
     strcpy(cstr,s+pos+1);
   }
   r = GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
-  memfree(cpar);
-  memfree(cstr);
+  g_free(cpar);
+  g_free(cstr);
   return r;
 
 errexit:
-  memfree(cpar);
-  memfree(cstr);
+  g_free(cpar);
+  g_free(cstr);
   return FALSE;
 }
 
@@ -3241,10 +3240,10 @@ GRAcurvefirst(int GC,int num,int *dashlist,
 {
   int i,gx0,gy0;
 
-  memfree(GRAClist[GC].gdashlist);
+  g_free(GRAClist[GC].gdashlist);
   GRAClist[GC].gdashlist=NULL;
   if (num!=0) {
-    if ((GRAClist[GC].gdashlist=memalloc(sizeof(int)*num))==NULL) num=0;
+    if ((GRAClist[GC].gdashlist=g_malloc(sizeof(int)*num))==NULL) num=0;
   }
   GRAClist[GC].gdashn=num;
   for (i=0;i<num;i++) 
@@ -3517,7 +3516,7 @@ GRAinitbbox(struct GRAbbox *bbox)
 void 
 GRAendbbox(struct GRAbbox *bbox)
 {
-  memfree(bbox->fontalias);
+  g_free(bbox->fontalias);
 }
 
 int 
@@ -3604,8 +3603,8 @@ GRAboundingbox(char code,int *cpar,char *cstr,void *local)
       setbbminmax(bbox, cpar[j * 2 + 3], cpar[j * 2 + 4], cpar[j * 2 + 5], cpar[j * 2 + 6],lw);
     break;
   case 'F':
-    memfree(bbox->fontalias);
-    if ((bbox->fontalias=memalloc(strlen(cstr)+1))!=NULL)
+    g_free(bbox->fontalias);
+    if ((bbox->fontalias=g_malloc(strlen(cstr)+1))!=NULL)
       strcpy(bbox->fontalias,cstr);
     break;
   case 'H':

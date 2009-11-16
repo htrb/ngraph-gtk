@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.60 2009/11/12 01:36:46 hito Exp $
+ * $Id: x11lgnd.c,v 1.61 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -160,7 +160,7 @@ LegendLineCB(struct objlist *obj, int id)
   int num, *data;
   char *s;
 
-  s = (char *) memalloc(CB_BUF_SIZE);
+  s = (char *) g_malloc(CB_BUF_SIZE);
   if (s == NULL)
     return NULL;
 
@@ -181,7 +181,7 @@ LegendRectCB(struct objlist *obj, int id)
   int x1, y1;
   char *s;
 
-  s = (char *) memalloc(CB_BUF_SIZE);
+  s = (char *) g_malloc(CB_BUF_SIZE);
   if (s == NULL)
 
   getobj(obj, "x1", id, 0, NULL, &x1);
@@ -196,7 +196,7 @@ LegendArcCB(struct objlist *obj, int id)
   int x1, y1;
   char *s;
 
-  s = (char *) memalloc(CB_BUF_SIZE);
+  s = (char *) g_malloc(CB_BUF_SIZE);
   if (s == NULL)
     return NULL;
 
@@ -218,10 +218,10 @@ LegendTextCB(struct objlist *obj, int id)
 /* SJIS ---> UTF-8 */
     s = sjis_to_utf8(text);
 #else
-    s = nstrdup(text);
+    s = g_strdup(text);
 #endif
   } else {
-    s = nstrdup("");
+    s = g_strdup("");
   }
   return s;
 }
@@ -382,14 +382,13 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
       char *tmp;
       tmp = sjis_to_utf8(buf);
       if (tmp) {
-	memfree(buf);
-	buf = strdup(tmp);
-	free(tmp);
+	g_free(buf);
+	buf = tmp;
       }
     }
 #endif
     gtk_entry_set_text(GTK_ENTRY(d->text), buf);
-    memfree(buf);
+    g_free(buf);
   }
 
   if (d->font)
@@ -535,7 +534,7 @@ legend_dialog_close(GtkWidget *w, void *data)
     entry_completion_append(NgraphApp.legend_text_list, str);
     gtk_entry_set_completion(GTK_ENTRY(d->text), NULL);
 
-    ptr = strdup(str);
+    ptr = g_strdup(str);
 
     if (ptr) {
       char *org_str;
@@ -544,21 +543,21 @@ legend_dialog_close(GtkWidget *w, void *data)
       char *tmp;
       tmp = utf8_to_sjis(ptr);
       if (tmp) {
-	free(ptr);
+	g_free(ptr);
 	ptr = tmp;
       }
 #endif
       sgetobjfield(d->Obj, d->Id, "text", NULL, &org_str, FALSE, FALSE, FALSE);
       if (org_str == NULL || strcmp(ptr, org_str)) {
 	if (sputobjfield(d->Obj, d->Id, "text", ptr) != 0) {
-	  memfree(org_str);
-	  free(ptr);
+	  g_free(org_str);
+	  g_free(ptr);
 	  return;
 	}
 	set_graph_modified();
       }
-      memfree(org_str);
-      free(ptr);
+      g_free(org_str);
+      g_free(ptr);
     }
   }
 
@@ -2071,7 +2070,7 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
       case LegendTypeLine:
 	sgetobjfield(d->obj[type], row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
 	snprintf(buf2, sizeof(buf2), _("arrow:%s"), _(valstr));
-	memfree(valstr);
+	g_free(valstr);
 	get_points(buf, sizeof(buf), d->obj[type], row, &x0, &y0, TRUE, buf2);
 	break;
       case LegendTypeCurve:
@@ -2139,7 +2138,7 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
 	  tmp = sjis_to_utf8(text);
 	  if (tmp) {
 	    tree_store_set_string(GTK_WIDGET(d->text), iter, i, tmp);
-	    free(tmp);
+	    g_free(tmp);
 	  }
 #else
 	  tree_store_set_string(GTK_WIDGET(d->text), iter, i, text);

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.17 2009/11/12 01:36:45 hito Exp $
+ * $Id: object.h,v 1.18 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -186,10 +186,6 @@ void ignorestdio(struct savedstdio *save);
 void restorestdio(struct savedstdio *save);
 void savestdio(struct savedstdio *save);
 void loadstdio(struct savedstdio *save);
-
-void *memalloc(size_t size);
-void *memrealloc(void *ptr,size_t size);
-void memfree(void *ptr);
 
 void arrayinit(struct narray *array,unsigned int base);
 struct narray *arraynew(unsigned int base);

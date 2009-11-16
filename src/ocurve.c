@@ -1,5 +1,5 @@
 /* 
- * $Id: ocurve.c,v 1.9 2009/05/01 09:15:58 hito Exp $
+ * $Id: ocurve.c,v 1.10 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -27,6 +27,8 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "object.h"
 #include "gra.h"
@@ -38,8 +40,6 @@
 #define NAME "curve"
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRSPL  100
 
@@ -106,7 +106,7 @@ curvedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 0: case 1:
     if (num<2) return 0;
     bsize=num+1;
-    if ((buf=memalloc(sizeof(double)*9*bsize))==NULL) return 1;
+    if ((buf=g_malloc(sizeof(double)*9*bsize))==NULL) return 1;
     for (i=0;i<bsize;i++) buf[i]=i;
     for (i=0;i<num;i++) {
       buf[bsize+i]=pdata[i*2];
@@ -123,13 +123,13 @@ curvedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
     if (spline(buf,buf+bsize,buf+3*bsize,buf+4*bsize,buf+5*bsize,num,
                spcond,spcond,0,0)) {
-      memfree(buf);
+      g_free(buf);
       error(obj,ERRSPL);
       return 1;
     }
     if (spline(buf,buf+2*bsize,buf+6*bsize,buf+7*bsize,buf+8*bsize,num,
                spcond,spcond,0,0)) {
-      memfree(buf);
+      g_free(buf);
       error(obj,ERRSPL);
       return 1;
     }
@@ -144,7 +144,7 @@ curvedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if (!GRAcurve(GC,c,buf[i+bsize],buf[i+2*bsize]))
         break;
     }
-    memfree(buf);
+    g_free(buf);
     break;
   case 2:
     if (num<7) return 0;
@@ -255,7 +255,7 @@ curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 0;
     }
     bsize=num+1;
-    if ((buf=memalloc(sizeof(double)*9*bsize))==NULL) return 1;
+    if ((buf=g_malloc(sizeof(double)*9*bsize))==NULL) return 1;
     for (i=0;i<bsize;i++) buf[i]=i;
     for (i=0;i<num;i++) {
       buf[bsize+i]=pdata[i*2];
@@ -272,12 +272,12 @@ curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
     if (spline(buf,buf+bsize,buf+3*bsize,buf+4*bsize,buf+5*bsize,num,
                spcond,spcond,0,0)) {
-      memfree(buf);
+      g_free(buf);
       return 1;
     }
     if (spline(buf,buf+2*bsize,buf+6*bsize,buf+7*bsize,buf+8*bsize,num,
                spcond,spcond,0,0)) {
-      memfree(buf);
+      g_free(buf);
       return 1;
     }
     GRAcmatchfirst(0,0,0,NULL,NULL,splinedif,splineint,NULL,
@@ -286,7 +286,7 @@ curvebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       for (j=0;j<6;j++) c[j]=buf[i+(j+3)*bsize];
       GRAcmatch(c,buf[i+bsize],buf[i+2*bsize],&cmatch);
     }
-    memfree(buf);
+    g_free(buf);
     break;
   case 2:
     if (num<7) {
@@ -416,7 +416,7 @@ curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     case 0: case 1:
       if (num<2) return 0;
       bsize=num+1;
-      if ((buf=memalloc(sizeof(double)*9*bsize))==NULL) return 1;
+      if ((buf=g_malloc(sizeof(double)*9*bsize))==NULL) return 1;
       for (i=0;i<bsize;i++) buf[i]=i;
       for (i=0;i<num;i++) {
         buf[bsize+i]=pdata[i*2];
@@ -433,12 +433,12 @@ curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       }
       if (spline(buf,buf+bsize,buf+3*bsize,buf+4*bsize,buf+5*bsize,num,
                  spcond,spcond,0,0)) {
-        memfree(buf);
+        g_free(buf);
         return 1;
       }
       if (spline(buf,buf+2*bsize,buf+6*bsize,buf+7*bsize,buf+8*bsize,num,
                  spcond,spcond,0,0)) {
-        memfree(buf);
+        g_free(buf);
         return 1;
       }
       GRAcmatchfirst(minx,miny,err,NULL,NULL,splinedif,splineint,NULL,
@@ -448,11 +448,11 @@ curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         GRAcmatch(c,buf[i+bsize],buf[i+2*bsize],&cmatch);
         if (cmatch.match) {
           *(int *)rval=TRUE;
-          memfree(buf);
+          g_free(buf);
           return 0;
         }
       }
-      memfree(buf);
+      g_free(buf);
       break;
     case 2:
       if (num<7) return 0;

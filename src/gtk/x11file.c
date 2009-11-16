@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.118 2009/11/03 01:18:53 hito Exp $
+ * $Id: x11file.c,v 1.119 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -192,7 +192,7 @@ MathTextDialogClose(GtkWidget *w, void *data)
     return;
 
   p = gtk_entry_get_text(GTK_ENTRY(d->list));
-  ptr = nstrdup(p);
+  ptr = g_strdup(p);
   if (ptr == NULL)
     return;
 
@@ -204,15 +204,15 @@ MathTextDialogClose(GtkWidget *w, void *data)
     sgetobjfield(d->Obj, id, FieldStr[d->Mode], NULL, &obuf, FALSE, FALSE, FALSE);
     if (obuf == NULL || strcmp(obuf, ptr)) {
       if (sputobjfield(d->Obj, id, FieldStr[d->Mode], ptr)) {
-	memfree(ptr);
+	g_free(ptr);
 	d->ret = IDLOOP;
 	return;
       }
       set_graph_modified();
     }
-    memfree(obuf);
+    g_free(obuf);
   }
-  memfree(ptr);
+  g_free(ptr);
 
   switch (d->Mode) {
   case TYPE_MATH_X:
@@ -333,7 +333,7 @@ MathDialogList(GtkButton *w, gpointer client_data)
 
   DialogExecute(d->widget, &DlgMathText);
 
-  memfree(buf);
+  g_free(buf);
 
   MathDialogSetupItem(d->widget, d);
 
@@ -620,13 +620,13 @@ FitSaveDialogClose(GtkWidget *w, void *data)
   if (s) {
     char *ptr;
 
-    ptr = nstrdup(s);
+    ptr = g_strdup(s);
     g_strstrip(ptr);
     if (ptr[0] != '\0') {
       d->Profile = ptr;
       return;
     }
-    memfree(ptr);
+    g_free(ptr);
   }
 
   MessageBox(d->widget, _("Please specify the profile."), NULL, MB_OK);
@@ -735,13 +735,13 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
       return FALSE;
     newid = newobj(shell);
     if (newid < 0) {
-      memfree(file);
+      g_free(file);
       return FALSE;
     }
     arrayinit(&sarray, sizeof(char *));
     changefilename(file);
     if (arrayadd(&sarray, &file) == NULL) {
-      memfree(file);
+      g_free(file);
       arraydel2(&sarray);
       return FALSE;
     }
@@ -913,20 +913,20 @@ FitDialogSave(struct FitDialog *d)
     return;
 
   if (DlgFitSave.Profile[0] == '\0') {
-    memfree(DlgFitSave.Profile);
+    g_free(DlgFitSave.Profile);
     return;
   }
 
   switch (r) {
   case IDOK:
     if (copy_settings_to_fitobj(d, DlgFitSave.Profile)) {
-      memfree(DlgFitSave.Profile);
+      g_free(DlgFitSave.Profile);
       return;
     }
     break;
   case IDDELETE:
     if (delete_fitobj(d, DlgFitSave.Profile)) {
-      memfree(DlgFitSave.Profile);
+      g_free(DlgFitSave.Profile);
       return;
     }
     break;
@@ -969,12 +969,12 @@ FitDialogSave(struct FitDialog *d)
       ptr = g_strdup_printf(_("The profile '%s' is deleted."), DlgFitSave.Profile);
       MessageBox(d->widget, ptr, "Confirm", MB_OK);
       g_free(ptr);
-      memfree(DlgFitSave.Profile);
+      g_free(DlgFitSave.Profile);
       break;
     }
   }
 
-  memfree(ngpfile);
+  g_free(ngpfile);
 }
 
 static void
@@ -1083,7 +1083,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
     mathcode(math, &code, &needarray, NULL, &maxdim, &need2pass,
 	     TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
 	     FALSE, FALSE);
-    memfree(code);
+    g_free(code);
     dim = arraynum(&needarray);
     needdata = (int *) arraydata(&needarray);
     for (i = 0; i < dim; i++) {
@@ -1751,11 +1751,11 @@ FileMoveDialogClose(GtkWidget *w, void *data)
 
     ptr = list_store_get_string(d->list, &iter, 1); 
     x = strtod(ptr, &endptr);
-    free(ptr);
+    g_free(ptr);
 
     ptr = list_store_get_string(d->list, &iter, 2); 
     y = strtod(ptr, &endptr);
-    free(ptr);
+    g_free(ptr);
 
     if (move == NULL)
       move = arraynew(sizeof(int));
@@ -2018,8 +2018,8 @@ FileLoadDialogSetupItem(GtkWidget *w, struct FileLoadDialog *d, int id)
       s = nstrccat(s, ifs[i]);
   }
   gtk_entry_set_text(GTK_ENTRY(d->ifs), s);
-  memfree(s);
-  memfree(ifs);
+  g_free(s);
+  g_free(ifs);
   SetWidgetFromObjField(d->csv, d->Obj, id, "csv");
 }
 
@@ -2141,15 +2141,15 @@ FileLoadDialogClose(GtkWidget *w, void *data)
   sgetobjfield(d->Obj, d->Id, "ifs", NULL, &obuf, FALSE, FALSE, FALSE);
   if (obuf == NULL || strcmp(s, obuf)) {
     if (sputobjfield(d->Obj, d->Id, "ifs", s) != 0) {
-      memfree(obuf);
-      memfree(s);
+      g_free(obuf);
+      g_free(s);
       return;
     }
     set_graph_modified();
   }
 
-  memfree(obuf);
-  memfree(s);
+  g_free(obuf);
+  g_free(s);
 
   if (SetObjFieldFromWidget(d->csv, d->Obj, d->Id, "csv"))
     return;
@@ -2457,7 +2457,7 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
   if (valstr[i] == ':')
     i++;
   combo_box_entry_set_text(d->xaxis, valstr + i);;
-  memfree(valstr);
+  g_free(valstr);
 
   SetWidgetFromObjField(d->ycol, d->Obj, id, "y");
 
@@ -2466,7 +2466,7 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
   if (valstr[i] == ':')
     i++;
   combo_box_entry_set_text(d->yaxis, valstr + i);;
-  memfree(valstr);
+  g_free(valstr);
 
   SetWidgetFromObjField(d->type, d->Obj, id, "type");
 
@@ -2517,7 +2517,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
     if (valstr[i] == ':')
       i++;
     gtk_label_set_text(GTK_LABEL(d->fitid), valstr + i);
-    memfree(valstr);
+    g_free(valstr);
   }
   
   gtk_widget_set_sensitive(d->apply_all, d->multi_open);
@@ -2595,7 +2595,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
       return;
 
     if (putobj(d->Obj, "fit", d->Id, fit) == -1) {
-      memfree(fit);
+      g_free(fit);
       return;
     }
     create = TRUE;
@@ -2626,7 +2626,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
   if (valstr[i] == ':')
     i++;
   gtk_label_set_text(GTK_LABEL(d->fitid), valstr);
-  memfree(valstr);
+  g_free(valstr);
 }
 
 static void
@@ -2740,7 +2740,7 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
   if (tmp == NULL)
     return;
 
-  name = strdup(tmp);
+  name = g_strdup(tmp);
   if (name == NULL)
     return;
   if ((pid = fork()) >= 0) {
@@ -2750,7 +2750,7 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
       exit(1);
     }
   }
-  free(name);
+  g_free(name);
 }
 
 static void
@@ -3351,7 +3351,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
   if ((obj = chkobject("file")) == NULL)
     return;
   if ((id = newobj(obj)) >= 0) {
-    name = nstrdup(data[fil]);
+    name = g_strdup(data[fil]);
     if (name) {
       putobj(obj, "file", id, name);
       FileDialog(&DlgFile, obj, id, FALSE);
@@ -3371,39 +3371,42 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
 void
 CmFileNew(void)
 {
-  char *name, *file;
+  char *file;
   int id, ret;
   struct objlist *obj;
 
-
   if (Menulock || GlobalLock)
     return;
+
   if ((obj = chkobject("file")) == NULL)
     return;
+
   if (nGetOpenFileName(TopLevel, _("Data new"), NULL, NULL,
 		       NULL, &file, FALSE,
-		       Menulocal.changedirectory) == IDOK)
-  {
-    if ((id = newobj(obj)) >= 0) {
-      name = nstrdup(file);
-      if (name == NULL) {
-	free(file);
-	return;
-      }
-      changefilename(name);
-      AddDataFileList(name);
-      putobj(obj, "file", id, name);
-      FileDialog(&DlgFile, obj, id, FALSE);
-      ret = DialogExecute(TopLevel, &DlgFile);
-      if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	FitDel(obj, id);
-	delobj(obj, id);
-      } else
-	set_graph_modified();
-      FileWinUpdate(TRUE);
-    }
-    free(file);
+		       Menulocal.changedirectory) != IDOK) {
+    return;
   }
+
+  id = newobj(obj);
+  if (id < 0) {
+    g_free(file);
+    return;
+  }
+
+  changefilename(file);
+  AddDataFileList(file);
+  putobj(obj, "file", id, file);
+  FileDialog(&DlgFile, obj, id, FALSE);
+  ret = DialogExecute(TopLevel, &DlgFile);
+
+  if (ret == IDDELETE || ret == IDCANCEL) {
+    FitDel(obj, id);
+    delobj(obj, id);
+  } else {
+    set_graph_modified();
+  }
+
+  FileWinUpdate(TRUE);
 }
 
 
@@ -3411,7 +3414,7 @@ void
 CmFileOpen(void)
 {
   int id, ret;
-  char *name, *tmp;;
+  char *name;;
   char **file = NULL, **ptr;
   struct objlist *obj;
   struct narray farray;
@@ -3433,14 +3436,12 @@ CmFileOpen(void)
       id = newobj(obj);
       if (id >= 0) {
 	arrayadd(&farray, &id);
-	tmp = nstrdup(name);
-	changefilename(tmp);
-	AddDataFileList(tmp);
-	putobj(obj, "file", id, tmp);
+	changefilename(name);
+	AddDataFileList(name);
+	putobj(obj, "file", id, name);
       }
-      free(name);
     }
-    free(file);
+    g_free(file);
   }
 
   if (update_file_obj_multi(obj, &farray, TRUE)) {
@@ -4228,8 +4229,8 @@ get_axis_obj_str(struct objlist *obj, int id, char *field)
   sgetobjfield(obj, id, field, NULL, &valstr, FALSE, FALSE, FALSE);
   for (j = 0; (valstr[j] != '\0') && (valstr[j] != ':'); j++);
   if (valstr[j] == ':') j++;
-  tmp = strdup(valstr + j);
-  memfree(valstr);
+  tmp = g_strdup(valstr + j);
+  g_free(valstr);
 
   return tmp;
 }
@@ -4257,8 +4258,11 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       }
       bfile = getbasename(file);
       if (bfile) {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, bfile);
-	memfree(bfile);
+	char *ptr;
+	ptr = g_filename_to_utf8(bfile, -1, NULL, NULL, NULL);
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, CHK_STR(ptr));
+	g_free(ptr);
+	g_free(bfile);
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
       }
@@ -4277,7 +4281,7 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       if (axis) {
 	len = snprintf(buf, sizeof(buf), "%3s", axis);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
-	free(axis);
+	g_free(axis);
       }
       break;
     case FILE_WIN_COL_HIDDEN:
@@ -4793,7 +4797,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
       combo_box_set_active(GTK_WIDGET(cbox), id);
     }
-    free(name);
+    g_free(name);
   }
 
   d->select = -1;

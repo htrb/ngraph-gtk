@@ -1,5 +1,5 @@
 /* 
- * $Id: ntime.c,v 1.3 2009/03/24 09:16:10 hito Exp $
+ * $Id: ntime.c,v 1.4 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,8 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <glib.h>
+
 #include "object.h"
 #include "nstring.h"
 #include "ntime.h"
@@ -70,7 +72,7 @@ ndate(time_t *timep,int style)
     break;
   }
 
-  return nstrdup(c);
+  return g_strdup(c);
 }
 
 char *
@@ -114,7 +116,7 @@ ntime(time_t *timep,int style)
     break;
   }
 
-  return nstrdup(c);
+  return g_strdup(c);
 }
 
 int 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.51 2009/11/06 03:50:14 hito Exp $
+ * $Id: x11graph.c,v 1.52 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -844,7 +844,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
   cwd = ngetcwd();
   if (cwd) {
     gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), cwd);
-    memfree(cwd);
+    g_free(cwd);
   }
 }
 
@@ -917,8 +917,8 @@ LoadDialogClose(GtkWidget *w, void *data)
     return;
   d->expand = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->expand_file));
   s = gtk_entry_get_text(GTK_ENTRY(d->dir));
-  memfree(d->exdir);
-  d->exdir = nstrdup(s);
+  g_free(d->exdir);
+  d->exdir = g_strdup(s);
   d->ignorepath = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignore_path));
 }
 
@@ -928,7 +928,7 @@ LoadDialog(struct LoadDialog *data)
   data->SetupWindow = LoadDialogSetup;
   data->CloseWindow = LoadDialogClose;
   data->expand = Menulocal.expand;
-  data->exdir = nstrdup(Menulocal.expanddir);
+  data->exdir = g_strdup(Menulocal.expanddir);
   data->ignorepath = Menulocal.ignorepath;
 }
 
@@ -1116,9 +1116,9 @@ CmGraphLoad(void)
 	LoadNgpFile(file, DlgLoad.ignorepath, DlgLoad.expand,
 		    DlgLoad.exdir, Menulocal.scriptconsole, "-f");
       }
-      memfree(DlgLoad.exdir);
+      g_free(DlgLoad.exdir);
     }
-    free(file);
+    g_free(file);
   }
 }
 
@@ -1223,29 +1223,29 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   uri = gtk_recent_chooser_get_current_uri(w);
   fname = strstr(uri, pstr);
   if (fname == NULL) {
-    free(uri);
+    g_free(uri);
     return;
   }
   fname += sizeof(pstr) - 1;
 
   if (!CheckSave()) {
-    free(uri);
+    g_free(uri);
     return;
   }
 
-  path = nstrdup(fname);
+  path = g_strdup(fname);
   if (path == NULL) {
-    free(uri);
+    g_free(uri);
     return;
   }
 
   ptr = dirname(path);
   if (chdir(ptr)) {
     ErrorMessage();
-    memfree(path);
+    g_free(path);
     return;
   }
-  memfree(path);
+  g_free(path);
 
   LoadDialog(&DlgLoad);
 
@@ -1253,8 +1253,8 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
     LoadNgpFile(fname, DlgLoad.ignorepath, DlgLoad.expand,
 		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
   }
-  memfree(DlgLoad.exdir);
-  free(uri);
+  g_free(DlgLoad.exdir);
+  g_free(uri);
 }
 
 void

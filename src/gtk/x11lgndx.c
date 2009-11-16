@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.17 2009/03/11 01:37:17 hito Exp $
+ * $Id: x11lgndx.c,v 1.18 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -559,11 +559,11 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
   d->ret = ret;
 
   for (i = 0; i < 6; i++)
-    memfree(spc[i]);
+    g_free(spc[i]);
 
-  memfree(spz);
-  memfree(spy);
-  memfree(spx);
+  g_free(spz);
+  g_free(spy);
+  g_free(spx);
 }
 
 void
@@ -588,20 +588,20 @@ LegendGaussDialog(struct LegendGaussDialog *data,
   data->Mode = 0;
   data->alloc = TRUE;
 
-  spx = (double *) memalloc(sizeof(double) * (DIV_MAX + 1));
+  spx = (double *) g_malloc(sizeof(double) * (DIV_MAX + 1));
   if (spx == NULL)
     data->alloc = FALSE;
 
-  spy = (double *) memalloc(sizeof(double) * (DIV_MAX + 1));
+  spy = (double *) g_malloc(sizeof(double) * (DIV_MAX + 1));
   if (spy == NULL)
     data->alloc = FALSE;
 
-  spz = (double *) memalloc(sizeof(double) * (DIV_MAX + 1));
+  spz = (double *) g_malloc(sizeof(double) * (DIV_MAX + 1));
   if (spz == NULL)
     data->alloc = FALSE;
 
   for (i = 0; i < 6; i++) {
-    if ((spc[i] = (double *) memalloc(sizeof(double) * 201)) == NULL) {
+    if ((spc[i] = (double *) g_malloc(sizeof(double) * 201)) == NULL) {
       data->alloc = FALSE;
     }
   }

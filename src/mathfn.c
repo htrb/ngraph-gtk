@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.c,v 1.6 2009/08/04 10:41:47 hito Exp $
+ * $Id: mathfn.c,v 1.7 2009/11/16 09:13:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,10 +29,8 @@
 #include <limits.h>
 #include <math.h>
 #include <float.h>
+#include <glib.h>
 #include "mathfn.h"
-
-#define TRUE 1
-#define FALSE 0
 
 static int randinit=FALSE;
 /*

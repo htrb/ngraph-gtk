@@ -1,10 +1,11 @@
 /* 
- * $Id: math_equation.c,v 1.10 2009/11/12 01:36:47 hito Exp $
+ * $Id: math_equation.c,v 1.11 2009/11/16 09:13:06 hito Exp $
  * 
  */
 
 #include <stdlib.h>
 #include <string.h>
+#include <glib.h>
 
 #include "math_parser.h"
 #include "math_equation.h"
@@ -30,9 +31,9 @@ add_to_ary(MathValue *buf, int *num, int *size, const MathValue *val)
     int n;
 
     n = *num / BUF_UNIT;
-    ptr = realloc(buf, sizeof(*buf) * (n + 1) * BUF_UNIT);
+    ptr = g_realloc(buf, sizeof(*buf) * (n + 1) * BUF_UNIT);
     if (ptr == NULL) {
-      memfree(buf);
+      g_free(buf);
       *num = 0;
       return NULL;
     }
@@ -62,9 +63,9 @@ add_to_ary_int(int *buf, int *num, int val)
     int n;
 
     n = *num / BUF_UNIT;
-    ptr = realloc(buf, sizeof(*buf) * (n + 1) * BUF_UNIT);
+    ptr = g_realloc(buf, sizeof(*buf) * (n + 1) * BUF_UNIT);
     if (ptr == NULL) {
-      memfree(buf);
+      g_free(buf);
       *num = 0;
       return NULL;
     }
@@ -86,9 +87,9 @@ add_to_ary_array(MathEquationArray *buf, int *num)
     int n;
 
     n = *num / BUF_UNIT;
-    ptr = realloc(buf, sizeof(*buf) * (n + 1) * BUF_UNIT);
+    ptr = g_realloc(buf, sizeof(*buf) * (n + 1) * BUF_UNIT);
     if (ptr == NULL) {
-      memfree(buf);
+      g_free(buf);
       *num = 0;
       return NULL;
     }
@@ -134,7 +135,7 @@ math_equation_new(void)
 {
   MathEquation *eq;
 
-  eq = memalloc(sizeof(*eq));
+  eq = g_malloc(sizeof(*eq));
   if (eq == NULL)
     return NULL;
 
@@ -236,7 +237,7 @@ math_equation_parse(MathEquation *eq, const char *str)
     return MATH_ERROR_UNKNOWN;
 
   if (eq->pos_func_buf) {
-    memfree(eq->pos_func_buf);
+    g_free(eq->pos_func_buf);
     eq->pos_func_buf = NULL;
   }
 
@@ -260,7 +261,7 @@ math_equation_parse(MathEquation *eq, const char *str)
   }
 
   if (eq->pos_func_num > 0) {
-    eq->pos_func_buf = memalloc(eq->pos_func_num * sizeof(*eq->pos_func_buf));
+    eq->pos_func_buf = g_malloc(eq->pos_func_num * sizeof(*eq->pos_func_buf));
     if (eq->pos_func_buf == NULL) {
       math_expression_free(eq->exp);
       return MATH_ERROR_MEMORY;
@@ -279,10 +280,10 @@ free_array_buf(MathEquationArray *buf, int num)
     return;
 
   for (i = 0; i < num; i++) {
-    memfree(buf[i].data);
+    g_free(buf[i].data);
   }
 
-  memfree(buf);
+  g_free(buf);
 }
 
 void 
@@ -319,10 +320,10 @@ math_equation_free(MathEquation *eq)
 
   math_expression_free(eq->exp);
   math_expression_free(eq->opt_exp);
-  memfree(eq->cbuf);
-  memfree(eq->vbuf);
-  memfree(eq->pos_func_buf);
-  memfree(eq);
+  g_free(eq->cbuf);
+  g_free(eq->vbuf);
+  g_free(eq->pos_func_buf);
+  g_free(eq);
 }
 
 int 
@@ -381,7 +382,7 @@ math_equation_add_parameter(MathEquation *eq, int type, int min, int max, int us
 {
   MathEquationParametar *ptr, *prm;
 
-  prm = memalloc(sizeof(*prm));
+  prm = g_malloc(sizeof(*prm));
   if (prm == NULL)
     return 1;
 
@@ -515,7 +516,7 @@ init_parameter(MathEquation *eq)
   ptr = eq->parameter;
   while (ptr) {
     if (ptr->id) {
-      memfree(ptr->id);
+      g_free(ptr->id);
       ptr->id = NULL;
     }
     ptr->id_num = 0;
@@ -537,9 +538,9 @@ free_parameter(MathEquation *eq)
   while (ptr) {
     next = ptr->next;
     if (ptr->id) {
-      memfree(ptr->id);
+      g_free(ptr->id);
     }
-    memfree(ptr);
+    g_free(ptr);
     ptr = next;
   }
 }
@@ -564,7 +565,7 @@ math_equation_add_pos_func(MathEquation *eq, struct math_function_parameter *fpr
 static void
 free_func_prm_sub(struct math_function_parameter *ptr)
 {
-  memfree(ptr->name);
+  g_free(ptr->name);
 
   if (ptr->opt_usr) {
     math_expression_free(ptr->opt_usr);
@@ -576,7 +577,7 @@ free_func_prm_sub(struct math_function_parameter *ptr)
     ptr->base_usr = NULL;
   }
 
-  memfree(ptr->arg_type);
+  g_free(ptr->arg_type);
 }
 
 static void
@@ -584,7 +585,7 @@ free_func_prm(struct math_function_parameter *ptr)
 {
 
   free_func_prm_sub(ptr);
-  memfree(ptr);
+  g_free(ptr);
 }
 
 static int
@@ -673,7 +674,7 @@ math_equation_start_user_func_definition(MathEquation *eq, const char *name)
   if (eq == NULL || eq->func_def)
     return NULL;
 
-  fprm = malloc(sizeof(*fprm));
+  fprm = g_malloc(sizeof(*fprm));
   if (fprm == NULL)
     return NULL;
 
@@ -684,10 +685,10 @@ math_equation_start_user_func_definition(MathEquation *eq, const char *name)
   fprm->base_usr = NULL;
   fprm->opt_usr = NULL;
   fprm->arg_type = NULL;
-  fprm->name = nstrdup(name);
+  fprm->name = g_strdup(name);
 
   if (fprm->name == NULL) {
-    memfree(fprm);
+    g_free(fprm);
     return NULL;
   }
 
@@ -741,7 +742,7 @@ math_equation_register_user_func_definition(MathEquation *eq, const char *name, 
   free_func_prm_sub(fprm);
   memcpy(fprm, exp->u.func.fprm, sizeof(*fprm));
 
-  memfree(exp->u.func.fprm);
+  g_free(exp->u.func.fprm);
   exp->u.func.fprm = fprm;
 
   return 0;
@@ -784,23 +785,23 @@ math_equation_add_func(MathEquation *eq, const char *name, struct math_function_
     free_func_prm(ptr);
   }
 
-  ptr = memalloc(sizeof(*ptr));
+  ptr = g_malloc(sizeof(*ptr));
   if (ptr == NULL)
     return NULL;
 
   memcpy(ptr, prm, sizeof(*ptr));
-  ptr->name = nstrdup(name);
+  ptr->name = g_strdup(name);
 
   if (ptr->name == NULL) {
-    memfree(ptr);
+    g_free(ptr);
     return NULL;
   }
 
   if (prm->arg_type) {
-    ptr->arg_type = memalloc(sizeof(*prm->arg_type) * prm->argc);
+    ptr->arg_type = g_malloc(sizeof(*prm->arg_type) * prm->argc);
     if (ptr->arg_type == NULL) {
-      memfree(ptr->name);
-      memfree(ptr);
+      g_free(ptr->name);
+      g_free(ptr);
       return NULL;
     }
     memcpy(ptr->arg_type, prm->arg_type, sizeof(*prm->arg_type) * prm->argc);
@@ -808,9 +809,9 @@ math_equation_add_func(MathEquation *eq, const char *name, struct math_function_
 
   r = nhash_set_ptr(eq->function, name, ptr);
   if (r) {
-    memfree(ptr->name);
-    memfree(ptr->arg_type);
-    memfree(ptr);
+    g_free(ptr->name);
+    g_free(ptr->arg_type);
+    g_free(ptr);
     return NULL;
   }
 
@@ -927,7 +928,7 @@ expand_stack(MathEquation *eq, int size)
 
   if (eq->vbuf_size <= request_size) {
     n = (request_size / BUF_UNIT + 1) * BUF_UNIT;
-    ptr = realloc(eq->vbuf, sizeof(*ptr) * n);
+    ptr = g_realloc(eq->vbuf, sizeof(*ptr) * n);
     if (ptr == NULL)
       return 1;
     eq->vbuf = ptr;
@@ -1141,7 +1142,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   prev_num = eq->array_num;
 
   if (func->u.func.local_array_num > 0) {
-    local = memalloc(sizeof(*local) * func->u.func.local_array_num);
+    local = g_malloc(sizeof(*local) * func->u.func.local_array_num);
     if (local == NULL)
       return 1;
 
@@ -1159,7 +1160,7 @@ math_equation_call_user_func(MathFunctionCallExpression *exp, MathEquation *eq, 
   }
 
   if (expand_stack(eq, func->u.func.local_num)) {
-    memfree(local);
+    g_free(local);
     return 1;
   }
 
@@ -1236,7 +1237,7 @@ void
 math_equation_clear_variable(MathEquation *eq)
 {
   if (eq->vbuf) {
-    memfree(eq->vbuf);
+    g_free(eq->vbuf);
     eq->vnum = 0;
     eq->vbuf = NULL;
   }
@@ -1337,7 +1338,7 @@ check_array(MathEquation *eq, int id, int index)
 
     n = (i / BUF_UNIT + 1) * BUF_UNIT;
 
-    ptr = realloc(ary->data, sizeof(*ary->data) * n);
+    ptr = g_realloc(ary->data, sizeof(*ary->data) * n);
     if (ptr == NULL) {
       /* error: cannot allocate enough memory */
       return -1;

@@ -43,7 +43,7 @@ CREATE_NAME(Pref, DialogAdd)(GtkWidget *w, gpointer client_data)
     fcur = fcur->next;
   }
 
-  fnew = (struct LIST_TYPE *) memalloc(sizeof(struct LIST_TYPE));
+  fnew = (struct LIST_TYPE *) g_malloc(sizeof(struct LIST_TYPE));
   if (fnew == NULL) {
     return;
   }
@@ -62,7 +62,7 @@ CREATE_NAME(Pref, DialogAdd)(GtkWidget *w, gpointer client_data)
     } else {
       fprev->next = NULL;
     }
-    memfree(fnew);
+    g_free(fnew);
   }
   CREATE_NAME(Pref, DialogSetupItem)(d);
 }

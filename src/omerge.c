@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.14 2009/10/20 07:05:36 hito Exp $
+ * $Id: omerge.c,v 1.15 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <utime.h>
 #include <time.h>
+#include <glib.h>
 #ifndef WINDOWS
 #include <unistd.h>
 #else
@@ -49,8 +50,6 @@
 #define NAME "merge"
 #define PARENT "draw"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRFILE 100
 #define ERROPEN 101
@@ -83,13 +82,13 @@ mergeinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   greek=TRUE;
   n = 0;
 
-  ext = nstrdup("gra");
+  ext = g_strdup("gra");
 
   if (_putobj(obj,"zoom",inst,&zm)) return 1;
   if (_putobj(obj,"symbol_greek",inst,&greek)) return 1;
   if (_putobj(obj,"line_num",inst,&n)) return 1;
   if (_putobj(obj,"ext",inst,ext)) return 1;
-  if ((mergelocal=memalloc(sizeof(struct mergelocal)))==NULL) goto errexit;
+  if ((mergelocal=g_malloc(sizeof(struct mergelocal)))==NULL) goto errexit;
   if (_putobj(obj,"_local",inst,mergelocal)) goto errexit;
 
   mergelocal->storefd=NULL;
@@ -97,7 +96,7 @@ mergeinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 
 errexit:
-  memfree(mergelocal);
+  g_free(mergelocal);
   return 1;
 }
 
@@ -148,14 +147,14 @@ mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   else if (strcmp(" Ngraph GRA file",buf)==0) newgra=FALSE;
   else {
     error2(obj,ERRGRA,file);
-    memfree(buf);
+    g_free(buf);
     fclose(fd);
     return 1;
   }
-  memfree(buf);
+  g_free(buf);
   if (!newgra) {
     if ((rcode=fgetline(fd,&buf))==1) error2(obj,ERRGRA,file);
-    memfree(buf);
+    g_free(buf);
     if (rcode!=0) {
       fclose(fd);
       return 1;
@@ -170,11 +169,11 @@ mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     else rcode=GRAinputold(GC,buf,lm,tm,zm,greek);
     if (!rcode) {
       error2(obj,ERRGRAFM,buf);
-      memfree(buf);
+      g_free(buf);
       fclose(fd);
       return 1;
     }
-    memfree(buf);
+    g_free(buf);
     line++;
   }
   fclose(fd);
@@ -217,7 +216,7 @@ mergefile(struct objlist *obj,char *inst,char *rval,
   if (!ignorepath) return 0;
   file=(char *)(argv[2]);
   file2=getbasename(file);
-  memfree(file);
+  g_free(file);
   argv[2]=file2;
 
   if (clear_bbox(obj, inst))
@@ -233,7 +232,7 @@ mergetime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct stat buf;
   int style;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
@@ -250,7 +249,7 @@ mergedate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct stat buf;
   int style;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
@@ -269,7 +268,7 @@ mergestore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *buf;
   char *argv2[2];
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"_local",inst,&mergelocal);
   if (mergelocal->endstore) {
@@ -290,24 +289,24 @@ mergestore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     _getobj(obj,"time",inst,&time);
     if ((base=getbasename(file))==NULL) return 1;
     if ((mergelocal->storefd=nfopen(file,"rt"))==NULL) {
-      memfree(base);
+      g_free(base);
       return 1;
     }
-    if ((buf=memalloc(strlen(file)+50))==NULL) {
+    if ((buf=g_malloc(strlen(file)+50))==NULL) {
       fclose(mergelocal->storefd);
       mergelocal->storefd=NULL;
-      memfree(base);
+      g_free(base);
       return 1;
     }
     sprintf(buf,"merge::load_data '%s' '%s %s' <<'[EOF]'",base,date,time);
-    memfree(base);
+    g_free(base);
     *(char **)rval=buf;
     return 0;
   } else {
     if (fgetline(mergelocal->storefd,&buf)!=0) {
       fclose(mergelocal->storefd);
       mergelocal->storefd=NULL;
-      buf = nstrdup("[EOF]\n");
+      buf = g_strdup("[EOF]\n");
       if (buf == NULL) return 1;
       mergelocal->endstore=TRUE;
       *(char **)rval=buf;
@@ -334,30 +333,30 @@ mergeload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   s=(char *)argv[2];
   if ((file=getitok2(&s,&len," \t"))==NULL) return 1;
   if ((fullname=getfullpath(file))==NULL) {
-    memfree(file);
+    g_free(file);
     return 1;
   }
   _getobj(obj,"file",inst,&oldfile);
-  memfree(oldfile);
+  g_free(oldfile);
   _putobj(obj,"file",inst,fullname);
   if (gettimeval(s,&ftime)) {
-    memfree(file);
+    g_free(file);
     return 1;
   }
   if (access(file,R_OK)!=0) mkdata=TRUE;
   else {
-    if ((mes=memalloc(strlen(file)+256))==NULL) {
-      memfree(file);
+    if ((mes=g_malloc(strlen(file)+256))==NULL) {
+      g_free(file);
       return 1;
     }
     sprintf(mes,"`%s' Overwrite existing file?",file);
     mkdata=inputyn(mes);
-    memfree(mes);
+    g_free(mes);
   }
   if (mkdata) {
     if ((fp=nfopen(file,"wt"))==NULL) {
       error2(obj,ERROPEN,file);
-      memfree(file);
+      g_free(file);
       return 1;
     }
     while (nread(stdinfd(),buf,1)==1) fputc(buf[0],fp);
@@ -366,7 +365,7 @@ mergeload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     tm.modtime=ftime;
     utime(file,&tm);
   }
-  memfree(file);
+  g_free(file);
   return 0;
 }
 
@@ -379,7 +378,7 @@ mergestoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *buf;
   char *argv2[2];
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   _getobj(obj,"_local",inst,&mergelocal);
   if (mergelocal->endstore) {
@@ -399,13 +398,13 @@ mergestoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     _getobj(obj,"date",inst,&date);
     _getobj(obj,"time",inst,&time);
     if ((base=getbasename(file))==NULL) return 1;
-    if ((buf=memalloc(strlen(file)+50))==NULL) {
+    if ((buf=g_malloc(strlen(file)+50))==NULL) {
       mergelocal->storefd=NULL;
-      memfree(base);
+      g_free(base);
       return 1;
     }
     sprintf(buf,"merge::load_dummy '%s' '%s %s'\n",base,date,time);
-    memfree(base);
+    g_free(base);
     *(char **)rval=buf;
     mergelocal->endstore=TRUE;
     return 0;
@@ -422,11 +421,11 @@ mergeloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   s=(char *)argv[2];
   if ((file=getitok2(&s,&len," \t"))==NULL) return 1;
   if ((fullname=getfullpath(file))==NULL) {
-    memfree(file);
+    g_free(file);
     return 1;
   }
   _getobj(obj,"file",inst,&oldfile);
-  memfree(oldfile);
+  g_free(oldfile);
   _putobj(obj,"file",inst,fullname);
   return 0;
 }
@@ -462,17 +461,17 @@ mergebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (strcmp(graf,buf)==0) newgra=TRUE;
   else if (strcmp(" Ngraph GRA file",buf)==0) newgra=FALSE;
   else {
-    memfree(buf);
+    g_free(buf);
     fclose(fd);
     return 1;
   }
-  memfree(buf);
+  g_free(buf);
   if (!newgra) {
     if ((rcode=fgetline(fd,&buf))!=0) {
       fclose(fd);
       return 1;
     }
-    memfree(buf);
+    g_free(buf);
   }
   GRAinitbbox(&bbox);
   if ((GC=_GRAopencallback(GRAboundingbox,NULL,&bbox))==-1) {
@@ -489,11 +488,11 @@ mergebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (newgra) rcode=GRAinput(GC,buf,lm,tm,zm);
     else rcode=GRAinputold(GC,buf,lm,tm,zm,greek);
     if (!rcode) {
-      memfree(buf);
+      g_free(buf);
       fclose(fd);
       return 1;
     }
-    memfree(buf);
+    g_free(buf);
   }
   fclose(fd);
   _GRAclose(GC);

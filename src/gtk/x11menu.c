@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.108 2009/11/06 11:09:55 hito Exp $
+ * $Id: x11menu.c,v 1.109 2009/11/16 09:13:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1659,7 +1659,7 @@ create_cursor(void)
 {
   unsigned int i;
 
-  NgraphApp.cursor = malloc(sizeof(GdkCursor *) * CURSOR_TYPE_NUM);
+  NgraphApp.cursor = g_malloc(sizeof(GdkCursor *) * CURSOR_TYPE_NUM);
   if (NgraphApp.cursor == NULL)
     return 1;
 
@@ -1679,7 +1679,7 @@ free_cursor(void)
     gdk_cursor_unref(NgraphApp.cursor[i]);
     NgraphApp.cursor[i] = NULL;
   }
-  free(NgraphApp.cursor);
+  g_free(NgraphApp.cursor);
   NgraphApp.cursor = NULL;
 }
 
@@ -2278,13 +2278,13 @@ application(char *file)
   if (NgraphApp.CoordWin.Win)
     gtk_widget_destroy(NgraphApp.CoordWin.Win);
 
-  memfree(NgraphApp.InfoWin.str);
+  g_free(NgraphApp.InfoWin.str);
   NgraphApp.InfoWin.str = NULL;
 
-  memfree(NgraphApp.CoordWin.str);
+  g_free(NgraphApp.CoordWin.str);
   NgraphApp.CoordWin.str = NULL;
 
-  memfree(NgraphApp.FileName);
+  g_free(NgraphApp.FileName);
   NgraphApp.FileName = NULL;
 
   gtk_widget_destroy(TopLevel);
@@ -2587,20 +2587,20 @@ script_exec(GtkWidget *w, gpointer client_data)
   if (fcur->script == NULL)
     return;
 
-  name = nstrdup(fcur->script);
+  name = g_strdup(fcur->script);
   if (name == NULL)
     return;
 
   newid = newobj(shell);
   if (newid < 0) {
-    memfree(name);
+    g_free(name);
     return;
   }
 
   arrayinit(&sarray, sizeof(char *));
   if (arrayadd(&sarray, &name) == NULL) {
     delobj(shell, newid);
-    memfree(name);
+    g_free(name);
     arraydel2(&sarray);
     return;
   }
@@ -2609,7 +2609,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   while ((s = getitok2(&option, &len, " \t")) != NULL) {
     if (arrayadd(&sarray, &s) == NULL) {
       delobj(shell, newid);
-      memfree(s);
+      g_free(s);
       arraydel2(&sarray);
       return;
     }

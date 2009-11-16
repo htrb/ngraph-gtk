@@ -1,5 +1,5 @@
 /* 
- * $Id: opolygon.c,v 1.9 2009/08/17 07:09:45 hito Exp $
+ * $Id: opolygon.c,v 1.10 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -40,8 +40,6 @@
 #define NAME "polygon"
 #define PARENT "legend"
 #define OVERSION  "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 static char *polyfillmode[]={
   N_("empty"),

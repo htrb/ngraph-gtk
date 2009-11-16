@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.h,v 1.3 2009/03/24 09:23:28 hito Exp $
+ * $Id: nstring.h,v 1.4 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,7 +28,6 @@
 #define CHK_STR(s) (((s) == NULL) ? "" : (s))
 
 char *nstrnew(void);
-char *nstrdup(const char *src);
 char *nstrccat(char *po,char ch);
 char *nstrcat(char *po,char *s);
 char *nstrncat(char *po,char *s,size_t n);

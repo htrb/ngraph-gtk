@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.15 2009/07/26 13:01:40 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.16 2009/11/16 09:13:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -74,7 +74,7 @@ gra2cairofile_init(struct objlist *obj, char *inst, char *rval, int argc, char *
 
  Err:
   local = gra2cairo_free(obj, inst);
-  memfree(local);
+  g_free(local);
 
   return 1;
 }

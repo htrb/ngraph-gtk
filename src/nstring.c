@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.c,v 1.8 2009/10/20 07:05:36 hito Exp $
+ * $Id: nstring.c,v 1.9 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,42 +28,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <glib.h>
+
 #include "object.h"
 #include "nstring.h"
 
 #define NSTRLEN 0x400
-
-#define TRUE 1
-#define FALSE 0
 
 char *
 nstrnew(void)
 {
   char *po;
 
-  if ((po=memalloc(NSTRLEN))==NULL) return NULL;
+  if ((po=g_malloc(NSTRLEN))==NULL) return NULL;
   po[0]='\0';
   return po;
 }
-
-char *
-nstrdup(const char *src)
-{
-  char *dest;
-
-  if (src == NULL)
-    return NULL;
-
-  dest = memalloc(strlen(src) + 1);
-
-  if (dest == NULL)
-    return NULL;
-
-  strcpy(dest, src);
-
-  return dest;
-}
-
 
 char *
 nstrccat(char *po,char ch)
@@ -75,8 +55,8 @@ nstrccat(char *po,char ch)
   len=strlen(po);
   num=len/NSTRLEN;
   if (len%NSTRLEN==NSTRLEN-1) {
-    if ((po2=memrealloc(po,NSTRLEN*(num+2)))==NULL) {
-      memfree(po);
+    if ((po2=g_realloc(po,NSTRLEN*(num+2)))==NULL) {
+      g_free(po);
       return NULL;
     }
     po=po2;
@@ -94,9 +74,9 @@ nstraddchar(char *po, int len, char ch)
   if (len >= NSTRLEN - 1 && ! ((len + 1) & (NSTRLEN - 1))) {
     char *po2;
 
-    po2 = memrealloc(po, NSTRLEN * (len / NSTRLEN + 2));
+    po2 = g_realloc(po, NSTRLEN * (len / NSTRLEN + 2));
     if (po2 == NULL) {
-      memfree(po);
+      g_free(po);
       return NULL;
     }
     po = po2;
@@ -268,7 +248,7 @@ getitok2(char **s, int *len, char *ifs)
   char *po,*s2;
 
   if ((s2 = getitok(s, len, ifs))==NULL) return NULL;
-  if ((po=memalloc(*len+1))==NULL) {
+  if ((po=g_malloc(*len+1))==NULL) {
     *len=-1;
     return NULL;
   }
@@ -316,7 +296,7 @@ getitok4(char **s,int *len,char *ifs)
   char *po,*s2;
 
   if ((s2=getitok3(s,len,ifs))==NULL) return NULL;
-  if ((po=memalloc(*len+1))==NULL) {
+  if ((po=g_malloc(*len+1))==NULL) {
     *len=-1;
     return NULL;
   }

@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.55 2009/11/03 01:18:52 hito Exp $
+ * $Id: ogra2cairo.c,v 1.56 2009/11/16 09:13:05 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -117,8 +117,8 @@ free_font_map(struct fontmap *fcur)
     pango_font_description_free(fcur->font);
   }
 
-  memfree(fcur->fontalias);
-  memfree(fcur->fontname);
+  g_free(fcur->fontalias);
+  g_free(fcur->fontname);
 
   prev = NULL;
   cur = Gra2cairoConf->fontmap_list_root;
@@ -135,7 +135,7 @@ free_font_map(struct fontmap *fcur)
     cur = cur->next;
   }
 
-  memfree(fcur);
+  g_free(fcur);
 }
 
 static struct fontmap *
@@ -151,13 +151,13 @@ create_font_map(char *fontalias, char *fontname, int type, int twobyte, struct f
     free_font_map(fnew);
   }
 
-  fnew = memalloc(sizeof(struct fontmap));
+  fnew = g_malloc(sizeof(struct fontmap));
   if (fnew == NULL) {
     return NULL;
   }
 
   if (nhash_set_ptr(Gra2cairoConf->fontmap, fontalias, fnew)) {
-    memfree(fnew);
+    g_free(fnew);
     return NULL;
   }
 
@@ -190,7 +190,7 @@ gra2cairo_save_config(void)
 
   arrayinit(&conf, sizeof(char *));
   if (gra2cairo_get_fontmap_num() == 0) {
-    buf = nstrdup("font_map");
+    buf = g_strdup("font_map");
     if (buf) {
       arrayadd(&conf, &buf);
       removeconfig(CAIROCONF, &conf);
@@ -198,14 +198,11 @@ gra2cairo_save_config(void)
   } else {
     fcur = Gra2cairoConf->fontmap_list_root;
     while (fcur) {
-      char *ptr;
-      ptr = g_strdup_printf("font_map=%s,%s,%d,%s",
+      buf = g_strdup_printf("font_map=%s,%s,%d,%s",
 			    fcur->fontalias,
 			    gra2cairo_get_font_type_str(fcur->type),
 			    (fcur->twobyte) ? 1 : 0,
 			    fcur->fontname);
-      buf = nstrdup(ptr);
-      g_free(ptr);
       if (buf) {
 	arrayadd(&conf, &buf);
       }
@@ -248,34 +245,34 @@ loadconfig(void)
 	    type = i;
 	  }
 	}
-	memfree(f2);
+	g_free(f2);
 
 	val = strtol(f3, &endptr, 10);
-	memfree(f3);
+	g_free(f3);
 
 	fnew = create_font_map(f1, f4, type, val, fprev);
 	if (fnew == NULL) {
-	  memfree(tok);
-	  memfree(f1);
-	  memfree(f2);
-	  memfree(f3);
-	  memfree(f4);
+	  g_free(tok);
+	  g_free(f1);
+	  g_free(f2);
+	  g_free(f3);
+	  g_free(f4);
 	  closeconfig(fp);
 	  return 1;
 	}
 
 	fprev = fnew;
       } else {
-	memfree(f1);
-	memfree(f2);
-	memfree(f3);
-	memfree(f4);
+	g_free(f1);
+	g_free(f2);
+	g_free(f3);
+	g_free(f4);
       }
     } else {
       fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, CAIROCONF);
     }
-    memfree(tok);
-    memfree(str);
+    g_free(tok);
+    g_free(str);
   }
   closeconfig(fp);
   return 0;
@@ -303,7 +300,7 @@ free_fonts(struct gra2cairo_config *conf)
 static int
 init_conf(void)
 {
-  Gra2cairoConf = malloc(sizeof(*Gra2cairoConf));
+  Gra2cairoConf = g_malloc(sizeof(*Gra2cairoConf));
   if (Gra2cairoConf == NULL)
     return 1;
 
@@ -320,7 +317,7 @@ init_conf(void)
 
   Gra2cairoConf->fontmap = nhash_new();
   if (Gra2cairoConf->fontmap == NULL) {
-    free(Gra2cairoConf);
+    g_free(Gra2cairoConf);
     Gra2cairoConf = NULL;
     return 1;
   }
@@ -331,7 +328,7 @@ init_conf(void)
   if (loadconfig()) {
     free_fonts(Gra2cairoConf);
     nhash_free(Gra2cairoConf->fontmap);
-    free(Gra2cairoConf);
+    g_free(Gra2cairoConf);
     Gra2cairoConf = NULL;
     return 1;
   }
@@ -348,7 +345,7 @@ free_conf(void)
   free_fonts(Gra2cairoConf);
   nhash_free(Gra2cairoConf->fontmap);
 
-  free(Gra2cairoConf);
+  g_free(Gra2cairoConf);
   Gra2cairoConf = NULL;
 }
 
@@ -405,8 +402,8 @@ gra2cairo_update_fontmap(const char *fontalias, const char *fontname, int type, 
       return;
 
   if (strcmp(fontname, fcur->fontname)) {
-    memfree(fcur->fontname);
-    fcur->fontname = nstrdup(fontname);
+    g_free(fcur->fontname);
+    fcur->fontname = g_strdup(fontname);
   }
 
   if (fcur->font) {
@@ -423,13 +420,13 @@ gra2cairo_add_fontmap(const char *fontalias, const char *fontname, int type, int
   struct fontmap *fnew;
   char *alias, *name;
 
-  alias = nstrdup(fontalias);
+  alias = g_strdup(fontalias);
   if (alias == NULL)
     return;
   
-  name = nstrdup(fontname);
+  name = g_strdup(fontname);
   if (name == NULL) {
-    memfree(alias);
+    g_free(alias);
     return;
   }
 
@@ -451,7 +448,7 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
     goto errexit;
   }
 
-  local = memalloc(sizeof(struct gra2cairo_local));
+  local = g_malloc(sizeof(struct gra2cairo_local));
   if (local == NULL)
     goto errexit;
 
@@ -479,7 +476,7 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   if (Instance == 0)
     free_conf();
 
-  memfree(local);
+  g_free(local);
   return 1;
 }
 
@@ -516,7 +513,7 @@ gra2cairo_free(struct objlist *obj, char *inst)
   }
 
   if (local->fontalias) {
-    memfree(local->fontalias);
+    g_free(local->fontalias);
   }
 
   Instance--;
@@ -894,7 +891,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     if (cpar[1] == 0) {
       cairo_set_dash(local->cairo, NULL, 0, 0);
     } else {
-      dashlist = memalloc(sizeof(* dashlist) * cpar[1]);
+      dashlist = g_malloc(sizeof(* dashlist) * cpar[1]);
       if (dashlist == NULL)
 	break;
       for (i = 0; i < cpar[1]; i++) {
@@ -904,7 +901,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 	}
       }
       cairo_set_dash(local->cairo, dashlist, cpar[1], 0);
-      memfree(dashlist);
+      g_free(dashlist);
     }
 
     cairo_set_line_width(local->cairo, mxd2pw(local, cpar[2]));
@@ -1042,8 +1039,8 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     }
     break;
   case 'F':
-    memfree(local->fontalias);
-    local->fontalias = nstrdup(cstr);
+    g_free(local->fontalias);
+    local->fontalias = g_strdup(cstr);
     break;
   case 'H':
     fontspace = cpar[2] / 72.0 * 25.4;
@@ -1068,7 +1065,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     if (local->loadfont == NULL)
       break;
 
-    tmp = strdup(cstr);
+    tmp = g_strdup(cstr);
     if (tmp == NULL)
       break;
 
@@ -1104,7 +1101,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 
     tmp2= iso8859_to_utf8(tmp);
     if (tmp2 == NULL) {
-      free(tmp);
+      g_free(tmp);
       break;
     }
 
@@ -1113,13 +1110,13 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 
       ptr = ascii2greece(tmp2);
       if (ptr) {
-	free(tmp2);
+	g_free(tmp2);
 	tmp2 = ptr;
       }
     }
     draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
-    free(tmp2);
-    free(tmp);
+    g_free(tmp2);
+    g_free(tmp);
     break;
   case 'K':
     if (local->loadfont == NULL)
@@ -1129,7 +1126,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     if (tmp2 == NULL) 
       break;
     draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
-    free(tmp2);
+    g_free(tmp2);
     break;
   default:
     break;
@@ -1190,7 +1187,7 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
 
   draw_str(local, FALSE, tmp, fcur, size, 0, &width, NULL, NULL);
   *(int *) rval = mxp2dw(local, width);
-  free(tmp);
+  g_free(tmp);
 
   local->fontsin = s;
   local->fontcos = c;
@@ -1353,13 +1350,15 @@ addgra2cairo()
   };
   int i, n;
 
-  n = sizeof(errcode) / sizeof(*errcode);
+  if (Gra2CairoErrMsgs == NULL) {
+    n = sizeof(errcode) / sizeof(*errcode);
 
-  Gra2CairoErrMsgs = malloc(sizeof(*Gra2CairoErrMsgs) * n);
-  Gra2CairoErrMsgNum = n;
+    Gra2CairoErrMsgs = g_malloc(sizeof(*Gra2CairoErrMsgs) * n);
+    Gra2CairoErrMsgNum = n;
 
-  for (i = 0; i < n; i++) {
-    Gra2CairoErrMsgs[i] = strdup(cairo_status_to_string(errcode[i]));
+    for (i = 0; i < n; i++) {
+      Gra2CairoErrMsgs[i] = g_strdup(cairo_status_to_string(errcode[i]));
+    }
   }
 
   return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, gra2cairo, n, Gra2CairoErrMsgs, NULL, NULL);

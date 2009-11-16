@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.30 2009/11/06 03:50:13 hito Exp $
+ * $Id: ofit.c,v 1.31 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "nstring.h"
 #include "ioutil.h"
@@ -42,8 +44,6 @@
 #define NAME "fit"
 #define PARENT "object"
 #define OVERSION  "1.00.01"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRSYNTAX 100
 #define ERRILLEGAL 101
@@ -126,7 +126,7 @@ fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"converge",inst,&converge)) return 1;
   if (_putobj(obj,"display",inst,&disp)) return 1;
 
-  if ((fitlocal=memalloc(sizeof(struct fitlocal)))==NULL) return 1;
+  if ((fitlocal=g_malloc(sizeof(struct fitlocal)))==NULL) return 1;
   fitlocal->codef=NULL;
   for (i=0;i<10;i++) fitlocal->codedf[i]=NULL;
 #if ! NEW_MATH_CODE 
@@ -135,7 +135,7 @@ fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   fitlocal->equation=NULL;
   fitlocal->oid = oid;
   if (_putobj(obj,"_local",inst,fitlocal)) {
-    memfree(fitlocal);
+    g_free(fitlocal);
     return 1;
   }
   return 0;
@@ -149,15 +149,15 @@ fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"_local",inst,&fitlocal);
-  memfree(fitlocal->equation);
+  g_free(fitlocal->equation);
 #if NEW_MATH_CODE 
   math_equation_free(fitlocal->codef);
   for (i = 0; i < 10; i++)
     math_equation_free(fitlocal->codedf[i]);
 #else
-  memfree(fitlocal->codef);
+  g_free(fitlocal->codef);
   arrayfree(fitlocal->needdata);
-  for (i=0;i<10;i++) memfree(fitlocal->codedf[i]);
+  for (i=0;i<10;i++) g_free(fitlocal->codedf[i]);
 #endif
   return 0;
 }
@@ -212,7 +212,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
 	err_msg = math_err_get_error_message(code, math, rcode);
 	if (err_msg) {
 	  error22(obj, ERRUNKNOWN, field, err_msg);
-	  free(err_msg);
+	  g_free(err_msg);
 	} else {
 	  error(obj, ERRSYNTAX);
 	}
@@ -243,7 +243,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
       math_equation_free(fitlocal->codef);
       fitlocal->codef = code;
     } else {
-      memfree(fitlocal->codedf[field[10] - '0']);
+      g_free(fitlocal->codedf[field[10] - '0']);
       fitlocal->codedf[field[10] - '0'] = code;
     }
 #else
@@ -268,19 +268,19 @@ fitput(struct objlist *obj,char *inst,char *rval,
       needdata=NULL;
     }
     if (field[0]=='u') {
-      memfree(fitlocal->codef);
+      g_free(fitlocal->codef);
       fitlocal->codef=code;
       arrayfree(fitlocal->needdata);
       fitlocal->needdata=needdata;
     } else {
-      memfree(fitlocal->codedf[field[10]-'0']);
+      g_free(fitlocal->codedf[field[10]-'0']);
       fitlocal->codedf[field[10]-'0']=code;
     }
 #endif
   }
   _getobj(obj,"equation",inst,&equation);
   if (_putobj(obj,"equation",inst,NULL)) return 1;
-  memfree(equation);
+  g_free(equation);
   return 0;
 }
 
@@ -389,7 +389,7 @@ fitpoly(struct fitlocal *fitlocal,
   fitlocal->num=num;
 
 #define EQUATION_BUF_SIZE 512
-  if ((equation=memalloc(EQUATION_BUF_SIZE))==NULL) return 1;
+  if ((equation=g_malloc(EQUATION_BUF_SIZE))==NULL) return 1;
   equation[0]='\0';
   j=0;
 
@@ -820,7 +820,7 @@ errexit:
       }
     }
     equation_length = strlen(func) + 25 * pnum + 1;
-    equation=memalloc(equation_length);
+    equation=g_malloc(equation_length);
     if (equation == NULL)
       return 1;
     j = 0;
@@ -896,12 +896,12 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"equation",inst,&equation);
-  memfree(equation);
+  g_free(equation);
   if (_putobj(obj,"equation",inst,NULL)) return 1;
-  equation = nstrdup("undef");
+  equation = g_strdup("undef");
   if (equation == NULL) return 1;
   if (_putobj(obj,"equation",inst,equation)) {
-    memfree(equation);
+    g_free(equation);
     return 1;
   }
   num=0;
@@ -1078,7 +1078,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   _getobj(obj,"equation",inst,&equation);
   if (_putobj(obj,"equation",inst,fitlocal->equation)) return 1;
-  memfree(equation);
+  g_free(equation);
   fitlocal->equation=NULL;
   return 0;
 }
@@ -1100,7 +1100,7 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
 
-  memfree(*(char **)rval);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
 
   x = * (double *) argv[2];
@@ -1137,7 +1137,7 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 
   snprintf(buf, sizeof(buf), "%.15e", val.val);
-  ptr = nstrdup(buf);
+  ptr = g_strdup(buf);
   * (char **) rval = ptr;
 
   return 0;
@@ -1150,7 +1150,7 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (id < 0)
     return 1;
 
-  ptr = nstrdup(equation);
+  ptr = g_strdup(equation);
   if (ptr == NULL) {
     delobj(mathobj, id);
     return 1;
@@ -1162,7 +1162,7 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   r = getobj(mathobj, "calc", id, 0, NULL, &y);
   if (r >= 0) {
     snprintf(buf, sizeof(buf), "%.15e", y);
-    ptr = nstrdup(buf);
+    ptr = g_strdup(buf);
     * (char **) rval = ptr;
   }
 

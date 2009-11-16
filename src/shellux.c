@@ -1,5 +1,5 @@
 /* 
- * $Id: shellux.c,v 1.7 2009/06/02 04:24:46 hito Exp $
+ * $Id: shellux.c,v 1.8 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,9 +42,6 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "shellux.h"
-
-#define TRUE  1
-#define FALSE 0
 
 int 
 cmtrue(struct nshell *nshell,int argc,char **argv)

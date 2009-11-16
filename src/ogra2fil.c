@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2fil.c,v 1.4 2009/03/24 08:24:26 hito Exp $
+ * $Id: ogra2fil.c,v 1.5 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,8 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <stdio.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
@@ -36,9 +38,6 @@
 #define NAME "gra2file"
 #define PARENT "gra2"
 #define OVERSION  "1.00.00"
-
-#define TRUE  1
-#define FALSE 0
 
 #define ERRFOPEN 100
 
@@ -58,13 +57,13 @@ gra2finit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct gra2flocal *gra2flocal;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  if ((gra2flocal=memalloc(sizeof(struct gra2flocal)))==NULL) goto errexit;
+  if ((gra2flocal=g_malloc(sizeof(struct gra2flocal)))==NULL) goto errexit;
   if (_putobj(obj,"_local",inst,gra2flocal)) goto errexit;
   gra2flocal->fil=NULL;
   return 0;
 
 errexit:
-  memfree(gra2flocal);
+  g_free(gra2flocal);
   return 1;
 }
 

@@ -26,6 +26,37 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
   return label;
 }
 
+int
+entry_set_filename(GtkWidget *w, char *filename)
+{
+  if (! g_utf8_validate(filename, -1, NULL)) {
+    char *utf8filename;
+
+    utf8filename = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
+    if (utf8filename == NULL) {
+      return 1;
+    }
+    filename = utf8filename;
+  }
+
+  gtk_entry_set_text(GTK_ENTRY(w), filename);
+  return 0;
+}
+
+char *
+entry_get_filename(GtkWidget *w)
+{
+  char *filename;
+  const char *utf8filename;
+
+  utf8filename = gtk_entry_get_text(GTK_ENTRY(w));
+  if (utf8filename == NULL)
+    return NULL;
+
+  filename = g_filename_from_utf8(utf8filename, -1, NULL, NULL, NULL);
+  return filename;
+}
+
 GtkWidget *
 get_parent_window(GtkWidget *w)
 {
@@ -58,8 +89,8 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
   if (nGetOpenFileName(get_parent_window(GTK_WIDGET(w)), obj->name, ext, NULL,
 		       gtk_entry_get_text(w),
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
-    gtk_entry_set_text(w, file);
-    free (file);
+    entry_set_filename(GTK_WIDGET(w), file);
+    g_free(file);
   }
 }
 #endif

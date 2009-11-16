@@ -1,5 +1,5 @@
 /* 
- * $Id: odraw.c,v 1.13 2009/11/06 03:50:13 hito Exp $
+ * $Id: odraw.c,v 1.14 2009/11/16 09:13:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -27,6 +27,8 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <glib.h>
+
 #include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
@@ -38,8 +40,6 @@
 #define NAME "draw"
 #define PARENT "object"
 #define OVERSION "1.00.00"
-#define TRUE  1
-#define FALSE 0
 
 #define ERRILGC 100
 #define ERRGCOPEN 101
@@ -190,7 +190,7 @@ pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     else if (path==2) name=getrelativepath(file);
     else if (path==3) name=getbasename(file);
     else if (path==0) {
-      if ((name=memalloc(strlen(file)+1))==NULL) goto errexit;
+      if ((name=g_malloc(strlen(file)+1))==NULL) goto errexit;
       strcpy(name,file);
     }
   }
@@ -201,23 +201,23 @@ pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if ((s=nstrcat(s,argv[0]))==NULL) goto errexit;
   if ((s=nstrcat(s,"::file="))==NULL) goto errexit;
   if ((valstr=getvaluestr(obj,"file",&name,FALSE,TRUE))==NULL) {
-    memfree(s);
+    g_free(s);
     goto errexit;
   }
   if ((s=nstrcat(s,valstr))==NULL) {
-    memfree(valstr);
+    g_free(valstr);
     goto errexit;
   }
-  memfree(valstr);
+  g_free(valstr);
   if ((s=nstrccat(s,'\n'))==NULL) goto errexit;
-  memfree(name);
-  memfree(*(char **)rval);
+  g_free(name);
+  g_free(*(char **)rval);
   *(char **)rval=s;
   return 0;
 
 errexit:
-  memfree(name);
-  memfree(*(char **)rval);
+  g_free(name);
+  g_free(*(char **)rval);
   *(char **)rval=NULL;
   return 1;
 }

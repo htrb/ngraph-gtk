@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.174 2009/11/06 11:09:55 hito Exp $
+ * $Id: x11view.c,v 1.175 2009/11/16 09:13:06 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -240,7 +240,7 @@ CopyFocusedObjects(void)
   num = 0;
   for (i = 0; i < n; i++) {
     if (focus[i]->obj == axis) {
-      memfree(str);
+      g_free(str);
       return 1;
     }
 
@@ -261,7 +261,7 @@ CopyFocusedObjects(void)
 	continue;
 
       ptr = nstrcat(str, tmp);
-      memfree(tmp);
+      g_free(tmp);
     } else {
       ptr = nstrcat(str, s);
     }
@@ -271,7 +271,7 @@ CopyFocusedObjects(void)
     if (ptr) {
       str = ptr;
     } else {
-      memfree(str);
+      g_free(str);
       return 1;
     }
     num++;
@@ -280,7 +280,7 @@ CopyFocusedObjects(void)
     clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text(clipboard, str, -1);
   }
-  memfree(str);
+  g_free(str);
 
   return 0;
 }
@@ -637,7 +637,7 @@ data_dropped(char **filenames, int num, int file_type)
     if (fname == NULL)
       continue;
 
-    name = nstrdup(fname);
+    name = g_strdup(fname);
     g_free(fname);
 
     if (name == NULL) {
@@ -662,7 +662,7 @@ data_dropped(char **filenames, int num, int file_type)
     }
 
     if (ret) {
-      memfree(name);
+      g_free(name);
       continue;
     }
   }
@@ -675,7 +675,7 @@ data_dropped(char **filenames, int num, int file_type)
 static int
 text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 {
-  char *inst, *tmp, *ptr;
+  char *inst, *ptr;
   double zoom = Menulocal.PaperZoom / 10000.0;
   struct objlist *obj;
   int id, x1, y1, r, i, j, l;
@@ -686,7 +686,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     return 1;
 
   l = strlen(str);
-  ptr = malloc(l * 2);
+  ptr = g_malloc(l * 2 + 1);
 
   if (ptr == NULL)
     return 1;
@@ -715,29 +715,21 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 
 #ifdef JAPANESE
   {
-    char *tmp2;
+    char *tmp;
 
-    tmp2 = utf8_to_sjis(ptr);
-    if (tmp2 == NULL) {
-      free(ptr);
+    tmp = utf8_to_sjis(ptr);
+    g_free(ptr);
+    if (tmp == NULL) {
       return 1;
     }
 
-    tmp = nstrdup(tmp2);
-    free(tmp2);
+    ptr = tmp;
   }
-#else
-  tmp = nstrdup(ptr);
 #endif
 
-  free(ptr);
-  if (tmp == NULL) {
-    return 1;
-  }
-    
   id = newobj(obj);
   if (id < 0) {
-    memfree(tmp);
+    g_free(ptr);
     return 1;
   }
 
@@ -749,7 +741,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 
   _putobj(obj, "x", inst, &x1);
   _putobj(obj, "y", inst, &y1);
-  _putobj(obj, "text", inst, tmp);
+  _putobj(obj, "text", inst, ptr);
 
   PaintLock= TRUE;
 
@@ -961,7 +953,7 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
     gtk_clipboard_set_text(clip, str, -1);
   }
 
-  memfree(str);
+  g_free(str);
 
   g_list_foreach(list, free_tree_path_cb, NULL);
   g_list_free(list);
@@ -1752,7 +1744,7 @@ AddList(struct objlist *obj, char *inst)
     num = arraynum(draw);
   }
 
-  objlist = (struct objlist **) memalloc(sizeof(struct objlist *) * num);
+  objlist = (struct objlist **) g_malloc(sizeof(struct objlist *) * num);
   if (objlist == NULL)
     return;
 
@@ -1779,7 +1771,7 @@ AddList(struct objlist *obj, char *inst)
       _getobj(obj2, "id", inst2, &id2);
       if (id2 > id) {
 	addi = i;
-	memfree(objlist);
+	g_free(objlist);
 	mx_inslist(Menulocal.obj, Menulocal.inst, aobj, ainst, afield, addi);
 	if (draw != &(Menulocal.drawrable)) {
 	  arraydel2(draw);
@@ -1788,7 +1780,7 @@ AddList(struct objlist *obj, char *inst)
       }
     } else if (j > po) {
       addi = i;
-      memfree(objlist);
+      g_free(objlist);
       mx_inslist(Menulocal.obj, Menulocal.inst, aobj, ainst, afield, addi);
       if (draw != &(Menulocal.drawrable)) {
 	arraydel2(draw);
@@ -1798,7 +1790,7 @@ AddList(struct objlist *obj, char *inst)
     i++;
   }
   addi = i;
-  memfree(objlist);
+  g_free(objlist);
   mx_inslist(Menulocal.obj, Menulocal.inst, aobj, ainst, afield, addi);
   if (draw != &(Menulocal.drawrable))
     arraydel2(draw);
@@ -2900,7 +2892,7 @@ mouse_down_set_points(unsigned int state, struct Viewer *d, GdkGC *dc, int n)
   CheckGrid(TRUE, state, &x1, &y1, NULL);
 
   for (i = 0; i < n; i++) {
-    po = (struct Point *) memalloc(sizeof(struct Point));
+    po = (struct Point *) g_malloc(sizeof(struct Point));
     if (po) {
       po->x = x1;
       po->y = y1;
@@ -3309,7 +3301,7 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   }
 
   if ((num < 2) || (po->x != x1) || (po->y != y1)) {
-    po = (struct Point *) memalloc(sizeof(struct Point));
+    po = (struct Point *) g_malloc(sizeof(struct Point));
     if (po) {
       po->x = x1;
       po->y = y1;
@@ -3802,7 +3794,7 @@ create_axis(struct Viewer *d, GdkGC *dc)
 	if (idg >= 0) {
 	  getobj(obj, "oid", idx, 0, NULL, &oidx);
 
-	  ref = memalloc(ID_BUF_SIZE);
+	  ref = g_malloc(ID_BUF_SIZE);
 	  if (ref) {
 	    snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidx);
 	    putobj(obj2, "axis_x", idg, ref);
@@ -3810,7 +3802,7 @@ create_axis(struct Viewer *d, GdkGC *dc)
 
 	  getobj(obj, "oid", idy, 0, NULL, &oidy);
 
-	  ref = memalloc(ID_BUF_SIZE);
+	  ref = g_malloc(ID_BUF_SIZE);
 	  if (ref) {
 	    snprintf(ref, ID_BUF_SIZE, "axis:^%d", oidy);
 	    putobj(obj2, "axis_y", idg, ref);
@@ -5132,7 +5124,7 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   if (r != CHECK_FOCUSED_OBJ_NOT_FOUND)
     return FALSE;
 
-  focus = (struct FocusObj *) memalloc(sizeof(struct FocusObj));
+  focus = (struct FocusObj *) g_malloc(sizeof(struct FocusObj));
   if (! focus)
     return FALSE;
 
@@ -6139,7 +6131,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, char *inst)
 	ncopyobj(obj, idu2, idu);
 	inst2 = chkobjinst(obj, idu2);
 	if (idx2 >= 0) {
-	  axisx = (char *) memalloc(ID_BUF_SIZE);
+	  axisx = (char *) g_malloc(ID_BUF_SIZE);
 	  if (axisx) {
 	    snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
 	    putobj(obj, "reference", idu2, axisx);
@@ -6156,7 +6148,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, char *inst)
 	ncopyobj(obj, idr2, idr);
 	inst2 = chkobjinst(obj, idr2);
 	if (idy2 >= 0) {
-	  axisy = (char *) memalloc(ID_BUF_SIZE);
+	  axisy = (char *) g_malloc(ID_BUF_SIZE);
 	  if(axisy) {
 	    snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
 	    putobj(obj, "reference", idr2, axisy);
@@ -6199,14 +6191,14 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, char *inst)
 	  ncopyobj(dobj, idg2, idg);
 	  inst2 = chkobjinst(dobj, idg2);
 	  if (idx2 >= 0 && idu2 >= 0) {
-	    axisx = (char *) memalloc(ID_BUF_SIZE);
+	    axisx = (char *) g_malloc(ID_BUF_SIZE);
 	    if (axisx) {
 	      snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
 	      putobj(dobj, "axis_x", idg2, axisx);
 	    }
 	  }
 	  if (idy2 >= 0 && idr2 >= 0) {
-	    axisy = (char *) memalloc(ID_BUF_SIZE);
+	    axisy = (char *) g_malloc(ID_BUF_SIZE);
 	    if (axisy) {
 	      snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
 	      putobj(dobj, "axis_y", idg2, axisy);
@@ -6255,12 +6247,12 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, char *inst)
       }
 
       if (idx2 >= 0 && idy2 >= 0) {
-	axisy = (char *) memalloc(ID_BUF_SIZE);
+	axisy = (char *) g_malloc(ID_BUF_SIZE);
 	if (axisy) {
 	  snprintf(axisy, ID_BUF_SIZE, "axis:^%d", oidy);
 	  putobj(obj, "adjust_axis", idx2, axisy);
 	}
-	axisx = (char *) memalloc(ID_BUF_SIZE);
+	axisx = (char *) g_malloc(ID_BUF_SIZE);
 	if (axisx) {
 	  snprintf(axisx, ID_BUF_SIZE, "axis:^%d", oidx);
 	  putobj(obj, "adjust_axis", idy2, axisx);

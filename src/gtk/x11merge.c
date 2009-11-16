@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.29 2009/07/22 14:53:31 hito Exp $
+ * $Id: x11merge.c,v 1.30 2009/11/16 09:13:05 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -242,7 +242,7 @@ CmMergeOpen(void)
       set_graph_modified();
     }
   } else {
-    free(name);
+    g_free(name);
   }
   MergeWinUpdate(TRUE);
 }
@@ -355,9 +355,12 @@ merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
     case MERG_WIN_COL_FILE:
       getobj(d->obj, "file", row, 0, NULL, &file);
       bfile = getbasename(file);
-      if (bfile != NULL) {
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, bfile);
-	memfree(bfile);
+      if (bfile) {
+	char *ptr;
+	ptr = g_filename_to_utf8(bfile, -1, NULL, NULL, NULL);
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, CHK_STR(ptr));
+	g_free(ptr);
+	g_free(bfile);
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
       }
