@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.56 2009/11/17 06:41:49 hito Exp $
+ * $Id: x11commn.c,v 1.57 2009/11/17 07:24:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1199,7 +1199,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   argv[0] = (char *) &sarray;
   argv[1] = NULL;
   utf8_name = filename_to_utf8(name);
-  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), utf8_name);
+  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), CHK_STR(utf8_name));
   g_free(utf8_name);
   SetStatusBar(mes);
 

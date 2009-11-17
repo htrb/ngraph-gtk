@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.71 2009/11/17 06:41:50 hito Exp $
+ * $Id: x11opt.c,v 1.72 2009/11/17 07:24:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -314,6 +314,11 @@ set_scrpt_file(GtkWidget *entry, char **opt, char *msg)
   char *buf;
 
   buf = entry_get_filename(entry);
+  if (buf == NULL) {
+    MessageBox(NULL, _("Couldn't convert filename from UTF-8."), NULL, MB_OK);
+    return 1;
+  }
+
   if (msg && strlen(buf) == 0) {
     MessageBox(NULL, msg, NULL, MB_OK);
     g_free(buf);

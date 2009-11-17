@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.85 2009/11/17 06:41:49 hito Exp $
+ * $Id: ox11menu.c,v 1.86 2009/11/17 07:24:59 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1748,9 +1748,7 @@ SetCaption(int modified)
 
   snprintf(buf, sizeof(buf), "%s%s - Ngraph",
 	   (modified) ? "*" : "",
-	   (file) ? ((ptr) ? ptr :
-		     _("Invalid character in the filename")) :
-	   _("Unsaved Graph"));
+	   (file) ? CHK_STR(ptr) : _("Unsaved Graph"));
   g_free(ptr);
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), buf);
