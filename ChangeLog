@@ -1,7 +1,7 @@
 2009-11-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/math/math_parser.c (parse_primary_expression): return when
-	the type of the token is "MATH_TOKEN_TYPE_EOEQ".
+	* src/math/math_parser.c (parse_primary_expression): return NULL
+	when the type of the token is "MATH_TOKEN_TYPE_EOEQ".
 
 	* src/gtk/x11commn.c (AddNgpFileList): check if the filename is
 	valid UTF-8 string.
@@ -83,7 +83,7 @@
 
 2009-11-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/math/math_parser.c (parse_const_def_expression): set serror
+	* src/math/math_parser.c (parse_const_def_expression): set error
 	code.
 	(parse_const_def_expression): fix dondition from "token->data.op
 	== MATH_OPERATOR_TYPE_EQ" to "token->data.op !=
