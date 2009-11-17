@@ -1,5 +1,5 @@
 /* 
- * $Id: math_parser.c,v 1.12 2009/11/16 12:46:08 hito Exp $
+ * $Id: math_parser.c,v 1.13 2009/11/17 08:38:32 hito Exp $
  * 
  */
 
@@ -206,7 +206,7 @@ parse_primary_expression(const char **str, MathEquation *eq, int *err)
   case MATH_TOKEN_TYPE_EOEQ:
     *err = MATH_ERROR_EOEQ;
     math_scanner_free_token(token);
-    break;
+    return NULL;
   default:
     *err = MATH_ERROR_UNEXP_TOKEN;
     math_equation_set_parse_error(eq, token->ptr);

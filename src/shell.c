@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.36 2009/11/16 09:13:04 hito Exp $
+ * $Id: shell.c,v 1.37 2009/11/17 08:38:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4278,6 +4278,10 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
   int ecode, rcode;
   static MathEquation *eq = NULL;
   MathValue value;
+
+  if (r) {
+    *r = MERR;
+  }
 
   if (err_msg) {
     *err_msg = NULL;

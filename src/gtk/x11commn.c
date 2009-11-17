@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.57 2009/11/17 07:24:59 hito Exp $
+ * $Id: x11commn.c,v 1.58 2009/11/17 08:38:32 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1415,9 +1415,14 @@ AddNgpFileList(char *file)
     FALSE,
   };
 
-  full_name = getfullpath(file);
-  if (full_name == NULL)
+  if (! g_utf8_validate(file, -1, NULL)) {
     return;
+  }
+
+  full_name = getfullpath(file);
+  if (full_name == NULL) {
+    return;
+  }
 
   uri = g_strdup_printf("file://%s", full_name);
   g_free(full_name);

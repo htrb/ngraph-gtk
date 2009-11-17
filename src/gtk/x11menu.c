@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.110 2009/11/17 06:41:49 hito Exp $
+ * $Id: x11menu.c,v 1.111 2009/11/17 08:38:32 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -29,6 +29,7 @@
 
 #include "gtk_entry_completion.h"
 #include "gtk_subwin.h"
+#include "gtk_widget.h"
 
 #include "main.h"
 #include "x11bitmp.h"
@@ -1009,8 +1010,12 @@ show_file_menu_cb(GtkWidget *w, gpointer user_data)
 
   for (i = 0; i < MENU_HISTORY_NUM; i++) {
     if (i < num) {
+      char *ptr;
+
       label = gtk_bin_get_child(GTK_BIN(NgraphApp.fhistory[i]));
-      g_string_printf(str, "_%d: %s", i, data[i]);
+      ptr = filename_to_utf8(data[i]);
+      g_string_printf(str, "_%d: %s", i, CHK_STR(ptr));
+      g_free(ptr);
       add_underscore(str);
       gtk_label_set_text_with_mnemonic(GTK_LABEL(label), str->str);
       gtk_widget_show(GTK_WIDGET(NgraphApp.fhistory[i]));

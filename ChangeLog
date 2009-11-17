@@ -1,5 +1,13 @@
 2009-11-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/math/math_parser.c (parse_primary_expression): return when
+	the type of the token is "MATH_TOKEN_TYPE_EOEQ".
+
+	* src/gtk/x11commn.c (AddNgpFileList): check if the filename is
+	valid UTF-8 string.
+
+	* src/gtk/x11menu.c (show_file_menu_cb): change filename to UTF-8.
+
 	* src/gtk/x11opt.c (SetScriptDialogBrowse)
 	(SetDriverDialogBrowse): use "entry_set_filename()".
 
