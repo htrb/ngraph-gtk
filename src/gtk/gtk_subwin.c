@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.59 2009/11/17 06:41:49 hito Exp $
+ * $Id: gtk_subwin.c,v 1.60 2009/11/17 10:38:54 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -125,7 +125,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	  g_free(valstr);
 	  valstr = ptr;
 	}
-	gtk_entry_set_text(GTK_ENTRY(editable), valstr);
+	gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));
 	g_free(valstr);
       }
     }
