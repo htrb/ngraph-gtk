@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2009-11-17 15:47+0900\n"
-"PO-Revision-Date: 2009-11-12 16:48+0900\n"
+"PO-Revision-Date: 2009-11-17 15:52+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 #: src/gtk/ox11menu.c:1752
 msgid "Invalid character in the filename"
-msgstr ""
+msgstr "不正な文字を含むファイル名"
 
 #: src/gtk/ox11menu.c:1753
 msgid "Unsaved Graph"
@@ -678,11 +678,11 @@ msgstr "全て(_A)"
 
 #: src/gtk/x11dialg.c:795
 msgid "Couldn't convert filename from UTF-8."
-msgstr ""
+msgstr "UTF8 文字列からファイル名に変換できません."
 
 #: src/gtk/x11dialg.c:837
 msgid "Couldn't convert filename to UTF-8."
-msgstr ""
+msgstr "ファイル名から UTF8 文字列に変換できません."
 
 #: src/gtk/x11file.c:69 src/gtk/x11merge.c:53 src/gtk/x11opt.c:422
 msgid "file"
