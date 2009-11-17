@@ -19,6 +19,9 @@ enum SPIN_BUTTON_TYPE {
   SPIN_BUTTON_TYPE_CUSTOM,
 };
 
+char *filename_from_utf8(const char *str);
+char *filename_to_utf8(const char *str);
+
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);
 GtkWidget *create_spin_entry(int min, int max, int inc, int set_default_size, int set_default_action);
 void spin_entry_set_val(GtkWidget *entry, int val);

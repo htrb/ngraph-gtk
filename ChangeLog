@@ -1,3 +1,41 @@
+2009-11-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (SetScriptDialogBrowse)
+	(SetDriverDialogBrowse): use "entry_set_filename()".
+
+	* src/gtk/gtk_widget.c (entry_icon_file_select): use
+	"entry_set_filename()".
+
+	* src/gtk/x11opt.c (set_scrpt_file, SetDriverDialogClose): use
+	"entry_get_filename()".
+
+	* src/gtk/x11dialg.c (SetObjFieldFromText): change filename from UTF-8.
+
+	* src/gtk/gtk_widget.c (entry_get_filename, entry_set_filename):
+	add.
+
+	* src/gtk/gtk_subwin.c (modify_string): change filename from UTF-8.
+
+	* src/gtk/x11merge.c (merge_list_set_val): change filename to UTF-8.
+
+	* src/gtk/x11gui.c (file_dialog_set_current_neme): change filename to UTF-8.
+
+	* src/gtk/x11file.c (file_list_set_val): change filename to UTF-8.
+
+	* src/gtk/x11dialg.c (SetTextFromObjField): change filename to UTF-8.
+
+	* src/gtk/x11commn.c (check_overwrite, LoadNgpFile): change filename to UTF-8.
+
+	* src/gtk/ox11menu.c (SetCaption): change filename to UTF-8.
+
+	* src/gtk/gtk_widget.c (entry_set_filename): change filename to UTF-8.
+
+	* src/gtk/gtk_subwin.c (file_select, start_editing): change filename to UTF-8.
+
+	* src/ofile.c (set_data_progress): don't show the filename.
+
+	* src/gtk/gtk_widget.c (filename_from_utf8, filename_to_utf8): add.
+
 2009-11-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/nstring.c (nstrdup): remove (use g_strdup instead).

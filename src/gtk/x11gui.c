@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.36 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11gui.c,v 1.37 2009/11/17 06:41:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -834,12 +834,14 @@ file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
   if (dlg == NULL || full_name == NULL)
     return;
 
-  ptr = g_strdup(full_name);
-  name = basename(ptr);
-  if (name) {
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), name);
+  ptr = filename_to_utf8(full_name);
+  if (ptr) {
+    name = basename(ptr);
+    if (name) {
+      gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), name);
+    }
+    g_free(ptr);
   }
-  g_free(ptr);
 }
 
 static int

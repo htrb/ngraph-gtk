@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <glib.h>
 #include "math_expression.h"
 #include "math_equation.h"
 #include "math_function.h"

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.84 2009/11/16 09:13:05 hito Exp $
+ * $Id: ox11menu.c,v 1.85 2009/11/17 06:41:49 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -38,8 +38,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "gtk_subwin.h"
-
 #include "ngraph.h"
 #include "object.h"
 #include "ioutil.h"
@@ -52,6 +50,9 @@
 #include "spline.h"
 
 #include "strconv.h"
+
+#include "gtk_widget.h"
+#include "gtk_subwin.h"
 
 #include "main.h"
 #include "ogra2cairo.h"
@@ -1180,7 +1181,14 @@ mgtkinterrupt(void)
 int
 mgtkinputyn(char *mes)
 {
-  return InputYN(mes);
+  char *ptr;
+  int r;
+
+  ptr = g_locale_to_utf8(CHK_STR(mes), -1, NULL, NULL, NULL);
+  r = InputYN(ptr);
+  g_free(ptr);
+
+  return r;
 }
 
 static int
@@ -1733,13 +1741,18 @@ mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static void
 SetCaption(int modified)
 {
-  char buf[1024], *file;
+  char buf[1024], *file, *ptr;
 
   getobj(Menulocal.obj, "ngp", 0, 0, NULL, &file);
+  ptr = filename_to_utf8(file);
 
   snprintf(buf, sizeof(buf), "%s%s - Ngraph",
 	   (modified) ? "*" : "",
-	   (file) ? file : _("Unsaved Graph"));
+	   (file) ? ((ptr) ? ptr :
+		     _("Invalid character in the filename")) :
+	   _("Unsaved Graph"));
+  g_free(ptr);
+
   gtk_window_set_title(GTK_WINDOW(TopLevel), buf);
 }
 

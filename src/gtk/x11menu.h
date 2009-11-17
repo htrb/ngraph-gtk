@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.45 2009/11/06 11:09:55 hito Exp $
+ * $Id: x11menu.h,v 1.46 2009/11/17 06:41:50 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -279,7 +279,6 @@ void SetStatusBarXm(gchar * s);
 void ResetStatusBar(void);
 int PutStderr(char *s);
 int PutStdout(char *s);
-void DisplayStatus(char *str);
 void DisplayDialog(char *str);
 int ChkInterrupt(void);
 int InputYN(char *mes);

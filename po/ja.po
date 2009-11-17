@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-11-16 18:04+0900\n"
+"POT-Creation-Date: 2009-11-17 13:54+0900\n"
 "PO-Revision-Date: 2009-11-12 16:48+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1742
+#: src/gtk/ox11menu.c:1751
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
@@ -367,7 +367,7 @@ msgstr "フォント(_F)..."
 msgid "_Position ..."
 msgstr "位置(_P)..."
 
-#: src/gtk/x11commn.c:928 src/gtk/x11opt.c:1531
+#: src/gtk/x11commn.c:930 src/gtk/x11opt.c:1531
 #, c-format
 msgid ""
 "`%s'\n"
@@ -377,21 +377,21 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11commn.c:995
+#: src/gtk/x11commn.c:998
 msgid "Save NGP file"
 msgstr "NGP ファイルの保存"
 
-#: src/gtk/x11commn.c:1019 src/gtk/x11opt.c:1538
+#: src/gtk/x11commn.c:1022 src/gtk/x11opt.c:1538
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
 
-#: src/gtk/x11commn.c:1198 src/gtk/x11commn.c:1275
+#: src/gtk/x11commn.c:1202 src/gtk/x11commn.c:1280
 #, c-format
 msgid "Loading `%.128s'."
 msgstr "読込中 `%.128s'."
 
-#: src/gtk/x11commn.c:1388
+#: src/gtk/x11commn.c:1393
 msgid ""
 "This graph is modified.\n"
 "Save this graph?"
@@ -399,24 +399,24 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1594
+#: src/gtk/x11commn.c:1599
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1597
+#: src/gtk/x11commn.c:1602
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1601
+#: src/gtk/x11commn.c:1606
 #, c-format
 msgid "Install `Ngraph.ini' to ~/%s ?"
 msgstr "~/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1604
+#: src/gtk/x11commn.c:1609
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1765
+#: src/gtk/x11commn.c:1771
 msgid "error"
 msgstr "エラー"
 
@@ -672,11 +672,11 @@ msgstr "画像ファイル出力"
 msgid "_All"
 msgstr "全て(_A)"
 
-#: src/gtk/x11dialg.c:799
+#: src/gtk/x11dialg.c:795
 msgid "Couldn't convert filename from UTF-8."
 msgstr ""
 
-#: src/gtk/x11dialg.c:842
+#: src/gtk/x11dialg.c:837
 msgid "Couldn't convert filename to UTF-8."
 msgstr ""
 
@@ -724,7 +724,7 @@ msgstr "直後に複製(_B)"
 msgid "_Draw"
 msgstr "描画(_D)"
 
-#: src/gtk/x11file.c:114 src/gtk/x11file.c:3116
+#: src/gtk/x11file.c:114 src/gtk/x11file.c:3125
 msgid "_Fit"
 msgstr "フィット(_F)"
 
@@ -949,60 +949,60 @@ msgstr "ジョイン(_J):"
 msgid "_Math"
 msgstr "変換数式(_M) "
 
-#: src/gtk/x11file.c:3074
+#: src/gtk/x11file.c:3083
 #, c-format
 msgid "Data %d"
 msgstr "データ %d"
 
-#: src/gtk/x11file.c:3078
+#: src/gtk/x11file.c:3087
 msgid "_Apply all"
 msgstr "全てに適用(_A)"
 
-#: src/gtk/x11file.c:3085
+#: src/gtk/x11file.c:3094
 msgid "_Copy all"
 msgstr "全てコピー(_C)"
 
-#: src/gtk/x11file.c:3091 src/gtk/x11merge.c:136 src/gtk/x11print.c:161
+#: src/gtk/x11file.c:3100 src/gtk/x11merge.c:136 src/gtk/x11print.c:161
 msgid "_File:"
 msgstr "ファイル名(_F):"
 
-#: src/gtk/x11file.c:3094
+#: src/gtk/x11file.c:3103
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:3128 src/gtk/x11view.c:994
+#: src/gtk/x11file.c:3137 src/gtk/x11view.c:994
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:3132 src/gtk/x11view.c:995
+#: src/gtk/x11file.c:3141 src/gtk/x11view.c:995
 msgid "_Move"
 msgstr "移動(_M)"
 
-#: src/gtk/x11file.c:3136 src/gtk/x11menu.c:953
+#: src/gtk/x11file.c:3145 src/gtk/x11menu.c:953
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:3164
+#: src/gtk/x11file.c:3177
 msgid "This file contain invalid UTF-8 strings."
 msgstr "ファイルに不正な UTF-8 文字列が含まれています."
 
-#: src/gtk/x11file.c:3384
+#: src/gtk/x11file.c:3398
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:3428
+#: src/gtk/x11file.c:3442
 msgid "Data open"
 msgstr "データを開く"
 
-#: src/gtk/x11file.c:4457 src/gtk/x11file.c:4507
+#: src/gtk/x11file.c:4471 src/gtk/x11file.c:4521
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4465 src/gtk/x11file.c:4513
+#: src/gtk/x11file.c:4479 src/gtk/x11file.c:4527
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11file.c:4470
+#: src/gtk/x11file.c:4484
 msgid "Type"
 msgstr "タイプ"
 
@@ -1106,15 +1106,15 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: src/gtk/x11gui.c:754 src/gtk/x11gui.c:884
+#: src/gtk/x11gui.c:754 src/gtk/x11gui.c:886
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:861
+#: src/gtk/x11gui.c:863
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:872
+#: src/gtk/x11gui.c:874
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"
@@ -1951,15 +1951,15 @@ msgstr "クロスゲージ(_G)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2515
+#: src/gtk/x11menu.c:2518
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2565
+#: src/gtk/x11menu.c:2568
 msgid "Question"
 msgstr "質問:"
 
-#: src/gtk/x11menu.c:2622
+#: src/gtk/x11menu.c:2625
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."

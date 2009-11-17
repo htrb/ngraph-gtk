@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.45 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11dialg.c,v 1.46 2009/11/17 06:41:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -414,7 +414,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 static void
 select_tree_selection_foreach_cb(GtkTreeModel *model, GtkTreePath *path,
-			  GtkTreeIter *iter, gpointer data)
+				 GtkTreeIter *iter, gpointer data)
 {
   int a;
   struct SelectDialog *d;
@@ -674,8 +674,7 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 }
 
 void
-SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   GtkEntry *entry;
   struct narray *array;
@@ -738,8 +737,7 @@ chk_sputobjfield(struct objlist *obj, int id, char *field, char *str)
 }
 
 int
-SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   if (w == NULL)
     return 0;
@@ -760,8 +758,7 @@ SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 void
-SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   if (w == NULL)
     return;
@@ -780,8 +777,7 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 int
-SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   const char *tmp;
   char *buf;
@@ -794,7 +790,7 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
     return -1;
 
   if (strcmp(field, "file") == 0) {
-    buf = g_filename_from_utf8(tmp, -1, NULL, NULL, NULL);
+    buf = filename_from_utf8(tmp);
     if (buf == NULL) {
       MessageBox(NULL, _("Couldn't convert filename from UTF-8."), NULL, MB_OK);
       return -1;
@@ -816,8 +812,7 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 void
-SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   GtkEntry *entry;
   char *buf;
@@ -837,16 +832,14 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
   if (strcmp(field, "file") == 0) {
     char *ptr;
 
-    ptr = g_filename_to_utf8(buf, -1, NULL, NULL, NULL);
+    ptr = filename_to_utf8(buf);
     if (ptr == NULL) {
       MessageBox(NULL, _("Couldn't convert filename to UTF-8."), NULL, MB_OK);
       return;
     }
 
     g_free(buf);
-    buf = g_strdup(ptr);
-
-    g_free(ptr);
+    buf = ptr;
   }
 
   gtk_entry_set_text(entry, CHK_STR(buf));
@@ -854,8 +847,7 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 int
-SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int val, oval;
 
@@ -883,8 +875,7 @@ SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 void
-SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
-		    char *field)
+SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int val;
 
@@ -896,8 +887,7 @@ SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 int
-SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id,
-		      char *field)
+SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   gboolean state;
   int a, oa;
@@ -922,8 +912,7 @@ SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id,
 }
 
 void
-SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id,
-		      char *field)
+SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int a;
 

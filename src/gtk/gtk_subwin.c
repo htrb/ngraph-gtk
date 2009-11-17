@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.58 2009/11/16 12:59:20 hito Exp $
+ * $Id: gtk_subwin.c,v 1.59 2009/11/17 06:41:49 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -55,8 +55,14 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 
   if (nGetOpenFileName(d->Win, _("Open"), ext, NULL, gtk_entry_get_text(w),
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
-    entry_set_filename(GTK_WIDGET(w), file);
-    modify_string(d, "file", file);
+    char *ptr;
+
+    ptr = filename_to_utf8(file);
+    if (ptr) {
+      gtk_entry_set_text(w, ptr);
+      modify_string(d, "file", ptr);
+      g_free(ptr);
+    }
     g_free(file);
   }
 }
@@ -113,6 +119,12 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	}
 #endif
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
+	if (strcmp(list->name, "file") == 0) {
+	  char *ptr;
+	  ptr = filename_to_utf8(valstr);
+	  g_free(valstr);
+	  valstr = ptr;
+	}
 	gtk_entry_set_text(GTK_ENTRY(editable), valstr);
 	g_free(valstr);
       }
@@ -822,7 +834,7 @@ modify_string(struct SubWin *d, char *field, char *str)
   if (str && strcmp(field, "file") == 0) {
     char *ptr;
 
-    ptr = g_filename_from_utf8(str, -1, NULL, NULL, NULL);
+    ptr = filename_from_utf8(str);
     if (ptr == NULL) {
       return;
     }

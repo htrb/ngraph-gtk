@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.109 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11menu.c,v 1.110 2009/11/17 06:41:49 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -2480,26 +2480,26 @@ SetCursor(unsigned int type)
 void
 DisplayDialog(char *str)
 {
-  InfoWinDrawInfoText(str);
-}
+  char *ustr;
 
-void
-DisplayStatus(char *str)
-{
-  SetStatusBar(str);
+  if (str == NULL)
+    return;
+
+  ustr = g_locale_to_utf8(CHK_STR(str), -1, NULL, NULL, NULL);
+  InfoWinDrawInfoText(ustr);
+  g_free(ustr);
 }
 
 int
 PutStdout(char *s)
 {
   gssize len;
-  gsize rlen, wlen;
-  char *ustr;
+
+  if (s == NULL)
+    return 0;
 
   len = strlen(s);
-  ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
-  DisplayDialog(ustr);
-  g_free(ustr);
+  DisplayDialog(s);
   return len + 1;
 }
 
@@ -2509,6 +2509,9 @@ PutStderr(char *s)
   gssize len;
   gsize rlen, wlen;
   char *ustr;
+
+  if (s == NULL)
+    return 0;
 
   len = strlen(s);
   ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.70 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11opt.c,v 1.71 2009/11/17 06:41:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -552,8 +552,10 @@ SetDriverDialogClose(GtkWidget *w, void *data)
   }
 
   buf2 = entry_get_filename(d->driver);
-  g_free(d->Driver->driver);
-  d->Driver->driver = buf2;
+  if (buf2) {
+    g_free(d->Driver->driver);
+    d->Driver->driver = buf2;
+  }
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->ext));
   buf2 = g_strdup(buf);

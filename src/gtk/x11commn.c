@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.55 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11commn.c,v 1.56 2009/11/17 06:41:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,6 +44,7 @@
 #include "nconfig.h"
 
 #include "main.h"
+#include "gtk_widget.h"
 #include "x11gui.h"
 #include "x11graph.h"
 #include "x11dialg.h"
@@ -920,12 +921,14 @@ int
 check_overwrite(GtkWidget *parent, const char *filename)
 {
   int r;
-  char *buf;
+  char *buf, *ptr;
 
   if (filename == NULL || access(filename, W_OK))
     return 0;
 
-  buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), filename);
+  ptr = filename_to_utf8(filename);
+  buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), (ptr) ? ptr : filename);
+  g_free(ptr);
   r = MessageBox(parent, buf, "Driver", MB_YESNO);
   g_free(buf);
 
@@ -1123,7 +1126,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   struct objlist *sys;
   char *expanddir;
   struct objlist *obj, *aobj;
-  char *name;
+  char *name, *utf8_name;
   int i, r, newid, allocnow = FALSE, tmp;
   char *s;
   int len;
@@ -1195,7 +1198,9 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
 
   argv[0] = (char *) &sarray;
   argv[1] = NULL;
-  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
+  utf8_name = filename_to_utf8(name);
+  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), utf8_name);
+  g_free(utf8_name);
   SetStatusBar(mes);
 
   menu_lock(TRUE);
@@ -1758,9 +1763,10 @@ ProgressDialogFinalize(void)
 void
 ErrorMessage(void)
 {
-  char *ptr;
+  char *ptr, *s;
 
-  ptr = g_locale_to_utf8(strerror(errno), -1, NULL, NULL, NULL);
+  s = strerror(errno);
+  ptr = g_locale_to_utf8(CHK_STR(s), -1, NULL, NULL, NULL);
   if (ptr) {
     MessageBox(NULL, ptr, _("error"), MB_ERROR);
     g_free(ptr);

@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.119 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11file.c,v 1.120 2009/11/17 06:41:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3060,6 +3060,15 @@ create_text_tag(GtkWidget *view, GtkTextBuffer *buf)
   return tag;
 }
 
+static void
+set_file_preview(struct FileDialog *d, const char *s)
+{
+  int n;
+
+  gtk_text_buffer_set_text(d->comment, s, -1);
+  n = count_line_number_str(s);
+  set_line_number_tag(d->comment, d->comment_num_tag, n);
+}
 
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -3156,12 +3165,17 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     valid = g_utf8_validate(s, -1, &ptr);
     if (valid) {
-      int n;
-      gtk_text_buffer_set_text(d->comment, s, -1);
-      n = count_line_number_str(s);
-      set_line_number_tag(d->comment, d->comment_num_tag, n);
+      set_file_preview(d, s);
     } else {
-      gtk_text_buffer_set_text(d->comment, _("This file contain invalid UTF-8 strings."), -1);
+      char *ptr;
+
+      ptr = g_locale_to_utf8(s, -1, NULL, NULL, NULL);
+      if (ptr) {
+	set_file_preview(d, ptr);
+	g_free(ptr);
+      } else {
+	gtk_text_buffer_set_text(d->comment, _("This file contain invalid UTF-8 strings."), -1);
+      }
     }
   }
   FileDialogSetupItem(wi, d, TRUE, d->Id);
@@ -4259,8 +4273,8 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       bfile = getbasename(file);
       if (bfile) {
 	char *ptr;
-	ptr = g_filename_to_utf8(bfile, -1, NULL, NULL, NULL);
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, CHK_STR(ptr));
+	ptr = filename_to_utf8(bfile);
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, (ptr) ? ptr : "invalid UTF-8 character");
 	g_free(ptr);
 	g_free(bfile);
       } else {

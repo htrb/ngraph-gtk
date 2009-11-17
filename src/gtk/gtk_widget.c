@@ -11,6 +11,40 @@
 #include "x11menu.h"
 #include "x11gui.h"
 
+char *
+filename_from_utf8(const char *str)
+{
+  char *ptr;
+
+  if (str == NULL) {
+    return NULL;
+  }
+
+  ptr = g_filename_from_utf8(str, -1, NULL, NULL, NULL);
+  if (ptr == NULL) {
+    ptr = g_locale_from_utf8(str, -1, NULL, NULL, NULL);
+  }
+
+  return ptr;
+}
+
+char *
+filename_to_utf8(const char *str)
+{
+  char *ptr;
+
+  if (str == NULL) {
+    return NULL;
+  }
+
+  ptr = g_filename_to_utf8(str, -1, NULL, NULL, NULL);
+  if (ptr == NULL) {
+    ptr = g_locale_to_utf8(str, -1, NULL, NULL, NULL);
+  }
+
+  return ptr;
+}
+
 GtkWidget *
 item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
 {
@@ -29,10 +63,10 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
 int
 entry_set_filename(GtkWidget *w, char *filename)
 {
-  if (! g_utf8_validate(filename, -1, NULL)) {
-    char *utf8filename;
+  char *utf8filename = NULL;
 
-    utf8filename = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
+  if (! g_utf8_validate(filename, -1, NULL)) {
+    utf8filename = filename_to_utf8(filename);
     if (utf8filename == NULL) {
       return 1;
     }
@@ -40,6 +74,8 @@ entry_set_filename(GtkWidget *w, char *filename)
   }
 
   gtk_entry_set_text(GTK_ENTRY(w), filename);
+
+  g_free(utf8filename);
   return 0;
 }
 
@@ -53,7 +89,7 @@ entry_get_filename(GtkWidget *w)
   if (utf8filename == NULL)
     return NULL;
 
-  filename = g_filename_from_utf8(utf8filename, -1, NULL, NULL, NULL);
+  filename = filename_from_utf8(utf8filename);
   return filename;
 }
 

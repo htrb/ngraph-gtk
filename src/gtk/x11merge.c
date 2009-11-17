@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.30 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11merge.c,v 1.31 2009/11/17 06:41:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -357,7 +357,7 @@ merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       bfile = getbasename(file);
       if (bfile) {
 	char *ptr;
-	ptr = g_filename_to_utf8(bfile, -1, NULL, NULL, NULL);
+	ptr = filename_to_utf8(bfile);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, CHK_STR(ptr));
 	g_free(ptr);
 	g_free(bfile);
