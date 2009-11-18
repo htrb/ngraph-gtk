@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-34\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-11-18 09:48+0900\n"
+"POT-Creation-Date: 2009-11-18 12:26+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgid "len"
 msgstr ""
 
 #: src/gtk/x11axis.c:88 src/gtk/x11file.c:106 src/gtk/x11lgnd.c:81
-#: src/gtk/x11merge.c:72 src/gtk/x11view.c:1147
+#: src/gtk/x11merge.c:72 src/gtk/x11view.c:1148
 msgid "_Duplicate"
 msgstr ""
 
@@ -847,7 +847,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1610 src/gtk/x11file.c:1884 src/gtk/x11view.c:982
+#: src/gtk/x11file.c:1610 src/gtk/x11file.c:1884 src/gtk/x11view.c:983
 msgid "Line No."
 msgstr ""
 
@@ -968,11 +968,11 @@ msgstr ""
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:3137 src/gtk/x11view.c:992
+#: src/gtk/x11file.c:3137 src/gtk/x11view.c:993
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:3141 src/gtk/x11view.c:993
+#: src/gtk/x11file.c:3141 src/gtk/x11view.c:994
 msgid "_Move"
 msgstr ""
 
@@ -1706,31 +1706,31 @@ msgstr ""
 msgid "_Ngraph shell"
 msgstr ""
 
-#: src/gtk/x11menu.c:938 src/gtk/x11view.c:1124
+#: src/gtk/x11menu.c:938 src/gtk/x11view.c:1125
 msgid "_Left"
 msgstr ""
 
-#: src/gtk/x11menu.c:939 src/gtk/x11view.c:1125
+#: src/gtk/x11menu.c:939 src/gtk/x11view.c:1126
 msgid "_Vertical center"
 msgstr ""
 
-#: src/gtk/x11menu.c:940 src/gtk/x11view.c:1126
+#: src/gtk/x11menu.c:940 src/gtk/x11view.c:1127
 msgid "_Right"
 msgstr ""
 
-#: src/gtk/x11menu.c:944 src/gtk/x11view.c:1128
+#: src/gtk/x11menu.c:944 src/gtk/x11view.c:1129
 msgid "_Top"
 msgstr ""
 
-#: src/gtk/x11menu.c:945 src/gtk/x11view.c:1129
+#: src/gtk/x11menu.c:945 src/gtk/x11view.c:1130
 msgid "_Horizontal center"
 msgstr ""
 
-#: src/gtk/x11menu.c:946 src/gtk/x11view.c:1130
+#: src/gtk/x11menu.c:946 src/gtk/x11view.c:1131
 msgid "_Bottom"
 msgstr ""
 
-#: src/gtk/x11menu.c:978 src/gtk/x11view.c:1152
+#: src/gtk/x11menu.c:978 src/gtk/x11view.c:1153
 msgid "_Align"
 msgstr ""
 
@@ -1742,11 +1742,11 @@ msgstr ""
 msgid "rotate 9_0 degree counter-clockwise"
 msgstr ""
 
-#: src/gtk/x11menu.c:988 src/gtk/x11view.c:1139
+#: src/gtk/x11menu.c:988 src/gtk/x11view.c:1140
 msgid "flip _Horizontally"
 msgstr ""
 
-#: src/gtk/x11menu.c:990 src/gtk/x11view.c:1140
+#: src/gtk/x11menu.c:990 src/gtk/x11view.c:1141
 msgid "flip _Vertically"
 msgstr ""
 
@@ -1938,7 +1938,7 @@ msgstr ""
 msgid "_Toolbox"
 msgstr ""
 
-#: src/gtk/x11menu.c:1504 src/gtk/x11view.c:1155
+#: src/gtk/x11menu.c:1504 src/gtk/x11view.c:1156
 msgid "cross _Gauge"
 msgstr ""
 
@@ -2249,7 +2249,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:684 src/gtk/x11print.c:935 src/gtk/x11view.c:5517
+#: src/gtk/x11print.c:684 src/gtk/x11print.c:935 src/gtk/x11view.c:5518
 msgid "Drawing."
 msgstr ""
 
@@ -2277,49 +2277,49 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11view.c:1134
+#: src/gtk/x11view.c:1135
 msgid "_90 degree clockwise"
 msgstr ""
 
-#: src/gtk/x11view.c:1135
+#: src/gtk/x11view.c:1136
 msgid "9_0 degree counter-clockwise"
 msgstr ""
 
-#: src/gtk/x11view.c:1153
+#: src/gtk/x11view.c:1154
 msgid "_Rotate"
 msgstr ""
 
-#: src/gtk/x11view.c:1154
+#: src/gtk/x11view.c:1155
 msgid "_Flip"
 msgstr ""
 
-#: src/gtk/x11view.c:1367 src/gtk/x11view.c:1369
+#: src/gtk/x11view.c:1368 src/gtk/x11view.c:1370
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1476
+#: src/gtk/x11view.c:1477
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1485
+#: src/gtk/x11view.c:1486
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2826
+#: src/gtk/x11view.c:2827
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3942
+#: src/gtk/x11view.c:3943
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5511
+#: src/gtk/x11view.c:5512
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5518
+#: src/gtk/x11view.c:5519
 msgid "Drawing"
 msgstr ""
 
