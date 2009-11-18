@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.175 2009/11/16 09:13:06 hito Exp $
+ * $Id: x11view.c,v 1.176 2009/11/18 00:55:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -39,6 +39,7 @@
 #include "shell.h"
 
 #include "gtk_liststore.h"
+#include "gtk_widget.h"
 #include "strconv.h"
 
 #include "x11gui.h"
@@ -617,7 +618,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
 int
 data_dropped(char **filenames, int num, int file_type)
 {
-  char *fname, *name, *ext;
+  char *name, *ext;
   int i, id0, type, ret;
   struct objlist *obj, *mobj;
 
@@ -633,15 +634,9 @@ data_dropped(char **filenames, int num, int file_type)
 
   id0 = -1;
   for (i = 0; i < num; i++) {
-    fname = g_filename_from_uri(filenames[i], NULL, NULL);
-    if (fname == NULL)
-      continue;
-
-    name = g_strdup(fname);
-    g_free(fname);
-
+    name = g_filename_from_uri(filenames[i], NULL, NULL);
     if (name == NULL) {
-      return 1;
+      continue;
     }
 
     type = file_type;
@@ -778,7 +773,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 static void 
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
-  gchar **filenames, *fname, *str;
+  gchar **filenames, *str;
   int num, r, success;
   struct Viewer *d;
 
@@ -804,7 +799,11 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
 
     r = 1;
     if (num == 1) {
+      char *fname;
       fname = g_filename_from_uri(filenames[0], NULL, NULL);
+      if (fname == NULL) {
+	break;
+      }
       r = graph_dropped(fname);
       g_free(fname);
     }
