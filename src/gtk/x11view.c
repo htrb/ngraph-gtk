@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.176 2009/11/18 00:55:04 hito Exp $
+ * $Id: x11view.c,v 1.177 2009/11/19 07:16:52 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -802,6 +802,7 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
       char *fname;
       fname = g_filename_from_uri(filenames[0], NULL, NULL);
       if (fname == NULL) {
+	g_strfreev(filenames);
 	break;
       }
       r = graph_dropped(fname);
