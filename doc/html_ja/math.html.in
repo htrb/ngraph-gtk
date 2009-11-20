@@ -500,8 +500,8 @@ COLOR(3,%03)=Y
       <li> 既存の定数は上書きできません。
       <li> 数式 exp は数式変換実行時ではなく構文解析時に解釈されます。
       <li> 上記の影響で、定数定義時には NUM, MINX, MAXX, MINY, MAXY,
-	SUMX, SUMY, SUMXX, SUMYY, SUMXY, AVX, AVY, SGX, SGY, FIRST の各
-	定数は 0 とみなされます。
+	   SUMX, SUMY, SUMXX, SUMYY, SUMXY, AVX, AVY, SGX, SGY, FIRST,
+	   MASK, MOVE の各定数は 0 とみなされます。
     </ul>
 </table>
 </div>

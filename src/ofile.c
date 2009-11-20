@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.101 2009/11/20 05:39:47 hito Exp $
+ * $Id: ofile.c,v 1.102 2009/11/20 06:29:08 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -59,8 +59,8 @@
 
 #include "math/math_equation.h"
 
-#define MATH_CONST_SIZE		17
-#define TWOPASS_CONST_SIZE	(MATH_CONST_SIZE - 3)
+#define MATH_CONST_SIZE		19
+#define TWOPASS_CONST_SIZE	(MATH_CONST_SIZE - 5)
 
 #define NAME		"file"
 #define ALIAS		"data"
@@ -1673,6 +1673,8 @@ enum {
   MATH_CONST_SGX,
   MATH_CONST_SGY,
 
+  MATH_CONST_MASK,
+  MATH_CONST_MOVE,
   MATH_CONST_FIRST,
   MATH_CONST_D,
   MATH_CONST_N,
@@ -1700,6 +1702,8 @@ create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int use_f
     "SGX",
     "SGY",
 
+    "MASK",
+    "MOVE",
     "FIRST",
     "%D",
     "%N",
@@ -2423,6 +2427,14 @@ set_const(MathEquation *eq, struct f2ddata *fp, int first)
   val.val = first;
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, fp->const_id[MATH_CONST_FIRST], &val);
+
+  val.val = fp->masknum;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_MASK], &val);
+
+  val.val = fp->movenum;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, fp->const_id[MATH_CONST_MOVE], &val);
 
   return math_equation_optimize(eq);
 }

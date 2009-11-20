@@ -1,3 +1,8 @@
+2009-11-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (MATH_CONST_NUM): add constant "MASK" and "MOVE".
+	(set_const): set constant "MASK" and "MOVE".
+
 2009-11-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_parser.c (parse_primary_expression): return NULL
