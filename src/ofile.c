@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.100 2009/11/17 06:41:49 hito Exp $
+ * $Id: ofile.c,v 1.101 2009/11/20 05:39:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -459,12 +459,32 @@ file_rgb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
   g = exp->buf[1].val.val * 255;
   b = exp->buf[2].val.val * 255;
 
+#if 0
   if (r < 0 || r > 255 ||
       g < 0 || g > 255 ||
       b < 0 || b > 255) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
+#else
+  if (r < 0) {
+    r = 0;
+  } else if (r > 255) {
+    r = 255;
+  }
+
+  if (g < 0) {
+    g = 0;
+  } else if (g > 255) {
+    g = 255;
+  }
+
+  if (b < 0) {
+    b = 0;
+  } else if (b > 255) {
+    b = 255;
+  }
+#endif
 
   if (color2) {
     fp->color2[0] = r;
@@ -510,12 +530,32 @@ file_hsb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
   s = exp->buf[1].val.val;
   b = exp->buf[2].val.val;
 
+#if 0
   if (h < 0 || h > 1 ||
       s < 0 || s > 1 ||
       b < 0 || b > 1) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
+#else
+  if (h < 0) {
+    h = 0;
+  } else if (h > 1) {
+    h = 1;
+  }
+
+  if (s < 0) {
+    s = 0;
+  } else if (s > 1) {
+    s = 1;
+  }
+
+  if (b < 0) {
+    b = 0;
+  } else if (b > 1) {
+    b = 1;
+  }
+#endif
 
   HSB2RGB(h, s, b, &r, &g, &bb);
 
