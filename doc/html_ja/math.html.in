@@ -479,6 +479,8 @@ COLOR(3,%03)=Y
 <br>
 <div>
 <table border=1>
+<tr><td>MASK</td><td>マスクに設定された行数</td></tr>
+<tr><td>MOVE</td><td>移動に設定された行数</td></tr>
 <tr><td>%N</td><td>データファイルの数</td></tr>
 </table>
 </div>
