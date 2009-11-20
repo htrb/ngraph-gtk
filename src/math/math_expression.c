@@ -1,5 +1,5 @@
 /* 
- * $Id: math_expression.c,v 1.10 2009/11/16 12:46:08 hito Exp $
+ * $Id: math_expression.c,v 1.11 2009/11/20 08:14:55 hito Exp $
  * 
  */
 
@@ -871,6 +871,7 @@ reduce_expression(MathExpression *exp, int *err)
   r = math_expression_calculate(exp, &val);
   if (r) {
     math_expression_free(exp);
+    *err = MATH_ERROR_CALCULATION;
     return NULL;
   }
 
@@ -884,7 +885,7 @@ reduce_expression(MathExpression *exp, int *err)
 }
 
 static MathExpression *
-optimize_usr_function(MathExpression *exp, int *err)
+optimize_usr_function(MathExpression *exp,int *err)
 {
   MathExpression *new_exp;
 
@@ -1318,7 +1319,7 @@ MathExpression *
 math_expression_optimize(MathExpression *exp, int *err)
 {
   MathExpression *prev, *rexp, *top;
-  
+
   *err = MATH_ERROR_NONE;
 
   top = prev = NULL;
