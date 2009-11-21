@@ -1,5 +1,5 @@
 /* 
- * $Id: math_parser.c,v 1.14 2009/11/21 11:39:10 hito Exp $
+ * $Id: math_parser.c,v 1.15 2009/11/21 11:48:44 hito Exp $
  * 
  */
 
@@ -915,7 +915,7 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
 
   if (cname->type != MATH_TOKEN_TYPE_SYMBOL) {
     *err = MATH_ERROR_UNEXP_TOKEN;
-    math_equation_set_parse_error(eq, token->ptr);
+    math_equation_set_parse_error(eq, cname->ptr);
     math_scanner_free_token(cname);
     return NULL;
   }
