@@ -1,3 +1,33 @@
+2009-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_parser.c (parse_const_def_expression): return NULL
+	when "eq->func_def" is TRUE.
+	(parse_const_def_expression): set and restore "eq->func_def"
+	before and after call the function "parse_expression()".
+	(parse_expression_list): don't call "math_expression_free()"
+	before call "math_equation_set_parse_error()".
+	(parse_expression_list): return NULL when "token->type" is
+	"MATH_TOKEN_TYPE_CONST" and "inside_block" is TRUE.
+
+	* src/math/math_error.h (MATH_ERROR_INVALID_CDEF)
+	(MATH_ERROR_PRM_IN_DEF): add.
+
+	* src/math/math_error.c (ERR_MSG_INVALID_C, ERR_MSG_PRM_IN_DEF):
+	add.
+	(ERR_MSG_POS_FUNC): change message.
+	(math_err_get_error_message): add case for
+	"MATH_ERROR_INVALID_CDEF" and "MATH_ERROR_PRM_IN_DEF#.
+
+	* src/math/math_equation.c (math_equation_get_parameter): add
+	argument "int *err" and set error id when "err" is not NULL.
+
+	* src/ofile.c (put_func): don't substitute return value of the
+	function "set_equation()" when rcode is TRUE.
+
+	* src/object.c (ERR_MSG_BUF_SIZE): change buffer size.
+	(error, error2, error22): change maximumlength of an error
+	message.
+
 2009-11-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (MATH_CONST_NUM): add constant "MASK" and "MOVE".
@@ -90,7 +120,7 @@
 
 	* src/math/math_parser.c (parse_const_def_expression): set error
 	code.
-	(parse_const_def_expression): fix dondition from "token->data.op
+	(parse_const_def_expression): fix condition from "token->data.op
 	== MATH_OPERATOR_TYPE_EQ" to "token->data.op !=
 	MATH_OPERATOR_TYPE_ASSIGN"
 

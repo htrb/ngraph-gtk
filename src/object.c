@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.48 2009/11/19 07:16:51 hito Exp $
+ * $Id: object.c,v 1.49 2009/11/21 11:39:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -58,7 +58,7 @@ static struct loopproc *looproot=NULL, *loopnext=NULL;
 
 static struct objlist *errobj=NULL;
 
-#define ERR_MSG_BUF_SIZE 1024
+#define ERR_MSG_BUF_SIZE 2048
 static char errormsg1[ERR_MSG_BUF_SIZE]={'\0'};
 static char errormsg2[ERR_MSG_BUF_SIZE]={'\0'};
 static int errcode=0;
@@ -126,24 +126,24 @@ error(struct objlist *obj,int code)
   if (obj==NULL) objname="kernel";
   else objname=obj->name;
   if (code==ERRUNKNOWN)
-    printfstderr("%.64s: %.128s%.128s\n",
+    printfstderr("%.64s: %.256s%.256s\n",
                  objname,errormsg1,errormsg2);
   else if (code<100) {
     errtable=errorlist;
     errnum=ERRNUM;
     if ((errtable==NULL) || (code>=errnum))
-      printfstderr("%.64s: %.128s(%d)%.128s\n",objname,errormsg1,code,errormsg2);
+      printfstderr("%.64s: %.256s(%d)%.256s\n",objname,errormsg1,code,errormsg2);
     else
-      printfstderr("%.64s: %.128s%.128s%.128s\n",
+      printfstderr("%.64s: %.256s%.256s%.256s\n",
                    objname,errormsg1,errtable[code],errormsg2);
   } else {
     errtable=obj->errtable;
     errnum=obj->errnum;
     code=code-100;
     if ((errtable==NULL) || (code>=errnum))
-      printfstderr("%.64s: %.128s(%d)%.128s\n",objname,errormsg1,code,errormsg2);
+      printfstderr("%.64s: %.256s(%d)%.256s\n",objname,errormsg1,code,errormsg2);
     else
-      printfstderr("%.64s: %.128s%.128s%.128s\n",
+      printfstderr("%.64s: %.256s%.256s%.256s\n",
                    objname,errormsg1,errtable[code],errormsg2);
   }
   errormsg1[0]='\0';
@@ -155,7 +155,7 @@ void
 error2(struct objlist *obj,int code, const char *mes)
 {
   if (mes!=NULL) {
-    snprintf(errormsg2, sizeof(errormsg2), " `%.128s'.",mes);
+    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.",mes);
   } else {
     sprintf(errormsg2,".");
   }
@@ -166,12 +166,12 @@ void
 error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
 {
   if (mes1!=NULL) {
-    snprintf(errormsg1, sizeof(errormsg1), "%.128s: ",mes1);
+    snprintf(errormsg1, sizeof(errormsg1), "%.256s: ",mes1);
   } else {
     errormsg1[0]='\0';
   }
   if (mes2!=NULL) {
-    snprintf(errormsg2, sizeof(errormsg2), " `%.128s'.",mes2);
+    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.",mes2);
   } else {
     sprintf(errormsg2,".");
   }

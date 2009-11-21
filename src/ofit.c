@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.31 2009/11/16 09:13:04 hito Exp $
+ * $Id: ofit.c,v 1.32 2009/11/21 11:39:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -225,7 +225,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
 	return 1;
       }
 
-      prm = math_equation_get_parameter(code, 0);
+      prm = math_equation_get_parameter(code, 0, NULL);
       if (prm == NULL) {
 	math_equation_free(code);
 	return 1;
@@ -498,7 +498,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   if (fitlocal->codef==NULL) return FitError_Equation;
 
 #if NEW_MATH_CODE
-  prm = math_equation_get_parameter(fitlocal->codef, 0);
+  prm = math_equation_get_parameter(fitlocal->codef, 0, NULL);
   dim = prm->id_num;
   needdata = prm->id;
   if (deriv) {

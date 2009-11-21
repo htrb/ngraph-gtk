@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-34\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-11-19 16:16+0900\n"
+"POT-Creation-Date: 2009-11-21 00:03+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2360,37 +2360,50 @@ msgid "syntax error, invalid function definition."
 msgstr ""
 
 #: src/math/math_error.c:22
-msgid "error, invalid parameter."
+msgid "syntax error, constant annot be defined in a function definition ."
 msgstr ""
 
 #: src/math/math_error.c:23
-msgid "error, unknown function."
+msgid "error, invalid parameter."
 msgstr ""
 
 #: src/math/math_error.c:24
-msgid "error, cannot allocate enough memory."
+msgid ""
+"error, a parameter cannot be used in a user function or a constant "
+"definition."
 msgstr ""
 
 #: src/math/math_error.c:25
-msgid "error, unknown error."
+msgid "error, unknown function."
 msgstr ""
 
 #: src/math/math_error.c:26
-msgid "error, the function cannot be used in a user function."
+msgid "error, cannot allocate enough memory."
 msgstr ""
 
 #: src/math/math_error.c:27
-msgid "error, the constant is already defined."
+msgid "error, unknown error."
 msgstr ""
 
 #: src/math/math_error.c:28
+msgid ""
+"error, the function cannot be used in a user function or a constant "
+"definition."
+msgstr ""
+
+#: src/math/math_error.c:29
+msgid "error, the constant is already defined."
+msgstr ""
+
+#: src/math/math_error.c:30
 msgid "error, calculation error."
 msgstr ""
 
-#: src/math/math_error.c:80 src/math/math_error.c:88 src/math/math_error.c:106
-#: src/math/math_error.c:114 src/math/math_error.c:122
-#: src/math/math_error.c:130 src/math/math_error.c:138
-#: src/math/math_error.c:146 src/math/math_error.c:154
+#: src/math/math_error.c:82 src/math/math_error.c:90 src/math/math_error.c:108
+#: src/math/math_error.c:116 src/math/math_error.c:124
+#: src/math/math_error.c:132 src/math/math_error.c:140
+#: src/math/math_error.c:148 src/math/math_error.c:156
+#: src/math/math_error.c:164 src/math/math_error.c:172
 #, c-format
 msgid ""
 "%s\n"

@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.18 2009/11/16 09:13:04 hito Exp $
+ * $Id: omath.c,v 1.19 2009/11/21 11:39:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -253,7 +253,7 @@ parse_original_formula(struct objlist *obj,char *inst, struct mlocal *mlocal)
   math_equation_parse(mlocal->code, ptr);
   math_equation_optimize(mlocal->code);
 
-  prm = math_equation_get_parameter(mlocal->code, 0);
+  prm = math_equation_get_parameter(mlocal->code, 0, NULL);
   if (prm == NULL) {
     mlocal->maxdim = 0;
   } else {
@@ -305,7 +305,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 	return 1;
       }
 
-      prm = math_equation_get_parameter(mlocal->code, 0);
+      prm = math_equation_get_parameter(mlocal->code, 0, NULL);
       if (prm == NULL) {
 	mlocal->maxdim = 0;
       } else {

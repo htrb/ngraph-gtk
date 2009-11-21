@@ -1,5 +1,5 @@
 /* 
- * $Id: math_equation.h,v 1.7 2009/11/10 04:12:20 hito Exp $
+ * $Id: math_equation.h,v 1.8 2009/11/21 11:39:10 hito Exp $
  * 
  */
 
@@ -87,7 +87,7 @@ void math_equation_clear(MathEquation *eq);
 int math_equation_calculate(MathEquation *eq, MathValue *val);
 void math_equation_clear_variable(MathEquation *eq);
 
-MathEquationParametar *math_equation_get_parameter(MathEquation *eq, int type);
+MathEquationParametar *math_equation_get_parameter(MathEquation *eq, int type, int *err);
 int math_equation_use_parameter(MathEquation *eq, int type, int val);
 int math_equation_add_parameter(MathEquation *eq, int type, int min, int max, int use_index);
 int math_equation_set_parameter_data(MathEquation *eq, int type, MathValue *data);

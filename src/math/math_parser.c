@@ -1,5 +1,5 @@
 /* 
- * $Id: math_parser.c,v 1.13 2009/11/17 08:38:32 hito Exp $
+ * $Id: math_parser.c,v 1.14 2009/11/21 11:39:10 hito Exp $
  * 
  */
 
@@ -902,6 +902,11 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
   struct math_token *cname, *token;
   MathExpression *exp, *cdef;
 
+  if (eq->func_def) {
+    *err = MATH_ERROR_INVALID_CDEF;
+    return NULL;
+  }
+
   /* get name of the constant */
   cname = my_get_token(str);
   if (cname == NULL) {
@@ -934,7 +939,9 @@ parse_const_def_expression(const char **str, MathEquation *eq, int *err)
   }
   math_scanner_free_token(token);
 
+  eq->func_def = TRUE;
   exp = parse_expression(str, eq, err);
+  eq->func_def = FALSE;
   if (exp == NULL) {
     math_scanner_free_token(cname);
     return NULL;
@@ -1035,13 +1042,14 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block, int
 
     switch (token->type) {
     case MATH_TOKEN_TYPE_DEF:
-      math_scanner_free_token(token);
       if (inside_block) {
 	*err = MATH_ERROR_FDEF_NEST;
 	math_equation_set_parse_error(eq, token->ptr);
+	math_scanner_free_token(token);
 	math_expression_free(top);
 	return NULL;
       }
+      math_scanner_free_token(token);
       exp = parse_func_def_expression(str, eq, err);
       if (exp == NULL) {
 	math_expression_free(top);
@@ -1049,6 +1057,13 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block, int
       }
       continue;
     case MATH_TOKEN_TYPE_CONST:
+      if (inside_block) {
+	*err = MATH_ERROR_INVALID_CDEF;
+	math_equation_set_parse_error(eq, token->ptr);
+	math_scanner_free_token(token);
+	math_expression_free(top);
+	return NULL;
+      }
       math_scanner_free_token(token);
       exp = parse_const_def_expression(str, eq, err);
       if (exp == NULL) {
@@ -1057,14 +1072,15 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block, int
       }
       continue;
     case MATH_TOKEN_TYPE_EOEQ:
-      math_scanner_free_token(token);
       if (*str[0] == '\0') {
 	if (inside_block) {
 	  *err = MATH_ERROR_MISS_RC;
 	  math_equation_set_parse_error(eq, token->ptr);
+	  math_scanner_free_token(token);
 	  math_expression_free(top);
 	  return NULL;
 	}
+	math_scanner_free_token(token);
 	goto End;
       }
       continue;

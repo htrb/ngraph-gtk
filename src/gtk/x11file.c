@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.120 2009/11/17 06:41:49 hito Exp $
+ * $Id: x11file.c,v 1.121 2009/11/21 11:39:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1072,7 +1072,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       math_equation_free(code);
       return;
     }
-    prm = math_equation_get_parameter(code, 0);
+    prm = math_equation_get_parameter(code, 0, NULL);
     dim = prm->id_num;
     for (i = 0; i < dim; i++) {
       tbl[i] = prm->id[i];

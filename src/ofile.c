@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.102 2009/11/20 06:29:08 hito Exp $
+ * $Id: ofile.c,v 1.103 2009/11/21 11:39:10 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1117,7 +1117,7 @@ opendata(struct objlist *obj,char *inst,
     MathEquationParametar *prm;
 
     if (fp->codex[0] && fp->codex[0]->exp) {
-      prm = math_equation_get_parameter(fp->codex[0], 'F');
+      prm = math_equation_get_parameter(fp->codex[0], 'F', NULL);
       if (prm) {
 	fp->fnumx = prm->id_num;
 	fp->needx = prm->id;
@@ -1147,7 +1147,7 @@ opendata(struct objlist *obj,char *inst,
     }
 
     if (fp->codey[0] && fp->codey[0]->exp) {
-      prm = math_equation_get_parameter(fp->codey[0], 'F');
+      prm = math_equation_get_parameter(fp->codey[0], 'F', NULL);
       if (prm) {
 	fp->fnumy = prm->id_num;
 	fp->needy = prm->id;
@@ -1503,8 +1503,8 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
     }
 
     if (rcode) {
-      rcode = set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
-      rcode = set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, NULL);
+      set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
+      set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, NULL);
     }
 
     f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
@@ -1566,7 +1566,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
       if (f2dlocal->codex[0]) {
 	MathEquationParametar *prm;
 
-	prm = math_equation_get_parameter(f2dlocal->codex[0], 0);
+	prm = math_equation_get_parameter(f2dlocal->codex[0], 0, NULL);
 	if (prm == NULL)
 	  return 1;
 
@@ -1585,7 +1585,7 @@ f2dputmath(struct objlist *obj,char *inst,char *field,char *math)
       if (f2dlocal->codey[0]) {
 	MathEquationParametar *prm;
 
-	prm = math_equation_get_parameter(f2dlocal->codey[0], 0);
+	prm = math_equation_get_parameter(f2dlocal->codey[0], 0, NULL);
 	if (prm == NULL)
 	  return 1;
 
@@ -5431,7 +5431,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
       if (code == NULL) {
 	return 1;
       }
-      prm = math_equation_get_parameter(code, 0);
+      prm = math_equation_get_parameter(code, 0, NULL);
       maxdim = (prm) ? prm->id_max : 0;
 #else
       needdata=arraynew(sizeof(int));

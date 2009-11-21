@@ -1,5 +1,5 @@
 /* 
- * $Id: math_error.c,v 1.8 2009/11/16 09:13:06 hito Exp $
+ * $Id: math_error.c,v 1.9 2009/11/21 11:39:10 hito Exp $
  * 
  */
 
@@ -19,11 +19,13 @@
 #define ERR_MSG_MISS_RC		N_("syntax error, unexpected end of equation, expecting '}'.")
 #define ERR_MSG_MISS_RB		N_("syntax error, unexpected end of equation, expecting ']'.")
 #define ERR_MSG_INVALID_F	N_("syntax error, invalid function definition.")
+#define ERR_MSG_INVALID_C	N_("syntax error, constant annot be defined in a function definition .")
 #define ERR_MSG_INVALID_P	N_("error, invalid parameter.")
+#define ERR_MSG_PRM_IN_DEF	N_("error, a parameter cannot be used in a user function or a constant definition.")
 #define ERR_MSG_UNKNOWN_F	N_("error, unknown function.")
 #define ERR_MSG_MEMORY		N_("error, cannot allocate enough memory.")
 #define ERR_MSG_UNKNOWN		N_("error, unknown error.")
-#define ERR_MSG_POS_FUNC	N_("error, the function cannot be used in a user function.")
+#define ERR_MSG_POS_FUNC	N_("error, the function cannot be used in a user function or a constant definition.")
 #define ERR_MSG_CONST_EXIST	N_("error, the constant is already defined.")
 #define ERR_MSG_CALCULATION	N_("error, calculation error.")
 
@@ -140,6 +142,14 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
       buf = g_strdup(_(ERR_MSG_INVALID_F));
     }
     break;
+  case MATH_ERROR_INVALID_CDEF:
+    code_buf = check_error_position(eq, code);
+    if (code_buf) {
+      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVALID_C), code_buf);
+    } else {
+      buf = g_strdup(_(ERR_MSG_INVALID_C));
+    }
+    break;
   case MATH_ERROR_UNEXP_TOKEN:
     code_buf = check_error_position(eq, code);
     if (code_buf) {
@@ -154,6 +164,14 @@ math_err_get_error_message(MathEquation *eq, const char *code, int err)
       buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_INVALID_P), code_buf);
     } else {
       buf = g_strdup(_(ERR_MSG_INVALID_P));
+    }
+    break;
+  case MATH_ERROR_PRM_IN_DEF:
+    code_buf = check_error_position(eq, code);
+    if (code_buf) {
+      buf = g_strdup_printf(_("%s\n  the error is found at: %s"), _(ERR_MSG_PRM_IN_DEF), code_buf);
+    } else {
+      buf = g_strdup(_(ERR_MSG_PRM_IN_DEF));
     }
     break;
   case MATH_ERROR_MEMORY:

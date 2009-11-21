@@ -1,5 +1,5 @@
 /* 
- * $Id: math_equation.c,v 1.11 2009/11/16 09:13:06 hito Exp $
+ * $Id: math_equation.c,v 1.12 2009/11/21 11:39:10 hito Exp $
  * 
  */
 
@@ -486,11 +486,21 @@ math_equation_set_parameter_data(MathEquation *eq, int type, MathValue *data)
 }
 
 MathEquationParametar *
-math_equation_get_parameter(MathEquation *eq, int type)
+math_equation_get_parameter(MathEquation *eq, int type, int *err)
 {
   MathEquationParametar *ptr;
 
   if (eq == NULL || eq->parameter == NULL) {
+    if (err) {
+      *err = MATH_ERROR_INVALID_PRM;
+    }
+    return NULL;
+  }
+
+  if (eq->func_def) {
+    if (err) {
+      *err = MATH_ERROR_PRM_IN_DEF;
+    }
     return NULL;
   }
 

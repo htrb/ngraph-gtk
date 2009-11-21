@@ -1,5 +1,5 @@
 /* 
- * $Id: math_expression.c,v 1.11 2009/11/20 08:14:55 hito Exp $
+ * $Id: math_expression.c,v 1.12 2009/11/21 11:39:10 hito Exp $
  * 
  */
 
@@ -283,9 +283,8 @@ math_parameter_expression_new(MathEquation *eq, char *name, int *err)
     ofst = 1;
   }
 
-  prm = math_equation_get_parameter(eq, type);
+  prm = math_equation_get_parameter(eq, type, err);
   if (prm == NULL) {
-    *err = MATH_ERROR_INVALID_PRM;
     return NULL;
   }
 
