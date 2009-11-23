@@ -16,7 +16,7 @@ object.html: ../../src/ngraph object.html.in objlist.nsc
 	../../src/ngraph -i objlist.nsc >> object.html
 
 intro.html: intro.html.in Makefile
-	sh ../../pathconv.sh $(docdir) $(pkgdatadir) $(ngraphconfdir) intro.html.in
+	sh ../../pathconv.sh $(docdir) $(pkglibdir) $(ngraphconfdir) intro.html.in
 
 script.html: script.html.in Makefile
 	sh ../../pathconv.sh $(docdir) $(pkgdatadir) $(ngraphconfdir) script.html.in
