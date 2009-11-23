@@ -56,7 +56,8 @@ struct funcs {
   char *name;
   struct math_function_parameter prm;
 };
-static struct funcs func_ary[] = {
+
+static struct funcs FuncAry[] = {
 EOF
   func = []
   i = 0;
@@ -79,13 +80,13 @@ math_add_basic_function(MathEquation *eq) {
   int r;
   enum MATH_FUNCTION_ARG_TYPE *ptr;
 
-  for (i = 0; i < sizeof(func_ary) / sizeof(*func_ary); i++) {
+  for (i = 0; i < sizeof(FuncAry) / sizeof(*FuncAry); i++) {
     switch (i) {
 EOF
   func.each {|arg|
   f.puts <<EOF
     case #{arg[0]}:
-      if (func_ary[i].prm.arg_type)
+      if (FuncAry[i].prm.arg_type)
         break;
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * #{arg[1].length});
       if (ptr == NULL) {
@@ -106,12 +107,12 @@ EOF
              )
 
     }
-    f.puts("      func_ary[i].prm.arg_type = ptr;")
+    f.puts("      FuncAry[i].prm.arg_type = ptr;")
     f.puts("      break;")
   }
   f.puts("    }")
   f.puts <<EOF
-    if (math_equation_add_func(eq, func_ary[i].name, &func_ary[i].prm) == NULL)
+    if (math_equation_add_func(eq, FuncAry[i].name, &FuncAry[i].prm) == NULL)
       return r;
   }
   return 0;
