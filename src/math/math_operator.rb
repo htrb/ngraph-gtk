@@ -28,12 +28,6 @@ EOF
   f.puts("  #{OPE_PREFIX}_UNKNOWN\n};\n\n")
 
   f.puts <<EOF
-struct ope_str {
-  char *ope;
-  int len;
-  enum #{OPE_PREFIX} type;
-};
-
 int math_scanner_is_ope(int chr);
 enum #{OPE_PREFIX} math_scanner_check_ope_str(const char *str, int *len);
 
@@ -46,14 +40,20 @@ File.open("#{ARGV[1]}.c", "w") { |f|
 #include <string.h>
 #include "math_operator.h"
 
-static struct ope_str ope_str[] = {
+struct ope_str {
+  char *ope;
+  int len;
+  enum #{OPE_PREFIX} type;
+};
+
+static struct ope_str OpeStr[] = {
 EOF
   ope_str.each {|s|
     f.puts("  {\"#{s[0].gsub('\\', '\\\\\\')}\", #{s[0].length}, #{OPE_PREFIX}_#{s[1]}},")
   }
   f.puts("};\n\n")
 
-  f.puts("static char ope_char[#{N}] = {")
+  f.puts("static char OpeChar[#{N}] = {")
   N.times {|i|
     f.puts(ope.include?(i) ? "  1,  // '#{i.chr}'" : "  0,")
   }
@@ -64,20 +64,20 @@ EOF
 int
 math_scanner_is_ope(int chr)
 {
-  if (chr < 0 || chr > (int) (sizeof(ope_char) / sizeof(*ope_char)))
+  if (chr < 0 || chr > (int) (sizeof(OpeChar) / sizeof(*OpeChar)))
     return 0;
 
-  return ope_char[chr];
+  return OpeChar[chr];
 }
 
 enum #{OPE_PREFIX}
 math_scanner_check_ope_str(const char *str, int *len) {
   unsigned int i;
 
-  for (i = 0; i < sizeof(ope_str) / sizeof(*ope_str); i++) {
-    if (strncmp(str, ope_str[i].ope, ope_str[i].len) == 0) {
-      *len = ope_str[i].len;
-      return ope_str[i].type;
+  for (i = 0; i < sizeof(OpeStr) / sizeof(*OpeStr); i++) {
+    if (strncmp(str, OpeStr[i].ope, OpeStr[i].len) == 0) {
+      *len = OpeStr[i].len;
+      return OpeStr[i].type;
     }
   }
 

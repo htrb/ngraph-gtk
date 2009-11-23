@@ -1,7 +1,13 @@
 #include <string.h>
 #include "math_operator.h"
 
-static struct ope_str ope_str[] = {
+struct ope_str {
+  char *ope;
+  int len;
+  enum MATH_OPERATOR_TYPE type;
+};
+
+static struct ope_str OpeStr[] = {
   {"^:", 2, MATH_OPERATOR_TYPE_POW_ASSIGN},
   {"\\:", 2, MATH_OPERATOR_TYPE_MOD_ASSIGN},
   {"/:", 2, MATH_OPERATOR_TYPE_DIV_ASSIGN},
@@ -26,7 +32,7 @@ static struct ope_str ope_str[] = {
   {"-", 1, MATH_OPERATOR_TYPE_MINUS},
 };
 
-static char ope_char[256] = {
+static char OpeChar[256] = {
   0,
   0,
   0,
@@ -288,20 +294,20 @@ static char ope_char[256] = {
 int
 math_scanner_is_ope(int chr)
 {
-  if (chr < 0 || chr > (int) (sizeof(ope_char) / sizeof(*ope_char)))
+  if (chr < 0 || chr > (int) (sizeof(OpeChar) / sizeof(*OpeChar)))
     return 0;
 
-  return ope_char[chr];
+  return OpeChar[chr];
 }
 
 enum MATH_OPERATOR_TYPE
 math_scanner_check_ope_str(const char *str, int *len) {
   unsigned int i;
 
-  for (i = 0; i < sizeof(ope_str) / sizeof(*ope_str); i++) {
-    if (strncmp(str, ope_str[i].ope, ope_str[i].len) == 0) {
-      *len = ope_str[i].len;
-      return ope_str[i].type;
+  for (i = 0; i < sizeof(OpeStr) / sizeof(*OpeStr); i++) {
+    if (strncmp(str, OpeStr[i].ope, OpeStr[i].len) == 0) {
+      *len = OpeStr[i].len;
+      return OpeStr[i].type;
     }
   }
 

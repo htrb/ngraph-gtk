@@ -27,12 +27,6 @@ enum MATH_OPERATOR_TYPE {
   MATH_OPERATOR_TYPE_UNKNOWN
 };
 
-struct ope_str {
-  char *ope;
-  int len;
-  enum MATH_OPERATOR_TYPE type;
-};
-
 int math_scanner_is_ope(int chr);
 enum MATH_OPERATOR_TYPE math_scanner_check_ope_str(const char *str, int *len);
 
