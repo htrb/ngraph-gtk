@@ -77,7 +77,6 @@ EOF
 int
 math_add_basic_function(MathEquation *eq) {
   unsigned int i;
-  int r;
   enum MATH_FUNCTION_ARG_TYPE *ptr;
 
   for (i = 0; i < sizeof(FuncAry) / sizeof(*FuncAry); i++) {
@@ -113,7 +112,7 @@ EOF
   f.puts("    }")
   f.puts <<EOF
     if (math_equation_add_func(eq, FuncAry[i].name, &FuncAry[i].prm) == NULL)
-      return r;
+      return 1;
   }
   return 0;
 }

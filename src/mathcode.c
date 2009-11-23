@@ -1,5 +1,5 @@
 /* 
- * $Id: mathcode.c,v 1.12 2009/11/16 09:13:03 hito Exp $
+ * $Id: mathcode.c,v 1.13 2009/11/23 13:09:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,6 +29,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <glib.h>
+
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
