@@ -1,3 +1,8 @@
+2009-11-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_acos)
+	(math_func_asin): initialize variable "v".
+
 2009-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_parser.c (parse_const_def_expression): return NULL

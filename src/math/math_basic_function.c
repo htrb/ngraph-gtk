@@ -1,5 +1,5 @@
 /* 
- * $Id: math_basic_function.c,v 1.5 2009/11/10 04:12:20 hito Exp $
+ * $Id: math_basic_function.c,v 1.6 2009/11/23 13:24:01 hito Exp $
  * 
  */
 
@@ -180,6 +180,7 @@ math_func_acos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
+  v = exp->buf[0].val.val;
   if (v < 1 || v > 1) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -196,6 +197,7 @@ math_func_asin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
+  v = exp->buf[0].val.val;
   if (v < 1 || v > 1) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
