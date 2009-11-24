@@ -1,5 +1,5 @@
 /* 
- * $Id: math_equation.c,v 1.12 2009/11/21 11:39:10 hito Exp $
+ * $Id: math_equation.c,v 1.13 2009/11/24 06:32:37 hito Exp $
  * 
  */
 
@@ -162,12 +162,10 @@ math_equation_new(void)
   return eq;
 }
 
-void
-math_equation_clear(MathEquation *eq)
+static void
+clear_pos_func_buf(MathEquation *eq)
 {
   int i;
-
-  memset(eq->memory, 0, sizeof(eq->memory));
 
   if (eq->pos_func_buf) {
     for (i = 0; i < eq->pos_func_num; i++) {
@@ -175,6 +173,19 @@ math_equation_clear(MathEquation *eq)
       eq->pos_func_buf[i].type = MATH_VALUE_UNDEF;
     }
   }
+}
+
+void
+math_equation_clear(MathEquation *eq)
+{
+  int i;
+
+  if (eq == NULL)
+    return;
+
+  memset(eq->memory, 0, sizeof(eq->memory));
+
+  clear_pos_func_buf(eq);
 
   if (eq->vnum > 0 && eq->vbuf) {
     memset(eq->vbuf, 0, sizeof(*eq->vbuf) * eq->vnum);
@@ -266,6 +277,7 @@ math_equation_parse(MathEquation *eq, const char *str)
       math_expression_free(eq->exp);
       return MATH_ERROR_MEMORY;
     }
+    clear_pos_func_buf(eq);
   }
 
   return err;
@@ -363,8 +375,10 @@ math_equation_calculate(MathEquation *eq, MathValue *val)
   if ((eq == NULL) || (eq->exp == NULL) ||
       (eq->cnum > 0 && eq->cbuf == NULL) ||
       (eq->vnum > 0 && eq->vbuf == NULL)) {
-    if (val)
+    if (val) {
+      val->val = 0;
       val->type = MATH_VALUE_ERROR;
+    }
     return 1;
   }
 

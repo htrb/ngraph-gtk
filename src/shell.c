@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.38 2009/11/24 02:54:39 hito Exp $
+ * $Id: shell.c,v 1.39 2009/11/24 06:32:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4277,7 +4277,7 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
 #if NEW_MATH_CODE
   int ecode, rcode;
   static MathEquation *eq = NULL;
-  MathValue value;
+  MathValue value = {0, 0};
 
   if (r) {
     *r = MERR;
@@ -4290,6 +4290,8 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
   if (str == NULL || val == NULL) {
     return ERRMILLEGAL;
   }
+
+  *val = 0;
 
   if (eq == NULL) {
     eq = math_equation_basic_new();
@@ -4329,6 +4331,8 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
   if (str == NULL || val == NULL) {
     return ERRMILLEGAL;
   }
+
+  *val = 0;
 
   rcode = mathcode(str, &code, NULL, NULL, NULL, NULL, 
 		   FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,

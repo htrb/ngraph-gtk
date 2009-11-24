@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.26 2009/11/16 09:13:04 hito Exp $
+ * $Id: shellcm.c,v 1.27 2009/11/24 06:32:36 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1235,10 +1235,18 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
     sherror4(argv[0],ERRSMLARG);
     return ERRSMLARG;
   }
-  if ((s=nstrnew())==NULL) return ERR;
-  for (i=1;i<argc;i++)
-    if ((s=nstrcat(s,argv[i]))==NULL) return ERR;
 
+  s = nstrnew();
+  if (s == NULL) {
+    return ERR;
+  }
+
+  for (i = 1; i < argc; i++) {
+    s = nstrcat(s, argv[i]);
+    if (s == NULL) {
+      return ERR;
+    }
+  }
 
   ecode = str_calc(s, &vd, &rcode, &err_msg);
   g_free(s);
@@ -1257,16 +1265,20 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
     return ecode;
   }
 
-  if (rcode==MNAN) {
+  if (rcode == MNAN) {
     putstdout("nan");
     return ERR;
-  } else if (rcode==MUNDEF) {
+  } else if (rcode == MUNDEF) {
     putstdout("undefined");
     return ERR;
   }
 
-  if (argv[0][0]=='d') printfstdout("%.15e\n",vd);
-  else printfstdout("%d\n",nround(vd));
+  if (argv[0][0] == 'd') {
+    printfstdout("%.15e\n", vd); 
+  } else {
+    printfstdout("%d\n", nround(vd));
+  }
+
   return 0;
 }
 

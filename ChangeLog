@@ -1,5 +1,10 @@
 2009-11-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/math/math_equation.c (clear_pos_func_buf): add.
+	(math_equation_clear): use "clear_pos_func_buf()".
+	(math_equation_parse): call "clear_pos_func_buf()" if
+	"eq->pos_func_num" is greater than zero.
+
 	* src/math/math_basic_function.c (math_func_asin)
 	(math_func_acos): minimum value of "v" is -1 (not 0).
 	(math_func_not): don't have to check "exp->buf[1]".
@@ -12,6 +17,7 @@
 	* src/shell.c (str_calc): set rcode as "MNAN" or "MUNDEF" when
 	"value.type" is "MATH_VALUE_NAN" or "MATH_VALUE_UNDEF"
 	respectively.
+	(str_calc): initialize "value" and "val".
 
 2009-11-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
