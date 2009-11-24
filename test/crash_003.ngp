@@ -1,0 +1,3 @@
+# original ngraph causes segmentation fault with this script
+new gra name=a
+put gra:0 name=b c
