@@ -5,6 +5,9 @@
 	(math_func_not): don't have to check "exp->buf[1]".
 	(math_func_gt): comparing condition is ">" (not ">=").
 	(math_func_pn): "x" is "double" (not "int").
+	(math_func_pn): chech maximum value of "x".
+	(math_func_rsort): 3rd argument of the function "qsort" is
+	"sizeof(MathValue)" (not "sizeof(double)").
 
 	* src/shell.c (str_calc): set rcode as "MNAN" or "MUNDEF" when
 	"value.type" is "MATH_VALUE_NAN" or "MATH_VALUE_UNDEF"

@@ -1,5 +1,5 @@
 /* 
- * $Id: math_basic_function.c,v 1.7 2009/11/24 02:54:41 hito Exp $
+ * $Id: math_basic_function.c,v 1.8 2009/11/24 04:46:35 hito Exp $
  * 
  */
 
@@ -1557,7 +1557,7 @@ math_func_rsort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
     return 0;
   }
 
-  qsort(ary->data, ary->num, sizeof(double), rcompare_double);
+  qsort(ary->data, ary->num, sizeof(MathValue), rcompare_double);
 
   return 0;
 }
