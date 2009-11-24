@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.37 2009/11/17 08:38:32 hito Exp $
+ * $Id: shell.c,v 1.38 2009/11/24 02:54:39 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4310,6 +4310,12 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
   ecode = (rcode) ? ERRMFAT : 0;
 
   *val = value.val;
+
+  if (value.type == MATH_VALUE_NAN) {
+    rcode = MNAN;
+  } else if (value.type == MATH_VALUE_UNDEF) {
+    rcode = MUNDEF;
+  }
 #else
   int rcode, ecode = 0, i;
   char *code;

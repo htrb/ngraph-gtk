@@ -1,5 +1,5 @@
 /* 
- * $Id: math_basic_function.c,v 1.6 2009/11/23 13:24:01 hito Exp $
+ * $Id: math_basic_function.c,v 1.7 2009/11/24 02:54:41 hito Exp $
  * 
  */
 
@@ -181,7 +181,7 @@ math_func_acos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
   v = exp->buf[0].val.val;
-  if (v < 1 || v > 1) {
+  if (v < -1 || v > 1) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -198,7 +198,7 @@ math_func_asin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
   v = exp->buf[0].val.val;
-  if (v < 1 || v > 1) {
+  if (v < -1 || v > 1) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -925,7 +925,6 @@ int
 math_func_not(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   MATH_CHECK_ARG(rval, exp->buf[0]);
-  MATH_CHECK_ARG(rval, exp->buf[1]);
 
   rval->val = ! exp->buf[0].val.val;
   return 0;
@@ -1066,7 +1065,7 @@ math_func_gt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
 
-  rval->val = (exp->buf[0].val.val >= exp->buf[1].val.val);
+  rval->val = (exp->buf[0].val.val > exp->buf[1].val.val);
   return 0;
 }
 
@@ -1132,8 +1131,8 @@ math_func_iscont(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
 int
 math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  double l1, l2, tmp1, tmp2, val;
-  int i, n, x;
+  double l1, x, val;
+  int i, n;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -1141,7 +1140,7 @@ math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
-  if (n < 0) {
+  if (n < 0 || fabs(x) > 1000) {
     rval->type = MATH_VALUE_ERROR;
     return -1;
   }
@@ -1150,10 +1149,14 @@ math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   if (n == 0) {
     val = l1;
   } else {
+    double l2;
+
     l2 = x;
     if (n == 1) {
       val = l2;
     } else {
+      double tmp1, tmp2;
+
       for (i = 2; i <= n; i++) {
 	tmp1 = x * l2;
 	tmp2 = tmp1 - l1;
