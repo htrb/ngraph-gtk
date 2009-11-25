@@ -478,7 +478,7 @@ object: menu
 alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
-object id: 35
+object id: 36
 number of fields: 39
 size of instance: 184
 r--               id    int
@@ -522,13 +522,36 @@ r-x    toggle_window    void( int )
 ---          _evloop    void( )
 </pre>
 
+<h3>rawfile オブジェクト</h3>
+<pre>
+object: rawfile
+alias:
+version: 1.00.00
+parent: object
+object id: 13
+number of fields: 12
+size of instance: 64
+r--               id    int
+r--              oid    int
+rw-             name    char*
+r-x             save    *char( char *[] )
+--x             init    void( )
+--x             done    void( )
+---             next    void*
+rw-             file    char*
+r-x             open    void( )
+r-x            close    void( )
+r-x             gets    *char( )
+---           _local    void*
+</pre>
+
 <h3>int オブジェクト</h3>
 <pre>
 object: int
 alias:
 version: 1.00.00
 parent: object
-object id: 13
+object id: 14
 number of fields: 8
 size of instance: 48
 r--               id    int
@@ -547,7 +570,7 @@ object: double
 alias:
 version: 1.00.00
 parent: object
-object id: 14
+object id: 15
 number of fields: 8
 size of instance: 48
 r--               id    int
@@ -566,7 +589,7 @@ object: string
 alias:
 version: 1.00.00
 parent: object
-object id: 15
+object id: 16
 number of fields: 8
 size of instance: 48
 r--               id    int
@@ -585,7 +608,7 @@ object: iarray
 alias:
 version: 1.00.00
 parent: object
-object id: 16
+object id: 17
 number of fields: 14
 size of instance: 64
 r--               id    int
@@ -610,7 +633,7 @@ object: darray
 alias:
 version: 1.00.00
 parent: object
-object id: 17
+object id: 18
 number of fields: 14
 size of instance: 64
 r--               id    int
@@ -635,7 +658,7 @@ object: sarray
 alias:
 version: 1.00.00
 parent: object
-object id: 18
+object id: 19
 number of fields: 14
 size of instance: 64
 r--               id    int
@@ -660,7 +683,7 @@ object: math
 alias:
 version: 1.00.00
 parent: object
-object id: 19
+object id: 20
 number of fields: 38
 size of instance: 280
 r--               id    int
@@ -709,7 +732,7 @@ object: fit
 alias:
 version: 1.00.01
 parent: object
-object id: 20
+object id: 21
 number of fields: 59
 size of instance: 448
 r--               id    int
@@ -779,7 +802,7 @@ object: prm
 alias:
 version: 1.00.00
 parent: object
-object id: 21
+object id: 22
 number of fields: 11
 size of instance: 64
 r--               id    int
@@ -801,7 +824,7 @@ object: draw
 alias:
 version: 1.00.00
 parent: object
-object id: 22
+object id: 23
 number of fields: 16
 size of instance: 96
 r--               id    int
@@ -828,7 +851,7 @@ object: axisgrid
 alias:
 version: 1.00.00
 parent: draw
-object id: 23
+object id: 24
 number of fields: 30
 size of instance: 200
 r--               id    int
@@ -869,7 +892,7 @@ object: axis
 alias:
 version: 1.00.00
 parent: draw
-object id: 24
+object id: 25
 number of fields: 95
 size of instance: 616
 r--               id    int
@@ -975,9 +998,9 @@ object: file
 alias: data
 version: 1.00.00
 parent: draw
-object id: 25
-number of fields: 118
-size of instance: 784
+object id: 26
+number of fields: 115
+size of instance: 776
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1071,9 +1094,6 @@ r-x         opendata    void( )
 r-x        opendatac    void( )
 r-x          getdata    void( )
 r-x        closedata    void( )
-r-x             open    void( )
-r-x            close    void( )
-r-x             gets    *char( )
 --x     opendata_raw    void( )
 --x      getdata_raw    double[]( int[] )
 --x    closedata_raw    void( )
@@ -1104,7 +1124,7 @@ object: merge
 alias:
 version: 1.00.00
 parent: draw
-object id: 26
+object id: 27
 number of fields: 36
 size of instance: 232
 r--               id    int
@@ -1151,7 +1171,7 @@ object: legend
 alias:
 version: 1.00.00
 parent: draw
-object id: 27
+object id: 28
 number of fields: 20
 size of instance: 112
 r--               id    int
@@ -1182,7 +1202,7 @@ object: rectangle
 alias:
 version: 1.00.00
 parent: legend
-object id: 28
+object id: 29
 number of fields: 35
 size of instance: 224
 r--               id    int
@@ -1228,7 +1248,7 @@ object: line
 alias:
 version: 1.00.01
 parent: legend
-object id: 29
+object id: 30
 number of fields: 32
 size of instance: 200
 r--               id    int
@@ -1271,7 +1291,7 @@ object: curve
 alias:
 version: 1.00.00
 parent: legend
-object id: 30
+object id: 31
 number of fields: 30
 size of instance: 184
 r--               id    int
@@ -1312,7 +1332,7 @@ object: arc
 alias:
 version: 1.00.00
 parent: legend
-object id: 31
+object id: 32
 number of fields: 34
 size of instance: 216
 r--               id    int
@@ -1357,7 +1377,7 @@ object: polygon
 alias:
 version: 1.00.00
 parent: legend
-object id: 32
+object id: 33
 number of fields: 30
 size of instance: 184
 r--               id    int
@@ -1398,7 +1418,7 @@ object: mark
 alias:
 version: 1.00.00
 parent: legend
-object id: 33
+object id: 34
 number of fields: 32
 size of instance: 208
 r--               id    int
@@ -1441,7 +1461,7 @@ object: text
 alias:
 version: 1.00.00
 parent: legend
-object id: 34
+object id: 35
 number of fields: 34
 size of instance: 224
 r--               id    int
@@ -1486,7 +1506,7 @@ object: dialog
 alias:
 version: 1.00.00
 parent: object
-object id: 36
+object id: 37
 number of fields: 25
 size of instance: 168
 r--               id    int

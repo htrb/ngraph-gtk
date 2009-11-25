@@ -4,10 +4,10 @@ set +e
 
 while [ -n "$1" ]
 do
-    new file  file=$1
-    file::open
+    new rawfile  file=$1
+    rawfile::open
 
-    while l=${file::gets}
+    while l=${rawfile::gets}
     do
 	eqn=${l%#*}
 	val=${l#*#}
@@ -23,7 +23,7 @@ do
 	fi
     done
 
-    file::close
+    rawfile::close
     shift
 done
 

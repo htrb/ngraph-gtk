@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.104 2009/11/25 10:23:01 hito Exp $
+ * $Id: ofile.c,v 1.105 2009/11/25 12:19:07 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -345,7 +345,7 @@ struct f2dlocal {
   int need2passx,need2passy,total_line;
   struct f2ddata *data;
   int coord,idx,idy,id2,id3,icx,icy,ic2,ic3,isx,isy,is2,is3,iline;
-  FILE *storefd, *fp;
+  FILE *storefd;
   int endstore;
   double sumx, sumy, sumxx, sumyy, sumxy;
   double dminx, dmaxx, dminy, dmaxy, davx, davy, dsigx, dsigy;
@@ -698,10 +698,6 @@ opendata(struct objlist *obj,char *inst,
   double ip1,ip2;
   int dataclip;
   struct stat stat_buf;
-
-  if (f2dlocal->fp) {
-    return NULL;
-  }
 
   _getobj(obj,"id",inst,&fid);
   _getobj(obj,"file",inst,&file);
@@ -1875,7 +1871,6 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   f2dlocal->is3=chkobjoffset(obj,"stat_3");
   f2dlocal->iline=chkobjoffset(obj,"line");
   f2dlocal->storefd=NULL;
-  f2dlocal->fp = NULL;
   f2dlocal->endstore=FALSE;
 
   f2dlocal->sumx = 0;
@@ -1936,10 +1931,6 @@ f2ddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"_local",inst,&f2dlocal);
   closedata(f2dlocal->data, f2dlocal);
-  if (f2dlocal->fp) {
-    fclose(f2dlocal->fp);
-    f2dlocal->fp = NULL;
-  }
 #if NEW_MATH_CODE
   math_equation_free(f2dlocal->codex[0]);
   math_equation_free(f2dlocal->codex[1]);
@@ -6765,9 +6756,6 @@ f2dopendata(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int num2;
 
   _getobj(obj,"_local",inst,&f2dlocal);
-  if (f2dlocal->fp) {
-    return 1;
-  }
   if (strcmp0((char *)argv[1],"opendatac")==0) f2dlocal->coord=TRUE;
   else f2dlocal->coord=FALSE;
   fp=f2dlocal->data;
@@ -6829,80 +6817,6 @@ f2dclosedata(struct objlist *obj,char *inst,char *rval,
   f2dsettbl(inst,f2dlocal,fp);
   closedata(fp, f2dlocal);
   f2dlocal->data=NULL;
-  return 0;
-}
-
-static int 
-f2dopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
-{
-  struct f2dlocal *f2dlocal;
-  FILE *fp;
-  char *file;
-
-  _getobj(obj, "_local", inst, &f2dlocal);
-
-  if (f2dlocal->data) {
-    return 1;
-  }
-
-  _getobj(obj, "file", inst, &file);
-  if (file == NULL) {
-    return 1;
-  }
-
-  fp = nfopen(file, "rt");
-  if (fp == NULL) {
-    error2(obj, ERROPEN, file);
-    g_free(fp);
-    return 1;
-  }
-
-  f2dlocal->fp = fp;
-  return 0;
-}
-
-static int 
-f2dclose(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
-{
-  struct f2dlocal *f2dlocal;
-  FILE *fp;
-
-  _getobj(obj, "_local", inst, &f2dlocal);
-  fp = f2dlocal->fp;
-  if (fp == NULL) {
-    return 1;
-  }
-
-  fclose(fp);
-  f2dlocal->fp = NULL;
-
-  return 0;
-}
-
-static int 
-f2dgets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
-{
-  struct f2dlocal *f2dlocal;
-  FILE *fp;
-  int rcode;
-  char *buf;
-
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
-
-  _getobj(obj, "_local", inst, &f2dlocal);
-  fp = f2dlocal->fp;
-  if (fp == NULL) {
-    return 1;
-  }
-
-  rcode = fgetline(fp, &buf);
-  if (rcode) {
-    return 1;
-  }
-
-  *(char **)rval = buf;
-
   return 0;
 }
 
@@ -8487,9 +8401,6 @@ static struct objtable file2d[] = {
   {"opendatac",NVFUNC,NREAD|NEXEC,f2dopendata,NULL,0},
   {"getdata",NVFUNC,NREAD|NEXEC,f2dgetdata,NULL,0},
   {"closedata",NVFUNC,NREAD|NEXEC,f2dclosedata,NULL,0},
-  {"open",NVFUNC,NREAD|NEXEC,f2dopen,NULL,0},
-  {"close",NVFUNC,NREAD|NEXEC,f2dclose,NULL,0},
-  {"gets",NSFUNC,NREAD|NEXEC,f2dgets,NULL,0},
   {"opendata_raw",NVFUNC,NEXEC,f2dopendataraw,NULL,0},
   {"getdata_raw",NDAFUNC,NEXEC,f2dgetdataraw,"ia",0},
   {"closedata_raw",NVFUNC,NEXEC,f2dclosedataraw,NULL,0},
