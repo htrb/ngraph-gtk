@@ -434,4 +434,4 @@ do
     shift
 done
 
-unset usage check_file clear_viewer save_image check_set load_graph LOADSETTINGS SHOW_DIALOG
+unset usage check_file clear_viewer save_image check_set load_graph LOADSETTINGS SHOW_DIALOG XAXIS YAXIS
