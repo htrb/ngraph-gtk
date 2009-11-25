@@ -1,22 +1,10 @@
-EXTRA_DIST = math_test_new.nsc math_test_new.in math_test_old.nsc math_test_old.in math_test.awk
+EXTRA_DIST =  math_test.nsc math_test_new.dat math_test_old.dat
 NGRAPH=../src/ngraph
 
 test: math_test
 
-math_test: math_test_new math_test_old
-
-math_test_new: math_test_new.nsc
-	$(NGRAPH) -i math_test_new.nsc
-
-math_test_new.nsc: math_test_new.in math_test.awk
-	awk -f math_test.awk math_test_new.in > math_test_new.nsc
-
-math_test_old: math_test_old.nsc
-	$(NGRAPH) -i math_test_old.nsc
-
-math_test_old.nsc: math_test_old.in math_test.awk
-	awk -f math_test.awk math_test_old.in > math_test_old.nsc
-
+math_test: math_test.nsc math_test_old.dat  math_test_new.dat
+	$(NGRAPH) -i math_test.nsc math_test_old.dat math_test_new.dat
 
 # original Ngraph causes following errors
 #

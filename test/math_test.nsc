@@ -1,0 +1,31 @@
+#! /usr/bin/ngraph
+
+set +e
+
+while [ -n "$1" ]
+do
+    new file  file=$1
+    file::open
+
+    while l=${file::gets}
+    do
+	eqn=${l%#*}
+	val=${l#*#}
+
+	RESULT=`dexpr "$eqn"`
+	if [ "$RESULT" != "$val" ]
+	then
+	    echo
+	    echo error "$eqn"
+	    echo '    expected:' "$val"
+	    echo '      result:' "$RESULT"
+	    echo '  difference:' `dexpr $RESULT-$val`
+	fi
+    done
+
+    file::close
+    shift
+done
+
+
+del system

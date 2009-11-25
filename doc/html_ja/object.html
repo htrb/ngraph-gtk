@@ -976,8 +976,8 @@ alias: data
 version: 1.00.00
 parent: draw
 object id: 25
-number of fields: 115
-size of instance: 776
+number of fields: 118
+size of instance: 784
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1071,6 +1071,9 @@ r-x         opendata    void( )
 r-x        opendatac    void( )
 r-x          getdata    void( )
 r-x        closedata    void( )
+r-x             open    void( )
+r-x            close    void( )
+r-x             gets    *char( )
 --x     opendata_raw    void( )
 --x      getdata_raw    double[]( int[] )
 --x    closedata_raw    void( )

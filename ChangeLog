@@ -1,3 +1,13 @@
+2009-11-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2dgets, f2dclose, f2dopen): add.
+	(static struct objtable file2d[]): add field "gets", "open" and
+	"clese".
+	(struct f2dlocal): add member "fp".
+	(opendata, f2dopendata): check "f2dlocal->fp".
+	(f2ddone): close file if "f2dlocal->fp" is not NULL.
+	(f2dinit): initialize "f2dlocal->fp".
+
 2009-11-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_equation.c (clear_pos_func_buf): add.
