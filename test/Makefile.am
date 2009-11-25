@@ -1,6 +1,5 @@
 EXTRA_DIST = math_test_new.nsc math_test_new.in math_test_old.nsc math_test_old.in math_test.awk
 NGRAPH=../src/ngraph
-NGRAPH=mngraph
 
 test: math_test
 
