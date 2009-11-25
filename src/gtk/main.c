@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.45 2009/11/25 12:19:07 hito Exp $
+ * $Id: main.c,v 1.46 2009/11/25 14:36:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -70,7 +70,7 @@ static int consolecol = 80, consolerow = 25;
 void *addobjectroot(void);
 void *addint(void);
 void *adddouble(void);
-void *addrawfile(void);
+void *addio(void);
 void *addstring(void);
 void *addiarray(void);
 void *adddarray(void);
@@ -159,7 +159,7 @@ static void * ( * obj_add_func_ary[]) (void) = {
   addgra2gtkprint,
   addgra2gtk,
   addgra2gdk,
-  addrawfile,
+  addio,
   addint,
   adddouble,
   addstring,

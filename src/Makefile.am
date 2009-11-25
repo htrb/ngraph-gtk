@@ -12,7 +12,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	omerge.c opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c	\
 	oshell.c ostring.c osystem.c otext.c otext.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	gettext.h common.h nhash.h nhash.c strconv.c strconv.h orawfile.c
+	gettext.h common.h nhash.h nhash.c strconv.c strconv.h oio.c
 
 pkglib_PROGRAMS = terminal
 terminal_SOURCES = terminal.c

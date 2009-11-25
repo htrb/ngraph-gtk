@@ -71,7 +71,7 @@ am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-shell.$(OBJEXT) ngraph-shellcm.$(OBJEXT) \
 	ngraph-shellux.$(OBJEXT) ngraph-spline.$(OBJEXT) \
 	ngraph-nhash.$(OBJEXT) ngraph-strconv.$(OBJEXT) \
-	ngraph-orawfile.$(OBJEXT)
+	ngraph-oio.$(OBJEXT)
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 am__DEPENDENCIES_1 =
 ngraph_DEPENDENCIES = $(am__DEPENDENCIES_1) gtk/libngraph.la \
@@ -290,7 +290,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	omerge.c opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c	\
 	oshell.c ostring.c osystem.c otext.c otext.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	gettext.h common.h nhash.h nhash.c strconv.c strconv.h orawfile.c
+	gettext.h common.h nhash.h nhash.c strconv.c strconv.h oio.c
 
 terminal_SOURCES = terminal.c
 ngraph_LDADD = $(GTK_LIBS) gtk/libngraph.la math/libmath.la
@@ -455,6 +455,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-ogra2prn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oiarray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oint.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-olegend.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-omark.Po@am__quote@
@@ -462,7 +463,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-omerge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-opolygon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oprm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-orawfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-orect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oroot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-osarray.Po@am__quote@
@@ -1142,19 +1142,19 @@ ngraph-strconv.obj: strconv.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-strconv.obj `if test -f 'strconv.c'; then $(CYGPATH_W) 'strconv.c'; else $(CYGPATH_W) '$(srcdir)/strconv.c'; fi`
 
-ngraph-orawfile.o: orawfile.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-orawfile.o -MD -MP -MF $(DEPDIR)/ngraph-orawfile.Tpo -c -o ngraph-orawfile.o `test -f 'orawfile.c' || echo '$(srcdir)/'`orawfile.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ngraph-orawfile.Tpo $(DEPDIR)/ngraph-orawfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orawfile.c' object='ngraph-orawfile.o' libtool=no @AMDEPBACKSLASH@
+ngraph-oio.o: oio.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-oio.o -MD -MP -MF $(DEPDIR)/ngraph-oio.Tpo -c -o ngraph-oio.o `test -f 'oio.c' || echo '$(srcdir)/'`oio.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ngraph-oio.Tpo $(DEPDIR)/ngraph-oio.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='oio.c' object='ngraph-oio.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-orawfile.o `test -f 'orawfile.c' || echo '$(srcdir)/'`orawfile.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oio.o `test -f 'oio.c' || echo '$(srcdir)/'`oio.c
 
-ngraph-orawfile.obj: orawfile.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-orawfile.obj -MD -MP -MF $(DEPDIR)/ngraph-orawfile.Tpo -c -o ngraph-orawfile.obj `if test -f 'orawfile.c'; then $(CYGPATH_W) 'orawfile.c'; else $(CYGPATH_W) '$(srcdir)/orawfile.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ngraph-orawfile.Tpo $(DEPDIR)/ngraph-orawfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orawfile.c' object='ngraph-orawfile.obj' libtool=no @AMDEPBACKSLASH@
+ngraph-oio.obj: oio.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-oio.obj -MD -MP -MF $(DEPDIR)/ngraph-oio.Tpo -c -o ngraph-oio.obj `if test -f 'oio.c'; then $(CYGPATH_W) 'oio.c'; else $(CYGPATH_W) '$(srcdir)/oio.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ngraph-oio.Tpo $(DEPDIR)/ngraph-oio.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='oio.c' object='ngraph-oio.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-orawfile.obj `if test -f 'orawfile.c'; then $(CYGPATH_W) 'orawfile.c'; else $(CYGPATH_W) '$(srcdir)/orawfile.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oio.obj `if test -f 'oio.c'; then $(CYGPATH_W) 'oio.c'; else $(CYGPATH_W) '$(srcdir)/oio.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
