@@ -5,9 +5,9 @@ set +e
 while [ -n "$1" ]
 do
     new io
-    io::open $1 "r"
+    io::open "r" $1
 
-    while l=${io::gets}
+    while l=`get io -field gets`
     do
 	eqn=${l%#*}
 	val=${l#*#}

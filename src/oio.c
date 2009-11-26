@@ -1,5 +1,5 @@
 /* 
- * $Id: oio.c,v 1.1 2009/11/25 14:36:02 hito Exp $
+ * $Id: oio.c,v 1.2 2009/11/26 02:26:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -48,16 +48,18 @@
 #include "nstring.h"
 #include "oroot.h"
 
-static char *f2derrorlist[]={
+static char *io_errorlist[]={
   "file is not specified.",
-  "file is closed.",
-  "I/O error: open file",
-  "I/O error: read file",
-  "I/O error: write file",
   "invalid mode.",
+  "I/O error: open",
+  "I/O error: read",
+  "I/O error: write",
+  "I/O error: seek",
+  "IO is closed.",
+  "IO is opened.",
 };
 
-#define ERRNUM (sizeof(f2derrorlist) / sizeof(*f2derrorlist))
+#define ERRNUM (sizeof(io_errorlist) / sizeof(*io_errorlist))
 
 #define NAME		"io"
 #define PARENT		"object"
@@ -68,75 +70,117 @@ static char *f2derrorlist[]={
 #define ERROPEN		102
 #define ERRREAD		103
 #define ERRWRITE	104
-#define ERRCLOSED	105
+#define ERRSEEK		105
+#define ERRCLOSED	106
+#define ERROPENED	107
 
-struct f2dlocal {
+char *seek_whence[]={
+  N_("set"),
+  N_("cur"),
+  N_("end"),
+  NULL
+};
+
+enum IO_SEEK_WHENCE {
+  IO_SEEK_SET,
+  IO_SEEK_CUR,
+  IO_SEEK_END,
+};
+
+struct io_local {
   FILE *fp;
+  int popen;
 };
 
 static int 
-f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct f2dlocal *f2dlocal;
+  struct io_local *io_local;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
 
-  f2dlocal = g_malloc0(sizeof(struct f2dlocal));
-  if (f2dlocal == NULL) {
+  io_local = g_malloc0(sizeof(struct io_local));
+  if (io_local == NULL) {
     return 1;
   }
 
-  if (_putobj(obj, "_local", inst, f2dlocal)) {
-    g_free(f2dlocal);
+  if (_putobj(obj, "_local", inst, io_local)) {
+    g_free(io_local);
     return 1;
   }
 
-  f2dlocal->fp = NULL;
+  io_local->fp = NULL;
+  io_local->popen = FALSE;
+
+  return 0;
+}
+
+static int
+io_close_sub(struct io_local *io_local)
+{
+  if (io_local->fp == NULL) {
+    return 1;
+  }
+
+  if (io_local->popen) {
+    pclose(io_local->fp);
+  } else {
+    fclose(io_local->fp);
+  }
+  io_local->fp = NULL;
 
   return 0;
 }
 
 static int 
-f2ddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct f2dlocal *f2dlocal;
+  struct io_local *io_local;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
 
-  _getobj(obj,"_local",inst,&f2dlocal);
-  if (f2dlocal->fp) {
-    fclose(f2dlocal->fp);
-    f2dlocal->fp = NULL;
+  _getobj(obj,"_local",inst,&io_local);
+  if (io_local->fp) {
+    io_close_sub(io_local);
   }
 
   return 0;
 }
 
 static int 
-f2dopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_open(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct f2dlocal *f2dlocal;
+  struct io_local *io_local;
   FILE *fp;
   char *file, *mode;
 
-  _getobj(obj, "_local", inst, &f2dlocal);
+  _getobj(obj, "_local", inst, &io_local);
 
-  if (f2dlocal->fp) {
+  if (io_local->fp) {
+    error(obj, ERROPENED);
     return 1;
   }
 
-  file = argv[2];
-  mode = argv[3];
+  mode = argv[2];
+  file = argv[3];
 
   if (file == NULL || mode == NULL) {
     return 1;
   }
 
   errno = 0;
-  fp = nfopen(file, mode);
+
+  if (argv[1][0] == 'p') {
+    fp = popen(file, mode);
+    io_local->popen = TRUE;
+  } else {
+    fp = nfopen(file, mode);
+    io_local->popen = FALSE;
+  }
+
   if (fp == NULL) {
     if (errno == EINVAL) {
-      error(obj, ERRMODE);
+      error2(obj, ERRMODE, mode);
     } else {
       error2(obj, ERROPEN, file);
     }
@@ -145,38 +189,41 @@ f2dopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
   _putobj(obj, "file", inst, g_strdup(file));
 
-  f2dlocal->fp = fp;
+  io_local->fp = fp;
   return 0;
 }
 
 static int 
-f2dclose(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_close(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct f2dlocal *f2dlocal;
+  struct io_local *io_local;
   FILE *fp;
+  char *s;
 
-  _getobj(obj, "_local", inst, &f2dlocal);
-  fp = f2dlocal->fp;
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
   if (fp == NULL) {
     return 1;
   }
 
+  _getobj(obj, "file", inst, &s);
+  g_free(s);
   _putobj(obj, "file", inst, NULL);
-  fclose(fp);
-  f2dlocal->fp = NULL;
+
+  io_close_sub(io_local);
 
   return 0;
 }
 
 static int 
-f2dputs(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_puts(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct f2dlocal *f2dlocal;
+  struct io_local *io_local;
   FILE *fp;
   int rcode;
 
-  _getobj(obj, "_local", inst, &f2dlocal);
-  fp = f2dlocal->fp;
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
   if (fp == NULL) {
     return 1;
   }
@@ -195,9 +242,9 @@ f2dputs(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-f2dgets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_gets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct f2dlocal *f2dlocal;
+  struct io_local *io_local;
   FILE *fp;
   int rcode;
   char *buf;
@@ -205,16 +252,18 @@ f2dgets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   g_free(*(char **)rval);
   *(char **)rval = NULL;
 
-  _getobj(obj, "_local", inst, &f2dlocal);
-  fp = f2dlocal->fp;
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
   if (fp == NULL) {
     error(obj, ERRCLOSED);
     return 1;
   }
 
   rcode = fgetline(fp, &buf);
-  if (rcode) {
+  if (rcode < -1) {
     error(obj, ERRREAD);
+    return 1;
+  } else if (rcode) {
     return 1;
   }
 
@@ -224,21 +273,21 @@ f2dgets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-f2dgetc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_getc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct f2dlocal *f2dlocal;
+  struct io_local *io_local;
   FILE *fp;
   int rcode;
 
-  _getobj(obj, "_local", inst, &f2dlocal);
-  fp = f2dlocal->fp;
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
   if (fp == NULL) {
     error(obj, ERRCLOSED);
     return 1;
   }
 
   rcode = fgetc(fp);
-  if (rcode) {
+  if (rcode == EOF && ferror(fp)) {
     return 1;
   }
 
@@ -248,14 +297,14 @@ f2dgetc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-f2dputc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_putc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  struct f2dlocal *f2dlocal;
+  struct io_local *io_local;
   FILE *fp;
   int c;
 
-  _getobj(obj, "_local", inst, &f2dlocal);
-  fp = f2dlocal->fp;
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
   if (fp == NULL) {
     error(obj, ERRCLOSED);
     return 1;
@@ -273,19 +322,227 @@ f2dputc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static int 
+io_read(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct io_local *io_local;
+  FILE *fp;
+  int l;
+  size_t len, rlen;
+  char *buf;
+
+  g_free(*(char **)rval);
+  *(char **)rval = NULL;
+
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
+  if (fp == NULL) {
+    error(obj, ERRCLOSED);
+    return 1;
+  }
+
+  l = * (int *) argv[2];
+  if (l < 0) {
+    return 1;
+  } else if (l < 1) {
+    return 0;
+  }
+  len = l;
+
+  buf = g_malloc(len + 1);
+  if (buf == NULL) {
+    return 1;
+  }
+
+  rlen = fread(buf, 1, len, fp);
+  if (rlen == 0 && ferror(fp)) {
+    g_free(buf);
+    return 1;
+  }
+  buf[rlen] = '\0';
+
+  *(char **)rval = buf;
+
+  return 0;
+}
+
+static int 
+io_write(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct io_local *io_local;
+  FILE *fp;
+  size_t len, rlen;
+  char *buf;
+
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
+  if (fp == NULL) {
+    error(obj, ERRCLOSED);
+    return 1;
+  }
+
+  buf = argv[2];
+  if (buf == NULL) {
+    return 1;
+  }
+
+  len = strlen(buf);
+
+  rlen = fwrite(buf, 1, len, fp);
+
+  *(int *)rval = rlen;
+
+  return 0;
+}
+
+static int 
+io_seek(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct io_local *io_local;
+  FILE *fp;
+  int r, pos, w, whence;
+
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
+  if (fp == NULL) {
+    error(obj, ERRCLOSED);
+    return 1;
+  }
+
+  _getobj(obj, "whence", inst, &w);
+  switch (w) {
+  case IO_SEEK_SET:
+    whence = SEEK_SET;
+    break;
+  case IO_SEEK_CUR:
+    whence = SEEK_CUR;
+    break;
+  case IO_SEEK_END:
+    whence = SEEK_END;
+    break;
+  default:
+    return 1;
+  }
+
+  pos = *(int *) argv[2];
+
+  r = fseek(fp, pos, whence);
+  if (r) {
+    error(obj, ERRSEEK);
+    return 1;
+  }
+
+  return 0;
+}
+
+static int 
+io_rewind(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct io_local *io_local;
+  FILE *fp;
+
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
+  if (fp == NULL) {
+    error(obj, ERRCLOSED);
+    return 1;
+  }
+
+  rewind(fp);
+
+  return 0;
+}
+
+static int 
+io_tell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct io_local *io_local;
+  FILE *fp;
+  long pos;
+
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
+  if (fp == NULL) {
+    error(obj, ERRCLOSED);
+    return 1;
+  }
+
+  pos = ftell(fp);
+  if (pos < 0) {
+    error(obj, ERRSEEK);
+    return 1;
+  }
+
+  *(int *) rval = pos;
+
+  return 0;
+}
+
+static int
+io_flush(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct io_local *io_local;
+  FILE *fp;
+  int r;
+
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
+  if (fp == NULL) {
+    error(obj, ERRCLOSED);
+    return 1;
+  }
+
+  r = fflush(fp);
+  if (r) {
+    error(obj, ERRWRITE);
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
+io_eof(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  struct io_local *io_local;
+  FILE *fp;
+  int r;
+
+  _getobj(obj, "_local", inst, &io_local);
+  fp = io_local->fp;
+  if (fp == NULL) {
+    error(obj, ERRCLOSED);
+    return 1;
+  }
+
+  r = feof(fp);
+  
+  *(int *) rval = (r) ? TRUE : FALSE;
+
+  return 0;
+}
+
 static struct objtable file2d[] = {
-  {"init",NVFUNC,NEXEC,f2dinit,NULL,0},
-  {"done",NVFUNC,NEXEC,f2ddone,NULL,0},
+  {"init",NVFUNC,NEXEC,io_init,NULL,0},
+  {"done",NVFUNC,NEXEC,io_done,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
 
   {"file",NSTR,NREAD,NULL,NULL,0},
-  {"open",NVFUNC,NREAD|NEXEC,f2dopen,"ss",0},
-  {"popen",NVFUNC,NREAD|NEXEC,f2dopen,"ss",0},
-  {"close",NVFUNC,NREAD|NEXEC,f2dclose,"",0},
-  {"puts",NVFUNC,NREAD|NEXEC,f2dputs,"s",0},
-  {"putc",NIFUNC,NREAD|NEXEC,f2dputc,"i",0},
-  {"gets",NSFUNC,NREAD|NEXEC,f2dgets,"",0},
-  {"getc",NIFUNC,NREAD|NEXEC,f2dgetc,"",0},
+  {"open",NVFUNC,NREAD|NEXEC,io_open,"ss",0},
+  {"popen",NVFUNC,NREAD|NEXEC,io_open,"ss",0},
+  {"close",NVFUNC,NREAD|NEXEC,io_close,"",0},
+  {"puts",NVFUNC,NREAD|NEXEC,io_puts,"s",0},
+  {"putc",NIFUNC,NREAD|NEXEC,io_putc,"i",0},
+  {"gets",NSFUNC,NREAD|NEXEC,io_gets,"",0},
+  {"getc",NIFUNC,NREAD|NEXEC,io_getc,"",0},
+  {"read",NSFUNC,NREAD|NEXEC,io_read,"i",0},
+  {"write",NIFUNC,NREAD|NEXEC,io_write,"s",0},
+  {"whence",NENUM,NREAD|NWRITE,NULL,seek_whence,0},
+  {"seek",NVFUNC,NREAD|NEXEC,io_seek,"i",0},
+  {"tell",NIFUNC,NREAD|NEXEC,io_tell,"",0},
+  {"rewind",NVFUNC,NREAD|NEXEC,io_rewind,"",0},
+  {"flush",NVFUNC,NREAD|NEXEC,io_flush,"",0},
+  {"eof",NBFUNC,NREAD|NEXEC,io_eof,"",0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 
@@ -295,6 +552,6 @@ void *
 addio(void)
 /* addio() returns NULL on error */
 {
-  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,f2derrorlist,NULL,NULL);
+  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,io_errorlist,NULL,NULL);
 }
 

@@ -1,3 +1,9 @@
+2009-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.c (obj_add_func_ary[]): add "addio".
+
+	* src/oio.c: add.
+
 2009-11-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_equation.c (clear_pos_func_buf): add.

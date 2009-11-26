@@ -47,7 +47,7 @@ object
                         gra2gtk
                         gra2gdk
                         menu
-        rawfile
+        io
         int
         double
         string
@@ -523,15 +523,15 @@ r-x    toggle_window    void( int )
 ---          _evloop    void( )
 </pre>
 
-<h3>rawfile オブジェクト</h3>
+<h3>io オブジェクト</h3>
 <pre>
-object: rawfile
+object: io
 alias:
 version: 1.00.00
 parent: object
 object id: 13
-number of fields: 12
-size of instance: 64
+number of fields: 22
+size of instance: 104
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -539,10 +539,20 @@ r-x             save    *char( char *[] )
 --x             init    void( )
 --x             done    void( )
 ---             next    void*
-rw-             file    char*
-r-x             open    void( )
-r-x            close    void( )
-r-x             gets    *char( )
+r--             file    char*
+r-x             open    void( char * char * )
+r-x            popen    void( char * char * )
+r-x            close    void( void )
+r-x             puts    void( char * )
+r-x             putc    int( int )
+r-x             gets    *char( void )
+r-x             getc    int( void )
+rw-           whence    enum( set cur end )
+r-x             seek    void( int )
+r-x             tell    int( void )
+r-x           rewind    void( void )
+r-x            flush    void( void )
+r-x              eof    bool( void )
 ---           _local    void*
 </pre>
 

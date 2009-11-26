@@ -47,7 +47,7 @@ object
                         gra2gtk
                         gra2gdk
                         menu
-        rawfile
+        io
         int
         double
         string
