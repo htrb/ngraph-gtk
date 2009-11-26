@@ -530,8 +530,8 @@ alias:
 version: 1.00.00
 parent: object
 object id: 13
-number of fields: 22
-size of instance: 104
+number of fields: 24
+size of instance: 120
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -547,6 +547,8 @@ r-x             puts    void( char * )
 r-x             putc    int( int )
 r-x             gets    *char( void )
 r-x             getc    int( void )
+r-x             read    *char( int )
+r-x            write    int( char * )
 rw-           whence    enum( set cur end )
 r-x             seek    void( int )
 r-x             tell    int( void )

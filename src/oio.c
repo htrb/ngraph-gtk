@@ -1,5 +1,5 @@
 /* 
- * $Id: oio.c,v 1.2 2009/11/26 02:26:04 hito Exp $
+ * $Id: oio.c,v 1.3 2009/11/26 02:51:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -522,7 +522,7 @@ io_eof(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-static struct objtable file2d[] = {
+static struct objtable io[] = {
   {"init",NVFUNC,NEXEC,io_init,NULL,0},
   {"done",NVFUNC,NEXEC,io_done,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
@@ -546,12 +546,12 @@ static struct objtable file2d[] = {
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 
-#define TBLNUM (sizeof(file2d) / sizeof(*file2d))
+#define TBLNUM (sizeof(io) / sizeof(*io))
 
 void *
 addio(void)
 /* addio() returns NULL on error */
 {
-  return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,file2d,ERRNUM,io_errorlist,NULL,NULL);
+  return addobject(NAME, NULL, PARENT, OVERSION, TBLNUM, io, ERRNUM, io_errorlist, NULL, NULL);
 }
 
