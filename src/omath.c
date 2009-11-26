@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.19 2009/11/21 11:39:10 hito Exp $
+ * $Id: omath.c,v 1.20 2009/11/26 09:33:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -241,7 +241,6 @@ create_func_def_str(char *name, char *code)
 
   return ptr;
 }
-#endif
 
 static void
 parse_original_formula(struct objlist *obj,char *inst, struct mlocal *mlocal)
@@ -260,6 +259,7 @@ parse_original_formula(struct objlist *obj,char *inst, struct mlocal *mlocal)
     mlocal->maxdim = prm->id_max;
   }
 }
+#endif
 
 /* 
    # following procedure causes error.
