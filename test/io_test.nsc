@@ -7,6 +7,8 @@ TEST_STR2="123"
 TEST_FILE=${system::temp_file}
 
 new io
+
+# gets and puts test
 io::open w+ $TEST_FILE
 io::puts $TEST_STR
 io::rewind
@@ -18,6 +20,7 @@ else
     echo "OK. (gets and puts)"
 fi
 
+# getc and putc test
 TEST_CHAR=48
 io::putc $TEST_CHAR
 io::whence=cur
@@ -30,6 +33,7 @@ else
     echo "OK. (putc and getc)"
 fi
 
+# read and write test
 TEST_STR="123"
 io::write $TEST_STR
 io::whence=cur
@@ -44,8 +48,10 @@ else
     echo "OK. (read and write)"
 fi
 
+# flush test
 io::flush
 
+# tell test
 if [ ${io::tell} -ne 16 ]
 then
     echo "error. (tell)"
@@ -53,6 +59,7 @@ else
     echo "OK. (tell)"
 fi
 
+# eof test
 if io::eof
 then
     echo "OK. (eof)"
@@ -62,6 +69,7 @@ fi
 
 io::close
 
+# popen test
 io::popen r "ls io_test.nsc"
 str=${io::gets}
 if [ $str !=  "io_test.nsc" ]
