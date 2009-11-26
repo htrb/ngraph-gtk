@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.27 2009/11/24 06:32:36 hito Exp $
+ * $Id: shellcm.c,v 1.28 2009/11/26 08:29:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1226,10 +1226,7 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
   int rcode,ecode;
   double vd;
   int i;
-  char *s;
-#if NEW_MATH_CODE
-  char *err_msg;
-#endif
+  char *s, *err_msg;
 
   if (argc<1) {
     sherror4(argv[0],ERRSMLARG);

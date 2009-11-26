@@ -1,5 +1,7 @@
 2009-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/shellcm.c (cmdexpr): variable "err_msg" is always used.
+
 	* src/gtk/main.c (obj_add_func_ary[]): add "addio".
 
 	* src/oio.c: add.
