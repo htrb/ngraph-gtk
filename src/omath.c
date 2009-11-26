@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.20 2009/11/26 09:33:47 hito Exp $
+ * $Id: omath.c,v 1.21 2009/11/26 09:37:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -66,7 +66,7 @@ struct mlocal {
   double z;
   double val;
   int maxdim;
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   MathEquation *code;
 #else
   double memory[MEMORYNUM];
@@ -98,7 +98,7 @@ msettbl(char *inst,struct mlocal *mlocal)
   *(double *)(inst+mlocal->idpz)=mlocal->z;
 
   for (i = 0; i < MEMORYNUM; i++) {
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
     *(double *)(inst + mlocal->idpm[i]) = mlocal->code->memory[i].val;
 #else
     *(double *)(inst + mlocal->idpm[i]) = mlocal->memory[i];
@@ -110,7 +110,7 @@ msettbl(char *inst,struct mlocal *mlocal)
 static void 
 mlocalclear(struct mlocal *mlocal,int memory)
 {
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   math_equation_clear(mlocal->code);
 #else
   int i;
@@ -144,7 +144,7 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   mlocal->z=0;
   mlocal->val=0;
 
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   mlocal->code = math_equation_basic_new();
   if (mlocal->code == NULL)
     goto errexit;
@@ -210,7 +210,7 @@ mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"_local",inst,&mlocal);
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   math_equation_free(mlocal->code);
 #else
   g_free(mlocal->code);
@@ -221,7 +221,7 @@ mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
 static char *
 create_func_def_str(char *name, char *code)
 {
@@ -276,7 +276,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *math;
   struct mlocal *mlocal;
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   int rcode;
   char *ptr, *err_msg;
   MathEquationParametar *prm;
@@ -288,7 +288,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 #endif
 
   math=argv[2];
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   _getobj(obj,"_local",inst,&mlocal);
   if (strcmp("formula",argv[1])==0) {
     if (math) {
@@ -407,7 +407,7 @@ mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 'm':
     m = atoi(arg + 1);
     if (m >= 0 && m < MEMORYNUM) {
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
       mlocal->code->memory[m].val = * (double *) argv[2];
       mlocal->code->memory[m].type = MATH_VALUE_NORMAL;
 #else
@@ -429,7 +429,7 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   double *adata;
   struct narray *darray;
   int maxdim;
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   MathValue val, *data;
 #else
   double *data;
@@ -446,7 +446,7 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   data = g_malloc(sizeof(MathValue) * (num + 1));
 
   if (data == NULL) {

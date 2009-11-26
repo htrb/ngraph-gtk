@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.32 2009/11/21 11:39:10 hito Exp $
+ * $Id: ofit.c,v 1.33 2009/11/26 09:37:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -92,7 +92,7 @@ static char *fittypechar[]={
 
 struct fitlocal {
   int id, oid;
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   MathEquation *codedf[10];
   MathEquation *codef;
 #else
@@ -150,7 +150,7 @@ fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"_local",inst,&fitlocal);
   g_free(fitlocal->equation);
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   math_equation_free(fitlocal->codef);
   for (i = 0; i < 10; i++)
     math_equation_free(fitlocal->codedf[i]);
@@ -170,7 +170,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
   char *math;
   struct fitlocal *fitlocal;
   char *equation;
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
   MathEquation *code;
   int rcode;
 #else
@@ -188,7 +188,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
   } else if ((strcmp(field,"user_func")==0)
           || ((strncmp(field,"derivative",10)==0) && (field[10]!='\0'))) {
     math=(char *)(argv[2]);
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
     if (math!=NULL) {
       MathEquationParametar *prm;
 

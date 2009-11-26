@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.49 2009/11/21 11:39:10 hito Exp $
+ * $Id: object.c,v 1.50 2009/11/26 09:37:04 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3503,7 +3503,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         if (arg_add(&argv,p)==NULL) goto errexit;
       }
     } else if ((arglist[alp]=='i') || (arglist[alp]=='d')) {
-#if NEW_MATH_CODE 
+#if NEW_MATH_CODE
       str_calc(s2, &vd, &rcode, NULL);
 #else
       rcode=mathcode(s2,&code,NULL,NULL,NULL,NULL,
