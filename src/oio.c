@@ -1,5 +1,5 @@
 /* 
- * $Id: oio.c,v 1.3 2009/11/26 02:51:18 hito Exp $
+ * $Id: oio.c,v 1.4 2009/11/26 07:19:02 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -57,6 +57,7 @@ static char *io_errorlist[]={
   "I/O error: seek",
   "IO is closed.",
   "IO is opened.",
+  "I/O error:",
 };
 
 #define ERRNUM (sizeof(io_errorlist) / sizeof(*io_errorlist))
@@ -73,6 +74,7 @@ static char *io_errorlist[]={
 #define ERRSEEK		105
 #define ERRCLOSED	106
 #define ERROPENED	107
+#define ERRSTD		108
 
 char *seek_whence[]={
   N_("set"),
@@ -91,6 +93,16 @@ struct io_local {
   FILE *fp;
   int popen;
 };
+
+
+static void
+io_error(struct objlist *obj)
+{
+    char *str;
+
+    str = strerror(errno);
+    error2(obj, ERRSTD, str);
+}
 
 static int 
 io_init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -179,11 +191,7 @@ io_open(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 
   if (fp == NULL) {
-    if (errno == EINVAL) {
-      error2(obj, ERRMODE, mode);
-    } else {
-      error2(obj, ERROPEN, file);
-    }
+    io_error(obj);
     g_free(fp);
     return 1;
   }
@@ -234,7 +242,7 @@ io_puts(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   rcode = fputs("\n", fp);
      
   if (rcode == EOF) {
-    error(obj, ERRWRITE);
+    io_error(obj);
     return 1;
   }
 
@@ -261,7 +269,7 @@ io_gets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   rcode = fgetline(fp, &buf);
   if (rcode < -1) {
-    error(obj, ERRREAD);
+    io_error(obj);
     return 1;
   } else if (rcode) {
     return 1;
@@ -288,6 +296,7 @@ io_getc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   rcode = fgetc(fp);
   if (rcode == EOF && ferror(fp)) {
+    io_error(obj);
     return 1;
   }
 
@@ -314,6 +323,7 @@ io_putc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   c = fputc(c, fp);
   if (c) {
+    io_error(obj);
     return 1;
   }
 
@@ -351,11 +361,15 @@ io_read(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   buf = g_malloc(len + 1);
   if (buf == NULL) {
+    io_error(obj);
     return 1;
   }
 
   rlen = fread(buf, 1, len, fp);
-  if (rlen == 0 && ferror(fp)) {
+  if (rlen == 0) {
+    if (ferror(fp)) {
+      io_error(obj);
+    }
     g_free(buf);
     return 1;
   }
@@ -389,6 +403,10 @@ io_write(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   len = strlen(buf);
 
   rlen = fwrite(buf, 1, len, fp);
+  if (rlen < len) {
+    io_error(obj);
+    return 1;
+  }
 
   *(int *)rval = rlen;
 
@@ -428,7 +446,7 @@ io_seek(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   r = fseek(fp, pos, whence);
   if (r) {
-    error(obj, ERRSEEK);
+    io_error(obj);
     return 1;
   }
 
@@ -494,7 +512,7 @@ io_flush(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   r = fflush(fp);
   if (r) {
-    error(obj, ERRWRITE);
+    io_error(obj);
     return 1;
   }
 

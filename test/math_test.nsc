@@ -20,6 +20,8 @@ do
 	    echo '    expected:' "$val"
 	    echo '      result:' "$RESULT"
 	    echo '  difference:' `dexpr $RESULT-$val`
+	else
+	    echo "OK. ($eqn)"
 	fi
     done
 

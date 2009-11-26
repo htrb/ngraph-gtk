@@ -1,7 +1,10 @@
-EXTRA_DIST =  math_test.nsc math_test_new.dat math_test_old.dat
+EXTRA_DIST =  io_test.nsc math_test.nsc math_test_new.dat math_test_old.dat
 NGRAPH=../src/ngraph
 
-test: math_test
+test: math_test io_test
+
+io_test: io_test.nsc
+	$(NGRAPH) -i io_test.nsc
 
 math_test: math_test.nsc math_test_old.dat  math_test_new.dat
 	$(NGRAPH) -i math_test.nsc math_test_old.dat math_test_new.dat
