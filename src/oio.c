@@ -1,5 +1,5 @@
 /* 
- * $Id: oio.c,v 1.4 2009/11/26 07:19:02 hito Exp $
+ * $Id: oio.c,v 1.5 2009/11/26 07:29:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -24,11 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <math.h>
-#include <fcntl.h>
-#include <utime.h>
-#include <time.h>
 #include <errno.h>
 #include <glib.h>
 
@@ -101,7 +96,7 @@ io_error(struct objlist *obj)
     char *str;
 
     str = strerror(errno);
-    error2(obj, ERRSTD, str);
+    error2(obj, ERRSTD, CHK_STR(str));
 }
 
 static int 
@@ -181,7 +176,6 @@ io_open(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 
   errno = 0;
-
   if (argv[1][0] == 'p') {
     fp = popen(file, mode);
     io_local->popen = TRUE;
@@ -236,6 +230,7 @@ io_puts(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
+  errno = 0;
   if (argv[2]) {
     rcode = fputs(argv[2], fp);
   }
@@ -267,6 +262,7 @@ io_gets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
+  errno = 0;
   rcode = fgetline(fp, &buf);
   if (rcode < -1) {
     io_error(obj);
@@ -294,6 +290,7 @@ io_getc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
+  errno = 0;
   rcode = fgetc(fp);
   if (rcode == EOF && ferror(fp)) {
     io_error(obj);
@@ -321,8 +318,9 @@ io_putc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   c = *(int *) argv[2];
 
+  errno = 0;
   c = fputc(c, fp);
-  if (c) {
+  if (c == EOF) {
     io_error(obj);
     return 1;
   }
@@ -359,6 +357,7 @@ io_read(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
   len = l;
 
+  errno = 0;
   buf = g_malloc(len + 1);
   if (buf == NULL) {
     io_error(obj);
@@ -402,6 +401,7 @@ io_write(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   len = strlen(buf);
 
+  errno = 0;
   rlen = fwrite(buf, 1, len, fp);
   if (rlen < len) {
     io_error(obj);
@@ -444,6 +444,7 @@ io_seek(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   pos = *(int *) argv[2];
 
+  errno = 0;
   r = fseek(fp, pos, whence);
   if (r) {
     io_error(obj);
@@ -485,6 +486,7 @@ io_tell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
+  errno = 0;
   pos = ftell(fp);
   if (pos < 0) {
     error(obj, ERRSEEK);
@@ -510,6 +512,7 @@ io_flush(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
+  errno = 0;
   r = fflush(fp);
   if (r) {
     io_error(obj);
