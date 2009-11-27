@@ -1,3 +1,5 @@
+* GNU Scientific library (GSL) の利用
+
 * fit 設定の保存時にグラフ更新フラグがセットされてしまう不具合の修正。
 
 * legend text に TAB が含まれているときの bounding box 計算不具合の修正。   

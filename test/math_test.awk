@@ -1,7 +1,7 @@
 #! /usr/bin/awk
 
 BEGIN {
-    FS = "\t";
+    FS = "#";
     print("set +e");
     print;
 }

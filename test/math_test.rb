@@ -2,7 +2,7 @@
 puts("set +e")
 
 while (l = gets)
-  a = l.chomp.split("\t")
+  a = l.chomp.split("#")
   print <<EOF
 RESULT=`dexpr '#{a[0]}'`
 if [ "$RESULT" != "#{a[1]}" ]
