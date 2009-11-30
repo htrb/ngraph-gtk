@@ -1,5 +1,5 @@
 /* 
- * $Id: math_basic_function.c,v 1.9 2009/11/30 01:23:35 hito Exp $
+ * $Id: math_basic_function.c,v 1.10 2009/11/30 06:55:05 hito Exp $
  * 
  */
 
@@ -666,6 +666,27 @@ math_func_gamma(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 #endif
 }
 
+#ifdef HAVE_LIBGSL
+int
+math_func_erf(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rval)
+{
+  double x;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, expl->buf[0]);
+
+  x = expl->buf[0].val.val;
+
+  r = gsl_sf_erf_e(x, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+#endif
+
 int
 math_func_erfc(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rval)
 {
@@ -870,7 +891,107 @@ math_func_icbeta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
   }
 
   r =  gsl_sf_beta_inc_e(a, b, x, &val);
-    
+
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_zeta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int r;
+  gsl_sf_result val;
+  double n;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
+  n = exp->buf[0].val.val;
+
+  if (n == 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return -1;
+  }
+
+  r =  gsl_sf_zeta_e(n, &val);
+
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_zetam1(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int r;
+  gsl_sf_result val;
+  double n;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
+  n = exp->buf[0].val.val;
+
+  if (n == 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return -1;
+  }
+
+  r =  gsl_sf_zetam1_e(n, &val);
+
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_zeta_int(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int r;
+  gsl_sf_result val;
+  int n;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
+  n = exp->buf[0].val.val;
+
+  if (n == 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return -1;
+  }
+
+  r =  gsl_sf_zeta_int_e(n, &val);
+
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_zetam1_int(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int r;
+  gsl_sf_result val;
+  int n;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
+  n = exp->buf[0].val.val;
+
+  if (n == 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return -1;
+  }
+
+  r =  gsl_sf_zetam1_int_e(n, &val);
+
   rval->val = val.val;
   if (r) {
     rval->type = MATH_VALUE_ERROR;
@@ -1587,6 +1708,240 @@ math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   return 0;
 #endif
 }
+
+#ifdef HAVE_LIBGSL
+int
+math_func_ynu(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  double x2, x, n2, n;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  n = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  x2 = fabs(x);
+  n2 = fabs(n);
+
+  r = gsl_sf_bessel_Ynu_e(n2, x2, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_jnu(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  double x2, x, n2, n;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  n = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  x2 = fabs(x);
+  n2 = fabs(n);
+
+  r = gsl_sf_bessel_Jnu_e(n2, x2, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_inu(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  double x2, x, n2, n;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  n = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  x2 = fabs(x);
+  n2 = fabs(n);
+
+  r = gsl_sf_bessel_Inu_e(n2, x2, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_knu(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  double x2, x, n2, n;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  n = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  x2 = fabs(x);
+  n2 = fabs(n);
+
+  r = gsl_sf_bessel_Knu_e(n2, x2, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_in(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n2, n;
+  double x2, x;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  n = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  x2 = fabs(x);
+  n2 = abs(n);
+
+  switch (n2) {
+  case 0:
+    r = gsl_sf_bessel_I0_e(x2, &val);
+    break;
+  case 1:
+    r = gsl_sf_bessel_I1_e(x2, &val);
+    break;
+  default:
+    r = gsl_sf_bessel_In_e(n2, x2, &val);
+  }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_kn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n2, n;
+  double x2, x;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  n = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  x2 = fabs(x);
+  n2 = abs(n);
+
+  switch (n2) {
+  case 0:
+    r = gsl_sf_bessel_K0_e(x2, &val);
+    break;
+  case 1:
+    r = gsl_sf_bessel_K1_e(x2, &val);
+    break;
+  default:
+    r = gsl_sf_bessel_Kn_e(n2, x2, &val);
+  }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_yl(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n2, n;
+  double x2, x;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  n = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  x2 = fabs(x);
+  n2 = abs(n);
+
+  switch (n2) {
+  case 0:
+    r = gsl_sf_bessel_y0_e(x2, &val);
+    break;
+  case 1:
+    r = gsl_sf_bessel_y1_e(x2, &val);
+    break;
+  default:
+    r = gsl_sf_bessel_yl_e(n2, x2, &val);
+  }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_jl(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int n2, n;
+  double x2, x;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  n = exp->buf[0].val.val;
+  x = exp->buf[1].val.val;
+
+  x2 = fabs(x);
+  n2 = abs(n);
+
+  switch (n2) {
+  case 0:
+    r = gsl_sf_bessel_j0_e(x2, &val);
+    break;
+  case 1:
+    r = gsl_sf_bessel_j1_e(x2, &val);
+    break;
+  default:
+    r = gsl_sf_bessel_jl_e(n2, x2, &val);
+  }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+#endif
 
 int
 math_func_ei(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)

@@ -28,6 +28,7 @@ theta	1	0	0	NULL
 delta	1	0	0	NULL
 gamma	1	0	0	NULL
 icgam	2	0	0	NULL
+erf	1	0	0	NULL	true
 erfc	1	0	0	NULL
 qinv	1	0	0	NULL
 ei	1	0	0	NULL
@@ -65,3 +66,15 @@ isnan	1	0	0	NULL
 isundef	1	0	0	NULL
 isbreak	1	0	0	NULL
 iscont	1	0	0	NULL
+zeta	1	0	0	NULL	true
+zetam1	1	0	0	NULL	true
+zeta_int	1	0	0	NULL	true
+zetam1_int	1	0	0	NULL	true
+in	2	0	0	NULL	true
+kn	2	0	0	NULL	true
+yl	2	0	0	NULL	true
+jl	2	0	0	NULL	true
+jnu	2	0	0	NULL	true
+ynu	2	0	0	NULL	true
+inu	2	0	0	NULL	true
+knu	2	0	0	NULL	true
