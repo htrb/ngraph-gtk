@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.33 2009/11/26 09:37:04 hito Exp $
+ * $Id: ofit.c,v 1.34 2009/11/30 08:06:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1031,10 +1031,12 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 1;
     }
   }
-  if (type != FIT_TYPE_USER)
+
+  if (type != FIT_TYPE_USER) {
     rcode=fitpoly(fitlocal,type,dimension,through,x0,y0,data,num,disp,weight,wdata);
-  else
+  } else {
     rcode=fituser(obj,fitlocal,func,deriv,converge,data,num,disp,weight,wdata);
+  }
 
   switch (rcode) {
   case FitError_Fatal:
