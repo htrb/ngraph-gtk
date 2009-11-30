@@ -21,7 +21,7 @@ static struct funcs FuncAry[] = {
 #ifdef HAVE_LIBGSL
   {"ICBETA", {3, 0, 0, math_func_icbeta, NULL, NULL, NULL, NULL}},
 #else
-  {NULL, {3, 0, 0, NULL, NULL, NULL, NULL, NULL}},
+  {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
   {"THETA", {1, 0, 0, math_func_theta, NULL, NULL, NULL, NULL}},
   {"ISNAN", {1, 0, 0, math_func_isnan, NULL, NULL, NULL, NULL}},
