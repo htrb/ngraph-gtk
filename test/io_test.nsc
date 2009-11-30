@@ -28,9 +28,9 @@ io::seek -1
 ch=${io::getc}
 if [ "$ch" -ne $TEST_CHAR ]
 then
-    echo "error. (putc and getc)"
+    echo "error. (getc and putc)"
 else
-    echo "OK. (putc and getc)"
+    echo "OK. (getc and putc)"
 fi
 
 # read and write test
