@@ -1,5 +1,5 @@
 /* 
- * $Id: math_parser.c,v 1.16 2009/11/21 11:56:02 hito Exp $
+ * $Id: math_parser.c,v 1.17 2009/11/30 01:23:35 hito Exp $
  * 
  */
 
@@ -17,7 +17,7 @@
 #include "math_function.h"
 #include "parse_bin_expression.h"
 
-#define ARG_MAX 64
+#define MATH_ARG_MAX 64
 
 #define DEBUG 1
 
@@ -321,7 +321,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
     return NULL;
   }
 
-  arg_max = (fprm->argc< 0) ? ARG_MAX : fprm->argc;
+  arg_max = (fprm->argc< 0) ? MATH_ARG_MAX : fprm->argc;
 
   argv = g_malloc0((arg_max + 1) * sizeof(*argv));
   if (argv == NULL) {
@@ -356,7 +356,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
       }
     }
     argc = fprm->argc;
-  } else if ((fprm->argc >= 0 && argc > fprm->argc) || argc > ARG_MAX) {
+  } else if ((fprm->argc >= 0 && argc > fprm->argc) || argc > MATH_ARG_MAX) {
     *err = MATH_ERROR_ARG_NUM;
     math_equation_set_func_arg_num_error(eq, fprm, argc);
     free_arg_list(argv);

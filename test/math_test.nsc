@@ -1,6 +1,17 @@
 #! /usr/bin/ngraph
 
+check_val() {
+    if [ "$1" = "nan" -o  "$1" = "undefined" ]
+    then
+	echo $1
+    else
+	get text -field printf:"%.13E $1"
+    fi
+}
+
 set +e
+
+new text
 
 while [ -n "$1" ]
 do
@@ -10,9 +21,11 @@ do
     while l=`get io -field gets`
     do
 	eqn=${l%#*}
-	val=${l#*#}
+	val=`check_val ${l#*#}`
 
 	RESULT=`dexpr "$eqn"`
+	RESULT=`check_val $RESULT`
+
 	if [ "$RESULT" != "$val" ]
 	then
 	    echo

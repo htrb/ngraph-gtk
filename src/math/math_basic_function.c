@@ -1,11 +1,18 @@
 /* 
- * $Id: math_basic_function.c,v 1.8 2009/11/24 04:46:35 hito Exp $
+ * $Id: math_basic_function.c,v 1.9 2009/11/30 01:23:35 hito Exp $
  * 
  */
+
+#include "config.h"
 
 #include <stdlib.h>
 #include <math.h>
 #include <error.h>
+
+#ifdef HAVE_LIBGSL
+#include <gsl/gsl_sf.h>
+#endif
+
 #include "math_equation.h"
 #include "math_function.h"
 
@@ -366,6 +373,7 @@ math_func_delta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
   return 0;
 }
 
+#ifndef HAVE_LIBGSL
 static int
 gamma2(double x, double *val)
 {
@@ -525,12 +533,19 @@ exp1(double x, double *val)
   *val = qexp1;
   return 0;
 }
+#endif
 
 int
 math_func_icgam(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rval)
 {
-  double a, u, p0, p1, q0, q1, mu, x, val;
+  double mu, x;
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#else
+  double a, u, p0, p1, q0, q1, val;
   int i, i2, i3;
+#endif
 
   MATH_CHECK_ARG(rval, expl->buf[0]);
   MATH_CHECK_ARG(rval, expl->buf[1]);
@@ -543,6 +558,14 @@ math_func_icgam(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *r
     return -1;
   }
 
+#ifdef HAVE_LIBGSL
+  r = gsl_sf_gamma_inc_e(mu, x, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
   if (mu == 0) {
     if (exp1(-x, &val)) {
       rval->type = MATH_VALUE_ERROR;
@@ -618,25 +641,56 @@ math_func_icgam(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *r
 
   rval->val = val;
   return 0;
+#endif
 }
 
 int
 math_func_gamma(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#endif
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
+#ifdef HAVE_LIBGSL
+  r = gsl_sf_gamma_e (exp->buf[0].val.val, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
   return gamma2(exp->buf[0].val.val, &rval->val);
+#endif
 }
 
 int
 math_func_erfc(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rval)
 {
+  double x;
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#else
   int i, i2, sg;
-  double x, x2, x3, sum, h, h2, val;
+  double x2, x3, sum, h, h2, val;
+#endif
 
   MATH_CHECK_ARG(rval, expl->buf[0]);
 
   x = expl->buf[0].val.val;
+
+#ifdef HAVE_LIBGSL
+  r = gsl_sf_erfc_e(x, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
+
 
   x2 = fabs(x);
   if (x2 <= 0.1) {
@@ -694,6 +748,7 @@ math_func_erfc(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
   rval->val = val;
 
   return 0;
+#endif
 }
 
 static double
@@ -793,16 +848,62 @@ math_func_rand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   return 0;
 }
 
+#ifdef HAVE_LIBGSL
+int
+math_func_icbeta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int r;
+  gsl_sf_result val;
+  double a, b, x;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+  MATH_CHECK_ARG(rval, exp->buf[2]);
+
+  a = exp->buf[0].val.val;
+  b = exp->buf[1].val.val;
+  x = exp->buf[2].val.val;
+
+  if (x < 0 || x > 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return -1;
+  }
+
+  r =  gsl_sf_beta_inc_e(a, b, x, &val);
+    
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+#endif
+
 int
 math_func_beta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  double p, q, a, b, c;
+  double p, q;
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#else
+  double a, b, c;
+#endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
 
   p = exp->buf[0].val.val;
   q = exp->buf[1].val.val;
+
+#ifdef HAVE_LIBGSL
+  r =  gsl_sf_beta_e(p, q, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
 
   if (gamma2(p, &a)) {
     rval->type = MATH_VALUE_ERROR;
@@ -827,13 +928,21 @@ math_func_beta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   rval->val = a * b / c;
 
   return 0;
+#endif
 }
 
 int
 math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int i, n;
-  double l1, l2, tmp1, tmp2, val, x, alp;
+  double x, alp;
+  int n;
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#else
+  int i;
+  double l1, l2, tmp1, tmp2, val;
+#endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -848,6 +957,22 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
     return -1;
   }
 
+#ifdef HAVE_LIBGSL
+  if (n == 1) {
+    r = gsl_sf_laguerre_1_e(alp, x, &val);
+  } else if (n == 2) {
+    r = gsl_sf_laguerre_2_e(alp, x, &val);
+  } else if (n == 3) {
+    r = gsl_sf_laguerre_3_e(alp, x, &val);
+  } else {
+    r = gsl_sf_laguerre_n_e(n, alp, x, &val);
+  }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
   l1 = 1;
   if (n == 0) {
     val = l1;
@@ -869,6 +994,7 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   rval->val = val;
 
   return 0;
+#endif
 }
 
 int
@@ -1131,8 +1257,15 @@ math_func_iscont(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *r
 int
 math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  double l1, x, val;
-  int i, n;
+  double x;
+  int n;
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#else
+  double l1, val;
+  int i;
+#endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -1140,6 +1273,31 @@ math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   n = exp->buf[0].val.val;
   x = exp->buf[1].val.val;
 
+#ifdef HAVE_LIBGSL
+  if (n < 0 || fabs(x) > 1) {
+    rval->type = MATH_VALUE_ERROR;
+    return -1;
+  }
+
+  switch (n) {
+  case 1:
+    r = gsl_sf_legendre_P1_e(x, &val);
+    break;
+  case 2:
+    r = gsl_sf_legendre_P2_e(x, &val);
+    break;
+  case 3:
+    r = gsl_sf_legendre_P3_e(x, &val);
+    break;
+  default:
+    r = gsl_sf_legendre_Pl_e(n, x, &val);
+  }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
   if (n < 0 || fabs(x) > 1000) {
     rval->type = MATH_VALUE_ERROR;
     return -1;
@@ -1170,13 +1328,21 @@ math_func_pn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   rval->val = val;
 
   return 0;
+#endif
 }
 
 int
 math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int n2, m, i, l, n;
-  double x2, t1, t2, t3, s, ss, w, j0, j1, y0, y1, y2, x, val;
+  int n2, n;
+  double x2, x;
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#else
+  int m, i, l;
+  double t1, t2, t3, s, ss, w, j0, j1, y0, y1, y2, val;
+#endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -1186,6 +1352,21 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   x2 = fabs(x);
   n2 = abs(n);
+
+#ifdef HAVE_LIBGSL
+  if (n2 == 0) {
+    r = gsl_sf_bessel_Y0_e(x2, &val);
+  } else if (n2 == 1) {
+    r = gsl_sf_bessel_Y1_e(x2, &val);
+  } else {
+    r = gsl_sf_bessel_Yn_e(n2, x2, &val);
+  }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
   if ((n2 > 1000) || (x2 > 1000) || (x2 <= 1E-300)) {
     rval->type = MATH_VALUE_ERROR;
     return -1;
@@ -1285,13 +1466,21 @@ math_func_yn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   rval->val = val;
 
   return 0;
+#endif
 }
 
 int
 math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int n2, m, l, i, n;
-  double x2, t1, t2, t3, s, j, x;
+  int n2, n;
+  double x2, x;
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#else
+  int m, l, i;
+  double t1, t2, t3, s, j;
+#endif
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
@@ -1301,6 +1490,20 @@ math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   x2 = fabs(x);
   n2 = abs(n);
+#ifdef HAVE_LIBGSL
+  if (n2 == 0) {
+    r = gsl_sf_bessel_J0_e(x2, &val);
+  } else if (n2 == 1) {
+    r = gsl_sf_bessel_J1_e(x2, &val);
+  } else {
+    r = gsl_sf_bessel_Jn_e(n2, x2, &val);
+  }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
   if (n2 > 1000 || x2 > 1000) {
     rval->type = MATH_VALUE_ERROR;
     return -1;
@@ -1382,13 +1585,29 @@ math_func_jn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   rval->val = j;
 
   return 0;
+#endif
 }
 
 int
 math_func_ei(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
+#ifdef HAVE_LIBGSL
+  int r;
+  gsl_sf_result val;
+#endif
+
   MATH_CHECK_ARG(rval, exp->buf[0]);
+
+#ifdef HAVE_LIBGSL
+  r = gsl_sf_expint_Ei_e(exp->buf[0].val.val, &val);
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+#else
   return exp1(exp->buf[0].val.val, &rval->val);
+#endif
 }
 
 int

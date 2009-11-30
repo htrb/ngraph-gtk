@@ -36,8 +36,13 @@ int math_add_basic_function(MathEquation *eq);
 
 EOF
   func_str.each {|s|
-    if (s.length == 5)
-      f.puts("int math_func_#{s[0]}(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);")
+    case (s.length)
+    when 5:
+        f.puts("int math_func_#{s[0]}(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);")
+    when 6:
+        f.puts("#ifdef HAVE_LIBGSL")
+        f.puts("int math_func_#{s[0]}(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);")
+        f.puts("#endif")
     end
   }
   f.puts("#endif")
@@ -45,6 +50,8 @@ EOF
 
 File.open("#{ARGV[1]}.c", "w") { |f|
   f.puts <<EOF
+#include "config.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <glib.h>
@@ -68,6 +75,16 @@ EOF
         func.push([i, s[4].split(",")])
       end
       i += 1
+    elsif (s.length == 6)
+      f.puts("#ifdef HAVE_LIBGSL")
+      f.puts("  {\"#{s[0].upcase}\", {#{s[1]}, #{s[2]}, #{s[3]}, math_func_#{s[0]}, NULL, NULL, NULL, NULL}},")
+      if (s[4] != "NULL")
+        func.push([i, s[4].split(",")])
+      end
+      f.puts("#else")
+      f.puts("  {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},")
+      f.puts("#endif")
+      i += 1
     end
   }
   f.puts("};\n\n")
@@ -80,6 +97,9 @@ math_add_basic_function(MathEquation *eq) {
   enum MATH_FUNCTION_ARG_TYPE *ptr;
 
   for (i = 0; i < sizeof(FuncAry) / sizeof(*FuncAry); i++) {
+    if (FuncAry[i].name == NULL) {
+      continue;
+    }
     switch (i) {
 EOF
   func.each {|arg|

@@ -1,3 +1,14 @@
+2009-11-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/osystem.c (sysinit): call "gsl_set_error_handler_off()" when
+	"HAVE_LIBGSL" is defined.
+
+	* src/math/math_basic_function.c (math_func_icgam)
+	(math_func_gamma, math_func_erfc, math_func_beta, math_func_lgn)
+	(math_func_pn, math_func_yn, math_func_jn, math_func_ei): use GSL
+	function when available.
+	(math_func_icbeta): add.
+
 2009-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/omath.c (parse_original_formula): this function is not used

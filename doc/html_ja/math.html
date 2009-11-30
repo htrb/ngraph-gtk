@@ -184,7 +184,7 @@
 <h2><a href="#TOP">数式変換で使用できる関数</a></h2>
 <br>
 <div>
-<b>変換関数</b>
+<h3>変換関数</h3>
 <table border=1>
 <tr><td>ABS(x)</td><td>絶対値</td></tr>
 <tr><td>SIGN(x)</td><td>正負の符号</td></tr>
@@ -196,7 +196,7 @@
 <tr><td>MAX(x,y)</td><td>x, y の大きい方</td></tr>
 </table>
 <br>
-<b>初等関数</b>
+<h3>初等関数</h3>
 <table border=1>
 <tr><td>SQR(x)</td><td>二乗</td></tr>
 <tr><td>SQRT(x)</td><td>平方根</td></tr>
@@ -217,7 +217,7 @@
 <tr><td>ATANH(x)</td><td>逆ハイパボリックタンジェント</td></tr>
 </table>
 <br>
-<b>特殊関数</b>
+<h3>特殊関数</h3>
 <table border=1>
 <tr><td>RAND(x)</td><td>0≦RAND(x)＜x (x＞0のとき)の乱数</td></tr>
 <tr><td>THETA(x)</td><td>階段関数(x≧0 のとき 1, それ以外は 0 )</td></tr>
@@ -237,7 +237,12 @@
 <tr><td>MJD(year,month,day)</td><td>修正ユリウス日(year, month, day はグレゴリオ暦)</td></tr>
 </table>
 <br>
-<b>論理関数 0 を偽, それ以外を真とする。</b>
+<h3>論理関数</h3>
+<p>
+<ul>
+  <li> 0 を偽, それ以外を真とする。
+</ul>
+</p>
 <table border=1>
 <tr><td>EQ(x,y)</td><td>x＝y のとき真(=1)</td></tr>
 <tr><td>NEQ(x,y)</td><td>x≠y のとき真(=1)</td></tr>
@@ -251,7 +256,7 @@
 <tr><td>XOR(x,y)</td><td>(x≠0) xor (y≠0) のとき真(=1)</td></tr>
 </table>
 <br>
-<b>その他の関数</b>
+<h3>その他の関数</h3>
 <table border=1>
 <tr><td>SUM(x)</td><td>積算(一つの数式で 10 個まで)</td></tr>
 <tr><td>DIF(x)</td><td>差分(一つの数式で 10 個まで)</td></tr>
@@ -612,13 +617,25 @@ COLOR(3,%03)=Y
 </ul>
 </p>
 <div>
-<b>変換関数</b>
+<h3>変換関数</h3>
 <table border=1>
 <tr><td>MIN(a,b,c,...)</td><td>引数のうちもっとも小さな値 (引数の数は 64 個まで)</td></tr>
 <tr><td>MAX(a,b,c,...)</td><td>引数のうちもっとも大きな値 (引数の数は 64 個まで)</td></tr>
 </table>
 <br>
-<b>論理関数 0 を偽, それ以外を真とする。</b>
+
+<h3>特殊関数</h3>
+<table border=1>
+<tr><td>ICBETA(x,y)</td><td>不完全ベータ関数 I(a,b,x) (0 &lt;= x &lt;= 1) </td></tr>
+</table>
+
+<br>
+<h3>論理関数</h3>
+<p>
+<ul>
+  <li> 0 を偽, それ以外を真とする。
+</ul>
+</p>
 <table border=1>
 <tr><td>ISNORMAL(x)</td><td>x が通常の数値の場合真</td></tr>
 <tr><td>ISBREAK(x)</td><td>x が BREAK の場合真</td></tr>
@@ -627,7 +644,7 @@ COLOR(3,%03)=Y
 <tr><td>ISUNDEF(x)</td><td>x が UNDEF の場合真</td></tr>
 </table>
 <br>
-<b>その他の関数</b>
+<h3>その他の関数</h3>
 <table border=1>
 <tr><td>SIZE(x)</td><td>配列 x の要素数</td></tr>
 <tr><td>SORT(x)</td><td>配列 x を整列する</td></tr>

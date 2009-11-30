@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.h,v 1.4 2009/08/04 10:41:47 hito Exp $
+ * $Id: mathfn.h,v 1.5 2009/11/30 01:23:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,8 +32,8 @@ double cutdown(double x);
 double nraise(double x);
 double frand(double a);
 int nround(double x);
-int matinv(int dim,matrix m,matrix mi);
 int matsolv(int dim,matrix a,vector b,vector x);
+#ifndef NEW_MATH_CODE
 int gamma2(double x,double *val);
 int exp1(double x,double *val);
 int icgamma(double mu,double x,double *val);
@@ -48,6 +48,7 @@ int hermite(int n,double x,double *val);
 int chebyshev(int n,double x,double *val);
 int mjd(int year,int month,int day);
 void HSB2RGB(double h,double s,double b,int *R,int *G,int *B);
+#endif
 int bsearch_int(int *ary, int n, int val, int *idx);
 int compare_double(double x, double y);
 

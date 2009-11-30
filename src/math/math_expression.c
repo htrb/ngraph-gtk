@@ -1,5 +1,5 @@
 /* 
- * $Id: math_expression.c,v 1.12 2009/11/21 11:39:10 hito Exp $
+ * $Id: math_expression.c,v 1.13 2009/11/30 01:23:35 hito Exp $
  * 
  */
 
@@ -797,13 +797,9 @@ factorial(unsigned int n)
     4.269068009004705e+304,
   };
 
-#define N (sizeof(data) / sizeof(*data))
-
-  if (n < N) {
+  if (n < (sizeof(data) / sizeof(*data))) {
     return data[n];
   }
-
-#undef N
 
   return HUGE_VAL;
 }

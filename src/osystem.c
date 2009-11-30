@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.15 2009/11/16 12:59:18 hito Exp $
+ * $Id: osystem.c,v 1.16 2009/11/30 01:23:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -42,6 +42,10 @@
 #include "object.h"
 #include "ioutil.h"
 #include "ntime.h"
+
+#ifdef HAVE_LIBGSL
+#include <gsl/gsl_errno.h>
+#endif
 
 #define NAME     "system"
 #define PARENT   "object"
@@ -94,6 +98,11 @@ sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     g_free(wd);
     return 1;
   }
+
+#ifdef HAVE_LIBGSL
+  gsl_set_error_handler_off();
+#endif
+
   return 0;
 }
 

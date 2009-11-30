@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.c,v 1.7 2009/11/16 09:13:03 hito Exp $
+ * $Id: mathfn.c,v 1.8 2009/11/30 01:23:35 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -32,12 +32,6 @@
 #include <glib.h>
 #include "mathfn.h"
 
-static int randinit=FALSE;
-/*
-int randm[521];
-int randj;
-*/
-
 int
 compare_double(double x, double y)
 {
@@ -65,19 +59,6 @@ nraise(double x)
 }
 
 int 
-mjd(int year,int month,int day)
-{
-  int d,d1,d2,d3,d4;
-
-  d=(14-month)/12;
-  d1=(year-d)*365.25;
-  d2=(month+d*12-2)*30.59;
-  d3=(year-d)/100;
-  d4=(year-d)/400;
-  return d1+d2-d3+d4+day+1721088-2400000;
-}
-
-int 
 nround(double x)
 {
   int ix;
@@ -94,58 +75,7 @@ nround(double x)
   }
 }
 
-/*
-void randomize(int seed)
-{
-  int i,ih,ii,ij,mj;
-  int ia[521];
-  int j;
-
-  if (seed==0) seed=1;
-  for (i=0;i<521;i++) {
-    seed*=69069;
-    ia[i]=(seed>=0) ? 1:-1;
-  }
-  for (j=0;j<521;j++) {
-    ih=(j*32)%521;
-    mj=0;
-    for (i=0;i<31;i++) {
-      ii=(ih+i)%521;
-      mj=2*mj-(ia[ii]-1)/2;
-      ij=(ii+489)%521;
-      ia[ii]*=ia[ij];
-    }
-    randm[j]=mj;
-    ii=(ih+31)%521;
-    ij=(ii+489)%521;
-    ia[ii]*=ia[ij];
-  }
-  randj=0;
-}*/
-
-double 
-frand(double a)
-{
-  if (!randinit) {
-    randinit=TRUE;
-    srand(1);
-  }
-  return (rand()/((double )RAND_MAX+1))*a;
-/*
-  if (!randinit) {
-    randinit=TRUE;
-    randomize(1);
-  }
-  randj++;
-  if (randj==521) randj=0;
-  k=randj-32;
-  if (k<0) k+=521;
-  randm[randj]=randm[randj]^randm[k];
-  return *((float *)(randm+randj))*0.4656613E-9*a;
-*/
-}
-
-int 
+static int 
 matinv(int dim,matrix m,matrix mi)
 {
   int i,j,k;
@@ -199,6 +129,78 @@ matsolv(int dim,matrix a,vector b,vector x)
     x[i]=d;
   }
   return 0;
+}
+
+#ifndef NEW_MATH_CODE
+ 
+static int randinit=FALSE;
+/*
+int randm[521];
+int randj;
+*/
+
+int 
+mjd(int year,int month,int day)
+{
+  int d,d1,d2,d3,d4;
+
+  d=(14-month)/12;
+  d1=(year-d)*365.25;
+  d2=(month+d*12-2)*30.59;
+  d3=(year-d)/100;
+  d4=(year-d)/400;
+  return d1+d2-d3+d4+day+1721088-2400000;
+}
+
+/*
+void randomize(int seed)
+{
+  int i,ih,ii,ij,mj;
+  int ia[521];
+  int j;
+
+  if (seed==0) seed=1;
+  for (i=0;i<521;i++) {
+    seed*=69069;
+    ia[i]=(seed>=0) ? 1:-1;
+  }
+  for (j=0;j<521;j++) {
+    ih=(j*32)%521;
+    mj=0;
+    for (i=0;i<31;i++) {
+      ii=(ih+i)%521;
+      mj=2*mj-(ia[ii]-1)/2;
+      ij=(ii+489)%521;
+      ia[ii]*=ia[ij];
+    }
+    randm[j]=mj;
+    ii=(ih+31)%521;
+    ij=(ii+489)%521;
+    ia[ii]*=ia[ij];
+  }
+  randj=0;
+}*/
+
+double 
+frand(double a)
+{
+  if (!randinit) {
+    randinit=TRUE;
+    srand(1);
+  }
+  return (rand()/((double )RAND_MAX+1))*a;
+/*
+  if (!randinit) {
+    randinit=TRUE;
+    randomize(1);
+  }
+  randj++;
+  if (randj==521) randj=0;
+  k=randj-32;
+  if (k<0) k+=521;
+  randm[randj]=randm[randj]^randm[k];
+  return *((float *)(randm+randj))*0.4656613E-9*a;
+*/
 }
 
 int 
@@ -763,6 +765,8 @@ chebyshev(int n,double x,double *val)
   }
   return 0;
 }
+
+#endif
 
 void 
 HSB2RGB(double h,double s,double b,int *R,int *G,int *B)

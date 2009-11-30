@@ -32,6 +32,7 @@ erfc	1	0	0	NULL
 qinv	1	0	0	NULL
 ei	1	0	0	NULL
 beta	2	0	0	NULL
+icbeta	3	0	0	NULL	true
 jn	2	0	0	NULL
 yn	2	0	0	NULL
 pn	2	0	0	NULL

@@ -62,6 +62,9 @@
 /* Define to 1 if you have the `isfinite' function. */
 #undef HAVE_ISFINITE
 
+/* have GNU Scientific Library */
+#undef HAVE_LIBGSL
+
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
