@@ -601,9 +601,9 @@ COLOR(3,%03)=Y
 
 <dl>
   <dt> exp1 &amp;&amp; exp2 と AND(exp1, exp2) の違い。</dt>
-  <dd> <p>exp1 &amp;&amp; exp2 は exp1 が偽の時 exp2 を評価しません。また exp1, exp2 が共に真の場合、exp2 を評価した値を返します。</p>
+  <dd> <p>exp1 &amp;&amp; exp2 は exp1 が偽の時 exp2 を評価しません。また exp1 が真の場合、exp2 を評価した値を返します。</p>
   <dt> exp1 || exp2 と OR(exp1, exp2) の違い。</dt>
-  <dd> <p>exp1 || exp2 は exp1 が真の時 exp2 を評価しません。また exp1 が偽の場合、exp2 を評価した値を返します。</p>
+  <dd> <p>exp1 || exp2 は exp1 が真の時 exp2 を評価しません。また exp1 が真の場合は exp1、exp1 が偽の場合は exp2 を評価した値を返します。</p>
 </dl>
 
 </div>
