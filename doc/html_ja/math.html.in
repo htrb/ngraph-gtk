@@ -598,6 +598,14 @@ COLOR(3,%03)=Y
 <tr><td>&amp;&amp;</td><td>論理積</td></tr>
 <tr><td>||</td><td>論理和</td></tr>
 </table>
+
+<dl>
+  <dt> exp1 &amp;&amp; exp2 と AND(exp1, exp2) の違い。</dt>
+  <dd> <p>exp1 &amp;&amp; exp2 は exp1 が偽の時 exp2 を評価しません。また exp1, exp2 が共に真の場合、exp2 を評価した値を返します。</p>
+  <dt> exp1 || exp2 と OR(exp1, exp2) の違い。</dt>
+  <dd> <p>exp1 || exp2 は exp1 が真の時 exp2 を評価しません。また exp1 が偽の場合、exp2 を評価した値を返します。</p>
+</dl>
+
 </div>
 
 <br>
@@ -665,7 +673,7 @@ COLOR(3,%03)=Y
 <tr><td>COLOR(7,x)</td><td>R2, G2, B2 値を x (0≦x＜256)に設定</td></tr>
 <tr><td>HSB2(h,s,b)</td><td>R2, G2, B2, の値を、HSB値からそれぞれ h, s, b (0≦h,s,b≦1)に設定</td></tr>
 <tr><td>RGB2(r,g,b)</td><td>R2, G2, B2, の値を r, g, b (0≦r,g,b≦1)から設定</td></tr>
-<tr><td>UNLESS(x,ex1,ex2)</td><td>x≠0のときex2, x=0のときex2</td></tr>
+<tr><td>UNLESS(x,ex1,ex2)</td><td>x≠0のときex2, x=0のときex1</td></tr>
 <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す</td></tr>
 </table>
 </div>
