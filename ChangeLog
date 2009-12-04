@@ -1,3 +1,7 @@
+2009-12-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* configure.in: set "AM_SILENT_RULES".
+
 2009-11-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/osystem.c (sysinit): call "gsl_set_error_handler_off()" when

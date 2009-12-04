@@ -1,5 +1,5 @@
 /* 
- * $Id: mathfn.h,v 1.5 2009/11/30 01:23:35 hito Exp $
+ * $Id: mathfn.h,v 1.6 2009/12/04 16:11:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -47,8 +47,8 @@ int laguer(int n,double alp,double x,double *val);
 int hermite(int n,double x,double *val);
 int chebyshev(int n,double x,double *val);
 int mjd(int year,int month,int day);
-void HSB2RGB(double h,double s,double b,int *R,int *G,int *B);
 #endif
+void HSB2RGB(double h,double s,double b,int *R,int *G,int *B);
 int bsearch_int(int *ary, int n, int val, int *idx);
 int compare_double(double x, double y);
 
