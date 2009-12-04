@@ -1,5 +1,5 @@
 /* 
- * $Id: math_basic_function.c,v 1.10 2009/11/30 06:55:05 hito Exp $
+ * $Id: math_basic_function.c,v 1.11 2009/12/04 07:12:48 hito Exp $
  * 
  */
 
@@ -848,6 +848,9 @@ math_func_qinv(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
       y0 = y1;
       y1 = y0 - (qinv3(y0) - m2 * (0.5 - x2) * exp(0.5 * y0 * y0));
     } while (fabs(y0 - y1) >= 1e-14);
+  } else {
+    /* never reached */
+    y1 = 0;
   }
 
   if (x > 0.5) {

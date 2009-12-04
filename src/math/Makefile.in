@@ -60,7 +60,10 @@ am_libmath_la_OBJECTS = libmath_la-math_function.lo \
 	libmath_la-math_basic_function.lo libmath_la-math_equation.lo \
 	libmath_la-math_scanner.lo libmath_la-math_error.lo
 libmath_la_OBJECTS = $(am_libmath_la_OBJECTS)
-libmath_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libmath_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libmath_la_CFLAGS) \
 	$(CFLAGS) $(libmath_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -69,13 +72,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libmath_la_SOURCES)
 DIST_SOURCES = $(libmath_la_SOURCES)
 ETAGS = etags
@@ -83,6 +99,7 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
@@ -282,7 +299,7 @@ clean-noinstLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libmath.la: $(libmath_la_OBJECTS) $(libmath_la_DEPENDENCIES) 
-	$(libmath_la_LINK)  $(libmath_la_OBJECTS) $(libmath_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libmath_la_LINK)  $(libmath_la_OBJECTS) $(libmath_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -301,88 +318,100 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmath_la-math_scanner.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libmath_la-math_function.lo: math_function.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_function.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_function.Tpo -c -o libmath_la-math_function.lo `test -f 'math_function.c' || echo '$(srcdir)/'`math_function.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_function.Tpo $(DEPDIR)/libmath_la-math_function.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_function.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_function.Tpo -c -o libmath_la-math_function.lo `test -f 'math_function.c' || echo '$(srcdir)/'`math_function.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_function.Tpo $(DEPDIR)/libmath_la-math_function.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_function.c' object='libmath_la-math_function.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_function.lo `test -f 'math_function.c' || echo '$(srcdir)/'`math_function.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_function.lo `test -f 'math_function.c' || echo '$(srcdir)/'`math_function.c
 
 libmath_la-math_operator.lo: math_operator.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_operator.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_operator.Tpo -c -o libmath_la-math_operator.lo `test -f 'math_operator.c' || echo '$(srcdir)/'`math_operator.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_operator.Tpo $(DEPDIR)/libmath_la-math_operator.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_operator.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_operator.Tpo -c -o libmath_la-math_operator.lo `test -f 'math_operator.c' || echo '$(srcdir)/'`math_operator.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_operator.Tpo $(DEPDIR)/libmath_la-math_operator.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_operator.c' object='libmath_la-math_operator.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_operator.lo `test -f 'math_operator.c' || echo '$(srcdir)/'`math_operator.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_operator.lo `test -f 'math_operator.c' || echo '$(srcdir)/'`math_operator.c
 
 libmath_la-math_constant.lo: math_constant.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_constant.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_constant.Tpo -c -o libmath_la-math_constant.lo `test -f 'math_constant.c' || echo '$(srcdir)/'`math_constant.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_constant.Tpo $(DEPDIR)/libmath_la-math_constant.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_constant.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_constant.Tpo -c -o libmath_la-math_constant.lo `test -f 'math_constant.c' || echo '$(srcdir)/'`math_constant.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_constant.Tpo $(DEPDIR)/libmath_la-math_constant.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_constant.c' object='libmath_la-math_constant.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_constant.lo `test -f 'math_constant.c' || echo '$(srcdir)/'`math_constant.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_constant.lo `test -f 'math_constant.c' || echo '$(srcdir)/'`math_constant.c
 
 libmath_la-math_expression.lo: math_expression.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_expression.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_expression.Tpo -c -o libmath_la-math_expression.lo `test -f 'math_expression.c' || echo '$(srcdir)/'`math_expression.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_expression.Tpo $(DEPDIR)/libmath_la-math_expression.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_expression.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_expression.Tpo -c -o libmath_la-math_expression.lo `test -f 'math_expression.c' || echo '$(srcdir)/'`math_expression.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_expression.Tpo $(DEPDIR)/libmath_la-math_expression.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_expression.c' object='libmath_la-math_expression.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_expression.lo `test -f 'math_expression.c' || echo '$(srcdir)/'`math_expression.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_expression.lo `test -f 'math_expression.c' || echo '$(srcdir)/'`math_expression.c
 
 libmath_la-math_parser.lo: math_parser.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_parser.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_parser.Tpo -c -o libmath_la-math_parser.lo `test -f 'math_parser.c' || echo '$(srcdir)/'`math_parser.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_parser.Tpo $(DEPDIR)/libmath_la-math_parser.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_parser.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_parser.Tpo -c -o libmath_la-math_parser.lo `test -f 'math_parser.c' || echo '$(srcdir)/'`math_parser.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_parser.Tpo $(DEPDIR)/libmath_la-math_parser.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_parser.c' object='libmath_la-math_parser.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_parser.lo `test -f 'math_parser.c' || echo '$(srcdir)/'`math_parser.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_parser.lo `test -f 'math_parser.c' || echo '$(srcdir)/'`math_parser.c
 
 libmath_la-math_basic_function.lo: math_basic_function.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_basic_function.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_basic_function.Tpo -c -o libmath_la-math_basic_function.lo `test -f 'math_basic_function.c' || echo '$(srcdir)/'`math_basic_function.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_basic_function.Tpo $(DEPDIR)/libmath_la-math_basic_function.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_basic_function.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_basic_function.Tpo -c -o libmath_la-math_basic_function.lo `test -f 'math_basic_function.c' || echo '$(srcdir)/'`math_basic_function.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_basic_function.Tpo $(DEPDIR)/libmath_la-math_basic_function.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_basic_function.c' object='libmath_la-math_basic_function.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_basic_function.lo `test -f 'math_basic_function.c' || echo '$(srcdir)/'`math_basic_function.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_basic_function.lo `test -f 'math_basic_function.c' || echo '$(srcdir)/'`math_basic_function.c
 
 libmath_la-math_equation.lo: math_equation.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_equation.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_equation.Tpo -c -o libmath_la-math_equation.lo `test -f 'math_equation.c' || echo '$(srcdir)/'`math_equation.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_equation.Tpo $(DEPDIR)/libmath_la-math_equation.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_equation.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_equation.Tpo -c -o libmath_la-math_equation.lo `test -f 'math_equation.c' || echo '$(srcdir)/'`math_equation.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_equation.Tpo $(DEPDIR)/libmath_la-math_equation.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_equation.c' object='libmath_la-math_equation.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_equation.lo `test -f 'math_equation.c' || echo '$(srcdir)/'`math_equation.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_equation.lo `test -f 'math_equation.c' || echo '$(srcdir)/'`math_equation.c
 
 libmath_la-math_scanner.lo: math_scanner.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_scanner.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_scanner.Tpo -c -o libmath_la-math_scanner.lo `test -f 'math_scanner.c' || echo '$(srcdir)/'`math_scanner.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_scanner.Tpo $(DEPDIR)/libmath_la-math_scanner.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_scanner.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_scanner.Tpo -c -o libmath_la-math_scanner.lo `test -f 'math_scanner.c' || echo '$(srcdir)/'`math_scanner.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_scanner.Tpo $(DEPDIR)/libmath_la-math_scanner.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_scanner.c' object='libmath_la-math_scanner.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_scanner.lo `test -f 'math_scanner.c' || echo '$(srcdir)/'`math_scanner.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_scanner.lo `test -f 'math_scanner.c' || echo '$(srcdir)/'`math_scanner.c
 
 libmath_la-math_error.lo: math_error.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_error.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_error.Tpo -c -o libmath_la-math_error.lo `test -f 'math_error.c' || echo '$(srcdir)/'`math_error.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmath_la-math_error.Tpo $(DEPDIR)/libmath_la-math_error.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -MT libmath_la-math_error.lo -MD -MP -MF $(DEPDIR)/libmath_la-math_error.Tpo -c -o libmath_la-math_error.lo `test -f 'math_error.c' || echo '$(srcdir)/'`math_error.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmath_la-math_error.Tpo $(DEPDIR)/libmath_la-math_error.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='math_error.c' object='libmath_la-math_error.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_error.lo `test -f 'math_error.c' || echo '$(srcdir)/'`math_error.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmath_la_CFLAGS) $(CFLAGS) -c -o libmath_la-math_error.lo `test -f 'math_error.c' || echo '$(srcdir)/'`math_error.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
