@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-36\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-12-10 09:35+0900\n"
+"POT-Creation-Date: 2009-12-10 11:58+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,7 +91,7 @@ msgstr ""
 msgid "_Style %d:"
 msgstr ""
 
-#: src/gtk/x11axis.c:293 src/gtk/x11axis.c:1607
+#: src/gtk/x11axis.c:293 src/gtk/x11axis.c:1572
 #, c-format
 msgid "_Width %d:"
 msgstr ""
@@ -113,8 +113,8 @@ msgstr ""
 msgid "Axis"
 msgstr ""
 
-#: src/gtk/x11axis.c:340 src/gtk/x11axis.c:1419 src/gtk/x11axis.c:1603
-#: src/gtk/x11axis.c:1977 src/gtk/x11lgnd.c:640 src/gtk/x11lgndx.c:393
+#: src/gtk/x11axis.c:340 src/gtk/x11axis.c:1384 src/gtk/x11axis.c:1568
+#: src/gtk/x11axis.c:1942 src/gtk/x11lgnd.c:640 src/gtk/x11lgndx.c:414
 msgid "_Color:"
 msgstr ""
 
@@ -130,7 +130,7 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: src/gtk/x11axis.c:365 src/gtk/x11axis.c:1619
+#: src/gtk/x11axis.c:365 src/gtk/x11axis.c:1584
 msgid "Style"
 msgstr ""
 
@@ -166,230 +166,230 @@ msgstr ""
 msgid "_Zoom:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1259 src/gtk/x11axis.c:1582 src/gtk/x11file.c:1329
+#: src/gtk/x11axis.c:1224 src/gtk/x11axis.c:1547 src/gtk/x11file.c:1329
 msgid "_Min:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1263 src/gtk/x11axis.c:1587 src/gtk/x11file.c:1333
+#: src/gtk/x11axis.c:1228 src/gtk/x11axis.c:1552 src/gtk/x11file.c:1333
 msgid "_Max:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1267
+#: src/gtk/x11axis.c:1232
 msgid "_Inc:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1277
+#: src/gtk/x11axis.c:1242
 msgid "_File"
 msgstr ""
 
-#: src/gtk/x11axis.c:1285
+#: src/gtk/x11axis.c:1250
 msgid "_Scale:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1289 src/gtk/x11file.c:1338 src/gtk/x11print.c:253
+#: src/gtk/x11axis.c:1254 src/gtk/x11file.c:1338 src/gtk/x11print.c:253
 msgid "_Div:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1293
+#: src/gtk/x11axis.c:1258
 msgid "_Ref:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1298
+#: src/gtk/x11axis.c:1263
 msgid "Scale"
 msgstr ""
 
-#: src/gtk/x11axis.c:1405
+#: src/gtk/x11axis.c:1370
 msgid "Draw _Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:1411 src/gtk/x11file.c:2961 src/gtk/x11lgnd.c:610
-#: src/gtk/x11lgndx.c:377
+#: src/gtk/x11axis.c:1376 src/gtk/x11file.c:2961 src/gtk/x11lgnd.c:610
+#: src/gtk/x11lgndx.c:398
 msgid "Line _Style:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1415 src/gtk/x11file.c:2965 src/gtk/x11lgndx.c:381
+#: src/gtk/x11axis.c:1380 src/gtk/x11file.c:2965 src/gtk/x11lgndx.c:402
 msgid "_Line Width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1422
+#: src/gtk/x11axis.c:1387
 msgid "Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:1432 src/gtk/x11axis.c:1454
+#: src/gtk/x11axis.c:1397 src/gtk/x11axis.c:1419
 msgid "_Position:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1437
+#: src/gtk/x11axis.c:1402
 msgid "_Arrow length:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1442
+#: src/gtk/x11axis.c:1407
 msgid "_Arrow width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1445
+#: src/gtk/x11axis.c:1410
 msgid "Arrow"
 msgstr ""
 
-#: src/gtk/x11axis.c:1458
+#: src/gtk/x11axis.c:1423
 msgid "_Wave length:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1463
+#: src/gtk/x11axis.c:1428
 msgid "_Wave width:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1466
+#: src/gtk/x11axis.c:1431
 msgid "Wave"
 msgstr ""
 
-#: src/gtk/x11axis.c:1577
+#: src/gtk/x11axis.c:1542
 msgid "_Gauge:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1590 src/gtk/x11axis.c:1803
+#: src/gtk/x11axis.c:1555 src/gtk/x11axis.c:1768
 msgid "Range"
 msgstr ""
 
-#: src/gtk/x11axis.c:1599
+#: src/gtk/x11axis.c:1564
 msgid "_Style:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1612
+#: src/gtk/x11axis.c:1577
 #, c-format
 msgid "_Length %d:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1788
+#: src/gtk/x11axis.c:1753
 msgid "_Numbering:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1792
+#: src/gtk/x11axis.c:1757
 msgid "_Begin:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1796
+#: src/gtk/x11axis.c:1761
 msgid "_Step:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1800
+#: src/gtk/x11axis.c:1765
 msgid "_Num:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1812
+#: src/gtk/x11axis.c:1777
 msgid "_Align:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1816 src/gtk/x11axis.c:2096 src/gtk/x11lgnd.c:1263
+#: src/gtk/x11axis.c:1781 src/gtk/x11axis.c:2061 src/gtk/x11lgnd.c:1263
 msgid "_Direction:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1820
+#: src/gtk/x11axis.c:1785
 msgid "shift (_P):"
 msgstr ""
 
-#: src/gtk/x11axis.c:1824
+#: src/gtk/x11axis.c:1789
 msgid "shift (_N):"
 msgstr ""
 
-#: src/gtk/x11axis.c:1827 src/gtk/x11axis.c:2110
+#: src/gtk/x11axis.c:1792 src/gtk/x11axis.c:2075
 msgid "Position"
 msgstr ""
 
-#: src/gtk/x11axis.c:1838
+#: src/gtk/x11axis.c:1803
 msgid "_Fraction:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1842
+#: src/gtk/x11axis.c:1807
 msgid "_Head:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1846
+#: src/gtk/x11axis.c:1811
 msgid "_Tail:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1850
+#: src/gtk/x11axis.c:1815
 msgid "_Auto normalization:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1853
+#: src/gtk/x11axis.c:1818
 msgid "_Log power"
 msgstr ""
 
-#: src/gtk/x11axis.c:1857
+#: src/gtk/x11axis.c:1822
 msgid "_Add plus"
 msgstr ""
 
-#: src/gtk/x11axis.c:1861
+#: src/gtk/x11axis.c:1826
 msgid "no _Zero"
 msgstr ""
 
-#: src/gtk/x11axis.c:1865
+#: src/gtk/x11axis.c:1830
 msgid "Format"
 msgstr ""
 
-#: src/gtk/x11axis.c:1955
+#: src/gtk/x11axis.c:1920
 msgid "_Point:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1959 src/gtk/x11lgnd.c:1230
+#: src/gtk/x11axis.c:1924 src/gtk/x11lgnd.c:1230
 msgid "_Space:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1963
+#: src/gtk/x11axis.c:1928
 msgid "_Script size:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1967 src/gtk/x11lgnd.c:1243
+#: src/gtk/x11axis.c:1932 src/gtk/x11lgnd.c:1243
 msgid "_Font:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1972 src/gtk/x11lgnd.c:1252
+#: src/gtk/x11axis.c:1937 src/gtk/x11lgnd.c:1252
 msgid "_Jfont:"
 msgstr ""
 
-#: src/gtk/x11axis.c:1980 src/gtk/x11dialg.c:252 src/gtk/x11opt.c:703
+#: src/gtk/x11axis.c:1945 src/gtk/x11dialg.c:252 src/gtk/x11opt.c:703
 msgid "Font"
 msgstr ""
 
-#: src/gtk/x11axis.c:2092
+#: src/gtk/x11axis.c:2057
 msgid "_Length:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2102
+#: src/gtk/x11axis.c:2067
 msgid "_Adjust:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2106
+#: src/gtk/x11axis.c:2071
 msgid "Adjust _Position:"
 msgstr ""
 
-#: src/gtk/x11axis.c:2139
+#: src/gtk/x11axis.c:2104
 #, c-format
 msgid "Axis %d %s"
 msgstr ""
 
-#: src/gtk/x11axis.c:2150
+#: src/gtk/x11axis.c:2115
 msgid "_Scale"
 msgstr ""
 
-#: src/gtk/x11axis.c:2154
+#: src/gtk/x11axis.c:2119
 msgid "_Baseline"
 msgstr ""
 
-#: src/gtk/x11axis.c:2158
+#: src/gtk/x11axis.c:2123
 msgid "_Gauge"
 msgstr ""
 
-#: src/gtk/x11axis.c:2162
+#: src/gtk/x11axis.c:2127
 msgid "_Numbering"
 msgstr ""
 
-#: src/gtk/x11axis.c:2166
+#: src/gtk/x11axis.c:2131
 msgid "_Font"
 msgstr ""
 
-#: src/gtk/x11axis.c:2170
+#: src/gtk/x11axis.c:2135
 msgid "_Position"
 msgstr ""
 
@@ -935,11 +935,11 @@ msgstr ""
 msgid "_Size:"
 msgstr ""
 
-#: src/gtk/x11file.c:2973 src/gtk/x11lgnd.c:620 src/gtk/x11lgndx.c:385
+#: src/gtk/x11file.c:2973 src/gtk/x11lgnd.c:620 src/gtk/x11lgndx.c:406
 msgid "_Miter:"
 msgstr ""
 
-#: src/gtk/x11file.c:2977 src/gtk/x11lgnd.c:630 src/gtk/x11lgndx.c:389
+#: src/gtk/x11file.c:2977 src/gtk/x11lgnd.c:630 src/gtk/x11lgndx.c:410
 msgid "_Join:"
 msgstr ""
 
@@ -1309,32 +1309,32 @@ msgstr ""
 msgid "type:%-2d"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:341
+#: src/gtk/x11lgndx.c:362
 #, c-format
 msgid "Legend Gaussian/Lorentzian/Parabola/Sin %d"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:349
+#: src/gtk/x11lgndx.c:370
 msgid "_Sin"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:353
+#: src/gtk/x11lgndx.c:374
 msgid "_Parabola"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:357
+#: src/gtk/x11lgndx.c:378
 msgid "_Lorentz"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:361
+#: src/gtk/x11lgndx.c:382
 msgid "_Gauss"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:397
+#: src/gtk/x11lgndx.c:418
 msgid "_Division:"
 msgstr ""
 
-#: src/gtk/x11lgndx.c:424
+#: src/gtk/x11lgndx.c:445
 msgid "Direction:"
 msgstr ""
 
