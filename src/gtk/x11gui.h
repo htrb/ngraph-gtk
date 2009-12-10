@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.13 2009/07/23 05:19:00 hito Exp $
+ * $Id: x11gui.h,v 1.14 2009/12/10 08:59:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -71,4 +71,5 @@ int nGetSaveFileName(GtkWidget * parent, char *title, char *defext,
 		     int overwrite, int chdir);
 void get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h, GdkWindowState *state);
 void set_sensitivity_by_check_instance(GtkWidget *widget, gpointer user_data);
+int ndialog_run(GtkWidget *dlg);
 #endif

@@ -1,5 +1,26 @@
 2009-12-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (select_color): use "ndialog_run()" instead of
+	"gtk_dialog_run()".
+
+	* src/gtk/gtk_widget.c (show_color_sel): use "ndialog_run()"
+	instead of "gtk_dialog_run()".
+
+	* src/gtk/x11opt.c (PrefFontDialogUpdate, PrefFontDialogAdd): use
+	"ndialog_run()" instead of "gtk_dialog_run()".
+
+	* src/gtk/x11gui.c (DialogExecute): use "DnDLock" instead of
+	"GlobalLock".
+	(ndialog_run): add.
+	(DialogExecute, MessageBox, DialogInput, DialogRadio)
+	(DialogCombo, DialogComboEntry, DialogSpinEntry, DialogCheck)
+	(FileSelectionDialog): use "ndialog_run()" instead of
+	"gtk_dialog_run()".
+
+	* src/gtk/x11menu.c: add gloval variable "DnDLock".
+
+	* src/gtk/x11view.c (drag_drop_cb): check "DnDLock".
+
 	* src/gtk/x11lgndx.c (enum LEGEND_DIRECTION)
 	(LEGEND_DIRECTION_NUM): add
 	(LegendGaussDialogPaint, LegendGaussDialogClose): use "switch"
@@ -507,7 +528,7 @@
 2009-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (DialogExecute): set "GlobalLock" as TRUE, save
-	and restore "GlobalLock".
+	and restore "GlobalLock" to inhibit DnD during executing dialog.
 
 	* src/gtk/x11view.c (init_dnd): use
 	"gtk_target_list_add_text_targets()" to add text target.
@@ -1260,7 +1281,7 @@
 	* src/gtk/gtk_common.h (USE_ENTRY_ICON): add.
 
 	* src/omerge.c (merge): add field "ext".
-	(mergeinit): initialize field "ext". 
+	(mergeinit): initialize field "ext".
 
 2009-05-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -1920,7 +1941,6 @@
 	(removeconfig): use "removeconfig_match()" and "make_backup()".
 	(replaceconfig, removeconfig): use "tmpfile()" instead of "tempnam()".
 	(lockconfig): call "msleep()" while checking "configlocked()".
-
 
 2009-03-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.37 2009/11/17 06:41:49 hito Exp $
+ * $Id: x11gui.c,v 1.38 2009/12/10 08:59:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -112,14 +112,30 @@ dialog_delete_cb(GtkWidget *w, GdkEvent *e, gpointer user_data)
 }
 
 int
+ndialog_run(GtkWidget *dlg)
+{
+  int lock_state, r;
+
+  if (dlg == NULL) {
+    return GTK_RESPONSE_CANCEL;
+  }
+
+  lock_state = DnDLock;
+  r = gtk_dialog_run(GTK_DIALOG(dlg));
+  DnDLock = lock_state;
+
+  return r;
+}
+
+int
 DialogExecute(GtkWidget *parent, void *dialog)
 {
   GtkWidget *dlg, *win_ptr;
   struct DialogType *data;
   gint res_id, lockstate;
 
-  lockstate = GlobalLock;
-  GlobalLock = TRUE;
+  lockstate = DnDLock;
+  DnDLock = TRUE;
 
   data = (struct DialogType *) dialog;
 
@@ -183,7 +199,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
   }
 
   while (data->ret == IDLOOP) {
-    res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+    res_id = ndialog_run(dlg);
 
     if (res_id < 0) {
       switch (res_id) {
@@ -209,7 +225,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
   gtk_widget_hide_all(dlg);
   ResetEvent();
 
-  GlobalLock = lockstate;
+  DnDLock = lockstate;
 
   return data->ret;
 }
@@ -298,7 +314,7 @@ MessageBox(GtkWidget * parent, char *message, char *title, int mode)
   }
 
   gtk_widget_show_all(dlg);
-  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+  res_id = ndialog_run(dlg);
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
@@ -358,7 +374,7 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s, int *x, int *y
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
-  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+  res_id = ndialog_run(dlg);
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
@@ -421,7 +437,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
-  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+  res_id = ndialog_run(dlg);
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
@@ -494,7 +510,7 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
-  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+  res_id = ndialog_run(dlg);
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
@@ -560,7 +576,7 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
-  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+  res_id = ndialog_run(dlg);
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
@@ -628,7 +644,7 @@ DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, doubl
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
-  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+  res_id = ndialog_run(dlg);
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
@@ -694,7 +710,7 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
-  res_id = gtk_dialog_run(GTK_DIALOG(dlg));
+  res_id = ndialog_run(dlg);
 
   switch (res_id) {
   case GTK_RESPONSE_OK:
@@ -909,7 +925,7 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
   data->ret = IDCANCEL;
 
   while (1) {
-    if (gtk_dialog_run(GTK_DIALOG(dlg)) != GTK_RESPONSE_ACCEPT)
+    if (ndialog_run(dlg) != GTK_RESPONSE_ACCEPT)
       break;
 
     fsok(dlg);

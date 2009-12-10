@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-12-10 11:58+0900\n"
+"POT-Creation-Date: 2009-12-10 17:59+0900\n"
 "PO-Revision-Date: 2009-12-09 18:24+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1106,15 +1106,15 @@ msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"
 "です。"
 
-#: src/gtk/x11gui.c:754 src/gtk/x11gui.c:886
+#: src/gtk/x11gui.c:770 src/gtk/x11gui.c:902
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:863
+#: src/gtk/x11gui.c:879
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:874
+#: src/gtk/x11gui.c:890
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.177 2009/11/19 07:16:52 hito Exp $
+ * $Id: x11view.c,v 1.178 2009/12/10 08:59:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -778,7 +778,7 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
   struct Viewer *d;
 
   success = FALSE;
-  if (GlobalLock)
+  if (GlobalLock || Menulock || DnDLock)
     goto End;;
 
   d = (struct Viewer *) user_data;

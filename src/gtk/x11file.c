@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.121 2009/11/21 11:39:10 hito Exp $
+ * $Id: x11file.c,v 1.122 2009/12/10 08:59:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4548,7 +4548,7 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
   gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
   gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
 
-  response = gtk_dialog_run(GTK_DIALOG(dlg));
+  response = ndialog_run(dlg);
   gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(sel), &color);
   gtk_widget_destroy(dlg);
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-36\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-12-10 11:58+0900\n"
+"POT-Creation-Date: 2009-12-10 17:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1102,15 +1102,15 @@ msgid ""
 "researchers and engineers."
 msgstr ""
 
-#: src/gtk/x11gui.c:754 src/gtk/x11gui.c:886
+#: src/gtk/x11gui.c:770 src/gtk/x11gui.c:902
 msgid "All"
 msgstr ""
 
-#: src/gtk/x11gui.c:863
+#: src/gtk/x11gui.c:879
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:874
+#: src/gtk/x11gui.c:890
 #, c-format
 msgid "%s file (*.%s)"
 msgstr ""

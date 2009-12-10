@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.72 2009/11/17 07:24:59 hito Exp $
+ * $Id: x11opt.c,v 1.73 2009/12/10 08:59:53 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -841,7 +841,7 @@ PrefFontDialogUpdate(GtkWidget *w, gpointer client_data)
     return;
 
   dialog = create_font_selection_dialog(d, fcur);
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
+  if (ndialog_run(dialog) != GTK_RESPONSE_CANCEL) {
     set_font_from_font_selection_dialog(dialog, d, fcur);
     PrefFontDialogSetupItem(d);
   }
@@ -888,7 +888,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 
   dialog = create_font_selection_dialog(d, NULL);
 
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_CANCEL) {
+  if (ndialog_run(dialog) != GTK_RESPONSE_CANCEL) {
     set_font_from_font_selection_dialog(dialog, d, NULL);
     PrefFontDialogSetupItem(d);
     gtk_entry_set_text(GTK_ENTRY(d->alias), "");

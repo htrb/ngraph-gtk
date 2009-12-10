@@ -531,7 +531,7 @@ show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
   gtk_color_selection_set_has_opacity_control(sel, FALSE);
   gtk_color_selection_set_current_color(sel, &col);
 
-  r = gtk_dialog_run(GTK_DIALOG(dlg));
+  r = ndialog_run(dlg);
   gtk_color_selection_get_current_color(sel, &col);
   gtk_widget_destroy(dlg);
 

@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.111 2009/11/17 08:38:32 hito Exp $
+ * $Id: x11menu.c,v 1.112 2009/12/10 08:59:53 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -57,7 +57,7 @@
 #define FUNCTION_HISTORY "function_history"
 #define KEYMAP_FILE      "accel_map"
 
-int Menulock = FALSE;
+int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp;
 GtkWidget *TopLevel = NULL;
 GtkAccelGroup *AccelGroup = NULL;
