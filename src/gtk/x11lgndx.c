@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.18 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11lgndx.c,v 1.19 2009/12/10 02:57:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,6 +44,15 @@
 
 #define VIEW_SIZE 128
 
+enum LEGEND_DIRECTION {
+  LEGEND_DIRECTION_RIGHT,
+  LEGEND_DIRECTION_LEFT,
+  LEGEND_DIRECTION_BOTTOM,
+  LEGEND_DIRECTION_TOP,
+};
+
+#define LEGEND_DIRECTION_NUM (LEGEND_DIRECTION_TOP + 1)
+
 static double *spx, *spy, *spz;
 static double *spc[6];
 
@@ -78,7 +87,7 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
   set_color(d->color, d->Obj, id, NULL);
 
   n = d->Dir;
-  if (n >=0 && n < 4) {
+  if (n >= 0 && n < LEGEND_DIRECTION_NUM) {
     GtkToggleButton *btn;
     btn = GTK_TOGGLE_BUTTON(g_slist_nth_data(d->dir_list, n));
     gtk_toggle_button_set_active(btn, TRUE);
@@ -160,10 +169,13 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   gdk_draw_rectangle(pix, gc, FALSE, minx, miny, maxx - minx, maxy - miny);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
-  if ((d->Dir == 0) || (d->Dir == 1)) {
+  switch (d->Dir) {
+  case LEGEND_DIRECTION_TOP:
+  case LEGEND_DIRECTION_BOTTOM:
     amp = d->Wdy;
     wd = d->Wdx;
-  } else {
+    break;
+  default:
     amp = d->Wdx;
     wd = d->Wdy;
   }
@@ -207,18 +219,27 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 	  y = amp * 0.5 * (sin(2.0 * MPI * (tmp - d->Position * 0.5)) + 1);
 	}
 
-	if (d->Dir == 0) {
+	switch (d->Dir) {
+	case LEGEND_DIRECTION_TOP:
 	  spx[i] = nround(x);
 	  spy[i] = d->Wdy - nround(y);
-	} else if (d->Dir == 1) {
+	  break;
+	case LEGEND_DIRECTION_BOTTOM:
 	  spx[i] = nround(x);
 	  spy[i] = nround(y);
-	} else if (d->Dir == 2) {
+	  break;
+	case LEGEND_DIRECTION_LEFT:
 	  spx[i] = d->Wdx - nround(y);
 	  spy[i] = d->Wdy - nround(x);
-	} else if (d->Dir == 3) {
+	  break;
+	case LEGEND_DIRECTION_RIGHT:
 	  spx[i] = nround(y);
 	  spy[i] = d->Wdy - nround(x);
+	  break;
+	default:
+	  /* never reached*/
+	  spx[i] = 0;
+	  spy[i] = 0;
 	}
 	spz[i] = i;
 	spx[i] *= ppd;
@@ -309,7 +330,7 @@ LegendGaussDialogDir(GtkWidget *w, gpointer client_data)
 
   d = (struct LegendGaussDialog *) client_data;
   i= get_radio_index(d->dir_list);
-  if (i < 0)
+  if (i < 0 || i >= LEGEND_DIRECTION_NUM)
     return;
 
   d->Dir = i;
@@ -331,10 +352,11 @@ LegendGaussDialogDiv(GtkWidget *w, gpointer client_data)
 static void
 LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *button, *hbox, *hbox2, *vbox;
+  GtkWidget *w, *button, *hbox, *hbox2, *vbox, *table;
   GSList *func_list, *dir_list;
   struct LegendGaussDialog *d;
   char title[256];
+  int i;
 
   d = (struct LegendGaussDialog *) data;
   snprintf(title, sizeof(title), _("Legend Gaussian/Lorentzian/Parabola/Sin %d"), d->Id);
@@ -343,74 +365,87 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     hbox = gtk_hbox_new(FALSE, 4);
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
-
     button = NULL;
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Sin"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
-    gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Parabola"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
-    gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Lorentz"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
-    gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), _("_Gauss"));
     g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogMode), d);
-    gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
     func_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
 
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 0);
     d->func_list = func_list;
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    vbox = gtk_vbox_new(FALSE, 4);
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
     w = combo_box_entry_create();
-    item_setup(hbox2, w, _("Line _Style:"), TRUE);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
+    add_widget_to_table(table, _("Line _Style:"), w, TRUE, &i);
     d->style = w;
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-    item_setup(hbox2, w, _("_Line Width:"), TRUE);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
+    add_widget_to_table(table, _("_Line Width:"), w, FALSE, &i);
     d->width = w;
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-    item_setup(hbox2, w, _("_Miter:"), FALSE);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
+    add_widget_to_table(table, _("_Miter:"), w, FALSE, &i);
     d->miter = w;
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
     w = combo_box_create();
-    item_setup(hbox2, w, _("_Join:"), FALSE);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
+    add_widget_to_table(table, _("_Join:"), w, FALSE, &i);
     d->join = w;
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
     w = create_color_button(wi);
-    item_setup(hbox2, w, _("_Color:"), FALSE);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
+    add_widget_to_table(table, _("_Color:"), w, FALSE, &i);
     d->color = w;
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
     w = gtk_hscale_new_with_range(10, DIV_MAX, 1);
-    item_setup(hbox2, w, _("_Division:"), TRUE);
+    add_widget_to_table(table, _("_Division:"), w, TRUE, &i);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogDiv), d);
     d->div = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 4);
 
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
+    hbox2 = gtk_hbox_new(FALSE, 4);
+    button = NULL;
+
+    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_T");
+    g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
+    gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+
+    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_B");
+    g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
+    gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+
+    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_L");
+    g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
+    gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+
+    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_R");
+    g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
+    gtk_box_pack_start(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
+
+    dir_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
+    d->dir_list = dir_list;
+
+    add_widget_to_table(table, _("Direction:"), hbox2, TRUE, &i);
+
+    gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
+
 
     vbox = gtk_vbox_new(FALSE, 4);
 
@@ -432,35 +467,6 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 
     gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 0);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    hbox2 = gtk_hbox_new(FALSE, 4);
-
-    button = NULL;
-
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_R");
-    g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
-    gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_L");
-    g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
-    gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_B");
-    g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
-    gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-
-    button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_T");
-    g_signal_connect(button, "toggled", G_CALLBACK(LegendGaussDialogDir), d);
-    gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-
-    dir_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
-    d->dir_list = dir_list;
-
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 0);
   }
   LegendGaussDialogSetupItem(wi, d, d->Id);
@@ -496,10 +502,13 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
   if (putobj_color(d->color, d->Obj, d->Id, NULL))
     return;
 
-  if ((d->Dir == 0) || (d->Dir == 1)) {
+  switch (d->Dir) {
+  case LEGEND_DIRECTION_TOP:
+  case LEGEND_DIRECTION_BOTTOM:
     amp = d->Wdy;
     wd = d->Wdx;
-  } else {
+    break;
+  default:
     amp = d->Wdx;
     wd = d->Wdy;
   }
@@ -532,18 +541,27 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
       tmp = x / (wd / (0.25 + 10 * d->Param));
       y = amp * 0.5 * (sin(2.0 * MPI * (tmp - d->Position * 0.5)) + 1);
     }
-    if (d->Dir == 0) {
+    switch (d->Dir) {
+    case LEGEND_DIRECTION_TOP:
       gx = nround(x);
       gy = d->Wdy - nround(y);
-    } else if (d->Dir == 1) {
+      break;
+    case LEGEND_DIRECTION_BOTTOM:
       gx = nround(x);
       gy = nround(y);
-    } else if (d->Dir == 2) {
+      break;
+    case LEGEND_DIRECTION_LEFT:
       gx = d->Wdx - nround(y);
       gy = d->Wdy - nround(x);
-    } else if (d->Dir == 3) {
+      break;
+    case LEGEND_DIRECTION_RIGHT:
       gx = nround(y);
       gy = d->Wdy - nround(x);
+      break;
+    default:
+      /* never reached */
+      gx = 0;
+      gy = 0;
     }
     gx += d->Minx;
     gy += d->Miny;
@@ -584,7 +602,7 @@ LegendGaussDialog(struct LegendGaussDialog *data,
   data->Div = 20;
   data->Position = 0;
   data->Param = 0.175;
-  data->Dir = 0;
+  data->Dir = LEGEND_DIRECTION_TOP;
   data->Mode = 0;
   data->alloc = TRUE;
 

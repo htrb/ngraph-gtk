@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.46 2009/11/17 06:41:49 hito Exp $
+ * $Id: x11dialg.c,v 1.47 2009/12/10 02:57:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -79,11 +79,6 @@ struct CrossDialog DlgCross;
 struct AxisDialog DlgAxis;
 struct GridDialog DlgGrid;
 struct ZoomDialog DlgZoom;
-struct AxisBaseDialog DlgAxisBase;
-struct AxisPosDialog DlgAxisPos;
-struct NumDialog DlgNum;
-struct AxisFontDialog DlgAxisFont;
-struct GaugeDialog DlgGauge;
 struct MergeDialog DlgMerge;
 struct LegendDialog DlgLegendCurve;
 struct LegendDialog DlgLegendPoly;
@@ -177,21 +172,6 @@ initdialog(void)
   DlgZoom.widget = NULL;
   DlgZoom.focus = NULL;
   DlgZoom.resource = N_("Scale Zoom");
-  DlgAxisBase.widget = NULL;
-  DlgAxisBase.focus = NULL;
-  DlgAxisBase.resource = N_("Axis Baseine");
-  DlgAxisPos.widget = NULL;
-  DlgAxisPos.focus = NULL;
-  DlgAxisPos.resource = N_("Axis Position");
-  DlgNum.widget = NULL;
-  DlgNum.focus = NULL;
-  DlgNum.resource = N_("Axis Numbering");
-  DlgAxisFont.widget = NULL;
-  DlgAxisFont.focus = NULL;
-  DlgAxisFont.resource = N_("Axis Font");
-  DlgGauge.widget = NULL;
-  DlgGauge.focus = NULL;
-  DlgGauge.resource = N_("Axis Gauge");
   DlgMerge.widget = NULL;
   DlgMerge.focus = NULL;
   DlgMerge.resource = N_("merge");
@@ -739,22 +719,28 @@ chk_sputobjfield(struct objlist *obj, int id, char *field, char *str)
 int
 SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
+  int r = 0;
+
   if (w == NULL)
     return 0;
 
   if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
-    return SetObjFieldFromSpin(w, Obj, Id, field);
+    r = SetObjFieldFromSpin(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
-    return SetObjFieldFromText(w, Obj, Id, field);
+    r = SetObjFieldFromText(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
-    return SetObjFieldFromText(GTK_BIN(w)->child, Obj, Id, field);
+    r = SetObjFieldFromText(GTK_BIN(w)->child, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
-    return SetObjFieldFromList(w, Obj, Id, field);
+    r = SetObjFieldFromList(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
-    return SetObjFieldFromToggle(w, Obj, Id, field);
+    r = SetObjFieldFromToggle(w, Obj, Id, field);
   }
 
-  return 0;
+  if (r) {
+    gtk_widget_grab_focus(w);
+  }
+
+  return r;
 }
 
 void

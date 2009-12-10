@@ -37,5 +37,8 @@ GtkWidget *create_file_entry(struct objlist *obj);
 GtkWidget *create_direction_entry(void);
 GtkWidget *item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand);
 GtkWidget *get_parent_window(GtkWidget *w);
+GtkWidget *add_widget_to_table_sub(GtkWidget *table, char *title, GtkWidget *w, int expand, int col, int width, int col_max, int *n);
+GtkWidget *add_widget_to_table(GtkWidget *table, char *title, GtkWidget *w, int expand, int *n);
+void add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *obj_name);
 
 #endif

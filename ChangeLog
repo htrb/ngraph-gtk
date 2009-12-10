@@ -1,3 +1,51 @@
+2009-12-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgndx.c (enum LEGEND_DIRECTION)
+	(LEGEND_DIRECTION_NUM): add
+	(LegendGaussDialogPaint, LegendGaussDialogClose): use "switch"
+	instead of "if".
+	(LegendGaussDialogSetup): use "GtkTable" instead of "GtkHBox" and
+	"GtkVBox".
+
+	* src/gtk/x11dialg.h: add definition of structs "AxisBase",
+	"AxisPos", "AxisFont", "AxisNumbering" and "AxisGauge".
+	(struct AxisDialog): add member "tab", "del_btn", "tab_active",
+	"base", "font", "position", "gauge" and "numbering".
+
+	* src/gtk/x11dialg.c: remove gloval variables "DlgAxisBase",
+	"DlgAxisPos", "DlgNum", "DlgAxisFont" and "DlgGauge".
+	(SetObjFieldFromWidget): focus the widget when an error is
+	occurred.
+
+	* src/gtk/x11axis.c (bg_button_toggled): add.
+	(GridDialogSetupItem): call "bg_button_toggled()".
+	(GridDialogSetup): "toggled" signal is connected to
+	"bg_button_toggled()" .
+	(grid_copy_cliced): change name from "GridDialogCopy()".
+	(gauge_syle_setup, GridDialogSetup, SectionDialogSetup)
+	(CrossDialogSetup): use "GtkTable" instead of "GtkHBox" and
+	"GtkVBox".
+	(scale_tab_setup_item, scale_tab_copy_cliced, scale_tab_create)
+	(baseline_tab_set_value, baseline_tab_setup_item)
+	(baseline_tab_copy_cliced, baseline_tab_create)
+	(gauge_tab_set_value, gauge_tab_setup_item)
+	(gauge_tab_copy_cliced, gauge_tab_create)
+	(numbering_tab_set_value, numbering_tab_setup_item)
+	(numbering_tab_copy_cliced, numbering_tab_create)
+	(font_tab_set_value, font_tab_setup_item, font_tab_copy_cliced)
+	(font_tab_create, position_tab_set_value)
+	(position_tab_setup_item, position_tab_copy_cliced)
+	(position_tab_create, axis_dialog_show_tab): add.
+	(AxisDialogSetup): use "GtkNotebook".
+	(scale_tab_set_value): add.
+	(AxisDialogClose): call "gtk_notebook_set_current_page()" when
+	errors are occurred.
+	(AxisDialogSetup): sensitivity of the delete button is depemd on
+	"d->CanDel".
+
+	* src/gtk/gtk_widget.c (add_widget_to_table_sub)
+	(add_widget_to_table, add_copy_button_to_box): add.
+
 2009-12-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* configure.in: set "AM_SILENT_RULES".

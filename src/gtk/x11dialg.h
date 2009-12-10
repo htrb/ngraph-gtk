@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.48 2009/10/22 00:07:12 hito Exp $
+ * $Id: x11dialg.h,v 1.49 2009/12/10 02:57:27 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -259,63 +259,57 @@ void CrossDialog(struct CrossDialog *data,
 		 int x, int y, int lenx, int leny,
 		 struct objlist *obj, int idx, int idy);
 
+
+struct AxisBase
+{
+  GtkWidget *style, *width, *color, *arrow, *arrowlen, *arrowwid,
+    *wave, *wavelen, *wavewid, *baseline;
+  int R, G, B, tab_id;
+};
+
+struct AxisPos
+{
+  GtkWidget *x, *y, *len, *direction, *adjust, *adjustpos;
+  int tab_id;
+};
+
+struct AxisFont
+{
+  GtkWidget *space, *pt, *script, *font, *jfont, *color;
+  int R, G, B, tab_id;
+};
+
+struct AxisNumbering
+{
+  GtkWidget *num, *begin, *ster, *numnum, *head, *fraction, *add_plus, *tail,
+    *align, *direction, *shiftp, *shiftn, *log_power, *no_zero, *norm, *step;
+  int tab_id;
+};
+
+#define GAUGE_STYLE_NUM 3
+struct AxisGauge
+{
+  GtkWidget *length[GAUGE_STYLE_NUM], *width[GAUGE_STYLE_NUM],
+    *gauge, *min, *max, *style, *color;
+  int R, G, B, tab_id;
+};
+
 struct AxisDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *min, *max, *inc, *div, *scale, *ref, *clear;
+  GtkNotebook *tab;
+  GtkWidget *del_btn;
   struct objlist *Obj;
-  int Id;
-  int CanDel;
+  int Id, CanDel, tab_active;
+  struct AxisBase base;
+  struct AxisFont font;
+  struct AxisPos position;
+  struct AxisGauge gauge;
+  struct AxisNumbering numbering;
 };
-
 void AxisDialog(void *data, struct objlist *obj, int id, int candel);
-
-struct AxisBaseDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *style, *width, *color, *arrow, *arrowlen, *arrowwid,
-    *wave, *wavelen, *wavewid, *baseline;
-  struct objlist *Obj;
-  int Id;
-  int R, G, B;
-};
-void AxisBaseDialog(struct AxisBaseDialog *data, struct objlist *obj, int id);
-
-struct AxisPosDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *x, *y, *len, *direction, *adjust, *adjustpos;
-  struct objlist *Obj;
-  int Id;
-};
-void AxisPosDialog(struct AxisPosDialog *data, struct objlist *obj, int id);
-
-struct AxisFontDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *space, *pt, *script, *font, *jfont, *color;
-  struct objlist *Obj;
-  int Id;
-  int R, G, B;
-};
-void AxisFontDialog(struct AxisFontDialog *data, struct objlist *obj, int id);
-
-#define GAUGE_STYLE_NUM 3
-struct GaugeDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  struct objlist *Obj;
-  GtkWidget *length[GAUGE_STYLE_NUM], *width[GAUGE_STYLE_NUM],
-    *gauge, *min, *max, *style, *color;
-  int Id;
-  int R, G, B;
-};
-void GaugeDialog(struct GaugeDialog *data, struct objlist *obj, int id);
 
 #define GRID_DIALOG_STYLE_NUM 3
 
@@ -325,7 +319,7 @@ struct GridDialog
   /****** local member *******/
   struct objlist *Obj;
   GtkWidget *style[GRID_DIALOG_STYLE_NUM], *width[GRID_DIALOG_STYLE_NUM],
-    *axisx, *axisy, *background, *color, *bcolor;
+    *axisx, *axisy, *background, *color, *bcolor, *bclabel;
   int Id;
   int R, G, B, R2, G2, B2;
 };
@@ -339,17 +333,6 @@ struct ZoomDialog
   int zoom;
 };
 void ZoomDialog(struct ZoomDialog *data);
-
-struct NumDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *num, *begin, *ster, *numnum, *head, *fraction, *add_plus, *tail,
-    *align, *direction, *shiftp, *shiftn, *log_power, *no_zero, *norm, *step;
-  struct objlist *Obj;
-  int Id;
-};
-void NumDialog(struct NumDialog *data, struct objlist *obj, int id);
 
 struct MergeDialog
 {

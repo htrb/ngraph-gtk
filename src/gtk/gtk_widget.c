@@ -40,6 +40,53 @@ filename_to_utf8(const char *str)
 }
 
 GtkWidget *
+add_widget_to_table_sub(GtkWidget *table, char *title, GtkWidget *w, int expand, int col, int width, int col_max, int *n)
+{
+  GtkWidget *align, *label;
+  int i;
+
+  i = *n;
+  gtk_table_resize(GTK_TABLE(table), i + 1, col_max);
+
+  label = NULL;
+
+  if (title) {
+    label = gtk_label_new_with_mnemonic(title);
+    gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
+    gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+    gtk_table_attach(GTK_TABLE(table), label, col, col + 1, i, i + 1, GTK_FILL, 0, 4, 4);
+    col++;
+  }
+
+  align = gtk_alignment_new(0, 0.5, (expand) ? 1 : 0, 0);
+  gtk_container_add(GTK_CONTAINER(align), w);
+  gtk_table_attach(GTK_TABLE(table), align, col, col + width, i, i + 1, ((expand) ? GTK_EXPAND : 0) | GTK_FILL, 0, 4, 4);
+
+  *n = i + 1;
+
+  return label;
+}
+
+GtkWidget *
+add_widget_to_table(GtkWidget *table, char *title, GtkWidget *w, int expand, int *n)
+{
+  return add_widget_to_table_sub(table, title, w, expand, 0, (title) ? 1 : 2, 2, n);
+}
+
+void
+add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *obj_name)
+{
+  GtkWidget *hbox, *w;
+
+  hbox = gtk_hbox_new(FALSE, 4);
+  w = gtk_button_new_with_mnemonic(_("_Copy Settings"));
+  g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), obj_name);
+  g_signal_connect(w, "clicked", cb, d);
+  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(parent_box), hbox, FALSE, FALSE, 4);
+}
+
+GtkWidget *
 item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
 {
   GtkWidget *hbox, *label;
