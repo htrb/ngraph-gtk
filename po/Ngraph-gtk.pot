@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-36\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-12-10 17:59+0900\n"
+"POT-Creation-Date: 2009-12-10 18:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -674,7 +674,7 @@ msgstr ""
 msgid "Couldn't convert filename from UTF-8."
 msgstr ""
 
-#: src/gtk/x11dialg.c:823
+#: src/gtk/x11dialg.c:823 src/gtk/gtk_widget.c:112
 msgid "Couldn't convert filename to UTF-8."
 msgstr ""
 
@@ -1382,7 +1382,7 @@ msgstr ""
 msgid "Activate Information Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:176
+#: src/gtk/x11menu.c:176 src/gtk/gtk_subwin.c:56
 msgid "Open"
 msgstr ""
 
@@ -2329,6 +2329,14 @@ msgstr ""
 
 #: src/gtk/x11view.c:5520
 msgid "Drawing"
+msgstr ""
+
+#: src/gtk/gtk_widget.c:82
+msgid "_Copy Settings"
+msgstr ""
+
+#: src/gtk/gtk_widget.c:526
+msgid "Pick a Color"
 msgstr ""
 
 #: src/math/math_error.c:13

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-12-10 17:59+0900\n"
-"PO-Revision-Date: 2009-12-09 18:24+0900\n"
+"POT-Creation-Date: 2009-12-10 18:43+0900\n"
+"PO-Revision-Date: 2009-12-10 18:39+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -676,7 +676,7 @@ msgstr "全て(_A)"
 msgid "Couldn't convert filename from UTF-8."
 msgstr "UTF8 文字列からファイル名に変換できません."
 
-#: src/gtk/x11dialg.c:823
+#: src/gtk/x11dialg.c:823 src/gtk/gtk_widget.c:112
 msgid "Couldn't convert filename to UTF-8."
 msgstr "ファイル名から UTF8 文字列に変換できません."
 
@@ -1386,7 +1386,7 @@ msgstr "情報"
 msgid "Activate Information Window"
 msgstr "Information Windowをアクティブにする"
 
-#: src/gtk/x11menu.c:176
+#: src/gtk/x11menu.c:176 src/gtk/gtk_subwin.c:56
 msgid "Open"
 msgstr "開く"
 
@@ -2336,6 +2336,14 @@ msgstr "軸スケール設定中"
 msgid "Drawing"
 msgstr "描画中"
 
+#: src/gtk/gtk_widget.c:82
+msgid "_Copy Settings"
+msgstr "設定のコピー(_C)"
+
+#: src/gtk/gtk_widget.c:526
+msgid "Pick a Color"
+msgstr "色の選択"
+
 #: src/math/math_error.c:13
 msgid "syntax error, unexpected end of equation."
 msgstr "構文エラー, 予期しない数式の終わりです."
@@ -2610,9 +2618,6 @@ msgstr "偶奇"
 msgid "winding_rule"
 msgstr "ワインディング"
 
-#~ msgid "_Copy Settings"
-#~ msgstr "設定のコピー(_C)"
-
 #~ msgid "Axis Baseine"
 #~ msgstr "軸基線"
 
@@ -2791,9 +2796,6 @@ msgstr "ワインディング"
 
 #~ msgid "Move object (+CONTROL: Horizontal/Vertical +SHIFT: Fine)"
 #~ msgstr "オブジェクトの移動 (+CONTROL:水平/垂直移動 +SHIFT:微動)"
-
-#~ msgid "Pick a Clolor"
-#~ msgstr "色の選択"
 
 #~ msgid "_Print:"
 #~ msgstr "スプーラ(_P):"
