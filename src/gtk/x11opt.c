@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.73 2009/12/10 08:59:53 hito Exp $
+ * $Id: x11opt.c,v 1.74 2009/12/11 08:01:38 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -991,9 +991,9 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 static void
 MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *frame;
+  GtkWidget *w, *hbox2, *vbox2, *frame, *table;
   struct MiscDialog *d;
-  int j;
+  int i, j;
 
   d = (struct MiscDialog *) data;
   if (makewidget) {
@@ -1002,24 +1002,26 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
     hbox2 = gtk_hbox_new(FALSE, 4);
-
     vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
-    hbox = gtk_hbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Editor:"), TRUE);
+    add_widget_to_table(table, _("_Editor:"), w, TRUE, &i);
     d->editor = w;
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label(GTK_FRAME(frame), _("Save graph"));
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
+    i = 0;
     w = combo_box_create();
-    item_setup(vbox, w, _("_Path:"), FALSE);
+    add_widget_to_table(table, _("_Path:"), w, FALSE, &i);
     d->path = w;
     for (j = 0; pathchar[j]; j++) {
       combo_box_append_text(d->path, _(pathchar[j]));
@@ -1027,35 +1029,35 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_check_button_new_with_mnemonic(_("include _Data file"));
     d->datafile = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    add_widget_to_table(table, NULL, w, FALSE, &i);
 
     w = gtk_check_button_new_with_mnemonic(_("include _Merge file"));
     d->mergefile = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    add_widget_to_table(table, NULL, w, FALSE, &i);
 
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label(GTK_FRAME(frame), _("Load graph"));
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
+    i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Expand include file"));
+    add_widget_to_table(table, NULL, w, FALSE, &i);
     d->expand = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Expand directory:"), TRUE);
+    add_widget_to_table(table, _("_Expand directory:"), w, TRUE, &i);
     d->expanddir = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     w = gtk_check_button_new_with_mnemonic(_("_Ignore file path"));
+    add_widget_to_table(table, NULL, w, FALSE, &i);
     d->ignorepath = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+
+    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
 
@@ -1063,60 +1065,61 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     vbox2 = gtk_vbox_new(FALSE, 4);
 
     frame = gtk_frame_new(NULL);
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
+    i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
+    add_widget_to_table(table, NULL, w, FALSE, &i);
     d->directory = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_check_button_new_with_mnemonic(_("_Save file history"));
+    add_widget_to_table(table, NULL, w, FALSE, &i);
     d->history = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
     frame = gtk_frame_new(NULL);
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
+    i = 0;
     w = create_spin_entry(1, HIST_SIZE_MAX, 1, FALSE, TRUE);
-    item_setup(vbox, w, _("_Size of completion history:"), FALSE);
+    add_widget_to_table(table, _("_Size of completion history:"), w, FALSE, &i);
     d->hist_size = w;
 
     w = create_spin_entry(1, INFOWIN_SIZE_MAX, 1, FALSE, TRUE);
-    item_setup(vbox, w, _("_Length of information window:"), FALSE);
+    add_widget_to_table(table, _("_Length of information window:"), w, FALSE, &i);
     d->info_size = w;
 
     w = create_spin_entry(0, SPIN_ENTRY_MAX, 1, FALSE, TRUE);
-    item_setup(vbox, w, _("_Length of data preview:"), FALSE);
+    add_widget_to_table(table, _("_Length of data preview:"), w, FALSE, &i);
     d->data_head_lines = w;
 
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
     frame = gtk_frame_new(NULL);
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
+    i = 0;
     w = gtk_font_button_new();
-    item_setup(vbox, w, _("font of _Coordinate window:"), FALSE);
+    add_widget_to_table(table, _("font of _Coordinate window:"), w, FALSE, &i);
     d->coordwin_font = w;
 
     w = gtk_font_button_new();
-    item_setup(vbox, w, _("font of _Information window:"), FALSE);
+    add_widget_to_table(table, _("font of _Information window:"), w, FALSE, &i);
     d->infowin_font = w;
 
     w = gtk_font_button_new();
-    item_setup(vbox, w, _("font of data _Preview:"), FALSE);
+    add_widget_to_table(table, _("font of data _Preview:"), w, FALSE, &i);
     d->file_preview_font = w;
 
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
-    gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
-
+    gtk_box_pack_start(GTK_BOX(hbox2), vbox2, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, FALSE, FALSE, 4);
   }
   MiscDialogSetupItem(wi, d);
