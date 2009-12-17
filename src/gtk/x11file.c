@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.122 2009/12/10 08:59:53 hito Exp $
+ * $Id: x11file.c,v 1.123 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -99,6 +99,7 @@ static void file_copy_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_fit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
+static void FileDialogType(GtkWidget *w, gpointer client_data);
 
 static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpenB), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -1490,7 +1491,7 @@ FitDialog(struct FitDialog *data, struct objlist *obj, int id)
 }
 
 static void
-FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
+move_tab_setup_item(struct FileDialog *d, int id)
 {
   unsigned int j, movenum;
   int line;
@@ -1499,7 +1500,7 @@ FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
   GtkTreeIter iter;
   char buf[64];
 
-  list_store_clear(d->list);
+  list_store_clear(d->move.list);
 
   exeobj(d->Obj, "move_data_adjust", id, 0, NULL);
   getobj(d->Obj, "move_data", id, 0, NULL, &move);
@@ -1522,14 +1523,14 @@ FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
       x = *(double *) arraynget(movex, j);
       y = *(double *) arraynget(movey, j);
 
-      list_store_append(d->list, &iter);
-      list_store_set_int(d->list, &iter, 0, line);
+      list_store_append(d->move.list, &iter);
+      list_store_set_int(d->move.list, &iter, 0, line);
 
       snprintf(buf, sizeof(buf), "%+.15e", x);
-      list_store_set_string(d->list, &iter, 1, buf);
+      list_store_set_string(d->move.list, &iter, 1, buf);
 
       snprintf(buf, sizeof(buf), "%+.15e", y);
-      list_store_set_string(d->list, &iter, 2, buf);
+      list_store_set_string(d->move.list, &iter, 2, buf);
     }
   }
 }
@@ -1537,52 +1538,52 @@ FileMoveDialogSetupItem(GtkWidget *w, struct FileMoveDialog *d, int id)
 static void
 FileMoveDialogAdd(GtkWidget *w, gpointer client_data)
 {
-  struct FileMoveDialog *d;
+  struct FileDialog *d;
   int a;
   double x, y;
   const char *buf;
   char *endptr, buf2[64];
   GtkTreeIter iter;
 
-  d = (struct FileMoveDialog *) client_data;
+  d = (struct FileDialog *) client_data;
 
-  a = spin_entry_get_val(d->line);
+  a = spin_entry_get_val(d->move.line);
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->x));
+  buf = gtk_entry_get_text(GTK_ENTRY(d->move.x));
   if (buf[0] == '\0') return;
 
   x = strtod(buf, &endptr);
   if (x != x || x == HUGE_VAL || x == - HUGE_VAL || endptr[0] != '\0')
     return;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->y));
+  buf = gtk_entry_get_text(GTK_ENTRY(d->move.y));
   if (buf[0] == '\0') return;
 
   y = strtod(buf, &endptr);
   if (y != y || y == HUGE_VAL || y == - HUGE_VAL || endptr[0] != '\0')
     return;
 
-  list_store_append(d->list, &iter);
-  list_store_set_int(d->list, &iter, 0, a);
+  list_store_append(d->move.list, &iter);
+  list_store_set_int(d->move.list, &iter, 0, a);
 
   snprintf(buf2, sizeof(buf2), "%+.15e", x);
-  list_store_set_string(d->list, &iter, 1, buf2);
+  list_store_set_string(d->move.list, &iter, 1, buf2);
 
   snprintf(buf2, sizeof(buf2), "%+.15e", y);
-  list_store_set_string(d->list, &iter, 2, buf2);
+  list_store_set_string(d->move.list, &iter, 2, buf2);
 
-  gtk_entry_set_text(GTK_ENTRY(d->x), "");
-  gtk_entry_set_text(GTK_ENTRY(d->y), "");
-  d->changed = TRUE;
+  gtk_entry_set_text(GTK_ENTRY(d->move.x), "");
+  gtk_entry_set_text(GTK_ENTRY(d->move.y), "");
+  d->move.changed = TRUE;
 }
 
 
 static gboolean
 move_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
 {
-  struct FileMoveDialog *d;
+  struct FileDialog *d;
 
-  d = (struct FileMoveDialog *) user_data;
+  d = (struct FileDialog *) user_data;
   if (e->keyval != GDK_Return)
     return FALSE;
 
@@ -1594,140 +1595,113 @@ move_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
 static void
 FileMoveDialogRemove(GtkWidget *w, gpointer client_data)
 {
-  struct FileMoveDialog *d;
-  d = (struct FileMoveDialog *) client_data;
+  struct FileDialog *d;
+  d = (struct FileDialog *) client_data;
 
-  list_store_remove_selected_cb(w, d->list);
-  d->changed = TRUE;
+  list_store_remove_selected_cb(w, d->move.list);
+  d->move.changed = TRUE;
 }
 
 static void
-FileMoveDialogSetup(GtkWidget *wi, void *data, int makewidget)
+move_tab_copy(GtkButton *btn, gpointer user_data)
 {
-  GtkWidget *w, *hbox, *vbox, *swin;
-  struct FileMoveDialog *d;
+  struct FileDialog *d;
+  int sel;
+
+  d = (struct FileDialog *) user_data;
+  
+  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
+
+  if (sel != -1) {
+    move_tab_setup_item(d, sel);
+    d->move.changed = TRUE;
+  }
+}
+
+static GtkWidget *
+move_tab_create(struct FileDialog *d)
+{
+  GtkWidget *w, *hbox, *swin, *table, *vbox;
   n_list_store list[] = {
     {N_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
     {"X",            G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
     {"Y",            G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
+  int i;
 
-  d = (struct FileMoveDialog *) data;
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  w = list_store_create(sizeof(list) / sizeof(*list), list);
+  list_store_set_sort_column(w, 0);
+  list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+  d->move.list = w;
+  gtk_container_add(GTK_CONTAINER(swin), w);
 
-  if (makewidget) {
-    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
-    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
+  table = gtk_table_new(1, 2, FALSE);
 
-    swin = gtk_scrolled_window_new(NULL, NULL);
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    list_store_set_sort_column(w, 0);
-    list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
-    d->list = w;
-    gtk_container_add(GTK_CONTAINER(swin), w);
+  i = 0;
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
+  g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
+  add_widget_to_table(table, w, _("_Line:"), FALSE, i++);
+  d->move.line = w;
 
+  w = create_text_entry(TRUE, FALSE);
+  g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
+  add_widget_to_table(table, w, "_X:", TRUE, i++);
+  d->move.x = w;
 
-    vbox = gtk_vbox_new(FALSE, 4);
+  w = create_text_entry(TRUE, FALSE);
+  g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
+  add_widget_to_table(table, w, "_Y:", TRUE, i++);
+  d->move.y = w;
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
-    g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
-    item_setup(hbox, w, _("_Line:"), TRUE);
-    d->line = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+  w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+  add_widget_to_table(table, w, "", FALSE, i++);
+  g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogAdd), d);
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(TRUE, FALSE);
-    g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
-    item_setup(hbox, w, "_X:", TRUE);
-    d->x = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+  w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+  add_widget_to_table(table, w, NULL, FALSE, i++);
+  g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogRemove), d);
+  set_sensitivity_by_selection(d->move.list, w);
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(TRUE, FALSE);
-    g_signal_connect(w, "key-press-event", G_CALLBACK(move_dialog_key_pressed), d);
-    item_setup(hbox, w, "_Y:", TRUE);
-    d->y = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+  w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
+  add_widget_to_table(table, w, NULL, FALSE, i++);
+  g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->move.list);
+  set_sensitivity_by_row_num(d->move.list, w);
 
+  hbox = gtk_hbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogAdd), d);
+  w = gtk_frame_new(NULL);
+  gtk_container_add(GTK_CONTAINER(w), swin);
+  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(FileMoveDialogRemove), d);
-    set_sensitivity_by_selection(d->list, w);
+  w = gtk_frame_new(NULL);
+  gtk_container_add(GTK_CONTAINER(w), hbox);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
-    set_sensitivity_by_row_num(d->list, w);
+  vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
+  add_copy_button_to_box(vbox, G_CALLBACK(move_tab_copy), d, "file");
 
-    w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-
-    gtk_window_set_default_size(GTK_WINDOW(wi), 640, 400);
-  }
-
-  FileMoveDialogSetupItem(wi, d, d->Id);
-  /*
-  if (makewidget)
-    d->widget = NULL;
-  */
+  return vbox;
 }
 
-static void
-FileMoveDialogCopy(struct FileMoveDialog *d)
+static int
+move_tab_set_value(struct FileDialog *d)
 {
-  int sel;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
-
-  if (sel != -1) {
-    FileMoveDialogSetupItem(d->widget, d, sel);
-    d->changed = TRUE;
-  }
-}
-
-static void
-FileMoveDialogClose(GtkWidget *w, void *data)
-{
-  struct FileMoveDialog *d;
   unsigned int j, movenum;
-  int ret, line, a;
+  int line, a;
   double x, y;
   struct narray *move, *movex, *movey;
   GtkTreeIter iter;
   gboolean state;
   char *ptr, *endptr;
 
-  d = (struct FileMoveDialog *) data;
-
-  switch (d->ret) {
-  case IDOK:
-    break;
-  case IDCOPY:
-    FileMoveDialogCopy(d);
-    d->ret = IDLOOP;
-    return;
-  default:
-    return;
-  }
-
-  if (d->changed == FALSE) {
-    return;
+  if (d->move.changed == FALSE) {
+    return 0;
   }
 
   set_graph_modified();
-  ret = d->ret;
-  d->ret = IDLOOP;
   exeobj(d->Obj, "move_data_adjust", d->Id, 0, NULL);
   getobj(d->Obj, "move_data", d->Id, 0, NULL, &move);
   getobj(d->Obj, "move_data_x", d->Id, 0, NULL, &movex);
@@ -1745,15 +1719,15 @@ FileMoveDialogClose(GtkWidget *w, void *data)
     movey = NULL;
   }
 
-  state = list_store_get_iter_first(d->list, &iter);
+  state = list_store_get_iter_first(d->move.list, &iter);
   while (state) {
-    a = list_store_get_int(d->list, &iter, 0); 
+    a = list_store_get_int(d->move.list, &iter, 0); 
 
-    ptr = list_store_get_string(d->list, &iter, 1); 
+    ptr = list_store_get_string(d->move.list, &iter, 1); 
     x = strtod(ptr, &endptr);
     g_free(ptr);
 
-    ptr = list_store_get_string(d->list, &iter, 2); 
+    ptr = list_store_get_string(d->move.list, &iter, 2); 
     y = strtod(ptr, &endptr);
     g_free(ptr);
 
@@ -1786,39 +1760,30 @@ FileMoveDialogClose(GtkWidget *w, void *data)
       arrayadd(movey, &y);
     }
 
-    state = list_store_iter_next(d->list, &iter);
+    state = list_store_iter_next(d->move.list, &iter);
   }
 
   putobj(d->Obj, "move_data", d->Id, move);
   putobj(d->Obj, "move_data_x", d->Id, movex);
   putobj(d->Obj, "move_data_y", d->Id, movey);
-  d->ret = ret;
-}
 
-void
-FileMoveDialog(struct FileMoveDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = FileMoveDialogSetup;
-  data->CloseWindow = FileMoveDialogClose;
-  data->Obj = obj;
-  data->Id = id;
-  data->changed = FALSE;
+  return 0;
 }
 
 static void
-FileMaskDialogSetupItem(GtkWidget *w, struct FileMaskDialog *d, int id)
+mask_tab_setup_item(struct FileDialog *d, int id)
 {
   int line, j, masknum;
   struct narray *mask;
   GtkTreeIter iter;
 
-  list_store_clear(d->list);
+  list_store_clear(d->mask.list);
   getobj(d->Obj, "mask", id, 0, NULL, &mask);
   if ((masknum = arraynum(mask)) > 0) {
     for (j = 0; j < masknum; j++) {
       line = *(int *) arraynget(mask, j);
-      list_store_append(d->list, &iter);
-      list_store_set_int(d->list, &iter, 0, line);
+      list_store_append(d->mask.list, &iter);
+      list_store_set_int(d->mask.list, &iter, 0, line);
     }
   }
 }
@@ -1826,24 +1791,24 @@ FileMaskDialogSetupItem(GtkWidget *w, struct FileMaskDialog *d, int id)
 static void
 FileMaskDialogAdd(GtkWidget *w, gpointer client_data)
 {
-  struct FileMaskDialog *d;
+  struct FileDialog *d;
   int a;
   GtkTreeIter iter;
 
-  d = (struct FileMaskDialog *) client_data;
+  d = (struct FileDialog *) client_data;
 
-  a = spin_entry_get_val(d->line);
-  list_store_append(d->list, &iter);
-  list_store_set_int(d->list, &iter, 0, a);
-  d->changed = TRUE;
+  a = spin_entry_get_val(d->mask.line);
+  list_store_append(d->mask.list, &iter);
+  list_store_set_int(d->mask.list, &iter, 0, a);
+  d->mask.changed = TRUE;
 }
 
 static gboolean
 mask_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
 {
-  struct FileMaskDialog *d;
+  struct FileDialog *d;
 
-  d = (struct FileMaskDialog *) user_data;
+  d = (struct FileDialog *) user_data;
   if (e->keyval != GDK_Return)
     return FALSE;
 
@@ -1853,115 +1818,99 @@ mask_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
 }
 
 static void
-FileMaskDialogCopy(struct FileMaskDialog *d)
+mask_tab_copy(GtkButton *btn, gpointer user_data)
 {
+  struct FileDialog *d;
   int sel;
+
+  d = (struct FileDialog *) user_data;
 
   sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
 
   if (sel != -1) {
-    FileMaskDialogSetupItem(d->widget, d, sel);
-    d->changed = TRUE;
+    mask_tab_setup_item(d, sel);
+    d->mask.changed = TRUE;
   }
 }
 
 static void
 FileMaskDialogRemove(GtkWidget *w, gpointer client_data)
 {
-  struct FileMaskDialog *d;
-  d = (struct FileMaskDialog *) client_data;
+  struct FileDialog *d;
+  d = (struct FileDialog *) client_data;
 
-  list_store_remove_selected_cb(w, d->list);
-  d->changed = TRUE;
+  list_store_remove_selected_cb(w, d->mask.list);
+  d->mask.changed = TRUE;
 }
 
-static void
-FileMaskDialogSetup(GtkWidget *wi, void *data, int makewidget)
+static GtkWidget *
+mask_tab_create(struct FileDialog *d)
 {
-  GtkWidget *w, *swin, *hbox, *vbox;
-  struct FileMaskDialog *d;
+  GtkWidget *w, *swin, *hbox, *table, *vbox, *frame;
   n_list_store list[] = {
     {_("Line No."), G_TYPE_INT, TRUE, FALSE, NULL, FALSE},
   };
+  int i;
 
-  d = (struct FileMaskDialog *) data;
+  hbox = gtk_hbox_new(FALSE, 4);
 
-  if (makewidget) {
-    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
-    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
+  table = gtk_table_new(1, 2, FALSE);
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    vbox = gtk_vbox_new(FALSE, 4);
+  i = 0;
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
+  g_signal_connect(w, "key-press-event", G_CALLBACK(mask_dialog_key_pressed), d);
+  add_widget_to_table(table, w, _("_Line:"), FALSE, i++);
+  d->mask.line = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_NATURAL, TRUE, FALSE);
-    g_signal_connect(w, "key-press-event", G_CALLBACK(mask_dialog_key_pressed), d);
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  w = list_store_create(sizeof(list) / sizeof(*list), list);
+  list_store_set_sort_column(w, 0);
+  list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
+  d->mask.list = w;
+  gtk_container_add(GTK_CONTAINER(swin), w);
 
-    item_setup(vbox, w, _("_Line:"), FALSE);
-    d->line = w;
+  w = gtk_button_new_from_stock(GTK_STOCK_ADD);
+  add_widget_to_table(table, w, "", FALSE, i++);
+  g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogAdd), d);
 
-    swin = gtk_scrolled_window_new(NULL, NULL);
-    w = list_store_create(sizeof(list) / sizeof(*list), list);
-    list_store_set_sort_column(w, 0);
-    list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
-    d->list = w;
-    gtk_container_add(GTK_CONTAINER(swin), w);
+  w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+  add_widget_to_table(table, w, NULL, FALSE, i++);
+  g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogRemove), d);
+  set_sensitivity_by_selection(d->mask.list, w);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_ADD);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogAdd), d);
+  w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
+  add_widget_to_table(table, w, NULL, FALSE, i++);
+  g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->mask.list);
+  set_sensitivity_by_row_num(d->mask.list, w);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(FileMaskDialogRemove), d);
-    set_sensitivity_by_selection(d->list, w);
+  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
 
-    w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->list);
-    set_sensitivity_by_row_num(d->list, w);
+  w = gtk_frame_new(NULL);
+  gtk_container_add(GTK_CONTAINER(w), swin);
+  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
 
-    gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
+  frame = gtk_frame_new(NULL);
+  gtk_container_add(GTK_CONTAINER(frame), hbox);
 
-    w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
+  vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+  add_copy_button_to_box(vbox, G_CALLBACK(mask_tab_copy), d, "file");
 
-    gtk_window_set_default_size(GTK_WINDOW(wi), 300, 400);
-  }
-
-  FileMaskDialogSetupItem(wi, d, d->Id);
+  return vbox;
 }
 
-static void
-FileMaskDialogClose(GtkWidget *w, void *data)
+static int
+mask_tab_set_value(struct FileDialog *d)
 {
-  struct FileMaskDialog *d;
-  int ret, a;
+  int a;
   struct narray *mask;
   GtkTreeIter iter;
   gboolean state;
 
-  d = (struct FileMaskDialog *) data;
-
-  switch (d->ret) {
-  case IDOK:
-    break;
-  case IDCOPY:
-    FileMaskDialogCopy(d);
-    d->ret = IDLOOP;
-    return;
-  default:
-    return;
+  if (d->mask.changed == FALSE) {
+    return 0;
   }
-
-  if (d->changed == FALSE) {
-    return;
-  }
-
-  ret = d->ret;
-  d->ret = IDLOOP;
 
   getobj(d->Obj, "mask", d->Id, 0, NULL, &mask);
   if (mask) {
@@ -1969,40 +1918,31 @@ FileMaskDialogClose(GtkWidget *w, void *data)
     mask = NULL;
   }
   
-  state = list_store_get_iter_first(d->list, &iter);
+  state = list_store_get_iter_first(d->mask.list, &iter);
   while (state) {
-    a = list_store_get_int(d->list, &iter, 0); 
+    a = list_store_get_int(d->mask.list, &iter, 0); 
     if (mask == NULL)
       mask = arraynew(sizeof(int));
 
     arrayadd(mask, &a);
-    state = list_store_iter_next(d->list, &iter);
+    state = list_store_iter_next(d->mask.list, &iter);
   }
   putobj(d->Obj, "mask", d->Id, mask);
-  d->ret = ret;
   set_graph_modified();
-}
 
-void
-FileMaskDialog(struct FileMaskDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = FileMaskDialogSetup;
-  data->CloseWindow = FileMaskDialogClose;
-  data->Obj = obj;
-  data->Id = id;
-  data->changed = FALSE;
+  return 0;
 }
 
 static void
-FileLoadDialogSetupItem(GtkWidget *w, struct FileLoadDialog *d, int id)
+load_tab_setup_item(struct FileDialog *d, int id)
 {
   char *ifs, *s;
   unsigned int i, l;
 
-  SetWidgetFromObjField(d->headskip, d->Obj, id, "head_skip");
-  SetWidgetFromObjField(d->readstep, d->Obj, id, "read_step");
-  SetWidgetFromObjField(d->finalline, d->Obj, id, "final_line");
-  SetWidgetFromObjField(d->remark, d->Obj, id, "remark");
+  SetWidgetFromObjField(d->load.headskip, d->Obj, id, "head_skip");
+  SetWidgetFromObjField(d->load.readstep, d->Obj, id, "read_step");
+  SetWidgetFromObjField(d->load.finalline, d->Obj, id, "final_line");
+  SetWidgetFromObjField(d->load.remark, d->Obj, id, "remark");
   sgetobjfield(d->Obj, id, "ifs", NULL, &ifs, FALSE, FALSE, FALSE);
   s = nstrnew();
 
@@ -2017,112 +1957,90 @@ FileLoadDialogSetupItem(GtkWidget *w, struct FileLoadDialog *d, int id)
     } else
       s = nstrccat(s, ifs[i]);
   }
-  gtk_entry_set_text(GTK_ENTRY(d->ifs), s);
+  gtk_entry_set_text(GTK_ENTRY(d->load.ifs), s);
   g_free(s);
   g_free(ifs);
-  SetWidgetFromObjField(d->csv, d->Obj, id, "csv");
+  SetWidgetFromObjField(d->load.csv, d->Obj, id, "csv");
 }
 
 static void
-FileLoadDialogCopy(struct FileLoadDialog *d)
+load_tab_copy(GtkButton *btn, gpointer user_data)
 {
+  struct FileDialog *d;
   int sel;
 
-  if ((sel = CopyClick(d->widget, d->Obj, d->Id, FileCB)) != -1)
-    FileLoadDialogSetupItem(d->widget, d, sel);
-}
+  d = (struct FileDialog *) user_data;
 
-static void
-FileLoadDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  GtkWidget *w, *hbox,*vbox;
-  struct FileLoadDialog *d;
-
-  d = (struct FileLoadDialog *) data;
-
-  if (makewidget) {
-    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
-    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
-
-    vbox = gtk_vbox_new(FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-    item_setup(hbox, w, _("_Head skip:"), TRUE);
-    d->headskip = w;
-
-    w = create_spin_entry(1, INT_MAX, 1, TRUE, TRUE);
-    item_setup(hbox, w, _("_Read step:"), TRUE);
-    d->readstep = w;
-
-
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_NUM, TRUE, TRUE);
-    item_setup(hbox, w, _("_Final line:"), TRUE);
-    d->finalline = w;
-
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Remark:"), TRUE);
-    d->remark = w;
-
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Ifs:"), TRUE);
-    d->ifs = w;
-
-    w = gtk_check_button_new_with_mnemonic(_("_CSV"));
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    d->csv = w;
-
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
+  if (sel != -1) {
+    load_tab_setup_item(d, sel);
   }
-
-  FileLoadDialogSetupItem(wi, d, d->Id);
 }
 
-static void
-FileLoadDialogClose(GtkWidget *w, void *data)
+static GtkWidget *
+load_tab_create(struct FileDialog *d)
 {
-  struct FileLoadDialog *d;
-  int ret;
+  GtkWidget *w, *table, *frame, *vbox;
+  int i;
+
+  table = gtk_table_new(1, 2, FALSE);
+
+  i = 0;
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Head skip:"), FALSE, i++);
+  d->load.headskip = w;
+
+  w = create_spin_entry(1, INT_MAX, 1, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Read step:"), FALSE, i++);
+  d->load.readstep = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_NUM, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Final line:"), FALSE, i++);
+  d->load.finalline = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Remark:"), TRUE, i++);
+  d->load.remark = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_IFS:"), TRUE, i++);
+  d->load.ifs = w;
+
+  w = gtk_check_button_new_with_mnemonic(_("_CSV"));
+  add_widget_to_table(table, w, NULL, TRUE, i++);
+  d->load.csv = w;
+
+  frame = gtk_frame_new(NULL);
+  gtk_container_add(GTK_CONTAINER(frame), table);
+
+  vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
+
+  add_copy_button_to_box(vbox, G_CALLBACK(load_tab_copy), d, "file");
+
+  return vbox;
+}
+
+static int
+load_tab_set_value(struct FileDialog *d)
+{
   const char *ifs;
   char *s, *obuf;
   unsigned int i, l;
 
-  d = (struct FileLoadDialog *) data;
+  if (SetObjFieldFromWidget(d->load.headskip, d->Obj, d->Id, "head_skip"))
+    return 1;
 
-  switch (d->ret) {
-  case IDOK:
-    break;
-  case IDCOPY:
-    FileLoadDialogCopy(d);
-    d->ret = IDLOOP;
-    return;
-  default:
-    return;
-  }
+  if (SetObjFieldFromWidget(d->load.readstep, d->Obj, d->Id, "read_step"))
+    return 1;
 
-  ret = d->ret;
-  d->ret = IDLOOP;
+  if (SetObjFieldFromWidget(d->load.finalline, d->Obj, d->Id, "final_line"))
+    return 1;
 
-  if (SetObjFieldFromWidget(d->headskip, d->Obj, d->Id, "head_skip"))
-    return;
+  if (SetObjFieldFromWidget(d->load.remark, d->Obj, d->Id, "remark"))
+    return 1;
 
-  if (SetObjFieldFromWidget(d->readstep, d->Obj, d->Id, "read_step"))
-    return;
-
-  if (SetObjFieldFromWidget(d->finalline, d->Obj, d->Id, "final_line"))
-    return;
-
-  if (SetObjFieldFromWidget(d->remark, d->Obj, d->Id, "remark"))
-    return;
-
-  ifs = gtk_entry_get_text(GTK_ENTRY(d->ifs));
+  ifs = gtk_entry_get_text(GTK_ENTRY(d->load.ifs));
   s = nstrnew();
 
   l = strlen(ifs);
@@ -2143,7 +2061,7 @@ FileLoadDialogClose(GtkWidget *w, void *data)
     if (sputobjfield(d->Obj, d->Id, "ifs", s) != 0) {
       g_free(obuf);
       g_free(s);
-      return;
+      return 1;
     }
     set_graph_modified();
   }
@@ -2151,204 +2069,156 @@ FileLoadDialogClose(GtkWidget *w, void *data)
   g_free(obuf);
   g_free(s);
 
-  if (SetObjFieldFromWidget(d->csv, d->Obj, d->Id, "csv"))
-    return;
+  if (SetObjFieldFromWidget(d->load.csv, d->Obj, d->Id, "csv"))
+    return 1;
 
-  d->ret = ret;
-}
-
-void
-FileLoadDialog(struct FileLoadDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = FileLoadDialogSetup;
-  data->CloseWindow = FileLoadDialogClose;
-  data->Obj = obj;
-  data->Id = id;
+  return 0;
 }
 
 static void
-FileMathDialogSetupItem(GtkWidget *w, struct FileMathDialog *d, int id)
+math_tab_setup_item(struct FileDialog *d, int id)
 {
-  SetWidgetFromObjField(d->xsmooth, d->Obj, id, "smooth_x");
-  SetWidgetFromObjField(d->ysmooth, d->Obj, id, "smooth_y");
-  SetWidgetFromObjField(d->xmath, d->Obj, id, "math_x");
-  SetWidgetFromObjField(d->ymath, d->Obj, id, "math_y");
-  SetWidgetFromObjField(d->fmath, d->Obj, id, "func_f");
-  SetWidgetFromObjField(d->gmath, d->Obj, id, "func_g");
-  SetWidgetFromObjField(d->hmath, d->Obj, id, "func_h");
+  SetWidgetFromObjField(d->math.xsmooth, d->Obj, id, "smooth_x");
+  SetWidgetFromObjField(d->math.ysmooth, d->Obj, id, "smooth_y");
+  SetWidgetFromObjField(d->math.x, d->Obj, id, "math_x");
+  SetWidgetFromObjField(d->math.y, d->Obj, id, "math_y");
+  SetWidgetFromObjField(d->math.f, d->Obj, id, "func_f");
+  SetWidgetFromObjField(d->math.g, d->Obj, id, "func_g");
+  SetWidgetFromObjField(d->math.h, d->Obj, id, "func_h");
 }
 
 static void
-FileMathDialogCopy(struct FileMathDialog *d)
+math_tab_copy(GtkButton *btn, gpointer user_data)
 {
+  struct FileDialog *d;
   int sel;
+
+  d = (struct FileDialog *) user_data;
 
   sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
 
   if (sel != -1) {
-    FileMathDialogSetupItem(d->widget, d, sel);
+    math_tab_setup_item(d, sel);
   }
 }
 
 static gboolean
 func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
 {
-  struct FileMathDialog *d;
+  struct FileDialog *d;
 
-  d = (struct FileMathDialog *) user_data;
-  gtk_entry_set_completion(GTK_ENTRY(d->fmath), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->gmath), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->hmath), NULL);
+  d = (struct FileDialog *) user_data;
+  gtk_entry_set_completion(GTK_ENTRY(d->math.f), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.g), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.h), NULL);
 
   gtk_entry_set_completion(GTK_ENTRY(w), NgraphApp.func_list);
 
   return FALSE;
 }
 
-
-static void
-FileMathDialogSetup(GtkWidget *wi, void *data, int makewidget)
+static GtkWidget *
+math_tab_create(struct FileDialog *d)
 {
-  GtkWidget *w, *hbox,*vbox;
-  struct FileMathDialog *d;
+  GtkWidget *table, *w, *vbox, *frame;
+  int i;
 
-  d = (struct FileMathDialog *) data;
-  if (makewidget) {
-    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
-    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
+  table = gtk_table_new(1, 2, FALSE);
 
-    vbox = gtk_vbox_new(FALSE, 4);
-    hbox = gtk_hbox_new(FALSE, 4);
+  i = 0;
+  w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_X smooth:"), FALSE, i++);
+  d->math.xsmooth = w;
 
-    w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, TRUE, TRUE);
-    item_setup(hbox, w, _("_X smooth:"), FALSE);
-    d->xsmooth = w;
+  w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Y smooth:"), FALSE, i++);
+  d->math.ysmooth = w;
 
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_X math:"), TRUE);
-    d->xmath = w;
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_X math:"), TRUE, i++);
+  d->math.x = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Y math:"), TRUE, i++);
+  d->math.y = w;
 
+  w = create_text_entry(TRUE, TRUE);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
+  add_widget_to_table(table, w, "_F(X,Y,Z):", TRUE, i++);
+  d->math.f = w;
 
-    hbox = gtk_hbox_new(FALSE, 4);
+  w = create_text_entry(TRUE, TRUE);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
+  add_widget_to_table(table, w, "_G(X,Y,Z):", TRUE, i++);
+  d->math.g = w;
 
-    w = create_spin_entry(0, FILE_OBJ_SMOOTH_MAX, 1, TRUE, TRUE);
-    item_setup(hbox, w, _("_Y smooth:"), FALSE);
-    d->ysmooth = w;
+  w = create_text_entry(TRUE, TRUE);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
+  add_widget_to_table(table, w, "_H(X,Y,Z):", TRUE, i++);
+  d->math.h = w;
 
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Y math:"), TRUE);
-    d->ymath = w;
+  frame = gtk_frame_new(NULL);
+  gtk_container_add(GTK_CONTAINER(frame), table);
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+  vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
+  add_copy_button_to_box(vbox, G_CALLBACK(math_tab_copy), d, "file");
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(TRUE, TRUE);
-    g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
-    item_setup(hbox, w, "_F(X,Y,Z):", TRUE);
-    d->fmath = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(TRUE, TRUE);
-    g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
-    item_setup(hbox, w, "_G(X,Y,Z):", TRUE);
-    d->gmath = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(TRUE, TRUE);
-    g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
-    item_setup(hbox, w, "_H(X,Y,Z):", TRUE);
-    d->hmath = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
-  }
-
-  FileMathDialogSetupItem(wi, d, d->Id);
-
-  gtk_entry_set_completion(GTK_ENTRY(d->xmath), NgraphApp.x_math_list);
-  gtk_entry_set_completion(GTK_ENTRY(d->ymath), NgraphApp.y_math_list);
+  return vbox;
 }
 
-static void
-FileMathDialogClose(GtkWidget *w, void *data)
+static int
+math_tab_set_value(void *data)
 {
-  struct FileMathDialog *d;
-  int ret;
+  struct FileDialog *d;
   const char *s;
 
-  d = (struct FileMathDialog *) data;
+  d = (struct FileDialog *) data;
 
-  switch (d->ret) {
-  case IDOK:
-    break;
-  case IDCOPY:
-    FileMathDialogCopy(d);
-    d->ret = IDLOOP;
-    return;
-  default:
-    return;
-  }
-
-  ret = d->ret;
-  d->ret = IDLOOP;
-
-  s = gtk_entry_get_text(GTK_ENTRY(d->ymath));
+  s = gtk_entry_get_text(GTK_ENTRY(d->math.y));
   entry_completion_append(NgraphApp.y_math_list, s);
 
-  s = gtk_entry_get_text(GTK_ENTRY(d->xmath));
+  s = gtk_entry_get_text(GTK_ENTRY(d->math.x));
   entry_completion_append(NgraphApp.x_math_list, s);
 
-  s = gtk_entry_get_text(GTK_ENTRY(d->fmath));
+  s = gtk_entry_get_text(GTK_ENTRY(d->math.f));
   entry_completion_append(NgraphApp.func_list, s);
 
-  s = gtk_entry_get_text(GTK_ENTRY(d->gmath));
+  s = gtk_entry_get_text(GTK_ENTRY(d->math.g));
   entry_completion_append(NgraphApp.func_list, s);
 
-  s = gtk_entry_get_text(GTK_ENTRY(d->hmath));
+  s = gtk_entry_get_text(GTK_ENTRY(d->math.h));
   entry_completion_append(NgraphApp.func_list, s);
 
-  if (SetObjFieldFromWidget(d->xsmooth, d->Obj, d->Id, "smooth_x"))
-    return;
+  if (SetObjFieldFromWidget(d->math.xsmooth, d->Obj, d->Id, "smooth_x"))
+    return 1;
 
-  if (SetObjFieldFromWidget(d->xmath, d->Obj, d->Id, "math_x"))
-    return;
+  if (SetObjFieldFromWidget(d->math.x, d->Obj, d->Id, "math_x"))
+    return 1;
 
-  if (SetObjFieldFromWidget(d->ysmooth, d->Obj, d->Id, "smooth_y"))
-    return;
+  if (SetObjFieldFromWidget(d->math.ysmooth, d->Obj, d->Id, "smooth_y"))
+    return 1;
 
-  if (SetObjFieldFromWidget(d->ymath, d->Obj, d->Id, "math_y"))
-    return;
+  if (SetObjFieldFromWidget(d->math.y, d->Obj, d->Id, "math_y"))
+    return 1;
 
-  if (SetObjFieldFromWidget(d->fmath, d->Obj, d->Id, "func_f"))
-    return;
+  if (SetObjFieldFromWidget(d->math.f, d->Obj, d->Id, "func_f"))
+    return 1;
 
-  if (SetObjFieldFromWidget(d->gmath, d->Obj, d->Id, "func_g"))
-    return;
+  if (SetObjFieldFromWidget(d->math.g, d->Obj, d->Id, "func_g"))
+    return 1;
 
-  if (SetObjFieldFromWidget(d->hmath, d->Obj, d->Id, "func_h"))
-    return;
+  if (SetObjFieldFromWidget(d->math.h, d->Obj, d->Id, "func_h"))
+    return 1;
 
-  gtk_entry_set_completion(GTK_ENTRY(d->ymath), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->xmath), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->fmath), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->gmath), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->hmath), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.y), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.x), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.f), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.g), NULL);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.h), NULL);
 
-  d->ret = ret;
-}
-
-void
-FileMathDialog(struct FileMathDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = FileMathDialogSetup;
-  data->CloseWindow = FileMathDialogClose;
-  data->Obj = obj;
-  data->Id = id;
+  return 0;
 }
 
 static void
@@ -2430,12 +2300,11 @@ MarkDialog(struct MarkDialog *data, int type)
 }
 
 static void
-FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
+file_setup_item(struct FileDialog *d, int id)
 {
-  int i, j, a, lastinst;
+  int i, j, lastinst;
   struct objlist *aobj;
   char *name, *valstr;
-  GtkWidget *img;
 
   combo_box_clear(d->xaxis);
   combo_box_clear(d->yaxis);
@@ -2467,6 +2336,26 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
     i++;
   combo_box_entry_set_text(d->yaxis, valstr + i);;
   g_free(valstr);
+}
+
+static void
+set_fit_button_label(GtkWidget *btn, const char *str)
+{
+  char buf[128];
+
+  if (str && str[0] != '\0') {
+    snprintf(buf, sizeof(buf), "Fit:%s", str);
+  } else {
+    snprintf(buf, sizeof(buf), "Create");
+  }
+  gtk_button_set_label(GTK_BUTTON(btn), buf);
+}
+
+static void
+plot_tab_setup_item(struct FileDialog *d, int id)
+{
+  int a;
+  GtkWidget *img;
 
   SetWidgetFromObjField(d->type, d->Obj, id, "type");
 
@@ -2497,15 +2386,22 @@ FileDialogSetupItemCommon(GtkWidget *w, struct FileDialog *d, int id)
 
   set_color(d->col1, d->Obj, id, NULL);
   set_color2(d->col2, d->Obj, id);
+
+  FileDialogType(d->type, d);
 }
 
 static void
 FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
 {
-  int i;
   char *valstr;
+  int i;
 
-  FileDialogSetupItemCommon(w, d, id);
+  plot_tab_setup_item(d, d->Id);
+  math_tab_setup_item(d, d->Id);
+  load_tab_setup_item(d, d->Id);
+  mask_tab_setup_item(d, d->Id);
+  move_tab_setup_item(d, d->Id);
+  file_setup_item(d, d->Id);  
 
   if (file) {
     SetWidgetFromObjField(d->file, d->Obj, id, "file");
@@ -2514,10 +2410,13 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
   if (id == d->Id) {
     sgetobjfield(d->Obj, id, "fit", NULL, &valstr, FALSE, FALSE, FALSE);
     for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-    if (valstr[i] == ':')
+    if (valstr[i] == ':') {
       i++;
-    gtk_label_set_text(GTK_LABEL(d->fitid), valstr + i);
+    }
+    set_fit_button_label(d->fit, valstr + i);
     g_free(valstr);
+  } else {
+    set_fit_button_label(d->fit, NULL);
   }
   
   gtk_widget_set_sensitive(d->apply_all, d->multi_open);
@@ -2625,17 +2524,22 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
   if (valstr[i] == ':')
     i++;
-  gtk_label_set_text(GTK_LABEL(d->fitid), valstr);
+  set_fit_button_label(d->fit, valstr + i);
   g_free(valstr);
 }
 
 static void
-FileDialogCopy(struct FileDialog *d)
+plot_tab_copy(GtkButton *btn, gpointer user_data)
 {
+  struct FileDialog *d;
   int sel;
 
-  if ((sel = CopyClick(d->widget, d->Obj, d->Id, FileCB)) != -1)
-    FileDialogSetupItem(d->widget, d, FALSE, sel);
+  d = (struct FileDialog *) user_data;
+
+  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
+  if (sel != -1) {
+    plot_tab_setup_item(d, sel);
+  }
 }
 
 void 
@@ -2676,46 +2580,6 @@ FileDialogOption(GtkWidget *w, gpointer client_data)
   d = (struct FileDialog *) client_data;
   exeobj(d->Obj, "load_settings", d->Id, 0, NULL);
   FileDialogSetupItem(d->widget, d, FALSE, d->Id);
-}
-
-static void
-FileDialogMath(GtkWidget *w, gpointer client_data)
-{
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) client_data;
-  FileMathDialog(&DlgFileMath, d->Obj, d->Id);
-  DialogExecute(d->widget, &DlgFileMath);
-}
-
-static void
-FileDialogLoad(GtkWidget *w, gpointer client_data)
-{
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) client_data;
-  FileLoadDialog(&DlgFileLoad, d->Obj, d->Id);
-  DialogExecute(d->widget, &DlgFileLoad);
-}
-
-static void
-FileDialogMask(GtkWidget *w, gpointer client_data)
-{
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) client_data;
-  FileMaskDialog(&DlgFileMask, d->Obj, d->Id);
-  DialogExecute(d->widget, &DlgFileMask);
-}
-
-static void
-FileDialogMove(GtkWidget *w, gpointer client_data)
-{
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) client_data;
-  FileMoveDialog(&DlgFileMove, d->Obj, d->Id);
-  DialogExecute(d->widget, &DlgFileMove);
 }
 
 static void
@@ -2761,107 +2625,270 @@ FileDialogType(GtkWidget *w, gpointer client_data)
 
   d = (struct FileDialog *) client_data;
 
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), TRUE);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), TRUE);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->col1), TRUE);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), TRUE);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->style), TRUE);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->width), TRUE);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), TRUE);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), TRUE);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), TRUE);
-  
+  gtk_widget_set_sensitive(d->mark_btn, TRUE);
+  gtk_widget_set_sensitive(d->curve, TRUE);
+  gtk_widget_set_sensitive(d->col2, TRUE);
+  gtk_widget_set_sensitive(d->size, TRUE);
+  gtk_widget_set_sensitive(d->miter, TRUE);
+  gtk_widget_set_sensitive(d->join, TRUE);
+
+  gtk_widget_set_sensitive(d->mark_label, TRUE);
+  gtk_widget_set_sensitive(d->curve_label, TRUE);
+  gtk_widget_set_sensitive(d->col2_label, TRUE);
+  gtk_widget_set_sensitive(d->size_label, TRUE);
+  gtk_widget_set_sensitive(d->miter_label, TRUE);
+  gtk_widget_set_sensitive(d->join_label, TRUE);
+
+
   type = combo_box_get_active(w);
 
   switch (type) {
   case PLOT_TYPE_MARK:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->miter, FALSE);
+    gtk_widget_set_sensitive(d->join, FALSE);
+
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->miter_label, FALSE);
+    gtk_widget_set_sensitive(d->join_label, FALSE);
     break;
   case PLOT_TYPE_LINE:
   case PLOT_TYPE_POLYGON:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->col2, FALSE);
+    gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->col2_label, FALSE);
+    gtk_widget_set_sensitive(d->size_label, FALSE);
     break;
   case PLOT_TYPE_CURVE:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->col2, FALSE);
+    gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->col2_label, FALSE);
+    gtk_widget_set_sensitive(d->size_label, FALSE);
     break;
   case PLOT_TYPE_DIAGONAL:
   case PLOT_TYPE_RECTANGLE:
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->col2, FALSE);
+    gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(d->miter, FALSE);
+    gtk_widget_set_sensitive(d->join, FALSE);
+
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->col2_label, FALSE);
+    gtk_widget_set_sensitive(d->size_label, FALSE);
+    gtk_widget_set_sensitive(d->miter_label, FALSE);
+    gtk_widget_set_sensitive(d->join_label, FALSE);
     break;
   case PLOT_TYPE_ARROW:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->col2, FALSE);
+    gtk_widget_set_sensitive(d->miter, FALSE);
+    gtk_widget_set_sensitive(d->join, FALSE);
+
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->col2_label, FALSE);
+    gtk_widget_set_sensitive(d->miter_label, FALSE);
+    gtk_widget_set_sensitive(d->join_label, FALSE);
     break;
   case PLOT_TYPE_RECTANGLE_FILL:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(d->miter, FALSE);
+    gtk_widget_set_sensitive(d->join, FALSE);
+
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->size_label, FALSE);
+    gtk_widget_set_sensitive(d->miter_label, FALSE);
+    gtk_widget_set_sensitive(d->join_label, FALSE);
     break;
   case PLOT_TYPE_ERRORBAR_X:
   case PLOT_TYPE_ERRORBAR_Y:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->col2, FALSE);
+    gtk_widget_set_sensitive(d->miter, FALSE);
+    gtk_widget_set_sensitive(d->join, FALSE);
+
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->col2_label, FALSE);
+    gtk_widget_set_sensitive(d->miter_label, FALSE);
+    gtk_widget_set_sensitive(d->join_label, FALSE);
     break;
   case PLOT_TYPE_STAIRCASE_X:
   case PLOT_TYPE_STAIRCASE_Y:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->col2, FALSE);
+    gtk_widget_set_sensitive(d->size, FALSE);
+
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->col2_label, FALSE);
+    gtk_widget_set_sensitive(d->size_label, FALSE);
     break;
   case PLOT_TYPE_BAR_X:
   case PLOT_TYPE_BAR_Y:
   case PLOT_TYPE_BAR_SOLID_FILL_X:
   case PLOT_TYPE_BAR_SOLID_FILL_Y:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->col2, FALSE);
+    gtk_widget_set_sensitive(d->miter, FALSE);
+    gtk_widget_set_sensitive(d->join, FALSE);
+
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->col2_label, FALSE);
+    gtk_widget_set_sensitive(d->miter_label, FALSE);
+    gtk_widget_set_sensitive(d->join_label, FALSE);
     break;
   case PLOT_TYPE_BAR_FILL_X:
   case PLOT_TYPE_BAR_FILL_Y:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->miter), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->join), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->miter, FALSE);
+    gtk_widget_set_sensitive(d->join, FALSE);
+
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->miter_label, FALSE);
+    gtk_widget_set_sensitive(d->join_label, FALSE);
     break;
   case PLOT_TYPE_FIT:
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->mark_btn), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->curve), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->col2), FALSE);
-    gtk_widget_set_sensitive(gtk_widget_get_parent(d->size), FALSE);
+    gtk_widget_set_sensitive(d->mark_btn, FALSE);
+    gtk_widget_set_sensitive(d->curve, FALSE);
+    gtk_widget_set_sensitive(d->col2, FALSE);
+    gtk_widget_set_sensitive(d->size, FALSE);
+
+    gtk_widget_set_sensitive(d->mark_label, FALSE);
+    gtk_widget_set_sensitive(d->curve_label, FALSE);
+    gtk_widget_set_sensitive(d->col2_label, FALSE);
+    gtk_widget_set_sensitive(d->size_label, FALSE);
     break;
   }
 }
 
 static void
-FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
+file_settings_copy(GtkButton *btn, gpointer user_data)
 {
-  GtkWidget *w, *hbox, *vbox, *vbox2, *frame;
+  struct FileDialog *d;
+  int sel;
+
+  d = (struct FileDialog *) user_data;
+
+  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
+  if (sel != -1) {
+    file_setup_item(d, sel);
+  }
+}
+
+static GtkWidget *
+plot_tab_create(GtkWidget *parent, struct FileDialog *d)
+{
+  GtkWidget *table, *hbox, *w, *vbox;
+  int i;
+
+  hbox = gtk_hbox_new(FALSE, 4);
+
+  table = gtk_table_new(1, 2, FALSE);
+
+  i = 0;
+  w = combo_box_create();
+  add_widget_to_table(table, w, _("_Type:"), FALSE, i++);
+  d->type = w;
+  g_signal_connect(w, "changed", G_CALLBACK(FileDialogType), d);
+
+  w = gtk_button_new();
+  d->mark_label = add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
+  d->mark_btn = w;
+  g_signal_connect(w, "clicked", G_CALLBACK(FileDialogMark), d);
+
+  w = combo_box_create();
+  d->curve_label = add_widget_to_table(table, w, _("_Curve:"), FALSE, i++);
+  d->curve = w;
+
+  d->fit_table = table;
+  d->fit_row = i;
+
+  i++;
+  w = create_color_button(parent);
+  add_widget_to_table(table, w, _("_Color 1:"), FALSE, i++);
+  d->col1 = w;
+
+  w = create_color_button(parent);
+  d->col2_label = add_widget_to_table(table, w, _("_Color 2:"), FALSE, i++);
+  d->col2 = w;
+
+  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
+
+
+  table = gtk_table_new(1, 2, FALSE);
+
+  i = 0;
+  w = combo_box_entry_create();
+  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+  add_widget_to_table(table, w, _("Line _Style:"), TRUE, i++);
+  d->style = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Line Width:"), FALSE, i++);
+  d->width = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+  d->size_label = add_widget_to_table(table, w, _("_Size:"), FALSE, i++);
+  d->size = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
+  d->miter_label = add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
+  d->miter = w;
+
+  w = combo_box_create();
+  d->join_label = add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
+  d->join = w;
+
+  w = gtk_check_button_new_with_mnemonic(_("_Clip"));
+  add_widget_to_table(table, w, NULL, FALSE, i++);
+  d->clip = w;
+
+  gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
+
+  w = gtk_frame_new(NULL);
+  gtk_container_add(GTK_CONTAINER(w), hbox);
 
   vbox = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 4);
+
+  add_copy_button_to_box(vbox, G_CALLBACK(plot_tab_copy), d, "file");
+
+  return vbox;
+}
+
+static void
+file_dialog_show_tab(GtkWidget *w, gpointer user_data)
+{
+  struct FileDialog *d;
+  d = (struct FileDialog *) user_data;
+  gtk_notebook_set_current_page(d->tab, d->tab_active);
+}
+
+static void
+FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
+{
+  GtkWidget *w, *hbox, *vbox2, *frame, *notebook, *label;
 
   vbox2 = gtk_vbox_new(FALSE, 4);
 
@@ -2872,8 +2899,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   d->xcol = w;
 
   w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-
+  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
   item_setup(hbox, w, _("_X axis:"), TRUE);
   d->xaxis = w;
   g_signal_connect(w, "changed", G_CALLBACK(FileDialogAxis), d);
@@ -2888,114 +2914,45 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   d->ycol = w;
 
   w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-
+  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
   item_setup(hbox, w, _("_Y axis:"), TRUE);
   d->yaxis = w;
   g_signal_connect(w, "changed", G_CALLBACK(FileDialogAxis), d);
 
   gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
 
+  add_copy_button_to_box(vbox2, G_CALLBACK(file_settings_copy), d, "file");
+
   hbox = gtk_hbox_new(FALSE, 4);
-  frame = gtk_frame_new(NULL);
-  gtk_container_add(GTK_CONTAINER(frame), vbox2);
   d->comment_box = hbox;
-
-  vbox2 = gtk_vbox_new(FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
-  gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
-
-  hbox = gtk_hbox_new(FALSE, 4);
-
-  w = combo_box_create();
-  item_setup(hbox, w, _("_Type:"), FALSE);
-  d->type = w;
-  g_signal_connect(w, "changed", G_CALLBACK(FileDialogType), d);
-  gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
-
-
-  vbox2 = gtk_vbox_new(FALSE, 4);
-  w = gtk_button_new();
-  item_setup(vbox2, w, _("_Mark:"), FALSE);
-  d->mark_btn = w;
-  g_signal_connect(w, "clicked", G_CALLBACK(FileDialogMark), d);
-
-  w = combo_box_create();
-  item_setup(vbox2, w, _("_Curve:"), FALSE);
-  d->curve = w;
-
-  d->fit_box = vbox2;
-
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), vbox2);
 
 
-  vbox2 = gtk_vbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
-  gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+  notebook = gtk_notebook_new();
+  d->tab_active = 0;
+  g_signal_connect(notebook, "show", G_CALLBACK(file_dialog_show_tab), d);
 
-  hbox = gtk_hbox_new(FALSE, 4);
-  w = create_color_button(wi);
-  item_setup(hbox, w, _("_Color 1:"), FALSE);
-  d->col1 = w;
+  d->tab = GTK_NOTEBOOK(notebook);
+  gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), FALSE);
 
-  w = create_color_button(wi);
-  item_setup(hbox, w, _("_Color 2:"), FALSE);
-  d->col2 = w;
+  w = plot_tab_create(wi, d);
+  label = gtk_label_new_with_mnemonic(_("_Plot"));
+  gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-  w = gtk_check_button_new_with_mnemonic(_("_Clip"));
-  d->clip = w;
-  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  w = math_tab_create(d);
+  label = gtk_label_new_with_mnemonic(_("_Math"));
+  d->math.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-  gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 4);
-
-  hbox = gtk_hbox_new(FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
-
-
-  vbox2 = gtk_vbox_new(FALSE, 4);
-
-  w = combo_box_entry_create();
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-  item_setup(vbox2, w, _("Line _Style:"), TRUE);
-  d->style = w;
-
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-  item_setup(vbox2, w, _("_Line Width:"), TRUE);
-  d->width = w;
-
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-  item_setup(vbox2, w, _("_Size:"), TRUE);
-  d->size = w;
-
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-  item_setup(vbox2, w, _("_Miter:"), TRUE);
-  d->miter = w;
-
-  w = combo_box_create();
-  item_setup(vbox2, w, _("_Join:"), TRUE);
-  d->join = w;
-
-  gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 4);
+  w = load_tab_create(d);
+  label = gtk_label_new_with_mnemonic(_("_Load"));
+  d->load.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
 
-  vbox2 = gtk_vbox_new(FALSE, 4);
-
-  w = gtk_button_new_with_mnemonic(_("_Math"));
-  gtk_box_pack_start(GTK_BOX(vbox2), w, FALSE, FALSE, 4);
-  g_signal_connect(w, "clicked", G_CALLBACK(FileDialogMath), d);
-
-  w = gtk_button_new_with_mnemonic(_("_Load"));
-  gtk_box_pack_start(GTK_BOX(vbox2), w, FALSE, FALSE, 4);
-  g_signal_connect(w, "clicked", G_CALLBACK(FileDialogLoad), d);
-
-  d->button_box = vbox2;
-
-  gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-  gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
+  gtk_box_pack_start(GTK_BOX(d->vbox), notebook, TRUE, TRUE, 4);
 }
 
 static int
@@ -3071,9 +3028,44 @@ set_file_preview(struct FileDialog *d, const char *s)
 }
 
 static void
+set_headlines(struct FileDialog *d, char *s)
+{
+  gboolean valid;
+  const gchar *ptr;
+
+  if (s == NULL) {
+    return;
+  }
+
+  if (Menulocal.file_preview_font) {
+    PangoFontDescription *desc;
+
+    desc = pango_font_description_from_string(Menulocal.file_preview_font);
+    gtk_widget_modify_font(d->comment_view, NULL);
+    gtk_widget_modify_font(d->comment_view, desc);
+    pango_font_description_free(desc);
+  }
+  valid = g_utf8_validate(s, -1, &ptr);
+
+  if (valid) {
+    set_file_preview(d, s);
+  } else {
+    char *ptr;
+
+    ptr = g_locale_to_utf8(s, -1, NULL, NULL, NULL);
+    if (ptr) {
+      set_file_preview(d, ptr);
+      g_free(ptr);
+    } else {
+      gtk_text_buffer_set_text(d->comment, _("This file contain invalid UTF-8 strings."), -1);
+    }
+  }
+}
+
+static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *swin, *view;
+  GtkWidget *w, *hbox, *swin, *view, *label;
   struct FileDialog *d;
   int line, rcode;
   char title[20], *argv[2], *s;
@@ -3088,24 +3080,38 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CLOSE, IDDELETE);
 
-    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
-    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
-
     w = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Copy all"), IDCOPYALL);
     g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
 
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_file_entry(d->Obj);
-    item_setup(hbox, w, _("_File:"), TRUE);
+    item_setup(GTK_WIDGET(hbox), w, _("_File:"), TRUE);
     d->file = w;
 
     w = gtk_button_new_with_mnemonic(_("_Load settings"));
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->load_settings = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogOption), d);
+
+    w = gtk_button_new_with_mnemonic(_("_Edit"));
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogEdit), d);
+
+
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+
+
     FileDialogSetupCommon(wi, d);
+    gtk_notebook_set_tab_pos(d->tab, GTK_POS_LEFT);
+
+    w = mask_tab_create(d);
+    label = gtk_label_new_with_mnemonic(_("_Mask"));
+    d->mask.tab_id = gtk_notebook_append_page(d->tab, w, label);
+
+    w = move_tab_create(d);
+    label = gtk_label_new_with_mnemonic(_("_Move"));
+    d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     view = gtk_text_view_new_with_buffer(NULL);
@@ -3118,89 +3124,29 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(w), swin);
-    gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 0);
 
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = gtk_button_new_with_mnemonic(_("_Fit"));
+    w = gtk_button_new_with_label(_("Create"));
+    add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
-
-    w = gtk_label_new("");
-    d->fitid = w;
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->fit_box), hbox, FALSE, FALSE, 4);
-
-
-    w = gtk_button_new_with_mnemonic(_("_Mask"));
-    gtk_box_pack_start(GTK_BOX(d->button_box), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogMask), d);
-
-    w = gtk_button_new_with_mnemonic(_("_Move"));
-    gtk_box_pack_start(GTK_BOX(d->button_box), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogMove), d);
-
-    w = gtk_button_new_with_mnemonic(_("_Edit"));
-    gtk_box_pack_start(GTK_BOX(d->button_box), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(FileDialogEdit), d);
   }
 
   line = Menulocal.data_head_lines;
   argv[0] = (char *) &line;
   argv[1] = NULL;
   rcode = getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
-  if (s) {
-    gboolean valid;
-    const gchar *ptr;
-
-    if (Menulocal.file_preview_font) {
-      PangoFontDescription *desc;
-
-      desc = pango_font_description_from_string(Menulocal.file_preview_font);
-      gtk_widget_modify_font(d->comment_view, NULL);
-      gtk_widget_modify_font(d->comment_view, desc);
-      pango_font_description_free(desc);
-    }
-    valid = g_utf8_validate(s, -1, &ptr);
-    if (valid) {
-      set_file_preview(d, s);
-    } else {
-      char *ptr;
-
-      ptr = g_locale_to_utf8(s, -1, NULL, NULL, NULL);
-      if (ptr) {
-	set_file_preview(d, ptr);
-	g_free(ptr);
-      } else {
-	gtk_text_buffer_set_text(d->comment, _("This file contain invalid UTF-8 strings."), -1);
-      }
-    }
-  }
+  set_headlines(d, s);
   FileDialogSetupItem(wi, d, TRUE, d->Id);
 
-  /*
-  if (makewidget)
-    d->widget = NULL;
-  */
+  gtk_entry_set_completion(GTK_ENTRY(d->math.x), NgraphApp.x_math_list);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.y), NgraphApp.y_math_list);
 }
 
 static int
-FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
+plot_tab_set_value(struct FileDialog *d)
 {
-  if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
-    return TRUE;
-
-  if (SetObjAxisFieldFromWidget(d->xaxis, d->Obj, d->Id, "axis_x"))
-    return TRUE;
-
-  if (SetObjFieldFromWidget(d->ycol, d->Obj, d->Id, "y"))
-    return TRUE;
-
-  if (SetObjAxisFieldFromWidget(d->yaxis, d->Obj, d->Id, "axis_y"))
-    return TRUE;
-
   if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
     return TRUE;
 
@@ -3234,6 +3180,42 @@ FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
   if (putobj_color2(d->col2, d->Obj, d->Id))
     return TRUE;
 
+  return 0;
+}
+
+static int
+FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
+{
+  d->tab_active = gtk_notebook_get_current_page(d->tab);
+
+  if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
+    return TRUE;
+
+  if (SetObjAxisFieldFromWidget(d->xaxis, d->Obj, d->Id, "axis_x"))
+    return TRUE;
+
+  if (SetObjFieldFromWidget(d->ycol, d->Obj, d->Id, "y"))
+    return TRUE;
+
+  if (SetObjAxisFieldFromWidget(d->yaxis, d->Obj, d->Id, "axis_y"))
+    return TRUE;
+
+  if (plot_tab_set_value(d)) {
+    gtk_notebook_set_current_page(d->tab, 0);
+    return TRUE;
+  }
+
+
+  if (math_tab_set_value(d)) {
+    gtk_notebook_set_current_page(d->tab, d->math.tab_id);
+    return TRUE;
+  }
+
+  if (load_tab_set_value(d)) {
+    gtk_notebook_set_current_page(d->tab, d->load.tab_id);
+    return TRUE;
+  }
+
   return FALSE;
 }
 
@@ -3249,10 +3231,6 @@ FileDialogClose(GtkWidget *w, void *data)
   case IDOK:
   case IDFAPPLY:
     break;
-  case IDCOPY:
-    FileDialogCopy(d);
-    d->ret = IDLOOP;
-    return;
   case IDCOPYALL:
     FileDialogCopyAll(d);
     d->ret = IDLOOP;
@@ -3269,6 +3247,16 @@ FileDialogClose(GtkWidget *w, void *data)
 
   if (FileDialogCloseCommon(w, d))
     return;
+
+  if (mask_tab_set_value(d)) {
+    gtk_notebook_set_current_page(d->tab, d->mask.tab_id);
+    return;
+  }
+
+  if (move_tab_set_value(d)) {
+    gtk_notebook_set_current_page(d->tab, d->move.tab_id);
+    return;
+  }
 
   d->ret = ret;
 }
@@ -3290,7 +3278,10 @@ FileDialog(void *data, struct objlist *obj, int id, int multi)
 static void
 FileDialogDefSetupItem(GtkWidget *w, struct FileDialog *d, int id)
 {
-  FileDialogSetupItemCommon(w, d, id);
+  plot_tab_setup_item(d, d->Id);
+  math_tab_setup_item(d, d->Id);
+  load_tab_setup_item(d, d->Id);
+  file_setup_item(d, d->Id);  
 }
 
 static void
@@ -3302,7 +3293,11 @@ FileDefDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     FileDialogSetupCommon(wi, d);
+    gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
   }
+  gtk_entry_set_completion(GTK_ENTRY(d->math.x), NgraphApp.x_math_list);
+  gtk_entry_set_completion(GTK_ENTRY(d->math.y), NgraphApp.y_math_list);
+
   FileDialogDefSetupItem(wi, d, d->Id);
 }
 

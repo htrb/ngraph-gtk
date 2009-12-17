@@ -40,13 +40,16 @@ filename_to_utf8(const char *str)
 }
 
 GtkWidget *
-add_widget_to_table_sub(GtkWidget *table, char *title, GtkWidget *w, int expand, int col, int width, int col_max, int *n)
+add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
 {
   GtkWidget *align, *label;
-  int i;
+  int x, y;
 
-  i = *n;
-  gtk_table_resize(GTK_TABLE(table), i + 1, col_max);
+  g_object_get(table, "n-columns", &x, "n-rows", &y, NULL);
+
+  x = (x > col_max) ? x : col_max;
+  y = (y > n + 1) ? y : n + 1;
+  gtk_table_resize(GTK_TABLE(table), y, x);
 
   label = NULL;
 
@@ -54,23 +57,21 @@ add_widget_to_table_sub(GtkWidget *table, char *title, GtkWidget *w, int expand,
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
     gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-    gtk_table_attach(GTK_TABLE(table), label, col, col + 1, i, i + 1, GTK_FILL, 0, 4, 4);
+    gtk_table_attach(GTK_TABLE(table), label, col, col + 1, n, n + 1, GTK_FILL, 0, 4, 4);
     col++;
   }
 
   align = gtk_alignment_new(0, 0.5, (expand) ? 1 : 0, 0);
   gtk_container_add(GTK_CONTAINER(align), w);
-  gtk_table_attach(GTK_TABLE(table), align, col, col + width, i, i + 1, ((expand) ? GTK_EXPAND : 0) | GTK_FILL, 0, 4, 4);
-
-  *n = i + 1;
+  gtk_table_attach(GTK_TABLE(table), align, col, col + width, n, n + 1, ((expand) ? GTK_EXPAND : 0) | GTK_FILL, 0, 4, 4);
 
   return label;
 }
 
 GtkWidget *
-add_widget_to_table(GtkWidget *table, char *title, GtkWidget *w, int expand, int *n)
+add_widget_to_table(GtkWidget *table, GtkWidget *w, char *title, int expand, int n)
 {
-  return add_widget_to_table_sub(table, title, w, expand, 0, (title) ? 1 : 2, 2, n);
+  return add_widget_to_table_sub(table, w, title, expand, 0, (title) ? 1 : 2, 2, n);
 }
 
 void
@@ -174,7 +175,7 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
 #endif
 
 GtkWidget *
-create_file_entry(struct objlist *obj)
+create_file_entry_with_cb(GCallback cb, gpointer data)
 {
   GtkWidget *w;
 
@@ -182,10 +183,16 @@ create_file_entry(struct objlist *obj)
 
 #if USE_ENTRY_ICON
   gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_OPEN);
-  g_signal_connect(w, "icon-release", G_CALLBACK(entry_icon_file_select), obj);
+  g_signal_connect(w, "icon-release", cb, data);
 #endif
 
   return w;
+}
+
+GtkWidget *
+create_file_entry(struct objlist *obj)
+{
+  return create_file_entry_with_cb(G_CALLBACK(entry_icon_file_select), obj);
 }
 
 #if USE_ENTRY_ICON

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgndx.c,v 1.19 2009/12/10 02:57:27 hito Exp $
+ * $Id: x11lgndx.c,v 1.20 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -395,27 +395,27 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = combo_box_entry_create();
-    add_widget_to_table(table, _("Line _Style:"), w, TRUE, &i);
+    add_widget_to_table(table, w, _("Line _Style:"), TRUE, i++);
     d->style = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-    add_widget_to_table(table, _("_Line Width:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("_Line Width:"), FALSE, i++);
     d->width = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-    add_widget_to_table(table, _("_Miter:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
     d->miter = w;
 
     w = combo_box_create();
-    add_widget_to_table(table, _("_Join:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
     d->join = w;
 
     w = create_color_button(wi);
-    add_widget_to_table(table, _("_Color:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
     d->color = w;
 
     w = gtk_hscale_new_with_range(10, DIV_MAX, 1);
-    add_widget_to_table(table, _("_Division:"), w, TRUE, &i);
+    add_widget_to_table(table, w, _("_Division:"), TRUE, i++);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogDiv), d);
     d->div = w;
 
@@ -442,7 +442,7 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     dir_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(button));
     d->dir_list = dir_list;
 
-    add_widget_to_table(table, _("Direction:"), hbox2, TRUE, &i);
+    add_widget_to_table(table, hbox2, _("Direction:"), TRUE, i++);
 
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
 

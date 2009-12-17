@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.47 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11print.c,v 1.48 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -115,16 +115,19 @@ DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
 }
 
 static void
-DriverDialogBrowseCB(GtkWidget *wi, gpointer client_data)
+DriverDialogBrowseCB(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
   char *file;
+  const char *str;
   struct DriverDialog *d;
 
-  d = (struct DriverDialog *) client_data;
+  d = (struct DriverDialog *) user_data;
+
+  str = gtk_entry_get_text(w);
 
   if (nGetSaveFileName(d->widget, _("External Driver Output"), d->ext, NULL,
-		       NULL, &file, TRUE, Menulocal.changedirectory) == IDOK) {
-    gtk_entry_set_text(GTK_ENTRY(d->file), file);
+		       str, &file, TRUE, Menulocal.changedirectory) == IDOK) {
+    gtk_entry_set_text(w, file);
   }
   g_free(file);
 }
@@ -132,39 +135,31 @@ DriverDialogBrowseCB(GtkWidget *wi, gpointer client_data)
 static void
 DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox;
+  GtkWidget *w, *table;
   struct DriverDialog *d;
   struct extprinter *pcur;
-  int j;
+  int i, j;
 
   d = (struct DriverDialog *) data;
   if (makewidget) {
 
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
-    hbox = gtk_hbox_new(FALSE, 4);
+    i = 0;
     w = combo_box_create();
     d->driver = w;
-    item_setup(hbox, w, _("_Driver:"), FALSE);
+    add_widget_to_table(table, w, _("_Driver:"), FALSE, i++);
     g_signal_connect(d->driver, "changed", G_CALLBACK(DriverDialogSelectCB), d);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
     d->option = w;
-    item_setup(hbox, w, _("_Option:"), TRUE);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    add_widget_to_table(table, w, _("_Option:"), TRUE, i++);
 
-    hbox = gtk_hbox_new(FALSE, 4);
-    w = create_text_entry(FALSE, TRUE);
+    w = create_file_entry_with_cb(G_CALLBACK(DriverDialogBrowseCB), d);
     d->file = w;
-    item_setup(hbox, w, _("_File:"), TRUE);
+    add_widget_to_table(table, w, _("_File:"), TRUE, i++);
 
-    w = gtk_button_new_with_mnemonic(_("_Browse"));
-    g_signal_connect(w, "clicked", G_CALLBACK(DriverDialogBrowseCB), d);
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
   }
 
   combo_box_clear(d->driver);

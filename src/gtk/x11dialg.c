@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.47 2009/12/10 02:57:27 hito Exp $
+ * $Id: x11dialg.c,v 1.48 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -70,10 +70,6 @@ struct MathTextDialog DlgMathText;
 struct FitDialog DlgFit;
 struct FitLoadDialog DlgFitLoad;
 struct FitSaveDialog DlgFitSave;
-struct FileMoveDialog DlgFileMove;
-struct FileMaskDialog DlgFileMask;
-struct FileLoadDialog DlgFileLoad;
-struct FileMathDialog DlgFileMath;
 struct SectionDialog DlgSection;
 struct CrossDialog DlgCross;
 struct AxisDialog DlgAxis;
@@ -92,8 +88,8 @@ struct LegendGaussDialog DlgLegendGauss;
 struct PageDialog DlgPage;
 struct SwitchDialog DlgSwitch;
 struct DirectoryDialog DlgDirectory;
-struct LoadDialog DlgLoad;
 struct PrmDialog DlgPrm;
+struct LoadDialog DlgLoad;
 struct SaveDialog DlgSave;
 struct DriverDialog DlgDriver;
 struct PrintDialog DlgPrinter;
@@ -145,18 +141,6 @@ initdialog(void)
   DlgFitSave.focus = NULL;
   DlgFitSave.Profile = NULL;
   DlgFitSave.resource = N_("fit save");
-  DlgFileMove.widget = NULL;
-  DlgFileMove.focus = NULL;
-  DlgFileMove.resource = N_("data move");
-  DlgFileMask.widget = NULL;
-  DlgFileMask.focus = NULL;
-  DlgFileMask.resource = N_("data mask");
-  DlgFileLoad.widget = NULL;
-  DlgFileLoad.focus = NULL;
-  DlgFileLoad.resource = N_("data load");
-  DlgFileMath.widget = NULL;
-  DlgFileMath.focus = NULL;
-  DlgFileMath.resource = N_("data math");
   DlgSection.widget = NULL;
   DlgSection.focus = NULL;
   DlgSection.resource = N_("Frame/Section Graph");

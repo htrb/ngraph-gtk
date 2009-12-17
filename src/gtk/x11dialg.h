@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.49 2009/12/10 02:57:27 hito Exp $
+ * $Id: x11dialg.h,v 1.50 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -98,19 +98,49 @@ struct MarkDialog
 };
 void MarkDialog(struct MarkDialog *data, int type);
 
+struct FileMath
+{
+  GtkWidget *xsmooth, *x, *ysmooth, *y, *f, *g, *h;
+  int tab_id;
+};
+
+struct FileLoad
+{
+  GtkWidget *headskip, *readstep, *finalline, *remark, *ifs, *csv;
+  int tab_id;
+};
+
+struct FileMask
+{
+  GtkWidget *line, *list;
+  int changed, tab_id;
+};
+
+struct FileMove
+{
+  GtkWidget *line, *x, *y, *list;
+  int changed, tab_id;
+};
+
 struct FileDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *file, *load_settings, *fit, *fitid, *xcol, *xaxis, *ycol, *yaxis,
-    *type, *mark_btn, *curve, *col1, *col2, *clip, *style, *size, *miter, *join,
-    *comment_box, *fit_box, *button_box, *width, *apply_all, *comment_view;
+  GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
+    *type, *mark_btn, *mark_label, *curve, *curve_label, *col1, *col2, *col2_label,
+    *clip, *style, *size, *size_label, *miter, *miter_label, *join, *join_label,
+    *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view;
+  GtkNotebook *tab;
   GtkTextBuffer *comment;
   GtkTextTag *comment_num_tag;
   struct objlist *Obj;
   int Id;
   struct MarkDialog mark;
-  int R, G, B, R2, G2, B2, multi_open;
+  int R, G, B, R2, G2, B2, multi_open, fit_row, tab_active;
+  struct FileMath math;
+  struct FileLoad load;
+  struct FileMask mask;
+  struct FileMove move;
 };
 
 void FileDialog(void *data, struct objlist *obj, int id, int candel);
@@ -186,46 +216,6 @@ struct FitSaveDialog
   char *Profile;
 };
 void FitSaveDialog(struct FitSaveDialog *data, struct objlist *obj, int sid);
-
-struct FileMoveDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *line, *x, *y, *list;
-  struct objlist *Obj;
-  int Id, changed;
-};
-void FileMoveDialog(struct FileMoveDialog *data, struct objlist *obj, int id);
-
-struct FileMaskDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *line, *list;
-  struct objlist *Obj;
-  int Id, changed;
-};
-void FileMaskDialog(struct FileMaskDialog *data, struct objlist *obj, int id);
-
-struct FileLoadDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *headskip, *readstep, *finalline, *remark, *ifs, *csv;
-  struct objlist *Obj;
-  int Id;
-};
-void FileLoadDialog(struct FileLoadDialog *data, struct objlist *obj, int id);
-
-struct FileMathDialog
-{
-  DIALOG_PROTOTYPE;
-  /****** local member *******/
-  GtkWidget *xsmooth, *xmath, *ysmooth, *ymath, *fmath, *gmath, *hmath;
-  struct objlist *Obj;
-  int Id;
-};
-void FileMathDialog(struct FileMathDialog *data, struct objlist *obj, int id);
 
 struct SectionDialog
 {
@@ -352,7 +342,8 @@ struct LegendDialog
   GtkWidget *style, *points, *interpolation, *width, *miter, *join,
     *color,*color2, *x, *y, *x1, *y1, *x2, *y2, *rx, *ry, *angle1, *angle2,
     *pieslice, *fill, *fill_rule, *frame, *arrow, *arrow_length, *arrow_width,
-    *size, *type, *view, *text, *pt, *space, *script_size, *direction, *raw, *font, *jfont;
+    *size, *type, *view, *text, *pt, *space, *script_size, *direction, *raw, *font, *jfont,
+    *color2_label;
   struct objlist *Obj;
   int Id;
   int R, G, B, R2, G2, B2, wid, ang;
@@ -619,8 +610,6 @@ extern struct FitLoadDialog DlgFitLoad;
 extern struct FitSaveDialog DlgFitSave;
 extern struct FileMoveDialog DlgFileMove;
 extern struct FileMaskDialog DlgFileMask;
-extern struct FileLoadDialog DlgFileLoad;
-extern struct FileMathDialog DlgFileMath;
 extern struct SectionDialog DlgSection;
 extern struct CrossDialog DlgCross;
 extern struct AxisDialog DlgAxis;

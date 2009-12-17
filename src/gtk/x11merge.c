@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.31 2009/11/17 06:41:50 hito Exp $
+ * $Id: x11merge.c,v 1.32 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -105,20 +105,26 @@ MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
 }
 
 static void
-MergeDialogCopy(struct MergeDialog *d)
+MergeDialogCopy(GtkWidget *w, gpointer data)
 {
+  struct MergeDialog *d;
   int sel;
 
-  if ((sel = CopyClick(d->widget, d->Obj, d->Id, FileCB)) != -1)
+  d = (struct MergeDialog *) data;
+
+  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
+  if (sel != -1) {
     MergeDialogSetupItem(d, FALSE, sel);
+  } 
 }
 
 static void
 MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox;
+  GtkWidget *w, *frame, *table;
   struct MergeDialog *d;
   char title[64];
+  int i;
 
   d = (struct MergeDialog *) data;
 
@@ -128,37 +134,36 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CLOSE, IDDELETE);
 
-    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
-    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "merge");
+    table = gtk_table_new(1, 2, FALSE);
 
-    hbox = gtk_hbox_new(FALSE, 2);
+    i = 0;
     w = create_file_entry(d->Obj);
-    item_setup(hbox, w, _("_File:"), TRUE);
+    add_widget_to_table(table, w, _("_File:"), TRUE, i++);
     d->file = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 2);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    item_setup(hbox, w, _("_Top Margin:"), TRUE);
+    add_widget_to_table(table, w, _("_Top Margin:"), FALSE, i++);
     d->topmargin = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    item_setup(hbox, w, _("_Left Margin:"), TRUE);
+    add_widget_to_table(table, w, _("_Left Margin:"), FALSE, i++);
     d->leftmargin = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
-    item_setup(hbox, w, _("_Zoom:"), TRUE);
+    add_widget_to_table(table, w, _("_Zoom:"), FALSE, i++);
     d->zoom = w;
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-
 #ifdef JAPANESE
-    hbox = gtk_hbox_new(FALSE, 2);
     w = gtk_check_button_new_with_mnemonic(_("GreekSymbol"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
     d->greeksymbol = w;
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 #endif
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
+
+    add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(MergeDialogCopy), d, "merge");
   }
   MergeDialogSetupItem(d, TRUE, d->Id);
 }
@@ -174,10 +179,6 @@ MergeDialogClose(GtkWidget *w, void *data)
   switch(d->ret) {
   case IDOK:
     break;
-  case IDCOPY:
-    MergeDialogCopy(d);
-    d->ret = IDLOOP;
-    return;
   default:
     return;
   }

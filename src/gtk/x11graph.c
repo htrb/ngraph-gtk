@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.52 2009/11/16 09:13:05 hito Exp $
+ * $Id: x11graph.c,v 1.53 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -151,34 +151,29 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
 static void
 PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox;
+  GtkWidget *w, *table;
   unsigned int j;
   struct PageDialog *d;
+  int i;
 
   d = (struct PageDialog *) data;
 
   if (makewidget) {
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
-    hbox = gtk_hbox_new(FALSE, 4);
-
+    i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     spin_entry_set_range(w, PAPER_SIZE_MIN, G_MAXUSHORT);
-    item_setup(hbox, w, _("paper _Width:"), TRUE);
+    add_widget_to_table(table, w, _("paper _Width:"), FALSE, i++);
     d->paperwidth = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     spin_entry_set_range(w, PAPER_SIZE_MIN, G_MAXUSHORT);
-    item_setup(hbox, w, _("paper _Height:"), TRUE);
+    add_widget_to_table(table, w, _("paper _Height:"), FALSE, i++);
     d->paperheight = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
     w = combo_box_create();
-    item_setup(hbox, w, _("_Paper:"), FALSE);
+    add_widget_to_table(table, w, _("_Paper:"), FALSE, i++);
     d->paper = w;
     g_signal_connect(w, "changed", G_CALLBACK(PageDialogPage), d);
 
@@ -186,31 +181,20 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->paper, _(pagelist[j].paper));
     }
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
-    item_setup(hbox, w, _("_Left margin:"), TRUE);
+    add_widget_to_table(table, w, _("_Left margin:"), FALSE, i++);
     d->leftmargin = w;
 
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
-    item_setup(hbox, w, _("_Top margin:"), TRUE);
+    add_widget_to_table(table, w, _("_Top margin:"), FALSE, i++);
     d->topmargin = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, FALSE, TRUE);
-    item_setup(hbox, w, _("paper _Zoom:"), TRUE);
+    add_widget_to_table(table, w, _("paper _Zoom:"), FALSE, i++);
     d->paperzoom = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
   }
   PageDialogSetupItem(wi, d);
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.77 2009/12/10 02:57:27 hito Exp $
+ * $Id: x11axis.c,v 1.78 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -245,7 +245,7 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
 }
 
 static void
-grid_copy_cliced(GtkButton *btn, gpointer user_data)
+grid_copy_clicked(GtkButton *btn, gpointer user_data)
 {
   int sel;
   struct GridDialog *d;
@@ -277,7 +277,7 @@ GridDialogAxis(GtkWidget *w, gpointer client_data)
 }
 
 static void
-gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int *j)
+gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j)
 {
   GtkWidget *w;
   char buf[TITLE_BUF_SIZE]; 
@@ -287,13 +287,12 @@ gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int *j)
 
   snprintf(buf, sizeof(buf), _("_Style %d:"), n + 1);
   w = combo_box_entry_create();
-  add_widget_to_table_sub(table, buf, w, TRUE, 0, 1, 4, j);
+  add_widget_to_table_sub(table, w, buf, TRUE, 0, 1, 4, j);
   d->style[n] = w;
 
   snprintf(buf, sizeof(buf), _("_Width %d:"), n + 1);
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-  (*j)--;
-  add_widget_to_table_sub(table, buf, w, FALSE, 2, 1, 4, j);
+  add_widget_to_table_sub(table, w, buf, FALSE, 2, 1, 4, j);
   d->width[n] = w;
 }
 
@@ -319,12 +318,12 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     j = 0;
     w = combo_box_entry_create();
-    add_widget_to_table(table, _("Axis (_X):"), w, FALSE, &j);
+    add_widget_to_table(table, w, _("Axis (_X):"), FALSE, j++);
     g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), d);
     d->axisx = w;
 
     w = combo_box_entry_create();
-    add_widget_to_table(table, _("Axis (_Y):"), w, FALSE, &j);
+    add_widget_to_table(table, w, _("Axis (_Y):"), FALSE, j++);
     g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), d);
     d->axisy = w;
 
@@ -337,16 +336,16 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     j = 0;
     w = create_color_button(wi);
-    add_widget_to_table(table, _("_Color:"), w, FALSE, &j);
+    add_widget_to_table(table, w, _("_Color:"), FALSE, j++);
     d->color = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Background"));
-    add_widget_to_table(table, NULL, w, FALSE, &j);
+    add_widget_to_table(table, w, NULL, FALSE, j++);
     g_signal_connect(w, "toggled", G_CALLBACK(bg_button_toggled), d);
     d->background = w;
 
     w = create_color_button(wi);
-    d->bclabel = add_widget_to_table(table, _("_Background Color:"), w, FALSE, &j);
+    d->bclabel = add_widget_to_table(table, w, _("_Background Color:"), FALSE, j++);
     d->bcolor = w;
 
     frame = gtk_frame_new(_("Color"));
@@ -359,14 +358,14 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_table_new(1, 4, FALSE);
     j = 0;
     for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
-      gauge_syle_setup(d, table, i, &j);
+      gauge_syle_setup(d, table, i, j++);
     }
 
     frame = gtk_frame_new(_("Style"));
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
-    add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(grid_copy_cliced), d, "axisgrid");
+    add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(grid_copy_clicked), d, "axisgrid");
   }
 
   GridDialogSetupItem(wi, d, d->Id);
@@ -571,11 +570,11 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    add_widget_to_table(table, "_X:", w, FALSE, &i);
+    add_widget_to_table(table, w, "_X:", FALSE, i++);
     d->x = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    add_widget_to_table(table, "_Y:", w, FALSE, &i);
+    add_widget_to_table(table, w, "_Y:", FALSE, i++);
     d->y = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
@@ -585,11 +584,11 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    add_widget_to_table(table, _("Graph _Width:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("Graph _Width:"), FALSE, i++);
     d->width = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    add_widget_to_table(table, _("Graph _Height:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("Graph _Height:"), FALSE, i++);
     d->height = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
@@ -799,11 +798,11 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    add_widget_to_table(table, "_X:", w, FALSE, &i);
+    add_widget_to_table(table, w, "_X:", FALSE, i++);
     d->x = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    add_widget_to_table(table, "_Y:", w, FALSE, &i);
+    add_widget_to_table(table, w, "_Y:", FALSE, i++);
     d->y = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
@@ -813,11 +812,11 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    add_widget_to_table(table, _("Graph _Width:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("Graph _Width:"), FALSE, i++);
     d->width = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-    add_widget_to_table(table, _("Graph _Height:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("Graph _Height:"), FALSE, i++);
     d->height = w;
 
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 4);
@@ -1198,7 +1197,7 @@ file_button_show(GtkWidget *widget, gpointer user_data)
 }
 
 static void
-scale_tab_copy_cliced(GtkButton *btn, gpointer user_data)
+scale_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
   struct AxisDialog *d;
   int sel;
@@ -1221,15 +1220,15 @@ scale_tab_create(struct AxisDialog *d)
 
   i = 0;
   w = combo_box_entry_create();
-  add_widget_to_table(table, _("_Min:"), w, TRUE, &i);
+  add_widget_to_table(table, w, _("_Min:"), TRUE, i++);
   d->min = w;
 
   w = combo_box_entry_create();
-  add_widget_to_table(table, _("_Max:"), w, TRUE, &i);
+  add_widget_to_table(table, w, _("_Max:"), TRUE, i++);
   d->max = w;
 
   w = combo_box_entry_create();
-  add_widget_to_table(table, _("_Inc:"), w, TRUE, &i);
+  add_widget_to_table(table, w, _("_Inc:"), TRUE, i++);
   d->inc = w;
 
 
@@ -1244,18 +1243,18 @@ scale_tab_create(struct AxisDialog *d)
   g_signal_connect(w, "show", G_CALLBACK(file_button_show), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
-  add_widget_to_table(table, "", hbox, FALSE, &i);
+  add_widget_to_table(table, hbox, "", FALSE, i++);
   
   w = combo_box_create();
-  add_widget_to_table(table, _("_Scale:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Scale:"), FALSE, i++);
   d->scale = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-  add_widget_to_table(table, _("_Div:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Div:"), FALSE, i++);
   d->div = w;
 
   w = combo_box_entry_create();
-  add_widget_to_table(table, _("_Ref:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Ref:"), FALSE, i++);
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
   g_signal_connect(w, "changed", G_CALLBACK(AxisDialogRef), d);
   d->ref = w;
@@ -1266,7 +1265,7 @@ scale_tab_create(struct AxisDialog *d)
   parent_box = gtk_vbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(parent_box), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(parent_box, G_CALLBACK(scale_tab_copy_cliced), d, "axis");
+  add_copy_button_to_box(parent_box, G_CALLBACK(scale_tab_copy_clicked), d, "axis");
 
   return parent_box;
 }
@@ -1340,7 +1339,7 @@ baseline_tab_setup_item(struct AxisDialog *axis, int id)
 }
 
 static void
-baseline_tab_copy_cliced(GtkButton *btn, gpointer user_data)
+baseline_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
   struct AxisDialog *d;
   int sel;
@@ -1368,20 +1367,20 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = gtk_check_button_new_with_mnemonic(_("Draw _Baseline"));
-  add_widget_to_table(table, NULL, w, FALSE , &i);
+  add_widget_to_table(table, w, NULL, FALSE , i++);
   d->baseline = w;
 
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-  add_widget_to_table(table, _("Line _Style:"), w, TRUE, &i);
+  add_widget_to_table(table, w, _("Line _Style:"), TRUE, i++);
   d->style = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-  add_widget_to_table(table, _("_Line Width:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Line Width:"), FALSE, i++);
   d->width = w;
 
   w = create_color_button(wi);
-  add_widget_to_table(table, _("_Color:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
 
   frame = gtk_frame_new(_("Baseline"));
@@ -1394,17 +1393,17 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = combo_box_create();
-  add_widget_to_table(table, _("_Position:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Position:"), FALSE, i++);
   d->arrow = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
   spin_entry_set_inc(w, 1000, 10000);
-  add_widget_to_table(table, _("_Arrow length:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Arrow length:"), FALSE, i++);
   d->arrowlen = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
   spin_entry_set_inc(w, 1000, 10000);
-  add_widget_to_table(table, _("_Arrow width:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Arrow width:"), FALSE, i++);
   d->arrowwid = w;
 
   frame = gtk_frame_new(_("Arrow"));
@@ -1416,16 +1415,16 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = combo_box_create();
-  add_widget_to_table(table, _("_Position:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Position:"), FALSE, i++);
   d->wave = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-  add_widget_to_table(table, _("_Wave length:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Wave length:"), FALSE, i++);
   d->wavelen = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
-  add_widget_to_table(table, _("_Wave width:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Wave width:"), FALSE, i++);
   d->wavewid = w;
 
   frame = gtk_frame_new(_("Wave"));
@@ -1437,7 +1436,7 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   vbox = gtk_vbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(baseline_tab_copy_cliced), dd, "axis");
+  add_copy_button_to_box(vbox, G_CALLBACK(baseline_tab_copy_clicked), dd, "axis");
 
   return vbox;
 }
@@ -1510,7 +1509,7 @@ gauge_tab_setup_item(struct AxisDialog *axis, int id)
 }
 
 static void
-gauge_tab_copy_cliced(GtkButton *btn, gpointer user_data)
+gauge_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
   struct AxisDialog *d;
   int sel;
@@ -1539,17 +1538,17 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   j = 0;
   w = combo_box_create();
-  add_widget_to_table(table, _("_Gauge:"), w, FALSE, &j);
+  add_widget_to_table(table, w, _("_Gauge:"), FALSE, j++);
   d->gauge = w;
 
   w = create_text_entry(FALSE, TRUE);
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 3, -1);
-  add_widget_to_table(table, _("_Min:"), w, TRUE, &j);
+  add_widget_to_table(table, w, _("_Min:"), TRUE, j++);
   d->min = w;
 
   w = create_text_entry(FALSE, TRUE);
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 3, -1);
-  add_widget_to_table(table, _("_Max:"), w, TRUE, &j);
+  add_widget_to_table(table, w, _("_Max:"), TRUE, j++);
   d->max = w;
 
   frame = gtk_frame_new(_("Range"));
@@ -1561,23 +1560,22 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   j = 0;
   w = combo_box_entry_create();
-  add_widget_to_table_sub(table, _("_Style:"), w, TRUE, 0, 3, 4, &j);
+  add_widget_to_table_sub(table, w, _("_Style:"), TRUE, 0, 3, 4, j++);
   d->style = w;
 
   w = create_color_button(wi);
-  add_widget_to_table_sub(table, _("_Color:"), w, FALSE, 0, 1, 4, &j);
+  add_widget_to_table_sub(table, w, _("_Color:"), FALSE, 0, 1, 4, j++);
   d->color = w;
 
   for (i = 0; i < GAUGE_STYLE_NUM; i++) {
     snprintf(buf, sizeof(buf), _("_Width %d:"), i + 1);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-    add_widget_to_table_sub(table, buf, w, TRUE, 0, 1, 4, &j);
+    add_widget_to_table_sub(table, w, buf, TRUE, 0, 1, 4, j);
     d->width[i] = w;
 
     snprintf(buf, sizeof(buf), _("_Length %d:"), i + 1);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-    j--;
-    add_widget_to_table_sub(table, buf, w, TRUE, 2, 1, 4, &j);
+    add_widget_to_table_sub(table, w, buf, TRUE, 2, 1, 4, j++);
     d->length[i] = w;
   }
 
@@ -1587,7 +1585,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   parent_box = gtk_vbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(parent_box), vbox, TRUE, TRUE, 4);
-  add_copy_button_to_box(parent_box, G_CALLBACK(gauge_tab_copy_cliced), dd, "axis");
+  add_copy_button_to_box(parent_box, G_CALLBACK(gauge_tab_copy_clicked), dd, "axis");
 
   return parent_box;
 }
@@ -1719,7 +1717,7 @@ numbering_tab_setup_item(struct AxisDialog *axis, int id)
 }
 
 static void
-numbering_tab_copy_cliced(GtkButton *btn, gpointer user_data)
+numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
   struct AxisDialog *d;
   int sel;
@@ -1750,19 +1748,19 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = combo_box_create();
-  add_widget_to_table(table, _("_Numbering:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Numbering:"), FALSE, i++);
   d->num = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-  add_widget_to_table(table, _("_Begin:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Begin:"), FALSE, i++);
   d->begin = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-  add_widget_to_table(table, _("_Step:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Step:"), FALSE, i++);
   d->step = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_NUM, TRUE, TRUE);
-  add_widget_to_table(table, _("_Num:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Num:"), FALSE, i++);
   d->numnum = w;
 
   frame = gtk_frame_new(_("Range"));
@@ -1774,19 +1772,19 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = combo_box_create();
-  add_widget_to_table(table, _("_Align:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Align:"), FALSE, i++);
   d->align = w;
 
   w = combo_box_create();
-  add_widget_to_table(table, _("_Direction:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
   d->direction = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-  add_widget_to_table(table, _("shift (_P):"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("shift (_P):"), FALSE, i++);
   d->shiftp = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-  add_widget_to_table(table, _("shift (_N):"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("shift (_N):"), FALSE, i++);
   d->shiftn = w;
 
   frame = gtk_frame_new(_("Position"));
@@ -1800,31 +1798,31 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = combo_box_create();
-  add_widget_to_table(table, _("_Fraction:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Fraction:"), FALSE, i++);
   d->fraction = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_widget_to_table(table, _("_Head:"), w, TRUE, &i);
+  add_widget_to_table(table, w, _("_Head:"), TRUE, i++);
   d->head = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_widget_to_table(table, _("_Tail:"), w, TRUE, &i);
+  add_widget_to_table(table, w, _("_Tail:"), TRUE, i++);
   d->tail = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-  add_widget_to_table(table, _("_Auto normalization:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Auto normalization:"), FALSE, i++);
   d->norm = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Log power"));
-  add_widget_to_table(table, NULL, w, FALSE, &i);
+  add_widget_to_table(table, w, NULL, FALSE, i++);
   d->log_power = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Add plus"));
   d->add_plus = w;
-  add_widget_to_table(table, NULL, w, FALSE, &i);
+  add_widget_to_table(table, w, NULL, FALSE, i++);
 
   w = gtk_check_button_new_with_mnemonic(_("no _Zero"));
-  add_widget_to_table(table, NULL, w, FALSE, &i);
+  add_widget_to_table(table, w, NULL, FALSE, i++);
   d->no_zero = w;
 
   frame = gtk_frame_new(_("Format"));
@@ -1835,7 +1833,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   vbox = gtk_vbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
  
-  add_copy_button_to_box(vbox, G_CALLBACK(numbering_tab_copy_cliced), dd, "axis");
+  add_copy_button_to_box(vbox, G_CALLBACK(numbering_tab_copy_clicked), dd, "axis");
 
   return vbox;
 }
@@ -1891,7 +1889,7 @@ font_tab_setup_item(struct AxisDialog *axis, int id)
 }
 
 static void
-font_tab_copy_cliced(GtkButton *btn, gpointer user_data)
+font_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
   struct AxisDialog *d;
   int sel;
@@ -1917,29 +1915,29 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
-  add_widget_to_table(table, _("_Point:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Point:"), FALSE, i++);
   d->pt = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_SPACE_POINT, TRUE, TRUE);
-  add_widget_to_table(table, _("_Space:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Space:"), FALSE, i++);
   d->space = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
-  add_widget_to_table(table, _("_Script size:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Script size:"), FALSE, i++);
   d->script = w;
 
   w = combo_box_create();
-  add_widget_to_table(table, _("_Font:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
   d->font = w;
 
 #ifdef JAPANESE
   w = combo_box_create();
-  add_widget_to_table(table, _("_Jfont:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Jfont:"), FALSE, i++);
   d->jfont = w;
 #endif
     
   w = create_color_button(wi);
-  add_widget_to_table(table, _("_Color:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
 
   frame = gtk_frame_new(_("Font"));
@@ -1948,7 +1946,7 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   vbox = gtk_vbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(font_tab_copy_cliced), dd, "axis");
+  add_copy_button_to_box(vbox, G_CALLBACK(font_tab_copy_clicked), dd, "axis");
 
   return vbox;
 }
@@ -2020,7 +2018,7 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
 }
 
 static void
-position_tab_copy_cliced(GtkButton *btn, gpointer user_data)
+position_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 {
   struct AxisDialog *d;
   int sel;
@@ -2046,29 +2044,29 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-  add_widget_to_table(table, "_X:", w, FALSE, &i);
+  add_widget_to_table(table, w, "_X:", FALSE, i++);
   d->x = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-  add_widget_to_table(table, "_Y:", w, FALSE, &i);
+  add_widget_to_table(table, w, "_Y:", FALSE, i++);
   d->y = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);
-  add_widget_to_table(table, _("_Length:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Length:"), FALSE, i++);
   d->len = w;
 
   w = create_direction_entry();
-  add_widget_to_table(table, _("_Direction:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
   d->direction = w;
 
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 2, -1);
   g_signal_connect(w, "changed", G_CALLBACK(AxisPosDialogRef), dd);
-  add_widget_to_table(table, _("_Adjust:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("_Adjust:"), FALSE, i++);
   d->adjust = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-  add_widget_to_table(table, _("Adjust _Position:"), w, FALSE, &i);
+  add_widget_to_table(table, w, _("Adjust _Position:"), FALSE, i++);
   d->adjustpos = w;
 
 
@@ -2078,7 +2076,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   vbox = gtk_vbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 4);
 
-  add_copy_button_to_box(vbox, G_CALLBACK(position_tab_copy_cliced), dd, "axis");
+  add_copy_button_to_box(vbox, G_CALLBACK(position_tab_copy_clicked), dd, "axis");
 
   return vbox;
 }

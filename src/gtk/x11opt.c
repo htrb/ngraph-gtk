@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.74 2009/12/11 08:01:38 hito Exp $
+ * $Id: x11opt.c,v 1.75 2009/12/17 10:55:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -228,15 +228,15 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 }
 
 static void
-SetScriptDialogBrowse(GtkWidget *w, gpointer client_data)
+SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
   char *file;
   struct SetScriptDialog *d;
 
-  d = (struct SetScriptDialog *) client_data;
+  d = (struct SetScriptDialog *) user_data;
   if (nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL,
 		       NULL, &file, TRUE, FALSE) == IDOK) {
-    entry_set_filename(d->script, file);
+    entry_set_filename(GTK_WIDGET(w), file);
   }
   g_free(file);
 }
@@ -244,44 +244,32 @@ SetScriptDialogBrowse(GtkWidget *w, gpointer client_data)
 static void
 SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox;
+  GtkWidget *w, *table;
   struct SetScriptDialog *d;
+  int i;
 
   d = (struct SetScriptDialog *) data;
   if (makewidget) {
-    hbox = gtk_hbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Name:"), TRUE);
+    add_widget_to_table(table, w, _("_Name:"), TRUE, i++);
     d->name = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Script file:"), TRUE);
+    w = create_file_entry_with_cb(G_CALLBACK(SetScriptDialogBrowse), d);
+    add_widget_to_table(table, w, _("_Script file:"), TRUE, i++);
     d->script = w;
 
-    w = gtk_button_new_with_mnemonic(_("_Browse"));
-    g_signal_connect(w, "clicked", G_CALLBACK(SetScriptDialogBrowse), d);
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-
-
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Option:"), TRUE);
+    add_widget_to_table(table, w, _("_Option:"), TRUE, i++);
     d->option = w;
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Description:"), TRUE);
+    add_widget_to_table(table, w, _("_Description:"), TRUE, i++);
     d->description = w;
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
   }
   SetScriptDialogSetupItem(wi, d);
 }
@@ -470,15 +458,15 @@ SetDriverDialogSetupItem(GtkWidget *w, struct SetDriverDialog *d)
 }
 
 static void
-SetDriverDialogBrowse(GtkWidget *w, gpointer client_data)
+SetDriverDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
   char *file;
   struct SetDriverDialog *d;
 
-  d = (struct SetDriverDialog *) client_data;
+  d = (struct SetDriverDialog *) user_data;
   if (nGetOpenFileName(d->widget, _("External Driver"), NULL, NULL,
 		       NULL, &file, TRUE, FALSE) == IDOK) {
-    entry_set_filename(d->driver, file);
+    entry_set_filename(GTK_WIDGET(w), file);
   }
   g_free(file);
 }
@@ -486,44 +474,32 @@ SetDriverDialogBrowse(GtkWidget *w, gpointer client_data)
 static void
 SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox;
+  GtkWidget *w, *table;
   struct SetDriverDialog *d;
+  int i;
 
   d = (struct SetDriverDialog *) data;
   if (makewidget) {
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
-    hbox = gtk_hbox_new(FALSE, 4);
+    i = 0;
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Name:"), TRUE);
+    add_widget_to_table(table, w, _("_Name:"), TRUE, i++);
     d->name = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Driver:"), TRUE);
+    w = create_file_entry_with_cb(G_CALLBACK(SetDriverDialogBrowse), d);
+    add_widget_to_table(table, w, _("_Driver:"), TRUE, i++);
     d->driver = w;
 
-    w = gtk_button_new_with_mnemonic(_("_Browse"));
-    g_signal_connect(w, "clicked", G_CALLBACK(SetDriverDialogBrowse), d);
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
-
-
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Option:"), TRUE);
+    add_widget_to_table(table, w, _("_Option:"), TRUE, i++);
     d->option = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Extension:"), TRUE);
+    add_widget_to_table(table, w, _("_Extension:"), TRUE, i++);
     d->ext = w;
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
   }
   SetDriverDialogSetupItem(wi, d);
 }
@@ -1009,7 +985,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
-    add_widget_to_table(table, _("_Editor:"), w, TRUE, &i);
+    add_widget_to_table(table, w, _("_Editor:"), TRUE, i++);
     d->editor = w;
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
@@ -1021,7 +997,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = combo_box_create();
-    add_widget_to_table(table, _("_Path:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("_Path:"), FALSE, i++);
     d->path = w;
     for (j = 0; pathchar[j]; j++) {
       combo_box_append_text(d->path, _(pathchar[j]));
@@ -1029,11 +1005,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_check_button_new_with_mnemonic(_("include _Data file"));
     d->datafile = w;
-    add_widget_to_table(table, NULL, w, FALSE, &i);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("include _Merge file"));
     d->mergefile = w;
-    add_widget_to_table(table, NULL, w, FALSE, &i);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
 
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
@@ -1045,15 +1021,15 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Expand include file"));
-    add_widget_to_table(table, NULL, w, FALSE, &i);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
     d->expand = w;
 
     w = create_text_entry(FALSE, TRUE);
-    add_widget_to_table(table, _("_Expand directory:"), w, TRUE, &i);
+    add_widget_to_table(table, w, _("_Expand directory:"), TRUE, i++);
     d->expanddir = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Ignore file path"));
-    add_widget_to_table(table, NULL, w, FALSE, &i);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
     d->ignorepath = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1069,11 +1045,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
-    add_widget_to_table(table, NULL, w, FALSE, &i);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
     d->directory = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Save file history"));
-    add_widget_to_table(table, NULL, w, FALSE, &i);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
     d->history = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1085,15 +1061,15 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = create_spin_entry(1, HIST_SIZE_MAX, 1, FALSE, TRUE);
-    add_widget_to_table(table, _("_Size of completion history:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("_Size of completion history:"), FALSE, i++);
     d->hist_size = w;
 
     w = create_spin_entry(1, INFOWIN_SIZE_MAX, 1, FALSE, TRUE);
-    add_widget_to_table(table, _("_Length of information window:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("_Length of information window:"), FALSE, i++);
     d->info_size = w;
 
     w = create_spin_entry(0, SPIN_ENTRY_MAX, 1, FALSE, TRUE);
-    add_widget_to_table(table, _("_Length of data preview:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("_Length of data preview:"), FALSE, i++);
     d->data_head_lines = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1105,15 +1081,15 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = gtk_font_button_new();
-    add_widget_to_table(table, _("font of _Coordinate window:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("font of _Coordinate window:"), FALSE, i++);
     d->coordwin_font = w;
 
     w = gtk_font_button_new();
-    add_widget_to_table(table, _("font of _Information window:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("font of _Information window:"), FALSE, i++);
     d->infowin_font = w;
 
     w = gtk_font_button_new();
-    add_widget_to_table(table, _("font of data _Preview:"), w, FALSE, &i);
+    add_widget_to_table(table, w, _("font of data _Preview:"), FALSE, i++);
     d->file_preview_font = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1272,8 +1248,9 @@ use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 static void
 ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox;
+  GtkWidget *w, *table;
   struct ExViewerDialog *d;
+  int i;
 
   d = (struct ExViewerDialog *) data;
   if (makewidget) {
@@ -1281,32 +1258,27 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
+    i  = 0;
     w = gtk_check_button_new_with_mnemonic(_("use _External previewer"));
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
     g_signal_connect(w, "toggled", G_CALLBACK(use_external_toggled), d);
     d->use_external = w;
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_hscale_new_with_range(20, 620, 1);
     d->dpi = w;
-    item_setup(hbox, w, "_DPI:", TRUE);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+    add_widget_to_table(table, w, "_DPI:", TRUE, i++);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
-    item_setup(hbox, w, _("Window _Width:"), TRUE);
+    add_widget_to_table(table, w, _("Window _Width:"), FALSE, i++);
     d->width = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
-    item_setup(hbox, w, _("Window _Height:"), TRUE);
+    add_widget_to_table(table, w, _("Window _Height:"), FALSE, i++);
     d->height = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
   }
   ExViewerDialogSetupItem(wi, d);
 }
@@ -1370,9 +1342,9 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 static void
 ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox;
+  GtkWidget *w, *hbox, *table;
   struct ViewerDialog *d;
-  int i;
+  int i, j;
 
   d = (struct ViewerDialog *) data;
   if (makewidget) {
@@ -1380,63 +1352,50 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
-    vbox = gtk_vbox_new(FALSE, 4);
+    table = gtk_table_new(1, 2, FALSE);
 
+    i = 0;
     hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_hscale_new_with_range(20, 620, 1);
     d->dpi = w;
     item_setup(hbox, w, _("_DPI:"), TRUE);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+    add_widget_to_table(table, hbox, NULL, TRUE, i++);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     spin_entry_set_range(w, 1, GRID_MAX);
-    item_setup(hbox, w, _("_Grid:"), FALSE);
+    add_widget_to_table(table, w, _("_Grid:"), FALSE, i++);
     d->grid = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_color_button(wi);
-    item_setup(hbox, w, _("_Background Color:"), FALSE);
+    add_widget_to_table(table, w, _("_Background Color:"), FALSE, i++);
     d->bgcol = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = combo_box_create();
     combo_box_append_text(w, _("solid"));
     combo_box_append_text(w, _("dot"));
-    item_setup(hbox, w, _("_Line attribute of focus frame:"), FALSE);
+    add_widget_to_table(table, w, _("_Line attribute of focus frame:"), FALSE, i++);
     d->fftype = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = combo_box_create();
-    for (i = 0; gra2cairo_antialias_type[i]; i++) {
-      combo_box_append_text(w, _(gra2cairo_antialias_type[i]));
+    for (j = 0; gra2cairo_antialias_type[j]; j++) {
+      combo_box_append_text(w, _(gra2cairo_antialias_type[j]));
     }
     d->antialias = w;
-    item_setup(hbox, w, _("_Antialias:"), FALSE);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+    add_widget_to_table(table, w, _("_Antialias:"), FALSE, i++);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_check_button_new_with_mnemonic(_("_Preserve line width and style"));
     d->preserve_width = w;
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_check_button_new_with_mnemonic(_("_Load files on redraw"));
     d->loadfile = w;
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+    add_widget_to_table(table, w, NULL, FALSE, i++);
 
-    hbox = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-    item_setup(hbox, w, _("_Maximum number of data on redraw:"), FALSE);
+    add_widget_to_table(table, w, _("_Maximum number of data on redraw:"), FALSE, i++);
     d->data_num = w;
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
   }
   ViewerDialogSetupItem(wi, d);
 }
