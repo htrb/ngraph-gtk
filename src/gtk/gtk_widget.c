@@ -61,9 +61,11 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
     col++;
   }
 
-  align = gtk_alignment_new(0, 0.5, (expand) ? 1 : 0, 0);
-  gtk_container_add(GTK_CONTAINER(align), w);
-  gtk_table_attach(GTK_TABLE(table), align, col, col + width, n, n + 1, ((expand) ? GTK_EXPAND : 0) | GTK_FILL, 0, 4, 4);
+  if (w) {
+    align = gtk_alignment_new(0, 0.5, (expand) ? 1 : 0, 0);
+    gtk_container_add(GTK_CONTAINER(align), w);
+    gtk_table_attach(GTK_TABLE(table), align, col, col + width, n, n + 1, ((expand) ? GTK_EXPAND : 0) | GTK_FILL, 0, 4, 4);
+  }
 
   return label;
 }

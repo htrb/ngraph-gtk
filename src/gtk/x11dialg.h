@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.50 2009/12/17 10:55:44 hito Exp $
+ * $Id: x11dialg.h,v 1.51 2009/12/18 04:42:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -187,8 +187,8 @@ struct FitDialog
   /****** local member *******/
   GtkWidget *type, *through_point, *x, *y, *dim, *weight,
     *min, *max, *div, *interpolation, *formula, *converge,
-    *derivatives, *p[FIT_PARM_NUM], *d[FIT_PARM_NUM], *through_box,
-    *dim_box, *weight_box, *usr_deriv_box, *usr_def_frame, *div_box, *func_label;
+    *derivatives, *p[FIT_PARM_NUM], *d[FIT_PARM_NUM], *d_label[FIT_PARM_NUM], *through_box,
+    *dim_label, *usr_def_frame, *div_box, *func_label;
   struct objlist *Obj;
   int Id;
   int Lastid;

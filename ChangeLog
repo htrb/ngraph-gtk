@@ -1,3 +1,11 @@
+2009-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (set_user_fit_sensitivity)
+	(create_user_fit_frame): add.
+	(FitDialogSetSensitivity): use "set_user_fit_sensitivity()".
+	(FitDialogSetup): use "GtkTable" instead of "GtkHBox" or
+	"GtkVBox".
+
 2009-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (create_file_entry_with_cb): add.

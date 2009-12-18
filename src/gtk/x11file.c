@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.123 2009/12/17 10:55:44 hito Exp $
+ * $Id: x11file.c,v 1.124 2009/12/18 04:42:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1194,10 +1194,22 @@ FitDialogDraw(GtkWidget *w, gpointer client_data)
 static void
 set_fitdialog_sensitivity(struct FitDialog *d, int type, int through)
 {
-  gtk_widget_set_sensitive(d->dim_box, type == 0);
+  gtk_widget_set_sensitive(d->dim_label, type == 0);
+  gtk_widget_set_sensitive(d->dim, type == 0);
   gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
   gtk_widget_set_sensitive(d->through_box, through);
   gtk_widget_set_sensitive(d->through_point, TRUE);
+}
+
+static void
+set_user_fit_sensitivity(struct FitDialog *d, int active)
+{
+  int i;
+
+  for (i = 0; i < FIT_PARM_NUM; i++) {
+    gtk_widget_set_sensitive(d->d_label[i], active);
+    gtk_widget_set_sensitive(d->d[i], active);
+  }
 }
 
 static void
@@ -1237,20 +1249,63 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
     gtk_label_set_text(GTK_LABEL(d->func_label), "");
     deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
 
-    gtk_widget_set_sensitive(d->dim_box, FALSE);
+    gtk_widget_set_sensitive(d->dim_label, FALSE);
+    gtk_widget_set_sensitive(d->dim, FALSE);
     gtk_widget_set_sensitive(d->through_point, FALSE);
     gtk_widget_set_sensitive(d->through_box, FALSE);
     gtk_widget_set_sensitive(d->usr_def_frame, TRUE);
-    gtk_widget_set_sensitive(d->usr_deriv_box, deriv);
+    set_user_fit_sensitivity(d, deriv);
     break;
   }
   gtk_widget_set_sensitive(d->div_box, ! intp);
 }
 
+static GtkWidget *
+create_user_fit_frame(struct FitDialog *d)
+{
+  GtkWidget *table, *w;
+  int i, j;
+
+  table = gtk_table_new(1, 4, FALSE);
+
+  j = 0;
+  w = create_text_entry(FALSE, TRUE);
+  add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 3, 4, j++);
+  d->formula = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table_sub(table, w, _("_Converge (%):"), TRUE, 0, 1, 4, j);
+  d->converge = w;
+
+  w = gtk_check_button_new_with_mnemonic(_("_Derivatives"));
+  add_widget_to_table_sub(table, w, NULL, TRUE, 2, 2, 4, j++);
+  d->derivatives = w;
+
+  for (i = 0; i < FIT_PARM_NUM; i++) {
+    char p[] = "%0_0:", dd[] = "dF/d(%0_0):";
+    
+    p[sizeof(p) - 3] += i;
+    dd[sizeof(dd) - 4] += i;
+
+    w = create_text_entry(TRUE, TRUE);
+    add_widget_to_table_sub(table, w, p, TRUE, 0, 1, 4, j);
+    d->p[i] = w;
+
+    w = create_text_entry(TRUE, TRUE);
+    d->d_label[i] = add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, 4, j++);
+    d->d[i] = w;
+  }
+
+  w = gtk_frame_new(_("User definition"));
+  gtk_container_add(GTK_CONTAINER(w), table);
+
+  return w;
+}
+
 static void
 FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *hbox2, *vbox, *vbox2, *vbox3, *frame;
+  GtkWidget *w, *hbox, *hbox2, *vbox, *frame, *table;
   struct FitDialog *d;
   char title[20], **enumlist, mes[10];
   int i;
@@ -1268,36 +1323,33 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_Load"), IDLOAD);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
+ 
+    table = gtk_table_new(1, 5, FALSE);
+
     vbox = gtk_vbox_new(FALSE, 4);
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = combo_box_create();
-    item_setup(hbox, w, _("_Type:"), FALSE);
+    add_widget_to_table_sub(table, w, _("_Type:"), FALSE, 0, 1, 5, 0);
     d->type = w;
 
     hbox2 = gtk_hbox_new(FALSE, 4);
     w = combo_box_create();
-    item_setup(hbox2, w, _("_Dim:"), FALSE);
+    d->dim_label = add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 5, 0);
     d->dim = w;
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, FALSE, FALSE, 4);
-    d->dim_box = hbox2;
 
     w = gtk_label_new("");
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    gtk_misc_set_alignment(GTK_MISC(w), 0, 1);
+    add_widget_to_table_sub(table, w, NULL, TRUE, 4, 1, 5, 0);
     d->func_label = w;
 
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
 
     hbox2 = gtk_hbox_new(FALSE, 4);
     w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox2, w, _("_Weight:"), TRUE);
+    add_widget_to_table_sub(table, w, _("_Weight:"), TRUE, 0, 4, 5, 1);
     d->weight = w;
-    d->weight_box = hbox2;
 
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 4);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 4);
 
     hbox = gtk_hbox_new(FALSE, 4);
 
@@ -1316,7 +1368,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     d->through_box = hbox2;
 
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
     frame = gtk_frame_new(_("Action"));
@@ -1350,58 +1402,10 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), hbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
-    vbox = gtk_vbox_new(FALSE, 4);
-    hbox = gtk_hbox_new(FALSE, 4);
 
-    w = create_text_entry(FALSE, TRUE);
-    item_setup(hbox, w, _("_Formula:"), TRUE);
-    d->formula = w;
-
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = create_text_entry(TRUE, TRUE);
-    item_setup(hbox, w, _("_Converge (%):"), TRUE);
-    d->converge = w;
-
-    w = gtk_check_button_new_with_mnemonic(_("_Derivatives"));
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    d->derivatives = w;
-
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-
-    
-    vbox2 = gtk_vbox_new(FALSE, 4);
-    vbox3 = gtk_vbox_new(FALSE, 4);
-    for (i = 0; i < FIT_PARM_NUM; i++) {
-      char p[] = "%0_0:", dd[] = "dF/d(%0_0):";
-    
-      p[sizeof(p) - 3] += i;
-      dd[sizeof(dd) - 4] += i;
-
-      hbox = gtk_hbox_new(FALSE, 4);
-      w = create_text_entry(TRUE, TRUE);
-      item_setup(hbox, w, p, TRUE);
-      d->p[i] = w;
-      gtk_box_pack_start(GTK_BOX(vbox2), hbox, TRUE, TRUE, 4);
-
-      hbox = gtk_hbox_new(FALSE, 4);
-      w = create_text_entry(TRUE, TRUE);
-      item_setup(hbox, w, dd, TRUE);
-      d->d[i] = w;
-      gtk_box_pack_start(GTK_BOX(vbox3), hbox, TRUE, TRUE, 4);
-    }
-    hbox = gtk_hbox_new(FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 4);
-    gtk_box_pack_start(GTK_BOX(hbox), vbox3, TRUE, TRUE, 4);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-    d->usr_deriv_box = vbox3;
-
-    frame = gtk_frame_new(_("User definition"));
-    gtk_container_add(GTK_CONTAINER(frame), vbox);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    frame = create_user_fit_frame(d);
     d->usr_def_frame = frame;
+    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
     enumlist = (char **) chkobjarglist(d->Obj, "type");
     for (i = 0; enumlist[i]; i++) {
@@ -2346,7 +2350,7 @@ set_fit_button_label(GtkWidget *btn, const char *str)
   if (str && str[0] != '\0') {
     snprintf(buf, sizeof(buf), "Fit:%s", str);
   } else {
-    snprintf(buf, sizeof(buf), "Create");
+    snprintf(buf, sizeof(buf), _("Create"));
   }
   gtk_button_set_label(GTK_BUTTON(btn), buf);
 }
