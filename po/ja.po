@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-12-18 12:56+0900\n"
+"POT-Creation-Date: 2009-12-18 15:04+0900\n"
 "PO-Revision-Date: 2009-12-17 11:55+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -164,11 +164,11 @@ msgstr "グリッド(_G)"
 msgid "_Zoom:"
 msgstr "ズーム(_Z):"
 
-#: src/gtk/x11axis.c:1223 src/gtk/x11axis.c:1546 src/gtk/x11file.c:1382
+#: src/gtk/x11axis.c:1223 src/gtk/x11axis.c:1546 src/gtk/x11file.c:1392
 msgid "_Min:"
 msgstr "最小値(_M):"
 
-#: src/gtk/x11axis.c:1227 src/gtk/x11axis.c:1551 src/gtk/x11file.c:1386
+#: src/gtk/x11axis.c:1227 src/gtk/x11axis.c:1551 src/gtk/x11file.c:1396
 msgid "_Max:"
 msgstr "最大値(_M):"
 
@@ -184,7 +184,7 @@ msgstr "ファイル(_F)"
 msgid "_Scale:"
 msgstr "スケール法(_S):"
 
-#: src/gtk/x11axis.c:1253 src/gtk/x11file.c:1391 src/gtk/x11print.c:248
+#: src/gtk/x11axis.c:1253 src/gtk/x11file.c:1401 src/gtk/x11print.c:248
 msgid "_Div:"
 msgstr "分割数(_D):"
 
@@ -200,12 +200,12 @@ msgstr "スケール"
 msgid "Draw _Baseline"
 msgstr "軸基線描画(_B)"
 
-#: src/gtk/x11axis.c:1375 src/gtk/x11file.c:2848 src/gtk/x11lgnd.c:639
+#: src/gtk/x11axis.c:1375 src/gtk/x11file.c:2853 src/gtk/x11lgnd.c:639
 #: src/gtk/x11lgndx.c:398
 msgid "Line _Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1379 src/gtk/x11file.c:2852 src/gtk/x11lgndx.c:402
+#: src/gtk/x11axis.c:1379 src/gtk/x11file.c:2857 src/gtk/x11lgndx.c:402
 msgid "_Line Width:"
 msgstr "線幅(_W):"
 
@@ -660,7 +660,7 @@ msgstr "全て(_A)"
 msgid "Couldn't convert filename from UTF-8."
 msgstr "UTF8 文字列からファイル名に変換できません."
 
-#: src/gtk/x11dialg.c:807 src/gtk/gtk_widget.c:115
+#: src/gtk/x11dialg.c:807 src/gtk/gtk_widget.c:117
 msgid "Couldn't convert filename to UTF-8."
 msgstr "ファイル名から UTF8 文字列に変換できません."
 
@@ -704,7 +704,7 @@ msgstr "データ数"
 msgid "duplicate _Behind"
 msgstr "直後に複製(_B)"
 
-#: src/gtk/x11file.c:111 src/gtk/x11file.c:1426 src/gtk/x11menu.c:1292
+#: src/gtk/x11file.c:111 src/gtk/x11file.c:1441 src/gtk/x11menu.c:1292
 msgid "_Draw"
 msgstr "描画(_D)"
 
@@ -740,266 +740,266 @@ msgstr "プロフィール(_P):"
 msgid "Please specify the profile."
 msgstr "プロファイルを設定してください."
 
-#: src/gtk/x11file.c:732
+#: src/gtk/x11file.c:734
 msgid "Setting file not found."
 msgstr "設定ファイルが見つかりません."
 
-#: src/gtk/x11file.c:767
+#: src/gtk/x11file.c:773
 msgid "No settings."
 msgstr "設定がありません."
 
-#: src/gtk/x11file.c:787
+#: src/gtk/x11file.c:794
 msgid "Overwrite existing profile?"
 msgstr "既存のプロファイルに上書きしますか?"
 
-#: src/gtk/x11file.c:874
+#: src/gtk/x11file.c:881
 #, c-format
 msgid "Delete the profile '%s'?"
 msgstr "プロファイル '%s' を削除しますか?"
 
-#: src/gtk/x11file.c:885
+#: src/gtk/x11file.c:892
 #, c-format
 msgid "The profile '%s' is not exist."
 msgstr "プロファイル '%s' は存在しません."
 
-#: src/gtk/x11file.c:965
+#: src/gtk/x11file.c:975
 #, c-format
 msgid "The profile '%s' is saved."
 msgstr "プロファイル '%s' は保存されました."
 
-#: src/gtk/x11file.c:970
+#: src/gtk/x11file.c:980
 #, c-format
 msgid "The profile '%s' is deleted."
 msgstr "プロファイル '%s' は削除されました."
 
-#: src/gtk/x11file.c:1111
+#: src/gtk/x11file.c:1128
 msgid "Fitting Results"
 msgstr "フィット結果"
 
-#: src/gtk/x11file.c:1273
+#: src/gtk/x11file.c:1290
 msgid "_Formula:"
 msgstr "フィット式(_F):"
 
-#: src/gtk/x11file.c:1277
+#: src/gtk/x11file.c:1294
 msgid "_Converge (%):"
 msgstr "収束(%) (_C):"
 
-#: src/gtk/x11file.c:1280
+#: src/gtk/x11file.c:1297
 msgid "_Derivatives"
 msgstr "微分式指定(_D)"
 
-#: src/gtk/x11file.c:1299
+#: src/gtk/x11file.c:1316
 msgid "User definition"
 msgstr "ユーザ定義"
 
-#: src/gtk/x11file.c:1314
+#: src/gtk/x11file.c:1331
 #, c-format
 msgid "Fit %d"
 msgstr "フィット %d"
 
-#: src/gtk/x11file.c:1323 src/gtk/x11file.c:2955
-msgid "_Load"
-msgstr "読込(_L)"
-
-#: src/gtk/x11file.c:1333 src/gtk/x11file.c:2815
+#: src/gtk/x11file.c:1343 src/gtk/x11file.c:2820
 msgid "_Type:"
 msgstr "タイプ(_T):"
 
-#: src/gtk/x11file.c:1338
+#: src/gtk/x11file.c:1348
 msgid "_Dim:"
 msgstr "多項式次元(_D):"
 
-#: src/gtk/x11file.c:1349
+#: src/gtk/x11file.c:1359
 msgid "_Weight:"
 msgstr "重み付け(_W):"
 
-#: src/gtk/x11file.c:1356
+#: src/gtk/x11file.c:1366
 msgid "_Through"
 msgstr "通過点(_T)"
 
-#: src/gtk/x11file.c:1374
+#: src/gtk/x11file.c:1384
 msgid "Action"
 msgstr "動作"
 
-#: src/gtk/x11file.c:1397
+#: src/gtk/x11file.c:1407
 msgid "_Interpolation"
 msgstr "補完(_I)"
 
-#: src/gtk/x11file.c:1401
+#: src/gtk/x11file.c:1411
 msgid "Draw X range"
 msgstr "描画範囲(X)"
 
-#: src/gtk/x11file.c:1422
+#: src/gtk/x11file.c:1432 src/gtk/x11file.c:2960
+msgid "_Load"
+msgstr "読込(_L)"
+
+#: src/gtk/x11file.c:1445
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1630 src/gtk/x11file.c:1855 src/gtk/x11view.c:984
+#: src/gtk/x11file.c:1635 src/gtk/x11file.c:1860 src/gtk/x11view.c:984
 msgid "Line No."
 msgstr "行"
 
-#: src/gtk/x11file.c:1648 src/gtk/x11file.c:1866
+#: src/gtk/x11file.c:1653 src/gtk/x11file.c:1871
 msgid "_Line:"
 msgstr "新規行(_L):"
 
-#: src/gtk/x11file.c:1994
+#: src/gtk/x11file.c:1999
 msgid "_Head skip:"
 msgstr "先頭スキップ行(_H):"
 
-#: src/gtk/x11file.c:1998
+#: src/gtk/x11file.c:2003
 msgid "_Read step:"
 msgstr "読込ステップ行(_S):"
 
-#: src/gtk/x11file.c:2002
+#: src/gtk/x11file.c:2007
 msgid "_Final line:"
 msgstr "最終行(_F):"
 
-#: src/gtk/x11file.c:2006
+#: src/gtk/x11file.c:2011
 msgid "_Remark:"
 msgstr "コメント行(_R):"
 
-#: src/gtk/x11file.c:2010
+#: src/gtk/x11file.c:2015
 msgid "_IFS:"
 msgstr "区切文字(_I):"
 
-#: src/gtk/x11file.c:2013
+#: src/gtk/x11file.c:2018
 msgid "_CSV"
 msgstr "CSV形式"
 
-#: src/gtk/x11file.c:2134
+#: src/gtk/x11file.c:2139
 msgid "_X smooth:"
 msgstr "_X 隣接平均:"
 
-#: src/gtk/x11file.c:2138
+#: src/gtk/x11file.c:2143
 msgid "_Y smooth:"
 msgstr "_Y 隣接平均:"
 
-#: src/gtk/x11file.c:2142
+#: src/gtk/x11file.c:2147
 msgid "_X math:"
 msgstr "_X 変換数式:"
 
-#: src/gtk/x11file.c:2146
+#: src/gtk/x11file.c:2151
 msgid "_Y math:"
 msgstr "_Y 変換数式:"
 
-#: src/gtk/x11file.c:2353 src/gtk/x11file.c:3134
+#: src/gtk/x11file.c:2358 src/gtk/x11file.c:3139
 #, c-format
 msgid "Create"
 msgstr "作成"
 
-#: src/gtk/x11file.c:2820 src/gtk/x11lgnd.c:1198
+#: src/gtk/x11file.c:2825 src/gtk/x11lgnd.c:1198
 msgid "_Mark:"
 msgstr "マーク(_M):"
 
-#: src/gtk/x11file.c:2825
+#: src/gtk/x11file.c:2830
 msgid "_Curve:"
 msgstr "曲線(_C):"
 
-#: src/gtk/x11file.c:2833
+#: src/gtk/x11file.c:2838
 msgid "_Color 1:"
 msgstr "色 1(_C):"
 
-#: src/gtk/x11file.c:2837
+#: src/gtk/x11file.c:2842
 msgid "_Color 2:"
 msgstr "色 2(_C):"
 
-#: src/gtk/x11file.c:2856 src/gtk/x11lgnd.c:1203
+#: src/gtk/x11file.c:2861 src/gtk/x11lgnd.c:1203
 msgid "_Size:"
 msgstr "サイズ(_S):"
 
-#: src/gtk/x11file.c:2860 src/gtk/x11lgnd.c:649 src/gtk/x11lgndx.c:406
+#: src/gtk/x11file.c:2865 src/gtk/x11lgnd.c:649 src/gtk/x11lgndx.c:406
 msgid "_Miter:"
 msgstr "マイター(_M):"
 
-#: src/gtk/x11file.c:2864 src/gtk/x11lgnd.c:659 src/gtk/x11lgndx.c:410
+#: src/gtk/x11file.c:2869 src/gtk/x11lgnd.c:659 src/gtk/x11lgndx.c:410
 msgid "_Join:"
 msgstr "ジョイン(_J):"
 
-#: src/gtk/x11file.c:2867
+#: src/gtk/x11file.c:2872
 msgid "_Clip"
 msgstr "クリップ(_C)"
 
-#: src/gtk/x11file.c:2902
+#: src/gtk/x11file.c:2907
 msgid "_X column:"
 msgstr "_X カラム:"
 
-#: src/gtk/x11file.c:2907
+#: src/gtk/x11file.c:2912
 msgid "_X axis:"
 msgstr "_X 軸:"
 
-#: src/gtk/x11file.c:2917
+#: src/gtk/x11file.c:2922
 msgid "_Y column:"
 msgstr "_Y カラム:"
 
-#: src/gtk/x11file.c:2922
+#: src/gtk/x11file.c:2927
 msgid "_Y axis:"
 msgstr "_Y 軸:"
 
-#: src/gtk/x11file.c:2947
+#: src/gtk/x11file.c:2952
 msgid "_Plot"
 msgstr "プロット(_P)"
 
-#: src/gtk/x11file.c:2951
+#: src/gtk/x11file.c:2956
 msgid "_Math"
 msgstr "変換数式(_M) "
 
-#: src/gtk/x11file.c:3064
+#: src/gtk/x11file.c:3069
 msgid "This file contain invalid UTF-8 strings."
 msgstr "ファイルに不正な UTF-8 文字列が含まれています."
 
-#: src/gtk/x11file.c:3079
+#: src/gtk/x11file.c:3084
 #, c-format
 msgid "Data %d"
 msgstr "データ %d"
 
-#: src/gtk/x11file.c:3083
+#: src/gtk/x11file.c:3088
 msgid "_Apply all"
 msgstr "全てに適用(_A)"
 
-#: src/gtk/x11file.c:3087
+#: src/gtk/x11file.c:3092
 msgid "_Copy all"
 msgstr "全てコピー(_C)"
 
-#: src/gtk/x11file.c:3093 src/gtk/x11merge.c:141 src/gtk/x11print.c:160
+#: src/gtk/x11file.c:3098 src/gtk/x11merge.c:141 src/gtk/x11print.c:160
 msgid "_File:"
 msgstr "ファイル名(_F):"
 
-#: src/gtk/x11file.c:3096
+#: src/gtk/x11file.c:3101
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:3101 src/gtk/x11menu.c:954
+#: src/gtk/x11file.c:3106 src/gtk/x11menu.c:954
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:3113 src/gtk/x11view.c:994
+#: src/gtk/x11file.c:3118 src/gtk/x11view.c:994
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:3117 src/gtk/x11view.c:995
+#: src/gtk/x11file.c:3122 src/gtk/x11view.c:995
 msgid "_Move"
 msgstr "移動(_M)"
 
-#: src/gtk/x11file.c:3135
+#: src/gtk/x11file.c:3140
 msgid "_Fit:"
 msgstr "フィット(_F):"
 
-#: src/gtk/x11file.c:3397
+#: src/gtk/x11file.c:3402
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:3441
+#: src/gtk/x11file.c:3446
 msgid "Data open"
 msgstr "データを開く"
 
-#: src/gtk/x11file.c:4470 src/gtk/x11file.c:4520
+#: src/gtk/x11file.c:4475 src/gtk/x11file.c:4525
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4478 src/gtk/x11file.c:4526
+#: src/gtk/x11file.c:4483 src/gtk/x11file.c:4531
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11file.c:4483
+#: src/gtk/x11file.c:4488
 msgid "Type"
 msgstr "タイプ"
 
@@ -2333,7 +2333,7 @@ msgstr "描画中"
 msgid "_Copy Settings"
 msgstr "設定のコピー(_C)"
 
-#: src/gtk/gtk_widget.c:535
+#: src/gtk/gtk_widget.c:537
 msgid "Pick a Color"
 msgstr "色の選択"
 
