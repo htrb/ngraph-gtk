@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.78 2009/12/17 10:55:44 hito Exp $
+ * $Id: x11axis.c,v 1.79 2009/12/18 06:04:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -128,7 +128,7 @@ axis_scale_push(struct objlist *obj, int id)
 char *
 AxisCB(struct objlist *obj, int id)
 {
-  char *s, *valstr, *name;;
+  char *s, *valstr, *name;
   int dir;
 
   getobj(obj, "direction", id, 0, NULL, &dir);
@@ -1109,7 +1109,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
     if ((num > 0) && (anum != 0)) {
       int len;
       len = 6 * num + 6;
-      buf = g_malloc(len);;
+      buf = g_malloc(len);
       if (buf) {
 	j = 0;
 	j += snprintf(buf + j, len - j, "file:");

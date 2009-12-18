@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.15 2009/11/16 09:13:04 hito Exp $
+ * $Id: nconfig.c,v 1.16 2009/12/18 06:04:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -283,7 +283,7 @@ replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *
 
   while (fgetline(fp, &buf) == 0) {
     if (buf[0]=='[') {
-      return buf;;
+      return buf;
     }
 
     s = buf;

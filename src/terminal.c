@@ -75,7 +75,7 @@ main(int argc,char **argv)
   len = snprintf(buf, sizeof(buf) - 1, "%d", getpid()) + 1;
   if (write(fdo, buf, len) < 0) {
     close(fdo);
-    return 1;;
+    return 1;
   }
   
   close(fdo);

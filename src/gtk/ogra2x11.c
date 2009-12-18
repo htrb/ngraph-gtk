@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.31 2009/11/16 09:13:05 hito Exp $
+ * $Id: ogra2x11.c,v 1.32 2009/12/18 06:04:29 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -88,7 +88,7 @@ static int gtk_evloop(struct objlist *obj, char *inst, char *rval, int argc,
 		      char **argv);
 static int gtkloadconfig(struct gtklocal *gtklocal);
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
-static void gtkchangedpi(struct gtklocal *gtklocal);;
+static void gtkchangedpi(struct gtklocal *gtklocal);
 static gboolean gtkevpaint(GtkWidget * w, GdkEventExpose * e,
 			   gpointer user_data);
 static int gtkinit(struct objlist *obj, char *inst, char *rval, int argc,

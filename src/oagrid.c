@@ -1,5 +1,5 @@
 /* 
- * $Id: oagrid.c,v 1.18 2009/11/16 09:13:04 hito Exp $
+ * $Id: oagrid.c,v 1.19 2009/12/18 06:04:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -116,7 +116,7 @@ struct grid_prm {
 static int
 calc_intersection(int x1, int y1, int dir1, int x2, int y2, int dir2, int *ix, int *iy)
 {
-  double x, y, a, b;;
+  double x, y, a, b;
 
   if (dir1 == dir2 || dir1 - dir2 == 18000 || dir1 - dir2 == -18000)
     return 1;

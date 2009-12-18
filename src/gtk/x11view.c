@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.178 2009/12/10 08:59:53 hito Exp $
+ * $Id: x11view.c,v 1.179 2009/12/18 06:04:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -779,7 +779,7 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
 
   success = FALSE;
   if (GlobalLock || Menulock || DnDLock)
-    goto End;;
+    goto End;
 
   d = (struct Viewer *) user_data;
 
@@ -2075,7 +2075,7 @@ AlignFocusedObj(int align)
   focus = (struct FocusObj **) arraydata(d->focusobj);
 
   if (num == 1) {
-    maxx = Menulocal.PaperWidth;;
+    maxx = Menulocal.PaperWidth;
     maxy = Menulocal.PaperHeight;
     minx = 0;
     miny = 0;

@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.124 2009/12/18 04:42:16 hito Exp $
+ * $Id: x11file.c,v 1.125 2009/12/18 06:04:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -411,7 +411,7 @@ set_sensitivity_by_row_num(GtkWidget *tree, GtkWidget *btn)
 {
   GtkTreeModel *model;
 
-  model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree));;
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(tree));
   g_signal_connect(model, "row-deleted", G_CALLBACK(set_btn_sensitivity_delete_cb), btn);
   g_signal_connect(model, "row-inserted", G_CALLBACK(set_btn_sensitivity_insert_cb), btn);
   gtk_widget_set_sensitive(btn, FALSE);
@@ -435,7 +435,7 @@ set_sensitivity_by_selection(GtkWidget *tree, GtkWidget *btn)
 {
   GtkTreeSelection *sel;
 
-  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));;
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
   g_signal_connect(sel, "changed", G_CALLBACK(set_btn_sensitivity_selection_cb), btn);
   gtk_widget_set_sensitive(btn, FALSE);
 }
@@ -706,10 +706,12 @@ FitCB(struct objlist *obj, int id)
 }
 
 static void
-FitDialogCopy(  struct FitDialog *d)
+FitDialogCopy(GtkButton *btn, gpointer user_data)
 {
+  struct FitDialog *d;
   int sel;
 
+  d = (struct FitDialog *) user_data;
   sel = CopyClick(d->widget, d->Obj, d->Id, FitCB);
   if (sel != -1)
     FitDialogSetupItem(d->widget, d, sel);
@@ -756,17 +758,22 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
 }
 
 static void
-FitDialogLoad(struct FitDialog *d)
+FitDialogLoad(GtkButton *btn, gpointer user_data)
 {
+  struct FitDialog *d;
   int lastid, id;
+
+  d = (struct FitDialog *) user_data;
 
   if (!FitDialogLoadConfig(d, TRUE))
     return;
+
   lastid = chkobjlastinst(d->Obj);
   if ((d->Lastid < 0) || (lastid == d->Lastid)) {
     MessageBox(d->widget, _("No settings."), FITSAVE, MB_OK);
     return;
   }
+
   FitLoadDialog(&DlgFitLoad, d->Obj, d->Lastid + 1);
   if ((DialogExecute(d->widget, &DlgFitLoad) == IDOK)
       && (DlgFitLoad.sel >= 0)) {
@@ -894,12 +901,15 @@ delete_fitobj(struct FitDialog *d, char *profile)
 }
 
 static void
-FitDialogSave(struct FitDialog *d)
+FitDialogSave(GtkWidget *w, gpointer client_data)
 {
   int i, r, len;
   char *s, *ngpfile, *ptr;
   int error;
   HANDLE hFile;
+  struct FitDialog *d;
+
+  d = (struct FitDialog *) client_data;
 
   if (!FitDialogLoadConfig(d, FALSE))
     return;
@@ -984,15 +994,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
   struct FitDialog *d;
   double derror, correlation, coe[10];
   char *equation, *math, *inst, buf[1024];
-  int i, j, dim, dimension, tbl[10], type, num;
-#if NEW_MATH_CODE
-  MathEquation *code;
-  MathEquationParametar *prm;
-#else
-  char *code;
-  struct narray needarray;
-  int *needdata, maxdim, need2pass;
-#endif
+  int i, j, dimension, type, num;
 
   d = (struct FitDialog *) client_data;
 
@@ -1033,6 +1035,8 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
   if (equation == NULL) {
     snprintf(buf, sizeof(buf), "Undefined");
   } else if (type != 4) {
+    int dim;
+
     i = 0;
 
     if (type == 0) {
@@ -1064,10 +1068,19 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
     }
   } else {
+    int dim, tbl[10];
 #if NEW_MATH_CODE
+    MathEquation *code;
+    MathEquationParametar *prm;
+
     code = math_equation_basic_new();
     if (code == NULL)
       return;
+
+    if (math_equation_add_parameter(code, 0, 1, 3, MATH_EQUATION_PARAMETAR_USE_ID)) {
+      math_equation_free(code);
+      return;
+    }
 
     if (math_equation_parse(code, math)) {
       math_equation_free(code);
@@ -1080,6 +1093,10 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
     }
     math_equation_free(code);
 #else
+    char *code;
+    struct narray needarray;
+    int *needdata, maxdim, need2pass;
+
     arrayinit(&needarray, sizeof(int));
     mathcode(math, &code, &needarray, NULL, &maxdim, &need2pass,
 	     TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
@@ -1317,13 +1334,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
 
-    w = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_COPY, IDCOPY);
-    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "fit");
-
-    gtk_dialog_add_button(GTK_DIALOG(wi), _("_Load"), IDLOAD);
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
-
- 
     table = gtk_table_new(1, 5, FALSE);
 
     vbox = gtk_vbox_new(FALSE, 4);
@@ -1417,17 +1427,25 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
       combo_box_append_text(d->dim, mes);
     }
 
-    hbox = gtk_hbox_new(FALSE, 4);
+    hbox = add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(FitDialogCopy), d, "fit");
 
-    w = gtk_button_new_with_mnemonic(_("_Result"));
+    w = gtk_button_new_with_mnemonic(_("_Load"));
+    g_signal_connect(w, "clicked", G_CALLBACK(FitDialogLoad), d);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
-    g_signal_connect(w, "clicked", G_CALLBACK(FitDialogResult), d);
+
+    w = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+    g_signal_connect(w, "clicked", G_CALLBACK(FitDialogSave), d);
+    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+
 
     w = gtk_button_new_with_mnemonic(_("_Draw"));
-    gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    gtk_box_pack_end(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     g_signal_connect(w, "clicked", G_CALLBACK(FitDialogDraw), d);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    w = gtk_button_new_with_mnemonic(_("_Result"));
+    gtk_box_pack_end(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+    g_signal_connect(w, "clicked", G_CALLBACK(FitDialogResult), d);
+
 
     g_signal_connect(d->dim, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->type, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
@@ -1435,7 +1453,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->interpolation, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
   }
-
 
   FitDialogSetupItem(wi, d, d->Id);
 }
@@ -1451,18 +1468,6 @@ FitDialogClose(GtkWidget *w, void *data)
   switch (d->ret) {
   case IDOK:
     break;
-  case IDCOPY:
-    FitDialogCopy(d);
-    d->ret = IDLOOP;
-    return;
-  case IDLOAD:
-    FitDialogLoad(d);
-    d->ret = IDLOOP;
-    return;
-  case IDSAVE:
-    FitDialogSave(d);
-    d->ret = IDLOOP;
-    return;
   case IDDELETE:
     break;
   case IDCANCEL:
@@ -2329,7 +2334,7 @@ file_setup_item(struct FileDialog *d, int id)
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
   if (valstr[i] == ':')
     i++;
-  combo_box_entry_set_text(d->xaxis, valstr + i);;
+  combo_box_entry_set_text(d->xaxis, valstr + i);
   g_free(valstr);
 
   SetWidgetFromObjField(d->ycol, d->Obj, id, "y");
@@ -2338,7 +2343,7 @@ file_setup_item(struct FileDialog *d, int id)
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
   if (valstr[i] == ':')
     i++;
-  combo_box_entry_set_text(d->yaxis, valstr + i);;
+  combo_box_entry_set_text(d->yaxis, valstr + i);
   g_free(valstr);
 }
 
@@ -3427,7 +3432,7 @@ void
 CmFileOpen(void)
 {
   int id, ret;
-  char *name;;
+  char *name;
   char **file = NULL, **ptr;
   struct objlist *obj;
   struct narray farray;

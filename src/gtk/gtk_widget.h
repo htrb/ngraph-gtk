@@ -40,6 +40,6 @@ GtkWidget *item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand
 GtkWidget *get_parent_window(GtkWidget *w);
 GtkWidget *add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n);
 GtkWidget *add_widget_to_table(GtkWidget *table, GtkWidget *w, char *title, int expand, int n);
-void add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *obj_name);
+GtkWidget *add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *obj_name);
 
 #endif

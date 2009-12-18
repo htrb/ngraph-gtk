@@ -76,7 +76,7 @@ add_widget_to_table(GtkWidget *table, GtkWidget *w, char *title, int expand, int
   return add_widget_to_table_sub(table, w, title, expand, 0, (title) ? 1 : 2, 2, n);
 }
 
-void
+GtkWidget *
 add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *obj_name)
 {
   GtkWidget *hbox, *w;
@@ -87,6 +87,8 @@ add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *ob
   g_signal_connect(w, "clicked", cb, d);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
   gtk_box_pack_start(GTK_BOX(parent_box), hbox, FALSE, FALSE, 4);
+
+  return hbox;
 }
 
 GtkWidget *

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.105 2009/11/25 12:19:07 hito Exp $
+ * $Id: ofile.c,v 1.106 2009/12/18 06:04:29 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1715,30 +1715,30 @@ create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int use_f
 
   code = math_equation_basic_new();
   if (code == NULL)
-    return NULL;;
+    return NULL;
 
   if (use_prm) {
     if (math_equation_add_parameter(code, 0, 1, 3, MATH_EQUATION_PARAMETAR_USE_ID)) {
       math_equation_free(code);
-      return NULL;;
+      return NULL;
     }
   }
 
   if (use_fprm) {
     if (math_equation_add_parameter(code, 'F', 3, 5, MATH_EQUATION_PARAMETAR_USE_INDEX)) {
       math_equation_free(code);
-      return NULL;;
+      return NULL;
     }
   }
 
   if (math_equation_add_var(code, "X") != 0) {
     math_equation_free(code);
-    return NULL;;
+    return NULL;
   }
 
   if (math_equation_add_var(code, "Y") != 1) {
     math_equation_free(code);
-    return NULL;;
+    return NULL;
   }
 
   for (i = 0; i < sizeof(file_constant) / sizeof(*file_constant); i++) {
@@ -2292,7 +2292,7 @@ static int
 getdata_skip_step(struct f2ddata *fp)
 {
   char *buf;
-  int i, step, rcode;;
+  int i, step, rcode;
 
   step = 1;
   while (step < fp->rstep) {
@@ -3575,7 +3575,7 @@ getdataraw(struct f2ddata *fp,int maxdim,double *data,char *stat)
       dxstat=dystat=d2stat=d3stat=MUNDEF;
 #if NEW_MATH_CODE
       dx = data[fp->x].val;
-      dxstat = data[fp->x].type;;
+      dxstat = data[fp->x].type;
 #else
       dx=data[fp->x];
       dxstat=stat[fp->x];

@@ -5,6 +5,9 @@
 	(FitDialogSetSensitivity): use "set_user_fit_sensitivity()".
 	(FitDialogSetup): use "GtkTable" instead of "GtkHBox" or
 	"GtkVBox".
+	(FitDialogResult): call "math_equation_add_parameter()".
+	(FitDialogSave, FitDialogLoad, FitDialogCopy): connected to "clicked"
+	signal.
 
 2009-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
