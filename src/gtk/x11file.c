@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.125 2009/12/18 06:04:29 hito Exp $
+ * $Id: x11file.c,v 1.126 2009/12/18 09:02:59 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -994,7 +994,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
   struct FitDialog *d;
   double derror, correlation, coe[10];
   char *equation, *math, *inst, buf[1024];
-  int i, j, dimension, type, num;
+  int i, j, dim, dimension, type, num;
 
   d = (struct FitDialog *) client_data;
 
@@ -1035,8 +1035,6 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
   if (equation == NULL) {
     snprintf(buf, sizeof(buf), "Undefined");
   } else if (type != 4) {
-    int dim;
-
     i = 0;
 
     if (type == 0) {
@@ -1068,7 +1066,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
     }
   } else {
-    int dim, tbl[10];
+    int tbl[10];
 #if NEW_MATH_CODE
     MathEquation *code;
     MathEquationParametar *prm;
