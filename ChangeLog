@@ -157,7 +157,7 @@
 	(math_func_icbeta, math_func_erf, math_func_zeta)
 	(math_func_zetam1, math_func_zeta_int, math_func_zetam1_int)
 	(math_func_ynu, math_func_jnu, math_func_inu, math_func_knu)
-	(math_func_in, math_func_kn, math_func_yl, math_func_jl): add
+	(math_func_in, math_func_kn, math_func_yl, math_func_jl): add.
 
 2009-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
