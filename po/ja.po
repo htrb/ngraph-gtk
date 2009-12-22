@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-12-21 19:12+0900\n"
-"PO-Revision-Date: 2009-12-21 19:12+0900\n"
+"POT-Creation-Date: 2009-12-22 09:58+0900\n"
+"PO-Revision-Date: 2009-12-22 09:58+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -184,7 +184,7 @@ msgstr "ファイル(_F)"
 msgid "_Scale:"
 msgstr "スケール法(_S):"
 
-#: src/gtk/x11axis.c:1253 src/gtk/x11file.c:1399 src/gtk/x11print.c:252
+#: src/gtk/x11axis.c:1253 src/gtk/x11file.c:1399 src/gtk/x11print.c:256
 msgid "_Div:"
 msgstr "分割数(_D):"
 
@@ -959,7 +959,7 @@ msgstr "全てに適用(_A)"
 msgid "_Copy all"
 msgstr "全てコピー(_C)"
 
-#: src/gtk/x11file.c:3096 src/gtk/x11merge.c:141 src/gtk/x11print.c:164
+#: src/gtk/x11file.c:3096 src/gtk/x11merge.c:141 src/gtk/x11print.c:168
 msgid "_File:"
 msgstr "ファイル名(_F):"
 
@@ -1440,7 +1440,7 @@ msgid "Clear Viewer Window"
 msgstr "スケールのクリア"
 
 #: src/gtk/x11menu.c:238 src/gtk/x11menu.c:239 src/gtk/x11menu.c:240
-#: src/gtk/x11print.c:629
+#: src/gtk/x11print.c:633
 msgid "Print"
 msgstr "印刷"
 
@@ -2034,7 +2034,7 @@ msgstr "名称(_N): "
 msgid "_Script file:"
 msgstr "スクリプトファイル(_S):"
 
-#: src/gtk/x11opt.c:269 src/gtk/x11opt.c:503 src/gtk/x11print.c:160
+#: src/gtk/x11opt.c:269 src/gtk/x11opt.c:503 src/gtk/x11print.c:164
 msgid "_Option:"
 msgstr "オプション(_O):"
 
@@ -2062,7 +2062,7 @@ msgstr "説明"
 msgid "External Driver"
 msgstr "外部ドライバ"
 
-#: src/gtk/x11opt.c:499 src/gtk/x11print.c:155
+#: src/gtk/x11opt.c:499 src/gtk/x11print.c:159
 msgid "_Driver:"
 msgstr "ドライバ(_D):"
 
@@ -2206,80 +2206,80 @@ msgstr "再描画時の最大データ数(_M):"
 msgid "Save as .Ngraph.ngp"
 msgstr ".Ngraph.ngp として保存"
 
-#: src/gtk/x11print.c:129
+#: src/gtk/x11print.c:133
 msgid "External Driver Output"
 msgstr "外部ドライバ出力"
 
-#: src/gtk/x11print.c:301
+#: src/gtk/x11print.c:305
 msgid "_PostScript Version:"
 msgstr "ポストスクリプトレベル(_P):"
 
-#: src/gtk/x11print.c:337
+#: src/gtk/x11print.c:341
 msgid "_SVG Version:"
 msgstr "_SVG バージョン"
 
-#: src/gtk/x11print.c:352
+#: src/gtk/x11print.c:356
 msgid "_Convert texts to paths"
 msgstr "テキストをパスに変換(_C)"
 
-#: src/gtk/x11print.c:369
+#: src/gtk/x11print.c:373
 msgid "Cairo PS Output"
 msgstr "Cairo PS 出力"
 
-#: src/gtk/x11print.c:372
+#: src/gtk/x11print.c:376
 msgid "Cairo EPS Output"
 msgstr "Cairo EPS 出力"
 
-#: src/gtk/x11print.c:375
+#: src/gtk/x11print.c:379
 msgid "Cairo PNG Output"
 msgstr "Cairo PNG 出力"
 
-#: src/gtk/x11print.c:378
+#: src/gtk/x11print.c:382
 msgid "Cairo PDF Output"
 msgstr "Cairo PDF 出力"
 
-#: src/gtk/x11print.c:381
+#: src/gtk/x11print.c:385
 msgid "Cairo SVG Output"
 msgstr "Cairo SVG 出力"
 
-#: src/gtk/x11print.c:504
+#: src/gtk/x11print.c:508
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:628
+#: src/gtk/x11print.c:632
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:677
+#: src/gtk/x11print.c:681
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:683 src/gtk/x11print.c:934 src/gtk/x11view.c:5519
+#: src/gtk/x11print.c:687 src/gtk/x11print.c:938 src/gtk/x11view.c:5519
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11print.c:744
+#: src/gtk/x11print.c:748
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:783
+#: src/gtk/x11print.c:787
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:823
+#: src/gtk/x11print.c:827
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:988
+#: src/gtk/x11print.c:992
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11print.c:994
+#: src/gtk/x11print.c:998
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11print.c:995
+#: src/gtk/x11print.c:999
 msgid "Making data file."
 msgstr "データファイル作成中"
 
@@ -2374,7 +2374,7 @@ msgid "syntax error, invalid function definition."
 msgstr "構文エラー, 不正な関数定義です."
 
 #: src/math/math_error.c:22
-msgid "syntax error, constant cannot be defined in a function definition ."
+msgid "syntax error, constant cannot be defined in a function definition."
 msgstr "構文エラー, 関数定義内で定数の宣言は出来ません."
 
 #: src/math/math_error.c:23
