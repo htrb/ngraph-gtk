@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.126 2009/12/18 09:02:59 hito Exp $
+ * $Id: x11file.c,v 1.127 2009/12/22 09:55:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -3110,7 +3110,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     FileDialogSetupCommon(wi, d);
-    gtk_notebook_set_tab_pos(d->tab, GTK_POS_LEFT);
+    gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
 
     w = mask_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Mask"));
