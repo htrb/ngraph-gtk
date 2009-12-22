@@ -1,5 +1,5 @@
 /* 
- * $Id: math_error.c,v 1.9 2009/11/21 11:39:10 hito Exp $
+ * $Id: math_error.c,v 1.10 2009/12/22 00:57:42 hito Exp $
  * 
  */
 
@@ -19,7 +19,7 @@
 #define ERR_MSG_MISS_RC		N_("syntax error, unexpected end of equation, expecting '}'.")
 #define ERR_MSG_MISS_RB		N_("syntax error, unexpected end of equation, expecting ']'.")
 #define ERR_MSG_INVALID_F	N_("syntax error, invalid function definition.")
-#define ERR_MSG_INVALID_C	N_("syntax error, constant annot be defined in a function definition .")
+#define ERR_MSG_INVALID_C	N_("syntax error, constant cannot be defined in a function definition.")
 #define ERR_MSG_INVALID_P	N_("error, invalid parameter.")
 #define ERR_MSG_PRM_IN_DEF	N_("error, a parameter cannot be used in a user function or a constant definition.")
 #define ERR_MSG_UNKNOWN_F	N_("error, unknown function.")

@@ -176,6 +176,8 @@ entry_icon_file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *eve
     g_free(file);
   }
 }
+#else
+GCallback entry_icon_file_select = NULL;
 #endif
 
 GtkWidget *

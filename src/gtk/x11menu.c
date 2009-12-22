@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.112 2009/12/10 08:59:53 hito Exp $
+ * $Id: x11menu.c,v 1.113 2009/12/22 00:57:41 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -855,7 +855,7 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_Current directory"), FALSE, "<Ngraph>/Graph/Current directory", 0, 0, CmGraphMenu, MenuIdGraphDirectory);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
 
-  item = gtk_menu_item_new_with_mnemonic(_("_Add-In"));
+  item = gtk_menu_item_new_with_mnemonic(_("_Add-in"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
   create_addin_menu(item, accel_group);
   AddinMenu = item;
@@ -1322,7 +1322,7 @@ create_preferencemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_External viewer"), FALSE, "<Ngraph>/Preference/External Viewer", 0, 0, CmOptionMenu, MenuIdOptionExtViewer);
   create_menu_item(menu, _("_Font aliases"), FALSE, "<Ngraph>/Preference/Font aliases", 0, 0, CmOptionMenu, MenuIdOptionPrefFont);
   create_menu_item(menu, _("External _Driver"), FALSE, "<Ngraph>/Preference/External Driver", 0, 0, CmOptionMenu, MenuIdOptionPrefDriver);
-  create_menu_item(menu, _("_Addin script"), FALSE, "<Ngraph>/Preference/Addin Script", 0, 0, CmOptionMenu, MenuIdOptionScript);
+  create_menu_item(menu, _("_Add-in script"), FALSE, "<Ngraph>/Preference/Addin Script", 0, 0, CmOptionMenu, MenuIdOptionScript);
   create_menu_item(menu, _("_Miscellaneous"), FALSE, "<Ngraph>/Preference/Miscellaneous", 0, 0, CmOptionMenu, MenuIdOptionMisc);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("save as default (_Settings)"), FALSE, "<Ngraph>/Preference/save as default (Settings)", 0, 0, CmOptionMenu, MenuIdOptionSaveDefault);

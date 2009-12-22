@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.48 2009/12/17 10:55:44 hito Exp $
+ * $Id: x11print.c,v 1.49 2009/12/22 00:57:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -74,10 +74,11 @@ static GtkPrintSettings *PrintSettings = NULL;
 static void
 DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
 {
-  int a, i, j;
+  int a, i;
   struct extprinter *pcur;
   struct DriverDialog *d;
-  char buf[1024];
+  char *ptr, ngp_ext[] = ".ngp";
+  size_t l, n;
 
   d = (struct DriverDialog *) client_data;
 
@@ -88,32 +89,36 @@ DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
 
   pcur = Menulocal.extprinterroot;
   i = 0;
-  while (pcur != NULL) {
-    if (i == a) {
-      if (pcur->ext && pcur->ext[0] != '\0') {
-	if (NgraphApp.FileName) {
-	  strncpy(buf, NgraphApp.FileName, sizeof(buf) - 1);
-	  if (strchr(buf, '.') != NULL) {
-	    for (j = strlen(buf) - 1; buf[j] != '.'; j--);
-	    buf[j] = '\0';
-	  }
-	  strncat(buf, pcur->ext, sizeof(buf) - strlen(buf) - 1);
-	  gtk_entry_set_text(GTK_ENTRY(d->file), buf);
-	}
-	d->ext = pcur->ext;
-      } else {
-	gtk_entry_set_text(GTK_ENTRY(d->file), "");
-	d->ext = NULL;
-      }
-
-      gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(pcur->option));
-      break;
+  while (pcur) {
+    if (i != a) {
+      pcur = pcur->next;
+      i++;
+      continue;
     }
-    pcur = pcur->next;
-    i++;
+
+    if (pcur->ext && pcur->ext[0] != '\0') {
+      if (NgraphApp.FileName) {
+	l = strlen(NgraphApp.FileName);
+	n = sizeof(ngp_ext) - 1;
+	if (l > n && strcasecmp(NgraphApp.FileName + l - n, ngp_ext) == 0) {
+	  l -= n;
+	}
+	ptr = g_strdup_printf("%.*s.%s", l, NgraphApp.FileName, CHK_STR(pcur->ext));
+	gtk_entry_set_text(GTK_ENTRY(d->file), CHK_STR(ptr));
+	g_free(ptr);
+      }
+      d->ext = pcur->ext;
+    } else {
+      gtk_entry_set_text(GTK_ENTRY(d->file), "");
+      d->ext = NULL;
+    }
+
+    gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(pcur->option));
+    break;
   }
 }
 
+#if USE_ENTRY_ICON
 static void
 DriverDialogBrowseCB(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -131,6 +136,9 @@ DriverDialogBrowseCB(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event
   }
   g_free(file);
 }
+#else
+GCallback DriverDialogBrowseCB = NULL;
+#endif
 
 static void
 DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)

@@ -1,3 +1,16 @@
+2009-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c: initialize "DriverDialogBrowseCB" as NULL
+	when "USE_ENTRY_ICON" is FALSE.
+	(DriverDialogSelectCB): now "ext" of "struct extprinter" is not
+	include ".".
+
+	* src/gtk/x11opt.c: initialize "SetScriptDialogBrowse" and
+	"SetDriverDialogBrowse" as NULL when "USE_ENTRY_ICON" is FALSE.
+
+	* src/gtk/gtk_widget.c: initialize "entry_icon_file_select" as
+	NULL when "USE_ENTRY_ICON" is FALSE.
+
 2009-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (set_user_fit_sensitivity)

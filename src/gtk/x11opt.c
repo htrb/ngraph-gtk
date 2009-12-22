@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.75 2009/12/17 10:55:44 hito Exp $
+ * $Id: x11opt.c,v 1.76 2009/12/22 00:57:41 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -93,7 +93,7 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->external_driver = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
-    w = gtk_check_button_new_with_mnemonic(_("_Addin Script"));
+    w = gtk_check_button_new_with_mnemonic(_("_Add-in Script"));
     d->addin_script = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
@@ -227,6 +227,7 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
   gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(d->Script->description));
 }
 
+#if USE_ENTRY_ICON
 static void
 SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -240,6 +241,9 @@ SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *even
   }
   g_free(file);
 }
+#else
+GCallback SetScriptDialogBrowse = NULL;
+#endif
 
 static void
 SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -457,6 +461,7 @@ SetDriverDialogSetupItem(GtkWidget *w, struct SetDriverDialog *d)
   gtk_entry_set_text(GTK_ENTRY(d->ext), CHK_STR(d->Driver->ext));
 }
 
+#if USE_ENTRY_ICON
 static void
 SetDriverDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
@@ -470,6 +475,9 @@ SetDriverDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *even
   }
   g_free(file);
 }
+#else
+GCallback SetDriverDialogBrowse = NULL;
+#endif
 
 static void
 SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
