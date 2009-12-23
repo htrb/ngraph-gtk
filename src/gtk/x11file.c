@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.127 2009/12/22 09:55:46 hito Exp $
+ * $Id: x11file.c,v 1.128 2009/12/23 14:43:42 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2944,7 +2944,9 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   g_signal_connect(notebook, "show", G_CALLBACK(file_dialog_show_tab), d);
 
   d->tab = GTK_NOTEBOOK(notebook);
-  gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), FALSE);
+  gtk_notebook_set_scrollable(d->tab, FALSE);
+  gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
+
 
   w = plot_tab_create(wi, d);
   label = gtk_label_new_with_mnemonic(_("_Plot"));
@@ -3110,7 +3112,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     FileDialogSetupCommon(wi, d);
-    gtk_notebook_set_tab_pos(d->tab, GTK_POS_TOP);
 
     w = mask_tab_create(d);
     label = gtk_label_new_with_mnemonic(_("_Mask"));
