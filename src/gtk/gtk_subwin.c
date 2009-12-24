@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.60 2009/11/17 10:38:54 hito Exp $
+ * $Id: gtk_subwin.c,v 1.61 2009/12/24 07:14:09 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -290,7 +290,7 @@ set_cell_renderer_cb(struct SubWin *d, int n, n_list_store *list, GtkWidget *w)
       continue;
 
     col = gtk_tree_view_get_column(view, i);
-    glist = gtk_tree_view_column_get_cell_renderers(col);
+    glist = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
     rend = GTK_CELL_RENDERER(glist->data);
     g_list_free(glist);
 
@@ -330,7 +330,7 @@ set_editable_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCall
     return;
 
   col = gtk_tree_view_get_column(view, i);
-  glist = gtk_tree_view_column_get_cell_renderers(col);
+  glist = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
   rend = GTK_CELL_RENDERER(glist->data);
   g_list_free(glist);
 
@@ -357,7 +357,7 @@ set_combo_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallbac
     return;
 
   col = gtk_tree_view_get_column(view, i);
-  glist = gtk_tree_view_column_get_cell_renderers(col);
+  glist = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
   rend = GTK_CELL_RENDERER(glist->data);
   g_list_free(glist);
 
@@ -390,7 +390,7 @@ set_obj_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback 
     return;
 
   col = gtk_tree_view_get_column(view, i);
-  glist = gtk_tree_view_column_get_cell_renderers(col);
+  glist = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
   rend = GTK_CELL_RENDERER(glist->data);
   g_list_free(glist);
 

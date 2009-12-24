@@ -1,5 +1,15 @@
 2009-12-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (create_toolbar): use
+	"gtk_orientable_set_orientation()" instead of
+	"gtk_toolbar_set_orientation()" is the version of the GTK+ is
+	greater or equal to 2.16.
+
+	* src/gtk/gtk_subwin.c (set_cell_renderer_cb)
+	(set_editable_cell_renderer_cb, set_combo_cell_renderer_cb)
+	(set_obj_cell_renderer_cb): use "gtk_cell_layout_get_cells()"
+	instead of "gtk_tree_view_column_get_cell_renderers()".
+
 	* src/gtk/x11file.c (FitDialogSetSensitivity): don't change
 	sensitivity of widgets related to division settings.
 	(FitDialogSetup): don't use "toggled" signal of

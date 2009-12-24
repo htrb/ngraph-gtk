@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.113 2009/12/22 00:57:41 hito Exp $
+ * $Id: x11menu.c,v 1.114 2009/12/24 07:14:09 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1805,7 +1805,11 @@ create_toolbar(GtkWidget *box, GtkOrientation o, GtkWidget **hbox)
   t = gtk_toolbar_new();
   gtk_toolbar_set_style(GTK_TOOLBAR(t), GTK_TOOLBAR_ICONS);
   gtk_toolbar_set_show_arrow(GTK_TOOLBAR(t), TRUE);
+#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 16))
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(t), o);
+#else
   gtk_toolbar_set_orientation(GTK_TOOLBAR(t), o);
+#endif
   w = gtk_handle_box_new();
   g_signal_connect(w, "child-attached", G_CALLBACK(detach_toolbar), GINT_TO_POINTER(TRUE));
   g_signal_connect(w, "child-detached", G_CALLBACK(detach_toolbar), GINT_TO_POINTER(FALSE));
