@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2009-12-24 11:56+0900\n"
+"POT-Creation-Date: 2009-12-24 17:25+0900\n"
 "PO-Revision-Date: 2009-12-22 09:58+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1260,52 +1260,52 @@ msgstr "テキスト(_T):"
 msgid "points:%-3d %s%s%s%s"
 msgstr "点:%-3d %s%s%s%s"
 
-#: src/gtk/x11lgnd.c:2057 src/gtk/x11lgnd.c:2128
+#: src/gtk/x11lgnd.c:2057 src/gtk/x11lgnd.c:2141
 msgid "style:"
 msgstr "線種:"
 
-#: src/gtk/x11lgnd.c:2058 src/gtk/x11lgnd.c:2113 src/gtk/x11lgnd.c:2129
+#: src/gtk/x11lgnd.c:2058 src/gtk/x11lgnd.c:2125 src/gtk/x11lgnd.c:2142
 msgid "custom"
 msgstr "任意"
 
-#: src/gtk/x11lgnd.c:2084
+#: src/gtk/x11lgnd.c:2093
 #, c-format
 msgid "arrow:%s"
 msgstr "矢印:%s"
 
-#: src/gtk/x11lgnd.c:2091
+#: src/gtk/x11lgnd.c:2101
 #, c-format
 msgid "interpolation:%s"
 msgstr "補完法:%s"
 
-#: src/gtk/x11lgnd.c:2098
+#: src/gtk/x11lgnd.c:2109
 #, c-format
 msgid "fill:%s"
 msgstr "塗りつぶし:%s"
 
-#: src/gtk/x11lgnd.c:2110
+#: src/gtk/x11lgnd.c:2122
 #, c-format
 msgid "w:%.2f h:%.2f  style:%s%s%s"
 msgstr "幅:%.2f 高さ:%.2f  線種:%s%s%s"
 
-#: src/gtk/x11lgnd.c:2114
+#: src/gtk/x11lgnd.c:2126
 msgid "  fill"
 msgstr "  塗りつぶし"
 
-#: src/gtk/x11lgnd.c:2115
+#: src/gtk/x11lgnd.c:2127
 msgid "  frame"
 msgstr "  フレーム"
 
-#: src/gtk/x11lgnd.c:2128
+#: src/gtk/x11lgnd.c:2141
 msgid "fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:2137
+#: src/gtk/x11lgnd.c:2151
 #, c-format
 msgid "%s%stype:%-2d"
 msgstr "%s%sタイプ:%-2d"
 
-#: src/gtk/x11lgnd.c:2139
+#: src/gtk/x11lgnd.c:2153
 #, c-format
 msgid "type:%-2d"
 msgstr "タイプ:%-2d"

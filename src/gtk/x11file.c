@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.129 2009/12/24 01:48:47 hito Exp $
+ * $Id: x11file.c,v 1.130 2009/12/24 09:10:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1402,7 +1402,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->max = w;
 
     w = create_spin_entry(1, 65535, 1, TRUE, TRUE);
-    item_setup(hbox, w, _("_Div:"), TRUE);
+    item_setup(hbox, w, _("_Div:"), FALSE);
     d->div = w;
 
     w = gtk_check_button_new_with_mnemonic(_("_Interpolation"));
@@ -1416,7 +1416,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = create_user_fit_frame(d);
     d->usr_def_frame = frame;
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
 
 
     hbox = add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(FitDialogCopy), d, "fit");

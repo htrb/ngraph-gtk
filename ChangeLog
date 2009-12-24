@@ -1,5 +1,9 @@
 2009-12-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (legend_list_set_val): use
+	"legend_list_set_property()".
+	(legend_list_set_color, legend_list_set_property): add.
+
 	* src/gtk/x11menu.c (create_toolbar): use
 	"gtk_orientable_set_orientation()" instead of
 	"gtk_toolbar_set_orientation()" is the version of the GTK+ is

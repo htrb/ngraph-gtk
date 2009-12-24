@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.63 2009/12/17 10:55:44 hito Exp $
+ * $Id: x11lgnd.c,v 1.64 2009/12/24 09:10:46 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,7 +61,7 @@ static n_list_store Llist[] = {
   {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
   {"#",            G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
   //  {N_("object"),   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
-  {N_("object/property"), G_TYPE_STRING,  TRUE, FALSE, "property", FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {N_("object/property"), G_TYPE_STRING,  TRUE, FALSE, "property", TRUE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {N_("lw/size"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
@@ -1034,8 +1034,8 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "rectangle");
 
@@ -2061,13 +2061,131 @@ get_points(char *buf, int len, struct objlist *obj, int id, int *x, int *y, int 
 }
 
 static void
-legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
+legend_list_set_color(struct LegendWin *d, GtkTreeIter *iter, int type, int row, int color_type)
 {
-  int cx, x0, y0, x2, y2, mark, w, frame;
-  unsigned int i = 0;
-  char *valstr, *text, *ex, buf[256], buf2[256];
+  int r, g, b;
+  char color[256], rc[] = "R2", gc[] = "G2", bc[] = "B2";
+
+  if (color_type == 0) {
+    rc[1] = '\0';
+    gc[1] = '\0';
+    bc[1] = '\0';
+  }
+
+  getobj(d->obj[type], rc, row, 0, NULL, &r);
+  getobj(d->obj[type], gc, row, 0, NULL, &g);
+  getobj(d->obj[type], bc, row, 0, NULL, &b);
+  snprintf(color, sizeof(color), "#%02x%02x%02x", r, g, b);
+  tree_store_set_string(GTK_WIDGET(d->text), iter, LEGEND_WIN_COL_NUM, color);
+}
+
+static void
+legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int row, unsigned int i, int *x0, int *y0)
+{
+  int x2, y2, mark, w, frame;
+  char *valstr, *text, buf[256], buf2[256];
   char **enumlist;
   const char *str;
+
+  switch (type) {
+  case LegendTypeLine:
+    sgetobjfield(d->obj[type], row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
+    snprintf(buf2, sizeof(buf2), _("arrow:%s"), _(valstr));
+    g_free(valstr);
+    get_points(buf, sizeof(buf), d->obj[type], row, x0, y0, TRUE, buf2);
+    legend_list_set_color(d, iter, type, row, 0);
+    break;
+  case LegendTypeCurve:
+    getobj(d->obj[type], "interpolation", row, 0, NULL, &w);
+    enumlist = (char **) chkobjarglist(d->obj[type], "interpolation");
+    snprintf(buf2, sizeof(buf2), _("interpolation:%s"), _(enumlist[w]));
+    get_points(buf, sizeof(buf), d->obj[type], row, x0, y0, TRUE, buf2);
+    legend_list_set_color(d, iter, type, row, 0);
+    break;
+  case LegendTypePoly:
+    getobj(d->obj[type], "fill", row, 0, NULL, &w);
+    if (w) {
+      enumlist = (char **) chkobjarglist(d->obj[type], "fill");
+      snprintf(buf2, sizeof(buf2), _("fill:%s"), _(enumlist[w]));
+    }
+    get_points(buf, sizeof(buf), d->obj[type], row, x0, y0, w == 0, (w) ? buf2 : NULL);
+    legend_list_set_color(d, iter, type, row, 0);
+    break;
+  case LegendTypeRect:
+    getobj(d->obj[type], "fill", row, 0, NULL, &w);
+    getobj(d->obj[type], "frame", row, 0, NULL, &frame);
+    str = get_style_string(d->obj[type], row, "style");
+    getobj(d->obj[type], "x1", row, 0, NULL, x0);
+    getobj(d->obj[type], "y1", row, 0, NULL, y0);
+    getobj(d->obj[type], "x2", row, 0, NULL, &x2);
+    getobj(d->obj[type], "y2", row, 0, NULL, &y2);
+    snprintf(buf, sizeof(buf), _("w:%.2f h:%.2f  style:%s%s%s"),
+	     abs(*x0 - x2) / 100.0,
+	     abs(*y0 - y2) / 100.0,
+	     (str) ? _(str) : _("custom"),
+	     (w) ? _("  fill") : "",
+	     (frame) ? _("  frame") : ""
+	     );
+    legend_list_set_color(d, iter, type, row, (frame) ? 1 : 0);
+    break;
+  case LegendTypeArc:
+    getobj(d->obj[type], "fill", row, 0, NULL, &w);
+    str = get_style_string(d->obj[type], row, "style");
+    getobj(d->obj[type], "x", row, 0, NULL, x0);
+    getobj(d->obj[type], "y", row, 0, NULL, y0);
+    getobj(d->obj[type], "rx", row, 0, NULL, &x2);
+    getobj(d->obj[type], "ry", row, 0, NULL, &y2);
+    snprintf(buf, sizeof(buf), "rx:%.2f ry:%.2f  %s%s",
+	     x2 / 100.0,
+	     y2 / 100.0,
+	     (w) ? _("fill") : _("style:"),
+	     (w) ? "" : ((str) ? _(str) : _("custom")));
+    legend_list_set_color(d, iter, type, row, 0);
+    break;
+  case LegendTypeMark:
+    getobj(d->obj[type], "x", row, 0, NULL, x0);
+    getobj(d->obj[type], "y", row, 0, NULL, y0);
+    getobj(d->obj[type], "type", row, 0, NULL, &mark);
+    if (mark >= 0 && mark < MarkCharNum) {
+      char *mc = MarkChar[mark];
+      snprintf(buf, sizeof(buf), _("%s%stype:%-2d"), mc, (mc[0]) ? " " : "", mark);
+    } else {
+      snprintf(buf, sizeof(buf), _("type:%-2d"), mark);
+    }
+    legend_list_set_color(d, iter, type, row, 0);
+    break;
+  case LegendTypeText:
+    getobj(d->obj[type], "x", row, 0, NULL, x0);
+    getobj(d->obj[type], "y", row, 0, NULL, y0);
+    getobj(d->obj[type], "text", row, 0, NULL, &text);
+    {
+#ifdef JAPANESE
+      /* SJIS ---> UTF-8 */
+      char *tmp;
+      tmp = sjis_to_utf8(text);
+      if (tmp) {
+	tree_store_set_string(GTK_WIDGET(d->text), iter, i, tmp);
+	g_free(tmp);
+      }
+#else
+      tree_store_set_string(GTK_WIDGET(d->text), iter, i, text);
+#endif
+    }
+    legend_list_set_color(d, iter, type, row, 0);
+    break;
+  default:
+    buf[0] = '\0';
+  }
+  if (type != LegendTypeText) {
+    tree_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
+  }
+}
+
+static void
+legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
+{
+  int cx, x0, y0, w;
+  unsigned int i = 0;
 
   for (i = 0; i < LEGEND_WIN_COL_NUM; i++) {
     switch (i) {
@@ -2077,92 +2195,7 @@ legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
       tree_store_set_boolean(GTK_WIDGET(d->text), iter, i, cx);
       break;
     case LEGEND_WIN_COL_PROP:
-      ex = NULL;
-      switch (type) {
-      case LegendTypeLine:
-	sgetobjfield(d->obj[type], row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
-	snprintf(buf2, sizeof(buf2), _("arrow:%s"), _(valstr));
-	g_free(valstr);
-	get_points(buf, sizeof(buf), d->obj[type], row, &x0, &y0, TRUE, buf2);
-	break;
-      case LegendTypeCurve:
-	getobj(d->obj[type], "interpolation", row, 0, NULL, &w);
-	enumlist = (char **) chkobjarglist(d->obj[type], "interpolation");
-	snprintf(buf2, sizeof(buf2), _("interpolation:%s"), _(enumlist[w]));
-	get_points(buf, sizeof(buf), d->obj[type], row, &x0, &y0, TRUE, buf2);
-	break;
-      case LegendTypePoly:
-	getobj(d->obj[type], "fill", row, 0, NULL, &w);
-	if (w) {
-	  enumlist = (char **) chkobjarglist(d->obj[type], "fill");
-	  snprintf(buf2, sizeof(buf2), _("fill:%s"), _(enumlist[w]));
-	}
-	get_points(buf, sizeof(buf), d->obj[type], row, &x0, &y0, w == 0, (w) ? buf2 : NULL);
-	break;
-      case LegendTypeRect:
-	getobj(d->obj[type], "fill", row, 0, NULL, &w);
-	getobj(d->obj[type], "frame", row, 0, NULL, &frame);
-	str = get_style_string(d->obj[type], row, "style");
-	getobj(d->obj[type], "x1", row, 0, NULL, &x0);
-	getobj(d->obj[type], "y1", row, 0, NULL, &y0);
-	getobj(d->obj[type], "x2", row, 0, NULL, &x2);
-	getobj(d->obj[type], "y2", row, 0, NULL, &y2);
-	snprintf(buf, sizeof(buf), _("w:%.2f h:%.2f  style:%s%s%s"),
-		 abs(x0 - x2) / 100.0,
-		 abs(y0 - y2) / 100.0,
-		 (str) ? _(str) : _("custom"),
-		 (w) ? _("  fill") : "",
-		 (frame) ? _("  frame") : ""
-		 );
-	break;
-      case LegendTypeArc:
-	getobj(d->obj[type], "fill", row, 0, NULL, &w);
-	str = get_style_string(d->obj[type], row, "style");
-	getobj(d->obj[type], "x", row, 0, NULL, &x0);
-	getobj(d->obj[type], "y", row, 0, NULL, &y0);
-	getobj(d->obj[type], "rx", row, 0, NULL, &x2);
-	getobj(d->obj[type], "ry", row, 0, NULL, &y2);
-	snprintf(buf, sizeof(buf), "rx:%.2f ry:%.2f  %s%s",
-		 x2 / 100.0,
-		 y2 / 100.0,
-		 (w) ? _("fill") : _("style:"),
-		 (w) ? "" : ((str) ? _(str) : _("custom")));
-	break;
-      case LegendTypeMark:
-	getobj(d->obj[type], "x", row, 0, NULL, &x0);
-	getobj(d->obj[type], "y", row, 0, NULL, &y0);
-	getobj(d->obj[type], "type", row, 0, NULL, &mark);
-	if (mark >= 0 && mark < MarkCharNum) {
-	  char *mc = MarkChar[mark];
-	  snprintf(buf, sizeof(buf), _("%s%stype:%-2d"), mc, (mc[0]) ? " " : "", mark);
-	} else {
-	  snprintf(buf, sizeof(buf), _("type:%-2d"), mark);
-	}
-	break;
-      case LegendTypeText:
-	getobj(d->obj[type], "x", row, 0, NULL, &x0);
-	getobj(d->obj[type], "y", row, 0, NULL, &y0);
-	getobj(d->obj[type], "text", row, 0, NULL, &text);
-	{
-#ifdef JAPANESE
-/* SJIS ---> UTF-8 */
-	  char *tmp;
-	  tmp = sjis_to_utf8(text);
-	  if (tmp) {
-	    tree_store_set_string(GTK_WIDGET(d->text), iter, i, tmp);
-	    g_free(tmp);
-	  }
-#else
-	  tree_store_set_string(GTK_WIDGET(d->text), iter, i, text);
-#endif
-	}
-	break;
-      default:
-	buf[0] = '\0';
-      }
-      if (type != LegendTypeText) {
-	tree_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
-      }
+      legend_list_set_property(d, iter, type, row, i, &x0, &y0);
       break;
     case LEGEND_WIN_COL_X:
       tree_store_set_double(GTK_WIDGET(d->text), iter, i, x0 / 100.0);
