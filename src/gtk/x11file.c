@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.128 2009/12/23 14:43:42 hito Exp $
+ * $Id: x11file.c,v 1.129 2009/12/24 01:48:47 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1231,14 +1231,13 @@ static void
 FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
 {
   struct FitDialog *d;
-  int type, through, deriv, intp, dim;
+  int type, through, deriv, dim;
   char buf[1024];
 
   d = (struct FitDialog *) user_data;
 
   type = combo_box_get_active(d->type);
   through = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->through_point));
-  intp =  gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->interpolation));
 
   switch (type) {
   case FIT_TYPE_POLY:
@@ -1272,7 +1271,6 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
     set_user_fit_sensitivity(d, deriv);
     break;
   }
-  gtk_widget_set_sensitive(d->div_box, ! intp);
 }
 
 static GtkWidget *
@@ -1340,11 +1338,19 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = combo_box_create();
     add_widget_to_table_sub(table, w, _("_Type:"), FALSE, 0, 1, 5, 0);
     d->type = w;
+    enumlist = (char **) chkobjarglist(d->Obj, "type");
+    for (i = 0; enumlist[i]; i++) {
+      combo_box_append_text(d->type, _(enumlist[i]));
+    }
 
     hbox2 = gtk_hbox_new(FALSE, 4);
     w = combo_box_create();
     d->dim_label = add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 5, 0);
     d->dim = w;
+    for (i = 0; i < FIT_PARM_NUM - 1; i++) {
+      snprintf(mes, sizeof(mes), "%d", i + 1);
+      combo_box_append_text(d->dim, mes);
+    }
 
     w = gtk_label_new("");
     gtk_misc_set_alignment(GTK_MISC(w), 0, 1);
@@ -1358,6 +1364,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->weight = w;
 
     gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 4);
+
 
     hbox = gtk_hbox_new(FALSE, 4);
 
@@ -1379,10 +1386,10 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
 
+
     frame = gtk_frame_new(_("Action"));
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
-
 
     hbox = gtk_hbox_new(FALSE, 4);
 
@@ -1394,13 +1401,9 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     item_setup(hbox, w, _("_Max:"), TRUE);
     d->max = w;
 
-    hbox2 = gtk_hbox_new(FALSE, 4);
     w = create_spin_entry(1, 65535, 1, TRUE, TRUE);
-    item_setup(hbox2, w, _("_Div:"), TRUE);
+    item_setup(hbox, w, _("_Div:"), TRUE);
     d->div = w;
-    d->div_box = hbox2;
-    gtk_box_pack_start(GTK_BOX(hbox), hbox2, FALSE, FALSE, 4);
-
 
     w = gtk_check_button_new_with_mnemonic(_("_Interpolation"));
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
@@ -1415,15 +1418,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->usr_def_frame = frame;
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
-    enumlist = (char **) chkobjarglist(d->Obj, "type");
-    for (i = 0; enumlist[i]; i++) {
-      combo_box_append_text(d->type, _(enumlist[i]));
-    }
-
-    for (i = 0; i < FIT_PARM_NUM - 1; i++) {
-      snprintf(mes, sizeof(mes), "%d", i + 1);
-      combo_box_append_text(d->dim, mes);
-    }
 
     hbox = add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(FitDialogCopy), d, "fit");
 
@@ -1449,7 +1443,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->type, "changed", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->through_point, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
     g_signal_connect(d->derivatives, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
-    g_signal_connect(d->interpolation, "toggled", G_CALLBACK(FitDialogSetSensitivity), d);
   }
 
   FitDialogSetupItem(wi, d, d->Id);

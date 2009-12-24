@@ -1,3 +1,12 @@
+2009-12-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FitDialogSetSensitivity): don't change
+	sensitivity of widgets related to division settings.
+	(FitDialogSetup): don't use "toggled" signal of
+	"d->interpolation".
+
+	* src/gtk/x11dialg.h (struct FitDialog): remove member "div_box"
+
 2009-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c: initialize "DriverDialogBrowseCB" as NULL
@@ -19,8 +28,8 @@
 	(FitDialogSetup): use "GtkTable" instead of "GtkHBox" or
 	"GtkVBox".
 	(FitDialogResult): call "math_equation_add_parameter()".
-	(FitDialogSave, FitDialogLoad, FitDialogCopy): connected to "clicked"
-	signal.
+	(FitDialogSave, FitDialogLoad, FitDialogCopy): connected to
+	"clicked" signal.
 
 2009-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -41,8 +50,8 @@
 	(plot_tab_set_value): add.
 	(FileDialogSetup): use "set_headlines()".
 
-	* src/gtk/x11graph.c (PageDialogSetup): use "GtkTable" instead of "GtkHBox" or
-	"GtkVBox".
+	* src/gtk/x11graph.c (PageDialogSetup): use "GtkTable" instead of
+	"GtkHBox" or "GtkVBox".
 
 	* src/gtk/x11lgnd.c (LegendLineCB, LegendRectCB, LegendArcCB): use
 	"g_strdup_printf()" instead of "g_malloc()" and "snprintf()".
@@ -263,28 +272,34 @@
 	* src/gtk/x11opt.c (set_scrpt_file, SetDriverDialogClose): use
 	"entry_get_filename()".
 
-	* src/gtk/x11dialg.c (SetObjFieldFromText): change filename from UTF-8.
+	* src/gtk/x11dialg.c (SetObjFieldFromText): change filename from
+	UTF-8.
 
 	* src/gtk/gtk_widget.c (entry_get_filename, entry_set_filename):
 	add.
 
-	* src/gtk/gtk_subwin.c (modify_string): change filename from UTF-8.
+	* src/gtk/gtk_subwin.c (modify_string): change filename from
+	UTF-8.
 
-	* src/gtk/x11merge.c (merge_list_set_val): change filename to UTF-8.
+	* src/gtk/x11merge.c (merge_list_set_val): change filename to
+	UTF-8.
 
-	* src/gtk/x11gui.c (file_dialog_set_current_neme): change filename to UTF-8.
+	* src/gtk/x11gui.c (file_dialog_set_current_neme): change filename
+	to UTF-8.
 
 	* src/gtk/x11file.c (file_list_set_val): change filename to UTF-8.
 
 	* src/gtk/x11dialg.c (SetTextFromObjField): change filename to UTF-8.
 
-	* src/gtk/x11commn.c (check_overwrite, LoadNgpFile): change filename to UTF-8.
+	* src/gtk/x11commn.c (check_overwrite, LoadNgpFile): change
+	filename to UTF-8.
 
 	* src/gtk/ox11menu.c (SetCaption): change filename to UTF-8.
 
 	* src/gtk/gtk_widget.c (entry_set_filename): change filename to UTF-8.
 
-	* src/gtk/gtk_subwin.c (file_select, start_editing): change filename to UTF-8.
+	* src/gtk/gtk_subwin.c (file_select, start_editing): change
+	filename to UTF-8.
 
 	* src/ofile.c (set_data_progress): don't show the filename.
 
@@ -307,7 +322,8 @@
 	(parse_const_def_expression): "*err" is "MATH_ERROR_EOEQ" when the
 	type of the token is "MATH_TOKEN_TYPE_EOEQ".
 
-	* src/gtk/strconv.c (utf8_to_sjis, sjis_to_utf8): use "CP932" instead of "shift-jis"
+	* src/gtk/strconv.c (utf8_to_sjis, sjis_to_utf8): use "CP932"
+	instead of "shift-jis"
 
 2009-11-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -359,7 +375,8 @@
 	* src/gtk/x11gui.c (DialogExecute): save and restore current window.
 	(MessageBox): use "get_current_window()" as parent if "parent" is NULL.
 
-	* src/gtk/x11commn.c (ErrorMessage): first argument of "MessageBox()" is NULL.
+	* src/gtk/x11commn.c (ErrorMessage): first argument of
+	"MessageBox()" is NULL.
 
 	* src/math/math_error.c (math_err_get_error_message): convert
 	error message from utf-8 to locale.
