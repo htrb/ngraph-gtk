@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.76 2009/12/22 00:57:41 hito Exp $
+ * $Id: x11opt.c,v 1.77 2009/12/24 10:04:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1101,10 +1101,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->file_preview_font = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, FALSE, FALSE, 4);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, TRUE, TRUE, 4);
   }
   MiscDialogSetupItem(wi, d);
 }

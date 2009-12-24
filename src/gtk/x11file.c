@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.130 2009/12/24 09:10:46 hito Exp $
+ * $Id: x11file.c,v 1.131 2009/12/24 10:04:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2954,7 +2954,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   d->load.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
 
-  gtk_box_pack_start(GTK_BOX(d->vbox), notebook, TRUE, TRUE, 4);
+  gtk_box_pack_start(GTK_BOX(d->vbox), notebook, FALSE, FALSE, 4);
 }
 
 static int

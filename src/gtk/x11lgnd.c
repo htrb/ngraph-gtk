@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.64 2009/12/24 09:10:46 hito Exp $
+ * $Id: x11lgnd.c,v 1.65 2009/12/24 10:04:18 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1352,7 +1352,7 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "text");
 
