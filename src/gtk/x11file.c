@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.132 2009/12/25 07:34:12 hito Exp $
+ * $Id: x11file.c,v 1.133 2009/12/25 09:01:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -474,6 +474,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->list = w;
 
     swin = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(swin), w);
 
     w = gtk_frame_new(NULL);
@@ -1650,6 +1651,7 @@ move_tab_create(struct FileDialog *d)
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
   list_store_set_sort_column(w, 0);
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
@@ -1879,6 +1881,7 @@ mask_tab_create(struct FileDialog *d)
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
   list_store_set_sort_column(w, 0);
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
@@ -3129,6 +3132,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     view = gtk_text_view_new_with_buffer(NULL);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);

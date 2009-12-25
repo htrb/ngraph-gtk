@@ -1,5 +1,24 @@
 2009-12-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (EvalDialogSetup): call
+	"gtk_scrolled_window_set_policy()".
+
+	* src/gtk/x11file.c (MathDialogSetup, create_user_fit_frame)
+	(move_tab_create, mask_tab_create, FileDialogSetup): call
+	"gtk_scrolled_window_set_policy()".
+
+	* src/gtk/ogra2x11.c (gtkinit): call
+	"gtk_scrolled_window_set_policy()".
+
+	* src/gtk/x11dialg.c (SelectDialogSetup, CopyDialogSetup): call
+	"gtk_scrolled_window_set_policy()".
+
+	* src/gtk/ogra2x11.c (gtkinit): call
+	"gtk_scrolled_window_set_policy()".
+
+	* src/gtk/gtk_subwin.c (sub_window_create): call
+	"gtk_scrolled_window_set_policy()".
+
 	* src/gtk/x11file.c (create_user_fit_frame): initial values and
 	derivative equations awr shown in scrolled window.
 

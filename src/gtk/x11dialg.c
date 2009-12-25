@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.48 2009/12/17 10:55:44 hito Exp $
+ * $Id: x11dialg.c,v 1.49 2009/12/25 09:01:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -324,6 +324,7 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(d->list, "key-press-event", G_CALLBACK(multi_list_default_cb), d);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(swin), d->list);
 
     gtk_dialog_add_button(GTK_DIALOG(wi), _("_All"), IDSALL);
@@ -471,6 +472,7 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     list_store_set_selection_mode(d->list, GTK_SELECTION_SINGLE);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(swin), d->list);
 
     g_signal_connect(d->list, "button-press-event", G_CALLBACK(single_list_default_cb), d);

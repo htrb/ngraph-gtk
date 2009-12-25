@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.61 2009/12/24 07:14:09 hito Exp $
+ * $Id: gtk_subwin.c,v 1.62 2009/12/25 09:01:13 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1464,6 +1464,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
   gtk_window_set_urgency_hint(GTK_WINDOW(dlg), FALSE);
 
   swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   if (with_view_port) {
     gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(swin), text);

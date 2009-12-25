@@ -16,7 +16,7 @@ drawcurve() {
     put curve R:$R G:$G B:$B
     put curve interpolation:$INTP
     put curve style:"$STYLE"
-    put curve width:1
+    put curve width:20
     exe curve move:"0 7000+${i}*500"
   done
 }

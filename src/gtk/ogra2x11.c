@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.32 2009/12/18 06:04:29 hito Exp $
+ * $Id: ogra2x11.c,v 1.33 2009/12/25 09:01:13 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -317,6 +317,7 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   gtk_window_set_title((GtkWindow *) gtklocal->mainwin, gtklocal->title);
 
   scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_widget_set_size_request((GtkWidget *) scrolled_window,
 			      gtklocal->winwidth, gtklocal->winheight);
 

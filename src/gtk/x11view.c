@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.179 2009/12/18 06:04:29 hito Exp $
+ * $Id: x11view.c,v 1.180 2009/12/25 09:01:13 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -996,6 +996,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
 			   NULL);
 
     swin = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     w = tree_store_create(sizeof(list) / sizeof(*list), list);
     tree_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
     d->list = w;
