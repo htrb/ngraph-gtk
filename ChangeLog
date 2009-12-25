@@ -1,5 +1,8 @@
 2009-12-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (file_color): allow negative or greater than 255 for
+	"val".
+
 	* src/gtk/x11view.c (EvalDialogSetup): call
 	"gtk_scrolled_window_set_policy()".
 

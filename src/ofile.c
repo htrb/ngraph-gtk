@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.106 2009/12/18 06:04:29 hito Exp $
+ * $Id: ofile.c,v 1.107 2009/12/25 10:05:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -411,10 +411,18 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   color = exp->buf[0].val.val;
   val = exp->buf[1].val.val;
 
+#if 0
   if (val < 0 || val > 255) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
+#else
+  if (val < 0) {
+    val = 0;
+  } else if (val > 255) {
+    val = 255;
+  }
+#endif
 
   switch (color) {
   case 0:

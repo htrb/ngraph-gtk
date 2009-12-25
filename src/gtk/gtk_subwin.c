@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.63 2009/12/25 09:18:21 hito Exp $
+ * $Id: gtk_subwin.c,v 1.64 2009/12/25 10:05:22 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1462,6 +1462,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
   //  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_UTILITY);
   gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
   gtk_window_set_skip_taskbar_hint(GTK_WINDOW(dlg), TRUE);
+  gtk_window_set_skip_pager_hint(GTK_WINDOW(dlg), FALSE);
   gtk_window_set_urgency_hint(GTK_WINDOW(dlg), FALSE);
 
   swin = gtk_scrolled_window_new(NULL, NULL);
