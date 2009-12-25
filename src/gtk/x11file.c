@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.131 2009/12/24 10:04:18 hito Exp $
+ * $Id: x11file.c,v 1.132 2009/12/25 07:34:12 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1276,23 +1276,30 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
 static GtkWidget *
 create_user_fit_frame(struct FitDialog *d)
 {
-  GtkWidget *table, *w;
+  GtkWidget *table, *w, *vbox;
   int i, j;
 
-  table = gtk_table_new(1, 4, FALSE);
+  vbox = gtk_vbox_new(FALSE, 4);
+
+  table = gtk_table_new(1, 3, FALSE);
 
   j = 0;
   w = create_text_entry(FALSE, TRUE);
-  add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 3, 4, j++);
+  add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, 3, j++);
   d->formula = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_widget_to_table_sub(table, w, _("_Converge (%):"), TRUE, 0, 1, 4, j);
+  add_widget_to_table_sub(table, w, _("_Converge (%):"), TRUE, 0, 1, 3, j);
   d->converge = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Derivatives"));
-  add_widget_to_table_sub(table, w, NULL, TRUE, 2, 2, 4, j++);
+  add_widget_to_table_sub(table, w, NULL, FALSE, 2, 1, 3, j++);
   d->derivatives = w;
+
+  gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
+
+
+  table = gtk_table_new(1, 4, FALSE);
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "%0_0:", dd[] = "dF/d(%0_0):";
@@ -1309,8 +1316,17 @@ create_user_fit_frame(struct FitDialog *d)
     d->d[i] = w;
   }
 
+  w = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(w), table);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(w), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(w), GTK_SHADOW_NONE);
+  gtk_widget_set_size_request(GTK_WIDGET(w), -1, 200);
+  gtk_container_set_border_width(GTK_CONTAINER(w), 2);
+
+  gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 0);
+
   w = gtk_frame_new(_("User definition"));
-  gtk_container_add(GTK_CONTAINER(w), table);
+  gtk_container_add(GTK_CONTAINER(w), vbox);
 
   return w;
 }
@@ -1409,8 +1425,11 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
     d->interpolation = w;
 
+    vbox = gtk_vbox_new(FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
     frame = gtk_frame_new(_("Draw X range"));
-    gtk_container_add(GTK_CONTAINER(frame), hbox);
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, FALSE, FALSE, 4);
 
 
@@ -1630,6 +1649,7 @@ move_tab_create(struct FileDialog *d)
   int i;
 
   swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
   list_store_set_sort_column(w, 0);
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
@@ -1670,10 +1690,7 @@ move_tab_create(struct FileDialog *d)
 
   hbox = gtk_hbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
-
-  w = gtk_frame_new(NULL);
-  gtk_container_add(GTK_CONTAINER(w), swin);
-  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
   w = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(w), hbox);
@@ -1852,8 +1869,6 @@ mask_tab_create(struct FileDialog *d)
   };
   int i;
 
-  hbox = gtk_hbox_new(FALSE, 4);
-
   table = gtk_table_new(1, 2, FALSE);
 
   i = 0;
@@ -1863,6 +1878,7 @@ mask_tab_create(struct FileDialog *d)
   d->mask.line = w;
 
   swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
   w = list_store_create(sizeof(list) / sizeof(*list), list);
   list_store_set_sort_column(w, 0);
   list_store_set_selection_mode(w, GTK_SELECTION_MULTIPLE);
@@ -1883,11 +1899,9 @@ mask_tab_create(struct FileDialog *d)
   g_signal_connect(w, "clicked", G_CALLBACK(list_store_select_all_cb), d->mask.list);
   set_sensitivity_by_row_num(d->mask.list, w);
 
+  hbox = gtk_hbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
-
-  w = gtk_frame_new(NULL);
-  gtk_container_add(GTK_CONTAINER(w), swin);
-  gtk_box_pack_start(GTK_BOX(hbox), w, TRUE, TRUE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), hbox);
@@ -2954,7 +2968,7 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   d->load.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
 
-  gtk_box_pack_start(GTK_BOX(d->vbox), notebook, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(d->vbox), notebook, TRUE, TRUE, 4);
 }
 
 static int

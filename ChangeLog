@@ -1,3 +1,8 @@
+2009-12-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (create_user_fit_frame): initial values and
+	derivative equations awr shown in scrolled window.
+
 2009-12-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (legend_list_set_val): use
