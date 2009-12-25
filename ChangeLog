@@ -18,6 +18,7 @@
 
 	* src/gtk/gtk_subwin.c (sub_window_create): call
 	"gtk_scrolled_window_set_policy()".
+	(sub_window_create): call "gtk_window_set_skip_taskbar_hint()"
 
 	* src/gtk/x11file.c (create_user_fit_frame): initial values and
 	derivative equations awr shown in scrolled window.
