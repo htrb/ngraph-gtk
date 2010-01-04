@@ -1305,8 +1305,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 31
-number of fields: 30
-size of instance: 184
+number of fields: 31
+size of instance: 192
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1324,6 +1324,7 @@ rw-      redraw_flag    bool
 --x             done    void( )
 ---             next    void*
 rw-           points    int[]
+r--          _points    int[]
 rw-    interpolation    enum( spline spline_close bspline bspline_close )
 rw-            width    int
 rw-            style    int[]

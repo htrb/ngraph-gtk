@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2x11.c,v 1.33 2009/12/25 09:01:13 hito Exp $
+ * $Id: ogra2x11.c,v 1.34 2010/01/04 05:11:28 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -350,7 +350,8 @@ gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     goto errexit;
   }
 
-  if ((idn = getobjtblpos(obj, "_evloop", &robj)) == -1) {
+  idn = getobjtblpos(obj, "_evloop", &robj);
+  if (idn == -1) {
     goto errexit;
   }
 

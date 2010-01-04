@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.h,v 1.4 2009/03/24 10:27:31 hito Exp $
+ * $Id: gra.h,v 1.5 2010/01/04 05:11:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -20,6 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
+
+#ifndef GRA_HEADER
+#define GRA_HEADER
+
+#define CURVE_OBJ_USE_EXPAND_BUFFER 1
 
 struct greektbltype {
   unsigned int jis,symbol;
@@ -142,3 +147,4 @@ void GRAtextstyle(int GC,char *font,int size,int space,int dir);
 void GRAouttext(int GC,char *s);
 int greektable_num(void);
 
+#endif

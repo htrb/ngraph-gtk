@@ -1,5 +1,5 @@
 /* 
- * $Id: gra.c,v 1.29 2009/11/26 09:37:04 hito Exp $
+ * $Id: gra.c,v 1.30 2010/01/04 05:11:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -122,7 +122,9 @@ static struct GRAC GRAClist[]= {
 
 #define GRAClimit ((int) (sizeof(GRAClist) / sizeof(*GRAClist) - 1))
 
+#if ! CURVE_OBJ_USE_EXPAND_BUFFER
 static void GRAcmatchtod(double x,double y,struct cmatchtype *data);
+#endif
 static int GRAinview(int GC,int x,int y);
 static int GRArectclip(int GC,int *x0,int *y0,int *x1,int *y1);
 static int GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1);
@@ -3341,6 +3343,7 @@ GRAdashlinetod(int GC,double x,double y)
   GRAClist[GC].y0=y;
 }
 
+#if ! CURVE_OBJ_USE_EXPAND_BUFFER
 void 
 GRAcmatchfirst(int pointx,int pointy,int err,
                     clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
@@ -3452,6 +3455,7 @@ GRAcmatch(double c[],double x0,double y0,struct cmatchtype *data)
   }
   return TRUE;
 }
+#endif
 
 static void 
 setbbminmax(struct GRAbbox *bbox,int x1,int y1,int x2,int y2,int lw)

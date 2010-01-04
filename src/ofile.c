@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.107 2009/12/25 10:05:22 hito Exp $
+ * $Id: ofile.c,v 1.108 2010/01/04 05:11:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -4702,8 +4702,9 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       } else {
         if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
           if (num>=2) {
-            if (intp==0) spcond=SPLCND2NDDIF;
-            else {
+            if (intp==INTERPOLATION_TYPE_SPLINE) {
+	      spcond=SPLCND2NDDIF;
+	    } else {
               spcond=SPLCNDPERIODIC;
               if ((x[num-1]!=x[0]) || (y[num-1]!=y[0])) {
                 if (dataadd(x[0],y[0],count,r[0],g[0],b[0],&num,
@@ -4741,7 +4742,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
     }
     if (num!=0) {
-      if (intp==0) {
+      if (intp==INTERPOLATION_TYPE_SPLINE) {
 	spcond=SPLCND2NDDIF;
       } else {
         spcond=SPLCNDPERIODIC;
@@ -7874,8 +7875,9 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
       } else {
         if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
           if (num>=2) {
-            if (intp==0) spcond=SPLCND2NDDIF;
-            else {
+            if (intp==INTERPOLATION_TYPE_SPLINE) {
+	      spcond=SPLCND2NDDIF;
+	    } else {
               spcond=SPLCNDPERIODIC;
               if ((x[num-1]!=x[0]) || (y[num-1]!=y[0])) {
                 if (dataadd(x[0],y[0],count,r[0],g[0],b[0],&num,
@@ -7915,8 +7917,9 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
       }
     }
     if (num!=0) {
-      if (intp==0) spcond=SPLCND2NDDIF;
-      else {
+      if (intp==INTERPOLATION_TYPE_SPLINE) {
+	spcond=SPLCND2NDDIF;
+      } else {
         spcond=SPLCNDPERIODIC;
         if ((x[num-1]!=x[0]) || (y[num-1]!=y[0])) {
           if (dataadd(x[0],y[0],count,r[0],g[0],b[0],&num,

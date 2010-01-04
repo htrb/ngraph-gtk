@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.50 2009/11/26 09:37:04 hito Exp $
+ * $Id: object.c,v 1.51 2010/01/04 05:11:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -366,6 +366,32 @@ arraydel2(struct narray *array)
   g_free(array->data);
   array->data=NULL;
   array->size=0;
+  array->num=0;
+}
+
+void 
+arrayclear(struct narray *array)
+{
+  if (array == NULL)
+    return;
+
+  array->num=0;
+}
+
+void 
+arrayclear2(struct narray *array)
+{
+  unsigned int i;
+  char **data;
+
+  if (array == NULL)
+    return;
+
+  data = array->data;
+  for (i = 0; i < array->num; i++) {
+    g_free(data[i]);
+  }
+
   array->num=0;
 }
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.19 2009/11/16 12:59:18 hito Exp $
+ * $Id: object.h,v 1.20 2010/01/04 05:11:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -183,6 +183,8 @@ void *arraydata(struct narray *array);
 unsigned int arraynum(struct narray *array);
 void arraydel(struct narray *array);
 void arraydel2(struct narray *array);
+void arrayclear(struct narray *array);
+void arrayclear2(struct narray *array);
 void arrayfree(struct narray *array);
 void arrayfree2(struct narray *array);
 struct narray *arrayadd(struct narray *array,void *val);

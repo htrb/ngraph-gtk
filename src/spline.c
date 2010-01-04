@@ -1,5 +1,5 @@
 /* 
- * $Id: spline.c,v 1.2 2009/03/24 07:53:39 hito Exp $
+ * $Id: spline.c,v 1.3 2010/01/04 05:11:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -105,8 +105,9 @@ splinesolv2(double d[],double mu[],double ram[],double x[],double y[], int num,d
   return 0;
 }
 
-int splineperiod(double d[],double mu[],double ram[],double x[],double y[],
-                 int num,double *df0)
+int 
+splineperiod(double d[],double mu[],double ram[],double x[],double y[],
+	     int num,double *df0)
 {
   double h,xx,a,b,c,e;
 
