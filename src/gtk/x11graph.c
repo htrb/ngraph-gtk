@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.54 2009/12/18 06:04:29 hito Exp $
+ * $Id: x11graph.c,v 1.55 2010/01/21 07:22:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -822,7 +822,7 @@ DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->dir = w;
     item_setup(GTK_WIDGET(hbox), w, _("_Dir:"), TRUE);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
   }
 
   cwd = ngetcwd();

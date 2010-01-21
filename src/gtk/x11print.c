@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.49 2009/12/22 00:57:41 hito Exp $
+ * $Id: x11print.c,v 1.50 2010/01/21 07:22:49 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -538,6 +538,17 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
   putobj(graobj, "device", id, device);
 }
 
+static void
+init_print(GtkPrintOperation *operation, GtkPrintContext *context, gpointer user_data)
+{
+  GtkPrintSettings *settings;
+  int n;
+
+  settings = gtk_print_operation_get_print_settings(operation);
+  n = gtk_print_settings_get_n_copies(settings);
+  gtk_print_operation_set_n_pages(operation, n);
+}
+
 void
 CmOutputPrinter(int select_file, int show_dialog)
 {
@@ -561,10 +572,12 @@ CmOutputPrinter(int select_file, int show_dialog)
   FileAutoScale();
   AdjustAxis();
 
-  if ((graobj = chkobject("gra")) == NULL)
+  graobj = chkobject("gra");
+  if (graobj == NULL)
     return;
 
-  if ((g2wobj = chkobject("gra2gtkprint")) == NULL)
+  g2wobj = chkobject("gra2gtkprint");
+  if (g2wobj == NULL)
     return;
 
   g2wid = newobj(g2wobj);
@@ -578,7 +591,9 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   print = gtk_print_operation_new();
   gtk_print_operation_set_n_pages(print, 1);
-  gtk_print_operation_set_current_page(print, 0);
+  gtk_print_operation_set_has_selection(print, FALSE);
+  gtk_print_operation_set_support_selection(print, FALSE);
+  gtk_print_operation_set_embed_page_setup(print, FALSE);
   gtk_print_operation_set_use_full_page(print, TRUE);
 
   if (PrintSettings == NULL)
@@ -611,6 +626,7 @@ CmOutputPrinter(int select_file, int show_dialog)
   pobj.g2wid = g2wid;
   pobj.g2winst = g2winst;
   g_signal_connect(print, "draw_page", G_CALLBACK(draw_page), &pobj);
+  g_signal_connect(print, "begin_print", G_CALLBACK(init_print), &pobj);
 
   switch (show_dialog) {
   case PRINT_SHOW_DIALOG_NONE:

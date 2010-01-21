@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.56 2009/11/16 09:13:05 hito Exp $
+ * $Id: ogra2cairo.c,v 1.57 2010/01/21 07:22:49 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -856,7 +856,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       error(obj, r);
       return 1;
     }
-    break;
+    cairo_save(local->cairo);
   case '%': case 'X':
     break;
   case 'E':
