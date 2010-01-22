@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.52 2009/12/24 01:48:47 hito Exp $
+ * $Id: x11dialg.h,v 1.53 2010/01/22 02:02:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -80,6 +80,7 @@ const char *get_style_string(struct objlist *obj, int id, char *field);
   GtkVBox *vbox;\
   int ret, show_buttons, show_cancel;\
   char *resource;\
+  const char *ok_button;\
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);\
   void (*CloseWindow) (GtkWidget *w, void *data);\
 

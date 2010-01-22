@@ -1,7 +1,23 @@
+2010-01-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (EvalDialogSetup): set "d->ok_button" as
+	"GTK_STOCK_CLOSE".
+
+	* src/gtk/x11opt_proto.h (CREATE_NAME): set "d->ok_button" as
+	"GTK_STOCK_CLOSE".
+
+	* src/gtk/x11gui.c (DialogExecute): initialize "data->ok_button".
+	(DialogExecute): use "data->ok_button" for "ok" button.
+
+	* src/gtk/x11file.c (MathDialogSetup): set "d->ok_button" as
+	"GTK_STOCK_CLOSE".
+
+	* src/gtk/x11dialg.h (DIALOG_PROTOTYPE): add member "ok_button".
+
 2010-01-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (init_print): add.
-	(CmOutputPrinter): "begin_print" signall is connected to the
+	(CmOutputPrinter): "begin_print" signal is connected to the
 	function "init_print()".
 	(CmOutputPrinter): don't call
 	"gtk_print_operation_set_current_page()".
@@ -47,7 +63,7 @@
 	(sub_window_create): call "gtk_window_set_skip_taskbar_hint()"
 
 	* src/gtk/x11file.c (create_user_fit_frame): initial values and
-	derivative equations awr shown in scrolled window.
+	derivative equations are shown in scrolled window.
 
 2009-12-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

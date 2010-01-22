@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.38 2009/12/10 08:59:53 hito Exp $
+ * $Id: x11gui.c,v 1.39 2010/01/22 02:02:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -167,15 +167,18 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
     data->show_buttons = TRUE;
     data->show_cancel = TRUE;
+    data->ok_button = GTK_STOCK_OK;
 
     gtk_window_set_title(GTK_WINDOW(dlg), _(data->resource));
 
     data->SetupWindow(dlg, data, TRUE);
 
-    if (data->show_cancel)
+    if (data->show_cancel) {
       gtk_dialog_add_button(GTK_DIALOG(dlg), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+    }
 
-    gtk_dialog_add_button(GTK_DIALOG(dlg), GTK_STOCK_OK, GTK_RESPONSE_OK);
+    gtk_dialog_add_button(GTK_DIALOG(dlg), data->ok_button, GTK_RESPONSE_OK);
+
     gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   } else {
     dlg = data->widget;

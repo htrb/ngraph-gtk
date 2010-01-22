@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.133 2009/12/25 09:01:13 hito Exp $
+ * $Id: x11file.c,v 1.134 2010/01/22 02:02:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -505,6 +505,7 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, TRUE, TRUE, 4);
 
     d->show_cancel = FALSE;
+    d->ok_button = GTK_STOCK_CLOSE;
 
     gtk_window_set_default_size(GTK_WINDOW(wi), -1, 300);
   }

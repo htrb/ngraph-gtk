@@ -298,6 +298,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
   d->show_cancel = FALSE;
+  d->ok_button = GTK_STOCK_CLOSE;
 }
 
 #undef LIST_TYPE

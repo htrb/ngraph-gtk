@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.180 2009/12/25 09:01:13 hito Exp $
+ * $Id: x11view.c,v 1.181 2010/01/22 02:02:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1022,6 +1022,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
     d->show_cancel = FALSE;
+    d->ok_button = GTK_STOCK_CLOSE;
 
     gtk_window_set_default_size(GTK_WINDOW(wi), 500, 400);
   }
