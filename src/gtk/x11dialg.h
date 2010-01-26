@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.h,v 1.53 2010/01/22 02:02:23 hito Exp $
+ * $Id: x11dialg.h,v 1.54 2010/01/26 04:35:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -409,7 +409,7 @@ struct DirectoryDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *dir;
+  GtkWidget *dir, *dir_label;
 };
 void DirectoryDialog(struct DirectoryDialog *data);
 

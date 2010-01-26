@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-01-22 11:01+0900\n"
-"PO-Revision-Date: 2009-12-22 09:58+0900\n"
+"POT-Creation-Date: 2010-01-26 13:20+0900\n"
+"PO-Revision-Date: 2010-01-26 13:21+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -1063,39 +1063,47 @@ msgstr "挿入(_I)"
 msgid "_Objects"
 msgstr "オブジェクト(_O)"
 
-#: src/gtk/x11graph.c:823 src/gtk/x11graph.c:879
-msgid "_Dir:"
-msgstr "ディレクトリ(_D):"
+#: src/gtk/x11graph.c:823
+msgid "_Select Dir:"
+msgstr "ディレクトリ選択(_S):"
 
-#: src/gtk/x11graph.c:874
+#: src/gtk/x11graph.c:825
+msgid "Current Dir:"
+msgstr "現在のディレクトリ:"
+
+#: src/gtk/x11graph.c:886
 msgid "_Expand included file"
 msgstr "データファイルの展開(データ込 NGP ファイル) (_E)"
 
-#: src/gtk/x11graph.c:882 src/gtk/x11graph.c:929 src/gtk/x11opt.c:1039
+#: src/gtk/x11graph.c:891
+msgid "_Dir:"
+msgstr "ディレクトリ(_D):"
+
+#: src/gtk/x11graph.c:894 src/gtk/x11graph.c:941 src/gtk/x11opt.c:1039
 msgid "_Ignore file path"
 msgstr "パス情報無視(_I)"
 
-#: src/gtk/x11graph.c:933
+#: src/gtk/x11graph.c:945
 msgid "_Greek Symbol"
 msgstr "全角ギリシア -> シンボル(_G)"
 
-#: src/gtk/x11graph.c:992 src/gtk/x11opt.c:1008
+#: src/gtk/x11graph.c:1004 src/gtk/x11opt.c:1008
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:995
+#: src/gtk/x11graph.c:1007
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:999
+#: src/gtk/x11graph.c:1011
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1090 src/gtk/x11menu.c:189
+#: src/gtk/x11graph.c:1102 src/gtk/x11menu.c:189
 msgid "Load NGP file"
 msgstr "NGP ファイルを開く"
 
-#: src/gtk/x11graph.c:1337
+#: src/gtk/x11graph.c:1349
 msgid ""
 "Ngraph is the program creating scientific 2-dimensional graphs for "
 "researchers and engineers."

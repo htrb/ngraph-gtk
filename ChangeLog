@@ -1,3 +1,11 @@
+2010-01-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (DirectoryDialogSetup): use "GtkTable"
+	instead of "GtkHBox".
+	(DirectoryDialogSetup): add current directory label.
+
+	* src/gtk/x11dialg.h (DirectoryDialog): add member "dir_label".
+
 2010-01-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (EvalDialogSetup): set "d->ok_button" as

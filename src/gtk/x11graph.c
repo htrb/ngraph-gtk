@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.55 2010/01/21 07:22:49 hito Exp $
+ * $Id: x11graph.c,v 1.56 2010/01/26 04:35:00 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -810,24 +810,35 @@ SwitchDialog(struct SwitchDialog *data)
 static void
 DirectoryDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox;
+  GtkWidget *w, *table;
   struct DirectoryDialog *d;
   char *cwd;
 
   d = (struct DirectoryDialog *) data;
   if (makewidget) {
-    hbox = gtk_hbox_new(FALSE, 4);
+    table = gtk_table_new(2, 2, FALSE);
 
     w = gtk_file_chooser_button_new(_("directory"), GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
     d->dir = w;
-    item_setup(GTK_WIDGET(hbox), w, _("_Dir:"), TRUE);
+    add_widget_to_table(table, w, _("_Select Dir:"), TRUE, 0);
 
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+    w = gtk_label_new(_("Current Dir:"));
+    gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
+    gtk_table_attach(GTK_TABLE(table), w, 0, 1, 1, 2, 0, 0, 4, 4);
+
+    w = gtk_label_new("");
+    gtk_label_set_ellipsize(GTK_LABEL(w), PANGO_ELLIPSIZE_START);
+    gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
+    d->dir_label = w;
+    gtk_table_attach(GTK_TABLE(table), w, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 4, 4);
+
+    gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
   }
 
   cwd = ngetcwd();
   if (cwd) {
     gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(d->dir), cwd);
+    gtk_label_set_text(GTK_LABEL(d->dir_label), cwd);
     g_free(cwd);
   }
 }
