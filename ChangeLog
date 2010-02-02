@@ -1,3 +1,22 @@
+2010-02-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (LEGEND_PREVIEW_USE_ARC): add.
+
+	* src/gtk/x11lgnd.c (renderer_func, column_edited)
+	(column_0_edited, column_1_edited, insert_column)
+	(set_delete_button_sensitivity): add.
+	(points_setup): use "GtkTreeView".
+	(LegendCurveDialogSetup, LegendPolyDialogSetup)
+	(LegendArrowDialogSetup): change layout.
+
+	* src/gtk/x11dialg.c (SetObjPointsFromText)
+	(SetTextFromObjPoints): use "GtkTreeView".
+	(set_obj_points_from_text, set_entry_from_obj_point): add.
+	(SetObjFieldFromStyle): use "set_obj_points_from_text()" instead
+	of "SetObjPointsFromText()".
+	(SetStyleFromObjField): use "set_entry_from_obj_point()" instead
+	of "SetTextFromObjPoints()".
+
 2010-01-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (DirectoryDialogSetup): use "GtkTable"

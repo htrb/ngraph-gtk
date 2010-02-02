@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.49 2009/12/25 09:01:13 hito Exp $
+ * $Id: x11dialg.c,v 1.50 2010/02/02 06:40:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -559,51 +559,44 @@ CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 int
 SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  double d;
-  int ip;
-  char *buf, *ptr, *tmp, *eptr;
-  const char *ctmp;
-  struct narray *array = NULL, *atmp;
+  GtkTreeModel *list;
+  GtkTreeIter iter;
+  GtkTreeView *tree_view;
+  struct narray *array, *atmp;
+  unsigned int i;
+  int  r, ip;
+  double point[2];
 
   if (w == NULL)
     return 0;
 
-  ctmp = gtk_entry_get_text(GTK_ENTRY(w));
-  if (ctmp == NULL)
-    return -1;
+  tree_view = GTK_TREE_VIEW(w);
+  list = gtk_tree_view_get_model(tree_view);
 
-  buf = g_strdup(ctmp);
-  if (buf == NULL)
+  r = gtk_tree_model_get_iter_first(list, &iter);
+  if (! r)
     return -1;
 
   array = arraynew(sizeof(int));
-  ptr = buf;
-  while (1) {
-    while (ptr && isspace(*ptr))
-      ptr++;
+  if (array == NULL)
+    return -1;
 
-    if (*ptr == '\0')
-      break;
+  while (r) {
+    gtk_tree_model_get(list, &iter,
+		       0, point,
+		       1, point + 1,
+		       -1);
 
-    tmp = strchr(ptr, ' ');
-    if (tmp)
-      *tmp = '\0';
+    for (i = 0; i < sizeof(point) / sizeof(*point); i++) {
+      ip = nround(point[i] * 100);
+      atmp = arrayadd(array, &ip);
+      if (atmp == NULL)
+	goto ErrEnd;
 
-    d = strtod(ptr, &eptr);
-    if (d != d || d == HUGE_VAL || d == - HUGE_VAL || eptr[0] != '\0')
-      goto ErrEnd;
+      array = atmp;
+    }
 
-    ip = nround(d * 100);
-    atmp = arrayadd(array, &ip);
-    if (atmp == NULL)
-      goto ErrEnd;
-
-    array = atmp;
-
-    if (tmp == NULL)
-      break;
-
-    ptr = tmp + 1;
+    r = gtk_tree_model_iter_next(list, &iter);
   }
 
   if (get_graph_modified()) {
@@ -625,13 +618,10 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     g_free(str1);
   }
 
-  g_free(buf);
   return 0;
 
 
  ErrEnd:
-  if (buf)
-    g_free(buf);
 
   if (array)
     arrayfree(array);
@@ -639,37 +629,34 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return -1;
 }
 
+
 void
 SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  GtkEntry *entry;
+  GtkListStore *list;
+  GtkTreeIter iter;
+  GtkTreeView *tree_view;
   struct narray *array;
-  char *str, buf[128], *tmp;
   int i, n, *points;
 
   if (w == NULL)
     return;
 
-  str = nstrnew();
-  if (str == NULL)
-    return;
+  tree_view = GTK_TREE_VIEW(w);
+  list = GTK_LIST_STORE(gtk_tree_view_get_model(tree_view));
+  gtk_list_store_clear(list);
 
-  entry = GTK_ENTRY(w);
   getobj(Obj, field, Id, 0, NULL, &array);
   n = arraynum(array);
   points = (int *) arraydata(array);
-  for (i = 0; i < n; i++) {
-    snprintf(buf, sizeof(buf), "%.2f ", points[i] / 100.0);
-    tmp = nstrcat(str, buf);
-    if (tmp == NULL)
-      goto END;
-    str = tmp;
+  for (i = 0; i < n / 2; i++) {
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter,
+		       0, points[i * 2] / 100.0,
+		       1, points[i * 2 + 1] / 100.0,
+		       -1);
+
   }
-
-  gtk_entry_set_text(entry, str);
-
- END:
-  g_free(str);
 }
 
 int
@@ -895,6 +882,89 @@ SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), a);
 }
 
+static int
+set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
+{
+  double d;
+  int ip;
+  char *buf, *ptr, *tmp, *eptr;
+  const char *ctmp;
+  struct narray *array = NULL, *atmp;
+
+  if (w == NULL)
+    return 0;
+
+  ctmp = gtk_entry_get_text(GTK_ENTRY(w));
+  if (ctmp == NULL)
+    return -1;
+
+  buf = g_strdup(ctmp);
+  if (buf == NULL)
+    return -1;
+
+  array = arraynew(sizeof(int));
+  ptr = buf;
+  while (1) {
+    while (ptr && isspace(*ptr))
+      ptr++;
+
+    if (*ptr == '\0')
+      break;
+
+    tmp = strchr(ptr, ' ');
+    if (tmp)
+      *tmp = '\0';
+
+    d = strtod(ptr, &eptr);
+    if (d != d || d == HUGE_VAL || d == - HUGE_VAL || eptr[0] != '\0')
+      goto ErrEnd;
+
+    ip = nround(d * 100);
+    atmp = arrayadd(array, &ip);
+    if (atmp == NULL)
+      goto ErrEnd;
+
+    array = atmp;
+
+    if (tmp == NULL)
+      break;
+
+    ptr = tmp + 1;
+  }
+
+  if (get_graph_modified()) {
+    if (putobj(Obj, field, Id, array) < 0)
+      goto ErrEnd;
+  } else {
+    char *str1, *str2;
+
+    sgetobjfield(Obj, Id, field, NULL, &str1, FALSE, FALSE, FALSE);
+    if (putobj(Obj, field, Id, array) < 0) {
+      g_free(str1);
+      goto ErrEnd;
+    }
+    sgetobjfield(Obj, Id, field, NULL, &str2, FALSE, FALSE, FALSE);
+    if (str1 && str2 && strcmp(str1, str2)) {
+      set_graph_modified();
+    }
+    g_free(str2);
+    g_free(str1);
+  }
+
+  g_free(buf);
+  return 0;
+
+
+ ErrEnd:
+  if (buf)
+    g_free(buf);
+
+  if (array)
+    arrayfree(array);
+
+  return -1;
+}
+
 int
 SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
@@ -921,7 +991,7 @@ SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
 
   if (j == CLINESTYLE) {
-    if (SetObjPointsFromText(GTK_BIN(w)->child, Obj, Id, field)) {
+    if (set_obj_points_from_text(GTK_BIN(w)->child, Obj, Id, field)) {
       return -1;
     }
   }
@@ -958,6 +1028,63 @@ get_style_string(struct objlist *obj, int id, char *field)
   return NULL;
 }
 
+#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18))
+static void
+set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
+{
+  struct narray *array;
+  char buf[128];
+  int i, n, *points, l, pos;
+  GtkEntryBuffer *t_buf;
+
+  t_buf = gtk_entry_get_buffer(entry);
+  gtk_entry_buffer_set_text(t_buf, "", 0);
+
+  getobj(Obj, field, Id, 0, NULL, &array);
+  n = arraynum(array);
+  points = (int *) arraydata(array);
+  pos = 0;
+  for (i = 0; i < n / 2; i++) {
+    l = snprintf(buf, sizeof(buf), "%.2f %.2f ", points[i * 2] / 100.0, points[i * 2 + 1] / 100.0);
+    gtk_entry_buffer_insert_text(t_buf, pos, buf, l);
+    pos += l;
+  }
+}
+#else
+static void
+set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
+{
+  GtkEntry *entry;
+  struct narray *array;
+  char *str, buf[128], *tmp;
+  int i, n, *points;
+
+  if (w == NULL)
+    return;
+
+  str = nstrnew();
+  if (str == NULL)
+    return;
+
+  entry = GTK_ENTRY(w);
+   getobj(Obj, field, Id, 0, NULL, &array);
+   n = arraynum(array);
+   points = (int *) arraydata(array);
+  for (i = 0; i < n; i++) {
+    snprintf(buf, sizeof(buf), "%.2f ", points[i] / 100.0);
+    tmp = nstrcat(str, buf);
+    if (tmp == NULL)
+      goto END;
+    str = tmp;
+   }
+
+  gtk_entry_set_text(entry, str);
+
+ END:
+  g_free(str);
+}
+#endif
+
 void
 SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
@@ -982,7 +1109,7 @@ SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   if (s) {
     gtk_entry_set_text(entry, _(s));
   } else {
-    SetTextFromObjPoints(GTK_WIDGET(entry), Obj, Id, field);
+    set_entry_from_obj_point(entry, Obj, Id, field);
   }
 }
 

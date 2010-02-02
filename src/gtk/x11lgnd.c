@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.65 2009/12/24 10:04:18 hito Exp $
+ * $Id: x11lgnd.c,v 1.66 2010/02/02 06:40:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -618,14 +618,178 @@ width_setup(struct LegendDialog *d, GtkWidget *table, int i)
   add_widget_to_table(table, w, _("_Line width:"), FALSE, i++);
 }
 
-static void
-points_setup(struct LegendDialog *d, GtkWidget *table, int i)
-{
-  GtkWidget *w;
+#define POINTS_DIMENSION 2
 
-  w = create_text_entry(FALSE, TRUE);
-  d->points = w;
-  add_widget_to_table(table, w, _("_Points:"), TRUE, i);
+static void
+renderer_func(GtkTreeViewColumn *col, GtkCellRenderer *renderer, GtkTreeModel *model, GtkTreeIter *iter, gpointer data)
+{
+  int n;
+  double v;
+  char buf[1024];
+
+  n = GPOINTER_TO_INT(data);
+
+  gtk_tree_model_get(model, iter, n, &v, -1);
+  snprintf(buf, sizeof(buf), "%.2f", v);
+  g_object_set((GObject *) renderer, "text", buf, NULL);
+}
+
+static void
+column_edited(GtkCellRenderer *cell_renderer, gchar *path_str, gchar *str, int column, gpointer user_data)
+{
+  double d;
+  char *eptr;
+  GtkTreeModel *list;
+  GtkTreeIter iter;
+  GtkTreePath *path;
+  int r;
+
+  path = gtk_tree_path_new_from_string(path_str);
+  if (path == NULL)
+    return;
+
+  list = GTK_TREE_MODEL(user_data);
+  r = gtk_tree_model_get_iter(list, &iter, path);
+  if (! r)
+    return;
+
+  d = strtod(str, &eptr);
+  if (d != d || d == HUGE_VAL || d == - HUGE_VAL || eptr == str)
+    return;
+
+  gtk_list_store_set(GTK_LIST_STORE(list), &iter, column, d, -1);
+}
+
+static void
+column_0_edited(GtkCellRenderer *cell_renderer, gchar *path_str, gchar *str, gpointer user_data)
+{
+  column_edited(cell_renderer, path_str, str, 0, user_data);
+}
+
+static void
+column_1_edited(GtkCellRenderer *cell_renderer, gchar *path_str, gchar *str, gpointer user_data)
+{
+  column_edited(cell_renderer, path_str, str, 1, user_data);
+}
+
+static void
+insert_column(GtkWidget *w, gpointer user_data)
+{
+  GtkTreeView *tree_view;
+  GtkTreeModel *list;
+  GtkTreeIter iter, tmp;
+  GtkTreePath *path;
+  int r;
+
+  tree_view = GTK_TREE_VIEW(user_data);
+
+  list = gtk_tree_view_get_model(tree_view);
+  if (list == NULL)
+    return;
+
+  gtk_tree_view_get_cursor(tree_view, &path, NULL);
+  r = gtk_tree_model_get_iter(list, &iter, path);
+  if (! r)
+    goto End;
+
+  gtk_list_store_insert_after(GTK_LIST_STORE(list), &tmp, &iter);
+
+ End:
+  gtk_tree_path_free(path);
+}
+
+static void
+set_delete_button_sensitivity(GtkTreeSelection *sel, gpointer user_data)
+{
+  GtkWidget *btn;
+  int n;
+
+  btn = GTK_WIDGET(user_data);
+  n = gtk_tree_selection_count_selected_rows(sel);
+
+  gtk_widget_set_sensitive(btn, n > 0);
+}
+
+static GtkWidget *
+points_setup(struct LegendDialog *d)
+{
+  GtkWidget *label, *swin, *vbox, *hbox, *tree_view, *btn;
+  GtkTreeModel *list;
+  GtkCellRenderer *renderer;
+  GtkTreeViewColumn *col;
+  GtkTreeSelection *sel;
+  char *title[] = {"x", "y"};
+  int i;
+  GCallback edited_func[] = {G_CALLBACK(column_0_edited), G_CALLBACK(column_1_edited)};
+
+  list = GTK_TREE_MODEL(gtk_list_store_new(POINTS_DIMENSION, G_TYPE_DOUBLE, G_TYPE_DOUBLE));
+  tree_view = gtk_tree_view_new_with_model(list);
+  gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree_view), TRUE);
+  gtk_tree_view_set_rubber_banding(GTK_TREE_VIEW(tree_view), FALSE);
+  gtk_tree_view_set_grid_lines(GTK_TREE_VIEW(tree_view), GTK_TREE_VIEW_GRID_LINES_VERTICAL);
+  gtk_tree_view_set_reorderable(GTK_TREE_VIEW(tree_view), TRUE);
+
+  sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
+  gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
+
+  for (i = 0; i < POINTS_DIMENSION; i++) {
+    renderer = gtk_cell_renderer_spin_new();
+    g_object_set((GObject *) renderer,
+		 "xalign", 1.0,
+		 "editable", TRUE,
+		 "adjustment", gtk_adjustment_new(0,
+						  -SPIN_ENTRY_MAX / 100.0,
+						  SPIN_ENTRY_MAX / 100.0,
+						  1,
+						  10,
+						  0),
+		 "digits", 2,
+		 NULL);
+
+    g_signal_connect(renderer, "edited", G_CALLBACK(edited_func[i]), list);
+    col = gtk_tree_view_column_new_with_attributes(title[i], renderer,
+						   "text", i,
+						   NULL);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(tree_view), col);
+    gtk_tree_view_column_set_cell_data_func(col,
+					    renderer,
+					    renderer_func,
+					    GINT_TO_POINTER(i),
+					    NULL);
+  }
+
+  vbox = gtk_vbox_new(FALSE, 4);
+
+  label = gtk_label_new_with_mnemonic(_("_Points:"));
+  gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), tree_view);
+  gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
+
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
+  gtk_container_set_border_width(GTK_CONTAINER(swin), 2);
+  gtk_container_add(GTK_CONTAINER(swin), tree_view);
+  gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 4);
+
+  hbox = gtk_hbox_new(FALSE, 4);
+
+  btn = gtk_button_new_from_stock(GTK_STOCK_ADD);
+  g_signal_connect(btn, "clicked", G_CALLBACK(insert_column), tree_view);
+  gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
+
+  btn = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+  g_signal_connect(btn, "clicked", G_CALLBACK(list_store_remove_selected_cb), tree_view);
+  g_signal_connect(sel, "changed", G_CALLBACK(set_delete_button_sensitivity), btn);
+  gtk_widget_set_sensitive(btn, FALSE);
+  gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
+
+  gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
+
+
+  d->points = tree_view;
+
+  return vbox;
 }
 
 static void
@@ -699,10 +863,17 @@ LegendCurveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
 
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = points_setup(d);
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), w);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
-    points_setup(d, table, i++);
     style_setup(d, table, i++);
 
     w = combo_box_create();
@@ -716,7 +887,6 @@ LegendCurveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    hbox = gtk_hbox_new(FALSE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
@@ -753,10 +923,17 @@ LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
 
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = points_setup(d);
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), w);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
-    points_setup(d, table, i++);
     style_setup(d, table, i++);
     width_setup(d, table, i++);
     miter_setup(d, table, i++);
@@ -769,7 +946,6 @@ LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    hbox = gtk_hbox_new(FALSE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
@@ -904,9 +1080,17 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
 
+    hbox = gtk_hbox_new(FALSE, 4);
+
+    w = points_setup(d);
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), w);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+
     table = gtk_table_new(1, 2, FALSE);
 
-    i = 1;
+    i = 0;
     style_setup(d, table, i++);
     width_setup(d, table, i++);
     miter_setup(d, table, i++);
@@ -938,19 +1122,15 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i++;
     gtk_table_resize(GTK_TABLE(table), 3, i);
-    gtk_table_attach(GTK_TABLE(table), vbox, 2, 3, 1, i, 0, 0, 4, 4);
+    gtk_table_attach(GTK_TABLE(table), vbox, 2, 3, 0, i, 0, GTK_FILL, 4, 4);
 
 
-    w = create_text_entry(FALSE, TRUE);
-    d->points = w;
-    add_widget_to_table_sub(table, w, _("_Points:"), TRUE, 0, 3, 3, 0);
-
+    /* add dummy widget to align other widgets */
     w = gtk_label_new("");
-    gtk_table_attach(GTK_TABLE(table), w, 0, 2, i -1 , i, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 4, 4);
+    gtk_table_attach(GTK_TABLE(table), w, 0, 2, i -1 , i, 0, GTK_EXPAND, 4, 4);
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    hbox = gtk_hbox_new(FALSE, 4);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
