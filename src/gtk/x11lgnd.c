@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.66 2010/02/02 06:40:44 hito Exp $
+ * $Id: x11lgnd.c,v 1.67 2010/02/02 10:53:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -684,18 +684,34 @@ insert_column(GtkWidget *w, gpointer user_data)
   tree_view = GTK_TREE_VIEW(user_data);
 
   list = gtk_tree_view_get_model(tree_view);
-  if (list == NULL)
+  if (list == NULL) {
     return;
+  }
 
   gtk_tree_view_get_cursor(tree_view, &path, NULL);
-  r = gtk_tree_model_get_iter(list, &iter, path);
-  if (! r)
-    goto End;
+  if (path) {
+    r = gtk_tree_model_get_iter(list, &iter, path);
+    if (! r)
+      goto End;
 
-  gtk_list_store_insert_after(GTK_LIST_STORE(list), &tmp, &iter);
+    gtk_list_store_insert_after(GTK_LIST_STORE(list), &tmp, &iter);
+  } else {
+    gtk_list_store_append(GTK_LIST_STORE(list), &tmp);
+  }
+
+  if (path) {
+    gtk_tree_path_free(path);
+  }
+
+  path = gtk_tree_model_get_path(list, &tmp);
+
+  if (path) {
+    gtk_tree_view_set_cursor(tree_view, path, NULL, FALSE);
+  }
 
  End:
-  gtk_tree_path_free(path);
+  if (path)
+    gtk_tree_path_free(path);
 }
 
 static void

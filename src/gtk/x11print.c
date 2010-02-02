@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.50 2010/01/21 07:22:49 hito Exp $
+ * $Id: x11print.c,v 1.51 2010/02/02 10:53:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -591,9 +591,11 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   print = gtk_print_operation_new();
   gtk_print_operation_set_n_pages(print, 1);
+#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18))
   gtk_print_operation_set_has_selection(print, FALSE);
   gtk_print_operation_set_support_selection(print, FALSE);
   gtk_print_operation_set_embed_page_setup(print, FALSE);
+#endif
   gtk_print_operation_set_use_full_page(print, TRUE);
 
   if (PrintSettings == NULL)

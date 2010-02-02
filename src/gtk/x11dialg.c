@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.50 2010/02/02 06:40:44 hito Exp $
+ * $Id: x11dialg.c,v 1.51 2010/02/02 10:53:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1054,22 +1054,17 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
 static void
 set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
 {
-  GtkEntry *entry;
   struct narray *array;
   char *str, buf[128], *tmp;
   int i, n, *points;
-
-  if (w == NULL)
-    return;
 
   str = nstrnew();
   if (str == NULL)
     return;
 
-  entry = GTK_ENTRY(w);
-   getobj(Obj, field, Id, 0, NULL, &array);
-   n = arraynum(array);
-   points = (int *) arraydata(array);
+  getobj(Obj, field, Id, 0, NULL, &array);
+  n = arraynum(array);
+  points = (int *) arraydata(array);
   for (i = 0; i < n; i++) {
     snprintf(buf, sizeof(buf), "%.2f ", points[i] / 100.0);
     tmp = nstrcat(str, buf);
