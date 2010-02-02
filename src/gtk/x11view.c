@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.183 2010/02/02 07:34:16 hito Exp $
+ * $Id: x11view.c,v 1.184 2010/02/02 07:45:20 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2293,7 +2293,7 @@ show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double
     break;
   }
 
-  if (Menulocal.preview_use_arc && rx > 0 && ry > 0) {
+  if (! Menulocal.preview_use_rect && rx > 0 && ry > 0) {
     rx = mxd2p(rx * zoom);
     ry = mxd2p(ry * zoom);
     x = coord_conv_x(x, zoom, d);
@@ -2466,7 +2466,7 @@ ShowPoints(GdkGC *gc)
       width = abs(x2 - x1);
       height = abs(y2 - y1);
 
-      if (d->Mode == ArcB && Menulocal.preview_use_arc) {
+      if (d->Mode == ArcB && ! Menulocal.preview_use_rect) {
 	gdk_draw_arc(d->win, gc, FALSE, minx, miny, width, height, 0, 360 * 64);
       } else {
 	gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);

@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.87 2010/02/02 07:34:16 hito Exp $
+ * $Id: ox11menu.c,v 1.88 2010/02/02 07:45:20 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -253,7 +253,7 @@ static struct menu_config MenuConfigViewer[] = {
   {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.grid},
   {"focus_frame_type",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.focus_frame_type},
   {"preserve_width",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.preserve_width},
-  {"preview_use_arc",			MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.preview_use_arc},
+  {"preview_use_rect",			MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.preview_use_rect},
   {"background_color",			MENU_CONFIG_TYPE_COLOR, menu_config_set_bgcolor, NULL},
   {NULL},
 };

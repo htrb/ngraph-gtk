@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-38\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-02-02 16:04+0900\n"
+"POT-Creation-Date: 2010-02-02 16:43+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2198,7 +2198,7 @@ msgid "_Preserve line width and style"
 msgstr ""
 
 #: src/gtk/x11opt.c:1400
-msgid "_Use arc for draft"
+msgid "_Use rectangle for draft"
 msgstr ""
 
 #: src/gtk/x11opt.c:1404

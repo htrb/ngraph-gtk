@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-02-02 16:04+0900\n"
-"PO-Revision-Date: 2010-02-02 16:05+0900\n"
+"POT-Creation-Date: 2010-02-02 16:43+0900\n"
+"PO-Revision-Date: 2010-02-02 16:43+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -2203,8 +2203,8 @@ msgid "_Preserve line width and style"
 msgstr "線幅と線種を保持する(_S) "
 
 #: src/gtk/x11opt.c:1400
-msgid "_Use arc for draft"
-msgstr "下書き時に円弧を描画(_U)"
+msgid "_Use rectangle for draft"
+msgstr "下書き時に矩形を使用(_U)"
 
 #: src/gtk/x11opt.c:1404
 msgid "_Load files on redraw"
