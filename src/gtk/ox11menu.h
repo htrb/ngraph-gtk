@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.33 2009/07/08 10:13:03 hito Exp $
+ * $Id: ox11menu.h,v 1.34 2010/02/02 07:34:16 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -97,7 +97,7 @@ struct menulocal
   GdkRegion *region;
   int lock;
   struct gra2cairo_local *local;
-  int antialias;
+  int antialias, preview_use_arc;
   char *editor, *browser, *help_browser;
   struct objlist *obj;
   char *inst;

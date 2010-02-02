@@ -1,5 +1,18 @@
 2010-02-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11view.c (show_focus_line_arc, ShowPoints): call
+	"gdk_draw_arc()" only when "Menulocal.preview_use_arc" is true.
+
+	* src/gtk/x11opt.c (ViewerDialogSetupItem, ViewerDialogSetup)
+	(ViewerDialogClose): add codes for "previe_use_arc".
+
+	* src/gtk/x11dialg.h (ViewerDialog): add member "previe_use_arc".
+
+	* src/gtk/ox11menu.h (menulocal): add member "previe_use_arc".
+
+	* src/gtk/ox11menu.c (MenuConfigViewer): add setting related to
+	"previe_use_arc".
+
 	* src/gtk/x11view.c (LEGEND_PREVIEW_USE_ARC): add.
 
 	* src/gtk/x11lgnd.c (renderer_func, column_edited)

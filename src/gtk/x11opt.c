@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.77 2009/12/24 10:04:18 hito Exp $
+ * $Id: x11opt.c,v 1.78 2010/02/02 07:34:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1334,6 +1334,8 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   getobj(d->Obj, "redraw_flag", d->Id, 0, NULL, &a);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->loadfile), a);
 
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->preview_use_arc), Menulocal.preview_use_arc);
+
   spin_entry_set_val(d->data_num, Menulocal.redrawf_num);
   spin_entry_set_val(d->grid, Menulocal.grid);
 
@@ -1395,6 +1397,10 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->preserve_width = w;
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
+    w = gtk_check_button_new_with_mnemonic(_("_Use arc for draft"));
+    d->preview_use_arc = w;
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+
     w = gtk_check_button_new_with_mnemonic(_("_Load files on redraw"));
     d->loadfile = w;
     add_widget_to_table(table, w, NULL, FALSE, i++);
@@ -1446,6 +1452,9 @@ ViewerDialogClose(GtkWidget *w, void *data)
 
   Menulocal.preserve_width =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
+
+  Menulocal.preview_use_arc =
+    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preview_use_arc));
 
   gtk_color_button_get_color(GTK_COLOR_BUTTON(d->bgcol), &color);
   Menulocal.bg_r = color.red / 256;

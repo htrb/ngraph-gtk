@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.182 2010/02/02 06:40:44 hito Exp $
+ * $Id: x11view.c,v 1.183 2010/02/02 07:34:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -56,8 +56,6 @@
 #include "x11view.h"
 #include "x11commn.h"
 #include "x11merge.h"
-
-#define LEGEND_PREVIEW_USE_ARC 1
 
 #define ID_BUF_SIZE 16
 #define SCROLL_INC 20
@@ -2295,15 +2293,13 @@ show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double
     break;
   }
 
-#if LEGEND_PREVIEW_USE_ARC
-  if (rx > 0 && ry > 0) {
+  if (Menulocal.preview_use_arc && rx > 0 && ry > 0) {
     rx = mxd2p(rx * zoom);
     ry = mxd2p(ry * zoom);
     x = coord_conv_x(x, zoom, d);
     y = coord_conv_y(y, zoom, d);
     gdk_draw_arc(d->win, gc, FALSE, x - rx, y - ry, rx * 2, ry * 2, a1 / 100.0 * 64, a2 / 100.0 * 64);
   }
-#endif
 }
 
 static void
@@ -2470,12 +2466,8 @@ ShowPoints(GdkGC *gc)
       width = abs(x2 - x1);
       height = abs(y2 - y1);
 
-      if (d->Mode == ArcB) {
-#if LEGEND_PREVIEW_USE_ARC
+      if (d->Mode == ArcB && Menulocal.preview_use_arc) {
 	gdk_draw_arc(d->win, gc, FALSE, minx, miny, width, height, 0, 360 * 64);
-#else
-	gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
-#endif
       } else {
 	gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
       }
