@@ -1,17 +1,19 @@
+2010-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_liststore.c (list_store_remove_selected_cb): set
+	cursor ont the first selected path.
+
 2010-02-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (show_focus_line_arc, ShowPoints): call
-	"gdk_draw_arc()" only when "Menulocal.preview_use_rect" is false.
+	"gdk_draw_arc()" only when "Menulocal.do_not_use_arc_for_draft" is
+	false.
 
-	* src/gtk/x11opt.c (ViewerDialogSetupItem, ViewerDialogSetup)
-	(ViewerDialogClose): add codes for "preview_use_rect".
-
-	* src/gtk/x11dialg.h (ViewerDialog): add member "preview_use_rect".
-
-	* src/gtk/ox11menu.h (menulocal): add member "preview_use_rect".
+	* src/gtk/ox11menu.h (menulocal): add member
+	"do_not_use_arc_for_draft".
 
 	* src/gtk/ox11menu.c (MenuConfigViewer): add setting related to
-	"preview_use_rect".
+	"do_not_use_arc_for_draft".
 
 	* src/gtk/x11lgnd.c (renderer_func, column_edited)
 	(column_0_edited, column_1_edited, insert_column)

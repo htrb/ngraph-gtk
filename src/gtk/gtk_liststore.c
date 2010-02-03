@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_liststore.c,v 1.26 2009/11/16 09:13:05 hito Exp $
+ * $Id: gtk_liststore.c,v 1.27 2010/02/03 01:18:12 hito Exp $
  */
 
 #include <stdlib.h>
@@ -806,6 +806,7 @@ list_store_remove_selected_cb(GtkWidget *w, gpointer client_data)
   GtkTreeModel *model;
   gboolean found;
   GtkTreeIter iter;
+  GtkTreePath *first_path = NULL;
 
   sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(client_data));
   selected = gtk_tree_selection_get_selected_rows(sel, &model);
@@ -817,6 +818,15 @@ list_store_remove_selected_cb(GtkWidget *w, gpointer client_data)
     found = gtk_tree_model_get_iter(model, &iter, data->data);
     if (found)
       gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+
+    first_path = data->data;
+  }
+
+  if (first_path) {
+    if (! gtk_tree_model_get_iter(model, &iter, first_path)) {
+      gtk_tree_path_prev(first_path);
+    }
+    gtk_tree_view_set_cursor(GTK_TREE_VIEW(client_data), first_path, NULL, FALSE);
   }
 
   g_list_foreach(selected, free_tree_path_cb, NULL);
