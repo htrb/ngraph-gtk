@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-39\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-02-02 19:53+0900\n"
+"POT-Creation-Date: 2010-02-03 10:22+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -122,7 +122,7 @@ msgstr ""
 msgid "_Background"
 msgstr ""
 
-#: src/gtk/x11axis.c:348 src/gtk/x11opt.c:1380
+#: src/gtk/x11axis.c:348 src/gtk/x11opt.c:1378
 msgid "_Background Color:"
 msgstr ""
 
@@ -393,7 +393,7 @@ msgstr ""
 msgid "_Position"
 msgstr ""
 
-#: src/gtk/x11commn.c:930 src/gtk/x11opt.c:1517
+#: src/gtk/x11commn.c:930 src/gtk/x11opt.c:1508
 #, c-format
 msgid ""
 "`%s'\n"
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Save NGP file"
 msgstr ""
 
-#: src/gtk/x11commn.c:1022 src/gtk/x11opt.c:1524
+#: src/gtk/x11commn.c:1022 src/gtk/x11opt.c:1515
 #, c-format
 msgid "Saving `%.128s'."
 msgstr ""
@@ -442,11 +442,11 @@ msgstr ""
 msgid "error"
 msgstr ""
 
-#: src/gtk/x11dialg.c:51 src/gtk/x11opt.c:1384
+#: src/gtk/x11dialg.c:51 src/gtk/x11opt.c:1382
 msgid "solid"
 msgstr ""
 
-#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1385
+#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1383
 msgid "dot"
 msgstr ""
 
@@ -2177,39 +2177,35 @@ msgstr ""
 msgid "Window _Height:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1371
+#: src/gtk/x11opt.c:1369
 msgid "_DPI:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1376
+#: src/gtk/x11opt.c:1374
 msgid "_Grid:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1386
+#: src/gtk/x11opt.c:1384
 msgid "_Line attribute of focus frame:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1394
+#: src/gtk/x11opt.c:1392
 msgid "_Antialias:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1396
+#: src/gtk/x11opt.c:1394
 msgid "_Preserve line width and style"
 msgstr ""
 
-#: src/gtk/x11opt.c:1400
-msgid "_Use rectangle for draft"
-msgstr ""
-
-#: src/gtk/x11opt.c:1404
+#: src/gtk/x11opt.c:1398
 msgid "_Load files on redraw"
 msgstr ""
 
-#: src/gtk/x11opt.c:1409
+#: src/gtk/x11opt.c:1403
 msgid "_Maximum number of data on redraw:"
 msgstr ""
 
-#: src/gtk/x11opt.c:1518
+#: src/gtk/x11opt.c:1509
 msgid "Save as .Ngraph.ngp"
 msgstr ""
 

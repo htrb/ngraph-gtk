@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-02-02 19:53+0900\n"
+"POT-Creation-Date: 2010-02-03 10:22+0900\n"
 "PO-Revision-Date: 2010-02-02 16:43+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -120,7 +120,7 @@ msgstr "色(_C):"
 msgid "_Background"
 msgstr "背景色(_B) "
 
-#: src/gtk/x11axis.c:348 src/gtk/x11opt.c:1380
+#: src/gtk/x11axis.c:348 src/gtk/x11opt.c:1378
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
@@ -391,7 +391,7 @@ msgstr "フォント(_F)"
 msgid "_Position"
 msgstr "位置(_P)"
 
-#: src/gtk/x11commn.c:930 src/gtk/x11opt.c:1517
+#: src/gtk/x11commn.c:930 src/gtk/x11opt.c:1508
 #, c-format
 msgid ""
 "`%s'\n"
@@ -405,7 +405,7 @@ msgstr ""
 msgid "Save NGP file"
 msgstr "NGP ファイルの保存"
 
-#: src/gtk/x11commn.c:1022 src/gtk/x11opt.c:1524
+#: src/gtk/x11commn.c:1022 src/gtk/x11opt.c:1515
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
@@ -444,11 +444,11 @@ msgstr "Ngraph.ini をコピーできませんでした."
 msgid "error"
 msgstr "エラー"
 
-#: src/gtk/x11dialg.c:51 src/gtk/x11opt.c:1384
+#: src/gtk/x11dialg.c:51 src/gtk/x11opt.c:1382
 msgid "solid"
 msgstr "実線"
 
-#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1385
+#: src/gtk/x11dialg.c:52 src/gtk/x11opt.c:1383
 msgid "dot"
 msgstr "点線"
 
@@ -2182,39 +2182,35 @@ msgstr "幅(_W):"
 msgid "Window _Height:"
 msgstr "高さ(_H):"
 
-#: src/gtk/x11opt.c:1371
+#: src/gtk/x11opt.c:1369
 msgid "_DPI:"
 msgstr "_DPI:"
 
-#: src/gtk/x11opt.c:1376
+#: src/gtk/x11opt.c:1374
 msgid "_Grid:"
 msgstr "グリッド(_G):"
 
-#: src/gtk/x11opt.c:1386
+#: src/gtk/x11opt.c:1384
 msgid "_Line attribute of focus frame:"
 msgstr "フォーカスフレームの線種(_L):"
 
-#: src/gtk/x11opt.c:1394
+#: src/gtk/x11opt.c:1392
 msgid "_Antialias:"
 msgstr "アンチエイリアス(_A):"
 
-#: src/gtk/x11opt.c:1396
+#: src/gtk/x11opt.c:1394
 msgid "_Preserve line width and style"
 msgstr "線幅と線種を保持する(_S) "
 
-#: src/gtk/x11opt.c:1400
-msgid "_Use rectangle for draft"
-msgstr "下書き時に矩形を使用(_U)"
-
-#: src/gtk/x11opt.c:1404
+#: src/gtk/x11opt.c:1398
 msgid "_Load files on redraw"
 msgstr "再描画時にデータファイル読み込み(_L)"
 
-#: src/gtk/x11opt.c:1409
+#: src/gtk/x11opt.c:1403
 msgid "_Maximum number of data on redraw:"
 msgstr "再描画時の最大データ数(_M):"
 
-#: src/gtk/x11opt.c:1518
+#: src/gtk/x11opt.c:1509
 msgid "Save as .Ngraph.ngp"
 msgstr ".Ngraph.ngp として保存"
 
@@ -2622,6 +2618,9 @@ msgstr "偶奇"
 #: src/opolygon.c:47
 msgid "winding_rule"
 msgstr "ワインディング"
+
+#~ msgid "_Use rectangle for draft"
+#~ msgstr "下書き時に矩形を使用(_U)"
 
 #~ msgid "_Addin script"
 #~ msgstr "アドインスクリプト(_A)"
