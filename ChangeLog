@@ -1,7 +1,12 @@
+2010-02-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (get_save_opt): return "IDOK"(not "IDCANCEL")
+	when both "fnum" and "mnum" is negative.
+
 2010-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_liststore.c (list_store_remove_selected_cb): set
-	cursor ont the first selected path.
+	cursor on the first selected path.
 
 2010-02-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.58 2009/11/17 08:38:32 hito Exp $
+ * $Id: x11commn.c,v 1.59 2010/02/05 02:53:48 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -952,7 +952,7 @@ get_save_opt(int *sdata, int *smerge, int *path)
   mnum = (mobj) ? chkobjlastinst(mobj) : -1;
 
   if (fnum < 0 && mnum < 0)
-    return IDCANCEL;
+    return IDOK;
 
   SaveDialog(&DlgSave, sdata, smerge);
   ret = DialogExecute(TopLevel, &DlgSave);
