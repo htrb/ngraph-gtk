@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.79 2009/12/18 06:04:29 hito Exp $
+ * $Id: x11axis.c,v 1.80 2010/02/10 06:52:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -924,10 +924,7 @@ CrossDialog(struct CrossDialog *data,
 static void
 ZoomDialogSetupItem(GtkWidget *w, struct ZoomDialog *d)
 {
-  char buf[TITLE_BUF_SIZE];
-
-  snprintf(buf, sizeof(buf), "%d", d->zoom);
-  gtk_entry_set_text(GTK_ENTRY(d->zoom_entry), buf);
+  spin_entry_set_val(d->zoom_entry, d->zoom);
 }
 
 static void
@@ -964,7 +961,6 @@ ZoomDialog(struct ZoomDialog *data)
 {
   data->SetupWindow = ZoomDialogSetup;
   data->CloseWindow = ZoomDialogClose;
-  data->zoom = 20000;
 }
 
 static void

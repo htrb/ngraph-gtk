@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.51 2010/02/02 10:53:01 hito Exp $
+ * $Id: x11dialg.c,v 1.52 2010/02/10 06:52:28 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -156,6 +156,7 @@ initdialog(void)
   DlgZoom.widget = NULL;
   DlgZoom.focus = NULL;
   DlgZoom.resource = N_("Scale Zoom");
+  DlgZoom.zoom = 20000;
   DlgMerge.widget = NULL;
   DlgMerge.focus = NULL;
   DlgMerge.resource = N_("merge");

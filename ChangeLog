@@ -1,7 +1,15 @@
+2010-02-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (ZoomDialogSetupItem): use
+	"spin_entry_set_val()" .
+	(ZoomDialog): don't initialize "data->zoom".
+
+	* src/gtk/x11dialg.c (initdialog): initialize "DlgZoom.zoom"
+
 2010-02-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11commn.c (get_save_opt): return "IDOK"(not "IDCANCEL")
-	when both "fnum" and "mnum" is negative.
+	* src/gtk/x11commn.c (get_save_opt): return "IDOK" (not
+	"IDCANCEL") when both "fnum" and "mnum" is negative.
 
 2010-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
