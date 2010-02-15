@@ -1,9 +1,0 @@
-?package(ngraph-gtk):						\
-	needs="X11"						\
-	section="Applications/Graphics"				\
-	title="Ngraph"						\
-	command="/usr/bin/ngraph"				\
-	hints="GNOME"						\
-	icon="/usr/share/pixmaps/application-x-ngraph.png"	\
-	longtitle="Ngraph"					\
-	description="create scientific 2-dimensional graphs"
