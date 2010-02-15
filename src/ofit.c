@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.35 2010/02/15 08:31:01 hito Exp $
+ * $Id: ofit.c,v 1.36 2010/02/15 08:56:37 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -163,6 +163,7 @@ fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+#if NEW_MATH_CODE
 static void
 show_eqn_error(struct objlist *obj, MathEquation *code, char *math, char *field, int rcode)
 {
@@ -176,6 +177,7 @@ show_eqn_error(struct objlist *obj, MathEquation *code, char *math, char *field,
     error(obj, ERRSYNTAX);
   }
 }
+#endif
 
 static int 
 fitput(struct objlist *obj,char *inst,char *rval,
