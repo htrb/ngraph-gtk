@@ -1,3 +1,15 @@
+2010-02-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (ofile_create_math_equation): change name from
+	"create_math_equation()" and this function is now global.
+	(fitout): call "math_equation_parse()", "set_const()" and
+	"math_equation_optimize()" for weight function.
+
+	* src/ofit.c (fit_put_weight_func): add.
+	(show_eqn_error): add.
+	(fit): check "weight_func".
+	(fitput): use "show_eqn_error()".
+
 2010-02-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (ZoomDialogSetupItem): use

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.34 2009/11/30 08:06:29 hito Exp $
+ * $Id: ofit.c,v 1.35 2010/02/15 08:31:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,6 +38,7 @@
 #include "mathfn.h"
 #include "oroot.h"
 #include "ofit.h"
+#include "ofile.h"
 
 #include "math/math_equation.h"
 
@@ -162,6 +163,20 @@ fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static void
+show_eqn_error(struct objlist *obj, MathEquation *code, char *math, char *field, int rcode)
+{
+  char *err_msg;
+
+  err_msg = math_err_get_error_message(code, math, rcode);
+  if (err_msg) {
+    error22(obj, ERRUNKNOWN, field, err_msg);
+    g_free(err_msg);
+  } else {
+    error(obj, ERRSYNTAX);
+  }
+}
+
 static int 
 fitput(struct objlist *obj,char *inst,char *rval,
            int argc,char **argv)
@@ -208,14 +223,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
 
       rcode = math_equation_parse(code, math);
       if (rcode) {
-	char *err_msg;
-	err_msg = math_err_get_error_message(code, math, rcode);
-	if (err_msg) {
-	  error22(obj, ERRUNKNOWN, field, err_msg);
-	  g_free(err_msg);
-	} else {
-	  error(obj, ERRSYNTAX);
-	}
+	show_eqn_error(obj, code, math, field, rcode);
 	math_equation_free(code);
 	return 1;
       }
@@ -282,6 +290,44 @@ fitput(struct objlist *obj,char *inst,char *rval,
   if (_putobj(obj,"equation",inst,NULL)) return 1;
   g_free(equation);
   return 0;
+}
+
+static int 
+fit_put_weight_func(struct objlist *obj,char *inst,char *rval,
+           int argc,char **argv)
+{
+#if NEW_MATH_CODE
+  char *math;
+  MathEquation *code;
+  int rcode;
+
+  math = argv[2];
+  if (math == NULL) {
+    return 0;
+  }
+
+  g_strstrip(math);
+  if (math[0] == '\0') {
+    g_free(argv[2]);
+    argv[2] = NULL;
+    return 0;
+  }
+
+  code = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
+  if (code == NULL)
+    return 1;
+
+  rcode = math_equation_parse(code, math);
+  if (rcode) {
+    show_eqn_error(obj, code, math, argv[1], rcode);
+  }
+
+  math_equation_free(code);
+
+  return rcode;
+#else
+  return 0;
+#endif
 }
 
 enum FitError {
@@ -959,13 +1005,15 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   } else {
     return 1;
   }
+
   num=0;
   err2=err3=FALSE;
   for (i=0;i<dnum;i++) {
     x=data[i*2];
     y=data[i*2+1];
-    if (weight)
+    if (weight) {
       wt = wdata[i];
+    }
     err=FALSE;
     switch (type) {
     case  FIT_TYPE_POW:
@@ -987,16 +1035,18 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       /* nothing to do */
       break;
     }
-    if (err) err2=TRUE;
-    else if (weight && (wt <= 0)) {
+    if (err) {
+      err2 = TRUE;
+    } else if (weight && (wt <= 0)) {
       err=TRUE;
       err3=TRUE;
     }
     if (!err) {
       data[num*2]=x;
       data[num*2+1]=y;
-      if (weight)
+      if (weight) {
 	wdata[num] = wt;
+      }
       num++;
     }
   }
@@ -1193,7 +1243,7 @@ static struct objtable fit[] = {
 
   {"poly_dimension",NINT,NREAD|NWRITE,fitput,NULL,0},
 
-  {"weight_func",NSTR,NREAD|NWRITE,NULL,NULL,0},
+  {"weight_func",NSTR,NREAD|NWRITE,fit_put_weight_func,NULL,0},
   {"user_func",NSTR,NREAD|NWRITE,fitput,NULL,0},
   {"derivative",NBOOL,NREAD|NWRITE,fitput,NULL,0},
   {"derivative0",NSTR,NREAD|NWRITE,fitput,NULL,0},

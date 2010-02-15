@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.108 2010/01/04 05:11:28 hito Exp $
+ * $Id: ofile.c,v 1.109 2010/02/15 08:31:01 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -147,9 +147,6 @@ static char *f2dtypechar[]={
 };
 
 static int set_math_config(struct objlist *obj, char *inst, char *field, char *str);
-#if NEW_MATH_CODE
-static MathEquation *create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int use_fobj_func);
-#endif
 
 static struct obj_config FileConfig[] = {
   {"R",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
@@ -1411,7 +1408,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
   }
 
   for (i = 0; i < 3; i++) {
-    eq[i] = create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE);
+    eq[i] = ofile_create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE);
   }
 
   if (eq[0] == NULL || eq[1] == NULL || eq[2] == NULL)
@@ -1692,8 +1689,8 @@ enum {
   MATH_CONST_N,
 };
 
-static MathEquation *
-create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int use_fobj_func)
+MathEquation *
+ofile_create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int use_fobj_func)
 {
   MathEquation *code;
   unsigned int i;
@@ -5440,12 +5437,24 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
 #if NEW_MATH_CODE
       MathEquationParametar *prm;
 
-      code = create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
+      code = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
       if (code == NULL) {
 	return 1;
       }
+
+      rcode = math_equation_parse(code, weight);
+      if (rcode) {
+	math_equation_free(code);
+	return 1;
+      }
+
       prm = math_equation_get_parameter(code, 0, NULL);
       maxdim = (prm) ? prm->id_max : 0;
+
+      if (set_const(code, fp, FALSE)) {
+	math_equation_free(code);
+	return 1;
+      }
 #else
       needdata=arraynew(sizeof(int));
       rcode=mathcode(weight,&code,needdata,NULL,&maxdim,&need2pass,
@@ -5466,14 +5475,16 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
       fp->datanum=datanum2;
       emerr=emserr=emnonum=emig=emng=FALSE;
       while (getdata2(fp,code,maxdim,&dd,&ddstat)==0) {
-        if (ddstat==MNOERR) {
+        if (ddstat == MNOERR) {
           if (arrayadd(&data,&dd)==NULL) {
              arraydel(&data);
              return -1;
           }
-        } else errordisp2(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng,ddstat,"weight");
+        } else {
+	  errordisp2(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng,ddstat,"weight");
+	}
       }
-      if (arraynum(&data)==0) {
+      if (arraynum(&data) == 0) {
         arraydel(&data);
         return -1;
       }
@@ -5503,9 +5514,8 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
     max=fp->axmax2;
   } else if (min==max) return 0;
 #if NEW_MATH_CODE
-  code = create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
+  code = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
   if (code == NULL) {
-    math_equation_free(code);
     return 1;
   }
 
@@ -5517,6 +5527,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
 
   rcode = math_equation_optimize(code);
   if (rcode) {
+    math_equation_free(code);
     return 1;
   }
 #else
