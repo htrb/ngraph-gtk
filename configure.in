@@ -18,9 +18,9 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
 
-AC_CHECK_PROG(RM, rm)
-AC_CHECK_PROG(MKDIR, mkdir)
-AC_CHECK_PROG(RUBY, ruby)
+AC_CHECK_PROG(RM, rm, yes, no)
+AC_CHECK_PROG(MKDIR, mkdir, yes, no)
+AC_CHECK_PROG(RUBY, ruby, yes, no)
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [sqrt])

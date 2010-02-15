@@ -62,7 +62,7 @@ install: build
 
 	# Add here commands to install the package into debian/ngraph-gtk.
 	$(MAKE) DESTDIR=$(CURDIR)/debian/ngraph-gtk install
-	install -d root -g root  $(CURDIR)/debian/ngraph-gtk/usr/share/pixmaps/ \
+	install -d root -g root $(CURDIR)/debian/ngraph-gtk/usr/share/pixmaps/ \
 		$(CURDIR)/debian/ngraph-gtk/usr/share/application-registry/ \
 		$(CURDIR)/debian/ngraph-gtk/usr/share/mime-info/ \
 		$(CURDIR)/debian/ngraph-gtk/usr/share/menu/ \
