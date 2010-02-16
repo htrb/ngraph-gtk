@@ -1,3 +1,8 @@
+2010-02-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (load_tab_create): type of the spin button
+	"d->load.finalline" is "SPIN_BUTTON_TYPE_INT".
+
 2010-02-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (ofile_create_math_equation): change name from

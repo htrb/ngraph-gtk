@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.134 2010/01/22 02:02:23 hito Exp $
+ * $Id: x11file.c,v 1.135 2010/02/16 02:04:11 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2012,7 +2012,7 @@ load_tab_create(struct FileDialog *d)
   add_widget_to_table(table, w, _("_Read step:"), FALSE, i++);
   d->load.readstep = w;
 
-  w = create_spin_entry_type(SPIN_BUTTON_TYPE_NUM, TRUE, TRUE);
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_INT, TRUE, TRUE);
   add_widget_to_table(table, w, _("_Final line:"), FALSE, i++);
   d->load.finalline = w;
 
