@@ -1,5 +1,5 @@
 /* 
- * $Id: oaxis.c,v 1.48 2009/11/16 09:13:04 hito Exp $
+ * $Id: oaxis.c,v 1.49 2010/02/18 06:38:50 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1530,27 +1530,6 @@ axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-static void 
-numformat(char *num,char *format,double a)
-{
-  int i,j,len,ret;
-  char *s;
-  char format2[256];
-
-  s=strchr(format,'+');
-  if ((a==0) && (s!=NULL)) {
-    len=strlen(format);
-    for (i=j=0;i<=len;i++) {
-      format2[j]=format[i];
-      if (format[i]!='+') j++;
-    }
-    ret=sprintf(num,"\\xb1");
-    ret+=sprintf(num+ret,format2,a);
-  } else {
-    ret=sprintf(num,format,a);
-  }
-}
-
 static void
 get_num_pos_horizontal(int align, int plen, int fx0, int fy0, int fx1, int fy1, int *x, int *y)
 {
@@ -1856,22 +1835,122 @@ get_num_ofst_normal2(struct axis_config *aconf, int align, int side, int ilenmax
   *len = abs(hx1 - hx0);
 }
 
+static void 
+numformat(char *num, int nlen, char *format,double a)
+{
+  int i, j, len, ret;
+  char *s;
+  char format2[256], pm[] = "\\xb1";
+
+  s = strchr(format,'+');
+  if (a == 0 && s) {
+    len = strlen(format);
+    for (j = 0; j < (int) sizeof(pm) - 1; j++) {
+      format2[j] = pm[j];
+    }
+    for (i = 0; i < len && j < (int) sizeof(format2) - 1; i++) {
+      format2[j] = format[i];
+      if (format[i] != '+') {
+	j++;
+      }
+    }
+    format2[j] = '\0';
+    ret = snprintf(num, nlen, format2, a);
+  } else {
+    ret = snprintf(num, nlen, format, a);
+  }
+}
+
+static int
+draw_numbering_normalize(int GC, int side, struct axis_config *aconf,
+			 struct font_config *font, double norm,
+			 int maxlen, int sx, int sy, int dlx2, int dly2,
+			 int ndir, double nndir, int ndirection)
+{
+  int fx0, fy0, fx1, fy1, px0, px1, py0, py1, gx0, gy0;
+  char num[256];
+
+  if (norm/pow(10.0,cutdown(log10(norm)))==1) {
+    //          sprintf(num,"[%%F{Symbol}%c%%F{%s}10^%+d@]", (char )0xb4,font,(int )cutdown(log10(norm)));
+    snprintf(num, sizeof(num), "[\\xd710^%+d@]", (int )cutdown(log10(norm)));
+  } else {
+    //          sprintf(num,"[%g%%F{Symbol}%c%%F{%s}10^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (char )0xb4,font,(int )cutdown(log10(norm)));
+    snprintf(num, sizeof(num), "[%g\\xd710^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (int )cutdown(log10(norm)));
+  }
+  GRAtextextent(num,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+		&fx0,&fy0,&fx1,&fy1,FALSE);
+
+  if (abs(fy1-fy0)>maxlen)
+    maxlen=abs(fy1-fy0);
+
+  gx0=aconf->x0+(aconf->length+maxlen*1.2)*cos(aconf->dir);
+  gy0=aconf->y0-(aconf->length+maxlen*1.2)*sin(aconf->dir);
+  gx0=gx0-sy*sin(aconf->dir)+sx*cos(aconf->dir)+dlx2;
+  gy0=gy0-sy*cos(aconf->dir)-sx*sin(aconf->dir)+dly2;
+  switch (ndir) {
+  case AXIS_NUM_POS_NORMAL:
+    if (side==AXIS_NUM_POS_LEFT) {
+      if ((aconf->direction>4500) && (aconf->direction<=22500)) px1=fx1;
+      else px1=fx0;
+    } else {
+      if ((aconf->direction>13500) && (aconf->direction<=31500)) px1=fx1;
+      else px1=fx0;
+    }
+    py1=(fy0+fy1)/2;
+    break;
+  case AXIS_NUM_POS_PARALLEL1:
+  case AXIS_NUM_POS_PARALLEL2:
+    if (ndir==AXIS_NUM_POS_PARALLEL1) {
+      px0=fx0;
+    } else {
+      px0=fx1;
+    }
+    py0=(fy0+fy1)/2;
+    px1=cos(nndir)*px0+sin(nndir)*py0;
+    py1=-sin(nndir)*px0+cos(nndir)*py0;
+    break;
+  case AXIS_NUM_POS_NORMAL1:
+  case AXIS_NUM_POS_NORMAL2:
+    if (side==AXIS_NUM_POS_LEFT) {
+      if (ndir==AXIS_NUM_POS_NORMAL1) {
+	px0=fx0;
+      } else {
+	px0=fx1;
+      }
+    } else {
+      if (ndir==AXIS_NUM_POS_NORMAL1) {
+	px0=fx1;
+      } else {
+	px0=fx0;
+      }
+    }
+    py0=(fy0+fy1)/2;
+    px1=cos(nndir)*px0+sin(nndir)*py0;
+    py1=-sin(nndir)*px0+cos(nndir)*py0;
+    break;
+  }
+  GRAmoveto(GC,gx0-px1,gy0-py1);
+  GRAdrawtext(GC,num,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
+
+  return 0;
+}
+
 static int
 draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	       int GC, int side, int align, int ilenmax, int plen,
 	       struct axis_config *aconf, struct font_config *font, int step,
 	       int nnum, int numcount, int begin, int autonorm, int nozero,
-	       int logpow, char *num, char *format, double norm,
+	       int logpow, char *format, double norm,
 	       char *head, int headlen, char *tail, int taillen,
-	       int hx0, int hy0, int hx1, int hy1)
+	       int hx0, int hy0, int hx1, int hy1, int draw)
 {
   int fx0,fy0,fx1,fy1,px0,px1,py0,py1;
   int dlx,dly,dlx2,dly2,maxlen;
   int rcode;
   int gx0,gy0;
-  double nndir, po, min1, max1;
+  double nndir, po, min1, max1, value;
   int numlen,i;
-  char *text, ch;
+  char *text, ch, num[256];
   int sx, sy, ndir, ndirection, cstep;
 
   _getobj(obj,"num_shift_p",inst,&sx);
@@ -1963,16 +2042,20 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	numcount++;
 	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
 	  if ((!logpow
-	       && ((alocal->atype==AXISLOGBIG) || (alocal->atype==AXISLOGNORM)))
-              || (alocal->atype==AXISLOGSMALL))
-	    numformat(num,format,pow(10.0,po));
-	  else if (alocal->atype==AXISINVERSE)
-	    numformat(num,format,1.0/po);
-	  else
-	    numformat(num,format,po/norm);
+	       && (alocal->atype == AXISLOGBIG || alocal->atype == AXISLOGNORM))
+              || (alocal->atype==AXISLOGSMALL)) {
+	    value = pow(10.0, po);
+	  } else if (alocal->atype==AXISINVERSE) {
+	    value = 1.0 / po;
+	  } else {
+	    value = po / norm;
+	  }
+	  numformat(num, sizeof(num), format, value);
 	  numlen=strlen(num);
-	  if ((text=g_malloc(numlen+headlen+taillen+5))==NULL)
+	  text = g_malloc(numlen + headlen + taillen + 5);
+	  if (text == NULL) {
 	    return 1;
+	  }
 	  text[0]='\0';
 	  if (headlen!=0) strcpy(text,head);
 	  if (logpow
@@ -2017,8 +2100,12 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	    px1 = 0;
 	    py1 = 0;
 	  }
-	  GRAmoveto(GC,gx0-px1,gy0-py1);
-	  GRAdrawtext(GC,text,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
+	  if (draw) {
+	    GRAmoveto(GC,gx0-px1,gy0-py1);
+	    GRAdrawtext(GC,text,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
+	  } else {
+	    printfstdout("%5d %5d %5d %.14E %.14E\n", gx0 - px1, gy0 - py1, ndirection, value, po);
+	  }
 	  g_free(text);
 	}
 
@@ -2032,72 +2119,15 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
     }
   }
 
-  if (norm!=1) {
-    if (norm/pow(10.0,cutdown(log10(norm)))==1) {
-      //          sprintf(num,"[%%F{Symbol}%c%%F{%s}10^%+d@]", (char )0xb4,font,(int )cutdown(log10(norm)));
-      sprintf(num,"[\\xd710^%+d@]", (int )cutdown(log10(norm)));
-    } else {
-      //          sprintf(num,"[%g%%F{Symbol}%c%%F{%s}10^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (char )0xb4,font,(int )cutdown(log10(norm)));
-      sprintf(num,"[%g\\xd710^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (int )cutdown(log10(norm)));
-    }
-    GRAtextextent(num,font->font, font->jfont, font->pt, font->space, font->scriptsize,
-		  &fx0,&fy0,&fx1,&fy1,FALSE);
-
-    if (abs(fy1-fy0)>maxlen)
-      maxlen=abs(fy1-fy0);
-
-    gx0=aconf->x0+(aconf->length+maxlen*1.2)*cos(aconf->dir);
-    gy0=aconf->y0-(aconf->length+maxlen*1.2)*sin(aconf->dir);
-    gx0=gx0-sy*sin(aconf->dir)+sx*cos(aconf->dir)+dlx2;
-    gy0=gy0-sy*cos(aconf->dir)-sx*sin(aconf->dir)+dly2;
-    switch (ndir) {
-    case AXIS_NUM_POS_NORMAL:
-      if (side==AXIS_NUM_POS_LEFT) {
-	if ((aconf->direction>4500) && (aconf->direction<=22500)) px1=fx1;
-	else px1=fx0;
-      } else {
-	if ((aconf->direction>13500) && (aconf->direction<=31500)) px1=fx1;
-	else px1=fx0;
-      }
-      py1=(fy0+fy1)/2;
-      break;
-    case AXIS_NUM_POS_PARALLEL1:
-    case AXIS_NUM_POS_PARALLEL2:
-      if (ndir==AXIS_NUM_POS_PARALLEL1) px0=fx0;
-      else px0=fx1;
-      py0=(fy0+fy1)/2;
-      px1=cos(nndir)*px0+sin(nndir)*py0;
-      py1=-sin(nndir)*px0+cos(nndir)*py0;
-      break;
-    case AXIS_NUM_POS_NORMAL1:
-    case AXIS_NUM_POS_NORMAL2:
-      if (side==AXIS_NUM_POS_LEFT) {
-	if (ndir==AXIS_NUM_POS_NORMAL1) {
-	  px0=fx0;
-	} else {
-	  px0=fx1;
-	}
-      } else {
-	if (ndir==AXIS_NUM_POS_NORMAL1) {
-	  px0=fx1;
-	} else {
-	  px0=fx0;
-	}
-      }
-      py0=(fy0+fy1)/2;
-      px1=cos(nndir)*px0+sin(nndir)*py0;
-      py1=-sin(nndir)*px0+cos(nndir)*py0;
-      break;
-    }
-    GRAmoveto(GC,gx0-px1,gy0-py1);
-    GRAdrawtext(GC,num,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
+  if (norm != 1 && draw) {
+    draw_numbering_normalize(GC, side, aconf, font, norm, maxlen, sx, sy, dlx2, dly2, ndir, nndir, ndirection);
   }
 
   return 0;
 }
 
 static int
-numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf)
+numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, int draw)
 {
   int fr,fg,fb;
   int side, begin,step,nnum,numcount,cstep;
@@ -2227,13 +2257,16 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf)
 	if ((!logpow
 	     && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
 	    || (alocal.atype==AXISLOGSMALL))
-	  numformat(num,format,pow(10.0,po));
+	  numformat(num, sizeof(num), format, pow(10.0, po));
 	else if (alocal.atype==AXISINVERSE)
-	  numformat(num,format,1.0/po);
+	  numformat(num, sizeof(num), format, 1.0 / po);
 	else
-	  numformat(num,format,po/norm);
+	  numformat(num, sizeof(num), format, po / norm);
 	numlen=strlen(num);
-	if ((text=g_malloc(numlen+headlen+taillen+5))==NULL) return 1;
+	text = g_malloc(numlen + headlen + taillen + 5);
+	if (text == NULL) {
+	  return 1;
+	}
 	text[0]='\0';
 	if (headlen!=0) strcpy(text,head);
 	if (logpow
@@ -2269,8 +2302,11 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf)
 	}
 	g_free(text);
       }
-      if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) cstep=step-begin;
-      else cstep=0;
+      if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) {
+	cstep=step-begin;
+      } else {
+	cstep=0;
+      }
     }
     cstep++;
   }
@@ -2283,8 +2319,8 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf)
   if ((abs(hx0-hx1)!=0) && (abs(hy0-hy1)!=0)) {
     draw_numbering(obj, inst, &alocal, GC,
 		   side, align, ilenmax, plen, aconf, &font, step, nnum,
-		   numcount, begin, autonorm, nozero, logpow, num, format,
-		   norm, head, headlen, tail, taillen, hx0, hy0, hx1, hy1);
+		   numcount, begin, autonorm, nozero, logpow, format,
+		   norm, head, headlen, tail, taillen, hx0, hy0, hx1, hy1, draw);
   }
 
   return 0;
@@ -2629,13 +2665,50 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   get_axis_parameter(obj, inst, &aconf);
   if (aconf.min != aconf.max && aconf.inc != 0) {
-    numbering(obj, inst, GC, &aconf);
+    numbering(obj, inst, GC, &aconf, TRUE);
   }
 
 exit:
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
+
+static int 
+axis_get_numbering(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int GC;
+  int hidden;
+  struct axis_config aconf;
+
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
+    return 1;
+
+  _getobj(obj, "hidden", inst, &hidden);
+  if (hidden)
+    return 0;
+
+  _getobj(obj, "GC", inst, &GC);
+  if (GC < 0)
+    return 0;
+
+  _getobj(obj, "x", inst, &aconf.x0);
+  _getobj(obj, "y", inst, &aconf.y0);
+  _getobj(obj, "direction", inst, &aconf.direction);
+  _getobj(obj, "length", inst, &aconf.length);
+  _getobj(obj, "width", inst, &aconf.width);
+
+  aconf.dir = aconf.direction / 18000.0 * MPI;
+  aconf.x1 = aconf.x0+nround(aconf.length * cos(aconf.dir));
+  aconf.y1 = aconf.y0-nround(aconf.length * sin(aconf.dir));
+
+  get_axis_parameter(obj, inst, &aconf);
+  if (aconf.min != aconf.max && aconf.inc != 0) {
+    numbering(obj, inst, GC, &aconf, FALSE);
+  }
+
+  return 0;
+}
+
 
 static int 
 axisclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
@@ -2884,7 +2957,7 @@ axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,doub
   fnum=arraynum(&iarray);
   fdata=arraydata(&iarray);
   _getobj(obj,"id",inst,&id);
-  sprintf(buf,"axis:%d",id);
+  snprintf(buf, sizeof(buf), "axis:%d",id);
   _getobj(obj,"group",inst,&group);
   argv2[0]=(void *)buf;
   argv2[1]=NULL;
@@ -3516,6 +3589,7 @@ static struct objtable axis[] = {
   {"default_grouping",NVFUNC,NREAD|NEXEC,axisdefgrouping,"ia",0},
   {"group_position",NVFUNC,NREAD|NEXEC,axisgrouppos,"ia",0},
   {"group_manager",NIFUNC,NREAD|NEXEC,axismanager,NULL,0},
+  {"get_numbering",NVFUNC,NREAD|NEXEC,axis_get_numbering,NULL,0},
   {"save",NSFUNC,NREAD|NEXEC,axissave,"sa",0},
 };
 

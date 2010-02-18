@@ -1,3 +1,18 @@
+2010-02-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (numformat, draw_numbering, numbering): use
+	"snprintf()".
+	(draw_numbering): delete argument "num" and add argument "draw".
+	(draw_numbering): print position, direction and numbering value
+	when "draw" is false.
+	(numbering): add argument "draw".
+	(axis_get_numbering): add.
+	(axis): add field "get_numbering".
+	(draw_numbering_normalize): add.
+	(draw_numbering): use "draw_numbering_normalize()".
+
+	* driver/ngp2.in: add "-d dpi" option.
+
 2010-02-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (load_tab_create): type of the spin button
