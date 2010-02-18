@@ -1,5 +1,5 @@
 /* 
- * $Id: math_basic_function.c,v 1.11 2009/12/04 07:12:48 hito Exp $
+ * $Id: math_basic_function.c,v 1.12 2010/02/18 15:06:23 hito Exp $
  * 
  */
 
@@ -327,6 +327,18 @@ math_func_min(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
 
   rval->val = min;
+  return 0;
+}
+
+int
+math_func_progn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  if (exp->argc < 1) {
+    rval->val = 0;
+  } else {
+    *rval = exp->buf[exp->argc - 1].val;
+  }
+
   return 0;
 }
 

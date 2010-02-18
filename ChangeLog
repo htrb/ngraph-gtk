@@ -1,5 +1,9 @@
 2010-02-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/math/math_function.h.in: add function "progn".
+
+	* src/math/math_basic_function.c (math_func_progn): add
+
 	* src/oaxis.c (numformat, draw_numbering, numbering): use
 	"snprintf()".
 	(draw_numbering): delete argument "num" and add argument "draw".
