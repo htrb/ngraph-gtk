@@ -675,7 +675,7 @@ COLOR(3,%03)=Y
 <tr><td>COLOR(7,x)</td><td>R2, G2, B2 値を x (0≦x＜256)に設定</td></tr>
 <tr><td>HSB2(h,s,b)</td><td>R2, G2, B2, の値を、HSB値からそれぞれ h, s, b (0≦h,s,b≦1)に設定</td></tr>
 <tr><td>RGB2(r,g,b)</td><td>R2, G2, B2, の値を r, g, b (0≦r,g,b≦1)から設定</td></tr>
-<tr><td>UNLESS(x,ex1,ex2)</td><td>x≠0のときex2, x=0のときex1</td></tr>
+<tr><td>UNLESS(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x == 0 のとき ex1 </td></tr>
 <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す</td></tr>
 <tr><td>PROGN(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す (引数の数は 64 個まで)</td></tr>
 </table>
@@ -717,15 +717,11 @@ COLOR(3,%03)=Y
  関数 PROGN() は複数の引数 (64 個まで) を評価して、最後の引数の
  値を返す関数です。IF(), UNLESS(), FOR() 関数の引数に使用して複
  数の式を評価するために利用できます。下記の例では X の値が 1 変
- 化する毎に Y の平均値を計算しています。
+ 化する毎に Y の平均値を計算しています (X は 1 よりも大きいこと
+ を仮定) 。
       </p>
       <p>
- IF(X - A &lt; 1, PROGN(V : NAN, B +: Y, N +: 1), PROGN(V : B / N, B : Y, N : 1, A : X)) = IF(ISNORMAL(V), V * 1E9, CONT)
-      </p>
-      <p>
- 初回呼び出し時は変数 A, B, N, V は全て 0 なので PROGN(V : B / N, B
- : Y, N : 1,A:X) が評価されます。0 / 0 は NaN になるので、
- IF(ISNORMAL(V), V * 1E9, CONT) で最初のデータは CONT になります。
+ IF(X - A &lt; 1, PROGN(B +: Y, N +: 1, CONT), PROGN(V : IF(N, B / N, CONT), B : Y, N : 1, A : X, V))
       </p>
   </ul>
 </div>
