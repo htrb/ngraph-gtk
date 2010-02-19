@@ -1,5 +1,5 @@
 /* 
- * $Id: math_parser.c,v 1.17 2009/11/30 01:23:35 hito Exp $
+ * $Id: math_parser.c,v 1.18 2010/02/19 04:01:22 hito Exp $
  * 
  */
 
@@ -596,8 +596,8 @@ static MathExpression *
 CREATE_PARSER_FUNC(or, and, MATH_OPERATOR_TYPE_OR, MATH_EXPRESSION_TYPE_OR);
 
 static MathExpression *
-parse_variable_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_TYPE op,
-				 MathExpression *lexp, MathExpression *rexp, int *err)
+create_variable_assign_expression(MathEquation *eq, enum MATH_OPERATOR_TYPE op,
+				  MathExpression *lexp, MathExpression *rexp, int *err)
 {
   MathExpression *exp, *bin;
 
@@ -685,7 +685,7 @@ parse_assign_expression(const char **str, MathEquation *eq, enum MATH_OPERATOR_T
   }
 
   if (lexp->type == MATH_EXPRESSION_TYPE_VARIABLE && op != MATH_OPERATOR_TYPE_ASSIGN) {
-    exp = parse_variable_assign_expression(str, eq, op, lexp, rexp, err);
+    exp = create_variable_assign_expression(eq, op, lexp, rexp, err);
   } else {
     exp = math_assign_expression_new(MATH_EXPRESSION_TYPE_ASSIGN, eq, lexp, rexp, op, err);
     if (exp == NULL) {

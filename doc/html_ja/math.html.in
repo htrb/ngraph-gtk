@@ -617,8 +617,9 @@ COLOR(3,%03)=Y
 <h2><a href="#TOP">関数</a></h2>
 <p>
 <ul>
-  <li> 引数は省略することが出来ます。引数が省略された場合 0 が渡されます。
-  <li> IF() 関数のネスト数、DIF(), SUM() 関数の数の制限はなくなりました。
+ <li> 引数は省略することが出来ます。引数が省略された場合 0 が渡されます。
+ <li> IF() 関数のネスト数、DIF(), SUM() 関数の数の制限はなくなりました。
+ <li> 引数は左から評価されます。
 </ul>
 </p>
 <div>
@@ -675,6 +676,7 @@ COLOR(3,%03)=Y
 <tr><td>RGB2(r,g,b)</td><td>R2, G2, B2, の値を r, g, b (0≦r,g,b≦1)から設定</td></tr>
 <tr><td>UNLESS(x,ex1,ex2)</td><td>x≠0のときex2, x=0のときex1</td></tr>
 <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す</td></tr>
+<tr><td>PROGN(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す (引数の数は 64 個まで)</td></tr>
 </table>
 </div>
 
