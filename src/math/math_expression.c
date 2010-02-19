@@ -1,5 +1,5 @@
 /* 
- * $Id: math_expression.c,v 1.15 2010/02/19 04:40:37 hito Exp $
+ * $Id: math_expression.c,v 1.14 2010/02/19 04:37:25 hito Exp $
  * 
  */
 
@@ -1500,16 +1500,16 @@ calc(MathExpression *exp, MathValue *val)
     MATH_CHECK_VAL(val, right);
     if (right.val == 0) {
       if (left.val < 0) {
-	val->val = - HUGE_VAL;
+	val.val = - HUGE_VAL;
       } else if (left.val > 0) {
-	val->val = HUGE_VAL;
+	val.val = HUGE_VAL;
       } else {
-	val->val = 0;
+	val.val = 0;
       }
       val->type = MATH_VALUE_NAN;
-    } else {
-      val->val = left.val / right.val;
+      return 0;
     }
+    val->val = left.val / right.val;
     break;
   case MATH_EXPRESSION_TYPE_MOD:
     if (CALC_EXPRESSION(exp->u.bin.left, left)) {
