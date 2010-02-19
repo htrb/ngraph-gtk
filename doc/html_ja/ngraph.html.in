@@ -81,17 +81,17 @@
 #if NEW_MATH_CODE
 <li><a href="./math.html#NEW_TRANSFORM">GTK 版で追加された機能、変更点</a>
 <ul>
-  <li><a href="#NEW_FORMULA_LITERAL">数値リテラル</a>
-  <li><a href="#NEW_FORMULA_CONST">定数</a>
-  <li><a href="#NEW_FORMULA_CONST_DEF">定数定義</a>
-  <li><a href="#NEW_FORMULA_PAR">パラメータ</a>
-  <li><a href="#NEW_FORMULA_VAR">変数</a>
-  <li><a href="#NEW_FORMULA_ARRAY">配列</a>
-  <li><a href="#NEW_FORMULA_USR_FUNC">ユーザ定義関数</a>
-  <li><a href="#NEW_FORMULA_OP">演算子</a>
-  <li><a href="#NEW_FORMULA_FUNC">関数</a>
-  <li><a href="#NEW_OP_PRECEDENCE">演算子の優先順位</a>
-  <li><a href="#NEW_FORMULA_FUNC_EXAMPLE">数式変換の使用例</a>
+  <li><a href="./math.html#NEW_FORMULA_LITERAL">数値リテラル</a>
+  <li><a href="./math.html#NEW_FORMULA_CONST">定数</a>
+  <li><a href="./math.html#NEW_FORMULA_CONST_DEF">定数定義</a>
+  <li><a href="./math.html#NEW_FORMULA_PAR">パラメータ</a>
+  <li><a href="./math.html#NEW_FORMULA_VAR">変数</a>
+  <li><a href="./math.html#NEW_FORMULA_ARRAY">配列</a>
+  <li><a href="./math.html#NEW_FORMULA_USR_FUNC">ユーザ定義関数</a>
+  <li><a href="./math.html#NEW_FORMULA_OP">演算子</a>
+  <li><a href="./math.html#NEW_FORMULA_FUNC">関数</a>
+  <li><a href="./math.html#NEW_OP_PRECEDENCE">演算子の優先順位</a>
+  <li><a href="./math.html#NEW_FORMULA_FUNC_EXAMPLE">数式変換の使用例</a>
 </ul>
 #endif
 </ul>
