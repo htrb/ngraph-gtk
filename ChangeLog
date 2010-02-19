@@ -1,3 +1,8 @@
+2010-02-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_expression.c (calc): divided by zero is not
+	error. returned value is 'NaN'.
+
 2010-02-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_function.h.in: add function "progn".
