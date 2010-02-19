@@ -29,6 +29,7 @@
 <li><a href="#NEW_FORMULA_OP">演算子</a>
 <li><a href="#NEW_FORMULA_FUNC">関数</a>
 <li><a href="#NEW_OP_PRECEDENCE">演算子の優先順位</a>
+<li><a href="#NEW_FORMULA_FUNC_EXAMPLE">数式変換の使用例</a>
 #endif
 </ul>
 
@@ -701,6 +702,32 @@ COLOR(3,%03)=Y
 <tr><td>↓</td><td>||</td></tr>
 <tr><td>低</td><td>:(+:, -: ... )</td></tr>
 </table>
+</div>
+
+<br>
+<hr>
+<br>
+
+<a name="NEW_FORMULA_FUNC_EXAMPLE">&nbsp;</a>
+<h2><a href="#TOP">数式変換の使用例</a></h2>
+<div>
+  <ul>
+    <li>関数 PROGN() 使用例
+      <p>
+	関数 PROGN() は複数の引数 (64 個まで) を評価して、最後の引数の
+	値を返す関数です。IF(), UNLESS(), FOR() 関数の引数に使用して複
+	数の式を評価するために利用できます。下記の例では X の値が 1 変
+	化する毎に Y の平均値を計算しています。
+      </p>
+      <p>
+	IF(X - A &lt; 1, PROGN(V : NAN, B +: Y, N +: 1), PROGN(V : B / N, B : Y, N : 1, A : X)) = IF(ISNORMAL(V), V * 1E9, CONT)
+      </p>
+      <p>
+	初回呼び出し時は変数 A, B, N, V は全て 0 なので PROGN(V : B / N, B
+	: Y, N : 1,A:X) が評価されます。0 / 0 は NaN になるので、
+	IF(ISNORMAL(V), V * 1E9, CONT) で最初のデータは CONT になります。
+      </p>
+  </ul>
 </div>
 
 #endif
