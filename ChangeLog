@@ -1,6 +1,10 @@
 2010-02-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/math/math_function.h.in: add function "prog1" and "prog2".
+	* src/object.c (moveobj): move object only when id of instances of
+	"sid" and "did" are exist.
+	(_newobj, _delobj, _copyobj): remove.
+
+	* src/math/math_function.h.in: add functions "prog1" and "prog2".
 
 	* src/math/math_basic_function.c (math_func_prog1)
 	(math_func_prog2): add.

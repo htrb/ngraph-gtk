@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.109 2010/02/15 08:31:01 hito Exp $
+ * $Id: ofile.c,v 1.110 2010/02/22 08:31:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5417,7 +5417,9 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
            arraydel(&data);
            return -1;
         }
-      } else errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+      } else {
+	errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+      }
     }
     errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
     if ((dnum=(double )arraynum(&data))==0) {

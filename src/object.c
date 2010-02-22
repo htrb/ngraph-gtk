@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.52 2010/01/09 03:10:29 hito Exp $
+ * $Id: object.c,v 1.53 2010/02/22 08:31:03 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1410,18 +1410,38 @@ chkobjname(struct objlist *obj,int *id,char *name)
   char *iname;
   char *inst;
 
-  if (id==NULL) id2=0;
-  else id2=*id;
-  if (chkobjoffset(obj,"name")==-1) return -1;
-  for (i=id2;i<=obj->lastinst;i++) {
-    if ((inst=chkobjinst(obj,i))==NULL) return -1;
-    if (_getobj(obj,"name",inst,&iname)==-1) return -1;
-    if ((iname!=NULL) && (strcmp0(iname,name)==0)) {
-      if (id!=NULL) *id=i+1;
+  if (id == NULL) {
+    id2 = 0;
+  } else {
+    id2 = *id;
+  }
+
+  if (chkobjoffset(obj, "name") == -1) {
+    return -1;
+  }
+
+  for (i = id2; i <= obj->lastinst; i++) {
+    inst = chkobjinst(obj, i);
+    if (inst == NULL) {
+      return -1;
+    }
+
+    if (_getobj(obj, "name", inst, &iname) == -1) {
+      return -1;
+    }
+
+    if (iname && strcmp0(iname, name) == 0) {
+      if (id) {
+	*id = i + 1;
+      }
       return i;
     }
   }
-  if (id!=NULL) *id=obj->lastinst+1;
+
+  if (id) {
+    *id = obj->lastinst + 1;
+  }
+
   return -1;
 }
 
@@ -1791,99 +1811,6 @@ getobjproc(struct objlist *obj,char *vname,void *val)
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
-static int 
-_newobj(struct objlist *obj)
-/* _newobj() returns id or -1 on error */
-{
-  char *instcur,*instnew,*inst;
-  int i,offset,nextp,id,idp,oidp;
-  struct objlist *objcur;
-
-  if ((idp=obj->idp)==-1) {
-    error(obj,ERRNOID);
-    return -1;
-  }
-  id=obj->lastinst+1;
-  if ((id+obj->lastinst2+1)==INST_MAX) {
-    error3(obj,ERRINSTNUM,INST_MAX);
-    return -1;
-  }
-  nextp=obj->nextp;
-  if ((instcur=chkobjlast(obj))!=NULL) {
-    if (nextp==-1) {
-      error(obj,ERRNONEXT);
-      return -1;
-    }
-  }
-  instnew=g_malloc(obj->size);
-  if (instnew==NULL) return -1;
-  objcur=obj;
-  while (objcur!=NULL) {
-    for (i=0;i<objcur->tblnum;i++) {
-      offset=objcur->table[i].offset;
-      switch (objcur->table[i].type) {
-      case NVOID:
-      case NLABEL:
-      case NVFUNC:
-        break;
-      case NBOOL:
-      case NCHAR:
-      case NINT:
-      case NENUM:
-      case NBFUNC:
-      case NCFUNC:
-      case NIFUNC:
-        *(int *)(instnew+offset)=0;
-        break;
-      case NDOUBLE:
-      case NDFUNC:
-        *(double *)(instnew+offset)=0.0;
-        break;
-      default:
-        *(char **)(instnew+offset)=NULL;
-        break;
-      }
-    }
-    objcur=objcur->parent;
-  }
-  *(int *)(instnew+idp)=id;
-  if ((oidp=obj->oidp)!=-1) {
-    if (obj->lastoid==INT_MAX) obj->lastoid=0;
-    else obj->lastoid++;
-    if (nextp!=-1) {
-      do {
-        inst=obj->root;
-        while (inst!=NULL) {
-          if (*(int *)(inst+oidp)==obj->lastoid) {
-            if (obj->lastoid==INT_MAX) obj->lastoid=0;
-            else obj->lastoid++;
-            break;
-          }
-          inst=*(char **)(inst+nextp);
-        }
-        if (inst==NULL) {
-          inst=obj->root2;
-          while (inst!=NULL) {
-            if (*(int *)(inst+oidp)==obj->lastoid) {
-              if (obj->lastoid==INT_MAX) obj->lastoid=0;
-              else obj->lastoid++;
-              break;
-            }
-            inst=*(char **)(inst+nextp);
-          }
-        }
-      } while (inst!=NULL);
-    }
-    *(int *)(instnew+oidp)=obj->lastoid;
-  }
-
-  if (instcur==NULL) obj->root=instnew;
-  else *(char **)(instcur+nextp)=instnew;
-  if (nextp!=-1) *(char **)(instnew+nextp)=NULL;
-  obj->lastinst=id;
-  return id;
-}
-
 int 
 newobj(struct objlist *obj)
 /* newobj() returns id or -1 on error */
@@ -2022,33 +1949,6 @@ newobj(struct objlist *obj)
   obj->lastinst = id;
   obj->curinst = id;
   return id;
-}
-
-static int
-_delobj(struct objlist *obj,int delid)
-/* delobj() returns id or -1 on error */
-{
-  char *instcur,*instprev,*inst;
-  int nextp,idp;
-
-  if ((idp=obj->idp)==-1) {
-    error(obj,ERRNOID);
-    return -1;
-  }
-  if (getobjprev(obj,delid,&instcur,&instprev)==NULL) return -1;
-  if ((nextp=obj->nextp)==-1) obj->root=NULL;
-  else {
-    if (instprev==NULL) obj->root=*(char **)(instcur+nextp);
-    else *(char **)(instprev+nextp)=*(char **)(instcur+nextp);
-    inst=*(char **)(instcur+nextp);
-    while (inst!=NULL) {
-      (*(int *)(inst+idp))--;
-      inst=*(char **)(inst+nextp);
-    }
-  }
-  g_free(instcur);
-  obj->lastinst--;
-  return 0;
 }
 
 int 
@@ -2521,70 +2421,40 @@ copyobj(struct objlist *obj,char *vname,int did,int sid)
   return did;
 }
 
-static int 
-_copyobj(struct objlist *obj,int did,int sid)
-/* _copyobj() returns id or -1 on error */
-/* this function should not be used because this function do "shallow" copy. */
-{
-  char *dinstcur;
-  char *sinstcur,*instnext;
-  int idp,id,nextp;
-
-  if ((idp=obj->idp)==-1) {
-    error(obj,ERRNOID);
-    return -1;
-  }
-  if ((sinstcur=getobjinst(obj,sid))==NULL) return -1;
-  if (did==sid) return did;
-  if ((dinstcur=chkobjinst(obj,did))==NULL) {
-    if ((did=newobj(obj))==-1) return -1;
-    if ((dinstcur=getobjinst(obj,did))==NULL) return -1;
-  }
-  id=*(int *)(dinstcur+idp);
-  if ((nextp=obj->nextp)==-1) {
-    error2(obj,ERRVALFOUND,"next");
-    return -1;
-  }
-  instnext=*(char **)(dinstcur+nextp);
-  memcpy(dinstcur,sinstcur,obj->size);
-  *(int *)(dinstcur+idp)=id;
-  *(char **)(dinstcur+nextp)=instnext;
-  obj->curinst=did;
-  return did;
-}
-
 int 
 moveobj(struct objlist *obj,int did,int sid)
 /* moveobj() returns id or -1 on error */
 {
   char *dinstcur;
-  int id,idp;
+  int idp;
 
-  if ((idp=obj->idp)==-1) {
-    error(obj,ERRNOID);
+  idp = obj->idp;
+  if (idp == -1) {
+    error(obj, ERRNOID);
     return -1;
   }
-  if (getobjid(obj,sid)==-1) return -1;
-  if (did==sid) return did;
-  if ((dinstcur=chkobjinst(obj,did))==NULL) {
-    if ((id=_newobj(obj))==-1) return -1;
-    if (_copyobj(obj,id,sid)==-1) {
-      _delobj(obj,id);
-      return -1;
-    }
-    if (_delobj(obj,sid)==-1) {
-      _delobj(obj,id);
-      return -1;
-    }
-  } else {
-    exchobj(obj,did,sid);
-    if (delobj(obj,sid)==-1) {
-      exchobj(obj,did,sid);
-      return -1;
-    }
+
+  if (getobjid(obj, sid) == -1) {
+    return -1;
   }
-  obj->curinst=*(int *)(dinstcur+idp);
-  return *(int *)(dinstcur+idp);
+
+  if (did == sid) {
+    return did;
+  }
+
+  dinstcur = chkobjinst(obj, did);
+  if (dinstcur == NULL) {
+    return -1;
+  }
+
+  exchobj(obj,did,sid);
+  if (delobj(obj, sid) == -1) {
+    exchobj(obj, did, sid);
+    return -1;
+  }
+
+  obj->curinst = * (int *) (dinstcur + idp);
+  return * (int *) (dinstcur + idp);
 }
 
 int 
@@ -2728,32 +2598,60 @@ exchobj(struct objlist *obj,int id1,int id2)
   char *inst,*inst1,*inst2;
   int idp,id,nextp;
 
-  if ((idp=obj->idp)==-1) {
-    error(obj,ERRNOID);
+  idp = obj->idp;
+  if (idp == -1) {
+    error(obj, ERRNOID);
     return -1;
   }
-  if ((getobjprev(obj,id1,&instcur1,&instprev1)==NULL)
-   || (getobjprev(obj,id2,&instcur2,&instprev2)==NULL)) return -1;
-  if (id1==id2) return id1;
-  if ((nextp=obj->nextp)==-1) {
-    error2(obj,ERRVALFOUND,"next");
+  if (getobjprev(obj, id1, &instcur1, &instprev1)==NULL || 
+      getobjprev(obj, id2, &instcur2, &instprev2)==NULL) {
     return -1;
   }
-  id=*(int *)(instcur1+idp);
-  *(int *)(instcur1+idp)=*(int *)(instcur2+idp);
-  *(int *)(instcur2+idp)=id;
-  if (instprev1==NULL) inst1=obj->root;
-  else inst1=*(char **)(instprev1+nextp);
-  if (instprev2==NULL) inst2=obj->root;
-  else inst2=*(char **)(instprev2+nextp);
-  if (instprev1==NULL) obj->root=inst2;
-  else *(char **)(instprev1+nextp)=inst2;
-  if (instprev2==NULL) obj->root=inst1;
-  else *(char **)(instprev2+nextp)=inst1;
-  inst=*(char **)(instcur1+nextp);
-  *(char **)(instcur1+nextp)=*(char **)(instcur2+nextp);
-  *(char **)(instcur2+nextp)=inst;
-  obj->curinst=id2;
+
+  if (id1 == id2) {
+    return id1;
+  }
+
+  nextp = obj->nextp;
+  if (nextp == -1) {
+    error2(obj, ERRVALFOUND, "next");
+    return -1;
+  }
+
+  id = * (int *) (instcur1 + idp);
+
+  * (int *) (instcur1 + idp) = * (int *) (instcur2 + idp);
+  * (int *) (instcur2 + idp) = id;
+
+  if (instprev1 == NULL) {
+    inst1 = obj->root;
+  } else {
+    inst1 = *(char **) (instprev1 + nextp);
+  }
+
+  if (instprev2 == NULL) {
+    inst2 = obj->root;
+  } else {
+    inst2 = *(char **) (instprev2 + nextp);
+  }
+
+  if (instprev1 == NULL) {
+    obj->root = inst2;
+  } else {
+    * (char **) (instprev1 + nextp) = inst2;
+  }
+
+  if (instprev2 == NULL) {
+    obj->root = inst1;
+  } else {
+    * (char **) (instprev2 + nextp) = inst1;
+  }
+
+  inst = * (char **) (instcur1 + nextp);
+  * (char **) (instcur1 + nextp) = * (char **) (instcur2 + nextp);
+  * (char **) (instcur2 + nextp) = inst;
+  obj->curinst = id2;
+
   return id2;
 }
 
