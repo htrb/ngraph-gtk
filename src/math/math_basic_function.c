@@ -1,5 +1,5 @@
 /* 
- * $Id: math_basic_function.c,v 1.12 2010/02/18 15:06:23 hito Exp $
+ * $Id: math_basic_function.c,v 1.13 2010/02/22 02:15:29 hito Exp $
  * 
  */
 
@@ -337,6 +337,30 @@ math_func_progn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
     rval->val = 0;
   } else {
     *rval = exp->buf[exp->argc - 1].val;
+  }
+
+  return 0;
+}
+
+int
+math_func_prog2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  if (exp->argc < 2) {
+    rval->val = 0;
+  } else {
+    *rval = exp->buf[1].val;
+  }
+
+  return 0;
+}
+
+int
+math_func_prog1(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  if (exp->argc < 1) {
+    rval->val = 0;
+  } else {
+    *rval = exp->buf[0].val;
   }
 
   return 0;

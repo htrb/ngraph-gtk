@@ -679,6 +679,8 @@ COLOR(3,%03)=Y
 <tr><td>RGB2(r,g,b)</td><td>R2, G2, B2, の値を r, g, b (0≦r,g,b≦1)から設定</td></tr>
 <tr><td>UNLESS(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x == 0 のとき ex1 </td></tr>
 <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す</td></tr>
+<tr><td>PROG1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す (引数の数は 64 個まで)</td></tr>
+<tr><td>PROG2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す (引数の数は 64 個まで)</td></tr>
 <tr><td>PROGN(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す (引数の数は 64 個まで)</td></tr>
 </table>
 </div>
@@ -714,16 +716,16 @@ COLOR(3,%03)=Y
 <h2><a href="#TOP">数式変換の使用例</a></h2>
 <div>
   <ul>
-    <li>関数 PROGN() 使用例
+    <li>関数 PROG1(), PROG2(), PROGN() 使用例
       <p>
- 関数 PROGN() は複数の引数 (64 個まで) を評価して、最後の引数の
- 値を返す関数です。IF(), UNLESS(), FOR() 関数の引数に使用して複
- 数の式を評価するために利用できます。下記の例では X の値が 1 以
- 上変化する毎に Y の平均値を計算しています (X は 1 よりも大きい
- ことを仮定) 。
+ 関数 PROG1(), PROG1(), PROGN() は複数の引数 (64 個まで) を評価
+ して、最初、2 番目または最後の引数の値を返す関数です。IF(),
+ UNLESS(), FOR() 関数の引数に使用して複数の式を評価するために利
+ 用できます。下記の例では X の値が 1 以上変化する毎に Y の平均値
+ を計算しています (X は 1 よりも大きいことを仮定) 。
       </p>
       <p>
- IF(X - A &lt; 1, PROGN(B +: Y, N +: 1, CONT), PROGN(V : IF(N, B / N, CONT), B : Y, N : 1, A : X, V))
+ IF(X - A &lt; 1, PROGN(B +: Y, N +: 1, CONT), PROG1(IF(N, B / N, CONT), B : Y, N : 1, A : X))
       </p>
   </ul>
 </div>
