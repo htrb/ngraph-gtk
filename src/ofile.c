@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.111 2010/02/24 00:52:44 hito Exp $
+ * $Id: ofile.c,v 1.112 2010/02/24 01:44:51 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -5551,6 +5551,36 @@ calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, str
   g_free(c1); g_free(c2); g_free(c3);	\
   g_free(c4); g_free(c5); g_free(c6);
 
+static int
+draw_interpolation(struct f2ddata *fp, int GC, int num, int snum, int *style,
+		   double *c, double *x, double *y, double *z,
+		   double *c1, double *c2, double *c3,
+		   double *c4, double *c5, double *c6)
+{
+  int j, spcond;
+
+  spcond = SPLCND2NDDIF;
+  if (spline(z, x, c1, c2, c3, num, spcond, spcond, 0, 0) ||
+      spline(z, y, c4, c5, c6, num, spcond, spcond, 0, 0)) {
+    return -1;
+  }
+  GRAcurvefirst(GC, snum, style, f2dlineclipf, f2dtransf, 
+		f2dsplinedif, splineint, fp, x[0], y[0]);
+  for (j = 0; j < num - 1; j++) {
+    c[0] = c1[j];
+    c[1] = c2[j];
+    c[2] = c3[j];
+    c[3] = c4[j];
+    c[4] = c5[j];
+    c[5] = c6[j];
+
+    if (GRAcurve(GC, c, x[j], y[j]) == 0) {
+      break;
+    }
+  }
+
+  return 0;
+}
 
 static int
 draw_fit(struct objlist *obj, struct f2ddata *fp,
@@ -5558,9 +5588,9 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
 	 int width, int snum, int *style, int join, int miter)
 {
   char *equation;
-  double min,max,dx,dy;
-  int i, j, div, interpolation, first, rcode, num, emerr, spcond;
-  int *r,*g,*b;
+  double min, max, dx, dy;
+  int i, div, interpolation, first, rcode, num, emerr;
+  int *r, *g, *b;
   double c[8], *x, *y, *z, *c1, *c2, *c3, *c4, *c5, *c6, count;
 #if NEW_MATH_CODE
   MathEquation *code;
@@ -5635,23 +5665,12 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
           return -1;
         }
         count++;
-      } else if (interpolation) { /* redundant condition ? */
-        if (num>=2) {
-          spcond=SPLCND2NDDIF;
-          if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
-           || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-	    FREE_INTP_BUF();
-	    MATH_EQUATION_FREE(code);
-            error(obj,ERRSPL);
-            return -1;
-          }
-          GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,
-                        f2dsplinedif,splineint,fp,x[0],y[0]);
-          for (j=0;j<num-1;j++) {
-            c[0]=c1[j]; c[1]=c2[j]; c[2]=c3[j];
-            c[3]=c4[j]; c[4]=c5[j]; c[5]=c6[j];
-            if (!GRAcurve(GC,c,x[j],y[j])) break;
-          }
+      } else {
+        if (num >= 2 && draw_interpolation(fp, GC, num, snum, style, c, x, y, z, c1, c2, c3, c4, c5, c6)) {
+	  FREE_INTP_BUF();
+	  MATH_EQUATION_FREE(code);
+	  error(obj,ERRSPL);
+	  return -1;
         }
 	FREE_INTP_BUF();
         num=0;
@@ -5664,8 +5683,12 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
         if (first) {
           GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,NULL,NULL,fp,dx,dy);
           first=FALSE;
-        } else GRAdashlinetod(GC,dx,dy);
-      } else first=TRUE;
+        } else {
+	  GRAdashlinetod(GC,dx,dy);
+	}
+      } else {
+	first=TRUE;
+      }
     }
     if ((!emerr) && (rcode!=MNOERR) && (rcode!=MUNDEF)) {
       error(obj,ERRMERR);
@@ -5673,22 +5696,12 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     }
   }
   MATH_EQUATION_FREE(code);
+
   if (interpolation) {
-    if (num!=0) {
-      spcond=SPLCND2NDDIF;
-      if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
-       || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-	FREE_INTP_BUF();
-        error(obj,ERRSPL);
-        return -1;
-      }
-      GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,
-                    f2dsplinedif,splineint,fp,x[0],y[0]);
-      for (j=0;j<num-1;j++) {
-        c[0]=c1[j]; c[1]=c2[j]; c[2]=c3[j];
-        c[3]=c4[j]; c[4]=c5[j]; c[5]=c6[j];
-        if (!GRAcurve(GC,c,x[j],y[j])) break;
-      }
+    if (num > 0 && draw_interpolation(fp, GC, num, snum, style, c, x, y, z, c1, c2, c3, c4, c5, c6)) {
+      FREE_INTP_BUF();
+      error(obj,ERRSPL);
+      return -1;
     }
     FREE_INTP_BUF();
   }

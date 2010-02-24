@@ -1,3 +1,8 @@
+2010-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (draw_interpolation): add.
+	(draw_fit): use "draw_interpolation()".
+
 2010-02-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_expression.c (math_parameter_expression_new): set
