@@ -30,7 +30,7 @@ enum FILE_OBJ_PLOT_TYPE {
 #if NEW_MATH_CODE
 #include "math/math_equation.h"
 
-MathEquation *ofile_create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int use_fobj_func);
+MathEquation *ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, int usr_func, int use_fobj_func);
 #endif
 
 #endif

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.110 2010/02/22 08:31:03 hito Exp $
+ * $Id: ofile.c,v 1.111 2010/02/24 00:52:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1408,7 +1408,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
   }
 
   for (i = 0; i < 3; i++) {
-    eq[i] = ofile_create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE);
+    eq[i] = ofile_create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE, TRUE);
   }
 
   if (eq[0] == NULL || eq[1] == NULL || eq[2] == NULL)
@@ -1425,7 +1425,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
       return rcode;
   }
   if (h) {
-    rcode = set_user_fnc(eq, g, "h", err_msg);
+    rcode = set_user_fnc(eq, h, "h", err_msg);
     if (rcode)
       return rcode;
   }
@@ -1690,7 +1690,7 @@ enum {
 };
 
 MathEquation *
-ofile_create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int use_fobj_func)
+ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, int usr_func, int use_fobj_func)
 {
   MathEquation *code;
   unsigned int i;
@@ -1746,14 +1746,16 @@ ofile_create_math_equation(int *id, int use_prm, int use_fprm, int usr_func, int
     return NULL;
   }
 
-  for (i = 0; i < sizeof(file_constant) / sizeof(*file_constant); i++) {
-    f_id = math_equation_add_const(code, file_constant[i], NULL);
-    if (f_id < 0) {
-      math_equation_free(code);
-      return NULL;
-    }
-    if (id) {
-      id[i] = f_id;
+  if (use_const) {
+    for (i = 0; i < sizeof(file_constant) / sizeof(*file_constant); i++) {
+      f_id = math_equation_add_const(code, file_constant[i], NULL);
+      if (f_id < 0) {
+	math_equation_free(code);
+	return NULL;
+      }
+      if (id) {
+	id[i] = f_id;
+      }
     }
   }
 
@@ -2366,7 +2368,7 @@ set_var(MathEquation *eq, MathValue *x, MathValue *y)
 }
 
 static int
-set_const(MathEquation *eq, struct f2ddata *fp, int first)
+set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, int first)
 {
   MathValue val;
 
@@ -2375,75 +2377,75 @@ set_const(MathEquation *eq, struct f2ddata *fp, int first)
 
   math_equation_clear(eq);
 
-  if (fp->need2pass) {
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_MINX], &fp->minx);
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_MINY], &fp->miny);
+  if (need2pass) {
+    math_equation_set_const(eq, const_id[MATH_CONST_MINX], &fp->minx);
+    math_equation_set_const(eq, const_id[MATH_CONST_MINY], &fp->miny);
 
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_MAXX], &fp->maxx);
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_MAXY], &fp->maxy);
+    math_equation_set_const(eq, const_id[MATH_CONST_MAXX], &fp->maxx);
+    math_equation_set_const(eq, const_id[MATH_CONST_MAXY], &fp->maxy);
 
     val.val = fp->num;
     val.type = MATH_VALUE_NORMAL;
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_NUM], &val);
+    math_equation_set_const(eq, const_id[MATH_CONST_NUM], &val);
 
     val.val = fp->sumx;
     val.type = MATH_VALUE_NORMAL;
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMX], &val);
+    math_equation_set_const(eq, const_id[MATH_CONST_SUMX], &val);
 
     val.val = fp->sumy;
     val.type = MATH_VALUE_NORMAL;
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMY], &val);
+    math_equation_set_const(eq, const_id[MATH_CONST_SUMY], &val);
 
     val.val = fp->sumxx;
     val.type = MATH_VALUE_NORMAL;
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMXX], &val);
+    math_equation_set_const(eq, const_id[MATH_CONST_SUMXX], &val);
 
     val.val = fp->sumyy;
     val.type = MATH_VALUE_NORMAL;
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMYY], &val);
+    math_equation_set_const(eq, const_id[MATH_CONST_SUMYY], &val);
 
     val.val = fp->sumxy;
     val.type = MATH_VALUE_NORMAL;
-    math_equation_set_const(eq, fp->const_id[MATH_CONST_SUMXY], &val);
+    math_equation_set_const(eq, const_id[MATH_CONST_SUMXY], &val);
 
     if (fp->num > 0) {
       val.val = fp->sumx / fp->num;
       val.type = MATH_VALUE_NORMAL;
-      math_equation_set_const(eq, fp->const_id[MATH_CONST_AVX], &val);
+      math_equation_set_const(eq, const_id[MATH_CONST_AVX], &val);
 
       val.val = fp->sumy / fp->num;
       val.type = MATH_VALUE_NORMAL;
-      math_equation_set_const(eq, fp->const_id[MATH_CONST_AVY], &val);
+      math_equation_set_const(eq, const_id[MATH_CONST_AVY], &val);
 
       val.val = sqrt(fp->sumxx / fp->num - (fp->sumx / fp->num) * (fp->sumx / fp->num));
       val.type = MATH_VALUE_NORMAL;
-      math_equation_set_const(eq, fp->const_id[MATH_CONST_SGX], &val);
+      math_equation_set_const(eq, const_id[MATH_CONST_SGX], &val);
 
       val.val = sqrt(fp->sumyy / fp->num - (fp->sumy / fp->num) * (fp->sumy / fp->num));
       val.type = MATH_VALUE_NORMAL;
-      math_equation_set_const(eq, fp->const_id[MATH_CONST_SGY], &val);
+      math_equation_set_const(eq, const_id[MATH_CONST_SGY], &val);
     }
   }
 
   val.val = chkobjlastinst(fp->obj) + 1;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->const_id[MATH_CONST_N], &val);
+  math_equation_set_const(eq, const_id[MATH_CONST_N], &val);
 
   val.val = fp->id;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->const_id[MATH_CONST_D], &val);
+  math_equation_set_const(eq, const_id[MATH_CONST_D], &val);
 
   val.val = first;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->const_id[MATH_CONST_FIRST], &val);
+  math_equation_set_const(eq, const_id[MATH_CONST_FIRST], &val);
 
   val.val = fp->masknum;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->const_id[MATH_CONST_MASK], &val);
+  math_equation_set_const(eq, const_id[MATH_CONST_MASK], &val);
 
   val.val = fp->movenum;
   val.type = MATH_VALUE_NORMAL;
-  math_equation_set_const(eq, fp->const_id[MATH_CONST_MOVE], &val);
+  math_equation_set_const(eq, const_id[MATH_CONST_MOVE], &val);
 
   return math_equation_optimize(eq);
 }
@@ -3359,9 +3361,10 @@ getdata(struct f2ddata *fp)
   return 0;
 }
 
+
 static int 
 #if NEW_MATH_CODE
-getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, char *ddstat)
+getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *ddstat)
 #else
 getdata2(struct f2ddata *fp,char *code,int maxdim,double *dd,char *ddstat)
 #endif
@@ -5353,170 +5356,231 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
 }
 
 static int 
-fitout(struct objlist *obj,struct f2ddata *fp,int GC,
-       int width,int snum,int *style,
-       int join,int miter,char *fit,int redraw)
+calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, const char *weight, struct narray *data, struct narray *index)
 {
-  int emerr,emserr,emnonum,emig,emng;
-  int j,num;
-  double *x,*y,*z,*c1,*c2,*c3,*c4,*c5,*c6,count;
-  int *r,*g,*b;
-  double c[8];
-  int spcond;
-  struct objlist *fitobj;
-  int anum;
-  struct narray iarray;
-  int id;
-  char *inst;
-  struct narray data;
-  char *argv[2];
+#if NEW_MATH_CODE
+  MathEquation *code;
+  MathEquationParametar *prm;
+  double dd;
+  int emerr, emserr, emnonum, emig, emng, two_pass, maxdim, ddstat, rcode, datanum2, i, j;
+  int const_id[MATH_CONST_SIZE];
+
+  code = ofile_create_math_equation(const_id, TRUE, FALSE, TRUE, FALSE, FALSE);
+  if (code == NULL) {
+    return 1;
+  }
+
+  rcode = math_equation_parse(code, weight);
+  if (rcode) {
+    math_equation_free(code);
+    return 1;
+  }
+
+  prm = math_equation_get_parameter(code, 0, NULL);
+  maxdim = (prm) ? prm->id_max : 0;
+
+  two_pass = math_equation_check_const(code, const_id, TWOPASS_CONST_SIZE);
+  if (two_pass) {
+    reopendata(fp);
+    if (getminmaxdata(fp, f2dlocal) == -1) {
+      math_equation_free(code);
+      return 1;
+    }
+  }
+
+  if (maxdim < fp->x) maxdim = fp->x;
+  if (maxdim < fp->y) maxdim = fp->y;
+  datanum2 = fp->datanum;
+  reopendata(fp);
+  if (hskipdata(fp) != 0) {
+    math_equation_free(code);
+    return 1;
+  }
+  fp->datanum = datanum2;
+
+  if (set_const(code, const_id, two_pass, fp, TRUE)) {
+    math_equation_free(code);
+    return 1;
+  }
+
+  emerr = emserr = emnonum = emig = emng = FALSE;
+  for (i = j = 0; getdata2(fp, code, maxdim, &dd, &ddstat) == 0; i++) {
+    int *line;
+    line = (int *) arraynget(index, j);
+
+    if (line == NULL) {
+      break;
+    } else if (*line != i) {
+      continue;
+    }
+
+    j++;
+    if (ddstat == MNOERR) {
+      if (arrayadd(data, &dd) == NULL) {
+	return -1;
+      }
+    } else {
+      errordisp2(obj, fp, &emerr, &emserr, &emnonum, &emig, &emng, ddstat, "weight");
+    }
+  }
+
+  math_equation_free(code);
+#else
+  char *code;
+  int need2pass;
+  struct narray *needdata;
+  int datanum2;
+  char ddstat;
+  double dd;
+  int maxdim;
+  int emerr, emserr, emnonum, emig, emng, rcode;
+
+  needdata=arraynew(sizeof(int));
+  rcode=mathcode(weight,&code,needdata,NULL,&maxdim,&need2pass,
+		 TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE);
+  if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
+    return 1;
+  }
+
+  if (maxdim<fp->x) maxdim=fp->x;
+  if (maxdim<fp->y) maxdim=fp->y;
+  datanum2=fp->datanum;
+  reopendata(fp);
+  if (hskipdata(fp)!=0) {
+    return 1;
+  }
+  fp->datanum=datanum2;
+  emerr=emserr=emnonum=emig=emng=FALSE;
+  while (getdata2(fp,code,maxdim,&dd,&ddstat)==0) {
+    if (ddstat == MNOERR) {
+      if (arrayadd(data,&dd)==NULL) {
+	return -1;
+      }
+    } else {
+      errordisp2(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng,ddstat,"weight");
+    }
+  }
+
+  g_free(code);
+  arrayfree(needdata);
+#endif
+
+  if (arraynum(data) == 0) {
+    return -1;
+  }
+
+  return 0;
+}
+
+static int
+calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, struct objlist *fitobj, int fit_id)
+{
+  int emerr, emserr, emnonum, emig, emng, i, rcode;
+  struct narray data, index;
+  char *weight, *argv[2];
+  double dnum;
+
+  arrayinit(&data,sizeof(double));
+  arrayinit(&index,sizeof(int));
+  emerr = emserr = emnonum = emig = emng = FALSE;
+
+  for (i = 0; getdata(fp)==0; i++) {
+    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
+      if (arrayadd(&data, &fp->dx) == NULL || 
+	  arrayadd(&data, &fp->dy) == NULL ||
+	  arrayadd(&index, &i) == NULL) {
+	arraydel(&index);
+	arraydel(&data);
+	return -1;
+      }
+    } else {
+      errordisp(obj, fp, &emerr, &emserr, &emnonum, &emig, &emng);
+    }
+  }
+
+  errordisp(obj, fp, &emerr, &emserr, &emnonum, &emig, &emng);
+  if ((dnum=(double )arraynum(&data))==0) {
+    arraydel(&index);
+    arraydel(&data);
+    return -1;
+  }
+
+  dnum /= 2;
+  if (arrayins(&data, &dnum, 0) == NULL) {
+    arraydel(&index);
+    arraydel(&data);
+    return -1;
+  }
+
+  if (getobj(fitobj, "weight_func", fit_id, 0, NULL, &weight) == -1) {
+    arraydel(&index);
+    arraydel(&data);
+    return -1;
+  }
+
+  if (weight) {
+    rcode = calc_weight(obj, f2dlocal, fp, weight, &data, &index);
+    if (rcode) {
+      arraydel(&index);
+      arraydel(&data);
+      return rcode;
+    }
+  }
+  arraydel(&index);
+
+  argv[0] = (void *) (&data);
+  argv[1] = NULL;
+  if (exeobj(fitobj, "fit", fit_id, 1, argv)) {
+    arraydel(&data);
+    return -1;
+  }
+  arraydel(&data);
+
+  return 0;
+}
+
+#if NEW_MATH_CODE
+#define MATH_EQUATION_FREE(eq) math_equation_free(eq)
+#else
+#define MATH_EQUATION_FREE(eq) g_free(eq)
+#endif
+
+#define FREE_INTP_BUF()			\
+  g_free(x);  g_free(y);  g_free(z);	\
+  g_free(r);  g_free(g);  g_free(b);	\
+  g_free(c1); g_free(c2); g_free(c3);	\
+  g_free(c4); g_free(c5); g_free(c6);
+
+
+static int
+draw_fit(struct objlist *obj, struct f2ddata *fp,
+	 int GC, struct objlist *fitobj, char *fit_inst,
+	 int width, int snum, int *style, int join, int miter)
+{
   char *equation;
   double min,max,dx,dy;
-  int div;
+  int i, j, div, interpolation, first, rcode, num, emerr, spcond;
+  int *r,*g,*b;
+  double c[8], *x, *y, *z, *c1, *c2, *c3, *c4, *c5, *c6, count;
 #if NEW_MATH_CODE
   MathEquation *code;
   MathValue val;
 #else
   char *code;
-  int need2pass;
-  struct narray *needdata;
 #endif
-  int i,rcode;
-  double dnum;
-  char *weight;
-  int maxdim;
-  double dd;
-  char ddstat;
-  int interpolation;
-  int first;
-  int datanum2;
 
-  if (fit==NULL) {
-    error(obj,ERRNOFIT);
-    return -1;
-  }
-  arrayinit(&iarray,sizeof(int));
-  if (getobjilist(fit,&fitobj,&iarray,FALSE,NULL)) return -1 ;
-  anum=arraynum(&iarray);
-  if (anum<1) {
-    arraydel(&iarray);
-    error2(obj,ERRNOFITINST,fit);
-    return -1 ;
-  }
-  id=*(int *)arraylast(&iarray);
-  arraydel(&iarray);
-  if ((inst=getobjinst(fitobj,id))==NULL) return -1 ;
-  if (_getobj(fitobj,"equation",inst,&equation)) return -1;
-  if ((equation==NULL) && (!redraw)) {
-    arrayinit(&data,sizeof(double));
-    emerr=emserr=emnonum=emig=emng=FALSE;
-    while (getdata(fp)==0) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
-        if ((arrayadd(&data,&(fp->dx))==NULL)
-         || (arrayadd(&data,&(fp->dy))==NULL)) {
-           arraydel(&data);
-           return -1;
-        }
-      } else {
-	errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
-      }
-    }
-    errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
-    if ((dnum=(double )arraynum(&data))==0) {
-      arraydel(&data);
-      return -1;
-    }
-    dnum/=2;
-    if (arrayins(&data,&dnum,0)==NULL) {
-      arraydel(&data);
-      return -1;
-    }
-    if (_getobj(fitobj,"weight_func",inst,&weight)) {
-      arraydel(&data);
-      return -1;
-    }
-    if (weight!=NULL) {
-#if NEW_MATH_CODE
-      MathEquationParametar *prm;
-
-      code = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
-      if (code == NULL) {
-	return 1;
-      }
-
-      rcode = math_equation_parse(code, weight);
-      if (rcode) {
-	math_equation_free(code);
-	return 1;
-      }
-
-      prm = math_equation_get_parameter(code, 0, NULL);
-      maxdim = (prm) ? prm->id_max : 0;
-
-      if (set_const(code, fp, FALSE)) {
-	math_equation_free(code);
-	return 1;
-      }
-#else
-      needdata=arraynew(sizeof(int));
-      rcode=mathcode(weight,&code,needdata,NULL,&maxdim,&need2pass,
-                   TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,FALSE);
-      if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
-	arraydel(&data);
-        return 1;
-      }
-#endif
-      if (maxdim<fp->x) maxdim=fp->x;
-      if (maxdim<fp->y) maxdim=fp->y;
-      datanum2=fp->datanum;
-      reopendata(fp);
-      if (hskipdata(fp)!=0) {
-        arraydel(&data);
-        return 1;
-      }
-      fp->datanum=datanum2;
-      emerr=emserr=emnonum=emig=emng=FALSE;
-      while (getdata2(fp,code,maxdim,&dd,&ddstat)==0) {
-        if (ddstat == MNOERR) {
-          if (arrayadd(&data,&dd)==NULL) {
-             arraydel(&data);
-             return -1;
-          }
-        } else {
-	  errordisp2(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng,ddstat,"weight");
-	}
-      }
-      if (arraynum(&data) == 0) {
-        arraydel(&data);
-        return -1;
-      }
-#if NEW_MATH_CODE
-      math_equation_free(code);
-#else
-      g_free(code);
-      arrayfree(needdata);
-#endif
-    }
-    argv[0]=(void *)(&data);
-    argv[1]=NULL;
-    if (exeobj(fitobj,"fit",id,1,argv)) {
-      arraydel(&data);
-      return -1;
-    }
-    arraydel(&data);
-  }
-  if (_getobj(fitobj,"equation",inst,&equation)) return -1;
-  if (_getobj(fitobj,"min",inst,&min)) return -1;
-  if (_getobj(fitobj,"max",inst,&max)) return -1;
-  if (_getobj(fitobj,"div",inst,&div)) return -1;
-  if (_getobj(fitobj,"interpolation",inst,&interpolation)) return -1;
+  if (_getobj(fitobj, "equation", fit_inst, &equation)) return -1;
+  if (_getobj(fitobj, "min", fit_inst, &min)) return -1;
+  if (_getobj(fitobj, "max", fit_inst, &max)) return -1;
+  if (_getobj(fitobj, "div", fit_inst, &div)) return -1;
+  if (_getobj(fitobj, "interpolation", fit_inst, &interpolation)) return -1;
   if (equation==NULL) return -1;
   if ((min==0) && (max==0)) {
     min=fp->axmin2;
     max=fp->axmax2;
   } else if (min==max) return 0;
 #if NEW_MATH_CODE
-  code = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
+  code = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE, FALSE);
   if (code == NULL) {
     return 1;
   }
@@ -5567,11 +5631,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
       && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
         if (dataadd(dx,dy,count,0,0,0,&num,
                     &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) {
-#if NEW_MATH_CODE
-	  math_equation_free(code);
-#else
-          g_free(code);
-#endif
+	  MATH_EQUATION_FREE(code);
           return -1;
         }
         count++;
@@ -5580,15 +5640,8 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
           spcond=SPLCND2NDDIF;
           if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
            || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-            g_free(x);  g_free(y);  g_free(z);
-            g_free(r);  g_free(g);  g_free(b);
-            g_free(c1); g_free(c2); g_free(c3);
-            g_free(c4); g_free(c5); g_free(c6);
-#if NEW_MATH_CODE
-	    math_equation_free(code);
-#else
-            g_free(code);
-#endif
+	    FREE_INTP_BUF();
+	    MATH_EQUATION_FREE(code);
             error(obj,ERRSPL);
             return -1;
           }
@@ -5600,10 +5653,7 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
             if (!GRAcurve(GC,c,x[j],y[j])) break;
           }
         }
-        g_free(x);  g_free(y);  g_free(z);
-        g_free(r);  g_free(g);  g_free(b);
-        g_free(c1); g_free(c2); g_free(c3);
-        g_free(c4); g_free(c5); g_free(c6);
+	FREE_INTP_BUF();
         num=0;
         count=0;
         x=y=z=c1=c2=c3=c4=c5=c6=NULL;
@@ -5622,20 +5672,13 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
       emerr=TRUE;
     }
   }
-#if NEW_MATH_CODE
-  math_equation_free(code);
-#else
-  g_free(code);
-#endif
+  MATH_EQUATION_FREE(code);
   if (interpolation) {
     if (num!=0) {
       spcond=SPLCND2NDDIF;
       if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
        || spline(z,y,c4,c5,c6,num,spcond,spcond,0,0)) {
-        g_free(x);  g_free(y);  g_free(z);
-        g_free(r);  g_free(g);  g_free(b);
-        g_free(c1); g_free(c2); g_free(c3);
-        g_free(c4); g_free(c5); g_free(c6);
+	FREE_INTP_BUF();
         error(obj,ERRSPL);
         return -1;
       }
@@ -5647,12 +5690,58 @@ fitout(struct objlist *obj,struct f2ddata *fp,int GC,
         if (!GRAcurve(GC,c,x[j],y[j])) break;
       }
     }
-    g_free(x);  g_free(y);  g_free(z);
-    g_free(r);  g_free(g);  g_free(b);
-    g_free(c1); g_free(c2); g_free(c3);
-    g_free(c4); g_free(c5); g_free(c6);
+    FREE_INTP_BUF();
   }
+
   return 0;
+}
+
+static int 
+fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
+       struct f2ddata *fp,int GC,
+       int width,int snum,int *style,
+       int join,int miter,char *fit,int redraw)
+{
+  struct objlist *fitobj;
+  int anum;
+  struct narray iarray;
+  int id;
+  char *inst;
+  char *equation;
+  int rcode;
+
+  if (fit==NULL) {
+    error(obj,ERRNOFIT);
+    return -1;
+  }
+  arrayinit(&iarray,sizeof(int));
+  if (getobjilist(fit,&fitobj,&iarray,FALSE,NULL)) return -1 ;
+  anum=arraynum(&iarray);
+  if (anum<1) {
+    arraydel(&iarray);
+    error2(obj,ERRNOFITINST,fit);
+    return -1 ;
+  }
+  id=*(int *)arraylast(&iarray);
+  arraydel(&iarray);
+
+  inst = getobjinst(fitobj, id);
+  if (inst == NULL) {
+    return -1 ;
+  }
+
+  if (_getobj(fitobj, "equation", inst, &equation)) {
+    return -1;
+  }
+
+  if (equation == NULL && redraw == 0) {
+    rcode = calc_fit(obj, f2dlocal, fp, fitobj, id);
+    if (rcode) {
+      return rcode;
+    }
+  }
+
+  return draw_fit(obj, fp, GC, fitobj, inst, width, snum, style, join, miter);
 }
 
 static int 
@@ -5722,10 +5811,10 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   }
 
 #if NEW_MATH_CODE
-  if (set_const(fp->codex[0], fp, FALSE))
+  if (set_const(fp->codex[0], fp->const_id, fp->need2pass, fp, TRUE))
     return 1;
 
-  if (set_const(fp->codey[0], fp, FALSE))
+  if (set_const(fp->codey[0], fp->const_id, fp->need2pass, fp, TRUE))
     return 1;
 #endif
 
@@ -5754,11 +5843,11 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   case PLOT_TYPE_RECTANGLE_FILL:
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
 #if NEW_MATH_CODE
-    rcode = set_const(fp->codex[1], fp, FALSE);
+    rcode = set_const(fp->codex[1], fp->const_id, fp->need2pass, fp, FALSE);
     if (rcode)
       break;
 
-    rcode = set_const(fp->codey[2], fp, FALSE);
+    rcode = set_const(fp->codey[2], fp->const_id, fp->need2pass, fp, FALSE);
     if (rcode)
       break;
 
@@ -5769,11 +5858,11 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
     break;
   case PLOT_TYPE_ERRORBAR_X:
 #if NEW_MATH_CODE
-    rcode = set_const(fp->codex[1], fp, FALSE);
+    rcode = set_const(fp->codex[1], fp->const_id, fp->need2pass, fp, FALSE);
     if (rcode)
       break;
 
-    rcode = set_const(fp->codex[2], fp, FALSE);
+    rcode = set_const(fp->codex[2], fp->const_id, fp->need2pass, fp, FALSE);
     if (rcode)
       break;
 #endif
@@ -5781,11 +5870,11 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
     break;
   case PLOT_TYPE_ERRORBAR_Y:
 #if NEW_MATH_CODE
-    rcode = set_const(fp->codey[1], fp, FALSE);
+    rcode = set_const(fp->codey[1], fp->const_id, fp->need2pass, fp, FALSE);
     if (rcode)
       break;
 
-    rcode = set_const(fp->codey[2], fp, FALSE);
+    rcode = set_const(fp->codey[2], fp->const_id, fp->need2pass, fp, FALSE);
     if (rcode)
       break;
 #endif
@@ -5809,7 +5898,7 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
     break;
   case PLOT_TYPE_FIT:
     field = (char *)argv[1];
-    rcode = fitout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, fit, field[0] == 'r');
+    rcode = fitout(obj, f2dlocal, fp, GC, lwidth, snum, style, ljoin, lmiter, fit, field[0] == 'r');
     if (fp->datanum == 0)
       fp->datanum = f2dlocal->num;
     break;
@@ -6040,22 +6129,22 @@ f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int
 set_const_all(struct f2ddata *fp)
 {
-  if (set_const(fp->codex[0], fp, TRUE))
+  if (set_const(fp->codex[0], fp->const_id, fp->need2pass, fp, TRUE))
     return 1;
 
-  if (set_const(fp->codey[0], fp, TRUE))
+  if (set_const(fp->codey[0], fp->const_id, fp->need2pass, fp, TRUE))
     return 1;
 
-  if (set_const(fp->codex[1], fp, FALSE))
+  if (set_const(fp->codex[1], fp->const_id, fp->need2pass, fp, FALSE))
     return 1;
 
-  if (set_const(fp->codex[2], fp, FALSE))
+  if (set_const(fp->codex[2], fp->const_id, fp->need2pass, fp, FALSE))
     return 1;
 
-  if (set_const(fp->codey[1], fp, FALSE))
+  if (set_const(fp->codey[1], fp->const_id, fp->need2pass, fp, FALSE))
     return 1;
 
-  if (set_const(fp->codey[2], fp, FALSE))
+  if (set_const(fp->codey[2], fp->const_id, fp->need2pass, fp, FALSE))
     return 1;
 
   return 0;

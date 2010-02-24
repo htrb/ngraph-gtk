@@ -1,4 +1,26 @@
+2010-02-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_expression.c (math_parameter_expression_new): set
+	errorcode to "err" when the variable "prm" is NULL.
+
+	* src/ofit.c (ERR_INCONSISTENT_DATA_NUM): add.
+	(fiterrorlist): add error message.
+	(fit_put_weight_func): fix arguments of the function
+	"ofile_create_math_equation()".
+
+	* src/ofile.c (calc_fit, draw_fit): add.
+	(fitout): use "calc_fit()" and "draw_fit()".
+	(ofile_create_math_equation): add argument "use_const".
+	(set_equation): fix second argument of "set_user_fnc()" from "g"
+	to "h".
+	(set_const): add arguments "const_id" and "need2pass".
+	(f2ddraw): constant "FIRST" for equatiosn "fp->codex[0]" and
+	"fp->codey[0]" is TRUE.
+
 2010-02-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (fitout): use "calc_weight()" to calculate weight.
+	(calc_weight): add.
 
 	* src/object.c (moveobj): move object only when id of instances of
 	"sid" and "did" are exist.

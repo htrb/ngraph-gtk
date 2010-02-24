@@ -1,5 +1,5 @@
 /* 
- * $Id: ofit.c,v 1.36 2010/02/15 08:56:37 hito Exp $
+ * $Id: ofit.c,v 1.37 2010/02/24 00:52:44 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -60,6 +60,7 @@
 #define ERRRANGE 111
 #define ERRNEGATIVEWEIGHT 112
 #define ERRCONVERGE 113
+#define ERR_INCONSISTENT_DATA_NUM 114
 
 static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
@@ -78,6 +79,7 @@ static char *fiterrorlist[]={
   "math range check.",
   "negative or zero weight -> ignored.",
   "convergence error.",
+  "number of the data is not consistent."
 };
 
 #define ERRNUM (sizeof(fiterrorlist) / sizeof(*fiterrorlist))
@@ -315,7 +317,7 @@ fit_put_weight_func(struct objlist *obj,char *inst,char *rval,
     return 0;
   }
 
-  code = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE);
+  code = ofile_create_math_equation(NULL, TRUE, FALSE, TRUE, FALSE, FALSE);
   if (code == NULL)
     return 1;
 
@@ -1005,6 +1007,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     weight = TRUE;
     wdata = data + 2 * dnum;
   } else {
+    error(obj, ERR_INCONSISTENT_DATA_NUM);
     return 1;
   }
 
