@@ -114,7 +114,7 @@ entry_set_filename(GtkWidget *w, char *filename)
   if (! g_utf8_validate(filename, -1, NULL)) {
     utf8filename = filename_to_utf8(filename);
     if (utf8filename == NULL) {
-      MessageBox(NULL, _("Couldn't convert filename to UTF-8."), NULL, MB_OK);
+      message_box(NULL, _("Couldn't convert filename to UTF-8."), NULL, RESPONS_OK);
       return 1;
     }
     filename = utf8filename;

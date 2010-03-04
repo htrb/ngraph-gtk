@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.52 2010/02/10 06:52:28 hito Exp $
+ * $Id: x11dialg.c,v 1.53 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -44,8 +44,6 @@
 #include "gtk_liststore.h"
 #include "gtk_combo.h"
 #include "gtk_widget.h"
-
-void ResetEvent();
 
 struct line_style FwLineStyle[] = {
   {N_("solid"),      "",                        0},
@@ -752,7 +750,7 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   if (strcmp(field, "file") == 0) {
     buf = filename_from_utf8(tmp);
     if (buf == NULL) {
-      MessageBox(NULL, _("Couldn't convert filename from UTF-8."), NULL, MB_OK);
+      message_box(NULL, _("Couldn't convert filename from UTF-8."), NULL, RESPONS_OK);
       return -1;
     }
   } else {
@@ -794,7 +792,7 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
     ptr = filename_to_utf8(buf);
     if (ptr == NULL) {
-      MessageBox(NULL, _("Couldn't convert filename to UTF-8."), NULL, MB_OK);
+      message_box(NULL, _("Couldn't convert filename to UTF-8."), NULL, RESPONS_OK);
       return;
     }
 

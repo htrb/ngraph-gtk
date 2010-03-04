@@ -1,7 +1,7 @@
 #ifndef _SHELL_HEADER
 #define _SHELL_HEADER
 /* 
- * $Id: shell.h,v 1.13 2009/10/22 00:07:11 hito Exp $
+ * $Id: shell.h,v 1.14 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -23,6 +23,7 @@
  * 
  */
 
+#include "common.h"
 #include "ioutil.h"
 
 #define SHELLBUFSIZE 4096
@@ -117,7 +118,7 @@ struct nshell {
   int optione;
   int optionv;
   int optionx;
-  HANDLE fd;
+  int fd;
   char *readbuf;
   int readpo;
   int readbyte;
@@ -150,8 +151,8 @@ char *addexp(struct nshell *nshell,char *name);
 int delval(struct nshell *nshell,char *name);
 char *getval(struct nshell *nshell,char *name);
 struct cmdlist *getfunc(struct nshell *nshell,char *name);
-void setshhandle(struct nshell *shell,HANDLE fd);
-HANDLE getshhandle(struct nshell *nshell);
+void setshhandle(struct nshell *shell, int fd);
+int getshhandle(struct nshell *nshell);
 int cmdexecute(struct nshell *nshell, const char *cline);
 struct nshell *newshell(void);
 void delshell(struct nshell *nshell);
@@ -168,8 +169,17 @@ int printfconsole(char *fmt,...);
 void ngraphenvironment(struct nshell *nshell);
 int msleep(int ms);
 void set_security(int state);
-void set_environ(char **environ);
+void set_environ(char **env);
 int set_signal(int signal, int flags, void (*handler)(int));
 void set_childhandler(void);
 void unset_childhandler(void);
+#ifdef WINDOWS
+typedef struct {
+  int pid;
+  int errlevel;
+  int done;
+} WaitPidParam;
+
+int waitpid(WaitPidParam *pWP);
+#endif	/* WINDOWS */
 #endif

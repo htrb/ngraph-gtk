@@ -1,5 +1,5 @@
 /* 
- * $Id: opolygon.c,v 1.10 2009/11/16 09:13:04 hito Exp $
+ * $Id: opolygon.c,v 1.11 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -20,10 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "common.h"
 

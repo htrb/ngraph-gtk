@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.14 2009/12/10 08:59:53 hito Exp $
+ * $Id: x11gui.h,v 1.15 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -24,11 +24,19 @@
 #ifndef GTK_GUI_HEADER
 #define GTK_GUI_HEADER
 
-#define MB_OK 1
-#define MB_YESNOCANCEL 2
-#define MB_YESNO 3
-#define MB_OKCANCEL 4
-#define MB_ERROR 5
+#define RESPONS_OK 1
+#define RESPONS_YESNOCANCEL 2
+#define RESPONS_YESNO 3
+#define RESPONS_OKCANCEL 4
+#define RESPONS_ERROR 5
+
+#ifdef IDOK
+#undef IDOK
+#undef IDCANCEL
+#undef IDYES
+#undef IDNO
+#undef IDCLOSE
+#endif	/* IDOK */
 
 #define IDLOOP   0
 #define IDOK     1
@@ -52,8 +60,8 @@ typedef struct _tpoint {
 } TPoint;
 
 int DialogExecute(GtkWidget *parent, void *dialog);
-void MessageBeep(GtkWidget *parent);
-int MessageBox(GtkWidget *parent, char *message, char *title, int yesno);
+void message_beep(GtkWidget *parent);
+int message_box(GtkWidget *parent, char *message, char *title, int yesno);
 int DialogInput(GtkWidget *parent, char *title, char *mes, char **s, int *x, int *y);
 int DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *ary, int *r, int *x, int *y);
 int DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r, int *x, int *y);

@@ -1,5 +1,5 @@
 /* 
- * $Id: omath.c,v 1.21 2009/11/26 09:37:04 hito Exp $
+ * $Id: omath.c,v 1.22 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,7 @@
  * 
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdlib.h>
 #include <stdio.h>

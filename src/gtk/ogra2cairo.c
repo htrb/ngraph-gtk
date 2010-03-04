@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairo.c,v 1.57 2010/01/21 07:22:49 hito Exp $
+ * $Id: ogra2cairo.c,v 1.58 2010/03/04 08:30:17 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -1345,8 +1345,12 @@ addgra2cairo()
     CAIRO_STATUS_INVALID_DSC_COMMENT,
     CAIRO_STATUS_INVALID_INDEX,
     CAIRO_STATUS_CLIP_NOT_REPRESENTABLE,
+#ifdef CAIRO_STATUS_TEMP_FILE_ERROR
     CAIRO_STATUS_TEMP_FILE_ERROR,
+#endif
+#ifdef CAIRO_STATUS_INVALID_STRIDE
     CAIRO_STATUS_INVALID_STRIDE,
+#endif
   };
   int i, n;
 

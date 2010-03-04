@@ -71,6 +71,9 @@
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #undef HAVE_LIBPTHREAD
 
+/* Define to 1 if you have the `pthreadGC2' library (-lpthreadGC2). */
+#undef HAVE_LIBPTHREADGC2
+
 /* Define to 1 if you have the `readline' library (-lreadline). */
 #undef HAVE_LIBREADLINE
 
@@ -90,6 +93,9 @@
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
 
+/* Define to 1 if you have the `nanosleep' function. */
+#undef HAVE_NANOSLEEP
+
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
@@ -108,6 +114,9 @@
 
 /* Define to 1 if you have the `sigsuspend' function. */
 #undef HAVE_SIGSUSPEND
+
+/* Define to 1 if you have the `sleep' function. */
+#undef HAVE_SLEEP
 
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT

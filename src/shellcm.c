@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.28 2009/11/26 08:29:12 hito Exp $
+ * $Id: shellcm.c,v 1.29 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,7 @@
  * 
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,10 +31,10 @@
 #include <libgen.h>
 #ifndef WINDOWS
 #include <unistd.h>
-#else
+#else  /* WINDOWS */
 #include <dos.h>
 #include <dir.h>
-#endif
+#endif	/* WINDOWS */
 
 #define USE_HASH 1
 

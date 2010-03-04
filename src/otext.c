@@ -1,5 +1,5 @@
 /* 
- * $Id: otext.c,v 1.18 2009/11/16 09:13:04 hito Exp $
+ * $Id: otext.c,v 1.19 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,9 +28,7 @@
 #include <ctype.h>
 #include <glib.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #ifdef USE_UTF8
 #include <glib.h>

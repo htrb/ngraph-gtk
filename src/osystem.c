@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.16 2009/11/30 01:23:35 hito Exp $
+ * $Id: osystem.c,v 1.17 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,21 +21,14 @@
  * 
  */
 
+#include "common.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <glib.h>
-#ifndef WINDOWS
 #include <unistd.h>
-#else
-#include <dir.h>
-#include <dos.h>
-#endif
-
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "ngraph.h"
 #include "nstring.h"
@@ -47,17 +40,13 @@
 #include <gsl/gsl_errno.h>
 #endif
 
-#define NAME     "system"
-#define PARENT   "object"
-#define SYSNAME  "Ngraph"
-#define TEMPN    "NGP"
+#define NAME      "system"
+#define PARENT    "object"
+#define SYSNAME   "Ngraph"
+#define TEMPN     "NGP"
 #define COPYRIGHT "Copyright (C) 2003, Satoshi ISHIZAKA."
-#define EMAIL "ZXB01226@nifty.com"
-#ifndef WINDOWS
-#define WEB "http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html"
-#else
-#define WEB "http:\/\/homepage3.nifty.com\/slokar\/ngraph\/ngraph-gtk.html"
-#endif
+#define EMAIL     "ZXB01226@nifty.com"
+#define WEB       "http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html"
 
 #define ERRNODIR   100
 #define ERRTMPFILE 101

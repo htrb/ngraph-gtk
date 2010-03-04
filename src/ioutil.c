@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.23 2009/11/16 12:59:18 hito Exp $
+ * $Id: ioutil.c,v 1.24 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,7 @@
  * 
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -35,13 +33,13 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <glib.h>
+#include <glib/gstdio.h>
 #ifndef WINDOWS
 #include <unistd.h>
-#else
+#else  /* WINDOWS */
 #include <io.h>
 #include <dir.h>
-#include <windows.h>
-#endif
+#endif	/* WINDOWS */
 #include "object.h"
 #include "nstring.h"
 #include "jnstring.h"
@@ -84,7 +82,7 @@ changefilename(char *name)
     for (i=j+2;name[i]!='\0';i++) name[j++]=name[i];
 */
 }
-#else
+#else  /* WINDOWS */
 void 
 changefilename(char *name)
 {
@@ -116,7 +114,7 @@ changefilename(char *name)
 */
 }
 
-static void 
+void 
 unchangefilename(char *name)
 {
   int i;
@@ -125,7 +123,7 @@ unchangefilename(char *name)
   for (i=0;name[i]!='\0';i++)
     if ((name[i]==DIRSEP) && (!niskanji2(name,i))) name[i]='\\';
 }
-#endif
+#endif	/* WINDOWS */
 
 static void 
 pathresolv(char *name)
@@ -190,7 +188,10 @@ getfullpath(char *name)
   pathresolv(s);
   return s;
 }
-#else
+#else  /* WINDOWS */
+
+#define MAXPATH 4096
+
 char *
 getfullpath(char *name)
 {
@@ -204,7 +205,7 @@ getfullpath(char *name)
   changefilename(s);
   return s;
 }
-#endif
+#endif	/* WINDOWS */
 
 char *
 getrelativepath(char *name)
@@ -220,18 +221,18 @@ getrelativepath(char *name)
     pathresolv(s);
   } else {
     top=0;
-#ifndef WINDOWS
+#ifndef WINDOWS_XXX
     if (name[0]==DIRSEP) {
-#else
+#else  /* WINDOWS */
     if (isalpha(name[0]) && (name[1]==':')) top=2;
-    if ((name[top]==DIRSEP)
-        && ((top!=2) || ((toupper(name[0])-'A')==getdisk()))) {
-#endif
+    //    if ((name[top]==DIRSEP) && ((top!=2) || ((toupper(name[0])-'A')==getdisk()))) {
+    if ((name[top]==DIRSEP) && top!=2) {
+#endif	/* WINDOWS */
       if ((cwd=ngetcwd())==NULL) return NULL;
-#ifdef WINDOWS
+#ifdef WINDOWS_XXX
       for (j=2;cwd[j]!='\0';j++) cwd[j-2]=cwd[j];
       cwd[j-2]='\0';
-#endif
+#endif	/* WINDOWS */
       if ((cwd2=g_malloc(strlen(cwd)+2))==NULL) return NULL;
       strcpy(cwd2,cwd);
       g_free(cwd);
@@ -358,7 +359,7 @@ ngetcwd(void)
   return s;
 }
 
-#ifndef WINDOWS
+#ifndef WINDOWS_XXX
 
 char *
 nsearchpath(char *path,char *name,int shellscript)
@@ -430,7 +431,7 @@ nselectfile(char *dir,struct dirent *ent)
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
-#else
+#else  /* WINDOWS */
 
 
 static char *addexechar[]={
@@ -531,47 +532,60 @@ nsearchpath(char *path,char *name,int shellscript)
   return NULL;
 }
 
-#endif
+#endif	/* WINDOWS */
 
 static int 
-nscandir(char *dir,char ***namelist,
-             int (*select)(char *dir,struct dirent *ent),
-             int (*compar)())
+nscandir(char *dir,char ***namelist, int (*compar)())
 {
   unsigned int i;
-  DIR *dp;
-  struct dirent *ent;
+  GDir *dp;
+  const char *ent;
   char **po,**po2;
-  unsigned int allocn=256,alloc=0;
+  unsigned int allocn = 256, alloc = 0;
 
-  if ((dp=opendir(dir))==NULL) return -1;
-  if ((po=g_malloc(allocn*sizeof(char *)))==NULL) return -1;
-  while ((ent=readdir(dp))!=NULL) {
-    if ((select!=NULL) && ((*select)(dir,ent)==0)) continue;
-#ifndef WINDOWS
-    if (ent->d_ino==0) continue;
-#endif
-    if (allocn==alloc) {
-      if ((po2=g_realloc(po,(allocn+=256)*sizeof(char *)))==NULL) {
-        for (i=0;i<alloc;i++) {
+  dp = g_dir_open(dir, 0, NULL);
+  if (dp == NULL) {
+    return -1;
+  }
+
+  po = g_malloc(allocn * sizeof(char *));
+  if (po == NULL) {
+    g_dir_close(dp);
+    return -1;
+  }
+
+  while ((ent = g_dir_read_name(dp))) {
+    if (allocn == alloc) {
+      allocn += 256;
+      po2 = g_realloc(po, allocn * sizeof(char *));
+      if (po2 == NULL) {
+        for (i = 0; i < alloc; i++) {
 	  g_free(po[i]);
 	}
         g_free(po);
+	g_dir_close(dp);
         return -1;
       }
-      po=po2;
+      po = po2;
     }
-    if ((po[alloc]=g_malloc(strlen(ent->d_name)+1))==NULL) {
-      for (i=0;i<alloc;i++) g_free(po[i]);
+    po[alloc] = g_strdup(ent);
+    if (po[alloc] == NULL) {
+      for (i = 0; i < alloc; i++) {
+	g_free(po[i]);
+      }
       g_free(po);
+      g_dir_close(dp);
       return -1;
     }
-    strcpy(po[alloc],ent->d_name);
     alloc++;
   }
-  closedir(dp);
-  if (compar!=NULL) qsort(po,alloc,sizeof(struct dirent *),compar);
-  *namelist=po;
+  g_dir_close(dp);
+
+  if (compar != NULL) {
+    qsort(po, alloc, sizeof(struct dirent *), compar);
+  }
+
+  *namelist = po;
   return alloc;
 }
 
@@ -627,8 +641,8 @@ nglob2(char *path,int po,int *num,char ***list)
     strncpy(s2,path+p1,i-p1);
     s2[i-p1]='\0';
     strcpy(s3,path+i);
-    if (strlen(s1)==0) scannum=nscandir("./",&namelist,NULL,nalphasort);
-    else scannum=nscandir(s1,&namelist,NULL,nalphasort);
+    if (strlen(s1)==0) scannum=nscandir("./",&namelist,nalphasort);
+    else scannum=nscandir(s1,&namelist,nalphasort);
     for (i=0;i<scannum;i++) {
       if (wildmatch(s2,namelist[i],WILD_PATHNAME | WILD_PERIOD)) {
         len=strlen(namelist[i]);
@@ -811,15 +825,15 @@ nfopen(char *filename, const char *mode)
 {
   FILE *fp;
 
-#ifdef WINDOWS
+#ifdef WINDOWS_XXX
   unchangefilename(filename);
-#endif
-  fp=fopen(filename,mode);
+#endif	/* WINDOWS */
+  fp = g_fopen(filename,mode);
   changefilename(filename);
   return fp;
 }
 
-#ifndef WINDOWS
+#ifndef WINDOWS_XXX
 
 int 
 nisatty(int fd)
@@ -830,7 +844,7 @@ nisatty(int fd)
 int 
 nopen(char *path,int access,int mode)
 {
-  return open(path,access,mode);
+  return g_open(path,access,mode);
 }
 
 void 
@@ -893,7 +907,7 @@ stderrfd(void)
   return 2;
 }
 
-#else
+#else  /* WINDOWS */
 
 int 
 nisatty(HANDLE fd)
@@ -1056,7 +1070,7 @@ stderrfd(void)
   return GetStdHandle(STD_ERROR_HANDLE);
 }
 
-#endif
+#endif	/* WINDOWS */
 
 void
 set_progress_func(void (* func)(int, char *, double))
@@ -1076,7 +1090,9 @@ n_mkstemp(char *dir, char *templ, char **name)
 {
   char postfix[] = "XXXXXX", *buf;
   int len = sizeof(postfix), fd;
+#ifdef S_IRWXG
   mode_t mask_prev;
+#endif
 
   dir = (dir) ? dir : P_tmpdir;
   dir = (dir) ? dir : ".";
@@ -1095,9 +1111,16 @@ n_mkstemp(char *dir, char *templ, char **name)
   }
 
   snprintf(buf, len, "%s/%s%s", dir, CHK_STR(templ), postfix);
+
+#ifdef S_IRWXG
   mask_prev = umask(S_IRWXG | S_IRWXO);
-  fd = mkstemp(buf);
+#endif
+
+  fd = g_mkstemp(buf);
+
+#ifdef S_IRWXG
   umask(mask_prev);
+#endif
 
   if (fd < 0) {
     g_free(buf);

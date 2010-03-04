@@ -1,5 +1,5 @@
 /* 
- * $Id: x11merge.c,v 1.32 2009/12/17 10:55:44 hito Exp $
+ * $Id: x11merge.c,v 1.33 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -221,7 +221,7 @@ CmMergeOpen(void)
   char *name = NULL;
   int id, ret;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if ((obj = chkobject("merge")) == NULL)
@@ -256,7 +256,7 @@ CmMergeClose(void)
   int i;
   int num, *array;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("merge")) == NULL)
     return;
@@ -283,7 +283,7 @@ CmMergeUpdate(void)
   int i, j, ret;
   int *array, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("merge")) == NULL)
     return;

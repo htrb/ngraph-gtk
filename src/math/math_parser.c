@@ -1,13 +1,12 @@
 /* 
- * $Id: math_parser.c,v 1.18 2010/02/19 04:01:22 hito Exp $
+ * $Id: math_parser.c,v 1.19 2010/03/04 08:30:17 hito Exp $
  * 
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
-#include <readline/readline.h>
-#include <readline/history.h>
 #include <glib.h>
 
 #include "object.h"

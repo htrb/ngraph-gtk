@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.80 2010/02/03 01:18:12 hito Exp $
+ * $Id: x11opt.c,v 1.81 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -287,7 +287,7 @@ set_scrpt_option(GtkWidget *entry, char **opt, char *msg)
 
   buf = gtk_entry_get_text(GTK_ENTRY(entry));
   if (msg && strlen(buf) == 0) {
-    MessageBox(NULL, msg, NULL, MB_OK);
+    message_box(NULL, msg, NULL, RESPONS_OK);
     return 1;
   }
 
@@ -307,12 +307,12 @@ set_scrpt_file(GtkWidget *entry, char **opt, char *msg)
 
   buf = entry_get_filename(entry);
   if (buf == NULL) {
-    MessageBox(NULL, _("Couldn't convert filename from UTF-8."), NULL, MB_OK);
+    message_box(NULL, _("Couldn't convert filename from UTF-8."), NULL, RESPONS_OK);
     return 1;
   }
 
   if (msg && strlen(buf) == 0) {
-    MessageBox(NULL, msg, NULL, MB_OK);
+    message_box(NULL, msg, NULL, RESPONS_OK);
     g_free(buf);
     return 1;
   }
@@ -530,7 +530,7 @@ SetDriverDialogClose(GtkWidget *w, void *data)
 
   buf = gtk_entry_get_text(GTK_ENTRY(d->name));
   if (strlen(buf) == 0) {
-    MessageBox(d->widget, _("Please specify driver name."), NULL, MB_OK);
+    message_box(d->widget, _("Please specify driver name."), NULL, RESPONS_OK);
     return;
   }
 
@@ -858,7 +858,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
 
   alias = get_font_alias(d);
   if (alias == NULL) {
-    MessageBox(d->widget, _("Please specify a new alias name."), NULL, MB_OK);
+    message_box(d->widget, _("Please specify a new alias name."), NULL, RESPONS_OK);
     return;
   }
 
@@ -866,7 +866,7 @@ PrefFontDialogAdd(GtkWidget *w, gpointer client_data)
   g_free(alias);
 
   if (fmap) {
-    MessageBox(d->widget, _("Alias name already exists."), NULL, MB_OK);
+    message_box(d->widget, _("Alias name already exists."), NULL, RESPONS_OK);
     return;
   }
 
@@ -1483,7 +1483,7 @@ CmOptionSaveNgp(void)
   int i, path;
   struct objlist *obj;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   ngpfile = getscriptname("Ngraph.ngp");
@@ -1506,7 +1506,7 @@ CmOptionSaveNgp(void)
 
   if (access(ngpfile, 04) == 0) {
     snprintf(mes, sizeof(mes), _("`%s'\n\nOverwrite existing file?"), ngpfile);
-    if (MessageBox(NULL, mes, _("Save as .Ngraph.ngp"), MB_YESNO) != IDYES) {
+    if (message_box(NULL, mes, _("Save as .Ngraph.ngp"), RESPONS_YESNO) != IDYES) {
       g_free(ngpfile);
       return;
     }
@@ -1523,7 +1523,7 @@ CmOptionSaveNgp(void)
 static void
 CmOptionViewer(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   ViewerDialog(&DlgViewer, Menulocal.obj, 0);
   if (DialogExecute(TopLevel, &DlgViewer) == IDOK) {
@@ -1535,7 +1535,7 @@ CmOptionViewer(void)
 static void
 CmOptionExtViewer(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   ExViewerDialog(&DlgExViewer);
   DialogExecute(TopLevel, &DlgExViewer);
@@ -1544,7 +1544,7 @@ CmOptionExtViewer(void)
 static void
 CmOptionPrefFont(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   PrefFontDialog(&DlgPrefFont);
   DialogExecute(TopLevel, &DlgPrefFont);
@@ -1553,7 +1553,7 @@ CmOptionPrefFont(void)
 static void
 CmOptionPrefDriver(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   PrefDriverDialog(&DlgPrefDriver);
   DialogExecute(TopLevel, &DlgPrefDriver);
@@ -1562,7 +1562,7 @@ CmOptionPrefDriver(void)
 static void
 CmOptionScript(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   PrefScriptDialog(&DlgPrefScript);
   DialogExecute(TopLevel, &DlgPrefScript);
@@ -1571,7 +1571,7 @@ CmOptionScript(void)
 static void
 CmOptionMisc(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   MiscDialog(&DlgMisc, Menulocal.obj, 0);
   DialogExecute(TopLevel, &DlgMisc);
@@ -1580,7 +1580,7 @@ CmOptionMisc(void)
 static void
 CmOptionSaveDefault(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   DefaultDialog(&DlgDefault);
   DialogExecute(TopLevel, &DlgDefault);

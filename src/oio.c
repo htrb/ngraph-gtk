@@ -1,5 +1,5 @@
 /* 
- * $Id: oio.c,v 1.5 2009/11/26 07:29:59 hito Exp $
+ * $Id: oio.c,v 1.6 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,13 +26,7 @@
 #include <string.h>
 #include <errno.h>
 #include <glib.h>
-
-#ifndef WINDOWS
 #include <unistd.h>
-#else
-#include <io.h>
-#include <sys/stat.h>
-#endif
 
 #include "common.h"
 

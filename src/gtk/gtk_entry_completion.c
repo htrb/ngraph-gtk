@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_entry_completion.c,v 1.7 2009/11/16 09:13:05 hito Exp $
+ * $Id: gtk_entry_completion.c,v 1.8 2010/03/04 08:30:16 hito Exp $
  */
 
 #include <stdio.h>
@@ -90,7 +90,7 @@ entry_completion_save(GtkEntryCompletion *comp, char *file, int size)
   if (model == NULL)
     return 1;
 
-  fp = fopen(file, "w");
+  fp = nfopen(file, "w");
   if (fp == NULL)
     return 1;
 
@@ -115,7 +115,7 @@ entry_completion_load(GtkEntryCompletion *comp, char *file, int size)
 
   gtk_list_store_clear(GTK_LIST_STORE(model));
 
-  fp = fopen(file, "r");
+  fp = nfopen(file, "r");
   if (fp == NULL)
     return 1;
 

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11axis.c,v 1.80 2010/02/10 06:52:28 hito Exp $
+ * $Id: x11axis.c,v 1.81 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -2250,7 +2250,7 @@ CmAxisNewFrame(void)
   struct narray group;
   char *argv[2];
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
@@ -2305,7 +2305,7 @@ CmAxisNewSection(void)
   char *argv[2];
   char *ref;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = getobject("axis")) == NULL)
     return;
@@ -2370,7 +2370,7 @@ CmAxisNewCross(void)
   struct narray group;
   char *argv[2];
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
@@ -2409,7 +2409,7 @@ CmAxisNewSingle(void)
   struct objlist *obj;
   int id, ret;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
@@ -2448,7 +2448,7 @@ CmAxisDel(void)
 {
   struct objlist *obj;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if ((obj = chkobject("axis")) == NULL)
@@ -2473,7 +2473,7 @@ CmAxisUpdate(void)
   struct objlist *obj;
   int i, ret;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
@@ -2505,7 +2505,7 @@ CmAxisZoom(void)
   double zoom, min, max, mid, wd;
   char *argv[4];
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
@@ -2548,7 +2548,7 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
   struct objlist *obj;
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   obj = chkobject("axis");
@@ -2577,7 +2577,7 @@ CmAxisClear(GtkWidget *w, gpointer p)
   int i;
   int *array, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axis")) == NULL)
     return;
@@ -2625,7 +2625,7 @@ CmAxisGridNew(void)
   struct objlist *obj;
   int id, ret;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axisgrid")) == NULL)
     return;
@@ -2647,7 +2647,7 @@ CmAxisGridDel(void)
   int i;
   int num, *array;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axisgrid")) == NULL)
     return;
@@ -2674,7 +2674,7 @@ CmAxisGridUpdate(void)
   int i, j, ret;
   int *array, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("axisgrid")) == NULL)
     return;
@@ -2799,7 +2799,7 @@ AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
 {
   struct SubWin *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   d = &(NgraphApp.AxisWin);
@@ -2844,7 +2844,7 @@ CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
   struct narray farray;
   int i, n, num, *array;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   d = &(NgraphApp.AxisWin);
   if ((obj = chkobject("axis")) == NULL)
@@ -3104,7 +3104,7 @@ axiswin_delete_axis(struct SubWin *d)
 {
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
@@ -3135,7 +3135,7 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
 
   d = (struct SubWin *) client_data;
 
-  if (Menulock || GlobalLock) return;
+  if (Menulock || Globallock) return;
   UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
 
@@ -3157,7 +3157,7 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
 
   d = (struct SubWin *) client_data;
 
-  if (Menulock || GlobalLock) return;
+  if (Menulock || Globallock) return;
   UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
 
@@ -3179,7 +3179,7 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
 
   d = (struct SubWin *) client_data;
 
-  if (Menulock || GlobalLock) return;
+  if (Menulock || Globallock) return;
   UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
 
@@ -3201,7 +3201,7 @@ AxisWinAxisDown(GtkWidget *w, gpointer client_data)
 
   d = (struct SubWin *) client_data;
 
-  if (Menulock || GlobalLock) return;
+  if (Menulock || Globallock) return;
   UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
 
@@ -3224,7 +3224,7 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return TRUE;
 
   d = (struct SubWin *) user_data;

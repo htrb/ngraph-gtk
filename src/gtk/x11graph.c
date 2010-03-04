@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.56 2010/01/26 04:35:00 hito Exp $
+ * $Id: x11graph.c,v 1.57 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1054,7 +1054,7 @@ CmGraphNewMenu(GtkWidget *w, gpointer client_data)
 {
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (!CheckSave())
@@ -1091,7 +1091,7 @@ CmGraphLoad(void)
 {
   char *ext, *file;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (!CheckSave())
@@ -1120,7 +1120,7 @@ CmGraphLoad(void)
 void
 CmGraphSave(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   GraphSave(FALSE);
 }
@@ -1128,7 +1128,7 @@ CmGraphSave(void)
 void
 CmGraphOverWrite(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   GraphSave(TRUE);
 }
@@ -1136,7 +1136,7 @@ CmGraphOverWrite(void)
 void
 CmGraphSwitch(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   SwitchDialog(&DlgSwitch);
   if (DialogExecute(TopLevel, &DlgSwitch) == IDOK) {
@@ -1148,7 +1148,7 @@ CmGraphSwitch(void)
 void
 CmGraphPage(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   PageDialog(&DlgPage);
   if (DialogExecute(TopLevel, &DlgPage) == IDOK) {
@@ -1162,7 +1162,7 @@ CmGraphPage(void)
 void
 CmGraphDirectory(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   DirectoryDialog(&DlgDirectory);
   DialogExecute(TopLevel, &DlgDirectory);
@@ -1175,7 +1175,7 @@ CmGraphShell(void)
   char *inst;
   int idn, allocnow, n;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   menu_lock(TRUE);
@@ -1189,9 +1189,9 @@ CmGraphShell(void)
     if (n < 0) {
       newobj(shell);
     }
-    allocnow = AllocConsole();
+    allocnow = allocate_console();
     exeobj(shell, "shell", 0, 0, NULL);
-    FreeConsole(allocnow);
+    free_console(allocnow);
   }
   unregisterevloop(robj, idn, inst);
   menu_lock(FALSE);
@@ -1201,7 +1201,7 @@ CmGraphShell(void)
 void
 CmGraphQuit(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   QuitGUI();
@@ -1212,7 +1212,7 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
 {
   char *uri, pstr[] = "file://", *fname, *ptr, *path;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   uri = gtk_recent_chooser_get_current_uri(w);
@@ -1306,6 +1306,7 @@ CmGraphMenu(GtkWidget *w, gpointer client_data)
 static void
 about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
 {
+#ifdef HAVE_FORK
   pid_t pid;
 
   if (Menulocal.browser == NULL)
@@ -1316,6 +1317,7 @@ about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
     execlp(Menulocal.browser, Menulocal.browser, link, (char *) NULL);
     exit(0);
   }
+#endif
 }
 
 
@@ -1325,7 +1327,7 @@ CmHelpAbout(void)
   struct objlist *obj;
   char *web, *copyright;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if ((obj = chkobject("system")) == NULL)
@@ -1352,9 +1354,10 @@ CmHelpAbout(void)
 void
 CmHelpHelp(void)
 {
+#ifdef HAVE_FORK
   pid_t pid;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (Menulocal.help_browser == NULL)
@@ -1372,6 +1375,7 @@ CmHelpHelp(void)
     execlp(s, s, ptr, (char *) NULL);
     exit(0);
   }
+#endif
 }
 
 void

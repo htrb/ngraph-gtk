@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.36 2010/02/03 01:18:12 hito Exp $
+ * $Id: ox11menu.h,v 1.37 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -26,7 +26,7 @@
 
 #define LINETOLIMIT 500
 
-#define CW_USEDEFAULT -100000
+#define DEFAULT_GEOMETRY -100000
 
 #define ERRRUN 100
 #define ERRCMAP 101
@@ -35,7 +35,7 @@
 #define HIST_SIZE_MAX 10000
 #define INFOWIN_SIZE_MAX 10000
 
-extern int GlobalLock;
+extern int Globallock;
 extern struct savedstdio GtkIOSave;
 
 extern void mgtkdisplaydialog(char *str);
@@ -146,14 +146,13 @@ enum SAVE_CONFIG_TYPE {
   SAVE_CONFIG_TYPE_TOGGLE_VIEW     = 0x0100,
 };
 
-#define SAVE_CONFIG_TYPE_X11MENU (SAVE_CONFIG_TYPE_GEOMETRY		\
+#define SAVE_CONFIG_TYPE_X11MENU 	(SAVE_CONFIG_TYPE_GEOMETRY		\
 				  | SAVE_CONFIG_TYPE_CHILD_GEOMETRY	\
 				  | SAVE_CONFIG_TYPE_VIEWER		\
 				  | SAVE_CONFIG_TYPE_EXTERNAL_DRIVER	\
 				  | SAVE_CONFIG_TYPE_ADDIN_SCRIPT	\
 				  | SAVE_CONFIG_TYPE_MISC)
 
-unsigned long RGB(int R, int G, int B);
 void mx_redraw(struct objlist *obj, char *inst);
 void mx_clear(GdkRegion *region);
 void mx_inslist(struct objlist *obj, char *inst,

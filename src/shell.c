@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.39 2009/11/24 06:32:36 hito Exp $
+ * $Id: shell.c,v 1.40 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -99,9 +99,7 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -113,25 +111,24 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <glib.h>
-#ifndef WINDOWS
+#include <unistd.h>
 
 #ifdef HAVE_LIBREADLINE
 #include <readline/readline.h>
 #include <readline/history.h>
 static char *Prompt;
-#endif
+#endif	/* HAVE_LIBREADLINE */
 
+#ifndef WINDOWS
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
-#include <unistd.h>
-#else
+#else  /* WINDOWS */
 #include <dos.h>
 #include <dir.h>
 #include <io.h>
 #include <process.h>
-#include <windows.h>
-#endif
+#endif	/* WINDOWS */
 
 #define USE_HASH 1
 
@@ -198,13 +195,13 @@ static int Security=FALSE;
 static char writebuf[WRITEBUFSIZE];
 static int writepo;
 
-static HANDLE storeshhandle(struct nshell *nshell,HANDLE fd, char **readbuf,int *readbyte,int *readpo);
-static void restoreshhandle(struct nshell *nshell,HANDLE fd, char *readbuf,int readbyte,int readpo);
+static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readbyte,int *readpo);
+static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
 
 void
-set_environ(char **environ)
+set_environ(char **env)
 {
-  MainEnviron = environ;
+  MainEnviron = env;
 }
 
 void
@@ -226,7 +223,7 @@ unlinkfile(char **file)
 #ifndef WINDOWS
 
 int
-set_signal(int signal, int flags, void (*handler)(int))
+set_signal(int signal_id, int flags, void (*handler)(int))
 {
   static struct sigaction act;
 
@@ -235,7 +232,7 @@ set_signal(int signal, int flags, void (*handler)(int))
   act.sa_flags = (flags | SA_RESTART);
   sigemptyset(&act.sa_mask);
 
-  return sigaction(signal, &act, NULL);
+  return sigaction(signal_id, &act, NULL);
 }
 
 static void
@@ -259,8 +256,11 @@ unset_childhandler(void)
 {
   set_signal(SIGCHLD, 0, SIG_DFL);
 }
+#endif
 
-#ifdef HAVE_LIBPTHREAD
+#ifndef WINDOWS_XXX
+
+#if (HAVE_LIBPTHREAD || HAVE_LIBPTHREADGC2)
 
 #include <pthread.h>
 
@@ -309,6 +309,7 @@ reset_shellevloop(void)
 static void 
 set_shellevloop(int sig)
 {
+#ifdef ITIMER_REAL
   struct itimerval tval;
 
   set_signal(sig, 0, SIG_IGN);
@@ -319,11 +320,13 @@ set_shellevloop(int sig)
   tval.it_value.tv_usec=100000;
   setitimer(ITIMER_REAL,&tval,NULL);
   set_signal(SIGALRM, 0, set_shellevloop);
+#endif
 }
 
 static void 
 reset_shellevloop(void)
 {
+#ifdef ITIMER_REAL
   struct itimerval tval;
 
   tval.it_interval.tv_sec=0;
@@ -332,6 +335,7 @@ reset_shellevloop(void)
   tval.it_value.tv_usec=0;
   setitimer(ITIMER_REAL,&tval,NULL);
   set_signal(SIGALRM, 0, SIG_IGN);
+#endif
 }
 
 #endif	/* HAVE_LIBPTHREAD */
@@ -342,7 +346,9 @@ shgetstdin(void)
   int byte;
 
   if (nisatty(stdinfd())) {
+#ifdef SIGALRM
     set_shellevloop(SIGALRM);
+#endif
     do {
       byte=read(stdinfd(),buf,1);
     } while (byte<0);
@@ -369,7 +375,9 @@ shget(struct nshell *nshell)
   if (nisatty(nshell->fd)) {
 #ifdef HAVE_LIBREADLINE
     if(str_ptr == NULL){
+#ifdef SIGALRM
       set_shellevloop(SIGALRM);
+#endif
       str_ptr = line_str = readline(Prompt);
       reset_shellevloop();
       if(str_ptr == NULL){
@@ -398,7 +406,9 @@ shget(struct nshell *nshell)
       }
     }
 #else
+#ifdef SIGALRM
     set_shellevloop(SIGALRM);
+#endif
     do {
       byte=read(nshell->fd,buf,1);
     } while (byte<0);
@@ -478,36 +488,15 @@ shprintfstderr(char *fmt,...)
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
-#else
-
-typedef struct {
-  int pid;
-  int errlevel;
-  int done;
-} WaitPidParam;
-
-DWORD WINAPI WaitPidThread(LPVOID lpvWaitPidParam)
-{
-  WaitPidParam *pWP;
-
-  pWP=(WaitPidParam *)lpvWaitPidParam;
-  cwait(&(pWP->errlevel),pWP->pid,WAIT_CHILD);
-  pWP->done=TRUE;
-  return 0;
-}
-
-int waitpid(WaitPidParam *pWP)
-{
-  if (pWP->done) return pWP->pid;
-  else return 0;
-}
+#else  /* WINDOWS */
 
 typedef struct {
   int KeyInput;
   int Ch;
 } ThreadParam;
 
-DWORD WINAPI GetKeyThread(LPVOID lpvThreadParam)
+DWORD WINAPI 
+GetKeyThread(LPVOID lpvThreadParam)
 {
   ThreadParam *pTH;
   char buf[2];
@@ -527,7 +516,8 @@ DWORD WINAPI GetKeyThread(LPVOID lpvThreadParam)
   return 0;
 }
 
-int shgetstdin()
+int 
+shgetstdin(void)
 {
   char buf[2];
   DWORD byte;
@@ -549,7 +539,8 @@ int shgetstdin()
   }
 }
 
-int shget(struct nshell *nshell)
+int 
+shget(struct nshell *nshell)
 {
   char buf[2];
   DWORD byte;
@@ -586,10 +577,11 @@ int shget(struct nshell *nshell)
   }
 }
 
-int shputstdout(char *s)
+int 
+shputstdout(char *s)
 {
   DWORD len,len2;
-  HANDLE h;
+  int h;
   int i;
 
   len=strlen(s);
@@ -602,7 +594,8 @@ int shputstdout(char *s)
   return len+1;
 }
 
-int shputstderr(char *s)
+int 
+shputstderr(char *s)
 {
   DWORD len,len2;
   HANDLE h;
@@ -618,7 +611,8 @@ int shputstderr(char *s)
   return len+1;
 }
 
-int shprintfstdout(char *fmt,...)
+int 
+shprintfstdout(char *fmt,...)
 {
   DWORD len,len2;
   HANDLE h;
@@ -638,7 +632,8 @@ int shprintfstdout(char *fmt,...)
   return len;
 }
 
-int shprintfstderr(char *fmt,...)
+int 
+shprintfstderr(char *fmt,...)
 {
   DWORD len,len2;
   HANDLE h;
@@ -658,7 +653,27 @@ int shprintfstderr(char *fmt,...)
   return len;
 }
 
-#endif
+#endif	/* WINDOWS */
+
+#ifdef WINDOWS
+DWORD WINAPI 
+WaitPidThread(LPVOID lpvWaitPidParam)
+{
+  WaitPidParam *pWP;
+
+  pWP=(WaitPidParam *)lpvWaitPidParam;
+  cwait(&(pWP->errlevel),pWP->pid,WAIT_CHILD);
+  pWP->done=TRUE;
+  return 0;
+}
+
+int 
+waitpid(WaitPidParam *pWP)
+{
+  if (pWP->done) return pWP->pid;
+  else return 0;
+}
+#endif	/* WINDOWS */
 
 struct cmdtabletype cmdtable[] = {
                   {"cd",cmcd},
@@ -1929,7 +1944,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
   unsigned int u, n;
   char *c1,*c2,*name,*val,ch,valf,valf2,*ifs;
   char *s,*sb,*se;
-  HANDLE sout,sout2;
+  int sout,sout2;
   int rcode,dummy;
   int byte;
   char *tmpfil;
@@ -2375,7 +2390,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
   int eoflen,match,len;
   struct objlist *sys;
   char *tmpfil;
-  HANDLE sout;
+  int sout;
 
   cmdcur=*cmdroot;
   cmdprev=NULL;
@@ -2911,11 +2926,15 @@ set_env_val(struct nhash *h, void *data)
 int
 msleep(int ms)
 {
+#ifdef HAVE_NANOSLEEP
   struct timespec ts;
 
   ts.tv_sec = ms / 1000;
   ts.tv_nsec = (ms % 1000) * 1000000;
   return nanosleep(&ts, NULL);
+#else
+  return usleep(ms * 1000);
+#endif
 }
 
 int 
@@ -2927,11 +2946,11 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   int err,quote,bquote,rcode,needcmd;
   char *str,*name,*val,*po,*cmdname;
   int i,j,num,pnum,errlevel,a,looplevel,len;
-  char *arg,*endptr,**environ;
+  char *arg,*endptr,**env;
   struct cmdstack *stroot,*stcur,*st;
   char *fstdout,*fstdin;
   int istdout,istdin;
-  HANDLE sout,sout2,sin,sin2,sin3,fd;
+  int sout,sout2,sin,sin2,sin3,fd;
   int lastc;
   int pipef;
   struct objlist *sys;
@@ -2953,18 +2972,18 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   
 #ifndef WINDOWS
   pid_t pid;
-#else
+#else  /* WINDOWS */
   int pid;
   WaitPidParam WP;
   DWORD IDThread;
-#endif
+#endif	/* WINDOWS */
 
   nshell->cmdexec++;
   err=-1;
   stroot=NULL;
   prmnewroot=NULL;
   fstdout=fstdin=NULL;
-  environ=NULL;
+  env=NULL;
   newenviron=NULL;
   newvalroot=NULL;
   cmdname=NULL;
@@ -3433,7 +3452,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	  }
 #endif
 
-	  environ=MainEnviron;
+	  env=MainEnviron;
 	  MainEnviron=(char **)newenviron;
 	  newenviron=NULL;
 	  sout=sin=NOHANDLE;
@@ -3794,12 +3813,12 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		}
 #ifndef WINDOWS
 		unset_childhandler();
-		if ((pid=fork())<0) {
+		pid = fork();
+		if (pid < 0) {
 		  sherror2(ERRSYSTEM,"fork");
 		  set_childhandler();
 		  goto errexit;
-		}
-		if (pid==0) {
+		} else if (pid == 0) {
 		  errlevel=execve(cmdname,(char **)argv,MainEnviron);
 		  printfstderr("shell: %.64s: %.64s",
 			       argv[0],strerror(errno));
@@ -3816,7 +3835,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  errlevel = WIFEXITED(errlevel) ? WEXITSTATUS(errlevel) : 1;
 		}
 		set_childhandler();
-#else
+#else	/* WINDOWS */
 		pid=spawnve(P_NOWAIT,cmdname,(char **)argv,MainEnviron);
 		if (pid==-1)
 		  printfstderr("shell: %.64s: %.64s",
@@ -3830,9 +3849,9 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  }
 		  errlevel=WP.errlevel;
 		  errlevel=errlevel >>8;
-		  nsetconsolemode();
+		  //		  nsetconsolemode();
 		}
-#endif
+#endif	/* WINDOWS */
 		g_free(argv);
 		g_free(cmdname);
 		cmdname=NULL;
@@ -3859,8 +3878,8 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	  }
 	  unlinkfile(&tmpfil2);
 	  arg_del(MainEnviron);
-	  MainEnviron=environ;
-	  environ=NULL;
+	  MainEnviron=env;
+	  env=NULL;
 	}
 	restoreval(nshell,newvalroot);
 	newvalroot=NULL;
@@ -3890,9 +3909,9 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   g_free(fstdin);
   g_free(cmdname);
   arg_del(newenviron);
-  if (environ!=NULL) {
+  if (env!=NULL) {
     arg_del(MainEnviron);
-    MainEnviron=environ;
+    MainEnviron=env;
   }
   if (newvalroot!=NULL) restoreval(nshell,newvalroot);
   if (sout2!=NOHANDLE) nredirect2(1,sout2);
@@ -3979,18 +3998,18 @@ cmdexecute(struct nshell *nshell, const char *cline)
 }
 
 void 
-setshhandle(struct nshell *nshell,HANDLE fd)
+setshhandle(struct nshell *nshell,int fd)
 {
   nshell->fd=fd;
   nshell->readbyte=0;
   nshell->readpo=0;
 }
 
-static HANDLE 
-storeshhandle(struct nshell *nshell,HANDLE fd,
+static int 
+storeshhandle(struct nshell *nshell,int fd,
                      char **readbuf,int *readbyte,int *readpo)
 {
-  HANDLE sfd;
+  int sfd;
 
   sfd=nshell->fd;
   *readbuf=nshell->readbuf;
@@ -4004,7 +4023,7 @@ storeshhandle(struct nshell *nshell,HANDLE fd,
 }
 
 static void 
-restoreshhandle(struct nshell *nshell,HANDLE fd,
+restoreshhandle(struct nshell *nshell,int fd,
                      char *readbuf,int readbyte,int readpo)
 {
   g_free(nshell->readbuf);
@@ -4015,7 +4034,7 @@ restoreshhandle(struct nshell *nshell,HANDLE fd,
 }
 
 
-HANDLE 
+int 
 getshhandle(struct nshell *nshell)
 {
   return nshell->fd;

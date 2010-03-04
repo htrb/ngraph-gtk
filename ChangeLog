@@ -1,3 +1,42 @@
+2010-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (reset_event): change name from "ResetEvent"
+
+	* Src/Gtk/x11gui.c (message_beep): change name from "MessageBeep"
+	(message_box): change name from "MessageBox".
+
+	* src/gtk/x11commn.c (allocate_console): change name from
+	"AllocConsole".
+	(free_console): change name from "FreeConsol".
+
+	* src/gtk/main.c (reset_fifo, nallocconsole, reset_fifo)
+	(nfreeconsole): use "nopen()" and "nclose()".
+	(get_file_list): use "g_dir_open()", "g_dir_read_name()" and
+	"g_dir_close()".
+
+	* src/gtk/ox11menu.h (DEFAULT_GEOMETRY): change name from
+	"CW_USEDEFAULT".
+
+	* src/gtk/gtk_entry_completion.c (entry_completion_save)
+	(entry_completion_load): use "nfopen()".
+
+	* src/strconv.c (str2utf8): use "g_iconv".
+
+	* src/object.c: change variable name form "GlovalLock" to
+	"Glovallock".
+
+	* src/nconfig.c (lockconfig, openconfig, make_backup)
+	(replaceconfig, removeconfig, copyconfig): use "nfopen()".
+
+	* src/ioutil.c (nscandir): use "g_dir_open()", "g_dir_read_name()"
+	and "g_dir_close()".
+	(nscandir): remove 3rd argument.
+	(nopen): use "g_open()".
+	(nfopen): use "g_fopen()".
+	(n_mkstemp): use "g_mkstemp()".
+
+	* configure.in: check library "pthreadGC2".
+
 2010-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (draw_interpolation): add.

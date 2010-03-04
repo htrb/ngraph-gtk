@@ -1,5 +1,5 @@
 /* 
- * $Id: odouble.c,v 1.5 2009/11/16 09:13:04 hito Exp $
+ * $Id: odouble.c,v 1.6 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -22,9 +22,7 @@
  */
 
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdlib.h>
 #include <ctype.h>

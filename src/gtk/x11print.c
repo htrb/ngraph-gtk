@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.51 2010/02/02 10:53:01 hito Exp $
+ * $Id: x11print.c,v 1.52 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -563,7 +563,7 @@ CmOutputPrinter(int select_file, int show_dialog)
   GtkPaperSize *paper_size;
   GtkPageSetup *page_setup;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (select_file && ! SetFileHidden())
@@ -648,7 +648,7 @@ CmOutputPrinter(int select_file, int show_dialog)
 
   if (res == GTK_PRINT_OPERATION_RESULT_ERROR) {
     snprintf(buf, sizeof(buf), _("Printing error: %s"), error->message);
-    MessageBox(NULL, buf, _("Print"), MB_ERROR);
+    message_box(NULL, buf, _("Print"), RESPONS_ERROR);
     g_error_free(error);
   } else if (res == GTK_PRINT_OPERATION_RESULT_APPLY) {
     if (PrintSettings)
@@ -671,7 +671,7 @@ CmOutputDriver(void)
   int ret;
   struct savedstdio stdio;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (! SetFileHidden())
@@ -713,7 +713,7 @@ CmOutputDriver(void)
 void
 CmOutputViewer(int select_file)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (select_file && ! SetFileHidden())
@@ -797,7 +797,7 @@ CmPrintGRAFile(void)
   int id, g2wid, g2woid, ret;
   char *g2winst, *tmp, *file;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   tmp = get_base_ngp_name();
@@ -857,7 +857,7 @@ CmOutputImage(int type)
   char *title, *ext_str;
   char *file, *tmp;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   switch (type) {
@@ -967,7 +967,7 @@ CmPrintDataFile(void)
   char *file;
   char *argv[4];
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (GetDrawFiles(&farray))

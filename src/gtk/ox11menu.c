@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.89 2010/02/03 01:18:12 hito Exp $
+ * $Id: ox11menu.c,v 1.90 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -23,8 +23,6 @@
 
 
 #include "gtk_common.h"
-
-#include <X11/Xlib.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -805,32 +803,32 @@ initwindowconfig(void)
   Menulocal.filex =
     Menulocal.filey =
     Menulocal.fileheight =
-    Menulocal.filewidth = CW_USEDEFAULT;
+    Menulocal.filewidth = DEFAULT_GEOMETRY;
 
   Menulocal.axisx =
     Menulocal.axisy =
     Menulocal.axisheight =
-    Menulocal.axiswidth = CW_USEDEFAULT;
+    Menulocal.axiswidth = DEFAULT_GEOMETRY;
 
   Menulocal.legendx =
     Menulocal.legendy =
     Menulocal.legendheight =
-    Menulocal.legendwidth = CW_USEDEFAULT;
+    Menulocal.legendwidth = DEFAULT_GEOMETRY;
 
   Menulocal.mergex =
     Menulocal.mergey =
     Menulocal.mergeheight =
-    Menulocal.mergewidth = CW_USEDEFAULT;
+    Menulocal.mergewidth = DEFAULT_GEOMETRY;
 
   Menulocal.dialogx =
     Menulocal.dialogy =
     Menulocal.dialogheight =
-    Menulocal.dialogwidth = CW_USEDEFAULT;
+    Menulocal.dialogwidth = DEFAULT_GEOMETRY;
 
   Menulocal.coordx =
     Menulocal.coordy =
     Menulocal.coordheight =
-    Menulocal.coordwidth = CW_USEDEFAULT;
+    Menulocal.coordwidth = DEFAULT_GEOMETRY;
 }
 
 int
@@ -1004,7 +1002,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   memset(&Menulocal, 0, sizeof(Menulocal));
 
   Menulocal.menux = Menulocal.menuy
-    = Menulocal.menuheight = Menulocal.menuwidth = CW_USEDEFAULT;
+    = Menulocal.menuheight = Menulocal.menuwidth = DEFAULT_GEOMETRY;
   initwindowconfig();
   Menulocal.showtip = TRUE;
   Menulocal.statusb = TRUE;
@@ -1220,7 +1218,7 @@ menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static int
 mx_evloop(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  ResetEvent();
+  reset_event();
   return 0;
 }
 
@@ -1525,7 +1523,7 @@ mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     label = gtk_label_new(" Ngraph ");
     gtk_container_add(GTK_CONTAINER(TopLevel), label);
     gtk_widget_show_all(TopLevel);
-    ResetEvent();
+    reset_event();
   }
 
   lock = Menulock;
@@ -1536,7 +1534,7 @@ mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (create_window) {
     gtk_widget_destroy(TopLevel);
     TopLevel = NULL;
-    ResetEvent();
+    reset_event();
   }
   return 0;
 }
@@ -1561,7 +1559,8 @@ static int
 mx_cat(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   static char buf[1024];
-  int fd, len, use_stdin = TRUE;
+  int len, use_stdin = TRUE;
+  int fd;
 
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);

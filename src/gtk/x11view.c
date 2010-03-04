@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.185 2010/02/03 01:18:12 hito Exp $
+ * $Id: x11view.c,v 1.186 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -778,7 +778,7 @@ drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelection
   struct Viewer *d;
 
   success = FALSE;
-  if (GlobalLock || Menulock || DnDLock)
+  if (Globallock || Menulock || DnDLock)
     goto End;
 
   d = (struct Viewer *) user_data;
@@ -1528,7 +1528,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
       mask_selected_data(fileobj, selnum, &SelList);
       arraydel(&SelList);
     } else if ((ret == IDEVMOVE) && (selnum > 0)) {
-      SetCursor(GDK_TCROSS);
+      NSetCursor(GDK_TCROSS);
       d->Capture = TRUE;
       d->MoveData = TRUE;
     }
@@ -2063,7 +2063,7 @@ AlignFocusedObj(int align)
   char *inst;
   struct Viewer *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
@@ -2177,7 +2177,7 @@ RotateFocusedObj(int direction)
   char *argv[5];
   struct Viewer *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
@@ -2225,7 +2225,7 @@ FlipFocusedObj(enum FLIP_DIRECTION dir)
   char *argv[4];
   struct Viewer *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
@@ -2672,7 +2672,7 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
   cursor = get_mouse_cursor_type(d, point->x, point->y);
 
   if (cursor == GDK_LEFT_PTR) {
-    SetCursor(cursor);
+    NSetCursor(cursor);
     return;
   }
 
@@ -2682,25 +2682,25 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
   case GDK_TOP_LEFT_CORNER:
     GetLargeFrame(&(d->RefX2), &(d->RefY2), &(d->RefX1), &(d->RefY1));
     d->MouseMode = MOUSEZOOM1;
-    SetCursor(cursor);
+    NSetCursor(cursor);
     init_zoom(state, d, dc);
     break;
   case GDK_TOP_RIGHT_CORNER:
     GetLargeFrame(&(d->RefX1), &(d->RefY2), &(d->RefX2), &(d->RefY1));
     d->MouseMode = MOUSEZOOM2;
-    SetCursor(cursor);
+    NSetCursor(cursor);
     init_zoom(state, d, dc);
     break;
   case GDK_BOTTOM_RIGHT_CORNER:
     GetLargeFrame(&(d->RefX1), &(d->RefY1), &(d->RefX2), &(d->RefY2));
     d->MouseMode = MOUSEZOOM3;
-    SetCursor(cursor);
+    NSetCursor(cursor);
     init_zoom(state, d, dc);
     break;
   case GDK_BOTTOM_LEFT_CORNER:
     GetLargeFrame(&(d->RefX2), &(d->RefY1), &(d->RefX1), &(d->RefY2));
     d->MouseMode = MOUSEZOOM4;
-    SetCursor(cursor);
+    NSetCursor(cursor);
     init_zoom(state, d, dc);
     break;
   case GDK_CROSSHAIR:
@@ -2711,7 +2711,7 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
     d->ShowLine = TRUE;
     d->LineX = d->LineY = 0;
     ShowFocusLine(dc, FALSE, state, d->ChangePoint);
-    SetCursor(cursor);
+    NSetCursor(cursor);
     break;
   case GDK_FLEUR:
     d->MouseMode = MOUSEDRAG;
@@ -2827,7 +2827,7 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
   }
 
   if (selnum > 0)
-    MessageBox(NULL, _("Data points are moved."), "Confirm", MB_OK);
+    message_box(NULL, _("Data points are moved."), "Confirm", RESPONS_OK);
 
  ErrEnd:
   move_data_cancel(d, FALSE);
@@ -2860,7 +2860,7 @@ mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_ou
 	  ChangeDPI(TRUE);
 	}
       } else {
-	MessageBeep(TopLevel);
+	message_beep(TopLevel);
       }
     } else {
       if ((int) (vdpi * sqrt(2)) <= 620) {
@@ -2872,7 +2872,7 @@ mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_ou
 	  ChangeDPI(TRUE);
 	}
       } else {
-	MessageBeep(TopLevel);
+	message_beep(TopLevel);
       }
     }
   }
@@ -2913,7 +2913,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   double zoom;
   int pos;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   if (region)
@@ -2941,7 +2941,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   case PointB:
   case LegendB:
   case AxisB:
-    pos = GetCursor();
+    pos = NGetCursor();
     if (pos == GDK_LEFT_PTR) {
       mouse_down_point(state, point, d, dc);
     } else {
@@ -3328,7 +3328,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
   GdkGC *dc;
   double zoom;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   zoom = Menulocal.PaperZoom / 10000.0;
@@ -3369,7 +3369,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
     case MOUSENONE:
       break;
     }
-    SetCursor(get_mouse_cursor_type(d, point->x, point->y));
+    NSetCursor(get_mouse_cursor_type(d, point->x, point->y));
     d->MouseMode = MOUSENONE;
     SetPoint(d, d->MouseX2, d->MouseY2);
     break;
@@ -3881,7 +3881,7 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
 {
   GdkGC *dc;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   dc = gdk_gc_new(d->win);
@@ -3940,10 +3940,10 @@ move_data_cancel(struct Viewer *d, gboolean show_message)
   arraydel(&SelList);
   d->MoveData = FALSE;
   d->Capture = FALSE;
-  SetCursor(GDK_LEFT_PTR);
+  NSetCursor(GDK_LEFT_PTR);
 
   if (show_message)
-    MessageBox(NULL, _("Moving data points is canceled."), "Confirm", MB_OK);
+    message_box(NULL, _("Moving data points is canceled."), "Confirm", RESPONS_OK);
 }
 
 static gboolean
@@ -3954,7 +3954,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
   struct Point *po;
   double zoom;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   if (d->MoveData) {
@@ -4021,7 +4021,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 static gboolean
 ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   if (d->Mode == ZoomB) {
@@ -4120,7 +4120,7 @@ set_mouse_cursor_hover(struct Viewer *d, int x, int y)
   if (d->Mode != PointB && d->Mode != LegendB && d->Mode != AxisB)
     return;
 
-  SetCursor(get_mouse_cursor_type(d, x, y));
+  NSetCursor(get_mouse_cursor_type(d, x, y));
 }
 
 static void
@@ -4401,7 +4401,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   int dx, dy;
   double zoom;
 
-  if (Menulock || GlobalLock || ! d->win)
+  if (Menulock || Globallock || ! d->win)
     return FALSE;
 
   zoom = Menulocal.PaperZoom / 10000.0;
@@ -4436,7 +4436,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   } else {
     int pos;
 
-    pos = GetCursor();
+    pos = NGetCursor();
     if (pos == GDK_FLEUR ||
 	pos == GDK_TOP_LEFT_CORNER ||
 	pos == GDK_BOTTOM_LEFT_CORNER ||
@@ -4727,7 +4727,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   int dx = 0, dy = 0, mv, n;
   double zoom;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   d = (struct Viewer *) client_data;
@@ -4833,14 +4833,14 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_Shift_L:
   case GDK_Shift_R:
     if (d->Mode == ZoomB) {
-      SetCursor(GDK_PLUS);
+      NSetCursor(GDK_PLUS);
       return TRUE;
     }
     break;
   case GDK_Control_L:
   case GDK_Control_R:
     if (d->Mode == ZoomB) {
-      SetCursor(GDK_TARGET);
+      NSetCursor(GDK_TARGET);
       return TRUE;
     }
     break;
@@ -4862,7 +4862,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   char *argv[4];
   int axis = FALSE;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   d = (struct Viewer *) client_data;
@@ -4873,7 +4873,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_Control_L:
   case GDK_Control_R:
     if (d->Mode == ZoomB) {
-      SetCursor(GDK_TARGET);
+      NSetCursor(GDK_TARGET);
       return TRUE;
     }
     break;
@@ -4970,7 +4970,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
 		      rect.width, rect.height);
   }
 
-  if (! GlobalLock) {
+  if (! Globallock) {
     /* I think it does not need to check chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid). */
     if (d->ShowFrame)
       ShowFocusFrame(gc);
@@ -5550,7 +5550,7 @@ Draw(int SelectFile)
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
     d->ignoreredraw = TRUE;
     _exeobj(Menulocal.GRAobj, "clear", Menulocal.GRAinst, 0, NULL);
-    //    ResetEvent();
+    //    reset_event();
     /* XmUpdateDisplay(d->Win); */
     _exeobj(Menulocal.GRAobj, "draw", Menulocal.GRAinst, 0, NULL);
     _exeobj(Menulocal.GRAobj, "flush", Menulocal.GRAinst, 0, NULL);
@@ -5598,7 +5598,7 @@ Clear(void)
 void
 CmViewerDraw(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   Draw(TRUE);
@@ -5611,7 +5611,7 @@ void
 CmViewerDrawB(GtkWidget *w, gpointer client_data)
 {
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   Draw(FALSE);
@@ -5623,7 +5623,7 @@ CmViewerDrawB(GtkWidget *w, gpointer client_data)
 void
 CmViewerClear(void)
 {
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   Clear();
@@ -5659,7 +5659,7 @@ ViewUpdate(void)
   int axis;
   struct Viewer *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
@@ -5892,7 +5892,7 @@ ViewDelete(void)
   int axis;
   struct Viewer *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
@@ -5940,7 +5940,7 @@ ViewDelete(void)
   if (num != 0)
     UpdateAll();
 
-  SetCursor(GDK_LEFT_PTR);
+  NSetCursor(GDK_LEFT_PTR);
 }
 
 static void
@@ -5952,7 +5952,7 @@ reorder_object(enum object_move_type type)
   char *inst;
   struct Viewer *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
@@ -6286,7 +6286,7 @@ ViewCopy(void)
   int axis = FALSE;
   struct Viewer *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
@@ -6349,7 +6349,7 @@ ViewCross(int state)
   GdkGC *dc;
   struct Viewer *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
@@ -6496,29 +6496,29 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
   switch (Mode) {
   case PointB:
     DefaultMode = 0;
-    SetCursor(GDK_LEFT_PTR);
+    NSetCursor(GDK_LEFT_PTR);
     break;
   case LegendB:
     DefaultMode = 1;
-    SetCursor(GDK_LEFT_PTR);
+    NSetCursor(GDK_LEFT_PTR);
     break;
   case AxisB:
     DefaultMode = 2;
-    SetCursor(GDK_LEFT_PTR);
+    NSetCursor(GDK_LEFT_PTR);
     break;
   case TrimB:
   case DataB:
   case EvalB:
-    SetCursor(GDK_LEFT_PTR);
+    NSetCursor(GDK_LEFT_PTR);
     break;
   case TextB:
-    SetCursor(GDK_XTERM);
+    NSetCursor(GDK_XTERM);
     break;
   case ZoomB:
-    SetCursor(GDK_TARGET);
+    NSetCursor(GDK_TARGET);
     break;
   default:
-    SetCursor(GDK_PENCIL);
+    NSetCursor(GDK_PENCIL);
   }
   NgraphApp.Viewer.Mode = Mode;
   NgraphApp.Viewer.Capture = FALSE;

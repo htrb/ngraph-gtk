@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.135 2010/02/16 02:04:11 hito Exp $
+ * $Id: x11file.c,v 1.136 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -632,7 +632,7 @@ FitSaveDialogClose(GtkWidget *w, void *data)
     g_free(ptr);
   }
 
-  MessageBox(d->widget, _("Please specify the profile."), NULL, MB_OK);
+  message_box(d->widget, _("Please specify the profile."), NULL, RESPONS_OK);
 
   d->ret = IDLOOP;
   return;
@@ -733,7 +733,7 @@ FitDialogLoadConfig(struct FitDialog *d, int errmes)
   if (lastid == d->Lastid) {
     if ((file = searchscript(FITSAVE)) == NULL) {
       if (errmes)
-	MessageBox(d->widget, _("Setting file not found."), FITSAVE, MB_OK);
+	message_box(d->widget, _("Setting file not found."), FITSAVE, RESPONS_OK);
       return FALSE;
     }
     if ((shell = chkobject("shell")) == NULL)
@@ -772,7 +772,7 @@ FitDialogLoad(GtkButton *btn, gpointer user_data)
 
   lastid = chkobjlastinst(d->Obj);
   if ((d->Lastid < 0) || (lastid == d->Lastid)) {
-    MessageBox(d->widget, _("No settings."), FITSAVE, MB_OK);
+    message_box(d->widget, _("No settings."), FITSAVE, RESPONS_OK);
     return;
   }
 
@@ -793,8 +793,8 @@ copy_settings_to_fitobj(struct FitDialog *d, char *profile)
   for (i = d->Lastid + 1; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     if (s && strcmp(s, profile) == 0) {
-      if (MessageBox(d->widget, _("Overwrite existing profile?"), "Confirm",
-		     MB_YESNO) != IDYES) {
+      if (message_box(d->widget, _("Overwrite existing profile?"), "Confirm",
+		     RESPONS_YESNO) != IDYES) {
 	return 1;
       }
       break;
@@ -881,7 +881,7 @@ delete_fitobj(struct FitDialog *d, char *profile)
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     if (s && strcmp(s, profile) == 0) {
       ptr = g_strdup_printf(_("Delete the profile '%s'?"), profile);
-      r = MessageBox(d->widget, ptr, "Confirm", MB_YESNO);
+      r = message_box(d->widget, ptr, "Confirm", RESPONS_YESNO);
       g_free(ptr);
       if (r != IDYES) {
 	return 1;
@@ -892,7 +892,7 @@ delete_fitobj(struct FitDialog *d, char *profile)
 
   if (i > chkobjlastinst(d->Obj)) {
     ptr = g_strdup_printf(_("The profile '%s' is not exist."), profile);
-    MessageBox(d->widget, ptr, "Confirm", MB_OK);
+    message_box(d->widget, ptr, "Confirm", RESPONS_OK);
     g_free(ptr);
     return 1;
   }
@@ -908,7 +908,7 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
   int i, r, len;
   char *s, *ngpfile, *ptr;
   int error;
-  HANDLE hFile;
+  int hFile;
   struct FitDialog *d;
 
   d = (struct FitDialog *) client_data;
@@ -975,12 +975,12 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
     switch (r) {
     case IDOK:
       ptr = g_strdup_printf(_("The profile '%s' is saved."), DlgFitSave.Profile);
-      MessageBox(d->widget, ptr, "Confirm", MB_OK);
+      message_box(d->widget, ptr, "Confirm", RESPONS_OK);
       g_free(ptr);
       break;
     case IDDELETE:
       ptr = g_strdup_printf(_("The profile '%s' is deleted."), DlgFitSave.Profile);
-      MessageBox(d->widget, ptr, "Confirm", MB_OK);
+      message_box(d->widget, ptr, "Confirm", RESPONS_OK);
       g_free(ptr);
       g_free(DlgFitSave.Profile);
       break;
@@ -1125,7 +1125,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
     }
   }
-  MessageBox(d->widget, buf, _("Fitting Results"), MB_OK);
+  message_box(d->widget, buf, _("Fitting Results"), RESPONS_OK);
 }
 
 static int
@@ -2603,6 +2603,7 @@ FileDialogOption(GtkWidget *w, gpointer client_data)
 static void
 FileDialogEdit(GtkWidget *w, gpointer client_data)
 {
+#ifdef HAVE_FORK
   struct FileDialog *d;
   const char *tmp;
   char *name;
@@ -2633,6 +2634,7 @@ FileDialogEdit(GtkWidget *w, gpointer client_data)
     }
   }
   g_free(name);
+#endif
 }
 
 static void
@@ -3365,7 +3367,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
   int id;
   struct objlist *obj;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   for (i = 0; i < MENU_HISTORY_NUM; i++) {
@@ -3404,7 +3406,7 @@ CmFileNew(void)
   int id, ret;
   struct objlist *obj;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if ((obj = chkobject("file")) == NULL)
@@ -3448,7 +3450,7 @@ CmFileOpen(void)
   struct objlist *obj;
   struct narray farray;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if ((obj = chkobject("file")) == NULL)
@@ -3487,7 +3489,7 @@ CmFileClose(void)
   int i;
   int *array, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("file")) == NULL)
     return;
@@ -3553,7 +3555,7 @@ CmFileUpdate(void)
   struct narray farray;
   int last;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if ((obj = chkobject("file")) == NULL)
@@ -3580,6 +3582,7 @@ CmFileUpdate(void)
 void
 CmFileEdit(void)
 {
+#ifdef HAVE_FORK
   struct objlist *obj;
   int i;
   char *name;
@@ -3587,7 +3590,7 @@ CmFileEdit(void)
   pid_t pid;
   int last;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (Menulocal.editor == NULL)
@@ -3627,6 +3630,7 @@ CmFileEdit(void)
     execvp(argv[0], argv);
     exit(1);
   }
+#endif
 }
 
 void
@@ -3666,7 +3670,7 @@ CmOptionFileDef(void)
   struct objlist *obj;
   int id;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if ((obj = chkobject("file")) == NULL)
@@ -3693,11 +3697,12 @@ CmOptionFileDef(void)
 static void
 FileWinFileEdit(struct SubWin *d)
 {
+#ifdef HAVE_FORK
   int sel;
   char *argv[3], *name;
   pid_t pid;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if (Menulocal.editor == NULL)
@@ -3722,6 +3727,7 @@ FileWinFileEdit(struct SubWin *d)
     execvp(argv[0], argv);
     exit(1);
   }
+#endif
 }
 
 static void
@@ -3738,7 +3744,7 @@ FileWinFileDelete(struct SubWin *d)
 {
   int sel, update;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
@@ -3775,7 +3781,7 @@ file_obj_copy(struct SubWin *d)
 {
   int sel, id;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return -1;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
@@ -3815,7 +3821,7 @@ FileWinFileCopy2(struct SubWin *d)
 {
   int id, sel, j;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
@@ -3849,7 +3855,7 @@ FileWinFileUpdate(struct SubWin *d)
 {
   int sel, ret;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
  
@@ -3871,7 +3877,7 @@ FileWinFileDraw(struct SubWin *d)
 {
   int i, sel, hidden, h;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_index(GTK_WIDGET(d->text));
@@ -3932,7 +3938,7 @@ FileWinFit(struct SubWin *d)
   int sel, idnum, fitid = 0, ret;
   struct narray iarray;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = d->select;
@@ -4000,8 +4006,8 @@ draw_type_pixbuf(struct objlist *obj, int i)
   char *inst, *name;
   struct gra2cairo_local *local;
 
-  lockstate = GlobalLock;
-  GlobalLock = TRUE;
+  lockstate = Globallock;
+  Globallock = TRUE;
 
   found = find_gra2gdk_inst(&name, &gobj, &inst, &robj, &output, &local);
   if (! found) {
@@ -4244,7 +4250,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
 
   g_object_unref(G_OBJECT(pix));
 
-  GlobalLock = lockstate;
+  Globallock = lockstate;
 
   return pixbuf;
 }
@@ -4335,7 +4341,7 @@ FileWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
 {
   struct SubWin *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   d = &(NgraphApp.FileWin);
@@ -4357,7 +4363,7 @@ CmFileWinMath(GtkWidget *w, gpointer p)
 {
   struct objlist *obj;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   obj = chkobject("file");
@@ -4378,7 +4384,7 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return TRUE;
 
   d = (struct SubWin *) user_data;

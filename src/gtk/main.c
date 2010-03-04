@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.46 2009/11/25 14:36:02 hito Exp $
+ * $Id: main.c,v 1.47 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -25,7 +25,9 @@
 
 #include <sys/stat.h>
 #include <sys/types.h>
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif	/* HAVE_SYS_WAIT_H */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -54,12 +56,12 @@
 static char **attempt_shell_completion(char *text, int start, int end);
 #define HIST_SIZE 100
 #define HIST_FILE "shell_history"
-#endif
+#endif	/* HAVE_LIBREADLINE */
 
 #define SYSCONF "[Ngraph]"
 #ifndef LIBDIR
 #define LIBDIR "/usr/local/lib/Ngraph"
-#endif
+#endif	/* LIBDIR */
 
 #define INIT_SCRIPT "Ngraph.nsc"
 
@@ -284,15 +286,16 @@ reset_fifo(char *fifo_in, char *fifo_out)
 {
   int fdi, fdo;
 
-  fdi = open(fifo_in, O_WRONLY);
-  fdo = open(fifo_out, O_RDONLY);
+  fdi = nopen(fifo_in, O_WRONLY, 0);
+  fdo = nopen(fifo_out, O_RDONLY, 0);
   if (fdi >= 0)
-    close(fdi);
+    nclose(fdi);
 
   if (fdo >= 0)
-    close(fdo);
+    nclose(fdo);
 }
 
+#ifdef HAVE_FORK
 static int
 exec_console(char *fifo_in, char *fifo_out)
 {
@@ -327,10 +330,12 @@ exec_console(char *fifo_in, char *fifo_out)
   }
   return 0;
 }
+#endif
 
 int
 nallocconsole(void)
 {
+#ifdef HAVE_FORK
   int fd[3] = {-1, -1, -1}, fdi, fdo;
   unsigned int i;
   char buf[256], ttyname[256], fifo_in[1024], fifo_out[1024];
@@ -359,8 +364,8 @@ nallocconsole(void)
   if (exec_console(fifo_in, fifo_out))
     return FALSE;
 
-  fdi = open(fifo_in, O_RDONLY);
-  fdo = open(fifo_out, O_WRONLY);
+  fdi = nopen(fifo_in, O_RDONLY, 0);
+  fdo = nopen(fifo_out, O_WRONLY, 0);
   unlink(fifo_in);
   unlink(fifo_out);
 
@@ -371,12 +376,12 @@ nallocconsole(void)
 	   0x1b, 0x07, sysname, version);
 
   if (write(fdo, buf, strlen(buf) + 1) < 0) {
-    close(fdi);
-    close(fdo);
+    nclose(fdi);
+    nclose(fdo);
     return FALSE;
   }
 
-  close(fdo);
+  nclose(fdo);
 
   for (i = 0; i < sizeof(ttyname) - 1; i++) {
     if (read(fdi, ttyname + i, 1) != 1)
@@ -388,7 +393,7 @@ nallocconsole(void)
   ttyname[i] = '\0';
 
   if (i == 0) {
-    close(fdi);
+    nclose(fdi);
     return FALSE;
   }
 
@@ -399,24 +404,24 @@ nallocconsole(void)
     if (buf[0] == '\0')
       break;
   }
-  close(fdi);
+  nclose(fdi);
 
   if (i == 0)
     return FALSE;
 
   buf[i] = '\0';
 
-  fd[0] = open(ttyname, O_RDONLY);
+  fd[0] = nopen(ttyname, O_RDONLY, 0);
   if (fd[0] < 0) {
     goto ErrEnd;
   }
 
-  fd[1] = open(ttyname, O_WRONLY);
+  fd[1] = nopen(ttyname, O_WRONLY, 0);
   if (fd[1] < 0) {
     goto ErrEnd;
   }
 
-  fd[2] = open(ttyname, O_WRONLY);
+  fd[2] = nopen(ttyname, O_WRONLY, 0);
   if (fd[2] < 0) {
     goto ErrEnd;
   }
@@ -424,20 +429,20 @@ nallocconsole(void)
   consolepid = atoi(buf);
 
   consolefd[0] = dup(0);
-  close(0);
+  nclose(0);
   dup2(fd[0], 0);
 
   consolefd[1] = dup(1);
-  close(1);
+  nclose(1);
   dup2(fd[1], 1);
 
   consolefd[2] = dup(2);
-  close(2);
+  nclose(2);
   dup2(fd[2], 2);
 
-  close(fd[0]);
-  close(fd[1]);
-  close(fd[2]);
+  nclose(fd[0]);
+  nclose(fd[1]);
+  nclose(fd[2]);
   consolefdin = dup(0);
   consolefdout = dup(2);
   consoleac = TRUE;
@@ -453,16 +458,17 @@ nallocconsole(void)
 
  ErrEnd:
   if (fd[0] < 0) {
-    close(fd[0]);
+    nclose(fd[0]);
   }
 
   if (fd[1] < 0) {
-    close(fd[1]);
+    nclose(fd[1]);
   }
 
   if (fd[2] < 0) {
-    close(fd[2]);
+    nclose(fd[2]);
   }
+#endif
 
   return FALSE;
 }
@@ -470,34 +476,36 @@ nallocconsole(void)
 void
 nfreeconsole(void)
 {
+#ifdef HAVE_FORK
   if (consoleac) {
-    close(0);
+    nclose(0);
     if (consolefd[0] != -1) {
       dup2(consolefd[0], 0);
-      close(consolefd[0]);
+      nclose(consolefd[0]);
     }
-    close(1);
+    nclose(1);
     if (consolefd[1] != -1) {
       dup2(consolefd[1], 1);
-      close(consolefd[1]);
+      nclose(consolefd[1]);
     }
-    close(2);
+    nclose(2);
     if (consolefd[2] != -1) {
       dup2(consolefd[2], 2);
-      close(consolefd[2]);
+      nclose(consolefd[2]);
     }
 
     kill(consolepid, SIGTERM);
     consolepid = -1;
 
-    close(consolefdin);
-    close(consolefdout);
+    nclose(consolefdin);
+    nclose(consolefdout);
 
     consolefdin = 0;
     consolefdout = 2;
     consoleac = FALSE;
     loadstdio(&consolesave);
   }
+#endif
 }
 
 void
@@ -576,7 +584,7 @@ load_config(struct objlist *sys, char *inst, int *allocconsole)
 }
 
 int
-main(int argc, char **argv, char **environ)
+main(int argc, char **argv, char **env)
 {
   char *homedir, *libdir, *confdir, *home, *inifile, *loginshell;
   char *inst;
@@ -598,13 +606,15 @@ main(int argc, char **argv, char **environ)
   char_type_buf_init();
 #endif
 
+#ifndef WINDOWS
   set_childhandler();
+#endif
 
   gtk_set_locale();
   OpenDisplay = gtk_init_check(&argc, &argv);
   g_set_application_name(AppName);
 
-  set_environ(environ);
+  set_environ(env);
 
   if (init_cmd_tbl()) {
     exit(1);
@@ -1242,17 +1252,17 @@ get_exec_file_list(void)
 static struct mylist *
 get_file_list(const char *path, int type, int mode)
 {
-  DIR *dir;
-  struct dirent *ent;
+  GDir *dir;
+  const char *ent;
   struct stat statbuf;
   struct mylist *list = NULL, *list_next = list;
   char *full_path_name;
 
-  if ((dir = opendir(path)) == NULL) {
+  if ((dir = g_dir_open(path, 0, NULL)) == NULL) {
     return NULL;
   }
-  while ((ent = readdir(dir)) != NULL) {
-    if (my_sprintf(&full_path_name, "%s/%s", path, ent->d_name) < 0) {
+  while ((ent = g_dir_read_name(dir)) != NULL) {
+    if (my_sprintf(&full_path_name, "%s/%s", path, ent) < 0) {
       if (list != NULL)
 	mylist_free(list);
       list = NULL;
@@ -1260,13 +1270,13 @@ get_file_list(const char *path, int type, int mode)
     }
     stat(full_path_name, &statbuf);
     if ((statbuf.st_mode & type) && (statbuf.st_mode & mode)) {
-      list_next = mylist_add(list_next, ent->d_name);
+      list_next = mylist_add(list_next, ent);
       if (list == NULL)
 	list = list_next;
     }
   }
 
-  closedir(dir);
+  g_dir_close(dir);
 
   return list;
 }

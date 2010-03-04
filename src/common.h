@@ -19,5 +19,9 @@
 
 #endif /* HAVE_GETTEXT */
 
+#ifdef __MINGW32__
+#define WINDOWS 1
+#include <windows.h>
 #endif
 
+#endif	/* COMMON_HEADER */

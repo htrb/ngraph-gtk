@@ -1,5 +1,5 @@
 /* 
- * $Id: math_basic_function.c,v 1.13 2010/02/22 02:15:29 hito Exp $
+ * $Id: math_basic_function.c,v 1.14 2010/03/04 08:30:17 hito Exp $
  * 
  */
 
@@ -7,7 +7,6 @@
 
 #include <stdlib.h>
 #include <math.h>
-#include <error.h>
 
 #ifdef HAVE_LIBGSL
 #include <gsl/gsl_sf.h>

@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.59 2010/02/05 02:53:48 hito Exp $
+ * $Id: x11commn.c,v 1.60 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -748,7 +748,7 @@ FitClear(void)
   char *fit;
   struct narray iarray;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("file")) == NULL)
     return;
@@ -787,7 +787,7 @@ DeleteDrawable(void)
 }
 
 static void
-SaveParent(HANDLE hFile, struct objlist *parent, int storedata,
+SaveParent(int hFile, struct objlist *parent, int storedata,
 	   int storemerge)
 {
   struct objlist *ocur;
@@ -864,7 +864,7 @@ SaveParent(HANDLE hFile, struct objlist *parent, int storedata,
 int
 SaveDrawrable(char *name, int storedata, int storemerge)
 {
-  HANDLE hFile;
+  int hFile;
   struct objlist *sysobj, *drawobj, *graobj;
   int id, len, error;
   char *arg[2];
@@ -874,6 +874,7 @@ SaveDrawrable(char *name, int storedata, int storemerge)
   error = FALSE;
 
   hFile = nopen(name, O_CREAT | O_TRUNC | O_RDWR, NFMODE_NORMAL_FILE);
+
   if (hFile < 0) {
     error = TRUE;
   } else {
@@ -929,7 +930,7 @@ check_overwrite(GtkWidget *parent, const char *filename)
   ptr = filename_to_utf8(filename);
   buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), (ptr) ? ptr : filename);
   g_free(ptr);
-  r = MessageBox(parent, buf, "Driver", MB_YESNO);
+  r = message_box(parent, buf, "Driver", RESPONS_YESNO);
   g_free(buf);
 
   return r != IDYES;
@@ -1189,7 +1190,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   DeleteDrawable();
 
   if (console)
-    allocnow = AllocConsole();
+    allocnow = allocate_console();
 
   sec = TRUE;
   argv[0] = (char *) &sec;
@@ -1245,7 +1246,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   arraydel2(&sarray);
 
   if (console)
-    FreeConsole(allocnow);
+    free_console(allocnow);
 
   GetPageSettingsFromGRA();
   UpdateAll();
@@ -1390,8 +1391,8 @@ CheckSave(void)
   int ret;
 
   if (get_graph_modified()) {
-    ret = MessageBox(TopLevel, _("This graph is modified.\nSave this graph?"),
-		     "Modified", MB_YESNOCANCEL);
+    ret = message_box(TopLevel, _("This graph is modified.\nSave this graph?"),
+		     "Modified", RESPONS_YESNOCANCEL);
     if (ret == IDYES) {
       if (GraphSave(TRUE) == IDCANCEL)
 	return FALSE;
@@ -1477,7 +1478,7 @@ SetFileName(char *str)
 }
 
 int
-AllocConsole(void)
+allocate_console(void)
 {
   int allocnow;
 
@@ -1488,7 +1489,7 @@ AllocConsole(void)
 }
 
 void
-FreeConsole(int allocnow)
+free_console(int allocnow)
 {
   if (allocnow)
     nfreeconsole();
@@ -1601,17 +1602,17 @@ CheckIniFile(void)
 
   ret = writecheckconfig();
   if (ret == 0) {
-    MessageBox(TopLevel, _("Ngraph.ini is not found."), "Ngraph.ini", MB_ERROR);
+    message_box(TopLevel, _("Ngraph.ini is not found."), "Ngraph.ini", RESPONS_ERROR);
     return FALSE;
   } else if ((ret == -1) || (ret == -3)) {
-    MessageBox(TopLevel, _("Ngraph.ini is write protected."), "Ngraph.ini", MB_ERROR);
+    message_box(TopLevel, _("Ngraph.ini is write protected."), "Ngraph.ini", RESPONS_ERROR);
     return FALSE;
   } else if ((ret == -2) || (ret == 2)) {
     char buf[256];
     snprintf(buf, sizeof(buf), _("Install `Ngraph.ini' to ~/%s ?"), HOME_DIR);
-    if (MessageBox(TopLevel, buf, "Ngraph.ini", MB_YESNO) == IDYES) {
+    if (message_box(TopLevel, buf, "Ngraph.ini", RESPONS_YESNO) == IDYES) {
       if (!copyconfig()) {
-	MessageBox(TopLevel, _("Ngraph.ini could not be copied."), "Ngraph.ini", MB_ERROR);
+	message_box(TopLevel, _("Ngraph.ini could not be copied."), "Ngraph.ini", RESPONS_ERROR);
 	return FALSE;
       }
     } else {
@@ -1712,8 +1713,8 @@ ProgressDialogCreate(char *title)
   if (ProgressDiaog)
     gtk_widget_destroy(ProgressDiaog);
 
-  SaveCursor = GetCursor();
-  SetCursor(GDK_WATCH);
+  SaveCursor = NGetCursor();
+  NSetCursor(GDK_WATCH);
 
   set_draw_lock(DrawLockDraw);
 
@@ -1757,7 +1758,7 @@ ProgressDialogFinalize(void)
   if (TopLevel == NULL)
     return;
 
-  SetCursor(SaveCursor);
+  NSetCursor(SaveCursor);
   set_progress_func(NULL);
   gtk_widget_destroy(ProgressDiaog);
   ProgressDiaog = NULL;
@@ -1773,7 +1774,7 @@ ErrorMessage(void)
   s = strerror(errno);
   ptr = g_locale_to_utf8(CHK_STR(s), -1, NULL, NULL, NULL);
   if (ptr) {
-    MessageBox(NULL, ptr, _("error"), MB_ERROR);
+    message_box(NULL, ptr, _("error"), RESPONS_ERROR);
     g_free(ptr);
   }
 }

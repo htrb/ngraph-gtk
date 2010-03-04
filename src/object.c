@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.53 2010/02/22 08:31:03 hito Exp $
+ * $Id: object.c,v 1.54 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -22,9 +22,7 @@
  */
 
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdio.h>
 #include <ctype.h>
@@ -42,9 +40,7 @@
 #include "nhash.h"
 #include "shell.h"
 
-#ifdef WINDOWS
 #include <math.h>
-#endif
 
 #include "math/math_equation.h"
 
@@ -62,7 +58,7 @@ static struct objlist *errobj=NULL;
 static char errormsg1[ERR_MSG_BUF_SIZE]={'\0'};
 static char errormsg2[ERR_MSG_BUF_SIZE]={'\0'};
 static int errcode=0;
-int GlobalLock=FALSE;
+int Globallock=FALSE;
 
 int (*getstdin)(void);
 int (*putstdout)(char *s);
@@ -116,7 +112,7 @@ error(struct objlist *obj,int code)
   char **errtable;
   int errnum;
 
-  GlobalLock=TRUE;
+  Globallock=TRUE;
   errobj=obj;
   errcode=code;
 
@@ -148,7 +144,7 @@ error(struct objlist *obj,int code)
   }
   errormsg1[0]='\0';
   errormsg2[0]='\0';
-  GlobalLock=FALSE;
+  Globallock=FALSE;
 }
 
 void 

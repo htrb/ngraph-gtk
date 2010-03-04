@@ -1,14 +1,11 @@
 /* 
- * $Id: strconv.c,v 1.1 2009/11/25 12:19:07 hito Exp $
+ * $Id: strconv.c,v 1.2 2010/03/04 08:30:16 hito Exp $
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <string.h>
 #include <stdlib.h>
-#include <iconv.h>
 #include <glib.h>
 
 #include "object.h"
@@ -53,16 +50,16 @@ ascii2greece(char unsigned *src)
 static char *
 str2utf8(char *str, char *scode, char *dcode)
 {
-  iconv_t cd;
+  GIConv cd;
   size_t l, slen, dlen;
   char *tmp, *ptr;
 
   if (str == NULL) 
     return NULL;
 
-  cd = iconv_open(dcode, scode);
-  if (cd == (iconv_t)(-1)) {
-    iconv_close(cd);
+  cd = g_iconv_open(dcode, scode);
+  if (cd == (GIConv)(-1)) {
+    g_iconv_close(cd);
     return NULL;
   }
 
@@ -74,7 +71,7 @@ str2utf8(char *str, char *scode, char *dcode)
     return NULL;
 
   ptr = tmp;
-  l = iconv(cd, &str, &slen, &ptr, &dlen);
+  l = g_iconv(cd, &str, &slen, &ptr, &dlen);
   if (l == (size_t)(-1)) {
     g_free(tmp);
     tmp = NULL;
@@ -82,7 +79,7 @@ str2utf8(char *str, char *scode, char *dcode)
     *ptr = '\0';
   }
 
-  iconv_close(cd);
+  g_iconv_close(cd);
 
   return tmp;
 }

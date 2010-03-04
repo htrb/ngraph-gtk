@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.h,v 1.10 2009/08/06 01:38:23 hito Exp $
+ * $Id: x11commn.h,v 1.11 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -46,13 +46,11 @@ void AddDataFileList(char *file);
 void SetFileName(char *name);
 int CheckIniFile(void);
 void SaveHistory(void);
-int AllocConsole(void);
-void FreeConsole(int allocnow);
+int allocate_console(void);
+void free_console(int allocnow);
 char *FileCB(struct objlist *obj, int id);
 int SetFileHidden(void);
 int GetDrawFiles(struct narray *farray);
-void ExtTextOut(GdkDisplay *disp, GtkWindow *win, GdkGC gc,
-		int x, int y, GdkRectangle *rect, char *buf, int len);
 void ProgressDialogCreate(char *title);
 void ProgressDialogSetTitle(char *title);
 void ProgressDialogFinalize(void);

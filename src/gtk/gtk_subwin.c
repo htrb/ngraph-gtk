@@ -1,10 +1,11 @@
 /* 
- * $Id: gtk_subwin.c,v 1.66 2009/12/26 10:01:44 hito Exp $
+ * $Id: gtk_subwin.c,v 1.67 2010/03/04 08:30:16 hito Exp $
  */
 
 #include "gtk_common.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <libgen.h>
 
@@ -441,10 +442,10 @@ get_geometry(struct SubWin *d, int *x, int *y, int *w, int *h)
     *y = Menulocal.coordy;
     break;
   default:
-    *w = CW_USEDEFAULT;
-    *h = CW_USEDEFAULT;
-    *x = CW_USEDEFAULT;
-    *y = CW_USEDEFAULT;
+    *w = DEFAULT_GEOMETRY;
+    *h = DEFAULT_GEOMETRY;
+    *x = DEFAULT_GEOMETRY;
+    *y = DEFAULT_GEOMETRY;
     break;
   }
 }
@@ -514,15 +515,15 @@ sub_window_set_geometry(struct SubWin *d, int resize)
 
   get_geometry(d, &x, &y, &w, &h);
 
-  if (w == CW_USEDEFAULT) {
+  if (w == DEFAULT_GEOMETRY) {
     w = DEFAULT_WIDTH;
   }
 
-  if (h == CW_USEDEFAULT) {
+  if (h == DEFAULT_GEOMETRY) {
     h = DEFAULT_HEIGHT;
   }
 
-  if ((x != CW_USEDEFAULT) && (y != CW_USEDEFAULT)) {
+  if ((x != DEFAULT_GEOMETRY) && (y != DEFAULT_GEOMETRY)) {
     gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
     x += x0;
     y += y0;
@@ -646,7 +647,7 @@ copy(struct SubWin *d)
 {
   int sel, id;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -669,7 +670,7 @@ delete(struct SubWin *d)
   int sel;
   int update;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   if (sel >= 0 && sel <= d->num) {
@@ -694,7 +695,7 @@ move_top(struct SubWin *d)
 {
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -711,7 +712,7 @@ move_last(struct SubWin *d)
 {
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   if ((sel >= 0) && (sel <= d->num)) {
@@ -727,7 +728,7 @@ move_up(struct SubWin *d)
 {
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   if ((sel >= 1) && (sel <= d->num)) {
@@ -743,7 +744,7 @@ move_down(struct SubWin *d)
 {
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   if ((sel >= 0) && (sel < d->num)) {
@@ -759,7 +760,7 @@ update(struct SubWin *d)
 {
   int sel, ret;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   UnFocus();
@@ -782,7 +783,7 @@ focus(struct SubWin *d, int add)
 {
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -796,7 +797,7 @@ modify_numeric(struct SubWin *d, char *field, int val)
 {
   int sel, v1, v2;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -823,7 +824,7 @@ modify_string(struct SubWin *d, char *field, char *str)
 {
   int sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -858,7 +859,7 @@ hidden(struct SubWin *d)
   int sel;
   int hidden;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -879,7 +880,7 @@ set_hidden_state(struct SubWin *d, int hide)
   int sel;
   int hidden;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -937,7 +938,7 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
   static guint32 time = 0;
   int tdif;
 
-  if (Menulock || GlobalLock) return FALSE;
+  if (Menulock || Globallock) return FALSE;
 
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
@@ -975,7 +976,7 @@ ev_button_up(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 {
   struct SubWin *d;
 
-  if (Menulock || GlobalLock) return FALSE;
+  if (Menulock || Globallock) return FALSE;
 
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
@@ -1003,7 +1004,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return TRUE;
 
   d = (struct SubWin *) user_data;
@@ -1078,7 +1079,7 @@ tree_copy(struct LegendWin *d)
 {
   int n, m, sel, id;
 
-  if (Menulock || GlobalLock) return;
+  if (Menulock || Globallock) return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
 
@@ -1101,7 +1102,7 @@ tree_delete(struct LegendWin *d)
   int n, m;
   gboolean sel, update;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1132,7 +1133,7 @@ tree_move_top(struct LegendWin *d)
   int n, m;
   gboolean sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1152,7 +1153,7 @@ tree_move_last(struct LegendWin *d)
   int n, m;
   gboolean sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1172,7 +1173,7 @@ tree_move_up(struct LegendWin *d)
   int n, m;
   gboolean sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1192,7 +1193,7 @@ tree_move_down(struct LegendWin *d)
   int n, m;
   gboolean sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1212,7 +1213,7 @@ tree_update(struct LegendWin *d)
   int n, m;
   gboolean sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1228,7 +1229,7 @@ tree_focus(struct LegendWin *d, int add)
   int n, m;
   gboolean sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1247,7 +1248,7 @@ tree_hidden(struct LegendWin *d)
   GtkTreeIter iter;
   gboolean sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1274,7 +1275,7 @@ tree_set_hidden_state(struct LegendWin *d, int hide)
   int n, m, hidden;
   gboolean sel;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
@@ -1300,7 +1301,7 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return TRUE;
 
   d = (struct LegendWin *) user_data;
@@ -1731,7 +1732,7 @@ ev_popup_menu(GtkWidget *w, gpointer client_data)
 {
   struct SubWin *d;
 
-  if (Menulock || GlobalLock) return TRUE;
+  if (Menulock || Globallock) return TRUE;
 
   d = (struct SubWin *) client_data;
   do_popup(NULL, d);

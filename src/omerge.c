@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.15 2009/11/16 09:13:04 hito Exp $
+ * $Id: omerge.c,v 1.16 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,7 @@
  * 
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,11 +31,8 @@
 #include <utime.h>
 #include <time.h>
 #include <glib.h>
-#ifndef WINDOWS
 #include <unistd.h>
-#else
-#include <io.h>
-#endif
+
 #include "ngraph.h"
 #include "object.h"
 #include "nstring.h"

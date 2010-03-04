@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11dlg.c,v 1.28 2009/11/16 09:13:05 hito Exp $
+ * $Id: ox11dlg.c,v 1.29 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -98,11 +98,11 @@ dlgconfirm(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   mes = (char *)argv[2];
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
   mes = CHK_STR(mes);
-  rcode = MessageBox(DLGTopLevel, mes, (title) ? title : "Select", MB_YESNO);
-  GlobalLock = locksave;
+  rcode = message_box(DLGTopLevel, mes, (title) ? title : "Select", RESPONS_YESNO);
+  Globallock = locksave;
   if (rcode == IDYES) {
     *(int *)rval = 1;
   } else {
@@ -122,10 +122,10 @@ dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   mes = (char *)argv[2];
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
-  rcode = MessageBox(DLGTopLevel, CHK_STR(mes), (title) ? title : "Confirm", MB_OK);
-  GlobalLock = locksave;
+  locksave = Globallock;
+  Globallock = TRUE;
+  rcode = message_box(DLGTopLevel, CHK_STR(mes), (title) ? title : "Confirm", RESPONS_OK);
+  Globallock = locksave;
 
   return 0;
 }
@@ -137,8 +137,8 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   int locksave, x, y, r;
   char *inputbuf;
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
   mes = (char *)argv[2];
   g_free(*(char **)rval);
   *(char **)rval = NULL;
@@ -167,10 +167,10 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     *(char **)rval = inputbuf;
   } else {
     g_free(inputbuf);
-    GlobalLock = locksave;
+    Globallock = locksave;
     return 1;
   }
-  GlobalLock = locksave;
+  Globallock = locksave;
   return 0;
 }
 
@@ -238,8 +238,8 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (arraynum(sarray) == 0)
     return 1;
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
 
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
@@ -272,13 +272,13 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (ret != IDOK) {
-    GlobalLock = locksave;
+    Globallock = locksave;
     return 1;
   }
 
   *(int *) rval = r;
 
-  GlobalLock = locksave;
+  Globallock = locksave;
   return 0;
 }
 
@@ -293,8 +293,8 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (arraynum(sarray) == 0)
     return 1;
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
 
   g_free(*(char **)rval);
   *(char **)rval = NULL;
@@ -335,13 +335,13 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (ret != IDOK) {
-    GlobalLock = locksave;
+    Globallock = locksave;
     return 1;
   }
 
   *(char **)rval = r;
 
-  GlobalLock = locksave;
+  Globallock = locksave;
   return 0;
 }
 
@@ -352,8 +352,8 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   char *title, *caption;
   double min, max, inc, r;
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
 
   g_free(*(char **)rval);
   *(char **)rval = NULL;
@@ -389,7 +389,7 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     r = * (int *) argv[5];
     break;
   default:
-    GlobalLock = locksave;
+    Globallock = locksave;
     return 1;
   }
 
@@ -398,7 +398,7 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (ret != IDOK) {
-    GlobalLock = locksave;
+    Globallock = locksave;
     return 1;
   }
 
@@ -410,11 +410,11 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     *(char **)rval = g_strdup_printf("%d", (int) r);
     break;
   default:
-    GlobalLock = locksave;
+    Globallock = locksave;
     return 1;
   }
 
-  GlobalLock = locksave;
+  Globallock = locksave;
 
   return 0;
 }
@@ -466,8 +466,8 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
   memset(r, 0, n * sizeof(int));
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
 
   inum = arraynum(iarray);
   for (i = 0; i < inum; i++) {
@@ -482,7 +482,7 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (ret != IDOK) {
     arrayfree(array);
     g_free(r);
-    GlobalLock = locksave;
+    Globallock = locksave;
     return 1;
   }
 
@@ -495,7 +495,7 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   *(struct narray **) rval = array;
 
-  GlobalLock = locksave;
+  Globallock = locksave;
   return 0;
 }
 
@@ -504,10 +504,10 @@ dlgbeep(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int locksave;
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
-  MessageBeep(DLGTopLevel);
-  GlobalLock = locksave;
+  locksave = Globallock;
+  Globallock = TRUE;
+  message_beep(DLGTopLevel);
+  Globallock = locksave;
 
   return 0;
 }
@@ -524,8 +524,8 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
   int ret;
   char *file;
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
   g_free(*(char **)rval);
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
@@ -553,7 +553,7 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
     }
   }
 
-  GlobalLock = locksave;
+  Globallock = locksave;
   return (ret == IDOK)? 0 : 1;
 }
 
@@ -570,8 +570,8 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
   char **file = NULL, *name;
   struct narray *farray;
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
 
   arrayfree2(*(struct narray **)rval);
   *(char **)rval = NULL;
@@ -603,7 +603,7 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
   }
   g_free(file);
 
-  GlobalLock = locksave;
+  Globallock = locksave;
 
   return (ret == IDOK)? 0 : 1;
 }
@@ -620,8 +620,8 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   int ret;
   char *file;
 
-  locksave = GlobalLock;
-  GlobalLock = TRUE;
+  locksave = Globallock;
+  Globallock = TRUE;
   g_free(*(char **)rval);
   *(char **)rval = NULL;
   array = (struct narray *)argv[2];
@@ -649,7 +649,7 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
     }
   }
 
-  GlobalLock = locksave;
+  Globallock = locksave;
   return (ret == IDOK)?0:1;
 }
 

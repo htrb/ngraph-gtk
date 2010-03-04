@@ -1,10 +1,10 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
+#endif
 #include <fcntl.h>
 #include <stdio.h>
 #include <signal.h>
@@ -20,17 +20,22 @@ sig_handler(int sig)
 static void
 my_signal(int signum, void (* sighandler))
 {
+#ifndef __MINGW32__
   struct sigaction act;
 
   act.sa_handler = sighandler;
   act.sa_flags = SA_RESTART;
   sigemptyset(&act.sa_mask);
   sigaction(signum, &act, NULL);
+#else
+  signal(signum, sighandler);
+#endif
 }
 
 int
 main(int argc,char **argv)
 {
+#ifndef __MINGW32__
   int fdi, fdo, len;
   char *ptr, buf[256] = {0};
 #ifdef HAVE_SIGSUSPEND
@@ -84,7 +89,6 @@ main(int argc,char **argv)
   my_signal(SIGTERM, sig_handler);
 
 #ifdef HAVE_SIGSUSPEND
-
   sigemptyset(&sig_mask);
   sigaddset(&sig_mask, SIGINT);
 #ifdef SIGWINCH
@@ -101,6 +105,8 @@ main(int argc,char **argv)
   pause();
 
 #endif /* HAVE_SIGSUSPEND */
+
+#endif	/* __MINGW32__ */
 
   return 0;
 }

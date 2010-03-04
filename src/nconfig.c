@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.16 2009/12/18 06:04:29 hito Exp $
+ * $Id: nconfig.c,v 1.17 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,31 +28,17 @@
 #include <errno.h>
 #include <glib.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"
 #include "shell.h"
 #include "nconfig.h"
-#ifndef WINDOWS
 #include <unistd.h>
-#else
-#include <io.h>
-#include <dir.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#endif
 
 #define CONF "Ngraph.ini"
-#ifndef WINDOWS
 #define CONFBAK "Ngraph.ini~"
-#else
-#define CONFBAK "Ngraph.in~"
-#endif
 #define LOCK "Ngraph.lock"
 
 #ifndef TRUE
@@ -110,7 +96,7 @@ lockconfig(char *dir)
     msleep(100);
   }
   if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return;
-  if ((fp=fopen(file,"wt"))==NULL) {
+  if ((fp=nfopen(file,"wt"))==NULL) {
     g_free(file);
     return;
   }
@@ -256,7 +242,7 @@ make_backup(char *homedir, char *libdir, char *fil, FILE *fptmp)
     g_free(bak);
   }
 
-  fp = fopen(fil, "wt");
+  fp = nfopen(fil, "wt");
   if (fp == NULL) {
     return FALSE;
   }
@@ -347,7 +333,7 @@ replaceconfig(char *section,struct narray *conf)
     unlockconfig(dir);
     return FALSE;
   }
-  fp = fopen(fil,"rt");
+  fp = nfopen(fil,"rt");
   if (fp == NULL) {
     fclose(fptmp);
     g_free(fil);
@@ -478,7 +464,7 @@ removeconfig(char *section,struct narray *conf)
     unlockconfig(dir);
     return FALSE;
   }
-  fp = fopen(fil,"rt");
+  fp = nfopen(fil,"rt");
   if (fp == NULL) {
     fclose(fptmp);
     g_free(fil);
@@ -631,10 +617,10 @@ copyconfig(void)
     return FALSE;
   }
 
-  if ((homefp=fopen(homename,"wt"))==NULL) {
+  if ((homefp=nfopen(homename,"wt"))==NULL) {
     return FALSE;
   }
-  if ((libfp=fopen(libname,"rt"))==NULL) {
+  if ((libfp=nfopen(libname,"rt"))==NULL) {
     g_free(homename);
     fclose(homefp);
     g_free(libname);

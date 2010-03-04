@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.39 2010/01/22 02:02:24 hito Exp $
+ * $Id: x11gui.c,v 1.40 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -145,7 +145,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->parent = parent;
 #else
     gtk_widget_destroy(data->widget);
-    ResetEvent();
+    reset_event();
     data->widget = NULL;
 #endif
   }
@@ -226,7 +226,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
   //  data->widget = NULL;
   set_current_window(win_ptr);
   gtk_widget_hide_all(dlg);
-  ResetEvent();
+  reset_event();
 
   DnDLock = lockstate;
 
@@ -234,10 +234,10 @@ DialogExecute(GtkWidget *parent, void *dialog)
 }
 
 void
-MessageBeep(GtkWidget * parent)
+message_beep(GtkWidget * parent)
 {
   gdk_beep();
-  ResetEvent();
+  reset_event();
 }
 
 static void
@@ -265,7 +265,7 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
 }
 
 int
-MessageBox(GtkWidget * parent, char *message, char *title, int mode)
+message_box(GtkWidget * parent, char *message, char *title, int mode)
 {
   GtkWidget *dlg;
   int data;
@@ -277,12 +277,12 @@ MessageBox(GtkWidget * parent, char *message, char *title, int mode)
     title = "Error";
 
   switch (mode) {
-  case MB_YESNOCANCEL:
-  case MB_YESNO:
+  case RESPONS_YESNOCANCEL:
+  case RESPONS_YESNO:
     dlg_button = GTK_BUTTONS_YES_NO;
     dlg_type = GTK_MESSAGE_QUESTION;
     break;
-  case MB_ERROR:
+  case RESPONS_ERROR:
     dlg_button = GTK_BUTTONS_OK;
     dlg_type = GTK_MESSAGE_ERROR;
     break;
@@ -301,8 +301,8 @@ MessageBox(GtkWidget * parent, char *message, char *title, int mode)
 			       "%s", message);
 
   switch (mode) {
-  case MB_YESNOCANCEL:
-  case MB_YESNO:
+  case RESPONS_YESNOCANCEL:
+  case RESPONS_YESNO:
     gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_YES);
     break;
   }
@@ -310,7 +310,7 @@ MessageBox(GtkWidget * parent, char *message, char *title, int mode)
   gtk_window_set_title(GTK_WINDOW(dlg), title);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
 
-  if (mode == MB_YESNOCANCEL) {
+  if (mode == RESPONS_YESNOCANCEL) {
     gtk_dialog_add_button(GTK_DIALOG(dlg),
 			  GTK_STOCK_CANCEL,
 			  GTK_RESPONSE_CANCEL);
@@ -333,9 +333,9 @@ MessageBox(GtkWidget * parent, char *message, char *title, int mode)
     data = IDCANCEL;
     break;
   default:
-    if ((mode == MB_OK) || (mode == MB_ERROR)) {
+    if ((mode == RESPONS_OK) || (mode == RESPONS_ERROR)) {
       data = IDOK;
-    } else if (mode == MB_YESNO) {
+    } else if (mode == RESPONS_YESNO) {
       data = IDNO;
     } else {
       data = IDCANCEL; 
@@ -343,7 +343,7 @@ MessageBox(GtkWidget * parent, char *message, char *title, int mode)
   }
 
   gtk_widget_destroy(dlg);
-  ResetEvent();
+  reset_event();
 
   return data;
 }
@@ -391,7 +391,7 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s, int *x, int *y
 
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
-  ResetEvent();
+  reset_event();
 
   return data;
 }
@@ -463,7 +463,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
-  ResetEvent();
+  reset_event();
 
   return data;
 }
@@ -529,7 +529,7 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
-  ResetEvent();
+  reset_event();
 
   return data;
 }
@@ -598,7 +598,7 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
 
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
-  ResetEvent();
+  reset_event();
 
   return data;
 }
@@ -661,7 +661,7 @@ DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, doubl
 
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
-  ResetEvent();
+  reset_event();
 
   return data;
 }
@@ -731,7 +731,7 @@ DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array,
 
   get_dialog_position(dlg, x, y);
   gtk_widget_destroy(dlg);
-  ResetEvent();
+  reset_event();
 
   return data;
 }
@@ -943,7 +943,7 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
   }
 
   gtk_widget_destroy(dlg);
-  ResetEvent();
+  reset_event();
   data->widget = NULL;
 
   return data->ret;

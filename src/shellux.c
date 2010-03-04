@@ -1,5 +1,5 @@
 /* 
- * $Id: shellux.c,v 1.8 2009/11/16 09:13:04 hito Exp $
+ * $Id: shellux.c,v 1.9 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,9 +21,7 @@
  * 
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,10 +30,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <time.h>
-#else
-#include <windows.h>
+#else  /* WINDOWS */
 #include <dos.h>
-#endif
+#endif	/* WINDOWS */
 #include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
@@ -82,6 +79,7 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
     return ERRNUMERIC;
   }
   if (has_eventloop()) {
+#ifdef SIGALRM
     timeout=FALSE;
     set_signal(SIGALRM, 0, cmsleeptimeout);
     alarm(a);
@@ -91,13 +89,16 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
     }
     alarm(0);
     set_signal(SIGALRM, 0, SIG_IGN);
+#else
+    sleep(a);
+#endif
   } else {
     sleep(a);
   }
   return 0;
 }
 
-#else
+#else  /* WINDOWS */
 
 typedef struct {
   int Sleep;
@@ -109,7 +110,7 @@ DWORD WINAPI SleepThread(LPVOID lpvThreadParam)
   ThreadParam *pTH;
 
   pTH=(ThreadParam *)lpvThreadParam;
-  sleep(pTH->Second);
+  Sleep(pTH->Second);
   pTH->Sleep=FALSE;
   return 0;
 }
@@ -138,7 +139,7 @@ int cmsleep(struct nshell *nshell,int argc,char **argv)
   return 0;
 }
 
-#endif
+#endif	/* WINDOWS */
 
 static int 
 testexpand(int pre,int *oppo,int *numpo,

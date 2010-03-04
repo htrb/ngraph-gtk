@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.h,v 1.8 2009/08/13 08:52:00 hito Exp $
+ * $Id: ioutil.h,v 1.9 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -24,6 +24,8 @@
 #ifndef IOUTIL_HEADER
 #define IOUTIL_HEADER
 
+#include "common.h"
+
 #include <sys/stat.h>
 #include <dirent.h>
 #include <stdio.h>
@@ -37,21 +39,26 @@ typedef int HANDLE;
 #define NOHANDLE -1
 #define NFMODE (S_IRUSR | S_IWUSR)
 #define NFMODE_NORMAL_FILE (NFMODE | S_IRGRP | S_IROTH)
-#else
+#else	/* WINDOWS */
 #define DIRSEP '/'
-#define PATHSEP ";"
+#define PATHSEP ":"
 #define CONFSEP "/"
-#define CONFTOP "/_"
+#define CONFTOP "/"
+#if 0
 typedef void *HANDLE;
 #define NOHANDLE NULL
-#define NFMODE (S_IREAD | S_IWRITE)
-#define NFMODE_NORMAL_FILE (NFMODE | S_IRGRP | S_IROTH)
+#else
+#define NOHANDLE -1
 #endif
+#define NFMODE (S_IREAD | S_IWRITE)
+#define NFMODE_NORMAL_FILE NFMODE
+#define mkdir(name,mode) _mkdir (name)
+#endif	/* WINDOWS */
 
 void changefilename(char *name);
 #ifdef WINDOWS
 void unchangefilename(char *name);
-#endif
+#endif	/* WINDOWS */
 void char_type_buf_init(void);
 char *getfullpath(char *name);
 char *getrelativepath(char *name);
@@ -65,20 +72,20 @@ int nglob(char *path,char ***namelist);
 int fgetline(FILE *fp,char **buf);
 int fgetnline(FILE *fp,char *buf,int len);
 int nfgetc(FILE *fp);
-int nisatty(HANDLE fd);
+int nisatty(int fd);
 FILE *nfopen(char *filename,const char *mode);
-HANDLE nopen(char *path,int access,int mode);
-void nclose(HANDLE fd);
-HANDLE nredirect(int fd,HANDLE newfd);
-void nredirect2(int fd,HANDLE savefd);
-void nlseek(HANDLE fd,long offset,int fromwhere);
-int nread(HANDLE fd,char *buf,unsigned len);
-int nwrite(HANDLE fd,char *buf,unsigned len);
-HANDLE stdinfd(void);
-HANDLE stdoutfd(void);
-HANDLE stderrfd(void);
+int nopen(char *path,int access,int mode);
+void nclose(int fd);
+int nredirect(int fd,int newfd);
+void nredirect2(int fd,int savefd);
+void nlseek(int fd,long offset,int fromwhere);
+int nread(int fd,char *buf,unsigned len);
+int nwrite(int fd,char *buf,unsigned len);
+int stdinfd(void);
+int stdoutfd(void);
+int stderrfd(void);
 void set_progress_func(void (* func)(int, char *, double));
 void set_progress(int pos, char *msg, double fraction);
 int n_mkstemp(char *dir, char *templ, char **name);
 
-#endif
+#endif	/* IOUTIL_HEADER */

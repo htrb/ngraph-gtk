@@ -17,6 +17,6 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 pkglib_PROGRAMS = terminal
 terminal_SOURCES = terminal.c
 
-ngraph_LDADD = $(GTK_LIBS) $(GSL_LIBS) gtk/libngraph.la math/libmath.la
+ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GSL_LIBS)
 
 ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -D_FORTIFY_SOURCE

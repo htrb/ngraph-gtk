@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.67 2010/02/02 10:53:01 hito Exp $
+ * $Id: x11lgnd.c,v 1.68 2010/03/04 08:30:17 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1576,7 +1576,7 @@ CmLineDel(void)
   int i;
   int num, *data;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("line")) == NULL)
     return;
@@ -1603,7 +1603,7 @@ CmLineUpdate(void)
   int i, j, ret;
   int *data, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("line")) == NULL)
     return;
@@ -1649,7 +1649,7 @@ CmCurveDel(void)
   int i;
   int num, *data;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("curve")) == NULL)
     return;
@@ -1676,7 +1676,7 @@ CmCurveUpdate(void)
   int i, j, ret;
   int *data, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("curve")) == NULL)
     return;
@@ -1721,7 +1721,7 @@ CmPolyDel(void)
   int i;
   int num, *data;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("polygon")) == NULL)
     return;
@@ -1748,7 +1748,7 @@ CmPolyUpdate(void)
   int i, j, ret;
   int *data, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("polygon")) == NULL)
     return;
@@ -1793,7 +1793,7 @@ CmRectDel(void)
   int i;
   int num, *data;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("rectangle")) == NULL)
     return;
@@ -1820,7 +1820,7 @@ CmRectUpdate(void)
   int i, j, ret;
   int *data, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("rectangle")) == NULL)
     return;
@@ -1865,7 +1865,7 @@ CmArcDel(void)
   int i;
   int num, *data;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("arc")) == NULL)
     return;
@@ -1892,7 +1892,7 @@ CmArcUpdate(void)
   int i, j, ret;
   int *data, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("arc")) == NULL)
     return;
@@ -1937,7 +1937,7 @@ CmMarkDel(void)
   int i;
   int num, *data;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("mark")) == NULL)
     return;
@@ -1964,7 +1964,7 @@ CmMarkUpdate(void)
   int i, j, ret;
   int *data, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("mark")) == NULL)
     return;
@@ -2009,7 +2009,7 @@ CmTextDel(void)
   int i;
   int num, *data;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("text")) == NULL)
     return;
@@ -2036,7 +2036,7 @@ CmTextUpdate(void)
   int i, j, ret;
   int *data, num;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
   if ((obj = chkobject("text")) == NULL)
     return;
@@ -2079,7 +2079,7 @@ CmOptionTextDef(void)
   struct objlist *obj;
   int id;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   if ((obj = chkobject("text")) == NULL)
@@ -2112,7 +2112,7 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
 
   d = &(NgraphApp.LegendWin);
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return;
 
   UnFocus();
@@ -2474,7 +2474,7 @@ LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
 {
   struct LegendWin *d;
 
-  if (Menulock || GlobalLock)
+  if (Menulock || Globallock)
     return FALSE;
 
   d = &(NgraphApp.LegendWin);

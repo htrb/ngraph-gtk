@@ -1,5 +1,5 @@
 /* 
- * $Id: ngraph.h,v 1.4 2009/11/16 09:13:04 hito Exp $
+ * $Id: ngraph.h,v 1.5 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -21,6 +21,11 @@
  * 
  */
 
+#ifndef NGRAPH_HEADER
+#define NGRAPH_HEADER
+
+#include "common.h"
+
 #include <glib.h>
 
 int printfconsole(char *fmt,...);
@@ -41,9 +46,16 @@ void nsetconsolemode(void);
 void nfreeconsole(void);
 void nforegroundconsole(void);
 
+#ifndef PLATFORM
 #define PLATFORM "for Windows"
-#else
+#endif	/* PLATFORM */
+
+#else  /* WINDOWS */
+
 #ifndef PLATFORM
 #define PLATFORM "for X11"
-#endif
-#endif
+#endif	/* PLATFORM */
+
+#endif	/* WINDOWS */
+
+#endif	/* NGRAPH_HEADER */

@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.112 2010/02/24 01:44:51 hito Exp $
+ * $Id: ofile.c,v 1.113 2010/03/04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -31,13 +31,7 @@
 #include <time.h>
 #include <errno.h>
 #include <glib.h>
-
-#ifndef WINDOWS
 #include <unistd.h>
-#else
-#include <io.h>
-#include <sys/stat.h>
-#endif
 
 #include "common.h"
 
@@ -7879,7 +7873,7 @@ f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     int len;
     struct utimbuf tm;
     FILE *fp;
-    HANDLE fd;
+    int fd;
     char buf[257];
 
     fp = nfopen(fullname, "wt");

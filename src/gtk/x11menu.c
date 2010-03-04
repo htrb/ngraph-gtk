@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.114 2009/12/24 07:14:09 hito Exp $
+ * $Id: x11menu.c,v 1.115 2010/03/04 08:30:17 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -560,7 +560,7 @@ AppMainLoop(void)
 }
 
 void
-ResetEvent(void)
+reset_event(void)
 {
   while (gtk_events_pending()) {
     gtk_main_iteration();
@@ -1945,44 +1945,44 @@ defaultwindowconfig(void)
   h = w / 2 * 1.2;
 
   if (Menulocal.fileopen) {
-    if (Menulocal.filewidth == CW_USEDEFAULT)
+    if (Menulocal.filewidth == DEFAULT_GEOMETRY)
       Menulocal.filewidth = w / 4;
 
-    if (Menulocal.fileheight == CW_USEDEFAULT)
+    if (Menulocal.fileheight == DEFAULT_GEOMETRY)
       Menulocal.fileheight = h / 4;
 
-    if (Menulocal.filex == CW_USEDEFAULT)
+    if (Menulocal.filex == DEFAULT_GEOMETRY)
       Menulocal.filex = -Menulocal.filewidth - 4;
 
-    if (Menulocal.filey == CW_USEDEFAULT)
+    if (Menulocal.filey == DEFAULT_GEOMETRY)
       Menulocal.filey = 0;
   }
 
   if (Menulocal.axisopen) {
-    if (Menulocal.axiswidth == CW_USEDEFAULT)
+    if (Menulocal.axiswidth == DEFAULT_GEOMETRY)
       Menulocal.axiswidth = w / 4;
 
-    if (Menulocal.axisheight == CW_USEDEFAULT)
+    if (Menulocal.axisheight == DEFAULT_GEOMETRY)
       Menulocal.axisheight = h / 4;
 
-    if (Menulocal.axisx == CW_USEDEFAULT)
+    if (Menulocal.axisx == DEFAULT_GEOMETRY)
       Menulocal.axisx = -Menulocal.axiswidth - 4;
 
-    if (Menulocal.axisy == CW_USEDEFAULT)
+    if (Menulocal.axisy == DEFAULT_GEOMETRY)
       Menulocal.axisy = Menulocal.fileheight + 4;
   }
 
   if (Menulocal.coordopen) {
-    if (Menulocal.coordwidth == CW_USEDEFAULT)
+    if (Menulocal.coordwidth == DEFAULT_GEOMETRY)
       Menulocal.coordwidth = w / 4;
 
-    if (Menulocal.coordheight == CW_USEDEFAULT)
+    if (Menulocal.coordheight == DEFAULT_GEOMETRY)
       Menulocal.coordheight = h / 4;
 
-    if (Menulocal.coordx == CW_USEDEFAULT)
+    if (Menulocal.coordx == DEFAULT_GEOMETRY)
       Menulocal.coordx = -Menulocal.coordwidth - 4;
 
-    if (Menulocal.coordy == CW_USEDEFAULT)
+    if (Menulocal.coordy == DEFAULT_GEOMETRY)
       Menulocal.coordy = Menulocal.fileheight + Menulocal.axisheight + 8;
   }
 }
@@ -2136,16 +2136,16 @@ application(char *file)
   w = gdk_screen_get_width(screen);
   h = gdk_screen_get_height(screen);
 
-  if (Menulocal.menux == CW_USEDEFAULT)
+  if (Menulocal.menux == DEFAULT_GEOMETRY)
     Menulocal.menux = w * 3 / 8;
 
-  if (Menulocal.menuy == CW_USEDEFAULT)
+  if (Menulocal.menuy == DEFAULT_GEOMETRY)
     Menulocal.menuy = h / 8;
 
-  if (Menulocal.menuwidth == CW_USEDEFAULT)
+  if (Menulocal.menuwidth == DEFAULT_GEOMETRY)
     Menulocal.menuwidth = w / 2;
 
-  if (Menulocal.menuheight == CW_USEDEFAULT)
+  if (Menulocal.menuheight == DEFAULT_GEOMETRY)
     Menulocal.menuheight = h / 1.2;
 
   x = Menulocal.menux;
@@ -2162,7 +2162,7 @@ application(char *file)
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
-  ResetEvent();
+  reset_event();
 
   //    g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
@@ -2185,7 +2185,7 @@ application(char *file)
 
   NgraphApp.FileName = NULL;
 
-  ResetEvent();
+  reset_event();
 
   ViewerWinSetup();
 
@@ -2195,7 +2195,7 @@ application(char *file)
     return 1;
 
   reset_graph_modified();
-  SetCursor(GDK_LEFT_PTR);
+  NSetCursor(GDK_LEFT_PTR);
 
   putstderr = mgtkputstderr;
   printfstderr = mgtkprintfstderr;
@@ -2247,10 +2247,12 @@ application(char *file)
 
   CmViewerDrawB(NgraphApp.Viewer.Win, NULL);
 
+#ifndef WINDOWS
   set_signal(SIGINT, 0, kill_signal_handler);
   set_signal(SIGTERM, 0, term_signal_handler);
+#endif	/* WINDOWS */
 
-  ResetEvent();
+  reset_event();
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   set_widget_visibility(Menulocal.show_cross);
 
@@ -2260,8 +2262,10 @@ application(char *file)
   gtk_accel_map_save(KEYMAP_FILE);
 #endif
 
+#ifndef WINDOWS
   set_signal(SIGTERM, 0, SIG_DFL);
   set_signal(SIGINT, 0, SIG_DFL);
+#endif	/* WINDOWS */
 
   SaveHistory();
   save_entry_history();
@@ -2303,7 +2307,7 @@ application(char *file)
   free_markpixmap();
   free_cursor();
 
-  ResetEvent();
+  reset_event();
 
   if (terminated) {
     delobj(getobject("system"), 0);
@@ -2421,13 +2425,13 @@ ResetStatusBar(void)
 }
 
 unsigned int
-GetCursor(void)
+NGetCursor(void)
 {
   return CursorType;
 }
 
 void
-SetCursor(unsigned int type)
+NSetCursor(unsigned int type)
 {
   struct Viewer *d;
   GdkWindow *win;
@@ -2524,7 +2528,7 @@ PutStderr(char *s)
 
   len = strlen(s);
   ustr = g_locale_to_utf8(s, len, &rlen, &wlen, NULL);
-  MessageBox(NULL, ustr, _("Error:"), MB_ERROR);
+  message_box(NULL, ustr, _("Error:"), RESPONS_ERROR);
   g_free(ustr);
   UpdateAll2();
   return len + 1;
@@ -2574,7 +2578,7 @@ InputYN(char *mes)
 {
   int ret;
 
-  ret = MessageBox((CurrentWindow) ? CurrentWindow : TopLevel, mes, _("Question"), MB_YESNO);
+  ret = message_box((CurrentWindow) ? CurrentWindow : TopLevel, mes, _("Question"), RESPONS_YESNO);
   UpdateAll2();
   return (ret == IDYES) ? TRUE : FALSE;
 }
@@ -2588,7 +2592,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   struct objlist *robj, *shell;
   struct script *fcur;
 
-  if (Menulock || GlobalLock || client_data == NULL)
+  if (Menulock || Globallock || client_data == NULL)
     return;
 
   shell = chkobject("shell");
@@ -2628,7 +2632,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   }
 
   if (Menulocal.addinconsole) {
-    allocnow = AllocConsole();
+    allocnow = allocate_console();
   }
 
   snprintf(mes, sizeof(mes), _("Executing `%.128s'."), name);
@@ -2649,7 +2653,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   arraydel2(&sarray);
 
   if (Menulocal.addinconsole) {
-    FreeConsole(allocnow);
+    free_console(allocnow);
   }
 
   GetPageSettingsFromGRA();
@@ -2671,7 +2675,7 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
   sub_window_hide((struct SubWin *) &(NgraphApp.InfoWin));
   sub_window_hide((struct SubWin *) &(NgraphApp.CoordWin));
 
-  //  ResetEvent();
+  //  reset_event();
 
   initwindowconfig();
   mgtkwindowconfig();
