@@ -1,0 +1,8 @@
+courier = "courier new"
+
+tahoma = "tahoma,browallia new,ms ui gothic,mingliu,simhei,gulimche,latha,mangal"
+sans = "arial,browallia new,ms ui gothic,mingliu,simhei,gulimche,latha,mangal"
+serif = "times new roman,angsana new,ms ui gothic,mingliu,simsun,gulimche,latha,mangal"
+monospace = "courier new,courier monothai,ms gothic,mingliu,simsun,gulimche,latha,mangal"
+Tahoma = "Tahoma,browallia new,ms ui gothic,mingliu,simhei,gulimche,latha,mangal"
+
