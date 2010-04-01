@@ -1,0 +1,52 @@
+#! ngraph
+#
+new text
+text::x=3000
+text::y=6500  
+text::font="HelveticaBold"
+text::text="Demo #5C: TEXT"
+#
+for i in `seq 0 4500 31500`
+do
+  new text
+  text::x=12000
+  text::y=13500
+  text::pt=6000
+  text::font=HelveticaBoldOblique
+  text::direction=$i
+  text::R=189
+  text::G=189
+  text::B=189
+  text::text=" "${system::name}
+done
+#
+Y=8000
+for i in Helvetica Times Courier Symbol
+do
+  new text
+  text::x=500
+  text::y=${Y}
+  text::pt=2000
+  text::font=Courier
+  text::direction=0
+  text::text="${i}:"
+  new text
+  text::x=5000
+  text::y=$Y
+  text::pt=2200
+  text::font=$i
+  text::direction=0
+  text::text='!"#$\%&\x27()*+,-./0123456789:;<=>?\@\nABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]\^\_`\nabcdefghijklmnopqrstuvwxyz{|}~'
+  Y=`iexpr $Y+3000`
+done
+#
+new text R:255 G:0 B:0
+text::x=3000
+text::y=22000
+text::pt=4000
+text::font=TimesBoldItalic
+text::direction=0
+text::text="date: %{system::date:0}\ntime: %{system::time:0}"
+#
+new gra
+

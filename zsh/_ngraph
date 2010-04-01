@@ -1,0 +1,54 @@
+#compdef ngraph
+
+_arguments \
+    ':file:_files' \
+    '-L[load ngp file]:file:_files -g "*.ngp(-.)"' \
+    '-x[set data column of x axis]:integer' \
+    '-y[set data column of y axis]:integer' \
+    '-X[set X axis as x axis]' \
+    '-Y[set Y axis as y axis]' \
+    '-U[set U axis as x axis]' \
+    '-R[set R axis as y axis]' \
+    '-d[set type of data plot]:type of data plot:(mark line polygon curve \
+       diagonal arrow rectangle rectangle_fill rectangle_solid_fill \
+       errorbar_x errorbar_y staircase_x staircase_y bar_x bar_y \
+       bar_fill_x bar_fill_y bar_solid_fill_x bar_solid_fill_y fit)' \
+    '-m[set mark type (0 - 89)]:integer' \
+    '-o[set mark size]:integer' \
+    '-l[set line style]:string' \
+    '-w[set line width]:integer' \
+    '-cr[red element of plot color 1]:integer' \
+    '-cg[green element of plot color 1]:integer' \
+    '-cb[blue element of plot color 1]:integer' \
+    '-CR[red element of plot color 2]:integer' \
+    '-CG[green element of plot color 2]:integer' \
+    '-CB[blue element of plot color 2]:integer' \
+    '-s[set number of head skip]:lines' \
+    '-r[set number of read step]:lines' \
+    '-f[set number of finale line]:lines' \
+    '-vx[set number of neighbor average for x]:integer' \
+    '-vy[set number of neighbor average for y]:integer' \
+    '-mx[set math transformation for x]:string' \
+    '-my[set math transformation for y]:string' \
+    '-ex[set scale type of x axis]:type of axis:(linear log inverse)' \
+    '-ey[set scale type of y axis]:type of axis:(linear log inverse)' \
+    '-minx[set minimum of x axis]:double' \
+    '-maxx[set maximum of x axis]:double' \
+    '-incx[set increment of x axis]:double' \
+    '-miny[set minimum of y axis]:double' \
+    '-maxy[set maximum of y axis]:double' \
+    '-incy[set increment of y axis]:double' \
+    '-g[load settings from data file]' \
+    '-png[save as png file]:file:_files -g "*.ngp(-.)"' \
+    '-pdf[save as pdf file]:file:_files -g "*.ngp(-.)"' \
+    '-ps[save as ps file]:file:_files -g "*.ngp(-.)"' \
+    '-eps[save as eps file]:file:_files -g "*.ngp(-.)"' \
+    '-svg[save as svg file]:file:_files -g "*.ngp(-.)"' \
+    '-gra[save as gra file]:file:_files -g "*.ngp(-.)"' \
+    '-p[print graph]:file:_files -g "*.ngp(-.)"' \
+    '-dialog[show print dialog (with -p option)]' \
+    '-n[output ngp-file to stdout]' \
+    '-h[Show this help message]' \
+    '--help[Show this help message]' \
+    '-v[Show version of Ngraph]' \
+    '--version[Show version of Ngraph]'

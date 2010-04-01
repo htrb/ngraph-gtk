@@ -1,0 +1,50 @@
+#! ngraph
+#
+new text
+text::x=3000
+text::y=6500  
+text::font="HelveticaBold"
+text::text="Demo #5A: ARROW"
+#
+new line
+put line points="4000 7000 4000 12000"
+put line width=500
+put line arrow=both
+put line arrow_length=36213
+put line arrow_width=30000
+#
+new line
+put line points="7000 7000 15000 12000"
+put line style="600 300 200 300"
+put line arrow_length=36213
+put line arrow_width=30000
+put line width=500
+put line arrow=begin
+#
+new line
+put line points="7000 12000 15000 7000"
+put line style="600 300 200 300"
+put line arrow_length=36213
+put line arrow_width=30000
+put line width=500
+put line arrow=end
+#
+for i in `seq 4 2 18`
+do
+  new line
+  put line points="10000 18000 ${i}000 12500"
+  put line width=${i}0
+  put line arrow=end
+done
+#
+for i in `seq 4 2 18`
+do
+  new line
+  put line arrow_length=80000
+  put line arrow_width=160000
+  put line points="10000 18000 ${i}000 23500"
+  put line width=${i}0
+  put line arrow=end
+done
+#
+new gra

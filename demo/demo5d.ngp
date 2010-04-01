@@ -1,0 +1,38 @@
+#! ngraph
+#
+new text
+text::x=3000
+text::y=6500  
+text::font="HelveticaBold"
+text::text="Demo #5D: CURVE"
+#
+STYLE=""
+drawcurve() {
+  for i in `seq 0 10`
+  do
+    new curve
+    put curve points:"3000 2000 10000 2000 15000 11000 20000 6000 \
+    15000 1000 10000 10000 3000 10000"
+    put curve R:$R G:$G B:$B
+    put curve interpolation:$INTP
+    put curve style:"$STYLE"
+    put curve width:20
+    exe curve move:"0 7000+${i}*500"
+  done
+}
+#
+R=0 G=256 B=256
+INTP=spline
+drawcurve
+R=0 G=128 B=256
+INTP=spline_close
+drawcurve
+STYLE="300 50 50 50"
+R=0 G=64 B=256
+INTP=bspline
+drawcurve
+R=0 G=0 B=256
+INTP=bspline_close
+drawcurve
+#
+new gra

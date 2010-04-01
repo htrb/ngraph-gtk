@@ -1,0 +1,4 @@
+new dialog
+dialog::message $1
+del dialog
+del system

@@ -1,0 +1,8 @@
+application/x-ngraph
+	ext: ngp
+
+application/x-ngraph-script
+	ext: nsc
+
+application/x-ngraph-graphic
+	ext: gra

@@ -1,0 +1,16 @@
+# calc.nsc written by S. ISHIZAKA. 1997/12
+#
+# This script assists plotting a mathematical function.
+#
+# The simplest add-in script using an external program.
+#
+SCRIPT=${system:0:temp_file}
+wish ${NGRAPHLIB}/calc.tcl "$SCRIPT"
+if [ -s "$SCRIPT" ];
+then
+  new shell
+  shell::shell "$SCRIPT"
+  del shell
+fi
+system:0:unlink_temp_file
+menu:0:clear

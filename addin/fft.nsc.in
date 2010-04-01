@@ -1,0 +1,13 @@
+#
+# fft.nsc written by S. ISHIZAKA. 1999/07
+#
+SCRIPT=${system:0:temp_file}
+wish $NGRAPHLIB/fft.tcl LIBDIRDEF/fft "$SCRIPT"
+if [ -f "$SCRIPT" ];
+then
+  new shell
+  shell::shell "$SCRIPT"
+  del shell
+fi
+system:0:unlink_temp_file
+menu:0:clear

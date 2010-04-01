@@ -1,0 +1,19 @@
+#! /usr/bin/ngraph -i 
+
+FILE="tmp"
+
+for obj in `object`
+do
+    echo '<h3>'$obj'</h3>'
+    echo '<pre>'
+    object $obj | grep -Ev -f objlist.txt
+    echo '</pre>'
+    echo
+done
+
+echo '<br>'
+echo '<hr>'
+echo '<br>'
+echo '</body></html>'
+
+del system

@@ -1,0 +1,77 @@
+#! ngraph
+
+set +e
+
+ID=${gra:viewer:id}
+
+new sarray name="FILE"
+for demo in demo1 demo2 demo3 demo4 demo5a demo5b demo5c demo5d demo5e
+do
+    sarray::add $demo
+done
+
+new sarray name="CAPTION"
+sarray::add "Demo #_1: COLOR(), RGB(), HSB() and MARKSIZE() FUNCTION"
+sarray::add "Demo #_2: LEAST SQUARE FIT"
+sarray::add "Demo #_3: AXIS DIVISION"
+sarray::add "Demo #_4: MULTI GRAPH"
+sarray::add "Demo #5_A: ARROW"
+sarray::add "Demo #5_B: MARK"
+sarray::add "Demo #5_C: TEXT"
+sarray::add "Demo #5_D: CURVE"
+sarray::add "Demo #5_E: AXIS"
+sarray::add "_Quit demo"
+
+new dialog
+dialog::title="demo"
+dialog::caption="select demonstration"
+dialog::select="0"
+
+while true
+do
+    FILE_INDEX=`get dialog: -field radio:sarray:CAPTION`
+    if [ -z "$FILE_INDEX" ]
+    then
+	break
+    fi
+
+    if [ "$FILE_INDEX" -ge ${sarray:FILE:num} ]
+    then
+	break
+    fi
+
+    demo=`get sarray:FILE -field get:$FILE_INDEX`
+    for drawrable in `derive -instance draw`
+    do
+	del ${drawrable}:0-!
+    done
+    gra:$ID:clear
+
+    . /usr/share/doc/Ngraph-gtk/demo/${demo}.ngp
+    ID2=${gra::id}
+    if [ $ID != $ID2 ]
+    then
+	gra:$ID:close
+	for field in top_margin left_margin zoom draw_obj
+	do
+	    cpy gra:$ID2,$ID $field
+	done
+	gra:$ID:open
+	del gra:$ID2
+    fi
+
+    menu::draw
+    dialog::select=`iexpr "($FILE_INDEX + 1) \\ ${sarray:CAPTION:num}"`
+done
+
+del dialog
+del sarray:FILE
+del sarray:CAPTION
+
+for drawrable in `derive -instance draw`
+do
+    del ${drawrable}:0-!
+done
+gra:$ID:clear
+
+set -e

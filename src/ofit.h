@@ -1,0 +1,12 @@
+#ifndef OFIT_HEADER
+#define OFIT_HEADER
+
+enum FIT_OBJ_TYPE {
+  FIT_TYPE_POLY,
+  FIT_TYPE_POW,
+  FIT_TYPE_EXP,
+  FIT_TYPE_LOG,
+  FIT_TYPE_USER,
+};
+
+#endif

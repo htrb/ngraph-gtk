@@ -1,0 +1,7 @@
+#define ERROPEN 100
+#define ERRBUSY 101
+#define ERRALOPEN 102
+#define ERRNODEVICE 103
+#define ERRILGC 104
+#define ERRGRABUSY 105
+#define ERRGRACLOSE 106

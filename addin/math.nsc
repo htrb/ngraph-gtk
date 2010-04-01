@@ -1,0 +1,19 @@
+# math.nsc written by S. ISHIZAKA. 1997/12
+#
+# Line-calculator using shell-builtin command "dexpr".
+#
+set +e
+new dialog
+MATH=${dialog::input:'Input mathematical expression'}
+if [ "$MATH" ]
+then
+    if result=`dexpr "$MATH"`
+    then
+	new text
+	result=`get text -field printf:"%G $result"`
+	del text
+	dialog::message:"$MATH=$result"
+	menu::echo:"Math: $MATH=$result"
+    fi
+fi
+del dialog

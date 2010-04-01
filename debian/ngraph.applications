@@ -1,0 +1,7 @@
+ngraph
+	command=ngraph
+	name=ngraph
+	can_open_multiple_files=false
+	expects_uris=false
+	requires_terminal=false
+	mime_types=image/x-ngraph

@@ -1,0 +1,39 @@
+# append.nsc written by S. ISHIZAKA. 1997/12
+#
+# This script reads and appends a NGP-file without clearing the present graph.
+#
+# This script uses rather special techniques. 
+# We don't recommend to edit this script.
+#
+
+if [ "$*" ]
+then
+  FILE=$*
+else
+  new dialog
+  FILE=${dialog::get_open_file:'ngp'}
+  del dialog
+fi
+if [ "$FILE" ]
+then
+  # hide exsisting 'axis', 'axisgrid' and 'file' instances
+  system:0:hide_instance axis axisgrid file
+  # execute file
+  new shell
+  shell::shell "$FILE"
+  del shell
+  # tighten connection between new instances
+  for i in `derive -instance file axis axisgrid`
+  do
+   exe ${i}:0-! tight
+  done
+  # recover hidden instances
+  system:0:recover_instance axis axisgrid file
+  # delete closed GRA instance
+  if [ ${gra::GC} = -1 ]
+  then
+    del gra
+  fi
+  menu:0:clear
+  menu:0:modified=true
+fi
