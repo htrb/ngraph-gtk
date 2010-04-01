@@ -1,12 +1,16 @@
 /**
  *
- * $Id: wmfapi.h,v 1.4 2009/07/13 09:59:00 hito Exp $
+ * $Id: wmfapi.h,v 1.5 2010/04/01 02:08:53 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
  * Original author: Satoshi ISHIZAKA
  *                  isizaka@msa.biglobe.ne.jp
  **/
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 typedef unsigned char BYTE;
 typedef unsigned short UINT;
@@ -177,22 +181,6 @@ BOOL SetWindowOrg(HDC hdc,INT X,INT Y);
 BOOL SetWindowExt(HDC hdc,INT nXExtent,INT nYExtent);
 void SetMapMode(HDC hdc,INT fnMapMode);
 void CloseMetaFile(HDC hdc,METAHEADER *mh);
-HDC CreateMetaFile(LPCTSTR lpszFile);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void CreateMetaFile(HDC dc);
+int chk_write(HDC fd, void *buf, int len);
 

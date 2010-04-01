@@ -1,6 +1,6 @@
 /**
  *
- * $Id: wmfapi.c,v 1.3 2009/03/31 09:10:51 hito Exp $
+ * $Id: wmfapi.c,v 1.4 2010/04/01 02:08:53 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -37,6 +37,15 @@ struct table {
     unsigned int num;
     char *data;
 } tbl;
+
+int
+chk_write(HDC fd, void *buf, int len)
+{
+  int r;
+
+  r = write(fd, buf, len);
+  return (r != len);
+}
 
 void tblinit(void)
 {
@@ -88,10 +97,10 @@ BOOL Polygon(HDC hdc,POINT *lpPoints,INT nCount)
   r.rdSize=4+nCount*2;
   r.rdFunction=0x0324;
   r.rdParm[0]=nCount;
-  write(hdc,&r,8);
+  chk_write(hdc,&r,8);
   for (i=0;i<nCount;i++) {
-    write(hdc,&(lpPoints[i].x),2);
-    write(hdc,&(lpPoints[i].y),2);
+    chk_write(hdc,&(lpPoints[i].x),2);
+    chk_write(hdc,&(lpPoints[i].y),2);
   }
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
@@ -109,7 +118,7 @@ BOOL Ellipse(HDC hdc,INT nLeftRect,INT nTopRect,INT nRightRect,INT nBottomRect)
   r.rdParm[1]=nRightRect;
   r.rdParm[2]=nTopRect;
   r.rdParm[3]=nLeftRect;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 
@@ -131,7 +140,7 @@ BOOL Arc(HDC hdc,INT nLeftRect,INT nTopRect,INT nRightRect,INT nBottomRect,
   r.rdParm[5]=nRightRect;
   r.rdParm[6]=nTopRect;
   r.rdParm[7]=nLeftRect;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 
@@ -153,7 +162,7 @@ BOOL Pie(HDC hdc,INT nLeftRect,INT nTopRect,INT nRightRect,INT nBottomRect,
   r.rdParm[5]=nRightRect;
   r.rdParm[6]=nTopRect;
   r.rdParm[7]=nLeftRect;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 
@@ -175,7 +184,7 @@ BOOL Chord(HDC hdc,INT nLeftRect,INT nTopRect,INT nRightRect,INT nBottomRect,
   r.rdParm[5]=nRightRect;
   r.rdParm[6]=nTopRect;
   r.rdParm[7]=nLeftRect;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 
@@ -192,7 +201,7 @@ void SetPixel(HDC hdc,INT X,INT Y,COLORREF crColor)
   r.rdParm[1]=crColor >> 16;
   r.rdParm[2]=Y;
   r.rdParm[3]=X;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 }
@@ -204,7 +213,7 @@ void SetPolyFillMode(HDC hdc,INT iPolyFillMode)
   r.rdSize=4;
   r.rdFunction=0x0106;
   r.rdParm[0]=iPolyFillMode;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 }
@@ -216,7 +225,7 @@ void SetBkMode(HDC hdc,INT iBkMode)
   r.rdSize=4;
   r.rdFunction=0x0102;
   r.rdParm[0]=iBkMode;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 }
@@ -228,7 +237,7 @@ void SetTextAlign(HDC hdc,UINT fMode)
   r.rdSize=4;
   r.rdFunction=0x012e;
   r.rdParm[0]=fMode;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 }
@@ -240,7 +249,7 @@ void SetTextCharacterExtra(HDC hdc,INT nCharExtra)
   r.rdSize=4;
   r.rdFunction=0x0108;
   r.rdParm[0]=nCharExtra;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 }
@@ -253,10 +262,10 @@ BOOL TextOut(HDC hdc,INT X,INT Y,LPCTSTR lpszString,UINT cbCount)
   r.rdSize=6+size;
   r.rdFunction=0x0521;
   r.rdParm[0]=cbCount;
-  write(hdc,&r,8);
-  write(hdc,lpszString,size*2);
-  write(hdc,&Y,2);
-  write(hdc,&X,2);
+  chk_write(hdc,&r,8);
+  chk_write(hdc,lpszString,size*2);
+  chk_write(hdc,&Y,2);
+  chk_write(hdc,&X,2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
   return TRUE;
@@ -269,7 +278,7 @@ void SetTextColor(HDC hdc,COLORREF crColor)
   r.rdFunction=0x0209;
   r.rdParm[0]=crColor & 0xffff;
   r.rdParm[1]=crColor >> 16;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 }
@@ -284,7 +293,7 @@ BOOL Rectangle(HDC hdc,INT nLeftRect,INT nTopRect,INT nRightRect,INT nBottomRect
   r.rdParm[1]=nRightRect;
   r.rdParm[2]=nTopRect;
   r.rdParm[3]=nLeftRect;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
   return TRUE;
@@ -298,7 +307,7 @@ BOOL MoveTo(HDC hdc,INT nX,INT nY)
   r.rdFunction=0x0214;
   r.rdParm[0]=nY;
   r.rdParm[1]=nX;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
   return TRUE;
@@ -312,7 +321,7 @@ BOOL LineTo(HDC hdc,INT nXEnd,INT nYEnd)
   r.rdFunction=0x0213;
   r.rdParm[0]=nYEnd;
   r.rdParm[1]=nXEnd;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
   return TRUE;
@@ -387,17 +396,17 @@ HGDIOBJ SelectObject(HDC hdc,void *hgdiobj)
         pen->Dc=hdc;
         r.rdSize=3+5;
         r.rdFunction=0x02fa;
-        write(hdc,&r,6);
-        write(hdc,&(pen->Pen.lopnStyle),sizeof(pen->Pen.lopnStyle));
-        write(hdc,&(pen->Pen.lopnWidth),sizeof(pen->Pen.lopnWidth));
-        write(hdc,&(pen->Pen.lopnColor),sizeof(pen->Pen.lopnColor));
+        chk_write(hdc,&r,6);
+        chk_write(hdc,&(pen->Pen.lopnStyle),sizeof(pen->Pen.lopnStyle));
+        chk_write(hdc,&(pen->Pen.lopnWidth),sizeof(pen->Pen.lopnWidth));
+        chk_write(hdc,&(pen->Pen.lopnColor),sizeof(pen->Pen.lopnColor));
         RECN+=r.rdSize;
         if (MAXREC<r.rdSize) MAXREC=r.rdSize;
       }
       r.rdSize=4;
       r.rdFunction=0x012d;
       r.rdParm[0]=pen->Index;
-      write(hdc,&r,r.rdSize*2);
+      chk_write(hdc,&r,r.rdSize*2);
       RECN+=r.rdSize;
       if (MAXREC<r.rdSize) MAXREC=r.rdSize;
       break;
@@ -408,17 +417,17 @@ HGDIOBJ SelectObject(HDC hdc,void *hgdiobj)
         brush->Dc=hdc;
         r.rdSize=3+4;
         r.rdFunction=0x02fc;
-        write(hdc,&r,6);
-        write(hdc,&(brush->Brush.lbStyle),sizeof(brush->Brush.lbStyle));
-        write(hdc,&(brush->Brush.lbColor),sizeof(brush->Brush.lbColor));
-        write(hdc,&(brush->Brush.lbHatch),sizeof(brush->Brush.lbHatch));
+        chk_write(hdc,&r,6);
+        chk_write(hdc,&(brush->Brush.lbStyle),sizeof(brush->Brush.lbStyle));
+        chk_write(hdc,&(brush->Brush.lbColor),sizeof(brush->Brush.lbColor));
+        chk_write(hdc,&(brush->Brush.lbHatch),sizeof(brush->Brush.lbHatch));
         RECN+=r.rdSize;
         if (MAXREC<r.rdSize) MAXREC=r.rdSize;
       }
       r.rdSize=4;
       r.rdFunction=0x012d;
       r.rdParm[0]=brush->Index;
-      write(hdc,&r,r.rdSize*2);
+      chk_write(hdc,&r,r.rdSize*2);
       RECN+=r.rdSize;
       if (MAXREC<r.rdSize) MAXREC=r.rdSize;
       break;
@@ -429,28 +438,28 @@ HGDIOBJ SelectObject(HDC hdc,void *hgdiobj)
         font->Dc=hdc;
         r.rdSize=3+25;
         r.rdFunction=0x02fb;
-        write(hdc,&r,6);
-        write(hdc,&(font->Font.lfHeight),sizeof(font->Font.lfHeight));
-        write(hdc,&(font->Font.lfWidth),sizeof(font->Font.lfWidth));
-        write(hdc,&(font->Font.lfEscapement),sizeof(font->Font.lfEscapement));
-        write(hdc,&(font->Font.lfOrientation),sizeof(font->Font.lfOrientation));
-        write(hdc,&(font->Font.lfWeight),sizeof(font->Font.lfWeight));
-        write(hdc,&(font->Font.lfItalic),sizeof(font->Font.lfItalic));
-        write(hdc,&(font->Font.lfUnderline),sizeof(font->Font.lfUnderline));
-        write(hdc,&(font->Font.lfStrikeOut),sizeof(font->Font.lfStrikeOut));
-        write(hdc,&(font->Font.lfCharSet),sizeof(font->Font.lfCharSet));
-        write(hdc,&(font->Font.lfOutPrecision),sizeof(font->Font.lfOutPrecision));
-        write(hdc,&(font->Font.lfClipPrecision),sizeof(font->Font.lfClipPrecision));
-        write(hdc,&(font->Font.lfQuality),sizeof(font->Font.lfQuality));
-        write(hdc,&(font->Font.lfPitchAndFamily),sizeof(font->Font.lfPitchAndFamily));
-        write(hdc,font->Font.lfFaceName,LF_FACESIZE);
+        chk_write(hdc,&r,6);
+        chk_write(hdc,&(font->Font.lfHeight),sizeof(font->Font.lfHeight));
+        chk_write(hdc,&(font->Font.lfWidth),sizeof(font->Font.lfWidth));
+        chk_write(hdc,&(font->Font.lfEscapement),sizeof(font->Font.lfEscapement));
+        chk_write(hdc,&(font->Font.lfOrientation),sizeof(font->Font.lfOrientation));
+        chk_write(hdc,&(font->Font.lfWeight),sizeof(font->Font.lfWeight));
+        chk_write(hdc,&(font->Font.lfItalic),sizeof(font->Font.lfItalic));
+        chk_write(hdc,&(font->Font.lfUnderline),sizeof(font->Font.lfUnderline));
+        chk_write(hdc,&(font->Font.lfStrikeOut),sizeof(font->Font.lfStrikeOut));
+        chk_write(hdc,&(font->Font.lfCharSet),sizeof(font->Font.lfCharSet));
+        chk_write(hdc,&(font->Font.lfOutPrecision),sizeof(font->Font.lfOutPrecision));
+        chk_write(hdc,&(font->Font.lfClipPrecision),sizeof(font->Font.lfClipPrecision));
+        chk_write(hdc,&(font->Font.lfQuality),sizeof(font->Font.lfQuality));
+        chk_write(hdc,&(font->Font.lfPitchAndFamily),sizeof(font->Font.lfPitchAndFamily));
+        chk_write(hdc,font->Font.lfFaceName,LF_FACESIZE);
         RECN+=r.rdSize;
         if (MAXREC<r.rdSize) MAXREC=r.rdSize;
       }
       r.rdSize=4;
       r.rdFunction=0x012d;
       r.rdParm[0]=font->Index;
-      write(hdc,&r,r.rdSize*2);
+      chk_write(hdc,&r,r.rdSize*2);
       RECN+=r.rdSize;
       if (MAXREC<r.rdSize) MAXREC=r.rdSize;
       break;
@@ -471,7 +480,7 @@ BOOL DeleteObject(void *hObject)
       r.rdSize=4;
       r.rdFunction=0x01f0;
       r.rdParm[0]=obj->Index;
-      write(obj->Dc,&r,r.rdSize*2);
+      chk_write(obj->Dc,&r,r.rdSize*2);
       tbldel(obj->Index);
       RECN+=r.rdSize;
       if (MAXREC<r.rdSize) MAXREC=r.rdSize;
@@ -489,7 +498,7 @@ BOOL SetWindowOrg(HDC hdc,INT X,INT Y)
   r.rdFunction=0x020b;
   r.rdParm[0]=Y;
   r.rdParm[1]=X;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
   return TRUE;
@@ -503,7 +512,7 @@ BOOL SetWindowExt(HDC hdc,INT nXExtent,INT nYExtent)
   r.rdFunction=0x020c;
   r.rdParm[0]=nYExtent;
   r.rdParm[1]=nXExtent;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
   return TRUE;
@@ -516,7 +525,7 @@ void SetMapMode(HDC hdc,INT fnMapMode)
   r.rdSize=4;
   r.rdFunction=0x0103;
   r.rdParm[0]=fnMapMode;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
 }
@@ -527,7 +536,7 @@ void CloseMetaFile(HDC hdc,METAHEADER *mh)
 
   r.rdSize=3;
   r.rdFunction=0;
-  write(hdc,&r,r.rdSize*2);
+  chk_write(hdc,&r,r.rdSize*2);
   RECN+=r.rdSize;
   if (MAXREC<r.rdSize) MAXREC=r.rdSize;
   mh->mtType=1;
@@ -537,17 +546,15 @@ void CloseMetaFile(HDC hdc,METAHEADER *mh)
   mh->mtNoObjects=tbl.num;
   mh->mtMaxRecord=MAXREC;
   mh->mtNoParameters=0;
-  close(hdc);
+
+  lseek(hdc, 0, SEEK_SET);
   tbldone();
 }
 
-HDC CreateMetaFile(LPCTSTR lpszFile)
+void
+CreateMetaFile(HDC dc)
 {
-  HDC dc;
-
   tblinit();
   RECN=0;
   MAXREC=0;
-  dc=open(lpszFile,O_CREAT|O_TRUNC|O_WRONLY,S_IREAD|S_IWRITE);
-  return dc;
 }

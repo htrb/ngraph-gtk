@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2ps.c,v 1.6 2009/06/18 11:32:06 hito Exp $
+ * $Id: gra2ps.c,v 1.7 2010/04/01 02:08:53 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -624,7 +624,7 @@ void setbbminmax(int x1,int y1,int x2,int y2,int lw)
 
 void getboundingbox(char code,int *cpar,char *cstr)
 {
-  int i,lw;
+  int i,n,lw;
   double x,y,csin,ccos;
   int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
   int c1,c2;
@@ -722,7 +722,8 @@ void getboundingbox(char code,int *cpar,char *cstr)
     csin=sin(MPI*bdir/18000.0);
     ccos=cos(MPI*bdir/18000.0);
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i<n) {
       ch=0;
       if (cstr[i]=='\\') {
         if (cstr[i+1]=='x') {
@@ -787,7 +788,8 @@ void getboundingbox(char code,int *cpar,char *cstr)
     csin=sin(MPI*bdir/18000.0);
     ccos=cos(MPI*bdir/18000.0);
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i < n) {
       if (niskanji((unsigned char)cstr[i]) && (cstr[i+1]!='\0')) {
         w=charwidth(cstr[i],bfontalias,bpt);
         h=charheight(bfontalias,bpt);
@@ -825,7 +827,7 @@ void draw(char code,int *cpar,char *cstr)
   struct tm *ltime;
   char *buf,*fontname;
   FILE *fp;
-  int i,a;
+  int i,n,a;
   struct fontmap *fcur;
   unsigned int jis,R,G,B;
   int c1,c2,sx,sy;
@@ -1097,7 +1099,8 @@ void draw(char code,int *cpar,char *cstr)
     }
     printfstdout("%s (",textspace);
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i < n) {
       if (cstr[i]=='\\') {
         if (cstr[i+1]=='x') {
           if (tolower(cstr[i+2])>='a') c1=tolower(cstr[i+2])-'a'+10;
@@ -1145,7 +1148,8 @@ void draw(char code,int *cpar,char *cstr)
     }
     printfstdout("%s <",textspace);
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i < n) {
       if (niskanji((unsigned char)cstr[i]) && (cstr[i+1]!='\0')) {
         if (!sjis)
           jis=njms2jis(((unsigned char)cstr[i] << 8)+(unsigned char)cstr[i+1]);
@@ -1244,7 +1248,7 @@ int main(int argc,char **argv)
   printfstderr("Ngraph - PostScript(R) Printer Driver version: "VERSION"\n");
 
 #ifndef WINDOWS
-  if ((lib=getenv("NGRAPHLIB"))!=NULL) {
+  if ((lib=getenv("NGRAPHCONF"))!=NULL) {
     if ((libdir=(char *)malloc(strlen(lib)+1))==NULL) exit(1);
     strcpy(libdir,lib);
   } else {
@@ -1265,7 +1269,7 @@ int main(int argc,char **argv)
     strcpy(homedir,libdir);
   }
 #else
-  if ((lib=getenv("NGRAPHLIB"))!=NULL) {
+  if ((lib=getenv("NGRAPHCONF"))!=NULL) {
     if ((libdir=(char *)malloc(strlen(lib)+1))==NULL) exit(1);
     strcpy(libdir,lib);
   } else {

@@ -88,7 +88,7 @@ object
 <ul><pre>permission     field_name   field_type</pre></ul>
 の形式で表示されています。
 <br>
-<h3>object オブジェクト</h3>
+<h3>object</h3>
 <pre>
 object: object
 alias:
@@ -105,15 +105,15 @@ rw-             name    char*
 r-x             save    *char( char *[] )
 </pre>
 
-<h3>system オブジェクト</h3>
+<h3>system</h3>
 <pre>
 object: system
 alias:
 version: 6.03.51.gtk-41
 parent: object
 object id: 1
-number of fields: 28
-size of instance: 184
+number of fields: 29
+size of instance: 192
 r--               id    int
 r--              oid    int
 r-x             save    *char( char *[] )
@@ -124,6 +124,7 @@ r--          version    char*
 r--        copyright    char*
 r--           e-mail    char*
 r--              web    char*
+r--         compiler    char*
 rw-      login_shell    char*
 rw-              cwd    char*
 rw-      ignore_path    bool
@@ -144,7 +145,7 @@ r-x recover_instance    void( char *[] )
 r-x           resize    void( int[] )
 </pre>
 
-<h3>shell オブジェクト</h3>
+<h3>shell</h3>
 <pre>
 object: shell
 alias:
@@ -165,7 +166,7 @@ r-x            shell    void( char *[] )
 ---           _local    void*
 </pre>
 
-<h3>gra オブジェクト</h3>
+<h3>gra</h3>
 <pre>
 object: gra
 alias:
@@ -198,7 +199,7 @@ r--          _device    char*
 r-x             draw    void( void )
 </pre>
 
-<h3>gra2 オブジェクト</h3>
+<h3>gra2</h3>
 <pre>
 object: gra2
 alias:
@@ -220,7 +221,7 @@ rw-       delete_gra    bool
 r-x       disconnect    void( void )
 </pre>
 
-<h3>gra2null オブジェクト</h3>
+<h3>gra2null</h3>
 <pre>
 object: gra2null
 alias:
@@ -246,7 +247,7 @@ r-x       disconnect    void( void )
 ---     _chardescent    int( )
 </pre>
 
-<h3>gra2file オブジェクト</h3>
+<h3>gra2file</h3>
 <pre>
 object: gra2file
 alias:
@@ -272,7 +273,7 @@ rw-             file    char*
 ---          _output    void( )
 </pre>
 
-<h3>gra2prn オブジェクト</h3>
+<h3>gra2prn</h3>
 <pre>
 object: gra2prn
 alias:
@@ -300,7 +301,7 @@ rw-              prn    char*
 ---          _output    void( )
 </pre>
 
-<h3>gra2cairo オブジェクト</h3>
+<h3>gra2cairo</h3>
 <pre>
 object: gra2cairo
 alias:
@@ -332,7 +333,7 @@ rw-        antialias    enum( none default gray )
 ---           _local    void*
 </pre>
 
-<h3>gra2cairofile オブジェクト</h3>
+<h3>gra2cairofile</h3>
 <pre>
 object: gra2cairofile
 alias:
@@ -368,7 +369,7 @@ rw-           format    enum( ps2 ps3 eps2 eps3 pdf svg1.1 svg1.2 png )
 ---     _chardescent    int( )
 </pre>
 
-<h3>gra2gtkprint オブジェクト</h3>
+<h3>gra2gtkprint</h3>
 <pre>
 object: gra2gtkprint
 alias:
@@ -401,7 +402,7 @@ rw-        antialias    enum( none default gray )
 ---         _context    void( )
 </pre>
 
-<h3>gra2gtk オブジェクト</h3>
+<h3>gra2gtk</h3>
 <pre>
 object: gra2gtk
 alias: gra2win:gra2x11
@@ -440,7 +441,7 @@ rw-               BB    int
 ---          _evloop    void( )
 </pre>
 
-<h3>gra2gdk オブジェクト</h3>
+<h3>gra2gdk</h3>
 <pre>
 object: gra2gdk
 alias:
@@ -473,7 +474,7 @@ rw-        antialias    enum( none default gray )
 ---             next    void*
 </pre>
 
-<h3>menu オブジェクト</h3>
+<h3>menu</h3>
 <pre>
 object: menu
 alias: winmenu:gtkmenu
@@ -523,7 +524,7 @@ r-x    toggle_window    void( int )
 ---          _evloop    void( )
 </pre>
 
-<h3>io オブジェクト</h3>
+<h3>io</h3>
 <pre>
 object: io
 alias:
@@ -558,7 +559,7 @@ r-x              eof    bool( void )
 ---           _local    void*
 </pre>
 
-<h3>int オブジェクト</h3>
+<h3>int</h3>
 <pre>
 object: int
 alias:
@@ -577,7 +578,7 @@ r-x             save    *char( char *[] )
 rw-                @    int
 </pre>
 
-<h3>double オブジェクト</h3>
+<h3>double</h3>
 <pre>
 object: double
 alias:
@@ -596,7 +597,7 @@ r-x             save    *char( char *[] )
 rw-                @    double
 </pre>
 
-<h3>string オブジェクト</h3>
+<h3>string</h3>
 <pre>
 object: string
 alias:
@@ -615,7 +616,7 @@ r-x             save    *char( char *[] )
 rw-                @    char*
 </pre>
 
-<h3>iarray オブジェクト</h3>
+<h3>iarray</h3>
 <pre>
 object: iarray
 alias:
@@ -640,7 +641,7 @@ r-x              ins    void( int int )
 r-x              del    void( int )
 </pre>
 
-<h3>darray オブジェクト</h3>
+<h3>darray</h3>
 <pre>
 object: darray
 alias:
@@ -665,7 +666,7 @@ r-x              ins    void( int double )
 r-x              del    void( int )
 </pre>
 
-<h3>sarray オブジェクト</h3>
+<h3>sarray</h3>
 <pre>
 object: sarray
 alias:
@@ -690,7 +691,7 @@ r-x              ins    void( int char * )
 r-x              del    void( int )
 </pre>
 
-<h3>math オブジェクト</h3>
+<h3>math</h3>
 <pre>
 object: math
 alias:
@@ -739,7 +740,7 @@ r-x            clear    void( )
 ---           _local    void*
 </pre>
 
-<h3>fit オブジェクト</h3>
+<h3>fit</h3>
 <pre>
 object: fit
 alias:
@@ -809,7 +810,7 @@ r-x             calc    *char( double )
 ---           _local    void*
 </pre>
 
-<h3>prm オブジェクト</h3>
+<h3>prm</h3>
 <pre>
 object: prm
 alias:
@@ -831,7 +832,7 @@ rw-      ignore_path    bool
 r-x             load    void( )
 </pre>
 
-<h3>draw オブジェクト</h3>
+<h3>draw</h3>
 <pre>
 object: draw
 alias:
@@ -858,7 +859,7 @@ rw-      redraw_flag    bool
 ---       redraw_num    int
 </pre>
 
-<h3>axisgrid オブジェクト</h3>
+<h3>axisgrid</h3>
 <pre>
 object: axisgrid
 alias:
@@ -899,7 +900,7 @@ r-x             draw    void( int )
 r-x            tight    void( )
 </pre>
 
-<h3>axis オブジェクト</h3>
+<h3>axis</h3>
 <pre>
 object: axis
 alias:
@@ -1006,7 +1007,7 @@ r-x    get_numbering    void( )
 r-x             save    *char( char *[] )
 </pre>
 
-<h3>file オブジェクト</h3>
+<h3>file</h3>
 <pre>
 object: file
 alias: data
@@ -1132,7 +1133,7 @@ r-x      output_file    void( char * int bool )
 ---           _local    void*
 </pre>
 
-<h3>merge オブジェクト</h3>
+<h3>merge</h3>
 <pre>
 object: merge
 alias:
@@ -1179,7 +1180,7 @@ r--              ext    char*
 ---           _local    void*
 </pre>
 
-<h3>legend オブジェクト</h3>
+<h3>legend</h3>
 <pre>
 object: legend
 alias:
@@ -1210,7 +1211,7 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>rectangle オブジェクト</h3>
+<h3>rectangle</h3>
 <pre>
 object: rectangle
 alias:
@@ -1256,7 +1257,7 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>line オブジェクト</h3>
+<h3>line</h3>
 <pre>
 object: line
 alias:
@@ -1299,7 +1300,7 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>curve オブジェクト</h3>
+<h3>curve</h3>
 <pre>
 object: curve
 alias:
@@ -1341,7 +1342,7 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>arc オブジェクト</h3>
+<h3>arc</h3>
 <pre>
 object: arc
 alias:
@@ -1386,7 +1387,7 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>polygon オブジェクト</h3>
+<h3>polygon</h3>
 <pre>
 object: polygon
 alias:
@@ -1427,7 +1428,7 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>mark オブジェクト</h3>
+<h3>mark</h3>
 <pre>
 object: mark
 alias:
@@ -1470,7 +1471,7 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>text オブジェクト</h3>
+<h3>text</h3>
 <pre>
 object: text
 alias:
@@ -1515,7 +1516,7 @@ r-x            match    bool( int int int int int )
 r-x      save_config    void( )
 </pre>
 
-<h3>dialog オブジェクト</h3>
+<h3>dialog</h3>
 <pre>
 object: dialog
 alias:

@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2wmf.c,v 1.7 2009/06/18 11:32:06 hito Exp $
+ * $Id: gra2wmf.c,v 1.8 2010/04/01 02:08:53 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -20,6 +20,8 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <unistd.h>
+#include <glib.h>
+#include <glib/gstdio.h>
 
 #include "dir_defs.h"
 
@@ -34,9 +36,6 @@
 #define NSTRLEN 256
 #define LINETOLIMIT 500
 #define VERSION "1.00.01"
-
-#define TRUE  1
-#define FALSE 0
 
 #define FONT_ROMAN 0
 #define FONT_BOLD 1
@@ -623,7 +622,7 @@ void setbbminmax(int x1,int y1,int x2,int y2,int lw)
 
 void getboundingbox(char code,int *cpar,char *cstr)
 {
-  int i,lw;
+  int i,n,lw;
   double x,y,csin,ccos;
   int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
   int c1,c2;
@@ -721,7 +720,8 @@ void getboundingbox(char code,int *cpar,char *cstr)
     csin=sin(bdir/18000.0*MPI);
     ccos=cos(bdir/18000.0*MPI);
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i < n) {
       if ((cstr[i]=='\\') && (cstr[i+1]=='x')) {
         if (toupper(cstr[i+2])>='A') c1=toupper(cstr[i+2])-'A'+10;
         else c1=cstr[i+2]-'0';
@@ -763,7 +763,8 @@ void getboundingbox(char code,int *cpar,char *cstr)
     csin=sin(bdir/18000.0*MPI);
     ccos=cos(bdir/18000.0*MPI);
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i < n) {
       if (niskanji((unsigned char)cstr[i]) && (cstr[i+1]!='\0')) {
         w=charwidth((((unsigned char)cstr[i+1])<<8)+(unsigned char)cstr[i],
                        bfontalias,bpt);
@@ -871,7 +872,7 @@ void draw(char code,int *cpar,char *cstr)
   HFONT TmpFont;
   HDC DC;
   unsigned int cap,join;
-  int i,R,G,B;
+  int i,n,R,G,B;
   double Theta1,Theta2;
   POINT *Points;
   int italic;
@@ -1145,7 +1146,7 @@ void draw(char code,int *cpar,char *cstr)
       IDFont.lfWeight=0;
       IDFont.lfItalic=0;
     }
-    strcpy(IDFont.lfFaceName,fontname);
+    strcpy((char *) IDFont.lfFaceName, fontname);
     if ((TmpFont=CreateFontIndirect(&IDFont))!=NULL) {
       SelectObject(DC,TmpFont);
       DeleteObject(TheFont);
@@ -1161,7 +1162,8 @@ void draw(char code,int *cpar,char *cstr)
     if (!loadfontf) break;
     if ((s=nstrnew())==NULL) break;
     i=0;
-    while (i<strlen(cstr)) {
+    n = strlen(cstr);
+    while (i < n) {
       if (cstr[i]=='\\') {
         if (cstr[i+1]=='x') {
           if (toupper(cstr[i+2])>='A') ch[0]=toupper(cstr[i+2])-'A'+10;
@@ -1192,7 +1194,8 @@ void draw(char code,int *cpar,char *cstr)
     TextOut(DC,dot2pixelx(nround(x0)),
                dot2pixely(nround(y0)),s,strlen(s));
     fontwidth=0;
-    for (i=0;i<strlen(s);i++) {
+    n = strlen(s);
+    for (i = 0; i < n; i++) {
       fontwidth+=charwidth((unsigned char)s[i],fontalias,fontsize/25.4*72);
       fontwidth+=fontspace;
     }
@@ -1209,7 +1212,8 @@ void draw(char code,int *cpar,char *cstr)
     TextOut(DC,dot2pixelx(nround(x0)),
                dot2pixely(nround(y0)),cstr,strlen(cstr));
     fontwidth=0;
-    for (i=0;i<strlen(cstr);i+=2) {
+    n = strlen(cstr);
+    for (i = 0; i < n; i += 2) {
       fontwidth+=charwidth((((unsigned char)cstr[i+1])<<8)+(unsigned char)cstr[i],
                            fontalias,fontsize/25.4*72);
       fontwidth+=fontspace;
@@ -1366,20 +1370,21 @@ int main(int argc,char **argv)
 {
   int i;
   char *lib,*home;
-  char *filename,*tmpfile,*metafile;
+  char *filename,*metafile;
 
   int sx,sy,left,right,top,bottom;
   HDC DC;
-  int sd1,sd2,len;
+  int sd2,len;
   METAFILEHEADER MetaHeader;
   METAHEADER mh;
   WORD *Header;
   FILE *fp;
-  char *buf,buf2[512];
+  char *buf,buf2[2048];
+  gchar tmpfile[] = "GMXXXXXX";
 
   printfstderr("Ngraph - Windows(R) Metafile Driver: version "VERSION"\n");
 
-  if ((lib=getenv("NGRAPHLIB"))!=NULL) {
+  if ((lib=getenv("NGRAPHCONF"))!=NULL) {
     if ((libdir=(char *)malloc(strlen(lib)+1))==NULL) exit(1);
     strcpy(libdir,lib);
   } else {
@@ -1494,54 +1499,66 @@ int main(int argc,char **argv)
   MetaHeader.checksum= *(Header+0) ^ *(Header+1) ^ *(Header+2) ^ 
                        *(Header+3) ^ *(Header+4) ^ *(Header+5) ^
                        *(Header+6) ^ *(Header+7) ^ *(Header+8) ^ *(Header+9);
-  if ((tmpfile=tempnam(NULL,"GR2WM"))==NULL) {
+
+  DC = g_mkstemp_full(tmpfile, O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+  if (DC < 0) {
     printfstderr("error: open temp file.");
     exit(1);
   }
-  if ((DC=CreateMetaFile(tmpfile))<0) {
-    printfstderr("error: file open `%s'.",tmpfile);
-    exit(1);
-  }
+
+  CreateMetaFile(DC);
+
   SetMapMode(DC,MM_ANISOTROPIC);
   SetWindowExt(DC,right*windpi/2540,bottom*windpi/2540);
   SetWindowOrg(DC,0,0);
 
   PrintPage(DC,filename,bminx*windpi/2540,bminy*windpi/2540);
 
-  CloseMetaFile(DC,&mh);
-  sd1=open(tmpfile,O_RDONLY,S_IREAD|S_IWRITE);
-  if (sd1<0) {
-    printfstderr("error: file open `%s'.",tmpfile);
-    exit(1);
+  CloseMetaFile(DC, &mh);
+
+  sd2=open(metafile,O_CREAT|O_TRUNC|O_WRONLY | O_BINARY,S_IREAD|S_IWRITE);
+  if (sd2<0) {
+    printfstderr("error: file open `%s'.",metafile);
+    goto ErrExit:
   }
-  sd2=open(metafile,O_CREAT|O_TRUNC|O_WRONLY,S_IREAD|S_IWRITE);
-  if (sd2<0) {    printfstderr("error: file open `%s'.",metafile);
-    exit(1);
+
+  chk_write(sd2,&(MetaHeader.key),sizeof(MetaHeader.key));
+  chk_write(sd2,&(MetaHeader.hmf),sizeof(MetaHeader.hmf));
+  chk_write(sd2,&(MetaHeader.bbox),sizeof(MetaHeader.bbox));
+  chk_write(sd2,&(MetaHeader.inch),sizeof(MetaHeader.inch));
+  chk_write(sd2,&(MetaHeader.reserved),sizeof(MetaHeader.reserved));
+  chk_write(sd2,&(MetaHeader.checksum),sizeof(MetaHeader.checksum));
+  chk_write(sd2,&(mh.mtType),sizeof(mh.mtType));
+  chk_write(sd2,&(mh.mtHeaderSize),sizeof(mh.mtHeaderSize));
+  chk_write(sd2,&(mh.mtVersion),sizeof(mh.mtVersion));
+  chk_write(sd2,&(mh.mtSize),sizeof(mh.mtSize));
+  chk_write(sd2,&(mh.mtNoObjects),sizeof(mh.mtNoObjects));
+  chk_write(sd2,&(mh.mtMaxRecord),sizeof(mh.mtMaxRecord));
+
+  if (chk_write(sd2,&(mh.mtNoParameters),sizeof(mh.mtNoParameters))) { 
+    printfstderr("error: write file `%s'.", metafile);
+    goto ErrExit:
   }
-  write(sd2,&(MetaHeader.key),sizeof(MetaHeader.key));
-  write(sd2,&(MetaHeader.hmf),sizeof(MetaHeader.hmf));
-  write(sd2,&(MetaHeader.bbox),sizeof(MetaHeader.bbox));
-  write(sd2,&(MetaHeader.inch),sizeof(MetaHeader.inch));
-  write(sd2,&(MetaHeader.reserved),sizeof(MetaHeader.reserved));
-  write(sd2,&(MetaHeader.checksum),sizeof(MetaHeader.checksum));
-  write(sd2,&(mh.mtType),sizeof(mh.mtType));
-  write(sd2,&(mh.mtHeaderSize),sizeof(mh.mtHeaderSize));
-  write(sd2,&(mh.mtVersion),sizeof(mh.mtVersion));
-  write(sd2,&(mh.mtSize),sizeof(mh.mtSize));
-  write(sd2,&(mh.mtNoObjects),sizeof(mh.mtNoObjects));
-  write(sd2,&(mh.mtMaxRecord),sizeof(mh.mtMaxRecord));
-  write(sd2,&(mh.mtNoParameters),sizeof(mh.mtNoParameters));
-  while ((len=read(sd1,buf2,256))>0) {
-    write(sd2,buf2,len);
+
+  while ((len=read(DC,buf2,sizeof(buf2)))>0) {
+    if (chk_write(sd2,buf2,len)) {
+      printfstderr("error: write file `%s'.", metafile);
+      goto ErrExit:
+    }
   }
-  close(sd1);
+  close(DC);
   close(sd2);
-  unlink(tmpfile);
-  free(tmpfile);
+
+  g_unlink(tmpfile);
 
   free(libdir);
   free(homedir);
   return 0;
-}
 
+ ErrExit:
+  close(DC);
+  g_unlink(tmpfile);
+
+  return 1;
+}
 

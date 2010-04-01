@@ -4,9 +4,9 @@ FILE="tmp"
 
 for obj in `object`
 do
-    echo '<h3>'$obj' オブジェクト</h3>'
+    echo '<h3>'$obj'</h3>'
     echo '<pre>'
-    object $obj | grep -v -e "current instance:" -e "last instance id:"
+    object $obj | grep -Ev -f objlist.txt
     echo '</pre>'
     echo
 done
