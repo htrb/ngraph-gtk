@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.h,v 1.37 2010/03/04 08:30:17 hito Exp $
+ * $Id: ox11menu.h,v 1.38 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -38,14 +38,14 @@
 extern int Globallock;
 extern struct savedstdio GtkIOSave;
 
-extern void mgtkdisplaydialog(char *str);
-extern void mgtkdisplaystatus(char *str);
-extern int mgtkputstderr(char *s);
+extern void mgtkdisplaydialog(const char *str);
+extern void mgtkdisplaystatus(const char *str);
+extern int mgtkputstderr(const char *s);
 extern int mgtkprintfstderr(char *fmt, ...);
-extern int mgtkputstdout(char *s);
+extern int mgtkputstdout(const char *s);
 extern int mgtkprintfstdout(char *fmt, ...);
 extern int mgtkinterrupt(void);
-extern int mgtkinputyn(char *mes);
+extern int mgtkinputyn(const char *mes);
 
 enum paper_id {
   PAPER_ID_A3,
@@ -158,12 +158,12 @@ void mx_clear(GdkRegion *region);
 void mx_inslist(struct objlist *obj, char *inst,
 		struct objlist *aobj, char *ainst, char *afield, int addn);
 void mx_dellist(struct objlist *obj, char *inst, int deln);
-void mgtkdisplaydialog(char *str);
-void mgtkdisplaystatus(char *str);
-int mgtkputstderr(char *s);
+void mgtkdisplaydialog(const char *str);
+void mgtkdisplaystatus(const char *str);
+int mgtkputstderr(const char *s);
 int mgtkprintfstderr(char *fmt, ...);
 int mgtkinterrupt(void);
-int mgtkinputyn(char *mes);
+int mgtkinputyn(const char *mes);
 void initwindowconfig(void);
 int mgtkwindowconfig(void);
 void menuadddrawrable(struct objlist *parent, struct narray *drawrable);

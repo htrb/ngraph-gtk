@@ -12,11 +12,13 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	omerge.c opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c	\
 	oshell.c ostring.c osystem.c otext.c otext.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	gettext.h common.h nhash.h nhash.c strconv.c strconv.h oio.c
+	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h
 
 pkglib_PROGRAMS = terminal
 terminal_SOURCES = terminal.c
 
-ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GSL_LIBS)
+ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 
-ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -D_FORTIFY_SOURCE
+ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -D_FORTIFY_SOURCE -DCCNAME='"'$(CC)'"'
+
+terminal_CFLAGS = $(GTK_CFLAGS)

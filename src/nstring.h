@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.h,v 1.4 2009/11/16 09:13:04 hito Exp $
+ * $Id: nstring.h,v 1.5 2010/04/01 06:08:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,7 +37,7 @@ int strcmp0(const char *s1,const char *s2);
 int strcmp2(char *s1,char *s2);
 #define WILD_PATHNAME 2
 #define WILD_PERIOD 4
-int wildmatch(char *pat,char *s,int flags);
+int wildmatch(const char *pat, const char *s,int flags);
 char *getitok(char **s,int *len,char *ifs);
 char *getitok2(char **s,int *len,char *ifs);
 

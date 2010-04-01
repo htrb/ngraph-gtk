@@ -14,8 +14,8 @@ fi
 
 TARGET=`basename $1 .in`
 
-cat $1 | sed -e s!DOCDIRDEF!$DOCDIR!g \
-             -e s!LIBDIRDEF!$LIBDIR!g \
-             -e s!CONFDIRDEF!$CONFDIR!g > $TARGET
+cat $1 | sed -e "s!DOCDIRDEF!$DOCDIR!g" \
+             -e "s!LIBDIRDEF!$LIBDIR!g" \
+             -e "s!CONFDIRDEF!$CONFDIR!g" > $TARGET
 
 echo $CONFDIR

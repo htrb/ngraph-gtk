@@ -11,34 +11,6 @@
 #include "x11menu.h"
 #include "x11gui.h"
 
-char *
-filename_from_utf8(const char *str)
-{
-  char *ptr;
-
-  if (str == NULL) {
-    return NULL;
-  }
-
-  ptr = g_filename_from_utf8(str, -1, NULL, NULL, NULL);
-
-  return ptr;
-}
-
-char *
-filename_to_utf8(const char *str)
-{
-  char *ptr;
-
-  if (str == NULL) {
-    return NULL;
-  }
-
-  ptr = g_filename_to_utf8(str, -1, NULL, NULL, NULL);
-
-  return ptr;
-}
-
 GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
 {
@@ -109,35 +81,22 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
 int
 entry_set_filename(GtkWidget *w, char *filename)
 {
-  char *utf8filename = NULL;
-
-  if (! g_utf8_validate(filename, -1, NULL)) {
-    utf8filename = filename_to_utf8(filename);
-    if (utf8filename == NULL) {
-      message_box(NULL, _("Couldn't convert filename to UTF-8."), NULL, RESPONS_OK);
-      return 1;
-    }
-    filename = utf8filename;
-  }
-
   gtk_entry_set_text(GTK_ENTRY(w), filename);
 
-  g_free(utf8filename);
   return 0;
 }
 
 char *
 entry_get_filename(GtkWidget *w)
 {
-  char *filename;
   const char *utf8filename;
 
   utf8filename = gtk_entry_get_text(GTK_ENTRY(w));
-  if (utf8filename == NULL)
+  if (utf8filename == NULL) {
     return NULL;
+  }
 
-  filename = filename_from_utf8(utf8filename);
-  return filename;
+  return g_strdup(utf8filename);
 }
 
 GtkWidget *

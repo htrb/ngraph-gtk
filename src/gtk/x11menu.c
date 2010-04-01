@@ -1,6 +1,6 @@
 /* --*-coding:utf-8-*-- */
 /* 
- * $Id: x11menu.c,v 1.115 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11menu.c,v 1.116 2010/04/01 06:08:23 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -758,6 +758,8 @@ create_recent_graph_menu(GtkWidget *parent)
 
   filter = gtk_recent_filter_new();
   gtk_recent_filter_add_application(filter, AppName);
+  gtk_recent_filter_set_name(filter, "NGP file");
+  gtk_recent_filter_add_pattern(filter, "*.ngp");
 
   gtk_recent_chooser_menu_set_show_numbers(GTK_RECENT_CHOOSER_MENU(recent), TRUE);
 
@@ -1005,17 +1007,14 @@ show_file_menu_cb(GtkWidget *w, gpointer user_data)
   if (RecentData)
     gtk_widget_set_sensitive(RecentData, num > 0);
 
-  if (str == NULL)
+  if (str == NULL) {
     str = g_string_new("");
+  }
 
   for (i = 0; i < MENU_HISTORY_NUM; i++) {
     if (i < num) {
-      char *ptr;
-
       label = gtk_bin_get_child(GTK_BIN(NgraphApp.fhistory[i]));
-      ptr = filename_to_utf8(data[i]);
-      g_string_printf(str, "_%d: %s", i, CHK_STR(ptr));
-      g_free(ptr);
+      g_string_printf(str, "_%d: %s", i, CHK_STR(data[i]));
       add_underscore(str);
       gtk_label_set_text_with_mnemonic(GTK_LABEL(label), str->str);
       gtk_widget_show(GTK_WIDGET(NgraphApp.fhistory[i]));
@@ -1564,14 +1563,14 @@ createmenu(GtkMenuBar *parent)
     return;
 
   filename = g_strdup_printf("%s/%s", home, KEYMAP_FILE);
-  if (access(filename, R_OK) == 0) {
+  if (naccess(filename, R_OK) == 0) {
     gtk_accel_map_load(filename);
   }
   g_free(filename);
 }
 
 static void
-createpixmap(GtkWidget *win, int n, struct command_data *data)
+createpixmap(int n, struct command_data *data)
 {
   GdkPixbuf *pixbuf;
   int i;
@@ -1587,10 +1586,10 @@ createpixmap(GtkWidget *win, int n, struct command_data *data)
 }
 
 static void
-create_toolbar_pixmap(GtkWidget *win)
+create_toolbar_pixmap(void)
 {
-  createpixmap(win, COMMAND1_NUM, Command1_data);
-  createpixmap(win, COMMAND2_NUM, Command2_data);
+  createpixmap(COMMAND1_NUM, Command1_data);
+  createpixmap(COMMAND2_NUM, Command2_data);
 }
 
 #define MARK_PIX_SIZE 24
@@ -1645,7 +1644,7 @@ free_markpixmap(void)
 }
 
 static void
-createicon(GtkWidget *win)
+createicon(void)
 {
   GList *list = NULL;
   GdkPixbuf *pixbuf;
@@ -1862,6 +1861,32 @@ set_widget_visibility(int cross)
   ViewCross(cross);
 }
 
+static GtkWidget *
+create_message_box(GtkWidget **label1, GtkWidget **label2)
+{
+  GtkWidget *frame, *w, *hbox;
+
+  frame = gtk_frame_new(NULL);
+  gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+
+  hbox = gtk_hbox_new(FALSE, 4);
+
+  w = gtk_label_new(NULL);
+  gtk_misc_set_alignment(GTK_MISC(w), 1.0, 0.5);
+  gtk_label_set_width_chars(GTK_LABEL(w), 16);
+  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  *label1 = w;
+
+  w = gtk_label_new(NULL);
+  gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
+  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
+  *label2 = w;
+
+  gtk_container_add(GTK_CONTAINER(frame), hbox);
+
+  return frame;
+}
+
 static void
 setupwindow(void)
 {
@@ -1924,9 +1949,12 @@ setupwindow(void)
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
   NgraphApp.Message = gtk_statusbar_new();
-  NgraphApp.Message1 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message1");
-  NgraphApp.Message2 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message2");
+  gtk_box_pack_end(GTK_BOX(NgraphApp.Message),
+		   create_message_box(&NgraphApp.Message_pos, &NgraphApp.Message_extra),
+		   FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), NgraphApp.Message, FALSE, FALSE, 0);
+
+  NgraphApp.Message1 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message1");
 
   createcommand1(GTK_TOOLBAR(command1));
   createcommand2(GTK_TOOLBAR(command2));
@@ -2161,31 +2189,28 @@ application(char *file)
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);
 
-  gtk_widget_show_all(GTK_WIDGET(TopLevel));
-  reset_event();
-
-  //    g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
 
   set_gdk_color(&white, 255, 255, 255);
   set_gdk_color(&gray,  0xaa, 0xaa, 0xaa);
 
-  createicon(TopLevel);
+  createicon();
   gtk_window_set_default_icon_list(NgraphApp.iconpix);
   gtk_window_set_icon_list(GTK_WINDOW(TopLevel), NgraphApp.iconpix);
 
-  create_toolbar_pixmap(TopLevel);
+  create_toolbar_pixmap();
 
   initdialog();
+
+  gtk_widget_show_all(GTK_WIDGET(TopLevel));
+  reset_event();
   setupwindow();
 
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   set_widget_visibility(Menulocal.show_cross);
 
   NgraphApp.FileName = NULL;
-
-  reset_event();
 
   ViewerWinSetup();
 
@@ -2252,7 +2277,6 @@ application(char *file)
   set_signal(SIGTERM, 0, term_signal_handler);
 #endif	/* WINDOWS */
 
-  reset_event();
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   set_widget_visibility(Menulocal.show_cross);
 
@@ -2348,7 +2372,7 @@ ChangePage(void)
 }
 
 static void
-SetStatusBarSub(char *mes, guint id)
+SetStatusBarSub(const char *mes, guint id)
 {
 
   if (NgraphApp.Message) {
@@ -2375,35 +2399,40 @@ SetPoint(struct Viewer *d, int x, int y)
   //  y += Menulocal.TopMargin;
 
   if (NgraphApp.Message) {
+    snprintf(buf, sizeof(buf), "% 6.2f, % 6.2f", x / 100.0, y / 100.0);
+    gtk_label_set_text(GTK_LABEL(NgraphApp.Message_pos), buf);
+
     switch (d->MouseMode) {
     case MOUSECHANGE:
       if (d->Angle >= 0) {
-	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%6.2f°)", x / 100.0, y / 100.0, d->Angle / 100.0);
+	snprintf(buf, sizeof(buf), "%6.2f°", d->Angle / 100.0);
+	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       } else {
-	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->LineX / 100.0, d->LineY / 100.0);
+	snprintf(buf, sizeof(buf), "(% .2f, % .2f)", d->LineX / 100.0, d->LineY / 100.0);
+	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       }
       break;
-      case MOUSEZOOM1:
+    case MOUSEZOOM1:
     case MOUSEZOOM2:
     case MOUSEZOOM3:
     case MOUSEZOOM4:
-      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f%%)", x / 100.0, y / 100.0, d->Zoom * 100);
+      snprintf(buf, sizeof(buf), "% .2f%%", d->Zoom * 100);
+      gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       break;
     case MOUSEDRAG:
-      snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);
+      snprintf(buf, sizeof(buf), "(% .2f, % .2f)", d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);
+      gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       break;
     default:
       num =  arraynum(d->points);
       po = (num > 1) ? (* (struct Point **) arraynget(d->points, num - 2)) : NULL;
       if (d->Capture && po) {
-	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f    (%.2f : %.2f)", x / 100.0, y / 100.0, (x - po->x) / 100.0, (y - po->y) / 100.0);
+	snprintf(buf, sizeof(buf), "(% .2f, % .2f)", (x - po->x) / 100.0, (y - po->y) / 100.0);
+	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       } else {
-	snprintf(buf, sizeof(buf), "X:%.2f Y:%.2f", x / 100.0, y / 100.0);
+	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), NULL);
       }
     }
-
-    ResetStatusBarSub(NgraphApp.Message2);
-    SetStatusBarSub(buf, NgraphApp.Message2);
   }
 
   g_object_set(NgraphApp.Viewer.HRuler, "position", N2GTK_RULER_METRIC(x), NULL);
@@ -2413,7 +2442,7 @@ SetPoint(struct Viewer *d, int x, int y)
 }
 
 void
-SetStatusBar(char *mes)
+SetStatusBar(const char *mes)
 {
   SetStatusBarSub(mes, NgraphApp.Message1);
 }
@@ -2440,7 +2469,7 @@ NSetCursor(unsigned int type)
     return;
 
   d = &(NgraphApp.Viewer);
-  win = d->win;
+  win = d->gdk_win;
 
   CursorType = type;
 
@@ -2491,7 +2520,7 @@ NSetCursor(unsigned int type)
 }
 
 void
-DisplayDialog(char *str)
+DisplayDialog(const char *str)
 {
   char *ustr;
 
@@ -2504,7 +2533,7 @@ DisplayDialog(char *str)
 }
 
 int
-PutStdout(char *s)
+PutStdout(const char *s)
 {
   gssize len;
 
@@ -2517,7 +2546,7 @@ PutStdout(char *s)
 }
 
 int
-PutStderr(char *s)
+PutStderr(const char *s)
 {
   gssize len;
   gsize rlen, wlen;
@@ -2574,7 +2603,7 @@ ChkInterrupt(void)
 }
 
 int
-InputYN(char *mes)
+InputYN(const char *mes)
 {
   int ret;
 
@@ -2660,7 +2689,7 @@ script_exec(GtkWidget *w, gpointer client_data)
   UpdateAll2();
 
   delobj(shell, newid);
-  gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
+  gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, FALSE);
 }
 
 static void
@@ -2674,8 +2703,6 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
   sub_window_hide((struct SubWin *) &(NgraphApp.LegendWin));
   sub_window_hide((struct SubWin *) &(NgraphApp.InfoWin));
   sub_window_hide((struct SubWin *) &(NgraphApp.CoordWin));
-
-  //  reset_event();
 
   initwindowconfig();
   mgtkwindowconfig();

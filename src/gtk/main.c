@@ -1,5 +1,5 @@
 /* 
- * $Id: main.c,v 1.47 2010/03/04 08:30:17 hito Exp $
+ * $Id: main.c,v 1.48 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -37,6 +37,13 @@
 #include <locale.h>
 #include <signal.h>
 
+#ifdef WINDOWS
+#ifdef LOCALEDIR
+#undef LOCALEDIR
+#endif	/* LOCALEDIR */
+char *DOCDIR, *LIBDIR, *CONFDIR, *LOCALEDIR;
+#endif	/* WINDOWS */
+
 #include "dir_defs.h"
 #include "ngraph.h"
 #include "object.h"
@@ -59,14 +66,11 @@ static char **attempt_shell_completion(char *text, int start, int end);
 #endif	/* HAVE_LIBREADLINE */
 
 #define SYSCONF "[Ngraph]"
-#ifndef LIBDIR
-#define LIBDIR "/usr/local/lib/Ngraph"
-#endif	/* LIBDIR */
 
 #define INIT_SCRIPT "Ngraph.nsc"
 
 static char *systemname;
-static int consolefdout, consolefdin, consoleac = FALSE;
+static int consolefdout, consolefdin, ConsoleAc = FALSE;
 static int consolecol = 80, consolerow = 25;
 
 void *addobjectroot(void);
@@ -195,7 +199,7 @@ OpenApplication(void)
 }
 
 int
-putconsole(char *s)
+putconsole(const char *s)
 {
   int len;
 
@@ -232,7 +236,7 @@ interruptconsole(void)
 }
 
 static int
-inputynconsole(char *mes)
+inputynconsole(const char *mes)
 {
   int len, r;
   char buf[10], yn[] = " [yn] ";
@@ -261,20 +265,19 @@ inputynconsole(char *mes)
 }
 
 static void
-displaydialogconsole(char *str)
+displaydialogconsole(const char *str)
 {
   putconsole(str);
 }
 
 static void
-displaystatusconsole(char *str)
+displaystatusconsole(const char *str)
 {
 }
 
 static char *terminal = NULL;
 static struct savedstdio consolesave;
 static int consolefd[3];
-static pid_t consolepid = -1;
 
 void
 resizeconsole(int col, int row)
@@ -295,7 +298,95 @@ reset_fifo(char *fifo_in, char *fifo_out)
     nclose(fdo);
 }
 
-#ifdef HAVE_FORK
+#ifdef WINDOWS
+static HWND ConsoleHandle;
+
+static int 
+check_console(int allocconsole)
+{
+  HMENU menu;
+  DWORD console_pid;
+  pid_t pid;
+
+  if (allocconsole) {
+    return TRUE;
+  }
+
+  ConsoleHandle = GetConsoleWindow();
+  if (ConsoleHandle == NULL) {
+    return TRUE;
+  }
+
+  GetWindowThreadProcessId(ConsoleHandle, &console_pid);
+
+  pid = getpid();
+
+  return (pid != console_pid);
+}
+
+int
+nallocconsole(void)
+{
+  if (ConsoleAc) {
+    return TRUE;
+  }
+
+  if (ConsoleHandle) {
+    ShowWindow(ConsoleHandle, SW_RESTORE);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+void
+nfreeconsole(void)
+{
+  if (! ConsoleAc && ConsoleHandle) {
+    ShowWindow(ConsoleHandle, SW_HIDE);
+  }
+}
+
+void
+hide_console(void)
+{
+  HMENU menu;
+
+  if (ConsoleHandle == NULL || ConsoleAc) {
+    return;
+  }
+
+  menu = GetSystemMenu(ConsoleHandle, FALSE);
+  RemoveMenu(menu, SC_CLOSE, MF_BYCOMMAND);
+
+  nfreeconsole();
+}
+
+void
+resotre_console(void)
+{
+  if (ConsoleHandle == NULL || ConsoleAc) {
+    return;
+  }
+
+  GetSystemMenu(ConsoleHandle, TRUE);
+  nallocconsole();
+}
+#else  /* WINDOWS */
+static pid_t consolepid = -1;
+
+void
+hide_console(void)
+{
+  /* do nothing */
+}
+
+void
+resotre_console(void)
+{
+  /* do nothing */
+}
+
 static int
 exec_console(char *fifo_in, char *fifo_out)
 {
@@ -304,8 +395,8 @@ exec_console(char *fifo_in, char *fifo_out)
 
   pid = fork();
   if (pid == -1) {
-    unlink(fifo_in);
-    unlink(fifo_out);
+    g_unlink(fifo_in);
+    g_unlink(fifo_out);
     return 1;
   } else if (pid == 0) {
     pid = fork();
@@ -330,12 +421,10 @@ exec_console(char *fifo_in, char *fifo_out)
   }
   return 0;
 }
-#endif
 
 int
 nallocconsole(void)
 {
-#ifdef HAVE_FORK
   int fd[3] = {-1, -1, -1}, fdi, fdo;
   unsigned int i;
   char buf[256], ttyname[256], fifo_in[1024], fifo_out[1024];
@@ -343,7 +432,7 @@ nallocconsole(void)
   char *sysname;
   char *version;
 
-  if (consoleac)
+  if (ConsoleAc)
     return FALSE;
 
   if (terminal == NULL)
@@ -357,7 +446,7 @@ nallocconsole(void)
   }
 
   if (mkfifo(fifo_out, 0600)) {
-    unlink(fifo_in);
+    g_unlink(fifo_in);
     return FALSE;
   }
 
@@ -366,8 +455,8 @@ nallocconsole(void)
 
   fdi = nopen(fifo_in, O_RDONLY, 0);
   fdo = nopen(fifo_out, O_WRONLY, 0);
-  unlink(fifo_in);
-  unlink(fifo_out);
+  g_unlink(fifo_in);
+  g_unlink(fifo_out);
 
   sys = chkobject("system");
   getobj(sys, "name", 0, 0, NULL, &sysname);
@@ -445,7 +534,7 @@ nallocconsole(void)
   nclose(fd[2]);
   consolefdin = dup(0);
   consolefdout = dup(2);
-  consoleac = TRUE;
+  ConsoleAc = TRUE;
   savestdio(&consolesave);
   putstderr = putconsole;
   printfstderr = printfconsole;
@@ -468,7 +557,6 @@ nallocconsole(void)
   if (fd[2] < 0) {
     nclose(fd[2]);
   }
-#endif
 
   return FALSE;
 }
@@ -476,8 +564,7 @@ nallocconsole(void)
 void
 nfreeconsole(void)
 {
-#ifdef HAVE_FORK
-  if (consoleac) {
+  if (ConsoleAc) {
     nclose(0);
     if (consolefd[0] != -1) {
       dup2(consolefd[0], 0);
@@ -502,11 +589,11 @@ nfreeconsole(void)
 
     consolefdin = 0;
     consolefdout = 2;
-    consoleac = FALSE;
+    ConsoleAc = FALSE;
     loadstdio(&consolesave);
   }
-#endif
 }
+#endif	/* WINDOWS */
 
 void
 nforegroundconsole()
@@ -583,14 +670,69 @@ load_config(struct objlist *sys, char *inst, int *allocconsole)
   }
 }
 
-int
-main(int argc, char **argv, char **env)
+#ifdef WINDOWS
+static int
+set_dir_defs(char *app)
 {
-  char *homedir, *libdir, *confdir, *home, *inifile, *loginshell;
+  char *utf8_name, *app_path, *tmp;
+
+  utf8_name = g_locale_from_utf8(app, -1, NULL, NULL, NULL);
+  if (utf8_name == NULL) {
+    return 1;
+  }
+
+  changefilename(utf8_name);
+
+  tmp = g_path_get_dirname(utf8_name);
+  g_free(utf8_name);
+  if (tmp == NULL) {
+    return 1;
+  }
+
+  app_path = g_path_get_dirname(tmp);
+  g_free(tmp);
+  if (app_path == NULL) {
+    return 1;
+  }
+
+  DOCDIR  = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
+  LIBDIR  = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib");
+  CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
+  LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
+
+  g_free(app_path);
+
+  return (DOCDIR && LIBDIR && CONFDIR);
+}
+#endif	/* WINDOWS */
+
+static void
+set_path_env(char *homedir)
+{
+  const char *path;
+  char *pathset;
+
+  path = g_getenv("PATH");
+  pathset = g_strdup_printf("%s%s%s%s.%s%s", LIBDIR, PATHSEP, homedir, PATHSEP, PATHSEP, CHK_STR(path));
+#ifdef WINDOWS
+  path_to_win(pathset);
+#endif	/* WINDOWS */
+  g_setenv("PATH", pathset, TRUE);
+  g_setenv("NGRAPHLIB",  LIBDIR, TRUE);
+  g_setenv("NGRAPHCONF", CONFDIR, TRUE);
+  g_free(pathset);
+}
+
+
+int
+main(int argc, char **argv)
+{
+  char *homedir, *libdir, *confdir, *inifile, *loginshell;
+  const char *home;
   char *inst;
   struct objlist *sys, *obj, *lobj;
   unsigned int j;
-  int i;
+  int i, r;
   char *sarg[2];
   struct narray sarray;
   int id;
@@ -602,19 +744,25 @@ main(int argc, char **argv, char **env)
   char *history_file = NULL;
 #endif
 
+  g_thread_init(NULL);
+  gdk_threads_init();
+  gdk_threads_enter();
+
 #if EOF == -1
   char_type_buf_init();
 #endif
 
 #ifndef WINDOWS
   set_childhandler();
-#endif
+#endif	/* WINDOWS */
 
   gtk_set_locale();
   OpenDisplay = gtk_init_check(&argc, &argv);
   g_set_application_name(AppName);
 
-  set_environ(env);
+#ifdef WINDOWS
+  set_dir_defs(argv[0]);
+#endif	/* WINDOWS */
 
   if (init_cmd_tbl()) {
     exit(1);
@@ -633,44 +781,39 @@ main(int argc, char **argv, char **env)
   bindtextdomain(PACKAGE, LOCALEDIR);
   bind_textdomain_codeset(PACKAGE, "UTF-8");
   textdomain(PACKAGE);
-#endif
+#endif	/* HAVE_GETTEXT */
 
-#if 0
-  if ((lib = getenv("NGRAPHLIB")) != NULL) {
-    libdir = g_strdup(lib);
-  } else {
-    libdir = g_strdup(LIBDIR);
-  }
-#else
   libdir = g_strdup(LIBDIR);
-#endif
   if (libdir == NULL)
     exit(1);
 
   confdir = g_strdup(CONFDIR);
-  if (confdir == NULL)
+  if (confdir == NULL) {
     exit(1);
-
-  /*
-  if ((home = getenv("NGRAPHHOME")) != NULL) {
-    if ((homedir = (char *) g_malloc(strlen(home) + 1)) == NULL)
-      exit(1);
-    strcpy(homedir, home);
-  } else 
-  */
-  if ((home = getenv("HOME")) != NULL) {
-    char *ptr;
-
-    ptr = g_strdup_printf("%s/%s", home, HOME_DIR);
-    homedir = g_strdup(ptr);
-    g_free(ptr);
-    if (homedir == NULL)
-      exit(1);
-  } else {
-    homedir = g_strdup(confdir);
-    if (homedir == NULL)
-      exit(1);
   }
+
+  if ((home = g_getenv("HOME")) != NULL) {
+    homedir = g_strdup_printf("%s/%s", home, HOME_DIR);
+    if (homedir == NULL) {
+      exit(1);
+    }
+    changefilename(homedir);
+  }else {
+    if ((home = g_get_user_config_dir()) != NULL) {
+      homedir = g_strdup_printf("%s/%s", home, HOME_DIR);
+      if (homedir == NULL) {
+	exit(1);
+      }
+      changefilename(homedir);
+    } else {
+      homedir = g_strdup(confdir);
+      if (homedir == NULL) {
+	exit(1);
+      }
+    }
+  }
+  set_path_env(homedir);
+  set_environ();
 
   if (addobjectroot() == NULL)
     exit(1);
@@ -737,24 +880,36 @@ main(int argc, char **argv, char **env)
     nallocconsole();
   }
 
+#ifdef WINDOWS
+  ConsoleAc = check_console(allocconsole);
   if (isatty(0) && isatty(1) && isatty(2)) {
-    consoleac = TRUE;
-    if (!allocconsole) {
+    if (! allocconsole) {
+      consolefdin = dup(0);
+      consolefdout = dup(2);
+    }
+  }
+#else
+  if (isatty(0) && isatty(1) && isatty(2)) {
+    ConsoleAc = TRUE;
+    if (! allocconsole) {
       consolefdin = dup(0);
       consolefdout = dup(2);
     }
   } else {
-    consoleac = FALSE;
+    ConsoleAc = FALSE;
   }
+#endif
 
   inifile = NULL;
   obj = getobject("shell");
-  if (obj == NULL)
+  if (obj == NULL) {
     exit(1);
+  }
 
   id = newobj(obj);
-  if (id < 0)
+  if (id < 0) {
     exit(1);
+  }
 
   for (i = 1; i < argc; i++) {
     if (argv[i][0] != '-' || argv[i][1] != 'i' || i >= argc - 1) {
@@ -767,12 +922,14 @@ main(int argc, char **argv, char **env)
     }
     changefilename(inifile);
   }
+
   if (inifile == NULL) {
     if (findfilename(homedir, CONFTOP, INIT_SCRIPT))
       inifile = getfilename(homedir, CONFTOP, INIT_SCRIPT);
     else if (findfilename(confdir, CONFTOP, INIT_SCRIPT))
       inifile = getfilename(confdir, CONFTOP, INIT_SCRIPT);
   }
+
   if (inifile) {
     arrayinit(&sarray, sizeof(char *));
     if (arrayadd(&sarray, &inifile) == NULL)
@@ -782,12 +939,19 @@ main(int argc, char **argv, char **env)
 	exit(1);
     sarg[0] = (char *) &sarray;
     sarg[1] = NULL;
-    exeobj(obj, "shell", id, 1, sarg);
+    r = exeobj(obj, "shell", id, 1, sarg);
     arraydel(&sarray);
     g_free(inifile);
+
+    if (r) {
+      exit(1);
+    }
   }
-  if (getobj(sys, "login_shell", 0, 0, NULL, &loginshell))
+
+  if (getobj(sys, "login_shell", 0, 0, NULL, &loginshell)) {
     exit(1);
+  }
+
   do {
     if (_putobj(sys, "login_shell", inst, NULL))
       exit(1);
@@ -824,8 +988,13 @@ main(int argc, char **argv, char **env)
     g_free(history_file);
   }
 #endif
-  if (consoleac && (consolepid != -1))
+
+#ifndef WINDOWS
+  if (ConsoleAc && (consolepid != -1)) {
     nfreeconsole();
+  }
+#endif
+
   g_free(terminal);
   delobj(getobject("system"), 0);
   return 0;
@@ -1220,7 +1389,8 @@ cmd_name_matching(const char *text)
 struct mylist *
 get_exec_file_list(void)
 {
-  char *path, *path_env, *next_ptr, *path_ptr;
+  char *path, *next_ptr, *path_ptr;
+  const char *path_env;
   static struct mylist *list = NULL, *list_next = NULL;
 
   if (list != NULL) {
@@ -1231,7 +1401,7 @@ get_exec_file_list(void)
      */
   }
 
-  if ((path_env = getenv("PATH")) == NULL)
+  if ((path_env = g_getenv("PATH")) == NULL)
     return NULL;
 
   if ((path = path_ptr = g_strdup(path_env)) == NULL)
@@ -1268,7 +1438,7 @@ get_file_list(const char *path, int type, int mode)
       list = NULL;
       break;
     }
-    stat(full_path_name, &statbuf);
+    nstat(full_path_name, &statbuf);
     if ((statbuf.st_mode & type) && (statbuf.st_mode & mode)) {
       list_next = mylist_add(list_next, ent);
       if (list == NULL)

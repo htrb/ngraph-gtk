@@ -1,5 +1,5 @@
 /* 
- * $Id: x11lgnd.c,v 1.68 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11lgnd.c,v 1.69 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -779,14 +779,14 @@ points_setup(struct LegendDialog *d)
   label = gtk_label_new_with_mnemonic(_("_Points:"));
   gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), tree_view);
-  gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 2);
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_ETCHED_IN);
   gtk_container_set_border_width(GTK_CONTAINER(swin), 2);
   gtk_container_add(GTK_CONTAINER(swin), tree_view);
-  gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 4);
+  gtk_box_pack_start(GTK_BOX(vbox), swin, TRUE, TRUE, 2);
 
   hbox = gtk_hbox_new(FALSE, 4);
 
@@ -885,7 +885,7 @@ LegendCurveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), w);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
     table = gtk_table_new(1, 2, FALSE);
 
@@ -903,7 +903,7 @@ LegendCurveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "curve");
@@ -945,7 +945,7 @@ LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), w);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
     table = gtk_table_new(1, 2, FALSE);
 
@@ -962,7 +962,7 @@ LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "polygon");
@@ -1102,7 +1102,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), w);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
     table = gtk_table_new(1, 2, FALSE);
 
@@ -1147,7 +1147,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "line");
@@ -1206,7 +1206,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
 
     table = gtk_table_new(1, 2, FALSE);
@@ -1230,7 +1230,7 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "rectangle");
@@ -1266,7 +1266,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     init_legend_dialog_widget_member(d);
 
-    hbox = gtk_hbox_new(FALSE, 0);
+    hbox = gtk_hbox_new(FALSE, 4);
 
     table = gtk_table_new(1, 2, FALSE);
 
@@ -1289,7 +1289,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
 
     table = gtk_table_new(1, 2, FALSE);
@@ -1318,7 +1318,7 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "arc");
@@ -1381,7 +1381,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
 
     table = gtk_table_new(1, 2, FALSE);
@@ -1404,7 +1404,7 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "mark");
@@ -1498,7 +1498,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
 
     table = gtk_table_new(1, 2, FALSE);
@@ -1512,7 +1512,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "text");
@@ -1548,7 +1548,7 @@ LegendTextDefDialogSetup(GtkWidget *w, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 0);
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "text");
 

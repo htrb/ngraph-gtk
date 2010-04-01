@@ -1,5 +1,5 @@
 /* 
- * $Id: x11graph.c,v 1.57 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11graph.c,v 1.58 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -28,6 +28,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <libgen.h>
+
+#include "dir_defs.h"
 
 #include "ngraph.h"
 #include "object.h"
@@ -856,7 +858,7 @@ DirectoryDialogClose(GtkWidget *w, void *data)
   s = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(d->dir));
 
   if (s && strlen(s) > 0) {
-    if (chdir(s)) {
+    if (nchdir(s)) {
       ErrorMessage();
     }
   }
@@ -1210,7 +1212,7 @@ CmGraphQuit(void)
 void
 CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
 {
-  char *uri, pstr[] = "file://", *fname, *ptr, *path;
+  char *uri, pstr[] = "file://", *fname, *path;
 
   if (Menulock || Globallock)
     return;
@@ -1228,14 +1230,8 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
     return;
   }
 
-  path = g_strdup(fname);
-  if (path == NULL) {
-    g_free(uri);
-    return;
-  }
-
-  ptr = dirname(path);
-  if (chdir(ptr)) {
+  path = g_path_get_dirname(fname);
+  if (nchdir(path)) {
     ErrorMessage();
     g_free(path);
     return;
@@ -1306,18 +1302,12 @@ CmGraphMenu(GtkWidget *w, gpointer client_data)
 static void
 about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
 {
-#ifdef HAVE_FORK
-  pid_t pid;
+  char *cmd;
 
-  if (Menulocal.browser == NULL)
-    return;
+  cmd = g_strdup_printf("%s \"%s\"", Menulocal.browser, link);
+  system_bg(cmd);
 
-  pid = fork();
-  if (pid == 0) {
-    execlp(Menulocal.browser, Menulocal.browser, link, (char *) NULL);
-    exit(0);
-  }
-#endif
+  g_free(cmd);
 }
 
 
@@ -1354,8 +1344,7 @@ CmHelpAbout(void)
 void
 CmHelpHelp(void)
 {
-#ifdef HAVE_FORK
-  pid_t pid;
+  char *cmd;
 
   if (Menulock || Globallock)
     return;
@@ -1363,19 +1352,10 @@ CmHelpHelp(void)
   if (Menulocal.help_browser == NULL)
     return;
 
+  cmd = g_strdup_printf("%s \"%s/%s\"", Menulocal.help_browser, DOCDIR, HELP_FILE);
+  system_bg(cmd);
 
-  pid = fork();
-  if (pid == 0) {
-    char *ptr, *s;
-    int len;
-
-    ptr = Menulocal.help_browser;
-    s = getitok2(&ptr, &len, " ");
-    while (*ptr == ' ') ptr++;
-    execlp(s, s, ptr, (char *) NULL);
-    exit(0);
-  }
-#endif
+  g_free(cmd);
 }
 
 void

@@ -254,7 +254,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = dir_defs.h.in
-AM_CPPFLAGS = -DLOCALEDIR=\"@localedir@\"
+AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 noinst_LTLIBRARIES = libngraph.la
 libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	gtk_entry_completion.c gtk_entry_completion.h gtk_liststore.c	\
@@ -820,7 +820,7 @@ uninstall-am:
 
 
 dir_defs.h: dir_defs.h.in Makefile
-	sh ../../pathconv.sh $(docdir) $(pkglibdir) $(ngraphconfdir) dir_defs.h.in
+	sh ../../pathconv.sh "$(docdir)" "$(pkglibdir)" "$(ngraphconfdir)" dir_defs.h.in
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

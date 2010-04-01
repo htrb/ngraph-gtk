@@ -1,5 +1,5 @@
 /* 
- * $Id: shellcm.c,v 1.29 2010/03/04 08:30:16 hito Exp $
+ * $Id: shellcm.c,v 1.30 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,12 +29,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <libgen.h>
-#ifndef WINDOWS
 #include <unistd.h>
-#else  /* WINDOWS */
-#include <dos.h>
-#include <dir.h>
-#endif	/* WINDOWS */
 
 #define USE_HASH 1
 
@@ -57,13 +52,13 @@ cmcd(struct nshell *nshell,int argc,char **argv)
   char *home;
 
   if (argv[1]!=NULL) {
-    if (chdir(argv[1])!=0) {
+    if (nchdir(argv[1])!=0) {
       sherror3(argv[0],ERRNODIR,argv[1]);
       return ERR;
     }
   } else {
     if ((home=getval(nshell,"HOME"))!=NULL) {
-      if (chdir(home)!=0) {
+      if (nchdir(home)!=0) {
         sherror3(argv[0],ERRNODIR,home);
         return ERR;
       }
@@ -95,17 +90,20 @@ int
 cmbasename(struct nshell *nshell,int argc,char **argv)
 {
   int len, ext_len;
-  char *bname, *tmp;
+  char *bname;
 
   if (argc < 2) {
     return 1;
   }
 
-  tmp = g_strdup(argv[1]);
-  if (tmp == NULL)
+  if (argv[1] == NULL) {
     return 1;
+  }
 
-  bname = basename(tmp);
+  bname = getbasename(argv[1]);
+  if (bname == NULL) {
+    return 1;
+  }
 
   if (argc == 2) {
     len = strlen(bname);
@@ -118,8 +116,8 @@ cmbasename(struct nshell *nshell,int argc,char **argv)
     }
   }
 
-  printfstdout("%s\n", bname);
-  g_free(tmp);
+  putstdout(bname);
+  g_free(bname);
 
   return 0;
 }
@@ -133,12 +131,12 @@ cmdirname(struct nshell *nshell,int argc,char **argv)
     return 1;
   }
 
-  tmp = g_strdup(argv[1]);
-  if (tmp == NULL)
+  if (argv[1] == NULL)
     return 1;
 
-  putstdout(dirname(tmp));
+  tmp = getdirname(argv[1]);
 
+  putstdout(tmp);
   g_free(tmp);
 
   return 0;
@@ -295,9 +293,14 @@ cmpwd(struct nshell *nshell,int argc,char **argv)
 {
   char *s;
 
-  if ((s=ngetcwd())==NULL) return ERR;
+  s = ngetcwd();
+  if (s == NULL) {
+    return ERR;
+  }
+
   putstdout(s);
   g_free(s);
+
   return 0;
 }
 

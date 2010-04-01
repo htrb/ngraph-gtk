@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2cairofile.c,v 1.16 2009/11/16 09:13:05 hito Exp $
+ * $Id: ogra2cairofile.c,v 1.17 2010/04/01 06:08:23 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -97,6 +97,17 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
   int format, dpi, r;
   struct gra2cairo_local *local;
 
+#if WINDOWS
+  fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
+#else  /* WINDOWS */
+  fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);
+#endif	/* WINDOWS */
+
+  if (fname == NULL) {
+    *err = CAIRO_STATUS_NO_MEMORY;
+    return NULL;
+  }
+
   *err = 0;
 
   _getobj(obj, "format", inst, &format);
@@ -144,6 +155,8 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
   default:
     ps = cairo_ps_surface_create(fname, w, h);
   }
+
+  g_free(fname);
 
   r = cairo_surface_status(ps);
   if (r != CAIRO_STATUS_SUCCESS) {
@@ -233,7 +246,19 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
       if (fname == NULL)
 	return 1;
 
+#if WINDOWS
+      fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
+#else  /* WINDOWS */
+      fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);
+#endif	/* WINDOWS */
+      if (fname == NULL) {
+	error(obj, CAIRO_STATUS_NO_MEMORY + 100);
+	return 1;
+      }
       r = cairo_surface_write_to_png(cairo_get_target(local->cairo), fname);
+
+      g_free(fname);
+
       if (r) {
 	_getobj(obj, "file", inst, &fname);
 	error2(obj, r + 100, fname);

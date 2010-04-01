@@ -1,5 +1,5 @@
 /* 
- * $Id: nconfig.c,v 1.17 2010/03/04 08:30:16 hito Exp $
+ * $Id: nconfig.c,v 1.18 2010/04/01 06:08:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -112,7 +112,7 @@ unlockconfig(char *dir)
 
   if (!findfilename(dir,CONFSEP,LOCK)) return;
   if ((file=getfilename(dir,CONFSEP,LOCK))==NULL) return;
-  unlink(file);
+  g_unlink(file);
   g_free(file);
 }
 
@@ -130,7 +130,7 @@ openconfig(char *section)
   homeconf=libconf=NULL;
   if (findfilename(homedir,CONFSEP,CONF)) {
     if ((homeconf=getfilename(homedir,CONFSEP,CONF))!=NULL) {
-      if (stat(homeconf,&homestat)!=0) {
+      if (nstat(homeconf,&homestat)!=0) {
         g_free(homeconf);
         homeconf=NULL;
       }
@@ -138,7 +138,7 @@ openconfig(char *section)
   }
   if (findfilename(libdir,CONFSEP,CONF)) {
     if ((libconf=getfilename(libdir,CONFSEP,CONF))!=NULL) {
-      if (stat(libconf,&libstat)!=0) {
+      if (nstat(libconf,&libstat)!=0) {
         g_free(libconf);
         libconf=NULL;
       }
@@ -229,12 +229,12 @@ make_backup(char *homedir, char *libdir, char *fil, FILE *fptmp)
   if (! findfilename(homedir, CONFSEP, CONF)) {
     bak = getfilename(libdir, CONFSEP, CONFBAK);
     if (bak && findfilename(libdir, CONFSEP, CONFBAK)) {
-      unlink(bak);
+      g_unlink(bak);
     }
   } else {
     bak = getfilename(homedir, CONFSEP, CONFBAK);
     if (bak && findfilename(homedir, CONFSEP, CONFBAK)) {
-      unlink(bak);
+      g_unlink(bak);
     }
   }
   if (bak) {
@@ -531,7 +531,7 @@ writecheckconfig(void)
   homeconf=libconf=NULL;
   if (findfilename(homedir,CONFSEP,CONF)) {
     if ((homeconf=getfilename(homedir,CONFSEP,CONF))!=NULL) {
-      if (stat(homeconf,&homestat)!=0) {
+      if (nstat(homeconf,&homestat)!=0) {
         g_free(homeconf);
         homeconf=NULL;
       }
@@ -539,7 +539,7 @@ writecheckconfig(void)
   }
   if (findfilename(libdir,CONFSEP,CONF)) {
     if ((libconf=getfilename(libdir,CONFSEP,CONF))!=NULL) {
-      if (stat(libconf,&libstat)!=0) {
+      if (nstat(libconf,&libstat)!=0) {
         g_free(libconf);
         libconf=NULL;
       }
@@ -562,7 +562,7 @@ writecheckconfig(void)
     dir=2;
     s=libconf;
   } else return 0;
-  ret=access(s,W_OK);
+  ret=naccess(s,W_OK);
   g_free(s);
   if (ret==0) return dir;
   return -dir;
@@ -583,9 +583,9 @@ copyconfig(void)
   if (getobj(sys,"home_dir",0,0,NULL,&homedir)==-1) return FALSE;
   if (getobj(sys,"conf_dir",0,0,NULL,&libdir)==-1) return FALSE;
 
-  r = stat(homedir, &sbuf);
+  r = nstat(homedir, &sbuf);
   if (r && errno == ENOENT) {
-    r = mkdir(homedir, 0755);
+    r = g_mkdir(homedir, 0755);
     if (r)
       return FALSE;
   } else if (! S_ISDIR(sbuf.st_mode)) {
@@ -594,7 +594,7 @@ copyconfig(void)
 
   if (findfilename(homedir,CONFSEP,CONF)) {
     if ((bak=getfilename(homedir,CONFSEP,CONFBAK))!=NULL) {
-      if (findfilename(homedir,CONFSEP,CONFBAK)) unlink(bak);
+      if (findfilename(homedir,CONFSEP,CONFBAK)) g_unlink(bak);
       if ((homename=getfilename(homedir,CONFSEP,CONF))!=NULL) {
         rename(homename,bak);
         g_free(homename);

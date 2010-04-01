@@ -1,5 +1,5 @@
 /* 
- * $Id: ox11menu.c,v 1.90 2010/03/04 08:30:17 hito Exp $
+ * $Id: ox11menu.c,v 1.91 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -1119,26 +1119,26 @@ menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
 
 void
-mgtkdisplaydialog(char *str)
+mgtkdisplaydialog(const char *str)
 {
   DisplayDialog(str);
 }
 
 
 void
-mgtkdisplaystatus(char *str)
+mgtkdisplaystatus(const char *str)
 {
   DisplayDialog(str);
 }
 
 int
-mgtkputstderr(char *s)
+mgtkputstderr(const char *s)
 {
   return PutStderr(s);
 }
 
 int
-mgtkputstdout(char *s)
+mgtkputstdout(const char *s)
 {
   return PutStdout(s);
 }
@@ -1178,7 +1178,7 @@ mgtkinterrupt(void)
 }
 
 int
-mgtkinputyn(char *mes)
+mgtkinputyn(const char *mes)
 {
   char *ptr;
   int r;
@@ -1207,8 +1207,15 @@ menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   savestdio(&GtkIOSave);
 
-  file = (char *) argv[2];
+  file = get_utf8_filename(argv[2]);
+
+  hide_console();
   r = application(file);
+  resotre_console();
+
+  if (file) {
+    g_free(file);
+  }
 
   loadstdio(&GtkIOSave);
   Menulocal.lock = 0;
@@ -1368,7 +1375,7 @@ mx_clear(GdkRegion *region)
     gint w, h;
     GdkColor color;
 
-    if (Menulocal.pix == NULL)
+    if (Menulocal.pix == NULL || Menulocal.gc == NULL)
       return;
 
     gdk_drawable_get_size(Menulocal.pix, &w, &h);
@@ -1741,15 +1748,13 @@ mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 static void
 SetCaption(int modified)
 {
-  char buf[1024], *file, *ptr;
+  char buf[1024], *file;
 
   getobj(Menulocal.obj, "ngp", 0, 0, NULL, &file);
-  ptr = filename_to_utf8(file);
 
   snprintf(buf, sizeof(buf), "%s%s - Ngraph",
 	   (modified) ? "*" : "",
-	   (file) ? CHK_STR(ptr) : _("Unsaved Graph"));
-  g_free(ptr);
+	   (file) ? file : _("Unsaved Graph"));
 
   gtk_window_set_title(GTK_WINDOW(TopLevel), buf);
 }

@@ -1,5 +1,5 @@
 /* 
- * $Id: object.h,v 1.20 2010/01/04 05:11:28 hito Exp $
+ * $Id: object.h,v 1.21 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -141,30 +141,30 @@ struct loopproc {
 #define ERROVERWRITE 23
 
 extern int (*getstdin)(void);
-extern int (*putstdout)(char *s);
-extern int (*putstderr)(char *s);
+extern int (*putstdout)(const char *s);
+extern int (*putstderr)(const char *s);
 extern int (*printfstdout)(char *fmt,...);
 extern int (*printfstderr)(char *fmt,...);
 extern int (*ninterrupt)(void);
-extern int (*inputyn)(char *mes);
-extern void (*ndisplaydialog)(char *str);
-extern void (*ndisplaystatus)(char *str);
+extern int (*inputyn)(const char *mes);
+extern void (*ndisplaydialog)(const char *str);
+extern void (*ndisplaystatus)(const char *str);
 
 struct savedstdio {
   int (*getstdin)(void);
-  int (*putstdout)(char *s);
-  int (*putstderr)(char *s);
+  int (*putstdout)(const char *s);
+  int (*putstderr)(const char *s);
   int (*printfstdout)(char *fmt,...);
   int (*printfstderr)(char *fmt,...);
   int (*ninterrupt)(void);
-  int (*inputyn)(char *mes);
-  void (*ndisplaydialog)(char *str);
-  void (*ndisplaystatus)(char *str);
+  int (*inputyn)(const char *mes);
+  void (*ndisplaydialog)(const char *str);
+  void (*ndisplaystatus)(const char *str);
 };
 
 extern struct savedstdio stdiosave;
 
-extern int seputs(char *s);
+extern int seputs(const char *s);
 extern int seprintf(char *fmt,...);
 
 void error(struct objlist *obj,int code);
@@ -295,7 +295,7 @@ void obj_do_tighten(struct objlist *obj, char *inst, char *field);
 int getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def);
 void delchildobj(struct objlist *parent);
 int vinterrupt(void);
-int vinputyn(char *mes);
+int vinputyn(const char *mes);
 int copy_obj_field(struct objlist *obj, int dist, int src, char **ignore_field);
 int str_calc(const char *str, double *val, int *r, char **err_msg);
 

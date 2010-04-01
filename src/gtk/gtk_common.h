@@ -8,8 +8,6 @@
 
 #include "common.h"
 
-#define PLATFORM "for GTK+"
-
 #define USE_ENTRY_ICON (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 16))
 
 

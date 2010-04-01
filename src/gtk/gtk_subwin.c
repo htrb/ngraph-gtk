@@ -1,5 +1,5 @@
 /* 
- * $Id: gtk_subwin.c,v 1.67 2010/03/04 08:30:16 hito Exp $
+ * $Id: gtk_subwin.c,v 1.68 2010/04/01 06:08:23 hito Exp $
  */
 
 #include "gtk_common.h"
@@ -56,13 +56,9 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 
   if (nGetOpenFileName(d->Win, _("Open"), ext, NULL, gtk_entry_get_text(w),
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
-    char *ptr;
-
-    ptr = filename_to_utf8(file);
-    if (ptr) {
-      gtk_entry_set_text(w, ptr);
-      modify_string(d, "file", ptr);
-      g_free(ptr);
+    if (file) {
+      gtk_entry_set_text(w, file);
+      modify_string(d, "file", file);
     }
     g_free(file);
   }
@@ -120,12 +116,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	}
 #endif
 	sgetobjfield(d->obj, sel, list->name, NULL, &valstr, FALSE, FALSE, FALSE);
-	if (strcmp(list->name, "file") == 0) {
-	  char *ptr;
-	  ptr = filename_to_utf8(valstr);
-	  g_free(valstr);
-	  valstr = ptr;
-	}
 	gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));
 	g_free(valstr);
       }
@@ -832,22 +822,8 @@ modify_string(struct SubWin *d, char *field, char *str)
   if (sel < 0 || sel > d->num)
     return;
 
-  if (str && strcmp(field, "file") == 0) {
-    char *ptr;
-
-    ptr = filename_from_utf8(str);
-    if (ptr == NULL) {
-      return;
-    }
-
-    if (chk_sputobjfield(d->obj, sel, field, ptr))
-      return;
-
-    g_free(ptr);
-  } else {
-    if (chk_sputobjfield(d->obj, sel, field, str))
-      return;
-  }
+  if (chk_sputobjfield(d->obj, sel, field, str))
+    return;
 
   d->select = sel;
   d->update(FALSE);
@@ -1460,8 +1436,9 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
   gtk_window_group_add_window(group, GTK_WINDOW(dlg));
   //  gtk_widget_set_parent_window(GTK_WIDGET(dlg), TopLevel);
   //  gtk_window_set_destroy_with_parent(GTK_WINDOW(dlg), TRUE);
-  //  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_UTILITY);
-  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+  //  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_window_set_type_hint(GTK_WINDOW(dlg), GDK_WINDOW_TYPE_HINT_UTILITY);
+  gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(TopLevel));
   gtk_window_set_skip_taskbar_hint(GTK_WINDOW(dlg), TRUE);
   gtk_window_set_skip_pager_hint(GTK_WINDOW(dlg), FALSE);
   gtk_window_set_urgency_hint(GTK_WINDOW(dlg), FALSE);

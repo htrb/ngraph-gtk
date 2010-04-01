@@ -1,6 +1,6 @@
 /**
  *
- * $Id: gra2wmf.c,v 1.8 2010/04/01 02:08:53 hito Exp $
+ * $Id: gra2wmf.c,v 1.9 2010/04/01 06:08:22 hito Exp $
  *
  * This is free software; you can redistribute it and/or modify it.
  *
@@ -1519,7 +1519,7 @@ int main(int argc,char **argv)
   sd2=open(metafile,O_CREAT|O_TRUNC|O_WRONLY | O_BINARY,S_IREAD|S_IWRITE);
   if (sd2<0) {
     printfstderr("error: file open `%s'.",metafile);
-    goto ErrExit:
+    goto ErrExit;
   }
 
   chk_write(sd2,&(MetaHeader.key),sizeof(MetaHeader.key));
@@ -1537,13 +1537,13 @@ int main(int argc,char **argv)
 
   if (chk_write(sd2,&(mh.mtNoParameters),sizeof(mh.mtNoParameters))) { 
     printfstderr("error: write file `%s'.", metafile);
-    goto ErrExit:
+    goto ErrExit;
   }
 
   while ((len=read(DC,buf2,sizeof(buf2)))>0) {
     if (chk_write(sd2,buf2,len)) {
       printfstderr("error: write file `%s'.", metafile);
-      goto ErrExit:
+      goto ErrExit;
     }
   }
   close(DC);

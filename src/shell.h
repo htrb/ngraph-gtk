@@ -1,7 +1,7 @@
 #ifndef _SHELL_HEADER
 #define _SHELL_HEADER
 /* 
- * $Id: shell.h,v 1.14 2010/03/04 08:30:16 hito Exp $
+ * $Id: shell.h,v 1.15 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -124,7 +124,7 @@ struct nshell {
   int readbyte;
   int deleted;
   int (*sgetstdin)();
-  int (*sputstdout)(char *s);
+  int (*sputstdout)(const char *s);
   int (*sprintfstdout)(char *fmt,...);
 };
 
@@ -169,17 +169,12 @@ int printfconsole(char *fmt,...);
 void ngraphenvironment(struct nshell *nshell);
 int msleep(int ms);
 void set_security(int state);
-void set_environ(char **env);
+void set_environ(void);
 int set_signal(int signal, int flags, void (*handler)(int));
 void set_childhandler(void);
 void unset_childhandler(void);
+int system_bg(char *cmd);
 #ifdef WINDOWS
-typedef struct {
-  int pid;
-  int errlevel;
-  int done;
-} WaitPidParam;
-
-int waitpid(WaitPidParam *pWP);
+void show_system_error(void);
 #endif	/* WINDOWS */
 #endif

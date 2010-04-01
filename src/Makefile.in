@@ -83,16 +83,20 @@ am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 am__DEPENDENCIES_1 =
 ngraph_DEPENDENCIES = gtk/libngraph.la math/libmath.la \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 ngraph_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(ngraph_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_terminal_OBJECTS = terminal.$(OBJEXT)
+am_terminal_OBJECTS = terminal-terminal.$(OBJEXT)
 terminal_OBJECTS = $(am_terminal_OBJECTS)
 terminal_LDADD = $(LDADD)
+terminal_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(terminal_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -318,11 +322,12 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	omerge.c opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c	\
 	oshell.c ostring.c osystem.c otext.c otext.h shell.c shell.h	\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	gettext.h common.h nhash.h nhash.c strconv.c strconv.h oio.c
+	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h
 
 terminal_SOURCES = terminal.c
-ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GSL_LIBS)
-ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -D_FORTIFY_SOURCE
+ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -D_FORTIFY_SOURCE -DCCNAME='"'$(CC)'"'
+terminal_CFLAGS = $(GTK_CFLAGS)
 all: all-recursive
 
 .SUFFIXES:
@@ -448,7 +453,7 @@ ngraph$(EXEEXT): $(ngraph_OBJECTS) $(ngraph_DEPENDENCIES)
 	$(AM_V_CCLD)$(ngraph_LINK) $(ngraph_OBJECTS) $(ngraph_LDADD) $(LIBS)
 terminal$(EXEEXT): $(terminal_OBJECTS) $(terminal_DEPENDENCIES) 
 	@rm -f terminal$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(terminal_OBJECTS) $(terminal_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(terminal_LINK) $(terminal_OBJECTS) $(terminal_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -503,7 +508,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-shellux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-spline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-strconv.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/terminal.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/terminal-terminal.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1280,6 +1285,22 @@ ngraph-oio.obj: oio.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='oio.c' object='ngraph-oio.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oio.obj `if test -f 'oio.c'; then $(CYGPATH_W) 'oio.c'; else $(CYGPATH_W) '$(srcdir)/oio.c'; fi`
+
+terminal-terminal.o: terminal.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(terminal_CFLAGS) $(CFLAGS) -MT terminal-terminal.o -MD -MP -MF $(DEPDIR)/terminal-terminal.Tpo -c -o terminal-terminal.o `test -f 'terminal.c' || echo '$(srcdir)/'`terminal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/terminal-terminal.Tpo $(DEPDIR)/terminal-terminal.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='terminal.c' object='terminal-terminal.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(terminal_CFLAGS) $(CFLAGS) -c -o terminal-terminal.o `test -f 'terminal.c' || echo '$(srcdir)/'`terminal.c
+
+terminal-terminal.obj: terminal.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(terminal_CFLAGS) $(CFLAGS) -MT terminal-terminal.obj -MD -MP -MF $(DEPDIR)/terminal-terminal.Tpo -c -o terminal-terminal.obj `if test -f 'terminal.c'; then $(CYGPATH_W) 'terminal.c'; else $(CYGPATH_W) '$(srcdir)/terminal.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/terminal-terminal.Tpo $(DEPDIR)/terminal-terminal.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='terminal.c' object='terminal-terminal.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(terminal_CFLAGS) $(CFLAGS) -c -o terminal-terminal.obj `if test -f 'terminal.c'; then $(CYGPATH_W) 'terminal.c'; else $(CYGPATH_W) '$(srcdir)/terminal.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

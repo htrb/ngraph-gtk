@@ -1,5 +1,5 @@
 /* 
- * $Id: ofile.c,v 1.113 2010/03/04 08:30:16 hito Exp $
+ * $Id: ofile.c,v 1.114 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -1952,27 +1952,43 @@ f2ddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-f2dfile(struct objlist *obj,char *inst,char *rval,
-	int argc,char **argv)
+f2dfile(struct objlist *obj, char *inst, char *rval, 
+	int argc, char **argv)
 {
   struct objlist *sys;
   int ignorepath;
-  char *file,*file2;
+  char *file, *file2;
   int num2;
   struct f2dlocal *f2dlocal;
 
-  _getobj(obj,"_local",inst,&f2dlocal);
+  _getobj(obj, "_local", inst, &f2dlocal);
   f2dlocal->mtime = 0;
   f2dlocal->mtime_stat = 0;
   sys=getobject("system");
-  getobj(sys,"ignore_path",0,0,NULL,&ignorepath);
-  if (!ignorepath) return 0;
-  file=(char *)(argv[2]);
-  file2=getbasename(file);
-  g_free(file);
-  argv[2]=file2;
-  num2=0;
-  _putobj(obj,"data_num",inst,&num2);
+  getobj(sys, "ignore_path", 0, 0, NULL, &ignorepath);
+
+  num2 = 0;
+  _putobj(obj, "data_num", inst, &num2);
+
+  if (argv[2] == NULL) {
+    return 0;
+  }
+
+  file = get_utf8_filename(argv[2]);
+  g_free(argv[2]);
+  if (file == NULL) {
+    argv[2] = NULL;
+    return 1;
+  }
+
+  if (ignorepath) {
+    file2 = getbasename(file);
+    g_free(file);
+    argv[2] = file2;
+  } else {
+    argv[2] = file;
+  }
+
   return 0;
 }
 
@@ -6295,7 +6311,7 @@ f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       }
       break;
     }
-    if (arraynum(array) >= (limit * 3)) break;
+    if ((int) arraynum(array) >= (limit * 3)) break;
   }
   closedata(fp, f2dlocal);
   num=arraynum(array);
@@ -6776,7 +6792,7 @@ f2dtime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
-  if (stat(file,&buf)!=0) return 1;
+  if (nstat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
   *((char **)rval)=ntime((time_t *)&(buf.st_mtime),style);
   return 0;
@@ -6793,7 +6809,7 @@ f2ddate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
-  if (stat(file,&buf)!=0) return 1;
+  if (nstat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
   *(char **)rval=ndate((time_t *)&(buf.st_mtime),style);
   return 0;
@@ -7101,7 +7117,7 @@ get_mtime(struct objlist *obj, char *inst, time_t *mtime)
   if (file == NULL)
     return 1;
 
-  r = stat(file, &buf);
+  r = nstat(file, &buf);
   if (r)
     return 1;
 
@@ -7854,7 +7870,7 @@ f2dload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (gettimeval(s, &ftime))
     return 1;
 
-  if (access(fullname, R_OK) != 0) {
+  if (naccess(fullname, R_OK) != 0) {
     mkdata = TRUE;
   } else {
     int len;
@@ -8278,7 +8294,7 @@ f2doutputfile(struct objlist *obj,char *inst,char *rval,
   fp2 = nfopen(file, (append) ? "at" : "wt");
   if (fp2 == NULL) {
     //    error2(obj, ERROPEN, file);
-    error22(obj, ERRUNKNOWN, strerror(errno), file);
+    error22(obj, ERRUNKNOWN, g_strerror(errno), file);
     closedata(fp, f2dlocal);
     return 1;
   }

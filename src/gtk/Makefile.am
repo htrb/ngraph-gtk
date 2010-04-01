@@ -1,6 +1,6 @@
 EXTRA_DIST = dir_defs.h.in
 
-AM_CPPFLAGS = -DLOCALEDIR=\"@localedir@\"
+AM_CPPFLAGS = -DLOCALEDIR=\""@localedir@"\"
 
 noinst_LTLIBRARIES = libngraph.la
 
@@ -20,7 +20,7 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 
 dir_defs.h: dir_defs.h.in Makefile
-	sh ../../pathconv.sh $(docdir) $(pkglibdir) $(ngraphconfdir) dir_defs.h.in
+	sh ../../pathconv.sh "$(docdir)" "$(pkglibdir)" "$(ngraphconfdir)" dir_defs.h.in
 
 libngraph_la_LDFLAGS = -static
 

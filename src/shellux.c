@@ -1,5 +1,5 @@
 /* 
- * $Id: shellux.c,v 1.9 2010/03/04 08:30:16 hito Exp $
+ * $Id: shellux.c,v 1.10 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -26,13 +26,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifndef WINDOWS
 #include <unistd.h>
 #include <signal.h>
 #include <time.h>
-#else  /* WINDOWS */
-#include <dos.h>
-#endif	/* WINDOWS */
+
 #include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
@@ -54,12 +51,12 @@ cmfalse(struct nshell *nshell,int argc,char **argv)
 
 #ifndef WINDOWS
 
-int timeout;
+int Timeout;
 
 static void 
 cmsleeptimeout(int sig)
 {
-  timeout=TRUE;
+  Timeout=TRUE;
 }
 
 int 
@@ -80,10 +77,10 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
   }
   if (has_eventloop()) {
 #ifdef SIGALRM
-    timeout=FALSE;
+    Timeout=FALSE;
     set_signal(SIGALRM, 0, cmsleeptimeout);
     alarm(a);
-    while (!timeout) {
+    while (!Timeout) {
       eventloop();
       msleep(10);
     }
@@ -172,7 +169,7 @@ testexpand(int pre,int *oppo,int *numpo,
     case 'x':
     case 's':
       if (numbufc[*numpo]==NULL) return FALSE;
-      if (stat(numbufc[*numpo],&buf)!=0) {
+      if (nstat(numbufc[*numpo],&buf)!=0) {
         numbuf[*numpo]=FALSE;
         numbufc[*numpo]=NULL;
         break;

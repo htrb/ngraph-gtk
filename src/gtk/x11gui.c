@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.c,v 1.40 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11gui.c,v 1.41 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -33,6 +33,7 @@
 
 #include "object.h"
 #include "nstring.h"
+#include "ioutil.h"
 
 #include "gtk_widget.h"
 #include "gtk_combo.h"
@@ -48,8 +49,8 @@ struct nGetOpenFileData
   GtkWidget *parent, *widget, *chdir_cb;
   int ret;
   char *title;
-  char **initdir;
-  const char *initfil;
+  char **init_dir;
+  const char *init_file;
   int chdir;
   char *ext;
   char **file;
@@ -265,16 +266,17 @@ get_dialog_position(GtkWidget *w, int *x, int *y)
 }
 
 int
-message_box(GtkWidget * parent, char *message, char *title, int mode)
+message_box(GtkWidget * parent, const char *message, const char *title, int mode)
 {
   GtkWidget *dlg;
   int data;
   GtkMessageType dlg_type;
   GtkButtonsType dlg_button;
   gint res_id;
- 
-  if (title == NULL)
+
+  if (title == NULL) {
     title = "Error";
+  }
 
   switch (mode) {
   case RESPONS_YESNOCANCEL:
@@ -349,7 +351,7 @@ message_box(GtkWidget * parent, char *message, char *title, int mode)
 }
 
 int
-DialogInput(GtkWidget * parent, char *title, char *mes, char **s, int *x, int *y)
+DialogInput(GtkWidget * parent, const char *title, const char *mes, char **s, int *x, int *y)
 {
   GtkWidget *dlg, *text;
   GtkVBox *vbox;
@@ -397,7 +399,7 @@ DialogInput(GtkWidget * parent, char *title, char *mes, char **s, int *x, int *y
 }
 
 int
-DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r, int *x, int *y)
+DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *r, int *x, int *y)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkVBox *vbox;
@@ -469,7 +471,7 @@ DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *array,
 }
 
 int
-DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r, int *x, int *y)
+DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y)
 {
   GtkWidget *dlg, *combo;
   GtkVBox *vbox;
@@ -535,7 +537,7 @@ DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array,
 }
 
 int
-DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r, int *x, int *y)
+DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y)
 {
   GtkWidget *dlg, *combo;
   GtkVBox *vbox;
@@ -604,7 +606,7 @@ DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *a
 }
 
 int
-DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, double max, double inc, double *r, int *x, int *y)
+DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, double *r, int *x, int *y)
 {
   GtkWidget *dlg, *spin;
   GtkVBox *vbox;
@@ -667,7 +669,7 @@ DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, doubl
 }
 
 int
-DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r, int *x, int *y)
+DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *r, int *x, int *y)
 {
   GtkWidget *dlg, *btn, **btn_ary;
   GtkVBox *vbox;
@@ -784,11 +786,15 @@ fsok(GtkWidget *dlg)
 
   k = 0;
   for (list = top; list; list = list->next) {
-    file = (char *) list->data;
-    if ((file == NULL) || (strlen(file) < 1)) {
+    char *tmp;
+
+    tmp = (char *) list->data;
+    if (tmp == NULL || strlen(tmp) < 1) {
       gdk_beep();
       continue;
     }
+
+    file = get_utf8_filename(tmp);
 
     for (i = strlen(file) - 1; (i > 0) && (file[i] != '/') && (file[i] != '.'); i--);
     if ((file[i] != '.') && data->ext) {
@@ -799,20 +805,21 @@ fsok(GtkWidget *dlg)
 
     if (len) {
       file2 = g_strdup_printf("%s.%s", file, data->ext);
+      g_free(file);
     } else {
-      file2 = g_strdup(file);
+      file2 = file;
     }
     if (file2) {
       if (data->mustexist) {
-	if ((stat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG) 
-	    || (access(file2, R_OK) != 0)) {
+	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG) 
+	    || (naccess(file2, R_OK) != 0)) {
 	  gdk_beep();
 	  error22(NULL, 0, "I/O error", file2);
 	  g_free(file2);
 	  continue;
 	}
       } else {
-	if ((stat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
+	if ((nstat(file2, &buf) == 0) && ((buf.st_mode & S_IFMT) != S_IFREG)) {
 	  gdk_beep();
 	  error22(NULL, 0, "I/O error", file2);
 	  g_free(file2);
@@ -829,15 +836,12 @@ fsok(GtkWidget *dlg)
 
   if (data->changedir && k > 0) {
     data->chdir = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->chdir_cb));
-    if (data->chdir && data->initdir) {
-      char *dir, *tmp, *tmp2;
+    if (data->chdir && data->init_dir) {
+      char *dir;
 
-      g_free(*(data->initdir));
-      tmp = g_strdup(farray[0]);
-      dir = dirname(tmp);
-      tmp2 = g_strdup(dir);
-      *(data->initdir) = tmp2;
-      g_free(tmp);
+      g_free(*(data->init_dir));
+      dir = g_path_get_dirname(farray[0]);
+      *(data->init_dir) = dir;
     }
   }
   farray[k] = NULL;
@@ -848,18 +852,15 @@ fsok(GtkWidget *dlg)
 static void 
 file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
 {
-  char *name, *ptr;
+  char *name;
 
   if (dlg == NULL || full_name == NULL)
     return;
 
-  ptr = filename_to_utf8(full_name);
-  if (ptr) {
-    name = basename(ptr);
-    if (name) {
-      gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), name);
-    }
-    g_free(ptr);
+  name = getbasename(full_name);
+  if (name) {
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dlg), name);
+    g_free(name);
   }
 }
 
@@ -906,22 +907,31 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dlg), filter);
   }
 
-  if (data->initdir && *(data->initdir)) {
-    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), *(data->initdir));
+  if (data->init_dir && *(data->init_dir)) {
+    gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dlg), *(data->init_dir));
   }
   gtk_widget_show_all(dlg);
 
-  if (data->changedir && data->initdir) {
+  if (data->changedir && data->init_dir) {
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data->chdir_cb), data->chdir);
   } else {
     gtk_widget_hide(data->chdir_cb);
   }
 
-  if (data->initfil) {
+  if (data->init_file) {
     if (type == GTK_FILE_CHOOSER_ACTION_SAVE) {
-      file_dialog_set_current_neme(dlg, data->initfil);
+#ifdef WINDOWS
+      char *tmp;
+      tmp = g_locale_from_utf8(data->init_file, -1, NULL, NULL, NULL);
+      if (tmp) {
+	file_dialog_set_current_neme(dlg, tmp);
+	g_free(tmp);
+      }
+#else  /* WINDOWS */
+      file_dialog_set_current_neme(dlg, data->init_file);
+#endif	/* WINDOWS */
     } else {
-      gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), data->initfil);
+      gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), data->init_file);
     }
   }
 
@@ -951,14 +961,14 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
 
 int
 nGetOpenFileNameMulti(GtkWidget * parent,
-		      char *title, char *defext, char **initdir,
-		      const char *initfil, char ***file, int chd)
+		      char *title, char *defext, char **init_dir,
+		      const char *init_file, char ***file, int chd)
 {
   int ret;
   
   FileSelection.title = title;
-  FileSelection.initdir = initdir;
-  FileSelection.initfil = initfil;
+  FileSelection.init_dir = init_dir;
+  FileSelection.init_file = init_file;
   FileSelection.file = NULL;
   FileSelection.chdir = chd;
   FileSelection.ext = defext;
@@ -969,7 +979,7 @@ nGetOpenFileNameMulti(GtkWidget * parent,
   ret = FileSelectionDialog(parent, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OPEN);
   if (ret == IDOK) {
     *file = FileSelection.file;
-    if (FileSelection.chdir && initdir && chdir(*initdir)) {
+    if (FileSelection.chdir && init_dir && nchdir(*init_dir)) {
       ErrorMessage();
     }
   } else {
@@ -981,14 +991,14 @@ nGetOpenFileNameMulti(GtkWidget * parent,
 
 int
 nGetOpenFileName(GtkWidget *parent,
-		 char *title, char *defext, char **initdir, const char *initfil,
+		 char *title, char *defext, char **init_dir, const char *init_file,
 		 char **file, int exist, int chd)
 {
   int ret;
   
   FileSelection.title = title;
-  FileSelection.initdir = initdir;
-  FileSelection.initfil = initfil;
+  FileSelection.init_dir = init_dir;
+  FileSelection.init_file = init_file;
   FileSelection.file = NULL;
   FileSelection.chdir = chd;
   FileSelection.ext = defext;
@@ -1005,7 +1015,7 @@ nGetOpenFileName(GtkWidget *parent,
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     g_free(FileSelection.file);
-    if (FileSelection.chdir && initdir && chdir(*initdir)) {
+    if (FileSelection.chdir && init_dir && nchdir(*init_dir)) {
       ErrorMessage();
     }
   } else {
@@ -1017,14 +1027,14 @@ nGetOpenFileName(GtkWidget *parent,
 
 int
 nGetSaveFileName(GtkWidget * parent,
-		 char *title, char *defext, char **initdir, const char *initfil,
+		 char *title, char *defext, char **init_dir, const char *init_file,
 		 char **file, int overwrite, int chd)
 {
   int ret;
 
   FileSelection.title = title;
-  FileSelection.initdir = initdir;
-  FileSelection.initfil = initfil;
+  FileSelection.init_dir = init_dir;
+  FileSelection.init_file = init_file;
   FileSelection.file = NULL;
   FileSelection.chdir = chd;
   FileSelection.ext = defext;
@@ -1036,7 +1046,7 @@ nGetSaveFileName(GtkWidget * parent,
   if (ret == IDOK) {
     *file = FileSelection.file[0];
     g_free(FileSelection.file);
-    if (FileSelection.chdir && initdir && chdir(*initdir)) {
+    if (FileSelection.chdir && init_dir && nchdir(*init_dir)) {
       ErrorMessage();
     }
   } else {

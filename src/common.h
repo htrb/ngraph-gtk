@@ -19,9 +19,23 @@
 
 #endif /* HAVE_GETTEXT */
 
+#include <glib.h>
+#include <glib/gstdio.h>
+
 #ifdef __MINGW32__
 #define WINDOWS 1
+#define _WIN32_WINNT 0x0500
 #include <windows.h>
 #endif
+
+#ifndef CCNAME
+#define CCNAME "unknown";
+#endif
+
+#ifndef __VERSION__
+#define __VERSION__ ""
+#endif
+
+#define COMPILER_NAME (CCNAME " " __VERSION__)
 
 #endif	/* COMMON_HEADER */

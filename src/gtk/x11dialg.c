@@ -1,5 +1,5 @@
 /* 
- * $Id: x11dialg.c,v 1.53 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11dialg.c,v 1.54 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -747,15 +747,7 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   if (tmp == NULL)
     return -1;
 
-  if (strcmp(field, "file") == 0) {
-    buf = filename_from_utf8(tmp);
-    if (buf == NULL) {
-      message_box(NULL, _("Couldn't convert filename from UTF-8."), NULL, RESPONS_OK);
-      return -1;
-    }
-  } else {
-    buf = g_strdup(tmp);
-  }
+  buf = g_strdup(tmp);
 
   if (buf == NULL)
     return -1;
@@ -785,19 +777,6 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   if (buf == NULL) {
     gtk_entry_set_text(entry, "");
     return;
-  }
-
-  if (strcmp(field, "file") == 0) {
-    char *ptr;
-
-    ptr = filename_to_utf8(buf);
-    if (ptr == NULL) {
-      message_box(NULL, _("Couldn't convert filename to UTF-8."), NULL, RESPONS_OK);
-      return;
-    }
-
-    g_free(buf);
-    buf = ptr;
   }
 
   gtk_entry_set_text(entry, CHK_STR(buf));

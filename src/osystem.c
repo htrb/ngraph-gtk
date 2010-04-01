@@ -1,5 +1,5 @@
 /* 
- * $Id: osystem.c,v 1.17 2010/03/04 08:30:16 hito Exp $
+ * $Id: osystem.c,v 1.18 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -80,6 +80,7 @@ sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"copyright",inst,COPYRIGHT)) return 1;
   if (_putobj(obj,"e-mail",inst,EMAIL)) return 1;
   if (_putobj(obj,"web",inst,WEB)) return 1;
+  if (_putobj(obj,"compiler",inst, COMPILER_NAME)) return 1;
   if (_putobj(obj,"GRAF",inst,"%Ngraph GRAF")) return 1;
   if (_putobj(obj,"temp_prefix",inst,TEMPN)) return 1;
   if ((wd=ngetcwd())==NULL) return 1;
@@ -138,7 +139,7 @@ sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
     data = arraydata(array);
     for (i = 0; i < n; i++) {
-      unlink(data[i]);
+      g_unlink(data[i]);
     }
   }
   arrayfree2(array);
@@ -167,17 +168,17 @@ static int
 syscwd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *wd;
-  char *home;
+  const char *home;
 
   wd=argv[2];
   if (wd!=NULL) {
-    if (chdir(wd)!=0) {
+    if (nchdir(wd)!=0) {
       error2(obj,ERRNODIR,wd);
       return 1;
     }
   } else {
-    if ((home=getenv("HOME"))!=NULL) {
-      if (chdir(home)!=0) {
+    if ((home=g_getenv("HOME"))!=NULL) {
+      if (nchdir(home)!=0) {
         error2(obj,ERRNODIR,home);
         return 1;
       }
@@ -264,7 +265,7 @@ sysunlink(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     for (i=num-1;i>=0;i--)
       if (strcmp(tmpfil,data[i])==0) break;
     if (i>=0) {
-      unlink(data[i]);
+      g_unlink(data[i]);
       arrayndel2(array,i);
     }
   }
@@ -342,6 +343,7 @@ static struct objtable nsystem[] = {
   {"copyright",NSTR,NREAD,NULL,NULL,0},
   {"e-mail",NSTR,NREAD,NULL,NULL,0},
   {"web",NSTR,NREAD,NULL,NULL,0},
+  {"compiler",NSTR,NREAD,NULL,NULL,0},
   {"login_shell",NSTR,NREAD|NWRITE,NULL,NULL,0},
   {"cwd",NSTR,NREAD|NWRITE,syscwd,NULL,0},
   {"ignore_path",NBOOL,NREAD|NWRITE,NULL,NULL,0},

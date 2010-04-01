@@ -1,5 +1,5 @@
 /* 
- * $Id: x11opt.c,v 1.81 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11opt.c,v 1.82 2010/04/01 06:08:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -307,7 +307,6 @@ set_scrpt_file(GtkWidget *entry, char **opt, char *msg)
 
   buf = entry_get_filename(entry);
   if (buf == NULL) {
-    message_box(NULL, _("Couldn't convert filename from UTF-8."), NULL, RESPONS_OK);
     return 1;
   }
 
@@ -972,6 +971,24 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   }
 }
 
+#if USE_ENTRY_ICON
+static void
+set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
+{
+  char *file;
+  struct SetDriverDialog *d;
+
+  d = (struct SetDriverDialog *) user_data;
+  if (nGetOpenFileName(d->widget, _("Editor"), NULL, NULL,
+		       NULL, &file, TRUE, FALSE) == IDOK) {
+    entry_set_filename(GTK_WIDGET(w), file);
+  }
+  g_free(file);
+}
+#else
+GCallback set_file_in_entry = NULL;
+#endif
+
 static void
 MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -992,7 +1009,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
-    w = create_text_entry(FALSE, TRUE);
+    w = create_file_entry_with_cb(G_CALLBACK(set_file_in_entry), d);
     add_widget_to_table(table, w, _("_Editor:"), TRUE, i++);
     d->editor = w;
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1084,20 +1101,20 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Font"));
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
     w = gtk_font_button_new();
-    add_widget_to_table(table, w, _("font of _Coordinate window:"), FALSE, i++);
+    add_widget_to_table(table, w, _("_Coordinate window:"), FALSE, i++);
     d->coordwin_font = w;
 
     w = gtk_font_button_new();
-    add_widget_to_table(table, w, _("font of _Information window:"), FALSE, i++);
+    add_widget_to_table(table, w, _("_Information window:"), FALSE, i++);
     d->infowin_font = w;
 
     w = gtk_font_button_new();
-    add_widget_to_table(table, w, _("font of data _Preview:"), FALSE, i++);
+    add_widget_to_table(table, w, _("data _Preview:"), FALSE, i++);
     d->file_preview_font = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1504,7 +1521,7 @@ CmOptionSaveNgp(void)
       putobj(obj, "save_path", i, &path);
   }
 
-  if (access(ngpfile, 04) == 0) {
+  if (naccess(ngpfile, 04) == 0) {
     snprintf(mes, sizeof(mes), _("`%s'\n\nOverwrite existing file?"), ngpfile);
     if (message_box(NULL, mes, _("Save as .Ngraph.ngp"), RESPONS_YESNO) != IDYES) {
       g_free(ngpfile);

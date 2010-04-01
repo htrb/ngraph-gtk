@@ -1,3 +1,222 @@
+2010-04-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (graph_dropped): add "-f" option for
+	"LoadNgpFile()".
+	(ViewerEvMouseMove, ViewerEvPaint, create_pix): check
+	"Menulocal.gc".
+
+	* src/gtk/x11opt.c (set_file_in_entry): add.
+	(MiscDialogSetup): use "create_file_entry_with_cb()" instead of
+	"create_text_entry()".
+	(CmOptionSaveNgp): use "naccess()" instead of "access()".
+
+	* src/gtk/x11merge.c (merge_list_set_val): the filename is always
+	UTF-8.
+
+	* src/gtk/x11menu.h (NgraphApp): remove member "Message1", and
+	members "Message_pos" and "Message_extra".
+
+	* src/gtk/x11menu.c (show_file_menu_cb): the filename is always
+	UTF-8.
+	(createpixmap, create_toolbar_pixmap, createicon): remove unused
+	argument "win".
+	(create_message_box): add.
+	(setupwindow): call "gtk_widget_show_all()" and "reset_event()"
+	just after call "gtk_table_attach" for "NgraphApp.Viewer.Win".
+	(SetPoint): use GtkLabel to show the cursor position in the status
+	bar.
+
+	* src/gtk/x11gui.c (fsok): use "naccess()" instead of "access()".
+	(fsok): use "nstat()" instead of "stat()".
+	(fsok): convert filename string to UTF-8.
+	(fsok): use "g_path_get_dirname()".
+	(file_dialog_set_current_neme): use "getbasename()".
+	(FileSelectionDialog): second argument of
+	"file_dialog_set_current_neme()" has to be converted from UTF-8.
+
+	* src/gtk/x11graph.c (DirectoryDialogClose, CmGraphHistory): use
+	"nchdir()" instead of "chdir()".
+	(CmGraphHistory): use "g_path_get_dirname()".
+	(about_link_activated_cb, CmHelpHelp): use "system_bg()".
+
+	* src/gtk/x11file.c (edit_file): add.
+	(FileDialogEdit, CmFileEdit, FileWinFileEdit): use "edit_file()".
+	(file_list_set_val): the filename is always UTF-8.
+
+	* src/gtk/x11dialg.c (SetObjFieldFromText, SetTextFromObjField):
+	strings are always UTF-8.
+
+	* src/gtk/x11commn.c (SaveDrawrable): don't write platform
+	information.
+	(check_overwrite, GraphSave): use "naccess()" instead of
+	"access()".
+	(GraphSave): use "nchdir()" instead of "chdir()".
+	(LoadNgpFile): check if the file is readable or not.
+	(LoadNgpFile): the filename is always UTF-8.
+	(CheckIniFile): get home directory from "system" object.
+	(ErrorMessage): use "g_strerror()" instead of "strerror()".
+
+	* src/gtk/ox11menu.c (menumenu): convert filename string from
+	UTF-8.
+	(menumenu): call "hide_console()" and "resotre_console()" before
+	and after call "application()" respectively.
+	(SetCaption): the filename is always UTF-8.
+
+	* src/gtk/ogra2cairofile.c (create_cairo, gra2cairofile_output):
+	convert filename string from UTF-8.
+
+	* src/gtk/main.c (check_console, hide_console, resotre_console):
+	added.
+	(nallocconsole, exec_console): use "g_unlink()" instead of
+	"unlink()".
+	(set_dir_defs, set_path_env): added.
+	(main): don't use third argument.
+	(main): call "g_thread_init()", "gdk_threads_init()" and
+	"gdk_threads_enter()".
+	(main): call "set_dir_defs()" when "WINDOWS" is defined.
+	(main): use "g_getenv()" instead of "getenv()".
+	(main): use "g_get_user_config_dir()".
+	(main): check return value of "exeobj()" for "shell::shell".
+	(get_file_list): use "nstat()" instead of "stat()".
+
+	* src/gtk/gtk_widget.c (filename_from_utf8, filename_to_utf8):
+	remove.
+	(entry_set_filename, entry_get_filename): don't convert file name.
+
+	* src/gtk/gtk_subwin.c (start_editing, modify_string): strings are
+	always UTF-8.
+	(sub_window_create): type hit for subwindows are
+	"GDK_WINDOW_TYPE_HINT_UTILITY".
+	(sub_window_create): call "gtk_window_set_transient_for()".
+
+	* src/shellux.c (testexpand): use "nstat()" instead of "stat()".
+
+	* src/shellcm.c (cmcd): use "nchdir()" instead of "chdir()".
+	(cmbasename): use "getbasename()" instead of "basename()".
+	(cmdirname): use "getdirname()" instead of "dirname()".
+
+	* src/shell.c (set_environ): use "g_getenv()" to get environment
+	variable.
+	(unlinkfile): use "g_unlink()" instead of "unlink()".
+	(set_shellevloop): use "g_thread_create()" instead of
+	"pthread_create()".
+	(reset_shellevloop): use "g_thread_join()" instead of
+	"pthread_join()".
+	(readline_thread, nreadline): added.
+	(shget): use "nreadline()" when readline library is available.
+	(puts_localized): added.
+	(shputstdout, shprintfstdout): use "puts_localized()".
+	(getcmdline): convert strings to UTF-8 if the strings are not
+	valid UTF-8.
+	(expand): use "g_unlink()" instead of "unlink()".
+	(expand): use function "strlen()" only once for a loop.
+	(set_env_val, cmdexec, newshell): use "g_getenv()" instead of
+	"getenv()".
+	(proc_in_thread, quote_args): added.
+	(cmdexec): use "g_strerror()" instead of "strerror()".
+	(cmdexec): use "g_thread_create()" and "proc_in_thread()" to
+	execute command.
+	(show_system_error, system_in_thread, system_bg): added.
+
+	* src/osystem.c (nsystem): add field "compiler".
+	(sysinit): set compiler name.
+	(sysdone, sysunlink): use "g_unlink()" instead of "unlink()".
+	(syscwd): use "nchdir()" instead of "chdir()".
+
+	* src/oprm.c (prmload): use "naccess()" instead of "access()".
+
+	* src/omerge.c (mergefile): call "get_utf8_filename()" for
+	filename argument.
+	(mergetime, mergedate): use "nstat()" instead of "stat()".
+	(mergeload): use "naccess()" instead of "access()".
+
+	* src/oio.c (io_error): use "g_strerror()" instead of
+	"strerror()".
+
+	* src/ogra2prn.c (gra2p_output): use "g_unlink()" instead of
+	"unlink()".
+
+	* src/ofile.c (f2dfile): call "get_utf8_filename()" for filename
+	argument.
+	(f2dtime, f2ddate, get_mtime): use "nstat()" instead of "stat()".
+	(f2dload): use "naccess()" instead of "access()".
+	(f2doutputfile): use "g_strerror()" instead of "strerror()".
+
+	* src/object.c (error2, error22): call "g_locale_from_utf8()" for
+	message string.
+
+	* src/nconfig.c (unlockconfig, make_backup, copyconfig): use
+	"g_unlink()" instead of "unlink()".
+	(openconfig, writecheckconfig, copyconfig): use "nstat()" instead
+	of "stat()".
+	(writecheckconfig): use "naccess()" instead of "access()".
+
+	* src/ioutil.c (changefilename): don't check Shit-JIS kanji
+	code. Encodeing of the filename should be UTF-8.
+	(path_to_win): added.
+	(getfullpath): use "get_utf8_filename()".
+	(getdisk): added.
+	(getrelativepath): use "get_utf8_filename()".
+	(get_utf8_filename, get_localized_filename): added.
+	(getbasename): use "g_path_get_basename()".
+	(getdirname): use "g_path_get_dirname()".
+	(nsearchpath): call "g_find_program_in_path()".
+	(nselectdir): use "nstat()" instead of "stat()".
+	(nfopen): use "g_fopen()".
+	(nstat, naccess, nchdir): added.
+	(n_mkstemp): use "g_get_tmp_dir()".
+
+	* src/common.h (COMPILER_NAME): added.
+	(WINDOWS): define if "__MINGW32__" is defined
+
+	* initfile/Ngraph.ini.in (help_browser): change format (file name
+	is not included).
+
+	* driver/wmfapi.c (chk_write): added.
+	(Polygon, Ellipse, Arc, Pie, Chord, SetPixel, SetPolyFillMode)
+	(SetBkMode, SetTextAlign, SetTextCharacterExtra, TextOut)
+	(SetTextColor, Rectangle, MoveTo, LineTo, SelectObject)
+	(DeleteObject, SetWindowOrg, SetWindowExt, CloseMetaFile)
+	(SetMapMode): use "chk_write()" instead of "write()".
+	(CloseMetaFile): don't close the file but call "fseek()".
+	(CreateMetaFile): add argument "dc".
+	(CreateMetaFile): don't open a file.
+
+	* driver/gra2wmf.c (getboundingbox, draw): use function "strlen()"
+	only once for each loops.
+	(main): use environment variable "NGRAPHCONF" instead of
+	"NGRAPHLIB".
+	(main): use "g_mkstemp_full()" to create temporally file.
+	(main): use "chk_write()" instead of "write()".
+
+2010-03-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* driver/gra2ps.c (getboundingbox, draw): use function "strlen()"
+	only once for each loops.
+	(main): use environment variable "NGRAPHCONF" instead of
+	"NGRAPHLIB".
+
+	* mingw/windows_resource.rc: added.
+
+	* mingw/windows_make.sed: added.
+
+	* mingw/windows_demo.sed: added.
+
+	* mingw/windows.sh: added.
+
+	* mingw/pango.aliases: added.
+
+	* mingw/gtkrc: added.
+
+	* mingw/associate.bat: added.
+
+	* mingw/Makefile.am: added.
+
+2010-03-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.c (main): use "g_listenv()" instead of 3rd argument
+	of "main()" function.
+
 2010-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (reset_event): change name from "ResetEvent"
@@ -39,7 +258,7 @@
 
 2010-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofile.c (draw_interpolation): add.
+	* src/ofile.c (draw_interpolation): added.
 	(draw_fit): use "draw_interpolation()".
 
 2010-02-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -47,12 +266,12 @@
 	* src/math/math_expression.c (math_parameter_expression_new): set
 	errorcode to "err" when the variable "prm" is NULL.
 
-	* src/ofit.c (ERR_INCONSISTENT_DATA_NUM): add.
+	* src/ofit.c (ERR_INCONSISTENT_DATA_NUM): added.
 	(fiterrorlist): add error message.
 	(fit_put_weight_func): fix arguments of the function
 	"ofile_create_math_equation()".
 
-	* src/ofile.c (calc_fit, draw_fit): add.
+	* src/ofile.c (calc_fit, draw_fit): added.
 	(fitout): use "calc_fit()" and "draw_fit()".
 	(ofile_create_math_equation): add argument "use_const".
 	(set_equation): fix second argument of "set_user_fnc()" from "g"
@@ -64,7 +283,7 @@
 2010-02-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (fitout): use "calc_weight()" to calculate weight.
-	(calc_weight): add.
+	(calc_weight): added.
 
 	* src/object.c (moveobj): move object only when id of instances of
 	"sid" and "did" are exist.
@@ -73,7 +292,7 @@
 	* src/math/math_function.h.in: add functions "prog1" and "prog2".
 
 	* src/math/math_basic_function.c (math_func_prog1)
-	(math_func_prog2): add.
+	(math_func_prog2): added.
 
 2010-02-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -92,9 +311,9 @@
 	(draw_numbering): print position, direction and numbering value
 	when "draw" is false.
 	(numbering): add argument "draw".
-	(axis_get_numbering): add.
+	(axis_get_numbering): added.
 	(axis): add field "get_numbering".
-	(draw_numbering_normalize): add.
+	(draw_numbering_normalize): added.
 	(draw_numbering): use "draw_numbering_normalize()".
 
 	* driver/ngp2.in: add "-d dpi" option.
@@ -111,8 +330,8 @@
 	(fitout): call "math_equation_parse()", "set_const()" and
 	"math_equation_optimize()" for weight function.
 
-	* src/ofit.c (fit_put_weight_func): add.
-	(show_eqn_error): add.
+	* src/ofit.c (fit_put_weight_func): added.
+	(show_eqn_error): added.
 	(fit): check "weight_func".
 	(fitput): use "show_eqn_error()".
 
@@ -148,14 +367,14 @@
 
 	* src/gtk/x11lgnd.c (renderer_func, column_edited)
 	(column_0_edited, column_1_edited, insert_column)
-	(set_delete_button_sensitivity): add.
+	(set_delete_button_sensitivity): added.
 	(points_setup): use "GtkTreeView".
 	(LegendCurveDialogSetup, LegendPolyDialogSetup)
 	(LegendArrowDialogSetup): change layout.
 
 	* src/gtk/x11dialg.c (SetObjPointsFromText)
 	(SetTextFromObjPoints): use "GtkTreeView".
-	(set_obj_points_from_text, set_entry_from_obj_point): add.
+	(set_obj_points_from_text, set_entry_from_obj_point): added.
 	(SetObjFieldFromStyle): use "set_obj_points_from_text()" instead
 	of "SetObjPointsFromText()".
 	(SetStyleFromObjField): use "set_entry_from_obj_point()" instead
@@ -187,7 +406,7 @@
 
 2010-01-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11print.c (init_print): add.
+	* src/gtk/x11print.c (init_print): added.
 	(CmOutputPrinter): "begin_print" signal is connected to the
 	function "init_print()".
 	(CmOutputPrinter): don't call
@@ -195,18 +414,18 @@
 
 2010-01-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gra.h (CURVE_OBJ_USE_EXPAND_BUFFER): add.
+	* src/gra.h (CURVE_OBJ_USE_EXPAND_BUFFER): added.
 
 	* src/ocurve.c (curveinit): initialize "_points" field when
 	"CURVE_OBJ_USE_EXPAND_BUFFER" is TRUE.
 	(curve_expand, curve_expand_points, curve_clear)
 	(curve_set_points, curve_flip, curve_move, curve_rotate)
-	(curve_zoom, curve_change): add.
+	(curve_zoom, curve_change): added.
 	(curve): add field "_points".
 	(curvedraw, curvebbox, curvematch): use "_points" field when
 	"CURVE_OBJ_USE_EXPAND_BUFFER" is TRUE.
 
-	* src/object.c (arrayclear, arrayclear2): add.
+	* src/object.c (arrayclear, arrayclear2): added.
 
 2009-12-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -240,7 +459,7 @@
 
 	* src/gtk/x11lgnd.c (legend_list_set_val): use
 	"legend_list_set_property()".
-	(legend_list_set_color, legend_list_set_property): add.
+	(legend_list_set_color, legend_list_set_property): added.
 
 	* src/gtk/x11menu.c (create_toolbar): use
 	"gtk_orientable_set_orientation()" instead of
@@ -275,7 +494,7 @@
 2009-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (set_user_fit_sensitivity)
-	(create_user_fit_frame): add.
+	(create_user_fit_frame): added.
 	(FitDialogSetSensitivity): use "set_user_fit_sensitivity()".
 	(FitDialogSetup): use "GtkTable" instead of "GtkHBox" or
 	"GtkVBox".
@@ -285,10 +504,10 @@
 
 2009-12-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/gtk_widget.c (create_file_entry_with_cb): add.
+	* src/gtk/gtk_widget.c (create_file_entry_with_cb): added.
 
 	* src/gtk/x11dialg.h (struct FileMath, struct FileLoad)
-	(struct FileMask, struct FileMove): add.
+	(struct FileMask, struct FileMove): added.
 	(struct FileDialog): add member "math", "load", "mask" and "move"
 
 	* src/gtk/x11file.c (move_tab_setup_item, move_tab_copy)
@@ -299,7 +518,7 @@
 	(math_tab_create, math_tab_set_value, file_setup_item)
 	(set_fit_button_label, plot_tab_setup_item, file_settings_copy)
 	(plot_tab_create, file_dialog_show_tab, set_headlines)
-	(plot_tab_set_value): add.
+	(plot_tab_set_value): added.
 	(FileDialogSetup): use "set_headlines()".
 
 	* src/gtk/x11graph.c (PageDialogSetup): use "GtkTable" instead of
@@ -307,9 +526,9 @@
 
 	* src/gtk/x11lgnd.c (LegendLineCB, LegendRectCB, LegendArcCB): use
 	"g_strdup_printf()" instead of "g_malloc()" and "snprintf()".
-	(legend_dialog_set_sensitive): add.
+	(legend_dialog_set_sensitive): added.
 	(legend_dialog_setup_item): call "legend_dialog_set_sensitive()".
-	(legend_copy_clicked): add.
+	(legend_copy_clicked): added.
 	(width_setup, points_setup, style_setup, miter_setup)
 	(join_setup, color_setup, color2_setup, LegendCurveDialogSetup)
 	(LegendPolyDialogSetup, LegendArrowDialogSetup)
@@ -359,7 +578,7 @@
 
 	* src/gtk/x11gui.c (DialogExecute): use "DnDLock" instead of
 	"GlobalLock".
-	(ndialog_run): add.
+	(ndialog_run): added.
 	(DialogExecute, MessageBox, DialogInput, DialogRadio)
 	(DialogCombo, DialogComboEntry, DialogSpinEntry, DialogCheck)
 	(FileSelectionDialog): use "ndialog_run()" instead of
@@ -386,7 +605,7 @@
 	(SetObjFieldFromWidget): focus the widget when an error is
 	occurred.
 
-	* src/gtk/x11axis.c (bg_button_toggled): add.
+	* src/gtk/x11axis.c (bg_button_toggled): added.
 	(GridDialogSetupItem): call "bg_button_toggled()".
 	(GridDialogSetup): "toggled" signal is connected to
 	"bg_button_toggled()" .
@@ -404,16 +623,16 @@
 	(font_tab_set_value, font_tab_setup_item, font_tab_copy_clicked)
 	(font_tab_create, position_tab_set_value)
 	(position_tab_setup_item, position_tab_copy_clicked)
-	(position_tab_create, axis_dialog_show_tab): add.
+	(position_tab_create, axis_dialog_show_tab): added.
 	(AxisDialogSetup): use "GtkNotebook".
-	(scale_tab_set_value): add.
+	(scale_tab_set_value): added.
 	(AxisDialogClose): call "gtk_notebook_set_current_page()" when
 	errors are occurred.
 	(AxisDialogSetup): sensitivity of the delete button is depemd on
 	"d->CanDel".
 
 	* src/gtk/gtk_widget.c (add_widget_to_table_sub)
-	(add_widget_to_table, add_copy_button_to_box): add.
+	(add_widget_to_table, add_copy_button_to_box): added.
 
 2009-12-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -431,7 +650,7 @@
 	(math_func_icbeta, math_func_erf, math_func_zeta)
 	(math_func_zetam1, math_func_zeta_int, math_func_zetam1_int)
 	(math_func_ynu, math_func_jnu, math_func_inu, math_func_knu)
-	(math_func_in, math_func_kn, math_func_yl, math_func_jl): add.
+	(math_func_in, math_func_kn, math_func_yl, math_func_jl): added.
 
 2009-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -442,11 +661,11 @@
 
 	* src/gtk/main.c (obj_add_func_ary[]): add "addio".
 
-	* src/oio.c: add.
+	* src/oio.c: added.
 
 2009-11-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/math/math_equation.c (clear_pos_func_buf): add.
+	* src/math/math_equation.c (clear_pos_func_buf): added.
 	(math_equation_clear): use "clear_pos_func_buf()".
 	(math_equation_parse): call "clear_pos_func_buf()" if
 	"eq->pos_func_num" is greater than zero.
@@ -482,10 +701,10 @@
 	"MATH_TOKEN_TYPE_CONST" and "inside_block" is TRUE.
 
 	* src/math/math_error.h (MATH_ERROR_INVALID_CDEF)
-	(MATH_ERROR_PRM_IN_DEF): add.
+	(MATH_ERROR_PRM_IN_DEF): added.
 
 	* src/math/math_error.c (ERR_MSG_INVALID_C, ERR_MSG_PRM_IN_DEF):
-	add.
+	added.
 	(ERR_MSG_POS_FUNC): change message.
 	(math_err_get_error_message): add case for
 	"MATH_ERROR_INVALID_CDEF" and "MATH_ERROR_PRM_IN_DEF#.
@@ -528,7 +747,7 @@
 	UTF-8.
 
 	* src/gtk/gtk_widget.c (entry_get_filename, entry_set_filename):
-	add.
+	added.
 
 	* src/gtk/gtk_subwin.c (modify_string): change filename from
 	UTF-8.
@@ -555,7 +774,7 @@
 
 	* src/ofile.c (set_data_progress): don't show the filename.
 
-	* src/gtk/gtk_widget.c (filename_from_utf8, filename_to_utf8): add.
+	* src/gtk/gtk_widget.c (filename_from_utf8, filename_to_utf8): added.
 
 2009-11-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -579,14 +798,14 @@
 
 2009-11-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/omath.c (parse_original_formula): add.
+	* src/omath.c (parse_original_formula): added.
 	(mformula): use "parse_original_formula()".
 
 2009-11-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shellcm.c (str_calc): remove.
 
-	* src/shell.c (str_calc): add.
+	* src/shell.c (str_calc): added.
 
 	* src/object.c (getargument): use "str_calc()".
 
@@ -659,10 +878,10 @@
 	set error id to "*err" when the constant is already defined.
 
 	* src/math/math_error.c (ERR_MSG_CONST_EXIST)
-	(ERR_MSG_CALCULATION): add.
+	(ERR_MSG_CALCULATION): added.
 
 	* src/math/math_equation.c (math_equation_set_const_error)
-	(math_equation_get_const_name): add.
+	(math_equation_get_const_name): added.
 	(math_equation_add_const_definition): add argument "int *err".
 
 	* src/math/math_error.c (check_error_position)
@@ -670,7 +889,7 @@
 	(ERR_MSG_UNEXP_OP, ERR_MSG_UNEXP_TOK, ERR_MSG_ARG_NUM)
 	(ERR_MSG_MISS_RP, ERR_MSG_MISS_RC, ERR_MSG_MISS_RB)
 	(ERR_MSG_UNKNOWN_F, ERR_MSG_INVARID_F, ERR_MSG_INVARID_P)
-	(ERR_MSG_MEMORY, ERR_MSG_UNKNOWN, ERR_MSG_POS_FUNC): add.
+	(ERR_MSG_MEMORY, ERR_MSG_UNKNOWN, ERR_MSG_POS_FUNC): added.
 
 	* src/math/math_parser.c (parse_array_expression)
 	(parse_primary_expression, get_argument, create_math_func)
@@ -686,7 +905,7 @@
 	initialize struct.
 	(math_equation_set_parse_error)
 	(math_equation_set_func_arg_num_error)
-	(math_equation_set_func_error): add.
+	(math_equation_set_func_error): added.
 	(math_equation_parse): initialize "eq->err_info".
 
 	* src/gtk/x11lgnd.c (width_edited, pos_edited): add 4th argument
@@ -721,7 +940,7 @@
 
 	* src/ofile.c (struct f2dlocal): add member "total_line",
 	(f2dinit): initialize "f2dlocal->total_line".
-	(set_final_line): add.
+	(set_final_line): added.
 	(check_mtime, getminmaxdata): call "set_final_line()".
 
 2009-10-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -730,7 +949,7 @@
 
 	* src/omath.c (mlocalclear, minit, mdone): add code for new math
 	code.
-	(create_func_def_str): add.
+	(create_func_def_str): added.
 	(mformula, mcalc): add code for new math code.
 
 	* src/ofit.c (fitdone, fitput, fituser): add code for new math
@@ -742,13 +961,13 @@
 	(struct f2dload): add some members when "NEW_MATH_CODE" is true.
 	(file_color, file_rgb_sub, file_rgb, file_rgb2, file_hsb_sub)
 	(file_hsb, file_hsb2, file_marksize, file_marktype, struct funcs)
-	(add_file_func): add.
+	(add_file_func): added.
 	(opendata, reopendata, f2dputmath): add code for new math code.
-	(create_func_def_str, set_user_fnc, set_equation, put_func): add.
-	(create_math_equation): add.
+	(create_func_def_str, set_user_fnc, set_equation, put_func): added.
+	(create_math_equation): added.
 	(f2dinit, f2ddone, getdataarray, getdata_get_other_files): add
 	code for new math code.
-	(set_var, set_const, file_calculate, set_const_all): add.
+	(set_var, set_const, file_calculate, set_const_all): added.
 	(getdata_sub2, getdata_sub1, getdata, getdata2, getdataraw)
 	(getminmaxdata, markout, rectout, barout, fitout, f2ddraw)
 	(f2devaluate, f2dgetdataraw, f2dstat, f2dstat2, f2dboundings)
@@ -760,53 +979,53 @@
 
 	* src/gtk/x11file.c (FitDialogResult): add code for new math code.
 
-	* src/math/parse_bin_expression.h: add.
+	* src/math/parse_bin_expression.h: added.
 
-	* src/math/math_scanner.h: add.
+	* src/math/math_scanner.h: added.
 
-	* src/math/math_scanner.c: add.
+	* src/math/math_scanner.c: added.
 
-	* src/math/math_parser.h: add.
+	* src/math/math_parser.h: added.
 
-	* src/math/math_parser.c: add.
+	* src/math/math_parser.c: added.
 
-	* src/math/math_operator.rb: add.
+	* src/math/math_operator.rb: added.
 
-	* src/math/math_operator.h.in: add.
+	* src/math/math_operator.h.in: added.
 
-	* src/math/math_operator.h: add.
+	* src/math/math_operator.h: added.
 
-	* src/math/math_operator.c: add.
+	* src/math/math_operator.c: added.
 
-	* src/math/math_function.rb: add.
+	* src/math/math_function.rb: added.
 
-	* src/math/math_function.h.in: add.
+	* src/math/math_function.h.in: added.
 
-	* src/math/math_function.h: add.
+	* src/math/math_function.h: added.
 
-	* src/math/math_function.c: add.
+	* src/math/math_function.c: added.
 
-	* src/math/math_expression.h: add.
+	* src/math/math_expression.h: added.
 
-	* src/math/math_expression.c: add.
+	* src/math/math_expression.c: added.
 
-	* src/math/math_error.h: add.
+	* src/math/math_error.h: added.
 
-	* src/math/math_equation.h: add.
+	* src/math/math_equation.h: added.
 
-	* src/math/math_equation.c: add.
+	* src/math/math_equation.c: added.
 
-	* src/math/math_constant.rb: add.
+	* src/math/math_constant.rb: added.
 
-	* src/math/math_constant.h.in: add.
+	* src/math/math_constant.h.in: added.
 
-	* src/math/math_constant.h: add.
+	* src/math/math_constant.h: added.
 
-	* src/math/math_constant.c: add.
+	* src/math/math_constant.c: added.
 
-	* src/math/math_basic_function.c: add.
+	* src/math/math_basic_function.c: added.
 
-	* src/math/Makefile.am: add.
+	* src/math/Makefile.am: added.
 
 	* configure.in: add macro for new math code.
 
@@ -839,7 +1058,7 @@
 
 2009-08-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11commn.c (get_save_opt): add.
+	* src/gtk/x11commn.c (get_save_opt): added.
 	(GraphSave): use "get_save_opt()".
 
 2009-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -851,7 +1070,7 @@
 	not.
 	(text_dropped): use "CheckGrid()".
 	(enum EvalDialogColType, eval_dialog_set_parent_cal)
-	(mask_selected_data): add.
+	(mask_selected_data): added.
 	(EvalDialogSetupItem, eval_dialog_copy_selected)
 	(EvalDialogSetup, select_data_cb): use "GtkTreeStore" instead of
 	"GtkListStore".
@@ -869,7 +1088,7 @@
 	* src/gtk/gtk_widget.c (_create_spin_entry): fix argument of
 	"gtk_spin_button_set_digits()".
 
-	* src/gtk/x11dialg.c (get_style_string): add.
+	* src/gtk/x11dialg.c (get_style_string): added.
 	(SetStyleFromObjField): use "get_style_string()".
 
 	* src/gtk/x11lgnd.c (legend_list_set_val): don't display size of
@@ -879,7 +1098,7 @@
 	(legend_list_set_val): show some fields in "LEGEND_WIN_COL_PROP"
 	column.
 	(width_edited): edit "size" field of mark object.
-	(get_points): add.
+	(get_points): added.
 
 2009-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -907,7 +1126,7 @@
 	* src/gtk/x11axis.c (pos_edited_common): use "str_calc()" instead
 	of "strtod()".
 
-	* src/gtk/gtk_widget.c (spin_change_value_cb): add.
+	* src/gtk/gtk_widget.c (spin_change_value_cb): added.
 	(_create_spin_entry): call "g_signal_connect()" for "input"
 	signal.
 	(_create_spin_entry): second argument of
@@ -917,16 +1136,16 @@
 	"gtk_spin_button_set_numeric()" is FALSE.
 	(numeric_cb): use "str_calc()" instead of "strtod()".
 
-	* src/gtk/x11lgnd.c (width_edited): add.
+	* src/gtk/x11lgnd.c (width_edited): added.
 	(CmLegendWindow): call "set_editable_cell_renderer_cb()" for
 	"LEGEND_WIN_COL_WIDTH".
 	(legend_list_set_val): add case for "LEGEND_WIN_COL_WIDTH".
 	(legend_list_set_val): add mark character and mark size for the
 	case of "LegendTypeMark".
-	(MarkChar, MarkCharNum): add.
+	(MarkChar, MarkCharNum): added.
 	(Llist): add column "lw/pt", remove column "object" and change
 	column from "property" to "object/property".
-	(LEGEND_WIN_COL_WIDTH): add.
+	(LEGEND_WIN_COL_WIDTH): added.
 	(legend_list_set_val): gettextize some strings.
 	(legend_list_set_val): remove case for "LEGEND_WIN_COL_NAME".
 	(legend_list_build, legend_list_set): set strings to
@@ -940,7 +1159,7 @@
 	(FitSaveDialogClose): call "g_strstrip()" for the profile.
 	(FitSaveDialogClose): show confirm message when the profile is not
 	specified.
-	(copy_settings_to_fitobj, delete_fitobj): add.
+	(copy_settings_to_fitobj, delete_fitobj): added.
 	(FitDialogSave): use "copy_settings_to_fitobj()" and
 	"delete_fitobj()".
 	(FitCB): return "type" only when "profile" is NULL.
@@ -948,7 +1167,7 @@
 2009-08-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (eval_dialog_copy_selected)
-	(eval_data_sel_cb): add.
+	(eval_data_sel_cb): added.
 	(EvalDialogSetup): add "Copy" button.
 	(paste_cb): place pasted text to center of the widget.
 	(text_dropped): position of the text is multiple of 100.
@@ -971,7 +1190,7 @@
 	(FitDialogSetup): maximum number of "d->dim" is 9.
 	(FitDialogSetup): maximum number of "d->div" is 65535.
 	(FitDialogSetSensitivity): set equation label string.
-	(set_fitdialog_sensitivity): add.
+	(set_fitdialog_sensitivity): added.
 
 	* src/ofit.c (fituser): show "dxxc" in the progress dialog.
 
@@ -997,10 +1216,10 @@
 	* src/object.c (sexeobjfield): check "arglist" before call
 	"strcmp()".
 
-	* src/odraw.h (enum SAVE_PATH_TYPE): add.
+	* src/odraw.h (enum SAVE_PATH_TYPE): added.
 
 	* src/gtk/x11commn.c (SetFileName): use copy of "str".
-	(ToRalativePath): add.
+	(ToRalativePath): added.
 	(GraphSave): save and restore previous working directory.
 	(GraphSave): change "file::file" and "merge::file" depend on the
 	value of "path".
@@ -1012,7 +1231,7 @@
 	* src/gtk/x11file.c (FitCB): just return "valstr".
 
 	* src/gtk/x11commn.c (FileCB): use "g_strdup_printf()".
-	(change_filename, get_basename, ToBasename): add.
+	(change_filename, get_basename, ToBasename): added.
 	(ToFullPath): use "change_filename()".
 	(LoadNgpFile): "system::ignore_path" is always FALSE.
 	(LoadNgpFile): call "ToBasename()" when "ignorepath" is TRUE.
@@ -1023,7 +1242,7 @@
 	* src/gtk/x11commn.c (LoadPrmFile): set modified flag when load
 	PRM file.
 
-	* src/oaxis.c (draw_wave, draw_arrow): add.
+	* src/oaxis.c (draw_wave, draw_arrow): added.
 	(axisdraw): use "draw_wave()" and "draw_arrow()".
 
 2009-08-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -1034,21 +1253,21 @@
 	* src/oline.c (arrowdraw, arrowbbox): use "enum
 	ARROW_POSITION_TYPE".
 
-	* src/oaxis.c (enum AXIS_SCALE_TYPE): add.
+	* src/oaxis.c (enum AXIS_SCALE_TYPE): added.
 	(anumdirchar, enum AXIS_NUM_DIR): add member "normal2".
 	(get_num_pos_horizontal, get_num_pos_parallel)
 	(get_num_pos_normal, struct font_config, struct axis_config)
 	(get_num_ofst_horizontal, get_num_ofst_parallel)
 	(get_num_ofst_normal1, get_num_ofst_normal2, draw_numbering)
 	(numbering, draw_gauge, get_axis_parameter)
-	(get_reference_parameter): add.
+	(get_reference_parameter): added.
 	(axisdraw): use "get_reference_parameter()", "draw_gauge()" and
 	"numbering()".
 	(axisdraw): use "enum ARROW_POSITION_TYPE".
 
-	* src/odraw.h (enum ARROW_POSITION_TYPE): add.
+	* src/odraw.h (enum ARROW_POSITION_TYPE): added.
 
-	* src/mathfn.c (compare_double): add.
+	* src/mathfn.c (compare_double): added.
 
 	* src/axis.c (getaxispositionini): use "compare_double()" to
 	compare two floating-point value.
@@ -1068,7 +1287,7 @@
 
 	* src/shellcm.c (cmcpy): use "copy_obj_field()".
 
-	* src/object.c (copy_obj_field): add.
+	* src/object.c (copy_obj_field): added.
 
 2009-07-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -1105,7 +1324,7 @@
 	of "strcmp()".
 
 	* src/gtk/x11gui.c (set_dialog_position, get_dialog_position):
-	add.
+	added.
 	(DialogInput, DialogRadio, DialogCombo, DialogComboEntry)
 	(DialogSpinEntry, DialogCheck): add add argument "x" and "y".
 
@@ -1134,14 +1353,14 @@
 	* src/gtk/x11merge.c (CmMergeWindow): call "sub_window_show_all()"
 	instead of "sub_window_show()".
 
-	* src/gtk/gtk_subwin.c (sub_window_show_all): add.
+	* src/gtk/gtk_subwin.c (sub_window_show_all): added.
 	(sub_window_show, sub_window_hide): call "gtk_widget_show()" and
 	"gtk_widget_hide()" instead of "gtk_widget_show_all()" and
 	"gtk_widget_hide_all()" respectively.
 
 2009-07-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/omark.c (MODIFY_MARK_TYPE, rotate_cw, v_flip, h_flip): add.
+	* src/omark.c (MODIFY_MARK_TYPE, rotate_cw, v_flip, h_flip): added.
 	(markrotate, markflip): modify mark type when "MODIFY_MARK_TYPE"
 	is TRUE.
 
@@ -1159,14 +1378,14 @@
 	* src/gtk/gtk_liststore.c (create_column): set "expand" property
 	as TRUE when ellipsize mode is not "PANGO_ELLIPSIZE_NONE".
 
-	* src/gtk/x11file.c (enum FILE_COMBO_ITEM, select_color): add.
+	* src/gtk/x11file.c (enum FILE_COMBO_ITEM, select_color): added.
 	(select_type): set not only "type" but color.
 	(create_type_combo_box): add color setting combo item.
 
 2009-07-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (count_line_number_str, set_line_number_tag)
-	(create_text_tag): add.
+	(create_text_tag): added.
 	(FileDialogSetup): initialize "d->comment_num_tag" and set tag for
 	line number.
 
@@ -1175,16 +1394,16 @@
 
 	* addin/Makefile.am (pkglib_DATA): add "cal.nsc".
 
-	* addin/cal.nsc: add.
+	* addin/cal.nsc: added.
 
-	* src/gtk/x11gui.c (DialogSpinEntry): add.
+	* src/gtk/x11gui.c (DialogSpinEntry): added.
 
-	* src/gtk/ox11dlg.c (dlgspin): add.
+	* src/gtk/ox11dlg.c (dlgspin): added.
 	(dialog): add new field "double_entry" and "integer_entry".
 
 2009-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.c (clear_information): add.
+	* src/gtk/x11menu.c (clear_information): added.
 	(create_windowmenu): add menu item "_Clear information window".
 
 	* src/gtk/ox11menu.c (menudone): return "1" when GUI is active.
@@ -1193,7 +1412,7 @@
 	GUI is not active.
 	(menuerrorlist): add error message ("the GUI is not active").
 	(SubwinData, _subwin_data, subwindow_show, subwindow_hide)
-	(mx_show_win, mx_hide_win): add.
+	(mx_show_win, mx_hide_win): added.
 	(gtkmenu): add new field "show_window" and "hide_window".
 
 	* src/gtk/x11info.c (create_win): initialize font and geometry
@@ -1204,7 +1423,7 @@
 	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
 	(MiscDialogClose): add code for "infowin_font" setting.
 
-	* src/gtk/x11info.c (InfoWinSetFont): add.
+	* src/gtk/x11info.c (InfoWinSetFont): added.
 	(InfoWinUpdate): call "InfoWinSetFont()".
 
 	* src/gtk/ox11menu.h (struct menulocal): add member
@@ -1213,7 +1432,7 @@
 	* src/gtk/ox11menu.c (menuerrorlist): add error message ("cannot
 	open the file").
 	(MenuConfigMisc): add "infowin_font" setting.
-	(mx_cat, mx_clear_info, mx_toggle_win): add.
+	(mx_cat, mx_clear_info, mx_toggle_win): added.
 	(gtkmenu): add new field "cat", "clear_info" and "toggle_window".
 
 2009-07-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -1235,7 +1454,7 @@
 
 	* src/shell.c (getcmdline): the type of argument "str" is "const
 	char *".
-	(eval_script): add.
+	(eval_script): added.
 	(cmdexecute): the type of argument "cline" is "const char *".
 
 2009-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -1250,7 +1469,7 @@
 
 	* src/gtk/x11menu.c (createmenu): use "g_strdup_printf()" instead
 	of "snprintf()".
-	(load_hist_file, save_hist_file): add.
+	(load_hist_file, save_hist_file): added.
 	(save_entry_history): use "save_hist_file()".
 	(load_hist): use "load_hist_file()".
 
@@ -1294,7 +1513,7 @@
 	* src/gtk/x11merge.c (CmMergeOpen): change the arguments of the
 	function "nGetOpenFileName()".
 
-	* src/gtk/x11gui.c (file_dialog_set_current_neme): add.
+	* src/gtk/x11gui.c (file_dialog_set_current_neme): added.
 	(FileSelectionDialog): use "file_dialog_set_current_neme()".
 	(nGetOpenFileNameMulti, nGetOpenFileName, nGetSaveFileName):
 	remove the argument "filter".
@@ -1333,7 +1552,7 @@
 	(FileSelectionDialog): call "check_overwrite()" when "type" is "
 	GTK_FILE_CHOOSER_ACTION_SAVE" and "data->overwrite" is false.
 
-	* src/gtk/x11commn.c (check_overwrite): add.
+	* src/gtk/x11commn.c (check_overwrite): added.
 
 2009-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -1341,7 +1560,7 @@
 	"gra2cairo_draw_path()" before call
 	"cairo_surface_write_to_png()".
 
-	* src/gtk/ogra2cairo.c (gra2cairo_draw_path): add.
+	* src/gtk/ogra2cairo.c (gra2cairo_draw_path): added.
 	(gra2cairo_free, gra2cairo_flush, gra2cairo_output): use
 	"gra2cairo_draw_path()".
 
@@ -1357,7 +1576,7 @@
 
 2009-06-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/main.c (reset_fifo, exec_console): add.
+	* src/gtk/main.c (reset_fifo, exec_console): added.
 	(nallocconsole): use "exec_console()".
 	(nallocconsole): call "unlink()" after open fifo.
 
@@ -1368,7 +1587,7 @@
 	* src/gtk/main.c (main): initialize system::conf_dir.
 	(main): search "conf_dir" instead of "lib_dir".
 
-	* src/gtk/dir_defs.h.in (CONFDIR): add.
+	* src/gtk/dir_defs.h.in (CONFDIR): added.
 
 	* src/shell.c (ngraphenvironment): add new environment variable
 	"NGRAPHCONF".
@@ -1408,7 +1627,7 @@
 	* src/gtk/x11file.c (FitDialogSave): use "NFMODE_NORMAL_FILE"
 	instead of "NFMODE".
 
-	* src/ioutil.h (NFMODE_NORMAL_FILE): add.
+	* src/ioutil.h (NFMODE_NORMAL_FILE): added.
 
 	* src/osystem.c (sysdone): delete temporary files if exist.
 
@@ -1420,15 +1639,15 @@
 
 2009-06-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* zsh/_ngraph: add.
+	* zsh/_ngraph: added.
 
-	* zsh/_ngp2: add.
+	* zsh/_ngp2: added.
 
-	* zsh/_gra2wmf: add.
+	* zsh/_gra2wmf: added.
 
-	* zsh/_gra2ps: add.
+	* zsh/_gra2ps: added.
 
-	* zsh/Makefile.am: add.
+	* zsh/Makefile.am: added.
 
 	* src/gtk/x11print.c (draw_gra): check "NgraphApp.Viewer.win"
 	before call "gdk_window_invalidate_rect()".
@@ -1498,15 +1717,15 @@
 2009-06-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (set_signal, set_shellevloop, reset_shellevloop):
-	add.
+	added.
 	(shellevloop): use pthread.
 	(shgetstdin, shget): use "set_shellevloop()" and
 	"reset_shellevloop()".
-	(childhandler, set_childhandler, unset_childhandler): add.
+	(childhandler, set_childhandler, unset_childhandler): added.
 	(cmdexec): call "unset_childhandler()" and "set_childhandler()"
 	before and after execute command.
 
-	* src/gtk/x11menu.c (term_signal_handler): add.
+	* src/gtk/x11menu.c (term_signal_handler): added.
 	(childhandler): remove.
 	(AppMainLoop): check type of "Hide_window".
 	(application): use "set_signal()".
@@ -1541,14 +1760,14 @@
 	* src/gtk/ogra2cairo.c (gra2cairo): change permission of fields
 	"init" and "done".
 
-	* src/gtk/main.c (load_config): add.
+	* src/gtk/main.c (load_config): added.
 	(load_config): bug fix: check return value of "getobject".
 
-	* src/gtk/x11axis.c (file_button_show): add.
+	* src/gtk/x11axis.c (file_button_show): added.
 	(AxisDialogSetup): call "g_signal_connect()" for "show" signal of
 	"File" button.
 
-	* src/gtk/x11opt.c (set_font): add.
+	* src/gtk/x11opt.c (set_font): added.
 	(MiscDialogClose): use "set_font()".
 	(MiscDialogSetupItem, MiscDialogSetup): initialize and setup
 	"d->file_preview_font".
@@ -1566,7 +1785,7 @@
 
 	* src/gtk/ox11menu.c (MenuConfigMisc): add config
 	"file_preview_font".
-	(menulocal_finalize): add.
+	(menulocal_finalize): added.
 	(menuinit, menudone): use "menulocal_finalize()".
 	(menuinit): call "memset()" to initialize "Menulocal".
 
@@ -1582,7 +1801,7 @@
 	"create_direction_entry()" instead of "create_spin_entry_type()".
 
 	* src/gtk/gtk_widget.c (direction_icon_released)
-	(create_direction_entry): add.
+	(create_direction_entry): added.
 
 2009-05-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -1628,13 +1847,13 @@
 	argument of "DialogExecute".
 
 	* src/gtk/gtk_widget.c (get_parent_window)
-	(entry_icon_file_select, create_file_entry): add.
+	(entry_icon_file_select, create_file_entry): added.
 
-	* src/gtk/gtk_subwin.c (file_select): add.
+	* src/gtk/gtk_subwin.c (file_select): added.
 	(start_editing): call gtk_entry_set_icon_from_stock when
 	"list->name" is "file".
 
-	* src/gtk/gtk_common.h (USE_ENTRY_ICON): add.
+	* src/gtk/gtk_common.h (USE_ENTRY_ICON): added.
 
 	* src/omerge.c (merge): add field "ext".
 	(mergeinit): initialize field "ext".
@@ -1649,29 +1868,29 @@
 
 	* src/shell.c (cmdtable): add commands "basename" and "dirname".
 
-	* src/shellcm.c (cmdirname, cmbasename): add.
+	* src/shellcm.c (cmdirname, cmbasename): added.
 
 2009-05-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (Trimming): use "axis_scale_push()" instead of
 	"exeobj()".
 
-	* src/gtk/x11axis.c (check_axis_history): add.
+	* src/gtk/x11axis.c (check_axis_history): added.
 	(CmAxisWinScaleUndo): call "check_axis_history()" instead of
 	"chkobjlastinst()".
-	(axis_scale_push): add.
+	(axis_scale_push): added.
 	(AxisDialogClose, axiswin_scale_clear, CmAxisClear)
 	(axis_prm_edited_common): use "axis_scale_push()" instead of
 	"exeobj()".
 	(CmAxisWinScaleUndo): call "set_axis_undo_button_sensitivity()".
 
-	* src/gtk/x11menu.c (hide_instance_menu_cb): add.
+	* src/gtk/x11menu.c (hide_instance_menu_cb): added.
 	(set_show_instance_menu_cb): add arguments "show_cb" and
 	"hide_cb".
-	(show_axis_menu_cb, hide_axis_menu_cb): add.
+	(show_axis_menu_cb, hide_axis_menu_cb): added.
 	(create_axismenu): add 5th and 6th arguments to call
 	"set_show_instance_menu_cb()".
-	(set_axis_undo_button_sensitivity): add.
+	(set_axis_undo_button_sensitivity): added.
 	(setupwindow): call "set_axis_undo_button_sensitivity()".
 
 	* src/gtk/x11file.c (CmFileWinMath): check number of instance.
@@ -1680,10 +1899,10 @@
 
 	* src/gtk/x11axis.c (AxisDialogSetupItem): add item to combo boxes
 	when the value is different from previous one.
-	(axis_prm_edited_common, min_edited, max_edited, inc_edited): add.
+	(axis_prm_edited_common, min_edited, max_edited, inc_edited): added.
 	(CmAxisWindow): call "set_editable_cell_renderer_cb()" for
 	"AXIS_WIN_COL_MIN", "AXIS_WIN_COL_MAX" and "AXIS_WIN_COL_INC".
-	(AxisHistoryCB): add.
+	(AxisHistoryCB): added.
 	(AxisWinExpose): use "AxisHistoryCB()".
 	(CmAxisDel): check "DlgCopy.sel".
 
@@ -1707,7 +1926,7 @@
 	(axisrotate2, axisflip2): check "inst".
 	(axisrotate, axisflip): check return value of
 	"get_axis_group_box()".
-	(AXIS_HISTORY_NUM): add.
+	(AXIS_HISTORY_NUM): added.
 	(axisscalepush): use "AXIS_HISTORY_NUM".
 
 2009-05-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -1718,7 +1937,7 @@
 2009-05-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (USE_BUF_PTR, USE_RING_BUF, BUF_TYPE, USE_MEMMOVE)
-	(RING_BUF_INC, ring_buf_index): add.
+	(RING_BUF_INC, ring_buf_index): added.
 	(struct f2ddata): add new member "buf_ptr" or "ringbuf_top".
 	(struct f2ddata): now "buf" is array.
 	(opendata): initialize "buf_ptr" or "ringbuf_top".
@@ -1731,12 +1950,12 @@
 
 	* src/gtk/x11view.c (enum ViewerPopupIdn): add
 	"VIEW_FLIP_HORIZONTAL" and "VIEW_FLIP_VERTICAL".
-	(create_popup_menu): add.
+	(create_popup_menu): added.
 	(create_popup_menu): add flip menu.
-	(VIEWER_POPUP_ITEM_FLIP): add.
-	(execute_selected_instances): add.
+	(VIEWER_POPUP_ITEM_FLIP): added.
+	(execute_selected_instances): added.
 	(RotateFocusedObj): use "execute_selected_instances()".
-	(FlipFocusedObj): add.
+	(FlipFocusedObj): added.
 	(do_popup): set sensitivity of flip menu.
 	(ViewerPopupMenu): add case for "VIEW_FLIP_HORIZONTAL" and
 	"VIEW_FLIP_VERTICAL".
@@ -1750,42 +1969,42 @@
 	"FlipH" and "FlipV".
 	(create_editmenu): add flip menu.
 
-	* src/orect.c (rectflip): add.
+	* src/orect.c (rectflip): added.
 	(rect): add new field "flip".
 
 	* src/opolygon.c (opoly): add new field "flip".
 
-	* src/omark.c (markflip): add.
+	* src/omark.c (markflip): added.
 	(mark): add new field "flip".
 
 	* src/oline.c (arrow): add new field "flip".
 
-	* src/olegend.h (enum FLIP_DIRECTION): add.
+	* src/olegend.h (enum FLIP_DIRECTION): added.
 
-	* src/olegend.c (flip, legendflip): add.
+	* src/olegend.c (flip, legendflip): added.
 
 	* src/ocurve.c (curve): add new field "flip".
 
 	* src/oaxis.c (axisbbox2, get_axis_box): remove unused arguments
 	"argc" and "argv".
-	(get_axis_group_box): add.
+	(get_axis_group_box): added.
 	(axisbbox, axisrotate): use "get_axis_group_box()".
-	(axisflip2, axisflip): add.
+	(axisflip2, axisflip): added.
 	(axis): add new field "flip".
 
-	* src/oarc.c (arcflip): add.
+	* src/oarc.c (arcflip): added.
 	(arc): add new field "flip".
 
 	* addin/append.nsc: hide and recover axisgrid.
 
 2009-04-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.h (SUBWIN_PROTOTYPE): add.
+	* src/gtk/x11menu.h (SUBWIN_PROTOTYPE): added.
 	(struct SubWin, struct LegendWin, struct InfoWin): use
 	"SUBWIN_PROTOTYPE".
 	(struct CoordWin): remove.
 
-	* src/gtk/x11dialg.h (DIALOG_PROTOTYPE): add. use
+	* src/gtk/x11dialg.h (DIALOG_PROTOTYPE): added. use
 	"DIALOG_PROTOTYPE" for all struct which inherit "DialogType"
 	struct.
 
@@ -1798,7 +2017,7 @@
 	(ev_button_down): don't respond to right button click.
 	(ev_button_down): call "tree_update()" when "d->type" is
 	"TypeLegendWin".
-	(ev_button_up): add.
+	(ev_button_up): added.
 	(list_sub_window_create, tree_sub_window_create): call back
 	function for "button-release-event" is "ev_button_up()".
 
@@ -1823,33 +2042,33 @@
 	"d->type" is "TypeLegendWin".
 
 	* src/gtk/x11lgnd.c (LEGEND_WIN_COL_HIDDEN, LEGEND_WIN_COL_PROP)
-	(LEGEND_WIN_COL_X, LEGEND_WIN_COL_Y): add.
+	(LEGEND_WIN_COL_X, LEGEND_WIN_COL_Y): added.
 	(legend_list_set_val): use "case" instead of "strcmp()".
-	(enum CHANGE_DIR, pos_edited, pos_x_edited, pos_y_edited): add.
+	(enum CHANGE_DIR, pos_edited, pos_x_edited, pos_y_edited): added.
 	(CmLegendWindow): call "set_editable_cell_renderer_cb()" for
 	"LEGEND_WIN_COL_X" and "LEGEND_WIN_COL_Y".
 	(Llist):  colum "x" and "y" is editable.
 
 	* src/gtk/x11file.c (FILE_WIN_COL_HIDDEN, FILE_WIN_COL_FILE)
-	(FILE_WIN_COL_X, FILE_WIN_COL_Y): add.
+	(FILE_WIN_COL_X, FILE_WIN_COL_Y): added.
 	(file_list_set_val): use "case" instead of "strcmp()".
 
 	* src/gtk/x11axis.c (AXIS_WIN_COL_HIDDEN, AXIS_WIN_COL_NAME)
-	(AXIS_WIN_COL_MIN, AXIS_WIN_COL_MAX, AXIS_WIN_COL_INC): add.
+	(AXIS_WIN_COL_MIN, AXIS_WIN_COL_MAX, AXIS_WIN_COL_INC): added.
 	(axis_list_set_val): use "case" instead of "strcmp()".
 
 	* src/gtk/x11merge.c (MERG_WIN_COL_HIDDEN, MERG_WIN_COL_FILE):
-	add.
+	added.
 	(merge_list_set_val): use "case" instead of "strcmp()".
 
-	* src/gtk/gtk_liststore.h (tree_store_path_get_string): add.
+	* src/gtk/gtk_liststore.h (tree_store_path_get_string): added.
 
 2009-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (menuinit): free "sdel->description" when
 	error is occurred.
 
-	* src/oaxis.c (check_group): add.
+	* src/oaxis.c (check_group): added.
 	(axisuniqgroup): use "check_group()".
 
 2009-04-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -1861,7 +2080,7 @@
 
 	* src/odraw.c (clear_bbox): check if "inst" is NULL.
 
-	* src/oaxis.c (INST_ARRAY_NUM): add.
+	* src/oaxis.c (INST_ARRAY_NUM): added.
 	(axisdone): change "group" field of other instances belong to the
 	same group.
 	(get_axis_group_type): initialize "inst_array".
@@ -1869,14 +2088,14 @@
 2009-04-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (enum CHANGE_DIR, pos_edited_common)
-	(pos_x_edited, pos_y_edited): add.
+	(pos_x_edited, pos_y_edited): added.
 	(CmAxisWindow): call "set_editable_cell_renderer_cb()" for
 	"AXIS_WIN_COL_X" and "AXIS_WIN_COL_Y".
 
 	* src/gtk/gtk_subwin.c (start_editing): call "UnFocus()".
 	(set_cell_renderer_cb): set "list[i].edited_id" when
 	"g_signal_connect()" is called for "edited" signal.
-	(set_editable_cell_renderer_cb): add.
+	(set_editable_cell_renderer_cb): added.
 	(update): call "UnFocus()".
 
 	* src/gtk/gtk_liststore.h: add member "edited_id".
@@ -1893,20 +2112,20 @@
 	to "cdata->button" when "cdata->button" is not NULL.
 
 	* src/gtk/x11file.c (set_btn_sensitivity_delete_cb)
-	(set_btn_sensitivity_insert_cb, set_sensitivity_by_row_num): add.
+	(set_btn_sensitivity_insert_cb, set_sensitivity_by_row_num): added.
 	(MathDialogSetup, FileMoveDialogSetup, FileMaskDialogSetup): call
 	"set_sensitivity_by_row_num()".
 
 2009-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (set_btn_sensitivity_cb)
-	(set_sensitivity_by_selection): add.
+	(set_sensitivity_by_selection): added.
 	(MathDialogSetup, FileMoveDialogSetup, FileMaskDialogSetup): call
 	"set_sensitivity_by_selection()"
 
 	* src/oshell.c (cmdsecurity): use "set_security()".
 
-	* src/shell.c (set_security, set_environ): add.
+	* src/shell.c (set_security, set_environ): added.
 
 	* src/gtk/x11commn.c (LoadNgpFile): check execution of
 	"shell::shell" for loding graph is success or not.
@@ -1936,7 +2155,7 @@
 	(show_win_menu_cb): set active state for "ToggleStatusBar",
 	"ToggleRuler", "ToggleScrollbar", "ToggleCToobar", "TogglePToobar"
 	and "ToggleCrossGauge".
-	(toggle_view_cb): add.
+	(toggle_view_cb): added.
 	(create_windowmenu): create some menu items to show and hide
 	widgets.
 	(create_windowmenu): now the title of this menu is "View".
@@ -1959,7 +2178,7 @@
 	"ctoolbar", "show_cross" and "ptoolbar".
 	(enum SAVE_CONFIG_TYPE): add "SAVE_CONFIG_TYPE_TOGGLE_VIEW".
 
-	* src/gtk/ox11menu.c (MenuConfigToggleView): add.
+	* src/gtk/ox11menu.c (MenuConfigToggleView): added.
 	(MenuConfigArrray): add "MenuConfigToggleView".
 	(menu_save_config): add codes for "SAVE_CONFIG_TYPE_TOGGLE_VIEW".
 
@@ -1978,7 +2197,7 @@
 	"MenuIdAlignVCenter", "MenuIdAlignRight", "MenuIdAlignTop",
 	"MenuIdAlignHCenter" and "MenuIdAlignHBottom".
 
-	* src/gtk/x11menu.c (hide_edit_menu_cb, create_alignmenu): add.
+	* src/gtk/x11menu.c (hide_edit_menu_cb, create_alignmenu): added.
 	(create_editmenu): call "create_alignmenu()".
 
 	* src/object.h (struct objlist): add member "child".
@@ -1991,32 +2210,32 @@
 2009-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.h (ROTATE_CLOCKWISE, ROTATE_COUNTERCLOCKWISE)
-	(enum FOCU_OBJ_TYPE): add.
+	(enum FOCU_OBJ_TYPE): added.
 
 	* src/gtk/x11view.c (enum ViewerPopupIdn): add "VIEW_CUT",
 	"VIEW_PASTE" add "VIEW_DUP".
 	(CopyFocusedObjects, CutFocusedObjects, check_last_insts)
-	(focus_new_insts, paste_cb, PasteObjectsFromClipboard): add.
+	(focus_new_insts, paste_cb, PasteObjectsFromClipboard): added.
 	(create_popup_menu): add cut, copy and paste menu item.
-	(check_focused_obj_type): add.
+	(check_focused_obj_type): added.
 	(do_popup): use "check_focused_obj_type()".
 	(ViewerPopupMenu): add case for "VIEW_CUT", "VIEW_PASTE" add
 	"VIEW_DUP".
-	(CmEditMenuCB): add.
+	(CmEditMenuCB): added.
 
 	* src/gtk/x11menu.h (enum MenuID): add "MenuIdEditCut",
 	"MenuIdEditCopy", "MenuIdEditPaste", "MenuIdEditDelete",
 	"MenuIdEditRotateCW" and "MenuIdEditRotateCCW".
 
 	* src/gtk/x11menu.c (show_edit_menu_cb, hide_edit_menu_cb)
-	(create_editmenu): add.
+	(create_editmenu): added.
 	(createmenu): call "create_editmenu()".
 
 2009-04-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/orect.c (rectrotate, rectmove, rectchange, rectzoom)
 	(rectgeometry): use "clear_bbox()".
-	(set_position, get_position): add.
+	(set_position, get_position): added.
 	(rectdraw): use "get_position()".
 	(rectrotate, rectmove, rectchange, rectzoom): use "set_position()".
 
@@ -2045,13 +2264,13 @@
 	* src/oarc.c (arcgeometry, arcmove, arcchange, arcrotate)
 	(arczoom): use "clear_bbox()".
 
-	* src/odraw.c (clear_bbox): add.
+	* src/odraw.c (clear_bbox): added.
 
 2009-04-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oagrid.c (struct axis_prm, struct axis_pos)
 	(struct grid_prm, get_grid_prm, draw_grid_line, draw_background)
-	(calc_intersection): add.
+	(calc_intersection): added.
 	(agriddraw): use "get_grid_prm()", "draw_grid_line()" and
 	"draw_background()".
 
@@ -2063,9 +2282,9 @@
 	(reorder_object): reorder instances when the focused instance is
 	"merge" object.
 
-	* src/oaxis.c (axis_get_box): add.
+	* src/oaxis.c (axis_get_box): added.
 	(axisbbox2): use "axis_get_box()".
-	(axisrotate2, axisrotate): add.
+	(axisrotate2, axisrotate): added.
 	(axis): add field "rotate".
 
 2009-04-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -2081,33 +2300,33 @@
 	(mouse_move_change): second argument of "ShowFocusLine()" is TRUE
 	at the first time to call "ShowFocusLine()".
 	(enum ViewerPopupIdn): add "VIEW_ROTATE_CLOCKWISE" and "VIEW_ROTATE_COUNTER_CLOCKWISE".
-	(create_popup_menu): add.
+	(create_popup_menu): added.
 	(create_popup_menu): add item "_Rotate".
-	(VIEWER_POPUP_ITEM_ROTATE): add.
-	(RotateFocusedObj): add.
+	(VIEWER_POPUP_ITEM_ROTATE): added.
+	(RotateFocusedObj): added.
 	(do_popup): set sensitivity of "d->popup_item[VIEWER_POPUP_ITEM_ROTATE]".
 	(ViewerPopupMenu): add case for "VIEW_ROTATE_CLOCKWISE" and "VIEW_ROTATE_CONTER_CLOCKWISE"
 
-	* src/orect.c (rectrotate): add.
+	* src/orect.c (rectrotate): added.
 
-	* src/otext.c (textrotate): add.
+	* src/otext.c (textrotate): added.
 	(text): add field "rotate".
 
-	* src/orect.c (rectrotate): add.
+	* src/orect.c (rectrotate): added.
 	(rect): add field "rotate".
 
 	* src/opolygon.c (opoly): add field "rotate".
 
-	* src/omark.c (markrotate): add.
+	* src/omark.c (markrotate): added.
 	(mark): add field "rotate".
 
 	* src/oline.c (arrow): add field "rotate".
 
-	* src/olegend.c (rotate, legendrotate): add.
+	* src/olegend.c (rotate, legendrotate): added.
 
 	* src/ocurve.c (curve): add field "rotate".
 
-	* src/oarc.c (arcrotate): add.
+	* src/oarc.c (arcrotate): added.
 	(arc): add field "rotate".
 
 2009-04-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -2115,7 +2334,7 @@
 	* src/gtk/ox11menu.c (mxd2p, mxd2px, mxd2py, mxp2d): remove.
 
 	* src/gtk/x11view.c (mxd2p, mxp2d coord_conv_x, coord_conv_y)
-	(draw_frame_rect, draw_focus_line): add.
+	(draw_frame_rect, draw_focus_line): added.
 	(GetFocusFrame, ShowFocusFrame, show_focus_line_arc)
 	(draw_frame_rect, ShowFocusLine, ShowPoints, ShowFrameRect)
 	(ShowCrossGauge, get_mouse_cursor_type): use "coord_conv_x()" and
@@ -2124,16 +2343,16 @@
 
 2009-04-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11view.c (arc_get_angle, show_focus_line_arc): add.
+	* src/gtk/x11view.c (arc_get_angle, show_focus_line_arc): added.
 	(ShowFocusLine): call "show_focus_line_arc()" when focused object
 	is "arc".
 	(ShowFocusLine): add argument "state".
 	(mouse_up_change): check if the focused object is "arc".
 
-	* src/oarc.h: add.
+	* src/oarc.h: added.
 
 	* src/oarc.c (arcbbox): add points to modify angle.
-	(arcchange): add.
+	(arcchange): added.
 	(arc): add "change" field.
 
 	* src/gtk/ogra2cairo.c (gra2cairo_output): do nothing when "a1 ==
@@ -2152,7 +2371,7 @@
 	* src/gtk/x11view.c (ShowPoints): draw arc and rectangle when
 	"num" is greater or equal to 2.
 	(mouse_move_drag, mouse_move_zoom, mouse_move_change)
-	(mouse_move_scroll, mouse_move_draw): add.
+	(mouse_move_scroll, mouse_move_draw): added.
 	(ViewerEvMouseMove): use "mouse_move_drag()", "mouse_move_zoom()",
 	"mouse_move_change()", "mouse_move_scroll()" and
 	"mouse_move_draw()".
@@ -2172,7 +2391,7 @@
 
 	* src/gtk/x11scrip.c: remove.
 
-	* src/gtk/x11menu.c (script_exec): add.
+	* src/gtk/x11menu.c (script_exec): added.
 	(create_addin_menu): use "script_exec()" as callback.
 
 2009-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -2185,17 +2404,17 @@
 	(CloseGC, Clear, CmViewerButtonArm, Focus): remove argument of
 	function "UnFocus()".
 
-	* src/gtk/x11commn.c (axis_move_each_obj): add.
+	* src/gtk/x11commn.c (axis_move_each_obj): added.
 	(AxisMove): use "axis_move_each_obj()".
 
 	* src/gtk/x11axis.c (AxisWinAxisTop, AxisWinAxisLast)
-	(AxisWinAxisUp, AxisWinAxisDown): add.
+	(AxisWinAxisUp, AxisWinAxisDown): added.
 	(axiswin_ev_key_down): call "AxisWinAxisTop()",
 	"AxisWinAxisLast()", "AxisWinAxisUp()" and "AxisWinAxisDown()".
 	(Popup_list): set "AxisWinAxisTop()", "AxisWinAxisLast()",
 	"AxisWinAxisUp()" and "AxisWinAxisDown()" to related member.
 
-	* src/ofit.c (enum FitError, display_equation): add.
+	* src/ofit.c (enum FitError, display_equation): added.
 	(fitpoly, fituser, fitfit): use "FitError".
 	(fitpoly, fituser): use "snprintf()" instead of "sprintf()".
 	(fitpoly, fituser): call "display_equation()".
@@ -2233,7 +2452,7 @@
 
 	* src/ofit.c (fitfit): use loop to initialize values related to
 	parameters "%0?" and "parameter0?".
-	(fitcalc): add.
+	(fitcalc): added.
 	(fit): add member "calc".
 
 	* src/omath.c (mparam): bug fix: fix calculation of "m".
@@ -2246,7 +2465,7 @@
 	* src/gtk/x11graph.c (DirectoryDialogSetup): change width of
 	"d->dir".
 
-	* src/gtk/ogra2cairo.c (relative_move): add.
+	* src/gtk/ogra2cairo.c (relative_move): added.
 	(draw_str, gra2cairo_output): use "relative_move()" instead of
 	"cairo_rel_move_to()".
 
@@ -2287,12 +2506,12 @@
 	(expand, checkcmd, cmdexec): use "n_mkstemp()" instead of
 	"tempnam()".
 
-	* src/ioutil.c (n_mkstemp): add.
+	* src/ioutil.c (n_mkstemp): added.
 
-	* src/ogra2prn.c (mytempfile): add.
+	* src/ogra2prn.c (mytempfile): added.
 	(gra2p_output): use "mytempfile()".
 
-	* src/nconfig.c (replaceconfig_match, removeconfig_match, make_backup): add.
+	* src/nconfig.c (replaceconfig_match, removeconfig_match, make_backup): added.
 	(replaceconfig): use "replaceconfig_match()" and "make_backup()".
 	(removeconfig): use "removeconfig_match()" and "make_backup()".
 	(replaceconfig, removeconfig): use "tmpfile()" instead of "tempnam()".
@@ -2324,9 +2543,9 @@
 
 	* src/ofile.c (f2dload): use "R_OK", "W_OK", "X_OK" for "access()".
 
-	* src/gra.c (GRAC_INIT_VAL): add.
+	* src/gra.c (GRAC_INIT_VAL): added.
 	(GRAClist): use "GRAC_INIT_VAL".
-	(get_gra_font): add.
+	(get_gra_font): added.
 	(GRAinputold): use "get_gra_font()".
 
 	* src/shell.c (shputstderr, shprintfstderr): comment out.
@@ -2345,7 +2564,7 @@
 
 	* src/gtk/ox11dlg.c (dialogclose): remove.
 
-	* src/gtk/ogra2cairo.c (FONT_FACE_NUM): add.
+	* src/gtk/ogra2cairo.c (FONT_FACE_NUM): added.
 	(check_type): use "FONT_FACE_NUM".
 
 	* src/gtk/ogra2x11.c (gtkevsize): remove.
@@ -2354,22 +2573,22 @@
 
 	* src/oprm.c (remarkconv): use "greektable_num()".
 
-	* src/gra.c (greektable_num): add.
-	(FONTTBL_NUM): add.
-	(GREEK_TBL_NUM): add.
+	* src/gra.c (greektable_num): added.
+	(FONTTBL_NUM): added.
+	(GREEK_TBL_NUM): added.
 	(GRAinputold): check index of "fonttbl[]".
 
 2009-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/ox11menu.c (SetCaption, graph_modified_sub): add.
+	* src/gtk/ox11menu.c (SetCaption, graph_modified_sub): added.
 	(set_graph_modified, reset_graph_modified): use
 	"graph_modified_sub()".
 	(gtkmenu): field "modified" use function "mxmodified".
-	(mxmodified): add.
+	(mxmodified): added.
 
 	* src/gtk/x11menu.c (SetCaption): remove.
 
-	* src/ofile.c (f2dload_sub): add.
+	* src/ofile.c (f2dload_sub): added.
 	(f2dload, f2dloaddum): use "f2dload_sub()".
 
 	* src/gtk/x11file.c (FileDialogSetupItemCommon,start_editing): use
@@ -2394,7 +2613,7 @@
 
 	* src/gtk/x11view.c (ViewerWinFileUpdate): use "update_file_obj_multi()".
 
-	* src/gtk/x11file.c (update_file_obj_multi): add.
+	* src/gtk/x11file.c (update_file_obj_multi): added.
 	(CmFileUpdate, CmFileOpen): use "update_file_obj_multi()".
 
 2009-03-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -2422,7 +2641,7 @@
 	(SetStatusBarXm): remove.
 	(ResetZoom, SetZoom, ResetStatusBar): use "SetStatusBarSub()" or
 	"ResetStatusBarSub()".
-	(SetStatusBarSub, ResetStatusBarSub): add.
+	(SetStatusBarSub, ResetStatusBarSub): added.
 
 	* src/gtk/ox11menu.c (mgtkdisplaystatus): use "DisplayDialog()"
 	instead of "DisplayStatus()".
@@ -2507,12 +2726,12 @@
 	(add_geometry_to_array, add_color_to_array)
 	(add_prm_str_to_array, save_ext_driver_config)
 	(save_script_config, add_str_to_array, menu_save_config_sub)
-	(menu_save_config): add.
+	(menu_save_config): added.
 	(menu_config_set_child_window_geometry): use "struct child_win_stat *"
 	(addmenu): initialize "MenuConfigHash" with "MenuConfigArrray".
 
 	* src/gtk/ox11menu.h (enum SAVE_CONFIG_TYPE)
-	(SAVE_CONFIG_TYPE_X11MENU): add.
+	(SAVE_CONFIG_TYPE_X11MENU): added.
 
 	* src/gtk/x11opt.c (CHK_STR, save_font_config, save_misc_config)
 	(save_script_config, save_ext_driver_config, save_viewer_config)
@@ -2524,12 +2743,12 @@
 
 	* src/nstring.h (CHK_STR): add
 
-	* src/gtk/ogra2cairo.c (gra2cairo_save_config): add.
+	* src/gtk/ogra2cairo.c (gra2cairo_save_config): added.
 
 	* src/oaxis.c (enum axis_config_type): remove.
 	(axisloadconfig): use "obj_load_config()".
 
-	* src/otext.c (TextConfig): add.
+	* src/otext.c (TextConfig): added.
 	(textloadconfig): use "obj_load_config()".
 	(textsaveconfig): use "obj_save_config()".
 	(addtext): initialize "TextConfigHash".
@@ -2574,7 +2793,7 @@
 	(MergeWinExpose): set active state of the menu item when i is
 	"POPUP_ITEM_HIDE".
 
-	* src/gtk/x11menu.h (enum pop_up_menu_item_type): add.
+	* src/gtk/x11menu.h (enum pop_up_menu_item_type): added.
 
 	* src/gtk/x11lgnd.c (Popup_list): add initial data for member
 	"type".
@@ -2590,14 +2809,14 @@
 
 	* src/gtk/x11axis.c (Popup_list): add initial data for member
 	"type".
-	(POPUP_ITEM_HIDE): add.
+	(POPUP_ITEM_HIDE): added.
 	(popup_show_cb): set active state of the menu item when i is
 	"POPUP_ITEM_HIDE".
 
 	* src/gtk/gtk_subwin.h (struct subwin_popup_list): add member "type".
 
 	* src/gtk/gtk_subwin.c (tree_set_hidden_state, set_hidden_state):
-	add.
+	added.
 	(list_sub_window_hide): use "set_hidden_state()".
 	(tree_sub_window_hide): use "tree_set_hidden_state()"
 	(sub_win_create_popup_menu): create GtkCheckMenuItem when
@@ -2653,7 +2872,7 @@
 	"Menulocal.autoredraw".
 
 	* src/gtk/x11opt.c (enum SAVE_CONFIG_TYPE)
-	(SAVE_CONFIG_TYPE_X11MENU, save_config): add.
+	(SAVE_CONFIG_TYPE_X11MENU, save_config): added.
 	(DefaultDialogClose): use "save_config()" to save configuration.
 	(PrefScriptDialogSetup, PrefDriverDialogSetup)
 	(PrefFontDialogSetup, MiscDialogSetup, ExViewerDialogSetup)
@@ -2700,13 +2919,13 @@
 	status bar.
 
 	* src/gtk/x11menu.c (toggle_status_bar): remove.
-	(show_outputmenu_cb): add.
+	(show_outputmenu_cb): added.
 	(create_outputmenu): call "g_signal_connect()" for "Output" menu.
 	(show_winmwnu_cb, create_windowmenu): remove codes related to
 	status bar.
 	(SetPoint): add offset to coordinate.
 
-	* src/gtk/x11opt_proto.h (Pref*DialogMoveSub): add.
+	* src/gtk/x11opt_proto.h (Pref*DialogMoveSub): added.
 	(Pref*DialogUp, Pref*DialogUp): use Pref*DialogMoveSub.
 	(Pref*ListDefailtCb): respond to "GDK_Up", "GDK_Down" and
 	"GDK_Delete".
@@ -2719,7 +2938,7 @@
 	* src/gtk/x11menu.h (POINT_TYPE_DRAW_ALL): add
 
 	* src/gtk/x11opt.c (script_free, script_init, extprinter_free)
-	(extprinter_init): add.
+	(extprinter_init): added.
 	(PrefScriptDialogUpdate, PrefScriptDialogRemove)
 	(PrefScriptDialogAdd, PrefScriptDialogUp, PrefScriptDialogDown)
 	(script_list_defailt_cb, script_list_sel_cb)
@@ -2762,7 +2981,7 @@
 	newly created GdkGC.
 
 	* src/gtk/x11menu.h (POINT_TYPE_POINT, POINT_TYPE_DRAW1)
-	(POINT_TYPE_DRAW2, POINT_TYPE_TRIM): add.
+	(POINT_TYPE_DRAW2, POINT_TYPE_TRIM): added.
 
 	* src/gtk/x11menu.c (SetCursor): do nothing when "type" is same as
 	"CursorType".
@@ -2777,7 +2996,7 @@
 
 	* src/gtk/ox11menu.c (mx_redraw): call "draw_paper_frame()" after
 	call "GRAredraw()".
-	(check_object_name): add.
+	(check_object_name): added.
 	(mx_get_focused): use "check_object_name()" to check the object is
 	exist in the argument.
 	(gtkmenu): argument type of "focused" is "sa".
@@ -2791,16 +3010,16 @@
 	* src/gtk/x11menu.c (setupwindow): create GtkHRuler and GtkVRuler.
 	(SetPoint): set position of "NgraphApp.Viewer.HRuler" and
 	"NgraphApp.Viewer.VRuler".
-	(set_widget_visibility): add.
+	(set_widget_visibility): added.
 	(application): call "set_widget_visibility()" after call
 	"gtk_widget_show_all()".
 
 	* src/gtk/x11view.c (MakeRuler): remove.
-	(SetVRuler, SetHRuler): add.
+	(SetVRuler, SetHRuler): added.
 	(ChangeDPI): call "SetHRuler()" and "SetVRuler()".
 	(ViewerEvHScroll): call "SetVRuler()".
 	(ViewerEvVScroll): call "SetHRuler()".
-	(draw_paper_frame): add.
+	(draw_paper_frame): added.
 	(Draw, create_pix): call "draw_paper_frame()".
 	(ViewerWinSetup): call "ChangeDPI" after initialize "d->cx",
 	"d->cy", "d->hscroll" and "d->vscroll".
@@ -2818,7 +3037,7 @@
 
 	* demo/demo.ngp: use dialog::check
 
-	* src/gtk/ox11dlg.c (get_sarray_argument): add.
+	* src/gtk/ox11dlg.c (get_sarray_argument): added.
 	(dlgradio, dlgcombo, dlgcheck): use "get_sarray_argument()".
 
 	* src/object.c (saveobj, restoreobj): remove.
@@ -2885,7 +3104,7 @@
 
 	* src/gtk/ox11menu.c (mx_get_focused): return 0 when "num" is less
 	than 1.
-	(mx_echo): add.
+	(mx_echo): added.
 	(gtkmenu): add field "echo".
 
 2009-02-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -2893,7 +3112,7 @@
 	* src/ofile.c (f2ddraw): do "fp->datanum = f2dlocal->num" after
 	call "fitout()" when "fp->datanum" is zero.
 
-	* src/gtk/x11opt.c (CHK_STR): add.
+	* src/gtk/x11opt.c (CHK_STR): added.
 	(save_ext_driver_config, save_script_config)
 	(SetScriptDialogSetupItem, SetDriverDialogSetupItem): use
 	"CHK_STR"
@@ -2913,7 +3132,7 @@
 	(SetScriptDialogSetup): change title from "Script:" to "Script
 	file".
 	(SetScriptDialogSetup): add widgets for script description.
-	(set_scrpt_option): add.
+	(set_scrpt_option): added.
 	(SetScriptDialogClose): use "set_scrpt_option()".
 	(SetScriptDialogClose): save description of the script.
 	(PrefScriptDialogSetup): add column for file name and script
@@ -2925,7 +3144,7 @@
 
 	* src/gtk/x11menu.c: add global variable "AddinMenu".
 	(show_graphmwnu_cb): set sensitivity of "AddinMenu".
-	(create_addin_menu, update_addin_menu): add.
+	(create_addin_menu, update_addin_menu): added.
 	(create_graphmenu): now "Add-In" menu has sub menu.
 
 	* src/gtk/x11graph.c (CmGraphMenu): remove case for
@@ -2954,7 +3173,7 @@
 
 	* src/gtk/x11dialg.c (SetObjPointsFromText): check field of the
 	instance is modified or not after call "sgetobjfield()".
-	(chk_sputobjfield): add.
+	(chk_sputobjfield): added.
 	(SetObjFieldFromText, SetObjFieldFromStyle)
 	(SetObjFieldFromFontList, SetObjAxisFieldFromWidget): use
 	"chk_sputobjfield()".
@@ -2966,7 +3185,7 @@
 2009-02-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (axiswin_delete_axis)
-	(axis_delete_popup_func, axiswin_ev_key_down): add.
+	(axis_delete_popup_func, axiswin_ev_key_down): added.
 	(CmAxisWindow): initialize "d->ev_key".
 	(Popup_list): "axis_delete_popup_func()" is called when delete
 	menu is activated.
@@ -2981,12 +3200,12 @@
 	* src/oaxis.c (axischange): check length of axis instead of
 	position.
 	(FIND_X, FIND_Y, FIND_U, FIND_R, FIND_FRAME, FIND_CROSS)
-	(CHECK_FRAME, CHECK_CROSS): add.
+	(CHECK_FRAME, CHECK_CROSS): added.
 	(get_axis_group_type): use "FIND_X", "FIND_Y", "FIND_U", "FIND_R",
 	"CHECK_FRAME" and "CHECK_CROSS".
-	(axis_save_groupe): add.
+	(axis_save_groupe): added.
 	(axissave): use "axis_save_groupe()" and "get_axis_group_type()".
-	(struct axis_config, AxisConfig, enum axis_config_type): add.
+	(struct axis_config, AxisConfig, enum axis_config_type): added.
 	(addaxis): initialize "AxisConfigHash".
 	(axisloadconfig): use "AxisConfigHash".
 
@@ -3001,16 +3220,16 @@
 	length are "SPIN_BUTTON_TYPE_POSITION".
 
 	* src/oaxis.c (get_axis_group_type, get_axis_box, set_axis_box):
-	add.
+	added.
 	(axisbbox): use "get_axis_group_type()", "get_axis_box()" and
 	"set_axis_box()".
 	(axismatch, axismove, axischange, axiszoom): use
 	"get_axis_group_type()".
 	(axis_change_point0, axis_change_point1, axis_change_point2)
-	(axis_change_point3): add.
+	(axis_change_point3): added.
 	(axischange): use "axis_change_point0()", "axis_change_point1()",
 	"axis_change_point2()" and "axis_change_point3()".
-	(check_direction): add.
+	(check_direction): added.
 	(axisbbox, axischange): call "check_direction()" to check
 	direction of axises.
 
@@ -3022,15 +3241,15 @@
 	(axisdraw): add initialization to avoid compile warnings.
 	(axisautoscalefile): set "set" as TRUE when "set" is FALSE.
 	(axisgrouping): check "data[0]".
-	(set_group, set_group_pos): add.
+	(set_group, set_group_pos): added.
 	(axisgrouping): use "set_group()".
 	(axisgrouppos): use "set_group_pos()".
 	(axis_default, axis_default_set, axis_default_set_ref)
-	(axis_default_set_adj): add.
+	(axis_default_set_adj): added.
 	(axisdefgrouping): use "axis_default()", "axis_default_set_adj()"
 	and "axis_default_set_ref()".
 	(enum AXIS_TYPE, enum AXIS_GAUGE, enum AXIS_NUM_POS)
-	(enum AXIS_NUM_ALIGN, enum AXIS_NUM_DIR): add.
+	(enum AXIS_NUM_ALIGN, enum AXIS_NUM_DIR): added.
 
 	* src/omath.c (mformula): use "mathcode_error()".
 
@@ -3044,11 +3263,11 @@
 	(mathcode_error): remove.
 	(addfile): initialize "MathErrorCodeArray".
 
-	* src/mathcode.c (mathcode_error): add.
+	* src/mathcode.c (mathcode_error): added.
 
 2009-02-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11opt.c (add_prm_str_to_array): add.
+	* src/gtk/x11opt.c (add_prm_str_to_array): added.
 	(save_misc_config): use "add_prm_str_to_array()".
 	(save_misc_config): save "coordwin_font".
 	(DefaultDialogClose): call "add_str_to_array()" when
@@ -3062,7 +3281,7 @@
 	* src/gtk/x11dialg.h (struct MiscDialog): add member
 	"coordwin_font".
 
-	* src/gtk/x11cood.c (CoordWinSetFont): add.
+	* src/gtk/x11cood.c (CoordWinSetFont): added.
 	(CoordWinDrawTex): remove.
 	(CoordWinSetCoord): call "gtk_label_set_text()" instead of
 	"CoordWinSetCoord()".
@@ -3083,11 +3302,11 @@
 	"with_view_port".
 	(sub_window_create): use "gtk_scrolled_window_add_with_viewport()"
 	when "with_view_port" is TRUE.
-	(label_sub_window_create): add.
+	(label_sub_window_create): added.
 
 	* src/omath.c (mformula): use "switch" to check "rcode".
 
-	* src/ofile.c (mathcode_error): add.
+	* src/ofile.c (mathcode_error): added.
 	(f2dputmath, fitout): use "mathcode_error()".
 
 	* src/gtk/x11gui.c (DialogExecute): call "gtk_widget_grab_focus()"
@@ -3117,11 +3336,11 @@
 	(agriddraw): adjust "dirx" and "diry" as these value is greater or
 	equal to zero and less than 36000.
 
-	* src/oaxis.c (axisdirection): add.
+	* src/oaxis.c (axisdirection): added.
 	(axis): "axisdirection()" is called when field "direction" is
 	changed.
 
-	* src/odraw.h (enum INTERPOLATION_TYPE): add.
+	* src/odraw.h (enum INTERPOLATION_TYPE): added.
 
 	* src/mathcode.c (mathcode): return value type of "mathcode()" is
 	"enum MATH_CODE_ERROR_NO".
@@ -3129,10 +3348,10 @@
 	* src/gtk/x11graph.c (DirectoryDialogClose, CmGraphHistory): call
 	"ErrorMessage()" when "chdir()" returns non zero value.
 
-	* src/gtk/x11commn.c (ErrorMessage): add.
+	* src/gtk/x11commn.c (ErrorMessage): added.
 
 	* src/gtk/x11file.c (FitDialogSetSensitivity): use "FIT_OBJ_TYPE".
-	(enum MATH_FNC_TYPE): add.
+	(enum MATH_FNC_TYPE): added.
 	(MathTextDialogSetup, MathTextDialogClose): use "MATH_FNC_TYPE".
 	(FitDialogSetSensitivity): use "FIT_OBJ_TYPE".
 	(FileDialogFit, FileDialogType, draw_type_pixbuf, select_type)
@@ -3140,7 +3359,7 @@
 
 	* src/ofit.c (fitpoly, fitfit): use "FIT_OBJ_TYPE".
 
-	* src/ofit.h: add.
+	* src/ofit.h: added.
 
 	* src/ofile.c (f2ddraw): do "fp->datanum = f2dlocal->num" after
 	call "fitout()" when "redraw" is true.
@@ -3158,20 +3377,20 @@
 
 	* src/gtk/ogra2cairo.c (loadfont): remove unused variables "lang"
 	and "lang_ja".
-	(gra2cairo_get_fontmap_num): add.
+	(gra2cairo_get_fontmap_num): added.
 
 	* src/gtk/x11opt.c (save_font_config, save_ext_viewer_config)
 	(save_misc_config, save_script_config, save_ext_driver_config)
 	(save_viewer_config, save_child_geometory_config)
 	(save_geometory_config, add_str_to_array)
-	(add_str_with_int_to_array, add_geometry_to_array): add.
+	(add_str_with_int_to_array, add_geometry_to_array): added.
 	(DefaultDialogClose): use "add_str_to_array()",
 	"save_geometory_config()" and so on.
-	(scriptlist_sel_cb, drvlist_sel_cb, fontlist_sel_cb): add.
+	(scriptlist_sel_cb, drvlist_sel_cb, fontlist_sel_cb): added.
 	(PrefScriptDialogSetup, PrefDriverDialogSetup)
 	(PrefFontDialogSetup): set signal handler to GtkTreeSelection for
 	"changed" signal.
-	(get_font_alias): add.
+	(get_font_alias): added.
 	(set_font_from_font_selection_dialog): use "get_font_alias()".
 	(PrefFontDialogAdd): use "get_font_alias()" and
 	"gra2cairo_get_fontmap()" to check if "alias" is valid string.
@@ -3193,7 +3412,7 @@
 	(set_font_from_font_selection_dialog, PrefFontDialogUpdate)
 	(PrefFontDialogRemove, PrefFontDialogAdd, font_list_defailt_cb)
 	(PrefFontDialogSetup, PrefFontDialogClose, PrefFontDialog)
-	(CmOptionPrefFont): add.
+	(CmOptionPrefFont): added.
 	(CmOptionMenu): add case for "MenuIdOptionPrefFont".
 
 	* src/gtk/x11menu.h (enum MenuID): add "MenuIdOptionPrefFont".
@@ -3201,13 +3420,13 @@
 	* src/gtk/x11menu.c (create_preferencemenu): add menu item "Font
 	aliases".
 
-	* src/gtk/x11dialg.h (struct PrefFontDialog): add.
+	* src/gtk/x11dialg.h (struct PrefFontDialog): added.
 
 	* src/gtk/x11dialg.c: add global variable "DlgPrefFont".
 
 	* src/gtk/ogra2cairo.c (FontFaceStr, gra2cairo_get_fontmap)
 	(gra2cairo_remove_fontmap, gra2cairo_add_fontmap, free_fonts)
-	(gra2cairo_update_fontmap, check_type): add.
+	(gra2cairo_update_fontmap, check_type): added.
 	(init_conf, free_conf): use "free_fonts()".
 	(loadconfig): remove unused variable "fcur".
 	(init_conf): use "FontFaceStr".
@@ -3256,25 +3475,25 @@
 
 	* src/ofile.c (f2dtight): use "obj_do_tighten()".
 
-	* src/object.c (obj_do_tighten): add.
+	* src/object.c (obj_do_tighten): added.
 
 2009-01-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11merge.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)
-	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): add.
+	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): added.
 	(MergeWinExpose): change sensitivity of popup menu item.
 
 	* src/gtk/x11lgnd.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)
-	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): add.
+	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): added.
 	(LegendWinExpose): change sensitivity of popup menu item.
 
 	* src/gtk/x11file.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)
-	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): add.
+	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): added.
 	(popup_show_cb): change sensitivity of popup menu item.
 	(FileDialog): d->multi_open is TRUE when "multi > 0".
 
 	* src/gtk/x11axis.c (POPUP_ITEM_TOP, POPUP_ITEM_UP)
-	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): add.
+	(POPUP_ITEM_DOWN, POPUP_ITEM_BOTTOM): added.
 	(popup_show_cb): change sensitivity of popup menu item.
 
 2009-01-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -3283,7 +3502,7 @@
 	"through_box", "dim_box", "weight_box", "usr_deriv_box",
 	"usr_def_frame" and "div_box".
 
-	* src/gtk/x11file.c (FitDialogSetSensitivity): add.
+	* src/gtk/x11file.c (FitDialogSetSensitivity): added.
 	(FitDialogSetup): add signal handler for some widgets to change
 	sensitivity of widgets.
 
@@ -3323,7 +3542,7 @@
 	(SectionDialogGrid): don't call "set_graph_modified()" when
 	"axisgrid" object is not created.
 
-	* src/gtk/x11gui.c (set_sensitivity_by_check_instance): add.
+	* src/gtk/x11gui.c (set_sensitivity_by_check_instance): added.
 	(DialogExecute): call "gtk_widget_hide_all()" before call
 	"gtk_widget_show_all()".
 
@@ -3337,14 +3556,14 @@
 	* src/oprm.c (prmload): execute "move_data_adjust" before get
 	"move_data", "move_data_x" and "move_data_y".
 
-	* src/ofile.c (adjust_move_num): add.
+	* src/ofile.c (adjust_move_num): added.
 	(file2d): add field "move_data_adjust".
 	(opendata): execute "move_data_adjust" before get "move_data",
 	"move_data_x" and "move_data_y".
 
 2009-01-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11view.c (menu_activate): add.
+	* src/gtk/x11view.c (menu_activate): added.
 	(ViewerWinSetup): add signal handler for "selection-done" to
 	"d->menu".
 	(Evaluate): cursor type is "GDK_TCROSS" when move data mode.
@@ -3362,14 +3581,14 @@
 
 2009-01-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.h (enum MouseMode): add.
+	* src/gtk/x11menu.h (enum MouseMode): added.
 	(struct Viewer): member "MouseMode" and "Mode" are enum.
 
-	* src/gtk/x11view.c (init_zoom): add.
+	* src/gtk/x11view.c (init_zoom): added.
 	(mouse_down_move): use "get_mouse_cursor_type()" to check cursor
 	position.
 	(get_mouse_cursor_type): set "d->ChangePoint".
-	(POINT_LENGTH, FOCUS_FRAME_OFST, FOCUS_RECT_SIZE): add.
+	(POINT_LENGTH, FOCUS_FRAME_OFST, FOCUS_RECT_SIZE): added.
 	(ShowFocusFrame, get_mouse_cursor_type): use "FOCUS_RECT_SIZE" and
 	"FOCUS_FRAME_OFST".
 	(ShowPoints): use "POINT_LENGTH".
@@ -3429,7 +3648,7 @@
 	save window state.
 	(sub_window_save_geometry): save window state.
 	(sub_window_hide, sub_window_show, sub_window_toggle_visibility):
-	add.
+	added.
 	(cb_del): just call "sub_window_hide()".
 
 2009-01-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -3468,7 +3687,7 @@
 	"gtk_widget_show_all()".
 
 	* src/gtk/gtk_subwin.c (sub_window_set_geometry)
-	(sub_window_save_geometry): add.
+	(sub_window_save_geometry): added.
 	(cb_show): call "sub_window_set_geometry()".
 	(cb_del): call "sub_window_save_geometry()".
 
@@ -3488,7 +3707,7 @@
 	(menuinit): initialize "Menulocal.focus_frame_type".
 
 	* src/gtk/x11menu.c (show_instance_menu_cb)
-	(set_show_instance_menu_cb, struct show_instance_menu_data): add.
+	(set_show_instance_menu_cb, struct show_instance_menu_data): added.
 	(create_filemenu, create_axisgridmenu, create_axismenu)
 	(create_mergemenu, create_outputmenu): call
 	"show_instance_menu_cb()".
@@ -3498,9 +3717,9 @@
 2009-01-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.c: variable "looproot" is static.
-	(has_eventloop): add.
+	(has_eventloop): added.
 
-	* src/shell.c (msleep): add.
+	* src/shell.c (msleep): added.
 	(cmdexec): don't set "WNOHANG" when "has_eventloop()" returns
 	FALSE.
 	(cmdexec): use "msleep()" after call "eventloop()".
@@ -3509,7 +3728,7 @@
 	returns FALSE.
 	(cmsleep): use "msleep()" after call "eventloop()".
 
-	* demo/demo.ngp.in: add.
+	* demo/demo.ngp.in: added.
 
 	* src/gtk/gtk_subwin.c (sub_window_create): add argument "xpm2"
 	and call "gtk_window_set_icon_list()" when "xpm2" is not NULL.
@@ -3534,7 +3753,7 @@
 
 2009-01-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/terminal.c (my_signal): add.
+	* src/terminal.c (my_signal): added.
 	(main): use "my_signal".
 
 	* src/gtk/main.c: variables "consolecol", "consolerow",
@@ -3556,7 +3775,7 @@
 	* src/gtk/x11view.c (OpenGC): don't call
 	"gdk_display_get_default()".
 
-	* src/gtk/ogra2x11.c (gtkflush): add.
+	* src/gtk/ogra2x11.c (gtkflush): added.
 
 	* src/gtk/ox11menu.c (mxflush): don't call "gdk_display_flush()".
 
@@ -3591,7 +3810,7 @@
 
 2008-12-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* demo/demo.ngp: add.
+	* demo/demo.ngp: added.
 
 	* src/gtk/x11view.c (AlignFocusedObj, ViewDelete, ViewCopy)
 	(ViewCross): do nothing when "Menulock" or "GlobalLock" is TRUE.
@@ -3604,7 +3823,7 @@
 	"Menulock" or "GlobalLock" is TRUE.
 
 	* src/gtk/ogra2x11.c (gtkclear): clear pixmap.
-	(gtk_set_dpi): add.
+	(gtk_set_dpi): added.
 	(gra2gtk): add filed "dpi".
 
 	* src/gtk/x11scrip.c (CmScriptExec): use "menu_lock()" to lock
@@ -3644,7 +3863,7 @@
 
 2008-12-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/omark.c (marktype): add.
+	* src/omark.c (marktype): added.
 	(mark): check marktype.
 
 	* demo/demo5b.ngp (text): maximum value of "i" is 8.
@@ -3773,7 +3992,7 @@
 
 2008-12-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.c (kill_signal_handler): add.
+	* src/gtk/x11menu.c (kill_signal_handler): added.
 	(childhandler): use "sigaction()" instead of "signal()".
 	(AppMainLoop): call "CheckSave()" when "Hide_window" is TRUE.
 	(application): use "sigaction()" instead of "signal()".
@@ -3785,7 +4004,7 @@
 
 	* src/gtk/x11view.c (enum ViewerPopupIdn): add "VIEW_UP" and
 	"VIEW_DOWN".
-	(enum object_move_type): add.
+	(enum object_move_type): added.
 	(create_popup_menu): add up and down object menu item.
 	(ViewerPopupMenu): add case "VIEW_DOWN" and "VIEW_UP".
 	(reorder_object): change argument from int to "enum
@@ -3818,7 +4037,7 @@
 	(mouse_up_point): change cursor if any object is focused.
 
 	* src/gtk/ox11menu.c (gtkmenu): add field "draw".
-	(mxdraw): add.
+	(mxdraw): added.
 	(mx_redraw): call "gdk_window_invalidate_rect()".
 
 	* src/gtk/x11merge.c (MergeDialogSetup): use
@@ -3846,7 +4065,7 @@
 
 	* src/gtk/x11axis.c (Popup_list): add separator.
 	(Popup_list): add clear menu item.
-	(axiswin_scale_clear): add.
+	(axiswin_scale_clear): added.
 
 	* src/gtk/gtk_subwin.c (sub_win_create_popup_menu): add
 	"GtkSeparatorMenuItem" when "list[i].title" is NULL.
@@ -3885,7 +4104,7 @@
 
 2008-12-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofile.c (search_mask): add.
+	* src/ofile.c (search_mask): added.
 	(getdata_sub2, getdata2, getdataraw): use "search_mask()".
 	(struct f2ddata): add member "mask_index".
 	(opendata, reopendata): initialize "fp->mask_index".
@@ -3896,13 +4115,13 @@
 
 	* src/gtk/x11gui.c (DialogRadio, DialogCombo, DialogCheck): add
 	label if "caption" is not NULL.
-	(DialogComboEntry): add.
+	(DialogComboEntry): added.
 
 	* src/gtk/ox11dlg.c (dlgconfirm, dlgmessage, dlgradio, dlgcombo)
 	(dlgcheck): check and use "title" field.
 	(dlginput, dlgradio, dlgcombo, dlgcheck): check and use "caption"
 	field.
-	(dlgcombo_entry): add.
+	(dlgcombo_entry): added.
 	(dialog): add "combo_entry", "title" and "caption" field.
 
 2008-11-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -3914,25 +4133,25 @@
 	set name.
 	(fsok): check "filter".
 
-	* src/gtk/ox11dlg.c (dlgcombo): add.
+	* src/gtk/ox11dlg.c (dlgcombo): added.
 	(dialog): add field "combo".
 	(dlggetsavefile, dlggetopenfile): use "memfree()" to free "*(char
 	**)rval".
 
-	* src/gtk/x11gui.c (DialogCombo): add.
+	* src/gtk/x11gui.c (DialogCombo): added.
 
 	* demo/encoding.ngp: use "dialog::combo" instead of
 	"dialog::input".
 
 2008-11-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/ox11dlg.c (dlgcheck, dlgradio): add.
+	* src/gtk/ox11dlg.c (dlgcheck, dlgradio): added.
 	(dialog): add fields "radio" and "check".
 	now all functions dfined in ox11dlg.c is static.
 
 	* src/gtk/x11gui.h: add prototype of "DialogCheck" and "DialogRadio"
 
-	* src/gtk/x11gui.c (DialogCheck, DialogRadio): add.
+	* src/gtk/x11gui.c (DialogCheck, DialogRadio): added.
 
 	* src/gtk/ox11menu.h (struct menulocal): remove unused member
 	"framex", "framey" and "exwinbackingstore".
@@ -3946,14 +4165,14 @@
 	(MenuConfigHash, menu_config_set_four_elements)
 	(menu_config_set_window_geometry, menu_config_set_bgcolor)
 	(menu_config_set_ext_driver, menu_config_set_prn_driver)
-	(menu_config_set_script, set_menu_config_mxlocal): add.
+	(menu_config_set_script, set_menu_config_mxlocal): added.
 	(addmenu): initialize "MenuConfigHash".
 	(mgtkloadconfig, mgtkwindowconfig): use "FileConfigHash".
 
 2008-11-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c add global valiable "FileConfigHash".
-	(enum file_config_type, struct file_config, FileConfig): add.
+	(enum file_config_type, struct file_config, FileConfig): added.
 	(f2dloadconfig): use "FileConfigHash".
 	(addfile): initialize "FileConfigHash".
 
@@ -3964,11 +4183,11 @@
 	* src/gtk/main.c (get_obj_font_list): use
 	"Gra2cairoConf->font_num".
 
-	* src/gtk/ogra2cairo.c (free_font_map): add.
-	(create_font_map): add.
+	* src/gtk/ogra2cairo.c (free_font_map): added.
+	(create_font_map): added.
 	(loadconfig): use "create_font_map()"
 	(init_conf): initialize "Gra2cairoConf->font_num".
-	(free_fonts_sub): add.
+	(free_fonts_sub): added.
 	(free_conf): use "nhash_each" and "nhash_free" to free font maps.
 	(loadfont): remove second argument and return "struct fontmap *".
 	(loadfont): remove codes related with " Gra2cairoConf->font".
@@ -3997,7 +4216,7 @@
 
 	* src/oroot.h: add prototype of "oputcolor()".
 
-	* src/oroot.c (oputcolor): add.
+	* src/oroot.c (oputcolor): added.
 
 	* src/gtk/x11dialg.c (SetFontListFromObj): use
 	"Gra2cairoConf->fontmap_list_root" instead of
@@ -4023,7 +4242,7 @@
 
 	* src/nhash.h: add prototype of "nhash_num()".
 
-	* src/nhash.c (count_hash, nhash_num): add.
+	* src/nhash.c (count_hash, nhash_num): added.
 
 2008-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -4034,10 +4253,10 @@
 
 	* initfile/.Ngraph: use new gra to create image file.
 
-	* driver/ngp2.in: add.
+	* driver/ngp2.in: added.
 
-	* driver/Makefile.am (ngp2): add.
-	(bin_SCRIPTS): add.
+	* driver/Makefile.am (ngp2): added.
+	(bin_SCRIPTS): added.
 
 2008-11-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -4085,7 +4304,7 @@
 
 2008-11-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.c (get_home): add.
+	* src/gtk/x11menu.c (get_home): added.
 	(createmenu): load accel map when "KEYMAP_FILE" is exist in
 	"NGRAPH_HOME".
 
@@ -4103,10 +4322,10 @@
 	* src/gtk/x11print.c (DriverDialogClose): change buffer size of a
 	message.
 
-	* src/shellcm.c (printexp): add.
+	* src/shellcm.c (printexp): added.
 	(cmexport, cmset): use hash when "USE_HASH" is true.
 
-	* src/shell.c (create_vallist, free_vallist): add.
+	* src/shell.c (create_vallist, free_vallist): added.
 	(addval, saveval, restoreval, addexp, delval, getval, getexp)
 	(newfunc, addfunc, getfunc, cmdexec, newshell, delshell): use hash
 	when "USE_HASH" is true.
@@ -4119,7 +4338,7 @@
 	(nhash_free_with_memfree_ptr, create_hash_with_hkey)
 	(nhash_set_int_with_hkey, nhash_set_ptr_with_hkey)
 	(nhash_get_with_hkey, nhash_get_int_with_hkey)
-	(nhash_del_with_hkey, nhash_get_ptr_with_hkey): add.
+	(nhash_del_with_hkey, nhash_get_ptr_with_hkey): added.
 
 2008-10-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -4136,7 +4355,7 @@
 
 	* src/shellcm.c (cmtype): use 'check_cpcmd()' and 'check_cmd()'.
 
-	* src/shell.c (init_cmd_tbl, check_cmd, check_cpcmd): add.
+	* src/shell.c (init_cmd_tbl, check_cmd, check_cpcmd): added.
 	(checkcmd): use 'check_cpcmd()'.
 	(cmdexec): use 'check_cmd()'.
 
@@ -4144,24 +4363,24 @@
 
 	* src/shell.c (cmdtable): add setting for 'seq'.
 
-	* src/shellcm.c (cmseq): add.
+	* src/shellcm.c (cmseq): added.
 
 2008-10-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (set_objlist_btn_state)
-	(set_drawlist_btn_state): add.
+	(set_drawlist_btn_state): added.
 	(SwitchDialogAdd, SwitchDialogInsert, SwitchDialogRemove): call
 	set_drawlist_btn_state() after call SwitchDialogSetupItem().
 	(SwitchDialogSetup): set_drawlist_btn_state() and
 	set_objlist_btn_state() after call SwitchDialogSetupItem().
-	(drawlist_sel_cb, objlist_sel_cb): add.
+	(drawlist_sel_cb, objlist_sel_cb): added.
 
 	* src/gtk/x11dialg.h (struct SwitchDialog): add member "top",
 	"up", "down", "bottom", "del", "ins", "add" and "btn_lock".
 
 2008-10-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11graph.c (SwitchDialogDown, SwitchDialogUp): add.
+	* src/gtk/x11graph.c (SwitchDialogDown, SwitchDialogUp): added.
 	(SwitchDialogSetup): add 'GO UP' and 'GO DOWN' button.
 	(SwitchDialogLast): select last item after move object.
 	(SwitchDialogTop): select first item after move object.
@@ -4200,22 +4419,22 @@
 	(f2dgetdata, f2dclosedata, f2dopendataraw, f2dgetdataraw)
 	(f2dclosedataraw, f2dstat, f2dstat2, f2dboundings)
 	(f2doutputfile): add argument to closedata().
-	(get_mtime): add.
+	(get_mtime): added.
 	(f2dstat): use get_mtime() to check mtime.
 	(fitout): remove closedata().
 
 2008-10-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofile.c (update_mask): add.
+	* src/ofile.c (update_mask): added.
 	(file2d): use update_mask() for "mask" field.
 	(getdataraw, getdata2, getdata_sub2): use bsearch_int() to check
 	mask.
 
 	* src/gtk/x11view.c (Evaluate): add masked line as sorted.
 
-	* src/object.c (cmp_func_int, arraysort_int): add.
+	* src/object.c (cmp_func_int, arraysort_int): added.
 
-	* src/mathfn.c (bsearch_int): add.
+	* src/mathfn.c (bsearch_int): added.
 
 2008-09-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -4226,13 +4445,13 @@
 
 2008-09-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofile.c (getdata_sub2, getdata_skip_step): add.
+	* src/ofile.c (getdata_sub2, getdata_skip_step): added.
 	(getdata_sub1): use getdata_sub2().
 	(struct f2ddata): use enum instead of int for 'type'.
 
 2008-09-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* initfile/.Ngraph (check_set): add.
+	* initfile/.Ngraph (check_set): added.
 	* initfile/.Ngraph: use check_set to initialize file object.
 	
 
@@ -4241,7 +4460,7 @@
 	* src/ofile.c (struct f2ddata): add member 'mtime' and
 	'interrupt'.
 	(opendata): set mtime to 'fp->mtime'.
-	(check_mtime): add.
+	(check_mtime): added.
 	(getminmaxdata): call check_mtime() and hskipdata().
 	(f2ddraw, f2devaluate, f2dopendata, f2dstat, f2dstat2)
 	(f2dboundings, f2doutputfile): remove check_mtime() placed before
@@ -4308,7 +4527,7 @@
 	* src/ofile.c (struct f2dlocal): add member "sumx, sumy, sumxx,
 	sumyy, sumxy, minx, maxx, miny, maxy, num and mtime".
 	(f2dfile, f2dput): set 'f2dlocal->mtime' as 0.
-	(update_field, foputabs, foputge1): add.
+	(update_field, foputabs, foputge1): added.
 	(getminmaxdata): add argument 'local'.
 	(f2ddraw, f2devaluate, f2dopendata, f2dstat, f2dstat2)
 	(f2dboundings, f2doutputfile): add argument to getminmaxdata().
@@ -4355,7 +4574,7 @@
 	in the case of 'I' and 'E'.
 	(addgra2cairofile): add error messages.
 
-	* src/gtk/ogra2cairo.c (check_cairo_status): add.
+	* src/gtk/ogra2cairo.c (check_cairo_status): added.
 	(gra2cairo_flush): call check_cairo_status().
 	(gra2cairo_output): call check_cairo_status() in the case of 'I'
 	and 'E'.
@@ -4365,11 +4584,11 @@
 
 	* src/gra.c (GRAreopen, GRAdraw, GRAinit, GRAend): return int.
 
-	* src/ogra.h (ERROPEN): add.
+	* src/ogra.h (ERROPEN): added.
 
 2008-09-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/object.c (add_obj_to_hash): add.
+	* src/object.c (add_obj_to_hash): added.
 	(addobject): set object name and table position to hash.
 	(chkobject): use hash to search object.
 	(chkobjtblpos): use hash to search table position.
@@ -4377,15 +4596,15 @@
 
 	* src/object.h (struct objlist): add member 'table_hash'.
 
-	* src/nhash.h: add.
+	* src/nhash.h: added.
 
-	* src/nhash.c: add.
+	* src/nhash.c: added.
 
 2008-09-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (DefaultDialogClose, ExViewerDialogSetupItem)
 	(ExViewerDialogSetup): add settings for 'use_external'.
-	(use_external_toggled): add.
+	(use_external_toggled): added.
 
 	* src/gtk/ox11menu.h (struct menulocal): add member
 	"exwin_use_external".
@@ -4414,10 +4633,10 @@
 	(CmOutputPrinter): check 'show_dialog' when call
 	gtk_print_operation_run().
 	(CmOutputPrinterB): add argument when call CmOutputPrinter().
-	(init_graobj): add.
+	(init_graobj): added.
 	(CmOutputPrinter, CmOutputDriver, CmOutputViewer)
 	(CmPrintGRAFile, CmOutputImage): use init_graobj().
-	(draw_gra): add.
+	(draw_gra): added.
 	(draw_page, CmOutputDriver, CmPrintGRAFile, CmOutputImage): use draw_gra().
 
 	* src/gtk/x11menu.c (SetPoint, SetZoom, ResetZoom, SetStatusBar)
@@ -4428,7 +4647,7 @@
 	* src/gtk/x11graph.c (CmGraphMenu): add argument when call
 	CmOutputPrinter().
 
-	* src/gtk/ox11menu.c (mx_print): add.
+	* src/gtk/ox11menu.c (mx_print): added.
 	(gtkmenu): add member "print".
 
 	* src/gtk/ogra2gtkprint.c (gra2gtkprint): remove member "next".
@@ -4441,23 +4660,23 @@
 
 	* src/gtk/x11print.c (CmPrintGRAFile): set base-name of ngp file
 	as default GRA filename.
-	(get_base_ngp_name): add.
+	(get_base_ngp_name): added.
 	(CmPrintGRAFile, CmOutputImage): use get_base_ngp_name().
 
 	* src/gtk/ogra2cairo.c (draw_str, gra2cairo_charheight)
 	(gra2cairo_charwidth):  check font size.
 
-	* src/gtk/x11view.c (new_merge_obj, new_file_obj): add.
+	* src/gtk/x11view.c (new_merge_obj, new_file_obj): added.
 	(data_dropped): add argument 'file_type'. use new_file_obj() and
 	new_merge_obj().
 
 	* src/gtk/x11view.h: add prototype of data_dropped().
 
 	* src/gtk/x11merge.c: include "x11view.h"
-	(drag_drop_cb, init_dnd): add.
+	(drag_drop_cb, init_dnd): added.
 	(CmMergeWindow): call init_dnd().
 
-	* src/gtk/x11file.c (drag_drop_cb, init_dnd): add.
+	* src/gtk/x11file.c (drag_drop_cb, init_dnd): added.
 	(CmFileWindow): call init_dnd().
 
 	* src/gtk/x11menu.c (createcommand2): set signal handler for
@@ -4468,7 +4687,7 @@
 	* src/gtk/x11view.c: add 'KeepMouseMode'.
 	(ViewerEvLButtonDblClk): call gtk_toggle_tool_button_set_active()
 	when 'KeepMouseMode == FALSE'.
-	(CmViewerButtonPressed): add.
+	(CmViewerButtonPressed): added.
 
 2008-09-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -4477,7 +4696,7 @@
 	(check_focused_obj): now return index of found item.
 	(Focus): remove gtk_toggle_tool_button_set_active().
 	(ShowPoints): draw arc when 'd->Mode == ArcB'.
-	(calc_snap_angle, calc_integer_ratio, SQRT3): add.
+	(calc_snap_angle, calc_integer_ratio, SQRT3): added.
 	(ViewerEvMouseMove): call calc_snap_angle() or
 	calc_integer_ratio().
 
@@ -4489,19 +4708,19 @@
 2008-09-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_up_point): don't change cursor.
-	(get_mouse_cursor_type): add.
+	(get_mouse_cursor_type): added.
 	(set_mouse_cursor_hover): use get_mouse_cursor_type().
 
 	* src/gtk/x11menu.c (Command2_data): remove MoveB.
 
 2008-09-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11file.c (POPUP_ITEM_FIT): add.
+	* src/gtk/x11file.c (POPUP_ITEM_FIT): added.
 	(popup_show_cb): check if the object associate with fit.
 
 	* src/gtk/x11view.c (ViewerWinFileUpdate): call
 	ProgressDialogCreate() before evaluate.
-	(range_increment): add.
+	(range_increment): added.
 	(scrollbar_scroll_cb, ViewerEvScroll): use range_increment().
 	(ViewerEvMouseMove): scroll when mouse position is out of the
 	widget.
@@ -4543,7 +4762,7 @@
 
 	* src/gtk/ox11menu.c (mgtkloadconfig, menuinit): add settings for
 	'Mxlocal->data_head_lines'.
-	(mx_data_head_lines): add.
+	(mx_data_head_lines): added.
 	(gtkmenu): add 'data_head_lines'.
 
 	* src/gtk/x11opt.c (DefaultDialogClose, MiscDialogSetupItem)
@@ -4579,13 +4798,13 @@
 2008-08-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (struct f2ddata): add ifs_buf.
-	(check_ifs_init, CHECK_IFS, CHECK_REMARK): add.
+	(check_ifs_init, CHECK_IFS, CHECK_REMARK): added.
 	(opendata): call check_ifs_init().
 	(getdataarray, getdata_sub1, getdata2, getdataraw): use
 	CHECK_REMARK and CHECK_IFS instead of strchr().
 
-	* src/ioutil.c: add.
-	(char_type_buf_init): add.
+	* src/ioutil.c: added.
+	(char_type_buf_init): added.
 	(fgetline): use is_line_sep() when EOF == -1.
 
 	* src/gtk/x11file.c (FileMoveDialogAdd): check if x and y are NaN or INF.
@@ -4598,7 +4817,7 @@
 
 2008-08-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/ofile.c (struct f2ddata_buf): add.
+	* src/ofile.c (struct f2ddata_buf): added.
 	(struct f2ddata, opendata, closedata, getdata_sub1, getdata): use
 	'struct f2ddata_buf'.
 
@@ -4618,7 +4837,7 @@
 
 	* src/ioutil.c (fgetline): use switch instead of if.
 
-	* src/ofile.c (getdata_sub1): add.
+	* src/ofile.c (getdata_sub1): added.
 	(getdata): use getdata_sub1().
 	(getdata): use memmove() instead of loop.
 
@@ -4634,17 +4853,17 @@
 
 	* src/gtk/x11file.c (select_type): set selected item to d->select.
 
-	* src/gtk/x11menu.c (add_underscore): add.
+	* src/gtk/x11menu.c (add_underscore): added.
 	(show_graphmwnu_cb, show_filemwnu_cb): call add_underscore().
 
 2008-08-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.c: add.
+	* src/gtk/x11menu.c: added.
 	(create_graphmenu, create_axismenu): add accelerator.
-	(create_toggle_menu_item): add.
+	(create_toggle_menu_item): added.
 	(create_windowmenu): use create_toggle_menu_item().
 
-	* src/gtk/x11menu.h: add.
+	* src/gtk/x11menu.h: added.
 
 	* src/gtk/gtk_subwin.c (sub_window_create): add accel group to sub
 	window.
@@ -4661,7 +4880,7 @@
 
 	* src/gtk/x11menu.c (MARK_PIX_SIZE): change mark size from 28 to 24.
 
-	* src/gtk/x11file.c (create_type_combo_box): add.
+	* src/gtk/x11file.c (create_type_combo_box): added.
 	(select_type, start_editing_type): modified for tree model.
 
 	* src/gtk/gtk_liststore.c (start_editing_obj): use GtkTreeModel
@@ -4669,13 +4888,13 @@
 
 2008-08-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/gtk_liststore.c (start_editing_obj): add.
+	* src/gtk/gtk_liststore.c (start_editing_obj): added.
 	(create_column): set some properties to GtkCellRenderer.
 	set start_editing virtual function.
 
-	* src/gtk/gtk_subwin.c (set_obj_cell_renderer_cb): add.
+	* src/gtk/gtk_subwin.c (set_obj_cell_renderer_cb): added.
 
-	* src/gtk/x11file.c (select_type, start_editing_type): add.
+	* src/gtk/x11file.c (select_type, start_editing_type): added.
 	(CmFileWindow): call set_obj_cell_renderer_cb.
 
 2008-08-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -4695,7 +4914,7 @@
 	'expand_to_fullpath'
 	(menuinit): initialize Menulocal.expandtofullpath.
 
-	* src/gtk/x11commn.c (ToFullPath): add.
+	* src/gtk/x11commn.c (ToFullPath): added.
 	(LoadNgpFile): call ToFullPath() when 'Menulocal.expandtofullpath
 	&& (!ignorepath)'
 
@@ -4707,44 +4926,44 @@
 	* src/shellux.c (cmtest): add condition
 	'(strcmp2(argv[i+1],"=")!=0) && (strcmp2(argv[i+1],"!=")!=0)'
 
-	* src/jnstring.h: add.
+	* src/jnstring.h: added.
 
-	* src/jnstring.c: add.
+	* src/jnstring.c: added.
 
-	* src/ngraph.h (ALIGNSIZE): add.
+	* src/ngraph.h (ALIGNSIZE): added.
 
 2008-07-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11file.c (get_axis_obj_str): add.
+	* src/gtk/x11file.c (get_axis_obj_str): added.
 	(file_list_set_val): use get_axis_obj_str().
 	(start_editing): check axis object.
 
 2008-07-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (select_axis, select_axis_x, select_axis_y):
-	add.
+	added.
 	(start_editing): use "changed" signal.
 
-	* src/gtk/x11axis.c (select_type): add.
+	* src/gtk/x11axis.c (select_type): added.
 	(start_editing): use "changed" signal.
 
 2008-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (edited_y, edited_x, edited_axis)
-	(start_editing): add.
+	(start_editing): added.
 	(CmFileWindow): call set_combo_cell_renderer_cb().
 
-	* src/gtk/x11axis.c (start_editing, edited): add.
+	* src/gtk/x11axis.c (start_editing, edited): added.
 	(CmAxisWindow): call set_combo_cell_renderer_cb().
 
-	* src/gtk/gtk_subwin.c (set_combo_cell_renderer_cb): add.
+	* src/gtk/gtk_subwin.c (set_combo_cell_renderer_cb): added.
 
 	* src/gtk/gtk_liststore.c (create_column): add case G_TYPE_ENUM.
 	(create_tree_view): column type of G_TYPE_ENUM is string.
 
 	* src/gtk/x11menu.c: add global variables RecentGraph and
 	RecentData.
-	(create_recent_graph_menu, create_recent_data_menu): add.
+	(create_recent_graph_menu, create_recent_data_menu): added.
 	(create_graphmenu): call create_recent_graph_menu.
 	(create_filemenu): call create_recent_data_menu.
 
@@ -4754,7 +4973,7 @@
 
 2008-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11dialg.c (search_id): add.
+	* src/gtk/x11dialg.c (search_id): added.
 	(SelectDialogSetup, SelectDialogSetup): add id column. check id
 	column insteadof index.
 
@@ -4773,13 +4992,13 @@
 	* src/gtk/x11file.c (MathDialogSetup, MathDialogList): now math
 	dialog can be sorted.
 
-	* src/gtk/gtk_liststore.c (list_store_path_get_int): add.
+	* src/gtk/gtk_liststore.c (list_store_path_get_int): added.
 
 	* src/gtk/x11file.c (FileMoveDialogSetup, FileMaskDialogSetup):
 	now lists of masked and moved data are sorted by line number.
 
 	* src/gtk/gtk_liststore.c (list_store_set_sort_column)
-	(list_store_set_sort_all): add.
+	(list_store_set_sort_all): added.
 
 2008-07-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -4797,7 +5016,7 @@
 
 	* src/gtk/ox11menu.c (menuinit): free gra2cairo_local when failed.
 
-	* src/gtk/ogra2cairo.c (gra2cairo_free): add.
+	* src/gtk/ogra2cairo.c (gra2cairo_free): added.
 	(gra2cairo_init): call free_conf() only when Instance == 0.
 
 	* src/gtk/ogra2cairofile.c (gra2cairofile_init): free
@@ -4806,10 +5025,10 @@
 2008-07-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (start_editing, cancel_editing)
-	(numeric_cb, string_cb): add.
+	(numeric_cb, string_cb): added.
 	(set_cell_renderer_cb): set callback functions when type is
 	G_TYPE_DOUBLE, G_TYPE_INT or G_TYPE_STRING.
-	(modify_numeric, modify_string): add.
+	(modify_numeric, modify_string): added.
 
 	* src/gtk/gtk_liststore.h (_list_store): add min, max, inc and
 	page.
@@ -4821,12 +5040,12 @@
 	* src/ofile.c (closedata): call set_data_progress();
 
 	* src/gtk/x11dialg.c (SetObjFieldFromWidget)
-	(SetWidgetFromObjField): add.
+	(SetWidgetFromObjField): added.
 
 2008-07-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.c (SetTextFromObjPoints)
-	(SetObjPointsFromText): add.
+	(SetObjPointsFromText): added.
 	(SetObjFieldFromStyle): call SetObjPointsFromText() to set value.
 	(SetStyleFromObjField): call SetTextFromObjPoints() to set value.
 
@@ -4919,14 +5138,14 @@
 	(NumDialogSetup, AxisFontDialogSetup, AxisDialogSetup): use
 	GtkSpinButton.
 
-	* src/gtk/gtk_widget.c: add.
+	* src/gtk/gtk_widget.c: added.
 
 2008-07-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_liststore.c (create_column): set "mode" attribute as
 	GTK_CELL_RENDERER_MODE_ACTIVATABLE when the column is editable.
 
-	* src/gtk/gtk_subwin.c (set_cell_renderer_cb, toggle_cb): add.
+	* src/gtk/gtk_subwin.c (set_cell_renderer_cb, toggle_cb): added.
 	(list_sub_window_create, tree_sub_window_create): call
 	set_cell_renderer_cb().
 
@@ -4935,7 +5154,7 @@
 	* src/gtk/x11file.c (FileMoveDialogSetup, FileMaskDialogSetup):
 	add copy button.
 	(FileMaskDialogClose, FileMoveDialogClose): add case for IDCOPY.
-	(FileMoveDialogCopy, FileMaskDialogCopy): add.
+	(FileMoveDialogCopy, FileMaskDialogCopy): added.
 
 2008-07-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -4960,10 +5179,10 @@
 
 	* src/gtk/ox11menu.h (struct menulocal): add PaperLandscape,
 	PaperId and PaperName.
-	(enum paper_id): add.
+	(enum paper_id): added.
 
 	* src/gtk/x11graph.c (PageDialogClose): check paper size.
-	(set_paper_type): add.
+	(set_paper_type): added.
 	(struct pagelisttype, pagelist): add name, landscape and id;
 
 	* src/gtk/x11commn.c (CheckPage): bug fix: remove redundant return.
@@ -4973,10 +5192,10 @@
 	* src/gtk/x11graph.c (CmGraphMenu): call CmOutputPrinter() when
 	sel == MenuIdOutputDriver.
 
-	* src/gtk/ogra2gtkprint.c: add.
+	* src/gtk/ogra2gtkprint.c: added.
 
 	* src/gtk/x11print.c (CmOutputPrinter, draw_page)
-	(struct print_obj): add.
+	(struct print_obj): added.
 	add global variable PrintSettings.
 
 	* src/gtk/ogra2cairo.c (gra2cairo_output): save current point
@@ -4990,7 +5209,7 @@
 	* src/gtk/x11file.c (FitDialogSetupItem, FitDialogSave)
 	(FitDialogApply): bug fix: poly_dimension is active item + 1.
 
-	* src/gtk/x11commn.c (GetDrawFiles): add.
+	* src/gtk/x11commn.c (GetDrawFiles): added.
 
 	* src/gtk/x11print.c (CmPrintDataFile): now CmPrintDataFile() can
 	output multi data files into one file.
@@ -5024,13 +5243,13 @@
 	dpix and dpiy
 
 	* src/gtk/ogra2cairo.c (gra2cairo_antialias_type)
-	(gra2cairo_set_antialias, set_antialias): add.
+	(gra2cairo_set_antialias, set_antialias): added.
 	(gra2cairo_output, gra2cairo_init): add antialias settings.
 	(gra2cairo): add member "antialias", "dpix" and "dpiy".
-	(mxp2dw, mxd2pw, mxp2dh, mxd2ph, mxd2px, mxd2py): add.
+	(mxp2dw, mxd2pw, mxp2dh, mxd2ph, mxd2px, mxd2py): added.
 	(gra2cairo_init, gra2cairo_set_dpi): add settings for pixel_dot_x
 	and pixel_dot_y.
-	(gra2cairo_set_dpi_x, gra2cairo_set_dpi_y): add.
+	(gra2cairo_set_dpi_x, gra2cairo_set_dpi_y): added.
 	(draw_str, gra2cairo_output): use mxp2dw(), mxd2pw(), mxp2dh(),
 	mxd2ph(), mxd2px() and mxd2py().
 
@@ -5039,7 +5258,7 @@
 
 2008-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.c (create_image_outputmenu): add.
+	* src/gtk/x11menu.c (create_image_outputmenu): added.
 	(create_outputmenu): add "Export image" sub menu.
 
 	* src/gtk/x11menu.h (enum MenuID): add MenuId MenuIdOutputPSFile,
@@ -5048,7 +5267,7 @@
 
 	* src/gtk/x11print.c (OutputImageDialogSetupItem)
 	(OutputImageDialogSetup, OutputImageDialogClose)
-	(OutputImageDialog, CmOutputImage): add.
+	(OutputImageDialog, CmOutputImage): added.
 	(CmOutputMenu): add case MenuIdOutputPSFile, MenuIdOutputEPSFile,
 	MenuIdOutputPDFFile, MenuIdOutputPNGFile and MenuIdOutputSVGFile.
 
@@ -5065,7 +5284,7 @@
 	* src/gtk/x11lgndx.c (LegendGaussDialogPaint): use gra2gdk.
 
 	* src/gtk/x11menu.c (create_markpixmap): use gra2gdk.
-	(find_gra2gdk_inst): add.
+	(find_gra2gdk_inst): added.
 
 	* src/gtk/x11view.c (ViewerWinSetup): call OpenGRA() after
 	OpenGC().
@@ -5082,9 +5301,9 @@
 
 2008-06-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/ogra2cairofile.c: add.
+	* src/gtk/ogra2cairofile.c: added.
 
-	* src/gtk/ogra2cairo.c: add.
+	* src/gtk/ogra2cairo.c: added.
 
 2008-06-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -5109,12 +5328,12 @@
 
 2008-06-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/gtk/x11menu.c (detach_toolbar, create_toolbar): add.
+	* src/gtk/x11menu.c (detach_toolbar, create_toolbar): added.
 	(setupwindow): use create_toolbar().
 
-	* src/gtk/x11view.c (reorder_object): add.
+	* src/gtk/x11view.c (reorder_object): added.
 	(ViewTop, ViewLast): use reorder_object().
-	(ViewCopyAxis): add.
+	(ViewCopyAxis): added.
 	(ViewCopy): use ViewCopyAxis().
 
 2008-06-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
@@ -5122,23 +5341,23 @@
 	* src/gtk/x11commn.c (ProgressDialogCreate): set cursor to GDK_WATCH.
 	(ProgressDialogFinalize): restore cursor.
 
-	* src/gtk/x11menu.c (GetCursor): add.
+	* src/gtk/x11menu.c (GetCursor): added.
 
-	* src/gtk/x11merge.c (ev_key_down): add.
+	* src/gtk/x11merge.c (ev_key_down): added.
 
 	* src/gtk/x11view.c (Focus): now merge object can be focused.
 
 2008-06-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_down_move_data)
-	(mouse_down_set_points, mouse_down_zoom): add.
+	(mouse_down_set_points, mouse_down_zoom): added.
 	(ViewerEvLButtonDown): use mouse_down_move_data(),
 	mouse_down_set_points() and mouse_down_zoom().
 	(ViewerEvRButtonDown): use mouse_down_zoom();
 	(ViewerEvRButtonDown): cancel make arc, rectangle, gauss and axis
 	when Button3 is pressed.
 	(create_axis, create_single_axis, create_legendx)
-	(create_legend3, create_legend2, create_legend1): add.
+	(create_legend3, create_legend2, create_legend1): added.
 	(ViewerEvLButtonDblClk): use create_axis(), create_single_axis(),
 	create_legendx(), create_legend3(), create_legend2() and
 	create_legend1().
@@ -5149,7 +5368,7 @@
 	* src/gtk/x11view.c (add_focus_obj, clear_focus_obj)
 	(mouse_down_point, mouse_down_move, mouse_up_point)
 	(set_mouse_cursor_hover, mouse_up_drag, mouse_up_zoom)
-	(mouse_up_change, mouse_up_lgend1, mouse_up_lgend2): add.
+	(mouse_up_change, mouse_up_lgend1, mouse_up_lgend2): added.
 	(Match, Focus): use add_focus_obj();
 	(ViewerWinUpdate, UnFocus, ViewUpdate): use clear_focus_obj();
 	(ViewerEvLButtonUp): use mouse_down_point(), mouse_up_drag(),
@@ -5157,16 +5376,16 @@
 
 	* src/gtk/x11menu.c (Command2_data): add move tool button.
 	(createcommand2): default sensitivity of the MoveButton is false.
-	(SetMoveButtonState): add.
+	(SetMoveButtonState): added.
 	(SetCursor): add GDK_FLEUR.
 
 	* src/gtk/x11view.c (enum ViewerPopupIdn): add alignment id.
 	(struct viewer_popup): add member 'struct viewer_popup *submenu'
-	(create_menu): add.
+	(create_menu): added.
 	(create_popup_menu): add alignment submenu. use create_menu.
-	(AlignFocusedObj): add.
+	(AlignFocusedObj): added.
 	(do_popup): add codes for alignment submenu.
-	(check_focused_obj): add.
+	(check_focused_obj): added.
 	(Focus): add argument "int add". add codes for multiple focus.
 	(ViewerPopupMenu): call AlignFocusedObj().
 
@@ -5177,7 +5396,7 @@
 	add".
 	(ev_key_down_tree): check 'e->state & GDK_SHIFT_MASK' when
 	e->keyval == GDK_space.
-	(list_sub_window_add_focus, tree_sub_window_add_focus): add.
+	(list_sub_window_add_focus, tree_sub_window_add_focus): added.
 
 2008-06-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
@@ -5185,7 +5404,7 @@
 	(legend_dialog_setup_item, LegendRectDialogSetup): use width and
 	height instaed of x2 and y2 for legend rectangle.
 
-	* src/gtk/x11view.c (swapint): add.
+	* src/gtk/x11view.c (swapint): added.
 	(ViewerEvLButtonDblClk): x2 and y2 are always greater than x1 and
 	y2 respectivery.
 
@@ -5201,7 +5420,7 @@
 
 	* src/omerge.c (mergeinit): initialize "line_num".
 
-	* src/ogra.c (set_progress_val): add.
+	* src/ogra.c (set_progress_val): added.
 	(oGRAdraw): use set_progress_val().
 	(oGRAdrawparent): call set_progress_val().
 
@@ -5239,7 +5458,7 @@
 	* driver/gra2wmf.c (draw, getboundingbox): bug fix: reported at
 	http://www2e.biglobe.ne.jp/~isizaka/bbs_old/light.cgi [670].
 
-	* src/gtk/ox11menu.c (mx_get_focused): add.
+	* src/gtk/ox11menu.c (mx_get_focused): added.
 	(gtkmenu): add "focused".
 
 	* src/gtk/x11dialg.c (CopyDialogSetup, SelectDialogSetup): select
@@ -5254,7 +5473,7 @@
 	(ViewerDialogClose): add settings for "redraw_num".
 
 	* src/gtk/ox11menu.c (menuinit): set "redraw_num".
-	(mxredraw_num): add.
+	(mxredraw_num): added.
 	(mx_redraw): check Mxlocal->redrawf_num.
 	(mgtkloadconfig): get Mxlocal->redrawf_num from init file.
 	(menuinit): initialize Mxlocal->redrawf_num.
@@ -5270,7 +5489,7 @@
 	(ProgressDialogCreate): call set_draw_lock().
 
 	* src/gtk/x11menu.c (ChkInterrupt): check DrawLock.
-	(set_draw_lock): add.
+	(set_draw_lock): added.
 	add DrawLock.
 
 	* src/gtk/ox11menu.c (mx_redraw): call set_draw_lock().

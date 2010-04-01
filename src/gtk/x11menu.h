@@ -1,5 +1,5 @@
 /* 
- * $Id: x11menu.h,v 1.48 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11menu.h,v 1.49 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for GTK".
  * 
@@ -163,7 +163,7 @@ enum pop_up_menu_item_type {
 struct Viewer
 {
   GtkWidget *Win;
-  GdkWindow *win;
+  GdkWindow *gdk_win;
   GtkWidget *menu, *VScroll, *HScroll, *VRuler, *HRuler,
     *PToolbar, *CToolbar, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
   int ShowFrame, ShowLine, ShowRect;
@@ -234,8 +234,8 @@ struct NgraphApp
 {
   int Interrupt;
   char *FileName;
-  GtkWidget *Message;
-  guint Message1, Message2;
+  GtkWidget *Message, *Message_pos, *Message_extra;
+  gint Message1;
   GtkWidget *ghistory[MENU_HISTORY_NUM], *fhistory[MENU_HISTORY_NUM];
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list;
   GtkToolItem *viewb[20];
@@ -274,14 +274,13 @@ void ResetZoom(void);
 void reset_event(void);
 void WaitForMap(void);
 void GetWMFrame(void);
-void SetStatusBar(char *mes);
-void SetStatusBarXm(gchar * s);
+void SetStatusBar(const char *mes);
 void ResetStatusBar(void);
-int PutStderr(char *s);
-int PutStdout(char *s);
-void DisplayDialog(char *str);
+int PutStderr(const char *s);
+int PutStdout(const char *s);
+void DisplayDialog(const char *str);
 int ChkInterrupt(void);
-int InputYN(char *mes);
+int InputYN(const char *mes);
 void QuitGUI(void);
 void menu_lock(int lock);
 void set_draw_lock(int lock);

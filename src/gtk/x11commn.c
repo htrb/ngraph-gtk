@@ -1,5 +1,5 @@
 /* 
- * $Id: x11commn.c,v 1.60 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11commn.c,v 1.61 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -884,8 +884,8 @@ SaveDrawrable(char *name, int storedata, int storemerge)
     _getobj(sysobj, "version", inst, &ver);
 
     len = snprintf(comment, sizeof(comment),
-		   "#!ngraph\n#%%creator: %s %s \n#%%version: %s\n",
-		   sysname, PLATFORM, ver);
+		   "#!ngraph\n#%%creator: %s \n#%%version: %s\n",
+		   sysname, ver);
     if (nwrite(hFile, comment, len) != len)
       error = TRUE;
 
@@ -922,14 +922,13 @@ int
 check_overwrite(GtkWidget *parent, const char *filename)
 {
   int r;
-  char *buf, *ptr;
+  char *buf;
 
-  if (filename == NULL || access(filename, W_OK))
+  if (filename == NULL || naccess(filename, W_OK))
     return 0;
 
-  ptr = filename_to_utf8(filename);
-  buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), (ptr) ? ptr : filename);
-  g_free(ptr);
+  buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), CHK_STR(filename));
+
   r = message_box(parent, buf, "Driver", RESPONS_YESNO);
   g_free(buf);
 
@@ -994,7 +993,7 @@ GraphSave(int overwrite)
     overwrite = FALSE;
   }
   prev_wd = current_wd = NULL;
-  if ((initfil == NULL) || (! overwrite || (access(initfil, 04) == -1))) {
+  if ((initfil == NULL) || (! overwrite || (naccess(initfil, 04) == -1))) {
     prev_wd = ngetcwd();
     ret = nGetSaveFileName(TopLevel, _("Save NGP file"), "ngp",
 			   &(Menulocal.graphloaddir), initfil,
@@ -1014,7 +1013,7 @@ GraphSave(int overwrite)
   }
 
   if (ret == IDOK) {
-    if (prev_wd && chdir(prev_wd)) {
+    if (prev_wd && nchdir(prev_wd)) {
       ErrorMessage();
     }
 
@@ -1045,7 +1044,7 @@ GraphSave(int overwrite)
     }
     g_free(file);
 
-    if (current_wd && chdir(current_wd)) {
+    if (current_wd && nchdir(current_wd)) {
       ErrorMessage();
     }
   }
@@ -1057,7 +1056,7 @@ GraphSave(int overwrite)
 }
 
 static void
-change_filename(char * (*func)(char *))
+change_filename(char * (*func)(const char *))
 {
   struct objlist *obj;
   int i;
@@ -1102,11 +1101,11 @@ ToRalativePath(void)
 }
 
 static char *
-get_basename(char *file)
+get_basename(const char *file)
 {
   char *ptr;
 
-  ptr = g_path_get_basename(file);
+  ptr = getbasename(file);
   if (ptr == NULL)
     return NULL;
 
@@ -1127,7 +1126,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   struct objlist *sys;
   char *expanddir;
   struct objlist *obj, *aobj;
-  char *name, *utf8_name;
+  char *name;
   int i, r, newid, allocnow = FALSE, tmp;
   char *s;
   int len;
@@ -1138,6 +1137,13 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   char *inst;
   struct objlist *robj;
   int idn;
+
+  changefilename(file);
+
+  if (naccess(file, R_OK)) {
+    ErrorMessage();
+    return;
+  }
 
   sys = chkobject("system");
   if (sys == NULL)
@@ -1179,8 +1185,6 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
     return;
   }
 
-  changefilename(name);
-
   if (arrayadd(&sarray, &name) == NULL) {
     g_free(name);
     arraydel2(&sarray);
@@ -1189,8 +1193,9 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
 
   DeleteDrawable();
 
-  if (console)
+  if (console) {
     allocnow = allocate_console();
+  }
 
   sec = TRUE;
   argv[0] = (char *) &sec;
@@ -1199,9 +1204,8 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
 
   argv[0] = (char *) &sarray;
   argv[1] = NULL;
-  utf8_name = filename_to_utf8(name);
-  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), CHK_STR(utf8_name));
-  g_free(utf8_name);
+
+  snprintf(mes, sizeof(mes), _("Loading `%.128s'."), name);
   SetStatusBar(mes);
 
   menu_lock(TRUE);
@@ -1245,8 +1249,9 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   ResetStatusBar();
   arraydel2(&sarray);
 
-  if (console)
+  if (console) {
     free_console(allocnow);
+  }
 
   GetPageSettingsFromGRA();
   UpdateAll();
@@ -1600,6 +1605,7 @@ CheckIniFile(void)
 {
   int ret;
 
+
   ret = writecheckconfig();
   if (ret == 0) {
     message_box(TopLevel, _("Ngraph.ini is not found."), "Ngraph.ini", RESPONS_ERROR);
@@ -1608,14 +1614,27 @@ CheckIniFile(void)
     message_box(TopLevel, _("Ngraph.ini is write protected."), "Ngraph.ini", RESPONS_ERROR);
     return FALSE;
   } else if ((ret == -2) || (ret == 2)) {
-    char buf[256];
-    snprintf(buf, sizeof(buf), _("Install `Ngraph.ini' to ~/%s ?"), HOME_DIR);
+    struct objlist *sys;
+    char *homedir, *buf;
+
+    sys = getobject("system");
+    if (sys == NULL) {
+      return FALSE;
+    }
+
+    if (getobj(sys, "home_dir", 0, 0, NULL, &homedir) == -1) {
+      return FALSE;
+    }
+
+    buf = g_strdup_printf(_("Install `Ngraph.ini' to %s ?"), homedir);
     if (message_box(TopLevel, buf, "Ngraph.ini", RESPONS_YESNO) == IDYES) {
+      g_free(buf);
       if (!copyconfig()) {
 	message_box(TopLevel, _("Ngraph.ini could not be copied."), "Ngraph.ini", RESPONS_ERROR);
 	return FALSE;
       }
     } else {
+      g_free(buf);
       return FALSE;
     }
   }
@@ -1769,12 +1788,11 @@ ProgressDialogFinalize(void)
 void
 ErrorMessage(void)
 {
-  char *ptr, *s;
+  const char *s;
+  char *ptr;
 
-  s = strerror(errno);
-  ptr = g_locale_to_utf8(CHK_STR(s), -1, NULL, NULL, NULL);
-  if (ptr) {
-    message_box(NULL, ptr, _("error"), RESPONS_ERROR);
-    g_free(ptr);
-  }
+  s = g_strerror(errno);
+  ptr = g_strdup(s);
+  message_box(NULL, CHK_STR(ptr), _("error"), RESPONS_ERROR);
+  g_free(ptr);
 }

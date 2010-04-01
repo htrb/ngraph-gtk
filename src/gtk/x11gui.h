@@ -1,5 +1,5 @@
 /* 
- * $Id: x11gui.h,v 1.15 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11gui.h,v 1.16 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,13 +61,13 @@ typedef struct _tpoint {
 
 int DialogExecute(GtkWidget *parent, void *dialog);
 void message_beep(GtkWidget *parent);
-int message_box(GtkWidget *parent, char *message, char *title, int yesno);
-int DialogInput(GtkWidget *parent, char *title, char *mes, char **s, int *x, int *y);
-int DialogRadio(GtkWidget *parent, char *title, char *caption, struct narray *ary, int *r, int *x, int *y);
-int DialogCheck(GtkWidget *parent, char *title, char *caption, struct narray *array, int *r, int *x, int *y);
-int DialogCombo(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r, int *x, int *y);
-int DialogComboEntry(GtkWidget *parent, char *title, char *caption, struct narray *array, int sel, char **r, int *x, int *y);
-int DialogSpinEntry(GtkWidget *parent, char *title, char *caption, double min, double max, double inc, double *r, int *x, int *y);
+int message_box(GtkWidget *parent, const char *message, const char *title, int yesno);
+int DialogInput(GtkWidget *parent, const char *title, const char *mes, char **s, int *x, int *y);
+int DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct narray *ary, int *r, int *x, int *y);
+int DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *r, int *x, int *y);
+int DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y);
+int DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y);
+int DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, double *r, int *x, int *y);
 int nGetOpenFileNameMulti(GtkWidget * parent,
 			  char *title, char *defext, char **initdir,
 			  const char *initfil, char ***file, int chd);

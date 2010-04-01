@@ -1,5 +1,5 @@
 /* 
- * $Id: nstring.c,v 1.10 2010/03/04 08:30:16 hito Exp $
+ * $Id: nstring.c,v 1.11 2010/04/01 06:08:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -150,9 +150,9 @@ strcmp2(char *s1,char *s2)
 }
 
 static int 
-wildmatch2(char *pat,char *s,int flags)
+wildmatch2(const char *pat, const char *s,int flags)
 {
-  char *spo,*patpo,*po;
+  const char *spo,*patpo,*po;
 
   if ((s==NULL) || (pat==NULL)) return 0;
   spo=s;
@@ -208,7 +208,7 @@ wildmatch2(char *pat,char *s,int flags)
 }
 
 int 
-wildmatch(char *pat,char *s,int flags)
+wildmatch(const char *pat, const char *s,int flags)
 {
   if ((s==NULL) || (pat==NULL)) return 0;
   if (flags & WILD_PERIOD) {

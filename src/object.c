@@ -1,5 +1,5 @@
 /* 
- * $Id: object.c,v 1.54 2010/03/04 08:30:16 hito Exp $
+ * $Id: object.c,v 1.55 2010/04/01 06:08:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -61,14 +61,14 @@ static int errcode=0;
 int Globallock=FALSE;
 
 int (*getstdin)(void);
-int (*putstdout)(char *s);
-int (*putstderr)(char *s);
+int (*putstdout)(const char *s);
+int (*putstderr)(const char *s);
 int (*printfstdout)(char *fmt,...);
 int (*printfstderr)(char *fmt,...);
 int (*ninterrupt)(void);
-int (*inputyn)(char *mes);
-void (*ndisplaydialog)(char *str);
-void (*ndisplaystatus)(char *str);
+int (*inputyn)(const char *mes);
+void (*ndisplaydialog)(const char *str);
+void (*ndisplaystatus)(const char *str);
 
 #if USE_HASH
 static NHASH ObjHash = NULL;
@@ -150,8 +150,13 @@ error(struct objlist *obj,int code)
 void 
 error2(struct objlist *obj,int code, const char *mes)
 {
+
   if (mes!=NULL) {
-    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.",mes);
+    char *local_msg;
+
+    local_msg = g_locale_from_utf8(mes, -1, NULL, NULL, NULL);
+    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.", CHK_STR(local_msg));
+    g_free(local_msg);
   } else {
     sprintf(errormsg2,".");
   }
@@ -161,13 +166,19 @@ error2(struct objlist *obj,int code, const char *mes)
 void 
 error22(struct objlist *obj,int code, const char *mes1, const char *mes2)
 {
+  char *local_msg;
+
   if (mes1!=NULL) {
-    snprintf(errormsg1, sizeof(errormsg1), "%.256s: ",mes1);
+    local_msg = g_locale_from_utf8(mes1, -1, NULL, NULL, NULL);
+    snprintf(errormsg1, sizeof(errormsg1), "%.256s: ", CHK_STR(local_msg));
+    g_free(local_msg);
   } else {
     errormsg1[0]='\0';
   }
   if (mes2!=NULL) {
-    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.",mes2);
+    local_msg = g_locale_from_utf8(mes2, -1, NULL, NULL, NULL);
+    snprintf(errormsg2, sizeof(errormsg2), " `%.256s'.", CHK_STR(local_msg)); 
+    g_free(local_msg);
   } else {
     sprintf(errormsg2,".");
   }
@@ -188,7 +199,7 @@ vgetchar(void)
 }
 
 static int 
-vputs(char *s)
+vputs(const char *s)
 {
   return 0;
 }
@@ -200,7 +211,7 @@ vnprintf(char *fmt,...)
 }
 
 int 
-seputs(char *s)
+seputs(const char *s)
 {
   return fputs(s,stderr);
 }
@@ -224,25 +235,18 @@ vinterrupt(void)
 }
 
 int 
-vinputyn(char *mes)
+vinputyn(const char *mes)
 {
   return FALSE;
 }
 
 static void 
-vdisplaydialog(char *str)
+vdisplaydialog(const char *str)
 {
 }
 
-#ifdef COMPILE_UNUSED_FUNCTIONS
 static void 
-vdisplaywindow(char *str)
-{
-}
-#endif /* COMPILE_UNUSED_FUNCTIONS */
-
-static void 
-vdisplaystatus(char *str)
+vdisplaystatus(const char *str)
 {
 }
 

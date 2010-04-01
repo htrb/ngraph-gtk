@@ -1,5 +1,5 @@
 /* 
- * $Id: shell.c,v 1.40 2010/03/04 08:30:16 hito Exp $
+ * $Id: shell.c,v 1.41 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -122,13 +122,8 @@ static char *Prompt;
 #ifndef WINDOWS
 #include <sys/wait.h>
 #include <sys/ioctl.h>
-#include <sys/time.h>
-#else  /* WINDOWS */
-#include <dos.h>
-#include <dir.h>
-#include <io.h>
-#include <process.h>
 #endif	/* WINDOWS */
+#include <sys/time.h>
 
 #define USE_HASH 1
 
@@ -199,9 +194,42 @@ static int storeshhandle(struct nshell *nshell,int fd, char **readbuf,int *readb
 static void restoreshhandle(struct nshell *nshell,int fd, char *readbuf,int readbyte,int readpo);
 
 void
-set_environ(char **env)
+set_environ(void)
 {
-  MainEnviron = env;
+  int i, n;
+  char *name, **list, **env;
+  const char *val;
+
+  MainEnviron = NULL;
+
+  env = g_listenv();
+  if (env == NULL) {
+    MainEnviron = NULL;
+    return;
+  }
+
+  for (n = 0; env[n]; n++) ;
+
+  list = g_malloc0(sizeof(*list) * (n + 1));
+  if (list == NULL) {
+    g_strfreev(env);
+    return;
+  }
+
+  for (i = 0; i < n; i++) {
+    name = env[i];
+    val = g_getenv(name);
+    list[i] = g_strdup_printf("%s=%s", name, val);
+    if (list[i] == NULL) {
+      g_strfreev(env);
+      g_strfreev(list);
+      return;
+    }
+  }
+
+  MainEnviron = list;
+
+  g_strfreev(env);
 }
 
 void
@@ -214,14 +242,13 @@ static void
 unlinkfile(char **file)
 {
   if (*file!=NULL) {
-    unlink(*file);
+    g_unlink(*file);
     g_free(*file);
     *file=NULL;
   }
 }
 
 #ifndef WINDOWS
-
 int
 set_signal(int signal_id, int flags, void (*handler)(int))
 {
@@ -256,16 +283,11 @@ unset_childhandler(void)
 {
   set_signal(SIGCHLD, 0, SIG_DFL);
 }
-#endif
+#endif	/* WINDOWS */
 
-#ifndef WINDOWS_XXX
-
-#if (HAVE_LIBPTHREAD || HAVE_LIBPTHREADGC2)
-
-#include <pthread.h>
 
 static int EvLoopActive = FALSE;
-static pthread_t EvLoopThread;
+static GThread *EvLoopThread = NULL;
 
 static void *
 shellevloop(void *ptr)
@@ -288,10 +310,13 @@ set_shellevloop(int sig)
   if (EvLoopActive)
     return;
 
-  if (pthread_create(&EvLoopThread, NULL, shellevloop, NULL) == 0) {
-    while (! EvLoopActive) {
-      msleep(10);
-    }
+  EvLoopThread = g_thread_create(shellevloop, NULL, TRUE, NULL);
+
+  if (EvLoopThread == NULL)
+    return;
+
+  while (! EvLoopActive) {
+    msleep(10);
   }
 }
 
@@ -300,45 +325,10 @@ reset_shellevloop(void)
 {
   if (EvLoopActive) {
     EvLoopActive = FALSE;
-    pthread_join(EvLoopThread, NULL);
+    g_thread_join(EvLoopThread);
   }
 }
 
-#else  /* HAVE_LIBPTHREAD */
-
-static void 
-set_shellevloop(int sig)
-{
-#ifdef ITIMER_REAL
-  struct itimerval tval;
-
-  set_signal(sig, 0, SIG_IGN);
-  eventloop();
-  tval.it_interval.tv_sec=0;
-  tval.it_interval.tv_usec=0;
-  tval.it_value.tv_sec=0;
-  tval.it_value.tv_usec=100000;
-  setitimer(ITIMER_REAL,&tval,NULL);
-  set_signal(SIGALRM, 0, set_shellevloop);
-#endif
-}
-
-static void 
-reset_shellevloop(void)
-{
-#ifdef ITIMER_REAL
-  struct itimerval tval;
-
-  tval.it_interval.tv_sec=0;
-  tval.it_interval.tv_usec=0;
-  tval.it_value.tv_sec=0;
-  tval.it_value.tv_usec=0;
-  setitimer(ITIMER_REAL,&tval,NULL);
-  set_signal(SIGALRM, 0, SIG_IGN);
-#endif
-}
-
-#endif	/* HAVE_LIBPTHREAD */
 static int 
 shgetstdin(void)
 {
@@ -346,9 +336,7 @@ shgetstdin(void)
   int byte;
 
   if (nisatty(stdinfd())) {
-#ifdef SIGALRM
-    set_shellevloop(SIGALRM);
-#endif
+    set_shellevloop(0);
     do {
       byte=read(stdinfd(),buf,1);
     } while (byte<0);
@@ -363,6 +351,47 @@ shgetstdin(void)
   return buf[0];
 }
 
+#if HAVE_LIBREADLINE
+static int ReadlineLock = FALSE;
+
+static void *
+readline_thread(void *prompt)
+{
+  char *str;
+
+  str = readline(prompt);
+
+  ReadlineLock = FALSE;
+
+  return str;
+}
+
+static char *
+nreadline(char *prompt)
+{
+  GThread *thread;
+
+  if (ReadlineLock) {
+    return NULL;
+  }
+
+
+  ReadlineLock = TRUE;
+  thread = g_thread_create(readline_thread, prompt, TRUE, NULL);
+  if (thread == NULL) {
+    ReadlineLock = FALSE;
+    return NULL;
+  }
+
+  while (ReadlineLock) {
+    eventloop();
+    msleep(10);
+  }
+
+  return (char *) g_thread_join(thread);
+}
+#endif
+
 static int 
 shget(struct nshell *nshell)
 {
@@ -375,11 +404,7 @@ shget(struct nshell *nshell)
   if (nisatty(nshell->fd)) {
 #ifdef HAVE_LIBREADLINE
     if(str_ptr == NULL){
-#ifdef SIGALRM
-      set_shellevloop(SIGALRM);
-#endif
-      str_ptr = line_str = readline(Prompt);
-      reset_shellevloop();
+      str_ptr = line_str = nreadline(Prompt);
       if(str_ptr == NULL){
 	byte = 0;
       } else if(strlen(str_ptr) > 0) {
@@ -396,7 +421,7 @@ shget(struct nshell *nshell)
     }
     if(str_ptr != NULL){
       if(*line_str == '\0'){
-	g_free(str_ptr);
+	free(str_ptr);		/* str_ptr is allocated by readline library */
 	str_ptr = line_str = NULL;
 	buf[0] = '\0';
 	byte = 1;
@@ -405,15 +430,13 @@ shget(struct nshell *nshell)
 	byte = 1;
       }
     }
-#else
-#ifdef SIGALRM
-    set_shellevloop(SIGALRM);
-#endif
+#else  /* HAVE_LIBREADLINE */
+    set_shellevloop(0);
     do {
       byte=read(nshell->fd,buf,1);
     } while (byte<0);
     reset_shellevloop();
-#endif
+#endif	/* HAVE_LIBREADLINE */
   } else {
     do {
       byte=read(nshell->fd,buf,1);
@@ -424,18 +447,30 @@ shget(struct nshell *nshell)
   return buf[0];
 }
 
+static int
+puts_localized(int fd, const char *str)
+{
+  int len, r;
+  char *localized;
+
+  localized = g_locale_from_utf8(str, -1, NULL, NULL, NULL);
+  if (localized == NULL) {
+    return 0;
+  }
+
+  len = strlen(localized);
+  r = write(fd, localized, len);
+  g_free(localized);
+
+  return len;
+}
+
 static int 
-shputstdout(char *s)
+shputstdout(const char *s)
 {
   int len, r;
 
-  len = strlen(s);
-
-  r = write(stdoutfd(), s, len);
-  if (r < 0)
-    return 0;
-
-  len = r;
+  len = puts_localized(stdoutfd(), s);
 
   r = write(stdoutfd(), "\n", 1);
   if (r >= 0)
@@ -444,32 +479,46 @@ shputstdout(char *s)
   return len;
 }
 
-#ifdef COMPILE_UNUSED_FUNCTIONS
+#ifdef WINDOWS
 static int 
-shputstderr(char *s)
+shputstderr(const char *s)
 {
-  int len;
+  int len, r;
 
   len=strlen(s);
-  write(stderrfd(),s,len);
-  write(stderrfd(),"\n",1);
-  return len+1;
+  r = write(stderrfd(),s,len);
+  if (r < 0){
+    return r;
+  }
+
+  r = write(stderrfd(),"\n",1);
+  if (r < 0){
+    return r;
+  }
+
+  return len + 1;
 }
-#endif /* COMPILE_UNUSED_FUNCTIONS */
+#endif	/* WINDOWS */
 
 static int 
 shprintfstdout(char *fmt,...)
 {
-  int len, r;
-  char buf[1024];
+  int len;
+  char *buf;
   va_list ap;
 
   va_start(ap,fmt);
-  len=vsprintf(buf,fmt,ap);
+  buf = g_strdup_vprintf(fmt, ap);
   va_end(ap);
-  r = write(stdoutfd(),buf,len);
 
-  return (r < 0) ? 0 : r;
+  if (buf == NULL) {
+    return 0;
+  }
+
+  len = puts_localized(stdoutfd(), buf);
+  g_free(buf);
+
+  return len;
 }
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
@@ -487,193 +536,6 @@ shprintfstderr(char *fmt,...)
   return len;
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
-
-#else  /* WINDOWS */
-
-typedef struct {
-  int KeyInput;
-  int Ch;
-} ThreadParam;
-
-DWORD WINAPI 
-GetKeyThread(LPVOID lpvThreadParam)
-{
-  ThreadParam *pTH;
-  char buf[2];
-  DWORD byte;
-
-  pTH=(ThreadParam *)lpvThreadParam;
-  do {
-    ReadFile(stdinfd(),buf,1,&byte,NULL);
-    if (byte==0) {
-      pTH->KeyInput=TRUE;
-      pTH->Ch=EOF;
-      return 0;
-    }
-  } while (buf[0]=='\r');
-  pTH->KeyInput=TRUE;
-  pTH->Ch=buf[0];
-  return 0;
-}
-
-int 
-shgetstdin(void)
-{
-  char buf[2];
-  DWORD byte;
-  ThreadParam TH;
-  DWORD IDThread;
-
-  if (stdinfd()==INVALID_HANDLE_VALUE) return EOF;
-  if (nisatty(stdinfd())) {
-    TH.KeyInput=FALSE;
-    CreateThread(NULL,0,GetKeyThread,&TH,0,&IDThread);
-    while (!TH.KeyInput) eventloop();
-    return TH.Ch;
-  } else {
-    do {
-      ReadFile(stdinfd(),buf,1,&byte,NULL);
-      if (byte==0) return EOF;
-    } while (buf[0]=='\r');
-    return buf[0];
-  }
-}
-
-int 
-shget(struct nshell *nshell)
-{
-  char buf[2];
-  DWORD byte;
-  ThreadParam TH;
-  DWORD IDThread;
-
-  if (nshell->fd==INVALID_HANDLE_VALUE) return EOF;
-  if (nisatty(nshell->fd)) {
-    TH.KeyInput=FALSE;
-    CreateThread(NULL,0,GetKeyThread,&TH,0,&IDThread);
-    while (!TH.KeyInput) eventloop();
-    return TH.Ch;
-  } else if (nshell->readbuf!=NULL) {
-   while (TRUE) {
-     if (nshell->readpo>=nshell->readbyte) {
-       nshell->readpo=0;
-       if (!ReadFile(nshell->fd,nshell->readbuf,SHELLBUFSIZE,
-                    (LPDWORD)&(nshell->readbyte),NULL)) {
-         nshell->readbyte=0;
-       }
-       if (nshell->readbyte==0) return EOF;
-     }
-     if (nshell->readbuf[nshell->readpo]!='\r') {
-       nshell->readpo++;
-       return nshell->readbuf[nshell->readpo-1];
-     } else nshell->readpo++;
-   }
-  } else {
-   do {
-      if (!ReadFile(nshell->fd,buf,1,&byte,NULL)) return EOF;
-      if (byte==0) return EOF;
-    } while (buf[0]=='\r');
-    return buf[0];
-  }
-}
-
-int 
-shputstdout(char *s)
-{
-  DWORD len,len2;
-  int h;
-  int i;
-
-  len=strlen(s);
-  if ((h=stdoutfd())==INVALID_HANDLE_VALUE) return len+1;
-  for (i=0;i<len;i++) {
-    if (s[i]=='\n') WriteFile(h,"\r",1,&len2,NULL);
-    WriteFile(h,s+i,1,&len2,NULL);
-  }
-  WriteFile(h,"\r\n",2,&len2,NULL);
-  return len+1;
-}
-
-int 
-shputstderr(char *s)
-{
-  DWORD len,len2;
-  HANDLE h;
-  int i;
-
-  len=strlen(s);
-  if ((h=stderrfd())==INVALID_HANDLE_VALUE) return len+1;
-  for (i=0;i<len;i++) {
-    if (s[i]=='\n') WriteFile(h,"\r",1,&len2,NULL);
-    WriteFile(h,s+i,1,&len2,NULL);
-  }
-  WriteFile(h,"\r\n",2,&len2,NULL);
-  return len+1;
-}
-
-int 
-shprintfstdout(char *fmt,...)
-{
-  DWORD len,len2;
-  HANDLE h;
-  char buf[1024];
-  va_list ap;
-  int i;
-
-  va_start(ap,fmt);
-  len=vsprintf(buf,fmt,ap);
-  va_end(ap);
-
-  if ((h=stdoutfd())==INVALID_HANDLE_VALUE) return len;
-  for (i=0;i<len;i++) {
-    if (buf[i]=='\n') WriteFile(h,"\r",1,&len2,NULL);
-    WriteFile(h,buf+i,1,&len2,NULL);
-  }
-  return len;
-}
-
-int 
-shprintfstderr(char *fmt,...)
-{
-  DWORD len,len2;
-  HANDLE h;
-  char buf[1024];
-  va_list ap;
-  int i;
-
-  va_start(ap,fmt);
-  len=vsprintf(buf,fmt,ap);
-  va_end(ap);
-
-  if ((h=stderrfd())==INVALID_HANDLE_VALUE) return len;
-  for (i=0;i<len;i++) {
-    if (buf[i]=='\n') WriteFile(h,"\r",1,&len2,NULL);
-    WriteFile(h,buf+i,1,&len2,NULL);
-  }
-  return len;
-}
-
-#endif	/* WINDOWS */
-
-#ifdef WINDOWS
-DWORD WINAPI 
-WaitPidThread(LPVOID lpvWaitPidParam)
-{
-  WaitPidParam *pWP;
-
-  pWP=(WaitPidParam *)lpvWaitPidParam;
-  cwait(&(pWP->errlevel),pWP->pid,WAIT_CHILD);
-  pWP->done=TRUE;
-  return 0;
-}
-
-int 
-waitpid(WaitPidParam *pWP)
-{
-  if (pWP->done) return pWP->pid;
-  else return 0;
-}
-#endif	/* WINDOWS */
 
 struct cmdtabletype cmdtable[] = {
                   {"cd",cmcd},
@@ -1689,15 +1551,32 @@ getcmdline(struct nshell *nshell,
         if ((cmd!=NULL) || (cmdroot!=NULL)) {
           sherror(ERRUEXPEOF);
           err=-2;
-        } else err=1;
+        } else {
+	  err=1;
+	}
         goto errexit;
       }
       for (i=*istr;(str[i]!='\0') && (str[i]!='\n');i++);
-      if ((tok=g_malloc(i-*istr+1))==NULL) goto errexit;
+      if ((tok=g_malloc(i-*istr+1))==NULL) {
+	goto errexit;
+      }
       strncpy(tok,str+*istr,i-*istr);
       tok[i-*istr]='\0';
-      if (str[i]=='\n') *istr=i+1;
-      else *istr=i;
+      if (str[i]=='\n') {
+	*istr=i+1;
+      } else {
+	*istr=i;
+      }
+    }
+    if (! g_utf8_validate(tok, -1, NULL)) {
+      char *tmp;
+
+      tmp = g_locale_to_utf8(tok, -1, NULL, NULL, NULL);
+      if (tmp == NULL) {
+	goto errexit;
+      }
+      g_free(tok);
+      tok = tmp;
     }
     tok2=tok;
     do {
@@ -2006,14 +1885,14 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
           rcode=cmdexecute(nshell,sb);
           if ((rcode!=0) && (rcode!=1)) {
             nredirect2(1,sout2);
-            unlink(tmpfil);
+            g_unlink(tmpfil);
             g_free(tmpfil);
             goto errexit;
           }
           g_free(sb);
           if ((sb=nstrnew())==NULL) {
             nredirect2(1,sout2);
-            unlink(tmpfil);
+            g_unlink(tmpfil);
             g_free(tmpfil);
             goto errexit;
           }
@@ -2022,13 +1901,13 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
             writebuf[byte]='\0';
             if ((sb=nstrcat(sb,writebuf))==NULL) {
               nredirect2(1,sout2);
-              unlink(tmpfil);
+              g_unlink(tmpfil);
               g_free(tmpfil);
               goto errexit;
             }
           }
           nredirect2(1,sout2);
-          unlink(tmpfil);
+          g_unlink(tmpfil);
           if (byte==-1) {
             sherror2(ERRREAD,tmpfil);
             g_free(tmpfil);
@@ -2277,7 +2156,7 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
                 c2[k]=ch;
               }
             } else {
-              for (k=0;k<=strlen(c2);k++) {
+              for (k = 0; k <= (int) strlen(c2); k++) {
                 ch=c2[k];
                 c2[k]='\0';
                 if (wildmatch(c1,c2,WILD_PATHNAME)) {
@@ -2287,7 +2166,9 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
                 c2[k]=ch;
               }
             } 
-            if (k>strlen(c2)) k=0;
+            if (k > (int) strlen(c2)) {
+	      k=0;
+	    }
             g_free(c1);
             c1=quotation(nshell,c2+k,quote2);
             g_free(c2);
@@ -2303,7 +2184,9 @@ expand(struct nshell *nshell,char *str,int *quote,int *bquote, int ifsexp)
               goto errexit;
             }
             if (valf2=='%') {
-              for (k=0;k<=strlen(c2)-1;k++) {
+	      int len;
+	      len = strlen(c2) - 1;
+              for (k = 0; k <= len; k++) {
                 if (wildmatch(c1,c2+k,WILD_PATHNAME|WILD_PERIOD)) break;
               }
             } else {
@@ -2890,8 +2773,9 @@ set_env_val(struct nhash *h, void *data)
 {
   struct vallist *valcur;
   struct set_env_arg *arg;
-  char *val, *s, *env;
-  int len, r;
+  const char *val, *env;
+  char *s;
+  int r;
 
   valcur = (struct vallist *) h->val.p;
   arg = (struct set_env_arg *) data;
@@ -2902,24 +2786,21 @@ set_env_val(struct nhash *h, void *data)
   r = getexp(arg->nshell, valcur->name);
   if (r || valcur->arg) {
     val = valcur->val;
-  } else if ((env = getenv(valcur->name))) {
+  } else if ((env = g_getenv(valcur->name))) {
     val = env;
   } else {
     return 0;
   }
 
-  len = strlen(valcur->name); 
-  s = g_malloc(len + strlen(val) + 2);
+  s = g_strdup_printf("%s=%s", valcur->name, val);
   if (s == NULL)
     return 1;
 
-  memcpy(s, valcur->name, len);
-  s[len] = '=';
-  strcpy(s + len + 1, val);
   if (arg_add(arg->newenviron, s) == NULL) {
     g_free(s);
     return 1;
   }
+
   return 0;
 }
 
@@ -2936,6 +2817,93 @@ msleep(int ms)
   return usleep(ms * 1000);
 #endif
 }
+
+#ifdef WINDOWS
+static int WaitProc;
+
+static void *
+proc_in_thread(void *ptr)
+{
+  char *cmd;
+  PROCESS_INFORMATION pi;
+  STARTUPINFO si;
+  DWORD exit_code;
+  int r;
+
+  if (ptr == NULL) {
+    return NULL;
+  }
+
+  while (! WaitProc) {
+    msleep(1);
+  }
+
+  cmd = (char *) ptr;
+  ZeroMemory(&si, sizeof(si));
+  si.cb = sizeof(si);
+  r = CreateProcess(NULL, cmd, NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
+  if (r == 0) {
+    show_system_error();
+    WaitProc = 0;
+    return NULL;
+  }
+
+  CloseHandle(pi.hThread);
+  WaitForSingleObject(pi.hProcess, INFINITE);
+  GetExitCodeProcess(pi.hProcess, &exit_code);
+  CloseHandle(pi.hProcess);
+
+  WaitProc = 0;
+
+  return GINT_TO_POINTER(exit_code);
+}
+
+static char *
+quote_args(char **args)
+{
+  int len, i;
+  char *cmd, *ptr;
+
+  if (args == NULL) {
+    return NULL;
+  }
+
+  for (len = i = 0; args[i]; i++) {
+    len += strlen(args[i]) * 2 + 3;
+  }
+
+  cmd = g_malloc(len + 1);
+  if (cmd == NULL) {
+    return NULL;
+  }
+
+  ptr = cmd;
+  for (i = 0; args[i]; i++) {
+    char *arg, ch;
+
+    *ptr = '"';
+    ptr++;
+    arg = args[i];
+    while (*arg) {
+      ch = *arg;
+      if (ch == '"') {
+	*ptr = '\\';
+	ptr++;
+      }
+      *ptr = ch;
+      ptr++;
+      arg++;
+    }
+    *ptr = '"';
+    ptr++;
+    *ptr = ' ';
+    ptr++;
+  }
+  *ptr = '\0';
+
+  return cmd;
+}
+#endif	/* WINDOWS */
 
 int 
 cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
@@ -2972,10 +2940,6 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
   
 #ifndef WINDOWS
   pid_t pid;
-#else  /* WINDOWS */
-  int pid;
-  WaitPidParam WP;
-  DWORD IDThread;
 #endif	/* WINDOWS */
 
   nshell->cmdexec++;
@@ -3435,10 +3399,10 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 	  while (valcur!=NULL) {
 	    if (!valcur->func
 		&& (getexp(nshell,valcur->name) || valcur->arg ||
-		    (getenv(valcur->name)!=NULL))) {
+		    (g_getenv(valcur->name)!=NULL))) {
 	      len=strlen(valcur->name);
 	      if (getexp(nshell,valcur->name) || valcur->arg) val=valcur->val;
-	      else val=getenv(valcur->name);
+	      else val=g_getenv(valcur->name);
 	      if ((s=g_malloc(len+strlen(val)+2))==NULL) goto errexit;
 	      strcpy(s,valcur->name);
 	      s[len]='=';
@@ -3811,7 +3775,38 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  }
 		  prm=prm->next;
 		}
-#ifndef WINDOWS
+#ifdef WINDOWS
+		{
+		  GThread *thread;
+		  char *ptr, *cmd;
+		  int r;
+
+		  ptr = quote_args(argv);
+		  if (ptr == NULL) {
+		    sherror(ERRMEMORY);
+		    goto errexit;
+		  }
+
+		  cmd = g_locale_from_utf8(ptr, -1, NULL, NULL, NULL);
+		  g_free(ptr);
+		  if (cmd == NULL) {
+		    sherror(ERRMEMORY);
+		    goto errexit;
+		  }
+
+		  errlevel = 0;
+		  thread = g_thread_create(proc_in_thread, cmd, TRUE, NULL);
+		  if (thread) {
+		    WaitProc = 1;
+		    while (WaitProc) {
+		      msleep(1);
+		      eventloop();
+		    }
+		    errlevel = GPOINTER_TO_INT(g_thread_join(thread));
+		  }
+		  g_free(cmd);
+		}
+#else	/* WINDOWS */
 		unset_childhandler();
 		pid = fork();
 		if (pid < 0) {
@@ -3821,7 +3816,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		} else if (pid == 0) {
 		  errlevel=execve(cmdname,(char **)argv,MainEnviron);
 		  printfstderr("shell: %.64s: %.64s",
-			       argv[0],strerror(errno));
+			       argv[0],g_strerror(errno));
 		  exit(errlevel);
 		} else {
 		  if (has_eventloop()) {
@@ -3835,22 +3830,6 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		  errlevel = WIFEXITED(errlevel) ? WEXITSTATUS(errlevel) : 1;
 		}
 		set_childhandler();
-#else	/* WINDOWS */
-		pid=spawnve(P_NOWAIT,cmdname,(char **)argv,MainEnviron);
-		if (pid==-1)
-		  printfstderr("shell: %.64s: %.64s",
-			       argv[0],strerror(errno));
-		else {
-		  WP.pid=pid;
-		  WP.done=FALSE;
-		  CreateThread(NULL,0,WaitPidThread,&WP,0,&IDThread);
-		  while (waitpid(&WP)!=pid) {
-		    eventloop();
-		  }
-		  errlevel=WP.errlevel;
-		  errlevel=errlevel >>8;
-		  //		  nsetconsolemode();
-		}
 #endif	/* WINDOWS */
 		g_free(argv);
 		g_free(cmdname);
@@ -3924,7 +3903,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
       if (prmcur->prmno == PPSI2 &&
 	  prmcur->next!=NULL &&
 	  prmcur->next->str != NULL) {
-        unlink((prmcur->next)->str);
+        g_unlink((prmcur->next)->str);
         prmcur=prmcur->next;
       }
       prmcur=prmcur->next;
@@ -4062,7 +4041,7 @@ newshell(void)
   env = MainEnviron;
 
   i=0;
-  while (env[i]) {
+  while (env && env[i]) {
     tok=env[i];
     name=getitok2(&tok,&len,"=");
     if (tok[0]=='=') tok++;
@@ -4075,8 +4054,17 @@ newshell(void)
     i++;
   }
 
-  if ((getval(nshell,"PATH")==NULL) && (getenv("Path")!=NULL)) {
-    addval(nshell,"PATH",getenv("Path"));
+  if ((getval(nshell,"PATH")==NULL) && (g_getenv("Path")!=NULL)) {
+    const char *path;
+    char *tmp;
+
+    path = g_getenv("Path");
+    tmp = g_strdup(path);
+
+    if (tmp) {
+      addval(nshell,"PATH", tmp);
+      g_free(tmp);
+    }
   }
   nshell->argc=0;
   nshell->argv=NULL;
@@ -4286,8 +4274,15 @@ ngraphenvironment(struct nshell *nshell)
   if (getval(nshell,"PS2")==NULL) addval(nshell,"PS2",">");
   if (getval(nshell,"IFS")==NULL) addval(nshell,"IFS"," \t\n");
   if (getval(nshell,"IGNOREEOF")==NULL) addval(nshell,"IGNOREEOF","10");
-  pathset="PATH=$NGRAPHLIB\\"PATHSEP"$NGRAPHHOME\\"PATHSEP".\\"PATHSEP"$PATH";
-  cmdexecute(nshell,pathset);
+  pathset = g_strdup_printf("PATH='%s%s%s%s.%s'$PATH", lib, PATHSEP, home, PATHSEP, PATHSEP);
+
+  if (pathset) {
+#ifdef WINDOWS
+    path_to_win(pathset);
+#endif	/* WINDOWS */
+    cmdexecute(nshell,pathset);
+    g_free(pathset);
+  }
 }
 
 int
@@ -4407,3 +4402,78 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
   return 0;
 }
 
+#ifdef WINDOWS
+void
+show_system_error(void)
+{
+  LPVOID *msg;
+
+  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		GetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPSTR) &msg,
+		0,
+		NULL);
+
+  shputstderr((char *)msg);
+  LocalFree(msg);
+}
+
+static void *
+system_in_thread(void *ptr)
+{
+  char *cmd;
+  PROCESS_INFORMATION pi;
+  STARTUPINFO si;
+  int r;
+
+  if (ptr == NULL) {
+    return NULL;
+  }
+
+  cmd = (char *) ptr;
+  ZeroMemory(&si, sizeof(si));
+  si.cb = sizeof(si);
+  r = CreateProcess(NULL, cmd, NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi);
+  if (r == 0) {
+    show_system_error();
+    return NULL;
+  }
+
+  CloseHandle(pi.hThread);
+  WaitForSingleObject(pi.hProcess, INFINITE);
+  CloseHandle(pi.hProcess);
+  g_free(cmd);
+
+  return NULL;
+}
+#endif	/* WINDOWS */
+
+int
+system_bg(char *cmd)
+{
+#ifdef WINDOWS
+  GThread *thread;
+  char *ptr;
+
+  if (cmd == NULL)
+    return 1;
+
+  ptr = g_locale_from_utf8(cmd, -1, NULL, NULL, NULL);
+
+  thread = g_thread_create(system_in_thread, ptr, FALSE, NULL);
+  if (thread == NULL) {
+    return 1;
+  }
+
+  return 0;
+#else  /* WINDOWS */
+  if (cmd == NULL)
+    return 1;
+
+  return ! g_spawn_command_line_async(cmd, NULL);
+#endif	/* WINDOWS */
+}

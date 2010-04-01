@@ -1,5 +1,5 @@
 /* 
- * $Id: ioutil.c,v 1.24 2010/03/04 08:30:16 hito Exp $
+ * $Id: ioutil.c,v 1.25 2010/04/01 06:08:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -34,16 +34,16 @@
 #include <ctype.h>
 #include <glib.h>
 #include <glib/gstdio.h>
-#ifndef WINDOWS
 #include <unistd.h>
-#else  /* WINDOWS */
-#include <io.h>
-#include <dir.h>
-#endif	/* WINDOWS */
 #include "object.h"
 #include "nstring.h"
 #include "jnstring.h"
 #include "ioutil.h"
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 
 static void (* ShowProgressFunc)(int, char *, double) = NULL;
 
@@ -63,74 +63,50 @@ char_type_buf_init(void)
 #define is_line_sep(ch) (C_type_buf[ch + 1])
 #endif
 
-#ifndef WINDOWS
 void 
 changefilename(char *name)
 {
+#ifdef WINDOWS
   int i;
 
-  if (name==NULL) return;
-  for (i=0;name[i]!='\0';i++)
-    if ((name[i]=='\\') && (!niskanji2(name,i))) name[i]=DIRSEP;
-/*
-  if ((name[0]==DIRSEP) && (name[1]==DIRSEP)) {
-    for (i=2;(name[i]!='\0') && (name[i]!=DIRSEP);i++);
-    if (name[i]==DIRSEP) i++;
+  if (name == NULL) {
+    return;
   }
-  j=i;
-  if (isalpha(name[j]) && (name[j+1]==':'))
-    for (i=j+2;name[i]!='\0';i++) name[j++]=name[i];
-*/
-}
-#else  /* WINDOWS */
-void 
-changefilename(char *name)
-{
-  int i;
-/*  char disk[4];
-  DWORD csensitive; */
 
-  if (name==NULL) return;
-  for (i=0;name[i]!='\0';i++)
-    if ((name[i]=='\\') && (!niskanji2(name,i))) name[i]=DIRSEP;
-/*
-  if ((name[0]==DIRSEP) && (name[1]==DIRSEP)) return;
-  if (isalpha(name[0]) && (name[1]==':')) {
-    name[0]=tolower(name[0]);
-    disk[0]=name[0];
-    disk[1]=name[1];
-    disk[2]='\\';
-    disk[3]='\0';
-    GetVolumeInformation(disk,NULL,0,NULL,NULL,&csensitive,NULL,0);
-  } else {
-    GetVolumeInformation(NULL,NULL,0,NULL,NULL,&csensitive,NULL,0);
-  }
-  if ((csensitive & FS_CASE_SENSITIVE)==0) {
-    for (i=0;name[i]!='\0';i++) {
-      if (niskanji(name[i])) i++;
-      else name[i]=tolower(name[i]);
+  for (i = 0; name[i] != '\0'; i++) {
+    if (name[i] == '\\') {
+      name[i] = DIRSEP;
     }
   }
-*/
+#endif  /* WINDOWS */
 }
 
 void 
-unchangefilename(char *name)
+path_to_win(char *name)
 {
+#ifdef WINDOWS
   int i;
 
-  if (name==NULL) return;
-  for (i=0;name[i]!='\0';i++)
-    if ((name[i]==DIRSEP) && (!niskanji2(name,i))) name[i]='\\';
+  if (name == NULL) {
+    return;
+  }
+
+  for (i = 0; name[i] != '\0'; i++) {
+    if (name[i] == DIRSEP) {
+      name[i] = '\\';
+    }
+  }
+#endif  /* WINDOWS */
 }
-#endif	/* WINDOWS */
 
 static void 
 pathresolv(char *name)
 {
   int j,k;
 
-  if (name==NULL) return;
+  if (name == NULL) {
+    return;
+  }
   changefilename(name);
   j=k=0;
   while (name[k]!='\0') {
@@ -154,112 +130,176 @@ pathresolv(char *name)
   name[j]='\0';
 }
 
-#ifndef WINDOWS
 char *
-getfullpath(char *name)
+getfullpath(const char *name)
 {
-  char *s,*cwd;
-  int top,j;
+  char *s, *cwd, *utf8_name;
+  int top;
 
-  if (name==NULL) return NULL;
-  changefilename(name);
-  if ((name[0]==DIRSEP) && (name[1]==DIRSEP)) {
-    if ((s=g_malloc(strlen(name)+1))==NULL) return NULL;
-    strcpy(s,name);
+  if (name == NULL) {
+    return NULL;
+  }
+
+  utf8_name = get_utf8_filename(name);
+  if (utf8_name == NULL) {
+    return NULL;
+  }
+
+  changefilename(utf8_name);
+
+  if (utf8_name[0] == DIRSEP && utf8_name[1] == DIRSEP) {
+    s = utf8_name;
   } else {
-    if (isalpha(name[0]) && name[1]==':') top=2;
-    else top=0;
-    if (name[top]==DIRSEP) {
-      if ((s=g_malloc(strlen(name)+1))==NULL) return NULL;
-      strcpy(s,name+top);
+    if (isalpha(utf8_name[0]) && utf8_name[1] == ':') {
+      top = 2;
     } else {
-      if ((cwd=ngetcwd())==NULL) return NULL;
-      if ((s=g_malloc(strlen(cwd)+strlen(name)+2))==NULL) {
-        g_free(cwd);
-        return NULL;
+      top = 0;
+    }
+    if (utf8_name[top] == DIRSEP) {
+      s = utf8_name;
+    } else {
+      cwd = ngetcwd();
+      if (cwd == NULL) {
+	g_free(utf8_name);
+	return NULL;
       }
-      strcpy(s,cwd);
-      j=strlen(cwd);
-      if ((cwd[0]!='\0') && (cwd[strlen(cwd)-1]!=DIRSEP)) s[j++]=DIRSEP;
-      strcpy(s+j,name+top);
+      s = g_strdup_printf("%s%c%s", cwd, DIRSEP, utf8_name + top);
       g_free(cwd);
+      g_free(utf8_name);
     }
   }
   pathresolv(s);
   return s;
 }
-#else  /* WINDOWS */
 
-#define MAXPATH 4096
-
-char *
-getfullpath(char *name)
+#ifdef WINDOWS
+static int
+getdisk(void)
 {
-  char buf[MAXPATH],*s;
+  char *cwd;
+  int drive;
 
-  if (name==NULL) return NULL;
-  unchangefilename(name);
-  if (GetFullPathName(name,MAXPATH,buf,&s)==0) return NULL;
-  if ((s=g_malloc(strlen(buf)+1))==NULL) return NULL;
-  strcpy(s,buf);
-  changefilename(s);
-  return s;
+  cwd = g_get_current_dir();
+  if (cwd == NULL) {
+    return -1;
+  }
+
+  drive = toupper(cwd[0]) - 'A';
+
+  g_free(cwd);
+
+  return drive;
 }
 #endif	/* WINDOWS */
 
 char *
-getrelativepath(char *name)
+getrelativepath(const char *name)
 {
-  char *s,*cwd,*cwd2;
-  int i,j,depth,top;
+  char *s, *utf8_name;
 
-  if (name==NULL) return NULL;
-  changefilename(name);
-  if ((name[0]==DIRSEP) && (name[1]==DIRSEP)) {
-    if ((s=g_malloc(strlen(name)+1))==NULL) return NULL;
-    strcpy(s,name);
+  if (name == NULL) {
+    return NULL;
+  }
+
+  utf8_name = get_utf8_filename(name);
+  if (utf8_name == NULL) {
+    return NULL;
+  }
+
+  if ((utf8_name[0]==DIRSEP) && (utf8_name[1]==DIRSEP)) {
+    s = utf8_name;
     pathresolv(s);
   } else {
-    top=0;
-#ifndef WINDOWS_XXX
-    if (name[0]==DIRSEP) {
+    int i, j, top, depth;
+
+    top = 0;
+#ifdef WINDOWS
+    if (isalpha(utf8_name[0]) && name[1] == ':') {
+      top = 2;
+    }
+#endif	/* WINDOWS */
+    if (
+#ifdef WINDOWS
+	name[top] == DIRSEP && (top != 2 || toupper(name[0]) - 'A' == getdisk())
 #else  /* WINDOWS */
-    if (isalpha(name[0]) && (name[1]==':')) top=2;
-    //    if ((name[top]==DIRSEP) && ((top!=2) || ((toupper(name[0])-'A')==getdisk()))) {
-    if ((name[top]==DIRSEP) && top!=2) {
+	name[0] == DIRSEP
 #endif	/* WINDOWS */
-      if ((cwd=ngetcwd())==NULL) return NULL;
-#ifdef WINDOWS_XXX
-      for (j=2;cwd[j]!='\0';j++) cwd[j-2]=cwd[j];
-      cwd[j-2]='\0';
+	) {
+      char *cwd, *cwd2;
+
+      cwd = ngetcwd();
+      if (cwd == NULL) {
+	g_free(utf8_name);
+	return NULL;
+      }
+#ifdef WINDOWS
+      for (j = 2; cwd[j] != '\0'; j++) {
+	cwd[j - 2] = cwd[j];
+      }
+      cwd[j - 2] = '\0';
 #endif	/* WINDOWS */
-      if ((cwd2=g_malloc(strlen(cwd)+2))==NULL) return NULL;
-      strcpy(cwd2,cwd);
+
+      cwd2 = g_malloc(strlen(cwd) + 2);
+      if (cwd2 == NULL) {
+	g_free(cwd);
+	g_free(utf8_name);
+	return NULL;
+      }
+      strcpy(cwd2, cwd);
       g_free(cwd);
       i=strlen(cwd2);
       if ((i==0) || (cwd2[i-1]!=DIRSEP)) {
-        cwd2[i]=DIRSEP;
-        cwd2[i+1]='\0';
+	cwd2[i]=DIRSEP;
+	cwd2[i+1]='\0';
       }
-      for (i=0;(cwd2[i]!='\0') && (name[i+top]!='\0');i++)
-        if (cwd2[i]!=name[i+top]) break;
-      if (i>0) i--;
+
+      for (i=0;(cwd2[i]!='\0') && (utf8_name[i+top]!='\0');i++) {
+	if (cwd2[i]!=utf8_name[i+top]) {
+	  break;
+	}
+      }
+
+      if (i > 0) {
+	i--;
+      }
       for (;niskanji2(cwd2,i) || (cwd2[i]!=DIRSEP);i--);
       depth=0;
-      for (j=strlen(cwd2);j!=i;j--)
-        if (!niskanji2(cwd2,j) && (cwd2[j]==DIRSEP)) depth++;
-      g_free(cwd2);
-      if ((s=nstrnew())==NULL) return NULL;
-      if (depth==0) {
-        if ((s=nstrcat(s,"./"))==NULL) return NULL;
-      } else {
-        for (j=0;j<depth;j++)
-          if ((s=nstrcat(s,"../"))==NULL) return NULL;
+      for (j=strlen(cwd2);j!=i;j--) {
+	if (!niskanji2(cwd2,j) && (cwd2[j]==DIRSEP)) {
+	  depth++;
+	}
       }
-      if ((s=nstrcat(s,name+i+top+1))==NULL) return NULL;
+      g_free(cwd2);
+
+      s=nstrnew();
+      if (s == NULL) {
+	g_free(utf8_name);
+	return NULL;
+      }
+
+      if (depth==0) {
+	s = nstrcat(s, "./");
+	if (s == NULL) {
+	  g_free(utf8_name);
+	  return NULL;
+	}
+      } else {
+	for (j = 0; j < depth; j++) {
+	  s = nstrcat(s, "../");
+	  if (s == NULL) {
+	    g_free(utf8_name);
+	    return NULL;
+	  }
+	}
+      }
+
+      s = nstrcat(s, utf8_name + i + top + 1);
+      g_free(utf8_name);
+      if (s == NULL) {
+	return NULL;
+      }
     } else {
-      if ((s=g_malloc(strlen(name)+1))==NULL) return NULL;
-      strcpy(s,name);
+      s = utf8_name;
       pathresolv(s);
     }
   }
@@ -271,18 +311,91 @@ getrelativepath(char *name)
 #endif
 
 char *
-getbasename(char *name)
+get_utf8_filename(const char *name)
 {
-  char *s;
-  int i;
+  char *utf8_name;
 
-  if (name==NULL) return NULL;
-  changefilename(name);
-  for (i=strlen(name);(name[i]!=DIRSEP) && (name[i]!=':') && (i!=0);i--);
-  if ((name[i]==DIRSEP) || (name[i]==':')) i++;
-  if ((s=g_malloc(strlen(name)-i+1))==NULL) return NULL;
-  strcpy(s,name+i);
-  return s;
+  if (name == NULL) {
+    return NULL;
+  }
+
+  if (g_utf8_validate(name, -1, NULL)) {
+    utf8_name = g_strdup(name);
+  } else {
+#ifdef WINDOWS
+    utf8_name = g_locale_to_utf8(name, -1, NULL, NULL, NULL);
+#else  /* WINDOWS */
+    utf8_name = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
+#endif	/* WINDOWS */
+  }
+
+  changefilename(utf8_name);
+
+  return utf8_name;
+}
+
+char *
+get_localized_filename(const char *name)
+{
+  char *localized_name;
+
+  if (name == NULL) {
+    return NULL;
+  }
+
+#ifdef WINDOWS
+  if (g_utf8_validate(name, -1, NULL)) {
+    localized_name = g_strdup(name);
+  } else {
+    localized_name = g_locale_to_utf8(name, -1, NULL, NULL, NULL);
+  }
+#else  /* WINDOWS */
+  if (g_utf8_validate(name, -1, NULL)) {
+    localized_name = g_filename_from_utf8(name, -1, NULL, NULL, NULL);
+  } else {
+    localized_name = g_strdup(name);
+  }
+#endif	/* WINDOWS */
+
+  return localized_name;
+}
+
+char *
+getbasename(const char *name)
+{
+  char *basename, *tmp;
+
+  if (name == NULL)
+    return NULL;
+
+  tmp = get_utf8_filename(name);
+  if (tmp == NULL) {
+    return NULL;
+  }
+
+  basename = g_path_get_basename(tmp);
+  g_free(tmp);
+
+  return basename;
+}
+
+char *
+getdirname(const char *name)
+{
+  char *dirname, *tmp;
+
+  if (name == NULL)
+    return NULL;
+
+  tmp = get_utf8_filename(name);
+  if (tmp == NULL) {
+    return NULL;
+  }
+
+  dirname = g_path_get_dirname(tmp);
+  g_free(tmp);
+
+  return dirname;
 }
 
 char *
@@ -328,7 +441,7 @@ findfilename(char *dir,char *sep,char *file)
   struct stat buf;
 
   if ((s=getfilename(dir,sep,file))==NULL) return FALSE;
-  if ((access(s,R_OK)==0) && (stat(s,&buf)==0)) {
+  if ((naccess(s,R_OK)==0) && (nstat(s,&buf)==0)) {
     if ((buf.st_mode & S_IFMT)==S_IFREG) find=TRUE;
     else find=FALSE;
   }
@@ -340,26 +453,14 @@ findfilename(char *dir,char *sep,char *file)
 char *
 ngetcwd(void)
 {
-  char *buf,*s;
-  size_t size;
+  char *s;
 
-  size=0;
-  buf=NULL;
-  do {
-    g_free(buf);
-    size+=256;
-    if ((buf=g_malloc(size))==NULL) return NULL;
-    s=getcwd(buf,size);
-  } while ((s==NULL) && (size<=10240));
-  if (size>10240) {
-    g_free(buf);
-    return NULL;
-  }
+  s = g_get_current_dir();
+
   changefilename(s);
+
   return s;
 }
-
-#ifndef WINDOWS_XXX
 
 char *
 nsearchpath(char *path,char *name,int shellscript)
@@ -369,7 +470,12 @@ nsearchpath(char *path,char *name,int shellscript)
 
   if (name==NULL) return NULL;
   if (name[0]=='\0') return NULL;
-  cmdname=NULL;
+
+  cmdname = g_find_program_in_path(name);
+  if (cmdname) {
+    return cmdname;
+  }
+
   if (strchr(name,DIRSEP)==NULL) {
     while ((tok=getitok(&path,&len,PATHSEP))!=NULL) {
       g_free(cmdname);
@@ -380,16 +486,16 @@ nsearchpath(char *path,char *name,int shellscript)
         len++;
       }
       strcpy(cmdname+len,name);
-      if ((!shellscript && (access(cmdname,X_OK)==0))
-      || (shellscript && (access(cmdname,R_OK)==0))) return cmdname;
+      if ((!shellscript && (naccess(cmdname,X_OK)==0))
+      || (shellscript && (naccess(cmdname,R_OK)==0))) return cmdname;
     }
     if (tok==NULL) {
       g_free(cmdname);
       return NULL;
     }
   } else {
-    if (!((!shellscript && (access(name,X_OK)==0))
-    || (shellscript && (access(name,R_OK)==0)))) return NULL;
+    if (!((!shellscript && (naccess(name,X_OK)==0))
+    || (shellscript && (naccess(name,R_OK)==0)))) return NULL;
     if ((cmdname=g_malloc(strlen(name)+1))==NULL) return NULL;
     strcpy(cmdname,name);
     return cmdname;
@@ -408,7 +514,7 @@ nselectdir(char *dir,struct dirent *ent)
   s=nstrcat(s,dir);
   if (s[strlen(s)+1]!='/') s=nstrccat(s,'/');
   s=nstrcat(s,ent->d_name);
-  stat(s,&sbuf);
+  nstat(s,&sbuf);
   g_free(s);
   if ((sbuf.st_mode & S_IFMT)==S_IFDIR) return 1;
   return 0;
@@ -424,115 +530,12 @@ nselectfile(char *dir,struct dirent *ent)
   s=nstrcat(s,dir);
   if (s[strlen(s)+1]!='/') s=nstrccat(s,'/');
   s=nstrcat(s,ent->d_name);
-  stat(s,&sbuf);
+  nstat(s,&sbuf);
   g_free(s);
   if ((sbuf.st_mode & S_IFMT)==S_IFREG) return 1;
   return 0;
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
-
-#else  /* WINDOWS */
-
-
-static char *addexechar[]={
-  ".com",
-  ".exe",
-  ".bat",
-  ".COM",
-  ".EXE",
-  ".BAT",
-};
-
-#define ADDEXENUM (sizeof(addexechar) / sizeof(*addexechar))
-
-char *
-nsearchpath(char *path,char *name,int shellscript)
-{
-  char *cmdname,*tok;
-  int i,k,len,len0;
-  char *path3;
-  char *path2;
-  int pathlen;
-
-  if (name==NULL) return NULL;
-  if (name[0]=='\0') return NULL;
-  changefilename(name);
-  cmdname=NULL;
-  if (strchr(name,DIRSEP)==NULL) {
-    if (path==NULL) pathlen=0;
-    else pathlen=strlen(path);
-    if ((path2=g_malloc(pathlen+4))==NULL) return NULL;
-    strcpy(path2,".;");
-    if (path!=NULL) strcat(path2,path);
-    path3=path2;
-    while ((tok=getitok(&path3,&len0,PATHSEP))!=NULL) {
-      if (tok[0]!='\0') {
-        g_free(cmdname);
-        if ((cmdname=g_malloc(strlen(name)+len0+6))==NULL) {
-          g_free(path2);
-          return NULL;
-        }
-        if ((strchr(name,'.')==NULL) && !shellscript) {
-          for (k=0;k<ADDEXENUM;k++) {
-            len=len0;
-            strncpy(cmdname,tok,len);
-            if ((cmdname[len-1]!=DIRSEP) && (cmdname[len-1]!='\\')) {
-              cmdname[len]=DIRSEP;
-              len++;
-            }
-            strcpy(cmdname+len,name);
-            len+=strlen(name);
-            strcpy(cmdname+len,addexechar[k]);
-            unchangefilename(cmdname);
-            if (access(cmdname,R_OK)==0) {
-              g_free(path2);
-              return cmdname;
-            }
-          }
-        } else {
-          len=len0;
-          strncpy(cmdname,tok,len);
-          if ((cmdname[len-1]!=DIRSEP) && (cmdname[len-1]!='\\')) {
-            cmdname[len]=DIRSEP;
-            len++;
-          }
-          strcpy(cmdname+len,name);
-          len+=strlen(name);
-          unchangefilename(cmdname);
-          if (access(cmdname,R_OK)==0) {
-            g_free(path2);
-            return cmdname;
-          }
-        }
-      }
-    }
-    if (tok==NULL) g_free(path2);
-  } else {
-    if ((cmdname=g_malloc(strlen(name)+6))==NULL) g_free(path2);
-    strcpy(cmdname,name);
-    changefilename(cmdname);
-    len=strlen(cmdname);
-    for (i=len-1;(i>0) && (cmdname[i]!=DIRSEP);i--);
-    if ((strchr(cmdname+i,'.')==NULL) && !shellscript) {
-      for (k=0;k<ADDEXENUM;k++) {
-        strcpy(cmdname+len,addexechar[k]);
-        unchangefilename(cmdname);
-        if (access(cmdname,R_OK)==0) {
-          return cmdname;
-        }
-      }
-    } else {
-      unchangefilename(cmdname);
-      if (access(cmdname,R_OK)==0) {
-        return cmdname;
-      }
-    }
-  }
-  g_free(cmdname);
-  return NULL;
-}
-
-#endif	/* WINDOWS */
 
 static int 
 nscandir(char *dir,char ***namelist, int (*compar)())
@@ -619,7 +622,7 @@ nglob2(char *path,int po,int *num,char ***list)
     }
   }
   if (path[i]=='\0') {
-    if (access(path,R_OK)==0) {
+    if (naccess(path,R_OK)==0) {
       if ((s=g_malloc(strlen(path)+1))==NULL) return -1;
       strcpy(s,path);
       if (arg_add(list,s)==NULL) return -1;
@@ -821,19 +824,24 @@ nfgetc(FILE *fp)
 }
 
 FILE *
-nfopen(char *filename, const char *mode)
+nfopen(const char *filename, const char *mode)
 {
   FILE *fp;
+  char *tmp;
 
-#ifdef WINDOWS_XXX
-  unchangefilename(filename);
-#endif	/* WINDOWS */
-  fp = g_fopen(filename,mode);
-  changefilename(filename);
+  if (filename == NULL)
+    return NULL;
+
+  tmp = get_localized_filename(filename);
+  if (tmp == NULL) {
+    return NULL;
+  }
+
+  fp = g_fopen(tmp, mode);
+  g_free(tmp);
+
   return fp;
 }
-
-#ifndef WINDOWS_XXX
 
 int 
 nisatty(int fd)
@@ -841,10 +849,84 @@ nisatty(int fd)
   return isatty(fd);
 }
 
-int 
-nopen(char *path,int access,int mode)
+int
+nstat(const gchar *filename, struct stat *buf)
 {
-  return g_open(path,access,mode);
+  int r;
+  char *tmp;
+
+  if (filename == NULL || buf == NULL)
+    return -1;
+
+  tmp = get_localized_filename(filename);
+  if (tmp == NULL) {
+    return -1;
+  }
+
+  r =  g_stat(tmp, buf);
+  g_free(tmp);
+
+  return r;
+}
+
+int
+naccess(const gchar *filename, int mode)
+{
+  int r;
+  char *tmp;
+
+  if (filename == NULL)
+    return -1;
+
+  tmp = get_localized_filename(filename);
+  if (tmp == NULL) {
+    return -1;
+  }
+
+  r =  g_access(tmp, mode);
+  g_free(tmp);
+
+  return r;
+}
+
+int
+nchdir(const gchar *path)
+{
+  int r;
+  char *tmp;
+
+  if (path == NULL)
+    return -1;
+
+  tmp = get_localized_filename(path);
+  if (tmp == NULL) {
+    return -1;
+  }
+
+  r =  g_chdir(tmp);
+  g_free(tmp);
+
+  return r;
+}
+
+int 
+nopen(const char *path,int access,int mode)
+{
+  int r;
+  char *tmp;
+
+  if (path == NULL)
+    return -1;
+
+  tmp = get_localized_filename(path);
+  if (tmp == NULL) {
+    return -1;
+  }
+
+  r =  g_open(tmp, access, mode | O_BINARY);
+  g_free(tmp);
+
+  return r;
 }
 
 void 
@@ -907,171 +989,6 @@ stderrfd(void)
   return 2;
 }
 
-#else  /* WINDOWS */
-
-int 
-nisatty(HANDLE fd)
-{
-  DWORD flag;
-
-  if (GetConsoleMode(fd,&flag)) return TRUE;
-  return FALSE;
-}
-
-HANDLE 
-nopen(char *path,int access,int mode)
-{
-  DWORD fdwAccess,fdwCreate;
-  LONG DistanceToMove;
-  HANDLE fd;
-  SECURITY_ATTRIBUTES saAttr;
-  DWORD fdwAttrsAndFlags;
-
-  if (access&O_RDWR) fdwAccess=GENERIC_READ|GENERIC_WRITE;
-  else if (access&O_WRONLY) fdwAccess=GENERIC_WRITE;
-  else fdwAccess=GENERIC_READ;
-  fdwCreate=0;
-  if (access&O_CREAT) {
-    if (access&O_TRUNC) fdwCreate=CREATE_ALWAYS;
-    else fdwCreate=OPEN_ALWAYS;
-  } else fdwCreate=OPEN_EXISTING;
-  saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
-  saAttr.bInheritHandle = TRUE;
-  saAttr.lpSecurityDescriptor = NULL;
-  fdwAttrsAndFlags=FILE_FLAG_SEQUENTIAL_SCAN | FILE_ATTRIBUTE_NORMAL;
-  unchangefilename(path);
-  fd=CreateFile(path,fdwAccess,FILE_SHARE_READ,&saAttr,fdwCreate,fdwAttrsAndFlags,NULL);
-  changefilename(path);
-  if (access&O_APPEND) {
-    DistanceToMove=0;
-    SetFilePointer(fd,0L,&DistanceToMove,FILE_END);
-  }
-  return fd;
-}
-
-void 
-nclose(HANDLE fd)
-{
-  CloseHandle(fd);
-}
-
-void 
-nlseek(HANDLE fd,long offset,int fromwhere)
-{
-  LONG DistanceToMove;
-  DWORD dwMoveMethod;
-
-  if (fromwhere==SEEK_CUR) dwMoveMethod=FILE_CURRENT;
-  else if (fromwhere==SEEK_END) dwMoveMethod=FILE_END;
-  else if (fromwhere==SEEK_SET) dwMoveMethod=FILE_BEGIN;
-  DistanceToMove=0;
-  SetFilePointer(fd,offset,&DistanceToMove,dwMoveMethod);
-}
-
-int 
-nread(HANDLE fd,char *buf,unsigned len)
-{
-  DWORD len2;
-  int i,j;
-
-  do {
-    if (!ReadFile(fd,buf,len,&len2,NULL)) return -1;
-    if (len2==0) return 0;
-    j=0;
-    for (i=0;i<len2;i++)
-      if (buf[i]!='\r') buf[j++]=buf[i];
-    if (j!=0) return j;
-  } while (j==0);
-  return 0;
-}
-
-int 
-nwrite(HANDLE fd,char *buf,unsigned len)
-{
-  DWORD len2;
-  int i,j,num;
-  char *buf2;
-
-  num=0;
-  for (i=0;i<len;i++) if (buf[i]=='\n') num++;
-  buf2=g_malloc(len+num);
-  if (buf2==NULL) return 0;
-  j=0;
-  for (i=0;i<len;i++) {
-    if (buf[i]=='\n') buf2[j++]='\r';
-    buf2[j++]=buf[i];
-  }
-  WriteFile(fd,buf2,j,&len2,NULL);
-  g_free(buf2);
-  return len2-num;
-}
-
-HANDLE 
-nredirect(int fd,HANDLE newfd)
-{
-  HANDLE savefd;
-
-  switch (fd) {
-  case 0:
-    savefd=GetStdHandle(STD_INPUT_HANDLE);
-    SetStdHandle(STD_INPUT_HANDLE,newfd);
-    break;
-  case 1:
-    savefd=GetStdHandle(STD_OUTPUT_HANDLE);
-    SetStdHandle(STD_OUTPUT_HANDLE,newfd);
-    break;
-  case 2:
-    savefd=GetStdHandle(STD_ERROR_HANDLE);
-    SetStdHandle(STD_ERROR_HANDLE,newfd);
-    break;
-  }
-  return savefd;
-}
-
-void 
-nredirect2(int fd,HANDLE savefd)
-{
-  HANDLE oldfd;
-
-  switch (fd) {
-  case 0:
-    oldfd=GetStdHandle(STD_INPUT_HANDLE);
-    CloseHandle(oldfd);
-    SetStdHandle(STD_INPUT_HANDLE,savefd);
-    break;
-  case 1:
-    oldfd=GetStdHandle(STD_OUTPUT_HANDLE);
-    CloseHandle(oldfd);
-    SetStdHandle(STD_OUTPUT_HANDLE,savefd);
-    break;
-  case 2:
-    oldfd=GetStdHandle(STD_ERROR_HANDLE);
-    CloseHandle(oldfd);
-    SetStdHandle(STD_ERROR_HANDLE,savefd);
-    break;
-  }
-}
-
-HANDLE 
-stdinfd(void)
-{
-  return GetStdHandle(STD_INPUT_HANDLE);
-}
-
-HANDLE 
-stdoutfd(void)
-{
-  return GetStdHandle(STD_OUTPUT_HANDLE);
-}
-
-HANDLE 
-stderrfd(void)
-{
-  return GetStdHandle(STD_ERROR_HANDLE);
-}
-
-#endif	/* WINDOWS */
-
 void
 set_progress_func(void (* func)(int, char *, double))
 {
@@ -1086,31 +1003,32 @@ set_progress(int pos, char *msg, double fraction)
 }
 
 int
-n_mkstemp(char *dir, char *templ, char **name)
+n_mkstemp(const char *dir, char *templ, char **name)
 {
-  char postfix[] = "XXXXXX", *buf;
-  int len = sizeof(postfix), fd;
+  char postfix[] = "XXXXXX", *buf, *path;
+  int len, fd, path_last;
 #ifdef S_IRWXG
   mode_t mask_prev;
 #endif
 
-  dir = (dir) ? dir : P_tmpdir;
-  dir = (dir) ? dir : ".";
+  dir = (dir) ? dir : g_get_tmp_dir();
 
-  if (dir)
-    len += strlen(dir);
-
-  if (templ)
-    len += strlen(templ);
-
-  len++;
-  buf = g_malloc(len);
-  if (buf == NULL) {
-    *name = NULL;
+  path = g_strdup(dir);
+  if (path == NULL) {
     return -1;
   }
 
-  snprintf(buf, len, "%s/%s%s", dir, CHK_STR(templ), postfix);
+  len = strlen(path);
+  if (len > 1) {
+    path_last = path[len - 1];
+  } else {
+    path_last = '\0';
+  }
+
+  changefilename(path);
+  buf = g_strdup_printf("%s%s%s%s", path, (path_last == '/') ? "" : "/", CHK_STR(templ), postfix);
+
+  g_free(path);
 
 #ifdef S_IRWXG
   mask_prev = umask(S_IRWXG | S_IRWXO);

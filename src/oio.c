@@ -1,5 +1,5 @@
 /* 
- * $Id: oio.c,v 1.6 2010/03/04 08:30:16 hito Exp $
+ * $Id: oio.c,v 1.7 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -87,9 +87,9 @@ struct io_local {
 static void
 io_error(struct objlist *obj)
 {
-    char *str;
+    const char *str;
 
-    str = strerror(errno);
+    str = g_strerror(errno);
     error2(obj, ERRSTD, CHK_STR(str));
 }
 

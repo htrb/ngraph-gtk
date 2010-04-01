@@ -1,5 +1,5 @@
 /* 
- * $Id: x11view.c,v 1.186 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11view.c,v 1.187 2010/04/01 06:08:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -389,7 +389,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 
   if (arraynum(NgraphApp.Viewer.focusobj) > 0) {
     set_graph_modified();
-    dc = gdk_gc_new(NgraphApp.Viewer.win);
+    dc = gdk_gc_new(NgraphApp.Viewer.gdk_win);
     NgraphApp.Viewer.allclear = FALSE;
     ShowFocusFrame(dc);
     NgraphApp.Viewer.ShowFrame = TRUE;
@@ -447,7 +447,7 @@ graph_dropped(char *fname)
       return 0;
 
     LoadNgpFile(fname, Menulocal.ignorepath, Menulocal.expand,
-		Menulocal.expanddir, FALSE, NULL);
+		Menulocal.expanddir, FALSE, "-f");
     load = TRUE;
   }
 
@@ -758,7 +758,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     AddInvalidateRect(obj, inst);
 
     set_graph_modified();
-    dc = gdk_gc_new(d->win);
+    dc = gdk_gc_new(d->gdk_win);
     ShowFocusFrame(dc);
     d->ShowFrame = TRUE;
     g_object_unref(G_OBJECT(dc));
@@ -1227,7 +1227,7 @@ ViewerWinSetup(void)
   int x, y, width, height;
 
   d = &(NgraphApp.Viewer);
-  d->win = d->Win->window;
+  d->gdk_win = d->Win->window;
   Menulocal.GRAoid = -1;
   Menulocal.GRAinst = NULL;
   d->Mode = PointB;
@@ -1252,8 +1252,8 @@ ViewerWinSetup(void)
   OpenGC();
   OpenGRA();
   SetScroller();
-  gdk_window_get_position(d->win, &x, &y);
-  gdk_drawable_get_size(d->win, &width, &height);
+  gdk_window_get_position(d->gdk_win, &x, &y);
+  gdk_drawable_get_size(d->gdk_win, &width, &height);
   d->width = width;
   d->height = height;
   d->cx = width / 2;
@@ -1979,21 +1979,21 @@ ShowFocusFrame(GdkGC *gc)
     width = abs(x2 - x1);
     height = abs(y2 - y1);
 
-    gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
+    gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
 
-    gdk_draw_rectangle(d->win, gc, TRUE,
+    gdk_draw_rectangle(d->gdk_win, gc, TRUE,
 		       x1 - FOCUS_RECT_SIZE,
 		       y1 - FOCUS_RECT_SIZE,
 		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    gdk_draw_rectangle(d->win, gc, TRUE,
+    gdk_draw_rectangle(d->gdk_win, gc, TRUE,
 		       x1 - FOCUS_RECT_SIZE,
 		       y2,
 		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    gdk_draw_rectangle(d->win, gc, TRUE,
+    gdk_draw_rectangle(d->gdk_win, gc, TRUE,
 		       x2,
 		       y1 - FOCUS_RECT_SIZE,
 		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    gdk_draw_rectangle(d->win, gc, TRUE,
+    gdk_draw_rectangle(d->gdk_win, gc, TRUE,
 		       x2,
 		       y2,
 		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
@@ -2022,7 +2022,7 @@ ShowFocusFrame(GdkGC *gc)
 	  width = abs(x2 - x1);
 	  height = abs(y2 - y1);
 
-	  gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
+	  gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
 	}
       }
     }
@@ -2040,7 +2040,7 @@ ShowFocusFrame(GdkGC *gc)
 	x1 = coord_conv_x((bbox[j] + d->FrameOfsX), zoom, d);
 	y1 = coord_conv_y((bbox[j + 1] + d->FrameOfsY), zoom, d);
 
-	gdk_draw_rectangle(d->win, gc, TRUE,
+	gdk_draw_rectangle(d->gdk_win, gc, TRUE,
 			   x1 - FOCUS_RECT_SIZE / 2,
 			   y1 - FOCUS_RECT_SIZE / 2,
 			   FOCUS_RECT_SIZE,
@@ -2298,7 +2298,7 @@ show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double
     ry = mxd2p(ry * zoom);
     x = coord_conv_x(x, zoom, d);
     y = coord_conv_y(y, zoom, d);
-    gdk_draw_arc(d->win, gc, FALSE, x - rx, y - ry, rx * 2, ry * 2, a1 / 100.0 * 64, a2 / 100.0 * 64);
+    gdk_draw_arc(d->gdk_win, gc, FALSE, x - rx, y - ry, rx * 2, ry * 2, a1 / 100.0 * 64, a2 / 100.0 * 64);
   }
 }
 
@@ -2341,7 +2341,7 @@ draw_frame_rect(GdkGC *gc, int change, double zoom, int *bbox, struct Viewer *d)
   width = abs(x2 - x1);
   height = abs(y2 - y1);
 
-  gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
+  gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
 }
 
 static void
@@ -2361,7 +2361,7 @@ draw_focus_line(GdkGC *gc, int change, double zoom, int bboxnum, int *bbox, stru
     x1 = coord_conv_x(bbox[j] + ofsx, zoom, d);
     y1 = coord_conv_y(bbox[j + 1] + ofsy, zoom, d);
     if (j != 4) {
-      gdk_draw_line(d->win, gc, x0, y0, x1, y1);
+      gdk_draw_line(d->gdk_win, gc, x0, y0, x1, y1);
     }
     x0 = x1;
     y0 = y1;
@@ -2467,9 +2467,9 @@ ShowPoints(GdkGC *gc)
       height = abs(y2 - y1);
 
       if (d->Mode == ArcB && ! Menulocal.do_not_use_arc_for_draft) {
-	gdk_draw_arc(d->win, gc, FALSE, minx, miny, width, height, 0, 360 * 64);
+	gdk_draw_arc(d->gdk_win, gc, FALSE, minx, miny, width, height, 0, 360 * 64);
       } else {
-	gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
+	gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
       }
     }
   } else {
@@ -2478,10 +2478,10 @@ ShowPoints(GdkGC *gc)
       x1 = coord_conv_x(po[i]->x, zoom, d);
       y1 = coord_conv_y(po[i]->y, zoom, d);
 
-      gdk_draw_line(d->win, gc,
+      gdk_draw_line(d->gdk_win, gc,
 		    x1 - (POINT_LENGTH - 1), y1,
 		    x1 + POINT_LENGTH, y1);
-      gdk_draw_line(d->win, gc,
+      gdk_draw_line(d->gdk_win, gc,
 		    x1, y1 - (POINT_LENGTH - 1),
 		    x1, y1 + POINT_LENGTH);
     }
@@ -2498,7 +2498,7 @@ ShowPoints(GdkGC *gc)
       x1 = coord_conv_x(po[i]->x, zoom, d);
       y1 = coord_conv_y(po[i]->y, zoom, d);
 
-      gdk_draw_line(d->win, gc, x0, y0, x1, y1);
+      gdk_draw_line(d->gdk_win, gc, x0, y0, x1, y1);
 
       x0 = x1;
       y0 = y1;
@@ -2536,7 +2536,7 @@ ShowFrameRect(GdkGC *gc)
     width = abs(x2 - x1);
     height = abs(y2 - y1);
 
-    gdk_draw_rectangle(d->win, gc, FALSE, minx, miny, width, height);
+    gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
   }
   gdk_gc_set_function(gc, GDK_COPY);
 }
@@ -2554,15 +2554,15 @@ ShowCrossGauge(GdkGC *gc)
   gdk_gc_set_function(gc, GDK_XOR);
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
-  gdk_drawable_get_size(d->win, &width, &height);
+  gdk_drawable_get_size(d->gdk_win, &width, &height);
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
   x = coord_conv_x(d->CrossX, zoom, d);
   y = coord_conv_y(d->CrossY, zoom, d);
 
-  gdk_draw_line(d->win, gc, x, 0, x, height);
-  gdk_draw_line(d->win, gc, 0, y, width, y);
+  gdk_draw_line(d->gdk_win, gc, x, 0, x, height);
+  gdk_draw_line(d->gdk_win, gc, 0, y, width, y);
   gdk_gc_set_function(gc, GDK_COPY);
 }
 
@@ -2935,7 +2935,7 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
     return TRUE;
   }
 
-  dc = gdk_gc_new(d->win);
+  dc = gdk_gc_new(d->gdk_win);
 
   switch (d->Mode) {
   case PointB:
@@ -3336,7 +3336,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
   if (! d->Capture)
     return TRUE;
 
-  dc = gdk_gc_new(d->win);
+  dc = gdk_gc_new(d->gdk_win);
 
   switch (d->Mode) {
   case PointB:
@@ -3884,7 +3884,7 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   if (Menulock || Globallock)
     return FALSE;
 
-  dc = gdk_gc_new(d->win);
+  dc = gdk_gc_new(d->gdk_win);
 
   switch (d->Mode) {
   case PointB:
@@ -3964,7 +3964,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 
   if (d->Capture) {
     zoom = Menulocal.PaperZoom / 10000.0;
-    dc = gdk_gc_new(d->win);
+    dc = gdk_gc_new(d->gdk_win);
     switch (d->Mode) {
     case LineB:
     case CurveB:
@@ -4352,7 +4352,7 @@ mouse_move_scroll(TPoint *point, struct Viewer *d)
 {
   int h, w;
 
-  gdk_window_get_geometry(d->win, NULL, NULL, &w, &h, NULL);
+  gdk_window_get_geometry(d->gdk_win, NULL, NULL, &w, &h, NULL);
   if (point->y > h) {
     range_increment(d->VScroll, SCROLL_INC);
   } else if (point->y < 0) {
@@ -4401,7 +4401,9 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   int dx, dy;
   double zoom;
 
-  if (Menulock || Globallock || ! d->win)
+  dc = Menulocal.gc;
+
+  if (Menulock || Globallock || ! d->gdk_win || dc == NULL)
     return FALSE;
 
   zoom = Menulocal.PaperZoom / 10000.0;
@@ -4417,8 +4419,6 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
        (d->MouseMode != MOUSENONE))) {
     CheckGrid(TRUE, state, &dx, &dy, NULL);
   }
-
-  dc = Menulocal.gc;
 
   if (region == NULL && Menulocal.show_cross) {
     ShowCrossGauge(dc);
@@ -4507,7 +4507,7 @@ popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer
 
   d = (struct Viewer *) user_data;
 
-  gdk_window_get_geometry(d->win, &cx, &cy, NULL, NULL, NULL);
+  gdk_window_get_geometry(d->gdk_win, &cx, &cy, NULL, NULL, NULL);
   gtk_window_get_position(GTK_WINDOW(TopLevel), x, y);
 
   *x += cx;
@@ -4797,7 +4797,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
     if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG))
 	&& (d->Mode & POINT_TYPE_POINT)) {
-      dc = gdk_gc_new(d->win);
+      dc = gdk_gc_new(d->gdk_win);
       zoom = Menulocal.PaperZoom / 10000.0;
       ShowFocusFrame(dc);
       if (e->state & GDK_SHIFT_MASK) {
@@ -4884,7 +4884,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     if (d->MouseMode != MOUSEDRAG)
       break;
 
-    dc = gdk_gc_new(d->win);
+    dc = gdk_gc_new(d->gdk_win);
     ShowFocusFrame(dc);
     dx = d->FrameOfsX;
     dy = d->FrameOfsY;
@@ -4952,11 +4952,11 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   GdkRectangle rect;
 
   d = (struct Viewer *) client_data;
+  gc = Menulocal.gc;
 
-  if (e && e->count != 0)
+  if ((e && e->count != 0) || gc == NULL)
     return TRUE;
 
-  gc = Menulocal.gc;
 
   Menulocal.scrollx = d->hscroll - d->cx;
   Menulocal.scrolly = d->vscroll - d->cy;
@@ -5003,7 +5003,7 @@ ViewerEvVScroll(GtkRange *range, gpointer user_data)
 
   d->vscroll = gtk_range_get_value(range);
   SetVRuler(d);
-  gdk_window_invalidate_rect(d->win, NULL, TRUE);
+  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
 }
 
 static void
@@ -5015,7 +5015,7 @@ ViewerEvHScroll(GtkRange *range, gpointer user_data)
 
   d->hscroll = gtk_range_get_value(range);
   SetHRuler(d);
-  gdk_window_invalidate_rect(d->win, NULL, TRUE);
+  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
 }
 
 void
@@ -5055,7 +5055,7 @@ ViewerWinUpdate(int clear)
     gra2cairo_clip_region(Menulocal.local, NULL);
     Menulocal.region = NULL;
   }
-  gdk_window_invalidate_rect(d->win, NULL, TRUE);
+  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
 
   d->allclear = TRUE;
 }
@@ -5066,7 +5066,7 @@ SetHRuler(struct Viewer *d)
   double x1, x2, zoom;
   int width;
 
-  gdk_drawable_get_size(d->win, &width, NULL);
+  gdk_drawable_get_size(d->gdk_win, &width, NULL);
   zoom = Menulocal.PaperZoom / 10000.0;
   x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
@@ -5080,7 +5080,7 @@ SetVRuler(struct Viewer *d)
   double y1, y2, zoom;
   int height;
 
-  gdk_drawable_get_size(d->win, NULL, &height);
+  gdk_drawable_get_size(d->gdk_win, NULL, &height);
   zoom = Menulocal.PaperZoom / 10000.0;
   y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
   y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
@@ -5220,7 +5220,7 @@ Focus(struct objlist *fobj, int id, int add)
     UnFocus();
   }
 
-  dc = gdk_gc_new(d->win);
+  dc = gdk_gc_new(d->gdk_win);
   d->allclear = FALSE;
   UpdateAll();
   ShowFocusFrame(dc);
@@ -5239,7 +5239,7 @@ UnFocus(void)
 
   d = &(NgraphApp.Viewer);
   if (arraynum(d->focusobj) != 0) {
-    gc = gdk_gc_new(d->win);
+    gc = gdk_gc_new(d->gdk_win);
     ShowFocusFrame(gc);
     g_object_unref(G_OBJECT(gc));
     clear_focus_obj(d->focusobj);
@@ -5247,7 +5247,7 @@ UnFocus(void)
 
   d->ShowFrame = FALSE;
   if (arraynum(d->points) != 0) {
-    gc = gdk_gc_new(d->win);
+    gc = gdk_gc_new(d->gdk_win);
     ShowPoints(gc);
     g_object_unref(G_OBJECT(gc));
     arraydel2(d->points);
@@ -5259,19 +5259,28 @@ create_pix(int w, int h)
 {
   GdkRectangle rect;
 
-  if (w == 0)
+  if (Menulocal.gc == NULL) {
+    return;
+  }
+
+
+  if (w == 0) {
     w = 1;
+  }
 
-  if (h == 0)
+  if (h == 0) {
     h = 1;
+  }
 
-  if (Menulocal.local->cairo)
+  if (Menulocal.local->cairo) {
     cairo_destroy(Menulocal.local->cairo);
+  }
 
   Menulocal.local->cairo = NULL;
 
-  if (Menulocal.pix)
+  if (Menulocal.pix){
     g_object_unref(Menulocal.pix);
+  }
 
   Menulocal.pix = gdk_pixmap_new(NgraphApp.Viewer.Win->window, w, h, -1);
   rect.x = 0;
@@ -5438,7 +5447,7 @@ ChangeDPI(int redraw)
   }
 
   if (redraw) {
-    gdk_window_invalidate_rect(d->win, NULL, TRUE);
+    gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
   }
 
   SetHRuler(d);
@@ -5521,7 +5530,7 @@ Draw(int SelectFile)
   SetStatusBar(_("Drawing."));
   ProgressDialogSetTitle(_("Drawing"));
 
-  gc = gdk_gc_new(d->win);
+  gc = gdk_gc_new(d->gdk_win);
 
   if (d->ShowFrame)
     ShowFocusFrame(gc);
@@ -5581,7 +5590,7 @@ Draw(int SelectFile)
 
   ProgressDialogFinalize();
 
-  gdk_window_invalidate_rect(d->win, NULL, TRUE);
+  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
 }
 
 static void
@@ -5663,7 +5672,7 @@ ViewUpdate(void)
     return;
 
   d = &(NgraphApp.Viewer);
-  dc = gdk_gc_new(d->win);
+  dc = gdk_gc_new(d->gdk_win);
 
   ShowFocusFrame(dc);
   d->ShowFrame = FALSE;
@@ -5903,7 +5912,7 @@ ViewDelete(void)
     return;
   }
 
-  dc = gdk_gc_new(d->win);
+  dc = gdk_gc_new(d->gdk_win);
   ShowFocusFrame(dc);
   d->ShowFrame = FALSE;
 
@@ -6294,7 +6303,7 @@ ViewCopy(void)
   if (d->MouseMode != MOUSENONE || ! (d->Mode & POINT_TYPE_POINT))
     return;
 
-  dc = gdk_gc_new(d->win);
+  dc = gdk_gc_new(d->gdk_win);
 
   ShowFocusFrame(dc);
   d->ShowFrame = FALSE;
@@ -6355,7 +6364,7 @@ ViewCross(int state)
   d = &(NgraphApp.Viewer);
 
   if (state != Menulocal.show_cross) {
-    dc = gdk_gc_new(d->win);
+    dc = gdk_gc_new(d->gdk_win);
     ShowCrossGauge(dc);
     Menulocal.show_cross = state;
     g_object_unref(G_OBJECT(dc));

@@ -1,5 +1,5 @@
 /* 
- * $Id: omerge.c,v 1.16 2010/03/04 08:30:16 hito Exp $
+ * $Id: omerge.c,v 1.17 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -199,23 +199,38 @@ mergeredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mergefile(struct objlist *obj,char *inst,char *rval,
-            int argc,char **argv)
+mergefile(struct objlist *obj, char *inst, char *rval, 
+            int argc, char **argv)
 {
   struct objlist *sys;
   int ignorepath;
-  char *file,*file2;
+  char *file, *file2;
 
   sys=getobject("system");
-  getobj(sys,"ignore_path",0,0,NULL,&ignorepath);
-  if (!ignorepath) return 0;
-  file=(char *)(argv[2]);
-  file2=getbasename(file);
-  g_free(file);
-  argv[2]=file2;
+  getobj(sys, "ignore_path", 0, 0, NULL, &ignorepath);
 
-  if (clear_bbox(obj, inst))
+  if (argv[2] == NULL) {
+    return 0;
+  }
+
+  file = get_utf8_filename(argv[2]);
+  g_free(argv[2]);
+  if (file == NULL) {
+    argv[2] = NULL;
     return 1;
+  }
+
+  if (ignorepath) {
+    file2 = getbasename(file);
+    g_free(file);
+    argv[2] = file2;
+  } else {
+    argv[2] = file;
+  }
+
+  if (clear_bbox(obj, inst)) {
+    return 1;
+  }
 
   return 0;
 }
@@ -231,7 +246,7 @@ mergetime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
-  if (stat(file,&buf)!=0) return 1;
+  if (nstat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
   *(char **)rval=ntime((time_t *)&(buf.st_mtime),style);
   return 0;
@@ -248,7 +263,7 @@ mergedate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   *(char **)rval=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
-  if (stat(file,&buf)!=0) return 1;
+  if (nstat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
   *(char **)rval=ndate((time_t *)&(buf.st_mtime),style);
   return 0;
@@ -338,7 +353,7 @@ mergeload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     g_free(file);
     return 1;
   }
-  if (access(file,R_OK)!=0) mkdata=TRUE;
+  if (naccess(file,R_OK)!=0) mkdata=TRUE;
   else {
     if ((mes=g_malloc(strlen(file)+256))==NULL) {
       g_free(file);

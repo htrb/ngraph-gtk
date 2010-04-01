@@ -6,7 +6,7 @@
 #
 SCRIPT=${system:0:temp_file}
 wish ${NGRAPHLIB}/calc.tcl "$SCRIPT"
-if [ -f "$SCRIPT" ];
+if [ -s "$SCRIPT" ];
 then
   new shell
   shell::shell "$SCRIPT"

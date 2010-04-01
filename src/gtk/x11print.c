@@ -1,5 +1,5 @@
 /* 
- * $Id: x11print.c,v 1.52 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11print.c,v 1.53 2010/04/01 06:08:24 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -479,8 +479,8 @@ draw_gra(struct objlist *graobj, int id, char *msg, int close)
 
   ProgressDialogFinalize();
   ResetStatusBar();
-  if (NgraphApp.Viewer.win) {
-    gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
+  if (NgraphApp.Viewer.gdk_win) {
+    gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, FALSE);
   }
 }
 
@@ -1030,7 +1030,7 @@ CmPrintDataFile(void)
   }
   ProgressDialogFinalize();
   ResetStatusBar();
-  gdk_window_invalidate_rect(NgraphApp.Viewer.win, NULL, FALSE);
+  gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, FALSE);
 
   arraydel(&farray);
   g_free(file);

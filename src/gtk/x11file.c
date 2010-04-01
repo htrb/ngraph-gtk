@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 /* 
- * $Id: x11file.c,v 1.136 2010/03/04 08:30:17 hito Exp $
+ * $Id: x11file.c,v 1.137 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -38,6 +38,7 @@
 #include "gtk_widget.h"
 
 #include "ngraph.h"
+#include "shell.h"
 #include "object.h"
 #include "ioutil.h"
 #include "nstring.h"
@@ -2601,40 +2602,41 @@ FileDialogOption(GtkWidget *w, gpointer client_data)
 }
 
 static void
+edit_file(const char *file)
+{
+  char *cmd, *localize_name;
+
+  if (file == NULL)
+    return;
+
+  localize_name = get_localized_filename(file);
+  if (localize_name == NULL)
+    return;
+
+  cmd = g_strdup_printf("\"%s\" \"%s\"", Menulocal.editor, localize_name);
+  g_free(localize_name);
+
+  system_bg(cmd);
+
+  g_free(cmd);
+}
+
+static void
 FileDialogEdit(GtkWidget *w, gpointer client_data)
 {
-#ifdef HAVE_FORK
   struct FileDialog *d;
-  const char *tmp;
-  char *name;
-  char *argv[3];
-  pid_t pid;
+  const char *file;
 
   d = (struct FileDialog *) client_data;
 
   if (Menulocal.editor == NULL)
     return;
 
-  argv[0] = Menulocal.editor;
-  argv[2] = NULL;
-
-  tmp = gtk_entry_get_text(GTK_ENTRY(d->file));
-
-  if (tmp == NULL)
+  file = gtk_entry_get_text(GTK_ENTRY(d->file));
+  if (file == NULL)
     return;
 
-  name = g_strdup(tmp);
-  if (name == NULL)
-    return;
-  if ((pid = fork()) >= 0) {
-    argv[1] = name;
-    if (pid == 0) {
-      execvp(argv[0], argv);
-      exit(1);
-    }
-  }
-  g_free(name);
-#endif
+  edit_file(file);
 }
 
 static void
@@ -3582,12 +3584,9 @@ CmFileUpdate(void)
 void
 CmFileEdit(void)
 {
-#ifdef HAVE_FORK
   struct objlist *obj;
   int i;
   char *name;
-  char *argv[3];
-  pid_t pid;
   int last;
 
   if (Menulock || Globallock)
@@ -3619,18 +3618,7 @@ CmFileEdit(void)
   if (getobj(obj, "file", i, 0, NULL, &name) == -1)
     return;
 
-  if (name == NULL)
-    return;
-
-  argv[0] = Menulocal.editor;
-  argv[1] = name;
-  argv[2] = NULL;
-  pid = fork();
-  if (pid == 0) {
-    execvp(argv[0], argv);
-    exit(1);
-  }
-#endif
+  edit_file(name);
 }
 
 void
@@ -3697,10 +3685,8 @@ CmOptionFileDef(void)
 static void
 FileWinFileEdit(struct SubWin *d)
 {
-#ifdef HAVE_FORK
   int sel;
-  char *argv[3], *name;
-  pid_t pid;
+  char *name;
 
   if (Menulock || Globallock)
     return;
@@ -3716,18 +3702,7 @@ FileWinFileEdit(struct SubWin *d)
   if (getobj(d->obj, "file", sel, 0, NULL, &name) == -1)
     return;
 
-  if (name == NULL)
-    return;
-
-  argv[0] = Menulocal.editor;
-  argv[1] = name;
-  argv[2] = NULL;
-  pid = fork();
-  if (pid == 0) {
-    execvp(argv[0], argv);
-    exit(1);
-  }
-#endif
+  edit_file(name);
 }
 
 static void
@@ -4293,10 +4268,7 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       }
       bfile = getbasename(file);
       if (bfile) {
-	char *ptr;
-	ptr = filename_to_utf8(bfile);
-	list_store_set_string(GTK_WIDGET(d->text), iter, i, (ptr) ? ptr : "invalid UTF-8 character");
-	g_free(ptr);
+	list_store_set_string(GTK_WIDGET(d->text), iter, i, CHK_STR(bfile));
 	g_free(bfile);
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");

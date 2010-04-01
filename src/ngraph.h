@@ -1,5 +1,5 @@
 /* 
- * $Id: ngraph.h,v 1.5 2010/03/04 08:30:16 hito Exp $
+ * $Id: ngraph.h,v 1.6 2010/04/01 06:08:22 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -29,33 +29,12 @@
 #include <glib.h>
 
 int printfconsole(char *fmt,...);
-int putconsole(char *s);
+int putconsole(const char *s);
 int printfconsole(char *fmt,...);
-void displaydialog(char *str);
-void displaystatus(char *str);
+void displaydialog(const char *str);
+void displaystatus(const char *str);
 void pausewindowconsole(char *title,char *str);
 
 #define ALIGNSIZE 8
-
-#ifdef WINDOWS
-int winputstderr(char *s);
-int winprintfstderr(char *fmt,...);
-void winpausewindow(char *title,char *str);
-int nallocconsole(void);
-void nsetconsolemode(void);
-void nfreeconsole(void);
-void nforegroundconsole(void);
-
-#ifndef PLATFORM
-#define PLATFORM "for Windows"
-#endif	/* PLATFORM */
-
-#else  /* WINDOWS */
-
-#ifndef PLATFORM
-#define PLATFORM "for X11"
-#endif	/* PLATFORM */
-
-#endif	/* WINDOWS */
 
 #endif	/* NGRAPH_HEADER */

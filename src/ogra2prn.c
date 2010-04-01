@@ -1,5 +1,5 @@
 /* 
- * $Id: ogra2prn.c,v 1.8 2010/03/04 08:30:16 hito Exp $
+ * $Id: ogra2prn.c,v 1.9 2010/04/01 06:08:23 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -171,7 +171,7 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
       cmdexecute(nshell,s);
       delshell(nshell);
       g_free(s);
-      unlink(gra2plocal->fname);
+      g_unlink(gra2plocal->fname);
       g_free(gra2plocal->fname);
       gra2plocal->fname=NULL;
     }
@@ -180,7 +180,7 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
 
 errexit:
   if (gra2plocal->fname) {
-    unlink(gra2plocal->fname);
+    g_unlink(gra2plocal->fname);
     g_free(gra2plocal->fname);
     gra2plocal->fname = NULL;
   }
