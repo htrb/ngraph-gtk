@@ -1563,7 +1563,7 @@ Optional Features:
   --disable-gtktest       do not try to compile and run a test GTK+ program
   --disable-gsltest       Do not try to compile and run a test GSL program
   --enable-japanese	  enable japanese text support
-  --enable-new_math	  enable new math code
+  --disable-new_math	  disable new math code
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -16271,9 +16271,13 @@ $as_echo "$enable_japanese" >&6; }
 $as_echo_n "checking if new math code is enabled... " >&6; }
 # Check whether --enable-new_math was given.
 if test "${enable_new_math+set}" = set; then :
-  enableval=$enable_new_math; enable_new_math=yes
+  enableval=$enable_new_math; \
+case "${enableval}" in
+ yes) enable_new_math=yes ;;
+ *)  enable_new_math=no ;;
+esac
 else
-  enable_new_math=no
+  enable_new_math=yes
 fi
 
 test x"$enable_new_math" = xyes &&
