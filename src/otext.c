@@ -574,6 +574,22 @@ text_set_text(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   error(obj, ERR_INVALID_STR);
   return 1;
 #else
+  char *ptr;
+
+  if (argv[2] == NULL) {
+    return 0;
+  }
+
+  if (g_utf8_validate(argv[2], -1, NULL)) {
+    ptr = utf8_to_sjis(argv[2]);
+    if (ptr == NULL) {
+      return 0;
+    }
+
+    g_free(argv[2]);
+    argv[2] = ptr;
+  }
+
   return textgeometry(obj, inst, rval, argc, argv);
 #endif
 }

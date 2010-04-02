@@ -1572,11 +1572,10 @@ getcmdline(struct nshell *nshell,
       char *tmp;
 
       tmp = g_locale_to_utf8(tok, -1, NULL, NULL, NULL);
-      if (tmp == NULL) {
-	goto errexit;
+      if (tmp) {
+	g_free(tok);
+	tok = tmp;
       }
-      g_free(tok);
-      tok = tmp;
     }
     tok2=tok;
     do {
