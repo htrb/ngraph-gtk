@@ -1499,8 +1499,14 @@ int main(int argc,char **argv)
   MetaHeader.checksum= *(Header+0) ^ *(Header+1) ^ *(Header+2) ^ 
                        *(Header+3) ^ *(Header+4) ^ *(Header+5) ^
                        *(Header+6) ^ *(Header+7) ^ *(Header+8) ^ *(Header+9);
-
+#if (GLIB_MAJOR_VERSION > 2 || (GLIB_MAJOR_VERSION == 2 && GLIB_MINOR_VERSION >= 22))
   DC = g_mkstemp_full(tmpfile, O_RDWR | O_BINARY, S_IRUSR | S_IWUSR);
+#else	/* GLIB_MAJOR_VERSION */
+  DC = g_mkstemp(tmpfile);
+#ifdef __MINGW32__
+  setmode(DC, O_BINARY);
+#endif	/* __MINGW32__ */
+#endif	/* GLIB_MAJOR_VERSION */
   if (DC < 0) {
     printfstderr("error: open temp file.");
     exit(1);
