@@ -37,7 +37,6 @@ cp -r /mingw/share/themes $PKG_DIR/share
 cp -r /mingw/etc/gtk-2.0  $PKG_DIR/etc
 cp -r /mingw/etc/pango    $PKG_DIR/etc
 cp -r /mingw/lib/gtk-2.0  $PKG_DIR/lib
-cp -r /mingw/lib/locale   $PKG_DIR/lib
 
 cp $WIN_PATH/gtkrc         $PKG_DIR/etc/gtk-2.0
 cp $WIN_PATH/pango.aliases $PKG_DIR/etc/pango
