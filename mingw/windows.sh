@@ -6,7 +6,7 @@ WIN_PATH=mingw
 
 (cd $WIN_PATH; windres -o ../src/windows_resource.o windows_resource.rc)
 
-./configure  --enable-japanese --enable-new_math --prefix=$PKG_DIR
+./configure --enable-japanese --prefix=$PKG_DIR
 
 for makefile in `find -name Makefile`
 do
