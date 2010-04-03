@@ -85,7 +85,7 @@
 
 	* src/gtk/gtk_subwin.c (start_editing, modify_string): strings are
 	always UTF-8.
-	(sub_window_create): type hit for subwindows are
+	(sub_window_create): type hint for subwindows are
 	"GDK_WINDOW_TYPE_HINT_UTILITY".
 	(sub_window_create): call "gtk_window_set_transient_for()".
 
