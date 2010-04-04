@@ -1,4 +1,18 @@
+2010-04-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* mingw/windows.sh: remove "--enable-new_math" option for
+	configure script.
+
 2010-04-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.ini.win: change Japanese fonts.
+
+	* src/otext.c (text_set_text): treat shift-jis strings.
+
+	* src/shell.c (getcmdline): treat shit-jis strings.
+
+	* driver/gra2wmf.c (main): use g_mkstemp() when the version of
+	GLIB is lesser than 2.22.
 
 	* src/gtk/x11view.c (graph_dropped): add "-f" option for
 	"LoadNgpFile()".
