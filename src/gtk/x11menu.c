@@ -2147,6 +2147,50 @@ init_ngraph_app_struct(void)
   NgraphApp.Interrupt = FALSE;
 }
 
+static void
+create_sub_windows(void)
+{
+  if (Menulocal.dialogopen)
+    CmInformationWindow(NULL, NULL);
+
+  if (Menulocal.coordopen)
+    CmCoordinateWindow(NULL, NULL);
+
+  if (Menulocal.mergeopen)
+    CmMergeWindow(NULL, NULL);
+
+  if (Menulocal.legendopen)
+    CmLegendWindow(NULL, NULL);
+
+  if (Menulocal.axisopen)
+    CmAxisWindow(NULL, NULL);
+
+  if (Menulocal.fileopen)
+    CmFileWindow(NULL, NULL);
+}
+
+static void
+destroy_sub_windows(void)
+{
+  if (NgraphApp.FileWin.Win)
+    gtk_widget_destroy(NgraphApp.FileWin.Win);
+
+  if (NgraphApp.AxisWin.Win)
+    gtk_widget_destroy(NgraphApp.AxisWin.Win);
+
+  if (NgraphApp.LegendWin.Win)
+    gtk_widget_destroy(NgraphApp.LegendWin.Win);
+
+  if (NgraphApp.MergeWin.Win)
+    gtk_widget_destroy(NgraphApp.MergeWin.Win);
+
+  if (NgraphApp.InfoWin.Win)
+    gtk_widget_destroy(NgraphApp.InfoWin.Win);
+
+  if (NgraphApp.CoordWin.Win)
+    gtk_widget_destroy(NgraphApp.CoordWin.Win);
+}
+
 int
 application(char *file)
 {
@@ -2207,12 +2251,11 @@ application(char *file)
   reset_event();
   setupwindow();
 
-  gtk_widget_show_all(GTK_WIDGET(TopLevel));
-  set_widget_visibility(Menulocal.show_cross);
-
   NgraphApp.FileName = NULL;
 
+  gtk_widget_show_all(GTK_WIDGET(TopLevel));
   ViewerWinSetup();
+  set_widget_visibility(Menulocal.show_cross);
 
   create_markpixmap(TopLevel);
 
@@ -2230,24 +2273,6 @@ application(char *file)
   ndisplaystatus = mgtkdisplaystatus;
   ninterrupt = mgtkinterrupt;
   inputyn = mgtkinputyn;
-
-  if (Menulocal.dialogopen)
-    CmInformationWindow(NULL, NULL);
-
-  if (Menulocal.coordopen)
-    CmCoordinateWindow(NULL, NULL);
-
-  if (Menulocal.mergeopen)
-    CmMergeWindow(NULL, NULL);
-
-  if (Menulocal.legendopen)
-    CmLegendWindow(NULL, NULL);
-
-  if (Menulocal.axisopen)
-    CmAxisWindow(NULL, NULL);
-
-  if (Menulocal.fileopen)
-    CmFileWindow(NULL, NULL);
 
   if ((aobj = getobject("axis")) != NULL) {
     for (i = 0; i <= chkobjlastinst(aobj); i++)
@@ -2280,6 +2305,8 @@ application(char *file)
   gtk_widget_show_all(GTK_WIDGET(TopLevel));
   set_widget_visibility(Menulocal.show_cross);
 
+  create_sub_windows();
+
   terminated = AppMainLoop();
 
 #if 0
@@ -2297,23 +2324,7 @@ application(char *file)
 
   ViewerWinClose();
 
-  if (NgraphApp.FileWin.Win)
-    gtk_widget_destroy(NgraphApp.FileWin.Win);
-
-  if (NgraphApp.AxisWin.Win)
-    gtk_widget_destroy(NgraphApp.AxisWin.Win);
-
-  if (NgraphApp.LegendWin.Win)
-    gtk_widget_destroy(NgraphApp.LegendWin.Win);
-
-  if (NgraphApp.MergeWin.Win)
-    gtk_widget_destroy(NgraphApp.MergeWin.Win);
-
-  if (NgraphApp.InfoWin.Win)
-    gtk_widget_destroy(NgraphApp.InfoWin.Win);
-
-  if (NgraphApp.CoordWin.Win)
-    gtk_widget_destroy(NgraphApp.CoordWin.Win);
+  destroy_sub_windows();
 
   g_free(NgraphApp.InfoWin.str);
   NgraphApp.InfoWin.str = NULL;
