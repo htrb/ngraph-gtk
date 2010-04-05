@@ -1,3 +1,13 @@
+2010-04-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_sub_windows, destroy_sub_windows):
+	add.
+	(application): use "create_sub_windows()" and
+	"destroy_sub_windows()" .
+
+	* src/gtk/gtk_subwin.c (ev_sub_win_key_down): call
+	"gtk_widget_hide()" instead of "gtk_widget_hide_all()".
+
 2010-04-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* mingw/windows.sh: remove "--enable-new_math" option for

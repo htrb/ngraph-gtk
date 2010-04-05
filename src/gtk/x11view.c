@@ -1308,7 +1308,7 @@ ViewerWinClose(void)
   CloseGRA();
   arrayfree2(d->focusobj);
   arrayfree2(d->points);
-  //  XUndefineCursor(XtDisplay(d->Win), XtWindow(d->Win));
+
   if (region) {
     gdk_region_destroy(region);
     region = NULL;
