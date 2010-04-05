@@ -1392,7 +1392,7 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   switch (e->keyval) {
   case GDK_w:
     if (e->state & GDK_CONTROL_MASK) {
-      gtk_widget_hide_all(w);
+      gtk_widget_hide(w);
       return TRUE;
     }
     return FALSE;
