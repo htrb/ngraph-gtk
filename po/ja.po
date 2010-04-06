@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-05 18:04+0900\n"
-"PO-Revision-Date: 2010-03-16 14:22+0900\n"
+"POT-Creation-Date: 2010-04-06 17:28+0900\n"
+"PO-Revision-Date: 2010-04-06 13:06+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -816,7 +816,7 @@ msgstr "補完(_I)"
 
 #: src/gtk/x11file.c:1434
 msgid "Draw X range"
-msgstr "描画範囲(X)"
+msgstr "X 描画範囲"
 
 #: src/gtk/x11file.c:1446 src/gtk/x11file.c:2975
 msgid "_Load"
@@ -1957,15 +1957,15 @@ msgstr "クロスゲージ(_G)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2565
+#: src/gtk/x11menu.c:2633
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2615
+#: src/gtk/x11menu.c:2683
 msgid "Question"
 msgstr "質問:"
 
-#: src/gtk/x11menu.c:2672
+#: src/gtk/x11menu.c:2740
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."

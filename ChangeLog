@@ -1,3 +1,14 @@
+2010-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (SUB_WINDOW_STATE, change_window_state_cb):
+	add.
+	(application): "change_window_state_cb()" is connected to the
+	"window-state-event" signal.
+
+	* src/gtk/gtk_subwin.c (hide_minimize_menu_item): add.
+	(sub_window_create): "hide_minimize_menu_item()" is connected to
+	the "realize" signal.
+
 2010-04-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_sub_windows, destroy_sub_windows):
