@@ -2191,6 +2191,65 @@ destroy_sub_windows(void)
     gtk_widget_destroy(NgraphApp.CoordWin.Win);
 }
 
+#ifdef WINDOWS
+enum SUB_WINDOW_STATE {
+  FILE_WIN_VISIBLE   = 0x01,
+  AXIS_WIN_VISIBLE   = 0x02,
+  LEGEND_WIN_VISIBLE = 0x04,
+  MERGE_WIN_VISIBLE  = 0x08,
+  INFO_WIN_VISIBLE   = 0x10,
+  COORD_WIN_VISIBLE  = 0x20,
+};
+
+static gboolean
+change_window_state_cb(GtkWidget *widget, GdkEventWindowState *event, gpointer user_data)
+{
+  static int window_state = 0;
+
+  if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) {
+    if (NgraphApp.FileWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.FileWin.Win)) {
+      window_state |= FILE_WIN_VISIBLE;
+      gtk_widget_hide(NgraphApp.FileWin.Win);
+    }
+    if (NgraphApp.AxisWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.AxisWin.Win)) {
+      window_state |= AXIS_WIN_VISIBLE;
+      gtk_widget_hide(NgraphApp.AxisWin.Win);
+    }
+    if (NgraphApp.LegendWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.LegendWin.Win)) {
+      window_state |= LEGEND_WIN_VISIBLE;
+      gtk_widget_hide(NgraphApp.LegendWin.Win);
+    }
+    if (NgraphApp.InfoWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.InfoWin.Win)) {
+      window_state |= INFO_WIN_VISIBLE;
+      gtk_widget_hide(NgraphApp.InfoWin.Win);
+    }
+    if (NgraphApp.CoordWin.Win && GTK_WIDGET_VISIBLE(NgraphApp.CoordWin.Win)) {
+      window_state |= COORD_WIN_VISIBLE;
+      gtk_widget_hide(NgraphApp.CoordWin.Win);
+    }
+  } else if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
+    if (NgraphApp.FileWin.Win && (window_state & FILE_WIN_VISIBLE)) {
+      gtk_widget_show(NgraphApp.FileWin.Win);
+    }
+    if (NgraphApp.AxisWin.Win && (window_state & AXIS_WIN_VISIBLE)) {
+      gtk_widget_show(NgraphApp.AxisWin.Win);
+    }
+    if (NgraphApp.LegendWin.Win && (window_state & LEGEND_WIN_VISIBLE)) {
+      gtk_widget_show(NgraphApp.LegendWin.Win);
+    }
+    if (NgraphApp.InfoWin.Win && (window_state & INFO_WIN_VISIBLE)) {
+      gtk_widget_show(NgraphApp.InfoWin.Win);
+    }
+    if (NgraphApp.CoordWin.Win && (window_state & COORD_WIN_VISIBLE)) {
+      gtk_widget_show(NgraphApp.CoordWin.Win);
+    }
+    window_state = 0;
+  }
+
+  return FALSE;
+}
+#endif
+
 int
 application(char *file)
 {
@@ -2233,6 +2292,9 @@ application(char *file)
   gtk_window_set_default_size(GTK_WINDOW(TopLevel), width, height);
   gtk_window_move(GTK_WINDOW(TopLevel), x, y);
 
+#ifdef WINDOWS
+  g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
+#endif
   g_signal_connect(TopLevel, "delete-event", G_CALLBACK(CloseCallback), NULL);
   g_signal_connect(TopLevel, "destroy-event", G_CALLBACK(CloseCallback), NULL);
 
