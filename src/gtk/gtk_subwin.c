@@ -1400,6 +1400,21 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return FALSE;
 }
 
+#ifdef WINDOWS
+#include <gdk/gdkwin32.h>
+
+static void
+hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
+{
+  HWND handle;
+  HMENU menu;
+
+  handle = GDK_WINDOW_HWND(widget->window);
+  menu = GetSystemMenu(handle, FALSE);
+  RemoveMenu(menu, SC_MINIMIZE, MF_BYCOMMAND);
+}
+#endif
+
 static GtkWidget *
 sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **xpm, const char **xpm2, int with_view_port)
 {
@@ -1456,6 +1471,9 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
 
   d->swin = swin;
 
+#ifdef WINDOWS
+  g_signal_connect(dlg, "realize", G_CALLBACK(hide_minimize_menu_item), NULL);
+#endif
   g_signal_connect(dlg, "show", G_CALLBACK(cb_show), d);
   g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
   g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
