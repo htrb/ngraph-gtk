@@ -1,3 +1,10 @@
+2010-04-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileDialogCopyAll): remove.
+	(FileDialogClose): remove case "IDCOPYALL"
+	(FileDialogSetup): remove "Copy all" button.
+	(FileDialogSetup): set width of the file preview as 240.
+
 2010-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (SUB_WINDOW_STATE, change_window_state_cb):
