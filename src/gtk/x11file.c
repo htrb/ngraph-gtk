@@ -2579,19 +2579,6 @@ copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename)
 }
 
 static void
-FileDialogCopyAll(struct FileDialog *d)
-{
-  int sel;
-
-  sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
-  if (sel == -1) 
-    return;
-
-  copy_file_obj_field(d->Obj, d->Id, sel, FALSE);
-  FileDialogSetupItem(d->widget, d, FALSE, d->Id);
-}
-
-static void
 FileDialogOption(GtkWidget *w, gpointer client_data)
 {
   struct FileDialog *d;
@@ -3104,9 +3091,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CLOSE, IDDELETE);
 
-    w = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Copy all"), IDCOPYALL);
-    g_signal_connect(w, "show", G_CALLBACK(set_sensitivity_by_check_instance), "file");
-
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = create_file_entry(d->Obj);
@@ -3139,6 +3123,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     view = gtk_text_view_new_with_buffer(NULL);
+    gtk_widget_set_size_request(GTK_WIDGET(view), 240, -1);
     gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
     gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
     d->comment = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
@@ -3255,10 +3240,6 @@ FileDialogClose(GtkWidget *w, void *data)
   case IDOK:
   case IDFAPPLY:
     break;
-  case IDCOPYALL:
-    FileDialogCopyAll(d);
-    d->ret = IDLOOP;
-    return;
   default:
     return;
   }
