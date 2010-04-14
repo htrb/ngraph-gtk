@@ -765,9 +765,13 @@ create_recent_graph_menu(GtkWidget *parent)
 
   gtk_recent_chooser_set_show_tips(GTK_RECENT_CHOOSER(recent), TRUE);
   gtk_recent_chooser_set_show_icons(GTK_RECENT_CHOOSER(recent), FALSE);
-  gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(recent), GTK_RECENT_SORT_MRU);
   gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(recent), TRUE);
+#ifndef WINDOWS
+  gtk_recent_chooser_set_show_not_found(GTK_RECENT_CHOOSER(recent), FALSE);
+#endif
+  gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(recent), GTK_RECENT_SORT_MRU);
   gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(recent), 10);
+
   gtk_recent_chooser_add_filter(GTK_RECENT_CHOOSER(recent), filter);
 
   g_signal_connect(recent, "item-activated", G_CALLBACK(CmGraphHistory), NULL);
