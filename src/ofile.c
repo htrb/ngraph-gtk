@@ -1313,7 +1313,7 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 static char *
 create_func_def_str(const char *name, const char *code)
 {
-  return g_strdup_printf("def %s(x,y,z) {%s;}", name, code);b
+  return g_strdup_printf("def %s(x,y,z) {%s;}", name, code);
 }
 
 static int
