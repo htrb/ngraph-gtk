@@ -223,21 +223,7 @@ mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static char *
 create_func_def_str(char *name, char *code)
 {
-  char func_def[] = "def %s(x,y,z) {%s;}";
-  int nlen, clen, len;
-  char *ptr;
-
-  nlen = strlen(name);
-  clen = strlen(code);
-
-  len = nlen + clen + sizeof(func_def);
-  ptr = g_malloc(len);
-  if (ptr == NULL)
-    return NULL;
-
-  snprintf(ptr, len, func_def, name, code);
-
-  return ptr;
+  return g_strdup_printf("def %s(x,y,z) {%s;}", name, code);
 }
 
 static void
