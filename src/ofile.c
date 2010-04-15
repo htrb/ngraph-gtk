@@ -216,6 +216,8 @@ struct f2ddata_buf {
 #endif
 };
 
+#define EQUATION_NUM 3
+
 struct f2ddata {
   struct objlist *obj;
   int id;
@@ -245,7 +247,7 @@ struct f2ddata {
   int axtype,aytype,axposx,axposy,ayposx,ayposy,axlen,aylen;
   double ratex,ratey;
 #if NEW_MATH_CODE
-  MathEquation *codex[3], *codey[3];
+  MathEquation *codex[EQUATION_NUM], *codey[EQUATION_NUM];
   MathValue minx, maxx, miny, maxy;
   int *const_id;
   int color2[3], colr2, colg2, colb2;
@@ -1311,35 +1313,23 @@ closedata(struct f2ddata *fp, struct f2dlocal *f2dlocal)
 static char *
 create_func_def_str(const char *name, const char *code)
 {
-  char func_def[] = "def %s(x,y,z) {%s;}";
-  int nlen, clen, len;
-  char *ptr;
-
-  nlen = strlen(name);
-  clen = strlen(code);
-
-  len = nlen + clen + sizeof(func_def);
-  ptr = g_malloc(len);
-  if (ptr == NULL)
-    return NULL;
-
-  snprintf(ptr, len, func_def, name, code);
-
-  return ptr;
+  return g_strdup_printf("def %s(x,y,z) {%s;}", name, code);b
 }
 
 static int
 set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_msg)
 {
-  int r;
+  int r, i;
   char *buf, default_func[] = "def f(x,y,z){0}";
-  //                     01234
+  //                           01234
 
   if (err_msg)
     *err_msg = NULL;
 
-  if (eq[0] == NULL || eq[1] == NULL || eq[2] == NULL) {
-    return 0;
+  for (i = 0; i < EQUATION_NUM; i++) {
+    if (eq[i] == NULL) {
+      return MATH_ERROR_MEMORY;
+    }
   }
 
   default_func[4] = fname[0];
@@ -1349,37 +1339,22 @@ set_user_fnc(MathEquation **eq, const char *str, const char *fname, char **err_m
     if (buf == NULL)
       return MATH_ERROR_MEMORY;
 
-    r = math_equation_parse(eq[0], buf);
-    if (r) {
-      if (err_msg) {
-	*err_msg = math_err_get_error_message(eq[0], buf, r);
+    for (i = 0; i < EQUATION_NUM; i++) {
+      r = math_equation_parse(eq[i], buf);
+      if (r) {
+	if (err_msg) {
+	  *err_msg = math_err_get_error_message(eq[i], buf, r);
+	}
+	g_free(buf);
+	return r;
       }
-      g_free(buf);
-      return r;
     }
 
-    r = math_equation_parse(eq[1], buf);
-    if (r) {
-      if (err_msg) {
-	*err_msg = math_err_get_error_message(eq[0], buf, r);
-      }
-      g_free(buf);
-      return r;
-    }
-
-    r = math_equation_parse(eq[2], buf);
-    if (r) {
-      if (err_msg) {
-	*err_msg = math_err_get_error_message(eq[0], buf, r);
-      }
-      g_free(buf);
-      return r;
-    }
     g_free(buf);
   } else {
-    math_equation_parse(eq[0], default_func);
-    math_equation_parse(eq[1], default_func);
-    math_equation_parse(eq[2], default_func);
+    for (i = 0; i < EQUATION_NUM; i++) {
+      math_equation_parse(eq[i], default_func);
+    }
   }
 
   return 0;
@@ -1394,19 +1369,22 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
     *err_msg = NULL;
   }
 
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < EQUATION_NUM; i++) {
     if (eq[i]) {
       math_equation_free(eq[i]);
     }
     eq[i] = NULL;
   }
 
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < EQUATION_NUM; i++) {
     eq[i] = ofile_create_math_equation(f2dlocal->const_id, TRUE, TRUE, TRUE, TRUE, TRUE);
   }
 
-  if (eq[0] == NULL || eq[1] == NULL || eq[2] == NULL)
-    return MATH_ERROR_MEMORY;
+  for (i = 0; i < EQUATION_NUM; i++) {
+    if (eq[i] == NULL) {
+      return MATH_ERROR_MEMORY;
+    }
+  }
 
   if (f) {
     rcode = set_user_fnc(eq, f, "f", err_msg);
@@ -1427,7 +1405,7 @@ set_equation(struct f2dlocal *f2dlocal, MathEquation **eq, const char *f, const 
   if (str == NULL)
     return 0;
 
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < EQUATION_NUM; i++) {
     rcode = math_equation_parse(eq[i], str);
     if (rcode) {
       if (err_msg) {
@@ -2461,6 +2439,54 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
 }
 
 static int
+set_const_all(struct f2ddata *fp)
+{
+  int first_x1, first_y1;
+
+  if (set_const(fp->codex[0], fp->const_id, fp->need2pass, fp, TRUE))
+    return 1;
+
+  if (set_const(fp->codey[0], fp->const_id, fp->need2pass, fp, TRUE))
+    return 1;
+
+  switch (fp->type) {
+  case TYPE_NORMAL:
+    first_x1 = FALSE;
+    first_y1 = FALSE;
+    break;
+  case TYPE_DIAGONAL:
+    first_x1 = FALSE;
+    first_y1 = FALSE;
+    break;
+  case TYPE_ERR_X:
+    first_x1 = TRUE;
+    first_y1 = FALSE;
+    break;
+  case TYPE_ERR_Y:
+    first_x1 = FALSE;
+    first_y1 = TRUE;
+    break;
+  default:
+    first_x1 = FALSE;
+    first_y1 = FALSE;
+  }
+
+  if (set_const(fp->codex[1], fp->const_id, fp->need2pass, fp, first_x1))
+    return 1;
+
+  if (set_const(fp->codex[2], fp->const_id, fp->need2pass, fp, FALSE))
+    return 1;
+
+  if (set_const(fp->codey[1], fp->const_id, fp->need2pass, fp, first_y1))
+    return 1;
+
+  if (set_const(fp->codey[2], fp->const_id, fp->need2pass, fp, FALSE))
+    return 1;
+
+  return 0;
+}
+
+static int
 file_calculate(struct f2ddata *fp, MathEquation *eq, MathValue *x, MathValue *y, MathValue *prm, MathValue *fprm, MathValue *val)
 {
   if (eq == NULL || eq->exp == NULL)
@@ -2669,8 +2695,12 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, d
     dx3 = gdata[fp->x];
     dy3 = d3;
 
-    file_calculate(fp, fp->codey[1], &dx2, &dy2, gdata, datax, &d2);
-    file_calculate(fp, fp->codey[2], &dx3, &dy3, gdata, datax, &d3);
+    if (fp->codey[1]) {
+      file_calculate(fp, fp->codey[1], &dx2, &dy2, gdata, datax, &d2);
+    }
+    if (fp->codey[2]) {
+      file_calculate(fp, fp->codey[2], &dx3, &dy3, gdata, datax, &d3);
+    }
     break;
   }
 
@@ -5834,10 +5864,7 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   }
 
 #if NEW_MATH_CODE
-  if (set_const(fp->codex[0], fp->const_id, fp->need2pass, fp, TRUE))
-    return 1;
-
-  if (set_const(fp->codey[0], fp->const_id, fp->need2pass, fp, TRUE))
+  if (set_const_all(fp))
     return 1;
 #endif
 
@@ -5866,41 +5893,15 @@ f2ddraw(struct objlist *obj, char *inst,char *rval,int argc,char **argv)
   case PLOT_TYPE_RECTANGLE_FILL:
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
 #if NEW_MATH_CODE
-    rcode = set_const(fp->codex[1], fp->const_id, fp->need2pass, fp, FALSE);
-    if (rcode)
-      break;
-
-    rcode = set_const(fp->codey[2], fp->const_id, fp->need2pass, fp, FALSE);
-    if (rcode)
-      break;
-
     rcode = rectout(obj, fp, GC, lwidth, snum, style, type);
 #else
     rcode = rectout(obj, fp, GC, fr2, fg2, fb2, lwidth, snum, style, type);
 #endif
     break;
   case PLOT_TYPE_ERRORBAR_X:
-#if NEW_MATH_CODE
-    rcode = set_const(fp->codex[1], fp->const_id, fp->need2pass, fp, FALSE);
-    if (rcode)
-      break;
-
-    rcode = set_const(fp->codex[2], fp->const_id, fp->need2pass, fp, FALSE);
-    if (rcode)
-      break;
-#endif
     rcode = errorbarout(obj, fp, GC, lwidth, snum, style, type);
     break;
   case PLOT_TYPE_ERRORBAR_Y:
-#if NEW_MATH_CODE
-    rcode = set_const(fp->codey[1], fp->const_id, fp->need2pass, fp, FALSE);
-    if (rcode)
-      break;
-
-    rcode = set_const(fp->codey[2], fp->const_id, fp->need2pass, fp, FALSE);
-    if (rcode)
-      break;
-#endif
     rcode = errorbarout(obj, fp, GC, lwidth, snum, style, type);
     break;
   case PLOT_TYPE_STAIRCASE_X:
@@ -6147,32 +6148,6 @@ f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   *(struct narray **)rval=array;
   return 0;
 }
-
-#if NEW_MATH_CODE
-static int
-set_const_all(struct f2ddata *fp)
-{
-  if (set_const(fp->codex[0], fp->const_id, fp->need2pass, fp, TRUE))
-    return 1;
-
-  if (set_const(fp->codey[0], fp->const_id, fp->need2pass, fp, TRUE))
-    return 1;
-
-  if (set_const(fp->codex[1], fp->const_id, fp->need2pass, fp, FALSE))
-    return 1;
-
-  if (set_const(fp->codex[2], fp->const_id, fp->need2pass, fp, FALSE))
-    return 1;
-
-  if (set_const(fp->codey[1], fp->const_id, fp->need2pass, fp, FALSE))
-    return 1;
-
-  if (set_const(fp->codey[2], fp->const_id, fp->need2pass, fp, FALSE))
-    return 1;
-
-  return 0;
-}
-#endif
 
 static int 
 f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
