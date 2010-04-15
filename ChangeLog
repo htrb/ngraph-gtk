@@ -1,3 +1,17 @@
+2010-04-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/omath.c (create_func_def_str): use "g_strdup_printf()".
+
+	* src/ofile.c (EQUATION_NUM): add.
+	(struct f2ddata, set_user_fnc, set_equation): use "EQUATION_NUM".
+	(create_func_def_str): use "g_strdup_printf()".
+	(set_const_all): last argument of "set_const()" for "fp->codex[1]"
+	and "fp->codey[1]" is depend on "fp->type".
+	(f2ddraw): use "set_const_all()" instead of "set_const()".
+
+	* src/gtk/gtk_common.h (GTK_WIDGET_VISIBLE): use
+	"gtk_widget_get_visible()" if "GTK_WIDGET_VISIBLE" is not defined.
+
 2010-04-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileDialogCopyAll): remove.
