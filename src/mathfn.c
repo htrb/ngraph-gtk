@@ -767,46 +767,46 @@ chebyshev(int n,double x,double *val)
 #endif
 
 void 
-HSB2RGB(double h,double s,double b,int *R,int *G,int *B)
+HSB2RGB(double h, double s, double b, int *R, int *G, int *B)
 {
-  double th,s3;
+  double th, s3;
 
-  if (b==0) {
-    *R=*G=*B=0;
+  if (b == 0) {
+    *R = *G = *B = 0;
     return;
   }
-  s=1-s;
-  s3=sqrt(3.0);
-  if (1.0/6.0>=h) {
-    th=tan(2*MPI*h);
-    *R=b*255;
-    *B=b*s*255;
-    *G=b*(2*th-s*(th-s3))/(th+s3)*255;
-  } else if (2.0/6.0>=h) {
-    th=tan(2*MPI*(h-1.0/3.0));
-    *G=b*255;
-    *B=b*s*255;
-    *R=b*(2*th-s*(th+s3))/(th-s3)*255;
-  } else if (3.0/6.0>=h) {
-    th=tan(2*MPI*(h-1.0/3.0));
-    *G=b*255;
-    *R=b*s*255;
-    *B=b*(2*th-s*(th-s3))/(th+s3)*255;
-  } else if (4.0/6.0>=h) {
-    th=tan(2*MPI*(h-2.0/3.0));
-    *B=b*255;
-    *R=b*s*255;
-    *G=b*(2*th-s*(th+s3))/(th-s3)*255;
-  } else if (5.0/6.0>=h) {
-    th=tan(2*MPI*(h-2.0/3.0));
-    *B=b*255;
-    *G=b*s*255;
-    *R=b*(2*th-s*(th-s3))/(th+s3)*255;
+  s = 1 - s;
+  s3 = sqrt(3.0);
+  if (1.0 / 6.0 >= h) {
+    th = tan(2 * MPI * h);
+    *R = b * 255;
+    *B = b * s * 255;
+    *G = b * (2 * th - s * (th - s3)) / (th + s3) * 255;
+  } else if (2.0 / 6.0 >= h) {
+    th = tan(2 * MPI * (h - 1.0 / 3.0));
+    *G = b * 255;
+    *B = b * s * 255;
+    *R = b * (2 * th - s * (th + s3)) / (th - s3) * 255;
+  } else if (3.0 / 6.0 >= h) {
+    th = tan(2 * MPI * (h - 1.0 / 3.0));
+    *G = b * 255;
+    *R = b * s * 255;
+    *B = b * (2 * th - s * (th - s3)) / (th + s3) * 255;
+  } else if (4.0 / 6.0 >= h) {
+    th = tan(2 * MPI * (h - 2.0 / 3.0));
+    *B = b * 255;
+    *R = b * s * 255;
+    *G = b * (2 * th - s * (th + s3)) / (th - s3) * 255;
+  } else if (5.0 / 6.0 >= h) {
+    th = tan(2 * MPI * (h - 2.0 / 3.0));
+    *B = b * 255;
+    *G = b * s * 255;
+    *R = b * (2 * th - s * (th - s3)) / (th + s3) * 255;
   } else {
-    th=tan(2*MPI*h);
-    *R=b*255;
-    *G=b*s*255;
-    *B=b*(2*th-s*(th+s3))/(th-s3)*255;
+    th = tan(2 * MPI * h);
+    *R = b * 255;
+    *G = b * s * 255;
+    *B = b * (2 * th - s * (th + s3)) / (th - s3) * 255;
   }
 }
 
