@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-14 18:46+0900\n"
-"PO-Revision-Date: 2010-04-06 13:06+0900\n"
+"POT-Creation-Date: 2010-04-19 16:01+0900\n"
+"PO-Revision-Date: 2010-04-19 15:25+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -551,7 +551,7 @@ msgstr "直線"
 
 #: src/gtk/x11dialg.c:172
 msgid "legend rectangle"
-msgstr "四角形"
+msgstr "矩形"
 
 #: src/gtk/x11dialg.c:175
 msgid "legend arc"
@@ -1135,7 +1135,7 @@ msgstr "多角形"
 
 #: src/gtk/x11lgnd.c:109 src/ofile.c:126
 msgid "rectangle"
-msgstr "四角形"
+msgstr "矩形"
 
 #: src/gtk/x11lgnd.c:110
 msgid "arc"
@@ -1191,7 +1191,7 @@ msgstr "矢印(_A):"
 #: src/gtk/x11lgnd.c:1178
 #, c-format
 msgid "Legend rectangle %d"
-msgstr "四角形 %d"
+msgstr "矩形 %d"
 
 #: src/gtk/x11lgnd.c:1200
 msgid "_Width:"
@@ -1538,12 +1538,12 @@ msgstr "多角形の新規作成 (+SHIFT:微動 +CONTROL:角度をスナップ)"
 
 #: src/gtk/x11menu.c:352 src/gtk/x11menu.c:353
 msgid "Rectangle"
-msgstr "四角形"
+msgstr "矩形"
 
 #: src/gtk/x11menu.c:354
 msgid ""
 "New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"
-msgstr "四角形の新規作成 (+SHIFT:微動 +CONTROL:正方形または縦横が整数比の矩形)"
+msgstr "矩形の新規作成 (+SHIFT:微動 +CONTROL:正方形または縦横が整数比の矩形)"
 
 #: src/gtk/x11menu.c:362 src/gtk/x11menu.c:363
 msgid "Arc"
@@ -1807,7 +1807,7 @@ msgstr "多角形(_P)"
 
 #: src/gtk/x11menu.c:1219
 msgid "_Rectangle"
-msgstr "四角形(_R)"
+msgstr "矩形(_R)"
 
 #: src/gtk/x11menu.c:1222
 msgid "_Arc"
