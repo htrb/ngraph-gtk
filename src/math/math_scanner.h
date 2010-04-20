@@ -38,6 +38,7 @@ struct math_token {
     char *sym;
   } data;
   const char *ptr;
+  struct math_token *next;
 };
 
 struct math_token *math_scanner_get_token(const char *str, const char ** rstr);
