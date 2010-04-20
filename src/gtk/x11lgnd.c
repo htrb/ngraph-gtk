@@ -2427,16 +2427,16 @@ legend_list_build(struct LegendWin *d)
   GtkTreePath *path;
 
   tree_store_clear(GTK_WIDGET(d->text));
-  for (k = 0; k < LEGENDNUM; k++) {
-    tree_store_append(GTK_WIDGET(d->text), &iter, NULL);
+  for (k = LEGENDNUM - 1; k >= 0 ; k--) {
+    tree_store_prepend(GTK_WIDGET(d->text), &iter, NULL);
     tree_store_set_string(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_PROP, _(legendlist[k]));
     d->legend[k] = chkobjlastinst(d->obj[k]);
     tree_store_set_int(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_ID, d->legend[k] + 1);
-    for (i = 0; i <= d->legend[k]; i++) {
-      tree_store_append(GTK_WIDGET(d->text), &child, &iter);
+    for (i = d->legend[k]; i >= 0 ; i--) {
+      tree_store_prepend(GTK_WIDGET(d->text), &child, &iter);
       legend_list_set_val(d, &child, k, i);
     }
-    path = gtk_tree_path_new_from_indices(k, -1);
+    path = gtk_tree_path_new_from_indices(0, -1);
     if (ExpandRow[k]) {
       gtk_tree_view_expand_row(GTK_TREE_VIEW(d->text), path, FALSE);
     }
