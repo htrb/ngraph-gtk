@@ -540,6 +540,15 @@ tree_store_append(GtkWidget *w, GtkTreeIter *iter, GtkTreeIter *parent)
   gtk_tree_store_append(GTK_TREE_STORE(model), iter, parent);
 }
 
+void
+tree_store_prepend(GtkWidget *w, GtkTreeIter *iter, GtkTreeIter *parent)
+{
+  GtkTreeModel *model;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(w));
+  gtk_tree_store_prepend(GTK_TREE_STORE(model), iter, parent);
+}
+
 gboolean
 list_store_get_iter_first(GtkWidget *w, GtkTreeIter *iter)
 {
