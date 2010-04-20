@@ -2093,55 +2093,23 @@ init_ngraph_app_struct(void)
   NgraphApp.Viewer.Win = NULL;
   NgraphApp.Viewer.popup = NULL;
 
-  NgraphApp.FileWin.Win = NULL;
-  NgraphApp.FileWin.popup = NULL;
-  NgraphApp.FileWin.popup_item = NULL;
-  NgraphApp.FileWin.ev_key = NULL;
-  NgraphApp.FileWin.ev_button = NULL;
-  NgraphApp.FileWin.window_state = 0;
+  memset(&NgraphApp.FileWin, 0, sizeof(NgraphApp.FileWin));
   NgraphApp.FileWin.can_focus = FALSE;
 
-  NgraphApp.AxisWin.Win = NULL;
-  NgraphApp.AxisWin.popup = NULL;
-  NgraphApp.AxisWin.popup_item = NULL;
-  NgraphApp.AxisWin.ev_key = NULL;
-  NgraphApp.AxisWin.ev_button = NULL;
-  NgraphApp.AxisWin.window_state = 0;
+  memset(&NgraphApp.AxisWin, 0, sizeof(NgraphApp.AxisWin));
   NgraphApp.AxisWin.can_focus = TRUE;
 
-  NgraphApp.LegendWin.Win = NULL;
-  NgraphApp.LegendWin.popup = NULL;
-  NgraphApp.LegendWin.popup_item = NULL;
-  NgraphApp.LegendWin.ev_key = NULL;
-  NgraphApp.LegendWin.ev_button = NULL;
-  NgraphApp.LegendWin.window_state = 0;
+  memset(&NgraphApp.LegendWin, 0, sizeof(NgraphApp.LegendWin));
   NgraphApp.LegendWin.can_focus = TRUE;
 
-  NgraphApp.MergeWin.Win = NULL;
-  NgraphApp.MergeWin.popup = NULL;
-  NgraphApp.MergeWin.popup_item = NULL;
-  NgraphApp.MergeWin.ev_key = NULL;
-  NgraphApp.MergeWin.ev_button = NULL;
-  NgraphApp.MergeWin.window_state = 0;
+  memset(&NgraphApp.MergeWin, 0, sizeof(NgraphApp.MergeWin));
   NgraphApp.MergeWin.can_focus = TRUE;
 
-  NgraphApp.InfoWin.Win = NULL;
-  NgraphApp.InfoWin.popup = NULL;
-  NgraphApp.InfoWin.popup_item = NULL;
-  NgraphApp.InfoWin.str = NULL;
-  NgraphApp.InfoWin.ev_key = NULL;
-  NgraphApp.InfoWin.ev_button = NULL;
-  NgraphApp.InfoWin.window_state = 0;
-  NgraphApp.FileWin.can_focus = FALSE;
+  memset(&NgraphApp.InfoWin, 0, sizeof(NgraphApp.InfoWin));
+  NgraphApp.InfoWin.can_focus = FALSE;
 
-  NgraphApp.CoordWin.Win = NULL;
-  NgraphApp.CoordWin.popup = NULL;
-  NgraphApp.CoordWin.popup_item = NULL;
-  NgraphApp.CoordWin.str = NULL;
-  NgraphApp.CoordWin.ev_key = NULL;
-  NgraphApp.CoordWin.ev_button = NULL;
-  NgraphApp.CoordWin.window_state = 0;
-  NgraphApp.FileWin.can_focus = FALSE;
+  memset(&NgraphApp.CoordWin, 0, sizeof(NgraphApp.CoordWin));
+  NgraphApp.CoordWin.can_focus = FALSE;
 
   NgraphApp.legend_text_list = NULL;
   NgraphApp.x_math_list = NULL;
