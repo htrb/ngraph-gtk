@@ -3281,6 +3281,7 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
     d->setup_dialog = AxisDialog;
     d->dialog = &DlgAxis;
     d->ev_key = axiswin_ev_key_down;
+    d->delete = AxisDel;
 
     dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
 
