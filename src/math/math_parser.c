@@ -22,8 +22,7 @@
 
 MathValue MATH_VALUE_ZERO = {0.0, MATH_VALUE_NORMAL};
 
-static struct math_token *st_look_ahead_token[3];
-static int st_look_ahead_token_exists = 0;
+static struct math_token *st_look_ahead_token = NULL;
 
 static MathExpression * parse_expression(const char **str, MathEquation *eq, int *err);
 static MathExpression * parse_expression_list(const char **str, MathEquation *eq, int inside_block, int *err);
@@ -35,31 +34,12 @@ my_get_token(const const char **str)
 {
   struct math_token *token;
 
-  switch (st_look_ahead_token_exists) {
-  case 0:
+  if (st_look_ahead_token) {
+    token = st_look_ahead_token;
+    st_look_ahead_token = token->next;
+    token->next = NULL;
+  } else {
     token = math_scanner_get_token(*str, str);
-    break;
-  case 1:
-    st_look_ahead_token_exists--;
-    token = st_look_ahead_token[0];
-    st_look_ahead_token[0] = NULL;
-    break;
- case 2:
-    st_look_ahead_token_exists--;
-    token = st_look_ahead_token[0];
-    st_look_ahead_token[0] = st_look_ahead_token[1];
-    st_look_ahead_token[1] = NULL;
-    break;
- case 3:
-    st_look_ahead_token_exists--;
-    token = st_look_ahead_token[0];
-    st_look_ahead_token[0] = st_look_ahead_token[1];
-    st_look_ahead_token[1] = st_look_ahead_token[2];
-    st_look_ahead_token[2] = NULL;
-    break;
-  default:
-    token = NULL;
-    break;
   }
 
   return token;
@@ -68,20 +48,8 @@ my_get_token(const const char **str)
 static void
 unget_token(struct math_token *token)
 {
-  switch (st_look_ahead_token_exists) {
-  case 3:
-    break;
-  case 2:
-    st_look_ahead_token[2] = st_look_ahead_token[1];
-  case 1:
-    st_look_ahead_token[1] = st_look_ahead_token[0];
-  case 0:
-    st_look_ahead_token[0] = token;
-    st_look_ahead_token_exists++;
-    break;
-  default:
-    break;
-  }
+  token->next = st_look_ahead_token;
+  st_look_ahead_token = token;
 }
 
 static MathExpression *
@@ -1081,6 +1049,7 @@ parse_expression_list(const char ** str, MathEquation *eq, int inside_block, int
 	math_scanner_free_token(token);
 	goto End;
       }
+      math_scanner_free_token(token);
       continue;
     case MATH_TOKEN_TYPE_RC:
       if (inside_block) {
@@ -1141,18 +1110,21 @@ MathExpression *
 math_parser_parse(const char *line, MathEquation *eq, int *err)
 {
   const char *ptr = line;
+  struct math_token *token, *tmp;
   MathExpression *exp;
-  int i;
 
   *err = MATH_ERROR_NONE;
 
-  st_look_ahead_token_exists = 0;
+  st_look_ahead_token = NULL;
   exp = parse_expression_list(&ptr, eq, 0, err);
 
-  for (i = 0; i < st_look_ahead_token_exists; i++) {
-    math_scanner_free_token(st_look_ahead_token[i]);
-    st_look_ahead_token[i] = NULL;
+  token = st_look_ahead_token;
+  while (token) {
+    tmp = token->next;
+    math_scanner_free_token(token);
+    token = tmp;
   }
+  st_look_ahead_token = NULL;
 
   return exp;
 }
