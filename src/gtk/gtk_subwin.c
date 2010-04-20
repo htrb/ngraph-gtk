@@ -664,7 +664,11 @@ delete(struct SubWin *d)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   if (sel >= 0 && sel <= d->num) {
-    delobj(d->obj, sel);
+    if (d->delete) {
+      d->delete(sel);
+    } else {
+      delobj(d->obj, sel);
+    }
     d->num--;
     update = FALSE;
     if (d->num < 0) {
@@ -761,8 +765,13 @@ update(struct SubWin *d)
     d->setup_dialog(d->dialog, d->obj, sel, -1);
     d->select = sel;
     if ((ret = DialogExecute(d->Win, d->dialog)) == IDDELETE) {
-      delobj(d->obj, sel);
+      if (d->delete) {
+	d->delete(sel);
+      } else {
+	delobj(d->obj, sel);
+      }
       d->select = -1;
+      set_graph_modified();
     }
     d->update(FALSE);
   }
