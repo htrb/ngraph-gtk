@@ -190,16 +190,17 @@ enum SubWinType {
   TypeCoordWin,
 };
 
-#define SUBWIN_PROTOTYPE enum SubWinType type;\
-  GtkWidget *Win, *swin, *popup, **popup_item;\
-  GdkWindowState window_state;\
-  GObject *text;\
-  int select, num, can_focus;\
-  void (* update)(int);\
-  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id);\
-  void *dialog;\
-  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);\
-  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);\
+#define SUBWIN_PROTOTYPE enum SubWinType type;				\
+  GtkWidget *Win, *swin, *popup, **popup_item;				\
+  GdkWindowState window_state;						\
+  GObject *text;							\
+  int select, num, can_focus;						\
+  void (* update)(int);							\
+  void (* delete)(int);							\
+  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id); \
+  void *dialog;								\
+  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);		\
+  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);	\
 
 
 struct SubWin
