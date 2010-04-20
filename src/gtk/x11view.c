@@ -861,17 +861,17 @@ EvalDialogSetupItem(GtkWidget *w, struct EvalDialog *d)
   tree_store_clear(d->list);
 
   id = -1;
-  for (i = 0; i < d->Num; i++) {
+  for (i = d->Num - 1; i >= 0; i--) {
     if (id != EvalList[i].id) {
       if (id >= 0) {
 	eval_dialog_set_parent_cal(d->list, &parent, id, n);
       }
-      tree_store_append(d->list, &parent, NULL);
+      tree_store_prepend(d->list, &parent, NULL);
       id = EvalList[i].id;
       n = 0;
     }
 
-    tree_store_append(d->list, &iter, &parent);
+    tree_store_prepend(d->list, &iter, &parent);
     tree_store_set_int(d->list, &iter, EVAL_DIALOG_COL_TYPE_ID, EvalList[i].id);
     tree_store_set_int(d->list, &iter, EVAL_DIALOG_COL_TYPE_LN, EvalList[i].line);
 
