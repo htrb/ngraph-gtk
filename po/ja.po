@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-19 16:01+0900\n"
+"POT-Creation-Date: 2010-04-20 18:25+0900\n"
 "PO-Revision-Date: 2010-04-19 15:25+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -972,23 +972,23 @@ msgstr "移動(_M)"
 msgid "_Fit:"
 msgstr "フィット(_F):"
 
-#: src/gtk/x11file.c:3398
+#: src/gtk/x11file.c:3407
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:3442
+#: src/gtk/x11file.c:3450
 msgid "Data open"
 msgstr "データを開く"
 
-#: src/gtk/x11file.c:4445 src/gtk/x11file.c:4495
+#: src/gtk/x11file.c:4452 src/gtk/x11file.c:4502
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4453 src/gtk/x11file.c:4501
+#: src/gtk/x11file.c:4460 src/gtk/x11file.c:4508
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11file.c:4458
+#: src/gtk/x11file.c:4465
 msgid "Type"
 msgstr "タイプ"
 
@@ -1953,15 +1953,15 @@ msgstr "クロスゲージ(_G)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2637
+#: src/gtk/x11menu.c:2605
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2687
+#: src/gtk/x11menu.c:2655
 msgid "Question"
 msgstr "質問:"
 
-#: src/gtk/x11menu.c:2744
+#: src/gtk/x11menu.c:2712
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."

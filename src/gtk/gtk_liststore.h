@@ -55,6 +55,7 @@ void list_store_select_all(GtkWidget *w);
 
 GtkWidget *tree_store_create(int n, n_list_store *list);
 void tree_store_append(GtkWidget *w, GtkTreeIter *iter, GtkTreeIter *parent);
+void tree_store_prepend(GtkWidget *w, GtkTreeIter *iter, GtkTreeIter *parent);
 gboolean tree_store_get_iter_children(GtkWidget *w, GtkTreeIter *child, GtkTreeIter *iter);
 gboolean tree_store_get_selected_nth(GtkWidget *w, int *n, int *m);
 void tree_store_select_nth(GtkWidget *w, int n, int m);
