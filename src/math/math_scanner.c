@@ -485,7 +485,7 @@ create_token(const char *str, enum MATH_TOKEN_TYPE type)
 {
   struct math_token *tok;
 
-  tok = g_malloc(sizeof(*tok));
+  tok = g_malloc0(sizeof(*tok));
   if (tok == NULL) {
     return NULL;
   }
