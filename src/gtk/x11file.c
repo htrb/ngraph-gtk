@@ -3339,6 +3339,16 @@ FileDefDialog(struct FileDialog *data, struct objlist *obj, int id)
   data->Id = id;
 }
 
+static void
+delete_file_obj(int id)
+{
+  struct objlist *obj;
+
+  obj = chkobject("file");
+  FitDel(obj, id);
+  delobj(obj, id);
+}
+
 void
 CmFileHistory(GtkWidget *w, gpointer client_data)
 {
@@ -3371,8 +3381,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
       FileDialog(&DlgFile, obj, id, FALSE);
       ret = DialogExecute(TopLevel, &DlgFile);
       if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	FitDel(obj, id);
-	delobj(obj, id);
+	delete_file_obj(id);
       } else {
 	set_graph_modified();
       }
@@ -3414,8 +3423,7 @@ CmFileNew(void)
   ret = DialogExecute(TopLevel, &DlgFile);
 
   if (ret == IDDELETE || ret == IDCANCEL) {
-    FitDel(obj, id);
-    delobj(obj, id);
+    delete_file_obj(id);
   } else {
     set_graph_modified();
   }
@@ -3483,8 +3491,7 @@ CmFileClose(void)
     num = arraynum(&farray);
     array = (int *) arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
-      FitDel(obj, array[i]);
-      delobj(obj, array[i]);
+      delete_file_obj(array[i]);
       set_graph_modified();
     }
     FileWinUpdate(TRUE);
@@ -3516,11 +3523,11 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	ret = IDDELETE;
       }
       if (ret == IDDELETE) {
-	FitDel(obj, array[i]);
-	delobj(obj, array[i]);
+	delete_file_obj(array[i]);
 	set_graph_modified();
-	for (j = i + 1; j < num; j++)
+	for (j = i + 1; j < num; j++) {
 	  array[j]--;
+	}
       } else if (ret == IDFAPPLY) {
 	id0 = i;
       }
@@ -3706,8 +3713,7 @@ FileWinFileDelete(struct SubWin *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
 
   if ((sel >= 0) && (sel <= d->num)) {
-    FitDel(d->obj, sel);
-    delobj(d->obj, sel);
+    delete_file_obj(sel);
     d->num--;
     update = FALSE;
     if (d->num < 0) {
@@ -3818,9 +3824,10 @@ FileWinFileUpdate(struct SubWin *d)
   if ((sel >= 0) && (sel <= d->num)) {
     d->setup_dialog(d->dialog, d->obj, sel, FALSE);
     d->select = sel;
-    if ((ret = DialogExecute(d->Win, d->dialog)) == IDDELETE) {
-      FitDel(d->obj, sel);
-      delobj(d->obj, sel);
+
+    ret = DialogExecute(d->Win, d->dialog);
+    if (ret == IDDELETE) {
+      delete_file_obj(sel);
       d->select = -1;
       set_graph_modified();
     }
@@ -4868,6 +4875,7 @@ CmFileWindow(GtkWidget *w, gpointer client_data)
     d->setup_dialog = FileDialog;
     d->dialog = &DlgFile;
     d->ev_key = filewin_ev_key_down;
+    d->delete = delete_file_obj;
 
     dlg = list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
 
