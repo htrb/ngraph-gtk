@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-20 18:25+0900\n"
-"PO-Revision-Date: 2010-04-19 15:25+0900\n"
+"POT-Creation-Date: 2010-04-21 18:48+0900\n"
+"PO-Revision-Date: 2010-04-21 18:41+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -697,7 +697,7 @@ msgstr "データ数"
 msgid "duplicate _Behind"
 msgstr "直後に複製(_B)"
 
-#: src/gtk/x11file.c:112 src/gtk/x11file.c:1455 src/gtk/x11menu.c:1295
+#: src/gtk/x11file.c:112 src/gtk/x11file.c:1455 src/gtk/x11menu.c:1298
 msgid "_Draw"
 msgstr "描画(_D)"
 
@@ -1437,7 +1437,7 @@ msgid "Clear Viewer Window"
 msgstr "スケールのクリア"
 
 #: src/gtk/x11menu.c:238 src/gtk/x11menu.c:239 src/gtk/x11menu.c:240
-#: src/gtk/x11print.c:651
+#: src/gtk/x11print.c:673
 msgid "Print"
 msgstr "印刷"
 
@@ -1849,119 +1849,123 @@ msgstr "_SVG ファイル"
 msgid "P_NG file"
 msgstr "P_NG ファイル"
 
-#: src/gtk/x11menu.c:1287
+#: src/gtk/x11menu.c:1273
+msgid "E_MF file"
+msgstr "E_MF ファイル"
+
+#: src/gtk/x11menu.c:1290
 msgid "_Output"
 msgstr "出力(_O)"
 
-#: src/gtk/x11menu.c:1299
+#: src/gtk/x11menu.c:1302
 msgid "_Export image"
 msgstr "画像にエクスポート(_E)"
 
-#: src/gtk/x11menu.c:1303
+#: src/gtk/x11menu.c:1306
 msgid "external _Viewer"
 msgstr "外部ビューア(_V)"
 
-#: src/gtk/x11menu.c:1305
+#: src/gtk/x11menu.c:1308
 msgid "external _Driver"
 msgstr "外部ドライバ(_D)"
 
-#: src/gtk/x11menu.c:1307
+#: src/gtk/x11menu.c:1310
 msgid "data _File"
 msgstr "データファイル(_F)"
 
-#: src/gtk/x11menu.c:1317
+#: src/gtk/x11menu.c:1320
 msgid "_Preference"
 msgstr "設定(_P)"
 
-#: src/gtk/x11menu.c:1324 src/gtk/x11opt.c:80
+#: src/gtk/x11menu.c:1327 src/gtk/x11opt.c:80
 msgid "_Viewer"
 msgstr "ビューア(_V)"
 
-#: src/gtk/x11menu.c:1325
+#: src/gtk/x11menu.c:1328
 msgid "_External viewer"
 msgstr "外部ビューア(_E)"
 
-#: src/gtk/x11menu.c:1326 src/gtk/x11opt.c:88
+#: src/gtk/x11menu.c:1329 src/gtk/x11opt.c:88
 msgid "_Font aliases"
 msgstr "フォント別名(_F)"
 
-#: src/gtk/x11menu.c:1327
+#: src/gtk/x11menu.c:1330
 msgid "External _Driver"
 msgstr "外部ドライバ(_D)"
 
-#: src/gtk/x11menu.c:1328
+#: src/gtk/x11menu.c:1331
 msgid "_Add-in script"
 msgstr "スクリプト設定"
 
-#: src/gtk/x11menu.c:1329 src/gtk/x11opt.c:100
+#: src/gtk/x11menu.c:1332 src/gtk/x11opt.c:100
 msgid "_Miscellaneous"
 msgstr "その他(_M)"
 
-#: src/gtk/x11menu.c:1331
+#: src/gtk/x11menu.c:1334
 msgid "save as default (_Settings)"
 msgstr "初期状態としてセーブ(各種設定)(_S)"
 
-#: src/gtk/x11menu.c:1332
+#: src/gtk/x11menu.c:1335
 msgid "save as default (_Graph)"
 msgstr "初期状態としてセーブ(グラフ)(_G)"
 
-#: src/gtk/x11menu.c:1334
+#: src/gtk/x11menu.c:1337
 msgid "_Data file default"
 msgstr "データファイル初期状態(_D)"
 
-#: src/gtk/x11menu.c:1335
+#: src/gtk/x11menu.c:1338
 msgid "_Legend text default"
 msgstr "レジェンドテキスト初期状態(_T)"
 
-#: src/gtk/x11menu.c:1445
+#: src/gtk/x11menu.c:1448
 msgid "_View"
 msgstr "表示(_V)"
 
-#: src/gtk/x11menu.c:1473
+#: src/gtk/x11menu.c:1476
 msgid "default _Window config"
 msgstr "初期状態のウィンドウ配置(_W)"
 
-#: src/gtk/x11menu.c:1480
+#: src/gtk/x11menu.c:1483
 msgid "_Clear information window"
 msgstr "Information Window をクリア(_C)"
 
-#: src/gtk/x11menu.c:1487
+#: src/gtk/x11menu.c:1490
 msgid "_Status bar"
 msgstr "ステータスバー(_S)"
 
-#: src/gtk/x11menu.c:1491
+#: src/gtk/x11menu.c:1494
 msgid "_Ruler"
 msgstr "ルーラー(_R)"
 
-#: src/gtk/x11menu.c:1495
+#: src/gtk/x11menu.c:1498
 msgid "_Scrollbar"
 msgstr "スクロールバー(_S)"
 
-#: src/gtk/x11menu.c:1499
+#: src/gtk/x11menu.c:1502
 msgid "_Command toolbar"
 msgstr "コマンドツールバー(_C)"
 
-#: src/gtk/x11menu.c:1503
+#: src/gtk/x11menu.c:1506
 msgid "_Toolbox"
 msgstr "ツールボックス(_T) "
 
-#: src/gtk/x11menu.c:1507 src/gtk/x11view.c:1159
+#: src/gtk/x11menu.c:1510 src/gtk/x11view.c:1159
 msgid "cross _Gauge"
 msgstr "クロスゲージ(_G)"
 
-#: src/gtk/x11menu.c:1519
+#: src/gtk/x11menu.c:1522
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2605
+#: src/gtk/x11menu.c:2608
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2655
+#: src/gtk/x11menu.c:2658
 msgid "Question"
 msgstr "質問:"
 
-#: src/gtk/x11menu.c:2712
+#: src/gtk/x11menu.c:2715
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
@@ -2219,68 +2223,72 @@ msgstr "ポストスクリプトレベル(_P):"
 msgid "_SVG Version:"
 msgstr "_SVG バージョン"
 
-#: src/gtk/x11print.c:356
+#: src/gtk/x11print.c:368
 msgid "_Convert texts to paths"
 msgstr "テキストをパスに変換(_C)"
 
-#: src/gtk/x11print.c:373
+#: src/gtk/x11print.c:385
 msgid "Cairo PS Output"
 msgstr "Cairo PS 出力"
 
-#: src/gtk/x11print.c:376
+#: src/gtk/x11print.c:388
 msgid "Cairo EPS Output"
 msgstr "Cairo EPS 出力"
 
-#: src/gtk/x11print.c:379
+#: src/gtk/x11print.c:391
 msgid "Cairo PNG Output"
 msgstr "Cairo PNG 出力"
 
-#: src/gtk/x11print.c:382
+#: src/gtk/x11print.c:394
 msgid "Cairo PDF Output"
 msgstr "Cairo PDF 出力"
 
-#: src/gtk/x11print.c:385
+#: src/gtk/x11print.c:397
 msgid "Cairo SVG Output"
 msgstr "Cairo SVG 出力"
 
-#: src/gtk/x11print.c:508
+#: src/gtk/x11print.c:401
+msgid "Cairo EMF Output"
+msgstr "Cairo EMF 出力"
+
+#: src/gtk/x11print.c:530
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:650
+#: src/gtk/x11print.c:672
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:699
+#: src/gtk/x11print.c:721
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:705 src/gtk/x11print.c:956 src/gtk/x11view.c:5530
+#: src/gtk/x11print.c:727 src/gtk/x11print.c:987 src/gtk/x11view.c:5530
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11print.c:766
+#: src/gtk/x11print.c:788
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:805
+#: src/gtk/x11print.c:827
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:845
+#: src/gtk/x11print.c:867
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11print.c:1010
+#: src/gtk/x11print.c:1041
 msgid "Data file"
 msgstr "データの保存"
 
-#: src/gtk/x11print.c:1016
+#: src/gtk/x11print.c:1047
 msgid "Making data file"
 msgstr "データファイル作成中"
 
-#: src/gtk/x11print.c:1017
+#: src/gtk/x11print.c:1048
 msgid "Making data file."
 msgstr "データファイル作成中"
 

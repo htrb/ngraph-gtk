@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-43\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-20 18:25+0900\n"
+"POT-Creation-Date: 2010-04-21 18:48+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -695,7 +695,7 @@ msgstr ""
 msgid "duplicate _Behind"
 msgstr ""
 
-#: src/gtk/x11file.c:112 src/gtk/x11file.c:1455 src/gtk/x11menu.c:1295
+#: src/gtk/x11file.c:112 src/gtk/x11file.c:1455 src/gtk/x11menu.c:1298
 msgid "_Draw"
 msgstr ""
 
@@ -1433,7 +1433,7 @@ msgid "Clear Viewer Window"
 msgstr ""
 
 #: src/gtk/x11menu.c:238 src/gtk/x11menu.c:239 src/gtk/x11menu.c:240
-#: src/gtk/x11print.c:651
+#: src/gtk/x11print.c:673
 msgid "Print"
 msgstr ""
 
@@ -1844,119 +1844,123 @@ msgstr ""
 msgid "P_NG file"
 msgstr ""
 
-#: src/gtk/x11menu.c:1287
+#: src/gtk/x11menu.c:1273
+msgid "E_MF file"
+msgstr ""
+
+#: src/gtk/x11menu.c:1290
 msgid "_Output"
 msgstr ""
 
-#: src/gtk/x11menu.c:1299
+#: src/gtk/x11menu.c:1302
 msgid "_Export image"
 msgstr ""
 
-#: src/gtk/x11menu.c:1303
+#: src/gtk/x11menu.c:1306
 msgid "external _Viewer"
 msgstr ""
 
-#: src/gtk/x11menu.c:1305
+#: src/gtk/x11menu.c:1308
 msgid "external _Driver"
 msgstr ""
 
-#: src/gtk/x11menu.c:1307
+#: src/gtk/x11menu.c:1310
 msgid "data _File"
 msgstr ""
 
-#: src/gtk/x11menu.c:1317
+#: src/gtk/x11menu.c:1320
 msgid "_Preference"
 msgstr ""
 
-#: src/gtk/x11menu.c:1324 src/gtk/x11opt.c:80
+#: src/gtk/x11menu.c:1327 src/gtk/x11opt.c:80
 msgid "_Viewer"
 msgstr ""
 
-#: src/gtk/x11menu.c:1325
+#: src/gtk/x11menu.c:1328
 msgid "_External viewer"
 msgstr ""
 
-#: src/gtk/x11menu.c:1326 src/gtk/x11opt.c:88
+#: src/gtk/x11menu.c:1329 src/gtk/x11opt.c:88
 msgid "_Font aliases"
 msgstr ""
 
-#: src/gtk/x11menu.c:1327
+#: src/gtk/x11menu.c:1330
 msgid "External _Driver"
 msgstr ""
 
-#: src/gtk/x11menu.c:1328
+#: src/gtk/x11menu.c:1331
 msgid "_Add-in script"
 msgstr ""
 
-#: src/gtk/x11menu.c:1329 src/gtk/x11opt.c:100
+#: src/gtk/x11menu.c:1332 src/gtk/x11opt.c:100
 msgid "_Miscellaneous"
 msgstr ""
 
-#: src/gtk/x11menu.c:1331
+#: src/gtk/x11menu.c:1334
 msgid "save as default (_Settings)"
 msgstr ""
 
-#: src/gtk/x11menu.c:1332
+#: src/gtk/x11menu.c:1335
 msgid "save as default (_Graph)"
 msgstr ""
 
-#: src/gtk/x11menu.c:1334
+#: src/gtk/x11menu.c:1337
 msgid "_Data file default"
 msgstr ""
 
-#: src/gtk/x11menu.c:1335
+#: src/gtk/x11menu.c:1338
 msgid "_Legend text default"
 msgstr ""
 
-#: src/gtk/x11menu.c:1445
+#: src/gtk/x11menu.c:1448
 msgid "_View"
 msgstr ""
 
-#: src/gtk/x11menu.c:1473
+#: src/gtk/x11menu.c:1476
 msgid "default _Window config"
 msgstr ""
 
-#: src/gtk/x11menu.c:1480
+#: src/gtk/x11menu.c:1483
 msgid "_Clear information window"
 msgstr ""
 
-#: src/gtk/x11menu.c:1487
+#: src/gtk/x11menu.c:1490
 msgid "_Status bar"
 msgstr ""
 
-#: src/gtk/x11menu.c:1491
+#: src/gtk/x11menu.c:1494
 msgid "_Ruler"
 msgstr ""
 
-#: src/gtk/x11menu.c:1495
+#: src/gtk/x11menu.c:1498
 msgid "_Scrollbar"
 msgstr ""
 
-#: src/gtk/x11menu.c:1499
+#: src/gtk/x11menu.c:1502
 msgid "_Command toolbar"
 msgstr ""
 
-#: src/gtk/x11menu.c:1503
+#: src/gtk/x11menu.c:1506
 msgid "_Toolbox"
 msgstr ""
 
-#: src/gtk/x11menu.c:1507 src/gtk/x11view.c:1159
+#: src/gtk/x11menu.c:1510 src/gtk/x11view.c:1159
 msgid "cross _Gauge"
 msgstr ""
 
-#: src/gtk/x11menu.c:1519
+#: src/gtk/x11menu.c:1522
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2605
+#: src/gtk/x11menu.c:2608
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2655
+#: src/gtk/x11menu.c:2658
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:2712
+#: src/gtk/x11menu.c:2715
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
@@ -2214,68 +2218,72 @@ msgstr ""
 msgid "_SVG Version:"
 msgstr ""
 
-#: src/gtk/x11print.c:356
+#: src/gtk/x11print.c:368
 msgid "_Convert texts to paths"
 msgstr ""
 
-#: src/gtk/x11print.c:373
+#: src/gtk/x11print.c:385
 msgid "Cairo PS Output"
 msgstr ""
 
-#: src/gtk/x11print.c:376
+#: src/gtk/x11print.c:388
 msgid "Cairo EPS Output"
 msgstr ""
 
-#: src/gtk/x11print.c:379
+#: src/gtk/x11print.c:391
 msgid "Cairo PNG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:382
+#: src/gtk/x11print.c:394
 msgid "Cairo PDF Output"
 msgstr ""
 
-#: src/gtk/x11print.c:385
+#: src/gtk/x11print.c:397
 msgid "Cairo SVG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:508
+#: src/gtk/x11print.c:401
+msgid "Cairo EMF Output"
+msgstr ""
+
+#: src/gtk/x11print.c:530
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:650
+#: src/gtk/x11print.c:672
 #, c-format
 msgid "Printing error: %s"
 msgstr ""
 
-#: src/gtk/x11print.c:699
+#: src/gtk/x11print.c:721
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:705 src/gtk/x11print.c:956 src/gtk/x11view.c:5530
+#: src/gtk/x11print.c:727 src/gtk/x11print.c:987 src/gtk/x11view.c:5530
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:766
+#: src/gtk/x11print.c:788
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:805
+#: src/gtk/x11print.c:827
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:845
+#: src/gtk/x11print.c:867
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:1010
+#: src/gtk/x11print.c:1041
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1016
+#: src/gtk/x11print.c:1047
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1017
+#: src/gtk/x11print.c:1048
 msgid "Making data file."
 msgstr ""
 

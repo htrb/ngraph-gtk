@@ -1,3 +1,20 @@
+2010-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_image_outputmenu): add "EMF file" menu
+	item.
+
+	* src/gtk/x11print.c (OutputImageDialogSetupItem)
+	(OutputImageDialogSetup, OutputImageDialogClose)
+	(CmOutputImage, CmOutputMenu): add case for "MenuIdOutputEMFFile".
+
+	* src/gtk/x11menu.h (MenuID): add "MenuIdOutputEMFFile".
+
+	* src/gtk/ogra2cairofile.h (surface_type_id): add "TYPE_EMF".
+
+	* src/gtk/ogra2cairofile.c (CAIRO_EMF_SCALE): add.
+	(surface_type): add type "emf".
+	(create_cairo, gra2cairofile_output): add case for "TYPE_EMF".
+
 2010-04-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (legend_list_build): use
