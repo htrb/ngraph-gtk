@@ -14,6 +14,9 @@
 #include <cairo/cairo-ps.h>
 #include <cairo/cairo-pdf.h>
 #include <cairo/cairo-svg.h>
+#ifdef CAIRO_HAS_WIN32_SURFACE
+#include <cairo/cairo-win32.h>
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
 
 #include "mathfn.h"
 #include "ngraph.h"
@@ -32,6 +35,10 @@
 #define M_PI 3.141592
 #endif
 
+#ifdef CAIRO_HAS_WIN32_SURFACE
+#define CAIRO_EMF_SCALE 16
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
+
 char *surface_type[] = {
   "ps2",
   "ps3",
@@ -41,6 +48,9 @@ char *surface_type[] = {
   "svg1.1",
   "svg1.2",
   "png",
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  "emf",
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
   NULL,
 };
 
@@ -96,8 +106,12 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
   double w, h;
   int format, dpi, r;
   struct gra2cairo_local *local;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  HDC hdc;
+  XFORM xform;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
 
-#if WINDOWS
+#ifdef WINDOWS
   fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
 #else  /* WINDOWS */
   fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);
@@ -152,6 +166,20 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
   case TYPE_PNG:
     ps = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w, h);
     break;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case TYPE_EMF:
+    hdc = CreateEnhMetaFile(NULL, fname, NULL, NULL);
+    SetGraphicsMode(hdc, GM_ADVANCED);
+    xform.eM11 = 1.0 / CAIRO_EMF_SCALE;
+    xform.eM12 = 0;
+    xform.eM21 = 0;
+    xform.eM22 = 1.0 / CAIRO_EMF_SCALE;
+    xform.eDx = 0;
+    xform.eDy = 0;
+    SetWorldTransform(hdc, &xform);
+    ps = cairo_win32_printing_surface_create(hdc);
+    break;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
   default:
     ps = cairo_ps_surface_create(fname, w, h);
   }
@@ -176,11 +204,18 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
     return NULL;
   }
 
-  if (format == TYPE_PNG) {
+  switch (format) {
+  case TYPE_PNG:
     cairo_set_source_rgb(cairo, 1, 1, 1);
     cairo_rectangle(cairo, 0, 0, w, h);
     cairo_fill(cairo);
     cairo_new_path(cairo);
+    break;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case TYPE_EMF:
+    cairo_scale (cairo, CAIRO_EMF_SCALE, CAIRO_EMF_SCALE);
+    break;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
   }
 
   return cairo;
@@ -222,6 +257,11 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
   char code, *cstr, *fname;
   int *cpar, format, r;
   struct gra2cairo_local *local;
+  cairo_surface_t *surface;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  HDC hdc;
+  HENHMETAFILE emf;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
 
   local = (struct gra2cairo_local *)argv[2];
   code = *(char *)(argv[3]);
@@ -239,30 +279,45 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
     break;
   case 'E':
     _getobj(obj, "format", inst, &format);
-    if (local->cairo && format == TYPE_PNG) {
-      gra2cairo_draw_path(local);
+    if (local->cairo) {
+      switch (format) {
+      case TYPE_PNG:
+	gra2cairo_draw_path(local);
 
-      _getobj(obj, "file", inst, &fname);
-      if (fname == NULL)
-	return 1;
+	_getobj(obj, "file", inst, &fname);
+	if (fname == NULL)
+	  return 1;
 
 #if WINDOWS
-      fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
+	fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
 #else  /* WINDOWS */
-      fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);
+	fname = g_filename_from_utf8(fname, -1, NULL, NULL, NULL);
 #endif	/* WINDOWS */
-      if (fname == NULL) {
-	error(obj, CAIRO_STATUS_NO_MEMORY + 100);
-	return 1;
-      }
-      r = cairo_surface_write_to_png(cairo_get_target(local->cairo), fname);
+	if (fname == NULL) {
+	  error(obj, CAIRO_STATUS_NO_MEMORY + 100);
+	  return 1;
+	}
+	surface = cairo_get_target(local->cairo);
+	r = cairo_surface_write_to_png(surface, fname);
 
-      g_free(fname);
+	g_free(fname);
 
-      if (r) {
-	_getobj(obj, "file", inst, &fname);
-	error2(obj, r + 100, fname);
-	return 1;
+	if (r) {
+	  _getobj(obj, "file", inst, &fname);
+	  error2(obj, r + 100, fname);
+	  return 1;
+	}
+	break;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+      case TYPE_EMF:
+	gra2cairo_draw_path(local);
+	surface = cairo_get_target(local->cairo);
+	hdc = cairo_win32_surface_get_dc(surface);
+	cairo_surface_finish(surface);
+	emf = CloseEnhMetaFile(hdc);
+	DeleteEnhMetaFile(emf);
+	break;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
       }
     }
     break;
