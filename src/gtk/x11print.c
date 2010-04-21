@@ -340,6 +340,18 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_SVG Version:"));
     break;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case MenuIdOutputEMFFile:
+    combo_box_append_text(d->version, "--------");
+
+    gtk_widget_set_sensitive(d->version, FALSE);
+    gtk_widget_set_sensitive(d->vlabel, FALSE);
+    gtk_widget_set_sensitive(d->dlabel, FALSE);
+    gtk_widget_set_sensitive(d->dpi, FALSE);
+
+    gtk_widget_set_sensitive(d->t2p, TRUE);
+    break;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
   }
   combo_box_set_active(d->version, 0);
 }
@@ -384,6 +396,11 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
   case MenuIdOutputSVGFile:
     title = N_("Cairo SVG Output");
     break;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case MenuIdOutputEMFFile:
+    title = N_("Cairo EMF Output");
+    break;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
   default:
     title = NULL; /* not reachable */
   }
@@ -433,6 +450,11 @@ OutputImageDialogClose(GtkWidget *w, void *data)
   case MenuIdOutputPNGFile:
     d->Version = TYPE_PNG;
     break;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case MenuIdOutputEMFFile:
+    d->Version = TYPE_EMF;
+    break;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
   case MenuIdOutputPDFFile:
     d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
     d->Version = TYPE_PDF;
@@ -881,6 +903,12 @@ CmOutputImage(int type)
     title = "Save as Scalable Vector Graphics (SVG)";
     ext_str = "svg";
     break;
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case MenuIdOutputEMFFile:
+    title = "Save as Scalable Vector Graphics (EMF)";
+    ext_str = "emf";
+    break;
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
   default:
     /* not reachable */
     title = NULL;
@@ -942,6 +970,9 @@ CmOutputImage(int type)
   case MenuIdOutputEPSFile:
   case MenuIdOutputSVGFile:
   case MenuIdOutputPDFFile:
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case MenuIdOutputEMFFile:
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
     t2p = DlgImageOut.text2path;
     putobj(g2wobj, "text2path", g2wid, &t2p);
     break;
@@ -1078,6 +1109,9 @@ CmOutputMenu(GtkWidget *wi, gpointer client_data)
   case MenuIdOutputPDFFile:
   case MenuIdOutputPNGFile:
   case MenuIdOutputSVGFile:
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  case MenuIdOutputEMFFile:
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
     CmOutputImage((int) client_data);
     break;
   case MenuIdPrintDataFile:
