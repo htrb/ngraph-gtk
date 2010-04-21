@@ -1269,6 +1269,9 @@ create_image_outputmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("P_DF file"), FALSE, "<Ngraph>/Output/PDF File", 0, 0, CmOutputMenu, MenuIdOutputPDFFile);
   create_menu_item(menu, _("_SVG file"), FALSE, "<Ngraph>/Output/SVG File", 0, 0, CmOutputMenu, MenuIdOutputSVGFile);
   create_menu_item(menu, _("P_NG file"), FALSE, "<Ngraph>/Output/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  create_menu_item(menu, _("E_MF file"), FALSE, "<Ngraph>/Output/EMF File", 0, 0, CmOutputMenu, MenuIdOutputEMFFile);
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
 }
 
 static void
