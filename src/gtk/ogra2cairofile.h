@@ -15,6 +15,9 @@ enum surface_type_id {
   TYPE_SVG1_1,
   TYPE_SVG1_2,
   TYPE_PNG,
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  TYPE_EMF,
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
 };
 
 #endif
