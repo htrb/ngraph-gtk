@@ -87,6 +87,7 @@ enum MenuID {
   MenuIdOutputPSFile,
   MenuIdOutputEPSFile,
   MenuIdOutputPNGFile,
+  MenuIdOutputEMFFile,
   MenuIdOutputPDFFile,
   MenuIdOutputSVGFile,
   MenuIdPrintDataFile,
