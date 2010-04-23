@@ -346,9 +346,9 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 
     gtk_widget_set_sensitive(d->version, FALSE);
     gtk_widget_set_sensitive(d->vlabel, FALSE);
-    gtk_widget_set_sensitive(d->dlabel, FALSE);
-    gtk_widget_set_sensitive(d->dpi, FALSE);
 
+    gtk_widget_set_sensitive(d->dlabel, TRUE);
+    gtk_widget_set_sensitive(d->dpi, TRUE);
     gtk_widget_set_sensitive(d->t2p, TRUE);
     break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
