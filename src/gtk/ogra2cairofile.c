@@ -35,10 +35,6 @@
 #define M_PI 3.141592
 #endif
 
-#ifdef CAIRO_HAS_WIN32_SURFACE
-#define CAIRO_EMF_SCALE 16
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
-
 char *surface_type[] = {
   "ps2",
   "ps3",
@@ -98,6 +94,47 @@ gra2cairofile_done(struct objlist *obj, char *inst, char *rval, int argc, char *
   return 0;
 }
 
+#ifdef CAIRO_HAS_WIN32_SURFACE
+static HDC
+create_reference_dc(void)
+{
+#if 0
+  PRINTDLG print_dlg;
+  DEVNAMES *dev_names;
+  DEVMODE *dev_mode;
+  char *driver_name, *device_name;
+  memset(&print_dlg, 0, sizeof(print_dlg));
+
+  print_dlg.lStructSize = sizeof(print_dlg);
+  print_dlg.Flags = PD_RETURNDEFAULT;
+
+  if (PrintDlg(&print_dlg) == 0) {
+    return CreateDC("DISPLAY", NULL, NULL, NULL);
+  }
+
+  dev_names   = (DEVNAMES *) (GlobalLock(print_dlg.hDevNames));
+  dev_mode    = (DEVMODE *) (GlobalLock(print_dlg.hDevMode));
+  driver_name = (char *) (dev_names) + dev_names->wDriverOffset;
+  device_name = (char *) (dev_names) + dev_names->wDeviceOffset;
+
+  return CreateDC(driver_name, device_name, NULL, dev_mode);
+#else
+  char name[1024];
+  DWORD len;
+  HDC hdc;
+
+  len = sizeof(name);
+  if (GetDefaultPrinter(name, &len)) {
+    hdc = CreateDC("WINSPOOL", name, NULL, NULL);
+  } else {
+    hdc = CreateDC("DISPLAY", NULL, NULL, NULL);
+  }
+
+  return hdc;
+#endif
+}
+#endif
+
 static cairo_t *
 create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *err)
 {
@@ -107,8 +144,7 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
   int format, dpi, r;
   struct gra2cairo_local *local;
 #ifdef CAIRO_HAS_WIN32_SURFACE
-  HDC hdc;
-  XFORM xform;
+  HDC hdc, hdc_ref;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
 
 #ifdef WINDOWS
@@ -168,16 +204,15 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case TYPE_EMF:
-    hdc = CreateEnhMetaFile(NULL, fname, NULL, NULL);
-    SetGraphicsMode(hdc, GM_ADVANCED);
-    xform.eM11 = 1.0 / CAIRO_EMF_SCALE;
-    xform.eM12 = 0;
-    xform.eM21 = 0;
-    xform.eM22 = 1.0 / CAIRO_EMF_SCALE;
-    xform.eDx = 0;
-    xform.eDy = 0;
-    SetWorldTransform(hdc, &xform);
+    hdc_ref = create_reference_dc();
+    hdc = CreateEnhMetaFile(hdc_ref, fname, NULL, NULL);
+    DeleteDC(hdc_ref);
+    if (hdc == NULL) {
+      g_free(fname);
+      return NULL;
+    }
     ps = cairo_win32_printing_surface_create(hdc);
+    StartPage(hdc);
     break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   default:
@@ -211,11 +246,6 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
     cairo_fill(cairo);
     cairo_new_path(cairo);
     break;
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  case TYPE_EMF:
-    cairo_scale (cairo, CAIRO_EMF_SCALE, CAIRO_EMF_SCALE);
-    break;
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
   }
 
   return cairo;
@@ -313,7 +343,10 @@ gra2cairofile_output(struct objlist *obj, char *inst, char *rval,
 	gra2cairo_draw_path(local);
 	surface = cairo_get_target(local->cairo);
 	hdc = cairo_win32_surface_get_dc(surface);
+	cairo_surface_flush(surface);
+	cairo_surface_copy_page(surface);
 	cairo_surface_finish(surface);
+	EndPage(hdc);
 	emf = CloseEnhMetaFile(hdc);
 	DeleteEnhMetaFile(emf);
 	break;
