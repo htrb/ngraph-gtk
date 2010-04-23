@@ -1,3 +1,17 @@
+2010-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* mingw/windows_make.sed: add "-lwinspool" option to the variable
+	"LIBS".
+
+	* src/gtk/x11print.c (OutputImageDialogSetupItem): "d->dpi" and
+	"d->dlabel" are sensitive.
+
+	* src/gtk/ogra2cairofile.c (create_reference_dc): add.
+	(create_cairo): use "create_reference_dc()" to get reference DC.
+	(create_cairo): call "StartPage()".
+	(gra2cairofile_output): call "cairo_surface_flush()",
+	"cairo_surface_copy_page()" and "EndPage()".
+
 2010-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_image_outputmenu): add "EMF file" menu
