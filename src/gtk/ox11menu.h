@@ -130,6 +130,10 @@ struct menulocal
   int statusb, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
   int hist_size, info_size, bg_r, bg_g, bg_b;
   int focus_frame_type;
+#ifdef WINDOWS
+  int emf_dpi;
+#endif
+  int png_dpi, ps_version, svg_version;
 };
 
 extern struct menulocal Menulocal;
@@ -144,6 +148,7 @@ enum SAVE_CONFIG_TYPE {
   SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x0040,
   SAVE_CONFIG_TYPE_FONTS           = 0x0080,
   SAVE_CONFIG_TYPE_TOGGLE_VIEW     = 0x0100,
+  SAVE_CONFIG_TYPE_EXPORT_IMAGE    = 0x0200,
 };
 
 #define SAVE_CONFIG_TYPE_X11MENU 	(SAVE_CONFIG_TYPE_GEOMETRY		\
