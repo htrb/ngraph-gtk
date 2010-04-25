@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-43\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-21 18:48+0900\n"
+"POT-Creation-Date: 2010-04-25 15:39+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1757
+#: src/gtk/ox11menu.c:1779
 msgid "Unsaved Graph"
 msgstr ""
 
@@ -1433,7 +1433,7 @@ msgid "Clear Viewer Window"
 msgstr ""
 
 #: src/gtk/x11menu.c:238 src/gtk/x11menu.c:239 src/gtk/x11menu.c:240
-#: src/gtk/x11print.c:673
+#: src/gtk/x11print.c:690
 msgid "Print"
 msgstr ""
 
@@ -1952,15 +1952,15 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2608
+#: src/gtk/x11menu.c:2609
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2658
+#: src/gtk/x11menu.c:2659
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:2715
+#: src/gtk/x11menu.c:2716
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
@@ -2210,80 +2210,80 @@ msgstr ""
 msgid "External Driver Output"
 msgstr ""
 
-#: src/gtk/x11print.c:305
+#: src/gtk/x11print.c:304
 msgid "_PostScript Version:"
 msgstr ""
 
-#: src/gtk/x11print.c:341
+#: src/gtk/x11print.c:347
 msgid "_SVG Version:"
 msgstr ""
 
-#: src/gtk/x11print.c:368
+#: src/gtk/x11print.c:379
 msgid "_Convert texts to paths"
 msgstr ""
 
-#: src/gtk/x11print.c:385
+#: src/gtk/x11print.c:396
 msgid "Cairo PS Output"
 msgstr ""
 
-#: src/gtk/x11print.c:388
+#: src/gtk/x11print.c:399
 msgid "Cairo EPS Output"
 msgstr ""
 
-#: src/gtk/x11print.c:391
+#: src/gtk/x11print.c:402
 msgid "Cairo PNG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:394
+#: src/gtk/x11print.c:405
 msgid "Cairo PDF Output"
 msgstr ""
 
-#: src/gtk/x11print.c:397
+#: src/gtk/x11print.c:408
 msgid "Cairo SVG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:401
+#: src/gtk/x11print.c:412
 msgid "Cairo EMF Output"
 msgstr ""
 
-#: src/gtk/x11print.c:530
+#: src/gtk/x11print.c:547
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:672
+#: src/gtk/x11print.c:689
 #, c-format
 msgid "Printing error: %s"
 msgstr ""
 
-#: src/gtk/x11print.c:721
+#: src/gtk/x11print.c:738
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:727 src/gtk/x11print.c:987 src/gtk/x11view.c:5530
+#: src/gtk/x11print.c:744 src/gtk/x11print.c:1004 src/gtk/x11view.c:5530
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:788
+#: src/gtk/x11print.c:805
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:827
+#: src/gtk/x11print.c:844
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:867
+#: src/gtk/x11print.c:884
 msgid "Making GRA file."
 msgstr ""
 
-#: src/gtk/x11print.c:1041
+#: src/gtk/x11print.c:1058
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1047
+#: src/gtk/x11print.c:1064
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11print.c:1048
+#: src/gtk/x11print.c:1065
 msgid "Making data file."
 msgstr ""
 

@@ -1,3 +1,22 @@
+2010-04-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (SvgVersion): change order of SVG version.
+	(OutputImageDialogSetupItem): initialize image export settings.
+	(OutputImageDialogClose): save image export settings.
+	(OutputImageDialogClose): "d->Version" is "TYPE_SVG1_1" when
+	selected version is "SVG version 1.1".
+
+	* src/gtk/ox11menu.h (menulocal): add image export settings.
+	(SAVE_CONFIG_TYPE): add "SAVE_CONFIG_TYPE_EXPORT_IMAGE".
+
+	* src/gtk/ox11menu.c (MenuConfigExportImage): add.
+	(MenuConfigArrray): add "MenuConfigExportImage".
+	(menu_save_config): save image export settings.
+	(menuinit): initialize image export settings.
+
+	* src/gtk/x11menu.c (application): call "menu_save_config()" for
+	"SAVE_CONFIG_TYPE_EXPORT_IMAGE".
+
 2010-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* mingw/windows_make.sed: add "-lwinspool" option to the variable
