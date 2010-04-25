@@ -58,8 +58,8 @@ static char *PsVersion[] = {
 };
 
 static char *SvgVersion[] = {
-  "SVG version 1.2",
   "SVG version 1.1",
+  "SVG version 1.2",
   NULL,
 };
 
@@ -285,7 +285,6 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 {
   int i;
 
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
   gtk_label_set_text(GTK_LABEL(d->vlabel), "");
 
   combo_box_clear(d->version);
@@ -303,6 +302,9 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_widget_set_sensitive(d->t2p, TRUE);
 
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_PostScript Version:"));
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
+    combo_box_set_active(d->version, Menulocal.ps_version);
     break;
   case MenuIdOutputPNGFile:
     combo_box_append_text(d->version, "--------");
@@ -314,7 +316,8 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_widget_set_sensitive(d->vlabel, FALSE);
     gtk_widget_set_sensitive(d->t2p, FALSE);
 
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.windpi);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.png_dpi);
+    combo_box_set_active(d->version, 0);
     break;
   case MenuIdOutputPDFFile:
     combo_box_append_text(d->version, "--------");
@@ -325,6 +328,9 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_widget_set_sensitive(d->vlabel, FALSE);
 
     gtk_widget_set_sensitive(d->t2p, TRUE);
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
+    combo_box_set_active(d->version, 0);
     break;
   case MenuIdOutputSVGFile:
     for (i = 0; PsVersion[i]; i++) {
@@ -339,6 +345,9 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_widget_set_sensitive(d->t2p, TRUE);
 
     gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_SVG Version:"));
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
+    combo_box_set_active(d->version, Menulocal.svg_version);
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
@@ -350,10 +359,12 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     gtk_widget_set_sensitive(d->dlabel, TRUE);
     gtk_widget_set_sensitive(d->dpi, TRUE);
     gtk_widget_set_sensitive(d->t2p, TRUE);
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.emf_dpi);
+    combo_box_set_active(d->version, 0);
     break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   }
-  combo_box_set_active(d->version, 0);
 }
 
 static void
@@ -420,6 +431,8 @@ OutputImageDialogClose(GtkWidget *w, void *data)
   if (d->ret != IDOK)
     return;
 
+  d->Dpi = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(d->dpi));
+
   switch (d->DlgType) {
   case MenuIdOutputPSFile:
     d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
@@ -433,6 +446,7 @@ OutputImageDialogClose(GtkWidget *w, void *data)
       d->Version = TYPE_PS2;
       break;
     }
+    Menulocal.ps_version = a;
     break;
   case MenuIdOutputEPSFile:
     d->text2path = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->t2p));
@@ -446,13 +460,16 @@ OutputImageDialogClose(GtkWidget *w, void *data)
       d->Version = TYPE_EPS2;
       break;
     }
+    Menulocal.ps_version = a;
     break;
   case MenuIdOutputPNGFile:
     d->Version = TYPE_PNG;
+    Menulocal.png_dpi = d->Dpi;
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
     d->Version = TYPE_EMF;
+    Menulocal.emf_dpi = d->Dpi;
     break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   case MenuIdOutputPDFFile:
@@ -464,16 +481,16 @@ OutputImageDialogClose(GtkWidget *w, void *data)
     a = combo_box_get_active(d->version);
     switch (a) {
     case 0:
-      d->Version = TYPE_SVG1_2;
+      d->Version = TYPE_SVG1_1;
       break;
     case 1:
     default:
       d->Version = TYPE_SVG1_2;
       break;
     }
+    Menulocal.svg_version = a;
     break;
   }
-  d->Dpi = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(d->dpi));
 
 }
 
