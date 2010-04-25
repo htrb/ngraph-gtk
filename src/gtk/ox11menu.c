@@ -266,6 +266,16 @@ static struct menu_config MenuConfigToggleView[] = {
   {NULL},
 };
 
+static struct menu_config MenuConfigExportImage[] = {
+  {"png_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.png_dpi},
+#ifdef WINDOWS
+  {"emf_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.emf_dpi},
+#endif
+  {"ps_version",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ps_version},
+  {"svg_version",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.svg_version},
+  {NULL},
+};
+
 static struct menu_config MenuConfigGeometry[] = {
   {"menu_win", MENU_CONFIG_TYPE_WINDOW, menu_config_set_four_elements, menu_config_menu_geometry},
   {NULL},
@@ -288,6 +298,7 @@ static struct menu_config *MenuConfigArrray[] = {
   MenuConfigMisc,
   MenuConfigViewer,
   MenuConfigToggleView,
+  MenuConfigExportImage,
   MenuConfigGeometry,
   MenuConfigChildGeometry,
   NULL,
@@ -485,6 +496,10 @@ menu_save_config(int type)
 
   if (type & SAVE_CONFIG_TYPE_TOGGLE_VIEW) {
     menu_save_config_sub(MenuConfigToggleView, &conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_EXPORT_IMAGE) {
+    menu_save_config_sub(MenuConfigExportImage, &conf);
   }
 
   if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
@@ -1039,6 +1054,13 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.grid = 200;
   Menulocal.data_head_lines = 20;
   Menulocal.local = local;
+
+  Menulocal.png_dpi = 72;
+#ifdef WINDOWS
+  Menulocal.emf_dpi = 72;
+#endif
+  Menulocal.ps_version = 0;
+  Menulocal.svg_version = 0;
 
   if (mgtkloadconfig())
     goto errexit;
