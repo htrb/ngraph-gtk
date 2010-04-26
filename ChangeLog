@@ -1,3 +1,16 @@
+2010-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* mingw/install.txt: add document.
+
+	* src/gtk/x11file.c (MathTextDialogClose): call
+	"gtk_entry_set_completion()" before exit the function except the
+	case of "d->ret == IDLOOP".
+	(math_tab_setup_item): call "gtk_entry_set_completion()".
+	(clear_math_completion): add.
+	(FileDialogClose, FileDefDialogClose): call
+	"clear_math_completion()" before exit the function except the case
+	of "d->ret == IDLOOP".
+
 2010-04-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (SvgVersion): change order of SVG version.
