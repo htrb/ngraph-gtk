@@ -111,17 +111,19 @@ int
 niskanji(unsigned char code)
 {
   if ((0x81 <= code && code <= 0x9f) ||
-      (0xe0 <= code && code <= 0xffU)) return TRUE;
+      (0xe0 <= code)) return TRUE;
   return FALSE;
 }
 
 int 
 niskanji2(char *s,int pos)
 {
-  int k;
+  int k, l;
 
-  if (pos>=strlen(s)) return FALSE;
-  else {
+  l = strlen(s);
+  if (pos >= l) {
+    return FALSE;
+  } else {
     k=pos;
     do {
       k--;
