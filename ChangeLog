@@ -1,5 +1,8 @@
 2010-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/jnstring.c (niskanji): conditions are simplified.
+	(niskanji2): use variable "l" to compare length of string.
+
 	* mingw/install.txt: add document.
 
 	* src/gtk/x11file.c (MathTextDialogClose): call
