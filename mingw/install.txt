@@ -1,0 +1,101 @@
+How to make Ngraph-gtk on Windows with MinGW
+
+
+1. Get and install MinGW
+
+http://sourceforge.net/projects/mingw/files/
+
+"Automated MinGW Installer"
+MinGW-5.1.6.exe
+
+"MSYS Base System"
+MSYS-1.0.11.exe
+
+"MSYS Supplementary Tools"
+msysDTK-1.0.1.exe
+
+
+2. Get libraries
+
+"GCC Version 4"
+gcc-core-4.4.0-mingw32-dll.tar.gz
+
+"MinGW libiconv"
+libiconv-1.13.1-1-mingw32-dll-2.tar.lzma
+libiconv-1.13.1-1-mingw32-dev.tar.lzma
+
+"MinGW gettext"
+libintl-0.17-1-mingw32-dll-8.tar.lzma
+gettext-0.17-1-mingw32-bin.tar.lzma
+gettext-0.17-1-mingw32-dev.tar.lzma
+libgettextpo-0.17-1-mingw32-dll-0.tar.lzma
+
+
+3. Install libraries
+
+cd /mingw
+tar xf gcc-core-4.4.0-mingw32-dll.tar.gz
+tar --lzma -xf libiconv-1.13.1-1-mingw32-dll-2.tar.lzma
+tar --lzma -xf libiconv-1.13.1-1-mingw32-dev.tar.lzma
+tar --lzma -xf libintl-0.17-1-mingw32-dll-8.tar.lzma
+tar --lzma -xf gettext-0.17-1-mingw32-bin.tar.lzma
+tar --lzma -xf gettext-0.17-1-mingw32-dev.tar.lzma
+tar --lzma -xf libgettextpo-0.17-1-mingw32-dll-0.tar.lzma
+
+
+4. Get GTK+
+
+http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/
+
+gtk+_2.20.0-1_win32.zip
+gtk+-dev_2.20.0-1_win32.zip
+gtk+-bundle_2.20.0-20100406_win32.zip
+
+
+5. Install GTK+
+
+extract all files in C:\mingw
+
+
+6. Get readline libraries
+
+http://sourceforge.net/projects/gnuwin32/files/readline/
+
+readline-5.0-1-bin.zip
+readline-5.0-1-lib.zip
+
+
+7. Install readline libraries
+
+extract all files in C:\mingw
+
+
+8. Get GSL
+
+http://www.gnu.org/software/gsl/
+gsl-1.14.tar.gz
+
+
+9. Compile and install GSL
+
+tar xf gsl-1.14.tar.gz
+cd gsl-1.14
+./configure --prefix=/mingw
+make
+make install
+
+
+10. Get Ngraph-gtk
+
+http://sourceforge.net/projects/ngraph-gtk/files/
+Ngraph-gtk-6.03.51.gtk-43.tar.gz
+
+
+11. Compile and install GSL
+
+tar xf Ngraph-gtk-6.03.51.gtk-43.tar.gz
+cd Ngraph-gtk-6.03.51.gtk-43
+sh mingw/windows.sh
+
+Ngraph-gtk will be installed in C:\ngraph-gtk if there are no error
+during the compilation.
