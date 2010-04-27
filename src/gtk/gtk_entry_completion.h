@@ -3,7 +3,8 @@
  */
 
 GtkEntryCompletion *entry_completion_create(void);
-int entry_completion_save(GtkEntryCompletion *comp, char *file, int size);
-int entry_completion_load(GtkEntryCompletion *comp, char *file, int size);
+void entry_completion_set_entry(GtkEntryCompletion *comp, GtkWidget *entry);
+int  entry_completion_save(GtkEntryCompletion *comp, char *file, int size);
+int  entry_completion_load(GtkEntryCompletion *comp, char *file, int size);
 void entry_completion_append(GtkEntryCompletion *comp, const char *str);
 

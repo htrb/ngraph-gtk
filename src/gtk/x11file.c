@@ -162,15 +162,15 @@ MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   switch (d->Mode) {
   case TYPE_MATH_X:
-    gtk_entry_set_completion(GTK_ENTRY(d->list), NgraphApp.x_math_list);
+    entry_completion_set_entry(NgraphApp.x_math_list, d->list);
     break;
   case TYPE_MATH_Y:
-    gtk_entry_set_completion(GTK_ENTRY(d->list), NgraphApp.y_math_list);
+    entry_completion_set_entry(NgraphApp.y_math_list, d->list);
     break;
   case TYPE_FUNC_F:
   case TYPE_FUNC_G:
   case TYPE_FUNC_H:
-    gtk_entry_set_completion(GTK_ENTRY(d->list), NgraphApp.func_list);
+    entry_completion_set_entry(NgraphApp.func_list, d->list);
     break;
   }
 
@@ -194,7 +194,6 @@ MathTextDialogClose(GtkWidget *w, void *data)
   case IDOK:
     break;
   case IDCANCEL:
-    gtk_entry_set_completion(GTK_ENTRY(d->list), NULL);
     return;
   default:
     d->ret = IDLOOP;
@@ -204,7 +203,6 @@ MathTextDialogClose(GtkWidget *w, void *data)
   p = gtk_entry_get_text(GTK_ENTRY(d->list));
   ptr = g_strdup(p);
   if (ptr == NULL) {
-    gtk_entry_set_completion(GTK_ENTRY(d->list), NULL);
     return;
   }
 
@@ -239,7 +237,6 @@ MathTextDialogClose(GtkWidget *w, void *data)
     entry_completion_append(NgraphApp.func_list, p);
     break;
   }
-  gtk_entry_set_completion(GTK_ENTRY(d->list), NULL);
 }
 
 void
@@ -2115,8 +2112,8 @@ math_tab_setup_item(struct FileDialog *d, int id)
   SetWidgetFromObjField(d->math.g, d->Obj, id, "func_g");
   SetWidgetFromObjField(d->math.h, d->Obj, id, "func_h");
 
-  gtk_entry_set_completion(GTK_ENTRY(d->math.x), NgraphApp.x_math_list);
-  gtk_entry_set_completion(GTK_ENTRY(d->math.y), NgraphApp.y_math_list);
+  entry_completion_set_entry(NgraphApp.x_math_list, d->math.x);
+  entry_completion_set_entry(NgraphApp.y_math_list, d->math.y);
 }
 
 static void
@@ -2140,11 +2137,8 @@ func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
   struct FileDialog *d;
 
   d = (struct FileDialog *) user_data;
-  gtk_entry_set_completion(GTK_ENTRY(d->math.f), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->math.g), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->math.h), NULL);
 
-  gtk_entry_set_completion(GTK_ENTRY(w), NgraphApp.func_list);
+  entry_completion_set_entry(NgraphApp.func_list, w);
 
   return FALSE;
 }
@@ -2198,16 +2192,6 @@ math_tab_create(struct FileDialog *d)
   add_copy_button_to_box(vbox, G_CALLBACK(math_tab_copy), d, "file");
 
   return vbox;
-}
-
-static void
-clear_math_completion(struct FileDialog *d)
-{
-  gtk_entry_set_completion(GTK_ENTRY(d->math.y), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->math.x), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->math.f), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->math.g), NULL);
-  gtk_entry_set_completion(GTK_ENTRY(d->math.h), NULL);
 }
 
 static int
@@ -3253,10 +3237,7 @@ FileDialogClose(GtkWidget *w, void *data)
   case IDOK:
   case IDFAPPLY:
     break;
-  case IDLOOP:
-    return;
   default:
-    clear_math_completion(d);
     return;
   }
 
@@ -3279,7 +3260,6 @@ FileDialogClose(GtkWidget *w, void *data)
     return;
   }
 
-  clear_math_completion(d);
   d->ret = ret;
 }
 
@@ -3331,10 +3311,7 @@ FileDefDialogClose(GtkWidget *w, void *data)
   switch (d->ret) {
   case IDOK:
     break;
-  case IDLOOP:
-    return;
   default:
-    clear_math_completion(d);
     return;
   }
 
@@ -3344,7 +3321,6 @@ FileDefDialogClose(GtkWidget *w, void *data)
   if (FileDialogCloseCommon(w, d))
     return;
 
-  clear_math_completion(d);
   d->ret = ret;
 }
 

@@ -546,7 +546,6 @@ legend_dialog_close(GtkWidget *w, void *data)
       return;
 
     entry_completion_append(NgraphApp.legend_text_list, str);
-    gtk_entry_set_completion(GTK_ENTRY(d->text), NULL);
 
     ptr = g_strdup(str);
 
@@ -1520,7 +1519,7 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->prop_cb = LegendTextCB;
   }
   legend_dialog_setup_item(wi, d, d->Id);
-  gtk_entry_set_completion(GTK_ENTRY(d->text), NgraphApp.legend_text_list);
+  entry_completion_set_entry(NgraphApp.legend_text_list, d->text);
   d->focus = d->text;
 }
 
