@@ -141,8 +141,10 @@ PageDialogPage(GtkWidget *w, gpointer client_data)
   if (a < 0)
     return;
 
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->paperwidth), a == 0);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->paperheight), a == 0);
+  gtk_widget_set_sensitive(d->paperwidth, a == 0);
+  gtk_widget_set_sensitive(d->paperheight, a == 0);
+  gtk_widget_set_sensitive(d->paperwidth_label, a == 0);
+  gtk_widget_set_sensitive(d->paperheight_label, a == 0);
 
   if (a > 0) {
     spin_entry_set_val(d->paperwidth, pagelist[a].width);
@@ -166,12 +168,12 @@ PageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     i = 0;
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     spin_entry_set_range(w, PAPER_SIZE_MIN, G_MAXUSHORT);
-    add_widget_to_table(table, w, _("paper _Width:"), FALSE, i++);
+    d->paperwidth_label = add_widget_to_table(table, w, _("paper _Width:"), FALSE, i++);
     d->paperwidth = w;
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     spin_entry_set_range(w, PAPER_SIZE_MIN, G_MAXUSHORT);
-    add_widget_to_table(table, w, _("paper _Height:"), FALSE, i++);
+    d->paperheight_label = add_widget_to_table(table, w, _("paper _Height:"), FALSE, i++);
     d->paperheight = w;
 
     w = combo_box_create();
