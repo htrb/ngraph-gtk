@@ -1605,7 +1605,6 @@ CheckIniFile(void)
 {
   int ret;
 
-
   ret = writecheckconfig();
   if (ret == 0) {
     message_box(TopLevel, _("Ngraph.ini is not found."), "Ngraph.ini", RESPONS_ERROR);
