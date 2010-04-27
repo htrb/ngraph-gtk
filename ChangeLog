@@ -1,3 +1,43 @@
+2010-04-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (PageDialogPage): change sensitivity of
+	labels.
+	(PageDialogSetup): initialize "d->paperheight_label" and
+	"d->paperwidth_label".
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem): initialize
+	"d->help_browser" and "d->browser".
+	(set_file_in_entry): change title of the dialog.
+	(MiscDialogSetup): add entries to set programs for help browser
+	and web browser.
+	(MiscDialogSetup): change order of frames.
+	(use_external_toggled): toggle sensitivity of labels.
+	(load_file_toggled): add.
+	(ViewerDialogSetup): "load_file_toggled()" is connected to the
+	"toggled" signal.
+	(set_program_name): add.
+	(MiscDialogClose): use "set_program_name()".
+
+	* src/gtk/x11dialg.h (PageDialog): add member "paperwidth_label"
+	and "paperheight_label".
+	(ExViewerDialog):add member "d_label", "w_label" and "h_label".
+	(ViewerDialog): add member *data_num_label".
+
+	* src/gtk/gtk_entry_completion.c (entry_completion_set_entry):
+	add.
+
+	* src/gtk/x11lgnd.c (LegendTextDialogSetup): don't call
+	"gtk_entry_set_completion()".
+	(LegendTextDialogSetup): use "entry_completion_set_entry()"
+	instead of "gtk_entry_set_completion()".
+
+	* src/gtk/x11file.c (clear_math_completion): remove.
+	(MathTextDialogSetup, math_tab_setup_item, func_entry_focused):
+	use "entry_completion_set_entry()" instead of
+	"gtk_entry_set_completion()".
+	(FileDialogClose, FileDefDialogClose): don't call
+	"clear_math_completion()".
+
 2010-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/jnstring.c (niskanji): conditions are simplified.
