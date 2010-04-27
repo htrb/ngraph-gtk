@@ -937,6 +937,12 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   if (Menulocal.editor)
     gtk_entry_set_text(GTK_ENTRY(d->editor), Menulocal.editor);
 
+  if (Menulocal.help_browser)
+    gtk_entry_set_text(GTK_ENTRY(d->help_browser), Menulocal.help_browser);
+
+  if (Menulocal.browser)
+    gtk_entry_set_text(GTK_ENTRY(d->browser), Menulocal.browser);
+
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->history), Menulocal.savehistory);
@@ -979,7 +985,7 @@ set_file_in_entry(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, g
   struct SetDriverDialog *d;
 
   d = (struct SetDriverDialog *) user_data;
-  if (nGetOpenFileName(d->widget, _("Editor"), NULL, NULL,
+  if (nGetOpenFileName(d->widget, _("Select program"), NULL, NULL,
 		       NULL, &file, TRUE, FALSE) == IDOK) {
     entry_set_filename(GTK_WIDGET(w), file);
   }
@@ -1005,13 +1011,23 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox2 = gtk_hbox_new(FALSE, 4);
     vbox2 = gtk_vbox_new(FALSE, 4);
 
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("External programs"));
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
+
     w = create_file_entry_with_cb(G_CALLBACK(set_file_in_entry), d);
     add_widget_to_table(table, w, _("_Editor:"), TRUE, i++);
     d->editor = w;
+
+    w = create_file_entry_with_cb(G_CALLBACK(set_file_in_entry), d);
+    add_widget_to_table(table, w, _("_Help browser:"), TRUE, i++);
+    d->help_browser = w;
+
+    w = create_file_entry_with_cb(G_CALLBACK(set_file_in_entry), d);
+    add_widget_to_table(table, w, _("_Web browser:"), TRUE, i++);
+    d->browser = w;
+
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
@@ -1065,23 +1081,7 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     vbox2 = gtk_vbox_new(FALSE, 4);
 
-    frame = gtk_frame_new(NULL);
-    table = gtk_table_new(1, 2, FALSE);
-
-    i = 0;
-    w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->directory = w;
-
-    w = gtk_check_button_new_with_mnemonic(_("_Save file history"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->history = w;
-
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
-
-
-    frame = gtk_frame_new(NULL);
+    frame = gtk_frame_new(_("Size"));
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
@@ -1118,7 +1118,23 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->file_preview_font = w;
 
     gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
+
+    frame = gtk_frame_new(_("Miscellaneous"));
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
+    w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->directory = w;
+
+    w = gtk_check_button_new_with_mnemonic(_("_Save file history"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->history = w;
+
+    gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
+
 
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox2, TRUE, TRUE, 4);
@@ -1149,6 +1165,26 @@ set_font(char **cfg, GtkWidget *btn)
 }
 
 static void
+set_program_name(GtkWidget *entry, char **prm)
+{
+  const char *buf;
+  char *buf2;
+
+  buf = gtk_entry_get_text(GTK_ENTRY(entry));
+  if (buf) {
+    buf2 = g_strdup(buf);
+    if (buf2) {
+      changefilename(buf2);
+      g_free(*prm);
+    }
+    *prm = buf2;
+  } else {
+    g_free(*prm);
+    *prm = NULL;
+  }
+}
+
+static void
 MiscDialogClose(GtkWidget *w, void *data)
 {
   struct MiscDialog *d;
@@ -1164,18 +1200,9 @@ MiscDialogClose(GtkWidget *w, void *data)
   ret = d->ret;
   d->ret = IDLOOP;
 
-  buf = gtk_entry_get_text(GTK_ENTRY(d->editor));
-  if (buf) {
-    buf2 = g_strdup(buf);
-    if (buf2) {
-      changefilename(buf2);
-      g_free(Menulocal.editor);
-    }
-    Menulocal.editor = buf2;
-  } else {
-    g_free(Menulocal.editor);
-    Menulocal.editor = NULL;
-  }
+  set_program_name(d->editor, &Menulocal.editor);
+  set_program_name(d->help_browser, &Menulocal.help_browser);
+  set_program_name(d->browser, &Menulocal.browser);
 
   Menulocal.changedirectory =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->directory));
@@ -1265,9 +1292,13 @@ use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 
   state = ! gtk_toggle_button_get_active(togglebutton);
 
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->dpi), state);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->width), state);
-  gtk_widget_set_sensitive(gtk_widget_get_parent(d->height), state);
+  gtk_widget_set_sensitive(d->dpi, state);
+  gtk_widget_set_sensitive(d->width, state);
+  gtk_widget_set_sensitive(d->height, state);
+
+  gtk_widget_set_sensitive(d->d_label, state);
+  gtk_widget_set_sensitive(d->w_label, state);
+  gtk_widget_set_sensitive(d->h_label, state);
 }
 
 static void
@@ -1293,14 +1324,14 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_hscale_new_with_range(20, 620, 1);
     d->dpi = w;
-    add_widget_to_table(table, w, "_DPI:", TRUE, i++);
+    d->d_label = add_widget_to_table(table, w, "_DPI:", TRUE, i++);
 
     w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
-    add_widget_to_table(table, w, _("Window _Width:"), FALSE, i++);
+    d->w_label = add_widget_to_table(table, w, _("Window _Width:"), FALSE, i++);
     d->width = w;
 
     w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
-    add_widget_to_table(table, w, _("Window _Height:"), FALSE, i++);
+    d->h_label = add_widget_to_table(table, w, _("Window _Height:"), FALSE, i++);
     d->height = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
@@ -1364,6 +1395,20 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
 }
 
+static void 
+load_file_toggled(GtkToggleButton *togglebutton, gpointer user_data)
+{
+  gboolean state;
+  struct ViewerDialog *d;
+
+  d = (struct ViewerDialog *) user_data;
+
+  state = gtk_toggle_button_get_active(togglebutton);
+
+  gtk_widget_set_sensitive(d->data_num, state);
+  gtk_widget_set_sensitive(d->data_num_label, state);
+}
+
 static void
 ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -1413,11 +1458,12 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
     w = gtk_check_button_new_with_mnemonic(_("_Load files on redraw"));
+    g_signal_connect(w, "toggled", G_CALLBACK(load_file_toggled), d);
     d->loadfile = w;
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-    add_widget_to_table(table, w, _("_Maximum number of data on redraw:"), FALSE, i++);
+    d->data_num_label = add_widget_to_table(table, w, _("_Maximum number of data on redraw:"), FALSE, i++);
     d->data_num = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);

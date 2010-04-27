@@ -390,7 +390,8 @@ struct PageDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *leftmargin, *topmargin, *paperwidth, *paperheight, *paperzoom, *paper;
+  GtkWidget *leftmargin, *topmargin, *paperwidth, *paperheight,
+    *paperwidth_label, *paperheight_label, *paperzoom, *paper;
 };
 void PageDialog(struct PageDialog *data);
 
@@ -531,7 +532,7 @@ struct MiscDialog
   /****** local member *******/
   GtkWidget *editor, *directory, *history, *path, *datafile,
     *expand, *expanddir, *ignorepath, *mergefile, *coordwin_font, *infowin_font,
-    *file_preview_font, *hist_size, *info_size, *data_head_lines;
+    *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser, *browser;
   struct objlist *Obj;
   int Id;
 };
@@ -541,7 +542,7 @@ struct ExViewerDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *dpi, *width, *height, *use_external;
+  GtkWidget *dpi, *width, *height, *d_label, *w_label, *h_label, *use_external;
   struct objlist *Obj;
   int Id;
 };
@@ -551,7 +552,7 @@ struct ViewerDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *dpi, *loadfile, *grid, *data_num, *antialias, *fftype,
+  GtkWidget *dpi, *loadfile, *grid, *data_num, *data_num_label, *antialias, *fftype,
     *bgcol, *preserve_width;
   struct objlist *Obj;
   int Id;
