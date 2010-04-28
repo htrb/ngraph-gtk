@@ -1214,21 +1214,21 @@ CmGraphQuit(void)
 void
 CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
 {
-  char *uri, pstr[] = "file://", *fname, *path;
+  char *uri, *fname, *path;
 
   if (Menulock || Globallock)
     return;
 
   uri = gtk_recent_chooser_get_current_uri(w);
-  fname = strstr(uri, pstr);
+
+  fname = g_filename_from_uri(uri, NULL, NULL);
+  g_free(uri);
   if (fname == NULL) {
-    g_free(uri);
     return;
   }
-  fname += sizeof(pstr) - 1;
 
   if (!CheckSave()) {
-    g_free(uri);
+    g_free(fname);
     return;
   }
 
@@ -1236,6 +1236,7 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   if (nchdir(path)) {
     ErrorMessage();
     g_free(path);
+    g_free(fname);
     return;
   }
   g_free(path);
@@ -1247,7 +1248,7 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
 		DlgLoad.exdir, Menulocal.scriptconsole, "-f");
   }
   g_free(DlgLoad.exdir);
-  g_free(uri);
+  g_free(fname);
 }
 
 void

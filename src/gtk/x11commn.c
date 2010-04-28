@@ -1430,8 +1430,9 @@ AddNgpFileList(char *file)
     return;
   }
 
-  uri = g_strdup_printf("file://%s", full_name);
+  uri = g_filename_to_uri(full_name, NULL, NULL);
   g_free(full_name);
+
   gtk_recent_manager_add_full(Menulocal.ngpfilelist, uri, &recent_data);
   g_free(uri);
 }
