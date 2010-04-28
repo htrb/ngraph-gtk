@@ -309,7 +309,7 @@ replaceconfig(char *section,struct narray *conf)
   int i,j,num,num2, r;
   char **data;
   struct objlist *sys;
-  char *libdir,*homedir,*dir,*fil,*buf,*pfx;
+  char *libdir,*homedir,*dir,*fil,*buf,*pfx, *tmp_name;
   FILE *fp,*fptmp;
   struct narray iconf;
 
@@ -328,14 +328,14 @@ replaceconfig(char *section,struct narray *conf)
     dir=homedir;
   }
   lockconfig(dir);
-  fptmp = tmpfile();
+  fptmp = n_tmpfile(&tmp_name);
   if (fptmp == NULL) {
     unlockconfig(dir);
     return FALSE;
   }
   fp = nfopen(fil,"rt");
   if (fp == NULL) {
-    fclose(fptmp);
+    n_tmpfile_close(fptmp, tmp_name);
     g_free(fil);
     unlockconfig(dir);
     return FALSE;
@@ -389,7 +389,7 @@ flush:
 
   r = make_backup(homedir, libdir, fil, fptmp);
 
-  fclose(fptmp);
+  n_tmpfile_close(fptmp, tmp_name);
   g_free(fil);
   unlockconfig(dir);
   return r;
@@ -438,9 +438,9 @@ removeconfig_match(FILE *fp, FILE *fptmp, struct narray *conf)
 int 
 removeconfig(char *section,struct narray *conf)
 {
-  int change,r;
+  int change, r;
   struct objlist *sys;
-  char *libdir,*homedir,*dir,*fil,*buf,*pfx;
+  char *libdir,*homedir,*dir,*fil,*buf,*pfx, *tmp_name;
   FILE *fp,*fptmp;
 
   change=FALSE;
@@ -459,14 +459,14 @@ removeconfig(char *section,struct narray *conf)
     dir=homedir;
   }
   lockconfig(dir);
-  fptmp = tmpfile();
+  fptmp = n_tmpfile(&tmp_name);
   if (fptmp == NULL) {
     unlockconfig(dir);
     return FALSE;
   }
   fp = nfopen(fil,"rt");
   if (fp == NULL) {
-    fclose(fptmp);
+    n_tmpfile_close(fptmp, tmp_name);
     g_free(fil);
     unlockconfig(dir);
     return FALSE;
@@ -488,7 +488,7 @@ removeconfig(char *section,struct narray *conf)
 flush:
   if (!change) {
     fclose(fp);
-    fclose(fptmp);
+    n_tmpfile_close(fptmp, tmp_name);
     g_free(fil);
     unlockconfig(dir);
     return TRUE;
@@ -504,7 +504,7 @@ flush:
   /* make backup */
   r = make_backup(homedir, libdir, fil, fptmp);
 
-  fclose(fptmp);
+  n_tmpfile_close(fptmp, tmp_name);
   g_free(fil);
   unlockconfig(dir);
   return r;

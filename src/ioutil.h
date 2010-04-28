@@ -76,6 +76,8 @@ int stderrfd(void);
 void set_progress_func(void (* func)(int, char *, double));
 void set_progress(int pos, char *msg, double fraction);
 int n_mkstemp(const char *dir, char *templ, char **name);
+FILE *n_tmpfile(char **name);
+void n_tmpfile_close(FILE *fp, char *name);
 int nstat(const gchar *filename, struct stat *buf);
 int naccess(const gchar *filename, int mode);
 int nchdir(const gchar *path);

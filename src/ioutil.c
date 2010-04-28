@@ -1049,3 +1049,50 @@ n_mkstemp(const char *dir, char *templ, char **name)
 
   return fd;
 }
+
+FILE *
+n_tmpfile(char **name)
+{
+  int fd;
+  FILE *fp;
+
+  fd = n_mkstemp(NULL, "ntmp", name);
+  if (fd < 0) {
+    return NULL;
+  }
+
+#ifndef WINDOWS
+  if (*name) {
+    g_unlink(*name);
+  }
+#endif
+
+  fp = fdopen(fd, "w+b");
+  if (fp == NULL) {
+    close(fd);
+    if (*name) {
+#ifdef WINDOWS
+      g_unlink(*name);
+#endif
+      g_free(*name);
+      *name = NULL;
+    }
+  }
+
+  return fp;
+}
+
+void
+n_tmpfile_close(FILE *fp, char *name)
+{
+  if (fp){
+    fclose(fp);
+  }
+
+  if (name) {
+#ifdef WINDOWS
+    g_unlink(name);
+#endif
+    g_free(name);
+  }
+}
