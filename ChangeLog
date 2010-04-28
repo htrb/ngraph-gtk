@@ -1,5 +1,8 @@
 2010-04-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/Makefile.am (ngraph_CFLAGS): add option
+	"-DG_DISABLE_DEPRECATED=1" and "-DG_DISABLE_SINGLE_INCLUDES=1".
+
 	* src/nconfig.c (replaceconfig, removeconfig): use "n_tmpfile()"
 	and "n_tmpfile_close()".
 
