@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-44\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-27 23:13+0900\n"
+"POT-Creation-Date: 2010-04-28 20:04+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -422,24 +422,24 @@ msgid ""
 "Save this graph?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1610
+#: src/gtk/x11commn.c:1611
 msgid "Ngraph.ini is not found."
 msgstr ""
 
-#: src/gtk/x11commn.c:1613
+#: src/gtk/x11commn.c:1614
 msgid "Ngraph.ini is write protected."
 msgstr ""
 
-#: src/gtk/x11commn.c:1628
+#: src/gtk/x11commn.c:1629
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr ""
 
-#: src/gtk/x11commn.c:1632
+#: src/gtk/x11commn.c:1633
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1795
+#: src/gtk/x11commn.c:1796
 msgid "error"
 msgstr ""
 
@@ -1090,7 +1090,7 @@ msgstr ""
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1342
+#: src/gtk/x11graph.c:1343
 msgid ""
 "Ngraph is the program creating scientific 2-dimensional graphs for "
 "researchers and engineers."

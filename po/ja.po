@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-27 23:13+0900\n"
+"POT-Creation-Date: 2010-04-28 20:04+0900\n"
 "PO-Revision-Date: 2010-04-27 16:29+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -424,24 +424,24 @@ msgstr ""
 "このグラフは変更されています.\n"
 "保存しますか?"
 
-#: src/gtk/x11commn.c:1610
+#: src/gtk/x11commn.c:1611
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1613
+#: src/gtk/x11commn.c:1614
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1628
+#: src/gtk/x11commn.c:1629
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1632
+#: src/gtk/x11commn.c:1633
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1795
+#: src/gtk/x11commn.c:1796
 msgid "error"
 msgstr "エラー"
 
@@ -1092,7 +1092,7 @@ msgstr "合成ファイルを含める(_I)"
 msgid "Load NGP file"
 msgstr "NGP ファイルを開く"
 
-#: src/gtk/x11graph.c:1342
+#: src/gtk/x11graph.c:1343
 msgid ""
 "Ngraph is the program creating scientific 2-dimensional graphs for "
 "researchers and engineers."
