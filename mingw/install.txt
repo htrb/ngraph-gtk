@@ -17,6 +17,8 @@ msysDTK-1.0.1.exe
 
 2. Get libraries
 
+http://sourceforge.net/projects/mingw/files/
+
 "GCC Version 4"
 gcc-core-4.4.0-mingw32-dll.tar.gz
 
@@ -88,13 +90,13 @@ make install
 10. Get Ngraph-gtk
 
 http://sourceforge.net/projects/ngraph-gtk/files/
-Ngraph-gtk-6.03.51.gtk-43.tar.gz
+Ngraph-gtk-6.03.51.gtk-44.tar.gz
 
 
-11. Compile and install GSL
+11. Compile and install Ngraph-gtk
 
-tar xf Ngraph-gtk-6.03.51.gtk-43.tar.gz
-cd Ngraph-gtk-6.03.51.gtk-43
+tar xf Ngraph-gtk-6.03.51.gtk-44.tar.gz
+cd Ngraph-gtk-6.03.51.gtk-44
 sh mingw/windows.sh
 
 Ngraph-gtk will be installed in C:\ngraph-gtk if there are no error
