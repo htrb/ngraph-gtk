@@ -3535,7 +3535,9 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
       goto errexit;
     }
     for (i=0;enumlist[i]!=NULL;i++) {
-      if (strcmp0(enumlist[i],argv[0])==0) {
+      int ofst;
+      ofst = (enumlist[i][0] == '\0') ? 1 : 0;
+      if (strcmp0(enumlist[i] + ofst, argv[0]) == 0) {
 	break;
       }
     }

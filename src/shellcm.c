@@ -713,7 +713,7 @@ dispfield(struct objlist *obj,char *name)
     printfstdout(" )");
   } else if (ftype==NENUM) {
     if ((enumlist=(char **)chkobjarglist(obj,name))!=NULL) {
-      for (j=0;enumlist[j]!=NULL;j++) printfstdout(" %s",enumlist[j]);
+      for (j=0;enumlist[j] && enumlist[j][0];j++) printfstdout(" %s",enumlist[j]);
       printfstdout(" )");
     }
   }
