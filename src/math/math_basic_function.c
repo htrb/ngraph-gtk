@@ -6,6 +6,7 @@
 #include "config.h"
 
 #include <stdlib.h>
+#include <time.h>
 #include <math.h>
 
 #ifdef HAVE_LIBGSL
@@ -1156,22 +1157,58 @@ math_func_lgn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 #endif
 }
 
+static double
+mjd(int y, int m, int d, int hh, int mm, int ss)
+{
+  int d0, d1, d2, d3, d4;
+
+  d0 = (14 - m) / 12;
+  d1 = (y - d0) * 365.25;
+  d2 = (m + d0 * 12 - 2) * 30.59;
+  d3 = (y - d0) / 100;
+  d4 = (y - d0) / 400;
+
+  return  d1 + d2 - d3 + d4 + d + 1721088 - 2400000 + hh / 24.0 + mm / 1440.0  + ss / 86400.0;
+}
+
 int
 math_func_mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int d, d1, d2, d3, d4;
-
   MATH_CHECK_ARG(rval, exp->buf[0]);
   MATH_CHECK_ARG(rval, exp->buf[1]);
   MATH_CHECK_ARG(rval, exp->buf[2]);
+  MATH_CHECK_ARG(rval, exp->buf[3]);
+  MATH_CHECK_ARG(rval, exp->buf[4]);
+  MATH_CHECK_ARG(rval, exp->buf[5]);
 
-  d = (14 - exp->buf[1].val.val) / 12;
-  d1 = (exp->buf[0].val.val - d) * 365.25;
-  d2 = (exp->buf[1].val.val + d * 12 - 2) * 30.59;
-  d3 = (exp->buf[0].val.val - d) / 100;
-  d4 = (exp->buf[0].val.val - d) / 400;
 
-  rval->val =  d1 + d2 - d3 + d4 + exp->buf[2].val.val + 1721088 - 2400000;
+  rval->val = mjd(exp->buf[0].val.val,
+		  exp->buf[1].val.val,
+		  exp->buf[2].val.val,
+		  exp->buf[3].val.val,
+		  exp->buf[4].val.val,
+		  exp->buf[5].val.val);
+
+  return 0;
+}
+
+int
+math_func_unix2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct tm *tm;
+  time_t t;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
+  t = exp->buf[0].val.val;
+
+  tm = gmtime(&t);
+  if (tm == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = mjd(tm->tm_year, tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
 
   return 0;
 }

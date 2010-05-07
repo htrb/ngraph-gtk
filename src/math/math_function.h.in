@@ -40,7 +40,8 @@ pn	2	0	0	NULL
 lgn	3	0	0	NULL
 hn	2	0	0	NULL
 tn	2	0	0	NULL
-mjd	3	0	0	NULL
+mjd	6	0	0	NULL
+unix2mjd	1	0	0	NULL
 eq	2	0	0	NULL
 neq	2	0	0	NULL
 ge	2	0	0	NULL
