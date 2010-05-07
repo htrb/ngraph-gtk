@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-44\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-04-28 20:04+0900\n"
+"POT-Creation-Date: 2010-05-07 16:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 msgid "Save file"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:97 src/oaxis.c:112
+#: src/gtk/ogra2cairo.c:42 src/odraw.c:101 src/oaxis.c:92 src/oaxis.c:107
 msgid "none"
 msgstr ""
 
@@ -1969,7 +1969,7 @@ msgstr ""
 msgid "top"
 msgstr ""
 
-#: src/gtk/x11merge.c:55 src/oaxis.c:99 src/oaxis.c:113 src/oaxis.c:126
+#: src/gtk/x11merge.c:55 src/oaxis.c:94 src/oaxis.c:108 src/oaxis.c:121
 msgid "left"
 msgstr ""
 
@@ -2480,7 +2480,7 @@ msgstr ""
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:104 src/oaxis.c:98
+#: src/odraw.c:104 src/oaxis.c:93
 msgid "both"
 msgstr ""
 
@@ -2512,31 +2512,39 @@ msgstr ""
 msgid "inverse"
 msgstr ""
 
-#: src/oaxis.c:100 src/oaxis.c:114 src/oaxis.c:127
+#: src/oaxis.c:87
+msgid "MJD"
+msgstr ""
+
+#: src/oaxis.c:95 src/oaxis.c:109 src/oaxis.c:122
 msgid "right"
 msgstr ""
 
-#: src/oaxis.c:125
+#: src/oaxis.c:120
 msgid "center"
 msgstr ""
 
-#: src/oaxis.c:128
+#: src/oaxis.c:123
 msgid "point"
 msgstr ""
 
-#: src/oaxis.c:140
-msgid "normal"
+#: src/oaxis.c:135
+msgid "horizontal"
 msgstr ""
 
-#: src/oaxis.c:141
-msgid "parallel"
+#: src/oaxis.c:136
+msgid "parallel1"
 msgstr ""
 
-#: src/oaxis.c:142
+#: src/oaxis.c:137
 msgid "parallel2"
 msgstr ""
 
-#: src/oaxis.c:144
+#: src/oaxis.c:138
+msgid "normal1"
+msgstr ""
+
+#: src/oaxis.c:139
 msgid "normal2"
 msgstr ""
 
