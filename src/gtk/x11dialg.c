@@ -1141,7 +1141,7 @@ SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   count = combo_box_get_num(w);
   if (count == 0) {
     enumlist = (char **) chkobjarglist(Obj, field);
-    for (j = 0; enumlist[j]; j++) {
+    for (j = 0; enumlist[j] && enumlist[j][0]; j++) {
       combo_box_append_text(w, _(enumlist[j]));
     }
   }

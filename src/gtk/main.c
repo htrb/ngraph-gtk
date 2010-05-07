@@ -1169,7 +1169,7 @@ get_obj_enum_list(struct objlist *objcur, char *member, char *val)
 
   len = strlen(val);
   j = 0;
-  for (i = 0; enumlist[i] != NULL; i++) {
+  for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
     if (strncmp(enumlist[i], val, len) == 0) {
       list[j++] = enumlist[i];
     }

@@ -1365,7 +1365,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table_sub(table, w, _("_Type:"), FALSE, 0, 1, 5, 0);
     d->type = w;
     enumlist = (char **) chkobjarglist(d->Obj, "type");
-    for (i = 0; enumlist[i]; i++) {
+    for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
       combo_box_append_text(d->type, _(enumlist[i]));
     }
 
@@ -4458,7 +4458,7 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
   gtk_tree_store_append(list, &parent, NULL);
   gtk_tree_store_set(list, &parent, 0, NULL, 1, _("Type"), 2, FILE_COMBO_ITEM_TYPE, -1);
 
-  for (i = 0; enumlist[i]; i++) {
+  for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
     GtkTreeIter iter, child;
 
     gtk_tree_store_append(list, &iter, &parent);
@@ -4475,7 +4475,7 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
       }
     } else if (strcmp(enumlist[i], "curve") == 0) {
       curvelist = (char **) chkobjarglist(obj, "interpolation");
-      for (j = 0; curvelist[j]; j++) {
+      for (j = 0; curvelist[j] && curvelist[i][0]; j++) {
 	gtk_tree_store_append(list, &child, &iter);
 	gtk_tree_store_set(list, &child, 0, NULL, 1, _(curvelist[j]), 2, FILE_COMBO_ITEM_INTP, -1);
       }
