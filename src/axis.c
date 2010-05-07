@@ -206,7 +206,7 @@ getaxispositionini(struct axislocal *alocal,
 
   if (compare_double(min, max)) return -1;
   if (compare_double(inc, 0)) return -1;
-  if (type==1) {
+  if (type==AXIS_TYPE_LOG) {
     if ((min<=0) || (max<=0)) return -1;
     if (compare_double(fabs(inc), 10)) {
       alocal->atype=AXISLOGNORM;
@@ -219,7 +219,7 @@ getaxispositionini(struct axislocal *alocal,
     alocal->max=log10(max);
     alocal->inc=log10(fabs(inc));
     if (alocal->atype==AXISLOGSMALL) alocal->inc=1;
-  } else if (type==2) {
+  } else if (type==AXIS_TYPE_INVERSE) {
     if (min*max<=0) return -1;
     alocal->atype=AXISINVERSE;
     alocal->min=min;
