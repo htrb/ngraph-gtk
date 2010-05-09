@@ -84,13 +84,8 @@ char *axistypechar[]={
   N_("linear"),
   N_("log"),
   N_("inverse"),
+  N_("MJD"),
   NULL
-};
-
-enum AXIS_SCALE_TYPE {
-  AXIS_TYPE_LINEAR,
-  AXIS_TYPE_LOG,
-  AXIS_TYPE_INVERSE,
 };
 
 static char *axisgaugechar[]={
@@ -137,29 +132,30 @@ enum AXIS_NUM_ALIGN {
 };
 
 static char *anumdirchar[]={
-  N_("normal"),
-  N_("parallel"),
+  N_("horizontal"),
+  N_("parallel1"),
   N_("parallel2"),
-  //  N_("normal1"),
+  N_("normal1"),
   N_("normal2"),
-  //  N_("vertical"),
+  "\0normal",			/* for backward compatibility */
+  "\0parallel",			/* for backward compatibility */
   NULL
 };
 
 enum AXIS_NUM_DIR {
-  AXIS_NUM_POS_NORMAL,
+  AXIS_NUM_POS_HORIZONTAL,
   AXIS_NUM_POS_PARALLEL1,
   AXIS_NUM_POS_PARALLEL2,
   AXIS_NUM_POS_NORMAL1,
   AXIS_NUM_POS_NORMAL2,
-  AXIS_NUM_POS_VERTICAL,
+  AXIS_NUM_POS_NORMAL,		/* for backward compatibility */
+  AXIS_NUM_POS_PARALLEL,	/* for backward compatibility */
 };
 
 static struct obj_config AxisConfig[] = {
   {"R", OBJ_CONFIG_TYPE_NUMERIC},
   {"G", OBJ_CONFIG_TYPE_NUMERIC},
   {"B", OBJ_CONFIG_TYPE_NUMERIC},
-  {"type", OBJ_CONFIG_TYPE_NUMERIC},
   {"type", OBJ_CONFIG_TYPE_NUMERIC},
   {"direction", OBJ_CONFIG_TYPE_NUMERIC},
   {"baseline", OBJ_CONFIG_TYPE_NUMERIC},
@@ -1835,30 +1831,130 @@ get_num_ofst_normal2(struct axis_config *aconf, int align, int side, int ilenmax
   *len = abs(hx1 - hx0);
 }
 
-static void 
-numformat(char *num, int nlen, char *format,double a)
+static void
+mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len)
 {
-  int i, j, len, ret;
-  char *s;
-  char format2[256], pm[] = "\\xb1";
+  struct tm *tm;
+  time_t t;
+  size_t size;
+  const char 
+    *fmt_y = "%Y",
+    *fmt_ym = "%Y-%m",
+    *fmt_ymd = "%Y-%m-%d",
+    *fmt_ymdhms = "%Y-%m-%d\\&\\n%H:%M:%S\\&",
+    *fmt_ymdhm = "%Y-%m-%d\\&\\n%H:%M\\&",
+    *fmt_hms = "%H:%M:%S",
+    *fmt_hm = "%H:%M",
+    *fmt;
 
-  s = strchr(format,'+');
-  if (a == 0 && s) {
-    len = strlen(format);
-    for (j = 0; j < (int) sizeof(pm) - 1; j++) {
-      format2[j] = pm[j];
-    }
-    for (i = 0; i < len && j < (int) sizeof(format2) - 1; i++) {
-      format2[j] = format[i];
-      if (format[i] != '+') {
-	j++;
-      }
-    }
-    format2[j] = '\0';
-    ret = snprintf(num, nlen, format2, a);
-  } else {
-    ret = snprintf(num, nlen, format, a);
+  t = nround((mjd - 40587) * 86400);
+  tm = gmtime(&t);
+  if (tm == NULL || t < 0) {
+    snprintf(num, len, "%G", mjd);
+    return;
   }
+
+  if (fabs(aconf->max - aconf->min) < 1) {
+    if (tm->tm_sec == 0) {
+      fmt = fmt_hm;
+    } else {
+      fmt = fmt_hms;
+    }
+  } else if (fabs(aconf->max - aconf->min) > 365) {
+    if (tm->tm_sec == 0) {
+      if (tm->tm_hour == 0 && tm->tm_min == 0) {
+	if (tm->tm_mday == 1) {
+	  if (tm->tm_mon == 0) {
+	    fmt = fmt_y;
+	  } else {
+	    fmt = fmt_ym;
+	  }
+	} else {
+	  fmt = fmt_ymd;
+	}
+      } else {
+	fmt = fmt_ymdhm;
+      }
+    } else {
+      fmt = fmt_ymdhms;
+    }
+  } else {
+    if (tm->tm_sec == 0) {
+      if (tm->tm_hour == 0 && tm->tm_min == 0) {
+	fmt = fmt_ymd;
+      } else {
+	fmt = fmt_ymdhm;
+      }
+    } else {
+      fmt = fmt_ymdhms;
+    }
+  }
+
+  size = strftime(num, len, fmt, tm);
+  if (size == 0) {
+    num[0] = '\0';
+  }
+}
+
+
+static double
+numformat(char **text, int *nlen, const char *format,
+	  const struct axis_config *aconf,
+	  const struct axislocal *alocal,
+	  int logpow, double po, double norm,
+	  const char *head, const char *tail)
+{
+  int i, j, len, ret, lpow;
+  char *s;
+  char num[256], format2[256], pm[] = "\\xb1";
+  double a;
+
+  *text = NULL;
+  *nlen = 0;
+
+  if ((! logpow && (alocal->atype == AXISLOGBIG || alocal->atype == AXISLOGNORM)) ||
+      (alocal->atype == AXISLOGSMALL)) {
+    a = pow(10.0, po);
+  } else if (alocal->atype == AXISINVERSE) {
+    a = 1.0 / po;
+  } else {
+    a = po / norm;
+  }
+
+  if (aconf->type == AXIS_TYPE_MJD) {
+    mjd_to_date_str(aconf, po, num, sizeof(num));
+    logpow = 0;
+  } else {
+    s = strchr(format,'+');
+    if (a == 0 && s) {
+      len = strlen(format);
+      for (j = 0; j < (int) sizeof(pm) - 1; j++) {
+	format2[j] = pm[j];
+      }
+      for (i = 0; i < len && j < (int) sizeof(format2) - 1; i++) {
+	format2[j] = format[i];
+	if (format[i] != '+') {
+	  j++;
+	}
+      }
+      format2[j] = '\0';
+      ret = snprintf(num, sizeof(num), format2, a);
+    } else {
+      ret = snprintf(num, sizeof(num), format, a);
+    }
+  }
+
+  lpow = (logpow && (alocal->atype == AXISLOGBIG || alocal->atype == AXISLOGNORM));
+  *text = g_strdup_printf("%s%s%s%s%s",
+			  CHK_STR(head),
+			  (lpow) ? "10^" : "",
+			  CHK_STR(num),
+			  (lpow) ? "@" : "",
+			  CHK_STR(tail));
+
+  *nlen = strlen(num);
+
+  return a;
 }
 
 static int
@@ -1888,7 +1984,7 @@ draw_numbering_normalize(int GC, int side, struct axis_config *aconf,
   gx0=gx0-sy*sin(aconf->dir)+sx*cos(aconf->dir)+dlx2;
   gy0=gy0-sy*cos(aconf->dir)-sx*sin(aconf->dir)+dly2;
   switch (ndir) {
-  case AXIS_NUM_POS_NORMAL:
+  case AXIS_NUM_POS_HORIZONTAL:
     if (side==AXIS_NUM_POS_LEFT) {
       if ((aconf->direction>4500) && (aconf->direction<=22500)) px1=fx1;
       else px1=fx0;
@@ -1941,7 +2037,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	       struct axis_config *aconf, struct font_config *font, int step,
 	       int nnum, int numcount, int begin, int autonorm, int nozero,
 	       int logpow, char *format, double norm,
-	       char *head, int headlen, char *tail, int taillen,
+	       char *head, int headlen, char *tail,
 	       int hx0, int hy0, int hx1, int hy1, int draw)
 {
   int fx0,fy0,fx1,fy1,px0,px1,py0,py1;
@@ -1950,7 +2046,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
   int gx0,gy0;
   double nndir, po, min1, max1, value;
   int numlen,i;
-  char *text, ch, num[256];
+  char *text, ch;
   int sx, sy, ndir, ndirection, cstep;
 
   _getobj(obj,"num_shift_p",inst,&sx);
@@ -1972,7 +2068,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
   }
 
   switch (ndir) {
-  case AXIS_NUM_POS_NORMAL:
+  case AXIS_NUM_POS_HORIZONTAL:
     ndirection = 0;
     break;
   case AXIS_NUM_POS_NORMAL1:
@@ -1987,9 +2083,6 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
   case AXIS_NUM_POS_PARALLEL2:
     ndirection = aconf->direction + 18000;
     break;
-  case AXIS_NUM_POS_VERTICAL:
-    ndirection = 9000;
-    break;
   default:
     /* never reached */
     ndirection = 0;
@@ -2001,9 +2094,9 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
   if (side==AXIS_NUM_POS_RIGHT) sy*=-1;
 
   switch (ndir) {
-  case AXIS_NUM_POS_NORMAL:
+  case AXIS_NUM_POS_HORIZONTAL:
     get_num_ofst_horizontal(aconf, align, side, ilenmax, plen, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
-   break;
+    break;
   case AXIS_NUM_POS_PARALLEL1:
   case AXIS_NUM_POS_PARALLEL2:
     get_num_ofst_parallel(aconf, side, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
@@ -2041,33 +2134,16 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
       if ((cstep==step) || ((alocal->atype==AXISLOGSMALL) && (rcode==3))) {
 	numcount++;
 	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
-	  if ((!logpow
-	       && (alocal->atype == AXISLOGBIG || alocal->atype == AXISLOGNORM))
-              || (alocal->atype==AXISLOGSMALL)) {
-	    value = pow(10.0, po);
-	  } else if (alocal->atype==AXISINVERSE) {
-	    value = 1.0 / po;
-	  } else {
-	    value = po / norm;
-	  }
-	  numformat(num, sizeof(num), format, value);
-	  numlen=strlen(num);
-	  text = g_malloc(numlen + headlen + taillen + 5);
+	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail);
 	  if (text == NULL) {
 	    return 1;
 	  }
-	  text[0]='\0';
-	  if (headlen!=0) strcpy(text,head);
-	  if (logpow
-              && ((alocal->atype==AXISLOGBIG) || (alocal->atype==AXISLOGNORM)))
-	    strcat(text,"10^");
-	  if (numlen!=0) strcat(text,num);
-	  if (logpow
-              && ((alocal->atype==AXISLOGBIG) || (alocal->atype==AXISLOGNORM)))
-	    strcat(text,"@");
-	  if (taillen!=0) strcat(text,tail);
-	  if (align==AXIS_NUM_ALIGN_POINT) {
-	    for (i=headlen;i<headlen+numlen;i++) if (text[i]=='.') break;
+	  if (align == AXIS_NUM_ALIGN_POINT) {
+	    for (i = headlen; i < headlen + numlen; i++) {
+	      if (text[i]=='.') {
+		break;
+	      }
+	    }
 	    ch=text[i];
 	    text[i]='\0';
 	    GRAtextextent(text,font->font, font->jfont, font->pt, font->space, font->scriptsize,
@@ -2083,7 +2159,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 			  &fx0,&fy0,&fx1,&fy1,FALSE);
 	  }
 	  switch (ndir) {
-	  case AXIS_NUM_POS_NORMAL:
+	  case AXIS_NUM_POS_HORIZONTAL:
 	    get_num_pos_horizontal(align, plen, fx0, fy0, fx1, fy1, &px1, &py1);
 	    break;
 	  case AXIS_NUM_POS_PARALLEL1:
@@ -2127,200 +2203,230 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 }
 
 static int
+get_step(struct axislocal *alocal, int step, int *begin)
+{
+  int n, count, rcode;
+  double po;
+
+  count = 0;
+  while ((rcode = getaxisposition(alocal, &po)) != -2) {
+    if (rcode >= 2) {
+      count++;
+    }
+  }
+
+  switch (alocal->atype) {
+  case AXISINVERSE:
+    if (step == 0) {
+      if (count == 0) {
+	n = 1;
+      } else {
+	n = nround(pow(10.0, (double) (int) (log10((double) count))));
+      }
+
+      if (n != 1) {
+	n--;
+      }
+
+      if (count >= 18 * n) {
+	step = 9 * n;
+      } else if (count >= 6 * n) {
+	step = 3 * n;
+      } else {
+	step = n;
+      }
+    }
+
+    if (*begin == 0) {
+      *begin = 1;
+    }
+    break;
+  case AXISLOGSMALL:
+    if (step == 0) {
+      step = 1;
+    }
+
+    if (*begin == 0) {
+      *begin = 1;
+    }
+    break;
+  default:
+    if (step == 0) {
+      if (count == 0) {
+	n = 1;
+      } else {
+	n = nround(pow(10.0,(double )(int )(log10(count * 0.5))));
+      }
+      if (count >= 10 * n) {
+	step = 5 * n;
+      } else if (count >= 5 * n) {
+	step = 2 * n;
+      } else {
+	step = n;
+      }
+    }
+    if (*begin == 0) {
+      double min1, min2;
+
+      min1 = roundmin(alocal->posst, alocal->dposl);
+      min2 = roundmin(alocal->posst, alocal->dposm);
+      *begin = nround(fabs((min1 - min2) / alocal->dposm)) % step + 1;
+    }
+  }
+
+  return step;
+}
+
+static int
 numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, int draw)
 {
   int fr,fg,fb;
   int side, begin,step,nnum,numcount,cstep;
   int autonorm,align,nozero;
-  char *format,*head,*tail,num[256],*text;
-  int headlen,taillen,numlen;
+  char *format,*head,*tail,*text;
+  int headlen,numlen;
   int logpow;
   double po;
   double norm;
-  int n,count;
   int rcode, i;
   int hx0,hy0,hx1,hy1,fx0,fy0,fx1,fy1;
   int ilenmax,flenmax,plen;
   struct font_config font;
   struct axislocal alocal;
 
-  _getobj(obj,"num",inst,&side);
+  _getobj(obj, "num", inst, &side);
   if (side == AXIS_NUM_POS_NONE)
     return 0;
 
-  _getobj(obj,"num_R",inst,&fr);
-  _getobj(obj,"num_G",inst,&fg);
-  _getobj(obj,"num_B",inst,&fb);
-  _getobj(obj,"num_pt",inst,&font.pt);
-  _getobj(obj,"num_space",inst,&font.space);
-  _getobj(obj,"num_script_size",inst,&font.scriptsize);
-  _getobj(obj,"num_begin",inst,&begin);
-  _getobj(obj,"num_step",inst,&step);
-  _getobj(obj,"num_num",inst,&nnum);
-  _getobj(obj,"num_auto_norm",inst,&autonorm);
-  _getobj(obj,"num_head",inst,&head);
-  _getobj(obj,"num_format",inst,&format);
-  _getobj(obj,"num_tail",inst,&tail);
-  _getobj(obj,"num_log_pow",inst,&logpow);
-  _getobj(obj,"num_align",inst,&align);
-  _getobj(obj,"num_no_zero",inst,&nozero);
-  _getobj(obj,"num_font",inst,&font.font);
-  _getobj(obj,"num_jfont",inst,&font.jfont);
+  _getobj(obj, "num_R", inst, &fr);
+  _getobj(obj, "num_G", inst, &fg);
+  _getobj(obj, "num_B", inst, &fb);
+  _getobj(obj, "num_pt", inst, &font.pt);
+  _getobj(obj, "num_space", inst, &font.space);
+  _getobj(obj, "num_script_size", inst, &font.scriptsize);
+  _getobj(obj, "num_begin", inst, &begin);
+  _getobj(obj, "num_step", inst, &step);
+  _getobj(obj, "num_num", inst, &nnum);
+  _getobj(obj, "num_auto_norm", inst, &autonorm);
+  _getobj(obj, "num_head", inst, &head);
+  _getobj(obj, "num_format", inst, &format);
+  _getobj(obj, "num_tail", inst, &tail);
+  _getobj(obj, "num_log_pow", inst, &logpow);
+  _getobj(obj, "num_align", inst, &align);
+  _getobj(obj, "num_no_zero", inst, &nozero);
+  _getobj(obj, "num_font", inst, &font.font);
+  _getobj(obj, "num_jfont", inst, &font.jfont);
 
-  GRAcolor(GC,fr,fg,fb);
+  GRAcolor(GC, fr, fg, fb);
 
   headlen = (head) ? strlen(head) : 0;
-  taillen = (tail) ? strlen(tail) : 0;
 
-  if (getaxispositionini(&alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0) {
-    error(obj,ERRMINMAX);
+  if (getaxispositionini(&alocal, aconf->type, aconf->min, aconf->max, aconf->inc, aconf->div, FALSE)!=0) {
+    error(obj, ERRMINMAX);
     return 1;
   }
 
-  count=0;
-  while ((rcode=getaxisposition(&alocal,&po))!=-2) {
-    if (rcode>=2) count++;
-  }
+  step = get_step(&alocal, step, &begin);
 
-  if (alocal.atype==AXISINVERSE) {
-    if (step==0) {
-      if (count==0) {
-	n=1;
-      } else {
-	n=nround(pow(10.0,(double )(int )(log10((double )count))));
-      }
-
-      if (n!=1)
-	n--;
-
-      if (count>=18*n) {
-	step=9*n;
-      } else if (count>=6*n) {
-	step=3*n;
-      } else {
-	step=n;
-      }
+  norm = 1;
+  if (alocal.atype == AXISNORMAL) {
+    double abs_pos;
+    abs_pos = fabs(alocal.dposm);
+    if (abs_pos >= pow(10.0, (double) autonorm) ||
+	abs_pos <= pow(10.0, (double) - autonorm)) {
+      norm = abs_pos;
     }
+  }
 
-    if (begin==0)
-      begin=1;
-  } else if (alocal.atype==AXISLOGSMALL) {
-    if (step==0)
-      step=1;
-
-    if (begin==0)
-      begin=1;
-  } else {
-    if (step==0) {
-      if (count==0) {
-	n=1;
-      } else {
-	n=nround(pow(10.0,(double )(int )(log10(count*0.5))));
-      }
-      if (count>=10*n) {
-	step=5*n;
-      } else if (count>=5*n) {
-	step=2*n;
-      } else {
-	step=n;
-      }
+  if (aconf->type == AXIS_TYPE_MJD) {
+    norm = 1;
+    if (align == AXIS_NUM_ALIGN_POINT) {
+      align = AXIS_NUM_ALIGN_CENTER;
     }
-    if (begin==0)
-      begin=nround(fabs((roundmin(alocal.posst,alocal.dposl)
-			 -roundmin(alocal.posst,alocal.dposm))/alocal.dposm))
-	% step+1;
   }
 
-  norm=1;
-  if (alocal.atype==AXISNORMAL) {
-    if ((fabs(alocal.dposm)>=pow(10.0,(double )autonorm))
-	|| (fabs(alocal.dposm)<=pow(10.0,(double )-autonorm)))
-      norm=fabs(alocal.dposm);
-  }
-
-  if (getaxispositionini(&alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0)
+  if (getaxispositionini(&alocal, aconf->type, aconf->min, aconf->max, aconf->inc, aconf->div, FALSE)) {
     return 1;
-  GRAtextextent(".",font.font, font.jfont, font.pt, font.space, font.scriptsize,&fx0,&fy0,&fx1,&fy1,FALSE);
-  plen=abs(fx1-fx0);
-  hx0=hy0=hx1=hy1=0;
-  flenmax=ilenmax=0;
-  if (begin<=0) begin=1;
-  cstep=step-begin+1;
-  numcount=0;
-  while ((rcode=getaxisposition(&alocal,&po))!=-2) {
-    if (rcode < 2)
+  }
+
+  GRAtextextent(".", font.font, font.jfont, font.pt, font.space, font.scriptsize,
+		&fx0, &fy0, &fx1, &fy1, FALSE);
+  plen = abs(fx1 - fx0);
+  hx0 = hy0 = hx1 = hy1 = 0;
+  flenmax = ilenmax = 0;
+  if (begin <= 0) {
+    begin = 1;
+  }
+  cstep = step - begin + 1;
+  numcount = 0;
+  while ((rcode = getaxisposition(&alocal, &po)) != -2) {
+    if (rcode < 2) {
       continue;
+    }
 
-    if ((cstep==step) || ((alocal.atype==AXISLOGSMALL) && (rcode==3))) {
+    if (cstep == step ||
+	(alocal.atype == AXISLOGSMALL && rcode == 3)) {
       numcount++;
-      if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
-	if ((!logpow
-	     && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-	    || (alocal.atype==AXISLOGSMALL))
-	  numformat(num, sizeof(num), format, pow(10.0, po));
-	else if (alocal.atype==AXISINVERSE)
-	  numformat(num, sizeof(num), format, 1.0 / po);
-	else
-	  numformat(num, sizeof(num), format, po / norm);
-	numlen=strlen(num);
-	text = g_malloc(numlen + headlen + taillen + 5);
+
+      if ((numcount <= nnum || nnum == -1) &&
+	  (po != 0 || ! nozero)) {
+
+	numformat(&text, &numlen, format, aconf, &alocal, logpow, po, norm, head, tail);
 	if (text == NULL) {
 	  return 1;
 	}
-	text[0]='\0';
-	if (headlen!=0) strcpy(text,head);
-	if (logpow
-	    && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-	  strcat(text,"10^");
-	if (numlen!=0) strcat(text,num);
-	if (logpow
-	    && ((alocal.atype==AXISLOGBIG) || (alocal.atype==AXISLOGNORM)))
-	  strcat(text,"@");
-	if (taillen!=0) strcat(text,tail);
-	if (align==AXIS_NUM_ALIGN_POINT) {
-	  for (i=headlen;i<headlen+numlen;i++) if (text[i]=='.') break;
-	  if (text[i]=='.') {
-	    GRAtextextent(text+i+1,font.font, font.jfont, font.pt, font.space, font.scriptsize,
-			  &fx0,&fy0,&fx1,&fy1,FALSE);
-	    if (fy0<hy0) hy0=fy0;
-	    if (fy1>hy1) hy1=fy1;
-	    if (abs(fx1-fx0)>flenmax) flenmax=abs(fx1-fx0);
+	if (align == AXIS_NUM_ALIGN_POINT) {
+	  for (i = headlen; i < headlen + numlen; i++) {
+	    if (text[i] == '.') {
+	      break;
+	    }
 	  }
-	  text[i]='\0';
-	  GRAtextextent(text,font.font, font.jfont, font.pt, font.space, font.scriptsize,
-			&fx0,&fy0,&fx1,&fy1,FALSE);
-	  if (abs(fx1-fx0)>ilenmax) ilenmax=abs(fx1-fx0);
-	  if (fy0<hy0) hy0=fy0;
-	  if (fy1>hy1) hy1=fy1;
+	  if (text[i] == '.') {
+	    GRAtextextent(text + i + 1, font.font, font.jfont, font.pt, font.space, font.scriptsize,
+			  &fx0, &fy0, &fx1, &fy1, FALSE);
+	    hy0 = MIN(hy0, fy0);
+	    hy1 = MAX(hy1, fy1);
+	    if (abs(fx1-fx0) > flenmax) {
+	      flenmax = abs(fx1 - fx0);
+	    }
+	  }
+	  text[i] = '\0';
+	  GRAtextextent(text, font.font, font.jfont, font.pt, font.space, font.scriptsize,
+			&fx0, &fy0, &fx1, &fy1, FALSE);
+	  if (abs(fx1 - fx0) > ilenmax) {
+	    ilenmax = abs(fx1 - fx0);
+	  }
+	  hy0 = MIN(hy0, fy0);
+	  hy1 = MAX(hy1, fy1);
 	} else {
-	  GRAtextextent(text,font.font, font.jfont, font.pt, font.space, font.scriptsize,
-			&fx0,&fy0,&fx1,&fy1,FALSE);
-	  if (fx0<hx0) hx0=fx0;
-	  if (fx1>hx1) hx1=fx1;
-	  if (fy0<hy0) hy0=fy0;
-	  if (fy1>hy1) hy1=fy1;
+	  GRAtextextent(text, font.font, font.jfont, font.pt, font.space, font.scriptsize,
+			&fx0, &fy0, &fx1, &fy1, FALSE);
+	  hx0 = MIN(hx0, fx0);
+	  hx1 = MAX(hx1, fx1);
+	  hy0 = MIN(hy0, fy0);
+	  hy1 = MAX(hy1, fy1);
 	}
 	g_free(text);
       }
-      if ((alocal.atype==AXISLOGSMALL) && (rcode==3)) {
-	cstep=step-begin;
+      if ((alocal.atype == AXISLOGSMALL) && (rcode == 3)) {
+	cstep = step - begin;
       } else {
-	cstep=0;
+	cstep = 0;
       }
     }
     cstep++;
   }
 
-  if (align==AXIS_NUM_ALIGN_POINT) {
-    hx0=0;
-    hx1=flenmax+ilenmax+plen/2;
+  if (align == AXIS_NUM_ALIGN_POINT) {
+    hx0 = 0;
+    hx1 = flenmax + ilenmax + plen / 2;
   }
 
-  if ((abs(hx0-hx1)!=0) && (abs(hy0-hy1)!=0)) {
+  if (hx0 != hx1 && hy0 != hy1) {
     draw_numbering(obj, inst, &alocal, GC,
 		   side, align, ilenmax, plen, aconf, &font, step, nnum,
 		   numcount, begin, autonorm, nozero, logpow, format,
-		   norm, head, headlen, tail, taillen, hx0, hy0, hx1, hy1, draw);
+		   norm, head, headlen, tail, hx0, hy0, hx1, hy1, draw);
   }
 
   return 0;
@@ -3506,6 +3612,33 @@ axisscalepop(struct objlist *obj,char *inst,char *rval,int argc,
   return 0;
 }
 
+static int 
+anumdirput(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
+{
+  int type;
+
+  type = * (int *) argv[2];
+  switch (type) {
+  case AXIS_NUM_POS_HORIZONTAL:
+  case AXIS_NUM_POS_PARALLEL1:
+  case AXIS_NUM_POS_PARALLEL2:
+  case AXIS_NUM_POS_NORMAL1:
+  case AXIS_NUM_POS_NORMAL2:
+    break;
+  case AXIS_NUM_POS_NORMAL:
+    * (int *) argv[2] = AXIS_NUM_POS_HORIZONTAL;
+    break;
+  case AXIS_NUM_POS_PARALLEL:
+    * (int *) argv[2] = AXIS_NUM_POS_PARALLEL1;
+    break;
+  default:
+    * (int *) argv[2] = AXIS_NUM_POS_HORIZONTAL;
+    break;
+  }
+
+  return 0;
+}
+
 static struct objtable axis[] = {
   {"init",NVFUNC,NEXEC,axisinit,NULL,0},
   {"done",NVFUNC,NEXEC,axisdone,NULL,0},
@@ -3561,7 +3694,7 @@ static struct objtable axis[] = {
   {"num_script_size",NINT,NREAD|NWRITE,axisput,NULL,0},
   {"num_align",NENUM,NREAD|NWRITE,NULL,anumalignchar,0},
   {"num_no_zero",NBOOL,NREAD|NWRITE,NULL,NULL,0},
-  {"num_direction",NENUM,NREAD|NWRITE,NULL,anumdirchar,0},
+  {"num_direction",NENUM,NREAD|NWRITE,anumdirput,anumdirchar,0},
   {"num_shift_p",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_shift_n",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_R",NINT,NREAD|NWRITE,NULL,NULL,0},

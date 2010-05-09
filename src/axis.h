@@ -27,6 +27,13 @@
 #define AXISLOGBIG   3
 #define AXISINVERSE  4
 
+enum AXIS_SCALE_TYPE {
+  AXIS_TYPE_LINEAR,
+  AXIS_TYPE_LOG,
+  AXIS_TYPE_INVERSE,
+  AXIS_TYPE_MJD,
+};
+
 struct axislocal {
     int atype;
     double min,max,inc;
