@@ -1,3 +1,54 @@
+2010-05-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (axistypechar): add scale type "MJD".
+	(anumdirchar): use "horizontal" and "parallel1" instead of
+	"normal" and "parallel" respectively.
+	(AxisConfig): remove duplicated member "type".
+	(mjd_to_date_str): add.
+	(numformat): construct whole numbering string.
+	(draw_numbering_normalize, draw_numbering, anumdirput): use
+	"AXIS_NUM_POS_HORIZONTAL" and "AXIS_NUM_POS_PARALLEL1" instead of
+	"AXIS_NUM_POS_NORMAL" and "AXIS_NUM_POS_PARALLEL" respectively.
+	(draw_numbering): remove unused argument "taillen".
+	(draw_numbering): remove unused variable "num".
+	(draw_numbering): move some codes to the function "numformat()".
+	(get_step): add.
+	(numbering): remove unused variables "taillen", "num", "n" and
+	"count".
+	(numbering): use "get_step()".
+	(numbering): move some codes to the function "numformat()".
+	(anumdirput): add.
+	(axis): use "anumdirput" to set value to the field "num_direction".
+
+	* src/axis.h (AXIS_SCALE_TYPE): meved from "oaxis.c".
+
+2010-05-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (mjd): add.
+	(math_func_mjd): use "mjd()".
+	(math_func_unix2mjd): add.
+
+	* src/math/math_function.h.in: add function "unix2mjd".
+	add 4th, 5th and 6th arguments to the function "mjd".
+
+	* src/shellcm.c (dispfield): check first character of a string
+	"enumlist[j]".
+
+	* src/axis.h (AXIS_SCALE_TYPE): moved from "oaxis.c".
+
+	* src/object.c (getargument): check first character of a string
+	"enumlist[i]".
+
+	* src/gtk/main.c (get_obj_enum_list): check first character of a
+	string "enumlist[i]".
+
+	* src/gtk/x11dialg.c (SetListFromObjField): check first character
+	of a string "enumlist[i]".
+
+	* src/gtk/x11file.c (FitDialogSetup, create_type_combo_box)
+	(create_type_combo_box): check first character of strings
+	"curvelist[j]" and "enumlist[i]".
+
 2010-04-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/Makefile.am (ngraph_CFLAGS): add option
