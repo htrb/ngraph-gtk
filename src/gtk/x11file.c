@@ -707,7 +707,11 @@ FitCB(struct objlist *obj, int id)
   getobj(obj, "profile", id, 0, NULL, &profile);
 
   if (profile == NULL) {
-    sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
+    char *tmp;
+
+    sgetobjfield(obj, id, "type", NULL, &tmp, FALSE, FALSE, FALSE);
+    valstr = g_strdup(_(tmp));
+    g_free(tmp);
   } else {
     valstr = NULL;
   }
