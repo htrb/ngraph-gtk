@@ -722,7 +722,7 @@ draw_str(struct gra2cairo_local *local, int draw, char *str, struct fontmap *fon
   PangoLayoutIter *piter;
   int w, h, baseline;
 
-  if (size == 0) {
+  if (size == 0 || str == NULL) {
     if (fw)
       *fw = 0;
 
