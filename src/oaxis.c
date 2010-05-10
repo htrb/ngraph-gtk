@@ -1623,7 +1623,8 @@ struct axis_config {
 
 
 static void
-get_num_ofst_horizontal(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
+get_num_ofst_horizontal(const struct axis_config *aconf, int align, int side,
+			int ilenmax, int plen,
 			int hx0, int hy0, int hx1, int hy1,
 			int *x1, int *y1, int *x2, int *y2, int *len)
 {
@@ -1704,7 +1705,7 @@ get_num_ofst_horizontal(struct axis_config *aconf, int align, int side, int ilen
 }
 
 static void
-get_num_ofst_parallel(struct axis_config *aconf, int side,
+get_num_ofst_parallel(const struct axis_config *aconf, int side,
 		      int hx0, int hy0, int hx1, int hy1,
 		      int *x1, int *y1, int *x2, int *y2, int *len)
 {
@@ -1720,9 +1721,10 @@ get_num_ofst_parallel(struct axis_config *aconf, int side,
 }
 
 static void
-get_num_ofst_normal1(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
-			int hx0, int hy0, int hx1, int hy1,
-			int *x1, int *y1, int *x2, int *y2, int *len)
+get_num_ofst_normal1(const struct axis_config *aconf, int align, int side,
+		     int ilenmax, int plen,
+		     int hx0, int hy0, int hx1, int hy1,
+		     int *x1, int *y1, int *x2, int *y2, int *len)
 {
   int py1;
 
@@ -1776,9 +1778,10 @@ get_num_ofst_normal1(struct axis_config *aconf, int align, int side, int ilenmax
 }
 
 static void
-get_num_ofst_normal2(struct axis_config *aconf, int align, int side, int ilenmax, int plen,
-			int hx0, int hy0, int hx1, int hy1,
-			int *x1, int *y1, int *x2, int *y2, int *len)
+get_num_ofst_normal2(const struct axis_config *aconf, int align, int side,
+		     int ilenmax, int plen,
+		     int hx0, int hy0, int hx1, int hy1,
+		     int *x1, int *y1, int *x2, int *y2, int *len)
 {
   int py1;
 
@@ -1832,7 +1835,7 @@ get_num_ofst_normal2(struct axis_config *aconf, int align, int side, int ilenmax
 }
 
 static void
-mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len)
+mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len, const char *date_format)
 {
   struct tm *tm;
   time_t t;
@@ -1854,39 +1857,43 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len)
     return;
   }
 
-  if (fabs(aconf->max - aconf->min) < 1) {
-    if (tm->tm_sec == 0) {
-      fmt = fmt_hm;
-    } else {
-      fmt = fmt_hms;
-    }
-  } else if (fabs(aconf->max - aconf->min) > 365) {
-    if (tm->tm_sec == 0) {
-      if (tm->tm_hour == 0 && tm->tm_min == 0) {
-	if (tm->tm_mday == 1) {
-	  if (tm->tm_mon == 0) {
-	    fmt = fmt_y;
+  if (date_format && date_format[0]) {
+    fmt = date_format;
+  }else {
+    if (fabs(aconf->max - aconf->min) < 1) {
+      if (tm->tm_sec == 0) {
+	fmt = fmt_hm;
+      } else {
+	fmt = fmt_hms;
+      }
+    } else if (fabs(aconf->max - aconf->min) > 365) {
+      if (tm->tm_sec == 0) {
+	if (tm->tm_hour == 0 && tm->tm_min == 0) {
+	  if (tm->tm_mday == 1) {
+	    if (tm->tm_mon == 0) {
+	      fmt = fmt_y;
+	    } else {
+	      fmt = fmt_ym;
+	    }
 	  } else {
-	    fmt = fmt_ym;
+	    fmt = fmt_ymd;
 	  }
 	} else {
-	  fmt = fmt_ymd;
+	  fmt = fmt_ymdhm;
 	}
       } else {
-	fmt = fmt_ymdhm;
+	fmt = fmt_ymdhms;
       }
     } else {
-      fmt = fmt_ymdhms;
-    }
-  } else {
-    if (tm->tm_sec == 0) {
-      if (tm->tm_hour == 0 && tm->tm_min == 0) {
-	fmt = fmt_ymd;
+      if (tm->tm_sec == 0) {
+	if (tm->tm_hour == 0 && tm->tm_min == 0) {
+	  fmt = fmt_ymd;
+	} else {
+	  fmt = fmt_ymdhm;
+	}
       } else {
-	fmt = fmt_ymdhm;
+	fmt = fmt_ymdhms;
       }
-    } else {
-      fmt = fmt_ymdhms;
     }
   }
 
@@ -1902,7 +1909,7 @@ numformat(char **text, int *nlen, const char *format,
 	  const struct axis_config *aconf,
 	  const struct axislocal *alocal,
 	  int logpow, double po, double norm,
-	  const char *head, const char *tail)
+	  const char *head, const char *tail, const char *date_format)
 {
   int i, j, len, ret, lpow;
   char *s;
@@ -1922,7 +1929,7 @@ numformat(char **text, int *nlen, const char *format,
   }
 
   if (aconf->type == AXIS_TYPE_MJD) {
-    mjd_to_date_str(aconf, po, num, sizeof(num));
+    mjd_to_date_str(aconf, po, num, sizeof(num), date_format);
     logpow = 0;
   } else {
     s = strchr(format,'+');
@@ -1958,8 +1965,8 @@ numformat(char **text, int *nlen, const char *format,
 }
 
 static int
-draw_numbering_normalize(int GC, int side, struct axis_config *aconf,
-			 struct font_config *font, double norm,
+draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
+			 const struct font_config *font, double norm,
 			 int maxlen, int sx, int sy, int dlx2, int dly2,
 			 int ndir, double nndir, int ndirection)
 {
@@ -2034,10 +2041,10 @@ draw_numbering_normalize(int GC, int side, struct axis_config *aconf,
 static int
 draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	       int GC, int side, int align, int ilenmax, int plen,
-	       struct axis_config *aconf, struct font_config *font, int step,
+	       struct axis_config *aconf, const struct font_config *font, int step,
 	       int nnum, int numcount, int begin, int autonorm, int nozero,
-	       int logpow, char *format, double norm,
-	       char *head, int headlen, char *tail,
+	       int logpow, const char *format, double norm,
+	       const char *head, int headlen, const char *tail, const char *date_format,
 	       int hx0, int hy0, int hx1, int hy1, int draw)
 {
   int fx0,fy0,fx1,fy1,px0,px1,py0,py1;
@@ -2134,7 +2141,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
       if ((cstep==step) || ((alocal->atype==AXISLOGSMALL) && (rcode==3))) {
 	numcount++;
 	if (((numcount<=nnum) || (nnum==-1)) && ((po!=0) || !nozero)) {
-	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail);
+	  value = numformat(&text, &numlen, format, aconf, alocal, logpow, po, norm, head, tail, date_format);
 	  if (text == NULL) {
 	    return 1;
 	  }
@@ -2283,7 +2290,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   int fr,fg,fb;
   int side, begin,step,nnum,numcount,cstep;
   int autonorm,align,nozero;
-  char *format,*head,*tail,*text;
+  char *format,*head,*tail,*text,*date_format;
   int headlen,numlen;
   int logpow;
   double po;
@@ -2311,6 +2318,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   _getobj(obj, "num_head", inst, &head);
   _getobj(obj, "num_format", inst, &format);
   _getobj(obj, "num_tail", inst, &tail);
+  _getobj(obj, "num_date_format", inst, &date_format);
   _getobj(obj, "num_log_pow", inst, &logpow);
   _getobj(obj, "num_align", inst, &align);
   _getobj(obj, "num_no_zero", inst, &nozero);
@@ -2371,7 +2379,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
       if ((numcount <= nnum || nnum == -1) &&
 	  (po != 0 || ! nozero)) {
 
-	numformat(&text, &numlen, format, aconf, &alocal, logpow, po, norm, head, tail);
+	numformat(&text, &numlen, format, aconf, &alocal, logpow, po, norm, head, tail, date_format);
 	if (text == NULL) {
 	  return 1;
 	}
@@ -2426,7 +2434,8 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
     draw_numbering(obj, inst, &alocal, GC,
 		   side, align, ilenmax, plen, aconf, &font, step, nnum,
 		   numcount, begin, autonorm, nozero, logpow, format,
-		   norm, head, headlen, tail, hx0, hy0, hx1, hy1, draw);
+		   norm, head, headlen, tail, date_format,
+		   hx0, hy0, hx1, hy1, draw);
   }
 
   return 0;
@@ -3700,6 +3709,7 @@ static struct objtable axis[] = {
   {"num_R",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_G",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_B",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"num_date_format",NSTR,NREAD|NWRITE,NULL,NULL,0},
   {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,NULL,0},
   {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,NULL,0},
   {"scale_history",NDARRAY,NREAD,NULL,NULL,0},

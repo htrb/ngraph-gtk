@@ -135,7 +135,7 @@ AxisCB(struct objlist *obj, int id)
   getobj(obj, "group", id, 0, NULL, &name);
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  s = g_strdup_printf("%-10s %.6s dir:%d", name, valstr, dir);
+  s = g_strdup_printf("%-10s %.6s %s:%.2f", name, _(valstr), _("dir"), dir / 100.0);
   g_free(valstr);
 
   return s;
@@ -159,7 +159,7 @@ AxisHistoryCB(struct objlist *obj, int id)
 
   name = CHK_STR(name);
   sgetobjfield(obj, id, "type", NULL, &valstr, FALSE, FALSE, FALSE);
-  s = g_strdup_printf("%-10s %.6s dir:%d", name, valstr, dir);
+  s = g_strdup_printf("%-10s %.6s %s:%.2f", name, _(valstr), _("dir"), dir / 100.0);
   g_free(valstr);
 
   return s;
@@ -1630,6 +1630,9 @@ numbering_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->tail, axis->Obj, axis->Id, "num_tail"))
     return 1;
 
+  if (SetObjFieldFromWidget(d->date_format, axis->Obj, axis->Id, "num_date_format"))
+    return 1;
+
   if (SetObjFieldFromWidget(d->align, axis->Obj, axis->Id, "num_align"))
     return 1;
 
@@ -1694,6 +1697,8 @@ numbering_tab_setup_item(struct AxisDialog *axis, int id)
   }
 
   combo_box_set_active(d->fraction, a);
+
+  SetWidgetFromObjField(d->date_format, axis->Obj, id, "num_date_format");
 
   SetWidgetFromObjField(d->tail, axis->Obj, id, "num_tail");
 
@@ -1804,6 +1809,10 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   w = create_text_entry(TRUE, TRUE);
   add_widget_to_table(table, w, _("_Tail:"), TRUE, i++);
   d->tail = w;
+
+  w = create_text_entry(TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Date format:"), TRUE, i++);
+  d->date_format = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
   add_widget_to_table(table, w, _("_Auto normalization:"), FALSE, i++);

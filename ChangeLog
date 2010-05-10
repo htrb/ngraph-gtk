@@ -1,3 +1,30 @@
+2010-05-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (get_num_ofst_horizontal, get_num_ofst_parallel)
+	(get_num_ofst_normal1, get_num_ofst_normal2): the type of the
+	parameter "aconf" is "const struct axis_config *".
+	(mjd_to_date_str): add parameter "date_format".
+	(draw_numbering_normalize): the type of parameters "aconf" and
+	"font" are "const struct axis_config *" and "const struct
+	font_config *" respectively.
+	(axis): add field "num_date_format".
+
+	* src/math/math_basic_function.c (math_func_unix2mjd): first
+	argument of the function "mjd()" is "tm->tm_year + 1900".
+
+	* src/gtk/ogra2cairo.c (draw_str): check if the parameter "str" is
+	NULL or not.
+
+	* src/gtk/main.c (main): set "LC_TIME" as "C".
+
+	* src/gtk/x11dialg.h (AxisNumbering):add member "date_format".
+
+	* src/gtk/x11file.c (FitCB): localize message.
+
+	* src/gtk/x11axis.c (AxisCB, AxisHistoryCB): localize message.
+	(numbering_tab_set_value, numbering_tab_setup_item)
+	(numbering_tab_create): add settings for date format.
+
 2010-05-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oaxis.c (axistypechar): add scale type "MJD".

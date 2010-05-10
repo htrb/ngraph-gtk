@@ -197,8 +197,8 @@ getaxisposition(struct axislocal *alocal, /*@out@*/ double *po)
 }
 
 int 
-getaxispositionini(struct axislocal *alocal,
-                 int type,double min,double max,double inc,int div,int tighten)
+getaxispositionini(struct axislocal *alocal, int type,
+		   double min,double max,double inc,int div,int tighten)
 {
   double po;
   int rcode;

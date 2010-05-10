@@ -1259,8 +1259,7 @@ chkobjinstoid(struct objlist *obj,int oid)
 }
 
 static int 
-chkobjtblpos(struct objlist *obj,char *name,
-                 struct objlist **robj)
+chkobjtblpos(struct objlist *obj, char *name, struct objlist **robj)
 /* chkobjtblpos() returns -1 on error */
 {
 #if USE_HASH
@@ -1677,7 +1676,7 @@ getobjoffset(struct objlist *obj,char *name)
 }
 
 int 
-getobjtblpos(struct objlist *obj,char *name,struct objlist **robj)
+getobjtblpos(struct objlist *obj, char *name, struct objlist **robj)
 /* getoffset() returns -1 on error */
 {
   int tblnum;

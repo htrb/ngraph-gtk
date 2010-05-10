@@ -273,7 +273,8 @@ struct AxisFont
 struct AxisNumbering
 {
   GtkWidget *num, *begin, *ster, *numnum, *head, *fraction, *add_plus, *tail,
-    *align, *direction, *shiftp, *shiftn, *log_power, *no_zero, *norm, *step;
+    *date_format, *align, *direction, *shiftp, *shiftn, *log_power, *no_zero,
+    *norm, *step;
   int tab_id;
 };
 
