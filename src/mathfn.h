@@ -51,4 +51,3 @@ int mjd(int year,int month,int day);
 void HSB2RGB(double h,double s,double b,int *R,int *G,int *B);
 int bsearch_int(int *ary, int n, int val, int *idx);
 int compare_double(double x, double y);
-
