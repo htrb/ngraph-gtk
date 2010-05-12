@@ -682,6 +682,8 @@ COLOR(3,%03)=Y
 <tr><td>PROG1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す (引数の数は 64 個まで)</td></tr>
 <tr><td>PROG2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す (引数の数は 64 個まで)</td></tr>
 <tr><td>PROGN(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す (引数の数は 64 個まで)</td></tr>
+<tr><td>MJD(year,month,day,hour,min,sec)</td><td>修正ユリウス日(year, month, day はグレゴリオ暦、hour,min,sec は UTC 時刻、うるう秒は考慮されない)</td></tr>
+<tr><td>UNIX2MJD(time)</td><td>修正ユリウス日(time は 1970年1月1日00:00:00 UTC からの経過秒数、うるう秒は考慮されない)</td></tr>
 </table>
 </div>
 

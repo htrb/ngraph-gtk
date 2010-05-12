@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-05-10 15:44+0900\n"
-"PO-Revision-Date: 2010-05-10 15:59+0900\n"
+"POT-Creation-Date: 2010-05-12 17:42+0900\n"
+"PO-Revision-Date: 2010-05-12 17:43+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -307,8 +307,8 @@ msgid "_Tail:"
 msgstr "後続(_T):"
 
 #: src/gtk/x11axis.c:1814
-msgid "_Date format:"
-msgstr "日付書式(_D):"
+msgid "_Date/time format:"
+msgstr "日時書式(_D):"
 
 #: src/gtk/x11axis.c:1818
 msgid "_Auto normalization:"

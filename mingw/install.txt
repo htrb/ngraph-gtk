@@ -49,8 +49,8 @@ tar --lzma -xf libgettextpo-0.17-1-mingw32-dll-0.tar.lzma
 
 http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/
 
-gtk+_2.20.0-1_win32.zip
-gtk+-dev_2.20.0-1_win32.zip
+gtk+_2.20.1-1_win32.zip
+gtk+-dev_2.20.1-1_win32.zip
 gtk+-bundle_2.20.0-20100406_win32.zip
 
 

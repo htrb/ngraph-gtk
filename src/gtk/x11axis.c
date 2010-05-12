@@ -1811,7 +1811,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->tail = w;
 
   w = create_text_entry(TRUE, TRUE);
-  add_widget_to_table(table, w, _("_Date format:"), TRUE, i++);
+  add_widget_to_table(table, w, _("_Date/time format:"), TRUE, i++);
   d->date_format = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
