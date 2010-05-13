@@ -1260,7 +1260,7 @@ CmGraphLoadB(GtkWidget *w, gpointer client_data)
 void
 CmGraphSaveB(GtkWidget *w, gpointer client_data)
 {
-  CmGraphSave();
+  CmGraphOverWrite();
 }
 
 void

@@ -104,6 +104,7 @@ struct command_data {
   void (*func)(GtkWidget *, gpointer);
   gchar *label, *tip, *caption;
   const char **xpm;
+  const char *stock;
   int type;
   GtkWidget *img;
   GtkWidget **button;
@@ -116,6 +117,7 @@ static struct command_data Command1_data[] = {
     "Data Window",
     N_("Activate Data Window"), 
     Filewin_xpm,
+    NULL,
     0,
     NULL,
     NULL,
@@ -126,6 +128,7 @@ static struct command_data Command1_data[] = {
     "Axis Window",
     N_("Activate Axis Window"), 
     Axiswin_xpm,
+    NULL,
     0,
     NULL,
     NULL,
@@ -136,6 +139,7 @@ static struct command_data Command1_data[] = {
     "Legend Window",
     N_("Activate Legend Window"), 
     Legendwin_xpm,
+    NULL,
     0,
     NULL,
     NULL,
@@ -146,6 +150,7 @@ static struct command_data Command1_data[] = {
     "Merge Window",
     N_("Activate Merge Window"), 
     Mergewin_xpm,
+    NULL,
     0,
     NULL,
     NULL,
@@ -156,6 +161,7 @@ static struct command_data Command1_data[] = {
     "Coordinate Window",
     N_("Activate Coordinate Window"), 
     Coordwin_xpm,
+    NULL,
     0,
     NULL,
     NULL,
@@ -166,6 +172,7 @@ static struct command_data Command1_data[] = {
     "Information Window",
     N_("Activate Information Window"), 
     Infowin_xpm,
+    NULL,
     0,
     NULL,
     NULL,
@@ -176,7 +183,9 @@ static struct command_data Command1_data[] = {
     N_("Open"),
     N_("Open Data"),
     N_("Open Data file"), 
-    Fileopen_xpm,
+    //    Fileopen_xpm,
+    NULL,
+    GTK_STOCK_FILE,
     0,
     NULL,
     NULL,
@@ -187,7 +196,9 @@ static struct command_data Command1_data[] = {
     N_("Load"),
     N_("Load NGP"),
     N_("Load NGP file"), 
-    Load_xpm,
+    //    Load_xpm,
+    NULL,
+    GTK_STOCK_OPEN,
     0,
     NULL,
     NULL,
@@ -197,7 +208,9 @@ static struct command_data Command1_data[] = {
     N_("Save"),
     N_("Save NGP"),
     N_("Save NGP file "), 
-    Save_xpm,
+    //    Save_xpm,
+    NULL,
+    GTK_STOCK_SAVE,
     0,
     NULL,
     NULL,
@@ -209,6 +222,7 @@ static struct command_data Command1_data[] = {
     N_("Clear Scale"),
     N_("Clear Scale"), 
     Scale_xpm,
+    NULL,
     0,
     NULL,
     NULL,
@@ -219,6 +233,7 @@ static struct command_data Command1_data[] = {
     N_("Draw"),
     N_("Draw on Viewer Window"), 
     Draw_xpm,
+    NULL,
     0,
     NULL,
     NULL,
@@ -228,7 +243,9 @@ static struct command_data Command1_data[] = {
     N_("Clear Image"),
     N_("Clear Image"),
     N_("Clear Viewer Window"), 
-    Clear_xpm,
+    //    Clear_xpm,
+    NULL,
+    GTK_STOCK_CLEAR,
     0,
     NULL,
     NULL,
@@ -238,17 +255,21 @@ static struct command_data Command1_data[] = {
     N_("Print"),
     N_("Print"),
     N_("Print"), 
-    Print_xpm,
+    //    Print_xpm,
+    NULL,
+    GTK_STOCK_PRINT,
     0,
     NULL,
     NULL,
   },
   {
     CmOutputViewerB,
-    N_("Viewer"),
-    N_("Ex. Viewer"),
-    N_("Open External Viewer"), 
-    Preview_xpm,
+    N_("Print preview"),
+    N_("Print preview"),
+    N_("Print preview"), 
+    //    Preview_xpm,
+    NULL,
+    GTK_STOCK_PRINT_PREVIEW,
     0,
     NULL,
     NULL,
@@ -260,6 +281,7 @@ static struct command_data Command1_data[] = {
     N_("Math Transformation"),
     N_("Set Math Transformation"), 
     Math_xpm,
+    NULL,
     0,
     NULL,
     &MathBtn,
@@ -269,7 +291,9 @@ static struct command_data Command1_data[] = {
     N_("Undo"),
     N_("Scale Undo"),
     N_("Undo Scale Settings"), 
-    Scaleundo_xpm,
+    //    Scaleundo_xpm,
+    NULL,
+    GTK_STOCK_UNDO,
     0,
     NULL,
     &AxisUndoBtn,
@@ -283,6 +307,7 @@ static struct command_data Command2_data[] = {
     N_("Pointer"),
     N_("Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
     Point_xpm,
+    NULL,
     PointB,
     NULL,
     NULL,
@@ -293,6 +318,7 @@ static struct command_data Command2_data[] = {
     N_("Legend Pointer"),
     N_("Legend Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     Legendpoint_xpm,
+    NULL,
     LegendB,
     NULL,
     NULL,
@@ -303,6 +329,7 @@ static struct command_data Command2_data[] = {
     N_("Axis Pointer"),
     N_("Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     Axispoint_xpm,
+    NULL,
     AxisB,
     NULL,
     NULL,
@@ -313,6 +340,7 @@ static struct command_data Command2_data[] = {
     N_("Data Pointer"),
     N_("Data Pointer"),
     Datapoint_xpm,
+    NULL,
     DataB,
     NULL,
     NULL,
@@ -324,6 +352,7 @@ static struct command_data Command2_data[] = {
     N_("Line"),
     N_("New Legend Line (+SHIFT: Fine +CONTROL: snap angle)"), 
     Line_xpm,
+    NULL,
     LineB,
     NULL,
     NULL,
@@ -334,8 +363,10 @@ static struct command_data Command2_data[] = {
     N_("Curve"),
     N_("New Legend Curve (+SHIFT: Fine +CONTROL: snap angle)"), 
     Curve_xpm,
+    NULL,
     CurveB,
-
+    NULL,
+    NULL,
   },
   {
     NULL,
@@ -343,6 +374,7 @@ static struct command_data Command2_data[] = {
     N_("Polygon"),
     N_("New Legend Polygon (+SHIFT: Fine +CONTROL: snap angle)"), 
     Polygon_xpm,
+    NULL,
     PolyB,
     NULL,
     NULL,
@@ -353,6 +385,7 @@ static struct command_data Command2_data[] = {
     N_("Rectangle"),
     N_("New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"), 
     Rect_xpm,
+    NULL,
     RectB,
     NULL,
     NULL,
@@ -363,6 +396,7 @@ static struct command_data Command2_data[] = {
     N_("Arc"),
     N_("New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"), 
     Arc_xpm,
+    NULL,
     ArcB,
     NULL,
     NULL,
@@ -373,6 +407,7 @@ static struct command_data Command2_data[] = {
     N_("Mark"),
     N_("New Legend Mark (+SHIFT: Fine)"), 
     Mark_xpm,
+    NULL,
     MarkB,
     NULL,
     NULL,
@@ -383,6 +418,7 @@ static struct command_data Command2_data[] = {
     N_("Text"),
     N_("New Legend Text (+SHIFT: Fine)"), 
     Text_xpm,
+    NULL,
     TextB,
     NULL,
     NULL,
@@ -393,6 +429,7 @@ static struct command_data Command2_data[] = {
     N_("Gaussian"),
     N_("New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Gauss_xpm,
+    NULL,
     GaussB,
     NULL,
     NULL,
@@ -403,6 +440,7 @@ static struct command_data Command2_data[] = {
     N_("Frame Graph"),
     N_("New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Frame_xpm,
+    NULL,
     FrameB,
     NULL,
     NULL,
@@ -413,6 +451,7 @@ static struct command_data Command2_data[] = {
     N_("Section Graph"),
     N_("New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Section_xpm,
+    NULL,
     SectionB,
     NULL,
     NULL,
@@ -423,6 +462,7 @@ static struct command_data Command2_data[] = {
     N_("Cross Graph"),
     N_("New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
     Cross_xpm,
+    NULL,
     CrossB,
     NULL,
     NULL,
@@ -433,6 +473,7 @@ static struct command_data Command2_data[] = {
     N_("Single Axis"),
     N_("New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"), 
     Single_xpm,
+    NULL,
     SingleB,
     NULL,
     NULL,
@@ -444,6 +485,7 @@ static struct command_data Command2_data[] = {
     N_("Axis Trimming"),
     N_("Axis Trimming (+SHIFT: Fine)"), 
     Trimming_xpm,
+    NULL,
     TrimB,
     NULL,
     NULL,
@@ -454,6 +496,7 @@ static struct command_data Command2_data[] = {
     N_("Evaluate Data"),
     N_("Evaluate Data Point"), 
     Eval_xpm,
+    NULL,
     EvalB,
     NULL,
     NULL,
@@ -464,6 +507,7 @@ static struct command_data Command2_data[] = {
     N_("Viewer Zoom"),
     N_("Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"), 
     Zoom_xpm,
+    NULL,
     ZoomB,
     NULL,
     NULL,
@@ -744,8 +788,13 @@ set_show_instance_menu_cb(GtkWidget *menu, char *name, struct show_instance_menu
 static void
 show_graph_menu_cb(GtkWidget *w, gpointer user_data)
 {
-  if (AddinMenu)
+  if (AddinMenu) {
     gtk_widget_set_sensitive(AddinMenu, Menulocal.scriptroot != NULL);
+  }
+
+  if (ExtDrvOutMenu) {
+    gtk_widget_set_sensitive(ExtDrvOutMenu, Menulocal.extprinterroot != NULL);
+  }
 }
 
 static void
@@ -821,6 +870,25 @@ update_addin_menu(void)
   create_addin_menu(AddinMenu, AccelGroup);
 }
 
+static void 
+create_image_outputmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
+{
+  GtkWidget *menu;
+
+  menu = gtk_menu_new();
+  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
+
+  create_menu_item(menu, _("_GRA file"), FALSE, "<Ngraph>/Output/GRA File", 0, 0, CmOutputMenu, MenuIdOutputGRAFile);
+  create_menu_item(menu, _("_PS file"),  FALSE, "<Ngraph>/Output/PS File",  0, 0, CmOutputMenu, MenuIdOutputPSFile);
+  create_menu_item(menu, _("_EPS file"), FALSE, "<Ngraph>/Output/EPS File", 0, 0, CmOutputMenu, MenuIdOutputEPSFile);
+  create_menu_item(menu, _("P_DF file"), FALSE, "<Ngraph>/Output/PDF File", 0, 0, CmOutputMenu, MenuIdOutputPDFFile);
+  create_menu_item(menu, _("_SVG file"), FALSE, "<Ngraph>/Output/SVG File", 0, 0, CmOutputMenu, MenuIdOutputSVGFile);
+  create_menu_item(menu, _("P_NG file"), FALSE, "<Ngraph>/Output/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
+#ifdef CAIRO_HAS_WIN32_SURFACE
+  create_menu_item(menu, _("E_MF file"), FALSE, "<Ngraph>/Output/EMF File", 0, 0, CmOutputMenu, MenuIdOutputEMFFile);
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
+}
 
 static void 
 create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
@@ -846,16 +914,25 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+
   create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);
   create_menu_item(menu, GTK_STOCK_SAVE_AS, TRUE, "<Ngraph>/Graph/SaveAs",  GDK_s, GDK_CONTROL_MASK | GDK_SHIFT_MASK, CmGraphMenu, MenuIdGraphSave);
+  item = gtk_menu_item_new_with_mnemonic(_("_Export image"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
+
+  create_image_outputmenu(item, accel_group);
+  ExtDrvOutMenu = create_menu_item(menu, _("external _Driver"), FALSE, "<Ngraph>/Graph/External Driver", 0, 0, CmOutputMenu, MenuIdOutputDriver);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+
   create_menu_item(menu, _("_Draw order"), FALSE, "<Ngraph>/Graph/Draw order", 0, 0, CmGraphMenu, MenuIdGraphSwitch);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+
 #if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 14))
   create_menu_item(menu, GTK_STOCK_PAGE_SETUP, TRUE, "<Ngraph>/Graph/Page", 0, 0, CmGraphMenu, MenuIdGraphPage);
 #else
   create_menu_item(menu, _("pa_Ge"), FALSE, "<Ngraph>/Graph/Page", 0, 0, CmGraphMenu, MenuIdGraphPage);
 #endif
+  create_menu_item(menu, GTK_STOCK_PRINT_PREVIEW, TRUE, "<Ngraph>/Graph/Print preview", 0, 0, CmOutputMenu, MenuIdOutputViewer);
   create_menu_item(menu, GTK_STOCK_PRINT, TRUE, "<Ngraph>/Graph/Print",  GDK_p, GDK_CONTROL_MASK, CmGraphMenu, MenuIdOutputDriver);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
   create_menu_item(menu, _("_Current directory"), FALSE, "<Ngraph>/Graph/Current directory", 0, 0, CmGraphMenu, MenuIdGraphDirectory);
@@ -1049,7 +1126,7 @@ static void
 create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
   GtkWidget *item, *menu;
-  static struct show_instance_menu_data data[5];
+  static struct show_instance_menu_data data[6];
 
   item = gtk_menu_item_new_with_mnemonic(_("_Data"));
   gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
@@ -1071,7 +1148,8 @@ create_filemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   data[0].widget = create_menu_item(menu, GTK_STOCK_PROPERTIES, TRUE, "<Ngraph>/Data/Property", 0, 0, CmFileMenu, MenuIdFileUpdate);
   data[1].widget = create_menu_item(menu, GTK_STOCK_CLOSE, TRUE, "<Ngraph>/Data/Close", 0, 0, CmFileMenu, MenuIdFileClose);
   data[2].widget = create_menu_item(menu, GTK_STOCK_EDIT, TRUE, "<Ngraph>/Data/Edit", 0, 0, CmFileMenu, MenuIdFileEdit);
-  data[3].widget = create_menu_item(menu, _("_Math Transformation"), FALSE, "<Ngraph>/Data/Math", 0, 0, CmFileMenu, MenuIdFileMath);
+  data[3].widget = create_menu_item(menu, _("_Save data"), FALSE, "<Ngraph>/Data/Save data", 0, 0, CmOutputMenu, MenuIdPrintDataFile);
+  data[4].widget = create_menu_item(menu, _("_Math Transformation"), FALSE, "<Ngraph>/Data/Math", 0, 0, CmFileMenu, MenuIdFileMath);
 
   set_show_instance_menu_cb(menu, "file", data, sizeof(data) / sizeof(*data), NULL, NULL);
 }
@@ -1255,64 +1333,6 @@ create_mergemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 }
 
 static void 
-create_image_outputmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
-{
-  GtkWidget *menu;
-
-  menu = gtk_menu_new();
-  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
-
-  create_menu_item(menu, _("_GRA file"), FALSE, "<Ngraph>/Output/GRA File", 0, 0, CmOutputMenu, MenuIdOutputGRAFile);
-  create_menu_item(menu, _("_PS file"),  FALSE, "<Ngraph>/Output/PS File",  0, 0, CmOutputMenu, MenuIdOutputPSFile);
-  create_menu_item(menu, _("_EPS file"), FALSE, "<Ngraph>/Output/EPS File", 0, 0, CmOutputMenu, MenuIdOutputEPSFile);
-  create_menu_item(menu, _("P_DF file"), FALSE, "<Ngraph>/Output/PDF File", 0, 0, CmOutputMenu, MenuIdOutputPDFFile);
-  create_menu_item(menu, _("_SVG file"), FALSE, "<Ngraph>/Output/SVG File", 0, 0, CmOutputMenu, MenuIdOutputSVGFile);
-  create_menu_item(menu, _("P_NG file"), FALSE, "<Ngraph>/Output/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
-#ifdef CAIRO_HAS_WIN32_SURFACE
-  create_menu_item(menu, _("E_MF file"), FALSE, "<Ngraph>/Output/EMF File", 0, 0, CmOutputMenu, MenuIdOutputEMFFile);
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
-}
-
-static void
-show_outputmenu_cb(GtkWidget *w, gpointer user_data)
-{
-  if (ExtDrvOutMenu)
-    gtk_widget_set_sensitive(ExtDrvOutMenu, Menulocal.extprinterroot != NULL);
-}
-
-static void 
-create_outputmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
-{
-  GtkWidget *item, *menu;
-  static struct show_instance_menu_data data[2];
-
-  item = gtk_menu_item_new_with_mnemonic(_("_Output"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
-
-  menu = gtk_menu_new();
-  gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
-  g_signal_connect(menu, "show", G_CALLBACK(show_outputmenu_cb), NULL);
-
-  create_menu_item(menu, _("_Draw"), FALSE, "<Ngraph>/Output/Draw", GDK_d, GDK_CONTROL_MASK, CmOutputMenu, MenuIdViewerDraw);
-  create_menu_item(menu, GTK_STOCK_CLEAR, TRUE, "<Ngraph>/Output/Clear", GDK_e, GDK_CONTROL_MASK, CmOutputMenu, MenuIdViewerClear);
-  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
-
-  item = gtk_menu_item_new_with_mnemonic(_("_Export image"));
-  gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
-  create_image_outputmenu(item, accel_group);
-
-  create_menu_item(menu, _("external _Viewer"), FALSE, "<Ngraph>/Output/External Viewer", 0, 0, CmOutputMenu, MenuIdOutputViewer);
-
-  ExtDrvOutMenu = create_menu_item(menu, _("external _Driver"), FALSE, "<Ngraph>/Output/External Driver", 0, 0, CmOutputMenu, MenuIdOutputDriver);
-
-  data[0].widget = create_menu_item(menu, _("data _File"), FALSE, "<Ngraph>/Output/Data File", 0, 0, CmOutputMenu, MenuIdPrintDataFile);
-
-  set_show_instance_menu_cb(menu, "file", data, sizeof(data) / sizeof(*data), NULL, NULL);
-}
-
-static void 
 create_preferencemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
   GtkWidget *item, *menu;
@@ -1452,6 +1472,10 @@ create_windowmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
 
+  create_menu_item(menu, _("_Draw"), FALSE, "<Ngraph>/View/Draw", GDK_d, GDK_CONTROL_MASK, CmOutputMenu, MenuIdViewerDraw);
+  create_menu_item(menu, GTK_STOCK_CLEAR, TRUE, "<Ngraph>/View/Clear", GDK_e, GDK_CONTROL_MASK, CmOutputMenu, MenuIdViewerClear);
+  create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
+
   item = create_toggle_menu_item(menu, "_Data Window", "<Ngraph>/View/Data Window", GDK_F3, 0, G_CALLBACK(toggle_win_cb), CmFileWindow);
   ShowFileWin = item;
 
@@ -1558,7 +1582,6 @@ createmenu(GtkMenuBar *parent)
   create_axismenu(parent, accel_group);
   create_legendmenu(parent, accel_group);
   create_mergemenu(parent, accel_group);
-  create_outputmenu(parent, accel_group);
   create_preferencemenu(parent, accel_group);
   create_helpmenu(parent, accel_group);
 
@@ -1583,7 +1606,7 @@ createpixmap(int n, struct command_data *data)
   int i;
 
   for (i = 0; i < n; i++) {
-    if (data[i].label == NULL)
+    if (data[i].label == NULL || data[i].xpm == NULL)
       continue;
 
     pixbuf = gdk_pixbuf_new_from_xpm_data(data[i].xpm);
@@ -1720,13 +1743,22 @@ createcommand1(GtkToolbar *parent)
   for (i = 0; i < COMMAND1_NUM; i++) {
     cdata = &Command1_data[i];
     if (cdata->label) {
-      b = gtk_tool_button_new(cdata->img, _(cdata->label));
-      if (cdata->button)
+      if (cdata->xpm) {
+	b = gtk_tool_button_new(cdata->img, _(cdata->label));
+      } else {
+	b = gtk_tool_button_new_from_stock(cdata->stock);
+	gtk_tool_button_set_label(GTK_TOOL_BUTTON(b), _(cdata->label));
+      }
+
+      if (cdata->button) {
 	*cdata->button = GTK_WIDGET(b);
+      }
 
-      if (Menulocal.showtip)
+      if (Menulocal.showtip) {
 	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(cdata->tip));
+      }
 
+      gtk_tool_item_set_homogeneous(GTK_TOOL_ITEM(b), FALSE);
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "enter-notify-event",
 		       G_CALLBACK(tool_button_enter_leave_cb),
@@ -1757,11 +1789,14 @@ createcommand2(GtkToolbar *parent)
     cdata = &Command2_data[i];
     if (cdata->label) {
       b = gtk_radio_tool_button_new(list);
-      if (cdata->button)
-	*cdata->button = GTK_WIDGET(b);
 
-      if (Menulocal.showtip)
+      if (cdata->button) {
+	*cdata->button = GTK_WIDGET(b);
+      }
+
+      if (Menulocal.showtip) {
 	gtk_tool_item_set_tooltip_text(GTK_TOOL_ITEM(b), _(cdata->tip));
+      }
 
       g_signal_connect(gtk_bin_get_child(GTK_BIN(b)),
 		       "enter-notify-event",
@@ -1776,7 +1811,11 @@ createcommand2(GtkToolbar *parent)
 
       list = gtk_radio_tool_button_get_group(GTK_RADIO_TOOL_BUTTON(b));
 
-      gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(b), cdata->img);
+      if (cdata->img) {
+	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(b), cdata->img);
+      } else {
+	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(b), cdata->stock);
+      }
       gtk_tool_button_set_label(GTK_TOOL_BUTTON(b), _(cdata->label));
 
       g_signal_connect(b, "clicked", G_CALLBACK(CmViewerButtonArm), GINT_TO_POINTER(cdata->type));
