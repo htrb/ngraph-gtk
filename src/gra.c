@@ -1718,7 +1718,7 @@ GRAexpandmath(char **s)
   double memory[MEMORYNUM];
   char memorystat[MEMORYNUM];
 #endif
-  double vd;
+  double vd, uvd, mod;
 
   *s=*s+2;
   str=NULL;
@@ -1766,10 +1766,26 @@ GRAexpandmath(char **s)
                   NULL,NULL,NULL,0,NULL,NULL,NULL,0,&vd);
   g_free(code);
 #endif
-  if (rcode!=MNOERR) goto errexit;
+  if (rcode != MNOERR) {
+    goto errexit;
+  }
   g_free(str);
-  if ((str=g_malloc(24))==NULL) goto errexit;
-  sprintf(str,"%.15e",vd);
+
+  mod = fabs(fmod(vd, 1));
+  uvd = fabs(vd);
+  if (uvd < 0.1) {
+    str = g_strdup_printf("%.15e", vd);
+  } else if (uvd < 1E6 && mod < DBL_EPSILON) {
+    str = g_strdup_printf("%.0f", vd);
+  } else if (uvd < 10) {
+    str = g_strdup_printf("%.15f", vd);
+  } else if (uvd < 100) {
+    str = g_strdup_printf("%.14f", vd);
+  } else if (uvd < 1000) {
+    str = g_strdup_printf("%.13f", vd);
+  } else {
+    str = g_strdup_printf("%.15e", vd);
+  }
   return str;
 errexit:
   g_free(str);
@@ -1779,14 +1795,9 @@ errexit:
 static char *
 GRAexpandpf(char **s)
 {
-  int i,j,len,len1,len2,err;
-  char *str,*format,*format2,*s2,*ret,*ret2;
+  int i, len;
+  char *str, *format, *ret, *ret2;
   int quote;
-  long int vi;
-  long long int vll;
-  double vd;
-  char *buf;
-  char *endptr;
 
   *s=*s+4;
   str=NULL;
@@ -1821,89 +1832,8 @@ GRAexpandpf(char **s)
   if ((*s)[0]!='}') goto errexit;
   (*s)++;
 
-  if (format[0]=='%') {
-    for (i = 1; format[i] != '\0' && strchr("diouxXeEfgGcs%",format[i]) == NULL; i++) {
-      if (strchr("$*qjzZtLh", format[i])) {
-	goto errexit;
-      }
-    }
-    if (format[i]!='\0') {
-      if ((format2=g_malloc(i+2))==NULL) goto errexit;
-      strncpy(format2,format,i+1);
-      format2[i+1]='\0';
-      len1=len2=0;
-      err=FALSE;
-      s2=format2;
-      for (j=0;(s2[j]!='\0') && (!isdigit(s2[j]));j++);
-      if (isdigit(s2[j])) {
-        len1=strtol(s2+j,&endptr,10);
-        if (len1<0) len1=0;
-        if (endptr[0]=='.') {
-          s2=endptr;
-          for (j=0;(s2[j]!='\0') && (strchr(".*",s2[j])!=NULL);j++);
-          if (isdigit(s2[j])) {
-            len2=strtol(s2+j,&endptr,10);
-            if (len2<0) len2=0;
-          } else err=TRUE;
-        }
-      }
-      if (!err) {
-        len=len1+len2+256;
-        switch (format[i]) {
-        case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
-	  if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
-	    vll = strtoll(str, &endptr, 10);
-	    if ((buf=g_malloc(len))!=NULL) {
-	      sprintf(buf,format2,vll);
-	      ret=nstrcat(ret,buf);
-	      g_free(buf);
-	    }
-	  }else {
-	    vi=strtol(str,&endptr,10);
-	    if ((buf=g_malloc(len))!=NULL) {
-	      sprintf(buf,format2,vi);
-	      ret=nstrcat(ret,buf);
-	      g_free(buf);
-	    }
-	  }
-          break;
-        case 'e': case 'E': case 'f': case 'g': case 'G':
-	  if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
-	    break;
-	  }
-	  vd=strtod(str,&endptr);
-	  if ((buf=g_malloc(len))!=NULL) {
-	    sprintf(buf,format2,vd);
-	    ret=nstrcat(ret,buf);
-	    g_free(buf);
-	  }
-          break;
-        case 's':
-	  if (i > 1 && format2[i - 1] == 'l') {
-	    break;
-	  }
-          if ((buf=g_malloc(len+strlen(str)))!=NULL) {
-            sprintf(buf,format2,str);
-            ret=nstrcat(ret,buf);
-            g_free(buf);
-          }
-          break;
-        case 'c':
-	  if (i > 1 && format2[i - 1] == 'l') {
-	    break;
-	  }
-          if ((buf=g_malloc(len+strlen(str)))!=NULL) {
-            sprintf(buf,format2,str[0]);
-            ret=nstrcat(ret,buf);
-            g_free(buf);
-          }
-        }
-      }
-      g_free(format2);
-      if (ret==NULL) goto errexit;
-    }
-  }
-
+  add_printf_formated_str(&ret, format, str, &i);
+ 
   g_free(str);
   g_free(format);
   return ret;
@@ -1997,7 +1927,7 @@ GRAexpandtext(char *s)
 
 void 
 GRAdrawtext(int GC,char *s,char *font,char *jfont,
-				 int size,int space,int dir,int scriptsize)
+	    int size,int space,int dir,int scriptsize)
 {
   char *c,*tok;
   char *str;

@@ -190,15 +190,10 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *array;
   char **argv2;
   int argc2;
-  char *format,*format2,*s;
-  int po,arg,i,j,quote;
+  char *format;
+  int po, arg, i, quote, r;
   char *ret;
-  char *buf;
-  int len1,len2,len;
-  int vi,err;
-  long long int vll;
-  double vd;
-  char *endptr;
+  char *arg_str;
 
   g_free(*(char **)rval);
   *(char **)rval=NULL;
@@ -213,122 +208,37 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   while (format[po]!='\0') {
     quote=FALSE;
     for (i=po;(quote || (format[i]!='%')) && (format[i]!='\0');i++) {
-      if (quote) quote=FALSE;
-      else if (format[i]=='\\') quote=TRUE;
-    }
-    if (i>po) {
-      if ((ret=nstrncat(ret,format+po,i-po))==NULL) return 1;
-    }
-    po=i;
-    if (format[po]=='%') {
-      for (i = 1; format[po+i] != '\0' && strchr("diouxXeEfgGcs%",format[po+i]) == NULL; i++) {
-	if (strchr("$*qjzZtLh", format[i])) {
-          g_free(ret);
-          return 1;
-	}
+      if (quote) {
+	quote=FALSE;
+      } else if (format[i]=='\\') {
+	quote=TRUE;
       }
-      if (format[po+i]!='\0') {
-        if ((format2=g_malloc(i+2))==NULL) {
-          g_free(ret);
-          return 1;
-        }
-        strncpy(format2,format+po,i+1);
-        format2[i+1]='\0';
-        len1=len2=0;
-        err=FALSE;
-        s=format2;
-        for (j=0;(s[j]!='\0') && (!isdigit(s[j]));j++);
-        if (isdigit(s[j])) {
-          len1=strtol(s+j,&endptr,10);
-          if (len1<0) len1=0;
-          if (endptr[0]=='.') {
-            s=endptr;
-            for (j=0;(s[j]!='\0') && (strchr(".*",s[j])!=NULL);j++);
-            if (isdigit(s[j])) {
-              len2=strtol(s+j,&endptr,10);
-              if (len2<0) len2=0;
-            } else {
-	      err = TRUE;
-	    }
-          }
-        }
-        if (!err) {
-          len=len1+len2+256;
-          switch (format[po+i]) {
-          case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
-	    if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
-	      vll=0;
-	      if ((arg<argc2) && (argv2[arg]!=NULL)) {
-		vll=strtoll(argv2[arg],&endptr,10);
-	      }
-	      arg++;
-	      if ((buf=g_malloc(len))!=NULL) {
-		sprintf(buf,format2,vll);
-		ret=nstrcat(ret,buf);
-		g_free(buf);
-	      }
-	    }else {
-	      vi=0;
-	      if ((arg<argc2) && (argv2[arg]!=NULL)) {
-		vi=strtol(argv2[arg],&endptr,10);
-	      }
-	      arg++;
-	      if ((buf=g_malloc(len))!=NULL) {
-		sprintf(buf,format2,vi);
-		ret=nstrcat(ret,buf);
-		g_free(buf);
-	      }
-	    }
-            break;
-          case 'e': case 'E': case 'f': case 'g': case 'G':
-	    if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
-	      break;
-	    }
-            vd=0.0;
-            if ((arg<argc2) && (argv2[arg]!=NULL)) {
-              vd=strtod(argv2[arg],&endptr);
-            }
-            arg++;
-            if ((buf=g_malloc(len))!=NULL) {
-              sprintf(buf,format2,vd);
-              ret=nstrcat(ret,buf);
-              g_free(buf);
-            }
-            break;
-          case 's':
-	    if (i > 1 && format2[i - 1] == 'l') {
-	      break;
-	    }
-            if ((arg<argc2) && (argv2[arg]!=NULL)) {
-              if ((buf=g_malloc(len+strlen(argv2[arg])))!=NULL) {
-                sprintf(buf,format2,argv2[arg]);
-                ret=nstrcat(ret,buf);
-                g_free(buf);
-              }
-            }
-            arg++;
-            break;
-          case 'c':
-	    if (i > 1 && format2[i - 1] == 'l') {
-	      break;
-	    }
-            if ((arg<argc2) && (argv2[arg]!=NULL)) {
-              if ((buf=g_malloc(len+strlen(argv2[arg])))!=NULL) {
-                sprintf(buf,format2,argv2[arg][0]);
-                ret=nstrcat(ret,buf);
-                g_free(buf);
-              }
-            }
-            arg++;
-            break;
-          }
-        }
-        g_free(format2);
-        if (ret==NULL) return 1;
-        po+=i+1;
-      } else po++;
     }
+    if (i > po) {
+      ret = nstrncat(ret, format + po, i - po);
+      if (ret == NULL) {
+	return 1;
+      }
+    }
+    po = i;
+
+    if (format[po] != '%') {
+      continue;
+    }
+
+    arg_str = (arg < argc2 && argv2[arg]) ? argv2[arg] : NULL;
+    r = add_printf_formated_str(&ret, format + po, arg_str, &i);
+    if (ret == NULL) {
+      return 1;
+    }
+
+    if (r) {
+      arg++;
+    }
+
+    po += i + 1;
   }
+
   *(char **)rval=ret;
   return 0;
 }
