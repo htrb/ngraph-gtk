@@ -1,3 +1,52 @@
+2010-05-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/otext.c (textprintf): use "add_printf_formated_str()".
+
+	* src/ofit.c (ERR_SMALL_ARGS, ERR_INVALID_PARAM): add.
+	(fittypechar): add error messages.
+	(fitcalc): variable "eq" is not static.
+	(bisection, newton, fitsolve): add.
+	(fit): add fields "newton" and "bisection".
+
+	* src/nstring.c (get_printf_format_str, add_printf_formated_str):
+	add.
+
+	* src/gra.c (GRAexpandmath): use "g_strdup_printf()" instead of
+	"sprintf()".
+	(GRAexpandmath): change format string depend on the value "vd".
+	(GRAexpandpf): use "add_printf_formated_str()".
+
+2010-05-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (mjd2gd, math_func_mjd2year)
+	(math_func_mjd2month, math_func_mjd2day): add.
+
+	* src/math/math_function.h.in: add functions "mjd2year",
+	"mjd2month" and "mjd2day".
+
+	* src/gtk/x11graph.c (CmGraphSaveB): call "CmGraphOverWrite()"
+	instead of "CmGraphSave()".
+
+	* src/gtk/x11menu.c (show_outputmenu_cb, create_outputmenu):
+	remove.
+	(command_data): add member "stock".
+	(Command1_data): use stock items.
+	(show_graph_menu_cb): set sensitivity of the widget
+	"ExtDrvOutMenu".
+	(create_graphmenu): move "Export image", "external _Driver" and
+	"Print preview" menu items from "Output" menu.
+	(create_filemenu): move "Save data" menu item from "Output" menu.
+	(create_windowmenu): move "Draw" and "Clear" menu items from
+	"Output" menu.
+	(createmenu): don't call "create_outputmenu()".
+	(createpixmap): ceck "data[i].xpm".
+	(createcommand1): call "gtk_tool_button_new_from_stock()" when
+	"cdata->xpm" is NULL.
+	(createcommand1): call "gtk_tool_item_set_homogeneous()".
+	(createcommand2): call "gtk_tool_button_set_stock_id()" when
+	"cdata->img" is NULL.
+
+
 2010-05-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oaxis.c (get_num_ofst_horizontal, get_num_ofst_parallel)
