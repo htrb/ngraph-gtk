@@ -1,3 +1,8 @@
+2010-05-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* test/math_test_new.dat: add test for functions "mjd2year()",
+	"mjd2month()", "mjd2day()" and "unix2mjd()".
+
 2010-05-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/otext.c (textprintf): use "add_printf_formated_str()".
