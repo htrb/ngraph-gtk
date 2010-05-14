@@ -255,6 +255,131 @@ getitok2(char **s, int *len, char *ifs)
   return po;
 }
 
+static char *
+get_printf_format_str(const char *str, int *len)
+{
+  int n;
+  char *fmt;
+
+  *len = 0;
+
+  n = 0;
+  if (str[n] != '%') {
+    return NULL;
+  }
+
+  fmt = g_strdup(str);
+  if (fmt == NULL) {
+    return NULL;
+  }
+  n++;
+
+  while (strchr("#0- +", str[n])) {
+    n++;
+  }
+
+  for (; isdigit(str[n]); n++);
+
+  if (str[n] == '.') {
+    n++;
+    for (; isdigit(str[n]); n++);
+  }
+
+  if (str[n] == 'l') {
+    n++;
+  }
+
+  if (str[n] == 'l') {
+    n++;
+  }
+
+  if (strchr("diouxXeEfFgGcs", str[n]) == NULL) {
+    return NULL;
+  }
+
+  *len = n;
+  n++;
+
+  fmt[n] = '\0';
+
+  return fmt;
+}
+
+int
+add_printf_formated_str(char **str, const char *format, const char *arg, int *len)
+{
+  int i, formated;
+  char *format2, *buf, *endptr;
+  int vi;
+  long long int vll;
+  double vd;
+
+  formated = FALSE;
+  format2 = get_printf_format_str(format, &i);
+  if (len) {
+    *len = i;
+  }
+  if (format2 == NULL) {
+    return formated;
+  }
+
+  buf = NULL;
+  switch (format[i]) {
+  case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
+    if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+      vll = 0;
+      if (arg) {
+	vll = strtod(arg, &endptr);
+      }
+      buf = g_strdup_printf(format2, vll);
+    }else {
+      vi = 0;
+      if (arg) {
+	vi = strtod(arg, &endptr);
+      }
+      buf = g_strdup_printf(format2, vi);
+    }
+    formated = TRUE;
+    break;
+  case 'e': case 'E': case 'f': case 'F': case 'g': case 'G':
+    if (i > 2 && strncmp(format2 + i - 2, "ll", 2) == 0) {
+      break;
+    }
+    vd = 0.0;
+    if (arg) {
+      vd = strtod(arg,&endptr);
+    }
+    buf = g_strdup_printf(format2, vd);
+    formated = TRUE;
+    break;
+  case 's':
+    if (i > 1 && format2[i - 1] == 'l') {
+      break;
+    }
+    if (arg) {
+      buf = g_strdup_printf(format2, arg);
+    }
+    formated = TRUE;
+    break;
+  case 'c':
+    if (i > 1 && format2[i - 1] == 'l') {
+      break;
+    }
+    if (arg) {
+      buf = g_strdup_printf(format2, arg[0]);
+    }
+    formated = TRUE;
+    break;
+  }
+
+  if (buf) {
+    *str = nstrcat(*str, buf);
+    g_free(buf);
+  }
+
+  return formated;
+}
+
 #ifdef COMPILE_UNUSED_FUNCTIONS
 char *
 getitok3(char **s,int *len,char *ifs)
