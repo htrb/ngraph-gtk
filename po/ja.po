@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-05-17 14:59+0900\n"
+"POT-Creation-Date: 2010-05-17 21:10+0900\n"
 "PO-Revision-Date: 2010-05-17 19:01+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2503,7 +2503,7 @@ msgstr "閉Bスプライン"
 msgid "linear"
 msgstr "線形"
 
-#: src/oaxis.c:85 src/ofit.c:95
+#: src/oaxis.c:85 src/ofit.c:91
 msgid "log"
 msgstr "対数"
 
@@ -2547,19 +2547,19 @@ msgstr "軸と直交1"
 msgid "normal2"
 msgstr "軸と直交2"
 
-#: src/ofit.c:92
+#: src/ofit.c:88
 msgid "poly"
 msgstr "多項式"
 
-#: src/ofit.c:93
+#: src/ofit.c:89
 msgid "pow"
 msgstr "べき関数"
 
-#: src/ofit.c:94
+#: src/ofit.c:90
 msgid "exp"
 msgstr "指数関数"
 
-#: src/ofit.c:96
+#: src/ofit.c:92
 msgid "user"
 msgstr "ユーザ定義"
 
