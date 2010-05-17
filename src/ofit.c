@@ -61,8 +61,6 @@
 #define ERRNEGATIVEWEIGHT 112
 #define ERRCONVERGE 113
 #define ERR_INCONSISTENT_DATA_NUM 114
-#define ERR_SMALL_ARGS 115
-#define ERR_INVALID_PARAM 116
 
 static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
@@ -82,8 +80,6 @@ static char *fiterrorlist[]={
   "negative or zero weight -> ignored.",
   "convergence error.",
   "number of the data is not consistent.",
-  "too small number of arguments.",
-  "invalid parameter.",
 };
 
 #define ERRNUM (sizeof(fiterrorlist) / sizeof(*fiterrorlist))
@@ -1148,7 +1144,7 @@ static int
 fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
 #if NEW_MATH_CODE
-  MathEquation *eq = NULL;
+  MathEquation *eq;
   MathValue val;
 #else
   struct objlist *mathobj;
@@ -1233,231 +1229,6 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 #endif
 }
 
-#if NEW_MATH_CODE
-
-#define MAX_ITERATION 10000
-
-static int
-bisection(MathEquation *eq, double a, double b, double y, double tolerance, double *x)
-{
-  int r, i;
-  double c, fa, fb, fc;
-  MathValue val, rval;
-
-  if (tolerance < 0) {
-    tolerance = 0;
-  }
-
-  if (b < a) {
-    c = a;
-    a = b;
-    a = c;
-  }
-
-  val.type = MATH_VALUE_NORMAL;
-
-  val.val = a;
-  math_equation_set_var(eq, 0, &val);
-  r = math_equation_calculate(eq, &rval);
-  if (r || rval.type != MATH_VALUE_NORMAL) {
-    return 1;
-  }
-  fa = rval.val - y;
-
-  val.val = b;
-  math_equation_set_var(eq, 0, &val);
-  r = math_equation_calculate(eq, &rval);
-  if (r || rval.type != MATH_VALUE_NORMAL) {
-    return 1;
-  }
-  fb = rval.val - y;
-
-  if (compare_double(fa, 0)) {
-    *x = a;
-    return 0;
-  }
-
-  if (compare_double(fb, 0)) {
-    *x = b;
-    return 0;
-  }
-
-  if (fa * fb > 0) {
-    return 1;
-  }
-
-  i = 0;
-  while (1) {
-    c = (a + b) / 2;
-    if (c - a <= tolerance || b - c <= tolerance) {
-      break;
-    }
-
-    val.val = c;
-    math_equation_set_var(eq, 0, &val);
-    r = math_equation_calculate(eq, &rval);
-    if (r || rval.type != MATH_VALUE_NORMAL) {
-      return 1;
-    }
-
-    fc = rval.val - y;
-    if (compare_double(fc, 0)) {
-      break;
-    }
-
-    if (fc * fa > 0) {
-      a = c;
-      fa = fc;
-    } else {
-      b = c;
-      fb = fc;
-    }
-
-    if (tolerance == 0 && i > MAX_ITERATION) {
-      break;
-    }
-    i++;
-  }
-
-  *x = c;
-
-  return 0;
-}
-
-static int
-newton(MathEquation *eq, double *xx, double y)
-{
-  int r, i, n;
-  double h, x, fx, df, x_prev, fx_prev;
-  MathValue val, rval;
-
-  val.type = MATH_VALUE_NORMAL;
-
-  x = *xx;
-
-  val.val = x;
-  math_equation_set_var(eq, 0, &val);
-  r = math_equation_calculate(eq, &rval);
-  if (r || rval.type != MATH_VALUE_NORMAL) {
-    return 1;
-  }
-  fx = rval.val - y;
-
-  n = 0;
-  while (! compare_double(fx, 0)) {
-    double dx;
-
-    dx = (x == 0) ? 1E-6 : x * 1E-6;
-    val.val = x + dx;
-    math_equation_set_var(eq, 0, &val);
-    r = math_equation_calculate(eq, &rval);
-    if (r || rval.type != MATH_VALUE_NORMAL) {
-      return 1;
-    }
-    df = (rval.val - y - fx) / dx;
-    h = fx / df;
-
-    x_prev = x;
-    fx_prev = fx;
-    i = 0;
-    do {
-      x = x_prev - h;
-      val.val = x;
-      math_equation_set_var(eq, 0, &val);
-      r = math_equation_calculate(eq, &rval);
-      if (r || rval.type != MATH_VALUE_NORMAL) {
-	return 1;
-      }
-      fx = rval.val - y;
-      h /= 2;
-
-      i++;
-      if (i > MAX_ITERATION) {
-	return 1;
-      }
-    } while (fabs(fx) > fabs(fx_prev));
-
-    n++;
-    if (n > MAX_ITERATION || (i == 1 && compare_double(x, x_prev))) {
-      break;
-    }
-  }
-  printf("newton: %d\n", n);
-  *xx = x;
-
-  return 0;
-}
-
-static int 
-fitsolve(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
-{
-  static MathEquation *eq = NULL;
-  int r, n;
-  char *equation, *ptr;
-  double a, b, x, y, tolerance, *data;
-  struct narray *darray;
-
-  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
-
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
-
-  darray = (struct narray *) (argv[2]);
-  n = arraynum(darray);
-  data = arraydata(darray);
-
-  if (argv[1][0] == 'b') {
-    if (n < 2) {
-      error(obj, ERR_SMALL_ARGS);
-      return 1;
-    }
-
-    a = data[0];
-    b = data[1];
-    y = (n > 2) ? data[2] : 0;
-    tolerance = (n > 3) ? data[3] : 0;
-  } else {
-    x = (n > 0) ? data[0] : 0;
-    y = (n > 1) ? data[1] : 0;
-  }
-
-  _getobj(obj, "equation", inst, &equation);
-  if (equation == NULL)
-    return 0;
-
-  eq = math_equation_basic_new();
-  if (eq == NULL) {
-    return 1;
-  }
-
-  if (math_equation_add_var(eq, "X") != 0) {
-    math_equation_free(eq);
-    return 1;
-  }
-
-  if (math_equation_parse(eq, equation)) {
-    math_equation_free(eq);
-    return 1;
-  }
-
-  if (argv[1][0] == 'b') {
-    r = bisection(eq, a, b, y, tolerance, &x);
-  } else {
-    r = newton(eq, &x, y);
-  }
-  math_equation_free(eq);
-  if (r) {
-    error(obj, ERRCONVERGE);
-    ptr = g_strdup("error");
-  } else {
-    ptr = g_strdup_printf("%.15e", x);
-  }
-  * (char **) rval = ptr;
-
-  return r;
-}
-#endif
-
 static struct objtable fit[] = {
   {"init",NVFUNC,NEXEC,fitinit,NULL,0},
   {"done",NVFUNC,NEXEC,fitdone,NULL,0},
@@ -1518,10 +1289,6 @@ static struct objtable fit[] = {
 
   {"fit",NVFUNC,NREAD|NEXEC,fitfit,"da",0},
   {"calc",NSFUNC,NREAD|NEXEC,fitcalc,"d",0},
-#if NEW_MATH_CODE
-  {"newton",NSFUNC,NREAD|NEXEC,fitsolve,"da",0},
-  {"bisection",NSFUNC,NREAD|NEXEC,fitsolve,"da",0},
-#endif
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 

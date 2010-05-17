@@ -84,6 +84,10 @@
 #define ERRNEGATIVE	119
 #define ERRREAD		120
 #define ERRWRITE	121
+#define ERR_SMALL_ARGS	122
+#define ERR_INVALID_TYPE	123
+#define ERR_INVALID_PARAM	124
+#define ERRCONVERGE	125
 
 #if ! NEW_MATH_CODE
 static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
@@ -112,6 +116,10 @@ static char *f2derrorlist[]={
   "negative value in LOG-axis ---> ABS()",
   "I/O error: read file",
   "I/O error: write file",
+  "too small number of arguments.",
+  "invalid type.",
+  "invalid parameter.",
+  "convergence error.",
 };
 
 #define ERRNUM (sizeof(f2derrorlist) / sizeof(*f2derrorlist))
@@ -5749,6 +5757,37 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
   return 0;
 }
 
+static int
+get_fit_obj_id(char *fit, struct objlist **fitobj, char **inst)
+{
+  struct narray iarray;
+  int anum, id;
+
+  if (fit == NULL) {
+    return -1;
+  }
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(fit, fitobj, &iarray, FALSE, NULL)) {
+    return -1 ;
+  }
+  anum = arraynum(&iarray);
+  if (anum < 1) {
+    arraydel(&iarray);
+    return -1 ;
+  }
+
+  id = * (int *) arraylast(&iarray);
+  arraydel(&iarray);
+
+  *inst = getobjinst(*fitobj, id);
+  if (*inst == NULL) {
+    return -1 ;
+  }
+
+  return id;
+}
+
 static int 
 fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
        struct f2ddata *fp,int GC,
@@ -5756,31 +5795,20 @@ fitout(struct objlist *obj,struct f2dlocal *f2dlocal,
        int join,int miter,char *fit,int redraw)
 {
   struct objlist *fitobj;
-  int anum;
-  struct narray iarray;
   int id;
   char *inst;
   char *equation;
   int rcode;
 
-  if (fit==NULL) {
-    error(obj,ERRNOFIT);
+  if (fit == NULL) {
+    error(obj, ERRNOFIT);
     return -1;
   }
-  arrayinit(&iarray,sizeof(int));
-  if (getobjilist(fit,&fitobj,&iarray,FALSE,NULL)) return -1 ;
-  anum=arraynum(&iarray);
-  if (anum<1) {
-    arraydel(&iarray);
-    error2(obj,ERRNOFITINST,fit);
-    return -1 ;
-  }
-  id=*(int *)arraylast(&iarray);
-  arraydel(&iarray);
 
-  inst = getobjinst(fitobj, id);
-  if (inst == NULL) {
-    return -1 ;
+  id = get_fit_obj_id(fit, &fitobj, &inst);
+  if (id < 0) {
+    error2(obj, ERRNOFITINST, fit);
+    return -1;
   }
 
   if (_getobj(fitobj, "equation", inst, &equation)) {
@@ -8419,6 +8447,311 @@ adjust_move_num(struct objlist *obj, char *inst, char *rval, int argc, char **ar
   return 0;
 }
 
+#if NEW_MATH_CODE
+
+#define MAX_ITERATION 10000
+
+static int
+bisection(MathEquation *eq, double a, double b, double y, double tolerance, double *x)
+{
+  int r, i;
+  double c, fa, fb, fc;
+  MathValue val, rval;
+
+  if (tolerance < 0) {
+    tolerance = 0;
+  }
+
+  if (b < a) {
+    c = a;
+    a = b;
+    a = c;
+  }
+
+  val.type = MATH_VALUE_NORMAL;
+
+  val.val = a;
+  math_equation_set_var(eq, 0, &val);
+  r = math_equation_calculate(eq, &rval);
+  if (r || rval.type != MATH_VALUE_NORMAL) {
+    return 1;
+  }
+  fa = rval.val - y;
+
+  val.val = b;
+  math_equation_set_var(eq, 0, &val);
+  r = math_equation_calculate(eq, &rval);
+  if (r || rval.type != MATH_VALUE_NORMAL) {
+    return 1;
+  }
+  fb = rval.val - y;
+
+  if (compare_double(fa, 0)) {
+    *x = a;
+    return 0;
+  }
+
+  if (compare_double(fb, 0)) {
+    *x = b;
+    return 0;
+  }
+
+  if (fa * fb > 0) {
+    return 1;
+  }
+
+  i = 0;
+  while (1) {
+    c = (a + b) / 2;
+    if (c - a <= tolerance || b - c <= tolerance) {
+      break;
+    }
+
+    val.val = c;
+    math_equation_set_var(eq, 0, &val);
+    r = math_equation_calculate(eq, &rval);
+    if (r || rval.type != MATH_VALUE_NORMAL) {
+      return 1;
+    }
+
+    fc = rval.val - y;
+    if (compare_double(fc, 0)) {
+      break;
+    }
+
+    if (fc * fa > 0) {
+      a = c;
+      fa = fc;
+    } else {
+      b = c;
+      fb = fc;
+    }
+
+    if (tolerance == 0 && i > MAX_ITERATION) {
+      break;
+    }
+    i++;
+  }
+
+  *x = c;
+
+  return i >= MAX_ITERATION;
+}
+
+static int
+newton(MathEquation *eq, double *xx, double y)
+{
+  int r, i, n;
+  double h, x, fx, df, x_prev, fx_prev;
+  MathValue val, rval;
+
+  val.type = MATH_VALUE_NORMAL;
+
+  x = *xx;
+
+  val.val = x;
+  math_equation_set_var(eq, 0, &val);
+  r = math_equation_calculate(eq, &rval);
+  if (r || rval.type != MATH_VALUE_NORMAL) {
+    return 1;
+  }
+  fx = rval.val - y;
+
+  n = 0;
+  while (! compare_double(fx, 0)) {
+    double dx;
+
+    dx = (x == 0) ? 1E-6 : x * 1E-6;
+    val.val = x + dx;
+    math_equation_set_var(eq, 0, &val);
+    r = math_equation_calculate(eq, &rval);
+    if (r || rval.type != MATH_VALUE_NORMAL) {
+      return 1;
+    }
+    df = (rval.val - y - fx) / dx;
+    h = fx / df;
+
+    x_prev = x;
+    fx_prev = fx;
+    i = 0;
+    do {
+      x = x_prev - h;
+      val.val = x;
+      math_equation_set_var(eq, 0, &val);
+      r = math_equation_calculate(eq, &rval);
+      if (r || rval.type != MATH_VALUE_NORMAL) {
+	return 1;
+      }
+      fx = rval.val - y;
+      h /= 2;
+
+      i++;
+      if (i > MAX_ITERATION) {
+	return 1;
+      }
+    } while (fabs(fx) > fabs(fx_prev));
+
+    n++;
+    if (n > MAX_ITERATION || (i == 1 && compare_double(x, x_prev))) {
+      break;
+    }
+  }
+  *xx = x;
+
+  return n >= MAX_ITERATION;
+}
+
+static int 
+solve_equation(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  static MathEquation *eq = NULL;
+  int r, n, type, fit_id;
+  char *equation, *ptr, *fit, *fit_inst;
+  double a, b, x, y, tolerance, *data;
+  struct narray *darray;
+  struct objlist *fit_obj;
+
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  g_free(*(char **)rval);
+  *(char **)rval = NULL;
+
+  _getobj(obj, "type", inst, &type);
+  _getobj(obj, "fit", inst, &fit);
+
+  if (type != PLOT_TYPE_FIT) {
+    error(obj, ERR_INVALID_TYPE);
+    return 1;
+  }
+
+  fit_id = get_fit_obj_id(fit, &fit_obj, &fit_inst);
+  if (fit_id < 0) {
+    error2(obj, ERRNOFITINST, fit);
+    return -1;
+  }
+
+  if (_getobj(fit_obj, "equation", fit_inst, &equation)) {
+    return -1;
+  }
+
+  darray = (struct narray *) (argv[2]);
+  n = arraynum(darray);
+  data = arraydata(darray);
+
+  if (argv[1][0] == 'b') {
+    if (n < 2) {
+      error(obj, ERR_SMALL_ARGS);
+      return 1;
+    }
+
+    a = data[0];
+    b = data[1];
+    y = (n > 2) ? data[2] : 0;
+    tolerance = (n > 3) ? data[3] : 0;
+  } else {
+    x = (n > 0) ? data[0] : 0;
+    y = (n > 1) ? data[1] : 0;
+  }
+
+  eq = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE, FALSE);
+  if (eq == NULL) {
+    return 1;
+  }
+
+  r = math_equation_parse(eq, equation);
+  if (r) {
+    math_equation_free(eq);
+    return 1;
+  }
+
+  r = math_equation_optimize(eq);
+  if (r) {
+    math_equation_free(eq);
+    return 1;
+  }
+
+  if (argv[1][0] == 'b') {
+    r = bisection(eq, a, b, y, tolerance, &x);
+  } else {
+    r = newton(eq, &x, y);
+  }
+  math_equation_free(eq);
+
+  if (r) {
+    ptr = g_strdup(f2derrorlist[ERRCONVERGE - 100]);
+  } else {
+    ptr = g_strdup_printf("%.15e", x);
+  }
+  * (char **) rval = ptr;
+
+  return 0;
+}
+
+static int 
+calc_equation(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  MathEquation *eq;
+  MathValue val;
+  int r, type, fit_id;
+  char *equation, *ptr, *fit, *fit_inst;
+  double x;
+  struct objlist *fit_obj;
+
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
+
+  g_free(*(char **)rval);
+  *(char **)rval = NULL;
+
+  _getobj(obj, "type", inst, &type);
+  _getobj(obj, "fit", inst, &fit);
+
+  if (type != PLOT_TYPE_FIT) {
+    error(obj, ERR_INVALID_TYPE);
+    return 1;
+  }
+
+  fit_id = get_fit_obj_id(fit, &fit_obj, &fit_inst);
+  if (fit_id < 0) {
+    error2(obj, ERRNOFITINST, fit);
+    return -1;
+  }
+
+  if (_getobj(fit_obj, "equation", fit_inst, &equation)) {
+    return -1;
+  }
+
+  x = * (double *) argv[2];
+
+  eq = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE, FALSE);
+  if (eq == NULL) {
+    return 1;
+  }
+
+  r = math_equation_parse(eq, equation);
+  if (r) {
+    math_equation_free(eq);
+    return 1;
+  }
+
+  val.val = x;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_var(eq, 0, &val);
+
+  r = math_equation_calculate(eq, &val);
+  if (r) {
+    ptr = math_err_get_error_message(eq, equation, r);
+  }
+  math_equation_free(eq);
+
+  if (! r) {
+    ptr = g_strdup_printf("%.15e", val.val);
+  }
+  * (char **) rval = ptr;
+
+  return 0;
+}
+#endif
+
 static struct objtable file2d[] = {
   {"init",NVFUNC,NEXEC,f2dinit,NULL,0},
   {"done",NVFUNC,NEXEC,f2ddone,NULL,0},
@@ -8533,6 +8866,11 @@ static struct objtable file2d[] = {
   {"save_config",NVFUNC,NREAD|NEXEC,f2dsaveconfig,NULL,0},
   {"output_file",NVFUNC,NREAD|NEXEC,f2doutputfile,"sib",0},
   {"modified",NVFUNC,NEXEC,update_field,NULL,0},
+#if NEW_MATH_CODE
+  {"newton",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
+  {"bisection",NSFUNC,NREAD|NEXEC,solve_equation,"da",0},
+  {"calc",NSFUNC,NREAD|NEXEC,calc_equation,"d",0},
+#endif
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 

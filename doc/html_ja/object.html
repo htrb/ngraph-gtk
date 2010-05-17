@@ -747,8 +747,8 @@ alias:
 version: 1.00.01
 parent: object
 object id: 21
-number of fields: 61
-size of instance: 464
+number of fields: 59
+size of instance: 448
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -807,8 +807,6 @@ r--      correlation    double
 rw-          display    bool
 r-x              fit    void( double[] )
 r-x             calc    *char( double )
-r-x           newton    *char( double[] )
-r-x        bisection    *char( double[] )
 ---           _local    void*
 </pre>
 
@@ -1017,8 +1015,8 @@ alias: data
 version: 1.00.00
 parent: draw
 object id: 26
-number of fields: 115
-size of instance: 776
+number of fields: 118
+size of instance: 800
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1133,6 +1131,9 @@ r-x            tight    void( )
 r-x      save_config    void( )
 r-x      output_file    void( char * int bool )
 --x         modified    void( )
+r-x           newton    *char( double[] )
+r-x        bisection    *char( double[] )
+r-x             calc    *char( double )
 ---           _local    void*
 </pre>
 

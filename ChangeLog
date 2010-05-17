@@ -1,3 +1,20 @@
+2010-05-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (ERR_SMALL_ARGS, ERR_INVALID_PARAM): remove.
+	(fittypechar): remove some error messages.
+	(bisection, newton, fitsolve): remove.
+	(fit): remove fields "newton" and "bisection".
+
+	* src/ofile.c (ERR_SMALL_ARGS, ERR_INVALID_TYPE)
+	(ERR_INVALID_PARAM, ERRCONVERGE): add.
+	(f2derrorlist): add error messages.
+	(get_fit_obj_id): add.
+	(fitout): use "get_fit_obj_id()".
+	(bisection, newton): moved from "ofit.c".
+	(solve_equation): add.
+	(calc_equation): add.
+	(file2d): add fields "newton", "bisection" and "calc".
+
 2010-05-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* test/math_test_new.dat: add test for functions "mjd2year()",
