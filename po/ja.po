@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
 "POT-Creation-Date: 2010-05-17 14:59+0900\n"
-"PO-Revision-Date: 2010-05-13 16:38+0900\n"
+"PO-Revision-Date: 2010-05-17 19:01+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "MIME-Version: 1.0\n"
@@ -408,7 +408,7 @@ msgstr ""
 
 #: src/gtk/x11commn.c:998
 msgid "Save NGP file"
-msgstr "NGP ファイルの保存"
+msgstr "NGPファイルの保存"
 
 #: src/gtk/x11commn.c:1022 src/gtk/x11opt.c:1578
 #, c-format
@@ -1094,7 +1094,7 @@ msgstr "合成ファイルを含める(_I)"
 
 #: src/gtk/x11graph.c:1105 src/gtk/x11menu.c:198
 msgid "Load NGP file"
-msgstr "NGP ファイルを開く"
+msgstr "NGPファイルを開く"
 
 #: src/gtk/x11graph.c:1343
 msgid ""
