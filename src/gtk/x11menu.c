@@ -879,14 +879,14 @@ create_image_outputmenu(GtkWidget *parent, GtkAccelGroup *accel_group)
   gtk_menu_set_accel_group (GTK_MENU(menu), accel_group);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
 
-  create_menu_item(menu, _("_GRA file"), FALSE, "<Ngraph>/Output/GRA File", 0, 0, CmOutputMenu, MenuIdOutputGRAFile);
-  create_menu_item(menu, _("_PS file"),  FALSE, "<Ngraph>/Output/PS File",  0, 0, CmOutputMenu, MenuIdOutputPSFile);
-  create_menu_item(menu, _("_EPS file"), FALSE, "<Ngraph>/Output/EPS File", 0, 0, CmOutputMenu, MenuIdOutputEPSFile);
-  create_menu_item(menu, _("P_DF file"), FALSE, "<Ngraph>/Output/PDF File", 0, 0, CmOutputMenu, MenuIdOutputPDFFile);
-  create_menu_item(menu, _("_SVG file"), FALSE, "<Ngraph>/Output/SVG File", 0, 0, CmOutputMenu, MenuIdOutputSVGFile);
-  create_menu_item(menu, _("P_NG file"), FALSE, "<Ngraph>/Output/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
+  create_menu_item(menu, _("_GRA file"), FALSE, "<Ngraph>/Graph/Export image/GRA File", 0, 0, CmOutputMenu, MenuIdOutputGRAFile);
+  create_menu_item(menu, _("_PS file"),  FALSE, "<Ngraph>/Graph/Export image/PS File",  0, 0, CmOutputMenu, MenuIdOutputPSFile);
+  create_menu_item(menu, _("_EPS file"), FALSE, "<Ngraph>/Graph/Export image/EPS File", 0, 0, CmOutputMenu, MenuIdOutputEPSFile);
+  create_menu_item(menu, _("P_DF file"), FALSE, "<Ngraph>/Graph/Export image/PDF File", 0, 0, CmOutputMenu, MenuIdOutputPDFFile);
+  create_menu_item(menu, _("_SVG file"), FALSE, "<Ngraph>/Graph/Export image/SVG File", 0, 0, CmOutputMenu, MenuIdOutputSVGFile);
+  create_menu_item(menu, _("P_NG file"), FALSE, "<Ngraph>/Graph/Export image/PNG File", 0, 0, CmOutputMenu, MenuIdOutputPNGFile);
 #ifdef CAIRO_HAS_WIN32_SURFACE
-  create_menu_item(menu, _("E_MF file"), FALSE, "<Ngraph>/Output/EMF File", 0, 0, CmOutputMenu, MenuIdOutputEMFFile);
+  create_menu_item(menu, _("E_MF file"), FALSE, "<Ngraph>/Graph/Export image/EMF File", 0, 0, CmOutputMenu, MenuIdOutputEMFFile);
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
 }
 

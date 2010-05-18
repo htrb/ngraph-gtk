@@ -1,3 +1,8 @@
+2010-05-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (create_image_outputmenu): change accel path
+	of "Export image" menu items.
+
 2010-05-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (ERR_SMALL_ARGS, ERR_INVALID_PARAM): remove.
