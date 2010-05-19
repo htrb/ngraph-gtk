@@ -3165,8 +3165,8 @@ GRAinview(int GC,int x,int y)
 
 void 
 GRAcurvefirst(int GC,int num,int *dashlist,
-      clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
-                   double x0,double y0)
+	      clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
+	      double x0,double y0)
 {
   int i,gx0,gy0;
 

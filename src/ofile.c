@@ -796,27 +796,27 @@ opendata(struct objlist *obj,char *inst,
     if (axmin==axmax) {
       error(obj,ERRNOSETAXIS);
       return NULL;
-    } else if (axtype==1) {
-      if ((axmin<=0) || (axmax<=0)) {
+    } else if (axtype == AXIS_TYPE_LOG) {
+      if ((axmin <= 0) || (axmax <= 0)) {
 	error(obj,ERRMINMAX);
 	return NULL;
       } else {
 	axmin=log10(axmin);
 	axmax=log10(axmax);
       }
-    } else if (axtype==2) {
-      if (axmin*axmax<=0) {
-	error(obj,ERRMINMAX);
+    } else if (axtype == AXIS_TYPE_INVERSE) {
+      if (axmin * axmax <= 0) {
+	error(obj, ERRMINMAX);
 	return NULL;
       } else {
-	axmin=1/axmin;
-	axmax=1/axmax;
+	axmin = 1 / axmin;
+	axmax = 1 / axmax;
       }
     }
-    ratex=axlen/(axmax-axmin);
+    ratex = axlen / (axmax - axmin);
 
-    if (axisy==NULL) {
-      error(obj,ERRNOAXIS);
+    if (axisy == NULL) {
+      error(obj, ERRNOAXIS);
       return NULL;
     }
 
@@ -898,7 +898,7 @@ opendata(struct objlist *obj,char *inst,
     dirx = 0;
     axmin = 0;
     axmax = 0;
-    axtype = 0;
+    axtype = AXIS_TYPE_LINEAR;
 
     ayposx = 0;
     ayposy = 0;
@@ -906,7 +906,7 @@ opendata(struct objlist *obj,char *inst,
     diry = 0;
     aymin = 0;
     aymax = 0;
-    aytype = 0;
+    aytype = AXIS_TYPE_LINEAR;
 
     axvx = 0;
     axvy = 0;
@@ -4171,7 +4171,7 @@ getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
   maxx=fp->axmax;
   miny=fp->aymin;
   maxy=fp->aymax;
-  if (fp->axtype==1) {
+  if (fp->axtype == AXIS_TYPE_LOG) {
     if (x==0) {
       fp->ignore=TRUE;
       return -1;
@@ -4180,14 +4180,15 @@ getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
       x=fabs(x);
     }
     x=log10(x);
-  } else if (fp->axtype==2) {
+  } else if (fp->axtype == AXIS_TYPE_INVERSE) {
     if (x==0) {
       fp->ignore=TRUE;
       return -1;
     }
     x=1/x;
   }
-  if (fp->aytype==1) {
+
+  if (fp->aytype == AXIS_TYPE_LOG) {
     if (y==0) {
       fp->ignore=TRUE;
       return -1;
@@ -4196,7 +4197,7 @@ getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
       y=fabs(y);
     }
     y=log10(y);
-  } else if (fp->aytype==2) {
+  } else if (fp->aytype == AXIS_TYPE_INVERSE) {
     if (y==0) {
       fp->ignore=TRUE;
       return -1;
@@ -4231,6 +4232,32 @@ getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
   return 0;
 }
 
+static int
+get_pos_sub(struct f2ddata *fp, double *val, int atype)
+{
+  switch (atype) {
+  case AXIS_TYPE_LOG:
+    if (*val == 0) {
+      fp->ignore = TRUE;
+      return -1;
+    } else if (*val < 0) {
+      fp->negative = TRUE;
+      *val = fabs(*val);
+    }
+    *val = log10(*val);
+    break;
+  case AXIS_TYPE_INVERSE:
+    if (*val == 0) {
+      fp->ignore = TRUE;
+      return -1;
+    }
+    *val = 1 / *val;
+    break;
+  }
+
+  return 0;
+}
+
 static int 
 getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
 /*
@@ -4238,38 +4265,18 @@ getposition2(struct f2ddata *fp,int axtype,int aytype,double *x,double *y)
           0: normal
 */
 {
-  if (axtype==1) {
-    if (*x==0) {
-      fp->ignore=TRUE;
-      return -1;
-    } else if (*x<0) {
-      fp->negative=TRUE;
-      *x=fabs(*x);
-    }
-    *x=log10(*x);
-  } else if (axtype==2) {
-    if (*x==0) {
-      fp->ignore=TRUE;
-      return -1;
-    }
-    *x=1 / *x;
+  int r;
+
+  r = get_pos_sub(fp, x, axtype);
+  if (r) {
+    return -1;
   }
-  if (aytype==1) {
-    if (*y==0) {
-      fp->ignore=TRUE;
-      return -1;
-    } else if (*y<0) {
-      fp->negative=TRUE;
-      *y=fabs(*y);
-    }
-    *y=log10(*y);
-  } else if (aytype==2) {
-    if (*y==0) {
-      fp->ignore=TRUE;
-      return -1;
-    }
-    *y=1 / *y;
+
+  r = get_pos_sub(fp, y, aytype);
+  if (r) {
+    return -1;
   }
+
   return 0;
 }
 
@@ -6033,24 +6040,28 @@ f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     axdir=dirx/18000.0*MPI;
     axvx=cos(axdir);
     axvy=-sin(axdir);
-    if (axmin==axmax) return 1;
-    else if (axtype==1) {
-      if ((axmin<=0) || (axmax<=0)) return 1;
-      else {
-          axmin=log10(axmin);
-          axmax=log10(axmax);
+    if (axmin==axmax) {
+      return 1;
+    } else if (axtype == AXIS_TYPE_LOG) {
+      if ((axmin<=0) || (axmax<=0)) {
+	return 1;
+      } else {
+	axmin=log10(axmin);
+	axmax=log10(axmax);
       }
-    } else if (axtype==2) {
-      if (axmin*axmax<=0) return 1;
-      else {
+    } else if (axtype == AXIS_TYPE_INVERSE) {
+      if (axmin * axmax <= 0) {
+	return 1;
+      } else {
         axmin=1/axmin;
         axmax=1/axmax;
       }
     }
     ratex=axlen/(axmax-axmin);
   }
-  if (axisy==NULL) return 1;
-  else {
+  if (axisy == NULL) {
+    return 1;
+  } else {
     arrayinit(&iarray,sizeof(int));
     if (getobjilist(axisy,&aobj,&iarray,FALSE,NULL)) return 1;
     anum=arraynum(&iarray);
@@ -6115,25 +6126,31 @@ f2dgetcoord(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   miny=aymin;
   maxy=aymax;
 
-  if (axtype==1) {
-    if (x==0) return -1;
-    else if (x<0) {
-      x=fabs(x);
+  if (axtype == AXIS_TYPE_LOG) {
+    if (x == 0) {
+      return -1;
+    } else if (x < 0) {
+      x = fabs(x);
     }
-    x=log10(x);
-  } else if (axtype==2) {
-    if (x==0) return -1;
-    x=1/x;
+    x = log10(x);
+  } else if (axtype == AXIS_TYPE_INVERSE) {
+    if (x == 0) {
+      return -1;
+    }
+    x = 1 / x;
   }
-  if (aytype==1) {
-    if (y==0) return -1;
-    else if (y<0) {
-      y=fabs(y);
+  if (aytype == AXIS_TYPE_LOG) {
+    if (y == 0) {
+      return -1;
+    } else if (y < 0) {
+      y = fabs(y);
     }
-    y=log10(y);
-  } else if (aytype==2) {
-    if (y==0) return -1;
-    y=1/y;
+    y = log10(y);
+  } else if (aytype == AXIS_TYPE_INVERSE) {
+    if (y == 0) {
+      return -1;
+    }
+    y = 1 / y;
   }
 
   if (dataclip &&
@@ -8638,21 +8655,6 @@ solve_equation(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   n = arraynum(darray);
   data = arraydata(darray);
 
-  if (argv[1][0] == 'b') {
-    if (n < 2) {
-      error(obj, ERR_SMALL_ARGS);
-      return 1;
-    }
-
-    a = data[0];
-    b = data[1];
-    y = (n > 2) ? data[2] : 0;
-    tolerance = (n > 3) ? data[3] : 0;
-  } else {
-    x = (n > 0) ? data[0] : 0;
-    y = (n > 1) ? data[1] : 0;
-  }
-
   eq = ofile_create_math_equation(NULL, FALSE, FALSE, FALSE, FALSE, FALSE);
   if (eq == NULL) {
     return 1;
@@ -8671,10 +8673,26 @@ solve_equation(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
 
   if (argv[1][0] == 'b') {
+    if (n < 2) {
+      error(obj, ERR_SMALL_ARGS);
+      math_equation_free(eq);
+      return 1;
+    }
+
+    a = data[0];
+    b = data[1];
+    y = (n > 2) ? data[2] : 0;
+    x = 0;
+    tolerance = (n > 3) ? data[3] : 0;
+
     r = bisection(eq, a, b, y, tolerance, &x);
   } else {
+    x = (n > 0) ? data[0] : 0;
+    y = (n > 1) ? data[1] : 0;
+
     r = newton(eq, &x, y);
   }
+
   math_equation_free(eq);
 
   if (r) {

@@ -1,3 +1,10 @@
+2010-05-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (opendata, getposition, f2dgetcoord): use
+	"AXIS_TYPE_LINEAR", "AXIS_TYPE_LOG" and "AXIS_TYPE_INVERSE".
+	(get_pos_sub): add.
+	(getposition2): use "get_pos_sub()".
+
 2010-05-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (create_image_outputmenu): change accel path
