@@ -2486,7 +2486,7 @@ SetPoint(struct Viewer *d, int x, int y)
   //  x += Menulocal.LeftMargin;
   //  y += Menulocal.TopMargin;
 
-  if (NgraphApp.Message) {
+  if (NgraphApp.Message && GTK_WIDGET_VISIBLE(NgraphApp.Message)) {
     snprintf(buf, sizeof(buf), "% 6.2f, % 6.2f", x / 100.0, y / 100.0);
     gtk_label_set_text(GTK_LABEL(NgraphApp.Message_pos), buf);
 

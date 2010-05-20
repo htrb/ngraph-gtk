@@ -23,8 +23,12 @@
 
 #include "gtk_common.h"
 
+#include <time.h>
+#include <math.h>
+
 #include "ngraph.h"
 #include "object.h"
+#include "axis.h"
 
 #include "gtk_subwin.h"
 
@@ -65,7 +69,7 @@ CoordWinSetCoord(int x, int y)
 {
   struct objlist *obj;
   static int bufsize = 0;
-  int l, i, j, num;
+  int l, i, j, num, type;
   char *argv[3];
   double a;
   char *name;
@@ -75,11 +79,12 @@ CoordWinSetCoord(int x, int y)
 
   obj = chkobject("axis");
 
-  if (obj == NULL || d->text == NULL)
+  if (d->Win == NULL || ! GTK_WIDGET_VISIBLE(d->Win) || obj == NULL || d->text == NULL) {
     return;
+  }
 
   num = chkobjlastinst(obj) + 1;
-  l = 45 * (num + 1);
+  l = 64 * (num + 1);
 
   if (l > bufsize) {
     g_free(d->str);
@@ -89,6 +94,7 @@ CoordWinSetCoord(int x, int y)
 
   if (d->str == NULL) {
     bufsize = 0;
+    gtk_label_set_text(GTK_LABEL(d->text), "");
     return;
   }
 
@@ -98,9 +104,21 @@ CoordWinSetCoord(int x, int y)
   argv[1] = (char *) &y;
   argv[2] = NULL;
   for (i = 0; i < num; i++) {
+    if (getobj(obj, "coordinate", i, 2, argv, &a) == -1) {
+      continue;
+    }
     getobj(obj, "group", i, 0, NULL, &name);
-    if (getobj(obj, "coordinate", i, 2, argv, &a) != -1) {
-      j += snprintf(d->str + j, bufsize - j, "\n%2d %5s %+.7e", i, name, a);
+    getobj(obj, "type", i, 0, NULL, &type);
+    j += snprintf(d->str + j, bufsize - j, "\n%2d %5s %+.7e", i, name, a);
+    if (type == AXIS_TYPE_MJD) {
+      struct tm *tm;
+      time_t t;
+
+      t = floor((a - 40587) * 86400);
+      tm = gmtime(&t);
+      if (tm) {
+	j += strftime(d->str + j, bufsize - j, "  %F %T", tm);
+      }
     }
   }
 
