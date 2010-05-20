@@ -73,7 +73,7 @@
 	(create_windowmenu): move "Draw" and "Clear" menu items from
 	"Output" menu.
 	(createmenu): don't call "create_outputmenu()".
-	(createpixmap): ceck "data[i].xpm".
+	(createpixmap): check "data[i].xpm".
 	(createcommand1): call "gtk_tool_button_new_from_stock()" when
 	"cdata->xpm" is NULL.
 	(createcommand1): call "gtk_tool_item_set_homogeneous()".
