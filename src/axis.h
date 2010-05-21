@@ -34,6 +34,18 @@ enum AXIS_SCALE_TYPE {
   AXIS_TYPE_MJD,
 };
 
+enum AXIS_NUM_DIR {
+  AXIS_NUM_POS_HORIZONTAL,
+  AXIS_NUM_POS_PARALLEL1,
+  AXIS_NUM_POS_PARALLEL2,
+  AXIS_NUM_POS_NORMAL1,
+  AXIS_NUM_POS_NORMAL2,
+  AXIS_NUM_POS_OBLIQUE1,
+  AXIS_NUM_POS_OBLIQUE2,
+  AXIS_NUM_POS_NORMAL,		/* for backward compatibility */
+  AXIS_NUM_POS_PARALLEL,	/* for backward compatibility */
+};
+
 struct axislocal {
     int atype;
     double min,max,inc;

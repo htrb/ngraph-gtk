@@ -1,3 +1,45 @@
+2010-05-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (anumdirchar): add new settings "oblique1" and
+	"oblique2".
+	(get_num_pos): renamed from "get_num_pos_parallel".
+	(get_num_pos_normal): removed.
+	(get_num_pos_oblique, get_num_ofst_oblique1)
+	(get_num_ofst_oblique2): add.
+	(draw_numbering_normalize): add case for "AXIS_NUM_POS_OBLIQUE1"
+	and "AXIS_NUM_POS_OBLIQUE2".
+	(draw_numbering): add argument "ndir".
+	(draw_numbering): add case for "AXIS_NUM_POS_OBLIQUE1" and
+	"AXIS_NUM_POS_OBLIQUE2".
+	(draw_numbering): use "get_num_pos()" instead of
+	"get_num_pos_normal()" and "get_num_pos_parallel()".
+	(numbering): get field "num_direction".
+	(numbering): "align" is not used when "ndir" is
+	"AXIS_NUM_POS_OBLIQUE1" or "AXIS_NUM_POS_OBLIQUE2".
+	(anumdirput): add case for "AXIS_NUM_POS_OBLIQUE1" and
+	"AXIS_NUM_POS_OBLIQUE2".
+
+	* src/axis.h (AXIS_NUM_DIR): moved from "oaxis.c".
+
+	* src/gra.c (GRAexpandmath): show "0" when calculated value is
+	equal to 0.
+
+	* src/gtk/x11dialg.h (AxisNumbering): add member "align_label".
+
+	* src/gtk/x11axis.c (num_direction_changed): add.
+	(numbering_tab_create): "change" signal is connected to the
+	function "num_direction_changed()".
+	(numbering_tab_create): initialize "d->align_label".
+
+2010-05-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (SetPoint): don't show the position in the
+	status bar when the widget is not visible.
+
+	* src/gtk/x11cood.c (CoordWinSetCoord): show date when tyoe of the
+	axis is "AXIS_TYPE_MJD".
+	(CoordWinSetCoord): do nothing when the widget is not visible.
+
 2010-05-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (opendata, getposition, f2dgetcoord): use

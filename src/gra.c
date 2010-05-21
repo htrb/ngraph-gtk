@@ -1773,7 +1773,9 @@ GRAexpandmath(char **s)
 
   mod = fabs(fmod(vd, 1));
   uvd = fabs(vd);
-  if (uvd < 0.1) {
+  if (uvd == 0) {
+    str = g_strdup("0");
+  } else if (uvd < 0.1) {
     str = g_strdup_printf("%.15e", vd);
   } else if (uvd < 1E6 && mod < DBL_EPSILON) {
     str = g_strdup_printf("%.0f", vd);

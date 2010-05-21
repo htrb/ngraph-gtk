@@ -33,6 +33,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
+#include "axis.h"
 
 #include "gtk_liststore.h"
 #include "gtk_subwin.h"
@@ -1731,6 +1732,20 @@ numbering_tab_copy_clicked(GtkButton *btn, gpointer user_data)
   }
 }
 
+static void
+num_direction_changed(GtkWidget *w, gpointer client_data)
+{
+  int dir, state;
+  struct AxisDialog *d;
+
+  d = (struct AxisDialog *) client_data;
+
+  dir = combo_box_get_active(w);
+  state = (dir != AXIS_NUM_POS_OBLIQUE1 && dir != AXIS_NUM_POS_OBLIQUE2);
+  gtk_widget_set_sensitive(d->numbering.align, state);
+  gtk_widget_set_sensitive(d->numbering.align_label, state);
+}
+
 static GtkWidget *
 numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 {
@@ -1773,11 +1788,12 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = combo_box_create();
-  add_widget_to_table(table, w, _("_Align:"), FALSE, i++);
+  d->align_label = add_widget_to_table(table, w, _("_Align:"), FALSE, i++);
   d->align = w;
 
   w = combo_box_create();
   add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);
+  g_signal_connect(w, "changed", G_CALLBACK(num_direction_changed), dd);
   d->direction = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POSITION, TRUE, TRUE);

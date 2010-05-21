@@ -137,19 +137,11 @@ static char *anumdirchar[]={
   N_("parallel2"),
   N_("normal1"),
   N_("normal2"),
+  N_("oblique1"),
+  N_("oblique2"),
   "\0normal",			/* for backward compatibility */
   "\0parallel",			/* for backward compatibility */
   NULL
-};
-
-enum AXIS_NUM_DIR {
-  AXIS_NUM_POS_HORIZONTAL,
-  AXIS_NUM_POS_PARALLEL1,
-  AXIS_NUM_POS_PARALLEL2,
-  AXIS_NUM_POS_NORMAL1,
-  AXIS_NUM_POS_NORMAL2,
-  AXIS_NUM_POS_NORMAL,		/* for backward compatibility */
-  AXIS_NUM_POS_PARALLEL,	/* for backward compatibility */
 };
 
 static struct obj_config AxisConfig[] = {
@@ -1550,7 +1542,7 @@ get_num_pos_horizontal(int align, int plen, int fx0, int fy0, int fx1, int fy1, 
 }
 
 static void
-get_num_pos_parallel(int align, int plen, double nndir, int fx0, int fy0, int fx1, int fy1, int *x, int *y)
+get_num_pos(int align, int plen, double nndir, int fx0, int fy0, int fx1, int fy1, int *x, int *y)
 {
   int px0, py0;
 
@@ -1578,33 +1570,26 @@ get_num_pos_parallel(int align, int plen, double nndir, int fx0, int fy0, int fx
 }
 
 static void
-get_num_pos_normal(int side, int align, int plen, double nndir, int fx0, int fy0, int fx1, int fy1, int *x, int *y)
+get_num_pos_oblique(int align, int plen, double nndir, int fx0, int fy0, int fx1, int fy1, int *x, int *y)
 {
   int px0, py0;
 
   switch (align) {
-  case AXIS_NUM_ALIGN_CENTER:
-    px0 = (fx0 + fx1) / 2;
-    break;
   case AXIS_NUM_ALIGN_LEFT:
-    px0 = fx1;
-    break;
-  case AXIS_NUM_ALIGN_RIGHT:
     px0 = fx0;
     break;
-  case AXIS_NUM_ALIGN_POINT:
-    px0 = fx0 + plen / 2;
+  case AXIS_NUM_ALIGN_RIGHT:
+    px0 = fx1;
     break;
   default:
     /* never reached */
-    px0 = 0;
+    px0 = fx0;
   }
-  py0 = (fy0 + fy1) / 2;
+  py0 = fy0;
 
   *x =  cos(nndir) * px0 + sin(nndir) * py0;
   *y = -sin(nndir) * px0 + cos(nndir) * py0;
 }
-
 
 struct font_config {
   char *font, *jfont;
@@ -1835,6 +1820,72 @@ get_num_ofst_normal2(const struct axis_config *aconf, int align, int side,
 }
 
 static void
+get_num_ofst_oblique1(const struct axis_config *aconf, int align, int side,
+		   int ilenmax, int plen,
+		   int hx0, int hy0, int hx1, int hy1,
+		   int *x1, int *y1, int *x2, int *y2, int *len)
+{
+  int w, h;
+  double sin_t, cos_t;
+
+  switch (side) {
+  case AXIS_NUM_POS_LEFT:
+    w = abs(hx1 - hx0);
+    h = abs(hy1 - hy0);
+
+    cos_t = cos(aconf->dir + MPI / 4);
+    sin_t = sin(aconf->dir + MPI / 4);
+
+    *x1 =   w * cos_t - h * sin_t;
+    *y1 = - w * sin_t - h * cos_t;
+    break;
+  case AXIS_NUM_POS_RIGHT:
+    *x1 = *y1 = 0;
+    break;
+  default:
+    /* never reached */
+    *x1 = 0;
+    *y1 = 0;
+  }
+
+  *x2 = *y2 = 0;
+  *len = abs(hx1 - hx0);
+}
+
+static void
+get_num_ofst_oblique2(const struct axis_config *aconf, int align, int side,
+		   int ilenmax, int plen,
+		   int hx0, int hy0, int hx1, int hy1,
+		   int *x1, int *y1, int *x2, int *y2, int *len)
+{
+  int w, h;
+  double sin_t, cos_t;
+
+  switch (side) {
+  case AXIS_NUM_POS_LEFT:
+    w = abs(hx1 - hx0);
+    h = abs(hy1 - hy0);
+
+    cos_t = cos(aconf->dir - MPI / 4);
+    sin_t = sin(aconf->dir - MPI / 4);
+
+    *x1 = - w * cos_t - h * sin_t;
+    *y1 =   w * sin_t - h * cos_t;
+    break;
+  case AXIS_NUM_POS_RIGHT:
+    *x1 = *y1 = 0;
+    break;
+  default:
+    /* never reached */
+    *x1 = 0;
+    *y1 = 0;
+  }
+
+  *x2 = *y2 = 0;
+  *len = abs(hx1 - hx0);
+}
+
+static void
 mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len, const char *date_format)
 {
   struct tm *tm;
@@ -2031,6 +2082,10 @@ draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
     px1=cos(nndir)*px0+sin(nndir)*py0;
     py1=-sin(nndir)*px0+cos(nndir)*py0;
     break;
+  case AXIS_NUM_POS_OBLIQUE1:
+  case AXIS_NUM_POS_OBLIQUE2:
+    px1 = py1 = 0;
+    break;
   }
   GRAmoveto(GC,gx0-px1,gy0-py1);
   GRAdrawtext(GC,num,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
@@ -2040,7 +2095,7 @@ draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
 
 static int
 draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
-	       int GC, int side, int align, int ilenmax, int plen,
+	       int GC, int side, int align, int ndir, int ilenmax, int plen,
 	       struct axis_config *aconf, const struct font_config *font, int step,
 	       int nnum, int numcount, int begin, int autonorm, int nozero,
 	       int logpow, const char *format, double norm,
@@ -2054,11 +2109,10 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
   double nndir, po, min1, max1, value;
   int numlen,i;
   char *text, ch;
-  int sx, sy, ndir, ndirection, cstep;
+  int sx, sy, ndirection, cstep;
 
   _getobj(obj,"num_shift_p",inst,&sx);
   _getobj(obj,"num_shift_n",inst,&sy);
-  _getobj(obj,"num_direction",inst,&ndir);
 
   switch (aconf->type) {
   case AXIS_TYPE_LOG:
@@ -2084,6 +2138,12 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
   case AXIS_NUM_POS_NORMAL2:
     ndirection = aconf->direction + 27000;
     break;
+  case AXIS_NUM_POS_OBLIQUE1:
+    ndirection = aconf->direction + 4500;
+    break;
+  case AXIS_NUM_POS_OBLIQUE2:
+    ndirection = aconf->direction + 31500;
+    break;
   case AXIS_NUM_POS_PARALLEL1:
     ndirection = aconf->direction;
     break;
@@ -2094,9 +2154,10 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
     /* never reached */
     ndirection = 0;
   }
-  if (ndirection > 36000)
+  if (ndirection > 36000) {
     ndirection -= 36000;
-  nndir=ndirection/18000.0*MPI;
+  }
+  nndir = ndirection / 18000.0 * MPI;
 
   if (side==AXIS_NUM_POS_RIGHT) sy*=-1;
 
@@ -2113,6 +2174,12 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
     break;
   case AXIS_NUM_POS_NORMAL2:
     get_num_ofst_normal2(aconf, align, side, ilenmax, plen, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
+    break;
+  case AXIS_NUM_POS_OBLIQUE1:
+    get_num_ofst_oblique1(aconf, align, side, ilenmax, plen, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
+    break;
+  case AXIS_NUM_POS_OBLIQUE2:
+    get_num_ofst_oblique2(aconf, align, side, ilenmax, plen, hx0, hy0, hx1, hy1, &dlx, &dly, &dlx2, &dly2, &maxlen);
     break;
   default:
     /* never reached */
@@ -2171,13 +2238,19 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	    break;
 	  case AXIS_NUM_POS_PARALLEL1:
 	  case AXIS_NUM_POS_PARALLEL2:
-	    get_num_pos_parallel(align, plen, nndir, fx0, fy0, fx1, fy1, &px1, &py1);
+	    get_num_pos(align, plen, nndir, fx0, fy0, fx1, fy1, &px1, &py1);
 	    break;
 	  case AXIS_NUM_POS_NORMAL1:
-	    get_num_pos_normal(side, align, plen, nndir, fx0, fy0, fx1, fy1, &px1, &py1);
+	    get_num_pos(align, plen, nndir, fx0, fy0, fx1, fy1, &px1, &py1);
 	    break;
 	  case AXIS_NUM_POS_NORMAL2:
-	    get_num_pos_normal(side, align, plen, nndir, fx1, fy0, fx0, fy1, &px1, &py1);
+	    get_num_pos(align, plen, nndir, fx1, fy0, fx0, fy1, &px1, &py1);
+	    break;
+	  case AXIS_NUM_POS_OBLIQUE1:
+	    get_num_pos_oblique(AXIS_NUM_ALIGN_LEFT, plen, nndir, fx1, fy0, fx0, fy1, &px1, &py1);
+	    break;
+	  case AXIS_NUM_POS_OBLIQUE2:
+	    get_num_pos_oblique(AXIS_NUM_ALIGN_RIGHT, plen, nndir, fx1, fy0, fx0, fy1, &px1, &py1);
 	    break;
 	  default:
 	    px1 = 0;
@@ -2296,7 +2369,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   double po;
   double norm;
   int rcode, i;
-  int hx0,hy0,hx1,hy1,fx0,fy0,fx1,fy1;
+  int hx0,hy0,hx1,hy1,fx0,fy0,fx1,fy1,ndir;
   int ilenmax,flenmax,plen;
   struct font_config font;
   struct axislocal alocal;
@@ -2324,6 +2397,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   _getobj(obj, "num_no_zero", inst, &nozero);
   _getobj(obj, "num_font", inst, &font.font);
   _getobj(obj, "num_jfont", inst, &font.jfont);
+  _getobj(obj, "num_direction",inst, &ndir);
 
   GRAcolor(GC, fr, fg, fb);
 
@@ -2351,6 +2425,10 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
     if (align == AXIS_NUM_ALIGN_POINT) {
       align = AXIS_NUM_ALIGN_CENTER;
     }
+  }
+
+  if (ndir == AXIS_NUM_POS_OBLIQUE1 || ndir == AXIS_NUM_POS_OBLIQUE2) {
+    align = AXIS_NUM_ALIGN_CENTER;
   }
 
   if (getaxispositionini(&alocal, aconf->type, aconf->min, aconf->max, aconf->inc, aconf->div, FALSE)) {
@@ -2432,7 +2510,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 
   if (hx0 != hx1 && hy0 != hy1) {
     draw_numbering(obj, inst, &alocal, GC,
-		   side, align, ilenmax, plen, aconf, &font, step, nnum,
+		   side, align, ndir, ilenmax, plen, aconf, &font, step, nnum,
 		   numcount, begin, autonorm, nozero, logpow, format,
 		   norm, head, headlen, tail, date_format,
 		   hx0, hy0, hx1, hy1, draw);
@@ -3633,6 +3711,8 @@ anumdirput(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
   case AXIS_NUM_POS_PARALLEL2:
   case AXIS_NUM_POS_NORMAL1:
   case AXIS_NUM_POS_NORMAL2:
+  case AXIS_NUM_POS_OBLIQUE1:
+  case AXIS_NUM_POS_OBLIQUE2:
     break;
   case AXIS_NUM_POS_NORMAL:
     * (int *) argv[2] = AXIS_NUM_POS_HORIZONTAL;
