@@ -1218,7 +1218,8 @@ mjd2gd(double mjd, int *yy, int *mm, int *dd)
 {
   double x0, x1, x2, c1, c2, j, m, d;
 
-  x2 = mjd + 2400000.5 - 1721119.5;
+  mjd = floor(mjd);
+  x2 = mjd + (2400000.5 - 1721119.5);
   c2 = floor((4 * x2 + 3) / 146097.0);
   x1 = x2 - floor(146097 * c2 / 4.0);
   c1 = floor((100 * x1 + 99) / 36525.0);
