@@ -98,16 +98,14 @@ void *addgra2gtkprint(void);
 void *addgra2gdk(void);
 void *addmerge(void);
 void *addlegend(void);
-void *addline(void);
-void *addcurve(void);
 void *addrectangle(void);
 void *addarc(void);
-void *addpolygon(void);
 void *addmark(void);
 void *addtext(void);
 void *addaxis(void);
 void *addagrid(void);
 void *addprm(void);
+void *addpath(void);
 
 void *addgra2gtk(void);
 void *addmenu(void);
@@ -182,10 +180,8 @@ static void * ( * obj_add_func_ary[]) (void) = {
   addmerge,
   addlegend,
   addrectangle,
-  addline,
-  addcurve,
   addarc,
-  addpolygon,
+  addpath,
   addmark,
   addtext,
   addmenu,

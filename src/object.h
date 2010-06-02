@@ -254,6 +254,7 @@ int _exeobj(struct objlist *obj,char *vname,char *inst,int argc,char **argv);
 int __exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv);
 int copyobj(struct objlist *obj,char *vname,int did,int sid);
 int newobj(struct objlist *obj);
+int newobj_alias(struct objlist *obj, char *name);
 int delobj(struct objlist *obj,int delid);
 int putobj(struct objlist *obj,char *vname,int id,void *val);
 int getobj(struct objlist *obj,char *vname,int id,
@@ -266,6 +267,7 @@ int movedownobj(struct objlist *obj,int id);
 int movelastobj(struct objlist *obj,int id);
 int exchobj(struct objlist *obj,int id1,int id2);
 
+int getobjiname(char *s, char **name, char **ptr);
 int chkobjilist(char *s,struct objlist **obj,struct narray *iarray,
                 int def,int *spc);
 int getobjilist(char *s,struct objlist **obj,struct narray *iarray,

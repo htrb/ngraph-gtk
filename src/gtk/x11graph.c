@@ -268,7 +268,7 @@ SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
     buf = (char **) arraynget(&(d->drawrable),
 			      *(int *) arraynget(&(d->idrawrable), j));
     list_store_append(d->drawlist, &iter);
-    list_store_set_string(d->drawlist, &iter, 0, *buf);
+    list_store_set_string(d->drawlist, &iter, 0, _(*buf));
   }
 
   d->btn_lock = FALSE;
@@ -652,7 +652,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *hbox, *vbox, *vbox2, *label, *frame;
   GtkTreeIter iter;
   struct SwitchDialog *d;
-  int num2, num1, j, k;
+  int num2, num1, j, k, *obj_check;
   char **buf;
   GtkTreeSelection *sel;
   static n_list_store list[] = {
@@ -761,20 +761,32 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
   for (j = 0; j < num2; j++) {
     buf = (char **) arraynget(&(d->drawrable), j);
     list_store_append(d->objlist, &iter);
-    list_store_set_string(d->objlist, &iter, 0, *buf);
+    list_store_set_string(d->objlist, &iter, 0, _(*buf));
   }
   num1 = arraynum(&(Menulocal.drawrable));
+  obj_check = g_malloc0(sizeof(*obj_check) * num2);
+  if (obj_check == NULL) {
+    return;
+  }
   for (j = 0; j < num1; j++) {
+    struct objlist *obj;
+
     buf = (char **) arraynget(&(Menulocal.drawrable), j);
+    obj = chkobject(*buf);
+    if (obj == NULL) {
+      continue;
+    }
     for (k = 0; k < num2; k++) {
-      if (strcmp0(*(char **) arraynget(&(d->drawrable), k), *buf) == 0) {
+      if (strcmp0(*(char **) arraynget(&(d->drawrable), k), obj->name) == 0) {
 	break;
       }
     }
-    if (k != num2) {
+    if (k != num2 && obj_check[k] == 0) {
+      obj_check[k] = 1;
       arrayadd(&(d->idrawrable), &k);
     }
   }
+  g_free(obj_check);
   SwitchDialogSetupItem(wi, d);
   set_objlist_btn_state(d, FALSE);
   set_drawlist_btn_state(d, FALSE);

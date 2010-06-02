@@ -1810,9 +1810,8 @@ getobjproc(struct objlist *obj,char *vname,void *val)
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
-int 
-newobj(struct objlist *obj)
-/* newobj() returns id or -1 on error */
+int
+newobj_alias(struct objlist *obj, char *name)
 {
   struct objlist *robj;
   char *instcur,*instnew,*inst;
@@ -1925,7 +1924,7 @@ newobj(struct objlist *obj)
   }
   if (robj->table[initn].proc) {
     argv = NULL;
-    if (arg_add2(&argv, 2, obj->name, "init") == NULL) {
+    if (arg_add2(&argv, 2, name, "init") == NULL) {
       g_free(argv);
       return -1;
     }
@@ -1948,6 +1947,13 @@ newobj(struct objlist *obj)
   obj->lastinst = id;
   obj->curinst = id;
   return id;
+}
+
+int 
+newobj(struct objlist *obj)
+/* newobj() returns id or -1 on error */
+{
+  return newobj_alias(obj, obj->name);
 }
 
 int 
@@ -2936,14 +2942,14 @@ int
 chkobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
 {
   char *oname,*ilist;
-  int len;
+  int r;
   int spc2;
 
-  if (s==NULL) return -1;
-  if ((s[0]==':') || ((oname=getitok2(&s,&len,":"))==NULL)) {
-    if (len==-1) return -1;
-    return ERRILOBJ;
+  r = getobjiname(s, &oname, &s);
+  if (r) {
+    return r;
   }
+
   if ((*obj=chkobject(oname))==NULL) {
     g_free(oname);
     return -1;
@@ -2958,18 +2964,44 @@ chkobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
 }
 
 int 
+getobjiname(char *s, char **name, char **ptr)
+{
+  char *oname;
+  int len;
+
+  *name = NULL;
+  if (s == NULL) {
+    return -1;
+  }
+
+  len = 0;
+  if (s[0] == ':' || (oname = getitok2(&s, &len, ":")) == NULL) {
+    if (len == -1) {
+      return -1;
+    }
+    error2(NULL, ERRILOBJ, s);
+    return ERRILOBJ;
+  }
+
+  if (ptr) {
+    *ptr = s;
+  }
+  *name = oname;
+  return 0;
+}
+
+int 
 getobjilist(char *s,struct objlist **obj,struct narray *iarray,int def,int *spc)
 {
   char *oname,*ilist;
-  int len;
+  int r;
   int spc2;
 
-  if (s==NULL) return -1;
-  if ((s[0]==':') || ((oname=getitok2(&s,&len,":"))==NULL)) {
-    if (len==-1) return -1;
-    error2(NULL,ERRILOBJ,s);
-    return ERRILOBJ;
+  r = getobjiname(s, &oname, &s);
+  if (r) {
+    return r;
   }
+
   if ((*obj=getobject(oname))==NULL) {
     g_free(oname);
     return -1;

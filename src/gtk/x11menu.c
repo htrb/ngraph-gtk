@@ -348,34 +348,12 @@ static struct command_data Command2_data[] = {
   {NULL},
   {
     NULL,
-    N_("Line"),
-    N_("Line"),
-    N_("New Legend Line (+SHIFT: Fine +CONTROL: snap angle)"), 
+    N_("Path"),
+    N_("Path"),
+    N_("New Legend Path (+SHIFT: Fine +CONTROL: snap angle)"), 
     Line_xpm,
     NULL,
-    LineB,
-    NULL,
-    NULL,
-  },
-  {
-    NULL,
-    N_("Curve"),
-    N_("Curve"),
-    N_("New Legend Curve (+SHIFT: Fine +CONTROL: snap angle)"), 
-    Curve_xpm,
-    NULL,
-    CurveB,
-    NULL,
-    NULL,
-  },
-  {
-    NULL,
-    N_("Polygon"),
-    N_("Polygon"),
-    N_("New Legend Polygon (+SHIFT: Fine +CONTROL: snap angle)"), 
-    Polygon_xpm,
-    NULL,
-    PolyB,
+    PathB,
     NULL,
     NULL,
   },
@@ -434,6 +412,7 @@ static struct command_data Command2_data[] = {
     NULL,
     NULL,
   },
+  {NULL},
   {
     NULL,
     N_("Frame axis"),
@@ -1275,7 +1254,7 @@ static void
 create_legendmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 {
   GtkWidget *item, *menu;
-  static struct show_instance_menu_data data[8];
+  static struct show_instance_menu_data data[6];
 
   item = gtk_menu_item_new_with_mnemonic(_("_Legend"));
   gtk_menu_shell_append(GTK_MENU_SHELL(parent), GTK_WIDGET(item));
@@ -1285,29 +1264,23 @@ create_legendmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), menu);
 
   /* an under score must be placed top of the menu title. */
-  data[0].widget = create_legendsubmenu(menu, N_("_Line"), CmLineMenu, accel_group);
-  data[0].obj = chkobject("line");
+  data[0].widget = create_legendsubmenu(menu, N_("_Path"), CmLineMenu, accel_group);
+  data[0].obj = chkobject("path");
 
-  data[1].widget = create_legendsubmenu(menu, N_("_Curve"), CmCurveMenu, accel_group);
-  data[1].obj = chkobject("curve");
+  data[1].widget = create_legendsubmenu(menu, N_("_Rectangle"), CmRectangleMenu, accel_group);
+  data[1].obj = chkobject("rectangle");
 
-  data[2].widget = create_legendsubmenu(menu, N_("_Polygon"), CmPolygonMenu, accel_group);
-  data[2].obj = chkobject("polygon");
+  data[2].widget = create_legendsubmenu(menu, N_("_Arc"), CmArcMenu, accel_group);
+  data[2].obj = chkobject("arc");
 
-  data[3].widget = create_legendsubmenu(menu, N_("_Rectangle"), CmRectangleMenu, accel_group);
-  data[3].obj = chkobject("rectangle");
+  data[3].widget = create_legendsubmenu(menu, N_("_Mark"), CmMarkMenu, accel_group);
+  data[3].obj = chkobject("mark");
 
-  data[4].widget = create_legendsubmenu(menu, N_("_Arc"), CmArcMenu, accel_group);
-  data[4].obj = chkobject("arc");
+  data[4].widget = create_legendsubmenu(menu, N_("_Text"), CmTextMenu, accel_group);
+  data[4].obj = chkobject("text");
 
-  data[5].widget = create_legendsubmenu(menu, N_("_Mark"), CmMarkMenu, accel_group);
-  data[5].obj = chkobject("mark");
-
-  data[6].widget = create_legendsubmenu(menu, N_("_Text"), CmTextMenu, accel_group);
-  data[6].obj = chkobject("text");
-
-  data[7].obj = NULL;
-  data[7].widget = NULL;
+  data[5].obj = NULL;
+  data[5].widget = NULL;
 
   g_signal_connect(menu, "show", G_CALLBACK(show_instance_menu_cb), data);
 }

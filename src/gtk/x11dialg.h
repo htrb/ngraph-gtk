@@ -48,24 +48,11 @@ int CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 	      char *(*callback) (struct objlist *, int));
 int SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
-int SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
-void SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field);
-int SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id, char *field);
-void SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
-int SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field);
-void SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
-int SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field);
-void SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field);
-void SetComboList(GtkWidget *w, char **list, int num);
-void SetComboList2(GtkWidget *w, char **list, int num);
-GtkWidget *GetComboBoxList(GtkWidget *w);
-GtkWidget *GetComboBoxText(GtkWidget *w);
-void SetComboBoxVisibleItemCount(GtkWidget *w, int count);
 int get_radio_index(GSList *top);
 void SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name, int jfont);
 void SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, int jfont);
@@ -341,11 +328,10 @@ struct LegendDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   char *(* prop_cb) (struct objlist *obj, int id);
-  GtkWidget *style, *points, *interpolation, *width, *miter, *join,
+  GtkWidget *path_type, *style, *points, *interpolation, *width, *miter, *join,
     *color,*color2, *x, *y, *x1, *y1, *x2, *y2, *rx, *ry, *angle1, *angle2,
-    *pieslice, *fill, *fill_rule, *frame, *arrow, *arrow_length, *arrow_width,
-    *size, *type, *view, *text, *pt, *space, *script_size, *direction, *raw, *font, *jfont,
-    *color2_label;
+    *pieslice, *close_path, *stroke, *fill, *fill_rule, *frame, *arrow, *arrow_length, *arrow_width,
+    *size, *type, *view, *text, *pt, *space, *script_size, *direction, *raw, *font, *jfont;
   struct objlist *Obj;
   int Id;
   int R, G, B, R2, G2, B2, wid, ang;
@@ -353,10 +339,6 @@ struct LegendDialog
   GdkPixmap *arrow_pixmap;
 };
 
-void LegendCurveDialog(struct LegendDialog *data,
-		       struct objlist *obj, int id);
-void LegendPolyDialog(struct LegendDialog *data,
-		      struct objlist *obj, int id);
 void LegendArrowDialog(struct LegendDialog *data,
 		       struct objlist *obj, int id);
 void LegendRectDialog(struct LegendDialog *data,
@@ -624,8 +606,6 @@ extern struct NumDialog DlgNum;
 extern struct AxisFontDialog DlgAxisFont;
 extern struct GaugeDialog DlgGauge;
 extern struct MergeDialog DlgMerge;
-extern struct LegendDialog DlgLegendCurve;
-extern struct LegendDialog DlgLegendPoly;
 extern struct LegendDialog DlgLegendArrow;
 extern struct LegendDialog DlgLegendRect;
 extern struct LegendDialog DlgLegendArc;

@@ -64,10 +64,8 @@ object
                 merge
                 legend
                         rectangle
-                        line
-                        curve
                         arc
-                        polygon
+                        path
                         mark
                         text
         dialog
@@ -480,7 +478,7 @@ object: menu
 alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
-object id: 36
+object id: 34
 number of fields: 39
 size of instance: 184
 r--               id    int
@@ -1261,98 +1259,13 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>line</h3>
-<pre>
-object: line
-alias:
-version: 1.00.01
-parent: legend
-object id: 30
-number of fields: 32
-size of instance: 200
-r--               id    int
-r--              oid    int
-rw-             name    char*
-r-x             save    *char( char *[] )
----               GC    int
-rw-           hidden    bool
-r-x           redraw    void( int )
-rw-                R    int
-rw-                G    int
-rw-                B    int
-rw-             clip    bool
-rw-      redraw_flag    bool
----       redraw_num    int
---x             init    void( )
---x             done    void( )
----             next    void*
-rw-           points    int[]
-rw-            width    int
-rw-            style    int[]
-rw-             join    enum( miter round bevel )
-rw-      miter_limit    int
-rw-            arrow    enum( none end begin both )
-rw-     arrow_length    int
-rw-      arrow_width    int
-r-x             draw    void( int )
-r-x             bbox    int[]( void )
-r-x             move    void( int int )
-r-x           rotate    void( int int int int )
-r-x             flip    void( int int int )
-r-x           change    void( int int int )
-r-x          zooming    void( int int int int )
-r-x            match    bool( int int int int int )
-</pre>
-
-<h3>curve</h3>
-<pre>
-object: curve
-alias:
-version: 1.00.00
-parent: legend
-object id: 31
-number of fields: 31
-size of instance: 192
-r--               id    int
-r--              oid    int
-rw-             name    char*
-r-x             save    *char( char *[] )
----               GC    int
-rw-           hidden    bool
-r-x           redraw    void( int )
-rw-                R    int
-rw-                G    int
-rw-                B    int
-rw-             clip    bool
-rw-      redraw_flag    bool
----       redraw_num    int
---x             init    void( )
---x             done    void( )
----             next    void*
-rw-           points    int[]
-r--          _points    int[]
-rw-    interpolation    enum( spline spline_close bspline bspline_close )
-rw-            width    int
-rw-            style    int[]
-rw-             join    enum( miter round bevel )
-rw-      miter_limit    int
-r-x             draw    void( int )
-r-x             bbox    int[]( void )
-r-x             move    void( int int )
-r-x           rotate    void( int int int int )
-r-x             flip    void( int int int )
-r-x           change    void( int int int )
-r-x          zooming    void( int int int int )
-r-x            match    bool( int int int int int )
-</pre>
-
 <h3>arc</h3>
 <pre>
 object: arc
 alias:
 version: 1.00.00
 parent: legend
-object id: 32
+object id: 30
 number of fields: 34
 size of instance: 216
 r--               id    int
@@ -1391,15 +1304,15 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 </pre>
 
-<h3>polygon</h3>
+<h3>path</h3>
 <pre>
-object: polygon
-alias:
-version: 1.00.00
+object: path
+alias: line:curve:polygon
+version: 1.00.01
 parent: legend
-object id: 33
-number of fields: 30
-size of instance: 184
+object id: 31
+number of fields: 41
+size of instance: 272
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1416,12 +1329,23 @@ rw-      redraw_flag    bool
 --x             init    void( )
 --x             done    void( )
 ---             next    void*
+rw-             type    enum( line curve )
 rw-           points    int[]
+r--          _points    int[]
+rw-    interpolation    enum( spline spline_close bspline bspline_close )
 rw-             fill    enum( empty even_odd_rule winding_rule )
+rw-           stroke    bool
+rw-       close_path    bool
+rw-               R2    int
+rw-               G2    int
+rw-               B2    int
 rw-            width    int
 rw-            style    int[]
 rw-             join    enum( miter round bevel )
 rw-      miter_limit    int
+rw-            arrow    enum( none end begin both )
+rw-     arrow_length    int
+rw-      arrow_width    int
 r-x             draw    void( int )
 r-x             bbox    int[]( void )
 r-x             move    void( int int )
@@ -1438,7 +1362,7 @@ object: mark
 alias:
 version: 1.00.00
 parent: legend
-object id: 34
+object id: 32
 number of fields: 32
 size of instance: 208
 r--               id    int
@@ -1481,7 +1405,7 @@ object: text
 alias:
 version: 1.00.00
 parent: legend
-object id: 35
+object id: 33
 number of fields: 34
 size of instance: 224
 r--               id    int
@@ -1526,7 +1450,7 @@ object: dialog
 alias:
 version: 1.00.00
 parent: object
-object id: 37
+object id: 35
 number of fields: 25
 size of instance: 168
 r--               id    int

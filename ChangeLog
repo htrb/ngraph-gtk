@@ -1,3 +1,120 @@
+2010-06-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* demo/encoding.ngp: use "path" object instead of "line" object.
+
+	* demo/demo5d.ngp: use "path" object instead of "line" object.
+
+	* demo/demo5a.ngp: use "path" object instead of "line" object.
+
+	* demo/demo4.ngp.in: use "path" object instead of "line" object.
+
+	* demo/demo3.ngp.in: use "path" object instead of "line" object.
+
+	* demo/demo2.ngp.in: use "path" object instead of "curve" object.
+
+	* addin/legend.tcl (makescript): use "path" object instead of
+	"line" object.
+
+	* initfile/Ngraph.ngp (gra::draw_obj): remove "line", "polygon"
+	and "curve" objects. add "path" object.
+
+	* src/Makefile.am (ngraph_SOURCES): remove "oline.c", "opolygon.c"
+	and "ocurve.c". add "opath.c" and "opath.h".
+
+	* src/oprm.c (prmload): use "path" object instead of "line",
+	"polygon" and "curve" objects.
+
+	* src/shellcm.c (cmnew): use object name from the
+	functions"getobjiname()" for "newobj_alias()".
+
+	* src/object.c (newobj_alias): add.
+	(newobj): use "newobj_alias()".
+	(getobjiname): add.
+	(chkobjilist, getobjilist): use "getobjiname()".
+
+	* src/gtk/gtk_widget.c (get_widget): add.
+	(spin_entry_set_val, spin_entry_get_val): use "get_widget()".
+
+	* src/gtk/main.c (obj_add_func_ary): remove "addline", "addcurve"
+	and "addpolygon". add "addpath".
+
+	* src/gtk/x11dialg.h: remove prototype of unused functions.
+	(LegendDialog):add member "stroke", "path_type" and
+	"close_path". remove member "color2_label".
+
+	* src/gtk/x11lgnd.c (legendlist): remove "line", "polygon" and
+	"curve" items. add "path" item.
+	(Ldlg): remove "DlgLegendCurve" and "DlgLegendPoly".
+	(LegendType): remove "LegendTypeLine", "LegendTypeCurve",
+	"LegendTypePoly". add "LegendTypePath".
+	(LegendLineCB): show the type of the "path" object.
+	(init_legend_dialog_widget_member): initialize "d->path_type",
+	"d->stroke" and "d->close_path".
+	(set_sensitive_with_labdl): add.
+	(legend_dialog_set_sensitive): use "set_sensitive_with_labdl()".
+	(legend_dialog_set_sensitive): set sensitivity for stroke and fill
+	related widgets.
+	(legend_dialog_setup_item): set up "d->stroke", "d->path_type" and
+	"d->close_path".
+	(legend_dialog_setup_item): call "get_widget()" before call
+	"gtk_range_set_value" and "gtk_entry_set_text()".
+	(width_setup, style_setup, miter_setup, join_setup, color_setup)
+	(color2_setup): save label instead of control widgets.
+	(LegendCurveDialogSetup, LegendCurveDialog, LegendPolyDialogSetup)
+	(LegendPolyDialog, CmCurveDel, CmCurveUpdate, CmCurveMenu)
+	(CmPolyDel, CmPolyUpdate, CmPolygonMenu): removed.
+	(LegendArrowDialogSetup): add control widgets for "d->stroke",
+	"d->fill_rule", "d->path_type" and "d->close_path".
+	(CmLineDel, CmLineUpdate): use "path" object instead of "line"
+	object.
+	(LegendWinLegendUpdate, legend_list_set_property): remove case for
+	"LegendTypeLine", "LegendTypeCurve" and "LegendTypePoly". add case
+	for "LegendTypePath".
+	(legend_list_set_property): show some attributes for "path"
+	object.
+
+	* src/gtk/x11dialg.c (initdialog): don't initialize
+	"DlgLegendCurve" and "DlgLegendPoly".
+	(SetWidgetFromObjField, SetObjFieldFromWidget)
+	(SetObjFieldFromStyle, SetStyleFromObjField, _putobj_color)
+	(_set_color): call "get_widget()" for the parameter "widget".
+	(SetComboList, SetComboList2): removed.
+	(SetObjFieldFromText, SetTextFromObjField, SetObjFieldFromSpin)
+	(SetSpinFromObjField, SetObjFieldFromToggle)
+	(SetToggleFromObjField, SetObjFieldFromStyle): now these functions
+	are static.
+
+	* src/gtk/x11view.c (create_legend2): create only "path" object.
+	(create_legendx): create "path" object instead of "curve" object.
+	(ViewerEvLButtonDblClk, ViewerEvRButtonDown): remove case for
+	"LineB" "CurveB" and "PolyB". add case for "PathB".
+	(ViewerEvRButtonDown): "g_object_unref()" shoud be called outside
+	of the "switch" block.
+	(ViewUpdate): don't check "line", "polygon" and "curve"
+	objects. check "path" object.
+
+	* src/gtk/x11menu.h (PointerType): remove "LineB" "CurveB" and
+	"PolyB". add "PathB".
+
+	* src/gtk/x11menu.c (Command2_data): remove "line", "polygon" and
+	"curve" buttons. add "path" button.
+	(create_legendmenu): remove "line", "polygon" and "curve" menu
+	items. add "path" menu item.
+
+	* src/gtk/x11graph.c (SwitchDialogSetupItem, SwitchDialogSetup):
+	localize.
+	(SwitchDialogSetup): check duplicate item.
+
+2010-06-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (mjd2gd): "mjd" must be an integer.
+
+	* src/oline.c: removed.
+
+	* src/ocurve.c: removed.
+
+	* src/opolygon.c: removed.
+
 2010-05-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oaxis.c (anumdirchar): add new settings "oblique1" and

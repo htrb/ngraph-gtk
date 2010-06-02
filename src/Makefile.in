@@ -62,20 +62,19 @@ am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-mathfn.$(OBJEXT) ngraph-nstring.$(OBJEXT) \
 	ngraph-ntime.$(OBJEXT) ngraph-oagrid.$(OBJEXT) \
 	ngraph-oarc.$(OBJEXT) ngraph-oaxis.$(OBJEXT) \
-	ngraph-object.$(OBJEXT) ngraph-ocurve.$(OBJEXT) \
-	ngraph-odarray.$(OBJEXT) ngraph-odouble.$(OBJEXT) \
-	ngraph-odraw.$(OBJEXT) ngraph-ofile.$(OBJEXT) \
-	ngraph-ofit.$(OBJEXT) ngraph-ogra.$(OBJEXT) \
-	ngraph-ogra2.$(OBJEXT) ngraph-ogra2fil.$(OBJEXT) \
-	ngraph-ogra2nul.$(OBJEXT) ngraph-ogra2prn.$(OBJEXT) \
-	ngraph-oiarray.$(OBJEXT) ngraph-oint.$(OBJEXT) \
-	ngraph-olegend.$(OBJEXT) ngraph-oline.$(OBJEXT) \
+	ngraph-object.$(OBJEXT) ngraph-odarray.$(OBJEXT) \
+	ngraph-odouble.$(OBJEXT) ngraph-odraw.$(OBJEXT) \
+	ngraph-ofile.$(OBJEXT) ngraph-ofit.$(OBJEXT) \
+	ngraph-ogra.$(OBJEXT) ngraph-ogra2.$(OBJEXT) \
+	ngraph-ogra2fil.$(OBJEXT) ngraph-ogra2nul.$(OBJEXT) \
+	ngraph-ogra2prn.$(OBJEXT) ngraph-oiarray.$(OBJEXT) \
+	ngraph-oint.$(OBJEXT) ngraph-olegend.$(OBJEXT) \
 	ngraph-omark.$(OBJEXT) ngraph-omath.$(OBJEXT) \
-	ngraph-omerge.$(OBJEXT) ngraph-opolygon.$(OBJEXT) \
-	ngraph-oprm.$(OBJEXT) ngraph-orect.$(OBJEXT) \
-	ngraph-oroot.$(OBJEXT) ngraph-osarray.$(OBJEXT) \
-	ngraph-oshell.$(OBJEXT) ngraph-ostring.$(OBJEXT) \
-	ngraph-osystem.$(OBJEXT) ngraph-otext.$(OBJEXT) \
+	ngraph-omerge.$(OBJEXT) ngraph-oprm.$(OBJEXT) \
+	ngraph-orect.$(OBJEXT) ngraph-oroot.$(OBJEXT) \
+	ngraph-osarray.$(OBJEXT) ngraph-oshell.$(OBJEXT) \
+	ngraph-ostring.$(OBJEXT) ngraph-osystem.$(OBJEXT) \
+	ngraph-otext.$(OBJEXT) ngraph-opath.$(OBJEXT) \
 	ngraph-shell.$(OBJEXT) ngraph-shellcm.$(OBJEXT) \
 	ngraph-shellux.$(OBJEXT) ngraph-spline.$(OBJEXT) \
 	ngraph-nhash.$(OBJEXT) ngraph-strconv.$(OBJEXT) \
@@ -315,14 +314,14 @@ SUBDIRS = gtk math
 ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	ioutil.c ioutil.h jnstring.c jnstring.h mathcode.c mathcode.h	\
 	mathfn.c mathfn.h ngraph.h nstring.c nstring.h ntime.c ntime.h	\
-	oagrid.c oarc.c oarc.h oaxis.c object.c object.h ocurve.c	\
-	odarray.c odouble.c odraw.c odraw.h ofile.c ofile.h ofit.c	\
-	ofit.h ogra.c ogra.h ogra2.c ogra2fil.c ogra2nul.c ogra2prn.c	\
-	oiarray.c oint.c olegend.c olegend.h oline.c omark.c omath.c	\
-	omerge.c opolygon.c oprm.c orect.c oroot.c oroot.h osarray.c	\
-	oshell.c ostring.c osystem.c otext.c otext.h shell.c shell.h	\
-	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
-	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h
+	oagrid.c oarc.c oarc.h oaxis.c object.c object.h odarray.c	\
+	odouble.c odraw.c odraw.h ofile.c ofile.h ofit.c ofit.h ogra.c	\
+	ogra.h ogra2.c ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c	\
+	oint.c olegend.c olegend.h omark.c omath.c omerge.c oprm.c	\
+	orect.c oroot.c oroot.h osarray.c oshell.c ostring.c osystem.c	\
+	otext.c otext.h opath.c opath.h shell.c shell.h shellcm.c	\
+	shellcm.h shellux.c shellux.h spline.c spline.h common.h	\
+	nhash.h nhash.c strconv.c strconv.h oio.c gettext.h
 
 terminal_SOURCES = terminal.c
 ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
@@ -478,7 +477,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oarc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oaxis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-object.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-ocurve.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-odarray.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-odouble.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-odraw.Po@am__quote@
@@ -493,11 +491,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-olegend.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-omark.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-omath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-omerge.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-opolygon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-opath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oprm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-orect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-oroot.Po@am__quote@
@@ -745,22 +742,6 @@ ngraph-object.obj: object.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-object.obj `if test -f 'object.c'; then $(CYGPATH_W) 'object.c'; else $(CYGPATH_W) '$(srcdir)/object.c'; fi`
 
-ngraph-ocurve.o: ocurve.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-ocurve.o -MD -MP -MF $(DEPDIR)/ngraph-ocurve.Tpo -c -o ngraph-ocurve.o `test -f 'ocurve.c' || echo '$(srcdir)/'`ocurve.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-ocurve.Tpo $(DEPDIR)/ngraph-ocurve.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ocurve.c' object='ngraph-ocurve.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-ocurve.o `test -f 'ocurve.c' || echo '$(srcdir)/'`ocurve.c
-
-ngraph-ocurve.obj: ocurve.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-ocurve.obj -MD -MP -MF $(DEPDIR)/ngraph-ocurve.Tpo -c -o ngraph-ocurve.obj `if test -f 'ocurve.c'; then $(CYGPATH_W) 'ocurve.c'; else $(CYGPATH_W) '$(srcdir)/ocurve.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-ocurve.Tpo $(DEPDIR)/ngraph-ocurve.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ocurve.c' object='ngraph-ocurve.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-ocurve.obj `if test -f 'ocurve.c'; then $(CYGPATH_W) 'ocurve.c'; else $(CYGPATH_W) '$(srcdir)/ocurve.c'; fi`
-
 ngraph-odarray.o: odarray.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-odarray.o -MD -MP -MF $(DEPDIR)/ngraph-odarray.Tpo -c -o ngraph-odarray.o `test -f 'odarray.c' || echo '$(srcdir)/'`odarray.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-odarray.Tpo $(DEPDIR)/ngraph-odarray.Po
@@ -969,22 +950,6 @@ ngraph-olegend.obj: olegend.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-olegend.obj `if test -f 'olegend.c'; then $(CYGPATH_W) 'olegend.c'; else $(CYGPATH_W) '$(srcdir)/olegend.c'; fi`
 
-ngraph-oline.o: oline.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-oline.o -MD -MP -MF $(DEPDIR)/ngraph-oline.Tpo -c -o ngraph-oline.o `test -f 'oline.c' || echo '$(srcdir)/'`oline.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-oline.Tpo $(DEPDIR)/ngraph-oline.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='oline.c' object='ngraph-oline.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oline.o `test -f 'oline.c' || echo '$(srcdir)/'`oline.c
-
-ngraph-oline.obj: oline.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-oline.obj -MD -MP -MF $(DEPDIR)/ngraph-oline.Tpo -c -o ngraph-oline.obj `if test -f 'oline.c'; then $(CYGPATH_W) 'oline.c'; else $(CYGPATH_W) '$(srcdir)/oline.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-oline.Tpo $(DEPDIR)/ngraph-oline.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='oline.c' object='ngraph-oline.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-oline.obj `if test -f 'oline.c'; then $(CYGPATH_W) 'oline.c'; else $(CYGPATH_W) '$(srcdir)/oline.c'; fi`
-
 ngraph-omark.o: omark.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-omark.o -MD -MP -MF $(DEPDIR)/ngraph-omark.Tpo -c -o ngraph-omark.o `test -f 'omark.c' || echo '$(srcdir)/'`omark.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-omark.Tpo $(DEPDIR)/ngraph-omark.Po
@@ -1032,22 +997,6 @@ ngraph-omerge.obj: omerge.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omerge.c' object='ngraph-omerge.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-omerge.obj `if test -f 'omerge.c'; then $(CYGPATH_W) 'omerge.c'; else $(CYGPATH_W) '$(srcdir)/omerge.c'; fi`
-
-ngraph-opolygon.o: opolygon.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-opolygon.o -MD -MP -MF $(DEPDIR)/ngraph-opolygon.Tpo -c -o ngraph-opolygon.o `test -f 'opolygon.c' || echo '$(srcdir)/'`opolygon.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-opolygon.Tpo $(DEPDIR)/ngraph-opolygon.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='opolygon.c' object='ngraph-opolygon.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-opolygon.o `test -f 'opolygon.c' || echo '$(srcdir)/'`opolygon.c
-
-ngraph-opolygon.obj: opolygon.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-opolygon.obj -MD -MP -MF $(DEPDIR)/ngraph-opolygon.Tpo -c -o ngraph-opolygon.obj `if test -f 'opolygon.c'; then $(CYGPATH_W) 'opolygon.c'; else $(CYGPATH_W) '$(srcdir)/opolygon.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-opolygon.Tpo $(DEPDIR)/ngraph-opolygon.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='opolygon.c' object='ngraph-opolygon.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-opolygon.obj `if test -f 'opolygon.c'; then $(CYGPATH_W) 'opolygon.c'; else $(CYGPATH_W) '$(srcdir)/opolygon.c'; fi`
 
 ngraph-oprm.o: oprm.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-oprm.o -MD -MP -MF $(DEPDIR)/ngraph-oprm.Tpo -c -o ngraph-oprm.o `test -f 'oprm.c' || echo '$(srcdir)/'`oprm.c
@@ -1176,6 +1125,22 @@ ngraph-otext.obj: otext.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='otext.c' object='ngraph-otext.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-otext.obj `if test -f 'otext.c'; then $(CYGPATH_W) 'otext.c'; else $(CYGPATH_W) '$(srcdir)/otext.c'; fi`
+
+ngraph-opath.o: opath.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-opath.o -MD -MP -MF $(DEPDIR)/ngraph-opath.Tpo -c -o ngraph-opath.o `test -f 'opath.c' || echo '$(srcdir)/'`opath.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-opath.Tpo $(DEPDIR)/ngraph-opath.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='opath.c' object='ngraph-opath.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-opath.o `test -f 'opath.c' || echo '$(srcdir)/'`opath.c
+
+ngraph-opath.obj: opath.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-opath.obj -MD -MP -MF $(DEPDIR)/ngraph-opath.Tpo -c -o ngraph-opath.obj `if test -f 'opath.c'; then $(CYGPATH_W) 'opath.c'; else $(CYGPATH_W) '$(srcdir)/opath.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-opath.Tpo $(DEPDIR)/ngraph-opath.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='opath.c' object='ngraph-opath.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-opath.obj `if test -f 'opath.c'; then $(CYGPATH_W) 'opath.c'; else $(CYGPATH_W) '$(srcdir)/opath.c'; fi`
 
 ngraph-shell.o: shell.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-shell.o -MD -MP -MF $(DEPDIR)/ngraph-shell.Tpo -c -o ngraph-shell.o `test -f 'shell.c' || echo '$(srcdir)/'`shell.c

@@ -550,21 +550,22 @@ new file
 	file::axis_y='axis:4'
 	file::file='/usr/share/doc/Ngraph-gtk/demo/demo3.dat'
 
-new line
-	line::hidden=false
-	line::R=0
-	line::G=0
-	line::B=0
-	line::clip=true
-	line::redraw_flag=true
-	line::points='4500 10500 6000 10500'
-	line::width=80
-	line::style=
-	line::join=miter
-	line::miter_limit=1000
-	line::arrow=begin
-	line::arrow_length=44100
-	line::arrow_width=28000
+new path
+	path::type=line
+	path::hidden=false
+	path::R=0
+	path::G=0
+	path::B=0
+	path::clip=true
+	path::redraw_flag=true
+	path::points='4500 10500 6000 10500'
+	path::width=80
+	path::style=
+	path::join=miter
+	path::miter_limit=1000
+	path::arrow=begin
+	path::arrow_length=44100
+	path::arrow_width=28000
 
 new rectangle
 	rectangle::hidden=false
@@ -718,4 +719,4 @@ new gra name:viewer
 	gra::zoom=10000
 	gra::paper_width=21000
 	gra::paper_height=29700
-	gra::draw_obj='rectangle axisgrid axis file merge legend line curve arc polygon mark text'
+	gra::draw_obj='rectangle axisgrid axis file merge legend arc path mark text'

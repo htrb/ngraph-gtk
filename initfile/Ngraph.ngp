@@ -262,4 +262,4 @@ new gra name:viewer
 	gra::zoom=10000
 	gra::paper_width=21000
 	gra::paper_height=29700
-	gra::draw_obj='axisgrid axis file merge rectangle line curve arc polygon mark text'
+	gra::draw_obj='axisgrid axis file merge rectangle arc path mark text'

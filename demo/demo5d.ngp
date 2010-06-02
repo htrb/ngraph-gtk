@@ -10,14 +10,14 @@ STYLE=""
 drawcurve() {
   for i in `seq 0 10`
   do
-    new curve
-    put curve points:"3000 2000 10000 2000 15000 11000 20000 6000 \
+    new path type=curve
+    put path points:"3000 2000 10000 2000 15000 11000 20000 6000 \
     15000 1000 10000 10000 3000 10000"
-    put curve R:$R G:$G B:$B
-    put curve interpolation:$INTP
-    put curve style:"$STYLE"
-    put curve width:20
-    exe curve move:"0 7000+${i}*500"
+    put path R:$R G:$G B:$B
+    put path interpolation:$INTP
+    put path style:"$STYLE"
+    put path width:20
+    exe path move:"0 7000+${i}*500"
   done
 }
 #

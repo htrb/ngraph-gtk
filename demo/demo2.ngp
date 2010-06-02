@@ -419,69 +419,73 @@ new rectangle
 	rectangle::width=40
 	rectangle::style=
 
-new line
-	line::hidden=false
-	line::R=255
-	line::G=0
-	line::B=0
-	line::clip=true
-	line::redraw_flag=true
-	line::points='10947 4274 13053 4274'
-	line::width=40
-	line::style=
-	line::join=miter
-	line::miter_limit=1000
-	line::arrow=none
-	line::arrow_length=72420
-	line::arrow_width=60000
+new path
+	path::type=line
+	path::hidden=false
+	path::R=255
+	path::G=0
+	path::B=0
+	path::clip=true
+	path::redraw_flag=true
+	path::points='10947 4274 13053 4274'
+	path::width=40
+	path::style=
+	path::join=miter
+	path::miter_limit=1000
+	path::arrow=none
+	path::arrow_length=72420
+	path::arrow_width=60000
 
-new line
-	line::hidden=false
-	line::R=0
-	line::G=0
-	line::B=255
-	line::clip=true
-	line::redraw_flag=true
-	line::points='10947 8674 13053 8674'
-	line::width=40
-	line::style=
-	line::join=miter
-	line::miter_limit=1000
-	line::arrow=none
-	line::arrow_length=72420
-	line::arrow_width=60000
+new path
+	path::type=line
+	path::hidden=false
+	path::R=0
+	path::G=0
+	path::B=255
+	path::clip=true
+	path::redraw_flag=true
+	path::points='10947 8674 13053 8674'
+	path::width=40
+	path::style=
+	path::join=miter
+	path::miter_limit=1000
+	path::arrow=none
+	path::arrow_length=72420
+	path::arrow_width=60000
 
-new line
-	line::hidden=false
-	line::R=0
-	line::G=0
-	line::B=0
-	line::clip=true
-	line::redraw_flag=true
-	line::points='13300 19300 15621 17844'
-	line::width=40
-	line::style=
-	line::join=miter
-	line::miter_limit=1000
-	line::arrow=end
-	line::arrow_length=72420
-	line::arrow_width=60000
+new path
+	path::type=line
+	path::hidden=false
+	path::R=0
+	path::G=0
+	path::B=0
+	path::clip=true
+	path::redraw_flag=true
+	path::points='13300 19300 15621 17844'
+	path::width=40
+	path::style=
+	path::join=miter
+	path::miter_limit=1000
+	path::arrow=end
+	path::arrow_length=72420
+	path::arrow_width=60000
 
-new line
-	line::hidden=false
-	line::R=0
-	line::G=0
-	line::B=0
-	line::clip=true
-	line::redraw_flag=true
-	line::points='8086 5622 7173 6309'
-	line::width=40
-	line::style=
-	line::join=miter
-	line::miter_limit=1000
-	line::arrow=end
-	line::arrow_length=72426
-	line::arrow_width=60000
+new path
+	path::type=line
+	path::hidden=false
+	path::R=0
+	path::G=0
+	path::B=0
+	path::clip=true
+	path::redraw_flag=true
+	path::points='8086 5622 7173 6309'
+	path::width=40
+	path::style=
+	path::join=miter
+	path::miter_limit=1000
+	path::arrow=end
+	path::arrow_length=72426
+	path::arrow_width=60000
 
 new arc
 	arc::hidden=false

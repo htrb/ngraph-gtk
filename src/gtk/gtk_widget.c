@@ -12,6 +12,20 @@
 #include "x11gui.h"
 
 GtkWidget *
+get_widget(GtkWidget *w)
+{
+  GtkWidget *widget;
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_LABEL)) {
+    widget = gtk_label_get_mnemonic_widget(GTK_LABEL(w));
+  } else {
+    widget = w;
+  }
+
+  return widget;
+}
+
+GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
 {
   GtkWidget *align, *label;
@@ -303,10 +317,13 @@ spin_entry_set_inc(GtkWidget *w, int inc, int page)
 }
 
 void
-spin_entry_set_val(GtkWidget *entry, int ival)
+spin_entry_set_val(GtkWidget *w, int ival)
 {
   gdouble min, max, val;
   enum SPIN_BUTTON_TYPE type;
+  GtkWidget *entry;
+
+  entry = get_widget(w);
 
   type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "user-data"));
 
@@ -324,10 +341,13 @@ spin_entry_set_val(GtkWidget *entry, int ival)
 }
 
 int
-spin_entry_get_val(GtkWidget *entry)
+spin_entry_get_val(GtkWidget *w)
 {
   gdouble val;
   enum SPIN_BUTTON_TYPE type;
+  GtkWidget *entry;
+
+  entry = get_widget(w);
 
   type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "user-data"));
   val = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry));

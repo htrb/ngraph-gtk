@@ -45,6 +45,7 @@
 #include "gra.h"
 #include "ioutil.h"
 #include "odraw.h"
+#include "opath.h"
 
 #define NAME "prm"
 #define PARENT "object"
@@ -469,7 +470,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   FILE *fp,*fp2;
   int i,j,k,filetype,num,greek,ignorepath;
   struct objlist *fobj,*fitobj,*aobj,*agdobj;
-  struct objlist *lobj,*pobj,*mobj,*tobj,*robj,*cobj;
+  struct objlist *pobj,*mobj,*tobj,*robj;
   struct objlist *mgobj,*gobj,*cmobj;
   int fid,fidroot,fitid,aid,agdid,lid,pid,mid,tid,rid,rid2,cid;
   int mgid,gid,cmid;
@@ -515,12 +516,10 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if ((fitobj=getobject("fit"))==NULL) return 1;
   if ((aobj=getobject("axis"))==NULL) return 1;
   if ((agdobj=getobject("axisgrid"))==NULL) return 1;
-  if ((lobj=getobject("line"))==NULL) return 1;
-  if ((pobj=getobject("polygon"))==NULL) return 1;
+  if ((pobj=getobject("path"))==NULL) return 1;
   if ((mobj=getobject("mark"))==NULL) return 1;
   if ((robj=getobject("rectangle"))==NULL) return 1;
   if ((tobj=getobject("text"))==NULL) return 1;
-  if ((cobj=getobject("curve"))==NULL) return 1;
   if ((mgobj=getobject("merge"))==NULL) return 1;
   if ((gobj=getobject("gra"))==NULL) return 1;
   if (file==NULL) return 0;
@@ -1106,32 +1105,32 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       goto errexit;
     }
     if (d9) {
-      if ((lid=newobj(lobj))==-1) goto errexit;
+      if ((lid=newobj(pobj))==-1) goto errexit;
       if ((iarray=arraynew(sizeof(int)))==NULL) goto errexit;
       arrayadd(iarray,&d1);
       arrayadd(iarray,&d2);
       arrayadd(iarray,&d3);
       arrayadd(iarray,&d4);
-      putobj(lobj,"points",lid,iarray);
+      putobj(pobj,"points",lid,iarray);
       d1=d5*10000.0/d7;
       d2=d1*0.828427;
       if (d1==0) d3=0;
       else {
         d3=1;
-        putobj(lobj,"arrow_length",lid,&d1);
-        putobj(lobj,"arrow_width",lid,&d2);
+        putobj(pobj,"arrow_length",lid,&d1);
+        putobj(pobj,"arrow_width",lid,&d2);
       }
-      putobj(lobj,"arrow",lid,&d3);
+      putobj(pobj,"arrow",lid,&d3);
       iarray=linestyleconv(d6,15);
-      putobj(lobj,"style",lid,iarray);
-      putobj(lobj,"width",lid,&d7);
+      putobj(pobj,"style",lid,iarray);
+      putobj(pobj,"width",lid,&d7);
       R=(d8 & 4)?255:0;
       G=(d8 & 2)?255:0;
       B=(d8 & 1)?255:0;
-      putobj(lobj,"R",lid,&R);
-      putobj(lobj,"G",lid,&G);
-      putobj(lobj,"B",lid,&B);
-      putobj(lobj,"hidden",lid,&(dmode[1]));
+      putobj(pobj,"R",lid,&R);
+      putobj(pobj,"G",lid,&G);
+      putobj(pobj,"B",lid,&B);
+      putobj(pobj,"hidden",lid,&(dmode[1]));
     }
   }
 
@@ -1154,21 +1153,25 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
     if (d5!=0) {
       if ((d3==0) || (d3==25)) {
-        if ((lid=newobj(lobj))==-1) goto errexit;
-        cmobj=lobj;
+        if ((lid=newobj(pobj))==-1) goto errexit;
+        cmobj=pobj;
         cmid=lid;
       } else if (d3==1) {
         if ((pid=newobj(pobj))==-1) goto errexit;
         d10=FALSE;
         putobj(pobj,"fill",pid,&d10);
+        d10=TRUE;
+        putobj(pobj,"close_path",pid,&d10);
         cmobj=pobj;
         cmid=pid;
       } else if ((d3==2) || (d3==3)) {
-        if ((cid=newobj(cobj))==-1) goto errexit;
+        if ((cid=newobj(pobj))==-1) goto errexit;
         if (d3==2) intp=0;
         else intp=1;
-        putobj(cobj,"interpolation",cid,&intp);
-        cmobj=cobj;
+        putobj(pobj,"interpolation",cid,&intp);
+        d10=PATH_TYPE_CURVE;
+        putobj(pobj,"type",pid,&d10);
+        cmobj=pobj;
         cmid=cid;
       } else if  (d3>=26) {
         if ((rid=newobj(robj))==-1) goto errexit;

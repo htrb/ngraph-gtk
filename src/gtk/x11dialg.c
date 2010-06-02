@@ -74,8 +74,6 @@ struct AxisDialog DlgAxis;
 struct GridDialog DlgGrid;
 struct ZoomDialog DlgZoom;
 struct MergeDialog DlgMerge;
-struct LegendDialog DlgLegendCurve;
-struct LegendDialog DlgLegendPoly;
 struct LegendDialog DlgLegendArrow;
 struct LegendDialog DlgLegendRect;
 struct LegendDialog DlgLegendArc;
@@ -104,6 +102,15 @@ struct ViewerDialog DlgViewer;
 struct SelectDialog DlgSelect;
 struct CopyDialog DlgCopy;
 struct OutputImageDialog DlgImageOut;
+
+static void SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+static int SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+static void SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+static int SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+static void SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+static int SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+static void SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
+static int SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 
 void
 initdialog(void)
@@ -158,12 +165,6 @@ initdialog(void)
   DlgMerge.widget = NULL;
   DlgMerge.focus = NULL;
   DlgMerge.resource = N_("merge");
-  DlgLegendCurve.widget = NULL;
-  DlgLegendCurve.focus = NULL;
-  DlgLegendCurve.resource = N_("legend curve");
-  DlgLegendPoly.widget = NULL;
-  DlgLegendPoly.focus = NULL;
-  DlgLegendPoly.resource = N_("legend polygon");
   DlgLegendArrow.widget = NULL;
   DlgLegendArrow.focus = NULL;
   DlgLegendArrow.resource = N_("legend line");
@@ -689,12 +690,15 @@ chk_sputobjfield(struct objlist *obj, int id, char *field, char *str)
 }
 
 int
-SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
+SetObjFieldFromWidget(GtkWidget *widget, struct objlist *Obj, int Id, char *field)
 {
+  GtkWidget *w;
   int r = 0;
 
-  if (w == NULL)
+  if (widget == NULL)
     return 0;
+
+  w = get_widget(widget);
 
   if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
     r = SetObjFieldFromSpin(w, Obj, Id, field);
@@ -716,10 +720,14 @@ SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 }
 
 void
-SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
+SetWidgetFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *field)
 {
-  if (w == NULL)
+  GtkWidget *w;
+
+  if (widget == NULL)
     return;
+
+  w = get_widget(widget);
 
   if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
     SetSpinFromObjField(w, Obj, Id, field);
@@ -734,7 +742,7 @@ SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
 }
 
-int
+static int
 SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   const char *tmp;
@@ -761,7 +769,7 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return 0;
 }
 
-void
+static void
 SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   GtkEntry *entry;
@@ -783,7 +791,7 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   g_free(buf);
 }
 
-int
+static int
 SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int val, oval;
@@ -811,7 +819,7 @@ SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return 0;
 }
 
-void
+static void
 SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int val;
@@ -823,7 +831,7 @@ SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   spin_entry_set_val(w, val);
 }
 
-int
+static int
 SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   gboolean state;
@@ -848,7 +856,7 @@ SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return 0;
 }
 
-void
+static void
 SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int a;
@@ -944,13 +952,16 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 }
 
 int
-SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
+SetObjFieldFromStyle(GtkWidget *widget, struct objlist *Obj, int Id, char *field)
 {
   unsigned int j;
   const char *ptr;
+  GtkWidget *w;
 
-  if (w == NULL)
+  if (widget == NULL)
     return 0;
+
+  w = get_widget(widget);
 
   ptr = gtk_entry_get_text(GTK_ENTRY(GTK_BIN(w)->child));
 
@@ -1059,15 +1070,18 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
 #endif
 
 void
-SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
+SetStyleFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *field)
 {
   unsigned int j;
   GtkEntry *entry;
   int count;
   const char *s;
+  GtkWidget *w;
 
-  if (w == NULL)
+  if (widget == NULL)
     return;
+
+  w = get_widget(widget);
 
   entry = GTK_ENTRY(GTK_BIN(w)->child);
 
@@ -1103,7 +1117,7 @@ get_radio_index(GSList *top)
   return -1;
 }
 
-int
+static int
 SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int pos, opos;
@@ -1129,7 +1143,7 @@ SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   return 0;
 }
 
-void
+static void
 SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   char **enumlist;
@@ -1147,33 +1161,6 @@ SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
   getobj(Obj, field, Id, 0, NULL, &a);
   combo_box_set_active(w, a);
-}
-
-void
-SetComboList(GtkWidget *w, char **list, int num)
-{
-  int count;
-
-  if (w == NULL)
-    return;
-
-  count = combo_box_get_num(w);
-  if (count == 0) {
-    SetComboList2(w, list, num);
-  }
-}
-
-void
-SetComboList2(GtkWidget *w, char **list, int num)
-{
-  int j;
-
-  if (w == NULL)
-    return;
-
-  for (j = 0; j < num; j++) {
-    combo_box_append_text(w, list[j]);
-  }
 }
 
 void
@@ -1258,11 +1245,14 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
 }
 
 static void
-_set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
+_set_color(GtkWidget *widget, struct objlist *obj, int id, char *prefix, char *postfix)
 {
   GdkColor color;
   int r, g, b;
   char buf[64];
+  GtkWidget *w;
+
+  w = get_widget(widget);
 
   snprintf(buf, sizeof(buf), "%sR%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &r);
@@ -1293,11 +1283,14 @@ set_color2(GtkWidget *w, struct objlist *obj, int id)
 }
 
 static int
-_putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
+_putobj_color(GtkWidget *widget, struct objlist *obj, int id, char *prefix, char *postfix)
 {
   GdkColor color;
   int r, g, b, o;
   char buf[64];
+  GtkWidget *w;
+
+  w = get_widget(widget);
 
   gtk_color_button_get_color(GTK_COLOR_BUTTON(w), &color);
   r = (color.red >> 8);

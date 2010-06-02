@@ -64,10 +64,8 @@ object
                 merge
                 legend
                         rectangle
-                        line
-                        curve
                         arc
-                        polygon
+                        path
                         mark
                         text
         dialog

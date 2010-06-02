@@ -974,37 +974,39 @@ new file
 	file::axis_y='axis:5'
 	file::file='DOCDIRDEF/demo4.dat'
 
-new line
-	line::hidden=false
-	line::R=0
-	line::G=0
-	line::B=0
-	line::clip=true
-	line::redraw_flag=true
-	line::points='5053 8079 19053 8079'
-	line::width=40
-	line::style='450 150 150 150'
-	line::join=miter
-	line::miter_limit=1000
-	line::arrow=none
-	line::arrow_length=72426
-	line::arrow_width=60000
+new path
+	path::type=line
+	path::hidden=false
+	path::R=0
+	path::G=0
+	path::B=0
+	path::clip=true
+	path::redraw_flag=true
+	path::points='5053 8079 19053 8079'
+	path::width=40
+	path::style='450 150 150 150'
+	path::join=miter
+	path::miter_limit=1000
+	path::arrow=none
+	path::arrow_length=72426
+	path::arrow_width=60000
 
-new line
-	line::hidden=false
-	line::R=0
-	line::G=0
-	line::B=0
-	line::clip=true
-	line::redraw_flag=true
-	line::points='5000 14500 19000 14500'
-	line::width=40
-	line::style='450 150 150 150'
-	line::join=miter
-	line::miter_limit=1000
-	line::arrow=none
-	line::arrow_length=72420
-	line::arrow_width=60000
+new path
+	path::type=line
+	path::hidden=false
+	path::R=0
+	path::G=0
+	path::B=0
+	path::clip=true
+	path::redraw_flag=true
+	path::points='5000 14500 19000 14500'
+	path::width=40
+	path::style='450 150 150 150'
+	path::join=miter
+	path::miter_limit=1000
+	path::arrow=none
+	path::arrow_length=72420
+	path::arrow_width=60000
 
 new text
 	text::hidden=false

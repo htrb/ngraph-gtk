@@ -33,7 +33,9 @@
 
 #include "ngraph.h"
 #include "object.h"
+#include "odraw.h"
 #include "otext.h"
+#include "opath.h"
 #include "jnstring.h"
 #include "nstring.h"
 #include "mathfn.h"
@@ -103,9 +105,7 @@ static gboolean LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_
 static void LegendDialogCopy(struct LegendDialog *d);
 
 static char *legendlist[LEGENDNUM] = {
-  N_("line"),
-  N_("curve"),
-  N_("polygon"),
+  N_("path"),
   N_("rectangle"),
   N_("arc"),
   N_("mark"),
@@ -113,8 +113,6 @@ static char *legendlist[LEGENDNUM] = {
 };
 
 static struct LegendDialog *Ldlg[] = {
-  &DlgLegendCurve,
-  &DlgLegendPoly,
   &DlgLegendArrow,
   &DlgLegendRect,
   &DlgLegendArc,
@@ -125,9 +123,7 @@ static struct LegendDialog *Ldlg[] = {
 static int ExpandRow[LEGENDNUM] = {0};
 
 enum LegendType {
-  LegendTypeLine = 0,
-  LegendTypeCurve,
-  LegendTypePoly,
+  LegendTypePath = 0,
   LegendTypeRect,
   LegendTypeArc,
   LegendTypeMark,
@@ -157,9 +153,11 @@ static char *
 LegendLineCB(struct objlist *obj, int id)
 {
   struct narray *array;
-  int num, *data;
-  char *s;
+  int num, *data, path_type;
+  char *s, **enum_path_type;
 
+  getobj(obj, "type", id, 0, NULL, &path_type);
+  enum_path_type = (char **) chkobjarglist(obj, "type");
   getobj(obj, "points", id, 0, NULL, &array);
   num = arraynum(array);
   data = (int *) arraydata(array);
@@ -167,7 +165,10 @@ LegendLineCB(struct objlist *obj, int id)
   if (num < 2) {
     s = g_strdup("------");
   } else {
-    s = g_strdup_printf("(X:%.2f Y:%.2f)-", data[0] / 100.0, data[1] / 100.0);
+    s = g_strdup_printf("%s (X:%.2f Y:%.2f)-",
+			_(enum_path_type[path_type]),
+			data[0] / 100.0,
+			data[1] / 100.0);
   }
 
   return s;
@@ -220,6 +221,9 @@ LegendTextCB(struct objlist *obj, int id)
 static void
 init_legend_dialog_widget_member(struct LegendDialog *d)
 {
+  d->path_type = NULL;
+  d->stroke = NULL;
+  d->close_path = NULL;
   d->style = NULL;
   d->points = NULL;
   d->interpolation = NULL;
@@ -283,9 +287,24 @@ set_fonts(struct LegendDialog *d, int id)
 }
 
 static void
+set_sensitive_with_labdl(GtkWidget *w, int a)
+{
+  GtkWidget *widget;
+
+  gtk_widget_set_sensitive(w, a);
+  widget = get_widget(w);
+
+  if (w != widget) {
+    gtk_widget_set_sensitive(widget, a);
+  }
+}
+
+static void
 legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 {
+  GtkWidget *widget;
   struct LegendDialog *d;
+  int path_type;
 
   d = (struct LegendDialog *) client_data;
 
@@ -293,13 +312,62 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->pieslice, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill)));
   }
 
-  if (d->frame && d->fill && d->color && d->color2 && d->color2_label) {
+  if (d->frame && d->fill && d->color && d->color2) {
     int a;
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->frame));
     gtk_widget_set_sensitive(d->fill, ! a);
-    gtk_widget_set_sensitive(d->color2, a);
-    gtk_widget_set_sensitive(d->color2_label, a);
+    set_sensitive_with_labdl(d->color2, a);
+  }
+
+  path_type = 0;
+  if (d->path_type && d->interpolation) {
+    widget = get_widget(d->path_type);
+    path_type = combo_box_get_active(widget);
+
+    set_sensitive_with_labdl(d->interpolation, path_type == PATH_TYPE_CURVE);
+  }
+
+  if (d->stroke &&
+      d->style &&
+      d->width &&
+      d->miter &&
+      d->join &&
+      d->color &&
+      d->close_path &&
+      d->arrow &&
+      d->arrow_length &&
+      d->arrow_width) {
+    int a, ca;
+
+    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    ca = combo_box_get_active(get_widget(d->interpolation));
+
+    set_sensitive_with_labdl(d->style, a);
+    set_sensitive_with_labdl(d->width, a);
+    set_sensitive_with_labdl(d->miter, a);
+    set_sensitive_with_labdl(d->join, a);
+    set_sensitive_with_labdl(d->color, a);
+    set_sensitive_with_labdl(d->arrow, a);
+    set_sensitive_with_labdl(d->arrow_length, a);
+    set_sensitive_with_labdl(d->arrow_width, a);
+
+    if (path_type == PATH_TYPE_CURVE) {
+      set_sensitive_with_labdl(d->close_path, a &&
+			       (ca != INTERPOLATION_TYPE_SPLINE_CLOSE &&
+				ca != INTERPOLATION_TYPE_BSPLINE_CLOSE));
+    } else {
+      set_sensitive_with_labdl(d->close_path, a);
+    }
+  }
+
+  if (d->path_type && d->fill_rule && d->color2) {
+    int a;
+
+    widget = get_widget(d->fill_rule);
+    a = combo_box_get_active(widget);
+
+    set_sensitive_with_labdl(d->color2, a);
   }
 }
 
@@ -308,7 +376,11 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 {
   unsigned int i;
   int x1, y1, x2, y2;
+  GtkWidget *widget;
   struct lwidget lw[] = {
+    {d->stroke, "stroke"},
+    {d->path_type, "type"},
+    {d->close_path, "close_path"},
     {d->width, "width"},
     {d->join, "join"},
     {d->miter, "miter_limit"},
@@ -371,8 +443,11 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
       d->ang = 170;
     }
 
-    gtk_range_set_value(GTK_RANGE(d->arrow_width), d->wid / 100);
-    gtk_range_set_value(GTK_RANGE(d->arrow_length), d->ang);
+    widget = get_widget(d->arrow_width);
+    gtk_range_set_value(GTK_RANGE(widget), d->wid / 100);
+
+    widget = get_widget(d->arrow_length);
+    gtk_range_set_value(GTK_RANGE(widget), d->ang);
   }
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
@@ -382,6 +457,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     getobj(d->Obj, "y2", id, 0, NULL, &y2);
 
     spin_entry_set_val(d->x2, x2 - x1);
+
     spin_entry_set_val(d->y2, y2 - y1);
   }
 
@@ -399,7 +475,8 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
       }
     }
 #endif
-    gtk_entry_set_text(GTK_ENTRY(d->text), buf);
+    widget = get_widget(d->text);
+    gtk_entry_set_text(GTK_ENTRY(widget), buf);
     g_free(buf);
   }
 
@@ -422,6 +499,9 @@ legend_dialog_close(GtkWidget *w, void *data)
   unsigned int i;
   int ret, x1, y1, x2, y2, oval;
   struct lwidget lw[] = {
+    {d->stroke, "stroke"},
+    {d->path_type, "type"},
+    {d->close_path, "close_path"},
     {d->width, "width"},
     {d->join, "join"},
     {d->miter, "miter_limit"},
@@ -613,8 +693,7 @@ width_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-  d->width = w;
-  add_widget_to_table(table, w, _("_Line width:"), FALSE, i++);
+  d->width = add_widget_to_table(table, w, _("_Line width:"), FALSE, i++);
 }
 
 #define POINTS_DIMENSION 2
@@ -814,8 +893,7 @@ style_setup(struct LegendDialog *d, GtkWidget *table, int i)
 
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-  d->style = w;
-  add_widget_to_table(table, w, _("Line _Style:"), TRUE, i);
+  d->style = add_widget_to_table(table, w, _("Line _Style:"), TRUE, i);
 }
 
 static void
@@ -824,8 +902,7 @@ miter_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-  d->miter = w;
-  add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
+  d->miter = add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
 }
 
 static void
@@ -834,8 +911,7 @@ join_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = combo_box_create();
-  d->join = w;
-  add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
+  d->join = add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
 }
 
 static void
@@ -844,8 +920,7 @@ color_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_color_button(d->widget);
-  d->color = w;
-  add_widget_to_table(table, w, _("_Color:"), FALSE, i);
+  d->color = add_widget_to_table(table, w, _("_Color:"), FALSE, i);
 }
 
 static void
@@ -854,132 +929,8 @@ color2_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_color_button(d->widget);
-  d->color2 = w;
-
-  w = add_widget_to_table(table, w, _("_Color2:"), FALSE, i);
-  d->color2_label = w;
+  d->color2 = add_widget_to_table(table, w, _("_Color2:"), FALSE, i);
 }
-
-static void
-LegendCurveDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  GtkWidget *hbox, *w, *frame, *table;
-  struct LegendDialog *d;
-  char title[64];
-  int i;
-
-  d = (struct LegendDialog *) data;
-
-  snprintf(title, sizeof(title), _("Legend curve %d"), d->Id);
-  gtk_window_set_title(GTK_WINDOW(wi), title);
-
-  if (makewidget) {
-    init_legend_dialog_widget_member(d);
-
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = points_setup(d);
-
-    frame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(frame), w);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-
-    table = gtk_table_new(1, 2, FALSE);
-
-    i = 0;
-    style_setup(d, table, i++);
-
-    w = combo_box_create();
-    add_widget_to_table(table, w, _("_Interpolation:"), FALSE, i++);
-    d->interpolation = w;
-
-    width_setup(d, table, i++);
-    miter_setup(d, table, i++);
-    join_setup(d, table, i++);
-    color_setup(d, table, i++);
-
-    frame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-
-    add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "curve");
-
-    d->prop_cb = LegendLineCB;
-  }
-  legend_dialog_setup_item(wi, d, d->Id);
-}
-
-void
-LegendCurveDialog(struct LegendDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = LegendCurveDialogSetup;
-  data->CloseWindow = legend_dialog_close;
-  data->Obj = obj;
-  data->Id = id;
-}
-
-static void
-LegendPolyDialogSetup(GtkWidget *wi, void *data, int makewidget)
-{
-  GtkWidget *hbox, *w, *frame, *table;
-  struct LegendDialog *d;
-  char title[64];
-  int i;
-
-  d = (struct LegendDialog *) data;
-  snprintf(title, sizeof(title), _("Legend polygon %d"), d->Id);
-  gtk_window_set_title(GTK_WINDOW(wi), title);
-
-  if (makewidget) {
-    init_legend_dialog_widget_member(d);
-
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
-
-    hbox = gtk_hbox_new(FALSE, 4);
-
-    w = points_setup(d);
-
-    frame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(frame), w);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-
-    table = gtk_table_new(1, 2, FALSE);
-
-    i = 0;
-    style_setup(d, table, i++);
-    width_setup(d, table, i++);
-    miter_setup(d, table, i++);
-    join_setup(d, table, i++);
-    color_setup(d, table, i++);
-
-    w = combo_box_create();
-    add_widget_to_table(table, w, _("_Fill:"), FALSE, i++);
-    d->fill_rule = w;
-
-    frame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(frame), table);
-    gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
-
-    add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "polygon");
-
-    d->prop_cb = LegendLineCB;
-  }
-  legend_dialog_setup_item(wi, d, d->Id);
-}
-
-void
-LegendPolyDialog(struct LegendDialog *data, struct objlist *obj, int id)
-{
-  data->SetupWindow = LegendPolyDialogSetup;
-  data->CloseWindow = legend_dialog_close;
-  data->Obj = obj;
-  data->Id = id;
-}
-
 
 static void
 draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
@@ -1081,7 +1032,7 @@ LegendArrowDialogScaleL(GtkWidget *w, gpointer client_data)
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *vbox, *frame, *table;
+  GtkWidget *w, *hbox, *vbox, *hbox2, *vbox2, *frame, *table;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1103,19 +1054,41 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), w);
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
+    vbox2 = gtk_vbox_new(FALSE, 0);
+
+    hbox2 = gtk_hbox_new(FALSE, 4);
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Type:"), FALSE, i++);
+    g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+    d->path_type = w;
+
+    w = combo_box_create();
+    d->interpolation = add_widget_to_table(table, w, _("_Interpolation:"), FALSE, i++);
+    g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+
+    gtk_box_pack_start(GTK_BOX(vbox2), table, FALSE, FALSE, 0);
+
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
+    w = gtk_check_button_new_with_mnemonic(_("_Close path"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->close_path = w;
+
+    w = combo_box_create();
+    d->arrow = add_widget_to_table(table, w, _("_Arrow:"), FALSE, i++);
+
     style_setup(d, table, i++);
     width_setup(d, table, i++);
     miter_setup(d, table, i++);
     join_setup(d, table, i++);
+
     color_setup(d, table, i++);
 
-    w = combo_box_create();
-    add_widget_to_table(table, w, _("_Arrow:"), FALSE, i++);
-    d->arrow = w;
-
+    gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
 
     vbox = gtk_vbox_new(FALSE, 4);
     w = gtk_hscale_new_with_range(10, 170, 1);
@@ -1135,21 +1108,37 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->arrow_width = w;
 
-    i++;
-    gtk_table_resize(GTK_TABLE(table), 3, i);
-    gtk_table_attach(GTK_TABLE(table), vbox, 2, 3, 0, i, 0, GTK_FILL, 4, 4);
+    gtk_box_pack_start(GTK_BOX(hbox2), vbox, FALSE, FALSE, 0);
 
+    w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
+    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    d->stroke = w;
+    frame = gtk_frame_new(NULL);
+    gtk_frame_set_label_widget(GTK_FRAME(frame), w);
+    gtk_container_add(GTK_CONTAINER(frame), hbox2);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
-    /* add dummy widget to align other widgets */
-    w = gtk_label_new("");
-    gtk_table_attach(GTK_TABLE(table), w, 0, 2, i -1 , i, 0, GTK_EXPAND, 4, 4);
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Fill:"), FALSE, i++);
+    g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
+    d->fill_rule = w;
+
+    color2_setup(d, table, i++);
+
+    frame = gtk_frame_new(_("Fill"));
+    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
+
 
     frame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_container_add(GTK_CONTAINER(frame), vbox2);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
-    add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "line");
+    add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "path");
 
     d->prop_cb = LegendLineCB;
   }
@@ -1566,7 +1555,6 @@ LegendTextDefDialog(struct LegendDialog *data,
   data->Id = id;
 }
 
-
 void
 CmLineDel(void)
 {
@@ -1577,7 +1565,7 @@ CmLineDel(void)
 
   if (Menulock || Globallock)
     return;
-  if ((obj = chkobject("line")) == NULL)
+  if ((obj = chkobject("path")) == NULL)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
@@ -1604,7 +1592,7 @@ CmLineUpdate(void)
 
   if (Menulock || Globallock)
     return;
-  if ((obj = chkobject("line")) == NULL)
+  if ((obj = chkobject("path")) == NULL)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
@@ -1639,151 +1627,6 @@ CmLineMenu(GtkMenuItem *w, gpointer client_data)
     break;
   }
 }
-
-void
-CmCurveDel(void)
-{
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("curve")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, (struct narray *) &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = (int *) arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
-}
-
-void
-CmCurveUpdate(void)
-{
-  struct narray array;
-  struct objlist *obj;
-  int i, j, ret;
-  int *data, num;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("curve")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, (struct narray *) &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = (int *) arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendCurveDialog(&DlgLegendCurve, obj, data[i]);
-      if ((ret = DialogExecute(TopLevel, &DlgLegendCurve)) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++)
-	  data[j]--;
-      }
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
-}
-
-void
-CmCurveMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdLegendUpdate:
-    CmCurveUpdate();
-    break;
-  case MenuIdLegendDel:
-    CmCurveDel();
-    break;
-  }
-}
-
-void
-CmPolyDel(void)
-{
-  struct narray array;
-  struct objlist *obj;
-  int i;
-  int num, *data;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("polygon")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, (struct narray *) &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = (int *) arraydata(&array);
-    for (i = num - 1; i >= 0; i--) {
-      delobj(obj, data[i]);
-      set_graph_modified();
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
-}
-
-void
-CmPolyUpdate(void)
-{
-  struct narray array;
-  struct objlist *obj;
-  int i, j, ret;
-  int *data, num;
-
-  if (Menulock || Globallock)
-    return;
-  if ((obj = chkobject("polygon")) == NULL)
-    return;
-  if (chkobjlastinst(obj) == -1)
-    return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, (struct narray *) &array, NULL);
-  if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
-    num = arraynum(&array);
-    data = (int *) arraydata(&array);
-    for (i = 0; i < num; i++) {
-      LegendPolyDialog(&DlgLegendPoly, obj, data[i]);
-      if ((ret = DialogExecute(TopLevel, &DlgLegendPoly)) == IDDELETE) {
-	delobj(obj, data[i]);
-	set_graph_modified();
-	for (j = i + 1; j < num; j++)
-	  data[j]--;
-      }
-    }
-    LegendWinUpdate(TRUE);
-  }
-  arraydel(&array);
-}
-
-void
-CmPolygonMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdLegendUpdate:
-    CmPolyUpdate();
-    break;
-  case MenuIdLegendDel:
-    CmPolyDel();
-    break;
-  }
-}
-
 void
 CmRectDel(void)
 {
@@ -2128,23 +1971,11 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
   lgd->Obj = obj;
   lgd->Id = sub_id;
   switch (id) {
-  case LegendTypeLine:
+  case LegendTypePath:
     lgd->SetupWindow = LegendArrowDialogSetup;
     lgd->CloseWindow = legend_dialog_close;
     LegendArrowDialog(&DlgLegendArrow, d->obj[id], sub_id);
     ret = DialogExecute(d->Win, &DlgLegendArrow);
-    break;
-  case LegendTypeCurve: 
-    lgd->SetupWindow = LegendCurveDialogSetup;
-    lgd->CloseWindow = legend_dialog_close;
-    LegendCurveDialog(&DlgLegendCurve, d->obj[id], sub_id);
-    ret = DialogExecute(d->Win, &DlgLegendCurve);
-    break;
-  case LegendTypePoly:
-    lgd->SetupWindow = LegendPolyDialogSetup;
-    lgd->CloseWindow = legend_dialog_close;
-    LegendPolyDialog(&DlgLegendPoly, d->obj[id], sub_id);
-    ret = DialogExecute(d->Win, &DlgLegendPoly);
     break;
   case LegendTypeRect:
     lgd->SetupWindow = LegendRectDialogSetup;
@@ -2277,34 +2108,30 @@ legend_list_set_color(struct LegendWin *d, GtkTreeIter *iter, int type, int row,
 static void
 legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int row, unsigned int i, int *x0, int *y0)
 {
-  int x2, y2, mark, w, frame;
+  int x2, y2, mark, w, frame, path_type, stroke, fill, len;
   char *valstr, *text, buf[256], buf2[256];
-  char **enumlist;
+  char **enum_intp, **enum_path_type;
   const char *str;
 
   switch (type) {
-  case LegendTypeLine:
+  case LegendTypePath:
+    getobj(d->obj[type], "type", row, 0, NULL, &path_type);
+    getobj(d->obj[type], "fill", row, 0, NULL, &fill);
+    getobj(d->obj[type], "stroke", row, 0, NULL, &stroke);
     sgetobjfield(d->obj[type], row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
-    snprintf(buf2, sizeof(buf2), _("arrow:%s"), _(valstr));
-    g_free(valstr);
-    get_points(buf, sizeof(buf), d->obj[type], row, x0, y0, TRUE, buf2);
-    legend_list_set_color(d, iter, type, row, 0);
-    break;
-  case LegendTypeCurve:
     getobj(d->obj[type], "interpolation", row, 0, NULL, &w);
-    enumlist = (char **) chkobjarglist(d->obj[type], "interpolation");
-    snprintf(buf2, sizeof(buf2), _("interpolation:%s"), _(enumlist[w]));
-    get_points(buf, sizeof(buf), d->obj[type], row, x0, y0, TRUE, buf2);
-    legend_list_set_color(d, iter, type, row, 0);
-    break;
-  case LegendTypePoly:
-    getobj(d->obj[type], "fill", row, 0, NULL, &w);
-    if (w) {
-      enumlist = (char **) chkobjarglist(d->obj[type], "fill");
-      snprintf(buf2, sizeof(buf2), _("fill:%s"), _(enumlist[w]));
-    }
-    get_points(buf, sizeof(buf), d->obj[type], row, x0, y0, w == 0, (w) ? buf2 : NULL);
-    legend_list_set_color(d, iter, type, row, 0);
+    enum_intp = (char **) chkobjarglist(d->obj[type], "interpolation");
+    enum_path_type = (char **) chkobjarglist(d->obj[type], "type");
+
+    len = snprintf(buf, sizeof(buf), "%s ", _(enum_path_type[path_type]));
+    snprintf(buf2, sizeof(buf2), "%s%s%s%s", 
+	     (fill) ? _("fill") : "",
+	     (fill) ? " " : "",
+	     (stroke) ? _("arrow:") : "",
+	     (stroke) ? _(valstr) : "");
+    g_free(valstr);
+    get_points(buf + len, sizeof(buf) - len, d->obj[type], row, x0, y0, stroke, buf2);
+    legend_list_set_color(d, iter, type, row, (fill) ? 1 : 0);
     break;
   case LegendTypeRect:
     getobj(d->obj[type], "fill", row, 0, NULL, &w);

@@ -270,30 +270,30 @@ proc makescript { f i gx gy height } {
   if { ($type=="line") || ($type=="polygon") || ($type=="curve") \
     || ($type=="diagonal") || ($type=="errorbar_x") || ($type=="errorbar_y") \
     || ($type=="staircase_x") || ($type=="staircase_y") || ($type=="fit") } {
-    puts $f "new line"
-    puts $f [format "line::points=\'%d %d %d %d\'" \
+    puts $f "new path type=line"
+    puts $f [format "path::points=\'%d %d %d %d\'" \
             $gx [expr int($gy+$height*2/3)] \
             [expr $gx+$width] [expr int($gy+$height*2/3)]]
-    puts $f [format "line::width=%d" $linewidth]
+    puts $f [format "path::width=%d" $linewidth]
     if { $linestyle != "" } {
-      puts $f [format "line::style=\'%s\'" $linestyle]
+      puts $f [format "path::style=\'%s\'" $linestyle]
     }
-    puts $f [format "line::R=%d" $R]
-    puts $f [format "line::G=%d" $G]
-    puts $f [format "line::B=%d" $B]
+    puts $f [format "path::R=%d" $R]
+    puts $f [format "path::G=%d" $G]
+    puts $f [format "path::B=%d" $B]
   } elseif { ($type=="arrow") } {
-    puts $f "new line"
-    puts $f [format "line::points=\'%d %d %d %d\'" \
+    puts $f "new path type=line"
+    puts $f [format "path::points=\'%d %d %d %d\'" \
             $gx [expr int($gy+$height*2/3)] \
             [expr $gx+$width] [expr int($gy+$height*2/3)]]
-    puts $f [format "line::width=%d" $linewidth]
+    puts $f [format "path::width=%d" $linewidth]
     if { $linestyle != "" } { 
-      puts $f [format "line::style=\'%s\'" $linestyle]
+      puts $f [format "path::style=\'%s\'" $linestyle]
     }
-    puts $f [format "line::R=%d" $R]
-    puts $f [format "line::G=%d" $G]
-    puts $f [format "line::B=%d" $B]
-    puts $f "line::arrow=end"
+    puts $f [format "path::R=%d" $R]
+    puts $f [format "path::G=%d" $G]
+    puts $f [format "path::B=%d" $B]
+    puts $f "path::arrow=end"
   } elseif { ($type=="rectangle") || ($type=="rectangle_fill") \
    || ($type=="rectangle_solid_fill") || ($type=="bar_x") || ($type=="bar_y") \
    || ($type=="bar_fill_x") || ($type=="bar_fill_y") \

@@ -33,6 +33,7 @@
 #include "gra.h"
 #include "olegend.h"
 #include "oarc.h"
+#include "opath.h"
 #include "mathfn.h"
 #include "ioutil.h"
 #include "nstring.h"
@@ -3454,23 +3455,19 @@ create_legend1(struct Viewer *d, GdkGC *dc)
 static void
 create_legend2(struct Viewer *d, GdkGC *dc)
 {
-  int i, id, num, ret = IDCANCEL;
-  char *inst;
-  struct objlist *obj = NULL;
-  struct Point *po;
-  struct narray *parray;
+  int num;
 
   d->Capture = FALSE;
   num = arraynum(d->points);
 
   if (num >= 3) {
-    if (d->Mode == LineB) {
-      obj = chkobject("line");
-    } else if (d->Mode == CurveB) {
-      obj = chkobject("curve");
-    } else if (d->Mode == PolyB) {
-      obj = chkobject("polygon");
-    }
+    struct objlist *obj = NULL;
+    struct narray *parray;
+    struct Point *po;
+    char *inst;
+    int i, id, num, ret = IDCANCEL;
+
+    obj = chkobject("path");
 
     if (obj) {
       id = newobj(obj);
@@ -3487,15 +3484,9 @@ create_legend2(struct Viewer *d, GdkGC *dc)
 	_putobj(obj, "points", inst, parray);
 	PaintLock = TRUE;
 
-	if (d->Mode == LineB) {
+	if (d->Mode == PathB) {
 	  LegendArrowDialog(&DlgLegendArrow, obj, id);
 	  ret = DialogExecute(TopLevel, &DlgLegendArrow);
-	} else if (d->Mode == CurveB) {
-	  LegendCurveDialog(&DlgLegendCurve, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendCurve);
-	} else if (d->Mode == PolyB) {
-	  LegendPolyDialog(&DlgLegendPoly, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendPoly);
 	}
 
 	if (ret == IDDELETE || ret == IDCANCEL) {
@@ -3596,7 +3587,7 @@ create_legend3(struct Viewer *d, GdkGC *dc)
 static void
 create_legendx(struct Viewer *d, GdkGC *dc)
 {
-  int id, num, x1, y1, x2, y2, ret = IDCANCEL;
+  int id, num, x1, y1, x2, y2, ret = IDCANCEL, type;
   char *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
@@ -3606,12 +3597,14 @@ create_legendx(struct Viewer *d, GdkGC *dc)
   pdata = (struct Point **) arraydata(d->points);
 
   if (num >= 3) {
-    obj = chkobject("curve");
+    obj = chkobject("path");
 
     if (obj) {
       id = newobj(obj);
 
       if (id >= 0) {
+	type = PATH_TYPE_CURVE;
+	putobj(obj, "type", id, &type);
 	inst = chkobjinst(obj, id);
 	x1 = pdata[0]->x;
 	y1 = pdata[0]->y;
@@ -3901,9 +3894,7 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   case TextB:
     create_legend1(d, dc);
     break;
-  case LineB:
-  case CurveB:
-  case PolyB:
+  case PathB:
     create_legend2(d, dc);
     break;
   case RectB:
@@ -3966,9 +3957,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
     zoom = Menulocal.PaperZoom / 10000.0;
     dc = gdk_gc_new(d->gdk_win);
     switch (d->Mode) {
-    case LineB:
-    case CurveB:
-    case PolyB:
+    case PathB:
       num = arraynum(d->points);
       if (num > 0) {
 	ShowPoints(dc);
@@ -4004,8 +3993,8 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
       default:
 	break;
       }
-      g_object_unref(G_OBJECT(dc));
     }
+    g_object_unref(G_OBJECT(dc));
     return TRUE;
   }
 
@@ -5841,15 +5830,9 @@ ViewUpdate(void)
     } else {
       AddInvalidateRect(obj, inst);
 
-      if (obj == chkobject("line")) {
+      if (obj == chkobject("path")) {
 	LegendArrowDialog(&DlgLegendArrow, obj, id);
 	ret = DialogExecute(TopLevel, &DlgLegendArrow);
-      } else if (obj == chkobject("curve")) {
-	LegendCurveDialog(&DlgLegendCurve, obj, id);
-	ret = DialogExecute(TopLevel, &DlgLegendCurve);
-      } else if (obj == chkobject("polygon")) {
-	LegendPolyDialog(&DlgLegendPoly, obj, id);
-	ret = DialogExecute(TopLevel, &DlgLegendPoly);
       } else if (obj == chkobject("rectangle")) {
 	LegendRectDialog(&DlgLegendRect, obj, id);
 	ret = DialogExecute(TopLevel, &DlgLegendRect);

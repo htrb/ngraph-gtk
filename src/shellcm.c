@@ -843,21 +843,31 @@ cmnew(struct nshell *nshell,int argc,char **argv)
   struct objlist *obj;
   struct narray iarray;
   int i,anum,id;
+  char *oname;
 
   if (argc<2) {
     sherror4(argv[0],ERROBJARG);
     return ERROBJARG;
   }
   arrayinit(&iarray,sizeof(int));
-  if (getobjilist(argv[1],&obj,&iarray,FALSE,NULL)) return ERR;
+  getobjiname(argv[1], &oname, NULL);
+  if (getobjilist(argv[1],&obj,&iarray,FALSE,NULL)) {
+    g_free(oname);
+    return ERR;
+  }
   anum=arraynum(&iarray);
   arraydel(&iarray);
   if (anum!=0) {
     sherror3(argv[0],ERRNEWINST,argv[1]);
     arraydel(&iarray);
+    g_free(oname);
     return ERRNEWINST;
   }
-  if ((id=newobj(obj))==-1) return ERR;
+  id = newobj_alias(obj, oname);
+  g_free(oname);
+  if (id == -1) {
+    return ERR;
+  }
   for (i=2;i<argc;i++) {
     if (sputfield(obj,id,argv[i])!=0) {
       delobj(obj,id);

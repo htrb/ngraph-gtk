@@ -116,28 +116,26 @@ enum DrawLockVal {DrawLockNone, DrawLockDraw, DrawLockExpose};
 enum PointerType {
   PointB   = 0x000001,
   LegendB  = 0x000002,
-  LineB    = 0x000004,
-  CurveB   = 0x000008,
-  PolyB    = 0x000010,
-  RectB    = 0x000020,
-  ArcB     = 0x000040,
-  MarkB    = 0x000080,
-  TextB    = 0x000100,
-  GaussB   = 0x000200,
-  AxisB    = 0x000400,
-  TrimB    = 0x000800,
-  FrameB   = 0x001000,
-  SectionB = 0x002000,
-  CrossB   = 0x004000,
-  SingleB  = 0x008000,
-  DataB    = 0x010000,
-  EvalB    = 0x020000,
-  ZoomB    = 0x040000,
+  PathB    = 0x000004,
+  RectB    = 0x000008,
+  ArcB     = 0x000010,
+  MarkB    = 0x000020,
+  TextB    = 0x000040,
+  GaussB   = 0x000080,
+  AxisB    = 0x000100,
+  TrimB    = 0x000200,
+  FrameB   = 0x000400,
+  SectionB = 0x000800,
+  CrossB   = 0x001000,
+  SingleB  = 0x002000,
+  DataB    = 0x004000,
+  EvalB    = 0x008000,
+  ZoomB    = 0x010000,
 };
 
 #define POINT_TYPE_POINT (PointB | LegendB | AxisB)
 #define POINT_TYPE_DRAW1 (ArcB | RectB | GaussB | FrameB | SectionB | CrossB)
-#define POINT_TYPE_DRAW2 (CurveB | LineB | PolyB | SingleB)
+#define POINT_TYPE_DRAW2 (PathB | SingleB)
 #define POINT_TYPE_DRAW3 (TextB | MarkB)
 #define POINT_TYPE_DRAW_ALL (POINT_TYPE_DRAW1 | POINT_TYPE_DRAW2 | POINT_TYPE_DRAW3)
 #define POINT_TYPE_TRIM  (TrimB | DataB | EvalB)
@@ -211,7 +209,7 @@ struct SubWin
 };
 
 
-#define LEGENDNUM 7
+#define LEGENDNUM 5
 
 struct LegendWin
 {
