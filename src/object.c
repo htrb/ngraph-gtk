@@ -1820,6 +1820,10 @@ newobj_alias(struct objlist *obj, char *name)
   char **argv;
   struct objlist *objcur;
 
+  if (obj == NULL || name == NULL) {
+    return -1;
+  }
+
   idp = obj->idp;
   if (idp == -1) {
     error(obj, ERRNOID);
