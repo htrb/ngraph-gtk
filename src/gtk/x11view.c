@@ -3453,55 +3453,53 @@ create_legend1(struct Viewer *d, GdkGC *dc)
 }
 
 static void
-create_legend2(struct Viewer *d, GdkGC *dc)
+create_path(struct Viewer *d, GdkGC *dc)
 {
-  int num;
+  struct objlist *obj = NULL;
+  struct narray *parray;
+  struct Point *po;
+  char *inst;
+  int i, num, id, ret = IDCANCEL;
 
   d->Capture = FALSE;
   num = arraynum(d->points);
+  obj = chkobject("path");
 
-  if (num >= 3) {
-    struct objlist *obj = NULL;
-    struct narray *parray;
-    struct Point *po;
-    char *inst;
-    int i, id, num, ret = IDCANCEL;
-
-    obj = chkobject("path");
-
-    if (obj) {
-      id = newobj(obj);
-      if (id >= 0) {
-	inst = chkobjinst(obj, id);
-	parray = arraynew(sizeof(int));
-
-	for (i = 0; i < num - 1; i++) {
-	  po = *(struct Point **) arraynget(d->points, i);
-	  arrayadd(parray, &(po->x));
-	  arrayadd(parray, &(po->y));
-	}
-
-	_putobj(obj, "points", inst, parray);
-	PaintLock = TRUE;
-
-	if (d->Mode == PathB) {
-	  LegendArrowDialog(&DlgLegendArrow, obj, id);
-	  ret = DialogExecute(TopLevel, &DlgLegendArrow);
-	}
-
-	if (ret == IDDELETE || ret == IDCANCEL) {
-	  delobj(obj, id);
-	} else {
-	  AddList(obj, inst);
-	  AddInvalidateRect(obj, inst);
-	  set_graph_modified();
-	}
-
-	PaintLock = FALSE;
-      }
-    }
+  if (num < 3 || obj == NULL) {
+    goto ExitCreatePath;
   }
 
+  id = newobj(obj);
+  if (id < 0) {
+    goto ExitCreatePath;
+  }
+
+  inst = chkobjinst(obj, id);
+  parray = arraynew(sizeof(int));
+
+  for (i = 0; i < num - 1; i++) {
+    po = *(struct Point **) arraynget(d->points, i);
+    arrayadd(parray, &(po->x));
+    arrayadd(parray, &(po->y));
+  }
+
+  _putobj(obj, "points", inst, parray);
+  PaintLock = TRUE;
+
+  LegendArrowDialog(&DlgLegendArrow, obj, id);
+  ret = DialogExecute(TopLevel, &DlgLegendArrow);
+
+  if (ret == IDDELETE || ret == IDCANCEL) {
+    delobj(obj, id);
+  } else {
+    AddList(obj, inst);
+    AddInvalidateRect(obj, inst);
+    set_graph_modified();
+  }
+
+  PaintLock = FALSE;
+
+ ExitCreatePath:
   ShowPoints(dc);
   arraydel2(d->points);
 
@@ -3895,7 +3893,7 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
     create_legend1(d, dc);
     break;
   case PathB:
-    create_legend2(d, dc);
+    create_path(d, dc);
     break;
   case RectB:
   case ArcB:
