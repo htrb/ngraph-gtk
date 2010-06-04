@@ -1282,6 +1282,18 @@ set_color2(GtkWidget *w, struct objlist *obj, int id)
   _set_color(w, obj, id, NULL, "2");
 }
 
+void
+set_fill_color(GtkWidget *w, struct objlist *obj, int id)
+{
+  _set_color(w, obj, id, "fill_", NULL);
+}
+
+void
+set_stroke_color(GtkWidget *w, struct objlist *obj, int id)
+{
+  _set_color(w, obj, id, "stroke_", NULL);
+}
+
 static int
 _putobj_color(GtkWidget *widget, struct objlist *obj, int id, char *prefix, char *postfix)
 {
@@ -1341,3 +1353,14 @@ putobj_color2(GtkWidget *w, struct objlist *obj, int id)
   return _putobj_color(w, obj, id, NULL, "2");
 }
 
+int
+putobj_fill_color(GtkWidget *w, struct objlist *obj, int id)
+{
+  return _putobj_color(w, obj, id, "fill_", NULL);
+}
+
+int
+putobj_stroke_color(GtkWidget *w, struct objlist *obj, int id)
+{
+  return _putobj_color(w, obj, id, "stroke_", NULL);
+}

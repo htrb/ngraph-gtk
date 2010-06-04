@@ -1776,7 +1776,7 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   stat=MEOF;
   minmaxstat=MUNDEF;
   dataclip=TRUE;
-  ljoin = 2;
+  ljoin = JOIN_TYPE_BEVEL;
   if (_putobj(obj,"x",inst,&x)) return 1;
   if (_putobj(obj,"y",inst,&y)) return 1;
   if (_putobj(obj,"read_step",inst,&rstep)) return 1;

@@ -1220,8 +1220,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 29
-number of fields: 35
-size of instance: 224
+number of fields: 42
+size of instance: 304
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1229,9 +1229,6 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
-rw-                R    int
-rw-                G    int
-rw-                B    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1242,11 +1239,14 @@ rw-               x1    int
 rw-               y1    int
 rw-               x2    int
 rw-               y2    int
+rw-         stroke_R    int
+rw-         stroke_G    int
+rw-         stroke_B    int
+rw-           fill_R    int
+rw-           fill_G    int
+rw-           fill_B    int
 rw-             fill    bool
-rw-            frame    bool
-rw-               R2    int
-rw-               G2    int
-rw-               B2    int
+rw-           stroke    bool
 rw-            width    int
 rw-            style    int[]
 r-x             draw    void( int )
@@ -1257,6 +1257,13 @@ r-x             flip    void( int int int )
 r-x           change    void( int int int )
 r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
+-w-            frame    bool
+-w-                R    int
+-w-                G    int
+-w-                B    int
+-w-               R2    int
+-w-               G2    int
+-w-               B2    int
 </pre>
 
 <h3>arc</h3>
@@ -1266,8 +1273,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 30
-number of fields: 34
-size of instance: 216
+number of fields: 44
+size of instance: 320
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1275,9 +1282,6 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
-rw-                R    int
-rw-                G    int
-rw-                B    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1290,10 +1294,20 @@ rw-               rx    int
 rw-               ry    int
 rw-           angle1    int
 rw-           angle2    int
-rw-             fill    bool
 rw-         pieslice    bool
+rw-           fill_R    int
+rw-           fill_G    int
+rw-           fill_B    int
+rw-         stroke_R    int
+rw-         stroke_G    int
+rw-         stroke_B    int
+rw-             fill    bool
+rw-           stroke    bool
+rw-       close_path    bool
 rw-            width    int
 rw-            style    int[]
+rw-             join    enum( miter round bevel )
+rw-      miter_limit    int
 r-x             draw    void( int )
 r-x             bbox    int[]( void )
 r-x             move    void( int int )
@@ -1302,6 +1316,9 @@ r-x             flip    void( int int int )
 r-x           change    void( int int int )
 r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
+-w-                R    int
+-w-                G    int
+-w-                B    int
 </pre>
 
 <h3>path</h3>
@@ -1311,8 +1328,8 @@ alias: line:curve:polygon
 version: 1.00.01
 parent: legend
 object id: 31
-number of fields: 41
-size of instance: 272
+number of fields: 44
+size of instance: 320
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1320,9 +1337,6 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
-rw-                R    int
-rw-                G    int
-rw-                B    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1333,12 +1347,15 @@ rw-             type    enum( line curve )
 rw-           points    int[]
 r--          _points    int[]
 rw-    interpolation    enum( spline spline_close bspline bspline_close )
+rw-           fill_R    int
+rw-           fill_G    int
+rw-           fill_B    int
+rw-         stroke_R    int
+rw-         stroke_G    int
+rw-         stroke_B    int
 rw-             fill    enum( empty even_odd_rule winding_rule )
 rw-           stroke    bool
 rw-       close_path    bool
-rw-               R2    int
-rw-               G2    int
-rw-               B2    int
 rw-            width    int
 rw-            style    int[]
 rw-             join    enum( miter round bevel )
@@ -1354,6 +1371,9 @@ r-x             flip    void( int int int )
 r-x           change    void( int int int )
 r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
+-w-                R    int
+-w-                G    int
+-w-                B    int
 </pre>
 
 <h3>mark</h3>

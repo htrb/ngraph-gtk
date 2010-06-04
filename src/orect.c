@@ -46,13 +46,16 @@ static char *recterrorlist[]={
 static int 
 rectinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int width,frame;
+  int width, stroke;
 
-  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  width=40;
-  frame=FALSE;
-  if (_putobj(obj,"width",inst,&width)) return 1;
-  if (_putobj(obj,"frame",inst,&frame)) return 1;
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
+
+  width = 40;
+  stroke = TRUE;
+
+  if (_putobj(obj, "width", inst, &width)) return 1;
+  if (_putobj(obj, "stroke", inst, &stroke)) return 1;
+
   return 0;
 }
 
@@ -87,7 +90,7 @@ static int
 rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x1,y1,x2,y2,width,ifill,iframe,fr,fg,fb,br,bg,bb,tm,lm,w,h;
+  int x1,y1,x2,y2,width,ifill,stroke,fr,fg,fb,br,bg,bb,tm,lm,w,h;
   struct narray *style;
   int snum,*sdata;
   int clip,zoom;
@@ -95,16 +98,16 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"GC",inst,&GC);
   if (GC<0) return 0;
-  _getobj(obj,"R",inst,&fr);
-  _getobj(obj,"G",inst,&fg);
-  _getobj(obj,"B",inst,&fb);
-  _getobj(obj,"R2",inst,&br);
-  _getobj(obj,"G2",inst,&bg);
-  _getobj(obj,"B2",inst,&bb);
+  _getobj(obj,"stroke_R",inst,&fr);
+  _getobj(obj,"stroke_G",inst,&fg);
+  _getobj(obj,"stroke_B",inst,&fb);
+  _getobj(obj,"fill_R",inst,&br);
+  _getobj(obj,"fill_G",inst,&bg);
+  _getobj(obj,"fill_B",inst,&bb);
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
   _getobj(obj,"fill",inst,&ifill);
-  _getobj(obj,"frame",inst,&iframe);
+  _getobj(obj,"stroke",inst,&stroke);
   _getobj(obj,"clip",inst,&clip);
 
   get_position(obj, inst, &x1, &y1, &x2, &y2);
@@ -113,20 +116,18 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   sdata=arraydata(style);
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
-  if (iframe) {
-    GRAcolor(GC,fr,fg,fb);
-    GRArectangle(GC,x1,y1,x2,y2,1);
+
+  if (ifill) {
     GRAcolor(GC,br,bg,bb);
-    GRAlinestyle(GC,snum,sdata,width,0,0,1000);
-    GRArectangle(GC,x1,y1,x2,y2,0);
-  } else if (!ifill) {
-    GRAcolor(GC,fr,fg,fb);
-    GRAlinestyle(GC,snum,sdata,width,0,0,1000);
-    GRArectangle(GC,x1,y1,x2,y2,0);
-  } else {
-    GRAcolor(GC,fr,fg,fb);
     GRArectangle(GC,x1,y1,x2,y2,1);
   }
+
+  if (stroke) {
+    GRAcolor(GC,fr,fg,fb);
+    GRAlinestyle(GC,snum,sdata,width,0,0,1000);
+    GRArectangle(GC,x1,y1,x2,y2,0);
+  }
+
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
@@ -135,7 +136,7 @@ static int
 rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
-  int x1,y1,x2,y2,width,fill,frame;
+  int x1,y1,x2,y2,width,fill,stroke;
   struct narray *array;
 
   array=*(struct narray **)rval;
@@ -145,14 +146,18 @@ rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"fill",inst,&fill);
-  _getobj(obj,"frame",inst,&frame);
+  _getobj(obj,"stroke",inst,&stroke);
+
+  if (! fill && ! stroke) {
+    return 0;
+  }
 
   if ((array==NULL) && ((array=arraynew(sizeof(int)))==NULL)) return 1;
   minx=(x1<x2) ? x1 : x2;
   miny=(y1<y2) ? y1 : y2;
   maxx=(x1>x2) ? x1 : x2;
   maxy=(y1>y2) ? y1 : y2;
-  if ((!fill) || frame) {
+  if (stroke) {
     minx-=width/2;
     miny-=width/2;
     maxx+=width/2;
@@ -391,14 +396,20 @@ rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
   struct narray *array;
-  int ifill,iframe;
+  int ifill,stroke;
 
   *(int *)rval=FALSE;
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
+
   _getobj(obj,"bbox",inst,&array);
   _getobj(obj,"fill",inst,&ifill);
-  _getobj(obj,"frame",inst,&iframe);
+  _getobj(obj,"stroke",inst,&stroke);
+
+  if (! ifill && ! stroke) {
+    return 0;
+  }
+
   if (array==NULL) return 0;
   minx=*(int *)argv[2];
   miny=*(int *)argv[3];
@@ -411,7 +422,7 @@ rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   bmaxx=*(int *)arraynget(array,2);
   bmaxy=*(int *)arraynget(array,3);
   if ((minx==maxx) && (miny==maxy)) {
-    if (ifill || iframe) {
+    if (ifill) {
       bminx-=err;
       bminy-=err;
       bmaxx+=err;
@@ -446,6 +457,74 @@ rectgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static int 
+rect_frame(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+{
+  int frame, fill, stroke;
+
+  frame = * (int *) argv[2];
+
+  _getobj(obj, "fill", inst, &fill);
+
+  stroke = (frame || ! fill);
+  _putobj(obj, "stroke", inst, &stroke);
+
+  fill = (frame || fill);
+  _putobj(obj, "fill", inst, &fill);
+
+  return 0;
+}
+
+static int 
+put_color2(struct objlist *obj, char *inst, char *rval,  int argc, char **argv)
+{
+  int fill, frame, col, val, val2, f;
+
+  _getobj(obj, "fill", inst, &fill);
+  _getobj(obj, "frame", inst, &frame);
+
+  if (fill == 0 && frame == 0) {
+    return 0;
+  }
+
+  col = argv[1][0];
+  val =  * (int *) argv[2];
+
+  if (val < 0) {
+    val = 0;
+  } else if (val > 255) {
+    val = 255;
+  }
+
+  if (frame) {
+    f = TRUE;
+    _putobj(obj, "stroke", inst, &f);
+    _putobj(obj, "fill", inst, &f);
+  } else {
+    f = FALSE;
+    _putobj(obj, "stroke", inst, &f);
+  }
+
+  switch (col) {
+  case 'R':
+    _getobj(obj, "stroke_R", inst, &val2);
+    _putobj(obj, "stroke_R", inst, &val);
+    _putobj(obj, "fill_R", inst, &val2);
+    break;
+  case 'G':
+    _getobj(obj, "stroke_G", inst, &val2);
+    _putobj(obj, "stroke_G", inst, &val);
+    _putobj(obj, "fill_G", inst, &val2);
+    break;
+  case 'B':
+    _getobj(obj, "stroke_B", inst, &val2);
+    _putobj(obj, "stroke_B", inst, &val);
+    _putobj(obj, "fill_B", inst, &val2);
+    break;
+  }
+  return 0;
+}
+
 static struct objtable rect[] = {
   {"init",NVFUNC,NEXEC,rectinit,NULL,0},
   {"done",NVFUNC,NEXEC,rectdone,NULL,0},
@@ -456,15 +535,20 @@ static struct objtable rect[] = {
   {"x2",NINT,NREAD|NWRITE,legendgeometry,NULL,0},
   {"y2",NINT,NREAD|NWRITE,legendgeometry,NULL,0},
 
+  {"stroke_R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"stroke_G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"stroke_B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+
+  {"fill_R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"fill_G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"fill_B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+
   {"fill",NBOOL,NREAD|NWRITE,legendgeometry,NULL,0},
-  {"frame",NBOOL,NREAD|NWRITE,legendgeometry,NULL,0},
-  {"R2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
-  {"G2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
-  {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"stroke",NBOOL,NREAD|NWRITE,legendgeometry,NULL,0},
   {"width",NINT,NREAD|NWRITE,rectgeometry,NULL,0},
   {"style",NIARRAY,NREAD|NWRITE,oputstyle,NULL,0},
-  {"draw",NVFUNC,NREAD|NEXEC,rectdraw,"i",0},
 
+  {"draw",NVFUNC,NREAD|NEXEC,rectdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,rectbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,rectmove,"ii",0},
   {"rotate",NVFUNC,NREAD|NEXEC,rectrotate,"iiii",0},
@@ -472,6 +556,16 @@ static struct objtable rect[] = {
   {"change",NVFUNC,NREAD|NEXEC,rectchange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,rectzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,rectmatch,"iiiii",0},
+
+
+  /* following fields exist for backward compatibility */
+  {"frame",NBOOL,NWRITE,rect_frame,NULL,0},
+  {"R",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
+  {"G",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
+  {"B",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
+  {"R2",NINT,NWRITE,put_color2,NULL,0},
+  {"G2",NINT,NWRITE,put_color2,NULL,0},
+  {"B2",NINT,NWRITE,put_color2,NULL,0},
 };
 
 #define TBLNUM (sizeof(rect) / sizeof(*rect))

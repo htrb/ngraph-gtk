@@ -1,3 +1,56 @@
+2010-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oarc.c (arcinit): initialize fields "miter_limit", "join"
+	and "stroke".
+	(get_pos): add.
+	(arcdraw): use "stroke_[RGB]" instead of "[RGB]".
+	(arcdraw): use "stroke", "miter_limit", "join", "fill_[RGB]" and
+	"close_path".
+	(arcbbox): use "stroke" and "close_path".
+	(arc): add fields "fill_[RGB]", "stroke_[RGB]", "close_path" and
+	"stroke".
+
+	* src/odraw.h (JOIN_TYPE): add.
+
+	* src/olegend.c (put_color_for_backward_compatibility): add.
+
+	* src/orect.c (rectdraw): use "fill_[RGB]" and "stroke_[RGB]"
+	instead of "[RGB]2" and "[RGB]".
+	(rectdraw, rectbbox, rectmatch): don't use "frame". use "stroke".
+	(rect_frame, put_color2): add.
+	(rect): add fields "fill_[RGB]", "stroke_[RGB]" and "stroke".
+
+	* src/gtk/x11dialg.h (LegendDialog): add member "stroke_color".
+
+	* src/gtk/x11lgnd.c (init_legend_dialog_widget_member): initialize
+	"d->fill_color" and "d->stroke_color".
+	(set_sensitive_with_label): fix typo.
+	(legend_dialog_set_sensitive): set sensitivity of "d->fill_color"
+	and "d->stroke_color".
+	(legend_dialog_setup_item): setup "d->fill_color" and
+	"d->stroke_color".
+	(legend_dialog_close): get value from "d->fill_color" and
+	"d->stroke_color".
+	(fill_color_setup, stroke_color_setup): add.
+	(LegendArrowDialogSetup, LegendRectDialogSetup): use
+	"fill_color_setup()" and "stroke_color_setup()" instead of
+	"color_setup()" and "color2_setup()" respectively.
+	(LegendRectDialogSetup): remove "d->frame" setting. add
+	"d->stroke" setting.
+	(LegendArcDialogSetup): use "fill_color_setup()" and
+	"stroke_color_setup()" instead of "color_setup()" and
+	"color2_setup()" respectively.
+	(LegendArcDialogSetup): add settings for "d->stroke" and
+	"d->close_path".
+	(COLOR_TYPE): add.
+	(legend_list_set_color): support "COLOR_TYPE_FILL" and
+	"COLOR_TYPE_STROKE".
+	(legend_list_set_property): use "COLOR_TYPE_FILL" and
+	"COLOR_TYPE_STROKE".
+
+	* src/gtk/x11dialg.c (set_fill_color, set_stroke_color)
+	(putobj_fill_color, putobj_stroke_color): add.
+
 2010-06-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (create_path): use "goto" statement to handle

@@ -232,6 +232,8 @@ init_legend_dialog_widget_member(struct LegendDialog *d)
   d->join = NULL;
   d->color = NULL;
   d->color2 = NULL;
+  d->stroke_color = NULL;
+  d->fill_color = NULL;
   d->x = NULL;
   d->y = NULL;
   d->x1 = NULL;
@@ -287,7 +289,7 @@ set_fonts(struct LegendDialog *d, int id)
 }
 
 static void
-set_sensitive_with_labdl(GtkWidget *w, int a)
+set_sensitive_with_label(GtkWidget *w, int a)
 {
   GtkWidget *widget;
 
@@ -308,32 +310,37 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 
   d = (struct LegendDialog *) client_data;
 
-  if (d->pieslice && d->fill) {
-    gtk_widget_set_sensitive(d->pieslice, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill)));
-  }
-
-  if (d->frame && d->fill && d->color && d->color2) {
-    int a;
-
-    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->frame));
-    gtk_widget_set_sensitive(d->fill, ! a);
-    set_sensitive_with_labdl(d->color2, a);
-  }
-
-  path_type = 0;
+  path_type = PATH_TYPE_LINE;
   if (d->path_type && d->interpolation) {
     widget = get_widget(d->path_type);
     path_type = combo_box_get_active(widget);
 
-    set_sensitive_with_labdl(d->interpolation, path_type == PATH_TYPE_CURVE);
+    set_sensitive_with_label(d->interpolation, path_type == PATH_TYPE_CURVE);
+  }
+
+  if (d->stroke && d->stroke_color && d->style && d->width) {
+    int a;
+
+    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    set_sensitive_with_label(d->stroke_color, a);
+    set_sensitive_with_label(d->style, a);
+    set_sensitive_with_label(d->width, a);
   }
 
   if (d->stroke &&
-      d->style &&
-      d->width &&
       d->miter &&
       d->join &&
-      d->color &&
+      d->close_path) {
+    int a;
+
+    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
+    set_sensitive_with_label(d->miter, a);
+    set_sensitive_with_label(d->join, a);
+    set_sensitive_with_label(d->close_path, a);
+  }
+
+  if (d->stroke &&
+      d->interpolation &&
       d->close_path &&
       d->arrow &&
       d->arrow_length &&
@@ -343,31 +350,35 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
     ca = combo_box_get_active(get_widget(d->interpolation));
 
-    set_sensitive_with_labdl(d->style, a);
-    set_sensitive_with_labdl(d->width, a);
-    set_sensitive_with_labdl(d->miter, a);
-    set_sensitive_with_labdl(d->join, a);
-    set_sensitive_with_labdl(d->color, a);
-    set_sensitive_with_labdl(d->arrow, a);
-    set_sensitive_with_labdl(d->arrow_length, a);
-    set_sensitive_with_labdl(d->arrow_width, a);
+    set_sensitive_with_label(d->miter, a);
+    set_sensitive_with_label(d->join, a);
+    set_sensitive_with_label(d->arrow, a);
+    set_sensitive_with_label(d->arrow_length, a);
+    set_sensitive_with_label(d->arrow_width, a);
 
     if (path_type == PATH_TYPE_CURVE) {
-      set_sensitive_with_labdl(d->close_path, a &&
+      set_sensitive_with_label(d->close_path, a &&
 			       (ca != INTERPOLATION_TYPE_SPLINE_CLOSE &&
 				ca != INTERPOLATION_TYPE_BSPLINE_CLOSE));
     } else {
-      set_sensitive_with_labdl(d->close_path, a);
+      set_sensitive_with_label(d->close_path, a);
     }
   }
 
-  if (d->path_type && d->fill_rule && d->color2) {
+  if (d->fill && d->fill_color) {
+    int a;
+
+    a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
+    set_sensitive_with_label(d->fill_color, a);
+  }
+
+  if (d->path_type && d->fill_rule && d->fill_color) {
     int a;
 
     widget = get_widget(d->fill_rule);
     a = combo_box_get_active(widget);
 
-    set_sensitive_with_labdl(d->color2, a);
+    set_sensitive_with_label(d->fill_color, a);
   }
 }
 
@@ -395,7 +406,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     {d->angle2, "angle2"},
     {d->fill, "fill"},
     {d->fill_rule, "fill"},
-    {d->frame, "frame"},
     {d->raw, "raw"},
     {d->arrow, "arrow"},
     {d->pieslice, "pieslice"},
@@ -489,6 +499,12 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   if (d->color2)
     set_color2(d->color2, d->Obj, id);
 
+  if (d->stroke_color)
+    set_stroke_color(d->stroke_color, d->Obj, id);
+
+  if (d->fill_color)
+    set_fill_color(d->fill_color, d->Obj, id);
+
   legend_dialog_set_sensitive(NULL, d);
 }
 
@@ -516,7 +532,6 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->angle2, "angle2"},
     {d->fill, "fill"},
     {d->fill_rule, "fill"},
-    {d->frame, "frame"},
     {d->raw, "raw"},
     {d->arrow, "arrow"},
     {d->pieslice, "pieslice"},
@@ -654,10 +669,13 @@ legend_dialog_close(GtkWidget *w, void *data)
     }
   }
 
-  if (d->color && putobj_color(d->color, d->Obj, d->Id, NULL))
+  if (d->stroke_color && putobj_stroke_color(d->stroke_color, d->Obj, d->Id))
     return;
 
  if (d->color2 && putobj_color2(d->color2, d->Obj, d->Id))
+    return;
+
+ if (d->fill_color && putobj_fill_color(d->fill_color, d->Obj, d->Id))
     return;
 
   d->ret = ret;
@@ -933,6 +951,24 @@ color2_setup(struct LegendDialog *d, GtkWidget *table, int i)
 }
 
 static void
+fill_color_setup(struct LegendDialog *d, GtkWidget *table, int i)
+{
+  GtkWidget *w;
+
+  w = create_color_button(d->widget);
+  d->fill_color = add_widget_to_table(table, w, _("_Color:"), FALSE, i);
+}
+
+static void
+stroke_color_setup(struct LegendDialog *d, GtkWidget *table, int i)
+{
+  GtkWidget *w;
+
+  w = create_color_button(d->widget);
+  d->stroke_color = add_widget_to_table(table, w, _("_Color:"), FALSE, i);
+}
+
+static void
 draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 {
   int lw, len, x, w;
@@ -1086,7 +1122,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     miter_setup(d, table, i++);
     join_setup(d, table, i++);
 
-    color_setup(d, table, i++);
+    stroke_color_setup(d, table, i++);
 
     gtk_box_pack_start(GTK_BOX(hbox2), table, TRUE, TRUE, 0);
 
@@ -1113,6 +1149,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
     g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->stroke = w;
+
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), hbox2);
@@ -1126,7 +1163,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
     d->fill_rule = w;
 
-    color2_setup(d, table, i++);
+    fill_color_setup(d, table, i++);
 
     frame = gtk_frame_new(_("Fill"));
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1157,7 +1194,7 @@ LegendArrowDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *frame, *table;
+  GtkWidget *w, *hbox, *vbox, *frame, *table;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1197,27 +1234,40 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
 
 
+    vbox = gtk_vbox_new(FALSE, 0);
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
+
     style_setup(d, table, i++);
     width_setup(d, table, i++);
-    color_setup(d, table, i++);
+    stroke_color_setup(d, table, i++);
 
-    w = gtk_check_button_new_with_mnemonic(_("_Fill"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->fill = w;
-
-    color2_setup(d, table, i++);
-
-    w = gtk_check_button_new_with_mnemonic(_("_Frame"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
+    w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
     g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
-    d->frame = w;
-
+    d->stroke = w;
 
     frame = gtk_frame_new(NULL);
+    gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
+    fill_color_setup(d, table, i++);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Fill"));
+    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    d->fill = w;
+
+    frame = gtk_frame_new(NULL);
+    gtk_frame_set_label_widget(GTK_FRAME(frame), w);
+    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
@@ -1240,7 +1290,7 @@ LegendRectDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *table, *frame;
+  GtkWidget *w, *hbox, *vbox, *table, *frame;
   struct LegendDialog *d;
   char title[64];
   int i;
@@ -1291,21 +1341,53 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Angle2:"), FALSE, i++);
     d->angle2 = w;
 
-    style_setup(d, table, i++);
-    width_setup(d, table, i++);
-    color_setup(d, table, i++);
-
-    w = gtk_check_button_new_with_mnemonic(_("_Fill"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
-    d->fill = w;
-
     w = gtk_check_button_new_with_mnemonic(_("_Pieslice"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->pieslice = w;
 
+    vbox = gtk_vbox_new(FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
+
+
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
+    w = gtk_check_button_new_with_mnemonic(_("_Close path"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->close_path = w;
+
+    style_setup(d, table, i++);
+    width_setup(d, table, i++);
+    miter_setup(d, table, i++);
+    join_setup(d, table, i++);
+    stroke_color_setup(d, table, i++);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Stroke"));
+    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    d->stroke = w;
+
     frame = gtk_frame_new(NULL);
+    gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+
+
+    table = gtk_table_new(1, 2, FALSE);
+
+    i = 0;
+    fill_color_setup(d, table, i++);
+
+    w = gtk_check_button_new_with_mnemonic(_("_Fill"));
+    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    d->fill = w;
+
+    frame = gtk_frame_new(NULL);
+    gtk_frame_set_label_widget(GTK_FRAME(frame), w);
+    gtk_container_add(GTK_CONTAINER(frame), table);
+    gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+
+    frame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
@@ -2086,29 +2168,52 @@ get_points(char *buf, int len, struct objlist *obj, int id, int *x, int *y, int 
 	   CHK_STR(ex));
 }
 
+enum COLOR_TYPE {
+  COLOR_TYPE_1,
+  COLOR_TYPE_2,
+  COLOR_TYPE_FILL,
+  COLOR_TYPE_STROKE,
+};
+
 static void
 legend_list_set_color(struct LegendWin *d, GtkTreeIter *iter, int type, int row, int color_type)
 {
   int r, g, b;
-  char color[256], rc[] = "R2", gc[] = "G2", bc[] = "B2";
+  char color[256], *rc, *gc, *bc;
 
-  if (color_type == 0) {
-    rc[1] = '\0';
-    gc[1] = '\0';
-    bc[1] = '\0';
+  switch (color_type) {
+  case COLOR_TYPE_STROKE:
+    rc = "stroke_R";
+    gc = "stroke_G";
+    bc = "stroke_B";
+    break;
+  case COLOR_TYPE_FILL:
+    rc = "fill_R";
+    gc = "fill_G";
+    bc = "fill_B";
+    break;
+  case COLOR_TYPE_2:
+    rc = "R2";
+    gc = "G2";
+    bc = "B2";
+    break;
+  default:
+    rc = "R";
+    gc = "G";
+    bc = "B";
   }
 
   getobj(d->obj[type], rc, row, 0, NULL, &r);
   getobj(d->obj[type], gc, row, 0, NULL, &g);
   getobj(d->obj[type], bc, row, 0, NULL, &b);
-  snprintf(color, sizeof(color), "#%02x%02x%02x", r, g, b);
+  snprintf(color, sizeof(color), "#%02x%02x%02x", r & 0xff, g & 0xff, b &0xff);
   tree_store_set_string(GTK_WIDGET(d->text), iter, LEGEND_WIN_COL_NUM, color);
 }
 
 static void
 legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int row, unsigned int i, int *x0, int *y0)
 {
-  int x2, y2, mark, w, frame, path_type, stroke, fill, len;
+  int x2, y2, mark, path_type, stroke, fill, len, intp;
   char *valstr, *text, buf[256], buf2[256];
   char **enum_intp, **enum_path_type;
   const char *str;
@@ -2119,50 +2224,54 @@ legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int r
     getobj(d->obj[type], "fill", row, 0, NULL, &fill);
     getobj(d->obj[type], "stroke", row, 0, NULL, &stroke);
     sgetobjfield(d->obj[type], row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
-    getobj(d->obj[type], "interpolation", row, 0, NULL, &w);
+    getobj(d->obj[type], "interpolation", row, 0, NULL, &intp);
     enum_intp = (char **) chkobjarglist(d->obj[type], "interpolation");
     enum_path_type = (char **) chkobjarglist(d->obj[type], "type");
 
     len = snprintf(buf, sizeof(buf), "%s ", _(enum_path_type[path_type]));
-    snprintf(buf2, sizeof(buf2), "%s%s%s%s", 
+    snprintf(buf2, sizeof(buf2), "%s%s%s%s%s%s", 
+	     (path_type) ? _(enum_intp[intp]) : "",
+	     (path_type) ? " " : "",
 	     (fill) ? _("fill") : "",
 	     (fill) ? " " : "",
 	     (stroke) ? _("arrow:") : "",
 	     (stroke) ? _(valstr) : "");
     g_free(valstr);
     get_points(buf + len, sizeof(buf) - len, d->obj[type], row, x0, y0, stroke, buf2);
-    legend_list_set_color(d, iter, type, row, (fill) ? 1 : 0);
+    legend_list_set_color(d, iter, type, row, (fill) ? COLOR_TYPE_FILL : COLOR_TYPE_STROKE);
     break;
   case LegendTypeRect:
-    getobj(d->obj[type], "fill", row, 0, NULL, &w);
-    getobj(d->obj[type], "frame", row, 0, NULL, &frame);
+    getobj(d->obj[type], "fill", row, 0, NULL, &fill);
+    getobj(d->obj[type], "stroke", row, 0, NULL, &stroke);
     str = get_style_string(d->obj[type], row, "style");
     getobj(d->obj[type], "x1", row, 0, NULL, x0);
     getobj(d->obj[type], "y1", row, 0, NULL, y0);
     getobj(d->obj[type], "x2", row, 0, NULL, &x2);
     getobj(d->obj[type], "y2", row, 0, NULL, &y2);
-    snprintf(buf, sizeof(buf), _("w:%.2f h:%.2f  style:%s%s%s"),
+    snprintf(buf, sizeof(buf), _("w:%.2f h:%.2f%s%s%s"),
 	     abs(*x0 - x2) / 100.0,
 	     abs(*y0 - y2) / 100.0,
-	     (str) ? _(str) : _("custom"),
-	     (w) ? _("  fill") : "",
-	     (frame) ? _("  frame") : ""
+	     (stroke) ? _("  style:") : "",
+	     (stroke) ? ((str) ? _(str) : _("custom")) : "",
+	     (fill)  ? _("  fill") : ""
 	     );
-    legend_list_set_color(d, iter, type, row, (frame) ? 1 : 0);
+    legend_list_set_color(d, iter, type, row, (fill) ? COLOR_TYPE_FILL : COLOR_TYPE_STROKE);
     break;
   case LegendTypeArc:
-    getobj(d->obj[type], "fill", row, 0, NULL, &w);
+    getobj(d->obj[type], "fill", row, 0, NULL, &fill);
+    getobj(d->obj[type], "stroke", row, 0, NULL, &stroke);
     str = get_style_string(d->obj[type], row, "style");
     getobj(d->obj[type], "x", row, 0, NULL, x0);
     getobj(d->obj[type], "y", row, 0, NULL, y0);
     getobj(d->obj[type], "rx", row, 0, NULL, &x2);
     getobj(d->obj[type], "ry", row, 0, NULL, &y2);
-    snprintf(buf, sizeof(buf), "rx:%.2f ry:%.2f  %s%s",
+    snprintf(buf, sizeof(buf), "rx:%.2f ry:%.2f%s%s%s",
 	     x2 / 100.0,
 	     y2 / 100.0,
-	     (w) ? _("fill") : _("style:"),
-	     (w) ? "" : ((str) ? _(str) : _("custom")));
-    legend_list_set_color(d, iter, type, row, 0);
+	     (stroke) ? _("  style:") : "",
+	     (stroke) ? ((str) ? _(str) : _("custom")) : "",
+	     (fill) ? _("  fill") : "");
+    legend_list_set_color(d, iter, type, row, (fill) ? COLOR_TYPE_FILL : COLOR_TYPE_STROKE);
     break;
   case LegendTypeMark:
     getobj(d->obj[type], "x", row, 0, NULL, x0);
@@ -2174,7 +2283,7 @@ legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int r
     } else {
       snprintf(buf, sizeof(buf), _("type:%-2d"), mark);
     }
-    legend_list_set_color(d, iter, type, row, 0);
+    legend_list_set_color(d, iter, type, row, COLOR_TYPE_1);
     break;
   case LegendTypeText:
     getobj(d->obj[type], "x", row, 0, NULL, x0);
@@ -2193,7 +2302,7 @@ legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int r
       tree_store_set_string(GTK_WIDGET(d->text), iter, i, text);
 #endif
     }
-    legend_list_set_color(d, iter, type, row, 0);
+    legend_list_set_color(d, iter, type, row, COLOR_TYPE_1);
     break;
   default:
     buf[0] = '\0';

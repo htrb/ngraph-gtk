@@ -39,5 +39,6 @@ int legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
 void rotate(int px, int py, int angle, int *x, int *y);
 void flip(int pivot, enum FLIP_DIRECTION dir, int *x, int *y);
 int legendflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
+int put_color_for_backward_compatibility(struct objlist *obj, char *inst, char *rval,  int argc, char **argv);
 
 #endif

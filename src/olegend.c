@@ -365,6 +365,37 @@ legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+int 
+put_color_for_backward_compatibility(struct objlist *obj, char *inst, char *rval,  int argc, char **argv)
+{
+  int col, val;
+
+  col = argv[1][0];
+  val =  * (int *) argv[2];
+
+  if (val < 0) {
+    val = 0;
+  } else if (val > 255) {
+    val = 255;
+  }
+
+  switch (col) {
+  case 'R':
+    _putobj(obj, "stroke_R", inst, &val);
+    _putobj(obj, "fill_R", inst, &val);
+    break;
+  case 'G':
+    _putobj(obj, "stroke_G", inst, &val);
+    _putobj(obj, "fill_G", inst, &val);
+    break;
+  case 'B':
+    _putobj(obj, "stroke_B", inst, &val);
+    _putobj(obj, "fill_B", inst, &val);
+    break;
+  }
+  return 0;
+}
+
 static struct objtable legend[] = {
   {"init",NVFUNC,0,legendinit,NULL,0},
   {"done",NVFUNC,0,legenddone,NULL,0},

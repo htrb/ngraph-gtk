@@ -1,5 +1,5 @@
 /* 
- * $Id: oarc.c,v 1.21 2010-03-04 08:30:16 hito Exp $
+ * $id: oarc.c,v 1.21 2010-03-04 08:30:16 hito Exp $
  * 
  * This file is part of "Ngraph for X11".
  * 
@@ -49,15 +49,24 @@ static char *arcerrorlist[]={
 static int 
 arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
-  int angle2,width,pieslice;
+  int angle2, width, pieslice, stroke, miter, join;
 
-  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  angle2=36000;
-  width=40;
-  pieslice=TRUE;
-  if (_putobj(obj,"pieslice",inst,&pieslice)) return 1;
-  if (_putobj(obj,"angle2",inst,&angle2)) return 1;
-  if (_putobj(obj,"width",inst,&width)) return 1;
+  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
+
+  angle2 = 36000;
+  width = 40;
+  pieslice = TRUE;
+  miter = 1000;
+  join = JOIN_TYPE_BEVEL;
+  stroke = TRUE;
+
+  if (_putobj(obj, "pieslice", inst, &pieslice)) return 1;
+  if (_putobj(obj, "angle2", inst, &angle2)) return 1;
+  if (_putobj(obj, "width", inst, &width)) return 1;
+  if (_putobj(obj, "miter_limit", inst, &miter)) return 1;
+  if (_putobj(obj, "join", inst, &join)) return 1;
+  if (_putobj(obj, "stroke", inst, &stroke)) return 1;
+
   return 0;
 }
 
@@ -68,11 +77,18 @@ arcdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
+static void
+get_pos(int angle1, int x, int y, int rx, int ry, int *x1, int *y1)
+{
+  *x1 = x + rx * cos(-angle1 * MPI / 18000);
+  *y1 = y + ry * sin(-angle1 * MPI / 18000);
+}
+
 static int 
 arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,tm,lm,w,h;
+  int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,tm,lm,w,h,stroke,close_path,br,bg,bb, join, miter;
   int pieslice;
   struct narray *style;
   int snum,*sdata;
@@ -81,9 +97,12 @@ arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"GC",inst,&GC);
   if (GC<0) return 0;
-  _getobj(obj,"R",inst,&fr);
-  _getobj(obj,"G",inst,&fg);
-  _getobj(obj,"B",inst,&fb);
+  _getobj(obj,"stroke_R",inst,&fr);
+  _getobj(obj,"stroke_G",inst,&fg);
+  _getobj(obj,"stroke_B",inst,&fb);
+  _getobj(obj,"fill_R",inst,&br);
+  _getobj(obj,"fill_G",inst,&bg);
+  _getobj(obj,"fill_B",inst,&bb);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"rx",inst,&rx);
@@ -93,20 +112,54 @@ arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"angle2",inst,&angle2);
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
+  _getobj(obj, "join", inst, &join);
+  _getobj(obj, "miter_limit", inst, &miter);
   _getobj(obj,"fill",inst,&ifill);
+  _getobj(obj,"stroke",inst,&stroke);
+  _getobj(obj,"close_path",inst,&close_path);
   _getobj(obj,"clip",inst,&clip);
+
+  if (! ifill && ! stroke) {
+    return 0;
+  }
+
   snum=arraynum(style);
   sdata=arraydata(style);
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
-  GRAcolor(GC,fr,fg,fb);
-  if (ifill==0) {
-    GRAlinestyle(GC,snum,sdata,width,0,0,1000);
-    GRAcircle(GC,x,y,rx,ry,angle1,angle2,0);
-  } else {
-    if (pieslice) GRAcircle(GC,x,y,rx,ry,angle1,angle2,1);
-    else GRAcircle(GC,x,y,rx,ry,angle1,angle2,2);
+
+  if (ifill) {
+    GRAcolor(GC,br,bg,bb);
+    if (pieslice) {
+      GRAcircle(GC,x,y,rx,ry,angle1,angle2,1);
+    } else {
+      GRAcircle(GC,x,y,rx,ry,angle1,angle2,2);
+    }
   }
+
+  if (stroke) {
+    GRAcolor(GC,fr,fg,fb);
+    GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
+    GRAcircle(GC,x,y,rx,ry,angle1,angle2,0);
+    if (close_path) {
+      int x1, y1;
+
+      get_pos(angle1 + 100, x, y, rx, ry, &x1, &y1);
+      GRAmoveto(GC, x1, y1);
+
+      get_pos(angle1, x, y, rx, ry, &x1, &y1);
+      GRAlineto(GC, x1, y1);
+      if (pieslice) {
+	GRAlineto(GC, x, y);
+      }
+      get_pos(angle1 + angle2, x, y, rx, ry, &x1, &y1);
+      GRAlineto(GC, x1, y1);
+
+      get_pos(angle1 + angle2 - 100, x, y, rx, ry, &x1, &y1);
+      GRAlineto(GC, x1, y1);
+    }
+  }
+
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
@@ -156,7 +209,7 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x,y,x1,y1;
-  int x0,y0,angle1,angle2,rx,ry,pieslice,fill;
+  int x0,y0,angle1,angle2,rx,ry,pieslice,fill,stroke,close_path;
   struct narray *array;
   int i,width;
 
@@ -169,9 +222,16 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"angle1",inst,&angle1);
   _getobj(obj,"angle2",inst,&angle2);
   _getobj(obj,"fill",inst,&fill);
+  _getobj(obj,"stroke",inst,&stroke);
   _getobj(obj,"pieslice",inst,&pieslice);
+  _getobj(obj,"close_path",inst,&close_path);
   _getobj(obj,"width",inst,&width);
   angle2+=angle1;
+
+  if (! fill && ! stroke) {
+    return 0;
+  }
+
   if (angle2<angle1) angle2+=36000;
   if ((array==NULL) && ((array=arraynew(sizeof(int)))==NULL)) return 1;
 
@@ -187,6 +247,7 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (x>maxx) maxx=x;
   if (y<miny) miny=y;
   if (y>maxy) maxy=y;
+
   for (i=angle1/9000+1;i<=angle2/9000;i++) {
     x=x0+rx*cos(i*MPI/2);
     y=y0-ry*sin(i*MPI/2);
@@ -195,7 +256,8 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (y<miny) miny=y;
     if (y>maxy) maxy=y;
   }
-  if (fill && pieslice) {
+
+  if (pieslice && (fill || close_path)) {
     x=x0;
     y=y0;
     if (x<minx) minx=x;
@@ -203,12 +265,14 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (y<miny) miny=y;
     if (y>maxy) maxy=y;
   }
-  if (!fill) {
+
+  if (stroke) {
     minx-=width/2;
     miny-=width/2;
     maxx+=width/2;
     maxy+=width/2;
   }
+
   arrayins(array,&maxy,0);
   arrayins(array,&maxx,0);
   arrayins(array,&miny,0);
@@ -495,16 +559,32 @@ static struct objtable arc[] = {
   {"init",NVFUNC,NEXEC,arcinit,NULL,0},
   {"done",NVFUNC,NEXEC,arcdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
+
   {"x",NINT,NREAD|NWRITE,arcgeometry,NULL,0},
   {"y",NINT,NREAD|NWRITE,arcgeometry,NULL,0},
   {"rx",NINT,NREAD|NWRITE,arcgeometry,NULL,0},
   {"ry",NINT,NREAD|NWRITE,arcgeometry,NULL,0},
   {"angle1",NINT,NREAD|NWRITE,arcgeometry,NULL,0},
   {"angle2",NINT,NREAD|NWRITE,arcgeometry,NULL,0},
-  {"fill",NBOOL,NREAD|NWRITE,arcgeometry,NULL,0},
+
   {"pieslice",NBOOL,NREAD|NWRITE,arcgeometry,NULL,0},
+
+  {"fill_R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"fill_G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"fill_B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+
+  {"stroke_R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"stroke_G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"stroke_B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+
+  {"fill",NBOOL,NREAD|NWRITE,arcgeometry,NULL,0},
+  {"stroke",NBOOL,NREAD|NWRITE,arcgeometry,NULL,0},
+  {"close_path",NBOOL,NREAD|NWRITE,arcgeometry,NULL,0},
   {"width",NINT,NREAD|NWRITE,arcgeometry,NULL,0},
   {"style",NIARRAY,NREAD|NWRITE,oputstyle,NULL,0},
+  {"join",NENUM,NREAD|NWRITE,NULL,joinchar,0},
+  {"miter_limit",NINT,NREAD|NWRITE,oputge1,NULL,0},
+
   {"draw",NVFUNC,NREAD|NEXEC,arcdraw,"i",0},
   {"bbox",NIAFUNC,NREAD|NEXEC,arcbbox,"",0},
   {"move",NVFUNC,NREAD|NEXEC,arcmove,"ii",0}, 
@@ -513,6 +593,12 @@ static struct objtable arc[] = {
   {"change",NVFUNC,NREAD|NEXEC,arcchange,"iii",0},
   {"zooming",NVFUNC,NREAD|NEXEC,arczoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,arcmatch,"iiiii",0},
+
+
+  /* following fields exist for backward compatibility */
+  {"R",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
+  {"G",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
+  {"B",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
 };
 
 #define TBLNUM (sizeof(arc) / sizeof(*arc))
