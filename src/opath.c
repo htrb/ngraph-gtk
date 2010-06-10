@@ -398,11 +398,9 @@ curve_clear(struct objlist *obj,char *inst)
   arrayclear(expand_points);
 }
 
-#define ARROW_DIRECTION_HEAD 0
-#define ARROW_DIRECTION_TAIL 1
-
 static void
-get_arrow_pos(int width, int headlen, int headwidth,
+get_arrow_pos(int *points2, int n, int strict,
+	      int width, int headlen, int headwidth,
 	      int x0, int y0, int x1, int y1, int *ap)
 {
   int ax0, ay0, ox, oy;
@@ -419,17 +417,33 @@ get_arrow_pos(int width, int headlen, int headwidth,
   ax0 = nround(x0 - dx * alen);
   ay0 = nround(y0 - dy * alen);
 
-  ox = nround(dx * alen * width / awidth / 2);
-  oy = nround(dy * alen * width / awidth / 2);
+  if (strict) {
+    ox = oy = 0;
+  } else {
+    ox = nround(dx * alen * width / awidth / 2);
+    oy = nround(dy * alen * width / awidth / 2);
+  }
   ax0 += ox;
   ay0 += oy;
 
   ap[0] = nround(ax0 - dy * awidth);
   ap[1] = nround(ay0 + dx * awidth);
-  ap[2] = nround(x0 + ox);
-  ap[3] = nround(y0 + oy);
+  ap[2] = x0 + nround(ox);
+  ap[3] = y0 + nround(oy);
   ap[4] = nround(ax0 + dy * awidth);
   ap[5] = nround(ay0 - dx * awidth);
+
+  if (points2 && strict) {
+    double alen2;
+
+    alen2 = alen - 10;
+    if (alen2 < 0) {
+      alen2 = 0;
+    }
+
+    points2[n]     = nround(x0 - dx * alen2);
+    points2[n + 1] = nround(y0 - dy * alen2);
+  }
 }
 
 static int 
@@ -542,12 +556,14 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     y3 = points2[2 * num - 1];
 
     if (head == ARROW_POSITION_BEGIN || head == ARROW_POSITION_BOTH) {
-      get_arrow_pos(width, headlen, headwidth,
+      get_arrow_pos(points2, 0, type == PATH_TYPE_LINE,
+		    width, headlen, headwidth,
 		    x0, y0, x1, y1, ap);
     }
 
     if (head == ARROW_POSITION_END || head == ARROW_POSITION_BOTH) {
-      get_arrow_pos(width, headlen, headwidth,
+      get_arrow_pos(points2, 0, type == PATH_TYPE_LINE,
+		    width, headlen, headwidth,
 		    x3, y3, x2, y2, ap2);
     }
 
@@ -663,12 +679,14 @@ arrowbbox(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   g_free(points2);
 
   if (head==ARROW_POSITION_BEGIN || head==ARROW_POSITION_BOTH) {
-    get_arrow_pos(width, headlen, headwidth,
+    get_arrow_pos(NULL, 0, type == PATH_TYPE_LINE,
+		  width, headlen, headwidth,
 		  x0, y0, x1, y1, ap);
   }
 
   if (head==ARROW_POSITION_END || head==ARROW_POSITION_BOTH) {
-    get_arrow_pos(width, headlen, headwidth,
+    get_arrow_pos(NULL, 2 * num - 2, type == PATH_TYPE_LINE,
+		  width, headlen, headwidth,
 		  x3, y3, x2, y2, ap2);
   }
   if (array == NULL && (array = arraynew(sizeof(int))) == NULL) {

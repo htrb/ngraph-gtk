@@ -1,5 +1,9 @@
 2010-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/opath.c (get_arrow_pos): add strict mode.
+	(arrowdraw, arrowbbox): use strict mode for "get_arrow_pos()" when
+	the type is "PATH_TYPE_LINE".
+
 	* demo/demo5a.ngp: change position of "path" instances.
 
 	* src/gtk/x11lgndx.c (LegendGaussDialogSetupItem): use
