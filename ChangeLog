@@ -1,3 +1,12 @@
+2010-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* demo/demo5a.ngp: change position of "path" instances.
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogSetupItem): use
+	"set_stroke_color()" instead of "set_color()".
+	(LegendGaussDialogClose): use "putobj_stroke_color()" instead of
+	"putobj_color()".
+
 2010-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (graph_modified_sub): call "set_modified_state()".

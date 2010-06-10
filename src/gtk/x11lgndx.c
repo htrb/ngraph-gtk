@@ -84,7 +84,7 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 
   SetWidgetFromObjField(d->miter, d->Obj, id, "miter_limit");
 
-  set_color(d->color, d->Obj, id, NULL);
+  set_stroke_color(d->color, d->Obj, id);
 
   n = d->Dir;
   if (n >= 0 && n < LEGEND_DIRECTION_NUM) {
@@ -499,7 +499,7 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
   if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "miter_limit"))
     return;
 
-  if (putobj_color(d->color, d->Obj, d->Id, NULL))
+  if (putobj_stroke_color(d->color, d->Obj, d->Id))
     return;
 
   switch (d->Dir) {
