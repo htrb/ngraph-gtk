@@ -562,7 +562,7 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     }
 
     if (head == ARROW_POSITION_END || head == ARROW_POSITION_BOTH) {
-      get_arrow_pos(points2, 0, type == PATH_TYPE_LINE,
+      get_arrow_pos(points2, num * 2 - 2, type == PATH_TYPE_LINE,
 		    width, headlen, headwidth,
 		    x3, y3, x2, y2, ap2);
     }
@@ -685,7 +685,7 @@ arrowbbox(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   if (head==ARROW_POSITION_END || head==ARROW_POSITION_BOTH) {
-    get_arrow_pos(NULL, 2 * num - 2, type == PATH_TYPE_LINE,
+    get_arrow_pos(NULL, 0, type == PATH_TYPE_LINE,
 		  width, headlen, headwidth,
 		  x3, y3, x2, y2, ap2);
   }

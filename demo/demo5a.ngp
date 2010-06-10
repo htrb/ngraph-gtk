@@ -7,14 +7,14 @@ text::font="HelveticaBold"
 text::text="Demo #5A: ARROW"
 #
 new path type=line
-put path points="4000 8000 4000 12000"
+put path points="4000 7000 4000 12000"
 put path width=500
 put path arrow=both
 put path arrow_length=36213
 put path arrow_width=30000
 #
 new path type=line
-put path points="7000 8000 15000 12000"
+put path points="7000 7000 15000 12000"
 put path style="600 300 200 300"
 put path arrow_length=36213
 put path arrow_width=30000
@@ -22,7 +22,7 @@ put path width=500
 put path arrow=begin
 #
 new path type=line
-put path points="7000 12000 15000 8000"
+put path points="7000 12000 15000 7000"
 put path style="600 300 200 300"
 put path arrow_length=36213
 put path arrow_width=30000
@@ -32,7 +32,7 @@ put path arrow=end
 for i in `seq 4 2 18`
 do
   new path type=line
-  put path points="10000 18000 ${i}000 13500"
+  put path points="10000 18000 ${i}000 12500"
   put path width=${i}0
   put path arrow=end
 done
@@ -42,7 +42,7 @@ do
   new path type=line
   put path arrow_length=80000
   put path arrow_width=160000
-  put path points="10000 18000 ${i}000 22500"
+  put path points="10000 18000 ${i}000 23500"
   put path width=${i}0
   put path arrow=end
 done
