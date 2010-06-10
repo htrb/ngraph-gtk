@@ -1,3 +1,9 @@
+2010-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (graph_modified_sub): call "set_modified_state()".
+
+	* src/gtk/x11menu.c (set_modified_state): add.
+
 2010-06-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oarc.c (arcinit): initialize fields "miter_limit", "join"

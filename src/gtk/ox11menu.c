@@ -1818,6 +1818,7 @@ graph_modified_sub(int a)
 
   putobj(Menulocal.obj, "modified", 0, &a);
   SetCaption(a);
+  set_modified_state(a);
 }
 
 void

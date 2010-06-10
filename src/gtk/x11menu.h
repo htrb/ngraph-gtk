@@ -288,5 +288,6 @@ int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist 
 void update_addin_menu(void);
 int check_focused_obj_type(struct Viewer *d, int *type);
 void set_axis_undo_button_sensitivity(int state);
+void set_modified_state(int state);
 
 #endif

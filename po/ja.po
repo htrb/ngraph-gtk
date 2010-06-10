@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-06-04 16:51+0900\n"
+"POT-Creation-Date: 2010-06-09 17:40+0900\n"
 "PO-Revision-Date: 2010-06-03 19:13+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1897,15 +1897,15 @@ msgstr "クロスゲージ(_G)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2621
+#: src/gtk/x11menu.c:2628
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2671
+#: src/gtk/x11menu.c:2678
 msgid "Question"
 msgstr "質問:"
 
-#: src/gtk/x11menu.c:2728
+#: src/gtk/x11menu.c:2735
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."

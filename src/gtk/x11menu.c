@@ -68,14 +68,14 @@ static int Toggle_cb_disable = FALSE, DrawLock = FALSE;
 static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
-  *ShowInfoWin = NULL, *RecentData = NULL,
+  *ShowInfoWin = NULL, *RecentData = NULL, *SaveMenuItem = NULL,
   *AddinMenu = NULL, *ExtDrvOutMenu = NULL, *EditCut = NULL,
   *EditCopy = NULL, *EditPaste = NULL, *EditDelete = NULL,
   *RotateCW = NULL, *RotateCCW = NULL, *FlipH = NULL, *FlipV = NULL,
   *EditAlign = NULL, *ToggleStatusBar = NULL, *ToggleScrollbar = NULL,
   *ToggleRuler = NULL, *TogglePToobar = NULL, *ToggleCToobar = NULL,
   *ToggleCrossGauge = NULL, *MathBtn = NULL, *AxisUndoBtn = NULL,
-  *AxisUndoMenuItem = NULL;
+  *AxisUndoMenuItem = NULL, *SaveBtn = NULL;
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
@@ -213,7 +213,7 @@ static struct command_data Command1_data[] = {
     GTK_STOCK_SAVE,
     0,
     NULL,
-    NULL,
+    &SaveBtn,
   },
   {NULL},
   {
@@ -894,7 +894,7 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
 
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
 
-  create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);
+  SaveMenuItem = create_menu_item(menu, GTK_STOCK_SAVE, TRUE, "<Ngraph>/Graph/Save",  GDK_s, GDK_CONTROL_MASK, CmGraphMenu, MenuIdGraphOverWrite);
   create_menu_item(menu, GTK_STOCK_SAVE_AS, TRUE, "<Ngraph>/Graph/SaveAs",  GDK_s, GDK_CONTROL_MASK | GDK_SHIFT_MASK, CmGraphMenu, MenuIdGraphSave);
   item = gtk_menu_item_new_with_mnemonic(_("_Export image"));
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
@@ -2236,6 +2236,13 @@ change_window_state_cb(GtkWidget *widget, GdkEventWindowState *event, gpointer u
   return FALSE;
 }
 #endif
+
+void
+set_modified_state(int state)
+{
+  gtk_widget_set_sensitive(SaveMenuItem, state);
+  gtk_widget_set_sensitive(SaveBtn, state);
+}
 
 int
 application(char *file)
