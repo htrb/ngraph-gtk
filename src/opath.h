@@ -1,0 +1,9 @@
+#ifndef OPATH_HEADER
+#define OPATH_HEADER
+
+enum PATH_TYPE {
+  PATH_TYPE_LINE,
+  PATH_TYPE_CURVE,
+};
+
+#endif
