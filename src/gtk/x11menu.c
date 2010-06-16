@@ -207,7 +207,7 @@ static struct command_data Command1_data[] = {
     CmGraphSaveB,
     N_("Save"),
     N_("Save NGP"),
-    N_("Save NGP file "), 
+    N_("Save NGP file"),
     //    Save_xpm,
     NULL,
     GTK_STOCK_SAVE,

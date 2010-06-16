@@ -370,15 +370,10 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
     set_sensitive_with_label(d->fill_color, a);
-  }
 
-  if (d->path_type && d->fill_rule && d->fill_color) {
-    int a;
-
-    widget = get_widget(d->fill_rule);
-    a = combo_box_get_active(widget);
-
-    set_sensitive_with_label(d->fill_color, a);
+    if (d->fill_rule) {
+      set_sensitive_with_label(d->fill_rule, a);
+    }
   }
 }
 
@@ -405,7 +400,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     {d->angle1, "angle1"},
     {d->angle2, "angle2"},
     {d->fill, "fill"},
-    {d->fill_rule, "fill"},
+    {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
     {d->arrow, "arrow"},
     {d->pieslice, "pieslice"},
@@ -531,7 +526,7 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->angle1, "angle1"},
     {d->angle2, "angle2"},
     {d->fill, "fill"},
-    {d->fill_rule, "fill"},
+    {d->fill_rule, "fill_rule"},
     {d->raw, "raw"},
     {d->arrow, "arrow"},
     {d->pieslice, "pieslice"},
@@ -1159,13 +1154,16 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = combo_box_create();
-    add_widget_to_table(table, w, _("_Fill:"), FALSE, i++);
-    g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
-    d->fill_rule = w;
+    d->fill_rule = add_widget_to_table(table, w, _("fill _Rule:"), FALSE, i++);
 
     fill_color_setup(d, table, i++);
 
-    frame = gtk_frame_new(_("Fill"));
+    w = gtk_check_button_new_with_mnemonic(_("_Fill"));
+    g_signal_connect(w, "toggled", G_CALLBACK(legend_dialog_set_sensitive), d);
+    d->fill = w;
+
+    frame = gtk_frame_new(NULL);
+    gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
 

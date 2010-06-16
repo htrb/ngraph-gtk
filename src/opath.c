@@ -51,10 +51,31 @@ static char *patherrorlist[]={
 #define ERRNUM (sizeof(patherrorlist) / sizeof(*patherrorlist))
 
 static char *path_fill_mode[]={
-  N_("empty"),
+  "false",
+  "true",
+  "\0empty",                   /* for backward compatibility */
+  "\0even_odd_rule",           /* for backward compatibility */
+  "\0winding_rule",            /* for backward compatibility */
+  NULL,
+};
+
+enum PATH_FUILL_MODE {
+  PATH_FILL_MODE_TRUE,
+  PATH_FILL_MODE_FALSE,
+  PATH_FILL_MODE_EMPTY,
+  PATH_FILL_MODE_EVEN_ODD,
+  PATH_FILL_MODE_WINDING,
+};
+
+static char *path_fill_rule[]={
   N_("even_odd_rule"),
   N_("winding_rule"),
   NULL,
+};
+
+enum PATH_FUILL_RULE {
+  PATH_FILL_RULE_EVEN_ODD,
+  PATH_FILL_RULE_WINDING,
 };
 
 static char *path_type[]={
@@ -399,12 +420,12 @@ curve_clear(struct objlist *obj,char *inst)
 }
 
 static void
-get_arrow_pos(int *points2, int n, int strict,
+get_arrow_pos(int *points2, int n,
 	      int width, int headlen, int headwidth,
 	      int x0, int y0, int x1, int y1, int *ap)
 {
   int ax0, ay0, ox, oy;
-  double alen, awidth, len, dx, dy;
+  double alen,  alen2, awidth, len, dx, dy;
 
   alen = width * (double) headlen / 10000;
   awidth = width * (double) headwidth / 20000;
@@ -416,12 +437,17 @@ get_arrow_pos(int *points2, int n, int strict,
   dy /= len;
   ax0 = nround(x0 - dx * alen);
   ay0 = nround(y0 - dy * alen);
+  alen2 = alen * width / awidth / 2;
 
-  if (strict) {
+  if (len >= alen2) {
     ox = oy = 0;
+    if (points2) {
+      points2[n]     = nround(x0 - dx * alen2);
+      points2[n + 1] = nround(y0 - dy * alen2);
+    }
   } else {
-    ox = nround(dx * alen * width / awidth / 2);
-    oy = nround(dy * alen * width / awidth / 2);
+    ox = nround(dx * alen2);
+    oy = nround(dy * alen2);
   }
   ax0 += ox;
   ay0 += oy;
@@ -432,35 +458,108 @@ get_arrow_pos(int *points2, int n, int strict,
   ap[3] = y0 + nround(oy);
   ap[4] = nround(ax0 + dy * awidth);
   ap[5] = nround(ay0 - dx * awidth);
+}
 
-  if (points2 && strict) {
-    double alen2;
+static void
+draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, int num)
+{
+  int width, fr, fg, fb, headlen, headwidth, intp;
+  int join, miter, head;
+  int x, y, x0, y0, x1, y1, x2, y2, x3, y3, close_path;
+  struct narray *style;
+  int snum, *sdata;
+  int i;
+  int ap[6], ap2[6];
 
-    alen2 = alen - 10;
-    if (alen2 < 0) {
-      alen2 = 0;
-    }
+  _getobj(obj, "stroke_R", inst, &fr);
+  _getobj(obj, "stroke_G", inst, &fg);
+  _getobj(obj, "stroke_B", inst, &fb);
 
-    points2[n]     = nround(x0 - dx * alen2);
-    points2[n + 1] = nround(y0 - dy * alen2);
+  _getobj(obj, "close_path",   inst, &close_path);
+  _getobj(obj, "width",        inst, &width);
+  _getobj(obj, "style",        inst, &style);
+  _getobj(obj, "join",         inst, &join);
+  _getobj(obj, "miter_limit",  inst, &miter);
+  _getobj(obj, "arrow",        inst, &head);
+  _getobj(obj, "arrow_length", inst, &headlen);
+  _getobj(obj, "arrow_width",  inst, &headwidth);
+
+  snum = arraynum(style);
+  sdata = arraydata(style);
+
+  GRAcolor(GC, fr, fg, fb);
+  GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
+
+  x0 = points2[0];
+  y0 = points2[1];
+  x1 = points2[2];
+  y1 = points2[3];
+  x2 = points2[2 * num - 4];
+  y2 = points2[2 * num - 3];
+  x3 = points2[2 * num - 2];
+  y3 = points2[2 * num - 1];
+
+  if (head == ARROW_POSITION_BEGIN || head == ARROW_POSITION_BOTH) {
+    get_arrow_pos(points2, 0,
+		  width, headlen, headwidth,
+		  x0, y0, x1, y1, ap);
   }
+
+  if (head == ARROW_POSITION_END || head == ARROW_POSITION_BOTH) {
+    get_arrow_pos(points2, num * 2 - 2,
+		  width, headlen, headwidth,
+		  x3, y3, x2, y2, ap2);
+  }
+
+  if (num > 2 && 
+      (close_path ||
+       intp == INTERPOLATION_TYPE_SPLINE_CLOSE ||
+       intp == INTERPOLATION_TYPE_BSPLINE_CLOSE)) {
+    GRAdrawpoly(GC, num, pdata, 0);
+  } else {
+    x = points2[0];
+    y = points2[1];
+
+    GRAmoveto(GC, x, y);
+    for (i = 1; i < num; i++) {
+      x = points2[i * 2];
+      y = points2[i * 2 + 1];
+      GRAlineto(GC, x, y);
+    }
+  }
+
+  if (head == ARROW_POSITION_BEGIN || head == ARROW_POSITION_BOTH) {
+    GRAlinestyle(GC, 0, NULL, 1, 0, join, miter);
+    GRAdrawpoly(GC, 3, ap, 1);
+  }
+
+  if (head == ARROW_POSITION_END || head == ARROW_POSITION_BOTH) {
+    GRAlinestyle(GC, 0, NULL, 1, 0, join, miter);
+    GRAdrawpoly(GC, 3, ap2, 1);
+  }
+}
+
+static void
+draw_fill(struct objlist *obj, char *inst, int GC, int *points2, int num)
+{
+  int br, bg, bb, fill_rule;
+
+  _getobj(obj, "fill_rule", inst, &fill_rule);
+  _getobj(obj, "fill_R",    inst, &br);
+  _getobj(obj, "fill_G",    inst, &bg);
+  _getobj(obj, "fill_B",    inst, &bb);
+
+  GRAcolor(GC, br, bg, bb);
+  GRAdrawpoly(GC, num, points2, fill_rule + 1);
 }
 
 static int 
 arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int GC;
-  int width, fr, fg, fb, br, bg, bb, lm, tm, w, h, headlen, headwidth, intp;
-  int join, miter, head;
-  struct narray *style;
-  int snum, *sdata;
-  int i, j, num;
+  int GC, lm, tm, w, h, intp, i, j, num;
   struct narray *points;
-  int *points2;
-  int *pdata;
-  int x, y, x0, y0, x1, y1, x2, y2, x3, y3, type, close_path, stroke, fill;
-  int clip, zoom;
-  int ap[6], ap2[6];
+  int *points2, *pdata;
+  int x0, y0, x1, y1, type, stroke, fill, clip, zoom;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
@@ -471,30 +570,14 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 0;
   }
 
-  _getobj(obj, "type", inst, &type);
-
   _getobj(obj, "stroke", inst, &stroke);
   _getobj(obj, "fill",   inst, &fill);
   if (fill == 0 && stroke == 0) {
     return 0;
   }
 
-  _getobj(obj, "stroke_R", inst, &fr);
-  _getobj(obj, "stroke_G", inst, &fg);
-  _getobj(obj, "stroke_B", inst, &fb);
-  _getobj(obj, "fill_R",   inst, &br);
-  _getobj(obj, "fill_G",   inst, &bg);
-  _getobj(obj, "fill_B",   inst, &bb);
-
-  _getobj(obj, "close_path",   inst, &close_path);
-  _getobj(obj, "width",        inst, &width);
-  _getobj(obj, "style",        inst, &style);
-  _getobj(obj, "join",         inst, &join);
-  _getobj(obj, "miter_limit",  inst, &miter);
-  _getobj(obj, "arrow",        inst, &head);
-  _getobj(obj, "arrow_length", inst, &headlen);
-  _getobj(obj, "arrow_width",  inst, &headwidth);
-  _getobj(obj, "clip",         inst, &clip);
+  _getobj(obj, "type", inst, &type);
+  _getobj(obj, "clip", inst, &clip);
 
   if (type == PATH_TYPE_CURVE) {
     _getobj(obj, "interpolation", inst, &intp);
@@ -506,8 +589,6 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     _getobj(obj, "points", inst, &points);
   }
 
-  snum = arraynum(style);
-  sdata = arraydata(style);
   num = arraynum(points) / 2;
   pdata = arraydata(points);
 
@@ -538,61 +619,11 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, clip);
 
   if (fill) {
-    GRAcolor(GC, br, bg, bb);
-    GRAdrawpoly(GC, num, points2, fill);
+    draw_fill(obj, inst, GC, points2, num);
   }
 
   if (stroke) {
-    GRAcolor(GC, fr, fg, fb);
-    GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
-
-    x0 = points2[0];
-    y0 = points2[1];
-    x1 = points2[2];
-    y1 = points2[3];
-    x2 = points2[2 * num - 4];
-    y2 = points2[2 * num - 3];
-    x3 = points2[2 * num - 2];
-    y3 = points2[2 * num - 1];
-
-    if (head == ARROW_POSITION_BEGIN || head == ARROW_POSITION_BOTH) {
-      get_arrow_pos(points2, 0, type == PATH_TYPE_LINE,
-		    width, headlen, headwidth,
-		    x0, y0, x1, y1, ap);
-    }
-
-    if (head == ARROW_POSITION_END || head == ARROW_POSITION_BOTH) {
-      get_arrow_pos(points2, num * 2 - 2, type == PATH_TYPE_LINE,
-		    width, headlen, headwidth,
-		    x3, y3, x2, y2, ap2);
-    }
-
-    if (num > 2 && 
-	(close_path ||
-	 intp == INTERPOLATION_TYPE_SPLINE_CLOSE ||
-	 intp == INTERPOLATION_TYPE_BSPLINE_CLOSE)) {
-      GRAdrawpoly(GC, num, pdata, 0);
-    } else {
-      x = points2[0];
-      y = points2[1];
-
-      GRAmoveto(GC, x, y);
-      for (i = 1; i < num; i++) {
-	x = points2[i * 2];
-	y = points2[i * 2 + 1];
-	GRAlineto(GC, x, y);
-      }
-    }
-
-    if (head == ARROW_POSITION_BEGIN || head == ARROW_POSITION_BOTH) {
-      GRAlinestyle(GC, 0, NULL, 1, 0, join, miter);
-      GRAdrawpoly(GC, 3, ap, 1);
-    }
-
-    if (head == ARROW_POSITION_END || head == ARROW_POSITION_BOTH) {
-      GRAlinestyle(GC, 0, NULL, 1, 0, join, miter);
-      GRAdrawpoly(GC, 3, ap2, 1);
-    }
+    draw_stroke(obj, inst, GC, points2, pdata, num);
   }
 
   g_free(points2);
@@ -679,13 +710,13 @@ arrowbbox(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   g_free(points2);
 
   if (head==ARROW_POSITION_BEGIN || head==ARROW_POSITION_BOTH) {
-    get_arrow_pos(NULL, 0, type == PATH_TYPE_LINE,
+    get_arrow_pos(NULL, 0,
 		  width, headlen, headwidth,
 		  x0, y0, x1, y1, ap);
   }
 
   if (head==ARROW_POSITION_END || head==ARROW_POSITION_BOTH) {
-    get_arrow_pos(NULL, 0, type == PATH_TYPE_LINE,
+    get_arrow_pos(NULL, 0,
 		  width, headlen, headwidth,
 		  x3, y3, x2, y2, ap2);
   }
@@ -920,6 +951,37 @@ curve_change(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   return legendchange(obj, inst, rval, argc, argv);
 }
 
+static int 
+put_fill_mode(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int mode, rule;
+
+  mode = * (int *) argv[2];
+  switch (mode) {
+  case PATH_FILL_MODE_TRUE:
+    break;
+  case PATH_FILL_MODE_FALSE:
+    break;
+  case PATH_FILL_MODE_EMPTY:
+    * (int *) argv[2] = FALSE;
+    break;
+  case PATH_FILL_MODE_EVEN_ODD:
+    * (int *) argv[2] = TRUE;
+    rule = PATH_FILL_RULE_EVEN_ODD;
+    _putobj(obj, "fill_rule", inst, &rule);
+    break;
+  case PATH_FILL_MODE_WINDING:
+    * (int *) argv[2] = TRUE;
+    rule = PATH_FILL_RULE_WINDING;
+    _putobj(obj, "fill_rule", inst, &rule);
+    break;
+  default:
+    * (int *) argv[2] = FALSE;
+  }
+
+  return legendgeometry(obj, inst, rval, argc, argv);
+}
+
 static struct objtable arrow[] = {
   {"init", NVFUNC, NEXEC, arrowinit, NULL, 0},
   {"done", NVFUNC, NEXEC, arrowdone, NULL, 0},
@@ -940,7 +1002,8 @@ static struct objtable arrow[] = {
   {"stroke_G", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
   {"stroke_B", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
 
-  {"fill", NENUM, NREAD|NWRITE, NULL, path_fill_mode, 0},
+  {"fill", NENUM, NREAD|NWRITE, put_fill_mode, path_fill_mode, 0},
+  {"fill_rule", NENUM, NREAD|NWRITE, NULL, path_fill_rule, 0},
   {"stroke", NBOOL, NREAD|NWRITE, NULL, NULL, 0},
   {"close_path", NBOOL, NREAD|NWRITE, NULL, NULL, 0},
   {"width", NINT, NREAD|NWRITE, arrowput, NULL, 0},

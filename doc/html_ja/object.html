@@ -1328,8 +1328,8 @@ alias: line:curve:polygon
 version: 1.00.01
 parent: legend
 object id: 31
-number of fields: 44
-size of instance: 320
+number of fields: 45
+size of instance: 328
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1353,7 +1353,8 @@ rw-           fill_B    int
 rw-         stroke_R    int
 rw-         stroke_G    int
 rw-         stroke_B    int
-rw-             fill    enum( empty even_odd_rule winding_rule )
+rw-             fill    enum( false true )
+rw-        fill_rule    enum( even_odd_rule winding_rule )
 rw-           stroke    bool
 rw-       close_path    bool
 rw-            width    int

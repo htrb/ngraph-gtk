@@ -1,3 +1,26 @@
+2010-06-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/opath.c (path_fill_mode): "fill" field accept "true" or
+	"false" .
+	(PATH_FUILL_MODE, path_fill_rule, PATH_FILL_RULE): add.
+	(draw_stroke, draw_fill): add.
+	(arrowdraw): use "draw_stroke()" and "draw_fill()".
+	(put_fill_mode): add.
+	(arrow): use "put_fill_mode()" for "fill" field.
+	(arrow): add "fill_rule" field.
+
+	* src/gtk/x11lgnd.c (legend_dialog_set_sensitive): sensitivity of
+	the widget "d->fill_rule" is depend on the widget "d->fill".
+	(legend_dialog_setup_item, legend_dialog_close): field name for
+	the widget "d->fill_rule" is "fill_rule".
+	(LegendArrowDialogSetup): add widget "d->fill".
+
+2010-06-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/opath.c (get_arrow_pos): remove parameter "strict".
+	(arrowdraw, arrowbbox): remove 3rd argument of the function
+	"get_arrow_pos()".
+
 2010-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/opath.c (get_arrow_pos): add strict mode.
