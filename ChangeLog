@@ -1,3 +1,9 @@
+2010-06-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/opath.c (distance, check_point_match, point_match): add.
+	(curvematch): use "point_match()".
+	(get_arrow_pos): use "distance()".
+
 2010-06-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/opath.c (path_fill_mode): "fill" field accept "true" or

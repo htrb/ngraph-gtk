@@ -419,6 +419,12 @@ curve_clear(struct objlist *obj,char *inst)
   arrayclear(expand_points);
 }
 
+static double
+distance(double x1, double y1)
+{
+  return sqrt(x1 * x1 + y1 * y1);
+}
+
 static void
 get_arrow_pos(int *points2, int n,
 	      int width, int headlen, int headwidth,
@@ -432,7 +438,7 @@ get_arrow_pos(int *points2, int n,
 
   dx = x0 - x1;
   dy = y0 - y1;
-  len = sqrt(dx * dx + dy * dy);
+  len = distance(dx, dy);
   dx /= len;
   dy /= len;
   ax0 = nround(x0 - dx * alen);
@@ -798,18 +804,97 @@ set_points(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return legendgeometry(obj, inst, rval, argc, argv);
 }
 
-static int 
-curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+static int
+check_point_match(int i, int j, int *pdata, int err, int x, int y)
 {
-  int minx,miny,maxx,maxy,err;
-  int bminx,bminy,bmaxx,bmaxy;
-  int i,num, fill, stroke, type;
-  struct narray *array;
+  double x1, y1, x2, y2, r, ip;
+
+  x1 = pdata[i * 2];
+  y1 = pdata[i * 2 + 1];
+  x2 = pdata[j * 2];
+  y2 = pdata[j * 2 + 1];
+
+  r = distance(x - x1, y - y1);
+  if (r <= err) {
+    return TRUE;
+  }
+
+  r = distance(x - x2, y - y2);
+  if (r <= err) {
+    return TRUE;
+  }
+
+  r = distance(x1 - x2, y1 - y2);
+  if (r == 0) {
+    return FALSE;
+  }
+
+  ip = ((x2 - x1) * (x - x1) + (y2 - y1) * (y - y1)) / r;
+  if (ip < 0 || ip > r) {
+    return FALSE;
+  }
+
+  x2 = x1 + (x2 - x1) * ip / r;
+  y2 = y1 + (y2 - y1) * ip / r;
+  r = distance(x - x2, y - y2);
+  if (r <= err) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static int
+point_match(struct objlist *obj, char *inst, int type, int fill, int err, int x, int y)
+{
   struct narray *points;
-  int *pdata;
-  int intp;
-  double x1, y1, x2, y2;
-  double r1, r2, r3, ip;
+  int *pdata, num, r, i;
+
+  if (type == PATH_TYPE_CURVE) {
+    int intp;
+
+    _getobj(obj, "interpolation", inst, &intp);
+    _getobj(obj, "_points", inst, &points);
+    if (arraynum(points) == 0) {
+      curve_expand_points(obj, inst, intp, points);
+    }
+  } else {
+    _getobj(obj, "points", inst, &points);
+  }
+
+  num = arraynum(points) / 2;
+  pdata = arraydata(points);
+  if (num == 0 || pdata == NULL) {
+    return FALSE;
+  }
+
+  r = FALSE;
+  for (i = 0; i < num - 1; i++) {
+    r = check_point_match(i, i + 1, pdata, err, x, y);
+    if (r) {
+      break;
+    }
+  }
+
+  if (r == FALSE) {
+    int close_path;
+
+    _getobj(obj, "close_path", inst, &close_path);
+    if (fill || close_path) {
+      r = check_point_match(0, num - 1, pdata, err, x, y);
+    }
+  }
+
+  return r;
+}
+
+static int 
+curvematch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+{
+  int minx, miny, maxx, maxy, err;
+  int bminx, bminy, bmaxx, bmaxy;
+  int fill, stroke, type;
+  struct narray *array;
 
   * (int *) rval = FALSE;
 
@@ -829,45 +914,9 @@ curvematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   maxx = * (int *) argv[4];
   maxy = * (int *) argv[5];
   err  = * (int *) argv[6];
+
   if (minx == maxx && miny == maxy) {
-    if (type == PATH_TYPE_CURVE) {
-      _getobj(obj, "interpolation", inst, &intp);
-      _getobj(obj, "_points", inst, &points);
-      if (arraynum(points) == 0) {
-	curve_expand_points(obj, inst, intp, points);
-      }
-    } else {
-      _getobj(obj, "points", inst, &points);
-    }
-
-    num = arraynum(points) / 2;
-    pdata = arraydata(points);
-
-    for (i = 0; i < num - 1; i++) {
-      x1 = pdata[i * 2];
-      y1 = pdata[i * 2 + 1];
-      x2 = pdata[i * 2 + 2];
-      y2 = pdata[i * 2 + 3];
-      r2 = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-      r1 = sqrt((minx - x1) * (minx - x1) + (miny - y1) * (miny - y1));
-      r3 = sqrt((minx - x2) * (minx - x2) + (miny - y2) * (miny - y2));
-      if (r1 <= err || r3 < err) {
-        * (int *)rval = TRUE;
-        break;
-      }
-      if (r2) {
-        ip = ((x2 - x1) * (minx - x1) + (y2 - y1) * (miny - y1)) / r2;
-        if (0 <= ip && ip <= r2) {
-          x2 = x1 + (x2 - x1) * ip / r2;
-          y2 = y1 + (y2 - y1) * ip / r2;
-          r1 = sqrt((minx - x2) * (minx - x2) + (miny - y2) * (miny - y2));
-          if (r1 < err) {
-            * (int *) rval = TRUE;
-            break;
-          }
-        }
-      }
-    }
+    * (int *) rval = point_match(obj, inst, type, fill, err, minx, miny);
   } else {
     if (_exeobj(obj, "bbox", inst, 0, NULL)) {
       return 1;
