@@ -1260,16 +1260,12 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
   g_free(s);
 
   if (ecode) {
-#if NEW_MATH_CODE
     if (err_msg) {
       printfstderr("shell: %s\n", err_msg);
       g_free(err_msg);
     } else {
       sherror4(argv[0],ecode);
     }
-#else
-    sherror4(argv[0],ecode);
-#endif
     return ecode;
   }
 

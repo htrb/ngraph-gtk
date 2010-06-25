@@ -1,25 +1,4 @@
-/* 
- * $Id: oaxis.c,v 1.49 2010-02-18 06:38:50 hito Exp $
- * 
- * This file is part of "Ngraph for X11".
- * 
- * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
- * "Ngraph for X11" is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * "Ngraph for X11" is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- */
+/* --*-coding:utf-8-*-- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -186,7 +165,7 @@ static struct obj_config AxisConfig[] = {
   {"num_format", OBJ_CONFIG_TYPE_STRING},
   {"num_tail", OBJ_CONFIG_TYPE_STRING},
   {"num_font", OBJ_CONFIG_TYPE_STRING},
-  {"num_jfont", OBJ_CONFIG_TYPE_STRING},
+  {"num_font_style", OBJ_CONFIG_TYPE_NUMERIC},
 
   {"style", OBJ_CONFIG_TYPE_STYLE},
   {"gauge_style", OBJ_CONFIG_TYPE_STYLE},
@@ -246,7 +225,7 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
   int autonorm,num,gnum;
-  char *font,*jfont,*format,*group,*name, buf[256];
+  char *font,*format,*group,*name, buf[256];
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   width=40;
@@ -288,19 +267,15 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"num_log_pow",inst,&logpow)) return 1;
   if (_putobj(obj,"num_num",inst,&num)) return 1;
 
-  format = font = jfont = group = name = NULL;
+  format = font = group = name = NULL;
 
   format = g_strdup("%g");
   if (format == NULL) goto errexit;
   if (_putobj(obj,"num_format",inst,format)) goto errexit;
 
-  font = g_strdup(fontchar[4]);
+  font = g_strdup(fontchar[0]);
   if (font == NULL) goto errexit;
   if (_putobj(obj,"num_font",inst,font)) goto errexit;
-
-  jfont = g_strdup(jfontchar[1]);
-  if (jfont == NULL) goto errexit;
-  if (_putobj(obj,"num_jfont",inst,jfont)) goto errexit;
 
   gnum = axisuniqgroup(obj,'a');
   snprintf(buf, sizeof(buf), "a_%d",gnum);
@@ -319,7 +294,6 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 errexit:
   g_free(format);
   g_free(font);
-  g_free(jfont);
   g_free(group);
   g_free(name);
   return 1;
@@ -1592,8 +1566,8 @@ get_num_pos_oblique(int align, int plen, double nndir, int fx0, int fy0, int fx1
 }
 
 struct font_config {
-  char *font, *jfont;
-  int pt, space, scriptsize;
+  char *font;
+  int style, pt, space, scriptsize;
 };
 
 struct axis_config {
@@ -1964,7 +1938,7 @@ numformat(char **text, int *nlen, const char *format,
 {
   int i, j, len, ret, lpow;
   char *s;
-  char num[256], format2[256], pm[] = "\\xb1";
+  char num[256], format2[256], pm[] = "±";
   double a;
 
   *text = NULL;
@@ -2026,12 +2000,12 @@ draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
 
   if (norm/pow(10.0,cutdown(log10(norm)))==1) {
     //          sprintf(num,"[%%F{Symbol}%c%%F{%s}10^%+d@]", (char )0xb4,font,(int )cutdown(log10(norm)));
-    snprintf(num, sizeof(num), "[\\xd710^%+d@]", (int )cutdown(log10(norm)));
+    snprintf(num, sizeof(num), "[×10^%+d@]", (int )cutdown(log10(norm)));
   } else {
     //          sprintf(num,"[%g%%F{Symbol}%c%%F{%s}10^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (char )0xb4,font,(int )cutdown(log10(norm)));
-    snprintf(num, sizeof(num), "[%g\\xd710^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (int )cutdown(log10(norm)));
+    snprintf(num, sizeof(num), "[%g×10^%+d@]", norm/pow(10.0,cutdown(log10(norm))), (int )cutdown(log10(norm)));
   }
-  GRAtextextent(num,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+  GRAtextextent(num,font->font, font->style, font->pt, font->space, font->scriptsize,
 		&fx0,&fy0,&fx1,&fy1,FALSE);
 
   if (abs(fy1-fy0)>maxlen)
@@ -2088,7 +2062,7 @@ draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
     break;
   }
   GRAmoveto(GC,gx0-px1,gy0-py1);
-  GRAdrawtext(GC,num,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
+  GRAdrawtext(GC,num,font->font,font->style,font->pt,font->space,ndirection,font->scriptsize);
 
   return 0;
 }
@@ -2220,16 +2194,16 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	    }
 	    ch=text[i];
 	    text[i]='\0';
-	    GRAtextextent(text,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+	    GRAtextextent(text,font->font, font->style, font->pt, font->space, font->scriptsize,
 			  &fx0,&fy0,&fx1,&fy1,FALSE);
 	    if (abs(fx1-fx0)>ilenmax) ilenmax=abs(fx1-fx0);
 	    text[i]=ch;
-	    GRAtextextent(text,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+	    GRAtextextent(text,font->font, font->style, font->pt, font->space, font->scriptsize,
 			  &px0,&py0,&px1,&py1,FALSE);
 	    if (py0<fy0) fy0=py0;
 	    if (py1>fy1) fy1=py1;
 	  } else {
-	    GRAtextextent(text,font->font, font->jfont, font->pt, font->space, font->scriptsize,
+	    GRAtextextent(text,font->font, font->style, font->pt, font->space, font->scriptsize,
 			  &fx0,&fy0,&fx1,&fy1,FALSE);
 	  }
 	  switch (ndir) {
@@ -2258,7 +2232,7 @@ draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
 	  }
 	  if (draw) {
 	    GRAmoveto(GC,gx0-px1,gy0-py1);
-	    GRAdrawtext(GC,text,font->font,font->jfont,font->pt,font->space,ndirection,font->scriptsize);
+	    GRAdrawtext(GC,text,font->font,font->style,font->pt,font->space,ndirection,font->scriptsize);
 	  } else {
 	    printfstdout("%5d %5d %5d %.14E %.14E\n", gx0 - px1, gy0 - py1, ndirection, value, po);
 	  }
@@ -2396,7 +2370,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   _getobj(obj, "num_align", inst, &align);
   _getobj(obj, "num_no_zero", inst, &nozero);
   _getobj(obj, "num_font", inst, &font.font);
-  _getobj(obj, "num_jfont", inst, &font.jfont);
+  _getobj(obj, "num_font_style", inst, &font.style);
   _getobj(obj, "num_direction",inst, &ndir);
 
   GRAcolor(GC, fr, fg, fb);
@@ -2435,7 +2409,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
     return 1;
   }
 
-  GRAtextextent(".", font.font, font.jfont, font.pt, font.space, font.scriptsize,
+  GRAtextextent(".", font.font, font.style, font.pt, font.space, font.scriptsize,
 		&fx0, &fy0, &fx1, &fy1, FALSE);
   plen = abs(fx1 - fx0);
   hx0 = hy0 = hx1 = hy1 = 0;
@@ -2468,7 +2442,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 	    }
 	  }
 	  if (text[i] == '.') {
-	    GRAtextextent(text + i + 1, font.font, font.jfont, font.pt, font.space, font.scriptsize,
+	    GRAtextextent(text + i + 1, font.font, font.style, font.pt, font.space, font.scriptsize,
 			  &fx0, &fy0, &fx1, &fy1, FALSE);
 	    hy0 = MIN(hy0, fy0);
 	    hy1 = MAX(hy1, fy1);
@@ -2477,7 +2451,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 	    }
 	  }
 	  text[i] = '\0';
-	  GRAtextextent(text, font.font, font.jfont, font.pt, font.space, font.scriptsize,
+	  GRAtextextent(text, font.font, font.style, font.pt, font.space, font.scriptsize,
 			&fx0, &fy0, &fx1, &fy1, FALSE);
 	  if (abs(fx1 - fx0) > ilenmax) {
 	    ilenmax = abs(fx1 - fx0);
@@ -2485,7 +2459,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 	  hy0 = MIN(hy0, fy0);
 	  hy1 = MAX(hy1, fy1);
 	} else {
-	  GRAtextextent(text, font.font, font.jfont, font.pt, font.space, font.scriptsize,
+	  GRAtextextent(text, font.font, font.style, font.pt, font.space, font.scriptsize,
 			&fx0, &fy0, &fx1, &fy1, FALSE);
 	  hx0 = MIN(hx0, fx0);
 	  hx1 = MAX(hx1, fx1);
@@ -3779,7 +3753,7 @@ static struct objtable axis[] = {
   {"num_pt",NINT,NREAD|NWRITE,axisput,NULL,0},
   {"num_space",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_font",NSTR,NREAD|NWRITE,NULL,NULL,0},
-  {"num_jfont",NSTR,NREAD|NWRITE,NULL,NULL,0},
+  {"num_font_style",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_script_size",NINT,NREAD|NWRITE,axisput,NULL,0},
   {"num_align",NENUM,NREAD|NWRITE,NULL,anumalignchar,0},
   {"num_no_zero",NBOOL,NREAD|NWRITE,NULL,NULL,0},
@@ -3814,6 +3788,9 @@ static struct objtable axis[] = {
   {"group_manager",NIFUNC,NREAD|NEXEC,axismanager,NULL,0},
   {"get_numbering",NVFUNC,NREAD|NEXEC,axis_get_numbering,NULL,0},
   {"save",NSFUNC,NREAD|NEXEC,axissave,"sa",0},
+
+  /* following fields exist for backward compatibility */
+  {"num_jfont",NSTR,NWRITE,NULL,NULL,0},
 };
 
 #define TBLNUM (sizeof(axis) / sizeof(*axis))

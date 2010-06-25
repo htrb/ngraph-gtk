@@ -4287,7 +4287,6 @@ ngraphenvironment(struct nshell *nshell)
 int
 str_calc(const char *str, double *val, int *r, char **err_msg)
 {
-#if NEW_MATH_CODE
   int ecode, rcode;
   static MathEquation *eq = NULL;
   MathValue value = {0, 0};
@@ -4331,64 +4330,6 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
   } else if (value.type == MATH_VALUE_UNDEF) {
     rcode = MUNDEF;
   }
-#else
-  int rcode, ecode = 0, i;
-  char *code;
-  double memory[MEMORYNUM];
-  char memorystat[MEMORYNUM];
-
-  if (err_msg) {
-    *err_msg = NULL;
-  }
-
-  if (str == NULL || val == NULL) {
-    return ERRMILLEGAL;
-  }
-
-  *val = 0;
-
-  rcode = mathcode(str, &code, NULL, NULL, NULL, NULL, 
-		   FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-		   FALSE, FALSE, FALSE, FALSE, FALSE);
-
-  if (rcode != MCNOERR) {
-    switch (rcode) {
-    case MCSYNTAX:
-      ecode = ERRMSYNTAX;
-      break;
-    case MCILLEGAL:
-      ecode = ERRMILLEGAL;
-      break;
-    case MCNEST:
-      ecode = ERRMNEST;
-      break;
-    default:
-      ecode = ERRUNKNOWNSH;
-    }
-    return ecode;
-  }
-  for (i = 0; i < MEMORYNUM; i++) {
-    memory[i] = 0;
-    memorystat[i] = MNOERR;
-  }
-  rcode = calculate(code, 1, 
-		    0, MNOERR, 0, MNOERR, 0, MNOERR, 
-		    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-		    NULL, NULL, 
-		    memory, memorystat, 
-		    NULL, NULL, 
-		    NULL, NULL, 
-		    NULL, NULL, NULL, 
-		    NULL, NULL, NULL, 0, NULL, NULL, NULL, 0, val);
-  g_free(code);
-
-  if (rcode == MSERR) {
-    ecode = ERRMSYNTAX;
-  } else if (rcode == MERR) {
-    ecode = ERRMFAT;
-  }
-
-#endif
 
   if (ecode) {
     return ecode;

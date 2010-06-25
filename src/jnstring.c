@@ -46,67 +46,6 @@ njms2jis(unsigned int code)
   return ((unsigned int)(dh << 8))+dl;
 }
 
-#ifdef COMPILE_UNUSED_FUNCTIONS
-static unsigned int 
-njis2jms(unsigned int code)
-{
-  unsigned char dh,dl;
-
-  dh=code >> 8;
-  dl=code & 0xffU;
-  if (dh & 0x1) dl+=0x1f;
-  else dl+=0x7d;
-  if (dl>=0x7f) dl++;
-  if (dh>=0x5f) {
-    dh-=0x5f;
-    dh=dh>>1;
-    dh+=0xe0;
-  } else {
-    dh-=0x21;
-    dh=dh>>1;
-    dh+=0x81;
-  }
-  return ((unsigned int)(dh << 8))+dl;
-}
-
-static void 
-njms2euc(char *s)
-{
-  unsigned int i, n;
-  unsigned int jis;
-
-  n = strlen(s);
-  for (i=0;i<n;i++) {
-    if (niskanji((unsigned char)s[i])) {
-      if (i+1<n) {
-        jis=njms2jis(((unsigned char)s[i] << 8)+(unsigned char)s[i+1]);
-        s[i]=(jis >> 8) | 0x80;
-        s[i+1]=(jis & 0xffU) | 0x80; 
-      } else s[i]=' ';
-      i++;
-    }
-  }
-}
-
-static void 
-neuc2jms(char *s)
-{
-  unsigned int i, n;
-  unsigned int jms;
-
-  n = strlen(s);
-  for (i=0;i<n;i++) {
-    if ((s[i] & 0x80) && (s[i+1] & 0x80)) {
-      jms=njis2jms((((unsigned char)s[i] << 8)
-                    +(unsigned char)s[i+1]) & 0x7f7f);
-      s[i]=jms >> 8;
-      s[i+1]=jms & 0xffU;
-      i++;
-    }
-  }
-}
-#endif /* COMPILE_UNUSED_FUNCTIONS */
-
 int 
 niskanji(unsigned char code)
 {
@@ -114,22 +53,3 @@ niskanji(unsigned char code)
       (0xe0 <= code)) return TRUE;
   return FALSE;
 }
-
-int 
-niskanji2(char *s,int pos)
-{
-  int k, l;
-
-  l = strlen(s);
-  if (pos >= l) {
-    return FALSE;
-  } else {
-    k=pos;
-    do {
-      k--;
-    } while ((k>=0) && niskanji((unsigned char)s[k]));
-    if ((pos-k)%2==1) return FALSE;
-    else return TRUE;
-  }
-}
-

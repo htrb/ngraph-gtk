@@ -75,26 +75,10 @@ char *joinchar[]={
 };
 
 char *fontchar[]={
-  "Times",
-  "TimesBold",
-  "TimesItalic",
-  "TimesBoldItalic",
-  "Helvetica",
-  "HelveticaBold",
-  "HelveticaOblique",
-  "HelveticaBoldOblique",
-  "Courier",
-  "CourierBold",
-  "CourierOblique",
-  "CourierBoldOblique",
-  "Symbol",
+  "Sans-serif",
+  "Serif",
+  "Monospace",
    NULL
-};
-
-char *jfontchar[]={
-  "Mincho",
-  "Gothic",
-  NULL
 };
 
 char *arrowchar[]={

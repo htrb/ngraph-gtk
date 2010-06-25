@@ -58,7 +58,6 @@ extern char *capchar[];
 extern char *joinchar[];
 extern char *fillchar[];
 extern char *fontchar[];
-extern char *jfontchar[];
 extern char *intpchar[];
 extern char *arrowchar[];
 

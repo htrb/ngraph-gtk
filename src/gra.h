@@ -50,6 +50,7 @@ struct GRAbbox {
   int clipsizex;
   int clipsizey;
   char *fontalias;
+  int font_style;
   int loadfont;
 };
 
@@ -76,6 +77,11 @@ struct cmatchtype {
   int bbox,bboxset;
   int match;
 };
+
+#define GRA_FONT_STYLE_NORMAL 0
+#define GRA_FONT_STYLE_BOLD   1
+#define GRA_FONT_STYLE_ITALIC 2
+
 
 extern struct greektbltype greektable[48];
 int _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
@@ -119,14 +125,14 @@ void GRAdrawpoly(int GC,int num,int *point,int fil);
 void GRAlines(int GC,int num,int *point);
 void GRAmark(int GC,int type,int x0,int y0,int size,
               int fr,int fg,int fb,int br,int bg,int bb);
-void GRAdrawtext(int GC,char *s,char *font,char *jfont,
-                 int size,int space,int dir,int scriptsize);
-void GRAdrawtextraw(int GC,char *s,char *font,char *jfont,
+void GRAdrawtext(int GC,char *s,char *font, int style,
+                 int size, int space, int dir, int scriptsize);
+void GRAdrawtextraw(int GC,char *s,char *font, int style,
                  int size,int space,int dir);
-void GRAtextextent(char *s,char *font,char *jfont,
+void GRAtextextent(char *s,char *font, int style, 
                  int size,int space,int scriptsize,
                  int *gx0,int *gy0,int *gx1,int *gy1,int raw);
-void GRAtextextentraw(char *s,char *font,char *jfont,
+void GRAtextextentraw(char *s,char *font, int style,
                  int size,int space,int *gx0,int *gy0,int *gx1,int *gy1);
 int GRAinput(int GC,char *s,int leftm,int topm,int rate);
 int GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek);
@@ -143,7 +149,7 @@ int GRAcmatch(double c[],double x0,double y0,struct cmatchtype *data);
 void GRAinitbbox(struct GRAbbox *bbox);
 void GRAendbbox(struct GRAbbox *bbox);
 int GRAboundingbox(char code,int *cpar,char *cstr,void *local);
-void GRAtextstyle(int GC,char *font,int size,int space,int dir);
+void GRAtextstyle(int GC,char *font,int style, int size,int space,int dir);
 void GRAouttext(int GC,char *s);
 int greektable_num(void);
 

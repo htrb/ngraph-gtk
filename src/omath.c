@@ -58,26 +58,15 @@ static char *matherrorlist[]={
 
 #define ERRNUM (sizeof(matherrorlist) / sizeof(*matherrorlist))
 
+#define MEMORYNUM 20
+
 struct mlocal {
   double x;
   double y;
   double z;
   double val;
   int maxdim;
-#if NEW_MATH_CODE
   MathEquation *code;
-#else
-  double memory[MEMORYNUM];
-  char memorystat[MEMORYNUM];
-  double sumdata[10];
-  char sumstat[10];
-  double difdata[10];
-  char difstat[10];
-  char *code;
-  char *ufcodef;
-  char *ufcodeg;
-  char *ufcodeh;
-#endif
   int rcode;
   int idpx;
   int idpy;
@@ -96,11 +85,7 @@ msettbl(char *inst,struct mlocal *mlocal)
   *(double *)(inst+mlocal->idpz)=mlocal->z;
 
   for (i = 0; i < MEMORYNUM; i++) {
-#if NEW_MATH_CODE
     *(double *)(inst + mlocal->idpm[i]) = mlocal->code->memory[i].val;
-#else
-    *(double *)(inst + mlocal->idpm[i]) = mlocal->memory[i];
-#endif
   }
   *(int *)(inst+mlocal->idpr)=mlocal->rcode;
 }
@@ -108,23 +93,7 @@ msettbl(char *inst,struct mlocal *mlocal)
 static void 
 mlocalclear(struct mlocal *mlocal,int memory)
 {
-#if NEW_MATH_CODE
   math_equation_clear(mlocal->code);
-#else
-  int i;
-  if (memory) {
-    for (i=0;i<MEMORYNUM;i++) {
-      mlocal->memory[i]=0;
-      mlocal->memorystat[i]=MNOERR;
-    }
-  }
-  for (i=0;i<10;i++) {
-    mlocal->sumdata[i]=0;
-    mlocal->sumstat[i]=MNOERR;
-    mlocal->difdata[i]=0;
-    mlocal->difstat[i]=MUNDEF;
-  }
-#endif
 }
 
 static int 
@@ -142,7 +111,6 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   mlocal->z=0;
   mlocal->val=0;
 
-#if NEW_MATH_CODE
   mlocal->code = math_equation_basic_new();
   if (mlocal->code == NULL)
     goto errexit;
@@ -170,13 +138,6 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   math_equation_parse(mlocal->code, "def f(x,y,z){0}");
   math_equation_parse(mlocal->code, "def g(x,y,z){0}");
   math_equation_parse(mlocal->code, "def h(x,y,z){0}");
-#else
-  mlocal->code=NULL;
-  mlocal->ufcodef=NULL;
-  mlocal->ufcodeg=NULL;
-  mlocal->ufcodeh=NULL;
-#endif
-
 
   mlocal->rcode=MNOERR;
   mlocalclear(mlocal,TRUE);
@@ -208,18 +169,10 @@ mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"_local",inst,&mlocal);
-#if NEW_MATH_CODE
   math_equation_free(mlocal->code);
-#else
-  g_free(mlocal->code);
-  g_free(mlocal->ufcodef);
-  g_free(mlocal->ufcodeg);
-  g_free(mlocal->ufcodeh);
-#endif
   return 0;
 }
 
-#if NEW_MATH_CODE
 static char *
 create_func_def_str(char *name, char *code)
 {
@@ -243,7 +196,6 @@ parse_original_formula(struct objlist *obj,char *inst, struct mlocal *mlocal)
     mlocal->maxdim = prm->id_max;
   }
 }
-#endif
 
 /* 
    # following procedure causes error.
@@ -260,19 +212,11 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *math;
   struct mlocal *mlocal;
-#if NEW_MATH_CODE
   int rcode;
   char *ptr, *err_msg;
   MathEquationParametar *prm;
-#else
-  enum MATH_CODE_ERROR_NO rcode;
-  int column,multi,maxdim,memory,usrfn;
-  char *code;
-  struct narray needdata;
-#endif
 
   math=argv[2];
-#if NEW_MATH_CODE
   _getobj(obj,"_local",inst,&mlocal);
   if (strcmp("formula",argv[1])==0) {
     if (math) {
@@ -321,50 +265,6 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
     parse_original_formula(obj, inst, mlocal);
   }
-#else
-  if (math!=NULL) {
-    if (strcmp("formula",argv[1])==0) {
-      column=TRUE;
-      multi=TRUE;
-      usrfn=TRUE;
-      memory=TRUE;
-    } else if ((strcmp("f",argv[1])==0) ||
-	       (strcmp("g",argv[1])==0) ||
-	       (strcmp("h",argv[1])==0)) {
-      column=FALSE;
-      multi=FALSE;
-      usrfn=FALSE;
-      memory=FALSE;
-    } else {
-      /* not reachable */
-      return 0;
-    }
-    arrayinit(&needdata,sizeof(int));
-    rcode=mathcode(math,&code,&needdata,NULL,&maxdim,NULL,
-                   TRUE,TRUE,TRUE,column,multi,FALSE,memory,usrfn,FALSE,FALSE,FALSE);
-    if (column) arraydel(&needdata);
-
-    if (mathcode_error(obj, rcode, MathErrorCodeArray)) {
-      return 1;
-    }
-  } else code=NULL;
-  _getobj(obj,"_local",inst,&mlocal);
-  if (strcmp("formula",argv[1])==0) {
-    g_free(mlocal->code);
-    mlocal->code=code;
-    mlocal->maxdim=maxdim;
-  } else if (strcmp("f",argv[1])==0) {
-    g_free(mlocal->ufcodef);
-    mlocal->ufcodef=code;
-  } else if (strcmp("g",argv[1])==0) {
-    g_free(mlocal->ufcodeg);
-    mlocal->ufcodeg=code;
-  } else if (strcmp("h",argv[1])==0) {
-    g_free(mlocal->ufcodeh);
-    mlocal->ufcodeh=code;
-  }
-  mlocalclear(mlocal,FALSE);
-#endif
   msettbl(inst,mlocal);
   return 0;
 }
@@ -391,13 +291,8 @@ mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 'm':
     m = atoi(arg + 1);
     if (m >= 0 && m < MEMORYNUM) {
-#if NEW_MATH_CODE
       mlocal->code->memory[m].val = * (double *) argv[2];
       mlocal->code->memory[m].type = MATH_VALUE_NORMAL;
-#else
-      mlocal->memory[m] = * (double *) argv[2];
-      mlocal->memorystat[m] = MNOERR;
-#endif
     }
     break;
   }
@@ -413,12 +308,7 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   double *adata;
   struct narray *darray;
   int maxdim;
-#if NEW_MATH_CODE
   MathValue val, *data;
-#else
-  double *data;
-  char *datastat;
-#endif
 
   _getobj(obj,"_local",inst,&mlocal);
   maxdim=mlocal->maxdim;
@@ -430,7 +320,6 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
-#if NEW_MATH_CODE
   data = g_malloc(sizeof(MathValue) * (num + 1));
 
   if (data == NULL) {
@@ -460,34 +349,6 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   math_equation_calculate(mlocal->code, &val);
   mlocal->val = val.val;
   mlocal->rcode = val.type;
-#else
-  data = g_malloc(sizeof(double) * (num + 1));
-  datastat = g_malloc(sizeof(char) * (num + 1));
-
-  if (data == NULL || datastat == NULL) {
-    g_free(data);
-    g_free(datastat);
-    return 1;
-  }
-  data[0]=0;
-  datastat[0]=MNOERR;
-  for (i=0;i<num;i++) {
-    data[i+1]=adata[i];
-    datastat[i+1]=MNOERR;
-  }
-  mlocal->rcode=calculate(mlocal->code,1,
-                  mlocal->x,MNOERR,mlocal->y,MNOERR,mlocal->z,MNOERR,
-                  0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                  data,datastat,
-                  mlocal->memory,mlocal->memorystat,
-                  mlocal->sumdata,mlocal->sumstat,
-                  mlocal->difdata,mlocal->difstat,
-                  NULL,NULL,NULL,
-                  mlocal->ufcodef,mlocal->ufcodeg,mlocal->ufcodeh,
-                  0,NULL,NULL,NULL,0,
-                  &(mlocal->val));
-  g_free(datastat);
-#endif
   g_free(data);
   msettbl(inst,mlocal);
   *(double *)rval=mlocal->val;

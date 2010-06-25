@@ -262,10 +262,10 @@ getrelativepath(const char *name)
       if (i > 0) {
 	i--;
       }
-      for (;niskanji2(cwd2,i) || (cwd2[i]!=DIRSEP);i--);
+      for (;cwd2[i] != DIRSEP;i--);
       depth=0;
-      for (j=strlen(cwd2);j!=i;j--) {
-	if (!niskanji2(cwd2,j) && (cwd2[j]==DIRSEP)) {
+      for (j=strlen(cwd2); j != i; j--) {
+	if (cwd2[j] == DIRSEP) {
 	  depth++;
 	}
       }

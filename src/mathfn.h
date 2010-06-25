@@ -33,21 +33,6 @@ double nraise(double x);
 double frand(double a);
 int nround(double x);
 int matsolv(int dim,matrix a,vector b,vector x);
-#ifndef NEW_MATH_CODE
-int gamma2(double x,double *val);
-int exp1(double x,double *val);
-int icgamma(double mu,double x,double *val);
-int erfc1(double x,double *val);
-int qinv1(double x,double *val);
-int beta(double p,double q,double *val);
-int jbessel(int n,double x,double *val);
-int ybessel(int n,double x,double *val);
-int legendre(int n,double x,double *val);
-int laguer(int n,double alp,double x,double *val);
-int hermite(int n,double x,double *val);
-int chebyshev(int n,double x,double *val);
-int mjd(int year,int month,int day);
-#endif
 void HSB2RGB(double h,double s,double b,int *R,int *G,int *B);
 int bsearch_int(int *ary, int n, int val, int *idx);
 int compare_double(double x, double y);

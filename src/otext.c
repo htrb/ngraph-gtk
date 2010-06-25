@@ -30,6 +30,7 @@
 
 #include "common.h"
 
+#define USE_UTF8 1
 #ifdef USE_UTF8
 #include <glib.h>
 #endif
@@ -69,7 +70,7 @@ static struct obj_config TextConfig[] = {
   {"script_size", OBJ_CONFIG_TYPE_NUMERIC},
   {"raw", OBJ_CONFIG_TYPE_NUMERIC},
   {"font", OBJ_CONFIG_TYPE_STRING},
-  {"jfont", OBJ_CONFIG_TYPE_STRING},
+  {"style", OBJ_CONFIG_TYPE_NUMERIC},
 };
 
 static NHASH TextConfigHash = NULL;
@@ -90,7 +91,7 @@ static int
 textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int pt,scriptsize;
-  char *font,*jfont;
+  char *font;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   pt=2000;
@@ -98,18 +99,12 @@ textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"pt",inst,&pt)) return 1;
   if (_putobj(obj,"script_size",inst,&scriptsize)) return 1;
 
-  font = g_malloc(strlen(fontchar[4]) + 1);
-  jfont = g_malloc(strlen(jfontchar[1]) + 1);
-  if (font == NULL || jfont == NULL) {
-    g_free(font);
-    g_free(jfont);
+  font = g_strdup(fontchar[0]);
+  if (font == NULL) {
     return 1;
   }
-  strcpy(font,fontchar[4]);
-  strcpy(jfont,jfontchar[1]);
-  if (_putobj(obj,"font",inst,font) || _putobj(obj,"jfont",inst,jfont)) {
+  if (_putobj(obj,"font",inst,font)) {
     g_free(font);
-    g_free(jfont);
     return 1;
   }
   textloadconfig(obj,inst);
@@ -140,6 +135,8 @@ textgeometry(struct objlist *obj,char *inst,char *rval,
     } else if (*(int *)(argv[2])>TEXT_OBJ_SCRIPT_SIZE_MAX) {
       *(int *)(argv[2])=TEXT_OBJ_SCRIPT_SIZE_MAX;
     }
+  } else if (strcmp(field,"style") == 0) {
+    * (int *) (argv[2]) &= (GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC);
   }
 
   if (clear_bbox(obj, inst))
@@ -153,9 +150,9 @@ textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
   int x,y,pt,space,dir,fr,fg,fb,tm,lm,w,h,scriptsize,raw;
-  char *font,*jfont;
+  char *font;
   char *text;
-  int clip,zoom;
+  int clip,zoom,style;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"GC",inst,&GC);
@@ -172,14 +169,17 @@ textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"script_size",inst,&scriptsize);
   _getobj(obj,"raw",inst,&raw);
   _getobj(obj,"font",inst,&font);
-  _getobj(obj,"jfont",inst,&jfont);
   _getobj(obj,"clip",inst,&clip);
+  _getobj(obj,"style",inst,&style);
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
   GRAcolor(GC,fr,fg,fb);
   GRAmoveto(GC,x,y);
-  if (raw) GRAdrawtextraw(GC,text,font,jfont,pt,space,dir);
-  else GRAdrawtext(GC,text,font,jfont,pt,space,dir,scriptsize);
+  if (raw) {
+    GRAdrawtextraw(GC,text,font,style,pt,space,dir);
+  } else {
+    GRAdrawtext(GC,text,font,style,pt,space,dir,scriptsize);
+  }
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
@@ -248,8 +248,8 @@ textbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   struct narray *array;
-  int x,y,pt,space,dir,scriptsize,raw;
-  char *font,*jfont;
+  int x,y,pt,space,dir,scriptsize,raw,style;
+  char *font;
   char *text;
   int gx0,gy0,gx1,gy1;
   int i,ggx[4],ggy[4];
@@ -266,9 +266,12 @@ textbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"script_size",inst,&scriptsize);
   _getobj(obj,"raw",inst,&raw);
   _getobj(obj,"font",inst,&font);
-  _getobj(obj,"jfont",inst,&jfont);
-  if (raw) GRAtextextentraw(text,font,jfont,pt,space,&gx0,&gy0,&gx1,&gy1);
-  else GRAtextextent(text,font,jfont,pt,space,scriptsize,&gx0,&gy0,&gx1,&gy1,FALSE);
+  _getobj(obj,"style",inst,&style);
+  if (raw) {
+    GRAtextextentraw(text,font,style,pt,space,&gx0,&gy0,&gx1,&gy1);
+  } else {
+    GRAtextextent(text,font,style,pt,space,scriptsize,&gx0,&gy0,&gx1,&gy1,FALSE);
+  }
   si=-sin(dir/18000.0*MPI);
   co=cos(dir/18000.0*MPI);
   ggx[0]=x+gx0*co-gy0*si;
@@ -398,8 +401,8 @@ textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int gx0,gy0,gx1,gy1;
   int px,py,px2,py2;
   double si,co;
-  int x,y,pt,space,dir,scriptsize,raw;
-  char *font,*jfont;
+  int x,y,pt,space,dir,scriptsize,raw, style;
+  char *font;
   char *text;
 
   *(int *)rval=FALSE;
@@ -413,15 +416,18 @@ textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"script_size",inst,&scriptsize);
   _getobj(obj,"raw",inst,&raw);
   _getobj(obj,"font",inst,&font);
-  _getobj(obj,"jfont",inst,&jfont);
+  _getobj(obj,"style",inst,&style);
   minx=*(int *)(argv[2]);
   miny=*(int *)(argv[3]);
   maxx=*(int *)(argv[4]);
   maxy=*(int *)(argv[5]);
   err=*(int *)(argv[6]);
   if ((minx==maxx) && (miny==maxy)) {
-    if (raw) GRAtextextentraw(text,font,jfont,pt,space,&gx0,&gy0,&gx1,&gy1);
-    else GRAtextextent(text,font,jfont,pt,space,scriptsize,&gx0,&gy0,&gx1,&gy1,FALSE);
+    if (raw) {
+      GRAtextextentraw(text,font,style,pt,space,&gx0,&gy0,&gx1,&gy1);
+    } else {
+      GRAtextextent(text,font,style,pt,space,scriptsize,&gx0,&gy0,&gx1,&gy1,FALSE);
+    }
     si=sin(dir/18000.0*MPI);
     co=cos(dir/18000.0*MPI);
     px=minx-x;
@@ -514,7 +520,7 @@ static struct objtable text[] = {
   {"y",NINT,NREAD|NWRITE,textgeometry,NULL,0},
   {"pt",NINT,NREAD|NWRITE,textgeometry,NULL,0},
   {"font",NSTR,NREAD|NWRITE,textgeometry,NULL,0},
-  {"jfont",NSTR,NREAD|NWRITE,textgeometry,NULL,0},
+  {"style",NINT,NREAD|NWRITE,textgeometry,NULL,0},
   {"space",NINT,NREAD|NWRITE,textgeometry,NULL,0},
   {"direction",NINT,NREAD|NWRITE,textgeometry,NULL,0},
   {"script_size",NINT,NREAD|NWRITE,textgeometry,NULL,0},
@@ -529,6 +535,9 @@ static struct objtable text[] = {
   {"zooming",NVFUNC,NREAD|NEXEC,textzoom,"iiii",0},
   {"match",NBFUNC,NREAD|NEXEC,textmatch,"iiiii",0},
   {"save_config",NVFUNC,NREAD|NEXEC,textsaveconfig,NULL,0},
+
+  /* following fields exist for backward compatibility */
+  {"jfont",NSTR,NWRITE,textgeometry,NULL,0},
 };
 
 #define TBLNUM (sizeof(text) / sizeof(*text))

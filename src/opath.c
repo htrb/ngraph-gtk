@@ -467,9 +467,9 @@ get_arrow_pos(int *points2, int n,
 }
 
 static void
-draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, int num)
+draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, int num, int intp)
 {
-  int width, fr, fg, fb, headlen, headwidth, intp;
+  int width, fr, fg, fb, headlen, headwidth;
   int join, miter, head;
   int x, y, x0, y0, x1, y1, x2, y2, x3, y3, close_path;
   struct narray *style;
@@ -629,7 +629,7 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   if (stroke) {
-    draw_stroke(obj, inst, GC, points2, pdata, num);
+    draw_stroke(obj, inst, GC, points2, pdata, num, intp);
   }
 
   g_free(points2);

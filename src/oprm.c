@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
-
+/* ToDo: UTF-8 string support */
 #include "common.h"
 
 #include <stdlib.h>
@@ -144,7 +144,7 @@ addfontcontrol(char *s,int *po,int *fchange,int *jchange,
     fchange[script]=FALSE;
   }
   if (jchange[script]) {
-    j+=sprintf(s+j,"%%J{%s}",jfontchar[ffj[script]]);
+    //    j+=sprintf(s+j,"%%J{%s}",jfontchar[ffj[script]]);
     jchange[script]=FALSE;
   }
   *po=j;
@@ -191,10 +191,10 @@ remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
 	    break;
 	}
         if (k != greektable_num()) {
-          j+=sprintf(s2+j,"%%F{%s}%c%%F{%s}%%J{%s}",
-                     fontchar[12],greektable[k].symbol,
-                     fontchar[fff[script]+ffb[script]],
-                     jfontchar[ffj[script]]);
+          /* j+=sprintf(s2+j,"%%F{%s}%c%%F{%s}%%J{%s}", */
+          /*            fontchar[12],greektable[k].symbol, */
+          /*            fontchar[fff[script]+ffb[script]], */
+          /*            jfontchar[ffj[script]]); */
 	} else {
           s2[j]=s[i];
           s2[j+1]=s[i+1];
@@ -1045,8 +1045,8 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((s=g_malloc(strlen(fontchar[fff[j]+ffb[j]])+1))==NULL) goto errexit;
       strcpy(s,fontchar[fff[j]+ffb[j]]);
       putobj(tobj,"font",tid,s);
-      if ((s=g_malloc(strlen(jfontchar[ffj[j]])+1))==NULL) goto errexit;
-      strcpy(s,jfontchar[ffj[j]]);
+      //      if ((s=g_malloc(strlen(jfontchar[ffj[j]])+1))==NULL) goto errexit;
+      //      strcpy(s,jfontchar[ffj[j]]);
       putobj(tobj,"jfont",tid,s);
       putobj(tobj,"pt",tid,&(ffs[j]));
       putobj(tobj,"space",tid,&(ffp[j]));
@@ -1081,8 +1081,8 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((s=g_malloc(strlen(fontchar[fff[2]+ffb[2]])+1))==NULL) goto errexit;
       strcpy(s,fontchar[fff[2]+ffb[2]]);
       putobj(tobj,"font",tid,s);
-      if ((s=g_malloc(strlen(jfontchar[ffj[2]])+1))==NULL) goto errexit;
-      strcpy(s,jfontchar[ffj[2]]);
+      //      if ((s=g_malloc(strlen(jfontchar[ffj[2]])+1))==NULL) goto errexit;
+      //      strcpy(s,jfontchar[ffj[2]]);
       putobj(tobj,"jfont",tid,s);
       putobj(tobj,"pt",tid,&(ffs[2]));
       putobj(tobj,"space",tid,&(ffp[2]));
@@ -1532,8 +1532,8 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         goto errexit;
       strcpy(s,fontchar[fff[3+i]+ffb[3+i]]);
       putobj(aobj,"num_font",aid,s);
-      if ((s=g_malloc(strlen(jfontchar[ffj[3+i]])+1))==NULL) goto errexit;
-      strcpy(s,jfontchar[ffj[3+i]]);
+      //      if ((s=g_malloc(strlen(jfontchar[ffj[3+i]])+1))==NULL) goto errexit;
+      //      strcpy(s,jfontchar[ffj[3+i]]);
       putobj(aobj,"num_jfont",aid,s);
       putobj(aobj,"num_pt",aid,&(ffs[3+i]));
       putobj(aobj,"num_space",aid,&(ffp[3+i]));

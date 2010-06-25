@@ -3365,11 +3365,6 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
   char **argv,*p;
   int rcode;
   int i,err;
-#if ! NEW_MATH_CODE 
-  char *code;
-  double memory[MEMORYNUM];
-  char memorystat[MEMORYNUM];
-#endif
   char **enumlist;
   char *oname,*os;
   int olen;
@@ -3462,27 +3457,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         if (arg_add(&argv,p)==NULL) goto errexit;
       }
     } else if ((arglist[alp]=='i') || (arglist[alp]=='d')) {
-#if NEW_MATH_CODE
       str_calc(s2, &vd, &rcode, NULL);
-#else
-      rcode=mathcode(s2,&code,NULL,NULL,NULL,NULL,
-                     FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE);
-      if (rcode!=MCNOERR) {
-        err=3;
-        goto errexit;
-      }
-      for (i=0;i<MEMORYNUM;i++) {memory[i]=0;memorystat[i]=MNOERR;}
-      rcode=calculate(code,1,
-                      0,MNOERR,0,MNOERR,0,MNOERR,
-                      0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-                      NULL,NULL,
-                      memory,memorystat,
-                      NULL,NULL,
-                      NULL,NULL,
-                      NULL,NULL,NULL,
-                      NULL,NULL,NULL,0,NULL,NULL,NULL,0,&vd);
-      g_free(code);
-#endif
       if (rcode!=MNOERR) {
         err=3;
         goto errexit;

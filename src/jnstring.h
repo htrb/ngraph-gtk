@@ -23,4 +23,3 @@
 
 unsigned int njms2jis(unsigned int code);
 int niskanji(unsigned char code);
-int niskanji2(char *s,int pos);
