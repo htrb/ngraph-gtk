@@ -3,7 +3,8 @@
 new text
 text::x=3000
 text::y=6500  
-text::font="HelveticaBold"
+text::font="Sans-serif"
+text::style=3
 text::text="Demo #5A: ARROW"
 #
 new path type=line
