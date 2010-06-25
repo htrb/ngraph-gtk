@@ -5,4 +5,4 @@
 char *iso8859_to_utf8(char *src);
 char *sjis_to_utf8(char *src);
 char *utf8_to_sjis(char *src);
-char *ascii2greece(char *src);
+gchar *ascii2greece(const gchar *src);

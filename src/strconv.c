@@ -10,39 +10,45 @@
 
 #include "object.h"
 
-unsigned char *
-ascii2greece(char unsigned *src)
+gchar *
+ascii2greece(const gchar *src)
 {
-  int i, j, k, slen, dlen, ucode, lcode;
-  static unsigned char *u = (unsigned char *) "ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϛΩΞΨΖ", *l = (unsigned char *) "αβχδεϕγηιφκλμνοπθρστυϖωξψζ";
-  unsigned char *tmp;
-
-  ucode = (u[0] << 8) + u[1];
-  lcode = (l[0] << 8) + l[1];
+  int i, j, k, c, len, slen, dlen;
+  static char *u[] = {"Α", "Β", "Χ", "Δ", "Ε", "Φ", "Γ", "Η", "Ι",
+		      "ϑ", "Κ", "Λ", "Μ", "Ν", "Ο", "Π", "Θ", "Ρ",
+		      "Σ", "Τ", "Υ", "ϛ", "Ω", "Ξ", "Ψ", "Ζ"};
+  static char *l[] = {"α", "β", "χ", "δ", "ε", "ϕ", "γ", "η", "ι",
+		      "φ", "κ", "λ", "μ", "ν", "ο", "π", "θ", "ρ",
+		      "σ", "τ", "υ", "ϖ", "ω", "ξ", "ψ", "ζ"};
+  gchar *tmp, *ch, buf[2];
 
   slen = strlen((char *)src);
-  dlen = slen * 2 + 1;
+  dlen = slen * 6 + 1;
 
   tmp = g_malloc(dlen);
   if (tmp == NULL)
     return NULL;
 
-  for (i = j = 0; i < slen; i++, j++) {
+  tmp[0] = '\0';
+  for (i = j = 0; i < slen; i++) {
     if (src[i] >= 'a' && src[i] <= 'z') {
-      k = src[i] - 'a';
-      tmp[j] = l[k * 2];
-      j++;
-      tmp[j] = l[k * 2 + 1];
+      c = src[i] - 'a';
+      ch = l[c];
     } else if (src[i] >= 'A' && src[i] <= 'Z') {
-      k = src[i] - 'A';
-      tmp[j] = u[k * 2];
-      j++;
-      tmp[j] = u[k * 2 + 1];
+      c = src[i] - 'A';
+      ch = u[c];
     } else {
-      tmp[j] = src[i];
+      buf[0] = src[i];
+      buf[1] = '\0';
+      ch = buf;
     }
+
+    len = strlen(ch);
+    for (k = 0; k < len; k++) {
+      tmp[j++] = ch[k];
+    }
+    tmp[j] = '\0';
   }
-  tmp[j] = '\0';
 
   return tmp;
 }
