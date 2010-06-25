@@ -1,3 +1,162 @@
+2010-06-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.ngp: change font settings.
+
+	* initfile/Ngraph.ini.win: change font settings.
+
+	* initfile/Ngraph.ini.in: change font settings.
+
+	* driver/ngp2.in: remove "-wmf" option.
+
+	* driver/Makefile.am (ngraphconfdir): gra2ps and gra2wmf are not
+	used now.
+
+	* src/ogra2nul.c (g2nul_charwidth, g2nul_charheight): check
+	backward compatibility.
+	(addgra2null): initialize "FontDataHash".
+
+	* src/oaxis.c (AxisConfig): remove configuration "num_jfont", add
+	configuration "num_font_style".
+	(axisinit): "jfont" field does not exist now.
+	(axis): add field "num_font_style".
+
+	* src/jnstring.c (njis2jms, njms2euc, neuc2jms): removed.
+
+	* src/shellcm.c (cmdexpr): remove old math related codes.
+
+	* src/mathcode.c: remove old math related codes.
+
+	* src/omath.c: remove old math related codes.
+
+	* src/object.c (getargument): remove old math related codes.
+
+	* src/otext.c (TextConfig): remove configuration "jfont". add
+	configuration "style".
+	(textinit): "jfont" field does not exist now.
+	(textgeometry): check value of "style" field.
+	(text): add field "style".
+
+	* src/ofit.c: remove old math related codes.
+
+	* src/mathfn.c: remove old math related functions.
+
+	* src/opath.c (draw_stroke): arr parameter "intp".
+
+	* src/shell.c (str_calc): remove old math related codes.
+
+	* src/ofile.c: remove old math related codes.
+
+	* src/gra.c (FONT_STYLE_NORMAL, FONT_STYLE_BOLD)
+	(FONT_STYLE_ITALIC): added.
+	(GRAC): add member "style".
+	(GRAdraw, GRAcharwidth, GRAcharascent, GRAchardescent)
+	(GRAtextstyle): 4th argument of the "H" command represents style
+	of the font.
+	(GRAoutkanji): removed.
+	(GRAexpandmath): remove old math related codes.
+	(GRAexpandtext): use "case" statement.
+	(GRAdrawtext, GRAtextextent): add format command "\B", "\I" and
+	"\N".
+	(GRAtextextent, GRAtextextentraw): dont check "kanji" code.
+	(GRAinputold): convert argument of the "S" command Shift-JI to
+	UTF-8.
+
+	* src/ioutil.c (getrelativepath): "cwd2" may not be Shift-JIS
+	code.
+
+	* src/gtk/ogra2cairo.h (compatible_font_info): added.
+
+	* src/gtk/ogra2cairo.c (check_type, gra2cairo_get_font_type_str):
+	removed.
+	(create_font_map): don't save type, symbol and twobyte.
+	(gra2cairo_save_config): save "font" configurations. remove
+	"font-map" configurations.
+	(loadconfig): load "font" configurations.
+	(loadconfig): load "font-map" configurations only when the "font"
+	configuration related to the font is not loaded yet.
+	(init_conf): don't initialize "FontFace".
+	(gra2cairo_update_fontmap, gra2cairo_add_fontmap): remove
+	parameter "type" and "two_byte".
+	(gra2cairo_done): save configurations when old configurations are
+	used.
+	(gra2cairo_get_compatible_font_info): add.
+	(loadfont): add parameter "font_style" and "symbol".
+	(loadfont): set weight and style every time.
+	(gra2cairo_output): use UTF-8 in the 'S' command.
+	(gra2cairo_charwidth): use "gunichar" instead of "char *".
+	(addgra2cairo): initialize "CompatibleFontHash".
+
+	* src/gtk/main.c (get_obj_font_list): remove japanese specified
+	codes.
+
+	* src/gtk/x11dialg.h (AxisFont, LegendDialog): add member
+	"font_bold" and "font_italic".
+
+	* src/gtk/x11lgnd.c (LegendTextCB): remove japanese specified
+	settings.
+	(init_legend_dialog_widget_member): remove "d->jfont", add
+	"d->font_bold" and "d->font_italic".
+	(get_font, set_font): get and set font style settings.
+	(set_fonts): remove.
+	(legend_dialog_setup_item, legend_dialog_close)
+	(legend_dialog_setup_sub, legend_list_set_property): remove
+	japanese specified settings.
+	(legend_dialog_setup_item, legend_dialog_close)
+	(legend_dialog_setup_sub): get and set font style settings.
+
+	* src/gtk/x11dialg.c (SetFontListFromObj)
+	(SetObjFieldFromFontList): remove japanese specified settings.
+
+	* src/gtk/x11file.c (FitDialogResult): remove old math related
+	codes.
+	(draw_type_pixbuf): add 3rd argument for "GRAtextstyle()".
+
+	* src/gtk/x11view.c (CopyFocusedObjects, focus_new_insts)
+	(text_dropped): remove japanese specified settings.
+
+	* src/gtk/x11menu.c (USE_EXT_DRIVER): add.
+	(show_graph_menu_cb, create_graphmenu, create_preferencemenu):
+	external driver menu is not shown.
+
+	* src/gtk/x11opt.c (PrefFontDialogSetupItem)
+	(create_font_selection_dialog): don't save font type.
+	(create_font_selection_dialog)
+	(set_font_from_font_selection_dialog): remove japanese specified
+	settings.
+	(set_font_from_font_selection_dialog): remove settings related to
+	font type.
+	(PrefFontDialogSetup): dont show the style of the font.
+
+	* src/gtk/x11merge.c (MergeDialogSetupItem, MergeDialogSetup)
+	(MergeDialogClose): remove japanese specified settings.
+
+	* src/gtk/x11axis.c (font_tab_set_value, font_tab_setup_item)
+	(font_tab_create): remove japanese specified settings.
+	(font_tab_set_value, font_tab_setup_item, font_tab_create): add
+	font style settings.
+
+	* demo/encodeing.ngp: remove.
+
+	* demo/demo5a.ngp: change font settings.
+
+	* demo/demo5b.ngp: change font settings.
+
+	* demo/demo5c.ngp: show muliti languages.
+
+	* demo/demo5d.ngp: change font settings.
+
+	* demo/demo5e.ngp: change font settings.
+
+	* demo/demo4.ngp.in: change font settings.
+
+	* demo/demo3.ngp.in: change font settings.
+
+	* demo/demo2.ngp.in: change font settings.
+
+	* demo/demo1.ngp.in: change font settings.
+
+	* debian/rules: remove configure option "--enable-janese".
+
 2010-06-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/opath.c (distance, check_point_match, point_match): add.

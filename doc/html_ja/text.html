@@ -28,61 +28,9 @@ Ngraphでは異なるオペレーティングシステムとの互換性を考�
 <br>
 <table border=1>
 <tr><td>Ngraph定義名</td><td>フォント名</td></tr>
-<tr><td>Times</td><td>Times New Roman
-<tr><td>TimesBold</td><td>Times New Roman
-<tr><td>TimesItalic</td><td>Times New Roman
-<tr><td>TimesBoldItalic</td><td>Times New Roman
-<tr><td>Helvetica</td><td>Arial
-<tr><td>HelveticaBold</td><td>Arial
-<tr><td>HelveticaOblique</td><td>Arial
-<tr><td>HelveticaItalic</td><td>Arial
-<tr><td>HelveticaBoldOblique</td><td>Arial
-<tr><td>HelveticaBoldItalic</td><td>Arial
-<tr><td>Courier</td><td>Courier New
-<tr><td>CourierBold</td><td>Courier New
-<tr><td>CourierOblique</td><td>Courier New
-<tr><td>CourierItalic</td><td>Courier New
-<tr><td>CourierBoldOblique</td><td>Courier New
-<tr><td>CourierBoldItalic</td><td>Courier New
-<tr><td>Symbol</td><td>Standard Symbols L
-<tr><td>SymbolItalic</td><td>Standard Symbols L
-<tr><td>SymbolBoldItalic</td><td>Standard Symbols L
-<tr><td>Mincho</td><td>Sazanami Mincho
-<tr><td>MinchoBold</td><td>Sazanami Mincho
-<tr><td>MinchoItalic</td><td>Sazanami Mincho
-<tr><td>MinchoBoldItalic</td><td>Sazanami Mincho
-<tr><td>Gothic</td><td>Sazanami Gothic
-<tr><td>GothicBold</td><td>Sazanami Gothic
-<tr><td>GothicItalic</td><td>Sazanami Gothic
-<tr><td>GothicBoldItalic</td><td>Sazanami Gothic
-<tr><td>Tim</td><td>Times New Roman
-<tr><td>TimB</td><td>Times New Roman
-<tr><td>TimI</td><td>Times New Roman
-<tr><td>TimBI</td><td>Times New Roman
-<tr><td>Helv</td><td>Arial
-<tr><td>HelvB</td><td>Arial
-<tr><td>HelvO</td><td>Arial
-<tr><td>HelvI</td><td>Arial
-<tr><td>HelvBO</td><td>Arial
-<tr><td>HelvBI</td><td>Arial
-<tr><td>Cour</td><td>Courier New
-<tr><td>CourB</td><td>Courier New
-<tr><td>CourO</td><td>Courier New
-<tr><td>CourI</td><td>Courier New
-<tr><td>CourBO</td><td>Courier New
-<tr><td>CourBI</td><td>Courier New
-<tr><td>Sym</td><td>Standard Symbols L
-<tr><td>SymB</td><td>Standard Symbols L
-<tr><td>SymI</td><td>Standard Symbols L
-<tr><td>SymBI</td><td>Standard Symbols L
-<tr><td>Min<td>Sazanami Mincho
-<tr><td>MinB<td>Sazanami Mincho
-<tr><td>MinI<td>Sazanami Mincho
-<tr><td>MinBI<td>Sazanami Mincho
-<tr><td>Goth<td>Sazanami Gothic
-<tr><td>GothB<td>Sazanami Gothic
-<tr><td>GothI<td>Sazanami Gothic
-<tr><td>GothBI<td>Sazanami Gothic
+<tr><td>Serif</td><td>Times New Roman
+<tr><td>Sans-serif</td><td>Arial
+<tr><td>Monospace</td><td>Courier New
 </table>
 </div>
 
@@ -103,19 +51,20 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 <tr><td>^</td><td>続く文字は上付き文字になる</td></tr>
 <tr><td>_</td><td>続く文字は下付き文字になる</td></tr>
 <tr><td>@</td><td>上付き文字, 下付き文字を解除する</td></tr>
+<tr><td>\B</td><td>続く文字は太字 (bold) になる</td></tr>
+<tr><td>\I</td><td>続く文字は斜体 (italic) になる</td></tr>
+<tr><td>\N</td><td>太字、斜体を解除する</td></tr>
 <tr><td>\.</td><td>スペースと同等</td></tr>
 <tr><td>\b</td><td>バックスペース(幅は'h')</td></tr>
 <tr><td>\n</td><td>改行</td></tr>
 <tr><td>\-</td><td>ハイフン</td></tr>
-<tr><td>\x??</td><td>文字を16進コード??で指定</td></tr>
 <tr><td>\&</td><td>テキストが\nの改行によって複数行あるとき\&の位置で位置合わせをする</td></tr>
 <tr><td>\</td><td>次の文字が%\@^_の時, それらを制御文字として扱わずに出力する</td></tr>
 </table><br>
 <br>
 <b>フォント</b>
 <table border=1>
-<tr><td>%F{エイリアス名}</td><td>英字フォントをエイリアス名に変更する</td></tr>
-<tr><td>%J{エイリアス名}</td><td>2バイト文字フォントをエイリアス名に変更する</td></tr>
+<tr><td>%F{エイリアス名}</td><td>フォントをエイリアス名に変更する</td></tr>
 <tr><td>%S{整数}</td><td>フォントのサイズをポイントで指定する</td></tr>
 <tr><td>%P{整数}</td><td>文字間隔をポイントで指定する</td></tr>
 <tr><td>%X{整数}</td><td>カレントポイントを右方向に移動させる量をポイントで指定する</td></tr>

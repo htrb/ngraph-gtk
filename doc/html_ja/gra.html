@@ -71,7 +71,7 @@ GRAファイルの第一行はGRAファイルの識別子である
  <li>arg1, ..., argnはグラフィックスコマンドの引数(整数)です。
 </ul>
 コマンドの区切りにはスペース, タブ, コンマが使えます。<br>
-ただしcommandが%, F, S, Kの場合には
+ただしcommandが%, F, S の場合には
 <ul>Sthis is a string</ul>
 のようにコマンド直後に文字列の引数(上の例ではthis is a string)を記述します。
 この場合, 文字列引数の中のスペース・タブ・コンマは通常の文字として扱われます。<br>
@@ -284,16 +284,16 @@ arg(i*2+2) i=1-arg1 Y座標<br>
 <br>
 <table border=1>
  <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
- <tr><td>H</td><td>フォントメトリック指定命令</td><td>H,3,arg1,arg2,arg3 </td></tr>
+ <tr><td>H</td><td>フォントメトリック指定命令</td><td>H,4,arg1,arg2,arg3,arg4 </td></tr>
 </table>
 <p>
 arg1 文字のポイントサイズ, 0.01pt単位（1pt=1/72inch）<br>
 arg2 文字スペーシング・ポイント量, 0.01pt単位<br>
 arg3 描画方向, X軸から反時計回りに0.01度単位<br>
+arg4 スタイル, 1: bold, 2:italic の論理和<br>
 </p>
 <ul>
  <li>文字は全てスケーラブルでなければなりません。
- <li>漢字出力命令の前には必ず漢字フォントの, 英数字出力命令の前には必ず英数字フォントの選択命令を発行しなければなりません。
 </ul>
 <br>
 <table border=1>
@@ -301,22 +301,8 @@ arg3 描画方向, X軸から反時計回りに0.01度単位<br>
  <tr><td>S</td><td>英数字描画命令</td><td>Sstring </td></tr>
 </table>
 <p>
-文字列引数 (string 英数字文字列)
+文字列引数 (string は UTF-8 文字列)
 </p>
-<ul>
- <li> \x?? は ?? を16進コードとする文字, \\は\
-</ul>
-<br>
-<table border=1>
- <tr><td>コマンド</td><td>機能</td><td>書式</td></tr>
- <tr><td>K</td><td>漢字描画命令</td><td>Kstring </td></tr>
-</table>
-<p>
-文字列引数(string 漢字文字列)<br>
-</p>
-<ul>
- <li>漢字コードはSHIFT JIS
-</ul>
 </div>
 
 <br>

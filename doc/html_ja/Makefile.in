@@ -202,6 +202,8 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POSUB = @POSUB@
 POW_LIB = @POW_LIB@
 RANLIB = @RANLIB@
@@ -275,7 +277,7 @@ HTML_FILE = addin.html copyrigh.html data.html gra.html intro.html	\
 	script.html text.html tutorial.html
 
 EXTRA_DIST = ${HTML_FILE} object.html.in objlist.nsc objlist.txt	\
-        intro.html.in script.html.in math.html.in ngraph.html.in
+        intro.html.in script.html.in
 
 htmljadir = $(docdir)/html_ja
 htmlja_DATA = ${HTML_FILE}
@@ -660,12 +662,6 @@ intro.html: intro.html.in Makefile
 
 script.html: script.html.in Makefile
 	sh ../../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" script.html.in
-
-math.html: math.html.in Makefile
-	cpp -P math.html.in > math.html
-
-ngraph.html: ngraph.html.in Makefile
-	cpp -P ngraph.html.in > ngraph.html
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

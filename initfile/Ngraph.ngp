@@ -50,8 +50,7 @@ new axis
 	axis::num_log_pow=true
 	axis::num_pt=2000
 	axis::num_space=0
-	axis::num_font='Helvetica'
-	axis::num_jfont='Gothic'
+	axis::num_font='Sans-serif'
 	axis::num_script_size=7000
 	axis::num_align=center
 	axis::num_no_zero=false
@@ -114,8 +113,7 @@ new axis
 	axis::num_log_pow=true
 	axis::num_pt=2000
 	axis::num_space=0
-	axis::num_font='Helvetica'
-	axis::num_jfont='Gothic'
+	axis::num_font='Sans-serif'
 	axis::num_script_size=7000
 	axis::num_align=right
 	axis::num_no_zero=false
@@ -178,8 +176,7 @@ new axis
 	axis::num_log_pow=true
 	axis::num_pt=2000
 	axis::num_space=0
-	axis::num_font='Helvetica'
-	axis::num_jfont='Gothic'
+	axis::num_font='Sans-serif'
 	axis::num_script_size=7000
 	axis::num_align=center
 	axis::num_no_zero=false
@@ -242,8 +239,7 @@ new axis
 	axis::num_log_pow=true
 	axis::num_pt=2000
 	axis::num_space=0
-	axis::num_font='Helvetica'
-	axis::num_jfont='Gothic'
+	axis::num_font='Sans-serif'
 	axis::num_script_size=7000
 	axis::num_align=left
 	axis::num_no_zero=false

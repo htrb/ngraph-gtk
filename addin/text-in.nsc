@@ -8,8 +8,7 @@ PT=2000    # Size
 R=0        # Red
 G=0        # Green 
 B=0        # Blue
-FONT=Helv  # Font
-JFONT=Goth # Japanese font
+FONT=Sans-serif  # Font
 DIR=0      # Direction
 
 new dialog
@@ -36,7 +35,6 @@ then
     text::G=$G
     text::B=$B
     text::font=$FONT
-    text::jfont=$JFONT
     text::direction=$DIR
   done
   menu::modified=true

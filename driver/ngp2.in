@@ -217,10 +217,6 @@ do
 	    -eps2)
 		save_image "eps2" $NGP_NAME.eps
 		;;
-	    -wmf)
-		save_gra $TMPFILE
-		gra2wmf -o $NGP_NAME.wmf $TMPFILE
-		;;
 	    -pdf)
 		save_image "pdf" $NGP_NAME.pdf
 		;;

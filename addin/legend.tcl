@@ -66,7 +66,7 @@ proc colordialog { w title } {
 #
 # Font selection dialogbox.
 #
-# global: textred textgreen textblue textpt textspc textsc textfont textjfont
+# global: textred textgreen textblue textpt textspc textsc textfont
 #
 proc fontdialog { w title } {
   proc setbuttoncolor { w } {
@@ -75,7 +75,7 @@ proc fontdialog { w title } {
     $w config -background $color -foreground $color
   }
   global dlgbutton2
-  global fontlist jfontlist textfont textjfont textpt textspc textsc
+  global fontlist textfont textpt textspc textsc
   global textred textgreen textblue
   global pt spc sc
   global red green blue
@@ -93,10 +93,9 @@ proc fontdialog { w title } {
   frame $w.top.ptf
   frame $w.top.ff
   frame $w.top.ff.fontf 
-  frame $w.top.ff.jfontf 
   frame $w.top.colorf
   pack $w.top.ptf $w.top.ff -side top -fill x -pady 1m -padx 5m -anchor w
-  pack $w.top.ff.fontf $w.top.ff.jfontf -side left -padx 2m -anchor w
+  pack $w.top.ff.fontf -side left -padx 2m -anchor w
   pack $w.top.colorf -side top -fill x -pady 1m -padx 5m -anchor w
 
   label $w.top.ptf.textptl -text " Pt:"
@@ -126,23 +125,6 @@ proc fontdialog { w title } {
     {.f.top.ff.fontf.fontl configure \
      -text [format "Font:%%s" [%W get active]]}
 
-  label $w.top.ff.jfontf.jfontl
-  frame $w.top.ff.jfontf.j
-  pack $w.top.ff.jfontf.jfontl $w.top.ff.jfontf.j -side top -anchor w
-  listbox $w.top.ff.jfontf.j.jfont -width 10 -height 4 -relief raised -bd 2 \
-         -selectmode single \
-         -yscrollcommand "$w.top.ff.jfontf.j.scrollj set"
-  pack $w.top.ff.jfontf.j.jfont -side left -anchor w
-  scrollbar $w.top.ff.jfontf.j.scrollj \
-         -command "$w.top.ff.jfontf.j.jfont yview"
-  pack $w.top.ff.jfontf.j.scrollj -side right -fill y
-  foreach i $jfontlist {
-    $w.top.ff.jfontf.j.jfont insert end $i
-  }
-  bind $w.top.ff.jfontf.j.jfont <Double-1> \
-    {.f.top.ff.jfontf.jfontl configure \
-     -text [format "Kanji:%%s" [%W get active]]}
-
   label $w.top.colorf.textcolf -text "Color:"
   button $w.top.colorf.textcol \
          -command "colordialog .c Color; \
@@ -170,12 +152,8 @@ proc fontdialog { w title } {
   set sc $textsc
   $w.top.ff.fontf.f.font activate [lsearch -exact $fontlist $textfont]
   $w.top.ff.fontf.f.font yview [lsearch -exact $fontlist $textfont]
-  $w.top.ff.jfontf.j.jfont activate [lsearch -exact $jfontlist $textjfont]
-  $w.top.ff.jfontf.j.jfont yview [lsearch -exact $jfontlist $textjfont]
   $w.top.ff.fontf.fontl configure \
      -text [format "Font:%s" [$w.top.ff.fontf.f.font get active]]
-  $w.top.ff.jfontf.jfontl configure \
-     -text [format "Kanji:%s" [$w.top.ff.jfontf.j.jfont get active]]
 
   bind $w <Return> "$w.bot.ok flash; set dlgbutton2 ok"
 
@@ -192,7 +170,6 @@ proc fontdialog { w title } {
     set textspc $spc
     set textsc $sc
     set textfont [$w.top.ff.fontf.f.font get active]
-    set textjfont [$w.top.ff.jfontf.j.jfont get active]
   }
 
   destroy $w
@@ -311,19 +288,19 @@ proc makescript { f i gx gy height } {
     } elseif { ($type=="rectangle_fill") || ($type=="bar_fill_x") \
      || ($type=="bar_fill_y") } {
       puts $f "rectangle::fill=true"
-      puts $f "rectangle::frame=true"
-      puts $f [format "rectangle::R=%d" $R2]
-      puts $f [format "rectangle::G=%d" $G2]
-      puts $f [format "rectangle::B=%d" $B2]
-      puts $f [format "rectangle::R2=%d" $R]
-      puts $f [format "rectangle::G2=%d" $G]
-      puts $f [format "rectangle::B2=%d" $B]
+      puts $f "rectangle::stroke=true"
+      puts $f [format "rectangle::fill_R=%d" $R2]
+      puts $f [format "rectangle::fill_G=%d" $G2]
+      puts $f [format "rectangle::fill_B=%d" $B2]
+      puts $f [format "rectangle::stroke_R=%d" $R]
+      puts $f [format "rectangle::stroke_G=%d" $G]
+      puts $f [format "rectangle::stroke_G=%d" $B]
     } elseif { ($type=="rectangle_solid_fill") \
      || ($type=="bar_solid_fill_x") || ($type=="bar_solid_fill_y") } {
       puts $f "rectangle::fill=true"
-      puts $f [format "rectangle::R=%d" $R]
-      puts $f [format "rectangle::G=%d" $G]
-      puts $f [format "rectangle::B=%d" $B]
+      puts $f [format "rectangle::fill_R=%d" $R]
+      puts $f [format "rectangle::fill_G=%d" $G]
+      puts $f [format "rectangle::fill_B=%d" $B]
     }
     puts $f [format "rectangle::width=%d" $linewidth]
     if { $linestyle!="" } {
@@ -355,7 +332,7 @@ proc savescript {} {
   global redlist greenlist bluelist red2list green2list blue2list
   global mixlist showlist captionlist
   global mix type caption frame posx posy width
-  global textfont textjfont textpt textspc textsc textred textgreen textblue
+  global textfont textpt textspc textsc textred textgreen textblue
   global script
   if { $script == "" } return
   set f [ open $script w ]
@@ -387,7 +364,6 @@ proc savescript {} {
         puts $f [format "text::y=%d" [expr $gy+$height]]
         puts $f [format "text::pt=%d" [expr $textpt]]
         puts $f "text::font=$textfont"
-        puts $f "text::jfont=$textjfont"
         puts $f [format "text::space=%d" $textspc]
         puts $f [format "text::script_size=%d" $textsc]
         puts $f [format "text::R=%d" $textred]
@@ -421,14 +397,14 @@ proc savescript {} {
     puts $f [format "rectangle::x2=%d+\${int:texttot:@}" \
             [expr int($posx+$len+$height/2)]]
     puts $f [format "rectangle::y2=%d" [expr int($gy+$height/4)]]
-    puts $f "rectangle::R=255"
-    puts $f "rectangle::G=255"
-    puts $f "rectangle::B=255"
-    puts $f "rectangle::R2=0"
-    puts $f "rectangle::G2=0"
-    puts $f "rectangle::B2=0"
+    puts $f "rectangle::fill_R=255"
+    puts $f "rectangle::fill_G=255"
+    puts $f "rectangle::fill_B=255"
+    puts $f "rectangle::stroke_R=0"
+    puts $f "rectangle::stroke_G=0"
+    puts $f "rectangle::stroke_B=0"
     puts $f "rectangle::fill=true"
-    puts $f "rectangle::frame=true"
+    puts $f "rectangle::stroke=true"
     puts $f "movetop rectangle:!"
     puts $f "movetop rectangle:!"
     puts $f "del int:textlen"
@@ -577,15 +553,7 @@ proc setupwindow {} {
   -ipady 1m
 }
 
-set fontlist {Times TimesBold TimesItalic TimesBoldItalic \
-              Helvetica HelveticaBold HelveticaOblique HelveticaItalic \
-              HelveticaBoldOblique HelveticaBoldItalic \
-              Courier CourierBold CourierOblique CourierItalic \
-              CourierBoldOblique CourierBoldItalic Symbol SymbolItalic \
-              Tim TimB TimI TimBI Helv HelvB HelvO HelvI HelvBO HelvBI \
-              Cour CourB CourO CourI CourBO CourBI Sym SymI}
-
-set jfontlist {Mincho Gothic Min Goth}
+set fontlist {Sans-serif Serif Monospace}
 
 set textred 0
 set textgreen 0
@@ -593,8 +561,7 @@ set textblue 0
 set textpt 2000
 set textspc 0
 set textsc 7000
-set textfont Helvetica
-set textjfont Gothic
+set textfont Sans-serif
 
 set posx 5000
 set posy 5000

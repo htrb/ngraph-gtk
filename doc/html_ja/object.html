@@ -905,8 +905,8 @@ alias:
 version: 1.00.00
 parent: draw
 object id: 25
-number of fields: 97
-size of instance: 624
+number of fields: 98
+size of instance: 632
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -969,7 +969,7 @@ rw-      num_log_pow    bool
 rw-           num_pt    int
 rw-        num_space    int
 rw-         num_font    char*
-rw-        num_jfont    char*
+rw-   num_font_style    int
 rw-  num_script_size    int
 rw-        num_align    enum( center left right point )
 rw-      num_no_zero    bool
@@ -1004,6 +1004,7 @@ r-x   group_position    void( int[] )
 r-x    group_manager    int( )
 r-x    get_numbering    void( )
 r-x             save    *char( char *[] )
+-w-        num_jfont    char*
 </pre>
 
 <h3>file</h3>
@@ -1427,8 +1428,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 33
-number of fields: 34
-size of instance: 224
+number of fields: 35
+size of instance: 232
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1450,7 +1451,7 @@ rw-                x    int
 rw-                y    int
 rw-               pt    int
 rw-             font    char*
-rw-            jfont    char*
+rw-            style    int
 rw-            space    int
 rw-        direction    int
 rw-      script_size    int
@@ -1463,6 +1464,7 @@ r-x           rotate    void( int int int int )
 r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 r-x      save_config    void( )
+-w-            jfont    char*
 </pre>
 
 <h3>dialog</h3>

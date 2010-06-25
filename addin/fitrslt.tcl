@@ -66,7 +66,7 @@ proc colordialog { w title } {
 #
 # Font selection dialogbox.
 #
-# global: textred textgreen textblue textpt textspc textsc textfont textjfont
+# global: textred textgreen textblue textpt textspc textsc textfont
 #
 proc fontdialog { w title } {
   proc setbuttoncolor { w } {
@@ -75,7 +75,7 @@ proc fontdialog { w title } {
     $w config -background $color -foreground $color
   }
   global dlgbutton2
-  global fontlist jfontlist textfont textjfont textpt textspc textsc
+  global fontlist textfont textpt textspc textsc
   global textred textgreen textblue
   global pt spc sc
   global red green blue
@@ -93,10 +93,9 @@ proc fontdialog { w title } {
   frame $w.top.ptf
   frame $w.top.ff
   frame $w.top.ff.fontf 
-  frame $w.top.ff.jfontf 
   frame $w.top.colorf
   pack $w.top.ptf $w.top.ff -side top -fill x -pady 1m -padx 5m -anchor w
-  pack $w.top.ff.fontf $w.top.ff.jfontf -side left -padx 2m -anchor w
+  pack $w.top.ff.fontf -side left -padx 2m -anchor w
   pack $w.top.colorf -side top -fill x -pady 1m -padx 5m -anchor w
 
   label $w.top.ptf.textptl -text " Pt:"
@@ -126,23 +125,6 @@ proc fontdialog { w title } {
     {.f.top.ff.fontf.fontl configure \
      -text [format "Font:%%s" [%W get active]]}
 
-  label $w.top.ff.jfontf.jfontl
-  frame $w.top.ff.jfontf.j
-  pack $w.top.ff.jfontf.jfontl $w.top.ff.jfontf.j -side top -anchor w
-  listbox $w.top.ff.jfontf.j.jfont -width 10 -height 4 -relief raised -bd 2 \
-         -selectmode single \
-         -yscrollcommand "$w.top.ff.jfontf.j.scrollj set"
-  pack $w.top.ff.jfontf.j.jfont -side left -anchor w
-  scrollbar $w.top.ff.jfontf.j.scrollj \
-         -command "$w.top.ff.jfontf.j.jfont yview"
-  pack $w.top.ff.jfontf.j.scrollj -side right -fill y
-  foreach i $jfontlist {
-    $w.top.ff.jfontf.j.jfont insert end $i
-  }
-  bind $w.top.ff.jfontf.j.jfont <Double-1> \
-    {.f.top.ff.jfontf.jfontl configure \
-     -text [format "Kanji:%%s" [%W get active]]}
-
   label $w.top.colorf.textcolf -text "Color:"
   button $w.top.colorf.textcol \
          -command "colordialog .c Color; \
@@ -170,12 +152,8 @@ proc fontdialog { w title } {
   set sc $textsc
   $w.top.ff.fontf.f.font activate [lsearch -exact $fontlist $textfont]
   $w.top.ff.fontf.f.font yview [lsearch -exact $fontlist $textfont]
-  $w.top.ff.jfontf.j.jfont activate [lsearch -exact $jfontlist $textjfont]
-  $w.top.ff.jfontf.j.jfont yview [lsearch -exact $jfontlist $textjfont]
   $w.top.ff.fontf.fontl configure \
      -text [format "Font:%s" [$w.top.ff.fontf.f.font get active]]
-  $w.top.ff.jfontf.jfontl configure \
-     -text [format "Kanji:%s" [$w.top.ff.jfontf.j.jfont get active]]
 
   bind $w <Return> "$w.bot.ok flash; set dlgbutton2 ok"
 
@@ -192,7 +170,6 @@ proc fontdialog { w title } {
     set textspc $spc
     set textsc $sc
     set textfont [$w.top.ff.fontf.f.font get active]
-    set textjfont [$w.top.ff.jfontf.j.jfont get active]
   }
 
   destroy $w
@@ -230,7 +207,7 @@ proc loaddatalist {} {
 }
 
 proc makescript { f gx gy height cap val} {
-  global textfont textjfont textpt textspc textsc textred textgreen textblue
+  global textfont textpt textspc textsc textred textgreen textblue
   global script frame
   puts $f "new text"
   puts $f [format "text::text=\'%s %s'" $cap $val]
@@ -238,7 +215,6 @@ proc makescript { f gx gy height cap val} {
   puts $f [format "text::y=%d" [expr $gy+$height]]
   puts $f [format "text::pt=%d" [expr $textpt]]
   puts $f "text::font=$textfont"
-  puts $f "text::jfont=$textjfont"
   puts $f [format "text::space=%d" $textspc]
   puts $f [format "text::script_size=%d" $textsc]
   puts $f [format "text::R=%d" $textred]
@@ -260,7 +236,7 @@ proc savescript {} {
   global p0 p1 p2 p3 p4 p5 p6 p7 p8 p9
   global cap0 cap1 cap2 cap3 cap4 cap5 cap6 cap7 cap8 cap9
   global val0 val1 val2 val3 val4 val5 val6 val7 val8 val9
-  global textfont textjfont textpt textspc textsc textred textgreen textblue
+  global textfont textpt textspc textsc textred textgreen textblue
   global script
 
   if { $script == "" } return
@@ -332,9 +308,9 @@ proc savescript {} {
     puts $f [format "rectangle::x2=%d+\${int:texttot:@}" \
             [expr int($posx+3*$height/4)]]
     puts $f [format "rectangle::y2=%d" [expr int($gy+$height/2)]]
-    puts $f "rectangle::R=0"
-    puts $f "rectangle::G=0"
-    puts $f "rectangle::B=0"
+    puts $f "rectangle::fill_R=0"
+    puts $f "rectangle::fill_G=0"
+    puts $f "rectangle::fill_B=0"
     puts $f "rectangle::fill=true"
     puts $f "new rectangle"
     puts $f [format "rectangle::x1=%d" [expr int($posx-$height/2)]]
@@ -342,14 +318,14 @@ proc savescript {} {
     puts $f [format "rectangle::x2=%d+\${int:texttot:@}" \
             [expr int($posx+$height/2)]]
     puts $f [format "rectangle::y2=%d" [expr int($gy+$height/4)]]
-    puts $f "rectangle::R=255"
-    puts $f "rectangle::G=255"
-    puts $f "rectangle::B=255"
-    puts $f "rectangle::R2=0"
-    puts $f "rectangle::G2=0"
-    puts $f "rectangle::B2=0"
+    puts $f "rectangle::fill_R=255"
+    puts $f "rectangle::fill_G=255"
+    puts $f "rectangle::fill_B=255"
+    puts $f "rectangle::stroke_R=0"
+    puts $f "rectangle::stroke_G=0"
+    puts $f "rectangle::stroke_B=0"
     puts $f "rectangle::fill=true"
-    puts $f "rectangle::frame=true"
+    puts $f "rectangle::stroke=true"
     puts $f "del int:textlen"
     puts $f "del int:texttot"
     puts $f "del iarray:textbbox"
@@ -619,15 +595,7 @@ proc setupwindow {} {
   -ipady 1m 
 }
 
-set fontlist {Times TimesBold TimesItalic TimesBoldItalic \
-              Helvetica HelveticaBold HelveticaOblique HelveticaItalic \
-              HelveticaBoldOblique HelveticaBoldItalic \
-              Courier CourierBold CourierOblique CourierItalic \
-              CourierBoldOblique CourierBoldItalic Symbol SymbolItalic \
-              Tim TimB TimI TimBI Helv HelvB HelvO HelvI HelvBO HelvBI \
-              Cour CourB CourO CourI CourBO CourBI Sym SymI}
-
-set jfontlist {Mincho Gothic Min Goth}
+set fontlist {Serif Sans-serif Monospace}
 
 set textred 0
 set textgreen 0
@@ -637,8 +605,7 @@ set textspc 0
 set textsc 7000
 set posx 5000
 set posy 5000
-set textfont Helvetica
-set textjfont Gothic
+set textfont Sans-serif
 
 set plus 0
 set figure 5
