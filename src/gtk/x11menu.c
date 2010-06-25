@@ -20,7 +20,6 @@
 #include "object.h"
 #include "ioutil.h"
 #include "shell.h"
-#include "jnstring.h"
 #include "nstring.h"
 #include "nconfig.h"
 #include "mathfn.h"
@@ -57,6 +56,8 @@
 #define FUNCTION_HISTORY "function_history"
 #define KEYMAP_FILE      "accel_map"
 
+#define USE_EXT_DRIVER 0
+
 int Menulock = FALSE, DnDLock = FALSE;
 struct NgraphApp NgraphApp;
 GtkWidget *TopLevel = NULL;
@@ -69,13 +70,17 @@ static unsigned int CursorType;
 static GtkWidget *ShowFileWin = NULL, *ShowAxisWin = NULL,
   *ShowLegendWin = NULL, *ShowMergeWin = NULL, *ShowCoodinateWin = NULL,
   *ShowInfoWin = NULL, *RecentData = NULL, *SaveMenuItem = NULL,
-  *AddinMenu = NULL, *ExtDrvOutMenu = NULL, *EditCut = NULL,
+  *AddinMenu = NULL, *EditCut = NULL,
   *EditCopy = NULL, *EditPaste = NULL, *EditDelete = NULL,
   *RotateCW = NULL, *RotateCCW = NULL, *FlipH = NULL, *FlipV = NULL,
   *EditAlign = NULL, *ToggleStatusBar = NULL, *ToggleScrollbar = NULL,
   *ToggleRuler = NULL, *TogglePToobar = NULL, *ToggleCToobar = NULL,
   *ToggleCrossGauge = NULL, *MathBtn = NULL, *AxisUndoBtn = NULL,
   *AxisUndoMenuItem = NULL, *SaveBtn = NULL;
+
+#if USE_EXT_DRIVER
+static GtkWidget *ExtDrvOutMenu = NULL
+#endif
 
 static void CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data);
 static void script_exec(GtkWidget *w, gpointer client_data);
@@ -771,9 +776,11 @@ show_graph_menu_cb(GtkWidget *w, gpointer user_data)
     gtk_widget_set_sensitive(AddinMenu, Menulocal.scriptroot != NULL);
   }
 
+#if USE_EXT_DRIVER
   if (ExtDrvOutMenu) {
     gtk_widget_set_sensitive(ExtDrvOutMenu, Menulocal.extprinterroot != NULL);
   }
+#endif
 }
 
 static void
@@ -900,7 +907,9 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   gtk_menu_shell_append(GTK_MENU_SHELL(menu), GTK_WIDGET(item));
 
   create_image_outputmenu(item, accel_group);
+#if USE_EXT_DRIVER
   ExtDrvOutMenu = create_menu_item(menu, _("external _Driver"), FALSE, "<Ngraph>/Graph/External Driver", 0, 0, CmOutputMenu, MenuIdOutputDriver);
+#endif
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
 
   create_menu_item(menu, _("_Draw order"), FALSE, "<Ngraph>/Graph/Draw order", 0, 0, CmGraphMenu, MenuIdGraphSwitch);
@@ -1320,7 +1329,9 @@ create_preferencemenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_Viewer"), FALSE, "<Ngraph>/Preference/Viewer", 0, 0, CmOptionMenu, MenuIdOptionViewer);
   create_menu_item(menu, _("_External viewer"), FALSE, "<Ngraph>/Preference/External Viewer", 0, 0, CmOptionMenu, MenuIdOptionExtViewer);
   create_menu_item(menu, _("_Font aliases"), FALSE, "<Ngraph>/Preference/Font aliases", 0, 0, CmOptionMenu, MenuIdOptionPrefFont);
+#if USE_EXT_DRIVER
   create_menu_item(menu, _("External _Driver"), FALSE, "<Ngraph>/Preference/External Driver", 0, 0, CmOptionMenu, MenuIdOptionPrefDriver);
+#endif
   create_menu_item(menu, _("_Add-in script"), FALSE, "<Ngraph>/Preference/Addin Script", 0, 0, CmOptionMenu, MenuIdOptionScript);
   create_menu_item(menu, _("_Miscellaneous"), FALSE, "<Ngraph>/Preference/Miscellaneous", 0, 0, CmOptionMenu, MenuIdOptionMisc);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
