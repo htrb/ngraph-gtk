@@ -99,9 +99,6 @@ MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
   SetWidgetFromObjField(d->topmargin, d->Obj, id, "top_margin");
   SetWidgetFromObjField(d->leftmargin, d->Obj, id, "left_margin");
   SetWidgetFromObjField(d->zoom, d->Obj, id, "zoom");
-#ifdef JAPANESE
-  SetWidgetFromObjField(d->greeksymbol, d->Obj, id, "symbol_greek");
-#endif
 }
 
 static void
@@ -153,12 +150,6 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Zoom:"), FALSE, i++);
     d->zoom = w;
 
-#ifdef JAPANESE
-    w = gtk_check_button_new_with_mnemonic(_("GreekSymbol"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->greeksymbol = w;
-#endif
-
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(d->vbox), frame, TRUE, TRUE, 4);
@@ -194,10 +185,7 @@ MergeDialogClose(GtkWidget *w, void *data)
     return;
   if (SetObjFieldFromWidget(d->zoom, d->Obj, d->Id, "zoom"))
     return;
-#ifdef JAPANESE
-  if (SetObjFieldFromWidget(d->greeksymbol, d->Obj, d->Id, "symbol_greek"))
-    return;
-#endif
+
   d->ret = ret;
 }
 

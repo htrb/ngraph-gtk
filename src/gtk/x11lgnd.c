@@ -33,10 +33,10 @@
 
 #include "ngraph.h"
 #include "object.h"
+#include "gra.h"
 #include "odraw.h"
 #include "otext.h"
 #include "opath.h"
-#include "jnstring.h"
 #include "nstring.h"
 #include "mathfn.h"
 
@@ -206,12 +206,7 @@ LegendTextCB(struct objlist *obj, int id)
   getobj(obj, "text", id, 0, NULL, &text);
 
   if (text) {
-#ifdef JAPANESE
-/* SJIS ---> UTF-8 */
-    s = sjis_to_utf8(text);
-#else
     s = g_strdup(text);
-#endif
   } else {
     s = g_strdup("");
   }
@@ -260,32 +255,64 @@ init_legend_dialog_widget_member(struct LegendDialog *d)
   d->direction = NULL;
   d->raw = NULL;
   d->font = NULL;
-  d->jfont = NULL;
+  d->font_bold = NULL;
+  d->font_italic = NULL;
 }
 
 static void
-set_font(GtkWidget *w, char *name, struct LegendDialog *d, int id, int jfont)
+get_font(struct LegendDialog *d)
 {
-  SetFontListFromObj(w, d->Obj, d->Id, name, jfont);
-}
+  int style, bold, italic, old_style;
 
-static void
-get_font(char *name, struct LegendDialog *d, int jfont)
-{
-  if (jfont) {
-    SetObjFieldFromFontList(d->jfont, d->Obj, d->Id, name, jfont);
-  } else {
-    SetObjFieldFromFontList(d->font, d->Obj, d->Id, name, jfont);
+  SetObjFieldFromFontList(d->font, d->Obj, d->Id, "font");
+
+  style = 0;
+  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->font_bold));
+  if (bold) {
+    style |= GRA_FONT_STYLE_BOLD;
+  }
+
+  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->font_italic));
+  if (italic) {
+    style |= GRA_FONT_STYLE_ITALIC;
+  }
+
+  getobj(d->Obj, "style", d->Id, 0, NULL, &old_style);
+  if (old_style != style) {
+    putobj(d->Obj, "style", d->Id, &style);
+    set_graph_modified();
   }
 }
 
 static void
-set_fonts(struct LegendDialog *d, int id)
+set_font(struct LegendDialog *d, int id)
 {
-  set_font(d->font, "font", d, id, FALSE);
-#ifdef JAPANESE
-  set_font(d->jfont, "jfont", d, id, TRUE);
-#endif
+  int style;
+  struct compatible_font_info *compatible;
+
+  compatible = SetFontListFromObj(d->font, d->Obj, d->Id, "font");
+
+  if (compatible) {
+    /* for backward compatibility */
+    style = compatible->style;
+    if (d->text && compatible->symbol) {
+      char buf[] = "%F{Sym}", *tmp;
+      const char *str;
+      GtkWidget *widget;
+
+      widget = get_widget(d->text);
+      str = gtk_entry_get_text(GTK_ENTRY(widget));
+      if (str && strncmp(str, buf, sizeof(buf) - 1)) {
+	tmp = g_strdup_printf("%s%s", buf, str);
+	gtk_entry_set_text(GTK_ENTRY(widget), tmp);
+	g_free(tmp);
+      }
+    }
+  } else {
+    getobj(d->Obj, "style", d->Id, 0, NULL, &style);
+  }
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->font_bold), style & GRA_FONT_STYLE_BOLD);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->font_italic), style & GRA_FONT_STYLE_ITALIC);
 }
 
 static void
@@ -469,24 +496,13 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   if (d->text) {
     char *buf;
     sgetobjfield(d->Obj,id,"text",NULL,&buf,FALSE,FALSE,FALSE);
-#ifdef JAPANESE
-    /* SJIS ---> UTF-8 */
-    {
-      char *tmp;
-      tmp = sjis_to_utf8(buf);
-      if (tmp) {
-	g_free(buf);
-	buf = tmp;
-      }
-    }
-#endif
     widget = get_widget(d->text);
     gtk_entry_set_text(GTK_ENTRY(widget), buf);
     g_free(buf);
   }
 
-  if (d->font)
-    set_fonts(d, id);
+  if (d->font && d->font_bold && d->font_italic)
+    set_font(d, id);
 
   if (d->color)
     set_color(d->color, d->Obj, id, NULL);
@@ -618,14 +634,9 @@ legend_dialog_close(GtkWidget *w, void *data)
     }
   }
 
-  if (d->font) {
-    get_font("font", d, FALSE);
+  if (d->font && d->font_bold && d->font_italic) {
+    get_font(d);
   }
-#ifdef JAPANESE
-  if (d->jfont) {
-    get_font("jfont", d, TRUE);
-  }
-#endif
 
   if (d->text) {
     const char *str;
@@ -641,15 +652,6 @@ legend_dialog_close(GtkWidget *w, void *data)
 
     if (ptr) {
       char *org_str;
-#ifdef JAPANESE
-/* UTF-8 ---> SJIS */
-      char *tmp;
-      tmp = utf8_to_sjis(ptr);
-      if (tmp) {
-	g_free(ptr);
-	ptr = tmp;
-      }
-#endif
       sgetobjfield(d->Obj, d->Id, "text", NULL, &org_str, FALSE, FALSE, FALSE);
       if (org_str == NULL || strcmp(ptr, org_str)) {
 	if (sputobjfield(d->Obj, d->Id, "text", ptr) != 0) {
@@ -1498,7 +1500,7 @@ LegendMarkDialog(struct LegendDialog *data, struct objlist *obj, int id)
 static void
 legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
 {
-  GtkWidget *w;
+  GtkWidget *w, *btn_box;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_POINT, TRUE, TRUE);
   add_widget_to_table(table, w, _("_Pt:"), FALSE, i++);
@@ -1517,11 +1519,19 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
   add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
   d->font = w;
 
-#ifdef JAPANESE
-  w = combo_box_create();
-  add_widget_to_table(table, w, _("_Jfont:"), FALSE, i++);
-  d->jfont = w;
-#endif
+  btn_box = gtk_hbutton_box_new();
+  gtk_box_set_spacing(GTK_BOX(btn_box), 10);
+  w = gtk_check_button_new_with_label("gtk-bold");
+  gtk_button_set_use_stock(GTK_BUTTON(w), TRUE);
+  d->font_bold = w;
+  gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
+
+  w = gtk_check_button_new_with_label("gtk-italic");
+  gtk_button_set_use_stock(GTK_BUTTON(w), TRUE);
+  d->font_italic = w;
+  gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
+
+  add_widget_to_table(table, btn_box, "", FALSE, i++);
 
   color_setup(d, table, i++);
 
@@ -2287,19 +2297,7 @@ legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int r
     getobj(d->obj[type], "x", row, 0, NULL, x0);
     getobj(d->obj[type], "y", row, 0, NULL, y0);
     getobj(d->obj[type], "text", row, 0, NULL, &text);
-    {
-#ifdef JAPANESE
-      /* SJIS ---> UTF-8 */
-      char *tmp;
-      tmp = sjis_to_utf8(text);
-      if (tmp) {
-	tree_store_set_string(GTK_WIDGET(d->text), iter, i, tmp);
-	g_free(tmp);
-      }
-#else
-      tree_store_set_string(GTK_WIDGET(d->text), iter, i, text);
-#endif
-    }
+    tree_store_set_string(GTK_WIDGET(d->text), iter, i, text);
     legend_list_set_color(d, iter, type, row, COLOR_TYPE_1);
     break;
   default:

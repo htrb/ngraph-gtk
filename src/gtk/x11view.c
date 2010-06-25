@@ -254,22 +254,7 @@ CopyFocusedObjects(void)
     if (r < 0 || s == NULL)
       return 1;
 
-#ifdef JAPANESE
-    if (focus[i]->obj == text) {
-      char *tmp;
-
-      tmp = sjis_to_utf8(s);
-      if (tmp == NULL)
-	continue;
-
-      ptr = nstrcat(str, tmp);
-      g_free(tmp);
-    } else {
-      ptr = nstrcat(str, s);
-    }
-#else
     ptr = nstrcat(str, s);
-#endif
     if (ptr) {
       str = ptr;
     } else {
@@ -318,11 +303,10 @@ check_last_insts(struct objlist *parent, struct narray *array)
 static void
 focus_new_insts(struct objlist *parent, struct narray *array)
 {
-  struct objlist *ocur, *text;
+  struct objlist *ocur;
   int i, instnum, prev_instnum, oid;
   char *inst;
 
-  text = chkobject("text");
   ocur = parent->child;
   while (chkobjparent(ocur) == parent) {
     instnum = chkobjlastinst(ocur);
@@ -330,16 +314,6 @@ focus_new_insts(struct objlist *parent, struct narray *array)
     arrayndel(array, 0);
     if (chkobjfield(ocur, "bbox") == 0) {
       for (i = prev_instnum + 1; i <= instnum; i++) {
-#ifdef JAPANESE
-	if (ocur == text) {
-	  char *tmp, *str;
-	  getobj(ocur, "text", i, 0, NULL, &str);
-	  tmp = utf8_to_sjis(str);
-	  if (tmp) {
-	    putobj(ocur, "text", i, tmp);
-	  }
-	}
-#endif
 	getobj(ocur, "oid", i, 0, NULL, &oid);
 	add_focus_obj(NgraphApp.Viewer.focusobj, ocur, oid);
 	inst = chkobjinst(ocur, i);
@@ -708,20 +682,6 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     }
   }
   ptr[j] = '\0';
-
-#ifdef JAPANESE
-  {
-    char *tmp;
-
-    tmp = utf8_to_sjis(ptr);
-    g_free(ptr);
-    if (tmp == NULL) {
-      return 1;
-    }
-
-    ptr = tmp;
-  }
-#endif
 
   id = newobj(obj);
   if (id < 0) {

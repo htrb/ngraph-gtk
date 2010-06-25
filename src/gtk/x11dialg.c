@@ -1163,37 +1163,59 @@ SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   combo_box_set_active(w, a);
 }
 
-void
-SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name, int jfont)
+struct compatible_font_info *
+SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name)
 {
   int j, selfont;
   struct fontmap *fcur;
   char *font;
+  struct compatible_font_info *compatible;
 
   if (w == NULL)
-    return;
+    return NULL;
+
+  compatible = NULL;
 
   getobj(obj, name, id, 0, NULL, &font);
   combo_box_clear(w);
 
   fcur = Gra2cairoConf->fontmap_list_root;
   j = 0;
-  selfont = 0;
+  selfont = -1;
   while (fcur) {
-    if ((jfont && fcur->twobyte) || (! jfont && !(fcur->twobyte))) {
-      combo_box_append_text(w, fcur->fontalias);
-      if (font && strcmp(font, fcur->fontalias) == 0)
-	selfont = j;
-      j++;
+    combo_box_append_text(w, fcur->fontalias);
+    if (font && strcmp(font, fcur->fontalias) == 0) {
+      selfont = j;
     }
+    j++;
     fcur = fcur->next;
   }
 
+  if (selfont < 0) {
+    compatible = gra2cairo_get_comptible_font_info(font);
+    if (compatible == NULL) {
+      selfont = 0;
+    } else {
+      fcur = Gra2cairoConf->fontmap_list_root;
+      j = 0;
+      while (fcur) {
+	if (strcmp(compatible->name, fcur->fontalias) == 0) {
+	  selfont = j;
+	  break;
+	}
+	j++;
+	fcur = fcur->next;
+      }
+    }
+  }
+
   combo_box_set_active(w, selfont);
+
+  return compatible;
 }
 
 void
-SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, int jfont)
+SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name)
 {
   struct fontmap *fcur;
   char *fontalias;
@@ -1212,9 +1234,6 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, i
   }
 
   g_free(fontalias);
-
-  if ((! jfont || ! fcur->twobyte) && (jfont || fcur->twobyte))
-    return;
 
   chk_sputobjfield(obj, id, name, fcur->fontalias);
 }

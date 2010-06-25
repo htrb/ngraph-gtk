@@ -39,7 +39,6 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
-#include "jnstring.h"
 #include "odraw.h"
 #include "nconfig.h"
 

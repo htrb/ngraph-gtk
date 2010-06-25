@@ -1081,7 +1081,6 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
     }
   } else {
     int tbl[10];
-#if NEW_MATH_CODE
     MathEquation *code;
     MathEquationParametar *prm;
 
@@ -1104,23 +1103,6 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       tbl[i] = prm->id[i];
     }
     math_equation_free(code);
-#else
-    char *code;
-    struct narray needarray;
-    int *needdata, maxdim, need2pass;
-
-    arrayinit(&needarray, sizeof(int));
-    mathcode(math, &code, &needarray, NULL, &maxdim, &need2pass,
-	     TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE,
-	     FALSE, FALSE);
-    g_free(code);
-    dim = arraynum(&needarray);
-    needdata = (int *) arraydata(&needarray);
-    for (i = 0; i < dim; i++) {
-      tbl[i] = needdata[i];
-    }
-    arraydel(&needarray);
-#endif
     i = 0;
     i += snprintf(buf + i, sizeof(buf) - i, "Eq: User defined\n\n");
 
@@ -4071,7 +4053,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     if (intp >= 2) {
       GRAmoveto(ggc, height, height * 3 / 4);
-      GRAtextstyle(ggc, "Times", 52, 0, 0);
+      GRAtextstyle(ggc, "Times", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
       GRAouttext(ggc, "B");
     }
     GRAcurvefirst(ggc, 0, NULL, NULL, NULL, splinedif, splineint, NULL, spx[0], spy[0]);
@@ -4196,7 +4178,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
   case PLOT_TYPE_FIT:
     GRAcolor(ggc, fr, fg, fb);
     GRAmoveto(ggc, 1, height * 3 / 4);
-    GRAtextstyle(ggc, "Times", 52, 0, 0);
+    GRAtextstyle(ggc, "Times", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
     GRAouttext(ggc, "fit");
     break;
   }

@@ -654,16 +654,13 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
 {
   struct fontmap *fcur;
   GtkTreeIter iter;
-  const char *type;
 
   list_store_clear(d->list);
   fcur = Gra2cairoConf->fontmap_list_root;
   while (fcur) {
-    type = gra2cairo_get_font_type_str(fcur->type);
     list_store_append(d->list, &iter);
     list_store_set_string(d->list, &iter, 0, fcur->fontalias);
     list_store_set_string(d->list, &iter, 1, fcur->fontname);
-    list_store_set_string(d->list, &iter, 2, type);
     fcur = fcur->next;
   }
 }
@@ -671,40 +668,16 @@ PrefFontDialogSetupItem(struct PrefFontDialog *d)
 static GtkWidget *
 create_font_selection_dialog(struct PrefFontDialog *d, struct fontmap *fcur)
 {
-  GtkWidget *dialog, *vbox, *w;
-  static char *type[] = {
-    "",
-    "Bold",
-    "Italic",
-    "Bold Italic",
-    "Oblique",
-    "Bold Oblique",
-  };
-
-#define TYPE_NUM ((int) (sizeof(type) / sizeof(*type)))
+  GtkWidget *dialog;
 
   dialog = gtk_font_selection_dialog_new(_("Font"));
 
-#ifdef JAPANESE
-  vbox = GTK_DIALOG(dialog)->vbox;
-  w = gtk_check_button_new_with_mnemonic(_("_Jfont"));
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-  gtk_widget_show(w);
-  d->two_byte = w;
-#endif
-
   if (fcur) {
-    int t;
     char *buf;
 
-    t = (fcur->type < 0 || fcur->type >= TYPE_NUM) ? 0 : fcur->type;
-    buf = g_strdup_printf("%s %s 16", fcur->fontname, type[t]);
+    buf = g_strdup_printf("%s 16", fcur->fontname);
     gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(dialog), buf);
     g_free(buf);
-
-#ifdef JAPANESE
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->two_byte), fcur->twobyte);
-#endif
   }
 
   return dialog;
@@ -743,14 +716,9 @@ set_font_from_font_selection_dialog(GtkWidget *w, struct PrefFontDialog *d, stru
   PangoFontDescription *pdesc;
   char *fname;
   const char *family;
-  PangoStyle style;
-  PangoWeight weight;
-  int type, two_byte;
 
   fname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(w));
   pdesc = pango_font_description_from_string(fname);
-  weight = pango_font_description_get_weight(pdesc);
-  style = pango_font_description_get_style(pdesc);
   family = pango_font_description_get_family(pdesc);
 
   g_free(fname);
@@ -760,43 +728,14 @@ set_font_from_font_selection_dialog(GtkWidget *w, struct PrefFontDialog *d, stru
     return;
   }
 
-  switch (style) {
-  case PANGO_STYLE_OBLIQUE:
-    if (weight > PANGO_WEIGHT_NORMAL) {
-      type = BOLDOBLIQUE;
-     } else {
-      type = OBLIQUE;
-    }
-    break;
-  case PANGO_STYLE_ITALIC:
-    if (weight > PANGO_WEIGHT_NORMAL) {
-      type = BOLDITALIC;
-    } else {
-      type = ITALIC;
-    }
-    break;
-  default:
-    if (weight > PANGO_WEIGHT_NORMAL) {
-      type = BOLD;
-    } else {
-      type = NORMAL;
-    }
-  }
-
-#ifdef JAPANESE
-  two_byte = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->two_byte));
-#else
-  two_byte = FALSE;
-#endif
-
   if (fcur) {
-    gra2cairo_update_fontmap(fcur->fontalias, family, type, two_byte);
+    gra2cairo_update_fontmap(fcur->fontalias, family);
   } else {
     char *alias;
 
     alias = get_font_alias(d);
     if (alias) {
-      gra2cairo_add_fontmap(alias, family, type, two_byte);
+      gra2cairo_add_fontmap(alias, family);
       g_free(alias);
     }
   }
@@ -893,7 +832,6 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
   n_list_store list[] = {
     {N_("alias"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
     {N_("name"),  G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-    {N_("style"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
   };
 
   d = (struct PrefFontDialog *) data;

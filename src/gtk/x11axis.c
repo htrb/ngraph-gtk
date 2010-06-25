@@ -33,6 +33,7 @@
 #include "object.h"
 #include "nstring.h"
 #include "mathfn.h"
+#include "gra.h"
 #include "axis.h"
 
 #include "gtk_liststore.h"
@@ -1863,6 +1864,7 @@ static int
 font_tab_set_value(struct AxisDialog *axis)
 {
   struct AxisFont *d;
+  int style, bold, italic, old_style;
 
   d = &axis->font;
 
@@ -1875,14 +1877,27 @@ font_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->script, axis->Obj, axis->Id, "num_script_size"))
     return 1;
 
-  SetObjFieldFromFontList(d->font, axis->Obj, axis->Id, "num_font", FALSE);
-
-#ifdef JAPANESE
-  SetObjFieldFromFontList(d->jfont, axis->Obj, axis->Id, "num_jfont", TRUE);
-#endif
+  SetObjFieldFromFontList(d->font, axis->Obj, axis->Id, "num_font");
 
   if (putobj_color(d->color, axis->Obj, axis->Id, "num_"))
     return 1;
+
+  style = 0;
+  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->font_bold));
+  if (bold) {
+    style |= GRA_FONT_STYLE_BOLD;
+  }
+
+  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->font_italic));
+  if (italic) {
+    style |= GRA_FONT_STYLE_ITALIC;
+  }
+
+  getobj(axis->Obj, "num_font_style", axis->Id, 0, NULL, &old_style);
+  if (old_style != style) {
+    putobj(axis->Obj, "num_font_style", axis->Id, &style);
+    set_graph_modified();
+  }
 
   return 0;
 }
@@ -1890,7 +1905,9 @@ font_tab_set_value(struct AxisDialog *axis)
 static void
 font_tab_setup_item(struct AxisDialog *axis, int id)
 {
+  struct compatible_font_info *compatible;
   struct AxisFont *d;
+  int style;
 
   d = &axis->font;
 
@@ -1900,13 +1917,17 @@ font_tab_setup_item(struct AxisDialog *axis, int id)
 
   SetWidgetFromObjField(d->script, axis->Obj, id, "num_script_size");
 
-  SetFontListFromObj(d->font, axis->Obj, id, "num_font", FALSE);
-
-#ifdef JAPANESE
-  SetFontListFromObj(d->jfont, axis->Obj, id, "num_jfont", TRUE);
-#endif
-
   set_color(d->color, axis->Obj, id, "num_");
+
+  compatible = SetFontListFromObj(d->font, axis->Obj, id, "num_font");
+
+  if (compatible) {
+    style = compatible->style;
+  } else {
+    getobj(axis->Obj, "num_font_style", axis->Id, 0, NULL, &style);
+  }
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->font_bold), style & GRA_FONT_STYLE_BOLD);
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->font_italic), style & GRA_FONT_STYLE_ITALIC);
 }
 
 static void
@@ -1926,7 +1947,7 @@ font_tab_copy_clicked(GtkButton *btn, gpointer user_data)
 static GtkWidget *
 font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 {
-  GtkWidget *w, *vbox, *table, *frame;
+  GtkWidget *w, *vbox, *table, *frame, *btn_box;
   struct AxisFont *d;
   int i;
 
@@ -1951,12 +1972,20 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   add_widget_to_table(table, w, _("_Font:"), FALSE, i++);
   d->font = w;
 
-#ifdef JAPANESE
-  w = combo_box_create();
-  add_widget_to_table(table, w, _("_Jfont:"), FALSE, i++);
-  d->jfont = w;
-#endif
-    
+  btn_box = gtk_hbutton_box_new();
+  gtk_box_set_spacing(GTK_BOX(btn_box), 10);
+  w = gtk_check_button_new_with_label("gtk-bold");
+  gtk_button_set_use_stock(GTK_BUTTON(w), TRUE);
+  d->font_bold = w;
+  gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
+
+  w = gtk_check_button_new_with_label("gtk-italic");
+  gtk_button_set_use_stock(GTK_BUTTON(w), TRUE);
+  d->font_italic = w;
+  gtk_box_pack_start(GTK_BOX(btn_box), w, FALSE, FALSE, 0);
+
+  add_widget_to_table(table, btn_box, "", FALSE, i++);
+
   w = create_color_button(wi);
   add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
