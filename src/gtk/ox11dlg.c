@@ -32,7 +32,6 @@
 #include "ngraph.h"
 #include "object.h"
 #include "nstring.h"
-#include "jnstring.h"
 #include "ioutil.h"
 #include "ox11menu.h"
 

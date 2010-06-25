@@ -28,6 +28,7 @@
 #include <gdk/gdk.h>
 
 #include "object.h"
+#include "ogra2cairo.h"
 
 #define MARK_TYPE_NUM 90
 #define MATH_FNC_NUM 5
@@ -54,8 +55,8 @@ int SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 void SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field);
 int get_radio_index(GSList *top);
-void SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name, int jfont);
-void SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name, int jfont);
+struct compatible_font_info *SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name);
+void SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name);
 void set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix);
 void set_color2(GtkWidget *w, struct objlist *obj, int id);
 void set_fill_color(GtkWidget *w, struct objlist *obj, int id);
@@ -257,7 +258,7 @@ struct AxisPos
 
 struct AxisFont
 {
-  GtkWidget *space, *pt, *script, *font, *jfont, *color;
+  GtkWidget *space, *pt, *script, *font, *color, *font_bold, *font_italic;
   int R, G, B, tab_id;
 };
 
@@ -332,10 +333,13 @@ struct LegendDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   char *(* prop_cb) (struct objlist *obj, int id);
-  GtkWidget *path_type, *style, *points, *interpolation, *width, *miter, *join, *color, *color2,
-    *stroke_color, *fill_color, *x, *y, *x1, *y1, *x2, *y2, *rx, *ry, *angle1, *angle2,
-    *pieslice, *close_path, *stroke, *fill, *fill_rule, *arrow, *arrow_length, *arrow_width,
-    *size, *type, *view, *text, *pt, *space, *script_size, *direction, *raw, *font, *jfont;
+  GtkWidget *path_type, *style, *points, *interpolation, *width,
+    *miter, *join, *color, *color2, *stroke_color, *fill_color,
+    *x, *y, *x1, *y1, *x2, *y2, *rx, *ry, *angle1, *angle2,
+    *pieslice, *close_path, *stroke, *fill, *fill_rule, *arrow,
+    *arrow_length, *arrow_width, *size, *type, *view, *text, *pt,
+    *space, *script_size, *direction, *raw, *font, *font_bold,
+    *font_italic;
   struct objlist *Obj;
   int Id;
   int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, wid, ang;

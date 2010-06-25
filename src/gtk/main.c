@@ -1207,7 +1207,7 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
 {
   char **list = (char **) NULL;
   struct fontmap *fontmap, *fontmaproot;
-  int j, len, twobyte;
+  int j, len;
 
   if (Gra2cairoConf == NULL)
     return NULL;
@@ -1227,14 +1227,10 @@ get_obj_font_list(struct objlist *objcur, char *member, char *val)
   if (list == NULL)
     return NULL;
 
-  twobyte = (strstr(member, "jfont") != NULL);
-
   len = strlen(val);
   j = 0;
-  for (fontmap = fontmaproot; fontmap != NULL;
-       fontmap = fontmap->next) {
-    if ((fontmap->twobyte == twobyte)
-	&& (strncmp(fontmap->fontalias, val, len) == 0)) {
+  for (fontmap = fontmaproot; fontmap != NULL; fontmap = fontmap->next) {
+    if (strncmp(fontmap->fontalias, val, len) == 0) {
       list[j++] = fontmap->fontalias;
     }
   }

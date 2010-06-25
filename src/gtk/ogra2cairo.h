@@ -19,9 +19,15 @@ enum cairo_font_type {NORMAL = 0, BOLD, ITALIC, BOLDITALIC, OBLIQUE, BOLDOBLIQUE
 struct fontmap
 {
   char *fontalias, *fontname;
-  int type, twobyte, symbol;
   PangoFontDescription *font;
   struct fontmap *next;
+};
+
+struct compatible_font_info {
+  char *old_name;
+  int style;
+  int symbol;
+  char *name;
 };
 
 struct gra2cairo_config {
@@ -36,6 +42,7 @@ struct gra2cairo_local {
   int linetonum, text2path, antialias;
   struct fontmap *loadfont;
   char *fontalias;
+  int font_style, symbol;
   double pixel_dot_x,  pixel_dot_y, offsetx, offsety,
     fontdir, fontcos, fontsin, fontspace, fontsize;
   GdkRegion *region;
@@ -48,13 +55,14 @@ int gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, 
 int gra2cairo_clear_region(struct gra2cairo_local *local);
 void gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias);
 struct gra2cairo_local *gra2cairo_free(struct objlist *obj, char *inst);
-void gra2cairo_update_fontmap(const char *fontalias, const char *fontname, int type, int two_byte);
+void gra2cairo_update_fontmap(const char *fontalias, const char *fontname);
 const char *gra2cairo_get_font_type_str(int type);
 struct fontmap *gra2cairo_get_fontmap(char *font_alias);
 void gra2cairo_remove_fontmap(char *fontalias);
-void gra2cairo_add_fontmap(const char *fontalias, const char *fontname, int type, int two_byte);
+void gra2cairo_add_fontmap(const char *fontalias, const char *fontname);
 int gra2cairo_get_fontmap_num(void);
 void gra2cairo_save_config(void);
 void gra2cairo_draw_path(struct gra2cairo_local *local);
+struct compatible_font_info *gra2cairo_get_compatible_font_info(char *name);
 
 #endif

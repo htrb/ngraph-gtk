@@ -41,7 +41,6 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
-#include "jnstring.h"
 #include "nconfig.h"
 #include "mathfn.h"
 #include "gra.h"

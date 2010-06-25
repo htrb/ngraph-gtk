@@ -38,7 +38,6 @@
 #include "ioutil.h"
 #include "gra.h"
 #include "nstring.h"
-#include "jnstring.h"
 #include "mathfn.h"
 #include "nconfig.h"
 

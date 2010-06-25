@@ -15,6 +15,8 @@
 #include <cairo/cairo.h>
 
 #include "mathfn.h"
+#include "object.h"
+#include "gra.h"
 #include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
@@ -31,12 +33,15 @@
 #define OVERSION  "1.00.00"
 #define CAIROCONF "[gra2cairo]"
 
+#define DEFAULT_FONT "Sans-serif"
+
 #ifndef M_PI
 #define M_PI 3.141592
 #endif
 
 char **Gra2CairoErrMsgs = NULL;
 int Gra2CairoErrMsgNum = 0;
+int OldConfigExist = FALSE;	/* for backward compatibility */
 
 char *gra2cairo_antialias_type[] = {
   N_("none"),
@@ -48,26 +53,68 @@ char *gra2cairo_antialias_type[] = {
 
 struct gra2cairo_config *Gra2cairoConf = NULL;
 static int Instance = 0;
-static NHASH FontFace = NULL;
-static char *FontFaceStr[] = {
-  "normal",
-  "bold",
-  "italic",
-  "bold_italic",
-  "oblique",
-  "bold_oblique",
+static NHASH CompatibleFontHash = NULL;
+
+static struct compatible_font_info CompatibleFont[] = {
+  {"Times",                GRA_FONT_STYLE_NORMAL,                       FALSE, "Serif"},
+  {"TimesBold",            GRA_FONT_STYLE_BOLD,                         FALSE, "Serif"},
+  {"TimesItalic",          GRA_FONT_STYLE_ITALIC,                       FALSE, "Serif"},
+  {"TimesBoldItalic",      GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Serif"},
+  {"Helvetica",            GRA_FONT_STYLE_NORMAL,                       FALSE, "Sans-serif"},
+  {"HelveticaBold",        GRA_FONT_STYLE_BOLD,                         FALSE, "Sans-serif"},
+  {"HelveticaOblique",     GRA_FONT_STYLE_ITALIC,                       FALSE, "Sans-serif"},
+  {"HelveticaItalic",      GRA_FONT_STYLE_ITALIC,                       FALSE, "Sans-serif"},
+  {"HelveticaBoldOblique", GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Sans-serif"},
+  {"HelveticaBoldItalic",  GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Sans-serif"},
+  {"Courier",              GRA_FONT_STYLE_NORMAL,                       FALSE, "Monospace"},
+  {"CourierBold",          GRA_FONT_STYLE_BOLD,                         FALSE, "Monospace"},
+  {"CourierOblique",       GRA_FONT_STYLE_ITALIC,                       FALSE, "Monospace"},
+  {"CourierItalic",        GRA_FONT_STYLE_ITALIC,                       FALSE, "Monospace"},
+  {"CourierBoldOblique",   GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Monospace"},
+  {"CourierBoldItalic",    GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Monospace"},
+  {"Symbol",               GRA_FONT_STYLE_NORMAL,                       TRUE,  "Serif"},
+  {"SymbolBold",           GRA_FONT_STYLE_BOLD,                         TRUE,  "Serif"},
+  {"SymbolItalic",         GRA_FONT_STYLE_ITALIC,                       TRUE,  "Serif"},
+  {"SymbolBoldItalic",     GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, TRUE,  "Serif"},
+  {"Mincho",               GRA_FONT_STYLE_NORMAL,                       FALSE, "Sans-serif"},
+  {"MinchoBold",           GRA_FONT_STYLE_BOLD,                         FALSE, "Sans-serif"},
+  {"MinchoItalic",         GRA_FONT_STYLE_ITALIC,                       FALSE, "Sans-serif"},
+  {"MinchoBoldItalic",     GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Sans-serif"},
+  {"Gothic",               GRA_FONT_STYLE_NORMAL,                       FALSE, "Serif"},
+  {"GothicBold",           GRA_FONT_STYLE_BOLD,                         FALSE, "Serif"},
+  {"GothicItalic",         GRA_FONT_STYLE_ITALIC,                       FALSE, "Serif"},
+  {"GothicBoldItalic",     GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Serif"},
+  {"Tim",                  GRA_FONT_STYLE_NORMAL,                       FALSE, "Serif"},
+  {"TimB",                 GRA_FONT_STYLE_BOLD,                         FALSE, "Serif"},
+  {"TimI",                 GRA_FONT_STYLE_ITALIC,                       FALSE, "Serif"},
+  {"TimBI",                GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Serif"},
+  {"Helv",                 GRA_FONT_STYLE_NORMAL,                       FALSE, "Sans-serif"},
+  {"HelvB",                GRA_FONT_STYLE_BOLD,                         FALSE, "Sans-serif"},
+  {"HelvO",                GRA_FONT_STYLE_ITALIC,                       FALSE, "Sans-serif"},
+  {"HelvI",                GRA_FONT_STYLE_ITALIC,                       FALSE, "Sans-serif"},
+  {"HelvBO",               GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Sans-serif"},
+  {"HelvBI",               GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Sans-serif"},
+  {"Cour",                 GRA_FONT_STYLE_NORMAL,                       FALSE, "Monospace"},
+  {"CourB",                GRA_FONT_STYLE_BOLD,                         FALSE, "Monospace"},
+  {"CourO",                GRA_FONT_STYLE_ITALIC,                       FALSE, "Monospace"},
+  {"CourI",                GRA_FONT_STYLE_ITALIC,                       FALSE, "Monospace"},
+  {"CourBO",               GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Monospace"},
+  {"CourBI",               GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Monospace"},
+  {"Sym",                  GRA_FONT_STYLE_NORMAL,                       TRUE,  "Serif"},
+  {"SymB",                 GRA_FONT_STYLE_BOLD,                         TRUE,  "Serif"},
+  {"SymI",                 GRA_FONT_STYLE_ITALIC,                       TRUE,  "Serif"},
+  {"SymBI",                GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, TRUE,  "Serif"},
+  {"Min",                  GRA_FONT_STYLE_NORMAL,                       FALSE, "Sans-serif"},
+  {"MinB",                 GRA_FONT_STYLE_BOLD,                         FALSE, "Sans-serif"},
+  {"MinI",                 GRA_FONT_STYLE_ITALIC,                       FALSE, "Sans-serif"},
+  {"MinBI",                GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Sans-serif"},
+  {"Goth",                 GRA_FONT_STYLE_NORMAL,                       FALSE, "Serif"},
+  {"GothB",                GRA_FONT_STYLE_BOLD,                         FALSE, "Serif"},
+  {"GothI",                GRA_FONT_STYLE_ITALIC,                       FALSE, "Serif"},
+  {"GothBI",               GRA_FONT_STYLE_BOLD | GRA_FONT_STYLE_ITALIC, FALSE, "Serif"},
 };
 
 #define FONT_FACE_NUM ((int) (sizeof(FontFaceStr) / sizeof(*FontFaceStr)))
-
-static int
-check_type(int type)
-{
-  if (type < 0 || type >= FONT_FACE_NUM) {
-    type = NORMAL;
-  }
-  return type;
-}
 
 static int
 mxp2dw(struct gra2cairo_local *local, int r)
@@ -139,10 +186,9 @@ free_font_map(struct fontmap *fcur)
 }
 
 static struct fontmap *
-create_font_map(char *fontalias, char *fontname, int type, int twobyte, struct fontmap *fprev)
+create_font_map(char *fontalias, char *fontname, struct fontmap *fprev)
 {
   struct fontmap *fnew;
-  char symbol[] = "Sym";
 
   if (Gra2cairoConf->fontmap == NULL)
     return NULL;
@@ -162,9 +208,6 @@ create_font_map(char *fontalias, char *fontname, int type, int twobyte, struct f
   }
 
   fnew->fontalias = fontalias;
-  fnew->symbol = ! strncmp(fontalias, symbol, sizeof(symbol) - 1);
-  fnew->type = type;
-  fnew->twobyte = twobyte;
   fnew->fontname = fontname;
   fnew->font = NULL;
   fnew->next = NULL;
@@ -189,8 +232,9 @@ gra2cairo_save_config(void)
   struct narray conf;
 
   arrayinit(&conf, sizeof(char *));
+
   if (gra2cairo_get_fontmap_num() == 0) {
-    buf = g_strdup("font_map");
+    buf = g_strdup("font");
     if (buf) {
       arrayadd(&conf, &buf);
       removeconfig(CAIROCONF, &conf);
@@ -198,11 +242,8 @@ gra2cairo_save_config(void)
   } else {
     fcur = Gra2cairoConf->fontmap_list_root;
     while (fcur) {
-      buf = g_strdup_printf("font_map=%s,%s,%d,%s",
-			    fcur->fontalias,
-			    gra2cairo_get_font_type_str(fcur->type),
-			    (fcur->twobyte) ? 1 : 0,
-			    fcur->fontname);
+      buf = g_strdup_printf("font=%s,%s",
+			    fcur->fontalias, fcur->fontname);
       if (buf) {
 	arrayadd(&conf, &buf);
       }
@@ -210,6 +251,17 @@ gra2cairo_save_config(void)
     }
     replaceconfig(CAIROCONF, &conf);
   }
+
+  /* for backward compatibility */
+  if (OldConfigExist) {
+    buf = g_strdup("font_map");
+    if (buf) {
+      arrayadd(&conf, &buf);
+      removeconfig(CAIROCONF, &conf);
+    }
+    OldConfigExist = FALSE;
+  }
+
   arraydel2(&conf);
 }
 
@@ -218,10 +270,8 @@ loadconfig(void)
 {
   FILE *fp;
   char *tok, *str, *s2;
-  char *f1, *f2, *f3, *f4;
-  int val;
-  char *endptr;
-  int len, type;
+  char *f1, *f2;
+  int len;
   struct fontmap *fnew, *fprev;
 
   fp = openconfig(CAIROCONF);
@@ -231,32 +281,16 @@ loadconfig(void)
   fprev = NULL;
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
-    if (strcmp(tok, "font_map") == 0) {
+    if (strcmp(tok, "font") == 0) {
       f1 = getitok2(&s2, &len, " \t,");
-      f2 = getitok2(&s2, &len, " \t,");
-      f3 = getitok2(&s2, &len, " \t,");
       for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
-      f4 = getitok2(&s2, &len, "");
-      if (f1 && f2 && f3 && f4) {
-	type = NORMAL;
-	if (FontFace) {
-	  int i;
-	  if (nhash_get_int(FontFace, f2, &i) == 0) {
-	    type = i;
-	  }
-	}
-	g_free(f2);
-
-	val = strtol(f3, &endptr, 10);
-	g_free(f3);
-
-	fnew = create_font_map(f1, f4, type, val, fprev);
+      f2 = getitok2(&s2, &len, "");
+      if (f1 && f2) {
+	fnew = create_font_map(f1, f2, fprev);
 	if (fnew == NULL) {
 	  g_free(tok);
 	  g_free(f1);
 	  g_free(f2);
-	  g_free(f3);
-	  g_free(f4);
 	  closeconfig(fp);
 	  return 1;
 	}
@@ -265,8 +299,44 @@ loadconfig(void)
       } else {
 	g_free(f1);
 	g_free(f2);
-	g_free(f3);
-	g_free(f4);
+      }
+    } else if (strcmp(tok, "font_map") == 0) { /* for backward compatibility */
+      char *f3, *f4;
+
+      OldConfigExist = TRUE;
+      f1 = getitok2(&s2, &len, " \t,");
+      f3 = getitok2(&s2, &len, " \t,");
+      f4 = getitok2(&s2, &len, " \t,");
+      g_free(f3);
+      g_free(f4);
+      for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
+      f2 = getitok2(&s2, &len, "");
+      fnew = NULL;
+      if (f1 && f2) {
+	struct compatible_font_info *info;
+	struct fontmap *tmp;
+
+	info = gra2cairo_get_compatible_font_info(f1);
+
+	if (info && nhash_get_ptr(Gra2cairoConf->fontmap, info->name, (void *) &tmp)) {
+	  g_free(f1);
+	  f1 = g_strdup(info->name);
+	  if (f1) {
+	    fnew = create_font_map(f1, f2, fprev);
+	  }
+	  if (fnew == NULL) {
+	    g_free(tok);
+	    g_free(f1);
+	    g_free(f2);
+	    closeconfig(fp);
+	    return 1;
+	  }
+	  fprev = fnew;
+	}
+      }
+      if (fnew == NULL) {
+	g_free(f1);
+	g_free(f2);
       }
     } else {
       fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, CAIROCONF);
@@ -304,17 +374,6 @@ init_conf(void)
   if (Gra2cairoConf == NULL)
     return 1;
 
-  if (FontFace == NULL) {
-    FontFace = nhash_new();
-    if (FontFace) {
-      nhash_set_int(FontFace, FontFaceStr[BOLD],        BOLD);
-      nhash_set_int(FontFace, FontFaceStr[ITALIC],      ITALIC);
-      nhash_set_int(FontFace, FontFaceStr[BOLDITALIC],  BOLDITALIC);
-      nhash_set_int(FontFace, FontFaceStr[OBLIQUE],     OBLIQUE);
-      nhash_set_int(FontFace, FontFaceStr[BOLDOBLIQUE], BOLDOBLIQUE);
-    }
-  }
-
   Gra2cairoConf->fontmap = nhash_new();
   if (Gra2cairoConf->fontmap == NULL) {
     g_free(Gra2cairoConf);
@@ -347,14 +406,6 @@ free_conf(void)
 
   g_free(Gra2cairoConf);
   Gra2cairoConf = NULL;
-}
-
-const char *
-gra2cairo_get_font_type_str(int type)
-{
-  type = check_type(type);
-
-  return FontFaceStr[type];
 }
 
 struct fontmap *
@@ -391,7 +442,7 @@ gra2cairo_remove_fontmap(char *fontalias)
 }
 
 void
-gra2cairo_update_fontmap(const char *fontalias, const char *fontname, int type, int two_byte)
+gra2cairo_update_fontmap(const char *fontalias, const char *fontname)
 {
   struct fontmap *fcur;
 
@@ -410,12 +461,10 @@ gra2cairo_update_fontmap(const char *fontalias, const char *fontname, int type, 
     pango_font_description_free(fcur->font);
     fcur->font = NULL;
   }
-  fcur->type = type;
-  fcur->twobyte = two_byte;
 }
 
 void
-gra2cairo_add_fontmap(const char *fontalias, const char *fontname, int type, int two_byte)
+gra2cairo_add_fontmap(const char *fontalias, const char *fontname)
 {
   struct fontmap *fnew;
   char *alias, *name;
@@ -433,7 +482,7 @@ gra2cairo_add_fontmap(const char *fontalias, const char *fontname, int type, int
   if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fnew) == 0) {
     free_font_map(fnew);
   }
-  create_font_map(alias, name, type, two_byte, NULL);
+  create_font_map(alias, name, NULL);
 }
 
 static int
@@ -467,6 +516,8 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   local->text2path = FALSE;
   local->antialias = antialias;
   local->region = NULL;
+  local->font_style = GRA_FONT_STYLE_NORMAL;
+  local->symbol = FALSE;
 
   Instance++;
 
@@ -530,6 +581,9 @@ gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
 
+  if (OldConfigExist) {		/* for backward compatibility */
+    gra2cairo_save_config();
+  }
   gra2cairo_free(obj, inst);
 
   return 0;
@@ -655,47 +709,68 @@ set_antialias(struct objlist *obj, char *inst, char *rval, int argc, char **argv
   return 0;
 }
 
+struct compatible_font_info *
+gra2cairo_get_compatible_font_info(char *name)
+{
+  int i;
+
+  if (name == NULL) {
+    return NULL;
+  }
+
+  if (CompatibleFontHash == NULL) {
+    return NULL;
+  }
+
+  if (nhash_get_int(CompatibleFontHash, name, &i)) {
+    return NULL;
+  }
+
+  return &CompatibleFont[i];
+}
+
 static struct fontmap *
-loadfont(char *fontalias)
+loadfont(char *fontalias, int font_style, int *symbol)
 {
   struct fontmap *fcur;
   PangoFontDescription *pfont;
   PangoStyle style;
   PangoWeight weight;
 
-  if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fcur))
-    return NULL;
+  *symbol = FALSE;
 
-  if (fcur->font)
-    return fcur;
+  if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fcur)) {
+    int i;
 
-  pfont = pango_font_description_new();
-  pango_font_description_set_family(pfont, fcur->fontname);
+    if (nhash_get_int(CompatibleFontHash, fontalias, &i) == 0) {
+      if (nhash_get_ptr(Gra2cairoConf->fontmap, CompatibleFont[i].name, (void *) &fcur) == 0) {
+	font_style = CompatibleFont[i].style;
+	*symbol = CompatibleFont[i].symbol;
+      }
+    }
+    if (fcur == NULL && nhash_get_ptr(Gra2cairoConf->fontmap, DEFAULT_FONT, (void *) &fcur)) {
+      return NULL;
+    }
+  }
 
-  switch (fcur->type) {
-  case ITALIC:
-  case BOLDITALIC:
+  if (fcur->font) {
+    pfont = fcur->font;
+  } else {
+    pfont = pango_font_description_new();
+    pango_font_description_set_family(pfont, fcur->fontname);
+  }
+
+  if (font_style > 0 && (font_style & GRA_FONT_STYLE_ITALIC)) {
     style = PANGO_STYLE_ITALIC;
-    break;
-  case OBLIQUE:
-  case BOLDOBLIQUE:
-    style = PANGO_STYLE_OBLIQUE;
-    break;
-  default:
+  } else {
     style = PANGO_STYLE_NORMAL;
-    break;
   }
   pango_font_description_set_style(pfont, style);
 
-  switch (fcur->type) {
-  case BOLD:
-  case BOLDITALIC:
-  case BOLDOBLIQUE:
+  if (font_style > 0 && (font_style & GRA_FONT_STYLE_BOLD)) {
     weight = PANGO_WEIGHT_BOLD;
-    break;
-  default:
+  } else {
     weight = PANGO_WEIGHT_NORMAL;
-    break;
   }
   pango_font_description_set_weight(pfont, weight);
 
@@ -828,7 +903,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
                  int argc, char **argv)
 {
   char code, *cstr, *tmp, *tmp2;
-  int *cpar, i, j, r;
+  int *cpar, i, j, r, font_style;
   double x, y, w, h, l, fontcashsize, fontcashdir, fontsize,
     fontspace, fontdir, fontsin, fontcos, a1, a2;
   cairo_line_join_t join;
@@ -1058,64 +1133,74 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     }
     local->fontsin = fontsin;
     local->fontcos = fontcos;
-
-    local->loadfont = loadfont(local->fontalias);
+    font_style = (cpar[0] > 3) ? cpar[4] : -1;
+    local->loadfont = loadfont(local->fontalias, font_style, &local->symbol);
     break;
   case 'S':
     if (local->loadfont == NULL)
       break;
 
-    tmp = g_strdup(cstr);
+    l = strlen(cstr);
+    tmp = g_malloc(l * 6 + 1);
     if (tmp == NULL)
       break;
 
-    l = strlen(cstr);
     for (j = i = 0; i <= l; i++, j++) {
-      char c;
+      char c, buf[6];
+      int len, k;
+
       if (cstr[i] == '\\') {
 	i++;
-        if (cstr[i] == 'x') {
+        if (cstr[i] == 'x' &&
+	    g_ascii_isxdigit(cstr[i + 1]) &&
+	    g_ascii_isxdigit(cstr[i + 2])) {
 	  i++;
 	  c = toupper(cstr[i]);
           if (c >= 'A') {
-	    tmp[j] = c - 'A' + 10;
+	    buf[0] = c - 'A' + 10;
 	  } else { 
-	    tmp[j] = cstr[i] - '0';
+	    buf[0] = cstr[i] - '0';
 	  }
 
 	  i++;
-	  tmp[j] *= 16;
+	  buf[0] *= 16;
 	  c = toupper(cstr[i]);
           if (c >= 'A'){
-	    tmp[j] += c - 'A' + 10;
+	    buf[0] += c - 'A' + 10;
 	  } else {
-	    tmp[j] += cstr[i] - '0';
+	    buf[0] += cstr[i] - '0';
 	  }
-        } else if (cstr[i] != '\0') {
+
+	  buf[1] = '\0';
+	  tmp2= iso8859_to_utf8(buf);
+	  if (tmp2 == NULL) {
+	    break;
+	  }
+	  len = strlen(tmp2);
+	  for (k = 0; k < len; k++) {
+	    tmp[j + k] = tmp2[k];
+	  }
+	  g_free(tmp2);
+	  j += k - 1;
+	} else if (cstr[i] != '\0') {
           tmp[j] = cstr[i];
         }
       } else {
         tmp[j] = cstr[i];
       }
+      tmp[j + 1] = '\0';
     }
 
-    tmp2= iso8859_to_utf8(tmp);
-    if (tmp2 == NULL) {
-      g_free(tmp);
-      break;
-    }
-
-    if (local->loadfont->symbol) {
+    if (local->symbol) {
       char *ptr;
 
-      ptr = ascii2greece(tmp2);
+      ptr = ascii2greece(tmp);
       if (ptr) {
-	g_free(tmp2);
-	tmp2 = ptr;
+	g_free(tmp);
+	tmp = ptr;
       }
     }
-    draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
-    g_free(tmp2);
+    draw_str(local, TRUE, tmp, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
     g_free(tmp);
     break;
   case 'K':
@@ -1139,19 +1224,17 @@ int
 gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
-  char ch[3], *font, *tmp;
+  gunichar ch;
+  gchar *font, tmp[8];
   double size, dir, s,c ;
-  //  XChar2b kanji[1];
-  int width;
+  int width, n, style, symbol;
   struct fontmap *fcur;
-  //  XFontStruct *fontstruct;
 
-  ch[0] = (*(unsigned int *)(argv[3]) & 0xffU);
-  ch[1] = (*(unsigned int *)(argv[3]) & 0xff00U) >> 8;
-  ch[2] = '\0';
+  ch = * (gunichar *) argv[3];
 
   size = (*(int *)(argv[4])) / 72.0 * 25.4;
   font = (char *)(argv[5]);
+  style = *(int *) (argv[6]);
 
   if (size == 0) {
     *(int *) rval = 0;
@@ -1164,7 +1247,7 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   if (local->cairo == NULL)
     return 0;
 
-  fcur = loadfont(font);
+  fcur = loadfont(font, style, &symbol);
 
   if (fcur == NULL) {
     *(int *) rval = nround(size * 0.600);
@@ -1179,15 +1262,21 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   local->fontsin = 0;
   local->fontcos = 1;
 
-  if (ch[1]) {
-    tmp = sjis_to_utf8(ch);
-  } else {
-    tmp = iso8859_to_utf8(ch);
+  n = g_unichar_to_utf8(ch, tmp);
+  tmp[n] = '\0';
+
+  if (symbol) {
+    char *ptr;
+    ptr = ascii2greece(tmp);
+    if (ptr == NULL) {
+      return 1;
+    }
+    strcpy(tmp, ptr);
+    g_free(ptr);
   }
 
   draw_str(local, FALSE, tmp, fcur, size, 0, &width, NULL, NULL);
   *(int *) rval = mxp2dw(local, width);
-  g_free(tmp);
 
   local->fontsin = s;
   local->fontcos = c;
@@ -1203,14 +1292,13 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   char *font;
   double size, dir, s, c;
   char *func;
-  int height, descent, ascent;
-  //  XFontStruct *fontstruct;
+  int height, descent, ascent, style, symbol;
   struct fontmap *fcur;
-  int twobyte;
 
   func = (char *)argv[1];
   size = (*(int *)(argv[3])) / 72.0 * 25.4;
   font = (char *)(argv[4]);
+  style = *(int *) (argv[5]);
 
   if (size == 0) {
     *(int *) rval = 0;
@@ -1229,7 +1317,7 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
     height = FALSE;
   }
 
-  fcur = loadfont(font);
+  fcur = loadfont(font, style, &symbol);
 
   if (fcur == NULL) {
     if (height) {
@@ -1240,8 +1328,6 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
 
     return 0;
   }
-
-  twobyte = fcur->twobyte;
 
   dir = local->fontdir;
   s = local->fontsin;
@@ -1258,40 +1344,6 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   } else {
     *(int *)rval = mxp2dh(local, descent);
   }
-
-  /*
-
-  if (cashpos != -1) {
-    fontstruct = (mxlocal->font[cashpos]).fontstruct;    
-    if (fontstruct) {
-      if (twobyte) {
-        if (height) {
-	  *(int *)rval = nround(size * 0.791);
-	} else {
-	  *(int *)rval = nround(size * 0.250);
-	}
-      } else {
-        if {
-	  (height) *(int *)rval = nround(size * 0.562);
-	} else {
-	  *(int *)rval = nround(size * 0.250);
-	}
-      }
-    } else {
-      if (height) {
-	*(int *) rval = mxp2dh(fontstruct->ascent);
-      } else {
-	*(int *) rval = mxp2dh(fontstruct->descent);
-      }
-    }
-  } else {
-    if (height) {
-      *(int *) rval = nround(size * 0.562);
-    } else {
-      *(int *) rval = nround(size * 0.250);
-    }
-  }
-  */
 
   local->fontsin = s;
   local->fontcos = c;
@@ -1352,7 +1404,17 @@ addgra2cairo()
     CAIRO_STATUS_INVALID_STRIDE,
 #endif
   };
-  int i, n;
+  unsigned int i, n;
+
+  if (CompatibleFontHash == NULL) {
+    CompatibleFontHash = nhash_new();
+    if (CompatibleFontHash == NULL) {
+      return NULL;
+    }
+    for (i = 0; i < sizeof(CompatibleFont) / sizeof(*CompatibleFont); i++) {
+      nhash_set_int(CompatibleFontHash, CompatibleFont[i].old_name, i);
+    }
+  }
 
   if (Gra2CairoErrMsgs == NULL) {
     n = sizeof(errcode) / sizeof(*errcode);
