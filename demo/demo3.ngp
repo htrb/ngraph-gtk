@@ -611,8 +611,8 @@ new text
 	text::x=4000
 	text::y=21000
 	text::pt=2000
-	text::font='Helvetica'
-	text::jfont='Gothic'
+	text::font='Sans-serif'
+	text::style=0
 	text::space=0
 	text::direction=0
 	text::script_size=7000
@@ -629,8 +629,7 @@ new text
 	text::x=11000
 	text::y=14900
 	text::pt=2000
-	text::font='Courier'
-	text::jfont='Gothic'
+	text::font='Monospace'
 	text::space=0
 	text::direction=0
 	text::script_size=7000
@@ -647,8 +646,8 @@ new text
 	text::x=2500
 	text::y=7500
 	text::pt=2000
-	text::font='HelveticaBold'
-	text::jfont='Gothic'
+	text::font='Sans-serif'
+	text::style=1
 	text::space=0
 	text::direction=0
 	text::script_size=7000
@@ -665,8 +664,8 @@ new text
 	text::x=9000
 	text::y=22000
 	text::pt=2000
-	text::font='Helvetica'
-	text::jfont='Gothic'
+	text::font='Sans-serif'
+	text::style=0
 	text::space=0
 	text::direction=0
 	text::script_size=7000
@@ -683,8 +682,8 @@ new text
 	text::x=3000
 	text::y=17000
 	text::pt=2000
-	text::font='Helvetica'
-	text::jfont='Gothic'
+	text::font='Sans-serif'
+	text::style=0
 	text::space=0
 	text::direction=9000
 	text::script_size=7000
@@ -701,8 +700,8 @@ new text
 	text::x=6100
 	text::y=10700
 	text::pt=2000
-	text::font='Helvetica'
-	text::jfont='Gothic'
+	text::font='Sans-serif'
+	text::style=0
 	text::space=0
 	text::direction=0
 	text::script_size=7000
