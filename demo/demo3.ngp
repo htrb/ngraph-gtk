@@ -660,7 +660,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Sample length (%F{Sym}m%F{Helv}m)'
+	text::text='Sample length (μm)'
 	text::x=9000
 	text::y=22000
 	text::pt=2000
@@ -678,7 +678,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Resistance (K%F{Sym}W%F{Helv})'
+	text::text='Resistance (KΩ)'
 	text::x=3000
 	text::y=17000
 	text::pt=2000

@@ -1062,7 +1062,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='%F{Symbol}G%F{Helvetica}%J{Gothic}(x)'
+	text::text='Γ(x)'
 	text::x=14684
 	text::y=5553
 	text::pt=1600
