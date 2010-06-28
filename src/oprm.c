@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  * 
  */
-/* ToDo: UTF-8 string support */
+
 #include "common.h"
 
 #include <stdlib.h>
@@ -37,9 +37,9 @@
 #include <glib.h>
 #include <unistd.h>
 
+#include "strconv.h"
 #include "ngraph.h"
 #include "mathfn.h"
-#include "jnstring.h"
 #include "ntime.h"
 #include "object.h"
 #include "gra.h"
@@ -68,11 +68,7 @@ static char *prmerrorlist[]={
 static int 
 prminit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
-  int greek;
-
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  greek=TRUE;
-  if (_putobj(obj,"symbol_greek",inst,&greek)) return 1;
   return 0;
 }
 
@@ -84,22 +80,31 @@ prmdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static char *
-pathconv(char *s,int ignorepath)
+pathconv(char *str,int ignorepath)
 {
   int i;
-  char *file;
+  char *file, *s;
 
-  if (s==NULL) return NULL;
-  if (s[0]=='\0') return NULL;
+  if (str==NULL) return NULL;
+  if (str[0]=='\0') return NULL;
+
+  s = sjis_to_utf8(str);
+  if (s == NULL) {
+    return NULL;
+  }
+  g_free(str);
+
   if (ignorepath) {
     file=getbasename(s);
     g_free(s);
-  } else file=s;
+  } else {
+    file=s;
+  }
   changefilename(file);
   for (i=0;file[i]!='\0';i++) {
-    if (niskanji(file[i])) i++;
-    else file[i]=tolower(file[i]);
+    file[i]=tolower(file[i]);
   }
+
   return file;
 }
 
@@ -152,20 +157,26 @@ addfontcontrol(char *s,int *po,int *fchange,int *jchange,
 
 
 static char *
-remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
-                 int greek)
+remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
 /* %C is ignored
    %F ---> %F{}
    %d ---> %{system:0:date:1}
    %01C0101 ---> %{file:file:column:01 01}
 */
 {
-  int i,j,k,fchange[2],jchange[2],script,fff[2],ffj[2],ffb[2];
-  char *s2;
+  int i,j,fchange[2],jchange[2],script,fff[2],ffj[2],ffb[2];
+  char *s2, *s;
   int file,line,col;
-  unsigned int code;
 
-  if ((s2=g_malloc(strlen(s)+200))==NULL) return NULL;
+  s = sjis_to_utf8(str);
+  if (s == NULL) {
+    return NULL;
+  }
+
+  s2 = g_malloc(strlen(s) + 200);
+  if (s2 == NULL) {
+    return NULL;
+  }
   j=0;
   script=0;
   for (i=0;i<2;i++) {
@@ -182,30 +193,6 @@ remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
       s2[j+1]=s[i+1];
       i++;
       j+=2;
-    } else if (niskanji((unsigned char)s[i])) {
-      addfontcontrol(s2,&j,fchange,jchange,fff,ffb,ffj,script);
-      code=njms2jis(((unsigned char)s[i] << 8)+(unsigned char)s[i+1]);
-      if (((code>>8)==0x26) && greek) {
-        for (k = 0; k < greektable_num(); k++) {
-	  if (greektable[k].jis==(code & 0xffU)) 
-	    break;
-	}
-        if (k != greektable_num()) {
-          /* j+=sprintf(s2+j,"%%F{%s}%c%%F{%s}%%J{%s}", */
-          /*            fontchar[12],greektable[k].symbol, */
-          /*            fontchar[fff[script]+ffb[script]], */
-          /*            jfontchar[ffj[script]]); */
-	} else {
-          s2[j]=s[i];
-          s2[j+1]=s[i+1];
-          j+=2;
-        }
-      } else {
-        s2[j]=s[i];
-        s2[j+1]=s[i+1];
-        j+=2;
-      }
-      i++;
     } else if (s[i]=='%') {
       if ((toupper(s[i+1])=='S') && isdigit(s[i+2]) && isdigit(s[i+3])) {
         s2[j]=s[i];
@@ -318,13 +305,18 @@ remarkconv(char *s,int ff,int fj,int fb,int *fnameid,char *prmfile,
       }
     } else {
       addfontcontrol(s2,&j,fchange,jchange,fff,ffb,ffj,script);
-      if ((s[i]=='^') || (s[i]=='_')) script=1;
-      else if (s[i]=='@') script=0;
+      if ((s[i]=='^') || (s[i]=='_')) {
+	script=1;
+      } else if (s[i]=='@') {
+	script=0;
+      }
       s2[j]=s[i];
       j++;
     }
   }
   s2[j]='\0';
+
+  g_free(s);
   return s2;
 }
 
@@ -468,7 +460,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *file;
   FILE *fp,*fp2;
-  int i,j,k,filetype,num,greek,ignorepath;
+  int i,j,k,filetype,num,ignorepath;
   struct objlist *fobj,*fitobj,*aobj,*agdobj;
   struct objlist *pobj,*mobj,*tobj,*robj;
   struct objlist *mgobj,*gobj,*cmobj;
@@ -509,7 +501,6 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"file",inst,&file);
-  _getobj(obj,"symbol_greek",inst,&greek);
   _getobj(obj,"ignore_path",inst,&ignorepath);
   str4[4]='\0';
   if ((fobj=getobject("file"))==NULL) return 1;
@@ -1012,7 +1003,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (i<=1) j=0;
     else j=1;
     if ((strlen(buf)!=0)
-    && ((s=remarkconv(buf,fff[j],ffj[j],ffb[j],fnameid,file,greek))!=NULL)) {
+    && ((s=remarkconv(buf,fff[j],ffj[j],ffb[j],fnameid,file))!=NULL)) {
       if ((tid=newobj(tobj))==-1) {
         g_free(s);
         goto errexit;
@@ -1045,9 +1036,6 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((s=g_malloc(strlen(fontchar[fff[j]+ffb[j]])+1))==NULL) goto errexit;
       strcpy(s,fontchar[fff[j]+ffb[j]]);
       putobj(tobj,"font",tid,s);
-      //      if ((s=g_malloc(strlen(jfontchar[ffj[j]])+1))==NULL) goto errexit;
-      //      strcpy(s,jfontchar[ffj[j]]);
-      putobj(tobj,"jfont",tid,s);
       putobj(tobj,"pt",tid,&(ffs[j]));
       putobj(tobj,"space",tid,&(ffp[j]));
       putobj(tobj,"R",tid,&(ffR[j]));
@@ -1063,7 +1051,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   for (i=0;i<20;i++) {
     if (prmloadline(obj,file,fp,buf,TRUE)!=0) goto errexit;
     if ((strlen(buf)!=0)
-    && ((s=remarkconv(buf,fff[2],ffj[2],ffb[2],fnameid,file,greek))!=NULL)) {
+    && ((s=remarkconv(buf,fff[2],ffj[2],ffb[2],fnameid,file))!=NULL)) {
       if ((tid=newobj(tobj))==-1) {
         g_free(s);
         goto errexit;
@@ -1081,9 +1069,6 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((s=g_malloc(strlen(fontchar[fff[2]+ffb[2]])+1))==NULL) goto errexit;
       strcpy(s,fontchar[fff[2]+ffb[2]]);
       putobj(tobj,"font",tid,s);
-      //      if ((s=g_malloc(strlen(jfontchar[ffj[2]])+1))==NULL) goto errexit;
-      //      strcpy(s,jfontchar[ffj[2]]);
-      putobj(tobj,"jfont",tid,s);
       putobj(tobj,"pt",tid,&(ffs[2]));
       putobj(tobj,"space",tid,&(ffp[2]));
       putobj(tobj,"R",tid,&(ffR[2]));
@@ -1127,9 +1112,9 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       R=(d8 & 4)?255:0;
       G=(d8 & 2)?255:0;
       B=(d8 & 1)?255:0;
-      putobj(pobj,"R",lid,&R);
-      putobj(pobj,"G",lid,&G);
-      putobj(pobj,"B",lid,&B);
+      putobj(pobj,"stroke_R",lid,&R);
+      putobj(pobj,"stroke_G",lid,&G);
+      putobj(pobj,"stroke_B",lid,&B);
       putobj(pobj,"hidden",lid,&(dmode[1]));
     }
   }
@@ -1711,7 +1696,6 @@ static struct objtable prm[] = {
   {"done",NVFUNC,NEXEC,prmdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
   {"file",NSTR,NREAD|NWRITE,NULL,NULL,0},
-  {"symbol_greek",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"ignore_path",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"load",NVFUNC,NREAD|NEXEC,prmload,NULL,0},
 };

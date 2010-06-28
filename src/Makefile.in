@@ -58,27 +58,26 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibdir)"
 PROGRAMS = $(bin_PROGRAMS) $(pkglib_PROGRAMS)
 am_ngraph_OBJECTS = ngraph-axis.$(OBJEXT) ngraph-nconfig.$(OBJEXT) \
 	ngraph-gra.$(OBJEXT) ngraph-ioutil.$(OBJEXT) \
-	ngraph-jnstring.$(OBJEXT) ngraph-mathcode.$(OBJEXT) \
-	ngraph-mathfn.$(OBJEXT) ngraph-nstring.$(OBJEXT) \
-	ngraph-ntime.$(OBJEXT) ngraph-oagrid.$(OBJEXT) \
-	ngraph-oarc.$(OBJEXT) ngraph-oaxis.$(OBJEXT) \
-	ngraph-object.$(OBJEXT) ngraph-odarray.$(OBJEXT) \
-	ngraph-odouble.$(OBJEXT) ngraph-odraw.$(OBJEXT) \
-	ngraph-ofile.$(OBJEXT) ngraph-ofit.$(OBJEXT) \
-	ngraph-ogra.$(OBJEXT) ngraph-ogra2.$(OBJEXT) \
-	ngraph-ogra2fil.$(OBJEXT) ngraph-ogra2nul.$(OBJEXT) \
-	ngraph-ogra2prn.$(OBJEXT) ngraph-oiarray.$(OBJEXT) \
-	ngraph-oint.$(OBJEXT) ngraph-olegend.$(OBJEXT) \
-	ngraph-omark.$(OBJEXT) ngraph-omath.$(OBJEXT) \
-	ngraph-omerge.$(OBJEXT) ngraph-oprm.$(OBJEXT) \
-	ngraph-orect.$(OBJEXT) ngraph-oroot.$(OBJEXT) \
-	ngraph-osarray.$(OBJEXT) ngraph-oshell.$(OBJEXT) \
-	ngraph-ostring.$(OBJEXT) ngraph-osystem.$(OBJEXT) \
-	ngraph-otext.$(OBJEXT) ngraph-opath.$(OBJEXT) \
-	ngraph-shell.$(OBJEXT) ngraph-shellcm.$(OBJEXT) \
-	ngraph-shellux.$(OBJEXT) ngraph-spline.$(OBJEXT) \
-	ngraph-nhash.$(OBJEXT) ngraph-strconv.$(OBJEXT) \
-	ngraph-oio.$(OBJEXT)
+	ngraph-mathcode.$(OBJEXT) ngraph-mathfn.$(OBJEXT) \
+	ngraph-nstring.$(OBJEXT) ngraph-ntime.$(OBJEXT) \
+	ngraph-oagrid.$(OBJEXT) ngraph-oarc.$(OBJEXT) \
+	ngraph-oaxis.$(OBJEXT) ngraph-object.$(OBJEXT) \
+	ngraph-odarray.$(OBJEXT) ngraph-odouble.$(OBJEXT) \
+	ngraph-odraw.$(OBJEXT) ngraph-ofile.$(OBJEXT) \
+	ngraph-ofit.$(OBJEXT) ngraph-ogra.$(OBJEXT) \
+	ngraph-ogra2.$(OBJEXT) ngraph-ogra2fil.$(OBJEXT) \
+	ngraph-ogra2nul.$(OBJEXT) ngraph-ogra2prn.$(OBJEXT) \
+	ngraph-oiarray.$(OBJEXT) ngraph-oint.$(OBJEXT) \
+	ngraph-olegend.$(OBJEXT) ngraph-omark.$(OBJEXT) \
+	ngraph-omath.$(OBJEXT) ngraph-omerge.$(OBJEXT) \
+	ngraph-oprm.$(OBJEXT) ngraph-orect.$(OBJEXT) \
+	ngraph-oroot.$(OBJEXT) ngraph-osarray.$(OBJEXT) \
+	ngraph-oshell.$(OBJEXT) ngraph-ostring.$(OBJEXT) \
+	ngraph-osystem.$(OBJEXT) ngraph-otext.$(OBJEXT) \
+	ngraph-opath.$(OBJEXT) ngraph-shell.$(OBJEXT) \
+	ngraph-shellcm.$(OBJEXT) ngraph-shellux.$(OBJEXT) \
+	ngraph-spline.$(OBJEXT) ngraph-nhash.$(OBJEXT) \
+	ngraph-strconv.$(OBJEXT) ngraph-oio.$(OBJEXT)
 ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 am__DEPENDENCIES_1 =
 ngraph_DEPENDENCIES = gtk/libngraph.la math/libmath.la \
@@ -314,16 +313,16 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = gtk math
 ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
-	ioutil.c ioutil.h jnstring.c jnstring.h mathcode.c mathcode.h	\
-	mathfn.c mathfn.h ngraph.h nstring.c nstring.h ntime.c ntime.h	\
-	oagrid.c oarc.c oarc.h oaxis.c object.c object.h odarray.c	\
-	odouble.c odraw.c odraw.h ofile.c ofile.h ofit.c ofit.h ogra.c	\
-	ogra.h ogra2.c ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c	\
-	oint.c olegend.c olegend.h omark.c omath.c omerge.c oprm.c	\
-	orect.c oroot.c oroot.h osarray.c oshell.c ostring.c osystem.c	\
-	otext.c otext.h opath.c opath.h shell.c shell.h shellcm.c	\
-	shellcm.h shellux.c shellux.h spline.c spline.h common.h	\
-	nhash.h nhash.c strconv.c strconv.h oio.c gettext.h
+	ioutil.c ioutil.h mathcode.c mathcode.h mathfn.c mathfn.h	\
+	ngraph.h nstring.c nstring.h ntime.c ntime.h oagrid.c oarc.c	\
+	oarc.h oaxis.c object.c object.h odarray.c odouble.c odraw.c	\
+	odraw.h ofile.c ofile.h ofit.c ofit.h ogra.c ogra.h ogra2.c	\
+	ogra2fil.c ogra2nul.c ogra2prn.c oiarray.c oint.c olegend.c	\
+	olegend.h omark.c omath.c omerge.c oprm.c orect.c oroot.c	\
+	oroot.h osarray.c oshell.c ostring.c osystem.c otext.c otext.h	\
+	opath.c opath.h shell.c shell.h shellcm.c shellcm.h shellux.c	\
+	shellux.h spline.c spline.h common.h nhash.h nhash.c strconv.c	\
+	strconv.h oio.c gettext.h
 
 terminal_SOURCES = terminal.c
 ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
@@ -468,7 +467,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-axis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-gra.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-ioutil.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-jnstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-mathcode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-mathfn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ngraph-nconfig.Po@am__quote@
@@ -599,22 +597,6 @@ ngraph-ioutil.obj: ioutil.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ioutil.c' object='ngraph-ioutil.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-ioutil.obj `if test -f 'ioutil.c'; then $(CYGPATH_W) 'ioutil.c'; else $(CYGPATH_W) '$(srcdir)/ioutil.c'; fi`
-
-ngraph-jnstring.o: jnstring.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-jnstring.o -MD -MP -MF $(DEPDIR)/ngraph-jnstring.Tpo -c -o ngraph-jnstring.o `test -f 'jnstring.c' || echo '$(srcdir)/'`jnstring.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-jnstring.Tpo $(DEPDIR)/ngraph-jnstring.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jnstring.c' object='ngraph-jnstring.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-jnstring.o `test -f 'jnstring.c' || echo '$(srcdir)/'`jnstring.c
-
-ngraph-jnstring.obj: jnstring.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-jnstring.obj -MD -MP -MF $(DEPDIR)/ngraph-jnstring.Tpo -c -o ngraph-jnstring.obj `if test -f 'jnstring.c'; then $(CYGPATH_W) 'jnstring.c'; else $(CYGPATH_W) '$(srcdir)/jnstring.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ngraph-jnstring.Tpo $(DEPDIR)/ngraph-jnstring.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='jnstring.c' object='ngraph-jnstring.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -c -o ngraph-jnstring.obj `if test -f 'jnstring.c'; then $(CYGPATH_W) 'jnstring.c'; else $(CYGPATH_W) '$(srcdir)/jnstring.c'; fi`
 
 ngraph-mathcode.o: mathcode.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ngraph_CFLAGS) $(CFLAGS) -MT ngraph-mathcode.o -MD -MP -MF $(DEPDIR)/ngraph-mathcode.Tpo -c -o ngraph-mathcode.o `test -f 'mathcode.c' || echo '$(srcdir)/'`mathcode.c

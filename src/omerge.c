@@ -68,19 +68,17 @@ struct mergelocal {
 static int 
 mergeinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int zm, greek, n;
+  int zm, n;
   struct mergelocal *mergelocal;
   char *ext;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   zm=10000;
-  greek=TRUE;
   n = 0;
 
   ext = g_strdup("gra");
 
   if (_putobj(obj,"zoom",inst,&zm)) return 1;
-  if (_putobj(obj,"symbol_greek",inst,&greek)) return 1;
   if (_putobj(obj,"line_num",inst,&n)) return 1;
   if (_putobj(obj,"ext",inst,ext)) return 1;
   if ((mergelocal=g_malloc(sizeof(struct mergelocal)))==NULL) goto errexit;
@@ -111,7 +109,7 @@ mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   FILE *fd;
   char *buf;
   int lm,tm,zm;
-  int newgra,rcode,greek,line = 0;
+  int newgra,rcode,line = 0;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"GC",inst,&GC);
@@ -120,7 +118,6 @@ mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"left_margin",inst,&lm);
   _getobj(obj,"top_margin",inst,&tm);
   _getobj(obj,"zoom",inst,&zm);
-  _getobj(obj,"symbol_greek",inst,&greek);
 
   if (file==NULL) {
     error(obj,ERRFILE);
@@ -161,7 +158,7 @@ mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 1;
     }
     if (newgra) rcode=GRAinput(GC,buf,lm,tm,zm);
-    else rcode=GRAinputold(GC,buf,lm,tm,zm,greek);
+    else rcode=GRAinputold(GC,buf,lm,tm,zm);
     if (!rcode) {
       error2(obj,ERRGRAFM,buf);
       g_free(buf);
@@ -446,7 +443,7 @@ mergebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *array;
   char *file,*graf;
   int lm,tm,zm;
-  int newgra,rcode,greek;
+  int newgra,rcode;
   struct objlist *sys;
   FILE *fd;
   char *buf;
@@ -459,7 +456,6 @@ mergebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"left_margin",inst,&lm);
   _getobj(obj,"top_margin",inst,&tm);
   _getobj(obj,"zoom",inst,&zm);
-  _getobj(obj,"symbol_greek",inst,&greek);
   if (file==NULL) return 1;
   if ((sys=getobject("system"))==NULL) return 1;
   if (getobj(sys,"GRAF",0,0,NULL,&graf)) return 1;
@@ -496,7 +492,7 @@ mergebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       return 1;
     }
     if (newgra) rcode=GRAinput(GC,buf,lm,tm,zm);
-    else rcode=GRAinputold(GC,buf,lm,tm,zm,greek);
+    else rcode=GRAinputold(GC,buf,lm,tm,zm);
     if (!rcode) {
       g_free(buf);
       fclose(fd);
@@ -628,7 +624,6 @@ static struct objtable merge[] = {
   {"top_margin",NINT,NREAD|NWRITE,mergegeometry,NULL,0},
   {"left_margin",NINT,NREAD|NWRITE,mergegeometry,NULL,0},
   {"zoom",NINT,NREAD|NWRITE,mergegeometry,NULL,0},
-  {"symbol_greek",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,mergedraw,"i",0},
   {"redraw",NVFUNC,NREAD|NEXEC,mergeredraw,"i",0},
   {"save",NSFUNC,NREAD|NEXEC,pathsave,"sa",0},
@@ -647,6 +642,8 @@ static struct objtable merge[] = {
 
   {"ext",NSTR,NREAD,NULL,NULL,0},
   {"_local",NPOINTER,0,NULL,NULL,0},
+
+  {"symbol_greek",NBOOL,NWRITE,NULL,NULL,0},
 };
 
 #define TBLNUM (sizeof(merge) / sizeof(*merge))

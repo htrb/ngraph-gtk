@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.51.gtk-44\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-06-25 15:29+0900\n"
+"POT-Creation-Date: 2010-06-28 16:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 msgid "Save file"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:47 src/odraw.c:101 src/oaxis.c:71 src/oaxis.c:86
+#: src/gtk/ogra2cairo.c:47 src/odraw.c:85 src/oaxis.c:71 src/oaxis.c:86
 msgid "none"
 msgstr ""
 
@@ -1063,27 +1063,23 @@ msgstr ""
 msgid "_Ignore file path"
 msgstr ""
 
-#: src/gtk/x11graph.c:960
-msgid "_Greek Symbol"
-msgstr ""
-
-#: src/gtk/x11graph.c:1019 src/gtk/x11opt.c:979
+#: src/gtk/x11graph.c:1006 src/gtk/x11opt.c:979
 msgid "_Path:"
 msgstr ""
 
-#: src/gtk/x11graph.c:1022
+#: src/gtk/x11graph.c:1009
 msgid "_Include data file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1026
+#: src/gtk/x11graph.c:1013
 msgid "_Include merge file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1117 src/gtk/x11menu.c:203
+#: src/gtk/x11graph.c:1104 src/gtk/x11menu.c:203
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1355
+#: src/gtk/x11graph.c:1342
 msgid ""
 "Ngraph is the program creating scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -2388,31 +2384,31 @@ msgstr ""
 msgid "bevel"
 msgstr ""
 
-#: src/odraw.c:102
+#: src/odraw.c:86
 msgid "end"
 msgstr ""
 
-#: src/odraw.c:103
+#: src/odraw.c:87
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:104 src/oaxis.c:72
+#: src/odraw.c:88 src/oaxis.c:72
 msgid "both"
 msgstr ""
 
-#: src/odraw.c:109
+#: src/odraw.c:93
 msgid "spline"
 msgstr ""
 
-#: src/odraw.c:110
+#: src/odraw.c:94
 msgid "spline_close"
 msgstr ""
 
-#: src/odraw.c:111
+#: src/odraw.c:95
 msgid "bspline"
 msgstr ""
 
-#: src/odraw.c:112
+#: src/odraw.c:96
 msgid "bspline_close"
 msgstr ""
 

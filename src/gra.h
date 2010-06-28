@@ -135,7 +135,7 @@ void GRAtextextent(char *s,char *font, int style,
 void GRAtextextentraw(char *s,char *font, int style,
                  int size,int space,int *gx0,int *gy0,int *gx1,int *gy1);
 int GRAinput(int GC,char *s,int leftm,int topm,int rate);
-int GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek);
+int GRAinputold(int GC,char *s,int leftm,int topm,int rate);
 void GRAcurvefirst(int GC,int num,int *dashlist,
       clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
              double x0,double y0);
@@ -151,6 +151,5 @@ void GRAendbbox(struct GRAbbox *bbox);
 int GRAboundingbox(char code,int *cpar,char *cstr,void *local);
 void GRAtextstyle(int GC,char *font,int style, int size,int space,int dir);
 void GRAouttext(int GC,char *s);
-int greektable_num(void);
 
 #endif

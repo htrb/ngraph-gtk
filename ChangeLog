@@ -1,3 +1,29 @@
+2010-06-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oprm.c (prminit, prmload): the field "symbol_greek" in not
+	used now.
+	(remarkconv): use UTF-8 string.
+	(prm): the field "symbol_greek" is removed.
+
+	* src/omerge.c (mergeinit, mergedraw, mergebbox): the field
+	"symbol_greek" in not used now.
+
+	* src/gra.c (GRAexpandtext, GRAdrawtext, GRAtextextent)
+	(get_str_bbox): use "g_ascii_isxdigit()" instead of "isxdigit()".
+	(GRAtextextent): use "g_ascii_xdigit_value()".
+	(get_str_bbox): added.
+	(GRAboundingbox): use "get_str_bbox()".
+	(GRAinputold): just convert string from Shift-jis to UTF-8 when
+	the variable "code" is 'K'.
+
+	* src/gtk/x11dialg.h (MergeDialog, PrmDialog): the member
+	"greek_symbol" is removed.
+
+	* src/gtk/x11graph.c (PrmDialogSetup, PrmDialogClose): the field
+	"symbol_greek" in not used now.
+
+	* src/jnstring.c: removed.
+
 2010-06-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/Ngraph.ngp: change font settings.

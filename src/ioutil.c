@@ -37,7 +37,6 @@
 #include <unistd.h>
 #include "object.h"
 #include "nstring.h"
-#include "jnstring.h"
 #include "ioutil.h"
 
 #ifndef O_BINARY

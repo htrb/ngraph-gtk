@@ -322,7 +322,7 @@ struct MergeDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *file, *topmargin, *leftmargin, *zoom, *greeksymbol;
+  GtkWidget *file, *topmargin, *leftmargin, *zoom;
   struct objlist *Obj;
   int Id;
 };
@@ -421,7 +421,7 @@ struct PrmDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *ignore_path, *greek_symbol;
+  GtkWidget *ignore_path;
   struct objlist *Obj;
   int Id;
 };

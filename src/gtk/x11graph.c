@@ -957,17 +957,10 @@ PrmDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->ignore_path = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
 
-    w = gtk_check_button_new_with_mnemonic(_("_Greek Symbol"));
-    d->greek_symbol = w;
-    gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
   }
   getobj(d->Obj, "ignore_path", d->Id, 0, NULL, &a);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->ignore_path), a);
-
-  getobj(d->Obj, "symbol_greek", d->Id, 0, NULL, &a);
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->greek_symbol), a);
 }
 
 static void
@@ -982,12 +975,6 @@ PrmDialogClose(GtkWidget *w, void *data)
 
   a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignore_path));
   if (putobj(d->Obj, "ignore_path", d->Id, &a) == -1) {
-    d->ret = IDLOOP;
-    return;
-  }
-
-  a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->greek_symbol));
-  if (putobj(d->Obj, "symbol_greek", d->Id, &a) == -1) {
     d->ret = IDLOOP;
     return;
   }

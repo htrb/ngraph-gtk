@@ -34,7 +34,6 @@
 #include "object.h"
 #include "strconv.h"
 #include "nstring.h"
-#include "jnstring.h"
 #include "mathfn.h"
 #include "mathcode.h"
 #include "gra.h"
@@ -1900,7 +1899,7 @@ GRAexpandtext(char *s)
         j += 2;
 	break;
       case 'x':
-	  if (isxdigit(s[j + 2]) && isxdigit(s[j + 3])) {
+	  if (g_ascii_isxdigit(s[j + 2]) && g_ascii_isxdigit(s[j + 3])) {
 	    if (s[j + 2] != '0' || s[j + 3] != '0') {
 	      str = nstrccat(str, '\\');
 	      str = nstrccat(str, 'x');
@@ -1967,6 +1966,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
     return;
   }
 
+  c = NULL;
   font2 = NULL;
   font3 = NULL;
   cs = cos(dir * MPI / 18000);
@@ -2017,7 +2017,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
 
     while (*ptr && strchr("\n\r\b_^@%", ptr[0]) == NULL) {
       if (ptr[0] == '\\') {
-        if (ptr[1] == 'x' && isxdigit(ptr[2]) && isxdigit(ptr[3])) {
+        if (ptr[1] == 'x' && g_ascii_isxdigit(ptr[2]) && g_ascii_isxdigit(ptr[3])) {
 	  g_string_append_c(str, ptr[0]);
 	  g_string_append_c(str, ptr[1]);
 	  g_string_append_c(str, ptr[2]);
@@ -2307,7 +2307,7 @@ GRAtextextent(char *s, char *font, int style,
     while (j < len && strchr("\n\b\r_^@%",c[j]) == NULL) {
       switch (c[j]) {
       case '\\':
-        if (c[j+1]=='x' && isxdigit(c[j+2]) && isxdigit(c[j+3])) {
+        if (c[j+1]=='x' && g_ascii_isxdigit(c[j+2]) && g_ascii_isxdigit(c[j+3])) {
           if (((str=nstrccat(str,c[j]))==NULL)
            || ((str=nstrccat(str,c[j+1]))==NULL)
            || ((str=nstrccat(str,c[j+2]))==NULL)
@@ -2349,20 +2349,9 @@ GRAtextextent(char *s, char *font, int style,
       gchar *p;
       w = 0;
       for (p = str; *p; p = g_utf8_next_char(p)) {
-	if (p[0] == '\\' && p[1] == 'x' && isxdigit(p[2]) && isxdigit(p[3])) {
+	if (p[0] == '\\' && p[1] == 'x' && g_ascii_isxdigit(p[2]) && g_ascii_isxdigit(p[3])) {
 	  char buf[2], *ustr;
-	  if (toupper(p[2]) >= 'A') {
-	    ch = toupper(p[2]) - 'A' + 10;
-	  } else {
-	    ch = p[2] - '0';
-	  }
-	  if (toupper(p[3])>='A') {
-	    ch = ch * 16 + toupper(p[3]) - 'A' + 10;
-	  } else {
-	    ch = ch * 16 + p[3] - '0';
-	  }
-
-	  buf[0] = ch;
+	  buf[0] = g_ascii_xdigit_value(p[2]) * 16 + g_ascii_xdigit_value(p[3]);
 	  buf[1] = '\0';
 	  ustr = iso8859_to_utf8(buf);
 	  if (ustr) {
@@ -2765,25 +2754,6 @@ static char *fonttbl[]={
 #define FONTTBL_NUM ((int) (sizeof(fonttbl) / sizeof(*fonttbl)))
 #define FONTTBL_SYMBOL (FONTTBL_NUM - 1)
 
-struct greektbltype greektable[]={
- {0x21,0101}, {0x22,0102}, {0x23,0107}, {0x24,0104}, {0x25,0105}, {0x26,0132},
- {0x27,0110}, {0x28,0121}, {0x29,0111}, {0x2A,0113}, {0x2B,0114}, {0x2C,0115},
- {0x2D,0116}, {0x2E,0130}, {0x2F,0117},
- {0x30,0120}, {0x31,0122}, {0x32,0123}, {0x33,0124}, {0x34,0241}, {0x35,0106},
- {0x36,0103}, {0x37,0131}, {0x38,0127},
- {0x41,0141}, {0x42,0142}, {0x43,0147}, {0x44,0144}, {0x45,0145}, {0x46,0172},
- {0x47,0150}, {0x48,0161}, {0x49,0151}, {0x4A,0153}, {0x4B,0154}, {0x4C,0155},
- {0x4D,0156}, {0x4E,0170}, {0x4F,0157}, {0x50,0160}, {0x51,0162}, {0x52,0163},
- {0x53,0164}, {0x54,0165}, {0x55,0146}, {0x56,0143}, {0x57,0171}, {0x58,0167}};
-
-#define GREEK_TBL_NUM ((int) (sizeof(greektable) / sizeof(*greektable)))
-
-int
-greektable_num(void)
-{
-  return GREEK_TBL_NUM;
-}
-
 static char *
 get_gra_font(int i)
 {
@@ -2795,15 +2765,13 @@ get_gra_font(int i)
 }
 
 int 
-GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
+GRAinputold(int GC,char *s,int leftm,int topm,int rate)
 {
-  int pos,num,i,j,k,h,m;
+  int pos,num,i,j;
   char code,code2;
   int cpar[50],cpar2[50];
-  char cstr[256],cstr2[256],*po;
+  char cstr[256],*po,*ustr;
   int col,B,R,G;
-  unsigned int jiscode;
-  int greekin,len;
 
   code='\0';
   for (i=0;s[i]!='\0';i++)
@@ -2848,75 +2816,10 @@ GRAinputold(int GC,char *s,int leftm,int topm,int rate,int greek)
     GRAinputdraw(GC,leftm,topm,rate,code,cpar,cstr);
     break;
   case 'K':
-    greekin=FALSE;
-    j=0;
-    len=strlen(cstr);
-    for (i=0;TRUE;i+=2) {
-      if (cstr[i]!='\0')
-        jiscode=njms2jis(((unsigned char)cstr[i] << 8)
-                         +(unsigned char)cstr[i+1]);
-      if (!greekin) {
-        if ((i>=len) || (((jiscode>>8)==0x26) && greek)) {
-          if (i!=j) {
-	    char *tmp;
-
-            code2='S';
-            cpar2[0]=-1;
-            strncpy(cstr2,cstr+j,i-j);
-            cstr2[i-j]='\0';
-	    tmp = sjis_to_utf8(cstr2);
-	    if (tmp) {
-	      GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,tmp);
-	      g_free(tmp);
-	    }
-            j=i;
-          }
-          greekin=TRUE;
-        }
-      } else {
-        if ((i>=len) || ((jiscode>>8)!=0x26)) {
-          if (i!=j) {
-            code2='F';
-            cpar2[0]=-1;
-            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,fonttbl[FONTTBL_SYMBOL]);
-            code2='H';
-            cpar2[0]=3;
-            cpar2[1]=GRAClist[GC].mergept;
-            cpar2[2]=GRAClist[GC].mergesp;
-            cpar2[3]=GRAClist[GC].mergedir;
-            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr2);
-            code2='S';
-            cpar2[0]=-1;
-            m=0;
-            for (k=j;k<i;k+=2) {
-              jiscode=njms2jis(((unsigned char)cstr[k] << 8)
-                               +(unsigned char)cstr[k+1]);
-              for (h = 0; h < GREEK_TBL_NUM; h++) {
-		if (greektable[h].jis == (jiscode & 0xffU))
-		  break;
-	      }
-              if (h != GREEK_TBL_NUM) {
-		cstr2[m++] = greektable[h].symbol;
-	      }
-            }
-            cstr2[m]='\0';
-            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr2);
-            j=i;
-            code2='F';
-            cpar2[0]=-1;
-	    GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,
-			 get_gra_font(GRAClist[GC].mergefont));
-            code2='H';
-            cpar2[0]=3;
-            cpar2[1]=GRAClist[GC].mergept;
-            cpar2[2]=GRAClist[GC].mergesp;
-            cpar2[3]=GRAClist[GC].mergedir;
-            GRAinputdraw(GC,leftm,topm,rate,code2,cpar2,cstr2);
-          }
-          greekin=FALSE;
-        }
-      }
-      if (i>=len) break;
+    ustr = sjis_to_utf8(cstr);
+    if (ustr) {
+      GRAinputdraw(GC, leftm, topm, rate, 'S', cpar, ustr);
+      g_free(ustr);
     }
     break;
   case 'I':
@@ -3467,15 +3370,67 @@ GRAendbbox(struct GRAbbox *bbox)
   g_free(bbox->fontalias);
 }
 
+static int
+get_str_bbox(struct GRAbbox *bbox, char *cstr)
+{
+  double x,y,csin,ccos;
+  int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
+  gchar *ptr;
+
+  if (! bbox->loadfont) {
+    return 0;
+  }
+
+  csin = sin(bbox->dir / 18000.0 * MPI);
+  ccos = cos(bbox->dir / 18000.0 * MPI);
+  for (ptr = cstr; ptr[0]; ptr = g_utf8_next_char(ptr)) {
+    if (ptr[0] == '\\' && ptr[1] == 'x' && g_ascii_isxdigit(ptr[2]) && g_ascii_isxdigit(ptr[3])) {
+      char s[2], *tmp;
+      s[0] = g_ascii_xdigit_value(ptr[2]) * 16 + g_ascii_xdigit_value(ptr[3]);
+      s[1] = '\0';
+      ptr += 3;
+      tmp = iso8859_to_utf8(s);
+      if (tmp == NULL) {
+	break;
+      }
+      w = GRAcharwidth(tmp, bbox->fontalias, bbox->font_style, bbox->pt);
+      g_free(tmp);
+    } else {
+      w = GRAcharwidth(ptr, bbox->fontalias, bbox->font_style, bbox->pt);
+    }
+    h=GRAcharascent(bbox->fontalias,bbox->font_style,bbox->pt);
+    d=GRAchardescent(bbox->fontalias,bbox->font_style,bbox->pt);
+    x=0;
+    y=d;
+    x1=(int )(bbox->posx+(x*ccos+y*csin));
+    y1=(int )(bbox->posy+(-x*csin+y*ccos));
+    x=0;
+    y=-h;
+    x2=(int )(bbox->posx+(x*ccos+y*csin));
+    y2=(int )(bbox->posy+(-x*csin+y*ccos));
+    x=w;
+    y=d;
+    x3=(int )(bbox->posx+(x*ccos+y*csin));
+    y3=(int )(bbox->posy+(-x*csin+y*ccos));
+    x=w;
+    y=-h;
+    x4=(int )(bbox->posx+(int )(x*ccos+y*csin));
+    y4=(int )(bbox->posy+(int )(-x*csin+y*ccos));
+    setbbminmax(bbox,x1,y1,x4,y4,FALSE);
+    setbbminmax(bbox,x2,y2,x3,y3,FALSE);
+    bbox->posx+=(int )((w+bbox->spc*25.4/72)*ccos);
+    bbox->posy-=(int )((w+bbox->spc*25.4/72)*csin);
+  }
+
+  return 0;
+}
+
 int 
 GRAboundingbox(char code,int *cpar,char *cstr,void *local)
 {
-  unsigned int i, n;
   int lw, j;
-  double x,y,csin,ccos;
-  int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
-  int c1, c2, ch;
   struct GRAbbox *bbox;
+  char *tmp;
 
   bbox=local;
   switch (code) {
@@ -3565,51 +3520,14 @@ GRAboundingbox(char code,int *cpar,char *cstr,void *local)
     bbox->loadfont=TRUE;
     break;
   case 'S':
-    /* ToDo: treat UTF-8 strings  */
-    if (!bbox->loadfont) break;
-    csin=sin(bbox->dir/18000.0*MPI);
-    ccos=cos(bbox->dir/18000.0*MPI);
-    i=0;
-    n = strlen(cstr);
-    while (i<n) {
-      if ((cstr[i]=='\\') && (cstr[i+1]=='x')) {
-        if (toupper(cstr[i+2])>='A') c1=toupper(cstr[i+2])-'A'+10;
-        else c1=cstr[i+2]-'0';
-        if (toupper(cstr[i+3])>='A') c2=toupper(cstr[i+3])-'A'+10;
-        else c2=cstr[i+3]-'0';
-        ch=c1*16+c2;
-        i+=4;
-      } else {
-        ch=cstr[i];
-        i++;
-      }
-      w=GRAcharwidth(cstr + i,bbox->fontalias,bbox->font_style,bbox->pt);
-      h=GRAcharascent(bbox->fontalias,bbox->font_style,bbox->pt);
-      d=GRAchardescent(bbox->fontalias,bbox->font_style,bbox->pt);
-      x=0;
-      y=d;
-      x1=(int )(bbox->posx+(x*ccos+y*csin));
-      y1=(int )(bbox->posy+(-x*csin+y*ccos));
-      x=0;
-      y=-h;
-      x2=(int )(bbox->posx+(x*ccos+y*csin));
-      y2=(int )(bbox->posy+(-x*csin+y*ccos));
-      x=w;
-      y=d;
-      x3=(int )(bbox->posx+(x*ccos+y*csin));
-      y3=(int )(bbox->posy+(-x*csin+y*ccos));
-      x=w;
-      y=-h;
-      x4=(int )(bbox->posx+(int )(x*ccos+y*csin));
-      y4=(int )(bbox->posy+(int )(-x*csin+y*ccos));
-      setbbminmax(bbox,x1,y1,x4,y4,FALSE);
-      setbbminmax(bbox,x2,y2,x3,y3,FALSE);
-      bbox->posx+=(int )((w+bbox->spc*25.4/72)*ccos);
-      bbox->posy-=(int )((w+bbox->spc*25.4/72)*csin);
-    }
+    get_str_bbox(bbox, cstr);
     break;
   case 'K':
-    /* ToDo: convert Shif-JIS to UTF-8  */ 
+    tmp = sjis_to_utf8(cstr);
+    if (tmp) {
+      get_str_bbox(bbox, tmp);
+      g_free(tmp);
+    }
    break;
   }
   return 0;

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-06-25 15:29+0900\n"
+"POT-Creation-Date: 2010-06-28 16:59+0900\n"
 "PO-Revision-Date: 2010-06-18 17:23+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -30,7 +30,7 @@ msgstr "ファイルを開く"
 msgid "Save file"
 msgstr "別名で保存"
 
-#: src/gtk/ogra2cairo.c:47 src/odraw.c:101 src/oaxis.c:71 src/oaxis.c:86
+#: src/gtk/ogra2cairo.c:47 src/odraw.c:85 src/oaxis.c:71 src/oaxis.c:86
 msgid "none"
 msgstr "なし"
 
@@ -1065,27 +1065,23 @@ msgstr "ディレクトリ(_D):"
 msgid "_Ignore file path"
 msgstr "パス情報無視(_I)"
 
-#: src/gtk/x11graph.c:960
-msgid "_Greek Symbol"
-msgstr "全角ギリシア -> シンボル(_G)"
-
-#: src/gtk/x11graph.c:1019 src/gtk/x11opt.c:979
+#: src/gtk/x11graph.c:1006 src/gtk/x11opt.c:979
 msgid "_Path:"
 msgstr "パス情報(_P):"
 
-#: src/gtk/x11graph.c:1022
+#: src/gtk/x11graph.c:1009
 msgid "_Include data file"
 msgstr "データファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1026
+#: src/gtk/x11graph.c:1013
 msgid "_Include merge file"
 msgstr "合成ファイルを含める(_I)"
 
-#: src/gtk/x11graph.c:1117 src/gtk/x11menu.c:203
+#: src/gtk/x11graph.c:1104 src/gtk/x11menu.c:203
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
-#: src/gtk/x11graph.c:1355
+#: src/gtk/x11graph.c:1342
 msgid ""
 "Ngraph is the program creating scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -2395,31 +2391,31 @@ msgstr "丸結合"
 msgid "bevel"
 msgstr "斜結合"
 
-#: src/odraw.c:102
+#: src/odraw.c:86
 msgid "end"
 msgstr "終点"
 
-#: src/odraw.c:103
+#: src/odraw.c:87
 msgid "begin"
 msgstr "始点"
 
-#: src/odraw.c:104 src/oaxis.c:72
+#: src/odraw.c:88 src/oaxis.c:72
 msgid "both"
 msgstr "両方"
 
-#: src/odraw.c:109
+#: src/odraw.c:93
 msgid "spline"
 msgstr "スプライン"
 
-#: src/odraw.c:110
+#: src/odraw.c:94
 msgid "spline_close"
 msgstr "閉スプライン"
 
-#: src/odraw.c:111
+#: src/odraw.c:95
 msgid "bspline"
 msgstr "Bスプライン"
 
-#: src/odraw.c:112
+#: src/odraw.c:96
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
@@ -2575,6 +2571,9 @@ msgstr "偶奇"
 #: src/opath.c:72
 msgid "winding_rule"
 msgstr "ワインディング"
+
+#~ msgid "_Greek Symbol"
+#~ msgstr "全角ギリシア -> シンボル(_G)"
 
 #~ msgid "style"
 #~ msgstr "スタイル"

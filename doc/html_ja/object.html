@@ -815,8 +815,8 @@ alias:
 version: 1.00.00
 parent: object
 object id: 22
-number of fields: 11
-size of instance: 64
+number of fields: 10
+size of instance: 56
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -825,7 +825,6 @@ r-x             save    *char( char *[] )
 --x             done    void( )
 ---             next    void*
 rw-             file    char*
-rw-     symbol_greek    bool
 rw-      ignore_path    bool
 r-x             load    void( )
 </pre>
@@ -1164,7 +1163,6 @@ rw-        save_path    enum( unchange full relative base )
 rw-       top_margin    int
 rw-      left_margin    int
 rw-             zoom    int
-rw-     symbol_greek    bool
 r-x             draw    void( int )
 r-x           redraw    void( int )
 r-x             save    *char( char *[] )
@@ -1181,6 +1179,7 @@ r-x          zooming    void( int int int int )
 r-x            match    bool( int int int int int )
 r--              ext    char*
 ---           _local    void*
+-w-     symbol_greek    bool
 </pre>
 
 <h3>legend</h3>
