@@ -474,34 +474,44 @@ static struct font_data FontData[] = {
 static NHASH FontDataHash = NULL;
 
 static int
-g2nul_charwidth(struct objlist *obj, char *inst, char *rval,
+g2nul_strwidth(struct objlist *obj, char *inst, char *rval,
 		int argc, char **argv)
 {
+  char *font, *s, *ptr;
+  int size, width, i, style, w;
   gunichar ch;
-  char *font;
-  int size, width, i, style;
 
-  ch = * (gunichar *) argv[3];
+  s = argv[3];
   size = * (int *) argv[4];
   font = (char *) argv[5];
   style = * (int *) argv[6];
 
-  width = -1;
-  if (ch < 256 && nhash_get_int(FontDataHash, font, &i) == 0) {
-    if (FontData[i].style >= 0) {
-      style = FontData[i].style;
-    }
-    if (style >= 0 && style < 4 && FontData[i].width[style]) {
-      width = FontData[i].width[style][ch];
-    }
+  if (s == NULL) {
+    return 0;
   }
 
-  if (width < 0) {
-    width = 600;
-  }
+  w = 0;
+  for (ptr = s; ptr[0]; ptr = g_utf8_next_char(ptr)) {
+    ch = g_utf8_get_char(ptr);
+    width = -1;
+    if (ch < 256 && nhash_get_int(FontDataHash, font, &i) == 0) {
+      if (FontData[i].style >= 0) {
+	style = FontData[i].style;
+      }
+      if (style >= 0 && style < 4 && FontData[i].width[style]) {
+	width = FontData[i].width[style][ch];
+      }
+    }
 
-  if (g_unichar_iswide(ch)) {
-    width *= 2;
+    if (width < 0) {
+      width = 600;
+    }
+
+    if (g_unichar_iswide(ch)) {
+      width *= 2;
+    }
+
+    w += width;
   }
 
   * (int *) rval = nround(width * size * 25.4 / 72000.0);
@@ -556,7 +566,7 @@ static struct objtable gra2null[] = {
   {"init",NVFUNC,NEXEC,g2nulinit,NULL,0},
   {"done",NVFUNC,NEXEC,g2nuldone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
-  {"_charwidth",NIFUNC,0,g2nul_charwidth,NULL,0},
+  {"_strwidth",NIFUNC,0,g2nul_strwidth,NULL,0},
   {"_charascent",NIFUNC,0,g2nul_charheight,NULL,0},
   {"_chardescent",NIFUNC,0,g2nul_chardescent,NULL,0},
 };

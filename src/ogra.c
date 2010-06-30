@@ -145,7 +145,7 @@ oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray **list;
   int offset,oid,gid;
   int topm,leftm,width,height,zoom;
-  int output,charwidth,charheight,chardescent;
+  int output,charheight,chardescent,strwidth;
 
   _getobj(obj,"device",inst,&device);
   _getobj(obj,"GC",inst,&GC);
@@ -183,9 +183,9 @@ oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       if ((output=getobjtblpos(dobj,"_output",&robj))==-1) return 1;
     } else output=-1;
 
-    if (!chkobjfield(dobj,"_charwidth")) {
-      if ((charwidth=getobjtblpos(dobj,"_charwidth",&robj))==-1) return 1;
-    } else charwidth=-1;
+    if (!chkobjfield(dobj,"_strwidth")) {
+      if ((strwidth=getobjtblpos(dobj,"_strwidth",&robj))==-1) return 1;
+    } else strwidth=-1;
 
     if (!chkobjfield(dobj,"_charascent")) {
       if ((charheight=getobjtblpos(dobj,"_charascent",&robj))==-1) return 1;
@@ -205,7 +205,7 @@ oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     } else local=NULL;
 
     GC=GRAopen(chkobjectname(dobj),"_output",
-               robj,dinst,output,charwidth,charheight,chardescent,list,local);
+               robj,dinst,output,strwidth,charheight,chardescent,list,local);
 
     if (GC==-2) {
       error2(obj,ERRBUSY,device);

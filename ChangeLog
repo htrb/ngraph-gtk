@@ -1,3 +1,46 @@
+2010-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.c (set_entry_from_obj_point): use "GString *"
+	instead of "char *".
+
+	* src/gtk/x11file.c (load_tab_set_value): use "GString *" instead
+	of "char *".
+
+	* src/gtk/x11view.c (eval_dialog_copy_selected)
+	(CopyFocusedObjects): use "GString *" instead of "char *".
+
+	* src/gra.c (GRAtextextent, GRAexpandtext): use "GString *"
+	instead of "char *".
+
+	* src/ogra2nul.c (g2nul_strwidth): added.
+	(g2nul_charwidth): removed.
+	(gra2null): remove "_charwidth" field, add "_strwidth" field.
+
+	* src/ogra.c (oGRAopen): use "_strwidth" field instead of
+	"_charwidth" field.
+
+	* src/gra.c (GRAC): remove "charwidth" member, add "strwidth"
+	member.
+	(_GRAopen, GRAopen): initialize "strwidth" member.
+	(GRAstrwidth): added.
+	(GRAcharwidth): removed.
+	(GRAtextextent, GRAtextextentraw, get_str_bbox): use
+	"GRAstrwidth()" instead of "GRAcharwidth()".
+
+	* src/gtk/x11opt_proto.h (CREATE_NAME): call
+	"gtk_scrolled_window_set_policy()".
+
+	* src/gtk/ogra2cairo.c (gra2cairo): remove "_charwidth" field, add
+	"_strwidth" field.
+	(gra2cairo_strwidth): added.
+	(gra2cairo_charwidth): removed.
+
+	* src/gtk/ogra2cairofile.c (gra2cairofile): remove "_charwidth"
+	field, add "_strwidth" field.
+
+	* src/gtk/ogra2x11.c (gra2gtk): remove "_charwidth" field, add
+	"_strwidth" field.
+
 2010-06-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oprm.c (prminit, prmload): the field "symbol_greek" in not

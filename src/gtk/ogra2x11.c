@@ -681,7 +681,7 @@ static struct objtable gra2gtk[] = {
   {"BB", NINT, NREAD | NWRITE, gtkbb, NULL, 0},
   {"_gtklocal", NPOINTER, 0, NULL, NULL, 0},
   {"_output", NVFUNC, 0, gtk_output, NULL, 0},
-  {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
+  {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_evloop", NVFUNC, 0, gtk_evloop, NULL, 0},

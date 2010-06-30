@@ -275,7 +275,7 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
   gint res_id;
 
   if (title == NULL) {
-    title = "Error";
+    title = _("Error");
   }
 
   switch (mode) {

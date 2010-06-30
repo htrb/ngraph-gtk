@@ -182,8 +182,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 
   if (d->alloc) {
     GC = _GRAopen("gra2gdk", "_output",
-		   robj, inst, output, -1,
-		   -1, -1, NULL, local);
+		  robj, inst, output, -1, -1, -1, NULL, local);
     GRAlinestyle(GC, 0, NULL, 1, 0, 0, 1000);
     if (GC >= 0) {
       GRAview(GC, minx, miny, maxx, maxy, 1);

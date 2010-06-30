@@ -1221,20 +1221,18 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 
 
 int
-gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_strwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
-  gunichar ch;
-  gchar *font, tmp[8];
+  gchar *font, *str;
   double size, dir, s,c ;
-  int width, n, style, symbol;
+  int width, style, symbol;
   struct fontmap *fcur;
 
-  ch = * (gunichar *) argv[3];
-
-  size = (*(int *)(argv[4])) / 72.0 * 25.4;
-  font = (char *)(argv[5]);
-  style = *(int *) (argv[6]);
+  str = argv[3];
+  size = ( * (int *) argv[4]) / 72.0 * 25.4;
+  font = argv[5];
+  style = * (int *) (argv[6]);
 
   if (size == 0) {
     *(int *) rval = 0;
@@ -1262,20 +1260,21 @@ gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char 
   local->fontsin = 0;
   local->fontcos = 1;
 
-  n = g_unichar_to_utf8(ch, tmp);
-  tmp[n] = '\0';
-
   if (symbol) {
     char *ptr;
-    ptr = ascii2greece(tmp);
+    ptr = ascii2greece(str);
     if (ptr == NULL) {
       return 1;
     }
-    strcpy(tmp, ptr);
-    g_free(ptr);
+    str = ptr;
   }
 
-  draw_str(local, FALSE, tmp, fcur, size, 0, &width, NULL, NULL);
+  draw_str(local, FALSE, str, fcur, size, 0, &width, NULL, NULL);
+
+  if (symbol) {
+    g_free(str);
+  }
+
   *(int *) rval = mxp2dw(local, width);
 
   local->fontsin = s;
@@ -1361,7 +1360,7 @@ static struct objtable gra2cairo[] = {
   {"flush",NVFUNC,NREAD|NEXEC,gra2cairo_flush,"",0},
   {"antialias", NENUM, NREAD | NWRITE, set_antialias, gra2cairo_antialias_type, 0},
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
-  {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
+  {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_local", NPOINTER, 0, NULL, NULL, 0}, 

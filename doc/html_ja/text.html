@@ -120,7 +120,25 @@ Legend textダイアログボックスのTextで文字列中に制御文字を�
 <tr><td>%{file:X:dmaxy}</td><td>ファイルXの最大値(y)</td></tr>
 <tr><td>%{file:X:davy}</td><td>ファイルXの平均値(y)</td></tr>
 <tr><td>%{file:X:dsigy}</td><td>ファイルXの標準偏差(y)</td></tr>
-<tr><td>%{text:0:printf %#.6g %{fit:0:%00}}</td><td>fit:0:%00を、text:0の関数printfを使い"%#.6g"のフォーマットで出力する</td></tr>
+<tr>
+ <td>
+  %{file:X:calc:a}
+ </td>
+ <td>
+  ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
+  f(a) を計算する。
+ </td>
+</tr>
+<tr>
+ <td>
+  %{file:X:newton:a b}
+ </td>
+ <td>
+  ファイルXのプロットタイプが Fit のとき、フィットの結果 f(x) に対して
+  f(x)=b となる xを初期値 x=a としてニュートン法で求める。
+ </td>
+</tr>
+<tr><td>%{fit:0:%00}}</td><td>fit:0:%00</td></tr>
 </table>
 </div>
 

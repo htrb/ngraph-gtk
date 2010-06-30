@@ -1044,10 +1044,11 @@ static void
 set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
 {
   struct narray *array;
-  char *str, buf[128], *tmp;
+  char buf[128], *tmp;
+  GString *str;
   int i, n, *points;
 
-  str = nstrnew();
+  str = g_string_sized_new(256);
   if (str == NULL)
     return;
 
@@ -1055,17 +1056,13 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
   n = arraynum(array);
   points = (int *) arraydata(array);
   for (i = 0; i < n; i++) {
-    snprintf(buf, sizeof(buf), "%.2f ", points[i] / 100.0);
-    tmp = nstrcat(str, buf);
-    if (tmp == NULL)
-      goto END;
-    str = tmp;
-   }
+    g_string_append_printf(str, "%.2f ", points[i] / 100.0);
+  }
 
-  gtk_entry_set_text(entry, str);
+  gtk_entry_set_text(entry, str->str);
 
  END:
-  g_free(str);
+  g_string_free(str, TRUE);
 }
 #endif
 

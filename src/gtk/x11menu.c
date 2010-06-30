@@ -1631,8 +1631,7 @@ create_markpixmap(GtkWidget *win)
 				  255, 255, 255);
       if (pix) {
 	gra = _GRAopen("gra2gdk", "_output",
-		       robj, inst, output, -1,
-		       -1, -1, NULL, local);
+		       robj, inst, output, -1, -1, -1, NULL, local);
 	if (gra >= 0) {
 	  GRAview(gra, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE, 0);
 	  GRAlinestyle(gra, 0, NULL, 1, 0, 0, 1000);

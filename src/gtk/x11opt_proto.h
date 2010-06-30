@@ -245,6 +245,7 @@ CREATE_NAME(Pref, DialogCreateWidgets)(struct CREATE_NAME(Pref, Dialog) *d, GtkW
   hbox = gtk_hbox_new(FALSE, 4);
 
   swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   w = list_store_create(n, list);
   d->list = w;
   g_signal_connect(d->list, "button-press-event", G_CALLBACK(CREATE_NAME(Pref, ListDefailtCb)), d);

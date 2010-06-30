@@ -370,7 +370,7 @@ static struct objtable gra2cairofile[] = {
   {"text2path", NBOOL, NREAD|NWRITE, NULL, NULL,0},
   {"format", NENUM, NREAD | NWRITE, NULL, surface_type, 0},
   {"_output", NVFUNC, 0, gra2cairofile_output, NULL, 0}, 
-  {"_charwidth", NIFUNC, 0, gra2cairo_charwidth, NULL, 0},
+  {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
 };

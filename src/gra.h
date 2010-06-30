@@ -87,12 +87,12 @@ extern struct greektbltype greektable[48];
 int _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
                    struct narray **list,void *local);
 int _GRAopen(char *objname,char *outputname,
-            struct objlist *obj,char *inst,
-            int output,int charwidth,int charascent,int chardescent,
+            struct objlist *obj,char *inst, int output,
+	     int strwidth,int charascent,int chardescent,
             struct narray **list,void *local);
 int GRAopen(char *objname,char *outputname,
-            struct objlist *obj,char *inst,
-            int output,int charwidth,int charascent,int chardescent,
+            struct objlist *obj,char *inst, int output,
+	    int strwidth,int charascent,int chardescent,
             struct narray **list,void *local);
 int GRAreopen(int GC);
 int GRAopened(int GC);

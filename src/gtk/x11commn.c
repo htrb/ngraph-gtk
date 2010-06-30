@@ -1396,7 +1396,7 @@ CheckSave(void)
 
   if (get_graph_modified()) {
     ret = message_box(TopLevel, _("This graph is modified.\nSave this graph?"),
-		     "Modified", RESPONS_YESNOCANCEL);
+		      _("Confirm"), RESPONS_YESNOCANCEL);
     if (ret == IDYES) {
       if (GraphSave(TRUE) == IDCANCEL)
 	return FALSE;

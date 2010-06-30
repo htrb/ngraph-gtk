@@ -220,9 +220,10 @@ CopyFocusedObjects(void)
   struct narray *focus_array;
   struct FocusObj **focus;
   struct objlist *axis, *text;
-  char *str, *s, *ptr;
+  char *s;
   int i, r, n, id, num;
   GtkClipboard* clipboard;
+  GString *str;
 
   focus_array = NgraphApp.Viewer.focusobj;
   n = arraynum(focus_array);
@@ -232,17 +233,17 @@ CopyFocusedObjects(void)
 
   focus = (struct FocusObj **) arraydata(focus_array);
 
-  str = nstrnew();
+  str = g_string_sized_new(256);
   if (str == NULL)
     return 1;
 
   axis = chkobject("axis");
   text = chkobject("text");
-  str = nstrcat(str, SCRIPT_IDN);
+  g_string_append(str, SCRIPT_IDN);
   num = 0;
   for (i = 0; i < n; i++) {
     if (focus[i]->obj == axis) {
-      g_free(str);
+      g_string_free(str, TRUE);
       return 1;
     }
 
@@ -251,23 +252,21 @@ CopyFocusedObjects(void)
       continue;
 
     r = getobj(focus[i]->obj, "save", id, 0, NULL, &s);
-    if (r < 0 || s == NULL)
-      return 1;
-
-    ptr = nstrcat(str, s);
-    if (ptr) {
-      str = ptr;
-    } else {
-      g_free(str);
+    if (r < 0 || s == NULL) {
+      g_string_free(str, TRUE);
       return 1;
     }
+
+    g_string_append(str, s);
     num++;
   }
+
   if (num > 0) {
     clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    gtk_clipboard_set_text(clipboard, str, -1);
+    gtk_clipboard_set_text(clipboard, str->str, -1);
   }
-  g_free(str);
+
+  g_string_free(str, TRUE);
 
   return 0;
 }
@@ -861,13 +860,13 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
   GtkTreeIter iter;
   GtkTreeModel *model;
   GList *list, *ptr;
-  char buf[1024], *str;
+  GString *str;
 
   tv = GTK_TREE_VIEW(user_data);
   sel = gtk_tree_view_get_selection(tv);
   list = gtk_tree_selection_get_selected_rows(sel, &model);
 
-  str = nstrnew();
+  str = g_string_sized_new(256);
   if (str == NULL)
     return;
 
@@ -885,7 +884,7 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
 			 EVAL_DIALOG_COL_TYPE_ID, &id,
 			 EVAL_DIALOG_COL_TYPE_LN, &ln,
 			 -1);
-      snprintf(buf, sizeof(buf), "%d %d\n", id, ln);
+      g_string_append_printf(str, "%d %d\n", id, ln);
     } else {
       gtk_tree_model_get(model, &iter,
 			 EVAL_DIALOG_COL_TYPE_ID, &id,
@@ -895,26 +894,23 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
 			 -1);
 
       if (x && y) {
-	snprintf(buf, sizeof(buf), "%d %d %s %s\n", id, ln, x, y);
+	g_string_append_printf(str, "%d %d %s %s\n", id, ln, x, y);
       }
 
       g_free(x);
       g_free(y);
     }
-    str = nstrcat(str, buf);
-    if (str == NULL)
-      return;
   }
 
-  if (str[0] != '\0') {
+  if (str->len > 0) {
     clip = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
-    gtk_clipboard_set_text(clip, str, -1);
+    gtk_clipboard_set_text(clip, str->str, -1);
 
     clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    gtk_clipboard_set_text(clip, str, -1);
+    gtk_clipboard_set_text(clip, str->str, -1);
   }
 
-  g_free(str);
+  g_string_free(str, TRUE);
 
   g_list_foreach(list, free_tree_path_cb, NULL);
   g_list_free(list);

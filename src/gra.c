@@ -51,7 +51,7 @@ struct GRAC {
   char *outputname;
   struct objlist *obj;
   char *inst;
-  int output,charwidth,charascent,chardescent;
+  int output,strwidth,charascent,chardescent;
   struct narray **list;
   void *local;
   int (*direct)(char code,int *cpar,char *cstr,void *local);
@@ -98,7 +98,7 @@ struct GRAC {
 };
 
 #define GRAC_INIT_VAL {FALSE, FALSE, NULL, NULL, NULL, NULL,		\
-      -1, -1, -1, -1, NULL, NULL, NULL,					\
+      -1, -1, -1, -1, NULL, NULL, NULL,				\
       FALSE, 0, 0, SHRT_MAX, SHRT_MAX, 1, 0, 0, SHRT_MAX, SHRT_MAX,	\
       0, 0, 1,								\
       FALSE, 0, NULL, 1, 0, 0, 0,					\
@@ -149,7 +149,6 @@ _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
   GRAClist[i].obj=NULL;
   GRAClist[i].inst=NULL;
   GRAClist[i].output=-1;
-  GRAClist[i].charwidth=-1;
   GRAClist[i].charascent=-1;
   GRAClist[i].chardescent=-1;
   GRAClist[i].list=list;
@@ -160,9 +159,9 @@ _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
 
 int 
 _GRAopen(char *objname,char *outputname,
-             struct objlist *obj,char *inst,
-             int output,int charwidth,int charascent,int chardescent,
-             struct narray **list,void *local)
+	 struct objlist *obj,char *inst, int output,
+	 int strwidth,int charascent,int chardescent,
+	 struct narray **list,void *local)
 {
   int i;
 
@@ -176,7 +175,7 @@ _GRAopen(char *objname,char *outputname,
   GRAClist[i].obj=obj;
   GRAClist[i].inst=inst;
   GRAClist[i].output=output;
-  GRAClist[i].charwidth=charwidth;
+  GRAClist[i].strwidth=strwidth;
   GRAClist[i].charascent=charascent;
   GRAClist[i].chardescent=chardescent;
   GRAClist[i].list=list;
@@ -187,9 +186,9 @@ _GRAopen(char *objname,char *outputname,
 
 int 
 GRAopen(char *objname,char *outputname,
-            struct objlist *obj,char *inst,
-            int output,int charwidth,int charascent,int chardescent,
-            struct narray **list,void *local)
+	struct objlist *obj,char *inst, int output,
+	int strwidth,int charascent,int chardescent,
+	struct narray **list,void *local)
 {
   int i,GC;
 
@@ -215,7 +214,7 @@ GRAopen(char *objname,char *outputname,
   GRAClist[i].obj=obj;
   GRAClist[i].inst=inst;
   GRAClist[i].output=output;
-  GRAClist[i].charwidth=charwidth;
+  GRAClist[i].strwidth=strwidth;
   GRAClist[i].charascent=charascent;
   GRAClist[i].chardescent=chardescent;
   GRAClist[i].list=list;
@@ -622,34 +621,33 @@ GRAdraw(int GC,char code,int *cpar,char *cstr)
 }
 
 static int 
-GRAcharwidth(const gchar *s, char *font, int style, int size)
+GRAstrwidth(const gchar *s, char *font, int style, int size)
 {
   char *argv[8];
   int i, idp;
-  gunichar uch;
-
-  uch = g_utf8_get_char(s);
 
   for (i = GRAClimit - 1; i >= 0; i--) {
-    if (GRAopened(i) == i && GRAClist[i].charwidth != -1)
+    if (GRAopened(i) == i && GRAClist[i].strwidth != -1)
       break;
   }
-  if (i == -1)
+
+  if (i == -1) {
     return nround(25.4 / 72000.0 * size * 600);
+  }
 
   argv[0] = GRAClist[i].objname;
-  argv[1] = "_charwidth";
+  argv[1] = "_strwidth";
   argv[2] = GRAClist[i].local;
-  argv[3] = (char *) &uch;
+  argv[3] = (char *) s;
   argv[4] = (char *) &size;
   argv[5] = font;
   argv[6] = (char *) &style;
   argv[7] = NULL;
 
-  if (__exeobj(GRAClist[i].obj, GRAClist[i].charwidth, GRAClist[i].inst, 6, argv))
+  if (__exeobj(GRAClist[i].obj, GRAClist[i].strwidth, GRAClist[i].inst, 6, argv))
     return nround(25.4 / 72000.0 * size * 600);
 
-  idp = chkobjoffset2(GRAClist[i].obj, GRAClist[i].charwidth);
+  idp = chkobjoffset2(GRAClist[i].obj, GRAClist[i].strwidth);
   return *(int *)(GRAClist[i].inst+idp);
 }
 
@@ -1832,14 +1830,14 @@ static gchar *
 GRAexpandtext(char *s)
 {
   int i,j,len;
-  gchar *str;
+  GString *str;
   char *snew,*s2;
 
   if (s == NULL) {
     return NULL;
   }
 
-  str = nstrnew();
+  str = g_string_sized_new(256);
   if (str == NULL) {
     return NULL;
   }
@@ -1851,42 +1849,39 @@ GRAexpandtext(char *s)
     while (j < len && s[j] != '\\' && s[j] != '%') {
       j++;
     }
-    str = nstrncat(str, s + i, j - i);
-    if (str == NULL) {
-      return NULL;
-    }
+    g_string_append_len(str, s + i, j - i);
     if (s[j] == '\\') {
       switch (s[j + 1]) {
       case 'n':
-        str = nstrccat(str, '\n');
+        g_string_append_c(str, '\n');
         j += 2;
 	break;
       case 'b':
-        str = nstrccat(str, '\b');
+        g_string_append_c(str, '\b');
         j += 2;
 	break;
       case '&':
-        str = nstrccat(str, '\r');
+        g_string_append_c(str, '\r');
         j += 2;
 	break;
       case 'N':
-        str = nstrccat(str, FONT_STYLE_NORMAL);
+        g_string_append_c(str, FONT_STYLE_NORMAL);
         j += 2;
 	break;
       case 'B':
-        str = nstrccat(str, FONT_STYLE_BOLD);
+        g_string_append_c(str, FONT_STYLE_BOLD);
         j += 2;
 	break;
       case 'I':
-        str = nstrccat(str, FONT_STYLE_ITALIC);
+        g_string_append_c(str, FONT_STYLE_ITALIC);
         j += 2;
 	break;
       case '.':
-        str = nstrccat(str, ' ');
+        g_string_append_c(str, ' ');
         j += 2;
 	break;
       case '-':
-	str = nstrcat(str, "‐");
+	g_string_append(str, "‐");
         j += 2;
 	break;
       case '\\':
@@ -1894,17 +1889,17 @@ GRAexpandtext(char *s)
       case '@':
       case '^':
       case '_':
-        str = nstrccat(str, '\\');
-        str = nstrccat(str, s[j + 1]);
+        g_string_append_c(str, '\\');
+        g_string_append_c(str, s[j + 1]);
         j += 2;
 	break;
       case 'x':
 	  if (g_ascii_isxdigit(s[j + 2]) && g_ascii_isxdigit(s[j + 3])) {
 	    if (s[j + 2] != '0' || s[j + 3] != '0') {
-	      str = nstrccat(str, '\\');
-	      str = nstrccat(str, 'x');
-	      str = nstrccat(str, toupper(s[j + 2]));
-	      str = nstrccat(str, toupper(s[j + 3]));
+	      g_string_append_c(str, '\\');
+	      g_string_append_c(str, 'x');
+	      g_string_append_c(str, toupper(s[j + 2]));
+	      g_string_append_c(str, toupper(s[j + 3]));
 	    }
 	    j += 4;
 	  } else {
@@ -1914,33 +1909,31 @@ GRAexpandtext(char *s)
       default:
         j++;
       }
-      if (str == NULL) {
-	return NULL;
-      }
     } else if ((s[j]=='%') && (s[j+1]=='{')) {
       s2=s+j;
       snew=GRAexpandobj(&s2);
-      if ((str=nstrcat(str,snew))==NULL) return NULL;
+      g_string_append(str, snew);
       g_free(snew);
       j=(s2-s);
     } else if ((s[j]=='%') && (s[j+1]=='[')) {
       s2=s+j;
       snew=GRAexpandmath(&s2);
-      if ((str=nstrcat(str,snew))==NULL) return NULL;
+      g_string_append(str, snew);
       g_free(snew);
       j=(s2-s);
     } else if ((s[j]=='%') && (s[j+1]=='p') && (s[j+2]=='f') && (s[j+3]=='{')) {
       s2=s+j;
       snew=GRAexpandpf(&s2);
-      if ((str=nstrcat(str,snew))==NULL) return NULL;
+      g_string_append(str, snew);
       g_free(snew);
       j=(s2-s);
     } else if (j<len) {
-      if ((str=nstrccat(str,s[j]))==NULL) return NULL;
+      g_string_append_c(str, s[j]);
       j++;
     }
   } while (j < len);
-  return str;
+
+  return g_string_free(str, FALSE);
 }
 
 void 
@@ -2242,7 +2235,7 @@ GRAtextextent(char *s, char *font, int style,
 	      int *gx0, int *gy0, int *gx1, int *gy1, int raw)
 {
   gchar *c, *tok;
-  char *str;
+  GString *str;
   int w, h, d, len, scmovey, scriptf;
   char *endptr;
   char *font2;
@@ -2298,24 +2291,30 @@ GRAtextextent(char *s, char *font, int style,
   }
 
   j=0;
+  str = g_string_sized_new(256);
+  if (str == NULL) {
+    goto errexit;
+  }
   do {
-    str = nstrnew();
-    if (str == NULL) {
-      goto errexit;
-    }
+    g_string_set_size(str, 0);
 
     while (j < len && strchr("\n\b\r_^@%",c[j]) == NULL) {
       switch (c[j]) {
       case '\\':
-        if (c[j+1]=='x' && g_ascii_isxdigit(c[j+2]) && g_ascii_isxdigit(c[j+3])) {
-          if (((str=nstrccat(str,c[j]))==NULL)
-           || ((str=nstrccat(str,c[j+1]))==NULL)
-           || ((str=nstrccat(str,c[j+2]))==NULL)
-           || ((str=nstrccat(str,c[j+3]))==NULL)) goto errexit;
-          j+=4;
+        if (c[j + 1]=='x' && g_ascii_isxdigit(c[j + 2]) && g_ascii_isxdigit(c[j + 3])) {
+	  char buf[2], *ustr;
+
+	  buf[0] = g_ascii_xdigit_value(c[j + 2]) * 16 + g_ascii_xdigit_value(c[j + 3]);
+	  buf[1] = '\0';
+	  ustr = iso8859_to_utf8(buf);
+	  if (ustr) {
+	    g_string_append(str, ustr);
+	    g_free(ustr);
+	  }
+          j += 4;
         } else if (isprint(c[j + 1])) {
-          if ((str=nstrccat(str,c[j+1]))==NULL) goto errexit;
-          j+=2;
+	  g_string_append_c(str, c[j + 1]);
+          j += 2;
         } else {
 	  j++;
 	}
@@ -2333,7 +2332,7 @@ GRAtextextent(char *s, char *font, int style,
 	j++;
 	break;
       default:
-        if ((str=nstrccat(str,c[j]))==NULL) goto errexit;
+	g_string_append_c(str, c[j]);
         j++;
       }
 
@@ -2341,30 +2340,11 @@ GRAtextextent(char *s, char *font, int style,
 	break;
       }
     }
-    if (str == NULL) {
-      goto errexit;
-    }
 
-    if (str[0] != '\0') {
-      gchar *p;
-      w = 0;
-      for (p = str; *p; p = g_utf8_next_char(p)) {
-	if (p[0] == '\\' && p[1] == 'x' && g_ascii_isxdigit(p[2]) && g_ascii_isxdigit(p[3])) {
-	  char buf[2], *ustr;
-	  buf[0] = g_ascii_xdigit_value(p[2]) * 16 + g_ascii_xdigit_value(p[3]);
-	  buf[1] = '\0';
-	  ustr = iso8859_to_utf8(buf);
-	  if (ustr) {
-	    w += GRAcharwidth(ustr, font2, style2, size2) + nround(space2 / 72.0 * 25.4);
-	    g_free(ustr);
-	  }
-	  p += 3;
-	} else {
-	  w += GRAcharwidth(p, font2, style2, size2) + nround(space2 / 72.0 * 25.4);
-	}
-      }
-      h=GRAcharascent(font2, style2,size2);
-      d=GRAchardescent(font2, style2,size2);
+    if (str->len > 0) {
+      w = GRAstrwidth(str->str, font2, style2, size2) + nround(space2 / 72.0 * 25.4);
+      h = GRAcharascent(font2, style2,size2);
+      d = GRAchardescent(font2, style2,size2);
 
       if (x0<*gx0) *gx0=x0;
       if (x0+w<*gx0) *gx0=x0+w;
@@ -2376,8 +2356,7 @@ GRAtextextent(char *s, char *font, int style,
       if (y0+d>*gy1) *gy1=y0+d;
       x0+=w;
     }
-    g_free(str);
-    str = NULL;
+
     if (style3 != style2) {
       style2 = style3;
       continue;
@@ -2498,7 +2477,9 @@ GRAtextextent(char *s, char *font, int style,
   } while (j<len);
 
 errexit:
-  g_free(str);
+  if (str) {
+    g_string_free(str, TRUE);
+  }
   g_free(c);
   g_free(font2);
   g_free(font3);
@@ -2506,60 +2487,13 @@ errexit:
 
 void 
 GRAtextextentraw(char *s,char *font, int style,
-                   int size,int space,int *gx0,int *gy0,int *gx1,int *gy1)
+		 int size,int space,int *gx0,int *gy0,int *gx1,int *gy1)
 {
-  char *c;
-  char *str;
-  int w, h, len, j, x0, y0;
+  *gx0 = *gy0 = *gx1 = *gy1 = 0;
+  if (s == NULL || font == NULL) return;
 
-  *gx0=*gy0=*gx1=*gy1=0;
-  if (font==NULL) return;
-  str=NULL;
-  x0=0;
-  y0=0;
-  if (s==NULL) return;
-  c=s;
-  len = strlen(c);
-  j = 0;
-  str = nstrnew();
-  if (str == NULL) {
-    goto errexit;
-  }
-
-  while (j < len) {
-    if (c[j]=='\\') {
-      if ((str=nstrccat(str,'\\'))==NULL) goto errexit;
-      if ((str=nstrccat(str,c[j]))==NULL) goto errexit;
-      j++;
-    } else {
-      if ((str=nstrccat(str,c[j]))==NULL) goto errexit;
-      j++;
-    }
-  }
-  if (str == NULL) {
-    goto errexit;
-  }
-
-  if (str[0]!='\0') {
-    gchar *p;
-    w = 0;
-    for (p = str; *p; p = g_utf8_next_char(p)) {
-      w += GRAcharwidth(p, font, style, size) + nround(space / 72.0 * 25.4);
-    }
-    h = GRAcharascent(font, style, size);
-    if (x0     < *gx0) *gx0 = x0;
-    if (x0 + w < *gx0) *gx0 = x0 + w;
-    if (x0     > *gx1) *gx1 = x0;
-    if (x0 + w > *gx1) *gx1 = x0 + w;
-    if (y0 - h < *gy0) *gy0 = y0 - h;
-    if (y0     < *gy0) *gy0 = y0;
-    if (y0     > *gy1) *gy1 = y0;
-    if (y0 - h > *gy1) *gy1 = y0 - h;
-    x0 += w;
-  }
-
-errexit:
-  g_free(str);
+  *gx1 = GRAstrwidth(s, font, style, size) + nround(space / 72.0 * 25.4);
+  *gy0 = - GRAcharascent(font, style, size);
 }
 
 
@@ -3373,60 +3307,69 @@ GRAendbbox(struct GRAbbox *bbox)
 static int
 get_str_bbox(struct GRAbbox *bbox, char *cstr)
 {
-  double x,y,csin,ccos;
-  int w,h,d,x1,y1,x2,y2,x3,y3,x4,y4;
+  double x, y, csin, ccos;
+  int w, h, d, x1, y1, x2, y2, x3, y3, x4, y4;
   gchar *ptr;
+  GString *str;
 
   if (! bbox->loadfont) {
     return 0;
   }
 
+  str = g_string_sized_new(256);
+  if (str == NULL) {
+    return 1;
+  }
+
   csin = sin(bbox->dir / 18000.0 * MPI);
   ccos = cos(bbox->dir / 18000.0 * MPI);
-  for (ptr = cstr; ptr[0]; ptr = g_utf8_next_char(ptr)) {
+  for (ptr = cstr; ptr[0]; ptr++) {
     if (ptr[0] == '\\' && ptr[1] == 'x' && g_ascii_isxdigit(ptr[2]) && g_ascii_isxdigit(ptr[3])) {
       char s[2], *tmp;
       s[0] = g_ascii_xdigit_value(ptr[2]) * 16 + g_ascii_xdigit_value(ptr[3]);
       s[1] = '\0';
-      ptr += 3;
       tmp = iso8859_to_utf8(s);
-      if (tmp == NULL) {
-	break;
+      if (tmp) {
+	g_string_append(str, tmp);
+	g_free(tmp);
       }
-      w = GRAcharwidth(tmp, bbox->fontalias, bbox->font_style, bbox->pt);
-      g_free(tmp);
+      ptr += 3;
     } else {
-      w = GRAcharwidth(ptr, bbox->fontalias, bbox->font_style, bbox->pt);
+      g_string_append_c(str, ptr[0]);
     }
-    h=GRAcharascent(bbox->fontalias,bbox->font_style,bbox->pt);
-    d=GRAchardescent(bbox->fontalias,bbox->font_style,bbox->pt);
-    x=0;
-    y=d;
-    x1=(int )(bbox->posx+(x*ccos+y*csin));
-    y1=(int )(bbox->posy+(-x*csin+y*ccos));
-    x=0;
-    y=-h;
-    x2=(int )(bbox->posx+(x*ccos+y*csin));
-    y2=(int )(bbox->posy+(-x*csin+y*ccos));
-    x=w;
-    y=d;
-    x3=(int )(bbox->posx+(x*ccos+y*csin));
-    y3=(int )(bbox->posy+(-x*csin+y*ccos));
-    x=w;
-    y=-h;
-    x4=(int )(bbox->posx+(int )(x*ccos+y*csin));
-    y4=(int )(bbox->posy+(int )(-x*csin+y*ccos));
-    setbbminmax(bbox,x1,y1,x4,y4,FALSE);
-    setbbminmax(bbox,x2,y2,x3,y3,FALSE);
-    bbox->posx+=(int )((w+bbox->spc*25.4/72)*ccos);
-    bbox->posy-=(int )((w+bbox->spc*25.4/72)*csin);
   }
+
+  w = GRAstrwidth(str->str, bbox->fontalias, bbox->font_style, bbox->pt);
+  h = GRAcharascent(bbox->fontalias, bbox->font_style, bbox->pt);
+  d = GRAchardescent(bbox->fontalias, bbox->font_style, bbox->pt);
+  x = 0;
+  y = d;
+  x1 = (int )(bbox->posx + ( x * ccos + y * csin));
+  y1 = (int )(bbox->posy + (-x * csin + y * ccos));
+  x = 0;
+  y = -h;
+  x2 = (int )(bbox->posx + ( x * ccos + y * csin));
+  y2 = (int )(bbox->posy + (-x * csin + y * ccos));
+  x = w;
+  y = d;
+  x3 = (int )(bbox->posx + ( x * ccos + y * csin));
+  y3 = (int )(bbox->posy + (-x * csin + y * ccos));
+  x = w;
+  y = -h;
+  x4 = (int )(bbox->posx + (int )( x * ccos + y * csin));
+  y4 = (int )(bbox->posy + (int )(-x * csin + y * ccos));
+  setbbminmax(bbox, x1, y1, x4, y4, FALSE);
+  setbbminmax(bbox, x2, y2, x3, y3, FALSE);
+  bbox->posx += (int )((w + bbox->spc * 25.4 / 72) * ccos);
+  bbox->posy -= (int )((w + bbox->spc * 25.4 / 72) * csin);
+
+  g_string_free(str, TRUE);
 
   return 0;
 }
 
 int 
-GRAboundingbox(char code,int *cpar,char *cstr,void *local)
+GRAboundingbox(char code, int *cpar, char *cstr, void *local)
 {
   int lw, j;
   struct GRAbbox *bbox;

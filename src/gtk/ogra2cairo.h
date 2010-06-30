@@ -49,7 +49,7 @@ struct gra2cairo_local {
 };
 
 int gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region);
-int gra2cairo_charwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv);
+int gra2cairo_strwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv);
 int gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char **argv);
 int gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, int y2);
 int gra2cairo_clear_region(struct gra2cairo_local *local);

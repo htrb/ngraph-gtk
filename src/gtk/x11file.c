@@ -1949,26 +1949,29 @@ static void
 load_tab_setup_item(struct FileDialog *d, int id)
 {
   char *ifs, *s;
-  unsigned int i, l;
+  unsigned int i, j, l;
 
   SetWidgetFromObjField(d->load.headskip, d->Obj, id, "head_skip");
   SetWidgetFromObjField(d->load.readstep, d->Obj, id, "read_step");
   SetWidgetFromObjField(d->load.finalline, d->Obj, id, "final_line");
   SetWidgetFromObjField(d->load.remark, d->Obj, id, "remark");
   sgetobjfield(d->Obj, id, "ifs", NULL, &ifs, FALSE, FALSE, FALSE);
-  s = nstrnew();
 
   l = strlen(ifs);
+  s = g_malloc(l * 2 + 1);
+  j = 0;
   for (i = 0; i < l; i++) {
     if (ifs[i] == '\t') {
-      s = nstrccat(s, '\\');
-      s = nstrccat(s, 't');
+      s[j++] = '\\';
+      s[j++] = 't';
     } else if (ifs[i] == '\\') {
-      s = nstrccat(s, '\\');
-      s = nstrccat(s, '\\');
-    } else
-      s = nstrccat(s, ifs[i]);
-  }
+      s[j++] = '\\';
+      s[j++] = '\\';
+    } else {
+      s[j++] = ifs[i];
+    }
+  } 
+  s[j] = '\0';
   gtk_entry_set_text(GTK_ENTRY(d->load.ifs), s);
   g_free(s);
   g_free(ifs);
@@ -2037,8 +2040,9 @@ static int
 load_tab_set_value(struct FileDialog *d)
 {
   const char *ifs;
-  char *s, *obuf;
+  char *obuf;
   unsigned int i, l;
+  GString *s;
 
   if (SetObjFieldFromWidget(d->load.headskip, d->Obj, d->Id, "head_skip"))
     return 1;
@@ -2053,33 +2057,33 @@ load_tab_set_value(struct FileDialog *d)
     return 1;
 
   ifs = gtk_entry_get_text(GTK_ENTRY(d->load.ifs));
-  s = nstrnew();
+  s = g_string_new("");
 
   l = strlen(ifs);
   for (i = 0; i < l; i++) {
     if ((ifs[i] == '\\') && (ifs[i + 1] == 't')) {
-      s = nstrccat(s, 0x09);
+      g_string_append_c(s, 0x09);
       i++;
     } else if (ifs[i] == '\\') {
-      s = nstrccat(s, '\\');
+      g_string_append_c(s, '\\');
       i++;
     } else {
-      s = nstrccat(s, ifs[i]);
+      g_string_append_c(s, ifs[i]);
     }
   }
 
   sgetobjfield(d->Obj, d->Id, "ifs", NULL, &obuf, FALSE, FALSE, FALSE);
-  if (obuf == NULL || strcmp(s, obuf)) {
-    if (sputobjfield(d->Obj, d->Id, "ifs", s) != 0) {
+  if (obuf == NULL || strcmp(s->str, obuf)) {
+    if (sputobjfield(d->Obj, d->Id, "ifs", s->str) != 0) {
       g_free(obuf);
-      g_free(s);
+      g_string_free(s, TRUE);
       return 1;
     }
     set_graph_modified();
   }
 
   g_free(obuf);
-  g_free(s);
+  g_string_free(s, TRUE);
 
   if (SetObjFieldFromWidget(d->load.csv, d->Obj, d->Id, "csv"))
     return 1;
@@ -3975,8 +3979,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
   getobj(obj, "B2", i, 0, NULL, &fb2);
 
   ggc = _GRAopen("gra2gdk", "_output",
-		 robj, inst, output, -1,
-		 -1, -1, NULL, local);
+		 robj, inst, output, -1, -1, -1, NULL, local);
   if (ggc < 0) {
     _GRAclose(ggc);
     g_object_unref(G_OBJECT(pix));
