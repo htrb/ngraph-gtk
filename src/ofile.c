@@ -5417,8 +5417,9 @@ f2dcolumn(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int cline, line, n, p;
-  char *file, buf[256], *s;
+  int cline, line, p;
+  char *file, *ptr;
+  GString *s;
   FILE *fd;
 
   g_free(*(char **)rval);
@@ -5439,7 +5440,7 @@ f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (fd == NULL)
     return 0;
 
-  s = nstrnew();
+  s = g_string_sized_new(256);
   if (s == NULL) {
     fclose(fd);
     return 0;
@@ -5448,20 +5449,21 @@ f2dhead(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   p = ceil(log10(line + 1));
 
   for (cline = 0; cline < line; cline++) {
-    n = sprintf(buf, "%*d ", p, cline + 1);
-
-    if (fgetnline(fd, buf + n, sizeof(buf) - n))
+    if (fgetline(fd, &ptr)) {
       break;
+    }
 
-    if (cline)
-      s = nstrccat(s,'\n');
+    if (cline) {
+      s = g_string_append_c(s, '\n');
+    }
 
-    s = nstrcat(s,buf);
+    g_string_append_printf(s, "%*d %s", p, cline + 1, ptr);
+    g_free(ptr);
   }
 
   fclose(fd);
 
-  *(char **) rval = s;
+  *(char **) rval = g_string_free(s, FALSE);
 
   return 0;
 }
@@ -6641,59 +6643,76 @@ exit:
 }
 
 static int 
-f2dsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+f2dsave(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct objlist *fitobj;
-  struct narray iarray,*array,*array2;
-  int anum,idnum;
+  struct narray iarray, *array, *array2;
+  int anum, idnum;
   char **adata;
-  int i,j;
+  int i, j;
   char *argv2[4];
-  char *s,*s2,*fit,*fitsave;
+  char *s2, *fit, *fitsave;
   int id;
+  GString *s;
 
-  array=(struct narray *)argv[2];
-  anum=arraynum(array);
-  adata=arraydata(array);
-  for (j=0;j<anum;j++)
-    if (strcmp("fit",adata[j])==0) return pathsave(obj,inst,rval,argc,argv);
-  _getobj(obj,"fit",inst,&fit);
-  if (fit==NULL) return pathsave(obj,inst,rval,argc,argv);
-  arrayinit(&iarray,sizeof(int));
-  if (getobjilist(fit,&fitobj,&iarray,FALSE,NULL)) return 1;
-  idnum=arraynum(&iarray);
-  if (idnum<1) {
-    arraydel(&iarray);
-    return pathsave(obj,inst,rval,argc,argv);
+  array = (struct narray *) argv[2];
+  anum = arraynum(array);
+  adata = arraydata(array);
+
+  for (j = 0; j < anum; j++) {
+    if (strcmp("fit", adata[j]) == 0) {
+      return pathsave(obj, inst, rval, argc, argv);
+    }
   }
-  id=*(int *)arraylast(&iarray);
-  arraydel(&iarray);
-  if (getobj(fitobj,"save",id,0,NULL,&fitsave)==-1) return 1;
-  if ((s=nstrnew())==NULL) return 1;
-  if ((s=nstrcat(s,fitsave))==NULL) return 1;
 
-  array2=arraynew(sizeof(char *));
-  for (i=0;i<anum;i++) arrayadd(array2,&(adata[i]));
-  s2="fit";
-  arrayadd(array2,&s2);
-  argv2[0]=argv[0];
-  argv2[1]=argv[1];
-  argv2[2]=(char *)array2;
-  argv2[3]=NULL;
-  if (pathsave(obj,inst,rval,3,argv2)!=0) {
+  _getobj(obj, "fit", inst, &fit);
+  if (fit == NULL) {
+    return pathsave(obj, inst, rval, argc, argv);
+  }
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL)) {
+    return 1;
+  }
+
+  idnum = arraynum(&iarray);
+  if (idnum < 1) {
+    arraydel(&iarray);
+    return pathsave(obj, inst, rval, argc, argv);
+  }
+
+  id = * (int *) arraylast(&iarray);
+  arraydel(&iarray);
+  if (getobj(fitobj, "save", id, 0, NULL, &fitsave) == -1) {
+    return 1;
+  }
+
+  s = g_string_sized_new(1024);
+  if (s == NULL) {
+    return 1;
+  }
+  g_string_append(s, fitsave);
+
+  array2 = arraynew(sizeof(char *));
+  for (i = 0; i < anum; i++) {
+    arrayadd(array2, &(adata[i]));
+  }
+  s2 = "fit";
+  arrayadd(array2, &s2);
+  argv2[0] = argv[0];
+  argv2[1] = argv[1];
+  argv2[2] = (char *) array2;
+  argv2[3] = NULL;
+  if (pathsave(obj, inst, rval, 3, argv2)) {
     arrayfree(array2);
     return 1;
   }
   arrayfree(array2);
-  if ((s=nstrcat(s,*(char **)rval))==NULL) {
-    g_free(*(char **)rval);
-    *(char **)rval=NULL;
-    return 1;
-  }
-  if ((s=nstrccat(s,'\t'))==NULL) return 1;
-  if ((s=nstrcat(s,"file::fit='fit:^'${fit::oid}\n"))==NULL) return 1;
-  g_free(*(char **)rval);
-  *(char **)rval=s;
+  g_string_append(s, * (char **) rval);
+  g_string_append_c(s, '\t');
+  g_string_append(s, "file::fit='fit:^'${fit::oid}\n");
+  g_free(* (char **) rval);
+  * (char **) rval = g_string_free(s, FALSE);
   return 0;
 }
 

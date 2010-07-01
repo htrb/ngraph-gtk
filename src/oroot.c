@@ -320,65 +320,90 @@ ochgobjlist(char **olist)
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
 static int 
-osave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+osave(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   struct objlist *obj2;
-  char *s,*field,*name,*valstr;
-  char buf[8],*list;
-  int i,j,perm;
+  char *field, *name, *valstr;
+  char buf[8], *list;
+  int i, j, perm;
   struct narray *array;
   int anum;
   char **adata;
+  GString *s;
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
-  array=(struct narray *)argv[2];
-  anum=arraynum(array);
-  adata=arraydata(array);
-  if ((obj2=getobject(argv[0]))==NULL) return 1;
-  if (_getobj(obj2,"name",inst,&name)) return 1;
-  if ((s=nstrnew())==NULL) return 1;
-  if ((s=nstrcat(s,"new "))==NULL) return 1;
-  if ((s=nstrcat(s,argv[0]))==NULL) return 1;
-  if (name!=NULL) {
-    if ((s=nstrcat(s," name:"))==NULL) return 1;
-    if ((s=nstrcat(s,name))==NULL) return 1;
+  g_free(* (char **) rval);
+  * (char **) rval = NULL;
+  array = (struct narray *) argv[2];
+  anum = arraynum(array);
+  adata = arraydata(array);
+  obj2 = getobject(argv[0]);
+  if (obj2 == NULL) {
+    return 1;
   }
-  if ((s=nstrccat(s,'\n'))==NULL) return 1;
-  for (i=0;i<chkobjfieldnum(obj2);i++) {
-    field=chkobjfieldname(obj2,i);
-    for (j=0;j<anum;j++) if (strcmp0(field,adata[j])==0) break;
-    if (j==anum) {
-      perm=chkobjperm(obj2,field);
-      if (((perm&NREAD)!=0)
-       && ((perm&NWRITE)!=0) && (strcmp0(field,"name")!=0)) {
-        valstr=NULL;
-        if ((s=nstrccat(s,'\t'))==NULL) goto errexit;
-        if ((s=nstrcat(s,argv[0]))==NULL) goto errexit;
-        if ((s=nstrcat(s,"::"))==NULL) goto errexit;
-        if ((s=nstrcat(s,field))==NULL) goto errexit;
-        if ((s=nstrccat(s,'='))==NULL) goto errexit;
-        if (chkobjfieldtype(obj2,field)==NOBJ) {
-          if (_getobj(obj2,field,inst,&list)) goto errexit;
-          list=chgobjlist(list);
-          if ((valstr=getvaluestr(obj2,field,&list,FALSE,TRUE))==NULL)
+  if (_getobj(obj2, "name", inst, &name)) {
+    return 1;
+  }
+
+  s = g_string_sized_new(256);
+  if (s == NULL) {
+    return 1;
+  }
+
+  g_string_append(s, "new ");
+  g_string_append(s, argv[0]);
+  if (name != NULL) {
+    g_string_append(s, " name:");
+    g_string_append(s, name);
+  }
+  g_string_append_c(s, '\n');
+  for (i = 0; i < chkobjfieldnum(obj2); i++) {
+    field = chkobjfieldname(obj2,  i);
+    for (j = 0; j < anum; j++) {
+      if (strcmp0(field, adata[j]) == 0) {
+	break;
+      }
+    }
+    if (j == anum) {
+      perm = chkobjperm(obj2, field);
+      if ((perm & NREAD) && (perm & NWRITE) && strcmp0(field,  "name") != 0) {
+        valstr = NULL;
+        g_string_append_c(s, '\t');
+        g_string_append(s, argv[0]);
+        g_string_append(s, "::");
+        g_string_append(s, field);
+        g_string_append_c(s, '=');
+        if (chkobjfieldtype(obj2, field) == NOBJ) {
+          if (_getobj(obj2, field, inst, &list)) {
+	    goto errexit;
+	  }
+          list = chgobjlist(list);
+	  valstr = getvaluestr(obj2, field, &list, FALSE, TRUE);
+          if (valstr == NULL) {
             goto errexit;
+	  }
           g_free(list);
         } else {
-          if (_getobj(obj2,field,inst,(void *)buf)) goto errexit;
-          if ((valstr=getvaluestr(obj2,field,buf,FALSE,TRUE))==NULL)
+          if (_getobj(obj2, field, inst, (void *)buf)) {
+	    goto errexit;
+	  }
+	  valstr = getvaluestr(obj2, field, buf, FALSE, TRUE);
+          if (valstr == NULL) {
             goto errexit;
+	  }
         }
-        if ((s=nstrcat(s,valstr))==NULL) goto errexit;
-        if ((s=nstrccat(s,'\n'))==NULL) goto errexit;
+        g_string_append(s, valstr);
+        g_string_append_c(s, '\n');
         g_free(valstr);
       }
     }
   }
-  *(char **)rval=s;
+
+  * (char **) rval = g_string_free(s, FALSE);
+
   return 0;
+
 errexit:
-  g_free(s);
+  g_string_free(s, TRUE);
   g_free(valstr);
   return 1;
 }

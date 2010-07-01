@@ -514,7 +514,7 @@ g2nul_strwidth(struct objlist *obj, char *inst, char *rval,
     w += width;
   }
 
-  * (int *) rval = nround(width * size * 25.4 / 72000.0);
+  * (int *) rval = nround(w * size * 25.4 / 72000.0);
 
   return 0;
 }

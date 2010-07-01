@@ -502,40 +502,6 @@ nsearchpath(char *path,char *name,int shellscript)
   return NULL;
 }
 
-#ifdef COMPILE_UNUSED_FUNCTIONS
-static int 
-nselectdir(char *dir,struct dirent *ent)
-{
-  char *s;
-  struct stat sbuf;
-
-  if ((s=nstrnew())==NULL) return 0;
-  s=nstrcat(s,dir);
-  if (s[strlen(s)+1]!='/') s=nstrccat(s,'/');
-  s=nstrcat(s,ent->d_name);
-  nstat(s,&sbuf);
-  g_free(s);
-  if ((sbuf.st_mode & S_IFMT)==S_IFDIR) return 1;
-  return 0;
-}
-
-static int 
-nselectfile(char *dir,struct dirent *ent)
-{
-  char *s;
-  struct stat sbuf;
-
-  if ((s=nstrnew())==NULL) return 0;
-  s=nstrcat(s,dir);
-  if (s[strlen(s)+1]!='/') s=nstrccat(s,'/');
-  s=nstrcat(s,ent->d_name);
-  nstat(s,&sbuf);
-  g_free(s);
-  if ((sbuf.st_mode & S_IFMT)==S_IFREG) return 1;
-  return 0;
-}
-#endif /* COMPILE_UNUSED_FUNCTIONS */
-
 static int 
 nscandir(char *dir,char ***namelist, int (*compar)())
 {

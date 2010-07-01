@@ -209,17 +209,26 @@ cmseq(struct nshell *nshell, int argc, char **argv)
 int 
 cmeval(struct nshell *nshell,int argc,char **argv)
 {
-  char *s;
+  GString *s;
   int i,rcode;
 
-  if ((s=nstrnew())==NULL) return ERR;
-  for (i=1;i<argc;i++) {
-    if ((s=nstrcat(s,argv[i]))==NULL) return ERR;
-    if ((s=nstrccat(s,' '))==NULL) return ERR;
+  s = g_string_sized_new(128);
+  if (s == NULL) {
+    return ERR;
   }
-  rcode=cmdexecute(nshell,s);
-  g_free(s);
-  if ((rcode!=0) && (rcode!=1)) return ERR;
+
+  for (i = 1; i < argc; i++) {
+    g_string_append(s, argv[i]);
+    g_string_append_c(s, ' ');
+  }
+
+  rcode = cmdexecute(nshell, s->str);
+  g_string_free(s, TRUE);
+
+  if (rcode != 0 && rcode != 1) {
+    return ERR;
+  }
+
   return 0;
 }
 
@@ -1237,27 +1246,25 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
   int rcode,ecode;
   double vd;
   int i;
-  char *s, *err_msg;
+  char *err_msg;
+  GString *s;
 
   if (argc<1) {
     sherror4(argv[0],ERRSMLARG);
     return ERRSMLARG;
   }
 
-  s = nstrnew();
+  s = g_string_sized_new(64);
   if (s == NULL) {
     return ERR;
   }
 
   for (i = 1; i < argc; i++) {
-    s = nstrcat(s, argv[i]);
-    if (s == NULL) {
-      return ERR;
-    }
+    g_string_append(s, argv[i]);
   }
 
-  ecode = str_calc(s, &vd, &rcode, &err_msg);
-  g_free(s);
+  ecode = str_calc(s->str, &vd, &rcode, &err_msg);
+  g_string_free(s, TRUE);
 
   if (ecode) {
     if (err_msg) {
@@ -1290,29 +1297,38 @@ int
 cmread(struct nshell *nshell,int argc,char **argv)
 {
   int c,i,len;
-  char *s,*po,*s2,*ifs;
+  char *po,*s2,*ifs;
+  GString *s;
 
-  if ((s=nstrnew())==NULL) return ERR;
-  while (TRUE) {
-    c=getstdin();
-    if ((c=='\n') || (c==EOF)) break;
-    if ((s=nstrccat(s,c))==NULL) return ERR;
+  s = g_string_sized_new(64);
+  if (s == NULL) {
+    return ERR;
   }
-  if (argc==1) {
-    addval(nshell,"REPLY",s);
+
+  while (TRUE) {
+    c = getstdin();
+    if (c == '\n' || c == EOF) {
+      break;
+    }
+    g_string_append_c(s, c);
+  }
+
+  if (argc == 1) {
+    addval(nshell, "REPLY", s->str);
   } else {
-    po=s;
-    ifs=getval(nshell,"IFS");
-    for (i=1;i<argc;i++) {
-      if ((s2=getitok2(&po,&len,ifs))!=NULL) {
-        addval(nshell,argv[i],s2);
+    po = s->str;
+    ifs = getval(nshell, "IFS");
+    for (i = 1; i < argc; i++) {
+      s2 = getitok2(&po, &len, ifs);
+      if (s2) {
+        addval(nshell, argv[i], s2);
         g_free(s2);
       } else {
-        addval(nshell,argv[i],"");
+        addval(nshell, argv[i], "");
       }
     }
   }
-  g_free(s);
-  if (c==EOF) return ERR;
-  else return 0;
+  g_string_free(s, TRUE);
+
+  return (c == EOF) ? ERR : 0;
 }

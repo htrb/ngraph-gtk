@@ -108,7 +108,7 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
   char *cstr;
   char *graf,*sname,*sver;
   char *pfx;
-  char *s;
+  GString *s;
   char *driver,*option,*prn;
   struct nshell *nshell;
 
@@ -139,38 +139,45 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
     fprintf(gra2plocal->fil,"%%Creator: %s ver %s\n",sname,sver);
   }
   if (gra2plocal->fil) {
-      fputc(code,gra2plocal->fil);
-      if (cpar[0]==-1) {
-        for (i=0;cstr[i]!='\0';i++)
-          fputc(cstr[i],gra2plocal->fil);
-      } else {
-        fprintf(gra2plocal->fil,",%d",cpar[0]);
-        for (i=1;i<=cpar[0];i++)
+    fputc(code,gra2plocal->fil);
+    if (cpar[0]==-1) {
+      for (i=0;cstr[i]!='\0';i++) {
+	fputc(cstr[i],gra2plocal->fil);
+      }
+    } else {
+      fprintf(gra2plocal->fil,",%d",cpar[0]);
+      for (i=1;i<=cpar[0];i++) {
         fprintf(gra2plocal->fil,",%d",cpar[i]);
       }
-      fputc('\n',gra2plocal->fil);
-      if (code=='E') {
-        fclose(gra2plocal->fil);
-        gra2plocal->fil=NULL;
-        _getobj(obj,"driver",inst,&driver);
-        _getobj(obj,"option",inst,&option);
-        _getobj(obj,"prn",inst,&prn);
-        if ((s=nstrnew())==NULL) goto errexit;
-        if ((s=nstrcat(s,driver))==NULL) goto errexit;
-        if ((s=nstrccat(s,' '))==NULL) goto errexit;
-        if ((s=nstrcat(s,option))==NULL) goto errexit;
-        if ((s=nstrcat(s," '"))==NULL) goto errexit;
-        if ((s=nstrcat(s,gra2plocal->fname))==NULL) goto errexit;
-        if ((s=nstrcat(s,"' "))==NULL) goto errexit;
-        if ((s=nstrcat(s,prn))==NULL) goto errexit;
-        if ((nshell=newshell())==NULL) {
-        g_free(s);
-        goto errexit;
+    }
+    fputc('\n',gra2plocal->fil);
+    if (code=='E') {
+      fclose(gra2plocal->fil);
+      gra2plocal->fil=NULL;
+      _getobj(obj,"driver",inst,&driver);
+      _getobj(obj,"option",inst,&option);
+      _getobj(obj,"prn",inst,&prn);
+
+      s = g_string_sized_new(256);
+      if (s == NULL) {
+	goto errexit;
+      }
+      g_string_append(s, driver);
+      g_string_append_c(s,' ');
+      g_string_append(s,option);
+      g_string_append(s," '");
+      g_string_append(s,gra2plocal->fname);
+      g_string_append(s,"' ");
+      g_string_append(s,prn);
+      nshell = newshell();
+      if (nshell == NULL) {
+	g_string_free(s, TRUE);
+	goto errexit;
       }
       ngraphenvironment(nshell);
-      cmdexecute(nshell,s);
+      cmdexecute(nshell, s->str);
       delshell(nshell);
-      g_free(s);
+      g_string_free(s, TRUE);
       g_unlink(gra2plocal->fname);
       g_free(gra2plocal->fname);
       gra2plocal->fname=NULL;

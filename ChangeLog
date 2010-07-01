@@ -1,3 +1,32 @@
+2010-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAexpandmath): use "GString *" instead of "char *".
+
+	* src/ofile.c (f2dhead, f2dsave): use "GString *" instead of
+	"char *".
+
+	* src/oroot.c (osave): use "GString *" instead of "char *".
+
+	* src/odraw.c (pathsave): use "GString *" instead of "char *".
+
+	* src/oaxis.c (axis_save_group): use "GString *" instead of
+	"char *".
+
+	* src/ogra2prn.c (gra2p_output): use "GString *" instead of
+	"char *".
+
+	* src/shellcm.c (cmeval, cmread, cmdexpr): use "GString *" instead
+	of "char *".
+
+	* src/gtk/ogra2cairo.c (gra2cairo_output): use
+	"g_unichar_to_utf8()"instead of "iso8859_to_utf8()".
+
+	* src/gra.c (GRAtextextent, get_str_bbox): use
+	"g_string_append_unichar()"
+	(GRAdrawtext): convert string such as "\x31" to unicode character.
+
+	* src/strconv.c (iso8859_to_utf8): removed.
+
 2010-06-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.c (set_entry_from_obj_point): use "GString *"

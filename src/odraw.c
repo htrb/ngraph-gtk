@@ -142,8 +142,9 @@ pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char **adata;
   int i,j;
   char *argv2[4];
-  char *file,*name,*s,*valstr;
+  char *file,*name,*valstr;
   int path;
+  GString *s;
 
   array=(struct narray *)argv[2];
   anum=arraynum(array);
@@ -155,8 +156,8 @@ pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
   array2=arraynew(sizeof(char *));
   for (i=0;i<anum;i++) arrayadd(array2,&(adata[i]));
-  s="file";
-  arrayadd(array2,&s);
+  file="file";
+  arrayadd(array2,&file);
   argv2[0]=argv[0];
   argv2[1]=argv[1];
   argv2[2]=(char *)array2;
@@ -179,24 +180,26 @@ pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
   }
 
-  if ((s=nstrnew())==NULL) goto errexit;
-  if ((s=nstrcat(s,*(char **)rval))==NULL) goto errexit;
-  if ((s=nstrccat(s,'\t'))==NULL) goto errexit;
-  if ((s=nstrcat(s,argv[0]))==NULL) goto errexit;
-  if ((s=nstrcat(s,"::file="))==NULL) goto errexit;
-  if ((valstr=getvaluestr(obj,"file",&name,FALSE,TRUE))==NULL) {
+  s = g_string_sized_new(256);
+  if (s == NULL) {
+    goto errexit;
+  }
+  g_string_append(s, * (char **) rval);
+  g_string_append_c(s, '\t');
+  g_string_append(s, argv[0]);
+  g_string_append(s, "::file=");
+
+  valstr = getvaluestr(obj, "file", &name, FALSE, TRUE);
+  if (valstr == NULL) {
     g_free(s);
     goto errexit;
   }
-  if ((s=nstrcat(s,valstr))==NULL) {
-    g_free(valstr);
-    goto errexit;
-  }
+  g_string_append(s, valstr);
   g_free(valstr);
-  if ((s=nstrccat(s,'\n'))==NULL) goto errexit;
+  g_string_append_c(s, '\n');
   g_free(name);
-  g_free(*(char **)rval);
-  *(char **)rval=s;
+  g_free(* (char **) rval);
+  * (char **) rval = g_string_free(s, FALSE);
   return 0;
 
 errexit:

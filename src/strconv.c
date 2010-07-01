@@ -91,12 +91,6 @@ str2utf8(char *str, char *scode, char *dcode)
 }
 
 char *
-iso8859_to_utf8(char *src)
-{
-  return str2utf8(src, "iso-8859-1", "utf-8//TRANSLIT");
-}
-
-char *
 sjis_to_utf8(char *src)
 {
   return str2utf8(src, "CP932", "utf-8//TRANSLIT");

@@ -3506,8 +3506,9 @@ axisdefgrouping(struct objlist *obj,char *inst,char *rval,
 static int
 axis_save_group(struct objlist *obj, int type, char **inst_array, char **rval)
 {
-  char *s, *str, buf[64];
+  char *str, buf[64];
   int i, n, id;
+  GString *s;
 
   switch (type) {
   case 'f':
@@ -3527,28 +3528,21 @@ axis_save_group(struct objlist *obj, int type, char **inst_array, char **rval)
     return 1;
   }
 
-  s = nstrnew();
+  s = g_string_sized_new(64);
   if (s == NULL)
     return 1;
 
-  s = nstrcat(s, *rval);
-  if (s == NULL)
-    return 1;
-
-  s = nstrcat(s, str);
-  if (s == NULL)
-    return 1;
+  g_string_append(s, *rval);
+  g_string_append(s, str);
 
   for (i = 0; i < n; i++) {
     _getobj(obj, "id", inst_array[i], &id);
     snprintf(buf, sizeof(buf), "%d%c", id, (i == n - 1) ? '\n' : ' ');
-    s = nstrcat(s, buf);
-    if (s == NULL)
-      return 1;
+    g_string_append(s, buf);
   }
 
   g_free(*rval);
-  *rval = s;
+  *rval = g_string_free(s, FALSE);
 
   return 0;
 }

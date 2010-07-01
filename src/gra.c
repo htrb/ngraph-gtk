@@ -1712,64 +1712,75 @@ errexit:
 static char *
 GRAexpandmath(char **s)
 {
-  char *str,*ret;
+  char *ret;
   int quote;
   int rcode;
   double vd, uvd, mod;
+  GString *str;
 
-  *s=*s+2;
-  str=NULL;
-  if ((str=nstrnew())==NULL) goto errexit;
-  if ((*s)==NULL) goto errexit;
-  quote=FALSE;
-  while (((*s)[0]!='\0') && (quote || ((*s)[0]!=']'))) {
-    if (!quote && ((*s)[0]=='%') && ((*s)[1]=='{')) {
-      ret=GRAexpandobj(s);
-      str=nstrcat(str,ret);
+  *s = *s + 2;
+  str = g_string_sized_new(128);
+  if (str == NULL) {
+    return NULL;
+  }
+
+  if (*s == NULL) {
+    goto errexit;
+  }
+
+  quote = FALSE;
+  while ((*s)[0] != '\0' && (quote || (*s)[0] != ']')) {
+    if (! quote && (*s)[0] == '%' && (*s)[1] == '{') {
+      ret = GRAexpandobj(s);
+      g_string_append(str, ret);
       g_free(ret);
-      if (str==NULL) goto errexit;
-    } else if (!quote && ((*s)[0]=='%') && ((*s)[1]=='[')) {
-      ret=GRAexpandmath(s);
-      str=nstrcat(str,ret);
+    } else if (!quote && (*s)[0] == '%' && (*s)[1] == '[') {
+      ret = GRAexpandmath(s);
+      g_string_append(str, ret);
       g_free(ret);
-      if (str==NULL) goto errexit;
-    } else if (!quote && ((*s)[0]=='\\')) {
-      quote=TRUE;
+    } else if (!quote && (*s)[0] == '\\') {
+      quote = TRUE;
       (*s)++;
     } else {
-      if (quote) quote=FALSE;
-      if ((str=nstrccat(str,(*s)[0]))==NULL) goto errexit;
+      if (quote) {
+	quote = FALSE;
+      }
+      g_string_append_c(str, (*s)[0]);
       (*s)++;
     }
   }
-  if ((*s)[0]!=']') goto errexit;
+
+  if ((*s)[0] != ']') {
+    goto errexit;
+  }
   (*s)++;
-  str_calc(str, &vd, &rcode, NULL);
+  str_calc(str->str, &vd, &rcode, NULL);
   if (rcode != MNOERR) {
     goto errexit;
   }
-  g_free(str);
+  g_string_free(str, TRUE);
 
   mod = fabs(fmod(vd, 1));
   uvd = fabs(vd);
   if (uvd == 0) {
-    str = g_strdup("0");
+    ret = g_strdup("0");
   } else if (uvd < 0.1) {
-    str = g_strdup_printf("%.15e", vd);
+    ret = g_strdup_printf("%.15e", vd);
   } else if (uvd < 1E6 && mod < DBL_EPSILON) {
-    str = g_strdup_printf("%.0f", vd);
+    ret = g_strdup_printf("%.0f", vd);
   } else if (uvd < 10) {
-    str = g_strdup_printf("%.15f", vd);
+    ret = g_strdup_printf("%.15f", vd);
   } else if (uvd < 100) {
-    str = g_strdup_printf("%.14f", vd);
+    ret = g_strdup_printf("%.14f", vd);
   } else if (uvd < 1000) {
-    str = g_strdup_printf("%.13f", vd);
+    ret = g_strdup_printf("%.13f", vd);
   } else {
-    str = g_strdup_printf("%.15e", vd);
+    ret = g_strdup_printf("%.15e", vd);
   }
-  return str;
+  return ret;
+
 errexit:
-  g_free(str);
+  g_string_free(str, TRUE);
   return NULL;
 }
 
@@ -2008,36 +2019,31 @@ GRAdrawtext(int GC, char *s, char *font, int style,
   while (*ptr) {
     g_string_set_size(str, 0);
 
-    while (*ptr && strchr("\n\r\b_^@%", ptr[0]) == NULL) {
+    for (; *ptr && strchr("\n\r\b_^@%", ptr[0]) == NULL; ptr++) {
       if (ptr[0] == '\\') {
         if (ptr[1] == 'x' && g_ascii_isxdigit(ptr[2]) && g_ascii_isxdigit(ptr[3])) {
-	  g_string_append_c(str, ptr[0]);
-	  g_string_append_c(str, ptr[1]);
-	  g_string_append_c(str, ptr[2]);
-	  g_string_append_c(str, ptr[3]);
-          ptr += 4;
+	  gunichar wc;
+
+	  wc = g_ascii_xdigit_value(ptr[2]) * 16 + g_ascii_xdigit_value(ptr[3]);
+	  g_string_append_unichar(str, wc);
+
+          ptr += 3;
         } else if (ptr[1]=='\\') {
 	  g_string_append_c(str, ptr[0]);
 	  g_string_append_c(str, ptr[1]);
-          ptr += 2;
-	} else if (isprint(ptr[1])) {
+          ptr++;
+	} else if (g_ascii_isprint(ptr[1])) {
 	  g_string_append_c(str, ptr[1]);
-          ptr += 2;
-        } else {
-	  ptr++;
+          ptr++;
 	}
       } else if (ptr[0] == FONT_STYLE_NORMAL) {
 	style3 = GRA_FONT_STYLE_NORMAL;
-	ptr++;
       } else if (ptr[0] == FONT_STYLE_BOLD) {
 	style3 |= GRA_FONT_STYLE_BOLD;
-	ptr++;
       } else if (ptr[0] == FONT_STYLE_ITALIC) {
 	style3 |= GRA_FONT_STYLE_ITALIC;
-	ptr++;
       } else {
 	g_string_append_c(str, ptr[0]);
-        ptr++;
       }
 
       if (style3 != style2) {
@@ -2302,15 +2308,10 @@ GRAtextextent(char *s, char *font, int style,
       switch (c[j]) {
       case '\\':
         if (c[j + 1]=='x' && g_ascii_isxdigit(c[j + 2]) && g_ascii_isxdigit(c[j + 3])) {
-	  char buf[2], *ustr;
+	  gunichar wc;
 
-	  buf[0] = g_ascii_xdigit_value(c[j + 2]) * 16 + g_ascii_xdigit_value(c[j + 3]);
-	  buf[1] = '\0';
-	  ustr = iso8859_to_utf8(buf);
-	  if (ustr) {
-	    g_string_append(str, ustr);
-	    g_free(ustr);
-	  }
+	  wc = g_ascii_xdigit_value(c[j + 2]) * 16 + g_ascii_xdigit_value(c[j + 3]);
+	  g_string_append_unichar(str, wc);
           j += 4;
         } else if (isprint(c[j + 1])) {
 	  g_string_append_c(str, c[j + 1]);
@@ -3325,14 +3326,10 @@ get_str_bbox(struct GRAbbox *bbox, char *cstr)
   ccos = cos(bbox->dir / 18000.0 * MPI);
   for (ptr = cstr; ptr[0]; ptr++) {
     if (ptr[0] == '\\' && ptr[1] == 'x' && g_ascii_isxdigit(ptr[2]) && g_ascii_isxdigit(ptr[3])) {
-      char s[2], *tmp;
-      s[0] = g_ascii_xdigit_value(ptr[2]) * 16 + g_ascii_xdigit_value(ptr[3]);
-      s[1] = '\0';
-      tmp = iso8859_to_utf8(s);
-      if (tmp) {
-	g_string_append(str, tmp);
-	g_free(tmp);
-      }
+      gunichar wc;
+
+      wc = g_ascii_xdigit_value(ptr[2]) * 16 + g_ascii_xdigit_value(ptr[3]);
+      g_string_append_unichar(str, wc);
       ptr += 3;
     } else {
       g_string_append_c(str, ptr[0]);

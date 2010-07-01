@@ -1146,45 +1146,21 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       break;
 
     for (j = i = 0; i <= l; i++, j++) {
-      char c, buf[6];
-      int len, k;
+      if (cstr[i] == '\\' &&
+	  cstr[i + 1] == 'x' &&
+	  g_ascii_isxdigit(cstr[i + 2]) &&
+	  g_ascii_isxdigit(cstr[i + 3])) {
+	char buf[8];
+	int len, k;
+	gunichar wc;
 
-      if (cstr[i] == '\\') {
-	i++;
-        if (cstr[i] == 'x' &&
-	    g_ascii_isxdigit(cstr[i + 1]) &&
-	    g_ascii_isxdigit(cstr[i + 2])) {
-	  i++;
-	  c = toupper(cstr[i]);
-          if (c >= 'A') {
-	    buf[0] = c - 'A' + 10;
-	  } else { 
-	    buf[0] = cstr[i] - '0';
-	  }
-
-	  i++;
-	  buf[0] *= 16;
-	  c = toupper(cstr[i]);
-          if (c >= 'A'){
-	    buf[0] += c - 'A' + 10;
-	  } else {
-	    buf[0] += cstr[i] - '0';
-	  }
-
-	  buf[1] = '\0';
-	  tmp2= iso8859_to_utf8(buf);
-	  if (tmp2 == NULL) {
-	    break;
-	  }
-	  len = strlen(tmp2);
-	  for (k = 0; k < len; k++) {
-	    tmp[j + k] = tmp2[k];
-	  }
-	  g_free(tmp2);
-	  j += k - 1;
-	} else if (cstr[i] != '\0') {
-          tmp[j] = cstr[i];
-        }
+	wc = g_ascii_xdigit_value(cstr[i + 2]) * 16 + g_ascii_xdigit_value(cstr[i + 3]);
+	len = g_unichar_to_utf8(wc, buf);
+	for (k = 0; k < len; k++) {
+	  tmp[j + k] = buf[k];
+	}
+	j += len - 1;
+	i += 3;
       } else {
         tmp[j] = cstr[i];
       }
