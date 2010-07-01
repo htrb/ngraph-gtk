@@ -194,7 +194,8 @@ getdisk(void)
 char *
 getrelativepath(const char *name)
 {
-  char *s, *utf8_name;
+  char *utf8_name, *str;
+  GString *s;
 
   if (name == NULL) {
     return NULL;
@@ -206,8 +207,8 @@ getrelativepath(const char *name)
   }
 
   if ((utf8_name[0]==DIRSEP) && (utf8_name[1]==DIRSEP)) {
-    s = utf8_name;
-    pathresolv(s);
+    str = utf8_name;
+    pathresolv(str);
   } else {
     int i, j, top, depth;
 
@@ -270,39 +271,30 @@ getrelativepath(const char *name)
       }
       g_free(cwd2);
 
-      s=nstrnew();
+      s = g_string_sized_new(64);
       if (s == NULL) {
 	g_free(utf8_name);
 	return NULL;
       }
 
       if (depth==0) {
-	s = nstrcat(s, "./");
-	if (s == NULL) {
-	  g_free(utf8_name);
-	  return NULL;
-	}
+	g_string_append(s, "./");
       } else {
 	for (j = 0; j < depth; j++) {
-	  s = nstrcat(s, "../");
-	  if (s == NULL) {
-	    g_free(utf8_name);
-	    return NULL;
-	  }
+	  g_string_append(s, "../");
 	}
       }
 
-      s = nstrcat(s, utf8_name + i + top + 1);
+      g_string_append(s, utf8_name + i + top + 1);
       g_free(utf8_name);
-      if (s == NULL) {
-	return NULL;
-      }
+      str = g_string_free(s, FALSE);
     } else {
-      s = utf8_name;
-      pathresolv(s);
+      str = utf8_name;
+      pathresolv(str);
     }
   }
-  return s;
+
+  return str;
 }
 
 #if 0

@@ -1,5 +1,7 @@
 2010-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ioutil.c (getrelativepath): use "GString *" instead of "char *".
+
 	* src/gra.c (GRAexpandmath): use "GString *" instead of "char *".
 
 	* src/ofile.c (f2dhead, f2dsave): use "GString *" instead of
