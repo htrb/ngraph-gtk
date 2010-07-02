@@ -221,13 +221,13 @@ wildmatch(const char *pat, const char *s,int flags)
 }
 
 char *
-getitok(char **s,int *len,char *ifs)
+getitok(char **s, int *len, const char *ifs)
 {
   char *po,*spo;
   int i;
 
   if (*s == NULL) return NULL;
-  po= *s;
+  po = *s;
   for (i = 0; (po[i]!='\0') && (strchr(ifs, po[i]) != NULL); i++);
   if (po[i]=='\0') {
     *len=0;
@@ -241,7 +241,7 @@ getitok(char **s,int *len,char *ifs)
 }
 
 char *
-getitok2(char **s, int *len, char *ifs)
+getitok2(char **s, int *len, const char *ifs)
 {
   char *po,*s2;
 
@@ -306,7 +306,7 @@ get_printf_format_str(const char *str, int *len)
 }
 
 int
-add_printf_formated_str(char **str, const char *format, const char *arg, int *len)
+add_printf_formated_str(GString *str, const char *format, const char *arg, int *len)
 {
   int i, formated;
   char *format2, *buf, *endptr;
@@ -373,7 +373,7 @@ add_printf_formated_str(char **str, const char *format, const char *arg, int *le
   }
 
   if (buf) {
-    *str = nstrcat(*str, buf);
+    g_string_append(str, buf);
     g_free(buf);
   }
 

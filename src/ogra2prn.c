@@ -162,13 +162,21 @@ gra2p_output(struct objlist *obj,char *inst,char *rval,
       if (s == NULL) {
 	goto errexit;
       }
-      g_string_append(s, driver);
+      if (driver) {
+	g_string_append(s, driver);
+      }
       g_string_append_c(s,' ');
-      g_string_append(s,option);
+      if (option) {
+	g_string_append(s,option);
+      }
       g_string_append(s," '");
-      g_string_append(s,gra2plocal->fname);
+      if (gra2plocal->fname) {
+	g_string_append(s, gra2plocal->fname);
+      }
       g_string_append(s,"' ");
-      g_string_append(s,prn);
+      if (prn) {
+	g_string_append(s,prn);
+      }
       nshell = newshell();
       if (nshell == NULL) {
 	g_string_free(s, TRUE);

@@ -192,7 +192,7 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int argc2;
   char *format;
   int po, arg, i, quote, r;
-  char *ret;
+  GString *ret;
   char *arg_str;
 
   g_free(*(char **)rval);
@@ -202,7 +202,12 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   argc2=arraynum(array);
   if (argc2<1) return 0;
   format=argv2[0];
-  if ((ret=nstrnew())==NULL) return 1;
+
+  ret = g_string_sized_new(64);
+  if (ret == NULL) {
+    return 1;
+  }
+
   po=0;
   arg=1;
   while (format[po]!='\0') {
@@ -215,10 +220,7 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       }
     }
     if (i > po) {
-      ret = nstrncat(ret, format + po, i - po);
-      if (ret == NULL) {
-	return 1;
-      }
+      g_string_append_len(ret, format + po, i - po);
     }
     po = i;
 
@@ -227,10 +229,7 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
 
     arg_str = (arg < argc2 && argv2[arg]) ? argv2[arg] : NULL;
-    r = add_printf_formated_str(&ret, format + po, arg_str, &i);
-    if (ret == NULL) {
-      return 1;
-    }
+    r = add_printf_formated_str(ret, format + po, arg_str, &i);
 
     if (r) {
       arg++;
@@ -239,7 +238,7 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     po += i + 1;
   }
 
-  *(char **)rval=ret;
+  *(char **)rval = g_string_free(ret, FALSE);
   return 0;
 }
 

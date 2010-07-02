@@ -1637,16 +1637,22 @@ GRAexpandobj(char **s)
   struct objlist *obj;
   int i,j,anum,*id;
   struct narray iarray;
-  char *str,*arg,*ret;
+  char *arg,*ret;
+  GString *str, *garg;
   char *field;
   int len;
   int quote;
 
   *s=*s+2;
-  str=field=arg=NULL;
+  field = arg = NULL;
+  str = garg = NULL;
   arrayinit(&iarray,sizeof(int));
-  if ((str=nstrnew())==NULL) goto errexit;
-  if ((arg=nstrnew())==NULL) goto errexit;
+
+  garg = g_string_sized_new(64);
+  if (garg == NULL) {
+    goto errexit;
+  }
+
   if (chkobjilist2(s,&obj,&iarray,TRUE)) goto errexit;
   anum=arraynum(&iarray);
   if (anum<=0) goto errexit;
@@ -1660,50 +1666,61 @@ GRAexpandobj(char **s)
   while (((*s)[0]!='\0') && (quote || ((*s)[0]!='}'))) {
     if (!quote && ((*s)[0]=='%') && ((*s)[1]=='{')) {
       ret=GRAexpandobj(s);
-      arg=nstrcat(arg,ret);
-      g_free(ret);
-      if (arg==NULL) goto errexit;
+      if (ret) {
+	g_string_append(garg, ret);
+	g_free(ret);
+      }
     } else if (!quote && ((*s)[0]=='%') && ((*s)[1]=='[')) {
       ret=GRAexpandmath(s);
-      arg=nstrcat(arg,ret);
-      g_free(ret);
-      if (str==NULL) goto errexit;
+      if (ret) {
+	g_string_append(garg, ret);
+	g_free(ret);
+      }
     } else if (!quote && ((*s)[0]=='\\')) {
       quote=TRUE;
       (*s)++;
     } else {
       if (quote) quote=FALSE;
-      if ((arg=nstrccat(arg,(*s)[0]))==NULL) goto errexit;
+      g_string_append_c(garg, (*s)[0]);
       (*s)++;
     }
   }
   if ((*s)[0]!='}') goto errexit;
   (*s)++;
+
+  arg = g_string_free(garg, FALSE);
+  garg = NULL;
+
+  str = g_string_sized_new(64);
+  if (str == NULL) {
+    goto errexit;
+  }
+
   for (i=0;i<anum;i++) {
     if (schkobjfield(obj,id[i],field,arg,&ret,TRUE,FALSE,FALSE)!=0)
       goto errexit;
     for (j=0;ret[j]!='\0';j++) {
       if ((ret[j]=='%') || (ret[j]=='\\')
        || (ret[j]=='_') || (ret[j]=='^') || (ret[j]=='@')) {
-        if ((str=nstrccat(str,'\\'))==NULL) {
-          g_free(ret);
-          goto errexit;
-        }
+	g_string_append_c(str, '\\');
       }
-      if ((str=nstrccat(str,ret[j]))==NULL) {
-        g_free(ret);
-        goto errexit;
-      }
+      g_string_append_c(str, ret[j]);
     }
     g_free(ret);
   }
   arraydel(&iarray);
   g_free(field);
   g_free(arg);
-  return str;
+  return g_string_free(str, FALSE);
+
 errexit:
   arraydel(&iarray);
-  g_free(str);
+  if (str) {
+    g_string_free(str, TRUE);
+  }
+  if (garg) {
+    g_string_free(garg, TRUE);
+  }
   g_free(field);
   g_free(arg);
   return NULL;
@@ -1732,12 +1749,16 @@ GRAexpandmath(char **s)
   while ((*s)[0] != '\0' && (quote || (*s)[0] != ']')) {
     if (! quote && (*s)[0] == '%' && (*s)[1] == '{') {
       ret = GRAexpandobj(s);
-      g_string_append(str, ret);
-      g_free(ret);
+      if (ret) {
+	g_string_append(str, ret);
+	g_free(ret);
+      }
     } else if (!quote && (*s)[0] == '%' && (*s)[1] == '[') {
       ret = GRAexpandmath(s);
-      g_string_append(str, ret);
-      g_free(ret);
+      if (ret) {
+	g_string_append(str, ret);
+	g_free(ret);
+      }
     } else if (!quote && (*s)[0] == '\\') {
       quote = TRUE;
       (*s)++;
@@ -1788,14 +1809,23 @@ static char *
 GRAexpandpf(char **s)
 {
   int i, len;
-  char *str, *format, *ret, *ret2;
+  char *format, *ret2;
   int quote;
+  GString *str, *ret;
 
-  *s=*s+4;
-  str=NULL;
-  format=NULL;
-  if ((ret=nstrnew())==NULL) goto errexit;
-  if ((str=nstrnew())==NULL) goto errexit;
+  *s = *s + 4;
+  str = NULL;
+  format = NULL;
+
+  ret = g_string_sized_new(64);
+  if (ret == NULL) {
+    goto errexit;
+  }
+
+  str = g_string_sized_new(64);
+  if (str == NULL) {
+    goto errexit;
+  }
   if ((*s)==NULL) goto errexit;
   if ((format=getitok2(s,&len," \t}"))==NULL) goto errexit;
   if (((*s)[0]!='\0') && ((*s)[0]!='}')) (*s)++;
@@ -1804,35 +1834,42 @@ GRAexpandpf(char **s)
   while (((*s)[0]!='\0') && (quote || ((*s)[0]!='}'))) {
     if (!quote && ((*s)[0]=='%') && ((*s)[1]=='{')) {
       ret2=GRAexpandobj(s);
-      str=nstrcat(str,ret2);
-      g_free(ret2);
-      if (str==NULL) goto errexit;
+      if (ret2) {
+	g_string_append(str, ret2);
+	g_free(ret2);
+      }
     } else if (!quote && ((*s)[0]=='%') && ((*s)[1]=='[')) {
       ret2=GRAexpandmath(s);
-      str=nstrcat(str,ret2);
-      g_free(ret2);
-      if (str==NULL) goto errexit;
+      if (ret2) {
+	g_string_append(str, ret2);
+	g_free(ret2);
+      }
     } else if (!quote && ((*s)[0]=='\\')) {
       quote=TRUE;
       (*s)++;
     } else {
       if (quote) quote=FALSE;
-      if ((str=nstrccat(str,(*s)[0]))==NULL) goto errexit;
+      g_string_append_c(str, (*s)[0]);
       (*s)++;
     }
   }
   if ((*s)[0]!='}') goto errexit;
   (*s)++;
 
-  add_printf_formated_str(&ret, format, str, &i);
- 
-  g_free(str);
+  add_printf_formated_str(ret, format, str->str, &i);
+
+  g_string_free(str, TRUE);
   g_free(format);
-  return ret;
+  return g_string_free(ret, FALSE);
 
 errexit:
-  g_free(ret);
-  g_free(str);
+  if (ret) {
+    g_string_free(ret, TRUE);
+  }
+
+  if (str) {
+    g_string_free(str, TRUE);
+  }
   g_free(format);
   return NULL;
 }
@@ -1923,20 +1960,26 @@ GRAexpandtext(char *s)
     } else if ((s[j]=='%') && (s[j+1]=='{')) {
       s2=s+j;
       snew=GRAexpandobj(&s2);
-      g_string_append(str, snew);
-      g_free(snew);
+      if (snew) {
+	g_string_append(str, snew);
+	g_free(snew);
+      }
       j=(s2-s);
     } else if ((s[j]=='%') && (s[j+1]=='[')) {
       s2=s+j;
       snew=GRAexpandmath(&s2);
-      g_string_append(str, snew);
-      g_free(snew);
+      if (snew) {
+	g_string_append(str, snew);
+	g_free(snew);
+      }
       j=(s2-s);
     } else if ((s[j]=='%') && (s[j+1]=='p') && (s[j+2]=='f') && (s[j+3]=='{')) {
       s2=s+j;
       snew=GRAexpandpf(&s2);
-      g_string_append(str, snew);
-      g_free(snew);
+      if (snew) {
+	g_string_append(str, snew);
+	g_free(snew);
+      }
       j=(s2-s);
     } else if (j<len) {
       g_string_append_c(str, s[j]);

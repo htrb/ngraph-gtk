@@ -397,7 +397,7 @@ exec_console(char *fifo_in, char *fifo_out)
   } else if (pid == 0) {
     pid = fork();
     if (pid == 0) {
-      char buf[256], *s, *s2;
+      char buf[256], *s2, *s;
       int len;
 
       snprintf(buf, sizeof(buf), "%s %s %s", terminal, fifo_in, fifo_out);
@@ -604,7 +604,7 @@ load_config(struct objlist *sys, char *inst, int *allocconsole)
 #endif
 {
   FILE *fp;
-  char *tok, *str, *s2, *f1, *endptr;
+  char *tok, *str, *f1, *endptr, *s2;
   int len;
   long val;
 

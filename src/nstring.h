@@ -38,8 +38,8 @@ int strcmp2(char *s1,char *s2);
 #define WILD_PATHNAME 2
 #define WILD_PERIOD 4
 int wildmatch(const char *pat, const char *s,int flags);
-char *getitok(char **s,int *len,char *ifs);
-char *getitok2(char **s,int *len,char *ifs);
-int add_printf_formated_str(char **str, const char *format, const char *arg, int *len);
+char *getitok(char **s, int *len, const char *ifs);
+char *getitok2(char **s, int *len, const char *ifs);
+int add_printf_formated_str(GString *str, const char *format, const char *arg, int *len);
 
 #endif

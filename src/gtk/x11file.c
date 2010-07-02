@@ -4056,7 +4056,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     if (intp >= 2) {
       GRAmoveto(ggc, height, height * 3 / 4);
-      GRAtextstyle(ggc, "Times", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
+      GRAtextstyle(ggc, "Serif", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
       GRAouttext(ggc, "B");
     }
     GRAcurvefirst(ggc, 0, NULL, NULL, NULL, splinedif, splineint, NULL, spx[0], spy[0]);
@@ -4181,7 +4181,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
   case PLOT_TYPE_FIT:
     GRAcolor(ggc, fr, fg, fb);
     GRAmoveto(ggc, 1, height * 3 / 4);
-    GRAtextstyle(ggc, "Times", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
+    GRAtextstyle(ggc, "Serif", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
     GRAouttext(ggc, "fit");
     break;
   }

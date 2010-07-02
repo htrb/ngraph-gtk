@@ -1189,10 +1189,9 @@ SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name)
   }
 
   if (selfont < 0) {
+    selfont = 0;
     compatible = gra2cairo_get_compatible_font_info(font);
-    if (compatible == NULL) {
-      selfont = 0;
-    } else {
+    if (compatible) {
       fcur = Gra2cairoConf->fontmap_list_root;
       j = 0;
       while (fcur) {

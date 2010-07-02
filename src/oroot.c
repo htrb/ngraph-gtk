@@ -351,7 +351,7 @@ osave(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   g_string_append(s, "new ");
   g_string_append(s, argv[0]);
-  if (name != NULL) {
+  if (name) {
     g_string_append(s, " name:");
     g_string_append(s, name);
   }
