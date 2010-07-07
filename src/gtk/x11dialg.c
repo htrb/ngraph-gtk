@@ -96,6 +96,7 @@ struct PrefScriptDialog DlgPrefScript;
 struct SetDriverDialog DlgSetDriver;
 struct PrefDriverDialog DlgPrefDriver;
 struct PrefFontDialog DlgPrefFont;
+struct FontSettingDialog DlgFontSetting;
 struct MiscDialog DlgMisc;
 struct ExViewerDialog DlgExViewer;
 struct ViewerDialog DlgViewer;

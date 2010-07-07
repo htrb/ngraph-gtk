@@ -513,9 +513,19 @@ struct PrefFontDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *list, *alias, *two_byte, *update_b, *del_b, *up_b, *down_b;
+  GtkWidget *list, *update_b, *del_b, *up_b, *down_b;
 };
 void PrefFontDialog(struct PrefFontDialog *data);
+
+struct FontSettingDialog
+{
+  DIALOG_PROTOTYPE;
+  /****** local member *******/
+  GtkWidget *list, *alias, *font_b, *add_b, *del_b, *up_b, *down_b;
+  const gchar *alias_str, *font_str, *alternative_str;
+  int is_update;
+};
+void FontSettingDialog(struct FontSettingDialog *d, const char *alias, const char *font, const char *alternative);
 
 struct MiscDialog
 {
@@ -636,6 +646,7 @@ extern struct PrefScriptDialog DlgPrefScript;
 extern struct SetDriverDialog DlgSetDriver;
 extern struct PrefDriverDialog DlgPrefDriver;
 extern struct PrefFontDialog DlgPrefFont;
+extern struct FontSettingDialog DlgFontSetting;
 extern struct MiscDialog DlgMisc;
 extern struct ExViewerDialog DlgExViewer;
 extern struct ViewerDialog DlgViewer;

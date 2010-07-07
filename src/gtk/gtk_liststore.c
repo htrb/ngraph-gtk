@@ -825,8 +825,9 @@ list_store_remove_selected_cb(GtkWidget *w, gpointer client_data)
 
   for (data = g_list_last(selected); data; data = data->prev) {
     found = gtk_tree_model_get_iter(model, &iter, data->data);
-    if (found)
+    if (found) {
       gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
+    }
 
     first_path = data->data;
   }

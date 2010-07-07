@@ -1,3 +1,31 @@
+2010-07-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.ini.win: add alternative fonts settings.
+
+	* src/gtk/ogra2cairo.c (free_font_map): free "d->alternative".
+	(create_font_map): add 3rd argument "alternative".
+	(gra2cairo_save_config): save alternative fonts.
+	(loadconfig): load alternative fonts.
+	(gra2cairo_add_fontmap): dont duplicate font names.
+	(gra2cairo_set_alternative_font): added.
+	(loadfont): use alternative fonts.
+
+	* src/gtk/x11dialg.h (FontSettingDialog): added.
+
+	* src/gtk/x11opt.c (FontSettingDialogSetupItem)
+	(AlternativeFontListSelCb, get_font_family)
+	(FontSettingDialogAddAlternative)
+	(FontSettingDialogRemoveAlternative)
+	(FontSettingDialogDownAlternative)
+	(FontSettingDialogUpAlternative, FontSettingDialogSetup)
+	(FontSettingDialogClose, FontSettingDialog): added
+	(get_font_alias): type of the parameter is "struct
+	FontSettingDialog *".
+	(PrefFontDialogUpdate, PrefFontDialogAdd): use
+	"FontSettingDialog".
+	(PrefFontDialogSetupItem, PrefFontDialogSetup): show alternative
+	fonts.
+
 2010-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/nstring.c (getitok, getitok2): type of the 3rd parameter is

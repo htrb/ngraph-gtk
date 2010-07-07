@@ -166,6 +166,7 @@ free_font_map(struct fontmap *fcur)
 
   g_free(fcur->fontalias);
   g_free(fcur->fontname);
+  g_free(fcur->alternative);
 
   prev = NULL;
   cur = Gra2cairoConf->fontmap_list_root;
@@ -186,7 +187,7 @@ free_font_map(struct fontmap *fcur)
 }
 
 static struct fontmap *
-create_font_map(char *fontalias, char *fontname, struct fontmap *fprev)
+create_font_map(const char *fontalias, const char *fontname, const char *alternative, struct fontmap *fprev)
 {
   struct fontmap *fnew;
 
@@ -207,8 +208,9 @@ create_font_map(char *fontalias, char *fontname, struct fontmap *fprev)
     return NULL;
   }
 
-  fnew->fontalias = fontalias;
-  fnew->fontname = fontname;
+  fnew->fontalias = g_strdup(fontalias);
+  fnew->fontname = g_strdup(fontname);
+  fnew->alternative = g_strdup(alternative);
   fnew->font = NULL;
   fnew->next = NULL;
 
@@ -242,8 +244,11 @@ gra2cairo_save_config(void)
   } else {
     fcur = Gra2cairoConf->fontmap_list_root;
     while (fcur) {
-      buf = g_strdup_printf("font=%s,%s",
-			    fcur->fontalias, fcur->fontname);
+      buf = g_strdup_printf("font=%s,%s%s%s",
+			    fcur->fontalias,
+			    fcur->fontname,
+			    (fcur->alternative) ? "," : "",
+			    CHK_STR(fcur->alternative));
       if (buf) {
 	arrayadd(&conf, &buf);
       }
@@ -270,7 +275,7 @@ loadconfig(void)
 {
   FILE *fp;
   char *tok, *str, *s2;
-  char *f1, *f2;
+  char *f1, *f2, *f3;
   int len;
   struct fontmap *fnew, *fprev;
 
@@ -282,15 +287,16 @@ loadconfig(void)
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (strcmp(tok, "font") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
+      f1 = getitok2(&s2, &len, ",");
+      f2 = getitok2(&s2, &len, ",");
       for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
-      f2 = getitok2(&s2, &len, "");
+      f3 = getitok2(&s2, &len, "");
       if (f1 && f2) {
-	fnew = create_font_map(f1, f2, fprev);
+	fnew = create_font_map(f1, f2, f3, fprev);
+	g_free(f1);
+	g_free(f2);
 	if (fnew == NULL) {
 	  g_free(tok);
-	  g_free(f1);
-	  g_free(f2);
 	  closeconfig(fp);
 	  return 1;
 	}
@@ -300,13 +306,16 @@ loadconfig(void)
 	g_free(f1);
 	g_free(f2);
       }
+      g_free(f3);
     } else if (strcmp(tok, "font_map") == 0) { /* for backward compatibility */
-      char *f3, *f4;
+      char *f4, *endptr;
+      int two_byte;
 
       OldConfigExist = TRUE;
       f1 = getitok2(&s2, &len, " \t,");
       f3 = getitok2(&s2, &len, " \t,");
       f4 = getitok2(&s2, &len, " \t,");
+      two_byte = strtol(f4, &endptr, 10);
       g_free(f3);
       g_free(f4);
       for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
@@ -318,26 +327,30 @@ loadconfig(void)
 
 	info = gra2cairo_get_compatible_font_info(f1);
 
-	if (info && nhash_get_ptr(Gra2cairoConf->fontmap, info->name, (void *) &tmp)) {
-	  g_free(f1);
-	  f1 = g_strdup(info->name);
-	  if (f1) {
-	    fnew = create_font_map(f1, f2, fprev);
-	  }
-	  if (fnew == NULL) {
-	    g_free(tok);
+	if (info) {
+	  if (nhash_get_ptr(Gra2cairoConf->fontmap, info->name, (void *) &tmp)) {
 	    g_free(f1);
-	    g_free(f2);
-	    closeconfig(fp);
-	    return 1;
+	    f1 = g_strdup(info->name);
+	    if (f1) {
+	      fnew = create_font_map(f1, f2, NULL, fprev);
+	    }
+	    if (fnew == NULL) {
+	      g_free(tok);
+	      g_free(f1);
+	      g_free(f2);
+	      closeconfig(fp);
+	      return 1;
+	    }
+	    fprev = fnew;
+	  } else {
+	    if (two_byte) {
+	      gra2cairo_set_alternative_font(info->name, f2);
+	    }
 	  }
-	  fprev = fnew;
 	}
       }
-      if (fnew == NULL) {
-	g_free(f1);
-	g_free(f2);
-      }
+      g_free(f1);
+      g_free(f2);
     } else {
       fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, CAIROCONF);
     }
@@ -467,22 +480,44 @@ void
 gra2cairo_add_fontmap(const char *fontalias, const char *fontname)
 {
   struct fontmap *fnew;
-  char *alias, *name;
-
-  alias = g_strdup(fontalias);
-  if (alias == NULL)
-    return;
-  
-  name = g_strdup(fontname);
-  if (name == NULL) {
-    g_free(alias);
-    return;
-  }
 
   if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fnew) == 0) {
     free_font_map(fnew);
   }
-  create_font_map(alias, name, NULL);
+  create_font_map(fontalias, fontname, NULL, NULL);
+}
+
+void
+gra2cairo_set_alternative_font(const char *fontalias, const char *fontname)
+{
+  struct fontmap *fnew;
+
+  if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fnew)) {
+    return;
+  }
+
+  g_free(fnew->alternative);
+  if (fontname) {
+    gchar *ptr;
+
+    ptr = g_strdup(fontname);
+    if (ptr) {
+      g_strstrip(ptr);
+      if (ptr[0]) {
+	fnew->alternative = ptr;
+      } else {
+	fnew->alternative = NULL;
+	g_free(ptr);
+      }
+    }
+  } else {
+    fnew->alternative = NULL;
+  }
+
+  if (fnew->font) {
+    pango_font_description_free(fnew->font);
+    fnew->font = NULL;
+  }
 }
 
 static int
@@ -756,8 +791,16 @@ loadfont(char *fontalias, int font_style, int *symbol)
   if (fcur->font) {
     pfont = fcur->font;
   } else {
+    gchar *ptr;
     pfont = pango_font_description_new();
-    pango_font_description_set_family(pfont, fcur->fontname);
+
+    ptr = g_strdup_printf("%s%s%s", fcur->fontname, (fcur->alternative) ? "," : "", CHK_STR(fcur->alternative));
+    if (ptr) {
+      pango_font_description_set_family(pfont, ptr);
+      g_free(ptr);
+    } else {
+      return NULL;
+    }
   }
 
   if (font_style > 0 && (font_style & GRA_FONT_STYLE_ITALIC)) {
@@ -1145,7 +1188,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     if (tmp == NULL)
       break;
 
-    for (j = i = 0; i <= l; i++, j++) {
+    for (j = i = 0; i <= l; i++) {
       if (cstr[i] == '\\' &&
 	  cstr[i + 1] == 'x' &&
 	  g_ascii_isxdigit(cstr[i + 2]) &&
@@ -1157,14 +1200,13 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 	wc = g_ascii_xdigit_value(cstr[i + 2]) * 16 + g_ascii_xdigit_value(cstr[i + 3]);
 	len = g_unichar_to_utf8(wc, buf);
 	for (k = 0; k < len; k++) {
-	  tmp[j + k] = buf[k];
+	  tmp[j++] = buf[k];
 	}
-	j += len - 1;
 	i += 3;
       } else {
-        tmp[j] = cstr[i];
+        tmp[j++] = cstr[i];
       }
-      tmp[j + 1] = '\0';
+      tmp[j] = '\0';
     }
 
     if (local->symbol) {

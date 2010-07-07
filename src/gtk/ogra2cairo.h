@@ -15,10 +15,9 @@ enum antialias_type_id {
   ANTIALIAS_TYPE_SUBPIXEL,
 };
 
-enum cairo_font_type {NORMAL = 0, BOLD, ITALIC, BOLDITALIC, OBLIQUE, BOLDOBLIQUE };
 struct fontmap
 {
-  char *fontalias, *fontname;
+  char *fontalias, *fontname, *alternative;
   PangoFontDescription *font;
   struct fontmap *next;
 };
@@ -64,5 +63,6 @@ int gra2cairo_get_fontmap_num(void);
 void gra2cairo_save_config(void);
 void gra2cairo_draw_path(struct gra2cairo_local *local);
 struct compatible_font_info *gra2cairo_get_compatible_font_info(char *name);
+void gra2cairo_set_alternative_font(const char *fontalias, const char *fontname);
 
 #endif
