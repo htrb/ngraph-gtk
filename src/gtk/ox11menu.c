@@ -207,9 +207,11 @@ static struct menu_config MenuConfig[] = {
   {"addin_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.addinconsole},
   {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
   {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
-  {"browser",			MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.browser},
-  {"help_browser",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.help_browser},
   {"data_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.datafilelist},
+  {"greece_charactor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.greece_char},
+  {"mathematics_charactor",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.mathematics_char},
+  {"physics_charactor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.physics_char},
+  {"misc_charactor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.misc_char},
   {NULL},
 };
 
@@ -225,6 +227,8 @@ static struct menu_config MenuConfigScript[] = {
 
 static struct menu_config MenuConfigMisc[] = {
   {"editor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.editor},
+  {"browser",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.browser},
+  {"help_browser",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.help_browser},
   {"coordwin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.coordwin_font},
   {"infowin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.infowin_font},
   {"file_preview_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.file_preview_font},

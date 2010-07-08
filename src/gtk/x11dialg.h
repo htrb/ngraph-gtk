@@ -339,9 +339,9 @@ struct LegendDialog
     *pieslice, *close_path, *stroke, *fill, *fill_rule, *arrow,
     *arrow_length, *arrow_width, *size, *type, *view, *text, *pt,
     *space, *script_size, *direction, *raw, *font, *font_bold,
-    *font_italic;
+    *font_italic, *tab;
   struct objlist *Obj;
-  int Id;
+  int Id, tab_active;
   int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, wid, ang;
   struct MarkDialog mark;
   GdkPixmap *arrow_pixmap;

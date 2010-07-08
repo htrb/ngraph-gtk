@@ -1,3 +1,19 @@
+2010-07-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.h (menulocal): add members "greece_char",
+	"mathematics_char", "physics_char" and "misc_char".
+
+	* src/gtk/ox11menu.c (MenuConfigMisc): "browser" and
+	"help_browser" ins member of miscellaneous settings menu.
+	(MenuConfig): append character selection data.
+
+	* src/gtk/x11opt.c (FontSettingDialogClose): free returned string
+	from the function "list_store_get_string()".
+
+	* src/gtk/x11lgnd.c (insert_selcted_char, create_character_view)
+	(create_character_panel): added.
+	(LegendTextDialogSetup): append character selection panel.
+
 2010-07-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/Ngraph.ini.win: add alternative fonts settings.

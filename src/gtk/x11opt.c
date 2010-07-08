@@ -929,7 +929,7 @@ static void
 FontSettingDialogClose(GtkWidget *wi, void *data)
 {
   struct FontSettingDialog *d;
-  gchar *alias, *family;
+  gchar *alias, *family, *font;
   const gchar *font_name;
   struct fontmap *fmap;
   GString *alt;
@@ -978,11 +978,13 @@ FontSettingDialogClose(GtkWidget *wi, void *data)
     return;
   }
 
-  font_name = list_store_get_string(d->list, &iter, 0);
-  alt = g_string_new(font_name);
+  font = list_store_get_string(d->list, &iter, 0);
+  alt = g_string_new(font);
+  g_free(font);
   while (list_store_iter_next(d->list, &iter)) {
-    font_name = list_store_get_string(d->list, &iter, 0);
-    g_string_append_printf(alt, ",%s", font_name);
+    font = list_store_get_string(d->list, &iter, 0);
+    g_string_append_printf(alt, ",%s", font);
+    g_free(font);
   }
 
   gra2cairo_set_alternative_font(alias, alt->str);

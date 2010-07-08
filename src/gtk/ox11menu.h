@@ -134,6 +134,7 @@ struct menulocal
   int emf_dpi;
 #endif
   int png_dpi, ps_version, svg_version;
+  char *greece_char, *mathematics_char, *physics_char, *misc_char;
 };
 
 extern struct menulocal Menulocal;

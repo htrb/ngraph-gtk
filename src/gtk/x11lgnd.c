@@ -257,6 +257,7 @@ init_legend_dialog_widget_member(struct LegendDialog *d)
   d->font = NULL;
   d->font_bold = NULL;
   d->font_italic = NULL;
+  d->tab = NULL;
 }
 
 static void
@@ -552,6 +553,10 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->space, "space"},
     {d->script_size, "script_size"},
   };
+
+  if (d->tab) {
+    d->tab_active = gtk_notebook_get_current_page(GTK_NOTEBOOK(d->tab));
+  }
 
   switch(d->ret) {
   case IDOK:
@@ -1545,6 +1550,111 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
 }
 
 static void
+insert_selcted_char(GtkIconView *icon_view, GtkTreePath *path, gpointer user_data)
+{
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  char *ptr;
+  GtkEditable *entry;
+  int pos;
+
+  model = gtk_icon_view_get_model(icon_view);
+  if (! gtk_tree_model_get_iter(model, &iter, path)) {
+    return;
+  }
+
+  gtk_tree_model_get(model,  &iter, 0, &ptr, -1);
+
+  entry = GTK_EDITABLE(user_data);
+  pos = gtk_editable_get_position(entry);
+  gtk_editable_insert_text(entry, ptr, -1, &pos);
+  gtk_editable_set_position(entry, pos + 1);
+
+  g_free(ptr);
+}
+
+static GtkWidget *
+create_character_view(GtkWidget *entry, gchar *data)
+{
+  GtkWidget *icon_view, *swin;
+  GtkListStore *model;
+  GtkTreeIter iter;
+  gchar *ptr;
+
+  model = gtk_list_store_new(1, G_TYPE_STRING);
+  icon_view = gtk_icon_view_new_with_model(GTK_TREE_MODEL(model));
+  gtk_icon_view_set_text_column(GTK_ICON_VIEW(icon_view), 0);
+  gtk_icon_view_set_spacing(GTK_ICON_VIEW(icon_view), 0);
+  gtk_icon_view_set_row_spacing(GTK_ICON_VIEW(icon_view), 0);
+  gtk_icon_view_set_column_spacing(GTK_ICON_VIEW(icon_view), 0);
+  gtk_icon_view_set_margin(GTK_ICON_VIEW(icon_view), 0);
+  gtk_icon_view_set_item_padding(GTK_ICON_VIEW(icon_view), 0);
+  gtk_icon_view_set_columns(GTK_ICON_VIEW(icon_view), 24);
+  g_signal_connect(icon_view, "item-activated", G_CALLBACK(insert_selcted_char), entry);
+
+  for (ptr = data; *ptr; ptr = g_utf8_next_char(ptr)) {
+    gunichar ch;
+    gchar str[8];
+    int l;
+
+    gtk_list_store_append(model, &iter);
+    ch = g_utf8_get_char(ptr);
+    l = g_unichar_to_utf8(ch, str);
+    str[l] = '\0';
+    gtk_list_store_set(model, &iter, 0, str, -1);
+  }
+
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(swin), icon_view);
+
+  return swin;
+}
+
+struct char_map_data {
+  char **data;
+  char *title;
+};
+
+static GtkWidget *
+create_character_panel(GtkWidget *entry)
+{
+  GtkWidget *tab, *label, *child;
+  int n, i;
+  struct char_map_data charcter_data[] = {
+    {&Menulocal.greece_char, N_("_Greece")},
+    {&Menulocal.mathematics_char, N_("_Mathematics")},
+    {&Menulocal.physics_char, N_("_Physics")},
+    {&Menulocal.misc_char, N_("_Miscellaneous")},
+  };
+
+  n = sizeof(charcter_data) / sizeof(*charcter_data);
+  tab = gtk_notebook_new();
+
+  for (i = 0; i < n; i++) {
+    char *data, *title;
+
+    data = *charcter_data[i].data;
+    title = charcter_data[i].title;
+    if (data && data[0]) {
+      label = gtk_label_new_with_mnemonic(_(title));
+      child = create_character_view(entry, data);
+      gtk_notebook_append_page(GTK_NOTEBOOK(tab), child, label);
+    }
+  }
+
+  return tab;
+}
+
+static void
+text_dialog_show_tab(GtkWidget *w, gpointer user_data)
+{
+  struct LegendDialog *d;
+  d = (struct LegendDialog *) user_data;
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(d->tab), d->tab_active);
+}
+
+static void
 LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *frame, *table;
@@ -1591,7 +1701,13 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
+    gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
+
+    w = create_character_panel(d->text);
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
+    g_signal_connect(w, "show", G_CALLBACK(text_dialog_show_tab), d);
+    d->tab = w;
+    d->tab_active = 0;
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "text");
 
