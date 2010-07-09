@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.04.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-07-08 18:46+0900\n"
+"POT-Creation-Date: 2010-07-09 14:08+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1782
+#: src/gtk/ox11menu.c:1848
 msgid "Unsaved Graph"
 msgstr ""
 
@@ -1221,71 +1221,55 @@ msgstr ""
 msgid "_Raw"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1625
-msgid "_Greece"
-msgstr ""
-
-#: src/gtk/x11lgnd.c:1626
-msgid "_Mathematics"
-msgstr ""
-
-#: src/gtk/x11lgnd.c:1627
-msgid "_Physics"
-msgstr ""
-
-#: src/gtk/x11lgnd.c:1628 src/gtk/x11menu.c:1336 src/gtk/x11opt.c:100
-msgid "_Miscellaneous"
-msgstr ""
-
-#: src/gtk/x11lgnd.c:1666
+#: src/gtk/x11lgnd.c:1656
 #, c-format
 msgid "Legend text %d"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1696
+#: src/gtk/x11lgnd.c:1686
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2287
+#: src/gtk/x11lgnd.c:2277
 #, c-format
 msgid "points:%-3d %s%s%s%s"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2289
+#: src/gtk/x11lgnd.c:2279
 msgid "style:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2290 src/gtk/x11lgnd.c:2379 src/gtk/x11lgnd.c:2396
+#: src/gtk/x11lgnd.c:2280 src/gtk/x11lgnd.c:2369 src/gtk/x11lgnd.c:2386
 msgid "custom"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2359
+#: src/gtk/x11lgnd.c:2349
 msgid "fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2361
+#: src/gtk/x11lgnd.c:2351
 msgid "arrow:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2375
+#: src/gtk/x11lgnd.c:2365
 #, c-format
 msgid "w:%.2f h:%.2f%s%s%s"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2378 src/gtk/x11lgnd.c:2395
+#: src/gtk/x11lgnd.c:2368 src/gtk/x11lgnd.c:2385
 msgid "  style:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2380 src/gtk/x11lgnd.c:2397
+#: src/gtk/x11lgnd.c:2370 src/gtk/x11lgnd.c:2387
 msgid "  fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2406
+#: src/gtk/x11lgnd.c:2396
 #, c-format
 msgid "%s%stype:%-2d"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2408
+#: src/gtk/x11lgnd.c:2398
 #, c-format
 msgid "type:%-2d"
 msgstr ""
@@ -1837,6 +1821,10 @@ msgstr ""
 
 #: src/gtk/x11menu.c:1335
 msgid "_Add-in script"
+msgstr ""
+
+#: src/gtk/x11menu.c:1336 src/gtk/x11opt.c:100
+msgid "_Miscellaneous"
 msgstr ""
 
 #: src/gtk/x11menu.c:1338

@@ -58,8 +58,6 @@ static char *matherrorlist[]={
 
 #define ERRNUM (sizeof(matherrorlist) / sizeof(*matherrorlist))
 
-#define MEMORYNUM 20
-
 struct mlocal {
   double x;
   double y;
@@ -71,22 +69,15 @@ struct mlocal {
   int idpx;
   int idpy;
   int idpz;
-  int idpm[MEMORYNUM];
   int idpr;
 };
 
 static void 
 msettbl(char *inst,struct mlocal *mlocal)
 {
-  int i;
-
   *(double *)(inst+mlocal->idpx)=mlocal->x;
   *(double *)(inst+mlocal->idpy)=mlocal->y;
   *(double *)(inst+mlocal->idpz)=mlocal->z;
-
-  for (i = 0; i < MEMORYNUM; i++) {
-    *(double *)(inst + mlocal->idpm[i]) = mlocal->code->memory[i].val;
-  }
   *(int *)(inst+mlocal->idpr)=mlocal->rcode;
 }
 
@@ -100,8 +91,6 @@ static int
 minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
   struct mlocal *mlocal;
-  char mstr[32];
-  int i;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   if ((mlocal=g_malloc(sizeof(struct mlocal)))==NULL) goto errexit;
@@ -149,10 +138,6 @@ minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   mlocal->idpy=chkobjoffset(obj,"y");
   mlocal->idpz=chkobjoffset(obj,"z");
 
-  for (i = 0; i < MEMORYNUM; i++) {
-    snprintf(mstr, sizeof(mstr), "m%02d", i);
-    mlocal->idpm[i] = chkobjoffset(obj, mstr);
-  }
   mlocal->idpr=chkobjoffset(obj,"status");
   msettbl(inst,mlocal);
   return 0;
@@ -273,7 +258,6 @@ static int
 mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   char *arg;
-  int m;
   struct mlocal *mlocal;
 
   _getobj(obj, "_local", inst, &mlocal);
@@ -287,13 +271,6 @@ mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     break;
   case 'z':
     mlocal->z = * (double *) argv[2];
-    break;
-  case 'm':
-    m = atoi(arg + 1);
-    if (m >= 0 && m < MEMORYNUM) {
-      mlocal->code->memory[m].val = * (double *) argv[2];
-      mlocal->code->memory[m].type = MATH_VALUE_NORMAL;
-    }
     break;
   }
   msettbl(inst, mlocal);
@@ -382,26 +359,6 @@ static struct objtable math[] = {
   {"x",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"y",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"z",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m00",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m01",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m02",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m03",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m04",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m05",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m06",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m07",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m08",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m09",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m10",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m11",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m12",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m13",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m14",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m15",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m16",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m17",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m18",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
-  {"m19",NDOUBLE,NREAD|NWRITE,mparam,NULL,0},
   {"status",NENUM,NREAD,NULL,matherrorchar,0},
   {"calc",NDFUNC,NREAD|NEXEC,mcalc,"da",0},
   {"clear",NVFUNC,NREAD|NEXEC,mclear,NULL,0},

@@ -83,7 +83,6 @@ show_usage() {
     echo "    -ps2          output PostScript level 2"
     echo "    -eps, -eps3   output Encapsulated PostScript level 3"
     echo "    -eps2         output Encapsulated PostScript level 2"
-    echo "    -wmf          output Windows meta file"
     echo "    -pdf          output Portable Document Format"
     echo "    -svg, -svg1.1 output Scalable Vector Graphics version 1.1"
     echo "    -svg1.2       output Scalable Vector Graphics version 1.2"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-07-08 18:46+0900\n"
+"POT-Creation-Date: 2010-07-09 14:08+0900\n"
 "PO-Revision-Date: 2010-07-08 15:59+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1782
+#: src/gtk/ox11menu.c:1848
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
@@ -1225,71 +1225,55 @@ msgstr "スクリプトサイズ(_S):"
 msgid "_Raw"
 msgstr "_Raw"
 
-#: src/gtk/x11lgnd.c:1625
-msgid "_Greece"
-msgstr "ギリシャ文字(_G)"
-
-#: src/gtk/x11lgnd.c:1626
-msgid "_Mathematics"
-msgstr "数学(_M)"
-
-#: src/gtk/x11lgnd.c:1627
-msgid "_Physics"
-msgstr "物理(_P)"
-
-#: src/gtk/x11lgnd.c:1628 src/gtk/x11menu.c:1336 src/gtk/x11opt.c:100
-msgid "_Miscellaneous"
-msgstr "その他(_M)"
-
-#: src/gtk/x11lgnd.c:1666
+#: src/gtk/x11lgnd.c:1656
 #, c-format
 msgid "Legend text %d"
 msgstr "テキスト %d"
 
-#: src/gtk/x11lgnd.c:1696
+#: src/gtk/x11lgnd.c:1686
 msgid "_Text:"
 msgstr "テキスト(_T):"
 
-#: src/gtk/x11lgnd.c:2287
+#: src/gtk/x11lgnd.c:2277
 #, c-format
 msgid "points:%-3d %s%s%s%s"
 msgstr "点:%-3d %s%s%s%s"
 
-#: src/gtk/x11lgnd.c:2289
+#: src/gtk/x11lgnd.c:2279
 msgid "style:"
 msgstr "線種:"
 
-#: src/gtk/x11lgnd.c:2290 src/gtk/x11lgnd.c:2379 src/gtk/x11lgnd.c:2396
+#: src/gtk/x11lgnd.c:2280 src/gtk/x11lgnd.c:2369 src/gtk/x11lgnd.c:2386
 msgid "custom"
 msgstr "任意"
 
-#: src/gtk/x11lgnd.c:2359
+#: src/gtk/x11lgnd.c:2349
 msgid "fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:2361
+#: src/gtk/x11lgnd.c:2351
 msgid "arrow:"
 msgstr "矢印:"
 
-#: src/gtk/x11lgnd.c:2375
+#: src/gtk/x11lgnd.c:2365
 #, c-format
 msgid "w:%.2f h:%.2f%s%s%s"
 msgstr "幅:%.2f 高さ:%.2f%s%s%s"
 
-#: src/gtk/x11lgnd.c:2378 src/gtk/x11lgnd.c:2395
+#: src/gtk/x11lgnd.c:2368 src/gtk/x11lgnd.c:2385
 msgid "  style:"
 msgstr "  線種:"
 
-#: src/gtk/x11lgnd.c:2380 src/gtk/x11lgnd.c:2397
+#: src/gtk/x11lgnd.c:2370 src/gtk/x11lgnd.c:2387
 msgid "  fill"
 msgstr "  塗りつぶし"
 
-#: src/gtk/x11lgnd.c:2406
+#: src/gtk/x11lgnd.c:2396
 #, c-format
 msgid "%s%stype:%-2d"
 msgstr "%s%sタイプ:%-2d"
 
-#: src/gtk/x11lgnd.c:2408
+#: src/gtk/x11lgnd.c:2398
 #, c-format
 msgid "type:%-2d"
 msgstr "タイプ:%-2d"
@@ -1843,6 +1827,10 @@ msgstr "外部ドライバ(_D)"
 #: src/gtk/x11menu.c:1335
 msgid "_Add-in script"
 msgstr "スクリプト設定"
+
+#: src/gtk/x11menu.c:1336 src/gtk/x11opt.c:100
+msgid "_Miscellaneous"
+msgstr "その他(_M)"
 
 #: src/gtk/x11menu.c:1338
 msgid "save as default (_Settings)"
@@ -2606,6 +2594,15 @@ msgstr "偶奇"
 #: src/opath.c:72
 msgid "winding_rule"
 msgstr "ワインディング"
+
+#~ msgid "_Greece"
+#~ msgstr "ギリシャ文字(_G)"
+
+#~ msgid "_Mathematics"
+#~ msgstr "数学(_M)"
+
+#~ msgid "_Physics"
+#~ msgstr "物理(_P)"
 
 #~ msgid "_New alias:"
 #~ msgstr "新規別名(_N):"

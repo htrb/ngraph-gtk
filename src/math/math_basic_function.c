@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <glib.h>
 
 #ifdef HAVE_LIBGSL
 #include <gsl/gsl_sf.h>
@@ -24,6 +25,10 @@
     *rval = v.val;							\
     return 0;								\
   }
+
+
+#define MATH_FUNCTION_MEMORY_NUM 65536
+static MathValue *Memory = NULL;
 
 
 int
@@ -2100,6 +2105,21 @@ math_func_ei(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 #endif
 }
 
+static int
+init_memory(void)
+{
+  if (Memory) {
+    return 0;
+  }
+
+  Memory = g_malloc0(sizeof(*Memory) * MATH_FUNCTION_MEMORY_NUM);
+  if (Memory == NULL) {
+    return 1;
+  }
+
+  return 0;
+}
+
 int
 math_func_rm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
@@ -2107,14 +2127,18 @@ math_func_rm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
+  if (Memory == NULL && init_memory()) {
+    return 1;
+  }
+
   n = exp->buf[0].val.val;
 
-  if (n < 0 || n >= MATH_EQUATION_MEMORY_NUM) {
+  if (n < 0 || n >= MATH_FUNCTION_MEMORY_NUM) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
-  *rval = eq->memory[n];
+  *rval = Memory[n];
 
   return 0;
 }
@@ -2126,14 +2150,18 @@ math_func_m(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
+  if (Memory == NULL && init_memory()) {
+    return 1;
+  }
+
   n = exp->buf[0].val.val;
 
-  if (n < 0 || n >= MATH_EQUATION_MEMORY_NUM) {
+  if (n < 0 || n >= MATH_FUNCTION_MEMORY_NUM) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
-  *rval = eq->memory[n] = exp->buf[1].val;
+  *rval = Memory[n] = exp->buf[1].val;
 
   return 0;
 }
@@ -2145,6 +2173,10 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   double v;
   MathFunctionArgument *argv;
 
+  if (Memory == NULL && init_memory()) {
+    return 1;
+  }
+
   argv = exp->buf;
 
   MATH_CHECK_ARG(rval, argv[0]);
@@ -2153,19 +2185,20 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   MATH_CHECK_ARG(rval, argv[3]);
 
   n = argv[0].val.val;
-  if (n < 0 || n >= MATH_EQUATION_MEMORY_NUM || (argv[2].val.val - argv[1].val.val) * argv[3].val.val <= 0) {
+  if (n < 0 || n >= MATH_FUNCTION_MEMORY_NUM || (argv[2].val.val - argv[1].val.val) * argv[3].val.val <= 0) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
   
-  eq->memory[n].type= MATH_VALUE_NORMAL;
+  Memory[n].type = MATH_VALUE_NORMAL;
 
   rval->val = 0;
   for (v = argv[1].val.val; (argv[3].val.val < 0) ?  (v >= argv[2].val.val) : (v <= argv[2].val.val); v += argv[3].val.val) {
-    eq->memory[n].val = v;
+    Memory[n].val = v;
     r = math_expression_calculate(argv[4].exp, rval);
-    if(r)
+    if(r) {
       return r;
+    }
   }
 
   return 0;

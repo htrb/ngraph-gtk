@@ -183,8 +183,6 @@ math_equation_clear(MathEquation *eq)
   if (eq == NULL)
     return;
 
-  memset(eq->memory, 0, sizeof(eq->memory));
-
   clear_pos_func_buf(eq);
 
   if (eq->vnum > 0 && eq->vbuf) {

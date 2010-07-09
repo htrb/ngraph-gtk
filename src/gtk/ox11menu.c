@@ -109,6 +109,7 @@ enum menu_config_type {
   MENU_CONFIG_TYPE_COLOR,
   MENU_CONFIG_TYPE_SCRIPT,
   MENU_CONFIG_TYPE_DRIVER,
+  MENU_CONFIG_TYPE_CHARMAP,
 };
 
 static int menu_config_set_four_elements(char *s2, void *data);
@@ -116,6 +117,7 @@ static int menu_config_set_child_window_geometry(char *s2, void *data);
 static int menu_config_set_bgcolor(char *s2, void *data);
 static int menu_config_set_ext_driver(char *s2, void *data);
 static int menu_config_set_script(char *s2, void *data);
+static int menu_config_set_char_map(char *s2, void *data);
 
 static int *menu_config_menu_geometry[] = {
   &Menulocal.menux,
@@ -208,10 +210,7 @@ static struct menu_config MenuConfig[] = {
   {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
   {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
   {"data_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.datafilelist},
-  {"greece_charactor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.greece_char},
-  {"mathematics_charactor",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.mathematics_char},
-  {"physics_charactor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.physics_char},
-  {"misc_charactor",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.misc_char},
+  {"character_map",		MENU_CONFIG_TYPE_CHARMAP, menu_config_set_char_map, &Menulocal.char_map},
   {NULL},
 };
 
@@ -393,6 +392,25 @@ add_prm_str_to_array(struct menu_config *cfg, struct narray *conf)
 }
 
 static void
+save_char_map_config(struct narray *conf)
+{
+  char *title, *data, *buf;
+  struct character_map_list *pcur;
+
+  pcur = Menulocal.char_map;
+  while (pcur) {
+    title = CHK_STR(pcur->title);
+    data = CHK_STR(pcur->data);
+
+    buf = g_strdup_printf("character_map=%s,%s", title, data);
+    if (buf) {
+      arrayadd(conf, &buf);
+    }
+    pcur = pcur->next;
+  }
+}
+
+static void
 save_ext_driver_config(struct narray *conf)
 {
   char *buf, *driver, *ext, *option;
@@ -471,6 +489,9 @@ menu_save_config_sub(struct menu_config *cfg, struct narray *conf)
       break;
     case MENU_CONFIG_TYPE_DRIVER:
       save_ext_driver_config(conf);
+      break;
+    case MENU_CONFIG_TYPE_CHARMAP:
+      save_char_map_config(conf);
       break;
     case MENU_CONFIG_TYPE_HISTORY:
       break;
@@ -616,6 +637,39 @@ menu_config_set_bgcolor(char *s2, void *data)
     Menulocal.bg_b = val & 0xffU;
   }
   g_free(f1);
+  return 0;
+}
+
+static int
+menu_config_set_char_map(char *s2, void *data)
+{
+  char *title;
+  int len;
+  struct character_map_list *pcur, **pptr;
+
+  pptr = (struct character_map_list **) data;
+
+  if (! g_utf8_validate(s2, -1, NULL)) {
+    return 0;
+  }
+
+  title = getitok2(&s2, &len, ",");
+  g_strstrip(title);
+
+  for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
+  g_strstrip(s2);
+
+  pcur = g_malloc(sizeof(*pcur));
+  if (pcur == NULL) {
+    g_free(title);
+    return 1;
+  }
+  pcur->title = title;
+  pcur->data = g_strdup(s2);
+  pcur->next = *pptr;
+
+  *pptr = pcur;
+
   return 0;
 }
 
@@ -786,6 +840,7 @@ mgtkloadconfig(void)
 	if (f1)
 	  arrayadd(* (struct narray **) cfg->data, &f1);
 	break;
+      case MENU_CONFIG_TYPE_CHARMAP:
       case MENU_CONFIG_TYPE_COLOR:
       case MENU_CONFIG_TYPE_SCRIPT:
       case MENU_CONFIG_TYPE_DRIVER:
@@ -943,6 +998,7 @@ static void
 menulocal_finalize(void)
 {
   struct extprinter *pcur, *pdel;
+  struct character_map_list *cmap, *cmap_tmp;
   struct script *scur, *sdel;
   int i, j;
   struct menu_config *cfg;
@@ -955,6 +1011,16 @@ menulocal_finalize(void)
       }
     }
   }
+
+  cmap = Menulocal.char_map;
+  while (cmap) {
+    cmap_tmp = cmap;
+    cmap = cmap_tmp->next;
+    g_free(cmap_tmp->title);
+    g_free(cmap_tmp->data);
+    g_free(cmap_tmp);
+  }
+  Menulocal.char_map = NULL;
 
   pcur = Menulocal.extprinterroot;
   while (pcur) {

@@ -6,7 +6,7 @@ EXTRA_DIST = dir_defs.h.in ngp2.in ${ngraphconf_DATA}
 
 #bin_PROGRAMS = gra2ps gra2wmf
 
-#bin_SCRIPTS = ngp2
+bin_SCRIPTS = ngp2
 
 
 

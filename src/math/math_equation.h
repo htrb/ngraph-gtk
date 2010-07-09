@@ -15,7 +15,6 @@ typedef struct _math_value MathValue;
 #include "nhash.h"
 
 #define MATH_EQUATION_ARRAY_INDEX_MAX 65535
-#define MATH_EQUATION_MEMORY_NUM 20
 
 struct _math_value {
   double val;
@@ -47,7 +46,6 @@ struct _math_equation {
   NHASH local_variable, local_array;
   int local_vnum, local_array_num, func_def;
   MathValue *cbuf, *vbuf, *pos_func_buf;
-  MathValue memory[MATH_EQUATION_MEMORY_NUM];
   int stack_ofst, stack_end, vbuf_size;
   MathExpression *exp, *opt_exp, *const_def;
   MathEquationParametar *parameter;

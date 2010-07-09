@@ -1588,7 +1588,9 @@ create_character_view(GtkWidget *entry, gchar *data)
   gtk_icon_view_set_row_spacing(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_column_spacing(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_margin(GTK_ICON_VIEW(icon_view), 0);
+#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18))
   gtk_icon_view_set_item_padding(GTK_ICON_VIEW(icon_view), 0);
+#endif
   gtk_icon_view_set_columns(GTK_ICON_VIEW(icon_view), 24);
   g_signal_connect(icon_view, "item-activated", G_CALLBACK(insert_selcted_char), entry);
 
@@ -1611,31 +1613,19 @@ create_character_view(GtkWidget *entry, gchar *data)
   return swin;
 }
 
-struct char_map_data {
-  char **data;
-  char *title;
-};
-
 static GtkWidget *
 create_character_panel(GtkWidget *entry)
 {
   GtkWidget *tab, *label, *child;
-  int n, i;
-  struct char_map_data charcter_data[] = {
-    {&Menulocal.greece_char, N_("_Greece")},
-    {&Menulocal.mathematics_char, N_("_Mathematics")},
-    {&Menulocal.physics_char, N_("_Physics")},
-    {&Menulocal.misc_char, N_("_Miscellaneous")},
-  };
+  struct character_map_list *list;
 
-  n = sizeof(charcter_data) / sizeof(*charcter_data);
   tab = gtk_notebook_new();
 
-  for (i = 0; i < n; i++) {
+  for (list = Menulocal.char_map; list; list = list->next) {
     char *data, *title;
 
-    data = *charcter_data[i].data;
-    title = charcter_data[i].title;
+    data = list->data;
+    title = list->title;
     if (data && data[0]) {
       label = gtk_label_new_with_mnemonic(_(title));
       child = create_character_view(entry, data);

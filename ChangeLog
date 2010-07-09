@@ -1,3 +1,32 @@
+2010-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/omath.c (math): remove fields "m00" to "m19".
+	(mlocal): remove member "idpm".
+	(msettbl, minit, mparam): now memories are not used.
+
+	* src/math/math_basic_function.c (MATH_FUNCTION_MEMORY_NUM):
+	added.
+	(init_memory): added.
+	(math_func_rm, math_func_m, math_func_for): use staic variable
+	"Memory".
+
+	* src/math/math_equation.c (math_equation_clear): don't initialize
+	"eq->memory".
+
+	* src/math/math_equation.h (_math_equation): remove member
+	"memory".
+
+	* src/gtk/x11lgnd.c (create_character_panel): use
+	"Menulocal.char_map".
+
+	* src/gtk/ox11menu.c (MenuConfig): use "character_map" instead of
+	"greece_charactor", "mathematics_charactor", "physics_charactor"
+	and "misc_charactor".
+	(save_char_map_config, menu_config_set_char_map): added.
+	(menu_save_config_sub, mgtkloadconfig): add case for
+	"MENU_CONFIG_TYPE_CHARMAP".
+	(menulocal_finalize): free "Menulocal.char_map".
+
 2010-07-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.h (menulocal): add members "greece_char",

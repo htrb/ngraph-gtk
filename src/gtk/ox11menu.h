@@ -85,6 +85,11 @@ struct prnprinter
   struct prnprinter *next;
 };
 
+struct character_map_list {
+  char *title, *data;
+  struct character_map_list *next;
+};
+
 struct menulocal
 {
   GdkDrawable *win, *pix;
@@ -134,7 +139,7 @@ struct menulocal
   int emf_dpi;
 #endif
   int png_dpi, ps_version, svg_version;
-  char *greece_char, *mathematics_char, *physics_char, *misc_char;
+  struct character_map_list *char_map;
 };
 
 extern struct menulocal Menulocal;
