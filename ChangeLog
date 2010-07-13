@@ -1,3 +1,8 @@
+2010-07-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (legend_dialog_close): save color of
+	"d->color".
+
 2010-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/omath.c (math): remove fields "m00" to "m19".

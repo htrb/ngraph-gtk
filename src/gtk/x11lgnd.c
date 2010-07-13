@@ -674,10 +674,13 @@ legend_dialog_close(GtkWidget *w, void *data)
   if (d->stroke_color && putobj_stroke_color(d->stroke_color, d->Obj, d->Id))
     return;
 
- if (d->color2 && putobj_color2(d->color2, d->Obj, d->Id))
+  if (d->fill_color && putobj_fill_color(d->fill_color, d->Obj, d->Id))
     return;
 
- if (d->fill_color && putobj_fill_color(d->fill_color, d->Obj, d->Id))
+  if (d->color && putobj_color(d->color, d->Obj, d->Id, NULL))
+    return;
+
+  if (d->color2 && putobj_color2(d->color2, d->Obj, d->Id))
     return;
 
   d->ret = ret;
