@@ -505,5 +505,5 @@ CmMergeWindow(GtkWidget *w, gpointer client_data)
 
     sub_window_show_all(d);
     sub_window_set_geometry(d, TRUE);
- }
+  }
 }
