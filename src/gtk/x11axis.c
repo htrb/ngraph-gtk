@@ -2210,20 +2210,25 @@ scale_tab_set_value(struct AxisDialog *d)
     return 1;
   }
 
-  if (SetObjFieldFromWidget(d->max, d->Obj, d->Id, "max"))
+  if (SetObjFieldFromWidget(d->max, d->Obj, d->Id, "max")) {
     return 1;
+  }
 
-  if (SetObjFieldFromWidget(d->inc, d->Obj, d->Id, "inc"))
+  if (SetObjFieldFromWidget(d->inc, d->Obj, d->Id, "inc")) {
     return 1;
+  }
 
-  if (SetObjFieldFromWidget(d->div, d->Obj, d->Id, "div"))
+  if (SetObjFieldFromWidget(d->div, d->Obj, d->Id, "div")) {
     return 1;
+  }
 
-  if (SetObjFieldFromWidget(d->scale, d->Obj, d->Id, "type"))
+  if (SetObjFieldFromWidget(d->scale, d->Obj, d->Id, "type")) {
     return 1;
+  }
 
-  if (SetObjAxisFieldFromWidget(d->ref, d->Obj, d->Id, "reference"))
+  if (SetObjAxisFieldFromWidget(d->ref, d->Obj, d->Id, "reference")) {
     return 1;
+  }
 
   return 0;
 }

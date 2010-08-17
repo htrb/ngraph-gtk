@@ -1252,6 +1252,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
     free_console(allocnow);
   }
 
+  set_axis_undo_button_sensitivity(FALSE);
   GetPageSettingsFromGRA();
   UpdateAll();
   delobj(obj, newid);
@@ -1295,6 +1296,7 @@ LoadPrmFile(char *file)
   }
   delobj(obj, id);
 
+  set_axis_undo_button_sensitivity(FALSE);
 }
 
 void

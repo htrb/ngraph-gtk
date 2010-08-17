@@ -1082,6 +1082,7 @@ CmGraphNewMenu(GtkWidget *w, gpointer client_data)
   }
 
   SetFileName(NULL);
+  set_axis_undo_button_sensitivity(FALSE);
   reset_graph_modified();
 
   UpdateAll();

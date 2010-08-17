@@ -1,5 +1,11 @@
 2010-08-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11commn.c (LoadNgpFile, LoadPrmFile): call
+	"set_axis_undo_button_sensitivity()".
+
+	* src/gtk/x11graph.c (CmGraphNewMenu): call
+	"set_axis_undo_button_sensitivity()".
+
 	* src/gtk/gtk_liststore.c (list_store_set_align): added.
 
 	* src/gtk/x11axis.c (axis_list_set_val): use "%g" instead of
