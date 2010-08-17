@@ -1,3 +1,12 @@
+2010-08-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_liststore.c (list_store_set_align): added.
+
+	* src/gtk/x11axis.c (axis_list_set_val): use "%g" instead of
+	"%.2e" for format string of the function "printf()".
+	(CmAxisWindow): call "list_store_set_align()" for columns
+	AXIS_WIN_COL_MIN, AXIS_WIN_COL_MAX and. AXIS_WIN_COL_INC.
+
 2010-07-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/Ngraph.nsc: -n option works after all other options are managed.

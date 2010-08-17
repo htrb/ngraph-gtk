@@ -2810,10 +2810,10 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 	list_store_set_string(GTK_WIDGET(d->text), iter, i - 1, "---------");
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "---------");
       } else {
-	len = snprintf(buf, sizeof(buf), "%+.2e", min);
+	len = snprintf(buf, sizeof(buf), "%g", min);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i - 1, buf);
 
-	len = snprintf(buf, sizeof(buf), "%+.2e", max);
+	len = snprintf(buf, sizeof(buf), "%g", max);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
       }
       break;
@@ -2827,7 +2827,7 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       if (inc == 0) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "---------");
       } else {
-	len = snprintf(buf, sizeof(buf), "%+.2e", inc);
+	len = snprintf(buf, sizeof(buf), "%g", inc);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
       }
       break;
@@ -3351,6 +3351,10 @@ CmAxisWindow(GtkWidget *w, gpointer client_data)
     set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MIN, Alist, G_CALLBACK(min_edited));
     set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
     set_editable_cell_renderer_cb(d, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
+
+    list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MIN, 1.0);
+    list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MAX, 1.0);
+    list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_INC, 1.0);
 
     sub_window_show_all(d);
     sub_window_set_geometry(d, TRUE);

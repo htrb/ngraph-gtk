@@ -21,6 +21,7 @@ GtkWidget *list_store_create(int n, n_list_store *list);
 void list_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, void *ptr);
 void list_store_set_sort_all(GtkWidget *tview);
 void list_store_set_sort_column(GtkWidget *tview, int col);
+void list_store_set_align(GtkWidget *tview, int col, double align);
 
 int list_store_get_int(GtkWidget *w, GtkTreeIter *iter, int col);
 void list_store_set_int(GtkWidget *w, GtkTreeIter *iter, int col, int v);
@@ -72,15 +73,16 @@ void free_tree_path_cb(gpointer data, gpointer user_data);
 
 void tree_store_selected_toggle_expand(GtkWidget *w);
 
-#define tree_store_get_int list_store_get_int
-#define tree_store_get_boolean list_store_get_boolean
-#define tree_store_get_string list_store_get_string
-#define tree_store_get_iter_first list_store_get_iter_first
-#define tree_store_iter_next list_store_iter_next
-#define tree_store_get_selected_iter list_store_get_selected_iter
-#define tree_store_set_selection_mode list_store_set_selection_mode
-#define tree_store_path_get_string list_store_path_get_string
-#define tree_store_set_sort_all list_store_set_sort_all
-#define tree_store_set_sort_column list_store_set_sort_column
-#define tree_store_select_all_cb list_store_select_all_cb
+#define tree_store_get_int		list_store_get_int
+#define tree_store_get_boolean		list_store_get_boolean
+#define tree_store_get_string		list_store_get_string
+#define tree_store_get_iter_first	list_store_get_iter_first
+#define tree_store_iter_next		list_store_iter_next
+#define tree_store_get_selected_iter	list_store_get_selected_iter
+#define tree_store_set_selection_mode	list_store_set_selection_mode
+#define tree_store_path_get_string	list_store_path_get_string
+#define tree_store_set_sort_all		list_store_set_sort_all
+#define tree_store_set_sort_column	list_store_set_sort_column
+#define tree_store_select_all_cb	list_store_select_all_cb
+#define tree_store_set_align		list_store_set_align
 #endif

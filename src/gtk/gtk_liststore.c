@@ -141,6 +141,27 @@ create_column(n_list_store *list, int i, int j)
   return col;
 }
 
+void
+list_store_set_align(GtkWidget *tview, int n, double align)
+{
+  GtkTreeViewColumn *col;
+  GList *list;
+
+  col = gtk_tree_view_get_column(GTK_TREE_VIEW(tview), n);
+  if (col == NULL) {
+    return;
+  }
+
+  list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
+  if (list == NULL || list->data == NULL) {
+    return;
+  }
+
+  g_object_set((GObject *) list->data, "xalign", (gfloat) align, NULL);
+
+  g_list_free(list);
+}
+
 static GtkWidget *
 create_tree_view(int n, n_list_store *list, int tree)
 {
