@@ -1189,22 +1189,26 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
       break;
 
     for (j = i = 0; i <= l; i++) {
-      if (cstr[i] == '\\' &&
-	  cstr[i + 1] == 'x' &&
-	  g_ascii_isxdigit(cstr[i + 2]) &&
-	  g_ascii_isxdigit(cstr[i + 3])) {
-	char buf[8];
-	int len, k;
-	gunichar wc;
+      if (cstr[i] == '\\') {
+	if (cstr[i + 1] == 'x' &&
+	    g_ascii_isxdigit(cstr[i + 2]) &&
+	    g_ascii_isxdigit(cstr[i + 3])) {
+	  char buf[8];
+	  int len, k;
+	  gunichar wc;
 
-	wc = g_ascii_xdigit_value(cstr[i + 2]) * 16 + g_ascii_xdigit_value(cstr[i + 3]);
-	len = g_unichar_to_utf8(wc, buf);
-	for (k = 0; k < len; k++) {
-	  tmp[j++] = buf[k];
+	  wc = g_ascii_xdigit_value(cstr[i + 2]) * 16 + g_ascii_xdigit_value(cstr[i + 3]);
+	  len = g_unichar_to_utf8(wc, buf);
+	  for (k = 0; k < len; k++) {
+	    tmp[j++] = buf[k];
+	  }
+	  i += 3;
+	} else {
+	  i += 1;
+	  tmp[j++] = cstr[i];
 	}
-	i += 3;
       } else {
-        tmp[j++] = cstr[i];
+	tmp[j++] = cstr[i];
       }
       tmp[j] = '\0';
     }

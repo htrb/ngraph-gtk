@@ -1,3 +1,15 @@
+2010-08-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAdrawtext, GRAtextextent): use "case" instead of
+	"if".
+	(GRAtextextent): bug fix: fix calculation of bounding box when
+	"c[j] == '\n" and "scriptf != 0".
+	(GRAtextextent, GRAtextextentraw): fix calculation of space.
+	(get_str_bbox): fix treatment of '\' character.
+
+	* src/gtk/ogra2cairo.c (gra2cairo_output): fix treatment of '\'
+	character.
+
 2010-08-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11commn.c (LoadNgpFile, LoadPrmFile): call

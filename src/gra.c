@@ -2039,6 +2039,8 @@ GRAdrawtext(int GC, char *s, char *font, int style,
   style3 = style2 = style;
   size2 = size;
   space2 = space;
+  size3 = size;
+  space3 = space;
   scriptf = 0;
   scmovex = 0;
   scmovey = 0;
@@ -2104,10 +2106,11 @@ GRAdrawtext(int GC, char *s, char *font, int style,
       continue;
     }
 
-    if (ptr[0] == '\n') {
+    switch (ptr[0]) {
+    case '\n':
       x0 += (int ) (si * size * 25.4 / 72.0);
       y0 += (int ) (cs * size * 25.4 / 72.0);
-      if (scriptf != 0) {
+      if (scriptf) {
         scriptf = 0;
         g_free(font2);
         font2 = font3;
@@ -2124,73 +2127,71 @@ GRAdrawtext(int GC, char *s, char *font, int style,
         GRAtextextent(ptr, font2, style2, size2, space2, scriptsize,
                       &fx0, &fy0, &fx1, &fy1, TRUE);
         ptr[k] = ch;
-        x1 = x0 + (int ) ( cs * (alignlen - fx1));
-        y1 = y0 + (int ) (-si * (alignlen - fx1));
+        x1 = x0 + (int) ( cs * (alignlen - fx1));
+        y1 = y0 + (int) (-si * (alignlen - fx1));
       } else {
         x1 = x0;
         y1 = y0;
       }
       GRAmoveto(GC, x1, y1);
       ptr++;
-    } else if (ptr[0] == '\b') {
+      break;
+    case '\b':
       GRAtextextent("h", font2, style2, size2, space2, scriptsize, 
                     &fx0, &fy0, &fx1, &fy1, TRUE);
       x1 = (int ) (cs * (fx1 - fx0));
       y1 = (int ) (si * (fx1 - fx0));
       GRAmoverel(GC, -x1, y1);
       ptr++;
-    } else if (ptr[0] == '\r') {
+      break;
+    case '\r':
       ptr++;
-    } else if (ptr[0] != '\0' && strchr("_^@", ptr[0])) {
-      switch (ptr[0]) {
-      case '^':
-      case '_':
-        if (scriptf==0) {
-	  font3 = g_strdup(font2);
-          if (font3 == NULL) {
-	    goto errexit;
-	  }
-          size3 = size2;
-          space3 = space2;
-        }
-        height = size2;
-        size2 = (int ) (size2 * 1e-4 * scriptsize);
-        space2 = (int ) (space2 * 1e-4 * scriptsize);
-        if (ptr[0] == '^') {
-          x = (int )(-si * (height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
-          y = (int )(-cs * (height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
-          GRAmoverel(GC, x, y);
-          scmovex += x;
-          scmovey += y;
-        } else {
-          x = (int )(si * size2 * 5e-5 * scriptsize * 25.4 / 72.0);
-          y = (int )(cs * size2 * 5e-5 * scriptsize * 25.4 / 72.0);
-          GRAmoverel(GC, x, y);
-          scmovex += x;
-          scmovey += y;
-        }
-        if (ptr[0] == '^') {
-	  scriptf = 1;
-	} else {
-	  scriptf = 2;
+      break;
+    case '_':
+    case '^':
+      if (scriptf == 0) {
+	font3 = g_strdup(font2);
+	if (font3 == NULL) {
+	  goto errexit;
 	}
-	break;
-      case '@':
-        if (scriptf != 0) {
-          scriptf = 0;
-          GRAmoverel(GC, -scmovex, -scmovey);
-          g_free(font2);
-          font2 = font3;
-          font3 = NULL;
-          size2 = size3;
-          space2 = space3;
-        }
-	scmovex = 0;
-	scmovey = 0;
-        break;
+	size3 = size2;
+	space3 = space2;
+      }
+      height = size2;
+      size2 = (int ) (size2 * 1e-4 * scriptsize);
+      space2 = (int ) (space2 * 1e-4 * scriptsize);
+      if (ptr[0] == '^') {
+	x = (int )(-si * (height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
+	y = (int )(-cs * (height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
+	GRAmoverel(GC, x, y);
+	scmovex += x;
+	scmovey += y;
+	scriptf = 1;
+      } else {
+	x = (int )(si * size2 * 5e-5 * scriptsize * 25.4 / 72.0);
+	y = (int )(cs * size2 * 5e-5 * scriptsize * 25.4 / 72.0);
+	GRAmoverel(GC, x, y);
+	scmovex += x;
+	scmovey += y;
+	scriptf = 2;
       }
       ptr++;
-    } else if (ptr[0] == '%') {
+      break;
+    case '@':
+      if (scriptf) {
+	scriptf = 0;
+	GRAmoverel(GC, -scmovex, -scmovey);
+	g_free(font2);
+	font2 = font3;
+	font3 = NULL;
+	size2 = size3;
+	space2 = space3;
+      }
+      scmovex = 0;
+      scmovey = 0;
+      ptr++;
+      break;
+    case '%':
       if ((ptr[1]!='\0') && (strchr("FJSPXY", toupper(ptr[1]))!=NULL) && (ptr[2]=='{')) {
         for (i = 3; ptr[i] != '\0' && ptr[i] != '}'; i++);
         if (ptr[i] == '}') {
@@ -2235,6 +2236,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
       } else {
 	ptr = g_utf8_next_char(ptr);
       }
+      break;
     }
   }
 
@@ -2318,6 +2320,8 @@ GRAtextextent(char *s, char *font, int style,
   font2 = g_strdup(font);
   size2 = size;
   space2 = space;
+  size3 = size;
+  space3 = space;
   scriptf = 0;
   scmovey = 0;
 
@@ -2386,19 +2390,20 @@ GRAtextextent(char *s, char *font, int style,
     }
 
     if (str->len > 0) {
-      w = GRAstrwidth(str->str, font2, style2, size2) + nround(space2 / 72.0 * 25.4);
-      h = GRAcharascent(font2, style2,size2);
-      d = GRAchardescent(font2, style2,size2);
+      w = GRAstrwidth(str->str, font2, style2, size2)
+	+ nround(space2 / 72.0 * 25.4) * (str->len - 1);
+      h = GRAcharascent(font2, style2, size2);
+      d = GRAchardescent(font2, style2, size2);
 
-      if (x0<*gx0) *gx0=x0;
-      if (x0+w<*gx0) *gx0=x0+w;
-      if (x0>*gx1) *gx1=x0;
-      if (x0+w>*gx1) *gx1=x0+w;
-      if (y0-h<*gy0) *gy0=y0-h;
-      if (y0+d<*gy0) *gy0=y0+d;
-      if (y0-h>*gy1) *gy1=y0-h;
-      if (y0+d>*gy1) *gy1=y0+d;
-      x0+=w;
+      if (x0     < *gx0) *gx0 = x0;
+      if (x0 + w < *gx0) *gx0 = x0 + w;
+      if (x0     > *gx1) *gx1 = x0;
+      if (x0 + w > *gx1) *gx1 = x0 + w;
+      if (y0 - h < *gy0) *gy0 = y0 - h;
+      if (y0 + d < *gy0) *gy0 = y0 + d;
+      if (y0 - h > *gy1) *gy1 = y0 - h;
+      if (y0 + d > *gy1) *gy1 = y0 + d;
+      x0 += w;
     }
 
     if (style3 != style2) {
@@ -2406,119 +2411,136 @@ GRAtextextent(char *s, char *font, int style,
       continue;
     }
 
-    if (c[j] == '\n') {
-      y0+=(int )(size*25.4/72.0);
-      if (scriptf!=0) {
-        scriptf=0;
+    switch (c[j]) {
+    case '\n':
+      y0 += (int) (size * 25.4 / 72.0);
+      if (scriptf) {
+	y0 -= scmovey;
+        scriptf = 0;
         g_free(font2);
-        font2=font3;
-        font3=NULL;
-        size2=size3;
-        space2=space3;
+        font2 = font3;
+        font3 = NULL;
+        size2 = size3;
+        space2 = space3;
       }
-      scmovey=0;
-      if ((!raw) && (alignlen!=0)) {
-        for (k=j+1;(k<len) && (c[k]!='\n') && (c[k]!='\r');k++);
-        ch=c[k];
-        c[k]='\0';
-        GRAtextextent(c+j+1,font2,style2,size2,space2,scriptsize,
-                      &fx0,&fy0,&fx1,&fy1,TRUE);
-        c[k]=ch;
-        x0=alignlen-fx1;
-      } else x0=0;
+      scmovey = 0;
+      if (! raw && alignlen) {
+        for (k = j + 1; (k < len) && (c[k] != '\n') && (c[k] != '\r'); k++);
+        ch = c[k];
+        c[k] = '\0';
+        GRAtextextent(c + j + 1, font2, style2, size2, space2, scriptsize,
+                      &fx0, &fy0, &fx1, &fy1, TRUE);
+        c[k] = ch;
+        x0 = alignlen - fx1;
+      } else {
+	x0 = 0;
+      }
       j++;
-    } else if (c[j]=='\b') {
-      GRAtextextent("h",font2,style2,size2,space2,scriptsize,
-                    &fx0,&fy0,&fx1,&fy1,TRUE);
-      x0-=(fx1-fx0);
+      break;
+    case '\b':
+      GRAtextextent("h", font2, style2, size2, space2, scriptsize,
+                    &fx0, &fy0, &fx1, &fy1, TRUE);
+      x0 -= (fx1 - fx0);
       j++;
-    } else if (c[j]=='\r') {
+      break;
+    case '\r':
       j++;
-    } else if ((c[j]!='\0') && (strchr("_^@",c[j])!=NULL)) {
-      switch (c[j]) {
-      case '^':
-      case '_':
-        if (scriptf==0) {
-	  font3 = g_strdup(font2);
-          if (font3 == NULL) {
+      break;
+    case '_':
+    case '^':
+      if (scriptf == 0) {
+	font3 = g_strdup(font2);
+	if (font3 == NULL) {
+	  goto errexit;
+	}
+	size3 = size2;
+	space3 = space2;
+      }
+      height = size2;
+      size2 = (int) (size2 * 1e-4 * scriptsize);
+      space2 = (int) (space2 * 1e-4 * scriptsize);
+      if (c[j]=='^') {
+	y = (int) (-(height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
+	y0 += y;
+	scmovey += y;
+	scriptf = 1;
+      } else {
+	y = (int) (size2 * 5e-5 * scriptsize * 25.4 / 72.0);
+	y0 += y;
+	scmovey += y;
+	scriptf = 2;
+      }
+      j++;
+      break;
+    case '@':
+      if (scriptf) {
+	scriptf = 0;
+	y0 -= scmovey;
+	g_free(font2);
+	font2 = font3;
+	font3 = NULL;
+	size2 = size3;
+	space2 = space3;
+      }
+      scmovey = 0;
+      j++;
+      break;
+    case '%':
+      if (c[j + 1] != '\0' && strchr("FJSPXY", toupper(c[j + 1])) && c[j + 2] == '{') {
+        for (i = j + 3; c[i] != '\0' && c[i] != '}'; i++);
+        if (c[i] == '}') {
+	  tok = g_malloc(i - j - 2);
+          if (tok == NULL) {
 	    goto errexit;
 	  }
-          size3=size2;
-          space3=space2;
-        }
-        height=size2;
-        size2=(int )(size2*1e-4*scriptsize);
-        space2=(int )(space2*1e-4*scriptsize);
-        if (c[j]=='^') {
-          y=(int )(-(height*0.8-size2*5e-5*scriptsize)*25.4/72.0);
-          y0+=y;
-          scmovey+=y;
-        } else {
-          y=(int )(size2*5e-5*scriptsize*25.4/72.0);
-          y0+=y;
-          scmovey+=y;
-        }
-        if (c[j]=='^') scriptf=1;
-		else scriptf=2;
-		break;
-      case '@':
-        if (scriptf!=0) {
-          scriptf=0;
-          y0-=scmovey;
-          g_free(font2);
-          font2=font3;
-          font3=NULL;
-          size2=size3;
-          space2=space3;
-	}
-	scmovey=0;
-	break;
-      }
-      j++;
-    } else if (c[j]=='%') {
-      if ((c[j+1]!='\0') && (strchr("FJSPXY",toupper(c[j+1]))!=NULL) && (c[j+2]=='{')) {
-        for (i=j+3;(c[i]!='\0') && (c[i]!='}');i++);
-        if (c[i]=='}') {
-          if ((tok=g_malloc(i-j-2))==NULL) goto errexit;
-          strncpy(tok,c+j+3,i-j-3);
-          tok[i-j-3]='\0';
-          if (tok[0]!='\0') {
-            switch (toupper(c[j+1])) {
+          strncpy(tok, c + j + 3, i - j - 3);
+          tok[i - j - 3] = '\0';
+          if (tok[0] != '\0') {
+            switch (toupper(c[j + 1])) {
             case 'F':
               g_free(font2);
-              font2=tok;
+              font2 = tok;
               break;
             case 'J':
               break;
             case 'S':
-              val=strtol(tok,&endptr,10);
-              if (endptr[0]=='\0') size2=val*100;
+              val = strtol(tok, &endptr, 10);
+              if (endptr[0] == '\0') {
+		size2 = val * 100;
+	      }
               g_free(tok);
               break;
             case 'P':
-              val=strtol(tok,&endptr,10);
-              if (endptr[0]=='\0') space2=val*100;
+              val = strtol(tok, &endptr, 10);
+              if (endptr[0] == '\0') {
+		space2 = val * 100;
+	      }
               g_free(tok);
               break;
             case 'X':
-              val=strtol(tok,&endptr,10);
-              if (endptr[0]=='\0') x0+=(int )(val*100*25.4/72.0);
+              val = strtol(tok, &endptr, 10);
+              if (endptr[0] == '\0') {
+		x0 += (int) (val * 100 * 25.4 / 72.0);
+	      }
               g_free(tok);
               break;
             case 'Y':
-              val=strtol(tok,&endptr,10);
-              if (endptr[0]=='\0') y0+=(int )(val*100*25.4/72.0);
+              val = strtol(tok, &endptr, 10);
+              if (endptr[0] == '\0') {
+		y0 += (int) (val * 100 * 25.4 / 72.0);
+	      }
               g_free(tok);
               break;
             }
           }
         }
-        j=i+1;
+        j = i + 1;
       } else {
 	j++;
       }
+      break;
     }
-  } while (j<len);
+  } while (j < len);
 
 errexit:
   if (str) {
@@ -2536,7 +2558,8 @@ GRAtextextentraw(char *s,char *font, int style,
   *gx0 = *gy0 = *gx1 = *gy1 = 0;
   if (s == NULL || font == NULL) return;
 
-  *gx1 = GRAstrwidth(s, font, style, size) + nround(space / 72.0 * 25.4);
+  *gx1 = GRAstrwidth(s, font, style, size)
+    + nround(space / 72.0 * 25.4) * (strlen(s) - 1);
   *gy0 = - GRAcharascent(font, style, size);
 }
 
@@ -3368,12 +3391,17 @@ get_str_bbox(struct GRAbbox *bbox, char *cstr)
   csin = sin(bbox->dir / 18000.0 * MPI);
   ccos = cos(bbox->dir / 18000.0 * MPI);
   for (ptr = cstr; ptr[0]; ptr++) {
-    if (ptr[0] == '\\' && ptr[1] == 'x' && g_ascii_isxdigit(ptr[2]) && g_ascii_isxdigit(ptr[3])) {
-      gunichar wc;
+    if (ptr[0] == '\\') {
+      if (ptr[1] == 'x' && g_ascii_isxdigit(ptr[2]) && g_ascii_isxdigit(ptr[3])) {
+	gunichar wc;
 
-      wc = g_ascii_xdigit_value(ptr[2]) * 16 + g_ascii_xdigit_value(ptr[3]);
-      g_string_append_unichar(str, wc);
-      ptr += 3;
+	wc = g_ascii_xdigit_value(ptr[2]) * 16 + g_ascii_xdigit_value(ptr[3]);
+	g_string_append_unichar(str, wc);
+	ptr += 3;
+      } else {
+	ptr += 1;
+	g_string_append_c(str, ptr[0]);
+      }
     } else {
       g_string_append_c(str, ptr[0]);
     }
