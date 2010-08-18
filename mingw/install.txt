@@ -5,13 +5,13 @@ How to make Ngraph-gtk on Windows with MinGW
 
 http://sourceforge.net/projects/mingw/files/
 
-"Automated MinGW Installer"
+"AutomatedMinGWInstaller/MinGW5.1.6"
 MinGW-5.1.6.exe
 
-"MSYS Base System"
+"MSYS/BaseSystem/msys-core/msys-1.0.11"
 MSYS-1.0.11.exe
 
-"MSYS Supplementary Tools"
+"MSYS/SupplementaryTools/msysDTK-1.0.1"
 msysDTK-1.0.1.exe
 
 
@@ -19,14 +19,14 @@ msysDTK-1.0.1.exe
 
 http://sourceforge.net/projects/mingw/files/
 
-"GCC Version 4"
+"MinGW/BaseSystem/GCC/Version4/Previous Release gcc-4.4.0"
 gcc-core-4.4.0-mingw32-dll.tar.gz
 
-"MinGW libiconv"
+"MinGW/libiconv/release1.13"
 libiconv-1.13.1-1-mingw32-dll-2.tar.lzma
 libiconv-1.13.1-1-mingw32-dev.tar.lzma
 
-"MinGW gettext"
+"MinGW/gettext/gettext-0.17-1"
 libintl-0.17-1-mingw32-dll-8.tar.lzma
 gettext-0.17-1-mingw32-bin.tar.lzma
 gettext-0.17-1-mingw32-dev.tar.lzma
@@ -51,7 +51,7 @@ http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/
 
 gtk+_2.20.1-1_win32.zip
 gtk+-dev_2.20.1-1_win32.zip
-gtk+-bundle_2.20.0-20100406_win32.zip
+gtk+-bundle_2.20.0-20100817_win32.zip
 
 
 5. Install GTK+
@@ -90,13 +90,13 @@ make install
 10. Get Ngraph-gtk
 
 http://sourceforge.net/projects/ngraph-gtk/files/
-Ngraph-gtk-6.03.51.gtk-44.tar.gz
+Ngraph-gtk-6.04.00.tar.gz
 
 
 11. Compile and install Ngraph-gtk
 
-tar xf Ngraph-gtk-6.03.51.gtk-44.tar.gz
-cd Ngraph-gtk-6.03.51.gtk-44
+tar xf Ngraph-gtk-6.04.00.tar.gz
+cd Ngraph-gtk-6.04.00
 sh mingw/windows.sh
 
 Ngraph-gtk will be installed in C:\ngraph-gtk if there are no error
