@@ -1996,7 +1996,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
 {
   char *c, *tok;
   GString *str;
-  int len, scmovex, scmovey, scriptf;
+  int len, scmovex, scmovey, scriptf, scx_max, scy_max, scdist_max;
   char *endptr;
   char *font2;
   int size2, space2, style2;
@@ -2044,6 +2044,9 @@ GRAdrawtext(int GC, char *s, char *font, int style,
   scriptf = 0;
   scmovex = 0;
   scmovey = 0;
+  scx_max = 0;
+  scy_max = 0;
+  scdist_max = 0;
 
   len = strlen(c);
 
@@ -2108,8 +2111,8 @@ GRAdrawtext(int GC, char *s, char *font, int style,
 
     switch (ptr[0]) {
     case '\n':
-      x0 += (int ) (si * size * 25.4 / 72.0);
-      y0 += (int ) (cs * size * 25.4 / 72.0);
+      x0 += (int) (si * size * 25.4 / 72.0);
+      y0 += (int) (cs * size * 25.4 / 72.0);
       if (scriptf) {
         scriptf = 0;
         g_free(font2);
@@ -2118,6 +2121,11 @@ GRAdrawtext(int GC, char *s, char *font, int style,
         size2 = size3;
         space2 = space3;
       }
+      x0 += scx_max;
+      y0 += scy_max;
+      scdist_max = 0;
+      scx_max = 0;
+      scy_max = 0;
       scmovex = 0;
       scmovey = 0;
       if (alignlen != 0) {
@@ -2139,8 +2147,8 @@ GRAdrawtext(int GC, char *s, char *font, int style,
     case '\b':
       GRAtextextent("h", font2, style2, size2, space2, scriptsize, 
                     &fx0, &fy0, &fx1, &fy1, TRUE);
-      x1 = (int ) (cs * (fx1 - fx0));
-      y1 = (int ) (si * (fx1 - fx0));
+      x1 = (int) (cs * (fx1 - fx0));
+      y1 = (int) (si * (fx1 - fx0));
       GRAmoverel(GC, -x1, y1);
       ptr++;
       break;
@@ -2158,22 +2166,27 @@ GRAdrawtext(int GC, char *s, char *font, int style,
 	space3 = space2;
       }
       height = size2;
-      size2 = (int ) (size2 * 1e-4 * scriptsize);
-      space2 = (int ) (space2 * 1e-4 * scriptsize);
+      size2 = (int) (size2 * 1e-4 * scriptsize);
+      space2 = (int) (space2 * 1e-4 * scriptsize);
       if (ptr[0] == '^') {
-	x = (int )(-si * (height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
-	y = (int )(-cs * (height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
+	x = (int) (-si * (height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
+	y = (int) (-cs * (height * 0.8 - size2 * 5e-5 * scriptsize) * 25.4 / 72.0);
 	GRAmoverel(GC, x, y);
 	scmovex += x;
 	scmovey += y;
 	scriptf = 1;
       } else {
-	x = (int )(si * size2 * 5e-5 * scriptsize * 25.4 / 72.0);
-	y = (int )(cs * size2 * 5e-5 * scriptsize * 25.4 / 72.0);
+	x = (int) (si * size2 * 5e-5 * scriptsize * 25.4 / 72.0);
+	y = (int) (cs * size2 * 5e-5 * scriptsize * 25.4 / 72.0);
 	GRAmoverel(GC, x, y);
 	scmovex += x;
 	scmovey += y;
 	scriptf = 2;
+	if (scdist_max < scmovex * si + scmovey * cs) {
+	  scdist_max = scmovex * si + scmovey * cs;
+	  scx_max = scmovex;
+	  scy_max = scmovey;
+	}
       }
       ptr++;
       break;
@@ -2221,12 +2234,12 @@ GRAdrawtext(int GC, char *s, char *font, int style,
               break;
             case 'X':
               val=strtol(tok, &endptr, 10);
-              if (endptr[0]=='\0') GRAmoverel(GC, (int )(val * 100 * 25.4 / 72.0), 0);
+              if (endptr[0]=='\0') GRAmoverel(GC, (int) (val * 100 * 25.4 / 72.0), 0);
               g_free(tok);
               break;
             case 'Y':
               val=strtol(tok, &endptr, 10);
-              if (endptr[0]=='\0') GRAmoverel(GC, 0, (int )(val * 100 * 25.4 / 72.0));
+              if (endptr[0]=='\0') GRAmoverel(GC, 0, (int) (val * 100 * 25.4 / 72.0));
               g_free(tok);
               break;
             }
@@ -2287,7 +2300,7 @@ GRAtextextent(char *s, char *font, int style,
 {
   gchar *c, *tok;
   GString *str;
-  int w, h, d, len, scmovey, scriptf;
+  int w, h, d, len, scmovey, scriptf, scy_max;
   char *endptr;
   char *font2;
   int size2, space2, style2;
@@ -2324,6 +2337,7 @@ GRAtextextent(char *s, char *font, int style,
   space3 = space;
   scriptf = 0;
   scmovey = 0;
+  scy_max = 0;
 
   len = strlen(c);
 
@@ -2423,7 +2437,9 @@ GRAtextextent(char *s, char *font, int style,
         size2 = size3;
         space2 = space3;
       }
+      y0 += scy_max;
       scmovey = 0;
+      scy_max = 0;
       if (! raw && alignlen) {
         for (k = j + 1; (k < len) && (c[k] != '\n') && (c[k] != '\r'); k++);
         ch = c[k];
@@ -2469,6 +2485,9 @@ GRAtextextent(char *s, char *font, int style,
 	y0 += y;
 	scmovey += y;
 	scriptf = 2;
+	if (scy_max < scmovey) {
+	  scy_max = scmovey;
+	}
       }
       j++;
       break;

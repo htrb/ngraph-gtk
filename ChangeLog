@@ -1,3 +1,8 @@
+2010-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAdrawtext, GRAtextextent): consider subscript
+	 strings for the calculation of new line position.
+
 2010-08-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAdrawtext, GRAtextextent): use "case" instead of
@@ -43,7 +48,7 @@
 	* src/math/math_basic_function.c (MATH_FUNCTION_MEMORY_NUM):
 	added.
 	(init_memory): added.
-	(math_func_rm, math_func_m, math_func_for): use staic variable
+	(math_func_rm, math_func_m, math_func_for): use static variable
 	"Memory".
 
 	* src/math/math_equation.c (math_equation_clear): don't initialize
@@ -56,8 +61,8 @@
 	"Menulocal.char_map".
 
 	* src/gtk/ox11menu.c (MenuConfig): use "character_map" instead of
-	"greece_charactor", "mathematics_charactor", "physics_charactor"
-	and "misc_charactor".
+	"greece_character", "mathematics_character", "physics_character"
+	and "misc_character".
 	(save_char_map_config, menu_config_set_char_map): added.
 	(menu_save_config_sub, mgtkloadconfig): add case for
 	"MENU_CONFIG_TYPE_CHARMAP".
@@ -87,7 +92,7 @@
 	(create_font_map): add 3rd argument "alternative".
 	(gra2cairo_save_config): save alternative fonts.
 	(loadconfig): load alternative fonts.
-	(gra2cairo_add_fontmap): dont duplicate font names.
+	(gra2cairo_add_fontmap): don't duplicate font names.
 	(gra2cairo_set_alternative_font): added.
 	(loadfont): use alternative fonts.
 
