@@ -26,7 +26,7 @@
 	* src/gtk/gtk_liststore.c (list_store_set_align): added.
 
 	* src/gtk/x11axis.c (axis_list_set_val): use "%g" instead of
-	"%.2e" for format string of the function "printf()".
+	"%.2e" for format string of the function "snprintf()".
 	(CmAxisWindow): call "list_store_set_align()" for columns
 	AXIS_WIN_COL_MIN, AXIS_WIN_COL_MAX and. AXIS_WIN_COL_INC.
 

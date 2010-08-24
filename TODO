@@ -1,3 +1,5 @@
+* support alpha component of color
+
 * fit 設定の保存時にグラフ更新フラグがセットされてしまう不具合の修正。
 
 * コードの整理
