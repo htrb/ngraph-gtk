@@ -1,3 +1,11 @@
+2010-08-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (gra2cairo_output): now 7th argument of "C"
+	command means not only fill method but stroke.
+
+	* src/oarc.c (get_pos): removed
+	(arcdraw): use 7th argument of "C" command to draw stroke.
+
 2010-08-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAdrawtext, GRAtextextent): consider subscript

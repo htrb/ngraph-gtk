@@ -97,11 +97,18 @@ X座標増加方向は右, Y座標増加方向は下です。
  <tr><td>I</td><td>初期化命令</td><td>I,5,arg1,arg2,arg3,arg4,arg5</td></tr>
 </table>
 <p>
-arg1 左マージン<br>
-arg2 上マージン<br>
-arg3 出力用紙幅<br>
-arg4 出力用紙高<br>
-arg5 拡大率(0.01%単位)<br>
+<dl>
+ <dt> arg1
+ <dd> 左マージン
+ <dt> arg2
+ <dd> 上マージン
+ <dt> arg3
+ <dd> 出力用紙幅
+ <dt> arg4
+ <dd> 出力用紙高
+ <dt> arg5
+ <dd> 拡大率(0.01%単位)
+</dl>
 </p>
 <ul>
  <li>出力デバイスの初期化を行う。1回の描画で初めに一度だけ呼ばれる。<br>
@@ -128,11 +135,22 @@ arg5 拡大率(0.01%単位)<br>
  <tr><td>V</td><td>クリッピング領域, 原点移動命令</td><td>V,5,arg1,arg2,arg3,arg4,arg5</td></tr>
 </table>
 <p>
-arg1 左上X座標, 新しいX座標原点<br>
-arg2 左上Y座標, 新しいY座標原点<br>
-arg3 右下X座標<br>
-arg4 右下Y座標<br>
-arg5 0:クリッピングオフ   1:クリッピングオン<br>
+<dl>
+ <dt> arg1
+ <dd> 左上X座標, 新しいX座標原点
+ <dt> arg2
+ <dd> 左上Y座標, 新しいY座標原点
+ <dt> arg3
+ <dd> 右下X座標
+ <dt> arg4
+ <dd> 右下Y座標
+ <dt> arg5
+ <dd> 
+      <ul>
+       <li> 0:クリッピングオフ
+       <li> 1:クリッピングオン
+      </ul>
+</dl>
 </p>
 <ul>
  <li>この命令以降, V命令を除くすべての命令は原点をクリッピング領域左上としたものになる。
@@ -146,12 +164,30 @@ arg5 0:クリッピングオフ   1:クリッピングオン<br>
 </table>
 <p>
 n: 点線要素の数+5<br>
-arg1 0:実線   >1:点線要素の数<br>
-arg2 線幅<br>
-arg3 線端形状   0:Butt   1:Round    2:Projecting<br>
-arg4 線交差形状   0:Miter   1:Round   2:Bevel<br>
-arg5 Miter limit<br>
-arg(i)-arg(i+5) i=1-arg1 点線要素<br>
+<dl>
+ <dt> arg1
+ <dd> 0:実線   >1:点線要素の数
+ <dt> arg2
+ <dd> 線幅
+ <dt> arg3
+ <dd> 線端形状
+      <ul>
+       <li> 0:Butt
+       <li> 1:Round
+       <li> 2:Projecting
+      </ul>
+ <dt> arg4
+ <dd> 線交差形状
+<ul>
+ <li> 0:Miter
+ <li> 1:Round
+ <li> 2:Bevel 
+</ul>
+ <dt> arg5
+ <dd> Miter limit
+ <dt> arg(i) - arg(i + 5) i = 1 - arg1
+ <dd> 点線要素
+</dl>
 </p>
 <br>
 <table border=1>
@@ -159,9 +195,14 @@ arg(i)-arg(i+5) i=1-arg1 点線要素<br>
  <tr><td>G</td><td>カラー指定命令</td><td>G,3,arg1,arg2,arg3 </td></tr>
 </table>
 <p>
-arg1 R(8bit)<br>
-arg2 G(8bit)<br>
-arg3 B(8bit)<br>
+<dl>
+ <dt> arg1
+ <dd> R(8bit)
+ <dt> arg2
+ <dd> G(8bit)
+ <dt> arg3
+ <dd> B(8bit)
+</dl>
 </p>
 <br>
 <table border=1>
@@ -169,8 +210,12 @@ arg3 B(8bit)<br>
  <tr><td>M</td><td>カレントポイント移動命令</td><td>M,2,arg1,arg2 </td></tr>
 </table>
 <p>
-arg1 X座標<br>
-arg2 Y座標<br>
+<dl>
+ <dt> arg1
+ <dd> X座標
+ <dt> arg2
+ <dd> Y座標
+</dl>
 </p>
 <br>
 <table border=1>
@@ -178,8 +223,12 @@ arg2 Y座標<br>
  <tr><td>N</td><td>カレントポイント相対移動命令</td><td>N,2,arg1,arg2 </td></tr>
 </table>
 <p>
-arg1 X方向移動量<br>
-arg2 Y方向移動量<br>
+<dl>
+ <dt> arg1
+ <dd> X方向移動量
+ <dt> arg2
+ <dd> Y方向移動量
+</dl>
 </p>
 <br>
 <table border=1>
@@ -187,10 +236,16 @@ arg2 Y方向移動量<br>
  <tr><td>L</td><td>線描画命令</td><td>L,4,arg1,arg2,arg3,arg4 </td></tr>
 </table>
 <p>
-arg1 始点X座標<br>
-arg2 始点Y座標<br>
-arg3 終点X座標<br>
-arg4 終点Y座標<br>
+<dl>
+ <dt> arg1
+ <dd> 始点X座標
+ <dt> arg2
+ <dd> 始点Y座標
+ <dt> arg3
+ <dd> 終点X座標
+ <dt> arg4
+ <dd> 終点Y座標
+</dl>
 </p>
 <br>
 <table border=1>
@@ -198,8 +253,12 @@ arg4 終点Y座標<br>
  <tr><td>T</td><td>カレントポイント相対・線描画命令</td><td>T,2,arg1,arg2 </td></tr>
 </table>
 <p>
-arg1 終点X座標, 新しいカレントポイントX座標<br>
-arg2 終点Y座標, 新しいカレントポイントY座標<br>
+<dl>
+ <dt> arg1
+ <dd> 終点X座標, 新しいカレントポイントX座標
+ <dt> arg2
+ <dd> 終点Y座標, 新しいカレントポイントY座標
+</dl>
 </p>
 <ul>
  <li>本命令実行後, カレントポイントは終点に移動する。
@@ -210,15 +269,30 @@ arg2 終点Y座標, 新しいカレントポイントY座標<br>
  <tr><td>C</td><td>楕円描画命令</td><td>C,7,arg1,arg2,arg3,arg4,arg5,arg6,arg7 </td></tr>
 </table>
 <p>
-arg1 中心のX座標<br>
-arg2 中心のY座標<br>
-arg3 X方向半径<br>
-arg4 Y方向半径<br>
-arg5 楕円弧開始角度, 0.01度単位(0-36000)<br>
-arg6 楕円弧角度, 0.01度単位(0-36000)<br>
-arg7 	0:円の輪郭（内部は塗りつぶさない）
-1:扇形内部を塗りつぶす
-2:円弧内部を塗りつぶす<br>
+<dl>
+ <dt> arg1
+ <dd> 中心のX座標
+ <dt> arg2 
+ <dd> 中心のY座標
+ <dt> arg3 
+ <dd> X方向半径
+ <dt> arg4
+ <dd> Y方向半径
+ <dt> arg5 
+ <dd> 楕円弧開始角度, 0.01度単位(0-36000)
+ <dt> arg6
+ <dd> 楕円弧開始角度, 0.01度単位(0-36000)
+ <dt> arg7
+ <dd> 
+      <ul>
+       <li> 0:円の輪郭（内部は塗りつぶさない）
+       <li> 1:扇形内部を塗りつぶす
+       <li> 2:円弧内部を塗りつぶす
+       <li> 3:扇形に輪郭を描画
+       <li> 4:弓形に輪郭を描画
+      </ul>
+
+</dl>
 </p>
 <ul>
  <li>arg5から開始してarg6の角度だけ反時計回りに楕円弧を描く。
@@ -230,11 +304,23 @@ arg7 	0:円の輪郭（内部は塗りつぶさない）
  <tr><td>B</td><td>四角形描画命令</td><td>B,5,arg1,arg2,arg3,arg4,arg5 </td></tr>
 </table>
 <p>
-arg1 X座標<br>
-arg2 Y座標<br>
-arg3 対角のX座標<br>
-arg4 対角のY座標<br>
-arg5 0:四角形の輪郭（内部は塗りつぶさない）1:内部を塗りつぶす<br>
+<dl>
+ <dt> arg1
+ <dd> X座標
+ <dt> arg2
+ <dd> Y座標
+ <dt> arg3
+ <dd> 対角のX座標
+ <dt> arg4
+ <dd> 対角のY座標
+ <dt> arg5
+ <dd> 
+<ul>
+ <li> 0:四角形の輪郭（内部は塗りつぶさない）
+ <li> 1:内部を塗りつぶす
+</ul>
+
+</dl>
 </p>
 <br>
 <table border=1>
@@ -242,8 +328,12 @@ arg5 0:四角形の輪郭（内部は塗りつぶさない）1:内部を塗り�
  <tr><td>P</td><td>点描画命令</td><td>P,2,arg1,arg2 </td></tr>
 </table>
 <p>
-arg1 X座標<br>
-arg2 Y座標<br>
+<dl>
+ <dt> arg1
+ <dd> X座標
+ <dt> arg2
+ <dd> Y座標
+</dl>
 </p>
 <br>
 <table border=1>
@@ -252,9 +342,14 @@ arg2 Y座標<br>
 </table>
 <p>
 n  座標点の数*2+1<br>
-arg1 座標点の数<br>
-arg(i*2+0) i=1-arg1 X座標<br>
-arg(i*2+1) i=1-arg1 Y座標<br>
+<dl>
+ <dt> arg1
+ <dd> 座標点の数
+ <dt> arg(i * 2 + 0) i = 1 - arg1
+ <dd> X座標
+ <dt> arg(i * 2 + 1) i = 1 - arg1
+ <dd> Y座標
+</dl>
 </p>
 <br>
 <table border=1>
@@ -263,12 +358,21 @@ arg(i*2+1) i=1-arg1 Y座標<br>
 </table>
 <p>
 n  座標点の数*2+2<br>
-arg1 座標点の数<br>
-arg2 	0:多角形の輪郭（内部は塗りつぶさない）
-1:内部を塗りつぶす(EvenOddRule)
-2:内部を塗りつぶす(WindingRule)<br>
-arg(i*2+1) i=1-arg1 X座標<br>
-arg(i*2+2) i=1-arg1 Y座標<br>
+<dl>
+ <dt> arg1
+ <dd> 座標点の数
+ <dt> arg2
+ <dd> 
+      <ul>
+       <li> 0:多角形の輪郭（内部は塗りつぶさない）
+       <li> 1:内部を塗りつぶす(EvenOddRule)
+       <li> 2:内部を塗りつぶす(WindingRule)
+      </ul>
+ <dt> arg(i * 2 + 1) i = 1 - arg1
+ <dd> X座標
+ <dt> arg(i * 2 + 2) i = 1 - arg1
+ <dd> Y座標
+</dl>
 </p>
 <br>
 <table border=1>
@@ -287,10 +391,16 @@ arg(i*2+2) i=1-arg1 Y座標<br>
  <tr><td>H</td><td>フォントメトリック指定命令</td><td>H,4,arg1,arg2,arg3,arg4 </td></tr>
 </table>
 <p>
-arg1 文字のポイントサイズ, 0.01pt単位（1pt=1/72inch）<br>
-arg2 文字スペーシング・ポイント量, 0.01pt単位<br>
-arg3 描画方向, X軸から反時計回りに0.01度単位<br>
-arg4 スタイル, 1: bold, 2:italic の論理和<br>
+<dl>
+ <dt> arg1
+ <dd> 文字のポイントサイズ, 0.01pt単位（1pt=1/72inch）
+ <dt> arg2
+ <dd> 文字スペーシング・ポイント量, 0.01pt単位
+ <dt> arg3
+ <dd> 描画方向, X軸から反時計回りに0.01度単位
+ <dt> arg4
+ <dd> スタイル, 1: bold, 2:italic の和
+</dl>
 </p>
 <ul>
  <li>文字は全てスケーラブルでなければなりません。

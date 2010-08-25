@@ -77,13 +77,6 @@ arcdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   return 0;
 }
 
-static void
-get_pos(int angle1, int x, int y, int rx, int ry, int *x1, int *y1)
-{
-  *x1 = x + rx * cos(-angle1 * MPI / 18000);
-  *y1 = y + ry * sin(-angle1 * MPI / 18000);
-}
-
 static int 
 arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
@@ -130,34 +123,15 @@ arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (ifill) {
     GRAcolor(GC,br,bg,bb);
-    if (pieslice) {
-      GRAcircle(GC,x,y,rx,ry,angle1,angle2,1);
-    } else {
-      GRAcircle(GC,x,y,rx,ry,angle1,angle2,2);
-    }
+    GRAcircle(GC, x, y, rx, ry, angle1, angle2,
+	      (pieslice) ? 1 : 2);
   }
 
   if (stroke) {
     GRAcolor(GC,fr,fg,fb);
     GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
-    GRAcircle(GC,x,y,rx,ry,angle1,angle2,0);
-    if (close_path) {
-      int x1, y1;
-
-      get_pos(angle1 + 100, x, y, rx, ry, &x1, &y1);
-      GRAmoveto(GC, x1, y1);
-
-      get_pos(angle1, x, y, rx, ry, &x1, &y1);
-      GRAlineto(GC, x1, y1);
-      if (pieslice) {
-	GRAlineto(GC, x, y);
-      }
-      get_pos(angle1 + angle2, x, y, rx, ry, &x1, &y1);
-      GRAlineto(GC, x1, y1);
-
-      get_pos(angle1 + angle2 - 100, x, y, rx, ry, &x1, &y1);
-      GRAlineto(GC, x1, y1);
-    }
+    GRAcircle(GC, x, y, rx, ry, angle1, angle2,
+	      (close_path) ? ((pieslice) ? 3 : 4) : 0);
   }
 
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);

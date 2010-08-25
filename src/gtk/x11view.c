@@ -4632,7 +4632,7 @@ ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data)
       return ViewerEvLButtonDown(e->state, &point, d);
     } else {
       return ViewerEvLButtonDblClk(e->state, &point, d);
-   }
+    }
     break;
   case Button2:
     return ViewerEvMButtonDown(e->state, &point, d);

@@ -1078,14 +1078,23 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     cairo_scale(local->cairo, w, h);
     cairo_arc_negative(local->cairo, 0., 0., 1., -a1, -a2);
     cairo_restore (local->cairo);
-    if (cpar[7] == 0) {
-      cairo_stroke(local->cairo);
-    } else {
-      if (cpar[7] == 1) {
-	cairo_line_to(local->cairo, x + w, y + h);
-      }
+    switch (cpar[7]) {
+    case 1:
+      cairo_line_to(local->cairo, x + w, y + h);
+      /* fall through */
+    case 2:
       cairo_close_path(local->cairo);
       cairo_fill(local->cairo);
+      break;
+    case 3:
+      cairo_line_to(local->cairo, x + w, y + h);
+      /* fall through */
+    case 4:
+      cairo_close_path(local->cairo);
+      cairo_stroke(local->cairo);
+      break;
+    default:
+      cairo_stroke(local->cairo);
     }
     break;
   case 'B':
