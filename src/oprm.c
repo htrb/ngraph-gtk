@@ -160,7 +160,7 @@ remarkconv(char *str,int ff,int fj,int fb,int *fnameid,char *prmfile)
 /* %C is ignored
    %F ---> %F{}
    %d ---> %{system:0:date:1}
-   %01C0101 ---> %{file:file:column:01 01}
+   %01C0101 ---> %{file:01:column:01 01}
 */
 {
   int i,j,fchange[2],jchange[2],script,fff[2],ffj[2],ffb[2];
