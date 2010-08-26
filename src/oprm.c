@@ -149,7 +149,6 @@ addfontcontrol(char *s,int *po,int *fchange,int *jchange,
     fchange[script]=FALSE;
   }
   if (jchange[script]) {
-    //    j+=sprintf(s+j,"%%J{%s}",jfontchar[ffj[script]]);
     jchange[script]=FALSE;
   }
   *po=j;
@@ -1155,7 +1154,7 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         else intp=1;
         putobj(pobj,"interpolation",cid,&intp);
         d10=PATH_TYPE_CURVE;
-        putobj(pobj,"type",pid,&d10);
+        putobj(pobj,"type",cid,&d10);
         cmobj=pobj;
         cmid=cid;
       } else if  (d3>=26) {
@@ -1517,9 +1516,6 @@ prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
         goto errexit;
       strcpy(s,fontchar[fff[3+i]+ffb[3+i]]);
       putobj(aobj,"num_font",aid,s);
-      //      if ((s=g_malloc(strlen(jfontchar[ffj[3+i]])+1))==NULL) goto errexit;
-      //      strcpy(s,jfontchar[ffj[3+i]]);
-      putobj(aobj,"num_jfont",aid,s);
       putobj(aobj,"num_pt",aid,&(ffs[3+i]));
       putobj(aobj,"num_space",aid,&(ffp[3+i]));
       putobj(aobj,"num_R",aid,&(ffR[3+i]));
