@@ -1,3 +1,16 @@
+2010-08-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oprm.c (prmload): don't use the field "num_jfont".
+	(prmload): id of path object is not "pid" but "cid" when the type
+	of the instance is "PATH_TYPE_CURVE".
+
+	* src/gra.c (GRAcolor): add argument "alpha".
+	(GRAC): add member "alpha".
+	(GRAdraw): check "GRAClist[GC].alpha".
+
+	* src/gtk/ogra2cairo.c (gra2cairo_output): use
+	"cairo_set_source_rgba()" when teh value "alpha" is less than 255.
+
 2010-08-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.c (gra2cairo_output): now 7th argument of "C"

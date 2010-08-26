@@ -70,6 +70,7 @@ struct GRAC {
 
   int colorf;
   int fr,fg,fb;
+  int alpha;
 
   int textf;
   char *textfont;
@@ -98,11 +99,11 @@ struct GRAC {
 };
 
 #define GRAC_INIT_VAL {FALSE, FALSE, NULL, NULL, NULL, NULL,		\
-      -1, -1, -1, -1, NULL, NULL, NULL,				\
+      -1, -1, -1, -1, NULL, NULL, NULL,					\
       FALSE, 0, 0, SHRT_MAX, SHRT_MAX, 1, 0, 0, SHRT_MAX, SHRT_MAX,	\
       0, 0, 1,								\
       FALSE, 0, NULL, 1, 0, 0, 0,					\
-      FALSE, 0, 0, 0, 							\
+      FALSE, 0, 0, 0, 255,						\
       FALSE, NULL, 0, 0, 0, GRA_FONT_STYLE_NORMAL,			\
       0, 0, 10000, 0, 0, 0, 0, 						\
       0, 0, 0, TRUE, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0,		\
@@ -491,7 +492,7 @@ GRAdraw(int GC,char code,int *cpar,char *cstr)
 {
   char *argv[7];
   double zoom;
-  int i, zoomf, style;
+  int i, zoomf, style, alpha;
 
   if (GC<0) return ERRILGC;
   if (GC>=GRAClimit) return ERRILGC;
@@ -548,13 +549,19 @@ GRAdraw(int GC,char code,int *cpar,char *cstr)
     }
     break;
   case 'G':
-    if (GRAClist[GC].colorf
-    && (cpar[1]==GRAClist[GC].fr) && (cpar[2]==GRAClist[GC].fg)
-    && (cpar[3]==GRAClist[GC].fb)) return 0;
-    GRAClist[GC].colorf=TRUE;
-    GRAClist[GC].fr=cpar[1];
-    GRAClist[GC].fg=cpar[2];
-    GRAClist[GC].fb=cpar[3];
+    alpha = (cpar[0] > 3) ? cpar[4] : 255;
+    if (GRAClist[GC].colorf &&
+	cpar[1] == GRAClist[GC].fr &&
+	cpar[2] == GRAClist[GC].fg &&
+	cpar[3] == GRAClist[GC].fb &&
+	alpha   == GRAClist[GC].alpha) {
+      return 0;
+    }
+    GRAClist[GC].colorf = TRUE;
+    GRAClist[GC].fr = cpar[1];
+    GRAClist[GC].fg = cpar[2];
+    GRAClist[GC].fb = cpar[3];
+    GRAClist[GC].alpha = alpha;
     break;
   case 'F':
     if ((GRAClist[GC].textfont!=NULL)
@@ -820,23 +827,38 @@ GRAlinestyle(int GC,int num,int *type,int width,int cap,int join,
 }
 
 void 
-GRAcolor(int GC,int fr,int fg,int fb)
+GRAcolor(int GC, int fr, int fg, int fb, int alpha)
 {
   char code;
-  int cpar[4];
+  int cpar[5];
 
-  if (fr>255) fr=255;
-  if (fr<0) fr=0;
-  if (fg>255) fg=255;
-  if (fg<0) fg=0;
-  if (fb>255) fb=255;
-  if (fb<0) fb=0;
-  code='G';
-  cpar[0]=3;
-  cpar[1]=fr;
-  cpar[2]=fg;
-  cpar[3]=fb;
-  GRAdraw(GC,code,cpar,NULL);
+  if (fr > 255) {
+    fr = 255;
+  } else if (fr < 0) {
+    fr = 0;
+  }
+  if (fg > 255) {
+    fg = 255;
+  } else if (fg < 0) {
+    fg = 0;
+  }
+  if (fb > 255) {
+    fb = 255;
+  } else if (fb < 0) {
+    fb = 0;
+  }
+  if (alpha > 255) {
+    alpha = 255;
+  } else if (alpha < 0) {
+    alpha = 0;
+  }
+  code = 'G';
+  cpar[0] = 4;
+  cpar[1] = fr;
+  cpar[2] = fg;
+  cpar[3] = fb;
+  cpar[4] = alpha;
+  GRAdraw(GC, code, cpar, NULL);
 }
 
 void 
@@ -1051,21 +1073,21 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       type2=type-0;
       r=size/2;
       if (type2==0) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAcircle(GC,x0,y0,r,r,0,36000,1);
       } else if (type2==2) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAcircle(GC,x0,y0,r,r,0,36000,0);
       } else if (type2==5) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAcircle(GC,x0,y0,r,r,0,36000,1);
         r/=2;
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAcircle(GC,x0,y0,r,r,0,36000,1);
       } else {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAcircle(GC,x0,y0,r,r,0,36000,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAcircle(GC,x0,y0,r,r,0,36000,0);
         if (type2==3) {
           r/=2;
@@ -1094,24 +1116,24 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       x2=x0+size/2;
       y2=y0+size/2;
       if (type2==0) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRArectangle(GC,x1,y1,x2,y2,1);
       } else if (type2==2) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRArectangle(GC,x1,y1,x2,y2,0);
       } else if (type2==5) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRArectangle(GC,x1,y1,x2,y2,1);
         x1=x0-size/4;
         y1=y0-size/4;
         x2=x0+size/4;
         y2=y0+size/4;
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRArectangle(GC,x1,y1,x2,y2,1);
       } else {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRArectangle(GC,x1,y1,x2,y2,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRArectangle(GC,x1,y1,x2,y2,0);
         if (type2==3) {
           x1=x0-size/4;
@@ -1156,25 +1178,25 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       po[8]=x0;
       po[9]=y0-size/2;
       if (type2==0) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,5,po,1);
       } else if (type2==2) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,5,po,0);
       } else if (type2==5) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,5,po,1);
         po[1]=y0-size/4;
         po[2]=x0+size/4;
         po[5]=y0+size/4;
         po[6]=x0-size/4;
         po[9]=y0-size/4;
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,5,po,1);
       } else {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,5,po,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,5,po,0);
         if (type2==3) {
           po[1]=y0-size/4;
@@ -1234,13 +1256,13 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       po[6]=x0;
       po[7]=y0-sgn*size/2;
       if (type2==0) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,1);
       } else if (type2==2) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,0);
       } else if (type2==5) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,1);
         po[1]=y0-sgn*size/d/2;
         po[2]=x0+size/4;
@@ -1248,12 +1270,12 @@ GRAmark(int GC,int type,int x0,int y0,int size,
         po[4]=x0-size/4;
         po[5]=y0+sgn*size/d/4;
         po[7]=y0-sgn*size/d/2;
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po,1);
       } else {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,0);
         if (type2==3) {
           po[1]=y0-sgn*size/d/2;
@@ -1303,13 +1325,13 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       po[6]=x0-sgn*size/2;
       po[7]=y0;
       if (type2==0) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,1);
       } else if (type2==2) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,0);
       } else if (type2==5) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,1);
         po[0]=x0-sgn*size/d/2;
         po[2]=x0+sgn*size/d/4;
@@ -1317,12 +1339,12 @@ GRAmark(int GC,int type,int x0,int y0,int size,
         po[4]=x0+sgn*size/d/4;
         po[5]=y0-size/4;
         po[6]=x0-sgn*size/d/2;
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po,1);
       } else {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,0);
         if (type2==3) {
           po[0]=x0-sgn*size/d/2;
@@ -1369,27 +1391,27 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       po2[6]=x0;
       po2[7]=y0;
       if (type==38) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,1);
         GRAdrawpoly(GC,4,po2,1);
       } else if (type==39) {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po,1);
         GRAdrawpoly(GC,4,po2,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,0);
         GRAdrawpoly(GC,4,po2,0);
       } else if (type==48) {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po2,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,1);
         GRAdrawpoly(GC,4,po,0);
         GRAdrawpoly(GC,4,po2,0);
       } else if (type==49) {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po2,1);
         GRAdrawpoly(GC,4,po,0);
         GRAdrawpoly(GC,4,po2,0);
@@ -1413,103 +1435,103 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       po2[6]=x0;
       po2[7]=y0;
       if (type==58) {
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,1);
         GRAdrawpoly(GC,4,po2,1);
       } else if (type==59) {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po,1);
         GRAdrawpoly(GC,4,po2,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,0);
         GRAdrawpoly(GC,4,po2,0);
       } else if (type==68) {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po2,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po,1);
         GRAdrawpoly(GC,4,po,0);
         GRAdrawpoly(GC,4,po2,0);
       } else if (type==69) {
-        GRAcolor(GC,br,bg,bb);
+        GRAcolor(GC,br,bg,bb, 255);
         GRAdrawpoly(GC,4,po,1);
-        GRAcolor(GC,fr,fg,fb);
+        GRAcolor(GC,fr,fg,fb, 255);
         GRAdrawpoly(GC,4,po2,1);
         GRAdrawpoly(GC,4,po,0);
         GRAdrawpoly(GC,4,po2,0);
       }
       break;
     case 70:
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0-size/2,y0,x0+size/2,y0);      
       GRAline(GC,x0,y0-size/2,x0,y0+size/2);      
       break;
     case 71:
       d=sqrt(2.0);
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0-size/d/2,y0-size/d/2,x0+size/d/2,y0+size/d/2);      
       GRAline(GC,x0+size/d/2,y0-size/d/2,x0-size/d/2,y0+size/d/2);      
       break;
     case 72:
       d=sqrt(3.0);
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0,y0+size/2,x0,y0-size/2);
       GRAline(GC,x0+size*d/4,y0-size/4,x0-size*d/4,y0+size/4);      
       GRAline(GC,x0-size*d/4,y0-size/4,x0+size*d/4,y0+size/4);      
       break;
     case 73:
       d=sqrt(3.0);
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0+size/2,y0,x0-size/2,y0);      
       GRAline(GC,x0-size/4,y0+size*d/4,x0+size/4,y0-size*d/4);      
       GRAline(GC,x0-size/4,y0-size*d/4,x0+size/4,y0+size*d/4);      
       break;
     case 74:
       d=sqrt(3.0);
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0,y0,x0,y0-size/2);      
       GRAline(GC,x0,y0,x0-size*d/4,y0+size/4);      
       GRAline(GC,x0,y0,x0+size*d/4,y0+size/4);      
       break;
     case 75:
       d=sqrt(3.0);
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0,y0,x0,y0+size/2);      
       GRAline(GC,x0,y0,x0-size*d/4,y0-size/4);      
       GRAline(GC,x0,y0,x0+size*d/4,y0-size/4);      
       break;
     case 76:
       d=sqrt(3.0);
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0,y0,x0-size/2,y0);      
       GRAline(GC,x0,y0,x0+size/4,y0-size*d/4);      
       GRAline(GC,x0,y0,x0+size/4,y0+size*d/4);      
       break;
     case 77:
       d=sqrt(3.0);
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0,y0,x0+size/2,y0);      
       GRAline(GC,x0,y0,x0-size/4,y0-size*d/4);      
       GRAline(GC,x0,y0,x0-size/4,y0+size*d/4);      
       break;
     case 78:
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0-size/2,y0,x0+size/2,y0);      
       break;
     case 79:
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAline(GC,x0,y0-size/2,x0,y0+size/2);      
       break;
     case 80:
       r=size/2;
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAcircle(GC,x0,y0,r,r,0,36000,0);
       r/=2;
       GRAcircle(GC,x0,y0,r,r,0,36000,0);
       break;
     case 81:
       r=size/2;
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAcircle(GC,x0,y0,r,r,0,36000,0);
       GRAline(GC,x0-size/2,y0,x0+size/2,y0);
       GRAline(GC,x0,y0-size/2,x0,y0+size/2);
@@ -1517,7 +1539,7 @@ GRAmark(int GC,int type,int x0,int y0,int size,
     case 82:
       r=size/2;
       d=sqrt(2.0);
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAcircle(GC,x0,y0,r,r,0,36000,0);
       GRAline(GC,x0-size/d/2,y0-size/d/2,x0+size/d/2,y0+size/d/2);
       GRAline(GC,x0-size/d/2,y0+size/d/2,x0+size/d/2,y0-size/d/2);
@@ -1527,7 +1549,7 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       y1=y0-size/2;
       x2=x0+size/2;
       y2=y0+size/2;
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRArectangle(GC,x1,y1,x2,y2,0);
       x1=x0-size/4;
       y1=y0-size/4;
@@ -1540,7 +1562,7 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       y1=y0-size/2;
       x2=x0+size/2;
       y2=y0+size/2;
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRArectangle(GC,x1,y1,x2,y2,0);
       GRAline(GC,x0-size/2,y0,x0+size/2,y0);
       GRAline(GC,x0,y0-size/2,x0,y0+size/2);
@@ -1550,7 +1572,7 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       y1=y0-size/2;
       x2=x0+size/2;
       y2=y0+size/2;
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRArectangle(GC,x1,y1,x2,y2,0);
       GRAline(GC,x0-size/2,y0-size/2,x0+size/2,y0+size/2);      
       GRAline(GC,x0+size/2,y0-size/2,x0-size/2,y0+size/2);      
@@ -1566,7 +1588,7 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       po[7]=y0;
       po[8]=x0;
       po[9]=y0-size/2;
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAdrawpoly(GC,5,po,0);
       po[1]=y0-size/4;
       po[2]=x0+size/4;
@@ -1586,7 +1608,7 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       po[7]=y0;
       po[8]=x0;
       po[9]=y0-size/2;
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAdrawpoly(GC,5,po,0);
       GRAline(GC,x0-size/2,y0,x0+size/2,y0);
       GRAline(GC,x0,y0-size/2,x0,y0+size/2);
@@ -1602,13 +1624,13 @@ GRAmark(int GC,int type,int x0,int y0,int size,
       po[7]=y0;
       po[8]=x0;
       po[9]=y0-size/2;
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAdrawpoly(GC,5,po,0);
       GRAline(GC,x0-size/4,y0-size/4,x0+size/4,y0+size/4);
       GRAline(GC,x0-size/4,y0+size/4,x0+size/4,y0-size/4);
       break;
     default:
-      GRAcolor(GC,fr,fg,fb);
+      GRAcolor(GC,fr,fg,fb, 255);
       GRAputpixel(GC,x0,y0);
       break;
     }
@@ -2627,7 +2649,7 @@ GRAinputdraw(int GC,int leftm,int topm,int rate,
   case 'O': case 'Q': case 'F': case 'S': case 'K':
     break;
   case 'G':
-    if (cpar[0] != 3)
+    if (cpar[0] != 3 && cpar[0] != 4)
       return FALSE;
     break;
   case 'I':

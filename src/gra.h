@@ -115,7 +115,7 @@ void GRAview(int GC,int x1,int y1,int x2,int y2,int clip);
 void GRAwindow(int GC,double minx,double miny,double maxx,double maxy);
 void GRAlinestyle(int GC,int num,int *type,
                   int width,int cap,int join,int miter);
-void GRAcolor(int GC,int fr,int fg,int fb);
+void GRAcolor(int GC, int fr, int fg, int fb, int alpha);
 void GRAmoveto(int GC,int x,int y);
 void GRAline(int GC,int x0,int y0,int x1,int y1);
 void GRAlineto(int GC,int x,int y);

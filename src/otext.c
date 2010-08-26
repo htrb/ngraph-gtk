@@ -173,7 +173,7 @@ textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"style",inst,&style);
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
-  GRAcolor(GC,fr,fg,fb);
+  GRAcolor(GC,fr,fg,fb, 255);
   GRAmoveto(GC,x,y);
   if (raw) {
     GRAdrawtextraw(GC,text,font,style,pt,space,dir);

@@ -2373,7 +2373,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   _getobj(obj, "num_font_style", inst, &font.style);
   _getobj(obj, "num_direction",inst, &ndir);
 
-  GRAcolor(GC, fr, fg, fb);
+  GRAcolor(GC, fr, fg, fb, 255);
 
   headlen = (head) ? strlen(head) : 0;
 
@@ -2527,7 +2527,7 @@ draw_gauge(struct objlist *obj,char *inst, int GC, struct axis_config *aconf)
   snum=arraynum(style);
   sdata=arraydata(style);
 
-  GRAcolor(GC,fr,fg,fb);
+  GRAcolor(GC,fr,fg,fb, 255);
 
   if (getaxispositionini(&alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0) {
     error(obj,ERRMINMAX);
@@ -2808,7 +2808,7 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
-  GRAcolor(GC,fr,fg,fb);
+  GRAcolor(GC,fr,fg,fb, 255);
 
   if (bline) {
     GRAlinestyle(GC,snum,sdata,aconf.width,2,0,1000);

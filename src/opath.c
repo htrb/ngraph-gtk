@@ -493,7 +493,7 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, i
   snum = arraynum(style);
   sdata = arraydata(style);
 
-  GRAcolor(GC, fr, fg, fb);
+  GRAcolor(GC, fr, fg, fb, 255);
   GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
 
   x0 = points2[0];
@@ -555,7 +555,7 @@ draw_fill(struct objlist *obj, char *inst, int GC, int *points2, int num)
   _getobj(obj, "fill_G",    inst, &bg);
   _getobj(obj, "fill_B",    inst, &bb);
 
-  GRAcolor(GC, br, bg, bb);
+  GRAcolor(GC, br, bg, bb, 255);
   GRAdrawpoly(GC, num, points2, fill_rule + 1);
 }
 

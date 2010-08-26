@@ -301,7 +301,7 @@ draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, st
   _getobj(obj, "BR", inst, &br);
   _getobj(obj, "BG", inst, &bg);
   _getobj(obj, "BB", inst, &bb);
-  GRAcolor(GC, br, bg, bb);
+  GRAcolor(GC, br, bg, bb, 255);
 
   r = calc_intersection(ax->x, ax->y, ay->dir,
 			ay->x, ay->y, ax->dir,
@@ -380,7 +380,7 @@ agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   if (ax_prm.amin != ax_prm.amax && ay_prm.amin != ay_prm.amax) {
-    GRAcolor(GC, fr, fg, fb);
+    GRAcolor(GC, fr, fg, fb, 255);
     if (draw_grid_line(obj, GC, &ax_prm, &ax_pos, &ay_pos, &gprm) == 0) {
       draw_grid_line(obj, GC, &ay_prm, &ay_pos, &ax_pos, &gprm);
     }

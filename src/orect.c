@@ -118,12 +118,12 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
 
   if (ifill) {
-    GRAcolor(GC,br,bg,bb);
+    GRAcolor(GC,br,bg,bb, 255);
     GRArectangle(GC,x1,y1,x2,y2,1);
   }
 
   if (stroke) {
-    GRAcolor(GC,fr,fg,fb);
+    GRAcolor(GC,fr,fg,fb, 255);
     GRAlinestyle(GC,snum,sdata,width,0,0,1000);
     GRArectangle(GC,x1,y1,x2,y2,0);
   }

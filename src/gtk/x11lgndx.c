@@ -249,7 +249,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 	     SPLCND2NDDIF, 0, 0);
       spline(spz, spy, spc[3], spc[4], spc[5], spnum, SPLCND2NDDIF,
 	     SPLCND2NDDIF, 0, 0);
-      GRAcolor(GC, 0, 0, 0);
+      GRAcolor(GC, 0, 0, 0, 255);
       GRAcurvefirst(GC, 0, NULL, NULL, NULL,
 		    splinedif, splineint, NULL, spx[0], spy[0]);
       for (j = 0; j < spnum - 1; j++) {

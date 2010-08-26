@@ -3777,7 +3777,7 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
   first=TRUE;
   while (getdata(fp)==0) {
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+    GRAcolor(GC,fp->colr,fp->colg,fp->colb, 255);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
     && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if (first) {
@@ -3856,7 +3856,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
             for (j=0;j<num-1;j++) {
               c[0]=c1[j]; c[1]=c2[j]; c[2]=c3[j];
               c[3]=c4[j]; c[4]=c5[j]; c[5]=c6[j];
-              GRAcolor(GC,r[j],g[j],b[j]);
+              GRAcolor(GC,r[j],g[j],b[j], 255);
               if (!GRAcurve(GC,c,x[j],y[j])) break;
             }
           }
@@ -3896,7 +3896,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       for (j=0;j<num-1;j++) {
         c[0]=c1[j]; c[1]=c2[j]; c[2]=c3[j];
         c[3]=c4[j]; c[4]=c5[j]; c[5]=c6[j];
-        GRAcolor(GC,r[j],g[j],b[j]);
+        GRAcolor(GC,r[j],g[j],b[j], 255);
         if (!GRAcurve(GC,c,x[j],y[j])) break;
       }
     }
@@ -3926,7 +3926,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
                 GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,
                               f2dbsplinedif,bsplineint,fp,c[0],c[4]);
               }
-              GRAcolor(GC,bsr[j],bsg[j],bsb[j]);
+              GRAcolor(GC,bsr[j],bsg[j],bsb[j], 255);
               if (!GRAcurve(GC,c,c[0],c[4])) return -1;
             }
             first=FALSE;
@@ -3947,7 +3947,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           num++;
           bspline(0,bs1+1,c);
           bspline(0,bs2+1,c+4);
-          GRAcolor(GC,bsr[1],bsg[1],bsb[1]);
+          GRAcolor(GC,bsr[1],bsg[1],bsb[1], 255);
           if (!GRAcurve(GC,c,c[0],c[4])) return -1;
         }
       } else {
@@ -3956,7 +3956,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
             for (j=0;j<2;j++) {
               bspline(j+3,bs1+j+2,c);
               bspline(j+3,bs2+j+2,c+4);
-              GRAcolor(GC,bsr[j+2],bsg[j+2],bsb[j+2]);
+              GRAcolor(GC,bsr[j+2],bsg[j+2],bsb[j+2], 255);
               if (!GRAcurve(GC,c,c[0],c[4])) return -1;
             }
           }
@@ -3970,7 +3970,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       for (j=0;j<2;j++) {
         bspline(j+3,bs1+j+2,c);
         bspline(j+3,bs2+j+2,c+4);
-        GRAcolor(GC,bsr[j+2],bsg[j+2],bsb[j+2]);
+        GRAcolor(GC,bsr[j+2],bsg[j+2],bsb[j+2], 255);
         if (!GRAcurve(GC,c,c[0],c[4])) return -1;
       }
     }
@@ -3998,7 +3998,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
             bspline(0,bs2,c+4);
             GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,
                           f2dbsplinedif,bsplineint,fp,c[0],c[4]);
-            GRAcolor(GC,bsr[0],bsg[0],bsb[0]);
+            GRAcolor(GC,bsr[0],bsg[0],bsb[0], 255);
             if (!GRAcurve(GC,c,c[0],c[4])) return -1;
             first=FALSE;
           }
@@ -4018,7 +4018,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           num++;
           bspline(0,bs1,c);
           bspline(0,bs2,c+4);
-          GRAcolor(GC,bsr[0],bsg[0],bsb[0]);
+          GRAcolor(GC,bsr[0],bsg[0],bsb[0], 255);
           if (!GRAcurve(GC,c,c[0],c[4])) return -1;
         }
       } else {
@@ -4032,7 +4032,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
               bsb[4+j]=bsb2[j];
               bspline(0,bs1+j+1,c);
               bspline(0,bs2+j+1,c+4);
-              GRAcolor(GC,bsr[j+1],bsg[j+1],bsb[j+1]);
+              GRAcolor(GC,bsr[j+1],bsg[j+1],bsb[j+1], 255);
               if (!GRAcurve(GC,c,c[0],c[4])) return -1;
             }
           }
@@ -4051,7 +4051,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
         bsb[4+j]=bsb2[j];
         bspline(0,bs1+j+1,c);
         bspline(0,bs2+j+1,c+4);
-        GRAcolor(GC,bsr[j+1],bsg[j+1],bsb[j+1]);
+        GRAcolor(GC,bsr[j+1],bsg[j+1],bsb[j+1], 255);
         if (!GRAcurve(GC,c,c[0],c[4])) return -1;
       }
     }
@@ -4078,7 +4078,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   if (type == PLOT_TYPE_DIAGONAL) GRAlinestyle(GC,snum,style,width,0,0,1000);
   else GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+    GRAcolor(GC,fp->colr,fp->colg,fp->colb, 255);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
      && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
@@ -4125,7 +4125,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
       if (type == PLOT_TYPE_RECTANGLE_FILL || type == PLOT_TYPE_RECTANGLE_SOLID_FILL) {
         if (type == PLOT_TYPE_RECTANGLE_FILL) {
-	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2);
+	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2, 255);
 	}
         x0=fp->dx;
         y0=fp->dy;
@@ -4136,7 +4136,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
           f2dtransf(x1,y1,&gx1,&gy1,fp);
           GRArectangle(GC,gx0,gy0,gx1,gy1,1);
         }
-        if (type == PLOT_TYPE_RECTANGLE_FILL) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+        if (type == PLOT_TYPE_RECTANGLE_FILL) GRAcolor(GC,fp->colr,fp->colg,fp->colb, 255);
       }
       if (type == PLOT_TYPE_RECTANGLE || type == PLOT_TYPE_RECTANGLE_FILL) {
         x0=fp->dx;
@@ -4195,7 +4195,7 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
   GRAlinestyle(GC,snum,style,width,0,0,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+    GRAcolor(GC,fp->colr,fp->colg,fp->colb, 255);
     if (type == PLOT_TYPE_ERRORBAR_X) {
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
        && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
@@ -4269,7 +4269,7 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
   num=0;
   while (getdata(fp)==0) {
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+    GRAcolor(GC,fp->colr,fp->colg,fp->colb, 255);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if (num==0) {
@@ -4369,12 +4369,12 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+    GRAcolor(GC,fp->colr,fp->colg,fp->colb, 255);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if ((type == PLOT_TYPE_BAR_FILL_X) || (type == PLOT_TYPE_BAR_SOLID_FILL_X)) {
         if (type == PLOT_TYPE_BAR_FILL_X) {
-	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2);
+	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2, 255);
 	}
         x0=0;
         y0=fp->dy;
@@ -4393,11 +4393,11 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
           ap[7]=gy0-nround(size*fp->ayvy);
           GRAdrawpoly(GC,4,ap,1);
         }
-        if (type == PLOT_TYPE_BAR_FILL_X) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+        if (type == PLOT_TYPE_BAR_FILL_X) GRAcolor(GC,fp->colr,fp->colg,fp->colb, 255);
       }
       if ((type == PLOT_TYPE_BAR_FILL_Y) || (type == PLOT_TYPE_BAR_SOLID_FILL_Y)) {
         if (type == PLOT_TYPE_BAR_FILL_Y) {
-	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2);
+	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2, 255);
 	}
         x0=fp->dx;
         y0=0;
@@ -4416,7 +4416,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
           ap[7]=gy0-nround(size*fp->axvy);
           GRAdrawpoly(GC,4,ap,1);
         }
-        if (type == PLOT_TYPE_BAR_FILL_Y) GRAcolor(GC,fp->colr,fp->colg,fp->colb);
+        if (type == PLOT_TYPE_BAR_FILL_Y) GRAcolor(GC,fp->colr,fp->colg,fp->colb, 255);
       }
       if ((type == PLOT_TYPE_BAR_X) || (type == PLOT_TYPE_BAR_FILL_X)) {
         x0=0;
@@ -4684,7 +4684,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     return 1;
   }
 
-  GRAcolor(GC,fp->fr,fp->fg,fp->fb);
+  GRAcolor(GC,fp->fr,fp->fg,fp->fb, 255);
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
   num=0;
   count=0;
