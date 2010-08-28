@@ -3789,7 +3789,9 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
         first=FALSE;
         x0=fp->dx;
         y0=fp->dy;
-      } else  GRAdashlinetod(GC,fp->dx,fp->dy);
+      } else {
+	GRAdashlinetod(GC,fp->dx,fp->dy);
+      }
     } else {
       if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
         if (! first && close) GRAdashlinetod(GC,x0,y0);
