@@ -100,13 +100,15 @@ char *intpchar[]={
 static int 
 drawinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int clip,redrawf;
+  int clip,redrawf,alpha;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   clip=TRUE;
   redrawf=TRUE;
+  alpha=255;
   if (_putobj(obj,"clip",inst,&clip)) return 1;
   if (_putobj(obj,"redraw_flag",inst,&redrawf)) return 1;
+  if (_putobj(obj,"alpha",inst,&alpha)) return 1;
   return 0;
 }
 
@@ -238,6 +240,7 @@ static struct objtable draw[] = {
   {"R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"alpha",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"clip",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"redraw_flag",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"redraw_num",NINT,0,NULL,NULL,0},

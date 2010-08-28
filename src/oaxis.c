@@ -127,6 +127,7 @@ static struct obj_config AxisConfig[] = {
   {"R", OBJ_CONFIG_TYPE_NUMERIC},
   {"G", OBJ_CONFIG_TYPE_NUMERIC},
   {"B", OBJ_CONFIG_TYPE_NUMERIC},
+  {"alpha", OBJ_CONFIG_TYPE_NUMERIC},
   {"type", OBJ_CONFIG_TYPE_NUMERIC},
   {"direction", OBJ_CONFIG_TYPE_NUMERIC},
   {"baseline", OBJ_CONFIG_TYPE_NUMERIC},
@@ -146,6 +147,7 @@ static struct obj_config AxisConfig[] = {
   {"gauge_R", OBJ_CONFIG_TYPE_NUMERIC},
   {"gauge_G", OBJ_CONFIG_TYPE_NUMERIC},
   {"gauge_B", OBJ_CONFIG_TYPE_NUMERIC},
+  {"gauge_alpha", OBJ_CONFIG_TYPE_NUMERIC},
   {"num", OBJ_CONFIG_TYPE_NUMERIC},
   {"num_auto_norm", OBJ_CONFIG_TYPE_NUMERIC},
   {"num_log_pow", OBJ_CONFIG_TYPE_NUMERIC},
@@ -160,6 +162,7 @@ static struct obj_config AxisConfig[] = {
   {"num_R", OBJ_CONFIG_TYPE_NUMERIC},
   {"num_G", OBJ_CONFIG_TYPE_NUMERIC},
   {"num_B", OBJ_CONFIG_TYPE_NUMERIC},
+  {"num_alpha", OBJ_CONFIG_TYPE_NUMERIC},
 
   {"num_head", OBJ_CONFIG_TYPE_STRING},
   {"num_format", OBJ_CONFIG_TYPE_STRING},
@@ -220,7 +223,7 @@ static int
 axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int width;
-  int alen,awid,wlen,wwid;
+  int alen,awid,wlen,wwid,alpha;
   int bline;
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
@@ -247,6 +250,7 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   logpow=TRUE;
   scriptsize=7000;
   num=-1;
+  alpha=255;
   if (_putobj(obj,"baseline",inst,&bline)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
   if (_putobj(obj,"arrow_length",inst,&alen)) return 1;
@@ -259,6 +263,7 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"gauge_width2",inst,&wid2)) return 1;
   if (_putobj(obj,"gauge_length3",inst,&len3)) return 1;
   if (_putobj(obj,"gauge_width3",inst,&wid3)) return 1;
+  if (_putobj(obj,"gauge_alpha",inst,&alpha)) return 1;
   if (_putobj(obj,"num_pt",inst,&pt)) return 1;
   if (_putobj(obj,"num_script_size",inst,&scriptsize)) return 1;
   if (_putobj(obj,"num_auto_norm",inst,&autonorm)) return 1;
@@ -266,6 +271,7 @@ axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"num_shift_n",inst,&sy)) return 1;
   if (_putobj(obj,"num_log_pow",inst,&logpow)) return 1;
   if (_putobj(obj,"num_num",inst,&num)) return 1;
+  if (_putobj(obj,"num_alpha",inst,&alpha)) return 1;
 
   format = font = group = name = NULL;
 
@@ -2334,7 +2340,7 @@ get_step(struct axislocal *alocal, int step, int *begin)
 static int
 numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, int draw)
 {
-  int fr,fg,fb;
+  int fr,fg,fb,alpha;
   int side, begin,step,nnum,numcount,cstep;
   int autonorm,align,nozero;
   char *format,*head,*tail,*text,*date_format;
@@ -2355,6 +2361,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   _getobj(obj, "num_R", inst, &fr);
   _getobj(obj, "num_G", inst, &fg);
   _getobj(obj, "num_B", inst, &fb);
+  _getobj(obj, "num_alpha", inst, &alpha);
   _getobj(obj, "num_pt", inst, &font.pt);
   _getobj(obj, "num_space", inst, &font.space);
   _getobj(obj, "num_script_size", inst, &font.scriptsize);
@@ -2373,7 +2380,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
   _getobj(obj, "num_font_style", inst, &font.style);
   _getobj(obj, "num_direction",inst, &ndir);
 
-  GRAcolor(GC, fr, fg, fb, 255);
+  GRAcolor(GC, fr, fg, fb, alpha);
 
   headlen = (head) ? strlen(head) : 0;
 
@@ -2496,7 +2503,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 static int
 draw_gauge(struct objlist *obj,char *inst, int GC, struct axis_config *aconf)
 {
-  int fr,fg,fb;
+  int fr,fg,fb,alpha;
   struct narray *style;
   int snum,*sdata;
   struct axislocal alocal;
@@ -2514,6 +2521,7 @@ draw_gauge(struct objlist *obj,char *inst, int GC, struct axis_config *aconf)
   _getobj(obj,"gauge_R",inst,&fr);
   _getobj(obj,"gauge_G",inst,&fg);
   _getobj(obj,"gauge_B",inst,&fb);
+  _getobj(obj,"gauge_alpha",inst,&alpha);
   _getobj(obj,"gauge_min",inst,&gmin);
   _getobj(obj,"gauge_max",inst,&gmax);
   _getobj(obj,"gauge_style",inst,&style);
@@ -2527,7 +2535,7 @@ draw_gauge(struct objlist *obj,char *inst, int GC, struct axis_config *aconf)
   snum=arraynum(style);
   sdata=arraydata(style);
 
-  GRAcolor(GC,fr,fg,fb, 255);
+  GRAcolor(GC,fr,fg,fb, alpha);
 
   if (getaxispositionini(&alocal,aconf->type,aconf->min,aconf->max,aconf->inc,aconf->div,FALSE)!=0) {
     error(obj,ERRMINMAX);
@@ -2766,7 +2774,7 @@ static int
 axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int fr, fg, fb, lm, tm, w, h, bline;
+  int fr, fg, fb, lm, tm, w, h, bline, alpha;
   struct narray *style;
   int snum, *sdata;
   int clip, zoom;
@@ -2790,6 +2798,7 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"R",inst,&fr);
   _getobj(obj,"G",inst,&fg);
   _getobj(obj,"B",inst,&fb);
+  _getobj(obj,"alpha",inst,&alpha);
   _getobj(obj,"x",inst,&aconf.x0);
   _getobj(obj,"y",inst,&aconf.y0);
   _getobj(obj,"direction",inst,&aconf.direction);
@@ -2808,7 +2817,7 @@ axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
-  GRAcolor(GC,fr,fg,fb, 255);
+  GRAcolor(GC,fr,fg,fb, alpha);
 
   if (bline) {
     GRAlinestyle(GC,snum,sdata,aconf.width,2,0,1000);
@@ -3736,6 +3745,7 @@ static struct objtable axis[] = {
   {"gauge_R",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"gauge_G",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"gauge_B",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"gauge_alpha",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num",NENUM,NREAD|NWRITE,NULL,axisnumchar,0},
   {"num_begin",NINT,NREAD|NWRITE,oputabs,NULL,0},
   {"num_step",NINT,NREAD|NWRITE,oputabs,NULL,0},
@@ -3758,6 +3768,7 @@ static struct objtable axis[] = {
   {"num_R",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_G",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_B",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"num_alpha",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"num_date_format",NSTR,NREAD|NWRITE,NULL,NULL,0},
   {"scale_push",NVFUNC,NREAD|NEXEC,axisscalepush,NULL,0},
   {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,NULL,0},

@@ -90,7 +90,7 @@ static int
 rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x1,y1,x2,y2,width,ifill,stroke,fr,fg,fb,br,bg,bb,tm,lm,w,h;
+  int x1,y1,x2,y2,width,ifill,stroke,fr,fg,fb,br,bg,bb,tm,lm,w,h, alpha;
   struct narray *style;
   int snum,*sdata;
   int clip,zoom;
@@ -104,6 +104,7 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"fill_R",inst,&br);
   _getobj(obj,"fill_G",inst,&bg);
   _getobj(obj,"fill_B",inst,&bb);
+  _getobj(obj,"alpha", inst, &alpha);
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
   _getobj(obj,"fill",inst,&ifill);
@@ -118,12 +119,12 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
 
   if (ifill) {
-    GRAcolor(GC,br,bg,bb, 255);
+    GRAcolor(GC,br,bg,bb, alpha);
     GRArectangle(GC,x1,y1,x2,y2,1);
   }
 
   if (stroke) {
-    GRAcolor(GC,fr,fg,fb, 255);
+    GRAcolor(GC,fr,fg,fb, alpha);
     GRAlinestyle(GC,snum,sdata,width,0,0,1000);
     GRArectangle(GC,x1,y1,x2,y2,0);
   }

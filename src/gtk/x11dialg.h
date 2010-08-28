@@ -120,7 +120,7 @@ struct FileDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
-    *type, *mark_btn, *mark_label, *curve, *curve_label, *col1, *col2, *col2_label,
+    *type, *mark_btn, *mark_label, *curve, *curve_label, *col1, *col2, *opacity, *col2_label,
     *clip, *style, *size, *size_label, *miter, *miter_label, *join, *join_label,
     *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view;
   GtkNotebook *tab;
@@ -129,7 +129,7 @@ struct FileDialog
   struct objlist *Obj;
   int Id;
   struct MarkDialog mark;
-  int R, G, B, R2, G2, B2, multi_open, fit_row, tab_active;
+  int R, G, B, R2, G2, B2, alpha, multi_open, fit_row, tab_active;
   struct FileMath math;
   struct FileLoad load;
   struct FileMask mask;
@@ -245,9 +245,9 @@ void CrossDialog(struct CrossDialog *data,
 
 struct AxisBase
 {
-  GtkWidget *style, *width, *color, *arrow, *arrowlen, *arrowwid,
+  GtkWidget *style, *width, *color, *opacity, *arrow, *arrowlen, *arrowwid,
     *wave, *wavelen, *wavewid, *baseline;
-  int R, G, B, tab_id;
+  int R, G, B, alpha, tab_id;
 };
 
 struct AxisPos
@@ -258,8 +258,8 @@ struct AxisPos
 
 struct AxisFont
 {
-  GtkWidget *space, *pt, *script, *font, *color, *font_bold, *font_italic;
-  int R, G, B, tab_id;
+  GtkWidget *space, *pt, *script, *font, *color, *opacity, *font_bold, *font_italic;
+  int R, G, B, alpha, tab_id;
 };
 
 struct AxisNumbering
@@ -274,8 +274,8 @@ struct AxisNumbering
 struct AxisGauge
 {
   GtkWidget *length[GAUGE_STYLE_NUM], *width[GAUGE_STYLE_NUM],
-    *gauge, *min, *max, *style, *color;
-  int R, G, B, tab_id;
+    *gauge, *min, *max, *style, *color, *opacity;
+  int R, G, B, alpha, tab_id;
 };
 
 struct AxisDialog
@@ -303,9 +303,9 @@ struct GridDialog
   /****** local member *******/
   struct objlist *Obj;
   GtkWidget *style[GRID_DIALOG_STYLE_NUM], *width[GRID_DIALOG_STYLE_NUM],
-    *axisx, *axisy, *background, *color, *bcolor, *bclabel;
+    *axisx, *axisy, *background, *color, *opacity, *bcolor, *bclabel;
   int Id;
-  int R, G, B, R2, G2, B2;
+  int R, G, B, R2, G2, B2, A;
 };
 void GridDialog(struct GridDialog *data, struct objlist *obj, int id);
 
@@ -334,7 +334,7 @@ struct LegendDialog
   /****** local member *******/
   char *(* prop_cb) (struct objlist *obj, int id);
   GtkWidget *path_type, *style, *points, *interpolation, *width,
-    *miter, *join, *color, *color2, *stroke_color, *fill_color,
+    *miter, *join, *color, *color2, *opacity, *stroke_color, *fill_color,
     *x, *y, *x1, *y1, *x2, *y2, *rx, *ry, *angle1, *angle2,
     *pieslice, *close_path, *stroke, *fill, *fill_rule, *arrow,
     *arrow_length, *arrow_width, *size, *type, *view, *text, *pt,
@@ -342,7 +342,7 @@ struct LegendDialog
     *font_italic, *tab;
   struct objlist *Obj;
   int Id, tab_active;
-  int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, wid, ang;
+  int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, alpha, wid, ang;
   struct MarkDialog mark;
   GdkPixmap *arrow_pixmap;
 };
@@ -363,8 +363,8 @@ struct LegendGaussDialog
   DIALOG_PROTOTYPE;
   /****** local member *******/
   GSList *func_list, *dir_list;
-  GtkWidget *style, *div, *color, *width, *miter, *join, *sch, *scv, *view;
-  int R, G, B;
+  GtkWidget *style, *div, *color, *opacity, *width, *miter, *join, *sch, *scv, *view;
+  int R, G, B, A;
   struct objlist *Obj;
   int Id;
   int Minx, Miny, Wdx, Wdy;

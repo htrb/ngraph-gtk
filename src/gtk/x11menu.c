@@ -1635,7 +1635,7 @@ create_markpixmap(GtkWidget *win)
 	if (gra >= 0) {
 	  GRAview(gra, 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE, 0);
 	  GRAlinestyle(gra, 0, NULL, 1, 0, 0, 1000);
-	  GRAmark(gra, i, MARK_PIX_SIZE / 2, MARK_PIX_SIZE / 2, MARK_PIX_SIZE - 4, R, G, B, R2, G2, B2);
+	  GRAmark(gra, i, MARK_PIX_SIZE / 2, MARK_PIX_SIZE / 2, MARK_PIX_SIZE - 4, R, G, B, R2, G2, B2, 255);
 	}
 	_GRAclose(gra);
       }

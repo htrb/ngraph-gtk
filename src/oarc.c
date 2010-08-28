@@ -81,7 +81,7 @@ static int
 arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,tm,lm,w,h,stroke,close_path,br,bg,bb, join, miter;
+  int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,tm,lm,w,h,stroke,close_path,br,bg,bb, join, miter, alpha;
   int pieslice;
   struct narray *style;
   int snum,*sdata;
@@ -96,6 +96,7 @@ arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"fill_R",inst,&br);
   _getobj(obj,"fill_G",inst,&bg);
   _getobj(obj,"fill_B",inst,&bb);
+  _getobj(obj, "alpha", inst, &alpha);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"rx",inst,&rx);
@@ -122,13 +123,13 @@ arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
 
   if (ifill) {
-    GRAcolor(GC,br,bg,bb, 255);
+    GRAcolor(GC,br,bg,bb, alpha);
     GRAcircle(GC, x, y, rx, ry, angle1, angle2,
 	      (pieslice) ? 1 : 2);
   }
 
   if (stroke) {
-    GRAcolor(GC,fr,fg,fb, 255);
+    GRAcolor(GC,fr,fg,fb, alpha);
     GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
     GRAcircle(GC, x, y, rx, ry, angle1, angle2,
 	      (close_path) ? ((pieslice) ? 3 : 4) : 0);

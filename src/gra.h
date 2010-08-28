@@ -124,7 +124,7 @@ void GRArectangle(int GC,int x0,int y0,int x1,int y1,int fil);
 void GRAdrawpoly(int GC,int num,int *point,int fil);
 void GRAlines(int GC,int num,int *point);
 void GRAmark(int GC,int type,int x0,int y0,int size,
-              int fr,int fg,int fb,int br,int bg,int bb);
+	     int fr,int fg,int fb,int br,int bg,int bb, int alpha);
 void GRAdrawtext(int GC,char *s,char *font, int style,
                  int size, int space, int dir, int scriptsize);
 void GRAdrawtextraw(int GC,char *s,char *font, int style,

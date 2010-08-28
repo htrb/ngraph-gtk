@@ -1,3 +1,64 @@
+2010-08-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (axisinit): initialize field "gauge_alpha" and
+	"num_alpha".
+	(AxisConfig): add data "alpha", "gauge_alpha" and "num_alpha".
+	(numbering): use field "num_alpha".
+	(draw_gauge): use field "gauge_alpha".
+	(axisdraw): use field "alpha".
+	(axis): add fields "num_alpha" and "gauge_alpha".
+
+	* src/oarc.c (arcdraw): use field "alpha".
+
+	* src/omark.c (markdraw): use field "alpha".
+
+	* src/otext.c (textdraw): use field "alpha".
+	(TextConfig): add data "alpha".
+
+	* src/opath.c (draw_stroke, draw_fill): add parameter "alpha".
+	(arrowdraw): use field "alpha".
+
+	* src/ofile.c (f2ddata): add member "alpha".
+	(opendata): use field "alpha".
+	(markout, lineout, curveout, rectout, errorbarout, stairout)
+	(barout, draw_fit): use "fp->alpha".
+	(FileConfig): add data "alpha".
+
+	* src/oagrid.c (draw_background): add parameter "alpha".
+	(agriddraw): use field "alpha".
+
+	* src/odraw.c (drawinit): initialize field "alpha".
+	(draw): add field "alpha".
+
+	* src/orect.c (rectdraw): use field "alpha".
+
+	* src/gra.c (GRAmark): add parameter "alpha".
+
+	* src/gtk/x11lgnd.c (init_legend_dialog_widget_member): initialize
+	"d->opacity".
+	(legend_dialog_setup_item): setup "d->opacity".
+	(legend_dialog_close): save opacity.
+	(opacity_setup): added.
+	(LegendArrowDialogSetup, LegendRectDialogSetup)
+	(LegendArcDialogSetup, LegendMarkDialogSetup)
+	(legend_dialog_setup_sub): add widget to set opacity.
+
+	* src/gtk/x11file.c (plot_tab_setup_item): setup "d->opacity".
+	(plot_tab_create): add widget to set opacity.
+	(plot_tab_set_value): save opacity.
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogSetupItem): setup "d->opacity".
+	(LegendGaussDialogSetup): add widget to set opacity.
+	(LegendGaussDialogClose): save opacity.
+
+	* src/gtk/x11axis.c (opacity_setup): added.
+	(GridDialogSetupItem, baseline_tab_setup_item)
+	(gauge_tab_setup_item, font_tab_setup_item): setup "d->opacity".
+	(GridDialogSetup, baseline_tab_create, gauge_tab_create)
+	(font_tab_create): add widget to set opacity.
+	(GridDialogClose, baseline_tab_set_value, gauge_tab_set_value)
+	(font_tab_set_value): save opacity.
+
 2010-08-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oprm.c (prmload): don't use the field "num_jfont".

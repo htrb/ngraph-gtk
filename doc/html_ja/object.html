@@ -816,8 +816,8 @@ alias:
 version: 1.00.00
 parent: object
 object id: 23
-number of fields: 16
-size of instance: 96
+number of fields: 17
+size of instance: 104
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -831,6 +831,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -843,8 +844,8 @@ alias:
 version: 1.00.00
 parent: draw
 object id: 24
-number of fields: 30
-size of instance: 200
+number of fields: 31
+size of instance: 208
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -855,6 +856,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -884,8 +886,8 @@ alias:
 version: 1.00.00
 parent: draw
 object id: 25
-number of fields: 98
-size of instance: 632
+number of fields: 101
+size of instance: 656
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -895,6 +897,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -936,6 +939,7 @@ rw-     gauge_width3    int
 rw-          gauge_R    int
 rw-          gauge_G    int
 rw-          gauge_B    int
+rw-      gauge_alpha    int
 rw-              num    enum( none left right )
 rw-        num_begin    int
 rw-         num_step    int
@@ -958,6 +962,7 @@ rw-      num_shift_n    int
 rw-            num_R    int
 rw-            num_G    int
 rw-            num_B    int
+rw-        num_alpha    int
 rw-  num_date_format    char*
 r-x       scale_push    void( )
 r-x        scale_pop    void( )
@@ -993,8 +998,8 @@ alias: data
 version: 1.00.00
 parent: draw
 object id: 26
-number of fields: 118
-size of instance: 800
+number of fields: 119
+size of instance: 808
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1003,6 +1008,7 @@ rw-           hidden    bool
 rw-                R    int
 rw-                G    int
 rw-                B    int
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1122,8 +1128,8 @@ alias:
 version: 1.00.00
 parent: draw
 object id: 27
-number of fields: 36
-size of instance: 232
+number of fields: 37
+size of instance: 240
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1132,6 +1138,7 @@ rw-           hidden    bool
 rw-                R    int
 rw-                G    int
 rw-                B    int
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1169,8 +1176,8 @@ alias:
 version: 1.00.00
 parent: draw
 object id: 28
-number of fields: 20
-size of instance: 112
+number of fields: 21
+size of instance: 120
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1182,6 +1189,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1200,8 +1208,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 29
-number of fields: 42
-size of instance: 304
+number of fields: 43
+size of instance: 312
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1209,6 +1217,7 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1253,8 +1262,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 30
-number of fields: 44
-size of instance: 320
+number of fields: 45
+size of instance: 328
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1262,6 +1271,7 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1308,8 +1318,8 @@ alias: line:curve:polygon
 version: 1.00.01
 parent: legend
 object id: 31
-number of fields: 45
-size of instance: 328
+number of fields: 46
+size of instance: 336
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1317,6 +1327,7 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1364,8 +1375,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 32
-number of fields: 32
-size of instance: 208
+number of fields: 33
+size of instance: 216
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1376,6 +1387,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1407,8 +1419,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 33
-number of fields: 35
-size of instance: 232
+number of fields: 36
+size of instance: 240
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1419,6 +1431,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
+rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int

@@ -467,7 +467,7 @@ get_arrow_pos(int *points2, int n,
 }
 
 static void
-draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, int num, int intp)
+draw_stroke(struct objlist *obj, char *inst, int GC, int alpha, int *points2, int *pdata, int num, int intp)
 {
   int width, fr, fg, fb, headlen, headwidth;
   int join, miter, head;
@@ -493,7 +493,7 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, i
   snum = arraynum(style);
   sdata = arraydata(style);
 
-  GRAcolor(GC, fr, fg, fb, 255);
+  GRAcolor(GC, fr, fg, fb, alpha);
   GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
 
   x0 = points2[0];
@@ -546,7 +546,7 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, i
 }
 
 static void
-draw_fill(struct objlist *obj, char *inst, int GC, int *points2, int num)
+draw_fill(struct objlist *obj, char *inst, int GC, int alpha, int *points2, int num)
 {
   int br, bg, bb, fill_rule;
 
@@ -555,14 +555,14 @@ draw_fill(struct objlist *obj, char *inst, int GC, int *points2, int num)
   _getobj(obj, "fill_G",    inst, &bg);
   _getobj(obj, "fill_B",    inst, &bb);
 
-  GRAcolor(GC, br, bg, bb, 255);
+  GRAcolor(GC, br, bg, bb, alpha);
   GRAdrawpoly(GC, num, points2, fill_rule + 1);
 }
 
 static int 
 arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int GC, lm, tm, w, h, intp, i, j, num;
+  int GC, lm, tm, w, h, intp, i, j, num, alpha;
   struct narray *points;
   int *points2, *pdata;
   int x0, y0, x1, y1, type, stroke, fill, clip, zoom;
@@ -582,8 +582,9 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 0;
   }
 
-  _getobj(obj, "type", inst, &type);
-  _getobj(obj, "clip", inst, &clip);
+  _getobj(obj, "type",  inst, &type);
+  _getobj(obj, "clip",  inst, &clip);
+  _getobj(obj, "alpha", inst, &alpha);
 
   if (type == PATH_TYPE_CURVE) {
     _getobj(obj, "interpolation", inst, &intp);
@@ -625,11 +626,11 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, clip);
 
   if (fill) {
-    draw_fill(obj, inst, GC, points2, num);
+    draw_fill(obj, inst, GC, alpha, points2, num);
   }
 
   if (stroke) {
-    draw_stroke(obj, inst, GC, points2, pdata, num, intp);
+    draw_stroke(obj, inst, GC, alpha, points2, pdata, num, intp);
   }
 
   g_free(points2);

@@ -74,7 +74,7 @@ static int
 markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x,y,type,size,width,fr,fg,fb,br,bg,bb,tm,lm,w,h;
+  int x,y,type,size,width,fr,fg,fb,br,bg,bb,tm,lm,w,h, alpha;
   struct narray *style;
   int snum,*sdata;
   int clip,zoom;
@@ -88,6 +88,7 @@ markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"R2",inst,&br);
   _getobj(obj,"G2",inst,&bg);
   _getobj(obj,"B2",inst,&bb);
+  _getobj(obj,"alpha",inst,&alpha);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"type",inst,&type);
@@ -100,7 +101,7 @@ markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
   GRAlinestyle(GC,snum,sdata,width,0,0,1000);
-  GRAmark(GC,type,x,y,size,fr,fg,fb,br,bg,bb);
+  GRAmark(GC,type,x,y,size,fr,fg,fb,br,bg,bb,alpha);
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
