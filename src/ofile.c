@@ -150,10 +150,11 @@ static struct obj_config FileConfig[] = {
   {"R",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"G",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"B",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"A",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"R2",               OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"G2",               OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"B2",               OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
-  {"alpha",            OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
+  {"A2",               OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"x",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"y",                OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
   {"type",             OBJ_CONFIG_TYPE_NUMERIC, NULL, NULL},
@@ -209,11 +210,14 @@ static NHASH FileConfigHash = NULL;
 #define check_infinite(v) ((v) != (v) || (v) == HUGE_VAL || (v) == - HUGE_VAL)
 #endif
 
+struct rgba {
+  int r, g, b, a;
+};
 
 struct f2ddata_buf {
   double dx, dy, d2, d3;
-  int colr, colg, colb, marksize, marktype, line;
-  int colr2, colg2, colb2;
+  struct rgba col, col2;
+  int marksize, marktype, line;
   int dxstat, dystat, d2stat, d3stat;
 };
 
@@ -250,22 +254,18 @@ struct f2ddata {
   MathEquation *codex[EQUATION_NUM], *codey[EQUATION_NUM];
   MathValue minx, maxx, miny, maxy;
   int *const_id;
-  int color2[3], colr2, colg2, colb2;
+  struct rgba col, col2, color, color2, fg, bg;
   int fnumx, fnumy;
   int *needx, *needy;
-  int br, bg, bb;
   int dxstat,dystat,d2stat,d3stat;
-  int color[3];
   double dx,dy,d2,d3;
   int maxdim;
   int need2pass;
   double sumx,sumy,sumxx,sumyy,sumxy;
   int num,datanum,prev_datanum;
-  int fr, fg, fb, alpha;
   int marksize0,marksize;
   int marktype0,marktype;
   int ignore,negative;
-  int colr, colg, colb;
   int msize,mtype;
   struct f2ddata_buf buf[DXBUFSIZE];
 #if BUF_TYPE == USE_BUF_PTR
@@ -377,24 +377,76 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   switch (color) {
   case 0:
+    fp->color.r = val;
+    break;
   case 1:
+    fp->color.g = val;
+    break;
   case 2:
-    fp->color[color] = val;
+    fp->color.b = val;
     break;
   case 3:
-    fp->color[0] = fp->color[1] = fp->color[2] = val;
+    fp->color.r = fp->color.g = fp->color.b = val;
     break;
   case 4:
+    fp->color2.r = val;
+    break;
   case 5:
+    fp->color2.g = val;
+    break;
   case 6:
-    fp->color2[color - 4] = val;
+    fp->color2.b = val;
     break;
   case 7:
-    fp->color2[0] = fp->color2[1] = fp->color2[2] = val;
+    fp->color2.r = fp->color2.g = fp->color2.b = val;
     break;
   default:
     rval->type = MATH_VALUE_ERROR;
     return 1;
+  }
+
+  return 0;
+}
+
+static int
+file_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct f2ddata *fp;
+  int alpha, color;
+
+  rval->val = exp->buf[0].val.val;
+
+  fp = (struct f2ddata *) math_equation_get_user_data(eq);
+  if (fp == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  alpha = exp->buf[0].val.val;
+
+#if 0
+  if (alpha < 0 || alpha > 255) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+#else
+  if (alpha < 0) {
+    alpha = 0;
+  } else if (alpha > 255) {
+    alpha = 255;
+  }
+#endif
+
+  color = exp->buf[1].val.val;
+  switch (color) {
+  case 1:
+    fp->color.a = alpha;
+    break;
+  case 2:
+    fp->color2.a = alpha;
+  default:
+    fp->color.a = alpha;
+    fp->color2.a = alpha;
   }
 
   return 0;
@@ -446,13 +498,13 @@ file_rgb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
 #endif
 
   if (color2) {
-    fp->color2[0] = r;
-    fp->color2[1] = g;
-    fp->color2[2] = b;
+    fp->color2.r = r;
+    fp->color2.g = g;
+    fp->color2.b = b;
   } else {
-    fp->color[0] = r;
-    fp->color[1] = g;
-    fp->color[2] = b;
+    fp->color.r = r;
+    fp->color.g = g;
+    fp->color.b = b;
   }
 
   return 0;
@@ -519,13 +571,13 @@ file_hsb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
   HSB2RGB(h, s, b, &r, &g, &bb);
 
   if (color2) {
-    fp->color2[0] = r;
-    fp->color2[1] = g;
-    fp->color2[2] = bb;
+    fp->color2.r = r;
+    fp->color2.g = g;
+    fp->color2.b = bb;
   } else {
-    fp->color[0] = r;
-    fp->color[1] = g;
-    fp->color[2] = bb;
+    fp->color.r = r;
+    fp->color.g = g;
+    fp->color.b = bb;
   }
 
   return 0;
@@ -600,6 +652,7 @@ struct funcs {
 
 static struct funcs file_func[] = {
   {"COLOR",    {2, 0, 0, file_color,    NULL, NULL, NULL, NULL}},
+  {"ALPHA",    {2, 0, 0, file_alpha,    NULL, NULL, NULL, NULL}},
   {"RGB",      {3, 0, 0, file_rgb,      NULL, NULL, NULL, NULL}},
   {"RGB2",     {3, 0, 0, file_rgb2,     NULL, NULL, NULL, NULL}},
   {"HSB",      {3, 0, 0, file_hsb,      NULL, NULL, NULL, NULL}},
@@ -625,7 +678,7 @@ opendata(struct objlist *obj,char *inst,
 {
   int fid;
   char *file;
-  int fr, fg, fb, alpha;
+  struct rgba fg, bg;
   int x,y,type,hskip,rstep,final,csv;
   char *remark,*ifs;
   char *axisx,*axisy;
@@ -643,7 +696,6 @@ opendata(struct objlist *obj,char *inst,
   int axtype,aytype,axposx,axposy,ayposx,ayposy,axlen,aylen,dirx,diry;
   char *inst1;
   int marksize,marktype;
-  int br, bg, bb;
   int num2,prev_datanum;
   int *data2;
   char *raxis;
@@ -671,13 +723,14 @@ opendata(struct objlist *obj,char *inst,
   _getobj(obj,"move_data",inst,&move);
   _getobj(obj,"move_data_x",inst,&movex);
   _getobj(obj,"move_data_y",inst,&movey);
-  _getobj(obj,"R",inst,&fr);
-  _getobj(obj,"G",inst,&fg);
-  _getobj(obj,"B",inst,&fb);
-  _getobj(obj,"R2",inst,&br);
-  _getobj(obj,"G2",inst,&bg);
-  _getobj(obj,"B2",inst,&bb);
-  _getobj(obj,"alpha",inst,&alpha);
+  _getobj(obj,"R",inst,&fg.r);
+  _getobj(obj,"G",inst,&fg.g);
+  _getobj(obj,"B",inst,&fg.b);
+  _getobj(obj,"A",inst,&fg.a);
+  _getobj(obj,"R2",inst,&bg.r);
+  _getobj(obj,"G2",inst,&bg.g);
+  _getobj(obj,"B2",inst,&bg.b);
+  _getobj(obj,"A2",inst,&bg.a);
   _getobj(obj,"mark_size",inst,&marksize);
   _getobj(obj,"mark_type",inst,&marktype);
   _getobj(obj,"data_clip",inst,&dataclip);
@@ -998,25 +1051,16 @@ opendata(struct objlist *obj,char *inst,
   if (fp->maxdim<y) fp->maxdim=y;
   if (f2dlocal->need2passx || f2dlocal->need2passy) fp->need2pass=TRUE;
   else fp->need2pass=FALSE;
-  fp->br=br;
   fp->bg=bg;
-  fp->bb=bb;
-  fp->color2[0]=br;
-  fp->color2[1]=bg;
-  fp->color2[2]=bb;
+  fp->color2=bg;
   fp->fnumx = 0;
   fp->needx = NULL;
   fp->fnumy = 0;
   fp->needy = NULL;
   fp->dx=fp->dy=fp->d2=fp->d3=0;
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
-  fp->fr=fr;
   fp->fg=fg;
-  fp->fb=fb;
-  fp->alpha = alpha;
-  fp->color[0]=fp->fr;
-  fp->color[1]=fp->fg;
-  fp->color[2]=fp->fb;
+  fp->color=fp->fg;
   fp->marksize0=marksize;
   fp->marksize=marksize;
   fp->marktype0=marktype;
@@ -1108,12 +1152,8 @@ reopendata(struct f2ddata *fp)
   fp->ignore=fp->negative=FALSE;
   fp->dx=fp->dy=fp->d2=fp->d3=0;
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
-  fp->color2[0]=fp->br;
-  fp->color2[1]=fp->bg;
-  fp->color2[2]=fp->bb;
-  fp->color[0]=fp->fr;
-  fp->color[1]=fp->fg;
-  fp->color[2]=fp->fb;
+  fp->color2=fp->bg;
+  fp->color=fp->fg;
   fp->marksize=fp->marksize0;
   fp->marktype=fp->marktype0;
 }
@@ -1510,7 +1550,7 @@ ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, in
 static int 
 f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int x,y,rstep,final,msize,r2,g2,b2,lwidth,miter;
+  int x,y,rstep,final,msize,r2,g2,b2,a2,lwidth,miter;
   char *s1,*s2,*s3,*s4;
   struct f2dlocal *f2dlocal;
   int stat,minmaxstat,dataclip,num,ljoin;
@@ -1525,6 +1565,7 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   r2=255;
   g2=255;
   b2=255;
+  a2=255;
   miter=1000;
   num=0;
   stat=MEOF;
@@ -1539,6 +1580,7 @@ f2dinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"R2",inst,&r2)) return 1;
   if (_putobj(obj,"G2",inst,&g2)) return 1;
   if (_putobj(obj,"B2",inst,&b2)) return 1;
+  if (_putobj(obj,"A2",inst,&a2)) return 1;
   if (_putobj(obj,"line_width",inst,&lwidth)) return 1;
   if (_putobj(obj,"line_miter_limit",inst,&miter)) return 1;
   if (_putobj(obj,"line_join",inst,&ljoin)) return 1;
@@ -2384,15 +2426,11 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, M
 #else
   buf = &fp->buf[fp->bufnum];
 #endif
-  buf->colr = fp->color[0];
-  buf->colg = fp->color[1];
-  buf->colb = fp->color[2];
+  buf->col = fp->color;
   buf->marksize = fp->marksize;
   buf->marktype = fp->marktype;
   buf->line = fp->line;
-  buf->colr2 = fp->color2[0];
-  buf->colg2 = fp->color2[1];
-  buf->colb2 = fp->color2[2];
+  buf->col2 = fp->color2;
   buf->dx = dx.val;
   buf->dy = dy.val;
   buf->d2 = d2.val;
@@ -2600,12 +2638,8 @@ getdata(struct f2ddata *fp)
     fp->d3 = sum3 / num3;
   fp->d3stat = buf->d3stat;
   fp->dline = buf->line;
-  fp->colr = buf->colr;
-  fp->colg = buf->colg;
-  fp->colb = buf->colb;
-  fp->colr2 = buf->colr2;
-  fp->colg2 = buf->colg2;
-  fp->colb2 = buf->colb2;
+  fp->col = buf->col;
+  fp->col2 = buf->col2;
   fp->msize = buf->marksize;
   fp->mtype = buf->marktype;
 #elif BUF_TYPE == USE_RING_BUF
@@ -2642,12 +2676,8 @@ getdata(struct f2ddata *fp)
   if (num3!=0) fp->d3=sum3/num3;
   fp->d3stat=fp->buf[n].d3stat;
   fp->dline=fp->buf[n].line;
-  fp->colr=fp->buf[n].colr;
-  fp->colg=fp->buf[n].colg;
-  fp->colb=fp->buf[n].colb;
-  fp->colr2=fp->buf[n].colr2;
-  fp->colg2=fp->buf[n].colg2;
-  fp->colb2=fp->buf[n].colb2;
+  fp->col=fp->buf[n].col;
+  fp->col2=fp->buf[n].col2;
   fp->msize=fp->buf[n].marksize;
   fp->mtype=fp->buf[n].marktype;
 #else  /* BUF_TYPE */
@@ -2682,12 +2712,8 @@ getdata(struct f2ddata *fp)
   if (num3!=0) fp->d3=sum3/num3;
   fp->d3stat=fp->buf[fp->bufpo].d3stat;
   fp->dline=fp->buf[fp->bufpo].line;
-  fp->colr=fp->buf[fp->bufpo].colr;
-  fp->colg=fp->buf[fp->bufpo].colg;
-  fp->colb=fp->buf[fp->bufpo].colb;
-  fp->colr2=fp->buf[fp->bufpo].colr2;
-  fp->colg2=fp->buf[fp->bufpo].colg2;
-  fp->colb2=fp->buf[fp->bufpo].colb2;
+  fp->col=fp->buf[fp->bufpo].col;
+  fp->col2=fp->buf[fp->bufpo].col2;
   fp->msize=fp->buf[fp->bufpo].marksize;
   fp->mtype=fp->buf[fp->bufpo].marktype;
 #endif	/* BUF_TYPE */
@@ -2952,12 +2978,8 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
       fp->dystat=dystat;
       fp->d2stat=d2stat;
       fp->d3stat=d3stat;
-      fp->colr=fp->color[0];
-      fp->colg=fp->color[1];
-      fp->colb=fp->color[2];
-      fp->colr2=fp->color2[0];
-      fp->colg2=fp->color2[1];
-      fp->colb2=fp->color2[2];
+      fp->col=fp->color;
+      fp->col2=fp->color2;
       datanum++;
 
       if (fp->rstep > 1 && getdata_skip_step(fp))
@@ -3681,14 +3703,14 @@ errordisp2(struct objlist *obj,
 
 static double *
 dataadd(double dx,double dy,double dz,
-	int fr,int fg,int fb,int *size,
+	int fr,int fg,int fb,int fa, int *size,
 	double **x,double **y,double **z,
-	int **r,int **g,int **b,
+	int **r,int **g,int **b, int **a,
 	double **c1,double **c2,double **c3,
 	double **c4,double **c5,double **c6)
 {
   double *xb,*yb,*zb,*c1b,*c2b,*c3b,*c4b,*c5b,*c6b;
-  int *rb,*gb,*bb;
+  int *rb,*gb,*bb,*ab;
   int bz;
 
   if (*size==0) {
@@ -3698,6 +3720,7 @@ dataadd(double dx,double dy,double dz,
      || ((*r=g_malloc(sizeof(int)*SPBUFFERSZ))==NULL)
      || ((*g=g_malloc(sizeof(int)*SPBUFFERSZ))==NULL)
      || ((*b=g_malloc(sizeof(int)*SPBUFFERSZ))==NULL)
+     || ((*a=g_malloc(sizeof(int)*SPBUFFERSZ))==NULL)
      || ((*c1=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
      || ((*c2=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
      || ((*c3=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
@@ -3705,7 +3728,7 @@ dataadd(double dx,double dy,double dz,
      || ((*c5=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)
      || ((*c6=g_malloc(sizeof(double)*SPBUFFERSZ))==NULL)) {
       g_free(*x);  g_free(*y);  g_free(*z);
-      g_free(*r);  g_free(*g);  g_free(*b);
+      g_free(*r);  g_free(*g);  g_free(*b);  g_free(*a);
       g_free(*c1); g_free(*c2); g_free(*c3);
       g_free(*c4); g_free(*c5); g_free(*c6);
       return NULL;
@@ -3718,6 +3741,7 @@ dataadd(double dx,double dy,double dz,
      || ((rb=g_realloc(*r,sizeof(int)*SPBUFFERSZ*bz))==NULL)
      || ((gb=g_realloc(*g,sizeof(int)*SPBUFFERSZ*bz))==NULL)
      || ((bb=g_realloc(*b,sizeof(int)*SPBUFFERSZ*bz))==NULL)
+     || ((ab=g_realloc(*b,sizeof(int)*SPBUFFERSZ*bz))==NULL)
      || ((c1b=g_realloc(*c1,sizeof(double)*SPBUFFERSZ*bz))==NULL)
      || ((c2b=g_realloc(*c2,sizeof(double)*SPBUFFERSZ*bz))==NULL)
      || ((c3b=g_realloc(*c3,sizeof(double)*SPBUFFERSZ*bz))==NULL)
@@ -3725,13 +3749,13 @@ dataadd(double dx,double dy,double dz,
      || ((c5b=g_realloc(*c5,sizeof(double)*SPBUFFERSZ*bz))==NULL)
      || ((c6b=g_realloc(*c6,sizeof(double)*SPBUFFERSZ*bz))==NULL)) {
       g_free(*x);  g_free(*y);  g_free(*z);
-      g_free(*r);  g_free(*g);  g_free(*b);
+      g_free(*r);  g_free(*g);  g_free(*b);  g_free(*a);
       g_free(*c1); g_free(*c2); g_free(*c3);
       g_free(*c4); g_free(*c5); g_free(*c6);
       return NULL;
     } else {
       *x=xb;   *y=yb;   *z=zb;
-      *r=rb;   *g=gb;   *b=bb;
+      *r=rb;   *g=gb;   *b=bb;   *a=ab;
       *c1=c1b; *c2=c2b; *c3=c3b;
       *c4=c4b; *c5=c5b; *c6=c6b;
     }
@@ -3742,6 +3766,7 @@ dataadd(double dx,double dy,double dz,
   (*r)[*size]=fr;
   (*g)[*size]=fg;
   (*b)[*size]=fb;
+  (*a)[*size]=fa;
   (*size)++;
   return *x;
 }
@@ -3759,8 +3784,8 @@ markout(struct objlist *obj,struct f2ddata *fp,int GC, int width,int snum,int *s
 	(getposition(fp,fp->dx,fp->dy,&gx,&gy)==0)) {
       if (fp->msize>0)
         GRAmark(GC,fp->mtype, gx, gy, fp->msize,
-		fp->colr, fp->colg, fp->colb,
-		fp->colr2, fp->colg2, fp->colb2, fp->alpha);
+		fp->col.r, fp->col.g, fp->col.b, fp->col.a,
+		fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
     } else errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
   }
   errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
@@ -3780,7 +3805,7 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
   first=TRUE;
   while (getdata(fp)==0) {
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb, fp->alpha);
+    GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
     && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if (first) {
@@ -3814,10 +3839,10 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   int j,num;
   int first;
   double *x,*y,*z,*c1,*c2,*c3,*c4,*c5,*c6,count;
-  int *r,*g,*b;
+  int *r,*g,*b,*a;
   double c[8];
   double bs1[7],bs2[7],bs3[4],bs4[4];
-  int bsr[7],bsg[7],bsb[7],bsr2[4],bsg2[4],bsb2[4];
+  int bsr[7],bsg[7],bsb[7],bsa[7],bsr2[4],bsg2[4],bsb2[4],bsa2[4];
   int spcond;
 
   emerr=emserr=emnonum=emig=emng=FALSE;
@@ -3828,12 +3853,12 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
     num=0;
     count=0;
     x=y=z=c1=c2=c3=c4=c5=c6=NULL;
-    r=g=b=NULL;
+    r=g=b=a=NULL;
     while (getdata(fp)==0) {
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
       && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
-        if (dataadd(fp->dx,fp->dy,count,fp->colr,fp->colg,fp->colb,&num,
-                   &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
+        if (dataadd(fp->dx,fp->dy,count,fp->col.r,fp->col.g,fp->col.b,fp->col.a,&num,
+		    &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
         count++;
       } else {
         if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
@@ -3843,8 +3868,8 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
 	    } else {
               spcond=SPLCNDPERIODIC;
               if ((x[num-1]!=x[0]) || (y[num-1]!=y[0])) {
-                if (dataadd(x[0],y[0],count,r[0],g[0],b[0],&num,
-                   &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
+                if (dataadd(x[0],y[0],count,r[0],g[0],b[0],a[0],&num,
+			    &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
               }
             }
             if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
@@ -3861,7 +3886,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
             for (j=0;j<num-1;j++) {
               c[0]=c1[j]; c[1]=c2[j]; c[2]=c3[j];
               c[3]=c4[j]; c[4]=c5[j]; c[5]=c6[j];
-              GRAcolor(GC,r[j],g[j],b[j], fp->alpha);
+              GRAcolor(GC,r[j],g[j],b[j], a[j]);
               if (!GRAcurve(GC,c,x[j],y[j])) break;
             }
           }
@@ -3872,7 +3897,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           num=0;
           count=0;
           x=y=z=c1=c2=c3=c4=c5=c6=NULL;
-          r=g=b=NULL;
+          r=g=b=a=NULL;
         }
         errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
       }
@@ -3883,8 +3908,8 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       } else {
         spcond=SPLCNDPERIODIC;
         if ((x[num-1]!=x[0]) || (y[num-1]!=y[0])) {
-          if (dataadd(x[0],y[0],count,r[0],g[0],b[0],&num,
-                  &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
+          if (dataadd(x[0],y[0],count,r[0],g[0],b[0],a[0],&num,
+		      &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
         }
       }
       if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
@@ -3901,7 +3926,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       for (j=0;j<num-1;j++) {
         c[0]=c1[j]; c[1]=c2[j]; c[2]=c3[j];
         c[3]=c4[j]; c[4]=c5[j]; c[5]=c6[j];
-        GRAcolor(GC,r[j],g[j],b[j], fp->alpha);
+        GRAcolor(GC,r[j],g[j],b[j], a[j]);
         if (!GRAcurve(GC,c,x[j],y[j])) break;
       }
     }
@@ -3919,9 +3944,10 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
         if (first) {
           bs1[num]=fp->dx;
           bs2[num]=fp->dy;
-          bsr[num]=fp->colr;
-          bsg[num]=fp->colg;
-          bsb[num]=fp->colb;
+          bsr[num]=fp->col.r;
+          bsg[num]=fp->col.g;
+          bsb[num]=fp->col.b;
+          bsa[num]=fp->col.a;
           num++;
           if (num>=7) {
             for (j=0;j<2;j++) {
@@ -3931,7 +3957,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
                 GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,
                               f2dbsplinedif,bsplineint,fp,c[0],c[4]);
               }
-              GRAcolor(GC,bsr[j],bsg[j],bsb[j], fp->alpha);
+              GRAcolor(GC,bsr[j],bsg[j],bsb[j],bsa[j]);
               if (!GRAcurve(GC,c,c[0],c[4])) return -1;
             }
             first=FALSE;
@@ -3943,16 +3969,18 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
             bsr[j-1]=bsr[j];
             bsg[j-1]=bsg[j];
             bsb[j-1]=bsb[j];
+            bsa[j-1]=bsa[j];
           }
           bs1[6]=fp->dx;
           bs2[6]=fp->dy;
-          bsr[6]=fp->colr;
-          bsg[6]=fp->colg;
-          bsb[6]=fp->colb;
+          bsr[6]=fp->col.r;
+          bsg[6]=fp->col.g;
+          bsb[6]=fp->col.b;
+          bsa[6]=fp->col.a;
           num++;
           bspline(0,bs1+1,c);
           bspline(0,bs2+1,c+4);
-          GRAcolor(GC,bsr[1],bsg[1],bsb[1], fp->alpha);
+          GRAcolor(GC,bsr[1],bsg[1],bsb[1],bsa[1]);
           if (!GRAcurve(GC,c,c[0],c[4])) return -1;
         }
       } else {
@@ -3961,7 +3989,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
             for (j=0;j<2;j++) {
               bspline(j+3,bs1+j+2,c);
               bspline(j+3,bs2+j+2,c+4);
-              GRAcolor(GC,bsr[j+2],bsg[j+2],bsb[j+2], fp->alpha);
+              GRAcolor(GC,bsr[j+2],bsg[j+2],bsb[j+2],bsa[j+2]);
               if (!GRAcurve(GC,c,c[0],c[4])) return -1;
             }
           }
@@ -3975,7 +4003,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
       for (j=0;j<2;j++) {
         bspline(j+3,bs1+j+2,c);
         bspline(j+3,bs2+j+2,c+4);
-        GRAcolor(GC,bsr[j+2],bsg[j+2],bsb[j+2], fp->alpha);
+        GRAcolor(GC,bsr[j+2],bsg[j+2],bsb[j+2],bsa[j+2]);
         if (!GRAcurve(GC,c,c[0],c[4])) return -1;
       }
     }
@@ -3991,19 +4019,21 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           bs3[num]=fp->dx;
           bs2[num]=fp->dy;
           bs4[num]=fp->dy;
-          bsr[num]=fp->colr;
-          bsg[num]=fp->colg;
-          bsb[num]=fp->colb;
-          bsr2[num]=fp->colr;
-          bsg2[num]=fp->colg;
-          bsb2[num]=fp->colb;
+          bsr[num]=fp->col.r;
+          bsg[num]=fp->col.g;
+          bsb[num]=fp->col.b;
+          bsa[num]=fp->col.a;
+          bsr2[num]=fp->col.r;
+          bsg2[num]=fp->col.g;
+          bsb2[num]=fp->col.b;
+          bsa2[num]=fp->col.a;
           num++;
           if (num>=4) {
             bspline(0,bs1,c);
             bspline(0,bs2,c+4);
             GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,
                           f2dbsplinedif,bsplineint,fp,c[0],c[4]);
-            GRAcolor(GC,bsr[0],bsg[0],bsb[0], fp->alpha);
+            GRAcolor(GC,bsr[0],bsg[0],bsb[0],bsa[0]);
             if (!GRAcurve(GC,c,c[0],c[4])) return -1;
             first=FALSE;
           }
@@ -4014,16 +4044,18 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
             bsr[j-1]=bsr[j];
             bsg[j-1]=bsg[j];
             bsb[j-1]=bsb[j];
+            bsa[j-1]=bsa[j];
           }
           bs1[3]=fp->dx;
           bs2[3]=fp->dy;
-          bsr[3]=fp->colr;
-          bsg[3]=fp->colg;
-          bsb[3]=fp->colb;
+          bsr[3]=fp->col.r;
+          bsg[3]=fp->col.g;
+          bsb[3]=fp->col.b;
+          bsa[3]=fp->col.a;
           num++;
           bspline(0,bs1,c);
           bspline(0,bs2,c+4);
-          GRAcolor(GC,bsr[0],bsg[0],bsb[0], fp->alpha);
+          GRAcolor(GC,bsr[0],bsg[0],bsb[0],bsa[0]);
           if (!GRAcurve(GC,c,c[0],c[4])) return -1;
         }
       } else {
@@ -4035,9 +4067,10 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
               bsr[4+j]=bsr2[j];
               bsg[4+j]=bsg2[j];
               bsb[4+j]=bsb2[j];
+              bsa[4+j]=bsa2[j];
               bspline(0,bs1+j+1,c);
               bspline(0,bs2+j+1,c+4);
-              GRAcolor(GC,bsr[j+1],bsg[j+1],bsb[j+1], fp->alpha);
+              GRAcolor(GC,bsr[j+1],bsg[j+1],bsb[j+1],bsa[j+1]);
               if (!GRAcurve(GC,c,c[0],c[4])) return -1;
             }
           }
@@ -4054,9 +4087,10 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
         bsr[4+j]=bsr2[j];
         bsg[4+j]=bsg2[j];
         bsb[4+j]=bsb2[j];
+        bsa[4+j]=bsa2[j];
         bspline(0,bs1+j+1,c);
         bspline(0,bs2+j+1,c+4);
-        GRAcolor(GC,bsr[j+1],bsg[j+1],bsb[j+1], fp->alpha);
+        GRAcolor(GC,bsr[j+1],bsg[j+1],bsb[j+1],bsa[j+1]);
         if (!GRAcurve(GC,c,c[0],c[4])) return -1;
       }
     }
@@ -4083,7 +4117,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   if (type == PLOT_TYPE_DIAGONAL) GRAlinestyle(GC,snum,style,width,0,0,1000);
   else GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb, fp->alpha);
+    GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
      && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
@@ -4130,7 +4164,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
       if (type == PLOT_TYPE_RECTANGLE_FILL || type == PLOT_TYPE_RECTANGLE_SOLID_FILL) {
         if (type == PLOT_TYPE_RECTANGLE_FILL) {
-	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2, fp->alpha);
+	  GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
 	}
         x0=fp->dx;
         y0=fp->dy;
@@ -4141,7 +4175,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
           f2dtransf(x1,y1,&gx1,&gy1,fp);
           GRArectangle(GC,gx0,gy0,gx1,gy1,1);
         }
-        if (type == PLOT_TYPE_RECTANGLE_FILL) GRAcolor(GC,fp->colr,fp->colg,fp->colb, fp->alpha);
+        if (type == PLOT_TYPE_RECTANGLE_FILL) GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
       }
       if (type == PLOT_TYPE_RECTANGLE || type == PLOT_TYPE_RECTANGLE_FILL) {
         x0=fp->dx;
@@ -4200,7 +4234,7 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
   GRAlinestyle(GC,snum,style,width,0,0,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb, fp->alpha);
+    GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
     if (type == PLOT_TYPE_ERRORBAR_X) {
       if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
        && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
@@ -4274,7 +4308,7 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
   num=0;
   while (getdata(fp)==0) {
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb, fp->alpha);
+    GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if (num==0) {
@@ -4374,12 +4408,12 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
-    GRAcolor(GC,fp->colr,fp->colg,fp->colb, fp->alpha);
+    GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
     if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if ((type == PLOT_TYPE_BAR_FILL_X) || (type == PLOT_TYPE_BAR_SOLID_FILL_X)) {
         if (type == PLOT_TYPE_BAR_FILL_X) {
-	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2, fp->alpha);
+	  GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
 	}
         x0=0;
         y0=fp->dy;
@@ -4398,11 +4432,11 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
           ap[7]=gy0-nround(size*fp->ayvy);
           GRAdrawpoly(GC,4,ap,1);
         }
-        if (type == PLOT_TYPE_BAR_FILL_X) GRAcolor(GC,fp->colr,fp->colg,fp->colb, fp->alpha);
+        if (type == PLOT_TYPE_BAR_FILL_X) GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
       }
       if ((type == PLOT_TYPE_BAR_FILL_Y) || (type == PLOT_TYPE_BAR_SOLID_FILL_Y)) {
         if (type == PLOT_TYPE_BAR_FILL_Y) {
-	  GRAcolor(GC, fp->colr2, fp->colg2, fp->colb2, fp->alpha);
+	  GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
 	}
         x0=fp->dx;
         y0=0;
@@ -4421,7 +4455,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
           ap[7]=gy0-nround(size*fp->axvy);
           GRAdrawpoly(GC,4,ap,1);
         }
-        if (type == PLOT_TYPE_BAR_FILL_Y) GRAcolor(GC,fp->colr,fp->colg,fp->colb, fp->alpha);
+        if (type == PLOT_TYPE_BAR_FILL_Y) GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
       }
       if ((type == PLOT_TYPE_BAR_X) || (type == PLOT_TYPE_BAR_FILL_X)) {
         x0=0;
@@ -4657,7 +4691,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
   char *equation;
   double min, max, dx, dy;
   int i, div, interpolation, first, rcode, num, emerr;
-  int *r, *g, *b;
+  int *r, *g, *b, *a;
   double c[8], *x, *y, *z, *c1, *c2, *c3, *c4, *c5, *c6, count;
   MathEquation *code;
   MathValue val;
@@ -4689,7 +4723,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     return 1;
   }
 
-  GRAcolor(GC,fp->fr,fp->fg,fp->fb, fp->alpha);
+  GRAcolor(GC,fp->fg.r,fp->fg.g,fp->fg.b, fp->fg.a);
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
   num=0;
   count=0;
@@ -4707,8 +4741,8 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     if (interpolation) {
       if ((rcode==MNOERR)
       && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
-        if (dataadd(dx,dy,count,0,0,0,&num,
-                    &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) {
+        if (dataadd(dx,dy,count,0,0,0,255,&num,
+                    &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) {
 	  MATH_EQUATION_FREE(code);
           return -1;
         }
@@ -6947,10 +6981,9 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
   int j,k,num;
   int first;
   double *x,*y,*z,*c1,*c2,*c3,*c4,*c5,*c6,count,dd,dx,dy;
-  int *r,*g,*b;
+  int *r,*g,*b,*a;
   double c[8];
   double bs1[7],bs2[7],bs3[4],bs4[4];
-  int bsr[7],bsg[7],bsb[7],bsr2[4],bsg2[4],bsb2[4];
   int spcond;
 
   emerr=emserr=emnonum=emig=emng=FALSE;
@@ -6963,8 +6996,8 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
     r=g=b=NULL;
     while (getdata(fp)==0) {
       if (fp->dxstat==MNOERR && fp->dystat==MNOERR) {
-        if (dataadd(fp->dx,fp->dy,count,fp->colr,fp->colg,fp->colb,&num,
-                   &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
+        if (dataadd(fp->dx,fp->dy,count,fp->col.r,fp->col.g,fp->col.b,fp->col.a,&num,
+		    &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
         count++;
       } else {
         if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
@@ -6974,8 +7007,8 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
 	    } else {
               spcond=SPLCNDPERIODIC;
               if ((x[num-1]!=x[0]) || (y[num-1]!=y[0])) {
-                if (dataadd(x[0],y[0],count,r[0],g[0],b[0],&num,
-                   &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
+                if (dataadd(x[0],y[0],count,r[0],g[0],b[0],a[0],&num,
+			    &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
               }
             }
             if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
@@ -7016,8 +7049,8 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
       } else {
         spcond=SPLCNDPERIODIC;
         if ((x[num-1]!=x[0]) || (y[num-1]!=y[0])) {
-          if (dataadd(x[0],y[0],count,r[0],g[0],b[0],&num,
-                  &x,&y,&z,&r,&g,&b,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
+          if (dataadd(x[0],y[0],count,r[0],g[0],b[0],a[0],&num,
+		      &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
         }
       }
       if (spline(z,x,c1,c2,c3,num,spcond,spcond,0,0)
@@ -7054,9 +7087,6 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
         if (first) {
           bs1[num]=fp->dx;
           bs2[num]=fp->dy;
-          bsr[num]=fp->colr;
-          bsg[num]=fp->colg;
-          bsb[num]=fp->colb;
           num++;
           if (num>=7) {
             for (j=0;j<2;j++) {
@@ -7077,15 +7107,9 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           for (j=1;j<7;j++) {
             bs1[j-1]=bs1[j];
             bs2[j-1]=bs2[j];
-            bsr[j-1]=bsr[j];
-            bsg[j-1]=bsg[j];
-            bsb[j-1]=bsb[j];
           }
           bs1[6]=fp->dx;
           bs2[6]=fp->dy;
-          bsr[6]=fp->colr;
-          bsg[6]=fp->colg;
-          bsb[6]=fp->colb;
           num++;
           bspline(0,bs1+1,c);
           bspline(0,bs2+1,c+4);
@@ -7137,12 +7161,6 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           bs3[num]=fp->dx;
           bs2[num]=fp->dy;
           bs4[num]=fp->dy;
-          bsr[num]=fp->colr;
-          bsg[num]=fp->colg;
-          bsb[num]=fp->colb;
-          bsr2[num]=fp->colr;
-          bsg2[num]=fp->colg;
-          bsb2[num]=fp->colb;
           num++;
           if (num>=4) {
             bspline(0,bs1,c);
@@ -7159,15 +7177,9 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           for (j=1;j<4;j++) {
             bs1[j-1]=bs1[j];
             bs2[j-1]=bs2[j];
-            bsr[j-1]=bsr[j];
-            bsg[j-1]=bsg[j];
-            bsb[j-1]=bsb[j];
           }
           bs1[3]=fp->dx;
           bs2[3]=fp->dy;
-          bsr[3]=fp->colr;
-          bsg[3]=fp->colg;
-          bsb[3]=fp->colb;
           num++;
           bspline(0,bs1,c);
           bspline(0,bs2,c+4);
@@ -7183,9 +7195,6 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
             for (j=0;j<3;j++) {
               bs1[4+j]=bs3[j];
               bs2[4+j]=bs4[j];
-              bsr[4+j]=bsr2[j];
-              bsg[4+j]=bsg2[j];
-              bsb[4+j]=bsb2[j];
               bspline(0,bs1+j+1,c);
               bspline(0,bs2+j+1,c+4);
               for (k=1;k<=div;k++) {
@@ -7205,9 +7214,6 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
       for (j=0;j<3;j++) {
         bs1[4+j]=bs3[j];
         bs2[4+j]=bs4[j];
-        bsr[4+j]=bsr2[j];
-        bsg[4+j]=bsg2[j];
-        bsb[4+j]=bsb2[j];
         bspline(0,bs1+j+1,c);
         bspline(0,bs2+j+1,c+4);
         for (k=1;k<=div;k++) {
@@ -7747,6 +7753,7 @@ static struct objtable file2d[] = {
   {"R2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"G2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"A2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
 
   {"remark",NSTR,NREAD|NWRITE,update_field,NULL,0},
   {"ifs",NSTR,NREAD|NWRITE,update_field,NULL,0},

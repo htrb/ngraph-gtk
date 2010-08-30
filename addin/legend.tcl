@@ -387,10 +387,12 @@ proc savescript {} {
     puts $f [format "rectangle::x2=%d+\${int:texttot:@}" \
             [expr int($posx+$len+3*$height/4)]]
     puts $f [format "rectangle::y2=%d" [expr int($gy+$height/2)]]
-    puts $f "rectangle::R=0"
-    puts $f "rectangle::G=0"
-    puts $f "rectangle::B=0"
+    puts $f "rectangle::fill_R=0"
+    puts $f "rectangle::fill_G=0"
+    puts $f "rectangle::fill_B=0"
+    puts $f "rectangle::fill_A=64"
     puts $f "rectangle::fill=true"
+    puts $f "rectangle::stroke=false"
     puts $f "new rectangle"
     puts $f [format "rectangle::x1=%d" [expr int($posx-$height/2)]]
     puts $f [format "rectangle::y1=%d" [expr int($posy-$height/4)]]

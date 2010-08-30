@@ -831,7 +831,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
-rw-            alpha    int
+rw-                A    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -844,8 +844,8 @@ alias:
 version: 1.00.00
 parent: draw
 object id: 24
-number of fields: 31
-size of instance: 208
+number of fields: 32
+size of instance: 216
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -856,7 +856,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
-rw-            alpha    int
+rw-                A    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -875,6 +875,7 @@ rw-       background    bool
 rw-               BR    int
 rw-               BG    int
 rw-               BB    int
+rw-               BA    int
 r-x             draw    void( int )
 r-x            tight    void( )
 </pre>
@@ -897,7 +898,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
-rw-            alpha    int
+rw-                A    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -939,7 +940,7 @@ rw-     gauge_width3    int
 rw-          gauge_R    int
 rw-          gauge_G    int
 rw-          gauge_B    int
-rw-      gauge_alpha    int
+rw-          gauge_A    int
 rw-              num    enum( none left right )
 rw-        num_begin    int
 rw-         num_step    int
@@ -962,7 +963,7 @@ rw-      num_shift_n    int
 rw-            num_R    int
 rw-            num_G    int
 rw-            num_B    int
-rw-        num_alpha    int
+rw-            num_A    int
 rw-  num_date_format    char*
 r-x       scale_push    void( )
 r-x        scale_pop    void( )
@@ -998,8 +999,8 @@ alias: data
 version: 1.00.00
 parent: draw
 object id: 26
-number of fields: 119
-size of instance: 808
+number of fields: 120
+size of instance: 816
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1008,7 +1009,7 @@ rw-           hidden    bool
 rw-                R    int
 rw-                G    int
 rw-                B    int
-rw-            alpha    int
+rw-                A    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1038,6 +1039,7 @@ rw- line_miter_limit    int
 rw-               R2    int
 rw-               G2    int
 rw-               B2    int
+rw-               A2    int
 rw-           remark    char*
 rw-              ifs    char*
 rw-              csv    bool
@@ -1138,7 +1140,7 @@ rw-           hidden    bool
 rw-                R    int
 rw-                G    int
 rw-                B    int
-rw-            alpha    int
+rw-                A    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1189,7 +1191,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
-rw-            alpha    int
+rw-                A    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1208,8 +1210,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 29
-number of fields: 43
-size of instance: 312
+number of fields: 45
+size of instance: 336
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1217,7 +1219,6 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
-rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1231,9 +1232,11 @@ rw-               y2    int
 rw-         stroke_R    int
 rw-         stroke_G    int
 rw-         stroke_B    int
+rw-         stroke_A    int
 rw-           fill_R    int
 rw-           fill_G    int
 rw-           fill_B    int
+rw-           fill_A    int
 rw-             fill    bool
 rw-           stroke    bool
 rw-            width    int
@@ -1250,6 +1253,7 @@ r-x            match    bool( int int int int int )
 -w-                R    int
 -w-                G    int
 -w-                B    int
+-w-                A    int
 -w-               R2    int
 -w-               G2    int
 -w-               B2    int
@@ -1262,8 +1266,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 30
-number of fields: 45
-size of instance: 328
+number of fields: 47
+size of instance: 352
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1271,7 +1275,6 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
-rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1288,9 +1291,11 @@ rw-         pieslice    bool
 rw-           fill_R    int
 rw-           fill_G    int
 rw-           fill_B    int
+rw-           fill_A    int
 rw-         stroke_R    int
 rw-         stroke_G    int
 rw-         stroke_B    int
+rw-         stroke_A    int
 rw-             fill    bool
 rw-           stroke    bool
 rw-       close_path    bool
@@ -1309,6 +1314,7 @@ r-x            match    bool( int int int int int )
 -w-                R    int
 -w-                G    int
 -w-                B    int
+-w-                A    int
 </pre>
 
 <h3>path</h3>
@@ -1318,8 +1324,8 @@ alias: line:curve:polygon
 version: 1.00.01
 parent: legend
 object id: 31
-number of fields: 46
-size of instance: 336
+number of fields: 48
+size of instance: 360
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1327,7 +1333,6 @@ r-x             save    *char( char *[] )
 ---               GC    int
 rw-           hidden    bool
 r-x           redraw    void( int )
-rw-            alpha    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1341,9 +1346,11 @@ rw-    interpolation    enum( spline spline_close bspline bspline_close )
 rw-           fill_R    int
 rw-           fill_G    int
 rw-           fill_B    int
+rw-           fill_A    int
 rw-         stroke_R    int
 rw-         stroke_G    int
 rw-         stroke_B    int
+rw-         stroke_A    int
 rw-             fill    enum( false true )
 rw-        fill_rule    enum( even_odd_rule winding_rule )
 rw-           stroke    bool
@@ -1366,6 +1373,7 @@ r-x            match    bool( int int int int int )
 -w-                R    int
 -w-                G    int
 -w-                B    int
+-w-                A    int
 </pre>
 
 <h3>mark</h3>
@@ -1375,8 +1383,8 @@ alias:
 version: 1.00.00
 parent: legend
 object id: 32
-number of fields: 33
-size of instance: 216
+number of fields: 34
+size of instance: 224
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -1387,7 +1395,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
-rw-            alpha    int
+rw-                A    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int
@@ -1401,6 +1409,7 @@ rw-             type    int
 rw-               R2    int
 rw-               G2    int
 rw-               B2    int
+rw-               A2    int
 rw-            width    int
 rw-            style    int[]
 r-x             draw    void( int )
@@ -1431,7 +1440,7 @@ r-x           redraw    void( int )
 rw-                R    int
 rw-                G    int
 rw-                B    int
-rw-            alpha    int
+rw-                A    int
 rw-             clip    bool
 rw-      redraw_flag    bool
 ---       redraw_num    int

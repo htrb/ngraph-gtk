@@ -179,15 +179,6 @@ GridCB(struct objlist *obj, int id)
   return s;
 }
 
-static GtkWidget *
-opacity_setup(GtkWidget *table, int i)
-{
-  GtkWidget *w;
-
-  w = create_spin_entry(0, 255, 1, TRUE, TRUE);
-  return add_widget_to_table(table, w, _("_Opacity:"), FALSE, i++);
-}
-
 static void
 bg_button_toggled(GtkToggleButton *button, gpointer user_data)
 {
@@ -253,8 +244,6 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
 
   set_color(d->color, d->Obj, id, NULL);
   set_color(d->bcolor, d->Obj, id, "B");
-
-  SetWidgetFromObjField(d->opacity, d->Obj, id, "alpha");
 }
 
 static void
@@ -361,8 +350,6 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->bclabel = add_widget_to_table(table, w, _("_Background Color:"), FALSE, j++);
     d->bcolor = w;
 
-    d->opacity = opacity_setup(table, j++);
-
     frame = gtk_frame_new(_("Color"));
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
@@ -424,9 +411,6 @@ GridDialogClose(GtkWidget *w, void *data)
   }
 
   if (SetObjFieldFromWidget(d->background, d->Obj, d->Id, "background"))
-    return;
-
-  if (SetObjFieldFromWidget(d->opacity, d->Obj, d->Id, "alpha"))
     return;
 
   if (putobj_color(d->color, d->Obj, d->Id, NULL))
@@ -1318,9 +1302,6 @@ baseline_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->wavewid, axis->Obj, axis->Id, "wave_width"))
     return 1;
 
-  if (SetObjFieldFromWidget(d->opacity, axis->Obj, axis->Id, "alpha"))
-    return 1;
-
   if (putobj_color(d->color, axis->Obj, axis->Id, NULL))
     return 1;
 
@@ -1353,8 +1334,6 @@ baseline_tab_setup_item(struct AxisDialog *axis, int id)
   SetWidgetFromObjField(d->wavewid, axis->Obj, id, "wave_width");
 
   set_color(d->color, axis->Obj, id, NULL);
-
-  SetWidgetFromObjField(d->opacity, axis->Obj, id, "alpha");
 }
 
 static void
@@ -1401,8 +1380,6 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   w = create_color_button(wi);
   add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
-
-  d->opacity = opacity_setup(table, i++);
 
   frame = gtk_frame_new(_("Baseline"));
   gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1494,9 +1471,6 @@ gauge_tab_set_value(struct AxisDialog *axis)
       return 1;
   }
 
-  if (SetObjFieldFromWidget(d->opacity, axis->Obj, axis->Id, "gauge_alpha"))
-    return 1;
-
   if (putobj_color(d->color, axis->Obj, axis->Id, "gauge_"))
     return 1;
 
@@ -1530,8 +1504,6 @@ gauge_tab_setup_item(struct AxisDialog *axis, int id)
   }
 
   set_color(d->color, axis->Obj, id, "gauge_");
-
-  SetWidgetFromObjField(d->opacity, axis->Obj, id, "gauge_alpha");
 }
 
 static void
@@ -1592,8 +1564,6 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   w = create_color_button(wi);
   add_widget_to_table_sub(table, w, _("_Color:"), FALSE, 0, 1, 4, j++);
   d->color = w;
-
-  d->opacity = opacity_setup(table, j++);
 
   for (i = 0; i < GAUGE_STYLE_NUM; i++) {
     snprintf(buf, sizeof(buf), _("_Width %d:"), i + 1);
@@ -1909,9 +1879,6 @@ font_tab_set_value(struct AxisDialog *axis)
 
   SetObjFieldFromFontList(d->font, axis->Obj, axis->Id, "num_font");
 
-  if (SetObjFieldFromWidget(d->opacity, axis->Obj, axis->Id, "num_alpha"))
-    return 1;
-
   if (putobj_color(d->color, axis->Obj, axis->Id, "num_"))
     return 1;
 
@@ -1951,8 +1918,6 @@ font_tab_setup_item(struct AxisDialog *axis, int id)
   SetWidgetFromObjField(d->script, axis->Obj, id, "num_script_size");
 
   set_color(d->color, axis->Obj, id, "num_");
-
-  SetWidgetFromObjField(d->opacity, axis->Obj, id, "num_alpha");
 
   compatible = SetFontListFromObj(d->font, axis->Obj, id, "num_font");
 
@@ -2024,8 +1989,6 @@ font_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   w = create_color_button(wi);
   add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
   d->color = w;
-
-  d->opacity = opacity_setup(table, i++);
 
   frame = gtk_frame_new(_("Font"));
   gtk_container_add(GTK_CONTAINER(frame), table);

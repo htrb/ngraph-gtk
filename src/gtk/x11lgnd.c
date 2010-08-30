@@ -229,7 +229,6 @@ init_legend_dialog_widget_member(struct LegendDialog *d)
   d->color2 = NULL;
   d->stroke_color = NULL;
   d->fill_color = NULL;
-  d->opacity = NULL;
   d->x = NULL;
   d->y = NULL;
   d->x1 = NULL;
@@ -438,7 +437,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
     {d->direction, "direction"},
     {d->space, "space"},
     {d->script_size, "script_size"},
-    {d->opacity, "alpha"},
   };
 
   SetTextFromObjPoints(d->points, d->Obj, id, "points");
@@ -554,7 +552,6 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->direction, "direction"},
     {d->space, "space"},
     {d->script_size, "script_size"},
-    {d->opacity, "alpha"},
   };
 
   if (d->tab) {
@@ -977,15 +974,6 @@ stroke_color_setup(struct LegendDialog *d, GtkWidget *table, int i)
 }
 
 static void
-opacity_setup(struct LegendDialog *d, GtkWidget *table, int i)
-{
-  GtkWidget *w;
-
-  w = create_spin_entry(0, 255, 1, TRUE, TRUE);
-  d->opacity = add_widget_to_table(table, w, _("_Opacity:"), FALSE, i++);
-}
-
-static void
 draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 {
   int lw, len, x, w;
@@ -1189,10 +1177,6 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
 
-    table = gtk_table_new(1, 1, FALSE);
-    opacity_setup(d, table, i++);
-    gtk_box_pack_start(GTK_BOX(vbox2), table, FALSE, FALSE, 0);
-
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), vbox2);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
@@ -1287,10 +1271,6 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_frame_set_label_widget(GTK_FRAME(frame), w);
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-
-    table = gtk_table_new(1, 1, FALSE);
-    opacity_setup(d, table, i++);
-    gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), vbox);
@@ -1412,10 +1392,6 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-    table = gtk_table_new(1, 1, FALSE);
-    opacity_setup(d, table, i++);
-    gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
-
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), vbox);
     gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
@@ -1501,7 +1477,6 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     color_setup(d, table, i++);
     color2_setup(d, table, i++);
-    opacity_setup(d, table, i++);
 
     frame = gtk_frame_new(NULL);
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -1565,7 +1540,6 @@ legend_dialog_setup_sub(struct LegendDialog *d, GtkWidget *table, int i)
   add_widget_to_table(table, btn_box, "", FALSE, i++);
 
   color_setup(d, table, i++);
-  opacity_setup(d, table, i++);
 
   w = create_direction_entry();
   add_widget_to_table(table, w, _("_Direction:"), FALSE, i++);

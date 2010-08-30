@@ -392,6 +392,10 @@ put_color_for_backward_compatibility(struct objlist *obj, char *inst, char *rval
     _putobj(obj, "stroke_B", inst, &val);
     _putobj(obj, "fill_B", inst, &val);
     break;
+  case 'A':
+    _putobj(obj, "stroke_A", inst, &val);
+    _putobj(obj, "fill_A", inst, &val);
+    break;
   }
   return 0;
 }

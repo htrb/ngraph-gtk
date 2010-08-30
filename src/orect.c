@@ -46,15 +46,18 @@ static char *recterrorlist[]={
 static int 
 rectinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int width, stroke;
+  int width, stroke, alpha;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
   width = 40;
   stroke = TRUE;
+  alpha = 255;
 
   if (_putobj(obj, "width", inst, &width)) return 1;
   if (_putobj(obj, "stroke", inst, &stroke)) return 1;
+  if (_putobj(obj, "stroke_A", inst, &alpha)) return 1;
+  if (_putobj(obj, "fill_A", inst, &alpha)) return 1;
 
   return 0;
 }
@@ -90,7 +93,7 @@ static int
 rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x1,y1,x2,y2,width,ifill,stroke,fr,fg,fb,br,bg,bb,tm,lm,w,h, alpha;
+  int x1,y1,x2,y2,width,ifill,stroke,fr,fg,fb,fa,br,bg,bb,ba,tm,lm,w,h;
   struct narray *style;
   int snum,*sdata;
   int clip,zoom;
@@ -101,10 +104,11 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"stroke_R",inst,&fr);
   _getobj(obj,"stroke_G",inst,&fg);
   _getobj(obj,"stroke_B",inst,&fb);
+  _getobj(obj,"stroke_A",inst,&fa);
   _getobj(obj,"fill_R",inst,&br);
   _getobj(obj,"fill_G",inst,&bg);
   _getobj(obj,"fill_B",inst,&bb);
-  _getobj(obj,"alpha", inst, &alpha);
+  _getobj(obj,"fill_A", inst, &ba);
   _getobj(obj,"width",inst,&width);
   _getobj(obj,"style",inst,&style);
   _getobj(obj,"fill",inst,&ifill);
@@ -119,12 +123,12 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
 
   if (ifill) {
-    GRAcolor(GC,br,bg,bb, alpha);
+    GRAcolor(GC,br,bg,bb, ba);
     GRArectangle(GC,x1,y1,x2,y2,1);
   }
 
   if (stroke) {
-    GRAcolor(GC,fr,fg,fb, alpha);
+    GRAcolor(GC,fr,fg,fb, fa);
     GRAlinestyle(GC,snum,sdata,width,0,0,1000);
     GRArectangle(GC,x1,y1,x2,y2,0);
   }
@@ -539,10 +543,12 @@ static struct objtable rect[] = {
   {"stroke_R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"stroke_G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"stroke_B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"stroke_A",NINT,NREAD|NWRITE,oputcolor,NULL,0},
 
   {"fill_R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"fill_G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"fill_B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"fill_A",NINT,NREAD|NWRITE,oputcolor,NULL,0},
 
   {"fill",NBOOL,NREAD|NWRITE,legendgeometry,NULL,0},
   {"stroke",NBOOL,NREAD|NWRITE,legendgeometry,NULL,0},
@@ -564,6 +570,7 @@ static struct objtable rect[] = {
   {"R",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
   {"G",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
   {"B",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
+  {"A",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
   {"R2",NINT,NWRITE,put_color2,NULL,0},
   {"G2",NINT,NWRITE,put_color2,NULL,0},
   {"B2",NINT,NWRITE,put_color2,NULL,0},

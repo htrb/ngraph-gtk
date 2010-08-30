@@ -64,7 +64,7 @@ static struct obj_config TextConfig[] = {
   {"R", OBJ_CONFIG_TYPE_NUMERIC},
   {"G", OBJ_CONFIG_TYPE_NUMERIC},
   {"B", OBJ_CONFIG_TYPE_NUMERIC},
-  {"alpha", OBJ_CONFIG_TYPE_NUMERIC},
+  {"A", OBJ_CONFIG_TYPE_NUMERIC},
   {"pt", OBJ_CONFIG_TYPE_NUMERIC},
   {"space", OBJ_CONFIG_TYPE_NUMERIC},
   {"direction", OBJ_CONFIG_TYPE_NUMERIC},
@@ -150,7 +150,7 @@ static int
 textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x,y,pt,space,dir,fr,fg,fb,tm,lm,w,h,scriptsize,raw,alpha;
+  int x,y,pt,space,dir,fr,fg,fb,fa,tm,lm,w,h,scriptsize,raw;
   char *font;
   char *text;
   int clip,zoom,style;
@@ -161,7 +161,7 @@ textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"R",inst,&fr);
   _getobj(obj,"G",inst,&fg);
   _getobj(obj,"B",inst,&fb);
-  _getobj(obj,"alpha",inst,&alpha);
+  _getobj(obj,"A",inst,&fa);
   _getobj(obj,"text",inst,&text);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
@@ -175,7 +175,7 @@ textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"style",inst,&style);
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
-  GRAcolor(GC,fr,fg,fb, alpha);
+  GRAcolor(GC,fr,fg,fb, fa);
   GRAmoveto(GC,x,y);
   if (raw) {
     GRAdrawtextraw(GC,text,font,style,pt,space,dir);

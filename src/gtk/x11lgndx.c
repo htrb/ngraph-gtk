@@ -84,8 +84,6 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 
   SetWidgetFromObjField(d->miter, d->Obj, id, "miter_limit");
 
-  SetWidgetFromObjField(d->opacity, d->Obj, id, "alpha");
-
   set_stroke_color(d->color, d->Obj, id);
 
   n = d->Dir;
@@ -415,9 +413,6 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
     d->color = w;
 
-    w = create_spin_entry(0, 255, 1, TRUE, TRUE);
-    d->opacity = add_widget_to_table(table, w, _("_Opacity:"), FALSE, i++);
-
     w = gtk_hscale_new_with_range(10, DIV_MAX, 1);
     add_widget_to_table(table, w, _("_Division:"), TRUE, i++);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogDiv), d);
@@ -501,9 +496,6 @@ LegendGaussDialogClose(GtkWidget *w, void *data)
     return;
 
   if (SetObjFieldFromWidget(d->miter, d->Obj, d->Id, "miter_limit"))
-    return;
-
-  if (SetObjFieldFromWidget(d->opacity, d->Obj, d->Id, "alpha"))
     return;
 
   if (putobj_stroke_color(d->color, d->Obj, d->Id))

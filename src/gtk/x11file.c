@@ -2397,8 +2397,6 @@ plot_tab_setup_item(struct FileDialog *d, int id)
   set_color(d->col1, d->Obj, id, NULL);
   set_color2(d->col2, d->Obj, id);
 
-  SetWidgetFromObjField(d->opacity, d->Obj, id, "alpha");
-
   FileDialogType(d->type, d);
 }
 
@@ -2862,9 +2860,6 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   d->join_label = add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
   d->join = w;
 
-  w = create_spin_entry(0, 255, 1, TRUE, TRUE);
-  d->opacity = add_widget_to_table(table, w, _("_Opacity:"), FALSE, i++);
-
   w = gtk_check_button_new_with_mnemonic(_("_Clip"));
   add_widget_to_table(table, w, NULL, FALSE, i++);
   d->clip = w;
@@ -3180,9 +3175,6 @@ plot_tab_set_value(struct FileDialog *d)
     return TRUE;
 
   if (putobj_color2(d->col2, d->Obj, d->Id))
-    return TRUE;
-
-  if (SetObjFieldFromWidget(d->opacity, d->Obj, d->Id, "alpha"))
     return TRUE;
 
   return 0;
@@ -4000,7 +3992,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     getobj(obj, "mark_type", i, 0, NULL, &marktype);
     GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     GRAmark(ggc, marktype, height / 2, height / 2, height - 2,
-	    fr, fg, fb, fr2, fg2, fb2, 255);
+	    fr, fg, fb, 255, fr2, fg2, fb2, 255);
     break;
   case PLOT_TYPE_LINE:
     GRAcolor(ggc, fr, fg, fb, 255);

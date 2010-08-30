@@ -47,7 +47,7 @@ static char *markerrorlist[]={
 static int 
 markinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {  
-  int size,width,r2,g2,b2;
+  int size,width,r2,g2,b2,a2;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   size=200;
@@ -55,11 +55,13 @@ markinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   r2=255;
   g2=255;
   b2=255;
+  a2=255;
   if (_putobj(obj,"size",inst,&size)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
   if (_putobj(obj,"R2",inst,&r2)) return 1;
   if (_putobj(obj,"G2",inst,&g2)) return 1;
   if (_putobj(obj,"B2",inst,&b2)) return 1;
+  if (_putobj(obj,"A2",inst,&a2)) return 1;
   return 0;
 }
 
@@ -74,7 +76,7 @@ static int
 markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x,y,type,size,width,fr,fg,fb,br,bg,bb,tm,lm,w,h, alpha;
+  int x,y,type,size,width,fr,fg,fb,fa,br,bg,bb,ba,tm,lm,w,h;
   struct narray *style;
   int snum,*sdata;
   int clip,zoom;
@@ -85,10 +87,11 @@ markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"R",inst,&fr);
   _getobj(obj,"G",inst,&fg);
   _getobj(obj,"B",inst,&fb);
+  _getobj(obj,"A",inst,&fa);
   _getobj(obj,"R2",inst,&br);
   _getobj(obj,"G2",inst,&bg);
   _getobj(obj,"B2",inst,&bb);
-  _getobj(obj,"alpha",inst,&alpha);
+  _getobj(obj,"A2",inst,&ba);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"type",inst,&type);
@@ -101,7 +104,7 @@ markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   GRAregion(GC,&lm,&tm,&w,&h,&zoom);
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
   GRAlinestyle(GC,snum,sdata,width,0,0,1000);
-  GRAmark(GC,type,x,y,size,fr,fg,fb,br,bg,bb,alpha);
+  GRAmark(GC,type,x,y,size,fr,fg,fb,fa,br,bg,bb,ba);
   GRAaddlist(GC,obj,inst,(char *)argv[0],(char *)argv[1]);
   return 0;
 }
@@ -553,6 +556,7 @@ static struct objtable mark[] = {
   {"R2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"G2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"A2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"width",NINT,NREAD|NWRITE,markgeometry,NULL,0},
   {"style",NIARRAY,NREAD|NWRITE,oputstyle,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,markdraw,"i",0},

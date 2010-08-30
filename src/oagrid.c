@@ -54,7 +54,7 @@ static int
 agridinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int wid1,wid2,wid3,dot;
-  int r,g,b,br,bg,bb;
+  int r,g,b,br,bg,bb,ba;
   struct narray *style1;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -67,6 +67,7 @@ agridinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   br=255;
   bg=255;
   bb=255;
+  ba=255;
   style1=arraynew(sizeof(int));
   dot=150;
   arrayadd(style1,&dot);
@@ -81,6 +82,7 @@ agridinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj,"BR",inst,&br)) return 1;
   if (_putobj(obj,"BG",inst,&bg)) return 1;
   if (_putobj(obj,"BB",inst,&bb)) return 1;
+  if (_putobj(obj,"BA",inst,&ba)) return 1;
   return 0;
 }
 
@@ -294,14 +296,15 @@ draw_grid_line(struct objlist *obj, int GC,
 }
 
 static int
-draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, struct axis_pos *ay, int alpha)
+draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
 {
-  int r, br, bg, bb, pos[8];
+  int r, br, bg, bb, ba, pos[8];
 
   _getobj(obj, "BR", inst, &br);
   _getobj(obj, "BG", inst, &bg);
   _getobj(obj, "BB", inst, &bb);
-  GRAcolor(GC, br, bg, bb, alpha);
+  _getobj(obj, "BA", inst, &ba);
+  GRAcolor(GC, br, bg, bb, ba);
 
   r = calc_intersection(ax->x, ax->y, ay->dir,
 			ay->x, ay->y, ax->dir,
@@ -327,7 +330,7 @@ static int
 agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
   int GC, clip, zoom, back;
-  int i, fr, fg, fb, lm, tm, w, h, r, alpha;
+  int i, fr, fg, fb, fa, lm, tm, w, h, r;
   char *axisx, *axisy;
   struct axis_prm ax_prm,  ay_prm;
   struct axis_pos ax_pos,  ay_pos;
@@ -342,7 +345,7 @@ agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   _getobj(obj, "R", inst, &fr);
   _getobj(obj, "G", inst, &fg);
   _getobj(obj, "B", inst, &fb);
-  _getobj(obj, "alpha", inst, &alpha);
+  _getobj(obj, "A", inst, &fa);
   _getobj(obj, "axis_x", inst, &axisx);
   _getobj(obj, "axis_y", inst, &axisy);
   _getobj(obj, "clip", inst, &clip);
@@ -375,13 +378,13 @@ agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   GRAregion(GC, &lm, &tm, &w, &h, &zoom);
   GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, clip);
 
-  if (back && draw_background(obj, inst, GC, &ax_pos, &ay_pos, alpha)) {
+  if (back && draw_background(obj, inst, GC, &ax_pos, &ay_pos)) {
     error(obj, ERRAXISDIR);
     return 1;
   }
 
   if (ax_prm.amin != ax_prm.amax && ay_prm.amin != ay_prm.amax) {
-    GRAcolor(GC, fr, fg, fb, alpha);
+    GRAcolor(GC, fr, fg, fb, fa);
     if (draw_grid_line(obj, GC, &ax_prm, &ax_pos, &ay_pos, &gprm) == 0) {
       draw_grid_line(obj, GC, &ay_prm, &ay_pos, &ax_pos, &gprm);
     }
@@ -416,6 +419,7 @@ static struct objtable agrid[] = {
   {"BR",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"BG",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"BB",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"BA",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,agriddraw,"i",0},
   {"tight",NVFUNC,NREAD|NEXEC,agridtight,NULL,0},
 };

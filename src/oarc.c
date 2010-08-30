@@ -48,8 +48,8 @@ static char *arcerrorlist[]={
 
 static int 
 arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
-{  
-  int angle2, width, pieslice, stroke, miter, join;
+{
+  int angle2, width, pieslice, stroke, miter, join, alpha;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
@@ -59,6 +59,7 @@ arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   miter = 1000;
   join = JOIN_TYPE_BEVEL;
   stroke = TRUE;
+  alpha = 255;
 
   if (_putobj(obj, "pieslice", inst, &pieslice)) return 1;
   if (_putobj(obj, "angle2", inst, &angle2)) return 1;
@@ -66,6 +67,8 @@ arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (_putobj(obj, "miter_limit", inst, &miter)) return 1;
   if (_putobj(obj, "join", inst, &join)) return 1;
   if (_putobj(obj, "stroke", inst, &stroke)) return 1;
+  if (_putobj(obj, "stroke_A", inst, &alpha)) return 1;
+  if (_putobj(obj, "fill_A", inst, &alpha)) return 1;
 
   return 0;
 }
@@ -81,7 +84,7 @@ static int
 arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
   int GC;
-  int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,tm,lm,w,h,stroke,close_path,br,bg,bb, join, miter, alpha;
+  int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,fa,tm,lm,w,h,stroke,close_path,br,bg,bb, ba, join, miter;
   int pieslice;
   struct narray *style;
   int snum,*sdata;
@@ -93,10 +96,11 @@ arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"stroke_R",inst,&fr);
   _getobj(obj,"stroke_G",inst,&fg);
   _getobj(obj,"stroke_B",inst,&fb);
+  _getobj(obj,"stroke_A",inst,&fa);
   _getobj(obj,"fill_R",inst,&br);
   _getobj(obj,"fill_G",inst,&bg);
   _getobj(obj,"fill_B",inst,&bb);
-  _getobj(obj, "alpha", inst, &alpha);
+  _getobj(obj,"fill_A",inst,&ba);
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
   _getobj(obj,"rx",inst,&rx);
@@ -123,13 +127,13 @@ arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   GRAview(GC,0,0,w*10000.0/zoom,h*10000.0/zoom,clip);
 
   if (ifill) {
-    GRAcolor(GC,br,bg,bb, alpha);
+    GRAcolor(GC,br,bg,bb, ba);
     GRAcircle(GC, x, y, rx, ry, angle1, angle2,
 	      (pieslice) ? 1 : 2);
   }
 
   if (stroke) {
-    GRAcolor(GC,fr,fg,fb, alpha);
+    GRAcolor(GC,fr,fg,fb, fa);
     GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
     GRAcircle(GC, x, y, rx, ry, angle1, angle2,
 	      (close_path) ? ((pieslice) ? 3 : 4) : 0);
@@ -547,10 +551,12 @@ static struct objtable arc[] = {
   {"fill_R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"fill_G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"fill_B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"fill_A",NINT,NREAD|NWRITE,oputcolor,NULL,0},
 
   {"stroke_R",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"stroke_G",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"stroke_B",NINT,NREAD|NWRITE,oputcolor,NULL,0},
+  {"stroke_A",NINT,NREAD|NWRITE,oputcolor,NULL,0},
 
   {"fill",NBOOL,NREAD|NWRITE,arcgeometry,NULL,0},
   {"stroke",NBOOL,NREAD|NWRITE,arcgeometry,NULL,0},
@@ -574,6 +580,7 @@ static struct objtable arc[] = {
   {"R",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
   {"G",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
   {"B",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
+  {"A",NINT,NWRITE,put_color_for_backward_compatibility,NULL,0},
 };
 
 #define TBLNUM (sizeof(arc) / sizeof(*arc))

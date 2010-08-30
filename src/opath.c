@@ -87,7 +87,7 @@ static char *path_type[]={
 static int 
 arrowinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {  
-  int width, headlen, headwidth, miter, stroke, join, prm, type;
+  int width, headlen, headwidth, miter, stroke, join, prm, type, alpha;
   struct narray *expand_points;
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
@@ -120,6 +120,7 @@ arrowinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   miter = 1000;
   join = JOIN_TYPE_BEVEL;
   stroke = 1;
+  alpha = 255;
 
   if (_putobj(obj, "type",         inst, &type))      return 1;
   if (_putobj(obj, "stroke",       inst, &stroke))    return 1;
@@ -128,6 +129,8 @@ arrowinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (_putobj(obj, "arrow_length", inst, &headlen))   return 1;
   if (_putobj(obj, "arrow_width",  inst, &headwidth)) return 1;
   if (_putobj(obj, "join",         inst, &join))      return 1;
+  if (_putobj(obj, "stroke_A",     inst, &alpha)) return 1;
+  if (_putobj(obj, "fill_A",       inst, &alpha)) return 1;
 
   expand_points = arraynew(sizeof(int));
   if (expand_points == NULL) {
@@ -467,9 +470,9 @@ get_arrow_pos(int *points2, int n,
 }
 
 static void
-draw_stroke(struct objlist *obj, char *inst, int GC, int alpha, int *points2, int *pdata, int num, int intp)
+draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, int num, int intp)
 {
-  int width, fr, fg, fb, headlen, headwidth;
+  int width, fr, fg, fb, fa, headlen, headwidth;
   int join, miter, head;
   int x, y, x0, y0, x1, y1, x2, y2, x3, y3, close_path;
   struct narray *style;
@@ -480,6 +483,7 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int alpha, int *points2, in
   _getobj(obj, "stroke_R", inst, &fr);
   _getobj(obj, "stroke_G", inst, &fg);
   _getobj(obj, "stroke_B", inst, &fb);
+  _getobj(obj, "stroke_A", inst, &fa);
 
   _getobj(obj, "close_path",   inst, &close_path);
   _getobj(obj, "width",        inst, &width);
@@ -493,7 +497,7 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int alpha, int *points2, in
   snum = arraynum(style);
   sdata = arraydata(style);
 
-  GRAcolor(GC, fr, fg, fb, alpha);
+  GRAcolor(GC, fr, fg, fb, fa);
   GRAlinestyle(GC, snum, sdata, width, 0, join, miter);
 
   x0 = points2[0];
@@ -546,23 +550,24 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int alpha, int *points2, in
 }
 
 static void
-draw_fill(struct objlist *obj, char *inst, int GC, int alpha, int *points2, int num)
+draw_fill(struct objlist *obj, char *inst, int GC, int *points2, int num)
 {
-  int br, bg, bb, fill_rule;
+  int br, bg, bb, ba, fill_rule;
 
   _getobj(obj, "fill_rule", inst, &fill_rule);
   _getobj(obj, "fill_R",    inst, &br);
   _getobj(obj, "fill_G",    inst, &bg);
   _getobj(obj, "fill_B",    inst, &bb);
+  _getobj(obj, "fill_A",    inst, &ba);
 
-  GRAcolor(GC, br, bg, bb, alpha);
+  GRAcolor(GC, br, bg, bb, ba);
   GRAdrawpoly(GC, num, points2, fill_rule + 1);
 }
 
 static int 
 arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 {
-  int GC, lm, tm, w, h, intp, i, j, num, alpha;
+  int GC, lm, tm, w, h, intp, i, j, num;
   struct narray *points;
   int *points2, *pdata;
   int x0, y0, x1, y1, type, stroke, fill, clip, zoom;
@@ -584,7 +589,6 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   _getobj(obj, "type",  inst, &type);
   _getobj(obj, "clip",  inst, &clip);
-  _getobj(obj, "alpha", inst, &alpha);
 
   if (type == PATH_TYPE_CURVE) {
     _getobj(obj, "interpolation", inst, &intp);
@@ -626,11 +630,11 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   GRAview(GC, 0, 0, w * 10000.0 / zoom, h * 10000.0 / zoom, clip);
 
   if (fill) {
-    draw_fill(obj, inst, GC, alpha, points2, num);
+    draw_fill(obj, inst, GC, points2, num);
   }
 
   if (stroke) {
-    draw_stroke(obj, inst, GC, alpha, points2, pdata, num, intp);
+    draw_stroke(obj, inst, GC, points2, pdata, num, intp);
   }
 
   g_free(points2);
@@ -1047,10 +1051,12 @@ static struct objtable arrow[] = {
   {"fill_R", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
   {"fill_G", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
   {"fill_B", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
+  {"fill_A", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
 
   {"stroke_R", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
   {"stroke_G", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
   {"stroke_B", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
+  {"stroke_A", NINT, NREAD|NWRITE, oputcolor, NULL, 0},
 
   {"fill", NENUM, NREAD|NWRITE, put_fill_mode, path_fill_mode, 0},
   {"fill_rule", NENUM, NREAD|NWRITE, NULL, path_fill_rule, 0},
@@ -1079,6 +1085,7 @@ static struct objtable arrow[] = {
   {"R", NINT, NWRITE, put_color_for_backward_compatibility, NULL, 0},
   {"G", NINT, NWRITE, put_color_for_backward_compatibility, NULL, 0},
   {"B", NINT, NWRITE, put_color_for_backward_compatibility, NULL, 0},
+  {"A", NINT, NWRITE, put_color_for_backward_compatibility, NULL, 0},
 };
 
 #define TBLNUM (sizeof(arrow) / sizeof(*arrow))

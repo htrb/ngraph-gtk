@@ -1,3 +1,51 @@
+2010-08-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2ddata_buf, f2ddata): use "struct rgba" instead of
+	"int".
+	(file_alpha): added.
+	(file_func): add function "ALPHA".
+	(opendata): use fields "A" and "A2".
+	(dataadd): add parameters "fa" and "a".
+
+	* src/oaxis.c (axis): rename fields from "gauge_alpha" to
+	"gauge_A" end "num_alpha" to "num_A".
+
+	* src/oagrid.c (agridinit): initialize field "BA".
+	(draw_background, agriddraw): remove parameter "alpha".
+	(draw_background): use field "BA".
+	(agriddraw): use field "A".
+	(agrid): add field "BA".
+
+	* src/oarc.c (arcinit): initialize field "stroke_A" and "fill_A".
+	(arcdraw): use field "stroke_A" and "fill_A".
+	(arc): add field "stroke_A" and "fill_A".
+
+	* src/omark.c (markinit): initialize field "A2".
+	(markdraw): use field "A" and "A2".
+	(mark): add field "A2".
+
+	* src/opath.c (arrowinit): initialize field "stroke_A" and "fill_A".
+	(draw_stroke, draw_fill): remove parameter "alpha".
+	(draw_stroke): use field "stroke_A".
+	(draw_fill): use field "fill_A".
+	(arrow): add field "stroke_A" and "fill_A".
+
+	* src/olegend.c (put_color_for_backward_compatibility): set opacity.
+
+	* src/orect.c (rectinit): initialize field "stroke_A" and "fill_A".
+	(rectdraw): use field "stroke_A" and "fill_A".
+	(rect): add field "stroke_A" and "fill_A".
+
+	* src/gra.c (GRAmark): remove parameter "alpha". add parameter
+	"fa" and "ba".
+
+	* src/gtk/gtk_widget.c (show_color_sel, create_color_button): use
+	opacity control.
+
+	* src/gtk/x11dialg.c (_set_color, _putobj_color): setup opacity.
+
+	* src/gtk/x11axis.c (opacity_setup): removed.
+
 2010-08-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oaxis.c (axisinit): initialize field "gauge_alpha" and
