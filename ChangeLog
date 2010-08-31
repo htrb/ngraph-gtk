@@ -1,3 +1,7 @@
+2010-08-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (select_color): set opacity.
+
 2010-08-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (f2ddata_buf, f2ddata): use "struct rgba" instead of

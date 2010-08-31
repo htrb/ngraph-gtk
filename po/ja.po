@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-08-30 15:40+0900\n"
+"POT-Creation-Date: 2010-08-31 13:03+0900\n"
 "PO-Revision-Date: 2010-08-27 16:57+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -981,7 +981,7 @@ msgstr "データを開く"
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4443 src/gtk/x11file.c:4491
+#: src/gtk/x11file.c:4443 src/gtk/x11file.c:4492
 msgid "Color 2"
 msgstr "色 2"
 

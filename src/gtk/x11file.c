@@ -4476,7 +4476,7 @@ static int
 select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
 {
   GtkWidget *dlg, *sel;
-  int r, g, b, response;
+  int r, g, b, a, response;
   GdkColor color;
   char *title;
 
@@ -4486,12 +4486,14 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
     getobj(obj, "R", id, 0, NULL, &r);
     getobj(obj, "G", id, 0, NULL, &g);
     getobj(obj, "B", id, 0, NULL, &b);
+    getobj(obj, "A", id, 0, NULL, &a);
     break;
   case FILE_COMBO_ITEM_COLOR_2:
     title = _("Color 2");
     getobj(obj, "R2", id, 0, NULL, &r);
     getobj(obj, "G2", id, 0, NULL, &g);
     getobj(obj, "B2", id, 0, NULL, &b);
+    getobj(obj, "A2", id, 0, NULL, &a);
     break;
   default:
     return 1;
@@ -4509,11 +4511,15 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
   sel = GTK_COLOR_SELECTION_DIALOG(dlg)->colorsel;
 #endif
 
-  gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
   gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
+  gtk_color_selection_set_has_opacity_control(GTK_COLOR_SELECTION(sel), TRUE);
+
+  gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
+  gtk_color_selection_set_current_alpha(GTK_COLOR_SELECTION(sel), (a & 0xffU) * 257);
 
   response = ndialog_run(dlg);
   gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(sel), &color);
+  a = gtk_color_selection_get_current_alpha(GTK_COLOR_SELECTION(sel));
   gtk_widget_destroy(dlg);
 
   if (response != GTK_RESPONSE_OK)
@@ -4522,17 +4528,20 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
   r = (color.red >> 8);
   g = (color.green >> 8);
   b = (color.blue >> 8);
+  a >>= 8;
 
   switch (type) {
   case FILE_COMBO_ITEM_COLOR_1:
     putobj(obj, "R", id, &r);
     putobj(obj, "G", id, &g);
     putobj(obj, "B", id, &b);
+    putobj(obj, "A", id, &a);
     break;
   case FILE_COMBO_ITEM_COLOR_2:
     putobj(obj, "R2", id, &r);
     putobj(obj, "G2", id, &g);
     putobj(obj, "B2", id, &b);
+    putobj(obj, "A2", id, &a);
   default:
     return 1;
   }
