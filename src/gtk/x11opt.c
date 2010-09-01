@@ -1620,7 +1620,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     hbox = gtk_hbox_new(FALSE, 4);
     w = gtk_hscale_new_with_range(20, 620, 1);
     d->dpi = w;
-    item_setup(hbox, w, _("_DPI:"), TRUE);
+    item_setup(hbox, w, "_DPI:", TRUE);
     add_widget_to_table(table, hbox, NULL, TRUE, i++);
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
