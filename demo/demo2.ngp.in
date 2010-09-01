@@ -381,9 +381,9 @@ new file
 
 new rectangle
 	rectangle::hidden=false
-	rectangle::R=255
-	rectangle::G=255
-	rectangle::B=128
+	rectangle::fill_R=255
+	rectangle::fill_G=255
+	rectangle::fill_B=128
 	rectangle::clip=true
 	rectangle::redraw_flag=true
 	rectangle::x1=13718
@@ -391,18 +391,18 @@ new rectangle
 	rectangle::x2=20575
 	rectangle::y2=7093
 	rectangle::fill=true
-	rectangle::frame=true
-	rectangle::R2=0
-	rectangle::G2=0
-	rectangle::B2=0
+	rectangle::stroke=true
+	rectangle::stroke_R=0
+	rectangle::stroke_G=0
+	rectangle::stroke_B=0
 	rectangle::width=40
 	rectangle::style=
 
 new rectangle
 	rectangle::hidden=false
-	rectangle::R=255
-	rectangle::G=255
-	rectangle::B=128
+	rectangle::fill_R=255
+	rectangle::fill_G=255
+	rectangle::fill_B=128
 	rectangle::clip=true
 	rectangle::redraw_flag=true
 	rectangle::x1=13718
@@ -410,10 +410,10 @@ new rectangle
 	rectangle::x2=20590
 	rectangle::y2=12093
 	rectangle::fill=true
-	rectangle::frame=true
-	rectangle::R2=0
-	rectangle::G2=0
-	rectangle::B2=0
+	rectangle::stroke=true
+	rectangle::stroke_R=0
+	rectangle::stroke_G=0
+	rectangle::stroke_B=0
 	rectangle::width=40
 	rectangle::style=
 

@@ -564,9 +564,10 @@ new path
 
 new rectangle
 	rectangle::hidden=false
-	rectangle::R=0
-	rectangle::G=0
-	rectangle::B=0
+	rectangle::fill_R=0
+	rectangle::fill_G=0
+	rectangle::fill_B=0
+	rectangle::fill_A=64
 	rectangle::clip=true
 	rectangle::redraw_flag=true
 	rectangle::x1=11000
@@ -574,18 +575,18 @@ new rectangle
 	rectangle::x2=18200
 	rectangle::y2=19900
 	rectangle::fill=true
-	rectangle::frame=false
-	rectangle::R2=0
-	rectangle::G2=0
-	rectangle::B2=0
+	rectangle::stroke=false
+	rectangle::stroke_R=0
+	rectangle::stroke_G=0
+	rectangle::stroke_B=0
 	rectangle::width=40
 	rectangle::style=
 
 new rectangle
 	rectangle::hidden=false
-	rectangle::R=128
-	rectangle::G=255
-	rectangle::B=255
+	rectangle::fill_R=128
+	rectangle::fill_G=255
+	rectangle::fill_B=255
 	rectangle::clip=true
 	rectangle::redraw_flag=true
 	rectangle::x1=10700
@@ -593,10 +594,10 @@ new rectangle
 	rectangle::x2=17900
 	rectangle::y2=19600
 	rectangle::fill=true
-	rectangle::frame=true
-	rectangle::R2=0
-	rectangle::G2=0
-	rectangle::B2=0
+	rectangle::stroke=true
+	rectangle::stroke_R=0
+	rectangle::stroke_G=0
+	rectangle::stroke_B=0
 	rectangle::width=40
 	rectangle::style=
 

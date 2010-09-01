@@ -19,6 +19,7 @@ do
   text::R=0xff
   text::G=0xcf
   text::B=0xff
+  text::A=0x7f
   text::text=" "${system::name}
 done
 #
