@@ -1,3 +1,7 @@
+2010-09-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/nstring.c (add_printf_formated_str): free "format2".
+
 2010-08-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (select_color): set opacity.

@@ -377,6 +377,8 @@ add_printf_formated_str(GString *str, const char *format, const char *arg, int *
     g_free(buf);
   }
 
+  g_free(format2);
+
   return formated;
 }
 
