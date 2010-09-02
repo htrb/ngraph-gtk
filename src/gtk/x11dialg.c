@@ -1281,6 +1281,9 @@ _set_color(GtkWidget *widget, struct objlist *obj, int id, char *prefix, char *p
 
   snprintf(buf, sizeof(buf), "%sA%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &a);
+  if (! Menulocal.use_opacity) {
+    a = 255;
+  }
 
   color.red = (r & 0xffU) * 257;
   color.green = (g & 0xffU) * 257;
@@ -1329,7 +1332,7 @@ _putobj_color(GtkWidget *widget, struct objlist *obj, int id, char *prefix, char
   g = (color.green >> 8);
   b = (color.blue >> 8);
 
-  a = gtk_color_button_get_alpha(GTK_COLOR_BUTTON(w));
+  a = (Menulocal.use_opacity) ? gtk_color_button_get_alpha(GTK_COLOR_BUTTON(w)) : 0xffff;
   a >>= 8;
 
   snprintf(buf, sizeof(buf), "%sR%s", CHK_STR(prefix), CHK_STR(postfix));

@@ -553,6 +553,7 @@ gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **arg
   local->region = NULL;
   local->font_style = GRA_FONT_STYLE_NORMAL;
   local->symbol = FALSE;
+  local->use_opacity = FALSE;
 
   Instance++;
 
@@ -1043,17 +1044,17 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
     cairo_set_line_join(local->cairo, join);
     break;
   case 'G':
-    if (cpar[0] < 4 || cpar[4] == 255) {
-      cairo_set_source_rgb(local->cairo,
-			   cpar[1] / 255.0,
-			   cpar[2] / 255.0,
-			   cpar[3] / 255.0);
-    } else {
+    if (local->use_opacity && cpar[0] > 3 && cpar[4] < 255) {
       cairo_set_source_rgba(local->cairo,
 			    cpar[1] / 255.0,
 			    cpar[2] / 255.0,
 			    cpar[3] / 255.0,
 			    cpar[4] / 255.0);
+    } else {
+      cairo_set_source_rgb(local->cairo,
+			   cpar[1] / 255.0,
+			   cpar[2] / 255.0,
+			   cpar[3] / 255.0);
     }
     break;
   case 'M':
@@ -1393,6 +1394,20 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   return 0;
 }
 
+static int
+use_opacity(struct objlist *obj, char *inst, char *rval, int argc,
+	      char **argv)
+{
+  struct gra2cairo_local *local;
+
+  if (_getobj(obj, "_local", inst, &local))
+    return 1;
+
+  local->use_opacity = * (int *) argv[2];
+
+  return 0;
+}
+
 static struct objtable gra2cairo[] = {
   {"init", NVFUNC, 0, gra2cairo_init, NULL, 0}, 
   {"done", NVFUNC, 0, gra2cairo_done, NULL, 0}, 
@@ -1401,6 +1416,7 @@ static struct objtable gra2cairo[] = {
   {"dpiy", NINT, NREAD | NWRITE, gra2cairo_set_dpi_y, NULL, 0},
   {"flush",NVFUNC,NREAD|NEXEC,gra2cairo_flush,"",0},
   {"antialias", NENUM, NREAD | NWRITE, set_antialias, gra2cairo_antialias_type, 0},
+  {"use_opacity", NBOOL, NREAD | NWRITE, use_opacity, NULL,0},
   {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},

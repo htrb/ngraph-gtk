@@ -267,11 +267,6 @@ get_printf_format_str(const char *str, int *len)
   if (str[n] != '%') {
     return NULL;
   }
-
-  fmt = g_strdup(str);
-  if (fmt == NULL) {
-    return NULL;
-  }
   n++;
 
   while (strchr("#0- +", str[n])) {
@@ -300,6 +295,10 @@ get_printf_format_str(const char *str, int *len)
   *len = n;
   n++;
 
+  fmt = g_strdup(str);
+  if (fmt == NULL) {
+    return NULL;
+  }
   fmt[n] = '\0';
 
   return fmt;

@@ -306,8 +306,8 @@ alias:
 version: 1.00.00
 parent: gra2
 object id: 8
-number of fields: 21
-size of instance: 120
+number of fields: 22
+size of instance: 128
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -324,6 +324,7 @@ rw-             dpix    int
 rw-             dpiy    int
 r-x            flush    void( void )
 rw-        antialias    enum( none default gray )
+rw-      use_opacity    bool
 ---          _output    void( )
 ---        _strwidth    int( )
 ---      _charascent    int( )
@@ -338,8 +339,8 @@ alias:
 version: 1.00.00
 parent: gra2cairo
 object id: 9
-number of fields: 25
-size of instance: 176
+number of fields: 26
+size of instance: 184
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -354,6 +355,7 @@ rw-             dpix    int
 rw-             dpiy    int
 r-x            flush    void( void )
 rw-        antialias    enum( none default gray )
+rw-      use_opacity    bool
 ---           _local    void*
 --x             init    void( )
 --x             done    void( )
@@ -374,8 +376,8 @@ alias:
 version: 1.00.00
 parent: gra2cairo
 object id: 10
-number of fields: 22
-size of instance: 120
+number of fields: 23
+size of instance: 128
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -390,6 +392,7 @@ rw-             dpix    int
 rw-             dpiy    int
 r-x            flush    void( void )
 rw-        antialias    enum( none default gray )
+rw-      use_opacity    bool
 ---          _output    void( )
 ---        _strwidth    int( )
 ---      _charascent    int( )
@@ -407,8 +410,8 @@ alias: gra2win:gra2x11
 version: 1.00.00
 parent: gra2cairo
 object id: 11
-number of fields: 28
-size of instance: 208
+number of fields: 29
+size of instance: 216
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -418,6 +421,7 @@ r--              _GC    int
 rw-       delete_gra    bool
 r-x       disconnect    void( void )
 rw-        antialias    enum( none default gray )
+rw-      use_opacity    bool
 ---           _local    void*
 --x             init    void( )
 --x             done    void( )
@@ -446,8 +450,8 @@ alias:
 version: 1.00.00
 parent: gra2cairo
 object id: 12
-number of fields: 22
-size of instance: 128
+number of fields: 23
+size of instance: 136
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -462,6 +466,7 @@ rw-             dpix    int
 rw-             dpiy    int
 r-x            flush    void( void )
 rw-        antialias    enum( none default gray )
+rw-      use_opacity    bool
 ---          _output    void( )
 ---        _strwidth    int( )
 ---      _charascent    int( )
@@ -479,8 +484,8 @@ alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
 object id: 34
-number of fields: 39
-size of instance: 184
+number of fields: 40
+size of instance: 200
 r--               id    int
 r--              oid    int
 rw-             name    char*
@@ -507,6 +512,7 @@ rw-         modified    bool
 rw-              dpi    int
 rw-      redraw_flag    bool
 rw-       redraw_num    int
+rw-      use_opacity    bool
 r-x           redraw    void( void )
 r-x             draw    void( void )
 r-x            flush    void( void )

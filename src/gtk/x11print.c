@@ -286,6 +286,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
   int i;
 
   gtk_label_set_text(GTK_LABEL(d->vlabel), "");
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), FALSE);
 
   combo_box_clear(d->version);
   switch (d->DlgType) {
@@ -318,6 +319,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.png_dpi);
     combo_box_set_active(d->version, 0);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
     break;
   case MenuIdOutputPDFFile:
     combo_box_append_text(d->version, "--------");
@@ -331,6 +333,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
     combo_box_set_active(d->version, 0);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
     break;
   case MenuIdOutputSVGFile:
     for (i = 0; PsVersion[i]; i++) {
@@ -348,6 +351,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
     combo_box_set_active(d->version, Menulocal.svg_version);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
@@ -380,11 +384,15 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->t2p = w;
     gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
 
+    w = gtk_check_button_new_with_mnemonic(_("_Use opacity"));
+    d->use_opacity = w;
+    gtk_box_pack_start(GTK_BOX(d->vbox), w, FALSE, FALSE, 4);
+
     w = gtk_spin_button_new_with_range(1, DPI_MAX, 1);
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), TRUE);
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
     d->dpi = w;
-    d->dlabel = item_setup(GTK_WIDGET(d->vbox), w, "DPI:", FALSE);
+    d->dlabel = item_setup(GTK_WIDGET(d->vbox), w, "_DPI:", FALSE);
 
     w = combo_box_create();
     d->version = w;
@@ -432,6 +440,7 @@ OutputImageDialogClose(GtkWidget *w, void *data)
     return;
 
   d->Dpi = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(d->dpi));
+  d->UseOpacity = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_opacity));
 
   switch (d->DlgType) {
   case MenuIdOutputPSFile:
@@ -623,6 +632,8 @@ CmOutputPrinter(int select_file, int show_dialog)
   if (g2wid < 0)
     return;
 
+  putobj(g2wobj, "use_opacity", g2wid, &Menulocal.use_opacity);
+
   g2winst = chkobjinst(g2wobj, g2wid);
   _getobj(g2wobj, "oid", g2winst, &g2woid);
   id = newobj(graobj);
@@ -790,7 +801,6 @@ CmOutputViewer(int select_file)
       return;
 
     g2wid = newobj(g2wobj);
-
     if (g2wid < 0)
       return;
 
@@ -800,6 +810,7 @@ CmOutputViewer(int select_file)
     putobj(g2wobj, "BR", g2wid, &(Menulocal.bg_r));
     putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
     putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
+    putobj(g2wobj, "use_opacity", g2wid, &Menulocal.use_opacity);
     id = newobj(graobj);
     init_graobj(graobj, id, "gra2gtk", g2woid);
     draw_gra(graobj, id, _("Spawning external viewer."), FALSE);
@@ -892,7 +903,7 @@ CmOutputImage(int type)
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
   char *g2winst;
-  int ret, format, t2p, dpi;
+  int ret;
   char *title, *ext_str;
   char *file, *tmp;
 
@@ -990,17 +1001,17 @@ CmOutputImage(int type)
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
-    t2p = DlgImageOut.text2path;
-    putobj(g2wobj, "text2path", g2wid, &t2p);
+    putobj(g2wobj, "text2path", g2wid, &DlgImageOut.text2path);
     break;
   case MenuIdOutputPNGFile:
     break;
   }
-  dpi = DlgImageOut.Dpi;
-  putobj(g2wobj, "dpi", g2wid, &dpi);
-  format = DlgImageOut.Version;
-  putobj(g2wobj, "format", g2wid, &format);
-  init_graobj(graobj, id,  "gra2cairofile", g2woid);
+
+  putobj(g2wobj, "use_opacity", g2wid, &DlgImageOut.UseOpacity);
+  putobj(g2wobj, "dpi", g2wid, &DlgImageOut.Dpi);
+  putobj(g2wobj, "format", g2wid, &DlgImageOut.Version);
+
+  init_graobj(graobj, id, "gra2cairofile", g2woid);
   draw_gra(graobj, id, _("Drawing."), TRUE);
   delobj(graobj, id);
   delobj(g2wobj, g2wid);

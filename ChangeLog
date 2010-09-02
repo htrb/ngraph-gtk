@@ -1,3 +1,46 @@
+2010-09-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/nstring.c (get_printf_format_str): call "g_strdup()" after
+	check the strings.
+
+	* src/ofile.c (rectout): initialize "emig" and "emng".
+
+	* src/gtk/gtk_widget.c (show_color_sel, create_color_button):
+	check "Menulocal.use_opacity".
+
+	* src/gtk/ogra2cairo.c (gra2cairo_init): initialize "local->use_opacity".
+	(gra2cairo_output): check "local->use_opacity".
+	(use_opacity): added.
+	(gra2cairo): add field "use_opacity".
+
+	* src/gtk/x11print.c (OutputImageDialogSetupItem): setup "d->use_opacity".
+	(OutputImageDialogSetup): add widget to set "Use opacity".
+	(OutputImageDialogClose): save setting of "d->use_opacity".
+	(CmOutputImage): set opacity setting to "g2wobj".
+	(CmOutputPrinter, CmOutputViewer): save setting of "Menulocal.use_opacity".
+
+
+	* src/gtk/ox11menu.h (menulocal): add member "use_opacity".
+
+	* src/gtk/x11dialg.h (MiscDialog, OutputImageDialog): add member
+	"use_opacity".
+
+	* src/gtk/ox11menu.c (menuinit): initialize opacity setting.
+	(mxuse_opacity): added.
+	(gtkmenu): add field "use_opacity".
+
+	* src/gtk/x11dialg.c (_set_color, _putobj_color): check
+	"Menulocal.use_opacity".
+
+	* src/gtk/x11file.c (select_color): use opacity settings when
+	"Menulocal.use_opacity" is treu.
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem): setup "d->use_opacity".
+	(MiscDialogSetup): add widget to set "Use opacity".
+	(MiscDialogClose): save setting of "d->use_opacity".
+
+	* debian/control (Depends): use "${shlibs:Depends}".
+
 2010-09-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/nstring.c (add_printf_formated_str): free "format2".

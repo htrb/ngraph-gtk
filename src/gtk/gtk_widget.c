@@ -516,14 +516,14 @@ show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
   button = GTK_COLOR_BUTTON(w);
 
   gtk_color_button_get_color(button, &col);
-  alpha = gtk_color_button_get_alpha(button);
+  alpha = (Menulocal.use_opacity) ? gtk_color_button_get_alpha(button) : 0xffff;
 
   dlg = gtk_color_selection_dialog_new(_("Pick a Color"));
   gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(user_data));
   sel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg)->colorsel);
 
   gtk_color_selection_set_has_palette(sel, TRUE);
-  gtk_color_selection_set_has_opacity_control(sel, TRUE);
+  gtk_color_selection_set_has_opacity_control(sel, Menulocal.use_opacity);
   gtk_color_selection_set_current_color(sel, &col);
   gtk_color_selection_set_current_alpha(sel, alpha);
 
@@ -546,7 +546,7 @@ create_color_button(GtkWidget *win)
   GtkWidget *w;
 
   w = gtk_color_button_new();
-  gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(w), TRUE);
+  gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(w), Menulocal.use_opacity);
   g_signal_connect(w, "button-release-event", G_CALLBACK(show_color_sel), win);
 
   return w;

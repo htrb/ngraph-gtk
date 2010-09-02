@@ -4476,7 +4476,7 @@ static int
 select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
 {
   GtkWidget *dlg, *sel;
-  int r, g, b, a, response;
+  int r, g, b, a, rr ,gg, bb, aa, response;
   GdkColor color;
   char *title;
 
@@ -4503,6 +4503,10 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
   color.green = (g & 0xffU) * 257;
   color.blue = (b & 0xffU) * 257;
 
+  if (! Menulocal.use_opacity) {
+    a = 255;
+  }
+
   dlg = gtk_color_selection_dialog_new(title);
 
 #if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 14))
@@ -4512,41 +4516,42 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
 #endif
 
   gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
-  gtk_color_selection_set_has_opacity_control(GTK_COLOR_SELECTION(sel), TRUE);
+  gtk_color_selection_set_has_opacity_control(GTK_COLOR_SELECTION(sel), Menulocal.use_opacity);
 
   gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
   gtk_color_selection_set_current_alpha(GTK_COLOR_SELECTION(sel), (a & 0xffU) * 257);
 
   response = ndialog_run(dlg);
   gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(sel), &color);
-  a = gtk_color_selection_get_current_alpha(GTK_COLOR_SELECTION(sel));
+  aa = gtk_color_selection_get_current_alpha(GTK_COLOR_SELECTION(sel));
   gtk_widget_destroy(dlg);
 
   if (response != GTK_RESPONSE_OK)
     return 1;
 
-  r = (color.red >> 8);
-  g = (color.green >> 8);
-  b = (color.blue >> 8);
-  a >>= 8;
+  rr = (color.red >> 8);
+  gg = (color.green >> 8);
+  bb = (color.blue >> 8);
+  aa >>= 8;
 
   switch (type) {
   case FILE_COMBO_ITEM_COLOR_1:
-    putobj(obj, "R", id, &r);
-    putobj(obj, "G", id, &g);
-    putobj(obj, "B", id, &b);
-    putobj(obj, "A", id, &a);
+    putobj(obj, "R", id, &rr);
+    putobj(obj, "G", id, &gg);
+    putobj(obj, "B", id, &bb);
+    putobj(obj, "A", id, &aa);
     break;
   case FILE_COMBO_ITEM_COLOR_2:
-    putobj(obj, "R2", id, &r);
-    putobj(obj, "G2", id, &g);
-    putobj(obj, "B2", id, &b);
-    putobj(obj, "A2", id, &a);
+    putobj(obj, "R2", id, &rr);
+    putobj(obj, "G2", id, &gg);
+    putobj(obj, "B2", id, &bb);
+    putobj(obj, "A2", id, &aa);
+    break;
   default:
     return 1;
   }
 
-  return 0;
+  return rr == r && gg == g && bb == b && aa == a;
 }
 
 static void

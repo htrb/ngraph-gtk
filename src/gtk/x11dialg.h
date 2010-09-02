@@ -533,7 +533,8 @@ struct MiscDialog
   /****** local member *******/
   GtkWidget *editor, *directory, *history, *path, *datafile,
     *expand, *expanddir, *ignorepath, *mergefile, *coordwin_font, *infowin_font,
-    *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser, *browser;
+    *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
+    *browser, *use_opacity;
   struct objlist *Obj;
   int Id;
 };
@@ -596,8 +597,8 @@ struct OutputImageDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *version, *t2p, *dpi, *vlabel, *dlabel;
-  int Version, text2path, Dpi, DlgType;
+  GtkWidget *version, *t2p, *dpi, *vlabel, *dlabel, *use_opacity;
+  int Version, text2path, Dpi, DlgType, UseOpacity;
 };
 void OutputImageDialog(struct OutputImageDialog *data, int type);
 

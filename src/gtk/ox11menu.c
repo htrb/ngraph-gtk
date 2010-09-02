@@ -242,6 +242,7 @@ static struct menu_config MenuConfigMisc[] = {
   {"history_size",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.hist_size},
   {"infowin_size",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.info_size},
   {"data_head_lines",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.data_head_lines},
+  {"use_opacity",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.use_opacity},
   {NULL},
 };
 
@@ -1122,6 +1123,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   Menulocal.redrawf_num = 0xffU;
   Menulocal.grid = 200;
   Menulocal.data_head_lines = 20;
+  Menulocal.use_opacity = FALSE;
   Menulocal.local = local;
 
   Menulocal.png_dpi = 72;
@@ -1163,6 +1165,10 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     goto errexit;
 
   if (_putobj(obj, "redraw_num", inst, &(Menulocal.redrawf_num)))
+    goto errexit;
+
+  Menulocal.local->use_opacity = Menulocal.use_opacity;
+  if (_putobj(obj, "use_opacity", inst, &Menulocal.use_opacity))
     goto errexit;
 
   i = 0;
@@ -1341,6 +1347,19 @@ mxredraw_num(struct objlist *obj, char *inst, char *rval, int argc,
   Menulocal.redrawf_num = n;
 
   *(int *) argv[2] = n;
+
+  return 0;
+}
+
+static int
+mxuse_opacity(struct objlist *obj, char *inst, char *rval, int argc,
+	      char **argv)
+{
+  int n;
+
+  n = *(int *) argv[2];
+
+  Menulocal.local->use_opacity = Menulocal.use_opacity = n;
 
   return 0;
 }
@@ -1913,6 +1932,7 @@ static struct objtable gtkmenu[] = {
   {"dpi", NINT, NREAD | NWRITE, mxdpi, NULL, 0},
   {"redraw_flag", NBOOL, NREAD | NWRITE, mxredrawflag, NULL, 0},
   {"redraw_num", NINT, NREAD | NWRITE, mxredraw_num, NULL, 0},
+  {"use_opacity", NBOOL, NREAD | NWRITE, mxuse_opacity, NULL,0},
   {"redraw", NVFUNC, NREAD | NEXEC, mxredraw, "", 0},
   {"draw", NVFUNC, NREAD | NEXEC, mxdraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, mxflush, "", 0},

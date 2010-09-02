@@ -4110,7 +4110,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   double dx,dy,len,alen,awidth;
   int ap[6],headlen,headwidth;
 
-  emerr=emserr=emnonum=FALSE;
+  emerr=emserr=emnonum=emig=emng=FALSE;
   headlen=72426;
   headwidth=60000;
 

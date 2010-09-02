@@ -134,7 +134,7 @@ struct menulocal
   int scriptconsole, addinconsole;
   int statusb, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
   int hist_size, info_size, bg_r, bg_g, bg_b;
-  int focus_frame_type;
+  int focus_frame_type, use_opacity;
 #ifdef WINDOWS
   int emf_dpi;
 #endif

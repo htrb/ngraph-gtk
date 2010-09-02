@@ -1167,6 +1167,8 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
   if (Menulocal.file_preview_font) {
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(d->file_preview_font), Menulocal.file_preview_font);
   }
+
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
 }
 
 #if USE_ENTRY_ICON
@@ -1324,6 +1326,10 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->history = w;
 
+    w = gtk_check_button_new_with_mnemonic(_("_Use opacity"));
+    add_widget_to_table(table, w, NULL, FALSE, i++);
+    d->use_opacity = w;
+
     gtk_container_add(GTK_CONTAINER(frame), table);
     gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 4);
 
@@ -1447,6 +1453,9 @@ MiscDialogClose(GtkWidget *w, void *data)
   }
 
   set_font(&Menulocal.file_preview_font, d->file_preview_font);
+
+  Menulocal.use_opacity = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->use_opacity));
+  putobj(d->Obj, "use_opacity", d->Id, &Menulocal.use_opacity);
 
   d->ret = ret;
 
