@@ -24,6 +24,7 @@
 #ifndef GRA_HEADER
 #define GRA_HEADER
 
+#define EXPAND_DOTTED_LINE          0
 #define CURVE_OBJ_USE_EXPAND_BUFFER 1
 
 struct greektbltype {

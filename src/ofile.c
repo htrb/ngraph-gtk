@@ -3802,7 +3802,11 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
   double x0,y0;
 
   emerr=emserr=emnonum=emig=emng=FALSE;
+#if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
+#else
+  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+#endif
   first=TRUE;
   while (getdata(fp)==0) {
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
@@ -3846,7 +3850,11 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   int spcond;
 
   emerr=emserr=emnonum=emig=emng=FALSE;
+#if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
+#else
+  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+#endif
   switch (intp) {
   case INTERPOLATION_TYPE_SPLINE:
   case INTERPOLATION_TYPE_SPLINE_CLOSE:
@@ -4305,7 +4313,11 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
   double x0,y0,x1,y1,x,y,dx,dy;
 
   emerr=emserr=emnonum=emig=emng=FALSE;
+#if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
+#else
+  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+#endif
   num=0;
   while (getdata(fp)==0) {
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
@@ -4724,7 +4736,11 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
   }
 
   GRAcolor(GC,fp->fg.r,fp->fg.g,fp->fg.b, fp->fg.a);
+#if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
+#else
+  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+#endif
   num=0;
   count=0;
   emerr=FALSE;

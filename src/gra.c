@@ -81,11 +81,13 @@ struct GRAC {
   int mergetop,mergeleft,mergezoom;
   int mergefont,mergept,mergesp,mergedir;
 
+#if EXPAND_DOTTED_LINE
   int gdashn;
   int gdashi;
   double gdashlen;
   int gdotf;
   int *gdashlist;
+#endif
   clipfunc gclipf;
   transfunc gtransf;
   diffunc gdiff;
@@ -97,6 +99,13 @@ struct GRAC {
 
 };
 
+
+#if EXPAND_DOTTED_LINE
+#define INIT_DASH 0, 0, 0, TRUE, NULL,
+#else
+#define INIT_DASH
+#endif
+
 #define GRAC_INIT_VAL {FALSE, FALSE, NULL, NULL, NULL, NULL,		\
       -1, -1, -1, -1, NULL, NULL, NULL,					\
       FALSE, 0, 0, SHRT_MAX, SHRT_MAX, 1, 0, 0, SHRT_MAX, SHRT_MAX,	\
@@ -105,7 +114,8 @@ struct GRAC {
       FALSE, 0, 0, 0, 255,						\
       FALSE, NULL, 0, 0, 0, GRA_FONT_STYLE_NORMAL,			\
       0, 0, 10000, 0, 0, 0, 0, 						\
-      0, 0, 0, TRUE, NULL, NULL, NULL, NULL, NULL, NULL, 0, 0,		\
+      INIT_DASH								\
+      NULL, NULL, NULL, NULL, NULL, 0, 0,				\
       0, 0, 0, 0, 0, 0}
     
 
@@ -232,11 +242,13 @@ GRAreopen(int GC)
   if (GC<0) return ERRILGC;
   if (GC>=GRAClimit) return ERRILGC;
   g_free(GRAClist[GC].linedash);
+#if EXPAND_DOTTED_LINE
   g_free(GRAClist[GC].gdashlist);
+  GRAClist[GC].gdashlist=NULL;
+#endif
   g_free(GRAClist[GC].textfont);
   GRAClist[GC].linedashn=0;
   GRAClist[GC].linedash=NULL;
-  GRAClist[GC].gdashlist=NULL;
   GRAClist[GC].textfont=NULL;
   GRAClist[GC].viewf=FALSE;
   GRAClist[GC].linef=FALSE;
@@ -271,7 +283,9 @@ _GRAclose(int GC)
   if (GC<0) return;
   if (GC>=GRAClimit) return;
   g_free(GRAClist[GC].linedash);
+#if EXPAND_DOTTED_LINE
   g_free(GRAClist[GC].gdashlist);
+#endif
   g_free(GRAClist[GC].textfont);
   GRAClist[GC]=GRAClist[GRAClimit];
 }
@@ -294,7 +308,9 @@ GRAclose(int GC)
     }
   }
   g_free(GRAClist[GC].linedash);
+#if EXPAND_DOTTED_LINE
   g_free(GRAClist[GC].gdashlist);
+#endif
   g_free(GRAClist[GC].textfont);
   GRAClist[GC]=GRAClist[GRAClimit];
 }
@@ -3128,7 +3144,10 @@ GRAcurvefirst(int GC,int num,int *dashlist,
 	      clipfunc clipf,transfunc transf,diffunc diff,intpfunc intpf,void *local,
 	      double x0,double y0)
 {
-  int i,gx0,gy0;
+  int gx0,gy0;
+
+#if EXPAND_DOTTED_LINE
+  int i;
 
   g_free(GRAClist[GC].gdashlist);
   GRAClist[GC].gdashlist=NULL;
@@ -3138,14 +3157,15 @@ GRAcurvefirst(int GC,int num,int *dashlist,
   GRAClist[GC].gdashn=num;
   for (i=0;i<num;i++) 
     (GRAClist[GC].gdashlist)[i]=dashlist[i];
+  GRAClist[GC].gdashlen=0;
+  GRAClist[GC].gdashi=0;
+  GRAClist[GC].gdotf=TRUE;
+#endif
   GRAClist[GC].gclipf=clipf;
   GRAClist[GC].gtransf=transf;
   GRAClist[GC].gdiff=diff;
   GRAClist[GC].gintpf=intpf;
   GRAClist[GC].gflocal=local;
-  GRAClist[GC].gdashlen=0;
-  GRAClist[GC].gdashi=0;
-  GRAClist[GC].gdotf=TRUE;
   GRAClist[GC].x0=x0;
   GRAClist[GC].y0=y0;
   if (GRAClist[GC].gtransf==NULL) {
@@ -3180,8 +3200,12 @@ GRAcurve(int GC,double c[],double x0,double y0)
 void 
 GRAdashlinetod(int GC,double x,double y)
 {
-  double dx,dy,dd,len,len2,x1,y1,x2,y2;
-  int gx,gy,gx1,gy1,gx2,gy2;
+  double x1,y1,x2,y2;
+  int gx1,gy1,gx2,gy2;
+#if EXPAND_DOTTED_LINE
+  double dx,dy,dd,len,len2;
+  int gx,gy;
+#endif
 
   x1=GRAClist[GC].x0;
   y1=GRAClist[GC].y0;
@@ -3200,6 +3224,7 @@ GRAdashlinetod(int GC,double x,double y)
     }
     if ((x1!=GRAClist[GC].x0) || (y1!=GRAClist[GC].y0))
       GRAmoveto(GC,gx1,gy1);
+#if EXPAND_DOTTED_LINE
     if (GRAClist[GC].gdashn==0) GRAlineto(GC,gx2,gy2);
     else {
       dx=(gx2-gx1);
@@ -3226,6 +3251,9 @@ GRAdashlinetod(int GC,double x,double y)
       if (GRAClist[GC].gdotf) GRAlineto(GC,gx2,gy2);
       GRAClist[GC].gdashlen+=len2;
     }
+#else
+    GRAlineto(GC,gx2,gy2);
+#endif
   }
   GRAClist[GC].x0=x;
   GRAClist[GC].y0=y;
