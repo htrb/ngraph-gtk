@@ -14,6 +14,8 @@
 #include <gsl/gsl_sf.h>
 #endif
 
+#include "ntime.h"
+
 #include "math_equation.h"
 #include "math_function.h"
 
@@ -1218,63 +1220,54 @@ math_func_unix2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   return 0;
 }
 
-static void
-mjd2gd(double mjd, int *yy, int *mm, int *dd)
-{
-  double x0, x1, x2, c1, c2, j, m, d;
-
-  mjd = floor(mjd);
-  x2 = mjd + (2400000.5 - 1721119.5);
-  c2 = floor((4 * x2 + 3) / 146097.0);
-  x1 = x2 - floor(146097 * c2 / 4.0);
-  c1 = floor((100 * x1 + 99) / 36525.0);
-  x0 = x1 - floor(36525 * c1 / 100.0);
-  j = 100 * c2 + c1;
-  m = floor((5 * x0 + 461) / 153.0);
-  d = x0 - floor((153 * m - 457) / 5.0) + 1;
-  if (m > 12) {
-    m -= 12;
-    j += 1;
-  }
-
-  *yy = j;
-  *mm = m;
-  *dd = d;
-}
-
 int
 math_func_mjd2year(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int y, m, d;
+  struct tm t;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
-  mjd2gd(exp->buf[0].val.val, &y, &m, &d);
+  mjd2gd(exp->buf[0].val.val, &t);
 
-  rval->val = y;
+  if (t.tm_year + 1900 < -4800) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = t.tm_year + 1900;
   return 0;
 }
 
 int
 math_func_mjd2month(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int y, m, d;
+  struct tm t;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
-  mjd2gd(exp->buf[0].val.val, &y, &m, &d);
+  mjd2gd(exp->buf[0].val.val, &t);
 
-  rval->val = m;
+  if (t.tm_year + 1900 < -4800) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = t.tm_mon + 1;
   return 0;
 }
 
 int
 math_func_mjd2day(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
-  int y, m, d;
+  struct tm t;
 
   MATH_CHECK_ARG(rval, exp->buf[0]);
-  mjd2gd(exp->buf[0].val.val, &y, &m, &d);
+  mjd2gd(exp->buf[0].val.val, &t);
 
-  rval->val = d;
+  if (t.tm_year + 1900 < -4800) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = t.tm_mday;
   return 0;
 }
 

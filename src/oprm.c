@@ -451,6 +451,33 @@ sscanf2(char *buffer,char *format,...)
   return num;
 }
 
+static int 
+gettimeval2(char *s,time_t *time)
+{
+  char *endptr;
+  struct tm tm;
+
+  tm.tm_year=strtol(s,&endptr,10)-1900;
+  if (endptr[0]!='-') return -1;
+  s=endptr+1;
+  tm.tm_mon=strtol(s,&endptr,10)-1;
+  if (endptr[0]!='-') return -1;
+  s=endptr+1;
+  tm.tm_mday=strtol(s,&endptr,10);
+  if (endptr[0]!=' ') return -1;
+  s=endptr+1;
+  tm.tm_hour=strtol(s,&endptr,10);
+  if (endptr[0]!=':') return -1;
+  s=endptr+1;
+  tm.tm_min=strtol(s,&endptr,10);
+  if (endptr[0]!=':') return -1;
+  s=endptr+1;
+  tm.tm_sec=strtol(s,&endptr,10);
+  tm.tm_isdst=0;
+  *time=mktime(&tm);
+  return 0;
+}
+
 char buf[BUFSIZE];
 char buf2[BUFSIZE];
 

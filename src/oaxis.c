@@ -12,6 +12,7 @@
 
 #include "ngraph.h"
 #include "nhash.h"
+#include "ntime.h"
 #include "ioutil.h"
 #include "object.h"
 #include "mathfn.h"
@@ -1865,13 +1866,11 @@ get_num_ofst_oblique2(const struct axis_config *aconf, int align, int side,
   *len = abs(hx1 - hx0);
 }
 
-static void
-mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len, const char *date_format)
+static char *
+mjd_to_date_str(const struct axis_config *aconf, double mjd, const gchar *date_format)
 {
-  struct tm *tm;
-  time_t t;
-  size_t size;
-  const char 
+  struct tm tm;
+  const gchar 
     *fmt_y = "%Y",
     *fmt_ym = "%Y-%m",
     *fmt_ymd = "%Y-%m-%d",
@@ -1881,27 +1880,25 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len,
     *fmt_hm = "%H:%M",
     *fmt;
 
-  t = nround((mjd - 40587) * 86400);
-  tm = gmtime(&t);
-  if (tm == NULL || t < 0) {
-    snprintf(num, len, "%G", mjd);
-    return;
+  mjd2gd(mjd, &tm);
+  if (tm.tm_year + 1900 < -4800) {
+    return NULL;
   }
 
   if (date_format && date_format[0]) {
     fmt = date_format;
   }else {
     if (fabs(aconf->max - aconf->min) < 1) {
-      if (tm->tm_sec == 0) {
+      if (tm.tm_sec == 0) {
 	fmt = fmt_hm;
       } else {
 	fmt = fmt_hms;
       }
     } else if (fabs(aconf->max - aconf->min) > 365) {
-      if (tm->tm_sec == 0) {
-	if (tm->tm_hour == 0 && tm->tm_min == 0) {
-	  if (tm->tm_mday == 1) {
-	    if (tm->tm_mon == 0) {
+      if (tm.tm_sec == 0) {
+	if (tm.tm_hour == 0 && tm.tm_min == 0) {
+	  if (tm.tm_mday == 1) {
+	    if (tm.tm_mon == 0) {
 	      fmt = fmt_y;
 	    } else {
 	      fmt = fmt_ym;
@@ -1916,8 +1913,8 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len,
 	fmt = fmt_ymdhms;
       }
     } else {
-      if (tm->tm_sec == 0) {
-	if (tm->tm_hour == 0 && tm->tm_min == 0) {
+      if (tm.tm_sec == 0) {
+	if (tm.tm_hour == 0 && tm.tm_min == 0) {
 	  fmt = fmt_ymd;
 	} else {
 	  fmt = fmt_ymdhm;
@@ -1928,12 +1925,36 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, char *num, int len,
     }
   }
 
-  size = strftime(num, len, fmt, tm);
-  if (size == 0) {
-    num[0] = '\0';
-  }
+  return nstrftime(fmt, mjd);
 }
 
+static char *
+get_axis_gauge_num_str(const char *format, double a)
+{
+  int i, j, len;
+  char *s;
+  char *num, format2[256], pm[] = "±";
+
+  s = strchr(format, '+');
+  if (a == 0 && s) {
+    len = strlen(format);
+    for (j = 0; j < (int) sizeof(pm) - 1; j++) {
+      format2[j] = pm[j];
+    }
+    for (i = 0; i < len && j < (int) sizeof(format2) - 1; i++) {
+      format2[j] = format[i];
+      if (format[i] != '+') {
+	j++;
+      }
+    }
+    format2[j] = '\0';
+    num = g_strdup_printf(format2, a);
+  } else {
+    num = g_strdup_printf(format, a);
+  }
+
+  return num;
+}
 
 static double
 numformat(char **text, int *nlen, const char *format,
@@ -1942,9 +1963,8 @@ numformat(char **text, int *nlen, const char *format,
 	  int logpow, double po, double norm,
 	  const char *head, const char *tail, const char *date_format)
 {
-  int i, j, len, ret, lpow;
-  char *s;
-  char num[256], format2[256], pm[] = "±";
+  int lpow;
+  char *num;
   double a;
 
   *text = NULL;
@@ -1960,26 +1980,14 @@ numformat(char **text, int *nlen, const char *format,
   }
 
   if (aconf->type == AXIS_TYPE_MJD) {
-    mjd_to_date_str(aconf, po, num, sizeof(num), date_format);
-    logpow = 0;
-  } else {
-    s = strchr(format,'+');
-    if (a == 0 && s) {
-      len = strlen(format);
-      for (j = 0; j < (int) sizeof(pm) - 1; j++) {
-	format2[j] = pm[j];
-      }
-      for (i = 0; i < len && j < (int) sizeof(format2) - 1; i++) {
-	format2[j] = format[i];
-	if (format[i] != '+') {
-	  j++;
-	}
-      }
-      format2[j] = '\0';
-      ret = snprintf(num, sizeof(num), format2, a);
+    num = mjd_to_date_str(aconf, po, date_format);
+    if (num) {
+      logpow = 0;
     } else {
-      ret = snprintf(num, sizeof(num), format, a);
+      num = get_axis_gauge_num_str(format, a);
     }
+  } else {
+    num = get_axis_gauge_num_str(format, a);
   }
 
   lpow = (logpow && (alocal->atype == AXISLOGBIG || alocal->atype == AXISLOGNORM));
@@ -1990,7 +1998,12 @@ numformat(char **text, int *nlen, const char *format,
 			  (lpow) ? "@" : "",
 			  CHK_STR(tail));
 
-  *nlen = strlen(num);
+  if (num) {
+    g_free(num);
+    *nlen = strlen(num);
+  } else {
+    *nlen = 0;
+  }
 
   return a;
 }

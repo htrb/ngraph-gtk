@@ -1,3 +1,23 @@
+2010-09-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_mjd2year)
+	(math_func_mjd2month, math_func_mjd2day): use "mjd2gd()" in
+	"ntime.c".
+
+2010-09-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (mjd_to_date_str): use "nstrftime()" instead of
+	"strftime()".
+	(get_axis_gauge_num_str): added.
+	(numformat): use "get_axis_gauge_num_str()".
+
+	* src/oprm.c (gettimeval2): meved from "ntime.c".
+
+	* src/ntime.c (mjd2gd, append_date_str, nstrftime): added.
+
+	* src/gtk/x11cood.c (CoordWinSetCoord): use "nstrftime()" instead
+	of "strftime()".
+
 2010-09-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (lineout, curveout, stairout, draw_fit): set line
@@ -773,14 +793,14 @@
 	* src/gtk/x11view.c (create_legend2): create only "path" object.
 	(create_legendx): create "path" object instead of "curve" object.
 	(ViewerEvLButtonDblClk, ViewerEvRButtonDown): remove case for
-	"LineB" "CurveB" and "PolyB". add case for "PathB".
+	"LineB", "CurveB" and "PolyB". add case for "PathB".
 	(ViewerEvRButtonDown): "g_object_unref()" shoud be called outside
 	of the "switch" block.
 	(ViewUpdate): don't check "line", "polygon" and "curve"
 	objects. check "path" object.
 
-	* src/gtk/x11menu.h (PointerType): remove "LineB" "CurveB" and
-	"PolyB". add "PathB".
+	* src/gtk/x11menu.h (PointerType): remove "LineB", "CurveB" and
+	"PolyB" add "PathB".
 
 	* src/gtk/x11menu.c (Command2_data): remove "line", "polygon" and
 	"curve" buttons. add "path" button.
@@ -4910,7 +4930,7 @@
 	(cb_del): call "sub_window_save_geometry()".
 
 	* src/gtk/x11view.c (ShowFocusFrame): use
-	""Menulocal.focus_frame_type" for line attribute of focus frame.
+	"Menulocal.focus_frame_type" for line attribute of focus frame.
 
 	* src/gtk/x11opt.c (DefaultDialogClose): save
 	"Menulocal.focus_frame_type".

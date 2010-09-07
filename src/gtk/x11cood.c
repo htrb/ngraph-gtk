@@ -23,10 +23,10 @@
 
 #include "gtk_common.h"
 
-#include <time.h>
 #include <math.h>
 
 #include "ngraph.h"
+#include "ntime.h"
 #include "object.h"
 #include "axis.h"
 
@@ -111,13 +111,12 @@ CoordWinSetCoord(int x, int y)
     getobj(obj, "type", i, 0, NULL, &type);
     j += snprintf(d->str + j, bufsize - j, "\n%2d %5s %+.7e", i, name, a);
     if (type == AXIS_TYPE_MJD) {
-      struct tm *tm;
-      time_t t;
+      char *s;
 
-      t = floor((a - 40587) * 86400);
-      tm = gmtime(&t);
-      if (tm) {
-	j += strftime(d->str + j, bufsize - j, "  %F %T", tm);
+      s = nstrftime("  %F %T", a);
+      if (s) {
+	j += snprintf(d->str + j, bufsize - j, "%s", s);
+	g_free(s);
       }
     }
   }
