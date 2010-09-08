@@ -1228,7 +1228,7 @@ math_func_mjd2year(MathFunctionCallExpression *exp, MathEquation *eq, MathValue 
   MATH_CHECK_ARG(rval, exp->buf[0]);
   mjd2gd(exp->buf[0].val.val, &t);
 
-  if (t.tm_year + 1900 < -4800) {
+  if (t.tm_year < MJD2GD_YEAR_MIN) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -1245,7 +1245,7 @@ math_func_mjd2month(MathFunctionCallExpression *exp, MathEquation *eq, MathValue
   MATH_CHECK_ARG(rval, exp->buf[0]);
   mjd2gd(exp->buf[0].val.val, &t);
 
-  if (t.tm_year + 1900 < -4800) {
+  if (t.tm_year < MJD2GD_YEAR_MIN) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -1262,12 +1262,46 @@ math_func_mjd2day(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *
   MATH_CHECK_ARG(rval, exp->buf[0]);
   mjd2gd(exp->buf[0].val.val, &t);
 
-  if (t.tm_year + 1900 < -4800) {
+  if (t.tm_year < MJD2GD_YEAR_MIN) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
 
   rval->val = t.tm_mday;
+  return 0;
+}
+
+int
+math_func_mjd2wday(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct tm t;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  mjd2gd(exp->buf[0].val.val, &t);
+
+  if (t.tm_year < MJD2GD_YEAR_MIN) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = (t.tm_wday == 0) ? 7 : t.tm_wday;
+  return 0;
+}
+
+int
+math_func_mjd2yday(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  struct tm t;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  mjd2gd(exp->buf[0].val.val, &t);
+
+  if (t.tm_year < MJD2GD_YEAR_MIN) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  rval->val = t.tm_yday + 1;
   return 0;
 }
 

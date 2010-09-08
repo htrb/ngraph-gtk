@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-09-02 20:01+0900\n"
+"POT-Creation-Date: 2010-09-08 09:55+0900\n"
 "PO-Revision-Date: 2010-09-01 13:58+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -31,7 +31,7 @@ msgstr "ファイルを開く"
 msgid "Save file"
 msgstr "別名で保存"
 
-#: src/gtk/ogra2cairo.c:47 src/odraw.c:85 src/oaxis.c:71 src/oaxis.c:86
+#: src/gtk/ogra2cairo.c:47 src/odraw.c:85 src/oaxis.c:72 src/oaxis.c:87
 msgid "none"
 msgstr "なし"
 
@@ -1906,7 +1906,7 @@ msgstr "実行中 `%.128s'."
 msgid "top"
 msgstr "上"
 
-#: src/gtk/x11merge.c:55 src/oaxis.c:73 src/oaxis.c:87 src/oaxis.c:100
+#: src/gtk/x11merge.c:55 src/oaxis.c:74 src/oaxis.c:88 src/oaxis.c:101
 msgid "left"
 msgstr "左"
 
@@ -2423,7 +2423,7 @@ msgstr "終点"
 msgid "begin"
 msgstr "始点"
 
-#: src/odraw.c:88 src/oaxis.c:72
+#: src/odraw.c:88 src/oaxis.c:73
 msgid "both"
 msgstr "両方"
 
@@ -2443,59 +2443,59 @@ msgstr "Bスプライン"
 msgid "bspline_close"
 msgstr "閉Bスプライン"
 
-#: src/oaxis.c:63
+#: src/oaxis.c:64
 msgid "linear"
 msgstr "線形"
 
-#: src/oaxis.c:64 src/ofit.c:91
+#: src/oaxis.c:65 src/ofit.c:91
 msgid "log"
 msgstr "対数"
 
-#: src/oaxis.c:65
+#: src/oaxis.c:66
 msgid "inverse"
 msgstr "逆数"
 
-#: src/oaxis.c:66
+#: src/oaxis.c:67
 msgid "MJD"
 msgstr "MJD"
 
-#: src/oaxis.c:74 src/oaxis.c:88 src/oaxis.c:101
+#: src/oaxis.c:75 src/oaxis.c:89 src/oaxis.c:102
 msgid "right"
 msgstr "右"
 
-#: src/oaxis.c:99
+#: src/oaxis.c:100
 msgid "center"
 msgstr "中央"
 
-#: src/oaxis.c:102
+#: src/oaxis.c:103
 msgid "point"
 msgstr "小数点"
 
-#: src/oaxis.c:114
+#: src/oaxis.c:115
 msgid "horizontal"
 msgstr "水平"
 
-#: src/oaxis.c:115
+#: src/oaxis.c:116
 msgid "parallel1"
 msgstr "軸と平行1"
 
-#: src/oaxis.c:116
+#: src/oaxis.c:117
 msgid "parallel2"
 msgstr "軸と平行2"
 
-#: src/oaxis.c:117
+#: src/oaxis.c:118
 msgid "normal1"
 msgstr "軸と直交1"
 
-#: src/oaxis.c:118
+#: src/oaxis.c:119
 msgid "normal2"
 msgstr "軸と直交2"
 
-#: src/oaxis.c:119
+#: src/oaxis.c:120
 msgid "oblique1"
 msgstr "軸と斜交1"
 
-#: src/oaxis.c:120
+#: src/oaxis.c:121
 msgid "oblique2"
 msgstr "軸と斜交2"
 

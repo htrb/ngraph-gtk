@@ -1,8 +1,14 @@
 2010-09-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ntime.c (get_iso_8601_week): added.
+
+	* src/gtk/main.c (main): don't set "LC_TIME".
+
 	* src/math/math_basic_function.c (math_func_mjd2year)
 	(math_func_mjd2month, math_func_mjd2day): use "mjd2gd()" in
 	"ntime.c".
+	(math_func_mjd2wday, math_func_mjd2yday): added.
+
 
 2010-09-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

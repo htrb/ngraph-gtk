@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.04.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-09-02 20:01+0900\n"
+"POT-Creation-Date: 2010-09-08 09:55+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgstr ""
 msgid "Save file"
 msgstr ""
 
-#: src/gtk/ogra2cairo.c:47 src/odraw.c:85 src/oaxis.c:71 src/oaxis.c:86
+#: src/gtk/ogra2cairo.c:47 src/odraw.c:85 src/oaxis.c:72 src/oaxis.c:87
 msgid "none"
 msgstr ""
 
@@ -1901,7 +1901,7 @@ msgstr ""
 msgid "top"
 msgstr ""
 
-#: src/gtk/x11merge.c:55 src/oaxis.c:73 src/oaxis.c:87 src/oaxis.c:100
+#: src/gtk/x11merge.c:55 src/oaxis.c:74 src/oaxis.c:88 src/oaxis.c:101
 msgid "left"
 msgstr ""
 
@@ -2416,7 +2416,7 @@ msgstr ""
 msgid "begin"
 msgstr ""
 
-#: src/odraw.c:88 src/oaxis.c:72
+#: src/odraw.c:88 src/oaxis.c:73
 msgid "both"
 msgstr ""
 
@@ -2436,59 +2436,59 @@ msgstr ""
 msgid "bspline_close"
 msgstr ""
 
-#: src/oaxis.c:63
+#: src/oaxis.c:64
 msgid "linear"
 msgstr ""
 
-#: src/oaxis.c:64 src/ofit.c:91
+#: src/oaxis.c:65 src/ofit.c:91
 msgid "log"
 msgstr ""
 
-#: src/oaxis.c:65
+#: src/oaxis.c:66
 msgid "inverse"
 msgstr ""
 
-#: src/oaxis.c:66
+#: src/oaxis.c:67
 msgid "MJD"
 msgstr ""
 
-#: src/oaxis.c:74 src/oaxis.c:88 src/oaxis.c:101
+#: src/oaxis.c:75 src/oaxis.c:89 src/oaxis.c:102
 msgid "right"
 msgstr ""
 
-#: src/oaxis.c:99
+#: src/oaxis.c:100
 msgid "center"
 msgstr ""
 
-#: src/oaxis.c:102
+#: src/oaxis.c:103
 msgid "point"
 msgstr ""
 
-#: src/oaxis.c:114
+#: src/oaxis.c:115
 msgid "horizontal"
 msgstr ""
 
-#: src/oaxis.c:115
+#: src/oaxis.c:116
 msgid "parallel1"
 msgstr ""
 
-#: src/oaxis.c:116
+#: src/oaxis.c:117
 msgid "parallel2"
 msgstr ""
 
-#: src/oaxis.c:117
+#: src/oaxis.c:118
 msgid "normal1"
 msgstr ""
 
-#: src/oaxis.c:118
+#: src/oaxis.c:119
 msgid "normal2"
 msgstr ""
 
-#: src/oaxis.c:119
+#: src/oaxis.c:120
 msgid "oblique1"
 msgstr ""
 
-#: src/oaxis.c:120
+#: src/oaxis.c:121
 msgid "oblique2"
 msgstr ""
 

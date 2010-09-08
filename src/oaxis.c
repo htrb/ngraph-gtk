@@ -1881,7 +1881,7 @@ mjd_to_date_str(const struct axis_config *aconf, double mjd, const gchar *date_f
     *fmt;
 
   mjd2gd(mjd, &tm);
-  if (tm.tm_year + 1900 < -4800) {
+  if (tm.tm_year < MJD2GD_YEAR_MIN) {
     return NULL;
   }
 
@@ -1999,8 +1999,8 @@ numformat(char **text, int *nlen, const char *format,
 			  CHK_STR(tail));
 
   if (num) {
-    g_free(num);
     *nlen = strlen(num);
+    g_free(num);
   } else {
     *nlen = 0;
   }

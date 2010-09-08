@@ -27,3 +27,4 @@ int gettimeval(char *s,time_t *time);
 char *nstrftime(const gchar *fmt, double mjd);
 void mjd2gd(double mjd, struct tm *tm);
 
+#define MJD2GD_YEAR_MIN (-1900 - 4800)

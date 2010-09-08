@@ -214,7 +214,7 @@ mjd2gd(double mjd, struct tm *tm)
     da += 59;
     da %= 365;
   }
-  tm->tm_yday = da + 1;
+  tm->tm_yday = da;
 
   /* Time */
   t = fmod(mjd, 1);
@@ -231,14 +231,42 @@ mjd2gd(double mjd, struct tm *tm)
 }
 
 static int
+get_iso_8601_week(struct tm *t)
+{
+  int y, w, a, b, c, x;
+
+  w = t->tm_wday;
+  a = t->tm_yday % 7;
+  b = (w > a) ? w - a : 7 + w - a;
+  c = (b == 0) ? 6 : b -1;
+  x = (t->tm_yday + c) / 7;
+  y = (b + 3) % 7;
+  if (y > 4 || y == 0) {
+    x += 1;
+  }
+  if ((t->tm_yday == 0 && (w == 5 || w == 6 || w == 0)) ||
+      (t->tm_yday == 1 && (w == 6 || w == 0)) ||
+      (t->tm_yday == 2 && w == 0)) {
+    x = 53;
+  } else if (t->tm_mon == 11) {
+    if ((t->tm_mday == 31 && (w == 1 || w == 2 || w == 3)) ||
+	(t->tm_mday == 30 && (w == 1 || w == 2)) ||
+	(t->tm_mday == 29 && w == 1)) {
+      x = 1;
+    }
+  }
+  return x;
+}
+
+static int
 append_date_str(GString *str, const gchar *fmt, struct tm *t)
 {
-  const char *wfname[]={"Sunday", "Monday", "Tuesday", "Wednesday",
+  const char *wfname[]={"Sunday",   "Monday", "Tuesday", "Wednesday",
 			"Thursday", "Friday", "Saturday"};
-  const char *mfname[]={"January", "February", "March", "April",
-			"May", "June", "July", "August",
-			"September", "October", "November", "December"};
-  int y, m, d, w, n, h24, h12, mm, s;
+  const char *mfname[]={"January",   "February", "March",    "April",
+			"May",       "June",     "July",     "August",
+			"September", "October",  "November", "December"};
+  int y, m, d, w, h24, h12, mm, s, a, b, c, x;
 
   if (fmt == NULL || *fmt == '\0') {
     return 0;
@@ -266,8 +294,6 @@ append_date_str(GString *str, const gchar *fmt, struct tm *t)
 
   mm = t->tm_min;
   s = t->tm_sec;
-
-  n = 1;
 
   switch (*fmt) {
   case 'a':
@@ -301,20 +327,26 @@ append_date_str(GString *str, const gchar *fmt, struct tm *t)
   case 'e':
     g_string_append_printf(str, "% 2d", d);
     break;
-  case 'E':
-  case 'O':
-    n += append_date_str(str, fmt + 1, t);
-    break;
   case 'F':
     g_string_append_printf(str, "% 4d-%02d-%02d", y, m, d);
     break;
   case 'G':
-    /* Fix me */
+    x = get_iso_8601_week(t);
+    if (m == 1 && x == 53) {
+      y -= 1;
+    } else if (m == 12 && x == 1) {
+      y += 1;
+    }
     g_string_append_printf(str, "% 4d", y);
     break;
   case 'g':
-    /* Fix me */
-    g_string_append_printf(str, "% 2d", y % 100);
+    x = get_iso_8601_week(t);
+    if (m == 1 && x == 53) {
+      y -= 1;
+    } else if (m == 12 && x == 1) {
+      y += 1;
+    }
+    g_string_append_printf(str, "%02d", y % 100);
     break;
   case 'H':
     g_string_append_printf(str, "%02d", h24);
@@ -323,7 +355,7 @@ append_date_str(GString *str, const gchar *fmt, struct tm *t)
     g_string_append_printf(str, "%02d", h12);
     break;
   case 'j':
-    g_string_append_printf(str, "%03d", t->tm_yday);
+    g_string_append_printf(str, "%03d", t->tm_yday + 1);
     break;
   case 'k':
     g_string_append_printf(str, "% 2d", h24);
@@ -370,19 +402,23 @@ append_date_str(GString *str, const gchar *fmt, struct tm *t)
     g_string_append_printf(str, "%d", (w == 0) ? 7 : w);
     break;
   case 'U':
-    /* Fix me */
-    g_string_append_printf(str, "%02d", t->tm_yday / 7);
+    a = t->tm_yday % 7;
+    b = (w > a) ? w - a : 7 + w - a;
+    c = (b == 0) ? 7 : b;
+    g_string_append_printf(str, "%02d", (t->tm_yday + c)/ 7);
     break;
   case 'V':
-    /* Fix me */
-    g_string_append_printf(str, "%02d", t->tm_yday / 7);
+    x = get_iso_8601_week(t);
+    g_string_append_printf(str, "%02d", x);
     break;
   case 'w':
     g_string_append_printf(str, "%d", w);
     break;
   case 'W':
-    /* Fix me */
-    g_string_append_printf(str, "%02d", t->tm_yday / 7);
+    a = t->tm_yday % 7;
+    b = (w > a) ? w - a : 7 + w - a;
+    c = (b == 0) ? 6 : b -1;
+    g_string_append_printf(str, "%02d", (t->tm_yday + c) / 7);
     break;
   case 'y':
     g_string_append_printf(str, "%d", y % 100);
@@ -406,7 +442,7 @@ append_date_str(GString *str, const gchar *fmt, struct tm *t)
     g_string_append_c(str, *fmt);
   }
 
-  return n;
+  return 1;
 }
 
 char *
@@ -427,6 +463,9 @@ nstrftime(const gchar *fmt, double mjd)
     switch (*fmt) {
     case '%':
       fmt++;
+      while (*fmt == 'O' || *fmt == 'E') {
+	fmt++;
+      }
       n = append_date_str(str, fmt, &t);
       fmt += n;
       break;

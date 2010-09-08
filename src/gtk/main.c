@@ -774,7 +774,6 @@ main(int argc, char **argv)
 
 #ifdef HAVE_GETTEXT
   setlocale(LC_ALL, "");
-  setlocale(LC_TIME, "C");
   bindtextdomain(PACKAGE, LOCALEDIR);
   bind_textdomain_codeset(PACKAGE, "UTF-8");
   textdomain(PACKAGE);
