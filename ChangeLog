@@ -1,3 +1,9 @@
+2010-09-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_function.h.in: add functions "cm".
+
+	* src/math/math_basic_function.c (math_func_rm): added.
+
 2010-09-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ntime.c (get_iso_8601_week): added.

@@ -6,6 +6,7 @@
 #include "config.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <math.h>
 #include <glib.h>
@@ -2143,6 +2144,30 @@ init_memory(void)
   if (Memory == NULL) {
     return 1;
   }
+
+  return 0;
+}
+
+int
+math_func_cm(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  if (Memory == NULL && init_memory()) {
+    return 1;
+  }
+  
+  if (exp->buf[0].val.val == 0 && exp->buf[0].val.type == MATH_VALUE_NORMAL) {
+    memset(Memory, 0, sizeof(*Memory) * MATH_FUNCTION_MEMORY_NUM);
+  } else {
+    int i;
+    MathValue val;
+
+    val = exp->buf[0].val;
+    for (i = 0; i < MATH_FUNCTION_MEMORY_NUM; i++) {
+      Memory[i] = val;
+    }
+  }
+
+  *rval = exp->buf[0].val;
 
   return 0;
 }

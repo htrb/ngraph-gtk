@@ -78,7 +78,7 @@ static struct funcs FuncAry[] = {
   {"ATAN", {1, 0, 0, math_func_atan, NULL, NULL, NULL, NULL}},
   {"COSH", {1, 0, 0, math_func_cosh, NULL, NULL, NULL, NULL}},
   {"SINH", {1, 0, 0, math_func_sinh, NULL, NULL, NULL, NULL}},
-  {"MJD", {6, 0, 0, math_func_mjd, NULL, NULL, NULL, NULL}},
+  {"SQR", {1, 0, 0, math_func_sqr, NULL, NULL, NULL, NULL}},
   {"ABS", {1, 0, 0, math_func_abs, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"ERF", {1, 0, 0, math_func_erf, NULL, NULL, NULL, NULL}},
@@ -113,30 +113,31 @@ static struct funcs FuncAry[] = {
   {"AND", {2, 0, 0, math_func_and, NULL, NULL, NULL, NULL}},
   {"XOR", {2, 0, 0, math_func_xor, NULL, NULL, NULL, NULL}},
   {"MAX", {-1, 0, 0, math_func_max, NULL, NULL, NULL, NULL}},
-  {"SQR", {1, 0, 0, math_func_sqr, NULL, NULL, NULL, NULL}},
+  {"MJD", {6, 0, 0, math_func_mjd, NULL, NULL, NULL, NULL}},
   {"EXP", {1, 0, 0, math_func_exp, NULL, NULL, NULL, NULL}},
+  {"LOG", {1, 0, 0, math_func_log, NULL, NULL, NULL, NULL}},
   {"COS", {1, 0, 0, math_func_cos, NULL, NULL, NULL, NULL}},
   {"FOR", {5, 1, 0, math_func_for, NULL, NULL, NULL, NULL}},
   {"DIF", {1, 1, 1, math_func_dif, NULL, NULL, NULL, NULL}},
   {"SUM", {1, 1, 1, math_func_sum, NULL, NULL, NULL, NULL}},
   {"LGN", {3, 0, 0, math_func_lgn, NULL, NULL, NULL, NULL}},
-  {"LOG", {1, 0, 0, math_func_log, NULL, NULL, NULL, NULL}},
   {"SIN", {1, 0, 0, math_func_sin, NULL, NULL, NULL, NULL}},
   {"PN", {2, 0, 0, math_func_pn, NULL, NULL, NULL, NULL}},
-  {"LN", {1, 0, 0, math_func_ln, NULL, NULL, NULL, NULL}},
   {"IF", {3, 0, 0, math_func_if, NULL, NULL, NULL, NULL}},
+  {"LN", {1, 0, 0, math_func_ln, NULL, NULL, NULL, NULL}},
+  {"CM", {1, 0, 0, math_func_cm, NULL, NULL, NULL, NULL}},
   {"YN", {2, 0, 0, math_func_yn, NULL, NULL, NULL, NULL}},
   {"RM", {1, 1, 0, math_func_rm, NULL, NULL, NULL, NULL}},
   {"JN", {2, 0, 0, math_func_jn, NULL, NULL, NULL, NULL}},
   {"TN", {2, 0, 0, math_func_tn, NULL, NULL, NULL, NULL}},
   {"OR", {2, 0, 0, math_func_or, NULL, NULL, NULL, NULL}},
   {"EI", {1, 0, 0, math_func_ei, NULL, NULL, NULL, NULL}},
+  {"HN", {2, 0, 0, math_func_hn, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
-  {"IN", {2, 0, 0, math_func_in, NULL, NULL, NULL, NULL}},
+  {"KN", {2, 0, 0, math_func_kn, NULL, NULL, NULL, NULL}},
 #else
   {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
-  {"HN", {2, 0, 0, math_func_hn, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"YL", {2, 0, 0, math_func_yl, NULL, NULL, NULL, NULL}},
 #else
@@ -153,7 +154,7 @@ static struct funcs FuncAry[] = {
   {"GE", {2, 0, 0, math_func_ge, NULL, NULL, NULL, NULL}},
   {"EQ", {2, 0, 0, math_func_eq, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
-  {"KN", {2, 0, 0, math_func_kn, NULL, NULL, NULL, NULL}},
+  {"IN", {2, 0, 0, math_func_in, NULL, NULL, NULL, NULL}},
 #else
   {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
@@ -213,7 +214,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 63:
+    case 64:
       if (FuncAry[i].prm.arg_type)
         break;
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 5);
@@ -227,7 +228,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[4] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 71:
+    case 70:
       if (FuncAry[i].prm.arg_type)
         break;
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
