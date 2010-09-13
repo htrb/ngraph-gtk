@@ -1320,7 +1320,9 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
       g_free(err_msg);
       set_equation(f2dlocal, f2dlocal->codex, f, g, h, x, NULL);
     }
-    f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
+    f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0],
+						     f2dlocal->const_id,
+						     TWOPASS_CONST_SIZE);
     break;
   case 'y':
     f2dlocal->need2passy = FALSE;
@@ -1330,7 +1332,9 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
       g_free(err_msg);
       set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, NULL);
     }
-    f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
+    f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0],
+						     f2dlocal->const_id,
+						     TWOPASS_CONST_SIZE);
     break;
   case 'f':
   case 'g':
@@ -1362,8 +1366,12 @@ put_func(struct objlist *obj, char *inst, struct f2dlocal *f2dlocal, char *field
       set_equation(f2dlocal, f2dlocal->codey, f, g, h, y, NULL);
     }
 
-    f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
-    f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0], f2dlocal->const_id, TWOPASS_CONST_SIZE);
+    f2dlocal->need2passx = math_equation_check_const(f2dlocal->codex[0],
+						     f2dlocal->const_id,
+						     TWOPASS_CONST_SIZE);
+    f2dlocal->need2passy = math_equation_check_const(f2dlocal->codey[0],
+						     f2dlocal->const_id,
+						     TWOPASS_CONST_SIZE);
     break;
   default:
     /* never reached */
@@ -4183,7 +4191,9 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
           f2dtransf(x1,y1,&gx1,&gy1,fp);
           GRArectangle(GC,gx0,gy0,gx1,gy1,1);
         }
-        if (type == PLOT_TYPE_RECTANGLE_FILL) GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+        if (type == PLOT_TYPE_RECTANGLE_FILL) {
+	  GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+	}
       }
       if (type == PLOT_TYPE_RECTANGLE || type == PLOT_TYPE_RECTANGLE_FILL) {
         x0=fp->dx;

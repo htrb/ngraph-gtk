@@ -1,3 +1,7 @@
+2010-09-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (put_func, rectout): fix indent.
+
 2010-09-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_function.h.in: add functions "cm".
