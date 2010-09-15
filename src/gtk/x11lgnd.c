@@ -1339,11 +1339,11 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);
+    w = create_direction_entry();
     add_widget_to_table(table, w, _("_Angle1:"), FALSE, i++);
     d->angle1 = w;
 
-    w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, TRUE, TRUE);
+    w = create_direction_entry();
     add_widget_to_table(table, w, _("_Angle2:"), FALSE, i++);
     d->angle2 = w;
 

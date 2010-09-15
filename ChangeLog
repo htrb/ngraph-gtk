@@ -1,3 +1,11 @@
+2010-09-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (direction_icon_released): change direction
+	from 360 to 0 or 0 to 360 when an icon is released.
+
+	* src/gtk/x11lgnd.c (LegendArcDialogSetup): use
+	"create_direction_entry()" instead of "create_spin_entry_type()".
+
 2010-09-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (put_func, rectout): fix indent.

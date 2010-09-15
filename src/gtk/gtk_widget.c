@@ -178,23 +178,31 @@ create_file_entry(struct objlist *obj)
 static void
 direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *event, gpointer user_data)
 {
-  int val, rest;
+  int angle, val, rest;
 
-  val = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry));
-  val %= 360;
+  angle = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry));
+  val = angle % 360;
   val += (val < 0) ? 360 : 0;
 
   switch (pos) {
   case GTK_ENTRY_ICON_SECONDARY:
-    val -= val % 90;
-    val += 90;
+    if (angle == 360) {
+      val = 0;
+    } else {
+      val -= val % 90;
+      val += 90;
+    }
     break;
   case GTK_ENTRY_ICON_PRIMARY:
-    rest = val % 90;
-    if (rest == 0) {
-      val -= 90;
+    if (angle == 0) {
+      val = 360;
     } else {
-      val -= rest;
+      rest = val % 90;
+      if (rest == 0) {
+	val -= 90;
+      } else {
+	val -= rest;
+      }
     }
     break;
   }
