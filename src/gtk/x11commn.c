@@ -1783,6 +1783,7 @@ ProgressDialogFinalize(void)
   gtk_widget_destroy(ProgressDiaog);
   ProgressDiaog = NULL;
   ProgressBar = NULL;
+  ProgressBar2 = NULL;
   set_draw_lock(DrawLockNone);
 }
 

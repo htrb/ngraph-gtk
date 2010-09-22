@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-09-20 11:40+0900\n"
+"POT-Creation-Date: 2010-09-22 17:54+0900\n"
 "PO-Revision-Date: 2010-09-01 13:58+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -446,7 +446,7 @@ msgstr "/%s に 'Ngraph.ini' をインストールしますか?"
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1797
+#: src/gtk/x11commn.c:1798
 msgid "error"
 msgstr "エラー"
 
@@ -977,11 +977,11 @@ msgstr "新規作成"
 msgid "Data open"
 msgstr "データを開く"
 
-#: src/gtk/x11file.c:4435 src/gtk/x11file.c:4485
+#: src/gtk/x11file.c:4435 src/gtk/x11file.c:4487
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4443 src/gtk/x11file.c:4492
+#: src/gtk/x11file.c:4443 src/gtk/x11file.c:4494
 msgid "Color 2"
 msgstr "色 2"
 
@@ -1889,15 +1889,15 @@ msgstr "クロスゲージ(_G)"
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: src/gtk/x11menu.c:2642
+#: src/gtk/x11menu.c:2653
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:2692
+#: src/gtk/x11menu.c:2703
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:2749
+#: src/gtk/x11menu.c:2760
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."

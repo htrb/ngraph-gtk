@@ -4458,9 +4458,11 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 	GdkPixbuf *pixbuf;
 
 	pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
-
-	gtk_tree_store_append(list, &child, &iter);
-	gtk_tree_store_set(list, &child, 0, pixbuf, 1, NULL, 2, FILE_COMBO_ITEM_MARK, -1);
+	if (pixbuf) {
+	  gtk_tree_store_append(list, &child, &iter);
+	  gtk_tree_store_set(list, &child, 0, pixbuf, 1, NULL, 2, FILE_COMBO_ITEM_MARK, -1);
+	  g_object_unref(pixbuf);
+	}
       }
     } else if (strcmp(enumlist[i], "curve") == 0) {
       curvelist = (char **) chkobjarglist(obj, "interpolation");

@@ -1661,9 +1661,9 @@ free_markpixmap(void)
 }
 
 static void
-createicon(void)
+create_icon(void)
 {
-  GList *list = NULL;
+  GList *tmp, *list = NULL;
   GdkPixbuf *pixbuf;
 
   pixbuf = gdk_pixbuf_new_from_xpm_data(Icon_xpm);
@@ -1672,7 +1672,15 @@ createicon(void)
   pixbuf = gdk_pixbuf_new_from_xpm_data(Icon_xpm_64);
   list = g_list_append(list, pixbuf);
 
-  NgraphApp.iconpix = list;
+  gtk_window_set_default_icon_list(list);
+  gtk_window_set_icon_list(GTK_WINDOW(TopLevel), list);
+
+  tmp = list;
+  while (tmp) {
+    g_object_unref(tmp->data);
+    tmp = tmp->next;
+  }
+  g_list_free(list);
 }
 
 static int
@@ -2114,6 +2122,11 @@ save_entry_history(void)
   g_object_unref(NgraphApp.x_math_list);
   g_object_unref(NgraphApp.y_math_list);
   g_object_unref(NgraphApp.func_list);
+
+  NgraphApp.legend_text_list = NULL;
+  NgraphApp.x_math_list = NULL;
+  NgraphApp.y_math_list = NULL;
+  NgraphApp.func_list = NULL;
 }
 
 static void
@@ -2309,9 +2322,7 @@ application(char *file)
   set_gdk_color(&white, 255, 255, 255);
   set_gdk_color(&gray,  0xaa, 0xaa, 0xaa);
 
-  createicon();
-  gtk_window_set_default_icon_list(NgraphApp.iconpix);
-  gtk_window_set_icon_list(GTK_WINDOW(TopLevel), NgraphApp.iconpix);
+  create_icon();
 
   create_toolbar_pixmap();
 

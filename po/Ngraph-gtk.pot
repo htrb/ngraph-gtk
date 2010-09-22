@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-09-20 11:40+0900\n"
+"POT-Creation-Date: 2010-09-22 17:54+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -444,7 +444,7 @@ msgstr ""
 msgid "Ngraph.ini could not be copied."
 msgstr ""
 
-#: src/gtk/x11commn.c:1797
+#: src/gtk/x11commn.c:1798
 msgid "error"
 msgstr ""
 
@@ -975,11 +975,11 @@ msgstr ""
 msgid "Data open"
 msgstr ""
 
-#: src/gtk/x11file.c:4435 src/gtk/x11file.c:4485
+#: src/gtk/x11file.c:4435 src/gtk/x11file.c:4487
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4443 src/gtk/x11file.c:4492
+#: src/gtk/x11file.c:4443 src/gtk/x11file.c:4494
 msgid "Color 2"
 msgstr ""
 
@@ -1884,15 +1884,15 @@ msgstr ""
 msgid "_Help"
 msgstr ""
 
-#: src/gtk/x11menu.c:2642
+#: src/gtk/x11menu.c:2653
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:2692
+#: src/gtk/x11menu.c:2703
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:2749
+#: src/gtk/x11menu.c:2760
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""

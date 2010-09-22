@@ -1440,7 +1440,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
   if (xpm) {
     icon = gdk_pixbuf_new_from_xpm_data(xpm);
     if (xpm2) {
-      GList *list = NULL;
+      GList *tmp, *list = NULL;
 
       list = g_list_append(list, icon);
 
@@ -1448,6 +1448,13 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
       list = g_list_append(list, icon);
 
       gtk_window_set_icon_list(GTK_WINDOW(dlg), list);
+
+      tmp = list;
+      while (tmp) {
+	g_object_unref(tmp->data);
+	tmp = tmp->next;
+      }
+      g_list_free(list);
     } else {
       gtk_window_set_icon(GTK_WINDOW(dlg), icon);
     }
@@ -1477,8 +1484,6 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
     gtk_container_add(GTK_CONTAINER(swin), text);
   }
   gtk_container_add(GTK_CONTAINER(dlg), swin);
-
-  d->swin = swin;
 
 #ifdef WINDOWS
   g_signal_connect(dlg, "realize", G_CALLBACK(hide_minimize_menu_item), NULL);

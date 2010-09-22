@@ -1,5 +1,19 @@
 2010-09-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11file.c (file_list_set_val): unref pixbuf.
+
+	* src/gtk/x11commn.c (ProgressDialogFinalize): set NULL to
+	"ProgressBar2".
+
+	* src/gtk/x11menu.h (NgraphApp):remove members "swin" and
+	"iconpix".
+
+	* src/gtk/x11menu.c (create_icon): renamed from "createicon()".
+	(create_icon): unref pixbufs. free "list".
+
+	* src/gtk/gtk_subwin.c (sub_window_create): unref pixbufs. free
+	"list".
+
 	* src/ofit.c (fitput): use "math_equation_free()" instead of
 	"g_free()".
 

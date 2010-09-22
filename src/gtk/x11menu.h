@@ -190,7 +190,7 @@ enum SubWinType {
 };
 
 #define SUBWIN_PROTOTYPE enum SubWinType type;				\
-  GtkWidget *Win, *swin, *popup, **popup_item;				\
+  GtkWidget *Win, *popup, **popup_item;					\
   GdkWindowState window_state;						\
   GObject *text;							\
   int select, num, can_focus;						\
@@ -240,7 +240,6 @@ struct NgraphApp
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list;
   GtkToolItem *viewb[20];
   GdkPixmap *markpix[MARK_TYPE_NUM];
-  GList *iconpix;
   GdkCursor **cursor;
   struct Viewer Viewer;
   struct SubWin FileWin;
