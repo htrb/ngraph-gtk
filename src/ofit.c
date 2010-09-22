@@ -230,7 +230,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
       math_equation_free(fitlocal->codef);
       fitlocal->codef = code;
     } else {
-      g_free(fitlocal->codedf[field[10] - '0']);
+      math_equation_free(fitlocal->codedf[field[10] - '0']);
       fitlocal->codedf[field[10] - '0'] = code;
     }
   }

@@ -1,3 +1,8 @@
+2010-09-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (fitput): use "math_equation_free()" instead of
+	"g_free()".
+
 2010-09-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (direction_icon_released): change direction
