@@ -4459,8 +4459,11 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 
 	pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
 	if (pixbuf) {
+	  char buf[64];
+
 	  gtk_tree_store_append(list, &child, &iter);
-	  gtk_tree_store_set(list, &child, 0, pixbuf, 1, NULL, 2, FILE_COMBO_ITEM_MARK, -1);
+	  snprintf(buf, sizeof(buf), " %02d", j);
+	  gtk_tree_store_set(list, &child, 0, pixbuf, 1, buf, 2, FILE_COMBO_ITEM_MARK, -1);
 	  g_object_unref(pixbuf);
 	}
       }

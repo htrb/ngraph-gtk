@@ -1,3 +1,8 @@
+2010-10-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (create_type_combo_box): show number of a merk
+	type.
+
 2010-09-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (file_list_set_val): unref pixbuf.
