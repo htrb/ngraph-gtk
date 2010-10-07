@@ -5,6 +5,10 @@
 #ifndef _GTK_LISTSTORE_HEADER
 #define _GTK_LISTSTORE_HEADER
 
+#define OBJECT_COLUMN_TYPE_STRING 0
+#define OBJECT_COLUMN_TYPE_PIXBUF 1
+#define OBJECT_COLUMN_TYPE_INT    2
+
 typedef struct _list_store {
   char *title;
   GType type;

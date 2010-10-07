@@ -16,16 +16,16 @@ start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, con
   GtkCellRenderer *rend;
   GtkWidget *cbox;
 
-  model = GTK_TREE_MODEL(gtk_tree_store_new(3, G_TYPE_OBJECT, G_TYPE_STRING, G_TYPE_INT));
+  model = GTK_TREE_MODEL(gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT));
   cbox = gtk_combo_box_new_with_model(model);
-
-  rend = gtk_cell_renderer_pixbuf_new();
-  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", 0);
 
   rend = gtk_cell_renderer_text_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
-  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", 1);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "text", OBJECT_COLUMN_TYPE_STRING);
+
+  rend = gtk_cell_renderer_pixbuf_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "pixbuf", OBJECT_COLUMN_TYPE_PIXBUF);
 
 
   g_object_set(cbox, "has-frame", FALSE, NULL);

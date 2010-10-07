@@ -1,3 +1,19 @@
+2010-10-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (create_type_combo_box): change order of
+	columns.
+	(create_type_combo_box): use "OBJECT_COLUMN_TYPE_STRING",
+	"OBJECT_COLUMN_TYPE_PIXBUF" and "OBJECT_COLUMN_TYPE_INT".
+	(select_color): use "OBJECT_COLUMN_TYPE_INT".
+
+	* src/gtk/gtk_liststore.h (OBJECT_COLUMN_TYPE_STRING)
+	(OBJECT_COLUMN_TYPE_PIXBUF, OBJECT_COLUMN_TYPE_INT): added.
+
+	* src/gtk/gtk_liststore.c (start_editing_obj): change order of
+	columns.
+	(start_editing_obj): use "OBJECT_COLUMN_TYPE_STRING",
+	"OBJECT_COLUMN_TYPE_PIXBUF" and "OBJECT_COLUMN_TYPE_INT".
+
 2010-10-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (create_type_combo_box): show number of a merk

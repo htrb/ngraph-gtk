@@ -4432,7 +4432,10 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
   gtk_tree_store_append(list, &parent, NULL);
-  gtk_tree_store_set(list, &parent, 0, NULL, 1, _("Color 1"), 2, FILE_COMBO_ITEM_COLOR_1, -1);
+  gtk_tree_store_set(list, &parent,
+		     OBJECT_COLUMN_TYPE_STRING, _("Color 1"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_1, -1);
 
   switch (type) {
   case PLOT_TYPE_MARK:
@@ -4440,18 +4443,27 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
   case PLOT_TYPE_BAR_FILL_X:
   case PLOT_TYPE_BAR_FILL_Y:
     gtk_tree_store_append(list, &parent, NULL);
-    gtk_tree_store_set(list, &parent, 0, NULL, 1, _("Color 2"), 2, FILE_COMBO_ITEM_COLOR_2, -1);
+    gtk_tree_store_set(list, &parent,
+		       OBJECT_COLUMN_TYPE_STRING, _("Color 2"),
+		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_2, -1);
     break;
   }
 
   gtk_tree_store_append(list, &parent, NULL);
-  gtk_tree_store_set(list, &parent, 0, NULL, 1, _("Type"), 2, FILE_COMBO_ITEM_TYPE, -1);
+  gtk_tree_store_set(list, &parent,
+		     OBJECT_COLUMN_TYPE_STRING, _("Type"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, -1);
 
   for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
     GtkTreeIter iter, child;
 
     gtk_tree_store_append(list, &iter, &parent);
-    gtk_tree_store_set(list, &iter, 0, NULL, 1, _(enumlist[i]), 2, FILE_COMBO_ITEM_TYPE, -1);
+    gtk_tree_store_set(list, &iter,
+		       OBJECT_COLUMN_TYPE_STRING, _(enumlist[i]),
+		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, -1);
 
     if (strcmp(enumlist[i], "mark") == 0) {
       for (j = 0; j < MARK_TYPE_NUM; j++) {
@@ -4462,8 +4474,11 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 	  char buf[64];
 
 	  gtk_tree_store_append(list, &child, &iter);
-	  snprintf(buf, sizeof(buf), " %02d", j);
-	  gtk_tree_store_set(list, &child, 0, pixbuf, 1, buf, 2, FILE_COMBO_ITEM_MARK, -1);
+	  snprintf(buf, sizeof(buf), "%02d ", j);
+	  gtk_tree_store_set(list, &child,
+			     OBJECT_COLUMN_TYPE_STRING, buf,
+			     OBJECT_COLUMN_TYPE_PIXBUF, pixbuf,
+			     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_MARK, -1);
 	  g_object_unref(pixbuf);
 	}
       }
@@ -4471,7 +4486,10 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
       curvelist = (char **) chkobjarglist(obj, "interpolation");
       for (j = 0; curvelist[j] && curvelist[i][0]; j++) {
 	gtk_tree_store_append(list, &child, &iter);
-	gtk_tree_store_set(list, &child, 0, NULL, 1, _(curvelist[j]), 2, FILE_COMBO_ITEM_INTP, -1);
+	gtk_tree_store_set(list, &child,
+			   OBJECT_COLUMN_TYPE_STRING, _(curvelist[j]),
+			   OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+			   OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_INTP, -1);
       }
     }
   }
@@ -4562,7 +4580,7 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
 static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
-  int sel, col_type, type, mark_type, curve_type, a, b, c, *ary, found, depth;
+  int sel, col_type, type, mark_type, curve_type, b, c, *ary, found, depth;
   struct objlist *obj;
   struct SubWin *d;
   GtkTreeStore *list;
@@ -4585,11 +4603,11 @@ select_type(GtkComboBox *w, gpointer user_data)
   if (! found)
     return;
 
-  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, 2, &col_type, -1);
+  gtk_tree_model_get(GTK_TREE_MODEL(list), &iter, OBJECT_COLUMN_TYPE_INT, &col_type, -1);
   path = gtk_tree_model_get_path(GTK_TREE_MODEL(list), &iter);
   ary = gtk_tree_path_get_indices(path);
   depth = gtk_tree_path_get_depth(path);
-  a = b = c = -1;
+  b = c = -1;
 
   switch (depth) {
   case 3:
@@ -4597,7 +4615,6 @@ select_type(GtkComboBox *w, gpointer user_data)
   case 2:
     b = ary[1];
   case 1:
-    a = ary[0];
     break;
   default:
     return;
@@ -4608,7 +4625,7 @@ select_type(GtkComboBox *w, gpointer user_data)
   switch (col_type) {
   case FILE_COMBO_ITEM_COLOR_1:
   case FILE_COMBO_ITEM_COLOR_2:
-    if (select_color(obj, sel, a))
+    if (select_color(obj, sel, col_type))
       return;
     break;
   case FILE_COMBO_ITEM_TYPE:
