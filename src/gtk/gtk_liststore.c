@@ -8,9 +8,8 @@
 
 #include "gtk_liststore.h"
 
-static GtkCellEditable *
-start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, const gchar *path,
-	      GdkRectangle *background_area, GdkRectangle *cell_area, GtkCellRendererState flags)
+GtkWidget *
+create_object_cbox(void)
 {
   GtkTreeModel *model;
   GtkCellRenderer *rend;
@@ -30,7 +29,14 @@ start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, con
 
   g_object_set(cbox, "has-frame", FALSE, NULL);
 
-  return GTK_CELL_EDITABLE(cbox);
+  return cbox;
+}
+
+GtkCellEditable *
+start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, const gchar *path,
+		  GdkRectangle *background_area, GdkRectangle *cell_area, GtkCellRendererState flags)
+{
+  return GTK_CELL_EDITABLE(create_object_cbox());
 }
 
 static GtkTreeViewColumn *

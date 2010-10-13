@@ -101,6 +101,7 @@ static void file_fit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 static void FileDialogType(GtkWidget *w, gpointer client_data);
+static void create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent);
 
 static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpenB), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -4073,17 +4074,19 @@ draw_type_pixbuf(struct objlist *obj, int i)
   case PLOT_TYPE_RECTANGLE_FILL:
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
     GRAcolor(ggc, fr, fg, fb, 255);
-    if ((type == PLOT_TYPE_DIAGONAL) || (type == PLOT_TYPE_ARROW))
+    if ((type == PLOT_TYPE_DIAGONAL) || (type == PLOT_TYPE_ARROW)) {
       GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    else
+    } else {
       GRAlinestyle(ggc, 0, NULL, 1, 2, 0, 1000);
+    }
     spx[0] = 1;
     spy[0] = height - 1;
 
     spx[1] = height - 1;
     spy[1] = 1;
-    if ((type == PLOT_TYPE_DIAGONAL) || (type == PLOT_TYPE_ARROW))
+    if ((type == PLOT_TYPE_DIAGONAL) || (type == PLOT_TYPE_ARROW)) {
       GRAline(ggc, spx[0], spy[0], spx[1], spy[1]);
+    }
     if (type == PLOT_TYPE_ARROW) {
       poly[0] = height - 6;
       poly[1] = 1;
@@ -4096,11 +4099,13 @@ draw_type_pixbuf(struct objlist *obj, int i)
       GRAdrawpoly(ggc, 3, poly, 1);
     }
     if ((type == PLOT_TYPE_RECTANGLE_FILL) || (type == PLOT_TYPE_RECTANGLE_SOLID_FILL)) {
-      if (type == PLOT_TYPE_RECTANGLE_FILL)
+      if (type == PLOT_TYPE_RECTANGLE_FILL) {
 	GRAcolor(ggc, fr2, fg2, fb2, 255);
+      }
       GRArectangle(ggc, spx[0], spy[0], spx[1], spy[1], 1);
-      if (type == PLOT_TYPE_RECTANGLE_FILL)
+      if (type == PLOT_TYPE_RECTANGLE_FILL) {
 	GRAcolor(ggc, fr, fg, fb, 255);
+      }
     }
     if ((type == PLOT_TYPE_RECTANGLE) || (type == PLOT_TYPE_RECTANGLE_FILL)) {
       GRAline(ggc, spx[0], spy[0], spx[0], spy[1]);
@@ -4152,18 +4157,22 @@ draw_type_pixbuf(struct objlist *obj, int i)
     GRAcolor(ggc, fr, fg, fb, 255);
     GRAlinestyle(ggc, 0, NULL, 1, 2, 0, 1000);
     if ((type == PLOT_TYPE_BAR_FILL_X) || (type == PLOT_TYPE_BAR_SOLID_FILL_X)) {
-      if (type == PLOT_TYPE_BAR_FILL_X)
+      if (type == PLOT_TYPE_BAR_FILL_X) {
 	GRAcolor(ggc, fr2, fg2, fb2, 255);
+      }
       GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 1);
-      if (type == PLOT_TYPE_BAR_FILL_X)
+      if (type == PLOT_TYPE_BAR_FILL_X) {
 	GRAcolor(ggc, fr, fg, fb, 255);
+      }
     }
     if ((type == PLOT_TYPE_BAR_FILL_Y) || (type == PLOT_TYPE_BAR_SOLID_FILL_Y)) {
-      if (type == PLOT_TYPE_BAR_FILL_Y)
+      if (type == PLOT_TYPE_BAR_FILL_Y) {
 	GRAcolor(ggc, fr2, fg2, fb2, 255);
+      }
       GRArectangle(ggc, height / 3, 1, height * 3 / 4, height - 1, 1);
-      if (type == PLOT_TYPE_BAR_FILL_Y)
+      if (type == PLOT_TYPE_BAR_FILL_Y) {
 	GRAcolor(ggc, fr, fg, fb, 255);
+      }
     }
     if ((type == PLOT_TYPE_BAR_X) || (type == PLOT_TYPE_BAR_FILL_X)) {
       GRAline(ggc, 1,          height / 4,     height - 1, height /4);
@@ -4416,11 +4425,9 @@ enum FILE_COMBO_ITEM {
 
 
 static void
-create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
+create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 {
-  char **enumlist, **curvelist;
-  unsigned int i;
-  int j, count;
+  int count;
   GtkTreeStore *list;
   GtkTreeIter parent;
 
@@ -4428,7 +4435,6 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
   if (count > 0)
     return;
 
-  enumlist = (char **) chkobjarglist(obj, "type");
   list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
   gtk_tree_store_append(list, &parent, NULL);
@@ -4456,10 +4462,24 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, -1);
 
+  create_type_combo_box(cbox, obj, &parent);
+}
+
+static void
+create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
+{
+  char **enumlist, **curvelist;
+  unsigned int i;
+  int j;
+  GtkTreeStore *list;
+
+  enumlist = (char **) chkobjarglist(obj, "type");
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+
   for (i = 0; enumlist[i] && enumlist[i][0]; i++) {
     GtkTreeIter iter, child;
 
-    gtk_tree_store_append(list, &iter, &parent);
+    gtk_tree_store_append(list, &iter, parent);
     gtk_tree_store_set(list, &iter,
 		       OBJECT_COLUMN_TYPE_STRING, _(enumlist[i]),
 		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
@@ -4706,7 +4726,7 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
 
   getobj(obj, "type", sel, 0, NULL, &type);
 
-  create_type_combo_box(GTK_WIDGET(cbox), obj, type);
+  create_type_color_combo_box(GTK_WIDGET(cbox), obj, type);
 
   switch (type) {
   case PLOT_TYPE_MARK:

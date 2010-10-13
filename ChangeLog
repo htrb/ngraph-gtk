@@ -1,3 +1,18 @@
+2010-10-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/legend.tcl (savescript): don't set "fill_A" field.
+
+	* src/gtk/x11file.c (draw_type_pixbuf): add braces after "if"
+	statement.
+	(create_type_color_combo_box): renamed from
+	"create_type_combo_box()" .
+	(create_type_combo_box): create only "type", "mark" and
+	"interpolation" item.
+	(start_editing_type): use "create_type_color_combo_box()".
+
+	* src/gtk/gtk_liststore.c (create_object_cbox): added.
+	(start_editing_obj): use "create_object_cbox()".
+
 2010-10-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (create_type_combo_box): change order of

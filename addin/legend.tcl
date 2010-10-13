@@ -390,7 +390,6 @@ proc savescript {} {
     puts $f "rectangle::fill_R=0"
     puts $f "rectangle::fill_G=0"
     puts $f "rectangle::fill_B=0"
-    puts $f "rectangle::fill_A=64"
     puts $f "rectangle::fill=true"
     puts $f "rectangle::stroke=false"
     puts $f "new rectangle"

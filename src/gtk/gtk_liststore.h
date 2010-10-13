@@ -20,6 +20,8 @@ typedef struct _list_store {
   gulong edited_id;
 } n_list_store;
 
+GtkWidget *create_object_cbox(void);
+
 GtkWidget *list_store_create(int n, n_list_store *list);
 
 void list_store_set_val(GtkWidget *w, GtkTreeIter *iter, int col, GType type, void *ptr);
