@@ -2259,6 +2259,7 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *hbox,*vbox, *img;
   struct MarkDialog *d;
   int type;
+  char buf[16];
 #define COL 10
 
   d = (struct MarkDialog *) data;
@@ -2269,6 +2270,8 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     for (type = 0; type < MARK_TYPE_NUM; type++) {
       w = gtk_toggle_button_new();
+      snprintf(buf, sizeof(buf), "%02d", type);
+      gtk_widget_set_tooltip_text(w, buf);
       if (NgraphApp.markpix[type]) {
 	img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
 	gtk_button_set_image(GTK_BUTTON(w), img);
@@ -2285,7 +2288,6 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
     }
     gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
     gtk_box_pack_start(GTK_BOX(d->vbox), vbox, FALSE, FALSE, 4);
-    //    d->show_buttons = FALSE;
   }
 
   d->cb_respond = FALSE;

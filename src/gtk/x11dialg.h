@@ -70,7 +70,7 @@ const char *get_style_string(struct objlist *obj, int id, char *field);
 
 #define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;\
   GtkVBox *vbox;\
-  int ret, show_buttons, show_cancel;\
+  int ret, show_cancel;\
   char *resource;\
   const char *ok_button;\
   void (*SetupWindow) (GtkWidget *w, void *data, int makewidget);\

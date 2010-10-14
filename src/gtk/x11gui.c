@@ -166,7 +166,6 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->parent = parent;
     data->widget = dlg;
     data->vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
-    data->show_buttons = TRUE;
     data->show_cancel = TRUE;
     data->ok_button = GTK_STOCK_OK;
 
@@ -196,11 +195,6 @@ DialogExecute(GtkWidget *parent, void *dialog)
   set_current_window(dlg);
   if (data->focus)
     gtk_widget_grab_focus(data->focus);
-
-  if (! data->show_buttons) {
-    gtk_widget_hide(GTK_DIALOG(dlg)->action_area);
-    gtk_dialog_set_has_separator(GTK_DIALOG(dlg), FALSE);
-  }
 
   while (data->ret == IDLOOP) {
     res_id = ndialog_run(dlg);
