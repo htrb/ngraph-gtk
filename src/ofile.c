@@ -5373,15 +5373,16 @@ f2devaluate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 static int 
 f2dredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 {
-  int redrawf, num, dmax;
+  int redrawf, num, dmax, type;
   int GC;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"redraw_flag",inst,&redrawf);
   _getobj(obj,"data_num",inst,&num);
   _getobj(obj,"redraw_num",inst,&dmax);
+  _getobj(obj, "type", inst, &type);
 
-  if (num > 0 && num <= dmax && redrawf) {
+  if (num > 0 && (num <= dmax || type == PLOT_TYPE_FIT) && redrawf) {
     f2ddraw(obj,inst,rval,argc,argv);
   } else {
     _getobj(obj,"GC",inst,&GC);

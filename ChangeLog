@@ -1,3 +1,8 @@
+2010-10-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2dredraw): check the "type" is "PLOT_TYPE_FIT" or
+	not.
+
 2010-10-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (DialogExecute): don't use "data->show_buttons".
