@@ -116,31 +116,38 @@ error(struct objlist *obj,int code)
   errobj=obj;
   errcode=code;
 
-  if (code < 0)
+  if (code < 0) {
     code = ERRUNKNOWN;
+  }
 
-  if (obj==NULL) objname="kernel";
-  else objname=obj->name;
-  if (code==ERRUNKNOWN)
+  if (obj==NULL) {
+    objname="kernel";
+  } else {
+    objname=obj->name;
+  }
+
+  if (code==ERRUNKNOWN) {
     printfstderr("%.64s: %.256s%.256s\n",
                  objname,errormsg1,errormsg2);
-  else if (code<100) {
+  } else if (code<100) {
     errtable=errorlist;
     errnum=ERRNUM;
-    if ((errtable==NULL) || (code>=errnum))
+    if ((errtable==NULL) || (code>=errnum)) {
       printfstderr("%.64s: %.256s(%d)%.256s\n",objname,errormsg1,code,errormsg2);
-    else
+    } else {
       printfstderr("%.64s: %.256s%.256s%.256s\n",
                    objname,errormsg1,errtable[code],errormsg2);
+    }
   } else {
     errtable=obj->errtable;
     errnum=obj->errnum;
     code=code-100;
-    if ((errtable==NULL) || (code>=errnum))
+    if ((errtable==NULL) || (code>=errnum)) {
       printfstderr("%.64s: %.256s(%d)%.256s\n",objname,errormsg1,code,errormsg2);
-    else
+    } else {
       printfstderr("%.64s: %.256s%.256s%.256s\n",
                    objname,errormsg1,errtable[code],errormsg2);
+    }
   }
   errormsg1[0]='\0';
   errormsg2[0]='\0';
