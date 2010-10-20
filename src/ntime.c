@@ -421,7 +421,7 @@ append_date_str(GString *str, const gchar *fmt, struct tm *t)
     g_string_append_printf(str, "%02d", (t->tm_yday + c) / 7);
     break;
   case 'y':
-    g_string_append_printf(str, "%d", y % 100);
+    g_string_append_printf(str, "%02d", y % 100);
     break;
   case 'Y':
     g_string_append_printf(str, "%d", y);

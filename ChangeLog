@@ -1,3 +1,10 @@
+2010-10-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ntime.c (append_date_str): format string for "%y" is "%02d".
+
+	* src/gtk/x11lgnd.c (insert_selcted_char): focus entry widget
+	after insert character.
+
 2010-10-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.c (error): add braces after "if" statements.

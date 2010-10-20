@@ -1570,6 +1570,8 @@ insert_selcted_char(GtkIconView *icon_view, GtkTreePath *path, gpointer user_dat
   pos = gtk_editable_get_position(entry);
   gtk_editable_insert_text(entry, ptr, -1, &pos);
   gtk_editable_set_position(entry, pos + 1);
+  gtk_widget_grab_focus(GTK_WIDGET(user_data));
+  gtk_editable_select_region(entry, pos, pos);
 
   g_free(ptr);
 }
