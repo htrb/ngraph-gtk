@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2010-10-20 18:07+0900\n"
+"POT-Creation-Date: 2010-10-20 19:21+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1222,55 +1222,55 @@ msgstr ""
 msgid "_Raw"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1658
+#: src/gtk/x11lgnd.c:1659
 #, c-format
 msgid "Legend text %d"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:1688
+#: src/gtk/x11lgnd.c:1689
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2279
+#: src/gtk/x11lgnd.c:2280
 #, c-format
 msgid "points:%-3d %s%s%s%s"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2281
+#: src/gtk/x11lgnd.c:2282
 msgid "style:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2282 src/gtk/x11lgnd.c:2371 src/gtk/x11lgnd.c:2388
+#: src/gtk/x11lgnd.c:2283 src/gtk/x11lgnd.c:2372 src/gtk/x11lgnd.c:2389
 msgid "custom"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2351
+#: src/gtk/x11lgnd.c:2352
 msgid "fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2353
+#: src/gtk/x11lgnd.c:2354
 msgid "arrow:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2367
+#: src/gtk/x11lgnd.c:2368
 #, c-format
 msgid "w:%.2f h:%.2f%s%s%s"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2370 src/gtk/x11lgnd.c:2387
+#: src/gtk/x11lgnd.c:2371 src/gtk/x11lgnd.c:2388
 msgid "  style:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2372 src/gtk/x11lgnd.c:2389
+#: src/gtk/x11lgnd.c:2373 src/gtk/x11lgnd.c:2390
 msgid "  fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2398
+#: src/gtk/x11lgnd.c:2399
 #, c-format
 msgid "%s%stype:%-2d"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2400
+#: src/gtk/x11lgnd.c:2401
 #, c-format
 msgid "type:%-2d"
 msgstr ""
