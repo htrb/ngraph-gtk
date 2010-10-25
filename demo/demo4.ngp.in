@@ -1139,7 +1139,7 @@ new text
 	text::y=10026
 	text::pt=2000
 	text::font='Serif'
-	text::style=2
+	text::style=3
 	text::space=0
 	text::direction=0
 	text::script_size=7000
