@@ -1,3 +1,10 @@
+2010-12-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/osystem.c (WEB): change url (sourceforge).
+
+	* src/gtk/x11file.c (FitDialogSetSensitivity): show simple
+	equation when the "type" is FIT_TYPE_POLY and "dim == 1".
+
 2010-10-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ntime.c (append_date_str): format string for "%y" is "%02d".

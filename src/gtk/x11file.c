@@ -1240,8 +1240,12 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
   case FIT_TYPE_POLY:
     dim = combo_box_get_active(d->dim);
 
-    snprintf(buf, sizeof(buf), "Equation: Y=<i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
-    gtk_label_set_markup(GTK_LABEL(d->func_label), buf);
+    if (dim == 0) {
+      gtk_label_set_markup(GTK_LABEL(d->func_label), "Equation: Y=<i>a·</i>X<i>+b</i>");
+    } else {
+      snprintf(buf, sizeof(buf), "Equation: Y=<i>∑ a<sub>i</sub>·</i>X<sup><i>i</i></sup> (<i>i=0-%d</i>)", dim + 1);
+      gtk_label_set_markup(GTK_LABEL(d->func_label), buf);
+    }
     set_fitdialog_sensitivity(d, type, through);
     break;
   case FIT_TYPE_POW:
