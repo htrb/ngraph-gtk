@@ -1,3 +1,9 @@
+2010-12-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (color_button_key_event): added.
+	(create_color_button): the function "color_button_key_event()" is
+	connected to "key-press-event" and "key-release-event".
+
 2010-12-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/osystem.c (WEB): change url (sourceforge).

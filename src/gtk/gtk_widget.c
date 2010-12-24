@@ -548,6 +548,21 @@ show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
   return TRUE;
 }
 
+static gboolean
+color_button_key_event(GtkWidget *w, GdkEventKey *e, gpointer u)
+{
+  switch (e->keyval) {
+  case GDK_space:
+  case GDK_Return:
+    if (e->type == GDK_KEY_RELEASE) {
+      show_color_sel(w, NULL, u);
+    }
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
 GtkWidget *
 create_color_button(GtkWidget *win)
 {
@@ -556,6 +571,8 @@ create_color_button(GtkWidget *win)
   w = gtk_color_button_new();
   gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(w), Menulocal.use_opacity);
   g_signal_connect(w, "button-release-event", G_CALLBACK(show_color_sel), win);
+  g_signal_connect(w, "key-press-event", G_CALLBACK(color_button_key_event), win);
+  g_signal_connect(w, "key-release-event", G_CALLBACK(color_button_key_event), win);
 
   return w;
 }
