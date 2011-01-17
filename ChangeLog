@@ -1,3 +1,30 @@
+2011-01-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* doc/html_ja/math.html: add documents about the functions "push",
+	"pop", "unshift" and "shift".
+
+	* src/math/math_basic_function.c (math_func_unshift)
+	(math_func_shift, math_func_pop)
+	(math_func_push): added.
+
+	* src/math/math_function.h.in: add "push", "pop", "unshift" and
+	"shift".
+
+	* src/math/math_operator.rb: check coments.
+
+2011-01-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/opath.c (arrowdraw): check if the path should be closed or
+	not.
+	(draw_stroke): last parameter represents that the path should be
+	closed or not.
+
+	* src/ofile.c (draw_fit, curveoutfile): initialize variable "a".
+	(curveout, curveoutfile): use "FREE_INTP_BUF()".
+	(UPDATE_PROGRESS_LINE_NUM): added.
+	(hskipdata, getdata_sub1, getdataraw): use
+	"UPDATE_PROGRESS_LINE_NUM".
+
 2010-12-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (color_button_key_event): added.
