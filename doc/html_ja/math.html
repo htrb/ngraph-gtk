@@ -377,6 +377,24 @@
  <tr><td>XOR(x,y)</td><td>(x≠0) xor (y≠0) のとき真(=1)</td></tr>
 </table>
 <br>
+<h3>配列操作関数</h3>
+<table border=1>
+ <tr><td>SIZE(a)</td><td>配列 a の要素数</td></tr>
+ <tr><td>SORT(a)</td><td>配列 a を整列する</td></tr>
+ <tr><td>RSORT(a)</td><td>配列 a を逆順に整列する</td></tr>
+ <tr><td>POP(a)</td><td>配列 a から末尾の要素を取り除いてそれを返す</td></tr>
+ <tr><td>PUSH(a,x)</td><td>配列 a の末尾に x を追加する (戻り値は x) </td></tr>
+ <tr><td>SHIFT(a)</td><td>配列 a の先頭の要素を取り除いてそれを返す。残りの要素はひとつずつ前に詰められる</td></tr>
+ <tr><td>UNSHIFT(a,x)</td><td>配列 a の先頭に x を挿入する (戻り値は x) </td></tr>
+</table>
+<br>
+<h3>メモリー操作関数</h3>
+ <p>メモリーは全ての数式変換で共有されます。</p>
+ <tr><td>M(n,x)</td><td>引数を第nメモリーに代入する(n=0〜65535) (戻り値は x) </td></tr>
+ <tr><td>RM(n)</td><td>現在の第nメモリーの値(n=0〜65535)</td></tr>
+ <tr><td>CM(x)</td><td>メモリー全体を x で初期化する (戻り値は x) </td></tr>
+</table>
+<br>
 <h3>その他の関数</h3>
 <table border=1>
  <tr><td>ISNORMAL(x)</td><td>x が通常の数値の場合真</td></tr>
@@ -386,9 +404,6 @@
  <tr><td>ISUNDEF(x)</td><td>x が UNDEF の場合真</td></tr>
  <tr><td>SUM(x)</td><td>積算</td></tr>
  <tr><td>DIF(x)</td><td>差分</td></tr>
- <tr><td>M(n,x)</td><td>引数を第nメモリーに代入する(n=0〜65535) (戻り値は x) </td></tr>
- <tr><td>RM(n)</td><td>現在の第nメモリーの値(n=0〜65535)</td></tr>
- <tr><td>CM(x)</td><td>メモリー全体を x で初期化する (戻り値は x) </td></tr>
  <tr><td>F(x,y,z)</td><td>ユーザ定義関数</td></tr>
  <tr><td>G(x,y,z)</td><td>ユーザ定義関数</td></tr>
  <tr><td>H(x,y,z)</td><td>ユーザ定義関数</td></tr>
@@ -409,9 +424,6 @@
  <tr><td>HSB2(h,s,b)</td><td>R2, G2, B2, の値を、HSB値からそれぞれ h, s, b (0≦h,s,b≦1)に設定</td></tr>
  <tr><td>MARKSIZE(x)</td><td>マークのサイズをXに設定</td></tr>
  <tr><td>MARKTYPE(x)</td><td>マークの種類をXに設定</td></tr>
- <tr><td>SIZE(x)</td><td>配列 x の要素数</td></tr>
- <tr><td>SORT(x)</td><td>配列 x を整列する</td></tr>
- <tr><td>RSORT(x)</td><td>配列 x を逆順に整列する</td></tr>
  <tr><td>IF(x,ex1,ex2)</td><td>x ≠ 0 のとき ex1, x = 0 のとき ex2</td></tr>
  <tr><td>UNLESS(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x = 0 のとき ex1 </td></tr>
  <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す</td></tr>
