@@ -1,5 +1,8 @@
 2011-01-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* test/math_test_new.dat: add test for the the functions "push",
+	"pop", "unshift" and "shift".
+
 	* doc/html_ja/math.html: add documents about the functions "push",
 	"pop", "unshift" and "shift".
 
@@ -10,7 +13,7 @@
 	* src/math/math_function.h.in: add "push", "pop", "unshift" and
 	"shift".
 
-	* src/math/math_operator.rb: check coments.
+	* src/math/math_operator.rb: check cements.
 
 2011-01-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
