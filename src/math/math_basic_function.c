@@ -2303,6 +2303,116 @@ rcompare_double(const void *p1, const void *p2)
 }
 
 int
+math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (math_equation_set_array_val(eq, id, ary->num, &exp->buf[1].val)) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  *rval = exp->buf[1].val;
+
+  return 0;
+}
+
+int
+math_func_pop(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  ary->num--;
+  *rval = ary->data[ary->num];
+
+  ary->data[ary->num].val = 0;
+  ary->data[ary->num].type = MATH_VALUE_NORMAL;
+
+  return 0;
+}
+
+int
+math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL || ary->num < 1 || ary->data == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  *rval = ary->data[0];
+
+  ary->num--;
+  if (ary->num > 0) {
+    memmove(ary->data, ary->data + 1, sizeof(*ary->data) * ary->num);
+  }
+
+  ary->data[ary->num].val = 0;
+  ary->data[ary->num].type = MATH_VALUE_NORMAL;
+
+  return 0;
+}
+
+int
+math_func_unshift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  int id;
+  MathEquationArray *ary;
+
+  rval->val = 0;
+
+  id = (int) exp->buf[0].idx;
+  ary = math_equation_get_array(eq, id);
+
+  if (ary == NULL) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (math_equation_set_array_val(eq, id, ary->num, &exp->buf[1].val)) {
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  if (ary->num > 1) {
+    memmove(ary->data + 1, ary->data, sizeof(*ary->data) * (ary->num - 1));
+  }
+
+  *rval = ary->data[0] = exp->buf[1].val;
+
+  return 0;
+}
+
+int
 math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   int id;

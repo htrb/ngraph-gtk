@@ -1,3 +1,5 @@
+#name	argc	side_effect	positional	arg_type	use_GSL
+#arg_type 0: MATH_FUNCTION_ARG_TYPE_DOUBLE, 1: MATH_FUNCTION_ARG_TYPE_ARRAY, 2: MATH_FUNCTION_ARG_TYPE_PROC
 abs	1	0	0	NULL
 sign	1	0	0	NULL
 int	1	0	0	NULL
@@ -88,3 +90,7 @@ knu	2	0	0	NULL	true
 progn	-1	0	0	NULL
 prog1	-1	0	0	NULL
 prog2	-1	0	0	NULL
+push	2	0	0	1,0
+pop	1	0	0	1
+unshift	2	0	0	1,0
+shift	1	0	0	1

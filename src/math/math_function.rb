@@ -2,6 +2,7 @@
 
 func_str = [];
 IO.foreach(ARGV[0]) { |l|
+  next if (l[0] == ?#)
   l.chomp!
   next if (l.length < 1)
   func_str.push(l.split) 
