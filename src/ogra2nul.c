@@ -48,7 +48,7 @@ static char *g2nulerrorlist[]={
 #define ERRNUM (sizeof(g2nulerrorlist) / sizeof(*g2nulerrorlist))
 
 static int 
-g2nulinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+g2nulinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
   return 0;
@@ -56,7 +56,7 @@ g2nulinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
 
 static int 
-g2nuldone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+g2nuldone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   return 0;
 }
@@ -474,7 +474,7 @@ static struct font_data FontData[] = {
 static NHASH FontDataHash = NULL;
 
 static int
-g2nul_strwidth(struct objlist *obj, char *inst, char *rval,
+g2nul_strwidth(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 		int argc, char **argv)
 {
   char *font, *s, *ptr;
@@ -514,13 +514,13 @@ g2nul_strwidth(struct objlist *obj, char *inst, char *rval,
     w += width;
   }
 
-  * (int *) rval = nround(w * size * 25.4 / 72000.0);
+  rval->i = nround(w * size * 25.4 / 72000.0);
 
   return 0;
 }
 
 static int
-g2nul_charheight(struct objlist *obj,char *inst,char *rval,
+g2nul_charheight(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                      int argc,char **argv)
 {
   char *font;
@@ -544,13 +544,13 @@ g2nul_charheight(struct objlist *obj,char *inst,char *rval,
     height = 562;
   }
 
-  *(int *) rval = nround(25.4 / 72000.0 * size * height);
+  rval->i = nround(25.4 / 72000.0 * size * height);
 
   return 0;
 }
 
 static int
-g2nul_chardescent(struct objlist *obj,char *inst,char *rval,
+g2nul_chardescent(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                      int argc,char **argv)
 {
   char *font;
@@ -558,7 +558,7 @@ g2nul_chardescent(struct objlist *obj,char *inst,char *rval,
 
   size=*(int *)(argv[3]);
   font=(char *)(argv[4]);
-  *(int *)rval=nround(25.4/72000.0*size*250);
+  rval->i=nround(25.4/72000.0*size*250);
   return 0;
 }
 

@@ -94,7 +94,7 @@ io_error(struct objlist *obj)
 }
 
 static int 
-io_init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
 
@@ -134,7 +134,7 @@ io_close_sub(struct io_local *io_local)
 }
 
 static int 
-io_done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
 
@@ -149,7 +149,7 @@ io_done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-io_open(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_open(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -190,7 +190,7 @@ io_open(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-io_close(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_close(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -212,7 +212,7 @@ io_close(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-io_puts(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_puts(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -239,15 +239,15 @@ io_puts(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-io_gets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_gets(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
   int rcode;
   char *buf;
 
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
+  g_free(rval->str);
+  rval->str = NULL;
 
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
@@ -265,13 +265,13 @@ io_gets(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
-  *(char **)rval = buf;
+  rval->str = buf;
 
   return 0;
 }
 
 static int 
-io_getc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_getc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -291,13 +291,13 @@ io_getc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
-  *(int *)rval = rcode;
+  rval->i = rcode;
 
   return 0;
 }
 
 static int 
-io_putc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_putc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -319,13 +319,13 @@ io_putc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
-  *(int *) rval = c;
+  rval->i = c;
 
   return 0;
 }
 
 static int 
-io_read(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_read(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -333,8 +333,8 @@ io_read(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   size_t len, rlen;
   char *buf;
 
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
+  g_free(rval->str);
+  rval->str = NULL;
 
   _getobj(obj, "_local", inst, &io_local);
   fp = io_local->fp;
@@ -368,13 +368,13 @@ io_read(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   }
   buf[rlen] = '\0';
 
-  *(char **)rval = buf;
+  rval->str = buf;
 
   return 0;
 }
 
 static int 
-io_write(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_write(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -402,13 +402,13 @@ io_write(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
-  *(int *)rval = rlen;
+  rval->i = rlen;
 
   return 0;
 }
 
 static int 
-io_seek(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_seek(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -449,7 +449,7 @@ io_seek(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-io_rewind(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_rewind(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -467,7 +467,7 @@ io_rewind(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-io_tell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_tell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -487,13 +487,13 @@ io_tell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     return 1;
   }
 
-  *(int *) rval = pos;
+  rval->i = pos;
 
   return 0;
 }
 
 static int
-io_flush(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_flush(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -517,7 +517,7 @@ io_flush(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int
-io_eof(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+io_eof(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
   FILE *fp;
@@ -532,7 +532,7 @@ io_eof(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   r = feof(fp);
   
-  *(int *) rval = (r) ? TRUE : FALSE;
+  rval->i = (r) ? TRUE : FALSE;
 
   return 0;
 }

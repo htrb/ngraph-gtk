@@ -1008,7 +1008,8 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
 {
   struct FitDialog *d;
   double derror, correlation, coe[10];
-  char *equation, *math, *inst, buf[1024];
+  char *equation, *math, buf[1024];
+  N_VALUE *inst;
   int i, j, dim, dimension, type, num;
 
   d = (struct FitDialog *) client_data;
@@ -2471,7 +2472,8 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
 {
   struct FileDialog *d;
   struct objlist *fitobj, *obj;
-  char *fit, *inst;
+  char *fit;
+  N_VALUE *inst;
   int i, idnum, fitid = 0, fitoid, ret, create = FALSE;
   struct narray iarray;
   char *valstr;
@@ -3957,7 +3959,8 @@ draw_type_pixbuf(struct objlist *obj, int i)
   GdkPixmap *pix;
   GdkPixbuf *pixbuf;
   struct objlist *gobj, *robj;
-  char *inst, *name;
+  N_VALUE *inst;
+  char *name;
   struct gra2cairo_local *local;
 
   lockstate = Globallock;

@@ -598,9 +598,9 @@ nforegroundconsole()
 
 static void
 #ifdef HAVE_LIBREADLINE
-load_config(struct objlist *sys, char *inst, int *allocconsole, int *history_size)
+load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole, int *history_size)
 #else
-load_config(struct objlist *sys, char *inst, int *allocconsole)
+load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
 #endif
 {
   FILE *fp;
@@ -725,7 +725,7 @@ main(int argc, char **argv)
 {
   char *homedir, *libdir, *confdir, *inifile, *loginshell;
   const char *home;
-  char *inst;
+  N_VALUE *inst;
   struct objlist *sys, *obj, *lobj;
   unsigned int j;
   int i, r;

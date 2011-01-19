@@ -88,11 +88,11 @@ extern struct greektbltype greektable[48];
 int _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
                    struct narray **list,void *local);
 int _GRAopen(char *objname,char *outputname,
-            struct objlist *obj,char *inst, int output,
+            struct objlist *obj,N_VALUE *inst, int output,
 	     int strwidth,int charascent,int chardescent,
             struct narray **list,void *local);
 int GRAopen(char *objname,char *outputname,
-            struct objlist *obj,char *inst, int output,
+            struct objlist *obj,N_VALUE *inst, int output,
 	    int strwidth,int charascent,int chardescent,
             struct narray **list,void *local);
 int GRAreopen(int GC);
@@ -100,11 +100,11 @@ int GRAopened(int GC);
 void _GRAclose(int GC);
 void GRAclose(int GC);
 void _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redrawf,
-                int addn,struct objlist *obj,char *inst,char *field);
-void GRAredraw(struct objlist *obj,char *inst,int setredrawf,int redrawf);
-void GRAaddlist(int GC,struct objlist *obj,char *inst,
+                int addn,struct objlist *obj,N_VALUE *inst,char *field);
+void GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redrawf);
+void GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
                 char *objname,char *field);
-void GRAinslist(int GC,struct objlist *obj,char *inst,
+void GRAinslist(int GC,struct objlist *obj,N_VALUE *inst,
                 char *objname,char *field,int n);
 void GRAdellist(int GC,int n);
 struct objlist *GRAgetlist(int GC,int *oid,char **field,int n);

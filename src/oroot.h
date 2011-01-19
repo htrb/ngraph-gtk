@@ -34,19 +34,19 @@ enum obj_config_type {
 struct obj_config {
   char *name;
   enum obj_config_type type;
-  int (* load_proc)(struct objlist *, char *, char *, char *);
-  void (* save_proc)(struct objlist *, char *, char *, struct narray *);
+  int (* load_proc)(struct objlist *, N_VALUE *, char *, char *);
+  void (* save_proc)(struct objlist *, N_VALUE *, char *, struct narray *);
 };
 
-int obj_load_config(struct objlist *obj, char *inst, char *title, NHASH hash);
-int obj_save_config(struct objlist *obj, char *inst, char *title, struct obj_config *config, unsigned int n);
+int obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash);
+int obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n);
 
-void obj_save_config_string(struct objlist *obj, char *inst, char *field, struct narray *conf);
+void obj_save_config_string(struct objlist *obj, N_VALUE *inst, char *field, struct narray *conf);
 
-int oputabs(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
-int oputge1(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
-int oputangle(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
-int oputstyle(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
-int oputcolor(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
+int oputabs(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
+int oputge1(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
+int oputangle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
+int oputstyle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
+int oputcolor(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 
 #endif

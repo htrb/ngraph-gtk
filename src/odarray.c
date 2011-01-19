@@ -42,31 +42,31 @@ static char *darrayerrorlist[]={
 #define ERRNUM (sizeof(darrayerrorlist) / sizeof(*darrayerrorlist))
 
 static int 
-darrayinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+darrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-darraydone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+darraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-darraynum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+darraynum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
 
   _getobj(obj,"@",inst,&array);
-  *(int *)rval=arraynum(array);
+  rval->i=arraynum(array);
   return 0;
 }
 
 static int 
-darrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+darrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -76,12 +76,12 @@ darrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"@",inst,&array);
   po=(double *)arraynget(array,num);
   if (po==NULL) return 1;
-  *(double *)rval=*po;
+  rval->d=*po;
   return 0;
 }
 
 static int 
-darrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+darrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -95,7 +95,7 @@ darrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-darrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+darrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   double val;
@@ -114,7 +114,7 @@ darrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-darrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+darrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -135,7 +135,7 @@ darrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-darraydel(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+darraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;

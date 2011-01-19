@@ -118,7 +118,8 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   GdkColor black, white;
   GdkGC *gc;
   struct objlist *gobj, *robj;
-  char *inst, *name;
+  N_VALUE *inst;
+  char *name;
   struct gra2cairo_local *local;
 
   d = (struct LegendGaussDialog *) client_data;

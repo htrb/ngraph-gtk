@@ -1,3 +1,120 @@
+2011-01-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/object.h (n_value, N_VALUE): added.
+
+	* src/object.h: use "N_VALUE *" instead of "char *" for an
+	instance of an Ngraph object and return value of an object field.
+
+	* src/gtk/ogra2gdk.c: ditto.
+
+	* src/gtk/ogra2x11.c: ditto.
+
+	* src/gtk/ogra2gdk.h: ditto.
+
+	* src/gtk/x11lgndx.c: ditto.
+
+	* src/gtk/ogra2cairofile.c: ditto.
+
+	* src/gtk/x11graph.c: ditto.
+
+	* src/gtk/ogra2gtkprint.c: ditto.
+
+	* src/gtk/x11menu.c: ditto.
+
+	* src/gtk/x11menu.h: ditto.
+
+	* src/gtk/x11commn.c: ditto.
+
+	* src/gtk/x11view.c: ditto.
+
+	* src/gtk/x11file.c: ditto.
+
+	* src/gtk/ox11menu.c: ditto.
+
+	* src/gtk/ox11dlg.c: ditto.
+
+	* src/gtk/ox11menu.h: ditto.
+
+	* src/gtk/main.c: ditto.
+
+	* src/gtk/x11print.c: ditto.
+
+	* src/gtk/ogra2cairo.c: ditto.
+
+	* src/gtk/ogra2cairo.h: ditto.
+
+	* src/gra.c: ditto.
+
+	* src/orect.c: ditto.
+
+	* src/olegend.c: ditto.
+
+	* src/gra.h: ditto.
+
+	* src/osarray.c: ditto.
+
+	* src/olegend.h: ditto.
+
+	* src/ngraph.h: ditto.
+
+	* src/ofile.c: ditto.
+
+	* src/oroot.c: ditto.
+
+	* src/oroot.h: ditto.
+
+	* src/oint.c: ditto.
+
+	* src/ogra2.c: ditto.
+
+	* src/opath.c: ditto.
+
+	* src/omerge.c: ditto.
+
+	* src/ostring.c: ditto.
+
+	* src/oio.c: ditto.
+
+	* src/oshell.c: ditto.
+
+	* src/ofit.c: ditto.
+
+	* src/otext.c: ditto.
+
+	* src/osystem.c: ditto.
+
+	* src/object.c: ditto.
+
+	* src/oiarray.c: ditto.
+
+	* src/omath.c: ditto.
+
+	* src/omark.c: ditto.
+
+	* src/odraw.c: ditto.
+
+	* src/odraw.h: ditto.
+
+	* src/oarc.c: ditto.
+
+	* src/ogra.c: ditto.
+
+	* src/odouble.c: ditto.
+
+	* src/ogra2prn.c: ditto.
+
+	* src/odarray.c: ditto.
+
+	* src/ogra2fil.c: ditto.
+
+	* src/oagrid.c: ditto.
+
+	* src/oprm.c: ditto.
+
+	* src/oaxis.c: ditto.
+
+	* src/ogra2nul.c: ditto
+
 2011-01-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* test/math_test_new.dat: add test for the the functions "push",

@@ -105,10 +105,10 @@ struct menulocal
   int antialias, do_not_use_arc_for_draft;
   char *editor, *browser, *help_browser;
   struct objlist *obj;
-  char *inst;
+  N_VALUE *inst;
   struct objlist *GRAobj;
   int GRAoid;
-  char *GRAinst;
+  N_VALUE *GRAinst;
   int GC;
   int PaperWidth, PaperHeight, PaperLandscape;
   char *PaperName;
@@ -164,11 +164,11 @@ enum SAVE_CONFIG_TYPE {
 				  | SAVE_CONFIG_TYPE_ADDIN_SCRIPT	\
 				  | SAVE_CONFIG_TYPE_MISC)
 
-void mx_redraw(struct objlist *obj, char *inst);
+void mx_redraw(struct objlist *obj, N_VALUE *inst);
 void mx_clear(GdkRegion *region);
-void mx_inslist(struct objlist *obj, char *inst,
-		struct objlist *aobj, char *ainst, char *afield, int addn);
-void mx_dellist(struct objlist *obj, char *inst, int deln);
+void mx_inslist(struct objlist *obj, N_VALUE *inst,
+		struct objlist *aobj, N_VALUE *ainst, char *afield, int addn);
+void mx_dellist(struct objlist *obj, N_VALUE *inst, int deln);
 void mgtkdisplaydialog(const char *str);
 void mgtkdisplaystatus(const char *str);
 int mgtkputstderr(const char *s);

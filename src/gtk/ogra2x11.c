@@ -69,7 +69,7 @@ static char *gtkerrorlist[] = {
 struct gtklocal
 {
   struct objlist *obj;
-  char *inst;
+  N_VALUE *inst;
   GtkWidget *mainwin, *View;
   GdkPixmap *win;
   GdkWindow *window;
@@ -83,23 +83,23 @@ struct gtklocal
 };
 
 static void gtkMakeRuler(struct gtklocal *gtklocal);
-static int gtk_evloop(struct objlist *obj, char *inst, char *rval, int argc,
+static int gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		      char **argv);
 static int gtkloadconfig(struct gtklocal *gtklocal);
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);
 static gboolean gtkevpaint(GtkWidget * w, GdkEventExpose * e,
 			   gpointer user_data);
-static int gtkinit(struct objlist *obj, char *inst, char *rval, int argc,
+static int gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		   char **argv);
-static int gtkdone(struct objlist *obj, char *inst, char *rval, int argc,
+static int gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		   char **argv);
-static int gtkclear(struct objlist *obj, char *inst, char *rval, int argc,
+static int gtkclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		    char **argv);
-static int gtkredraw(struct objlist *obj, char *inst, char *rval, int argc,
+static int gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		     char **argv);
 static int dot2pixel(struct gtklocal *gtklocal, int r);
-static int gtk_output(struct objlist *obj, char *inst, char *rval, int argc,
+static int gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		      char **argv);
 
 static int
@@ -181,7 +181,7 @@ gtkevpaint(GtkWidget * w, GdkEventExpose * e, gpointer user_data)
 static int
 gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
-  char *inst;
+  N_VALUE *inst;
   struct gtklocal *local;
   int i, id;
   struct objlist *obj;
@@ -225,7 +225,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 static int
-gtkinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
   struct gra2cairo_local *local;
@@ -381,7 +381,7 @@ errexit:
 }
 
 static int
-gtkdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
   int idn;
@@ -416,7 +416,7 @@ gtkdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtkclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *local;
   GdkColor color;
@@ -440,7 +440,7 @@ gtkclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-gtkflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtkflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *local;
 
@@ -472,7 +472,7 @@ get_color(struct gtklocal *gtklocal, int argc, char **argv)
 
 
 static int
-gtkbr(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtkbr(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
 
@@ -484,7 +484,7 @@ gtkbr(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-gtkbb(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtkbb(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
 
@@ -496,7 +496,7 @@ gtkbb(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-gtkbg(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtkbg(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
 
@@ -508,7 +508,7 @@ gtkbg(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-gtkredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *gtklocal;
 
@@ -520,7 +520,7 @@ gtkredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-gtk_evloop(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   while (gtk_events_pending()) {
     gtk_main_iteration();
@@ -609,7 +609,7 @@ gtkMakeRuler(struct gtklocal *gtklocal)
 }
 
 static int
-gtk_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char code, *cstr;
   int *cpar;
@@ -642,7 +642,7 @@ gtk_output(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-gtk_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gtk_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int dpi;
   struct gtklocal *local;

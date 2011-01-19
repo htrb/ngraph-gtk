@@ -47,7 +47,7 @@ static char *arcerrorlist[]={
 #define ERRNUM (sizeof(arcerrorlist) / sizeof(*arcerrorlist))
 
 static int 
-arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arcinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int angle2, width, pieslice, stroke, miter, join, alpha;
 
@@ -74,14 +74,14 @@ arcinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-arcdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arcdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arcdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   int x,y,rx,ry,angle1,angle2,width,ifill,fr,fg,fb,fa,tm,lm,w,h,stroke,close_path,br,bg,bb, ba, join, miter;
@@ -144,7 +144,7 @@ arcdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-arcgeometry(struct objlist *obj,char *inst,char *rval,
+arcgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   char *field;
@@ -184,7 +184,7 @@ arcgeometry(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arcbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x,y,x1,y1;
@@ -192,7 +192,7 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *array;
   int i,width;
 
-  array=*(struct narray **)rval;
+  array=rval->array;
   if (arraynum(array)!=0) return 0;
   _getobj(obj,"x",inst,&x0);
   _getobj(obj,"y",inst,&y0);
@@ -277,15 +277,15 @@ arcbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (arraynum(array) == 0) {
     arrayfree(array);
-    *(struct narray **) rval = NULL;
+    rval->array = NULL;
     return 1;
   }
-  *(struct narray **) rval = array;
+  rval->array = array;
   return 0;
 }
 
 static int 
-arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arcmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y;
 
@@ -304,7 +304,7 @@ arcmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+arcchange(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int point, a1, a2, rx, ry, ret;
 
@@ -348,7 +348,7 @@ arcchange(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-arcrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arcrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int tmp, angle, rx, ry, a, use_pivot;
 
@@ -400,7 +400,7 @@ arcrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-arcflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arcflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int rx, ry, a1, a2, use_pivot;
   enum FLIP_DIRECTION dir;
@@ -446,7 +446,7 @@ arcflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arczoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,snum,*sdata,rx,ry,x,y,refx,refy,width,preserve_width;
   double zoom;
@@ -497,13 +497,13 @@ arczoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-arcmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+arcmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
   struct narray *array;
 
-  *(int *)rval=FALSE;
+  rval->i=FALSE;
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
   _getobj(obj,"bbox",inst,&array);
@@ -524,12 +524,12 @@ arcmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     bmaxx+=err;
     bmaxy+=err;
     if ((bminx<=minx) && (minx<=bmaxx)
-     && (bminy<=miny) && (miny<=bmaxy)) *(int *)rval=TRUE;
+     && (bminy<=miny) && (miny<=bmaxy)) rval->i=TRUE;
   } else {
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)
-     && (miny<=bmaxy) && (bmaxy<=maxy)) *(int *)rval=TRUE;
+     && (miny<=bmaxy) && (bmaxy<=maxy)) rval->i=TRUE;
   }
   return 0;
 }

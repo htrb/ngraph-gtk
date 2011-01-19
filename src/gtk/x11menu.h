@@ -283,7 +283,7 @@ int InputYN(const char *mes);
 void QuitGUI(void);
 void menu_lock(int lock);
 void set_draw_lock(int lock);
-int find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
+int find_gra2gdk_inst(char **name, struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
 void update_addin_menu(void);
 int check_focused_obj_type(struct Viewer *d, int *type);
 void set_axis_undo_button_sensitivity(int state);

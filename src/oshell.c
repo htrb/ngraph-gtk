@@ -57,7 +57,7 @@ struct shlocal {
 };
 
 static int 
-cmdinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+cmdinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
   struct nshell *nshell;
@@ -76,7 +76,7 @@ cmdinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-cmddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+cmddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
 
@@ -92,7 +92,7 @@ cmddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-cmdshell(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct shlocal *shlocal;
   struct nshell *nshell;
@@ -216,7 +216,7 @@ errexit:
 }
 
 static int 
-cmdsecurity(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+cmdsecurity(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   set_security(*(int *)argv[2]);
   return 0;

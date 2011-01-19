@@ -41,14 +41,14 @@ static char *interrorlist[]={
 #define ERRNUM (sizeof(interrorlist) / sizeof(*interrorlist))
 
 static int 
-intinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+intinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-intdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+intdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;

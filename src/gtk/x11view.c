@@ -148,7 +148,7 @@ static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_
 static gboolean ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static gboolean ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static void ViewerPopupMenu(GtkWidget *w, gpointer client_data);
-static void DelList(struct objlist *obj, char *inst);
+static void DelList(struct objlist *obj, N_VALUE *inst);
 static void ViewUpdate(void);
 static void ViewCopy(void);
 static void do_popup(GdkEventButton *event, struct Viewer *d);
@@ -163,8 +163,8 @@ static void ViewDelete(void);
 static int text_dropped(const char *str, gint x, gint y, struct Viewer *d);
 static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
 static void ShowFocusFrame(GdkGC *gc);
-static void AddInvalidateRect(struct objlist *obj, char *inst);
-static void AddList(struct objlist *obj, char *inst);
+static void AddInvalidateRect(struct objlist *obj, N_VALUE *inst);
+static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom);
@@ -304,7 +304,7 @@ focus_new_insts(struct objlist *parent, struct narray *array)
 {
   struct objlist *ocur;
   int i, instnum, prev_instnum, oid;
-  char *inst;
+  N_VALUE *inst;
 
   ocur = parent->child;
   while (chkobjparent(ocur) == parent) {
@@ -457,7 +457,7 @@ new_merge_obj(char *name, struct objlist *obj)
 
 
 static int
-arc_get_angle(struct objlist *obj, char *inst, unsigned int round, int point, int px, int py, int *angle1, int *angle2)
+arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point, int px, int py, int *angle1, int *angle2)
 {
   int x, y, rx, ry, a1, a2;
   double dx, dy, r, angle;
@@ -644,7 +644,8 @@ data_dropped(char **filenames, int num, int file_type)
 static int
 text_dropped(const char *str, gint x, gint y, struct Viewer *d)
 {
-  char *inst, *ptr;
+  N_VALUE *inst;
+  char *ptr;
   double zoom = Menulocal.PaperZoom / 10000.0;
   struct objlist *obj;
   int id, x1, y1, r, i, j, l;
@@ -1283,7 +1284,8 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   int snum;
   struct objlist *dobj;
   int did, id, limit;
-  char *dfield, *dinst;
+  char *dfield;
+  N_VALUE *dinst;
   int i;
   struct narray *eval;
   int evalnum;
@@ -1400,7 +1402,8 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
   int snum;
   struct objlist *dobj;
   int did, id, limit;
-  char *dfield, *dinst;
+  char *dfield;
+  N_VALUE *dinst;
   int i, j;
   struct narray *eval;
   int evalnum, tot;
@@ -1610,7 +1613,8 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
   int snum;
   struct objlist *dobj;
   int did;
-  char *dfield, *dinst;
+  char *dfield;
+  N_VALUE *dinst;
   int i, match, r;
   int minx, miny, maxx, maxy;
   struct savedstdio save;
@@ -1671,16 +1675,15 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
 }
 
 static void
-AddList(struct objlist *obj, char *inst)
+AddList(struct objlist *obj, N_VALUE *inst)
 {
   int addi;
   struct objlist *aobj;
-  char *ainst;
   char *afield;
   int i, j, po, num, oid, id, id2;
   struct objlist **objlist;
   struct objlist *obj2;
-  char *inst2;
+  N_VALUE *inst2, *ainst;
   char *field, **objname;
   struct narray *draw, drawrable;
   struct Viewer *d;
@@ -1756,7 +1759,7 @@ AddList(struct objlist *obj, char *inst)
 }
 
 static void
-DelList(struct objlist *obj, char *inst)
+DelList(struct objlist *obj, N_VALUE *inst)
 {
   int i, oid, oid2;
   struct objlist *obj2;
@@ -1774,7 +1777,7 @@ DelList(struct objlist *obj, char *inst)
 }
 
 static void
-AddInvalidateRect(struct objlist *obj, char *inst)
+AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
 {
   struct narray *abbox;
   int bboxnum, *bbox;
@@ -1813,7 +1816,7 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy)
   struct FocusObj **focus;
   struct narray *abbox;
   int bboxnum, *bbox;
-  char *inst;
+  N_VALUE *inst;
   struct savedstdio save;
   struct Viewer *d;
 
@@ -1904,7 +1907,7 @@ ShowFocusFrame(GdkGC *gc)
   int bboxnum;
   int *bbox;
   int x1, y1, x2, y2;
-  char *inst;
+  N_VALUE *inst;
   struct savedstdio save;
   double zoom;
   struct Viewer *d;
@@ -2017,7 +2020,7 @@ AlignFocusedObj(int align)
   struct FocusObj **focus;
   struct narray *abbox;
   char *argv[4];
-  char *inst;
+  N_VALUE *inst;
   struct Viewer *d;
 
   if (Menulock || Globallock)
@@ -2108,7 +2111,7 @@ AlignFocusedObj(int align)
 static void
 execute_selected_instances(struct FocusObj **focus, int num, int argc, char **argv, char *field)
 {
-  char *inst;
+  N_VALUE *inst;
   int i;
 
   for (i = 0; i < num; i++) {
@@ -2217,7 +2220,7 @@ FlipFocusedObj(enum FLIP_DIRECTION dir)
 }
 
 static void
-show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double zoom, struct objlist *obj, char *inst, struct Viewer *d)
+show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double zoom, struct objlist *obj, N_VALUE *inst, struct Viewer *d)
 {
   int x, y, rx, ry, a1, a2;
   static unsigned int prev_state = 0;
@@ -2333,7 +2336,7 @@ ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
   struct narray *abbox;
   int bboxnum;
   int *bbox;
-  char *inst;
+  N_VALUE *inst;
   struct savedstdio save;
   double zoom;
   int frame;
@@ -2988,7 +2991,8 @@ static void
 mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
 {
   int i, dx, dy, num, axis;
-  char *argv[5], *inst;
+  char *argv[5];
+  N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
 
@@ -3051,7 +3055,8 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
 {
   int vx1, vy1, vx2, vy2, zm, i, num, axis;
   double cc, nn, zoom2;
-  char *argv[5], *inst;
+  char *argv[5];
+  N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
 
@@ -3136,7 +3141,8 @@ static void
 mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
 {
   int dx, dy, axis;
-  char *argv[5], *inst;
+  char *argv[5];
+  N_VALUE *inst;
   struct FocusObj *focus;
   struct objlist *obj;
 
@@ -3357,7 +3363,7 @@ static void
 create_legend1(struct Viewer *d, GdkGC *dc)
 {
   int id, num, x1, y1, ret;
-  char *inst;
+  N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point *po;
 
@@ -3414,7 +3420,7 @@ create_path(struct Viewer *d, GdkGC *dc)
   struct objlist *obj = NULL;
   struct narray *parray;
   struct Point *po;
-  char *inst;
+  N_VALUE *inst;
   int i, num, id, ret = IDCANCEL;
 
   d->Capture = FALSE;
@@ -3466,7 +3472,7 @@ static void
 create_legend3(struct Viewer *d, GdkGC *dc)
 {
   int id, num, x1, y1, x2, y2, ret = IDCANCEL;
-  char *inst;
+  N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
 
@@ -3542,7 +3548,7 @@ static void
 create_legendx(struct Viewer *d, GdkGC *dc)
 {
   int id, num, x1, y1, x2, y2, ret = IDCANCEL, type;
-  char *inst;
+  N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
 
@@ -3600,7 +3606,7 @@ create_single_axis(struct Viewer *d, GdkGC *dc)
 {
   int id, num, x1, y1, x2, y2, lenx, dir, ret = IDCANCEL;
   double fx1, fy1;
-  char *inst;
+  N_VALUE *inst;
   struct objlist *obj = NULL;
   struct Point **pdata;
 
@@ -3670,7 +3676,8 @@ create_axis(struct Viewer *d, GdkGC *dc)
 {
   int idx, idy, idu, idr, idg, oidx, oidy, type,
     num, x1, y1, x2, y2, lenx, leny, ret = IDCANCEL;
-  char *inst, *argv[2], *ref;
+  N_VALUE *inst;
+  char *argv[2], *ref;
   struct objlist *obj = NULL, *obj2;
   struct Point **pdata;
   struct narray group;
@@ -3984,7 +3991,7 @@ static int
 get_mouse_cursor_type(struct Viewer *d, int x, int y)
 {
   int j, x1, y1, x2, y2, num, cursor, bboxnum, *bbox;
-  char *inst;
+  N_VALUE *inst;
   struct narray *abbox;
   struct FocusObj **focus;
   double zoom;
@@ -4800,7 +4807,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   GdkGC *dc;
   int num, i, dx, dy;
   struct FocusObj *focus;
-  char *inst;
+  N_VALUE *inst;
   struct objlist *obj;
   char *argv[4];
   int axis = FALSE;
@@ -5090,7 +5097,7 @@ void
 Focus(struct objlist *fobj, int id, int add)
 {
   int oid, focus;
-  char *inst;
+  N_VALUE *inst;
   struct narray *sarray;
   char **sdata;
   int snum;
@@ -5313,7 +5320,7 @@ ChangeDPI(int redraw)
 {
   int width, height, i, num, XPos, YPos, XRange = 0, YRange = 0;
   gint w, h;
-  char *inst;
+  N_VALUE *inst;
   double ratex, ratey;
   struct objlist *obj;
   struct narray *array;
@@ -5595,7 +5602,8 @@ ViewUpdate(void)
   int i, id, id2, did, num;
   struct FocusObj *focus;
   struct objlist *obj, *dobj = NULL, *aobj;
-  char *inst, *inst2, *dinst, *dfield;
+  N_VALUE *inst, *inst2, *dinst;
+  char *dfield;
   int ret, section;
   int x1, y1;
   int aid = 0, idx = 0, idy = 0, idu = 0, idr = 0, idg, j, lenx, leny;
@@ -5833,7 +5841,7 @@ ViewDelete(void)
   int i, id, num;
   struct FocusObj *focus;
   struct objlist *obj;
-  char *inst;
+  N_VALUE *inst;
   GdkGC *dc;
   int axis;
   struct Viewer *d;
@@ -5895,7 +5903,7 @@ reorder_object(enum object_move_type type)
   int id, num;
   struct FocusObj *focus;
   struct objlist *obj;
-  char *inst;
+  N_VALUE *inst;
   struct Viewer *d;
 
   if (Menulock || Globallock)
@@ -5952,11 +5960,12 @@ ncopyobj(struct objlist *obj, int id1, int id2)
 }
 
 static void
-ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, char *inst)
+ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 {
   int j, id2, did;
   struct objlist *dobj, *aobj;
-  char *inst2, *dinst, *dfield;
+  N_VALUE *inst2, *dinst;
+  char *dfield;
   int findX, findY, findU, findR, findG;
   char *axisx, *axisy;
   int matchx, matchy;
@@ -6227,7 +6236,7 @@ ViewCopy(void)
   int i, id, id2, num;
   struct FocusObj *focus;
   struct objlist *obj;
-  char *inst, *inst2;
+  N_VALUE *inst, *inst2;
   GdkGC *dc;
   int axis = FALSE;
   struct Viewer *d;

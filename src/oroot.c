@@ -47,7 +47,7 @@ static char *rooterrorlist[]={
 #define ERRNUM (sizeof(rooterrorlist) / sizeof(*rooterrorlist))
 
 int 
-obj_load_config(struct objlist *obj, char *inst, char *title, NHASH hash)
+obj_load_config(struct objlist *obj, N_VALUE *inst, char *title, NHASH hash)
 {
   FILE *fp;
   char *tok,*str,*s2;
@@ -108,7 +108,7 @@ obj_load_config(struct objlist *obj, char *inst, char *title, NHASH hash)
 }
 
 static void
-obj_save_config_numeric(struct objlist *obj, char *inst, char *field, struct narray *conf)
+obj_save_config_numeric(struct objlist *obj, N_VALUE *inst, char *field, struct narray *conf)
 {
   char buf[1024], *str;
   int val;
@@ -122,7 +122,7 @@ obj_save_config_numeric(struct objlist *obj, char *inst, char *field, struct nar
 }
 
 void
-obj_save_config_string(struct objlist *obj, char *inst, char *field, struct narray *conf)
+obj_save_config_string(struct objlist *obj, N_VALUE *inst, char *field, struct narray *conf)
 {
   char *buf, *val;
   int len;
@@ -139,7 +139,7 @@ obj_save_config_string(struct objlist *obj, char *inst, char *field, struct narr
 }
 
 static void
-obj_save_config_line_style(struct objlist *obj, char *inst, char *field, struct narray *conf)
+obj_save_config_line_style(struct objlist *obj, N_VALUE *inst, char *field, struct narray *conf)
 {
   char *buf;
   int i, j, num;
@@ -161,7 +161,7 @@ obj_save_config_line_style(struct objlist *obj, char *inst, char *field, struct 
 }
 
 int 
-obj_save_config(struct objlist *obj, char *inst, char *title, struct obj_config *config, unsigned int n)
+obj_save_config(struct objlist *obj, N_VALUE *inst, char *title, struct obj_config *config, unsigned int n)
 {
   struct narray conf;
   unsigned int i;
@@ -192,21 +192,21 @@ obj_save_config(struct objlist *obj, char *inst, char *title, struct obj_config 
 }
 
 static int 
-oinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {  
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-odone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+odone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-oputname(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oputname(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *arg;
   int i;
@@ -227,21 +227,21 @@ oputname(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 int 
-oputabs(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oputabs(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<0) *(int *)argv[2]=0;
   return 0;
 }
 
 int 
-oputge1(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oputge1(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
   return 0;
 }
 
 int 
-oputangle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oputangle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<0) *(int *)(argv[2])=0;
   else if (*(int *)(argv[2])>36000) *(int *)(argv[2])=36000;
@@ -249,7 +249,7 @@ oputangle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 int 
-oputcolor(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oputcolor(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *) (argv[2]) < 0) *(int *)(argv[2]) = 0;
   else if (*(int *)(argv[2]) > 255) *(int *)(argv[2]) = 255;
@@ -257,7 +257,7 @@ oputcolor(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 int 
-oputstyle(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oputstyle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int i,num,*adata;
@@ -279,7 +279,7 @@ ochgobjlist(char **olist)
   int id,len;
   struct objlist *obj;
   char *endptr;
-  char *inst;
+  N_VALUE *inst;
 
   list=*olist;
   objname=getitok2(&list,&len,":");
@@ -320,7 +320,7 @@ ochgobjlist(char **olist)
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
 static int 
-osave(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+osave(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct objlist *obj2;
   char *field, *name, *valstr;
@@ -331,8 +331,8 @@ osave(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   char **adata;
   GString *s;
 
-  g_free(* (char **) rval);
-  * (char **) rval = NULL;
+  g_free(rval->str);
+  rval->str = NULL;
   array = (struct narray *) argv[2];
   anum = arraynum(array);
   adata = arraydata(array);
@@ -398,7 +398,7 @@ osave(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     }
   }
 
-  * (char **) rval = g_string_free(s, FALSE);
+  rval->str = g_string_free(s, FALSE);
 
   return 0;
 

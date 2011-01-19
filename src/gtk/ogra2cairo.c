@@ -521,7 +521,7 @@ gra2cairo_set_alternative_font(const char *fontalias, const char *fontname)
 }
 
 static int
-gra2cairo_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {  
   struct gra2cairo_local *local = NULL;
   int antialias = ANTIALIAS_TYPE_DEFAULT;
@@ -581,7 +581,7 @@ gra2cairo_draw_path(struct gra2cairo_local *local)
 }
 
 struct gra2cairo_local *
-gra2cairo_free(struct objlist *obj, char *inst)
+gra2cairo_free(struct objlist *obj, N_VALUE *inst)
 {
   struct gra2cairo_local *local;
 
@@ -612,7 +612,7 @@ gra2cairo_free(struct objlist *obj, char *inst)
 }
 
 static int 
-gra2cairo_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
@@ -644,7 +644,7 @@ gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region)
 }
 
 static double
-gra2cairo_get_pixel_dot(struct objlist *obj, char *inst, char **argv)
+gra2cairo_get_pixel_dot(struct objlist *obj, N_VALUE *inst, char **argv)
 {
   int dpi;
 
@@ -662,7 +662,7 @@ gra2cairo_get_pixel_dot(struct objlist *obj, char *inst, char **argv)
 }
 
 static int
-gra2cairo_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int dpi;
   struct gra2cairo_local *local;
@@ -681,7 +681,7 @@ gra2cairo_set_dpi(struct objlist *obj, char *inst, char *rval, int argc, char **
 }
 
 static int
-gra2cairo_set_dpi_x(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_set_dpi_x(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
 
@@ -693,7 +693,7 @@ gra2cairo_set_dpi_x(struct objlist *obj, char *inst, char *rval, int argc, char 
 }
 
 static int
-gra2cairo_set_dpi_y(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_set_dpi_y(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
 
@@ -729,7 +729,7 @@ gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
 }
 
 static int
-set_antialias(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+set_antialias(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int antialias;
   struct gra2cairo_local *local;
@@ -928,7 +928,7 @@ check_cairo_status(cairo_t *cairo)
 }
 
 static int 
-gra2cairo_flush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_flush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 { 
   struct gra2cairo_local *local;
 
@@ -943,7 +943,7 @@ gra2cairo_flush(struct objlist *obj, char *inst, char *rval, int argc, char **ar
 }
 
 static int 
-gra2cairo_output(struct objlist *obj, char *inst, char *rval, 
+gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
                  int argc, char **argv)
 {
   char code, *cstr, *tmp, *tmp2;
@@ -1264,7 +1264,7 @@ gra2cairo_output(struct objlist *obj, char *inst, char *rval,
 
 
 int
-gra2cairo_strwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_strwidth(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
   gchar *font, *str;
@@ -1278,7 +1278,7 @@ gra2cairo_strwidth(struct objlist *obj, char *inst, char *rval, int argc, char *
   style = * (int *) (argv[6]);
 
   if (size == 0) {
-    *(int *) rval = 0;
+    rval->i = 0;
     return 0;
   }
 
@@ -1291,7 +1291,7 @@ gra2cairo_strwidth(struct objlist *obj, char *inst, char *rval, int argc, char *
   fcur = loadfont(font, style, &symbol);
 
   if (fcur == NULL) {
-    *(int *) rval = nround(size * 0.600);
+    rval->i = nround(size * 0.600);
     return 0;
   }
 
@@ -1318,7 +1318,7 @@ gra2cairo_strwidth(struct objlist *obj, char *inst, char *rval, int argc, char *
     g_free(str);
   }
 
-  *(int *) rval = mxp2dw(local, width);
+  rval->i = mxp2dw(local, width);
 
   local->fontsin = s;
   local->fontcos = c;
@@ -1328,7 +1328,7 @@ gra2cairo_strwidth(struct objlist *obj, char *inst, char *rval, int argc, char *
 }
 
 int
-gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairo_charheight(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
   char *font;
@@ -1343,7 +1343,7 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   style = *(int *) (argv[5]);
 
   if (size == 0) {
-    *(int *) rval = 0;
+    rval->i = 0;
     return 0;
   }
 
@@ -1363,9 +1363,9 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
 
   if (fcur == NULL) {
     if (height) {
-      *(int *) rval = nround(size * 0.562);
+      rval->i = nround(size * 0.562);
     } else {
-      *(int *) rval = nround(size * 0.250);
+      rval->i = nround(size * 0.250);
     }
 
     return 0;
@@ -1382,9 +1382,9 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
   draw_str(local, FALSE, "A", fcur, size, 0, NULL, &ascent, &descent);
 
   if (height) {
-    *(int *)rval = mxp2dh(local, ascent);
+    rval->i = mxp2dh(local, ascent);
   } else {
-    *(int *)rval = mxp2dh(local, descent);
+    rval->i = mxp2dh(local, descent);
   }
 
   local->fontsin = s;
@@ -1395,7 +1395,7 @@ gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char
 }
 
 static int
-use_opacity(struct objlist *obj, char *inst, char *rval, int argc,
+use_opacity(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	      char **argv)
 {
   struct gra2cairo_local *local;

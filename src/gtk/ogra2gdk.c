@@ -32,7 +32,7 @@
 #endif
 
 static int 
-g2g_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+g2g_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {  
   struct gra2cairo_local *local;
   int dpi;
@@ -66,7 +66,7 @@ g2g_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-g2g_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+g2g_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
@@ -75,7 +75,7 @@ g2g_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 GdkPixmap *
-gra2gdk_create_pixmap(struct objlist *obj, char *inst, struct gra2cairo_local *local,
+gra2gdk_create_pixmap(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local *local,
 		      GdkDrawable *drawable, int w, int h, int r, int g, int b)
 {
   cairo_t *cairo;

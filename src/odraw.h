@@ -61,7 +61,7 @@ extern char *fontchar[];
 extern char *intpchar[];
 extern char *arrowchar[];
 
-int pathsave(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
-int clear_bbox(struct objlist *obj, char *inst);
+int pathsave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
+int clear_bbox(struct objlist *obj, N_VALUE *inst);
 
 #endif

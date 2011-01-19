@@ -55,7 +55,7 @@ static char *GRAerrorlist[]={
 static void set_progress_val(int i, int n, char *name);
 
 static int 
-oGRAinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oGRAinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC,width,height,zoom;
 
@@ -78,7 +78,7 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
   struct objlist *dobj,*gobj;
   struct narray *sarray;
   char *list;
-  char *dinst;
+  N_VALUE *dinst;
   char *device,*dfield,*gfield;
   int oid,did,gid;
 
@@ -106,7 +106,7 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
 }
 
 static int 
-oGRAdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oGRAdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
 
@@ -118,7 +118,7 @@ oGRAdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-oGRAputdevice(struct objlist *obj,char *inst,char *rval,
+oGRAputdevice(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                   int argc,char **argv)
 {
   int GC;
@@ -133,14 +133,14 @@ oGRAputdevice(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int anum,id;
   struct narray iarray;
   int GC, r;
   char *device,*dev,*gfield;
   struct objlist *dobj,*gobj,*robj;
-  char *dinst,*ginst;
+  N_VALUE *dinst,*ginst;
   void *local;
   struct narray **list;
   int offset,oid,gid;
@@ -233,7 +233,7 @@ oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       }
     }
   }
-  *(int *)rval=GC;
+  rval->i=GC;
   if (_putobj(obj,"GC",inst,&GC)) return 1;
   r = GRAinit(GC,leftm,topm,width,height,zoom);
   if (r) {
@@ -246,7 +246,7 @@ oGRAopen(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-oGRAclose(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oGRAclose(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
 
@@ -259,11 +259,11 @@ oGRAclose(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-oGRAredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oGRAredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct objlist *dobj;
-  char *dinst,*field;
-  char *device,*dfield;
+  N_VALUE *dinst;
+  char *device,*dfield,*field;
   int oid,did;
 
   field=(char *)(argv[1]);
@@ -279,12 +279,12 @@ oGRAredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-oGRAclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oGRAclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   struct objlist *dobj;
-  char *dinst,*field;
-  char *device,*dfield;
+  N_VALUE *dinst;
+  char *device,*dfield,*field;
   int oid,did;
 
   field=(char *)(argv[1]);
@@ -302,7 +302,7 @@ oGRAclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-oGRAputtopm(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oGRAputtopm(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   char *arg;
@@ -352,7 +352,7 @@ oGRAdrawparent(struct objlist *parent)
 }
 
 static int 
-oGRAdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   struct objlist *draw;

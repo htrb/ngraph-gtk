@@ -48,12 +48,12 @@ struct gra2cairo_local {
 };
 
 int gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region);
-int gra2cairo_strwidth(struct objlist *obj, char *inst, char *rval, int argc, char **argv);
-int gra2cairo_charheight(struct objlist *obj, char *inst, char *rval, int argc, char **argv);
+int gra2cairo_strwidth(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
+int gra2cairo_charheight(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv);
 int gra2cairo_set_region(struct gra2cairo_local *local, int x1, int y1, int x2, int y2);
 int gra2cairo_clear_region(struct gra2cairo_local *local);
 void gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias);
-struct gra2cairo_local *gra2cairo_free(struct objlist *obj, char *inst);
+struct gra2cairo_local *gra2cairo_free(struct objlist *obj, N_VALUE *inst);
 void gra2cairo_update_fontmap(const char *fontalias, const char *fontname);
 const char *gra2cairo_get_font_type_str(int type);
 struct fontmap *gra2cairo_get_fontmap(char *font_alias);

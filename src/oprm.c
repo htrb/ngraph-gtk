@@ -66,14 +66,14 @@ static char *prmerrorlist[]={
 #define ERRNUM (sizeof(prmerrorlist) / sizeof(*prmerrorlist))
 
 static int 
-prminit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+prminit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {  
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-prmdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+prmdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
@@ -482,7 +482,7 @@ char buf[BUFSIZE];
 char buf2[BUFSIZE];
 
 static int 
-prmload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
   FILE *fp,*fp2;

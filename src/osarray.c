@@ -44,51 +44,51 @@ static char *sarrayerrorlist[]={
 #define ERRNUM (sizeof(sarrayerrorlist) / sizeof(*sarrayerrorlist))
 
 static int 
-sarrayinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sarrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-sarraydone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sarraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-sarraynum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sarraynum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
 
   _getobj(obj,"@",inst,&array);
-  *(int *)rval=arraynum(array);
+  rval->i=arraynum(array);
   return 0;
 }
 
 static int 
-sarrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
   char **po;
   char *buf;
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
   po=(char **)arraynget(array,num);
   if (po==NULL) return 1;
   if ((buf=g_malloc(strlen(*po)+1))==NULL) return 1;
   strcpy(buf,*po);
-  *(char **)rval=buf;
+  rval->str=buf;
   return 0;
 }
 
 static int 
-sarrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -102,7 +102,7 @@ sarrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-sarrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   char *val;
@@ -121,7 +121,7 @@ sarrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-sarrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -142,7 +142,7 @@ sarrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-sarraydel(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;

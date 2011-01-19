@@ -29,16 +29,16 @@ enum FLIP_DIRECTION {
   FLIP_DIRECTION_VERTICAL,
 };
 
-int legendgeometry(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
-int legendbbox(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
-int legendmove(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
-int legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
-int legendchange(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
-int legendzoom(struct objlist *obj,char *inst,char *rval, int argc,char **argv);
-int legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
+int legendgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
+int legendbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
+int legendmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
+int legendrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
+int legendchange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
+int legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
+int legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 void rotate(int px, int py, int angle, int *x, int *y);
 void flip(int pivot, enum FLIP_DIRECTION dir, int *x, int *y);
-int legendflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
-int put_color_for_backward_compatibility(struct objlist *obj, char *inst, char *rval,  int argc, char **argv);
+int legendflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
+int put_color_for_backward_compatibility(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,  int argc, char **argv);
 
 #endif

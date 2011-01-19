@@ -66,7 +66,7 @@ struct mergelocal {
 };
 
 static int 
-mergeinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergeinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int zm, n;
   struct mergelocal *mergelocal;
@@ -94,14 +94,14 @@ errexit:
 }
 
 static int 
-mergedone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergedone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergedraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   char *file,*graf;
@@ -175,7 +175,7 @@ mergedraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mergeredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergeredraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int redrawf, dmax, line_num;
   int GC;
@@ -196,7 +196,7 @@ mergeredraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mergefile(struct objlist *obj, char *inst, char *rval, 
+mergefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
             int argc, char **argv)
 {
   struct objlist *sys;
@@ -233,41 +233,41 @@ mergefile(struct objlist *obj, char *inst, char *rval,
 }
 
 static int 
-mergetime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergetime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
   struct stat buf;
   int style;
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
   if (nstat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
-  *(char **)rval=ntime((time_t *)&(buf.st_mtime),style);
+  rval->str=ntime((time_t *)&(buf.st_mtime),style);
   return 0;
 }
 
 static int 
-mergedate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergedate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *file;
   struct stat buf;
   int style;
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
   _getobj(obj,"file",inst,&file);
   if (file==NULL) return 0;
   if (nstat(file,&buf)!=0) return 1;
   style=*(int *)(argv[2]);
-  *(char **)rval=ndate((time_t *)&(buf.st_mtime),style);
+  rval->str=ndate((time_t *)&(buf.st_mtime),style);
   return 0;
 }
 
 static int 
-mergestore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergestore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mergelocal *mergelocal;
   char *file,*base,*date,*time;
@@ -275,8 +275,8 @@ mergestore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *buf;
   char *argv2[2];
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
   _getobj(obj,"_local",inst,&mergelocal);
   if (mergelocal->endstore) {
     mergelocal->endstore=FALSE;
@@ -307,7 +307,7 @@ mergestore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
     sprintf(buf,"merge::load_data '%s' '%s %s' <<'[EOF]'",base,date,time);
     g_free(base);
-    *(char **)rval=buf;
+    rval->str=buf;
     return 0;
   } else {
     if (fgetline(mergelocal->storefd,&buf)!=0) {
@@ -316,17 +316,17 @@ mergestore(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       buf = g_strdup("[EOF]\n");
       if (buf == NULL) return 1;
       mergelocal->endstore=TRUE;
-      *(char **)rval=buf;
+      rval->str=buf;
       return 0;
     } else {
-      *(char **)rval=buf;
+      rval->str=buf;
       return 0;
     }
   }
 }
 
 static int 
-mergeload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergeload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *s;
   int len;
@@ -377,7 +377,7 @@ mergeload(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mergestoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergestoredum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mergelocal *mergelocal;
   char *file,*base,*date,*time;
@@ -385,8 +385,8 @@ mergestoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *buf;
   char *argv2[2];
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
   _getobj(obj,"_local",inst,&mergelocal);
   if (mergelocal->endstore) {
     mergelocal->endstore=FALSE;
@@ -412,14 +412,14 @@ mergestoredum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     }
     sprintf(buf,"merge::load_dummy '%s' '%s %s'\n",base,date,time);
     g_free(base);
-    *(char **)rval=buf;
+    rval->str=buf;
     mergelocal->endstore=TRUE;
     return 0;
   }
 }
 
 static int 
-mergeloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergeloaddum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *s;
   int len;
@@ -438,7 +438,7 @@ mergeloaddum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mergebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergebbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   char *file,*graf;
@@ -450,7 +450,7 @@ mergebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct GRAbbox bbox;
   int GC;
 
-  array=*(struct narray **)rval;
+  array=rval->array;
   if (arraynum(array)!=0) return 0;
   _getobj(obj,"file",inst,&file);
   _getobj(obj,"left_margin",inst,&lm);
@@ -510,15 +510,15 @@ mergebbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&bbox.minx,0);
   if (arraynum(array)==0) {
     arrayfree(array);
-    *(struct narray **) rval = NULL;
+    rval->array = NULL;
     return 1;
   }
-  *(struct narray **)rval=array;
+  rval->array=array;
   return 0;
 }
 
 static int 
-mergemove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergemove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int lm,tm;
 
@@ -536,7 +536,7 @@ mergemove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mergezoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergezoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int lm,tm,zm;
   double zoom;
@@ -562,13 +562,13 @@ mergezoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mergematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mergematch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
   struct narray *array;
 
-  *(int *)rval=FALSE;
+  rval->i=FALSE;
   if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
   _getobj(obj,"bbox",inst,&array);
   if (array==NULL) return 0;
@@ -588,18 +588,18 @@ mergematch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     bmaxx+=err;
     bmaxy+=err;
     if ((bminx<=minx) && (minx<=bmaxx)
-     && (bminy<=miny) && (miny<=bmaxy)) *(int *)rval=TRUE;
+     && (bminy<=miny) && (miny<=bmaxy)) rval->i=TRUE;
   } else {
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)
-     && (miny<=bmaxy) && (bmaxy<=maxy)) *(int *)rval=TRUE;
+     && (miny<=bmaxy) && (bmaxy<=maxy)) rval->i=TRUE;
   }
   return 0;
 }
 
 static int 
-mergegeometry(struct objlist *obj,char *inst,char *rval,
+mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   char *field;

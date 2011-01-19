@@ -77,19 +77,19 @@ static struct obj_config TextConfig[] = {
 static NHASH TextConfigHash = NULL;
 
 static int 
-textloadconfig(struct objlist *obj,char *inst)
+textloadconfig(struct objlist *obj,N_VALUE *inst)
 {
   return obj_load_config(obj, inst, TEXTCONF, TextConfigHash);
 }
 
 static int 
-textsaveconfig(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textsaveconfig(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   return obj_save_config(obj, inst, TEXTCONF, TextConfig, sizeof(TextConfig) / sizeof(*TextConfig));
 }
 
 static int 
-textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int pt,scriptsize;
   char *font;
@@ -113,14 +113,14 @@ textinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-textdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-textgeometry(struct objlist *obj,char *inst,char *rval,
+textgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   char *field;
@@ -147,7 +147,7 @@ textgeometry(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   int x,y,pt,space,dir,fr,fg,fb,fa,tm,lm,w,h,scriptsize,raw;
@@ -187,7 +187,7 @@ textdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textprintf(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   char **argv2;
@@ -197,8 +197,8 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   GString *ret;
   char *arg_str;
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
   array=(struct narray *)argv[2];
   argv2=arraydata(array);
   argc2=arraynum(array);
@@ -240,12 +240,12 @@ textprintf(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     po += i + 1;
   }
 
-  *(char **)rval = g_string_free(ret, FALSE);
+  rval->str = g_string_free(ret, FALSE);
   return 0;
 }
 
 static int 
-textbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   struct narray *array;
@@ -256,7 +256,7 @@ textbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   int i,ggx[4],ggy[4];
   double si,co;
 
-  array=*(struct narray **)rval;
+  array=rval->array;
   if (arraynum(array)!=0) return 0;
   _getobj(obj,"text",inst,&text);
   _getobj(obj,"x",inst,&x);
@@ -300,15 +300,15 @@ textbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&(minx),0);
   if (arraynum(array)==0) {
     arrayfree(array);
-    *(struct narray **) rval = NULL;
+    rval->array = NULL;
     return 1;
   }
-  *(struct narray **)rval=array;
+  rval->array=array;
   return 0;
 }
 
 static int 
-textmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y;
 
@@ -327,7 +327,7 @@ textmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-textrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int dir, angle, use_pivot;
  
@@ -362,7 +362,7 @@ textrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y,pt,space,refx,refy;
   double zoom;
@@ -394,7 +394,7 @@ textzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -406,7 +406,7 @@ textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   char *font;
   char *text;
 
-  *(int *)rval=FALSE;
+  rval->i=FALSE;
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   _getobj(obj,"text",inst,&text);
   _getobj(obj,"x",inst,&x);
@@ -436,7 +436,7 @@ textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     px2=px*co-py*si;
     py2=px*si+py*co;
     if ((gx0<=px2) && (px2<=gx1)
-     && (gy0<=py2) && (py2<=gy1)) *(int *)rval=TRUE;
+     && (gy0<=py2) && (py2<=gy1)) rval->i=TRUE;
   } else {
     if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
     _getobj(obj,"bbox",inst,&array);
@@ -448,13 +448,13 @@ textmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)
-     && (miny<=bmaxy) && (bmaxy<=maxy)) *(int *)rval=TRUE;
+     && (miny<=bmaxy) && (bmaxy<=maxy)) rval->i=TRUE;
   }
   return 0;
 }
 
 static int 
-text_set_text(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+text_set_text(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
 #if USE_UTF8
   char *str, *ptr;

@@ -41,31 +41,31 @@ static char *iarrayerrorlist[]={
 #define ERRNUM (sizeof(iarrayerrorlist) / sizeof(*iarrayerrorlist))
 
 static int 
-iarrayinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+iarrayinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-iarraydone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+iarraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-iarraynum(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+iarraynum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
 
   _getobj(obj,"@",inst,&array);
-  *(int *)rval=arraynum(array);
+  rval->i=arraynum(array);
   return 0;
 }
 
 static int 
-iarrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+iarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num,*po;
@@ -74,12 +74,12 @@ iarrayget(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   _getobj(obj,"@",inst,&array);
   po=(int *)arraynget(array,num);
   if (po==NULL) return 1;
-  *(int *)rval=*po;
+  rval->i=*po;
   return 0;
 }
 
 static int 
-iarrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+iarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -93,7 +93,7 @@ iarrayput(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-iarrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+iarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int val;
@@ -112,7 +112,7 @@ iarrayadd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-iarrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+iarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;
@@ -133,7 +133,7 @@ iarrayins(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-iarraydel(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+iarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   int num;

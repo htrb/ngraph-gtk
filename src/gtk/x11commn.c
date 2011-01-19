@@ -149,7 +149,7 @@ ValidGRA(void)
 {
   int id;
   struct objlist *graobj;
-  char *inst;
+  N_VALUE *inst;
 
   if ((graobj = chkobject("gra")) == NULL)
     return -1;
@@ -210,7 +210,7 @@ SetPageSettingsToGRA(void)
 {
   int i, j, num, otherGC, id;
   struct objlist *obj;
-  char *inst;
+  N_VALUE *inst;
   struct narray *drawrable;
 
   if ((obj = chkobject("gra")) == NULL)
@@ -252,7 +252,7 @@ GetPageSettingsFromGRA(void)
 {
   int i, j, num, otherGC, id;
   struct objlist *obj;
-  char *inst;
+  N_VALUE *inst;
   struct narray *drawrable;
 
   if ((obj = chkobject("gra")) == NULL)
@@ -288,7 +288,7 @@ AxisDel2(int id)
   char *axis, *axis2;
   struct narray iarray;
   int anum;
-  char *inst;
+  N_VALUE *inst;
   char *axisx, *axisy;
   int findx, findy;
 
@@ -385,7 +385,7 @@ AxisDel(int id)
   int i, lastinst, *id_array, n;
   char *group, *group2;
   char type;
-  char *inst, *inst2;
+  N_VALUE *inst, *inst2;
   char group3[20];
 
   obj = chkobject("axis");
@@ -495,7 +495,7 @@ AxisNameToGroup(void)		/* this function may exist for compatibility with older v
   int a, j, anum;
   char *argv[2];
   int *data;
-  char *inst;
+  N_VALUE *inst;
 
 
   if ((obj = (struct objlist *) chkobject("axis")) == NULL)
@@ -702,7 +702,7 @@ FitCopy(struct objlist *obj, int did, int sid)
   int id2, idnum, idnum2;
   char *field[] = {"name", "equation", NULL};
   int fitoid;
-  char *inst;
+  N_VALUE *inst;
 
   if ((getobj(obj, "fit", sid, 0, NULL, &fit) >= 0) && (fit != NULL)) {
     arrayinit(&iarray, sizeof(int));
@@ -792,7 +792,8 @@ SaveParent(int hFile, struct objlist *parent, int storedata,
   struct objlist *ocur;
   int i, j, instnum;
   char *s;
-  char *inst, *fname, *fname2;
+  N_VALUE *inst;
+  char *fname, *fname2;
 
   ocur = chkobjroot();
   while (ocur != NULL) {
@@ -868,7 +869,8 @@ SaveDrawrable(char *name, int storedata, int storemerge)
   int id, len, error;
   char *arg[2];
   struct narray sarray;
-  char *inst, *ver, *sysname, *s, *opt, comment[COMMENT_BUF_SIZE];
+  N_VALUE *inst;
+  char *ver, *sysname, *s, *opt, comment[COMMENT_BUF_SIZE];
 
   error = FALSE;
 
@@ -1133,7 +1135,7 @@ LoadNgpFile(char *file, int ignorepath, int expand, char *exdir,
   struct narray sarray;
   char mes[256];
   int sec;
-  char *inst;
+  N_VALUE *inst;
   struct objlist *robj;
   int idn;
 
@@ -1313,7 +1315,8 @@ FileAutoScale(void)
   char *ref;
   struct narray iarray;
   int anum2, aid2;
-  char *inst, *group, *refgroup;
+  N_VALUE *inst;
+  char *group, *refgroup;
   int refother;
 
   if ((fobj = chkobject("file")) == NULL)

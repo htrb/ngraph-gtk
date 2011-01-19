@@ -35,6 +35,4 @@ void displaydialog(const char *str);
 void displaystatus(const char *str);
 void pausewindowconsole(char *title,char *str);
 
-#define ALIGNSIZE 8
-
 #endif	/* NGRAPH_HEADER */

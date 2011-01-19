@@ -95,7 +95,7 @@ enum {
 struct menulocal Menulocal;
 struct savedstdio GtkIOSave;
 
-static int mxflush(struct objlist *obj, char *inst, char *rval, int argc,
+static int mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		   char **argv);
 
 
@@ -1069,7 +1069,7 @@ menulocal_finalize(void)
 }
 
 static int
-menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
   int i;
@@ -1199,7 +1199,7 @@ menuinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-menudone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+menudone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (Menulocal.lock) {
     error(obj, ERR_MENU_RUN);
@@ -1288,7 +1288,7 @@ mgtkinputyn(const char *mes)
 }
 
 static int
-menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+menumenu(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *file;
   int r;
@@ -1320,14 +1320,14 @@ menumenu(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mx_evloop(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   reset_event();
   return 0;
 }
 
 static int
-mxredrawflag(struct objlist *obj, char *inst, char *rval, int argc,
+mxredrawflag(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	     char **argv)
 {
   Menulocal.redrawf = *(int *) argv[2];
@@ -1335,7 +1335,7 @@ mxredrawflag(struct objlist *obj, char *inst, char *rval, int argc,
 }
 
 static int
-mxredraw_num(struct objlist *obj, char *inst, char *rval, int argc,
+mxredraw_num(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	     char **argv)
 {
   int n;
@@ -1352,7 +1352,7 @@ mxredraw_num(struct objlist *obj, char *inst, char *rval, int argc,
 }
 
 static int
-mxuse_opacity(struct objlist *obj, char *inst, char *rval, int argc,
+mxuse_opacity(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	      char **argv)
 {
   int n;
@@ -1365,7 +1365,7 @@ mxuse_opacity(struct objlist *obj, char *inst, char *rval, int argc,
 }
 
 static int
-mx_data_head_lines(struct objlist *obj, char *inst, char *rval, int argc,
+mx_data_head_lines(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	     char **argv)
 {
   int n;
@@ -1382,7 +1382,7 @@ mx_data_head_lines(struct objlist *obj, char *inst, char *rval, int argc,
 }
 
 void
-mx_redraw(struct objlist *obj, char *inst)
+mx_redraw(struct objlist *obj, N_VALUE *inst)
 {
   int n;
 
@@ -1406,8 +1406,8 @@ mx_redraw(struct objlist *obj, char *inst)
 }
 
 void
-mx_inslist(struct objlist *obj, char *inst,
-	   struct objlist *aobj, char *ainst, char *afield, int addn)
+mx_inslist(struct objlist *obj, N_VALUE *inst,
+	   struct objlist *aobj, N_VALUE *ainst, char *afield, int addn)
 {
   int gc;
 
@@ -1416,7 +1416,7 @@ mx_inslist(struct objlist *obj, char *inst,
 }
 
 void
-mx_dellist(struct objlist *obj, char *inst, int deln)
+mx_dellist(struct objlist *obj, N_VALUE *inst, int deln)
 {
   int gc;
 
@@ -1425,7 +1425,7 @@ mx_dellist(struct objlist *obj, char *inst, int deln)
 }
 
 static int
-mxredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mxredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1437,7 +1437,7 @@ mxredraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int dpi;
 
@@ -1463,7 +1463,7 @@ mxdpi(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mxflush(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1512,7 +1512,7 @@ mx_clear(GdkRegion *region)
 }
 
 static int
-mxclear(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mxclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1532,7 +1532,7 @@ return 0;
 }
 
 static int
-mxfullpathngp(struct objlist *obj, char *inst, char *rval, int argc,
+mxfullpathngp(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	      char **argv)
 {
   char *name, *ngp2;
@@ -1573,7 +1573,7 @@ check_object_name(struct objlist *obj, struct narray *array)
 }
 
 static int
-mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_get_focused(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int num, i, id;
   char *name, *ptr;
@@ -1586,8 +1586,8 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
     return 1;
   }
 
-  arrayfree2(*(struct narray **)rval);
-  *(char **)rval = NULL;
+  arrayfree2(rval->array);
+  rval->array = NULL;
 
   d = &(NgraphApp.Viewer);
 
@@ -1617,14 +1617,14 @@ mx_get_focused(struct objlist *obj, char *inst, char *rval, int argc, char **arg
     }
   }
 
-  *(struct narray **)rval = oarray;
+  rval->array = oarray;
 
   return 0;
 
 }
 
 static int
-mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_print(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int show_dialog, select_file, create_window = FALSE, lock;
   GtkWidget *label;
@@ -1657,7 +1657,7 @@ mx_print(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mx_echo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_echo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1673,7 +1673,7 @@ mx_echo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mx_cat(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_cat(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   static char buf[1024];
   int len, use_stdin = TRUE;
@@ -1708,7 +1708,7 @@ mx_cat(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mx_clear_info(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_clear_info(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1768,7 +1768,7 @@ subwindow_hide(struct _subwin_data *win)
 }
 
 static int
-mx_show_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_show_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   unsigned int win;
 
@@ -1788,7 +1788,7 @@ mx_show_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mx_hide_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_hide_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   unsigned int win;
 
@@ -1808,7 +1808,7 @@ mx_hide_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-mx_toggle_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mx_toggle_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int win;
 
@@ -1844,7 +1844,7 @@ mx_toggle_win(struct objlist *obj, char *inst, char *rval, int argc, char **argv
 }
 
 static int
-mxdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
@@ -1870,7 +1870,7 @@ SetCaption(int modified)
 }
 
 static int
-mxmodified(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+mxmodified(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int modified;
 

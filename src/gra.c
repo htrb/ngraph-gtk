@@ -50,7 +50,7 @@ struct GRAC {
   char *objname;
   char *outputname;
   struct objlist *obj;
-  char *inst;
+  N_VALUE *inst;
   int output,strwidth,charascent,chardescent;
   struct narray **list;
   void *local;
@@ -169,7 +169,7 @@ _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
 
 int 
 _GRAopen(char *objname,char *outputname,
-	 struct objlist *obj,char *inst, int output,
+	 struct objlist *obj,N_VALUE *inst, int output,
 	 int strwidth,int charascent,int chardescent,
 	 struct narray **list,void *local)
 {
@@ -196,7 +196,7 @@ _GRAopen(char *objname,char *outputname,
 
 int 
 GRAopen(char *objname,char *outputname,
-	struct objlist *obj,char *inst, int output,
+	struct objlist *obj,N_VALUE *inst, int output,
 	int strwidth,int charascent,int chardescent,
 	struct narray **list,void *local)
 {
@@ -346,7 +346,7 @@ GRAinslist2(int GC,char *draw,int n)
 }
 
 void 
-GRAaddlist(int GC,struct objlist *obj,char *inst,
+GRAaddlist(int GC,struct objlist *obj,N_VALUE *inst,
                 char *objname,char *field)
 {
   int oid;
@@ -359,7 +359,7 @@ GRAaddlist(int GC,struct objlist *obj,char *inst,
 }
 
 void 
-GRAinslist(int GC,struct objlist *obj,char *inst,
+GRAinslist(int GC,struct objlist *obj,N_VALUE *inst,
                 char *objname,char *field,int n)
 {
   int oid;
@@ -405,7 +405,7 @@ GRAgetlist(int GC,int *oid,char **field,int n)
 
 void 
 _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
-                int addn,struct objlist *obj,char *inst,char *field)
+                int addn,struct objlist *obj,N_VALUE *inst,char *field)
 {
   int i;
   char *dargv[2];
@@ -413,7 +413,7 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
   struct objlist *dobj;
   int did;
   char *dfield;
-  char *dinst;
+  N_VALUE *dinst;
 
 
   if (ninterrupt()) return;
@@ -443,15 +443,15 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
 }
 
 static void 
-GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redraw_num,
-                int addn,struct objlist *aobj,char *ainst,char *afield)
+GRAredraw2(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num,
+                int addn,struct objlist *aobj,N_VALUE *ainst,char *afield)
 {
   struct narray *sarray;
   char **sdata;
   int snum;
   int oid,gid,xid,GC,GCnew;
   char *gfield,*xfield;
-  char *ginst;
+  N_VALUE *ginst;
   struct objlist *gobj,*xobj;
   char *device;
 
@@ -497,7 +497,7 @@ GRAredraw2(struct objlist *obj,char *inst,int setredrawf,int redraw_num,
 }
 
 void 
-GRAredraw(struct objlist *obj,char *inst,int setredrawf,int redraw_num)
+GRAredraw(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num)
 {
   GRAredraw2(obj,inst,setredrawf,redraw_num,-1,NULL,NULL,NULL);
 }
@@ -670,7 +670,7 @@ GRAstrwidth(const gchar *s, char *font, int style, int size)
     return nround(25.4 / 72000.0 * size * 600);
 
   idp = chkobjoffset2(GRAClist[i].obj, GRAClist[i].strwidth);
-  return *(int *)(GRAClist[i].inst+idp);
+  return GRAClist[i].inst[idp].i;
 }
 
 static int 
@@ -698,7 +698,7 @@ GRAcharascent(char *font, int style, int size)
     return nround(25.4 / 72000.0 * size * 563);
 
   idp = chkobjoffset2(GRAClist[i].obj, GRAClist[i].charascent);
-  return *(int *)(GRAClist[i].inst+idp);
+  return GRAClist[i].inst[idp].i;
 }
 
 static int 
@@ -726,7 +726,7 @@ GRAchardescent(char *font,int style,int size)
     return nround(25.4 / 72000.0 * size * 250);
 
   idp = chkobjoffset2(GRAClist[i].obj, GRAClist[i].chardescent);
-  return *(int *)(GRAClist[i].inst+idp);
+  return GRAClist[i].inst[idp].i;
 }
 
 int 

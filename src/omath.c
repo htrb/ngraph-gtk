@@ -73,12 +73,12 @@ struct mlocal {
 };
 
 static void 
-msettbl(char *inst,struct mlocal *mlocal)
+msettbl(N_VALUE *inst,struct mlocal *mlocal)
 {
-  *(double *)(inst+mlocal->idpx)=mlocal->x;
-  *(double *)(inst+mlocal->idpy)=mlocal->y;
-  *(double *)(inst+mlocal->idpz)=mlocal->z;
-  *(int *)(inst+mlocal->idpr)=mlocal->rcode;
+  inst[mlocal->idpx].d=mlocal->x;
+  inst[mlocal->idpy].d=mlocal->y;
+  inst[mlocal->idpz].d=mlocal->z;
+  inst[mlocal->idpr].i=mlocal->rcode;
 }
 
 static void 
@@ -88,7 +88,7 @@ mlocalclear(struct mlocal *mlocal,int memory)
 }
 
 static int 
-minit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+minit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {  
   struct mlocal *mlocal;
 
@@ -148,7 +148,7 @@ errexit:
 }
 
 static int 
-mdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
 
@@ -165,7 +165,7 @@ create_func_def_str(char *name, char *code)
 }
 
 static void
-parse_original_formula(struct objlist *obj,char *inst, struct mlocal *mlocal)
+parse_original_formula(struct objlist *obj,N_VALUE *inst, struct mlocal *mlocal)
 {
   char *ptr;
   MathEquationParametar *prm;
@@ -193,7 +193,7 @@ parse_original_formula(struct objlist *obj,char *inst, struct mlocal *mlocal)
    get math: calc                  # calc:0.000000000000000e+00
  */
 static int 
-mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mformula(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *math;
   struct mlocal *mlocal;
@@ -255,7 +255,7 @@ mformula(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mparam(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *arg;
   struct mlocal *mlocal;
@@ -278,7 +278,7 @@ mparam(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
   int i,num;
@@ -328,7 +328,7 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   mlocal->rcode = val.type;
   g_free(data);
   msettbl(inst,mlocal);
-  *(double *)rval=mlocal->val;
+  rval->d=mlocal->val;
   if (mlocal->rcode==MSERR) {
     error(obj,ERRSYNTAX);
     return 1;
@@ -337,7 +337,7 @@ mcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-mclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+mclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct mlocal *mlocal;
 

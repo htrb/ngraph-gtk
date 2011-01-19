@@ -52,7 +52,7 @@ char *surface_type[] = {
 
 
 static int 
-gra2cairofile_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairofile_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {  
   int dpi;
   struct gra2cairo_local *local;
@@ -86,7 +86,7 @@ gra2cairofile_init(struct objlist *obj, char *inst, char *rval, int argc, char *
 }
 
 static int 
-gra2cairofile_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2cairofile_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
     return 1;
@@ -136,7 +136,7 @@ create_reference_dc(void)
 #endif
 
 static cairo_t *
-create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *err)
+create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, int *err)
 {
   cairo_surface_t *ps;
   cairo_t *cairo;
@@ -252,7 +252,7 @@ create_cairo(struct objlist *obj, char *inst, char *fname, int iw, int ih, int *
 }
 
 static int
-init_cairo(struct objlist *obj, char *inst, struct gra2cairo_local *local, int w, int h)
+init_cairo(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local *local, int w, int h)
 {
   char *fname;
   cairo_t *cairo;
@@ -281,7 +281,7 @@ init_cairo(struct objlist *obj, char *inst, struct gra2cairo_local *local, int w
 }
 
 static int 
-gra2cairofile_output(struct objlist *obj, char *inst, char *rval, 
+gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
                  int argc, char **argv)
 {
   char code, *cstr, *fname;

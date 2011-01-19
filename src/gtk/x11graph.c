@@ -1176,7 +1176,7 @@ void
 CmGraphShell(void)
 {
   struct objlist *obj, *robj, *shell;
-  char *inst;
+  N_VALUE *inst;
   int idn, allocnow, n;
 
   if (Menulock || Globallock)

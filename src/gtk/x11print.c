@@ -66,7 +66,7 @@ static char *SvgVersion[] = {
 struct print_obj {
   struct objlist *graobj, *g2wobj;
   int id, g2wid;
-  char *g2winst;
+  N_VALUE *g2winst;
 };
 
 static GtkPrintSettings *PrintSettings = NULL;
@@ -539,7 +539,7 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
   char *argv[2];
   struct print_obj *pobj;
   int id, g2wid, r;
-  char *g2winst;
+  N_VALUE *g2winst;
 
   pobj = (struct print_obj *) user_data;
   graobj = pobj->graobj;
@@ -605,7 +605,7 @@ CmOutputPrinter(int select_file, int show_dialog)
   char buf[MESSAGE_BUF_SIZE];
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid, opt;
-  char *g2winst;
+  N_VALUE *g2winst;
   GError *error;
   struct print_obj pobj;
   GtkPaperSize *paper_size;
@@ -717,7 +717,7 @@ CmOutputDriver(void)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
-  char *g2winst;
+  N_VALUE *g2winst;
   int ret;
   struct savedstdio stdio;
 
@@ -791,7 +791,7 @@ CmOutputViewer(int select_file)
   } else {
     struct objlist *graobj, *g2wobj;
     int id, g2wid, g2woid;
-    char *g2winst;
+    N_VALUE *g2winst;
     int delgra;
 
     if ((graobj = chkobject("gra")) == NULL)
@@ -845,7 +845,8 @@ CmPrintGRAFile(void)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid, ret;
-  char *g2winst, *tmp, *file;
+  N_VALUE *g2winst;
+  char *tmp, *file;
 
   if (Menulock || Globallock)
     return;
@@ -902,7 +903,7 @@ CmOutputImage(int type)
 {
   struct objlist *graobj, *g2wobj;
   int id, g2wid, g2woid;
-  char *g2winst;
+  N_VALUE *g2winst;
   int ret;
   char *title, *ext_str;
   char *file, *tmp;

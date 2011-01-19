@@ -31,8 +31,19 @@
 struct objlist;
 struct objtable;
 
+union n_value {
+  int i;
+  double d;
+  char *str;
+  struct narray *array;
+  void *ptr;
+  union n_value *inst;
+};
+
+typedef union n_value N_VALUE;
+
 typedef
-  int (*Proc)(struct objlist *obj,char *inst,char *rval,int argc,char **argv);
+  int (*Proc)(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 
 typedef
   int (*DoneProc)(struct objlist *obj,void *local);
@@ -84,7 +95,7 @@ struct loopproc {
   char *evname;
   struct objlist *obj;
   int idn;
-  char *inst;
+  N_VALUE *inst;
   void *local;
 };
 
@@ -205,8 +216,8 @@ char **arg_add(char ***arg,void *ptr);
 void arg_del(char **arg);
 
 void registerevloop(char *objname, char *evname,
-                    struct objlist *obj,int idn,char *inst,void *local);
-void unregisterevloop(struct objlist *obj,int idn,char *inst);
+                    struct objlist *obj,int idn,N_VALUE *inst,void *local);
+void unregisterevloop(struct objlist *obj,int idn,N_VALUE *inst);
 void eventloop(void);
 
 struct objlist *chkobjroot(void);
@@ -227,8 +238,8 @@ int chkobjlastinst(struct objlist *obj);
 int chkobjcurinst(struct objlist *obj);
 int chkobjoffset(struct objlist *obj, const char *name);
 int chkobjoffset2(struct objlist *obj,int tblpos);
-char *chkobjinstoid(struct objlist *obj,int oid);
-char *chkobjinst(struct objlist *obj,int id);
+N_VALUE *chkobjinstoid(struct objlist *obj,int oid);
+N_VALUE *chkobjinst(struct objlist *obj,int id);
 int chkobjoid(struct objlist *obj,int oid);
 int chkobjfieldnum(struct objlist *obj);
 char *chkobjfieldname(struct objlist *obj,int num);
@@ -242,16 +253,16 @@ char *getobjver(const char *name);
 char *getobjectname(struct objlist *obj);
 int getobjoffset(struct objlist *obj, const char *name);
 int getobjtblpos(struct objlist *obj, const char *name,struct objlist **robj);
-char *getobjinstoid(struct objlist *obj,int oid);
-char *getobjinst(struct objlist *obj,int id);
+N_VALUE *getobjinstoid(struct objlist *obj,int oid);
+N_VALUE *getobjinst(struct objlist *obj,int id);
 int getobjfield(struct objlist *obj, const char *name);
 
-int _putobj(struct objlist *obj, const char *vname,char *inst,void *val);
-int _getobj(struct objlist *obj, const char *vname,char *inst,void *val);
-int _exeparent(struct objlist *obj,const char *vname,char *inst,char *rval,
+int _putobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val);
+int _getobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val);
+int _exeparent(struct objlist *obj,const char *vname,N_VALUE *inst,N_VALUE *rval,
                int argc,char **argv);
-int _exeobj(struct objlist *obj,const char *vname,char *inst,int argc,char **argv);
-int __exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv);
+int _exeobj(struct objlist *obj,const char *vname,N_VALUE *inst,int argc,char **argv);
+int __exeobj(struct objlist *obj,int idn,N_VALUE *inst,int argc,char **argv);
 int copyobj(struct objlist *obj, const char *vname,int did,int sid);
 int newobj(struct objlist *obj);
 int newobj_alias(struct objlist *obj, const char *name);
@@ -293,7 +304,7 @@ int sputobj(char *arg);
 int sexefield(struct objlist *obj,int id,char *arg);
 int sexeobj(char *arg);
 int has_eventloop(void);
-void obj_do_tighten(struct objlist *obj, char *inst,  const char *field);
+void obj_do_tighten(struct objlist *obj, N_VALUE *inst,  const char *field);
 int getobjilist2(char **s,struct objlist **obj,struct narray *iarray,int def);
 void delchildobj(struct objlist *parent);
 int vinterrupt(void);

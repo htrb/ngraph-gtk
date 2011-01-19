@@ -42,14 +42,14 @@ static char *doubleerrorlist[]={
 #define ERRNUM (sizeof(doubleerrorlist) / sizeof(*doubleerrorlist))
 
 static int 
-doubleinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+doubleinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-doubledone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+doubledone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;

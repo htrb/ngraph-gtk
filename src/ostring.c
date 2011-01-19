@@ -41,14 +41,14 @@ static char *stringerrorlist[]={
 #define ERRNUM (sizeof(stringerrorlist) / sizeof(*stringerrorlist))
 
 static int 
-stringinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+stringinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-stringdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+stringdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;

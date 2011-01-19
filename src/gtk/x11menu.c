@@ -618,10 +618,11 @@ QuitGUI(void)
 }
 
 int
-find_gra2gdk_inst(char **name, struct objlist **o, char **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal)
+find_gra2gdk_inst(char **name, struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal)
 {
   static struct objlist *obj = NULL, *robj = NULL;
-  static char *inst = NULL, *oname = "gra2gdk";
+  static N_VALUE *inst = NULL;
+  static char *oname = "gra2gdk";
   static int pos;
   static struct gra2cairo_local *local = NULL;
   int id;
@@ -1542,7 +1543,8 @@ static char *
 get_home(void)
 {
   struct objlist *sysobj;
-  char *inst, *home;
+  N_VALUE *inst;
+  char *home;
 
   sysobj = chkobject("system");
   inst = chkobjinst(sysobj, 0);
@@ -1613,7 +1615,8 @@ create_markpixmap(GtkWidget *win)
   GdkPixmap *pix;
   int gra, i, R, G, B, R2, G2, B2, found, output;
   struct objlist *obj, *robj;
-  char *inst, *name;
+  N_VALUE *inst;
+  char *name;
   struct gra2cairo_local *local;
 
   R = G = B = 0;

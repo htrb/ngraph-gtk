@@ -55,7 +55,7 @@ static char *dlgerrorlist[] = {
 GtkWidget *DLGTopLevel = NULL;
 
 static int
-dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlginit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int pos = -1;
 
@@ -80,14 +80,14 @@ dlginit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
 
 static int
-dlgdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlgdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
   return 0;
 }
 
 static int
-dlgconfirm(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlgconfirm(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *mes, *title;
   int rcode, locksave;
@@ -103,15 +103,15 @@ dlgconfirm(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   rcode = message_box(DLGTopLevel, mes, (title) ? title : "Select", RESPONS_YESNO);
   Globallock = locksave;
   if (rcode == IDYES) {
-    *(int *)rval = 1;
+    rval->i = 1;
   } else {
-    *(int *)rval = 0;
+    rval->i = 0;
   }
   return (rcode == IDYES)? 0 : 1;
 }
 
 static int
-dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *mes, *title;
   int rcode, locksave;
@@ -130,7 +130,7 @@ dlgmessage(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *mes, *title;
   int locksave, x, y, r;
@@ -139,8 +139,8 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   locksave = Globallock;
   Globallock = TRUE;
   mes = (char *)argv[2];
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
+  g_free(rval->str);
+  rval->str = NULL;
   inputbuf = NULL;
 
   if (_getobj(obj, "title", inst, &title)) {
@@ -163,7 +163,7 @@ dlginput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (r == IDOK && inputbuf != NULL) {
-    *(char **)rval = inputbuf;
+    rval->str = inputbuf;
   } else {
     g_free(inputbuf);
     Globallock = locksave;
@@ -227,7 +227,7 @@ get_sarray_argument(struct narray *sarray)
 }
 
 static int
-dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *title, *caption;
   int locksave, r, *ptr, x, y, ret;
@@ -275,14 +275,14 @@ dlgradio(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 1;
   }
 
-  *(int *) rval = r;
+  rval->i = r;
 
   Globallock = locksave;
   return 0;
 }
 
 static int
-dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int locksave, *ptr, sel, ret, x, y;
   char *r, *title, *caption;
@@ -295,8 +295,8 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   locksave = Globallock;
   Globallock = TRUE;
 
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
+  g_free(rval->str);
+  rval->str = NULL;
 
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
@@ -338,14 +338,14 @@ dlgcombo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
     return 1;
   }
 
-  *(char **)rval = r;
+  rval->str = r;
 
   Globallock = locksave;
   return 0;
 }
 
 static int
-dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlgspin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int locksave, ret, type, x, y;
   char *title, *caption;
@@ -354,8 +354,8 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   locksave = Globallock;
   Globallock = TRUE;
 
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
+  g_free(rval->str);
+  rval->str = NULL;
 
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
@@ -403,10 +403,10 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   switch (type) {
   case 'f':
-    *(char **)rval = g_strdup_printf("%.15e", r);
+    rval->str = g_strdup_printf("%.15e", r);
     break;
   case'i':
-    *(char **)rval = g_strdup_printf("%d", (int) r);
+    rval->str = g_strdup_printf("%d", (int) r);
     break;
   default:
     Globallock = locksave;
@@ -419,7 +419,7 @@ dlgspin(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlgcheck(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int locksave, *r, i, n, inum, *ptr, x, y, ret;
   struct narray *array, *sarray, *iarray;
@@ -430,8 +430,8 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   if (n == 0)
     return 1;
 
-  arrayfree(* (struct narray **) rval);
-  *(char **) rval = NULL;
+  arrayfree(rval->array);
+  rval->array = NULL;
 
   array = arraynew(sizeof(int));
   if (array == NULL) {
@@ -492,14 +492,14 @@ dlgcheck(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   g_free(r);
 
-  *(struct narray **) rval = array;
+  rval->array = array;
 
   Globallock = locksave;
   return 0;
 }
 
 static int
-dlgbeep(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+dlgbeep(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int locksave;
 
@@ -512,7 +512,7 @@ dlgbeep(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int
-dlggetopenfile(struct objlist *obj, char *inst, char *rval,
+dlggetopenfile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	       int argc, char **argv)
 {
   struct narray *array;
@@ -525,8 +525,8 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
 
   locksave = Globallock;
   Globallock = TRUE;
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
+  g_free(rval->str);
+  rval->str = NULL;
   array = (struct narray *)argv[2];
   d = arraydata(array);
   anum = arraynum(array);
@@ -548,7 +548,7 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
   if (ret == IDOK) {
     if (file) {
       changefilename(file);
-      *(char **)rval = file;
+      rval->str = file;
     }
   }
 
@@ -557,7 +557,7 @@ dlggetopenfile(struct objlist *obj, char *inst, char *rval,
 }
 
 static int
-dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
+dlggetopenfiles(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 		int argc, char **argv)
 {
   struct narray *array;
@@ -572,8 +572,8 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
   locksave = Globallock;
   Globallock = TRUE;
 
-  arrayfree2(*(struct narray **)rval);
-  *(char **)rval = NULL;
+  arrayfree2(rval->array);
+  rval->array = NULL;
 
   array = (struct narray *)argv[2];
   d = arraydata(array);
@@ -598,7 +598,7 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
       changefilename(file[i]);
       arrayadd(farray, &name);
     }
-    *(struct narray **)rval = farray;
+    rval->array = farray;
   }
   g_free(file);
 
@@ -608,7 +608,7 @@ dlggetopenfiles(struct objlist *obj, char *inst, char *rval,
 }
 
 static int
-dlggetsavefile(struct objlist *obj, char *inst, char *rval,
+dlggetsavefile(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	       int argc, char **argv)
 {
   struct narray *array;
@@ -621,8 +621,8 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
 
   locksave = Globallock;
   Globallock = TRUE;
-  g_free(*(char **)rval);
-  *(char **)rval = NULL;
+  g_free(rval->str);
+  rval->str = NULL;
   array = (struct narray *)argv[2];
   d = arraydata(array);
   anum = arraynum(array);
@@ -644,7 +644,7 @@ dlggetsavefile(struct objlist *obj, char *inst, char *rval,
   if (ret == IDOK) {
     if (file) {
       changefilename(file);
-      *(char **)rval = file;
+      rval->str = file;
     }
   }
 

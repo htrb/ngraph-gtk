@@ -44,7 +44,7 @@ static char *recterrorlist[]={
 #define ERRNUM (sizeof(recterrorlist) / sizeof(*recterrorlist))
 
 static int 
-rectinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int width, stroke, alpha;
 
@@ -63,14 +63,14 @@ rectinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-rectdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int
-set_position(struct objlist *obj, char *inst, int x1, int y1, int x2, int y2)
+set_position(struct objlist *obj, N_VALUE *inst, int x1, int y1, int x2, int y2)
 {
   if (_putobj(obj, "x1", inst, &x1)) return 1;
   if (_putobj(obj, "y1", inst, &y1)) return 1;
@@ -81,7 +81,7 @@ set_position(struct objlist *obj, char *inst, int x1, int y1, int x2, int y2)
 }
 
 static void
-get_position(struct objlist *obj, char *inst, int *x1, int *y1, int *x2, int *y2)
+get_position(struct objlist *obj, N_VALUE *inst, int *x1, int *y1, int *x2, int *y2)
 {
   _getobj(obj, "x1", inst, x1);
   _getobj(obj, "y1", inst, y1);
@@ -90,7 +90,7 @@ get_position(struct objlist *obj, char *inst, int *x1, int *y1, int *x2, int *y2
 }
 
 static int 
-rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   int x1,y1,x2,y2,width,ifill,stroke,fr,fg,fb,fa,br,bg,bb,ba,tm,lm,w,h;
@@ -138,13 +138,13 @@ rectdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x1,y1,x2,y2,width,fill,stroke;
   struct narray *array;
 
-  array=*(struct narray **)rval;
+  array=rval->array;
   if (arraynum(array)!=0) return 0;
 
   get_position(obj, inst, &x1, &y1, &x2, &y2);
@@ -186,15 +186,15 @@ rectbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayadd(array,&(maxy));
   if (arraynum(array)==0) {
     arrayfree(array);
-    *(struct narray **) rval = NULL;
+    rval->array = NULL;
     return 1;
   }
-  *(struct narray **)rval=array;
+  rval->array=array;
   return 0;
 }
 
 static int 
-rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int angle, x1, y1, x2, y2, nx1, ny1, nx2, ny2, px, py, use_pivot;
  
@@ -241,7 +241,7 @@ rectrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-rectflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x1, y1, x2, y2, p, use_pivot;
   enum FLIP_DIRECTION dir;
@@ -273,7 +273,7 @@ rectflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-rectmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
 
@@ -296,7 +296,7 @@ rectmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectchange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x1,y1,x2,y2;
   int point,x,y;
@@ -344,7 +344,7 @@ rectchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,snum,*sdata,refx,refy,x1,y1,x2,y2,width,preserve_width;
   double zoom;
@@ -396,14 +396,14 @@ rectzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
   struct narray *array;
   int ifill,stroke;
 
-  *(int *)rval=FALSE;
+  rval->i=FALSE;
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
 
@@ -433,26 +433,26 @@ rectmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       bmaxx+=err;
       bmaxy+=err;
       if ((bminx<=minx) && (minx<=bmaxx)
-       && (bminy<=miny) && (miny<=bmaxy)) *(int *)rval=TRUE;
+       && (bminy<=miny) && (miny<=bmaxy)) rval->i=TRUE;
     } else {
       if ((((bminx-err<=minx) && (minx<=bminx+err))
          || ((bmaxx-err<=minx) && (minx<=bmaxx+err)))
-       && (bminy-err<=miny) && (miny<=bmaxy+err)) *(int *)rval=TRUE;
+       && (bminy-err<=miny) && (miny<=bmaxy+err)) rval->i=TRUE;
       if ((((bminy-err<=miny) && (miny<=bminy+err))
          || ((bmaxy-err<=miny) && (miny<=bmaxy+err)))
-       && (bminx-err<=minx) && (minx<=bmaxx+err)) *(int *)rval=TRUE;
+       && (bminx-err<=minx) && (minx<=bmaxx+err)) rval->i=TRUE;
     }
   } else {
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)
-     && (miny<=bmaxy) && (bmaxy<=maxy)) *(int *)rval=TRUE;
+     && (miny<=bmaxy) && (bmaxy<=maxy)) rval->i=TRUE;
   }
   return 0;
 }
 
 static int 
-rectgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rectgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
 
@@ -463,7 +463,7 @@ rectgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-rect_frame(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+rect_frame(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int frame, fill, stroke;
 
@@ -481,7 +481,7 @@ rect_frame(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-put_color2(struct objlist *obj, char *inst, char *rval,  int argc, char **argv)
+put_color2(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,  int argc, char **argv)
 {
   int fill, frame, col, val, val2, f;
 

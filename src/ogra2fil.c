@@ -50,7 +50,7 @@ struct gra2flocal {
 };
 
 static int 
-gra2finit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2finit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {  
   struct gra2flocal *gra2flocal;
 
@@ -66,7 +66,7 @@ errexit:
 }
 
 static int 
-gra2fdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2fdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct gra2flocal *gra2flocal;
 
@@ -77,7 +77,7 @@ gra2fdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-gra2f_output(struct objlist *obj,char *inst,char *rval,
+gra2f_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   struct gra2flocal *gra2flocal;

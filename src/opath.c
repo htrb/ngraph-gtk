@@ -85,12 +85,12 @@ static char *path_type[]={
 };
 
 static int 
-arrowinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+arrowinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {  
   int width, headlen, headwidth, miter, stroke, join, prm, type, alpha;
   struct narray *expand_points;
 
-  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) {
     return 1;
   }
 
@@ -146,9 +146,9 @@ arrowinit(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-arrowdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+arrowdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
   return 0;
 }
 
@@ -156,7 +156,7 @@ arrowdone(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 #define ARROW_SIZE_MAX 200000
 
 static int 
-arrowput(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+arrowput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *field;
   int *val_ptr;
@@ -230,7 +230,7 @@ curve_expand(double c[], double x0, double y0, diffunc gdiff, intpfunc gintpf, s
 }
 
 static int
-curve_expand_points(struct objlist *obj, char *inst, int intp, struct narray *expand_points)
+curve_expand_points(struct objlist *obj, N_VALUE *inst, int intp, struct narray *expand_points)
 {
   int i, j, num, bsize, spcond, x, y;
   struct narray *points;
@@ -414,7 +414,7 @@ curve_expand_points(struct objlist *obj, char *inst, int intp, struct narray *ex
 }
 
 static void 
-curve_clear(struct objlist *obj,char *inst)
+curve_clear(struct objlist *obj,N_VALUE *inst)
 {
   struct narray *expand_points;
 
@@ -470,11 +470,11 @@ get_arrow_pos(int *points2, int n,
 }
 
 static void
-draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, int num, int intp)
+draw_stroke(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int *pdata, int num, int close_path)
 {
   int width, fr, fg, fb, fa, headlen, headwidth;
   int join, miter, head;
-  int x, y, x0, y0, x1, y1, x2, y2, x3, y3, close_path;
+  int x, y, x0, y0, x1, y1, x2, y2, x3, y3;
   struct narray *style;
   int snum, *sdata;
   int i;
@@ -485,7 +485,6 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, i
   _getobj(obj, "stroke_B", inst, &fb);
   _getobj(obj, "stroke_A", inst, &fa);
 
-  _getobj(obj, "close_path",   inst, &close_path);
   _getobj(obj, "width",        inst, &width);
   _getobj(obj, "style",        inst, &style);
   _getobj(obj, "join",         inst, &join);
@@ -521,10 +520,7 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, i
 		  x3, y3, x2, y2, ap2);
   }
 
-  if (num > 2 && 
-      (close_path ||
-       intp == INTERPOLATION_TYPE_SPLINE_CLOSE ||
-       intp == INTERPOLATION_TYPE_BSPLINE_CLOSE)) {
+  if (num > 2 && close_path) {
     GRAdrawpoly(GC, num, pdata, 0);
   } else {
     x = points2[0];
@@ -550,7 +546,7 @@ draw_stroke(struct objlist *obj, char *inst, int GC, int *points2, int *pdata, i
 }
 
 static void
-draw_fill(struct objlist *obj, char *inst, int GC, int *points2, int num)
+draw_fill(struct objlist *obj, N_VALUE *inst, int GC, int *points2, int num)
 {
   int br, bg, bb, ba, fill_rule;
 
@@ -565,14 +561,14 @@ draw_fill(struct objlist *obj, char *inst, int GC, int *points2, int num)
 }
 
 static int 
-arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+arrowdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int GC, lm, tm, w, h, intp, i, j, num;
+  int GC, lm, tm, w, h, intp, i, j, num, close_path;
   struct narray *points;
   int *points2, *pdata;
   int x0, y0, x1, y1, type, stroke, fill, clip, zoom;
 
-  if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv)) {
     return 1;
   }
 
@@ -589,12 +585,17 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   _getobj(obj, "type",  inst, &type);
   _getobj(obj, "clip",  inst, &clip);
+  _getobj(obj, "close_path", inst, &close_path);
 
   if (type == PATH_TYPE_CURVE) {
     _getobj(obj, "interpolation", inst, &intp);
     _getobj(obj, "_points",       inst, &points);
     if (arraynum(points) == 0) {
       curve_expand_points(obj, inst, intp, points);
+    }
+    if (intp == INTERPOLATION_TYPE_SPLINE_CLOSE ||
+	intp == INTERPOLATION_TYPE_BSPLINE_CLOSE) {
+      close_path = TRUE;
     }
   } else {
     _getobj(obj, "points", inst, &points);
@@ -634,16 +635,16 @@ arrowdraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   }
 
   if (stroke) {
-    draw_stroke(obj, inst, GC, points2, pdata, num, intp);
+    draw_stroke(obj, inst, GC, points2, pdata, num, close_path);
   }
 
   g_free(points2);
-  GRAaddlist(GC, obj, inst, (char *)argv[0], (char *)argv[1]);
+  GRAaddlist(GC, obj, inst, argv[0], argv[1]);
   return 0;
 }
 
 static int 
-arrowbbox(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+arrowbbox(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int minx, miny, maxx, maxy;
   int x, y, num, num2, type, intp, stroke, fill;
@@ -657,7 +658,7 @@ arrowbbox(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   int x0, y0, x1, y1, x2, y2, x3, y3;
   int ap[6], ap2[6];
 
-  array = * (struct narray **) rval;
+  array = rval->array;
   if (arraynum(array) != 0) {
     return 0;
   }
@@ -792,17 +793,17 @@ arrowbbox(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 
   if (arraynum(array) == 0) {
     arrayfree(array);
-    * (struct narray **) rval = NULL;
+    rval->array = NULL;
     return 1;
   }
 
-  * (struct narray **) rval = array;
+  rval->array = array;
 
   return 0;
 }
 
 static int 
-set_points(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+set_points(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   curve_clear(obj, inst);
 
@@ -850,7 +851,7 @@ check_point_match(int i, int j, int *pdata, int err, int x, int y)
 }
 
 static int
-point_match(struct objlist *obj, char *inst, int type, int fill, int err, int x, int y)
+point_match(struct objlist *obj, N_VALUE *inst, int type, int fill, int err, int x, int y)
 {
   struct narray *points;
   int *pdata, num, r, i;
@@ -894,16 +895,16 @@ point_match(struct objlist *obj, char *inst, int type, int fill, int err, int x,
 }
 
 static int 
-curvematch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+curvematch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int minx, miny, maxx, maxy, err;
   int bminx, bminy, bmaxx, bmaxy;
   int fill, stroke, type;
   struct narray *array;
 
-  * (int *) rval = FALSE;
+  rval->i = FALSE;
 
-  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) {
+  if (_exeparent(obj,argv[1],inst,rval,argc,argv)) {
     return 1;
   }
 
@@ -921,7 +922,7 @@ curvematch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
   err  = * (int *) argv[6];
 
   if (minx == maxx && miny == maxy) {
-    * (int *) rval = point_match(obj, inst, type, fill, err, minx, miny);
+    rval->i = point_match(obj, inst, type, fill, err, minx, miny);
   } else {
     if (_exeobj(obj, "bbox", inst, 0, NULL)) {
       return 1;
@@ -944,14 +945,14 @@ curvematch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 	minx <= bmaxx && bmaxx <= maxx && 
 	miny <= bminy && bminy <= maxy && 
 	miny <= bmaxy && bmaxy <= maxy) {
-      * (int *) rval = TRUE;
+      rval->i = TRUE;
     }
   }
   return 0;
 }
 
 static int 
-curve_flip(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+curve_flip(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   curve_clear(obj, inst);
 
@@ -959,7 +960,7 @@ curve_flip(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-curve_move(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+curve_move(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *points;
   int i, num, *pdata, type;
@@ -982,7 +983,7 @@ curve_move(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-curve_rotate(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+curve_rotate(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   curve_clear(obj, inst);
 
@@ -990,7 +991,7 @@ curve_rotate(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-curve_zoom(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+curve_zoom(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   curve_clear(obj, inst);
 
@@ -998,7 +999,7 @@ curve_zoom(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-curve_change(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+curve_change(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   curve_clear(obj, inst);
 
@@ -1006,7 +1007,7 @@ curve_change(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-put_fill_mode(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+put_fill_mode(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int mode, rule;
 

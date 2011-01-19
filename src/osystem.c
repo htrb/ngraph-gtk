@@ -63,7 +63,7 @@ static char *syserrorlist[]={
 #define ERRNUM (sizeof(syserrorlist) / sizeof(*syserrorlist))
 
 static int 
-sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *wd;
   int expand;
@@ -97,7 +97,7 @@ sysinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct objlist *objcur;
   int i, n;
@@ -165,7 +165,7 @@ sysdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-syscwd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+syscwd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *wd;
   const char *home;
@@ -191,40 +191,40 @@ syscwd(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-systime(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+systime(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   time_t t;
   int style;
 
   t=time(NULL);
   style=*(int *)(argv[2]);
-  g_free(*(char **)rval);
-  *(char **)rval=ntime(&t,style);
+  g_free(rval->str);
+  rval->str=ntime(&t,style);
   return 0;
 }
 
 static int 
-sysdate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sysdate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   time_t t;
   int style;
 
   t=time(NULL);
   style=*(int *)(argv[2]);
-  g_free(*(char **)rval);
-  *(char **)rval=ndate(&t,style);
+  g_free(rval->str);
+  rval->str=ndate(&t,style);
   return 0;
 }
 
 static int 
-systemp(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+systemp(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *pfx, *tmpfil;
   struct narray *array;
   int fd;
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
   _getobj(obj,"temp_prefix",inst,&pfx);
   _getobj(obj,"temp_list",inst,&array);
   if (array==NULL) {
@@ -243,12 +243,12 @@ systemp(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   close(fd);
 
   arrayadd2(array,&tmpfil);
-  *(char **)rval=tmpfil;
+  rval->str=tmpfil;
   return 0;
 }
 
 static int 
-sysunlink(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sysunlink(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *tmpfil;
   struct narray *array;
@@ -280,7 +280,7 @@ sysunlink(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-syshideinstance(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+syshideinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   struct objlist *obj2;
@@ -300,7 +300,7 @@ syshideinstance(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-sysrecoverinstance(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+sysrecoverinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
   struct objlist *obj2;
@@ -320,7 +320,7 @@ sysrecoverinstance(struct objlist *obj,char *inst,char *rval,int argc,char **arg
 }
 
 static int 
-systemresize(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+systemresize(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *iarray;
   int num;

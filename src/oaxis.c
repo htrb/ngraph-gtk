@@ -177,10 +177,10 @@ static struct obj_config AxisConfig[] = {
 
 static NHASH AxisConfigHash = NULL;
 
-static int get_axis_group_type(struct objlist *obj, char *inst, char **inst_array, int check_all);
+static int get_axis_group_type(struct objlist *obj, N_VALUE *inst, N_VALUE **inst_array, int check_all);
 
-static char *
-check_group(struct objlist *obj, char type, char *inst, int num)
+static N_VALUE *
+check_group(struct objlist *obj, char type, N_VALUE *inst, int num)
 {
   int n;
   char *group, *endptr;
@@ -192,7 +192,7 @@ check_group(struct objlist *obj, char type, char *inst, int num)
       if (num == n)
 	break;
     }
-    inst = * (char **) (inst + obj->nextp);
+    inst = inst[obj->nextp].inst;
   }
   return inst;
 }
@@ -201,7 +201,7 @@ static int
 axisuniqgroup(struct objlist *obj,char type)
 {
   int num;
-  char *inst;
+  N_VALUE *inst;
 
   num = 0;
   do {
@@ -215,13 +215,13 @@ axisuniqgroup(struct objlist *obj,char type)
 }
 
 static int 
-axisloadconfig(struct objlist *obj,char *inst,char *conf)
+axisloadconfig(struct objlist *obj,N_VALUE *inst,char *conf)
 {
   return obj_load_config(obj, inst, conf, AxisConfigHash);
 }
 
 static int 
-axisinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int width;
   int alen,awid,wlen,wwid,alpha;
@@ -307,9 +307,9 @@ errexit:
 }
 
 static int 
-axisdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
   int i;
 
   get_axis_group_type(obj, inst, inst_array, TRUE);
@@ -337,7 +337,7 @@ axisdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axisput(struct objlist *obj,char *inst,char *rval,
+axisput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
             int argc,char **argv)
 {
   char *field;
@@ -424,9 +424,9 @@ axisput(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
   int i;
 
   get_axis_group_type(obj, inst, inst_array, TRUE);
@@ -443,7 +443,7 @@ axisgeometry(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axisdirection(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisdirection(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int dir;
 
@@ -459,7 +459,7 @@ axisdirection(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static void
-axis_get_box(struct objlist *obj,char *inst, int *pos)
+axis_get_box(struct objlist *obj,N_VALUE *inst, int *pos)
 {
   int minx, miny, maxx, maxy;
   int x0, y0, x1, y1, length, direction;
@@ -494,7 +494,7 @@ axis_get_box(struct objlist *obj,char *inst, int *pos)
 
 
 static int 
-axisbbox2(struct objlist *obj, char *inst, char *rval)
+axisbbox2(struct objlist *obj, N_VALUE *inst, struct narray **rval)
 {
   int i, pos[POS_ARRAY_SIZE];
   struct narray *array;
@@ -502,7 +502,7 @@ axisbbox2(struct objlist *obj, char *inst, char *rval)
   if (inst == NULL)
     return 1;
 
-  array = * (struct narray **) rval;
+  array = *rval;
 
   if (arraynum(array) != 0)
     return 0;
@@ -521,13 +521,13 @@ axisbbox2(struct objlist *obj, char *inst, char *rval)
     return 1;
   }
 
-  * (struct narray **) rval = array;
+  *rval = array;
 
   return 0;
 }
 
 static int
-check_direction(struct objlist *obj, int type, char **inst_array)
+check_direction(struct objlist *obj, int type, N_VALUE **inst_array)
 {
   int i, n, direction, normal_dir[] = {0, 9000, 0, 9000};
 
@@ -591,9 +591,10 @@ check_direction(struct objlist *obj, int type, char **inst_array)
 #define CHECK_CROSS(a) ((a & FIND_CROSS) == FIND_CROSS)
 
 static int
-get_axis_group_type(struct objlist *obj, char *inst, char **inst_array, int check_all)
+get_axis_group_type(struct objlist *obj, N_VALUE *inst, N_VALUE **inst_array, int check_all)
 {
-  char *group, *group2, *inst2;
+  char *group, *group2;
+  N_VALUE *inst2;
   char type;
   int find_axis, len, id, i;
 
@@ -676,13 +677,13 @@ get_axis_group_type(struct objlist *obj, char *inst, char **inst_array, int chec
 }
 
 static int
-get_axis_box(struct objlist *obj, char *inst, int *minx, int *miny, int *maxx, int *maxy)
+get_axis_box(struct objlist *obj, N_VALUE *inst, int *minx, int *miny, int *maxx, int *maxy)
 {
   struct narray *rval2;
 
   rval2 = NULL;
 
-  if (axisbbox2(obj, inst, (void *) &rval2))
+  if (axisbbox2(obj, inst, &rval2))
     return 1;
 
   *minx = * (int *) arraynget(rval2, 0);
@@ -728,7 +729,7 @@ set_axis_box(struct narray *array, int minx, int miny, int maxx, int maxy, int a
 }
 
 static int
-get_axis_group_box(struct objlist *obj, char **inst_array, int type, int *minx, int *miny, int *maxx, int *maxy)
+get_axis_group_box(struct objlist *obj, N_VALUE **inst_array, int type, int *minx, int *miny, int *maxx, int *maxy)
 {
   int x0, y0, x1, y1, i;
 
@@ -770,14 +771,14 @@ get_axis_group_box(struct objlist *obj, char **inst_array, int type, int *minx, 
 }
 
 static int 
-axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int type, dir;
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
   struct narray *array;
   int minx,miny,maxx,maxy;
 
-  array = * (struct narray **) rval;
+  array = rval->array;
   if (arraynum(array) != 0)
     return 0;
 
@@ -785,7 +786,7 @@ axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   switch (type) {
   case 'a':
-    return axisbbox2(obj, inst, rval);
+    return axisbbox2(obj, inst, &rval->array);
     break;
   case 'f':
   case 's':
@@ -796,11 +797,11 @@ axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     dir = check_direction(obj, type, inst_array);
     array = set_axis_box(array, minx, miny, maxx, maxy, ! dir);
     if (array == NULL) {
-      * (struct narray **) rval = NULL;
+      rval->array = NULL;
       return 1;
     }
 
-    * (struct narray **) rval = array;
+    rval->array = array;
     break;
   }
 
@@ -808,7 +809,7 @@ axisbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axismatch2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -817,9 +818,9 @@ axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   double r,r2,r3,ip;
   struct narray *array;
 
-  *(int *)rval=FALSE;
+  rval->i=FALSE;
   array=NULL;
-  axisbbox2(obj,inst,(void *)&array);
+  axisbbox2(obj,inst,&array);
   if (array==NULL) return 0;
   minx=*(int *)argv[2];
   miny=*(int *)argv[3];
@@ -838,7 +839,7 @@ axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       r=sqrt((minx-x1)*(minx-x1)+(miny-y1)*(miny-y1));
       r3=sqrt((minx-x2)*(minx-x2)+(miny-y2)*(miny-y2));
       if ((r<=err) || (r3<err)) {
-        *(int *)rval=TRUE;
+        rval->i=TRUE;
         break;
       }
       if (r2!=0) {
@@ -848,7 +849,7 @@ axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           y2=y1+(y2-y1)*ip/r2;
           r=sqrt((minx-x2)*(minx-x2)+(miny-y2)*(miny-y2));
           if (r<err) {
-            *(int *)rval=TRUE;
+            rval->i=TRUE;
             break;
           }
         }
@@ -866,20 +867,20 @@ axismatch2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)
-     && (miny<=bmaxy) && (bmaxy<=maxy)) *(int *)rval=TRUE;
+     && (miny<=bmaxy) && (bmaxy<=maxy)) rval->i=TRUE;
   }
   arrayfree(array);
   return 0;
 }
 
 static int 
-axismatch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+axismatch(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int i, n, type;
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
   int rval2, match;
 
-  *(int *)rval = FALSE;
+  rval->i = FALSE;
 
   type = get_axis_group_type(obj, inst, inst_array, FALSE);
 
@@ -905,14 +906,14 @@ axismatch(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
       match = match || rval2;
     }
 
-    * (int *) rval = match;
+    rval->i = match;
   }
 
   return 0;
 }
 
 static int 
-axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axismove2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y;
 
@@ -931,10 +932,10 @@ axismove2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axismove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i;
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
 
   if (* (int *) argv[2] == 0 && * (int *) argv[3] == 0)
     return 0;
@@ -952,7 +953,7 @@ axismove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int
-axisrotate2(struct objlist *obj, char *inst, int px, int py, int angle)
+axisrotate2(struct objlist *obj, N_VALUE *inst, int px, int py, int angle)
 {
   int x, y, dir;
 
@@ -978,10 +979,10 @@ axisrotate2(struct objlist *obj, char *inst, int px, int py, int angle)
 }
 
 static int 
-axisrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i, n, type, angle, use_pivot, px, py, minx, miny, maxx, maxy;
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
 
   angle = *(int *) argv[2];
   use_pivot = * (int *) argv[3];
@@ -1025,7 +1026,7 @@ axisrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int
-axisflip2(struct objlist *obj, char *inst, int px, int py, enum FLIP_DIRECTION dir)
+axisflip2(struct objlist *obj, N_VALUE *inst, int px, int py, enum FLIP_DIRECTION dir)
 {
   int x, y, a, p, g_dir, n_dir, n_align;
 
@@ -1097,10 +1098,10 @@ axisflip2(struct objlist *obj, char *inst, int px, int py, enum FLIP_DIRECTION d
 }
 
 static int 
-axisflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i, n, type, use_pivot, px, py, minx, miny, maxx, maxy;
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
   enum FLIP_DIRECTION dir;
 
   dir = (* (int *) argv[2] == FLIP_DIRECTION_HORIZONTAL) ? FLIP_DIRECTION_HORIZONTAL : FLIP_DIRECTION_VERTICAL;
@@ -1140,7 +1141,7 @@ axisflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axischange2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axischange2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int len,dir,x,y;
   double x2,y2;
@@ -1185,7 +1186,7 @@ axischange2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static void
-axis_change_point0(struct objlist *obj, int type, char **inst_array, int x0, int y0)
+axis_change_point0(struct objlist *obj, int type, N_VALUE **inst_array, int x0, int y0)
 {
   int len, x, y;
 
@@ -1225,7 +1226,7 @@ axis_change_point0(struct objlist *obj, int type, char **inst_array, int x0, int
 }
 
 static void
-axis_change_point1(struct objlist *obj, int type, char **inst_array, int x0, int y0)
+axis_change_point1(struct objlist *obj, int type, N_VALUE **inst_array, int x0, int y0)
 {
   int len, x, y;
 
@@ -1259,7 +1260,7 @@ axis_change_point1(struct objlist *obj, int type, char **inst_array, int x0, int
 }
 
 static void
-axis_change_point2(struct objlist *obj, int type, char **inst_array, int x0, int y0)
+axis_change_point2(struct objlist *obj, int type, N_VALUE **inst_array, int x0, int y0)
 {
   int len, x, y;
 
@@ -1299,7 +1300,7 @@ axis_change_point2(struct objlist *obj, int type, char **inst_array, int x0, int
 }
 
 static void
-axis_change_point3(struct objlist *obj, int type, char **inst_array, int x0, int y0)
+axis_change_point3(struct objlist *obj, int type, N_VALUE **inst_array, int x0, int y0)
 {
   int len, x, y;
 
@@ -1345,9 +1346,9 @@ axis_change_point3(struct objlist *obj, int type, char **inst_array, int x0, int
 }
 
 static int 
-axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axischange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
   int type, point, x0, y0, len;
 
   type = get_axis_group_type(obj, inst, inst_array, FALSE);
@@ -1410,7 +1411,7 @@ axischange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axiszoom2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y,len,refx,refy,preserve_width;
   double zoom;
@@ -1483,10 +1484,10 @@ axiszoom2(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axiszoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axiszoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i;
-  char *inst_array[INST_ARRAY_NUM];
+  N_VALUE *inst_array[INST_ARRAY_NUM];
 
   if (get_axis_group_type(obj, inst, inst_array, FALSE) < 0)
     return 1;
@@ -2087,7 +2088,7 @@ draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
 }
 
 static int
-draw_numbering(struct objlist *obj, char *inst, struct axislocal *alocal,
+draw_numbering(struct objlist *obj, N_VALUE *inst, struct axislocal *alocal,
 	       int GC, int side, int align, int ndir, int ilenmax, int plen,
 	       struct axis_config *aconf, const struct font_config *font, int step,
 	       int nnum, int numcount, int begin, int autonorm, int nozero,
@@ -2351,7 +2352,7 @@ get_step(struct axislocal *alocal, int step, int *begin)
 }
 
 static int
-numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, int draw)
+numbering(struct objlist *obj, N_VALUE *inst, int GC, struct axis_config *aconf, int draw)
 {
   int fr,fg,fb,fa;
   int side, begin,step,nnum,numcount,cstep;
@@ -2514,7 +2515,7 @@ numbering(struct objlist *obj, char *inst, int GC, struct axis_config *aconf, in
 }
 
 static int
-draw_gauge(struct objlist *obj,char *inst, int GC, struct axis_config *aconf)
+draw_gauge(struct objlist *obj,N_VALUE *inst, int GC, struct axis_config *aconf)
 {
   int fr,fg,fb,fa;
   struct narray *style;
@@ -2616,7 +2617,7 @@ draw_gauge(struct objlist *obj,char *inst, int GC, struct axis_config *aconf)
 }
 
 static int
-get_axis_parameter(struct objlist *obj, char *inst,  struct axis_config *aconf)
+get_axis_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config *aconf)
 {
   _getobj(obj, "min",  inst, &aconf->min);
   _getobj(obj, "max",  inst, &aconf->max);
@@ -2628,9 +2629,10 @@ get_axis_parameter(struct objlist *obj, char *inst,  struct axis_config *aconf)
 }
 
 static int
-get_reference_parameter(struct objlist *obj, char *inst,  struct axis_config *aconf)
+get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config *aconf)
 {
-  char *axis, *inst1;
+  char *axis;
+  N_VALUE *inst1;
   struct objlist *aobj;
   int anum, id;
   struct narray iarray;
@@ -2656,7 +2658,7 @@ get_reference_parameter(struct objlist *obj, char *inst,  struct axis_config *ac
 }
 
 static int
-draw_wave(struct objlist *obj, char *inst, struct axis_config *aconf, int GC)
+draw_wave(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC)
 {
   int wave, wwidth, wlength, i;
   double wx[5],wxc1[5],wxc2[5],wxc3[5];
@@ -2741,7 +2743,7 @@ draw_wave(struct objlist *obj, char *inst, struct axis_config *aconf, int GC)
 }
 
 static int
-draw_arrow(struct objlist *obj, char *inst, struct axis_config *aconf, int GC)
+draw_arrow(struct objlist *obj, N_VALUE *inst, struct axis_config *aconf, int GC)
 {
   int arrow,alength,awidth;
   double alen,awid,dx,dy;
@@ -2784,7 +2786,7 @@ draw_arrow(struct objlist *obj, char *inst, struct axis_config *aconf, int GC)
 }
 
 static int 
-axisdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   int fr, fg, fb, fa, lm, tm, w, h, bline;
@@ -2863,7 +2865,7 @@ exit:
 }
 
 static int 
-axis_get_numbering(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+axis_get_numbering(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int GC;
   int hidden;
@@ -2900,7 +2902,7 @@ axis_get_numbering(struct objlist *obj, char *inst, char *rval, int argc, char *
 
 
 static int 
-axisclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisclear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   double min,max,inc;
 
@@ -2912,14 +2914,14 @@ axisclear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axisadjust(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisadjust(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *axis;
   int ad;
   struct objlist *aobj;
   int anum,id;
   struct narray iarray;
-  char *inst1;
+  N_VALUE *inst1;
   double min,max,inc,dir,po,dir1,x;
   int type,posx,posy,len,idir,posx1,posy1,div;
   struct axislocal alocal;
@@ -2998,7 +3000,7 @@ axisadjust(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axischangescale(struct objlist *obj,char *inst,
+axischangescale(struct objlist *obj,N_VALUE *inst,
                     double *rmin,double *rmax,double *rinc,int room)
 {
   int type;
@@ -3072,7 +3074,7 @@ axischangescale(struct objlist *obj,char *inst,
 }
 
 static int 
-axisscale(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axisscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int type,room;
   double min,max,inc;
@@ -3089,7 +3091,7 @@ axisscale(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-axiscoordinate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axiscoordinate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y,dx,dy,type,dir,len;
   double min,max,c,t,val;
@@ -3124,12 +3126,12 @@ axiscoordinate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if (val==0) return 1;
     val=1.0/val;
   }
-  *(double *)rval=val;
+  rval->d=val;
   return 0;
 }
 
 static int 
-axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,double *rmax)
+axisautoscalefile(struct objlist *obj,N_VALUE *inst,char *fileobj,double *rmin,double *rmax)
 {
   struct objlist *fobj;
   int fnum;
@@ -3180,7 +3182,7 @@ axisautoscalefile(struct objlist *obj,char *inst,char *fileobj,double *rmin,doub
 }
 
 static int 
-axisautoscale(struct objlist *obj,char *inst,char *rval,
+axisautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                   int argc,char **argv)
 {
   char *fileobj;
@@ -3209,7 +3211,7 @@ axisautoscale(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-axisgetautoscale(struct objlist *obj,char *inst,char *rval,
+axisgetautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                   int argc,char **argv)
 {
   char *fileobj;
@@ -3217,9 +3219,9 @@ axisgetautoscale(struct objlist *obj,char *inst,char *rval,
   double min,max,inc;
   struct narray *result;
 
-  result=*(struct narray **)rval;
+  result=rval->array;
   arrayfree(result);
-  *(struct narray **)rval=NULL;
+  rval->array=NULL;
   fileobj=(char *)argv[2];
   room=*(int *)argv[3];
   if (axisautoscalefile(obj,inst,fileobj,&min,&max)==0) {
@@ -3228,13 +3230,13 @@ axisgetautoscale(struct objlist *obj,char *inst,char *rval,
     arrayadd(result,&min);
     arrayadd(result,&max);
     arrayadd(result,&inc);
-    *(struct narray **)rval=result;
+    rval->array=result;
   }
   return 0;
 }
 
 static int 
-axistight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
+axistight(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   obj_do_tighten(obj, inst, "reference");
   obj_do_tighten(obj, inst, "adjust_axis");
@@ -3246,7 +3248,8 @@ axistight(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
 static void
 set_group(struct objlist *obj, int gnum, int id, char axis, char type)
 {
-  char *group, *group2, *inst2, buf[BUF_SIZE];
+  char *group, *group2, buf[BUF_SIZE];
+  N_VALUE *inst2;
 
   inst2 = chkobjinst(obj, id);
   if (inst2 == NULL) {
@@ -3270,7 +3273,7 @@ set_group(struct objlist *obj, int gnum, int id, char axis, char type)
 }
 
 static int 
-axisgrouping(struct objlist *obj,char *inst,char *rval,
+axisgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   struct narray *iarray;
@@ -3327,7 +3330,7 @@ axisgrouping(struct objlist *obj,char *inst,char *rval,
 static void
 set_group_pos(struct objlist *obj, int id, int x, int y, int len, int dir)
 {
-  char *inst2;
+  N_VALUE *inst2;
 
   inst2 = chkobjinst(obj, id);
   if (inst2 == NULL)
@@ -3343,7 +3346,7 @@ set_group_pos(struct objlist *obj, int id, int x, int y, int len, int dir)
 }
 
 static int 
-axisgrouppos(struct objlist *obj, char *inst, char *rval, 
+axisgrouppos(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
 	     int argc, char **argv)
 {
   int x, y, lx, ly;
@@ -3398,7 +3401,7 @@ axis_default(struct objlist *obj, int id, int *oid, int dir,
 	     enum AXIS_GAUGE gauge, enum AXIS_NUM_POS num,
 	     enum AXIS_NUM_ALIGN align, char *conf)
 {
-  char *inst2;
+  N_VALUE *inst2;
 
   inst2 = chkobjinst(obj, id);
   if (inst2 == NULL)
@@ -3419,7 +3422,8 @@ axis_default(struct objlist *obj, int id, int *oid, int dir,
 static void
 axis_default_set(struct objlist *obj, int id, int oid, char *field, char *conf)
 {
-  char *inst2, *ref, *ref2, buf[BUF_SIZE];
+  N_VALUE *inst2;
+  char *ref, *ref2, buf[BUF_SIZE];
 
   inst2 = chkobjinst(obj, id);
   if (inst2 == NULL)
@@ -3451,7 +3455,7 @@ axis_default_set_adj(struct objlist *obj, int id, int oid, char *conf)
 }
 
 static int 
-axisdefgrouping(struct objlist *obj,char *inst,char *rval,
+axisdefgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   int oidx, oidy;
@@ -3526,7 +3530,7 @@ axisdefgrouping(struct objlist *obj,char *inst,char *rval,
 }
 
 static int
-axis_save_group(struct objlist *obj, int type, char **inst_array, char **rval)
+axis_save_group(struct objlist *obj, int type, N_VALUE **inst_array, N_VALUE *rval)
 {
   char *str;
   int i, n, id;
@@ -3554,8 +3558,8 @@ axis_save_group(struct objlist *obj, int type, char **inst_array, char **rval)
   if (s == NULL)
     return 1;
 
-  if (*rval) {
-    g_string_append(s, *rval);
+  if (rval->str) {
+    g_string_append(s, rval->str);
   }
   g_string_append(s, str);
 
@@ -3564,18 +3568,19 @@ axis_save_group(struct objlist *obj, int type, char **inst_array, char **rval)
     g_string_append_printf(s, "%d%c", id, (i == n - 1) ? '\n' : ' ');
   }
 
-  g_free(*rval);
-  *rval = g_string_free(s, FALSE);
+  g_free(rval->str);
+  rval->str = g_string_free(s, FALSE);
 
   return 0;
 }
 
 static int 
-axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axissave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i, r, anum, type;
   struct narray *array;
-  char **adata, *inst_array[INST_ARRAY_NUM];
+  char **adata;
+  N_VALUE *inst_array[INST_ARRAY_NUM];
 
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) return 1;
 
@@ -3596,24 +3601,24 @@ axissave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   case 'f':
   case 's':
   case 'c':
-    r = axis_save_group(obj, type, inst_array, (char **) rval);
+    r = axis_save_group(obj, type, inst_array, rval);
     break;
   }
   return r;
 }
 
 static int 
-axismanager(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+axismanager(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,id,lastinst;
   char *group,*group2;
   char type;
-  char *inst2;
+  N_VALUE *inst2;
 
   _getobj(obj,"id",inst,&id);
   _getobj(obj,"group",inst,&group);
   if ((group==NULL) || (group[0]=='a')) {
-    *(int *)rval=id;
+    rval->i=id;
     return 0;
   }
   lastinst=chkobjlastinst(obj);
@@ -3625,12 +3630,12 @@ axismanager(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if ((group2!=NULL) && (group2[0]==type) && (strcmp(group+2,group2+2)==0))
       id=i;
   }
-  *(int *)rval=id;
+  rval->i=id;
   return 0;
 }
 
 static int 
-axisscalepush(struct objlist *obj,char *inst,char *rval,int argc,
+axisscalepush(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,
                   char **argv)
 {
   struct narray *array;
@@ -3664,7 +3669,7 @@ axisscalepush(struct objlist *obj,char *inst,char *rval,int argc,
 }
 
 static int 
-axisscalepop(struct objlist *obj,char *inst,char *rval,int argc,
+axisscalepop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,
                   char **argv)
 {
   struct narray *array;
@@ -3691,7 +3696,7 @@ axisscalepop(struct objlist *obj,char *inst,char *rval,int argc,
 }
 
 static int 
-anumdirput(struct objlist *obj,char *inst,char *rval, int argc,char **argv)
+anumdirput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
 {
   int type;
 

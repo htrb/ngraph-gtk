@@ -43,7 +43,7 @@ static char *gra2errorlist[]={
 #define ERRNUM (sizeof(gra2errorlist) / sizeof(*gra2errorlist))
 
 static int 
-gra2init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
 
@@ -54,14 +54,14 @@ gra2init(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-gra2done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   struct narray *sarray;
   struct objlist *gobj;
   int gid,deletegra,id;
   char *gfield;
-  char *ginst;
+  N_VALUE *ginst;
   char *device;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -90,7 +90,7 @@ gra2done(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-gra2clear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2clear(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,num;
   struct narray *sarray;
@@ -103,7 +103,7 @@ gra2clear(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 #ifdef COMPILE_UNUSED_FUNCTIONS
 static int 
-gra2disconnect(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2disconnect(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   struct narray *sarray;

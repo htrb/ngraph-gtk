@@ -33,7 +33,7 @@
 
 
 static int 
-gra2gtkprint_init(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2gtkprint_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {  
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
@@ -43,7 +43,7 @@ gra2gtkprint_init(struct objlist *obj, char *inst, char *rval, int argc, char **
 }
 
 static int 
-gra2gtkprint_done(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+gra2gtkprint_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
 
@@ -64,7 +64,7 @@ gra2gtkprint_done(struct objlist *obj, char *inst, char *rval, int argc, char **
 }
 
 static int
-create_cairo(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+create_cairo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   cairo_t *cairo;
   int dpi, id, r;

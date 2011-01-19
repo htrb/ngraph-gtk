@@ -44,21 +44,21 @@ static char *legenderrorlist[]={
 #define ERRNUM (sizeof(legenderrorlist) / sizeof(*legenderrorlist))
 
 static int 
-legendinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legendinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {  
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-legenddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legenddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 int 
-legendgeometry(struct objlist *obj,char *inst,char *rval,
+legendgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                    int argc,char **argv)
 {
   if (clear_bbox(obj, inst))
@@ -68,7 +68,7 @@ legendgeometry(struct objlist *obj,char *inst,char *rval,
 }
 
 int 
-legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legendmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
@@ -77,7 +77,7 @@ legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   double r,r2,r3,ip;
   struct narray *array;
 
-  *(int *)rval=FALSE;
+  rval->i=FALSE;
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
   _getobj(obj,"bbox",inst,&array);
@@ -99,7 +99,7 @@ legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
       r=sqrt((minx-x1)*(minx-x1)+(miny-y1)*(miny-y1));
       r3=sqrt((minx-x2)*(minx-x2)+(miny-y2)*(miny-y2));
       if ((r<=err) || (r3<err)) {
-        *(int *)rval=TRUE;
+        rval->i=TRUE;
         break;
       }
       if (r2!=0) {
@@ -109,7 +109,7 @@ legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
           y2=y1+(y2-y1)*ip/r2;
           r=sqrt((minx-x2)*(minx-x2)+(miny-y2)*(miny-y2));
           if (r<err) {
-            *(int *)rval=TRUE;
+            rval->i=TRUE;
             break;
           }
         }
@@ -124,13 +124,13 @@ legendmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)
-     && (miny<=bmaxy) && (bmaxy<=maxy)) *(int *)rval=TRUE;
+     && (miny<=bmaxy) && (bmaxy<=maxy)) rval->i=TRUE;
   }
   return 0;
 }
 
 int 
-legendbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legendbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x,y,num;
@@ -140,7 +140,7 @@ legendbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   struct narray *array;
   int i,width;
 
-  array=*(struct narray **)rval;
+  array=rval->array;
   if (arraynum(array)!=0) return 0;
   _getobj(obj,"points",inst,&points);
   _getobj(obj,"width",inst,&width);
@@ -173,15 +173,15 @@ legendbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&(minx),0);
   if (arraynum(array)==0) {
     arrayfree(array);
-    *(struct narray **) rval = NULL;
+    rval->array = NULL;
     return 1;
   }
-  *(struct narray **)rval=array;
+  rval->array=array;
   return 0;
 }
 
 int 
-legendmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legendmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points;
   int i,num,*pdata;
@@ -230,7 +230,7 @@ flip(int pivot, enum FLIP_DIRECTION dir, int *x, int *y)
 }
 
 int 
-legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legendrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points;
   int i, num, *pdata, angle, px, py, start, use_pivot;
@@ -265,7 +265,7 @@ legendrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 int 
-legendflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legendflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points;
   int i, num, *pdata, p, start, use_pivot;
@@ -300,7 +300,7 @@ legendflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 int 
-legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legendchange(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points;
   int num,*pdata;
@@ -325,7 +325,7 @@ legendchange(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 int 
-legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+legendzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *points,*style;
   int i,num,width,snum,*pdata,*sdata,preserve_width;
@@ -366,7 +366,7 @@ legendzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 int 
-put_color_for_backward_compatibility(struct objlist *obj, char *inst, char *rval,  int argc, char **argv)
+put_color_for_backward_compatibility(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,  int argc, char **argv)
 {
   int col, val;
 

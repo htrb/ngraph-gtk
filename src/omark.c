@@ -45,7 +45,7 @@ static char *markerrorlist[]={
 #define ERRNUM (sizeof(markerrorlist) / sizeof(*markerrorlist))
 
 static int 
-markinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {  
   int size,width,r2,g2,b2,a2;
 
@@ -66,14 +66,14 @@ markinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-markdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 
 static int 
-markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC;
   int x,y,type,size,width,fr,fg,fb,fa,br,bg,bb,ba,tm,lm,w,h;
@@ -110,13 +110,13 @@ markdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-markbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy;
   int x,y,size,width;
   struct narray *array;
 
-  array=*(struct narray **)rval;
+  array=rval->array;
   if (arraynum(array)!=0) return 0;
   _getobj(obj,"x",inst,&x);
   _getobj(obj,"y",inst,&y);
@@ -134,15 +134,15 @@ markbbox(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   arrayins(array,&minx,0);
   if (arraynum(array)==0) {
     arrayfree(array);
-    *(struct narray **) rval = NULL;
+    rval->array = NULL;
     return 1;
   }
-  *(struct narray **)rval=array;
+  rval->array=array;
   return 0;
 }
 
 static int 
-markmove(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markmove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x,y;
 
@@ -327,7 +327,7 @@ h_flip(int mark) {
 #endif	/* MODIFY_MARK_TYPE */
 
 static int 
-markrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int angle, use_pivot, px, py, x, y;
 #if MODIFY_MARK_TYPE
@@ -377,7 +377,7 @@ markrotate(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-markflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markflip(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int x, y, p, use_pivot;
   enum FLIP_DIRECTION dir;
@@ -422,7 +422,7 @@ markflip(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markzoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int i,x,y,size,refx,refy,width,snum,*sdata,preserve_width;
   double zoom;
@@ -466,7 +466,7 @@ markzoom(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-markgeometry(struct objlist *obj,char *inst,char *rval,
+markgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   char *field;
@@ -491,7 +491,7 @@ markgeometry(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-marktype(struct objlist *obj,char *inst,char *rval,
+marktype(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 	     int argc,char **argv)
 {
   int type;
@@ -506,13 +506,13 @@ marktype(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-markmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+markmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
   int bminx,bminy,bmaxx,bmaxy;
   struct narray *array;
 
-  *(int *)rval=FALSE;
+  rval->i=FALSE;
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
   _getobj(obj,"bbox",inst,&array);
@@ -533,12 +533,12 @@ markmatch(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
     bmaxx+=err;
     bmaxy+=err;
     if ((bminx<=minx) && (minx<=bmaxx)
-     && (bminy<=miny) && (miny<=bmaxy)) *(int *)rval=TRUE;
+     && (bminy<=miny) && (miny<=bmaxy)) rval->i=TRUE;
   } else {
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)
-     && (miny<=bmaxy) && (bmaxy<=maxy)) *(int *)rval=TRUE;
+     && (miny<=bmaxy) && (bmaxy<=maxy)) rval->i=TRUE;
   }
   return 0;
 }

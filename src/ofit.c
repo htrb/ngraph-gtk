@@ -105,7 +105,7 @@ struct fitlocal {
 };
 
 static int 
-fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+fitinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int div,dimension;
   double converge;
@@ -136,7 +136,7 @@ fitinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-fitdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+fitdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct fitlocal *fitlocal;
   int i;
@@ -165,7 +165,7 @@ show_eqn_error(struct objlist *obj, MathEquation *code, char *math, char *field,
 }
 
 static int 
-fitput(struct objlist *obj,char *inst,char *rval,
+fitput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
            int argc,char **argv)
 {
   char *field;
@@ -241,7 +241,7 @@ fitput(struct objlist *obj,char *inst,char *rval,
 }
 
 static int 
-fit_put_weight_func(struct objlist *obj,char *inst,char *rval,
+fit_put_weight_func(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
            int argc,char **argv)
 {
   char *math;
@@ -805,7 +805,7 @@ errexit:
 }
 
 static int 
-fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+fitfit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct fitlocal *fitlocal;
   int i,through,dimension,deriv,disp;
@@ -1017,7 +1017,7 @@ fitfit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+fitcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   MathEquation *eq;
   MathValue val;
@@ -1027,8 +1027,8 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   if (_exeparent(obj, argv[1], inst, rval, argc, argv)) return 1;
 
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
 
   x = * (double *) argv[2];
 
@@ -1064,7 +1064,7 @@ fitcalc(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
   snprintf(buf, sizeof(buf), "%.15e", val.val);
   ptr = g_strdup(buf);
-  * (char **) rval = ptr;
+  rval->str = ptr;
 
   return 0;
 }

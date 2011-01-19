@@ -56,7 +56,7 @@ struct gra2plocal {
 };
 
 static int 
-gra2pinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2pinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {  
   struct gra2plocal *gra2plocal;
 
@@ -73,7 +73,7 @@ errexit:
 }
 
 static int 
-gra2pdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+gra2pdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct gra2plocal *gra2plocal;
 
@@ -97,7 +97,7 @@ mytempfile(char *pfx, char **name)
 }
 
 static int 
-gra2p_output(struct objlist *obj,char *inst,char *rval,
+gra2p_output(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                  int argc,char **argv)
 {
   struct gra2plocal *gra2plocal;

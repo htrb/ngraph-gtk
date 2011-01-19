@@ -764,7 +764,7 @@ arg_del(char **arg)
 
 void 
 registerevloop(char *objname, char *evname,
-                    struct objlist *obj,int idn,char *inst,
+                    struct objlist *obj,int idn,N_VALUE *inst,
                     void *local)
 {
   struct loopproc *lpcur,*lpnew;
@@ -787,7 +787,7 @@ registerevloop(char *objname, char *evname,
 }
 
 void 
-unregisterevloop(struct objlist *obj,int idn,char *inst)
+unregisterevloop(struct objlist *obj,int idn,N_VALUE *inst)
 {
   struct loopproc *lpcur,*lpdel,*lpprev;
 
@@ -990,7 +990,6 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   objnew->doneproc=doneproc;
   if (parent==NULL) offset=0;
   else offset=parent->size;
-  if (offset % ALIGNSIZE != 0) offset = offset + (ALIGNSIZE - offset % ALIGNSIZE);
   for (i=0;i<tblnum;i++) {
     table[i].offset=offset;
     switch (table[i].type) {
@@ -998,19 +997,9 @@ addobject(char *name,char *alias,char *parentname,char *ver,
     case NLABEL:
     case NVFUNC:
       break;
-    case NBOOL: case NBFUNC:
-    case NINT:  case NIFUNC:
-    case NCHAR: case NCFUNC:
-    case NENUM:
-      offset+=sizeof(int);
-      break;
-    case NDOUBLE: case NDFUNC:
-      offset+=sizeof(double);
-      break;
     default:
-      offset+=sizeof(void *);
+      offset++;
     }
-    if (offset % ALIGNSIZE != 0) offset = offset + (ALIGNSIZE - offset % ALIGNSIZE);
     if (table[i].attrib & NEXEC) table[i].attrib&=~NWRITE;
 #if USE_HASH
     if (nhash_set_int(tbl_hash, table[i].name, i)) {
@@ -1034,7 +1023,7 @@ addobject(char *name,char *alias,char *parentname,char *ver,
 void 
 hideinstance(struct objlist *obj)
 {
-  char *instcur,*instprev;
+  N_VALUE *instcur,*instprev;
   int nextp,idp;
 
   if ((idp=obj->idp)==-1) return;
@@ -1046,16 +1035,16 @@ hideinstance(struct objlist *obj)
   } else {
     instcur=obj->root;
     while (instcur!=NULL) {
-      *(int *)(instcur+idp)+=obj->lastinst2+1;
-      instcur=*(char **)(instcur+nextp);
+      instcur[idp].i+=obj->lastinst2+1;
+      instcur=instcur[nextp].inst;
     }
     instcur=obj->root2;
     instprev=NULL;
     while (instcur!=NULL) {
       instprev=instcur;
-      instcur=*(char **)(instcur+nextp);
+      instcur=instcur[nextp].inst;
     }
-    *(char **)(instprev+nextp)=obj->root;
+    instprev[nextp].inst=obj->root;
     obj->lastinst2+=obj->lastinst+1;
   }
   obj->root=NULL;
@@ -1065,7 +1054,7 @@ hideinstance(struct objlist *obj)
 void 
 recoverinstance(struct objlist *obj)
 {
-  char *instcur,*instprev;
+  N_VALUE *instcur,*instprev;
   int nextp,idp;
 
   if ((idp=obj->idp)==-1) return;
@@ -1077,16 +1066,16 @@ recoverinstance(struct objlist *obj)
   } else {
     instcur=obj->root;
     while (instcur!=NULL) {
-      *(int *)(instcur+idp)+=obj->lastinst2+1;
-      instcur=*(char **)(instcur+nextp);
+      instcur[idp].i+=obj->lastinst2+1;
+      instcur=instcur[nextp].inst;
     }
     instcur=obj->root2;
     instprev=NULL;
     while (instcur!=NULL) {
       instprev=instcur;
-      instcur=*(char **)(instcur+nextp);
+      instcur=instcur[nextp].inst;
     }
-    *(char **)(instprev+nextp)=obj->root;
+    instprev[nextp].inst=obj->root;
     obj->root=obj->root2;
     obj->lastinst+=obj->lastinst2+1;
   }
@@ -1192,7 +1181,7 @@ int
 chkobjsize(struct objlist *obj)
 {
   if (obj==NULL) return 0;
-  return obj->size;
+  return obj->size * sizeof(N_VALUE);
 }
 
 int 
@@ -1243,23 +1232,23 @@ chkobjoffset2(struct objlist *obj,int tblpos)
   return obj->table[tblpos].offset;
 }
 
-char *
+N_VALUE *
 chkobjinstoid(struct objlist *obj,int oid)
 /* chkobjinstoid() returns NULL when instance is not found */
 {
   int oidp,nextp;
-  char *inst;
+  N_VALUE *inst;
 
   if ((oidp=obj->oidp)==-1) return NULL;
   inst=obj->root;
   if ((nextp=obj->nextp)==-1) {
     if (inst==NULL) return NULL;
-    if (*(int *)(inst+oidp)==oid) return inst;
+    if (inst[oidp].i==oid) return inst;
     else return NULL;
   } else {
     while (inst!=NULL) {
-      if (*(int *)(inst+oidp)==oid) return inst;
-      inst=*(char **)(inst+nextp);
+      if (inst[oidp].i==oid) return inst;
+      inst=inst[nextp].inst;
     }
   }
   return NULL;
@@ -1301,12 +1290,12 @@ chkobjtblpos(struct objlist *obj, const char *name, struct objlist **robj)
 #endif
 }
 
-char *
+N_VALUE *
 chkobjinst(struct objlist *obj,int id)
 /* chkobjinst() returns NULL if instance is not found */
 {
   int i,nextp;
-  char *instcur;
+  N_VALUE *instcur;
 
   instcur=obj->root;
   i=0;
@@ -1316,7 +1305,7 @@ chkobjinst(struct objlist *obj,int id)
     }
   } else {
     while ((instcur!=NULL) && (id!=i)) {
-      instcur=*(char **)(instcur+nextp);
+      instcur=instcur[nextp].inst;
       i++;
     }
     if (instcur==NULL) {
@@ -1326,11 +1315,11 @@ chkobjinst(struct objlist *obj,int id)
   return instcur;
 }
 
-char *
+N_VALUE *
 chkobjlast(struct objlist *obj)
 /* chkobjlast() returns NULL if instance is not found */
 {
-  char *instcur,*instprev;
+  N_VALUE *instcur,*instprev;
   int nextp;
 
   instcur=obj->root;
@@ -1339,18 +1328,18 @@ chkobjlast(struct objlist *obj)
     instprev=NULL;
     while (instcur!=NULL) {
       instprev=instcur;
-      instcur=*(char **)(instcur+nextp);
+      instcur=instcur[nextp].inst;
     }
     instcur=instprev;
   }
   return instcur;
 }
 
-static char *
-chkobjprev(struct objlist *obj,int id,char **inst,char **prev)
+static N_VALUE *
+chkobjprev(struct objlist *obj,int id,N_VALUE **inst,N_VALUE **prev)
 /* chkobjprev() returns NULL if instance is not found */
 {
-  char *instcur,*instprev;
+  N_VALUE *instcur,*instprev;
   int i,nextp;
 
   if (inst!=NULL) *inst=NULL;
@@ -1365,7 +1354,7 @@ chkobjprev(struct objlist *obj,int id,char **inst,char **prev)
   } else {
     while ((instcur!=NULL) && (id!=i)) {
       instprev=instcur;
-      instcur=*(char **)(instcur+nextp);
+      instcur=instcur[nextp].inst;
       i++;
     }
     if (instcur==NULL) {
@@ -1390,19 +1379,19 @@ chkobjoid(struct objlist *obj,int oid)
 /* chkobjoid() returns -1 on error */
 {
   int oidp,idp,nextp;
-  char *inst;
+  N_VALUE *inst;
 
   if ((oidp=obj->oidp)==-1) return -1;
   if ((idp=obj->idp)==-1) return -1;
   inst=obj->root;
   if ((nextp=obj->nextp)==-1) {
     if (inst==NULL) return -1;
-    if (*(int *)(inst+oidp)==oid) return *(int *)(inst+idp);
+    if (inst[oidp].i==oid) return inst[idp].i;
     else return -1;
   } else {
     while (inst!=NULL) {
-      if (*(int *)(inst+oidp)==oid) return *(int *)(inst+idp);
-      inst=*(char **)(inst+nextp);
+      if (inst[oidp].i==oid) return inst[idp].i;
+      inst=inst[nextp].inst;
     }
   }
   return -1;
@@ -1414,7 +1403,7 @@ chkobjname(struct objlist *obj,int *id,char *name)
 {
   int i,id2;
   char *iname;
-  char *inst;
+  N_VALUE *inst;
 
   if (id == NULL) {
     id2 = 0;
@@ -1705,11 +1694,11 @@ getobjtblpos(struct objlist *obj, const char *name, struct objlist **robj)
   return tblnum;
 }
 
-char *
+N_VALUE *
 getobjinst(struct objlist *obj,int id)
 /* getobjinst() returns NULL if instance is not found */
 {
-  char *instcur;
+  N_VALUE *instcur;
 
   if (obj==NULL) {
     error(NULL,ERROBJFOUND);
@@ -1722,8 +1711,8 @@ getobjinst(struct objlist *obj,int id)
   return instcur;
 }
 
-static char *
-getobjprev(struct objlist *obj,int id,char **inst,char **prev)
+N_VALUE *
+getobjprev(struct objlist *obj,int id,N_VALUE **inst,N_VALUE **prev)
 /* getobjprev() returns NULL if instance is not found */
 {
   if (obj==NULL) {
@@ -1737,10 +1726,10 @@ getobjprev(struct objlist *obj,int id,char **inst,char **prev)
   return *inst;
 }
 
-char *
+N_VALUE *
 getobjinstoid(struct objlist *obj,int oid)
 {
-  char *inst;
+  N_VALUE *inst;
 
   if (obj==NULL) {
     error(NULL,ERROBJFOUND);
@@ -1759,7 +1748,7 @@ getobjname(struct objlist *obj,int *id,char *name)
 {
   int i,id2;
   char *iname;
-  char *inst;
+  N_VALUE *inst;
 
   if (id==NULL) id2=0;
   else id2=*id;
@@ -1829,11 +1818,10 @@ int
 newobj_alias(struct objlist *obj, const char *name)
 {
   struct objlist *robj;
-  char *instcur,*instnew,*inst;
-  int i,offset,nextp,id,idp,oidp,rcode,initn,initp;
+  N_VALUE *instcur,*instnew,*inst;
+  int nextp,id,idp,oidp,rcode,initn,initp;
   int argc;
   char **argv;
-  struct objlist *objcur;
 
   if (obj == NULL || name == NULL) {
     return -1;
@@ -1868,40 +1856,12 @@ newobj_alias(struct objlist *obj, const char *name)
     return -1;
   }
 
-  instnew = g_malloc(obj->size);
-  if (instnew == NULL)
+  instnew = g_malloc0(obj->size * sizeof(N_VALUE));
+  if (instnew == NULL) {
     return -1;
-
-  objcur = obj;
-  while (objcur) {
-    for (i = 0; i < objcur->tblnum; i++) {
-      offset = objcur->table[i].offset;
-      switch (objcur->table[i].type) {
-      case NVOID:
-      case NLABEL:
-      case NVFUNC:
-        break;
-      case NBOOL:
-      case NCHAR:
-      case NINT:
-      case NENUM:
-      case NBFUNC:
-      case NCFUNC:
-      case NIFUNC:
-        *(int *)(instnew + offset) = 0;
-        break;
-      case NDOUBLE:
-      case NDFUNC:
-        *(double *)(instnew + offset) = 0.0;
-        break;
-      default:
-        *(char **)(instnew + offset) = NULL;
-        break;
-      }
-    }
-    objcur = objcur->parent;
   }
-  *(int *)(instnew + idp) = id;
+
+  instnew[idp].i = id;
   oidp = obj->oidp;
   if (oidp != -1) {
     if (obj->lastoid == INT_MAX) {
@@ -1913,7 +1873,7 @@ newobj_alias(struct objlist *obj, const char *name)
       do {
         inst=obj->root;
         while (inst) {
-          if (*(int *)(inst + oidp) == obj->lastoid) {
+          if (inst[oidp].i == obj->lastoid) {
             if (obj->lastoid == INT_MAX) {
 	      obj->lastoid=0;
             } else {
@@ -1921,12 +1881,12 @@ newobj_alias(struct objlist *obj, const char *name)
 	    }
             break;
           }
-          inst = *(char **)(inst + nextp);
+          inst = inst[nextp].inst;
         }
         if (inst == NULL) {
           inst = obj->root2;
           while (inst) {
-            if (*(int *)(inst + oidp) == obj->lastoid) {
+            if (inst[oidp].i == obj->lastoid) {
               if (obj->lastoid == INT_MAX) {
 		obj->lastoid = 0;
               } else {
@@ -1934,12 +1894,12 @@ newobj_alias(struct objlist *obj, const char *name)
 	      }
               break;
             }
-            inst = *(char **)(inst + nextp);
+            inst = inst[nextp].inst;
           }
         }
       } while (inst);
     }
-    *(int *)(instnew + oidp) = obj->lastoid;
+    instnew[oidp].i = obj->lastoid;
   }
   if (robj->table[initn].proc) {
     argv = NULL;
@@ -1958,10 +1918,10 @@ newobj_alias(struct objlist *obj, const char *name)
   if (instcur == NULL) {
     obj->root=instnew;
   } else {
-    *(char **)(instcur + nextp) = instnew;
+    instcur[nextp].inst = instnew;
   }
   if (nextp != -1) {
-    *(char **)(instnew + nextp) = NULL;
+    instnew[nextp].inst = NULL;
   }
   obj->lastinst = id;
   obj->curinst = id;
@@ -1980,7 +1940,7 @@ delobj(struct objlist *obj,int delid)
 /* delobj() returns id or -1 on error */
 {
   struct objlist *robj,*objcur;
-  char *instcur,*instprev,*inst;
+  N_VALUE *instcur,*instprev,*inst;
   int i,nextp,idp,donen,donep,rcode,offset;
   int argc;
   char **argv;
@@ -2013,33 +1973,35 @@ delobj(struct objlist *obj,int delid)
   }
   if ((nextp=obj->nextp)==-1) obj->root=NULL;
   else {
-    if (instprev==NULL) obj->root=*(char **)(instcur+nextp);
-    else *(char **)(instprev+nextp)=*(char **)(instcur+nextp);
-    inst=*(char **)(instcur+nextp);
+    if (instprev==NULL) obj->root=instcur[nextp].inst;
+    else instprev[nextp].inst=instcur[nextp].inst;
+    inst=instcur[nextp].inst;
     while (inst!=NULL) {
-      (*(int *)(inst+idp))--;
-      inst=*(char **)(inst+nextp);
+      inst[idp].i--;
+      inst=inst[nextp].inst;
     }
-    *(char **)(instcur+nextp)=NULL;
+    instcur[nextp].inst=NULL;
   }
   objcur=obj;
   while (objcur!=NULL) {
     for (i=0;i<objcur->tblnum;i++) {
       offset=objcur->table[i].offset;
       switch (objcur->table[i].type) {
-      case NPOINTER:
       case NSTR:
       case NOBJ:
       case NSFUNC:
-        g_free(*(char **)(instcur+offset));
+        g_free(instcur[offset].str);
+        break;
+      case NPOINTER:
+        g_free(instcur[offset].ptr);
         break;
       case NIARRAY: case NIAFUNC:
       case NDARRAY: case NDAFUNC:
-        array=*(struct narray **)(instcur+offset);
+        array=instcur[offset].array;
         arrayfree(array);
         break;
       case NSARRAY: case NSAFUNC:
-        array=*(struct narray **)(instcur+offset);
+        array=instcur[offset].array;
         arrayfree2(array);
         break;
       default:
@@ -2072,7 +2034,7 @@ delchildobj(struct objlist *parent)
 }
 
 int 
-_putobj(struct objlist *obj, const char *vname,char *inst,void *val)
+_putobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val)
 {
   struct objlist *robj;
   int idp,idn;
@@ -2085,16 +2047,16 @@ _putobj(struct objlist *obj, const char *vname,char *inst,void *val)
   case NVFUNC:
     break;
   case NBOOL: case NBFUNC:
-  case NINT: case NIFUNC:
+  case NINT:  case NIFUNC:
   case NCHAR: case NCFUNC:
   case NENUM:
-    *(int *)(inst+idp)=*(int *)val;
+    inst[idp].i=*(int *)val;
     break;
   case NDOUBLE: case NDFUNC:
-    *(double *)(inst+idp)=*(double *)val;
+    inst[idp].d=*(double *)val;
     break;
   default:
-    *(char **)(inst+idp)=(char *)val;
+    inst[idp].ptr=val;
     break;
   }
   return 0;
@@ -2106,7 +2068,7 @@ putobj(struct objlist *obj, const char *vname,int id,void *val)
 {
   struct objlist *robj;
   struct narray *array;
-  char *instcur;
+  N_VALUE *instcur;
   int idp,idn,rcode,argc;
   char **argv;
 
@@ -2135,18 +2097,20 @@ putobj(struct objlist *obj, const char *vname,int id,void *val)
 
   switch (robj->table[idn].type) {
   case NSTR:
-  case NPOINTER:
   case NOBJ:
   case NSFUNC:
-    g_free(*(char **)(instcur+idp));
+    g_free(instcur[idp].str);
+    break;
+  case NPOINTER:
+    g_free(instcur[idp].ptr);
     break;
   case NIARRAY: case NIAFUNC:
   case NDARRAY: case NDAFUNC:
-    array=*(struct narray **)(instcur+idp);
+    array=instcur[idp].array;
     arrayfree(array);
     break;
   case NSARRAY: case NSAFUNC:
-    array=*(struct narray **)(instcur+idp);
+    array=instcur[idp].array;
     arrayfree2(array);
     break;
   default:
@@ -2162,21 +2126,21 @@ putobj(struct objlist *obj, const char *vname,int id,void *val)
   case NINT:
   case NCHAR:
   case NENUM:
-        *(int *)(instcur+idp)=*(int *)val;
-        break;
+    instcur[idp].i=*(int *)val;
+    break;
   case NDOUBLE:
-        *(double *)(instcur+idp)=*(double *)val;
-        break;
+    instcur[idp].d=*(double *)val;
+    break;
   default:
-        *(char **)(instcur+idp)=(char *)val;
-        break;
+    instcur[idp].ptr=val;
+    break;
   }
   obj->curinst=id;
   return id;
 }
 
 int 
-_getobj(struct objlist *obj, const char *vname,char *inst,void *val)
+_getobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val)
 {
   struct objlist *robj;
   int idp,idn;
@@ -2190,13 +2154,22 @@ _getobj(struct objlist *obj, const char *vname,char *inst,void *val)
   case NINT:  case NIFUNC:
   case NCHAR: case NCFUNC:
   case NENUM:
-    *(int *)val=*(int *)(inst+idp);
+    *(int *)val=inst[idp].i;
     break;
   case NDOUBLE: case NDFUNC:
-    *(double *)val=*(double *)(inst+idp);
+    *(double *)val=inst[idp].d;
+    break;
+  case NSTR: case NSFUNC:
+  case NOBJ:
+    *(char **)val = inst[idp].str;
+    break;
+  case NIARRAY: case NIAFUNC:
+  case NSARRAY: case NSAFUNC:
+  case NDAFUNC: case NDARRAY:
+    *(struct narray **)val = inst[idp].array;
     break;
   default:
-    *(char **)val=*(char **)(inst+idp);
+    *(char **)val=inst[idp].ptr;
     break;
   }
   return 0;
@@ -2208,7 +2181,7 @@ getobj(struct objlist *obj, const char *vname,int id,
 /* getobj() returns id or -1 on error */
 {
   struct objlist *robj;
-  char *instcur;
+  N_VALUE *instcur;
   int i,idp,idn;
   int argc2,rcode;
   char **argv2;
@@ -2246,13 +2219,22 @@ getobj(struct objlist *obj, const char *vname,int id,
   case NINT: case NIFUNC:
   case NCHAR: case NCFUNC:
   case NENUM:
-    *(int *)val=*(int *)(instcur+idp);
+    *(int *)val=instcur[idp].i;
     break;
   case NDOUBLE: case NDFUNC:
-    *(double *)val=*(double *)(instcur+idp);
+    *(double *)val=instcur[idp].d;
+    break;
+  case NSTR: case NSFUNC:
+  case NOBJ:
+    *(char **)val = instcur[idp].str;
+    break;
+  case NIARRAY: case NIAFUNC:
+  case NSARRAY: case NSAFUNC:
+  case NDAFUNC: case NDARRAY:
+    *(struct narray **)val = instcur[idp].array;
     break;
   default:
-    *(char **)val=*(char **)(instcur+idp);
+    *(char **)val=instcur[idp].ptr;
     break;
   }
   obj->curinst=id;
@@ -2260,13 +2242,13 @@ getobj(struct objlist *obj, const char *vname,int id,
 }
 
 int 
-_exeparent(struct objlist *obj,const char *vname,char *inst,char *rval,
+_exeparent(struct objlist *obj,const char *vname,N_VALUE *inst,N_VALUE *rval,
                int argc,char **argv)
 /* _exeparent() returns errorlevel or -1 on error */
 {
   struct objlist *parent,*robj;
   int idn,idp,rcode;
-  char *rval2;
+  N_VALUE *rval2;
 
   if ((parent=obj->parent)==NULL) return 0;
   if ((idn=chkobjtblpos(parent,vname,&robj))==-1) return 0;
@@ -2281,7 +2263,7 @@ _exeparent(struct objlist *obj,const char *vname,char *inst,char *rval,
 }
 
 int 
-__exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv)
+__exeobj(struct objlist *obj,int idn,N_VALUE *inst,int argc,char **argv)
 /* __exeobj() returns errorlevel or -1 on error */
 {
   int rcode,idp;
@@ -2295,7 +2277,7 @@ __exeobj(struct objlist *obj,int idn,char *inst,int argc,char **argv)
 }
 
 int 
-_exeobj(struct objlist *obj,const char *vname,char *inst,int argc,char **argv)
+_exeobj(struct objlist *obj,const char *vname,N_VALUE *inst,int argc,char **argv)
 /* _exeobj() returns errorlevel or -1 on error */
 {
   struct objlist *robj;
@@ -2329,7 +2311,7 @@ exeobj(struct objlist *obj, const char *vname,int id,int argc,char **argv)
 /* exeobj() returns errorlevel or -1 on error */
 {
   struct objlist *robj;
-  char *instcur;
+  N_VALUE *instcur;
   int i,idn,idp,rcode;
   int argc2;
   char **argv2;
@@ -2449,7 +2431,7 @@ int
 moveobj(struct objlist *obj,int did,int sid)
 /* moveobj() returns id or -1 on error */
 {
-  char *dinstcur;
+  N_VALUE *dinstcur;
   int idp;
 
   idp = obj->idp;
@@ -2477,16 +2459,16 @@ moveobj(struct objlist *obj,int did,int sid)
     return -1;
   }
 
-  obj->curinst = * (int *) (dinstcur + idp);
-  return * (int *) (dinstcur + idp);
+  obj->curinst = dinstcur[idp].i;
+  return dinstcur[idp].i;
 }
 
 int 
 moveupobj(struct objlist *obj,int id)
 /* moveupobj() returns id or -1 on error */
 {
-  char *instcur,*instprev,*instcur2,*instprev2;
-  char *inst;
+  N_VALUE *instcur,*instprev,*instcur2,*instprev2;
+  N_VALUE *inst;
   int idp,nextp;
 
   if ((idp=obj->idp)==-1) {
@@ -2500,14 +2482,14 @@ moveupobj(struct objlist *obj,int id)
     return -1;
   }
   if (getobjprev(obj,id-1,&instcur2,&instprev2)==NULL) return -1;
-  inst=*(char **)(instcur+nextp);
+  inst=instcur[nextp].inst;
   if (instprev2==NULL) obj->root=instcur;
-  else *(char **)(instprev2+nextp)=instcur;
-  *(char **)(instcur+nextp)=instprev;
+  else instprev2[nextp].inst=instcur;
+  instcur[nextp].inst=instprev;
   if (instprev==NULL) obj->root=inst;
-  else *(char **)(instprev+nextp)=inst;
-  (*(int *)(instcur+idp))--;
-  (*(int *)(instprev+idp))++;
+  else instprev[nextp].inst=inst;
+  instcur[idp].i--;
+  instprev[idp].i++;
   obj->curinst=id-1;
   return id-1;
 }
@@ -2516,8 +2498,8 @@ int
 movetopobj(struct objlist *obj,int id)
 /* movetopobj() returns id or -1 on error */
 {
-  char *instcur,*instprev;
-  char *rinst,*pinst,*inst;
+  N_VALUE *instcur,*instprev;
+  N_VALUE *rinst,*pinst,*inst;
   int idp,nextp;
 
   if ((idp=obj->idp)==-1) {
@@ -2531,16 +2513,16 @@ movetopobj(struct objlist *obj,int id)
     return -1;
   }
   rinst=obj->root;
-  inst=*(char **)(instcur+nextp);
-  pinst=*(char **)(instprev+nextp);
+  inst=instcur[nextp].inst;
+  pinst=instprev[nextp].inst;
   obj->root=pinst;
-  *(char **)(instcur+nextp)=rinst;
-  *(char **)(instprev+nextp)=inst;
-  *(int *)(instcur+idp)=0;
+  instcur[nextp].inst=rinst;
+  instprev[nextp].inst=inst;
+  instcur[idp].i=0;
   instcur=rinst;
   while (instcur!=inst) {
-    (*(int *)(instcur+idp))++;
-    instcur=*(char **)(instcur+nextp);
+    instcur[idp].i++;
+    instcur=instcur[nextp].inst;
   }
   obj->curinst=0;
   return 0;
@@ -2550,8 +2532,8 @@ int
 movedownobj(struct objlist *obj,int id)
 /* movedownobj() returns id or -1 on error */
 {
-  char *instcur,*instprev;
-  char *ninst,*inst;
+  N_VALUE *instcur,*instprev;
+  N_VALUE *ninst,*inst;
   int idp,nextp,lid;
 
   if ((idp=obj->idp)==-1) {
@@ -2565,14 +2547,14 @@ movedownobj(struct objlist *obj,int id)
     error2(obj,ERRVALFOUND,"next");
     return -1;
   }
-  inst=*(char **)(instcur+nextp);
-  ninst=*(char **)(inst+nextp);
+  inst=instcur[nextp].inst;
+  ninst=inst[nextp].inst;
   if (instprev==NULL) obj->root=inst;
-  else *(char **)(instprev+nextp)=inst;
-  *(char **)(inst+nextp)=instcur;
-  *(char **)(instcur+nextp)=ninst;
-  (*(int *)(instcur+idp))++;
-  (*(int *)(inst+idp))--;
+  else instprev[nextp].inst=inst;
+  inst[nextp].inst=instcur;
+  instcur[nextp].inst=ninst;
+  instcur[idp].i++;
+  inst[idp].i--;
   obj->curinst=id+1;
   return id+1;
 }
@@ -2581,8 +2563,8 @@ int
 movelastobj(struct objlist *obj,int id)
 /* movelastobj() returns id or -1 on error */
 {
-  char *instcur,*instprev,*lastinst;
-  char *pinst,*inst;
+  N_VALUE *instcur,*instprev,*lastinst;
+  N_VALUE *pinst,*inst;
   int idp,nextp,lid;
 
   if ((idp=obj->idp)==-1) {
@@ -2597,17 +2579,17 @@ movelastobj(struct objlist *obj,int id)
     error2(obj,ERRVALFOUND,"next");
     return -1;
   }
-  inst=*(char **)(instcur+nextp);
+  inst=instcur[nextp].inst;
   if (instprev==NULL) pinst=obj->root;
-  else pinst=*(char **)(instprev+nextp);
-  *(char **)(lastinst+nextp)=pinst;
-  *(char **)(instcur+nextp)=NULL;
+  else pinst=instprev[nextp].inst;
+  lastinst[nextp].inst=pinst;
+  instcur[nextp].inst=NULL;
   if (instprev==NULL) obj->root=inst;
-  else *(char **)(instprev+nextp)=inst;
-  *(int *)(instcur+idp)=lid;
+  else instprev[nextp].inst=inst;
+  instcur[idp].i=lid;
   while (inst!=instcur) {
-    (*(int *)(inst+idp))--;
-    inst=*(char **)(inst+nextp);
+    inst[idp].i--;
+    inst=inst[nextp].inst;
   }
   obj->curinst=lid;
   return lid;
@@ -2617,9 +2599,9 @@ int
 exchobj(struct objlist *obj,int id1,int id2)
 /* exchobj() returns id or -1 on error */
 {
-  char *instcur1,*instprev1;
-  char *instcur2,*instprev2;
-  char *inst,*inst1,*inst2;
+  N_VALUE *instcur1,*instprev1;
+  N_VALUE *instcur2,*instprev2;
+  N_VALUE *inst,*inst1,*inst2;
   int idp,id,nextp;
 
   idp = obj->idp;
@@ -2642,38 +2624,38 @@ exchobj(struct objlist *obj,int id1,int id2)
     return -1;
   }
 
-  id = * (int *) (instcur1 + idp);
+  id = instcur1[idp].i;
 
-  * (int *) (instcur1 + idp) = * (int *) (instcur2 + idp);
-  * (int *) (instcur2 + idp) = id;
+  instcur1[idp].i = instcur2[idp].i;
+  instcur2[idp].i = id;
 
   if (instprev1 == NULL) {
     inst1 = obj->root;
   } else {
-    inst1 = *(char **) (instprev1 + nextp);
+    inst1 = instprev1[nextp].inst;
   }
 
   if (instprev2 == NULL) {
     inst2 = obj->root;
   } else {
-    inst2 = *(char **) (instprev2 + nextp);
+    inst2 = instprev2[nextp].inst;
   }
 
   if (instprev1 == NULL) {
     obj->root = inst2;
   } else {
-    * (char **) (instprev1 + nextp) = inst2;
+    instprev1[nextp].inst = inst2;
   }
 
   if (instprev2 == NULL) {
     obj->root = inst1;
   } else {
-    * (char **) (instprev2 + nextp) = inst1;
+    instprev2[nextp].inst = inst1;
   }
 
-  inst = * (char **) (instcur1 + nextp);
-  * (char **) (instcur1 + nextp) = * (char **) (instcur2 + nextp);
-  * (char **) (instcur2 + nextp) = inst;
+  inst = instcur1[nextp].inst;
+  instcur1[nextp].inst = instcur2[nextp].inst;
+  instcur2[nextp].inst = inst;
   obj->curinst = id2;
 
   return id2;
@@ -2682,21 +2664,21 @@ exchobj(struct objlist *obj,int id1,int id2)
 /* 
 char *saveobj(struct objlist *obj, int id)
 {
-  char *instcur,*instnew;
+  N_VALUE *instcur,*instnew;
 
   if ((instcur=getobjinst(obj,id))==NULL) return NULL;
   if ((instnew=g_malloc(obj->size))==NULL) return NULL;
-  memcpy(instnew,instcur,obj->size);
+  memcpy(instnew,instcur,obj->size * sizeof(N_VALUE));
   return instnew;
 }
 
 char *restoreobj(struct objlist *obj,int id,char *image)
 {
-  char *instcur;
+  N_VALUE *instcur;
 
   if (obj==NULL) return NULL;
   if ((instcur=getobjinst(obj,id))==NULL) return NULL;
-  memcpy(instcur,image,obj->size);
+  memcpy(instcur,image,obj->size * sizeof(N_VALUE));
   g_free(image);
   return instcur;
 }
@@ -3174,7 +3156,7 @@ chgobjlist(char *olist)
   int id,len;
   struct objlist *obj;
   char *endptr;
-  char *inst;
+  N_VALUE *inst;
 
   list=olist;
   objname=getitok2(&list,&len,":");
@@ -3979,7 +3961,7 @@ sexeobj(char *arg)
 }
 
 void
-obj_do_tighten(struct objlist *obj, char *inst, const char *field)
+obj_do_tighten(struct objlist *obj, N_VALUE *inst, const char *field)
 {
   char *dest, *dest2;
   struct narray iarray;
@@ -4050,7 +4032,7 @@ getuniqname(struct objlist *obj,char *prefix,char sep)
 {
   int i,j,len;
   char *iname;
-  char *inst;
+  N_VALUE *inst;
   char *name;
   int c[10];
 

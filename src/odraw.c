@@ -98,7 +98,7 @@ char *intpchar[]={
 };
 
 static int 
-drawinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+drawinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int clip,redrawf,alpha;
 
@@ -113,7 +113,7 @@ drawinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 static int 
-drawdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+drawdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
@@ -121,7 +121,7 @@ drawdone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 
 static int 
-drawdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+drawdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int GC,hidden;
 
@@ -137,7 +137,7 @@ drawdraw(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 }
 
 int 
-pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+pathsave(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array,*array2;
   int anum;
@@ -186,7 +186,7 @@ pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   if (s == NULL) {
     goto errexit;
   }
-  g_string_append(s, * (char **) rval);
+  g_string_append(s, rval->str);
   g_string_append_c(s, '\t');
   g_string_append(s, argv[0]);
   g_string_append(s, "::file=");
@@ -200,19 +200,19 @@ pathsave(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
   g_free(valstr);
   g_string_append_c(s, '\n');
   g_free(name);
-  g_free(* (char **) rval);
-  * (char **) rval = g_string_free(s, FALSE);
+  g_free(rval->str);
+  rval->str = g_string_free(s, FALSE);
   return 0;
 
 errexit:
   g_free(name);
-  g_free(*(char **)rval);
-  *(char **)rval=NULL;
+  g_free(rval->str);
+  rval->str=NULL;
   return 1;
 }
 
 int
-clear_bbox(struct objlist *obj, char *inst)
+clear_bbox(struct objlist *obj, N_VALUE *inst)
 {
   struct narray *array;
 

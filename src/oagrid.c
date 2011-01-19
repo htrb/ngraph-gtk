@@ -51,7 +51,7 @@ static char *agriderrorlist[]={
 #define ERRNUM (sizeof(agriderrorlist) / sizeof(*agriderrorlist))
 
 static int 
-agridinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int wid1,wid2,wid3,dot;
   int r,g,b,br,bg,bb,ba;
@@ -88,7 +88,7 @@ agridinit(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
 
 
 static int 
-agriddone(struct objlist *obj,char *inst,char *rval,int argc,char **argv)
+agriddone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
@@ -163,7 +163,8 @@ get_grid_prm(struct objlist *obj, char *axisy,
 {
   struct narray iarray;
   int anum, id;
-  char *inst1, *raxis;
+  N_VALUE *inst1;
+  char *raxis;
   struct objlist *aobj;
 
   if (axisy == NULL) {
@@ -296,7 +297,7 @@ draw_grid_line(struct objlist *obj, int GC,
 }
 
 static int
-draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
+draw_background(struct objlist *obj, N_VALUE *inst, int GC, struct axis_pos *ax, struct axis_pos *ay)
 {
   int r, br, bg, bb, ba, pos[8];
 
@@ -327,7 +328,7 @@ draw_background(struct objlist *obj, char *inst, int GC, struct axis_pos *ax, st
 }
 
 static int 
-agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int GC, clip, zoom, back;
   int i, fr, fg, fb, fa, lm, tm, w, h, r;
@@ -395,7 +396,7 @@ agriddraw(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
 }
 
 static int 
-agridtight(struct objlist *obj, char *inst, char *rval, int argc, char **argv)
+agridtight(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   obj_do_tighten(obj, inst, "axis_x");
   obj_do_tighten(obj, inst, "axis_y");
