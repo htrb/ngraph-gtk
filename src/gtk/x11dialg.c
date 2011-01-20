@@ -1291,6 +1291,9 @@ _set_color(GtkWidget *widget, struct objlist *obj, int id, char *prefix, char *p
 
   gtk_color_button_set_color(GTK_COLOR_BUTTON(w), &color);
   gtk_color_button_set_alpha(GTK_COLOR_BUTTON(w), (a & 0xffU) * 257);
+
+  snprintf(buf, sizeof(buf), "#%02X%02X%02X", r, g, b);
+  gtk_widget_set_tooltip_text(w, buf);
 }
 
 void

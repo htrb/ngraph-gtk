@@ -1551,13 +1551,15 @@ SetFileHidden(void)
 		 (struct narray *) &ifarray);
     if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
       a = TRUE;
-      for (i = 0; i <= lastinst; i++)
+      for (i = 0; i <= lastinst; i++) {
 	putobj(fobj, "hidden", i, &a);
+      }
       num = arraynum(&farray);
       array = (int *) arraydata(&farray);
       a = FALSE;
-      for (i = 0; i < num; i++)
+      for (i = 0; i < num; i++) {
 	putobj(fobj, "hidden", array[i], &a);
+      }
     } else {
       arraydel(&ifarray);
       arraydel(&farray);

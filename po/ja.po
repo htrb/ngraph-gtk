@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-01-14 18:55+0900\n"
-"PO-Revision-Date: 2010-09-01 13:58+0900\n"
+"POT-Creation-Date: 2011-01-20 17:09+0900\n"
+"PO-Revision-Date: 2011-01-20 17:11+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja_JP\n"
@@ -113,8 +113,8 @@ msgid "Axis"
 msgstr "軸"
 
 #: src/gtk/x11axis.c:341 src/gtk/x11axis.c:1381 src/gtk/x11axis.c:1565
-#: src/gtk/x11axis.c:1990 src/gtk/x11lgnd.c:946 src/gtk/x11lgnd.c:964
-#: src/gtk/x11lgnd.c:973 src/gtk/x11lgndx.c:414
+#: src/gtk/x11axis.c:1990 src/gtk/x11lgnd.c:961 src/gtk/x11lgnd.c:979
+#: src/gtk/x11lgnd.c:988 src/gtk/x11lgndx.c:414
 msgid "_Color:"
 msgstr "色(_C):"
 
@@ -202,12 +202,12 @@ msgstr "スケール"
 msgid "Draw _Baseline"
 msgstr "軸基線描画(_B)"
 
-#: src/gtk/x11axis.c:1373 src/gtk/x11file.c:2853 src/gtk/x11lgnd.c:919
+#: src/gtk/x11axis.c:1373 src/gtk/x11file.c:2858 src/gtk/x11lgnd.c:934
 #: src/gtk/x11lgndx.c:398
 msgid "Line _Style:"
 msgstr "線種(_S):"
 
-#: src/gtk/x11axis.c:1377 src/gtk/x11file.c:2857 src/gtk/x11lgndx.c:402
+#: src/gtk/x11axis.c:1377 src/gtk/x11file.c:2862 src/gtk/x11lgndx.c:402
 msgid "_Line Width:"
 msgstr "線幅(_W):"
 
@@ -280,7 +280,7 @@ msgstr "個数(_N):"
 msgid "_Align:"
 msgstr "位置合わせ(_A):"
 
-#: src/gtk/x11axis.c:1796 src/gtk/x11axis.c:2109 src/gtk/x11lgnd.c:1545
+#: src/gtk/x11axis.c:1796 src/gtk/x11axis.c:2109 src/gtk/x11lgnd.c:1558
 msgid "_Direction:"
 msgstr "方向(_D):"
 
@@ -336,7 +336,7 @@ msgstr "フォーマット"
 msgid "_Point:"
 msgstr "ポイント(_P):"
 
-#: src/gtk/x11axis.c:1964 src/gtk/x11lgnd.c:1516
+#: src/gtk/x11axis.c:1964 src/gtk/x11lgnd.c:1529
 msgid "_Space:"
 msgstr "文字間(_S):"
 
@@ -344,7 +344,7 @@ msgstr "文字間(_S):"
 msgid "_Script size:"
 msgstr "スクリプトサイズ(_S):"
 
-#: src/gtk/x11axis.c:1972 src/gtk/x11lgnd.c:1525 src/gtk/x11opt.c:846
+#: src/gtk/x11axis.c:1972 src/gtk/x11lgnd.c:1538 src/gtk/x11opt.c:846
 msgid "_Font:"
 msgstr "フォント(_F):"
 
@@ -429,24 +429,24 @@ msgstr ""
 msgid "Confirm"
 msgstr "確認"
 
-#: src/gtk/x11commn.c:1615
+#: src/gtk/x11commn.c:1617
 msgid "Ngraph.ini is not found."
 msgstr "Ngraph.ini が見つかりません."
 
-#: src/gtk/x11commn.c:1618
+#: src/gtk/x11commn.c:1620
 msgid "Ngraph.ini is write protected."
 msgstr "Ngraph.ini に書き込めませんでした."
 
-#: src/gtk/x11commn.c:1633
+#: src/gtk/x11commn.c:1635
 #, c-format
 msgid "Install `Ngraph.ini' to %s ?"
 msgstr "/%s に 'Ngraph.ini' をインストールしますか?"
 
-#: src/gtk/x11commn.c:1637
+#: src/gtk/x11commn.c:1639
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1801
+#: src/gtk/x11commn.c:1803
 msgid "error"
 msgstr "エラー"
 
@@ -787,7 +787,7 @@ msgstr "ユーザ定義"
 msgid "Fit %d"
 msgstr "フィット %d"
 
-#: src/gtk/x11file.c:1357 src/gtk/x11file.c:2820 src/gtk/x11lgnd.c:1105
+#: src/gtk/x11file.c:1357 src/gtk/x11file.c:2825 src/gtk/x11lgnd.c:1120
 msgid "_Type:"
 msgstr "タイプ(_T):"
 
@@ -815,7 +815,7 @@ msgstr "補完(_I)"
 msgid "Draw X range"
 msgstr "X 描画範囲"
 
-#: src/gtk/x11file.c:1445 src/gtk/x11file.c:2962
+#: src/gtk/x11file.c:1445 src/gtk/x11file.c:2967
 msgid "_Load"
 msgstr "読込(_L)"
 
@@ -871,121 +871,121 @@ msgstr "_X 変換数式:"
 msgid "_Y math:"
 msgstr "_Y 変換数式:"
 
-#: src/gtk/x11file.c:2367 src/gtk/x11file.c:3139
+#: src/gtk/x11file.c:2382 src/gtk/x11file.c:3144
 #, c-format
 msgid "Create"
 msgstr "作成"
 
-#: src/gtk/x11file.c:2825 src/gtk/x11lgnd.c:1470
+#: src/gtk/x11file.c:2830 src/gtk/x11lgnd.c:1483
 msgid "_Mark:"
 msgstr "マーク(_M):"
 
-#: src/gtk/x11file.c:2830
+#: src/gtk/x11file.c:2835
 msgid "_Curve:"
 msgstr "曲線(_C):"
 
-#: src/gtk/x11file.c:2838
+#: src/gtk/x11file.c:2843
 msgid "_Color 1:"
 msgstr "色 1(_C):"
 
-#: src/gtk/x11file.c:2842
+#: src/gtk/x11file.c:2847
 msgid "_Color 2:"
 msgstr "色 2(_C):"
 
-#: src/gtk/x11file.c:2861 src/gtk/x11lgnd.c:1475
+#: src/gtk/x11file.c:2866 src/gtk/x11lgnd.c:1488
 msgid "_Size:"
 msgstr "サイズ(_S):"
 
-#: src/gtk/x11file.c:2865 src/gtk/x11lgnd.c:928 src/gtk/x11lgndx.c:406
+#: src/gtk/x11file.c:2870 src/gtk/x11lgnd.c:943 src/gtk/x11lgndx.c:406
 msgid "_Miter:"
 msgstr "マイター(_M):"
 
-#: src/gtk/x11file.c:2869 src/gtk/x11lgnd.c:937 src/gtk/x11lgndx.c:410
+#: src/gtk/x11file.c:2874 src/gtk/x11lgnd.c:952 src/gtk/x11lgndx.c:410
 msgid "_Join:"
 msgstr "ジョイン(_J):"
 
-#: src/gtk/x11file.c:2872
+#: src/gtk/x11file.c:2877
 msgid "_Clip"
 msgstr "クリップ(_C)"
 
-#: src/gtk/x11file.c:2907
+#: src/gtk/x11file.c:2912
 msgid "_X column:"
 msgstr "_X カラム:"
 
-#: src/gtk/x11file.c:2912
+#: src/gtk/x11file.c:2917
 msgid "_X axis:"
 msgstr "_X 軸:"
 
-#: src/gtk/x11file.c:2922
+#: src/gtk/x11file.c:2927
 msgid "_Y column:"
 msgstr "_Y カラム:"
 
-#: src/gtk/x11file.c:2927
+#: src/gtk/x11file.c:2932
 msgid "_Y axis:"
 msgstr "_Y 軸:"
 
-#: src/gtk/x11file.c:2954
+#: src/gtk/x11file.c:2959
 msgid "_Plot"
 msgstr "プロット(_P)"
 
-#: src/gtk/x11file.c:2958
+#: src/gtk/x11file.c:2963
 msgid "_Math"
 msgstr "変換数式(_M)"
 
-#: src/gtk/x11file.c:3071
+#: src/gtk/x11file.c:3076
 msgid "This file contain invalid UTF-8 strings."
 msgstr "ファイルに不正な UTF-8 文字列が含まれています."
 
-#: src/gtk/x11file.c:3086
+#: src/gtk/x11file.c:3091
 #, c-format
 msgid "Data %d"
 msgstr "データ %d"
 
-#: src/gtk/x11file.c:3090
+#: src/gtk/x11file.c:3095
 msgid "_Apply all"
 msgstr "全てに適用(_A)"
 
-#: src/gtk/x11file.c:3097 src/gtk/x11merge.c:138 src/gtk/x11print.c:168
+#: src/gtk/x11file.c:3102 src/gtk/x11merge.c:138 src/gtk/x11print.c:168
 msgid "_File:"
 msgstr "ファイル名(_F):"
 
-#: src/gtk/x11file.c:3100
+#: src/gtk/x11file.c:3105
 msgid "_Load settings"
 msgstr "ファイルから設定読込(_L)"
 
-#: src/gtk/x11file.c:3105 src/gtk/x11menu.c:1026
+#: src/gtk/x11file.c:3110 src/gtk/x11menu.c:1026
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:3116 src/gtk/x11view.c:952
+#: src/gtk/x11file.c:3121 src/gtk/x11view.c:952
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:3120 src/gtk/x11view.c:953
+#: src/gtk/x11file.c:3125 src/gtk/x11view.c:953
 msgid "_Move"
 msgstr "移動(_M)"
 
-#: src/gtk/x11file.c:3140
+#: src/gtk/x11file.c:3145
 msgid "_Fit:"
 msgstr "フィット(_F):"
 
-#: src/gtk/x11file.c:3400
+#: src/gtk/x11file.c:3405
 msgid "Data new"
 msgstr "新規作成"
 
-#: src/gtk/x11file.c:3443
+#: src/gtk/x11file.c:3448
 msgid "Data open"
 msgstr "データを開く"
 
-#: src/gtk/x11file.c:4451 src/gtk/x11file.c:4537
+#: src/gtk/x11file.c:4456 src/gtk/x11file.c:4542
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4462 src/gtk/x11file.c:4544
+#: src/gtk/x11file.c:4467 src/gtk/x11file.c:4549
 msgid "Color 2"
 msgstr "色 2"
 
-#: src/gtk/x11file.c:4470
+#: src/gtk/x11file.c:4475
 msgid "Type"
 msgstr "タイプ"
 
@@ -1138,143 +1138,148 @@ msgstr "マーク"
 msgid "text"
 msgstr "テキスト"
 
-#: src/gtk/x11lgnd.c:719
+#: src/gtk/x11lgnd.c:212
+#, c-format
+msgid "X:%.2f Y:%.2f %s%stype:%-2d"
+msgstr "X:%.2f Y:%.2f %s%sタイプ:%-2d"
+
+#: src/gtk/x11lgnd.c:734
 msgid "_Line width:"
 msgstr "線幅(_W):"
 
-#: src/gtk/x11lgnd.c:880
+#: src/gtk/x11lgnd.c:895
 msgid "_Points:"
 msgstr "座標(_P):"
 
-#: src/gtk/x11lgnd.c:955
+#: src/gtk/x11lgnd.c:970
 msgid "_Color2:"
 msgstr "色2(_C):"
 
-#: src/gtk/x11lgnd.c:1082
+#: src/gtk/x11lgnd.c:1097
 #, c-format
 msgid "Legend line %d"
 msgstr "直線 %d"
 
-#: src/gtk/x11lgnd.c:1110
+#: src/gtk/x11lgnd.c:1125
 msgid "_Interpolation:"
 msgstr "補完法(_I):"
 
-#: src/gtk/x11lgnd.c:1118 src/gtk/x11lgnd.c:1361
+#: src/gtk/x11lgnd.c:1133 src/gtk/x11lgnd.c:1376
 msgid "_Close path"
 msgstr "パスを閉じる(_C)"
 
-#: src/gtk/x11lgnd.c:1123
+#: src/gtk/x11lgnd.c:1138
 msgid "_Arrow:"
 msgstr "矢印(_A):"
 
-#: src/gtk/x11lgnd.c:1154 src/gtk/x11lgnd.c:1252 src/gtk/x11lgnd.c:1371
+#: src/gtk/x11lgnd.c:1169 src/gtk/x11lgnd.c:1267 src/gtk/x11lgnd.c:1386
 msgid "_Stroke"
 msgstr "ストローク(_S)"
 
-#: src/gtk/x11lgnd.c:1167
+#: src/gtk/x11lgnd.c:1182
 msgid "fill _Rule:"
 msgstr "ルール(_R):"
 
-#: src/gtk/x11lgnd.c:1171 src/gtk/x11lgnd.c:1266 src/gtk/x11lgnd.c:1386
+#: src/gtk/x11lgnd.c:1186 src/gtk/x11lgnd.c:1281 src/gtk/x11lgnd.c:1401
 msgid "_Fill"
 msgstr "塗りつぶし(_F)"
 
-#: src/gtk/x11lgnd.c:1210
+#: src/gtk/x11lgnd.c:1225
 #, c-format
 msgid "Legend rectangle %d"
 msgstr "矩形 %d"
 
-#: src/gtk/x11lgnd.c:1232
+#: src/gtk/x11lgnd.c:1247
 msgid "_Width:"
 msgstr "幅(_W):"
 
-#: src/gtk/x11lgnd.c:1236
+#: src/gtk/x11lgnd.c:1251
 msgid "_Height:"
 msgstr "高さ(_H):"
 
-#: src/gtk/x11lgnd.c:1305
+#: src/gtk/x11lgnd.c:1320
 #, c-format
 msgid "Legend arc %d"
 msgstr "円 %d"
 
-#: src/gtk/x11lgnd.c:1343
+#: src/gtk/x11lgnd.c:1358
 msgid "_Angle1:"
 msgstr "開始角(_A):"
 
-#: src/gtk/x11lgnd.c:1347
+#: src/gtk/x11lgnd.c:1362
 msgid "_Angle2:"
 msgstr "円弧角(_A):"
 
-#: src/gtk/x11lgnd.c:1350
+#: src/gtk/x11lgnd.c:1365
 msgid "_Pieslice"
 msgstr "扇型(_P)"
 
-#: src/gtk/x11lgnd.c:1437
+#: src/gtk/x11lgnd.c:1450
 #, c-format
 msgid "Legend mark %d"
 msgstr "マーク %d"
 
-#: src/gtk/x11lgnd.c:1512
+#: src/gtk/x11lgnd.c:1525
 msgid "_Pt:"
 msgstr "ポイント(_P):"
 
-#: src/gtk/x11lgnd.c:1521
+#: src/gtk/x11lgnd.c:1534
 msgid "_Script:"
 msgstr "スクリプトサイズ(_S):"
 
-#: src/gtk/x11lgnd.c:1548
+#: src/gtk/x11lgnd.c:1561
 msgid "_Raw"
 msgstr "_Raw"
 
-#: src/gtk/x11lgnd.c:1659
+#: src/gtk/x11lgnd.c:1672
 #, c-format
 msgid "Legend text %d"
 msgstr "テキスト %d"
 
-#: src/gtk/x11lgnd.c:1689
+#: src/gtk/x11lgnd.c:1702
 msgid "_Text:"
 msgstr "テキスト(_T):"
 
-#: src/gtk/x11lgnd.c:2280
+#: src/gtk/x11lgnd.c:2298
 #, c-format
 msgid "points:%-3d %s%s%s%s"
 msgstr "点:%-3d %s%s%s%s"
 
-#: src/gtk/x11lgnd.c:2282
+#: src/gtk/x11lgnd.c:2300
 msgid "style:"
 msgstr "線種:"
 
-#: src/gtk/x11lgnd.c:2283 src/gtk/x11lgnd.c:2372 src/gtk/x11lgnd.c:2389
+#: src/gtk/x11lgnd.c:2301 src/gtk/x11lgnd.c:2390 src/gtk/x11lgnd.c:2407
 msgid "custom"
 msgstr "任意"
 
-#: src/gtk/x11lgnd.c:2352
+#: src/gtk/x11lgnd.c:2370
 msgid "fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:2354
+#: src/gtk/x11lgnd.c:2372
 msgid "arrow:"
 msgstr "矢印:"
 
-#: src/gtk/x11lgnd.c:2368
+#: src/gtk/x11lgnd.c:2386
 #, c-format
 msgid "w:%.2f h:%.2f%s%s%s"
 msgstr "幅:%.2f 高さ:%.2f%s%s%s"
 
-#: src/gtk/x11lgnd.c:2371 src/gtk/x11lgnd.c:2388
+#: src/gtk/x11lgnd.c:2389 src/gtk/x11lgnd.c:2406
 msgid "  style:"
 msgstr "  線種:"
 
-#: src/gtk/x11lgnd.c:2373 src/gtk/x11lgnd.c:2390
+#: src/gtk/x11lgnd.c:2391 src/gtk/x11lgnd.c:2408
 msgid "  fill"
 msgstr "  塗りつぶし"
 
-#: src/gtk/x11lgnd.c:2399
+#: src/gtk/x11lgnd.c:2417
 #, c-format
 msgid "%s%stype:%-2d"
 msgstr "%s%sタイプ:%-2d"
 
-#: src/gtk/x11lgnd.c:2401
+#: src/gtk/x11lgnd.c:2419
 #, c-format
 msgid "type:%-2d"
 msgstr "タイプ:%-2d"

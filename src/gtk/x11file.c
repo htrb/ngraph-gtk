@@ -2258,13 +2258,30 @@ MarkDialogCB(GtkWidget *w, gpointer client_data)
   gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
 }
 
+void
+button_set_mark_image(GtkWidget *w, int type)
+{
+  GtkWidget *img;
+  char buf[64];
+
+  if (type < 0 || type >= MARK_TYPE_NUM) {
+    type = 0;
+  }
+
+  if (NgraphApp.markpix[type]) {
+    img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
+    gtk_button_set_image(GTK_BUTTON(w), img);
+    snprintf(buf, sizeof(buf), "%02d", type);
+    gtk_widget_set_tooltip_text(w, buf);
+  }
+ }
+
 static void
 MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox,*vbox, *img;
+  GtkWidget *w, *hbox,*vbox;
   struct MarkDialog *d;
   int type;
-  char buf[16];
 #define COL 10
 
   d = (struct MarkDialog *) data;
@@ -2275,12 +2292,7 @@ MarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     for (type = 0; type < MARK_TYPE_NUM; type++) {
       w = gtk_toggle_button_new();
-      snprintf(buf, sizeof(buf), "%02d", type);
-      gtk_widget_set_tooltip_text(w, buf);
-      if (NgraphApp.markpix[type]) {
-	img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
-	gtk_button_set_image(GTK_BUTTON(w), img);
-      }
+      button_set_mark_image(w, type);
       g_signal_connect(w, "clicked", G_CALLBACK(MarkDialogCB), d);
       d->toggle[type] = w;
       if (type % COL == 0) {
@@ -2312,6 +2324,9 @@ MarkDialogClose(GtkWidget *w, void *data)
 void
 MarkDialog(struct MarkDialog *data, int type)
 {
+  if (type < 0 || type >= MARK_TYPE_NUM) {
+    type = 0;
+  }
   data->SetupWindow = MarkDialogSetup;
   data->CloseWindow = MarkDialogClose;
   data->Type = type;
@@ -2373,21 +2388,13 @@ static void
 plot_tab_setup_item(struct FileDialog *d, int id)
 {
   int a;
-  GtkWidget *img;
 
   SetWidgetFromObjField(d->type, d->Obj, id, "type");
 
   SetWidgetFromObjField(d->curve, d->Obj, id, "interpolation");
 
   getobj(d->Obj, "mark_type", id, 0, NULL, &a);
-  if (a < 0 || a >= MARK_TYPE_NUM)
-    a = 0;
-
-  if (NgraphApp.markpix[a]) {
-    img = gtk_image_new_from_pixmap(NgraphApp.markpix[a], NULL);
-    gtk_button_set_image(GTK_BUTTON(d->mark_btn), img);
-  }
-
+  button_set_mark_image(d->mark_btn, a);
   MarkDialog(&(d->mark), a);
 
   SetWidgetFromObjField(d->size, d->Obj, id, "mark_size");
@@ -2459,12 +2466,10 @@ static void
 FileDialogMark(GtkWidget *w, gpointer client_data)
 {
   struct FileDialog *d;
-  GtkWidget *img;
 
   d = (struct FileDialog *) client_data;
   DialogExecute(d->widget, &(d->mark));
-  img = gtk_image_new_from_pixmap(NgraphApp.markpix[d->mark.Type], NULL);
-  gtk_button_set_image(GTK_BUTTON(w), img);
+  button_set_mark_image(w, d->mark.Type);
 }
 
 static void

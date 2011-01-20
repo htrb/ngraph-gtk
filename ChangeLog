@@ -1,3 +1,27 @@
+2011-01-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_widget.c (show_color_sel): set tooltip text.
+
+	* src/gtk/x11lgnd.c (LegendMarkCB): added.
+	(CmMarkDel, CmMarkUpdate): use "LegendMarkCB".
+	(legend_dialog_setup_item, LegendMarkDialogMark): use
+	"button_set_mark_image()".
+	(CmLineUpdate, CmRectUpdate, CmArcUpdate, CmMarkUpdate)
+	(CmTextUpdate): don't use the variable "ret".
+
+	* src/gtk/x11dialg.c (_set_color): set tooltip text.
+
+	* src/gtk/x11file.c (button_set_mark_image): added.
+	(MarkDialogSetup, plot_tab_setup_item, FileDialogMark): use
+	"button_set_mark_image()".
+	(MarkDialog): check "type".
+
+	* src/gtk/x11commn.c (SetFileHidden): add braces after "for"
+	statement.
+
+	* src/gtk/x11merge.c (CmMergeUpdate): don't use the variable
+	"ret".
+
 2011-01-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.h (n_value, N_VALUE): added.

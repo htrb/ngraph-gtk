@@ -541,6 +541,14 @@ show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
   gtk_widget_destroy(dlg);
 
   if (r == GTK_RESPONSE_OK) {
+    char buf[64];
+    snprintf(buf, sizeof(buf),
+	     "#%02X%02X%02X",
+	     col.red >> 8,
+	     col.green >> 8,
+	     col.blue >> 8);
+    gtk_widget_set_tooltip_text(w, buf);
+
     gtk_color_button_set_color(button, &col);
     gtk_color_button_set_alpha(button, alpha);
   }

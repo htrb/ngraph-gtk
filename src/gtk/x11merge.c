@@ -268,7 +268,7 @@ CmMergeUpdate(void)
 {
   struct narray farray;
   struct objlist *obj;
-  int i, j, ret;
+  int i, j;
   int *array, num;
 
   if (Menulock || Globallock)
@@ -283,7 +283,7 @@ CmMergeUpdate(void)
     array = (int *) arraydata(&farray);
     for (i = 0; i < num; i++) {
       MergeDialog(&DlgMerge, obj, array[i], -1);
-      if ((ret = DialogExecute(TopLevel, &DlgMerge)) == IDDELETE) {
+      if (DialogExecute(TopLevel, &DlgMerge) == IDDELETE) {
 	delobj(obj, array[i]);
 	set_graph_modified();
 	for (j = i + 1; j < num; j++)

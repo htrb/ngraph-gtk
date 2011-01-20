@@ -199,6 +199,28 @@ LegendArcCB(struct objlist *obj, int id)
 }
 
 static char *
+LegendMarkCB(struct objlist *obj, int id)
+{
+  int x, y, type;
+  char *s;
+
+  getobj(obj, "x", id, 0, NULL, &x);
+  getobj(obj, "y", id, 0, NULL, &y);
+  getobj(obj, "type", id, 0, NULL, &type);
+  if (type >= 0 && type < MarkCharNum) {
+    char *mc = MarkChar[type];
+    s = g_strdup_printf(_("X:%.2f Y:%.2f %s%stype:%-2d"),
+			x / 100.0, y / 100.0,
+			mc,
+			(mc[0]) ? " " : "",
+			type);
+  } else {
+    s = g_strdup_printf("X:%.2f Y:%.2f", x / 100.0, y / 100.0);
+  }
+  return s;
+}
+
+static char *
 LegendTextCB(struct objlist *obj, int id)
 {
   char *text, *s;
@@ -448,16 +470,9 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 
   if (d->type) {
     int a;
-    GtkWidget *img;
 
     getobj(d->Obj, "type", id, 0, NULL, &a);
-    if (a < 0)
-      a = 89;
-    if (a > 89)
-      a = 89;
-
-    img = gtk_image_new_from_pixmap(NgraphApp.markpix[a], NULL);
-    gtk_button_set_image(GTK_BUTTON(d->type), img);
+    button_set_mark_image(d->type, a);
     MarkDialog(&d->mark, a);
   }
 
@@ -1417,12 +1432,10 @@ static void
 LegendMarkDialogMark(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
-  GtkWidget *img;
 
   d = (struct LegendDialog *) client_data;
   DialogExecute(d->widget, &(d->mark));
-  img = gtk_image_new_from_pixmap(NgraphApp.markpix[d->mark.Type], NULL);
-  gtk_button_set_image(GTK_BUTTON(w), img);
+  button_set_mark_image(w, d->mark.Type);
 }
 
 static void
@@ -1786,7 +1799,7 @@ CmLineUpdate(void)
 {
   struct narray array;
   struct objlist *obj;
-  int i, j, ret;
+  int i, j;
   int *data, num;
 
   if (Menulock || Globallock)
@@ -1801,11 +1814,12 @@ CmLineUpdate(void)
     data = (int *) arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendArrowDialog(&DlgLegendArrow, obj, data[i]);
-      if ((ret = DialogExecute(TopLevel, &DlgLegendArrow)) == IDDELETE) {
+      if (DialogExecute(TopLevel, &DlgLegendArrow) == IDDELETE) {
 	delobj(obj, data[i]);
 	set_graph_modified();
-	for (j = i + 1; j < num; j++)
+	for (j = i + 1; j < num; j++) {
 	  data[j]--;
+	}
       }
     }
     LegendWinUpdate(TRUE);
@@ -1858,7 +1872,7 @@ CmRectUpdate(void)
 {
   struct narray array;
   struct objlist *obj;
-  int i, j, ret;
+  int i, j;
   int *data, num;
 
   if (Menulock || Globallock)
@@ -1873,11 +1887,12 @@ CmRectUpdate(void)
     data = (int *) arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendRectDialog(&DlgLegendRect, obj, data[i]);
-      if ((ret = DialogExecute(TopLevel, &DlgLegendRect)) == IDDELETE) {
+      if (DialogExecute(TopLevel, &DlgLegendRect) == IDDELETE) {
 	delobj(obj, data[i]);
 	set_graph_modified();
-	for (j = i + 1; j < num; j++)
+	for (j = i + 1; j < num; j++) {
 	  data[j]--;
+	}
       }
     }
     LegendWinUpdate(TRUE);
@@ -1930,7 +1945,7 @@ CmArcUpdate(void)
 {
   struct narray array;
   struct objlist *obj;
-  int i, j, ret;
+  int i, j;
   int *data, num;
 
   if (Menulock || Globallock)
@@ -1945,11 +1960,12 @@ CmArcUpdate(void)
     data = (int *) arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendArcDialog(&DlgLegendArc, obj, data[i]);
-      if ((ret = DialogExecute(TopLevel, &DlgLegendArc)) == IDDELETE) {
+      if (DialogExecute(TopLevel, &DlgLegendArc) == IDDELETE) {
 	delobj(obj, data[i]);
 	set_graph_modified();
-	for (j = i + 1; j < num; j++)
+	for (j = i + 1; j < num; j++) {
 	  data[j]--;
+	}
       }
     }
     LegendWinUpdate(TRUE);
@@ -1984,7 +2000,7 @@ CmMarkDel(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendArcCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendMarkCB, (struct narray *) &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
     data = (int *) arraydata(&array);
@@ -2002,7 +2018,7 @@ CmMarkUpdate(void)
 {
   struct narray array;
   struct objlist *obj;
-  int i, j, ret;
+  int i, j;
   int *data, num;
 
   if (Menulock || Globallock)
@@ -2011,17 +2027,18 @@ CmMarkUpdate(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendArcCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendMarkCB, (struct narray *) &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
     data = (int *) arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendMarkDialog(&DlgLegendMark, obj, data[i]);
-	set_graph_modified();
-      if ((ret = DialogExecute(TopLevel, &DlgLegendMark)) == IDDELETE) {
+      if (DialogExecute(TopLevel, &DlgLegendMark) == IDDELETE) {
 	delobj(obj, data[i]);
-	for (j = i + 1; j < num; j++)
+	set_graph_modified();
+	for (j = i + 1; j < num; j++) {
 	  data[j]--;
+	}
       }
     }
     LegendWinUpdate(TRUE);
@@ -2074,7 +2091,7 @@ CmTextUpdate(void)
 {
   struct narray array;
   struct objlist *obj;
-  int i, j, ret;
+  int i, j;
   int *data, num;
 
   if (Menulock || Globallock)
@@ -2089,11 +2106,12 @@ CmTextUpdate(void)
     data = (int *) arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendTextDialog(&DlgLegendText, obj, data[i]);
-      if ((ret = DialogExecute(TopLevel, &DlgLegendText)) == IDDELETE) {
+      if (DialogExecute(TopLevel, &DlgLegendText) == IDDELETE) {
 	delobj(obj, data[i]);
 	set_graph_modified();
-	for (j = i + 1; j < num; j++)
+	for (j = i + 1; j < num; j++) {
 	  data[j]--;
+	}
       }
     }
     LegendWinUpdate(TRUE);
