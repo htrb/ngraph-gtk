@@ -441,10 +441,10 @@ textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     if (_exeobj(obj,"bbox",inst,0,NULL)) return 1;
     _getobj(obj,"bbox",inst,&array);
     if (arraynum(array)<4) return 1;
-    bminx=*(int *)arraynget(array,0);
-    bminy=*(int *)arraynget(array,1);
-    bmaxx=*(int *)arraynget(array,2);
-    bmaxy=*(int *)arraynget(array,3);
+    bminx=arraynget_int(array,0);
+    bminy=arraynget_int(array,1);
+    bmaxx=arraynget_int(array,2);
+    bmaxy=arraynget_int(array,3);
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)

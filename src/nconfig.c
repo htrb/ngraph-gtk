@@ -283,7 +283,7 @@ replaceconfig_match(FILE *fp, FILE *fptmp, struct narray *iconf, struct narray *
 	  out = TRUE;
 	  num2 = arraynum(iconf);
 	  for (j = 0; j < num2; j++) {
-	    if (i == *(int *)arraynget(iconf, j))
+	    if (i == arraynget_int(iconf, j))
 	      break;
 	  }
 	  if (j == num2) {
@@ -364,7 +364,7 @@ flush:
   num = arraynum(conf);
   for (i=0;i<num;i++) {
     num2=arraynum(&iconf);
-    for (j=0;j<num2;j++) if (i==*(int *)arraynget(&iconf,j)) break;
+    for (j=0;j<num2;j++) if (i==arraynget_int(&iconf,j)) break;
     if (j==num2) {
       fputs(data[i],fptmp);
       fputs("\n",fptmp);

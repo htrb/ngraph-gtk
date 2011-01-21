@@ -1601,7 +1601,7 @@ mx_get_focused(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 
   sarray = (argc > 2) ? (struct narray *) argv[2] : NULL;
 
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
   for (i = 0; i < num; i++) {
     if (check_object_name(focus[i]->obj, sarray))
       continue;

@@ -1,3 +1,69 @@
+2011-01-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11graph.c (SwitchDialogSetupItem)
+	(switch_dialog_top_cb, switch_dialog_last_cb, SwitchDialogUp)
+	(SwitchDialogDown, SwitchDialogClose): use "arraynget_int()".
+	(SwitchDialogSetup): use "arraynget_str()".
+
+	* src/gtk/x11axis.c (AxisDialogFile): use "arraynget_double()".
+
+	* src/gtk/x11view.c (mouse_down_move_data, ViewUpdate)
+	(ViewCopyAxis): use "arraylast_int()".
+	(focus_new_insts, mask_selected_data, mouse_down_move_data): use
+	"arraynget_int()".
+	(Evaluate): use "arraynget_double()".
+
+	* src/gtk/x11file.c (FileDialogFit, FileWinFit): use
+	"arraylast_int()".
+	(move_tab_setup_item): use "arraynget_int()" and
+	"arraynget_double()".
+	(move_tab_set_value, mask_tab_setup_item): use "arraynget_int()".
+
+	* src/gtk/x11commn.c (AxisDel2, axis_move_each_obj, FitDel)
+	(FitCopy, FitClear, FileAutoScale): use "arraylast_int()".
+
+	* src/gtk/ox11dlg.c (dlgradio, dlgcombo): use "arraylast_int()".
+	(get_sarray_argument): use "arraynget_int()".
+
+	* src/ofile.c (opendata, get_fit_obj_id, f2dgetcoord)
+	(f2dsettings, f2dbounding, f2dsave): use "arraylast_int()".
+
+	* src/oagrid.c (get_grid_prm): use "arraylast_int()".
+
+	* src/otext.c (textmatch): use "arraynget_int()".
+
+	* src/oroot.c (obj_save_config_line_style): use "arraynget_int()".
+
+	* src/orect.c (rectmatch): use "arraynget_int()".
+
+	* src/opath.c (curvematch): use "arraynget_int()".
+
+	* src/omerge.c (mergematch): use "arraynget_int()".
+
+	* src/omark.c (markmatch): use "arraynget_int()".
+
+	* src/olegend.c (legendmatch): use "arraynget_int()".
+
+	* src/ogra2.c (gra2done, gra2disconnect): use "arraynget_str()".
+
+	* src/ogra.c (oGRAdisconnect, oGRAopen): use "arraynget_str()".
+	(oGRAopen): bug fix: use "arraylast_int()" instead of "*(char *)".
+
+	* src/oaxis.c (get_axis_box, axismatch2, axisautoscalefile): use
+	"arraynget_int()" and "arraynget_double()".
+	(get_reference_parameter, axisadjust): use "arraylast_int()".
+
+	* src/oarc.c (arcmatch): use "arraynget_int()".
+
+	* src/nconfig.c (replaceconfig_match, replaceconfig): use
+	"arraynget_int()".
+
+	* src/object.c (arraynget_int, arraynget_double, arraynget_str)
+	(arraylast_int): added.
+	(getvaluestr): use "arraynget_int()", "arraynget_double()" and
+	"arraynget_str()".
+	(obj_do_tighten): use "arraylast_int()".
+
 2011-01-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.c (show_color_sel): set tooltip text.

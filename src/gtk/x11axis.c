@@ -1009,7 +1009,7 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
     pmax = max;
     pinc = inc;
     num = arraynum(array) / 3;
-    data = (double *) arraydata(array);
+    data = arraydata(array);
     for (j = 0; j < num; j++) {
       if (data[0 + j * 3] != pmin) {
 	snprintf(buf, sizeof(buf), "%.15g", data[0 + j * 3]);
@@ -1101,7 +1101,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
     anum = chkobjlastinst(d->Obj);
 
     if ((num > 0) && (anum != 0)) {
@@ -1142,13 +1142,13 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 	g_free(buf);
 
 	if (arraynum(result) == 3) {
-	  snprintf(s, sizeof(s), "%.15g", *(double *) arraynget(result, 0));
+	  snprintf(s, sizeof(s), "%.15g", arraynget_double(result, 0));
 	  combo_box_entry_set_text(d->min, s);
 
-	  snprintf(s, sizeof(s), "%.15g", *(double *) arraynget(result, 1));
+	  snprintf(s, sizeof(s), "%.15g", arraynget_double(result, 1));
 	  combo_box_entry_set_text(d->max, s);
 
-	  snprintf(s, sizeof(s), "%.15g", *(double *) arraynget(result, 2));
+	  snprintf(s, sizeof(s), "%.15g", arraynget_double(result, 2));
 	  combo_box_entry_set_text(d->inc, s);
 	}
 	putobj(d->Obj, "type", d->Id, &type);
@@ -2576,7 +2576,7 @@ CmAxisZoom(void)
     SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
     if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
       num = arraynum(&farray);
-      array = (int *) arraydata(&farray);
+      array = arraydata(&farray);
       for (i = 0; i < num; i++) {
 	getobj(obj, "min", array[i], 0, NULL, &min);
 	getobj(obj, "max", array[i], 0, NULL, &max);
@@ -2645,7 +2645,7 @@ CmAxisClear(GtkWidget *w, gpointer p)
   SelectDialog(&DlgSelect, obj, AxisCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       axis_scale_push(obj, array[i]);
       exeobj(obj, "clear", array[i], 0, NULL);
@@ -2715,7 +2715,7 @@ CmAxisGridDel(void)
   SelectDialog(&DlgSelect, obj, GridCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, array[i]);
       set_graph_modified();
@@ -2742,7 +2742,7 @@ CmAxisGridUpdate(void)
   SelectDialog(&DlgSelect, obj, GridCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       GridDialog(&DlgGrid, obj, array[i]);
       if ((ret = DialogExecute(TopLevel, &DlgGrid)) == IDDELETE) {
@@ -2913,7 +2913,7 @@ CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
   SelectDialog(&DlgSelect, obj, AxisHistoryCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       argv[0] = NULL;
       exeobj(obj, "scale_pop", array[i], 0, argv);

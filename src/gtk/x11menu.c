@@ -949,7 +949,7 @@ show_edit_menu_cb(GtkWidget *w, gpointer user_data)
 
   num = check_focused_obj_type(&NgraphApp.Viewer, &type);
 
-  focus = (struct FocusObj **) arraydata(NgraphApp.Viewer.focusobj);
+  focus = arraydata(NgraphApp.Viewer.focusobj);
 
   if (num < 1) {
     state2 = state = FALSE;
@@ -1072,7 +1072,7 @@ show_file_menu_cb(GtkWidget *w, gpointer user_data)
   static GString *str = NULL;
 
   num = arraynum(Menulocal.datafilelist);
-  data = (char **) arraydata(Menulocal.datafilelist);
+  data = arraydata(Menulocal.datafilelist);
 
   if (RecentData)
     gtk_widget_set_sensitive(RecentData, num > 0);

@@ -253,7 +253,7 @@ CmMergeClose(void)
   SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, array[i]);
       set_graph_modified();
@@ -280,7 +280,7 @@ CmMergeUpdate(void)
   SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
     for (i = 0; i < num; i++) {
       MergeDialog(&DlgMerge, obj, array[i], -1);
       if (DialogExecute(TopLevel, &DlgMerge) == IDDELETE) {

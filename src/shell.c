@@ -3416,7 +3416,7 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 #endif
 
 	  env=MainEnviron;
-	  MainEnviron=(char **)newenviron;
+	  MainEnviron=newenviron;
 	  newenviron=NULL;
 	  sout=sin=NOHANDLE;
 	  if (istdin!=PPNO) {

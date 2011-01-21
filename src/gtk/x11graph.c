@@ -266,7 +266,7 @@ SwitchDialogSetupItem(GtkWidget *w, struct SwitchDialog *d)
   num = arraynum(&(d->idrawrable));
   for (j = 0; j < num; j++) {
     buf = (char **) arraynget(&(d->drawrable),
-			      *(int *) arraynget(&(d->idrawrable), j));
+			      arraynget_int(&(d->idrawrable), j));
     list_store_append(d->drawlist, &iter);
     list_store_set_string(d->drawlist, &iter, 0, _(*buf));
   }
@@ -287,7 +287,7 @@ SwitchDialogAdd(GtkWidget *w, gpointer client_data)
   selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->objlist));
   list = gtk_tree_selection_get_selected_rows(selected, NULL);
 
-  data = (int *) arraydata(&(d->idrawrable));
+  data = arraydata(&(d->idrawrable));
   num = arraynum(&(d->idrawrable));
 
   for (ptr = list; ptr; ptr = ptr->next) {
@@ -341,7 +341,7 @@ SwitchDialogInsert(GtkWidget *w, gpointer client_data)
     g_list_free(list);
   }
 
-  data = (int *) arraydata(&(d->idrawrable));
+  data = arraydata(&(d->idrawrable));
 
   num2 = arraynum(&(d->idrawrable));
   selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->objlist));
@@ -386,7 +386,7 @@ switch_dialog_top_cb(gpointer data, gpointer user_data)
     return;
 
   i = ary[0];
-  k = *(int *) arraynget(&(d->idrawrable), i);
+  k = arraynget_int(&(d->idrawrable), i);
   arrayndel(&(d->idrawrable), i);
   arrayins(&(d->idrawrable), &k, 0);
 }
@@ -407,7 +407,7 @@ switch_dialog_last_cb(gpointer data, gpointer user_data)
     return;
 
   i = ary[0];
-  k = *(int *) arraynget(&(d->idrawrable), i);
+  k = arraynget_int(&(d->idrawrable), i);
   arrayndel(&(d->idrawrable), i);
   arrayadd(&(d->idrawrable), &k);
 }
@@ -445,7 +445,7 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
       break;
     }
 
-    k = *(int *) arraynget(&(d->idrawrable), i);
+    k = arraynget_int(&(d->idrawrable), i);
     arrayndel(&(d->idrawrable), i);
     i--;
     arrayins(&(d->idrawrable), &k, i);
@@ -502,7 +502,7 @@ SwitchDialogDown(GtkWidget *w, gpointer client_data)
       break;
     }
 
-    k = *(int *) arraynget(&(d->idrawrable), i);
+    k = arraynget_int(&(d->idrawrable), i);
     arrayndel(&(d->idrawrable), i);
     i++;
     arrayins(&(d->idrawrable), &k, i);
@@ -777,7 +777,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
       continue;
     }
     for (k = 0; k < num2; k++) {
-      if (strcmp0(*(char **) arraynget(&(d->drawrable), k), obj->name) == 0) {
+      if (strcmp0(arraynget_str(&(d->drawrable), k), obj->name) == 0) {
 	break;
       }
     }
@@ -805,7 +805,7 @@ SwitchDialogClose(GtkWidget *w, void *data)
     num = arraynum(&(d->idrawrable));
     for (j = 0; j < num; j++) {
       buf = (char **) arraynget(&(d->drawrable),
-				*(int *) arraynget(&(d->idrawrable), j));
+				arraynget_int(&(d->idrawrable), j));
       if ((*buf) != NULL)
 	arrayadd2(&(Menulocal.drawrable), buf);
     }

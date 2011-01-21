@@ -1045,7 +1045,7 @@ CmPrintDataFile(void)
     return;
   }
 
-  array = (int *) arraydata(&farray);
+  array = arraydata(&farray);
   for (i = 0; i < num; i++) {
     if (array[i] < 0 || array[i] > onum)
       continue;

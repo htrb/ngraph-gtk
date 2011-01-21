@@ -1540,9 +1540,9 @@ move_tab_setup_item(struct FileDialog *d, int id)
 
   if (movenum > 0) {
     for (j = 0; j < movenum; j++) {
-      line = *(int *) arraynget(move, j);
-      x = *(double *) arraynget(movex, j);
-      y = *(double *) arraynget(movey, j);
+      line = arraynget_int(move, j);
+      x = arraynget_double(movex, j);
+      y = arraynget_double(movey, j);
 
       list_store_append(d->move.list, &iter);
       list_store_set_int(d->move.list, &iter, 0, line);
@@ -1768,7 +1768,7 @@ move_tab_set_value(struct FileDialog *d)
       movenum = arraynum(movey);
 
     for (j = 0; j < movenum; j++) {
-      line = *(int *) arraynget(move, j);
+      line = arraynget_int(move, j);
 
       if (line == a)
 	break;
@@ -1801,7 +1801,7 @@ mask_tab_setup_item(struct FileDialog *d, int id)
   getobj(d->Obj, "mask", id, 0, NULL, &mask);
   if ((masknum = arraynum(mask)) > 0) {
     for (j = 0; j < masknum; j++) {
-      line = *(int *) arraynget(mask, j);
+      line = arraynget_int(mask, j);
       list_store_append(d->mask.list, &iter);
       list_store_set_int(d->mask.list, &iter, 0, line);
     }
@@ -2503,7 +2503,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
 	return;
       }
     } else {
-      fitid = *(int *) arraylast(&iarray);
+      fitid = arraylast_int(&iarray);
     }
     arraydel(&iarray);
   }
@@ -3367,7 +3367,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
   fil = i;
   datafilelist = Menulocal.datafilelist;
   num = arraynum(datafilelist);
-  data = (char **) arraydata(datafilelist);
+  data = arraydata(datafilelist);
   if ((fil < 0) || (fil >= num) || (data[fil] == NULL))
     return;
   if ((obj = chkobject("file")) == NULL)
@@ -3487,7 +3487,7 @@ CmFileClose(void)
   SelectDialog(&DlgSelect, obj, FileCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
       delete_file_obj(array[i]);
       set_graph_modified();
@@ -3506,7 +3506,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
   if (num < 1)
     return 0;
 
-  array = (int *) arraydata(farray);
+  array = arraydata(farray);
   id0 = -1;
 
   for (i = 0; i < num; i++) {
@@ -3927,7 +3927,7 @@ FileWinFit(struct SubWin *d)
 	return;
       }
     } else {
-      fitid = *(int *) arraylast(&iarray);
+      fitid = arraylast_int(&iarray);
     }
     arraydel(&iarray);
   }

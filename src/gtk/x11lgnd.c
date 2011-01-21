@@ -160,7 +160,7 @@ LegendLineCB(struct objlist *obj, int id)
   enum_path_type = (char **) chkobjarglist(obj, "type");
   getobj(obj, "points", id, 0, NULL, &array);
   num = arraynum(array);
-  data = (int *) arraydata(array);
+  data = arraydata(array);
 
   if (num < 2) {
     s = g_strdup("------");
@@ -1577,7 +1577,7 @@ insert_selcted_char(GtkIconView *icon_view, GtkTreePath *path, gpointer user_dat
     return;
   }
 
-  gtk_tree_model_get(model,  &iter, 0, &ptr, -1);
+  gtk_tree_model_get(model, &iter, 0, &ptr, -1);
 
   entry = GTK_EDITABLE(user_data);
   pos = gtk_editable_get_position(entry);
@@ -1781,10 +1781,10 @@ CmLineDel(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendLineCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, data[i]);
       set_graph_modified();
@@ -1808,10 +1808,10 @@ CmLineUpdate(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendLineCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendLineCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendArrowDialog(&DlgLegendArrow, obj, data[i]);
       if (DialogExecute(TopLevel, &DlgLegendArrow) == IDDELETE) {
@@ -1854,10 +1854,10 @@ CmRectDel(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendRectCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendRectCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, data[i]);
       set_graph_modified();
@@ -1881,10 +1881,10 @@ CmRectUpdate(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendRectCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendRectCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendRectDialog(&DlgLegendRect, obj, data[i]);
       if (DialogExecute(TopLevel, &DlgLegendRect) == IDDELETE) {
@@ -1927,10 +1927,10 @@ CmArcDel(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendArcCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendArcCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, data[i]);
       set_graph_modified();
@@ -1954,10 +1954,10 @@ CmArcUpdate(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendArcCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendArcCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendArcDialog(&DlgLegendArc, obj, data[i]);
       if (DialogExecute(TopLevel, &DlgLegendArc) == IDDELETE) {
@@ -2000,10 +2000,10 @@ CmMarkDel(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendMarkCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendMarkCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, data[i]);
       set_graph_modified();
@@ -2027,10 +2027,10 @@ CmMarkUpdate(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendMarkCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendMarkCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendMarkDialog(&DlgLegendMark, obj, data[i]);
       if (DialogExecute(TopLevel, &DlgLegendMark) == IDDELETE) {
@@ -2073,10 +2073,10 @@ CmTextDel(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendTextCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendTextCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = num - 1; i >= 0; i--) {
       delobj(obj, data[i]);
       set_graph_modified();
@@ -2100,10 +2100,10 @@ CmTextUpdate(void)
     return;
   if (chkobjlastinst(obj) == -1)
     return;
-  SelectDialog(&DlgSelect, obj, LegendTextCB, (struct narray *) &array, NULL);
+  SelectDialog(&DlgSelect, obj, LegendTextCB, &array, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&array);
-    data = (int *) arraydata(&array);
+    data = arraydata(&array);
     for (i = 0; i < num; i++) {
       LegendTextDialog(&DlgLegendText, obj, data[i]);
       if (DialogExecute(TopLevel, &DlgLegendText) == IDDELETE) {
@@ -2284,7 +2284,7 @@ get_points(char *buf, int len, struct objlist *obj, int id, int *x, int *y, int 
   struct narray *array;
 
   getobj(obj, "points", id, 0, NULL, &array);
-  points = (int *) arraydata(array);
+  points = arraydata(array);
   if (arraynum(array) < 2) {
     *x = 0;
     *y = 0;

@@ -155,7 +155,7 @@ obj_save_config_line_style(struct objlist *obj, N_VALUE *inst, char *field, stru
   j = 0;
   j += sprintf(buf, "%s=", field);
   for (i = 0; i < num; i++) {
-    j += sprintf(buf + j, "%d%s", *(int *) arraynget(iarray, i), (i == num - 1) ? "" : " ");
+    j += sprintf(buf + j, "%d%s", arraynget_int(iarray, i), (i == num - 1) ? "" : " ");
   }
   arrayadd(conf, &buf);
 }

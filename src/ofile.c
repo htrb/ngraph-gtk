@@ -355,7 +355,7 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   rval->val = exp->buf[1].val.val;
 
-  fp = (struct f2ddata *) math_equation_get_user_data(eq);
+  fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -418,7 +418,7 @@ file_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 
   rval->val = exp->buf[0].val.val;
 
-  fp = (struct f2ddata *) math_equation_get_user_data(eq);
+  fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -462,7 +462,7 @@ file_rgb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
 
   rval->val = exp->buf[2].val.val;
 
-  fp = (struct f2ddata *) math_equation_get_user_data(eq);
+  fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -533,7 +533,7 @@ file_hsb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
 
   rval->val = exp->buf[2].val.val;
 
-  fp = (struct f2ddata *) math_equation_get_user_data(eq);
+  fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -605,7 +605,7 @@ file_marksize(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 
   rval->val = exp->buf[0].val.val;
 
-  fp = (struct f2ddata *) math_equation_get_user_data(eq);
+  fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -630,7 +630,7 @@ file_marktype(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
 
   rval->val = exp->buf[0].val.val;
 
-  fp = (struct f2ddata *) math_equation_get_user_data(eq);
+  fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
@@ -757,7 +757,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
       error2(obj,ERRNOAXISINST,axisx);
       return NULL;
     }
-    id=*(int *)arraylast(&iarray);
+    id=arraylast_int(&iarray);
     arraydel(&iarray);
     if ((inst1=getobjinst(aobj,id))==NULL) return NULL;
     if (_getobj(aobj,"x",inst1,&axposx)) return NULL;
@@ -774,7 +774,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
 	if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
 	  anum=arraynum(&iarray);
 	  if (anum>0) {
-	    id=*(int *)arraylast(&iarray);
+	    id=arraylast_int(&iarray);
 	    arraydel(&iarray);
 	    if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
 	      _getobj(aobj,"min",inst1,&axmin);
@@ -825,7 +825,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
       error2(obj,ERRNOAXISINST,axisy);
       return NULL;
     }
-    id=*(int *)arraylast(&iarray);
+    id=arraylast_int(&iarray);
     arraydel(&iarray);
     if ((inst1=getobjinst(aobj,id))==NULL) return NULL;
     if (_getobj(aobj,"x",inst1,&ayposx)) return NULL;
@@ -842,7 +842,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
 	if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
 	  anum=arraynum(&iarray);
 	  if (anum>0) {
-	    id=*(int *)arraylast(&iarray);
+	    id=arraylast_int(&iarray);
 	    arraydel(&iarray);
 	    if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
 	      _getobj(aobj,"min",inst1,&aymin);
@@ -4828,7 +4828,7 @@ get_fit_obj_id(char *fit, struct objlist **fitobj, N_VALUE **inst)
     return -1 ;
   }
 
-  id = * (int *) arraylast(&iarray);
+  id = arraylast_int(&iarray);
   arraydel(&iarray);
 
   *inst = getobjinst(*fitobj, id);
@@ -5031,7 +5031,7 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
       arraydel(&iarray);
       return 1;
     }
-    id=*(int *)arraylast(&iarray);
+    id=arraylast_int(&iarray);
     arraydel(&iarray);
     if ((inst1=getobjinst(aobj,id))==NULL) return 1;
     if (_getobj(aobj,"x",inst1,&axposx)) return 1;
@@ -5048,7 +5048,7 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
         if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
           anum=arraynum(&iarray);
           if (anum>0) {
-            id=*(int *)arraylast(&iarray);
+            id=arraylast_int(&iarray);
             arraydel(&iarray);
             if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
               _getobj(aobj,"min",inst1,&axmin);
@@ -5091,7 +5091,7 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
       arraydel(&iarray);
       return 1;
     }
-    id=*(int *)arraylast(&iarray);
+    id=arraylast_int(&iarray);
     arraydel(&iarray);
     if ((inst1=getobjinst(aobj,id))==NULL) return 1;
     if (_getobj(aobj,"x",inst1,&ayposx)) return 1;
@@ -5108,7 +5108,7 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
         if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
           anum=arraynum(&iarray);
           if (anum>0) {
-            id=*(int *)arraylast(&iarray);
+            id=arraylast_int(&iarray);
             arraydel(&iarray);
             if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
               _getobj(aobj,"min",inst1,&aymin);
@@ -5759,7 +5759,7 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
               arrayinit(&iarray2,sizeof(int));
               if (!getobjilist(s,&aobj,&iarray2,FALSE,NULL)) {
                 if (arraynum(&iarray2)>=1) {
-                  aid=*(int *)arraylast(&iarray2);
+                  aid=arraylast_int(&iarray2);
                   putobj(aobj,"min",aid,&f1);
                   putobj(aobj,"max",aid,&f2);
                   putobj(aobj,"inc",aid,&f3);
@@ -5781,7 +5781,7 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
               arrayinit(&iarray2,sizeof(int));
               if (!getobjilist(s,&aobj,&iarray2,FALSE,NULL)) {
                 if (arraynum(&iarray2)>=1) {
-                  aid=*(int *)arraylast(&iarray2);
+                  aid=arraylast_int(&iarray2);
                   putobj(aobj,"type",aid,&i);
                 }
               }
@@ -6640,7 +6640,7 @@ f2dbounding(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     if (anum2<1) {
       arraydel(&iarray2);
     } else {
-      id=*(int *)arraylast(&iarray2);
+      id=arraylast_int(&iarray2);
       arraydel(&iarray2);
       for (i=0;i<anum;i++) if (adata[i]==id) break;
       if (i!=anum) {
@@ -6671,7 +6671,7 @@ f2dbounding(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     anum2=arraynum(&iarray2);
     if (anum2<1) arraydel(&iarray2);
     else {
-      id=*(int *)arraylast(&iarray2);
+      id=arraylast_int(&iarray2);
       arraydel(&iarray2);
       for (i=0;i<anum;i++) if (adata[i]==id) break;
       if (i!=anum) {
@@ -6738,7 +6738,7 @@ f2dsave(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     return pathsave(obj, inst, rval, argc, argv);
   }
 
-  id = * (int *) arraylast(&iarray);
+  id = arraylast_int(&iarray);
   arraydel(&iarray);
   if (getobj(fitobj, "save", id, 0, NULL, &fitsave) == -1) {
     return 1;

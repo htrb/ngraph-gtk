@@ -231,7 +231,7 @@ CopyFocusedObjects(void)
   if (n < 1)
     return 1;
 
-  focus = (struct FocusObj **) arraydata(focus_array);
+  focus = arraydata(focus_array);
 
   str = g_string_sized_new(256);
   if (str == NULL)
@@ -309,7 +309,7 @@ focus_new_insts(struct objlist *parent, struct narray *array)
   ocur = parent->child;
   while (chkobjparent(ocur) == parent) {
     instnum = chkobjlastinst(ocur);
-    prev_instnum = * (int *) arraynget(array, 0);
+    prev_instnum = arraynget_int(array, 0);
     arrayndel(array, 0);
     if (chkobjfield(ocur, "bbox") == 0) {
       for (i = prev_instnum + 1; i <= instnum; i++) {
@@ -1325,7 +1325,7 @@ ViewerWinFileUpdate(int x1, int y1, int x2, int y2, int err)
   if ((snum = arraynum(sarray)) == 0)
     goto End;
 
-  sdata = (char **) arraydata(sarray);
+  sdata = arraydata(sarray);
 
   snprintf(mes, sizeof(mes), _("Searching for data."));
   SetStatusBar(mes);
@@ -1364,7 +1364,7 @@ mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
   struct narray *mask;
 
   for (i = 0; i < selnum; i++) {
-    sel = *(int *) arraynget(sel_list, i);
+    sel = arraynget_int(sel_list, i);
     getobj(fileobj, "mask", EvalList[sel].id, 0, NULL, &mask);
 
     if (mask == NULL) {
@@ -1374,11 +1374,11 @@ mask_selected_data(struct objlist *fileobj, int selnum, struct narray *sel_list)
 
     masknum = arraynum(mask);
 
-    if (masknum == 0 || (* (int *) arraynget(mask, masknum - 1)) < EvalList[sel].line) {
+    if (masknum == 0 || (arraynget_int(mask, masknum - 1)) < EvalList[sel].line) {
       arrayadd(mask, &(EvalList[sel].line));
       exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
       set_graph_modified();
-    } else if ((* (int *) arraynget(mask, 0)) > EvalList[sel].line) {
+    } else if ((arraynget_int(mask, 0)) > EvalList[sel].line) {
       arrayins(mask, &(EvalList[sel].line), 0);
       exeobj(fileobj, "modified", EvalList[sel].id, 0, NULL);
       set_graph_modified();
@@ -1448,7 +1448,7 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
 
   ProgressDialogCreate(_("Evaluating"));
 
-  sdata = (char **) arraydata(sarray);
+  sdata = arraydata(sarray);
   tot = 0;
 
   for (i = 1; i < snum; i++) {
@@ -1463,9 +1463,9 @@ Evaluate(int x1, int y1, int x2, int y2, int err)
 	for (j = 0; j < evalnum; j++) {
 	  if (tot >= limit) break;
 	  tot++;
-	  line = *(double *) arraynget(eval, j * 3 + 0);
-	  dx = *(double *) arraynget(eval, j * 3 + 1);
-	  dy = *(double *) arraynget(eval, j * 3 + 2);
+	  line = arraynget_double(eval, j * 3 + 0);
+	  dx = arraynget_double(eval, j * 3 + 1);
+	  dy = arraynget_double(eval, j * 3 + 2);
 	  EvalList[tot - 1].id = id;
 	  EvalList[tot - 1].line = nround(line);
 	  EvalList[tot - 1].x = dx;
@@ -1529,7 +1529,7 @@ Trimming(int x1, int y1, int x2, int y2)
     vy2 = y1 - y2;
 
     num = arraynum(&farray);
-    array = (int *) arraydata(&farray);
+    array = arraydata(&farray);
 
     for (i = 0; i < num; i++) {
       id = array[i];
@@ -1647,7 +1647,7 @@ Match(char *objname, int x1, int y1, int x2, int y2, int err)
 
   ignorestdio(&save);
 
-  sdata = (char **) arraydata(sarray);
+  sdata = arraydata(sarray);
 
   r = 0;
   for (i = 1; i < snum; i++) {
@@ -1792,7 +1792,7 @@ AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
   _exeobj(obj, "bbox", inst, 0, NULL);
   _getobj(obj, "bbox", inst, &abbox);
   bboxnum = arraynum(abbox);
-  bbox = (int *) arraydata(abbox);
+  bbox = arraydata(abbox);
   if (bboxnum >= 4) {
     zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -1826,7 +1826,7 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy)
   *minx = *miny = *maxx = *maxy = 0;
 
   num = arraynum(d->focusobj);
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
 
   inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
   if (inst) {
@@ -1834,7 +1834,7 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy)
     _getobj(focus[0]->obj, "bbox", inst, &abbox);
 
     bboxnum = arraynum(abbox);
-    bbox = (int *) arraydata(abbox);
+    bbox = arraydata(abbox);
 
     if (bboxnum >= 4) {
       *minx = bbox[0];
@@ -1850,7 +1850,7 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy)
       _getobj(focus[i]->obj, "bbox", inst, &abbox);
 
       bboxnum = arraynum(abbox);
-      bbox = (int *) arraydata(abbox);
+      bbox = arraydata(abbox);
 
       if (bboxnum >= 4) {
 	if (bbox[0] < *minx)
@@ -1923,7 +1923,7 @@ ShowFocusFrame(GdkGC *gc)
   gdk_gc_set_function(gc, GDK_XOR);
 
   num = arraynum(d->focusobj);
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
 
   if (num > 0) {
     GetFocusFrame(&x1, &y1, &x2, &y2, d->FrameOfsX, d->FrameOfsY);
@@ -1968,7 +1968,7 @@ ShowFocusFrame(GdkGC *gc)
 	_getobj(focus[i]->obj, "bbox", inst, &abbox);
 
 	bboxnum = arraynum(abbox);
-	bbox = (int *) arraydata(abbox);
+	bbox = arraydata(abbox);
 
 	if (bboxnum >= 4) {
 	  x1 = coord_conv_x((bbox[0] + d->FrameOfsX), zoom, d);
@@ -1994,7 +1994,7 @@ ShowFocusFrame(GdkGC *gc)
       _getobj(focus[i]->obj, "bbox", inst, &abbox);
 
       bboxnum = arraynum(abbox);
-      bbox = (int *) arraydata(abbox);
+      bbox = arraydata(abbox);
 
       for (j = 4; j < bboxnum; j += 2) {
 	x1 = coord_conv_x((bbox[j] + d->FrameOfsX), zoom, d);
@@ -2034,7 +2034,7 @@ AlignFocusedObj(int align)
     return;
   }
 
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
 
   if (num == 1) {
     maxx = Menulocal.PaperWidth;
@@ -2060,7 +2060,7 @@ AlignFocusedObj(int align)
     _getobj(focus[i]->obj, "bbox", inst, &abbox);
 
     bboxnum = arraynum(abbox);
-    bbox = (int *) arraydata(abbox);
+    bbox = arraydata(abbox);
 
     if (bboxnum < 4) {
       continue;
@@ -2149,7 +2149,7 @@ RotateFocusedObj(int direction)
 
   angle = (direction == ROTATE_CLOCKWISE) ? 27000 : 9000;
 
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
 
   PaintLock = TRUE;
 
@@ -2195,7 +2195,7 @@ FlipFocusedObj(enum FLIP_DIRECTION dir)
     return;
   }
 
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
 
   PaintLock = TRUE;
 
@@ -2351,7 +2351,7 @@ ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
   gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
   num = arraynum(d->focusobj);
 
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
   zoom = Menulocal.PaperZoom / 10000.0;
 
   if (num != 1)
@@ -2365,7 +2365,7 @@ ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
   _getobj(focus[0]->obj, "bbox", inst, &abbox);
 
   bboxnum = arraynum(abbox);
-  bbox = (int *) arraydata(abbox);
+  bbox = arraydata(abbox);
 
   frame = FALSE;
 
@@ -2407,7 +2407,7 @@ ShowPoints(GdkGC *gc)
   gdk_gc_set_function(gc, GDK_XOR);
 
   num = arraynum(d->points);
-  po = (struct Point **) arraydata(d->points);
+  po = arraydata(d->points);
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -2696,7 +2696,7 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
   selnum = arraynum(&SelList);
 
   for (i = 0; i < selnum; i++) {
-    sel = *(int *) arraynget(&SelList, i);
+    sel = arraynget_int(&SelList, i);
 
     if (getobj(fileobj, "axis_x", EvalList[sel].id, 0, NULL, &axis) == -1)
       goto ErrEnd;
@@ -2707,7 +2707,7 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
       ax = -1;
     } else {
       anum = arraynum(&iarray);
-      ax = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
+      ax = (anum < 1) ? -1 : (arraylast_int(&iarray));
       arraydel(&iarray);
     }
 
@@ -2720,7 +2720,7 @@ mouse_down_move_data(TPoint *point, struct Viewer *d)
       ay = -1;
     } else {
       anum = arraynum(&iarray);
-      ay = (anum < 1) ? -1 : (*(int *) arraylast(&iarray));
+      ay = (anum < 1) ? -1 : (arraylast_int(&iarray));
       arraydel(&iarray);
     }
 
@@ -3479,7 +3479,7 @@ create_legend3(struct Viewer *d, GdkGC *dc)
   d->Capture = FALSE;
 
   num = arraynum(d->points);
-  pdata = (struct Point **) arraydata(d->points);
+  pdata = arraydata(d->points);
 
   if (num >= 3) {
     if (d->Mode == RectB) {
@@ -3554,7 +3554,7 @@ create_legendx(struct Viewer *d, GdkGC *dc)
 
   d->Capture = FALSE;
   num = arraynum(d->points);
-  pdata = (struct Point **) arraydata(d->points);
+  pdata = arraydata(d->points);
 
   if (num >= 3) {
     obj = chkobject("path");
@@ -3613,7 +3613,7 @@ create_single_axis(struct Viewer *d, GdkGC *dc)
   d->Capture = FALSE;
 
   num = arraynum(d->points);
-  pdata = (struct Point **) arraydata(d->points);
+  pdata = arraydata(d->points);
 
   if (num >= 3) {
     obj = chkobject("axis");
@@ -3684,7 +3684,7 @@ create_axis(struct Viewer *d, GdkGC *dc)
 
   d->Capture = FALSE;
   num = arraynum(d->points);
-  pdata = (struct Point **) arraydata(d->points);
+  pdata = arraydata(d->points);
 
   if (num >= 3) {
     obj = chkobject("axis");
@@ -4034,7 +4034,7 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
   if (num > 1)
     return cursor;
 
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
   inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
   if (inst == NULL)
     return cursor;
@@ -4045,7 +4045,7 @@ get_mouse_cursor_type(struct Viewer *d, int x, int y)
   _getobj(focus[0]->obj, "bbox", inst, &abbox);
 
   bboxnum = arraynum(abbox);
-  bbox = (int *) arraydata(abbox);
+  bbox = arraydata(abbox);
 
   for (j = 4; j < bboxnum; j += 2) {
     x1 = coord_conv_x((bbox[j] + d->FrameOfsX), zoom, d);
@@ -4986,7 +4986,7 @@ ViewerWinUpdate(int clear)
   }
   CheckPage();
   num = arraynum(d->focusobj);
-  focus = (struct FocusObj **) arraydata(d->focusobj);
+  focus = arraydata(d->focusobj);
   for (i = num - 1; i >= 0; i--) {
     if (chkobjoid(focus[i]->obj, focus[i]->oid) == -1)
       arrayndel2(d->focusobj, i);
@@ -5138,7 +5138,7 @@ Focus(struct objlist *fobj, int id, int add)
 
   ignorestdio(&save);
 
-  sdata = (char **) arraydata(sarray);
+  sdata = arraydata(sarray);
 
   for (i = 1; i < snum; i++) {
     dobj = getobjlist(sdata[i], &did, &dfield, NULL);
@@ -5682,7 +5682,7 @@ ViewUpdate(void)
 	if (((type == 's') || (type == 'f')) && findX && findY
 	    && !_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray)
 	    && ((snum = arraynum(sarray)) >= 0)) {
-	  sdata = (char **) arraydata(sarray);
+	  sdata = arraydata(sarray);
 
 	  for (j = 1; j < snum; j++) {
 	    if (((dobj = getobjlist(sdata[j], &did, &dfield, NULL)) != NULL)
@@ -5696,7 +5696,7 @@ ViewUpdate(void)
 		  if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
 		    if ((arraynum(&iarray) >= 1)
 			&& (obj == aobj)
-			&& (*(int *) arraylast(&iarray)
+			&& (arraylast_int(&iarray)
 			    == idx))
 		      matchx = TRUE;
 		  }
@@ -5708,7 +5708,7 @@ ViewUpdate(void)
 		  if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
 		    if ((arraynum(&iarray) >= 1)
 			&& (obj == aobj)
-			&& (*(int *) arraylast(&iarray)
+			&& (arraylast_int(&iarray)
 			    == idy))
 		      matchy = TRUE;
 		  }
@@ -6016,7 +6016,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
     if (((type == 's') || (type == 'f')) && findX && findY
 	&& !_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray)
 	&& ((snum = arraynum(sarray)) >= 0)) {
-      sdata = (char **) arraydata(sarray);
+      sdata = arraydata(sarray);
       for (j = 1; j < snum; j++) {
 	dobj = getobjlist(sdata[j], &did, &dfield, NULL);
 	if (dobj == NULL || dobj != chkobject("axisgrid"))
@@ -6035,8 +6035,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	  if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
 	    if ((arraynum(&iarray) >= 1)
 		&& (obj == aobj)
-		&& (*(int *)
-		    arraylast(&iarray) == idx))
+		&& (arraylast_int(&iarray) == idx))
 	      matchx = TRUE;
 	  }
 	  arraydel(&iarray);
@@ -6046,8 +6045,7 @@ ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 	  if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
 	    if ((arraynum(&iarray) >= 1)
 		&& (obj == aobj)
-		&& (*(int *)
-		    arraylast(&iarray) == idy))
+		&& (arraylast_int(&iarray) == idy))
 	      matchy = TRUE;
 	  }
 	  arraydel(&iarray);
@@ -6260,7 +6258,7 @@ ViewCopy(void)
   num = arraynum(d->focusobj);
 
   for (i = 0; i < num; i++) {
-    focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+    focus = * (struct FocusObj **) arraynget(d->focusobj, i);
     if (focus == NULL)
       continue;
 

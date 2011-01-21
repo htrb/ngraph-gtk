@@ -198,7 +198,7 @@ get_sarray_argument(struct narray *sarray)
 
   n = arraynum(&iarray);
   for (j = 0; j < n; j++) {
-    id = * (int *) arraynget(&iarray, j);
+    id = arraynget_int(&iarray, j);
     if (getobj(saobj, "num", id, 0, NULL, &m) == -1)
       continue;
 
@@ -230,7 +230,7 @@ static int
 dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *title, *caption;
-  int locksave, r, *ptr, x, y, ret;
+  int locksave, r, x, y, ret;
   struct narray *iarray, *sarray;
 
   sarray = get_sarray_argument((struct narray *) argv[2]);
@@ -260,12 +260,7 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     y = -1;
   }
 
-  ptr = (int *) arraylast(iarray);
-  if (ptr) {
-    r = *ptr;
-  } else {
-    r = -1;
-  }
+  r = arraylast_int(iarray);
 
   ret = DialogRadio(DLGTopLevel, (title) ? title : "Select", caption, sarray, &r, &x, &y);
   _putobj(obj, "x", inst, &x);
@@ -284,7 +279,7 @@ dlgradio(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 static int
 dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int locksave, *ptr, sel, ret, x, y;
+  int locksave, sel, ret, x, y;
   char *r, *title, *caption;
   struct narray *iarray, *sarray;
 
@@ -318,12 +313,7 @@ dlgcombo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     y = -1;
   }
 
-  ptr = (int *) arraylast(iarray);
-  if (ptr) {
-    sel = *ptr;
-  } else {
-    sel = -1;
-  }
+  sel = arraylast_int(iarray);
 
   if (strcmp(argv[1], "combo") == 0) {
     ret = DialogCombo(DLGTopLevel, (title) ? title : "Select", caption, sarray, sel, &r, &x, &y);

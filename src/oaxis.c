@@ -686,10 +686,10 @@ get_axis_box(struct objlist *obj, N_VALUE *inst, int *minx, int *miny, int *maxx
   if (axisbbox2(obj, inst, &rval2))
     return 1;
 
-  *minx = * (int *) arraynget(rval2, 0);
-  *miny = * (int *) arraynget(rval2, 1);
-  *maxx = * (int *) arraynget(rval2, 2);
-  *maxy = * (int *) arraynget(rval2, 3);
+  *minx = arraynget_int(rval2, 0);
+  *miny = arraynget_int(rval2, 1);
+  *maxx = arraynget_int(rval2, 2);
+  *maxy = arraynget_int(rval2, 3);
   arrayfree(rval2);
 
   return 0;
@@ -860,10 +860,10 @@ axismatch2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       arrayfree(array);
       return 1;
     }
-    bminx=*(int *)arraynget(array,0);
-    bminy=*(int *)arraynget(array,1);
-    bmaxx=*(int *)arraynget(array,2);
-    bmaxy=*(int *)arraynget(array,3);
+    bminx=arraynget_int(array,0);
+    bminy=arraynget_int(array,1);
+    bmaxx=arraynget_int(array,2);
+    bmaxy=arraynget_int(array,3);
     if ((minx<=bminx) && (bminx<=maxx)
      && (minx<=bmaxx) && (bmaxx<=maxx)
      && (miny<=bminy) && (bminy<=maxy)
@@ -2647,7 +2647,7 @@ get_reference_parameter(struct objlist *obj, N_VALUE *inst,  struct axis_config 
 
   anum=arraynum(&iarray);
   if (anum>0) {
-    id=*(int *)arraylast(&iarray);
+    id=arraylast_int(&iarray);
     arraydel(&iarray);
     if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
       get_axis_parameter(aobj, inst1, aconf);
@@ -2943,7 +2943,7 @@ axisadjust(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
      arraydel(&iarray);
      return 1;
   }
-  id=*(int *)arraylast(&iarray);
+  id=arraylast_int(&iarray);
   arraydel(&iarray);
   if ((inst1=getobjinst(aobj,id))==NULL) return 1;
   if (_getobj(aobj,"min",inst1,&min)) return 1;
@@ -3162,8 +3162,8 @@ axisautoscalefile(struct objlist *obj,N_VALUE *inst,char *fileobj,double *rmin,d
     getobj(fobj,"bounding",fdata[i],1,argv2,&minmax);
 
     if (arraynum(minmax)>=2) {
-      min1=*(double *)arraynget(minmax,0);
-      max1=*(double *)arraynget(minmax,1);
+      min1=arraynget_double(minmax,0);
+      max1=arraynget_double(minmax,1);
       if (!set) {
         min=min1;
         max=max1;
@@ -3287,7 +3287,7 @@ axisgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   if (num < 1)
     return 1;
 
-  data = (int *)arraydata(iarray);
+  data = arraydata(iarray);
 
   switch (data[0]) {
   case AXIS_TYPE_FRAME:
@@ -3361,7 +3361,7 @@ axisgrouppos(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
   if (anum < 1)
     return 1;
 
-  data = (int *)arraydata(iarray);
+  data = arraydata(iarray);
 
   switch (data[0]) {
   case AXIS_TYPE_FRAME:
@@ -3471,7 +3471,7 @@ axisdefgrouping(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   if (anum < 1)
     return 1;
 
-  data = (int *)arraydata(iarray);
+  data = arraydata(iarray);
 
   switch (data[0]) {
   case AXIS_TYPE_FRAME:

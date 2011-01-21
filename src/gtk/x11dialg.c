@@ -649,7 +649,7 @@ SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
   getobj(Obj, field, Id, 0, NULL, &array);
   n = arraynum(array);
-  points = (int *) arraydata(array);
+  points = arraydata(array);
   for (i = 0; i < n / 2; i++) {
     gtk_list_store_append(list, &iter);
     gtk_list_store_set(list, &iter,
@@ -1001,7 +1001,7 @@ get_style_string(struct objlist *obj, int id, char *field)
 
   getobj(obj, field, id, 0, NULL, &array);
   stylenum = arraynum(array);
-  style = (int *) arraydata(array);
+  style = arraydata(array);
   for (j = 0; j < CLINESTYLE; j++) {
     if (stylenum == FwLineStyle[j].num) {
       s = FwLineStyle[j].list;
@@ -1032,7 +1032,7 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
 
   getobj(Obj, field, Id, 0, NULL, &array);
   n = arraynum(array);
-  points = (int *) arraydata(array);
+  points = arraydata(array);
   pos = 0;
   for (i = 0; i < n / 2; i++) {
     l = snprintf(buf, sizeof(buf), "%.2f %.2f ", points[i * 2] / 100.0, points[i * 2 + 1] / 100.0);
@@ -1055,7 +1055,7 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
 
   getobj(Obj, field, Id, 0, NULL, &array);
   n = arraynum(array);
-  points = (int *) arraydata(array);
+  points = arraydata(array);
   for (i = 0; i < n; i++) {
     g_string_append_printf(str, "%.2f ", points[i] / 100.0);
   }

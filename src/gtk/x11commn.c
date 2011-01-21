@@ -303,7 +303,7 @@ AxisDel2(int id)
 	  if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
 	    anum = arraynum(&iarray);
 	    if (anum > 0) {
-	      aid1 = *(int *) arraylast(&iarray);
+	      aid1 = arraylast_int(&iarray);
 	      if (aid1 == id)
 		findx = TRUE;
 	    }
@@ -315,7 +315,7 @@ AxisDel2(int id)
 	  if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
 	    anum = arraynum(&iarray);
 	    if (anum > 0) {
-	      aid1 = *(int *) arraylast(&iarray);
+	      aid1 = arraylast_int(&iarray);
 	      if (aid1 == id)
 		findy = TRUE;
 	    }
@@ -335,7 +335,7 @@ AxisDel2(int id)
       if (!getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
 	anum = arraynum(&iarray);
 	if ((anum > 0) && (spc == 1)) {
-	  aid1 = *(int *) arraylast(&iarray);
+	  aid1 = arraylast_int(&iarray);
 	  if (aid1 > id)
 	    aid1--;
 	} else
@@ -348,7 +348,7 @@ AxisDel2(int id)
       if (!getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
 	anum = arraynum(&iarray);
 	if ((anum > 0) && (spc == 1)) {
-	  aid2 = *(int *) arraylast(&iarray);
+	  aid2 = arraylast_int(&iarray);
 	  if (aid2 > id)
 	    aid2--;
 	} else
@@ -449,7 +449,7 @@ axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
 
   anum = arraynum(&iarray);
   if (anum > 0 && spc == 1) {
-    aid = *(int *) arraylast(&iarray);
+    aid = arraylast_int(&iarray);
     if (aid == id1) {
       aid = id2;
     } else {
@@ -504,7 +504,7 @@ AxisNameToGroup(void)		/* this function may exist for compatibility with older v
   arrayinit(&iarray, sizeof(int));
   for (id = 0; id <= num; id++) {
     anum = arraynum(&iarray);
-    data = (int *) arraydata(&iarray);
+    data = arraydata(&iarray);
     for (j = 0; j < anum; j++)
       if (data[j] == id)
 	break;
@@ -683,7 +683,7 @@ FitDel(struct objlist *obj, int id)
     if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL) == 0) {
       idnum = arraynum(&iarray);
       if (idnum >= 1) {
-	fitid = *(int *) arraylast(&iarray);
+	fitid = arraylast_int(&iarray);
 	delobj(fitobj, fitid);
       }
     }
@@ -709,14 +709,14 @@ FitCopy(struct objlist *obj, int did, int sid)
     if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL) == 0) {
       idnum = arraynum(&iarray);
       if (idnum >= 1) {
-	fitid = *(int *) arraylast(&iarray);
+	fitid = arraylast_int(&iarray);
 	if ((getobj(obj, "fit", did, 0, NULL, &fit) >= 0)
 	    && (fit != NULL)) {
 	  arrayinit(&iarray2, sizeof(int));
 	  if (getobjilist(fit, &fitobj, &iarray2, FALSE, NULL) == 0) {
 	    idnum2 = arraynum(&iarray2);
 	    if (idnum2 >= 1) {
-	      id2 = *(int *) arraylast(&iarray2);
+	      id2 = arraylast_int(&iarray2);
 	    } else
 	      id2 = newobj(fitobj);
 	  } else
@@ -760,7 +760,7 @@ FitClear(void)
       if (getobjilist(fit, &fitobj, &iarray, FALSE, NULL) == 0) {
 	anum = arraynum(&iarray);
 	if (anum >= 1) {
-	  id = *(int *) arraylast(&iarray);
+	  id = arraylast_int(&iarray);
 	  getobj(obj, "hidden", i, 0, NULL, &hidden);
 	  if (!hidden)
 	    putobj(fitobj, "equation", id, NULL);
@@ -1362,7 +1362,7 @@ FileAutoScale(void)
       if (!getobjilist(ref, &aobj2, &iarray, FALSE, NULL)) {
 	anum2 = arraynum(&iarray);
 	if (anum2 > 0) {
-	  aid2 = *(int *) arraylast(&iarray);
+	  aid2 = arraylast_int(&iarray);
 	  arraydel(&iarray);
 	  inst = getobjinst(aobj2, aid2);
 	  if (inst) {
@@ -1453,7 +1453,7 @@ AddDataFileList(char *file)
     return;
   datafilelist = Menulocal.datafilelist;
   num = arraynum(datafilelist);
-  data = (char **) arraydata(datafilelist);
+  data = arraydata(datafilelist);
   for (i = 0; i < num; i++)
     if (strcmp0(data[i], file) == 0)
       break;
@@ -1555,7 +1555,7 @@ SetFileHidden(void)
 	putobj(fobj, "hidden", i, &a);
       }
       num = arraynum(&farray);
-      array = (int *) arraydata(&farray);
+      array = arraydata(&farray);
       a = FALSE;
       for (i = 0; i < num; i++) {
 	putobj(fobj, "hidden", array[i], &a);
@@ -1662,7 +1662,7 @@ SaveHistory(void)
   arrayinit(&conf, sizeof(char *));
 
   num = arraynum(Menulocal.datafilelist);
-  data = (char **) arraydata(Menulocal.datafilelist);
+  data = arraydata(Menulocal.datafilelist);
   for (i = 0; i < num; i++) {
     if (data[i]) {
       buf = g_strdup_printf("%s%s", data_history, data[i]);

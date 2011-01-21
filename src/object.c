@@ -639,6 +639,33 @@ arraynget(struct narray *array,unsigned int idx)
   return data+idx*base;
 }
 
+int
+arraynget_int(struct narray *array, unsigned int idx)
+{
+  void *ptr;
+
+  ptr = arraynget(array, idx);
+  return (ptr) ? * (int *) ptr : 0;
+}
+
+double
+arraynget_double(struct narray *array, unsigned int idx)
+{
+  void *ptr;
+
+  ptr = arraynget(array, idx);
+  return (ptr) ? * (double *) ptr : 0;
+}
+
+char *
+arraynget_str(struct narray *array, unsigned int idx)
+{
+  void *ptr;
+
+  ptr = arraynget(array, idx);
+  return (ptr) ? * (char **) ptr : NULL;
+}
+
 void *
 arraylast(struct narray *array)
 {
@@ -650,6 +677,15 @@ arraylast(struct narray *array)
   data=array->data;
   base=array->base;
   return data+(array->num-1)*base;
+}
+
+int
+arraylast_int(struct narray *array)
+{
+  void *ptr;
+
+  ptr = arraylast(array);
+  return (ptr) ? * (int *) ptr : 0;
 }
 
 static int
@@ -3256,7 +3292,7 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
       if (quote) len++;
       for (k=0;k<arraynum(array);k++) {
         if (k!=0) len+=1;
-        bval=*(char **)arraynget(array,k);
+        bval=arraynget_str(array,k);
         for (i=0;bval[i]!='\0';i++) {
           if ((bval[i]=='\'') && quote) len+=3;
           len++;
@@ -3305,8 +3341,8 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
     else {
       if (quote) j+=sprintf(s+j,"'");
       for (k=0;k<arraynum(array);k++) {
-        if (k!=0) j+=sprintf(s+j," %d",*(int *)arraynget(array,k));
-        else j+=sprintf(s+j,"%d",*(int *)arraynget(array,k));
+        if (k!=0) j+=sprintf(s+j," %d",arraynget_int(array,k));
+        else j+=sprintf(s+j,"%d",arraynget_int(array,k));
       }
       if (quote) j+=sprintf(s+j,"'");
     }
@@ -3317,8 +3353,8 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
     else {
       if (quote) j+=sprintf(s+j,"'");
       for (k=0;k<arraynum(array);k++) {
-        if (k!=0) j+=sprintf(s+j," %.15e",*(double *)arraynget(array,k));
-        else j+=sprintf(s+j,"%.15e",*(double *)arraynget(array,k));
+        if (k!=0) j+=sprintf(s+j," %.15e",arraynget_double(array,k));
+        else j+=sprintf(s+j,"%.15e",arraynget_double(array,k));
       }
       if (quote) j+=sprintf(s+j,"'");
     }
@@ -3330,7 +3366,7 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
       if (quote) j+=sprintf(s+j,"'");
       for (k=0;k<arraynum(array);k++) {
         if (k!=0) j+=sprintf(s+j," ");
-        bval=*(char **)arraynget(array,k);
+        bval=arraynget_str(array,k);
         for (i=0;bval[i]!='\0';i++) {
           if ((bval[i]=='\'') && quote) j+=sprintf(s+j,"'\\''");
           else j+=sprintf(s+j,"%c",bval[i]);
@@ -3978,7 +4014,7 @@ obj_do_tighten(struct objlist *obj, N_VALUE *inst, const char *field)
   if (! getobjilist(dest, &dobj, &iarray, FALSE, NULL)) {
     anum = arraynum(&iarray);
     if (anum > 0) {
-      id = * (int *) arraylast(&iarray);
+      id = arraylast_int(&iarray);
       if (getobj(dobj, "oid", id, 0, NULL, &oid) != -1) {
 	dest2 = (char *) g_malloc(strlen(chkobjectname(dobj)) + 10);
 	if (dest2) {

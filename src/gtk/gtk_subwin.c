@@ -43,7 +43,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
   int sel;
   char *file, *ext;
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   if (sel < 0 || sel > d->num)
@@ -78,7 +78,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   UnFocus();
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
@@ -147,7 +147,7 @@ toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
   GtkTreeIter iter;
   struct SubWin *d;
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
@@ -207,7 +207,7 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
 
   menu_lock(FALSE);
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   if (str == NULL || d->type == TypeLegendWin)
     return;
@@ -243,7 +243,7 @@ string_cb(GtkCellRenderer *renderer, gchar *path, gchar *str, gpointer user_data
 
   menu_lock(FALSE);
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   if (d->type == TypeLegendWin)
     return;
@@ -589,7 +589,7 @@ cb_show(GtkWidget *widget, gpointer user_data)
 {
   struct SubWin *d;
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   if (d->Win == NULL) return;
 
@@ -609,7 +609,7 @@ cb_destroy(GtkWidget *w, gpointer user_data)
 {
   struct SubWin *d;
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   d->Win = NULL;
 
@@ -886,7 +886,7 @@ popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer
 {
   struct SubWin *d;
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   gtk_window_get_position(GTK_WINDOW(d->Win), x, y);
 }
@@ -935,7 +935,7 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
   if (tdif > 0 && tdif < DOUBLE_CLICK_PERIOD)
     return TRUE;
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   if (d->ev_button && d->ev_button(w, event, user_data))
     return TRUE;
@@ -966,7 +966,7 @@ ev_button_up(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
 
   switch (event->button) {
   case 3:
@@ -992,7 +992,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   if (Menulock || Globallock)
     return TRUE;
 
-  d = (struct SubWin *) user_data;
+  d = user_data;
   e = (GdkEventKey *)event;
 
   if (d->ev_key && d->ev_key(w, event, user_data))

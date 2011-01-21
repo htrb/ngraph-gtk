@@ -73,7 +73,7 @@ gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 1;
   }
   if (arraynum(sarray)!=0) {
-    gobj=getobjlist(*(char **)arraynget(sarray,0),&gid,&gfield,NULL);
+    gobj=getobjlist(arraynget_str(sarray,0),&gid,&gfield,NULL);
     if (gobj==NULL) return 0;
     if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;
     if (GC!=-1) _exeobj(gobj,"close",ginst,0,NULL);
@@ -116,7 +116,7 @@ gra2disconnect(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   _getobj(obj,"_list",inst,&sarray);
   _putobj(obj,"_list",inst,NULL);
   if (arraynum(sarray)!=0) {
-    gobj=getobjlist(*(char **)arraynget(sarray,0),&gid,&gfield,NULL);
+    gobj=getobjlist(arraynget_str(sarray,0),&gid,&gfield,NULL);
     if (gobj!=NULL) {
       if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;
       if (GC!=-1) _exeobj(gobj,"close",ginst,0,NULL);

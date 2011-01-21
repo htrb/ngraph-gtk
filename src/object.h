@@ -207,7 +207,11 @@ struct narray *arrayndel2(struct narray *array,unsigned int idx);
 struct narray *arrayput(struct narray *array,void *val,unsigned int idx);
 struct narray *arrayput2(struct narray *array,char **val,unsigned int idx);
 void *arraynget(struct narray *array,unsigned int idx);
+int arraynget_int(struct narray *array, unsigned int idx);
+double arraynget_double(struct narray *array, unsigned int idx);
+char *arraynget_str(struct narray *array, unsigned int idx);
 void *arraylast(struct narray *array);
+int arraylast_int(struct narray *array);
 void arraysort_int(struct narray *array);
 void arrayuniq_int(struct narray *array);
 

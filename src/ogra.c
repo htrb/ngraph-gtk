@@ -90,7 +90,7 @@ oGRAdisconnect(struct objlist *obj,void *inst,int clear)
     && ((dinst=chkobjinstoid(dobj,did))!=NULL)) {
       if ((!chkobjfield(dobj,"_list"))
       && (!_getobj(dobj,"_list",dinst,&sarray)) && (sarray!=NULL)) {
-        list=*(char **)arraynget(sarray,0);
+        list=arraynget_str(sarray,0);
         if (((gobj=getobjlist(list,&gid,&gfield,NULL))!=NULL)
         && (gobj==obj) && (gid==oid) && (strcmp(gfield,"open")==0)) {
           arrayfree2(sarray);
@@ -173,7 +173,7 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       error2(obj,ERRNODEVICE,device);
       return 1;
     }
-    id=*(char *)arraylast(&iarray);
+    id=arraylast_int(&iarray);
     arraydel(&iarray);
 
     /* check target device */
@@ -197,7 +197,7 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
     if (!chkobjfield(dobj,"_list")) {
       if ((offset=getobjoffset(dobj,"_list"))==-1) return 1;
-      list=(struct narray **)(dinst+offset);
+      list=&dinst[offset].array;
     } else list=NULL;
 
     if (!chkobjfield(dobj,"_local")) {
@@ -217,7 +217,7 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
     /* clear gra connected to target device */
     if ((list!=NULL) && (*list!=NULL) && (arraynum(*list)!=0)) {
-      if (((gobj=getobjlist(*(char **)arraynget(*list,0),&gid,&gfield,NULL))!=NULL)
+      if (((gobj=getobjlist(arraynget_str(*list,0),&gid,&gfield,NULL))!=NULL)
       && ((ginst=chkobjinstoid(gobj,gid))!=NULL)
       && (!_getobj(gobj,"_device",ginst,&dev))) {
         if (oGRAdisconnect(gobj,ginst,TRUE)) return 1;

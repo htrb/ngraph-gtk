@@ -22,7 +22,7 @@ ascii2greece(const gchar *src)
 		      "σ", "τ", "υ", "ϖ", "ω", "ξ", "ψ", "ζ"};
   gchar *tmp, *ch, buf[2];
 
-  slen = strlen((char *)src);
+  slen = strlen(src);
   dlen = slen * 6 + 1;
 
   tmp = g_malloc(dlen);

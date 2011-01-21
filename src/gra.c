@@ -458,7 +458,7 @@ GRAredraw2(struct objlist *obj,N_VALUE *inst,int setredrawf,int redraw_num,
   if (_getobj(obj,"_list",inst,&sarray)) return;
   if (_getobj(obj,"oid",inst,&oid)) return;
   if ((snum=arraynum(sarray))==0) return;
-  sdata=(char **)arraydata(sarray);
+  sdata=arraydata(sarray);
   if ((_putobj(obj,"_list",inst,NULL)) || (_getobj(obj,"_GC",inst,&GC))) {
     arrayfree2(sarray);
     return;
