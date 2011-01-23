@@ -220,7 +220,7 @@
 	* src/math/math_function.h.in: add "push", "pop", "unshift" and
 	"shift".
 
-	* src/math/math_operator.rb: check cements.
+	* src/math/math_operator.rb: check coments.
 
 2011-01-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
