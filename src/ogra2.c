@@ -59,7 +59,7 @@ gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int GC;
   struct narray *sarray;
   struct objlist *gobj;
-  int gid,deletegra,id;
+  int gid,deletegra,id,n;
   char *gfield;
   N_VALUE *ginst;
   char *device;
@@ -68,11 +68,12 @@ gra2done(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"_GC",inst,&GC);
   _getobj(obj,"delete_gra",inst,&deletegra);
   _getobj(obj,"_list",inst,&sarray);
-  if ((GC!=-1) && !deletegra) {
+  n = arraynum(sarray);
+  if (GC != -1 && (! deletegra || n == 0)) {
     error2(obj,ERRLOCK,argv[0]);
     return 1;
   }
-  if (arraynum(sarray)!=0) {
+  if (n) {
     gobj=getobjlist(arraynget_str(sarray,0),&gid,&gfield,NULL);
     if (gobj==NULL) return 0;
     if ((ginst=getobjinstoid(gobj,gid))==NULL) return 0;

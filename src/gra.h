@@ -65,6 +65,8 @@ typedef void (*diffunc)(double d,double c[],
 typedef void (*intpfunc)(double d,double c[],
                         double x0,double y0,double *x,double *y,void *local);
 
+typedef int (*directfunc)(char code,int *cpar,char *cstr,void *local);
+
 struct cmatchtype {
   double x0,y0;
   int minx,miny,maxx,maxy;
@@ -85,8 +87,7 @@ struct cmatchtype {
 
 
 extern struct greektbltype greektable[48];
-int _GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
-                   struct narray **list,void *local);
+int _GRAopencallback(directfunc direct,struct narray **list,void *local);
 int _GRAopen(char *objname,char *outputname,
             struct objlist *obj,N_VALUE *inst, int output,
 	     int strwidth,int charascent,int chardescent,

@@ -1,3 +1,18 @@
+2011-01-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAC, _GRAopencallback): use "directfunc".
+
+	* src/gra.h (directfunc): typedefed.
+
+	* src/ogra2nul.c (g2nuldone): call "_exeparent()".
+
+	* src/ogra2.c (gra2done): check number of element od "sarray" whe
+	"GC" is not equal to -1.
+
+	* src/ogra.c (oGRAopen): fix indent.
+	(oGRAdrawparent): add parameter "oGRAargv".
+	(oGRAdraw): "oGRAargv" is local variable now.
+
 2011-01-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11graph.c (SwitchDialogSetupItem)

@@ -58,6 +58,7 @@ g2nulinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 static int 
 g2nuldone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+  if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
   return 0;
 }
 

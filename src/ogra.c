@@ -143,7 +143,7 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   N_VALUE *dinst,*ginst;
   void *local;
   struct narray **list;
-  int offset,oid,gid;
+  int oid,gid;
   int topm,leftm,width,height,zoom;
   int output,charheight,chardescent,strwidth;
 
@@ -177,7 +177,10 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     arraydel(&iarray);
 
     /* check target device */
-    if ((dinst=getobjinst(dobj,id))==NULL) return 1;
+    dinst = getobjinst(dobj, id);
+    if (dinst == NULL) {
+      return 1;
+    }
 
     if (!chkobjfield(dobj,"_output")) {
       if ((output=getobjtblpos(dobj,"_output",&robj))==-1) return 1;
@@ -196,9 +199,16 @@ oGRAopen(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     } else chardescent=-1;
 
     if (!chkobjfield(dobj,"_list")) {
-      if ((offset=getobjoffset(dobj,"_list"))==-1) return 1;
-      list=&dinst[offset].array;
-    } else list=NULL;
+      int  offset;
+
+      offset = getobjoffset(dobj, "_list");
+      if (offset == -1) {
+	return 1;
+      }
+      list = &dinst[offset].array;
+    } else {
+      list = NULL;
+    }
 
     if (!chkobjfield(dobj,"_local")) {
       if (_getobj(dobj,"_local",dinst,&local)) return 1;
@@ -322,10 +332,8 @@ oGRAputtopm(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   return 0;
 }
 
-char *oGRAargv[2];
-
 static int 
-oGRAdrawparent(struct objlist *parent)
+oGRAdrawparent(struct objlist *parent, char **oGRAargv)
 {
   struct objlist *ocur;
   int i,instnum;
@@ -344,7 +352,7 @@ oGRAdrawparent(struct objlist *parent)
 	  exeobj(ocur,"draw",i,1,oGRAargv);
         }
       }
-      if (!oGRAdrawparent(ocur)) return FALSE;
+      if (!oGRAdrawparent(ocur, oGRAargv)) return FALSE;
     }
     ocur=ocur->next;
   }
@@ -358,6 +366,7 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   struct objlist *draw;
   struct narray *array;
   char **drawrable, *objname;
+  char *oGRAargv[2];
   int j,i,anum,instnum;
 
   _getobj(obj,"GC",inst,&GC);
@@ -370,7 +379,7 @@ oGRAdraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   oGRAargv[1]=NULL;
   if (array==NULL) {
     if ((draw=getobject("draw"))==NULL) return 1;
-    oGRAdrawparent(draw);
+    oGRAdrawparent(draw, oGRAargv);
   } else {
     anum=arraynum(array);
     drawrable=arraydata(array);

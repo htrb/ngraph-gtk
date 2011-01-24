@@ -54,7 +54,7 @@ struct GRAC {
   int output,strwidth,charascent,chardescent;
   struct narray **list;
   void *local;
-  int (*direct)(char code,int *cpar,char *cstr,void *local);
+  directfunc direct;
 
   int viewf;
   int leftm,topm,width,height;
@@ -144,8 +144,7 @@ static int GRAlineclip(int GC,int *x0,int *y0,int *x1,int *y1);
 
 
 int 
-_GRAopencallback(int (*direct)(char code,int *cpar,char *cstr,void *local),
-                   struct narray **list,void *local)
+_GRAopencallback(directfunc direct,struct narray **list,void *local)
 {
   int i;
 
