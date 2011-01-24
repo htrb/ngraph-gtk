@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.01\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-01-21 19:12+0900\n"
+"POT-Creation-Date: 2011-01-24 19:17+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2581,7 +2581,7 @@ msgstr ""
 msgid "bar_solid_fill_y"
 msgstr ""
 
-#: src/ogra.c:409
+#: src/ogra.c:418
 #, c-format
 msgid "drawing %s (%.1f%%)"
 msgstr ""
