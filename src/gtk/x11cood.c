@@ -68,12 +68,12 @@ void
 CoordWinSetCoord(int x, int y)
 {
   struct objlist *obj;
-  static int bufsize = 0;
-  int l, i, j, num, type;
+  int i, num, type;
   char *argv[3];
   double a;
   char *name;
-  struct InfoWin *d;
+  struct SubWin *d;
+  static GString *str;
 
   d = &(NgraphApp.CoordWin);
 
@@ -84,22 +84,14 @@ CoordWinSetCoord(int x, int y)
   }
 
   num = chkobjlastinst(obj) + 1;
-  l = 64 * (num + 1);
 
-  if (l > bufsize) {
-    g_free(d->str);
-    d->str = (char *) g_malloc(l);
-    bufsize = l;
-  }
-
-  if (d->str == NULL) {
-    bufsize = 0;
+  if (str == NULL) {
+    str = g_string_new("");
     gtk_label_set_text(GTK_LABEL(d->text), "");
     return;
   }
 
-  j = 0;
-  j += snprintf(d->str + j, bufsize - j, "(X:%6.2f  Y:%6.2f)", x / 100.0, y / 100.0);
+  g_string_printf(str, "(X:%6.2f  Y:%6.2f)", x / 100.0, y / 100.0);
   argv[0] = (char *) &x;
   argv[1] = (char *) &y;
   argv[2] = NULL;
@@ -109,19 +101,19 @@ CoordWinSetCoord(int x, int y)
     }
     getobj(obj, "group", i, 0, NULL, &name);
     getobj(obj, "type", i, 0, NULL, &type);
-    j += snprintf(d->str + j, bufsize - j, "\n%2d %5s %+.7e", i, name, a);
+    g_string_append_printf(str, "\n%2d %5s %+.7e", i, name, a);
     if (type == AXIS_TYPE_MJD) {
       char *s;
 
       s = nstrftime("  %F %T", a);
       if (s) {
-	j += snprintf(d->str + j, bufsize - j, "%s", s);
+	g_string_append(str, s);
 	g_free(s);
       }
     }
   }
 
-  gtk_label_set_text(GTK_LABEL(d->text), d->str);
+  gtk_label_set_text(GTK_LABEL(d->text), str->str);
 }
 
 void
@@ -158,7 +150,7 @@ CoordWinUnmap(Widget w, XtPointer client_data, XtPointer call_data)
 void
 CmCoordinateWindow(GtkWidget *w, gpointer client_data)
 {
-  struct InfoWin *d;
+  struct SubWin *d;
 
   d = &(NgraphApp.CoordWin);
 

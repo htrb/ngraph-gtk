@@ -1934,7 +1934,13 @@ get_axis_gauge_num_str(const char *format, double a)
 {
   int i, j, len;
   char *s;
-  char *num, format2[256], pm[] = "±";
+  char format2[256], pm[] = "±";
+  GString *num;
+
+  num = g_string_sized_new(16);
+  if (num == NULL) {
+    return NULL;
+  }
 
   s = strchr(format, '+');
   if (a == 0 && s) {
@@ -1949,12 +1955,45 @@ get_axis_gauge_num_str(const char *format, double a)
       }
     }
     format2[j] = '\0';
-    num = g_strdup_printf(format2, a);
+    g_string_printf(num, format2, a);
   } else {
-    num = g_strdup_printf(format, a);
+    g_string_printf(num, format, a);
   }
 
-  return num;
+  len = num->len;
+  for (i = 0; i < len; i++) {
+    if (num->str[i] == 'E' || num->str[i] == 'e') {
+      switch (num->str[i + 1]) {
+      case '+':
+	j = 2;
+	if (i + 2 < len && num->str[i + 2] == '0') {
+	  j++;
+	}
+	g_string_erase(num, i, j);
+	break;
+      case '-':
+	if (i + 2 < len && num->str[i + 2] == '0') {
+	  g_string_erase(num, i + 2, 1);
+	}
+	g_string_erase(num, i, 1);
+	break;
+      case '0':
+	/* never reached */
+	g_string_erase(num, i, 2);
+	break;
+      default:
+	/* never reached */
+	g_string_erase(num, i, 1);
+	break;
+      }
+
+      g_string_insert(num, i, "×10^");
+      g_string_append_c(num, '@');
+      break;
+    }
+  }
+
+  return g_string_free(num, FALSE);
 }
 
 static double

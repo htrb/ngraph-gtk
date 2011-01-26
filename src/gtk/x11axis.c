@@ -981,7 +981,6 @@ AxisPosDialogRef(GtkWidget *w, gpointer client_data)
   combo_box_entry_set_text(w, buf);
 }
 
-#define FORMAT_LENGTH 10
 static void
 scale_tab_setup_item(struct AxisDialog *d, int id)
 {
@@ -1081,17 +1080,13 @@ static void
 AxisDialogFile(GtkWidget *w, gpointer client_data)
 {
   struct AxisDialog *d;
-  int anum, room, type;
-  char *buf, s[30];
-  char *argv2[3];
   struct objlist *fobj;
   struct narray farray;
-  int a, i, j, num, *array;
-  struct narray *result;
 
   d = (struct AxisDialog *) client_data;
 
-  if ((fobj = chkobject("file")) == NULL)
+  fobj = chkobject("file");
+  if (fobj == NULL)
     return;
 
   if (chkobjlastinst(fobj) == -1)
@@ -1100,26 +1095,30 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
   SelectDialog(&DlgSelect, fobj, FileCB, (struct narray *) &farray, NULL);
 
   if (DialogExecute(d->widget, &DlgSelect) == IDOK) {
+    int a, i, anum, num, *array;
+
     num = arraynum(&farray);
     array = arraydata(&farray);
     anum = chkobjlastinst(d->Obj);
 
-    if ((num > 0) && (anum != 0)) {
-      int len;
-      len = 6 * num + 6;
-      buf = g_malloc(len);
-      if (buf) {
-	j = 0;
-	j += snprintf(buf + j, len - j, "file:");
+    if (num > 0 && anum != 0) {
+      char *buf, *argv2[3];
+      GString *str;
+      int room, type;
+      struct narray *result;
 
+      str = g_string_sized_new(32);
+      if (str) {
+	g_string_append(str, "file:");
 	for (i = 0; i < num; i++) {
 	  if (i == num - 1) {
-	    j += snprintf(buf + j, len -j, "%d", array[i]);
+	    g_string_append_printf(str, "%d", array[i]);
 	  } else {
-	    j += snprintf(buf + j, len - j, "%d,", array[i]);
+	    g_string_append_printf(str, "%d,", array[i]);
 	  }
 	}
 
+	buf = g_string_free(str, FALSE);
 	room = 0;
 	argv2[0] = (char *) buf;
 	argv2[1] = (char *) &room;
@@ -1142,6 +1141,8 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 	g_free(buf);
 
 	if (arraynum(result) == 3) {
+	  char s[30];
+
 	  snprintf(s, sizeof(s), "%.15g", arraynget_double(result, 0));
 	  combo_box_entry_set_text(d->min, s);
 
@@ -1589,11 +1590,52 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 }
 
 static int
+set_num_format(struct AxisDialog *axis, struct AxisNumbering *d)
+{ 
+  GString *format;
+  int a;
+  char *new, *old;
+
+  format = g_string_new("%");
+  if (format == NULL) {
+    return 1;
+  }
+
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->add_plus))) {
+    g_string_append_c(format, '+');
+  }
+
+  a = combo_box_get_active(d->fraction);
+  if (a == 0) {
+    g_string_append_c(format, 'g');
+  } else if (a > 0) {
+    g_string_append_printf(format, ".%df", a - 1);
+  }
+
+  if (getobj(axis->Obj, "num_format", axis->Id, 0, NULL, &old) == -1) {
+    return 1;
+  }
+
+  new = g_string_free(format, FALSE);
+  if (g_strcmp0(old, new)) {
+    set_graph_modified();
+  }
+
+  if (putobj(axis->Obj, "num_format", axis->Id, new) == -1) {
+    return 1;
+  }
+ 
+  if (getobj(axis->Obj, "num_format", axis->Id, 0, NULL, &new) == -1){
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
 numbering_tab_set_value(struct AxisDialog *axis)
 {
-  char *format;
   struct AxisNumbering *d;
-  int j, a;
 
   d = &axis->numbering;
 
@@ -1612,21 +1654,7 @@ numbering_tab_set_value(struct AxisDialog *axis)
   if (SetObjFieldFromWidget(d->head, axis->Obj, axis->Id, "num_head"))
     return 1;
 
-  format = (char *) g_malloc(FORMAT_LENGTH);
-  if (format == NULL)
-    return 1;
-
-  j = snprintf(format, FORMAT_LENGTH, "%%");
-  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->add_plus)))
-    j += snprintf(format + j, FORMAT_LENGTH - j, "%c", '+');
-
-  a = combo_box_get_active(d->fraction);
-  if (a == 0) {
-    j += snprintf(format + j, FORMAT_LENGTH - j, "%c", 'g');
-  } else if (a > 0) {
-    j += snprintf(format + j, FORMAT_LENGTH - j, ".%df", a - 1);
-  }
-  if (putobj(axis->Obj, "num_format", axis->Id, format) == -1)
+  if (set_num_format(axis, d))
     return 1;
 
   if (SetObjFieldFromWidget(d->tail, axis->Obj, axis->Id, "num_tail"))
@@ -2791,7 +2819,7 @@ AxisWinUpdate(int clear)
 static void
 axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 {
-  int cx, len;
+  int cx;
   unsigned int i;
   double min, max, inc;
   char buf[256], *valstr;
@@ -2815,10 +2843,10 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 	list_store_set_string(GTK_WIDGET(d->text), iter, i - 1, "---------");
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "---------");
       } else {
-	len = snprintf(buf, sizeof(buf), "%g", min);
+	snprintf(buf, sizeof(buf), "%g", min);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i - 1, buf);
 
-	len = snprintf(buf, sizeof(buf), "%g", max);
+	snprintf(buf, sizeof(buf), "%g", max);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
       }
       break;
@@ -2832,7 +2860,7 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       if (inc == 0) {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "---------");
       } else {
-	len = snprintf(buf, sizeof(buf), "%g", inc);
+	snprintf(buf, sizeof(buf), "%g", inc);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
       }
       break;

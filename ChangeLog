@@ -1,3 +1,34 @@
+2011-01-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/oaxis.c (get_axis_gauge_num_str): use "GString" to create
+	format string.
+	(get_axis_gauge_num_str): numbering string is now well formated
+	such as "5.0×10^-7@".
+
+	* src/gtk/x11cood.c (CoordWinSetCoord): use static variable to
+	create information strings.
+	(CoordWinSetCoord, CoordWinUpdate): type of the coordinate window
+	is "SubWin".
+
+	* src/gtk/x11commn.c (FileAutoScale): use "GString" to create
+	argument string for "auto_scale" field.
+
+	* src/gtk/x11menu.h (NgraphApp): the type of members "InfoWin" and
+	"CoordWin" is "struct SubWin *".
+
+	* src/gtk/x11menu.c (application): now "NgraphApp.InfoWin" and
+	"NgraphApp.CoordWin" don't have the member "str".
+
+	* src/gtk/x11info.c (create_win, InfoWinUpdate): type of the
+	information window is "SubWin".
+
+	* src/gtk/x11axis.c (AxisDialogFile): use "GString" to create
+	argument string for "get_auto_scale" field.
+	(set_num_format): added.
+	(numbering_tab_set_value): use "set_num_format()".
+	(axis_list_set_val): variable "len" is not used.
+
+
 2011-01-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gra.c (GRAC, _GRAopencallback): use "directfunc".

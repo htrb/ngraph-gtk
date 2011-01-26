@@ -1311,13 +1311,14 @@ FileAutoScale(void)
   char *buf;
   struct objlist *fobj;
   int lastinst;
-  int i, j, a, len;
+  int i, j, a;
   char *ref;
   struct narray iarray;
   int anum2, aid2;
   N_VALUE *inst;
   char *group, *refgroup;
   int refother;
+  GString *str;
 
   if ((fobj = chkobject("file")) == NULL)
     return;
@@ -1329,22 +1330,25 @@ FileAutoScale(void)
   if (lastinst < 0 || aobj == NULL || anum == 0)
     return;
 
-  len = 6 * (lastinst + 1) + 6;
-  buf = (char *) g_malloc(len);
-  if (buf == NULL) {
+  str = g_string_new("file:");
+  if (str == NULL) {
     error(NULL, ERRHEAP);
     return;
   }
 
-  j = 0;
-  j += snprintf(buf + j, len - j, "file:");
   for (i = 0; i <= lastinst; i++) {
     getobj(fobj, "hidden", i, 0, NULL, &a);
-    if (!a)
-      j += snprintf(buf + j, len - j, "%d,", i);
+    if (! a) {
+      g_string_append_printf(str, "%d,", i);
+    }
   }
-  if (buf[j] == ',')
+  j = str->len;
+  buf = g_string_free(str, FALSE);
+
+  if (buf[j] == ',') {
     buf[j] = '\0';
+  }
+
   room = 0;
   argv2[0] = (char *) buf;
   argv2[1] = (char *) &room;
@@ -1356,7 +1360,7 @@ FileAutoScale(void)
     getobj(aobj, "group", i, 0, NULL, &group);
     getobj(aobj, "reference", i, 0, NULL, &ref);
     refother = FALSE;
-    if (ref != NULL) {
+    if (ref) {
       refother = TRUE;
       arrayinit(&iarray, sizeof(int));
       if (!getobjilist(ref, &aobj2, &iarray, FALSE, NULL)) {

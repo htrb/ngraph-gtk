@@ -37,7 +37,7 @@
 static GtkWidget *
 create_win(void)
 {
-  struct InfoWin *d;
+  struct SubWin *d;
   GtkWidget *w;
 
   d = &(NgraphApp.InfoWin);
@@ -152,7 +152,7 @@ InfoWinUnmap(Widget w, XtPointer client_data, XtPointer call_data)
 void
 CmInformationWindow(GtkWidget *w, gpointer data)
 {
-  struct InfoWin *d;
+  struct SubWin *d;
 
   d = &(NgraphApp.InfoWin);
 

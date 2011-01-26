@@ -220,14 +220,6 @@ struct LegendWin
   int legend[LEGENDNUM];
 };
 
-struct InfoWin
-{
-  SUBWIN_PROTOTYPE;
-  struct objlist *obj;
-  /* Private member */
-  char *str;
-};
-
 #define MENU_HISTORY_NUM 10
 
 struct NgraphApp
@@ -246,8 +238,8 @@ struct NgraphApp
   struct SubWin AxisWin;
   struct LegendWin LegendWin;
   struct SubWin MergeWin;
-  struct InfoWin CoordWin;
-  struct InfoWin InfoWin;
+  struct SubWin CoordWin;
+  struct SubWin InfoWin;
 };
 
 

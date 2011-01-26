@@ -2411,12 +2411,6 @@ application(char *file)
 
   destroy_sub_windows();
 
-  g_free(NgraphApp.InfoWin.str);
-  NgraphApp.InfoWin.str = NULL;
-
-  g_free(NgraphApp.CoordWin.str);
-  NgraphApp.CoordWin.str = NULL;
-
   g_free(NgraphApp.FileName);
   NgraphApp.FileName = NULL;
 
