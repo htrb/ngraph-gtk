@@ -74,6 +74,7 @@ CoordWinSetCoord(int x, int y)
   char *name;
   struct SubWin *d;
   static GString *str;
+  static int lock = FALSE;
 
   d = &(NgraphApp.CoordWin);
 
@@ -85,9 +86,15 @@ CoordWinSetCoord(int x, int y)
 
   num = chkobjlastinst(obj) + 1;
 
+  if (lock) {
+    return;
+  }
+  lock = TRUE;
+
   if (str == NULL) {
     str = g_string_new("");
     gtk_label_set_text(GTK_LABEL(d->text), "");
+    lock = FALSE;
     return;
   }
 
@@ -114,6 +121,8 @@ CoordWinSetCoord(int x, int y)
   }
 
   gtk_label_set_text(GTK_LABEL(d->text), str->str);
+
+  lock = FALSE;
 }
 
 void

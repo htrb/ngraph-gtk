@@ -4485,6 +4485,10 @@ check_focused_obj_type(struct Viewer *d, int *type)
   if (text == NULL)
     text = chkobject("text");
 
+  if (axis == NULL || merge == NULL || legend == NULL || text == NULL) {
+    return 0;
+  }
+
   t = 0;
   for (i = 0; i < num; i++) {
     focus = *(struct FocusObj **) arraynget(d->focusobj, i);

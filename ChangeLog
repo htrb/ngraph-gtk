@@ -1,3 +1,22 @@
+2011-01-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (set_data_progress): variable "msgbuf" is not static
+	now.
+	(solve_equation): variable "eq" is not static now.
+
+	* src/gtk/ox11menu.c (mx_cat): variable "buf" is not static now.
+
+	* src/gtk/x11view.c (check_focused_obj_type): check variables
+	"axis", "merge", "legend" and "text" are NULL or not.
+
+	* src/gtk/x11menu.c (find_gra2gdk_inst): remove first parameter.
+	(find_gra2gdk_inst): variable "inxt" is not static now.
+	(find_gra2gdk_inst): remove variable "local" and "onamek".
+
+2011-01-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11cood.c (CoordWinSetCoord): this function is now reentrant.
+
 2011-01-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/oaxis.c (get_axis_gauge_num_str): use "GString" to create

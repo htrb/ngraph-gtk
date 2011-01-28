@@ -119,13 +119,12 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   GdkGC *gc;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
-  char *name;
   struct gra2cairo_local *local;
 
   d = (struct LegendGaussDialog *) client_data;
   win = w->window;
 
-  found = find_gra2gdk_inst(&name, &gobj, &inst, &robj, &output, &local);
+  found = find_gra2gdk_inst(&gobj, &inst, &robj, &output, &local);
   if (! found) {
     return FALSE;
   }

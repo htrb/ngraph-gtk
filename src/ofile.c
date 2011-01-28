@@ -1934,7 +1934,7 @@ hskipdata(struct f2ddata *fp)
 static int
 set_data_progress(struct f2ddata *fp)
 {
-  static char msgbuf[256];
+  char msgbuf[32];
   double frac;
 
   if (fp->final > 0) {
@@ -7579,7 +7579,7 @@ newton(MathEquation *eq, double *xx, double y)
 static int 
 solve_equation(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  static MathEquation *eq = NULL;
+  MathEquation *eq = NULL;
   int r, n, type, fit_id;
   char *equation, *ptr, *fit;
   N_VALUE *fit_inst;

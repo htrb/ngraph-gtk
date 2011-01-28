@@ -618,17 +618,15 @@ QuitGUI(void)
 }
 
 int
-find_gra2gdk_inst(char **name, struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal)
+find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal)
 {
   static struct objlist *obj = NULL, *robj = NULL;
-  static N_VALUE *inst = NULL;
-  static char *oname = "gra2gdk";
   static int pos;
-  static struct gra2cairo_local *local = NULL;
+  N_VALUE *inst = NULL;
   int id;
 
   if (obj == NULL) {
-    obj = chkobject(oname);
+    obj = chkobject("gra2gdk");
     pos = getobjtblpos(obj, "_output", &robj);
   }
 
@@ -643,18 +641,17 @@ find_gra2gdk_inst(char **name, struct objlist **o, N_VALUE **i, struct objlist *
 
     inst = chkobjinst(obj, 0);
   }
-  _getobj(obj, "_local", inst, &local);
 
   if (inst == NULL) {
     return FALSE;
   }
 
+  _getobj(obj, "_local", inst, rlocal);
+
   *routput = pos;
   *i = inst;
   *o = obj;
   *ro = robj;
-  *name = oname;
-  *rlocal = local;
 
   return TRUE;
 }
@@ -1616,14 +1613,13 @@ create_markpixmap(GtkWidget *win)
   int gra, i, R, G, B, R2, G2, B2, found, output;
   struct objlist *obj, *robj;
   N_VALUE *inst;
-  char *name;
   struct gra2cairo_local *local;
 
   R = G = B = 0;
   R2 = 0;
   G2 = B2 = 255;
 
-  found = find_gra2gdk_inst(&name, &obj, &inst, &robj, &output, &local);
+  found = find_gra2gdk_inst(&obj, &inst, &robj, &output, &local);
 
   for (i = 0; i < MARK_TYPE_NUM; i++) {
     if (! found) {

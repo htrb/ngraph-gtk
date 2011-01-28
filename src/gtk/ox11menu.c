@@ -1675,7 +1675,7 @@ mx_echo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 static int
 mx_cat(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  static char buf[1024];
+  char buf[1024];
   int len, use_stdin = TRUE;
   int fd;
 
@@ -1740,11 +1740,11 @@ static struct _subwin_data {
     CmMergeWindow,
   },
   {
-    (struct SubWin *) &NgraphApp.CoordWin,
+    &NgraphApp.CoordWin,
     CmCoordinateWindow,
   },
   {
-    (struct SubWin *) &NgraphApp.InfoWin,
+    &NgraphApp.InfoWin,
     CmInformationWindow,
   },
 };

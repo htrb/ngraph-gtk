@@ -3965,13 +3965,12 @@ draw_type_pixbuf(struct objlist *obj, int i)
   GdkPixbuf *pixbuf;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
-  char *name;
   struct gra2cairo_local *local;
 
   lockstate = Globallock;
   Globallock = TRUE;
 
-  found = find_gra2gdk_inst(&name, &gobj, &inst, &robj, &output, &local);
+  found = find_gra2gdk_inst(&gobj, &inst, &robj, &output, &local);
   if (! found) {
     return NULL;
   }
