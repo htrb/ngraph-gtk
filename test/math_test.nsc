@@ -12,11 +12,11 @@ check_val() {
 set +e
 
 new text
+new io
 
 while [ -n "$1" ]
 do
-    new io
-    io::open "r" $1
+    io::open "r" "$1"
 
     while l=`get io -field gets`
     do
