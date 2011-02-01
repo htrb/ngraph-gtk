@@ -1,3 +1,13 @@
+2011-02-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* zsh/Makefile.am (zsh_DATA): remove settings for gra2ps and
+	gra2wmf.
+
+	* driver/Makefile.am (ngraphconf_DATA): remove settings for gra2ps
+	and gra2wmf.
+
+	* debian/ngraph.bash: remove settings for gra2ps and gra2wmf.
+
 2011-01-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* test/math_test.nsc: don't create io object every time.

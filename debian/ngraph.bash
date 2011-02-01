@@ -72,70 +72,70 @@ _ngp2()
 [ "${have:-}" ] && complete -F _ngp2 $filenames ngp2
 
 
-have gra2ps &&
-_gra2ps()
-{
-    local cur
+# have gra2ps &&
+# _gra2ps()
+# {
+#     local cur
 
-    COMPREPLY=()
-    cur=${COMP_WORDS[COMP_CWORD]}
-    prev=${COMP_WORDS[COMP_CWORD-1]}
+#     COMPREPLY=()
+#     cur=${COMP_WORDS[COMP_CWORD]}
+#     prev=${COMP_WORDS[COMP_CWORD-1]}
 
-    case "$prev" in
-        -o)
-            _filedir '@(ps|eps)'
-	    return 0
-            ;;
-	-i)
-            _filedir 'ps'
-	    return 0
-            ;;
-	-p)
-	    COMPREPLY=( $( compgen -W 'a3 a4 b4 a5 b5 letter legal' -- $cur ) )
-	    return 0
-	    ;;
-	-s)
-	    return 0
-	    ;;
-    esac
+#     case "$prev" in
+#         -o)
+#             _filedir '@(ps|eps)'
+# 	    return 0
+#             ;;
+# 	-i)
+#             _filedir 'ps'
+# 	    return 0
+#             ;;
+# 	-p)
+# 	    COMPREPLY=( $( compgen -W 'a3 a4 b4 a5 b5 letter legal' -- $cur ) )
+# 	    return 0
+# 	    ;;
+# 	-s)
+# 	    return 0
+# 	    ;;
+#     esac
 
-    case "$cur" in
-        -*)
-            COMPREPLY=( $( compgen -W '-o -i -c -e -p -l -r' -- $cur ) ) 
-            ;;
-	*)
-	    _filedir 'gra'
-	    ;;
-    esac
-}
-[ "${have:-}" ] && complete -F _gra2ps $filenames gra2ps
+#     case "$cur" in
+#         -*)
+#             COMPREPLY=( $( compgen -W '-o -i -c -e -p -l -r' -- $cur ) ) 
+#             ;;
+# 	*)
+# 	    _filedir 'gra'
+# 	    ;;
+#     esac
+# }
+# [ "${have:-}" ] && complete -F _gra2ps $filenames gra2ps
 
-have gra2wmf &&
-_gra2wmf()
-{
-    local cur
+# have gra2wmf &&
+# _gra2wmf()
+# {
+#     local cur
 
-    COMPREPLY=()
-    cur=${COMP_WORDS[COMP_CWORD]}
-    prev=${COMP_WORDS[COMP_CWORD-1]}
+#     COMPREPLY=()
+#     cur=${COMP_WORDS[COMP_CWORD]}
+#     prev=${COMP_WORDS[COMP_CWORD-1]}
 
-    case "$prev" in
-        -o)
-            _filedir 'wmf'
-	    return 0
-            ;;
-	-d)
-	    return 0
-	    ;;
-    esac
+#     case "$prev" in
+#         -o)
+#             _filedir 'wmf'
+# 	    return 0
+#             ;;
+# 	-d)
+# 	    return 0
+# 	    ;;
+#     esac
 
-    case "$cur" in
-        -*)
-            COMPREPLY=( $( compgen -W '-o -d' -- $cur ) ) 
-            ;;
-	*)
-	    _filedir 'gra'
-	    ;;
-    esac
-}
-[ "${have:-}" ] && complete -F _gra2wmf $filenames gra2wmf
+#     case "$cur" in
+#         -*)
+#             COMPREPLY=( $( compgen -W '-o -d' -- $cur ) ) 
+#             ;;
+# 	*)
+# 	    _filedir 'gra'
+# 	    ;;
+#     esac
+# }
+# [ "${have:-}" ] && complete -F _gra2wmf $filenames gra2wmf
