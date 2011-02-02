@@ -1,3 +1,13 @@
+2011-02-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.c (SetObjFieldFromWidget)
+	(SetWidgetFromObjField, SetObjFieldFromStyle)
+	(SetStyleFromObjField): use "gtk_bin_get_child()".
+
+	* src/gtk/gtk_combo.c (combo_box_entry_create)
+	(combo_box_entry_set_text, combo_box_entry_get_text): use
+	"gtk_bin_get_child()".
+
 2011-02-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* zsh/Makefile.am (zsh_DATA): remove settings for gra2ps and

@@ -706,7 +706,7 @@ SetObjFieldFromWidget(GtkWidget *widget, struct objlist *Obj, int Id, char *fiel
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
     r = SetObjFieldFromText(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
-    r = SetObjFieldFromText(GTK_BIN(w)->child, Obj, Id, field);
+    r = SetObjFieldFromText(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
     r = SetObjFieldFromList(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
@@ -735,7 +735,7 @@ SetWidgetFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *fiel
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_ENTRY)) {
     SetTextFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX_ENTRY)) {
-    SetTextFromObjField(GTK_BIN(w)->child, Obj, Id, field);
+    SetTextFromObjField(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_COMBO_BOX)) {
     SetListFromObjField(w, Obj, Id, field);
   } else if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_TOGGLE_BUTTON)) {
@@ -964,7 +964,7 @@ SetObjFieldFromStyle(GtkWidget *widget, struct objlist *Obj, int Id, char *field
 
   w = get_widget(widget);
 
-  ptr = gtk_entry_get_text(GTK_ENTRY(GTK_BIN(w)->child));
+  ptr = gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w))));
 
   if (ptr == NULL) {
     return -1;
@@ -981,7 +981,7 @@ SetObjFieldFromStyle(GtkWidget *widget, struct objlist *Obj, int Id, char *field
   }
 
   if (j == CLINESTYLE) {
-    if (set_obj_points_from_text(GTK_BIN(w)->child, Obj, Id, field)) {
+    if (set_obj_points_from_text(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field)) {
       return -1;
     }
   }
@@ -1081,7 +1081,7 @@ SetStyleFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *field
 
   w = get_widget(widget);
 
-  entry = GTK_ENTRY(GTK_BIN(w)->child);
+  entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w)));
 
   count = combo_box_get_num(w);
   if (count == 0) {

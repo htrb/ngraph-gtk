@@ -50,20 +50,20 @@ combo_box_entry_create(void)
   cbox = GTK_COMBO_BOX(gtk_combo_box_entry_new());
   set_model(cbox, FALSE);
   gtk_combo_box_entry_set_text_column(GTK_COMBO_BOX_ENTRY(cbox), 0);
-  gtk_entry_set_activates_default(GTK_ENTRY(GTK_BIN(cbox)->child), TRUE);
+  gtk_entry_set_activates_default(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), TRUE);
   return GTK_WIDGET(cbox);
 }
 
 void
 combo_box_entry_set_text(GtkWidget *cbox, char *str)
 {
-  gtk_entry_set_text(GTK_ENTRY(GTK_BIN(cbox)->child), str);
+  gtk_entry_set_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))), str);
 }
 
 const char *
 combo_box_entry_get_text(GtkWidget *cbox)
 {
-  return gtk_entry_get_text(GTK_ENTRY(GTK_BIN(cbox)->child));
+  return gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(cbox))));
 }
 
 void
