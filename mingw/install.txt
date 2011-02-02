@@ -9,6 +9,7 @@ Download mingw-get-inst-20101030.exe
 Execute mingw-get-inst-20101030.exe
 Check "MSYS Basic System" and "MinGW Developer Toolkit"
 
+
 2. Get GTK+
 
 http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/
@@ -54,13 +55,13 @@ make install
 8. Get Ngraph-gtk
 
 http://sourceforge.net/projects/ngraph-gtk/files/
-Ngraph-gtk-6.04.00.tar.gz
+Ngraph-gtk-6.05.02.tar.gz
 
 
 9. Compile and install Ngraph-gtk
 
-tar xf Ngraph-gtk-6.04.00.tar.gz
-cd Ngraph-gtk-6.04.00
+tar xf Ngraph-gtk-6.05.02.tar.gz
+cd Ngraph-gtk-6.05.02
 sh mingw/windows.sh
 
 Ngraph-gtk will be installed in C:\ngraph-gtk if there are no error
