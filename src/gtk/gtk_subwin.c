@@ -539,7 +539,7 @@ sub_window_save_geometry(struct SubWin *d)
   gint x, y, x0, y0, w, h;
   GdkWindowState state;
 
-  if (d->Win && d->Win->window) {
+  if (d->Win && GTK_WIDGET_GET_WINDOW(d->Win)) {
     gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
     get_window_geometry(d->Win, &x, &y, &w, &h, &state);
 
@@ -1351,13 +1351,20 @@ sub_window_minimize(void *ptr)
 {
   struct SubWin *d;
   GdkWindowState window_state;
+  GdkWindow *win;
 
   d = (struct SubWin *) ptr;
 
-  if (d->Win == NULL || d->Win->window == NULL)
+  if (d->Win == NULL) {
     return;
+  }
 
-  window_state = gdk_window_get_state(d->Win->window);
+  win = GTK_WIDGET_GET_WINDOW(d->Win);
+  if (win == NULL) {
+    return;
+  }
+
+  window_state = gdk_window_get_state(win);
   d->window_state = window_state;
 
   if (! (window_state & GDK_WINDOW_STATE_ICONIFIED)) {

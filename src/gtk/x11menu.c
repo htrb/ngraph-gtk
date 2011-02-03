@@ -1614,18 +1614,19 @@ create_markpixmap(GtkWidget *win)
   struct objlist *obj, *robj;
   N_VALUE *inst;
   struct gra2cairo_local *local;
+  GdkWindow *window;
 
   R = G = B = 0;
   R2 = 0;
   G2 = B2 = 255;
 
+  window = GTK_WIDGET_GET_WINDOW(win);
   found = find_gra2gdk_inst(&obj, &inst, &robj, &output, &local);
 
   for (i = 0; i < MARK_TYPE_NUM; i++) {
-    if (! found) {
-      pix = NULL;
-    } else {
-      pix = gra2gdk_create_pixmap(obj, inst, local, win->window,
+    pix = NULL;
+    if (window && found) {
+      pix = gra2gdk_create_pixmap(obj, inst, local, window,
 				  MARK_PIX_SIZE, MARK_PIX_SIZE,
 				  255, 255, 255);
       if (pix) {

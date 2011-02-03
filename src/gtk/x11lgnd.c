@@ -996,12 +996,15 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
   GdkPoint points[3];
   static GdkPixmap *pixmap = NULL;
   static GdkGC *gc;
+  GdkWindow *window;
 
-  if (win->window == NULL)
+  window = GTK_WIDGET_GET_WINDOW(win);
+  if (window == NULL) {
     return;
+  }
 
   if (pixmap == NULL) {
-    pixmap = gdk_pixmap_new(win->window, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE, -1);
+    pixmap = gdk_pixmap_new(window, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE, -1);
 
     gc = gdk_gc_new(pixmap);
 
@@ -1055,12 +1058,18 @@ LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
     draw_arrow_pixmap(w, d);
   }
 
-  if (d->arrow_pixmap) {
-    win = w->window;
-    gc = gdk_gc_new(win);
-    gdk_draw_drawable(win, gc, d->arrow_pixmap, 0, 0, 0, 0, -1, -1);
-    g_object_unref(gc);
+  if (d->arrow_pixmap == NULL) {
+    return;
   }
+
+  win = GTK_WIDGET_GET_WINDOW(w);
+  if (win == NULL) {
+    return;
+  }
+
+  gc = gdk_gc_new(win);
+  gdk_draw_drawable(win, gc, d->arrow_pixmap, 0, 0, 0, 0, -1, -1);
+  g_object_unref(gc);
 }
 
 static void

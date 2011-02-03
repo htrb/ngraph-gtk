@@ -165,7 +165,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
     data->parent = parent;
     data->widget = dlg;
-    data->vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+    data->vbox = GTK_VBOX(GTK_DIALOG_GET_CONTENT_AREA(GTK_DIALOG(dlg)));
     data->show_cancel = TRUE;
     data->ok_button = GTK_STOCK_OK;
 
@@ -360,7 +360,7 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, char **s, in
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+  vbox = GTK_VBOX(GTK_DIALOG_GET_CONTENT_AREA(GTK_DIALOG(dlg)));
 
   if (mes) {
     GtkWidget *label;
@@ -417,7 +417,7 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+  vbox = GTK_VBOX(GTK_DIALOG_GET_CONTENT_AREA(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
@@ -487,7 +487,7 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+  vbox = GTK_VBOX(GTK_DIALOG_GET_CONTENT_AREA(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
@@ -554,7 +554,7 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+  vbox = GTK_VBOX(GTK_DIALOG_GET_CONTENT_AREA(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
@@ -616,7 +616,7 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+  vbox = GTK_VBOX(GTK_DIALOG_GET_CONTENT_AREA(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
@@ -687,7 +687,7 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX((GTK_DIALOG(dlg)->vbox));
+  vbox = GTK_VBOX(GTK_DIALOG_GET_CONTENT_AREA(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
@@ -875,7 +875,7 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
 				    stock, GTK_RESPONSE_ACCEPT,
 				    NULL);
   rc = gtk_check_button_new_with_mnemonic(_("_Change current directory"));
-  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dlg)->vbox), rc, FALSE, FALSE, 5);
+  gtk_box_pack_start(GTK_BOX(GTK_DIALOG_GET_CONTENT_AREA(GTK_DIALOG(dlg))), rc, FALSE, FALSE, 5);
   data->chdir_cb = rc;
   gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dlg), data->multi);
   data->widget = dlg;
@@ -1053,8 +1053,9 @@ nGetSaveFileName(GtkWidget * parent,
 void
 get_window_geometry(GtkWidget *win, gint *x, gint *y, gint *w, gint *h, GdkWindowState *state)
 {
-  if (state)
-    *state = gdk_window_get_state(win->window);
+  if (state) {
+    *state = gdk_window_get_state(GTK_WIDGET_GET_WINDOW(win));
+  }
 
   gtk_window_get_size(GTK_WINDOW(win), w, h);
   gtk_window_get_position(GTK_WINDOW(win), x, y);

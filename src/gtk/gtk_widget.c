@@ -528,7 +528,7 @@ show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
 
   dlg = gtk_color_selection_dialog_new(_("Pick a Color"));
   gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(user_data));
-  sel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg)->colorsel);
+  sel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg)));
 
   gtk_color_selection_set_has_palette(sel, TRUE);
   gtk_color_selection_set_has_opacity_control(sel, Menulocal.use_opacity);

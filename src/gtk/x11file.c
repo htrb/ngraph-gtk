@@ -3975,7 +3975,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     return NULL;
   }
 
-  pix = gra2gdk_create_pixmap(gobj, inst, local, TopLevel->window,
+  pix = gra2gdk_create_pixmap(gobj, inst, local, GTK_WIDGET_GET_WINDOW(TopLevel),
 			      width, height,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
   if (pix == NULL) {
@@ -4564,12 +4564,7 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
   }
 
   dlg = gtk_color_selection_dialog_new(title);
-
-#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 14))
-  sel = gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg));
-#else
-  sel = GTK_COLOR_SELECTION_DIALOG(dlg)->colorsel;
-#endif
+  sel = GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg));
 
   gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
   gtk_color_selection_set_has_opacity_control(GTK_COLOR_SELECTION(sel), Menulocal.use_opacity);

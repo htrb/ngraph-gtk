@@ -81,6 +81,10 @@ gra2gdk_create_pixmap(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local
   cairo_t *cairo;
   GdkPixmap *pix;
 
+  if (drawable == NULL) {
+    return NULL;
+  }
+
   pix = gdk_pixmap_new(drawable, w, h, -1);
   cairo = gdk_cairo_create(pix);
 

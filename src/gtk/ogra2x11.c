@@ -337,7 +337,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   gtk_widget_show_all(gtklocal->mainwin);
 
-  win = gtklocal->View->window;
+  win = GTK_WIDGET_GET_WINDOW(gtklocal->View);
   gc = gdk_gc_new(win);
 
   gtklocal->win = NULL;

@@ -1,3 +1,56 @@
+2011-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/Makefile.am (libngraph_la_CFLAGS): add option
+	"-DGSEAL_ENABLE=1".
+
+	* src/gtk/ogra2gdk.c (gra2gdk_create_pixmap): check if the
+	variable "drawable" is NULL or not.
+
+	* src/gtk/x11axis.c (AxisPosDialogRef): removed.
+	(position_tab_create): use "AxisDialogRef()" for "changed" signal.
+	(AxisDialogRef): set empty text when the index of the active item
+	is 0.
+	(position_tab_setup_item, scale_tab_setup_item): add item "none"
+	to the GtkComboBoxEntry widget.
+
+	* src/gtk/gtk_widget.c (show_color_sel): use
+	"GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION()".
+
+	* src/gtk/x11gui.c (DialogExecute, DialogInput, DialogRadio)
+	(DialogCombo, DialogComboEntry, DialogSpinEntry, DialogCheck)
+	(FileSelectionDialog): use "GTK_DIALOG_GET_CONTENT_AREA()".
+
+	* src/gtk/x11view.c (paste_cb, ViewerWinSetup, create_pix)
+	(OpenGC): use "GTK_WIDGET_GET_WINDOW()".
+
+	* src/gtk/x11menu.c (create_markpixmap): use
+	"GTK_WIDGET_GET_WINDOW()".
+
+	* src/gtk/x11lgndx.c (clear_view, LegendGaussDialogPaint): use
+	"GTK_WIDGET_GET_WINDOW()".
+
+	* src/gtk/x11lgnd.c (draw_arrow_pixmap, LegendArrowDialogPaint):
+	use "GTK_WIDGET_GET_WINDOW()".
+
+	* src/gtk/x11gui.c (get_window_geometry): use
+	"GTK_WIDGET_GET_WINDOW()".
+
+	* src/gtk/x11file.c (select_color): use
+	"GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION()".
+	(draw_type_pixbuf): use "GTK_WIDGET_GET_WINDOW()".
+
+	* src/gtk/ogra2x11.c (gtkinit): use "GTK_WIDGET_GET_WINDOW()".
+
+	* src/gtk/gtk_subwin.c (sub_window_save_geometry)
+	(sub_window_minimize) :use "GTK_WIDGET_GET_WINDOW()".
+
+	* src/gtk/x11view.c (ViewerWinSetup): use
+	"GTK_WIDGET_SET_CAN_FOCUS()".
+
+	* src/gtk/gtk_common.h (GTK_WIDGET_GET_WINDOW)
+	(GTK_DIALOG_GET_CONTENT_AREA, GTK_WIDGET_SET_CAN_FOCUS)
+	(GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION): added.
+
 2011-02-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.c (SetObjFieldFromWidget)

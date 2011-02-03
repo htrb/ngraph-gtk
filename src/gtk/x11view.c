@@ -335,14 +335,19 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
   struct narray idarray;
   GdkGC *dc;
   struct objlist *draw_obj;
+  GdkWindow *window;
 
   if (text == NULL)
+    return;
+
+  window = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
+  if (window == NULL)
     return;
 
   if (strncmp(text, SCRIPT_IDN, SCRIPT_IDN_LEN)) {
     gint w, h;
 
-    gdk_window_get_geometry(NgraphApp.Viewer.Win->window, NULL, NULL, &w, &h, NULL);
+    gdk_window_get_geometry(window, NULL, NULL, &w, &h, NULL);
     text_dropped(text, w / 2, h / 2, &NgraphApp.Viewer);
     return;
   }
@@ -1185,7 +1190,7 @@ ViewerWinSetup(void)
   int x, y, width, height;
 
   d = &(NgraphApp.Viewer);
-  d->gdk_win = d->Win->window;
+  d->gdk_win = GTK_WIDGET_GET_WINDOW(d->Win);
   Menulocal.GRAoid = -1;
   Menulocal.GRAinst = NULL;
   d->Mode = PointB;
@@ -1239,7 +1244,7 @@ ViewerWinSetup(void)
 			GDK_BUTTON_PRESS_MASK |
 			GDK_KEY_PRESS_MASK |
 			GDK_KEY_RELEASE_MASK);
-  GTK_WIDGET_SET_FLAGS(d->Win, GTK_CAN_FOCUS);
+  GTK_WIDGET_SET_CAN_FOCUS(d->Win);
 
   g_signal_connect(d->Win, "button-press-event", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(d->Win, "button-release-event", G_CALLBACK(ViewerEvButtonUp), d);
@@ -5212,6 +5217,12 @@ static void
 create_pix(int w, int h)
 {
   GdkRectangle rect;
+  GdkWindow *window;
+
+  window = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
+  if (window == NULL) {
+    return;
+  }
 
   if (Menulocal.gc == NULL) {
     return;
@@ -5236,7 +5247,7 @@ create_pix(int w, int h)
     g_object_unref(Menulocal.pix);
   }
 
-  Menulocal.pix = gdk_pixmap_new(NgraphApp.Viewer.Win->window, w, h, -1);
+  Menulocal.pix = gdk_pixmap_new(window, w, h, -1);
   rect.x = 0;
   rect.y = 0;
   rect.width = w;
@@ -5280,7 +5291,7 @@ OpenGC(void)
   if (height == 0)
     height = 1;
 
-  Menulocal.win = NgraphApp.Viewer.Win->window;
+  Menulocal.win = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
   Menulocal.gc = gdk_gc_new(Menulocal.win);
   create_pix(width, height);
 

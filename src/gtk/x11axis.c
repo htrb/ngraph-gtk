@@ -966,22 +966,6 @@ ZoomDialog(struct ZoomDialog *data)
 }
 
 static void
-AxisPosDialogRef(GtkWidget *w, gpointer client_data)
-{
-  struct AxisDialog *d;
-  char buf[10];
-  int a, oid;
-
-  d = (struct AxisDialog *) client_data;
-  a = combo_box_get_active(w);
-  if (a < 0)
-    return;
-  getobj(d->Obj, "oid", a, 0, NULL, &oid);
-  snprintf(buf, sizeof(buf), "^%d", oid);
-  combo_box_entry_set_text(w, buf);
-}
-
-static void
 scale_tab_setup_item(struct AxisDialog *d, int id)
 {
   char *valstr;
@@ -1051,6 +1035,7 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
 
   combo_box_clear(d->ref);
   lastinst = chkobjlastinst(d->Obj);
+  combo_box_append_text(d->ref, _("none"));
   for (j = 0; j <= lastinst; j++) {
     getobj(d->Obj, "group", j, 0, NULL, &name);
     name =CHK_STR(name);
@@ -1059,8 +1044,9 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
 
   sgetobjfield(d->Obj, id, "reference", NULL, &valstr, FALSE, FALSE, FALSE);
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':')
+  if (valstr[i] == ':') {
     i++;
+  }
   combo_box_entry_set_text(d->ref, valstr + i);
   g_free(valstr);
 }
@@ -1169,12 +1155,18 @@ AxisDialogRef(GtkWidget *w, gpointer client_data)
   d = (struct AxisDialog *) client_data;
 
   a = combo_box_get_active(w);
-  if (a < 0)
+  if (a < 0) {
     return;
+  }
 
-  getobj(d->Obj, "oid", a, 0, NULL, &oid);
+  if (a == 0) {
+    combo_box_entry_set_text(w, "");
+    return;
+  }
+
+  getobj(d->Obj, "oid", a - 1, 0, NULL, &oid);
   snprintf(buf, sizeof(buf), "^%d", oid);
-  combo_box_entry_set_text(d->ref, buf);
+  combo_box_entry_set_text(w, buf);
 }
 
 static void
@@ -2078,6 +2070,7 @@ position_tab_setup_item(struct AxisDialog *axis, int id)
 
   lastinst = chkobjlastinst(axis->Obj);
   combo_box_clear(d->adjust);
+  combo_box_append_text(d->adjust, _("none"));
   for (j = 0; j <= lastinst; j++) {
     getobj(axis->Obj, "group", j, 0, NULL, &name);
     name = CHK_STR(name);
@@ -2139,7 +2132,7 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 2, -1);
-  g_signal_connect(w, "changed", G_CALLBACK(AxisPosDialogRef), dd);
+  g_signal_connect(w, "changed", G_CALLBACK(AxisDialogRef), dd);
   add_widget_to_table(table, w, _("_Adjust:"), FALSE, i++);
   d->adjust = w;
 

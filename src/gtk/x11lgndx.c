@@ -66,8 +66,11 @@ static void LegendGaussDialogDiv(GtkWidget *w, gpointer client_data);
 static void
 clear_view(struct LegendGaussDialog *d)
 {
-  if (d->view->window) {
-    gdk_window_invalidate_rect(d->view->window, NULL, TRUE);
+  GdkWindow *win;
+
+  win = GTK_WIDGET_GET_WINDOW(d->view);
+  if (win) {
+    gdk_window_invalidate_rect(win, NULL, TRUE);
   }
 }
 
@@ -122,7 +125,11 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   struct gra2cairo_local *local;
 
   d = (struct LegendGaussDialog *) client_data;
-  win = w->window;
+
+  win = GTK_WIDGET_GET_WINDOW(w);
+  if (win == NULL) {
+    return FALSE;
+  }
 
   found = find_gra2gdk_inst(&gobj, &inst, &robj, &output, &local);
   if (! found) {
