@@ -1,5 +1,8 @@
 2011-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/gtk_subwin.c (hide_minimize_menu_item): use
+	"GTK_WIDGET_GET_WINDOW()".
+
 	* src/gtk/Makefile.am (libngraph_la_CFLAGS): add option
 	"-DGSEAL_ENABLE=1".
 
