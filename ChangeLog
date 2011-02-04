@@ -1,3 +1,9 @@
+2011-02-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_function.rb: add comment after case labels.
+
+	* src/math/math_function.h.in: fix indent.
+
 2011-02-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (hide_minimize_menu_item): use

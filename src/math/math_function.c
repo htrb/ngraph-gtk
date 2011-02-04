@@ -176,9 +176,10 @@ math_add_basic_function(MathEquation *eq) {
       continue;
     }
     switch (i) {
-    case 9:
-      if (FuncAry[i].prm.arg_type)
+    case 9:  /*  UNSHIFT  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 2);
       if (ptr == NULL) {
         return 1;
@@ -187,9 +188,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 15:
-      if (FuncAry[i].prm.arg_type)
+    case 15:  /*  UNLESS  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
       if (ptr == NULL) {
         return 1;
@@ -199,9 +201,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[2] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 16:
-      if (FuncAry[i].prm.arg_type)
+    case 16:  /*  RSORT  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
@@ -209,9 +212,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 30:
-      if (FuncAry[i].prm.arg_type)
+    case 30:  /*  SHIFT  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
@@ -219,9 +223,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 35:
-      if (FuncAry[i].prm.arg_type)
+    case 35:  /*  PUSH  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 2);
       if (ptr == NULL) {
         return 1;
@@ -230,9 +235,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 39:
-      if (FuncAry[i].prm.arg_type)
+    case 39:  /*  SIZE  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
@@ -240,9 +246,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 40:
-      if (FuncAry[i].prm.arg_type)
+    case 40:  /*  SORT  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
@@ -250,9 +257,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 51:
-      if (FuncAry[i].prm.arg_type)
+    case 51:  /*  POP  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
       if (ptr == NULL) {
         return 1;
@@ -260,9 +268,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 64:
-      if (FuncAry[i].prm.arg_type)
+    case 64:  /*  FOR  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 5);
       if (ptr == NULL) {
         return 1;
@@ -274,9 +283,10 @@ math_add_basic_function(MathEquation *eq) {
       ptr[4] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 78:
-      if (FuncAry[i].prm.arg_type)
+    case 78:  /*  IF  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 3);
       if (ptr == NULL) {
         return 1;

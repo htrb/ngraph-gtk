@@ -55,7 +55,7 @@ EOF
 
   f.puts("static char OpeChar[#{N}] = {")
   N.times {|i|
-    f.puts(ope.include?(i) ? "  1,  // '#{i.chr}'" : "  0,")
+    f.puts(ope.include?(i) ? "  1,  /* #{i.chr} */" : "  0,")
   }
   f.puts("};")
 

@@ -73,14 +73,14 @@ EOF
     if (s.length == 5)
       f.puts("  {\"#{s[0].upcase}\", {#{s[1]}, #{s[2]}, #{s[3]}, math_func_#{s[0]}, NULL, NULL, NULL, NULL}},")
       if (s[4] != "NULL")
-        func.push([i, s[4].split(",")])
+        func.push([i, s[4].split(","), s[0].upcase])
       end
       i += 1
     elsif (s.length == 6)
       f.puts("#ifdef HAVE_LIBGSL")
       f.puts("  {\"#{s[0].upcase}\", {#{s[1]}, #{s[2]}, #{s[3]}, math_func_#{s[0]}, NULL, NULL, NULL, NULL}},")
       if (s[4] != "NULL")
-        func.push([i, s[4].split(",")])
+        func.push([i, s[4].split(","), s[0].upcase])
       end
       f.puts("#else")
       f.puts("  {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},")
@@ -105,9 +105,10 @@ math_add_basic_function(MathEquation *eq) {
 EOF
   func.each {|arg|
   f.puts <<EOF
-    case #{arg[0]}:
-      if (FuncAry[i].prm.arg_type)
+    case #{arg[0]}:  /*  #{arg[2].upcase}  */
+      if (FuncAry[i].prm.arg_type) {
         break;
+      }
       ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * #{arg[1].length});
       if (ptr == NULL) {
         return 1;
