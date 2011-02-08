@@ -1613,7 +1613,7 @@ create_character_view(GtkWidget *entry, gchar *data)
   gtk_icon_view_set_row_spacing(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_column_spacing(GTK_ICON_VIEW(icon_view), 0);
   gtk_icon_view_set_margin(GTK_ICON_VIEW(icon_view), 0);
-#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18))
+#if GTK_CHECK_VERSION(2, 18, 0)
   gtk_icon_view_set_item_padding(GTK_ICON_VIEW(icon_view), 0);
 #endif
   gtk_icon_view_set_columns(GTK_ICON_VIEW(icon_view), 24);

@@ -1018,7 +1018,7 @@ get_style_string(struct objlist *obj, int id, char *field)
   return NULL;
 }
 
-#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 18))
+#if GTK_CHECK_VERSION(2, 18, 0)
 static void
 set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *field)
 {

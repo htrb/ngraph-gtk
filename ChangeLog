@@ -1,3 +1,22 @@
+2011-02-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (menuinit): initialize fields
+	"GTK_compile_version" and "GTK_runtime_version".
+	(gtkmenu): add fields "GTK_compile_version" and
+	"GTK_runtime_version".
+
+	* src/gtk/x11print.c (CmOutputPrinter): use "GTK_CHECK_VERSION()".
+
+	* src/gtk/x11menu.c (create_graphmenu, create_toolbar): use
+	"GTK_CHECK_VERSION()".
+
+	* src/gtk/x11lgnd.c (create_character_view): use
+	"GTK_CHECK_VERSION()".
+
+	* src/gtk/x11dialg.c: use "GTK_CHECK_VERSION()".
+
+	* src/gtk/gtk_common.h: use "GTK_CHECK_VERSION()".
+
 2011-02-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_function.rb: add comment after case labels.

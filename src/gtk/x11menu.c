@@ -913,7 +913,7 @@ create_graphmenu(GtkMenuBar *parent, GtkAccelGroup *accel_group)
   create_menu_item(menu, _("_Draw order"), FALSE, "<Ngraph>/Graph/Draw order", 0, 0, CmGraphMenu, MenuIdGraphSwitch);
   create_menu_item(menu, NULL, FALSE, NULL, 0, 0, NULL, 0);
 
-#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 14))
+#if GTK_CHECK_VERSION(2, 14, 0)
   create_menu_item(menu, GTK_STOCK_PAGE_SETUP, TRUE, "<Ngraph>/Graph/Page", 0, 0, CmGraphMenu, MenuIdGraphPage);
 #else
   create_menu_item(menu, _("pa_Ge"), FALSE, "<Ngraph>/Graph/Page", 0, 0, CmGraphMenu, MenuIdGraphPage);
@@ -1845,7 +1845,7 @@ create_toolbar(GtkWidget *box, GtkOrientation o, GtkWidget **hbox)
   t = gtk_toolbar_new();
   gtk_toolbar_set_style(GTK_TOOLBAR(t), GTK_TOOLBAR_ICONS);
   gtk_toolbar_set_show_arrow(GTK_TOOLBAR(t), TRUE);
-#if (GTK_MAJOR_VERSION > 2 || (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION >= 16))
+#if GTK_CHECK_VERSION(2, 16, 0)
   gtk_orientable_set_orientation(GTK_ORIENTABLE(t), o);
 #else
   gtk_toolbar_set_orientation(GTK_TOOLBAR(t), o);
