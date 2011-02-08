@@ -2237,16 +2237,20 @@ math_func_for(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   MATH_CHECK_ARG(rval, argv[3]);
 
   n = argv[0].val.val;
-  if (n < 0 || n >= MATH_FUNCTION_MEMORY_NUM || (argv[2].val.val - argv[1].val.val) * argv[3].val.val <= 0) {
+  if (n >= MATH_FUNCTION_MEMORY_NUM || (argv[2].val.val - argv[1].val.val) * argv[3].val.val <= 0) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
-  
-  Memory[n].type = MATH_VALUE_NORMAL;
+
+  if (n >= 0) {
+    Memory[n].type = MATH_VALUE_NORMAL;
+  }
 
   rval->val = 0;
   for (v = argv[1].val.val; (argv[3].val.val < 0) ?  (v >= argv[2].val.val) : (v <= argv[2].val.val); v += argv[3].val.val) {
-    Memory[n].val = v;
+    if (n >= 0) {
+      Memory[n].val = v;
+    }
     r = math_expression_calculate(argv[4].exp, rval);
     if(r) {
       return r;

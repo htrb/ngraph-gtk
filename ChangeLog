@@ -1,5 +1,8 @@
 2011-02-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/math/math_basic_function.c (math_func_for): don't set first
+	argument to the memory when the argument is negative value.
+
 	* src/gtk/ox11menu.c (menuinit): initialize fields
 	"GTK_compile_version" and "GTK_runtime_version".
 	(gtkmenu): add fields "GTK_compile_version" and
