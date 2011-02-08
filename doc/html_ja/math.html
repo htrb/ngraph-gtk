@@ -240,8 +240,6 @@
  <tr><td>\</td><td>実数乗算の乗余</td></tr>
  <tr><td>^</td><td>ベキ乗</td></tr>
  <tr><td>!</td><td>階乗(引数は 169 以下の正の整数)</td></tr>
- <tr><td>( )</td><td>括弧(20 重まで)</td></tr>
- <tr><td>=</td><td>式の終端(省略可能) 別の式を後に続けることが可能</td></tr>
  <tr><td>:</td><td>代入</td></tr>
  <tr><td>-:</td><td>自己代入</td></tr>
  <tr><td>+:</td><td>自己代入</td></tr>
@@ -264,6 +262,12 @@
  <dd> <p>exp1 &amp;&amp; exp2 は exp1 が偽の時 exp2 を評価しません。また exp1 が真の場合、exp2 を評価した値を返します。</p></dd>
  <dt> exp1 || exp2 と OR(exp1, exp2) の違い。</dt>
  <dd> <p>exp1 || exp2 は exp1 が真の時 exp2 を評価しません。また exp1 が真の場合は exp1、exp1 が偽の場合は exp2 を評価した値を返します。</p></dd>
+ <dt> =
+ <dd> <p>= は式の終端を表します(省略可能)。= の後に別の式を後に続けることができます。</p>
+ <dt> 括弧 ()
+ <dd> <p>括弧 () の数に制限はありません。</p>
+
+
 </dl>
 
 </div>
@@ -427,7 +431,8 @@
  <tr><td>MARKTYPE(x)</td><td>マークの種類をXに設定</td></tr>
  <tr><td>IF(x,ex1,ex2)</td><td>x ≠ 0 のとき ex1, x = 0 のとき ex2</td></tr>
  <tr><td>UNLESS(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x = 0 のとき ex1 </td></tr>
- <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す</td></tr>
+ <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す。
+				      m が負の時はメモリーへの設定は行われない</td></tr>
  <tr><td>PROG1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す (引数の数は 64 個まで)</td></tr>
  <tr><td>PROG2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す (引数の数は 64 個まで)</td></tr>
  <tr><td>PROGN(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す (引数の数は 64 個まで)</td></tr>
@@ -571,10 +576,9 @@
  <li><b>関数 IF() 使用例</b>
       <br>
       <br>
-      IF(x,ex1,ex2) は x が真(&lt;&gt;0)のとき ex1 を，偽(=0)のとき ex2 を返す
-      関数です。x には論理関数を使うと便利です。例えば次の式
+      IF(x,ex1,ex2) は x が真(&lt;&gt;0)のとき ex1 を，偽(=0)のとき ex2 を返す関数です。例えば次の式
       <p>
-      IF( LT(x,0), 0, SQRT(x) )
+      IF( x &lt; 0, 0, SQRT(x) )
       </p>
       は x&lt;0 のとき 0、x&gt;=0 のとき√x を返す関数になります。また必ず  ex1, ex2 どちらか一方しか評価されません。
       <br>
