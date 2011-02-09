@@ -73,7 +73,7 @@
 	* src/gtk/ogra2x11.c (gtkinit): use "GTK_WIDGET_GET_WINDOW()".
 
 	* src/gtk/gtk_subwin.c (sub_window_save_geometry)
-	(sub_window_minimize) :use "GTK_WIDGET_GET_WINDOW()".
+	(sub_window_minimize): use "GTK_WIDGET_GET_WINDOW()".
 
 	* src/gtk/x11view.c (ViewerWinSetup): use
 	"GTK_WIDGET_SET_CAN_FOCUS()".
@@ -166,7 +166,7 @@
 
 	* src/ogra2nul.c (g2nuldone): call "_exeparent()".
 
-	* src/ogra2.c (gra2done): check number of element od "sarray" whe
+	* src/ogra2.c (gra2done): check number of element of "sarray" when
 	"GC" is not equal to -1.
 
 	* src/ogra.c (oGRAopen): fix indent.
