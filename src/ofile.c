@@ -53,7 +53,7 @@
 
 #include "math/math_equation.h"
 
-#define UPDATE_PROGRESS_LINE_NUM 0x3ff
+#define UPDATE_PROGRESS_LINE_NUM 0xfff
 
 #define MATH_CONST_SIZE		19
 #define TWOPASS_CONST_SIZE	(MATH_CONST_SIZE - 5)
