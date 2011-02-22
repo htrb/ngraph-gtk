@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-02-22 18:41+0900\n"
-"PO-Revision-Date: 2011-01-20 17:11+0900\n"
+"POT-Creation-Date: 2011-02-22 18:49+0900\n"
+"PO-Revision-Date: 2011-02-22 18:48+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja_JP\n"
@@ -1364,36 +1364,32 @@ msgid "_Frame graph"
 msgstr "フレームグラフ(_F)"
 
 #: src/gtk/x11menu.c:250
-#, fuzzy
 msgid "Create frame graph"
-msgstr "フレームグラフ(_F)"
+msgstr "フレームグラフを作成"
 
 #: src/gtk/x11menu.c:261 src/gtk/x11menu.c:1057
 msgid "_Section graph"
 msgstr "方眼グラフ(_S)"
 
 #: src/gtk/x11menu.c:262
-#, fuzzy
 msgid "Create section graph"
-msgstr "方眼グラフ"
+msgstr "方眼グラフを作成"
 
 #: src/gtk/x11menu.c:273 src/gtk/x11menu.c:1069
 msgid "_Cross graph"
 msgstr "交差グラフ(_C)"
 
 #: src/gtk/x11menu.c:274
-#, fuzzy
 msgid "Create cross graph"
-msgstr "交差グラフ(_C)"
+msgstr "交差グラフを作成"
 
 #: src/gtk/x11menu.c:285
 msgid "_All clear"
 msgstr "全てクリア(_A)"
 
 #: src/gtk/x11menu.c:286
-#, fuzzy
 msgid "Clear graph"
-msgstr "交差グラフ(_C)"
+msgstr "グラフのクリア"
 
 #: src/gtk/x11menu.c:297
 msgid "_Load graph"
@@ -1416,7 +1412,6 @@ msgid "_GRA file"
 msgstr "_GRA ファイル"
 
 #: src/gtk/x11menu.c:348
-#, fuzzy
 msgid "Export as GRA file"
 msgstr "合成ファイルの保存"
 
@@ -1426,7 +1421,7 @@ msgstr "_PS ファイル"
 
 #: src/gtk/x11menu.c:360
 msgid "Export as PostScript file"
-msgstr ""
+msgstr "PostScript ファイルにエクスポート"
 
 #: src/gtk/x11menu.c:371
 msgid "_EPS file"
@@ -1434,7 +1429,7 @@ msgstr "_EPS ファイル"
 
 #: src/gtk/x11menu.c:372
 msgid "Export as Encapsulate PostScript file"
-msgstr ""
+msgstr "EPS ファイルにエクスポート"
 
 #: src/gtk/x11menu.c:383
 msgid "P_DF file"
@@ -1442,7 +1437,7 @@ msgstr "P_DF ファイル"
 
 #: src/gtk/x11menu.c:384
 msgid "Export as Portable Document Format"
-msgstr ""
+msgstr "PDF ファイルにエクスポート"
 
 #: src/gtk/x11menu.c:395
 msgid "_SVG file"
@@ -1450,7 +1445,7 @@ msgstr "_SVG ファイル"
 
 #: src/gtk/x11menu.c:396
 msgid "Export as Scalable Vector Graphics file"
-msgstr ""
+msgstr "SVG ファイルにエクスポート"
 
 #: src/gtk/x11menu.c:407
 msgid "P_NG file"
@@ -1458,16 +1453,15 @@ msgstr "P_NG ファイル"
 
 #: src/gtk/x11menu.c:408
 msgid "Export as Portable Network Graphics  file"
-msgstr ""
+msgstr "PNG ファイルにエクスポート"
 
 #: src/gtk/x11menu.c:420
-#, fuzzy
 msgid "_EMF file"
 msgstr "E_MF ファイル"
 
 #: src/gtk/x11menu.c:421
 msgid "Export as Windows Enhanced Metafile"
-msgstr ""
+msgstr "EMF ファイルにエクスポート"
 
 #: src/gtk/x11menu.c:434
 msgid "_Draw order"
@@ -1537,55 +1531,25 @@ msgstr "水平反転(_H)"
 msgid "flip _Vertically"
 msgstr "垂直反転(_V)"
 
-#: src/gtk/x11menu.c:720
-#, fuzzy
-msgid "Data Window"
-msgstr "新規作成"
-
 #: src/gtk/x11menu.c:722
 msgid "Activate Data Window"
 msgstr "Data Windowをアクティブにする"
-
-#: src/gtk/x11menu.c:734
-#, fuzzy
-msgid "Axis Window"
-msgstr "Axis Windowをアクティブにする"
 
 #: src/gtk/x11menu.c:736
 msgid "Activate Axis Window"
 msgstr "Axis Windowをアクティブにする"
 
-#: src/gtk/x11menu.c:748
-#, fuzzy
-msgid "Legend Window"
-msgstr "Legend Windowをアクティブにする"
-
 #: src/gtk/x11menu.c:750
 msgid "Activate Legend Window"
 msgstr "Legend Windowをアクティブにする"
-
-#: src/gtk/x11menu.c:762
-#, fuzzy
-msgid "Merge Window"
-msgstr "Merge Windowをアクティブにする"
 
 #: src/gtk/x11menu.c:764
 msgid "Activate Merge Window"
 msgstr "Merge Windowをアクティブにする"
 
-#: src/gtk/x11menu.c:776
-#, fuzzy
-msgid "Coordinate Window"
-msgstr "_Coordinate window:"
-
 #: src/gtk/x11menu.c:778
 msgid "Activate Coordinate Window"
 msgstr "Coordinate Windowをアクティブにする"
-
-#: src/gtk/x11menu.c:790
-#, fuzzy
-msgid "Information Window"
-msgstr "_Information window:"
 
 #: src/gtk/x11menu.c:792
 msgid "Activate Information Window"
@@ -1641,12 +1605,11 @@ msgstr "クロスゲージ(_G)"
 
 #: src/gtk/x11menu.c:944
 msgid "_New"
-msgstr ""
+msgstr "新規作成(_N)"
 
 #: src/gtk/x11menu.c:956
-#, fuzzy
 msgid "_Open"
-msgstr "開く"
+msgstr "開く(_O)"
 
 #: src/gtk/x11menu.c:957
 msgid "Open Data"
@@ -2634,6 +2597,29 @@ msgstr "偶奇"
 #: src/opath.c:72
 msgid "winding_rule"
 msgstr "ワインディング"
+
+#~ msgid "Data Window"
+#~ msgstr "新規作成"
+
+#, fuzzy
+#~ msgid "Axis Window"
+#~ msgstr "Axis Windowをアクティブにする"
+
+#, fuzzy
+#~ msgid "Legend Window"
+#~ msgstr "Legend Windowをアクティブにする"
+
+#, fuzzy
+#~ msgid "Merge Window"
+#~ msgstr "Merge Windowをアクティブにする"
+
+#, fuzzy
+#~ msgid "Coordinate Window"
+#~ msgstr "_Coordinate window:"
+
+#, fuzzy
+#~ msgid "Information Window"
+#~ msgstr "_Information window:"
 
 #~ msgid "Merge"
 #~ msgstr "合成"

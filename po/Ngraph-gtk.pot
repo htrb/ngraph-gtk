@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-02-22 18:41+0900\n"
+"POT-Creation-Date: 2011-02-22 18:49+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1527,48 +1527,24 @@ msgstr ""
 msgid "flip _Vertically"
 msgstr ""
 
-#: src/gtk/x11menu.c:720
-msgid "Data Window"
-msgstr ""
-
 #: src/gtk/x11menu.c:722
 msgid "Activate Data Window"
-msgstr ""
-
-#: src/gtk/x11menu.c:734
-msgid "Axis Window"
 msgstr ""
 
 #: src/gtk/x11menu.c:736
 msgid "Activate Axis Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:748
-msgid "Legend Window"
-msgstr ""
-
 #: src/gtk/x11menu.c:750
 msgid "Activate Legend Window"
-msgstr ""
-
-#: src/gtk/x11menu.c:762
-msgid "Merge Window"
 msgstr ""
 
 #: src/gtk/x11menu.c:764
 msgid "Activate Merge Window"
 msgstr ""
 
-#: src/gtk/x11menu.c:776
-msgid "Coordinate Window"
-msgstr ""
-
 #: src/gtk/x11menu.c:778
 msgid "Activate Coordinate Window"
-msgstr ""
-
-#: src/gtk/x11menu.c:790
-msgid "Information Window"
 msgstr ""
 
 #: src/gtk/x11menu.c:792
