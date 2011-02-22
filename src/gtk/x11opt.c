@@ -439,7 +439,8 @@ PrefScriptDialogClose(GtkWidget *w, void *data)
   case IDSAVE:
     save_config(SAVE_CONFIG_TYPE_ADDIN_SCRIPT);
   case IDOK:
-    update_addin_menu();
+    /* update add-in menu if necessary */
+    break;
   }
 }
 

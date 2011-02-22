@@ -1728,54 +1728,6 @@ mx_clear_info(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
   return 0;
 }
 
-static struct _subwin_data {
-  struct SubWin *w;
-  void (*init)(GtkWidget *, gpointer);
-} SubwinData[] = {
-  {
-    &NgraphApp.FileWin,
-    CmFileWindow,
-  },
-  {
-    &NgraphApp.AxisWin,
-    CmAxisWindow,
-  },
-  {
-    (struct SubWin *) &NgraphApp.LegendWin,
-    CmLegendWindow,
-  },
-  {
-    &NgraphApp.MergeWin,
-    CmMergeWindow,
-  },
-  {
-    &NgraphApp.CoordWin,
-    CmCoordinateWindow,
-  },
-  {
-    &NgraphApp.InfoWin,
-    CmInformationWindow,
-  },
-};
-
-static void
-subwindow_show(struct _subwin_data *win)
-{
-  if (win->w->Win) {
-    sub_window_show(win->w);
-  } else {
-    win->init(NULL, NULL);
-  }
-}
-
-static void
-subwindow_hide(struct _subwin_data *win)
-{
-  if (win->w->Win) {
-    sub_window_hide(win->w);
-  }
-}
-
 static int
 mx_show_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -1788,10 +1740,7 @@ mx_show_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 
   win = * (unsigned int *) (argv[2]);
 
-  if (win >= sizeof(SubwinData) / sizeof(*SubwinData))
-    return 0;
-
-  subwindow_show(&SubwinData[win]);
+  window_action_set_active(win, TRUE);
 
   return 0;
 }
@@ -1808,10 +1757,7 @@ mx_hide_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
 
   win = * (unsigned int *) (argv[2]);
 
-  if (win >= sizeof(SubwinData) / sizeof(*SubwinData))
-    return 0;
-
-  subwindow_hide(&SubwinData[win]);
+  window_action_set_active(win, FALSE);
 
   return 0;
 }
@@ -1828,26 +1774,7 @@ mx_toggle_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 
   win = * (int *) (argv[2]);
 
-  switch (win) {
-  case 0:
-    CmFileWindow(NULL, NULL);
-    break;
-  case 1:
-    CmAxisWindow(NULL, NULL);
-    break;
-  case 2:
-    CmLegendWindow(NULL, NULL);
-    break;
-  case 3:
-    CmMergeWindow(NULL, NULL);
-    break;
-  case 4:
-    CmCoordinateWindow(NULL, NULL);
-    break;
-  case 5:
-    CmInformationWindow(NULL, NULL);
-    break;
-  }
+  window_action_toggle(win);
 
   return 0;
 }

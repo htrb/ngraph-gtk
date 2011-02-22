@@ -1220,6 +1220,9 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
     return;
 
   uri = gtk_recent_chooser_get_current_uri(w);
+  if (uri == NULL) {
+    return;
+  }
 
   fname = g_filename_from_uri(uri, NULL, NULL);
   g_free(uri);

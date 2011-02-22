@@ -1,3 +1,91 @@
+2011-02-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/NgraphUI.xml: added.
+	* src/object.c (set_newobj_cb, set_delobj_cb): added.
+	(newobj_alias): call "NewObjCB()" when "NewObjCB" is not NULL.
+	(delobj): call "DelObjCB()" when "DelObjCB" is not NULL.
+
+	* src/gtk/main.c (set_dir_defs): add setting for "PIXMAPDIR".
+
+	* src/gtk/x11lgnd.c (CmLegendWindow): type of the first argument
+	is "GtkToggleAction *".
+	(CmLegendWindow): visibility is depend on the state of the action.
+
+
+	* src/gtk/x11cood.c (CmCoordinateWindow): type of the first argument
+	is "GtkToggleAction *".
+	(CmCoordinateWindow): visibility is depend on the state of the action.
+
+
+	* src/gtk/ox11menu.c (subwindow_show, subwindow_hide): removed.
+	(mx_show_win, mx_hide_win): use "window_action_set_active()".
+	(mx_toggle_win): use "window_action_toggle()".
+
+	* src/gtk/x11file.c (CmFileHistory): get identifier of the history
+	entry from second argument.
+	(CmFileOpen): check number of instances.
+	(update_file_obj_multi): don't call "set_graph_modified()" when
+	"new_file" is TRUE and "ret" is "IDDELETE".
+	(CmFileWindow): type of the first argument is "GtkToggleAction *".
+	(CmFileWindow): visibility is depend on the state of the action.
+
+	* src/gtk/x11view.c (ViewerEvPopupMenu, ViewerPopupMenu)
+	(create_menu, create_popup_menu): removed.
+	(ShowFocusFrame): call "set_focus_sensitivity()".
+	(clear_focus_obj): type of the argument is "struct Viewer *".
+	(clear_focus_obj): call "set_focus_sensitivity()".
+	(ViewerPopupMenu): remove unused case.
+	(CmViewerButtonArm): data point button can be default.
+
+	* src/gtk/x11menu.h (Viewer): remove members "PToolbar",
+	"CToolbar" and "popup_item".
+
+	* src/gtk/x11menu.c (ActionEntry, create_action_group)
+	(reate_ui_from_file): added.
+	(application): use "GtkUIManager" to make the menu and toolbars.
+	(set_focus_sensitivity, set_btn_press_cb, get_toolbar)
+	(set_toolbar_caption, show_graph_menu, show_data_menu)
+	(check_instance, check_exist_instances)
+	(window_action_set_active, window_action_toggle)
+	(create_action_group): added.
+	(CmReloadWindowConfig): use "window_action_set_active".
+
+	* src/gtk/x11opt.c (PrefScriptDialogClose): dont update "add-in"
+	menu.
+
+	* src/gtk/x11graph.c (CmGraphHistory): check "uri" is NULL or not.
+
+	* src/gtk/x11merge.c (CmMergeWindow): type of the first argument
+	is "GtkToggleAction *".
+	(CmMergeWindow): visibility is depend on the state of the action.
+
+	* src/gtk/x11info.c (InfoWinUpdate): type of the first argument is
+	"GtkToggleAction *".
+	(InfoWinUpdate): visibility is depend on the state of the action.
+
+	* src/gtk/dir_defs.h.in (PIXMAPDIR): added.
+
+	* src/gtk/gtk_subwin.c (sub_window_hide, sub_window_show): static
+	function.
+	(sub_window_set_visibility): added.
+	(sub_window_toggle_visibility): removed.
+	(cb_del): use "window_action_set_active()".
+
+	* src/gtk/Makefile.am (pixmapdir): added.
+	(dir_defs.h): add pixmapdir setting.
+
+	* src/gtk/x11axis.c (CmAxisWindow): type of the first argument is
+	"GtkToggleAction *".
+	(CmAxisWindow): visibility is depend on the state of the action.
+
+	* pixmap/Makefile.am: added.
+
+	* mingw/windows_make.sed: add command for pixmap directory.
+
+	* configure.in (AC_CONFIG_FILES): add "pixmap/Makefile".
+
+	* Makefile.am (SUBDIRS): add directory "pixmap".
+
 2011-02-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_basic_function.c (math_func_for): don't set first

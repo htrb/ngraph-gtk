@@ -1850,6 +1850,9 @@ getobjproc(struct objlist *obj,char *vname,void *val)
 }
 #endif /* COMPILE_UNUSED_FUNCTIONS */
 
+static void (* NewObjCB)(struct objlist *obj) = NULL;
+static void (* DelObjCB)(struct objlist *obj) = NULL;
+
 int
 newobj_alias(struct objlist *obj, const char *name)
 {
@@ -1961,7 +1964,24 @@ newobj_alias(struct objlist *obj, const char *name)
   }
   obj->lastinst = id;
   obj->curinst = id;
+
+  if (NewObjCB) {
+    NewObjCB(obj);
+  }
+
   return id;
+}
+
+void 
+set_newobj_cb(void (* newobj_cb)(struct objlist *obj))
+{
+  NewObjCB = newobj_cb;
+}
+
+void 
+set_delobj_cb(void (* delobj_cb)(struct objlist *obj))
+{
+  DelObjCB = delobj_cb;
 }
 
 int 
@@ -2049,6 +2069,11 @@ delobj(struct objlist *obj,int delid)
   g_free(instcur);
   obj->lastinst--;
   obj->curinst=-1;
+
+  if (DelObjCB) {
+    DelObjCB(obj);
+  }
+
   return 0;
 }
 

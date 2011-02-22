@@ -30,7 +30,7 @@ void CmAxisAddMenu(GtkMenuItem *w, gpointer client_data);
 void CmAxisMenu(GtkMenuItem *w, gpointer client_data);
 void CmGridMenu(GtkMenuItem *w, gpointer client_data);
 void CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data);
-void CmAxisWindow(GtkWidget *w, gpointer client_data);
+void CmAxisWindow(GtkToggleAction *action, gpointer client_data);
 void AxisWindowUnmap(GtkWidget *w, gpointer client_data);
 void CmGridMenu(GtkMenuItem *w, gpointer client_data);
 int  check_axis_history(struct objlist *obj);

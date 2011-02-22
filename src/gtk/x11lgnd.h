@@ -32,6 +32,6 @@ void CmRectangleMenu(GtkMenuItem *w, gpointer client_data);
 void CmArcMenu(GtkMenuItem *w, gpointer client_data);
 void CmMarkMenu(GtkMenuItem *w, gpointer client_data);
 void CmTextMenu(GtkMenuItem *w, gpointer client_data);
-void CmLegendWindow(GtkWidget *w, gpointer client_data);
+void CmLegendWindow(GtkToggleAction *action, gpointer client_data);
 void CmOptionTextDef(void);
 void LegendWindowUnmap(GtkWidget *w, gpointer client_data);

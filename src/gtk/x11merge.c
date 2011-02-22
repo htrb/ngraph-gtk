@@ -476,34 +476,45 @@ init_dnd(struct SubWin *d)
 }
 
 void
-CmMergeWindow(GtkWidget *w, gpointer client_data)
+CmMergeWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
+  int state;
+  GtkWidget *dlg;
 
   d = &(NgraphApp.MergeWin);
   d ->type = TypeMergeWin;
 
-  if (d->Win) {
-    sub_window_toggle_visibility(d);
+  if (action) {
+    state = gtk_toggle_action_get_active(action);
   } else {
-    GtkWidget *dlg;
-
-    d->update = MergeWinUpdate;
-    d->setup_dialog = MergeDialog;
-    d->dialog = &DlgMerge;
-
-    dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
-
-    g_signal_connect(dlg, "expose-event", G_CALLBACK(MergeWinExpose), NULL);
-
-    d->obj = chkobject("merge");
-    d->num = chkobjlastinst(d->obj);
-
-    sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-
-    init_dnd(d);
-
-    sub_window_show_all(d);
-    sub_window_set_geometry(d, TRUE);
+    state = TRUE;
   }
+
+  if (d->Win) {
+    sub_window_set_visibility(d, state);
+    return;
+  }
+
+  if (! state) {
+    return;
+  }
+
+  d->update = MergeWinUpdate;
+  d->setup_dialog = MergeDialog;
+  d->dialog = &DlgMerge;
+
+  dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
+
+  g_signal_connect(dlg, "expose-event", G_CALLBACK(MergeWinExpose), NULL);
+
+  d->obj = chkobject("merge");
+  d->num = chkobjlastinst(d->obj);
+
+  sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+
+  init_dnd(d);
+
+  sub_window_show_all(d);
+  sub_window_set_geometry(d, TRUE);
 }

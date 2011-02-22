@@ -33,10 +33,8 @@ void sub_window_minimize(void *d);
 void sub_window_restore_state(void *d);
 void sub_window_set_geometry(struct SubWin *d, int resize);
 void sub_window_save_geometry(struct SubWin *d);
-void sub_window_hide(struct SubWin *d);
-void sub_window_show(struct SubWin *d);
 void sub_window_show_all(struct SubWin *d);
-void sub_window_toggle_visibility(struct SubWin *d);
+void sub_window_set_visibility(struct SubWin *d, int state);
 
 void set_editable_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback end);
 void set_combo_cell_renderer_cb(struct SubWin *d, int col, n_list_store *list, GCallback start, GCallback end);

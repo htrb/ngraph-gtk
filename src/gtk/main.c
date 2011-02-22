@@ -41,7 +41,7 @@
 #ifdef LOCALEDIR
 #undef LOCALEDIR
 #endif	/* LOCALEDIR */
-char *DOCDIR, *LIBDIR, *CONFDIR, *LOCALEDIR;
+char *DOCDIR, *LIBDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR
 #endif	/* WINDOWS */
 
 #include "dir_defs.h"
@@ -695,6 +695,7 @@ set_dir_defs(char *app)
   LIBDIR  = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
   LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
+  PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmap");
 
   g_free(app_path);
 

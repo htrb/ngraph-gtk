@@ -62,45 +62,11 @@
 #define SCROLL_INC 20
 #define POINT_ERROR 4
 
-enum ViewerPopupIdn {
-  VIEW_UPDATE = 1,
-  VIEW_DELETE,
-  VIEW_CUT,
-  VIEW_COPY,
-  VIEW_PASTE,
-  VIEW_DUP,
-  VIEW_TOP,
-  VIEW_LAST,
-  VIEW_UP,
-  VIEW_DOWN,
-  VIEW_CROSS,
-  VIEW_ALIGN_LEFT,
-  VIEW_ALIGN_RIGHT,
-  VIEW_ALIGN_HCENTER,
-  VIEW_ALIGN_TOP,
-  VIEW_ALIGN_VCENTER,
-  VIEW_ALIGN_BOTTOM,
-  VIEW_ROTATE_CLOCKWISE,
-  VIEW_ROTATE_COUNTER_CLOCKWISE,
-  VIEW_FLIP_HORIZONTAL,
-  VIEW_FLIP_VERTICAL,
-};
-
 enum object_move_type {
   OBJECT_MOVE_TYPE_TOP,
   OBJECT_MOVE_TYPE_UP,
   OBJECT_MOVE_TYPE_DOWN,
   OBJECT_MOVE_TYPE_LAST,
-};
-
-struct viewer_popup
-{
-  char *title;
-  gboolean use_stock;
-  enum ViewerPopupIdn idn;
-  struct viewer_popup *submenu;
-  int submenu_item_num;
-  enum pop_up_menu_item_type type;
 };
 
 #define Button1 1
@@ -143,11 +109,9 @@ static gboolean ViewerEvMouseMove(unsigned int state, TPoint *point, struct View
 static gboolean ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data);
 static gboolean ViewerEvButtonUp(GtkWidget *w, GdkEventButton *e, gpointer client_data);
 static gboolean ViewerEvMouseMotion(GtkWidget *w, GdkEventMotion *e, gpointer client_data);
-static gboolean ViewerEvPopupMenu(GtkWidget *w, gpointer client_data);
 static gboolean ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data);
 static gboolean ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data);
 static gboolean ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data);
-static void ViewerPopupMenu(GtkWidget *w, gpointer client_data);
 static void DelList(struct objlist *obj, N_VALUE *inst);
 static void ViewUpdate(void);
 static void ViewCopy(void);
@@ -158,7 +122,7 @@ static void reorder_object(enum object_move_type type);
 static void move_data_cancel(struct Viewer *d, gboolean show_message);
 static void SetHRuler(struct Viewer *d);
 static void SetVRuler(struct Viewer *d);
-static void clear_focus_obj(struct narray *focusobj);
+static void clear_focus_obj(struct Viewer *d);
 static void ViewDelete(void);
 static int text_dropped(const char *str, gint x, gint y, struct Viewer *d);
 static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
@@ -1035,118 +999,6 @@ EvalDialog(struct EvalDialog *data,
   data->sel = iarray;
 }
 
-static GtkWidget *
-create_menu(struct viewer_popup *popup, int n, struct Viewer *d)
-{
-  GtkWidget *menu, *item;
-  int i, j = 0;
-
-  menu = gtk_menu_new();
-
-  for (i = 0; i < n; i++) {
-    switch (popup[i].type) {
-    case POP_UP_MENU_ITEM_TYPE_NORMAL:
-    case POP_UP_MENU_ITEM_TYPE_MENU:
-      if (popup[i].use_stock) {
-	item = gtk_image_menu_item_new_from_stock(popup[i].title, NULL);
-      } else {
-	item = gtk_menu_item_new_with_mnemonic(_(popup[i].title));
-      }
-
-      if (d) {
-	d->popup_item[j] = item;
-	j++;
-      }
-
-      if (popup[i].submenu) {
-	GtkWidget *submenu;
-	submenu = create_menu(popup[i].submenu, popup[i].submenu_item_num, NULL);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), submenu);
-      } else {
-	g_signal_connect(item, "activate", G_CALLBACK(ViewerPopupMenu), GINT_TO_POINTER(popup[i].idn));
-      }
-      break;
-    case POP_UP_MENU_ITEM_TYPE_CHECK:
-      item = gtk_check_menu_item_new_with_mnemonic(_(popup[i].title));
-      g_signal_connect(item, "toggled", G_CALLBACK(ViewerPopupMenu), GINT_TO_POINTER(popup[i].idn));
-
-      if (d) {
-	d->popup_item[j] = item;
-	j++;
-      }
-      break;
-    default:
-      item = gtk_separator_menu_item_new();
-    }
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  }
-
-  return menu;
-}
-
-static GtkWidget *
-create_popup_menu(struct Viewer *d)
-{
-  struct viewer_popup align_popup[] = {
-    {N_("_Left"),              FALSE, VIEW_ALIGN_LEFT,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("_Vertical center"),   FALSE, VIEW_ALIGN_VCENTER, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("_Right"),             FALSE, VIEW_ALIGN_RIGHT,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-    {N_("_Top"),               FALSE, VIEW_ALIGN_TOP,     NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("_Horizontal center"), FALSE, VIEW_ALIGN_HCENTER, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("_Bottom"),            FALSE, VIEW_ALIGN_BOTTOM,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  };
-
-  struct viewer_popup rotate_popup[] = {
-    {N_("_90 degree clockwise"),         FALSE, VIEW_ROTATE_CLOCKWISE,        NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("9_0 degree counter-clockwise"), FALSE, VIEW_ROTATE_COUNTER_CLOCKWISE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  };
-
-  struct viewer_popup flip_popup[] = {
-    {N_("flip _Horizontally"), FALSE, VIEW_FLIP_HORIZONTAL, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("flip _Vertically"),   FALSE, VIEW_FLIP_VERTICAL,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  };
-
-  struct viewer_popup popup[] = {
-    {GTK_STOCK_CUT,         TRUE,  VIEW_CUT,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {GTK_STOCK_COPY,        TRUE,  VIEW_COPY,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {GTK_STOCK_PASTE,       TRUE,  VIEW_PASTE,  NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {N_("_Duplicate"),      FALSE, VIEW_DUP,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {GTK_STOCK_DELETE,      TRUE,  VIEW_DELETE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-    {GTK_STOCK_PROPERTIES,  TRUE,  VIEW_UPDATE, NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-    {N_("_Align"),          FALSE, 0, align_popup,  sizeof(align_popup) / sizeof(*align_popup), POP_UP_MENU_ITEM_TYPE_MENU},
-    {N_("_Rotate"),         FALSE, 0, rotate_popup, sizeof(rotate_popup) / sizeof(*rotate_popup), POP_UP_MENU_ITEM_TYPE_MENU},
-    {N_("_Flip"),           FALSE, 0, flip_popup,   sizeof(rotate_popup) / sizeof(*rotate_popup), POP_UP_MENU_ITEM_TYPE_MENU},
-    {N_("cross _Gauge"),     FALSE, VIEW_CROSS,  NULL, 0, POP_UP_MENU_ITEM_TYPE_CHECK},
-    {NULL, 0, 0, NULL, 0, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-    {GTK_STOCK_GOTO_TOP,    TRUE,  VIEW_TOP,    NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {GTK_STOCK_GO_UP,       TRUE,  VIEW_UP,     NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {GTK_STOCK_GO_DOWN,     TRUE,  VIEW_DOWN,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-    {GTK_STOCK_GOTO_BOTTOM, TRUE,  VIEW_LAST,   NULL, 0, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  };
-
-#define VIEWER_POPUP_ITEM_CUT     0
-#define VIEWER_POPUP_ITEM_COPY    1
-#define VIEWER_POPUP_ITEM_PASTE   2
-#define VIEWER_POPUP_ITEM_DUP     3
-#define VIEWER_POPUP_ITEM_DEL     4
-#define VIEWER_POPUP_ITEM_PROP    5
-#define VIEWER_POPUP_ITEM_ALIGN   6
-#define VIEWER_POPUP_ITEM_ROTATE  7
-#define VIEWER_POPUP_ITEM_FLIP    8
-#define VIEWER_POPUP_ITEM_CROSS   9
-#define VIEWER_POPUP_ITEM_TOP    10
-#define VIEWER_POPUP_ITEM_UP     11
-#define VIEWER_POPUP_ITEM_DOWN   12
-#define VIEWER_POPUP_ITEM_BOTTOM 13
-
-#if VIEWER_POPUP_ITEM_BOTTOM + 1 != VIEWER_POPUP_ITEM_NUM
-#error invalid array size (struct Viewer.popup_item)
-#endif
-  return create_menu(popup, sizeof(popup) / sizeof(*popup), d);
-}
 
 static gboolean
 scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
@@ -1249,16 +1101,11 @@ ViewerWinSetup(void)
   g_signal_connect(d->Win, "button-press-event", G_CALLBACK(ViewerEvButtonDown), d);
   g_signal_connect(d->Win, "button-release-event", G_CALLBACK(ViewerEvButtonUp), d);
   g_signal_connect(d->Win, "motion-notify-event", G_CALLBACK(ViewerEvMouseMotion), d);
-  g_signal_connect(d->Win, "popup-menu", G_CALLBACK(ViewerEvPopupMenu), d);
   g_signal_connect(d->Win, "scroll-event", G_CALLBACK(ViewerEvScroll), d);
   g_signal_connect(d->Win, "key-press-event", G_CALLBACK(ViewerEvKeyDown), d);
   g_signal_connect(d->Win, "key-release-event", G_CALLBACK(ViewerEvKeyUp), d);
 
   g_signal_connect(d->menu, "selection-done", G_CALLBACK(menu_activate), d);
-
-  d->popup = create_popup_menu(d);
-  gtk_widget_show_all(d->popup);
-  gtk_menu_attach_to_widget(GTK_MENU(d->popup), d->Win, NULL);
 }
 
 void
@@ -1806,8 +1653,9 @@ AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
     rect.width = mxd2p(bbox[2] * zoom + Menulocal.LeftMargin) - rect.x + 7;
     rect.height = mxd2p(bbox[3] * zoom + Menulocal.TopMargin) - rect.y + 7;
 
-    if (region == NULL)
+    if (region == NULL) {
       region = gdk_region_new();
+    }
 
     gdk_region_union_with_rect(region, &rect);
   }
@@ -2016,6 +1864,7 @@ ShowFocusFrame(GdkGC *gc)
   gdk_gc_set_function(gc, GDK_COPY);
 
   restorestdio(&save);
+  set_focus_sensitivity(d);
 }
 
 static void
@@ -2576,7 +2425,7 @@ mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
   if (arraynum(d->focusobj) && ! (state & GDK_SHIFT_MASK)) {
     ShowFocusFrame(dc);
     d->ShowFrame = FALSE;
-    clear_focus_obj(d->focusobj);
+    clear_focus_obj(d);
   }
 
   d->MouseMode = MOUSEPOINT;
@@ -2881,8 +2730,9 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   if (Menulock || Globallock)
     return FALSE;
 
-  if (region)
+  if (region) {
     return FALSE;
+  }
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -3883,7 +3733,7 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   }
 
   if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode)
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
+    gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
 
   g_object_unref(G_OBJECT(dc));
   UpdateAll();
@@ -4518,10 +4368,12 @@ check_focused_obj_type(struct Viewer *d, int *type)
 static void
 do_popup(GdkEventButton *event, struct Viewer *d)
 {
-  int button, event_time, i, num, type;
+  int button, event_time;
   GtkMenuPositionFunc func = NULL;
-  GtkClipboard *clip;
-  gboolean state;
+
+  if (d->popup == NULL) {
+    return;
+  }
 
   if (event) {
     button = event->button;
@@ -4532,74 +4384,10 @@ do_popup(GdkEventButton *event, struct Viewer *d)
     func = popup_menu_position;
   }
 
-  for (i = 0; i < VIEWER_POPUP_ITEM_NUM; i++) {
-    gtk_widget_set_sensitive(d->popup_item[i], FALSE);
-  }
-
-  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_CROSS], TRUE);
-  gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[VIEWER_POPUP_ITEM_CROSS]), Menulocal.show_cross);
-
-  num = check_focused_obj_type(d, &type);
-
-  switch (d->Mode) {
-  case PointB:
-  case LegendB:
-    clip = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-    state = gtk_clipboard_wait_is_text_available(clip);
-    gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_PASTE], state);
-  case AxisB:
-    if (num > 0) {
-      if (! (type & FOCUS_OBJ_TYPE_AXIS) &&
-	  (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_MERGE))) {
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_CUT], TRUE);
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_COPY], TRUE);
-      }
-      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DUP], TRUE);
-      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DEL], TRUE);
-      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_PROP], TRUE);
-      gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ALIGN], TRUE);
-      if (! (type & FOCUS_OBJ_TYPE_MERGE) && (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_AXIS))) {
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_ROTATE], TRUE);
-      }
-      if (! (type & (FOCUS_OBJ_TYPE_MERGE | FOCUS_OBJ_TYPE_TEXT)) && (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_AXIS))) {
-	gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_FLIP], TRUE);
-      }
-    }
-    if (num == 1) {
-      struct FocusObj *focus;
-      int id, last_id;
-
-      focus = * (struct FocusObj **) arraynget(d->focusobj, 0);
-      if (type & (FOCUS_OBJ_TYPE_LEGEND | FOCUS_OBJ_TYPE_MERGE)) {
-	id = chkobjoid(focus->obj, focus->oid);
-	last_id = chkobjlastinst(focus->obj);
-
-	if (id > 0) {
-	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_TOP], TRUE);
-	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_UP], TRUE);
-	}
-	if (id < last_id) {
-	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_DOWN], TRUE);
-	  gtk_widget_set_sensitive(d->popup_item[VIEWER_POPUP_ITEM_BOTTOM], TRUE);
-	}
-      }
-    }
-  default:
-    break;
-  }
   gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d, button, event_time);
 }
 
 
-static gboolean
-ViewerEvPopupMenu(GtkWidget *w, gpointer client_data)
-{
-  do_popup(NULL, client_data);
-  return TRUE;
-}
-
-guint32 ViewerTime = 0;
-TPoint ViewerPoint;
 
 static gboolean
 ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
@@ -4635,10 +4423,6 @@ ViewerEvButtonDown(GtkWidget *w, GdkEventButton *e, gpointer client_data)
 
   point.x = e->x;
   point.y = e->y;
-
-  ViewerTime = e->time;
-  ViewerPoint.x = point.x;
-  ViewerPoint.y = point.y;
 
   gtk_widget_grab_focus(w);
 
@@ -4698,7 +4482,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     } else {
       UnFocus();
     }
-    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(NgraphApp.viewb[DefaultMode]), TRUE);
+    gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
     return FALSE;
   case GDK_space:
     CmViewerDrawB(NULL, NULL);
@@ -4997,14 +4781,16 @@ ViewerWinUpdate(int clear)
   num = arraynum(d->focusobj);
   focus = arraydata(d->focusobj);
   for (i = num - 1; i >= 0; i--) {
-    if (chkobjoid(focus[i]->obj, focus[i]->oid) == -1)
+    if (chkobjoid(focus[i]->obj, focus[i]->oid) == -1) {
       arrayndel2(d->focusobj, i);
+    }
   }
 
-  if (arraynum(d->focusobj) == 0)
-    clear_focus_obj(d->focusobj);
+  if (arraynum(d->focusobj) == 0) {
+    clear_focus_obj(d);
+  }
 
-  if (d->allclear) {
+  if (d->allclear || region == NULL) {
     mx_clear(NULL);
     mx_redraw(Menulocal.obj, Menulocal.inst);
   } else if (region) {
@@ -5097,9 +4883,10 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
 }
 
 static void
-clear_focus_obj(struct narray *focusobj)
+clear_focus_obj(struct Viewer *d)
 {
-  arraydel2(focusobj);
+  arraydel2(d->focusobj);
+  set_focus_sensitivity(d);
 }
 
 void
@@ -5201,7 +4988,7 @@ UnFocus(void)
     gc = gdk_gc_new(d->gdk_win);
     ShowFocusFrame(gc);
     g_object_unref(G_OBJECT(gc));
-    clear_focus_obj(d->focusobj);
+    clear_focus_obj(d);
   }
 
   d->ShowFrame = FALSE;
@@ -5839,7 +5626,7 @@ ViewUpdate(void)
   PaintLock = FALSE;
 
   if (arraynum(d->focusobj) == 0)
-    clear_focus_obj(d->focusobj);
+    clear_focus_obj(d);
 
   if (! axis)
     d->allclear = FALSE;
@@ -6322,35 +6109,18 @@ ViewCross(int state)
 
   d = &(NgraphApp.Viewer);
 
-  if (state != Menulocal.show_cross) {
-    dc = gdk_gc_new(d->gdk_win);
-    ShowCrossGauge(dc);
-    Menulocal.show_cross = state;
-    g_object_unref(G_OBJECT(dc));
-  }
+  dc = gdk_gc_new(d->gdk_win);
+  ShowCrossGauge(dc);
+  Menulocal.show_cross = state;
+  g_object_unref(G_OBJECT(dc));
 }
 
-static void
+void
 ViewerPopupMenu(GtkWidget *w, gpointer client_data)
 {
   switch ((int) client_data) {
   case VIEW_UPDATE:
     ViewUpdate();
-    break;
-  case VIEW_DELETE:
-    ViewDelete();
-    break;
-  case VIEW_DUP:
-    ViewCopy();
-    break;
-  case VIEW_CUT:
-    CutFocusedObjects();
-    break;
-  case VIEW_COPY:
-    CopyFocusedObjects();
-    break;
-  case VIEW_PASTE:
-    PasteObjectsFromClipboard();
     break;
   case VIEW_TOP:
     reorder_object(OBJECT_MOVE_TYPE_TOP);
@@ -6363,29 +6133,6 @@ ViewerPopupMenu(GtkWidget *w, gpointer client_data)
     break;
   case VIEW_DOWN:
     reorder_object(OBJECT_MOVE_TYPE_DOWN);
-    break;
-  case VIEW_CROSS:
-    ViewCross(gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
-    break;
-  case VIEW_ALIGN_LEFT:
-  case VIEW_ALIGN_HCENTER:
-  case VIEW_ALIGN_RIGHT:
-  case VIEW_ALIGN_TOP:
-  case VIEW_ALIGN_VCENTER:
-  case VIEW_ALIGN_BOTTOM:
-    AlignFocusedObj((int) client_data);
-    break;
-  case VIEW_ROTATE_CLOCKWISE:
-    RotateFocusedObj(ROTATE_CLOCKWISE);
-    break;
-  case VIEW_ROTATE_COUNTER_CLOCKWISE:
-    RotateFocusedObj(ROTATE_COUNTERCLOCKWISE);
-    break;
-  case VIEW_FLIP_HORIZONTAL:
-    FlipFocusedObj(FLIP_DIRECTION_HORIZONTAL);
-    break;
-  case VIEW_FLIP_VERTICAL:
-    FlipFocusedObj(FLIP_DIRECTION_VERTICAL);
     break;
   }
 }
@@ -6428,7 +6175,7 @@ CmEditMenuCB(GtkToolItem *w, gpointer client_data)
   case MenuIdAlignHCenter:
     AlignFocusedObj(VIEW_ALIGN_HCENTER);
     break;
-  case MenuIdAlignHBottom:
+  case MenuIdAlignBottom:
     AlignFocusedObj(VIEW_ALIGN_BOTTOM);
     break;
   case MenuIdEditRotateCW:
@@ -6447,21 +6194,22 @@ CmEditMenuCB(GtkToolItem *w, gpointer client_data)
 }
 
 void
-CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
+CmViewerButtonArm(GtkAction *action, gpointer client_data)
 {
-  int Mode = PointB;
+  int mode = PointB;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
 
-  if (! gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(w)))
+  if (! gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action))) {
     return;
+  }
 
-  Mode = (int) client_data;
+  mode = (int) client_data;
 
   UnFocus();
 
-  switch (Mode) {
+  switch (mode) {
   case PointB:
     DefaultMode = 0;
     NSetCursor(GDK_LEFT_PTR);
@@ -6474,8 +6222,11 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
     DefaultMode = 2;
     NSetCursor(GDK_LEFT_PTR);
     break;
-  case TrimB:
   case DataB:
+    DefaultMode = 3;
+    NSetCursor(GDK_LEFT_PTR);
+    break;
+  case TrimB:
   case EvalB:
     NSetCursor(GDK_LEFT_PTR);
     break;
@@ -6488,7 +6239,7 @@ CmViewerButtonArm(GtkToolItem *w, gpointer client_data)
   default:
     NSetCursor(GDK_PENCIL);
   }
-  NgraphApp.Viewer.Mode = Mode;
+  NgraphApp.Viewer.Mode = mode;
   NgraphApp.Viewer.Capture = FALSE;
   NgraphApp.Viewer.MouseMode = MOUSENONE;
 

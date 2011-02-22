@@ -1,6 +1,6 @@
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 
-ngraphconf_DATA = Ngraph.nsc Ngraph.ngp fit.ngp Ngraph.ini accel_map
+ngraphconf_DATA = Ngraph.nsc Ngraph.ngp fit.ngp Ngraph.ini accel_map NgraphUI.xml
 
 EXTRA_DIST = ${ngraphconf_DATA} Ngraph.ini.in Ngraph.ini.win
 

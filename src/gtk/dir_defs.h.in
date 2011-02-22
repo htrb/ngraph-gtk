@@ -6,13 +6,14 @@
 #define _DIR_DEFS_HEADER
 
 #ifdef WINDOWS
-extern char *DOCDIR, *LIBDIR, *CONFDIR;
+extern char *DOCDIR, *LIBDIR, *CONFDIR, *PIXMAPDIR;
 #define HOME_DIR "Ngraph"
 #else  /* WINDOWS */
-#define DOCDIR   "DOCDIRDEF"
-#define LIBDIR   "LIBDIRDEF"
-#define CONFDIR  "CONFDIRDEF"
-#define HOME_DIR ".Ngraph"
+#define DOCDIR    "DOCDIRDEF"
+#define LIBDIR    "LIBDIRDEF"
+#define CONFDIR   "CONFDIRDEF"
+#define PIXMAPDIR "PIXMAPDIRDEF"
+#define HOME_DIR  ".Ngraph"
 #endif	/* WINDOWS */
 
 #define HELP_FILE "html_ja/ngraph.html"

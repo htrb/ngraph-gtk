@@ -6,13 +6,14 @@
 #define _DIR_DEFS_HEADER
 
 #ifdef WINDOWS
-extern char *DOCDIR, *LIBDIR, *CONFDIR;
+extern char *DOCDIR, *LIBDIR, *CONFDIR, *PIXMAPDIR;
 #define HOME_DIR "Ngraph"
 #else  /* WINDOWS */
-#define DOCDIR   "/usr/share/doc/Ngraph-gtk"
-#define LIBDIR   "/usr/lib/Ngraph-gtk"
-#define CONFDIR  "/etc/Ngraph-gtk"
-#define HOME_DIR ".Ngraph"
+#define DOCDIR    "/usr/share/doc/Ngraph-gtk"
+#define LIBDIR    "/usr/lib/Ngraph-gtk"
+#define CONFDIR   "/etc/Ngraph-gtk"
+#define PIXMAPDIR "/usr/share/pixmaps/Ngraph-gtk"
+#define HOME_DIR  ".Ngraph"
 #endif	/* WINDOWS */
 
 #define HELP_FILE "html_ja/ngraph.html"

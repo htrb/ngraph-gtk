@@ -16363,7 +16363,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html_ja/Makefile doc/html_ja/tutorial/Makefile doc/html_ja/dialogs/Makefile doc/html_ja/img/Makefile debian/Makefile zsh/Makefile test/Makefile mingw/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html_ja/Makefile doc/html_ja/tutorial/Makefile doc/html_ja/dialogs/Makefile doc/html_ja/img/Makefile debian/Makefile zsh/Makefile test/Makefile mingw/Makefile pixmap/Makefile"
 
 
 ac_config_headers="$ac_config_headers config.h"
@@ -17373,6 +17373,7 @@ do
     "zsh/Makefile") CONFIG_FILES="$CONFIG_FILES zsh/Makefile" ;;
     "test/Makefile") CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
     "mingw/Makefile") CONFIG_FILES="$CONFIG_FILES mingw/Makefile" ;;
+    "pixmap/Makefile") CONFIG_FILES="$CONFIG_FILES pixmap/Makefile" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5 ;;

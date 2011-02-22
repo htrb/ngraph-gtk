@@ -3350,7 +3350,7 @@ delete_file_obj(int id)
 void
 CmFileHistory(GtkWidget *w, gpointer client_data)
 {
-  int i, fil, num;
+  int fil, num;
   char **data;
   struct narray *datafilelist;
   int ret;
@@ -3361,10 +3361,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
   if (Menulock || Globallock)
     return;
 
-  for (i = 0; i < MENU_HISTORY_NUM; i++) {
-    if (w == NgraphApp.fhistory[i]) break;
-  }
-  fil = i;
+  fil = GPOINTER_TO_INT(client_data);
   datafilelist = Menulocal.datafilelist;
   num = arraynum(datafilelist);
   data = arraydata(datafilelist);
@@ -3433,7 +3430,7 @@ CmFileNew(void)
 void
 CmFileOpen(void)
 {
-  int id, ret;
+  int id, ret, n;
   char *name;
   char **file = NULL, **ptr;
   struct objlist *obj;
@@ -3442,12 +3439,15 @@ CmFileOpen(void)
   if (Menulock || Globallock)
     return;
 
-  if ((obj = chkobject("file")) == NULL)
+  obj = chkobject("file");
+  if (obj == NULL)
     return;
 
   ret = nGetOpenFileNameMulti(TopLevel, _("Data open"), NULL,
 			      &(Menulocal.fileopendir), NULL,
 			      &file, Menulocal.changedirectory);
+
+  n = chkobjlastinst(obj);
 
   arrayinit(&farray, sizeof(int));
   if (ret == IDOK && file) {
@@ -3467,6 +3467,11 @@ CmFileOpen(void)
   if (update_file_obj_multi(obj, &farray, TRUE)) {
     FileWinUpdate(TRUE);
   }
+
+  if (n != chkobjlastinst(obj)) {
+    set_graph_modified();
+  }
+
   arraydel(&farray);
 }
 
@@ -3522,7 +3527,9 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
       }
       if (ret == IDDELETE) {
 	delete_file_obj(array[i]);
-	set_graph_modified();
+	if (! new_file) {
+	  set_graph_modified();
+	}
 	for (j = i + 1; j < num; j++) {
 	  array[j]--;
 	}
@@ -4906,39 +4913,50 @@ init_dnd(struct SubWin *d)
 }
 
 void
-CmFileWindow(GtkWidget *w, gpointer client_data)
+CmFileWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
+  int state;
+  GtkWidget *dlg;
 
   d = &(NgraphApp.FileWin);
   d ->type = TypeFileWin;
 
-  if (d->Win) {
-    sub_window_toggle_visibility(d);
+  if (action) {
+    state = gtk_toggle_action_get_active(action);
   } else {
-    GtkWidget *dlg;
-
-    d->update = FileWinUpdate;
-    d->setup_dialog = FileDialog;
-    d->dialog = &DlgFile;
-    d->ev_key = filewin_ev_key_down;
-    d->delete = delete_file_obj;
-
-    dlg = list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
-
-    g_signal_connect(dlg, "expose-event", G_CALLBACK(FileWinExpose), NULL);
-
-    d->obj = chkobject("file");
-    d->num = chkobjlastinst(d->obj);
-
-    sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-    set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
-    set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
-    set_obj_cell_renderer_cb(d, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
-
-    init_dnd(d);
-
-    sub_window_show_all(d);
-    sub_window_set_geometry(d, TRUE);
+    state = TRUE;
   }
+
+  if (d->Win) {
+    sub_window_set_visibility(d, state);
+    return;
+  }
+
+  if (! state) {
+    return;
+  }
+
+  d->update = FileWinUpdate;
+  d->setup_dialog = FileDialog;
+  d->dialog = &DlgFile;
+  d->ev_key = filewin_ev_key_down;
+  d->delete = delete_file_obj;
+
+  dlg = list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
+
+  g_signal_connect(dlg, "expose-event", G_CALLBACK(FileWinExpose), NULL);
+
+  d->obj = chkobject("file");
+  d->num = chkobjlastinst(d->obj);
+
+  sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+  set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
+  set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
+  set_obj_cell_renderer_cb(d, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
+
+  init_dnd(d);
+
+  sub_window_show_all(d);
+  sub_window_set_geometry(d, TRUE);
 }

@@ -414,7 +414,6 @@ _GRAredraw(int GC,int snum,char **sdata,int setredrawf,int redraw_num,
   char *dfield;
   N_VALUE *dinst;
 
-
   if (ninterrupt()) return;
   dargv[0]=(char *)&GC;
   if ((addn==0) && (obj!=NULL) && (inst!=NULL) && (field!=NULL))

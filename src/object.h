@@ -281,6 +281,8 @@ int movetopobj(struct objlist *obj,int id);
 int movedownobj(struct objlist *obj,int id);
 int movelastobj(struct objlist *obj,int id);
 int exchobj(struct objlist *obj,int id1,int id2);
+void set_newobj_cb(void (* newobj_cb)(struct objlist *obj));
+void set_delobj_cb(void (* delobj_cb)(struct objlist *obj));
 
 int getobjiname(char *s, char **name, char **ptr);
 int chkobjilist(char *s,struct objlist **obj,struct narray *iarray,

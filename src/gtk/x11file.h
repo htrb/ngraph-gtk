@@ -32,7 +32,7 @@ void FileWinUpdate(int clear);
 void CmFileHistory(GtkWidget *w, gpointer client_data);
 void CmFileMenu(GtkMenuItem *w, gpointer client_data);
 void CmFileOpenB(GtkWidget *w, gpointer p);
-void CmFileWindow(GtkWidget *w, gpointer client_data);
+void CmFileWindow(GtkToggleAction *action, gpointer client_data);
 void FileWindowUnmap(GtkWidget *w, gpointer client_data);
 void CmFileWinMath(GtkWidget *w, gpointer p);
 void CmOptionFileDef(void);

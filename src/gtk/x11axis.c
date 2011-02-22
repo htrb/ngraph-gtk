@@ -3345,44 +3345,55 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 void
-CmAxisWindow(GtkWidget *w, gpointer client_data)
+CmAxisWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
+  int state;
+  GtkWidget *dlg;
 
   d = &(NgraphApp.AxisWin);
   d ->type = TypeAxisWin;
 
-  if (d->Win) {
-    sub_window_toggle_visibility(d);
+  if (action) {
+    state = gtk_toggle_action_get_active(action);
   } else {
-    GtkWidget *dlg;
-
-    d->update = AxisWinUpdate;
-    d->setup_dialog = AxisDialog;
-    d->dialog = &DlgAxis;
-    d->ev_key = axiswin_ev_key_down;
-    d->delete = AxisDel;
-
-    dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
-
-    g_signal_connect(dlg, "expose-event", G_CALLBACK(AxisWinExpose), NULL);
-
-    d->obj = chkobject("axis");
-    d->num = chkobjlastinst(d->obj);
-
-    sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-    set_combo_cell_renderer_cb(d, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
-    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_X, Alist, G_CALLBACK(pos_x_edited));
-    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_Y, Alist, G_CALLBACK(pos_y_edited));
-    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MIN, Alist, G_CALLBACK(min_edited));
-    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
-    set_editable_cell_renderer_cb(d, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
-
-    list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MIN, 1.0);
-    list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MAX, 1.0);
-    list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_INC, 1.0);
-
-    sub_window_show_all(d);
-    sub_window_set_geometry(d, TRUE);
+    state = TRUE;
   }
+
+  if (d->Win) {
+    sub_window_set_visibility(d, state);
+    return;
+  }
+
+  if (! state) {
+    return;
+  }
+
+  d->update = AxisWinUpdate;
+  d->setup_dialog = AxisDialog;
+  d->dialog = &DlgAxis;
+  d->ev_key = axiswin_ev_key_down;
+  d->delete = AxisDel;
+
+  dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
+
+  g_signal_connect(dlg, "expose-event", G_CALLBACK(AxisWinExpose), NULL);
+
+  d->obj = chkobject("axis");
+  d->num = chkobjlastinst(d->obj);
+
+  sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+  set_combo_cell_renderer_cb(d, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
+  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_X, Alist, G_CALLBACK(pos_x_edited));
+  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_Y, Alist, G_CALLBACK(pos_y_edited));
+  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MIN, Alist, G_CALLBACK(min_edited));
+  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
+  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
+
+  list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MIN, 1.0);
+  list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MAX, 1.0);
+  list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_INC, 1.0);
+
+  sub_window_show_all(d);
+  sub_window_set_geometry(d, TRUE);
 }

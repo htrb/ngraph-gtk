@@ -28,4 +28,5 @@ void CmGraphMenu(GtkWidget *w, gpointer client_data);
 void CmGraphHistory(GtkRecentChooser *w, gpointer client_data);
 void CmGraphLoadB(GtkWidget *w, gpointer client_data);
 void CmGraphSaveB(GtkWidget *w, gpointer client_data);
+void CmGraphSave(void);
 int set_paper_type(int w, int h);

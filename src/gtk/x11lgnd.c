@@ -2793,10 +2793,11 @@ pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
 }
 
 void
-CmLegendWindow(GtkWidget *w, gpointer client_data)
+CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 {
-  int i;
+  int i, state;
   struct LegendWin *d;
+  GtkWidget *dlg;
 
   d = &(NgraphApp.LegendWin);
   d ->type = TypeLegendWin;
@@ -2806,35 +2807,44 @@ CmLegendWindow(GtkWidget *w, gpointer client_data)
     d->legend[i] = chkobjlastinst(d->obj[i]);
   }
 
-  if (d->Win) {
-    sub_window_toggle_visibility((struct SubWin *) d);
+  if (action) {
+    state = gtk_toggle_action_get_active(action);
   } else {
-    GtkWidget *dlg;
-
-    d->update = LegendWinUpdate;
-    d->dialog = NULL;
-    d->setup_dialog = LegendWinLegendUpdate;
-    d->ev_key = NULL;
-
-    dlg = tree_sub_window_create(d, "Legend Window", LEGEND_WIN_COL_NUM, Llist, Legendwin_xpm, Legendwin48_xpm);
-
-    g_signal_connect(dlg, "expose-event", G_CALLBACK(LegendWinExpose), NULL);
-
-    for (i = 0; i < LEGENDNUM; i++) {
-      d->obj[i] = chkobject(legendlist[i]);
-      d->legend[i] = chkobjlastinst(d->obj[i]);
-    }
-
-    sub_win_create_popup_menu((struct SubWin *)d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-    legend_list_build(d);
-    gtk_tree_view_expand_all(GTK_TREE_VIEW(d->text));
-    gtk_widget_show_all(dlg);
-
-    set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_X, Llist, G_CALLBACK(pos_x_edited));
-    set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_Y, Llist, G_CALLBACK(pos_y_edited));
-    set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_WIDTH, Llist, G_CALLBACK(width_edited));
-
-    sub_window_show_all((struct SubWin *) d);
-    sub_window_set_geometry((struct SubWin *)d, TRUE);
+    state = TRUE;
   }
+
+  if (d->Win) {
+    sub_window_set_visibility((struct SubWin *)d, state);
+    return;
+  }
+
+  if (! state) {
+    return;
+  }
+
+  d->update = LegendWinUpdate;
+  d->dialog = NULL;
+  d->setup_dialog = LegendWinLegendUpdate;
+  d->ev_key = NULL;
+
+  dlg = tree_sub_window_create(d, "Legend Window", LEGEND_WIN_COL_NUM, Llist, Legendwin_xpm, Legendwin48_xpm);
+
+  g_signal_connect(dlg, "expose-event", G_CALLBACK(LegendWinExpose), NULL);
+
+  for (i = 0; i < LEGENDNUM; i++) {
+    d->obj[i] = chkobject(legendlist[i]);
+    d->legend[i] = chkobjlastinst(d->obj[i]);
+  }
+
+  sub_win_create_popup_menu((struct SubWin *)d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+  legend_list_build(d);
+  gtk_tree_view_expand_all(GTK_TREE_VIEW(d->text));
+  gtk_widget_show_all(dlg);
+
+  set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_X, Llist, G_CALLBACK(pos_x_edited));
+  set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_Y, Llist, G_CALLBACK(pos_y_edited));
+  set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_WIDTH, Llist, G_CALLBACK(width_edited));
+
+  sub_window_show_all((struct SubWin *) d);
+  sub_window_set_geometry((struct SubWin *)d, TRUE);
 }

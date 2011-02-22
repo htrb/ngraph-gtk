@@ -157,23 +157,33 @@ CoordWinUnmap(Widget w, XtPointer client_data, XtPointer call_data)
 */
 
 void
-CmCoordinateWindow(GtkWidget *w, gpointer client_data)
+CmCoordinateWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
+  int state;
+  GtkWidget *dlg;
 
-  d = &(NgraphApp.CoordWin);
+   d = &(NgraphApp.CoordWin);
+   d->type = TypeCoordWin;
+
+   if (action) {
+     state = gtk_toggle_action_get_active(action);
+   } else {
+     state = TRUE;
+   }
 
   if (d->Win) {
-    sub_window_toggle_visibility((struct SubWin *) d);
-  } else {
-    GtkWidget *dlg;
-
-    d->type = TypeCoordWin;
-
-    dlg = label_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
-
-    sub_window_show_all((struct SubWin *) d);
-    sub_window_set_geometry((struct SubWin *) d, TRUE);
-    CoordWinSetFont(Menulocal.coordwin_font);
+    sub_window_set_visibility(d, state);
+    return;
   }
+
+  if (! state) {
+    return;
+  }
+
+  dlg = label_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
+
+  sub_window_show_all((struct SubWin *) d);
+  sub_window_set_geometry((struct SubWin *) d, TRUE);
+  CoordWinSetFont(Menulocal.coordwin_font);
 }

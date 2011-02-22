@@ -150,20 +150,32 @@ InfoWinUnmap(Widget w, XtPointer client_data, XtPointer call_data)
 */
 
 void
-CmInformationWindow(GtkWidget *w, gpointer data)
+CmInformationWindow(GtkToggleAction *action, gpointer data)
 {
   struct SubWin *d;
+  int state;
+  GtkWidget *dlg;
 
   d = &(NgraphApp.InfoWin);
+  d->type = TypeCoordWin;
+
+  if (action) {
+    state = gtk_toggle_action_get_active(action);
+  } else {
+    state = TRUE;
+  }
 
   if (d->Win) {
-    sub_window_toggle_visibility((struct SubWin *) d);
-  } else {
-    GtkWidget *dlg;
+    sub_window_set_visibility(d, state);
+    return;
+  }
 
-    dlg = create_win();
-    if (dlg) {
-      sub_window_show_all((struct SubWin *) d);
-    }
+  if (! state) {
+    return;
+  }
+
+  dlg = create_win();
+  if (dlg) {
+    sub_window_show_all((struct SubWin *) d);
   }
 }

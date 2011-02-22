@@ -49,6 +49,30 @@ enum FOCU_OBJ_TYPE {
   FOCUS_OBJ_TYPE_TEXT   = 0x08,
 };
 
+enum ViewerPopupIdn {
+  VIEW_UPDATE = 1,
+  VIEW_DELETE,
+  VIEW_CUT,
+  VIEW_COPY,
+  VIEW_PASTE,
+  VIEW_DUP,
+  VIEW_TOP,
+  VIEW_LAST,
+  VIEW_UP,
+  VIEW_DOWN,
+  VIEW_CROSS,
+  VIEW_ALIGN_LEFT,
+  VIEW_ALIGN_RIGHT,
+  VIEW_ALIGN_HCENTER,
+  VIEW_ALIGN_TOP,
+  VIEW_ALIGN_VCENTER,
+  VIEW_ALIGN_BOTTOM,
+  VIEW_ROTATE_CLOCKWISE,
+  VIEW_ROTATE_COUNTER_CLOCKWISE,
+  VIEW_FLIP_HORIZONTAL,
+  VIEW_FLIP_VERTICAL,
+};
+
 void ViewerWinSetup(void);
 void ViewerWinClose(void);
 void ViewerWinUpdate(int clear);
@@ -63,9 +87,10 @@ void CmViewerDraw(void);
 void CmViewerClear(void);
 void CmViewerDrawB(GtkWidget *w, gpointer client_data);
 void CmViewerClearB(GtkWidget *w, gpointer client_data);
-void CmViewerButtonArm(GtkToolItem *w, gpointer client_data);
+void CmViewerButtonArm(GtkAction *w, gpointer client_data);
 gboolean CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
 int data_dropped(char **filenames, int num, int file_type);
 void draw_paper_frame(void);
 void CmEditMenuCB(GtkToolItem *w, gpointer client_data);
 void ViewCross(int state);
+void ViewerPopupMenu(GtkWidget *w, gpointer client_data);

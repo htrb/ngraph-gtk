@@ -52,7 +52,7 @@ enum MenuID {
   MenuIdAlignRight,
   MenuIdAlignTop,
   MenuIdAlignHCenter,
-  MenuIdAlignHBottom,
+  MenuIdAlignBottom,
   MenuIdEditRotateCW,
   MenuIdEditRotateCCW,
   MenuIdEditFlipHorizontally,
@@ -163,8 +163,7 @@ struct Viewer
 {
   GtkWidget *Win;
   GdkWindow *gdk_win;
-  GtkWidget *menu, *VScroll, *HScroll, *VRuler, *HRuler,
-    *PToolbar, *CToolbar, *popup, *popup_item[VIEWER_POPUP_ITEM_NUM];
+  GtkWidget *menu, *VScroll, *HScroll, *VRuler, *HRuler, *popup;
   int ShowFrame, ShowLine, ShowRect;
   int Capture, MoveData;
   enum MouseMode MouseMode;
@@ -230,7 +229,7 @@ struct NgraphApp
   gint Message1;
   GtkWidget *ghistory[MENU_HISTORY_NUM], *fhistory[MENU_HISTORY_NUM];
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list;
-  GtkToolItem *viewb[20];
+  GtkRadioAction *viewb;
   GdkPixmap *markpix[MARK_TYPE_NUM];
   GdkCursor **cursor;
   struct Viewer Viewer;
@@ -276,9 +275,11 @@ void QuitGUI(void);
 void menu_lock(int lock);
 void set_draw_lock(int lock);
 int find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *routput, struct gra2cairo_local **rlocal);
-void update_addin_menu(void);
 int check_focused_obj_type(struct Viewer *d, int *type);
 void set_axis_undo_button_sensitivity(int state);
 void set_modified_state(int state);
+void set_focus_sensitivity(struct Viewer *d);
+void window_action_set_active(enum SubWinType type, int state);
+void window_action_toggle(enum SubWinType type);
 
 #endif

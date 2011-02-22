@@ -23,5 +23,5 @@
 
 void MergeWinUpdate(int clear);
 void CmMergeMenu(GtkMenuItem *w, gpointer client_data);
-void CmMergeWindow(GtkWidget *w, gpointer client_data);
+void CmMergeWindow(GtkToggleAction *action, gpointer client_data);
 void MergeWindowUnmap(GtkWidget *w, gpointer client_data);
