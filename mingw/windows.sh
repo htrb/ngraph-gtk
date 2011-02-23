@@ -25,7 +25,7 @@ done
 
 make
 
-(cd initfile; cp Ngraph.ini.win Ngraph.ini)
+(cd initfile; cp Ngraph.ini.win Ngraph.ini; cp NgraphUI.xml.win NgraphUI.xml)
 
 make install
 

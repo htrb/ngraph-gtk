@@ -1,0 +1,23 @@
+#! /usr/bin/ngraph
+
+UI_FILE=$1
+MAP_FILE=$2
+
+TMP_FILE=${system::temp_file}
+
+TMP_NGP=tmp.ngp
+
+new menu
+
+echo "menu::get_ui" > $TMP_NGP
+menu::menu $TMP_NGP > $UI_FILE
+
+echo "menu::get_accel_map" > $TMP_NGP
+menu::menu $TMP_NGP > $TMP_FILE
+head -3 $TMP_FILE > $MAP_FILE
+tail -n +4 $TMP_FILE |sort >> $MAP_FILE
+
+rm $TMP_NGP
+
+del menu
+del system

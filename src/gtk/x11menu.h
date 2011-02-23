@@ -281,5 +281,7 @@ void set_modified_state(int state);
 void set_focus_sensitivity(struct Viewer *d);
 void window_action_set_active(enum SubWinType type, int state);
 void window_action_toggle(enum SubWinType type);
+void show_ui_definition(void);
+int activate_action(const char *name);
 
 #endif

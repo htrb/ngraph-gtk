@@ -822,8 +822,6 @@ struct NgraphActionEntry {
     0,
     "ngraph_draw.png",
     "<Ngraph>/View/DrawDirect",
-    GDK_d,
-    GDK_CONTROL_MASK,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -2145,10 +2143,17 @@ read_keymap_file(void)
   char *home, *filename;
 
   home = get_home();
-  if (home == NULL)
-    return;
+  if (home == NULL) {
+    filename = g_strdup_printf("%s/%s", home, KEYMAP_FILE);
+    if (naccess(filename, R_OK) == 0) {
+      gtk_accel_map_load(filename);
+      g_free(filename);
+      return;
+    }
+    g_free(filename);
+  }
 
-  filename = g_strdup_printf("%s/%s", home, KEYMAP_FILE);
+  filename = g_strdup_printf("%s/%s", CONFDIR, KEYMAP_FILE);
   if (naccess(filename, R_OK) == 0) {
     gtk_accel_map_load(filename);
   }
@@ -2167,13 +2172,16 @@ create_ui_from_file(const gchar *ui_file)
     filename = g_strdup_printf("%s/%s", home, ui_file);
     if (naccess(filename, R_OK) == 0) {
       id = gtk_ui_manager_add_ui_from_file(NgraphUi, filename, &err);
+      g_free(filename);
       return id;
     }
+    g_free(filename);
   }
 
   filename = g_strdup_printf("%s/%s", CONFDIR, ui_file);
   if (naccess(filename, R_OK) == 0) {
     id = gtk_ui_manager_add_ui_from_file(NgraphUi, filename, &err);
+    g_free(filename);
     return id;
   }
   g_free(filename);
@@ -3141,6 +3149,15 @@ create_action_group(struct NgraphActionEntry *entry, int n)
   return action_group;
 }
 
+void
+show_ui_definition(void)
+{
+  if (NgraphUi) {
+    fputs(gtk_ui_manager_get_ui(NgraphUi), stdout);
+    fflush(stdout);
+  }
+}
+
 int
 application(char *file)
 {
@@ -3273,20 +3290,6 @@ application(char *file)
   set_newobj_cb(NULL);
   set_delobj_cb(NULL);
 
-#if 0
-  gtk_accel_map_save(KEYMAP_FILE);
-  {
-    FILE *fp;
-    char *str;
-
-    str = gtk_ui_manager_get_ui(NgraphUi);
-    fp = fopen(UI_FILE, "w");
-    if (fp) {
-      fputs(str, fp);
-      fclose(fp);
-    }
-  }
-#endif
   gtk_ui_manager_remove_ui(NgraphUi, ui_id);
 
 #ifndef WINDOWS
@@ -3730,4 +3733,3 @@ CmReloadWindowConfig(GtkMenuItem *w, gpointer user_data)
     sub_window_set_geometry(&(NgraphApp.FileWin), TRUE);
   }
 }
-

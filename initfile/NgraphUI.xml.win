@@ -20,6 +20,7 @@
         <menuitem name="GraphExportPDF" action="GraphExportPDFAction"/>
         <menuitem name="GraphExportSVG" action="GraphExportSVGAction"/>
         <menuitem name="GraphExportPNG" action="GraphExportPNGAction"/>
+        <menuitem name="GraphExportEMF" action="GraphExportEMFAction"/>
       </menu>
       <separator/>
       <menuitem name="GraphDrawOrder" action="GraphDrawOrderAction"/>

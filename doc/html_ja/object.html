@@ -484,7 +484,7 @@ alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
 object id: 34
-number of fields: 42
+number of fields: 44
 size of instance: 216
 r--                   id  int
 r--                  oid  int
@@ -527,6 +527,8 @@ r-x           clear_info  void( void )
 r-x          show_window  void( int )
 r-x          hide_window  void( int )
 r-x        toggle_window  void( int )
+r-x               get_ui  void( void )
+r-x        get_accel_map  void( void )
 ---              _evloop  void( )
 </pre>
 

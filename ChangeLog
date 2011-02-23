@@ -1,3 +1,18 @@
+2011-02-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_get_ui, mx_get_accel_map): added.
+	(gtkmenu): add fields "get_ui" and "get_accel_map".
+
+	* src/gtk/x11menu.c (read_keymap_file): read keymap file in the
+	"CONFDIR".
+	(show_ui_definition): added.
+
+	* initfile/Makefile.am (update_ui_file): add rule.
+
+	* initfile/save_ui_file.nsc: added.
+
+	* initfile/NgraphUI.xml.win: added.
+
 2011-02-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/NgraphUI.xml: added.

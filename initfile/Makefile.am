@@ -1,8 +1,14 @@
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 
-ngraphconf_DATA = Ngraph.nsc Ngraph.ngp fit.ngp Ngraph.ini accel_map NgraphUI.xml
+UI_FILE = NgraphUI.xml
+ACCEL_FILE = accel_map 
 
-EXTRA_DIST = ${ngraphconf_DATA} Ngraph.ini.in Ngraph.ini.win
+ngraphconf_DATA = Ngraph.nsc Ngraph.ngp fit.ngp Ngraph.ini $(UI_FILE) $(ACCEL_FILE)
+
+EXTRA_DIST = ${ngraphconf_DATA} Ngraph.ini.in Ngraph.ini.win NgraphUI.xml.win save_ui_file.nsc
 
 Ngraph.ini: Ngraph.ini.in Makefile
 	sh ../pathconv.sh "$(docdir)" "$(pkglibdir)" "$(ngraphconfdir)" Ngraph.ini.in
+
+update_ui_file:
+	../src/ngraph -i save_ui_file.nsc $(UI_FILE) $(ACCEL_FILE)

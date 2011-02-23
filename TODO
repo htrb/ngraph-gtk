@@ -4,7 +4,5 @@
 
 * axis を cut & paste できないか？
 
-* GtkAction, GtkUIManager へ移行
-
 
 * Color selection dialog のパレット設定保存、読込

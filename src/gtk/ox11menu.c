@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include "ngraph.h"
 #include "object.h"
@@ -1780,6 +1781,44 @@ mx_toggle_win(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 }
 
 static int
+mx_get_ui(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  show_ui_definition();
+
+  return 0;
+}
+
+static int
+mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  FILE *fp;
+  int fd;
+  char buf[1024], *ptr;
+
+  fp = tmpfile();
+
+  if (fp == NULL) {
+    fputs(g_strerror(errno), stderr);
+    fputs("\n", stderr);
+    return 1;
+  }
+
+  fd = fileno(fp);
+  gtk_accel_map_save_fd(fd);
+
+  rewind(fp);
+
+  while ((ptr = fgets(buf, sizeof(buf), fp))) {
+    buf[sizeof(buf) - 1] = '\0';
+    fputs(buf, stdout);
+  }
+  fflush(stdout);
+  fclose(fp);
+
+  return 0;
+}
+
+static int
 mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
@@ -1883,6 +1922,8 @@ static struct objtable gtkmenu[] = {
   {"show_window", NVFUNC, NREAD | NEXEC, mx_show_win, "i", 0},
   {"hide_window", NVFUNC, NREAD | NEXEC, mx_hide_win, "i", 0},
   {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
+  {"get_ui", NVFUNC, NREAD | NEXEC, mx_get_ui, "", 0},
+  {"get_accel_map", NVFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 
