@@ -64,7 +64,7 @@
       <menuitem name="Data window" action="ViewToggleDataWindowAction"/>
       <menuitem name="Axis window" action="ViewToggleAxisWindowAction"/>
       <menuitem name="Legend window" action="ViewToggleLegendWindowAction"/>
-      <menuitem name="Merge window" action="ViewToggleCoordinateWindowAction"/>
+      <menuitem name="Merge window" action="ViewToggleMergeWindowAction"/>
       <menuitem name="Coordinate window" action="ViewToggleCoordinateWindowAction"/>
       <menuitem name="Information window" action="ViewToggleInformationWindowAction"/>
       <separator/>

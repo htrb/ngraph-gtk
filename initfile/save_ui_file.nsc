@@ -17,6 +17,8 @@ menu::menu $TMP_NGP > $TMP_FILE
 head -3 $TMP_FILE > $MAP_FILE
 tail -n +4 $TMP_FILE |sort >> $MAP_FILE
 
+awk '{print $0; if($2 ~ /name="GraphExportPNG"/) {print "        <menuitem name=\"GraphExportEMF\" action=\"GraphExportEMFAction\"/>"}}' $UI_FILE > $UI_FILE.win
+
 rm $TMP_NGP
 
 del menu

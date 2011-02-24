@@ -1,3 +1,13 @@
+2011-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (show_ui_definition): use "printfstdout()".
+
+	* src/gtk/ox11menu.c (mx_get_accel_map): use "putstderr()" and
+	"printfstdout()".
+
+	* initfile/save_ui_file.nsc: NgraphUI.xml.win is automatically
+	generated.
+
 2011-02-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (mx_get_ui, mx_get_accel_map): added.

@@ -1798,8 +1798,7 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
   fp = tmpfile();
 
   if (fp == NULL) {
-    fputs(g_strerror(errno), stderr);
-    fputs("\n", stderr);
+    putstderr(g_strerror(errno));
     return 1;
   }
 
@@ -1810,9 +1809,8 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 
   while ((ptr = fgets(buf, sizeof(buf), fp))) {
     buf[sizeof(buf) - 1] = '\0';
-    fputs(buf, stdout);
+    printfstdout("%s", buf);
   }
-  fflush(stdout);
   fclose(fp);
 
   return 0;

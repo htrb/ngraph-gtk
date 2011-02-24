@@ -3153,8 +3153,7 @@ void
 show_ui_definition(void)
 {
   if (NgraphUi) {
-    fputs(gtk_ui_manager_get_ui(NgraphUi), stdout);
-    fflush(stdout);
+    printfstdout("%s", gtk_ui_manager_get_ui(NgraphUi));
   }
 }
 

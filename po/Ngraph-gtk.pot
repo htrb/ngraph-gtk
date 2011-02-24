@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-02-23 18:13+0900\n"
+"POT-Creation-Date: 2011-02-24 17:20+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1842
+#: src/gtk/ox11menu.c:1840
 msgid "Unsaved Graph"
 msgstr ""
 
@@ -1898,15 +1898,15 @@ msgstr ""
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr ""
 
-#: src/gtk/x11menu.c:3545
+#: src/gtk/x11menu.c:3544
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:3595
+#: src/gtk/x11menu.c:3594
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:3652
+#: src/gtk/x11menu.c:3651
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
