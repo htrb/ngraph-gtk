@@ -1,3 +1,9 @@
+2011-02-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/cal.nsc: fix argument for "menu::show_window".
+
+	* src/gtk/x11menu.c (ActionEntry): fix callback functions.
+
 2011-02-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (show_ui_definition): use "printfstdout()".
