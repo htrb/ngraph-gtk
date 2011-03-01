@@ -538,21 +538,24 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
     return 1;
   }
 
-  AddDataFileList(name);
   putobj(obj, "file", id, name);
   if (*id0 != -1) {
     copy_file_obj_field(obj, id, *id0, FALSE);
+    AddDataFileList(name);
+    return 0;
+  }
+
+  FileDialog(&DlgFile, obj, id, multi);
+  ret = DialogExecute(TopLevel, &DlgFile);
+  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+    FitDel(obj, id);
+    delobj(obj, id);
   } else {
-    FileDialog(&DlgFile, obj, id, multi);
-    ret = DialogExecute(TopLevel, &DlgFile);
-    if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-      FitDel(obj, id);
-      delobj(obj, id);
-    } else {
-      if (ret == IDFAPPLY)
-	*id0 = id;
-      set_graph_modified();
+    if (ret == IDFAPPLY) {
+      *id0 = id;
     }
+    set_graph_modified();
+    AddDataFileList(name);
   }
 
   return 0;

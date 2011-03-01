@@ -98,8 +98,7 @@ GdkCursorType Cursor[] = {
 };
 
 #define CURSOR_TYPE_NUM (sizeof(Cursor) / sizeof(*Cursor))
-static void show_graph_menu(GtkAction *action, gpointer user_data);
-static void show_data_menu(GtkAction *action, gpointer user_data);
+
 static void clear_information(GtkMenuItem *w, gpointer user_data);
 static void toggle_view_cb(GtkToggleAction *action, gpointer data);
 
@@ -135,7 +134,7 @@ struct NgraphActionEntry {
     N_("_Graph"),
     NULL,
     NULL,
-    G_CALLBACK(show_graph_menu),
+    NULL,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -200,7 +199,7 @@ struct NgraphActionEntry {
     N_("_Data"),
     NULL,
     NULL,
-    G_CALLBACK(show_data_menu),
+    NULL
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1935,11 +1934,16 @@ find_gra2gdk_inst(struct objlist **o, N_VALUE **i, struct objlist **ro, int *rou
   return TRUE;
 }
 
-static void
-create_addin_menu(GtkWidget *parent)
+void
+create_addin_menu(void)
 {
-  GtkWidget *menu, *item;
+  GtkWidget *menu, *item, *parent;
   struct script *fcur;
+
+  parent = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar/GraphMenu/GraphAddin");
+  if (parent == NULL) {
+    return;
+  }
 
   gtk_widget_set_sensitive(parent, Menulocal.scriptroot != NULL);
   if (Menulocal.scriptroot == NULL) {
@@ -2073,13 +2077,18 @@ add_underscore(GString *str)
   }
 }
 
-static void
-create_recent_data_menu(GtkWidget *parent)
+void
+create_recent_data_menu(void)
 {
   int i, num;
   char **data, *basename;;
-  GtkWidget *menu, *item;
+  GtkWidget *menu, *item, *parent;
   static GString *str = NULL;
+
+  parent = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar/DataMenu/DataRecent");
+  if (parent == NULL) {
+    return;
+  }
 
   menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(parent));
   if (menu) {
@@ -2660,21 +2669,27 @@ init_ngraph_app_struct(void)
 
   memset(&NgraphApp.FileWin, 0, sizeof(NgraphApp.FileWin));
   NgraphApp.FileWin.can_focus = FALSE;
+  NgraphApp.FileWin.type = TypeFileWin;
 
   memset(&NgraphApp.AxisWin, 0, sizeof(NgraphApp.AxisWin));
   NgraphApp.AxisWin.can_focus = TRUE;
+  NgraphApp.AxisWin.type = TypeAxisWin;
 
   memset(&NgraphApp.LegendWin, 0, sizeof(NgraphApp.LegendWin));
   NgraphApp.LegendWin.can_focus = TRUE;
+  NgraphApp.LegendWin.type = TypeLegendWin;
 
   memset(&NgraphApp.MergeWin, 0, sizeof(NgraphApp.MergeWin));
   NgraphApp.MergeWin.can_focus = TRUE;
+  NgraphApp.MergeWin.type = TypeMergeWin;
 
   memset(&NgraphApp.InfoWin, 0, sizeof(NgraphApp.InfoWin));
   NgraphApp.InfoWin.can_focus = FALSE;
+  NgraphApp.InfoWin.type = TypeInfoWin;
 
   memset(&NgraphApp.CoordWin, 0, sizeof(NgraphApp.CoordWin));
   NgraphApp.CoordWin.can_focus = FALSE;
+  NgraphApp.CoordWin.type = TypeCoordWin;
 
   NgraphApp.legend_text_list = NULL;
   NgraphApp.x_math_list = NULL;
@@ -2889,28 +2904,6 @@ set_widget_visibility(void)
       gtk_toggle_action_set_active(action, *id_array[i].state);
       gtk_toggle_action_toggled(action);
     }
-  }
-}
-
-static void
-show_graph_menu(GtkAction *action, gpointer user_data)
-{
-  GtkWidget *menu;
-
-  menu = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar/GraphMenu/GraphAddin");
-  if (menu) {
-    create_addin_menu(menu);
-  }
-}
-
-static void
-show_data_menu(GtkAction *action, gpointer user_data)
-{
-  GtkWidget *menu;
-
-  menu = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar/DataMenu/DataRecent");
-  if (menu) {
-    create_recent_data_menu(menu);
   }
 }
 
@@ -3206,6 +3199,8 @@ application(char *file)
   ui_id = create_ui_from_file(UI_FILE);
   AccelGroup = gtk_ui_manager_get_accel_group(NgraphUi);
   gtk_window_add_accel_group(GTK_WINDOW(TopLevel), AccelGroup);
+  create_addin_menu();
+  create_recent_data_menu();
 
 #ifdef WINDOWS
   g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);

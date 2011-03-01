@@ -3352,7 +3352,6 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
   GtkWidget *dlg;
 
   d = &(NgraphApp.AxisWin);
-  d ->type = TypeAxisWin;
 
   if (action) {
     state = gtk_toggle_action_get_active(action);

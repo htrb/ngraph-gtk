@@ -164,7 +164,6 @@ CmCoordinateWindow(GtkToggleAction *action, gpointer client_data)
   GtkWidget *dlg;
 
    d = &(NgraphApp.CoordWin);
-   d->type = TypeCoordWin;
 
    if (action) {
      state = gtk_toggle_action_get_active(action);

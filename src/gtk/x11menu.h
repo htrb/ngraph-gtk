@@ -283,5 +283,7 @@ void window_action_set_active(enum SubWinType type, int state);
 void window_action_toggle(enum SubWinType type);
 void show_ui_definition(void);
 int activate_action(const char *name);
+void create_addin_menu(void);
+void create_recent_data_menu(void);
 
 #endif

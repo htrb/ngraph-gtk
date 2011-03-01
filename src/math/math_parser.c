@@ -16,7 +16,7 @@
 #include "math_function.h"
 #include "parse_bin_expression.h"
 
-#define MATH_ARG_MAX 64
+#define MATH_ARG_NUM 16
 
 #define DEBUG 1
 
@@ -221,11 +221,13 @@ get_argument(const char **str, MathEquation *eq, struct math_function_parameter 
 }
 
 static int
-parse_argument_list(const char **str, MathEquation *eq, struct math_function_parameter *fprm, MathExpression **argv, int argc, int *err)
+parse_argument_list(const char **str, MathEquation *eq, struct math_function_parameter *fprm, MathExpression ***buf, int argc, int *err)
 {
   struct math_token *token;
   int i, n;
-  MathExpression *exp;
+  MathExpression *exp, **tmp, **argv;
+
+  argv = *buf;
 
   token = my_get_token(str);
   unget_token(token);
@@ -262,13 +264,26 @@ parse_argument_list(const char **str, MathEquation *eq, struct math_function_par
       return -1;
     }
 
-    if (i < argc) {
-      argv[i] = exp;
-      argv[i + 1] = NULL;
-    } else {
-      math_expression_free(exp);
+    if (i >= argc) {
+      int m;
+
+      m = argc * 2 + 1;
+      tmp = g_realloc(argv, m * sizeof(*argv));
+      if (tmp == NULL) {
+	math_expression_free(exp);
+	free_arg_list(argv);
+	return -1;
+      }
+      argv = tmp;
+      memset(argv + argc, 0, m - argc);
+      argc = m - 1;
     }
+
+    argv[i] = exp;
+    argv[i + 1] = NULL;
   }
+
+  *buf = argv;
 
   return i;
 }
@@ -288,7 +303,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
     return NULL;
   }
 
-  arg_max = (fprm->argc< 0) ? MATH_ARG_MAX : fprm->argc;
+  arg_max = (fprm->argc < 0) ? MATH_ARG_NUM : fprm->argc;
 
   argv = g_malloc0((arg_max + 1) * sizeof(*argv));
   if (argv == NULL) {
@@ -296,7 +311,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
     return NULL;
   }
 
-  argc = parse_argument_list(str, eq, fprm, argv, arg_max, err);
+  argc = parse_argument_list(str, eq, fprm, &argv, arg_max, err);
   if (argc < 0) {
     g_free(argv);
     return NULL;
@@ -323,7 +338,7 @@ create_math_func(const char **str, MathEquation *eq, struct math_token *name, in
       }
     }
     argc = fprm->argc;
-  } else if ((fprm->argc >= 0 && argc > fprm->argc) || argc > MATH_ARG_MAX) {
+  } else if (fprm->argc >= 0 && argc > fprm->argc) {
     *err = MATH_ERROR_ARG_NUM;
     math_equation_set_func_arg_num_error(eq, fprm, argc);
     free_arg_list(argv);

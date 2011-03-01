@@ -3448,6 +3448,9 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
   if (type == NENUM) {
     enumlist = (char **)arglist;
     arglist = "s";
+  } else {
+    /* initialize to avoid warning nessage */
+    enumlist = NULL;
   }
   while (TRUE) {
     if ((arglist != NULL)

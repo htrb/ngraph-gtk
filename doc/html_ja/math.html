@@ -296,8 +296,8 @@
  <tr><td>GAUSS(x)</td><td>ガウスの記号[ ] ([n]はnを越えない最大の整数)</td></tr>
  <tr><td>FRAC(x)</td><td>小数部</td></tr>
  <tr><td>ROUND(x)</td><td>四捨五入した整数部</td></tr>
- <tr><td>MIN(a,b,c,...)</td><td>引数のうちもっとも小さな値 (引数の数は 64 個まで)</td></tr>
- <tr><td>MAX(a,b,c,...)</td><td>引数のうちもっとも大きな値 (引数の数は 64 個まで)</td></tr>
+ <tr><td>MIN(a,b,c,...)</td><td>引数のうちもっとも小さな値</td></tr>
+ <tr><td>MAX(a,b,c,...)</td><td>引数のうちもっとも大きな値</td></tr>
 </table>
 <br>
 <h3>初等関数</h3>
@@ -433,9 +433,9 @@
  <tr><td>UNLESS(x,ex1,ex2)</td><td>x ≠ 0 のとき ex2, x = 0 のとき ex1 </td></tr>
  <tr><td>FOR(m,begin,end,step,ex)</td><td>第mメモリの値に begin から end まで step で 値を設定し、ex を繰り返す。
 				      m が負の時はメモリーへの設定は行われない</td></tr>
- <tr><td>PROG1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す (引数の数は 64 個まで)</td></tr>
- <tr><td>PROG2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す (引数の数は 64 個まで)</td></tr>
- <tr><td>PROGN(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す (引数の数は 64 個まで)</td></tr>
+ <tr><td>PROG1(arg1,arg2,...)</td><td>引数を評価し、最初の引数の値を返す</td></tr>
+ <tr><td>PROG2(arg1,arg2,...)</td><td>引数を評価し、2 番目の引数の値を返す</td></tr>
+ <tr><td>PROGN(arg1,arg2,...)</td><td>引数を評価し、最後の引数の値を返す</td></tr>
 </table>
 </div>
 
@@ -606,11 +606,11 @@
 
  <li><b>関数 PROG1(), PROG2(), PROGN() 使用例</b>
       <p>
-      関数 PROG1(), PROG1(), PROGN() は複数の引数 (64 個まで) を評価
-      して、最初、2 番目または最後の引数の値を返す関数です。IF(),
-      UNLESS(), FOR() 関数の引数に使用して複数の式を評価するために利
-      用できます。下記の例では X の値が 1 以上変化する毎に Y の平均値
-      を計算しています (X は 1 よりも大きいことを仮定) 。
+      関数 PROG1(), PROG1(), PROGN() は複数の引数を評価して、最初、2 番目
+      または最後の引数の値を返す関数です。IF(), UNLESS(), FOR() 関数の引
+      数に使用して複数の式を評価するために利用できます。下記の例では X の
+      値が 1 以上変化する毎に Y の平均値を計算しています (X は 1 よりも大
+      きいことを仮定) 。
       </p>
       <p>
       IF(X - A &lt; 1, PROGN(B +: Y, N +: 1, CONT), PROG1(IF(N, B / N, CONT), B : Y, N : 1, A : X))

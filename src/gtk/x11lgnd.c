@@ -2800,7 +2800,6 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   GtkWidget *dlg;
 
   d = &(NgraphApp.LegendWin);
-  d ->type = TypeLegendWin;
 
   for (i = 0; i < LEGENDNUM; i++) {
     d->obj[i] = chkobject(legendlist[i]);

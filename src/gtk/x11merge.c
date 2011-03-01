@@ -483,7 +483,6 @@ CmMergeWindow(GtkToggleAction *action, gpointer client_data)
   GtkWidget *dlg;
 
   d = &(NgraphApp.MergeWin);
-  d ->type = TypeMergeWin;
 
   if (action) {
     state = gtk_toggle_action_get_active(action);

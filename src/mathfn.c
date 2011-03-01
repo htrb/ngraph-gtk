@@ -87,11 +87,12 @@ matinv(int dim,matrix m,matrix mi)
       else mi[i][j]=0;
   for (i=0;i<dim;i++) {
     max=0;
-    for (j=i;j<dim;j++) 
+    for (j=i;j<dim;j++) {
       if (fabs(m[j][i])>max) {
         pivot=j;
         max=fabs(m[j][i]);
       }
+    }
     if (max<=1E-300) return -1;
     for (k=0;k<dim;k++) {
       vec[k]=m[pivot][k];

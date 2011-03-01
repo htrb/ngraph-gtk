@@ -1453,24 +1453,36 @@ AddDataFileList(char *file)
   char *s;
   struct narray *datafilelist;
 
-  if ((file == NULL) || (file[0] == '\0'))
+  if (file == NULL || file[0] == '\0') {
     return;
+  }
+
+  if (! g_utf8_validate(file, -1, NULL)) {
+    return;
+  }
+
   datafilelist = Menulocal.datafilelist;
   num = arraynum(datafilelist);
   data = arraydata(datafilelist);
-  for (i = 0; i < num; i++)
-    if (strcmp0(data[i], file) == 0)
+  for (i = 0; i < num; i++) {
+    if (strcmp0(data[i], file) == 0) {
       break;
+    }
+  }
   if (i == num) {
-    if (num >= 10)
+    if (num >= 10) {
       arrayndel2(datafilelist, num - 1);
+    }
     arrayins2(datafilelist, &file, 0);
   } else {
     s = data[i];
-    for (j = i - 1; j >= 0; j--)
+    for (j = i - 1; j >= 0; j--) {
       data[j + 1] = data[j];
+    }
     data[0] = s;
   }
+
+  create_recent_data_menu();
 }
 
 void

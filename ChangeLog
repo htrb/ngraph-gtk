@@ -1,3 +1,47 @@
+2011-03-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11cood.c (CoordWinUpdate): don't set type to the
+	variable "d->type."
+
+	* src/gtk/x11lgnd.c (CmLegendWindow): don't set type to the
+	variable "d->type."
+
+	* src/gtk/x11merge.c (CmMergeWindow): don't set type to the
+	variable "d->type."
+
+	* src/gtk/x11info.c (create_win, InfoWinUpdate): don't set type to the
+	variable "d->type."
+
+	* src/gtk/x11axis.c (CmAxisWindow): don't set type to the variable
+	"d->type."
+
+	* src/math/math_parser.c (parse_argument_list): reallocate memory
+	for arguments if necessary.
+
+	* src/gtk/x11file.c (CmFileHistory, CmFileNew): call
+	"AddDataFileList()" only when the file is really opened.
+	(update_file_obj_multi): call "AddDataFileList()" when "new_file"
+	is TRUE and the file is really opened.
+	(CmFileOpen): don't call "AddDataFileList()".
+	(CmFileWindow): don't set type to the variable "d->type."
+
+
+	* src/gtk/x11view.c (new_file_obj): call "AddDataFileList()" only
+	when the file is really opened.
+
+	* src/gtk/x11opt.c (PrefScriptDialogClose): call
+	"create_addin_menu()".
+
+	* src/gtk/x11commn.c (AddDataFileList): check if the file name is
+	valid UTF-8 string or not.
+	(AddDataFileList): call "create_recent_data_menu()".
+
+	* src/gtk/x11menu.c (show_graph_menu, show_data_menu): removed.
+	(application): call "create_addin_menu()" and
+	"create_recent_data_menu()" after create UI.
+	(create_addin_menu, create_recent_data_menu): remove parameter.
+	(init_ngraph_app_struct): initialize "type" member of each struct.
+
 2011-02-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/cal.nsc: fix argument for "menu::show_window".

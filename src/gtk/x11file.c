@@ -3358,31 +3358,43 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
   int id;
   struct objlist *obj;
 
-  if (Menulock || Globallock)
+  if (Menulock || Globallock) {
     return;
+  }
 
   fil = GPOINTER_TO_INT(client_data);
   datafilelist = Menulocal.datafilelist;
   num = arraynum(datafilelist);
   data = arraydata(datafilelist);
-  if ((fil < 0) || (fil >= num) || (data[fil] == NULL))
+
+  if ((fil < 0) || (fil >= num) || (data[fil] == NULL)) {
     return;
-  if ((obj = chkobject("file")) == NULL)
-    return;
-  if ((id = newobj(obj)) >= 0) {
-    name = g_strdup(data[fil]);
-    if (name) {
-      putobj(obj, "file", id, name);
-      FileDialog(&DlgFile, obj, id, FALSE);
-      ret = DialogExecute(TopLevel, &DlgFile);
-      if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-	delete_file_obj(id);
-      } else {
-	set_graph_modified();
-      }
-    }
   }
-  AddDataFileList(data[fil]);
+
+  obj = chkobject("file");
+  if (obj == NULL) {
+    return;
+  }
+
+  id = newobj(obj);
+  if (id < 0) {
+    return;
+  }
+
+  name = g_strdup(data[fil]);
+  if (name == NULL) {
+    return;
+  }
+
+  putobj(obj, "file", id, name);
+  FileDialog(&DlgFile, obj, id, FALSE);
+  ret = DialogExecute(TopLevel, &DlgFile);
+  if ((ret == IDDELETE) || (ret == IDCANCEL)) {
+    delete_file_obj(id);
+  } else {
+    set_graph_modified();
+    AddDataFileList(data[fil]);
+  }
   FileWinUpdate(TRUE);
 }
 
@@ -3412,7 +3424,6 @@ CmFileNew(void)
   }
 
   changefilename(file);
-  AddDataFileList(file);
   putobj(obj, "file", id, file);
   FileDialog(&DlgFile, obj, id, FALSE);
   ret = DialogExecute(TopLevel, &DlgFile);
@@ -3421,6 +3432,7 @@ CmFileNew(void)
     delete_file_obj(id);
   } else {
     set_graph_modified();
+    AddDataFileList(file);
   }
 
   FileWinUpdate(TRUE);
@@ -3457,7 +3469,6 @@ CmFileOpen(void)
       if (id >= 0) {
 	arrayadd(&farray, &id);
 	changefilename(name);
-	AddDataFileList(name);
 	putobj(obj, "file", id, name);
       }
     }
@@ -3506,17 +3517,24 @@ int
 update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 {
   int i, j, num, *array, id0;
+  char *name;
 
   num = arraynum(farray);
-  if (num < 1)
+  if (num < 1) {
     return 0;
+  }
 
   array = arraydata(farray);
   id0 = -1;
 
   for (i = 0; i < num; i++) {
+    name = NULL;
     if (id0 != -1) {
       copy_file_obj_field(obj, array[i], array[id0], FALSE);
+      if (new_file) {
+	getobj(obj, "file", array[i], 0, NULL, &name);
+	AddDataFileList(name);
+      }
     } else {
       int ret;
 
@@ -3533,8 +3551,15 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 	for (j = i + 1; j < num; j++) {
 	  array[j]--;
 	}
-      } else if (ret == IDFAPPLY) {
-	id0 = i;
+      } else {
+	if (new_file) {
+	  getobj(obj, "file", array[i], 0, NULL, &name);
+	  AddDataFileList(name);
+	}
+
+	if (ret == IDFAPPLY) {
+	  id0 = i;
+	}
       }
     }
   }
@@ -4920,7 +4945,6 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
   GtkWidget *dlg;
 
   d = &(NgraphApp.FileWin);
-  d ->type = TypeFileWin;
 
   if (action) {
     state = gtk_toggle_action_get_active(action);

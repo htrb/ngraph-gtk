@@ -41,7 +41,6 @@ create_win(void)
   GtkWidget *w;
 
   d = &(NgraphApp.InfoWin);
-  d ->type = TypeInfoWin;
 
   w = text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm, Infowin48_xpm);
 
@@ -157,7 +156,6 @@ CmInformationWindow(GtkToggleAction *action, gpointer data)
   GtkWidget *dlg;
 
   d = &(NgraphApp.InfoWin);
-  d->type = TypeCoordWin;
 
   if (action) {
     state = gtk_toggle_action_get_active(action);
