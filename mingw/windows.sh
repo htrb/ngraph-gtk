@@ -29,7 +29,7 @@ make
 
 make install
 
-mkdir $PKG_DIR/share/icons
+mkdir -p $PKG_DIR/share/icons
 
 cp /mingw/bin/*.dll       $PKG_DIR/bin
 cp -r /mingw/share/locale $PKG_DIR/share
