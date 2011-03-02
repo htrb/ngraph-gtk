@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-03-01 16:20+0900\n"
+"POT-Creation-Date: 2011-03-02 19:05+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1898,15 +1898,15 @@ msgstr ""
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr ""
 
-#: src/gtk/x11menu.c:3539
+#: src/gtk/x11menu.c:3545
 msgid "Error:"
 msgstr ""
 
-#: src/gtk/x11menu.c:3589
+#: src/gtk/x11menu.c:3595
 msgid "Question"
 msgstr ""
 
-#: src/gtk/x11menu.c:3646
+#: src/gtk/x11menu.c:3652
 #, c-format
 msgid "Executing `%.128s'."
 msgstr ""
