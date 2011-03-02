@@ -3197,6 +3197,7 @@ application(char *file)
   }
 
   ui_id = create_ui_from_file(UI_FILE);
+  gtk_ui_manager_ensure_update(NgraphUi);
   AccelGroup = gtk_ui_manager_get_accel_group(NgraphUi);
   gtk_window_add_accel_group(GTK_WINDOW(TopLevel), AccelGroup);
   create_addin_menu();
@@ -3241,13 +3242,17 @@ application(char *file)
   ninterrupt = mgtkinterrupt;
   inputyn = mgtkinputyn;
 
-  if ((aobj = getobject("axis")) != NULL) {
-    for (i = 0; i <= chkobjlastinst(aobj); i++)
+  aobj = getobject("axis");
+  if (aobj) {
+    for (i = 0; i <= chkobjlastinst(aobj); i++) {
       exeobj(aobj, "tight", i, 0, NULL);
+    }
   }
-  if ((aobj = getobject("axisgrid")) != NULL) {
-    for (i = 0; i <= chkobjlastinst(aobj); i++)
+  aobj = getobject("axisgrid");
+  if (aobj) {
+    for (i = 0; i <= chkobjlastinst(aobj); i++) {
       exeobj(aobj, "tight", i, 0, NULL);
+    }
   }
 
   if (file != NULL) {
@@ -3276,6 +3281,7 @@ application(char *file)
 
   set_focus_sensitivity(&NgraphApp.Viewer);
   check_exist_instances(chkobject("draw"));
+
   set_newobj_cb(check_instance);
   set_delobj_cb(check_instance);
 

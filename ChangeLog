@@ -1,3 +1,8 @@
+2011-03-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (application): call
+	"gtk_ui_manager_ensure_update()" after add ui.
+
 2011-03-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11cood.c (CoordWinUpdate): don't set type to the
