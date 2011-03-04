@@ -1138,7 +1138,7 @@ CmGraphOverWrite(GtkWidget *w, gpointer client_data)
 }
 
 void
-CmGraphSwitch(void)
+CmGraphSwitch(GtkWidget *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1150,7 +1150,7 @@ CmGraphSwitch(void)
 }
 
 void
-CmGraphPage(void)
+CmGraphPage(GtkWidget *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;

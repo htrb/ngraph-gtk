@@ -31,5 +31,7 @@ void CmGraphShell(GtkWidget *w, gpointer client_data);
 void CmGraphDirectory(GtkWidget *w, gpointer client_data);
 void CmHelpHelp(GtkWidget *w, gpointer client_data);
 void CmHelpAbout(GtkWidget *w, gpointer client_data);
+void CmGraphSwitch(GtkWidget *w, gpointer client_data);
+void CmGraphPage(GtkWidget *w, gpointer client_data);
 
 int set_paper_type(int w, int h);

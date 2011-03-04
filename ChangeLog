@@ -1,5 +1,8 @@
 2011-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11menu.c (ActionEntry): add callback to actions
+	"GraphDrawOrderAction" and "GraphPageSetupAction".
+
 	* src/gtk/gtk_subwin.h (NgraphActionEntry): moved from "x11menu.c".
 
 	* src/gtk/x11graph.c (CmGraphLoadB, CmGraphSaveB, CmGraphMenu)
