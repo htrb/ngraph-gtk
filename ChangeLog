@@ -1,3 +1,10 @@
+2011-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.h (NgraphActionEntry): moved from "x11menu.c".
+
+	* src/gtk/x11graph.c (CmGraphLoadB, CmGraphSaveB, CmGraphMenu)
+	(CmHelpMenu): removed.
+
 2011-03-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (application): call

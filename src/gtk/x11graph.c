@@ -1090,8 +1090,8 @@ CmGraphNewMenu(GtkWidget *w, gpointer client_data)
   InfoWinClear();
 }
 
-static void
-CmGraphLoad(void)
+void
+CmGraphLoad(GtkWidget *w, gpointer client_data)
 {
   char *ext, *file;
 
@@ -1122,7 +1122,7 @@ CmGraphLoad(void)
 }
 
 void
-CmGraphSave(void)
+CmGraphSave(GtkWidget *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1130,7 +1130,7 @@ CmGraphSave(void)
 }
 
 void
-CmGraphOverWrite(void)
+CmGraphOverWrite(GtkWidget *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1164,7 +1164,7 @@ CmGraphPage(void)
 }
 
 void
-CmGraphDirectory(void)
+CmGraphDirectory(GtkWidget *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1173,7 +1173,7 @@ CmGraphDirectory(void)
 }
 
 void
-CmGraphShell(void)
+CmGraphShell(GtkWidget *w, gpointer client_data)
 {
   struct objlist *obj, *robj, *shell;
   N_VALUE *inst;
@@ -1203,7 +1203,7 @@ CmGraphShell(void)
 }
 
 void
-CmGraphQuit(void)
+CmGraphQuit(GtkWidget *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1254,57 +1254,6 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   g_free(fname);
 }
 
-void
-CmGraphLoadB(GtkWidget *w, gpointer client_data)
-{
-  CmGraphLoad();
-}
-
-void
-CmGraphSaveB(GtkWidget *w, gpointer client_data)
-{
-  CmGraphOverWrite();
-}
-
-void
-CmGraphMenu(GtkWidget *w, gpointer client_data)
-{
-  int sel;
-
-  sel = (int) client_data;
-  switch (sel) {
-  case MenuIdGraphLoad:
-    CmGraphLoad();
-    break;
-  case MenuIdGraphSave:
-    CmGraphSave();
-    break;
-  case MenuIdGraphOverWrite:
-    CmGraphOverWrite();
-    break;
-  case MenuIdGraphPage:
-    CmGraphPage();
-    break;
-  case MenuIdGraphSwitch:
-    CmGraphSwitch();
-    break;
-  case MenuIdOutputDriver:
-    CmOutputPrinter(TRUE, PRINT_SHOW_DIALOG_DIALOG);
-    break;
-  case MenuIdGraphDirectory:
-    CmGraphDirectory();
-    break;
-  case MenuIdGraphShell:
-    CmGraphShell();
-    break;
-  case MenuIdGraphQuit:
-    CmGraphQuit();
-    break;
-  default:
-    break;
-  }
-}
-
 static void
 about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
 {
@@ -1318,7 +1267,7 @@ about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
 
 
 void
-CmHelpAbout(void)
+CmHelpAbout(GtkWidget *w, gpointer client_data)
 {
   struct objlist *obj;
   char *web, *copyright;
@@ -1348,7 +1297,7 @@ CmHelpAbout(void)
 }
 
 void
-CmHelpHelp(void)
+CmHelpHelp(GtkWidget *w, gpointer client_data)
 {
   char *cmd;
 
@@ -1362,17 +1311,4 @@ CmHelpHelp(void)
   system_bg(cmd);
 
   g_free(cmd);
-}
-
-void
-CmHelpMenu(GtkWidget *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdHelpAbout:
-    CmHelpAbout();
-    break;
-  case MenuIdHelpHelp:
-    CmHelpHelp();
-    break;
-  }
 }

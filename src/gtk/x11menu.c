@@ -102,31 +102,7 @@ GdkCursorType Cursor[] = {
 static void clear_information(GtkMenuItem *w, gpointer user_data);
 static void toggle_view_cb(GtkToggleAction *action, gpointer data);
 
-void
-CmGraphSaveAsB(GtkWidget *w, gpointer client_data)
-{
-  CmGraphSave();
-}
-
-struct NgraphActionEntry {
-  enum {
-    ACTION_TYPE_NORMAL,
-    ACTION_TYPE_TOGGLE,
-    ACTION_TYPE_RADIO,
-    ACTION_TYPE_RECENT,
-  } type;
-  const gchar *name;
-  const gchar *stock_id;
-  const gchar *label;
-  const gchar *tooltip;
-  gchar *caption;
-  GCallback callback;
-  int user_data;
-  const char *icon;
-  const char *accel_path;
-  guint accel_key;
-  GdkModifierType accel_mods;
-} ActionEntry[] = {
+static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
     "GraphMenuAction",
@@ -296,7 +272,7 @@ struct NgraphActionEntry {
     N_("_Load graph"),
     N_("Load NGP"), 
     N_("Load NGP file"), 
-    G_CALLBACK(CmGraphLoadB),
+    G_CALLBACK(CmGraphLoad),
     0,
     NULL,
     "<Ngraph>/Graph/Load graph",
@@ -318,7 +294,7 @@ struct NgraphActionEntry {
     NULL,
     N_("Save NGP"), 
     N_("Save NGP file"), 
-    G_CALLBACK(CmGraphSaveB),
+    G_CALLBACK(CmGraphOverWrite),
     0,
     NULL,
     "<Ngraph>/Graph/Save",
@@ -332,7 +308,7 @@ struct NgraphActionEntry {
     NULL,
     N_("Save NGP"), 
     NULL,
-    G_CALLBACK(CmGraphSaveAsB),
+    G_CALLBACK(CmGraphSave),
     0,
     NULL,
     "<Ngraph>/Graph/SaveAs",
@@ -483,8 +459,8 @@ struct NgraphActionEntry {
     N_("_Current directory"),
     NULL,
     NULL,
-    G_CALLBACK(CmGraphMenu),
-    MenuIdGraphDirectory,
+    G_CALLBACK(CmGraphDirectory),
+    0,
     NULL,
     "<Ngraph>/Graph/Current directory",
   },
@@ -495,8 +471,8 @@ struct NgraphActionEntry {
     N_("_Ngraph shell"),
     NULL,
     NULL,
-    G_CALLBACK(CmGraphMenu),
-    MenuIdGraphShell,
+    G_CALLBACK(CmGraphShell),
+    0,
     NULL,
     "<Ngraph>/Graph/Ngraph shell",
   },
@@ -1516,8 +1492,8 @@ struct NgraphActionEntry {
     NULL,
     NULL,
     NULL,
-    G_CALLBACK(CmHelpMenu),
-    MenuIdHelpHelp,
+    G_CALLBACK(CmHelpHelp),
+    0,
     NULL,
     "<Ngraph>/Help/Help",
     GDK_F1,
@@ -1530,8 +1506,8 @@ struct NgraphActionEntry {
     NULL,
     NULL,
     NULL,
-    G_CALLBACK(CmHelpMenu),
-    MenuIdHelpAbout,
+    G_CALLBACK(CmHelpAbout),
+    0,
     NULL,
     "<Ngraph>/Help/About",
   },
@@ -1880,9 +1856,9 @@ struct WmStateHint
 };
 
 static gboolean
-CloseCallback(GtkWidget *w, GdkEvent  *event, gpointer user_data)
+CloseCallback(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
-  CmGraphQuit();
+  CmGraphQuit(w, user_data);
 
   return TRUE;
 }

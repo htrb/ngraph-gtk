@@ -21,12 +21,15 @@
  * 
  */
 
-void CmHelpMenu(GtkWidget *w, gpointer client_data);
-void CmGraphQuit(void);
+void CmGraphQuit(GtkWidget *w, gpointer client_data);
 void CmGraphNewMenu(GtkWidget *w, gpointer client_data);
-void CmGraphMenu(GtkWidget *w, gpointer client_data);
 void CmGraphHistory(GtkRecentChooser *w, gpointer client_data);
-void CmGraphLoadB(GtkWidget *w, gpointer client_data);
-void CmGraphSaveB(GtkWidget *w, gpointer client_data);
-void CmGraphSave(void);
+void CmGraphLoad(GtkWidget *w, gpointer client_data);
+void CmGraphSave(GtkWidget *w, gpointer client_data);
+void CmGraphOverWrite(GtkWidget *w, gpointer client_data);
+void CmGraphShell(GtkWidget *w, gpointer client_data);
+void CmGraphDirectory(GtkWidget *w, gpointer client_data);
+void CmHelpHelp(GtkWidget *w, gpointer client_data);
+void CmHelpAbout(GtkWidget *w, gpointer client_data);
+
 int set_paper_type(int w, int h);
