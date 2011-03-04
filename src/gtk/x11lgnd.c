@@ -1836,7 +1836,6 @@ CmLineUpdate(void)
   arraydel(&array);
 }
 
-
 void
 CmLineMenu(GtkMenuItem *w, gpointer client_data)
 {
@@ -1849,6 +1848,7 @@ CmLineMenu(GtkMenuItem *w, gpointer client_data)
     break;
   }
 }
+
 void
 CmRectDel(void)
 {

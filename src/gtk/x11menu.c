@@ -1037,7 +1037,7 @@ static struct NgraphActionEntry ActionEntry[] = {
   },
   {
     ACTION_TYPE_NORMAL,
-    "AxisAddClrossAction",
+    "AxisAddCrossAction",
     NULL,
     N_("_Cross graph"),
     NULL,
@@ -1287,7 +1287,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     NULL,
     NULL,
-    G_CALLBACK(CmLineMenu),
+    G_CALLBACK(CmRectangleMenu),
     MenuIdLegendUpdate,
     NULL,
     "<Ngraph>/Legend/Rectangle/Property", 
