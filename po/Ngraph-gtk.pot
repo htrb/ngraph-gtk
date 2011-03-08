@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.02\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-03-04 18:18+0900\n"
+"POT-Creation-Date: 2011-03-08 10:51+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -505,7 +505,7 @@ msgstr ""
 msgid "math text"
 msgstr ""
 
-#: src/gtk/x11dialg.c:142 src/ofile.c:145
+#: src/gtk/x11dialg.c:142 src/ofile.c:173
 msgid "fit"
 msgstr ""
 
@@ -1120,7 +1120,7 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:109 src/ofile.c:132
+#: src/gtk/x11lgnd.c:109 src/ofile.c:160
 msgid "rectangle"
 msgstr ""
 
@@ -1128,7 +1128,7 @@ msgstr ""
 msgid "arc"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:111 src/ofile.c:126
+#: src/gtk/x11lgnd.c:111 src/ofile.c:154
 msgid "mark"
 msgstr ""
 
@@ -2510,71 +2510,71 @@ msgstr ""
 msgid "user"
 msgstr ""
 
-#: src/ofile.c:127 src/opath.c:82
+#: src/ofile.c:155 src/opath.c:82
 msgid "line"
 msgstr ""
 
-#: src/ofile.c:128
+#: src/ofile.c:156
 msgid "polygon"
 msgstr ""
 
-#: src/ofile.c:129 src/opath.c:83
+#: src/ofile.c:157 src/opath.c:83
 msgid "curve"
 msgstr ""
 
-#: src/ofile.c:130
+#: src/ofile.c:158
 msgid "diagonal"
 msgstr ""
 
-#: src/ofile.c:131
+#: src/ofile.c:159
 msgid "arrow"
 msgstr ""
 
-#: src/ofile.c:133
+#: src/ofile.c:161
 msgid "rectangle_fill"
 msgstr ""
 
-#: src/ofile.c:134
+#: src/ofile.c:162
 msgid "rectangle_solid_fill"
 msgstr ""
 
-#: src/ofile.c:135
+#: src/ofile.c:163
 msgid "errorbar_x"
 msgstr ""
 
-#: src/ofile.c:136
+#: src/ofile.c:164
 msgid "errorbar_y"
 msgstr ""
 
-#: src/ofile.c:137
+#: src/ofile.c:165
 msgid "staircase_x"
 msgstr ""
 
-#: src/ofile.c:138
+#: src/ofile.c:166
 msgid "staircase_y"
 msgstr ""
 
-#: src/ofile.c:139
+#: src/ofile.c:167
 msgid "bar_x"
 msgstr ""
 
-#: src/ofile.c:140
+#: src/ofile.c:168
 msgid "bar_y"
 msgstr ""
 
-#: src/ofile.c:141
+#: src/ofile.c:169
 msgid "bar_fill_x"
 msgstr ""
 
-#: src/ofile.c:142
+#: src/ofile.c:170
 msgid "bar_fill_y"
 msgstr ""
 
-#: src/ofile.c:143
+#: src/ofile.c:171
 msgid "bar_solid_fill_x"
 msgstr ""
 
-#: src/ofile.c:144
+#: src/ofile.c:172
 msgid "bar_solid_fill_y"
 msgstr ""
 

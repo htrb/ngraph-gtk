@@ -1,3 +1,8 @@
+2011-03-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (ofile_create_math_equation, set_const): add
+	constants "COLX", "COLY", "HSKIP" and "RSTEP".
+
 2011-03-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (ActionEntry): add callback to actions

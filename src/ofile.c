@@ -55,8 +55,36 @@
 
 #define UPDATE_PROGRESS_LINE_NUM 0xfff
 
-#define MATH_CONST_SIZE		19
-#define TWOPASS_CONST_SIZE	(MATH_CONST_SIZE - 5)
+enum {
+  MATH_CONST_NUM,
+  MATH_CONST_MINX,
+  MATH_CONST_MAXX,
+  MATH_CONST_MINY,
+  MATH_CONST_MAXY,
+  MATH_CONST_SUMX,
+  MATH_CONST_SUMY,
+  MATH_CONST_SUMXX,
+  MATH_CONST_SUMYY,
+  MATH_CONST_SUMXY,
+  MATH_CONST_AVX,
+  MATH_CONST_AVY,
+  MATH_CONST_SGX,
+  MATH_CONST_SGY,
+  TWOPASS_CONST_SIZE,
+};
+
+enum {
+  MATH_CONST_MASK = TWOPASS_CONST_SIZE,
+  MATH_CONST_MOVE,
+  MATH_CONST_FIRST,
+  MATH_CONST_COLX,
+  MATH_CONST_COLY,
+  MATH_CONST_HSKIP,
+  MATH_CONST_RSTEP,
+  MATH_CONST_D,
+  MATH_CONST_N,
+  MATH_CONST_SIZE,
+};
 
 #define NAME		"file"
 #define ALIAS		"data"
@@ -1451,29 +1479,6 @@ f2dsaveconfig(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   return obj_save_config(obj, inst, F2DCONF, FileConfig, sizeof(FileConfig) / sizeof(*FileConfig));
 }
 
-enum {
-  MATH_CONST_NUM,
-  MATH_CONST_MINX,
-  MATH_CONST_MAXX,
-  MATH_CONST_MINY,
-  MATH_CONST_MAXY,
-  MATH_CONST_SUMX,
-  MATH_CONST_SUMY,
-  MATH_CONST_SUMXX,
-  MATH_CONST_SUMYY,
-  MATH_CONST_SUMXY,
-  MATH_CONST_AVX,
-  MATH_CONST_AVY,
-  MATH_CONST_SGX,
-  MATH_CONST_SGY,
-
-  MATH_CONST_MASK,
-  MATH_CONST_MOVE,
-  MATH_CONST_FIRST,
-  MATH_CONST_D,
-  MATH_CONST_N,
-};
-
 MathEquation *
 ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, int usr_func, int use_fobj_func)
 {
@@ -1495,10 +1500,17 @@ ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, in
     "AVY",
     "SGX",
     "SGY",
+    /* TWOPASS_CONST */
+
+
 
     "MASK",
     "MOVE",
     "FIRST",
+    "COLX",
+    "COLY",
+    "HSKIP",
+    "RSTEP",
     "%D",
     "%N",
   };
@@ -1532,7 +1544,7 @@ ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, in
   }
 
   if (use_const) {
-    for (i = 0; i < sizeof(file_constant) / sizeof(*file_constant); i++) {
+    for (i = 0; i < MATH_CONST_SIZE; i++) {
       f_id = math_equation_add_const(code, file_constant[i], NULL);
       if (f_id < 0) {
 	math_equation_free(code);
@@ -2174,6 +2186,14 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_FIRST], &val);
 
+  val.val = fp->x;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_COLX], &val);
+
+  val.val = fp->y;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_COLY], &val);
+
   val.val = fp->masknum;
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_MASK], &val);
@@ -2181,6 +2201,14 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   val.val = fp->movenum;
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_MOVE], &val);
+
+  val.val = fp->hskip;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_HSKIP], &val);
+
+  val.val = fp->rstep;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_RSTEP], &val);
 
   return math_equation_optimize(eq);
 }
