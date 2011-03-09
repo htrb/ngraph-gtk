@@ -1,3 +1,10 @@
+2011-03-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (mouse_up_drag): invert logic and fix indent.
+	(ViewerWinUpdate): set and restore "PaintLock".
+	(ViewerWinUpdate): don't check "region" when "d->allclear" is
+	true.
+
 2011-03-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (ofile_create_math_equation, set_const): add

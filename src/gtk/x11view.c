@@ -2856,56 +2856,59 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
 
   axis = FALSE;
 
-  if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
-    ShowFocusFrame(dc);
+  if (d->MouseX1 == d->MouseX2 && d->MouseY1 == d->MouseY2) {
+    return;
+  }
 
-    d->ShowFrame = FALSE;
+  ShowFocusFrame(dc);
 
-    d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		  - Menulocal.LeftMargin) / zoom;
+  d->ShowFrame = FALSE;
 
-    d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		  - Menulocal.TopMargin) / zoom;
+  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
+		- Menulocal.LeftMargin) / zoom;
 
-    dx = d->MouseX2 - d->MouseX1;
-    dy = d->MouseY2 - d->MouseY1;
+  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
+		- Menulocal.TopMargin) / zoom;
 
-    CheckGrid(FALSE, state, &dx, &dy, NULL);
+  dx = d->MouseX2 - d->MouseX1;
+  dy = d->MouseY2 - d->MouseY1;
 
-    num = arraynum(d->focusobj);
+  CheckGrid(FALSE, state, &dx, &dy, NULL);
 
-    PaintLock = TRUE;
+  num = arraynum(d->focusobj);
 
-    if (dx != 0 || dy != 0) {
-      argv[0] = (char *) &dx;
-      argv[1] = (char *) &dy;
-      argv[2] = NULL;
+  PaintLock = TRUE;
 
-      for (i = num - 1; i >= 0; i--) {
-	focus = *(struct FocusObj **) arraynget(d->focusobj, i);
-	obj = focus->obj;
+  if (dx != 0 || dy != 0) {
+    argv[0] = (char *) &dx;
+    argv[1] = (char *) &dy;
+    argv[2] = NULL;
 
-	if (obj == chkobject("axis"))
-	  axis = TRUE;
+    for (i = num - 1; i >= 0; i--) {
+      focus = *(struct FocusObj **) arraynget(d->focusobj, i);
+      obj = focus->obj;
 
-	inst = chkobjinstoid(focus->obj, focus->oid);
-	if (inst) {
-	  AddInvalidateRect(obj, inst);
-	  _exeobj(obj, "move", inst, 2, argv);
-	  set_graph_modified();
-	  AddInvalidateRect(obj, inst);
-	}
+      if (obj == chkobject("axis"))
+	axis = TRUE;
+
+      inst = chkobjinstoid(focus->obj, focus->oid);
+      if (inst) {
+	AddInvalidateRect(obj, inst);
+	_exeobj(obj, "move", inst, 2, argv);
+	set_graph_modified();
+	AddInvalidateRect(obj, inst);
       }
     }
-
-    PaintLock = FALSE;
-    d->FrameOfsX = d->FrameOfsY = 0;
-    ShowFocusFrame(dc);
-    d->ShowFrame = TRUE;
-    if (d->Mode == LegendB || (d->Mode == PointB && !axis))
-      d->allclear=FALSE;
-    UpdateAll();
   }
+
+  PaintLock = FALSE;
+  d->FrameOfsX = d->FrameOfsY = 0;
+  ShowFocusFrame(dc);
+  d->ShowFrame = TRUE;
+  if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
+    d->allclear=FALSE;
+  }
+  UpdateAll();
 }
 
 static void
@@ -3735,8 +3738,9 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
     break;
   }
 
-  if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode)
+  if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode) {
     gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
+  }
 
   g_object_unref(G_OBJECT(dc));
   UpdateAll();
@@ -4703,7 +4707,6 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   if ((e && e->count != 0) || gc == NULL)
     return TRUE;
 
-
   Menulocal.scrollx = d->hscroll - d->cx;
   Menulocal.scrolly = d->vscroll - d->cy;
 
@@ -4717,7 +4720,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   }
 
   if (! Globallock) {
-    /* I think it does not need to check chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid). */
+    /* I think it is not necessary to check chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid). */
     if (d->ShowFrame)
       ShowFocusFrame(gc);
 
@@ -4767,9 +4770,12 @@ ViewerEvHScroll(GtkRange *range, gpointer user_data)
 void
 ViewerWinUpdate(int clear)
 {
-  int i, num;
+  int i, num, lock_state;
   struct FocusObj **focus;
   struct Viewer *d;
+
+  lock_state = PaintLock;
+  PaintLock = TRUE;
 
   d = &(NgraphApp.Viewer);
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) == NULL) {
@@ -4793,7 +4799,7 @@ ViewerWinUpdate(int clear)
     clear_focus_obj(d);
   }
 
-  if (d->allclear || region == NULL) {
+  if (d->allclear) {
     mx_clear(NULL);
     mx_redraw(Menulocal.obj, Menulocal.inst);
   } else if (region) {
@@ -4803,6 +4809,8 @@ ViewerWinUpdate(int clear)
     gra2cairo_clip_region(Menulocal.local, NULL);
     Menulocal.region = NULL;
   }
+
+  PaintLock = lock_state;
   gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
 
   d->allclear = TRUE;
