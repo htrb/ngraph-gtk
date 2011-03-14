@@ -4820,9 +4820,6 @@ select_axis_y(GtkComboBox *w, gpointer user_data)
   select_axis(w, user_data, "axis_y");
 }
 
-#define AXIS_X 0
-#define AXIS_Y 1
-
 static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, int axis)
 {

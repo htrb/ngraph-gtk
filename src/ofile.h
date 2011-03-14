@@ -27,8 +27,15 @@ enum FILE_OBJ_PLOT_TYPE {
   PLOT_TYPE_FIT,
 };
 
+enum axis_instance_field_type{
+  AXIS_X,
+  AXIS_Y,
+  AXIS_REFERENCE,
+};
+
 #include "math/math_equation.h"
 
 MathEquation *ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, int usr_func, int use_fobj_func);
+int get_axis_id(struct objlist *obj, N_VALUE *inst, struct objlist **aobj, int axis);
 
 #endif

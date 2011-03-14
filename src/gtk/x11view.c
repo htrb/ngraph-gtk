@@ -31,6 +31,7 @@
 #include "ngraph.h"
 #include "object.h"
 #include "gra.h"
+#include "ofile.h"
 #include "olegend.h"
 #include "oarc.h"
 #include "opath.h"
@@ -5409,26 +5410,96 @@ CmViewerClearB(GtkWidget *w, gpointer client_data)
   CmViewerClear();
 }
 
+static int
+search_axis_group(struct objlist *obj, int id, const char *group,
+		  int *findX, int *findY, int *findU, int *findR, int *findG,
+		  int *idx, int *idy, int *idu, int *idr, int *idg)
+{
+  int j, id2, did, type;
+  struct objlist *dobj, *aobj, *gobj;
+  N_VALUE *inst2, *dinst;
+  char *group2;
+  struct narray *sarray;
+  int snum;
+  char **sdata;
+  char *dfield;
+
+  *findX = *findY = *findU = *findR = *findG = FALSE;
+  type = group[0];
+
+  for (j = 0; j <= id; j++) {
+    inst2 = chkobjinst(obj, j);
+    _getobj(obj, "group", inst2, &group2);
+    _getobj(obj, "id", inst2, &id2);
+
+    if (group2 == NULL || group2[0] != type)
+      continue;
+
+    if (strcmp(group + 2, group2 + 2) != 0)
+      continue;
+
+    if (group2[1] == 'X') {
+      *findX = TRUE;
+      *idx = id2;
+    } else if (group2[1] == 'Y') {
+      *findY = TRUE;
+      *idy = id2;
+    } else if (group2[1] == 'U') {
+      *findU = TRUE;
+      *idu = id2;
+    } else if (group2[1] == 'R') {
+      *findR = TRUE;
+      *idr = id2;
+    }
+  }
+
+  if ((type == 's' || type == 'f') &&
+      *findX && *findY &&
+      ! _getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray) &&
+      ((snum = arraynum(sarray)) >= 0)) {
+
+    sdata = arraydata(sarray);
+    gobj = chkobject("axisgrid");
+
+    for (j = 1; j < snum; j++) {
+      int aid1, aid2;
+
+      dobj = getobjlist(sdata[j], &did, &dfield, NULL);
+      if (dobj == NULL || dobj != gobj) {
+	continue;
+      }
+
+      dinst = chkobjinstoid(dobj, did);
+      if (dinst == NULL) {
+	continue;
+      }
+
+      aid1 = get_axis_id(dobj, dinst, &aobj, AXIS_X);
+      aid2 = get_axis_id(dobj, dinst, &aobj, AXIS_Y);
+      if (aid1 >= 0 && aid2 >= 0 && obj == aobj && aid1 == *idx && aid2 == *idy) {
+	*findG = TRUE;
+	_getobj(dobj, "id", dinst, idg);
+	break;
+      }
+    }
+  }
+  return type;
+}
+
 static void
 ViewUpdate(void)
 {
-  int i, id, id2, did, num;
+  int i, id, num;
   struct FocusObj *focus;
-  struct objlist *obj, *dobj = NULL, *aobj;
-  N_VALUE *inst, *inst2, *dinst;
-  char *dfield;
-  int ret, section;
+  struct objlist *obj, *dobj = NULL;
+  N_VALUE *inst, *dinst;
+  int ret;
   int x1, y1;
-  int aid = 0, idx = 0, idy = 0, idu = 0, idr = 0, idg, j, lenx, leny;
+  int idx = 0, idy = 0, idu = 0, idr = 0, idg, lenx, leny;
   int findX, findY, findU, findR, findG;
-  char *axisx, *axisy;
-  int matchx, matchy;
-  struct narray iarray, *sarray;
-  int snum;
-  char **sdata;
   GdkGC *dc;
   char type;
-  char *group, *group2;
+  char *group;
   int axis;
   struct Viewer *d;
 
@@ -5462,94 +5533,18 @@ ViewUpdate(void)
       axis = TRUE;
       _getobj(obj, "group", inst, &group);
 
-      if ((group != NULL) && (group[0] != 'a')) {
-	findX = findY = findU = findR = findG = FALSE;
-	type = group[0];
-
-	for (j = 0; j <= id; j++) {
-	  inst2 = chkobjinst(obj, j);
-	  _getobj(obj, "group", inst2, &group2);
-	  _getobj(obj, "id", inst2, &id2);
-
-	  if (group2 == NULL || group2[0] != type)
-	    continue;
-
-	  if (strcmp(group + 2, group2 + 2))
-	    continue;
-
-	  if (group2[1] == 'X') {
-	    findX = TRUE;
-	    idx = id2;
-	  } else if (group2[1] == 'Y') {
-	    findY = TRUE;
-	    idy = id2;
-	  } else if (group2[1] == 'U') {
-	    findU = TRUE;
-		idu = id2;
-	  } else if (group2[1] == 'R') {
-	    findR = TRUE;
-	    idr = id2;
-	  }
-	}
-
-	if (((type == 's') || (type == 'f')) && findX && findY
-	    && !_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray)
-	    && ((snum = arraynum(sarray)) >= 0)) {
-	  sdata = arraydata(sarray);
-
-	  for (j = 1; j < snum; j++) {
-	    if (((dobj = getobjlist(sdata[j], &did, &dfield, NULL)) != NULL)
-		&& (dobj == chkobject("axisgrid"))) {
-	      if ((dinst = chkobjinstoid(dobj, did)) != NULL) {
-		_getobj(dobj, "axis_x", dinst, &axisx);
-		_getobj(dobj, "axis_y", dinst, &axisy);
-		matchx = matchy = FALSE;
-		if (axisx != NULL) {
-		  arrayinit(&iarray, sizeof(int));
-		  if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
-		    if ((arraynum(&iarray) >= 1)
-			&& (obj == aobj)
-			&& (arraylast_int(&iarray)
-			    == idx))
-		      matchx = TRUE;
-		  }
-		  arraydel(&iarray);
-		}
-
-		if (axisy != NULL) {
-		  arrayinit(&iarray, sizeof(int));
-		  if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
-		    if ((arraynum(&iarray) >= 1)
-			&& (obj == aobj)
-			&& (arraylast_int(&iarray)
-			    == idy))
-		      matchy = TRUE;
-		  }
-		  arraydel(&iarray);
-		}
-
-		if (matchx && matchy) {
-		  findG = TRUE;
-		  _getobj(dobj, "id", dinst, &idg);
-		  break;
-		}
-	      }
-	    }
-	  }
-	}
+      if (group && group[0] != 'a') {
+	type = search_axis_group(obj, id, group,
+				 &findX, &findY, &findU, &findR, &findG,
+				 &idx, &idy, &idu, &idr, &idg);
 
 	if (((type == 's') || (type == 'f'))
 	    && findX && findY && findU && findR) {
 
-	  if (!findG) {
-	    dobj = chkobject("axisgrid");
+	  dobj = chkobject("axisgrid");
+	  if (! findG) {
 	    idg = -1;
 	  }
-
-	  if (type == 's')
-	    section = TRUE;
-	  else
-	    section = FALSE;
 
 	  getobj(obj, "y", idx, 0, NULL, &y1);
 	  getobj(obj, "x", idy, 0, NULL, &x1);
@@ -5560,7 +5555,7 @@ ViewUpdate(void)
 	  lenx = lenx - x1;
 
 	  SectionDialog(&DlgSection, x1, y1, lenx, leny, obj,
-			idx, idy, idu, idr, dobj, &idg, section);
+			idx, idy, idu, idr, dobj, &idg, type == 's');
 
 	  ret = DialogExecute(TopLevel, &DlgSection);
 
@@ -5570,10 +5565,10 @@ ViewUpdate(void)
 	    arrayndel2(d->focusobj, i);
 	  }
 
-	  if (!findG) {
-	    if (idg != -1) {
-	      if ((dinst = chkobjinst(dobj, idg)) != NULL)
-		AddList(dobj, dinst);
+	  if (! findG && idg != -1) {
+	    dinst = chkobjinst(dobj, idg);
+	    if (dinst) {
+	      AddList(dobj, dinst);
 	    }
 	  }
 	} else if ((type == 'c') && findX && findY) {
@@ -5587,7 +5582,7 @@ ViewUpdate(void)
 	  ret = DialogExecute(TopLevel, &DlgCross);
 
 	  if (ret == IDDELETE) {
-	    AxisDel(aid);
+	    AxisDel(id);
 	    set_graph_modified();
 	    arrayndel2(d->focusobj, i);
 	  }
@@ -5775,101 +5770,26 @@ ncopyobj(struct objlist *obj, int id1, int id2)
 static void
 ViewCopyAxis(struct objlist *obj, int id, struct FocusObj *focus, N_VALUE *inst)
 {
-  int j, id2, did;
-  struct objlist *dobj, *aobj;
-  N_VALUE *inst2, *dinst;
-  char *dfield;
+  int id2;
+  struct objlist *dobj;
+  N_VALUE *inst2;
   int findX, findY, findU, findR, findG;
   char *axisx, *axisy;
-  int matchx, matchy;
-  struct narray iarray, *sarray;
-  int snum;
-  char **sdata;
   int oidx, oidy;
   int idx = 0, idy = 0, idu = 0, idr = 0, idg;
   int idx2, idy2, idu2, idr2, idg2;
   char type;
-  char *group, *group2;
+  char *group;
   int tp;
   struct narray agroup;
   char *argv[2];
 
   _getobj(obj, "group", inst, &group);
 
-  if ((group != NULL) && (group[0] != 'a')) {
-    findX = findY = findU = findR = findG = FALSE;
-    type = group[0];
-
-    for (j = 0; j <= id; j++) {
-      inst2 = chkobjinst(obj, j);
-      _getobj(obj, "group", inst2, &group2);
-      _getobj(obj, "id", inst2, &id2);
-
-      if (group2 == NULL || group2[0] != type)
-	continue;
-
-      if (strcmp(group + 2, group2 + 2) != 0)
-	continue;
-
-      if (group2[1] == 'X') {
-	findX = TRUE;
-	idx = id2;
-      } else if (group2[1] == 'Y') {
-	findY = TRUE;
-	idy = id2;
-      } else if (group2[1] == 'U') {
-	findU = TRUE;
-	idu = id2;
-      } else if (group2[1] == 'R') {
-	findR = TRUE;
-	idr = id2;
-      }
-    }
-
-    if (((type == 's') || (type == 'f')) && findX && findY
-	&& !_getobj(Menulocal.obj, "_list", Menulocal.inst, &sarray)
-	&& ((snum = arraynum(sarray)) >= 0)) {
-      sdata = arraydata(sarray);
-      for (j = 1; j < snum; j++) {
-	dobj = getobjlist(sdata[j], &did, &dfield, NULL);
-	if (dobj == NULL || dobj != chkobject("axisgrid"))
-	  continue;
-
-	dinst = chkobjinstoid(dobj, did);
-	if (dinst == NULL)
-	  continue;
-
-	_getobj(dobj, "axis_x", dinst, &axisx);
-	_getobj(dobj, "axis_y", dinst, &axisy);
-	matchx = matchy = FALSE;
-
-	if (axisx) {
-	  arrayinit(&iarray, sizeof(int));
-	  if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
-	    if ((arraynum(&iarray) >= 1)
-		&& (obj == aobj)
-		&& (arraylast_int(&iarray) == idx))
-	      matchx = TRUE;
-	  }
-	  arraydel(&iarray);
-	}
-	if (axisy) {
-	  arrayinit(&iarray, sizeof(int));
-	  if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
-	    if ((arraynum(&iarray) >= 1)
-		&& (obj == aobj)
-		&& (arraylast_int(&iarray) == idy))
-	      matchy = TRUE;
-	  }
-	  arraydel(&iarray);
-	}
-	if (matchx && matchy) {
-	  findG = TRUE;
-	  _getobj(dobj, "id", dinst, &idg);
-	  break;
-	}
-      }
-    }
+  if (group && group[0] != 'a') {
+    type = search_axis_group(obj, id, group,
+			     &findX, &findY, &findU, &findR, &findG,
+			     &idx, &idy, &idu, &idr, &idg);
 
     if (((type == 's') || (type == 'f'))
 	&& findX && findY && findU && findR) {

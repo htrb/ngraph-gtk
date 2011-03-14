@@ -79,8 +79,11 @@ enum {
   MATH_CONST_FIRST,
   MATH_CONST_COLX,
   MATH_CONST_COLY,
+  MATH_CONST_AXISX,
+  MATH_CONST_AXISY,
   MATH_CONST_HSKIP,
   MATH_CONST_RSTEP,
+  MATH_CONST_FLINE,
   MATH_CONST_D,
   MATH_CONST_N,
   MATH_CONST_SIZE,
@@ -277,8 +280,8 @@ struct f2ddata {
   int dataclip;
   double axmin,axmax,aymin,aymax;
   double axmin2,axmax2,aymin2,aymax2;
-  double axdir,aydir;
   double axvx,axvy,ayvx,ayvy;
+  int axisx, axisy;
   int axtype,aytype,axposx,axposy,ayposx,ayposy,axlen,aylen;
   double ratex,ratey;
   MathEquation *codex[EQUATION_NUM], *codey[EQUATION_NUM];
@@ -702,6 +705,153 @@ add_file_func(MathEquation *eq) {
   return 0;
 }
 
+int
+get_axis_id(struct objlist *obj, N_VALUE *inst, struct objlist **aobj, int axis)
+{
+  char *field, *axis_str;
+  struct narray iarray;
+  int anum, id;
+
+  switch (axis) {
+  case AXIS_X:
+    field = "axis_x";
+    break;
+  case AXIS_Y:
+    field = "axis_y";
+    break;
+  case AXIS_REFERENCE:
+    field = "reference";
+    break;
+  default:
+    return - ERRNOAXIS;
+  }
+
+  _getobj(obj, field, inst, &axis_str);
+
+  if (axis_str == NULL) {
+    return - ERRNOAXIS;
+  }
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(axis_str, aobj, &iarray, FALSE, NULL)) {
+    return - ERRNOAXIS;
+  }
+
+  anum = arraynum(&iarray);
+  if (anum < 1) {
+    arraydel(&iarray);
+    return - ERRNOAXISINST;
+  }
+
+  id = arraylast_int(&iarray);
+  arraydel(&iarray);
+
+  return id;
+}
+
+struct axis_prm {
+  int posx, posy;
+  int len;
+  double min, max, min2, max2;
+  double vx, vy, rate;
+  int type;
+};
+
+static int
+get_axis_prm(struct objlist *obj, N_VALUE *inst, int axis, struct axis_prm *prm)
+{
+  int aid, id, dir;
+  N_VALUE *inst1;
+  struct objlist *aobj;
+  double min, max, ddir;
+
+  aid = get_axis_id(obj, inst, &aobj, axis);
+  if (aid  < 0) {
+    return aid;
+  }
+
+  inst1 = getobjinst(aobj, aid);
+  if (inst1 == NULL) {
+    return -1;
+  }
+
+  if (_getobj(aobj, "x", inst1, &prm->posx)) {
+    return -1;
+  }
+
+  if (_getobj(aobj, "y", inst1, &prm->posy)) {
+    return -1;
+  }
+
+  if (_getobj(aobj, "length", inst1, &prm->len)) {
+    return -1;
+  }
+
+  if (_getobj(aobj, "direction", inst1, &dir)) {
+    return -1;
+  }
+
+  if (_getobj(aobj, "min", inst1, &min)) {
+    return -1;
+  }
+
+  if (_getobj(aobj, "max", inst1, &max)) {
+    return -1;
+  }
+
+  if (_getobj(aobj, "type", inst1, &prm->type)) {
+    return -1;
+  }
+
+  if (min == 0 && max == 0) {
+    id = get_axis_id(aobj, inst1, &aobj, AXIS_REFERENCE);
+    if (id >= 0) {
+      inst1 = getobjinst(aobj, id);
+      if (inst1) {
+	_getobj(aobj, "min", inst1, &min);
+	_getobj(aobj, "max", inst1, &max);
+	_getobj(aobj, "type", inst1, &prm->type);
+      }
+    }
+  }
+
+  prm->min2 = min;
+  prm->max2 = max;
+
+  ddir = dir / 18000.0 * MPI;
+  prm->vx = cos(ddir);
+  prm->vy = -sin(ddir);
+
+  if (min == max) {
+    return - ERRNOSETAXIS;
+  }
+
+  switch (prm->type) {
+  case AXIS_TYPE_LOG:
+    if (min <= 0 || max <= 0) {
+      return - ERRMINMAX;
+    }
+
+    min = log10(min);
+    max = log10(max);
+    break;
+  case AXIS_TYPE_INVERSE:
+    if (min * max <= 0) {
+      return - ERRMINMAX;
+    }
+
+    min = 1 / min;
+    max = 1 / max;
+    break;
+  }
+
+  prm->rate = prm->len / (max - min);
+  prm->min = min;
+  prm->max = max;
+
+  return aid;
+}
+
 static struct f2ddata *
 opendata(struct objlist *obj,N_VALUE *inst,
 	 struct f2dlocal *f2dlocal,int axis,int raw)
@@ -711,27 +861,20 @@ opendata(struct objlist *obj,N_VALUE *inst,
   struct rgba fg, bg;
   int x,y,type,hskip,rstep,final,csv;
   char *remark,*ifs;
-  char *axisx,*axisy;
   int smoothx,smoothy;
   struct narray *mask;
   struct narray *move,*movex,*movey;
   struct f2ddata *fp;
   int i,j;
-  struct objlist *aobj;
-  int anum,id;
-  struct narray iarray;
-  double axmin,axmax,aymin,aymax,axmin2,axmax2,aymin2,aymax2,ratex,ratey;
-  double axdir,aydir;
-  double axvx,axvy,ayvx,ayvy;
-  int axtype,aytype,axposx,axposy,ayposx,ayposy,axlen,aylen,dirx,diry;
+  int axid,ayid,id;
   N_VALUE *inst1;
   int marksize,marktype;
   int num2,prev_datanum;
   int *data2;
-  char *raxis;
   double ip1,ip2;
   int dataclip;
   struct stat stat_buf;
+  struct axis_prm ax_prm, ay_prm;
 
   _getobj(obj,"id",inst,&fid);
   _getobj(obj,"file",inst,&file);
@@ -744,8 +887,6 @@ opendata(struct objlist *obj,N_VALUE *inst,
   _getobj(obj,"remark",inst,&remark);
   _getobj(obj,"ifs",inst,&ifs);
   _getobj(obj,"csv",inst,&csv);
-  _getobj(obj,"axis_x",inst,&axisx);
-  _getobj(obj,"axis_y",inst,&axisy);
   _getobj(obj,"smooth_x",inst,&smoothx);
   _getobj(obj,"smooth_y",inst,&smoothy);
   _getobj(obj,"mask",inst,&mask);
@@ -772,144 +913,20 @@ opendata(struct objlist *obj,N_VALUE *inst,
   }
 
   if (axis) {
-    if (axisx == NULL) {
-      error(obj, ERRNOAXIS);
+    axid = get_axis_prm(obj, inst, AXIS_X, &ax_prm);
+    if (axid  < 0) {
+      error(obj, - axid);
       return NULL;
     }
 
-    arrayinit(&iarray,sizeof(int));
-    if (getobjilist(axisx,&aobj,&iarray,FALSE,NULL)) return NULL;
-    anum=arraynum(&iarray);
-    if (anum<1) {
-      arraydel(&iarray);
-      error2(obj,ERRNOAXISINST,axisx);
-      return NULL;
-    }
-    id=arraylast_int(&iarray);
-    arraydel(&iarray);
-    if ((inst1=getobjinst(aobj,id))==NULL) return NULL;
-    if (_getobj(aobj,"x",inst1,&axposx)) return NULL;
-    if (_getobj(aobj,"y",inst1,&axposy)) return NULL;
-    if (_getobj(aobj,"length",inst1,&axlen)) return NULL;
-    if (_getobj(aobj,"direction",inst1,&dirx)) return NULL;
-    if (_getobj(aobj,"min",inst1,&axmin)) return NULL;
-    if (_getobj(aobj,"max",inst1,&axmax)) return NULL;
-    if (_getobj(aobj,"type",inst1,&axtype)) return NULL;
-    if ((axmin==0) && (axmax==0)) {
-      if (_getobj(aobj,"reference",inst1,&raxis)) return NULL;
-      if (raxis!=NULL) {
-	arrayinit(&iarray,sizeof(int));
-	if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
-	  anum=arraynum(&iarray);
-	  if (anum>0) {
-	    id=arraylast_int(&iarray);
-	    arraydel(&iarray);
-	    if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-	      _getobj(aobj,"min",inst1,&axmin);
-	      _getobj(aobj,"max",inst1,&axmax);
-	      _getobj(aobj,"type",inst1,&axtype);
-	    }
-	  }
-	}
-      }
-    }
-    axdir=dirx/18000.0*MPI;
-    axvx=cos(axdir);
-    axvy=-sin(axdir);
-    axmin2=axmin;
-    axmax2=axmax;
-    if (axmin==axmax) {
-      error(obj,ERRNOSETAXIS);
-      return NULL;
-    } else if (axtype == AXIS_TYPE_LOG) {
-      if ((axmin <= 0) || (axmax <= 0)) {
-	error(obj,ERRMINMAX);
-	return NULL;
-      } else {
-	axmin=log10(axmin);
-	axmax=log10(axmax);
-      }
-    } else if (axtype == AXIS_TYPE_INVERSE) {
-      if (axmin * axmax <= 0) {
-	error(obj, ERRMINMAX);
-	return NULL;
-      } else {
-	axmin = 1 / axmin;
-	axmax = 1 / axmax;
-      }
-    }
-    ratex = axlen / (axmax - axmin);
-
-    if (axisy == NULL) {
-      error(obj, ERRNOAXIS);
+    ayid = get_axis_prm(obj, inst, AXIS_Y, &ay_prm);
+    if (ayid  < 0) {
+      error(obj, - ayid);
       return NULL;
     }
 
-    arrayinit(&iarray,sizeof(int));
-    if (getobjilist(axisy,&aobj,&iarray,FALSE,NULL)) return NULL;
-    anum=arraynum(&iarray);
-    if (anum<1) {
-      arraydel(&iarray);
-      error2(obj,ERRNOAXISINST,axisy);
-      return NULL;
-    }
-    id=arraylast_int(&iarray);
-    arraydel(&iarray);
-    if ((inst1=getobjinst(aobj,id))==NULL) return NULL;
-    if (_getobj(aobj,"x",inst1,&ayposx)) return NULL;
-    if (_getobj(aobj,"y",inst1,&ayposy)) return NULL;
-    if (_getobj(aobj,"length",inst1,&aylen)) return NULL;
-    if (_getobj(aobj,"direction",inst1,&diry)) return NULL;
-    if (_getobj(aobj,"min",inst1,&aymin)) return NULL;
-    if (_getobj(aobj,"max",inst1,&aymax)) return NULL;
-    if (_getobj(aobj,"type",inst1,&aytype)) return NULL;
-    if ((aymin==0) && (aymax==0)) {
-      if (_getobj(aobj,"reference",inst1,&raxis)) return NULL;
-      if (raxis!=NULL) {
-	arrayinit(&iarray,sizeof(int));
-	if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
-	  anum=arraynum(&iarray);
-	  if (anum>0) {
-	    id=arraylast_int(&iarray);
-	    arraydel(&iarray);
-	    if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-	      _getobj(aobj,"min",inst1,&aymin);
-	      _getobj(aobj,"max",inst1,&aymax);
-	      _getobj(aobj,"type",inst1,&aytype);
-	    }
-	  }
-	}
-      }
-    }
-    aydir=diry/18000.0*MPI;
-    ayvx=cos(aydir);
-    ayvy=-sin(aydir);
-    aymin2=aymin;
-    aymax2=aymax;
-    if (aymin==aymax) {
-      error(obj,ERRNOSETAXIS);
-      return NULL;
-    } else if (aytype==1) {
-      if ((aymin<=0) || (aymax<=0)) {
-	error(obj,ERRMINMAX);
-	return NULL;
-      } else {
-	aymin=log10(aymin);
-	aymax=log10(aymax);
-      }
-    } else if (aytype==2) {
-      if (aymin*aymax<=0) {
-	error(obj,ERRMINMAX);
-	return NULL;
-      } else {
-	aymin=1/aymin;
-	aymax=1/aymax;
-      }
-    }
-    ratey=aylen/(aymax-aymin);
-
-    ip1=-axvy*ayvx+axvx*ayvy;
-    ip2=-ayvy*axvx+ayvx*axvy;
+    ip1=-ax_prm.vy*ay_prm.vx+ax_prm.vx*ay_prm.vy;
+    ip2=-ay_prm.vy*ax_prm.vx+ay_prm.vx*ax_prm.vy;
 
     if ((fabs(ip1)<=1e-15) || (fabs(ip2)<=1e-15)) {
       error(obj,ERRAXISDIR);
@@ -917,34 +934,12 @@ opendata(struct objlist *obj,N_VALUE *inst,
     }
   } else {
     /* these initialization exist to avoid compile warnings. */
-    axposx = 0;
-    axposy = 0;
-    axlen = 0;
-    dirx = 0;
-    axmin = 0;
-    axmax = 0;
-    axtype = AXIS_TYPE_LINEAR;
-
-    ayposx = 0;
-    ayposy = 0;
-    aylen = 0;
-    diry = 0;
-    aymin = 0;
-    aymax = 0;
-    aytype = AXIS_TYPE_LINEAR;
-
-    axvx = 0;
-    axvy = 0;
-    ayvx = 0;
-    ayvy = 0;
-    aydir = 0;
-    axdir = 0;
-    ratey = 0;
-    ratex = 0;
-    aymax2 = 0;
-    aymin2 = 0;
-    axmax2 = 0;
-    axmin2 = 0;
+    axid =0;
+    ayid =0;
+    memset(&ax_prm, 0, sizeof(ax_prm));
+    memset(&ay_prm, 0, sizeof(ay_prm));
+    ax_prm.type = AXIS_TYPE_LINEAR;
+    ay_prm.type = AXIS_TYPE_LINEAR;
   }
   if ((fp=g_malloc(sizeof(struct f2ddata)))==NULL) return NULL;
   fp->file=file;
@@ -964,6 +959,8 @@ opendata(struct objlist *obj,N_VALUE *inst,
 
   fp->obj=obj;
   fp->id=fid;
+  fp->axisx = axid;
+  fp->axisy = ayid;
   fp->prev_datanum = prev_datanum;
 #if BUF_TYPE == USE_BUF_PTR
   for (i = 0; i < DXBUFSIZE; i++) {
@@ -1028,30 +1025,28 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->count=0;
   fp->eof=FALSE;
 
-  fp->axmin=axmin;
-  fp->axmax=axmax;
-  fp->axmin2=axmin2;
-  fp->axmax2=axmax2;
-  fp->axdir=axdir;
-  fp->axvx=axvx;
-  fp->axvy=axvy;
-  fp->axtype=axtype;
-  fp->axposx=axposx;
-  fp->axposy=axposy;
-  fp->axlen=axlen;
-  fp->aymin=aymin;
-  fp->aymax=aymax;
-  fp->aymin2=aymin2;
-  fp->aymax2=aymax2;
-  fp->aydir=aydir;
-  fp->ayvx=ayvx;
-  fp->ayvy=ayvy;
-  fp->aytype=aytype;
-  fp->ayposx=ayposx;
-  fp->ayposy=ayposy;
-  fp->aylen=aylen;
-  fp->ratex=ratex;
-  fp->ratey=ratey;
+  fp->axmin=ax_prm.min;
+  fp->axmax=ax_prm.max;
+  fp->axmin2=ax_prm.min2;
+  fp->axmax2=ax_prm.max2;
+  fp->axvx=ax_prm.vx;
+  fp->axvy=ax_prm.vy;
+  fp->axtype=ax_prm.type;
+  fp->axposx=ax_prm.posx;
+  fp->axposy=ax_prm.posy;
+  fp->axlen=ax_prm.len;
+  fp->aymin=ay_prm.min;
+  fp->aymax=ay_prm.max;
+  fp->aymin2=ay_prm.min2;
+  fp->aymax2=ay_prm.max2;
+  fp->ayvx=ay_prm.vx;
+  fp->ayvy=ay_prm.vy;
+  fp->aytype=ay_prm.type;
+  fp->ayposx=ay_prm.posx;
+  fp->ayposy=ay_prm.posy;
+  fp->aylen=ay_prm.len;
+  fp->ratex=ax_prm.rate;
+  fp->ratey=ay_prm.rate;
   fp->interrupt = FALSE;
 
   for (i = 0; i < (int) (sizeof(fp->codex) / sizeof(*fp->codex)); i++) {
@@ -1509,8 +1504,11 @@ ofile_create_math_equation(int *id, int use_prm, int use_fprm, int use_const, in
     "FIRST",
     "COLX",
     "COLY",
+    "AXISX",
+    "AXISY",
     "HSKIP",
     "RSTEP",
+    "FLINE",
     "%D",
     "%N",
   };
@@ -2118,6 +2116,7 @@ static int
 set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, int first)
 {
   MathValue val;
+  int i;
 
   if (eq == NULL || eq->exp == NULL)
     return 0;
@@ -2194,6 +2193,14 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_COLY], &val);
 
+  val.val = fp->axisx;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_AXISX], &val);
+
+  val.val = fp->axisy;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_AXISY], &val);
+
   val.val = fp->masknum;
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_MASK], &val);
@@ -2209,6 +2216,11 @@ set_const(MathEquation *eq, int *const_id, int need2pass, struct f2ddata *fp, in
   val.val = fp->rstep;
   val.type = MATH_VALUE_NORMAL;
   math_equation_set_const(eq, const_id[MATH_CONST_RSTEP], &val);
+
+  getobj(fp->obj, "final_line", fp->id, 0, NULL, &i);
+  val.val = i;
+  val.type = MATH_VALUE_NORMAL;
+  math_equation_set_const(eq, const_id[MATH_CONST_FLINE], &val);
 
   return math_equation_optimize(eq);
 }
@@ -5029,174 +5041,60 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 {
   double x,y;
   int gx,gy;
-  char *axisx,*axisy,*raxis;
-  struct narray iarray;
-  struct objlist *aobj;
-  int anum,id;
-  N_VALUE *inst1;
-  int axtype,aytype,axposx,axposy,ayposx,ayposy,axlen,aylen,dirx,diry;
-  double axmin,axmax,aymin,aymax,ratex,ratey;
-  double axdir,aydir;
-  double axvx,axvy,ayvx,ayvy;
+  int id;
   double ip1,ip2;
   int dataclip;
   double minx,maxx,miny,maxy;
   double v1x,v1y,v2x,v2y,vx,vy;
   double a,b,c,d;
   struct narray *array;
+  struct axis_prm ax_prm, ay_prm;
 
   x=*(double *)argv[2];
   y=*(double *)argv[3];
   _getobj(obj,"data_clip",inst,&dataclip);
-  _getobj(obj,"axis_x",inst,&axisx);
-  _getobj(obj,"axis_y",inst,&axisy);
-  if (axisx==NULL) return 1;
-  else {
-    arrayinit(&iarray,sizeof(int));
-    if (getobjilist(axisx,&aobj,&iarray,FALSE,NULL)) return 1;
-    anum=arraynum(&iarray);
-    if (anum<1) {
-      arraydel(&iarray);
-      return 1;
-    }
-    id=arraylast_int(&iarray);
-    arraydel(&iarray);
-    if ((inst1=getobjinst(aobj,id))==NULL) return 1;
-    if (_getobj(aobj,"x",inst1,&axposx)) return 1;
-    if (_getobj(aobj,"y",inst1,&axposy)) return 1;
-    if (_getobj(aobj,"length",inst1,&axlen)) return 1;
-    if (_getobj(aobj,"direction",inst1,&dirx)) return 1;
-    if (_getobj(aobj,"min",inst1,&axmin)) return 1;
-    if (_getobj(aobj,"max",inst1,&axmax)) return 1;
-    if (_getobj(aobj,"type",inst1,&axtype)) return 1;
-    if ((axmin==0) && (axmax==0)) {
-      if (_getobj(aobj,"reference",inst1,&raxis)) return 1;
-      if (raxis!=NULL) {
-        arrayinit(&iarray,sizeof(int));
-        if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
-          anum=arraynum(&iarray);
-          if (anum>0) {
-            id=arraylast_int(&iarray);
-            arraydel(&iarray);
-            if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-              _getobj(aobj,"min",inst1,&axmin);
-              _getobj(aobj,"max",inst1,&axmax);
-              _getobj(aobj,"type",inst1,&axtype);
-            }
-          }
-        }
-      }
-    }
-    axdir=dirx/18000.0*MPI;
-    axvx=cos(axdir);
-    axvy=-sin(axdir);
-    if (axmin==axmax) {
-      return 1;
-    } else if (axtype == AXIS_TYPE_LOG) {
-      if ((axmin<=0) || (axmax<=0)) {
-	return 1;
-      } else {
-	axmin=log10(axmin);
-	axmax=log10(axmax);
-      }
-    } else if (axtype == AXIS_TYPE_INVERSE) {
-      if (axmin * axmax <= 0) {
-	return 1;
-      } else {
-        axmin=1/axmin;
-        axmax=1/axmax;
-      }
-    }
-    ratex=axlen/(axmax-axmin);
-  }
-  if (axisy == NULL) {
+
+  id = get_axis_prm(obj, inst, AXIS_X, &ax_prm);
+  if (id < 0) {
     return 1;
-  } else {
-    arrayinit(&iarray,sizeof(int));
-    if (getobjilist(axisy,&aobj,&iarray,FALSE,NULL)) return 1;
-    anum=arraynum(&iarray);
-    if (anum<1) {
-      arraydel(&iarray);
-      return 1;
-    }
-    id=arraylast_int(&iarray);
-    arraydel(&iarray);
-    if ((inst1=getobjinst(aobj,id))==NULL) return 1;
-    if (_getobj(aobj,"x",inst1,&ayposx)) return 1;
-    if (_getobj(aobj,"y",inst1,&ayposy)) return 1;
-    if (_getobj(aobj,"length",inst1,&aylen)) return 1;
-    if (_getobj(aobj,"direction",inst1,&diry)) return 1;
-    if (_getobj(aobj,"min",inst1,&aymin)) return 1;
-    if (_getobj(aobj,"max",inst1,&aymax)) return 1;
-    if (_getobj(aobj,"type",inst1,&aytype)) return 1;
-    if ((aymin==0) && (aymax==0)) {
-      if (_getobj(aobj,"reference",inst1,&raxis)) return 1;
-      if (raxis!=NULL) {
-        arrayinit(&iarray,sizeof(int));
-        if (!getobjilist(raxis,&aobj,&iarray,FALSE,NULL)) {
-          anum=arraynum(&iarray);
-          if (anum>0) {
-            id=arraylast_int(&iarray);
-            arraydel(&iarray);
-            if ((anum>0) && ((inst1=getobjinst(aobj,id))!=NULL)) {
-              _getobj(aobj,"min",inst1,&aymin);
-              _getobj(aobj,"max",inst1,&aymax);
-              _getobj(aobj,"type",inst1,&aytype);
-            }
-          }
-        }
-      }
-    }
-    aydir=diry/18000.0*MPI;
-    ayvx=cos(aydir);
-    ayvy=-sin(aydir);
-    if (aymin==aymax) return 1;
-    else if (aytype==1) {
-      if ((aymin<=0) || (aymax<=0)) return 1;
-      else {
-        aymin=log10(aymin);
-        aymax=log10(aymax);
-      }
-    } else if (aytype==2) {
-      if (aymin*aymax<=0) return 1;
-      else {
-        aymin=1/aymin;
-        aymax=1/aymax;
-      }
-    }
-    ratey=aylen/(aymax-aymin);
   }
-  ip1=-axvy*ayvx+axvx*ayvy;
-  ip2=-ayvy*axvx+ayvx*axvy;
+
+  id = get_axis_prm(obj, inst, AXIS_Y, &ay_prm);
+  if (id < 0) {
+    return 1;
+  }
+
+  ip1=-ax_prm.vy*ay_prm.vx+ax_prm.vx*ay_prm.vy;
+  ip2=-ay_prm.vy*ax_prm.vx+ay_prm.vx*ax_prm.vy;
   if ((fabs(ip1)<=1e-15) || (fabs(ip2)<=1e-15)) return 1;
 
   gx=gy=0;
-  minx=axmin;
-  maxx=axmax;
-  miny=aymin;
-  maxy=aymax;
+  minx=ax_prm.min;
+  maxx=ax_prm.max;
+  miny=ay_prm.min;
+  maxy=ay_prm.max;
 
-  if (axtype == AXIS_TYPE_LOG) {
+  if (ax_prm.type == AXIS_TYPE_LOG) {
     if (x == 0) {
       return -1;
     } else if (x < 0) {
       x = fabs(x);
     }
     x = log10(x);
-  } else if (axtype == AXIS_TYPE_INVERSE) {
+  } else if (ax_prm.type == AXIS_TYPE_INVERSE) {
     if (x == 0) {
       return -1;
     }
     x = 1 / x;
   }
-  if (aytype == AXIS_TYPE_LOG) {
+  if (ay_prm.type == AXIS_TYPE_LOG) {
     if (y == 0) {
       return -1;
     } else if (y < 0) {
       y = fabs(y);
     }
     y = log10(y);
-  } else if (aytype == AXIS_TYPE_INVERSE) {
+  } else if (ay_prm.type == AXIS_TYPE_INVERSE) {
     if (y == 0) {
       return -1;
     }
@@ -5206,26 +5104,26 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   if (dataclip &&
   ((((minx>x) || (x>maxx)) && ((maxx>x) || (x>minx)))
    || (((miny>y) || (y>maxy)) && ((maxy>y) || (y>miny))))) return 1;
-  v1x=ratex*(x-minx)*axvx;
-  v1y=ratex*(x-minx)*axvy;
-  v2x=ratey*(y-miny)*ayvx;
-  v2y=ratey*(y-miny)*ayvy;
-  vx=ayposx-axposx+v2x-v1x;
-  vy=ayposy-axposy+v2y-v1y;
-  a=ayvy*axvx-ayvx*axvy;
-  c=-ayvy*vx+ayvx*vy;
-  b=axvy*ayvx-axvx*ayvy;
-  d=axvy*vx-axvx*vy;
+  v1x=ax_prm.rate*(x-minx)*ax_prm.vx;
+  v1y=ax_prm.rate*(x-minx)*ax_prm.vy;
+  v2x=ay_prm.rate*(y-miny)*ay_prm.vx;
+  v2y=ay_prm.rate*(y-miny)*ay_prm.vy;
+  vx=ay_prm.posx-ax_prm.posx+v2x-v1x;
+  vy=ay_prm.posy-ax_prm.posy+v2y-v1y;
+  a=ay_prm.vy*ax_prm.vx-ay_prm.vx*ax_prm.vy;
+  c=-ay_prm.vy*vx+ay_prm.vx*vy;
+  b=ax_prm.vy*ay_prm.vx-ax_prm.vx*ay_prm.vy;
+  d=ax_prm.vy*vx-ax_prm.vx*vy;
   if ((fabs(a)<=1e-16) && (fabs(b)<=1e-16)) {
     return -1;
   } else if (fabs(b)<=1e-16) {
     a=c/a;
-    gx=ayposx+nround(v2x+a*axvx);
-    gy=ayposy+nround(v2y+a*axvy);
+    gx=ay_prm.posx+nround(v2x+a*ax_prm.vx);
+    gy=ay_prm.posy+nround(v2y+a*ax_prm.vy);
   } else {
     b=d/b;
-    gx=axposx+nround(v1x+b*ayvx);
-    gy=axposy+nround(v1y+b*ayvy);
+    gx=ax_prm.posx+nround(v1x+b*ay_prm.vx);
+    gy=ax_prm.posy+nround(v1y+b*ay_prm.vy);
   }
 
   array=rval->array;
@@ -5565,7 +5463,7 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   double f1,f2,f3;
   int i,j,id;
   char *s;
-  struct narray *iarray,iarray2;
+  struct narray *iarray;
   struct objlist *aobj;
   int aid,x;
 
@@ -5781,19 +5679,11 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 	    }
           }
           if (!err) {
-            if (x) _getobj(obj,"axis_x",inst,&s);
-            else _getobj(obj,"axis_y",inst,&s);
-            if (s!=NULL) {
-              arrayinit(&iarray2,sizeof(int));
-              if (!getobjilist(s,&aobj,&iarray2,FALSE,NULL)) {
-                if (arraynum(&iarray2)>=1) {
-                  aid=arraylast_int(&iarray2);
-                  putobj(aobj,"min",aid,&f1);
-                  putobj(aobj,"max",aid,&f2);
-                  putobj(aobj,"inc",aid,&f3);
-                }
-              }
-              arraydel(&iarray2);
+	    aid = get_axis_id(obj, inst, &aobj, (x) ? AXIS_X : AXIS_Y);
+	    if (aid >= 0) {
+	      putobj(aobj,"min",aid,&f1);
+	      putobj(aobj,"max",aid,&f2);
+	      putobj(aobj,"inc",aid,&f3);
             }
           }
         } else err=TRUE;
@@ -5803,17 +5693,9 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
           for (i=0;i<3;i++)
             if (strncmp(axistypechar[i],po+3,strlen(axistypechar[i]))==0) break;
           if (i!=3) {
-            if (po[2]=='x') _getobj(obj,"axis_x",inst,&s);
-            else _getobj(obj,"axis_y",inst,&s);
-            if (s!=NULL) {
-              arrayinit(&iarray2,sizeof(int));
-              if (!getobjilist(s,&aobj,&iarray2,FALSE,NULL)) {
-                if (arraynum(&iarray2)>=1) {
-                  aid=arraylast_int(&iarray2);
-                  putobj(aobj,"type",aid,&i);
-                }
-              }
-              arraydel(&iarray2);
+	    aid = get_axis_id(obj, inst, &aobj, (po[2]=='x') ? AXIS_X : AXIS_Y);
+	    if (aid >= 0) {
+	      putobj(aobj,"type",aid,&i);
             }
             po=po+3+strlen(axistypechar[i]);
           } else err=TRUE;
@@ -6630,10 +6512,9 @@ f2dbounding(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 {
   struct narray *minmax;
   char *axiss;
-  char *axisx,*axisy;
-  struct narray iarray,iarray2;
+  struct narray iarray;
   struct objlist *aobj;
-  int i,anum,anum2,id,r = 1;
+  int i,anum,id,r = 1;
   int *adata;
   double min,max;
   int minstat,maxstat;
@@ -6656,68 +6537,48 @@ f2dbounding(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     return 0;
   }
   adata=arraydata(&iarray);
-  _getobj(obj,"axis_x",inst,&axisx);
-  if (axisx!=NULL) {
-    arrayinit(&iarray2,sizeof(int));
 
-    if (getobjilist(axisx,&aobj,&iarray2,FALSE,NULL))
-      goto exit;
-
-    anum2=arraynum(&iarray2);
-
-    if (anum2<1) {
-      arraydel(&iarray2);
-    } else {
-      id=arraylast_int(&iarray2);
-      arraydel(&iarray2);
-      for (i=0;i<anum;i++) if (adata[i]==id) break;
-      if (i!=anum) {
-        if (getobj(aobj,"type",id,0,NULL,&type)==-1) goto exit;
-        abs=(type==1) ? TRUE:FALSE;
-        argv2[0]=(char *)&abs;
-        argv2[1]=NULL;
-        if (_exeobj(obj,"boundings",inst,1,argv2)) goto exit;
-        _getobj(obj,"minx",inst,&min);
-        _getobj(obj,"maxx",inst,&max);
-        _getobj(obj,"stat_minx",inst,&minstat);
-        _getobj(obj,"stat_maxx",inst,&maxstat);
-        if ((minstat==MNOERR) && (maxstat==MNOERR)) {
-          minmax=arraynew(sizeof(double));
-          arrayadd(minmax,&min);
-          arrayadd(minmax,&max);
-          rval->array=minmax;
-        }
-	r = 0;
-        goto exit;
+  id = get_axis_id(obj, inst, &aobj, AXIS_X);
+  if (id >= 0) {
+    for (i=0;i<anum;i++) if (adata[i]==id) break;
+    if (i!=anum) {
+      if (getobj(aobj,"type",id,0,NULL,&type)==-1) goto exit;
+      abs=(type==1) ? TRUE:FALSE;
+      argv2[0]=(char *)&abs;
+      argv2[1]=NULL;
+      if (_exeobj(obj,"boundings",inst,1,argv2)) goto exit;
+      _getobj(obj,"minx",inst,&min);
+      _getobj(obj,"maxx",inst,&max);
+      _getobj(obj,"stat_minx",inst,&minstat);
+      _getobj(obj,"stat_maxx",inst,&maxstat);
+      if ((minstat==MNOERR) && (maxstat==MNOERR)) {
+	minmax=arraynew(sizeof(double));
+	arrayadd(minmax,&min);
+	arrayadd(minmax,&max);
+	rval->array=minmax;
       }
+      r = 0;
+      goto exit;
     }
   }
-  _getobj(obj,"axis_y",inst,&axisy);
-  if (axisy!=NULL) {
-    arrayinit(&iarray2,sizeof(int));
-    if (getobjilist(axisy,&aobj,&iarray2,FALSE,NULL)) goto exit;
-    anum2=arraynum(&iarray2);
-    if (anum2<1) arraydel(&iarray2);
-    else {
-      id=arraylast_int(&iarray2);
-      arraydel(&iarray2);
-      for (i=0;i<anum;i++) if (adata[i]==id) break;
-      if (i!=anum) {
-        if (getobj(aobj,"type",id,0,NULL,&type)==-1) goto exit;
-        abs=(type==1) ? TRUE:FALSE;
-        argv2[0]=(char *)&abs;
-        argv2[1]=NULL;
-        if (_exeobj(obj,"boundings",inst,1,argv2)) goto exit;
-        _getobj(obj,"miny",inst,&min);
-        _getobj(obj,"maxy",inst,&max);
-        _getobj(obj,"stat_miny",inst,&minstat);
-        _getobj(obj,"stat_maxy",inst,&maxstat);
-        if ((minstat==MNOERR) && (maxstat==MNOERR)) {
-          minmax=arraynew(sizeof(double));
-          arrayadd(minmax,&min);
-          arrayadd(minmax,&max);
-          rval->array=minmax;
-        }
+  id = get_axis_id(obj, inst, &aobj, AXIS_Y);
+  if (id >= 0) {
+    for (i=0;i<anum;i++) if (adata[i]==id) break;
+    if (i!=anum) {
+      if (getobj(aobj,"type",id,0,NULL,&type)==-1) goto exit;
+      abs=(type==1) ? TRUE:FALSE;
+      argv2[0]=(char *)&abs;
+      argv2[1]=NULL;
+      if (_exeobj(obj,"boundings",inst,1,argv2)) goto exit;
+      _getobj(obj,"miny",inst,&min);
+      _getobj(obj,"maxy",inst,&max);
+      _getobj(obj,"stat_miny",inst,&minstat);
+      _getobj(obj,"stat_maxy",inst,&maxstat);
+      if ((minstat==MNOERR) && (maxstat==MNOERR)) {
+	minmax=arraynew(sizeof(double));
+	arrayadd(minmax,&min);
+	arrayadd(minmax,&max);
+	rval->array=minmax;
       }
     }
   }

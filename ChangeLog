@@ -1,3 +1,34 @@
+2011-03-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (get_axis_prm): added.
+	(opendata, f2dgetcoord): use "get_axis_prm()".
+	(ofile_create_math_equation, set_const): add constants "AXISX",
+	"AXISY" and "FLINE".
+
+	* src/gtk/x11commn.c (AxisDel2): use "g_strdup_printf()" instead
+	of "snprintf()".
+
+2011-03-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (search_axis_group): added.
+	(ViewUpdate, ViewCopyAxis): use "search_axis_group()".
+
+	* src/gtk/x11commn.c (get_new_axis_id): added.
+	(AxisDel2): use "get_new_axis_id()".
+
+2011-03-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (AxisDel2): use "get_axis_id()".
+
+	* src/gtk/x11view.c (ViewUpdate, ViewCopyAxis): use
+	"get_axis_id()".
+	(ViewUpdate): bug fix: id of the axis object to delete is not
+	"aid" but "id" when "type == 'c'".
+
+	* src/ofile.c (get_axis_id): added.
+	(opendata, f2dgetcoord, f2dsettings, f2dbounding): use
+	"get_axis_id()".
+
 2011-03-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_up_drag): invert logic and fix indent.

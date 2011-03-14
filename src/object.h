@@ -31,6 +31,14 @@
 struct objlist;
 struct objtable;
 
+enum OBJ_LIST_SPECIFIED_TYPE {
+  OBJ_LIST_SPECIFIED_NOT_FOUND,
+  OBJ_LIST_SPECIFIED_BY_ID,
+  OBJ_LIST_SPECIFIED_BY_OID,
+  OBJ_LIST_SPECIFIED_BY_NAME,
+  OBJ_LIST_SPECIFIED_BY_OTHER,
+};
+
 union n_value {
   int i;
   double d;

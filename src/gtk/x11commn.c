@@ -39,6 +39,7 @@
 #include "ioutil.h"
 #include "shell.h"
 #include "nstring.h"
+#include "ofile.h"
 #include "odraw.h"
 #include "nconfig.h"
 
@@ -280,98 +281,90 @@ GetPageSettingsFromGRA(void)
   ChangeGRA();
 }
 
+static int
+get_new_axis_id(struct objlist *obj, int fid, int id, int a)
+{
+  struct objlist *aobj;
+  int spc, aid = 0;
+  char *axis;
+  struct narray iarray;
+  int anum;
+
+  if (getobj(obj, (a == AXIS_X) ? "axis_x" : "axis_y", fid, 0, NULL, &axis) < 0) {
+    return -1;
+  }
+
+  if (axis == NULL) {
+    return -1;
+  }
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
+    return -1;
+  }
+
+  anum = arraynum(&iarray);
+  if (anum > 0 && spc == OBJ_LIST_SPECIFIED_BY_ID) {
+    aid = arraylast_int(&iarray);
+    if (aid > id) {
+      aid--;
+    }
+  } else {
+    aid = -1;
+  }
+  arraydel(&iarray);
+
+  return aid;
+}
+
 static void
 AxisDel2(int id)
 {
   struct objlist *obj, *aobj;
-  int i, spc, aid1 = 0, aid2 = 0;
-  char *axis, *axis2;
-  struct narray iarray;
-  int anum;
+  int i, aid1, aid2;
+  char *axis2;
   N_VALUE *inst;
-  char *axisx, *axisy;
-  int findx, findy;
 
-  if ((obj = getobject("axisgrid")) != NULL) {
+  obj = getobject("axisgrid");
+  if (obj) {
     for (i = chkobjlastinst(obj); i >= 0; i--) {
-      if ((inst = chkobjinst(obj, i)) != NULL) {
-	_getobj(obj, "axis_x", inst, &axisx);
-	_getobj(obj, "axis_y", inst, &axisy);
-	findx = findy = FALSE;
-	if (axisx != NULL) {
-	  arrayinit(&iarray, sizeof(int));
-	  if (!getobjilist(axisx, &aobj, &iarray, FALSE, NULL)) {
-	    anum = arraynum(&iarray);
-	    if (anum > 0) {
-	      aid1 = arraylast_int(&iarray);
-	      if (aid1 == id)
-		findx = TRUE;
-	    }
-	  }
-	  arraydel(&iarray);
-	}
-	if (axisy != NULL) {
-	  arrayinit(&iarray, sizeof(int));
-	  if (!getobjilist(axisy, &aobj, &iarray, FALSE, NULL)) {
-	    anum = arraynum(&iarray);
-	    if (anum > 0) {
-	      aid1 = arraylast_int(&iarray);
-	      if (aid1 == id)
-		findy = TRUE;
-	    }
-	  }
-	  arraydel(&iarray);
-	}
-	if (findx || findy)
-	  delobj(obj, i);
+      inst = chkobjinst(obj, i);
+      if (inst == NULL) {
+	continue;
+      }
+
+      aid1 = get_axis_id(obj, inst, &aobj, AXIS_X);
+      if (aid1 == id) {
+	delobj(obj, i);
+	continue;
+      }
+
+      aid1 = get_axis_id(obj, inst, &aobj, AXIS_Y);
+      if (aid1 == id) {
+	delobj(obj, i);
       }
     }
   }
-  if ((obj = getobject("file")) == NULL)
-    return;
-  for (i = 0; i <= chkobjlastinst(obj); i++) {
-    if ((getobj(obj, "axis_x", i, 0, NULL, &axis) >= 0) && (axis != NULL)) {
-      arrayinit(&iarray, sizeof(int));
-      if (!getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
-	anum = arraynum(&iarray);
-	if ((anum > 0) && (spc == 1)) {
-	  aid1 = arraylast_int(&iarray);
-	  if (aid1 > id)
-	    aid1--;
-	} else
-	  aid1 = -1;
-	arraydel(&iarray);
-      }
-    }
-    if ((getobj(obj, "axis_y", i, 0, NULL, &axis) >= 0) && (axis != NULL)) {
-      arrayinit(&iarray, sizeof(int));
-      if (!getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
-	anum = arraynum(&iarray);
-	if ((anum > 0) && (spc == 1)) {
-	  aid2 = arraylast_int(&iarray);
-	  if (aid2 > id)
-	    aid2--;
-	} else
-	  aid2 = -1;
-	arraydel(&iarray);
-      }
-    }
-    if ((aid1 >= 0) && (aid2 >= 0)) {
-      if (aid1 == aid2)
-	aid2 = aid1 + 1;
-    }
-    if ((aid1 >= 0) && (aid2 >= 0)) {
-      int len;
 
-      len = strlen(chkobjectname(aobj)) + 10;
-      axis2 = g_malloc(len);
+  obj = getobject("file");
+  if (obj == NULL) {
+    return;
+  }
+  for (i = 0; i <= chkobjlastinst(obj); i++) {
+    aid1 = get_new_axis_id(obj, i, id, AXIS_X);
+    aid2 = get_new_axis_id(obj, i, id, AXIS_Y);
+    if ((aid1 >= 0) && (aid2 >= 0)) {
+      if (aid1 == aid2) {
+	aid2 = aid1 + 1;
+      }
+
+      axis2 = g_strdup_printf("%s:%d", chkobjectname(aobj), aid1);
       if (axis2) {
-	snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid1);
 	putobj(obj, "axis_x", i, axis2);
       }
-      axis2 = g_malloc(len);
+
+      axis2 = g_strdup_printf("%s:%d", chkobjectname(aobj), aid2);
       if (axis2) {
-	snprintf(axis2, len, "%s:%d", chkobjectname(aobj), aid2);
 	putobj(obj, "axis_y", i, axis2);
       }
     }
@@ -448,7 +441,7 @@ axis_move_each_obj(char *axis_str, int i, struct objlist *obj, int id1, int id2)
     return;
 
   anum = arraynum(&iarray);
-  if (anum > 0 && spc == 1) {
+  if (anum > 0 && spc == OBJ_LIST_SPECIFIED_BY_ID) {
     aid = arraylast_int(&iarray);
     if (aid == id1) {
       aid = id2;

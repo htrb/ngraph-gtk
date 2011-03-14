@@ -2747,11 +2747,11 @@ char *restoreobj(struct objlist *obj,int id,char *image)
 
 static int 
 chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
-/* spc  0: not found
-        1: specified by id
-        2: specified by oid
-        3: specified by name
-        4: specified by other
+/* spc  OBJ_LIST_SPECIFIED_NOT_FOUND: not found
+        OBJ_LIST_SPECIFIED_BY_ID:     specified by id
+        OBJ_LIST_SPECIFIED_BY_OID:    specified by oid
+        OBJ_LIST_SPECIFIED_BY_NAME:   specified by name
+        OBJ_LIST_SPECIFIED_BY_OTHER:  specified by other
 */
 
 {
@@ -2759,7 +2759,7 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
   int oid;
   char *tok,*s,*iname,*endptr;
 
-  *spc=0;
+  *spc=OBJ_LIST_SPECIFIED_NOT_FOUND;
   num=0;
   tok=NULL;
   if ((ilist==NULL) || (ilist[0]=='\0')) {
@@ -2767,7 +2767,7 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
       if ((snum=chkobjcurinst(obj))==-1) return -1;
       if (arrayadd(iarray,&snum)==NULL) goto errexit;
       num++;
-      *spc=4;
+      *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
     }
   } else {
     while ((s=getitok2(&ilist,&len," \t,"))!=NULL) {
@@ -2777,11 +2777,11 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
       if (s[0]=='@') {
         if ((snum=chkobjcurinst(obj))==-1) goto errexit;
         s++;
-        *spc=4;
+        *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
       } else if (s[0]=='!') {
         if ((snum=chkobjlastinst(obj))==-1) goto errexit;
         s++;
-        *spc=4;
+        *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
       } else {
         if (s[0]=='^') {
           oid=TRUE;
@@ -2791,10 +2791,10 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
         if (s!=endptr) {
           if (oid) {
             snum=chkobjoid(obj,l);
-            *spc=2;
+            *spc=OBJ_LIST_SPECIFIED_BY_OID;
           } else {
             snum=chkobjid(obj,l);
-            *spc=1;
+            *spc=OBJ_LIST_SPECIFIED_BY_ID;
           }
           if (snum==-1) goto errexit;
         }
@@ -2808,10 +2808,10 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
         s++;
         if (s[0]=='@') {
           if ((dnum=chkobjcurinst(obj))==-1) goto errexit;
-          *spc=4;
+          *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
         } else if (s[0]=='!') {
           if ((dnum=chkobjlastinst(obj))==-1) goto errexit;
-          *spc=4;
+          *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
         } else {
           l=strtol(s,&endptr,10);
           if (endptr[0]!='\0') {
@@ -2819,11 +2819,11 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
           } else {
             dnum=getobjid(obj,l);
             if (dnum==-1) goto errexit;
-            *spc=1;
+            *spc=OBJ_LIST_SPECIFIED_BY_ID;
           }
         }
       } else if (s[0]=='+') {
-        *spc=4;
+        *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
         s++;
         if (s[0]=='@') {
           if ((dnum=chkobjcurinst(obj))==-1) goto errexit;
@@ -2851,7 +2851,7 @@ chkilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
           num++;
         }
       } else {
-        *spc=3;
+        *spc=OBJ_LIST_SPECIFIED_BY_NAME;
         sid=0;
         if (chkobjname(obj,&sid,iname)==-1) goto errexit;
         sid=0;
@@ -2873,19 +2873,18 @@ errexit:
 
 static int 
 getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
-/* spc  0: not found
-        1: specified by id
-        2: specified by oid
-        3: specified by name
-        4: specified by other
+/* spc  OBJ_LIST_SPECIFIED_NOT_FOUND: not found
+        OBJ_LIST_SPECIFIED_BY_ID:     specified by id
+        OBJ_LIST_SPECIFIED_BY_OID:    specified by oid
+        OBJ_LIST_SPECIFIED_BY_NAME:   specified by name
+        OBJ_LIST_SPECIFIED_BY_OTHER:  specified by other
 */
-
 {
   int i,len,snum,dnum,num,sid,l;
   int oid;
   char *tok,*s,*iname,*endptr;
 
-  *spc=0;
+  *spc=OBJ_LIST_SPECIFIED_NOT_FOUND;
   num=0;
   tok=NULL;
   if ((ilist==NULL) || (ilist[0]=='\0')) {
@@ -2893,7 +2892,7 @@ getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
       if ((snum=getobjcurinst(obj))==-1) return -1;
       if (arrayadd(iarray,&snum)==NULL) goto errexit;
       num++;
-      *spc=4;
+      *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
     }
   } else {
     while ((s=getitok2(&ilist,&len," \t,"))!=NULL) {
@@ -2903,11 +2902,11 @@ getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
       if (s[0]=='@') {
         if ((snum=getobjcurinst(obj))==-1) goto errexit;
         s++;
-        *spc=4;
+        *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
       } else if (s[0]=='!') {
         if ((snum=getobjlastinst(obj))==-1) goto errexit;
         s++;
-        *spc=4;
+        *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
       } else {
         if (s[0]=='^') {
           oid=TRUE;
@@ -2917,10 +2916,10 @@ getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
         if (s!=endptr) {
           if (oid) {
             snum=getobjoid(obj,l);
-            *spc=2;
+            *spc=OBJ_LIST_SPECIFIED_BY_OID;
           } else {
             snum=getobjid(obj,l);
-            *spc=1;
+            *spc=OBJ_LIST_SPECIFIED_BY_ID;
           }
           if (snum==-1) goto errexit;
         }
@@ -2934,10 +2933,10 @@ getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
         s++;
         if (s[0]=='@') {
           if ((dnum=getobjcurinst(obj))==-1) goto errexit;
-          *spc=4;
+          *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
         } else if (s[0]=='!') {
           if ((dnum=getobjlastinst(obj))==-1) goto errexit;
-          *spc=4;
+          *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
         } else {
           l=strtol(s,&endptr,10);
           if (endptr[0]!='\0') {
@@ -2946,11 +2945,11 @@ getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
           } else {
             dnum=getobjid(obj,l);
             if (dnum==-1) goto errexit;
-            *spc=1;
+            *spc=OBJ_LIST_SPECIFIED_BY_ID;
           }
         }
       } else if (s[0]=='+') {
-        *spc=4;
+        *spc=OBJ_LIST_SPECIFIED_BY_OTHER;
         s++;
         if (s[0]=='@') {
           if ((dnum=getobjcurinst(obj))==-1) goto errexit;
@@ -2980,7 +2979,7 @@ getilist(struct objlist *obj,char *ilist,struct narray *iarray,int def,int *spc)
           num++;
         }
       } else {
-        *spc=3;
+        *spc=OBJ_LIST_SPECIFIED_BY_NAME;
         sid=0;
         if (getobjname(obj,&sid,iname)==-1) goto errexit;
         sid=0;

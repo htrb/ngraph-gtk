@@ -2256,6 +2256,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
               font2=tok;
               break;
             case 'J':
+              g_free(tok);
               break;
             case 'S':
               val=strtol(tok, &endptr, 10);
