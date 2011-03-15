@@ -1,3 +1,7 @@
+2011-03-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (fitpoly, fituser): use enumerate for return code.
+
 2011-03-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (get_axis_prm): added.

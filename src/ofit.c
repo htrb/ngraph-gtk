@@ -275,7 +275,7 @@ fit_put_weight_func(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 }
 
 enum FitError {
-  /* FitError_Interrupt = -7, */
+  FitError_Interrupt = -7,
   /* FitError_Convergence = -6, */
   FitError_Range    = -5,	/* range check */
   FitError_Syntax   = -4,	/* syntax error */
@@ -319,8 +319,8 @@ fitpoly(struct fitlocal *fitlocal,
 
   if (type == FIT_TYPE_POLY) dim=dimension+1;
   else dim=2;
-  if (!through && (num<dim)) return -1;
-  if (through && (num<dim+1)) return -1;
+  if (!through && (num<dim)) return FitError_Small;
+  if (through && (num<dim+1)) return FitError_Small;
   yy=0;
   for (i=0;i<dim+1;i++) {
     b[i]=0;
@@ -362,7 +362,7 @@ fitpoly(struct fitlocal *fitlocal,
     b[dim]=y2;
     dim++;
   }
-  if (matsolv(dim,m,b,coe)) return -2;
+  if (matsolv(dim,m,b,coe)) return FitError_Matrix;
   derror=yy;
   for (i=0;i<dim;i++) derror-=coe[i]*b[i];
   derror=fabs(derror)/sum;
@@ -379,7 +379,7 @@ fitpoly(struct fitlocal *fitlocal,
   fitlocal->num=num;
 
 #define EQUATION_BUF_SIZE 512
-  if ((equation=g_malloc(EQUATION_BUF_SIZE))==NULL) return 1;
+  if ((equation=g_malloc(EQUATION_BUF_SIZE))==NULL) return FitError_Fatal;
   equation[0]='\0';
   j=0;
 
@@ -441,7 +441,7 @@ fitpoly(struct fitlocal *fitlocal,
   }
 
 
-  return 0;
+  return FitError_Success;
 }
 
 enum FitError 
@@ -495,7 +495,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
     par[i].type = MNOERR;
     par[i].val = fitlocal->coe[i];
   }
-  ecode=0;
+  ecode=FitError_Success;
 /*
   err2=FALSE;
   n=0;
@@ -527,7 +527,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   }
   if (err2) error(obj,ERRMATH);
   if (n<1) {
-    ecode=-1;
+    ecode=FitError_Small;
     goto errexit;
   }
   s0=yy/sum;
@@ -609,7 +609,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
       err3=TRUE;
     }
     if (n<1) {
-      ecode=-1;
+      ecode=FitError_Small;
       goto errexit;
     }
 
@@ -646,7 +646,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
       set_progress(0, buf, -1);
     }
     if (ninterrupt()) {
-      ecode=-7;
+      ecode=FitError_Interrupt;
       goto errexit;
     }
 
@@ -736,7 +736,7 @@ repeat:
   }
 
 errexit:
-  if ((ecode==0) || (ecode==-5)) {
+  if ((ecode==FitError_Success) || (ecode==FitError_Range)) {
     for (i = 0; i < 10; i++) fitlocal->coe[i] = par[i].val;
     fitlocal->dim=dim;
     fitlocal->derror=derror;
@@ -752,7 +752,7 @@ errexit:
     equation_length = strlen(func) + 25 * pnum + 1;
     equation=g_malloc(equation_length);
     if (equation == NULL)
-      return 1;
+      return FitError_Fatal;
     j = 0;
     prev_char = '\0';
     for (i = 0; func[i] != '\0'; i++) {
