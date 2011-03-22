@@ -790,7 +790,7 @@ CmOutputViewer(int select_file)
     exeobj(menuobj, "print", 0, 2, argv);
   } else {
     struct objlist *graobj, *g2wobj;
-    int id, g2wid, g2woid;
+    int id, g2wid, g2woid, c;
     N_VALUE *g2winst;
     int delgra;
 
@@ -807,9 +807,12 @@ CmOutputViewer(int select_file)
     g2winst = chkobjinst(g2wobj, g2wid);
     _getobj(g2wobj, "oid", g2winst, &g2woid);
     putobj(g2wobj, "dpi", g2wid, &(Menulocal.exwindpi));
-    putobj(g2wobj, "BR", g2wid, &(Menulocal.bg_r));
-    putobj(g2wobj, "BG", g2wid, &(Menulocal.bg_g));
-    putobj(g2wobj, "BB", g2wid, &(Menulocal.bg_b));
+    c = Menulocal.bg_r * 255.0;
+    putobj(g2wobj, "BR", g2wid, &c);
+    c = Menulocal.bg_g * 255.0;
+    putobj(g2wobj, "BG", g2wid, &c);
+    c = Menulocal.bg_b * 255.0;
+    putobj(g2wobj, "BB", g2wid, &c);
     putobj(g2wobj, "use_opacity", g2wid, &Menulocal.use_opacity);
     id = newobj(graobj);
     init_graobj(graobj, id, "gra2gtk", g2woid);

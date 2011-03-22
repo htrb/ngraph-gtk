@@ -76,7 +76,7 @@ g2g_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
 GdkPixmap *
 gra2gdk_create_pixmap(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local *local,
-		      GdkDrawable *drawable, int w, int h, int r, int g, int b)
+		      GdkDrawable *drawable, int w, int h, double r, double g, double b)
 {
   cairo_t *cairo;
   GdkPixmap *pix;
@@ -94,7 +94,7 @@ gra2gdk_create_pixmap(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local
     return NULL;
   }
 
-  cairo_set_source_rgb(cairo, r / 255.0, g / 255.0, b / 255.0);
+  cairo_set_source_rgb(cairo, r, g, b);
   cairo_rectangle(cairo, 0, 0, w, h);
   cairo_fill(cairo);
 

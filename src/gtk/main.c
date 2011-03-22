@@ -657,7 +657,7 @@ load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
       } else if (strcmp(tok, "terminal") == 0) {
 	terminal = getitok2(&s2, &len, "");
       } else {
-	fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, SYSCONF);
+	fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, SYSCONF);
       }
       g_free(tok);
       g_free(str);

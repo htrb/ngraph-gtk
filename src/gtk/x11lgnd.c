@@ -992,10 +992,8 @@ static void
 draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 {
   int lw, len, x, w;
-  static GdkColor black, white;
-  GdkPoint points[3];
   static GdkPixmap *pixmap = NULL;
-  static GdkGC *gc;
+  static cairo_t *cr;
   GdkWindow *window;
 
   window = GTK_WIDGET_GET_WINDOW(win);
@@ -1005,42 +1003,27 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 
   if (pixmap == NULL) {
     pixmap = gdk_pixmap_new(window, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE, -1);
-
-    gc = gdk_gc_new(pixmap);
-
-    black.red = 0;
-    black.green = 0;
-    black.blue = 0;
-
-    white.red = 65535;
-    white.green = 65535;
-    white.blue = 65535;
+    cr = gdk_cairo_create(pixmap);
   }
 
-  gdk_gc_set_rgb_bg_color(gc, &white);
-  gdk_gc_set_rgb_fg_color(gc, &white);
-  gdk_draw_rectangle(pixmap, gc, TRUE, 0, 0, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
+  cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+  cairo_rectangle(cr, 0, 0, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
+  cairo_fill(cr);
 
-  gdk_gc_set_rgb_fg_color(gc, &black);
+  cairo_set_source_rgb(cr, 0, 0, 0);
 
   lw = ARROW_VIEW_SIZE / 20;
-
   len = d->wid * 0.5 / tan(d->ang * 0.5 * MPI / 180);
   x = nround(lw * (len / 10000.0));
-  gdk_draw_rectangle(pixmap, gc, TRUE,
-		     x,
-		     (ARROW_VIEW_SIZE - lw) / 2,
-		     ARROW_VIEW_SIZE - x, lw);
-
   w = nround(lw * (d->wid / 20000.0));
-  points[0].x = 0;
-  points[0].y = ARROW_VIEW_SIZE / 2;
-  points[1].x = x;
-  points[1].y = ARROW_VIEW_SIZE / 2 - w;
-  points[2].x = x;
-  points[2].y = ARROW_VIEW_SIZE / 2 + w;
 
-  gdk_draw_polygon(pixmap, gc, TRUE, points, sizeof(points) / sizeof(*points));
+  cairo_rectangle(cr,
+		  x, (ARROW_VIEW_SIZE - lw) / 2,
+		  ARROW_VIEW_SIZE - x, lw);
+  cairo_move_to(cr, 0, ARROW_VIEW_SIZE / 2);
+  cairo_line_to(cr, x, ARROW_VIEW_SIZE / 2 - w);
+  cairo_line_to(cr, x, ARROW_VIEW_SIZE / 2 + w);
+  cairo_fill(cr);
 
   d->arrow_pixmap = pixmap;
 }
@@ -1050,7 +1033,7 @@ LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
 {
   struct LegendDialog *d;
   GdkWindow *win;
-  GdkGC *gc;
+  cairo_t *cr;
 
   d = (struct LegendDialog *) client_data;
 
@@ -1067,9 +1050,11 @@ LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
     return;
   }
 
-  gc = gdk_gc_new(win);
-  gdk_draw_drawable(win, gc, d->arrow_pixmap, 0, 0, 0, 0, -1, -1);
-  g_object_unref(gc);
+  cr = gdk_cairo_create(win);
+  gdk_cairo_set_source_pixmap(cr, d->arrow_pixmap, 0, 0);
+  cairo_rectangle(cr, 0, 0, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
+  cairo_fill(cr);
+  cairo_destroy(cr);
 }
 
 static void

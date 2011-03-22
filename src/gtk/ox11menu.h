@@ -92,8 +92,7 @@ struct character_map_list {
 
 struct menulocal
 {
-  GdkDrawable *win, *pix;
-  GdkGC *gc;
+  GdkDrawable *pix;
   int scrollx, scrolly;
   int redrawf, redrawf_num;
   int windpi, data_head_lines;
@@ -102,7 +101,7 @@ struct menulocal
   GdkRegion *region;
   int lock;
   struct gra2cairo_local *local;
-  int antialias, do_not_use_arc_for_draft;
+  int antialias;
   char *editor, *browser, *help_browser;
   struct objlist *obj;
   N_VALUE *inst;
@@ -133,7 +132,8 @@ struct menulocal
   struct narray *datafilelist;
   int scriptconsole, addinconsole;
   int statusb, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
-  int hist_size, info_size, bg_r, bg_g, bg_b;
+  int hist_size, info_size;
+  double bg_r, bg_g, bg_b;
   int focus_frame_type, use_opacity;
 #ifdef WINDOWS
   int emf_dpi;

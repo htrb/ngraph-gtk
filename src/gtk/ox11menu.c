@@ -255,7 +255,6 @@ static struct menu_config MenuConfigViewer[] = {
   {"viewer_grid",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.grid},
   {"focus_frame_type",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.focus_frame_type},
   {"preserve_width",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.preserve_width},
-  {"do_not_use_arc_for_draft",		MENU_CONFIG_TYPE_BOOL,    NULL, &Menulocal.do_not_use_arc_for_draft},
   {"background_color",			MENU_CONFIG_TYPE_COLOR, menu_config_set_bgcolor, NULL},
   {NULL},
 };
@@ -375,7 +374,9 @@ add_color_to_array(struct menu_config *cfg, struct narray *conf)
   if (buf) {
     snprintf(buf, BUF_SIZE, "%s=%02x%02x%02x",
 	     cfg->name,
-	     Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+	     (int) (Menulocal.bg_r * 255),
+	     (int) (Menulocal.bg_g * 255),
+	     (int) (Menulocal.bg_b * 255));
     arrayadd(conf, &buf);
   }
 }
@@ -634,9 +635,9 @@ menu_config_set_bgcolor(char *s2, void *data)
   f1 = getitok2(&s2, &len, " \t,");
   val = strtol(f1, &endptr, 16);
   if (endptr[0] == '\0') {
-    Menulocal.bg_r = (val >> 16) & 0xffU;
-    Menulocal.bg_g = (val >> 8) & 0xffU;
-    Menulocal.bg_b = val & 0xffU;
+    Menulocal.bg_r = ((val >> 16) & 0xffU) / 255.0;
+    Menulocal.bg_g = ((val >> 8) & 0xffU) / 255.0;
+    Menulocal.bg_b = (val & 0xffU) / 255.0;
   }
   g_free(f1);
   return 0;
@@ -856,7 +857,7 @@ mgtkloadconfig(void)
 	break;
       }
     } else {
-      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, MGTKCONF);
+      fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, MGTKCONF);
     }
     g_free(tok);
     g_free(str);
@@ -970,7 +971,7 @@ exwinloadconfig(void)
 	Menulocal.exwin_use_external = val;
       g_free(f1);
     } else {
-      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, G2WINCONF);
+      fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, G2WINCONF);
     }
     g_free(tok);
     g_free(str);
@@ -1112,9 +1113,9 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;
   Menulocal.info_size = 1000;
-  Menulocal.bg_r = 0xffU;
-  Menulocal.bg_g = 0xffU;
-  Menulocal.bg_b = 0xffU;
+  Menulocal.bg_r = 1.0;
+  Menulocal.bg_g = 1.0;
+  Menulocal.bg_b = 1.0;
   Menulocal.focus_frame_type = GDK_LINE_ON_OFF_DASH;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
@@ -1188,8 +1189,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.obj = obj;
   Menulocal.inst = inst;
   Menulocal.pix = NULL;
-  Menulocal.win = NULL;
-  Menulocal.gc = NULL;
   Menulocal.lock = 0;
 
   if (!OpenApplication()) {
@@ -1406,12 +1405,12 @@ mx_redraw(struct objlist *obj, N_VALUE *inst)
     n = 0;
   }
 
-  GRAredraw(obj, inst, TRUE, n);
   draw_paper_frame();
+  GRAredraw(obj, inst, TRUE, n);
   mxflush(obj, inst, NULL, 0, NULL);
 
-  if (Menulocal.win) {
-    gdk_window_invalidate_rect(Menulocal.win, NULL, TRUE);
+  if (NgraphApp.Viewer.gdk_win) {
+    gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, TRUE);
   }
 }
 
@@ -1466,8 +1465,8 @@ mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
       Menulocal.local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
 
-  if (Menulocal.win) {
-    gdk_window_invalidate_rect(Menulocal.win, NULL, TRUE);
+  if (NgraphApp.Viewer.gdk_win) {
+    gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, TRUE);
   }
   return 0;
 }
@@ -1491,34 +1490,26 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 void
 mx_clear(GdkRegion *region)
 {
-  if (Menulocal.pix) {
-    gint w, h;
-    GdkColor color;
+  gint w, h;
+  cairo_t *cr;
 
-    if (Menulocal.pix == NULL || Menulocal.gc == NULL)
-      return;
-
-    gdk_drawable_get_size(Menulocal.pix, &w, &h);
-
-    if (region) {
-      gdk_gc_set_clip_region(Menulocal.gc, region);
-    } else {
-      GdkRectangle rect;
-
-      rect.x = 0;
-      rect.y = 0;
-      rect.width = w;
-      rect.height = h;
-      gdk_gc_set_clip_rectangle(Menulocal.gc, &rect);
-    }
-    color.red = Menulocal.bg_r * 0xffU;
-    color.green = Menulocal.bg_g * 0xffU;
-    color.blue = Menulocal.bg_b * 0xffU;
-    gdk_gc_set_rgb_fg_color(Menulocal.gc, &color);
-    gdk_draw_rectangle(Menulocal.pix, Menulocal.gc, TRUE, 0, 0, w, h);
-    draw_paper_frame();
-    gdk_gc_set_clip_region(Menulocal.gc, NULL);
+  if (Menulocal.pix == NULL) {
+    return;
   }
+
+  cr = gdk_cairo_create(Menulocal.pix);
+
+  if (region) {
+    gdk_cairo_region(cr, region);
+  } else {
+    gdk_drawable_get_size(Menulocal.pix, &w, &h);
+    cairo_rectangle(cr, 0, 0, w, h);
+  }
+
+  cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+  cairo_fill(cr);
+  draw_paper_frame();
+  cairo_destroy(cr);
 }
 
 static int
@@ -1534,8 +1525,8 @@ mxclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   mx_clear(NULL);
 
-  if (Menulocal.win) {
-    gdk_window_invalidate_rect(Menulocal.win, NULL, TRUE);
+  if (NgraphApp.Viewer.gdk_win) {
+    gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, TRUE);
   }
 
 return 0;

@@ -96,7 +96,7 @@
       <menu name="AxisAdd" action="AxisAddAction">
         <menuitem name="AxisAddFrame" action="AxisAddFrameAction"/>
         <menuitem name="AxisAddSection" action="AxisAddSectionAction"/>
-        <menuitem name="AxisAddClross" action="AxisAddClrossAction"/>
+        <menuitem name="AxisAddCross" action="AxisAddCrossAction"/>
         <menuitem name="AxisAddSingle" action="AxisAddSingleAction"/>
       </menu>
       <menuitem name="AxisProperty" action="AxisPropertyAction"/>

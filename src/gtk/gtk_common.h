@@ -5,6 +5,7 @@
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib.h>
+#include <cairo/cairo.h>
 
 #include "common.h"
 

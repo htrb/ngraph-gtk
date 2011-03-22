@@ -2199,7 +2199,7 @@ create_markpixmap(GtkWidget *win)
     if (window && found) {
       pix = gra2gdk_create_pixmap(obj, inst, local, window,
 				  MARK_PIX_SIZE, MARK_PIX_SIZE,
-				  255, 255, 255);
+				  1.0, 1.0, 1.0);
       if (pix) {
 	gra = _GRAopen("gra2gdk", "_output",
 		       robj, inst, output, -1, -1, -1, NULL, local);
@@ -3287,7 +3287,6 @@ application(char *file)
 
   gtk_widget_destroy(TopLevel);
   CurrentWindow = TopLevel = PToolbar = CToolbar = NULL;
-  Menulocal.win = NULL;
 
   free_markpixmap();
   free_cursor();
@@ -3423,14 +3422,12 @@ NGetCursor(void)
 void
 NSetCursor(unsigned int type)
 {
-  struct Viewer *d;
   GdkWindow *win;
 
   if (NgraphApp.cursor == NULL || CursorType == type)
     return;
 
-  d = &(NgraphApp.Viewer);
-  win = d->gdk_win;
+  win = NgraphApp.Viewer.gdk_win;
 
   CursorType = type;
 

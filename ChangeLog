@@ -1,3 +1,68 @@
+2011-03-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (CmOutputViewer): range of color is 0.0 to
+	1.0.
+
+	* src/gtk/ox11menu.h (menulocal): remove members "win", "gc" and
+	"do_not_use_arc_for_draft".
+	(menulocal): change type of members "bg_r", "bg_g" and "bg_b" from
+	int to double.
+
+	* src/gtk/x11lgnd.c (draw_arrow_pixmap, LegendArrowDialogPaint):
+	use cairo to draw graphics.
+
+	* src/gtk/ox11menu.c (MenuConfigViewer): remove setting
+	"do_not_use_arc_for_draft".
+	(add_color_to_array, menu_config_set_bgcolor): range of color is
+	0.0 to 1.0.
+	(mx_redraw): call "draw_paper_frame()" before call "GRAredraw()".
+	(mx_redraw, mxdpi, mxclear): use "NgraphApp.Viewer.gdk_win"
+	instead of "Menulocal.win".
+	(mx_clear): use cairo to draw graphics.
+
+	* src/gtk/x11view.c (GRAY, DOT_LENGTH, create_cairo)
+	(draw_cairo_arc): added.
+	(paste_cb, text_dropped, mouse_down_point, init_zoom)
+	(mouse_down_move, mouse_up_point, mouse_up_drag, mouse_up_zoom)
+	(mouse_up_change, mouse_up_lgend1, mouse_up_lgend2)
+	(update_frame_rect, mouse_move_drag, mouse_move_zoom)
+	(mouse_move_change, mouse_move_draw, ViewerEvMouseMove)
+	(ViewerEvKeyDown, ViewerEvKeyUp, UnFocus, Draw, ViewUpdate)
+	(ViewCopy, ViewCross): don't call "ShowFocusFrame()",
+	"ShowPoints()", "ShowFocusLine()", "ShowFrameRect()" or
+	"ShowCrossGauge()".
+	(ShowFocusFrame, show_focus_line_arc, draw_frame_rect)
+	(draw_focus_line, ShowFocusLine, ShowPoints, ShowFrameRect)
+	(ShowCrossGauge, ViewerEvPaint, create_pix, draw_paper_frame): use
+	cairo to draw graphics.
+	(ViewerEvPaint): always redraw pixmap.
+	(ViewerEvMouseMove): call "gtk_widget_queue_draw()" if necessary.
+	(show_focus_line_arc, draw_focus_line): call "cairo_close_path()"
+	if necessary.
+	(draw_focus_line): add parameter "close_path".
+	(ViewDelete): fix memory leak.
+
+	* src/gtk/gtk_common.h: include "cairo/cairo.h".
+
+	* src/gtk/x11opt.c (ViewerDialogSetupItem, ViewerDialogClose):
+	range of color is 0.0 to 1.0.
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogPaint): use cairo to draw
+	graphics.
+	(LegendGaussDialogPaint): change background color depend on the
+	setting.
+
+	* src/gtk/ogra2x11.c (gtklocal): change type of members "bg_r",
+	"bg_g" and "bg_b" from int to double.
+	(gtklocal): remove member "gc".
+	(gtkevpaint, gtkMakeRuler): use cairo.
+	(clear_pixmap): added.
+	(gtkclear, gtkchangedpi): use "clear_pixmap()".
+	(get_color): return 0.0 to 1.0 instead of 0 to 255.
+
+	* src/gtk/ogra2gdk.c (gra2gdk_create_pixmap): change type of
+	parameters "r", "g" and "b" from int to double.
+
 2011-03-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofit.c (fitpoly, fituser): use enumerate for return code.

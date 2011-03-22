@@ -115,11 +115,10 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   struct LegendGaussDialog *d;
   int i, j, k, pw, dw, minx, miny, maxx, maxy,
     amp, wd, GC, spnum, output, found;
-  double ppd, x, y = 0, tmp, spc2[6];
+  double ppd, x, y = 0, tmp, spc2[6], dashes[] = {4.0};
   GdkPixmap *pix;
   GdkWindow *win;
-  GdkColor black, white;
-  GdkGC *gc;
+  cairo_t *cr;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
   struct gra2cairo_local *local;
@@ -138,27 +137,15 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 
   pix = gra2gdk_create_pixmap(gobj, inst, local, win,
 			      VIEW_SIZE, VIEW_SIZE,
-			      255, 255, 255);
+			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
   if (pix == NULL) {
     return FALSE;
   }
 
-  gc = gdk_gc_new(win);
-
-  black.red = 0;
-  black.green = 0;
-  black.blue = 0;
-
-  white.red = 65535;
-  white.green = 65535;
-  white.blue = 65535;
+  cr = gdk_cairo_create(win);
 
   pw = VIEW_SIZE - 1;
-
-  if (d->Wdx < d->Wdy)
-    dw = d->Wdy;
-  else
-    dw = d->Wdx;
+  dw = (d->Wdx < d->Wdy) ? d->Wdy : d->Wdx;
 
 
   ppd = pw / ((double) dw);
@@ -166,15 +153,6 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   miny = VIEW_SIZE / 2 - d->Wdy * ppd / 2;
   maxx = VIEW_SIZE / 2 + d->Wdx * ppd / 2;
   maxy = VIEW_SIZE / 2 + d->Wdy * ppd / 2;
-
-  gdk_gc_set_rgb_fg_color(gc, &white);
-  gdk_draw_rectangle(pix, gc, TRUE, 0, 0, VIEW_SIZE, VIEW_SIZE);
-
-  gdk_gc_set_rgb_fg_color(gc, &black);
-
-  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_draw_rectangle(pix, gc, FALSE, minx, miny, maxx - minx, maxy - miny);
-  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
 
   switch (d->Dir) {
   case LEGEND_DIRECTION_TOP:
@@ -194,29 +172,26 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
     if (GC >= 0) {
       GRAview(GC, minx, miny, maxx, maxy, 1);
 
-      if (d->Div > DIV_MAX)
+      if (d->Div > DIV_MAX) {
 	d->Div = DIV_MAX;
+      }
 
       for (i = 0; i <= (d->Div); i++) {
 	x = wd / ((double) (d->Div)) * i;
 	if (d->Mode == 0) {
-	  tmp =
-	    (x - wd * 0.5 - wd * d->Position * 0.5) /
+	  tmp = (x - wd * 0.5 - wd * d->Position * 0.5) /
 	    (wd / (1 + 10 * d->Param) / 2);
 	  y = amp * exp(-tmp * tmp);
 	} else if (d->Mode == 1) {
-	  tmp =
-	    (x - wd * 0.5 - wd * d->Position * 0.5) /
+	  tmp = (x - wd * 0.5 - wd * d->Position * 0.5) /
 	    (wd / (1 + 10 * d->Param) / 2);
 	  y = amp / (tmp * tmp + 1);
 	} else if (d->Mode == 2) {
 	  if (d->Position >= 0) {
-	    tmp =
-	      (x - wd * 0.5 - wd * d->Position * 0.5) /
+	    tmp = (x - wd * 0.5 - wd * d->Position * 0.5) /
 	      (-wd * 0.5 - wd * d->Position * 0.5);
 	  } else {
-	    tmp =
-	      (x - wd * 0.5 - wd * d->Position * 0.5) /
+	    tmp = (x - wd * 0.5 - wd * d->Position * 0.5) /
 	      (wd * 0.5 - wd * d->Position * 0.5);
 	  }
 	  y = amp * tmp * tmp;
@@ -260,10 +235,12 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
       GRAcurvefirst(GC, 0, NULL, NULL, NULL,
 		    splinedif, splineint, NULL, spx[0], spy[0]);
       for (j = 0; j < spnum - 1; j++) {
-	for (k = 0; k < 6; k++)
+	for (k = 0; k < 6; k++) {
 	  spc2[k] = spc[k][j];
-	if (!GRAcurve(GC, spc2, spx[j], spy[j]))
+	}
+	if (! GRAcurve(GC, spc2, spx[j], spy[j])) {
 	  break;
+	}
       }
     }
     _GRAclose(GC);
@@ -272,10 +249,20 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
       local->linetonum = 0;
     }
   }
-  gdk_draw_drawable(win, gc, pix, 0, 0, 0, 0, VIEW_SIZE, VIEW_SIZE);
+
+  gdk_cairo_set_source_pixmap(cr, pix, 0, 0);
+  cairo_rectangle(cr, 0, 0, VIEW_SIZE, VIEW_SIZE);
+  cairo_fill(cr);
+
+  cairo_set_source_rgb(cr, 0, 0, 0);
+  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+  cairo_set_line_width(cr, 1);
+  cairo_set_dash(cr, dashes, sizeof(dashes) / sizeof(*dashes), 0);
+  cairo_rectangle(cr, minx, miny, maxx - minx, maxy - miny);
+  cairo_stroke(cr);
 
   g_object_unref(G_OBJECT(pix));
-  g_object_unref(gc);
+  cairo_destroy(cr);
 
   return FALSE;
 }

@@ -6,6 +6,6 @@
 #define _O_GRA2GDK_HEADER
 
 GdkPixmap *
-gra2gdk_create_pixmap(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local *local, GdkDrawable *drawable, int w, int h, int r, int g, int b);
+gra2gdk_create_pixmap(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local *local, GdkDrawable *drawable, int w, int h, double r, double g, double b);
 
 #endif

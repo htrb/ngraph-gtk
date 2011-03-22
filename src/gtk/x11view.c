@@ -127,13 +127,15 @@ static void clear_focus_obj(struct Viewer *d);
 static void ViewDelete(void);
 static int text_dropped(const char *str, gint x, gint y, struct Viewer *d);
 static int add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid);
-static void ShowFocusFrame(GdkGC *gc);
+static void ShowFocusFrame(cairo_t *cr);
 static void AddInvalidateRect(struct objlist *obj, N_VALUE *inst);
 static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom);
 
+#define GRAY 0.5
+#define DOT_LENGTH 4.0
 
 static int
 mxd2p(int r)
@@ -178,6 +180,17 @@ range_increment(GtkWidget *w, double inc)
 
 static char SCRIPT_IDN[] = "#! ngraph\n# clipboard\n\n";
 #define SCRIPT_IDN_LEN (sizeof(SCRIPT_IDN) - 1)
+
+static cairo_t *
+create_cairo(GdkWindow *win)
+{
+  cairo_t *cr;
+  cr = gdk_cairo_create(win);
+  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+  cairo_set_line_width(cr, 1);
+
+  return cr;
+}
 
 static int
 CopyFocusedObjects(void)
@@ -298,7 +311,6 @@ static void
 paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 {
   struct narray idarray;
-  GdkGC *dc;
   struct objlist *draw_obj;
   GdkWindow *window;
 
@@ -333,11 +345,8 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 
   if (arraynum(NgraphApp.Viewer.focusobj) > 0) {
     set_graph_modified();
-    dc = gdk_gc_new(NgraphApp.Viewer.gdk_win);
     NgraphApp.Viewer.allclear = FALSE;
-    ShowFocusFrame(dc);
     NgraphApp.Viewer.ShowFrame = TRUE;
-    g_object_unref(G_OBJECT(dc));
     gtk_widget_grab_focus(NgraphApp.Viewer.Win);
     UpdateAll();
   }
@@ -680,7 +689,6 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   if ((r == IDDELETE) || (r == IDCANCEL)) {
     delobj(obj, id);
   } else {
-    GdkGC *dc;
     int oid;
 
     UnFocus();
@@ -692,10 +700,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
     AddInvalidateRect(obj, inst);
 
     set_graph_modified();
-    dc = gdk_gc_new(d->gdk_win);
-    ShowFocusFrame(dc);
     d->ShowFrame = TRUE;
-    g_object_unref(G_OBJECT(dc));
     gtk_widget_grab_focus(d->Win);
     UpdateAll();
   }
@@ -1642,27 +1647,30 @@ AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
   GdkRectangle rect;
 
   d = &(NgraphApp.Viewer);
-  if (chkobjfield(obj, "bbox"))
+  if (chkobjfield(obj, "bbox")) {
     return;
+  }
 
   _exeobj(obj, "bbox", inst, 0, NULL);
   _getobj(obj, "bbox", inst, &abbox);
   bboxnum = arraynum(abbox);
   bbox = arraydata(abbox);
-  if (bboxnum >= 4) {
-    zoom = Menulocal.PaperZoom / 10000.0;
-
-    rect.x = mxd2p(bbox[0] * zoom + Menulocal.LeftMargin) - 7;
-    rect.y = mxd2p(bbox[1] * zoom + Menulocal.TopMargin) - 7;
-    rect.width = mxd2p(bbox[2] * zoom + Menulocal.LeftMargin) - rect.x + 7;
-    rect.height = mxd2p(bbox[3] * zoom + Menulocal.TopMargin) - rect.y + 7;
-
-    if (region == NULL) {
-      region = gdk_region_new();
-    }
-
-    gdk_region_union_with_rect(region, &rect);
+  if (bboxnum < 4) {
+    return;
   }
+
+  zoom = Menulocal.PaperZoom / 10000.0;
+
+  rect.x = mxd2p(bbox[0] * zoom + Menulocal.LeftMargin) - 7;
+  rect.y = mxd2p(bbox[1] * zoom + Menulocal.TopMargin) - 7;
+  rect.width = mxd2p(bbox[2] * zoom + Menulocal.LeftMargin) - rect.x + 7;
+  rect.height = mxd2p(bbox[3] * zoom + Menulocal.TopMargin) - rect.y + 7;
+
+  if (region == NULL) {
+    region = gdk_region_new();
+  }
+
+  gdk_region_union_with_rect(region, &rect);
 }
 
 
@@ -1702,23 +1710,31 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy)
   }
   for (i = 1; i < num; i++) {
     inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
-    if (inst) {
-      _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
-      _getobj(focus[i]->obj, "bbox", inst, &abbox);
+    if (inst == NULL) {
+      continue;
+    }
 
-      bboxnum = arraynum(abbox);
-      bbox = arraydata(abbox);
+    _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
+    _getobj(focus[i]->obj, "bbox", inst, &abbox);
 
-      if (bboxnum >= 4) {
-	if (bbox[0] < *minx)
-	  *minx = bbox[0];
-	if (bbox[1] < *miny)
-	  *miny = bbox[1];
-	if (bbox[2] > *maxx)
-	  *maxx = bbox[2];
-	if (bbox[3] > *maxy)
-	  *maxy = bbox[3];
-      }
+    bboxnum = arraynum(abbox);
+    bbox = arraydata(abbox);
+
+    if (bboxnum < 4) {
+      continue;
+    }
+
+    if (bbox[0] < *minx) {
+      *minx = bbox[0];
+    }
+    if (bbox[1] < *miny) {
+      *miny = bbox[1];
+    }
+    if (bbox[2] > *maxx) {
+      *maxx = bbox[2];
+    }
+    if (bbox[3] > *maxy) {
+      *maxy = bbox[3];
     }
   }
   restorestdio(&save);
@@ -1756,7 +1772,7 @@ GetFocusFrame(int *minx, int *miny, int *maxx, int *maxy, int ofsx, int ofsy)
 }
 
 static void
-ShowFocusFrame(GdkGC *gc)
+ShowFocusFrame(cairo_t *cr)
 {
   int i, j, num;
   struct FocusObj **focus;
@@ -1773,11 +1789,15 @@ ShowFocusFrame(GdkGC *gc)
   d = &(NgraphApp.Viewer);
   ignorestdio(&save);
 
-  gdk_gc_set_rgb_fg_color(gc, &gray);
-  gdk_gc_set_line_attributes(gc, 1,
-			     (Menulocal.focus_frame_type ==  GDK_LINE_SOLID) ? GDK_LINE_SOLID : GDK_LINE_ON_OFF_DASH,
-			     GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_gc_set_function(gc, GDK_XOR);
+  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
+  if (Menulocal.focus_frame_type ==  GDK_LINE_SOLID) {
+    cairo_set_dash(cr, NULL, 0, 0);
+  } else {
+    double dash[] = {DOT_LENGTH};
+
+    cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
+  }
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
   num = arraynum(d->focusobj);
   focus = arraydata(d->focusobj);
@@ -1796,52 +1816,57 @@ ShowFocusFrame(GdkGC *gc)
     width = abs(x2 - x1);
     height = abs(y2 - y1);
 
-    gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
+    cairo_rectangle(cr, minx, miny, width, height);
+    cairo_stroke(cr);
 
-    gdk_draw_rectangle(d->gdk_win, gc, TRUE,
-		       x1 - FOCUS_RECT_SIZE,
-		       y1 - FOCUS_RECT_SIZE,
-		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    gdk_draw_rectangle(d->gdk_win, gc, TRUE,
-		       x1 - FOCUS_RECT_SIZE,
-		       y2,
-		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    gdk_draw_rectangle(d->gdk_win, gc, TRUE,
-		       x2,
-		       y1 - FOCUS_RECT_SIZE,
-		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    gdk_draw_rectangle(d->gdk_win, gc, TRUE,
-		       x2,
-		       y2,
-		       FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
+    cairo_rectangle(cr, 
+		    x1 - FOCUS_RECT_SIZE,
+		    y1 - FOCUS_RECT_SIZE,
+		    FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
+    cairo_rectangle(cr, 
+		    x1 - FOCUS_RECT_SIZE,
+		    y2,
+		    FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
+    cairo_rectangle(cr, 
+		    x2,
+		    y1 - FOCUS_RECT_SIZE,
+		    FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
+    cairo_rectangle(cr, 
+		    x2,
+		    y2,
+		    FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
+    cairo_fill(cr);
   }
   zoom = Menulocal.PaperZoom / 10000.0;
 
   if (num > 1) {
     for (i = 0; i < num; i++) {
       inst = chkobjinstoid(focus[i]->obj, focus[i]->oid);
-      if (inst) {
-	_exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
-	_getobj(focus[i]->obj, "bbox", inst, &abbox);
-
-	bboxnum = arraynum(abbox);
-	bbox = arraydata(abbox);
-
-	if (bboxnum >= 4) {
-	  x1 = coord_conv_x((bbox[0] + d->FrameOfsX), zoom, d);
-	  y1 = coord_conv_y((bbox[1] + d->FrameOfsY), zoom, d);
-	  x2 = coord_conv_x((bbox[2] + d->FrameOfsX), zoom, d);
-	  y2 = coord_conv_y((bbox[3] + d->FrameOfsY), zoom, d);
-
-	  minx = (x1 < x2) ? x1 : x2;
-	  miny = (y1 < y2) ? y1 : y2;
-
-	  width = abs(x2 - x1);
-	  height = abs(y2 - y1);
-
-	  gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
-	}
+      if (inst == NULL) {
+	continue;
       }
+      _exeobj(focus[i]->obj, "bbox", inst, 0, NULL);
+      _getobj(focus[i]->obj, "bbox", inst, &abbox);
+
+      bboxnum = arraynum(abbox);
+      bbox = arraydata(abbox);
+
+      if (bboxnum < 4) {
+	continue;
+      }
+      x1 = coord_conv_x((bbox[0] + d->FrameOfsX), zoom, d);
+      y1 = coord_conv_y((bbox[1] + d->FrameOfsY), zoom, d);
+      x2 = coord_conv_x((bbox[2] + d->FrameOfsX), zoom, d);
+      y2 = coord_conv_y((bbox[3] + d->FrameOfsY), zoom, d);
+
+      minx = (x1 < x2) ? x1 : x2;
+      miny = (y1 < y2) ? y1 : y2;
+
+      width = abs(x2 - x1);
+      height = abs(y2 - y1);
+
+      cairo_rectangle(cr, minx, miny, width, height);
+      cairo_stroke(cr);
     }
   } else if (num == 1) {
     i = 0;
@@ -1857,15 +1882,15 @@ ShowFocusFrame(GdkGC *gc)
 	x1 = coord_conv_x((bbox[j] + d->FrameOfsX), zoom, d);
 	y1 = coord_conv_y((bbox[j + 1] + d->FrameOfsY), zoom, d);
 
-	gdk_draw_rectangle(d->gdk_win, gc, TRUE,
-			   x1 - FOCUS_RECT_SIZE / 2,
-			   y1 - FOCUS_RECT_SIZE / 2,
-			   FOCUS_RECT_SIZE,
-			   FOCUS_RECT_SIZE);
+	cairo_rectangle(cr,
+			x1 - FOCUS_RECT_SIZE / 2,
+			y1 - FOCUS_RECT_SIZE / 2,
+			FOCUS_RECT_SIZE,
+			FOCUS_RECT_SIZE);
       }
+      cairo_fill(cr);
     }
   }
-  gdk_gc_set_function(gc, GDK_COPY);
 
   restorestdio(&save);
   set_focus_sensitivity(d);
@@ -2077,10 +2102,39 @@ FlipFocusedObj(enum FLIP_DIRECTION dir)
   UpdateAll();
 }
 
-static void
-show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double zoom, struct objlist *obj, N_VALUE *inst, struct Viewer *d)
+static int
+check_angle(int a)
 {
-  int x, y, rx, ry, a1, a2;
+  if (a < 0) {
+    a %= 36000;
+    if (a < 0) {
+      a += 36000;
+    }
+  } else if (a > 36000) {
+    a %= 36000;
+  }
+
+  return a;
+}
+
+static void
+draw_cairo_arc(cairo_t *cr, int x, int y, int rx, int ry, int a1, int a2)
+{
+  double da1, da2;
+
+  cairo_save(cr);
+  cairo_translate(cr, x, y);
+  cairo_scale(cr, rx, ry);
+  da1 = check_angle(a1) * (M_PI / 18000.0);
+  da2 = check_angle(a1 + a2) * (M_PI / 18000.0);
+  cairo_arc_negative(cr, 0.0, 0.0, 1.0, -da1, -da2);
+  cairo_restore(cr);
+}
+
+static void
+show_focus_line_arc(cairo_t *cr, int clear, unsigned int state, int change, double zoom, struct objlist *obj, N_VALUE *inst, struct Viewer *d)
+{
+  int x, y, rx, ry, pie_slice, fill, a1, a2, close_path;
   static unsigned int prev_state = 0;
 
   _getobj(obj, "x", inst, &x);
@@ -2089,6 +2143,11 @@ show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double
   _getobj(obj, "ry", inst, &ry);
   _getobj(obj, "angle1", inst, &a1);
   _getobj(obj, "angle2", inst, &a2);
+  _getobj(obj, "close_path", inst, &close_path);
+  _getobj(obj, "fill", inst, &fill);
+  _getobj(obj, "pieslice", inst, &pie_slice);
+
+  close_path = (close_path || fill);
 
   switch (change) {
   case ARC_POINT_TYPE_R:
@@ -2105,23 +2164,31 @@ show_focus_line_arc(GdkGC *gc, int clear, unsigned int state, int change, double
     } else {
       prev_state = state;
     }
-    if (arc_get_angle(obj, inst, state, change, d->MouseX2, d->MouseY2, &a1, &a2))
+    if (arc_get_angle(obj, inst, state, change, d->MouseX2, d->MouseY2, &a1, &a2)) {
       return;
+    }
     d->Angle = (change == ARC_POINT_TYPE_ANGLE1) ? a1 : (a1 + a2) % 36000;
     break;
   }
 
-  if (! Menulocal.do_not_use_arc_for_draft && rx > 0 && ry > 0) {
+  if (rx > 0 && ry > 0) {
     rx = mxd2p(rx * zoom);
     ry = mxd2p(ry * zoom);
     x = coord_conv_x(x, zoom, d);
     y = coord_conv_y(y, zoom, d);
-    gdk_draw_arc(d->gdk_win, gc, FALSE, x - rx, y - ry, rx * 2, ry * 2, a1 / 100.0 * 64, a2 / 100.0 * 64);
+    draw_cairo_arc(cr, x, y, rx, ry, a1, a2);
+    if (close_path) {
+      if (pie_slice) {
+	cairo_line_to(cr, x, y);
+      }
+      cairo_close_path(cr);
+    }
+    cairo_stroke(cr);
   }
 }
 
 static void
-draw_frame_rect(GdkGC *gc, int change, double zoom, int *bbox, struct Viewer *d)
+draw_frame_rect(cairo_t *gc, int change, double zoom, int *bbox, struct Viewer *d)
 {
   
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -2159,13 +2226,14 @@ draw_frame_rect(GdkGC *gc, int change, double zoom, int *bbox, struct Viewer *d)
   width = abs(x2 - x1);
   height = abs(y2 - y1);
 
-  gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
+  cairo_rectangle(gc, minx, miny, width, height);
+  cairo_stroke(gc);
 }
 
 static void
-draw_focus_line(GdkGC *gc, int change, double zoom, int bboxnum, int *bbox, struct Viewer *d)
+draw_focus_line(cairo_t *gc, int change, double zoom, int bboxnum, int *bbox, int close_path, struct Viewer *d)
 {
-  int j, ofsx, ofsy, x0, y0, x1, y1;
+  int j, ofsx, ofsy, x1, y1;
 
   for (j = 4; j < bboxnum; j += 2) {
     if (change == (j - 4) / 2) {
@@ -2178,16 +2246,21 @@ draw_focus_line(GdkGC *gc, int change, double zoom, int bboxnum, int *bbox, stru
 
     x1 = coord_conv_x(bbox[j] + ofsx, zoom, d);
     y1 = coord_conv_y(bbox[j + 1] + ofsy, zoom, d);
-    if (j != 4) {
-      gdk_draw_line(d->gdk_win, gc, x0, y0, x1, y1);
+    if (j == 4) {
+      cairo_move_to(gc, x1, y1);
+    } else {
+      cairo_line_to(gc, x1, y1);
     }
-    x0 = x1;
-    y0 = y1;
   }
+
+  if (close_path) {
+    cairo_close_path(gc);
+  }
+  cairo_stroke(gc);
 }
 
 static void
-ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
+ShowFocusLine(cairo_t *cr, int clear, unsigned int state, int change)
 {
   int num;
   struct FocusObj **focus;
@@ -2197,27 +2270,29 @@ ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
   N_VALUE *inst;
   struct savedstdio save;
   double zoom;
-  int frame;
   char *group;
   struct Viewer *d;
+  double dash[] = {DOT_LENGTH};
 
   d = &(NgraphApp.Viewer);
   ignorestdio(&save);
 
-  gdk_gc_set_rgb_fg_color(gc, &gray);
-  gdk_gc_set_function(gc, GDK_XOR);
-  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  num = arraynum(d->focusobj);
+  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
+  cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
+  num = arraynum(d->focusobj);
   focus = arraydata(d->focusobj);
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  if (num != 1)
+  if (num != 1) {
     goto End;
+  }
 
   inst = chkobjinstoid(focus[0]->obj, focus[0]->oid);
-  if (inst == NULL)
+  if (inst == NULL) {
     goto End;
+  }
 
   _exeobj(focus[0]->obj, "bbox", inst, 0, NULL);
   _getobj(focus[0]->obj, "bbox", inst, &abbox);
@@ -2225,44 +2300,45 @@ ShowFocusLine(GdkGC *gc, int clear, unsigned int state, int change)
   bboxnum = arraynum(abbox);
   bbox = arraydata(abbox);
 
-  frame = FALSE;
-
   if (focus[0]->obj == chkobject("rectangle")) {
-    frame = TRUE;
+    draw_frame_rect(cr, change, zoom, bbox, d);
   } else if (focus[0]->obj == chkobject("arc")) {
-    show_focus_line_arc(gc, clear, state, change, zoom, focus[0]->obj, inst, d);
-    goto End;
+    show_focus_line_arc(cr, clear, state, change, zoom, focus[0]->obj, inst, d);
+  } else if (focus[0]->obj == chkobject("path")) {
+    int close_path, fill;
+
+    _getobj(focus[0]->obj, "close_path", inst, &close_path);
+    _getobj(focus[0]->obj, "fill", inst, &fill);
+    close_path = (close_path || fill);
+    draw_focus_line(cr, change, zoom, bboxnum, bbox, close_path, d);
   } else if (focus[0]->obj == chkobject("axis")) {
     _getobj(focus[0]->obj, "group", inst, &group);
     if (group && group[0] != 'a') {
-      frame = TRUE;
+      draw_frame_rect(cr, change, zoom, bbox, d);
+    } else {
+      draw_focus_line(cr, change, zoom, bboxnum, bbox, FALSE, d);
     }
   }
 
-  if (!frame) {
-    draw_focus_line(gc, change, zoom, bboxnum, bbox, d);
-  } else {
-    draw_frame_rect(gc, change, zoom, bbox, d);
-  }
-
  End:
-  gdk_gc_set_function(gc, GDK_COPY);
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
   restorestdio(&save);
 }
 
 static void
-ShowPoints(GdkGC *gc)
+ShowPoints(cairo_t *cr)
 {
-  int i, num, x0 = 0, y0 = 0, x1, y1, x2, y2;
+  int i, num, x1, y1, x2, y2;
   struct Point **po;
   double zoom;
   struct Viewer *d;
   int minx, miny, height, width;
+  double dash[] = {DOT_LENGTH};
 
   d = &(NgraphApp.Viewer);
 
-  gdk_gc_set_rgb_fg_color(gc, &gray);
-  gdk_gc_set_function(gc, GDK_XOR);
+  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
   num = arraynum(d->points);
   po = arraydata(d->points);
@@ -2271,7 +2347,7 @@ ShowPoints(GdkGC *gc)
 
   if (d->Mode & POINT_TYPE_DRAW1) {
     if (num >= 2) {
-      gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+      cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
 
       x1 = coord_conv_x(po[0]->x, zoom, d);
       y1 = coord_conv_y(po[0]->y, zoom, d);
@@ -2284,83 +2360,84 @@ ShowPoints(GdkGC *gc)
       width = abs(x2 - x1);
       height = abs(y2 - y1);
 
-      if (d->Mode == ArcB && ! Menulocal.do_not_use_arc_for_draft) {
-	gdk_draw_arc(d->gdk_win, gc, FALSE, minx, miny, width, height, 0, 360 * 64);
+      if (d->Mode == ArcB) {
+	draw_cairo_arc(cr, minx + width / 2, miny + height / 2, width / 2, height / 2, 0, 36000);
       } else {
-	gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
+	cairo_rectangle(cr, minx, miny, width, height);
       }
+      cairo_stroke(cr);
     }
   } else {
-    gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
+    cairo_set_dash(cr, NULL, 0, 0);
     for (i = 0; i < num; i++) {
       x1 = coord_conv_x(po[i]->x, zoom, d);
       y1 = coord_conv_y(po[i]->y, zoom, d);
 
-      gdk_draw_line(d->gdk_win, gc,
-		    x1 - (POINT_LENGTH - 1), y1,
-		    x1 + POINT_LENGTH, y1);
-      gdk_draw_line(d->gdk_win, gc,
-		    x1, y1 - (POINT_LENGTH - 1),
-		    x1, y1 + POINT_LENGTH);
-    }
+      cairo_move_to(cr, x1 - (POINT_LENGTH - 1), y1);
+      cairo_line_to(cr, x1 + POINT_LENGTH, y1);
 
-    gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+      cairo_move_to(cr, x1, y1 - (POINT_LENGTH - 1));
+      cairo_line_to(cr, x1, y1 + POINT_LENGTH);
+    }
+    cairo_stroke(cr);
+
     if (num >= 1) {
+      cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
       x1 = coord_conv_x(po[0]->x, zoom, d);
       y1 = coord_conv_y(po[0]->y, zoom, d);
+      cairo_move_to(cr, x1, y1);
+      for (i = 1; i < num; i++) {
+	x1 = coord_conv_x(po[i]->x, zoom, d);
+	y1 = coord_conv_y(po[i]->y, zoom, d);
 
-      x0 = x1;
-      y0 = y1;
-    }
-    for (i = 1; i < num; i++) {
-      x1 = coord_conv_x(po[i]->x, zoom, d);
-      y1 = coord_conv_y(po[i]->y, zoom, d);
-
-      gdk_draw_line(d->gdk_win, gc, x0, y0, x1, y1);
-
-      x0 = x1;
-      y0 = y1;
+	cairo_line_to(cr, x1, y1);
+      }
+      cairo_stroke(cr);
     }
   }
-  gdk_gc_set_function(gc, GDK_COPY);
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 }
 
 static void
-ShowFrameRect(GdkGC *gc)
+ShowFrameRect(cairo_t *cr)
 {
   int x1, y1, x2, y2;
   double zoom;
   struct Viewer *d;
   int minx, miny, width, height;
+  double dash[] = {DOT_LENGTH};
 
   d = &(NgraphApp.Viewer);
+  if (d->MouseX1 == d->MouseX2 && d->MouseY1 == d->MouseY2) {
+    return;
+  }
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  gdk_gc_set_rgb_fg_color(gc, &gray);
-  gdk_gc_set_function(gc, GDK_XOR);
-  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
+  cairo_set_dash(cr, dash, sizeof(dash) / sizeof(*dash), 0);
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
-  if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
-    x1 = coord_conv_x(d->MouseX1, zoom, d);
-    y1 = coord_conv_y(d->MouseY1, zoom, d);
+  x1 = coord_conv_x(d->MouseX1, zoom, d);
+  y1 = coord_conv_y(d->MouseY1, zoom, d);
 
-    x2 = coord_conv_x(d->MouseX2, zoom, d);
-    y2 = coord_conv_y(d->MouseY2, zoom, d);
+  x2 = coord_conv_x(d->MouseX2, zoom, d);
+  y2 = coord_conv_y(d->MouseY2, zoom, d);
 
-    minx = (x1 < x2) ? x1 : x2;
-    miny = (y1 < y2) ? y1 : y2;
+  minx = (x1 < x2) ? x1 : x2;
+  miny = (y1 < y2) ? y1 : y2;
 
-    width = abs(x2 - x1);
-    height = abs(y2 - y1);
+  width = abs(x2 - x1);
+  height = abs(y2 - y1);
 
-    gdk_draw_rectangle(d->gdk_win, gc, FALSE, minx, miny, width, height);
-  }
-  gdk_gc_set_function(gc, GDK_COPY);
+  cairo_rectangle(cr, minx, miny, width, height);
+  cairo_stroke(cr);
+
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 }
 
 static void
-ShowCrossGauge(GdkGC *gc)
+ShowCrossGauge(cairo_t *cr)
 {
   int x, y, width, height;
   double zoom;
@@ -2368,9 +2445,9 @@ ShowCrossGauge(GdkGC *gc)
 
   d = &(NgraphApp.Viewer);
 
-  gdk_gc_set_rgb_fg_color(gc, &gray);
-  gdk_gc_set_function(gc, GDK_XOR);
-  gdk_gc_set_line_attributes(gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  cairo_set_source_rgb(cr, GRAY, GRAY, GRAY);
+  cairo_set_dash(cr, NULL, 0, 0);
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
   gdk_drawable_get_size(d->gdk_win, &width, &height);
 
@@ -2379,9 +2456,14 @@ ShowCrossGauge(GdkGC *gc)
   x = coord_conv_x(d->CrossX, zoom, d);
   y = coord_conv_y(d->CrossY, zoom, d);
 
-  gdk_draw_line(d->gdk_win, gc, x, 0, x, height);
-  gdk_draw_line(d->gdk_win, gc, 0, y, width, y);
-  gdk_gc_set_function(gc, GDK_COPY);
+  cairo_move_to(cr, x, 0);
+  cairo_line_to(cr, x, height);
+
+  cairo_move_to(cr, 0, y);
+  cairo_line_to(cr, width, y);
+  cairo_stroke(cr);
+
+  //  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 }
 
 static void
@@ -2390,35 +2472,40 @@ CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
   int offset;
   int grid;
 
-  if ((state & GDK_CONTROL_MASK) && (!ofs)) {
-    if ((x != NULL) && (y != NULL)) {
-      if (abs(*x) > abs(*y))
-	*y = 0;
-      else
-	*x = 0;
+  if ((state & GDK_CONTROL_MASK) && ! ofs && x != NULL && y != NULL) {
+    if (abs(*x) > abs(*y)) {
+      *y = 0;
+    } else {
+      *x = 0;
     }
   }
+
   grid = Menulocal.grid;
-  if (!(state & GDK_SHIFT_MASK)) {
-    if (ofs) {
-      offset = grid / 2;
-    } else {
-      offset = 0;
-    }
+  if (state & GDK_SHIFT_MASK) {
+    return;
+  }
 
-    if (x != NULL)
-      *x = ((*x + offset) / grid) * grid;
+  if (ofs) {
+    offset = grid / 2;
+  } else {
+    offset = 0;
+  }
 
-    if (y != NULL)
-      *y = ((*y + offset) / grid) * grid;
+  if (x != NULL) {
+    *x = ((*x + offset) / grid) * grid;
+  }
 
-    if (zoom != NULL)
-      *zoom = nround(*zoom * grid) / ((double) grid);
+  if (y != NULL) {
+    *y = ((*y + offset) / grid) * grid;
+  }
+
+  if (zoom != NULL) {
+    *zoom = nround(*zoom * grid) / ((double) grid);
   }
 }
 
 static void
-mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
+mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d)
 {
   double zoom;
 
@@ -2427,7 +2514,6 @@ mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
   d->Capture = TRUE;
 
   if (arraynum(d->focusobj) && ! (state & GDK_SHIFT_MASK)) {
-    ShowFocusFrame(dc);
     d->ShowFrame = FALSE;
     clear_focus_obj(d);
   }
@@ -2437,12 +2523,10 @@ mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
 }
 
 static void
-init_zoom(unsigned int state, struct Viewer *d, GdkGC *dc)
+init_zoom(unsigned int state, struct Viewer *d)
 {
   int vx1, vy1, vx2, vy2;
   double cc, nn, zoom2;
-
-  ShowFocusFrame(dc);
 
   d->ShowFrame = FALSE;
   d->MouseDX = d->RefX2 - d->MouseX1;
@@ -2477,13 +2561,11 @@ init_zoom(unsigned int state, struct Viewer *d, GdkGC *dc)
   d->MouseX2 = vx1;
   d->MouseY2 = vy1;
 
-  ShowFrameRect(dc);
-
   d->ShowRect = TRUE;
 }
 
 static void
-mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
+mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d)
 {
   int cursor;
 
@@ -2501,34 +2583,32 @@ mouse_down_move(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc)
     GetLargeFrame(&(d->RefX2), &(d->RefY2), &(d->RefX1), &(d->RefY1));
     d->MouseMode = MOUSEZOOM1;
     NSetCursor(cursor);
-    init_zoom(state, d, dc);
+    init_zoom(state, d);
     break;
   case GDK_TOP_RIGHT_CORNER:
     GetLargeFrame(&(d->RefX1), &(d->RefY2), &(d->RefX2), &(d->RefY1));
     d->MouseMode = MOUSEZOOM2;
     NSetCursor(cursor);
-    init_zoom(state, d, dc);
+    init_zoom(state, d);
     break;
   case GDK_BOTTOM_RIGHT_CORNER:
     GetLargeFrame(&(d->RefX1), &(d->RefY1), &(d->RefX2), &(d->RefY2));
     d->MouseMode = MOUSEZOOM3;
     NSetCursor(cursor);
-    init_zoom(state, d, dc);
+    init_zoom(state, d);
     break;
   case GDK_BOTTOM_LEFT_CORNER:
     GetLargeFrame(&(d->RefX2), &(d->RefY1), &(d->RefX1), &(d->RefY2));
     d->MouseMode = MOUSEZOOM4;
     NSetCursor(cursor);
-    init_zoom(state, d, dc);
+    init_zoom(state, d);
     break;
   case GDK_CROSSHAIR:
     d->MouseMode = MOUSECHANGE;
     d->Angle = -1;
-    ShowFocusFrame(dc);
     d->ShowFrame = FALSE;
     d->ShowLine = TRUE;
     d->LineX = d->LineY = 0;
-    ShowFocusLine(dc, FALSE, state, d->ChangePoint);
     NSetCursor(cursor);
     break;
   case GDK_FLEUR:
@@ -2698,7 +2778,7 @@ mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_ou
 }
 
 static void
-mouse_down_set_points(unsigned int state, struct Viewer *d, GdkGC *dc, int n)
+mouse_down_set_points(unsigned int state, struct Viewer *d, int n)
 {
   int x1, y1, i;
   struct Point *po;
@@ -2720,14 +2800,12 @@ mouse_down_set_points(unsigned int state, struct Viewer *d, GdkGC *dc, int n)
     }
   }
 
-  ShowPoints(dc);
   d->Capture = TRUE;
 }
 
 static gboolean
 ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 {
-  GdkGC *dc;
   double zoom;
   int pos;
 
@@ -2748,13 +2826,10 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 
   d->MouseMode = MOUSENONE;
 
-
   if (d->MoveData) {
     mouse_down_move_data(point, d);
     return TRUE;
   }
-
-  dc = gdk_gc_new(d->gdk_win);
 
   switch (d->Mode) {
   case PointB:
@@ -2762,9 +2837,9 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   case AxisB:
     pos = NGetCursor();
     if (pos == GDK_LEFT_PTR) {
-      mouse_down_point(state, point, d, dc);
+      mouse_down_point(state, point, d);
     } else {
-      mouse_down_move(state, point, d, dc);
+      mouse_down_move(state, point, d);
     }
     break;
   case TrimB:
@@ -2776,29 +2851,25 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
     break;
   case MarkB:
   case TextB:
-    mouse_down_set_points(state, d, dc, 1);
+    mouse_down_set_points(state, d, 1);
     break;
   case ZoomB:
     mouse_down_zoom(state, point, d, state & GDK_CONTROL_MASK);
     break;
   default:
-    mouse_down_set_points(state, d, dc, 2);
+    mouse_down_set_points(state, d, 2);
     break;
   }
-
-  g_object_unref(G_OBJECT(dc));
 
   return TRUE;
 }
 
 static void
-mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, double zoom)
+mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, double zoom)
 {
   int x1, x2, y1, y2, err;
 
   d->Capture = FALSE;
-  ShowFrameRect(dc);
-
   d->ShowRect = FALSE;
 
   d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
@@ -2827,7 +2898,6 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
     }
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
-    ShowFocusFrame(dc);
     break;
   case TrimB:
     Trimming(x1, y1, x2, y2);
@@ -2847,7 +2917,7 @@ mouse_up_point(unsigned int state, TPoint *point, struct Viewer *d, GdkGC *dc, d
 }
 
 static void
-mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
+mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int i, dx, dy, num, axis;
   char *argv[5];
@@ -2860,8 +2930,6 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   if (d->MouseX1 == d->MouseX2 && d->MouseY1 == d->MouseY2) {
     return;
   }
-
-  ShowFocusFrame(dc);
 
   d->ShowFrame = FALSE;
 
@@ -2904,7 +2972,6 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
 
   PaintLock = FALSE;
   d->FrameOfsX = d->FrameOfsY = 0;
-  ShowFocusFrame(dc);
   d->ShowFrame = TRUE;
   if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
     d->allclear=FALSE;
@@ -2913,7 +2980,7 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
 }
 
 static void
-mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
+mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int vx1, vy1, vx2, vy2, zm, i, num, axis;
   double cc, nn, zoom2;
@@ -2924,7 +2991,6 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
 
   axis = FALSE;
 
-  ShowFrameRect(dc);
   d->ShowRect = FALSE;
 
   vx1 = (mxp2d(point->x - d->cx + d->hscroll)
@@ -2992,15 +3058,15 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d, 
   d->FrameOfsX = d->FrameOfsY = 0;
   d->ShowFrame = TRUE;
 
-  ShowFocusFrame(dc);
-  if (d->Mode == LegendB || (d->Mode == PointB && !axis))
+  if (d->Mode == LegendB || (d->Mode == PointB && !axis)) {
     d->allclear = FALSE;
+  }
 
   UpdateAll();
 }
 
 static void
-mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
+mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int dx, dy, axis;
   char *argv[5];
@@ -3010,7 +3076,6 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
   axis = FALSE;
 
-  ShowFocusLine(dc, FALSE, state, d->ChangePoint);
   d->ShowLine = FALSE;
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
@@ -3059,25 +3124,22 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     }
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
-    ShowFocusFrame(dc);
     if (d->Mode == LegendB || (d->Mode == PointB && !axis))
       d->allclear = FALSE;
     UpdateAll();
   } else {
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
-    ShowFocusFrame(dc);
   }
 }
 
 static void
-mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
+mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int x1, y1, num;
   struct Point *po;
 
   d->Capture = FALSE;
-  ShowPoints(dc);
 
   d->MouseX1 = (mxp2d(point->x + d->hscroll - d->cx)
 		- Menulocal.LeftMargin) / zoom;
@@ -3096,19 +3158,16 @@ mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     po->x = x1;
     po->y = y1;
   }
-  ShowPoints(dc);
   if (arraynum(d->points) == 1) {
     ViewerEvLButtonDblClk(state, point, d);
   }
 }
 
 static void
-mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d, GdkGC *dc)
+mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int num, x1, y1;
   struct Point *po;
-
-  ShowPoints(dc);
 
   d->MouseX1 = (mxp2d(point->x + d->hscroll - d->cx)
 		- Menulocal.LeftMargin) / zoom;
@@ -3137,8 +3196,6 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
     }
   }
 
-  ShowPoints(dc);
-
   if ((d->Mode & POINT_TYPE_DRAW1) || d->Mode == SingleB) {
     if (arraynum(d->points) == 3) {
       d->Capture = FALSE;
@@ -3150,7 +3207,6 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 static gboolean
 ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
 {
-  GdkGC *dc;
   double zoom;
 
   if (Menulock || Globallock)
@@ -3160,8 +3216,6 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
 
   if (! d->Capture)
     return TRUE;
-
-  dc = gdk_gc_new(d->gdk_win);
 
   switch (d->Mode) {
   case PointB:
@@ -3173,19 +3227,19 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
     d->Capture = FALSE;
     switch (d->MouseMode) {
     case MOUSEDRAG:
-      mouse_up_drag(state, point, zoom, d, dc);
+      mouse_up_drag(state, point, zoom, d);
       break;
     case MOUSEZOOM1:
     case MOUSEZOOM2:
     case MOUSEZOOM3:
     case MOUSEZOOM4:
-      mouse_up_zoom(state, point, zoom, d, dc);
+      mouse_up_zoom(state, point, zoom, d);
       break;
     case MOUSECHANGE:
-      mouse_up_change(state, point, zoom, d, dc);
+      mouse_up_change(state, point, zoom, d);
       break;
     case MOUSEPOINT:
-      mouse_up_point(state, point, d, dc, zoom);
+      mouse_up_point(state, point, d, zoom);
       if (d->Mode & POINT_TYPE_POINT) {
 	d->allclear = FALSE;
 	UpdateAll();
@@ -3200,13 +3254,11 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
     break;
   case MarkB:
   case TextB:
-    mouse_up_lgend1(state, point, zoom, d, dc);
+    mouse_up_lgend1(state, point, zoom, d);
     break;
   default:
-    mouse_up_lgend2(state, point, zoom, d, dc);
+    mouse_up_lgend2(state, point, zoom, d);
   }
-
-  g_object_unref(G_OBJECT(dc));
 
   return TRUE;
 }
@@ -3222,7 +3274,7 @@ swapint(int *a, int *b)
 }
 
 static void
-create_legend1(struct Viewer *d, GdkGC *dc)
+create_legend1(struct Viewer *d)
 {
   int id, num, x1, y1, ret;
   N_VALUE *inst;
@@ -3271,13 +3323,12 @@ create_legend1(struct Viewer *d, GdkGC *dc)
     }
   }
 
-  ShowPoints(dc);
   arraydel2(d->points);
   d->allclear = FALSE;
 }
 
 static void
-create_path(struct Viewer *d, GdkGC *dc)
+create_path(struct Viewer *d)
 {
   struct objlist *obj = NULL;
   struct narray *parray;
@@ -3303,8 +3354,8 @@ create_path(struct Viewer *d, GdkGC *dc)
 
   for (i = 0; i < num - 1; i++) {
     po = *(struct Point **) arraynget(d->points, i);
-    arrayadd(parray, &(po->x));
-    arrayadd(parray, &(po->y));
+    arrayadd(parray, &po->x);
+    arrayadd(parray, &po->y);
   }
 
   _putobj(obj, "points", inst, parray);
@@ -3324,14 +3375,13 @@ create_path(struct Viewer *d, GdkGC *dc)
   PaintLock = FALSE;
 
  ExitCreatePath:
-  ShowPoints(dc);
   arraydel2(d->points);
 
   d->allclear = FALSE;
 }
 
 static void
-create_legend3(struct Viewer *d, GdkGC *dc)
+create_legend3(struct Viewer *d)
 {
   int id, num, x1, y1, x2, y2, ret = IDCANCEL;
   N_VALUE *inst;
@@ -3401,13 +3451,12 @@ create_legend3(struct Viewer *d, GdkGC *dc)
     }
   }
 
-  ShowPoints(dc);
   arraydel2(d->points);
   d->allclear = FALSE;
 }
 
 static void
-create_legendx(struct Viewer *d, GdkGC *dc)
+create_legendx(struct Viewer *d)
 {
   int id, num, x1, y1, x2, y2, ret = IDCANCEL, type;
   N_VALUE *inst;
@@ -3458,13 +3507,12 @@ create_legendx(struct Viewer *d, GdkGC *dc)
       }
     }
   }
-  ShowPoints(dc);
   arraydel2(d->points);
   d->allclear = FALSE;
 }
 
 static void
-create_single_axis(struct Viewer *d, GdkGC *dc)
+create_single_axis(struct Viewer *d)
 {
   int id, num, x1, y1, x2, y2, lenx, dir, ret = IDCANCEL;
   double fx1, fy1;
@@ -3528,13 +3576,12 @@ create_single_axis(struct Viewer *d, GdkGC *dc)
       }
     }
   }
-  ShowPoints(dc);
   arraydel2(d->points);
   d->allclear = TRUE;
 }
 
 static void
-create_axis(struct Viewer *d, GdkGC *dc)
+create_axis(struct Viewer *d)
 {
   int idx, idy, idu, idr, idg, oidx, oidy, type,
     num, x1, y1, x2, y2, lenx, leny, ret = IDCANCEL;
@@ -3687,7 +3734,6 @@ create_axis(struct Viewer *d, GdkGC *dc)
       }
     }
   }
-  ShowPoints(dc);
   arraydel2(d->points);
   d->allclear = TRUE;
 }
@@ -3695,12 +3741,8 @@ create_axis(struct Viewer *d, GdkGC *dc)
 static gboolean
 ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
 {
-  GdkGC *dc;
-
   if (Menulock || Globallock)
     return FALSE;
-
-  dc = gdk_gc_new(d->gdk_win);
 
   switch (d->Mode) {
   case PointB:
@@ -3715,25 +3757,25 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
     break;
   case MarkB:
   case TextB:
-    create_legend1(d, dc);
+    create_legend1(d);
     break;
   case PathB:
-    create_path(d, dc);
+    create_path(d);
     break;
   case RectB:
   case ArcB:
-    create_legend3(d, dc);
+    create_legend3(d);
     break;
   case GaussB:
-    create_legendx(d, dc);
+    create_legendx(d);
     break;
   case SingleB:
-    create_single_axis(d, dc);
+    create_single_axis(d);
     break;
   case FrameB:
   case SectionB:
   case CrossB:
-    create_axis(d, dc);
+    create_axis(d);
     break;
   case ZoomB:
     break;
@@ -3743,7 +3785,6 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
     gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
   }
 
-  g_object_unref(G_OBJECT(dc));
   UpdateAll();
 
   return TRUE;
@@ -3764,7 +3805,6 @@ move_data_cancel(struct Viewer *d, gboolean show_message)
 static gboolean
 ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEventButton *e)
 {
-  GdkGC *dc;
   int num;
   struct Point *po;
   double zoom;
@@ -3779,12 +3819,10 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 
   if (d->Capture) {
     zoom = Menulocal.PaperZoom / 10000.0;
-    dc = gdk_gc_new(d->gdk_win);
     switch (d->Mode) {
     case PathB:
       num = arraynum(d->points);
       if (num > 0) {
-	ShowPoints(dc);
 	arrayndel2(d->points, num - 1);
 	if (num <= 2) {
 	  arraydel2(d->points);
@@ -3800,7 +3838,6 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 	    po->y = d->MouseY1;
 	    CheckGrid(TRUE, state, &(po->x), &(po->y), NULL);
 	  }
-	  ShowPoints(dc);
 	}
 	break;
       case RectB:
@@ -3810,7 +3847,6 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
       case FrameB:
       case SectionB:
       case CrossB:
-	ShowPoints(dc);
 	arraydel2(d->points);
 	d->Capture = FALSE;
 	break;
@@ -3818,7 +3854,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 	break;
       }
     }
-    g_object_unref(G_OBJECT(dc));
+
     return TRUE;
   }
 
@@ -3937,15 +3973,13 @@ set_mouse_cursor_hover(struct Viewer *d, int x, int y)
 }
 
 static void
-update_frame_rect(TPoint *point, struct Viewer *d, GdkGC *dc, double zoom)
+update_frame_rect(TPoint *point, struct Viewer *d, double zoom)
 {
-  ShowFrameRect(dc);
   d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
 		- Menulocal.LeftMargin) / zoom;
 
   d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
 		- Menulocal.TopMargin) / zoom;
-  ShowFrameRect(dc);
 }
 
 #define SQRT3 1.73205080756888
@@ -4066,11 +4100,10 @@ calc_integer_ratio(struct narray *points, int *dx, int *dy)
 }
 
 static void
-mouse_move_drag(GdkGC *dc, unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_move_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int x, y;
 
-  ShowFocusFrame(dc);
   d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
 		- Menulocal.LeftMargin) / zoom;
 
@@ -4084,17 +4117,13 @@ mouse_move_drag(GdkGC *dc, unsigned int state, TPoint *point, double zoom, struc
 
   d->FrameOfsX = x;
   d->FrameOfsY = y;
-
-  ShowFocusFrame(dc);
 }
 
 static void
-mouse_move_zoom(GdkGC *dc, unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_move_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   double cc, nn, zoom2;
   int vx1, vx2, vy1, vy2;
-
-  ShowFrameRect(dc);
 
   vx1 = (mxp2d(point->x - d->cx + d->hscroll)
 	 - Menulocal.LeftMargin) / zoom;
@@ -4130,16 +4159,12 @@ mouse_move_zoom(GdkGC *dc, unsigned int state, TPoint *point, double zoom, struc
 
   d->MouseX2 = vx1;
   d->MouseY2 = vy1;
-
-  ShowFrameRect(dc);
 }
 
 static void
-mouse_move_change(GdkGC *dc, unsigned int state, TPoint *point, double zoom, struct Viewer *d)
+mouse_move_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 {
   int x, y;
-
-  ShowFocusLine(dc, TRUE, state, d->ChangePoint);
 
   d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
 		- Menulocal.LeftMargin) / zoom;
@@ -4156,8 +4181,6 @@ mouse_move_change(GdkGC *dc, unsigned int state, TPoint *point, double zoom, str
 
   d->LineX = x;
   d->LineY = y;
-
-  ShowFocusLine(dc, FALSE, state, d->ChangePoint);
 }
 
 static void
@@ -4180,44 +4203,42 @@ mouse_move_scroll(TPoint *point, struct Viewer *d)
 }
 
 static void
-mouse_move_draw(GdkGC *dc, unsigned int state, TPoint *point, int *dx, int *dy, struct Viewer *d)
+mouse_move_draw(unsigned int state, TPoint *point, int *dx, int *dy, struct Viewer *d)
 {
-  ShowPoints(dc);
+  struct Point *po;
 
-  if (arraynum(d->points) != 0) {
-    struct Point *po;
-    po = *(struct Point **) arraylast(d->points);
+  if (arraynum(d->points) == 0) {
+    return;
+  }
 
-    if (state & GDK_CONTROL_MASK) {
-      if (d->Mode & POINT_TYPE_DRAW1) {
-	calc_integer_ratio(d->points, dx, dy);
-      } else if (d->Mode & POINT_TYPE_DRAW2) {
-	calc_snap_angle(d->points, dx, dy);
-	if (! (state & GDK_SHIFT_MASK)) {
-	  CheckGrid(FALSE, 0, dx, dy, NULL);
-	}
+  po = *(struct Point **) arraylast(d->points);
+
+  if (state & GDK_CONTROL_MASK) {
+    if (d->Mode & POINT_TYPE_DRAW1) {
+      calc_integer_ratio(d->points, dx, dy);
+    } else if (d->Mode & POINT_TYPE_DRAW2) {
+      calc_snap_angle(d->points, dx, dy);
+      if (! (state & GDK_SHIFT_MASK)) {
+	CheckGrid(FALSE, 0, dx, dy, NULL);
       }
     }
-
-    if (po != NULL) {
-      po->x = *dx;
-      po->y = *dy;
-    }
   }
-  ShowPoints(dc);
+
+  if (po != NULL) {
+    po->x = *dx;
+    po->y = *dy;
+  }
 }
 
 static gboolean
 ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 {
-  GdkGC *dc;
   int dx, dy;
   double zoom;
 
-  dc = Menulocal.gc;
-
-  if (Menulock || Globallock || ! d->gdk_win || dc == NULL)
+  if (Menulock || Globallock || ! d->gdk_win) {
     return FALSE;
+  }
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -4233,14 +4254,8 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
     CheckGrid(TRUE, state, &dx, &dy, NULL);
   }
 
-  if (region == NULL && Menulocal.show_cross) {
-    ShowCrossGauge(dc);
-
-    d->CrossX = dx;
-    d->CrossY = dy;
-
-    ShowCrossGauge(dc);
-  }
+  d->CrossX = dx;
+  d->CrossY = dy;
 
   mouse_move_scroll(point, d);
 
@@ -4260,33 +4275,38 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 
       switch (d->MouseMode) {
       case MOUSEDRAG:
-	mouse_move_drag(dc, state, point, zoom, d);
+	mouse_move_drag(state, point, zoom, d);
 	break;
       case MOUSEZOOM1:
       case MOUSEZOOM2:
       case MOUSEZOOM3:
       case MOUSEZOOM4:
-	mouse_move_zoom(dc, state, point, zoom, d);
+	mouse_move_zoom(state, point, zoom, d);
 	break;
       case MOUSECHANGE:
-	mouse_move_change(dc, state, point, zoom, d);
+	mouse_move_change(state, point, zoom, d);
 	break;
       case MOUSEPOINT:
-	update_frame_rect(point, d, dc, zoom);
+	update_frame_rect(point, d, zoom);
 	break;
       case MOUSENONE:
 	break;
       }
     } else if (d->Mode & POINT_TYPE_POINT) {
       if (d->MouseMode == MOUSEPOINT) {
-	update_frame_rect(point, d, dc, zoom);
+	update_frame_rect(point, d, zoom);
       }
     } else {
-      mouse_move_draw(dc, state, point, &dx, &dy, d);
+      mouse_move_draw(state, point, &dx, &dy, d);
     }
   }
 
   SetPoint(d, dx, dy);
+
+  if ((region == NULL && Menulocal.show_cross && gtk_widget_is_drawable(d->Win)) ||
+      d->MouseMode != MOUSENONE) {
+    gtk_widget_queue_draw(d->Win);
+  }
 
   return FALSE;
 }
@@ -4474,7 +4494,6 @@ static gboolean
 ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 {
   struct Viewer *d;
-  GdkGC *dc;
   int dx = 0, dy = 0, mv, n;
   double zoom;
 
@@ -4548,9 +4567,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
     if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG))
 	&& (d->Mode & POINT_TYPE_POINT)) {
-      dc = gdk_gc_new(d->gdk_win);
       zoom = Menulocal.PaperZoom / 10000.0;
-      ShowFocusFrame(dc);
       if (e->state & GDK_SHIFT_MASK) {
 	mv = Menulocal.grid / 10;
       } else {
@@ -4573,10 +4590,6 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 
       d->FrameOfsX += dx / zoom;
       d->FrameOfsY += dy / zoom;
-
-      ShowFocusFrame(dc);
-
-      g_object_unref(G_OBJECT(dc));
       d->MouseMode = MOUSEDRAG;
       return TRUE;
     }
@@ -4605,7 +4618,6 @@ static gboolean
 ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 {
   struct Viewer *d;
-  GdkGC *dc;
   int num, i, dx, dy;
   struct FocusObj *focus;
   N_VALUE *inst;
@@ -4635,8 +4647,6 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     if (d->MouseMode != MOUSEDRAG)
       break;
 
-    dc = gdk_gc_new(d->gdk_win);
-    ShowFocusFrame(dc);
     dx = d->FrameOfsX;
     dy = d->FrameOfsY;
     argv[0] = (char *) &dx;
@@ -4660,8 +4670,7 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     PaintLock = FALSE;
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
-    ShowFocusFrame(dc);
-    g_object_unref(G_OBJECT(dc));
+
     if (! axis)
       d->allclear = FALSE;
     UpdateAll();
@@ -4698,49 +4707,57 @@ ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
 static gboolean
 ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
 {
-  GdkGC *gc;
+  cairo_t *cr;
   struct Viewer *d;
-  GdkRectangle rect;
 
   d = (struct Viewer *) client_data;
-  gc = Menulocal.gc;
 
-  if ((e && e->count != 0) || gc == NULL)
+  if (e && e->count != 0) {
     return TRUE;
+  }
+
+  cr = create_cairo(GTK_WIDGET_GET_WINDOW(w));
+  if (cr == NULL) {
+    return TRUE;
+  }
 
   Menulocal.scrollx = d->hscroll - d->cx;
   Menulocal.scrolly = d->vscroll - d->cy;
 
   if (Menulocal.pix) {
-    gdk_region_get_clipbox(e->region, &rect);
-    gdk_draw_drawable(e->window, gc, Menulocal.pix,
-		      d->hscroll - d->cx + rect.x,
-		      d->vscroll - d->cy + rect.y,
-		      rect.x, rect.y,
-		      rect.width, rect.height);
+    gdk_cairo_region(cr, e->region);
+    gdk_cairo_set_source_pixmap(cr, Menulocal.pix,
+				- d->hscroll + d->cx,
+				- d->vscroll + d->cy);
+    cairo_fill(cr);
   }
 
   if (! Globallock) {
     /* I think it is not necessary to check chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid). */
-    if (d->ShowFrame)
-      ShowFocusFrame(gc);
+    if (d->ShowFrame) {
+      ShowFocusFrame(cr);
+    }
 
-    ShowPoints(gc);
+    ShowPoints(cr);
 
-    if (d->ShowLine)
-      ShowFocusLine(gc, FALSE, 0, d->ChangePoint);
-
-    if (d->ShowRect)
-      ShowFrameRect(gc);
-
-    if (Menulocal.show_cross)
-      ShowCrossGauge(gc);
+    if (d->ShowLine) {
+      ShowFocusLine(cr, FALSE, 0, d->ChangePoint);
+    }
+    if (d->ShowRect) {
+      ShowFrameRect(cr);
+    }
+    if (Menulocal.show_cross) {
+      ShowCrossGauge(cr);
+    }
   }
 
   if (! PaintLock && region) {
     gdk_region_destroy(region);
     region = NULL;
   }
+
+  cairo_destroy(cr);
+
   return FALSE;
 }
 
@@ -4914,7 +4931,6 @@ Focus(struct objlist *fobj, int id, int add)
   char *dfield;
   int i;
   struct savedstdio save;
-  GdkGC *dc;
   int man;
   struct Viewer *d;
 
@@ -4978,12 +4994,9 @@ Focus(struct objlist *fobj, int id, int add)
     UnFocus();
   }
 
-  dc = gdk_gc_new(d->gdk_win);
   d->allclear = FALSE;
   UpdateAll();
-  ShowFocusFrame(dc);
   d->ShowFrame = TRUE;
-  g_object_unref(G_OBJECT(dc));
   gtk_widget_grab_focus(d->Win);
 
   restorestdio(&save);
@@ -4992,22 +5005,16 @@ Focus(struct objlist *fobj, int id, int add)
 void
 UnFocus(void)
 {
-  GdkGC *gc;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
+
   if (arraynum(d->focusobj) != 0) {
-    gc = gdk_gc_new(d->gdk_win);
-    ShowFocusFrame(gc);
-    g_object_unref(G_OBJECT(gc));
     clear_focus_obj(d);
   }
 
   d->ShowFrame = FALSE;
   if (arraynum(d->points) != 0) {
-    gc = gdk_gc_new(d->gdk_win);
-    ShowPoints(gc);
-    g_object_unref(G_OBJECT(gc));
     arraydel2(d->points);
   }
 }
@@ -5017,16 +5024,12 @@ create_pix(int w, int h)
 {
   GdkRectangle rect;
   GdkWindow *window;
+  cairo_t *cr;
 
   window = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
   if (window == NULL) {
     return;
   }
-
-  if (Menulocal.gc == NULL) {
-    return;
-  }
-
 
   if (w == 0) {
     w = 1;
@@ -5052,14 +5055,17 @@ create_pix(int w, int h)
   rect.width = w;
   rect.height = h;
 
-  gdk_gc_set_clip_rectangle(Menulocal.gc, &rect);
-  gdk_gc_set_rgb_fg_color(Menulocal.gc, &white);
-  gdk_draw_rectangle(Menulocal.pix, Menulocal.gc, TRUE, 0, 0, w, h);
-  draw_paper_frame();
-  gdk_gc_set_clip_rectangle(Menulocal.gc, NULL);
+  cr = gdk_cairo_create(Menulocal.pix);
+  Menulocal.local->cairo = cr;
 
-  Menulocal.local->cairo = gdk_cairo_create(Menulocal.pix);
-  gra2cairo_set_antialias(Menulocal.local, Menulocal.local->antialias);
+  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+  cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+  cairo_rectangle(cr, 0, 0, w, h);
+  cairo_fill(cr);
+
+  draw_paper_frame();
+
+  cairo_set_antialias(cr, Menulocal.local->antialias);
 #if 0
   cairo_set_tolerance(Menulocal.local->cairo, 0.1);
 #endif
@@ -5071,9 +5077,6 @@ void
 OpenGC(void)
 {
   int width, height;
-
-  if (Menulocal.gc)
-    return;
 
   Menulocal.local->pixel_dot_x =
   Menulocal.local->pixel_dot_y =
@@ -5090,8 +5093,7 @@ OpenGC(void)
   if (height == 0)
     height = 1;
 
-  Menulocal.win = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
-  Menulocal.gc = gdk_gc_new(Menulocal.win);
+  NgraphApp.Viewer.gdk_win = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
   create_pix(width, height);
 
   Menulocal.offsetx = 0;
@@ -5221,12 +5223,6 @@ ChangeDPI(int redraw)
 void
 CloseGC(void)
 {
-  if (Menulocal.gc == NULL)
-    return;
- 
-  g_object_unref(G_OBJECT(Menulocal.gc));
-  Menulocal.gc = NULL;
-
   if (Menulocal.region != NULL)
     gdk_region_destroy(Menulocal.region);
 
@@ -5238,10 +5234,6 @@ CloseGC(void)
 void
 ReopenGC(void)
 {
-  if (Menulocal.gc) {
-    g_object_unref(G_OBJECT(Menulocal.gc));
-  }
-  Menulocal.gc = gdk_gc_new(Menulocal.win);
   Menulocal.offsetx = 0;
   Menulocal.offsety = 0;
   Menulocal.local->pixel_dot_x =
@@ -5258,26 +5250,32 @@ void
 draw_paper_frame(void)
 {
   int w, h;
+  cairo_t *cr;
 
-  if (Menulocal.gc == NULL || Menulocal.pix == NULL)
+  if (Menulocal.local->cairo == NULL || Menulocal.pix == NULL)
     return;
 
-  gdk_gc_set_function(Menulocal.gc, GDK_COPY);
-  gdk_gc_set_line_attributes(Menulocal.gc, 1, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_MITER);
-
+  cr = Menulocal.local->cairo;
   w = mxd2p(Menulocal.PaperWidth) - 1;
   h = mxd2p(Menulocal.PaperHeight) - 1;
 
-  gdk_gc_set_rgb_fg_color(Menulocal.gc, &gray);
-
-  gdk_draw_rectangle(Menulocal.pix, Menulocal.gc, FALSE, 0, 0, w, h);
+  cairo_save(cr);
+  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+  cairo_set_source_rgb(cr, 0, 0, 0);
+  cairo_set_line_width(cr, 1);
+  cairo_set_dash(cr, NULL, 0, 0);
+#ifdef WINDOWS
+  cairo_rectangle(cr, 1, 1, w, h);
+#else
+  cairo_rectangle(cr, 0, 0, w, h);
+#endif
+  cairo_stroke(cr);
+  cairo_restore(cr);
 }
 
 void
 Draw(int SelectFile)
 {
-  int SShowFrame, SShowLine, SShowRect, SShowCross;
-  GdkGC *gc;
   struct Viewer *d;
 
   d = &(NgraphApp.Viewer);
@@ -5294,30 +5292,10 @@ Draw(int SelectFile)
   SetStatusBar(_("Drawing."));
   ProgressDialogSetTitle(_("Drawing"));
 
-  gc = gdk_gc_new(d->gdk_win);
-
-  if (d->ShowFrame)
-    ShowFocusFrame(gc);
-
-  if (d->ShowLine)
-    ShowFocusLine(gc, FALSE, 0, d->ChangePoint);
-
-  if (d->ShowRect)
-    ShowFrameRect(gc);
-
-  if (Menulocal.show_cross)
-    ShowCrossGauge(gc);
-
-  SShowFrame = d->ShowFrame;
-  SShowLine = d->ShowLine;
-  SShowRect = d->ShowRect;
-  SShowCross = Menulocal.show_cross;
-
-  d->ShowFrame = d->ShowLine = d->ShowRect = Menulocal.show_cross = FALSE;
   ReopenGC();
-  if (region)
+  if (region) {
     gdk_region_destroy(region);
-
+  }
   region = NULL;
 
   if (chkobjinstoid(Menulocal.GRAobj, Menulocal.GRAoid) != NULL) {
@@ -5330,26 +5308,8 @@ Draw(int SelectFile)
     d->ignoreredraw = FALSE;
   }
 
-  d->ShowFrame = SShowFrame;
-  d->ShowLine = SShowLine;
-  d->ShowRect = SShowRect;
-  Menulocal.show_cross = SShowCross;
-
   draw_paper_frame();
 
-  if (d->ShowFrame)
-    ShowFocusFrame(gc);
-
-  if (d->ShowLine)
-    ShowFocusLine(gc, FALSE, 0, d->ChangePoint);
-
-  if (d->ShowRect)
-    ShowFrameRect(gc);
-
-  if (Menulocal.show_cross)
-    ShowCrossGauge(gc);
-
-  g_object_unref(G_OBJECT(gc));
   ResetStatusBar();
 
   ProgressDialogFinalize();
@@ -5497,7 +5457,6 @@ ViewUpdate(void)
   int x1, y1;
   int idx = 0, idy = 0, idu = 0, idr = 0, idg, lenx, leny;
   int findX, findY, findU, findR, findG;
-  GdkGC *dc;
   char type;
   char *group;
   int axis;
@@ -5507,9 +5466,7 @@ ViewUpdate(void)
     return;
 
   d = &(NgraphApp.Viewer);
-  dc = gdk_gc_new(d->gdk_win);
 
-  ShowFocusFrame(dc);
   d->ShowFrame = FALSE;
 
   num = arraynum(d->focusobj);
@@ -5638,9 +5595,7 @@ ViewUpdate(void)
     d->allclear = FALSE;
 
   UpdateAll();
-  ShowFocusFrame(dc);
   d->ShowFrame = TRUE;
-  g_object_unref(G_OBJECT(dc));
 }
 
 static void
@@ -5650,7 +5605,6 @@ ViewDelete(void)
   struct FocusObj *focus;
   struct objlist *obj;
   N_VALUE *inst;
-  GdkGC *dc;
   int axis;
   struct Viewer *d;
 
@@ -5665,8 +5619,6 @@ ViewDelete(void)
     return;
   }
 
-  dc = gdk_gc_new(d->gdk_win);
-  ShowFocusFrame(dc);
   d->ShowFrame = FALSE;
 
   axis = FALSE;
@@ -5968,7 +5920,6 @@ ViewCopy(void)
   struct FocusObj *focus;
   struct objlist *obj;
   N_VALUE *inst, *inst2;
-  GdkGC *dc;
   int axis = FALSE;
   struct Viewer *d;
 
@@ -5980,9 +5931,6 @@ ViewCopy(void)
   if (d->MouseMode != MOUSENONE || ! (d->Mode & POINT_TYPE_POINT))
     return;
 
-  dc = gdk_gc_new(d->gdk_win);
-
-  ShowFocusFrame(dc);
   d->ShowFrame = FALSE;
 
   axis = FALSE;
@@ -6024,26 +5972,24 @@ ViewCopy(void)
     d->allclear = FALSE;
 
   UpdateAll();
-  ShowFocusFrame(dc);
   d->ShowFrame = TRUE;
-  g_object_unref(G_OBJECT(dc));
 }
 
 void
 ViewCross(int state)
 {
-  GdkGC *dc;
   struct Viewer *d;
 
   if (Menulock || Globallock)
     return;
 
   d = &(NgraphApp.Viewer);
+  d = &(NgraphApp.Viewer);
 
-  dc = gdk_gc_new(d->gdk_win);
-  ShowCrossGauge(dc);
   Menulocal.show_cross = state;
-  g_object_unref(G_OBJECT(dc));
+  if (gtk_widget_is_drawable(d->Win)) {
+    gtk_widget_queue_draw(d->Win);
+  }
 }
 
 void

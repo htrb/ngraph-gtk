@@ -1591,9 +1591,9 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->preserve_width), Menulocal.preserve_width);
 
-  color.red = Menulocal.bg_r * 257;
-  color.green = Menulocal.bg_g * 257;
-  color.blue = Menulocal.bg_b * 257;
+  color.red = Menulocal.bg_r * 65535;
+  color.green = Menulocal.bg_g * 65535;
+  color.blue = Menulocal.bg_b * 65535;
   gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
 }
 
@@ -1713,9 +1713,9 @@ ViewerDialogClose(GtkWidget *w, void *data)
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
 
   gtk_color_button_get_color(GTK_COLOR_BUTTON(d->bgcol), &color);
-  Menulocal.bg_r = color.red / 256;
-  Menulocal.bg_g = color.green / 256;
-  Menulocal.bg_b = color.blue / 256;
+  Menulocal.bg_r = color.red / 65535.0;
+  Menulocal.bg_g = color.green / 65535.0;
+  Menulocal.bg_b = color.blue / 65535.0;
 
   Menulocal.grid = spin_entry_get_val(d->grid);
 

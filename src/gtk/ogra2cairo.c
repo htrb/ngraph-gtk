@@ -12,11 +12,10 @@
 #include <math.h>
 #include <ctype.h>
 
-#include <cairo/cairo.h>
-
 #include "mathfn.h"
 #include "object.h"
 #include "gra.h"
+#include "main.h"
 #include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
@@ -352,7 +351,7 @@ loadconfig(void)
       g_free(f1);
       g_free(f2);
     } else {
-      fprintf(stderr, "configuration '%s' in section %s is not used.\n", tok, CAIROCONF);
+      fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName,tok, CAIROCONF);
     }
     g_free(tok);
     g_free(str);
@@ -1002,9 +1001,9 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
       cairo_reset_clip(local->cairo);
     }
 
-    if (local->region)
+    if (local->region) {
       gra2cairo_clip_region(local, local->region);
-
+    }
     break;
   case 'A':
     if (cpar[1] == 0) {
