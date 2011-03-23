@@ -1,3 +1,34 @@
+2011-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (CmOutputViewer): execute "present" field of
+	the "gra2gtk" object.
+
+	* src/gtk/ox11menu.c (menuinit): use "gra2cairo_set_antialias()"
+	to set antialias.
+	(mx_show_lib_version): added.
+	(gtkmenu): add field "lib_version", remove fields
+	"GTK_compile_version" and "GTK_runtime_version".
+
+	* src/gtk/x11view.c (draw_paper_frame): use
+	"CAIRO_COORDINATE_OFFSET".
+	(ViewerEvLButtonDown, ViewerEvRButtonDown, CmViewerButtonArm): call
+	"gtk_widget_queue_draw()".
+	(ViewerEvMouseMove): call "gtk_widget_queue_draw()" when "d->Mode
+	& POINT_TYPE_DRAW_ALL"is true.
+	(create_pix): use "gra2cairo_set_antialias()" to set antialias.
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogPaint): use
+	"CAIRO_COORDINATE_OFFSET".
+
+	* src/gtk/x11lgnd.c (draw_arrow_pixmap, LegendArrowDialogPaint):
+	use "CAIRO_COORDINATE_OFFSET".
+
+	* src/gtk/gtk_common.h (CAIRO_COORDINATE_OFFSET): added.
+
+	* src/gtk/ogra2x11.c (gtkpresent): added.
+	(gra2gtk): add field "present".
+	(gtkMakeRuler): use "CAIRO_COORDINATE_OFFSET".
+
 2011-03-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (CmOutputViewer): range of color is 0.0 to

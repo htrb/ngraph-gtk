@@ -251,14 +251,18 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   }
 
   gdk_cairo_set_source_pixmap(cr, pix, 0, 0);
-  cairo_rectangle(cr, 0, 0, VIEW_SIZE, VIEW_SIZE);
+  cairo_rectangle(cr,
+		  CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET,
+		  VIEW_SIZE, VIEW_SIZE);
   cairo_fill(cr);
 
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
   cairo_set_line_width(cr, 1);
   cairo_set_dash(cr, dashes, sizeof(dashes) / sizeof(*dashes), 0);
-  cairo_rectangle(cr, minx, miny, maxx - minx, maxy - miny);
+  cairo_rectangle(cr,
+		  minx + CAIRO_COORDINATE_OFFSET, miny + CAIRO_COORDINATE_OFFSET,
+		  maxx - minx, maxy - miny);
   cairo_stroke(cr);
 
   g_object_unref(G_OBJECT(pix));

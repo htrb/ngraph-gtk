@@ -709,6 +709,8 @@ gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias)
   if (local->cairo == NULL)
     return;
 
+  local->antialias = antialias;
+
   switch (antialias) {
   case ANTIALIAS_TYPE_NONE:
     antialias = CAIRO_ANTIALIAS_NONE;
@@ -736,8 +738,6 @@ set_antialias(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
   antialias = *(int *) argv[2];
 
   _getobj(obj, "_local", inst, &local);
-
-  local->antialias = antialias;
 
   gra2cairo_set_antialias(local, antialias);
 

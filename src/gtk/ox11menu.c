@@ -1075,7 +1075,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 {
   struct gra2cairo_local *local;
   int i;
-  char *str;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv)) {
     return 1;
@@ -1142,7 +1141,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (exwinloadconfig())
     goto errexit;
 
-  Menulocal.local->antialias = Menulocal.antialias;
+  gra2cairo_set_antialias(Menulocal.local, Menulocal.antialias);
   if (_putobj(obj, "antialias", inst, &(Menulocal.antialias)))
     goto errexit;
 
@@ -1176,14 +1175,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   i = 0;
   if (_putobj(obj, "modified", inst, &i))
-    goto errexit;
-
-  str = g_strdup_printf("%d.%d.%d", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
-  if (_putobj(obj, "GTK_compile_version", inst, str))
-    goto errexit;
-
-  str = g_strdup_printf("%d.%d.%d", gtk_major_version, gtk_minor_version, gtk_micro_version);
-  if (_putobj(obj, "GTK_runtime_version", inst, str))
     goto errexit;
 
   Menulocal.obj = obj;
@@ -1808,6 +1799,47 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 }
 
 static int
+mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  printfstdout("GTK+\n"
+	       " compile: %d.%d.%d\n"
+	       " runtime: %d.%d.%d\n"
+	       "\n",
+	       GTK_MAJOR_VERSION,
+	       GTK_MINOR_VERSION,
+	       GTK_MICRO_VERSION,
+	       gtk_major_version,
+	       gtk_minor_version,
+	       gtk_micro_version);
+
+  printfstdout("GLib\n"
+	       " compile: %d.%d.%d\n"
+	       " runtime: %d.%d.%d\n"
+	       "\n",
+	       GLIB_MAJOR_VERSION,
+	       GLIB_MINOR_VERSION,
+	       GLIB_MICRO_VERSION,
+	       glib_major_version,
+	       glib_minor_version,
+	       glib_micro_version);
+
+    printfstdout("Cairo\n"
+		 " compile: %s\n"
+		 " runtime: %s\n"
+		 "\n",
+		 CAIRO_VERSION_STRING,
+		 cairo_version_string());
+
+    printfstdout("Pango\n"
+		 " compile: %s\n"
+		 " runtime: %s\n",
+		 PANGO_VERSION_STRING,
+		 pango_version_string());
+
+  return 0;
+}
+
+static int
 mxdraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (TopLevel == NULL) {
@@ -1889,8 +1921,6 @@ static struct objtable gtkmenu[] = {
   {"init", NVFUNC, NEXEC, menuinit, NULL, 0},
   {"done", NVFUNC, NEXEC, menudone, NULL, 0},
   {"menu", NVFUNC, NREAD | NEXEC, menumenu, "s", 0},
-  {"GTK_compile_version", NSTR, NREAD, NULL, NULL, 0},
-  {"GTK_runtime_version", NSTR, NREAD, NULL, NULL, 0},
   {"ngp", NSTR, NREAD | NWRITE, NULL, NULL, 0},
   {"fullpath_ngp", NSTR, NREAD | NWRITE, mxfullpathngp, NULL, 0},
   {"data_head_lines", NINT, NREAD | NWRITE, mx_data_head_lines, NULL, 0},
@@ -1913,6 +1943,7 @@ static struct objtable gtkmenu[] = {
   {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
   {"get_ui", NVFUNC, NREAD | NEXEC, mx_get_ui, "", 0},
   {"get_accel_map", NVFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
+  {"lib_version", NVFUNC, NREAD | NEXEC, mx_show_lib_version, NULL, 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 

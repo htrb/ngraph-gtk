@@ -2861,6 +2861,8 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
     break;
   }
 
+  gtk_widget_queue_draw(d->Win);
+
   return TRUE;
 }
 
@@ -3814,10 +3816,7 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 
   if (d->MoveData) {
     move_data_cancel(d, TRUE);
-    return TRUE;
-  }
-
-  if (d->Capture) {
+  } else if (d->Capture) {
     zoom = Menulocal.PaperZoom / 10000.0;
     switch (d->Mode) {
     case PathB:
@@ -3854,15 +3853,13 @@ ViewerEvRButtonDown(unsigned int state, TPoint *point, struct Viewer *d, GdkEven
 	break;
       }
     }
-
-    return TRUE;
-  }
-
-  if (d->Mode == ZoomB) {
+  } else if (d->Mode == ZoomB) {
     mouse_down_zoom(state, point, d, ! (state & GDK_CONTROL_MASK));
   } else if (d->MouseMode == MOUSENONE) {
     do_popup(e, d);
   }
+
+  gtk_widget_queue_draw(d->Win);
 
   return TRUE;
 }
@@ -4304,6 +4301,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   SetPoint(d, dx, dy);
 
   if ((region == NULL && Menulocal.show_cross && gtk_widget_is_drawable(d->Win)) ||
+      (d->Mode & POINT_TYPE_DRAW_ALL) ||
       d->MouseMode != MOUSENONE) {
     gtk_widget_queue_draw(d->Win);
   }
@@ -5065,7 +5063,7 @@ create_pix(int w, int h)
 
   draw_paper_frame();
 
-  cairo_set_antialias(cr, Menulocal.local->antialias);
+  gra2cairo_set_antialias(Menulocal.local, Menulocal.antialias);
 #if 0
   cairo_set_tolerance(Menulocal.local->cairo, 0.1);
 #endif
@@ -5264,11 +5262,7 @@ draw_paper_frame(void)
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_set_line_width(cr, 1);
   cairo_set_dash(cr, NULL, 0, 0);
-#ifdef WINDOWS
-  cairo_rectangle(cr, 1, 1, w, h);
-#else
-  cairo_rectangle(cr, 0, 0, w, h);
-#endif
+  cairo_rectangle(cr, CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET, w, h);
   cairo_stroke(cr);
   cairo_restore(cr);
 }
@@ -6123,4 +6117,6 @@ CmViewerButtonArm(GtkAction *action, gpointer client_data)
   if (d->MoveData) {
     move_data_cancel(d, TRUE);
   }
+
+  gtk_widget_queue_draw(d->Win);
 }

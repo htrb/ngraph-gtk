@@ -40,8 +40,10 @@
 #include "nstring.h"
 #include "mathfn.h"
 #include "nconfig.h"
+#include "shell.h"
 
 #include "main.h"
+#include "x11menu.h"
 #include "x11gui.h"
 #include "ogra2x11.h"
 #include "ogra2cairo.h"
@@ -441,6 +443,24 @@ gtkclear(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 }
 
 static int
+gtkpresent(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct gtklocal *local;
+
+  if (_exeparent(obj, argv[1], inst, rval, argc, argv))
+    return 1;
+
+  if (_getobj(obj, "_gtklocal", inst, &local))
+    return 1;
+
+  reset_event();
+  msleep(100);
+  gtk_window_present(GTK_WINDOW(local->mainwin));
+
+  return 0;
+}
+
+static int
 gtkflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gtklocal *local;
@@ -596,11 +616,7 @@ gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal)
   cairo_set_line_width(cr, 1);
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_rectangle(cr,
-#ifdef WINDOWS
-		  1, 1,
-#else
-		  0, 0,
-#endif
+		  CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET,
 		  dot2pixel(gtklocal, width) - 1, dot2pixel(gtklocal, height) - 1);
   cairo_stroke(cr);
   cairo_restore(cr);
@@ -674,6 +690,7 @@ static struct objtable gra2gtk[] = {
   {"expose", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},
+  {"present", NVFUNC, NREAD | NEXEC, gtkpresent, "", 0},
   {"BR", NINT, NREAD | NWRITE, gtkbr, NULL, 0},
   {"BG", NINT, NREAD | NWRITE, gtkbg, NULL, 0},
   {"BB", NINT, NREAD | NWRITE, gtkbb, NULL, 0},

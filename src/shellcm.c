@@ -697,7 +697,7 @@ dispfield(struct objlist *obj,char *name)
   if (chkobjperm(obj,name) & NEXEC) perm[2]='x';
   else perm[2]='-';
   perm[3]='\0';
-  printfstdout("%3s %20.256s  %.256s",
+  printfstdout("%3s %16.256s  %.256s",
                    (char *)perm,(char *)name,(char *)type);
   if (ftype>=NVFUNC) {
     if ((alist=chkobjarglist(obj,name))!=NULL) {

@@ -820,6 +820,8 @@ CmOutputViewer(int select_file)
 
     delgra = TRUE;
     _putobj(g2wobj, "delete_gra", g2winst, &delgra);
+
+    exeobj(g2wobj, "present", g2wid, 0, NULL);
   }
 }
 
