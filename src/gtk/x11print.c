@@ -1029,7 +1029,7 @@ CmPrintDataFile(void)
   struct narray farray;
   struct objlist *obj;
   int i, num, onum, type, div, curve = FALSE, *array, append;
-  char *file;
+  char *file, buf[1024];
   char *argv[4];
 
   if (Menulock || Globallock)
@@ -1087,6 +1087,9 @@ CmPrintDataFile(void)
   for (i = 0; i < num; i++) {
     if (array[i] < 0 || array[i] > onum)
       continue;
+
+    snprintf(buf, sizeof(buf), "%d/%d", i, num);
+    set_progress(1, buf, 1.0 * (i + 1) / num);
 
     append = (i == 0) ? FALSE : TRUE;
     argv[2] = (char *) &append;

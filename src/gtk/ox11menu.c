@@ -1798,12 +1798,20 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
   return 0;
 }
 
+#ifdef HAVE_LIBREADLINE
+#include <readline/readline.h>
+#endif
+
+#ifdef HAVE_LIBGSL
+#include <gsl/gsl_version.h>
+#endif
+
 static int
 mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   printfstdout("GTK+\n"
 	       " compile: %d.%d.%d\n"
-	       " runtime: %d.%d.%d\n"
+	       "  linked: %d.%d.%d\n"
 	       "\n",
 	       GTK_MAJOR_VERSION,
 	       GTK_MINOR_VERSION,
@@ -1814,7 +1822,7 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 
   printfstdout("GLib\n"
 	       " compile: %d.%d.%d\n"
-	       " runtime: %d.%d.%d\n"
+	       "  linked: %d.%d.%d\n"
 	       "\n",
 	       GLIB_MAJOR_VERSION,
 	       GLIB_MINOR_VERSION,
@@ -1823,18 +1831,38 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       glib_minor_version,
 	       glib_micro_version);
 
-    printfstdout("Cairo\n"
-		 " compile: %s\n"
-		 " runtime: %s\n"
-		 "\n",
-		 CAIRO_VERSION_STRING,
-		 cairo_version_string());
+  printfstdout("Cairo\n"
+	       " compile: %s\n"
+	       "  linked: %s\n"
+	       "\n",
+	       CAIRO_VERSION_STRING,
+	       cairo_version_string());
 
-    printfstdout("Pango\n"
-		 " compile: %s\n"
-		 " runtime: %s\n",
-		 PANGO_VERSION_STRING,
-		 pango_version_string());
+  printfstdout("Pango\n"
+	       " compile: %s\n"
+	       "  linked: %s\n",
+	       PANGO_VERSION_STRING,
+	       pango_version_string());
+
+#ifdef HAVE_LIBREADLINE
+  printfstdout("\n");
+  printfstdout("readline\n"
+	       " compile: %d.%d\n"
+	       "  linked: %s\n",
+	       RL_VERSION_MAJOR,
+	       RL_VERSION_MINOR,
+	       rl_library_version);
+#endif
+
+#ifdef HAVE_LIBGSL
+  printfstdout("\n");
+  printfstdout("GSL\n"
+	       " compile: %d.%d\n"
+	       "  linked: %s\n",
+	       GSL_MAJOR_VERSION,
+	       GSL_MINOR_VERSION,
+	       gsl_version);
+#endif
 
   return 0;
 }

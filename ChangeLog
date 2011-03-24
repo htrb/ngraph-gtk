@@ -1,3 +1,10 @@
+2011-03-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_show_lib_version): show version of the
+	readline library and GSL.
+
+	* src/gtk/x11print.c (CmPrintDataFile): update progress dialog.
+
 2011-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (CmOutputViewer): execute "present" field of
