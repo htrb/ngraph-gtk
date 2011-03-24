@@ -5,18 +5,18 @@ How to make Ngraph-gtk on Windows with MinGW
 
 http://sourceforge.net/projects/mingw/files/
 
-Download mingw-get-inst-20110211.exe
-Execute mingw-get-inst-20110211.exe
+Download mingw-get-inst-20110316.exe
+Execute mingw-get-inst-20110316.exe
 Check "MSYS Basic System" and "MinGW Developer Toolkit"
 
 
 2. Get GTK+
 
-http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.20/
+http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.22/
 
-gtk+_2.20.1-1_win32.zip
-gtk+-dev_2.20.1-1_win32.zip
-gtk+-bundle_2.20.1-20100817_win32.zip
+gtk+_2.22.1-1_win32.zip
+gtk+-dev_2.22.1-1_win32.zip
+gtk+-bundle_2.22.1-20101227_win32.zip
 
 
 3. Install GTK+
