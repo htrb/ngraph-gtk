@@ -1952,7 +1952,7 @@ create_addin_menu(void)
 }
 
 void
-set_focus_sensitivity(struct Viewer *d)
+set_focus_sensitivity(const struct Viewer *d)
 {
   int num, type;
   GtkClipboard *clip;
@@ -3303,7 +3303,7 @@ application(char *file)
 void
 UpdateAll(void)
 {
-  ViewerWinUpdate(TRUE); 
+  ViewerWinUpdate(); 
   UpdateAll2();
 }
 

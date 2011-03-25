@@ -75,7 +75,7 @@ enum ViewerPopupIdn {
 
 void ViewerWinSetup(void);
 void ViewerWinClose(void);
-void ViewerWinUpdate(int clear);
+void ViewerWinUpdate(void);
 void OpenGC(void);
 void CloseGC(void);
 void SetScroller(void);

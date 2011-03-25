@@ -1,3 +1,24 @@
+2011-03-25  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerWinSetup): initialize "d->KeyMask".
+	(Evaluate, Trimming, Match, DelList, GetLargeFrame)
+	(coord_conv_x, coord_conv_y, GetFocusFrame, ShowFocusFrame)
+	(show_focus_line_arc, draw_frame_rect, draw_focus_line)
+	(ShowFocusLine, ShowPoints, ShowFrameRect, ShowCrossGauge): add
+	parameter "struct Viewer *" or "const struct Viewer *".
+	(mouse_down_move_data): remove unused parameter "TPoint *dpoint".
+	(ViewerWinUpdate): remove unused parameter "int clear".
+	(ShowFocusLine, show_focus_line_arc): remove unused parameter "int
+	clear" and "unsigned int state".
+	(show_focus_line_arc): remove unused variable "clear".
+	(ViewerEvMouseMove, ViewerEvButtonDown, ViewerEvButtonUp): save
+	"d->KeyMask".
+
+	* src/gtk/x11menu.h (struct Viewer): add member "KeyMask".
+
+	* src/gtk/x11menu.c (set_focus_sensitivity): change type of the
+	parameter to "const struct Viewer *".
+
 2011-03-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (mx_show_lib_version): show version of the
