@@ -172,8 +172,7 @@ range_increment(GtkWidget *w, double inc)
   double val;
 
   val = gtk_range_get_value(GTK_RANGE(w));
-  val += inc;
-  gtk_range_set_value(GTK_RANGE(w), val);
+  gtk_range_set_value(GTK_RANGE(w), val + inc);
 
   return val;
 }
@@ -4802,7 +4801,7 @@ ViewerWinUpdate(void)
 static void
 SetHRuler(const struct Viewer *d)
 {
-  double x1, x2, zoom;
+  gdouble x, x1, x2, zoom;
   int width;
 
   gdk_drawable_get_size(d->gdk_win, &width, NULL);
@@ -4810,13 +4809,14 @@ SetHRuler(const struct Viewer *d)
   x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
 
-  gtk_ruler_set_range(GTK_RULER(d->HRuler), x1, x2, 0, x2);
+  gtk_ruler_get_range(GTK_RULER(d->HRuler), NULL, NULL, &x, NULL);
+  gtk_ruler_set_range(GTK_RULER(d->HRuler), x1, x2, x, x2);
 }
 
 static void
 SetVRuler(const struct Viewer *d)
 {
-  double y1, y2, zoom;
+  gdouble y, y1, y2, zoom;
   int height;
 
   gdk_drawable_get_size(d->gdk_win, NULL, &height);
@@ -4824,7 +4824,8 @@ SetVRuler(const struct Viewer *d)
   y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
   y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
 
-  gtk_ruler_set_range(GTK_RULER(d->VRuler), y1, y2, 0, y2);
+  gtk_ruler_get_range(GTK_RULER(d->VRuler), NULL, NULL, &y, NULL);
+  gtk_ruler_set_range(GTK_RULER(d->VRuler), y1, y2, y, y2);
 }
 
 #define CHECK_FOCUSED_OBJ_ERROR -1
