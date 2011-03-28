@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-03-25 09:55+0900\n"
+"POT-Creation-Date: 2011-03-28 16:05+0900\n"
 "PO-Revision-Date: 2011-02-22 18:48+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -825,7 +825,7 @@ msgstr "読込(_L)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1647 src/gtk/x11file.c:1871 src/gtk/x11view.c:920
+#: src/gtk/x11file.c:1647 src/gtk/x11file.c:1871 src/gtk/x11view.c:919
 msgid "Line No."
 msgstr "行"
 
@@ -959,11 +959,11 @@ msgstr "ファイルから設定読込(_L)"
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:3121 src/gtk/x11view.c:930
+#: src/gtk/x11file.c:3121 src/gtk/x11view.c:929
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:3125 src/gtk/x11view.c:931
+#: src/gtk/x11file.c:3125 src/gtk/x11view.c:930
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -2230,7 +2230,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:755 src/gtk/x11print.c:1021 src/gtk/x11view.c:5253
+#: src/gtk/x11print.c:755 src/gtk/x11print.c:1021 src/gtk/x11view.c:5254
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2258,33 +2258,33 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11view.c:1192 src/gtk/x11view.c:1194
+#: src/gtk/x11view.c:1191 src/gtk/x11view.c:1193
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1299
+#: src/gtk/x11view.c:1298
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1308
+#: src/gtk/x11view.c:1307
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2692
+#: src/gtk/x11view.c:2691
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3766
+#: src/gtk/x11view.c:3765
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5247
+#: src/gtk/x11view.c:5248
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5254
+#: src/gtk/x11view.c:5255
 msgid "Drawing"
 msgstr "描画中"
 
