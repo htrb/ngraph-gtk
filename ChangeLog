@@ -1,3 +1,44 @@
+2011-03-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/Makefile.am (libngraph_la_SOURCES): add "gtk_ruler.c"
+	and "gtk_ruler.h".
+
+	* src/gtk/gtk_ruler.h: added.
+
+	* src/gtk/gtk_ruler.c: added.
+
+	* src/gtk/ox11menu.h (menulocal): remove unused members "scrollx",
+	"scrolly", "pixel_dot", "offsetx" and "offsety".
+
+	* src/gtk/ox11menu.c (mx_redraw): call "draw_paper_frame()" after
+	call "mxflush()".
+	(mx_clear): use "Menulocal.local->cairo".
+	(mx_clear): use "cairo_paint()" when clear whole drawing area.
+
+	* src/gtk/x11view.c (ViewerEvSize): remove unused codes.
+	(ViewerEvPaint): use "nround()" to get coordinate.
+	(SetHRuler, SetVRuler): use "nruler_set_range()" instead of
+	"gtk_ruler_set_range()".
+	(create_pix): size pf the pixmap is now "(w + 1) x (h + 1)".
+	(create_pix): use "cairo_paint()" instead of "cairo_rectangle()"
+	and "cairo_fill()".
+	(create_pix): don't call "draw_paper_frame()".
+	(ChangeDPI): size of drawing area is now "(w - 1) x (h - 1)".
+	(draw_paper_frame): use "gdk_drawable_get_size()" to get size of
+	the pixmap.
+	(draw_paper_frame): call "cairo_reset_clip()" before drawing.
+
+	* src/gtk/x11menu.h (Viewer): change type of members "VRuler" and
+	"HRuler". remove unused members "width" and "height".
+
+	* src/gtk/x11menu.c (setupwindow): use "hruler_new()" and
+	"vruler_new()".
+	(SetPoint): use "nruler_set_position()" instead of
+	"g_object_set()".
+
+	* src/gtk/ogra2gdk.c (gra2gdk_create_pixmap): use "cairo_paint()"
+	instead of "cairo_rectangle()" and "cairo_fill()".
+
 2011-03-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (SetHRuler, SetVRuler): keep position of the

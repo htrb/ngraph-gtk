@@ -1396,9 +1396,9 @@ mx_redraw(struct objlist *obj, N_VALUE *inst)
     n = 0;
   }
 
-  draw_paper_frame();
   GRAredraw(obj, inst, TRUE, n);
   mxflush(obj, inst, NULL, 0, NULL);
+  draw_paper_frame();
 
   if (NgraphApp.Viewer.gdk_win) {
     gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, TRUE);
@@ -1481,26 +1481,23 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 void
 mx_clear(GdkRegion *region)
 {
-  gint w, h;
   cairo_t *cr;
 
-  if (Menulocal.pix == NULL) {
+  if (Menulocal.pix == NULL || Menulocal.local->cairo == NULL) {
     return;
   }
 
-  cr = gdk_cairo_create(Menulocal.pix);
-
-  if (region) {
-    gdk_cairo_region(cr, region);
-  } else {
-    gdk_drawable_get_size(Menulocal.pix, &w, &h);
-    cairo_rectangle(cr, 0, 0, w, h);
-  }
+  cr = Menulocal.local->cairo;
 
   cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-  cairo_fill(cr);
+  if (region) {
+    gdk_cairo_region(cr, region);
+    cairo_fill(cr);
+  } else {
+    cairo_paint(cr);
+  }
+
   draw_paper_frame();
-  cairo_destroy(cr);
 }
 
 static int

@@ -31,6 +31,7 @@
 #include "gtk_entry_completion.h"
 #include "gtk_subwin.h"
 #include "gtk_widget.h"
+#include "gtk_ruler.h"
 
 #include "main.h"
 #include "x11bitmp.h"
@@ -2456,23 +2457,20 @@ setupwindow(void)
   NgraphApp.Viewer.popup = gtk_ui_manager_get_widget(NgraphUi, "/ViewerPopup");
   NgraphApp.Viewer.HScroll = gtk_hscrollbar_new(NULL);
   NgraphApp.Viewer.VScroll = gtk_vscrollbar_new(NULL);
-  NgraphApp.Viewer.HRuler = gtk_hruler_new();
-  NgraphApp.Viewer.VRuler = gtk_vruler_new();
+  NgraphApp.Viewer.HRuler = hruler_new();
+  NgraphApp.Viewer.VRuler = vruler_new();
   NgraphApp.Viewer.Win = gtk_drawing_area_new();
-
-  gtk_ruler_set_metric(GTK_RULER(NgraphApp.Viewer.HRuler), GTK_CENTIMETERS);
-  gtk_ruler_set_metric(GTK_RULER(NgraphApp.Viewer.VRuler), GTK_CENTIMETERS);
 
   table = gtk_table_new(3, 3, FALSE);
 
   gtk_table_attach(GTK_TABLE(table),
-		   NgraphApp.Viewer.HRuler,
+		   NgraphApp.Viewer.HRuler->widget,
 		   1, 2, 0, 1,
 		   GTK_FILL, GTK_FILL,
 		   0, 0);
 
   gtk_table_attach(GTK_TABLE(table),
-		   NgraphApp.Viewer.VRuler,
+		   NgraphApp.Viewer.VRuler->widget,
 		   0, 1, 1, 2,
 		   GTK_FILL, GTK_FILL,
 		   0, 0);
@@ -2505,8 +2503,6 @@ setupwindow(void)
   gtk_box_pack_start(GTK_BOX(vbox), NgraphApp.Message, FALSE, FALSE, 0);
 
   NgraphApp.Message1 = gtk_statusbar_get_context_id(GTK_STATUSBAR(NgraphApp.Message), "Message1");
-
-  //  createcommand2(GTK_TOOLBAR(command2));
 
   set_axis_undo_button_sensitivity(FALSE);
 
@@ -2815,8 +2811,8 @@ toggle_view_cb(GtkToggleAction *action, gpointer data)
    break;
   case MenuIdToggleRuler:
     Menulocal.ruler = state;
-    w1 = NgraphApp.Viewer.HRuler;
-    w2 = NgraphApp.Viewer.VRuler;
+    w1 = NgraphApp.Viewer.HRuler->widget;
+    w2 = NgraphApp.Viewer.VRuler->widget;
    break;
   case MenuIdToggleScrollbar:
     Menulocal.scrollbar = state;
@@ -3395,8 +3391,8 @@ SetPoint(struct Viewer *d, int x, int y)
     }
   }
 
-  g_object_set(NgraphApp.Viewer.HRuler, "position", N2GTK_RULER_METRIC(x), NULL);
-  g_object_set(NgraphApp.Viewer.VRuler, "position", N2GTK_RULER_METRIC(y), NULL);
+  nruler_set_position(NgraphApp.Viewer.HRuler, N2GTK_RULER_METRIC(x));
+  nruler_set_position(NgraphApp.Viewer.VRuler, N2GTK_RULER_METRIC(y));
 
   CoordWinSetCoord(x, y);
 }

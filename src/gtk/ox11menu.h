@@ -93,11 +93,9 @@ struct character_map_list {
 struct menulocal
 {
   GdkDrawable *pix;
-  int scrollx, scrolly;
   int redrawf, redrawf_num;
   int windpi, data_head_lines;
   int grid;
-  double pixel_dot, offsetx, offsety;
   GdkRegion *region;
   int lock;
   struct gra2cairo_local *local;

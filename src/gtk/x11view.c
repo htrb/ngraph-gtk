@@ -42,6 +42,7 @@
 
 #include "gtk_liststore.h"
 #include "gtk_widget.h"
+#include "gtk_ruler.h"
 #include "strconv.h"
 
 #include "x11gui.h"
@@ -148,14 +149,12 @@ static int
 mxd2px(int x)
 {
   return nround(x * Menulocal.local->pixel_dot_x + Menulocal.local->offsetx);
-  //  return nround(x * Menulocal.pixel_dot + Menulocal.offsetx - Menulocal.scrollx);
 }
 
 static int
 mxd2py(int y)
 {
   return nround(y * Menulocal.local->pixel_dot_y + Menulocal.local->offsety);
-  //  return nround(y * Menulocal.pixel_dot + Menulocal.offsety - Menulocal.scrolly);
 }
 #endif
 
@@ -163,7 +162,6 @@ static int
 mxp2d(int r)
 {
   return ceil(r / Menulocal.local->pixel_dot_x);
-  //  return nround(r / Menulocal.pixel_dot);
 }
 
 static double 
@@ -1078,8 +1076,6 @@ ViewerWinSetup(void)
   SetScroller();
   gdk_window_get_position(d->gdk_win, &x, &y);
   gdk_drawable_get_size(d->gdk_win, &width, &height);
-  d->width = width;
-  d->height = height;
   d->cx = width / 2;
   d->cy = height / 2;
 
@@ -4651,21 +4647,13 @@ static void
 ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
 {
   struct Viewer *d;
-  int x, y;
-  int width, height;
 
   d = (struct Viewer *) client_data;
 
-  x = allocation->x;
-  y = allocation->y;
-  width =allocation->width;
-  height = allocation->height;
+  d->cx = allocation->width / 2;
+  d->cy = allocation->height / 2;
 
-  d->cx = width / 2;
-  d->cy = height / 2;
   ChangeDPI(TRUE);
-  d->width = width;
-  d->height = height;
 }
 
 static gboolean
@@ -4685,14 +4673,11 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     return TRUE;
   }
 
-  Menulocal.scrollx = d->hscroll - d->cx;
-  Menulocal.scrolly = d->vscroll - d->cy;
-
   if (Menulocal.pix) {
     gdk_cairo_region(cr, e->region);
     gdk_cairo_set_source_pixmap(cr, Menulocal.pix,
-				- d->hscroll + d->cx,
-				- d->vscroll + d->cy);
+				nround(- d->hscroll + d->cx),
+				nround(- d->vscroll + d->cy));
     cairo_fill(cr);
   }
 
@@ -4707,9 +4692,11 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     if (d->ShowLine) {
       ShowFocusLine(cr, d);
     }
+
     if (d->ShowRect) {
       ShowFrameRect(cr, d);
     }
+
     if (Menulocal.show_cross) {
       ShowCrossGauge(cr, d);
     }
@@ -4801,7 +4788,7 @@ ViewerWinUpdate(void)
 static void
 SetHRuler(const struct Viewer *d)
 {
-  gdouble x, x1, x2, zoom;
+  gdouble x1, x2, zoom;
   int width;
 
   gdk_drawable_get_size(d->gdk_win, &width, NULL);
@@ -4809,14 +4796,13 @@ SetHRuler(const struct Viewer *d)
   x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
 
-  gtk_ruler_get_range(GTK_RULER(d->HRuler), NULL, NULL, &x, NULL);
-  gtk_ruler_set_range(GTK_RULER(d->HRuler), x1, x2, x, x2);
+  nruler_set_range(d->HRuler, x1, x2);
 }
 
 static void
 SetVRuler(const struct Viewer *d)
 {
-  gdouble y, y1, y2, zoom;
+  gdouble  y1, y2, zoom;
   int height;
 
   gdk_drawable_get_size(d->gdk_win, NULL, &height);
@@ -4824,8 +4810,7 @@ SetVRuler(const struct Viewer *d)
   y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
   y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
 
-  gtk_ruler_get_range(GTK_RULER(d->VRuler), NULL, NULL, &y, NULL);
-  gtk_ruler_set_range(GTK_RULER(d->VRuler), y1, y2, y, y2);
+  nruler_set_range(d->VRuler, y1, y2);
 }
 
 #define CHECK_FOCUSED_OBJ_ERROR -1
@@ -4988,7 +4973,6 @@ UnFocus(void)
 static void
 create_pix(int w, int h)
 {
-  GdkRectangle rect;
   GdkWindow *window;
   cairo_t *cr;
 
@@ -5015,21 +4999,14 @@ create_pix(int w, int h)
     g_object_unref(Menulocal.pix);
   }
 
-  Menulocal.pix = gdk_pixmap_new(window, w, h, -1);
-  rect.x = 0;
-  rect.y = 0;
-  rect.width = w;
-  rect.height = h;
+  Menulocal.pix = gdk_pixmap_new(window, w + 1, h + 1, -1);
 
   cr = gdk_cairo_create(Menulocal.pix);
   Menulocal.local->cairo = cr;
 
   cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
   cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-  cairo_rectangle(cr, 0, 0, w, h);
-  cairo_fill(cr);
-
-  draw_paper_frame();
+  cairo_paint(cr);
 
   gra2cairo_set_antialias(Menulocal.local, Menulocal.antialias);
 #if 0
@@ -5062,11 +5039,6 @@ OpenGC(void)
   NgraphApp.Viewer.gdk_win = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
   create_pix(width, height);
 
-  Menulocal.offsetx = 0;
-  Menulocal.offsety = 0;
-
-  Menulocal.scrollx = 0;
-  Menulocal.scrolly = 0;
   Menulocal.region = NULL;
 }
 
@@ -5143,6 +5115,8 @@ ChangeDPI(int redraw)
 
   if (Menulocal.pix) {
     gdk_drawable_get_size(Menulocal.pix, &w, &h);
+    w--;
+    h--;
   }else { 
     h = w = 0;
   }
@@ -5164,9 +5138,6 @@ ChangeDPI(int redraw)
   gtk_range_set_value(GTK_RANGE(d->VScroll), YPos);
   d->vupper = height;
   d->vscroll = YPos;
-
-  Menulocal.scrollx = -d->cx + XPos;
-  Menulocal.scrolly = -d->cy + YPos;
 
   if ((obj = chkobject("text")) != NULL) {
     num = chkobjlastinst(obj);
@@ -5200,8 +5171,6 @@ CloseGC(void)
 void
 ReopenGC(void)
 {
-  Menulocal.offsetx = 0;
-  Menulocal.offsety = 0;
   Menulocal.local->pixel_dot_x =
   Menulocal.local->pixel_dot_y =
     Menulocal.windpi / 25.4 / 100;
@@ -5221,16 +5190,16 @@ draw_paper_frame(void)
   if (Menulocal.local->cairo == NULL || Menulocal.pix == NULL)
     return;
 
+  gdk_drawable_get_size(Menulocal.pix, &w, &h);
   cr = Menulocal.local->cairo;
-  w = mxd2p(Menulocal.PaperWidth) - 1;
-  h = mxd2p(Menulocal.PaperHeight) - 1;
 
   cairo_save(cr);
+  cairo_reset_clip(cr);
   cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_set_line_width(cr, 1);
   cairo_set_dash(cr, NULL, 0, 0);
-  cairo_rectangle(cr, CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET, w, h);
+  cairo_rectangle(cr, CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET, w - 1, h - 1);
   cairo_stroke(cr);
   cairo_restore(cr);
 }

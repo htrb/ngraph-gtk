@@ -24,6 +24,7 @@
 #ifndef GTK_MENU_HEADER
 #define GTK_MENU_HEADER
 
+#include "gtk_ruler.h"
 #include "x11dialg.h"
 #include "ogra2cairo.h"
 
@@ -163,7 +164,8 @@ struct Viewer
 {
   GtkWidget *Win;
   GdkWindow *gdk_win;
-  GtkWidget *menu, *VScroll, *HScroll, *VRuler, *HRuler, *popup;
+  GtkWidget *menu, *VScroll, *HScroll, *popup;
+  Nruler *VRuler, *HRuler;
   int ShowFrame, ShowLine, ShowRect;
   int Capture, MoveData, KeyMask;
   enum MouseMode MouseMode;
@@ -174,7 +176,7 @@ struct Viewer
   int RefX1, RefY1, RefX2, RefY2, ChangePoint;
   int LineX, LineY, CrossX, CrossY, Angle;
   int allclear;
-  int cx, cy, width, height;
+  int cx, cy;
   int ignoreredraw;
   double vscroll, hscroll, vupper, hupper, Zoom;
 };

@@ -95,8 +95,7 @@ gra2gdk_create_pixmap(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local
   }
 
   cairo_set_source_rgb(cairo, r, g, b);
-  cairo_rectangle(cairo, 0, 0, w, h);
-  cairo_fill(cairo);
+  cairo_paint(cairo);
 
   if (local->cairo) {
     cairo_destroy(local->cairo);

@@ -15,7 +15,8 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11graph.h x11gui.c x11gui.h x11info.c x11info.h x11lgnd.c	\
 	x11lgnd.h x11lgndx.c x11menu.c x11menu.h x11merge.c x11merge.h	\
 	x11opt.c x11opt.h x11opt_proto.h x11print.c x11print.h		\
-	x11view.c x11view.h gtk_widget.c gtk_widget.h dir_defs.h
+	x11view.c x11view.h gtk_widget.c gtk_widget.h dir_defs.h	\
+	gtk_ruler.c gtk_ruler.h
 
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)

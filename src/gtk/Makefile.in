@@ -69,7 +69,7 @@ am_libngraph_la_OBJECTS = libngraph_la-gtk_combo.lo \
 	libngraph_la-x11lgndx.lo libngraph_la-x11menu.lo \
 	libngraph_la-x11merge.lo libngraph_la-x11opt.lo \
 	libngraph_la-x11print.lo libngraph_la-x11view.lo \
-	libngraph_la-gtk_widget.lo
+	libngraph_la-gtk_widget.lo libngraph_la-gtk_ruler.lo
 libngraph_la_OBJECTS = $(am_libngraph_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -269,7 +269,8 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 	x11graph.h x11gui.c x11gui.h x11info.c x11info.h x11lgnd.c	\
 	x11lgnd.h x11lgndx.c x11menu.c x11menu.h x11merge.c x11merge.h	\
 	x11opt.c x11opt.h x11opt_proto.h x11print.c x11print.h		\
-	x11view.c x11view.h gtk_widget.c gtk_widget.h dir_defs.h
+	x11view.c x11view.h gtk_widget.c gtk_widget.h dir_defs.h	\
+	gtk_ruler.c gtk_ruler.h
 
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
@@ -335,6 +336,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_combo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_entry_completion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_liststore.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_ruler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_subwin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-gtk_widget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libngraph_la-main.Plo@am__quote@
@@ -617,6 +619,14 @@ libngraph_la-gtk_widget.lo: gtk_widget.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk_widget.c' object='libngraph_la-gtk_widget.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_widget.lo `test -f 'gtk_widget.c' || echo '$(srcdir)/'`gtk_widget.c
+
+libngraph_la-gtk_ruler.lo: gtk_ruler.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -MT libngraph_la-gtk_ruler.lo -MD -MP -MF $(DEPDIR)/libngraph_la-gtk_ruler.Tpo -c -o libngraph_la-gtk_ruler.lo `test -f 'gtk_ruler.c' || echo '$(srcdir)/'`gtk_ruler.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libngraph_la-gtk_ruler.Tpo $(DEPDIR)/libngraph_la-gtk_ruler.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk_ruler.c' object='libngraph_la-gtk_ruler.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libngraph_la_CFLAGS) $(CFLAGS) -c -o libngraph_la-gtk_ruler.lo `test -f 'gtk_ruler.c' || echo '$(srcdir)/'`gtk_ruler.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
