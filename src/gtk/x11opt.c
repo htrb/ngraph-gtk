@@ -1788,12 +1788,15 @@ CmOptionSaveNgp(void)
 static void
 CmOptionViewer(void)
 {
+  int r;
+
   if (Menulock || Globallock)
     return;
+
   ViewerDialog(&DlgViewer, Menulocal.obj, 0);
-  if (DialogExecute(TopLevel, &DlgViewer) == IDOK) {
-    if (DlgViewer.Clear)
-      ChangeDPI(TRUE);
+  r = DialogExecute(TopLevel, &DlgViewer);
+  if (r == IDOK && DlgViewer.Clear) {
+    ChangeDPI();
   }
 }
 

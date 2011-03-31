@@ -1082,7 +1082,7 @@ ViewerWinSetup(void)
   d->hscroll = gtk_range_get_value(GTK_RANGE(d->HScroll));
   d->vscroll = gtk_range_get_value(GTK_RANGE(d->VScroll));
 
-  ChangeDPI(TRUE);
+  ChangeDPI();
 
   g_signal_connect(d->Win, "expose-event", G_CALLBACK(ViewerEvPaint), d);
   g_signal_connect(d->Win, "size-allocate", G_CALLBACK(ViewerEvSize), d);
@@ -2690,49 +2690,60 @@ mouse_down_move_data(struct Viewer *d)
   move_data_cancel(d, FALSE);
 }
 
+#define VIEWER_DPI_MAX 620
+#define VIEWER_DPI_MIN  20
+
 static void
 mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
 {
+  static double saved_dpi_d = -1;
+  static double saved_dpi_i = -1;
+  double dpi;
   int vdpi;
 
-  if (ZoomLock)
+  if (ZoomLock) {
     return;
+  }
 
   ZoomLock = TRUE;
   if (state & GDK_SHIFT_MASK) {
     d->hscroll -= (d->cx - point->x);
     d->vscroll -= (d->cy - point->y);
 
-    ChangeDPI(TRUE);
-  } else if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &vdpi) != -1) {
-    if (zoom_out) {
-      if ((int) (vdpi / sqrt(2)) >= 20) {
-	vdpi = nround(vdpi / sqrt(2));
-
-	if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
-	  d->hscroll -= (d->cx - point->x);
-	  d->vscroll -= (d->cy - point->y);
-
-	  //	    ChangeDPI(FALSE);
-	  ChangeDPI(TRUE);
-	}
-      } else {
-	message_beep(TopLevel);
-      }
-    } else {
-      if ((int) (vdpi * sqrt(2)) <= 620) {
-	vdpi = nround(vdpi * sqrt(2));
-	if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
-	  d->hscroll -= (d->cx - point->x);
-	  d->vscroll -= (d->cy - point->y);
-	  //	    ChangeDPI(FALSE);
-	  ChangeDPI(TRUE);
-	}
-      } else {
-	message_beep(TopLevel);
-      }
-    }
+    ChangeDPI();
+    goto End;
   }
+
+  if (getobj(Menulocal.obj, "dpi", 0, 0, NULL, &vdpi) == -1) {
+    goto End;
+  }
+
+  if (saved_dpi_i < 0 || saved_dpi_i != vdpi) {
+    saved_dpi_i = vdpi;
+    saved_dpi_d = vdpi;
+  }
+
+  dpi = (zoom_out) ? saved_dpi_d / sqrt(2) : saved_dpi_d * sqrt(2);
+  if (dpi < VIEWER_DPI_MIN) {
+    saved_dpi_i = VIEWER_DPI_MIN;
+    message_beep(TopLevel);
+  } else if (dpi > VIEWER_DPI_MAX) {
+    saved_dpi_i = VIEWER_DPI_MAX;
+    message_beep(TopLevel);
+  } else {
+    saved_dpi_d = dpi;
+    saved_dpi_i = nround(dpi);
+  }
+
+  vdpi = saved_dpi_i;
+
+  if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
+    d->hscroll -= (d->cx - point->x);
+    d->vscroll -= (d->cy - point->y);
+    ChangeDPI();
+  }
+
+ End:
   ZoomLock = FALSE;
 }
 
@@ -3286,6 +3297,7 @@ create_legend1(struct Viewer *d)
 
   arraydel2(d->points);
   d->allclear = FALSE;
+  UpdateAll();
 }
 
 static void
@@ -3339,6 +3351,7 @@ create_path(struct Viewer *d)
   arraydel2(d->points);
 
   d->allclear = FALSE;
+  UpdateAll();
 }
 
 static void
@@ -3413,6 +3426,7 @@ create_legend3(struct Viewer *d)
 
   arraydel2(d->points);
   d->allclear = FALSE;
+  UpdateAll();
 }
 
 static void
@@ -3469,6 +3483,7 @@ create_legendx(struct Viewer *d)
   }
   arraydel2(d->points);
   d->allclear = FALSE;
+  UpdateAll();
 }
 
 static void
@@ -3537,6 +3552,7 @@ create_single_axis(struct Viewer *d)
   }
   arraydel2(d->points);
   d->allclear = TRUE;
+  UpdateAll();
 }
 
 static void
@@ -3695,6 +3711,7 @@ create_axis(struct Viewer *d)
   }
   arraydel2(d->points);
   d->allclear = TRUE;
+  UpdateAll();
 }
 
 static gboolean
@@ -3743,8 +3760,6 @@ ViewerEvLButtonDblClk(unsigned int state, TPoint *point, struct Viewer *d)
   if ((d->Mode & POINT_TYPE_DRAW_ALL) && ! KeepMouseMode) {
     gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
   }
-
-  UpdateAll();
 
   return TRUE;
 }
@@ -3830,7 +3845,7 @@ ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   if (d->Mode == ZoomB) {
     d->hscroll -= (d->cx - point->x);
     d->vscroll -= (d->cy - point->y);
-    ChangeDPI(TRUE);
+    ChangeDPI();
   } else {
     ViewerEvLButtonDown(state, point, d);
     ViewerEvLButtonUp(state, point, d);
@@ -4653,7 +4668,7 @@ ViewerEvSize(GtkWidget *w, GtkAllocation *allocation, gpointer client_data)
   d->cx = allocation->width / 2;
   d->cy = allocation->height / 2;
 
-  ChangeDPI(TRUE);
+  ChangeDPI();
 }
 
 static gboolean
@@ -4753,7 +4768,7 @@ ViewerWinUpdate(void)
     OpenGRA();
     OpenGC();
     SetScroller();
-    ChangeDPI(TRUE);
+    ChangeDPI();
   }
   CheckPage();
   num = arraynum(d->focusobj);
@@ -5070,7 +5085,7 @@ SetScroller(void)
 }
 
 void
-ChangeDPI(int redraw)
+ChangeDPI(void)
 {
   int width, height, i, num, XPos, YPos, XRange = 0, YRange = 0;
   gint w, h;
@@ -5088,27 +5103,22 @@ ChangeDPI(int redraw)
   XPos = d->hscroll;
   YPos = d->vscroll;
 
-  if (XPos < 0)
+  if (XPos < 0) {
     XPos = 0;
-
-  if (YPos < 0)
-    YPos = 0;
-
-  if (XPos > XRange)
+  }
+  if (XPos > XRange) {
     XPos = XRange;
+  }
 
-  if (YPos > YRange)
+  if (YPos < 0) {
+    YPos = 0;
+  }
+  if (YPos > YRange) {
     YPos = YRange;
+  }
 
-  if (XRange == 0)
-    ratex = 0;
-  else
-    ratex = XPos / (double) XRange;
-
-  if (YRange == 0)
-    ratey = 0;
-  else
-    ratey = YPos / (double) YRange;
+  ratex = (XRange == 0) ? 0 : XPos / (double) XRange;
+  ratey = (YRange == 0) ? 0 : YPos / (double) YRange;
 
   width = mxd2p(Menulocal.PaperWidth);
   height = mxd2p(Menulocal.PaperHeight);
@@ -5117,7 +5127,7 @@ ChangeDPI(int redraw)
     gdk_drawable_get_size(Menulocal.pix, &w, &h);
     w--;
     h--;
-  }else { 
+  } else { 
     h = w = 0;
   }
 
@@ -5149,9 +5159,7 @@ ChangeDPI(int redraw)
     }
   }
 
-  if (redraw) {
-    gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
-  }
+  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
 
   SetHRuler(d);
   SetVRuler(d);

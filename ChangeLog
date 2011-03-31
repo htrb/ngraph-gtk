@@ -1,3 +1,13 @@
+2011-03-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (mouse_down_zoom): improve calculation of dpi.
+	(ChangeDPI): remove parameter.
+	(create_legend1, create_path, create_legend3, create_legendx)
+	(create_single_axis, create_axis): call "UpdateAll()".
+	(ViewerEvLButtonDblClk): don't call "UpdateAll()".
+
+	* src/gtk/x11opt.c (CmOptionViewer): simplify condition.
+
 2011-03-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/Makefile.am (libngraph_la_SOURCES): add "gtk_ruler.c"

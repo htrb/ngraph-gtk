@@ -81,7 +81,7 @@ void CloseGC(void);
 void SetScroller(void);
 void Focus(struct objlist *fobj, int id, int add);
 void UnFocus(void);
-void ChangeDPI(int redraw);
+void ChangeDPI(void);
 void Draw(int SelectFile);
 void CmViewerDraw(void);
 void CmViewerClear(void);

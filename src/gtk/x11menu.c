@@ -3324,7 +3324,7 @@ ChangePage(void)
   OpenGRA();
   OpenGC();
   SetScroller();
-  ChangeDPI(TRUE);
+  ChangeDPI();
 }
 
 static void
