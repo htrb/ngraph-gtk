@@ -411,16 +411,11 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 static void
 clear_pixmap(struct gtklocal *local)
 {
-  gint w, h;
   cairo_t *cr;
 
-  gdk_drawable_get_size(local->win, &w, &h);
-
   cr = gdk_cairo_create(local->win);
-  cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
   cairo_set_source_rgb(cr, local->bg_r, local->bg_g, local->bg_b);
-  cairo_rectangle(cr, 0, 0, w, h);
-  cairo_fill(cr);
+  cairo_paint(cr);
   cairo_destroy(cr);
 }
 

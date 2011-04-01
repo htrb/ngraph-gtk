@@ -1725,13 +1725,13 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d
 static int 
 coord_conv_x(int x, double zoom, const struct Viewer *d)
 {
-  return mxd2p(x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx;
+  return mxd2p(x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx + CAIRO_COORDINATE_OFFSET;
 }
 
 static int 
 coord_conv_y(int y, double zoom, const struct Viewer *d)
 {
-  return mxd2p(y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy;
+  return mxd2p(y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy + CAIRO_COORDINATE_OFFSET;
 }
 
 static void

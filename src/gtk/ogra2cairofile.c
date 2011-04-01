@@ -242,8 +242,7 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
   switch (format) {
   case TYPE_PNG:
     cairo_set_source_rgb(cairo, 1, 1, 1);
-    cairo_rectangle(cairo, 0, 0, w, h);
-    cairo_fill(cairo);
+    cairo_paint(cairo);
     cairo_new_path(cairo);
     break;
   }

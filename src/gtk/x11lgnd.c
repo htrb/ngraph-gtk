@@ -1007,10 +1007,7 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
   }
 
   cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
-  cairo_rectangle(cr,
-		  CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET,
-		  ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
-  cairo_fill(cr);
+  cairo_paint(cr);
 
   cairo_set_source_rgb(cr, 0, 0, 0);
 
@@ -1054,10 +1051,7 @@ LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
 
   cr = gdk_cairo_create(win);
   gdk_cairo_set_source_pixmap(cr, d->arrow_pixmap, 0, 0);
-  cairo_rectangle(cr,
-		  CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET,
-		  ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
-  cairo_fill(cr);
+  cairo_paint(cr);
   cairo_destroy(cr);
 }
 

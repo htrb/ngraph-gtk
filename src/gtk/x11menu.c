@@ -2464,13 +2464,13 @@ setupwindow(void)
   table = gtk_table_new(3, 3, FALSE);
 
   gtk_table_attach(GTK_TABLE(table),
-		   NgraphApp.Viewer.HRuler->widget,
+		   NgraphApp.Viewer.HRuler,
 		   1, 2, 0, 1,
 		   GTK_FILL, GTK_FILL,
 		   0, 0);
 
   gtk_table_attach(GTK_TABLE(table),
-		   NgraphApp.Viewer.VRuler->widget,
+		   NgraphApp.Viewer.VRuler,
 		   0, 1, 1, 2,
 		   GTK_FILL, GTK_FILL,
 		   0, 0);
@@ -2811,8 +2811,8 @@ toggle_view_cb(GtkToggleAction *action, gpointer data)
    break;
   case MenuIdToggleRuler:
     Menulocal.ruler = state;
-    w1 = NgraphApp.Viewer.HRuler->widget;
-    w2 = NgraphApp.Viewer.VRuler->widget;
+    w1 = NgraphApp.Viewer.HRuler;
+    w2 = NgraphApp.Viewer.VRuler;
    break;
   case MenuIdToggleScrollbar:
     Menulocal.scrollbar = state;

@@ -251,10 +251,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   }
 
   gdk_cairo_set_source_pixmap(cr, pix, 0, 0);
-  cairo_rectangle(cr,
-		  CAIRO_COORDINATE_OFFSET, CAIRO_COORDINATE_OFFSET,
-		  VIEW_SIZE, VIEW_SIZE);
-  cairo_fill(cr);
+  cairo_paint(cr);
 
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);

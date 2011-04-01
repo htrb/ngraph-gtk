@@ -31,11 +31,7 @@
 #define GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION(w) (w)->colorsel
 #endif
 
-#ifdef WINDOWS
 #define CAIRO_COORDINATE_OFFSET 1
-#else
-#define CAIRO_COORDINATE_OFFSET 0
-#endif
 
 #endif
 

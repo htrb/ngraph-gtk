@@ -1,3 +1,34 @@
+2011-04-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.h (Viewer): change type of members "VRuler" and
+	"HRuler".
+
+	* src/gtk/gtk_ruler.c (_Nruler): remove member "widget".
+	(ruler_new): call "g_object_set_data()" to save data.
+	(nruler_set_range, nruler_set_position): use "g_object_get_data()"
+	to get data.
+	(nruler_make_pixmap, nruler_draw_ticks): add parameter "widget".
+	(nruler_draw_ticks): remove redundant call of the function
+	"pango_layout_get_extents()".
+
+	* src/gtk/gtk_common.h (CAIRO_COORDINATE_OFFSET): always 1.
+
+	* src/gtk/x11view.c (coord_conv_x, coord_conv_y): add
+	CAIRO_COORDINATE_OFFSET.
+
+	* src/gtk/ogra2x11.c (clear_pixmap): use "cairo_paint()" instead
+	of "cairo_rectangle()" and "cairo_fill()".
+
+	* src/gtk/x11lgnd.c (draw_arrow_pixmap, LegendArrowDialogPaint):
+	use "cairo_paint()" instead of "cairo_rectangle()" and
+	"cairo_fill()".
+
+	* src/gtk/ogra2cairofile.c (create_cairo): use "cairo_paint()"
+	instead of "cairo_rectangle()" and "cairo_fill()".
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogPaint): use "cairo_paint()"
+	instead of "cairo_rectangle()" and "cairo_fill()".
+
 2011-03-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_down_zoom): improve calculation of dpi.

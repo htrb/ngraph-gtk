@@ -3,17 +3,9 @@
 
 #include <gtk/gtk.h>
 
-typedef struct _Nruler {
-  GtkWidget *widget;
-  int orientation;
-  GdkPixmap *backing_store;
-  double lower, upper, position;
-  double save_l, save_u;
-} Nruler;
-
-Nruler *hruler_new(void);
-Nruler *vruler_new(void);
-void nruler_set_range(Nruler *ruler, double lower, double upper);
-void nruler_set_position(Nruler *ruler, double position);
+GtkWidget *hruler_new(void);
+GtkWidget *vruler_new(void);
+void nruler_set_range(GtkWidget *ruler, double lower, double upper);
+void nruler_set_position(GtkWidget *ruler, double position);
 
 #endif /* GTK_RULER_HEADER */

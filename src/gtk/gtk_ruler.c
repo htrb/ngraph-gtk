@@ -38,15 +38,12 @@
 #define MAXIMUM_SUBDIVIDE     5
 #define MAXIMUM_SCALES        10
 
-static void nruler_make_pixmap(Nruler *ruler);
-static void nruler_draw_ticks(Nruler *ruler);
-static void nruler_draw_pos(Nruler *ruler);
-static void nruler_realize(GtkWidget *widget, gpointer user_data);
-static void nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data);
-static void nruler_size_request(GtkWidget *widget, GtkRequisition *requisition, gpointer user_data);
-static gboolean nruler_destroy(GtkWidget *widget, GdkEvent *event, gpointer user_data);
-static gboolean nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
-
+typedef struct _Nruler {
+  int orientation;
+  GdkPixmap *backing_store;
+  double lower, upper, position;
+  double save_l, save_u;
+} Nruler;
 
 struct _NrulerMetric
 {
@@ -63,8 +60,18 @@ static const struct _NrulerMetric Metric = {
   "Centimeters", "Cn", 28.35, { 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000 }, { 1, 5, 10, 50, 100 }
 };
 
+#define RULER_DATA_KEY "nruler"
 
-static Nruler *
+static void nruler_make_pixmap(Nruler *ruler, GtkWidget *widget);
+static void nruler_draw_ticks(Nruler *ruler, GtkWidget *widget);
+static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget);
+static void nruler_realize(GtkWidget *widget, gpointer user_data);
+static void nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data);
+static void nruler_size_request(GtkWidget *widget, GtkRequisition *requisition, gpointer user_data);
+static gboolean nruler_destroy(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+static gboolean nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
+
+static GtkWidget *
 ruler_new(int orientation)
 {
   Nruler *ruler;
@@ -77,33 +84,40 @@ ruler_new(int orientation)
 
   w = gtk_drawing_area_new();
   ruler->orientation = orientation;
-  ruler->widget = w;
 
   g_signal_connect(w, "expose-event", G_CALLBACK(nruler_expose), ruler);
   g_signal_connect(w, "realize", G_CALLBACK(nruler_realize), ruler);
   g_signal_connect(w, "size-allocate", G_CALLBACK(nruler_size_allocate), ruler);
   g_signal_connect(w, "size-request", G_CALLBACK(nruler_size_request), ruler);
   g_signal_connect(w, "destroy-event", G_CALLBACK(nruler_destroy), ruler);
+  g_object_set_data(G_OBJECT(w), RULER_DATA_KEY, ruler);
 
-  return ruler;
+  return w;
 }
 
 
-Nruler *
+GtkWidget *
 hruler_new(void)
 {
   return ruler_new(GTK_ORIENTATION_HORIZONTAL);
 }
 
-Nruler *
+GtkWidget *
 vruler_new(void)
 {
   return ruler_new(GTK_ORIENTATION_VERTICAL);
 }
 
 void
-nruler_set_range(Nruler *ruler, double lower, double upper)
+nruler_set_range(GtkWidget *w, double lower, double upper)
 {
+  Nruler *ruler;
+
+  if (w == NULL) {
+    return;
+  }
+
+  ruler = g_object_get_data(G_OBJECT(w), RULER_DATA_KEY);
   if (ruler == NULL) {
     return;
   }
@@ -111,22 +125,29 @@ nruler_set_range(Nruler *ruler, double lower, double upper)
   ruler->lower = lower;
   ruler->upper = upper;
 
-  if (gtk_widget_is_drawable(ruler->widget)) {
-    gtk_widget_queue_draw(ruler->widget);
+  if (gtk_widget_is_drawable(w)) {
+    gtk_widget_queue_draw(w);
   }
 }
 
 void
-nruler_set_position(Nruler *ruler, double position)
+nruler_set_position(GtkWidget *w, double position)
 {
+  Nruler *ruler;
+
+  if (w == NULL) {
+    return;
+  }
+
+  ruler = g_object_get_data(G_OBJECT(w), RULER_DATA_KEY);
   if (ruler == NULL) {
     return;
   }
 
   ruler->position = position;
 
-  if (gtk_widget_is_drawable(ruler->widget)) {
-    gtk_widget_queue_draw(ruler->widget);
+  if (gtk_widget_is_drawable(w)) {
+    gtk_widget_queue_draw(w);
   }
 }
 
@@ -134,6 +155,8 @@ static gboolean
 nruler_destroy(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
   Nruler *ruler;
+
+  g_object_set_data(G_OBJECT(widget), RULER_DATA_KEY, NULL);
 
   ruler = (Nruler *) user_data; 
   if (ruler) {
@@ -148,7 +171,6 @@ nruler_size_request(GtkWidget *widget, GtkRequisition *requisition, gpointer use
 {
   Nruler *ruler;
   GtkStyle *style;
-
 
   ruler = (Nruler *) user_data;
   style = gtk_widget_get_style(widget);
@@ -169,7 +191,7 @@ nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user
 
   ruler = (Nruler *) user_data;
 
-  nruler_make_pixmap(ruler);
+  nruler_make_pixmap(ruler, widget);
 }
 
 static void
@@ -179,7 +201,7 @@ nruler_realize(GtkWidget *widget, gpointer user_data)
 
   ruler = (Nruler *) user_data;
 
-  nruler_make_pixmap(ruler);
+  nruler_make_pixmap(ruler, widget);
 }
 
 static gboolean
@@ -188,22 +210,20 @@ nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
   if (gtk_widget_is_drawable(widget)) {
     Nruler *ruler = (Nruler *) user_data;
 
-    nruler_draw_ticks(ruler);
-    nruler_draw_pos(ruler);
+    nruler_draw_ticks(ruler, widget);
+    nruler_draw_pos(ruler, widget);
   }
 
   return FALSE;
 }
 
 static void
-nruler_make_pixmap(Nruler *ruler)
+nruler_make_pixmap(Nruler *ruler, GtkWidget *widget)
 {
-  GtkWidget *widget;
   gint width;
   gint height;
   GtkAllocation allocation;
 
-  widget = ruler->widget;
   gtk_widget_get_allocation(widget, &allocation);
 
   if (ruler->backing_store) {
@@ -226,9 +246,8 @@ nruler_make_pixmap(Nruler *ruler)
 }
 
 static void
-nruler_draw_ticks(Nruler *ruler)
+nruler_draw_ticks(Nruler *ruler, GtkWidget *widget)
 {
-  GtkWidget *widget;
   cairo_t *cr;
   gint i, j, len;
   gint width, height;
@@ -252,7 +271,6 @@ nruler_draw_ticks(Nruler *ruler)
   GtkStyle *style;
   GtkStateType state;
 
-  widget = ruler->widget;
   if (! gtk_widget_is_drawable(widget)) {
     return;
   }
@@ -402,7 +420,6 @@ nruler_draw_ticks(Nruler *ruler)
 
 	if (ruler->orientation == GTK_ORIENTATION_HORIZONTAL) {
 	  pango_layout_set_text(layout, unit_str, -1);
-	  pango_layout_get_extents(layout, &logical_rect, NULL);
 	  cairo_move_to(cr,
 			pos + 2,
 			ythickness + ofst);
@@ -410,7 +427,6 @@ nruler_draw_ticks(Nruler *ruler)
 	} else {
 	  for (j = 0; j < len; j++) {
 	    pango_layout_set_text(layout, unit_str + j, 1);
-	    pango_layout_get_extents(layout, NULL, &logical_rect);
 	    cairo_move_to(cr,
 			  xthickness + 1,
 			  pos + digit_height * j + 2 + ofst);
@@ -432,9 +448,8 @@ nruler_draw_ticks(Nruler *ruler)
 }
 
 static void
-nruler_draw_pos(Nruler *ruler)
+nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
 {
-  GtkWidget *widget;
   gint x, y;
   gint width, height;
   gint bs_width, bs_height;
@@ -445,8 +460,6 @@ nruler_draw_pos(Nruler *ruler)
   GtkStyle *style;
   GtkStateType state;
   cairo_t *cr;
-
-  widget = ruler->widget;
 
   style = gtk_widget_get_style(widget);
   state = gtk_widget_get_state(widget);
