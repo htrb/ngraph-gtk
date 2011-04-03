@@ -1,3 +1,43 @@
+2011-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_common.h (CAIRO_COORDINATE_OFFSET): always 0.
+
+	* src/gtk/main.c (main): don't call "gtk_set_locale()" when
+	version of the GTK+ is greater than 2.24.
+
+	* src/gtk/x11gui.c (DialogExecute): use "gtk_widget_hide()"
+	instead of "gtk_widget_hide_all()".
+
+	* src/gtk/x11dialg.c (SetObjFieldFromWidget)
+	(SetWidgetFromObjField): use "gtk_combo_box_get_has_entry()" when
+	version of the GTK+ is greater than 2.24.
+
+	* src/gtk/x11view.c (ViewerWinSetup, ShowCrossGauge, SetHRuler)
+	(SetVRuler): use "gdk_window_get_width()" and
+	"gdk_window_get_height()" when version of the GTK+ is greater than
+	2.24.
+	(ChangeDPI, draw_paper_frame): use "gdk_pixmap_get_size()" when
+	version of the GTK+ is greater than 2.24.
+
+	* src/gtk/ogra2x11.c (gtkchangedpi): use "gdk_pixmap_get_size()"
+	when version of the GTK+ is greater than 2.24.
+
+	* src/gtk/x11graph.c (CmHelpAbout): don't call
+	"gtk_about_dialog_set_url_hook()" when version of the GTK+ is
+	greater than 2.24.
+
+	* src/gtk/gtk_subwin.c (sub_window_minimize): use
+	"gtk_widget_hide()" instead of "gtk_widget_hide_all()".
+
+	* src/gtk/gtk_combo.c (combo_box_entry_create): use
+	"gtk_combo_box_new_with_entry()" and
+	"gtk_combo_box_set_entry_text_column()" when version of the GTK+
+	is greater than 2.24.
+
+	* src/gtk/gtk_ruler.c (nruler_make_pixmap): use
+	"gdk_pixmap_get_size()" when version of the GTK+ is greater than
+	2.24.
+
 2011-04-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.h (Viewer): change type of members "VRuler" and

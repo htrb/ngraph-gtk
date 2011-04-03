@@ -1075,7 +1075,12 @@ ViewerWinSetup(void)
   OpenGRA();
   SetScroller();
   gdk_window_get_position(d->gdk_win, &x, &y);
+#if GTK_CHECK_VERSION(2, 24, 0)
+  width = gdk_window_get_width(d->gdk_win);
+  height = gdk_window_get_height(d->gdk_win);
+#else
   gdk_drawable_get_size(d->gdk_win, &width, &height);
+#endif
   d->cx = width / 2;
   d->cy = height / 2;
 
@@ -2408,7 +2413,12 @@ ShowCrossGauge(cairo_t *cr, const struct Viewer *d)
   cairo_set_dash(cr, NULL, 0, 0);
   //  cairo_set_operator(cr, CAIRO_OPERATOR_DIFFERENCE);
 
+#if GTK_CHECK_VERSION(2, 24, 0)
+  width = gdk_window_get_width(d->gdk_win);
+  height = gdk_window_get_height(d->gdk_win);
+#else
   gdk_drawable_get_size(d->gdk_win, &width, &height);
+#endif
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
@@ -4806,7 +4816,11 @@ SetHRuler(const struct Viewer *d)
   gdouble x1, x2, zoom;
   int width;
 
+#if GTK_CHECK_VERSION(2, 24, 0)
+  width = gdk_window_get_width(d->gdk_win);
+#else
   gdk_drawable_get_size(d->gdk_win, &width, NULL);
+#endif
   zoom = Menulocal.PaperZoom / 10000.0;
   x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
@@ -4820,7 +4834,11 @@ SetVRuler(const struct Viewer *d)
   gdouble  y1, y2, zoom;
   int height;
 
+#if GTK_CHECK_VERSION(2, 24, 0)
+  height = gdk_window_get_height(d->gdk_win);
+#else
   gdk_drawable_get_size(d->gdk_win, NULL, &height);
+#endif
   zoom = Menulocal.PaperZoom / 10000.0;
   y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
   y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
@@ -5124,7 +5142,11 @@ ChangeDPI(void)
   height = mxd2p(Menulocal.PaperHeight);
 
   if (Menulocal.pix) {
+#if GTK_CHECK_VERSION(2, 24, 0)
+    gdk_pixmap_get_size(Menulocal.pix, &w, &h);
+#else
     gdk_drawable_get_size(Menulocal.pix, &w, &h);
+#endif
     w--;
     h--;
   } else { 
@@ -5198,7 +5220,11 @@ draw_paper_frame(void)
   if (Menulocal.local->cairo == NULL || Menulocal.pix == NULL)
     return;
 
+#if GTK_CHECK_VERSION(2, 24, 0)
+  gdk_pixmap_get_size(Menulocal.pix, &w, &h);
+#else
   gdk_drawable_get_size(Menulocal.pix, &w, &h);
+#endif
   cr = Menulocal.local->cairo;
 
   cairo_save(cr);

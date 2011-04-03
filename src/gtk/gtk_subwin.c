@@ -1373,7 +1373,7 @@ sub_window_minimize(void *ptr)
   d->window_state = window_state;
 
   if (! (window_state & GDK_WINDOW_STATE_ICONIFIED)) {
-    gtk_widget_hide_all(d->Win);
+    gtk_widget_hide(d->Win);
     //    gtk_window_iconify(GTK_WINDOW(d->Win));
     SaveWindowState = TRUE;
   }

@@ -568,7 +568,11 @@ gtkchangedpi(struct gtklocal *gtklocal)
   if (pixmap) {
     int pw, ph;
 
+#if GTK_CHECK_VERSION(2, 24, 0)
+    gdk_pixmap_get_size(pixmap, &pw, &ph);
+#else
     gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &pw, &ph);
+#endif
     if (pw != width || ph != height) {
       g_object_unref(G_OBJECT(pixmap));
       pixmap = NULL;

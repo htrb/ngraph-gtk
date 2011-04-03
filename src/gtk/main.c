@@ -753,7 +753,9 @@ main(int argc, char **argv)
   set_childhandler();
 #endif	/* WINDOWS */
 
+#if ! GTK_CHECK_VERSION(2, 24, 0)
   gtk_set_locale();
+#endif
   OpenDisplay = gtk_init_check(&argc, &argv);
   g_set_application_name(AppName);
 

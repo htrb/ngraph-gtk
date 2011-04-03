@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-04-01 11:52+0900\n"
+"POT-Creation-Date: 2011-04-02 20:49+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1085,7 +1085,7 @@ msgstr ""
 msgid "Load NGP file"
 msgstr ""
 
-#: src/gtk/x11graph.c:1295
+#: src/gtk/x11graph.c:1298
 msgid ""
 "Ngraph is the program creating scientific 2-dimensional graphs for "
 "researchers and engineers."
@@ -2225,7 +2225,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:755 src/gtk/x11print.c:1021 src/gtk/x11view.c:5231
+#: src/gtk/x11print.c:755 src/gtk/x11print.c:1021 src/gtk/x11view.c:5257
 msgid "Drawing."
 msgstr ""
 
@@ -2253,33 +2253,33 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11view.c:1187 src/gtk/x11view.c:1189
+#: src/gtk/x11view.c:1192 src/gtk/x11view.c:1194
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1294
+#: src/gtk/x11view.c:1299
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1303
+#: src/gtk/x11view.c:1308
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2687
+#: src/gtk/x11view.c:2697
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3776
+#: src/gtk/x11view.c:3786
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5225
+#: src/gtk/x11view.c:5251
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5232
+#: src/gtk/x11view.c:5258
 msgid "Drawing"
 msgstr ""
 

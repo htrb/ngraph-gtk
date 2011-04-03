@@ -185,7 +185,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
     data->SetupWindow(dlg, data, FALSE);
   }
 
-  gtk_widget_hide_all(dlg);
+  gtk_widget_hide(dlg);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   data->widget = dlg;
   data->ret = IDLOOP;
@@ -220,7 +220,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
   //  gtk_widget_destroy(dlg);
   //  data->widget = NULL;
   set_current_window(win_ptr);
-  gtk_widget_hide_all(dlg);
+  gtk_widget_hide(dlg);
   reset_event();
 
   DnDLock = lockstate;

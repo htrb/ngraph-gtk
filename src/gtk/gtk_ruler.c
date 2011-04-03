@@ -227,7 +227,11 @@ nruler_make_pixmap(Nruler *ruler, GtkWidget *widget)
   gtk_widget_get_allocation(widget, &allocation);
 
   if (ruler->backing_store) {
+#if GTK_CHECK_VERSION(2, 24, 0)
+    gdk_pixmap_get_size(ruler->backing_store, &width, &height);
+#else
     gdk_drawable_get_size(ruler->backing_store, &width, &height);
+#endif
     if ((width == allocation.width) &&
 	(height == allocation.height)) {
       return;

@@ -1254,6 +1254,7 @@ CmGraphHistory(GtkRecentChooser *w, gpointer client_data)
   g_free(fname);
 }
 
+#if ! GTK_CHECK_VERSION(2, 24, 0)
 static void
 about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
 {
@@ -1264,7 +1265,7 @@ about_link_activated_cb(GtkAboutDialog *about, const gchar *link, gpointer data)
 
   g_free(cmd);
 }
-
+#endif
 
 void
 CmHelpAbout(GtkWidget *w, gpointer client_data)
@@ -1281,7 +1282,9 @@ CmHelpAbout(GtkWidget *w, gpointer client_data)
   getobj(obj, "copyright", 0, 0, NULL, &copyright);
   getobj(obj, "web", 0, 0, NULL, &web);
 
+#if ! GTK_CHECK_VERSION(2, 24, 0)
   gtk_about_dialog_set_url_hook(about_link_activated_cb, NULL, NULL);
+#endif
   gtk_show_about_dialog(GTK_WINDOW(TopLevel),
 			"program-name", PACKAGE,
 			"copyright", copyright,
