@@ -5721,9 +5721,12 @@ f2dsettings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 	po+=i;
         break;
       default:
+	err=TRUE;
         break;
       }
-    } else err=TRUE;
+    } else {
+      err=TRUE;
+    }
     if (err) {
       error2(obj,ERRILOPTION,buf);
       g_free(buf);
