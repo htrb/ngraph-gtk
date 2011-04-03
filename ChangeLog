@@ -1,5 +1,7 @@
 2011-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/ofile.c (f2dsettings): fix infinite loop.
+
 	* src/gtk/gtk_common.h (CAIRO_COORDINATE_OFFSET): always 0.
 
 	* src/gtk/main.c (main): don't call "gtk_set_locale()" when
