@@ -1,3 +1,19 @@
+2011-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (check_overwrite): moved from x11commn.c.
+
+	* src/gtk/x11view.c (SetPoint): moved from x11menu.c.
+	(CmViewerClearB): removed.
+
+	* src/gtk/x11axis.c (check_axis_history): static function.
+
+	* src/gtk/x11print.c (GetDrawFiles): moved from x11commn.c.
+	(CmOutputDriverB): removed.
+
+	* src/gtk/x11menu.c (SaveHistory): moved from x11commn.c.
+
+	* src/gtk/x11lgndx.c (get_radio_index): moved from x11dialg.c.
+
 2011-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (f2dsettings): fix infinite loop.

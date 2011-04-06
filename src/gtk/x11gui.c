@@ -859,6 +859,23 @@ file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
 }
 
 static int
+check_overwrite(GtkWidget *parent, const char *filename)
+{
+  int r;
+  char *buf;
+
+  if (filename == NULL || naccess(filename, W_OK))
+    return 0;
+
+  buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), CHK_STR(filename));
+
+  r = message_box(parent, buf, "Driver", RESPONS_YESNO);
+  g_free(buf);
+
+  return r != IDYES;
+}
+
+static int
 FileSelectionDialog(GtkWidget *parent, int type, char *stock)
 {
   struct nGetOpenFileData *data;

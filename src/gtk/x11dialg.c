@@ -1118,23 +1118,6 @@ SetStyleFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *field
   }
 }
 
-int 
-get_radio_index(GSList *top)
-{
-  int i, n;
-  GtkToggleButton *btn;
-  GSList *list;
-  
-  n = g_slist_length(top);
-  for (i = 0, list = top; i < n; i++, list = list->next) {
-    btn = GTK_TOGGLE_BUTTON(list->data);
-    if (gtk_toggle_button_get_active(btn)) {
-      return i;
-    }
-  }
-  return -1;
-}
-
 static int
 SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {

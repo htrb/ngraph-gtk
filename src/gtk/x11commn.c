@@ -912,23 +912,6 @@ SaveDrawrable(char *name, int storedata, int storemerge)
   return error;
 }
 
-int
-check_overwrite(GtkWidget *parent, const char *filename)
-{
-  int r;
-  char *buf;
-
-  if (filename == NULL || naccess(filename, W_OK))
-    return 0;
-
-  buf = g_strdup_printf(_("`%s'\n\nOverwrite existing file?"), CHK_STR(filename));
-
-  r = message_box(parent, buf, "Driver", RESPONS_YESNO);
-  g_free(buf);
-
-  return r != IDYES;
-}
-
 static int
 get_save_opt(int *sdata, int *smerge, int *path)
 {
@@ -1581,42 +1564,6 @@ SetFileHidden(void)
 }
 
 int
-GetDrawFiles(struct narray *farray)
-{
-  struct objlist *fobj;
-  int lastinst;
-  struct narray ifarray;
-  int i, a;
-
-  if (farray == NULL)
-    return 1;
-
-  fobj = chkobject("file");
-  if (fobj == NULL)
-    return 1;
-
-  lastinst = chkobjlastinst(fobj);
-  if (lastinst < 0)
-    return 1;
-
-  arrayinit(&ifarray, sizeof(int));
-  for (i = 0; i <= lastinst; i++) {
-    getobj(fobj, "hidden", i, 0, NULL, &a);
-    if (!a)
-      arrayadd(&ifarray, &i);
-  }
-  SelectDialog(&DlgSelect, fobj, FileCB, farray, &ifarray);
-  if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
-    arraydel(&ifarray);
-    arraydel(farray);
-    return 1;
-  }
-  arraydel(&ifarray);
-
-  return 0;
-}
-
-int
 CheckIniFile(void)
 {
   int ret;
@@ -1654,44 +1601,6 @@ CheckIniFile(void)
     }
   }
   return TRUE;
-}
-
-void
-SaveHistory(void)
-{
-  struct narray conf;
-  char *buf;
-  int i, num;
-  char **data, data_history[] = "data_history=";
-
-  if (!Menulocal.savehistory)
-    return;
-  if (!CheckIniFile())
-    return;
-  arrayinit(&conf, sizeof(char *));
-
-  num = arraynum(Menulocal.datafilelist);
-  data = arraydata(Menulocal.datafilelist);
-  for (i = 0; i < num; i++) {
-    if (data[i]) {
-      buf = g_strdup_printf("%s%s", data_history, data[i]);
-      if (buf) {
-	arrayadd(&conf, &buf);
-      }
-    }
-  }
-  replaceconfig("[x11menu]", &conf);
-
-  arraydel2(&conf);
-  arrayinit(&conf, sizeof(char *));
-  if (arraynum(Menulocal.datafilelist) == 0) {
-    buf = g_strdup(data_history);
-    if (buf) {
-      arrayadd(&conf, &buf);
-    }
-  }
-  removeconfig("[x11menu]", &conf);
-  arraydel2(&conf);
 }
 
 void

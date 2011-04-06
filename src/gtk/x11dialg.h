@@ -44,7 +44,7 @@ extern int FwNumStyleNum;
 
 #define N_RESPONSE_ALL 1
 
-void initdialog();
+void initdialog(void);
 int CopyClick(GtkWidget *parent, struct objlist *obj, int Id,
 	      char *(*callback) (struct objlist *, int));
 int SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field);
@@ -54,7 +54,6 @@ void SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field
 int SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 void SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field);
 int SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field);
-int get_radio_index(GSList *top);
 struct compatible_font_info *SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name);
 void SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name);
 void set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix);

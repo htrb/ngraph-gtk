@@ -115,6 +115,7 @@ static struct subwin_popup_list Popup_list[] = {
 
 static gboolean AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
 static void axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
+static int check_axis_history(struct objlist *obj);
 
 void
 axis_scale_push(struct objlist *obj, int id)
@@ -2896,7 +2897,7 @@ AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
   return FALSE;
 }
 
-int 
+static int 
 check_axis_history(struct objlist *obj)
 {
   struct narray *array;

@@ -130,32 +130,6 @@ CoordWinUpdate(int clear)
 {
 }
 
-/*
-void
-CoordWinUnmap(Widget w, XtPointer client_data, XtPointer call_data)
-{
-  struct CoordWin *d;
-  Position x, y, x0, y0;
-  Dimension w0, h0;
-
-  d = &(NgraphApp.CoordWin);
-  if (d->Win != NULL) {
-    XtVaGetValues(d->Win, XmNx, &x, XmNy, &y,
-		  XmNwidth, &w0, XmNheight, &h0, NULL);
-    menulocal.coordwidth = w0;
-    menulocal.coordheight = h0;
-    XtTranslateCoords(TopLevel, 0, 0, &x0, &y0);
-    menulocal.coordx = x - x0;
-    menulocal.coordy = y - y0;
-    XtDestroyWidget(d->Win);
-    d->Win = NULL;
-    d->text = NULL;
-    XmToggleButtonSetState(XtNameToWidget
-			   (TopLevel, "*windowmenu.button_4"), False, False);
-  }
-}
-*/
-
 void
 CmCoordinateWindow(GtkToggleAction *action, gpointer client_data)
 {

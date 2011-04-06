@@ -28,6 +28,5 @@
 void CmOutputViewer(int select_file);
 void CmOutputPrinter(int select_file, int show_dialog);
 void CmOutputMenu(GtkWidget *w, gpointer client_data);
-void CmOutputDriverB(GtkWidget *w, gpointer client_data);
 void CmOutputViewerB(GtkWidget *w, gpointer client_data);
 void CmOutputPrinterB(GtkWidget *wi, gpointer client_data);

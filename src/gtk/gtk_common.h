@@ -31,7 +31,7 @@
 #define GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION(w) (w)->colorsel
 #endif
 
-#define CAIRO_COORDINATE_OFFSET 0
+#define CAIRO_COORDINATE_OFFSET 1
 
 #endif
 

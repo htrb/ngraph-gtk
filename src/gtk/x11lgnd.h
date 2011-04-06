@@ -26,7 +26,6 @@ typedef void (* legend_cb_func)(GtkMenuItem *w, gpointer client_data);
 
 void LegendWinUpdate(int clear);
 void CmLineMenu(GtkMenuItem *w, gpointer client_data);
-void CmCurveMenu(GtkMenuItem *w, gpointer client_data);
 void CmPolygonMenu(GtkMenuItem *w, gpointer client_data);
 void CmRectangleMenu(GtkMenuItem *w, gpointer client_data);
 void CmArcMenu(GtkMenuItem *w, gpointer client_data);
@@ -34,4 +33,3 @@ void CmMarkMenu(GtkMenuItem *w, gpointer client_data);
 void CmTextMenu(GtkMenuItem *w, gpointer client_data);
 void CmLegendWindow(GtkToggleAction *action, gpointer client_data);
 void CmOptionTextDef(void);
-void LegendWindowUnmap(GtkWidget *w, gpointer client_data);

@@ -25,4 +25,3 @@ void CoordWinSetFont(const char *font);
 void CoordWinUpdate(int clear);
 void CoordWinSetCoord(int x, int y);
 void CmCoordinateWindow(GtkToggleAction *action, gpointer client_data);
-void CoordWinUnmap(GtkWidget *w, gpointer client_data);

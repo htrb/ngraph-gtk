@@ -2540,32 +2540,6 @@ LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
   return FALSE;
 }
 
- /*
-void
-LegendWindowUnmap(GtkWidget *w, gpointer client_data)
-{
-  struct LegendWin *d;
-  Position x, y, x0, y0;
-  Dimension w0, h0;
-
-  d = &(NgraphApp.LegendWin);
-  if (d->Win != NULL) {
-    XtVaGetValues(d->Win, XmNx, &x, XmNy, &y,
-		  XmNwidth, &w0, XmNheight, &h0, NULL);
-    menulocal.legendwidth = w0;
-    menulocal.legendheight = h0;
-    XtTranslateCoords(TopLevel, 0, 0, &x0, &y0);
-    menulocal.legendx = x - x0;
-    menulocal.legendy = y - y0;
-    XtDestroyWidget(d->Win);
-    d->Win = NULL;
-    d->text = NULL;
-    XmToggleButtonSetState(XtNameToWidget
-			   (TopLevel, "*windowmenu.button_2"), False, False);
-  }
-}
- */
-
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {

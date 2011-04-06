@@ -386,32 +386,6 @@ MergeWinExpose(GtkWidget *w, GdkEvent *event, gpointer client_data)
   return FALSE;
 }
 
-/*
-void
-MergeWindowUnmap(GtkWidget *w, gpointer client_data)
-{
-  struct SubWin *d;
-  Position x, y, x0, y0;
-  Dimension w0, h0;
-
-  d = &(NgraphApp.MergeWin);
-  if (d->Win != NULL) {
-    XtVaGetValues(d->Win, XmNx, &x, XmNy, &y,
-		  XmNwidth, &w0, XmNheight, &h0, NULL);
-    Menulocal.mergewidth = w0;
-    Menulocal.mergeheight = h0;
-    XtTranslateCoords(TopLevel, 0, 0, &x0, &y0);
-    Menulocal.mergex = x - x0;
-    Menulocal.mergey = y - y0;
-    XtDestroyWidget(d->Win);
-    d->Win = NULL;
-    GTK_WIDGET(d->text) = NULL;
-    XmToggleButtonSetState(XtNameToWidget
-			   (TopLevel, "*windowmenu.button_3"), FALSE, FALSE);
-  }
-}
-*/
-
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {

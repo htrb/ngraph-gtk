@@ -1023,6 +1023,42 @@ CmOutputImage(int type)
   delobj(g2wobj, g2wid);
 }
 
+static int
+GetDrawFiles(struct narray *farray)
+{
+  struct objlist *fobj;
+  int lastinst;
+  struct narray ifarray;
+  int i, a;
+
+  if (farray == NULL)
+    return 1;
+
+  fobj = chkobject("file");
+  if (fobj == NULL)
+    return 1;
+
+  lastinst = chkobjlastinst(fobj);
+  if (lastinst < 0)
+    return 1;
+
+  arrayinit(&ifarray, sizeof(int));
+  for (i = 0; i <= lastinst; i++) {
+    getobj(fobj, "hidden", i, 0, NULL, &a);
+    if (!a)
+      arrayadd(&ifarray, &i);
+  }
+  SelectDialog(&DlgSelect, fobj, FileCB, farray, &ifarray);
+  if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
+    arraydel(&ifarray);
+    arraydel(farray);
+    return 1;
+  }
+  arraydel(&ifarray);
+
+  return 0;
+}
+
 void
 CmPrintDataFile(void)
 {
@@ -1102,12 +1138,6 @@ CmPrintDataFile(void)
 
   arraydel(&farray);
   g_free(file);
-}
-
-void
-CmOutputDriverB(GtkWidget *wi, gpointer client_data)
-{
-  CmOutputDriver();
 }
 
 void

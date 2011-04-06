@@ -1866,8 +1866,8 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
 	y1 = coord_conv_y((bbox[j + 1] + d->FrameOfsY), zoom, d);
 
 	cairo_rectangle(cr,
-			x1 - FOCUS_RECT_SIZE / 2,
-			y1 - FOCUS_RECT_SIZE / 2,
+			x1 - FOCUS_RECT_SIZE / 2 - CAIRO_COORDINATE_OFFSET,
+			y1 - FOCUS_RECT_SIZE / 2 - CAIRO_COORDINATE_OFFSET,
 			FOCUS_RECT_SIZE,
 			FOCUS_RECT_SIZE);
       }
@@ -3184,6 +3184,59 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
       ViewerEvLButtonDblClk(state, point, d);
     }
   }
+}
+
+static void
+SetPoint(struct Viewer *d, int x, int y)
+{
+  char buf[128];
+  struct Point *po;
+  unsigned int num;
+
+  //  x += Menulocal.LeftMargin;
+  //  y += Menulocal.TopMargin;
+
+  if (NgraphApp.Message && GTK_WIDGET_VISIBLE(NgraphApp.Message)) {
+    snprintf(buf, sizeof(buf), "% 6.2f, % 6.2f", x / 100.0, y / 100.0);
+    gtk_label_set_text(GTK_LABEL(NgraphApp.Message_pos), buf);
+
+    switch (d->MouseMode) {
+    case MOUSECHANGE:
+      if (d->Angle >= 0) {
+	snprintf(buf, sizeof(buf), "%6.2f°", d->Angle / 100.0);
+	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
+      } else {
+	snprintf(buf, sizeof(buf), "(% .2f, % .2f)", d->LineX / 100.0, d->LineY / 100.0);
+	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
+      }
+      break;
+    case MOUSEZOOM1:
+    case MOUSEZOOM2:
+    case MOUSEZOOM3:
+    case MOUSEZOOM4:
+      snprintf(buf, sizeof(buf), "% .2f%%", d->Zoom * 100);
+      gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
+      break;
+    case MOUSEDRAG:
+      snprintf(buf, sizeof(buf), "(% .2f, % .2f)", d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);
+      gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
+      break;
+    default:
+      num =  arraynum(d->points);
+      po = (num > 1) ? (* (struct Point **) arraynget(d->points, num - 2)) : NULL;
+      if (d->Capture && po) {
+	snprintf(buf, sizeof(buf), "(% .2f, % .2f)", (x - po->x) / 100.0, (y - po->y) / 100.0);
+	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
+      } else {
+	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), NULL);
+      }
+    }
+  }
+
+  nruler_set_position(NgraphApp.Viewer.HRuler, N2GTK_RULER_METRIC(x));
+  nruler_set_position(NgraphApp.Viewer.VRuler, N2GTK_RULER_METRIC(y));
+
+  CoordWinSetCoord(x, y);
 }
 
 static gboolean
@@ -5327,12 +5380,6 @@ CmViewerClear(void)
   Clear();
 
   FileWinUpdate(TRUE);
-}
-
-void
-CmViewerClearB(GtkWidget *w, gpointer client_data)
-{
-  CmViewerClear();
 }
 
 static int
