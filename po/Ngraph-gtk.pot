@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-04-06 16:01+0900\n"
+"POT-Creation-Date: 2011-04-15 16:21+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -815,7 +815,7 @@ msgstr ""
 msgid "_Result"
 msgstr ""
 
-#: src/gtk/x11file.c:1647 src/gtk/x11file.c:1871 src/gtk/x11view.c:917
+#: src/gtk/x11file.c:1647 src/gtk/x11file.c:1871 src/gtk/x11view.c:918
 msgid "Line No."
 msgstr ""
 
@@ -949,11 +949,11 @@ msgstr ""
 msgid "_Edit"
 msgstr ""
 
-#: src/gtk/x11file.c:3121 src/gtk/x11view.c:927
+#: src/gtk/x11file.c:3121 src/gtk/x11view.c:928
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:3125 src/gtk/x11view.c:928
+#: src/gtk/x11file.c:3125 src/gtk/x11view.c:929
 msgid "_Move"
 msgstr ""
 
@@ -1487,7 +1487,7 @@ msgstr ""
 msgid "_Left"
 msgstr ""
 
-#: src/gtk/x11menu.c:572 src/gtk/x11menu.c:608
+#: src/gtk/x11menu.c:572
 msgid "_Right"
 msgstr ""
 
@@ -1497,6 +1497,10 @@ msgstr ""
 
 #: src/gtk/x11menu.c:596
 msgid "_Top"
+msgstr ""
+
+#: src/gtk/x11menu.c:608
+msgid "_Bottom"
 msgstr ""
 
 #: src/gtk/x11menu.c:620
@@ -2225,7 +2229,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:755 src/gtk/x11print.c:1021 src/gtk/x11view.c:5310
+#: src/gtk/x11print.c:755 src/gtk/x11print.c:1021 src/gtk/x11view.c:5340
 msgid "Drawing."
 msgstr ""
 
@@ -2253,33 +2257,33 @@ msgstr ""
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11view.c:1192 src/gtk/x11view.c:1194
+#: src/gtk/x11view.c:1193 src/gtk/x11view.c:1195
 #, c-format
 msgid "Searching for data."
 msgstr ""
 
-#: src/gtk/x11view.c:1299
+#: src/gtk/x11view.c:1300
 #, c-format
 msgid "Evaluating."
 msgstr ""
 
-#: src/gtk/x11view.c:1308
+#: src/gtk/x11view.c:1309
 msgid "Evaluating"
 msgstr ""
 
-#: src/gtk/x11view.c:2697
+#: src/gtk/x11view.c:2698
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3839
+#: src/gtk/x11view.c:3853
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5304
+#: src/gtk/x11view.c:5334
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5311
+#: src/gtk/x11view.c:5341
 msgid "Drawing"
 msgstr ""
 

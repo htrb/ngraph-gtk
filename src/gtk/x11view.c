@@ -1,3 +1,4 @@
+/* -*- coding: utf-8 -*- */
 /* 
  * $Id: x11view.c,v 1.186 2010-03-04 08:30:17 hito Exp $
  * 
@@ -3187,6 +3188,20 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 }
 
 static void
+set_drag_info(struct Viewer *d)
+{
+  char buf[32];
+
+  snprintf(buf, sizeof(buf), "(% .2f, % .2f)", d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);
+  gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
+}
+
+static void
+reset_drag_info(struct Viewer *d)
+{
+  gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), NULL);
+}
+static void
 SetPoint(struct Viewer *d, int x, int y)
 {
   char buf[128];
@@ -3203,7 +3218,7 @@ SetPoint(struct Viewer *d, int x, int y)
     switch (d->MouseMode) {
     case MOUSECHANGE:
       if (d->Angle >= 0) {
-	snprintf(buf, sizeof(buf), "%6.2f$B!k(B", d->Angle / 100.0);
+	snprintf(buf, sizeof(buf), "%6.2f°", d->Angle / 100.0);
 	gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       } else {
 	snprintf(buf, sizeof(buf), "(% .2f, % .2f)", d->LineX / 100.0, d->LineY / 100.0);
@@ -3218,8 +3233,7 @@ SetPoint(struct Viewer *d, int x, int y)
       gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
       break;
     case MOUSEDRAG:
-      snprintf(buf, sizeof(buf), "(% .2f, % .2f)", d->FrameOfsX / 100.0, d->FrameOfsY / 100.0);
-      gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
+      set_drag_info(d);
       break;
     default:
       num =  arraynum(d->points);
@@ -4528,12 +4542,65 @@ ViewerEvButtonUp(GtkWidget *w, GdkEventButton *e, gpointer client_data)
   return FALSE;
 }
 
+static void
+move_focus_frame(GdkEventKey *e, struct Viewer *d)
+{
+  int dx = 0, dy = 0, mv;
+  double zoom;
+  
+  zoom = Menulocal.PaperZoom / 10000.0;
+  mv = (e->state & GDK_SHIFT_MASK) ? Menulocal.grid / 10 : Menulocal.grid;
+
+  switch (e->keyval) {
+  case GDK_Down:
+    dy = mv;
+    break;
+  case GDK_Up:
+    dy = -mv;
+    break;
+  case GDK_Right:
+    dx = mv;
+    break;
+  case GDK_Left:
+    dx = -mv;
+    break;
+  default:
+    return;
+  }
+
+  if (dx != 0 || dy != 0) {
+    d->FrameOfsX += dx / zoom;
+    d->FrameOfsY += dy / zoom;
+    d->MouseMode = MOUSEDRAG;
+    set_drag_info(d);
+    gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  }
+}
+
+static int
+viewer_key_scroll(GdkEventKey *e, struct Viewer *d)
+{
+  switch (e->keyval) {
+  case GDK_Up:
+    range_increment(d->VScroll, -SCROLL_INC);
+    return TRUE;
+  case GDK_Down:
+    range_increment(d->VScroll, SCROLL_INC);
+    return TRUE;
+  case GDK_Left:
+    range_increment(d->HScroll, -SCROLL_INC);
+    return TRUE;
+  case GDK_Right:
+    range_increment(d->HScroll, SCROLL_INC);
+    return TRUE;
+  }
+  return FALSE;
+}
+
 static gboolean
 ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
 {
   struct Viewer *d;
-  int dx = 0, dy = 0, mv, n;
-  double zoom;
 
   if (Menulock || Globallock)
     return FALSE;
@@ -4583,52 +4650,13 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_Up:
   case GDK_Left:
   case GDK_Right:
-    n = arraynum(d->focusobj);
-
-    if (n == 0) {
-      switch (e->keyval) {
-      case GDK_Up:
-	range_increment(d->VScroll, -SCROLL_INC);
-	return TRUE;
-      case GDK_Down:
-	range_increment(d->VScroll, SCROLL_INC);
-	return TRUE;
-      case GDK_Left:
-	range_increment(d->HScroll, -SCROLL_INC);
-	return TRUE;
-      case GDK_Right:
-	range_increment(d->HScroll, SCROLL_INC);
-	return TRUE;
-      }
-      return FALSE;
+    if (arraynum(d->focusobj) == 0) {
+      return viewer_key_scroll(e, d);
     }
 
-    if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG))
-	&& (d->Mode & POINT_TYPE_POINT)) {
-      zoom = Menulocal.PaperZoom / 10000.0;
-      if (e->state & GDK_SHIFT_MASK) {
-	mv = Menulocal.grid / 10;
-      } else {
-	mv = Menulocal.grid;
-      }
-
-      if (e->keyval == GDK_Down) {
-	dx = 0;
-	dy = mv;
-      } else if (e->keyval == GDK_Up) {
-	dx = 0;
-	dy = -mv;
-      } else if (e->keyval == GDK_Right) {
-	dx = mv;
-	dy = 0;
-      } else if (e->keyval == GDK_Left) {
-	dx = -mv;
-	dy = 0;
-      }
-
-      d->FrameOfsX += dx / zoom;
-      d->FrameOfsY += dy / zoom;
-      d->MouseMode = MOUSEDRAG;
+    if (((d->MouseMode == MOUSENONE) || (d->MouseMode == MOUSEDRAG)) &&
+	(d->Mode & POINT_TYPE_POINT)) {
+      move_focus_frame(e, d);
       return TRUE;
     }
     break;
@@ -4709,10 +4737,12 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     d->FrameOfsX = d->FrameOfsY = 0;
     d->ShowFrame = TRUE;
 
-    if (! axis)
+    if (! axis) {
       d->allclear = FALSE;
+    }
     UpdateAll();
     d->MouseMode = MOUSENONE;
+    reset_drag_info(d);
     return TRUE;
   default:
     break;

@@ -562,7 +562,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignLeft,
-    NULL,
+    "ngraph_align_l.png",
     "<Ngraph>/Edit/Align/Left",
   },
   {
@@ -574,7 +574,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignRight,
-    NULL,
+    "ngraph_align_r.png",
     "<Ngraph>/Edit/Align/Right",
   },
   {
@@ -586,7 +586,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignVCenter,
-    NULL,
+    "ngraph_align_vc.png",
     "<Ngraph>/Edit/Align/Vertical center",
   },
   {
@@ -598,19 +598,19 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignTop,
-    NULL,
+    "ngraph_align_t.png",
     "<Ngraph>/Edit/Align/Top",
   },
   {
     ACTION_TYPE_NORMAL,
     "EditAlignBottomAction",
     NULL,
-    N_("_Right"),
+    N_("_Bottom"),
     NULL,
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignBottom,
-    NULL,
+    "ngraph_align_b.png",
     "<Ngraph>/Edit/Align/Bottom",
   },
   {
@@ -622,7 +622,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmEditMenuCB),
     MenuIdAlignHCenter,
-    NULL,
+    "ngraph_align_hc.png",
     "<Ngraph>/Edit/Align/Horizontal center",
   },
   {
@@ -2351,12 +2351,12 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
 
   w = gtk_label_new(NULL);
   gtk_misc_set_alignment(GTK_MISC(w), 1.0, 0.5);
-  gtk_label_set_width_chars(GTK_LABEL(w), 16);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
   *label1 = w;
 
   w = gtk_label_new(NULL);
   gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
+  gtk_label_set_width_chars(GTK_LABEL(w), 16);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
   *label2 = w;
 
@@ -2498,7 +2498,7 @@ setupwindow(void)
 
   NgraphApp.Message = gtk_statusbar_new();
   gtk_box_pack_end(GTK_BOX(NgraphApp.Message),
-		   create_message_box(&NgraphApp.Message_pos, &NgraphApp.Message_extra),
+		   create_message_box(&NgraphApp.Message_extra, &NgraphApp.Message_pos),
 		   FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), NgraphApp.Message, FALSE, FALSE, 0);
 

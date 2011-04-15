@@ -1,3 +1,24 @@
+2011-04-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (setupwindow, create_message_box): exchange
+	position of messages.
+
+	* src/gtk/x11view.c (move_focus_frame, viewer_key_scroll): added.
+	(ViewerEvKeyDown): use "move_focus_frame()" and
+	"viewer_key_scroll()".
+	(set_drag_info, reset_drag_info): added.
+	(SetPoint, move_focus_frame): use "set_drag_info()".
+	(ViewerEvKeyUp): call "reset_drag_info()"
+
+	* pixmap/Makefile.am (EXTRA_DIST): add pixmaps ngraph_align_b.png,
+	ngraph_align_hc.png, ngraph_align_l.png, ngraph_align_r.png,
+	ngraph_align_t.png and ngraph_align_vc.png
+
+2011-04-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (ActionEntry): fix typo (from "_Right" to
+	"_Bottom").
+
 2011-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (check_overwrite): moved from x11commn.c.
