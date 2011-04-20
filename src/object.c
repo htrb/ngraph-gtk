@@ -429,7 +429,7 @@ arrayadd(struct narray *array,void *val)
   int size,base;
   char *data;
 
-  if (array==NULL) return NULL;
+  if (array==NULL || val == NULL) return NULL;
   if (array->num==array->size) {
     size=array->size+ALLOCSIZE;
     if ((data=g_realloc(array->data,array->base*size))==NULL) {

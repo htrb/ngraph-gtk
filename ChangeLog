@@ -1,3 +1,15 @@
+2011-04-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/object.c (arrayadd): check if the parameter "val" is NULL or
+	not.
+
+	* src/oroot.c (oputstyle): when size of the array is 1, it is as
+	same as the array has the same two elements.
+
+	* src/gtk/x11dialg.c (SetObjPointsFromText)
+	(SetObjFieldFromStyle): call "gtk_widget_grab_focus()" when an
+	error is occurred.
+
 2011-04-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (setupwindow, create_message_box): exchange

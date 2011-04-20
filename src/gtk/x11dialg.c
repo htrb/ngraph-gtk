@@ -591,8 +591,9 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     for (i = 0; i < sizeof(point) / sizeof(*point); i++) {
       ip = nround(point[i] * 100);
       atmp = arrayadd(array, &ip);
-      if (atmp == NULL)
+      if (atmp == NULL){
 	goto ErrEnd;
+      }
 
       array = atmp;
     }
@@ -601,8 +602,9 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
 
   if (get_graph_modified()) {
-    if (putobj(Obj, field, Id, array) < 0)
+    if (putobj(Obj, field, Id, array) < 0) {
       goto ErrEnd;
+    }
   } else {
     char *str1, *str2;
 
@@ -624,8 +626,10 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
  ErrEnd:
 
-  if (array)
+  if (array) {
     arrayfree(array);
+  }
+  gtk_widget_grab_focus(w);
 
   return -1;
 }
@@ -940,8 +944,9 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   }
 
   if (get_graph_modified()) {
-    if (putobj(Obj, field, Id, array) < 0)
+    if (putobj(Obj, field, Id, array) < 0) {
       goto ErrEnd;
+    }
   } else {
     char *str1, *str2;
 
@@ -985,7 +990,6 @@ SetObjFieldFromStyle(GtkWidget *widget, struct objlist *Obj, int Id, char *field
   w = get_widget(widget);
 
   ptr = gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w))));
-
   if (ptr == NULL) {
     return -1;
   }
@@ -994,6 +998,7 @@ SetObjFieldFromStyle(GtkWidget *widget, struct objlist *Obj, int Id, char *field
     if (strcmp(ptr, FwLineStyle[j].name) == 0 || 
 	strcmp(ptr, _(FwLineStyle[j].name)) == 0) {
       if (chk_sputobjfield(Obj, Id, field, FwLineStyle[j].list) != 0) {
+	gtk_widget_grab_focus(w);
 	return -1;
       }
       break;
@@ -1002,6 +1007,7 @@ SetObjFieldFromStyle(GtkWidget *widget, struct objlist *Obj, int Id, char *field
 
   if (j == CLINESTYLE) {
     if (set_obj_points_from_text(gtk_bin_get_child(GTK_BIN(w)), Obj, Id, field)) {
+      gtk_widget_grab_focus(w);
       return -1;
     }
   }
@@ -1027,11 +1033,13 @@ get_style_string(struct objlist *obj, int id, char *field)
       s = FwLineStyle[j].list;
       for (i = 0; i < FwLineStyle[j].num; i++) {
 	a = strtol(s, &s, 10);
-	if (style[i] != a)
+	if (style[i] != a) {
 	  break;
+	}
       }
-      if (i == FwLineStyle[j].num)
+      if (i == FwLineStyle[j].num) {
 	return FwLineStyle[j].name;
+      }
     }
   }
 

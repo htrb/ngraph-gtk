@@ -257,16 +257,24 @@ oputcolor(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 int 
-oputstyle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+oputstyle(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;
-  int i,num,*adata;
+  int i, num, *adata;
 
-  array=(struct narray *)argv[2];
-  num=arraynum(array);
-  adata=arraydata(array);
-  for (i=0;i<num;i++)
-    adata[i]=abs(adata[i]);
+  array = (struct narray *) argv[2];
+  num = arraynum(array);
+  adata = arraydata(array);
+  if (num == 1) {
+    array = arrayadd(array, adata);
+    if (array == NULL) {
+      return 1;
+    }
+    num++;
+  }
+  for (i = 0; i < num; i++) {
+    adata[i] = abs(adata[i]);
+  }
   return 0;
 }
 
