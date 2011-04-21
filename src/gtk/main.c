@@ -1120,11 +1120,14 @@ obj_member_completion_function(const char *text, int state)
   }
 
   if (list && list[list_index]) {
-    char *t;
+    char *t, *tt;
 
     t = g_strdup_printf("%.*s%s", first_char_loc, text, list[list_index]);
+    tt = strdup(t);
+    g_free(t);
+
     list_index++;
-    return t;
+    return tt;
   }
 
   return NULL;
@@ -1280,7 +1283,7 @@ my_completion_function(const char *text, int state, char **func(const char *))
   }
 
   if (list && list[list_index]) {
-    char *t = g_strdup(list[list_index]);
+    char *t = strdup(list[list_index]);
     if (t == NULL)
       return NULL;
 

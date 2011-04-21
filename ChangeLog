@@ -1,5 +1,8 @@
 2011-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/main.c (obj_member_completion_function)
+	(my_completion_function): use "strdup()" to create return value.
+
 	* src/gtk/gtk_ruler.c (nruler_destroy): remove unused parameter
 	"event".
 	(ruler_new): function "nruler_destroy()" is now connected to the
