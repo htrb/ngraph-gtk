@@ -68,7 +68,7 @@ static void nruler_draw_pos(Nruler *ruler, GtkWidget *widget);
 static void nruler_realize(GtkWidget *widget, gpointer user_data);
 static void nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data);
 static void nruler_size_request(GtkWidget *widget, GtkRequisition *requisition, gpointer user_data);
-static gboolean nruler_destroy(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+static gboolean nruler_destroy(GtkWidget *widget, gpointer user_data);
 static gboolean nruler_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
 
 static GtkWidget *
@@ -89,7 +89,7 @@ ruler_new(int orientation)
   g_signal_connect(w, "realize", G_CALLBACK(nruler_realize), ruler);
   g_signal_connect(w, "size-allocate", G_CALLBACK(nruler_size_allocate), ruler);
   g_signal_connect(w, "size-request", G_CALLBACK(nruler_size_request), ruler);
-  g_signal_connect(w, "destroy-event", G_CALLBACK(nruler_destroy), ruler);
+  g_signal_connect(w, "unrealize", G_CALLBACK(nruler_destroy), ruler);
   g_object_set_data(G_OBJECT(w), RULER_DATA_KEY, ruler);
 
   return w;
@@ -152,7 +152,7 @@ nruler_set_position(GtkWidget *w, double position)
 }
 
 static gboolean 
-nruler_destroy(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+nruler_destroy(GtkWidget *widget, gpointer user_data)
 {
   Nruler *ruler;
 

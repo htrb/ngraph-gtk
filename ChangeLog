@@ -1,3 +1,10 @@
+2011-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_ruler.c (nruler_destroy): remove unused parameter
+	"event".
+	(ruler_new): function "nruler_destroy()" is now connected to the
+	"unrealize" signal.
+
 2011-04-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/object.c (arrayadd): check if the parameter "val" is NULL or

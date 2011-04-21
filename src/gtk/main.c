@@ -1124,26 +1124,33 @@ obj_member_completion_function(const char *text, int state)
 
     t = g_strdup_printf("%.*s%s", first_char_loc, text, list[list_index]);
     list_index++;
-    return (t);
-  } else {
-    return ((char *) NULL);
+    return t;
   }
+
+  return NULL;
 }
 
 static char **
 get_obj_member_list(struct objlist *objcur, char *member)
 {
-  char **list = (char **) NULL;
-  int i, j, len;
+  char **list = (char **) NULL, *field;
+  int i, j, len, n;
 
-  if ((list = g_malloc(sizeof(*list) * (chkobjfieldnum(objcur) + 1))) == NULL)
+  n = chkobjfieldnum(objcur);
+  list = g_malloc(sizeof(*list) * (n + 1));
+  if (list == NULL) {
     return NULL;
+  }
 
   len = strlen(member);
   j = 0;
-  for (i = 0; i < chkobjfieldnum(objcur); i++) {
-    if (strncmp(chkobjfieldname(objcur, i), member, len) == 0) {
-      list[j++] = chkobjfieldname(objcur, i);
+  for (i = 0; i < n; i++) {
+    field = chkobjfieldname(objcur, i);
+    if (field == NULL) {
+      continue;
+    }
+    if (strncmp(field, member, len) == 0) {
+      list[j++] = field;
     }
   }
   list[j] = NULL;
