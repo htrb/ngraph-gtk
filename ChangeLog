@@ -1,3 +1,13 @@
+2011-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.c (main): call "g_mem_set_vtable()" when
+	"USE_MEM_PROFILE" is true.
+
+	* src/osystem.c (system_mem_profile): added.
+	(nsystem): add field "mem_profile" when "USE_MEM_PROFILE" is true.
+
+	* src/common.h (USE_MEM_PROFILE): added.
+
 2011-04-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.c (obj_member_completion_function)

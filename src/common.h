@@ -38,4 +38,6 @@
 
 #define COMPILER_NAME (CCNAME " " __VERSION__)
 
+#define USE_MEM_PROFILE 0
+
 #endif	/* COMMON_HEADER */

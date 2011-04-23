@@ -741,6 +741,10 @@ main(int argc, char **argv)
   char *history_file = NULL;
 #endif
 
+#if USE_MEM_PROFILE
+  g_mem_set_vtable(glib_mem_profiler_table);
+#endif
+
   g_thread_init(NULL);
   gdk_threads_init();
   gdk_threads_enter();
