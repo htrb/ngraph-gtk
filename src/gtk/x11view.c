@@ -403,7 +403,7 @@ graph_dropped(char *fname)
   }
 
   if (load) {
-    CmViewerDrawB(NULL, NULL);
+    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     return 0;
   }
   return 1;
@@ -3196,11 +3196,15 @@ set_drag_info(struct Viewer *d)
   gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), buf);
 }
 
+#define CLEAR_DRAG_INFO 0
+#if CLEAR_DRAG_INFO
 static void
 reset_drag_info(struct Viewer *d)
 {
   gtk_label_set_text(GTK_LABEL(NgraphApp.Message_extra), NULL);
 }
+#endif
+
 static void
 SetPoint(struct Viewer *d, int x, int y)
 {
@@ -4617,7 +4621,7 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     gtk_radio_action_set_current_value(NgraphApp.viewb, DefaultMode);
     return FALSE;
   case GDK_space:
-    CmViewerDrawB(NULL, NULL);
+    CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     return TRUE;
   case GDK_Delete:
     ViewDelete();
@@ -4742,7 +4746,9 @@ ViewerEvKeyUp(GtkWidget *w, GdkEventKey *e, gpointer client_data)
     }
     UpdateAll();
     d->MouseMode = MOUSENONE;
+#if CLEAR_DRAG_INFO
     reset_drag_info(d);
+#endif
     return TRUE;
   default:
     break;
@@ -5377,32 +5383,23 @@ Clear(void)
 }
 
 void
-CmViewerDraw(void)
+CmViewerDraw(GtkAction *w, gpointer client_data)
 {
+  int select_file;
+
   if (Menulock || Globallock)
     return;
 
-  Draw(TRUE);
+  select_file = GPOINTER_TO_INT(client_data);
+
+  Draw(select_file);
 
   FileWinUpdate(TRUE);
   AxisWinUpdate(TRUE);
 }
 
 void
-CmViewerDrawB(GtkWidget *w, gpointer client_data)
-{
-
-  if (Menulock || Globallock)
-    return;
-
-  Draw(FALSE);
-
-  FileWinUpdate(TRUE);
-  AxisWinUpdate(TRUE);
-}
-
-void
-CmViewerClear(void)
+CmViewerClear(GtkAction *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -6034,7 +6031,7 @@ ViewCross(int state)
 }
 
 void
-ViewerPopupMenu(GtkWidget *w, gpointer client_data)
+ViewerPopupMenu(GtkAction *w, gpointer client_data)
 {
   switch ((int) client_data) {
   case VIEW_UPDATE:
@@ -6063,7 +6060,7 @@ CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_da
 }
 
 void
-CmEditMenuCB(GtkToolItem *w, gpointer client_data)
+CmEditMenuCB(GtkAction *w, gpointer client_data)
 {
   switch ((int) client_data) {
   case MenuIdEditCut:

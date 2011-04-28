@@ -22,15 +22,23 @@
  */
 
 char *AxisCB(struct objlist *obj, int id);
-void CmAxisNewFrame(void);
-void CmAxisNewSection(void);
-void CmAxisNewCross(void);
-void CmAxisClear(GtkWidget *w, gpointer p);
-void CmAxisAddMenu(GtkMenuItem *w, gpointer client_data);
-void CmAxisMenu(GtkMenuItem *w, gpointer client_data);
-void CmGridMenu(GtkMenuItem *w, gpointer client_data);
-void CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data);
+
+void CmAxisNewFrame(GtkAction *w, gpointer client_data);
+void CmAxisNewSection(GtkAction *w, gpointer client_data);
+void CmAxisNewCross(GtkAction *w, gpointer client_data);
+void CmAxisNewSingle(GtkAction *w, gpointer client_data);
+
+void CmAxisUpdate(GtkAction *w, gpointer client_data);
+void CmAxisDel(GtkAction *w, gpointer client_data);
+void CmAxisZoom(GtkAction *w, gpointer client_data);
+void CmAxisClear(GtkAction *w, gpointer client_data);
+void CmAxisScaleUndo(GtkAction *w, gpointer client_data);
+
+void CmAxisGridNew(GtkAction *w, gpointer client_data);
+void CmAxisGridDel(GtkAction *w, gpointer client_data);
+void CmAxisGridUpdate(GtkAction *w, gpointer client_data);
+
 void CmAxisWindow(GtkToggleAction *action, gpointer client_data);
-void CmGridMenu(GtkMenuItem *w, gpointer client_data);
+
 void axis_scale_push(struct objlist *obj, int id);
 void AxisWinUpdate(int clear);

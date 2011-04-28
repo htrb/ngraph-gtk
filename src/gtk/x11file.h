@@ -30,12 +30,18 @@ struct evaltype
 
 void FileWinUpdate(int clear);
 void CmFileHistory(GtkWidget *w, gpointer client_data);
-void CmFileMenu(GtkMenuItem *w, gpointer client_data);
-void CmFileOpenB(GtkWidget *w, gpointer p);
+
+void CmFileNew(GtkAction *w, gpointer client_data);
+void CmFileOpen(GtkAction *w, gpointer client_data);
+void CmFileClose(GtkAction *w, gpointer client_data);
+void CmFileUpdate(GtkAction *w, gpointer client_data);
+void CmFileEdit(GtkAction *w, gpointer client_data);
+void CmFileMath(GtkAction *w, gpointer client_data);
+void CmFileSaveData(GtkAction *w, gpointer client_data);
+
 void CmFileWindow(GtkToggleAction *action, gpointer client_data);
 void FileWindowUnmap(GtkWidget *w, gpointer client_data);
-void CmFileWinMath(GtkWidget *w, gpointer p);
-void CmOptionFileDef(void);
+void CmOptionFileDef(GtkAction *w, gpointer client_data);
 int update_file_obj_multi(struct objlist *obj, struct narray *farray, int newfile);
 void copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename);
 void button_set_mark_image(GtkWidget *w, int type);

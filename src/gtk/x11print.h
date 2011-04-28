@@ -25,8 +25,7 @@
 #define PRINT_SHOW_DIALOG_PREVIEW 1
 #define PRINT_SHOW_DIALOG_DIALOG  2
 
-void CmOutputViewer(int select_file);
 void CmOutputPrinter(int select_file, int show_dialog);
-void CmOutputMenu(GtkWidget *w, gpointer client_data);
-void CmOutputViewerB(GtkWidget *w, gpointer client_data);
-void CmOutputPrinterB(GtkWidget *wi, gpointer client_data);
+void CmOutputMenu(GtkAction *w, gpointer client_data);
+void CmOutputViewerB(GtkAction *w, gpointer client_data);
+void CmOutputPrinterB(GtkAction *wi, gpointer client_data);

@@ -1,3 +1,54 @@
+2011-04-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (CmFileNew, CmFileOpen, CmFileClose)
+	(CmFileUpdate, CmFileEdit, CmFileMath): add parameters "GtkAction
+	*w" and "gpointer client_data".
+	(FileWinFileDraw): call "CmViewerDraw()" instead of
+	"CmViewerDrawB()".
+	(CmFileMenu): removed.
+	(GetDrawFiles, CmFileSaveData): moved from "x11print.c".
+
+	* src/gtk/x11view.c (ViewerEvKeyUp): call "reset_drag_info()" only
+	when "CLEAR_DRAG_INFO" is true.
+	(graph_dropped, ViewerEvKeyDown): call "CmViewerDraw()" instead of
+	"CmViewerDrawB()".
+	(CmViewerDraw, CmViewerClear): add parameters "GtkAction *w" and
+	"gpointer client_data".
+	(CmViewerDraw): second parameter represents if select files before
+	drawing or not.
+
+	* src/gtk/x11opt.c (CmOptionSaveNgp, CmOptionViewer)
+	(CmOptionExtViewer, CmOptionPrefFont, CmOptionScript)
+	(CmOptionMisc, CmOptionSaveDefault): add parameters "GtkAction *w"
+	and "gpointer client_data".
+	(CmOptionMenu): removed.
+
+	* src/gtk/x11merge.c (CmMergeOpen, CmMergeClose, CmMergeUpdate):
+	add parameters "GtkAction *w" and "gpointer client_data".
+	(CmMergeMenu, MergeWinMergeOpen): removed.
+
+	* src/gtk/x11axis.c (CmAxisNewFrame, CmAxisNewSection)
+	(CmAxisNewCross, CmAxisNewSingle, CmAxisDel, CmAxisUpdate)
+	(CmAxisZoom, CmAxisClear, CmAxisGridNew, CmAxisGridDel)
+	(CmAxisGridUpdate, CmAxisScaleUndo): add parameters "GtkAction *w"
+	and "gpointer client_data".
+	(CmAxisMenu, CmGridMenu): removed.
+
+	* src/gtk/x11print.c (CmOutputViewer): removed.
+	(CmOutputViewerB): merged with the function "CmOutputViewer()".
+	(CmOutputViewerB): never call "SetFileHidden()".
+	(CmPrintGRAFile, CmOutputImage): static function.
+	(CmOutputMenu): remove unused case.
+
+	* src/gtk/x11lgnd.c (CmLineDel, CmLineUpdate, CmRectDel)
+	(CmRectUpdate, CmArcDel, CmArcUpdate, CmMarkDel, CmMarkUpdate)
+	(CmTextDel, CmOptionTextDef): add parameters
+	"GtkAction *w" and "gpointer client_data".
+	(CmLineMenu, CmRectangleMenu, CmArcMenu, CmMarkMenu, CmTextMenu):
+	removed.
+
+	* src/gtk/x11menu.h (MenuID): remove unused items.
+
 2011-04-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.c (main): call "g_mem_set_vtable()" when

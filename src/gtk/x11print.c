@@ -761,12 +761,9 @@ CmOutputDriver(void)
 }
 
 void
-CmOutputViewer(int select_file)
+CmOutputViewerB(GtkAction *wi, gpointer client_data)
 {
   if (Menulock || Globallock)
-    return;
-
-  if (select_file && ! SetFileHidden())
     return;
 
   FileAutoScale();
@@ -845,7 +842,7 @@ get_base_ngp_name(void)
   return tmp;
 }
 
-void
+static void
 CmPrintGRAFile(void)
 {
   struct objlist *graobj, *g2wobj;
@@ -903,7 +900,7 @@ CmPrintGRAFile(void)
   delobj(g2wobj, g2wid);
 }
 
-void
+static void
 CmOutputImage(int type)
 {
   struct objlist *graobj, *g2wobj;
@@ -1023,151 +1020,16 @@ CmOutputImage(int type)
   delobj(g2wobj, g2wid);
 }
 
-static int
-GetDrawFiles(struct narray *farray)
-{
-  struct objlist *fobj;
-  int lastinst;
-  struct narray ifarray;
-  int i, a;
-
-  if (farray == NULL)
-    return 1;
-
-  fobj = chkobject("file");
-  if (fobj == NULL)
-    return 1;
-
-  lastinst = chkobjlastinst(fobj);
-  if (lastinst < 0)
-    return 1;
-
-  arrayinit(&ifarray, sizeof(int));
-  for (i = 0; i <= lastinst; i++) {
-    getobj(fobj, "hidden", i, 0, NULL, &a);
-    if (!a)
-      arrayadd(&ifarray, &i);
-  }
-  SelectDialog(&DlgSelect, fobj, FileCB, farray, &ifarray);
-  if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
-    arraydel(&ifarray);
-    arraydel(farray);
-    return 1;
-  }
-  arraydel(&ifarray);
-
-  return 0;
-}
-
 void
-CmPrintDataFile(void)
-{
-  struct narray farray;
-  struct objlist *obj;
-  int i, num, onum, type, div, curve = FALSE, *array, append;
-  char *file, buf[1024];
-  char *argv[4];
-
-  if (Menulock || Globallock)
-    return;
-
-  if (GetDrawFiles(&farray))
-    return;
-
-  obj = chkobject("file");
-  if (obj == NULL)
-    return;
-
-  onum = chkobjlastinst(obj);
-  num = arraynum(&farray);
-
-  if (num == 0) {
-    arraydel(&farray);
-    return;
-  }
-
-  array = arraydata(&farray);
-  for (i = 0; i < num; i++) {
-    if (array[i] < 0 || array[i] > onum)
-      continue;
-
-    getobj(obj, "type", array[i], 0, NULL, &type);
-    if (type == 3) {
-      curve = TRUE;
-    }
-  }
-
-  div = 10;
-
-  if (curve) {
-    OutputDataDialog(&DlgOutputData, div);
-    if (DialogExecute(TopLevel, &DlgOutputData) != IDOK) {
-      arraydel(&farray);
-      return;
-    }
-    div = DlgOutputData.div;
-  }
-
-  if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
-		       &file, FALSE, Menulocal.changedirectory) != IDOK) {
-    arraydel(&farray);
-    return;
-  }
-
-  ProgressDialogCreate(_("Making data file"));
-  SetStatusBar(_("Making data file."));
-
-  argv[0] = (char *) file;
-  argv[1] = (char *) &div;
-  argv[3] = NULL;
-  for (i = 0; i < num; i++) {
-    if (array[i] < 0 || array[i] > onum)
-      continue;
-
-    snprintf(buf, sizeof(buf), "%d/%d", i, num);
-    set_progress(1, buf, 1.0 * (i + 1) / num);
-
-    append = (i == 0) ? FALSE : TRUE;
-    argv[2] = (char *) &append;
-    if (exeobj(obj, "output_file", array[i], 3, argv))
-      break;
-  }
-  ProgressDialogFinalize();
-  ResetStatusBar();
-  gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, FALSE);
-
-  arraydel(&farray);
-  g_free(file);
-}
-
-void
-CmOutputPrinterB(GtkWidget *wi, gpointer client_data)
+CmOutputPrinterB(GtkAction *wi, gpointer client_data)
 {
   CmOutputPrinter(FALSE, PRINT_SHOW_DIALOG_DIALOG);
 }
 
 void
-CmOutputViewerB(GtkWidget *wi, gpointer client_data)
-{
-  CmOutputViewer(FALSE);
-}
-
-void
-CmOutputMenu(GtkWidget *wi, gpointer client_data)
+CmOutputMenu(GtkAction *wi, gpointer client_data)
 {
   switch ((int) client_data) {
-  case MenuIdViewerDraw:
-    CmViewerDraw();
-    break;
-  case MenuIdViewerClear:
-    CmViewerClear();
-    break;
-  case MenuIdOutputViewer:
-    CmOutputViewer(TRUE);
-    break;
-  case MenuIdOutputDriver:
-    CmOutputDriver();
-    break;
   case MenuIdOutputGRAFile:
     CmPrintGRAFile();
     break;
@@ -1180,9 +1042,6 @@ CmOutputMenu(GtkWidget *wi, gpointer client_data)
   case MenuIdOutputEMFFile:
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
     CmOutputImage((int) client_data);
-    break;
-  case MenuIdPrintDataFile:
-    CmPrintDataFile();
     break;
   }
 }

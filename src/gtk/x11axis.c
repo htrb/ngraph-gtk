@@ -2323,7 +2323,7 @@ AxisDialog(void *data, struct objlist *obj, int id, int candel)
 }
 
 void
-CmAxisNewFrame(void)
+CmAxisNewFrame(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret;
@@ -2365,19 +2365,21 @@ CmAxisNewFrame(void)
 		&idg, FALSE);
   ret = DialogExecute(TopLevel, &DlgSection);
   if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    if (idg != -1)
+    if (idg != -1) {
       delobj(obj2, idg);
+    }
     delobj(obj, idr);
     delobj(obj, idu);
     delobj(obj, idy);
     delobj(obj, idx);
-  } else
+  } else {
     set_graph_modified();
+  }
   AxisWinUpdate(TRUE);
 }
 
 void
-CmAxisNewSection(void)
+CmAxisNewSection(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj, *obj2;
   int idx, idy, idu, idr, idg, ret, oidx, oidy;
@@ -2437,13 +2439,14 @@ CmAxisNewSection(void)
     delobj(obj, idu);
     delobj(obj, idy);
     delobj(obj, idx);
-  } else
+  } else {
     set_graph_modified();
+  }
   AxisWinUpdate(TRUE);
 }
 
 void
-CmAxisNewCross(void)
+CmAxisNewCross(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   int idx, idy, ret;
@@ -2485,7 +2488,7 @@ CmAxisNewCross(void)
 }
 
 void
-CmAxisNewSingle(void)
+CmAxisNewSingle(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   int id, ret;
@@ -2506,26 +2509,7 @@ CmAxisNewSingle(void)
 }
 
 void
-CmAxisAddMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdAxisNewFrame:
-    CmAxisNewFrame();
-    break;
-  case MenuIdAxisNewSection:
-    CmAxisNewSection();
-    break;
-  case MenuIdAxisNewCross:
-    CmAxisNewCross();
-    break;
-  case MenuIdAxisNewSingle:
-    CmAxisNewSingle();
-    break;
-  }
-}
-
-void
-CmAxisDel(void)
+CmAxisDel(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
 
@@ -2549,7 +2533,7 @@ CmAxisDel(void)
 }
 
 void
-CmAxisUpdate(void)
+CmAxisUpdate(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   int i, ret;
@@ -2577,7 +2561,7 @@ CmAxisUpdate(void)
 }
 
 void
-CmAxisZoom(void)
+CmAxisZoom(GtkAction *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -2651,7 +2635,7 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
 }
 
 void
-CmAxisClear(GtkWidget *w, gpointer p)
+CmAxisClear(GtkAction *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -2679,29 +2663,7 @@ CmAxisClear(GtkWidget *w, gpointer p)
 }
 
 void
-CmAxisMenu(GtkMenuItem *menuitem, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdAxisUpdate:
-    CmAxisUpdate();
-    break;
-  case MenuIdAxisDel:
-    CmAxisDel();
-    break;
-  case MenuIdAxisZoom:
-    CmAxisZoom();
-    break;
-  case MenuIdAxisClear:
-    CmAxisClear(NULL, NULL);
-    break;
-  case MenuIdAxisUndo:
-    CmAxisWinScaleUndo(NULL, NULL);
-    break;
-  }
-}
-
-void
-CmAxisGridNew(void)
+CmAxisGridNew(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   int id, ret;
@@ -2721,7 +2683,7 @@ CmAxisGridNew(void)
 }
 
 void
-CmAxisGridDel(void)
+CmAxisGridDel(GtkAction *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -2746,9 +2708,8 @@ CmAxisGridDel(void)
   arraydel(&farray);
 }
 
-
 void
-CmAxisGridUpdate(void)
+CmAxisGridUpdate(GtkAction *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -2777,24 +2738,6 @@ CmAxisGridUpdate(void)
   }
   arraydel(&farray);
 }
-
-
-void
-CmGridMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdAxisGridNew:
-    CmAxisGridNew();
-    break;
-  case MenuIdAxisGridUpdate:
-    CmAxisGridUpdate();
-    break;
-  case MenuIdAxisGridDel:
-    CmAxisGridDel();
-    break;
-  }
-}
-
 
 void
 AxisWinUpdate(int clear)
@@ -2917,7 +2860,7 @@ check_axis_history(struct objlist *obj)
 }
 
 void
-CmAxisWinScaleUndo(GtkWidget *w, gpointer client_data)
+CmAxisScaleUndo(GtkAction *w, gpointer client_data)
 {
   struct SubWin *d;
   char *argv[1];

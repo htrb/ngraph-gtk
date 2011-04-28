@@ -104,7 +104,7 @@ static void FileDialogType(GtkWidget *w, gpointer client_data);
 static void create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent);
 
 static struct subwin_popup_list Popup_list[] = {
-  {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpenB), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -3399,7 +3399,7 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
 }
 
 void
-CmFileNew(void)
+CmFileNew(GtkAction *w, gpointer client_data)
 {
   char *file;
   int id, ret;
@@ -3440,7 +3440,7 @@ CmFileNew(void)
 
 
 void
-CmFileOpen(void)
+CmFileOpen(GtkAction *w, gpointer client_data)
 {
   int id, ret, n;
   char *name;
@@ -3487,7 +3487,7 @@ CmFileOpen(void)
 }
 
 void
-CmFileClose(void)
+CmFileClose(GtkAction *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -3568,7 +3568,7 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
 }
 
 void
-CmFileUpdate(void)
+CmFileUpdate(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   int ret;
@@ -3600,7 +3600,7 @@ CmFileUpdate(void)
 }
 
 void
-CmFileEdit(void)
+CmFileEdit(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   int i;
@@ -3640,38 +3640,7 @@ CmFileEdit(void)
 }
 
 void
-CmFileOpenB(GtkWidget *w, gpointer p)
-{
-  CmFileOpen();
-}
-
-void
-CmFileMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdFileNew:
-    CmFileNew();
-    break;
-  case MenuIdFileOpen:
-    CmFileOpen();
-    break;
-  case MenuIdFileUpdate:
-    CmFileUpdate();
-    break;
-  case MenuIdFileClose:
-    CmFileClose();
-    break;
-  case MenuIdFileEdit:
-    CmFileEdit();
-    break;
-  case MenuIdFileMath:
-    CmFileWinMath(NULL, NULL);
-    break;
-  }
-}
-
-void
-CmOptionFileDef(void)
+CmOptionFileDef(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;
@@ -3896,7 +3865,7 @@ FileWinFileDraw(struct SubWin *d)
     }
     d->select = -1;
   }
-  CmViewerDrawB(NULL, NULL);
+  CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
   FileWinUpdate(FALSE);
 }
 
@@ -4356,7 +4325,7 @@ FileWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
 }
 
 void
-CmFileWinMath(GtkWidget *w, gpointer p)
+CmFileMath(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
 
@@ -4370,6 +4339,123 @@ CmFileWinMath(GtkWidget *w, gpointer p)
 
   MathDialog(&DlgMath, obj);
   DialogExecute(TopLevel, &DlgMath);
+}
+
+static int
+GetDrawFiles(struct narray *farray)
+{
+  struct objlist *fobj;
+  int lastinst;
+  struct narray ifarray;
+  int i, a;
+
+  if (farray == NULL)
+    return 1;
+
+  fobj = chkobject("file");
+  if (fobj == NULL)
+    return 1;
+
+  lastinst = chkobjlastinst(fobj);
+  if (lastinst < 0)
+    return 1;
+
+  arrayinit(&ifarray, sizeof(int));
+  for (i = 0; i <= lastinst; i++) {
+    getobj(fobj, "hidden", i, 0, NULL, &a);
+    if (!a)
+      arrayadd(&ifarray, &i);
+  }
+  SelectDialog(&DlgSelect, fobj, FileCB, farray, &ifarray);
+  if (DialogExecute(TopLevel, &DlgSelect) != IDOK) {
+    arraydel(&ifarray);
+    arraydel(farray);
+    return 1;
+  }
+  arraydel(&ifarray);
+
+  return 0;
+}
+
+void
+CmFileSaveData(GtkAction *w, gpointer client_data)
+{
+  struct narray farray;
+  struct objlist *obj;
+  int i, num, onum, type, div, curve = FALSE, *array, append;
+  char *file, buf[1024];
+  char *argv[4];
+
+  if (Menulock || Globallock)
+    return;
+
+  if (GetDrawFiles(&farray))
+    return;
+
+  obj = chkobject("file");
+  if (obj == NULL)
+    return;
+
+  onum = chkobjlastinst(obj);
+  num = arraynum(&farray);
+
+  if (num == 0) {
+    arraydel(&farray);
+    return;
+  }
+
+  array = arraydata(&farray);
+  for (i = 0; i < num; i++) {
+    if (array[i] < 0 || array[i] > onum)
+      continue;
+
+    getobj(obj, "type", array[i], 0, NULL, &type);
+    if (type == 3) {
+      curve = TRUE;
+    }
+  }
+
+  div = 10;
+
+  if (curve) {
+    OutputDataDialog(&DlgOutputData, div);
+    if (DialogExecute(TopLevel, &DlgOutputData) != IDOK) {
+      arraydel(&farray);
+      return;
+    }
+    div = DlgOutputData.div;
+  }
+
+  if (nGetSaveFileName(TopLevel, _("Data file"), NULL, NULL, NULL,
+		       &file, FALSE, Menulocal.changedirectory) != IDOK) {
+    arraydel(&farray);
+    return;
+  }
+
+  ProgressDialogCreate(_("Making data file"));
+  SetStatusBar(_("Making data file."));
+
+  argv[0] = (char *) file;
+  argv[1] = (char *) &div;
+  argv[3] = NULL;
+  for (i = 0; i < num; i++) {
+    if (array[i] < 0 || array[i] > onum)
+      continue;
+
+    snprintf(buf, sizeof(buf), "%d/%d", i, num);
+    set_progress(1, buf, 1.0 * (i + 1) / num);
+
+    append = (i == 0) ? FALSE : TRUE;
+    argv[2] = (char *) &append;
+    if (exeobj(obj, "output_file", array[i], 3, argv))
+      break;
+  }
+  ProgressDialogFinalize();
+  ResetStatusBar();
+  gdk_window_invalidate_rect(NgraphApp.Viewer.gdk_win, NULL, FALSE);
+
+  arraydel(&farray);
+  g_free(file);
 }
 
 static gboolean

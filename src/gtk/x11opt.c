@@ -1740,8 +1740,8 @@ ViewerDialog(struct ViewerDialog *data, struct objlist *obj, int id)
   data->Clear = FALSE;
 }
 
-static void
-CmOptionSaveNgp(void)
+void
+CmOptionSaveNgp(GtkAction *w, gpointer client_data)
 {
   char *ngpfile;
   char mes[MESSAGE_BUF_SIZE];
@@ -1785,8 +1785,8 @@ CmOptionSaveNgp(void)
   return;
 }
 
-static void
-CmOptionViewer(void)
+void
+CmOptionViewer(GtkAction *w, gpointer client_data)
 {
   int r;
 
@@ -1800,8 +1800,8 @@ CmOptionViewer(void)
   }
 }
 
-static void
-CmOptionExtViewer(void)
+void
+CmOptionExtViewer(GtkAction *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1809,8 +1809,8 @@ CmOptionExtViewer(void)
   DialogExecute(TopLevel, &DlgExViewer);
 }
 
-static void
-CmOptionPrefFont(void)
+void
+CmOptionPrefFont(GtkAction *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1818,6 +1818,7 @@ CmOptionPrefFont(void)
   DialogExecute(TopLevel, &DlgPrefFont);
 }
 
+#if 0
 static void
 CmOptionPrefDriver(void)
 {
@@ -1826,9 +1827,10 @@ CmOptionPrefDriver(void)
   PrefDriverDialog(&DlgPrefDriver);
   DialogExecute(TopLevel, &DlgPrefDriver);
 }
+#endif
 
-static void
-CmOptionScript(void)
+void
+CmOptionScript(GtkAction *w, gpointer client_datavoid)
 {
   if (Menulock || Globallock)
     return;
@@ -1836,8 +1838,8 @@ CmOptionScript(void)
   DialogExecute(TopLevel, &DlgPrefScript);
 }
 
-static void
-CmOptionMisc(void)
+void
+CmOptionMisc(GtkAction *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
@@ -1845,48 +1847,11 @@ CmOptionMisc(void)
   DialogExecute(TopLevel, &DlgMisc);
 }
 
-static void
-CmOptionSaveDefault(void)
+void
+CmOptionSaveDefault(GtkAction *w, gpointer client_data)
 {
   if (Menulock || Globallock)
     return;
   DefaultDialog(&DlgDefault);
   DialogExecute(TopLevel, &DlgDefault);
-}
-
-void
-CmOptionMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdOptionViewer:
-    CmOptionViewer();
-    break;
-  case MenuIdOptionExtViewer:
-    CmOptionExtViewer();
-    break;
-  case MenuIdOptionPrefFont:
-    CmOptionPrefFont();
-    break;
-  case MenuIdOptionPrefDriver:
-    CmOptionPrefDriver();
-    break;
-  case MenuIdOptionScript:
-    CmOptionScript();
-    break;
-  case MenuIdOptionMisc:
-    CmOptionMisc();
-    break;
-  case MenuIdOptionSaveDefault:
-    CmOptionSaveDefault();
-    break;
-  case MenuIdOptionSaveNgp:
-    CmOptionSaveNgp();
-    break;
-  case MenuIdOptionFileDef:
-    CmOptionFileDef();
-    break;
-  case MenuIdOptionTextDef:
-    CmOptionTextDef();
-    break;
-  }
 }

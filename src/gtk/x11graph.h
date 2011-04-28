@@ -21,17 +21,17 @@
  * 
  */
 
-void CmGraphQuit(GtkWidget *w, gpointer client_data);
-void CmGraphNewMenu(GtkWidget *w, gpointer client_data);
+void CmGraphQuit(GtkAction *w, gpointer client_data);
+void CmGraphNewMenu(GtkAction *w, gpointer client_data);
 void CmGraphHistory(GtkRecentChooser *w, gpointer client_data);
-void CmGraphLoad(GtkWidget *w, gpointer client_data);
-void CmGraphSave(GtkWidget *w, gpointer client_data);
-void CmGraphOverWrite(GtkWidget *w, gpointer client_data);
-void CmGraphShell(GtkWidget *w, gpointer client_data);
-void CmGraphDirectory(GtkWidget *w, gpointer client_data);
-void CmHelpHelp(GtkWidget *w, gpointer client_data);
-void CmHelpAbout(GtkWidget *w, gpointer client_data);
-void CmGraphSwitch(GtkWidget *w, gpointer client_data);
-void CmGraphPage(GtkWidget *w, gpointer client_data);
+void CmGraphLoad(GtkAction *w, gpointer client_data);
+void CmGraphSave(GtkAction *w, gpointer client_data);
+void CmGraphOverWrite(GtkAction *w, gpointer client_data);
+void CmGraphShell(GtkAction *w, gpointer client_data);
+void CmGraphDirectory(GtkAction *w, gpointer client_data);
+void CmHelpHelp(GtkAction *w, gpointer client_data);
+void CmHelpAbout(GtkAction *w, gpointer client_data);
+void CmGraphSwitch(GtkAction *w, gpointer client_data);
+void CmGraphPage(GtkAction *w, gpointer client_data);
 
 int set_paper_type(int w, int h);

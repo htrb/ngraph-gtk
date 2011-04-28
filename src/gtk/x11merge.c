@@ -63,12 +63,11 @@ static n_list_store Mlist[] = {
 #define MERG_WIN_COL_ID     1
 #define MERG_WIN_COL_FILE   2
 
-static void MergeWinMergeOpen(GtkMenuItem *w, gpointer client_data);
 static gboolean MergeWinExpose(GtkWidget *w, GdkEvent *event, gpointer client_data);
 static void merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 
 static struct subwin_popup_list Popup_list[] = {
-  {GTK_STOCK_OPEN,        G_CALLBACK(MergeWinMergeOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_OPEN,        G_CALLBACK(CmMergeOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {GTK_STOCK_CLOSE,       G_CALLBACK(list_sub_window_delete), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
@@ -203,7 +202,7 @@ MergeDialog(void *data, struct objlist *obj, int id, int sub_id)
 }
 
 void
-CmMergeOpen(void)
+CmMergeOpen(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   char *name = NULL;
@@ -237,7 +236,7 @@ CmMergeOpen(void)
 }
 
 void
-CmMergeClose(void)
+CmMergeClose(GtkAction *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -264,7 +263,7 @@ CmMergeClose(void)
 }
 
 void
-CmMergeUpdate(void)
+CmMergeUpdate(GtkAction *w, gpointer client_data)
 {
   struct narray farray;
   struct objlist *obj;
@@ -293,29 +292,6 @@ CmMergeUpdate(void)
     MergeWinUpdate(TRUE);
   }
   arraydel(&farray);
-}
-
-
-void
-CmMergeMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdMergeOpen:
-    CmMergeOpen();
-    break;
-  case MenuIdMergeUpdate:
-    CmMergeUpdate();
-    break;
-  case MenuIdMergeClose:
-    CmMergeClose();
-    break;
-  }
-}
-
-static void
-MergeWinMergeOpen(GtkMenuItem *w, gpointer client_data)
-{
-  CmMergeOpen();
 }
 
 void

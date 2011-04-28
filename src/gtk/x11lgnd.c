@@ -1760,7 +1760,7 @@ LegendTextDefDialog(struct LegendDialog *data,
 }
 
 void
-CmLineDel(void)
+CmLineDel(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -1787,7 +1787,7 @@ CmLineDel(void)
 }
 
 void
-CmLineUpdate(void)
+CmLineUpdate(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -1820,20 +1820,7 @@ CmLineUpdate(void)
 }
 
 void
-CmLineMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdLegendUpdate:
-    CmLineUpdate();
-    break;
-  case MenuIdLegendDel:
-    CmLineDel();
-    break;
-  }
-}
-
-void
-CmRectDel(void)
+CmRectDel(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -1860,7 +1847,7 @@ CmRectDel(void)
 }
 
 void
-CmRectUpdate(void)
+CmRectUpdate(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -1893,20 +1880,7 @@ CmRectUpdate(void)
 }
 
 void
-CmRectangleMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdLegendUpdate:
-    CmRectUpdate();
-    break;
-  case MenuIdLegendDel:
-    CmRectDel();
-    break;
-  }
-}
-
-void
-CmArcDel(void)
+CmArcDel(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -1933,7 +1907,7 @@ CmArcDel(void)
 }
 
 void
-CmArcUpdate(void)
+CmArcUpdate(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -1966,20 +1940,7 @@ CmArcUpdate(void)
 }
 
 void
-CmArcMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdLegendUpdate:
-    CmArcUpdate();
-    break;
-  case MenuIdLegendDel:
-    CmArcDel();
-    break;
-  }
-}
-
-void
-CmMarkDel(void)
+CmMarkDel(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2006,7 +1967,7 @@ CmMarkDel(void)
 }
 
 void
-CmMarkUpdate(void)
+CmMarkUpdate(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2039,20 +2000,7 @@ CmMarkUpdate(void)
 }
 
 void
-CmMarkMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdLegendUpdate:
-    CmMarkUpdate();
-    break;
-  case MenuIdLegendDel:
-    CmMarkDel();
-    break;
-  }
-}
-
-void
-CmTextDel(void)
+CmTextDel(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2079,7 +2027,7 @@ CmTextDel(void)
 }
 
 void
-CmTextUpdate(void)
+CmTextUpdate(GtkAction *w, gpointer client_data)
 {
   struct narray array;
   struct objlist *obj;
@@ -2112,20 +2060,7 @@ CmTextUpdate(void)
 }
 
 void
-CmTextMenu(GtkMenuItem *w, gpointer client_data)
-{
-  switch ((int) client_data) {
-  case MenuIdLegendUpdate:
-    CmTextUpdate();
-    break;
-  case MenuIdLegendDel:
-    CmTextDel();
-    break;
-  }
-}
-
-void
-CmOptionTextDef(void)
+CmOptionTextDef(GtkAction *w, gpointer client_data)
 {
   struct objlist *obj;
   int id;

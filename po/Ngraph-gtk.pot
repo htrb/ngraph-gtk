@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.03\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-04-15 16:21+0900\n"
+"POT-Creation-Date: 2011-04-26 18:51+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,7 +75,7 @@ msgid "len"
 msgstr ""
 
 #: src/gtk/x11axis.c:90 src/gtk/x11file.c:109 src/gtk/x11lgnd.c:83
-#: src/gtk/x11merge.c:72
+#: src/gtk/x11merge.c:71
 msgid "_Duplicate"
 msgstr ""
 
@@ -84,7 +84,7 @@ msgid "_Focus"
 msgstr ""
 
 #: src/gtk/x11axis.c:94 src/gtk/x11file.c:114 src/gtk/x11lgnd.c:88
-#: src/gtk/x11merge.c:76
+#: src/gtk/x11merge.c:75
 msgid "_Show"
 msgstr ""
 
@@ -165,7 +165,7 @@ msgstr ""
 msgid "_Grid"
 msgstr ""
 
-#: src/gtk/x11axis.c:943 src/gtk/x11merge.c:150
+#: src/gtk/x11axis.c:943 src/gtk/x11merge.c:149
 msgid "_Zoom:"
 msgstr ""
 
@@ -937,7 +937,7 @@ msgstr ""
 msgid "_Apply all"
 msgstr ""
 
-#: src/gtk/x11file.c:3102 src/gtk/x11merge.c:138 src/gtk/x11print.c:168
+#: src/gtk/x11file.c:3102 src/gtk/x11merge.c:137 src/gtk/x11print.c:168
 msgid "_File:"
 msgstr ""
 
@@ -969,15 +969,27 @@ msgstr ""
 msgid "Data open"
 msgstr ""
 
-#: src/gtk/x11file.c:4487 src/gtk/x11file.c:4573
+#: src/gtk/x11file.c:4429
+msgid "Data file"
+msgstr ""
+
+#: src/gtk/x11file.c:4435
+msgid "Making data file"
+msgstr ""
+
+#: src/gtk/x11file.c:4436
+msgid "Making data file."
+msgstr ""
+
+#: src/gtk/x11file.c:4573 src/gtk/x11file.c:4659
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4498 src/gtk/x11file.c:4580
+#: src/gtk/x11file.c:4584 src/gtk/x11file.c:4666
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:4506
+#: src/gtk/x11file.c:4592
 msgid "Type"
 msgstr ""
 
@@ -1238,46 +1250,46 @@ msgstr ""
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2290
+#: src/gtk/x11lgnd.c:2225
 #, c-format
 msgid "points:%-3d %s%s%s%s"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2292
+#: src/gtk/x11lgnd.c:2227
 msgid "style:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2293 src/gtk/x11lgnd.c:2382 src/gtk/x11lgnd.c:2399
+#: src/gtk/x11lgnd.c:2228 src/gtk/x11lgnd.c:2317 src/gtk/x11lgnd.c:2334
 msgid "custom"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2362
+#: src/gtk/x11lgnd.c:2297
 msgid "fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2364
+#: src/gtk/x11lgnd.c:2299
 msgid "arrow:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2378
+#: src/gtk/x11lgnd.c:2313
 #, c-format
 msgid "w:%.2f h:%.2f%s%s%s"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2381 src/gtk/x11lgnd.c:2398
+#: src/gtk/x11lgnd.c:2316 src/gtk/x11lgnd.c:2333
 msgid "  style:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2383 src/gtk/x11lgnd.c:2400
+#: src/gtk/x11lgnd.c:2318 src/gtk/x11lgnd.c:2335
 msgid "  fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2409
+#: src/gtk/x11lgnd.c:2344
 #, c-format
 msgid "%s%stype:%-2d"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:2411
+#: src/gtk/x11lgnd.c:2346
 #, c-format
 msgid "type:%-2d"
 msgstr ""
@@ -1927,20 +1939,20 @@ msgstr ""
 msgid "zoom"
 msgstr ""
 
-#: src/gtk/x11merge.c:128
+#: src/gtk/x11merge.c:127
 #, c-format
 msgid "Merge %d"
 msgstr ""
 
-#: src/gtk/x11merge.c:142
+#: src/gtk/x11merge.c:141
 msgid "_Top Margin:"
 msgstr ""
 
-#: src/gtk/x11merge.c:146
+#: src/gtk/x11merge.c:145
 msgid "_Left Margin:"
 msgstr ""
 
-#: src/gtk/x11merge.c:218
+#: src/gtk/x11merge.c:217
 msgid "Merge open"
 msgstr ""
 
@@ -2229,32 +2241,20 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:755 src/gtk/x11print.c:1021 src/gtk/x11view.c:5340
+#: src/gtk/x11print.c:755 src/gtk/x11print.c:1018 src/gtk/x11view.c:5346
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:819
+#: src/gtk/x11print.c:816
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:861
+#: src/gtk/x11print.c:858
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:901
+#: src/gtk/x11print.c:898
 msgid "Making GRA file."
-msgstr ""
-
-#: src/gtk/x11print.c:1111
-msgid "Data file"
-msgstr ""
-
-#: src/gtk/x11print.c:1117
-msgid "Making data file"
-msgstr ""
-
-#: src/gtk/x11print.c:1118
-msgid "Making data file."
 msgstr ""
 
 #: src/gtk/x11view.c:1193 src/gtk/x11view.c:1195
@@ -2275,15 +2275,15 @@ msgstr ""
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:3853
+#: src/gtk/x11view.c:3857
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5334
+#: src/gtk/x11view.c:5340
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5341
+#: src/gtk/x11view.c:5347
 msgid "Drawing"
 msgstr ""
 
