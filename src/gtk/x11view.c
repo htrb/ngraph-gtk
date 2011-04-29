@@ -5090,6 +5090,8 @@ UnFocus(void)
   if (arraynum(d->points) != 0) {
     arraydel2(d->points);
   }
+
+  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
 }
 
 static void
