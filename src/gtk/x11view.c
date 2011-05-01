@@ -5091,7 +5091,7 @@ UnFocus(void)
     arraydel2(d->points);
   }
 
-  gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  gtk_widget_queue_draw(d->Win);
 }
 
 static void
