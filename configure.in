@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(Ngraph, 6.05.03, ZXB01226@nifty.com, Ngraph-gtk)
+AC_INIT(Ngraph, 6.05.04, ZXB01226@nifty.com, Ngraph-gtk)
 
 AC_CONFIG_SRCDIR(src/gtk/main.c)
 AM_INIT_AUTOMAKE
