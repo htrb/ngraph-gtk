@@ -232,7 +232,7 @@
 	(ViewerEvPaint): use "nround()" to get coordinate.
 	(SetHRuler, SetVRuler): use "nruler_set_range()" instead of
 	"gtk_ruler_set_range()".
-	(create_pix): size pf the pixmap is now "(w + 1) x (h + 1)".
+	(create_pix): size of the pixmap is now "(w + 1) x (h + 1)".
 	(create_pix): use "cairo_paint()" instead of "cairo_rectangle()"
 	and "cairo_fill()".
 	(create_pix): don't call "draw_paper_frame()".
