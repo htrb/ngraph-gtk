@@ -442,8 +442,9 @@ single_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
       (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
 
     i = list_store_get_selected_index(d->list);
-    if (i < 0)
+    if (i < 0) {
       return FALSE;
+    }
 
     gtk_dialog_response(GTK_DIALOG(d->widget), GTK_RESPONSE_OK);
 
@@ -501,8 +502,9 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
     list_store_select_nth(d->list, 0);
   } else if (d->Id >= 0) {
     a = search_id(d->list, d->Id);
-    if (a >= 0)
+    if (a >= 0) {
       list_store_select_nth(d->list, a);
+    }
   }
   /*
   if (makewidget) {
@@ -521,8 +523,9 @@ CopyDialogClose(GtkWidget *w, void *data)
 
   d = (struct CopyDialog *) data;
 
-  if (d->ret == IDCANCEL)
+  if (d->ret == IDCANCEL) {
     return;
+  }
 
   d->sel = list_store_get_selected_int(d->list, 0);
 }
@@ -568,19 +571,22 @@ SetObjPointsFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   int  r, ip;
   double point[2];
 
-  if (w == NULL)
+  if (w == NULL) {
     return 0;
+  }
 
   tree_view = GTK_TREE_VIEW(w);
   list = gtk_tree_view_get_model(tree_view);
 
   r = gtk_tree_model_get_iter_first(list, &iter);
-  if (! r)
+  if (! r) {
     return -1;
+  }
 
   array = arraynew(sizeof(int));
-  if (array == NULL)
+  if (array == NULL) {
     return -1;
+  }
 
   while (r) {
     gtk_tree_model_get(list, &iter,
@@ -644,8 +650,9 @@ SetTextFromObjPoints(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   struct narray *array;
   int i, n, *points;
 
-  if (w == NULL)
+  if (w == NULL) {
     return;
+  }
 
   tree_view = GTK_TREE_VIEW(w);
   list = GTK_LIST_STORE(gtk_tree_view_get_model(tree_view));
@@ -700,8 +707,9 @@ SetObjFieldFromWidget(GtkWidget *widget, struct objlist *Obj, int Id, char *fiel
   GtkWidget *w;
   int r = 0;
 
-  if (widget == NULL)
+  if (widget == NULL) {
     return 0;
+  }
 
   w = get_widget(widget);
 
@@ -739,8 +747,9 @@ SetWidgetFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *fiel
 {
   GtkWidget *w;
 
-  if (widget == NULL)
+  if (widget == NULL) {
     return;
+  }
 
   w = get_widget(widget);
 
@@ -773,17 +782,19 @@ SetObjFieldFromText(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   const char *tmp;
   char *buf;
 
-  if (w == NULL)
+  if (w == NULL) {
     return 0;
+  }
 
   tmp = gtk_entry_get_text(GTK_ENTRY(w));
-  if (tmp == NULL)
+  if (tmp == NULL) {
     return -1;
+  }
 
   buf = g_strdup(tmp);
-
-  if (buf == NULL)
+  if (buf == NULL) {
     return -1;
+  }
 
   if (chk_sputobjfield(Obj, Id, field, buf)) {
     g_free(buf);
@@ -800,8 +811,9 @@ SetTextFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   GtkEntry *entry;
   char *buf;
 
-  if (w == NULL)
+  if (w == NULL) {
     return;
+  }
 
   entry = GTK_ENTRY(w);
 
@@ -821,8 +833,9 @@ SetObjFieldFromSpin(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int val, oval;
 
-  if (w == NULL)
+  if (w == NULL) {
     return 0;
+  }
 
   val = spin_entry_get_val(w);
 
@@ -849,8 +862,9 @@ SetSpinFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int val;
 
-  if (w == NULL)
+  if (w == NULL){
     return;
+  }
 
   getobj(Obj, field, Id, 0, NULL, &val);
   spin_entry_set_val(w, val);
@@ -862,8 +876,9 @@ SetObjFieldFromToggle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   gboolean state;
   int a, oa;
 
-  if (w == NULL)
+  if (w == NULL) {
     return 0;
+  }
 
   state = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
   a = state ? TRUE : FALSE;
@@ -886,8 +901,9 @@ SetToggleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int a;
 
-  if (w == NULL)
+  if (w == NULL) {
     return;
+  }
 
   getobj(Obj, field, Id, 0, NULL, &a);
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), a);
@@ -902,16 +918,19 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   const char *ctmp;
   struct narray *array = NULL, *atmp;
 
-  if (w == NULL)
+  if (w == NULL) {
     return 0;
+  }
 
   ctmp = gtk_entry_get_text(GTK_ENTRY(w));
-  if (ctmp == NULL)
+  if (ctmp == NULL) {
     return -1;
+  }
 
   buf = g_strdup(ctmp);
-  if (buf == NULL)
+  if (buf == NULL) {
     return -1;
+  }
 
   array = arraynew(sizeof(int));
   ptr = buf;
@@ -919,12 +938,14 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
     while (ptr && isspace(*ptr))
       ptr++;
 
-    if (*ptr == '\0')
+    if (*ptr == '\0') {
       break;
+    }
 
     tmp = strchr(ptr, ' ');
-    if (tmp)
+    if (tmp) {
       *tmp = '\0';
+    }
 
     d = strtod(ptr, &eptr);
     if (d != d || d == HUGE_VAL || d == - HUGE_VAL || eptr[0] != '\0')
@@ -932,13 +953,15 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
     ip = nround(d * 100);
     atmp = arrayadd(array, &ip);
-    if (atmp == NULL)
+    if (atmp == NULL) {
       goto ErrEnd;
+    }
 
     array = atmp;
 
-    if (tmp == NULL)
+    if (tmp == NULL) {
       break;
+    }
 
     ptr = tmp + 1;
   }
@@ -968,11 +991,13 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 
 
  ErrEnd:
-  if (buf)
+  if (buf) {
     g_free(buf);
+  }
 
-  if (array)
+  if (array) {
     arrayfree(array);
+  }
 
   return -1;
 }
@@ -984,8 +1009,9 @@ SetObjFieldFromStyle(GtkWidget *widget, struct objlist *Obj, int Id, char *field
   const char *ptr;
   GtkWidget *w;
 
-  if (widget == NULL)
+  if (widget == NULL) {
     return 0;
+  }
 
   w = get_widget(widget);
 
@@ -1078,8 +1104,9 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
   int i, n, *points;
 
   str = g_string_sized_new(256);
-  if (str == NULL)
+  if (str == NULL) {
     return;
+  }
 
   getobj(Obj, field, Id, 0, NULL, &array);
   n = arraynum(array);
@@ -1104,8 +1131,9 @@ SetStyleFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *field
   const char *s;
   GtkWidget *w;
 
-  if (widget == NULL)
+  if (widget == NULL) {
     return;
+  }
 
   w = get_widget(widget);
 
@@ -1131,8 +1159,9 @@ SetObjFieldFromList(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   int pos, opos;
 
-  if (w == NULL)
+  if (w == NULL) {
     return 0;
+  }
 
   pos = combo_box_get_active(w);
 
@@ -1158,8 +1187,9 @@ SetListFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
   char **enumlist;
   int j, a, count;
 
-  if (w == NULL)
+  if (w == NULL) {
     return;
+  }
 
   count = combo_box_get_num(w);
   if (count == 0) {
@@ -1180,8 +1210,9 @@ SetFontListFromObj(GtkWidget *w, struct objlist *obj, int id, char *name)
   char *font;
   struct compatible_font_info *compatible;
 
-  if (w == NULL)
+  if (w == NULL) {
     return NULL;
+  }
 
   compatible = NULL;
 
@@ -1228,13 +1259,14 @@ SetObjFieldFromFontList(GtkWidget *w, struct objlist *obj, int id, char *name)
   struct fontmap *fcur;
   char *fontalias;
 
-  if (w == NULL)
+  if (w == NULL) {
     return;
+  }
 
   fontalias = combo_box_get_active_text(w);
-
-  if (fontalias == NULL)
+  if (fontalias == NULL) {
     return;
+  }
 
   if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fcur)) {
     g_free(fontalias);
@@ -1254,8 +1286,9 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
   int r;
 
   s = combo_box_entry_get_text(w);
-  if (s == NULL)
+  if (s == NULL) {
     return 0;
+  }
 
   if (s[0] == '\0') {
     buf = NULL;
@@ -1265,8 +1298,9 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
 
   r = chk_sputobjfield(obj, id, field, buf);
 
-  if (buf)
+  if (buf) {
     g_free(buf);
+  }
 
   return r;
 }

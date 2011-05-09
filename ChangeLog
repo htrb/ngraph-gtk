@@ -1,3 +1,7 @@
+2011-05-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.c: add braces after "if" statements.
+
 2011-05-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (UnFocus): use "gtk_widget_queue_draw()"
