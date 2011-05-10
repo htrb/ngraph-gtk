@@ -108,7 +108,7 @@ struct menulocal
   N_VALUE *GRAinst;
   int GC;
   int PaperWidth, PaperHeight, PaperLandscape;
-  char *PaperName;
+  char *PaperName, *Palette;
   enum paper_id PaperId;
   int LeftMargin, TopMargin;
   int PaperZoom;
@@ -152,7 +152,7 @@ enum SAVE_CONFIG_TYPE {
   SAVE_CONFIG_TYPE_EXTERNAL_VIEWER = 0x0040,
   SAVE_CONFIG_TYPE_FONTS           = 0x0080,
   SAVE_CONFIG_TYPE_TOGGLE_VIEW     = 0x0100,
-  SAVE_CONFIG_TYPE_EXPORT_IMAGE    = 0x0200,
+  SAVE_CONFIG_TYPE_OTHERS          = 0x0200,
 };
 
 #define SAVE_CONFIG_TYPE_X11MENU 	(SAVE_CONFIG_TYPE_GEOMETRY		\

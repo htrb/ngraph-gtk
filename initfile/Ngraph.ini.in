@@ -59,6 +59,7 @@ merge_win=-100000,-100000,-100000,-100000,0
 coordinate_win=-100000,-100000,-100000,-100000,1
 information_win=-100000,-100000,-100000,-100000,0
 history_size=1000
+palette=black:white:gray50:red:purple:blue:light blue:green:yellow:orange:lavender:brown:goldenrod4:dodger blue:pink:light green:gray10:gray30:gray75:gray90
 
 [gra2cairo]
 font=Sans-serif,Arial

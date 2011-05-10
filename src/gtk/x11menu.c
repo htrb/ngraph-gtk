@@ -3310,7 +3310,7 @@ application(char *file)
   SaveHistory();
   save_entry_history();
   menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
-		   SAVE_CONFIG_TYPE_EXPORT_IMAGE);
+		   SAVE_CONFIG_TYPE_OTHERS);
 
   ViewerWinClose();
 

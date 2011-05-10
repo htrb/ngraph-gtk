@@ -1,3 +1,19 @@
+2011-05-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.ini.win (palette): added.
+
+	* initfile/Ngraph.ini.in (palette): added.
+
+	* src/gtk/ox11menu.h (menulocal): add member "Palette".
+
+	* src/gtk/ox11menu.c (MenuConfigOthers): change name from
+	"MenuConfigExportImage". Add setting "palette".
+	(get_palette, set_palette): added.
+	(menu_save_config): call "get_palette()" before call
+	"menu_save_config_sub()" when "type & SAVE_CONFIG_TYPE_OTHERS" is
+	true.
+	(menuinit): call "set_palette()".
+
 2011-05-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.c: add braces after "if" statements.

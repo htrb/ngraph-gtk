@@ -269,13 +269,14 @@ static struct menu_config MenuConfigToggleView[] = {
   {NULL},
 };
 
-static struct menu_config MenuConfigExportImage[] = {
+static struct menu_config MenuConfigOthers[] = {
   {"png_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.png_dpi},
 #ifdef WINDOWS
   {"emf_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.emf_dpi},
 #endif
   {"ps_version",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.ps_version},
   {"svg_version",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.svg_version},
+  {"palette",		MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.Palette},
   {NULL},
 };
 
@@ -301,7 +302,7 @@ static struct menu_config *MenuConfigArrray[] = {
   MenuConfigMisc,
   MenuConfigViewer,
   MenuConfigToggleView,
-  MenuConfigExportImage,
+  MenuConfigOthers,
   MenuConfigGeometry,
   MenuConfigChildGeometry,
   NULL,
@@ -312,11 +313,61 @@ static NHASH MenuConfigHash = NULL;
 #define BUF_SIZE 64
 
 static void
+get_palette(void)
+{
+  GtkSettings *settings;
+  gchar *palette;
+
+  settings = gtk_settings_get_default();
+  if (settings == NULL) {
+    return;
+  }
+
+  g_object_get(settings, "gtk-color-palette", &palette, NULL);
+  if (palette == NULL) {
+    return;
+  }
+
+  if (Menulocal.Palette) {
+    g_free(Menulocal.Palette);
+  }
+
+  Menulocal.Palette = palette;
+}
+
+static void
+set_palette(void)
+{
+  GtkWidget *sel;
+  int n;
+  GdkColor *colors;
+  GtkSettings *settings;
+
+  if (Menulocal.Palette == NULL) {
+    return;
+  }
+
+  settings = gtk_settings_get_default();
+  if (settings == NULL) {
+    return;
+  }
+
+  sel = gtk_color_selection_new();
+  if (gtk_color_selection_palette_from_string(Menulocal.Palette, &colors, &n)) {
+    g_free(colors);
+    g_object_set(settings, "gtk-color-palette", Menulocal.Palette, NULL);
+  }
+  gtk_widget_destroy(sel);
+
+  return;
+}
+
+static void
 add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
 {
   char *buf;
 
-  buf = (char *) g_malloc(BUF_SIZE);    
+  buf = (char *) g_malloc(BUF_SIZE);
   if (buf) {
     snprintf(buf, BUF_SIZE, "%s=%d", cfg->name, * (int *) cfg->data);
     arrayadd(conf, &buf);
@@ -525,8 +576,9 @@ menu_save_config(int type)
     menu_save_config_sub(MenuConfigToggleView, &conf);
   }
 
-  if (type & SAVE_CONFIG_TYPE_EXPORT_IMAGE) {
-    menu_save_config_sub(MenuConfigExportImage, &conf);
+  if (type & SAVE_CONFIG_TYPE_OTHERS) {
+    get_palette();
+    menu_save_config_sub(MenuConfigOthers, &conf);
   }
 
   if (type & SAVE_CONFIG_TYPE_EXTERNAL_DRIVER) {
@@ -813,8 +865,9 @@ mgtkloadconfig(void)
 	f1 = getitok2(&s2, &len, " \t,");
 	if (f1) {
 	  val = strtol(f1, &endptr, 10);
-	  if (endptr[0] == '\0')
+	  if (endptr[0] == '\0') {
 	    * (int *) (cfg->data) = val;
+	  }
 	}
 	g_free(f1);
 	break;
@@ -822,8 +875,9 @@ mgtkloadconfig(void)
 	f1 = getitok2(&s2, &len, " \t,");
 	if (f1) {
 	  val = strtol(f1, &endptr, 10);
-	  if (endptr[0] == '\0')
-	    * (int *) (cfg->data) = (val != 0);
+	  if (endptr[0] == '\0') {
+	    * (int *) (cfg->data) = (val ? 1 : 0);
+	  }
 	}
 	g_free(f1);
 	break;
@@ -840,8 +894,9 @@ mgtkloadconfig(void)
       case MENU_CONFIG_TYPE_HISTORY:
 	for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
 	f1 = getitok2(&s2, &len, "");
-	if (f1)
+	if (f1) {
 	  arrayadd(* (struct narray **) cfg->data, &f1);
+	}
 	break;
       case MENU_CONFIG_TYPE_CHARMAP:
       case MENU_CONFIG_TYPE_COLOR:
@@ -1181,6 +1236,8 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.inst = inst;
   Menulocal.pix = NULL;
   Menulocal.lock = 0;
+
+  set_palette();
 
   if (!OpenApplication()) {
     error(obj, ERR_MENU_DISPLAY);
