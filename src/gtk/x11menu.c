@@ -806,7 +806,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Clear Image"),
     N_("Clear Viewer Window"),
-    G_CALLBACK(CmOutputMenu),
+    G_CALLBACK(CmViewerClear),
     0,
     NULL,
     "<Ngraph>/View/Clear",

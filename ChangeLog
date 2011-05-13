@@ -1,3 +1,10 @@
+2011-05-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (ActionEntry): fix callback function (from
+	"CmOutputMenu()" to "CmViewerClear()").
+
+	* src/gtk/x11opt.c (CmOptionSaveNgp): fix window title.
+
 2011-05-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/Ngraph.ini.win (palette): added.

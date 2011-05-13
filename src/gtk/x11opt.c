@@ -1771,7 +1771,7 @@ CmOptionSaveNgp(GtkAction *w, gpointer client_data)
 
   if (naccess(ngpfile, 04) == 0) {
     snprintf(mes, sizeof(mes), _("`%s'\n\nOverwrite existing file?"), ngpfile);
-    if (message_box(NULL, mes, _("Save as .Ngraph.ngp"), RESPONS_YESNO) != IDYES) {
+    if (message_box(NULL, mes, _("Save as Ngraph.ngp"), RESPONS_YESNO) != IDYES) {
       g_free(ngpfile);
       return;
     }

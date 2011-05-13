@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.05.04\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-05-10 19:31+0900\n"
+"POT-Creation-Date: 2011-05-13 15:24+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2185,7 +2185,7 @@ msgid "_Maximum number of data on redraw:"
 msgstr ""
 
 #: src/gtk/x11opt.c:1774
-msgid "Save as .Ngraph.ngp"
+msgid "Save as Ngraph.ngp"
 msgstr ""
 
 #: src/gtk/x11print.c:133

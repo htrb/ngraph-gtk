@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-05-10 19:31+0900\n"
-"PO-Revision-Date: 2011-02-22 18:48+0900\n"
+"POT-Creation-Date: 2011-05-13 15:24+0900\n"
+"PO-Revision-Date: 2011-05-13 15:27+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja_JP\n"
@@ -2190,8 +2190,8 @@ msgid "_Maximum number of data on redraw:"
 msgstr "再描画時の最大データ数(_M):"
 
 #: src/gtk/x11opt.c:1774
-msgid "Save as .Ngraph.ngp"
-msgstr ".Ngraph.ngp として保存"
+msgid "Save as Ngraph.ngp"
+msgstr "Ngraph.ngp として保存"
 
 #: src/gtk/x11print.c:133
 msgid "External Driver Output"
