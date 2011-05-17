@@ -221,7 +221,14 @@ char *arraynget_str(struct narray *array, unsigned int idx);
 void *arraylast(struct narray *array);
 int arraylast_int(struct narray *array);
 void arraysort_int(struct narray *array);
+void arrayrsort_int(struct narray *array);
 void arrayuniq_int(struct narray *array);
+void arraysort_double(struct narray *array);
+void arrayrsort_double(struct narray *array);
+void arrayuniq_double(struct narray *array);
+void arrayrsort_str(struct narray *array);
+void arraysort_str(struct narray *array);
+void arrayuniq_str(struct narray *array);
 
 int getargc(char **arg);
 char **arg_add(char ***arg,void *ptr);

@@ -51,6 +51,7 @@ object
         int
         double
         string
+        regexp
         iarray
         darray
         sarray

@@ -27,6 +27,7 @@
 #include <ctype.h>
 #include "ngraph.h"
 #include "object.h"
+#include "oiarray.h"
 
 #define NAME "iarray"
 #define PARENT "object"
@@ -51,16 +52,6 @@ static int
 iarraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
-  return 0;
-}
-
-static int 
-iarraynum(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
-{
-  struct narray *array;
-
-  _getobj(obj,"@",inst,&array);
-  rval->i=arraynum(array);
   return 0;
 }
 
@@ -92,6 +83,26 @@ iarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+struct narray *
+oarray_get_array(struct objlist *obj, N_VALUE *inst, unsigned int size)
+{
+  struct narray *array;
+
+  _getobj(obj, "@", inst, &array);
+  if (array == NULL) {
+    array = arraynew(size);
+    if (array == NULL) {
+      return NULL;
+    }
+    if (_putobj(obj, "@", inst, array)) {
+      arrayfree(array);
+      return NULL;
+    }
+  }
+
+  return array;
+}
+
 static int 
 iarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -99,15 +110,48 @@ iarrayadd(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int val;
 
   val=*(int *)argv[2];
-  _getobj(obj,"@",inst,&array);
+
+  array = oarray_get_array(obj, inst, sizeof(int));
   if (array==NULL) {
-    if ((array=arraynew(sizeof(int)))==NULL) return 1;
-    if (_putobj(obj,"@",inst,array)) {
-      arrayfree(array);
+      return 1;
+  }
+
+  if (arrayadd(array,&val)==NULL) return 1;
+  return 0;
+}
+
+static int 
+iarraypop(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  struct narray *array;
+  int val, n;
+
+  rval->i = 0;
+
+  _getobj(obj,"@",inst,&array);
+  if (array == NULL) {
+    return 1;
+  }
+
+  n = arraynum(array) - 1;
+  if (n < 0) {
+    return 1;
+  }
+
+  val = arraynget_int(array, n);
+  if (arrayndel(array, n) == NULL) {
+    return 1;
+  }
+
+  if (arraynum(array) == 0) {
+    arrayfree(array);
+    if (_putobj(obj, "@", inst, NULL)) {
       return 1;
     }
   }
-  if (arrayadd(array,&val)==NULL) return 1;
+
+  rval->i = val;
+
   return 0;
 }
 
@@ -120,15 +164,67 @@ iarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   num=*(int *)argv[2];
   val=*(int *)argv[3];
+
+  array = oarray_get_array(obj, inst, sizeof(int));
+  if (array == NULL) {
+      return 1;
+  }
+
+  if (arrayins(array, &val, num)==NULL) {
+    return 1;
+  }
+
+  return 0;
+}
+
+static int 
+iarrayunshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  struct narray *array;
+  int val;
+
+  val = * (int *) argv[2];
+
+  array = oarray_get_array(obj, inst, sizeof(int));
+  if (array == NULL) {
+    return 1;
+  }
+
+  if (arrayins(array, &val, 0)==NULL) {
+    return 1;
+  }
+
+  return 0;
+}
+
+static int 
+iarrayshift(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  struct narray *array;
+  int val;
+
+  rval->i = 0;
+
   _getobj(obj,"@",inst,&array);
-  if (array==NULL) {
-    if ((array=arraynew(sizeof(int)))==NULL) return 1;
-    if (_putobj(obj,"@",inst,array)) {
-      arrayfree(array);
+  if (array == NULL) {
+    return 1;
+  }
+
+  val = arraynget_int(array, 0);
+
+  if (arrayndel(array, 0) == NULL) {
+    return 1;
+  }
+
+  if (arraynum(array) == 0) {
+    arrayfree(array);
+    if (_putobj(obj, "@", inst, NULL)) {
       return 1;
     }
   }
-  if (arrayins(array,&val,num)==NULL) return 1;
+
+  rval->i = val;
+
   return 0;
 }
 
@@ -139,6 +235,7 @@ iarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int num;
 
   num=*(int *)argv[2];
+
   _getobj(obj,"@",inst,&array);
   if (array==NULL) return 1;
   if (arrayndel(array,num)==NULL) return 1;
@@ -149,17 +246,178 @@ iarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+int 
+oarray_num(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+
+  _getobj(obj, "@", inst, &array);
+  rval->i = arraynum(array);
+
+  return 0;
+}
+
+int 
+oarray_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  GString *str;
+  int i, n;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  if (_getobj(obj, "@", inst, &array)) {
+    return 1;
+  }
+
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  str = g_string_sized_new(64);
+  if (str == NULL) {
+    return 0;
+  }
+
+  for (i = 0; i < n; i++) {
+    g_string_append_printf(str, "%d%s", i, (i == n - 1) ? "" : " ");
+  }
+
+  rval->str = g_string_free(str,  FALSE);
+
+  return 0;
+}
+
+int 
+oarray_reverse_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  GString *str;
+  int i, n;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  if (_getobj(obj, "@", inst, &array)) {
+    return 1;
+  }
+
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  str = g_string_sized_new(64);
+  if (str == NULL) {
+    return 0;
+  }
+
+  for (i = 0; i < n; i++) {
+    g_string_append_printf(str, "%d%s", n - i - 1, (i == n - 1) ? "" : " ");
+  }
+
+  rval->str = g_string_free(str,  FALSE);
+
+  return 0;
+}
+
+static int 
+iarraysort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
+{
+  struct narray *array;
+
+  _getobj(obj, "@", inst, &array);
+
+  arraysort_int(array);
+
+  return 0;
+}
+
+static int 
+iarrayrsort(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
+{
+  struct narray *array;
+
+  _getobj(obj, "@", inst, &array);
+
+  arrayrsort_int(array);
+
+  return 0;
+}
+
+static int
+iarrayuniq(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv)
+{
+  struct narray *array;
+
+  _getobj(obj, "@", inst, &array);
+
+  arrayuniq_int(array);
+
+  return 0;
+}
+
+static int 
+iarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  GString *str;
+  int i, n;
+  char *delim;
+  int val;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  delim = (char *) argv[2];
+  if (delim == NULL) {
+    delim = ",";
+  }
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  str = g_string_sized_new(64);
+  if (str == NULL) {
+    return 1;
+  }
+
+  for (i = 0; i < n; i++) {
+    val = arraynget_int(array, i);
+    g_string_append_printf(str, "%d%s", val, (i == n - 1) ? "" : delim);
+  }
+
+  rval->str = g_string_free(str, FALSE);
+
+  return 0;
+}
+
 static struct objtable oiarray[] = {
   {"init",NVFUNC,NEXEC,iarrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,iarraydone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
   {"@",NIARRAY,NREAD|NWRITE,NULL,NULL,0},
-  {"num",NIFUNC,NREAD|NEXEC,iarraynum,NULL,0},
   {"get",NIFUNC,NREAD|NEXEC,iarrayget,"i",0},
   {"put",NVFUNC,NREAD|NEXEC,iarrayput,"ii",0},
   {"add",NVFUNC,NREAD|NEXEC,iarrayadd,"i",0},
+  {"push",NVFUNC,NREAD|NEXEC,iarrayadd,"i",0},
+  {"pop",NIFUNC,NREAD|NEXEC,iarraypop,NULL,0},
   {"ins",NVFUNC,NREAD|NEXEC,iarrayins,"ii",0},
+  {"unshift",NVFUNC,NREAD|NEXEC,iarrayunshift,"i",0},
+  {"shift",NIFUNC,NREAD|NEXEC,iarrayshift,NULL,0},
   {"del",NVFUNC,NREAD|NEXEC,iarraydel,"i",0},
+  {"join",NSFUNC,NREAD|NEXEC,iarrayjoin,"s",0},
+  {"sort",NVFUNC,NREAD|NEXEC,iarraysort,NULL,0},
+  {"rsort",NVFUNC,NREAD|NEXEC,iarrayrsort,NULL,0},
+  {"uniq",NVFUNC,NREAD|NEXEC,iarrayuniq,NULL,0},
+  {"num", NIFUNC, NREAD|NEXEC, oarray_num, NULL, 0},
+  {"seq", NSFUNC, NREAD|NEXEC, oarray_seq, NULL, 0},
+  {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, NULL, 0},
 };
 
 #define TBLNUM (sizeof(oiarray) / sizeof(*oiarray))

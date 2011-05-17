@@ -8,18 +8,72 @@ TMP_FILE=${system::temp_file}
 TMP_NGP=tmp.ngp
 
 new menu
+new regexp
+new sarray
+new io
 
 echo "menu::get_ui" > $TMP_NGP
 menu::menu $TMP_NGP > $UI_FILE
 
 echo "menu::get_accel_map" > $TMP_NGP
 menu::menu $TMP_NGP > $TMP_FILE
-head -3 $TMP_FILE > $MAP_FILE
-tail -n +4 $TMP_FILE |sort >> $MAP_FILE
 
-awk '{print $0; if($2 ~ /name="GraphExportPNG"/) {print "        <menuitem name=\"GraphExportEMF\" action=\"GraphExportEMFAction\"/>"}}' $UI_FILE > $UI_FILE.win
+
+echo -n > $MAP_FILE
+
+regexp::@="^; \("
+io::open "r" "$TMP_FILE"
+
+while true
+do
+    s="${io::gets}"
+    if io::eof
+    then
+	break
+    fi
+
+    if regexp::match $s
+    then
+	sarray::add "$s"
+    else
+	echo "$s" >> $MAP_FILE
+    fi
+done
+io::close
+
+sarray::sort
+for i in ${sarray::seq}
+do
+    get sarray -field get:$i >> $MAP_FILE
+done
+
+
+echo -n > $UI_FILE.win
+
+regexp::@='name="GraphExportPNG"'
+io::open "r" "$UI_FILE"
+
+while true
+do
+    s="${io::gets}"
+    if io::eof
+    then
+	break
+    fi
+
+    echo "$s" >> $UI_FILE.win
+
+    if regexp::match $s
+    then
+	echo '        <menuitem name="GraphExportEMF" action="GraphExportEMFAction"/>' >> $UI_FILE.win
+    fi
+done
+io::close
 
 rm $TMP_NGP
 
+del io
+del sarray
+del regexp
 del menu
 del system

@@ -78,6 +78,7 @@ void *addint(void);
 void *adddouble(void);
 void *addio(void);
 void *addstring(void);
+void *addregexp(void);
 void *addiarray(void);
 void *adddarray(void);
 void *addsarray(void);
@@ -167,6 +168,7 @@ static void * ( * obj_add_func_ary[]) (void) = {
   addint,
   adddouble,
   addstring,
+  addregexp,
   addiarray,
   adddarray,
   addsarray,

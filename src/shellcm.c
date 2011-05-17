@@ -75,7 +75,7 @@ cmecho(struct nshell *nshell,int argc,char **argv)
   nbr = (argc > 1 && strcmp(argv[1], "-n") == 0);
 
   for (i = (nbr) ? 2 : 1; i < argc; i++) {
-    printfstdout("%.256s",argv[i]);
+    printfstdout("%s",argv[i]);
     if (i != (argc - 1))
       printfstdout(" ");
   }

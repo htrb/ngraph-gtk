@@ -512,20 +512,24 @@ arrayins2(struct narray *array, char **val, unsigned int idx)
   char **data;
   char *s;
 
-  if (array == NULL)
+  if (array == NULL) {
     return NULL;
-  if (idx > array->num)
+  }
+
+  if (idx > array->num) {
     return NULL;
+  }
+
   if (*val == NULL) {
     return NULL;
-  } else {
-    s = g_malloc(strlen(*val) + 1);
-    if (s == NULL) {
-      arraydel2(array);
-      return NULL;
-    }
-    strcpy(s, *val);
   }
+
+  s = g_strdup(*val);
+  if (s == NULL) {
+    arraydel2(array);
+    return NULL;
+  }
+
   if (array->num == array->size) {
     size = array->size+ALLOCSIZE;
     data = g_realloc(array->data,array->base*size);
@@ -606,20 +610,23 @@ arrayput2(struct narray *array, char **val, unsigned int idx)
   char *s;
   char **data;
 
-  if (array == NULL)
+  if (array == NULL) {
     return NULL;
-  if (idx >= array->num)
+  }
+
+  if (idx >= array->num) {
     return NULL;
+  }
   if (*val == NULL){
     return NULL;
-  } else {
-    s = g_malloc(strlen(*val) + 1);
-    if (s == NULL) {
-      arraydel2(array);
-      return NULL;
-    }
-    strcpy(s, *val);
   }
+
+  s = g_strdup(*val);
+  if (s == NULL) {
+    arraydel2(array);
+    return NULL;
+  }
+
   data = (char **)array->data;
   g_free(data[idx]);
   data[idx] = s;
@@ -694,19 +701,42 @@ cmp_func_int(const void *p1, const void *p2)
   return (* (int *) p1) - (* (int *) p2);
 }
 
+static int
+cmp_func_int_r(const void *p1, const void *p2)
+{
+  return (* (int *) p2) - (* (int *) p1);
+}
+
 void
 arraysort_int(struct narray *array)
 {
   int num, *adata;
 
-  if (array == NULL)
+  if (array == NULL) {
     return;
+  }
 
   num = arraynum(array);
   adata = arraydata(array);
-  if (num > 1)
+  if (num > 1) {
     qsort(adata, num, sizeof(int), cmp_func_int);
+  }
+}
 
+void
+arrayrsort_int(struct narray *array)
+{
+  int num, *adata;
+
+  if (array == NULL) {
+    return;
+  }
+
+  num = arraynum(array);
+  adata = arraydata(array);
+  if (num > 1) {
+    qsort(adata, num, sizeof(int), cmp_func_int_r);
+  }
 }
 
 void
@@ -714,18 +744,190 @@ arrayuniq_int(struct narray *array)
 {
   int i, val, num, *adata;
 
-  if (array == NULL)
+  if (array == NULL) {
     return;
+  }
 
   num = arraynum(array);
-  if (num < 2)
+  if (num < 2) {
     return;
+  }
 
   adata = arraydata(array);
   val = adata[0];
   for (i = 1; i < num;) {
     if (adata[i] == val) {
       arrayndel(array, i);
+      num--;
+    } else {
+      val = adata[i];
+      i++;
+    }
+  }
+}
+
+static int
+cmp_func_double(const void *p1, const void *p2)
+{
+  double d1, d2;
+
+  d1 = * (double *) p1;
+  d2 = * (double *) p2;
+
+  if (d1 > d2) {
+    return 1;
+  } else if (d1 < d2) {
+    return -1;
+  }
+
+  return 0;
+}
+
+static int
+cmp_func_double_r(const void *p1, const void *p2)
+{
+  double d1, d2;
+
+  d1 = * (double *) p1;
+  d2 = * (double *) p2;
+
+  if (d1 > d2) {
+    return -1;
+  } else if (d1 < d2) {
+    return 1;
+  }
+
+  return 0;
+}
+
+void
+arraysort_double(struct narray *array)
+{
+  int num;
+  double *adata;
+
+  if (array == NULL) {
+    return;
+  }
+
+  num = arraynum(array);
+  adata = arraydata(array);
+  if (num > 1) {
+    qsort(adata, num, sizeof(double), cmp_func_double);
+  }
+}
+
+void
+arrayrsort_double(struct narray *array)
+{
+  int num;
+  double *adata;
+
+  if (array == NULL) {
+    return;
+  }
+
+  num = arraynum(array);
+  adata = arraydata(array);
+  if (num > 1) {
+    qsort(adata, num, sizeof(double), cmp_func_double_r);
+  }
+}
+
+void
+arrayuniq_double(struct narray *array)
+{
+  int i, num;
+  double *adata, val;
+
+  if (array == NULL) {
+    return;
+  }
+
+  num = arraynum(array);
+  if (num < 2) {
+    return;
+  }
+
+  adata = arraydata(array);
+  val = adata[0];
+  for (i = 1; i < num;) {
+    if (adata[i] == val) {
+      arrayndel(array, i);
+      num--;
+    } else {
+      val = adata[i];
+      i++;
+    }
+  }
+}
+
+static int
+cmp_func_str(const void *p1, const void *p2)
+{
+  return g_strcmp0(* (char **) p1, * (char **) p2);
+}
+
+static int
+cmp_func_str_r(const void *p1, const void *p2)
+{
+  return - g_strcmp0(* (char **) p1, * (char **) p2);
+}
+
+void
+arraysort_str(struct narray *array)
+{
+  int num;
+  char **adata;
+
+  if (array == NULL) {
+    return;
+  }
+
+  num = arraynum(array);
+  adata = arraydata(array);
+  if (num > 1) {
+    qsort(adata, num, sizeof(char *), cmp_func_str);
+  }
+}
+
+void
+arrayrsort_str(struct narray *array)
+{
+  int num;
+  char **adata;
+
+  if (array == NULL) {
+    return;
+  }
+
+  num = arraynum(array);
+  adata = arraydata(array);
+  if (num > 1) {
+    qsort(adata, num, sizeof(char *), cmp_func_str_r);
+  }
+}
+
+void
+arrayuniq_str(struct narray *array)
+{
+  int i, num;
+  char **adata, *val;
+
+  if (array == NULL) {
+    return;
+  }
+
+  num = arraynum(array);
+  if (num < 2) {
+    return;
+  }
+
+  adata = arraydata(array);
+  val = adata[0];
+  for (i = 1; i < num;) {
+    if (g_strcmp0(adata[i], val) == 0) {
+      arrayndel2(array, i);
       num--;
     } else {
       val = adata[i];
@@ -3257,158 +3459,98 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
 {
   struct narray *array;
   void *po;
-  char *bval,*s,*arglist;
+  char *bval,*arglist;
   unsigned int k;
-  int i,j;
+  int i;
   int type,len;
+  GString *str;
+
+  str = g_string_sized_new(64);
+  if (str == NULL) {
+    return NULL;
+  }
 
   arglist=chkobjarglist(obj,field);
   type=chkobjfieldtype(obj,field);
   len=0;
   po=val;
-  switch (type) {
-  case NBOOL: case NBFUNC:
-    len+=5;
-    break;
-  case NCHAR: case NCFUNC:
-    len+=1;
-    break;
-  case NINT: case NIFUNC:
-    len+=11;
-    break;
-  case NDOUBLE: case NDFUNC:
-    len+=23;
-    break;
-  case NSTR: case NSFUNC: case NOBJ:
-    if (*(char **)po==NULL) break;
-    else {
-      bval=*(char **)po;
-      if (quote) len++;
-      for (i=0;bval[i]!='\0';i++) {
-        if ((bval[i]=='\'') && quote) len+=3;
-        len++;
-      }
-      if (quote) len++;
-    }
-    break;
-  case NIARRAY: case NIAFUNC:
-    array=*(struct narray **)po;
-    if (array==NULL) break;
-    else {
-      if (quote) len++;
-      if (arraynum(array)!=0) len=arraynum(array)*12-1;
-      if (quote) len++;
-    }
-    break;
-  case NDARRAY: case NDAFUNC:
-    array=*(struct narray **)po;
-    if (array==NULL) break;
-    else {
-      if (quote) len++;
-      if (arraynum(array)!=0) len=arraynum(array)*24-1;
-      if (quote) len++;
-    }
-    break;
-  case NSARRAY: case NSAFUNC:
-    array=*(struct narray **)po;
-    if (array==NULL) break;
-    else {
-      if (quote) len++;
-      for (k=0;k<arraynum(array);k++) {
-        if (k!=0) len+=1;
-        bval=arraynget_str(array,k);
-        for (i=0;bval[i]!='\0';i++) {
-          if ((bval[i]=='\'') && quote) len+=3;
-          len++;
-        }
-      }
-      if (quote) len++;
-    }
-    break;
-  case NENUM:
-    len+=strlen(((char **)arglist)[*(int *)po]);
-    break;
-  }
-  if (cr) len++;
-  if ((s=g_malloc(len+1))==NULL) return NULL;
-  j=0;
+
   switch (type) {
   case NBOOL: case NBFUNC:
     if (*(int *)po) bval="true";
     else bval="false";
-    j+=sprintf(s+j,"%s",bval);
+    g_string_append_printf(str,"%s",bval);
     break;
   case NCHAR: case NCFUNC:
-    j+=sprintf(s+j,"%c",*(char *)po);
+    g_string_append_printf(str,"%c",*(char *)po);
     break;
   case NINT: case NIFUNC:
-    j+=sprintf(s+j,"%d",*(int *)po);
+    g_string_append_printf(str,"%d",*(int *)po);
     break;
   case NDOUBLE: case NDFUNC:
-    j+=sprintf(s+j,"%.15e",*(double *)po);
+    g_string_append_printf(str,"%.15e",*(double *)po);
     break;
   case NSTR: case NSFUNC: case NOBJ:
     if (*(char **)po==NULL) break;
     else {
       bval=*(char **)po;
-      if (quote) j+=sprintf(s+j,"'");
+      if (quote) g_string_append_printf(str,"'");
       for (i=0;bval[i]!='\0';i++) {
-        if ((bval[i]=='\'') && quote) j+=sprintf(s+j,"'\\''");
-        else j+=sprintf(s+j,"%c",bval[i]);
+        if ((bval[i]=='\'') && quote) g_string_append_printf(str,"'\\''");
+        else g_string_append_printf(str,"%c",bval[i]);
       }
-      if (quote) j+=sprintf(s+j,"'");
+      if (quote) g_string_append_printf(str,"'");
     }
     break;
   case NIARRAY: case NIAFUNC:
     array=*(struct narray **)po;
     if (array==NULL) break;
     else {
-      if (quote) j+=sprintf(s+j,"'");
+      if (quote) g_string_append_printf(str,"'");
       for (k=0;k<arraynum(array);k++) {
-        if (k!=0) j+=sprintf(s+j," %d",arraynget_int(array,k));
-        else j+=sprintf(s+j,"%d",arraynget_int(array,k));
+        if (k!=0) g_string_append_printf(str," %d",arraynget_int(array,k));
+        else g_string_append_printf(str,"%d",arraynget_int(array,k));
       }
-      if (quote) j+=sprintf(s+j,"'");
+      if (quote) g_string_append_printf(str,"'");
     }
     break;
   case NDARRAY: case NDAFUNC:
     array=*(struct narray **)po;
     if (array==NULL) break;
     else {
-      if (quote) j+=sprintf(s+j,"'");
+      if (quote) g_string_append_printf(str,"'");
       for (k=0;k<arraynum(array);k++) {
-        if (k!=0) j+=sprintf(s+j," %.15e",arraynget_double(array,k));
-        else j+=sprintf(s+j,"%.15e",arraynget_double(array,k));
+        if (k!=0) g_string_append_printf(str," %.15e",arraynget_double(array,k));
+        else g_string_append_printf(str,"%.15e",arraynget_double(array,k));
       }
-      if (quote) j+=sprintf(s+j,"'");
+      if (quote) g_string_append_printf(str,"'");
     }
     break;
   case NSARRAY: case NSAFUNC:
     array=*(struct narray **)po;
     if (array==NULL) break;
     else {
-      if (quote) j+=sprintf(s+j,"'");
+      if (quote) g_string_append_printf(str,"'");
       for (k=0;k<arraynum(array);k++) {
-        if (k!=0) j+=sprintf(s+j," ");
+        if (k!=0) g_string_append_printf(str," ");
         bval=arraynget_str(array,k);
         for (i=0;bval[i]!='\0';i++) {
-          if ((bval[i]=='\'') && quote) j+=sprintf(s+j,"'\\''");
-          else j+=sprintf(s+j,"%c",bval[i]);
+          if ((bval[i]=='\'') && quote) g_string_append_printf(str,"'\\''");
+          else g_string_append_printf(str,"%c",bval[i]);
         }
       }
-      if (quote) j+=sprintf(s+j,"'");
+      if (quote) g_string_append_printf(str,"'");
     }
     break;
   case NENUM:
-    j+=sprintf(s+j,"%s",((char **)arglist)[*(int *)po]);
+    g_string_append_printf(str,"%s",((char **)arglist)[*(int *)po]);
     break;
   }
   if (cr) {
-    s[j]='\n';
-    j++;
+    g_string_append_c(str, '\n');
   }
-  s[j]='\0';
-  return s;
+
+  return g_string_free(str, FALSE);
 }
 
 static int 

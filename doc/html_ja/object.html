@@ -51,6 +51,7 @@ object
         int
         double
         string
+        regexp
         iarray
         darray
         sarray
@@ -484,7 +485,7 @@ object: menu
 alias: winmenu:gtkmenu
 version: 1.00.00
 parent: gra2cairo
-object id: 34
+object id: 35
 number of fields: 43
 size of instance: 200
 r--               id  int
@@ -612,8 +613,8 @@ alias:
 version: 1.00.00
 parent: object
 object id: 16
-number of fields: 8
-size of instance: 48
+number of fields: 14
+size of instance: 64
 r--               id  int
 r--              oid  int
 rw-             name  char*
@@ -622,6 +623,37 @@ r-x             save  *char( char *[] )
 --x             done  void( )
 ---             next  void*
 rw-                @  char*
+r--           length  int
+r--             byte  int
+r-x            strip  void( )
+r-x           upcase  void( )
+r-x         downcase  void( )
+r-x          reverse  void( )
+</pre>
+
+<h3>regexp</h3>
+<pre>
+object: regexp
+alias:
+version: 1.00.00
+parent: object
+object id: 17
+number of fields: 14
+size of instance: 96
+r--               id  int
+r--              oid  int
+rw-             name  char*
+r-x             save  *char( char *[] )
+--x             init  void( )
+--x             done  void( )
+---             next  void*
+rw-                @  char*
+r-x            match  int( char * )
+r-x              get  *char( int int )
+r-x              num  int( )
+r-x              seq  *char( )
+r-x             rseq  *char( )
+---           _local  void*
 </pre>
 
 <h3>iarray</h3>
@@ -630,9 +662,9 @@ object: iarray
 alias:
 version: 1.00.00
 parent: object
-object id: 17
-number of fields: 14
-size of instance: 64
+object id: 18
+number of fields: 24
+size of instance: 104
 r--               id  int
 r--              oid  int
 rw-             name  char*
@@ -641,12 +673,22 @@ r-x             save  *char( char *[] )
 --x             done  void( )
 ---             next  void*
 rw-                @  int[]
-r-x              num  int( )
 r-x              get  int( int )
 r-x              put  void( int int )
 r-x              add  void( int )
+r-x             push  void( int )
+r-x              pop  int( )
 r-x              ins  void( int int )
+r-x          unshift  void( int )
+r-x            shift  int( )
 r-x              del  void( int )
+r-x             join  *char( char * )
+r-x             sort  void( )
+r-x            rsort  void( )
+r-x             uniq  void( )
+r-x              num  int( )
+r-x              seq  *char( )
+r-x             rseq  *char( )
 </pre>
 
 <h3>darray</h3>
@@ -655,9 +697,9 @@ object: darray
 alias:
 version: 1.00.00
 parent: object
-object id: 18
-number of fields: 14
-size of instance: 64
+object id: 19
+number of fields: 24
+size of instance: 104
 r--               id  int
 r--              oid  int
 rw-             name  char*
@@ -666,12 +708,22 @@ r-x             save  *char( char *[] )
 --x             done  void( )
 ---             next  void*
 rw-                @  double[]
-r-x              num  int( )
 r-x              get  double( int )
 r-x              put  void( int double )
 r-x              add  void( double )
+r-x             push  void( double )
+r-x              pop  double( )
 r-x              ins  void( int double )
+r-x          unshift  void( double )
+r-x            shift  double( )
 r-x              del  void( int )
+r-x             join  *char( char * )
+r-x             sort  void( )
+r-x            rsort  void( )
+r-x             uniq  void( )
+r-x              num  int( )
+r-x              seq  *char( )
+r-x             rseq  *char( )
 </pre>
 
 <h3>sarray</h3>
@@ -680,9 +732,9 @@ object: sarray
 alias:
 version: 1.00.00
 parent: object
-object id: 19
-number of fields: 14
-size of instance: 64
+object id: 20
+number of fields: 27
+size of instance: 128
 r--               id  int
 r--              oid  int
 rw-             name  char*
@@ -691,12 +743,25 @@ r-x             save  *char( char *[] )
 --x             done  void( )
 ---             next  void*
 rw-                @  *char[]
-r-x              num  int( )
+rw-        delimiter  char*
 r-x              get  *char( int )
 r-x              put  void( int char * )
 r-x              add  void( char * )
+r-x             push  void( char * )
+r-x              pop  *char( )
 r-x              ins  void( int char * )
+r-x          unshift  void( char * )
+r-x            shift  *char( )
 r-x              del  void( int )
+r-x            split  void( char * )
+r-x             join  *char( char * )
+r-x             sort  void( char * )
+r-x            rsort  void( char * )
+r-x             uniq  *char( )
+r-x              num  int( )
+r-x              seq  *char( )
+r-x             rseq  *char( )
+---           _local  void*
 </pre>
 
 <h3>math</h3>
@@ -705,7 +770,7 @@ object: math
 alias:
 version: 1.00.00
 parent: object
-object id: 20
+object id: 21
 number of fields: 18
 size of instance: 120
 r--               id  int
@@ -734,7 +799,7 @@ object: fit
 alias:
 version: 1.00.01
 parent: object
-object id: 21
+object id: 22
 number of fields: 59
 size of instance: 448
 r--               id  int
@@ -804,7 +869,7 @@ object: prm
 alias:
 version: 1.00.00
 parent: object
-object id: 22
+object id: 23
 number of fields: 10
 size of instance: 56
 r--               id  int
@@ -825,7 +890,7 @@ object: draw
 alias:
 version: 1.00.00
 parent: object
-object id: 23
+object id: 24
 number of fields: 17
 size of instance: 104
 r--               id  int
@@ -853,7 +918,7 @@ object: axisgrid
 alias:
 version: 1.00.00
 parent: draw
-object id: 24
+object id: 25
 number of fields: 32
 size of instance: 216
 r--               id  int
@@ -896,7 +961,7 @@ object: axis
 alias:
 version: 1.00.00
 parent: draw
-object id: 25
+object id: 26
 number of fields: 101
 size of instance: 656
 r--               id  int
@@ -1008,7 +1073,7 @@ object: file
 alias: data
 version: 1.00.00
 parent: draw
-object id: 26
+object id: 27
 number of fields: 120
 size of instance: 816
 r--               id  int
@@ -1139,7 +1204,7 @@ object: merge
 alias:
 version: 1.00.00
 parent: draw
-object id: 27
+object id: 28
 number of fields: 37
 size of instance: 240
 r--               id  int
@@ -1187,7 +1252,7 @@ object: legend
 alias:
 version: 1.00.00
 parent: draw
-object id: 28
+object id: 29
 number of fields: 21
 size of instance: 120
 r--               id  int
@@ -1219,7 +1284,7 @@ object: rectangle
 alias:
 version: 1.00.00
 parent: legend
-object id: 29
+object id: 30
 number of fields: 45
 size of instance: 336
 r--               id  int
@@ -1275,7 +1340,7 @@ object: arc
 alias:
 version: 1.00.00
 parent: legend
-object id: 30
+object id: 31
 number of fields: 47
 size of instance: 352
 r--               id  int
@@ -1333,7 +1398,7 @@ object: path
 alias: line:curve:polygon
 version: 1.00.01
 parent: legend
-object id: 31
+object id: 32
 number of fields: 48
 size of instance: 360
 r--               id  int
@@ -1392,7 +1457,7 @@ object: mark
 alias:
 version: 1.00.00
 parent: legend
-object id: 32
+object id: 33
 number of fields: 34
 size of instance: 224
 r--               id  int
@@ -1437,7 +1502,7 @@ object: text
 alias:
 version: 1.00.00
 parent: legend
-object id: 33
+object id: 34
 number of fields: 36
 size of instance: 240
 r--               id  int
@@ -1484,7 +1549,7 @@ object: dialog
 alias:
 version: 1.00.00
 parent: object
-object id: 35
+object id: 36
 number of fields: 25
 size of instance: 168
 r--               id  int
@@ -1517,4 +1582,5 @@ r-x    get_save_file  *char( char *[] )
 <br>
 <hr>
 <br>
-</body></html>
+</body>
+</html>

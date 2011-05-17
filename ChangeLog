@@ -1,3 +1,80 @@
+2011-05-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* test/iarray_test.nsc: added.
+
+	* test/darray_test.nsc: added.
+
+	* test/sarray_test.nsc: added.
+
+	* test/regexp_test.nsc: added.
+
+	* initfile/save_ui_file.nsc: don't use external programs.
+
+	* src/shellcm.c (cmecho): length of the output strings is now not
+	limited.
+
+	* src/object.c (cmp_func_int_r, arrayrsort_int, cmp_func_double)
+	(cmp_func_double_r, arraysort_double, arrayrsort_double)
+	(arrayuniq_double, cmp_func_str, cmp_func_str_r, arraysort_str)
+	(arrayrsort_str, arrayuniq_str): added.
+	(getvaluestr): use "g_string_append_printf()" instead of
+	"sprintf()".
+
+	* src/oio.c (io_eof): return value is depend on the return value
+	of the function "feof()".
+
+	* src/gtk/main.c (obj_add_func_ary): add "addregexp".
+
+	* src/oiarray.c (oarray_get_array, oarray_num, oarray_seq)
+	(iarraypop, iarrayunshift, iarrayshift, iarraysort, iarrayrsort)
+	(iarrayuniq, iarrayjoin, oarray_reverse_seq): added
+	(iarrayadd, iarrayins): use  "oarray_get_array()".
+	(oiarray): add fields "push", "pop", "unshift", "shift", "sort",
+	"rsort", "uniq", "join", "seq" and "rseq".
+
+	* src/odarray.c (darrayadd, darrayins): use  "oarray_get_array()".
+	(darraypop, darrayunshift, darrayshift, darraysort, darrayrsort)
+	(darrayuniq, darrayjoin): added.
+	(odarray): add fields "push", "pop", "unshift", "shift", "sort",
+	"rsort", "uniq", "join", "seq" and "rseq".
+
+	* src/osarray.c (sarrayadd, sarrayins): use  "oarray_get_array()".
+	(sarraypop, sarrayunshift, sarrayshift, sarraysort, sarrayrsort)
+	(sarrayuniq): added.
+	(osarray): add fields "push", "pop", "unshift", "shift", "sort",
+	"rsort" and "uniq".
+
+	* src/oregexp.c: added.
+
+2011-05-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ostring.c (string_strip, set_length, string_upcase)
+	(string_downcase, string_reverse): added.
+	(ostring): add field "byte", "length", "strip", "upcase",
+	"downcase" and "reverse".
+
+	* src/odarray.c (odarray): add field "seq" and "rseq".
+	(odarray): use "oarray_num()", "oarray_seq()" and
+	"oarray_reverse_seq()".
+
+	* src/oiarray.c (oarray_num): change name from "iarraunum()".
+	(oarray_seq, oarray_rseq): added.
+	(oiarray): add field "seq"and "rseq".
+	(oiarray): use "oarray_num()", "oarray_seq()" and
+	"oarray_reverse_seq()".
+
+	* src/osarray.c (ERRREGEXP, set_delimiter, sarraysplit)
+	(sarrayjoin): added.
+	(sarrayinit): initialize field "_local".
+	(sarraydone): finalize field "_local".
+	(osarray): add fields "delimiter", "split", "seq", "rseq" and
+	"join".
+	(osarray): use "oarray_num()", "oarray_seq()" and
+	"oarray_reverse_seq()".
+
+	* src/object.c (arrayins2, arrayput2): use "g_strdup()" instead of
+	"g_malloc()" and "strcpy()".
+
 2011-05-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (ActionEntry): fix callback function (from

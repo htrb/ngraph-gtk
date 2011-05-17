@@ -534,7 +534,7 @@ io_eof(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   
   rval->i = (r) ? TRUE : FALSE;
 
-  return 0;
+  return r ? 0 : 1;
 }
 
 static struct objtable io[] = {

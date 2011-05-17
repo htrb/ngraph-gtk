@@ -1,0 +1,46 @@
+show_result() {
+    if [ "$2" = "$3" ]
+    then
+	echo "OK. ($1)"
+    else
+	echo "error. ($1)  $2  $3"
+    fi
+}
+
+check_match() {
+    n=${regexp::num}
+    m=`object sarray -instance`
+    show_result "num" "$n" "$m"
+
+    for i in ${regexp::seq}
+    do
+	for j in `get sarray:$i -field seq`
+	do
+	    s1=`get regexp -field get:"$i $j"`
+	    s2=`get sarray:$i -field get:$j`
+	    show_result "get" "$s1" "$s2"
+	done
+    done
+}
+
+new regexp
+new sarray
+new sarray
+
+regexp::@="(foo)(bar)(BAZ)?"
+regexp::match 'foobarbaz foobarBAZ'
+sarray:0:@="foobar foo bar"
+sarray:1:@="foobarBAZ foo bar BAZ"
+
+check_match
+
+
+regexp::@="(?i)(foo)(bar)(BAZ)?"
+regexp::match 'FOObarbaz foobarBAZ'
+sarray:0:@="FOObarbaz FOO bar baz"
+sarray:1:@="foobarBAZ foo bar BAZ"
+
+check_match
+
+
+del system

@@ -59,6 +59,8 @@ else
     echo "OK. (tell)"
 fi
 
+io::getc
+
 # eof test
 if io::eof
 then
