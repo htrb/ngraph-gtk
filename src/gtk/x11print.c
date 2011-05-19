@@ -32,7 +32,6 @@
 #include "nstring.h"
 #include "object.h"
 #include "ioutil.h"
-#include "mathcode.h"
 
 #include "gtk_liststore.h"
 #include "gtk_combo.h"

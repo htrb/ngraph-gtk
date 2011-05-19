@@ -614,7 +614,7 @@ version: 1.00.00
 parent: object
 object id: 16
 number of fields: 14
-size of instance: 64
+size of instance: 96
 r--               id  int
 r--              oid  int
 rw-             name  char*
@@ -625,10 +625,10 @@ r-x             save  *char( char *[] )
 rw-                @  char*
 r--           length  int
 r--             byte  int
-r-x            strip  void( )
-r-x           upcase  void( )
-r-x         downcase  void( )
-r-x          reverse  void( )
+r-x            strip  *char( )
+r-x           upcase  *char( )
+r-x         downcase  *char( )
+r-x          reverse  *char( )
 </pre>
 
 <h3>regexp</h3>
@@ -663,8 +663,8 @@ alias:
 version: 1.00.00
 parent: object
 object id: 18
-number of fields: 24
-size of instance: 104
+number of fields: 32
+size of instance: 152
 r--               id  int
 r--              oid  int
 rw-             name  char*
@@ -686,9 +686,17 @@ r-x             join  *char( char * )
 r-x             sort  void( )
 r-x            rsort  void( )
 r-x             uniq  void( )
+r-x              sum  int( )
+r-x          average  double( )
+r-x             sdev  double( )
+r-x              RMS  double( )
+r-x              min  int( )
+r-x              max  int( )
 r-x              num  int( )
 r-x              seq  *char( )
 r-x             rseq  *char( )
+r-x          reverse  void( )
+r-x            slice  void( int int )
 </pre>
 
 <h3>darray</h3>
@@ -698,8 +706,8 @@ alias:
 version: 1.00.00
 parent: object
 object id: 19
-number of fields: 24
-size of instance: 104
+number of fields: 32
+size of instance: 152
 r--               id  int
 r--              oid  int
 rw-             name  char*
@@ -721,9 +729,17 @@ r-x             join  *char( char * )
 r-x             sort  void( )
 r-x            rsort  void( )
 r-x             uniq  void( )
+r-x              sum  double( )
+r-x          average  double( )
+r-x             sdev  double( )
+r-x              RMS  double( )
+r-x              min  double( )
+r-x              max  double( )
 r-x              num  int( )
 r-x              seq  *char( )
 r-x             rseq  *char( )
+r-x          reverse  void( )
+r-x            slice  void( int int )
 </pre>
 
 <h3>sarray</h3>
@@ -733,7 +749,7 @@ alias:
 version: 1.00.00
 parent: object
 object id: 20
-number of fields: 27
+number of fields: 29
 size of instance: 128
 r--               id  int
 r--              oid  int
@@ -761,6 +777,8 @@ r-x             uniq  *char( )
 r-x              num  int( )
 r-x              seq  *char( )
 r-x             rseq  *char( )
+r-x          reverse  void( )
+r-x            slice  void( int int )
 ---           _local  void*
 </pre>
 

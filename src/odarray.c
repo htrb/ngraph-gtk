@@ -25,6 +25,7 @@
 #include "common.h"
 
 #include <stdlib.h>
+#include <math.h>
 #include <ctype.h>
 #include "ngraph.h"
 #include "object.h"
@@ -299,6 +300,190 @@ darrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
+static double
+calc_sum(const double *d, int n)
+{
+  double sum;
+  int i;
+
+  sum = 0;
+
+  for (i = 0; i < n; i++) {
+    sum += d[i];
+  }
+
+  return sum;
+}
+
+static double
+calc_square_sum(const double *d, int n)
+{
+  double sum;
+  int i;
+
+  sum = 0;
+
+  for (i = 0; i < n; i++) {
+    sum += d[i] * d[i];
+  }
+
+  return sum;
+}
+
+static int 
+darray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int n;
+  double *data;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  data = arraydata(array);
+
+  rval->d = calc_sum(data, n);
+
+  return 0;
+}
+
+static int 
+darray_average(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int n;
+  double val, *data;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  data = arraydata(array);
+
+  val = calc_sum(data, n);
+  rval->d = val / n;
+
+  return 0;
+}
+
+static int
+darray_rms(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int n;
+  double val, *data;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  data = arraydata(array);
+
+  val = calc_square_sum(data, n);
+  rval->d = sqrt(val / n);
+
+  return 0;
+}
+
+static int
+darray_sdev(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int n;
+  double sum, ssum, val, *data;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  data = arraydata(array);
+
+  sum = calc_sum(data, n);
+  ssum = calc_square_sum(data, n);
+
+  sum /= n;
+  val = ssum / n - sum * sum;
+
+  rval->d = sqrt(val);
+
+  return 0;
+}
+
+static int
+darray_min(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int i, n;
+  double val, *data;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 1;
+  }
+
+  data = arraydata(array);
+
+  val = data[0];
+  for (i = 1; i < n; i++) {
+    if (data[i] < val) {
+      val = data[i];
+    }
+  }
+
+  rval->d = val;
+
+  return 0;
+}
+
+static int
+darray_max(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int i, n;
+  double val, *data;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 1;
+  }
+
+  data = arraydata(array);
+
+  val = data[0];
+  for (i = 1; i < n; i++) {
+    if (data[i] > val) {
+      val = data[i];
+    }
+  }
+
+  rval->d = val;
+
+  return 0;
+}
+
 static struct objtable odarray[] = {
   {"init",NVFUNC,NEXEC,darrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,darraydone,NULL,0},
@@ -317,9 +502,17 @@ static struct objtable odarray[] = {
   {"sort",NVFUNC,NREAD|NEXEC,darraysort,NULL,0},
   {"rsort",NVFUNC,NREAD|NEXEC,darrayrsort,NULL,0},
   {"uniq",NVFUNC,NREAD|NEXEC,darrayuniq,NULL,0},
+  {"sum", NDFUNC, NREAD|NEXEC, darray_sum, NULL, 0},
+  {"average", NDFUNC, NREAD|NEXEC, darray_average, NULL, 0},
+  {"sdev", NDFUNC, NREAD|NEXEC, darray_sdev, NULL, 0},
+  {"RMS", NDFUNC, NREAD|NEXEC, darray_rms, NULL, 0},
+  {"min", NDFUNC, NREAD|NEXEC, darray_min, NULL, 0},
+  {"max", NDFUNC, NREAD|NEXEC, darray_max, NULL, 0},
   {"num", NIFUNC, NREAD|NEXEC, oarray_num, NULL, 0}, 
   {"seq", NSFUNC, NREAD|NEXEC, oarray_seq, NULL, 0}, 
   {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, NULL, 0}, 
+  {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, NULL, 0},
+  {"slice", NVFUNC, NREAD|NEXEC, oarray_slice, "ii", 0},
 };
 
 #define TBLNUM (sizeof(odarray) / sizeof(*odarray))

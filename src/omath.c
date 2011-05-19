@@ -46,8 +46,6 @@
 #define ERRARG    103
 #define ERRSMLARG 104
 
-static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
-
 static char *matherrorlist[]={
   "syntax error.",
   "not allowed function.",
@@ -128,7 +126,7 @@ minit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   math_equation_parse(mlocal->code, "def g(x,y,z){0}");
   math_equation_parse(mlocal->code, "def h(x,y,z){0}");
 
-  mlocal->rcode=MNOERR;
+  mlocal->rcode=MATH_VALUE_NORMAL;
   mlocalclear(mlocal,TRUE);
   if (_putobj(obj,"formula",inst,NULL)) goto errexit;
   if (_putobj(obj,"f",inst,NULL)) goto errexit;
@@ -305,13 +303,13 @@ mcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
 
   data[0].val = 0;
-  data[0].type = MNOERR;
+  data[0].type = MATH_VALUE_NORMAL;
   for (i=0; i < num; i++) {
     data[i + 1].val = adata[i];
-    data[i + 1].type = MNOERR;
+    data[i + 1].type = MATH_VALUE_NORMAL;
   }
 
-  val.type = MNOERR;
+  val.type = MATH_VALUE_NORMAL;
 
   val.val = mlocal->x;
   math_equation_set_var(mlocal->code, 0, &val);
@@ -329,10 +327,6 @@ mcalc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   g_free(data);
   msettbl(inst,mlocal);
   rval->d=mlocal->val;
-  if (mlocal->rcode==MSERR) {
-    error(obj,ERRSYNTAX);
-    return 1;
-  }
   return 0;
 }
 
@@ -371,10 +365,5 @@ void *
 addmath(void)
 /* addmath() returns NULL on error */
 {
-  MathErrorCodeArray[MCNOERR] = 0;
-  MathErrorCodeArray[MCSYNTAX] = ERRSYNTAX;
-  MathErrorCodeArray[MCILLEGAL] = ERRILLEGAL;
-  MathErrorCodeArray[MCNEST] = ERRNEST;
-
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,math,ERRNUM,matherrorlist,NULL,NULL);
 }

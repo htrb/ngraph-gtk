@@ -6,7 +6,6 @@
 
 #include "ngraph.h"
 #include "object.h"
-#include "oiarray.h"
 
 #define NAME "regexp"
 #define PARENT "object"
@@ -147,14 +146,14 @@ regexp_get(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   rval->str = NULL;
 
   if (i < 0) {
-    return 0;
+    return 1;
   }
 
   _getobj(obj, "_local", inst, &local);
 
   strvp = arraynget(local->array, i);
   if (strvp == NULL) {
-    return 0;
+    return 1;
   }
 
   strv = *strvp;
@@ -162,11 +161,11 @@ regexp_get(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   for (n = 0; strv[n]; n++) {
     if (n == j) {
       rval->str = g_strdup(strv[n]);
-      break;
+      return 0;
     }
   }
 
-  return 0;
+  return 1;
 }
 
 static int 

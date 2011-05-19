@@ -275,6 +275,7 @@ parse_argument_list(const char **str, MathEquation *eq, struct math_function_par
 	return -1;
       }
       argv = tmp;
+      *buf = tmp;
       memset(argv + argc, 0, m - argc);
       argc = m - 1;
     }

@@ -24,8 +24,10 @@
 #include "common.h"
 
 #include <stdlib.h>
+#include <math.h>
 #include <ctype.h>
 #include "ngraph.h"
+#include "mathfn.h"
 #include "object.h"
 #include "oiarray.h"
 
@@ -397,6 +399,226 @@ iarrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
+int 
+oarray_reverse(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+
+  if (_getobj(obj, "@", inst, &array)) {
+    return 1;
+  }
+
+  array_reverse(array);
+  return 0;
+}
+
+int 
+oarray_slice(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int start, len;
+
+  start = * (int *) argv[2];
+  len = * (int *) argv[3];
+
+  if (_getobj(obj, "@", inst, &array)) {
+    return 1;
+  }
+
+  if (array_slice(array, start, len) == NULL) {
+    return 1;
+  }
+
+  return 0;
+}
+
+static double
+calc_sum(const int *d, int n)
+{
+  double sum;
+  int i;
+
+  sum = 0;
+
+  for (i = 0; i < n; i++) {
+    sum += d[i];
+  }
+
+  return sum;
+}
+
+static double
+calc_square_sum(const int *d, int n)
+{
+  double sum;
+  int i;
+
+  sum = 0;
+
+  for (i = 0; i < n; i++) {
+    sum += d[i] * d[i];
+  }
+
+  return sum;
+}
+
+static int 
+iarray_sum(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int n, *data;
+  double val;
+
+  rval->i = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  data = arraydata(array);
+
+  val = calc_sum(data, n);
+  if (val <= G_MININT || val >= G_MAXINT) {
+    return 1;
+  }
+
+  rval->i = nround(val);
+
+  return 0;
+}
+
+static int 
+iarray_average(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int n, *data;
+  double val;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  data = arraydata(array);
+
+  val = calc_sum(data, n);
+  rval->d = val / n;
+
+  return 0;
+}
+
+static int
+iarray_rms(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int n, *data;
+  double val;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  data = arraydata(array);
+
+  val = calc_square_sum(data, n);
+  rval->d = sqrt(val / n);
+
+  return 0;
+}
+
+static int
+iarray_sdev(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int n, *data;
+  double sum, ssum, val;
+
+  rval->d = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 0;
+  }
+
+  data = arraydata(array);
+
+  sum = calc_sum(data, n);
+  ssum = calc_square_sum(data, n);
+
+  sum /= n;
+  val = ssum / n - sum * sum;
+
+  rval->d = sqrt(val);
+
+  return 0;
+}
+
+static int
+iarray_min(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int i, n, *data, val;
+
+  rval->i = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 1;
+  }
+
+  data = arraydata(array);
+
+  val = data[0];
+  for (i = 1; i < n; i++) {
+    if (data[i] < val) {
+      val = data[i];
+    }
+  }
+
+  rval->i = val;
+
+  return 0;
+}
+
+static int
+iarray_max(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int i, n, *data, val;
+
+  rval->i = 0;
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 1;
+  }
+
+  data = arraydata(array);
+
+  val = data[0];
+  for (i = 1; i < n; i++) {
+    if (data[i] > val) {
+      val = data[i];
+    }
+  }
+
+  rval->i = val;
+
+  return 0;
+}
+
 static struct objtable oiarray[] = {
   {"init",NVFUNC,NEXEC,iarrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,iarraydone,NULL,0},
@@ -415,9 +637,17 @@ static struct objtable oiarray[] = {
   {"sort",NVFUNC,NREAD|NEXEC,iarraysort,NULL,0},
   {"rsort",NVFUNC,NREAD|NEXEC,iarrayrsort,NULL,0},
   {"uniq",NVFUNC,NREAD|NEXEC,iarrayuniq,NULL,0},
+  {"sum", NIFUNC, NREAD|NEXEC, iarray_sum, NULL, 0},
+  {"average", NDFUNC, NREAD|NEXEC, iarray_average, NULL, 0},
+  {"sdev", NDFUNC, NREAD|NEXEC, iarray_sdev, NULL, 0},
+  {"RMS", NDFUNC, NREAD|NEXEC, iarray_rms, NULL, 0},
+  {"min", NIFUNC, NREAD|NEXEC, iarray_min, NULL, 0},
+  {"max", NIFUNC, NREAD|NEXEC, iarray_max, NULL, 0},
   {"num", NIFUNC, NREAD|NEXEC, oarray_num, NULL, 0},
   {"seq", NSFUNC, NREAD|NEXEC, oarray_seq, NULL, 0},
   {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, NULL, 0},
+  {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, NULL, 0},
+  {"slice", NVFUNC, NREAD|NEXEC, oarray_slice, "ii", 0},
 };
 
 #define TBLNUM (sizeof(oiarray) / sizeof(*oiarray))

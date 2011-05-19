@@ -423,6 +423,26 @@ sarrayuniq(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc, char **argv
   return 0;
 }
 
+static int 
+sarray_slice(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int start, len;
+
+  start = * (int *) argv[2];
+  len = * (int *) argv[3];
+
+  if (_getobj(obj, "@", inst, &array)) {
+    return 1;
+  }
+
+  if (array_slice2(array, start, len) == NULL) {
+    return 1;
+  }
+
+  return 0;
+}
+
 static struct objtable osarray[] = {
   {"init",NVFUNC,NEXEC,sarrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,sarraydone,NULL,0},
@@ -446,6 +466,8 @@ static struct objtable osarray[] = {
   {"num", NIFUNC, NREAD|NEXEC, oarray_num, NULL, 0},
   {"seq", NSFUNC, NREAD|NEXEC, oarray_seq, NULL, 0},
   {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, NULL, 0},
+  {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, NULL, 0},
+  {"slice", NVFUNC, NREAD|NEXEC, sarray_slice, "ii", 0},
   {"_local",NPOINTER,0,NULL,NULL,0},
 };
 

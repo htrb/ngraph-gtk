@@ -34,7 +34,6 @@
 #include "nstring.h"
 #include "ioutil.h"
 #include "object.h"
-#include "mathcode.h"
 #include "mathfn.h"
 #include "oroot.h"
 #include "ofit.h"
@@ -61,8 +60,6 @@
 #define ERRNEGATIVEWEIGHT 112
 #define ERRCONVERGE 113
 #define ERR_INCONSISTENT_DATA_NUM 114
-
-static int MathErrorCodeArray[MATH_CODE_ERROR_NUM];
 
 static char *fiterrorlist[]={
   "syntax error.",
@@ -492,7 +489,7 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
   }
   for (i = 0; i < dim; i++) tbl[i] = needdata[i];
   for (i = 0; i < 10; i++) {
-    par[i].type = MNOERR;
+    par[i].type = MATH_VALUE_NORMAL;
     par[i].val = fitlocal->coe[i];
   }
   ecode=FitError_Success;
@@ -509,12 +506,11 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
     spx=data[k*2];
     spy=data[k*2+1];
     err=FALSE;
-    rcode=calculate(fitlocal->codef,1,spx,MNOERR,0,0,0,0,
+    rcode=calculate(fitlocal->codef,1,spx,MATH_VALUE_NORMAL,0,0,0,0,
                     0,0,0,0,0,0,0,0,0,0,0,0,
                     par,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                     NULL,NULL,NULL,0,NULL,NULL,NULL,0,&y1);
-    if (rcode==MSERR) return FitError_Syntax;
-    else if (rcode!=MNOERR) err=TRUE;
+    if (rcode!=MATH_VALUE_NORMAL) err=TRUE;
     if (!err) {
       if (fabs(yy)>1e100) return FitError_Range;
       y2=spy-y1;
@@ -554,23 +550,21 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
       spy=data[k*2+1];
       err=FALSE;
       var.val = spx;
-      var.type = MNOERR;
+      var.type = MATH_VALUE_NORMAL;
       math_equation_set_parameter_data(fitlocal->codef, 0, par);
       math_equation_set_var(fitlocal->codef, 0, &var);
       rcode = math_equation_calculate(fitlocal->codef, &var);
       y1 = var.val;
-      if (rcode==MSERR) return FitError_Syntax;
-      else if (rcode!=MNOERR) err=TRUE;
+      if (rcode!=MATH_VALUE_NORMAL) err=TRUE;
       if (deriv) {
         for (j=0;j<dim;j++) {
 	  var.val = spx;
-	  var.type = MNOERR;
+	  var.type = MATH_VALUE_NORMAL;
 	  math_equation_set_parameter_data(fitlocal->codedf[tbl[j]], 0, par);
 	  math_equation_set_var(fitlocal->codedf[tbl[j]], 0, &var);
 	  rcode = math_equation_calculate(fitlocal->codedf[tbl[j]], &var);
 	  x2[j] = var.val;
-          if (rcode==MSERR) return FitError_Syntax;
-          else if (rcode!=MNOERR) err=TRUE;
+	  if (rcode!=MATH_VALUE_NORMAL) err=TRUE;
         }
       } else {
         for (j=0;j<dim;j++) {
@@ -579,13 +573,12 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
           if (dxx == 0) dxx = 1e-6;
           par2[tbl[j]].val += dxx;
 	  var.val = spx;
-	  var.type = MNOERR;
+	  var.type = MATH_VALUE_NORMAL;
 	  math_equation_set_parameter_data(fitlocal->codef, 0, par2);
 	  math_equation_set_var(fitlocal->codef, 0, &var);
 	  rcode = math_equation_calculate(fitlocal->codef, &var);
 	  x2[j] = var.val;
-          if (rcode==MSERR) return FitError_Syntax;
-          else if (rcode!=MNOERR) err=TRUE;
+	  if (rcode!=MATH_VALUE_NORMAL) err=TRUE;
           x2[j]=(x2[j]-y1)/dxx;
         }
       }
@@ -673,12 +666,11 @@ fituser(struct objlist *obj,struct fitlocal *fitlocal,char *func,
         spx=data[k*2];
         spy=data[k*2+1];
         err=FALSE;
-        rcode=calculate(fitlocal->codef,1,spx,MNOERR,0,0,0,0,
+        rcode=calculate(fitlocal->codef,1,spx,MATH_VALUE_NORMAL,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,
                      par2,parstat,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                         NULL,NULL,NULL,0,NULL,NULL,NULL,0,&y1);
-        if (rcode==MSERR) return FitError_Syntax;
-        else if (rcode!=MNOERR) err=TRUE;
+        if (rcode!=MATH_VALUE_NORMAL) err=TRUE;
         if (!err) {
           if (fabs(yy)>1e100) goto repeat;
           y2=spy-y1;
@@ -1138,10 +1130,5 @@ void *
 addfit(void)
 /* addfit() returns NULL on error */
 {
-  MathErrorCodeArray[MCNOERR] = 0;
-  MathErrorCodeArray[MCSYNTAX] = ERRSYNTAX;
-  MathErrorCodeArray[MCILLEGAL] = ERRILLEGAL;
-  MathErrorCodeArray[MCNEST] = ERRNEST;
-
   return addobject(NAME,NULL,PARENT,OVERSION,TBLNUM,fit,ERRNUM,fiterrorlist,NULL,NULL);
 }

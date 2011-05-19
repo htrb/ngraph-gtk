@@ -32,9 +32,9 @@ do
 	break
     fi
 
-    if regexp::match $s
+    if regexp::match "$s"
     then
-	sarray::add "$s"
+	sarray::push "$s"
     else
 	echo "$s" >> $MAP_FILE
     fi
@@ -63,7 +63,7 @@ do
 
     echo "$s" >> $UI_FILE.win
 
-    if regexp::match $s
+    if regexp::match "$s"
     then
 	echo '        <menuitem name="GraphExportEMF" action="GraphExportEMFAction"/>' >> $UI_FILE.win
     fi

@@ -1,9 +1,12 @@
 EXTRA_DIST = regexp_test.nsc io_test.nsc math_test.nsc		\
 	math_test_new.dat math_test_old.dat iarray_test.nsc	\
-	darray_test.nsc sarray_test.nsc
+	darray_test.nsc sarray_test.nsc string_test.nsc
 NGRAPH=../src/ngraph
 
-test: math_test io_test regexp_test iarray_test darray_test sarray_test
+test: math_test io_test regexp_test iarray_test darray_test sarray_test string_test
+
+string_test: string_test.nsc
+	$(NGRAPH) -i string_test.nsc
 
 iarray_test: iarray_test.nsc
 	$(NGRAPH) -i iarray_test.nsc

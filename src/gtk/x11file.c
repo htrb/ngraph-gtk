@@ -42,7 +42,6 @@
 #include "object.h"
 #include "ioutil.h"
 #include "nstring.h"
-#include "mathcode.h"
 #include "mathfn.h"
 #include "gra.h"
 #include "spline.h"

@@ -1,3 +1,34 @@
+2011-05-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_parser.c (parse_argument_list): update "*buf"
+	after call the function "g_realloc()".
+
+	* src/object.c (array_reverse): added.
+
+	* src/odarray.c (odarray): add field "reverse", "sum", "average",
+	"RMS", "sdev", min", "max" and "slice".
+	(calc_sum, calc_square_sum, darray_sum, darray_average)
+	(darray_rms, darray_sdev, darray_min, darray_max): added.
+
+	* src/oiarray.c (oarray_reverse, oarray_slice): added.
+	(oiarray): add field "reverse", "sum", "average", "RMS", "sdev",
+	min", "max" and "slice".
+	(calc_sum, calc_square_sum, iarray_sum, iarray_average)
+	(iarray_rms, iarray_sdev, iarray_min, iarray_max): added.
+
+	* src/mathfn.c (bsearch_int): add braces after "if" statements.
+
+	* src/osarray.c (osarray): add field "reverse" and "slice".
+	(sarray_slice): added.
+
+2011-05-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofit.c (fituser): "MSERR" is not used.
+
+	* src/ofile.c (errordisp, errordisp2): "MSERR" is not used.
+
+	* src/oregexp.c (regexp_get): return 1 when failed.
+
 2011-05-17  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* test/iarray_test.nsc: added.

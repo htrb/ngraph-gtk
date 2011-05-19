@@ -181,9 +181,9 @@ bsearch_int(int *ary, int n, int val, int *idx)
   int min, max, i;
 
   if (n == 0 || ary == NULL) {
-    if (idx)
+    if (idx) {
       *idx = 0;
-
+    }
     return FALSE;
   }
 
@@ -194,15 +194,17 @@ bsearch_int(int *ary, int n, int val, int *idx)
     i = (min + max) / 2;
 
     if (ary[i] == val) {
-      if (idx)
+      if (idx) {
 	*idx = i;
+      }
       return TRUE;
     }
 
     if (min >= max) {
       if (idx) {
-	if (ary[i] < val)
+	if (ary[i] < val) {
 	  i++;
+	}
 	*idx = i;
       }
       return FALSE;

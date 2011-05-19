@@ -442,8 +442,9 @@ add_parameter_data(MathEquationParametar *ptr, int val)
     return -1;
   }
 
-  if (val > ptr->id_max)
+  if (val > ptr->id_max) {
     ptr->id_max = val;
+  }
 
   return ptr->id_num - 1;
 }
@@ -460,8 +461,9 @@ math_equation_use_parameter(MathEquation *eq, int type, int val)
 
   ptr = eq->parameter;
   while (ptr) {
-    if (ptr->type == type)
+    if (ptr->type == type) {
       break;
+    }
     ptr = ptr->next;
   }
 
@@ -469,8 +471,6 @@ math_equation_use_parameter(MathEquation *eq, int type, int val)
     /* error: the parameter is not exist */
     return -1;
   }
-
-  
 
   return add_parameter_data(ptr, val);
 }
@@ -518,8 +518,9 @@ math_equation_get_parameter(MathEquation *eq, int type, int *err)
 
   ptr = eq->parameter;
   while (ptr) {
-    if (ptr->type == type)
+    if (ptr->type == type) {
       break;
+    }
     ptr = ptr->next;
   }
 

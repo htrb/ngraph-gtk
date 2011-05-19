@@ -27,6 +27,7 @@
 #include <ctype.h>
 #include "ngraph.h"
 #include "object.h"
+#include "nstring.h"
 
 #define NAME "string"
 #define PARENT "object"
@@ -74,16 +75,27 @@ set_length(struct objlist *obj, N_VALUE *inst, char *str)
 static int 
 string_strip(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char *str;
+  char *str, *tmp;
 
-  _getobj(obj, "@", inst, &str);
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
+
+  if (_getobj(obj, "@", inst, &str)) {
+    return 1;
+  }
+
   if (str == NULL || str[0] == '\0') {
     return 0;
   }
 
-  g_strstrip(str);
+  tmp = g_strdup(str);
+  if (tmp) {
+    g_strstrip(tmp);
+  }
 
-  set_length(obj, inst, str);
+  rval->str = tmp;
 
   return 0;
 }
@@ -110,10 +122,15 @@ string_set(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
-int 
+static int 
 string_upcase(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char *str, *ptr;
+  char *str;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
 
   if (_getobj(obj, "@", inst, &str)) {
     return 1;
@@ -123,24 +140,20 @@ string_upcase(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
     return 0;
   }
 
-  ptr = g_utf8_strup(str, -1);
-  if (ptr == NULL) {
-    return 1;
-  }
-
-  if (_putobj(obj, "@", inst, ptr) < 0) {
-    return 1;
-  }
-
-  g_free(str);
+  rval->str = g_utf8_strup(str, -1);
 
   return 0;
 }
 
-int 
+static int 
 string_downcase(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char *str, *ptr;
+  char *str;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
 
   if (_getobj(obj, "@", inst, &str)) {
     return 1;
@@ -150,24 +163,20 @@ string_downcase(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, cha
     return 0;
   }
 
-  ptr = g_utf8_strdown(str, -1);
-  if (ptr == NULL) {
-    return 1;
-  }
-
-  if (_putobj(obj, "@", inst, ptr) < 0) {
-    return 1;
-  }
-
-  g_free(str);
+  rval->str = g_utf8_strdown(str, -1);
 
   return 0;
 }
 
-int 
+static int 
 string_reverse(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char *str, *ptr;
+  char *str;
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
 
   if (_getobj(obj, "@", inst, &str)) {
     return 1;
@@ -177,19 +186,39 @@ string_reverse(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
     return 0;
   }
 
-  ptr = g_utf8_strreverse(str, -1);
-  if (ptr == NULL) {
-    return 1;
-  }
-
-  if (_putobj(obj, "@", inst, ptr) < 0) {
-    return 1;
-  }
-
-  g_free(str);
+  rval->str = g_utf8_strreverse(str, -1);
 
   return 0;
 }
+
+#if 0
+static int 
+string_slice(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char *str;
+  int start, len;
+
+  start = * (int *) argv[2];
+  len = * (int *) argv[3];
+
+  if (rval->str) {
+    g_free(rval->str);
+  }
+  rval->str = NULL;
+
+  if (_getobj(obj, "@", inst, &str)) {
+    return 1;
+  }
+
+  if (str == NULL) {
+    return 0;
+  }
+
+  rval->str = nstr_slice(str, start, len);
+
+  return 0;
+}
+#endif
 
 static struct objtable ostring[] = {
   {"init",NVFUNC,NEXEC,stringinit,NULL,0},
@@ -198,10 +227,11 @@ static struct objtable ostring[] = {
   {"@",NSTR,NREAD|NWRITE,string_set,NULL,0},
   {"length",NINT,NREAD,NULL,NULL,0},
   {"byte",NINT,NREAD,NULL,NULL,0},
-  {"strip",NVFUNC,NREAD|NEXEC,string_strip,NULL,0},
-  {"upcase",NVFUNC,NREAD|NEXEC,string_upcase,NULL,0},
-  {"downcase",NVFUNC,NREAD|NEXEC,string_downcase,NULL,0},
-  {"reverse",NVFUNC,NREAD|NEXEC,string_reverse,NULL,0},
+  {"strip",NSFUNC,NREAD|NEXEC,string_strip,NULL,0},
+  {"upcase",NSFUNC,NREAD|NEXEC,string_upcase,NULL,0},
+  {"downcase",NSFUNC,NREAD|NEXEC,string_downcase,NULL,0},
+  {"reverse",NSFUNC,NREAD|NEXEC,string_reverse,NULL,0},
+  //  {"slice",NSFUNC,NREAD|NEXEC,string_slice,"ii",0},
 };
 
 #define TBLNUM (sizeof(ostring) / sizeof(*ostring))

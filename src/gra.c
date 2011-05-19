@@ -35,7 +35,6 @@
 #include "strconv.h"
 #include "nstring.h"
 #include "mathfn.h"
-#include "mathcode.h"
 #include "gra.h"
 #include "ogra.h"
 
@@ -1811,7 +1810,7 @@ GRAexpandmath(char **s)
   }
   (*s)++;
   str_calc(str->str, &vd, &rcode, NULL);
-  if (rcode != MNOERR) {
+  if (rcode != MATH_VALUE_NORMAL) {
     goto errexit;
   }
   g_string_free(str, TRUE);

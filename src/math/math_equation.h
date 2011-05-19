@@ -27,7 +27,7 @@ struct _math_value {
     MATH_VALUE_CONT   = 5,
     MATH_VALUE_BREAK  = 6,
     MATH_VALUE_NONUM  = 7,
-    //    MATH_VALUE_MEOF   = 8,
+    MATH_VALUE_MEOF   = 8,
   } type;
 };
 

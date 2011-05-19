@@ -134,7 +134,6 @@ static char *Prompt;
 #include "shell.h"
 #include "shellcm.h"
 #include "shellux.h"
-#include "mathcode.h"
 #include "math/math_equation.h"
 
 #define TEMPPFX "NGS"
@@ -4292,7 +4291,7 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
   MathValue value = {0, 0};
 
   if (r) {
-    *r = MERR;
+    *r = MATH_VALUE_ERROR;
   }
 
   if (err_msg) {
@@ -4325,10 +4324,8 @@ str_calc(const char *str, double *val, int *r, char **err_msg)
 
   *val = value.val;
 
-  if (value.type == MATH_VALUE_NAN) {
-    rcode = MNAN;
-  } else if (value.type == MATH_VALUE_UNDEF) {
-    rcode = MUNDEF;
+  if (value.type == MATH_VALUE_NAN || value.type == MATH_VALUE_UNDEF) {
+    rcode = value.type;
   }
 
   if (ecode) {

@@ -35,7 +35,6 @@
 #include "ngraph.h"
 #include "nstring.h"
 #include "object.h"
-#include "mathcode.h"
 #include "mathfn.h"
 #include "nhash.h"
 #include "shell.h"
@@ -550,6 +549,38 @@ arrayins2(struct narray *array, char **val, unsigned int idx)
 }
 
 struct narray *
+array_reverse(struct narray *array)
+{
+  unsigned int i, base, num, n;
+  char *data, *buf;
+
+  if (array == NULL) {
+    return NULL;
+  }
+
+  data = array->data;
+  base = array->base;
+  num = array->num;
+  n = num / 2;
+  num--;
+
+  buf = g_malloc(base);
+  if (buf == NULL) {
+    return NULL;
+  }
+
+  for (i = 0; i < n; i++) {
+    memcpy(buf, data + i * base, base);
+    memcpy(data + i * base, data + (num - i) * base, base);
+    memcpy(data + (num - i) * base, buf, base);
+  }
+
+  g_free(buf);
+
+  return array;
+}
+
+struct narray *
 arrayndel(struct narray *array,unsigned int idx)
 {
   int base;
@@ -567,6 +598,101 @@ arrayndel(struct narray *array,unsigned int idx)
   memmove(data, data + base, base * (array->num - idx - 1));
 #endif
   (array->num)--;
+  return array;
+}
+
+struct narray *
+array_slice(struct narray *array, int start, int length)
+{
+  int base, num;
+  char *data;
+
+  if (array == NULL) {
+    return NULL;
+  }
+
+  data = array->data;
+  base = array->base;
+  num = array->num;
+
+  if (length < 0) {
+    return NULL;
+  }
+
+  if (start < 0) {
+    start = num + start;
+  }
+
+  if (start < 0) {
+    return NULL;
+  }
+
+  if (start >= num) {
+    return NULL;
+  }
+
+  if (start + length > num) {
+    length = num - start;
+  }
+
+  if (length > 0) {
+    memmove(data, data + start * base, length * base);
+  }
+
+  array->num = length;
+
+  return array;
+}
+
+struct narray *
+array_slice2(struct narray *array, int start, int length)
+{
+  int i, base, num;
+  char *data, **sarray;
+
+  if (array == NULL) {
+    return NULL;
+  }
+
+  data = array->data;
+  sarray = array->data;
+  base = array->base;
+  num = array->num;
+
+  if (length < 0) {
+    return NULL;
+  }
+
+  if (start < 0) {
+    start = num + start;
+  }
+
+  if (start < 0) {
+    return NULL;
+  }
+
+  if (start >= num) {
+    return NULL;
+  }
+
+  if (start + length > num) {
+    length = num - start;
+  }
+
+  for (i = 0; i < start; i++) {
+    g_free(sarray[i]);
+  }
+
+  for (i = start + length; i < num; i++) {
+    g_free(sarray[i]);
+  }
+
+  if (length > 0) {
+    memmove(data, data + start * base, length * base);
+  }
+
+  array->num = length;
+
   return array;
 }
 
@@ -3660,7 +3786,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
       }
     } else if ((arglist[alp]=='i') || (arglist[alp]=='d')) {
       str_calc(s2, &vd, &rcode, NULL);
-      if (rcode!=MNOERR) {
+      if (rcode!=MATH_VALUE_NORMAL) {
         err=3;
         goto errexit;
       }

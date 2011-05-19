@@ -1083,7 +1083,7 @@ opendata(struct objlist *obj,N_VALUE *inst,
   fp->fnumy = 0;
   fp->needy = NULL;
   fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
+  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
   fp->fg=fg;
   fp->color=fp->fg;
   fp->marksize0=marksize;
@@ -1176,7 +1176,7 @@ reopendata(struct f2ddata *fp)
   fp->interrupt = FALSE;
   fp->ignore=fp->negative=FALSE;
   fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
+  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
   fp->color2=fp->bg;
   fp->color=fp->fg;
   fp->marksize=fp->marksize0;
@@ -1588,8 +1588,8 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   a2=255;
   miter=1000;
   num=0;
-  stat=MEOF;
-  minmaxstat=MUNDEF;
+  stat=MATH_VALUE_MEOF;
+  minmaxstat=MATH_VALUE_UNDEF;
   dataclip=TRUE;
   ljoin = JOIN_TYPE_BEVEL;
   if (_putobj(obj,"x",inst,&x)) return 1;
@@ -1685,10 +1685,10 @@ f2dinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   f2dlocal->maxx.val = 0;
   f2dlocal->miny.val = 0;
   f2dlocal->maxy.val = 0;
-  f2dlocal->minx.type = MUNDEF;
-  f2dlocal->maxx.type = MUNDEF;
-  f2dlocal->miny.type = MUNDEF;
-  f2dlocal->maxy.type = MUNDEF;
+  f2dlocal->minx.type = MATH_VALUE_UNDEF;
+  f2dlocal->maxx.type = MATH_VALUE_UNDEF;
+  f2dlocal->miny.type = MATH_VALUE_UNDEF;
+  f2dlocal->maxy.type = MATH_VALUE_UNDEF;
   f2dlocal->mtime = 0;
   f2dlocal->mtime_stat = 0;
   f2dlocal->total_line = 0;
@@ -1841,7 +1841,7 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
         po2=po;
         po2++;
         val=0;
-        st=MNONUM;
+        st=MATH_VALUE_NONUM;
       } else {
 #if 0
         for (po2=po;(*po2!='\0') && ! CHECK_IFS(ifs, *po2) && (*po2!=' ');po2++)
@@ -1857,18 +1857,18 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
         val=strtod(po,&endptr);
         if (endptr>=po2) {
 	  if (check_infinite(val)) {
-	    st = MNAN;
+	    st = MATH_VALUE_NAN;
 	  } else {
-	    st=MNOERR;
+	    st=MATH_VALUE_NORMAL;
 	  }
 	} else {
-          if (((po2-po)==1) && (*po=='|')) st=MSCONT;
-          else if (((po2-po)==1) && (*po=='=')) st=MSBREAK;
-          else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MNAN;
-          else if (((po2-po)==5) && (strncmp(po,"UNDEF",5)==0)) st=MUNDEF;
-          else if (((po2-po)==4) && (strncmp(po,"CONT",4)==0)) st=MSCONT;
-          else if (((po2-po)==5) && (strncmp(po,"BREAK",5)==0)) st=MSBREAK;
-          else st=MNONUM;
+          if (((po2-po)==1) && (*po=='|')) st=MATH_VALUE_CONT;
+          else if (((po2-po)==1) && (*po=='=')) st=MATH_VALUE_BREAK;
+          else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MATH_VALUE_NAN;
+          else if (((po2-po)==5) && (strncmp(po,"UNDEF",5)==0)) st=MATH_VALUE_UNDEF;
+          else if (((po2-po)==4) && (strncmp(po,"CONT",4)==0)) st=MATH_VALUE_CONT;
+          else if (((po2-po)==5) && (strncmp(po,"BREAK",5)==0)) st=MATH_VALUE_BREAK;
+          else st=MATH_VALUE_NONUM;
         }
         for (;(*po2==' ');po2++);
         if (CHECK_IFS(ifs, *po2)) po2++;
@@ -1890,18 +1890,18 @@ getdataarray(char *buf, int maxdim, double *count, MathValue *data, char *ifs, i
       val=strtod(po,&endptr);
       if (endptr>=po2) {
 	if (check_infinite(val)) {
-	  st = MNAN;
+	  st = MATH_VALUE_NAN;
 	} else {
-	  st=MNOERR;
+	  st=MATH_VALUE_NORMAL;
 	}
       } else {
-        if (((po2-po)==1) && (*po=='|')) st=MSCONT;
-        else if (((po2-po)==1) && (*po=='=')) st=MSBREAK;
-        else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MNAN;
-        else if (((po2-po)==5) && (strncmp(po,"UNDEF",5)==0)) st=MUNDEF;
-        else if (((po2-po)==4) && (strncmp(po,"CONT",4)==0)) st=MSCONT;
-        else if (((po2-po)==5) && (strncmp(po,"BREAK",5)==0)) st=MSBREAK;
-        else st=MNONUM;
+        if (((po2-po)==1) && (*po=='|')) st=MATH_VALUE_CONT;
+        else if (((po2-po)==1) && (*po=='=')) st=MATH_VALUE_BREAK;
+        else if (((po2-po)==3) && (strncmp(po,"NAN",3)==0)) st=MATH_VALUE_NAN;
+        else if (((po2-po)==5) && (strncmp(po,"UNDEF",5)==0)) st=MATH_VALUE_UNDEF;
+        else if (((po2-po)==4) && (strncmp(po,"CONT",4)==0)) st=MATH_VALUE_CONT;
+        else if (((po2-po)==5) && (strncmp(po,"BREAK",5)==0)) st=MATH_VALUE_BREAK;
+        else st=MATH_VALUE_NONUM;
       }
     }
     po=po2;
@@ -2325,7 +2325,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, M
 	datax[i] = gdata[j];
       } else {
 	datax[i].val = 0;
-	datax[i].type = MNONUM;
+	datax[i].type = MATH_VALUE_NONUM;
       }
     }
     for (i = 0; i < fnumy; i++) {
@@ -2334,7 +2334,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, M
 	datay[i] = gdata[j];
       } else {
 	datay[i].val = 0;
-	datay[i].type = MNONUM;
+	datay[i].type = MATH_VALUE_NONUM;
       }
     }
     if (filenum) {
@@ -2563,7 +2563,7 @@ getdata(struct f2ddata *fp)
   static MathValue math_value_zero = {0, 0};
 
   fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
+  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
   filenum=arraynum(&(fp->fileopen));
   openfile=arraydata(&(fp->fileopen));
 
@@ -2600,7 +2600,7 @@ getdata(struct f2ddata *fp)
   arraydel(&filedatay);
   if ((fp->bufnum==0) || (fp->bufpo>=fp->bufnum)) {
     fp->dx=fp->dy=fp->d2=fp->d3=0;
-    fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MEOF;
+    fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_MEOF;
     return 1;
   }
   switch (fp->type) {
@@ -2644,25 +2644,25 @@ getdata(struct f2ddata *fp)
 #if BUF_TYPE == USE_BUF_PTR
   for (i = 0; i <= num; i++) {
     buf = fp->buf_ptr[i];
-    if (buf->dxstat == MNOERR &&
+    if (buf->dxstat == MATH_VALUE_NORMAL &&
 	i >= fp->bufpo - smx &&
 	i <= fp->bufpo + smx) {
       sumx += buf->dx;
       numx++;
     }
-    if (buf->dystat == MNOERR &&
+    if (buf->dystat == MATH_VALUE_NORMAL &&
 	i >= fp->bufpo - smy &&
 	i <= fp->bufpo + smy) {
       sumy += buf->dy;
       numy++;
     }
-    if (buf->d2stat == MNOERR &&
+    if (buf->d2stat == MATH_VALUE_NORMAL &&
 	i >= fp->bufpo - sm2 &&
 	i <= fp->bufpo + sm2) {
       sum2 += buf->d2;
       num2++;
     }
-    if (buf->d3stat == MNOERR &&
+    if (buf->d3stat == MATH_VALUE_NORMAL &&
 	i >= fp->bufpo - sm3 &&
 	i <= fp->bufpo + sm3) {
       sum3 += buf->d3;
@@ -2695,22 +2695,22 @@ getdata(struct f2ddata *fp)
 #elif BUF_TYPE == USE_RING_BUF
   for (i=0;i<=num;i++) {
     n = ring_buf_index(fp, i);
-    if ((fp->buf[n].dxstat==MNOERR)
+    if ((fp->buf[n].dxstat==MATH_VALUE_NORMAL)
      && (i>=fp->bufpo-smx) && (i<=fp->bufpo+smx)) {
       sumx+=fp->buf[n].dx;
       numx++;
     }
-    if ((fp->buf[n].dystat==MNOERR)
+    if ((fp->buf[n].dystat==MATH_VALUE_NORMAL)
      && (i>=fp->bufpo-smy) && (i<=fp->bufpo+smy)) {
       sumy+=fp->buf[n].dy;
       numy++;
     }
-    if ((fp->buf[n].d2stat==MNOERR)
+    if ((fp->buf[n].d2stat==MATH_VALUE_NORMAL)
      && (i>=fp->bufpo-sm2) && (i<=fp->bufpo+sm2)) {
       sum2+=fp->buf[n].d2;
       num2++;
     }
-    if ((fp->buf[n].d3stat==MNOERR)
+    if ((fp->buf[n].d3stat==MATH_VALUE_NORMAL)
      && (i>=fp->bufpo-sm3) && (i<=fp->bufpo+sm3)) {
       sum3+=fp->buf[n].d3;
       num3++;
@@ -2732,22 +2732,22 @@ getdata(struct f2ddata *fp)
   fp->mtype=fp->buf[n].marktype;
 #else  /* BUF_TYPE */
   for (i=0;i<=num;i++) {
-    if ((fp->buf[i].dxstat==MNOERR)
+    if ((fp->buf[i].dxstat==MATH_VALUE_NORMAL)
      && (i>=fp->bufpo-smx) && (i<=fp->bufpo+smx)) {
       sumx+=fp->buf[i].dx;
       numx++;
     }
-    if ((fp->buf[i].dystat==MNOERR)
+    if ((fp->buf[i].dystat==MATH_VALUE_NORMAL)
      && (i>=fp->bufpo-smy) && (i<=fp->bufpo+smy)) {
       sumy+=fp->buf[i].dy;
       numy++;
     }
-    if ((fp->buf[i].d2stat==MNOERR)
+    if ((fp->buf[i].d2stat==MATH_VALUE_NORMAL)
      && (i>=fp->bufpo-sm2) && (i<=fp->bufpo+sm2)) {
       sum2+=fp->buf[i].d2;
       num2++;
     }
-    if ((fp->buf[i].d3stat==MNOERR)
+    if ((fp->buf[i].d3stat==MATH_VALUE_NORMAL)
      && (i>=fp->bufpo-sm3) && (i<=fp->bufpo+sm3)) {
       sum3+=fp->buf[i].d3;
       num3++;
@@ -2770,19 +2770,19 @@ getdata(struct f2ddata *fp)
 
   switch (fp->type) {
   case TYPE_NORMAL:
-    if (fp->dxstat==MNOERR && fp->dystat==MNOERR)
+    if (fp->dxstat==MATH_VALUE_NORMAL && fp->dystat==MATH_VALUE_NORMAL)
       fp->datanum++;
     break;
   case TYPE_DIAGONAL:
-    if (fp->dxstat==MNOERR && fp->dystat==MNOERR && fp->d2stat==MNOERR && fp->d3stat==MNOERR)
+    if (fp->dxstat==MATH_VALUE_NORMAL && fp->dystat==MATH_VALUE_NORMAL && fp->d2stat==MATH_VALUE_NORMAL && fp->d3stat==MATH_VALUE_NORMAL)
       fp->datanum++;
     break;
   case TYPE_ERR_X:
-    if (fp->dystat==MNOERR && fp->d2stat==MNOERR && fp->d3stat==MNOERR)
+    if (fp->dystat==MATH_VALUE_NORMAL && fp->d2stat==MATH_VALUE_NORMAL && fp->d3stat==MATH_VALUE_NORMAL)
       fp->datanum++;
     break;
   case TYPE_ERR_Y:
-    if (fp->dxstat==MNOERR && fp->d2stat==MNOERR && fp->d3stat==MNOERR)
+    if (fp->dxstat==MATH_VALUE_NORMAL && fp->d2stat==MATH_VALUE_NORMAL && fp->d3stat==MATH_VALUE_NORMAL)
       fp->datanum++;
     break;
   }
@@ -2848,7 +2848,7 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
   }
 
   *dd=0;
-  *ddstat=MUNDEF;
+  *ddstat=MATH_VALUE_UNDEF;
   find=FALSE;
   while (!fp->eof && (!find)) {
     if ((fp->final>=0) && (fp->line>=fp->final)) {
@@ -2884,7 +2884,7 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
 	return -1;
       }
       *dd=0;
-      *ddstat=MUNDEF;
+      *ddstat=MATH_VALUE_UNDEF;
       dx2 = gdata[fp->x];
       dy2 = gdata[fp->y];
       if (code && code->exp) {
@@ -2892,7 +2892,7 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
         *dd = val.val;
         *ddstat = val.type;
       }
-      if (masked) *ddstat=MSCONT;
+      if (masked) *ddstat=MATH_VALUE_CONT;
       find=TRUE;
       fp->dline=fp->line;
       step=1;
@@ -2918,7 +2918,7 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
   g_free(gdata);
   if (!find) {
     *dd=0;
-    *ddstat=MEOF;
+    *ddstat=MATH_VALUE_MEOF;
     return 1;
   }
   return 0;
@@ -2940,7 +2940,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
   int datanum;
 
   fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
+  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
   datanum=0;
   while (!fp->eof && (datanum==0)) {
     if ((fp->final>=0) && (fp->line>=fp->final)) {
@@ -2975,7 +2975,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
 #endif
       if (rcode==-1) return -1;
       dx=dy=d2=d3=0;
-      dxstat=dystat=d2stat=d3stat=MUNDEF;
+      dxstat=dystat=d2stat=d3stat=MATH_VALUE_UNDEF;
       dx = data[fp->x].val;
       dxstat = data[fp->x].type;
 
@@ -3016,7 +3016,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
 	break;
       }
       if (masked) {
-        dxstat=dystat=d2stat=d3stat=MSCONT;
+        dxstat=dystat=d2stat=d3stat=MATH_VALUE_CONT;
         for (i=0;i<=maxdim;i++)
           data[i].type = MATH_VALUE_CONT;
       }
@@ -3042,7 +3042,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
   }
   if (datanum==0) {
     fp->dx=fp->dy=fp->d2=fp->d3=0;
-    fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MEOF;
+    fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_MEOF;
     return 1;
   }
   return 0;
@@ -3068,7 +3068,7 @@ check_mtime(struct f2ddata *fp, struct f2dlocal *local)
 
   fp->datanum = local->num;
   fp->dx = fp->dy = fp->d2 = fp->d3=0;
-  fp->dxstat = fp->dystat = fp->d2stat = fp->d3stat = MUNDEF;
+  fp->dxstat = fp->dystat = fp->d2stat = fp->d3stat = MATH_VALUE_UNDEF;
   fp->dline = 0;
   fp->minx = local->minx;
   fp->maxx = local->maxx;
@@ -3116,10 +3116,10 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
    return -1;
   }
 
-  fp->minx.type = MUNDEF;
-  fp->maxx.type = MUNDEF;
-  fp->miny.type = MUNDEF;
-  fp->maxy.type = MUNDEF;
+  fp->minx.type = MATH_VALUE_UNDEF;
+  fp->maxx.type = MATH_VALUE_UNDEF;
+  fp->miny.type = MATH_VALUE_UNDEF;
+  fp->maxy.type = MATH_VALUE_UNDEF;
   fp->sumx=0;
   fp->sumy=0;
   fp->sumxx=0;
@@ -3132,7 +3132,7 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
     switch (fp->type) {
     case TYPE_NORMAL:
     case TYPE_DIAGONAL:
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
 	if ((fp->minx.type == MATH_VALUE_UNDEF) || (fp->minx.val > fp->dx)) {
 	  fp->minx.val = fp->dx;
 	}
@@ -3287,7 +3287,7 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
     }
   }
   fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MUNDEF;
+  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
   fp->dline=0;
   g_free(gdata);
   local->minx = fp->minx;
@@ -3613,7 +3613,7 @@ f2derror(struct objlist *obj,struct f2ddata *fp,int code,char *s)
 static void 
 errordisp(struct objlist *obj,
 	  struct f2ddata *fp,
-	  int *emerr,int *emserr,int *emnonum,int *emig,int *emng)
+	  int *emerr,int *emnonum,int *emig,int *emng)
 {
   int x,y;
   char *s;
@@ -3621,23 +3621,23 @@ errordisp(struct objlist *obj,
   if (!*emerr) {
     x=FALSE;
     y=FALSE;
-    if ((fp->dxstat==MERR) || (fp->dxstat==MNAN)) x=TRUE;
-    if ((fp->dystat==MERR) || (fp->dystat==MNAN)) y=TRUE;
+    if ((fp->dxstat==MATH_VALUE_ERROR) || (fp->dxstat==MATH_VALUE_NAN)) x=TRUE;
+    if ((fp->dystat==MATH_VALUE_ERROR) || (fp->dystat==MATH_VALUE_NAN)) y=TRUE;
 
     switch (fp->type) {
     case TYPE_NORMAL:
       break;
     case TYPE_DIAGONAL:
-      if ((fp->d2stat==MERR) || (fp->d2stat==MNAN)) x=TRUE;
-      if ((fp->d3stat==MERR) || (fp->d3stat==MNAN)) y=TRUE;
+      if ((fp->d2stat==MATH_VALUE_ERROR) || (fp->d2stat==MATH_VALUE_NAN)) x=TRUE;
+      if ((fp->d3stat==MATH_VALUE_ERROR) || (fp->d3stat==MATH_VALUE_NAN)) y=TRUE;
       break;
     case TYPE_ERR_X:
-      if ((fp->d2stat==MERR) || (fp->d2stat==MNAN)) x=TRUE;
-      if ((fp->d3stat==MERR) || (fp->d3stat==MNAN)) x=TRUE;
+      if ((fp->d2stat==MATH_VALUE_ERROR) || (fp->d2stat==MATH_VALUE_NAN)) x=TRUE;
+      if ((fp->d3stat==MATH_VALUE_ERROR) || (fp->d3stat==MATH_VALUE_NAN)) x=TRUE;
       break;
     case TYPE_ERR_Y:
-      if ((fp->d2stat==MERR) || (fp->d2stat==MNAN)) y=TRUE;
-      if ((fp->d3stat==MERR) || (fp->d3stat==MNAN)) y=TRUE;
+      if ((fp->d2stat==MATH_VALUE_ERROR) || (fp->d2stat==MATH_VALUE_NAN)) y=TRUE;
+      if ((fp->d3stat==MATH_VALUE_ERROR) || (fp->d3stat==MATH_VALUE_NAN)) y=TRUE;
       break;
     }
     if (x || y) {
@@ -3648,54 +3648,25 @@ errordisp(struct objlist *obj,
       *emerr=TRUE;
     }
   }
-  if (!*emserr) {
-    x=FALSE;
-    y=FALSE;
-    if (fp->dxstat==MSERR) x=TRUE;
-    if (fp->dystat==MSERR) y=TRUE;
-    switch (fp->type) {
-    case TYPE_NORMAL:
-      break;
-    case TYPE_DIAGONAL:
-      if (fp->d2stat==MSERR) x=TRUE;
-      if (fp->d3stat==MSERR) y=TRUE;
-      break;
-    case TYPE_ERR_X:
-      if (fp->d2stat==MSERR) x=TRUE;
-      if (fp->d3stat==MSERR) x=TRUE;
-      break;
-    case TYPE_ERR_Y:
-      if (fp->d2stat==MSERR) y=TRUE;
-      if (fp->d3stat==MSERR) y=TRUE;
-      break;
-    }
-    if (x || y) {
-      if (x && (!y)) s="x";
-      else if ((!x) && y) s="y";
-      else s="xy";
-      f2derror(obj,fp,ERRMSYNTAX,s);
-      *emserr=TRUE;
-    }
-  }
   if (!*emnonum) {
     x=FALSE;
     y=FALSE;
-    if (fp->dxstat==MNONUM) x=TRUE;
-    if (fp->dystat==MNONUM) y=TRUE;
+    if (fp->dxstat==MATH_VALUE_NONUM) x=TRUE;
+    if (fp->dystat==MATH_VALUE_NONUM) y=TRUE;
     switch (fp->type) {
     case TYPE_NORMAL:
       break;
     case TYPE_DIAGONAL:
-      if (fp->d2stat==MNONUM) x=TRUE;
-      if (fp->d3stat==MNONUM) y=TRUE;
+      if (fp->d2stat==MATH_VALUE_NONUM) x=TRUE;
+      if (fp->d3stat==MATH_VALUE_NONUM) y=TRUE;
       break;
     case TYPE_ERR_X:
-      if (fp->d2stat==MNONUM) x=TRUE;
-      if (fp->d3stat==MNONUM) x=TRUE;
+      if (fp->d2stat==MATH_VALUE_NONUM) x=TRUE;
+      if (fp->d3stat==MATH_VALUE_NONUM) x=TRUE;
       break;
     case TYPE_ERR_Y:
-      if (fp->d2stat==MNONUM) y=TRUE;
-      if (fp->d3stat==MNONUM) y=TRUE;
+      if (fp->d2stat==MATH_VALUE_NONUM) y=TRUE;
+      if (fp->d3stat==MATH_VALUE_NONUM) y=TRUE;
       break;
     }
     if (x || y) {
@@ -3720,22 +3691,18 @@ errordisp(struct objlist *obj,
 static void 
 errordisp2(struct objlist *obj,
 	   struct f2ddata *fp,
-	   int *emerr,int *emserr,int *emnonum,int *emig,int *emng,
+	   int *emerr,int *emnonum,int *emig,int *emng,
 	   char ddstat,char *s)
 {
-  if (!*emerr && (ddstat==MERR)) {
+  if (!*emerr && (ddstat==MATH_VALUE_ERROR)) {
     f2derror(obj,fp,ERRMERR,s);
     *emerr=TRUE;
   }
-  if (!*emerr && (ddstat==MNAN)) {
+  if (!*emerr && (ddstat==MATH_VALUE_NAN)) {
     f2derror(obj,fp,ERRMERR,s);
     *emerr=TRUE;
   }
-  if (!*emserr && (ddstat==MSERR)) {
-    f2derror(obj,fp,ERRMSYNTAX,s);
-    *emserr=TRUE;
-  }
-  if (!*emnonum && (ddstat==MNONUM)) {
+  if (!*emnonum && (ddstat==MATH_VALUE_NONUM)) {
     f2derror(obj,fp,ERRMNONUM,s);
     *emnonum=TRUE;
   }
@@ -3824,21 +3791,21 @@ dataadd(double dx,double dy,double dz,
 static int 
 markout(struct objlist *obj,struct f2ddata *fp,int GC, int width,int snum,int *style)
 {
-  int emerr,emserr,emnonum,emig,emng;
+  int emerr,emnonum,emig,emng;
   int gx,gy;
 
-  emerr=emserr=emnonum=emig=emng=FALSE;
+  emerr=emnonum=emig=emng=FALSE;
   GRAlinestyle(GC,snum,style,width,0,0,1000);
   while (getdata(fp)==0) {
-    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR) &&
+    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL) &&
 	(getposition(fp,fp->dx,fp->dy,&gx,&gy)==0)) {
       if (fp->msize>0)
         GRAmark(GC,fp->mtype, gx, gy, fp->msize,
 		fp->col.r, fp->col.g, fp->col.b, fp->col.a,
 		fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
-    } else errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+    } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   }
-  errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
 
@@ -3847,11 +3814,11 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
 	int width,int snum,int *style,
 	int join,int miter,int close)
 {
-  int emerr,emserr,emnonum,emig,emng;
+  int emerr,emnonum,emig,emng;
   int first;
   double x0,y0;
 
-  emerr=emserr=emnonum=emig=emng=FALSE;
+  emerr=emnonum=emig=emng=FALSE;
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
 #else
@@ -3860,7 +3827,7 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
   first=TRUE;
   while (getdata(fp)==0) {
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
     && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if (first) {
         GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,NULL,NULL,fp,
@@ -3872,15 +3839,15 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
 	GRAdashlinetod(GC,fp->dx,fp->dy);
       }
     } else {
-      if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+      if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
         if (! first && close) GRAdashlinetod(GC,x0,y0);
         first=TRUE;
       }
-      errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+      errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
     }
   }
   if (!first && close) GRAdashlinetod(GC,x0,y0);
-  errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
 
@@ -3895,7 +3862,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int intp)
 {
-  int emerr,emserr,emnonum,emig,emng;
+  int emerr,emnonum,emig,emng;
   int j,num;
   int first;
   double *x,*y,*z,*c1,*c2,*c3,*c4,*c5,*c6,count;
@@ -3905,7 +3872,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
   int bsr[7],bsg[7],bsb[7],bsa[7],bsr2[4],bsg2[4],bsb2[4],bsa2[4];
   int spcond;
 
-  emerr=emserr=emnonum=emig=emng=FALSE;
+  emerr=emnonum=emig=emng=FALSE;
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
 #else
@@ -3919,13 +3886,13 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
     x=y=z=c1=c2=c3=c4=c5=c6=NULL;
     r=g=b=a=NULL;
     while (getdata(fp)==0) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
         if (dataadd(fp->dx,fp->dy,count,fp->col.r,fp->col.g,fp->col.b,fp->col.a,&num,
 		    &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
         count++;
       } else {
-        if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+        if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
           if (num>=2) {
             if (intp==INTERPOLATION_TYPE_SPLINE) {
 	      spcond=SPLCND2NDDIF;
@@ -3957,7 +3924,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           x=y=z=c1=c2=c3=c4=c5=c6=NULL;
           r=g=b=a=NULL;
         }
-        errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
       }
     }
     if (num!=0) {
@@ -3991,7 +3958,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
     first=TRUE;
     num=0;
     while (getdata(fp)==0) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
         if (first) {
           bs1[num]=fp->dx;
@@ -4036,7 +4003,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           if (!GRAcurve(GC,c,c[0],c[4])) return -1;
         }
       } else {
-        if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+        if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
           if (!first) {
             for (j=0;j<2;j++) {
               bspline(j+3,bs1+j+2,c);
@@ -4048,7 +4015,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           first=TRUE;
           num=0;
         }
-        errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
       }
     }
     if (!first) {
@@ -4064,7 +4031,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
     first=TRUE;
     num=0;
     while (getdata(fp)==0) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
         if (first) {
           bs1[num]=fp->dx;
@@ -4111,7 +4078,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           if (!GRAcurve(GC,c,c[0],c[4])) return -1;
         }
       } else {
-        if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+        if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
           if (!first) {
             for (j=0;j<3;j++) {
               bs1[4+j]=bs3[j];
@@ -4129,7 +4096,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
           first=TRUE;
           num=0;
         }
-        errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
       }
     }
     if (!first) {
@@ -4148,7 +4115,7 @@ curveout(struct objlist *obj,struct f2ddata *fp,int GC,
     }
     break;
   }
-  errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
 
@@ -4156,13 +4123,13 @@ static int
 rectout(struct objlist *obj,struct f2ddata *fp,int GC,
 	int width,int snum,int *style,int type)
 {
-  int emerr,emserr,emnonum,emig,emng;
+  int emerr,emnonum,emig,emng;
   double x0,y0,x1,y1;
   int gx0,gy0,gx1,gy1,ax0,ay0;
   double dx,dy,len,alen,awidth;
   int ap[6],headlen,headwidth;
 
-  emerr=emserr=emnonum=emig=emng=FALSE;
+  emerr=emnonum=emig=emng=FALSE;
   headlen=72426;
   headwidth=60000;
 
@@ -4170,8 +4137,8 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   else GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-     && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
+    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+     && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->d2),&(fp->d3))==0)) {
       if (type == PLOT_TYPE_DIAGONAL) {
@@ -4269,9 +4236,9 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
           GRAline(GC,gx0,gy0,gx1,gy1);
         }
       }
-    } else errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+    } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   }
-  errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
 
@@ -4279,19 +4246,19 @@ static int
 errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
 	    int width,int snum,int *style,int type)
 {
-  int emerr,emserr,emnonum,emig,emng;
+  int emerr,emnonum,emig,emng;
   double x0,y0,x1,y1;
   int gx0,gy0,gx1,gy1;
   int size;
 
-  emerr=emserr=emnonum=emig=emng=FALSE;
+  emerr=emnonum=emig=emng=FALSE;
   GRAlinestyle(GC,snum,style,width,0,0,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
     if (type == PLOT_TYPE_ERRORBAR_X) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-       && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+       && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
        && (getposition2(fp,fp->axtype,fp->axtype,&(fp->d2),&(fp->d3))==0)) {
         x0=fp->d2;
@@ -4315,10 +4282,10 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
                        gy1+nround(size*fp->axvx));
           }
         }
-      } else errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+      } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
     } else if (type == PLOT_TYPE_ERRORBAR_Y) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-       && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+       && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
        && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)
        && (getposition2(fp,fp->aytype,fp->aytype,&(fp->d2),&(fp->d3))==0)) {
         x0=fp->dx;
@@ -4342,10 +4309,10 @@ errorbarout(struct objlist *obj,struct f2ddata *fp,int GC,
                        gy1+nround(size*fp->ayvx));
           }
         }
-      } else errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+      } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
     }
   }
-  errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
 
@@ -4354,11 +4321,11 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
 	 int width,int snum,int *style,
 	 int join,int miter,int type)
 {
-  int emerr,emserr,emnonum,emig,emng;
+  int emerr,emnonum,emig,emng;
   int num;
   double x0,y0,x1,y1,x,y,dx,dy;
 
-  emerr=emserr=emnonum=emig=emng=FALSE;
+  emerr=emnonum=emig=emng=FALSE;
 #if EXPAND_DOTTED_LINE
   GRAlinestyle(GC,0,NULL,width,0,join,miter);
 #else
@@ -4367,7 +4334,7 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
   num=0;
   while (getdata(fp)==0) {
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if (num==0) {
         x0=fp->dx;
@@ -4420,7 +4387,7 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
         y0=y1;
       }
     } else {
-      if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+      if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
         if (num!=0) {
           if (type == PLOT_TYPE_STAIRCASE_X) {
             dx=x0-x;
@@ -4434,7 +4401,7 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
         }
         num=0;
       }
-      errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+      errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
     }
   }
   if (num!=0) {
@@ -4448,7 +4415,7 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
       GRAdashlinetod(GC,x,y);
     }
   }
-  errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
 
@@ -4456,18 +4423,18 @@ static int
 barout(struct objlist *obj,struct f2ddata *fp,int GC,
        int width,int snum,int *style,int type)
 {
-  int emerr,emserr,emnonum,emig,emng;
+  int emerr,emnonum,emig,emng;
   double x0,y0,x1,y1;
   int gx0,gy0,gx1,gy1;
   int size;
   int ap[8];
 
-  emerr=emserr=emnonum=emig=emng=FALSE;
+  emerr=emnonum=emig=emng=FALSE;
   if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
     GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
      && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
       if ((type == PLOT_TYPE_BAR_FILL_X) || (type == PLOT_TYPE_BAR_SOLID_FILL_X)) {
         if (type == PLOT_TYPE_BAR_FILL_X) {
@@ -4553,9 +4520,9 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
           GRAdrawpoly(GC,4,ap,0);
         }
       }
-    } else errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+    } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   }
-  errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
 
@@ -4618,12 +4585,12 @@ calc_weight(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, 
     }
 
     j++;
-    if (ddstat == MNOERR) {
+    if (ddstat == MATH_VALUE_NORMAL) {
       if (arrayadd(data, &dd) == NULL) {
 	return -1;
       }
     } else {
-      errordisp2(obj, fp, &emerr, &emserr, &emnonum, &emig, &emng, ddstat, "weight");
+      errordisp2(obj, fp, &emerr, &emnonum, &emig, &emng, ddstat, "weight");
     }
   }
 
@@ -4649,7 +4616,7 @@ calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, str
   emerr = emserr = emnonum = emig = emng = FALSE;
 
   for (i = 0; getdata(fp)==0; i++) {
-    if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
+    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
       if (arrayadd(&data, &fp->dx) == NULL || 
 	  arrayadd(&data, &fp->dy) == NULL ||
 	  arrayadd(&index, &i) == NULL) {
@@ -4658,11 +4625,11 @@ calc_fit(struct objlist *obj, struct f2dlocal *f2dlocal, struct f2ddata *fp, str
 	return -1;
       }
     } else {
-      errordisp(obj, fp, &emerr, &emserr, &emnonum, &emig, &emng);
+      errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
     }
   }
 
-  errordisp(obj, fp, &emerr, &emserr, &emnonum, &emig, &emng);
+  errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
   if ((dnum=(double )arraynum(&data))==0) {
     arraydel(&index);
     arraydel(&data);
@@ -4796,7 +4763,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
     rcode = math_equation_calculate(code, &val);
     dy = val.val;
     if (interpolation) {
-      if ((rcode==MNOERR)
+      if ((rcode==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
         if (dataadd(dx,dy,count,0,0,0,255,&num,
                     &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) {
@@ -4818,7 +4785,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
         r=g=b=a=NULL;
       }
     } else {
-      if ((rcode==MNOERR) && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
+      if ((rcode==MATH_VALUE_NORMAL) && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
         if (first) {
           GRAcurvefirst(GC,snum,style,f2dlineclipf,f2dtransf,NULL,NULL,fp,dx,dy);
           first=FALSE;
@@ -4829,7 +4796,7 @@ draw_fit(struct objlist *obj, struct f2ddata *fp,
 	first=TRUE;
       }
     }
-    if ((!emerr) && (rcode!=MNOERR) && (rcode!=MUNDEF)) {
+    if ((!emerr) && (rcode!=MATH_VALUE_NORMAL) && (rcode!=MATH_VALUE_UNDEF)) {
       error(obj,ERRMERR);
       emerr=TRUE;
     }
@@ -5194,7 +5161,7 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
     case TYPE_NORMAL:
       dx=fp->dx;
       dy=fp->dy;
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)) {
         f2dtransf(dx,dy,&gx0,&gy0,fp);
         line=fp->dline;
@@ -5210,8 +5177,8 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
       dy=fp->dy;
       d2=fp->d2;
       d3=fp->d3;
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-      && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+      && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)
       && (getposition2(fp,fp->axtype,fp->aytype,&d2,&d3)==0)) {
         f2dtransf(dx,dy,&gx0,&gy0,fp);
@@ -5234,8 +5201,8 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
       dy=fp->dy;
       d2=fp->d2;
       d3=fp->d3;
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-      && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+      && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)
       && (getposition2(fp,fp->axtype,fp->axtype,&d2,&d3)==0)) {
         f2dtransf(d2,dy,&gx0,&gy0,fp);
@@ -5258,8 +5225,8 @@ f2devaluate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
       dy=fp->dy;
       d2=fp->d2;
       d3=fp->d3;
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-       && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+       && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
        && (getposition2(fp,fp->axtype,fp->aytype,&dx,&dy)==0)
        && (getposition2(fp,fp->aytype,fp->aytype,&d2,&d3)==0)) {
         f2dtransf(dx,d2,&gx0,&gy0,fp);
@@ -5904,7 +5871,7 @@ f2dclosedata(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   fp=f2dlocal->data;
   if (fp==NULL) return 0;
   fp->dx=fp->dy=fp->d2=fp->d3=0;
-  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MEOF;
+  fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_MEOF;
   f2dsettbl(inst,f2dlocal,fp);
   closedata(fp, f2dlocal);
   f2dlocal->data=NULL;
@@ -5999,7 +5966,7 @@ f2dgetdataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   }
   for (i=0;i<num;i++) {
     if (data[i]>FILE_OBJ_MAXCOL) {
-      d=MNONUM;
+      d=MATH_VALUE_NONUM;
     } else {
       d = gdata[data[i]].type;
     }
@@ -6099,10 +6066,10 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     closedata(fp, f2dlocal);
     return 1;
   }
-  minxstat=MUNDEF;
-  maxxstat=MUNDEF;
-  minystat=MUNDEF;
-  maxystat=MUNDEF;
+  minxstat=MATH_VALUE_UNDEF;
+  maxxstat=MATH_VALUE_UNDEF;
+  minystat=MATH_VALUE_UNDEF;
+  maxystat=MATH_VALUE_UNDEF;
   dnum=0;
   minx=maxx=miny=maxy=0;
   sumx=sumxx=sumy=sumyy=0;
@@ -6113,15 +6080,15 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   while ((rcode=getdata(fp))==0) {
     switch (fp->type) {
     case TYPE_NORMAL:
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
-        if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
-        if ((maxxstat==MUNDEF) || (maxx<fp->dx)) maxx=fp->dx;
-        minxstat=MNOERR;
-        maxxstat=MNOERR;
-        if ((minystat==MUNDEF) || (miny>fp->dy)) miny=fp->dy;
-        if ((maxystat==MUNDEF) || (maxy<fp->dy)) maxy=fp->dy;
-        minystat=MNOERR;
-        maxystat=MNOERR;
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
+        if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->dx)) minx=fp->dx;
+        if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->dx)) maxx=fp->dx;
+        minxstat=MATH_VALUE_NORMAL;
+        maxxstat=MATH_VALUE_NORMAL;
+        if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->dy)) miny=fp->dy;
+        if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->dy)) maxy=fp->dy;
+        minystat=MATH_VALUE_NORMAL;
+        maxystat=MATH_VALUE_NORMAL;
         sumx=sumx+fp->dx;
         sumxx=sumxx+(fp->dx)*(fp->dx);
         sumy=sumy+fp->dy;
@@ -6130,24 +6097,24 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       }
       break;
     case TYPE_DIAGONAL:
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-       && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) {
-        if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
-        if ((maxxstat==MUNDEF) || (maxx<fp->dx)) maxx=fp->dx;
-        minxstat=MNOERR;
-        maxxstat=MNOERR;
-        if ((minystat==MUNDEF) || (miny>fp->dy)) miny=fp->dy;
-        if ((maxystat==MUNDEF) || (maxy<fp->dy)) maxy=fp->dy;
-        minystat=MNOERR;
-        maxystat=MNOERR;
-        if ((minxstat==MUNDEF) || (minx>fp->d2)) minx=fp->d2;
-        if ((maxxstat==MUNDEF) || (maxx<fp->d2)) maxx=fp->d2;
-        minxstat=MNOERR;
-        maxxstat=MNOERR;
-        if ((minystat==MUNDEF) || (miny>fp->d3)) miny=fp->d3;
-        if ((maxystat==MUNDEF) || (maxy<fp->d3)) maxy=fp->d3;
-        minystat=MNOERR;
-        maxystat=MNOERR;
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+       && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)) {
+        if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->dx)) minx=fp->dx;
+        if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->dx)) maxx=fp->dx;
+        minxstat=MATH_VALUE_NORMAL;
+        maxxstat=MATH_VALUE_NORMAL;
+        if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->dy)) miny=fp->dy;
+        if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->dy)) maxy=fp->dy;
+        minystat=MATH_VALUE_NORMAL;
+        maxystat=MATH_VALUE_NORMAL;
+        if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->d2)) minx=fp->d2;
+        if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->d2)) maxx=fp->d2;
+        minxstat=MATH_VALUE_NORMAL;
+        maxxstat=MATH_VALUE_NORMAL;
+        if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->d3)) miny=fp->d3;
+        if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->d3)) maxy=fp->d3;
+        minystat=MATH_VALUE_NORMAL;
+        maxystat=MATH_VALUE_NORMAL;
         sumx=sumx+fp->dx;
         sumxx=sumxx+(fp->dx)*(fp->dx);
         sumy=sumy+fp->dy;
@@ -6161,20 +6128,20 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       }
       break;
     case TYPE_ERR_X:
-      if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
-       && (fp->dystat==MNOERR)) {
-        if ((minystat==MUNDEF) || (miny>fp->dy)) miny=fp->dy;
-        if ((maxystat==MUNDEF) || (maxy<fp->dy)) maxy=fp->dy;
-        minystat=MNOERR;
-        maxystat=MNOERR;
-        if ((minxstat==MUNDEF) || (minx>fp->d2)) minx=fp->d2;
-        if ((maxxstat==MUNDEF) || (maxx<fp->d2)) maxx=fp->d2;
-        minxstat=MNOERR;
-        maxxstat=MNOERR;
-        if ((minxstat==MUNDEF) || (minx>fp->d3)) minx=fp->d3;
-        if ((maxxstat==MUNDEF) || (maxx<fp->d3)) maxx=fp->d3;
-        minxstat=MNOERR;
-        maxxstat=MNOERR;
+      if ((fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
+       && (fp->dystat==MATH_VALUE_NORMAL)) {
+        if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->dy)) miny=fp->dy;
+        if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->dy)) maxy=fp->dy;
+        minystat=MATH_VALUE_NORMAL;
+        maxystat=MATH_VALUE_NORMAL;
+        if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->d2)) minx=fp->d2;
+        if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->d2)) maxx=fp->d2;
+        minxstat=MATH_VALUE_NORMAL;
+        maxxstat=MATH_VALUE_NORMAL;
+        if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->d3)) minx=fp->d3;
+        if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->d3)) maxx=fp->d3;
+        minxstat=MATH_VALUE_NORMAL;
+        maxxstat=MATH_VALUE_NORMAL;
         sumx=sumx+fp->d2;
         sumxx=sumxx+(fp->d2)*(fp->d2);
         sumy=sumy+fp->dy;
@@ -6188,20 +6155,20 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       }
       break;
     case TYPE_ERR_Y:
-      if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
-       && (fp->dxstat==MNOERR)) {
-        if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
-        if ((maxxstat==MUNDEF) || (maxx<fp->dx)) maxx=fp->dx;
-        minxstat=MNOERR;
-        maxxstat=MNOERR;
-        if ((minystat==MUNDEF) || (miny>fp->d2)) miny=fp->d2;
-        if ((maxystat==MUNDEF) || (maxy<fp->d2)) maxy=fp->d2;
-        minystat=MNOERR;
-        maxystat=MNOERR;
-        if ((minystat==MUNDEF) || (miny>fp->d3)) miny=fp->d3;
-        if ((maxystat==MUNDEF) || (maxy<fp->d3)) maxy=fp->d3;
-        minystat=MNOERR;
-        maxystat=MNOERR;
+      if ((fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
+       && (fp->dxstat==MATH_VALUE_NORMAL)) {
+        if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->dx)) minx=fp->dx;
+        if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->dx)) maxx=fp->dx;
+        minxstat=MATH_VALUE_NORMAL;
+        maxxstat=MATH_VALUE_NORMAL;
+        if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->d2)) miny=fp->d2;
+        if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->d2)) maxy=fp->d2;
+        minystat=MATH_VALUE_NORMAL;
+        maxystat=MATH_VALUE_NORMAL;
+        if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->d3)) miny=fp->d3;
+        if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->d3)) maxy=fp->d3;
+        minystat=MATH_VALUE_NORMAL;
+        maxystat=MATH_VALUE_NORMAL;
         sumx=sumx+fp->dx;
         sumxx=sumxx+(fp->dx)*(fp->dx);
         sumy=sumy+fp->d2;
@@ -6228,10 +6195,10 @@ f2dstat(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   } else {
     sumx=sumy=sumxx=sumyy=0;
   }
-  if (minxstat!=MNOERR) minx=0;
-  if (minystat!=MNOERR) miny=0;
-  if (maxxstat!=MNOERR) maxx=0;
-  if (maxystat!=MNOERR) maxy=0;
+  if (minxstat!=MATH_VALUE_NORMAL) minx=0;
+  if (minystat!=MATH_VALUE_NORMAL) miny=0;
+  if (maxxstat!=MATH_VALUE_NORMAL) maxx=0;
+  if (maxystat!=MATH_VALUE_NORMAL) maxy=0;
 
   f2dlocal->dminx = minx;
   f2dlocal->dmaxx = maxx;
@@ -6314,15 +6281,15 @@ f2dstat2(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     if (fp->dline==line) {
       switch (fp->type) {
       case TYPE_NORMAL:
-        if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
+        if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
           dx=fp->dx;
           dy=fp->dy;
           find=TRUE;
         }
 	break;
       default:
-        if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-         && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) {
+        if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+         && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)) {
           dx=fp->dx;
           dy=fp->dy;
           d2=fp->d2;
@@ -6365,7 +6332,7 @@ f2dboundings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **ar
 
   abs=*(int *)argv[2];
   mm=0;
-  minmaxstat=MUNDEF;
+  minmaxstat=MATH_VALUE_UNDEF;
   if (_putobj(obj,"minx",inst,&mm)) return 1;
   if (_putobj(obj,"maxx",inst,&mm)) return 1;
   if (_putobj(obj,"miny",inst,&mm)) return 1;
@@ -6391,10 +6358,10 @@ f2dboundings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **ar
     closedata(fp, f2dlocal);
     return 1;
   }
-  minxstat=MUNDEF;
-  maxxstat=MUNDEF;
-  minystat=MUNDEF;
-  maxystat=MUNDEF;
+  minxstat=MATH_VALUE_UNDEF;
+  maxxstat=MATH_VALUE_UNDEF;
+  minystat=MATH_VALUE_UNDEF;
+  maxystat=MATH_VALUE_UNDEF;
   minx=maxx=miny=maxy=0;
 
   if (set_const_all(fp))
@@ -6403,93 +6370,93 @@ f2dboundings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **ar
   while ((rcode=getdata(fp))==0) {
     switch (fp->type) {
     case TYPE_NORMAL:
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)) {
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
         if ((!abs) || (fp->dx>0)) {
-          if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
-          if ((maxxstat==MUNDEF) || (maxx<fp->dx)) maxx=fp->dx;
-          minxstat=MNOERR;
-          maxxstat=MNOERR;
+          if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->dx)) minx=fp->dx;
+          if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->dx)) maxx=fp->dx;
+          minxstat=MATH_VALUE_NORMAL;
+          maxxstat=MATH_VALUE_NORMAL;
         }
         if ((!abs) || (fp->dy>0)) {
-          if ((minystat==MUNDEF) || (miny>fp->dy)) miny=fp->dy;
-          if ((maxystat==MUNDEF) || (maxy<fp->dy)) maxy=fp->dy;
-          minystat=MNOERR;
-          maxystat=MNOERR;
+          if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->dy)) miny=fp->dy;
+          if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->dy)) maxy=fp->dy;
+          minystat=MATH_VALUE_NORMAL;
+          maxystat=MATH_VALUE_NORMAL;
         }
       }
       break;
     case TYPE_DIAGONAL:
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-       && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)) {
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+       && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)) {
         if ((!abs) || (fp->dx>0)) {
-          if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
-          if ((maxxstat==MUNDEF) || (maxx<fp->dx)) maxx=fp->dx;
-          minxstat=MNOERR;
-          maxxstat=MNOERR;
+          if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->dx)) minx=fp->dx;
+          if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->dx)) maxx=fp->dx;
+          minxstat=MATH_VALUE_NORMAL;
+          maxxstat=MATH_VALUE_NORMAL;
         }
         if ((!abs) || (fp->dy>0)) {
-          if ((minystat==MUNDEF) || (miny>fp->dy)) miny=fp->dy;
-          if ((maxystat==MUNDEF) || (maxy<fp->dy)) maxy=fp->dy;
-          minystat=MNOERR;
-          maxystat=MNOERR;
+          if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->dy)) miny=fp->dy;
+          if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->dy)) maxy=fp->dy;
+          minystat=MATH_VALUE_NORMAL;
+          maxystat=MATH_VALUE_NORMAL;
         }
         if ((!abs) || (fp->d2>0)) {
-          if ((minxstat==MUNDEF) || (minx>fp->d2)) minx=fp->d2;
-          if ((maxxstat==MUNDEF) || (maxx<fp->d2)) maxx=fp->d2;
-          minxstat=MNOERR;
-          maxxstat=MNOERR;
+          if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->d2)) minx=fp->d2;
+          if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->d2)) maxx=fp->d2;
+          minxstat=MATH_VALUE_NORMAL;
+          maxxstat=MATH_VALUE_NORMAL;
         }
         if ((!abs) || (fp->d3>0)) {
-          if ((minystat==MUNDEF) || (miny>fp->d3)) miny=fp->d3;
-          if ((maxystat==MUNDEF) || (maxy<fp->d3)) maxy=fp->d3;
-          minystat=MNOERR;
-          maxystat=MNOERR;
+          if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->d3)) miny=fp->d3;
+          if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->d3)) maxy=fp->d3;
+          minystat=MATH_VALUE_NORMAL;
+          maxystat=MATH_VALUE_NORMAL;
         }
       }
       break;
     case TYPE_ERR_X:
-      if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
-       && (fp->dystat==MNOERR)) {
+      if ((fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
+       && (fp->dystat==MATH_VALUE_NORMAL)) {
         if ((!abs) || (fp->dy>0)) {
-          if ((minystat==MUNDEF) || (miny>fp->dy)) miny=fp->dy;
-          if ((maxystat==MUNDEF) || (maxy<fp->dy)) maxy=fp->dy;
-          minystat=MNOERR;
-          maxystat=MNOERR;
+          if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->dy)) miny=fp->dy;
+          if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->dy)) maxy=fp->dy;
+          minystat=MATH_VALUE_NORMAL;
+          maxystat=MATH_VALUE_NORMAL;
         }
         if ((!abs) || (fp->d2>0)) {
-          if ((minxstat==MUNDEF) || (minx>fp->d2)) minx=fp->d2;
-          if ((maxxstat==MUNDEF) || (maxx<fp->d2)) maxx=fp->d2;
-          minxstat=MNOERR;
-          maxxstat=MNOERR;
+          if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->d2)) minx=fp->d2;
+          if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->d2)) maxx=fp->d2;
+          minxstat=MATH_VALUE_NORMAL;
+          maxxstat=MATH_VALUE_NORMAL;
         }
         if ((!abs) || (fp->d3>0)) {
-          if ((minxstat==MUNDEF) || (minx>fp->d3)) minx=fp->d3;
-          if ((maxxstat==MUNDEF) || (maxx<fp->d3)) maxx=fp->d3;
-          minxstat=MNOERR;
-          maxxstat=MNOERR;
+          if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->d3)) minx=fp->d3;
+          if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->d3)) maxx=fp->d3;
+          minxstat=MATH_VALUE_NORMAL;
+          maxxstat=MATH_VALUE_NORMAL;
         }
       }
       break;
     case TYPE_ERR_Y:
-      if ((fp->d2stat==MNOERR) && (fp->d3stat==MNOERR)
-       && (fp->dxstat==MNOERR)) {
+      if ((fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL)
+       && (fp->dxstat==MATH_VALUE_NORMAL)) {
         if ((!abs) || (fp->dx>0)) {
-          if ((minxstat==MUNDEF) || (minx>fp->dx)) minx=fp->dx;
-          if ((maxxstat==MUNDEF) || (maxx<fp->dx)) maxx=fp->dx;
-          minxstat=MNOERR;
-          maxxstat=MNOERR;
+          if ((minxstat==MATH_VALUE_UNDEF) || (minx>fp->dx)) minx=fp->dx;
+          if ((maxxstat==MATH_VALUE_UNDEF) || (maxx<fp->dx)) maxx=fp->dx;
+          minxstat=MATH_VALUE_NORMAL;
+          maxxstat=MATH_VALUE_NORMAL;
         }
         if ((!abs) || (fp->d2>0)) {
-          if ((minystat==MUNDEF) || (miny>fp->d2)) miny=fp->d2;
-          if ((maxystat==MUNDEF) || (maxy<fp->d2)) maxy=fp->d2;
-          minystat=MNOERR;
-          maxystat=MNOERR;
+          if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->d2)) miny=fp->d2;
+          if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->d2)) maxy=fp->d2;
+          minystat=MATH_VALUE_NORMAL;
+          maxystat=MATH_VALUE_NORMAL;
         }
         if ((!abs) || (fp->d3>0)) {
-          if ((minystat==MUNDEF) || (miny>fp->d3)) miny=fp->d3;
-          if ((maxystat==MUNDEF) || (maxy<fp->d3)) maxy=fp->d3;
-          minystat=MNOERR;
-          maxystat=MNOERR;
+          if ((minystat==MATH_VALUE_UNDEF) || (miny>fp->d3)) miny=fp->d3;
+          if ((maxystat==MATH_VALUE_UNDEF) || (maxy<fp->d3)) maxy=fp->d3;
+          minystat=MATH_VALUE_NORMAL;
+          maxystat=MATH_VALUE_NORMAL;
         }
       }
       break;
@@ -6554,7 +6521,7 @@ f2dbounding(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       _getobj(obj,"maxx",inst,&max);
       _getobj(obj,"stat_minx",inst,&minstat);
       _getobj(obj,"stat_maxx",inst,&maxstat);
-      if ((minstat==MNOERR) && (maxstat==MNOERR)) {
+      if ((minstat==MATH_VALUE_NORMAL) && (maxstat==MATH_VALUE_NORMAL)) {
 	minmax=arraynew(sizeof(double));
 	arrayadd(minmax,&min);
 	arrayadd(minmax,&max);
@@ -6577,7 +6544,7 @@ f2dbounding(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
       _getobj(obj,"maxy",inst,&max);
       _getobj(obj,"stat_miny",inst,&minstat);
       _getobj(obj,"stat_maxy",inst,&maxstat);
-      if ((minstat==MNOERR) && (maxstat==MNOERR)) {
+      if ((minstat==MATH_VALUE_NORMAL) && (maxstat==MATH_VALUE_NORMAL)) {
 	minmax=arraynew(sizeof(double));
 	arrayadd(minmax,&min);
 	arrayadd(minmax,&max);
@@ -6887,7 +6854,7 @@ static int
 curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
                  int intp,int div)
 {
-  int emerr,emserr,emnonum,emig,emng;
+  int emerr,emnonum,emig,emng;
   int j,k,num;
   int first;
   double *x,*y,*z,*c1,*c2,*c3,*c4,*c5,*c6,count,dd,dx,dy;
@@ -6896,7 +6863,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
   double bs1[7],bs2[7],bs3[4],bs4[4];
   int spcond;
 
-  emerr=emserr=emnonum=emig=emng=FALSE;
+  emerr=emnonum=emig=emng=FALSE;
   switch (intp) {
   case INTERPOLATION_TYPE_SPLINE:
   case INTERPOLATION_TYPE_SPLINE_CLOSE:
@@ -6905,12 +6872,12 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
     x=y=z=c1=c2=c3=c4=c5=c6=NULL;
     r=g=b=a=NULL;
     while (getdata(fp)==0) {
-      if (fp->dxstat==MNOERR && fp->dystat==MNOERR) {
+      if (fp->dxstat==MATH_VALUE_NORMAL && fp->dystat==MATH_VALUE_NORMAL) {
         if (dataadd(fp->dx,fp->dy,count,fp->col.r,fp->col.g,fp->col.b,fp->col.a,&num,
 		    &x,&y,&z,&r,&g,&b,&a,&c1,&c2,&c3,&c4,&c5,&c6)==NULL) return -1;
         count++;
       } else {
-        if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+        if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
           if (num>=2) {
             if (intp==INTERPOLATION_TYPE_SPLINE) {
 	      spcond=SPLCND2NDDIF;
@@ -6944,7 +6911,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           x=y=z=c1=c2=c3=c4=c5=c6=NULL;
           r=g=b=a=NULL;
         }
-        errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
       }
     }
     if (num!=0) {
@@ -6980,7 +6947,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
     first=TRUE;
     num=0;
     while (getdata(fp)==0) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
         if (first) {
           bs1[num]=fp->dx;
@@ -7018,7 +6985,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           }
         }
       } else {
-        if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+        if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
           if (!first) {
             for (j=0;j<2;j++) {
               bspline(j+3,bs1+j+2,c);
@@ -7033,7 +7000,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           first=TRUE;
           num=0;
         }
-        errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
       }
     }
     if (!first) {
@@ -7052,7 +7019,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
     first=TRUE;
     num=0;
     while (getdata(fp)==0) {
-      if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
+      if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
       && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
         if (first) {
           bs1[num]=fp->dx;
@@ -7088,7 +7055,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           }
         }
       } else {
-        if ((fp->dxstat!=MSCONT) && (fp->dystat!=MSCONT)) {
+        if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
           if (!first) {
             for (j=0;j<3;j++) {
               bs1[4+j]=bs3[j];
@@ -7105,7 +7072,7 @@ curveoutfile(struct objlist *obj,struct f2ddata *fp,FILE *fp2,
           first=TRUE;
           num=0;
         }
-        errordisp(obj,fp,&emerr,&emserr,&emnonum,&emig,&emng);
+        errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
       }
     }
     if (!first) {
@@ -7188,23 +7155,23 @@ f2doutputfile(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     while ((rcode=getdata(fp))==0) {
       switch (fp->type) {
       case TYPE_NORMAL:
-        if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR))
+        if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL))
           fprintf(fp2,"%.15e %.15e\n",fp->dx,fp->dy);
 	break;
       case TYPE_DIAGONAL:
-        if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-         && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR))
+        if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+         && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL))
           fprintf(fp2,"%.15e %.15e %.15e %.15e\n",fp->dx,fp->dy,fp->d2,fp->d3);
 	break;
       case TYPE_ERR_X:
-        if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-         && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR))
+        if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+         && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL))
           fprintf(fp2,"%.15e %.15e %.15e %.15e\n",
                      fp->dx,fp->d2-fp->dx,fp->d3-fp->dx,fp->dy);
 	break;
       case TYPE_ERR_Y:
-        if ((fp->dxstat==MNOERR) && (fp->dystat==MNOERR)
-         && (fp->d2stat==MNOERR) && (fp->d3stat==MNOERR))
+        if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
+         && (fp->d2stat==MATH_VALUE_NORMAL) && (fp->d3stat==MATH_VALUE_NORMAL))
           fprintf(fp2,"%.15e %.15e %.15e %.15e\n",
                      fp->dx,fp->dy,fp->d2-fp->dy,fp->d3-fp->dy);
 	break;

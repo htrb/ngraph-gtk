@@ -37,7 +37,6 @@
 #include "object.h"
 #include "nstring.h"
 #include "ioutil.h"
-#include "mathcode.h"
 #include "mathfn.h"
 #include "shell.h"
 #include "shellcm.h"
@@ -1276,10 +1275,10 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
     return ecode;
   }
 
-  if (rcode == MNAN) {
+  if (rcode == MATH_VALUE_NAN) {
     putstdout("nan");
     return ERR;
-  } else if (rcode == MUNDEF) {
+  } else if (rcode == MATH_VALUE_UNDEF) {
     putstdout("undefined");
     return ERR;
   }
