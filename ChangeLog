@@ -1,3 +1,21 @@
+2011-05-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ostring.c (utf8_string_slice, string_slice, string_match)
+	(string_rindex, string_index, string_replace): 	added.
+	(ostring): add field "slice", "replace", "index", "rindex" and
+	"math".
+
+
+	* src/oregexp.c (regexp_replace): added.
+	(oregexp): add field "replace".
+
+	* test/string_test.nsc: added.
+
+	* src/math/math_basic_function.c (compare_double_with_prec):
+	added.
+	(math_func_eq, math_func_neq): add 3rd argument. use
+	"compare_double_with_prec()".0
+
 2011-05-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_parser.c (parse_argument_list): update "*buf"

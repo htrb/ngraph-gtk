@@ -33,10 +33,12 @@
 #define PARENT "object"
 #define OVERSION "1.00.00"
 
-#define ERRINVALID_UTF8 100
+#define ERR_INVALID_UTF8	100
+#define ERR_REGEXP		101
 
 static char *stringerrorlist[]={
-  "invalid UTF-8 string."
+  "invalid UTF-8 string.",
+  "invalid regular expression.",
 };
 
 #define ERRNUM (sizeof(stringerrorlist) / sizeof(*stringerrorlist))
@@ -113,7 +115,7 @@ string_set(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   }
 
   if (! g_utf8_validate(str, -1, NULL)) {
-    error(obj, ERRINVALID_UTF8);
+    error(obj, ERR_INVALID_UTF8);
     return 1;
   }
 
@@ -191,12 +193,47 @@ string_reverse(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   return 0;
 }
 
-#if 0
+static char *
+utf8_string_slice(const char *str, int size, int byte_size, int start, int len)
+{
+  char *data, *ptr;
+
+  if (str == NULL || size < 1 || len <= 0) {
+    return NULL;
+  }
+
+  if (start < 0) {
+    start = size + start;
+  }
+
+  if (start < 0) {
+    return NULL;
+  }
+
+  if (start >= size) {
+    return NULL;
+  }
+
+  if (start + len > size) {
+    len = size - start;
+  }
+
+  data = g_malloc(byte_size + 1);
+  if (data == NULL) {
+    return NULL;
+  }
+
+  ptr = g_utf8_offset_to_pointer(str, start);
+  g_utf8_strncpy(data, ptr, len);
+
+  return data;
+}
+
 static int 
 string_slice(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *str;
-  int start, len;
+  int start, size, byte_size, len;
 
   start = * (int *) argv[2];
   len = * (int *) argv[3];
@@ -210,15 +247,213 @@ string_slice(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
     return 1;
   }
 
-  if (str == NULL) {
+  if (_getobj(obj, "byte", inst, &byte_size)) {
+    return 1;
+  }
+
+  if (_getobj(obj, "length", inst, &size)) {
+    return 1;
+  }
+
+  if (str == NULL || len < 1) {
     return 0;
   }
 
-  rval->str = nstr_slice(str, start, len);
+  rval->str = utf8_string_slice(str, size, byte_size, start, len);
 
   return 0;
 }
-#endif
+
+static int 
+string_replace(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  GRegex *regexp;
+  char *str, *pattern, *replace;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  pattern = (char *) argv[2];
+  replace = (char *) argv[3];
+  if (pattern == NULL || pattern[0] == '\0') {
+    return 0;
+  }
+
+  if (replace == NULL) {
+    replace = "";
+  }
+
+  if (! g_utf8_validate(pattern, -1, NULL)) {
+    error(obj, ERR_INVALID_UTF8);
+    return 1;
+  }
+
+  if (! g_utf8_validate(replace, -1, NULL)) {
+    error(obj, ERR_INVALID_UTF8);
+    return 1;
+  }
+
+  if (_getobj(obj, "@", inst, &str)) {
+    return 1;
+  }
+
+  if(str == NULL || str[0] == '\0') {
+    return 0;
+  }
+
+  regexp = g_regex_new(pattern, 0, 0, NULL);
+  if (regexp == NULL) {
+    error(obj, ERR_REGEXP);
+    return 1;
+  }
+
+  rval->str = g_regex_replace(regexp, str, -1, 0, replace, 0, NULL);
+
+  g_regex_unref(regexp);
+
+  return 0;
+}
+
+static int 
+string_index(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int pos, size;
+  char *str, *pattern, *ptr, *find;
+
+  rval->i = -1;
+
+  pattern = (char *) argv[2];
+  pos = * (int *) argv[3];
+
+  if (pattern == NULL || pattern[0] == '\0') {
+    return 1;
+  }
+
+  if (_getobj(obj, "length", inst, &size)) {
+    return 2;
+  }
+
+  if (! g_utf8_validate(pattern, -1, NULL)) {
+    error(obj, ERR_INVALID_UTF8);
+    return 2;
+  }
+
+  if (pos < 0) {
+    pos += size;
+  }
+
+  if (pos < 0 || pos >= size) {
+    return 1;
+  }
+
+  if (_getobj(obj, "@", inst, &str)) {
+    return 1;
+  }
+
+  if(str == NULL || str[0] == '\0') {
+    return 1;
+  }
+
+  ptr = g_utf8_offset_to_pointer(str, pos);
+
+  find = g_strstr_len(ptr, -1, pattern);
+  if (find == NULL) {
+    return 1;
+  }
+
+  rval->i = g_utf8_pointer_to_offset(str, find);
+
+  return 0;
+}
+
+static int 
+string_rindex(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int pos, size, len;
+  char *str, *pattern, *ptr, *find;
+
+  rval->i = -1;
+
+  pattern = (char *) argv[2];
+  pos = * (int *) argv[3];
+
+  if (pattern == NULL || pattern[0] == '\0') {
+    return 1;
+  }
+
+  if (_getobj(obj, "length", inst, &size)) {
+    return 2;
+  }
+
+  if (! g_utf8_validate(pattern, -1, NULL)) {
+    error(obj, ERR_INVALID_UTF8);
+    return 2;
+  }
+
+  if (pos < 0) {
+    pos += size;
+  }
+
+  if (pos < 0 || pos >= size) {
+    return 1;
+  }
+
+  if (_getobj(obj, "@", inst, &str)) {
+    return 1;
+  }
+
+  if(str == NULL || str[0] == '\0') {
+    return 1;
+  }
+
+  ptr = g_utf8_offset_to_pointer(str, pos);
+  len = ptr - str + 1;
+  if (len < 1) {
+    return 1;
+  }
+
+  find = g_strrstr_len(str, len, pattern);
+  if (find == NULL) {
+    return 1;
+  }
+
+  rval->i = g_utf8_pointer_to_offset(str, find);
+
+  return 0;
+}
+
+static int 
+string_match(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  GRegex *regexp;
+  char *str, *pattern;
+
+  pattern = (char *) argv[2];
+
+  rval->i = 0;
+
+  if (! g_utf8_validate(pattern, -1, NULL)) {
+    error(obj, ERR_INVALID_UTF8);
+    return 1;
+  }
+
+  _getobj(obj, "@", inst, &str);
+  if (str == NULL || str[0] == '\0') {
+    return 0;
+  }
+
+  regexp = g_regex_new(pattern, 0, 0, NULL);
+  if (regexp == NULL) {
+    error(obj, ERR_REGEXP);
+    return 1;
+  }
+
+  rval->i = g_regex_match(regexp, str, 0, NULL);
+
+  g_regex_unref(regexp);
+
+  return 0;
+}
 
 static struct objtable ostring[] = {
   {"init",NVFUNC,NEXEC,stringinit,NULL,0},
@@ -231,7 +466,11 @@ static struct objtable ostring[] = {
   {"upcase",NSFUNC,NREAD|NEXEC,string_upcase,NULL,0},
   {"downcase",NSFUNC,NREAD|NEXEC,string_downcase,NULL,0},
   {"reverse",NSFUNC,NREAD|NEXEC,string_reverse,NULL,0},
-  //  {"slice",NSFUNC,NREAD|NEXEC,string_slice,"ii",0},
+  {"slice",NSFUNC,NREAD|NEXEC,string_slice,"ii",0},
+  {"match",NBFUNC,NREAD|NEXEC,string_match,"s",0},
+  {"replace",NSFUNC,NREAD|NEXEC,string_replace,"ss",0},
+  {"index",NIFUNC,NREAD|NEXEC,string_index,"si",0},
+  {"rindex",NIFUNC,NREAD|NEXEC,string_rindex,"si",0},
 };
 
 #define TBLNUM (sizeof(ostring) / sizeof(*ostring))

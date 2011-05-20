@@ -3,32 +3,44 @@
 TMP_FILE=${system::temp_file}
 
 new io
+new string
 new regexp
 regexp::@="(current instance:)|(last instance id:)"
+
 
 for obj in `object`
 do
     echo '<h3>'$obj'</h3>'
-    echo '<pre>'
     object $obj > $TMP_FILE
     io::open "r" "$TMP_FILE"
+    table=0
+    echo '<pre>'
     while true
     do
-	s="${io::gets}"
+	string::@="${io::gets}"
 	if io::eof
 	then
 	    break
 	fi
 
-	if regexp::match "$s"
+	if regexp::match "${string::@}"
 	then
 	    continue
+	elif string::index ": 0"
+	then
+	    echo "${string::@}"
 	else
-	    echo "$s"
+	    if [ $table = "0" ]
+	    then
+		echo '</pre>'
+		echo "<table>"
+		table=1
+	    fi
+	    get string: -field replace:'([^\s]+)\s+([^\s]+)\s+(.+) <tr><td>\1</td><td align="right">\2</td><td>\3</td></tr>'
 	fi
     done
     io::close
-    echo '</pre>'
+    echo "</table>"
     echo
 done
 

@@ -16,7 +16,7 @@
 
 static char *regexperrorlist[]={
   "invalid regular expression.",
-  "invalid  UTF-8 string.",
+  "invalid UTF-8 string.",
 };
 
 struct oregexp_local {
@@ -221,6 +221,45 @@ regexp_match(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
   return 0;
 }
 
+static int 
+regexp_replace(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  struct oregexp_local *local;
+  char *str, *replace;
+
+  g_free(rval->str);
+  rval->str = NULL;
+
+  str = (char *) argv[2];
+  replace = (char *) argv[3];
+  if (str == NULL || str[0] == '\0') {
+    return 0;
+  }
+
+  if (replace == NULL) {
+    replace = "";
+  }
+
+  if (! g_utf8_validate(str, -1, NULL)) {
+    error(obj, ERR_INVALID_UTF8);
+    return 1;
+  }
+
+  if (! g_utf8_validate(replace, -1, NULL)) {
+    error(obj, ERR_INVALID_UTF8);
+    return 1;
+  }
+
+  _getobj(obj, "_local", inst, &local);
+  if (local->regexp == NULL) {
+    return 1;
+  }
+
+  rval->str = g_regex_replace(local->regexp, str, -1, 0, replace, 0, NULL);
+
+  return 0;
+}
+
 int 
 regexp_seq(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -289,6 +328,7 @@ static struct objtable oregexp[] = {
   {"next",  NPOINTER,0,           NULL,        NULL, 0},
   {"@",     NSTR,    NREAD|NWRITE,regexp_set,  NULL, 0},
   {"match", NIFUNC,  NREAD|NEXEC, regexp_match,"s",  0},
+  {"replace", NSFUNC,NREAD|NEXEC, regexp_replace,"ss",0},
   {"get",   NSFUNC,  NREAD|NEXEC, regexp_get,  "ii", 0},
   {"num",   NIFUNC,  NREAD|NEXEC, regexp_num,  NULL, 0},
   {"seq",   NSFUNC,  NREAD|NEXEC, regexp_seq,  NULL, 0},

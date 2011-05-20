@@ -83,7 +83,7 @@ static struct funcs FuncAry[] = {
   {"ATAN", {1, 0, 0, math_func_atan, NULL, NULL, NULL, NULL}},
   {"SQR", {1, 0, 0, math_func_sqr, NULL, NULL, NULL, NULL}},
   {"ABS", {1, 0, 0, math_func_abs, NULL, NULL, NULL, NULL}},
-  {"NEQ", {2, 0, 0, math_func_neq, NULL, NULL, NULL, NULL}},
+  {"NEQ", {3, 0, 0, math_func_neq, NULL, NULL, NULL, NULL}},
   {"POP", {1, 0, 0, math_func_pop, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"ERF", {1, 0, 0, math_func_erf, NULL, NULL, NULL, NULL}},
@@ -154,7 +154,7 @@ static struct funcs FuncAry[] = {
 #endif
   {"EI", {1, 0, 0, math_func_ei, NULL, NULL, NULL, NULL}},
   {"RM", {1, 1, 0, math_func_rm, NULL, NULL, NULL, NULL}},
-  {"EQ", {2, 0, 0, math_func_eq, NULL, NULL, NULL, NULL}},
+  {"EQ", {3, 0, 0, math_func_eq, NULL, NULL, NULL, NULL}},
   {"OR", {2, 0, 0, math_func_or, NULL, NULL, NULL, NULL}},
   {"LT", {2, 0, 0, math_func_lt, NULL, NULL, NULL, NULL}},
   {"JN", {2, 0, 0, math_func_jn, NULL, NULL, NULL, NULL}},

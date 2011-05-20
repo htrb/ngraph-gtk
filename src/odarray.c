@@ -268,16 +268,11 @@ darrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   struct narray *array;
   GString *str;
   int i, n;
-  char *delim;
+  char *sep, *ptr;
   double val;
 
   g_free(rval->str);
   rval->str = NULL;
-
-  delim = (char *) argv[2];
-  if (delim == NULL) {
-    delim = ",";
-  }
 
   _getobj(obj, "@", inst, &array);
   n = arraynum(array);
@@ -285,17 +280,30 @@ darrayjoin(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
     return 0;
   }
 
+  ptr = (char *) argv[2];
+  if (ptr) {
+    sep = g_strcompress(ptr);
+  } else {
+    sep = g_strdup(",");
+  }
+  if (sep == NULL) {
+    return 1;
+  }
+
   str = g_string_sized_new(64);
   if (str == NULL) {
+    g_free(sep);
     return 1;
   }
 
   for (i = 0; i < n; i++) {
     val = arraynget_double(array, i);
-    g_string_append_printf(str, "%.15e%s", val, (i == n - 1) ? "" : delim);
+    g_string_append_printf(str, "%.15e%s", val, (i == n - 1) ? "" : sep);
   }
 
   rval->str = g_string_free(str, FALSE);
+
+  g_free(sep);
 
   return 0;
 }
