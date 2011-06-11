@@ -1,5 +1,8 @@
 2011-06-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11print.c (DriverDialogSelectCB): type of variables "l"
+	and "n"is now "int".
+
 	* initfile/Ngraph.nsc: add option "-V".
 
 	* src/oaxis.c (axis): add field "auto_scale_margin". remove 2nd

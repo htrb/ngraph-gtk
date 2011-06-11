@@ -73,11 +73,10 @@ static GtkPrintSettings *PrintSettings = NULL;
 static void
 DriverDialogSelectCB(GtkWidget *wi, gpointer client_data)
 {
-  int a, i;
+  int a, i, l, n;
   struct extprinter *pcur;
   struct DriverDialog *d;
   char *ptr, ngp_ext[] = ".ngp";
-  size_t l, n;
 
   d = (struct DriverDialog *) client_data;
 
