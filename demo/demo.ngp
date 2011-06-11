@@ -23,12 +23,14 @@ sarray::add "Demo #5_E: AXIS"
 sarray::add "_Quit demo"
 
 caption="'${sarray::join="' '"}'"
+caption_num="${sarray:CAPTION:num}"
+
+del sarray:CAPTION
 
 new dialog
 dialog::title="demo"
 dialog::caption="select demonstration"
 dialog::select="0"
-
 
 while true
 do
@@ -64,11 +66,10 @@ do
     fi
 
     menu::draw
-    dialog::select=`iexpr "($FILE_INDEX + 1) \\ ${sarray:CAPTION:num}"`
+    dialog::select=`iexpr "($FILE_INDEX + 1) \\ $caption_num"`
 done
 
 del dialog
 del sarray:FILE
-del sarray:CAPTION
 
 set -e

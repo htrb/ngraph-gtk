@@ -22,6 +22,11 @@ sarray::add "Demo #5_D: CURVE"
 sarray::add "Demo #5_E: AXIS"
 sarray::add "_Quit demo"
 
+caption="'${sarray::join="' '"}'"
+caption_num="${sarray:CAPTION:num}"
+
+del sarray:CAPTION
+
 new dialog
 dialog::title="demo"
 dialog::caption="select demonstration"
@@ -29,7 +34,7 @@ dialog::select="0"
 
 while true
 do
-    FILE_INDEX=`get dialog: -field radio:sarray:CAPTION`
+    FILE_INDEX=`get dialog: -field radio:"$caption"`
     if [ -z "$FILE_INDEX" ]
     then
 	break
@@ -61,17 +66,10 @@ do
     fi
 
     menu::draw
-    dialog::select=`iexpr "($FILE_INDEX + 1) \\ ${sarray:CAPTION:num}"`
+    dialog::select=`iexpr "($FILE_INDEX + 1) \\ $caption_num"`
 done
 
 del dialog
 del sarray:FILE
-del sarray:CAPTION
-
-for drawrable in `derive -instance draw`
-do
-    del ${drawrable}:0-!
-done
-gra:$ID:clear
 
 set -e
