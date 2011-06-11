@@ -1256,6 +1256,38 @@ add_obj_to_hash(char *name, char *alias, void *obj)
 }
 #endif
 
+static int 
+check_arglist(int type, const char *arglist)
+{
+  int i;
+
+  if (type == NENUM) {
+    return (arglist) ? 0 : 1;
+  }
+
+  if (arglist == NULL || arglist[0] == '\0') {
+    return 0;
+  }
+
+  if (arglist[1] == 'a') {
+    if (arglist[0] != 's' &&
+	arglist[0] != 'i' &&
+	arglist[0] != 'd' &&
+	arglist[2] != '\0') {
+      return 1;
+    }
+    return 0;
+  }
+
+  for (i = 0; arglist[i]; i++) {
+    if (strchr("soidb", arglist[i]) == NULL) {
+      return 1;
+    }
+  }
+
+  return 0;
+}
+
 void *
 addobject(char *name,char *alias,char *parentname,char *ver,
                 int tblnum,struct objtable *table,
@@ -1364,13 +1396,15 @@ addobject(char *name,char *alias,char *parentname,char *ver,
     default:
       offset++;
     }
-    if (table[i].attrib & NEXEC) table[i].attrib&=~NWRITE;
+    if (check_arglist(table[i].type, table[i].arglist)) {
+      goto errexit;
+    }
+    if (table[i].attrib & NEXEC) {
+      table[i].attrib &= ~NWRITE;
+    }
 #if USE_HASH
     if (nhash_set_int(tbl_hash, table[i].name, i)) {
-      g_free(objnew);
-      nhash_free(tbl_hash);
-      error2(NULL,ERRHEAP,name);
-      return NULL;
+      goto errexit;
     }
 #endif
   }
@@ -1382,6 +1416,12 @@ addobject(char *name,char *alias,char *parentname,char *ver,
   id++;
 
   return objnew;
+
+ errexit:
+  g_free(objnew);
+  nhash_free(tbl_hash);
+  error2(NULL,ERRHEAP,name);
+  return NULL;
 }
 
 void 
@@ -1943,9 +1983,11 @@ chkobjarglist(struct objlist *obj, const char *name)
     case NBOOL:
       arglist="b";
       break;
+#if USE_NCHAR
     case NCHAR:
       arglist="c";
       break;
+#endif
     case NINT:
       arglist="i";
       break;
@@ -2437,7 +2479,9 @@ _putobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val)
     break;
   case NBOOL: case NBFUNC:
   case NINT:  case NIFUNC:
+#if USE_NCHAR
   case NCHAR: case NCFUNC:
+#endif
   case NENUM:
     inst[idp].i=*(int *)val;
     break;
@@ -2513,7 +2557,9 @@ putobj(struct objlist *obj, const char *vname,int id,void *val)
     break;
   case NBOOL:
   case NINT:
+#if USE_NCHAR
   case NCHAR:
+#endif
   case NENUM:
     instcur[idp].i=*(int *)val;
     break;
@@ -2541,7 +2587,9 @@ _getobj(struct objlist *obj, const char *vname,N_VALUE *inst,void *val)
     break;
   case NBOOL: case NBFUNC:
   case NINT:  case NIFUNC:
+#if USE_NCHAR
   case NCHAR: case NCFUNC:
+#endif
   case NENUM:
     *(int *)val=inst[idp].i;
     break;
@@ -2606,7 +2654,9 @@ getobj(struct objlist *obj, const char *vname,int id,
     break;
   case NBOOL: case NBFUNC:
   case NINT: case NIFUNC:
+#if USE_NCHAR
   case NCHAR: case NCFUNC:
+#endif
   case NENUM:
     *(int *)val=instcur[idp].i;
     break;
@@ -2759,7 +2809,9 @@ copyobj(struct objlist *obj, const char *vname,int did,int sid)
   case NLABEL:
   case NBOOL:
   case NINT:
+#if USE_NCHAR
   case NCHAR:
+#endif
   case NENUM:
   case NDOUBLE:
     if (putobj(obj,vname,did,po)==-1) return -1;
@@ -3607,9 +3659,11 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
     else bval="false";
     g_string_append_printf(str,"%s",bval);
     break;
+#if USE_NCHAR
   case NCHAR: case NCFUNC:
     g_string_append_printf(str,"%c",*(char *)po);
     break;
+#endif
   case NINT: case NIFUNC:
     g_string_append_printf(str,"%d",*(int *)po);
     break;
@@ -3679,6 +3733,480 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
   return g_string_free(str, FALSE);
 }
 
+#if 1
+
+static int
+add_arg_object(char *s2, char ***argv)
+{
+  char *p, *oname,*os;
+  int olen, i;
+  struct objlist *obj2;
+
+  if (s2 && s2[0]) {
+    os = s2;
+    oname = getitok2(&os, &olen, ":");
+    if (oname == NULL) {
+      return 1;
+    }
+
+    obj2 = chkobject(oname);
+    g_free(oname);
+    if (obj2 == NULL || os[0] != ':') {
+      return 1;
+    }
+
+    for (i = 1; os[i] && (isalnum(os[i]) || strchr("_^@!+-", os[i])); i++);
+    if (os[i] != '\0') {
+      return 1;
+    }
+
+    p = g_strdup(s2);
+    if (p == NULL) {
+      return 1;
+    }
+  } else {
+    p = NULL;
+  }
+
+  if (arg_add(argv, p) == NULL) {
+    g_free(p);
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
+add_arg_int(char *s2, char ***argv)
+{
+  int rcode, *p;
+  double vd;
+
+  str_calc(s2, &vd, &rcode, NULL);
+  if (rcode != MATH_VALUE_NORMAL) {
+    return 3;
+  }
+
+  p = g_malloc(sizeof(int));
+  if (p == NULL) {
+    return -1;
+  }
+
+  *p = nround(vd);
+  if (arg_add(argv, p) == NULL) {
+    g_free(p);
+    return -1;
+  }
+
+  return 0;
+}
+
+static int
+add_arg_double(char *s2, char ***argv)
+{
+  int rcode;
+  double vd, *p;
+
+  str_calc(s2, &vd, &rcode, NULL);
+  if (rcode != MATH_VALUE_NORMAL) {
+    return 3;
+  }
+
+  p = g_malloc(sizeof(double));
+  if (p == NULL) {
+    return -1;
+  }
+
+  *p = vd;
+  if (arg_add(argv, p) == NULL) {
+    g_free(p);
+    return -1;
+  }
+
+  return 0;
+}
+
+static int
+add_arg_bool(char *s2, char ***argv)
+{
+  int vi, *p;
+
+
+  if (g_ascii_strcasecmp("t", s2) == 0||
+      g_ascii_strcasecmp("true", s2) == 0) {
+    vi = TRUE;
+  } else if (g_ascii_strcasecmp("f", s2) == 0 ||
+	     g_ascii_strcasecmp("false", s2) == 0) {
+    vi = FALSE;
+  } else {
+    return 3;
+  }
+
+  p = g_malloc(sizeof(int));
+  if (p == NULL) {
+    return -1;
+  }
+
+  *p = vi;
+  if (arg_add(argv, p) == NULL) {
+    g_free(p);
+    return -1;
+  }
+
+  return 0;
+}
+
+static int
+add_arg_num(int type, char *s2, char ***argv)
+{
+  int r = -1;
+  switch (type) {
+  case 'i':
+    r = add_arg_int(s2, argv);
+    break;
+  case 'd':
+    r = add_arg_double(s2, argv);
+    break;
+  case 'b':
+    r = add_arg_bool(s2, argv);
+    break;
+  }
+
+  return r;
+}
+
+
+static int
+add_arg_sarray(struct narray **sary, int argc, char **argv)
+{
+  int i;
+  struct narray *array;
+
+  array = arraynew(sizeof(char *));
+  if (array == NULL) {
+    return -1;
+  }
+
+  for (i = 0; i < argc; i++) {
+    if (arrayadd2(array, argv + i) == NULL) {
+      arrayfree2(array);
+      return -1;
+    }
+  }
+
+  *sary = array;
+
+  return 0;
+}
+
+static int
+add_arg_iarray(struct narray **iary, int argc, char **argv)
+{
+  int i, vi, rcode;
+  double vd;
+  struct narray *array;
+
+  array = arraynew(sizeof(int));
+  if (array == NULL) {
+    return -1;
+  }
+
+  for (i = 0; i < argc; i++) {
+    str_calc(argv[i], &vd, &rcode, NULL);
+    if (rcode != MATH_VALUE_NORMAL) {
+      arrayfree(array);
+      return 3;
+    }
+    vi = nround(vd);
+    if (arrayadd(array, &vi) == NULL) {
+      arrayfree(array);
+      return -1;
+    }
+  }
+
+  *iary = array;
+
+  return 0;
+}
+
+static int
+add_arg_darray(struct narray **dary, int argc, char **argv)
+{
+  int i, rcode;
+  double vd;
+  struct narray *array;
+
+  array = arraynew(sizeof(double));
+  if (array == NULL) {
+    return -1;
+  }
+
+  for (i = 0; i < argc; i++) {
+    str_calc(argv[i], &vd, &rcode, NULL);
+    if (rcode != MATH_VALUE_NORMAL) {
+      arrayfree(array);
+      return 3;
+    }
+    if (arrayadd(array, &vd) == NULL) {
+      arrayfree(array);
+      return -1;
+    }
+  }
+
+  *dary = array;
+
+  return 0;
+}
+
+static int
+set_arg_enum(char **enumlist, char **argv, char *s)
+{
+  int i, *p;
+
+  if (s == NULL || enumlist == NULL) {
+    return 3;
+  }
+
+  s = g_strstrip(s);
+  if (s[0] == '\0') {
+    return 3;
+  }
+
+  for (i = 0; enumlist[i]; i++) {
+    int ofst;
+
+    ofst = (enumlist[i][0] == '\0') ? 1 : 0;
+    if (strcmp0(enumlist[i] + ofst, s) == 0) {
+      break;
+    }
+  }
+
+  if (enumlist[i] == NULL) {
+    return 3;
+  }
+
+  p = g_malloc(sizeof(int));
+  if (p == NULL) {
+    return -1;
+  }
+
+  *p = i;
+  if (arg_add(&argv, p) == NULL) {
+    g_free(p);
+    return -1;
+  }
+
+  return 0;
+}
+
+static int
+get_array_argument(int type, char *val, struct narray **array)
+{
+  int r, argc;
+  char **argv;
+
+  *array = NULL;
+
+  if (val == NULL || val[0] == '\0') {
+    return 0;
+  }
+
+  r = g_shell_parse_argv(val, &argc, &argv, NULL);
+  if (! r) {
+    return -1;
+  }
+
+  r = 0;
+  switch (type) {
+  case 'i':
+    r = add_arg_iarray(array, argc, argv);
+    break;
+  case 'd':
+    r = add_arg_darray(array, argc, argv);
+    break;
+  case 's':
+    r = add_arg_sarray(array, argc, argv);
+    break;
+  }
+
+  g_strfreev(argv);
+
+  return r;
+}
+
+static int 
+getargument(int type, char *arglist, char *val, int *argc, char ***rargv)
+{
+  char **argv, *p, *s, **sargv;
+  int i,err, r, sargc;
+
+  argv = NULL;
+  sargv = NULL;
+
+  if (arg_add(&argv, NULL) == NULL) {
+    err = 1;
+    goto errexit;
+  }
+
+  if (val == NULL) {
+    *argc = getargc(argv);
+    *rargv = argv;
+    return 0;
+  }
+
+  err = -1;
+
+  if (type == NENUM) {
+    r = set_arg_enum((char **) arglist, argv, val);
+    if (r) {
+      return r;
+    }
+
+    *argc = getargc(argv);
+    *rargv = argv;
+    return 0;
+  }
+
+  if (arglist == NULL) {
+    int sargc;
+
+    if (val[0] == '\0') {
+      *argc = getargc(argv);
+      *rargv = argv;
+      return 0;
+    }
+
+    r = g_shell_parse_argv(val, &sargc, &sargv, NULL);
+    if (! r) {
+      goto errexit;
+    }
+
+    for (i = 0; i < sargc; i++) {
+      p = g_strdup(sargv[i]);
+      if (arg_add(&argv, p) == NULL) {
+	goto errexit;
+      }
+    }
+  } else if (arglist[0] == '\0') {
+    if (val[0]) {
+      err = 1;
+      goto errexit;
+    }
+    *argc = getargc(argv);
+    *rargv = argv;
+  } else if (arglist[1] == 'a') {
+    struct narray *array;
+    r = get_array_argument(arglist[0], val, &array);
+    if (r) {
+      err = r;
+      goto errexit;
+    }
+
+    if (arg_add(&argv, array) == NULL) {
+      if (arglist[0] == 's') {
+	arrayfree2(array);
+      } else {
+	arrayfree(array);
+      }
+      err = -1;
+      goto errexit;
+    }
+  } else if (strcmp0(arglist, "s") == 0) {
+    if (val[0]) {
+      p = g_strdup(val);
+      if (p == NULL) {
+	goto errexit;
+      }
+    } else {
+      p = NULL;
+    }
+    if (arg_add(&argv, p) == NULL) {
+      goto errexit;
+    }
+  } else if (strcmp0(arglist, "o") == 0) {
+    if (add_arg_object(val, &argv)) {
+      err = 3;
+      goto errexit;
+    }
+  } else {
+    int j;
+
+    sargc = 0;
+    if (val[0]) {
+      r = g_shell_parse_argv(val, &sargc, &sargv, NULL);
+      if (! r) {
+	goto errexit;
+      }
+    }
+
+    for (j = 0; arglist[j]; j++) {
+      switch (arglist[j]) {
+      case 's':
+	if (j < sargc) {
+	  if (arglist[j + 1] == '\0') {
+	    p = g_strjoinv(" ", sargv + j);
+	  } else {
+	    p = g_strdup(sargv[j]);
+	  }
+	} else if (arglist[j + 1] == '\0') {
+	  p = NULL;
+	} else {
+	  err = 2;
+	  goto errexit;
+	}
+	if (arg_add(&argv, p) == NULL) {
+	  goto errexit;
+	}
+	break;
+      case 'o':
+	if (sargc > 0 && j >= sargc && arglist[j + 1]) {
+	  err = 1;
+	  goto errexit;
+	}
+	if (sargc == 0 || (j >= sargc && arglist[j + 1] == '\0')) {
+	  s = NULL;
+	} else {
+	  s = sargv[j];
+	}
+	if (add_arg_object(s, &argv)) {
+	  err = 3;
+	  goto errexit;
+	}
+	break;
+      case 'i':
+      case 'd':
+      case 'b':
+	if (j >= sargc) {
+	  err = 2;
+	  goto errexit;
+	}
+	r = add_arg_num(arglist[j], sargv[j], &argv);
+	if (r) {
+	  err = r;
+	  goto errexit;
+	}
+	break;
+      }
+    }
+  }
+
+  if (sargv) {
+    g_strfreev(sargv);
+  }
+  *argc = getargc(argv);
+  *rargv = argv;
+  return 0;
+
+errexit:
+  if (sargv) {
+    g_strfreev(sargv);
+  }
+  arg_del(argv);
+  *argc = -1;
+  *rargv = NULL;
+  return err;
+}
+#else
 static int 
 getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
 {
@@ -3902,6 +4430,7 @@ errexit:
   *rargv=NULL;
   return err;
 }
+#endif
 
 static void 
 freeargument(int type,char *arglist,int argc,char **argv,int full)

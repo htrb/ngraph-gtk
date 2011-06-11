@@ -2303,7 +2303,7 @@ tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
 static void
 detach_toolbar(GtkHandleBox *handlebox, GtkWidget *widget, gpointer user_data)
 {
-  gtk_toolbar_set_show_arrow(GTK_TOOLBAR(widget), (int) user_data);
+  gtk_toolbar_set_show_arrow(GTK_TOOLBAR(widget), GPOINTER_TO_INT(user_data));
 }
 
 static GtkWidget *
@@ -2797,7 +2797,7 @@ toggle_view_cb(GtkToggleAction *action, gpointer data)
   int type, state;
   GtkWidget *w1 = NULL, *w2 = NULL;
 
-  type = (int) data;
+  type = GPOINTER_TO_INT(data);
 
   if (action == NULL) {
     return;

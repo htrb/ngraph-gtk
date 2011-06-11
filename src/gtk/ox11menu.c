@@ -323,6 +323,7 @@ get_palette(void)
     return;
   }
 
+  palette = NULL;
   g_object_get(settings, "gtk-color-palette", &palette, NULL);
   if (palette == NULL) {
     return;
@@ -1863,58 +1864,80 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
 static int
 mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  printfstdout("GTK+\n"
-	       " compile: %d.%d.%d\n"
-	       "  linked: %d.%d.%d\n"
+  char *h;
+
+  h = CHK_STR(argv[2]);
+
+  printfstdout("%sGTK+\n"
+	       "%s compile: %d.%d.%d\n"
+	       "%s  linked: %d.%d.%d\n"
 	       "\n",
+	       h,
+	       h,
 	       GTK_MAJOR_VERSION,
 	       GTK_MINOR_VERSION,
 	       GTK_MICRO_VERSION,
+	       h,
 	       gtk_major_version,
 	       gtk_minor_version,
 	       gtk_micro_version);
 
-  printfstdout("GLib\n"
-	       " compile: %d.%d.%d\n"
-	       "  linked: %d.%d.%d\n"
+  printfstdout("%sGLib\n"
+	       "%s compile: %d.%d.%d\n"
+	       "%s  linked: %d.%d.%d\n"
 	       "\n",
+	       h,
+	       h,
 	       GLIB_MAJOR_VERSION,
 	       GLIB_MINOR_VERSION,
 	       GLIB_MICRO_VERSION,
+	       h,
 	       glib_major_version,
 	       glib_minor_version,
 	       glib_micro_version);
 
-  printfstdout("Cairo\n"
-	       " compile: %s\n"
-	       "  linked: %s\n"
+  printfstdout("%sCairo\n"
+	       "%s compile: %s\n"
+	       "%s  linked: %s\n"
 	       "\n",
+	       h,
+	       h,
 	       CAIRO_VERSION_STRING,
+	       h,
 	       cairo_version_string());
 
-  printfstdout("Pango\n"
-	       " compile: %s\n"
-	       "  linked: %s\n",
+  printfstdout("%sPango\n"
+	       "%s compile: %s\n"
+	       "%s  linked: %s\n",
+	       h,
+	       h,
 	       PANGO_VERSION_STRING,
+	       h,
 	       pango_version_string());
 
 #ifdef HAVE_LIBREADLINE
   printfstdout("\n");
-  printfstdout("readline\n"
-	       " compile: %d.%d\n"
-	       "  linked: %s\n",
+  printfstdout("%sreadline\n"
+	       "%s compile: %d.%d\n"
+	       "%s  linked: %s\n",
+	       h,
+	       h,
 	       RL_VERSION_MAJOR,
 	       RL_VERSION_MINOR,
+	       h,
 	       rl_library_version);
 #endif
 
 #ifdef HAVE_LIBGSL
   printfstdout("\n");
-  printfstdout("GSL\n"
-	       " compile: %d.%d\n"
-	       "  linked: %s\n",
+  printfstdout("%sGSL\n"
+	       "%s compile: %d.%d\n"
+	       "%s  linked: %s\n",
+	       h,
+	       h,
 	       GSL_MAJOR_VERSION,
 	       GSL_MINOR_VERSION,
+	       h,
 	       gsl_version);
 #endif
 
@@ -2025,7 +2048,7 @@ static struct objtable gtkmenu[] = {
   {"toggle_window", NVFUNC, NREAD | NEXEC, mx_toggle_win, "i", 0},
   {"get_ui", NVFUNC, NREAD | NEXEC, mx_get_ui, "", 0},
   {"get_accel_map", NVFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
-  {"lib_version", NVFUNC, NREAD | NEXEC, mx_show_lib_version, NULL, 0},
+  {"lib_version", NVFUNC, NREAD | NEXEC, mx_show_lib_version, "s", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 

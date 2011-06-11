@@ -53,7 +53,7 @@ static char *agriderrorlist[]={
 static int 
 agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int wid1,wid2,wid3,dot;
+  int wid1,wid2,wid3,dot,grid;
   int r,g,b,br,bg,bb,ba;
   struct narray *style1;
 
@@ -70,6 +70,7 @@ agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   ba=255;
   style1=arraynew(sizeof(int));
   dot=150;
+  grid=TRUE;
   arrayadd(style1,&dot);
   arrayadd(style1,&dot);
   if (_putobj(obj,"width1",inst,&wid1)) return 1;
@@ -83,6 +84,8 @@ agridinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"BG",inst,&bg)) return 1;
   if (_putobj(obj,"BB",inst,&bb)) return 1;
   if (_putobj(obj,"BA",inst,&ba)) return 1;
+  if (_putobj(obj,"grid_x",inst,&grid)) return 1;
+  if (_putobj(obj,"grid_y",inst,&grid)) return 1;
   return 0;
 }
 
@@ -331,7 +334,7 @@ static int
 agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   int GC, clip, zoom, back;
-  int i, fr, fg, fb, fa, lm, tm, w, h, r;
+  int i, fr, fg, fb, fa, lm, tm, w, h, r, grid_x, grid_y;
   char *axisx, *axisy;
   struct axis_prm ax_prm,  ay_prm;
   struct axis_pos ax_pos,  ay_pos;
@@ -351,6 +354,8 @@ agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
   _getobj(obj, "axis_y", inst, &axisy);
   _getobj(obj, "clip", inst, &clip);
   _getobj(obj, "background", inst, &back);
+  _getobj(obj, "grid_x", inst, &grid_x);
+  _getobj(obj, "grid_y", inst, &grid_y);
 
   for (i = 0; i < GRID_PRM_NUM; i++) {
     char buf[32];
@@ -386,12 +391,17 @@ agriddraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **ar
 
   if (ax_prm.amin != ax_prm.amax && ay_prm.amin != ay_prm.amax) {
     GRAcolor(GC, fr, fg, fb, fa);
-    if (draw_grid_line(obj, GC, &ax_prm, &ax_pos, &ay_pos, &gprm) == 0) {
-      draw_grid_line(obj, GC, &ay_prm, &ay_pos, &ax_pos, &gprm);
+    if (grid_x && draw_grid_line(obj, GC, &ax_prm, &ax_pos, &ay_pos, &gprm)) {
+      goto error_exit;
+    }
+    if (grid_y && draw_grid_line(obj, GC, &ay_prm, &ay_pos, &ax_pos, &gprm)) {
+      goto error_exit;
     }
   }
 
   GRAaddlist(GC, obj, inst, (char *) argv[0], (char *) argv[1]);
+
+ error_exit:
   return 0;
 }
 
@@ -410,6 +420,8 @@ static struct objtable agrid[] = {
   {"next",NPOINTER,0,NULL,NULL,0},
   {"axis_x",NOBJ,NREAD|NWRITE,NULL,NULL,0},
   {"axis_y",NOBJ,NREAD|NWRITE,NULL,NULL,0},
+  {"grid_x",NBOOL,NREAD|NWRITE,NULL,NULL,0},
+  {"grid_y",NBOOL,NREAD|NWRITE,NULL,NULL,0},
   {"width1",NINT,NREAD|NWRITE,oputabs,NULL,0},
   {"style1",NIARRAY,NREAD|NWRITE,NULL,NULL,0},
   {"width2",NINT,NREAD|NWRITE,oputabs,NULL,0},

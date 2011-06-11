@@ -62,8 +62,8 @@ nround(double x)
   int ix;
   double dx;
 
-  if (x>LONG_MAX) return LONG_MAX;
-  else if (x<LONG_MIN) return LONG_MIN;
+  if (x>G_MAXINT) return G_MAXINT;
+  else if (x<G_MININT) return G_MININT;
   else {
     ix=(int )x;
     dx=x-ix;

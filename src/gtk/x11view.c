@@ -1444,7 +1444,7 @@ Trimming(int x1, int y1, int x2, int y2, struct Viewer *d)
 
 	if ((rcode1 != -1) && (rcode2 != -1)) {
 	  axis_scale_push(obj, id);
-	  room = 1;
+	  room = 0;
 	  argv[0] = (char *) &min;
 	  argv[1] = (char *) &max;
 	  argv[2] = (char *) &room;
@@ -6035,7 +6035,7 @@ ViewCross(int state)
 void
 ViewerPopupMenu(GtkAction *w, gpointer client_data)
 {
-  switch ((int) client_data) {
+  switch (GPOINTER_TO_INT(client_data)) {
   case VIEW_UPDATE:
     ViewUpdate();
     break;
@@ -6064,7 +6064,7 @@ CmViewerButtonPressed(GtkWidget *widget, GdkEventButton *event, gpointer user_da
 void
 CmEditMenuCB(GtkAction *w, gpointer client_data)
 {
-  switch ((int) client_data) {
+  switch (GPOINTER_TO_INT(client_data)) {
   case MenuIdEditCut:
     CutFocusedObjects();
     break;
@@ -6122,7 +6122,7 @@ CmViewerButtonArm(GtkAction *action, gpointer client_data)
     return;
   }
 
-  mode = (int) client_data;
+  mode = GPOINTER_TO_INT(client_data);
 
   UnFocus();
 

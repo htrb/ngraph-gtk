@@ -255,9 +255,9 @@ proc makescript { f i gx gy height } {
     if { $linestyle != "" } {
       puts $f [format "path::style=\'%s\'" $linestyle]
     }
-    puts $f [format "path::R=%d" $R]
-    puts $f [format "path::G=%d" $G]
-    puts $f [format "path::B=%d" $B]
+    puts $f [format "path::stroke_R=%d" $R]
+    puts $f [format "path::stroke_G=%d" $G]
+    puts $f [format "path::stroke_B=%d" $B]
   } elseif { ($type=="arrow") } {
     puts $f "new path type=line"
     puts $f [format "path::points=\'%d %d %d %d\'" \
@@ -267,9 +267,9 @@ proc makescript { f i gx gy height } {
     if { $linestyle != "" } { 
       puts $f [format "path::style=\'%s\'" $linestyle]
     }
-    puts $f [format "path::R=%d" $R]
-    puts $f [format "path::G=%d" $G]
-    puts $f [format "path::B=%d" $B]
+    puts $f [format "path::stroke_R=%d" $R]
+    puts $f [format "path::stroke_G=%d" $G]
+    puts $f [format "path::stroke_B=%d" $B]
     puts $f "path::arrow=end"
   } elseif { ($type=="rectangle") || ($type=="rectangle_fill") \
    || ($type=="rectangle_solid_fill") || ($type=="bar_x") || ($type=="bar_y") \
@@ -282,9 +282,9 @@ proc makescript { f i gx gy height } {
     puts $f [format "rectangle::y2=%d" [expr int($gy+$height*2/3+$height/2)]]
     if { ($type=="rectangle") || ($type=="bar_x") || ($type=="bar_y") } {
       puts $f "rectangle::fill=false"
-      puts $f [format "rectangle::R=%d" $R]
-      puts $f [format "rectangle::G=%d" $G]
-      puts $f [format "rectangle::B=%d" $B]
+      puts $f [format "rectangle::stroke_R=%d" $R]
+      puts $f [format "rectangle::stroke_G=%d" $G]
+      puts $f [format "rectangle::stroke_B=%d" $B]
     } elseif { ($type=="rectangle_fill") || ($type=="bar_fill_x") \
      || ($type=="bar_fill_y") } {
       puts $f "rectangle::fill=true"
@@ -294,7 +294,7 @@ proc makescript { f i gx gy height } {
       puts $f [format "rectangle::fill_B=%d" $B2]
       puts $f [format "rectangle::stroke_R=%d" $R]
       puts $f [format "rectangle::stroke_G=%d" $G]
-      puts $f [format "rectangle::stroke_G=%d" $B]
+      puts $f [format "rectangle::stroke_B=%d" $B]
     } elseif { ($type=="rectangle_solid_fill") \
      || ($type=="bar_solid_fill_x") || ($type=="bar_solid_fill_y") } {
       puts $f "rectangle::fill=true"

@@ -1065,7 +1065,7 @@ CmGraphNewMenu(GtkAction *w, gpointer client_data)
 
   DeleteDrawable();
 
-  sel = (int) client_data;
+  sel = GPOINTER_TO_INT(client_data);
   switch (sel) {
   case MenuIdGraphNewFrame:
     CmAxisNewFrame(w, client_data);

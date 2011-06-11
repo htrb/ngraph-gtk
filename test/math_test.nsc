@@ -16,7 +16,7 @@ new io
 
 while [ -n "$1" ]
 do
-    io::open "r" "$1"
+    io::open "$1"
 
     while l=`get io -field gets`
     do

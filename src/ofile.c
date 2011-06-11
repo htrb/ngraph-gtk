@@ -4433,94 +4433,88 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
   if (type <= PLOT_TYPE_BAR_FILL_Y) GRAlinestyle(GC,snum,style,width,2,0,1000);
   while (getdata(fp)==0) {
     size=fp->marksize0/2;
-    GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)
-     && (getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))==0)) {
-      if ((type == PLOT_TYPE_BAR_FILL_X) || (type == PLOT_TYPE_BAR_SOLID_FILL_X)) {
-        if (type == PLOT_TYPE_BAR_FILL_X) {
-	  GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
-	}
-        x0=0;
-        y0=fp->dy;
-        x1=fp->dx;
-        y1=fp->dy;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          ap[0]=gx0+nround(size*fp->ayvx);
-          ap[1]=gy0+nround(size*fp->ayvy);
-          ap[2]=gx1+nround(size*fp->ayvx);
-          ap[3]=gy1+nround(size*fp->ayvy);
-          ap[4]=gx1-nround(size*fp->ayvx);
-          ap[5]=gy1-nround(size*fp->ayvy);
-          ap[6]=gx0-nround(size*fp->ayvx);
-          ap[7]=gy0-nround(size*fp->ayvy);
-          GRAdrawpoly(GC,4,ap,1);
-        }
-        if (type == PLOT_TYPE_BAR_FILL_X) GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+    if (fp->dxstat != MATH_VALUE_NORMAL ||
+	fp->dystat != MATH_VALUE_NORMAL || 
+	getposition2(fp,fp->axtype,fp->aytype,&(fp->dx),&(fp->dy))) {
+      errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+      continue;
+    }
+    switch (type) {
+    case PLOT_TYPE_BAR_FILL_X:
+    case PLOT_TYPE_BAR_SOLID_FILL_X:
+    case PLOT_TYPE_BAR_X:
+      x0=0;
+      y0=fp->dy;
+      x1=fp->dx;
+      y1=fp->dy;
+      if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)) {
+	break;
       }
-      if ((type == PLOT_TYPE_BAR_FILL_Y) || (type == PLOT_TYPE_BAR_SOLID_FILL_Y)) {
-        if (type == PLOT_TYPE_BAR_FILL_Y) {
-	  GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
-	}
-        x0=fp->dx;
-        y0=0;
-        x1=fp->dx;
-        y1=fp->dy;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          ap[0]=gx0+nround(size*fp->axvx);
-          ap[1]=gy0+nround(size*fp->axvy);
-          ap[2]=gx1+nround(size*fp->axvx);
-          ap[3]=gy1+nround(size*fp->axvy);
-          ap[4]=gx1-nround(size*fp->axvx);
-          ap[5]=gy1-nround(size*fp->axvy);
-          ap[6]=gx0-nround(size*fp->axvx);
-          ap[7]=gy0-nround(size*fp->axvy);
-          GRAdrawpoly(GC,4,ap,1);
-        }
-        if (type == PLOT_TYPE_BAR_FILL_Y) GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+      f2dtransf(x0,y0,&gx0,&gy0,fp);
+      f2dtransf(x1,y1,&gx1,&gy1,fp);
+      ap[0]=gx0+nround(size*fp->ayvx);
+      ap[1]=gy0+nround(size*fp->ayvy);
+      ap[2]=gx1+nround(size*fp->ayvx);
+      ap[3]=gy1+nround(size*fp->ayvy);
+      ap[4]=gx1-nround(size*fp->ayvx);
+      ap[5]=gy1-nround(size*fp->ayvy);
+      ap[6]=gx0-nround(size*fp->ayvx);
+      ap[7]=gy0-nround(size*fp->ayvy);
+      switch (type) {
+      case PLOT_TYPE_BAR_X:
+	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+	GRAdrawpoly(GC,4,ap,0);
+	break;
+      case PLOT_TYPE_BAR_SOLID_FILL_X:
+	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+	GRAdrawpoly(GC,4,ap,1);
+	break;
+      case PLOT_TYPE_BAR_FILL_X:
+	GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
+	GRAdrawpoly(GC,4,ap,1);
+	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+	GRAdrawpoly(GC,4,ap,0);
+	break;
       }
-      if ((type == PLOT_TYPE_BAR_X) || (type == PLOT_TYPE_BAR_FILL_X)) {
-        x0=0;
-        y0=fp->dy;
-        x1=fp->dx;
-        y1=fp->dy;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          ap[0]=gx0+nround(size*fp->ayvx);
-          ap[1]=gy0+nround(size*fp->ayvy);
-          ap[2]=gx1+nround(size*fp->ayvx);
-          ap[3]=gy1+nround(size*fp->ayvy);
-          ap[4]=gx1-nround(size*fp->ayvx);
-          ap[5]=gy1-nround(size*fp->ayvy);
-          ap[6]=gx0-nround(size*fp->ayvx);
-          ap[7]=gy0-nround(size*fp->ayvy);
-          GRAdrawpoly(GC,4,ap,0);
-        }
+      break;
+    case PLOT_TYPE_BAR_FILL_Y:
+    case PLOT_TYPE_BAR_SOLID_FILL_Y:
+    case PLOT_TYPE_BAR_Y:
+      x0=fp->dx;
+      y0=0;
+      x1=fp->dx;
+      y1=fp->dy;
+      if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)) {
+	break;
       }
-      if ((type == PLOT_TYPE_BAR_Y) || (type == PLOT_TYPE_BAR_FILL_Y)) {
-        x0=fp->dx;
-        y0=0;
-        x1=fp->dx;
-        y1=fp->dy;
-        if (f2dlineclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          ap[0]=gx0+nround(size*fp->axvx);
-          ap[1]=gy0+nround(size*fp->axvy);
-          ap[2]=gx1+nround(size*fp->axvx);
-          ap[3]=gy1+nround(size*fp->axvy);
-          ap[4]=gx1-nround(size*fp->axvx);
-          ap[5]=gy1-nround(size*fp->axvy);
-          ap[6]=gx0-nround(size*fp->axvx);
-          ap[7]=gy0-nround(size*fp->axvy);
-          GRAdrawpoly(GC,4,ap,0);
-        }
+      f2dtransf(x0,y0,&gx0,&gy0,fp);
+      f2dtransf(x1,y1,&gx1,&gy1,fp);
+      ap[0]=gx0+nround(size*fp->axvx);
+      ap[1]=gy0+nround(size*fp->axvy);
+      ap[2]=gx1+nround(size*fp->axvx);
+      ap[3]=gy1+nround(size*fp->axvy);
+      ap[4]=gx1-nround(size*fp->axvx);
+      ap[5]=gy1-nround(size*fp->axvy);
+      ap[6]=gx0-nround(size*fp->axvx);
+      ap[7]=gy0-nround(size*fp->axvy);
+      switch (type) {
+      case PLOT_TYPE_BAR_Y:
+	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+	GRAdrawpoly(GC,4,ap,0);
+	break;
+      case PLOT_TYPE_BAR_SOLID_FILL_Y:
+	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+	GRAdrawpoly(GC,4,ap,1);
+	break;
+      case PLOT_TYPE_BAR_FILL_Y:
+	GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
+	GRAdrawpoly(GC,4,ap,1);
+	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+	GRAdrawpoly(GC,4,ap,0);
+	break;
       }
-    } else errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+      break;
+    }
   }
   errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
@@ -6326,7 +6320,7 @@ f2dboundings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **ar
   struct f2dlocal *f2dlocal;
   struct f2ddata *fp;
   int rcode;
-  int minxstat,maxxstat,minystat,maxystat,minmaxstat;
+  int minxstat,maxxstat,minystat,maxystat,minmaxstat,type;
   double minx,maxx,miny,maxy,mm;
   int abs;
 
@@ -6383,6 +6377,33 @@ f2dboundings(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **ar
           minystat=MATH_VALUE_NORMAL;
           maxystat=MATH_VALUE_NORMAL;
         }
+	if (_getobj(obj, "type", inst, &type)) return 1;
+	switch (type) {
+	case PLOT_TYPE_BAR_X:
+	case PLOT_TYPE_BAR_FILL_X:
+	case PLOT_TYPE_BAR_SOLID_FILL_X:
+	  if (minxstat != MATH_VALUE_NORMAL) {
+	    break;
+	  }
+	if (minx > 0 && maxx > 0) {
+	  minx = 0;
+	} else if (minx < 0 && maxx < 0) {
+	  maxx = 0;
+	}
+	break;
+	case PLOT_TYPE_BAR_Y:
+	case PLOT_TYPE_BAR_FILL_Y:
+	case PLOT_TYPE_BAR_SOLID_FILL_Y:
+	  if (minystat != MATH_VALUE_NORMAL) {
+	    break;
+	  }
+	  if (miny > 0 && maxy > 0) {
+	    miny = 0;
+	  } else if (miny < 0 && maxy < 0) {
+	    maxy = 0;
+	  }
+	  break;
+	}
       }
       break;
     case TYPE_DIAGONAL:

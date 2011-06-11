@@ -282,9 +282,8 @@ GetPageSettingsFromGRA(void)
 }
 
 static int
-get_new_axis_id(struct objlist *obj, int fid, int id, int a)
+get_new_axis_id(struct objlist *obj, struct objlist **aobj, int fid, int id, int a)
 {
-  struct objlist *aobj;
   int spc, aid = 0;
   char *axis;
   struct narray iarray;
@@ -299,7 +298,7 @@ get_new_axis_id(struct objlist *obj, int fid, int id, int a)
   }
 
   arrayinit(&iarray, sizeof(int));
-  if (getobjilist(axis, &aobj, &iarray, FALSE, &spc)) {
+  if (getobjilist(axis, aobj, &iarray, FALSE, &spc)) {
     return -1;
   }
 
@@ -351,8 +350,8 @@ AxisDel2(int id)
     return;
   }
   for (i = 0; i <= chkobjlastinst(obj); i++) {
-    aid1 = get_new_axis_id(obj, i, id, AXIS_X);
-    aid2 = get_new_axis_id(obj, i, id, AXIS_Y);
+    aid1 = get_new_axis_id(obj, &aobj, i, id, AXIS_X);
+    aid2 = get_new_axis_id(obj, &aobj, i, id, AXIS_Y);
     if ((aid1 >= 0) && (aid2 >= 0)) {
       if (aid1 == aid2) {
 	aid2 = aid1 + 1;
@@ -1283,7 +1282,7 @@ FileAutoScale(void)
   int anum, room;
   struct objlist *aobj, *aobj2;
   double min, max, inc;
-  char *argv2[3];
+  char *argv2[2];
   char *buf;
   struct objlist *fobj;
   int lastinst;
@@ -1327,8 +1326,7 @@ FileAutoScale(void)
 
   room = 0;
   argv2[0] = (char *) buf;
-  argv2[1] = (char *) &room;
-  argv2[2] = NULL;
+  argv2[1] = NULL;
   for (i = 0; i <= anum; i++) {
     getobj(aobj, "min", i, 0, NULL, &min);
     getobj(aobj, "max", i, 0, NULL, &max);
@@ -1355,7 +1353,7 @@ FileAutoScale(void)
       }
     }
     if (! refother && (min == max || inc == 0)) {
-      exeobj(aobj, "auto_scale", i, 2, argv2);
+      exeobj(aobj, "auto_scale", i, 1, argv2);
     }
   }
   g_free(buf);

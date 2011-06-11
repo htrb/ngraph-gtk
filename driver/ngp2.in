@@ -186,10 +186,10 @@ do
 		case "$AUTO_SCALE" in
 		    2)
 			axis:0-!:clear
-			axis:0-!:auto_scale:'file:0-! 0'
+			axis:0-!:auto_scale:'file:0-!'
 			;;
 		    1)
-			axis:0-!:auto_scale:'file:0-! 0'
+			axis:0-!:auto_scale:'file:0-!'
 			;;
 		esac
 	    fi

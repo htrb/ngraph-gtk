@@ -97,15 +97,27 @@ static int
 io_init(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct io_local *io_local;
+  char *mode;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
 
+  mode = g_strdup("r");
+  if (mode == NULL) {
+    return 1;
+  }
+  if (_putobj(obj, "mode", inst, mode)) {
+    g_free(mode);
+    return 1;
+  }
+
   io_local = g_malloc0(sizeof(struct io_local));
   if (io_local == NULL) {
+    g_free(mode);
     return 1;
   }
 
   if (_putobj(obj, "_local", inst, io_local)) {
+    g_free(mode);
     g_free(io_local);
     return 1;
   }
@@ -156,16 +168,20 @@ io_open(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   char *file, *mode;
 
   _getobj(obj, "_local", inst, &io_local);
+  _getobj(obj, "mode", inst, &mode);
+
+  if (mode == NULL || mode[0] == '\0') {
+    mode = "r";
+  }
 
   if (io_local->fp) {
     error(obj, ERROPENED);
     return 1;
   }
 
-  mode = argv[2];
-  file = argv[3];
+  file = argv[2];
 
-  if (file == NULL || mode == NULL) {
+  if (file == NULL) {
     return 1;
   }
 
@@ -543,8 +559,9 @@ static struct objtable io[] = {
   {"next",NPOINTER,0,NULL,NULL,0},
 
   {"file",NSTR,NREAD,NULL,NULL,0},
-  {"open",NVFUNC,NREAD|NEXEC,io_open,"ss",0},
-  {"popen",NVFUNC,NREAD|NEXEC,io_open,"ss",0},
+  {"mode",NSTR,NREAD|NWRITE,NULL,NULL,0},
+  {"open",NVFUNC,NREAD|NEXEC,io_open,"s",0},
+  {"popen",NVFUNC,NREAD|NEXEC,io_open,"s",0},
   {"close",NVFUNC,NREAD|NEXEC,io_close,"",0},
   {"puts",NVFUNC,NREAD|NEXEC,io_puts,"s",0},
   {"putc",NIFUNC,NREAD|NEXEC,io_putc,"i",0},

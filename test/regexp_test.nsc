@@ -45,6 +45,6 @@ check_match
 
 regexp::@="(foo)(bar)(BAZ)?"
 show_result "replace" "${regexp::replace:'foobarbaz'}" "baz"
-show_result "replace" "${regexp::replace:'foobarbaz \2\1'}" "barfoobaz"
+show_result "replace" "${regexp::replace:'foobarbaz \\2\\1'}" "barfoobaz"
 
 del system

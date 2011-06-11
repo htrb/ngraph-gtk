@@ -9,7 +9,8 @@ TEST_FILE=${system::temp_file}
 new io
 
 # gets and puts test
-io::open "w+" "$TEST_FILE"
+io::mode="w+"
+io::open "$TEST_FILE"
 io::puts $TEST_STR
 io::rewind
 str=${io::gets}
@@ -72,7 +73,8 @@ fi
 io::close
 
 # popen test
-io::popen "r" "ls io_test.nsc"
+io::mode="r"
+io::popen "ls io_test.nsc"
 str=${io::gets}
 if [ $str !=  "io_test.nsc" ]
 then

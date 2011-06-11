@@ -281,7 +281,7 @@ struct AxisDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *min, *max, *inc, *div, *scale, *ref, *clear;
+  GtkWidget *min, *max, *inc, *div, *scale, *ref, *clear, *margin;
   GtkNotebook *tab;
   GtkWidget *del_btn;
   struct objlist *Obj;
@@ -302,7 +302,7 @@ struct GridDialog
   /****** local member *******/
   struct objlist *Obj;
   GtkWidget *style[GRID_DIALOG_STYLE_NUM], *width[GRID_DIALOG_STYLE_NUM],
-    *axisx, *axisy, *background, *color, *bcolor, *bclabel;
+    *axisx, *axisy, *background, *color, *bcolor, *bclabel, *draw_x, *draw_y;
   int Id;
   int R, G, B, R2, G2, B2, A;
 };

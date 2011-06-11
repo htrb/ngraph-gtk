@@ -83,21 +83,18 @@ object
 <h2><a href="#TOP">Ngraphオブジェクト一覧</a></h2>
 <br>
 各オブジェクトのフィールド一覧を示します。<br>
-各オブジェクトのフィールドは
-<ul><pre>permission     field_name   field_type</pre></ul>
-の形式で表示されています。
 <br>
 <h3>object</h3>
 <pre>
 object: object
-alias:
 version: 1.00.00
 parent: (null)
 object id: 0
 number of fields: 6
 size of instance: 32
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>--x</td><td align="right">init</td><td>void( )</td></tr>
 <tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
@@ -109,14 +106,14 @@ size of instance: 32
 <h3>system</h3>
 <pre>
 object: system
-alias:
 version: 6.05.04
 parent: object
 object id: 1
 number of fields: 29
 size of instance: 192
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>r-x</td><td align="right">save</td><td>*char( char *[] )</td></tr>
@@ -151,14 +148,14 @@ size of instance: 192
 <h3>shell</h3>
 <pre>
 object: shell
-alias:
 version: 1.00.00
 parent: object
 object id: 2
 number of fields: 10
 size of instance: 48
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -174,14 +171,14 @@ size of instance: 48
 <h3>gra</h3>
 <pre>
 object: gra
-alias:
 version: 1.00.00
 parent: object
 object id: 3
 number of fields: 22
 size of instance: 120
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -209,14 +206,14 @@ size of instance: 120
 <h3>gra2</h3>
 <pre>
 object: gra2
-alias:
 version: 1.00.00
 parent: object
 object id: 4
 number of fields: 11
 size of instance: 56
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -233,14 +230,14 @@ size of instance: 56
 <h3>gra2null</h3>
 <pre>
 object: gra2null
-alias:
 version: 1.00.00
 parent: gra2
 object id: 5
 number of fields: 15
 size of instance: 88
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -261,14 +258,14 @@ size of instance: 88
 <h3>gra2file</h3>
 <pre>
 object: gra2file
-alias:
 version: 1.00.00
 parent: gra2
 object id: 6
 number of fields: 15
 size of instance: 80
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -289,14 +286,14 @@ size of instance: 80
 <h3>gra2prn</h3>
 <pre>
 object: gra2prn
-alias:
 version: 1.00.00
 parent: gra2
 object id: 7
 number of fields: 17
 size of instance: 96
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -319,14 +316,14 @@ size of instance: 96
 <h3>gra2cairo</h3>
 <pre>
 object: gra2cairo
-alias:
 version: 1.00.00
 parent: gra2
 object id: 8
 number of fields: 22
 size of instance: 128
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -354,14 +351,14 @@ size of instance: 128
 <h3>gra2cairofile</h3>
 <pre>
 object: gra2cairofile
-alias:
 version: 1.00.00
 parent: gra2cairo
 object id: 9
 number of fields: 26
 size of instance: 184
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -393,14 +390,14 @@ size of instance: 184
 <h3>gra2gtkprint</h3>
 <pre>
 object: gra2gtkprint
-alias:
 version: 1.00.00
 parent: gra2cairo
 object id: 10
 number of fields: 23
 size of instance: 128
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -436,7 +433,8 @@ object id: 11
 number of fields: 30
 size of instance: 216
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -472,14 +470,14 @@ size of instance: 216
 <h3>gra2gdk</h3>
 <pre>
 object: gra2gdk
-alias:
 version: 1.00.00
 parent: gra2cairo
 object id: 12
 number of fields: 23
 size of instance: 136
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -515,7 +513,8 @@ object id: 35
 number of fields: 43
 size of instance: 200
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -557,21 +556,21 @@ size of instance: 200
 <tr><td>r-x</td><td align="right">toggle_window</td><td>void( int )</td></tr>
 <tr><td>r-x</td><td align="right">get_ui</td><td>void( void )</td></tr>
 <tr><td>r-x</td><td align="right">get_accel_map</td><td>void( void )</td></tr>
-<tr><td>r-x</td><td align="right">lib_version</td><td>void( )</td></tr>
+<tr><td>r-x</td><td align="right">lib_version</td><td>void( char * )</td></tr>
 <tr><td>---</td><td align="right">_evloop</td><td>void( )</td></tr>
 </table>
 
 <h3>io</h3>
 <pre>
 object: io
-alias:
 version: 1.00.00
 parent: object
 object id: 13
-number of fields: 24
-size of instance: 120
+number of fields: 25
+size of instance: 128
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -580,8 +579,9 @@ size of instance: 120
 <tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
 <tr><td>---</td><td align="right">next</td><td>void*</td></tr>
 <tr><td>r--</td><td align="right">file</td><td>char*</td></tr>
-<tr><td>r-x</td><td align="right">open</td><td>void( char * char * )</td></tr>
-<tr><td>r-x</td><td align="right">popen</td><td>void( char * char * )</td></tr>
+<tr><td>rw-</td><td align="right">mode</td><td>char*</td></tr>
+<tr><td>r-x</td><td align="right">open</td><td>void( char * )</td></tr>
+<tr><td>r-x</td><td align="right">popen</td><td>void( char * )</td></tr>
 <tr><td>r-x</td><td align="right">close</td><td>void( void )</td></tr>
 <tr><td>r-x</td><td align="right">puts</td><td>void( char * )</td></tr>
 <tr><td>r-x</td><td align="right">putc</td><td>int( int )</td></tr>
@@ -601,14 +601,14 @@ size of instance: 120
 <h3>int</h3>
 <pre>
 object: int
-alias:
 version: 1.00.00
 parent: object
 object id: 14
 number of fields: 8
 size of instance: 48
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -622,14 +622,14 @@ size of instance: 48
 <h3>double</h3>
 <pre>
 object: double
-alias:
 version: 1.00.00
 parent: object
 object id: 15
 number of fields: 8
 size of instance: 48
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -643,14 +643,14 @@ size of instance: 48
 <h3>string</h3>
 <pre>
 object: string
-alias:
 version: 1.00.00
 parent: object
 object id: 16
 number of fields: 19
 size of instance: 136
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -675,14 +675,14 @@ size of instance: 136
 <h3>regexp</h3>
 <pre>
 object: regexp
-alias:
 version: 1.00.00
 parent: object
 object id: 17
 number of fields: 15
 size of instance: 104
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -703,14 +703,14 @@ size of instance: 104
 <h3>iarray</h3>
 <pre>
 object: iarray
-alias:
 version: 1.00.00
 parent: object
 object id: 18
 number of fields: 32
 size of instance: 152
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -748,14 +748,14 @@ size of instance: 152
 <h3>darray</h3>
 <pre>
 object: darray
-alias:
 version: 1.00.00
 parent: object
 object id: 19
 number of fields: 32
 size of instance: 152
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -793,14 +793,14 @@ size of instance: 152
 <h3>sarray</h3>
 <pre>
 object: sarray
-alias:
 version: 1.00.00
 parent: object
 object id: 20
 number of fields: 29
 size of instance: 128
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -835,14 +835,14 @@ size of instance: 128
 <h3>math</h3>
 <pre>
 object: math
-alias:
 version: 1.00.00
 parent: object
 object id: 21
 number of fields: 18
 size of instance: 120
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -866,14 +866,14 @@ size of instance: 120
 <h3>fit</h3>
 <pre>
 object: fit
-alias:
 version: 1.00.01
 parent: object
 object id: 22
 number of fields: 59
 size of instance: 448
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -938,14 +938,14 @@ size of instance: 448
 <h3>prm</h3>
 <pre>
 object: prm
-alias:
 version: 1.00.00
 parent: object
 object id: 23
 number of fields: 10
 size of instance: 56
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -961,14 +961,14 @@ size of instance: 56
 <h3>draw</h3>
 <pre>
 object: draw
-alias:
 version: 1.00.00
 parent: object
 object id: 24
 number of fields: 17
 size of instance: 104
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -991,14 +991,14 @@ size of instance: 104
 <h3>axisgrid</h3>
 <pre>
 object: axisgrid
-alias:
 version: 1.00.00
 parent: draw
 object id: 25
-number of fields: 32
-size of instance: 216
+number of fields: 34
+size of instance: 232
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1018,6 +1018,8 @@ size of instance: 216
 <tr><td>---</td><td align="right">next</td><td>void*</td></tr>
 <tr><td>rw-</td><td align="right">axis_x</td><td>obj</td></tr>
 <tr><td>rw-</td><td align="right">axis_y</td><td>obj</td></tr>
+<tr><td>rw-</td><td align="right">grid_x</td><td>bool</td></tr>
+<tr><td>rw-</td><td align="right">grid_y</td><td>bool</td></tr>
 <tr><td>rw-</td><td align="right">width1</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">style1</td><td>int[]</td></tr>
 <tr><td>rw-</td><td align="right">width2</td><td>int</td></tr>
@@ -1036,14 +1038,14 @@ size of instance: 216
 <h3>axis</h3>
 <pre>
 object: axis
-alias:
 version: 1.00.00
 parent: draw
 object id: 26
-number of fields: 101
-size of instance: 656
+number of fields: 102
+size of instance: 664
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1073,6 +1075,7 @@ size of instance: 656
 <tr><td>rw-</td><td align="right">length</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">width</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">style</td><td>int[]</td></tr>
+<tr><td>rw-</td><td align="right">auto_scale_margin</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">adjust_axis</td><td>obj</td></tr>
 <tr><td>rw-</td><td align="right">adjust_position</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">arrow</td><td>enum( none end begin both )</td></tr>
@@ -1124,8 +1127,8 @@ size of instance: 656
 <tr><td>r-x</td><td align="right">scale_pop</td><td>void( )</td></tr>
 <tr><td>r--</td><td align="right">scale_history</td><td>double[]</td></tr>
 <tr><td>r-x</td><td align="right">scale</td><td>void( double double int )</td></tr>
-<tr><td>r-x</td><td align="right">auto_scale</td><td>void( obj int )</td></tr>
-<tr><td>r-x</td><td align="right">get_auto_scale</td><td>double[]( obj int )</td></tr>
+<tr><td>r-x</td><td align="right">auto_scale</td><td>void( obj )</td></tr>
+<tr><td>r-x</td><td align="right">get_auto_scale</td><td>double[]( obj )</td></tr>
 <tr><td>r-x</td><td align="right">clear</td><td>void( )</td></tr>
 <tr><td>r-x</td><td align="right">adjust</td><td>void( )</td></tr>
 <tr><td>r-x</td><td align="right">draw</td><td>void( int )</td></tr>
@@ -1157,7 +1160,8 @@ object id: 27
 number of fields: 120
 size of instance: 816
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1283,14 +1287,14 @@ size of instance: 816
 <h3>merge</h3>
 <pre>
 object: merge
-alias:
 version: 1.00.00
 parent: draw
 object id: 28
 number of fields: 37
 size of instance: 240
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1333,14 +1337,14 @@ size of instance: 240
 <h3>legend</h3>
 <pre>
 object: legend
-alias:
 version: 1.00.00
 parent: draw
 object id: 29
 number of fields: 21
 size of instance: 120
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1367,14 +1371,14 @@ size of instance: 120
 <h3>rectangle</h3>
 <pre>
 object: rectangle
-alias:
 version: 1.00.00
 parent: legend
 object id: 30
 number of fields: 45
 size of instance: 336
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1425,14 +1429,14 @@ size of instance: 336
 <h3>arc</h3>
 <pre>
 object: arc
-alias:
 version: 1.00.00
 parent: legend
 object id: 31
 number of fields: 47
 size of instance: 352
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1492,7 +1496,8 @@ object id: 32
 number of fields: 48
 size of instance: 360
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1546,14 +1551,14 @@ size of instance: 360
 <h3>mark</h3>
 <pre>
 object: mark
-alias:
 version: 1.00.00
 parent: legend
 object id: 33
 number of fields: 34
 size of instance: 224
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1593,14 +1598,14 @@ size of instance: 224
 <h3>text</h3>
 <pre>
 object: text
-alias:
 version: 1.00.00
 parent: legend
 object id: 34
 number of fields: 36
 size of instance: 240
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>
@@ -1642,14 +1647,14 @@ size of instance: 240
 <h3>dialog</h3>
 <pre>
 object: dialog
-alias:
 version: 1.00.00
 parent: object
 object id: 36
 number of fields: 25
 size of instance: 168
 </pre>
-<table>
+<table border="1" cellspacing="0">
+<tr><th>permission</th><th>field name</th><th>field type</th></tr>
 <tr><td>r--</td><td align="right">id</td><td>int</td></tr>
 <tr><td>r--</td><td align="right">oid</td><td>int</td></tr>
 <tr><td>rw-</td><td align="right">name</td><td>char*</td></tr>

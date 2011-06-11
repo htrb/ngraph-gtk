@@ -83,7 +83,4 @@ object
 <h2><a href="#TOP">Ngraphオブジェクト一覧</a></h2>
 <br>
 各オブジェクトのフィールド一覧を示します。<br>
-各オブジェクトのフィールドは
-<ul><pre>permission     field_name   field_type</pre></ul>
-の形式で表示されています。
 <br>

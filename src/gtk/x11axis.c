@@ -217,19 +217,23 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
   }
 
   sgetobjfield(d->Obj, id, "axis_x", NULL, &valstr, FALSE, FALSE, FALSE);
-
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':')
+  if (valstr[i] == ':') {
     i++;
+  }
   combo_box_entry_set_text(d->axisx, valstr + i);
   g_free(valstr);
 
   sgetobjfield(d->Obj, id, "axis_y", NULL, &valstr, FALSE, FALSE, FALSE);
   for (i = 0; (valstr[i] != '\0') && (valstr[i] != ':'); i++);
-  if (valstr[i] == ':')
+  if (valstr[i] == ':') {
     i++;
+  }
   combo_box_entry_set_text(d->axisy, valstr + i);
   g_free(valstr);
+
+  SetWidgetFromObjField(d->draw_x, d->Obj, id, "grid_x");
+  SetWidgetFromObjField(d->draw_y, d->Obj, id, "grid_y");
 
   for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
     char width[] = "width1", style[] = "style1"; 
@@ -325,10 +329,18 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), d);
     d->axisx = w;
 
+    w = gtk_check_button_new_with_mnemonic(_("draw _X grid"));
+    add_widget_to_table(table, w, NULL, FALSE, j++);
+    d->draw_x = w;
+
     w = combo_box_entry_create();
     add_widget_to_table(table, w, _("Axis (_Y):"), FALSE, j++);
     g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), d);
     d->axisy = w;
+
+    w = gtk_check_button_new_with_mnemonic(_("draw _Y grid"));
+    add_widget_to_table(table, w, NULL, FALSE, j++);
+    d->draw_y = w;
 
     frame = gtk_frame_new(_("Axis"));
     gtk_container_add(GTK_CONTAINER(frame), table);
@@ -410,6 +422,12 @@ GridDialogClose(GtkWidget *w, void *data)
     if (SetObjFieldFromWidget(d->width[i], d->Obj, d->Id, width))
       return;
   }
+
+  if (SetObjFieldFromWidget(d->draw_x, d->Obj, d->Id, "grid_x"))
+    return;
+
+  if (SetObjFieldFromWidget(d->draw_y, d->Obj, d->Id, "grid_y"))
+    return;
 
   if (SetObjFieldFromWidget(d->background, d->Obj, d->Id, "background"))
     return;
@@ -972,7 +990,7 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
   char *valstr;
   int i, j;
   double min, max, inc, pmin, pmax, pinc;
-  int div, lastinst;
+  int lastinst;
   char *name;
   struct narray *array;
   int num;
@@ -1030,7 +1048,6 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
     combo_box_entry_set_text(d->inc, buf);
   }
 
-  getobj(d->Obj, "div", id, 0, NULL, &div);
   SetWidgetFromObjField(d->div, d->Obj, id, "div");
   SetWidgetFromObjField(d->scale, d->Obj, id, "type");
 
@@ -1050,6 +1067,8 @@ scale_tab_setup_item(struct AxisDialog *d, int id)
   }
   combo_box_entry_set_text(d->ref, valstr + i);
   g_free(valstr);
+
+  SetWidgetFromObjField(d->margin, d->Obj, id, "auto_scale_margin");
 }
 
 static void
@@ -1089,7 +1108,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
     anum = chkobjlastinst(d->Obj);
 
     if (num > 0 && anum != 0) {
-      char *buf, *argv2[3];
+      char *buf, *argv2[2];
       GString *str;
       int room, type;
       struct narray *result;
@@ -1108,8 +1127,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 	buf = g_string_free(str, FALSE);
 	room = 0;
 	argv2[0] = (char *) buf;
-	argv2[1] = (char *) &room;
-	argv2[2] = NULL;
+	argv2[1] = NULL;
 
 	if (getobj(d->Obj, "type", d->Id, 0, NULL, &type) == -1) {
 	  arraydel(&farray);
@@ -1124,7 +1142,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 	  return;
 	}
 
-	getobj(d->Obj, "get_auto_scale", d->Id, 2, argv2, &result);
+	getobj(d->Obj, "get_auto_scale", d->Id, 1, argv2, &result);
 	g_free(buf);
 
 	if (arraynum(result) == 3) {
@@ -1250,6 +1268,10 @@ scale_tab_create(struct AxisDialog *d)
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
   g_signal_connect(w, "changed", G_CALLBACK(AxisDialogRef), d);
   d->ref = w;
+
+  w = create_spin_entry_type(SPIN_BUTTON_TYPE_PERCENT, TRUE, TRUE);
+  add_widget_to_table(table, w, _("_Auto scale margin:"), FALSE, i++);
+  d->margin = w;
 
   frame = gtk_frame_new(_("Scale"));
   gtk_container_add(GTK_CONTAINER(frame), table);
@@ -2252,6 +2274,10 @@ scale_tab_set_value(struct AxisDialog *d)
     return 1;
   }
 
+  if (SetObjFieldFromWidget(d->margin, d->Obj, d->Id, "auto_scale_margin")) {
+    return 1;
+  }
+
   return 0;
 }
 
@@ -2591,7 +2617,7 @@ CmAxisZoom(GtkAction *w, gpointer client_data)
 	  mid = (min + max) / 2;
 	  min = mid - wd * zoom;
 	  max = mid + wd * zoom;
-	  room = 1;
+	  room = 0;
 	  argv[0] = (char *) &min;
 	  argv[1] = (char *) &max;
 	  argv[2] = (char *) &room;

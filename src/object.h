@@ -109,7 +109,9 @@ struct loopproc {
 
 #define NVOID 0
 #define NBOOL 1
+#if USE_NCHAR
 #define NCHAR 2
+#endif
 #define NINT 3
 #define NDOUBLE 4
 #define NSTR 5
@@ -122,7 +124,9 @@ struct loopproc {
 #define NLABEL 12
 #define NVFUNC 20
 #define NBFUNC 21
+#if USE_NCHAR
 #define NCFUNC 22
+#endif
 #define NIFUNC 23
 #define NDFUNC 24
 #define NSFUNC 25

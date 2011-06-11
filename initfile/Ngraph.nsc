@@ -41,6 +41,7 @@ usage() {
     echo ' -n                      output ngp-file to stdout'
     echo ' -h, --help              Show this help message'
     echo ' -v, --version           Show version of Ngraph'
+    echo ' -V, --VERSION           Show detail information about Ngraph'
     del system:0
 }
 
@@ -388,6 +389,21 @@ do
 	-v|-version|--version)
 	    echo ${system::name} version ${system::version}
 	    echo ${system::copyright}
+	    del system:0
+	    ;;
+	-V|-VERSION|--VERSION)
+	    echo ${system::name} version ${system::version}
+	    echo ${system::copyright}
+	    echo
+	    echo "  compiler:"
+	    echo "    ${system::compiler}"
+	    if exist -q menu
+	    then
+		echo
+		echo "  library:"
+		menu::lib_version '    '
+	    fi
+	    echo
 	    del system:0
 	    ;;
 	-*)

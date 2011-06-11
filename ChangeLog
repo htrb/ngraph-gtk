@@ -1,7 +1,99 @@
+2011-06-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.nsc: add option "-V".
+
+	* src/oaxis.c (axis): add field "auto_scale_margin". remove 2nd
+	argument for "auto_scale" and "get_auto_scale" fields.
+	(axisautoscale_margin): added.
+	(axisinit): initialize "auto_scale_margin" field.
+	(axisadjust, axischangescale, axiscoordinate): use "AXIS_TYPE_",
+	"AXIS_TYPE_LOG" and "AXIS_TYPE_LOG" instead of 1 and 2.
+	(axischangescale): now parameter "room" means margin of the scale.
+	(axisautoscale, axisgetautoscale): remove 2nd argument.
+
+	* src/oagrid.c (agrid): add fields "grid_x" and "grid_y".
+	(agridinit): initialize "grid_x" and "grid_y" fields.
+	(agriddraw): check "grid_x" and "grid_y" fields.
+
+	* src/shellcm.c (dispfield): "NCHAR" and "NCFUNC" are not used now.
+
+	* src/object.c (check_arglist): added.
+	(addobject): call "check_arglist()".
+	(chkobjarglist, _putobj, putobj, _getobj, getobj, copyobj)
+	(getvaluestr): "NCHAR" and "NCFUNC" are not used now.
+	(add_arg_object, add_arg_int, add_arg_double, add_arg_bool)
+	(add_arg_num, add_arg_sarray, add_arg_iarray, add_arg_darray)
+	(set_arg_enum, get_array_argument): added.
+	(getargument): use "set_arg_enum()", "g_shell_parse_argv()",
+	"get_array_argument()", "add_arg_num()" and "add_arg_object()".
+
+	* src/oio.c (io): add "mode" field. remove 2nd argument for "open"
+	and "popen" field.
+	(io_init): initialize "mode" field.
+	(io_open): use "mode" filed instead of 2nd argument.
+
+	* src/mathfn.c (nround): use "G_MAXINT" and "G_MAXINT" instead of
+	"LANG_MIN" and "LONG_MAX" .
+
+	* src/ofile.c (barout): use "case" statement instead of "if".
+	(f2dboundings): minimum or maximum value for bar plot is now 0.
+
+	* src/gtk/x11dialg.h (AAxisDialog): add member "margin".
+	(GridDialog): add members "draw_x" and "draw_y".
+
+	* src/gtk/x11axis.c (GridDialogSetupItem): get "grid_x" and
+	"grid_y" fields.
+	(GridDialogSetup): add widgets to set "grid_x" and "grid_y" fields.
+	(GridDialogClose): set "grid_x" and "grid_y" fields.
+	(scale_tab_setup_item): remove redundant function call "getobj()"
+	for "div" fields.
+	(scale_tab_setup_item): get "auto_scale_margin" field.
+	(AxisDialogFile): remove second argument for "get_auto_scale" field.
+	(scale_tab_create): add widget to set "auto_scale_margin" field.
+	(scale_tab_set_value): set "auto_scale_margin" field.
+	(CmAxisZoom): now 3rd argument for "scale" field is 0.
+
+	* src/gtk/x11commn.c (FileAutoScale): remove second argument for
+	"auto_scale" field.
+
+	* demo/demo.ngp (dialog): don't clear graph before exit
+	demonstration.
+
+	* demo/demo4.ngp.in: use "axisgrid" instead of "path" to shou grid
+	line.
+
+	* src/math/math_basic_function.c (mjd): check parameters "m" and
+	"d".
+
+	* src/gtk/ox11menu.c (get_palette): initialize variable "palette"
+	as NULL.
+
+2011-06-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (gtkmenu): add argument for the field
+	"lib_version".
+	(mx_show_lib_version): add prefix for the output strings.
+
+	* src/gtk/x11view.c (ViewerPopupMenu, CmEditMenuCB)
+	(CmViewerButtonArm): use "GPOINTER_TO_INT()" to get data.
+
+	* src/gtk/x11print.c (CmOutputMenu): use "GPOINTER_TO_INT()" to
+	get data.
+
+	* src/gtk/x11menu.c (toggle_view_cb, detach_toolbar): use
+	"GPOINTER_TO_INT()" to get data.
+
+	* src/gtk/x11graph.c (CmGraphNewMenu): use "GPOINTER_TO_INT()" to
+	get data.
+
+2011-06-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (get_new_axis_id): add argument "aobj".
+
 2011-05-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ostring.c (utf8_string_slice, string_slice, string_match)
-	(string_rindex, string_index, string_replace): 	added.
+	(string_rindex, string_index, string_replace): added.
 	(ostring): add field "slice", "replace", "index", "rindex" and
 	"math".
 
@@ -14,7 +106,7 @@
 	* src/math/math_basic_function.c (compare_double_with_prec):
 	added.
 	(math_func_eq, math_func_neq): add 3rd argument. use
-	"compare_double_with_prec()".0
+	"compare_double_with_prec()".
 
 2011-05-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

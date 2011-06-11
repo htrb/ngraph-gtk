@@ -22,7 +22,7 @@ menu::menu $TMP_NGP > $TMP_FILE
 echo -n > $MAP_FILE
 
 regexp::@="^; \("
-io::open "r" "$TMP_FILE"
+io::open "$TMP_FILE"
 
 while true
 do
@@ -51,7 +51,7 @@ done
 echo -n > $UI_FILE.win
 
 regexp::@='name="GraphExportPNG"'
-io::open "r" "$UI_FILE"
+io::open "$UI_FILE"
 
 while true
 do

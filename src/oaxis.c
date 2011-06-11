@@ -228,7 +228,7 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int bline;
   int len1,wid1,len2,wid2,len3,wid3;
   int pt,sx,sy,logpow,scriptsize;
-  int autonorm,num,gnum;
+  int autonorm,num,gnum,margin;
   char *font,*format,*group,*name, buf[256];
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -252,8 +252,10 @@ axisinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   scriptsize=7000;
   num=-1;
   alpha=255;
+  margin=500;
   if (_putobj(obj,"baseline",inst,&bline)) return 1;
   if (_putobj(obj,"width",inst,&width)) return 1;
+  if (_putobj(obj,"auto_scale_margin",inst,&margin)) return 1;
   if (_putobj(obj,"arrow_length",inst,&alen)) return 1;
   if (_putobj(obj,"arrow_width",inst,&awid)) return 1;
   if (_putobj(obj,"wave_length",inst,&wlen)) return 1;
@@ -2998,10 +3000,10 @@ axisadjust(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (min==max) return 0;
   if (dir==dir1) return 0;
   if (getaxispositionini(&alocal,type,min,max,inc,div,FALSE)!=0) return 0;
-  if (type==1) {
+  if (type==AXIS_TYPE_LOG) {
     min=log10(min);
     max=log10(max);
-  } else if (type==2) {
+  } else if (type==AXIS_TYPE_INVERSE) {
     min=1/min;
     max=1/max;
   }
@@ -3054,12 +3056,12 @@ axischangescale(struct objlist *obj,N_VALUE *inst,
     ming=maxg;
     maxg=a;
   }
-  if (type==1) {
+  if (type==AXIS_TYPE_LOG) {
     if (ming<=0) return 1;
     if (maxg<=0) return 1;
     ming=log10(ming);
     maxg=log10(maxg);
-  } else if (type==2) {
+  } else if (type==AXIS_TYPE_INVERSE) {
     if (ming*maxg<=0) return 1;
   }
   order=(fabs(ming)+fabs(maxg))*0.5;
@@ -3071,17 +3073,17 @@ axischangescale(struct objlist *obj,N_VALUE *inst,
     ming=ming-order*0.5;
   }
   inc=scale(maxg-ming);
-  if (room==0) {
-    max=maxg+(maxg-ming)*0.05;
+  if (room > 0) {
+    max=maxg+(maxg-ming) * (room * 0.0001);
     max=nraise(max/inc*10)*inc/10;
-    min=ming-(maxg-ming)*0.05;
+    min=ming-(maxg-ming) * (room * 0.0001);
     min=cutdown(min/inc*10)*inc/10;
-    if (type==1) {
+    if (type==AXIS_TYPE_LOG) {
       max=pow(10.0,max);
       min=pow(10.0,min);
       max=log10(nraise(max/scale(max))*scale(max));
       min=log10(cutdown(min/scale(min)+1e-15)*scale(min));
-    } else if (type==2) {
+    } else if (type==AXIS_TYPE_INVERSE) {
       if (ming*min<=0) min=ming;
       if (maxg*max<=0) max=maxg;
     }
@@ -3090,7 +3092,7 @@ axischangescale(struct objlist *obj,N_VALUE *inst,
     min=ming;
   }
   if (min==max) max=min+1;
-  if (type!=2) {
+  if (type!=AXIS_TYPE_INVERSE) {
     inc=scale(max-min);
     if (max<min) inc*=-1;
     mmin=roundmin(min,inc)+inc;
@@ -3098,10 +3100,10 @@ axischangescale(struct objlist *obj,N_VALUE *inst,
   } else {
     inc=scale(max-min);
   }
-  if ((type!=1) && (inc==0)) inc=1;
-  if (type==1) inc=nround(inc);
+  if ((type!=AXIS_TYPE_LOG) && (inc==0)) inc=1;
+  if (type==AXIS_TYPE_LOG) inc=nround(inc);
   inc=fabs(inc);
-  if (type==1) {
+  if (type==AXIS_TYPE_LOG) {
     min=pow(10.0,min);
     max=pow(10.0,max);
     inc=pow(10.0,inc);
@@ -3148,20 +3150,20 @@ axiscoordinate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **a
   dy=*(int *)argv[3];
   c=dir/18000.0*MPI;
   t=-(x-dx)*cos(c)+(y-dy)*sin(c);
-  if (type==1) {
+  if (type==AXIS_TYPE_LOG) {
     if (min<=0) return 1;
     if (max<=0) return 1;
     min=log10(min);
     max=log10(max);
-  } else if (type==2) {
+  } else if (type==AXIS_TYPE_INVERSE) {
     if (min*max<=0) return 1;
     min=1.0/min;
     max=1.0/max;
   }
   val=min+(max-min)*t/len;
-  if (type==1) {
+  if (type==AXIS_TYPE_LOG) {
     val=pow(10.0,val);
-  } else if (type==2) {
+  } else if (type==AXIS_TYPE_INVERSE) {
     if (val==0) return 1;
     val=1.0/val;
   }
@@ -3230,7 +3232,7 @@ axisautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   double min,max,inc;
 
   fileobj=(char *)argv[2];
-  room=*(int *)argv[3];
+  _getobj(obj,"auto_scale_margin",inst,&room);
 
   if (axisautoscalefile(obj,inst,fileobj,&min,&max))
     return 0;
@@ -3262,7 +3264,7 @@ axisgetautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   arrayfree(result);
   rval->array=NULL;
   fileobj=(char *)argv[2];
-  room=*(int *)argv[3];
+  _getobj(obj,"auto_scale_margin",inst,&room);
   if (axisautoscalefile(obj,inst,fileobj,&min,&max)==0) {
     axischangescale(obj,inst,&min,&max,&inc,room);
     result=arraynew(sizeof(double));
@@ -3271,6 +3273,21 @@ axisgetautoscale(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
     arrayadd(result,&inc);
     rval->array=result;
   }
+  return 0;
+}
+
+static int 
+axisautoscale_margin(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
+		     int argc,char **argv)
+{
+  int room;
+  room = * (int *) argv[2];
+  if (room < 0) {
+    * (int *) argv[2] = 0;
+  } else if (room > 100000) {
+    * (int *) argv[2] = 100000;
+  }
+
   return 0;
 }
 
@@ -3780,6 +3797,7 @@ static struct objtable axis[] = {
   {"length",NINT,NREAD|NWRITE,axisgeometry,NULL,0},
   {"width",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"style",NIARRAY,NREAD|NWRITE,NULL,NULL,0},
+  {"auto_scale_margin",NINT,NREAD|NWRITE,axisautoscale_margin,NULL,0},
   {"adjust_axis",NOBJ,NREAD|NWRITE,NULL,NULL,0},
   {"adjust_position",NINT,NREAD|NWRITE,NULL,NULL,0},
   {"arrow",NENUM,NREAD|NWRITE,NULL,arrowchar,0},
@@ -3831,8 +3849,8 @@ static struct objtable axis[] = {
   {"scale_pop",NVFUNC,NREAD|NEXEC,axisscalepop,NULL,0},
   {"scale_history",NDARRAY,NREAD,NULL,NULL,0},
   {"scale",NVFUNC,NREAD|NEXEC,axisscale,"ddi",0},
-  {"auto_scale",NVFUNC,NREAD|NEXEC,axisautoscale,"oi",0},
-  {"get_auto_scale",NDAFUNC,NREAD|NEXEC,axisgetautoscale,"oi",0},
+  {"auto_scale",NVFUNC,NREAD|NEXEC,axisautoscale,"o",0},
+  {"get_auto_scale",NDAFUNC,NREAD|NEXEC,axisgetautoscale,"o",0},
   {"clear",NVFUNC,NREAD|NEXEC,axisclear,NULL,0},
   {"adjust",NVFUNC,NREAD|NEXEC,axisadjust,NULL,0},
   {"draw",NVFUNC,NREAD|NEXEC,axisdraw,"i",0},

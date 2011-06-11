@@ -1028,7 +1028,7 @@ CmOutputPrinterB(GtkAction *wi, gpointer client_data)
 void
 CmOutputMenu(GtkAction *wi, gpointer client_data)
 {
-  switch ((int) client_data) {
+  switch (GPOINTER_TO_INT(client_data)) {
   case MenuIdOutputGRAFile:
     CmPrintGRAFile();
     break;
@@ -1040,7 +1040,7 @@ CmOutputMenu(GtkAction *wi, gpointer client_data)
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
-    CmOutputImage((int) client_data);
+    CmOutputImage(GPOINTER_TO_INT(client_data));
     break;
   }
 }

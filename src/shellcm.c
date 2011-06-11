@@ -667,7 +667,9 @@ dispfield(struct objlist *obj,char *name)
   switch (ftype) {
   case NVOID:    strcpy(type,"void"); break;
   case NBOOL:    strcpy(type,"bool"); break;
+#if USE_NCHAR
   case NCHAR:    strcpy(type,"char"); break;
+#endif
   case NINT:     strcpy(type,"int"); break;
   case NDOUBLE:  strcpy(type,"double"); break;
   case NSTR:     strcpy(type,"char*"); break;
@@ -680,7 +682,9 @@ dispfield(struct objlist *obj,char *name)
   case NLABEL:   strcpy(type,"label"); break;
   case NVFUNC:   strcpy(type,"void("); break;
   case NBFUNC:   strcpy(type,"bool("); break;
+#if USE_NCHAR
   case NCFUNC:   strcpy(type,"char("); break;
+#endif
   case NIFUNC:   strcpy(type,"int("); break;
   case NDFUNC:   strcpy(type,"double("); break;
   case NSFUNC:   strcpy(type,"*char("); break;
@@ -705,7 +709,9 @@ dispfield(struct objlist *obj,char *name)
         for (j=0;alist[j]!='\0';j++) {
           switch (alist[j]) {
           case 'b': printfstdout(" bool"); break;
+#if USE_NCHAR
           case 'c': printfstdout(" char"); break;
+#endif
           case 'i': printfstdout(" int"); break;
           case 'd': printfstdout(" double"); break;
           case 's': printfstdout(" char *"); break;
