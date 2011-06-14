@@ -195,7 +195,7 @@ CopyFocusedObjects(void)
 {
   struct narray *focus_array;
   struct FocusObj **focus;
-  struct objlist *axis, *text;
+  struct objlist *axis;
   char *s;
   int i, r, n, id, num;
   GtkClipboard* clipboard;
@@ -214,7 +214,6 @@ CopyFocusedObjects(void)
     return 1;
 
   axis = chkobject("axis");
-  text = chkobject("text");
   g_string_append(str, SCRIPT_IDN);
   num = 0;
   for (i = 0; i < n; i++) {
@@ -798,6 +797,7 @@ EvalDialogSetupItem(GtkWidget *w, struct EvalDialog *d)
   tree_store_clear(d->list);
 
   id = -1;
+  n = 0;
   for (i = d->Num - 1; i >= 0; i--) {
     if (id != EvalList[i].id) {
       if (id >= 0) {
@@ -1010,10 +1010,6 @@ EvalDialog(struct EvalDialog *data,
 static gboolean
 scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
-  struct Viewer *d;
-
-  d = (struct Viewer *) client_data;
-
   switch (e->direction) {
   case GDK_SCROLL_UP:
   case GDK_SCROLL_LEFT:
@@ -1540,9 +1536,6 @@ AddList(struct objlist *obj, N_VALUE *inst)
   N_VALUE *inst2, *ainst;
   char *field, **objname;
   struct narray *draw, drawrable;
-  struct Viewer *d;
-
-  d = &NgraphApp.Viewer;
 
   aobj = obj;
   ainst = inst;
@@ -1634,10 +1627,8 @@ AddInvalidateRect(struct objlist *obj, N_VALUE *inst)
   struct narray *abbox;
   int bboxnum, *bbox;
   double zoom;
-  struct Viewer *d;
   GdkRectangle rect;
 
-  d = &NgraphApp.Viewer;
   if (chkobjfield(obj, "bbox")) {
     return;
   }
@@ -2477,10 +2468,6 @@ CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom)
 static void
 mouse_down_point(unsigned int state, TPoint *point, struct Viewer *d)
 {
-  double zoom;
-
-  zoom = Menulocal.PaperZoom / 10000.0;
-
   d->Capture = TRUE;
 
   if (arraynum(d->focusobj) && ! (state & GDK_SHIFT_MASK)) {
@@ -4123,9 +4110,9 @@ calc_integer_ratio(struct narray *points, int *dx, int *dy)
   y = *dy;
 
   po2 = *(struct Point **) arraynget(points, 0);
-
-  if (pow == NULL)
+  if (po2 == NULL) {
     return;
+  }
 
   w = abs(x - po2->x);
   h = abs(y - po2->y);

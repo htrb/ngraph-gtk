@@ -268,13 +268,11 @@ grid_copy_clicked(GtkButton *btn, gpointer user_data)
 static void
 GridDialogAxis(GtkWidget *w, gpointer client_data)
 {
-  struct GridDialog *d;
   char buf[10];
   int a, oid;
   struct objlist *aobj;
 
   aobj = getobject("axis");
-  d = (struct GridDialog *) client_data;
   a = combo_box_get_active(w);
   if (a < 0)
     return;
@@ -326,7 +324,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     j = 0;
     w = combo_box_entry_create();
     add_widget_to_table(table, w, _("Axis (_X):"), FALSE, j++);
-    g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), d);
+    g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), NULL);
     d->axisx = w;
 
     w = gtk_check_button_new_with_mnemonic(_("draw _X grid"));
@@ -335,7 +333,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = combo_box_entry_create();
     add_widget_to_table(table, w, _("Axis (_Y):"), FALSE, j++);
-    g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), d);
+    g_signal_connect(w, "changed", G_CALLBACK(GridDialogAxis), NULL);
     d->axisy = w;
 
     w = gtk_check_button_new_with_mnemonic(_("draw _Y grid"));
@@ -1110,7 +1108,7 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
     if (num > 0 && anum != 0) {
       char *buf, *argv2[2];
       GString *str;
-      int room, type;
+      int type;
       struct narray *result;
 
       str = g_string_sized_new(32);
@@ -1125,7 +1123,6 @@ AxisDialogFile(GtkWidget *w, gpointer client_data)
 	}
 
 	buf = g_string_free(str, FALSE);
-	room = 0;
 	argv2[0] = (char *) buf;
 	argv2[1] = NULL;
 
@@ -2888,7 +2885,6 @@ check_axis_history(struct objlist *obj)
 void
 CmAxisScaleUndo(GtkAction *w, gpointer client_data)
 {
-  struct SubWin *d;
   char *argv[1];
   struct objlist *obj;
   struct narray farray;
@@ -2896,11 +2892,13 @@ CmAxisScaleUndo(GtkAction *w, gpointer client_data)
 
   if (Menulock || Globallock)
     return;
-  d = &(NgraphApp.AxisWin);
+
   if ((obj = chkobject("axis")) == NULL)
     return;
+
   if (check_axis_history(obj) == 0)
     return;
+
   SelectDialog(&DlgSelect, obj, AxisHistoryCB, (struct narray *) &farray, NULL);
   if (DialogExecute(TopLevel, &DlgSelect) == IDOK) {
     num = arraynum(&farray);

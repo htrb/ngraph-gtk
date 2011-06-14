@@ -590,7 +590,7 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox;
   struct FitSaveDialog *d;
-  int i, j;
+  int i;
   char *s;
 
   d = (struct FitSaveDialog *) data;
@@ -608,7 +608,6 @@ FitSaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
   }
   combo_box_clear(d->profile);
-  j = 0;
   for (i = d->Sid; i <= chkobjlastinst(d->Obj); i++) {
     getobj(d->Obj, "profile", i, 0, NULL, &s);
     combo_box_append_text(d->profile, CHK_STR(s));
@@ -2129,10 +2128,6 @@ math_tab_copy(GtkButton *btn, gpointer user_data)
 static gboolean
 func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
 {
-  struct FileDialog *d;
-
-  d = (struct FileDialog *) user_data;
-
   entry_completion_set_entry(NgraphApp.func_list, w);
 
   return FALSE;
@@ -2164,17 +2159,17 @@ math_tab_create(struct FileDialog *d)
   d->math.y = w;
 
   w = create_text_entry(TRUE, TRUE);
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NULL);
   add_widget_to_table(table, w, "_F(X,Y,Z):", TRUE, i++);
   d->math.f = w;
 
   w = create_text_entry(TRUE, TRUE);
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NULL);
   add_widget_to_table(table, w, "_G(X,Y,Z):", TRUE, i++);
   d->math.g = w;
 
   w = create_text_entry(TRUE, TRUE);
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), d);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NULL);
   add_widget_to_table(table, w, "_H(X,Y,Z):", TRUE, i++);
   d->math.h = w;
 
@@ -3082,7 +3077,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *swin, *view, *label;
   struct FileDialog *d;
-  int line, rcode;
+  int line;
   char title[20], *argv[2], *s;
 
   d = (struct FileDialog *) data;
@@ -3149,7 +3144,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
   line = Menulocal.data_head_lines;
   argv[0] = (char *) &line;
   argv[1] = NULL;
-  rcode = getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
+  getobj(d->Obj, "head_lines", d->Id, 1, argv, &s);
   set_headlines(d, s);
   FileDialogSetupItem(wi, d, TRUE, d->Id);
 }
@@ -4241,7 +4236,7 @@ get_axis_obj_str(struct objlist *obj, int id, char *field)
 static void
 file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 {
-  int cx, len;
+  int cx;
   unsigned int i;
   char buf[256], *color;
   struct narray *mask, *move;
@@ -4279,7 +4274,7 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
     case FILE_WIN_COL_Y_AXIS:
       axis = get_axis_obj_str(d->obj, row, Flist[i].name);
       if (axis) {
-	len = snprintf(buf, sizeof(buf), "%3s", axis);
+	snprintf(buf, sizeof(buf), "%3s", axis);
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
 	g_free(axis);
       }
@@ -4821,7 +4816,6 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   GtkTreeView *view;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  n_list_store *list;
   struct SubWin *d;
   GtkComboBox *cbox;
   int sel, type, child = -1;
@@ -4838,8 +4832,6 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
     return;
 
   list_store_select_iter(GTK_WIDGET(view), &iter);
-
-  list = (n_list_store *) g_object_get_data(G_OBJECT(renderer), "user-data");
   sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);

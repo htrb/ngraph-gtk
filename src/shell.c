@@ -461,7 +461,7 @@ puts_localized(int fd, const char *str)
   r = write(fd, localized, len);
   g_free(localized);
 
-  return len;
+  return r;
 }
 
 static int 

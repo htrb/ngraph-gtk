@@ -947,7 +947,7 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 {
   char code, *cstr, *tmp, *tmp2;
   int *cpar, i, j, r, font_style;
-  double x, y, w, h, l, fontcashsize, fontcashdir, fontsize,
+  double x, y, w, h, l, fontsize,
     fontspace, fontdir, fontsin, fontcos, a1, a2;
   cairo_line_join_t join;
   cairo_line_cap_t cap;
@@ -1185,8 +1185,6 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     local->fontspace = fontspace;
     fontsize = cpar[1] / 72.0 * 25.4;
     local->fontsize = fontsize;
-    fontcashsize = mxd2ph(local, fontsize);
-    fontcashdir = cpar[3];
     fontdir = cpar[3] * MPI / 18000.0;
     fontsin = sin(fontdir);
     fontcos = cos(fontdir);

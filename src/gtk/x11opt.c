@@ -232,9 +232,7 @@ static void
 SetScriptDialogBrowse(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
   char *file;
-  struct SetScriptDialog *d;
 
-  d = (struct SetScriptDialog *) user_data;
   if (nGetOpenFileName(TopLevel, _("Add-in Script"), "nsc", NULL,
 		       NULL, &file, TRUE, FALSE) == IDOK) {
     entry_set_filename(GTK_WIDGET(w), file);
@@ -261,7 +259,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Name:"), TRUE, i++);
     d->name = w;
 
-    w = create_file_entry_with_cb(G_CALLBACK(SetScriptDialogBrowse), d);
+    w = create_file_entry_with_cb(G_CALLBACK(SetScriptDialogBrowse), NULL);
     add_widget_to_table(table, w, _("_Script file:"), TRUE, i++);
     d->script = w;
 

@@ -554,11 +554,9 @@ static int
 g2nul_chardescent(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
                      int argc,char **argv)
 {
-  char *font;
   int size;
 
   size=*(int *)(argv[3]);
-  font=(char *)(argv[4]);
   rval->i=nround(25.4/72000.0*size*250);
   return 0;
 }

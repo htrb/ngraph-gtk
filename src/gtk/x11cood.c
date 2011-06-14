@@ -135,7 +135,6 @@ CmCoordinateWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
   int state;
-  GtkWidget *dlg;
 
    d = &(NgraphApp.CoordWin);
 
@@ -154,7 +153,7 @@ CmCoordinateWindow(GtkToggleAction *action, gpointer client_data)
     return;
   }
 
-  dlg = label_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
+  label_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
 
   sub_window_show_all((struct SubWin *) d);
   sub_window_set_geometry((struct SubWin *) d, TRUE);

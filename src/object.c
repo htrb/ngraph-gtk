@@ -3640,7 +3640,7 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
   char *bval,*arglist;
   unsigned int k;
   int i;
-  int type,len;
+  int type;
   GString *str;
 
   str = g_string_sized_new(64);
@@ -3650,7 +3650,6 @@ getvaluestr(struct objlist *obj,const char *field,void *val,int cr,int quote)
 
   arglist=chkobjarglist(obj,field);
   type=chkobjfieldtype(obj,field);
-  len=0;
   po=val;
 
   switch (type) {

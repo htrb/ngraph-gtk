@@ -2091,7 +2091,6 @@ CmOptionTextDef(GtkAction *w, gpointer client_data)
 static void
 LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
 {
-  int num;
   int update, ret;
   struct LegendWin *d;
   struct LegendDialog *lgd;
@@ -2103,7 +2102,6 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
 
   UnFocus();
 
-  num = 0;
   update = FALSE;
 
   if (id < 0 || sub_id > d->legend[id])

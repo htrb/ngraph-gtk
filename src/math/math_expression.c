@@ -126,22 +126,20 @@ create_arg(const char *name, enum MATH_FUNCTION_ARG_TYPE type)
 static int
 register_arg(MathExpression *func, const char *arg_name, enum MATH_FUNCTION_ARG_TYPE type)
 {
-  int i;
-
   switch (type) {
   case MATH_FUNCTION_ARG_TYPE_DOUBLE:
     if (math_equation_check_var(func->equation, arg_name) >= 0) {
       /* the variable already exist */
       return 1;
     }
-    i = math_equation_add_var(func->equation, arg_name);
+    math_equation_add_var(func->equation, arg_name);
     break;
   case MATH_FUNCTION_ARG_TYPE_ARRAY:
     if (math_equation_check_array(func->equation, arg_name) >= 0) {
       /* the array already exist */
       return 1;
     }
-    i = math_equation_add_array(func->equation, arg_name);
+    math_equation_add_array(func->equation, arg_name);
     break;
   case MATH_FUNCTION_ARG_TYPE_PROC:
     return 1;
@@ -810,7 +808,6 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 {
   int i, n;
   enum MATH_FUNCTION_ARG_TYPE *type;
-  int use_array;
 
   type = exp->fprm->arg_type;
 
@@ -819,7 +816,6 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
     return 1;
   }
 
-  use_array = 0;
   n = exp->argc;
   for (i = 0; i < n; i++) {
     if (type){
@@ -829,7 +825,6 @@ call_func(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *val)
 	  val->type = MATH_VALUE_ERROR;
 	  return 1;
 	}
-	use_array = 1;
 	exp->buf[i].idx = exp->argv[i]->u.array.index;
 	break;
       case MATH_FUNCTION_ARG_TYPE_PROC:

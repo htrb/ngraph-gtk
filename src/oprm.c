@@ -509,8 +509,8 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   int statx,staty,stat2,stat3,line,plottype;
   char str4[5],*endptr;
   int hiddenaxis[4];
-  int setaxis[4],sccros[4],scauto[4];
-  int scnum,scstart,scstep,sczero,scplus,scperiod,scposs,scpose;
+  int setaxis[4],sccros[4];
+  int scnum,scstart,scstep,sczero,scplus,scposs,scpose;
   int scdir,sclr,sclog,scposx,scposy,scfull;
   char scfig[5];
   int la0,la1,la2,la3,la4,lw0,lw1,lw2,lw3,lw4,lc0,lc1,lc4;
@@ -1320,7 +1320,6 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       sccros[i]=strtol(str4,&endptr,10);
     }
     j+=4;
-    scauto[i]=(buf[j]=='Y')?0:1;
     j+=4;
     if (buf[j]=='A') scnum=-1;
     else {
@@ -1346,7 +1345,6 @@ prmload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     j+=4;
     scplus=(buf[j]=='Y')?TRUE:FALSE;
     j+=4;
-    scperiod=(buf[j]=='Y')?TRUE:FALSE;
     if (prmloadline(obj,file,fp,buf,TRUE)!=0) goto errexit;
     if (sscanf2(buf,"%d%d%d%d%d%d%d",
         (int *)&scposs,(int *)&scpose,(int *)&scdir,(int *)&sclr,

@@ -418,7 +418,7 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
   GtkTreeSelection *selected;
   GList *list, *ptr;
   struct SwitchDialog *d;
-  int i, k, num, modified, *ary;
+  int i, k, modified, *ary;
   GtkTreePath *path;
 
   d = (struct SwitchDialog *) client_data;
@@ -428,8 +428,6 @@ SwitchDialogUp(GtkWidget *w, gpointer client_data)
   if (list == NULL) {
     return;
   }
-
-  num = list_store_get_num(d->drawlist);
 
   modified = FALSE;
   for (ptr = list; ptr; ptr = g_list_next(ptr)) {
@@ -992,15 +990,13 @@ PrmDialog(struct PrmDialog *data, struct objlist *obj, int id)
 static void
 SaveDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *vbox, *hbox;
+  GtkWidget *w, *vbox;
   int j;
   struct SaveDialog *d;
 
   d = (struct SaveDialog *) data;
   if (makewidget) {
     vbox = gtk_vbox_new(FALSE, 4);
-
-    hbox = gtk_hbox_new(FALSE, 4);
 
     w = combo_box_create();
     item_setup(vbox, w, _("_Path:"), FALSE);

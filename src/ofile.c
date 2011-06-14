@@ -1322,13 +1322,8 @@ static int
 put_func(struct objlist *obj, N_VALUE *inst, struct f2dlocal *f2dlocal, char *field, char *eq)
 {
   int rcode, type;
-  char *x, *y, *f, *g, *h;
-  char default_func[] = "def f(x,y,z){0}", fname[] = "F", *err_msg;
-  //                     01234
-
+  char *x, *y, *f, *g, *h, *err_msg;
   type = field[5];
-  default_func[4] = type;
-  fname[0] = toupper(type);
 
   _getobj(obj, "math_x", inst, &x);
   _getobj(obj, "math_y", inst, &y);
@@ -2293,7 +2288,7 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, M
   int i,j;
   int masked,moved,moven;
   struct f2ddata_buf *buf;
-  MathValue dx, dy, dx2, dy2, dx3, dy3, d2, d3, *data2, *data3;
+  MathValue dx, dy, dx2, dy2, dx3, dy3, d2, d3;
 
 #if MASK_SERACH_METHOD == MASK_SERACH_METHOD_LINER
   masked = FALSE;
@@ -2369,11 +2364,9 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, M
     d2 = gdata[fp->y];
     d3 = gdata[fp->y + 1];
 
-    data2 = datax;
     dx2 = d2;
     dy2 = d3;
 
-    data3 = datay;
     dx3 = d2;
     dy3 = d3;
 
@@ -3840,7 +3833,9 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
       }
     } else {
       if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
-        if (! first && close) GRAdashlinetod(GC,x0,y0);
+        if (! first && close) {
+	  GRAdashlinetod(GC,x0,y0);
+	}
         first=TRUE;
       }
       errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
@@ -7207,7 +7202,7 @@ f2doutputfile(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
   }
   closedata(fp, f2dlocal);
   fclose(fp2);
-  return 0;
+  return r;
 }
 
 static int 

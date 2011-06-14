@@ -1279,7 +1279,7 @@ LoadPrmFile(char *file)
 void
 FileAutoScale(void)
 {
-  int anum, room;
+  int anum;
   struct objlist *aobj, *aobj2;
   double min, max, inc;
   char *argv2[2];
@@ -1324,7 +1324,6 @@ FileAutoScale(void)
     buf[j] = '\0';
   }
 
-  room = 0;
   argv2[0] = (char *) buf;
   argv2[1] = NULL;
   for (i = 0; i <= anum; i++) {

@@ -2036,7 +2036,7 @@ GRAdrawtext(int GC, char *s, char *font, int style,
   int size2, space2, style2;
   char *font3;
   int size3, space3, style3;
-  int i, j, k, x, y, val, x0, y0, x1, y1;
+  int i, k, x, y, val, x0, y0, x1, y1;
   double cs, si;
   int height;
   int alignlen, fx0, fx1, fy0, fy1;
@@ -2096,7 +2096,6 @@ GRAdrawtext(int GC, char *s, char *font, int style,
     alignlen = 0;
   }
 
-  j = 0;
   ptr = c;
   while (*ptr) {
     g_string_set_size(str, 0);

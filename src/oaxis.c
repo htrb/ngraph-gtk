@@ -2119,6 +2119,7 @@ draw_numbering_normalize(int GC, int side, const struct axis_config *aconf,
     break;
   case AXIS_NUM_POS_OBLIQUE1:
   case AXIS_NUM_POS_OBLIQUE2:
+  default:
     px1 = py1 = 0;
     break;
   }

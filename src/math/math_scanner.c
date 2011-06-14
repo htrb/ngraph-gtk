@@ -374,7 +374,6 @@ get_bin(const char *str, double *val)
 static const char *
 get_dec(const char *str, double *val)
 {
-  const char *ptr;
   int in_decimal, in_pow, pow_sign, pow_val;
   double dec, dec_order;
 
@@ -387,7 +386,7 @@ get_dec(const char *str, double *val)
   in_decimal = 0;
   in_pow = 0;
 
-  for (ptr = str; *str; str++) {
+  for (; *str; str++) {
     char c;
 
     c = toupper(*str);

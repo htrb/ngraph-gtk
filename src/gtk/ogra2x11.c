@@ -624,16 +624,12 @@ gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal)
 static int
 gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char code, *cstr;
+  char code;
   int *cpar;
   struct gtklocal *gtklocal;
-  struct gra2cairo_local *local;
-
-  local = (struct gra2cairo_local *) argv[2];
 
   code = *(char *) (argv[3]);
   cpar = (int *) argv[4];
-  cstr = argv[5];
 
   switch (code) {
   case 'I':

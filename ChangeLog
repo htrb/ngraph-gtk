@@ -1,3 +1,87 @@
+2011-06-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.nsc: open dummy "gra2cairofile" object when save
+	"GRA" file to render strings corectry.
+
+	* src/ogra2nul.c (g2nul_chardescent): remove unused variable
+	"font".
+
+	* src/oaxis.c (draw_numbering_normalize): add "default" in the
+	"case" statement.
+
+	* src/oprm.c (prmload): remove unused variables "scauto" and
+	"scperiod".
+
+	* src/math/math_expression.c (register_arg): remove unused
+	variable "i".
+	(call_func): remove unused variable "use_array".
+
+	* src/math/math_scanner.c (get_dec): remove unused variable "ptr".
+
+	* src/object.c (getvaluestr): remove unused variable "len".
+
+	* src/otext.c (textmatch): calculate margin.
+
+	* src/shell.c (puts_localized): return "r".
+
+	* src/ofile.c (put_func): remove unused variables "default_func"
+	and "fname".
+	(getdata_sub2): remove unused variables "data2" and "data3".
+	(f2doutputfile): return "r".
+
+	* src/orect.c (rectrotate): remove unused variables "nx1", "ny1",
+	"nx2" and "ny2".
+
+	* src/gra.c (GRAdrawtext): remove unused variable "j".
+
+	* src/gtk/ogra2cairo.c (loadconfig): remove unused variables
+	"fontcashsize" and "fontcashsize, fontcashdirfontcashdir".
+
+	* src/gtk/ox11dlg.c (dlgmessage): remove unused variable "rcode".
+
+	* src/gtk/x11cood.c (CmCoordinateWindow): remove unused variable
+	"dlg".
+
+	* src/gtk/x11file.c (FitSaveDialogSetup): remove unused variable
+	"j".
+	(func_entry_focused): remove unused variable "d".
+	(FileDialogSetup): remove unused variable "rcode".
+	(start_editing_type): remove unused variable "list".
+
+	* src/gtk/x11view.c (CutFocusedObjects): remove unused variable
+	"text".
+	(EvalDialogSetupItem): initialize variable "n".
+	(scrollbar_scroll_cb, AddList, AddInvalidateRect): remove unused
+	variable "d".
+	(mouse_down_point): remove unused variable "zoom".
+	(calc_integer_ratio): check variable "po2" (not "pow").
+
+	* src/gtk/x11opt.c (SetScriptDialogBrowse): remove unused variable
+	"d".
+
+	* src/gtk/ogra2x11.c (gtk_output): remove unused variables
+	"cstr"and "local".
+
+	* src/gtk/x11axis.c (GridDialogAxis): remove unused variable "d".
+	(AxisDialogFile): remove unused variable "room".
+	(CmAxisScaleUndo): remove unused variable "d".
+
+	* src/gtk/x11print.c (print_obj): remove unused member "g2wid".
+	(draw_page): remove unused variable "g2wid".
+
+	* src/gtk/x11lgnd.c (LegendWinLegendUpdate): remove unused
+	variable "num".
+
+	* src/gtk/x11commn.c (FileAutoScale): remove unused variable
+	"room".
+
+	* src/gtk/x11graph.c (SwitchDialogUp): remove unused variable
+	"num".
+	(SaveDialogSetup): remove unused variable "hbox".
+
+	* src/gtk/ogra2cairofile.c (gra2cairofile_output): remove unused
+	variable "cstr".
+
 2011-06-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* demo/demo.ngp.in (dialog): don't clear graph before exit

@@ -429,6 +429,12 @@ textmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     } else {
       GRAtextextent(text,font,style,pt,space,scriptsize,&gx0,&gy0,&gx1,&gy1,FALSE);
     }
+
+    minx-=err;
+    miny-=err;
+    maxx+=err;
+    maxy+=err;
+
     si=sin(dir/18000.0*MPI);
     co=cos(dir/18000.0*MPI);
     px=minx-x;

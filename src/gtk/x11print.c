@@ -64,7 +64,7 @@ static char *SvgVersion[] = {
 
 struct print_obj {
   struct objlist *graobj, *g2wobj;
-  int id, g2wid;
+  int id;
   N_VALUE *g2winst;
 };
 
@@ -536,14 +536,13 @@ draw_page(GtkPrintOperation *operation, GtkPrintContext *context, int page_nr, g
   struct objlist *graobj, *g2wobj;
   char *argv[2];
   struct print_obj *pobj;
-  int id, g2wid, r;
+  int id, r;
   N_VALUE *g2winst;
 
   pobj = (struct print_obj *) user_data;
   graobj = pobj->graobj;
   g2wobj = pobj->g2wobj;
   id = pobj->id;
-  g2wid = pobj->g2wid;
   g2winst = pobj->g2winst;
 
   argv[0] = (char *) context;
@@ -673,10 +672,9 @@ CmOutputPrinter(int select_file, int show_dialog)
   pobj.graobj = graobj;
   pobj.id = id;
   pobj.g2wobj = g2wobj;
-  pobj.g2wid = g2wid;
   pobj.g2winst = g2winst;
   g_signal_connect(print, "draw_page", G_CALLBACK(draw_page), &pobj);
-  g_signal_connect(print, "begin_print", G_CALLBACK(init_print), &pobj);
+  g_signal_connect(print, "begin_print", G_CALLBACK(init_print), NULL);
 
   switch (show_dialog) {
   case PRINT_SHOW_DIALOG_NONE:

@@ -196,7 +196,7 @@ rectbbox(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int 
 rectrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int angle, x1, y1, x2, y2, nx1, ny1, nx2, ny2, px, py, use_pivot;
+  int angle, x1, y1, x2, y2, px, py, use_pivot;
  
   get_position(obj, inst, &x1, &y1, &x2, &y2);
 
@@ -220,11 +220,6 @@ rectrotate(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   case 27000:
     rotate(px, py, angle, &x1, &y1);
     rotate(px, py, angle, &x2, &y2);
-
-    nx1 = MIN(x1, x2);
-    ny1 = MIN(y1, y2);
-    nx2 = MAX(x1, x2);
-    ny2 = MAX(y1, y2);
 
     if (set_position(obj, inst, x1, y1, x2, y2))
       return 1;

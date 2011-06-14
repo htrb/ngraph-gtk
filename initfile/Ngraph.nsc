@@ -132,6 +132,7 @@ SHOW_DIALOG=0
 XAXIS=0
 YAXIS=1
 SAVE_NGP=0
+NULL_DEVICE=/dev/null
 #
 while [ "$1" ]
 do
@@ -373,14 +374,25 @@ do
 	    check_file $2
 	    clear_viewer
 	    . $2
+
+	    new gra2cairofile file=$NULL_DEVICE
+	    new gra name=DUMMY
+	    gra:DUMMY:device=gra2cairofile:0
+	    gra:DUMMY:open
+
 	    new gra2file name=OUTPUT
+	    new gra name=OUTPUT
 	    gra2file::file=`basename $2 .ngp`.gra
-	    gra::device=gra2file:OUTPUT
-	    gra::open
-	    gra::draw
-	    gra::close
-	    del gra
-	    del gra2file
+	    gra:OUTPUT:device=gra2file:OUTPUT
+	    gra:OUTPUT:open
+	    gra:OUTPUT:draw
+	    gra:OUTPUT:close
+	    del gra:OUTPUT
+	    del gra2file:OUTPUT
+
+	    gra:DUMMY:close
+	    del gra:DUMMY
+	    del gra2cairofile
 	    del system:0
 	    ;;
 	-h|-help|--help)

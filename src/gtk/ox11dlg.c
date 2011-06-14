@@ -114,7 +114,7 @@ static int
 dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char *mes, *title;
-  int rcode, locksave;
+  int locksave;
 
   if (_getobj(obj, "title", inst, &title)) {
     title = NULL;
@@ -123,7 +123,7 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   mes = (char *)argv[2];
   locksave = Globallock;
   Globallock = TRUE;
-  rcode = message_box(DLGTopLevel, CHK_STR(mes), (title) ? title : "Confirm", RESPONS_OK);
+  message_box(DLGTopLevel, CHK_STR(mes), (title) ? title : "Confirm", RESPONS_OK);
   Globallock = locksave;
 
   return 0;
