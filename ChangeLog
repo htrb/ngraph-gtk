@@ -1,3 +1,8 @@
+2011-06-15  Shijo Nagao <shijo.nagao at ntnu.no>
+
+	* src/gtk/ox11menu.c (mx_show_lib_version): use macro
+	"GSL_VERSION" if available.
+
 2011-06-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/Ngraph.nsc: open dummy "gra2cairofile" object when save

@@ -1931,15 +1931,23 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 #ifdef HAVE_LIBGSL
   printfstdout("\n");
   printfstdout("%sGSL\n"
+#ifdef GSL_VERSION
+	       "%s compile: %s\n"
+#else  /* GSL_VERSION */
 	       "%s compile: %d.%d\n"
+#endif	/* GSL_VERSION */
 	       "%s  linked: %s\n",
 	       h,
 	       h,
+#ifdef GSL_VERSION
+	       GSL_VERSION,
+#else  /* GSL_VERSION */
 	       GSL_MAJOR_VERSION,
 	       GSL_MINOR_VERSION,
+#endif	/* GSL_VERSION */
 	       h,
 	       gsl_version);
-#endif
+#endif	/* HAVE_LIBGSL */
 
   return 0;
 }
