@@ -154,7 +154,7 @@
 	* demo/demo.ngp (dialog): don't clear graph before exit
 	demonstration.
 
-	* demo/demo4.ngp.in: use "axisgrid" instead of "path" to shou grid
+	* demo/demo4.ngp.in: use "axisgrid" instead of "path" to show grid
 	line.
 
 	* src/math/math_basic_function.c (mjd): check parameters "m" and
@@ -190,8 +190,7 @@
 	* src/ostring.c (utf8_string_slice, string_slice, string_match)
 	(string_rindex, string_index, string_replace): added.
 	(ostring): add field "slice", "replace", "index", "rindex" and
-	"math".
-
+	"match".
 
 	* src/oregexp.c (regexp_replace): added.
 	(oregexp): add field "replace".
