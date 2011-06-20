@@ -45,8 +45,8 @@ gsl-1.14.tar.gz
 
 7. Compile and install GSL
 
-tar xf gsl-1.14.tar.gz
-cd gsl-1.14
+tar xf gsl-1.15.tar.gz
+cd gsl-1.15
 ./configure --prefix=/mingw
 make
 make install
