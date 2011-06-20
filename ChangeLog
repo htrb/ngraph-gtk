@@ -1,3 +1,11 @@
+2011-06-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11merge.c (MergeDialogSetupItem): cursor will be set
+	after the last character.
+
+	* src/gtk/x11file.c (FileDialogSetupItem): cursor will be set
+	after the last character.
+
 2011-06-15  Shijo Nagao <shijo.nagao at ntnu.no>
 
 	* src/gtk/ox11menu.c (mx_show_lib_version): use macro

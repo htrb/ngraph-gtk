@@ -94,6 +94,7 @@ MergeDialogSetupItem(struct MergeDialog *d, int file, int id)
 {
   if (file) {
     SetWidgetFromObjField(d->file, d->Obj, id, "file");
+    gtk_editable_set_position(GTK_EDITABLE(d->file), -1);
   }
   SetWidgetFromObjField(d->topmargin, d->Obj, id, "top_margin");
   SetWidgetFromObjField(d->leftmargin, d->Obj, id, "left_margin");

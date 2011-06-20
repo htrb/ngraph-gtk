@@ -2424,6 +2424,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
 
   if (file) {
     SetWidgetFromObjField(d->file, d->Obj, id, "file");
+    gtk_editable_set_position(GTK_EDITABLE(d->file), -1);
   }
 
   if (id == d->Id) {
