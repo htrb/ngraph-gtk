@@ -573,7 +573,7 @@
 <a name="DATA_DIALOG">&nbsp;</a>
 <h2><a href="#TOP">データ・ダイアログボックス</a></h2>
 
-<img src="./dialogs/data.jpg" width="365" height="261" alt=""><br><br>
+<img src="./dialogs/data.png" alt=""><br><br>
 <table border="1">
  <tr>
   <td>ファイル名</td>
@@ -584,113 +584,138 @@
  <tr>
   <td>ファイルから設定読込</td>
   <td>
-   データファイルの先頭に設定パラメターが記述されている場合に、そのパラメターを撮り込む。
-   データファイルへの設定パラメターの記述の方法は<a href="./data.htm#DATAFILEOPTION">データファイル埋め込みオプション</a>を参照。
+   データファイルの先頭に設定パラメターが記述されている場合に、そのパラメターを取り込む。
+   データファイルへの設定パラメターの記述の方法は<a href="./data.html#DATAFILEOPTION">データファイル埋め込みオプション</a>を参照。
   </td>
  </tr>
  <tr>
-  <td>(X)カラム</td>
+  <td>編集</td>
+  <td>
+   データファイルを編集するためにエディターを開く。
+   起動されるエディターは[設定]-[その他]メニューで変更可能。
+  </td>
+ </tr>
+ <tr>
+  <td>Xカラム</td>
   <td>
    横軸として使用するデータの、データファイルにおけるカラム数。
    0の時は 1,2,3,... がデータとなる。
   </td>
  </tr>
  <tr>
-  <td>(X)軸</td>
+  <td>X軸</td>
   <td>
    横軸として使用する軸。
    軸の通し番号(Axis Window の行先頭に表示される数字)で指定するが、コンボボックスのリストには軸の名前で一覧表示される。
   </td>
  </tr>
  <tr>
-  <td>(Y)カラム</td>
+  <td>Yカラム</td>
   <td>
    縦軸として使用するデータの、データファイルにおけるカラム数。
    0の時は 1,2,3,... がデータとなる。
   </td>
  </tr>
  <tr>
-  <td>(Y)軸</td>
+  <td>Y軸</td>
   <td>
    縦軸として使用する軸。
    軸の通し番号(Axis Window の行先頭に表示される数字)で指定するが、コンボボックスのリストには軸の名前で一覧表示される。
   </td>
  </tr>
  <tr>
-  <td>タイプ</td>
   <td>
-   mark, line 等のプロットする方法。
+   プロット
   </td>
- </tr>
- <tr>
-  <td>mark-&gt;&gt;</td>
   <td>
-   タイプが mark の時にプロットに使われるマークの種類。
-  </td>
- </tr>
- <tr>
-  <td>curve-&gt;&gt;</td>
-  <td>
-   タイプが curve の時に使われる補間方法。
-   spline(スプライン補間), spline_close(閉スプライン補間), bspline(Bスプライン補間), bspline_close(閉Bスプライン補間)。
-   Bスプライン補間を使うにはデータ数が7点以上必要。
-  </td>
- </tr>
- <tr>
-  <td>fit-&gt;&gt;</td>
-  <td>
-   タイプが fit の時にフィッティングの方法を指定するダイアログボックスを開く。
-   タイプを fit にしたら必ず一度はこのボタンを押してフィッティング方法を指定しないと、
-   描画時に `fit' is not specified のエラーになる。
-  </td>
- </tr>
- <tr>
-  <td>色1</td>
-  <td>
-   プロットする線、マーク等の色。
-  </td>
- </tr>
- <tr>
-  <td>色2</td>
-  <td>
-   タイプが mark, rectangle_fill, bar_fill_x, bar_fill_y の時の第2色。
-  </td>
- </tr>
- <tr>
-  <td>クリップ</td>
-  <td>
-   チェックしない状態では、データは軸の外側にもプロットされる。
-  </td>
- </tr>
- <tr>
-  <td>線種</td>
-  <td>
-   プロットする線の種類。
-   点線の長さ、間隔を詳細に指定するには、"100 10" の様に点線の繰り返し要素の長さを指定する。
-  </td>
- </tr>
- <tr>
-  <td>線幅</td>
-  <td>
-   プロットする線の幅。
-  </td>
- </tr>
- <tr>
-  <td>サイズ</td>
-  <td>
-   マークの大きさ、エラーバーのバーの長さなどのサイズ。
-  </td>
- </tr>
- <tr>
-  <td>マイター</td>
-  <td>
-   マイターリミット。折れ線の角で輪郭をどこまで描画するかを決める。
-  </td>
- </tr>
- <tr>
-  <td>ジョイン</td>
-  <td>
-   折れ線の角の輪郭形状。
+   <table>
+    <tr>
+     <td>
+      <table border="1">
+       <tr>
+	<td>タイプ</td>
+	<td>
+	 mark, line 等のプロットする方法。
+	</td>
+       </tr>
+       <tr>
+	<td>マーク</td>
+	<td>
+	 タイプが mark の時にプロットに使われるマークの種類。
+	</td>
+       </tr>
+       <tr>
+	<td>曲線</td>
+	<td>
+	 タイプが curve の時に使われる補間方法。
+	 spline(スプライン補間), spline_close(閉スプライン補間), bspline(Bスプライン補間), bspline_close(閉Bスプライン補間)。
+	 Bスプライン補間を使うにはデータ数が7点以上必要。
+	</td>
+       </tr>
+       <tr>
+	<td>フィット</td>
+	<td>
+	 タイプが fit の時にフィッティングの方法を指定するダイアログボックスを開く。
+	 タイプを fit にしたら必ず一度はこのボタンを押してフィッティング方法を指定しないと、
+	 描画時に `fit' is not specified のエラーになる。
+	</td>
+       </tr>
+       <tr>
+	<td>色1</td>
+	<td>
+	 プロットする線、マーク等の色。
+	</td>
+       </tr>
+       <tr>
+	<td>色2</td>
+	<td>
+	 タイプが mark, rectangle_fill, bar_fill_x, bar_fill_y の時の第2色。
+	</td>
+       </tr>
+       <tr>
+	<td>クリップ</td>
+	<td>
+	 チェックしない状態では、データは軸の外側にもプロットされる。
+	</td>
+       </tr>
+       <tr>
+	<td>線種</td>
+	<td>
+	 プロットする線の種類。
+	 点線の長さ、間隔を詳細に指定するには、"100 10" の様に点線の繰り返し要素の長さを指定する。
+	</td>
+       </tr>
+       <tr>
+	<td>線幅</td>
+	<td>
+	 プロットする線の幅。
+	</td>
+       </tr>
+       <tr>
+	<td>サイズ</td>
+	<td>
+	 マークの大きさ、エラーバーのバーの長さなどのサイズ。
+	</td>
+       </tr>
+       <tr>
+	<td>マイター</td>
+	<td>
+	 マイターリミット。折れ線の角で輪郭をどこまで描画するかを決める。
+	</td>
+       </tr>
+       <tr>
+	<td>ジョイン</td>
+	<td>
+	 折れ線の角の輪郭形状。
+	</td>
+       </tr>
+      </table>
+     </td>
+     <td>
+      <img src="./dialogs/dataplot.png" alt="">
+     </td>
+    </tr>
+   </table>
   </td>
  </tr>
  <tr>
@@ -721,7 +746,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/datamath.jpg" width="328" height="196" alt="">
+      <img src="./dialogs/datamath.png" alt="">
      </td>
     </tr>
    </table>
@@ -774,7 +799,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/dataload.jpg" width="334" height="113" alt="">
+      <img src="./dialogs/dataload.png" alt="">
      </td>
     </tr>
    </td>
@@ -803,7 +828,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/datamask.jpg" width="186" height="180" alt="">
+      <img src="./dialogs/datamask.png" alt="">
      </td>
     </tr>
    </table>
@@ -832,40 +857,27 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/datamove.jpg" width="368" height="180" alt="">
+      <img src="./dialogs/datamove.png" alt="">
      </td>
     </tr>
    </table>
   </td>
  </tr>
  <tr>
-  <td>Edit</td>
-  <td>
-   データファイルを編集するためにエディターを開く。
-   起動されるエディターは[設定]-[その他]メニューで変更可能。
-  </td>
- </tr>
- <tr>
-  <td>Apply all</td>
+  <td>全てに適用</td>
   <td>
    ファイル選択ダイアログボックスで、複数のデータファイルを指定した場合、
    これ以降のデータファイルに対しては現在の設定を用いる。
   </td>
  </tr>
  <tr>
-  <td>Copy</td>
+  <td>設定のコピー</td>
   <td>
-   他のデータファイルの設定パラメターを取り込む。「数式変換」、「読込」、「マスク」、「移動」のパラメターはコピーされない。
-  </td>
- </tr>
- <tr>
-  <td>Copy All</td>
-  <td>
-   他のデータファイルの設定パラメターを取り込む。「数式変換」、「読込」、「マスク」、「移動」のパラメターもコピーされる。
+   それぞれのタブで設定するパラメータを他のデータファイルから取り込む。
   </td>
  </tr>
 </table>
-
+  
 
 <br>
 <hr>
@@ -876,7 +888,7 @@
 <a name="FIT_DIALOG">&nbsp;</a>
 <h2><a href="#TOP">フィット・ダイアログボックス</a></h2>
 
-<img src="./dialogs/datafit.jpg" width="367" height="376" alt=""><br><br>
+<img src="./dialogs/datafit.png" alt=""><br><br>
 <table border="1">
  <tr>
   <td>種類</td>
@@ -976,7 +988,7 @@
   <td>設定保存</td>
   <td>
    現在のフィット設定を保存する。後で読み込む際に区別がつくように「プロファイル」を指定する。
-   設定は _fit.ngp の名前のファイルに保存される。
+   設定は fit.ngp の名前のファイルに保存される。
   </td>
  </tr>
 </table>
@@ -991,59 +1003,74 @@
 <a name="AXIS_DIALOG">&nbsp;</a>
 <h2><a href="#TOP">軸・ダイアログボックス</a></h2>
 
-<img src="./dialogs/axis.jpg" width="344" height="153" alt=""><br><br>
 <table border="1">
  <tr>
-  <td>最小値、最大値</td>
+  <td>スケール</td>
   <td>
-   軸のスケールの最大と最小。
-   「最小値」「最大値」「増分」の全てが 0 の時、スケールは未設定状態とみなされ描画時に自動的に設定される。
-  </td>
- </tr>
- <tr>
-  <td>増分</td>
-  <td>
-   目盛数字は「増分」の値毎に付けられ、目盛線は「増分」を「分割数」だけ分割した値毎に付けられる。
-   「スケール法」が log の時、「増分」が10 では 10, 100, 1000 の様に目盛数字が付けられ、
-   「増分」が 1 の時には 1, 2, 3 の様に目盛数字が付けられる。
-  </td>
- </tr>
- <tr>
-  <td>スケール法</td>
-  <td>
-   <p>
-   linear(通常の線形軸), log(対数軸), inverse(逆数軸), MJD(軸の値を MJD
-   として日時で表示) から選択。
-   </p>
-   <p>
-   MJD の場合の日時表示は strftime (3) を使用しているため strftime (3)
-   で扱える範囲外の日時については MJD がそのまま表示されます。
-   </p>
-  </td>
- </tr>
- <tr>
-  <td>クリア</td>
-  <td>
-   スケールを未設定状態(「最小値」「最大値」「増分」の全てが 0)にする。
-  </td>
- </tr>
- <tr>
-  <td>ファイル</td>
-  <td>
-   指定したデータファイルのデータでスケールを自動設定する。
-  </td>
- </tr>
- <tr>
-  <td>分割数</td>
-  <td>
-   「増分」を更に分割する分割数。
-  </td>
- </tr>
- <tr>
-  <td>参照軸</td>
-  <td>
-   スケールが未設定状態(「最小値」「最大値」「増分」の全てが 0)の時、ここに指定した軸の設定が代わりに使われる。
-   軸の通し番号ではなく、実行時に決まる一意の番号(Axis Window の行末に表示される^で始まる数字)で指定するが、コンボボックスのリストには軸の名前で一覧表示される。
+   <table>
+    <tr>
+     <td>
+      <table border="1">
+       <tr>
+	<td>最小値、最大値</td>
+	<td>
+	 軸のスケールの最大と最小。
+	 「最小値」「最大値」「増分」の全てが 0 の時、スケールは未設定状態とみなされ描画時に自動的に設定される。
+	</td>
+       </tr>
+       <tr>
+	<td>増分</td>
+	<td>
+	 目盛数字は「増分」の値毎に付けられ、目盛線は「増分」を「分割数」だけ分割した値毎に付けられる。
+	 「スケール法」が log の時、「増分」が10 では 10, 100, 1000 の様に目盛数字が付けられ、
+	 「増分」が 1 の時には 1, 2, 3 の様に目盛数字が付けられる。
+	</td>
+       </tr>
+       <tr>
+	<td>スケール法</td>
+	<td>
+	 <p>
+	 linear(通常の線形軸), log(対数軸), inverse(逆数軸), MJD(軸の値を MJD
+	 として日時で表示) から選択。
+	 </p>
+	 <p>
+	 MJD の場合の日時表示は strftime (3) を使用しているため strftime (3)
+	 で扱える範囲外の日時については MJD がそのまま表示されます。
+	 </p>
+	</td>
+       </tr>
+       <tr>
+	<td>クリア</td>
+	<td>
+	 スケールを未設定状態(「最小値」「最大値」「増分」の全てが 0)にする。
+	</td>
+       </tr>
+       <tr>
+	<td>ファイル</td>
+	<td>
+	 指定したデータファイルのデータでスケールを自動設定する。
+	</td>
+       </tr>
+       <tr>
+	<td>分割数</td>
+	<td>
+	 「増分」を更に分割する分割数。
+	</td>
+       </tr>
+       <tr>
+	<td>参照軸</td>
+	<td>
+	 スケールが未設定状態(「最小値」「最大値」「増分」の全てが 0)の時、ここに指定した軸の設定が代わりに使われる。
+	 軸の通し番号ではなく、実行時に決まる一意の番号(Axis Window の行末に表示される^で始まる数字)で指定するが、コンボボックスのリストには軸の名前で一覧表示される。
+	</td>
+       </tr>
+      </table>
+     </td>
+     <td>
+      <img src="./dialogs/axis.png" alt="">
+     </td>
+    </tr>
+   </table>
   </td>
  </tr>
  <tr>
@@ -1082,7 +1109,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/axisbase.jpg" width="311" height="146" alt="">
+      <img src="./dialogs/axisbase.png" alt="">
      </td>
     </tr>
    </table>
@@ -1135,7 +1162,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/axisgage.jpg" width="208" height="228" alt="">
+      <img src="./dialogs/axisgage.png" alt="">
      </td>
     </tr>
    </table>
@@ -1193,6 +1220,7 @@
 	 各目盛数字の後続に付ける文字列。
 	</td>
        </tr>
+       <tr>
 	<td>日時書式</td>
 	<td>
 	 スケール法が MJD の時の日時書式を指定する。利用できる設定につい
@@ -1244,7 +1272,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/axisnum.jpg" width="296" height="228" alt="">
+      <img src="./dialogs/axisnum.png" alt="">
      </td>
     </tr>
    </table>
@@ -1296,7 +1324,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/axisfont.jpg" width="296" height="147" alt="">
+      <img src="./dialogs/axisfont.png" alt="">
      </td>
     </tr>
    </table>
@@ -1333,7 +1361,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/axispos.jpg" width="288" height="111" alt="">
+      <img src="./dialogs/axispos.png" alt="">
      </td>
     </tr>
    </table>
@@ -1349,13 +1377,19 @@
 <a name="GRID_DIALOG">&nbsp;</a>
 <h2><a href="#TOP">グリッド・ダイアログボックス</a></h2>
 
-<img src="./dialogs/grid.jpg"><br><br>
+<img src="./dialogs/grid.png"><br><br>
 <table border="1">
  <tr>
   <td>X軸、Y軸</td>
   <td>
    グリッドを付ける2つの直交した軸を指定する。
    軸の通し番号ではなく、実行時に決まる一意の番号(Axis Window の行末に表示される^で始まる数字)で指定するが、コンボボックスのリストには軸の名前で一覧表示される。
+  </td>
+ </tr>
+ <tr>
+  <td>Xグリッド描画、Yグリッド描画</td>
+  <td>
+   それぞれのグリッド線描画の有無を指定する。
   </td>
  </tr>
  <tr>
@@ -1404,14 +1438,6 @@
    <table border="1">
     <tr>
      <td>
-      座標
-     </td>
-     <td>
-      直線、曲線、多角形の場合に点列の座標を X0 Y0 X1 Y1 ... の様に指定する。各座標値の区切りはスペース、タブ、コンマ。
-     </td>
-    </tr>
-    <tr>
-     <td>
       線種
      </td>
      <td>
@@ -1458,11 +1484,35 @@
       <table border="1">
        <tr>
 	<td>
+	 座標
+	</td>
+	<td>
+	 直線、曲線、多角形の場合に点列の座標を指定する。「追加」「削除」のボタンで座標を追加または削除できる。また、行をドラッグすることで座標の順番を変えることが出来る。
+	</td>
+       </tr>
+       <tr>
+	<td>
+	 タイプ
+	</td>
+	<td>
+	 「直線」「曲線」から選択。
+	</td>
+       </tr>
+       <tr>
+	<td>
 	 補間法
 	</td>
 	<td>
-	 曲線の描画に使われる補間法。spine(スプライン), spline_close(閉スプライン), bspline(Bスプライン), bspline_close(閉Bスプライン)から選択。
+	 曲線の描画に使われる補間法。「スプライン」,「閉スプライン」,「Bスプライン」, 「閉Bスプライン)」から選択。
 	 Bスプラインを使うには座標点が7点以上必要。
+	</td>
+       </tr>
+       <tr>
+	<td>
+	 ストローク
+	</td>
+	<td>
+	 輪郭を描画する。
 	</td>
        </tr>
        <tr>
@@ -1471,6 +1521,14 @@
 	</td>
 	<td>
 	 終点と始点を直線で結ぶ。
+	</td>
+       </tr>
+       <tr>
+	<td>
+	 矢印
+	</td>
+	<td>
+	 直線に矢印を付加する。なし, 「始点」, 「終点」, 「両方」から選択。
 	</td>
        </tr>
        <tr>
@@ -1491,14 +1549,6 @@
        </tr>
        <tr>
 	<td>
-	 矢印
-	</td>
-	<td>
-	 直線に矢印を付加する。none(矢印なし), begin(始点), end(終点), both(始点および終点)から選択。
-	</td>
-       </tr>
-       <tr>
-	<td>
 	 スライダ
 	</td>
 	<td>
@@ -1509,7 +1559,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/lgndline.jpg" width="279" height="196" alt="">
+      <img src="./dialogs/lgndpath.png" alt="">
      </td>
     </tr>
    </table>
@@ -1545,13 +1595,13 @@
 	 ストローク
 	</td>
 	<td>
-	 四角形のフレームを「色」で描画。
+	 四角形の輪郭を「色」で描画。
 	</td>
        </tr>
       </table>
      </td>
      <td>
-      <img src="./dialogs/lgndrect.jpg" width="271" height="113" alt="">
+      <img src="./dialogs/lgndrect.png" alt="">
      </td>
     </tr>
    </table>
@@ -1576,10 +1626,26 @@
        </tr>
        <tr>
 	<td>
+	 開始角、円弧角
+	</td>
+	<td>
+	 円弧は「開始角」から反時計回りに「円弧角」だけ描画される。1度単位。
+	</td>
+       </tr>
+       <tr>
+	<td>
 	 扇形
 	</td>
 	<td>
 	 円の中心を円弧の端を結んだ扇形として描画する。
+	</td>
+       </tr>
+       <tr>
+	<td>
+	 ストローク
+	</td>
+	<td>
+	 扇形または弦形の輪郭を「色」で描画。
 	</td>
        </tr>
        <tr>
@@ -1593,32 +1659,16 @@
        </tr>
        <tr>
 	<td>
-	 開始角、円弧角
-	</td>
-	<td>
-	 円弧は「開始角」から反時計回りに「円弧角」だけ描画される。1度単位。
-	</td>
-       </tr>
-       <tr>
-	<td>
 	 塗りつぶし
 	</td>
 	<td>
 	 扇形または弦形として塗りつぶす。
 	</td>
        </tr>
-       <tr>
-	<td>
-	 ストローク
-	</td>
-	<td>
-	 扇形または弦形のフレームを「色」で描画。
-	</td>
-       </tr>
       </table>
      </td>
      <td>
-      <img src="./dialogs/lgndarc.jpg" width="281" height="133" alt="">
+      <img src="./dialogs/lgndarc.png" alt="">
      </td>
     </tr>
    </table>
@@ -1668,7 +1718,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/lgndmark.jpg" width="262" height="133" alt="">
+      <img src="./dialogs/lgndmark.png" alt="">
      </td>
     </tr>
    </table>
@@ -1696,7 +1746,7 @@
 	 テキスト
 	</td>
 	<td>
-	 文字列中に制御文字を入れる事で、フォントを文字列単位で変えたりが可能。詳細は<a href="./text.htm#TEXT">テキスト描画の制御文字</a>を参照。
+	 文字列中に制御文字を入れる事で、フォントを文字列単位で変えたりが可能。詳細は<a href="./text.html#TEXT">テキスト描画の制御文字</a>を参照。
 	</td>
        </tr>
        <tr>
@@ -1742,13 +1792,13 @@
 	 Raw
 	</td>
 	<td>
-	 <a href="./text.htm#TEXT">テキスト描画の制御文字</a>の機能を無効にし、「テキスト」の文字列をそのまま描画する。
+	 <a href="./text.html#TEXT">テキスト描画の制御文字</a>の機能を無効にし、「テキスト」の文字列をそのまま描画する。
 	</td>
        </tr>
       </table>
      </td>
      <td>
-      <img src="./dialogs/lgndtext.jpg" width="281" height="174" alt="">
+      <img src="./dialogs/lgndtext.png" alt="">
      </td>
     </tr>
    </table>
@@ -1798,7 +1848,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/lgndgaus.jpg" width="281" height="235" alt="">
+      <img src="./dialogs/lgndgaus.png" alt="">
      </td>
     </tr>
    </table>
@@ -1816,7 +1866,7 @@
 <a name="MERGE_DIALOG">&nbsp;</a>
 <h2><a href="#TOP">合成ファイル・ダイアログボックス</a></h2>
 
-<img src="./dialogs/merge.jpg" width="304" height="174" alt=""><br><br>
+<img src="./dialogs/merge.png" width="304" height="174" alt=""><br><br>
 <table border="1">
  <tr>
   <td>ファイル名</td>
@@ -1831,15 +1881,9 @@
   </td>
  </tr>
  <tr>
-  <td>拡大率</td>
+  <td>ズーム</td>
   <td>
    合成ファイルを拡大、縮小して合成する際の拡大率。%単位。
-  </td>
- </tr>
- <tr>
-  <td>全角ギリシア->シンボル</td>
-  <td>
-   Ngraph ver 5.4 以前の GRA ファイルを合成する際、全角ギリシア文字をSymbolフォントへと自動変換する。
   </td>
  </tr>
 </table>
@@ -1883,7 +1927,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/loadngp.jpg" width="208" height="113" alt="">
+      <img src="./dialogs/loadngp.png" alt="">
      </td>
     </tr>
    </table>
@@ -1899,9 +1943,8 @@
        <tr>
 	<td>パス情報</td>
 	<td>
-	 データファイルや合成ファイルのパス情報を保存する方法。uncahange
-	 (現在の設定のまま), full (絶対パスに変更), relative (カレントフォ
-	 ルダからの相対パス), base (パス情報なし)から選択。
+	 データファイルや合成ファイルのパス情報を保存する方法。「変更しない」(設定のまま),
+	 「フルパス」(絶対パスに変更), 「総体パス」(カレントフォルダからの相対パス), 「ファイル名のみ」(パス情報なし)から選択。
 	</td>
        </tr>
        <tr>
@@ -1919,7 +1962,7 @@
       </table>
      </td>
      <td>
-      <img src="./dialogs/save.jpg" width="185" height="115" alt="">
+      <img src="./dialogs/save.png" alt="">
      </td>
     </tr>
    </table>
@@ -1938,16 +1981,10 @@
 	 データファイルや合成ファイルのパス情報(フォルダ名)を無視し、それらファイルがカレントフォルダにあるものとして取り扱う。
 	</td>
        </tr>
-       <tr>
-	<td>全角ギリシア->シンボル</td>
-	<td>
-	 PRMファイルの Legend 中の全角ギリシア文字をSymbolフォントへと自動変換する。
-	</td>
-       </tr>
       </table>
      </td>
      <td>
-      <img src="./dialogs/loadprm.jpg" width="137" height="92" alt="">
+      <img src="./dialogs/loadprm.png" alt="">
      </td>
     </tr>
    </table>
@@ -1963,7 +2000,7 @@
 <a name="SWITCH_DIALOG">&nbsp;</a>
 <h2><a href="#TOP">描画順・ダイアログボックス</a></h2>
 
-<img src="./dialogs/pageord.jpg" width="265" height="207" alt=""><br>
+<img src="./dialogs/pageord.png" alt=""><br>
 <table border="1">
  <tr>
   <td>描画オブジェクト(描画順)</td>
@@ -1979,9 +2016,9 @@
   </td>
  </tr>
  <tr>
-  <td>最初へ、最後へ</td>
+  <td>最初へ、最後へ、上へ、下へ</td>
   <td>
-   「描画オブジェクト(描画順)」のリストで選択されているオブジェクトの順番を変更して最初、最後に移動する。
+   「描画オブジェクト(描画順)」のリストで選択されているオブジェクトの順番を変更して最初、最後、上、下に移動する。
   </td>
  </tr>
 </table>
@@ -1994,7 +2031,7 @@
 <a name="PREFMISC_DIALOG">&nbsp;</a>
 <h2><a href="#TOP">その他設定・ダイアログボックス</a></h2>
 
-<img src="./dialogs/prefmisc.png" width="482" height="306" alt=""><br><br>
+<img src="./dialogs/prefmisc.png" alt=""><br><br>
 <table border="1">
  <tr>
   <td>エディター</td>
@@ -2003,24 +2040,15 @@
   </td>
  </tr>
  <tr>
-  <td>「カレントディレクトリを移動」をチェック</td>
+  <td>ヘルプ・ブラウザ</td>
   <td>
-   ファイルを選択するダイアログボックスを開いた時、「カレントディレクトリを移動」が初期状態でチェックされているようにする。
+   ヘルプを表示するためのブラウザ。
   </td>
  </tr>
  <tr>
-  <td>終了時にファイル履歴をセーブ</td>
+  <td>ウェブ・ブラウザ</td>
   <td>
-   グラフファイル(NGPファイル)の履歴とデータファイルの履歴(それぞれ、[グラフ]-[最近使用したグラフ]、[データ]-[最近使用したデータ]にリストされる)を終了時に保存する。
-  </td>
- </tr>
- <tr>
-  <td>不透明度を使う</td>
-  <td>
-   グラフやレジェンドの色指定で透明度を使用するかどうかを設定します。ただ
-   し、PostScript など不透明度に対応していないフォーマットにエクスポート
-   する時は不透明度設定を使った部分がビットマップで出力されることがありま
-   す。
+   ウェブ・ブラウザ。
   </td>
  </tr>
  <tr>
@@ -2070,6 +2098,25 @@
   information window の表示に使われるフォントを指定する。
  </td>
 </tr>
+ <tr>
+  <td>「カレントディレクトリを移動」をチェック</td>
+  <td>
+   ファイルを選択するダイアログボックスを開いた時、「カレントディレクトリを移動」が初期状態でチェックされているようにする。
+  </td>
+ </tr>
+ <tr>
+  <td>終了時にファイル履歴をセーブ</td>
+  <td>
+   グラフファイル(NGPファイル)の履歴とデータファイルの履歴(それぞれ、[グラフ]-[最近使用したグラフ]、[データ]-[最近使用したデータ]にリストされる)を終了時に保存する。
+  </td>
+ </tr>
+ <tr>
+  <td>不透明度を使う</td>
+  <td>
+   グラフやレジェンドの色指定で透明度を使用するかどうかを設定する。
+   ただし、PostScript など不透明度に対応していないフォーマットにエクスポートする時は不透明度設定を使った部分がビットマップで出力されることがある。
+  </td>
+ </tr>
 </table>
 
 <br>

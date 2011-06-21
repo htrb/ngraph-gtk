@@ -233,16 +233,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = axis.jpg axisbase.jpg \
-	axisfont.jpg axisgage.jpg axisnum.jpg \
-	axispos.jpg data.jpg datafit.jpg \
-	dataload.jpg datamask.jpg datamath.jpg \
-	datamove.jpg grid.jpg lgndarc.jpg \
-	lgndcurv.jpg lgndgaus.jpg lgndline.jpg \
-	lgndmark.jpg lgndpoly.jpg lgndrect.jpg \
-	lgndtext.jpg loadngp.jpg loadprm.jpg \
-	merge.jpg pageord.jpg prefmisc.png \
-	save.jpg 
+EXTRA_DIST = axis.png axisbase.png axisfont.png axisgage.png		\
+	axisnum.png axispos.png data.png dataplot.png datafit.png	\
+	dataload.png datamask.png datamath.png datamove.png grid.png	\
+	lgndarc.png lgndgaus.png lgndpath.png lgndmark.png		\
+	lgndrect.png lgndtext.png loadngp.png loadprm.png merge.png	\
+	pageord.png prefmisc.png save.png
 
 htmljadialogdir = $(docdir)/html_ja/dialogs
 htmljadialog_DATA = ${EXTRA_DIST}
