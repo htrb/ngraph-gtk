@@ -240,7 +240,7 @@ nruler_make_pixmap(Nruler *ruler, GtkWidget *widget)
     g_object_unref(ruler->backing_store);
   }
 
-  ruler->backing_store = gdk_pixmap_new(GTK_WIDGET_GET_WINDOW(widget),
+  ruler->backing_store = gdk_pixmap_new(gtk_widget_get_window(widget),
 					allocation.width,
 					allocation.height,
 					-1);
@@ -494,7 +494,7 @@ nruler_draw_pos(Nruler *ruler, GtkWidget *widget)
     return;
   }
 
-  cr = gdk_cairo_create(GTK_WIDGET_GET_WINDOW(widget));
+  cr = gdk_cairo_create(gtk_widget_get_window(widget));
 
   /*  If a backing store exists, restore the ruler  */
   if (ruler->backing_store) {

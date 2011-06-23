@@ -996,7 +996,7 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
   static cairo_t *cr;
   GdkWindow *window;
 
-  window = GTK_WIDGET_GET_WINDOW(win);
+  window = gtk_widget_get_window(win);
   if (window == NULL) {
     return;
   }
@@ -1044,7 +1044,7 @@ LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
     return;
   }
 
-  win = GTK_WIDGET_GET_WINDOW(w);
+  win = gtk_widget_get_window(w);
   if (win == NULL) {
     return;
   }
@@ -2733,6 +2733,9 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_X, Llist, G_CALLBACK(pos_x_edited));
   set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_Y, Llist, G_CALLBACK(pos_y_edited));
   set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_WIDTH, Llist, G_CALLBACK(width_edited));
+
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->text), TRUE);
+  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->text), LEGEND_WIN_COL_ID);
 
   sub_window_show_all((struct SubWin *) d);
   sub_window_set_geometry((struct SubWin *)d, TRUE);

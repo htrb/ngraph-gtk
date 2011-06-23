@@ -314,7 +314,7 @@ paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
   if (text == NULL)
     return;
 
-  window = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
+  window = gtk_widget_get_window(NgraphApp.Viewer.Win);
   if (window == NULL)
     return;
 
@@ -1045,7 +1045,7 @@ ViewerWinSetup(void)
   int x, y, width, height;
 
   d = &NgraphApp.Viewer;
-  d->gdk_win = GTK_WIDGET_GET_WINDOW(d->Win);
+  d->gdk_win = gtk_widget_get_window(d->Win);
   Menulocal.GRAoid = -1;
   Menulocal.GRAinst = NULL;
   d->Mode = PointB;
@@ -4769,7 +4769,7 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
     return TRUE;
   }
 
-  cr = create_cairo(GTK_WIDGET_GET_WINDOW(w));
+  cr = create_cairo(gtk_widget_get_window(w));
   if (cr == NULL) {
     return TRUE;
   }
@@ -5087,7 +5087,7 @@ create_pix(int w, int h)
   GdkWindow *window;
   cairo_t *cr;
 
-  window = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
+  window = gtk_widget_get_window(NgraphApp.Viewer.Win);
   if (window == NULL) {
     return;
   }
@@ -5147,7 +5147,7 @@ OpenGC(void)
   if (height == 0)
     height = 1;
 
-  NgraphApp.Viewer.gdk_win = GTK_WIDGET_GET_WINDOW(NgraphApp.Viewer.Win);
+  NgraphApp.Viewer.gdk_win = gtk_widget_get_window(NgraphApp.Viewer.Win);
   create_pix(width, height);
 
   Menulocal.region = NULL;

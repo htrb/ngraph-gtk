@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.06.00\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-06-20 21:06+0900\n"
+"POT-Creation-Date: 2011-06-22 19:23+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -875,7 +875,7 @@ msgstr ""
 msgid "_Y math:"
 msgstr ""
 
-#: src/gtk/x11file.c:2376 src/gtk/x11file.c:3139
+#: src/gtk/x11file.c:2376 src/gtk/x11file.c:3051
 #, c-format
 msgid "Create"
 msgstr ""
@@ -936,72 +936,72 @@ msgstr ""
 msgid "_Math"
 msgstr ""
 
-#: src/gtk/x11file.c:3071
+#: src/gtk/x11file.c:2994
 msgid "This file contain invalid UTF-8 strings."
 msgstr ""
 
-#: src/gtk/x11file.c:3086
+#: src/gtk/x11file.c:3009
 #, c-format
 msgid "Data %d"
 msgstr ""
 
-#: src/gtk/x11file.c:3090
+#: src/gtk/x11file.c:3013
 msgid "_Apply all"
 msgstr ""
 
-#: src/gtk/x11file.c:3097 src/gtk/x11merge.c:138 src/gtk/x11print.c:166
+#: src/gtk/x11file.c:3020 src/gtk/x11merge.c:138 src/gtk/x11print.c:166
 msgid "_File:"
 msgstr ""
 
-#: src/gtk/x11file.c:3100
+#: src/gtk/x11file.c:3023
 msgid "_Load settings"
 msgstr ""
 
-#: src/gtk/x11file.c:3105 src/gtk/x11menu.c:160
+#: src/gtk/x11file.c:3028 src/gtk/x11menu.c:160
 msgid "_Edit"
 msgstr ""
 
-#: src/gtk/x11file.c:3116 src/gtk/x11view.c:928
+#: src/gtk/x11file.c:3039 src/gtk/x11view.c:928
 msgid "_Mask"
 msgstr ""
 
-#: src/gtk/x11file.c:3120 src/gtk/x11view.c:929
+#: src/gtk/x11file.c:3043 src/gtk/x11view.c:929
 msgid "_Move"
 msgstr ""
 
-#: src/gtk/x11file.c:3140
+#: src/gtk/x11file.c:3052
 msgid "_Fit:"
 msgstr ""
 
-#: src/gtk/x11file.c:3409
+#: src/gtk/x11file.c:3321
 msgid "Data new"
 msgstr ""
 
-#: src/gtk/x11file.c:3453
+#: src/gtk/x11file.c:3365
 msgid "Data open"
 msgstr ""
 
-#: src/gtk/x11file.c:4424
+#: src/gtk/x11file.c:4336
 msgid "Data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4430
+#: src/gtk/x11file.c:4342
 msgid "Making data file"
 msgstr ""
 
-#: src/gtk/x11file.c:4431
+#: src/gtk/x11file.c:4343
 msgid "Making data file."
 msgstr ""
 
-#: src/gtk/x11file.c:4568 src/gtk/x11file.c:4654
+#: src/gtk/x11file.c:4480 src/gtk/x11file.c:4566
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4579 src/gtk/x11file.c:4661
+#: src/gtk/x11file.c:4491 src/gtk/x11file.c:4573
 msgid "Color 2"
 msgstr ""
 
-#: src/gtk/x11file.c:4587
+#: src/gtk/x11file.c:4499
 msgid "Type"
 msgstr ""
 

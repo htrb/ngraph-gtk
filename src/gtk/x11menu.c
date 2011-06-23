@@ -2192,7 +2192,7 @@ create_markpixmap(GtkWidget *win)
   R2 = 0;
   G2 = B2 = 255;
 
-  window = GTK_WIDGET_GET_WINDOW(win);
+  window = gtk_widget_get_window(win);
   found = find_gra2gdk_inst(&obj, &inst, &robj, &output, &local);
 
   for (i = 0; i < MARK_TYPE_NUM; i++) {

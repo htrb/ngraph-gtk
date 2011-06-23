@@ -5356,7 +5356,7 @@ f2dcolumn(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 static int 
 f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
-  int cline, line, p;
+  int cline, line;
   char *file, *ptr;
   GString *s;
   FILE *fd;
@@ -5385,8 +5385,6 @@ f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 0;
   }
 
-  p = ceil(log10(line + 1));
-
   for (cline = 0; cline < line; cline++) {
     if (fgetline(fd, &ptr)) {
       break;
@@ -5396,7 +5394,7 @@ f2dhead(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       s = g_string_append_c(s, '\n');
     }
 
-    g_string_append_printf(s, "%*d %s", p, cline + 1, ptr);
+    g_string_append_printf(s, "%s", ptr);
     g_free(ptr);
   }
 

@@ -539,7 +539,7 @@ sub_window_save_geometry(struct SubWin *d)
   gint x, y, x0, y0, w, h;
   GdkWindowState state;
 
-  if (d->Win && GTK_WIDGET_GET_WINDOW(d->Win)) {
+  if (d->Win && gtk_widget_get_window(d->Win)) {
     gtk_window_get_position(GTK_WINDOW(TopLevel), &x0, &y0);
     get_window_geometry(d->Win, &x, &y, &w, &h, &state);
 
@@ -1364,7 +1364,7 @@ sub_window_minimize(void *ptr)
     return;
   }
 
-  win = GTK_WIDGET_GET_WINDOW(d->Win);
+  win = gtk_widget_get_window(d->Win);
   if (win == NULL) {
     return;
   }
@@ -1430,7 +1430,7 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
   HWND handle;
   HMENU menu;
 
-  handle = GDK_WINDOW_HWND(GTK_WIDGET_GET_WINDOW(widget));
+  handle = GDK_WINDOW_HWND(gtk_widget_get_window(widget));
   menu = GetSystemMenu(handle, FALSE);
   RemoveMenu(menu, SC_MINIMIZE, MF_BYCOMMAND);
 }

@@ -39,5 +39,8 @@ GtkWidget *add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, 
 GtkWidget *add_widget_to_table(GtkWidget *table, GtkWidget *w, char *title, int expand, int n);
 GtkWidget *add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *obj_name);
 GtkWidget *get_widget(GtkWidget *w);
+GtkWidget *create_text_view_with_line_number(GtkWidget **v);
+void text_view_with_line_number_set_text(GtkWidget *view, const gchar *str);
+void text_view_with_line_number_set_font(GtkWidget *view, const gchar *font);
 
 #endif

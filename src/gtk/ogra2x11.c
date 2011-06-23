@@ -162,7 +162,7 @@ gtkevpaint(GtkWidget *w, GdkEventExpose *e, gpointer user_data)
   if (gtklocal->win == NULL)
     return FALSE;
 
-  cr = gdk_cairo_create(GTK_WIDGET_GET_WINDOW(w));
+  cr = gdk_cairo_create(gtk_widget_get_window(w));
 
   if (gtklocal->redraw) {
     GRAredraw(gtklocal->obj, gtklocal->inst, FALSE, FALSE);
@@ -336,7 +336,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   gtk_widget_show_all(gtklocal->mainwin);
 
-  win = GTK_WIDGET_GET_WINDOW(gtklocal->View);
+  win = gtk_widget_get_window(gtklocal->View);
 
   gtklocal->win = NULL;
   gtklocal->window = win;

@@ -123,8 +123,6 @@ struct FileDialog
     *clip, *style, *size, *size_label, *miter, *miter_label, *join, *join_label,
     *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view;
   GtkNotebook *tab;
-  GtkTextBuffer *comment;
-  GtkTextTag *comment_num_tag;
   struct objlist *Obj;
   int Id;
   struct MarkDialog mark;

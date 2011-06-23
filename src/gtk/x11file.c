@@ -2966,78 +2966,6 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(d->vbox), notebook, TRUE, TRUE, 4);
 }
 
-static int
-count_line_number_str(const char *str)
-{
-  int i, n;
-
-  if (str == NULL)
-    return 0;
-
-  n = 0;
-  for (i = 0; str[i] != '\0' && str[i] != '\n'; i++) {
-    if (str[i] != ' ') {
-      n = i + 2;
-      break;
-    }
-  }
-
-  return n;
-}
-
-static void
-set_line_number_tag(GtkTextBuffer *buf, GtkTextTag *tag, int n)
-{
-  GtkTextIter start, end;
-
-  if (tag == NULL || n == 0)
-    return;
-
-  gtk_text_buffer_get_iter_at_offset(buf, &start, 0);
-  do {
-    end = start;
-    if (! gtk_text_iter_forward_chars(&end, n))
-      break;
-    gtk_text_buffer_apply_tag (buf, tag, &start, &end);
-
-    if (! gtk_text_iter_forward_line(&start))
-      break;
-  } while (1);
-}
-
-static GtkTextTag *
-create_text_tag(GtkWidget *view, GtkTextBuffer *buf)
-{
-  GtkTextTag *tag;
-  GdkColor fg, bg;
-
-  bg.red = 0xCC00;
-  bg.green = 0xCC00;
-  bg.blue = 0xCC00;
-
-  fg.red = 0x00;
-  fg.green = 0x00;
-  fg.blue = 0x00;
-
-  tag =  gtk_text_buffer_create_tag(buf,
-				    "line_number",
-				    // "weight", PANGO_WEIGHT_BOLD,
-				    "foreground-gdk", &fg,
-				    "background-gdk", &bg,
-				    NULL);
-  return tag;
-}
-
-static void
-set_file_preview(struct FileDialog *d, const char *s)
-{
-  int n;
-
-  gtk_text_buffer_set_text(d->comment, s, -1);
-  n = count_line_number_str(s);
-  set_line_number_tag(d->comment, d->comment_num_tag, n);
-}
-
 static void
 set_headlines(struct FileDialog *d, char *s)
 {
@@ -3049,26 +2977,21 @@ set_headlines(struct FileDialog *d, char *s)
   }
 
   if (Menulocal.file_preview_font) {
-    PangoFontDescription *desc;
-
-    desc = pango_font_description_from_string(Menulocal.file_preview_font);
-    gtk_widget_modify_font(d->comment_view, NULL);
-    gtk_widget_modify_font(d->comment_view, desc);
-    pango_font_description_free(desc);
+    text_view_with_line_number_set_font(d->comment_view, Menulocal.file_preview_font);
   }
   valid = g_utf8_validate(s, -1, &ptr);
 
   if (valid) {
-    set_file_preview(d, s);
+    text_view_with_line_number_set_text(d->comment_view, s);
   } else {
     char *ptr;
 
     ptr = g_locale_to_utf8(s, -1, NULL, NULL, NULL);
     if (ptr) {
-      set_file_preview(d, ptr);
+      text_view_with_line_number_set_text(d->comment_view, ptr);
       g_free(ptr);
     } else {
-      gtk_text_buffer_set_text(d->comment, _("This file contain invalid UTF-8 strings."), -1);
+      text_view_with_line_number_set_text(d->comment_view, _("This file contain invalid UTF-8 strings."));
     }
   }
 }
@@ -3076,7 +2999,7 @@ set_headlines(struct FileDialog *d, char *s)
 static void
 FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *swin, *view, *label;
+  GtkWidget *w, *hbox, *view, *label;
   struct FileDialog *d;
   int line;
   char title[20], *argv[2], *s;
@@ -3120,21 +3043,10 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Move"));
     d->move.tab_id = gtk_notebook_append_page(d->tab, w, label);
 
-    swin = gtk_scrolled_window_new(NULL, NULL);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    view = gtk_text_view_new_with_buffer(NULL);
-    gtk_widget_set_size_request(GTK_WIDGET(view), 240, -1);
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
-    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
-    d->comment = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-    d->comment_num_tag = create_text_tag(view, d->comment);
-    d->comment_view = view;
-    gtk_container_add(GTK_CONTAINER(swin), view);
-
+    view = create_text_view_with_line_number(&d->comment_view);
     w = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(w), swin);
+    gtk_container_add(GTK_CONTAINER(w), view);
     gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 0);
-
 
     w = gtk_button_new_with_label(_("Create"));
     add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
@@ -3971,7 +3883,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
     return NULL;
   }
 
-  pix = gra2gdk_create_pixmap(gobj, inst, local, GTK_WIDGET_GET_WINDOW(TopLevel),
+  pix = gra2gdk_create_pixmap(gobj, inst, local, gtk_widget_get_window(TopLevel),
 			      width, height,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
   if (pix == NULL) {
@@ -4677,7 +4589,7 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
   }
 
   dlg = gtk_color_selection_dialog_new(title);
-  sel = GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg));
+  sel = gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg));
 
   gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
   gtk_color_selection_set_has_opacity_control(GTK_COLOR_SELECTION(sel), Menulocal.use_opacity);
@@ -5055,6 +4967,10 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
   set_obj_cell_renderer_cb(d, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
 
   init_dnd(d);
+
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->text), TRUE);
+  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->text), FILE_WIN_COL_FILE);
+  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->text), FILE_WIN_COL_FILE);
 
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);

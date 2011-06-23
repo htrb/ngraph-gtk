@@ -1,3 +1,40 @@
+2011-06-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2dhead): don't add line number.
+
+	* src/gtk/x11dialg.h (FileDialog):remove members "comment" and
+	"comment_num_tag".
+
+	* src/gtk/x11file.c (count_line_number_str, set_line_number_tag)
+	(create_text_tag, set_file_preview): removed.
+	(set_headlines): use "text_view_with_line_number_set_text()".
+	(FileDialogSetup): use "create_text_view_with_line_number()".
+	(CmFileWindow): call "gtk_tree_view_set_enable_search()",
+	"gtk_tree_view_set_search_column()" and
+	"gtk_tree_view_set_tooltip_column()".
+
+	* src/gtk/x11merge.c (CmMergeWindow): call
+	"gtk_tree_view_set_enable_search()",
+	"gtk_tree_view_set_search_column()" and
+	"gtk_tree_view_set_tooltip_column()".
+
+	* src/gtk/x11axis.c (CmAxisWindow): call
+	"gtk_tree_view_set_enable_search()",
+	"gtk_tree_view_set_search_column()" and
+	"gtk_tree_view_set_tooltip_column()".
+
+
+	* src/gtk/gtk_widget.c (text_view_scroll_event)
+	(set_scroll_visibility, text_view_size_alocate)
+	(set_linumber_color, create_text_view_with_line_number)
+	(text_view_with_line_number_set_text)
+	(text_view_with_line_number_set_font): added.
+
+	* src/gtk/gtk_common.h: remove macros for Gtk+ which version is
+	lesser than 2.14.
+
+	* configure.in: "GTK_REQUIRED_VERSION" is now 2.14.0.
+
 2011-06-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11merge.c (MergeDialogSetupItem): cursor will be set

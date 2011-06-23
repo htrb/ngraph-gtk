@@ -3361,6 +3361,10 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
   list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MAX, 1.0);
   list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_INC, 1.0);
 
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->text), TRUE);
+  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->text), AXIS_WIN_COL_NAME);
+  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->text), AXIS_WIN_COL_NAME);
+
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);
 }

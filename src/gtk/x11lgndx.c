@@ -68,7 +68,7 @@ clear_view(struct LegendGaussDialog *d)
 {
   GdkWindow *win;
 
-  win = GTK_WIDGET_GET_WINDOW(d->view);
+  win = gtk_widget_get_window(d->view);
   if (win) {
     gdk_window_invalidate_rect(win, NULL, TRUE);
   }
@@ -125,7 +125,7 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 
   d = (struct LegendGaussDialog *) client_data;
 
-  win = GTK_WIDGET_GET_WINDOW(w);
+  win = gtk_widget_get_window(w);
   if (win == NULL) {
     return FALSE;
   }

@@ -528,7 +528,7 @@ show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
 
   dlg = gtk_color_selection_dialog_new(_("Pick a Color"));
   gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(user_data));
-  sel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG_GET_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(dlg)));
+  sel = GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg)));
 
   gtk_color_selection_set_has_palette(sel, TRUE);
   gtk_color_selection_set_has_opacity_control(sel, Menulocal.use_opacity);
@@ -583,4 +583,234 @@ create_color_button(GtkWidget *win)
   g_signal_connect(w, "key-release-event", G_CALLBACK(color_button_key_event), win);
 
   return w;
+}
+
+static gboolean
+text_view_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
+{
+  GtkRange *scl;
+  GtkAdjustment *adj;
+  gdouble inc, val, min, max;
+
+  switch (event->direction) {
+  case GDK_SCROLL_UP:
+    scl = g_object_get_data(G_OBJECT(widget), "vscroll");
+    adj = gtk_range_get_adjustment(scl);
+    inc = - gtk_adjustment_get_step_increment(adj);
+    break;
+  case GDK_SCROLL_DOWN:
+    scl = g_object_get_data(G_OBJECT(widget), "vscroll");
+    adj = gtk_range_get_adjustment(scl);
+    inc = gtk_adjustment_get_step_increment(adj);
+    break;
+  case GDK_SCROLL_LEFT:
+    scl = g_object_get_data(G_OBJECT(widget), "hscroll");
+    adj = gtk_range_get_adjustment(scl);
+    inc = - gtk_adjustment_get_step_increment(adj);
+    break;
+  case GDK_SCROLL_RIGHT:
+    scl = g_object_get_data(G_OBJECT(widget), "hscroll");
+    adj = gtk_range_get_adjustment(scl);
+    inc = gtk_adjustment_get_step_increment(adj);
+    break;
+  default:
+    return FALSE;
+  }
+
+  min = gtk_adjustment_get_lower(adj);
+  max = gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj);
+  val = gtk_adjustment_get_value(adj);
+  val += inc;
+
+  if (max < min) {
+    return FALSE;
+  }
+
+  if (val < min) {
+    val = min;
+  } else if (val > max) {
+    val = max;
+  }
+
+  gtk_adjustment_set_value(adj, val);
+
+  return FALSE;
+}
+
+
+static void
+set_scroll_visibility(GtkWidget *scroll)
+{
+  GtkAdjustment *adj;
+  int visible;
+  gdouble min, max, page;
+
+  if (scroll == NULL) {
+    return;
+  }
+
+  adj = gtk_range_get_adjustment(GTK_RANGE(scroll));
+  min = gtk_adjustment_get_lower(adj);
+  max = gtk_adjustment_get_upper(adj);
+  page = gtk_adjustment_get_page_size(adj);
+
+  visible = (max - min > page);
+  if (visible) {
+    gtk_widget_show(scroll);
+  } else {
+    gtk_widget_hide(scroll);
+  }
+}
+
+static void
+text_view_size_alocate(GtkWidget*widget, GdkRectangle *allocation, gpointer user_data)
+{
+  GtkWidget *scl;
+
+  scl = g_object_get_data(G_OBJECT(widget), "hscroll");
+  set_scroll_visibility(scl);
+
+  scl = g_object_get_data(G_OBJECT(widget), "vscroll");
+  set_scroll_visibility(scl);
+}
+
+static void
+set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
+{
+  GdkColor col;
+
+  col.red = r;
+  col.green = g;
+  col.blue = b;
+
+  gtk_widget_modify_base(w, GTK_STATE_NORMAL, &col);
+  gtk_widget_modify_base(w, GTK_STATE_ACTIVE, &col);
+  gtk_widget_modify_base(w, GTK_STATE_PRELIGHT, &col);
+  gtk_widget_modify_base(w, GTK_STATE_SELECTED, &col);
+  gtk_widget_modify_base(w, GTK_STATE_INSENSITIVE, &col);
+
+
+  col.red = 0;
+  col.green = 0;
+  col.blue = 0;
+
+  gtk_widget_modify_text(w, GTK_STATE_NORMAL, &col);
+  gtk_widget_modify_text(w, GTK_STATE_ACTIVE, &col);
+  gtk_widget_modify_text(w, GTK_STATE_PRELIGHT, &col);
+  gtk_widget_modify_text(w, GTK_STATE_SELECTED, &col);
+  gtk_widget_modify_text(w, GTK_STATE_INSENSITIVE, &col);
+
+  gtk_widget_set_sensitive(w, FALSE);
+}
+
+GtkWidget *
+create_text_view_with_line_number(GtkWidget **v)
+{
+  GtkWidget *view, *ln, *swin, *hs, *vs;
+  GtkAdjustment *hadj, *vadj;
+
+  view = gtk_text_view_new_with_buffer(NULL);
+  ln = gtk_text_view_new_with_buffer(NULL); 
+
+  set_linumber_color(ln, 0xCC00, 0xCC00, 0xCC00);
+
+  g_object_set_data(G_OBJECT(view), "line_number", ln);
+
+  gtk_widget_set_size_request(GTK_WIDGET(view), 240, 120);
+  gtk_widget_set_size_request(GTK_WIDGET(ln),   -1,  120);
+
+  gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
+  gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
+
+  gtk_text_view_set_editable(GTK_TEXT_VIEW(ln), FALSE);
+  gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(ln), FALSE);
+
+  swin = gtk_table_new(3, 2, FALSE);
+  hs = gtk_hscrollbar_new(NULL);
+  vs = gtk_vscrollbar_new(NULL);
+
+  g_object_set_data(G_OBJECT(view), "hscroll", hs);
+  g_object_set_data(G_OBJECT(view), "vscroll", vs);
+
+  hadj = gtk_range_get_adjustment(GTK_RANGE(hs));
+  vadj = gtk_range_get_adjustment(GTK_RANGE(vs));
+  gtk_widget_set_scroll_adjustments(view, hadj, vadj);
+  gtk_widget_set_scroll_adjustments(ln,   NULL, vadj);
+
+  g_signal_connect(view, "scroll-event", G_CALLBACK(text_view_scroll_event), NULL);
+  g_signal_connect(view, "size-allocate", G_CALLBACK(text_view_size_alocate), NULL);
+
+  gtk_table_attach(GTK_TABLE(swin), ln,   0, 1, 0, 1,
+		   0, GTK_EXPAND | GTK_FILL, 0, 0);
+  gtk_table_attach(GTK_TABLE(swin), view, 1, 2, 0, 1,
+		   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  gtk_table_attach(GTK_TABLE(swin), hs,   0, 2, 1, 2,
+		   GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach(GTK_TABLE(swin), vs,   2, 3, 0, 1,
+		   GTK_FILL, GTK_FILL, 0, 0);
+
+  if (v) {
+    *v = view;
+  }
+
+  return swin;
+}
+
+void
+text_view_with_line_number_set_text(GtkWidget *view, const gchar *str)
+{
+  GtkWidget *ln;
+  GtkTextBuffer *buf, *ln_buf;
+  int p, i, n;
+  GString *s;
+  gchar *ptr;
+  GtkTextIter start, end;
+
+  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+  gtk_text_buffer_set_text(buf, str, -1);
+
+  ln = g_object_get_data(G_OBJECT(view), "line_number");
+  if (ln == NULL) {
+    return;
+  }
+
+  s = g_string_sized_new(256);
+  if (s == NULL) {
+    return;
+  }
+
+  n = gtk_text_buffer_get_line_count(buf);
+  ln_buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(ln));
+  p = ceil(log10(n + 1));
+  for (i = 0; i < n; i++) {
+    g_string_append_printf(s, "%*d \n", p, i + 1);
+  }
+  ptr = g_string_free(s, FALSE);
+  gtk_text_buffer_set_text(ln_buf, ptr, -1);
+  g_free(ptr);
+
+  gtk_text_buffer_get_iter_at_offset(ln_buf, &start, 0);
+  gtk_text_buffer_get_iter_at_offset(ln_buf, &end, -1);
+}
+
+void
+text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
+{
+  PangoFontDescription *desc;
+  GtkWidget *ln;
+
+  desc = pango_font_description_from_string(font);
+  gtk_widget_modify_font(view, NULL);
+  gtk_widget_modify_font(view, desc);
+
+  ln = g_object_get_data(G_OBJECT(view), "line_number");
+  if (ln == NULL) {
+    pango_font_description_free(desc);
+    return;
+  }
+
+  gtk_widget_modify_font(ln, NULL);
+  gtk_widget_modify_font(ln, desc);
+
+  pango_font_description_free(desc);
 }
