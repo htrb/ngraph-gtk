@@ -1,3 +1,11 @@
+2011-07-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (message_box): limit length of an error
+	message.
+
+	* src/gra.c (GRAlines): fix argument number.
+	(GRAinputdraw): fix check of the argument number.
+
 2011-06-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (f2dhead): don't add line number.

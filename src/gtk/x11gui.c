@@ -294,7 +294,7 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
 			       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 			       dlg_type,
 			       dlg_button,
-			       "%s", message);
+			       "%.128s", message);
 
   switch (mode) {
   case RESPONS_YESNOCANCEL:

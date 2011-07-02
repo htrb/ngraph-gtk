@@ -1060,9 +1060,9 @@ GRAlines(int GC,int num,int *point)
   char code;
   int i,*cpar;
 
-  if ((cpar=g_malloc(sizeof(int)*(2+2*num)))==NULL) return;
+  if ((cpar=g_malloc(sizeof(int)*(1+2*num)))==NULL) return;
   code='R';
-  cpar[0]=2+2*num;
+  cpar[0]=1+2*num;
   cpar[1]=num;
   for (i=0;i<2*num;i++) cpar[i+2]=point[i];
   GRAdraw(GC,code,cpar,NULL);
@@ -2737,7 +2737,7 @@ GRAinputdraw(int GC,int leftm,int topm,int rate,
     cpar[4]=(int )(cpar[4]*r);
     break;
   case 'R':
-    if (cpar[0] != cpar[1] * 2 + 2)
+    if (cpar[0] != cpar[1] * 2 + 1)
       return FALSE;
 
     for (i=0;i<(2*(cpar[1]));i++) cpar[i+2]=(int )(cpar[i+2]*r);
