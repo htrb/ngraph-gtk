@@ -1060,7 +1060,7 @@ GRAlines(int GC,int num,int *point)
   char code;
   int i,*cpar;
 
-  if ((cpar=g_malloc(sizeof(int)*(1+2*num)))==NULL) return;
+  if ((cpar=g_malloc(sizeof(int)*(2+2*num)))==NULL) return;
   code='R';
   cpar[0]=1+2*num;
   cpar[1]=num;
