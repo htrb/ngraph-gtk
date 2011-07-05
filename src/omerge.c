@@ -535,6 +535,8 @@ mergemove(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+#define ZOOM_MAX 1000000
+
 static int 
 mergezoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -550,6 +552,11 @@ mergezoom(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   _getobj(obj,"zoom",inst,&zm);
   lm=(lm-refx)*zoom+refx;
   tm=(tm-refy)*zoom+refy;
+
+  if (zm * zoom > ZOOM_MAX) {
+    return 0;
+  }
+
   zm=zm*zoom;
   if (_putobj(obj,"left_margin",inst,&lm)) return 1;
   if (_putobj(obj,"top_margin",inst,&tm)) return 1;
@@ -606,11 +613,17 @@ mergegeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 
   field=(char *)(argv[1]);
   if (strcmp(field,"zoom")==0) {
-    if (*(int *)(argv[2])<1) *(int *)(argv[2])=1;
+    int *z = (int *) (argv[2]);
+    if (*z > ZOOM_MAX) {
+      *z = ZOOM_MAX;
+    } else if (*z < 1) {
+      *z = 1;
+    }
   }
 
-  if (clear_bbox(obj, inst))
+  if (clear_bbox(obj, inst)){
     return 1;
+  }
 
   return 0;
 }

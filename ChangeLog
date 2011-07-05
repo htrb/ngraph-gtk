@@ -1,3 +1,17 @@
+2011-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/omerge.c (ZOOM_MAX): added.
+	(mergezoom): do nothing if "zm * zoom" is larger than "ZOOM_MAX".
+	(mergegeometry): upper limit of the field "zoom" is "ZOOM_MAX".
+
+	* src/gtk/x11view.c (calc_zoom, set_zoom_prm): added.
+	(init_zoom, mouse_move_zoom): use "calc_zoom()" and
+	"set_zoom_prm()".
+	(mouse_up_zoom): use "calc_zoom()".
+	(ViewUpdate): set "d->ShowRect" as FALSE.
+
+	* src/gtk/gtk_widget.h (SPIN_ENTRY_MAX): change limit to 1000000.
+
 2011-07-02  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (message_box): limit length of an error
