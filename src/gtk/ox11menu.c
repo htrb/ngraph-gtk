@@ -1994,6 +1994,52 @@ mxmodified(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
+static int
+mx_focus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int n, i, *id_array;
+  char *legend;
+  struct objlist *lobj;
+  struct narray iarray;
+
+  legend = (char *) argv[2];
+  if (legend == NULL) {
+    return 0;
+  }
+
+  printf("%s\n", legend);
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(legend, &lobj, &iarray, FALSE, NULL)) {
+    return 0;
+  }
+
+  n = arraynum(&iarray);
+  if (n < 1) {
+    arraydel(&iarray);
+    return 0;
+  }
+
+  id_array = arraydata(&iarray);
+
+  for (i = 0; i < n; i++) {
+    Focus(lobj, id_array[i], TRUE);
+  }
+
+  arraydel(&iarray);
+
+  return 0;
+}
+
+static int
+mx_unfocus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+
+  UnFocus();
+
+  return 0;
+}
+
 int
 get_graph_modified(void)
 {
@@ -2057,6 +2103,8 @@ static struct objtable gtkmenu[] = {
   {"get_ui", NVFUNC, NREAD | NEXEC, mx_get_ui, "", 0},
   {"get_accel_map", NVFUNC, NREAD | NEXEC, mx_get_accel_map, "", 0},
   {"lib_version", NVFUNC, NREAD | NEXEC, mx_show_lib_version, "s", 0},
+  {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},
+  {"unfocus", NVFUNC, NREAD | NEXEC, mx_unfocus_obj, "", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 
