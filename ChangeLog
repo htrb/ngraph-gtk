@@ -1,5 +1,8 @@
 2011-07-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/object.c (add_arg_object, getargument): accept character ","
+	as a string of an id list.
+
 	* src/gtk/ox11menu.c (mx_focus_obj, mx_unfocus_obj): added.
 	(gtkmenu): add fields "focus" and "unfocus".
 

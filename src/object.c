@@ -3754,7 +3754,7 @@ add_arg_object(char *s2, char ***argv)
       return 1;
     }
 
-    for (i = 1; os[i] && (isalnum(os[i]) || strchr("_^@!+-", os[i])); i++);
+    for (i = 1; os[i] && (isalnum(os[i]) || strchr("_^@!+-,", os[i])); i++);
     if (os[i] != '\0') {
       return 1;
     }
@@ -4292,7 +4292,7 @@ getargument(int type,char *arglist, char *val,int *argc, char ***rargv)
         goto errexit;
       }
       for (i=1;
-          (os[i]!='\0')&&(isalnum(os[i])||(strchr("_^@!+-",os[i])!=NULL));i++);
+          (os[i]!='\0')&&(isalnum(os[i])||(strchr("_^@!+-,",os[i])!=NULL));i++);
       if (os[i]!='\0') {
         err=3;
         goto errexit;
