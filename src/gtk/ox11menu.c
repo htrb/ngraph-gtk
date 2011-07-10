@@ -2007,8 +2007,6 @@ mx_focus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
     return 0;
   }
 
-  printf("%s\n", legend);
-
   arrayinit(&iarray, sizeof(int));
   if (getobjilist(legend, &lobj, &iarray, FALSE, NULL)) {
     return 0;
