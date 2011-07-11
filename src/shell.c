@@ -574,6 +574,7 @@ struct cmdtabletype cmdtable[] = {
                   {"[",cmtest},
                   {"sleep",cmsleep},
                   {"test",cmtest},
+                  {"which",cmwhich},
                  };
 
 int CMDNUM = sizeof(cmdtable) / sizeof(*cmdtable);

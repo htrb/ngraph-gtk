@@ -53,5 +53,6 @@ int cmexe(struct nshell *nshell,int argc,char **argv);
 int cmdexpr(struct nshell *nshell,int argc,char **argv);
 int cmread(struct nshell *nshell,int argc,char **argv);
 int cmseq(struct nshell *nshell, int argc, char **argv);
+int cmwhich(struct nshell*nshell,int argc,char **argv);
 
 #endif

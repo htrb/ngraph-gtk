@@ -451,13 +451,17 @@ math_func_call_expression_new(MathEquation *eq, struct math_function_parameter *
   MathExpression *exp;
   MathFunctionArgument *buf;
 
-
-  if (check_argument(fprm, argc, argv))
+  if (check_argument(fprm, argc, argv)) {
     return NULL;
+  }
 
-  buf = g_malloc(sizeof(*buf) * argc);
-  if (buf == NULL)
-    return NULL;
+  buf = NULL;
+  if (argc > 0) {
+    buf = g_malloc(sizeof(*buf) * argc);
+    if (buf == NULL) {
+      return NULL;
+    }
+  }
 
   exp = math_expression_new(MATH_EXPRESSION_TYPE_FUNC_CALL, eq, err);
   if (exp == NULL) {

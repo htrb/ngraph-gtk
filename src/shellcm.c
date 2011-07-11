@@ -1337,3 +1337,38 @@ cmread(struct nshell *nshell,int argc,char **argv)
 
   return (c == EOF) ? ERR : 0;
 }
+
+int 
+cmwhich(struct nshell*nshell,int argc,char **argv)
+{
+  int i, r, start, quiet;
+  char *path;
+
+  if (strcmp0(argv[1], "-q")) {
+    start = 1;
+    quiet = FALSE;
+  } else {
+    start = 2;
+    quiet = TRUE;
+  }
+
+  if (argc < 1 + start) {
+    sherror4(argv[0], ERRSMLARG);
+    return ERRSMLARG;
+  }
+
+  r = 0;
+  for (i = start; i < argc; i++) {
+    path = g_find_program_in_path(argv[i]);
+    if (path == NULL) {
+      r = 1;
+    } else {
+      if (! quiet) {
+	putstdout(path);
+      }
+      g_free(path);
+    }
+  }
+
+  return r;
+}

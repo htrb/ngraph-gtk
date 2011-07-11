@@ -94,3 +94,4 @@ push		2	0	0	1,0
 pop		1	0	0	1
 unshift		2	0	0	1,0
 shift		1	0	0	1
+time		0	0	0	NULL

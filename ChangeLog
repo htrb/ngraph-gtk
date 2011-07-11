@@ -1,3 +1,27 @@
+2011-07-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shellcm.c (cmwhich): added.
+
+	* src/shell.c (cmdtable): add internal command "which".
+
+	* doc/html_ja/addin.html: update document.
+
+	* addin/Makefile.am (pkglib_SCRIPTS): add "fig2gra.rb".
+	(pkglib_DATA): add "tex_equation.nsc".
+
+	* addin/fig2gra.rb: added.
+
+	* addin/tex_equation.nsc: added.
+
+	* initfile/Ngraph.ini.in (script): add "TeX equation" addin.
+
+	* src/math/math_expression.c (math_func_call_expression_new):
+	"buf" is NULL when argc is less than 1.
+
+	* src/math/math_basic_function.c (math_func_time): added.
+
+	* src/math/math_function.h.in: add function "time()".
+
 2011-07-10  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/object.c (add_arg_object, getargument): accept character ","

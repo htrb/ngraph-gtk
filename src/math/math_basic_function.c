@@ -35,6 +35,13 @@ static MathValue *Memory = NULL;
 
 
 int
+math_func_time(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  rval->val = time(NULL);
+  return 0;
+}
+
+int
 math_func_atanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   double v;
