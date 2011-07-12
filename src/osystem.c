@@ -67,7 +67,7 @@ static int
 sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   char *wd;
-  int expand;
+  int expand, pid;
   char *exdir;
 
   if (_exeparent(obj,(char *)argv[1],inst,rval,argc,argv)) return 1;
@@ -85,6 +85,8 @@ sysinit(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (_putobj(obj,"GRAF",inst,"%Ngraph GRAF")) return 1;
   if (_putobj(obj,"temp_prefix",inst,TEMPN)) return 1;
   if ((wd=ngetcwd())==NULL) return 1;
+  pid = getpid();
+  if (_putobj(obj,"pid",inst,&pid)) return 1;
   if (_putobj(obj,"cwd",inst,wd)) {
     g_free(wd);
     return 1;
@@ -281,14 +283,6 @@ sysunlink(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 static int 
-syspid(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
-{
-  rval->i = getpid();
-
-  return 0;
-}
-
-static int 
 syshideinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -374,7 +368,7 @@ static struct objtable nsystem[] = {
   {"home_dir",NSTR,NREAD,NULL,NULL,0},
   {"time",NSFUNC,NREAD|NEXEC,systime,"i",0},
   {"date",NSFUNC,NREAD|NEXEC,sysdate,"i",0},
-  {"pid",NIFUNC,NREAD|NEXEC,syspid,"",0},
+  {"pid",NINT,NREAD,NULL,NULL,0},
   {"temp_file",NSFUNC,NREAD|NEXEC,systemp,NULL,0},
   {"temp_list",NSARRAY,NREAD,NULL,NULL,0},
   {"unlink_temp_file",NVFUNC,NREAD|NEXEC,sysunlink,NULL,0},

@@ -1,3 +1,7 @@
+2011-07-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/osystem.c (nsystem): type of the field "pid" is "NINT".
+
 2011-07-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/osystem.c (nsystem): add field "pid".
