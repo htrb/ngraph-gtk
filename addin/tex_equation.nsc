@@ -8,7 +8,7 @@ PSTOEDIT_OPTION="-q -flat 0.1 -nc -ssp -dt"
 
 RUBY_COMMAND="ruby"
 
-TEX_FILE="#temp#"
+TEX_FILE="_tex_eqn_${system::pid}"
 
 error_dialog() {
     new dialog
@@ -55,7 +55,11 @@ do
     merge_name=`get $text -field name`
     if [ -z "$merge_name" ]
     then
-	merge_name="tex_eqn_`get $text -field oid`_`iexpr 'time()'`"
+	new text
+	t=`iexpr 'time()'`
+	t=`get text -field printf:"%X $t"`
+	del text
+	merge_name="tex_eqn_`get $text -field oid`_$t"
     fi
     str=`get $text -field text`
     cat <<EOF > $TEX_FILE.tex
@@ -75,6 +79,7 @@ EOF
 	error_dialog "some error was occurred while executing $TEX_COMMAND"
 	rm "$TEX_FILE".*
 	delete_object
+	menu::show_window 5
 	exit
     fi
 

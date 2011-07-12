@@ -26,6 +26,7 @@ asinh		1	0	0	NULL
 acosh		1	0	0	NULL
 atanh		1	0	0	NULL
 rand		1	0	0	NULL
+srand		1	0	0	NULL
 theta		1	0	0	NULL
 delta		1	0	0	NULL
 gamma		1	0	0	NULL

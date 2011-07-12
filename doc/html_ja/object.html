@@ -109,8 +109,8 @@ object: system
 version: 6.06.00
 parent: object
 object id: 1
-number of fields: 29
-size of instance: 192
+number of fields: 30
+size of instance: 200
 </pre>
 <table border="1" cellspacing="0">
 <tr><th>permission</th><th>field name</th><th>field type</th></tr>
@@ -137,6 +137,7 @@ size of instance: 192
 <tr><td>r--</td><td align="right">home_dir</td><td>char*</td></tr>
 <tr><td>r-x</td><td align="right">time</td><td>*char( int )</td></tr>
 <tr><td>r-x</td><td align="right">date</td><td>*char( int )</td></tr>
+<tr><td>r-x</td><td align="right">pid</td><td>int( void )</td></tr>
 <tr><td>r-x</td><td align="right">temp_file</td><td>*char( )</td></tr>
 <tr><td>r--</td><td align="right">temp_list</td><td>*char[]</td></tr>
 <tr><td>r-x</td><td align="right">unlink_temp_file</td><td>void( )</td></tr>

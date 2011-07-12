@@ -19,68 +19,69 @@ static struct funcs FuncAry[] = {
   {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
   {"MJD2MONTH", {1, 0, 0, math_func_mjd2month, NULL, NULL, NULL, NULL}},
-  {"UNIX2MJD", {1, 0, 0, math_func_unix2mjd, NULL, NULL, NULL, NULL}},
   {"MJD2YEAR", {1, 0, 0, math_func_mjd2year, NULL, NULL, NULL, NULL}},
-  {"MJD2YDAY", {1, 0, 0, math_func_mjd2yday, NULL, NULL, NULL, NULL}},
-  {"ISNORMAL", {1, 0, 0, math_func_isnormal, NULL, NULL, NULL, NULL}},
+  {"MJD2WDAY", {1, 0, 0, math_func_mjd2wday, NULL, NULL, NULL, NULL}},
+  {"UNIX2MJD", {1, 0, 0, math_func_unix2mjd, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"ZETA_INT", {1, 0, 0, math_func_zeta_int, NULL, NULL, NULL, NULL}},
 #else
   {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
-  {"MJD2WDAY", {1, 0, 0, math_func_mjd2wday, NULL, NULL, NULL, NULL}},
-  {"MJD2DAY", {1, 0, 0, math_func_mjd2day, NULL, NULL, NULL, NULL}},
+  {"ISNORMAL", {1, 0, 0, math_func_isnormal, NULL, NULL, NULL, NULL}},
+  {"MJD2YDAY", {1, 0, 0, math_func_mjd2yday, NULL, NULL, NULL, NULL}},
   {"UNSHIFT", {2, 0, 0, math_func_unshift, NULL, NULL, NULL, NULL}},
-  {"ISBREAK", {1, 0, 0, math_func_isbreak, NULL, NULL, NULL, NULL}},
   {"ISUNDEF", {1, 0, 0, math_func_isundef, NULL, NULL, NULL, NULL}},
+  {"MJD2DAY", {1, 0, 0, math_func_mjd2day, NULL, NULL, NULL, NULL}},
+  {"ISBREAK", {1, 0, 0, math_func_isbreak, NULL, NULL, NULL, NULL}},
+  {"UNLESS", {3, 0, 0, math_func_unless, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"ICBETA", {3, 0, 0, math_func_icbeta, NULL, NULL, NULL, NULL}},
 #else
   {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
-  {"ISCONT", {1, 0, 0, math_func_iscont, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"ZETAM1", {1, 0, 0, math_func_zetam1, NULL, NULL, NULL, NULL}},
 #else
   {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
-  {"UNLESS", {3, 0, 0, math_func_unless, NULL, NULL, NULL, NULL}},
+  {"ISCONT", {1, 0, 0, math_func_iscont, NULL, NULL, NULL, NULL}},
+  {"ATANH", {1, 0, 0, math_func_atanh, NULL, NULL, NULL, NULL}},
   {"ISNAN", {1, 0, 0, math_func_isnan, NULL, NULL, NULL, NULL}},
   {"SHIFT", {1, 0, 0, math_func_shift, NULL, NULL, NULL, NULL}},
-  {"RSORT", {1, 1, 0, math_func_rsort, NULL, NULL, NULL, NULL}},
   {"GAUSS", {1, 0, 0, math_func_gauss, NULL, NULL, NULL, NULL}},
-  {"PROG2", {-1, 0, 0, math_func_prog2, NULL, NULL, NULL, NULL}},
-  {"PROGN", {-1, 0, 0, math_func_progn, NULL, NULL, NULL, NULL}},
+  {"ROUND", {1, 0, 0, math_func_round, NULL, NULL, NULL, NULL}},
+  {"RSORT", {1, 1, 0, math_func_rsort, NULL, NULL, NULL, NULL}},
   {"ASINH", {1, 0, 0, math_func_asinh, NULL, NULL, NULL, NULL}},
   {"ACOSH", {1, 0, 0, math_func_acosh, NULL, NULL, NULL, NULL}},
-  {"ROUND", {1, 0, 0, math_func_round, NULL, NULL, NULL, NULL}},
+  {"PROG2", {-1, 0, 0, math_func_prog2, NULL, NULL, NULL, NULL}},
   {"PROG1", {-1, 0, 0, math_func_prog1, NULL, NULL, NULL, NULL}},
+  {"SRAND", {1, 0, 0, math_func_srand, NULL, NULL, NULL, NULL}},
   {"THETA", {1, 0, 0, math_func_theta, NULL, NULL, NULL, NULL}},
   {"DELTA", {1, 0, 0, math_func_delta, NULL, NULL, NULL, NULL}},
-  {"ATANH", {1, 0, 0, math_func_atanh, NULL, NULL, NULL, NULL}},
-  {"ICGAM", {2, 0, 0, math_func_icgam, NULL, NULL, NULL, NULL}},
   {"GAMMA", {1, 0, 0, math_func_gamma, NULL, NULL, NULL, NULL}},
-  {"ERFC", {1, 0, 0, math_func_erfc, NULL, NULL, NULL, NULL}},
+  {"ICGAM", {2, 0, 0, math_func_icgam, NULL, NULL, NULL, NULL}},
+  {"PROGN", {-1, 0, 0, math_func_progn, NULL, NULL, NULL, NULL}},
   {"QINV", {1, 0, 0, math_func_qinv, NULL, NULL, NULL, NULL}},
-  {"RAND", {1, 0, 0, math_func_rand, NULL, NULL, NULL, NULL}},
-  {"BETA", {2, 0, 0, math_func_beta, NULL, NULL, NULL, NULL}},
-  {"TANH", {1, 0, 0, math_func_tanh, NULL, NULL, NULL, NULL}},
-  {"COSH", {1, 0, 0, math_func_cosh, NULL, NULL, NULL, NULL}},
-  {"SINH", {1, 0, 0, math_func_sinh, NULL, NULL, NULL, NULL}},
-  {"FRAC", {1, 0, 0, math_func_frac, NULL, NULL, NULL, NULL}},
-  {"SIZE", {1, 1, 0, math_func_size, NULL, NULL, NULL, NULL}},
-  {"ATAN", {1, 0, 0, math_func_atan, NULL, NULL, NULL, NULL}},
-  {"SORT", {1, 1, 0, math_func_sort, NULL, NULL, NULL, NULL}},
-  {"ACOS", {1, 0, 0, math_func_acos, NULL, NULL, NULL, NULL}},
-  {"ASIN", {1, 0, 0, math_func_asin, NULL, NULL, NULL, NULL}},
+  {"ERFC", {1, 0, 0, math_func_erfc, NULL, NULL, NULL, NULL}},
 #ifdef HAVE_LIBGSL
   {"ZETA", {1, 0, 0, math_func_zeta, NULL, NULL, NULL, NULL}},
 #else
   {NULL, {0, 0, 0, NULL, NULL, NULL, NULL, NULL}},
 #endif
-  {"SIGN", {1, 0, 0, math_func_sign, NULL, NULL, NULL, NULL}},
-  {"PUSH", {2, 0, 0, math_func_push, NULL, NULL, NULL, NULL}},
+  {"BETA", {2, 0, 0, math_func_beta, NULL, NULL, NULL, NULL}},
+  {"RAND", {1, 0, 0, math_func_rand, NULL, NULL, NULL, NULL}},
   {"SQRT", {1, 0, 0, math_func_sqrt, NULL, NULL, NULL, NULL}},
+  {"ASIN", {1, 0, 0, math_func_asin, NULL, NULL, NULL, NULL}},
+  {"PUSH", {2, 0, 0, math_func_push, NULL, NULL, NULL, NULL}},
+  {"SIZE", {1, 1, 0, math_func_size, NULL, NULL, NULL, NULL}},
+  {"TANH", {1, 0, 0, math_func_tanh, NULL, NULL, NULL, NULL}},
+  {"SORT", {1, 1, 0, math_func_sort, NULL, NULL, NULL, NULL}},
+  {"COSH", {1, 0, 0, math_func_cosh, NULL, NULL, NULL, NULL}},
+  {"FRAC", {1, 0, 0, math_func_frac, NULL, NULL, NULL, NULL}},
+  {"SINH", {1, 0, 0, math_func_sinh, NULL, NULL, NULL, NULL}},
+  {"ATAN", {1, 0, 0, math_func_atan, NULL, NULL, NULL, NULL}},
+  {"SIGN", {1, 0, 0, math_func_sign, NULL, NULL, NULL, NULL}},
+  {"ACOS", {1, 0, 0, math_func_acos, NULL, NULL, NULL, NULL}},
   {"TIME", {0, 0, 0, math_func_time, NULL, NULL, NULL, NULL}},
   {"ABS", {1, 0, 0, math_func_abs, NULL, NULL, NULL, NULL}},
   {"NEQ", {3, 0, 0, math_func_neq, NULL, NULL, NULL, NULL}},
@@ -177,7 +178,7 @@ math_add_basic_function(MathEquation *eq) {
       continue;
     }
     switch (i) {
-    case 9:  /*  UNSHIFT  */
+    case 8:  /*  UNSHIFT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -189,7 +190,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 15:  /*  UNLESS  */
+    case 12:  /*  UNLESS  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -202,7 +203,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[2] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 17:  /*  SHIFT  */
+    case 18:  /*  SHIFT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -213,7 +214,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 18:  /*  RSORT  */
+    case 21:  /*  RSORT  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -224,29 +225,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 39:  /*  SIZE  */
-      if (FuncAry[i].prm.arg_type) {
-        break;
-      }
-      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
-      if (ptr == NULL) {
-        return 1;
-      }
-      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
-      FuncAry[i].prm.arg_type = ptr;
-      break;
-    case 41:  /*  SORT  */
-      if (FuncAry[i].prm.arg_type) {
-        break;
-      }
-      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
-      if (ptr == NULL) {
-        return 1;
-      }
-      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
-      FuncAry[i].prm.arg_type = ptr;
-      break;
-    case 46:  /*  PUSH  */
+    case 39:  /*  PUSH  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -258,7 +237,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[1] = MATH_FUNCTION_ARG_TYPE_DOUBLE;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 53:  /*  POP  */
+    case 40:  /*  SIZE  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -269,7 +248,29 @@ math_add_basic_function(MathEquation *eq) {
       ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 64:  /*  FOR  */
+    case 42:  /*  SORT  */
+      if (FuncAry[i].prm.arg_type) {
+        break;
+      }
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      if (ptr == NULL) {
+        return 1;
+      }
+      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
+      FuncAry[i].prm.arg_type = ptr;
+      break;
+    case 54:  /*  POP  */
+      if (FuncAry[i].prm.arg_type) {
+        break;
+      }
+      ptr = g_malloc(sizeof(enum MATH_FUNCTION_ARG_TYPE) * 1);
+      if (ptr == NULL) {
+        return 1;
+      }
+      ptr[0] = MATH_FUNCTION_ARG_TYPE_ARRAY;
+      FuncAry[i].prm.arg_type = ptr;
+      break;
+    case 65:  /*  FOR  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }
@@ -284,7 +285,7 @@ math_add_basic_function(MathEquation *eq) {
       ptr[4] = MATH_FUNCTION_ARG_TYPE_PROC;
       FuncAry[i].prm.arg_type = ptr;
       break;
-    case 84:  /*  IF  */
+    case 85:  /*  IF  */
       if (FuncAry[i].prm.arg_type) {
         break;
       }

@@ -28,6 +28,7 @@
 #include <string.h>
 #include <time.h>
 #include <glib.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include "ngraph.h"
@@ -280,6 +281,14 @@ sysunlink(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 static int 
+syspid(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  rval->i = getpid();
+
+  return 0;
+}
+
+static int 
 syshideinstance(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -365,6 +374,7 @@ static struct objtable nsystem[] = {
   {"home_dir",NSTR,NREAD,NULL,NULL,0},
   {"time",NSFUNC,NREAD|NEXEC,systime,"i",0},
   {"date",NSFUNC,NREAD|NEXEC,sysdate,"i",0},
+  {"pid",NIFUNC,NREAD|NEXEC,syspid,"",0},
   {"temp_file",NSFUNC,NREAD|NEXEC,systemp,NULL,0},
   {"temp_list",NSARRAY,NREAD,NULL,NULL,0},
   {"unlink_temp_file",NVFUNC,NREAD|NEXEC,sysunlink,NULL,0},

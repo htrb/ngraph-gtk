@@ -1,3 +1,14 @@
+2011-07-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/osystem.c (nsystem): add field "pid".
+	(syspid): added.
+
+	* src/math/math_basic_function.c (math_func_srand): added.
+
+	* src/math/math_function.h.in: add function "srand()".
+
+	* src/gtk/x11menu.h (SSubWinType): change order.
+
 2011-07-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shellcm.c (cmwhich): added.

@@ -136,8 +136,8 @@ enum SubWinType {
   TypeAxisWin,
   TypeLegendWin,
   TypeMergeWin,
-  TypeInfoWin,
   TypeCoordWin,
+  TypeInfoWin,
 };
 
 #define SUBWIN_PROTOTYPE enum SubWinType type;				\

@@ -923,6 +923,17 @@ math_func_rand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rva
   return 0;
 }
 
+int
+math_func_srand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+
+  srand(exp->buf[0].val.val);
+  rval->val = exp->buf[0].val.val;
+
+  return 0;
+}
+
 #ifdef HAVE_LIBGSL
 int
 math_func_icbeta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)

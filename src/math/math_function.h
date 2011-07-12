@@ -25,60 +25,61 @@ int math_add_basic_function(MathEquation *eq);
 int math_func_zetam1_int(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #endif
 int math_func_mjd2month(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_unix2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_mjd2year(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_mjd2yday(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_isnormal(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_mjd2wday(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_unix2mjd(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #ifdef HAVE_LIBGSL
 int math_func_zeta_int(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #endif
-int math_func_mjd2wday(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_mjd2day(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_isnormal(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_mjd2yday(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_unshift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_isbreak(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_isundef(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_mjd2day(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_isbreak(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_unless(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #ifdef HAVE_LIBGSL
 int math_func_icbeta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #endif
-int math_func_iscont(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #ifdef HAVE_LIBGSL
 int math_func_zetam1(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #endif
-int math_func_unless(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_iscont(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_atanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_isnan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_shift(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_rsort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_gauss(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_prog2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_progn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_round(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_rsort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_asinh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_acosh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_round(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_prog2(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_prog1(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_srand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_theta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_delta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_atanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_icgam(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_gamma(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_erfc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_icgam(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_progn(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_qinv(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_rand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_beta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_tanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_cosh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_sinh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_frac(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_atan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_acos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_asin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_erfc(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #ifdef HAVE_LIBGSL
 int math_func_zeta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 #endif
-int math_func_sign(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
-int math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_beta(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_rand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_sqrt(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_asin(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_push(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_size(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_tanh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_sort(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_cosh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_frac(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_sinh(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_atan(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_sign(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
+int math_func_acos(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_time(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_abs(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
 int math_func_neq(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval);
