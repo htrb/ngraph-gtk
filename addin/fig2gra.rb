@@ -126,8 +126,16 @@ def draw_poly_line(f, a, b)
 
   prm = a.map{|i| i.to_i}
 
+  return if (prm[1] == 5)
+
   n = prm[15] * 2
   fill = (prm[8] != -1)
+
+  close_path = false
+  if (b[0] == b[-2] && b[1] == b[-1])
+    n -= 2
+    close_path = true
+  end
 
   if (prm[1] != 1 || fill)
     if (fill)
@@ -143,7 +151,11 @@ def draw_poly_line(f, a, b)
   else
     set_color(f, COLOR[prm[4]])
     set_line_attribute(f, prm[2], prm[3] / 80.0, 0, prm[10])
-    f.puts("R,#{n + 1},#{n / 2},#{b[0, n].join(',')}")
+    if (close_path)
+      f.puts("D,#{n + 2},#{n / 2},0,#{b[0, n].join(',')}")
+    else
+      f.puts("R,#{n + 1},#{n / 2},#{b[0, n].join(',')}")
+    end
   end
 end
 
@@ -180,6 +192,7 @@ def draw_spline(f, a, b)
   subpath = []
 
   state = b[n, n / 2]
+
   state.each_with_index {|v, i|
     if (v == 0) 
       m = subpath.size / 2
@@ -210,6 +223,12 @@ def draw_spline(f, a, b)
   pos = uniq_pos(pos)
   n = pos.size
 
+  close_path = false
+  if (pos[0] == pos[-2] && pos[1] == pos[-1])
+    n -= 2
+    close_path = true
+  end
+
   return if (n < 4)
 
   if (prm[1] % 2 != 0 || fill)
@@ -226,7 +245,11 @@ def draw_spline(f, a, b)
   else
     set_color(f, COLOR[prm[4]])
     set_line_attribute(f, prm[2], prm[3] / 80.0, 0, 2)
-    f.puts("R,#{n + 1},#{n / 2},#{pos.join(',')}")
+    if (close_path)
+      f.puts("D,#{n + 2},#{n / 2},0,#{pos.join(',')}")
+    else
+      f.puts("R,#{n + 1},#{n / 2},#{pos.join(',')}")
+    end
   end
 end
 

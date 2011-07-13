@@ -1,4 +1,9 @@
-2011-07-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+2011-07-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/ps2gra.nsc: remove automatically created files.
+
+	* addin/fig2gra.rb (#draw_poly_line, #uniq_pos): close path when
+	start and end points are same position.
 
 	* initfile/Ngraph.ini.in (script): add "import PS" and "import
 	EPS" addin.
