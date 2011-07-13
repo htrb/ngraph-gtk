@@ -378,7 +378,7 @@ psize = [21000, 29700] unless (psize)
 File.open(ARGV[1], "w") {|f|
   f.puts('%Ngraph GRAF')
   f.puts("I,5,0,0,#{psize.join(',')},10000")
-  f.puts("V,5,0,0,#{psize.join(',')},1")
+  f.puts("V,5,0,0,#{psize.join(',')},0")
 
   i = 8
   while (l[i])

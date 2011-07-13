@@ -5744,7 +5744,9 @@ reorder_object(enum object_move_type type)
 static void
 ncopyobj(struct objlist *obj, int id1, int id2)
 {
-  copy_obj_field(obj, id1, id2, NULL);
+  char *field[] = {"name", NULL};
+
+  copy_obj_field(obj, id1, id2, field);
 }
 
 static void

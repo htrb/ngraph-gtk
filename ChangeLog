@@ -1,3 +1,14 @@
+2011-07-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.ini.in (script): add "import PS" and "import
+	EPS" addin.
+
+	* addin/ps2gra.nsc: added.
+
+	* addin/Makefile.am: add ps2gra.nsc
+
+	* src/gtk/x11view.c (ncopyobj): don't copy "name" field.
+
 2011-07-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/osystem.c (nsystem): type of the field "pid" is "NINT".

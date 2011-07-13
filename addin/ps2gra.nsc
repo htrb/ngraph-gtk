@@ -1,0 +1,77 @@
+#! ngraph
+
+PSTOEDIT_COMMAND="pstoedit"
+PSTOEDIT_OPTION="-q -flat 0.1 -nc -ssp -dt"
+
+RUBY_COMMAND="ruby"
+
+error_dialog() {
+    new dialog
+    dialog::message "$1"
+    del dialog
+}
+
+check_command() {
+    if which -q $1
+    then
+	true
+    else
+	error_dialog "Cannot execute '$1'."
+	exit
+    fi
+}
+
+set +e
+
+check_command $RUBY_COMMAND
+check_command $PSTOEDIT_COMMAND
+
+new dialog
+ps_file=`get dialog -field get_open_file:$1`
+del dialog
+
+if [ -z "$ps_file" ]
+then
+    exit
+fi
+
+if [ ! -r "$ps_file" ]
+then
+    error_dialog "cannot open $ps_file"
+    exit
+fi
+
+fig_file="${system::temp_file}"
+gra_file="`pwd`/`basename $ps_file .$1`.gra"
+
+$PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$ps_file" "$fig_file"
+if [ ! -r "$fig_file" ]
+then
+    error_dialog "some error was occurred during execute pstoedit."
+    system::unlink_temp_file "$fig_file"
+    exit
+fi
+
+$RUBY_COMMAND $NGRAPHLIB/fig2gra.rb "$fig_file" "$gra_file"
+system::unlink_temp_file "$fig_file"
+if [ ! -r "$gra_file" ]
+then
+    error_dialog "some error was occurred while executing fig2gra."
+    exit
+fi
+
+for i in `object merge -instances`
+do
+    merge_file=`get merge:$i -field file`
+    if [ "$merge_file" = "$gra_file"]
+    then
+	exit
+    fi
+done
+
+new merge
+merge::file="$gra_file"
+
+menu::draw
+menu::unfocus
+menu::focus merge:!

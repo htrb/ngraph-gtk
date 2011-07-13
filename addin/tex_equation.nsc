@@ -12,7 +12,7 @@ TEX_FILE="_tex_eqn_${system::pid}"
 
 error_dialog() {
     new dialog
-    dialog::message "$1."
+    dialog::message "$1"
     del dialog
 }
 
@@ -74,9 +74,10 @@ do
 EOF
     $TEX_COMMAND $TEX_OPTION "$TEX_FILE".tex | menu::cat
     menu::echo "---------------"
+    menu::echo
     if [ ! -r "$TEX_FILE".pdf ]
     then
-	error_dialog "some error was occurred while executing $TEX_COMMAND"
+	error_dialog "some error was occurred while executing $TEX_COMMAND."
 	rm "$TEX_FILE".*
 	delete_object
 	menu::show_window 5
@@ -92,7 +93,7 @@ EOF
 	exit
     fi
 
-    gra_file="$merge_name".gra
+    gra_file="`pwd`/$merge_name".gra
     $RUBY_COMMAND $NGRAPHLIB/fig2gra.rb "$TEX_FILE".fig "$gra_file"
     if [ ! -r "$gra_file" ]
     then
