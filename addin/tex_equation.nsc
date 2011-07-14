@@ -77,7 +77,7 @@ EOF
     menu::echo
     if [ ! -r "$TEX_FILE".pdf ]
     then
-	error_dialog "some error was occurred while executing $TEX_COMMAND."
+	error_dialog "Faital error occurred while executing $TEX_COMMAND."
 	rm "$TEX_FILE".*
 	delete_object
 	menu::show_window 5
@@ -87,7 +87,7 @@ EOF
     $PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$TEX_FILE".pdf "$TEX_FILE".fig
     if [ ! -r "$TEX_FILE".fig ]
     then
-	error_dialog "some error was occurred while executing $PSTOEDIT_COMMAND."
+	error_dialog "Faital error occurred while executing $PSTOEDIT_COMMAND."
 	rm "$TEX_FILE".*
 	delete_object
 	exit
@@ -97,7 +97,7 @@ EOF
     $RUBY_COMMAND $NGRAPHLIB/fig2gra.rb "$TEX_FILE".fig "$gra_file"
     if [ ! -r "$gra_file" ]
     then
-	error_dialog "some error was occurred while executing fig2gra."
+	error_dialog "Faital error occurred while executing fig2gra."
 	rm "$TEX_FILE".*
 	delete_object
 	exit

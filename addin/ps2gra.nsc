@@ -47,7 +47,7 @@ gra_file="`pwd`/`basename $ps_file .$1`.gra"
 $PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$ps_file" "$fig_file"
 if [ ! -r "$fig_file" ]
 then
-    error_dialog "some error was occurred during execute pstoedit."
+    error_dialog "Faital error occurred while execute pstoedit."
     system::unlink_temp_file "$fig_file"
     exit
 fi
@@ -57,7 +57,7 @@ system::unlink_temp_file "$fig_file"
 rm -f "$fig_file"*
 if [ ! -r "$gra_file" ]
 then
-    error_dialog "some error was occurred while executing fig2gra."
+    error_dialog "Fatal error occurred while executing fig2gra."
     exit
 fi
 
