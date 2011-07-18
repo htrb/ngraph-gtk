@@ -60,6 +60,9 @@ darray::unshift "0"
 s="${darray::join}"
 show_result "unshift" "$s" "0.000000000000000e+00,2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
 
+s="${darray::get:-2}"
+show_result "get" "$s" "3.000000000000000e+00"
+
 darray::reverse
 s="${darray::join}"
 show_result "reverse" "$s" "4.000000000000000e+00,3.000000000000000e+00,2.000000000000000e+00,0.000000000000000e+00"
@@ -112,5 +115,14 @@ darray::slice -4 3
 darray::reverse
 s="${darray::join}"
 show_result "slice" "$s" "2.000000000000000e+00,3.000000000000000e+00,4.000000000000000e+00"
+
+darray::@="1 2 3"
+darray::map "x ^ 2"
+s="${darray::join}"
+show_result "map" "$s" "1.000000000000000e+00,4.000000000000000e+00,9.000000000000000e+00"
+
+darray::map "i"
+s="${darray::join}"
+show_result "map" "$s" "0.000000000000000e+00,1.000000000000000e+00,2.000000000000000e+00"
 
 del system

@@ -99,6 +99,11 @@ sarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   rval->str=NULL;
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
+
   po=(char **)arraynget(array,num);
   if (po==NULL) return 1;
   if ((buf=g_malloc(strlen(*po)+1))==NULL) return 1;
@@ -117,6 +122,10 @@ sarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=*(int *)argv[2];
   val=(char *)argv[3];
   _getobj(obj,"@",inst,&array);
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
   if (arrayput2(array,&val,num)==NULL) return 1;
   return 0;
 }
@@ -192,6 +201,10 @@ sarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   if (array == NULL) {
     return 1;
   }
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
 
   if (arrayins2(array,&val,num)==NULL) return 1;
   return 0;
@@ -260,6 +273,10 @@ sarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
   if (array==NULL) return 1;
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
   if (arrayndel2(array,num)==NULL) return 1;
   if (arraynum(array)==0) {
     arrayfree2(array);

@@ -54,11 +54,57 @@ intdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+static int
+int_times(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int count;
+
+  _getobj(obj, "@", inst, &count);
+  rval->i = count;
+  if (count <= 0) {
+    return 1;
+  }
+
+  count--;
+  _putobj(obj,"@",inst,&count);
+
+  return 0;
+}
+
+static int
+int_inc(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int count;
+
+  _getobj(obj, "@", inst, &count);
+  count++;
+  rval->i = count;
+  _putobj(obj,"@",inst,&count);
+
+  return 0;
+}
+
+static int
+int_dec(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
+{
+  int count;
+
+  _getobj(obj, "@", inst, &count);
+  count--;
+  rval->i = count;
+  _putobj(obj,"@",inst,&count);
+
+  return 0;
+}
+
 static struct objtable oint[] = {
   {"init",NVFUNC,NEXEC,intinit,NULL,0},
   {"done",NVFUNC,NEXEC,intdone,NULL,0},
   {"next",NPOINTER,0,NULL,NULL,0},
   {"@",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"times",NIFUNC,NREAD|NEXEC,int_times,"",0},
+  {"inc",NIFUNC,NREAD|NEXEC,int_inc,"",0},
+  {"dec",NIFUNC,NREAD|NEXEC,int_dec,"",0},
 };
 
 #define TBLNUM (sizeof(oint) / sizeof(*oint))

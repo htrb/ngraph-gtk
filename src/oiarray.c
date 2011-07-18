@@ -31,6 +31,8 @@
 #include "object.h"
 #include "oiarray.h"
 
+#include "math/math_equation.h"
+
 #define NAME "iarray"
 #define PARENT "object"
 #define OVERSION "1.00.00"
@@ -57,6 +59,16 @@ iarraydone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   return 0;
 }
 
+int
+oarray_get_index(struct narray *array, int i)
+{
+  if (i < 0) {
+    i += arraynum(array);
+  }
+
+  return i;
+}
+
 static int 
 iarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
@@ -65,6 +77,12 @@ iarrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
+
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
+
   po=(int *)arraynget(array,num);
   if (po==NULL) return 1;
   rval->i=*po;
@@ -81,6 +99,12 @@ iarrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=*(int *)argv[2];
   val=*(int *)argv[3];
   _getobj(obj,"@",inst,&array);
+
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
+
   if (arrayput(array,&val,num)==NULL) return 1;
   return 0;
 }
@@ -172,6 +196,11 @@ iarrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
       return 1;
   }
 
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
+
   if (arrayins(array, &val, num)==NULL) {
     return 1;
   }
@@ -240,6 +269,12 @@ iarraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   _getobj(obj,"@",inst,&array);
   if (array==NULL) return 1;
+
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
+
   if (arrayndel(array,num)==NULL) return 1;
   if (arraynum(array)==0) {
     arrayfree(array);
@@ -627,6 +662,80 @@ iarray_max(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
+MathEquation *
+oarray_create_math(struct objlist *obj, const char *fild, const char *eqn)
+{
+  MathEquation *code;
+  int rcode;
+
+  code = math_equation_basic_new();
+  if (code == NULL) {
+    return NULL;
+  }
+
+  if (math_equation_add_var(code, "X") != 0) {
+    math_equation_free(code);
+    return NULL;
+  }
+  if (math_equation_add_var(code, "I") != 1) {
+    math_equation_free(code);
+    return NULL;
+  }
+
+  rcode = math_equation_parse(code, eqn);
+  if (rcode) {
+    char *err_msg;
+    err_msg = math_err_get_error_message(code, eqn, rcode);
+    error22(obj, ERRUNKNOWN, fild, err_msg);
+    g_free(err_msg);
+    math_equation_free(code);
+    return NULL;
+  }
+  math_equation_optimize(code);
+
+  return code;
+}
+
+static int
+iarray_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int i, n, *data;
+  MathEquation *code;
+  MathValue val;
+
+  if (argv[2] == NULL) {
+    return 0;
+  }
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 1;
+  }
+
+  code = oarray_create_math(obj, argv[1], argv[2]);
+  if (code == NULL) {
+    return 1;
+  }
+
+  data = arraydata(array);
+  for (i = 0; i < n; i++) {
+    val.val = data[i];
+    val.type = MATH_VALUE_NORMAL;
+    math_equation_set_var(code, 0, &val);
+    val.val = i;
+    val.type = MATH_VALUE_NORMAL;
+    math_equation_set_var(code, 1, &val);
+    math_equation_calculate(code, &val);
+    data[i] = val.val;
+  }
+
+  math_equation_free(code);
+
+  return 0;
+}
+
 static struct objtable oiarray[] = {
   {"init",NVFUNC,NEXEC,iarrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,iarraydone,NULL,0},
@@ -656,6 +765,7 @@ static struct objtable oiarray[] = {
   {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, NULL, 0},
   {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, NULL, 0},
   {"slice", NVFUNC, NREAD|NEXEC, oarray_slice, "ii", 0},
+  {"map", NVFUNC, NREAD|NEXEC, iarray_map, "s", 0},
 };
 
 #define TBLNUM (sizeof(oiarray) / sizeof(*oiarray))

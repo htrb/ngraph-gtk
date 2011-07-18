@@ -607,8 +607,8 @@ object: int
 version: 1.00.00
 parent: object
 object id: 14
-number of fields: 8
-size of instance: 48
+number of fields: 11
+size of instance: 72
 </pre>
 <table border="1" cellspacing="0">
 <tr><th>permission</th><th>field name</th><th>field type</th></tr>
@@ -620,6 +620,9 @@ size of instance: 48
 <tr><td>--x</td><td align="right">done</td><td>void( )</td></tr>
 <tr><td>---</td><td align="right">next</td><td>void*</td></tr>
 <tr><td>rw-</td><td align="right">@</td><td>int</td></tr>
+<tr><td>r-x</td><td align="right">times</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">inc</td><td>int( void )</td></tr>
+<tr><td>r-x</td><td align="right">dec</td><td>int( void )</td></tr>
 </table>
 
 <h3>double</h3>
@@ -709,7 +712,7 @@ object: iarray
 version: 1.00.00
 parent: object
 object id: 18
-number of fields: 32
+number of fields: 33
 size of instance: 152
 </pre>
 <table border="1" cellspacing="0">
@@ -746,6 +749,7 @@ size of instance: 152
 <tr><td>r-x</td><td align="right">rseq</td><td>*char( )</td></tr>
 <tr><td>r-x</td><td align="right">reverse</td><td>void( )</td></tr>
 <tr><td>r-x</td><td align="right">slice</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">map</td><td>void( char * )</td></tr>
 </table>
 
 <h3>darray</h3>
@@ -754,7 +758,7 @@ object: darray
 version: 1.00.00
 parent: object
 object id: 19
-number of fields: 32
+number of fields: 33
 size of instance: 152
 </pre>
 <table border="1" cellspacing="0">
@@ -791,6 +795,7 @@ size of instance: 152
 <tr><td>r-x</td><td align="right">rseq</td><td>*char( )</td></tr>
 <tr><td>r-x</td><td align="right">reverse</td><td>void( )</td></tr>
 <tr><td>r-x</td><td align="right">slice</td><td>void( int int )</td></tr>
+<tr><td>r-x</td><td align="right">map</td><td>void( char * )</td></tr>
 </table>
 
 <h3>sarray</h3>

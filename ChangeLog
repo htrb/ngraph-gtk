@@ -1,3 +1,29 @@
+2011-07-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oiarray.c (oarray_get_index, oarray_create_math)
+	(iarray_map): added.
+	(iarrayget, iarrayput, iarrayins, iarraydel): use
+	"oarray_get_index()".
+	(oiarray): add field "map".
+
+	* src/odarray.c (darrayget, darrayput, darrayins, darraydel): use
+	"oarray_get_index()".
+	(odarray): add field "map".
+
+	* src/osarray.c (sarrayget, sarrayput, sarrayins, sarraydel): use
+	"oarray_get_index()".
+
+	* test/sarray_test.nsc: add tests for "get" and "map" fields.
+
+	* test/iarray_test.nsc: add tests for "get" and "map" fields.
+
+	* test/darray_test.nsc: add tests for "get" and "map" fields.
+
+2011-07-16  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/oint.c (int_times, int_inc, int_dec): added.
+	(oint): add fields "times", "inc" and "dec".
+
 2011-07-13  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/ps2gra.nsc: remove automatically created files.

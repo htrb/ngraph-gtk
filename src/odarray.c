@@ -31,6 +31,8 @@
 #include "object.h"
 #include "oiarray.h"
 
+#include "math/math_equation.h"
+
 #define NAME "darray"
 #define PARENT "object"
 #define OVERSION "1.00.00"
@@ -66,6 +68,11 @@ darrayget(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
+
   po=(double *)arraynget(array,num);
   if (po==NULL) return 1;
   rval->d=*po;
@@ -82,6 +89,10 @@ darrayput(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=*(int *)argv[2];
   val=*(double *)argv[3];
   _getobj(obj,"@",inst,&array);
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
   if (arrayput(array,&val,num)==NULL) return 1;
   return 0;
 }
@@ -154,6 +165,11 @@ darrayins(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     return 1;
   }
 
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
+
   if (arrayins(array,&val,num)==NULL) return 1;
   return 0;
 }
@@ -218,6 +234,12 @@ darraydel(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   num=*(int *)argv[2];
   _getobj(obj,"@",inst,&array);
   if (array==NULL) return 1;
+
+  num = oarray_get_index(array, num);
+  if (num < 0) {
+    return 1;
+  }
+
   if (arrayndel(array,num)==NULL) return 1;
   if (arraynum(array)==0) {
     arrayfree(array);
@@ -492,6 +514,47 @@ darray_max(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   return 0;
 }
 
+static int
+darray_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  struct narray *array;
+  int i, n;
+  double *data;
+  MathEquation *code;
+  MathValue val;
+
+  if (argv[2] == NULL) {
+    return 0;
+  }
+
+  _getobj(obj, "@", inst, &array);
+  n = arraynum(array);
+  if (n == 0) {
+    return 1;
+  }
+
+  code = oarray_create_math(obj, argv[1], argv[2]);
+  if (code == NULL) {
+    return 1;
+  }
+
+  data = arraydata(array);
+  for (i = 0; i < n; i++) {
+    val.val = data[i];
+    val.type = MATH_VALUE_NORMAL;
+    math_equation_set_var(code, 0, &val);
+    val.val = i;
+    val.type = MATH_VALUE_NORMAL;
+    math_equation_set_var(code, 1, &val);
+    math_equation_calculate(code, &val);
+    data[i] = val.val;
+  }
+
+  math_equation_free(code);
+
+  return 0;
+}
+
 static struct objtable odarray[] = {
   {"init",NVFUNC,NEXEC,darrayinit,NULL,0},
   {"done",NVFUNC,NEXEC,darraydone,NULL,0},
@@ -521,6 +584,7 @@ static struct objtable odarray[] = {
   {"rseq", NSFUNC, NREAD|NEXEC, oarray_reverse_seq, NULL, 0}, 
   {"reverse", NVFUNC, NREAD|NEXEC, oarray_reverse, NULL, 0},
   {"slice", NVFUNC, NREAD|NEXEC, oarray_slice, "ii", 0},
+  {"map", NVFUNC, NREAD|NEXEC, darray_map, "s", 0},
 };
 
 #define TBLNUM (sizeof(odarray) / sizeof(*odarray))
