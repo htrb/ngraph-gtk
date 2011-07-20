@@ -4010,8 +4010,10 @@ get_array_argument(int type, char *val, struct narray **array)
     return 0;
   }
 
+  argv = NULL;
   r = g_shell_parse_argv(val, &argc, &argv, NULL);
   if (! r) {
+    g_strfreev(argv);
     return -1;
   }
 

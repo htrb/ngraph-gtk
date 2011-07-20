@@ -23,7 +23,6 @@ check_command() {
 
 set +e
 
-check_command $RUBY_COMMAND
 check_command $PSTOEDIT_COMMAND
 
 new dialog
@@ -52,7 +51,13 @@ then
     exit
 fi
 
-$RUBY_COMMAND $NGRAPHLIB/fig2gra.rb "$fig_file" "$gra_file"
+if which -q $RUBY_COMMAND
+then
+    $RUBY_COMMAND $NGRAPHLIB/fig2gra.rb "$fig_file" "$gra_file"
+else
+    . $NGRAPHLIB/fig2gra.nsc
+    fig2gra "$fig_file" "$gra_file"
+fi
 system::unlink_temp_file "$fig_file"
 rm -f "$fig_file"*
 if [ ! -r "$gra_file" ]
@@ -76,3 +81,4 @@ merge::file="$gra_file"
 menu::draw
 menu::unfocus
 menu::focus merge:!
+menu::modified=true

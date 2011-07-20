@@ -43,8 +43,15 @@ then
 fi
 
 check_command $TEX_COMMAND
-check_command $RUBY_COMMAND
 check_command $PSTOEDIT_COMMAND
+
+if which -q $RUBY_COMMAND
+then
+    FIG2GRA_COMMAND=$NGRAPHLIB/fig2gra.rb
+else
+    . $NGRAPHLIB/fig2gra.nsc
+    FIG2GRA_COMMAND=fig2gra
+fi
 
 new iarray name=text
 new iarray name=graf
@@ -94,7 +101,7 @@ EOF
     fi
 
     gra_file="`pwd`/$merge_name".gra
-    $RUBY_COMMAND $NGRAPHLIB/fig2gra.rb "$TEX_FILE".fig "$gra_file"
+    FIG2GRA_COMMAND "$TEX_FILE".fig "$gra_file"
     if [ ! -r "$gra_file" ]
     then
 	error_dialog "Faital error occurred while executing fig2gra."
@@ -131,5 +138,6 @@ menu::unfocus
 menu::draw
 
 menu::focus merge:${iarray:merge:join:","}
+menu::modified=true
 
 delete_object

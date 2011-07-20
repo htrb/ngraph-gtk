@@ -204,8 +204,10 @@ regexp_match(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **arg
     return 1;
   }
 
+  info = NULL;
   r = g_regex_match(local->regexp, str, 0, &info);
   if (! r) {
+    g_match_info_free(info);
     return 1;
   }
 

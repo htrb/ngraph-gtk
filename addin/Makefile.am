@@ -1,5 +1,6 @@
 pkglib_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc		\
-	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc
+	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
+	fig2gra.nsc
 
 pkglib_SCRIPTS = calc.tcl fft.tcl fitrslt.tcl legend.tcl fig2gra.rb
 
