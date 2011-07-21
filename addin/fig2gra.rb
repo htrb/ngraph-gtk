@@ -93,14 +93,15 @@ def unit_conv(v)
   (v * COORD_CONV * 100 / RESOLUTION).to_i
 end
 
-def set_line_attribute(f, type, width, cap, join)
+def set_line_attribute(f, type, width, cap, join, len)
+  len = coord_conv(len)
   style = [
            [],
-           [450, 150],
-           [100, 100],
-           [450, 150, 150, 150],
-           [450, 150, 150, 150, 150, 150],
-           [450, 150, 150, 150, 150, 150, 150, 150],
+           [len, len],
+           [50, len],
+           [len, 100, 50, 100],
+           [len, 100, 50, 100, 50, 100],
+           [ken, 100, 50, 100, 50, 100, 50, 100],
           ]
 
   
@@ -145,12 +146,12 @@ def draw_poly_line(f, a, b)
 
     if (prm[3] > 0)
       set_color(f, COLOR[prm[4]])
-      set_line_attribute(f, prm[2], prm[3] / 80.0, 0, prm[10]) if (fill)
+      set_line_attribute(f, prm[2], prm[3] / 80.0, prm[11], prm[10], prm[9]) if (fill)
       f.puts("D,#{n + 2},#{n / 2},0,#{b[0, n].join(',')}")
     end
   else
     set_color(f, COLOR[prm[4]])
-    set_line_attribute(f, prm[2], prm[3] / 80.0, 0, prm[10])
+    set_line_attribute(f, prm[2], prm[3] / 80.0, prm[11], prm[10], prm[9])
     if (close_path)
       f.puts("D,#{n + 2},#{n / 2},0,#{b[0, n].join(',')}")
     else
@@ -239,12 +240,12 @@ def draw_spline(f, a, b)
 
     if (prm[3] > 0)
       set_color(f, COLOR[prm[4]])
-      set_line_attribute(f, prm[2], prm[3] / 80.0, 0, 2) if (fill)
+      set_line_attribute(f, prm[2], prm[3] / 80.0, prm[10], 2, prm[9]) if (fill)
       f.puts("D,#{n + 2},#{n / 2},0,#{pos.join(',')}")
     end
   else
     set_color(f, COLOR[prm[4]])
-    set_line_attribute(f, prm[2], prm[3] / 80.0, 0, 2)
+    set_line_attribute(f, prm[2], prm[3] / 80.0, prm[10], 2, prm[9])
     if (close_path)
       f.puts("D,#{n + 2},#{n / 2},0,#{pos.join(',')}")
     else
