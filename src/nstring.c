@@ -104,6 +104,7 @@ nstrcat(char *po,char *s)
   return po;
 }
 
+#ifdef COMPILE_UNUSED_FUNCTIONS
 char *
 nstrncat(char *po,char *s,size_t n)
 {
@@ -115,6 +116,7 @@ nstrncat(char *po,char *s,size_t n)
     if ((po=nstrccat(po,s[i]))==NULL) return NULL;
   return po;
 }
+#endif
 
 int 
 strcmp0(const char *s1, const char *s2)

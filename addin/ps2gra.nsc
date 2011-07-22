@@ -5,25 +5,21 @@ PSTOEDIT_OPTION="-q -flat 0.1 -nc -ssp -dt"
 
 RUBY_COMMAND="ruby"
 
-error_dialog() {
+ps2gra_error_dialog() {
     new dialog
     dialog::message "$1"
     del dialog
 }
 
-check_command() {
-    if which -q $1
-    then
-	true
-    else
-	error_dialog "Cannot execute '$1'."
-	exit
-    fi
-}
-
 set +e
 
-check_command $PSTOEDIT_COMMAND
+if which -q $PSTOEDIT_COMMAND
+then
+    true
+else
+    ps2gra_error_dialog "Cannot execute '$1'."
+    exit
+fi
 
 new dialog
 ps_file=`get dialog -field get_open_file:$1`
@@ -36,7 +32,7 @@ fi
 
 if [ ! -r "$ps_file" ]
 then
-    error_dialog "cannot open $ps_file"
+    ps2gra_error_dialog "cannot open $ps_file"
     exit
 fi
 
@@ -46,7 +42,7 @@ gra_file="`pwd`/`basename $ps_file .$1`.gra"
 $PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$ps_file" "$fig_file"
 if [ ! -r "$fig_file" ]
 then
-    error_dialog "Faital error occurred while execute pstoedit."
+    ps2gra_error_dialog "Faital error occurred while execute pstoedit."
     system::unlink_temp_file "$fig_file"
     exit
 fi
@@ -62,7 +58,7 @@ system::unlink_temp_file "$fig_file"
 rm -f "$fig_file"*
 if [ ! -r "$gra_file" ]
 then
-    error_dialog "Fatal error occurred while executing fig2gra."
+    ps2gra_error_dialog "Fatal error occurred while executing fig2gra."
     exit
 fi
 

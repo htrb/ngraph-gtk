@@ -10,23 +10,23 @@ RUBY_COMMAND="ruby"
 
 TEX_FILE="_tex_eqn_${system::pid}"
 
-error_dialog() {
+tex_eqn_error_dialog() {
     new dialog
     dialog::message "$1"
     del dialog
 }
 
-check_command() {
+tex_eqn_check_command() {
     if which -q $1
     then
 	true
     else
-	error_dialog "Cannot execute '$1'."
+	tex_eqn_error_dialog "Cannot execute '$1'."
 	exit
     fi
 }
 
-delete_object() {
+tex_eqn_delete_object() {
     del iarray:text
     del iarray:graf
     del iarray:merge
@@ -38,12 +38,12 @@ text_obj="${menu::focused:'text'}"
 
 if [ -z "$text_obj" ]
 then
-    error_dialog "focus text object to convert."
+    tex_eqn_error_dialog "focus text object to convert."
     exit
 fi
 
-check_command $TEX_COMMAND
-check_command $PSTOEDIT_COMMAND
+tex_eqn_check_command $TEX_COMMAND
+tex_eqn_check_command $PSTOEDIT_COMMAND
 
 if which -q $RUBY_COMMAND
 then
@@ -84,9 +84,9 @@ EOF
     menu::echo
     if [ ! -r "$TEX_FILE".pdf ]
     then
-	error_dialog "Faital error occurred while executing $TEX_COMMAND."
+	tex_eqn_error_dialog "Faital error occurred while executing $TEX_COMMAND."
 	rm "$TEX_FILE".*
-	delete_object
+	tex_eqn_delete_object
 	menu::show_window 5
 	exit
     fi
@@ -94,9 +94,9 @@ EOF
     $PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$TEX_FILE".pdf "$TEX_FILE".fig
     if [ ! -r "$TEX_FILE".fig ]
     then
-	error_dialog "Faital error occurred while executing $PSTOEDIT_COMMAND."
+	tex_eqn_error_dialog "Faital error occurred while executing $PSTOEDIT_COMMAND."
 	rm "$TEX_FILE".*
-	delete_object
+	tex_eqn_delete_object
 	exit
     fi
 
@@ -104,9 +104,9 @@ EOF
     $FIG2GRA_COMMAND "$TEX_FILE".fig "$gra_file"
     if [ ! -r "$gra_file" ]
     then
-	error_dialog "Faital error occurred while executing fig2gra."
+	tex_eqn_error_dialog "Faital error occurred while executing fig2gra."
 	rm "$TEX_FILE".*
-	delete_object
+	tex_eqn_delete_object
 	exit
     fi
 
@@ -140,4 +140,4 @@ menu::draw
 menu::focus merge:${iarray:merge:join:","}
 menu::modified=true
 
-delete_object
+tex_eqn_delete_object

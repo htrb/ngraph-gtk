@@ -30,7 +30,6 @@
 char *nstrnew(void);
 char *nstrccat(char *po,char ch);
 char *nstrcat(char *po,char *s);
-char *nstrncat(char *po,char *s,size_t n);
 char *nstraddchar(char *po, int len, char ch);
 
 int strcmp0(const char *s1,const char *s2);

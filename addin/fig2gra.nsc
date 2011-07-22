@@ -11,7 +11,7 @@ fig2gra_delete_obj() {
     del iarray:points
 }
 
-set_color() {
+fig2gra_set_color() {
     c=`get sarray:palette -field get:$1`
     if [ -n "$c" ]
     then
@@ -19,7 +19,7 @@ set_color() {
     fi
 }
 
-set_line_attribute () {
+fig2gra_set_line_attribute () {
     style=${iarray:fig2gra:get:2}
     width=`iexpr "${iarray:fig2gra:get:3} * $COORD_CONV * 100 / 80"`
     len=`iexpr "${iarray:fig2gra:get:9} * $COORD_CONV * 100 / 80"`
@@ -47,7 +47,7 @@ set_line_attribute () {
     esac
 }
 
-draw_poly_line() {
+fig2gra_draw_poly_line() {
     n=${iarray:points:num}
 
     if [ $n -lt 4 ]
@@ -76,19 +76,19 @@ draw_poly_line() {
 	n2=`iexpr $n+2`
 	if [ $fill -ne 0 ]
 	then
-	    set_color ${iarray:fig2gra:get:5}
+	    fig2gra_set_color ${iarray:fig2gra:get:5}
 	    io:fig2gra:puts "D,$n2,$m,1,${iarray:points:join:','}"
 	fi
 
 	if [ ${iarray:fig2gra:get:3} -gt 0 ]
 	then
-	    set_color ${iarray:fig2gra:get:4}
-	    set_line_attribute
+	    fig2gra_set_color ${iarray:fig2gra:get:4}
+	    fig2gra_set_line_attribute
 	    io:fig2gra:puts "D,$n2,$m,0,${iarray:points:join:','}"
 	fi
     else
-	set_color ${iarray:fig2gra:get:4}
-	set_line_attribute
+	fig2gra_set_color ${iarray:fig2gra:get:4}
+	fig2gra_set_line_attribute
 	if [ $close_path -ne 0 ]
 	then
 	    io:fig2gra:puts "D,`iexpr $n+2`,$m,0,${iarray:points:join:','}"
@@ -98,7 +98,7 @@ draw_poly_line() {
     fi
 }
 
-init_palette() {
+fig2gra_init_palette() {
     sarray:palette:@=""
     sarray:palette:push "0,0,0"
     sarray:palette:push "0,0,255"
@@ -139,7 +139,7 @@ init_palette() {
     del int
 }
 
-add_palette() {
+fig2gra_add_palette() {
     new string
     string::@=$3
     r=`iexpr 0x${string::slice:"1 2"}`
@@ -157,7 +157,7 @@ fig2gra() {
     new iarray name=points
     new sarray name=palette
 
-    init_palette
+    fig2gra_init_palette
 
     io:fig2gra:mode="r"
     regexp:fig2gra:@='^#'
@@ -234,7 +234,7 @@ fig2gra() {
 
 	case ${iarray:fig2gra:get:0} in
 	    0)			# Color Pseudo-objects
-		add_palette $a
+		fig2gra_add_palette $a
 		;;
 	    1)			# ELLIPSE
 		;;
@@ -243,7 +243,7 @@ fig2gra() {
 		then
 		    iarray:points:@="$b"
 		    iarray:points:map "x * $COORD_CONV * 100 / $RESOLUTION"
-		    draw_poly_line
+		    fig2gra_draw_poly_line
 		fi
 		;;
 	    3)			# SPLINE

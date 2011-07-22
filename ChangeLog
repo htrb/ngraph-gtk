@@ -1,3 +1,15 @@
+2011-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/ps2gra.nsc: change name of functions.
+
+	* addin/fig2gra.nsc: change name of functions.
+
+	* addin/fig2gra.rb (set_line_attribute): fix typo.
+
+	* addin/tex_equation.nsc: change name of functions.
+
+	* src/nstring.c (nstrncat): this function is not used.
+
 2011-07-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/tex_equation.nsc: fix typo.
