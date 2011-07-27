@@ -2101,7 +2101,7 @@ search_mask(int *mask, int n, int *index, int line)
 #endif
 
 static void
-set_var(MathEquation *eq, MathValue *x, MathValue *y)
+set_var(MathEquation *eq, const MathValue *x, const MathValue *y)
 {
   math_equation_set_var(eq, 0, x);
   math_equation_set_var(eq, 1, y);
@@ -2269,7 +2269,7 @@ set_const_all(struct f2ddata *fp)
 }
 
 static int
-file_calculate(struct f2ddata *fp, MathEquation *eq, MathValue *x, MathValue *y, MathValue *prm, MathValue *fprm, MathValue *val)
+file_calculate(struct f2ddata *fp, MathEquation *eq, const MathValue *x, const MathValue *y, MathValue *prm, MathValue *fprm, MathValue *val)
 {
   if (eq == NULL || eq->exp == NULL)
     return 0;
@@ -3170,7 +3170,7 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 	  fp->miny.val = fp->d3;
 	}
 	if ((fp->maxy.type == MATH_VALUE_UNDEF) || (fp->maxy.val < fp->d3)) {
-	  fp->maxx.val = fp->d3;
+	  fp->maxy.val = fp->d3;
 	}
 	fp->miny.type = MATH_VALUE_NORMAL;
 	fp->maxy.type = MATH_VALUE_NORMAL;
@@ -3248,7 +3248,7 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 	  fp->miny.val = fp->d3;
 	}
 	if ((fp->maxy.type == MATH_VALUE_UNDEF) || (fp->maxy.val < fp->d3)) {
-	  fp->maxx.val = fp->d3;
+	  fp->maxy.val = fp->d3;
 	}
 	fp->miny.type = MATH_VALUE_NORMAL;
 	fp->maxy.type = MATH_VALUE_NORMAL;
