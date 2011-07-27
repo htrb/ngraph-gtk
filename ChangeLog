@@ -1,3 +1,11 @@
+2011-07-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (message_box): increase maximum length of a
+	message.
+
+	* src/ofile.c (getminmaxdata): update "fp->maxy.val" instead of
+	"fp->maxx.val".
+
 2011-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/ps2gra.nsc: change name of functions.
