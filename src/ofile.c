@@ -2995,7 +2995,7 @@ getdataraw(struct f2ddata *fp, int maxdim, MathValue *data)
         d2 = data[fp->x].val + data[fp->x + 1].val;
         if (data[fp->x].type < data[fp->x + 1].type) d2stat = data[fp->x].type;
         else d2stat = data[fp->x + 1].type;
-        fp->d3 = data[fp->x].val + data[fp->x + 2].val;
+        d3 = data[fp->x].val + data[fp->x + 2].val;
         if (data[fp->x].type < data[fp->x + 2].type) d3stat = data[fp->x].type;
         else d3stat = data[fp->x + 2].type;
 	break;

@@ -3,8 +3,10 @@
 	* src/gtk/x11gui.c (message_box): increase maximum length of a
 	message.
 
-	* src/ofile.c (getminmaxdata): update "fp->maxy.val" instead of
-	"fp->maxx.val".
+	* src/ofile.c (getminmaxdata): bug fix: update "fp->maxy.val"
+	instead of "fp->maxx.val".
+	(getdataraw): bug fix: set value to not "fp->d3" but "d3".
+
 
 2011-07-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
