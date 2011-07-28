@@ -2552,7 +2552,7 @@ getdata(struct f2ddata *fp)
   int n;
 #endif
   MathValue *datax,*datay;
-  static MathValue gdata[FILE_OBJ_MAXCOL + 1];
+  static MathValue gdata[FILE_OBJ_MAXCOL + 3];
   static MathValue math_value_zero = {0, 0};
 
   fp->dx=fp->dy=fp->d2=fp->d3=0;
@@ -2830,15 +2830,9 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
 {
   char *buf;
   int i,step,rcode;
-  MathValue val, *gdata, dx2, dy2;
+  MathValue val, gdata[FILE_OBJ_MAXCOL + 3], dx2, dy2;
   int masked;
   int find;
-
-  gdata = g_malloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
-  if (gdata == NULL) {
-    g_free(gdata);
-   return -1;
-  }
 
   *dd=0;
   *ddstat=MATH_VALUE_UNDEF;
@@ -2853,7 +2847,6 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
       break;
     }
     if (rcode==-1) {
-      g_free(gdata);
       return -1;
     }
     fp->line++;
@@ -2873,7 +2866,6 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
       masked = search_mask(fp->mask, fp->masknum, &(fp->mask_index), fp->line);
 #endif
       if (rcode==-1) {
-	g_free(gdata);
 	return -1;
       }
       *dd=0;
@@ -2895,7 +2887,6 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
           break;
         }
         if (rcode==-1) {
-          g_free(gdata);
           return -1;
         }
         fp->line++;
@@ -2908,7 +2899,6 @@ getdata2(struct f2ddata *fp, MathEquation *code, int maxdim, double *dd, int *dd
     } else g_free(buf);
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
-  g_free(gdata);
   if (!find) {
     *dd=0;
     *ddstat=MATH_VALUE_MEOF;
@@ -3091,7 +3081,7 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
 */
 {
   int rcode;
-  MathValue *gdata = NULL;
+  MathValue gdata[FILE_OBJ_MAXCOL + 3];
 
   if (check_mtime(fp, local) == 0) {
     return 0;
@@ -3100,13 +3090,6 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   if (hskipdata(fp)!=0) {
     closedata(fp, local);
     return 1;
-  }
-
-
-  gdata = g_malloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
-  if (gdata == NULL) {
-   g_free(gdata);
-   return -1;
   }
 
   fp->minx.type = MATH_VALUE_UNDEF;
@@ -3119,9 +3102,7 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   fp->sumyy=0;
   fp->sumxy=0;
   fp->num=0;
-  while (
-	 (rcode = getdataraw(fp, fp->maxdim, gdata)) == 0
-	 ) {
+  while ((rcode = getdataraw(fp, fp->maxdim, gdata)) == 0) {
     switch (fp->type) {
     case TYPE_NORMAL:
     case TYPE_DIAGONAL:
@@ -3282,7 +3263,7 @@ getminmaxdata(struct f2ddata *fp, struct f2dlocal *local)
   fp->dx=fp->dy=fp->d2=fp->d3=0;
   fp->dxstat=fp->dystat=fp->d2stat=fp->d3stat=MATH_VALUE_UNDEF;
   fp->dline=0;
-  g_free(gdata);
+
   local->minx = fp->minx;
   local->maxx = fp->maxx;
   local->miny = fp->miny;
@@ -5904,18 +5885,11 @@ f2dgetdataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   struct narray *darray;
   int i,num,*data,maxdim;
   double d;
-  MathValue *gdata = NULL;
-
-  gdata = g_malloc(sizeof(MathValue) * (FILE_OBJ_MAXCOL + 1));
-  if (gdata == NULL) {
-   g_free(gdata);
-   return -1;
-  }
+  MathValue gdata[FILE_OBJ_MAXCOL + 3];
 
   _getobj(obj,"_local",inst,&f2dlocal);
   fp=f2dlocal->data;
   if (fp==NULL) {
-    g_free(gdata);
     return 0;
   }
   darray=rval->array;
@@ -5931,7 +5905,6 @@ f2dgetdataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     }
   }
   if (maxdim==-1) {
-    g_free(gdata);
     return 0;
   }
   if (maxdim>FILE_OBJ_MAXCOL) maxdim=FILE_OBJ_MAXCOL;
@@ -5939,7 +5912,6 @@ f2dgetdataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
   if (rcode!=0) {
     closedata(fp, f2dlocal);
     f2dlocal->data=NULL;
-    g_free(gdata);
     return 1;
   }
   darray=arraynew(sizeof(double));
@@ -5960,7 +5932,6 @@ f2dgetdataraw(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **ar
     arrayadd(darray,&d);
   }
   rval->array=darray;
-  g_free(gdata);
   return 0;
 }
 

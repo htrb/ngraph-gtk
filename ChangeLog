@@ -1,3 +1,10 @@
+2011-07-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (getdata2, getminmaxdata, f2dgetdataraw): use stack
+	instead of heap for the data buffer.
+	(getdata, getdata2, getminmaxdata, f2dgetdataraw): size of the
+	data buffer is "FILE_OBJ_MAXCOL + 3" (for error-bar plot).
+
 2011-07-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11gui.c (message_box): increase maximum length of a
