@@ -2143,7 +2143,7 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
     LegendTextDialog(&DlgLegendText, d->obj[id], sub_id);
     ret = DialogExecute(d->Win, &DlgLegendText);
     break; 
- }
+  }
   if (ret == IDDELETE) {
     delobj(d->obj[id], sub_id);
     set_graph_modified();
@@ -2152,6 +2152,8 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
     d->legend_type = -1;
   } else if (ret == IDOK) {
     update = TRUE;
+    d->select = sub_id;
+    d->legend_type = id;
   }
 
   if (update)
