@@ -1,3 +1,7 @@
+2011-07-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shellcm.c (cmwhich): check built-in command.
+
 2011-07-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (LegendWinLegendUpdate): save "d->select" and

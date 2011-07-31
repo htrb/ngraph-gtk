@@ -1359,14 +1359,20 @@ cmwhich(struct nshell*nshell,int argc,char **argv)
 
   r = 0;
   for (i = start; i < argc; i++) {
-    path = g_find_program_in_path(argv[i]);
-    if (path == NULL) {
-      r = 1;
-    } else {
+    if (check_cmd(argv[i])) {
       if (! quiet) {
-	putstdout(path);
+	printfstdout("%s: shell built-in command\n", argv[i]);
       }
-      g_free(path);
+    } else {
+      path = g_find_program_in_path(argv[i]);
+      if (path == NULL) {
+	r = 1;
+      } else {
+	if (! quiet) {
+	  putstdout(path);
+	}
+	g_free(path);
+      }
     }
   }
 
