@@ -46,4 +46,5 @@ cp $WIN_PATH/echo.nsc      $PKG_DIR
 
 rm $PKG_DIR/lib/*.tcl
 rm $PKG_DIR/lib/*.nsc
+rm $PKG_DIR/lib/*.rb
 rm $PKG_DIR/lib/terminal.exe
