@@ -2467,6 +2467,23 @@ FileDialogMark(GtkWidget *w, gpointer client_data)
   button_set_mark_image(w, d->mark.Type);
 }
 
+static int
+execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct objlist *fitobj, int fitid)
+{
+  int save_type, type, ret;
+
+  type = PLOT_TYPE_FIT;
+  getobj(fileobj, "type", fileid, 0, NULL, &save_type);
+  putobj(fileobj, "type", fileid, &type);
+  
+  FitDialog(&DlgFit, fitobj, fitid);
+  ret = DialogExecute(w, &DlgFit);
+
+  putobj(fileobj, "type", fileid, &save_type);
+
+  return ret;
+}
+
 static void
 FileDialogFit(GtkWidget *w, gpointer client_data)
 {
@@ -2519,8 +2536,7 @@ FileDialogFit(GtkWidget *w, gpointer client_data)
     create = TRUE;
   }
 
-  FitDialog(&DlgFit, fitobj, fitid);
-  ret = DialogExecute(d->widget, &DlgFit);
+  ret = execute_fit_dialog(d->widget, d->Obj, d->Id, fitobj, fitid);
 
   switch (ret) {
   case IDCANCEL:
@@ -3843,9 +3859,8 @@ FileWinFit(struct SubWin *d)
   if (fit == NULL)
     return;
 
-  FitDialog(&DlgFit, fitobj, fitid);
+  ret = execute_fit_dialog(d->Win, d->obj, sel, fitobj, fitid);
 
-  ret = DialogExecute(d->Win, &DlgFit);
   if (ret == IDDELETE) {
     delobj(fitobj, fitid);
     putobj(d->obj, "fit", sel, NULL);

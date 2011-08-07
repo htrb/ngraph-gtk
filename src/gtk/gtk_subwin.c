@@ -1403,6 +1403,9 @@ static gboolean
 ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
   GdkEventKey *e;
+  struct SubWin *d;
+
+  d = user_data;
 
   g_return_val_if_fail(w != NULL, FALSE);
   g_return_val_if_fail(event != NULL, FALSE);
@@ -1413,7 +1416,7 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   switch (e->keyval) {
   case GDK_w:
     if (e->state & GDK_CONTROL_MASK) {
-      gtk_widget_hide(w);
+      window_action_set_active(d->type, FALSE);
       return TRUE;
     }
     return FALSE;
@@ -1503,7 +1506,7 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
   g_signal_connect(dlg, "show", G_CALLBACK(cb_show), d);
   g_signal_connect(dlg, "delete-event", G_CALLBACK(cb_del), d);
   g_signal_connect(dlg, "destroy", G_CALLBACK(cb_destroy), d);
-  g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), NULL);
+  g_signal_connect(dlg, "key-press-event", G_CALLBACK(ev_sub_win_key_down), d);
 
   gtk_widget_show_all(swin);
 

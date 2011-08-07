@@ -1,3 +1,11 @@
+2011-08-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (ev_sub_win_key_down): use
+	"window_action_set_active()" instead of "gtk_widget_hide()".
+
+	* src/gtk/x11file.c (execute_fit_dialog): added.
+	(FileDialogFit, FileWinFit): use "execute_fit_dialog()".
+
 2011-07-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shellcm.c (cmwhich): check built-in command.
