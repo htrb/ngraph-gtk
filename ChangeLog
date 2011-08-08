@@ -1,3 +1,8 @@
+2011-08-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (sub_window_minimize)
+	(sub_window_restore_state): removed.
+
 2011-08-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (ev_sub_win_key_down): use

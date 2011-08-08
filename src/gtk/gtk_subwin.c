@@ -27,8 +27,6 @@
 
 #define DOUBLE_CLICK_PERIOD 250
 
-static int SaveWindowState = FALSE;
-
 static void hidden(struct SubWin *d);
 static void tree_update(struct LegendWin *d);
 static void tree_hidden(struct LegendWin *d);
@@ -1349,54 +1347,6 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
     return FALSE;
   }
   return TRUE;
-}
-
-void
-sub_window_minimize(void *ptr)
-{
-  struct SubWin *d;
-  GdkWindowState window_state;
-  GdkWindow *win;
-
-  d = (struct SubWin *) ptr;
-
-  if (d->Win == NULL) {
-    return;
-  }
-
-  win = gtk_widget_get_window(d->Win);
-  if (win == NULL) {
-    return;
-  }
-
-  window_state = gdk_window_get_state(win);
-  d->window_state = window_state;
-
-  if (! (window_state & GDK_WINDOW_STATE_ICONIFIED)) {
-    gtk_widget_hide(d->Win);
-    //    gtk_window_iconify(GTK_WINDOW(d->Win));
-    SaveWindowState = TRUE;
-  }
-}
-
-void
-sub_window_restore_state(void *ptr)
-{
-  struct SubWin *d;
-
-  d = (struct SubWin *) ptr;
-
-  if (d->Win == NULL)
-    return;
-
-  if (! SaveWindowState)
-    return;
-
-  if (d->window_state & (GDK_WINDOW_STATE_WITHDRAWN | GDK_WINDOW_STATE_ICONIFIED))
-    return;
-
-  //  gtk_window_deiconify(GTK_WINDOW(d->Win));
-  gtk_widget_show_all(d->Win);
 }
 
 static gboolean
