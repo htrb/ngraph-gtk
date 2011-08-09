@@ -1,3 +1,9 @@
+2011-08-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_equation.c (check_const_sub): chech
+	"exp->u.assign.right" instead of "exp->u.bin.right" when type of
+	the expression is "MATH_EXPRESSION_TYPE_ASSIGN".
+
 2011-08-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (sub_window_minimize)
