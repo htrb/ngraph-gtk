@@ -1502,7 +1502,7 @@ static struct NgraphActionEntry ActionEntry[] = {
   },
   {
     ACTION_TYPE_NORMAL,
-    "HelpAboputAction",
+    "HelpAboutAction",
     GTK_STOCK_ABOUT,
     NULL,
     NULL,

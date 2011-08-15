@@ -152,7 +152,7 @@
     </menu>
     <menu name="HelpMenu" action="HelpMenuAction">
       <menuitem name="HelpHelp" action="HelpHelpAction"/>
-      <menuitem name="HelpAboput" action="HelpAboputAction"/>
+      <menuitem name="HelpAbout" action="HelpAboutAction"/>
     </menu>
   </menubar>
   <toolbar name="CommandToolBar">

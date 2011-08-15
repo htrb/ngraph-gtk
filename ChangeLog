@@ -1,3 +1,11 @@
+2011-08-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/NgraphUI.xml.win: fix typo.
+
+	* initfile/NgraphUI.xml: fix typo.
+
+	* src/gtk/x11menu.c (ActionEntry): fix typo.
+
 2011-08-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_equation.c (check_const_sub): chech
