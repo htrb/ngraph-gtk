@@ -110,18 +110,26 @@ LegendGaussDialogSetupItem(GtkWidget *w, struct LegendGaussDialog *d, int id)
 }
 
 static gboolean
+#if GTK_CHECK_VERSION(3, 0, 0)
+LegendGaussDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
+#else
 LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data)
+#endif
 {
   struct LegendGaussDialog *d;
   int i, j, k, pw, dw, minx, miny, maxx, maxy,
     amp, wd, GC, spnum, output, found;
   double ppd, x, y = 0, tmp, spc2[6], dashes[] = {4.0};
-  GdkPixmap *pix;
   GdkWindow *win;
-  cairo_t *cr;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
   struct gra2cairo_local *local;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  cairo_surface_t *pix;
+#else
+  GdkPixmap *pix;
+  cairo_t *cr;
+#endif
 
   d = (struct LegendGaussDialog *) client_data;
 
@@ -135,7 +143,14 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
     return FALSE;
   }
 
-  pix = gra2gdk_create_pixmap(gobj, inst, local, win,
+#if GTK_CHECK_VERSION(3, 0, 0)
+  pix = gra2gdk_create_pixmap(local, VIEW_SIZE, VIEW_SIZE,
+			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+  if (pix == NULL) {
+    return FALSE;
+  }
+#else
+  pix = gra2gdk_create_pixmap(local, win,
 			      VIEW_SIZE, VIEW_SIZE,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
   if (pix == NULL) {
@@ -143,10 +158,10 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
   }
 
   cr = gdk_cairo_create(win);
+#endif
 
   pw = VIEW_SIZE - 1;
   dw = (d->Wdx < d->Wdy) ? d->Wdy : d->Wdx;
-
 
   ppd = pw / ((double) dw);
   minx = VIEW_SIZE / 2 - d->Wdx * ppd / 2;
@@ -250,7 +265,11 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
     }
   }
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  cairo_set_source_surface(cr, pix, 0, 0);
+#else
   gdk_cairo_set_source_pixmap(cr, pix, 0, 0);
+#endif
   cairo_paint(cr);
 
   cairo_set_source_rgb(cr, 0, 0, 0);
@@ -262,8 +281,12 @@ LegendGaussDialogPaint(GtkWidget *w, GdkEventExpose *event, gpointer client_data
 		  maxx - minx, maxy - miny);
   cairo_stroke(cr);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  cairo_surface_destroy(pix);
+#else
   g_object_unref(G_OBJECT(pix));
   cairo_destroy(cr);
+#endif
 
   return FALSE;
 }
@@ -469,7 +492,11 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->view = w;
     gtk_widget_set_size_request(w, VIEW_SIZE, VIEW_SIZE);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    g_signal_connect(w, "draw", G_CALLBACK(LegendGaussDialogPaint), d);
+#else
     g_signal_connect(w, "expose-event", G_CALLBACK(LegendGaussDialogPaint), d);
+#endif
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 
     w = gtk_hscale_new_with_range(- SCALE_H_MAX, SCALE_H_MAX, 1);

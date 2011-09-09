@@ -73,7 +73,7 @@ struct gtklocal
   struct objlist *obj;
   N_VALUE *inst;
   GtkWidget *mainwin, *View;
-  GdkPixmap *win;
+  cairo_surface_t *surface;
   GdkWindow *window;
   char *title;
   int redraw;
@@ -89,8 +89,13 @@ static int gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int arg
 static int gtkloadconfig(struct gtklocal *gtklocal);
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);
+#if GTK_CHECK_VERSION(3, 0, 0)
+static gboolean gtkevpaint(GtkWidget * w, cairo_t * e,
+			   gpointer user_data);
+#else
 static gboolean gtkevpaint(GtkWidget * w, GdkEventExpose * e,
 			   gpointer user_data);
+#endif
 static int gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		   char **argv);
 static int gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
@@ -148,6 +153,30 @@ gtkloadconfig(struct gtklocal *gtklocal)
   return 0;
 }
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+static gboolean
+gtkevpaint(GtkWidget *w, cairo_t *cr, gpointer user_data)
+{
+  struct gtklocal *gtklocal;
+
+  gtklocal = (struct gtklocal *) user_data;
+
+  if (gtklocal->surface == NULL) {
+    return FALSE;
+  }
+
+  if (gtklocal->redraw) {
+    GRAredraw(gtklocal->obj, gtklocal->inst, FALSE, FALSE);
+    gtklocal->redraw = FALSE;
+  }
+
+  cairo_set_source_surface(cr, gtklocal->surface, 0, 0);
+  cairo_paint(cr);
+  gtkMakeRuler(cr, gtklocal);
+
+  return FALSE;
+}
+#else
 static gboolean
 gtkevpaint(GtkWidget *w, GdkEventExpose *e, gpointer user_data)
 {
@@ -156,11 +185,13 @@ gtkevpaint(GtkWidget *w, GdkEventExpose *e, gpointer user_data)
 
   gtklocal = (struct gtklocal *) user_data;
 
-  if (e->count != 0)
+  if (e->count != 0) {
     return TRUE;
+  }
 
-  if (gtklocal->win == NULL)
+  if (gtklocal->surface == NULL) {
     return FALSE;
+  }
 
   cr = gdk_cairo_create(gtk_widget_get_window(w));
 
@@ -169,7 +200,7 @@ gtkevpaint(GtkWidget *w, GdkEventExpose *e, gpointer user_data)
     gtklocal->redraw = FALSE;
   }
 
-  gdk_cairo_set_source_pixmap(cr, gtklocal->win, 0, 0);
+  cairo_set_source_surface(cr, gtklocal->surface, 0, 0);
   gdk_cairo_region(cr, e->region);
   cairo_fill(cr);
   gtkMakeRuler(cr, gtklocal);
@@ -177,6 +208,7 @@ gtkevpaint(GtkWidget *w, GdkEventExpose *e, gpointer user_data)
 
   return FALSE;
 }
+#endif
 
 static int
 gtkclose(GtkWidget *widget, GdkEvent *event, gpointer user_data)
@@ -213,7 +245,7 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   e = (GdkEventKey *)event;
 
   switch (e->keyval) {
-  case GDK_w:
+  case GDK_KEY_w:
     if (e->state & GDK_CONTROL_MASK) {
       gtk_widget_destroy(gtklocal->mainwin);
       gtklocal->mainwin = NULL;
@@ -325,9 +357,14 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
 
   gtklocal->View = gtk_drawing_area_new();
-  g_signal_connect(gtklocal->View,
-		   "expose-event", G_CALLBACK(gtkevpaint), gtklocal);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  g_signal_connect(gtklocal->View, "draw",
+		   G_CALLBACK(gtkevpaint), gtklocal);
+#else
+  g_signal_connect(gtklocal->View, "expose-event",
+		   G_CALLBACK(gtkevpaint), gtklocal);
+#endif
   gtk_widget_set_size_request(gtklocal->View,
 			      gtklocal->winwidth, gtklocal->winheight);
 
@@ -338,7 +375,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   win = gtk_widget_get_window(gtklocal->View);
 
-  gtklocal->win = NULL;
+  gtklocal->surface= NULL;
   gtklocal->window = win;
   gtklocal->redraw = TRUE;
 
@@ -396,8 +433,9 @@ gtkdone(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
     }
   }
 
-  if (gtklocal->win)
-    g_object_unref(gtklocal->win);
+  if (gtklocal->surface) {
+    cairo_surface_destroy(gtklocal->surface);
+  }
 
   idn = getobjtblpos(obj, "_evloop", &robj);
   if (idn != -1)
@@ -413,7 +451,7 @@ clear_pixmap(struct gtklocal *local)
 {
   cairo_t *cr;
 
-  cr = gdk_cairo_create(local->win);
+  cr = cairo_create(local->surface);
   cairo_set_source_rgb(cr, local->bg_r, local->bg_g, local->bg_b);
   cairo_paint(cr);
   cairo_destroy(cr);
@@ -554,7 +592,7 @@ static void
 gtkchangedpi(struct gtklocal *gtklocal)
 {
   int width, height;
-  GdkPixmap *pixmap;
+  cairo_surface_t *pixmap;
 
 
   if ((gtklocal->PaperWidth == 0) || (gtklocal->PaperHeight == 0)) {
@@ -564,15 +602,13 @@ gtkchangedpi(struct gtklocal *gtklocal)
   width = dot2pixel(gtklocal, gtklocal->PaperWidth);
   height = dot2pixel(gtklocal, gtklocal->PaperHeight);
 
-  pixmap = gtklocal->win;
+  pixmap = gtklocal->surface;
   if (pixmap) {
     int pw, ph;
 
-#if GTK_CHECK_VERSION(2, 24, 0)
-    gdk_pixmap_get_size(pixmap, &pw, &ph);
-#else
-    gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &pw, &ph);
-#endif
+    ph = cairo_image_surface_get_height(pixmap);
+    pw = cairo_image_surface_get_width(pixmap);
+
     if (pw != width || ph != height) {
       g_object_unref(G_OBJECT(pixmap));
       pixmap = NULL;
@@ -580,8 +616,8 @@ gtkchangedpi(struct gtklocal *gtklocal)
   }
 
   if (pixmap == NULL) {
-    pixmap = gdk_pixmap_new(gtklocal->window, width, height, -1);
-    gtklocal->win = pixmap;
+    pixmap = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height);
+    gtklocal->surface = pixmap;
 
     clear_pixmap(gtklocal);
 
@@ -591,7 +627,7 @@ gtkchangedpi(struct gtklocal *gtklocal)
       cairo_destroy(gtklocal->local->cairo);
     }
 
-    gtklocal->local->cairo = gdk_cairo_create(pixmap);
+    gtklocal->local->cairo = cairo_create(pixmap);
   }
 
   gtk_widget_set_size_request(gtklocal->View, width, height);
@@ -601,13 +637,11 @@ static void
 gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal)
 {
   int width, height;
-  GdkWindow *win;
 
   width = gtklocal->PaperWidth;
   height = gtklocal->PaperHeight;
-  win = gtklocal->win;
 
-  if (width == 0 || height == 0 || win == NULL)
+  if (width == 0 || height == 0 || gtklocal->surface == NULL)
     return;
 
   cairo_save(cr);

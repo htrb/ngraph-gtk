@@ -68,7 +68,7 @@ int chk_sputobjfield(struct objlist *obj, int id, char *field, char *str);
 const char *get_style_string(struct objlist *obj, int id, char *field);
 
 #define DIALOG_PROTOTYPE GtkWidget *parent, *widget, *focus;\
-  GtkVBox *vbox;\
+  GtkBox *vbox;\
   int ret, show_cancel;\
   char *resource;\
   const char *ok_button;\
@@ -341,7 +341,7 @@ struct LegendDialog
   int Id, tab_active;
   int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, alpha, wid, ang;
   struct MarkDialog mark;
-  GdkPixmap *arrow_pixmap;
+  cairo_surface_t *arrow_pixmap;
 };
 
 void LegendArrowDialog(struct LegendDialog *data,

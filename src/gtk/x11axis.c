@@ -113,7 +113,11 @@ static struct subwin_popup_list Popup_list[] = {
 #define ID_BUF_SIZE 16
 #define TITLE_BUF_SIZE 128 
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+static gboolean AxisWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
+#else
 static gboolean AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
+#endif
 static void axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 static int check_axis_history(struct objlist *obj);
 
@@ -2842,7 +2846,11 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 }
 
 static gboolean
+#if GTK_CHECK_VERSION(3, 0, 0)
+AxisWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data)
+#else
 AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
+#endif
 {
   struct SubWin *d;
 
@@ -3279,28 +3287,28 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   e = (GdkEventKey *)event;
 
   switch (e->keyval) {
-  case GDK_Delete:
+  case GDK_KEY_Delete:
     axiswin_delete_axis(d);
     break;
-  case GDK_Home:
+  case GDK_KEY_Home:
     if (e->state & GDK_SHIFT_MASK)
       AxisWinAxisTop(w, d);
     else
       return FALSE;
     break;
-  case GDK_End:
+  case GDK_KEY_End:
     if (e->state & GDK_SHIFT_MASK)
       AxisWinAxisLast(w, d);
     else
       return FALSE;
     break;
-  case GDK_Up:
+  case GDK_KEY_Up:
     if (e->state & GDK_SHIFT_MASK)
       AxisWinAxisUp(w, d);
     else
       return FALSE;
     break;
-  case GDK_Down:
+  case GDK_KEY_Down:
     if (e->state & GDK_SHIFT_MASK)
       AxisWinAxisDown(w, d);
     else
@@ -3344,7 +3352,11 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
 
   dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  g_signal_connect(dlg, "draw", G_CALLBACK(AxisWinExpose), NULL);
+#else
   g_signal_connect(dlg, "expose-event", G_CALLBACK(AxisWinExpose), NULL);
+#endif
 
   d->obj = chkobject("axis");
   d->num = chkobjlastinst(d->obj);

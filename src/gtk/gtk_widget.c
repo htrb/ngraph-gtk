@@ -560,8 +560,8 @@ static gboolean
 color_button_key_event(GtkWidget *w, GdkEventKey *e, gpointer u)
 {
   switch (e->keyval) {
-  case GDK_space:
-  case GDK_Return:
+  case GDK_KEY_space:
+  case GDK_KEY_Return:
     if (e->type == GDK_KEY_RELEASE) {
       show_color_sel(w, NULL, u);
     }
@@ -642,7 +642,6 @@ static void
 set_scroll_visibility(GtkWidget *scroll)
 {
   GtkAdjustment *adj;
-  int visible;
   gdouble min, max, page;
 
   if (scroll == NULL) {
@@ -654,8 +653,7 @@ set_scroll_visibility(GtkWidget *scroll)
   max = gtk_adjustment_get_upper(adj);
   page = gtk_adjustment_get_page_size(adj);
 
-  visible = (max - min > page);
-  if (visible) {
+  if (max - min > page) {
     gtk_widget_show(scroll);
   } else {
     gtk_widget_hide(scroll);
@@ -663,7 +661,7 @@ set_scroll_visibility(GtkWidget *scroll)
 }
 
 static void
-text_view_size_alocate(GtkWidget*widget, GdkRectangle *allocation, gpointer user_data)
+text_view_size_allocate(GtkWidget*widget, GdkRectangle *allocation, gpointer user_data)
 {
   GtkWidget *scl;
 
@@ -677,6 +675,29 @@ text_view_size_alocate(GtkWidget*widget, GdkRectangle *allocation, gpointer user
 static void
 set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+  GdkRGBA col;
+
+  col.red = r;
+  col.green = g;
+  col.blue = b;
+
+  gtk_widget_override_background_color(w, GTK_STATE_NORMAL, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_ACTIVE, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_PRELIGHT, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_SELECTED, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_INSENSITIVE, &col);
+
+  col.red = 0;
+  col.green = 0;
+  col.blue = 0;
+
+  gtk_widget_override_background_color(w, GTK_STATE_NORMAL, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_ACTIVE, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_PRELIGHT, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_SELECTED, &col);
+  gtk_widget_override_background_color(w, GTK_STATE_INSENSITIVE, &col);
+#else
   GdkColor col;
 
   col.red = r;
@@ -689,7 +710,6 @@ set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
   gtk_widget_modify_base(w, GTK_STATE_SELECTED, &col);
   gtk_widget_modify_base(w, GTK_STATE_INSENSITIVE, &col);
 
-
   col.red = 0;
   col.green = 0;
   col.blue = 0;
@@ -699,9 +719,31 @@ set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
   gtk_widget_modify_text(w, GTK_STATE_PRELIGHT, &col);
   gtk_widget_modify_text(w, GTK_STATE_SELECTED, &col);
   gtk_widget_modify_text(w, GTK_STATE_INSENSITIVE, &col);
+#endif
 
   gtk_widget_set_sensitive(w, FALSE);
 }
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+static void (* get_preferred_width_org) (GtkWidget *w, gint *min, gint *natulal);
+static void (* get_preferred_height_org) (GtkWidget *w, gint *min, gint *natulal);
+
+static void
+get_preferred_width(GtkWidget *w, gint *min, gint *natulal)
+{
+  get_preferred_width_org(w, min, natulal);
+  if (*min > 240) {
+    *min = 0;
+  }
+}
+
+static void
+get_preferred_height(GtkWidget *w, gint *min, gint *natulal)
+{
+  get_preferred_height_org(w, min, natulal);
+  *min = 0;
+}
+#endif
 
 GtkWidget *
 create_text_view_with_line_number(GtkWidget **v)
@@ -734,11 +776,23 @@ create_text_view_with_line_number(GtkWidget **v)
 
   hadj = gtk_range_get_adjustment(GTK_RANGE(hs));
   vadj = gtk_range_get_adjustment(GTK_RANGE(vs));
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_scrollable_set_hadjustment(GTK_SCROLLABLE(view), hadj);
+  gtk_scrollable_set_vadjustment(GTK_SCROLLABLE(view), vadj);
+  gtk_scrollable_set_vadjustment(GTK_SCROLLABLE(ln), vadj);
+
+  /* fix-me: is there any other way to set minimum size of GtkTextView? */
+  get_preferred_width_org = GTK_WIDGET_GET_CLASS(view)->get_preferred_width;
+  get_preferred_height_org = GTK_WIDGET_GET_CLASS(view)->get_preferred_height;
+  GTK_WIDGET_GET_CLASS(view)->get_preferred_width = get_preferred_width;
+  GTK_WIDGET_GET_CLASS(view)->get_preferred_height = get_preferred_height;
+#else
   gtk_widget_set_scroll_adjustments(view, hadj, vadj);
   gtk_widget_set_scroll_adjustments(ln,   NULL, vadj);
+#endif
 
   g_signal_connect(view, "scroll-event", G_CALLBACK(text_view_scroll_event), NULL);
-  g_signal_connect(view, "size-allocate", G_CALLBACK(text_view_size_alocate), NULL);
+  g_signal_connect(view, "size-allocate", G_CALLBACK(text_view_size_allocate), NULL);
 
   gtk_table_attach(GTK_TABLE(swin), ln,   0, 1, 0, 1,
 		   0, GTK_EXPAND | GTK_FILL, 0, 0);
@@ -800,8 +854,13 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
   GtkWidget *ln;
 
   desc = pango_font_description_from_string(font);
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_widget_override_font(view, NULL);
+  gtk_widget_override_font(view, desc);
+#else
   gtk_widget_modify_font(view, NULL);
   gtk_widget_modify_font(view, desc);
+#endif
 
   ln = g_object_get_data(G_OBJECT(view), "line_number");
   if (ln == NULL) {
@@ -809,8 +868,13 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
     return;
   }
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_widget_override_font(ln, NULL);
+  gtk_widget_override_font(ln, desc);
+#else
   gtk_widget_modify_font(ln, NULL);
   gtk_widget_modify_font(ln, desc);
+#endif
 
   pango_font_description_free(desc);
 }

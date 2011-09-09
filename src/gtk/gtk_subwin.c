@@ -63,6 +63,15 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 }
 #endif
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+static gboolean
+cell_focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data) 
+{
+  menu_lock(FALSE);
+  return FALSE;
+}
+#endif
+
 static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data)
 {
@@ -117,6 +126,10 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 	gtk_entry_set_text(GTK_ENTRY(editable), CHK_STR(valstr));
 	g_free(valstr);
       }
+#if GTK_CHECK_VERSION(3, 0, 0)
+      /* fix-me: this code may need to avoid a bug of GTK+ 3.0 */
+      g_signal_connect(editable, "focus-out-event", G_CALLBACK(cell_focus_out), d);
+#endif
     }
     break;
   case G_TYPE_DOUBLE:
@@ -1002,37 +1015,37 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
     return TRUE;
 
   switch (e->keyval) {
-  case GDK_Delete:
+  case GDK_KEY_Delete:
     delete(d);
     break;
-  case GDK_Insert:
+  case GDK_KEY_Insert:
     copy(d);
     break;
-  case GDK_Home:
+  case GDK_KEY_Home:
     if (e->state & GDK_SHIFT_MASK)
       move_top(d);
     else
       return FALSE;
     break;
-  case GDK_End:
+  case GDK_KEY_End:
     if (e->state & GDK_SHIFT_MASK)
       move_last(d);
     else
       return FALSE;
     break;
-  case GDK_Up:
+  case GDK_KEY_Up:
     if (e->state & GDK_SHIFT_MASK)
       move_up(d);
     else
       return FALSE;
     break;
-  case GDK_Down:
+  case GDK_KEY_Down:
     if (e->state & GDK_SHIFT_MASK)
       move_down(d);
     else
       return FALSE;
     break;
-  case GDK_Return:
+  case GDK_KEY_Return:
     if (e->state & GDK_SHIFT_MASK) {
       e->state &= ~ GDK_SHIFT_MASK;
       return FALSE;
@@ -1040,10 +1053,10 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
     update(d);
     break;
-  case GDK_BackSpace:
+  case GDK_KEY_BackSpace:
     hidden(d);
     break;
-  case GDK_space:
+  case GDK_KEY_space:
     if (e->state & GDK_CONTROL_MASK)
       return FALSE;
 
@@ -1299,37 +1312,37 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
     return TRUE;
 
   switch (e->keyval) {
-  case GDK_Delete:
+  case GDK_KEY_Delete:
     tree_delete(d);
     break;
-  case GDK_Insert:
+  case GDK_KEY_Insert:
     tree_copy(d);
     break;
-  case GDK_Home:
+  case GDK_KEY_Home:
     if (e->state & GDK_SHIFT_MASK)
       tree_move_top(d);
     else
       return FALSE;
     break;
-  case GDK_End:
+  case GDK_KEY_End:
     if (e->state & GDK_SHIFT_MASK)
       tree_move_last(d);
     else
       return FALSE;
     break;
-  case GDK_Up:
+  case GDK_KEY_Up:
     if (e->state & GDK_SHIFT_MASK)
       tree_move_up(d);
     else
       return FALSE;
     break;
-  case GDK_Down:
+  case GDK_KEY_Down:
     if (e->state & GDK_SHIFT_MASK)
       tree_move_down(d);
     else
       return FALSE;
     break;
-  case GDK_Return:
+  case GDK_KEY_Return:
     if (e->state & GDK_SHIFT_MASK) {
       e->state &= ~ GDK_SHIFT_MASK;
       return FALSE;
@@ -1337,10 +1350,10 @@ ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
     tree_update(d);
     break;
-  case GDK_BackSpace:
+  case GDK_KEY_BackSpace:
     tree_hidden(d);
     break;
-  case GDK_space:
+  case GDK_KEY_space:
     tree_focus(d, e->state & GDK_SHIFT_MASK);
     break;
   default:
@@ -1364,7 +1377,7 @@ ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
 
   switch (e->keyval) {
-  case GDK_w:
+  case GDK_KEY_w:
     if (e->state & GDK_CONTROL_MASK) {
       window_action_set_active(d->type, FALSE);
       return TRUE;

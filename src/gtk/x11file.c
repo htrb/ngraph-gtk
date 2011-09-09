@@ -142,7 +142,11 @@ enum MATH_FNC_TYPE {
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+static gboolean FileWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
+#else
 static gboolean FileWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
+#endif
 
 static void
 MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -368,7 +372,7 @@ math_dialog_key_pressed_cb(GtkWidget *w, GdkEventKey *e, gpointer user_data)
 
   d = (struct MathDialog *) user_data;
 
-  if (e->keyval != GDK_Return)
+  if (e->keyval != GDK_KEY_Return)
     return FALSE;
 
   gsel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
@@ -1603,7 +1607,7 @@ move_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
   struct FileDialog *d;
 
   d = (struct FileDialog *) user_data;
-  if (e->keyval != GDK_Return)
+  if (e->keyval != GDK_KEY_Return)
     return FALSE;
 
   FileMoveDialogAdd(NULL, d);
@@ -1827,7 +1831,7 @@ mask_dialog_key_pressed(GtkWidget *w, GdkEventKey *e, gpointer user_data)
   struct FileDialog *d;
 
   d = (struct FileDialog *) user_data;
-  if (e->keyval != GDK_Return)
+  if (e->keyval != GDK_KEY_Return)
     return FALSE;
 
   FileMaskDialogAdd(NULL, d);
@@ -2263,7 +2267,14 @@ button_set_mark_image(GtkWidget *w, int type)
   }
 
   if (NgraphApp.markpix[type]) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GdkPixbuf *pixbuf;
+    pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[type],
+					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
+    img = gtk_image_new_from_pixbuf(pixbuf);
+#else
     img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
+#endif
     gtk_button_set_image(GTK_BUTTON(w), img);
     snprintf(buf, sizeof(buf), "%02d", type);
     gtk_widget_set_tooltip_text(w, buf);
@@ -3884,7 +3895,11 @@ draw_type_pixbuf(struct objlist *obj, int i)
     type, width = 40, height = 20, poly[14], marktype,
     intp, spcond, spnum, lockstate, found, output;
   double spx[7], spy[7], spz[7], spc[6][7], spc2[6];
+#if GTK_CHECK_VERSION(3, 0, 0)
+  cairo_surface_t *pix;
+#else
   GdkPixmap *pix;
+#endif
   GdkPixbuf *pixbuf;
   struct objlist *gobj, *robj;
   N_VALUE *inst;
@@ -3898,9 +3913,14 @@ draw_type_pixbuf(struct objlist *obj, int i)
     return NULL;
   }
 
-  pix = gra2gdk_create_pixmap(gobj, inst, local, gtk_widget_get_window(TopLevel),
+#if GTK_CHECK_VERSION(3, 0, 0)
+  pix = gra2gdk_create_pixmap(local, width, height,
+			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+#else
+  pix = gra2gdk_create_pixmap(local, gtk_widget_get_window(TopLevel),
 			      width, height,
 			      Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
+#endif
   if (pix == NULL) {
     return NULL;
   }
@@ -4137,9 +4157,13 @@ draw_type_pixbuf(struct objlist *obj, int i)
     local->linetonum = 0;
   }
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  pixbuf = gdk_pixbuf_get_from_surface(pix, 0, 0, width, height);
+  cairo_surface_destroy(pix);
+#else
   pixbuf = gdk_pixbuf_get_from_drawable(NULL, pix, NULL, 0, 0, 0, 0, width, height);
-
   g_object_unref(G_OBJECT(pix));
+#endif
 
   Globallock = lockstate;
 
@@ -4225,7 +4249,11 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 }
 
 static gboolean
+#if GTK_CHECK_VERSION(3, 0, 0)
+FileWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data)
+#else
 FileWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
+#endif
 {
   struct SubWin *d;
 
@@ -4396,29 +4424,29 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   e = (GdkEventKey *)event;
 
   switch (e->keyval) {
-  case GDK_Delete:
+  case GDK_KEY_Delete:
     FileWinFileDelete(d);
     break;
-  case GDK_Return:
+  case GDK_KEY_Return:
     if (e->state & GDK_SHIFT_MASK) {
       return FALSE;
     }
 
     FileWinFileUpdate(d);
     break;
-  case GDK_Insert:
+  case GDK_KEY_Insert:
     if (e->state & GDK_SHIFT_MASK)
       FileWinFileCopy2(d);
     else
       FileWinFileCopy(d);
     break;
-  case GDK_space:
+  case GDK_KEY_space:
     if (e->state & GDK_CONTROL_MASK)
       return FALSE;
 
     FileWinFileDraw(d);
     break;
-  case GDK_F:
+  case GDK_KEY_F:
     FileWinFit(d);
     break;
   default:
@@ -4541,8 +4569,12 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
     if (strcmp(enumlist[i], "mark") == 0) {
       for (j = 0; j < MARK_TYPE_NUM; j++) {
 	GdkPixbuf *pixbuf;
-
+#if GTK_CHECK_VERSION(3, 0, 0)
+	pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[j],
+					     0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
+#else
 	pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
+#endif
 	if (pixbuf) {
 	  char buf[64];
 
@@ -4971,7 +5003,12 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
 
   dlg = list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
 
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+  g_signal_connect(dlg, "draw", G_CALLBACK(FileWinExpose), NULL);
+#else
   g_signal_connect(dlg, "expose-event", G_CALLBACK(FileWinExpose), NULL);
+#endif
 
   d->obj = chkobject("file");
   d->num = chkobjlastinst(d->obj);

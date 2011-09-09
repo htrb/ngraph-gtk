@@ -29,6 +29,8 @@
 
 #define N2GTK_RULER_METRIC(v) ((v) / 100.0 * 72.0 / 25.4 * 10)
 
+#define MARK_PIX_SIZE 24
+
 enum MenuID {
   MenuIdGraphNewFrame,
   MenuIdGraphNewSection,
@@ -91,6 +93,11 @@ enum PointerType {
 #define POINT_TYPE_DRAW3 (TextB | MarkB)
 #define POINT_TYPE_DRAW_ALL (POINT_TYPE_DRAW1 | POINT_TYPE_DRAW2 | POINT_TYPE_DRAW3)
 #define POINT_TYPE_TRIM  (TrimB | DataB | EvalB)
+
+enum _n_line_type {
+  N_LINE_TYPE_SOLID,
+  N_LINE_TYPE_DOT,
+};
 
 enum MouseMode {
   MOUSENONE,
@@ -182,7 +189,11 @@ struct NgraphApp
   GtkWidget *ghistory[MENU_HISTORY_NUM], *fhistory[MENU_HISTORY_NUM];
   GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list;
   GtkRadioAction *viewb;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  cairo_surface_t *markpix[MARK_TYPE_NUM];
+#else
   GdkPixmap *markpix[MARK_TYPE_NUM];
+#endif
   GdkCursor **cursor;
   struct Viewer Viewer;
   struct SubWin FileWin;

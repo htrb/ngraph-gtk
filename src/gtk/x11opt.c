@@ -1585,7 +1585,7 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   spin_entry_set_val(d->data_num, Menulocal.redrawf_num);
   spin_entry_set_val(d->grid, Menulocal.grid);
 
-  combo_box_set_active(d->fftype, (Menulocal.focus_frame_type == GDK_LINE_SOLID) ? 0 : 1);
+  combo_box_set_active(d->fftype, (Menulocal.focus_frame_type == N_LINE_TYPE_SOLID) ? 0 : 1);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->preserve_width), Menulocal.preserve_width);
 
@@ -1718,7 +1718,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
   Menulocal.grid = spin_entry_get_val(d->grid);
 
   a = combo_box_get_active(d->fftype);
-  Menulocal.focus_frame_type = ((a == 0) ? GDK_LINE_SOLID : GDK_LINE_ON_OFF_DASH);
+  Menulocal.focus_frame_type = ((a == 0) ? N_LINE_TYPE_SOLID : N_LINE_TYPE_DOT);
 
   d->ret = ret;
 

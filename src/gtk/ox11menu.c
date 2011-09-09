@@ -1105,9 +1105,9 @@ menulocal_finalize(void)
   }
   Menulocal.scriptroot = NULL;
 
-  if (Menulocal.pix)
-    g_object_unref(Menulocal.pix);
-  Menulocal.pix = NULL;
+  if (Menulocal.pix) {
+    cairo_surface_destroy(Menulocal.pix);
+  }
 
   arraydel2(&Menulocal.drawrable);
 
@@ -1171,7 +1171,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.bg_r = 1.0;
   Menulocal.bg_g = 1.0;
   Menulocal.bg_b = 1.0;
-  Menulocal.focus_frame_type = GDK_LINE_ON_OFF_DASH;
+  Menulocal.focus_frame_type = N_LINE_TYPE_DOT;
 
   arrayinit(&(Menulocal.drawrable), sizeof(char *));
   menuadddrawrable(chkobject("draw"), &(Menulocal.drawrable));
@@ -1537,7 +1537,11 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 }
 
 void
+#if GTK_CHECK_VERSION(3, 0, 0)
+mx_clear(cairo_region_t *region)
+#else
 mx_clear(GdkRegion *region)
+#endif
 {
   cairo_t *cr;
 

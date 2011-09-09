@@ -92,11 +92,15 @@ struct character_map_list {
 
 struct menulocal
 {
-  GdkDrawable *pix;
+  cairo_surface_t *pix;
   int redrawf, redrawf_num;
   int windpi, data_head_lines;
   int grid;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  cairo_region_t *region;
+#else
   GdkRegion *region;
+#endif
   int lock;
   struct gra2cairo_local *local;
   int antialias;
@@ -163,7 +167,11 @@ enum SAVE_CONFIG_TYPE {
 				  | SAVE_CONFIG_TYPE_MISC)
 
 void mx_redraw(struct objlist *obj, N_VALUE *inst);
+#if GTK_CHECK_VERSION(3, 0, 0)
+void mx_clear(cairo_region_t *region);
+#else
 void mx_clear(GdkRegion *region);
+#endif
 void mx_inslist(struct objlist *obj, N_VALUE *inst,
 		struct objlist *aobj, N_VALUE *ainst, char *afield, int addn);
 void mx_dellist(struct objlist *obj, N_VALUE *inst, int deln);

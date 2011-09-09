@@ -625,7 +625,11 @@ gra2cairo_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 }
 
 int 
+#if GTK_CHECK_VERSION(3, 0, 0)
+gra2cairo_clip_region(struct gra2cairo_local *local, cairo_region_t *region)
+#else
 gra2cairo_clip_region(struct gra2cairo_local *local, GdkRegion *region)
+#endif
 {
   if (local == NULL || local->cairo == NULL)
     return 1;

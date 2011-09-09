@@ -63,7 +63,11 @@ static n_list_store Mlist[] = {
 #define MERG_WIN_COL_ID     1
 #define MERG_WIN_COL_FILE   2
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+static gboolean MergeWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
+#else
 static gboolean MergeWinExpose(GtkWidget *w, GdkEvent *event, gpointer client_data);
+#endif
 static void merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 
 static struct subwin_popup_list Popup_list[] = {
@@ -346,7 +350,11 @@ merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
 }
 
 static gboolean
+#if GTK_CHECK_VERSION(3, 0, 0)
+MergeWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data)
+#else
 MergeWinExpose(GtkWidget *w, GdkEvent *event, gpointer client_data)
+#endif
 {
   struct SubWin *d;
 
@@ -456,7 +464,11 @@ CmMergeWindow(GtkToggleAction *action, gpointer client_data)
 
   dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  g_signal_connect(dlg, "draw", G_CALLBACK(MergeWinExpose), NULL);
+#else
   g_signal_connect(dlg, "expose-event", G_CALLBACK(MergeWinExpose), NULL);
+#endif
 
   d->obj = chkobject("merge");
   d->num = chkobjlastinst(d->obj);

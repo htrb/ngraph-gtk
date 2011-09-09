@@ -33,8 +33,13 @@ create_object_cbox(void)
 }
 
 GtkCellEditable *
+#if GTK_CHECK_VERSION(3, 0, 0)
+start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, const gchar *path,
+		  const GdkRectangle *background_area, const GdkRectangle *cell_area, GtkCellRendererState flags)
+#else
 start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, const gchar *path,
 		  GdkRectangle *background_area, GdkRectangle *cell_area, GtkCellRendererState flags)
+#endif
 {
   return GTK_CELL_EDITABLE(create_object_cbox());
 }

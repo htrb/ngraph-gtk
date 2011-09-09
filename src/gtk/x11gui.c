@@ -95,7 +95,7 @@ dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
 
 
   switch (e->keyval) {
-  case GDK_w:
+  case GDK_KEY_w:
     if (e->state & GDK_CONTROL_MASK) {
       gtk_dialog_response(GTK_DIALOG(w), GTK_RESPONSE_CANCEL);
       return TRUE;
@@ -165,7 +165,7 @@ DialogExecute(GtkWidget *parent, void *dialog)
 
     data->parent = parent;
     data->widget = dlg;
-    data->vbox = GTK_VBOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+    data->vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
     data->show_cancel = TRUE;
     data->ok_button = GTK_STOCK_OK;
 
@@ -348,7 +348,7 @@ int
 DialogInput(GtkWidget * parent, const char *title, const char *mes, char **s, int *x, int *y)
 {
   GtkWidget *dlg, *text;
-  GtkVBox *vbox;
+  GtkBox *vbox;
   int data;
   gint res_id;
 
@@ -360,16 +360,16 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, char **s, in
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
 
   if (mes) {
     GtkWidget *label;
     label = gtk_label_new(mes);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
   }
  
   text = create_text_entry(FALSE, TRUE);
-  gtk_box_pack_start(GTK_BOX(vbox), text, FALSE, FALSE, 5);
+  gtk_box_pack_start(vbox, text, FALSE, FALSE, 5);
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
@@ -396,7 +396,7 @@ int
 DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *r, int *x, int *y)
 {
   GtkWidget *dlg, *btn, **btn_ary;
-  GtkVBox *vbox;
+  GtkBox *vbox;
   int data;
   gint res_id;
   char **d;
@@ -417,19 +417,19 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
   }
 
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
     btn = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(btn), d[i]);
-    gtk_box_pack_start(GTK_BOX(vbox), btn, FALSE, FALSE, 2);
+    gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
     btn_ary[i] = btn;
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(btn), i == *r);
   }
@@ -468,7 +468,7 @@ int
 DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y)
 {
   GtkWidget *dlg, *combo;
-  GtkVBox *vbox;
+  GtkBox *vbox;
   int data;
   gint res_id;
   char **d;
@@ -487,12 +487,12 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
   }
 
   combo = combo_box_create();
@@ -505,7 +505,7 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
   }
   combo_box_set_active(combo, sel);
 
-  gtk_box_pack_start(GTK_BOX(vbox), combo, FALSE, FALSE, 2);
+  gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
@@ -534,7 +534,7 @@ int
 DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y)
 {
   GtkWidget *dlg, *combo;
-  GtkVBox *vbox;
+  GtkBox *vbox;
   int data;
   gint res_id;
   char **d;
@@ -554,12 +554,12 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
   }
 
   combo = combo_box_entry_create();
@@ -571,7 +571,7 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
     combo_box_set_active(combo, sel);
   }
 
-  gtk_box_pack_start(GTK_BOX(vbox), combo, FALSE, FALSE, 2);
+  gtk_box_pack_start(vbox, combo, FALSE, FALSE, 2);
 
   set_dialog_position(dlg, x, y);
   gtk_widget_show_all(dlg);
@@ -603,7 +603,7 @@ int
 DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, double min, double max, double inc, double *r, int *x, int *y)
 {
   GtkWidget *dlg, *spin;
-  GtkVBox *vbox;
+  GtkBox *vbox;
   int data, n;
   gint res_id;
   double prec;
@@ -616,12 +616,12 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
   }
 
   if (inc == 0)
@@ -630,7 +630,7 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
   spin = gtk_spin_button_new_with_range(min, max, inc);
   gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(spin), TRUE);
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin), *r);
-  gtk_box_pack_start(GTK_BOX(vbox), spin, FALSE, FALSE, 2);
+  gtk_box_pack_start(vbox, spin, FALSE, FALSE, 2);
   gtk_entry_set_activates_default(GTK_ENTRY(spin), TRUE);
 
   prec = log10(fabs(inc));
@@ -666,7 +666,7 @@ int
 DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *r, int *x, int *y)
 {
   GtkWidget *dlg, *btn, **btn_ary;
-  GtkVBox *vbox;
+  GtkBox *vbox;
   int data;
   gint res_id;
   char **d;
@@ -687,19 +687,19 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
 				    NULL);
   gtk_dialog_set_default_response(GTK_DIALOG(dlg), GTK_RESPONSE_OK);
   gtk_window_set_resizable(GTK_WINDOW(dlg), FALSE);
-  vbox = GTK_VBOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
+  vbox = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dlg)));
 
   if (caption) {
     GtkWidget *label;
     label = gtk_label_new(caption);
-    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+    gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
   }
 
 
   btn = NULL;
   for (i = 0; i < anum; i++) {
     btn = gtk_check_button_new_with_mnemonic(d[i]);
-    gtk_box_pack_start(GTK_BOX(vbox), btn, FALSE, FALSE, 2);
+    gtk_box_pack_start(vbox, btn, FALSE, FALSE, 2);
     btn_ary[i] = btn;
   }
 

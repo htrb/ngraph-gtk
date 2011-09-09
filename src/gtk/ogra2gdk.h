@@ -5,7 +5,10 @@
 #ifndef _O_GRA2GDK_HEADER
 #define _O_GRA2GDK_HEADER
 
-GdkPixmap *
-gra2gdk_create_pixmap(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local *local, GdkDrawable *drawable, int w, int h, double r, double g, double b);
+#if GTK_CHECK_VERSION(3, 0, 0)
+cairo_surface_t *gra2gdk_create_pixmap(struct gra2cairo_local *local, int w, int h, double r, double g, double b);
+#else
+GdkPixmap *gra2gdk_create_pixmap(struct gra2cairo_local *local, GdkDrawable *drawable, int w, int h, double r, double g, double b);
+#endif
 
 #endif

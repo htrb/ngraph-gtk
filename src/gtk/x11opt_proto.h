@@ -191,23 +191,23 @@ CREATE_NAME(Pref, ListDefailtCb)(GtkWidget *w, GdkEventAny *e, gpointer user_dat
 
     ke = (GdkEventKey *) e;
     switch (ke->keyval) {
-    case GDK_Return:
+    case GDK_KEY_Return:
       CREATE_NAME(Pref, DialogUpdate)(NULL, d);
       return TRUE;
       break;
-    case GDK_Up:
+    case GDK_KEY_Up:
       if (ke->state & GDK_SHIFT_MASK) {
 	CREATE_NAME(Pref, DialogUp)(NULL, d);
 	return TRUE;
       }
       break;
-    case GDK_Down:
+    case GDK_KEY_Down:
       if (ke->state & GDK_SHIFT_MASK) {
 	CREATE_NAME(Pref, DialogDown)(NULL, d);
 	return TRUE;
       }
       break;
-    case GDK_Delete:
+    case GDK_KEY_Delete:
       CREATE_NAME(Pref, DialogRemove)(NULL, d);
       return TRUE;
       break;

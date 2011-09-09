@@ -168,6 +168,7 @@ initdialog(void)
   DlgMerge.resource = N_("merge");
   DlgLegendArrow.widget = NULL;
   DlgLegendArrow.focus = NULL;
+  DlgLegendArrow.arrow_pixmap = NULL;
   DlgLegendArrow.resource = N_("legend line");
   DlgLegendRect.widget = NULL;
   DlgLegendRect.focus = NULL;
@@ -265,7 +266,7 @@ multi_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
   d = (struct SelectDialog *) user_data;
 
   if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
+      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_KEY_Return)){
 
     sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->list));
     n = gtk_tree_selection_count_selected_rows(sel);
@@ -439,7 +440,7 @@ single_list_default_cb(GtkWidget *w, GdkEventAny *e, gpointer user_data)
   d = (struct CopyDialog *) user_data;
 
   if (e->type == GDK_2BUTTON_PRESS ||
-      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_Return)){
+      (e->type == GDK_KEY_PRESS && ((GdkEventKey *)e)->keyval == GDK_KEY_Return)){
 
     i = list_store_get_selected_index(d->list);
     if (i < 0) {

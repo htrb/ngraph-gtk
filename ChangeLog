@@ -1,3 +1,102 @@
+2011-09-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.h (gra2cairo_local): use "cairo_region_t"
+	instead of "GdkRegion" when the version of GTK+ is 3.
+
+	* src/gtk/ogra2cairo.c (gra2cairo_clip_region): use
+	"cairo_region_t" instead of "GdkRegion" when the version of GTK+
+	is 3.
+
+	* src/gtk/ox11menu.h (menulocal): type of "pix" is not "GdkPixmap"
+	but "cairo_surface_t".
+	(menulocal): use "cairo_region_t" instead of "GdkRegion" when the
+	version of GTK+ is 3.
+
+	* src/gtk/x11dialg.h (DIALOG_PROTOTYPE): type of "vbox" is not
+	"GtkVBox" but "GtkBox".
+	(LegendDialog): type of "arrow_pixmap" is not "GdkPixmap" but
+	"cairo_surface_t".
+
+	* src/gtk/x11gui.c (DialogInput, DialogRadio, DialogCombo)
+	(DialogComboEntry, DialogSpinEntry, DialogCheck): type of "vbox"
+	is not "GtkVBox" but "GtkBox".
+
+	* src/gtk/ox11menu.c (mx_clear): use "cairo_region_t" instead of
+	"GdkRegion" when the version of GTK+ is 3.
+
+	* src/gtk/x11file.c (button_set_mark_image, draw_type_pixbuf)
+	(create_type_combo_box): use "cairo_surface_t" instead of
+	"GdkPixmap" when the version of GTK+ is 3.
+
+	* src/gtk/x11view.c (region): use "cairo_region_t" instead of
+	"GdkRegion" when the version of GTK+ is 3.
+	(paste_cb, mouse_move_scroll): use "gdk_window_get_width()" and
+	"gdk_window_get_height()" instead of "gdk_window_get_geometry()"
+	when the version of GTK+ is greater than 2.24.
+	(ViewerWinSetup, ShowCrossGauge, SetHRuler, SetVRuler): use
+	"gdk_window_get_width()" and "gdk_window_get_height()" instead of
+	"gdk_drawable_get_size()" when the version of GTK+ is greater than
+	2.24.
+	(popup_menu_position): use "gdk_window_get_position()" instead of
+	"gdk_window_get_geometry()" when the version of GTK+ is greater
+	than 2.24.
+	(ViewerEvPaint): use "cairo_set_source_surface()" instead of
+	"gdk_cairo_set_source_pixmap()."
+	(ViewerEvPaint): added codes for GTK+ 3.
+	(create_pix): use "cairo_surface_t" instead of "GdkPixmap".
+	(OpenGC): added codes for GTK+ 3.
+
+	* src/gtk/ogra2x11.c (gtkevpaint): added codes for GTK+ 3.
+	(gtklocal): use "cairo_surface_t" instead of "GdkPixmap" when the
+	version of GTK+ is 3.
+
+	* src/gtk/ogra2gdk.c (gra2gdk_create_pixmap): use
+	"cairo_surface_t" instead of "GdkPixmap" when the version of GTK+
+	is 3.
+
+	* src/gtk/gtk_widget.c (text_view_size_allocate): fix typo.
+	(set_linumber_color): use "gtk_widget_override_background_color()"
+	instead of "gtk_widget_modify_base()" when the version of GTK+ is
+	3.
+	(get_preferred_width, get_preferred_height): added for GTK+ 3.
+	(create_text_view_with_line_number): added codes for GTK+ 3.
+	(text_view_with_line_number_set_font): use
+	"gtk_widget_override_font()" instead of "gtk_widget_modify_font()"
+	when the version of GTK+ is 3.
+
+	* src/gtk/x11lgnd.c (LegendArrowDialogPaint)
+	(LegendArrowDialogScaleL, LegendArrowDialogSetup)
+	(create_character_view, LegendWinExpose, CmLegendWindow): add
+	codes for GTK+ 3.
+
+	* src/gtk/x11menu.h (NgraphApp): use "cairo_surface_t" instead of
+	"GdkPixmap" when the version of GTK+ is 3.
+
+	* src/gtk/gtk_common.h: add "GDK_KEY_*" definitions.
+
+	* src/gtk/x11menu.c (create_markpixmap, free_markpixmap): use
+	"cairo_surface_t" instead of "GdkPixmap" when the version of GTK+
+	is 3.
+
+	* src/gtk/gtk_liststore.c (start_editing_obj): add "const" to the
+	5th parameter when the version of GTK+ is 3.
+
+	* src/gtk/x11info.c (InfoWinSetFont): use
+	"gtk_widget_override_font()" instead of "gtk_widget_modify_font()"
+	when the version of GTK+ is 3.
+
+	* src/gtk/gtk_subwin.c (cell_focus_out): added for GTK+ 3.
+	(start_editing): add codes for GTK+ 3.
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogPaint)
+	(LegendGaussDialogSetup): add codes for GTK+ 3.
+
+	* src/gtk/gtk_ruler.c (ruler_new): add codes for GTK+ 3.
+	(nruler_get_preferred_width, nruler_get_preferred_height): added
+	for GTK+ 3.
+	(nruler_size_request, nruler_expose, nruler_make_pixmap)
+	(nruler_draw_ticks, nruler_draw_pos): add codes for GTK+ 3.
+
 2011-08-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/NgraphUI.xml.win: fix typo.
@@ -8,7 +107,7 @@
 
 2011-08-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
-	* src/math/math_equation.c (check_const_sub): chech
+	* src/math/math_equation.c (check_const_sub): check
 	"exp->u.assign.right" instead of "exp->u.bin.right" when type of
 	the expression is "MATH_EXPRESSION_TYPE_ASSIGN".
 
@@ -3618,7 +3717,7 @@
 	(math_func_not): don't have to check "exp->buf[1]".
 	(math_func_gt): comparing condition is ">" (not ">=").
 	(math_func_pn): "x" is "double" (not "int").
-	(math_func_pn): chech maximum value of "x".
+	(math_func_pn): check maximum value of "x".
 	(math_func_rsort): 3rd argument of the function "qsort" is
 	"sizeof(MathValue)" (not "sizeof(double)").
 

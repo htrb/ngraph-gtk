@@ -101,7 +101,11 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_DOWN 9
 #define POPUP_ITEM_BOTTOM 10
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+static gboolean LegendWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
+#else
 static gboolean LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
+#endif
 static void LegendDialogCopy(struct LegendDialog *d);
 
 static char *legendlist[LEGENDNUM] = {
@@ -992,8 +996,7 @@ static void
 draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
 {
   int lw, len, x, w;
-  static GdkPixmap *pixmap = NULL;
-  static cairo_t *cr;
+  cairo_t *cr;
   GdkWindow *window;
 
   window = gtk_widget_get_window(win);
@@ -1001,10 +1004,11 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
     return;
   }
 
-  if (pixmap == NULL) {
-    pixmap = gdk_pixmap_new(window, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE, -1);
-    cr = gdk_cairo_create(pixmap);
+  if (d->arrow_pixmap == NULL) {
+    d->arrow_pixmap = cairo_image_surface_create(CAIRO_FORMAT_RGB24, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
   }
+
+  cr = cairo_create(d->arrow_pixmap);
 
   cairo_set_source_rgb(cr, Menulocal.bg_r, Menulocal.bg_g, Menulocal.bg_b);
   cairo_paint(cr);
@@ -1023,16 +1027,20 @@ draw_arrow_pixmap(GtkWidget *win, struct LegendDialog *d)
   cairo_line_to(cr, x, ARROW_VIEW_SIZE / 2 - w);
   cairo_line_to(cr, x, ARROW_VIEW_SIZE / 2 + w);
   cairo_fill(cr);
-
-  d->arrow_pixmap = pixmap;
 }
 
 static void
+#if GTK_CHECK_VERSION(3, 0, 0)
+LegendArrowDialogPaint(GtkWidget *w, cairo_t *cr, gpointer client_data)
+#else
 LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
+#endif
 {
   struct LegendDialog *d;
+#if ! GTK_CHECK_VERSION(3, 0, 0)
   GdkWindow *win;
   cairo_t *cr;
+#endif
 
   d = (struct LegendDialog *) client_data;
 
@@ -1044,37 +1052,70 @@ LegendArrowDialogPaint(GtkWidget *w, GdkEvent *event, gpointer client_data)
     return;
   }
 
+#if ! GTK_CHECK_VERSION(3, 0, 0)
   win = gtk_widget_get_window(w);
   if (win == NULL) {
     return;
   }
 
   cr = gdk_cairo_create(win);
-  gdk_cairo_set_source_pixmap(cr, d->arrow_pixmap, 0, 0);
+#endif
+  cairo_set_source_surface(cr, d->arrow_pixmap, 0, 0);
   cairo_paint(cr);
+#if ! GTK_CHECK_VERSION(3, 0, 0)
   cairo_destroy(cr);
+#endif
 }
 
 static void
 LegendArrowDialogScaleW(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  GdkWindow *win;
+  cairo_t *cr;
+#endif
 
   d = (struct LegendDialog *) client_data;
   d->wid = gtk_range_get_value(GTK_RANGE(w)) * 100;
   draw_arrow_pixmap(w, d);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+  win = gtk_widget_get_window(d->view);
+  if (win == NULL) {
+    return;
+  }
+  cr = gdk_cairo_create(win);
+  LegendArrowDialogPaint(d->view, cr, d);
+  cairo_destroy(cr);
+#else
   LegendArrowDialogPaint(d->view, NULL, d);
+#endif
 }
 
 static void
 LegendArrowDialogScaleL(GtkWidget *w, gpointer client_data)
 {
   struct LegendDialog *d;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  GdkWindow *win;
+  cairo_t *cr;
+#endif
 
   d = (struct LegendDialog *) client_data;
   d->ang = gtk_range_get_value(GTK_RANGE(w));
   draw_arrow_pixmap(w, d);
+#if GTK_CHECK_VERSION(3, 0, 0)
+  win = gtk_widget_get_window(d->view);
+  if (win == NULL) {
+    return;
+  }
+  cr = gdk_cairo_create(win);
+  LegendArrowDialogPaint(d->view, cr, d);
+  cairo_destroy(cr);
+#else
   LegendArrowDialogPaint(d->view, NULL, d);
+#endif
 }
 
 static void
@@ -1144,11 +1185,14 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->arrow_length = w;
 
-    d->arrow_pixmap = NULL;
     w = gtk_drawing_area_new();
     gtk_widget_set_size_request(w, ARROW_VIEW_SIZE, ARROW_VIEW_SIZE);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    g_signal_connect(w, "draw", G_CALLBACK(LegendArrowDialogPaint), d);
+#else
     g_signal_connect(w, "expose-event", G_CALLBACK(LegendArrowDialogPaint), d);
+#endif
     d->view = w;
 
     w = gtk_hscale_new_with_range(100, 2000, 1);
@@ -1588,6 +1632,11 @@ create_character_view(GtkWidget *entry, gchar *data)
   GtkListStore *model;
   GtkTreeIter iter;
   gchar *ptr;
+#if GTK_CHECK_VERSION(3, 0, 0)
+  PangoLayout *layout;
+  PangoRectangle ink_rect;
+  int width = 0, w;
+#endif
 
   model = gtk_list_store_new(1, G_TYPE_STRING);
   icon_view = gtk_icon_view_new_with_model(GTK_TREE_MODEL(model));
@@ -1612,7 +1661,22 @@ create_character_view(GtkWidget *entry, gchar *data)
     l = g_unichar_to_utf8(ch, str);
     str[l] = '\0';
     gtk_list_store_set(model, &iter, 0, str, -1);
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    /* fix-me: there exist extra spaces both side of strings when use GTK+3.0 */
+    layout = gtk_widget_create_pango_layout(icon_view, str);
+    pango_layout_get_pixel_extents(layout, &ink_rect, NULL);
+    w = ink_rect.x + ink_rect.width;
+    if (w > width) {
+      width = w;
+    }
+    g_object_unref(layout);
+#endif
   }
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_icon_view_set_item_width(GTK_ICON_VIEW(icon_view), width * 1.5);
+#endif
 
   swin = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
@@ -2455,7 +2519,11 @@ legend_list_set(struct LegendWin *d)
 }
 
 static gboolean
+#if GTK_CHECK_VERSION(3, 0, 0)
+LegendWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data)
+#else
 LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
+#endif
 {
   struct LegendWin *d;
 
@@ -2720,7 +2788,11 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 
   dlg = tree_sub_window_create(d, "Legend Window", LEGEND_WIN_COL_NUM, Llist, Legendwin_xpm, Legendwin48_xpm);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  g_signal_connect(dlg, "draw", G_CALLBACK(LegendWinExpose), NULL);
+#else
   g_signal_connect(dlg, "expose-event", G_CALLBACK(LegendWinExpose), NULL);
+#endif
 
   for (i = 0; i < LEGENDNUM; i++) {
     d->obj[i] = chkobject(legendlist[i]);

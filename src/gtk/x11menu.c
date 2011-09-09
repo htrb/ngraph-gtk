@@ -277,7 +277,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     NULL,
     "<Ngraph>/Graph/Load graph",
-    GDK_r,
+    GDK_KEY_r,
     GDK_CONTROL_MASK
   },
   {
@@ -299,7 +299,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     NULL,
     "<Ngraph>/Graph/Save",
-    GDK_s,
+    GDK_KEY_s,
     GDK_CONTROL_MASK
   },
   {
@@ -313,7 +313,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     NULL,
     "<Ngraph>/Graph/SaveAs",
-    GDK_s,
+    GDK_KEY_s,
     GDK_CONTROL_MASK | GDK_SHIFT_MASK
   },
   {
@@ -450,7 +450,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     NULL,
     "<Ngraph>/Graph/Print",
-    GDK_p,
+    GDK_KEY_p,
     GDK_CONTROL_MASK,
   },
   {
@@ -488,7 +488,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     NULL,
     "<Ngraph>/Graph/Quit",
-    GDK_q,
+    GDK_KEY_q,
     GDK_CONTROL_MASK,
   },
   {
@@ -502,7 +502,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     MenuIdEditCut,
     NULL,
     "<Ngraph>/Edit/Cut",
-    GDK_x,
+    GDK_KEY_x,
     GDK_CONTROL_MASK,
   },
   {
@@ -516,7 +516,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     MenuIdEditCopy,
     NULL,
     "<Ngraph>/Edit/Copy",
-    GDK_c,
+    GDK_KEY_c,
     GDK_CONTROL_MASK, 
  },
   {
@@ -530,7 +530,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     MenuIdEditPaste,
     NULL,
     "<Ngraph>/Edit/Paste",
-    GDK_v,
+    GDK_KEY_v,
     GDK_CONTROL_MASK,
   },
   {
@@ -700,7 +700,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     "ngraph_filewin.png",
     "<Ngraph>/View/Data Window",
-    GDK_F3,
+    GDK_KEY_F3,
     0,
   },
   {
@@ -714,7 +714,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     "ngraph_axiswin.png",
     "<Ngraph>/View/Axis Window",
-    GDK_F4,
+    GDK_KEY_F4,
     0,
   },
   {
@@ -728,7 +728,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     "ngraph_legendwin.png",
     "<Ngraph>/View/Legend Window",
-    GDK_F5,
+    GDK_KEY_F5,
     0,
   },
   {
@@ -742,7 +742,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     "ngraph_mergewin.png",
     "<Ngraph>/View/Merge Window",
-    GDK_F6,
+    GDK_KEY_F6,
     0,
   },
   {
@@ -756,7 +756,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     "ngraph_coordwin.png",
     "<Ngraph>/View/Coordinate Window",
-    GDK_F7,
+    GDK_KEY_F7,
     0,
   },
   {
@@ -770,7 +770,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     "ngraph_infowin.png",
     "<Ngraph>/View/Information Window",
-    GDK_F8,
+    GDK_KEY_F8,
     0,
   },
   {
@@ -784,7 +784,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     TRUE,
     "ngraph_draw.png",
     "<Ngraph>/View/Draw",
-    GDK_d,
+    GDK_KEY_d,
     GDK_CONTROL_MASK,
   },
   {
@@ -810,7 +810,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     NULL,
     "<Ngraph>/View/Clear",
-    GDK_e,
+    GDK_KEY_e,
     GDK_CONTROL_MASK,
   },
   {
@@ -908,7 +908,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     MenuIdToggleCrossGauge,
     NULL,
     "<Ngraph>/View/cross Gauge",
-    GDK_plus,
+    GDK_KEY_plus,
     0,
   },
   {
@@ -934,7 +934,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     NULL,
     "<Ngraph>/Data/Open",
-    GDK_o,
+    GDK_KEY_o,
     GDK_CONTROL_MASK,
   },
   {
@@ -1108,7 +1108,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     "ngraph_scale.png",
     "<Ngraph>/Axis/Scale Clear",
-    GDK_c,
+    GDK_KEY_c,
     GDK_SHIFT_MASK | GDK_CONTROL_MASK,
   },
   {
@@ -1497,7 +1497,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     0,
     NULL,
     "<Ngraph>/Help/Help",
-    GDK_F1,
+    GDK_KEY_F1,
     0,
   },
   {
@@ -2175,13 +2175,14 @@ create_ui_from_file(const gchar *ui_file)
   return -1;
 }
 
-
-
-#define MARK_PIX_SIZE 24
 static void
 create_markpixmap(GtkWidget *win)
 {
+#if GTK_CHECK_VERSION(3, 0, 0)
+  cairo_surface_t *pix;
+#else
   GdkPixmap *pix;
+#endif
   int gra, i, R, G, B, R2, G2, B2, found, output;
   struct objlist *obj, *robj;
   N_VALUE *inst;
@@ -2198,9 +2199,14 @@ create_markpixmap(GtkWidget *win)
   for (i = 0; i < MARK_TYPE_NUM; i++) {
     pix = NULL;
     if (window && found) {
-      pix = gra2gdk_create_pixmap(obj, inst, local, window,
+#if GTK_CHECK_VERSION(3, 0, 0)
+      pix = gra2gdk_create_pixmap(local, MARK_PIX_SIZE, MARK_PIX_SIZE,
+				  1.0, 1.0, 1.0);
+#else
+      pix = gra2gdk_create_pixmap(local, window,
 				  MARK_PIX_SIZE, MARK_PIX_SIZE,
 				  1.0, 1.0, 1.0);
+#endif
       if (pix) {
 	gra = _GRAopen("gra2gdk", "_output",
 		       robj, inst, output, -1, -1, -1, NULL, local);
@@ -2226,8 +2232,13 @@ free_markpixmap(void)
   int i;
 
   for (i = 0; i < MARK_TYPE_NUM; i++) {
-    if (NgraphApp.markpix[i])
+    if (NgraphApp.markpix[i]) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+      cairo_surface_destroy(NgraphApp.markpix[i]);
+#else
       g_object_unref(NgraphApp.markpix[i]);
+#endif
+    }
     NgraphApp.markpix[i] = NULL;
   }
 }
@@ -2277,7 +2288,11 @@ free_cursor(void)
   unsigned int i;
 
   for (i = 0; i < CURSOR_TYPE_NUM; i++) {
+#if GTK_CHECK_VERSION(3, 0,0)
+    g_object_unref(NgraphApp.cursor[i]);
+#else
     gdk_cursor_unref(NgraphApp.cursor[i]);
+#endif
     NgraphApp.cursor[i] = NULL;
   }
   g_free(NgraphApp.cursor);
