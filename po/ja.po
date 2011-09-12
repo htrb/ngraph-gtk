@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2011-09-09 19:12+0900\n"
-"PO-Revision-Date: 2011-06-21 11:41+0900\n"
+"POT-Creation-Date: 2011-09-12 18:55+0900\n"
+"PO-Revision-Date: 2011-09-12 18:56+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language: ja_JP\n"
@@ -449,7 +449,7 @@ msgstr "/%s に 'Ngraph.ini' をインストールしますか?"
 msgid "Ngraph.ini could not be copied."
 msgstr "Ngraph.ini をコピーできませんでした."
 
-#: src/gtk/x11commn.c:1718
+#: src/gtk/x11commn.c:1724
 msgid "error"
 msgstr "エラー"
 
@@ -1101,9 +1101,9 @@ msgstr "合成ファイルを含める(_I)"
 msgid "Load NGP file"
 msgstr "NGPファイルを開く"
 
-#: src/gtk/x11graph.c:1294
+#: src/gtk/x11graph.c:1298
 msgid ""
-"Ngraph is the program creating scientific 2-dimensional graphs for "
+"Ngraph is the program to create scientific 2-dimensional graphs for "
 "researchers and engineers."
 msgstr ""
 "Ngraph は理工系学生、研究者、技術者のために作られた２次元グラフ作成プログラム"

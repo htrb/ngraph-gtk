@@ -1286,12 +1286,16 @@ CmHelpAbout(GtkAction *w, gpointer client_data)
 			"copyright", copyright,
 			"version", VERSION,
 			"website", web,
+#if GTK_CHECK_VERSION(3, 0, 0)
+			"license-type", GTK_LICENSE_GPL_2_0,
+#else
 			"license", License,
+#endif
 			"wrap-license", TRUE,
 			"authors", Auther,
 			"translator-credits", Translator, 
 			"documenters", Documenter,
-			"comments", _("Ngraph is the program creating scientific 2-dimensional graphs for researchers and engineers."),
+			"comments", _("Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers."),
 			NULL);
 }
 

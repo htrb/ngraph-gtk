@@ -1671,10 +1671,16 @@ ProgressDialogCreate(char *title)
 
   ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_progress_bar_set_show_text(ProgressBar, TRUE);
+#endif
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar), FALSE, FALSE, 4);
 
   ProgressBar2 = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar2, PANGO_ELLIPSIZE_MIDDLE);
+#if GTK_CHECK_VERSION(3, 0, 0)
+  gtk_progress_bar_set_show_text(ProgressBar2, TRUE);
+#endif
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
 
   hbox = gtk_hbox_new(FALSE, 4);

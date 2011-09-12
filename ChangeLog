@@ -1,3 +1,11 @@
+2011-09-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11commn.c (ProgressDialogCreate): call
+	"gtk_progress_bar_set_show_text()" when the version of GTK+ is 3.
+
+	* src/gtk/x11graph.c (CmHelpAbout): use "license-type" instead of
+	"license" when the version of GTK+ is 3.
+
 2011-09-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.h (gra2cairo_local): use "cairo_region_t"
