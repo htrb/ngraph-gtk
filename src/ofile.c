@@ -1946,7 +1946,11 @@ set_data_progress(struct f2ddata *fp)
     frac = 1.0 * fp->line / fp->final;
   } else if (fp->prev_datanum > 0) {
     if (fp->datanum <= fp->prev_datanum) {
-      frac = 1.0 * fp->datanum / fp->prev_datanum;
+      if (fp->line < fp->hskip) {
+	frac = 1.0 * fp->line / (fp->prev_datanum + fp->hskip);
+      } else {
+	frac = 1.0 * (fp->datanum + fp->hskip) / (fp->prev_datanum + fp->hskip);
+      }
     } else {
       frac = -1;
     }
@@ -1954,8 +1958,9 @@ set_data_progress(struct f2ddata *fp)
     frac = -1;
   }
 
-  if (frac > 1)
+  if (frac > 1) {
     frac = 1.0;
+  }
 
   snprintf(msgbuf, sizeof(msgbuf), "id:%d (%d)", fp->id, fp->line);
   set_progress(0, msgbuf, frac);

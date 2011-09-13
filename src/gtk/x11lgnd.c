@@ -2665,7 +2665,7 @@ pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
     if (inc != 0 ) {
       exeobj(d->obj[ary[0]], "move", ary[1], 2, argv);
       set_graph_modified();
-      LegendWinUpdate(FALSE);
+      LegendWinUpdate(TRUE);
     }
   }
 
@@ -2730,7 +2730,7 @@ width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
     if (prev != w) {
       putobj(obj, field, ary[1], &w);
       set_graph_modified();
-      LegendWinUpdate(FALSE);
+      LegendWinUpdate(TRUE);
     }
   }
 
