@@ -1,7 +1,10 @@
 #ifndef _MAIN_HEADER
 #define _MAIN_HEADER
 
-extern char *AppName, *AppClass, *License, *Auther[], *Translator, *Documenter[];
+extern char *AppName, *AppClass, *Auther[], *Translator, *Documenter[];
+#if ! GTK_CHECK_VERSION(3, 0, 0)
+extern char *License;
+#endif
 
 int OpenApplication(void);
 int nallocconsole(void);

@@ -1,3 +1,8 @@
+2011-09-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.c: "License" is defined when the version of GTK+ is
+	less than 3.
+
 2011-09-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (set_data_progress): consider "d->hskip".
