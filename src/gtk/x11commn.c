@@ -56,7 +56,7 @@
 #define MESSAGE_BUF_SIZE 4096
 #define COMMENT_BUF_SIZE 1024
 
-static GtkWidget *ProgressDiaog = NULL;
+static GtkWidget *ProgressDialog = NULL;
 static GtkProgressBar *ProgressBar, *ProgressBar2;
 static unsigned int SaveCursor;
 
@@ -1603,8 +1603,8 @@ CheckIniFile(void)
 void
 ProgressDialogSetTitle(char *title)
 {
-  if (ProgressDiaog)
-    gtk_window_set_title(GTK_WINDOW(ProgressDiaog), title);
+  if (ProgressDialog)
+    gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
 }
 
 static void
@@ -1612,7 +1612,7 @@ show_progress(int pos, char *msg, double fraction)
 {
   GtkProgressBar *bar;
 
-  if (! ProgressDiaog)
+  if (! ProgressDialog)
     return;
 
   if (pos) {
@@ -1650,22 +1650,22 @@ ProgressDialogCreate(char *title)
   if (TopLevel == NULL)
     return;
 
-  if (ProgressDiaog)
-    gtk_widget_destroy(ProgressDiaog);
+  if (ProgressDialog)
+    gtk_widget_destroy(ProgressDialog);
 
   SaveCursor = NGetCursor();
   NSetCursor(GDK_WATCH);
 
   set_draw_lock(DrawLockDraw);
 
-  ProgressDiaog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  g_signal_connect(ProgressDiaog, "delete-event", G_CALLBACK(cb_del), NULL);
-  gtk_window_set_title(GTK_WINDOW(ProgressDiaog), title);
+  ProgressDialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  g_signal_connect(ProgressDialog, "delete-event", G_CALLBACK(cb_del), NULL);
+  gtk_window_set_title(GTK_WINDOW(ProgressDialog), title);
 
-  gtk_window_set_transient_for(GTK_WINDOW(ProgressDiaog), GTK_WINDOW(TopLevel));
-  gtk_window_set_modal(GTK_WINDOW(ProgressDiaog), TRUE);
-  gtk_window_set_position(GTK_WINDOW(ProgressDiaog), GTK_WIN_POS_CENTER);
-  gtk_window_set_type_hint(GTK_WINDOW(ProgressDiaog), GDK_WINDOW_TYPE_HINT_DIALOG);
+  gtk_window_set_transient_for(GTK_WINDOW(ProgressDialog), GTK_WINDOW(TopLevel));
+  gtk_window_set_modal(GTK_WINDOW(ProgressDialog), TRUE);
+  gtk_window_set_position(GTK_WINDOW(ProgressDialog), GTK_WIN_POS_CENTER);
+  gtk_window_set_type_hint(GTK_WINDOW(ProgressDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   vbox = gtk_vbox_new(FALSE, 4);
 
@@ -1690,10 +1690,10 @@ ProgressDialogCreate(char *title)
   gtk_box_pack_end(GTK_BOX(hbox), btn, FALSE, FALSE, 4);
 
   gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 4);
-  gtk_container_add(GTK_CONTAINER(ProgressDiaog), vbox);
+  gtk_container_add(GTK_CONTAINER(ProgressDialog), vbox);
 
-  gtk_window_set_default_size(GTK_WINDOW(ProgressDiaog), 400, -1);
-  gtk_widget_show_all(ProgressDiaog);
+  gtk_window_set_default_size(GTK_WINDOW(ProgressDialog), 400, -1);
+  gtk_widget_show_all(ProgressDialog);
 
   set_progress_func(show_progress);
 }
@@ -1706,8 +1706,8 @@ ProgressDialogFinalize(void)
 
   NSetCursor(SaveCursor);
   set_progress_func(NULL);
-  gtk_widget_destroy(ProgressDiaog);
-  ProgressDiaog = NULL;
+  gtk_widget_destroy(ProgressDialog);
+  ProgressDialog = NULL;
   ProgressBar = NULL;
   ProgressBar2 = NULL;
   set_draw_lock(DrawLockNone);

@@ -571,7 +571,7 @@ static void
 sub_window_show(struct SubWin *d)
 {
   if (d->Win) {
-    gtk_widget_show(d->Win);
+    gtk_window_present(GTK_WINDOW(d->Win));
   }
 }
 
