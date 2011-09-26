@@ -1,3 +1,11 @@
+2011-09-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* debian/ngraph.bash: add "-V" and "--VERSION" option. add "MJD"
+	to the parameter of the "-ex" and "-ey" option.
+
+	* zsh/_ngraph: add "-V" and "--VERSION" option. add "MJD" to the
+	parameter of the "-ex" and "-ey" option.
+
 2011-09-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (sub_window_show): use

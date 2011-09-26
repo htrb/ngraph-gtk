@@ -16,7 +16,7 @@ _ngraph()
 	    return 0
             ;;
 	-ex|-ey)
-            COMPREPLY=( $( compgen -W 'linear log inverse' -- $cur ) ) 
+            COMPREPLY=( $( compgen -W 'linear log inverse MJD' -- $cur ) ) 
 	    return 0
             ;;
 	-d)
@@ -38,7 +38,7 @@ _ngraph()
 
     case "$cur" in
         -*)
-            COMPREPLY=( $( compgen -W '-h --help --version \
+            COMPREPLY=( $( compgen -W '-h --help --version -V --VERSION\
 		-L -x -y -X -Y -d -m -o -l -w -cr -cg -cb -CR -CG -CB -s -r -f \
 		-vx -vy -mx -my -ex -ey -minx -maxx -incx -miny -maxy -incy -g \
 		-png -pdf -ps -eps -svg -gra -n -p -dialog' -- $cur ) ) 

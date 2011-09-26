@@ -30,8 +30,8 @@ _arguments \
     '-vy[set number of neighbor average for y]:integer' \
     '-mx[set math transformation for x]:string' \
     '-my[set math transformation for y]:string' \
-    '-ex[set scale type of x axis]:type of axis:(linear log inverse)' \
-    '-ey[set scale type of y axis]:type of axis:(linear log inverse)' \
+    '-ex[set scale type of x axis]:type of axis:(linear log inverse MJD)' \
+    '-ey[set scale type of y axis]:type of axis:(linear log inverse MJD)' \
     '-minx[set minimum of x axis]:double' \
     '-maxx[set maximum of x axis]:double' \
     '-incx[set increment of x axis]:double' \
@@ -51,4 +51,6 @@ _arguments \
     '-h[Show this help message]' \
     '--help[Show this help message]' \
     '-v[Show version of Ngraph]' \
-    '--version[Show version of Ngraph]'
+    '--version[Show version of Ngraph]' \
+    '-V[Show detail informations of Ngraph]' \
+    '--VERSION[Show detail informations of Ngraph]'
