@@ -9,7 +9,7 @@ Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
 Package: ngraph-gtk
 Architecture: any
 Depends: ${shlibs:Depends}
-Recommends: tcl, tk, ruby1.8 | ruby1.9.1
+Recommends: tcl, tk, ruby1.8 | ruby1.9.1, pstoedit
 Suggests: ttf-mscorefonts-installer
 Description: create scientific 2-dimensional graphs
  Ngraph is the program to create scientific 2-dimensional graphs for

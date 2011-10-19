@@ -82,7 +82,8 @@ proc savedata {} {
     }
   }
   set f [ open $output w ]
-  puts $f "-s2 -mxX -my$formula"
+  set eqn [regsub -all " " "$formula" ""]
+  puts $f "-s2 -mxX -my$eqn"
   puts $f "%CALC.NSC $min $max $div $incmin $incmax"
   for {set i $st} {$i <= $ed} {incr i 1} {
     set x [ expr double($min)+(double($max)-double($min))/double($div)*$i ]
@@ -101,7 +102,8 @@ proc savescript {} {
     puts $f "file::file=$output"
     puts $f "file::head_skip=2"
     puts $f "file::type=line"
-    puts $f "file::math_y='$formula'"
+    set eqn [regsub -all " " "$formula" ""]
+    puts $f "file::math_y='$eqn'"
     puts $f "menu::modified=true"
     close $f
   }
@@ -135,7 +137,7 @@ proc setupwindow {} {
   pack .formulaf .minimumf .maximumf .divisionf .setdataf \
        -in .top -side top -fill x -pady 1m -padx 5m -anchor w
 
-  label .title -text "Calc version 1.00.02" 
+  label .title -text "Calc version 1.00.03" 
   pack .title -in .titlef -side top -pady 1m -padx 5m -anchor center
 
   label .title2 -text "making a data file" 
