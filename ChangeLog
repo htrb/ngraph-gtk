@@ -1,3 +1,23 @@
+2011-10-24  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/Ngraph.ini.win (script): add fft add-in.
+
+	* src/gtk/main.c (set_dir_defs): "LIBDIR" is now "app_path/bin".
+
+	* mingw/windows.sh: add-in programs are now installed in
+	"$PKG_DIR/bin".
+
+	* addin/Makefile.am (pkglib_SCRIPTS): remove "calc.tcl" and "fitrslt.tcl".
+	(pkglib_PROGRAMS): add "calc" and "fitrslt".
+
+	* addin/addin_common.h: added.
+
+	* addin/addin_common.c: added.
+
+	* addin/calc.c: added.
+
+	* addin/fitrslt.c: added.
+
 2011-10-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* debian/control (Recommends): add pstoedit.

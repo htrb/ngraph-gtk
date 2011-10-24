@@ -2,15 +2,25 @@ pkglib_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc		\
 	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
 	fig2gra.nsc
 
-pkglib_SCRIPTS = calc.tcl fft.tcl fitrslt.tcl legend.tcl fig2gra.rb
+pkglib_SCRIPTS = legend.tcl fig2gra.rb
 
-EXTRA_DIST = ${pkglib_DATA} ${pkglib_SCRIPTS} fft.nsc.in
+EXTRA_DIST = ${pkglib_DATA} ${pkglib_SCRIPTS}
 
-pkglib_PROGRAMS = fft
+APP_CFLAGS = -D_FORTIFY_SOURCE -DGTK_DISABLE_DEPRECATED=1		\
+	 -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1	\
+	 -DG_DISABLE_DEPRECATED=1 -DGTK_DISABLE_SINGLE_INCLUDES=1	\
+	 -DG_DISABLE_SINGLE_INCLUDES=1					\
+	 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES=1 -DGSEAL_ENABLE=1
+
+pkglib_PROGRAMS = fft calc fitrslt
+
+calc_SOURCES = calc.c addin_common.c addin_common.h
+calc_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
+calc_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
+
+fitrslt_SOURCES = fitrslt.c addin_common.c addin_common.h
+fitrslt_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
+fitrslt_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 
 fft_SOURCES = fft.c
-
 fft_CFLAGS = -D_FORTIFY_SOURCE
-
-fft.nsc: fft.nsc.in Makefile
-	sh ../pathconv.sh $(docdir) $(pkglibdir) $(demodir) fft.nsc.in

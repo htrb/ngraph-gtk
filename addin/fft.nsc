@@ -1,13 +1,52 @@
 #
 # fft.nsc written by S. ISHIZAKA. 1999/07
 #
-SCRIPT=${system:0:temp_file}
-wish $NGRAPHLIB/fft.tcl /usr/lib/Ngraph-gtk/fft "$SCRIPT"
-if [ -f "$SCRIPT" ];
+
+new dialog
+SOURCE_FILE=${dialog::get_open_file}
+if [ ! -r "$SOURCE_FILE" ]
 then
-  new shell
-  shell::shell "$SCRIPT"
-  del shell
+    del dialog
+    exit
 fi
-system:0:unlink_temp_file
+
+DEST_FILE=${dialog::get_save_file:"dat _fft_.dat"}
+if [ -z "$DEST_FILE" ]
+then
+    del dialog
+    exit
+fi
+
+if $NGRAPHLIB/fft "$SOURCE_FILE" "$DEST_FILE"
+then
+    true
+else
+    dialog::message "some errors are occurred while calculation."
+    del dialog
+    exit
+fi
+
+new file
+file::x=1
+file::y=2
+file::file="$DEST_FILE"
+file::type=line
+file::B=255
+
+new file
+file::file="$DEST_FILE"
+file::x=1
+file::y=3
+file::type=line
+file::R=255
+
+new file
+file::file="$DEST_FILE"
+file::x=1
+file::y=2
+file::type=staircase_x
+file::math_y='SQRT(%02^2+%03^2)'
+menu::modified=true
+
+del dialog
 menu:0:clear

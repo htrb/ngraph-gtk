@@ -31,6 +31,9 @@ make install
 
 mkdir -p $PKG_DIR/share/icons
 
+rm $PKG_DIR/lib/terminal.exe
+mv $PKG_DIR/lib/*         $PKG_DIR/bin
+
 cp /mingw/bin/*.dll       $PKG_DIR/bin
 cp -r /mingw/share/locale $PKG_DIR/share
 cp -r /mingw/share/themes $PKG_DIR/share
@@ -43,8 +46,3 @@ cp $WIN_PATH/pango.aliases $PKG_DIR/etc/pango
 cp $WIN_PATH/ngraph.ico    $PKG_DIR/share/icons
 cp $WIN_PATH/associate.bat $PKG_DIR
 cp $WIN_PATH/echo.nsc      $PKG_DIR
-
-rm $PKG_DIR/lib/*.tcl
-rm $PKG_DIR/lib/*.nsc
-rm $PKG_DIR/lib/*.rb
-rm $PKG_DIR/lib/terminal.exe

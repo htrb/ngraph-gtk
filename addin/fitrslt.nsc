@@ -39,7 +39,7 @@ then
 	fi
     done
     SCRIPT=${system:0:temp_file}
-    wish ${NGRAPHLIB}/fitrslt.tcl -x ${X} -y ${Y} "$DATALIST" "$SCRIPT"
+    ${NGRAPHLIB}/fitrslt -x ${X} -y ${Y} "$DATALIST" "$SCRIPT"
     if [ -s "$SCRIPT" ];
     then
 	new shell

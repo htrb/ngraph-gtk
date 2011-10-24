@@ -696,7 +696,7 @@ set_dir_defs(char *app)
   }
 
   DOCDIR  = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
-  LIBDIR  = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib");
+  LIBDIR  = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
   LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
   PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps");
