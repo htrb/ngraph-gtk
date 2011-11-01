@@ -5,7 +5,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "addin_common.h"
+
 #define LINE_BUF_SIZE 1024
+
+#define FONT_PT       20.00
+#define FONT_SCRIPT   70.00
+#define FONT_SPACE     0.00
+
+static char *FontList[] = {"Serif",  "Sans-serif", "Monospace"};
 
 GtkWidget *
 create_text_entry(int set_default_action)
@@ -95,6 +103,105 @@ create_title(const char *name, const char *comment)
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
 
   return hbox;
+}
+
+const char *
+get_selected_font(struct font_prm *prm)
+{
+  int font, i;
+  i = gtk_combo_box_get_active(GTK_COMBO_BOX(prm->font));
+
+  font = (i >= 1 && i < (int) (sizeof(FontList) / sizeof(*FontList))) ? i : 0;
+
+  return FontList[font];
+}
+
+void
+get_font_parameter(struct font_prm *prm, int *pt, int *spc, int *script, int *style, int *r, int *g, int *b)
+{
+  int bold, italic;
+  GdkColor color;
+
+  *pt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->pt)) * 100;
+  *script = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->script)) * 100;
+  *spc = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->space)) * 100;
+
+  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->bold));
+  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->italic));
+  *style = (bold ? 1 : 0) + (italic ? 2 : 0);
+
+  gtk_color_button_get_color(GTK_COLOR_BUTTON(prm->color), &color);
+  *r = color.red >> 8;
+  *g = color.green >> 8;
+  *b = color.blue >> 8;
+}
+
+GtkWidget *
+create_font_frame(struct font_prm *prm)
+{
+  GtkWidget *frame, *w, *table, *hbox, *vbox;
+  unsigned int j, i;
+
+  frame = gtk_frame_new("font");
+
+  table = gtk_table_new(1, 2, FALSE);
+  j = 0;
+
+#if GTK_CHECK_VERSION(2, 24, 0)
+  w = gtk_combo_box_text_new();
+  for (i = 0; i < sizeof(FontList) / sizeof(*FontList); i++) {
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(w), FontList[i]);
+  }
+#else
+  w = gtk_combo_box_new_text();
+  for (i = 0; i < sizeof(FontList) / sizeof(*FontList); i++) {
+    gtk_combo_box_append_text(GTK_COMBO_BOX(w), FontList[i]);
+  }
+#endif
+  gtk_combo_box_set_active(GTK_COMBO_BOX(w), 1);
+  add_widget_to_table_sub(table, w, "_Font:", TRUE, 0, 1, j++);
+  prm->font = w;
+
+  w = gtk_spin_button_new_with_range(6, 100, 1);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_PT);
+  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
+  add_widget_to_table_sub(table, w, "_Pt:", TRUE, 0, 1, j++);
+  prm->pt = w;
+
+  w = gtk_spin_button_new_with_range(0, 100, 1);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_SPACE);
+  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
+  add_widget_to_table_sub(table, w, "_Space:", TRUE, 0, 1, j++);
+  prm->space = w;
+
+  w = gtk_spin_button_new_with_range(10, 100, 10);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_SCRIPT);
+  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
+  add_widget_to_table_sub(table, w, "_Script:", TRUE, 0, 1, j++);
+  prm->script = w;
+
+  hbox = gtk_hbox_new(FALSE, 4);
+  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
+
+  vbox = gtk_vbox_new(FALSE, 4);
+
+  w = gtk_check_button_new_with_mnemonic("_Bold");
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  prm->bold = w;
+
+  w = gtk_check_button_new_with_mnemonic("_Italic");
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  prm->italic = w;
+
+  w = gtk_color_button_new();
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
+  prm->color = w;
+
+  gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
+
+  gtk_container_add(GTK_CONTAINER(frame), hbox);
+
+  return frame;
 }
 
 int

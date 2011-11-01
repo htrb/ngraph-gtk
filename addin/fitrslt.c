@@ -14,26 +14,23 @@
 #define NAME    "Fitrslt"
 #define VERSION "1.00.01"
 
-#define POS_X   50.00
-#define POS_Y   50.00
-#define POS_INC  1.00
-#define ACCURACY 5
-#define DIVISION  100
-#define FORMULA   "X"
-#define ADD_PLUS  FALSE
+#define POS_X    50.00
+#define POS_Y    50.00
+
+#define POS_INC   1.00
+#define POS_MIN   -1000
+#define POS_MAX    1000
+
+#define ACCURACY     5
+#define DIVISION   100
+
+#define ADD_PLUS FALSE
 #define EXPAND    TRUE
 #define FRAME     TRUE
-#define FONT_PT       20.00
-#define FONT_SCRIPT   70.00
-#define FONT_SPACE     0.00
 
 #define LINE_BUF_SIZE 1024
 #define PRM_NUM       10
 
-#define POS_MIN   -1000
-#define POS_MAX    1000
-
-static char *FontList[] = {"Serif",  "Sans-serif", "Monospace"};
 
 struct fit_data {
   int file_id;
@@ -50,9 +47,8 @@ struct caption_widget {
 };
 
 struct fit_prm {
-  GtkWidget *window, *x,*y, *add_plus, *accuracy, *expand, *frame, *combo,
-    *font, *font_pt, *font_space, *font_script, *font_color,
-    *font_bold, *font_italic;
+  GtkWidget *window, *x,*y, *add_plus, *accuracy, *expand, *frame, *combo;
+  struct font_prm font;
   struct caption_widget caption[PRM_NUM];
   const char *script;
   struct fit_data *data;
@@ -101,23 +97,11 @@ loaddatalist(struct fit_prm *prm, const char *datalist)
 static void
 makescript(FILE *f, struct fit_prm *prm, int gx, int gy, int height, const char *cap, const char *val)
 {
-  int style, textpt, textspc, textsc, textred, textblue, textgreen, bold, italic, frame, font;
-  GdkColor color;
+  int style, textpt, textspc, textsc, textred, textblue, textgreen, frame;
+  const char *font;
 
-  textpt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->font_pt)) * 100;
-  textsc = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->font_script)) * 100;
-  textspc = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->font_space)) * 100;
-
-  bold = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->font_bold));
-  italic = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->font_italic));
-  style = (bold ? 1 : 0) + (italic ? 2 : 0);
-
-  gtk_color_button_get_color(GTK_COLOR_BUTTON(prm->font_color), &color);
-  textred = color.red >> 8;
-  textgreen = color.green >> 8;
-  textblue = color.blue >> 8;
-
-  font = gtk_combo_box_get_active(GTK_COMBO_BOX(prm->font));
+  get_font_parameter(&prm->font, &textpt, &textspc, &textsc, &style, &textred, &textblue, &textgreen);
+  font = get_selected_font(&prm->font);
 
   frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
 
@@ -126,7 +110,7 @@ makescript(FILE *f, struct fit_prm *prm, int gx, int gy, int height, const char 
   fprintf(f, "text::x=%d\n", gx);
   fprintf(f, "text::y=%d\n", gy + height);
   fprintf(f, "text::pt=%d\n", textpt);
-  fprintf(f, "text::font=%s\n", FontList[font]);
+  fprintf(f, "text::font=%s\n", font);
   fprintf(f, "text::space=%d\n", textspc);
   fprintf(f, "text::script_size=%d\n", textsc);
   fprintf(f, "text::R=%d\n", textred);
@@ -166,7 +150,7 @@ savescript(struct fit_prm *prm)
     fprintf(f, "new iarray name:textbbox\n");
   }
 
-  textpt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->font_pt)) * 100;
+  textpt = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->font.pt)) * 100;
   height = ceil(textpt * 25.4 / 72.0 / 100) * 100;
   gy = posy;
 
@@ -295,74 +279,6 @@ create_position_frame(struct fit_prm *prm)
   prm->y = w;
 
   gtk_container_add(GTK_CONTAINER(frame), table);
-
-  return frame;
-}
-
-static GtkWidget *
-create_font_frame(struct fit_prm *prm)
-{
-  GtkWidget *frame, *w, *table, *hbox, *vbox;
-  unsigned int j, i;
-
-  frame = gtk_frame_new("font");
-
-  table = gtk_table_new(1, 2, FALSE);
-  j = 0;
-
-#if GTK_CHECK_VERSION(2, 24, 0)
-  w = gtk_combo_box_text_new();
-  for (i = 0; i < sizeof(FontList) / sizeof(*FontList); i++) {
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(w), FontList[i]);
-  }
-#else
-  w = gtk_combo_box_new_text();
-  for (i = 0; i < sizeof(FontList) / sizeof(*FontList); i++) {
-    gtk_combo_box_append_text(GTK_COMBO_BOX(w), FontList[i]);
-  }
-#endif
-  gtk_combo_box_set_active(GTK_COMBO_BOX(w), 1);
-  add_widget_to_table_sub(table, w, "_Font:", TRUE, 0, 1, j++);
-  prm->font = w;
-
-  w = gtk_spin_button_new_with_range(6, 100, 1);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_PT);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
-  add_widget_to_table_sub(table, w, "_Pt:", TRUE, 0, 1, j++);
-  prm->font_pt = w;
-
-  w = gtk_spin_button_new_with_range(0, 100, 1);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_SPACE);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
-  add_widget_to_table_sub(table, w, "_Space:", TRUE, 0, 1, j++);
-  prm->font_space = w;
-
-  w = gtk_spin_button_new_with_range(10, 100, 10);
-  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), FONT_SCRIPT);
-  gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), 2);
-  add_widget_to_table_sub(table, w, "_Script:", TRUE, 0, 1, j++);
-  prm->font_script = w;
-
-  hbox = gtk_hbox_new(FALSE, 4);
-  gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
-
-  vbox = gtk_vbox_new(FALSE, 4);
-
-  w = gtk_check_button_new_with_mnemonic("_Bold");
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-  prm->font_bold = w;
-
-  w = gtk_check_button_new_with_mnemonic("_Italic");
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-  prm->font_italic = w;
-
-  w = gtk_color_button_new();
-  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
-  prm->font_color = w;
-
-  gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 4);
-
-  gtk_container_add(GTK_CONTAINER(frame), hbox);
 
   return frame;
 }
@@ -543,7 +459,7 @@ create_control(GtkWidget *box, struct fit_prm *prm)
   w = create_position_frame(prm);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
-  w = create_font_frame(prm);
+  w = create_font_frame(&prm->font);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
   gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 4);
@@ -605,6 +521,9 @@ main(int argc, char **argv)
   gtk_set_locale();
 #endif
   gtk_init(&argc, &argv);
+
+  prm.posx = POS_X;
+  prm.posy = POS_Y;
 
   data_file = get_opt(argc, argv, &prm);
   if (data_file == NULL) {

@@ -11,6 +11,6 @@ then
   new shell
   shell::shell "$SCRIPT"
   del shell
+  menu:0:clear
 fi
 system:0:unlink_temp_file
-menu:0:clear

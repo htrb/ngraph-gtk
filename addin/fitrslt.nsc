@@ -45,12 +45,12 @@ then
 	new shell
 	shell::shell "$SCRIPT"
 	del shell
+	gra::clear
+	gra::draw
+	gra::flush
     fi
     system:0:unlink_temp_file "$SCRIPT"
     system:0:unlink_temp_file "$DATALIST"
-    gra::clear
-    gra::draw
-    gra::flush
 else
     new dialog
     dialog::beep

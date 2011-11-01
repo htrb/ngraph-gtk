@@ -3312,6 +3312,11 @@ application(char *file)
 
   terminated = AppMainLoop();
 
+  SaveHistory();
+  save_entry_history();
+  menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
+		   SAVE_CONFIG_TYPE_OTHERS);
+
   set_newobj_cb(NULL);
   set_delobj_cb(NULL);
 
@@ -3321,11 +3326,6 @@ application(char *file)
   set_signal(SIGTERM, 0, SIG_DFL);
   set_signal(SIGINT, 0, SIG_DFL);
 #endif	/* WINDOWS */
-
-  SaveHistory();
-  save_entry_history();
-  menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
-		   SAVE_CONFIG_TYPE_OTHERS);
 
   ViewerWinClose();
 

@@ -36,7 +36,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-pkglib_PROGRAMS = fft$(EXEEXT) calc$(EXEEXT) fitrslt$(EXEEXT)
+pkglib_PROGRAMS = fft$(EXEEXT) calc$(EXEEXT) fitrslt$(EXEEXT) \
+	legend$(EXEEXT)
 subdir = addin
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -81,6 +82,13 @@ fitrslt_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 fitrslt_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(fitrslt_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_legend_OBJECTS = legend-legend.$(OBJEXT) \
+	legend-addin_common.$(OBJEXT)
+legend_OBJECTS = $(am_legend_OBJECTS)
+legend_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+legend_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(legend_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -129,8 +137,10 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(calc_SOURCES) $(fft_SOURCES) $(fitrslt_SOURCES)
-DIST_SOURCES = $(calc_SOURCES) $(fft_SOURCES) $(fitrslt_SOURCES)
+SOURCES = $(calc_SOURCES) $(fft_SOURCES) $(fitrslt_SOURCES) \
+	$(legend_SOURCES)
+DIST_SOURCES = $(calc_SOURCES) $(fft_SOURCES) $(fitrslt_SOURCES) \
+	$(legend_SOURCES)
 DATA = $(pkglib_DATA)
 ETAGS = etags
 CTAGS = ctags
@@ -288,7 +298,7 @@ pkglib_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc		\
 	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
 	fig2gra.nsc
 
-pkglib_SCRIPTS = legend.tcl fig2gra.rb
+pkglib_SCRIPTS = fig2gra.rb
 EXTRA_DIST = ${pkglib_DATA} ${pkglib_SCRIPTS}
 APP_CFLAGS = -D_FORTIFY_SOURCE -DGTK_DISABLE_DEPRECATED=1		\
 	 -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1	\
@@ -302,6 +312,9 @@ calc_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 fitrslt_SOURCES = fitrslt.c addin_common.c addin_common.h
 fitrslt_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
 fitrslt_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
+legend_SOURCES = legend.c addin_common.c addin_common.h
+legend_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)
+legend_LDADD = $(GTK_LIBS) $(GLIB_LIBS)
 fft_SOURCES = fft.c
 fft_CFLAGS = -D_FORTIFY_SOURCE
 all: all-am
@@ -390,6 +403,9 @@ fft$(EXEEXT): $(fft_OBJECTS) $(fft_DEPENDENCIES)
 fitrslt$(EXEEXT): $(fitrslt_OBJECTS) $(fitrslt_DEPENDENCIES) 
 	@rm -f fitrslt$(EXEEXT)
 	$(AM_V_CCLD)$(fitrslt_LINK) $(fitrslt_OBJECTS) $(fitrslt_LDADD) $(LIBS)
+legend$(EXEEXT): $(legend_OBJECTS) $(legend_DEPENDENCIES) 
+	@rm -f legend$(EXEEXT)
+	$(AM_V_CCLD)$(legend_LINK) $(legend_OBJECTS) $(legend_LDADD) $(LIBS)
 install-pkglibSCRIPTS: $(pkglib_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkglibdir)" || $(MKDIR_P) "$(DESTDIR)$(pkglibdir)"
@@ -436,6 +452,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fft-fft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fitrslt-addin_common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fitrslt-fitrslt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/legend-addin_common.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/legend-legend.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -540,6 +558,38 @@ fitrslt-addin_common.obj: addin_common.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='addin_common.c' object='fitrslt-addin_common.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fitrslt_CFLAGS) $(CFLAGS) -c -o fitrslt-addin_common.obj `if test -f 'addin_common.c'; then $(CYGPATH_W) 'addin_common.c'; else $(CYGPATH_W) '$(srcdir)/addin_common.c'; fi`
+
+legend-legend.o: legend.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(legend_CFLAGS) $(CFLAGS) -MT legend-legend.o -MD -MP -MF $(DEPDIR)/legend-legend.Tpo -c -o legend-legend.o `test -f 'legend.c' || echo '$(srcdir)/'`legend.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/legend-legend.Tpo $(DEPDIR)/legend-legend.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='legend.c' object='legend-legend.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(legend_CFLAGS) $(CFLAGS) -c -o legend-legend.o `test -f 'legend.c' || echo '$(srcdir)/'`legend.c
+
+legend-legend.obj: legend.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(legend_CFLAGS) $(CFLAGS) -MT legend-legend.obj -MD -MP -MF $(DEPDIR)/legend-legend.Tpo -c -o legend-legend.obj `if test -f 'legend.c'; then $(CYGPATH_W) 'legend.c'; else $(CYGPATH_W) '$(srcdir)/legend.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/legend-legend.Tpo $(DEPDIR)/legend-legend.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='legend.c' object='legend-legend.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(legend_CFLAGS) $(CFLAGS) -c -o legend-legend.obj `if test -f 'legend.c'; then $(CYGPATH_W) 'legend.c'; else $(CYGPATH_W) '$(srcdir)/legend.c'; fi`
+
+legend-addin_common.o: addin_common.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(legend_CFLAGS) $(CFLAGS) -MT legend-addin_common.o -MD -MP -MF $(DEPDIR)/legend-addin_common.Tpo -c -o legend-addin_common.o `test -f 'addin_common.c' || echo '$(srcdir)/'`addin_common.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/legend-addin_common.Tpo $(DEPDIR)/legend-addin_common.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='addin_common.c' object='legend-addin_common.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(legend_CFLAGS) $(CFLAGS) -c -o legend-addin_common.o `test -f 'addin_common.c' || echo '$(srcdir)/'`addin_common.c
+
+legend-addin_common.obj: addin_common.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(legend_CFLAGS) $(CFLAGS) -MT legend-addin_common.obj -MD -MP -MF $(DEPDIR)/legend-addin_common.Tpo -c -o legend-addin_common.obj `if test -f 'addin_common.c'; then $(CYGPATH_W) 'addin_common.c'; else $(CYGPATH_W) '$(srcdir)/addin_common.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/legend-addin_common.Tpo $(DEPDIR)/legend-addin_common.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='addin_common.c' object='legend-addin_common.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(legend_CFLAGS) $(CFLAGS) -c -o legend-addin_common.obj `if test -f 'addin_common.c'; then $(CYGPATH_W) 'addin_common.c'; else $(CYGPATH_W) '$(srcdir)/addin_common.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
