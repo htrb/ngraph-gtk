@@ -3061,11 +3061,13 @@ create_action_group(struct NgraphActionEntry *entry, int n)
 						 Menulocal.ngpfilelist);
 
       filter = gtk_recent_filter_new();
-      gtk_recent_filter_add_application(filter, AppName);
       gtk_recent_filter_set_name(filter, "NGP file");
-      gtk_recent_filter_add_pattern(filter, "*.ngp");
+      gtk_recent_filter_add_mime_type(filter, APP_MIME);
 
       gtk_recent_action_set_show_numbers(GTK_RECENT_ACTION(action), TRUE);
+
+      gtk_recent_chooser_add_filter(GTK_RECENT_CHOOSER(action), filter);
+      gtk_recent_chooser_set_filter(GTK_RECENT_CHOOSER(action), filter);
       gtk_recent_chooser_set_show_tips(GTK_RECENT_CHOOSER(action), TRUE);
       gtk_recent_chooser_set_show_icons(GTK_RECENT_CHOOSER(action), FALSE);
       gtk_recent_chooser_set_local_only(GTK_RECENT_CHOOSER(action), TRUE);
@@ -3074,9 +3076,8 @@ create_action_group(struct NgraphActionEntry *entry, int n)
 #endif
       gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(action), GTK_RECENT_SORT_MRU);
       gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(action), 10);
-      g_signal_connect(GTK_RECENT_CHOOSER(action), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
 
-      gtk_recent_chooser_add_filter(GTK_RECENT_CHOOSER(action), filter);
+      g_signal_connect(GTK_RECENT_CHOOSER(action), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
       break;
     default:
       action = NULL;

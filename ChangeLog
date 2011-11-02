@@ -1,3 +1,19 @@
+2011-11-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/calc.c (load_settings): set maximum length of a string of
+	"%s" parameter for the function "sscanf()".
+
+	* addin/fft.c (MAXP, MAXDATA): increase maximum data number.
+
+	* src/gtk/main.h (APP_MIME): added.
+
+	* src/gtk/x11menu.c (create_action_group): use
+	"gtk_recent_filter_add_mime_type()" instead of
+	"gtk_recent_filter_add_application()" and
+	"gtk_recent_filter_add_pattern()".
+
+	* src/gtk/x11commn.c (AddNgpFileList): use "APP_MIME".
+
 2011-11-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c: move some functions to "addin_common.c".

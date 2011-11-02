@@ -6,6 +6,8 @@ extern char *AppName, *AppClass, *Auther[], *Translator, *Documenter[];
 extern char *License;
 #endif
 
+#define APP_MIME "application/x-ngraph"
+
 int OpenApplication(void);
 int nallocconsole(void);
 void nfreeconsole(void);

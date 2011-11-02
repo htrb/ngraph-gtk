@@ -1395,7 +1395,7 @@ AddNgpFileList(char *file)
   GtkRecentData recent_data = {
     NULL,
     AppName,
-    "application/x-ngraph",
+    APP_MIME,
     AppName,
     "ngraph %f",
     NULL,

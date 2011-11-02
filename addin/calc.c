@@ -58,7 +58,7 @@ load_settings(struct calc_prm *prm)
   double min, max;
   int div, imin, imax, n;
   char *output, *ptr;
-  char l1[LINE_BUF_SIZE], l2[LINE_BUF_SIZE], tag[LINE_BUF_SIZE];
+  char buf[LINE_BUF_SIZE], tag[LINE_BUF_SIZE];
   char s1[LINE_BUF_SIZE], s2[LINE_BUF_SIZE], s3[LINE_BUF_SIZE];
   FILE *fp;
 
@@ -70,29 +70,31 @@ load_settings(struct calc_prm *prm)
     return;
   }
 
-  ptr = fgets(l1, sizeof(l1), fp);
+  ptr = fgets(buf, sizeof(buf), fp);
   if (ptr == NULL) {
     fclose(fp);
     return;
   }
 
-  ptr = fgets(l2, sizeof(l2), fp);
+  n = sscanf(buf, "-s%64s -mx%64s -my%64s", s1, s2, s3);
+  if (n != 3) {
+    fclose(fp);
+    return;
+  }
+
+  ptr = fgets(buf, sizeof(buf), fp);
   if (ptr == NULL) {
+    fclose(fp);
+    return;
+  }
+
+  n = sscanf(buf, "%64s %lf %lf %d %d %d", tag, &min, &max, &div, &imin, &imax);
+  if (n != 6) {
     fclose(fp);
     return;
   }
 
   fclose(fp);
-
-  n = sscanf(l1, "-s%s -mx%s -my%s", s1, s2, s3);
-  if (n != 3) {
-    return;
-  }
-
-  n = sscanf(l2, "%s %lf %lf %d %d %d", tag, &min, &max, &div, &imin, &imax);
-  if (n != 6) {
-    return;
-  }
 
   if (strcmp(tag, "%CALC.NSC") != 0) {
     return;

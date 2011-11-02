@@ -10,8 +10,8 @@
 
 #define PI 3.141592653589793
 
-#define MAXP 12
-#define MAXDATA 4096
+#define MAXP 16
+#define MAXDATA 65536
 
 double fr[MAXDATA],fi[MAXDATA],gr[MAXDATA],gi[MAXDATA];
 double workr[MAXDATA/2],worki[MAXDATA/2];
