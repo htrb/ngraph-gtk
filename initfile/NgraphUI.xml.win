@@ -82,8 +82,7 @@
     <menu name="DataMenu" action="DataMenuAction">
       <menuitem name="DataNew" action="DataNewAction"/>
       <menuitem name="DataOpen" action="DataOpenAction"/>
-      <menu name="DataRecent" action="DataRecentAction">
-      </menu>
+      <menuitem name="DataRecent" action="DataRecentAction" />
       <separator/>
       <menuitem name="DataProperty" action="DataPropertyAction"/>
       <menuitem name="DataClose" action="DataCloseAction"/>

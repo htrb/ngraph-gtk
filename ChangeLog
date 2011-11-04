@@ -1,3 +1,28 @@
+2011-11-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.h (NGRAPH_GRAPH_MIME, NGRAPH_DATA_MIME): added.
+
+	* src/gtk/x11dialg.h (MiscDialog): remove member "history".
+
+	* src/gtk/ox11menu.c (menu_save_config_sub, mgtkloadconfig)
+	(menulocal_finalize, menuinit): remove codes related to data file history.
+
+	* src/gtk/x11file.c (CmFileHistory): use "GtkRecentChooser".
+
+	* src/gtk/x11opt.c (MiscDialogSetupItem, MiscDialogSetup)
+	(MiscDialogClose): remove codes related to data file history.
+
+	* src/gtk/x11commn.c (add_hist): added.
+	(AddNgpFileList, AddDataFileList): use "add_hist()".
+
+	* src/gtk/ox11menu.h (menulocal): remove member "datafilelist".
+
+	* src/gtk/x11menu.c (SaveHistory, create_recent_data_menu)
+	(add_underscore): removed.
+	(recent_filter): added.
+	(create_action_group): use "gtk_recent_filter_add_custom()"
+	instead of "gtk_recent_filter_add_mime_type()".
+
 2011-11-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/calc.c (load_settings): set maximum length of a string of

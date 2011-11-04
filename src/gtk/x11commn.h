@@ -41,7 +41,7 @@ int GraphSave(int overwrite);
 void DeleteDrawable(void);
 void FileAutoScale(void);
 int CheckSave(void);
-void AddDataFileList(char *file);
+void AddDataFileList(const char *file);
 void SetFileName(char *name);
 int CheckIniFile(void);
 int allocate_console(void);

@@ -53,7 +53,6 @@ character_map=_Miscellaneous,☀☁☂☃☄★☆☐☑☒☚☛☜☝☞☟☠
 character_map=_Physics,µ℃℉ℎℏÅℇ☢
 character_map=_Mathematics,±×÷‰∀∂∃∄∇∈∉∋∌√∛∜∝∞∠∥∦∧∨∩∪∫∬∮≂≃≒≡≦≧≨≩≪≫
 character_map=_Greece,ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψωϕς
-save_history=1
 menu_win=-100000,-100000,-100000,-100000
 file_win=-100000,-100000,-100000,-100000,1
 axis_win=-100000,-100000,-100000,-100000,1

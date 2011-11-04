@@ -131,7 +131,6 @@ struct menulocal
   int expand, ignorepath, expandtofullpath, changedirectory, savehistory;
   int savepath, savewithdata, savewithmerge;
   GtkRecentManager *ngpfilelist;
-  struct narray *datafilelist;
   int scriptconsole, addinconsole;
   int statusb, ruler, scrollbar, ctoolbar, ptoolbar, show_cross, showtip, preserve_width;
   int hist_size, info_size;

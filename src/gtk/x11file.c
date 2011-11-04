@@ -3282,26 +3282,26 @@ delete_file_obj(int id)
 }
 
 void
-CmFileHistory(GtkWidget *w, gpointer client_data)
+CmFileHistory(GtkRecentChooser *w, gpointer client_data)
 {
-  int fil, num;
-  char **data;
-  struct narray *datafilelist;
   int ret;
-  char *name;
+  char *name, *fname;
   int id;
   struct objlist *obj;
+  char *uri;
 
   if (Menulock || Globallock) {
     return;
   }
 
-  fil = GPOINTER_TO_INT(client_data);
-  datafilelist = Menulocal.datafilelist;
-  num = arraynum(datafilelist);
-  data = arraydata(datafilelist);
+  uri = gtk_recent_chooser_get_current_uri(w);
+  if (uri == NULL) {
+    return;
+  }
 
-  if ((fil < 0) || (fil >= num) || (data[fil] == NULL)) {
+  name = g_filename_from_uri(uri, NULL, NULL);
+  g_free(uri);
+  if (name == NULL) {
     return;
   }
 
@@ -3315,8 +3315,8 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
     return;
   }
 
-  name = g_strdup(data[fil]);
-  if (name == NULL) {
+  fname = g_strdup(name);
+  if (fname == NULL) {
     return;
   }
 
@@ -3327,8 +3327,9 @@ CmFileHistory(GtkWidget *w, gpointer client_data)
     delete_file_obj(id);
   } else {
     set_graph_modified();
-    AddDataFileList(data[fil]);
+    AddDataFileList(fname);
   }
+  g_free(fname);
   FileWinUpdate(TRUE);
 }
 

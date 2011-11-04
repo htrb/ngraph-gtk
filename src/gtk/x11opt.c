@@ -1136,8 +1136,6 @@ MiscDialogSetupItem(GtkWidget *w, struct MiscDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->directory), Menulocal.changedirectory);
 
-  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->history), Menulocal.savehistory);
-
   combo_box_set_active(d->path, Menulocal.savepath);
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->datafile), Menulocal.savewithdata);
@@ -1321,10 +1319,6 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->directory = w;
 
-    w = gtk_check_button_new_with_mnemonic(_("_Save file history"));
-    add_widget_to_table(table, w, NULL, FALSE, i++);
-    d->history = w;
-
     w = gtk_check_button_new_with_mnemonic(_("_Use opacity"));
     add_widget_to_table(table, w, NULL, FALSE, i++);
     d->use_opacity = w;
@@ -1403,9 +1397,6 @@ MiscDialogClose(GtkWidget *w, void *data)
 
   Menulocal.changedirectory =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->directory));
-
-  Menulocal.savehistory =
-    gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->history));
 
   a = combo_box_get_active(d->path);
   if (a >= 0) {

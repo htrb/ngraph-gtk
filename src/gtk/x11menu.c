@@ -103,6 +103,11 @@ GdkCursorType Cursor[] = {
 static void clear_information(GtkAction *w, gpointer user_data);
 static void toggle_view_cb(GtkToggleAction *action, gpointer data);
 
+enum {
+  RECENT_TYPE_GRAPH,
+  RECENT_TYPE_DATA,
+};
+
 static struct NgraphActionEntry ActionEntry[] = {
   {
     ACTION_TYPE_NORMAL,
@@ -287,6 +292,8 @@ static struct NgraphActionEntry ActionEntry[] = {
     N_("_Recent graphs"),
     NULL,
     NULL,
+    NULL,
+    RECENT_TYPE_GRAPH,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -938,12 +945,14 @@ static struct NgraphActionEntry ActionEntry[] = {
     GDK_CONTROL_MASK,
   },
   {
-    ACTION_TYPE_NORMAL,
+    ACTION_TYPE_RECENT,
     "DataRecentAction",
     NULL,
     N_("_Recent data"),
     NULL,
     NULL,
+    NULL,
+    RECENT_TYPE_DATA,
   },
   {
     ACTION_TYPE_NORMAL,
@@ -2041,68 +2050,6 @@ set_focus_sensitivity(const struct Viewer *d)
 }
 
 static void
-add_underscore(GString *str)
-{
-  unsigned int i = 1;
-
-  while (i < str->len) {
-    if (str->str[i] == '_') {
-      g_string_insert_c(str, i, '_');
-      i++;
-    }
-    i++;
-  }
-}
-
-void
-create_recent_data_menu(void)
-{
-  int i, num;
-  char **data, *basename;;
-  GtkWidget *menu, *item, *parent;
-  static GString *str = NULL;
-
-  parent = gtk_ui_manager_get_widget(NgraphUi, "/MenuBar/DataMenu/DataRecent");
-  if (parent == NULL) {
-    return;
-  }
-
-  menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(parent));
-  if (menu) {
-    gtk_widget_destroy(menu);
-  }
-
-  num = arraynum(Menulocal.datafilelist);
-  data = arraydata(Menulocal.datafilelist);
-
-  gtk_widget_set_sensitive(parent, num > 0);
-  if (num < 1) {
-    return;
-  }
-
-  menu = gtk_menu_new();
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(parent), menu);
-
-  if (str == NULL) {
-    str = g_string_new("");
-  }
-
-  for (i = 0; i < num; i++) {
-    basename = g_path_get_basename(CHK_STR(data[i]));
-    g_string_printf(str, "_%d: %s", i, basename);
-    g_free(basename);
-    add_underscore(str);
-    item = gtk_menu_item_new_with_mnemonic(str->str);
-    gtk_widget_set_tooltip_text(item, CHK_STR(data[i]));
-    g_signal_connect(item, "activate", G_CALLBACK(CmFileHistory), GINT_TO_POINTER(i));
-    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-  }
-
-  gtk_widget_show_all(menu);
-}
-
-
-static void
 clear_information(GtkAction *w, gpointer user_data)
 {
   InfoWinClear();
@@ -3017,6 +2964,35 @@ window_action_toggle(enum SubWinType type)
   window_action_set_active(type, -1);
 }
 
+gboolean 
+recent_filter(const GtkRecentFilterInfo *filter_info, gpointer user_data)
+{
+  int i;
+
+  switch (GPOINTER_TO_INT(user_data)) {
+  case RECENT_TYPE_GRAPH:
+    if (g_strcmp0(filter_info->mime_type, NGRAPH_GRAPH_MIME)) {
+      return FALSE;
+    }
+    break;
+  case RECENT_TYPE_DATA:
+    if (g_strcmp0(filter_info->mime_type, NGRAPH_DATA_MIME)) {
+      return FALSE;
+    }
+    break;
+  default:
+    return FALSE;
+  }
+
+  for (i = 0; filter_info->applications[i]; i++) {
+    if (g_strcmp0(AppName, filter_info->applications[i]) == 0) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
 static GtkActionGroup *
 create_action_group(struct NgraphActionEntry *entry, int n)
 {
@@ -3061,8 +3037,13 @@ create_action_group(struct NgraphActionEntry *entry, int n)
 						 Menulocal.ngpfilelist);
 
       filter = gtk_recent_filter_new();
-      gtk_recent_filter_set_name(filter, "NGP file");
-      gtk_recent_filter_add_mime_type(filter, APP_MIME);
+      gtk_recent_filter_add_custom(filter,
+				   GTK_RECENT_FILTER_URI |
+				   GTK_RECENT_FILTER_MIME_TYPE |
+				   GTK_RECENT_FILTER_APPLICATION,
+				   recent_filter,
+				   GINT_TO_POINTER(entry[i].user_data),
+				   NULL);
 
       gtk_recent_action_set_show_numbers(GTK_RECENT_ACTION(action), TRUE);
 
@@ -3077,7 +3058,14 @@ create_action_group(struct NgraphActionEntry *entry, int n)
       gtk_recent_chooser_set_sort_type(GTK_RECENT_CHOOSER(action), GTK_RECENT_SORT_MRU);
       gtk_recent_chooser_set_limit(GTK_RECENT_CHOOSER(action), 10);
 
-      g_signal_connect(GTK_RECENT_CHOOSER(action), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
+      switch (entry[i].user_data) {
+      case RECENT_TYPE_GRAPH:
+	g_signal_connect(GTK_RECENT_CHOOSER(action), "item-activated", G_CALLBACK(CmGraphHistory), NULL);
+	break;
+      case RECENT_TYPE_DATA:
+	g_signal_connect(GTK_RECENT_CHOOSER(action), "item-activated", G_CALLBACK(CmFileHistory), NULL);
+	break;
+      }
       break;
     default:
       action = NULL;
@@ -3138,44 +3126,6 @@ show_ui_definition(void)
   }
 }
 
-static void
-SaveHistory(void)
-{
-  struct narray conf;
-  char *buf;
-  int i, num;
-  char **data, data_history[] = "data_history=";
-
-  if (!Menulocal.savehistory)
-    return;
-  if (!CheckIniFile())
-    return;
-  arrayinit(&conf, sizeof(char *));
-
-  num = arraynum(Menulocal.datafilelist);
-  data = arraydata(Menulocal.datafilelist);
-  for (i = 0; i < num; i++) {
-    if (data[i]) {
-      buf = g_strdup_printf("%s%s", data_history, data[i]);
-      if (buf) {
-	arrayadd(&conf, &buf);
-      }
-    }
-  }
-  replaceconfig("[x11menu]", &conf);
-
-  arraydel2(&conf);
-  arrayinit(&conf, sizeof(char *));
-  if (arraynum(Menulocal.datafilelist) == 0) {
-    buf = g_strdup(data_history);
-    if (buf) {
-      arrayadd(&conf, &buf);
-    }
-  }
-  removeconfig("[x11menu]", &conf);
-  arraydel2(&conf);
-}
-
 int
 application(char *file)
 {
@@ -3227,7 +3177,6 @@ application(char *file)
   AccelGroup = gtk_ui_manager_get_accel_group(NgraphUi);
   gtk_window_add_accel_group(GTK_WINDOW(TopLevel), AccelGroup);
   create_addin_menu();
-  create_recent_data_menu();
 
 #ifdef WINDOWS
   g_signal_connect(TopLevel, "window-state-event", G_CALLBACK(change_window_state_cb), NULL);
@@ -3313,7 +3262,6 @@ application(char *file)
 
   terminated = AppMainLoop();
 
-  SaveHistory();
   save_entry_history();
   menu_save_config(SAVE_CONFIG_TYPE_TOGGLE_VIEW |
 		   SAVE_CONFIG_TYPE_OTHERS);

@@ -106,7 +106,6 @@ enum menu_config_type {
   MENU_CONFIG_TYPE_STRING,
   MENU_CONFIG_TYPE_WINDOW,
   MENU_CONFIG_TYPE_CHILD_WINDOW,
-  MENU_CONFIG_TYPE_HISTORY,
   MENU_CONFIG_TYPE_COLOR,
   MENU_CONFIG_TYPE_SCRIPT,
   MENU_CONFIG_TYPE_DRIVER,
@@ -210,7 +209,6 @@ static struct menu_config MenuConfig[] = {
   {"addin_console",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.addinconsole},
   {"show_tip",			MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.showtip},
   {"expand_to_fullpath",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.expandtofullpath},
-  {"data_history",		MENU_CONFIG_TYPE_HISTORY, NULL, &Menulocal.datafilelist},
   {"character_map",		MENU_CONFIG_TYPE_CHARMAP, menu_config_set_char_map, &Menulocal.char_map},
   {NULL},
 };
@@ -233,7 +231,6 @@ static struct menu_config MenuConfigMisc[] = {
   {"infowin_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.infowin_font},
   {"file_preview_font",	MENU_CONFIG_TYPE_STRING,  NULL, &Menulocal.file_preview_font},
   {"change_directory",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.changedirectory},
-  {"save_history",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savehistory},
   {"save_path",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savepath},
   {"save_with_data",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithdata},
   {"save_with_merge",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.savewithmerge},
@@ -547,8 +544,6 @@ menu_save_config_sub(struct menu_config *cfg, struct narray *conf)
       break;
     case MENU_CONFIG_TYPE_CHARMAP:
       save_char_map_config(conf);
-      break;
-    case MENU_CONFIG_TYPE_HISTORY:
       break;
     }
   }
@@ -892,13 +887,6 @@ mgtkloadconfig(void)
       case MENU_CONFIG_TYPE_CHILD_WINDOW:
 	menu_config_set_child_window_geometry(s2, cfg->data);
 	break;
-      case MENU_CONFIG_TYPE_HISTORY:
-	for (; (s2[0] != '\0') && (strchr(" \t,", s2[0])); s2++);
-	f1 = getitok2(&s2, &len, "");
-	if (f1) {
-	  arrayadd(* (struct narray **) cfg->data, &f1);
-	}
-	break;
       case MENU_CONFIG_TYPE_CHARMAP:
       case MENU_CONFIG_TYPE_COLOR:
       case MENU_CONFIG_TYPE_SCRIPT:
@@ -1113,9 +1101,6 @@ menulocal_finalize(void)
 
   Menulocal.ngpfilelist = NULL;
 
-  arrayfree2(Menulocal.datafilelist);
-  Menulocal.datafilelist = NULL;
-
   g_free(Menulocal.fileopendir);
   Menulocal.fileopendir = NULL;
 
@@ -1164,7 +1149,6 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.expanddir = g_strdup("./");
   Menulocal.expandtofullpath = TRUE;
   Menulocal.ngpfilelist = gtk_recent_manager_get_default();
-  Menulocal.datafilelist = arraynew(sizeof(char *));
   Menulocal.GRAobj = chkobject("gra");
   Menulocal.hist_size = 1000;
   Menulocal.info_size = 1000;

@@ -29,7 +29,7 @@ struct evaltype
 };
 
 void FileWinUpdate(int clear);
-void CmFileHistory(GtkWidget *w, gpointer client_data);
+void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
 
 void CmFileNew(GtkAction *w, gpointer client_data);
 void CmFileOpen(GtkAction *w, gpointer client_data);

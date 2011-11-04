@@ -528,7 +528,7 @@ struct MiscDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *editor, *directory, *history, *path, *datafile,
+  GtkWidget *editor, *directory, *path, *datafile,
     *expand, *expanddir, *ignorepath, *mergefile, *coordwin_font, *infowin_font,
     *file_preview_font, *hist_size, *info_size, *data_head_lines, *help_browser,
     *browser, *use_opacity;
