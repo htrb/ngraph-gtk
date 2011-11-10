@@ -1,3 +1,10 @@
+2011-11-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (recent_filter): use "g_ascii_strncasecmp()"
+	and "g_ascii_strcasecmp()" instead of "g_strcmp0()".
+
+	* src/gtk/main.h (NGRAPH_TEXT_MIME): added.
+
 2011-11-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.h (NGRAPH_GRAPH_MIME, NGRAPH_DATA_MIME): added.

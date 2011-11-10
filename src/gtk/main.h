@@ -7,7 +7,8 @@ extern char *License;
 #endif
 
 #define NGRAPH_GRAPH_MIME "application/x-ngraph"
-#define NGRAPH_DATA_MIME "text/plain"
+#define NGRAPH_DATA_MIME  "text/plain"
+#define NGRAPH_TEXT_MIME  "text/"
 
 int OpenApplication(void);
 int nallocconsole(void);

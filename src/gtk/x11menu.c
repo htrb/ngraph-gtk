@@ -2969,14 +2969,19 @@ recent_filter(const GtkRecentFilterInfo *filter_info, gpointer user_data)
 {
   int i;
 
+  if (filter_info->mime_type == NULL) {
+    return FALSE;
+  }
+
   switch (GPOINTER_TO_INT(user_data)) {
   case RECENT_TYPE_GRAPH:
-    if (g_strcmp0(filter_info->mime_type, NGRAPH_GRAPH_MIME)) {
+    if (g_ascii_strcasecmp(filter_info->mime_type, NGRAPH_GRAPH_MIME)) {
       return FALSE;
     }
     break;
   case RECENT_TYPE_DATA:
-    if (g_strcmp0(filter_info->mime_type, NGRAPH_DATA_MIME)) {
+    if (g_ascii_strncasecmp(filter_info->mime_type, NGRAPH_TEXT_MIME,
+			    strlen(NGRAPH_TEXT_MIME))) {
       return FALSE;
     }
     break;
