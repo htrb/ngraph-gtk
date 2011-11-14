@@ -1,3 +1,7 @@
+2011-11-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/timer.nsc: added.
+
 2011-11-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (recent_filter): use "g_ascii_strncasecmp()"
