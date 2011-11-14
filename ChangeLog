@@ -1,5 +1,7 @@
 2011-11-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* addin/Makefile.am (pkglib_DATA): add "timer.nsc".
+
 	* addin/timer.nsc: added.
 
 2011-11-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
