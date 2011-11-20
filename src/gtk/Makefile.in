@@ -277,12 +277,7 @@ libngraph_la_SOURCES = gtk_common.h gtk_combo.c gtk_combo.h		\
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 libngraph_la_LDFLAGS = -static
-libngraph_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math -D_FORTIFY_SOURCE	\
-	 -DGTK_DISABLE_DEPRECATED=1 -DGDK_DISABLE_DEPRECATED=1		\
-	 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1	\
-	 -DGTK_DISABLE_SINGLE_INCLUDES=1 -DG_DISABLE_SINGLE_INCLUDES=1	\
-	 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES=1 -DGSEAL_ENABLE=1
-
+libngraph_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math -D_FORTIFY_SOURCE
 all: all-am
 
 .SUFFIXES:
