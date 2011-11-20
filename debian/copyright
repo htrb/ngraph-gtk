@@ -9,9 +9,9 @@ Ito Hiroyuki <ZXB01226@nifty.com>
 Copyright (C) 2003 Satoshi ISHIZAKA
 
 You are free to distribute this software under the terms of the GNU
-General Public License.  On Debian systems, the complete text of the
-GNU General Public License can be found in the file
-`/usr/share/common-licenses/GPL'.
+General Public License version 2.  On Debian systems, the complete
+text of the GNU General Public License version 2 can be found in the file
+`/usr/share/common-licenses/GPL-2'.
 
 The Debian packaging is (C) 2009, Ito Hiroyuki <ZXB01226@nifty.com> and
-is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+is licensed under the GPL version 2, see `/usr/share/common-licenses/GPL-2'.

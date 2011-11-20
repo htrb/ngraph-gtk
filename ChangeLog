@@ -1,3 +1,7 @@
+2011-11-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* debian/copyright: specify GPL version.
+
 2011-11-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/Makefile.am (pkglib_DATA): add "timer.nsc".
