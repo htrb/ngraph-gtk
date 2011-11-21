@@ -14,8 +14,6 @@
 
 2011-11-21  Koichi Akabe <vbkaisetsu at gmail.com>
 
-	* debian/source/format: added.
-
 	* debian/rules: updated for debian repository.
 
 	* debian/control: updated for debian repository.
