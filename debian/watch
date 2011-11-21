@@ -8,4 +8,4 @@ version=3
 
 # Uncomment to examine a Webpage
 # <Webpage URL> <string match>
-http://homepage3.nifty.com/slokar/ngraph/ ngraph-gtk-(.*)\.tar\.gz
+http://sourceforge.net/projects/ngraph-gtk/files/ (.*)/Ngraph-gtk-(.*)\.tar\.gz

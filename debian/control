@@ -2,15 +2,15 @@ Source: ngraph-gtk
 Section: graphics
 Priority: extra
 Maintainer: Ito Hiroyuki <ZXB01226@nifty.com>
-Build-Depends: debhelper (>= 7), autotools-dev
-Standards-Version: 3.7.3
+Uploaders: Koichi Akabe <vbkaisetsu@gmail.com>
+Build-Depends: debhelper (>= 8.0.0), libgtk2.0-dev, libgsl0-dev
+Standards-Version: 3.9.2
 Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
 
 Package: ngraph-gtk
 Architecture: any
-Depends: ${shlibs:Depends}
-Recommends: tcl, tk, ruby1.8 | ruby1.9.1, pstoedit
-Suggests: ttf-mscorefonts-installer
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: ruby1.8 | ruby1.9.1
 Description: create scientific 2-dimensional graphs
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. Graphs can be exported to postscript.

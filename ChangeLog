@@ -1,3 +1,35 @@
+2011-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* icons/application-x-ngraph.xpm: added.
+
+	* configure.in (AC_CONFIG_FILES): add "icons/Makefile" and
+	"misc/Makefile".
+
+	* MAKEFILE.am (SUBDIRS): add "icons" and "misc".
+
+2011-11-21  Koichi Akabe <vbkaisetsu at gmail.com>
+
+	* debian/source/format: added.
+
+	* debian/rules: updated for debian repository.
+
+	* debian/control: updated for debian repository.
+
+	* debian/install: added.
+
+
+2011-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/timer.nsc: remove shebang.
+
+	* addin/tex_equation.nsc: remove shebang.
+
+	* addin/ps2gra.nsc: remove shebang.
+
+	* addin/fig2gra.nsc: remove shebang.
+
+	* addin/cal.nsc: remove shebang.
+
 2011-11-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/Makefile.am (libngraph_la_CFLAGS): remove settingis

@@ -78,7 +78,7 @@ AC_CONFIG_FILES([Makefile src/Makefile src/gtk/Makefile \
 		 doc/html_ja/dialogs/Makefile \
 		 doc/html_ja/img/Makefile debian/Makefile \
 		 zsh/Makefile test/Makefile mingw/Makefile \
-		 pixmap/Makefile])
+		 pixmap/Makefile icons/Makefile misc/Makefile])
 
 AM_CONFIG_HEADER([config.h])
 AC_OUTPUT

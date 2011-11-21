@@ -1,5 +1,3 @@
-#! /usr/bin/ngraph
-
 new regexp
 regexp::@="(?i)UTF-?8"
 
