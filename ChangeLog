@@ -1,3 +1,7 @@
+2011-11-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* misc/ngraph.1: added.
+
 2011-11-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* configure.in (GTK2_REQUIRED_VERSION, GTK3_REQUIRED_VERSION):

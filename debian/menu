@@ -2,7 +2,7 @@
   needs="X11" \
   section="Applications/Graphics" \
   command="/usr/bin/ngraph" \
-  icon="/usr/share/pixmaps/application-x-ngraph.png" \
+  icon="/usr/share/pixmaps/application-x-ngraph.xpm" \
   title="Ngraph" \
   longtitle="create scientific 2-dimensional graphs" \
   description="Ngraph is the program to create scientific 2-dimensional graphs for \
