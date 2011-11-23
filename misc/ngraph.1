@@ -64,23 +64,23 @@ specify line style
 .B -w width
 specify line width
 .TP
-.B -CR
-specify red component of the 1st plot color
+.B -CR n
+specify red component of the 1st plot color (0-255)
 .TP
-.B -CG
-specify green component of the 1st plot color
+.B -CG n
+specify green component of the 1st plot color (0-255)
 .TP
-.B -CB
-specify blue component of the 1st plot color
+.B -CB n
+specify blue component of the 1st plot color (0-255)
 .TP
-.B -cr
-specify red component of the 2nd plot color
+.B -cr n
+specify red component of the 2nd plot color (0-255)
 .TP
-.B -cg
-specify green component of the 2nd plot color
+.B -cg n
+specify green component of the 2nd plot color (0-255)
 .TP
-.B -cb
-specify blue component of the 2nd plot color
+.B -cb n
+specify blue component of the 2nd plot color (0-255)
 .TP
 .B -s line
 specify number of the head skip
@@ -91,10 +91,10 @@ specify number of the read step
 .B -f line
 specify number of the final line
 .TP
-.B -vx
+.B -vx n
 neighbor average of the x data
 .TP
-.B -vy
+.B -vy n
 neighbor average of the y data
 .TP
 .B -mx formula
@@ -155,15 +155,15 @@ show print dialog (with -p option)
 print ngp file
 .TP
 .B -n
-output ngp-file to stdou
+output ngp-file to stdout
 .TP
-.B -h
+.B -h, --help
 show help message
 .TP
-.B -v
+.B -v, --version
 show version of \fINgraph\fR
 .TP
-.B -V
+.B -V, --VERSION
 show detail information about \fINgraph\fR
 .SH FILES
 .TP
