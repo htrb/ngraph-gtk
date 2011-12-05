@@ -1348,8 +1348,6 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
-
     table = gtk_table_new(1, 5, FALSE);
 
     vbox = gtk_vbox_new(FALSE, 4);
@@ -3038,8 +3036,6 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     d->apply_all = gtk_dialog_add_button(GTK_DIALOG(wi), _("_Apply all"), IDFAPPLY);
-
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CLOSE, IDDELETE);
 
     hbox = gtk_hbox_new(FALSE, 4);
 

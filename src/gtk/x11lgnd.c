@@ -1133,8 +1133,6 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
-
     hbox = gtk_hbox_new(FALSE, 4);
 
     w = points_setup(d);
@@ -1264,8 +1262,6 @@ LegendRectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     init_legend_dialog_widget_member(d);
 
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
-
     hbox = gtk_hbox_new(FALSE, 4);
 
     table = gtk_table_new(1, 2, FALSE);
@@ -1357,8 +1353,6 @@ LegendArcDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
-
     init_legend_dialog_widget_member(d);
 
     hbox = gtk_hbox_new(FALSE, 4);
@@ -1488,8 +1482,6 @@ LegendMarkDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     init_legend_dialog_widget_member(d);
-
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
 
     hbox = gtk_hbox_new(FALSE, 4);
 
@@ -1730,8 +1722,6 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     init_legend_dialog_widget_member(d);
-
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
 
     hbox = gtk_hbox_new(FALSE, 4);
 

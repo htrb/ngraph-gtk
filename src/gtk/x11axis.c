@@ -319,8 +319,6 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct GridDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
-
     hbox = gtk_hbox_new(FALSE, 4);
 
     table = gtk_table_new(1, 2, FALSE);
@@ -583,10 +581,6 @@ SectionDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct SectionDialog *) data;
 
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   NULL);
-
     hbox = gtk_hbox_new(FALSE, 4);
 
     table = gtk_table_new(1, 2, FALSE);
@@ -811,10 +805,6 @@ CrossDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct CrossDialog *) data;
   if (makewidget) {
-    gtk_dialog_add_buttons(GTK_DIALOG(wi),
-			   GTK_STOCK_DELETE, IDDELETE,
-			   NULL);
-
     hbox = gtk_hbox_new(FALSE, 4);
 
     table = gtk_table_new(1, 2, FALSE);
@@ -2199,8 +2189,6 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     GtkWidget *notebook, *w, *label;
-
-    d->del_btn = gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_DELETE, IDDELETE);
 
     notebook = gtk_notebook_new();
     gtk_notebook_set_scrollable(GTK_NOTEBOOK(notebook), FALSE);

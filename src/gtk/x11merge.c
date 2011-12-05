@@ -133,8 +133,6 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
-    gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CLOSE, IDDELETE);
-
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;

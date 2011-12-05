@@ -1,3 +1,20 @@
+2011-12-05  Hroyuki Ito  <hito@strecker.nict.go.jp>
+
+	* src/gtk/x11file.c (FitDialogSetup, FileDialogSetup): remove
+	"Delete" button from dialog.
+
+	* src/gtk/x11merge.c (MergeDialogSetup): remove "Delete" button
+	from dialog.
+
+	* src/gtk/x11axis.c (GridDialogSetup, SectionDialogSetup)
+	(CrossDialogSetup, AxisDialogSetup): remove "Delete" button from
+	dialog.
+
+	* src/gtk/x11lgnd.c (LegendArrowDialogSetup)
+	(LegendRectDialogSetup, LegendArcDialogSetup)
+	(LegendMarkDialogSetup, LegendTextDialogSetup): remove "Delete"
+	button from dialog.
+
 2011-12-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* debian/ngraph-gtk.manpages: added.
