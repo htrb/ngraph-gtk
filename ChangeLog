@@ -1,3 +1,13 @@
+2011-12-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* debian/ngraph-gtk.manpages: added.
+
+	* configure.in: change name of the package from "Ngraph-gtk" to
+	"ngraph-gtk".
+
+	* src/gtk/main.c (set_path_env): change order of "PATH"
+	environment.
+
 2011-11-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* misc/ngp2.1: added.

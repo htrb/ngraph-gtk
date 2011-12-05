@@ -714,7 +714,7 @@ set_path_env(char *homedir)
   char *pathset;
 
   path = g_getenv("PATH");
-  pathset = g_strdup_printf("%s%s%s%s.%s%s", LIBDIR, PATHSEP, homedir, PATHSEP, PATHSEP, CHK_STR(path));
+  pathset = g_strdup_printf("%s%s%s%s.%s%s", homedir, PATHSEP, LIBDIR, PATHSEP, PATHSEP, CHK_STR(path));
 #ifdef WINDOWS
   path_to_win(pathset);
 #endif	/* WINDOWS */

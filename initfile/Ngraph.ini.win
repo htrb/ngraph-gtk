@@ -1,7 +1,7 @@
 [Ngraph]
-# terminal=gnome-terminal -x c:/ngraph-gtk/lib/Ngraph-gtk/terminal
-# terminal=rxvt -e c:/ngraph-gtk/lib/Ngraph-gtk/terminal
-terminal=xterm -e c:/ngraph-gtk/lib/Ngraph-gtk/terminal
+# terminal=gnome-terminal -x c:/ngraph-gtk/lib/ngraph-gtk/terminal
+# terminal=rxvt -e c:/ngraph-gtk/lib/ngraph-gtk/terminal
+terminal=xterm -e c:/ngraph-gtk/lib/ngraph-gtk/terminal
 alloc_console=0
 
 [x11menu]

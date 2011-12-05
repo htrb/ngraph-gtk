@@ -9,10 +9,10 @@
 extern char *DOCDIR, *LIBDIR, *CONFDIR, *PIXMAPDIR;
 #define HOME_DIR "Ngraph"
 #else  /* WINDOWS */
-#define DOCDIR    "/usr/share/doc/Ngraph-gtk"
-#define LIBDIR    "/usr/lib/Ngraph-gtk"
-#define CONFDIR   "/etc/Ngraph-gtk"
-#define PIXMAPDIR "/usr/share/pixmaps/Ngraph-gtk"
+#define DOCDIR    "/usr/share/doc/ngraph-gtk"
+#define LIBDIR    "/usr/lib/ngraph-gtk"
+#define CONFDIR   "/etc/ngraph-gtk"
+#define PIXMAPDIR "/usr/share/pixmaps/ngraph-gtk"
 #define HOME_DIR  ".Ngraph"
 #endif	/* WINDOWS */
 
