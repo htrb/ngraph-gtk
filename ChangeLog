@@ -1,3 +1,12 @@
+2011-12-06  Hroyuki Ito  <hito@strecker.nict.go.jp>
+
+	* src/gtk/x11menu.c (ActionEntry): change menu strings from "Open"
+	to "Add".
+
+	* initfile/NgraphUI.xml: chang name of action from
+	"DataOpenAction" and "MergeOpenAction" to "DataAddAction" and
+	"MergeAddAction" respectively.
+
 2011-12-05  Hroyuki Ito  <hito@strecker.nict.go.jp>
 
 	* src/gtk/x11file.c (FitDialogSetup, FileDialogSetup): remove

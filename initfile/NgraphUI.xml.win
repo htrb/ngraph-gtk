@@ -80,8 +80,7 @@
       <menuitem name="ViewCrossGauge" action="ViewCrossGaugeAction"/>
     </menu>
     <menu name="DataMenu" action="DataMenuAction">
-      <menuitem name="DataNew" action="DataNewAction"/>
-      <menuitem name="DataOpen" action="DataOpenAction"/>
+      <menuitem name="DataAdd" action="DataAddAction"/>
       <menuitem name="DataRecent" action="DataRecentAction" />
       <separator/>
       <menuitem name="DataProperty" action="DataPropertyAction"/>
@@ -132,7 +131,7 @@
       </menu>
     </menu>
     <menu name="MergeMenu" action="MergeMenuAction">
-      <menuitem name="MergeOpen" action="MergeOpenAction"/>
+      <menuitem name="MergeAdd" action="MergeAddAction"/>
       <menuitem name="MergeProperty" action="MergePropertyAction"/>
       <menuitem name="MergeClose" action="MergeCloseAction"/>
     </menu>
@@ -162,7 +161,7 @@
     <toolitem name="Coordinate" action="ViewToggleCoordinateWindowAction"/>
     <toolitem name="Information" action="ViewToggleInformationWindowAction"/>
     <separator/>
-    <toolitem name="DataOpen" action="DataOpenAction"/>
+    <toolitem name="DataAdd" action="DataAddAction"/>
     <separator/>
     <toolitem name="GraphLoad" action="GraphLoadAction"/>
     <toolitem name="GraphSave" action="GraphSaveAction"/>

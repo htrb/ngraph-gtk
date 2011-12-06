@@ -103,7 +103,7 @@ static void FileDialogType(GtkWidget *w, gpointer client_data);
 static void create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent);
 
 static struct subwin_popup_list Popup_list[] = {
-  {GTK_STOCK_OPEN,            G_CALLBACK(CmFileOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_ADD,             G_CALLBACK(CmFileOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
   {N_("_Duplicate"),          G_CALLBACK(file_copy_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("duplicate _Behind"),   G_CALLBACK(file_copy2_popup_func), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -3386,7 +3386,7 @@ CmFileOpen(GtkAction *w, gpointer client_data)
   if (obj == NULL)
     return;
 
-  ret = nGetOpenFileNameMulti(TopLevel, _("Data open"), NULL,
+  ret = nGetOpenFileNameMulti(TopLevel, _("Add Data file"), NULL,
 			      &(Menulocal.fileopendir), NULL,
 			      &file, Menulocal.changedirectory);
 

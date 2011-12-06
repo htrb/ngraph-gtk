@@ -71,7 +71,7 @@ static gboolean MergeWinExpose(GtkWidget *w, GdkEvent *event, gpointer client_da
 static void merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 
 static struct subwin_popup_list Popup_list[] = {
-  {GTK_STOCK_OPEN,        G_CALLBACK(CmMergeOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_ADD,         G_CALLBACK(CmMergeOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {GTK_STOCK_CLOSE,       G_CALLBACK(list_sub_window_delete), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
@@ -217,7 +217,7 @@ CmMergeOpen(GtkAction *w, gpointer client_data)
   if ((obj = chkobject("merge")) == NULL)
     return;
 
-  if (nGetOpenFileName(TopLevel, _("Merge open"), "gra", NULL, NULL, &name,
+  if (nGetOpenFileName(TopLevel, _("Add Merge file"), "gra", NULL, NULL, &name,
 		       TRUE, Menulocal.changedirectory) != IDOK || ! name)
     return;
 
