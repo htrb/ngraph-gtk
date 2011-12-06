@@ -9,5 +9,4 @@ Terminal=false
 Type=Application
 Version=1.0
 Categories=GTK;GNOME;Graphics;
-Encoding=UTF-8
 MimeType=application/x-ngraph;application/x-ngraph-graphic

@@ -1,5 +1,11 @@
 2011-12-06  Hroyuki Ito  <hito@strecker.nict.go.jp>
 
+	* misc/ngraph.1: escape '-'.
+
+	* misc/ngraph.desktop (Encoding): removed.
+
+	* debian/control (Description): add text.
+
 	* src/gtk/x11menu.c (ActionEntry): change menu strings from "Open"
 	to "Add".
 

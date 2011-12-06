@@ -13,4 +13,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: ruby1.8 | ruby1.9.1
 Description: create scientific 2-dimensional graphs
  Ngraph is the program to create scientific 2-dimensional graphs for
- researchers and engineers. Graphs can be exported to postscript.
+ researchers and engineers. This program can create advanced graphs
+ which can't be created by spreadsheets. Graphs can be exported to
+ postscript.
+
