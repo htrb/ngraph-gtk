@@ -168,7 +168,6 @@
     <separator/>
     <toolitem name="AxisScaleClear" action="AxisScaleClearAction"/>
     <toolitem name="ViewDraw" action="ViewDrawDirectAction"/>
-    <toolitem name="ViewClear" action="ViewClearAction"/>
     <toolitem name="GraphPrint" action="GraphPrintAction"/>
     <toolitem name="GraphPrintPreview" action="GraphPrintPreviewAction"/>
     <separator/>

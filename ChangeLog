@@ -1,4 +1,10 @@
-2011-12-06  Hroyuki Ito  <hito@strecker.nict.go.jp>
+2011-12-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/NgraphUI.xml: remove "View Clear" button.
+
+	* initfile/NgraphUI.xml.win: remove "View Clear" button.
+
+2011-12-06  Hroyuki Ito  <ZXB01226 at nifty.com>
 
 	* misc/ngraph.1: escape '-'.
 
@@ -13,7 +19,7 @@
 	"DataOpenAction" and "MergeOpenAction" to "DataAddAction" and
 	"MergeAddAction" respectively.
 
-2011-12-05  Hroyuki Ito  <hito@strecker.nict.go.jp>
+2011-12-05  Hroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FitDialogSetup, FileDialogSetup): remove
 	"Delete" button from dialog.
