@@ -15,3 +15,5 @@
 override_dh_auto_install:
 	dh_auto_install
 	install -D -m 644 $(CURDIR)/misc/ngraph.bash $(CURDIR)/debian/ngraph-gtk/etc/bash_completion.d/ngraph
+
+

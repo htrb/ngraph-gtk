@@ -79,7 +79,7 @@ AC_CONFIG_FILES([Makefile src/Makefile src/gtk/Makefile \
 		 doc/Makefile doc/html_ja/Makefile \
 		 doc/html_ja/tutorial/Makefile \
 		 doc/html_ja/dialogs/Makefile \
-		 doc/html_ja/img/Makefile debian/Makefile \
+		 doc/html_ja/img/Makefile \
 		 zsh/Makefile test/Makefile mingw/Makefile \
 		 pixmap/Makefile icons/Makefile misc/Makefile])
 

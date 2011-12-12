@@ -1,15 +1,15 @@
 ngraph-gtk (6.06.03-1) unstable; urgency=low
 
-  * new upstream release.
+  * New upstream release.
+  * Initial release for debian repository (Closes: #649345)
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 21 Jul 2011 10:51:42 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Wed, 23 Nov 2011 09:16:03 +0900
 
 ngraph-gtk (6.06.02-1) unstable; urgency=low
 
   * new upstream release.
-  * Initial release for debian repository (Closes: #649345)
 
- -- Koichi Akabe <vbkaisetsu@gmail.com>  Wed, 21 Sep 2011 15:14:42 +0900
+ -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 21 Sep 2011 15:14:42 +0900
 
 ngraph-gtk (6.06.01-1) unstable; urgency=low
 
