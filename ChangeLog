@@ -1,3 +1,7 @@
+2011-12-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/legend.c (savescript): fix font setting.
+
 2011-12-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/tex_equation.nsc: add quotation mark around the variable "$NGRAPHLIB".

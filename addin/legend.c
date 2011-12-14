@@ -247,6 +247,7 @@ savescript(struct file_prm *prm)
   int i, j, height, len, gx, gy, posx, posy, pt, spc, script, r, g, b, style, width;
   gboolean type, mix, frame, caption;
   char *str;
+  const char *font;
 
   if (prm->script == NULL) {
     return 1;
@@ -261,6 +262,7 @@ savescript(struct file_prm *prm)
   mix = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->mix));
   frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
   caption = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->caption));
+  font = get_selected_font(&prm->font);
 
   get_font_parameter(&prm->font, &pt, &spc, &script, &style, &r, &g, &b);
 
@@ -301,7 +303,7 @@ savescript(struct file_prm *prm)
         fprintf(f, "text::x=%d\n", gx + len);
         fprintf(f, "text::y=%d\n", gy + height);
         fprintf(f, "text::pt=%d\n", pt);
-        fprintf(f, "text::font=textfont\n");
+        fprintf(f, "text::font=%s\n", font);
         fprintf(f, "text::space=%d\n", spc);
         fprintf(f, "text::script_size=%d\n", script);
         fprintf(f, "text::R=%d\n", r);
