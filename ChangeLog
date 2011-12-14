@@ -10,7 +10,7 @@
 
 	* addin/fft.nsc: add quotation mark around the variable "$NGRAPHLIB".
 
-	* addin/calc.nsc): add quotation mark around the variable "$NGRAPHLIB".
+	* addin/calc.nsc: add quotation mark around the variable "$NGRAPHLIB".
 
 2011-12-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
