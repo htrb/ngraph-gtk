@@ -14,7 +14,7 @@ then
     object file -instance > "$DATALIST"
     get file:0-! -id -field file id hidden x y type mark_type mark_size line_width line_style R G B R2 G2 B2 math_x math_y >> "$DATALIST"
     SCRIPT=${system:0:temp_file}
-    ${NGRAPHLIB}/legend -x ${X} -y ${Y} -w ${WIDTH} "$DATALIST" "$SCRIPT"
+    "${NGRAPHLIB}/legend" -x ${X} -y ${Y} -w ${WIDTH} "$DATALIST" "$SCRIPT"
     if [ -s "$SCRIPT" ];
     then
 	new shell

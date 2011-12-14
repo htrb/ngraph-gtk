@@ -1,3 +1,17 @@
+2011-12-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/tex_equation.nsc: add quotation mark around the variable "$NGRAPHLIB".
+
+	* addin/ps2gra.nsc: add quotation mark around the variable "$NGRAPHLIB".
+
+	* addin/legend.nsc: add quotation mark around the variable "$NGRAPHLIB".
+
+	* addin/fitrslt.nsc: add quotation mark around the variable "$NGRAPHLIB".
+
+	* addin/fft.nsc: add quotation mark around the variable "$NGRAPHLIB".
+
+	* addin/calc.nsc): add quotation mark around the variable "$NGRAPHLIB".
+
 2011-12-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/NgraphUI.xml: remove "View Clear" button.

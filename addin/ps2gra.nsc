@@ -47,9 +47,9 @@ fi
 
 if which -q $RUBY_COMMAND
 then
-    $RUBY_COMMAND $NGRAPHLIB/fig2gra.rb "$fig_file" "$gra_file"
+    $RUBY_COMMAND "$NGRAPHLIB/fig2gra.rb" "$fig_file" "$gra_file"
 else
-    . $NGRAPHLIB/fig2gra.nsc
+    . "$NGRAPHLIB/fig2gra.nsc"
     fig2gra "$fig_file" "$gra_file"
 fi
 system::unlink_temp_file "$fig_file"

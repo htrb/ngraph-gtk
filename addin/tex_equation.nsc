@@ -45,9 +45,9 @@ tex_eqn_check_command $PSTOEDIT_COMMAND
 
 if which -q $RUBY_COMMAND
 then
-    FIG2GRA_COMMAND="$RUBY_COMMAND $NGRAPHLIB/fig2gra.rb"
+    FIG2GRA_COMMAND="$RUBY_COMMAND \"$NGRAPHLIB/fig2gra.rb\""
 else
-    . $NGRAPHLIB/fig2gra.nsc
+    . "$NGRAPHLIB/fig2gra.nsc"
     FIG2GRA_COMMAND=fig2gra
 fi
 

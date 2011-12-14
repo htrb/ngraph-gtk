@@ -17,7 +17,7 @@ then
     exit
 fi
 
-if $NGRAPHLIB/fft "$SOURCE_FILE" "$DEST_FILE"
+if "$NGRAPHLIB/fft" "$SOURCE_FILE" "$DEST_FILE"
 then
     true
 else
