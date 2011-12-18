@@ -25,9 +25,9 @@
 #define TYPE      TRUE
 #define FRAME     TRUE
 
-#define CHECK_COLUMN   0
-#define ID_COLUMN      1
-#define CAPTION_COLUMN 5
+#define COLUMN_CHECK   0
+#define COLUMN_ID      1
+#define COLUMN_CAPTION 5
 
 struct file_data {
   char *file, *math_x, *math_y, *type, *caption, *style;
@@ -490,14 +490,14 @@ caption_toggled(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user
     return;
   }
 
-  gtk_tree_model_get(model, &iter, CHECK_COLUMN, &v, -1);
-  gtk_tree_model_get(model, &iter, ID_COLUMN, &i, -1);
+  gtk_tree_model_get(model, &iter, COLUMN_CHECK, &v, -1);
+  gtk_tree_model_get(model, &iter, COLUMN_ID, &i, -1);
 
   v = !v;
 
   prm->data[i].show = v;
 
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, CHECK_COLUMN, v, -1);
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CHECK, v, -1);
 }
 
 static void
@@ -518,12 +518,12 @@ caption_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, gpointer
     return;
   }
 
-  gtk_tree_model_get(model, &iter, ID_COLUMN, &i, -1);
+  gtk_tree_model_get(model, &iter, COLUMN_ID, &i, -1);
 
   g_free(prm->data[i].caption);
   prm->data[i].caption = g_strdup(new_text);
 
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, CAPTION_COLUMN, new_text, -1);
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, COLUMN_CAPTION, new_text, -1);
 }
 
 static GtkWidget *
