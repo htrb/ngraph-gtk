@@ -1,3 +1,10 @@
+2011-12-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/legend.c (caption_toggled, caption_edited): use
+	"gtk_tree_model_get()" to get file id.
+	(COLUMN_CHECK, COLUMN_ID): added. 
+	(COLUMN_CAPTION): change name.
+
 2011-12-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/legend.c (savescript): fix font setting.
