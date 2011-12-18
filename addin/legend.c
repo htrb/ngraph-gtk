@@ -25,6 +25,8 @@
 #define TYPE      TRUE
 #define FRAME     TRUE
 
+#define CHECK_COLUMN   0
+#define ID_COLUMN      1
 #define CAPTION_COLUMN 5
 
 struct file_data {
@@ -488,26 +490,14 @@ caption_toggled(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user
     return;
   }
 
-  tree_path = gtk_tree_path_new_from_string(path);
-  if (tree_path == NULL) {
-    return;
-  }
+  gtk_tree_model_get(model, &iter, CHECK_COLUMN, &v, -1);
+  gtk_tree_model_get(model, &iter, ID_COLUMN, &i, -1);
 
-  indices = gtk_tree_path_get_indices(tree_path);
-  if (indices == NULL) {
-    gtk_tree_path_free(tree_path);
-    return;
-  }
-
-  i = indices[0];
-  gtk_tree_path_free(tree_path);
-
-  gtk_tree_model_get(model, &iter, 0, &v, -1);
   v = !v;
 
   prm->data[i].show = v;
 
-  gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0, v, -1);
+  gtk_list_store_set(GTK_LIST_STORE(model), &iter, CHECK_COLUMN, v, -1);
 }
 
 static void
@@ -528,22 +518,9 @@ caption_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, gpointer
     return;
   }
 
-  tree_path = gtk_tree_path_new_from_string(path);
-  if (tree_path == NULL) {
-    return;
-  }
-
-  indices = gtk_tree_path_get_indices(tree_path);
-  if (indices == NULL) {
-    gtk_tree_path_free(tree_path);
-    return;
-  }
-
-  i = indices[0];
-  gtk_tree_path_free(tree_path);
+  gtk_tree_model_get(model, &iter, ID_COLUMN, &i, -1);
 
   g_free(prm->data[i].caption);
-
   prm->data[i].caption = g_strdup(new_text);
 
   gtk_list_store_set(GTK_LIST_STORE(model), &iter, CAPTION_COLUMN, new_text, -1);
