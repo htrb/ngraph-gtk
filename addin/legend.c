@@ -275,8 +275,7 @@ savescript(struct file_prm *prm)
   posy = gtk_spin_button_get_value(GTK_SPIN_BUTTON(prm->y)) * 100;
 
   if (frame) {
-    fprintf(f, "new int name:textlen\n");
-    fprintf(f, "new int name:texttot\n");
+    fprintf(f, "new iarray name:textlen\n");
     fprintf(f, "new iarray name:textbbox\n");
   }
 
@@ -313,10 +312,7 @@ savescript(struct file_prm *prm)
         fprintf(f, "text::B=%d\n", b);
         if (frame) {
           fprintf(f, "iarray:textbbox:@=${text::bbox}\n");
-          fprintf(f, "int:textlen:@=\"${iarray:textbbox:get:2}-${iarray:textbbox:get:0}\"\n");
-          fprintf(f, "if [ \"${int:texttot:@}\" -lt \"${int:textlen:@}\" ]; then\n");
-          fprintf(f, "int:texttot:@=${int:textlen:@}\n");
-          fprintf(f, "fi\n");
+          fprintf(f, "iarray:textlen:push \"${iarray:textbbox:get:2}-${iarray:textbbox:get:0}\"\n");
         }
       }
       gy = gy + ceil(height * 1.2 / 100.0) * 100;
@@ -326,7 +322,7 @@ savescript(struct file_prm *prm)
     fprintf(f, "new rectangle\n");
     fprintf(f, "rectangle::x1=%d\n", posx - height / 4);
     fprintf(f, "rectangle::y1=%d\n", posy);
-    fprintf(f, "rectangle::x2=%d+${int:texttot:@}\n", posx + len + 3 * height / 4);
+    fprintf(f, "rectangle::x2=%d+${iarray:textlen:max}\n", posx + len + 3 * height / 4);
     fprintf(f, "rectangle::y2=%d\n", gy + height / 2);
     fprintf(f, "rectangle::fill_R=0\n");
     fprintf(f, "rectangle::fill_G=0\n");
@@ -336,7 +332,7 @@ savescript(struct file_prm *prm)
     fprintf(f, "new rectangle\n");
     fprintf(f, "rectangle::x1=%d\n", posx - height / 2);
     fprintf(f, "rectangle::y1=%d\n", posy - height / 4);
-    fprintf(f, "rectangle::x2=%d+${int:texttot:@}\n", posx + len + height / 2);
+    fprintf(f, "rectangle::x2=%d+${iarray:textlen:max}\n", posx + len + height / 2);
     fprintf(f, "rectangle::y2=%d\n", gy + height / 4);
     fprintf(f, "rectangle::fill_R=255\n");
     fprintf(f, "rectangle::fill_G=255\n");
@@ -348,8 +344,7 @@ savescript(struct file_prm *prm)
     fprintf(f, "rectangle::stroke=true\n");
     fprintf(f, "movetop rectangle:!\n");
     fprintf(f, "movetop rectangle:!\n");
-    fprintf(f, "del int:textlen\n");
-    fprintf(f, "del int:texttot\n");
+    fprintf(f, "del iarray:textlen\n");
     fprintf(f, "del iarray:textbbox\n");
   }
   fprintf(f, "menu::modified=true\n");

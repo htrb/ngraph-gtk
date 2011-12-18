@@ -119,10 +119,7 @@ makescript(FILE *f, struct fit_prm *prm, int gx, int gy, int height, const char 
   fprintf(f, "text::style=%d\n", style);
   if (frame) {
     fprintf(f, "iarray:textbbox:@=${text::bbox}\n");
-    fprintf(f, "int:textlen:@=\"${iarray:textbbox:get:2}-${iarray:textbbox:get:0}\"\n");
-    fprintf(f, "if [ \"${int:texttot:@}\" -lt \"${int:textlen:@}\" ]; then\n");
-    fprintf(f, "int:texttot:@=${int:textlen:@}\n");
-    fprintf(f, "fi\n");
+    fprintf(f, "iarray:textlen:push \"${iarray:textbbox:get:2}-${iarray:textbbox:get:0}\"\n");
   }
   fprintf(f, "menu::modified=true\n");
 }
@@ -145,8 +142,7 @@ savescript(struct fit_prm *prm)
 
   frame = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(prm->frame));
   if (frame) {
-    fprintf(f, "new int name:textlen\n");
-    fprintf(f, "new int name:texttot\n");
+    fprintf(f, "new iarray name:textlen\n");
     fprintf(f, "new iarray name:textbbox\n");
   }
 
@@ -173,7 +169,7 @@ savescript(struct fit_prm *prm)
     fprintf(f, "new rectangle\n");
     fprintf(f, "rectangle::x1=%d\n", posx - height / 4);
     fprintf(f, "rectangle::y1=%d\n", posy);
-    fprintf(f, "rectangle::x2=%d+${int:texttot:@}\n", posx + 3 * height / 4);
+    fprintf(f, "rectangle::x2=%d+${iarray:textlen:max}\n", posx + 3 * height / 4);
     fprintf(f, "rectangle::y2=%d\n", gy + height / 2);
     fprintf(f, "rectangle::fill_R=0\n");
     fprintf(f, "rectangle::fill_G=0\n");
@@ -182,7 +178,7 @@ savescript(struct fit_prm *prm)
     fprintf(f, "new rectangle\n");
     fprintf(f, "rectangle::x1=%d\n", posx - height / 2);
     fprintf(f, "rectangle::y1=%d\n", posy - height / 4);
-    fprintf(f, "rectangle::x2=%d+${int:texttot:@}\n", posx + height / 2);
+    fprintf(f, "rectangle::x2=%d+${iarray:textlen:max}\n", posx + height / 2);
     fprintf(f, "rectangle::y2=%d\n", gy + height / 4);
     fprintf(f, "rectangle::fill_R=255\n");
     fprintf(f, "rectangle::fill_G=255\n");
@@ -192,8 +188,7 @@ savescript(struct fit_prm *prm)
     fprintf(f, "rectangle::stroke_B=0\n");
     fprintf(f, "rectangle::fill=true\n");
     fprintf(f, "rectangle::stroke=true\n");
-    fprintf(f, "del int:textlen\n");
-    fprintf(f, "del int:texttot\n");
+    fprintf(f, "del iarray:textlen\n");
     fprintf(f, "del iarray:textbbox\n");
   }
 
