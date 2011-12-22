@@ -678,9 +678,10 @@ set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
 #if GTK_CHECK_VERSION(3, 0, 0)
   GdkRGBA col;
 
-  col.red = r;
-  col.green = g;
-  col.blue = b;
+  col.red   = r * 1.0 / 0xFFFF;
+  col.green = g * 1.0 / 0xFFFF;
+  col.blue  = b * 1.0 / 0xFFFF;
+  col.alpha = 1.0;
 
   gtk_widget_override_background_color(w, GTK_STATE_NORMAL, &col);
   gtk_widget_override_background_color(w, GTK_STATE_ACTIVE, &col);
@@ -688,15 +689,16 @@ set_linumber_color(GtkWidget *w, guint r, guint g, guint b)
   gtk_widget_override_background_color(w, GTK_STATE_SELECTED, &col);
   gtk_widget_override_background_color(w, GTK_STATE_INSENSITIVE, &col);
 
-  col.red = 0;
+  col.red   = 0;
   col.green = 0;
-  col.blue = 0;
+  col.blue  = 0;
+  col.alpha = 1.0;
 
-  gtk_widget_override_background_color(w, GTK_STATE_NORMAL, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_ACTIVE, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_PRELIGHT, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_SELECTED, &col);
-  gtk_widget_override_background_color(w, GTK_STATE_INSENSITIVE, &col);
+  gtk_widget_override_color(w, GTK_STATE_NORMAL, &col);
+  gtk_widget_override_color(w, GTK_STATE_ACTIVE, &col);
+  gtk_widget_override_color(w, GTK_STATE_PRELIGHT, &col);
+  gtk_widget_override_color(w, GTK_STATE_SELECTED, &col);
+  gtk_widget_override_color(w, GTK_STATE_INSENSITIVE, &col);
 #else
   GdkColor col;
 

@@ -1,6 +1,11 @@
 #ifndef ADDIN_COMMON_HEADER
 #define ADDIN_COMMON_HEADER
 
+#if GTK_CHECK_VERSION(3, 2, 0)
+#define gtk_hbox_new(h, s) gtk_box_new(GTK_ORIENTATION_HORIZONTAL, s)
+#define gtk_vbox_new(h, s) gtk_box_new(GTK_ORIENTATION_VERTICAL, s)
+#endif
+
 struct font_prm {
   GtkWidget *font, *pt, *space, *script, *color, *bold, *italic;
 };

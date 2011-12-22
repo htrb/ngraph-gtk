@@ -473,9 +473,8 @@ caption_toggled(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user
   GtkTreeView *view;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GtkTreePath *tree_path;
   gboolean v;
-  gint i, *indices;
+  gint i;
 
   prm = (struct file_prm *) user_data;
   view = GTK_TREE_VIEW(prm->files);
@@ -501,9 +500,8 @@ caption_edited(GtkCellRenderer *renderer, gchar *path, gchar *new_text, gpointer
   struct file_prm *prm;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  GtkTreePath *tree_path;
   GtkTreeView *view;
-  gint *indices, i;
+  gint i;
 
   prm = (struct file_prm *) user_data;
   view = GTK_TREE_VIEW(prm->files);

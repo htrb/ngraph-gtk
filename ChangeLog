@@ -1,3 +1,25 @@
+2011-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/legend.c (caption_edited, caption_toggled): remove unused
+	variables.
+
+	* addin/addin_common.h (gtk_hbox_new, gtk_vbox_new): don't use
+	deprecated functions.
+
+	* src/gtk/gtk_common.h (gtk_hbox_new, gtk_vbox_new)
+	(gtk_hbutton_box_new, gtk_hseparator_new, gtk_hscrollbar_new)
+	(gtk_vscrollbar_new, gtk_hscale_new_with_range): don't use
+	deprecated functions.
+
+	* src/gtk/x11opt.c (FontSettingDialogAddAlternative): use
+	"GtkFontChooserDialog" when the version of GTK+ library is greater
+	or equal to 3.2.
+
+	* src/gtk/gtk_widget.c (set_linumber_color): use
+	"gtk_widget_override_color()" to set color of text. initialize
+	"alpha" member of the structure "GdkRGBA". The range of each
+	member of the structure "GdkRGBA" is from 0.0 to 1.0.
+
 2011-12-18  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c (makescript, savescript): use "iarray" object to
