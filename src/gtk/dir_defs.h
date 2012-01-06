@@ -16,6 +16,6 @@ extern char *DOCDIR, *LIBDIR, *CONFDIR, *PIXMAPDIR;
 #define HOME_DIR  ".Ngraph"
 #endif	/* WINDOWS */
 
-#define HELP_FILE "html_ja/ngraph.html"
+#define HELP_FILE "ngraph.html"
 
 #endif

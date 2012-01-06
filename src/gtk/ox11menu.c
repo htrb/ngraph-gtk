@@ -2026,6 +2026,17 @@ mx_unfocus_obj(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   return 0;
 }
 
+static int
+mx_get_locale(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  const char *locale;
+
+  locale = n_getlocale();
+  printfstdout("%s\n", CHK_STR(locale));
+
+  return 0;
+}
+
 int
 get_graph_modified(void)
 {
@@ -2091,6 +2102,7 @@ static struct objtable gtkmenu[] = {
   {"lib_version", NVFUNC, NREAD | NEXEC, mx_show_lib_version, "s", 0},
   {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},
   {"unfocus", NVFUNC, NREAD | NEXEC, mx_unfocus_obj, "", 0},
+  {"locale", NVFUNC, NREAD | NEXEC, mx_get_locale, "", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 

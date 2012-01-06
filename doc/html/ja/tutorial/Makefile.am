@@ -10,6 +10,6 @@ EXTRA_DIST = aclear.jpg addgraph.jpg adialog.jpg \
 	lwindow.jpg math.jpg pointer.jpg \
 	scundo.jpg trimming.jpg window.png
 
-htmljatutorialdir = $(docdir)/html_ja/tutorial
+htmltutorialdir = $(docdir)/html/ja/tutorial
 
-htmljatutorial_DATA = ${EXTRA_DIST}
+htmltutorial_DATA = ${EXTRA_DIST}

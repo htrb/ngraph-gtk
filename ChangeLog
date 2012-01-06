@@ -1,3 +1,15 @@
+2012-01-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_get_locale): added.
+	(gtkmenu): add field "locale".
+
+	* src/gtk/main.c (n_getlocale): added.
+	(main): get locale string.
+
+	* src/gtk/x11graph.c (check_help_file): added.
+	(CmHelpHelp): use "check_help_file()" to get full-path of help
+	file.
+
 2011-12-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/legend.c (caption_edited, caption_toggled): remove unused

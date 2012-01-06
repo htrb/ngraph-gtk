@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = doc/html_ja/img
+subdir = doc/html/ja/dialogs
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -81,8 +81,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(htmljaimgdir)"
-DATA = $(htmljaimg_DATA)
+am__installdirs = "$(DESTDIR)$(htmldialogdir)"
+DATA = $(htmldialog_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -233,19 +233,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = axisref.png barc.png baxispo.png \
-	bclear.png bcross.png bcurve.png bdataopn.png \
-	bdatapo.png bdraw.png beval.png bframe.png \
-	bgauss.png blgndpo.png bline.png bload.png \
-	bmark.png bmath.png bpoint.png bpolygon.png \
-	bpreview.png bprint.png brect.png bsave.png \
-	bscale.png bscundo.png bsection.png bsingle.png \
-	bstop.png btext.png btrim.png bzoom.png \
-	iconl.png winaxis.png wincoord.png windata.png \
-	wininfo.png winlgnd.png winmerge.png move.png
+EXTRA_DIST = axis.png axisbase.png axisfont.png axisgage.png		\
+	axisnum.png axispos.png data.png dataplot.png datafit.png	\
+	dataload.png datamask.png datamath.png datamove.png grid.png	\
+	lgndarc.png lgndgaus.png lgndpath.png lgndmark.png		\
+	lgndrect.png lgndtext.png loadngp.png loadprm.png merge.png	\
+	pageord.png prefmisc.png save.png
 
-htmljaimgdir = $(docdir)/html_ja/img
-htmljaimg_DATA = ${EXTRA_DIST}
+htmldialogdir = $(docdir)/html/ja/dialogs
+htmldialog_DATA = ${EXTRA_DIST}
 all: all-am
 
 .SUFFIXES:
@@ -258,9 +254,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/html_ja/img/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/html/ja/dialogs/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu doc/html_ja/img/Makefile
+	  $(AUTOMAKE) --gnu doc/html/ja/dialogs/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -285,26 +281,26 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-htmljaimgDATA: $(htmljaimg_DATA)
+install-htmldialogDATA: $(htmldialog_DATA)
 	@$(NORMAL_INSTALL)
-	test -z "$(htmljaimgdir)" || $(MKDIR_P) "$(DESTDIR)$(htmljaimgdir)"
-	@list='$(htmljaimg_DATA)'; test -n "$(htmljaimgdir)" || list=; \
+	test -z "$(htmldialogdir)" || $(MKDIR_P) "$(DESTDIR)$(htmldialogdir)"
+	@list='$(htmldialog_DATA)'; test -n "$(htmldialogdir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(htmljaimgdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(htmljaimgdir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(htmldialogdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(htmldialogdir)" || exit $$?; \
 	done
 
-uninstall-htmljaimgDATA:
+uninstall-htmldialogDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(htmljaimg_DATA)'; test -n "$(htmljaimgdir)" || list=; \
+	@list='$(htmldialog_DATA)'; test -n "$(htmldialogdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(htmljaimgdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(htmljaimgdir)" && rm -f $$files
+	echo " ( cd '$(DESTDIR)$(htmldialogdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(htmldialogdir)" && rm -f $$files
 tags: TAGS
 TAGS:
 
@@ -346,7 +342,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(htmljaimgdir)"; do \
+	for dir in "$(DESTDIR)$(htmldialogdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -394,7 +390,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-htmljaimgDATA
+install-data-am: install-htmldialogDATA
 
 install-dvi: install-dvi-am
 
@@ -438,7 +434,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-htmljaimgDATA
+uninstall-am: uninstall-htmldialogDATA
 
 .MAKE: install-am install-strip
 
@@ -447,12 +443,12 @@ uninstall-am: uninstall-htmljaimgDATA
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
-	install-htmljaimgDATA install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	uninstall uninstall-am uninstall-htmljaimgDATA
+	install-htmldialogDATA install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am uninstall uninstall-am uninstall-htmldialogDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

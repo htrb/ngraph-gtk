@@ -69,7 +69,7 @@ static char **attempt_shell_completion(char *text, int start, int end);
 
 #define INIT_SCRIPT "Ngraph.nsc"
 
-static char *systemname;
+static char *systemname, *locale;
 static int consolefdout, consolefdin, ConsoleAc = FALSE;
 static int consolecol = 80, consolerow = 25;
 
@@ -724,6 +724,11 @@ set_path_env(char *homedir)
   g_free(pathset);
 }
 
+const char *
+n_getlocale(void)
+{
+  return locale;
+}
 
 int
 main(int argc, char **argv)
@@ -789,6 +794,13 @@ main(int argc, char **argv)
   bind_textdomain_codeset(PACKAGE, "UTF-8");
   textdomain(PACKAGE);
 #endif	/* HAVE_GETTEXT */
+
+#if WINDOWS
+  locale = g_win32_getlocale();
+#else  /* WINDOWS */
+  locale = setlocale(LC_ALL, NULL);
+  locale = g_strdup(CHK_STR(locale));
+#endif /* WINDOWS */
 
   libdir = g_strdup(LIBDIR);
   if (libdir == NULL)

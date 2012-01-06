@@ -1299,10 +1299,45 @@ CmHelpAbout(GtkAction *w, gpointer client_data)
 			NULL);
 }
 
+static char *
+check_help_file(void)
+{
+  char *file, *ptr, *tmp;
+  const char *locale;
+    
+  locale = n_getlocale();
+  if (locale == NULL) {
+    goto End;
+  }
+
+  tmp = g_strdup(locale);
+  if (tmp == NULL){
+    goto End;
+  }
+
+  ptr = strchr(tmp, '_');
+  if (ptr == NULL) {
+    g_free(tmp);
+    goto End;
+  }
+
+  *ptr = '\0';
+  file = g_strdup_printf("%s/html/%s/%s", DOCDIR, tmp, HELP_FILE);
+  g_free(tmp);
+
+  if (naccess(file, R_OK) == 0) {
+    return file;
+  }
+  g_free(file);
+
+ End:
+  return g_strdup_printf("%s/html/en/%s", DOCDIR, HELP_FILE);
+}
+
 void
 CmHelpHelp(GtkAction *w, gpointer client_data)
 {
-  char *cmd;
+  char *cmd, *file;
 
   if (Menulock || Globallock)
     return;
@@ -1310,7 +1345,11 @@ CmHelpHelp(GtkAction *w, gpointer client_data)
   if (Menulocal.help_browser == NULL)
     return;
 
-  cmd = g_strdup_printf("%s \"%s/%s\"", Menulocal.help_browser, DOCDIR, HELP_FILE);
+  file = check_help_file();
+
+  cmd = g_strdup_printf("%s \"%s\"", Menulocal.help_browser, file);
+  g_free(file);
+
   system_bg(cmd);
 
   g_free(cmd);

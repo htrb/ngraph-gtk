@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = doc/html_ja/tutorial
+subdir = doc/html/img
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -81,8 +81,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(htmljatutorialdir)"
-DATA = $(htmljatutorial_DATA)
+am__installdirs = "$(DESTDIR)$(htmlimgdir)"
+DATA = $(htmlimg_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -233,20 +233,16 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = aclear.jpg addgraph.jpg adialog.jpg \
-	alegend.jpg awindow.jpg axispo.jpg \
-	axisref.jpg datapo.jpg draw.jpg \
-	eval.jpg evaldlg.jpg fdialog.jpg \
-	fdialog2.jpg fdialog3.jpg fdup.jpg \
-	filedlg.jpg fitdlg.jpg focus.jpg \
-	fopen.jpg fwindow.jpg fwindow2.jpg \
-	graphc.jpg graphf.jpg graphs.jpg \
-	infowin.jpg lapoint.jpg legend.jpg \
-	lwindow.jpg math.jpg pointer.jpg \
-	scundo.jpg trimming.jpg window.png
+EXTRA_DIST = barc.png baxispo.png bclear.png bcross.png bdataopn.png	\
+	 bdatapo.png bdraw.png beval.png bframe.png bgauss.png		\
+	 blgndpo.png bline.png bload.png bmark.png bmath.png		\
+	 bpoint.png bpreview.png bprint.png brect.png bsave.png		\
+	 bscale.png bscundo.png bsection.png bsingle.png btext.png	\
+	 btrim.png bzoom.png winaxis.png wincoord.png windata.png	\
+	 wininfo.png winlgnd.png winmerge.png icon.png
 
-htmljatutorialdir = $(docdir)/html_ja/tutorial
-htmljatutorial_DATA = ${EXTRA_DIST}
+htmlimgdir = $(docdir)/html/img
+htmlimg_DATA = ${EXTRA_DIST}
 all: all-am
 
 .SUFFIXES:
@@ -259,9 +255,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/html_ja/tutorial/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/html/img/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu doc/html_ja/tutorial/Makefile
+	  $(AUTOMAKE) --gnu doc/html/img/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -286,26 +282,26 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-htmljatutorialDATA: $(htmljatutorial_DATA)
+install-htmlimgDATA: $(htmlimg_DATA)
 	@$(NORMAL_INSTALL)
-	test -z "$(htmljatutorialdir)" || $(MKDIR_P) "$(DESTDIR)$(htmljatutorialdir)"
-	@list='$(htmljatutorial_DATA)'; test -n "$(htmljatutorialdir)" || list=; \
+	test -z "$(htmlimgdir)" || $(MKDIR_P) "$(DESTDIR)$(htmlimgdir)"
+	@list='$(htmlimg_DATA)'; test -n "$(htmlimgdir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(htmljatutorialdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(htmljatutorialdir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(htmlimgdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(htmlimgdir)" || exit $$?; \
 	done
 
-uninstall-htmljatutorialDATA:
+uninstall-htmlimgDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(htmljatutorial_DATA)'; test -n "$(htmljatutorialdir)" || list=; \
+	@list='$(htmlimg_DATA)'; test -n "$(htmlimgdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(htmljatutorialdir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(htmljatutorialdir)" && rm -f $$files
+	echo " ( cd '$(DESTDIR)$(htmlimgdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(htmlimgdir)" && rm -f $$files
 tags: TAGS
 TAGS:
 
@@ -347,7 +343,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(htmljatutorialdir)"; do \
+	for dir in "$(DESTDIR)$(htmlimgdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -395,7 +391,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-htmljatutorialDATA
+install-data-am: install-htmlimgDATA
 
 install-dvi: install-dvi-am
 
@@ -439,7 +435,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-htmljatutorialDATA
+uninstall-am: uninstall-htmlimgDATA
 
 .MAKE: install-am install-strip
 
@@ -448,12 +444,12 @@ uninstall-am: uninstall-htmljatutorialDATA
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
-	install-htmljatutorialDATA install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am uninstall uninstall-am uninstall-htmljatutorialDATA
+	install-htmlimgDATA install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	uninstall uninstall-am uninstall-htmlimgDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -5,6 +5,6 @@ EXTRA_DIST = axis.png axisbase.png axisfont.png axisgage.png		\
 	lgndrect.png lgndtext.png loadngp.png loadprm.png merge.png	\
 	pageord.png prefmisc.png save.png
 
-htmljadialogdir = $(docdir)/html_ja/dialogs
+htmldialogdir = $(docdir)/html/ja/dialogs
 
-htmljadialog_DATA = ${EXTRA_DIST}
+htmldialog_DATA = ${EXTRA_DIST}

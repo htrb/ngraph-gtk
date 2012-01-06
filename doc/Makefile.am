@@ -1,1 +1,1 @@
-SUBDIRS = html_ja
+SUBDIRS = html

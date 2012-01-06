@@ -17468,7 +17468,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html_ja/Makefile doc/html_ja/tutorial/Makefile doc/html_ja/dialogs/Makefile doc/html_ja/img/Makefile zsh/Makefile test/Makefile mingw/Makefile pixmap/Makefile icons/Makefile misc/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/en/Makefile doc/html/en/tutorial/Makefile doc/html/en/dialogs/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile mingw/Makefile pixmap/Makefile icons/Makefile misc/Makefile"
 
 
 ac_config_headers="$ac_config_headers config.h"
@@ -18504,10 +18504,14 @@ do
     "demo/Makefile") CONFIG_FILES="$CONFIG_FILES demo/Makefile" ;;
     "initfile/Makefile") CONFIG_FILES="$CONFIG_FILES initfile/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
-    "doc/html_ja/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html_ja/Makefile" ;;
-    "doc/html_ja/tutorial/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html_ja/tutorial/Makefile" ;;
-    "doc/html_ja/dialogs/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html_ja/dialogs/Makefile" ;;
-    "doc/html_ja/img/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html_ja/img/Makefile" ;;
+    "doc/html/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/Makefile" ;;
+    "doc/html/img/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/img/Makefile" ;;
+    "doc/html/en/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/en/Makefile" ;;
+    "doc/html/en/tutorial/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/en/tutorial/Makefile" ;;
+    "doc/html/en/dialogs/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/en/dialogs/Makefile" ;;
+    "doc/html/ja/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/ja/Makefile" ;;
+    "doc/html/ja/tutorial/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/ja/tutorial/Makefile" ;;
+    "doc/html/ja/dialogs/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/ja/dialogs/Makefile" ;;
     "zsh/Makefile") CONFIG_FILES="$CONFIG_FILES zsh/Makefile" ;;
     "test/Makefile") CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
     "mingw/Makefile") CONFIG_FILES="$CONFIG_FILES mingw/Makefile" ;;

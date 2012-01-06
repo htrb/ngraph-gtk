@@ -16,5 +16,6 @@ void nfreeconsole(void);
 void nforegroundconsole(void);
 void hide_console(void);
 void resotre_console(void);
+const char *n_getlocale(void);
 
 #endif
