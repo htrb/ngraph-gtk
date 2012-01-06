@@ -1,0 +1,280 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Add-in </title>
+</head>
+<body>
+<a name=TOP>&nbsp;</a>
+<h1> <a href=./ngraph.html>Add-in</a> </h1>
+<ul>
+ <li> <a href=./addin.html#ADDIN>Summary</a>
+ <li> <a href=./addin.html#LEGEND_NSC>legend.nsc Operation</a>
+ <li> <a href=./addin.html#STRUCTURE>The format of the add-in scripts</a>
+ <li> <a href=./addin.html#DATA>Add-in scripts to handle data</a>
+</ul>
+<br>
+<hr size=5>
+<br>
+<a name=ADDIN>&nbsp;</a>
+<h2> <a href=./addin.html#TOP>Summary</a> </h2>
+<p>
+The Ngraph [Add-Ins] Ngraph choose the add-ins that are registered in
+the menu called it &quot;Ngraph macro script&quot; to run as.  None of
+the add-in program [Preference] - [Addin script] done by.  The following
+add-in program has already been registered in the distribution.
+</p>
+<dl>
+<dt> legend.nsc
+<dd> Add-in for automatic generation of a legend.  &quot;Mix:&quot; If
+     you check the file name, X column will be treated as a legend as
+     the Y column data together.  Select the data file name from the
+     list box, &quot;Caption:&quot; Please enter the text to the legend.
+     The default data file name is used. </dd>
+ <dt> fitrslt.nsc
+ <dd> Add-in for creating the legend of the results of the fit.
+     &quot;Expand&quot; If you check, Legend of the current
+     numbers-so-fit results generated as Text, Legend also fit-Text has
+     changed does not change the results.  Legend-check if it uses a
+     non-object substitution features Text, if things change fitting
+     results, Legend-automatically changes the contents of the Text.
+     Add-in for creating the legend of the results of the fit. </dd>
+ <dt> append.nsc
+ <dd> Add-in scripts to read files without clearing the graph NGP
+     already loaded. </dd>
+ <dt> calc.nsc
+ <dd> Add-in for the drawing of any function.  Create a spaced data, set
+     up a data file Ngraph to draw a function using the conversion
+     function formula. </dd>
+ <dt> math.nsc
+ <dd> Add-in for the calculator line.  Display the answers when you
+     enter the formula.  Function can be used for conversion function
+     formula Ngraph. </dd>
+ <dt> text-in.nsc
+ <dd> The column of the legend-add-script that inserts data file next to
+     the plotted data points as text.  It also serves as an example of
+     data handling scripts. </dd>
+ <dt> cal.nsc
+ <dd> This add-in Information window to display the calendar.  We use
+     the / usr / bin / cal. </dd>
+ <dt> ps2gra.nsc
+ <dd> A macro that converts the GRA to import PostScript.  Such as those
+     using a bitmap, you may not convert properly.  Linear character,
+     the character information is expanded to the curve is lost.
+     Pstoedit is required to run and ruby. </dd>
+ <dt> tex_equation.nsc
+ <dd> GRA file import add-in that is a formula for LaTeX.  LaTeX to
+ enter a formula in legend text file is created and run from GRA and the
+ text still selected, as the merged file is created.  Formula is linear,
+ the curve is composed of character information is lost.  The real line
+ ruby, and pstoedit requires pdflatex. </dd>
+</dl>
+<p>
+ Add-in program can also create.  See all logic in the macro script is
+ an internal configuration parameters Ngraph, it has the ability to
+ change, add-in program to access the state variables Ngraph, or get the
+ current state of Ngraph, you can modify or The.  I can be quite alone
+ macro script, from the viewpoint of the user interface, but it may be
+ more efficient to start a program of independent individual.  Since the
+ macro script has the ability to launch external programs, but it is
+ also possible, in that case
+<ul>
+ <li> I know the status of the external program like Ngraph do?
+ <li> An external program or to change the state of Ngraph work?
+</ul>
+Becomes a problem.  Legend.nsc covers easy as one example of how it is
+described below.
+</p>
+<br>
+<hr>
+<br>
+<a name=LEGEND_NSC>&nbsp;</a>
+<h2> <a href=./addin.html#TOP>legend.nsc Operation</a> </h2>
+<p> legend.nsc to launch an external program is legend.tcl.  Create an intermediate file that describes the current state of Ngraph legend.tcl need first. </p>
+<pre>
+ DATALIST = ${system:0:temp_file}
+ object file -instance &gt; &quot;$DATALIST&quot;
+ get file:0-! -id -field file xy type &gt;&gt; &quot;$DATALIST&quot;
+</pre>
+<p>
+In this case, system:0:temp_file gets the temporary file name in, file
+object command (data file) the number of instances of various settings
+to get the get command parameters are written to temporary files.  This
+intermediate file format to launch an external program (in our case is
+legend.tcl) is a unique format.  Contents of this file that lists the
+status of the current set of data files Ngraph
+</p>
+<pre>
+ One
+ demo1.dat
+ One
+ Two
+ mark
+</pre>
+<p> Look something like this.  Then </p>
+<pre>
+ SCRIPT = ${system:0:temp_file}                                          
+</pre>
+<p>
+Another to get temporary file name for output legend.tcl in the SCRIPT
+and contains variable.  Ngraph macro script is executed as the file
+later.  Therefore, the contents of this file must be in accordance with
+the syntax of a macro script.
+</p>
+<pre>
+ wish legend.tcl &quot;$DATALIST&quot; &quot;$SCRIPT&quot;
+</pre>
+<p>
+Start the program and external legend.tcl here.  gets the state of
+Ngraph legend.tcl from the file specified on the command line first, is
+designed to be printed as a macro script to change it to a file
+condition specified in the second.  For example, &quot;STRING&quot;
+legend says - the text (0,0) to generate the contents of a file is $
+SCRIPT
+</p>
+<pre>
+ new text
+ text::x = 0
+ text::y = 0
+ text::text = &quot;STRING&quot;
+</pre>
+<p>
+  And. Also when you make changes to the chart, &quot;menu::modified =
+  TRUE&quot; is running, you have to be done to confirm the save when
+  you close the chart. To run this script
+</p>
+<pre>
+ if [-f &quot;$SCRIPT&quot;];                                                  
+ then                                                                  
+ new shell                                                     
+ shell::shell &quot;$SCRIPT&quot;                                        
+ del shell                                                     
+ fi                                                                    
+</pre>
+<p>
+Is. Now, if you are not there is a file that contains the SCRIPT
+variable (sentence if) to create an instance of shell object (new) and,
+interpreted the file to the instance (shell) will be, no longer needed
+at the end or delete an instance (del) has.
+</p>
+<pre>
+ system:0:unlink_temp_file &quot;$DATALIST&quot;
+ system:0:unlink_temp_file &quot;$SCRIPT&quot;                                
+</pre>
+<p> Finally, the intermediate files no longer needed ($DATALIST) and script files ($SCRIPT) to delete the. </p>
+<br>
+<hr>
+<br>
+<a name=STRUCTURE>&nbsp;</a>
+<h2> <a href=./addin.html#TOP>The format of the add-in scripts</a> </h2>
+<p> Add-in script that starts an external program, </p>
+<pre>
+ ... To generate the required intermediate files to an external program.
+ SCRIPT = ${system:0:temp_file}                                          
+ Intermediate external program filename &quot;$SCRIPT&quot;
+ if [-f &quot;$SCRIPT&quot;];                                                  
+ then                                                                  
+ new shell                                                     
+ shell::shell &quot;$SCRIPT&quot;                                        
+ del shell                                                     
+ fi                                                                    
+ system:0:unlink_temp_file &quot;$SCRIPT&quot;
+</pre>
+<p> And. </p>
+<p> Of course, if there is no need to get the current state of the Ngraph, </p>
+<pre>
+ SCRIPT = ${system:0:temp_file}
+ external program name &quot;$SCRIPT&quot;
+ if [-f &quot;$SCRIPT&quot;];
+ then new shell shell::shell &quot;$SCRIPT&quot;
+ del shell
+ fi
+ system:0:unlink_temp_file &quot;$SCRIPT&quot;
+</pre>
+<p> Is sufficient. </p>
+<br>
+<hr>
+<br>
+<a name=DATA>&nbsp;</a>
+<h2> <a href=./addin.html#TOP>Add-in scripts to handle data</a> </h2>
+<p> You can also work directly with the data from the add-in scripts.  Describes the text as an example - in.nsc.  Suppose the following data files. </p>
+<pre>
+ ===== Test.dat =========
+ 0 0 sampleA 
+ 1 1 sampleB
+ 2 2 sampleC
+ ======================
+</pre>
+<p>
+The x-coordinate of the first column, and then create a graph to the y
+coordinate of the second column.  The Ngraph open test.dat has already
+Plot type &quot;mark&quot; and is plotted.  This text-running in.nsc,
+&quot;Input legend-text column&quot; and enter the 3, legend text next
+to the third column of data-points can be inserted as text.
+</p>
+<p>
+This script uses the dialog object, legend-by prompting a number of
+columns of text, variable (COLUMN) and assign it to.
+</p>
+<pre>
+ new dialog
+ COLUMN = ${dialog::input:&#39;Input legend-text column&#39;}
+ del dialog
+</pre>
+<p>
+Then the object file in the file:Open the data file using opendatac,
+file::get the data until the data getdata, file at the end::close the
+data closedata.
+</p>
+<pre>
+ file:0:opendatac
+ while file:0:getdata
+ do
+ ... Setting the text.
+ done
+ file:0:closedata
+</pre>
+<p> In the while loop, we first generate a text object. </p>
+<pre>
+ new text
+</pre>
+<p>
+Also file:When you run getdata, numerical data file::data_x,
+file::data_y enter the, positions on the paper is 0.01mm per
+file::coord_x, file::coord_y enter the, line The number file::line enter
+the. We set the coordinates of the text was produced using them.
+</p>
+<pre>
+ text::x = ${file:0:coord_x} 
+ text::y = ${file:0:coord_y}
+</pre>
+<p>
+Also file:the tokens are used for column column.  file::The first
+argument is the number of rows in column of files, file::Use the line,
+the second argument is used to retrieve the value of the COLUMN variable
+number of columns.  Tokens extracted text:Set the text.
+</p>
+<pre>
+ text::text = `get file:0-field column:&quot;${file:0:line} ${COLUMN}&quot;`
+</pre>
+<p>
+However, file::column does not want to get the string to scan from the
+beginning of each file to be called, for large data files is slow.
+</p>
+<p> Add-in scripts to handle data in general, </p>
+<pre>
+ file::opendatac
+ while file::getdata
+ do
+ ... File the desired action::data_x file::data_y file::coord_x file::coord_y file::done line is used
+ file::closedata
+</pre>
+<p>
+And.  file::file, instead of opendatac::When using opendata,
+file::coord_x, file::coord_y is the value of indeterminate, even if an
+error is made instead of the axis will not be set.
+</p>
+<br>
+<hr>
+<br>
+</body>
+</html>

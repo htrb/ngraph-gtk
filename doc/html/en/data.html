@@ -1,0 +1,523 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Data file </title>
+</head>
+<body>
+<a name=TOP>&nbsp;</a>
+<h1>  <a href="./ngraph.html">Data file</a> </h1>
+<ul>
+ <li> <a href="./data.html#DATAFILE">The data file</a>
+ <li> <a href="./data.html#DATAFILE_EMPTY">Data file containing the missing data</a>
+ <li> <a href="./data.html#DATAFILE_DIAGONAL">Diagonal plot data format, data files of the rectangle</a>
+ <li> <a href="./data.html#DATAFILE_ERRBARX">Error_bar_x plot data format data files</a>
+ <li> <a href="./data.html#DATAFILE_ERRBARY">Error_bar_y plot data format data files</a>
+ <li> <a href="./data.html#DATAFILEOPTION">Data files embedded options</a>
+ </ul>
+<br>
+<hr size=5>
+<br>
+<a name=DATAFILE>&nbsp;</a>
+<h2> <a href="./data.html">The data file</a> </h2>
+<br>
+<div>
+  Data file is a text file format is basically as follows. <br>
+<br>
+<table border=1>
+ <tr>
+  <td>
+   <table>
+    <tr>
+     <td colspan=4>
+      Comment lines </td>
+    </tr>
+    <tr>
+     <td colspan=4>
+      ... (Comments may not) </td>
+    </tr>
+    <tr>
+     <td colspan=4>
+      Comment lines </td>
+    </tr>
+    <tr>
+     <td> Column 1 </td>
+     <td> Column 2 </td>
+     <td> Column 3 </td>
+     <td> Column 4. </td>
+    </tr>
+    <tr>
+     <td> Column 1 </td>
+     <td> Column 2 </td>
+     <td> Column 3 </td>
+     <td> Column 4. </td>
+    </tr>
+    <tr>
+     <td colspan=4>
+      Comment lines% </td>
+    </tr>
+    <tr>
+     <td> Column 1 </td>
+     <td> Column 2 </td>
+     <td> Column 3 </td>
+     <td> Column 4. </td>
+    </tr>
+    <tr>
+     <td> Column 1 </td>
+     <td> Column 2 </td>
+     <td> Column 3 </td>
+     <td> Column 4. </td>
+    </tr>
+    <tr>
+     <td> ... </td>
+     <td> ... </td>
+     <td> ... </td>
+     <td> ... </td>
+    </tr>
+   </table>
+  </td>
+ </tr>
+</table>
+<br>
+Comments in the data file 
+<ul>
+ <li> Data file is the first part of the Data dialog box [Load ...] read
+      together so as to skip a specified number of lines in the first
+      few lines of skip, etc. You can leave your comments. <li> By
+      default, this line is the line number 0. 
+ <li> Comments may or may not.
+</ul>
+<br>
+Way to insert comments into the file
+<ul>
+ <li> For comments on the way the Data File dialog box to the beginning [Load ...] the letter that is set in Remark. <li> The default is% # &#39;.
+</ul>
+<br>
+  Reading from data file
+<ul>
+ <li> Data dialog box for you to write data files embedded option in the first row of the data file [Load settings] can read data files from various settings, press the button.
+</ul>
+<br>
+Data
+<ul>
+ <li> Column 1, column 2, column 3, ... put the numeric data. 
+ <li> The maximum number of columns of data files is 99.
+ <li> There is no maximum line length limitation. 
+ <li> Data dialog box, the column separator [Load ...] You can set the
+      IFS.
+ <li> By default, spaces, commas, tabs, and parentheses.
+ <li> Carriage return is ASCII code (0A) 16.  (0D) 16 are ignored.
+</ul>
+<br>
+Exponent of the numerical data given
+<ul>
+ <li> The exponent of the numerical data specifiers e, E, you can use
+      the D.
+ <li> Cases) 1.0D+002
+</ul>
+<br>
+Handling of empty lines
+<ul>
+ <li> Null line (line only IFS) is skipped.
+</ul>
+</div>
+<br>
+<hr>
+<br>
+<a name=DATAFILE_EMPTY>&nbsp;</a>
+<h2>  <a href="./data.html">Data file containing the missing data</a> </h2>
+<br>
+<div>
+  Shows how to specify the missing data in Ngraph.  For example, consider the case where data is missing in the second row. <br>
+<br>
+<table border=1 CELLPADDING=3 CELLSPACING=0>
+ <tr>
+  <td> X </td>
+  <td> Y </td>
+  <td> Z </td>
+ </tr>
+ <tr>
+  <td> 1.0 </td>
+  <td> 2.0 </td>
+  <td> 3.0 </td>
+ </tr>
+ <tr>
+  <td> 2.0 </td>
+  <td>
+  </td>
+  <td> 4.0 </td>
+  <td> ← Y is missing </td>
+ </tr>
+ <tr>
+  <td> 3.0 </td>
+  <td> 4.0 </td>
+  <td> 5.0 </td>
+ </tr>
+</table>
+<br>
+This remains, in the Data dialog box (X) 1 the column, (Y) and then draw two column, the Y of the second line would have used the value of Z. <br>
+<br>
+To draw correct missing data | puts partial or deficient =. <br>
+<br>
+<table border=0>
+ <tr>
+  <td>
+   <table border=1 CELLPADDING=3 CELLSPACING=0>
+    <tr>
+     <td> 1.0 </td>
+     <td> 2.0 </td>
+     <td> 3.0 </td>
+    </tr>
+    <tr>
+     <td> 2.0 </td>
+     <td align=CENTER> | </td>
+     <td> 4.0 </td>
+    </tr>
+    <tr>
+     <td> 3.0 </td>
+     <td> 4.0 </td>
+     <td> 5.0 </td>
+    </tr>
+   </table>
+  </td>
+  <td> Or </td>
+  <td>
+   <table border=1 CELLPADDING=3 CELLSPACING=0>
+    <tr>
+     <td> 1.0 </td>
+     <td> 2.0 </td>
+     <td> 3.0 </td>
+    </tr>
+    <tr>
+     <td> 2.0 </td>
+     <td align=CENTER> = </td>
+     <td> 4.0 </td>
+    </tr>
+    <tr>
+     <td> 3.0 </td>
+     <td> 4.0 </td>
+     <td> 5.0 </td>
+    </tr>
+   </table>
+  </td>
+ </tr>
+</table>
+<br>
+Skip the missing data Y at this correctly. <br>
+<br>
+<ul>
+ <li> | And = difference <br>
+      <br>
+      <ul>
+       <li> If the Fit and the unique areas such as the plot does not mark the distinction between data formats.  The graph is the same for both. <br>
+       <li> For example, line by line type plot data format is different.  | Connected by a linear curve in the missing data before and after.  The curve is cut in a straight line before and after =.
+      </ul>
+      <br>
+ <li> Another notation of missing data <br>
+      <br>
+      <ul>
+       <li> &#39;CONT&#39; is &#39;| is equivalent to&#39;. <li> &#39;BREAK&#39; is equivalent to &#39;=&#39;.
+      </ul>
+</ul>
+<br>
+Missing data (not discouraged) to specify <br>
+<br>
+<ul>
+<li> Numeric data will fill in missing portions characters. <br>
+     <br>
+     <table border=1 CELLPADDING=3 CELLSPACING=0>
+      <tr>
+       <td> 1.0 </td>
+       <td> 2.0 </td>
+       <td> 3.0 </td>
+      </tr>
+      <tr>
+       <td> 2.0 </td>
+       <td align=CENTER> A </td>
+       <td> 4.0 </td>
+      </tr>
+      <tr>
+       <td> 3.0 </td>
+       <td> 4.0 </td>
+       <td> 5.0 </td>
+      </tr>
+     </table>
+     <br>
+     In this way, you get an error in pauses at the draw. <br>
+     <br>
+ <li> % # Symbol at the beginning of the second line of one of the &#39;(can be changed in the Data dialog box Remark) to skip the whole second row put. <br>
+     <br>
+     <table border=1 CELLPADDING=3 CELLSPACING=0>
+      <tr>
+       <td> 1.0 </td>
+       <td> 2.0 </td>
+       <td> 3.0 </td>
+      </tr>
+      <tr>
+       <td> 2.0% </td>
+       <td>
+       </td>
+       <td> 4.0 </td>
+      </tr>
+      <tr>
+       <td> 3.0 </td>
+       <td> 4.0 </td>
+       <td> 5.0 </td>
+      </tr>
+     </table>
+     <br>
+     This is the second line of data X, Y, is the same as it does not exist from the beginning with Z.  Therefore, (Y) 3 when the column, would have skipped Z = 4.0.
+</ul>
+<br>
+Graphing missing data using multiple <br>
+<br>
+<ul>
+ <li> By applying the missing data given, this can draw multiple graphs in a single file if the data divided by a = =. <br>
+      <br>
+ <li> Example: This example shows how to draw a graph consisting of two lines in = = the data are partitioned. <br>
+      <br>
+      <table border=1 CELLPADDING=3 CELLSPACING=0>
+      <tr>
+       <td> 1.0 </td>
+       <td> 2.0 </td>
+      </tr>
+       <tr>
+	<td> 2.0 </td>
+	<td> 3.0 </td>
+       </tr>
+       <tr>
+	<td> 3.0 </td>
+	<td> 4.0 </td>
+       </tr>
+       <tr>
+	<td align=CENTER> = </td>
+	<td align=CENTER> = </td>
+       </tr>
+       <tr>
+	<td> 4.0 </td>
+	<td> 5.0 </td>
+       </tr>
+       <tr>
+	<td> 5.0 </td>
+	<td> 6.0 </td>
+       </tr>
+       <tr>
+	<td> 6.0 </td>
+	<td> 7.0 </td>
+       </tr>
+      </table>
+      <br>
+</ul>
+</div>
+<br>
+<hr>
+<br>
+<a name=DATAFILE_DIAGONAL>&nbsp;</a>
+<h2> <a href="./data.html">Diagonal plot data format, data files of the rectangle</a> </h2>
+<br>
+<div>
+Diagonal form of data plots, rectangle, rectangle_fill, data file format used when you want to plot a rectangle and diagonals and using rectangle_solid_fill. <br>
+<br>
+Example: (0, 0) - (1, 1) and (1, 1) - (1, 2) diagonal to create a file like this: draw a rectangle or time, (X) 1 a column, (Y) to 3 column. <br>
+<br>
+<table border=1 CELLPADDING=3 CELLSPACING=0>
+ <tr>
+  <td> 0.0 </td>
+  <td> 0.0 </td>
+  <td> 1.0 </td>
+  <td> 1.0 </td>
+ </tr>
+ <tr>
+  <td> 1.0 </td>
+  <td> 1.0 </td>
+  <td> 1.0 </td>
+  <td> 2.0 </td>
+ </tr>
+</table>
+<br>
+<br>
+Point X and Y, Y and X of the end point must be continuous, respectively.  (Need not be consecutive four) </div>
+<br>
+<hr>
+<br>
+<a name=DATAFILE_ERRBARX>&nbsp;</a>
+<h2> <a href="./data.html">Error_bar_x plot data format data files</a> </h2>
+<br>
+<div>
+You can plot the error bars plotted for the data format error_bar_x. <br>
+<br>
+For example, consider the following data. <br>
+<br>
+<table border=1 CELLPADDING=3 CELLSPACING=0>
+ <tr>
+  <td> X </td>
+  <td> Error (X) </td>
+  <td> Y </td>
+ </tr>
+ <tr>
+  <td> 1.0 </td>
+  <td> + / - 0.5 </td>
+  <td> 2.0 </td>
+ </tr>
+ <tr>
+  <td> 2.0 </td>
+  <td> + / - 1.0 </td>
+  <td> 3.0 </td>
+ </tr>
+</table>
+<br>
+<br>
+In this case, create a data file as follows (X) 1 the column, (Y) to 4 column. <br>
+<br>
+<table border=1 CELLPADDING=3 CELLSPACING=0>
+ <tr>
+  <td> 1.0 </td>
+  <td> -0.5 </td>
+  <td> 0.5 </td>
+  <td> 2.0 </td>
+ </tr>
+ <tr>
+  <td> 2.0 </td>
+  <td> -1.0 </td>
+  <td> 1.0 </td>
+  <td> 3.0 </td>
+ </tr>
+</table>
+<br>
+<br>
+X, the lower the error of X, the maximum error of three columns of X must be contiguous. <br>
+</div>
+<br>
+<hr>
+<br>
+<a name=DATAFILE_ERRBARY>&nbsp;</a>
+<h2> <a href="./data.html">Error_bar_y plot data format data files</a> </h2>
+<br>
+<div>
+You can plot the error bars plotted for the data format error_bar_y. <br>
+<br>
+For example, consider the following data. <br>
+<br>
+<table border=1 CELLPADDING=3 CELLSPACING=0>
+ <tr>
+  <td> X </td>
+  <td> Y </td>
+  <td> Error (Y) </td>
+ </tr>
+ <tr>
+  <td> 1.0 </td>
+  <td> 2.0 </td>
+  <td> + / - 0.5 </td>
+ </tr>
+ <tr>
+  <td> 2.0 </td>
+  <td> 3.0 </td>
+  <td> + / - 1.0 </td>
+ </tr>
+</table>
+<br>
+<br>
+In this case, create a data file as follows, (X) 1 the column, (Y) to 2 column. <br>
+<br>
+<table border=1 CELLPADDING=3 CELLSPACING=0>
+ <tr>
+  <td> 1.0 </td>
+  <td> 2.0 </td>
+  <td> -0.5 </td>
+  <td> 0.5 </td>
+ </tr>
+ <tr>
+  <td> 2.0 </td>
+  <td> 3.0 </td>
+  <td> -1.0 </td>
+  <td> 1.0 </td>
+ </tr>
+</table>
+<br>
+<br>
+Y, the lower the error of Y, the maximum error of three columns of Y must be contiguous. <br>
+</div>
+<br>
+<hr>
+<br>
+<a name=DATAFILEOPTION>&nbsp;</a>
+<h2><a href="./data.html">Data files embedded options</a> </h2>
+<br>
+<div> Once you have a data file describing the embedded option in the
+ first row of the data file, the Data dialog box [Load settings] can
+ capture the settings button.  If you write multiple options, each
+ option has a space must be separated by tabs. <br>
+<br>
+<table border=1>
+ <tr>
+  <td> -Xcolumn </td>
+  <td> (X) column to the Column. </td>
+ </tr>
+ <tr>
+  <td> -Ycolumn </td>
+  <td> (Y) to the column to the Column. </td>
+ </tr>
+ <tr>
+  <td> -Dtype [, {mark_type | interpolation}] </td>
+  <td> The plot type to type.  mark when the type is specified as a
+  number followed by a comma kind of mark.  When the curve type is a
+  comma followed by the interpolation method (spline, spline_close,
+  bspline, bspline_close) specify the. <br> [Example]-dline-dmark,
+  10-dcurve, spline_close </td>
+ </tr>
+ <tr>
+  <td> -Omark_size </td>
+  <td> Mark_size to the size of the mark. </td>
+ </tr>
+ <tr>
+  <td> -Lline_style </td>
+  <td> Specifies the line style. <br>
+   Cases)-l100, 40,40,40 </td>
+ </tr>
+ <tr>
+  <td> -Wline_width </td>
+  <td> Line width to line_width. </td>
+ </tr>
+ <tr>
+  <td> -CR, G, B </td>
+  <td> Specifies the RGB color plot. </td>
+ </tr>
+ <tr>
+  <td> -CR, G, B </td>
+  <td> Specifies the RGB color of the two when the mark is used in the plot type. </td>
+ </tr>
+ <tr>
+  <td> -V {x | y} smooth </td>
+  <td> To smooth the average number of neighbors. </td>
+ </tr>
+ <tr>
+  <td> -Sskip </td>
+  <td> Skip to skip the first few rows. </td>
+ </tr>
+ <tr>
+  <td> -Rstep </td>
+  <td> Step to step the number of lines read. </td>
+ </tr>
+ <tr>
+  <td> -Ffinal_line </td>
+  <td> Read the last line number to final_line. </td>
+ </tr>
+ <tr>
+  <td> -M {x | y} math </td>
+  <td> Math formula to convert. </td>
+ </tr>
+ <tr>
+  <td> -E {x | y} scale_type </td>
+  <td> Scale_type the type of scale to the axis. <br>
+   The scal_type is linear, log, specify the inverse. </td>
+ </tr>
+ <tr>
+  <td> -Z {x | y} min, max, inc </td>
+  <td> Axis minimum, maximum, min increments, max, specified by inc. </td>
+ </tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+</body>
+</html>

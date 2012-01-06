@@ -1,0 +1,939 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Tutorial </title>
+</head>
+<body>
+<a name=TOP>&nbsp;</a>
+<h1> <a href=./ngraph.html>Tutorial</a> </h1>
+<ul>
+ <li> <a href=./tutorial.html#VIEW>Appearance</a>
+      <ol>
+       <li> Startup screen
+      </ol>
+ <li> <a href=./tutorial.html#GRAPH>Graphing Outline</a>
+      <ol>
+       <li> To provide a data file
+       <li> Determine the type of graph
+       <li> Open Data File
+       <li> Draw
+      </ol>
+ <li>
+      <a href=./tutorial.html#SCALE>Axis scale</a>
+      <ol>
+       <li> Changing the scale
+       <li> To clear the scale
+       <li> Of the magnified
+       <li> Restore the value of the scale
+      </ol>
+ <li> <a href=./tutorial.html#PLOT>How to Plot</a>
+      <ol>
+       <li> Change the way the plot
+       <li> Curve is a plot point +
+       <li> Evaluation of data points moving mask
+      </ol>
+ <li> <a href=./tutorial.html#LEGEND>Decorate a chart to map</a>
+      <ol>
+       <li> Add a Legend
+       <li> Move around the Viewer Window, configuration changes
+       <li> Legend replication
+       <li> Using legend.nsc
+       <li> How to Select the crowded Legend
+      </ol>
+ <li> <a href=./tutorial.html#OUTPUT>Reading print and save the graph output to a file</a>
+      <ol>
+       <li> Printing the Graph
+       <li> Save Graph
+       <li> Reading the graph
+       <li> Output to a file by an external driver
+       <li> GRA output to a file
+      </ol>
+ <li> <a href=./tutorial.html#FIT>Fitting</a>
+      <ol>
+       <li> Normal Fit
+       <li> Fitted with arbitrary function
+      </ol>
+ <li> <a href=./tutorial.html#MATH>Using conversion formulas feature</a>
+      <ol>
+       <li> And plot the data conversion formula
+      </ol>
+ <li> <a href=./tutorial.html#MULTI>Multiple charts</a>
+      <ol>
+       <li> How to make multiple charts
+       <li> Using append.nsc
+       <li> The name of the axis
+       <li> Specify the axis to plot
+       <li> Axial coordination
+      </ol>
+</ul>
+<br>
+<hr size=5>
+<br>
+<br>
+<a name=VIEW>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>Appearance</a> </h2>
+<ol>
+ <li><h3>  Startup screen </h3>
+      <br>
+      <p> Four windows are opened as shown below when you start Ngraph. </p>
+      <p><img src=./tutorial/window.png WIDTH=534 HEIGHT=370 alt=""></p>
+      <p> This section briefly gives a description of each window. </p>
+      <ul>
+       <dl>
+	<dt> Viewer Window
+	<dd> The main window of the Ngraph.  The graph is displayed in the Viewer Window for this.  Menu, as well as control buttons, located on the window.
+	<dt> Control buttons (top)
+	<dd> As with a normal application window, the button has been assigned to frequently used menu commands such as opening a file.
+	<dt> Control buttons (left side).
+	<dd> String that specifies the operation mode toggle button with
+	     the mouse on the Viewer Window.  Graphics object selection
+	     mode, the mode by creating a legend type, the data plotted
+	     in evaluation mode, switch to zoom mode, etc..
+	<dt> Data Window
+	<dd> Lists the data files opened.  In addition, various parameters are also listed for the plot.  Data dialog box opens when you double-click on this list, you can change various settings.
+	<dt> Axis Window
+	<dd> The name of the axis and displays a list of various parameters such as the number of scales.  Axis dialog box opens when you double-click the list, you can change various settings.
+	<dt> Coordinate Window
+	<dd> Position the mouse cursor is displayed in Viewer Window.  Also, if there is a coordinate axis of the coordinate axes are also shown corresponding to the mouse cursor position.
+       </dl>
+      </ul>
+      <p>
+      In addition to this, which lists the legend &quot;Legend
+      Window&quot;, a composite file that lists &quot;Merge
+      Window&quot;, etc. To display the results of the fit
+      &quot;Information Window&quot; can open the windows and so on.
+      Also, clicking the right mouse button on each window, you can get
+      a different menu in each window, which is to conduct various
+      operations.
+      </p>
+</ol>
+<br>
+<hr>
+<br>
+<a name=GRAPH>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>Graphing Outline</a> </h2>
+<ol>
+ <li><h3> To provide a data file </h3>
+      <br>
+      <br>
+      Create a chart Ngraph read data from a data file.  Therefore, you
+      must first prepare the data files.  Editor, spreadsheet program,
+      create a data file or from the measuring device control
+      software. <br>
+      <br>
+ <li><h3> Determine the type of graph </h3>
+      <br>
+      <br>
+      Start Ngraph Once you have the data file to the chart.  Determine
+      the type of chart you want to create next.  Are classified in the
+      following three Ngraph.
+      <p>
+      <table border=1>
+       <tr>
+	<td align=CENTER>
+	 <img src=./tutorial/graphf.jpg WIDTH=150 HEIGHT=146 alt="">
+	</td>
+	<td align=CENTER>
+	 <img src=./tutorial/graphs.jpg WIDTH=150 HEIGHT=146 alt="">
+	</td>
+	<td align=CENTER>
+	 <img src=./tutorial/graphc.jpg WIDTH=150 HEIGHT=146 alt="">
+	</td>
+       </tr>
+       <tr>
+	<td>
+	 Graph frame (Frame graph) <br>
+	 Surrounded by four axis graph </td>
+	<td>
+	 Grid graph (Section graph) <br>
+	 Surrounded by four axes, with a line graph grid </td>
+	<td>
+	 Intersection graph (Cross graph) <br>
+	 X-Y2-axis graph </td>
+       </tr>
+      </table>
+      </p>
+      Initially one has created a frame chart.  Four of the frame axis
+      scale so the graph is not set yet, and only the frame is displayed
+      showing the baseline axis.  If you like this continue.  To create
+      other types of charts, graphs] - [New] ([Graph] - [New graph])
+      specifies the type of graph to create the menu. <br>
+      <br>
+ <li><h3>Open Data File </h3>
+      <br>
+      <br>
+      Next, open the data file you have prepared.  To open the data file
+      is a variety of ways, anyway [Data] - [Open] ([Data] - [Open]) to
+      select the item, please open a data file in the file selection
+      dialog box. <br>
+      <p>
+      How to Open a data file is also available to others.
+      <ol>
+       <li> Press the control buttons below. <br>
+	    <img src=./tutorial/fopen.jpg WIDTH=490 HEIGHT=50 alt="file open control button">
+       <li> Out a pop-up menu by pressing the right mouse button on the
+	    Data Window, &quot;Open&quot; to select the menu.
+       <li> Select the data files from other file manager, drag and drop
+	    it onto the Data Window or the Viewer Window.
+      </ol>
+      </p>
+      In either case, the open dialog box to specify the data and how to plot and then specify the data file, please close the OK anyway. <br>
+      <br>
+ <li><h3> Draw </h3>
+      <br>
+      <br>
+      Automatically open the file in Ngraph is not to draw.  To draw a graph, please press the button below. <br>
+      <img src=./tutorial/draw.jpg WIDTH=490 HEIGHT=50 alt="">
+      <p>
+      How to draw is also available to others.
+      <ol>
+       <li> [View] - [Draw] ([View] - [Draw]) to select the menu.
+       <li> Press the spacebar to activate the Viewer Window. 
+      </ol>
+      </p>
+      Axis scale in this manner to draw and is automatically set to take a little margin, the graph is drawn.
+</ol>
+<br>
+<hr>
+<br>
+<a name=SCALE>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>Axis scale</a> </h2>
+<ol>
+ <li> <h3> Changing the scale </h3>
+      <br>
+      <br>
+      In particular scale (upper and lower limits of the axes) when
+      drawn without setting a value is determined by auto-scaling.  The
+      Axis Window has also listed the axis.  In the case of frame graph
+      has four axes, respectively &quot;fX1&quot;, &quot;fY1&quot;,
+      &quot;fU1&quot;, &quot;fR1&quot; and has a name.  To change the
+      scale of these axes, please double-click the axis you want to
+      change select from a list of Axis Window as shown below.
+      <p>
+      <img src=./tutorial/awindow.jpg WIDTH=250 HEIGHT=149 alt="">
+      </p>
+      <p>
+      Axis to open the dialog box is also available to others.
+      <ol>
+       <li> [Axis] - [Settings] ([Axis] - [Update]) to select the axis you want to change up the menu.
+       <li> One of the buttons below (good for both) selection mode
+       graphics object by pressing the (selection mode only or axial)
+       and double-click the axis on the Viewer Window and to the axis to
+       be changed in the dialog box comes out and then Press the
+       button. <br>
+	    <img src=./tutorial/axispo.jpg WIDTH=460 HEIGHT=50 alt="">
+      </ol>
+      </p>
+      Opens a dialog box like this and below the axis.  Here, the
+      &quot;minimum&quot; &quot;maximum&quot; &quot;increment&quot; of
+      the scale of the axis minimum, maximum, please specify the
+      increment.  For incremental graduations are marked with numbers.
+      &quot;Division number&quot; should be &quot;incremental&quot; to
+      decide what to draw a line equal to an additional graduation.
+      This value is 0 when the number of segments is determined
+      automatically.  Law &quot;scale&quot; in a normal linear axis
+      (linear), log (log), reciprocal (inverse), you can choose one of
+      the MJD.  &quot;File&quot; can be determined by performing an
+      auto-scaling in the data file from the specified file button to
+      open the scale. <br>
+      &quot;Clear&quot; is set to unset the scale.
+      <p>
+      <img src=./tutorial/adialog.jpg WIDTH=300 HEIGHT=130 alt="">
+      </p>
+      Axis to allow for more detailed settings &quot;baseline&quot; Axis
+      &quot;grid&quot; &quot;Number of Memory&quot; &quot;Fonts&quot;
+      &quot;Position&quot; buttons are available.  &quot;Baseline&quot;
+      Axis of baseline thickness of the axis button, and set and color.
+      You can also put the arrow on the end of the shaft.
+      &quot;Grid&quot; axis button &quot;gauge&quot; in length,
+      thickness, color and other settings do.  You can also decide
+      whether to draw or paint on the outside to the inside of the chart
+      gridlines (&quot;location&quot;), without drawing all or only part
+      of the axis (&quot;minimum range&quot;, &quot;Maximum Range&quot;)
+      can be .  &quot;Number of Memory&quot; button, the
+      &quot;gauge&quot; to set on the digits in memory full.  Changes
+      the position of the scale graduation numbers begin to fall
+      (&quot;starting point&quot; automatically set to 0), changing the
+      interval (&quot;interval&quot;, the automatic setting 0), changing
+      the number (&quot;quantity&quot; -1 Set auto).  &quot;Font&quot;
+      to set the font button graduation numbers. <br>
+      <br>
+ <li> <h3> To clear the scale </h3>
+      <br>
+      <br>
+      As explained in the previous section, the axis of the dialog box
+      &quot;Clear&quot; button, you can not set the configuration state
+      of the axis scale, if we want to clear more than one axis [Axis] -
+      [Scale Clear Menu given more than you want to clear the shaft, and
+      can be cleared at once.  Multiple axes can be cleared as well, or
+      press the button below.
+      <p>
+      <img src=./tutorial/aclear.jpg WIDTH=490 HEIGHT=50 alt="">
+      </p>
+ <li><h3> Of the magnified </h3>
+      <br>
+      <br>
+      Axis scale will change as the previous section by entering a
+      number, such as when you want to draw an enlarged portion of the
+      graph can be changed graphically.  It specifies the scope of the
+      shaft with the mouse on the Viewer Window and the trimming mode by
+      pressing the button below.
+      <p>
+      <img src=./tutorial/trimming.jpg WIDTH=460 HEIGHT=50 alt="">
+      </p>
+ <li><h3> Restore the value of the scale </h3>
+      <br>
+      <br>
+  Set the axis scale, and history is stored up to 10 axes.  After
+      drawing a larger portion as in the previous section, therefore,
+      you can easily revert to the original scale setting.  Please
+      specify on which axis settings back button below.
+      <p>
+      <img src=./tutorial/scundo.jpg WIDTH=490 HEIGHT=50 alt="">
+      </p>
+</ol>
+<br>
+<hr>
+<br>
+<a name=PLOT>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>How to Plot</a> </h2>
+<ol>
+ <li><h3> Change the way the plot </h3>
+     <br>
+      <br>
+      In its default state, the data points are plotted by a black dot.
+      In addition, the Data Window is open data files listed.  In order
+      to change the way the plot, please open a dialog box by
+      double-clicking the Data List Data Window.
+      <p>
+      <img src=./tutorial/fwindow.jpg WIDTH=250 HEIGHT=149 alt="">
+      </p>
+      <br>
+      <p>
+      How to Open a dialog box to other data
+      <ol>
+       <li> [Data] - [Settings] ([Data] - [Update]) to select the data file you want to plot on the menu
+       <li> Click the data on the Viewer Window and the mode button to select the data below <img src=./tutorial/datapo.jpg WIDTH=460 HEIGHT=50 alt="">
+       <li> Out a pop-up menu by pressing the right mouse button on the Data Window, &quot;Update&quot; menu, select
+      </ol>
+      There.
+      </p>
+      Data dialog box appears as shown in the lower left you this way.
+      <p>
+      <table border=0>
+       <tr>
+	<td>
+	 <img src=./tutorial/filedlg.jpg WIDTH=300 HEIGHT=214 alt="">
+	</tr>
+	<td>
+	 <img src=./tutorial/fdialog.jpg alt="148" HEIGHT=123 ALT="">
+	</td>
+       </tr>
+      </table>
+      </p>
+      To make a curve connecting the data to plot, for example by
+      changing the plot type as the right figure on &quot;curve&quot;
+      to.  Then close the dialog box with OK data, please draw it
+      again. <br> In the Data dialog box, the size of the dots in the
+      other, the width, color, etc. can be set.  I think that often you
+      annotate what if the data were also the beginning of the data
+      file, skip that part in the &quot;Read&quot; button &quot;Skip the
+      first row&quot; is set. <br>
+      <br>
+ <li><h3> Curve is a plot point + </h3>
+      <br>
+      <br>
+  To make a plot point in both curves and the data, open the same data
+      file twice, one with a curve, and set to point to the other plots.
+      Basically open at the same data by the method described in the
+      previous two, I may be opened twice, once to open a file that is
+      already open on the right mouse button on the Data Window as shown
+      below out the pop-up menu by pressing the &quot;Duplicate&quot; is
+      easier to select the item to generate a duplicate.  Similar
+      operations can be performed by pressing the INS key Data Window.
+      Bottom left is the state that issued the popup menu in Data
+      Window.  &quot;Duplicate&quot; in the Data Window as shown below
+      on the right to choose the menu will be listed as the same two
+      files. <br>
+      <p>
+      <table border=0>
+       <tr>
+	<td>
+	 <img src=./tutorial/fdup.jpg WIDTH=250 HEIGHT=156 alt="">
+	</td>
+	<td>
+	 <img src=./tutorial/fwindow2.jpg WIDTH=250 HEIGHT=149 alt="">
+	</td>
+       </tr>
+      </table>
+      </p>
+      Plot settings files opened this way twice, one to mark the plot, the other by a curve to the data are plotted as points on both curves. <br>
+      <p>
+      <table border=0>
+       <tr>
+	<td>
+	 <img src=./tutorial/fdialog2.jpg WIDTH=150 HEIGHT=125 alt="">
+	</td>
+	<td>
+	 <img src=./tutorial/fdialog.jpg WIDTH=148 HEIGHT=123 alt="">
+	</td>
+       </tr>
+      </table>
+      </p>
+      <br>
+ <li><h3> Evaluation of data points moving mask </h3><br>
+      <br>
+      The value of the plotted data at the time read from the
+      coordinates of the graph out the pop-up menu by pressing the right
+      mouse button in the Viewer Window, &quot;Show cross&quot; is
+      selected, will appear Cross gauge aspect to the mouse cursor, the
+      coordinates This is useful to read.  Also, when you know a more
+      direct numbers, press the control buttons below &quot;Evaluation
+      Mode&quot; and click on the Viewer Window data from then. <br>
+      <p>
+      <img src=./tutorial/eval.jpg WIDTH=460 HEIGHT=50 alt="">
+      </p>
+      A list of data are listed near the mouse pointer then.
+      <p>
+      <img src=./tutorial/evaldlg.jpg WIDTH=350 HEIGHT=183 alt="">
+      </p>
+      The items listed here &quot;ID&quot; is the number of data file,
+      &quot;line&quot; is the number of lines in the file, &quot;X,
+      Y&quot; to indicate the coordinate values.  Select an item in the
+      list box &quot;Mask&quot; by pressing a button, you can 描Kanaku
+      only part of the data.  Also, &quot;Move&quot; button, you can
+      also move the data.  These masks, movement of the Data dialog box,
+      deselect the &quot;mask&quot; &quot;move&quot; made in.
+</ol>
+<br>
+<hr>
+<br>
+<a name=LEGEND>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>Decorate a chart to map</a> </h2>
+<ol>
+<li><h3>  Add a Legend </h3>
+     <br>
+     <br>
+     Text in the figure, and put the arrow, select the type of the
+     Legend below and press the control buttons to position the mouse.
+     Legend&#39;s Once you have created a mouse selection mode.  If you
+     want to create more than one Legend, please click the control
+     button while holding down the SHIFT key.  When you move the mouse
+     while holding down the CTL key when specifying the location of the
+     Legend can also limit the angle and aspect ratio. <br>
+     <p>
+     <img src=./tutorial/legend.jpg WIDTH=460 HEIGHT=60 alt="">
+     </p>
+     <p>
+     <table border=1>
+      <tr>
+       <td>
+	<img src=../html/img/bline.png WIDTH=20 HEIGHT=20 alt="">
+       </td>
+       <td> Create a linear curve. </td>
+      </tr>
+      <tr>
+       <td>
+	<img src=../html/img/brect.png WIDTH=20 HEIGHT=20 alt="">
+       </td>
+       <td> Create a rectangle. </td>
+      </tr>
+      <tr>
+       <td>
+	<img src=../html/img/barc.png WIDTH=20 HEIGHT=20 alt="">
+       </td>
+       <td> Create an ellipse circle. </td>
+      </tr>
+      <tr>
+       <td>
+	<img src=../html/img/bmark.png WIDTH=20 HEIGHT=20 alt="">
+       </td>
+       <td> Plot Data Format &quot;mark&quot; to create a mark corresponding to. </td>
+      </tr>
+      <tr>
+       <td>
+	<img src=../html/img/btext.png WIDTH=20 HEIGHT=20 alt="">
+       </td>
+       <td> Create a text. </td>
+      </tr>
+      <tr>
+       <td>
+	<img src=../html/img/bgauss.png WIDTH=20 HEIGHT=20 alt="">
+       </td>
+       <td>
+	Gaussian, Lorentzian functions, parabolic and sinusoidal
+	curves. <br> Legend curve created immediately - that expand into
+	the curve changes as a function once created can not be.
+       </td>
+      </tr>
+     </table>
+     </p>
+     <br>
+     You can also create text in the Viewer Window by dragging and dropping text. <br>
+ <li><h3> Move around the Viewer Window, configuration changes </h3>
+     <br>
+     <br>
+  The Legend mouse Viewer, change settings, such as Axis, move, and can
+     also scale.  The Ngraph is be aware that there are five different
+     modes for the mouse pointer (see below).
+     <p>
+     <img src=./tutorial/pointer.jpg WIDTH=460 HEIGHT=70 alt="">
+     </p>
+     Here, &quot;legend + axis&quot; in pointer mode, you can select the
+     legend and axis.  &quot;Legend&quot; in pointer mode selection is
+     only legend.  Please use the selection if you do not want the shaft
+     axis and the legend is not crowded.  &quot;Axis&quot; is a pointer
+     to the selection mode, only the opposite axis.  &quot;Data&quot;
+     mode, a pointer to the selection of the data will be plotted, you
+     can do to set the data file corresponding to the plotted
+     points. <br> Determine the mode by pressing the control button that
+     you want to select a graphics object, the pointer will move mode
+     graphics you want and click with the mouse, you will see dotted
+     lines indicate that the focus is (see below).  You can select
+     multiple objects and more down the SHIFT key while clicking. <br>
+     <p>
+     <img src=./tutorial/focus.jpg WIDTH=127 HEIGHT=68 alt="">
+     </p>
+     Moved by dragging the mouse, you can zoom.  Hold down the CTL key
+     and dragging when moving, it only works in horizontal and vertical
+     alignment is useful for.  Also, when we heard a moving grid.  To
+     remove the grid, please press the SHIFT key while dragging.  You
+     can change the settings by double-clicking opens a dialog box. <br>
+     <br>
+ <li><h3> Legend replication </h3>
+     <br>
+     <br>
+     For when you must create a lot of similar legends, the ability to
+     produce a clone of it to create one.  It is the method described in
+     the previous section, the focus you want replicas Legend (selected)
+     state that (when surrounded by dotted lines) position.  If you make
+     a copy of the legend if more than one, please state it is focused
+     on several legends surrounding them with the mouse.  Press the INS
+     key here (pop-up menu or issue the &quot;Duplicate&quot; to select
+     the menu) will produce a duplicate of the legend that is the focus.
+     Replication will be generated in the same position, only one
+     visible overlap.  But after replication, so legend has been
+     replicated only focus will move only if you drag to the desired
+     cloned. <br>
+     <br>
+ <li><h3> Using legend.nsc </h3>
+     <br>
+     <br>
+     The Ngraph has provided the ability to use add-in called
+     subprogram.  LGEND are provided to automatically generate a legend
+     for the data to one of them.  Add-in] ([Addin]) from the menu
+     [Legend ...] When you run, select the data file is automatically
+     generated legends that are currently open.  Below is an example of
+     a legend created by the add-LEGEND. <br>
+     <p>
+     <img src=./tutorial/alegend.jpg WIDTH=169 HEIGHT=38 alt="">
+     </p>
+     <br>
+ <li><h3> How to Select the crowded Legend </h3>
+     <br>
+     <br>
+     &quot;Legend Window&quot; will not open by default, pressing the
+     button will open below.
+     <p>
+     <img src=./tutorial/lwindow.jpg WIDTH=490 HEIGHT=50 alt="">
+     </p>
+     &quot;Legend Window&quot; has been to see a list of legend.
+     &quot;File Window&quot; and &quot;Axis Window&quot; dialog box
+     opens when you double-click the list, as well as various settings
+     can be done.  Also, pressing the space appropriate to select a
+     legend in the list (or out the pop-up menu &quot;Focus&quot; to
+     select the menu) and will focus on the graphics object that
+     corresponds Viewer Window.  Overlapping sister created a legend,
+     this feature is useful when the mouse is difficult to choose only
+     the desired legend.
+</ol>
+<br>
+<hr>
+<br>
+<a name=OUTPUT>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>Reading print and save the graph output to a file</a> </h2>
+<ol>
+ <li><h3> Printing the Graph </h3>
+      <br>
+      <br>
+      Print [Chart] - [Print] menu. <br>
+      <br>
+ <li><h3> Save Graph </h3>
+      <br>
+      <br>
+      Save chart [Chart] - [Save] menu.  After listening to the file
+      name has to be saved when you select this menu to open the Save
+      dialog box for specifying various options.  If you press OK, will
+      create a file with the extension of NGP in the form of saving
+      Ngraph.  On the other hand, Ngraph is a graph reads data files
+      that are prepared in advance.  Therefore, to save the complete
+      graph NGP file saved not only the state of the graph, it will also
+      need to keep data files.  However, if you keep separate files and
+      data files NGP Thus, the data will become unreadable files
+      correctly when you copy the folder structure on different
+      computers.  Has saved several options available to avoid
+      this. <br>
+      <br>
+      <dl>
+       <dt> The path information
+       <dd> Specifies what to do when the data file path information to
+	    be saved.  not any changes in the unchange. You can save the
+	    full path and data path to full. will save a relative path
+	    relative to the current folder. The base is saved with the
+	    file name only without the path name. </dd>
+       <dt> Include a Data File
+       <dd> If you check this option, the contents of the file is
+	    embedded in the NGP data file. Therefore, the data file to
+	    store the graph is no longer necessary. Embedded data file
+	    will be expanded when reading the NGP file. </dd>
+       <dt> Synthetic data files contain
+       <dd> Composite file as described above (GRA file) file to embed the NGP. </dd>
+      </dl>
+      <br>
+ <li><h3> Reading the graph </h3>
+      <br>
+      <br>
+      NGP files that are saved (*. ngp) to load the [Chart] - [Open] and
+      in the menus. NGP and other files from the file manager to select,
+      you can also read the chart by dragging and dropping on the Viewer
+      Window. PRM File (*. prm) by specifying a graph can also read the
+      Ngraph for DOS. After hearing the name of the file has been loaded
+      and you select this menu, a dialog box for specifying various
+      options-read. The meaning of each option are as follows.
+      <dl>
+       <dt> Expand the data file
+       <dd> When you read a file that is embedded NGP data file, specify
+       whether to expand the data file that is embedded.  Folder to
+       extract the &quot;skirt&quot; Deployment can be specified.  The
+       default is the current folder (. \) Has. </dd>
+       <dt> Ignore the path information
+       <dd> If you check this option, the data file path information is
+	    ignored, the data file is assumed in the current folder.
+	    Folder structure will change in the case and data files in
+	    the current folder, please check this option. </dd>
+      </dl>
+      <br>
+ <li><h3> Export to Image File </h3>
+      <br>
+      <br>
+      [Out] - Export To Image can be output to a file and specify the output file format. <br>
+      <br>
+ <li><h3> GRA output to a file </h3>
+      <br>
+      <br>
+      GRA files and lines, Ngraph proprietary file format that describes
+      the graphics instructions such as a circle.  Can be used in the
+      synthesis of the graph.  GRA file creation [out] - Export to
+      Image] - [GRA File] menu.  GRA and the output file so that
+      [Synthesis] - [Open] to specify the menu, select the file from the
+      GRA as file manager, you can capture by drag and drop the Viewer
+      Window, or on the Merge Window . <br>
+</ol>
+<br>
+<hr>
+<br>
+<a name=FIT>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>Fitting</a> </h2>
+<ol>
+ <li><h3> Normal Fit </h3>
+      <br>
+      <br>
+      To fit the data is to plot the data fit the format dialog box as shown below.
+      <p>
+      <table border=0>
+       <tr>
+	<td>
+	 <img src=./tutorial/filedlg.jpg WIDTH=300 HEIGHT=214 alt="">
+	</td>
+	<td>
+	 <img src=./tutorial/fdialog3.jpg WIDTH=150 HEIGHT=120 alt="">
+	</td>
+       </tr>
+      </table>
+      </p>
+      Then, the "fit" fit dialog box is opened by pressing the button below to specify how to fit there. <p>
+      <img src=./tutorial/fitdlg.jpg WIDTH=300 HEIGHT=285 alt="">
+      </p>
+      Fit dialog box "type" is "poly", "pow", "exp", "log" to select
+      from. "User" can fit in a user-specified function is selected, it
+      will be explained next. Also "poly" (polynomial fit) in the case
+      of "dimension polynomials" Please specify. Then, the fitting is
+      done to draw. Fit results are displayed on the graph as a line
+      number to know when the fitting results, please press the button
+      to open the Information Window below. Fit dialog box or the "Show
+      Results" will appear in the numerical results fit well with the
+      button.
+      <br>
+      <p>
+      <img src=./tutorial/infowin.jpg WIDTH=490 HEIGHT=50 alt="">
+      </p>
+      <br>
+ <li><h3>Fitted with arbitrary function</h3>
+      <br>
+      <br>
+      If you fit any function of the Fit dialog box "type" in the "user"
+      to select. The fitting function expression "fit" to specify. As an
+      example
+
+      <p> Y=a*(X+b)^2 </p> 
+
+      If you fit the description. And b are fitting parameters over
+      a. Fitting parameters is in "fit expression" is specified from %00
+      to 09%. Fitting parameters over words is limited to a maximum of
+      10. In the example above expression "fit" to
+
+      <p> %00*(X+%01)^2 </p>
+
+      Please enter the. In the fitting of an arbitrary function, instead
+      of determining the values of the parameters at once, we find the
+      point where the error is minimized while changing the values ​​of
+      the parameters. How to find initial values of parameters are
+      determined, the value remains unchanged until the operation of
+      said parameters to determine the values of parameters from the
+      slope of the error in the new space-time parameters (up to
+      convergence) are repeated. &quot;%00 ~ %09 &quot; &#39;specify the
+      convergence (%)&quot;&quot; differential form &quot;&quot; dF / d
+      (%00): ~ dF / d (%09): &quot;This will repeat the behavior. To
+      find the slope of the error in the parameters space is required
+      for the partial differential equation in each of the fitting
+      function parameters. &quot;Specifying differential form&quot; is
+      checked, these differential expression &quot;dF / d(%00): ~ dF / d
+      (%09):&quot; Please enter into.  In the example above %00 * (X +
+      %01) %00 ^ 2, enter the partial differential equation with %01.
+      Specifically,
+      <p>
+      dF / d (%00): (X + %01) ^ 2 <br>
+      dF / d (%01): %00 * 2 * (X + %01)
+      </p>
+      And to please. &quot;Specifying differential form&quot; must be
+      checked, and ask that a numerical approximation of the
+      differential equation, convergence is more explicitly given
+      differential expression is faster.  In addition, the initial value
+      of the parameter fit over &quot;%00 ~ %09&quot; Please specify.
+      Has determined that a converged when the value of the parameters
+      remains unchanged, it will not change at all.  Change the criteria
+      are no longer regarded as &quot;to specify the convergence
+      (%):&quot;.  The default precision is 1% because of the fit result
+      is two digits. <br> Once these options are made fit if you draw
+      close the dialog box.  If you open the Information Window in the
+      previous section, you will see progress is the iteration until
+      convergence.  Also, sometimes
+      <p>
+      singular matrix or too small number of data
+      </p>
+      You get an error, there would be fit to continue treatment
+      indefinitely without convergence (in the drawing that shows the
+      progress dialog &quot;Stop&quot; button to interrupt please.)  In
+      such cases, please try this challenge by changing the initial
+      value of the fit parameters over. The fitting function is chosen,
+      to me it converges very careful initial value.
+</ol>
+<br>
+<hr>
+<br>
+<a name=MATH>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>Using conversion formulas feature</a> </h2>
+<ol>
+ <li><h3> And plot the data conversion formula </h3>
+      <br>
+      <br>
+      In addition to the chart data as a data file in Ngraph, has the
+      ability to graph from the given formula to convert the data.
+      Formula to convert the data in the dialog box &quot;Conversion
+      Formula&quot; button, &quot;Conversion Formula&quot; type.  The
+      conversion formulas are independent of each data file.  Press the
+      button below, you can also enter a batch conversion of multiple
+      data files formulas.
+      <p>
+      <img src=./tutorial/math.jpg>
+      </p>
+      For example, when you want to graph the vertical axis data were squared &quot;(Y) Conversion Formula Column&quot;
+      <p>
+      Y ^ 2 (SQR is the same thing, or (Y))
+      </p>
+      Please enter the.  If the dialog box data &quot;(Y) column&quot; and if the two are
+      <p>
+      %02 ^ 2 (or SQR(%02) is it the same)
+      </p>
+      You can get the same result. %02 meaning of &quot;data in the
+      second column of the data file&quot;. You can retrieve a specific
+      column like this %99 ~ %01. On the other hand, X is the data
+      dialog box &quot;(X) column&quot; column is specified in the data,
+      Y is the data dialog box &quot;(Y) column&quot; data in the
+      specified column. So, &quot;(Y) column&quot; and 3, this time a
+      &quot;Y&quot; and &quot;%03&quot; now indicates the same
+      value. <br> When you want to plot the sum of column 1 and column 2
+      is the formula to convert vertical data
+      <p>
+      %01 + %02
+      </p>
+      Please enter the.  Operations between columns can be like this.
+      Furthermore, the 0th (first digit of the list of Data Window)
+      column 1 of the data and when you want to plot the sum of column 2
+      of the first data is converted to the formula
+      <p>
+      %F0001 + %F0102
+      </p>
+      Please enter the.  You can also file for this operation between. <br>
+      The conversion formula is arithmetic, and many other functions are available in parentheses. <br>
+      <br>
+</ol>
+<br>
+<hr>
+<br>
+<a name=MULTI>&nbsp;</a>
+<h2> <a href=./tutorial.html#TOP>Multiple charts</a> </h2>
+<ol>
+ <li><h3> How to make multiple charts </h3>
+      <br>
+      <br>
+      <ul>
+       <li> To create a new graph <br>
+	    <br>
+	    If you want to create multiple charts on one sheet of paper,
+	    the Axis - Create the Add button to specify the type of
+	    chart you want from the menu.  Or below the control buttons
+	    <p>
+	    <img src=./tutorial/addgraph.jpg WIDTH=460 HEIGHT=50 alt="">
+	    </p>
+	    Press the graph (axis) can also be created by specifying the
+	    location with the mouse over the Viewer Window and the mode
+	    of preparation. <br>
+	    <br>
+       <li> To replicate the chart that you have already created <br>
+	    <br>
+	    There have already created a chart, to add a new chart just
+	    like that, but the duplicate would have already created a
+	    chart that is easier and more realistic.  To do this, press
+	    the button below the mouse pointer (selection) mode.  This
+	    mode selection is a legend and axis (which is also thought
+	    to replicate with legend).
+	    <p>
+	    <img src=./tutorial/lapoint.jpg WIDTH=460 HEIGHT=50 alt="">
+	    </p>
+	    Next, specify the range with the mouse over graph you want
+	    to surround the entire replicated on Viewer Window.  Then,
+	    select all the graphs and the legend of the mouse within the
+	    range, are surrounded by dotted lines.  Press the INS key in
+	    this state (or out the pop-up menu &quot;Duplicate&quot; to
+	    select the menu), and the graph is duplicated legend has
+	    been selected.  At this time, the focus (selected) is not
+	    only a legend and a new chart that is replicated, the source
+	    is not selected.  Please Allow the mouse to drag in this
+	    state.  Typically, when you create multiple graphs
+	    vertically, but is often located next to or align, it will
+	    not only move horizontally and vertically by dragging them
+	    while holding down the CTRL key when shifting the position
+	    of the mouse can be easily justified.
+      </ul>
+      <br>
+ <li><h3> Using append.nsc </h3>
+      <br>
+      <br>
+      A different graph files are saved as NGP, the same page as the
+      graph of import is much easier now. The Ngraph has provided the
+      ability to use add-in called subprogram. APPEND has been added to
+      provide a chart that graphs the current NGP files are stored in
+      one of them. Add-in] ([Addin]) from the menu [Append ...] Just
+      select the name of the NGP file to run, you can add to the current
+      graph.
+      <br>
+      <br>
+ <li><h3>The name of the axis</h3>
+      <br>
+      <br>
+      Frame and grid graph is a graph of the four axes (axis X, axis Y,
+      axis U, axis R) is composed. Also, the two axes intersect the
+      graph (axis X, axis Y) consists of. These axes are automatically
+      given a unique name so that you can create multiple graphs. The
+      name of the axis has the following form.
+      <p>
+      <table border=1>
+       <tr align=CENTER>
+	<td> Chart type</td>
+	<td> Axis </td>
+	<td> The number of graphs</td>
+       </tr>
+       <tr>
+	<td>
+	 f: Frame Graph <br>
+	 s: grid graphs <br>
+	 c: intersection graph
+	</td>
+	<td>
+	 X <br>
+	 Y <br>
+	 U <br>
+	 R
+	</td>
+	<td>Is swung from one chart for each type of</td>
+       </tr>
+      </table>
+      </p>
+      For example, the name of the axis of the graph that you create the
+      first frame fX1, fY1, fU1, next fR1, the name of the axis of the
+      second frame charts created fX2, fY2, fU2, is fR2.
+      <br>
+      The Axis Window "name" part of the name will be listed. It also
+      comes with the serial number from zero, as apart from other
+      graphic objects. The Axis Window "#" this number is a number that
+      is displayed in the part.
+      <br>
+      <br>
+ <li><h3>Specify the axis to plot</h3>
+      <br>
+      <br>
+      Axis to plot the data in the data dialog box "axis" to specify the
+      serial number of the axis. However, the combo box list is as
+      straightforward as the name of the axis are listed in the previous
+      section.<br>
+      <br>
+ <li><h3>Axial coordination</h3>
+      <br>
+      <br>
+      Ngraph axis function has been for two cooperation between the axes.<br>
+      <br>
+      <dl>
+       <dt> Reference Parameters
+       <dd> When no set maximum and minimum values ​​of the axes, if the
+	    other axis number is specified in the Reference parameter,
+	    maximum and minimum values ​​are automatically retrieved from
+	    the axis.  U axis of the graph frame is used primarily for
+	    the axis R. <br>
+	    </dd>
+       <dt> Adjust the parameters
+       <dd> If a number is specified, other axis is parallel move by
+	    themselves so as to intersect the axis Adjust position.
+	    Intersect the axis of the chart is used mainly. <br>
+	    </dd>
+      </dl>
+      <br>
+      These &quot;reference axis&quot;, &quot;button position&quot; -
+      &quot;cross-axis&quot; can be specified respectively. <br>
+      <br>
+      The axis as described earlier, are marked with serial numbers
+      starting from 0. Furthermore, (as well as any other graphic
+      object) are marked with numbers uniquely determined at run time
+      (specified as a number starting with ^). The end of the Axis
+      Window "^#" this number is the number that appears in the
+      part. The above "reference axis" or "button position" -
+      "cross-axis" are actually entered into if you choose a name from
+      the combo box list of the axis, the number "uniquely determined at
+      run time" is. "Serial number" and you have specified in the will
+      change in number of such cases have been deleted shaft so
+      inconvenient sister broken relationship referred to as a result,
+      these "numbers uniquely determined at run time" specified in I
+      have been to.<br> If you want to graph more common X-axis, fU2 fX2
+      by simply changing the scale of the axes and set the Reference
+      parameter as shown below, fX1, you can align the scale of the axis
+      of the fU1.
+      <p>
+      <img src=./tutorial/axisref.jpg WIDTH=250 HEIGHT=244 alt="">
+      </p>
+      <br>
+</ol>
+<br>
+<hr>
+<br>
+</body>
+</html>

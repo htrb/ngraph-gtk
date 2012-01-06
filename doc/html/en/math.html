@@ -1,0 +1,1119 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Math </title>
+</head>
+<body>
+<a name=TOP>&nbsp;</a>
+<h1> <a href=./ngraph.html>Data Processing</a> </h1>
+<ul>
+ <li> <a href=./math.html#TRANSFORM>Summary</a>
+ <li> <a href=./math.html#FORMULA_LITERAL>Number literals</a>
+ <li> <a href=./math.html#FORMULA_CONST>Constant</a>
+ <li> <a href=./math.html#CONST_DEF>Constant definition</a>
+ <li> <a href=./math.html#FORMULA_PAR>Parameters</a>
+ <li> <a href=./math.html#FORMULA_VAR>Variable</a>
+ <li> <a href=./math.html#ARRAY>Array</a>
+ <li> <a href=./math.html#USR_FUNC>User-Defined Functions</a>
+ <li> <a href=./math.html#FORMULA_OP>Operator</a>
+ <li> <a href=./math.html#FORMULA_FUNC>Function</a>
+ <li> <a href=./math.html#OP_PRECEDENCE>Operator precedence</a>
+ <li> <a href=./math.html#OP_EXAMPLE>Examples of the conversion formula</a>
+</ul>
+<br>
+<hr size=5>
+<br>
+<a name=TRANSFORM>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Summary</a> </h2>
+<br>
+<div>
+Adjoining mean drawing is done after the data processing such as conversion formulas.
+May be important to be aware of the procedure when you create a chart.
+The following shows the flow of data.
+<br>
+<br>
+<center>
+ Data files<br>
+ ↓ <br>
+ Conversion formula<br>
+ ↓ <br>
+ Delete the data masked<br>
+ ↓ <br>
+ to move the data has been moved <br>
+ ↓ <br>
+ Adjacent Average<br>
+ ↓ <br>
+ [Coefficient of curve interpolation, least-squares fit coefficients of] <br>
+ ↓ <br>
+ Output (graph drawing). <br>
+</center>
+<br>
+When you create a log chart, graph and log interpolation of the curve is generally linear graph of log-transformed so that the data made after the results are different.
+With respect to least squares linear graph and finds the same coefficient in the log normal graph.
+<br>
+</div>
+<br>
+<hr>
+<br>
+<a name=FORMULA_LITERAL>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Numeric literals can be used in the conversion formula</a> </h2>
+<br>
+<div>
+<dl>
+ <dt> 1</dt>
+ <dt> 1.0</dt>
+ <dt> 1.0E3</dt>
+ <dd> <p> Floating point </p> </dd>
+ <dt> 0xffff</dt>
+ <dd> <p> Hexadecimal integer </p> </dd>
+ <dt> 0b1011</dt>
+ <dd> <p> Binary integer </p> </dd>
+ <dt> 0o377</dt>
+ <dd> <p> Octal integer </p> </dd>
+</dl>
+<p> Part of a series of numbers that can be put anywhere a space for readability (123 456.789 E8 example). </p>
+</div>
+<br>
+<hr>
+<br>
+<a name=FORMULA_CONST>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Constants for use in the conversion formula</a> </h2>
+<br>
+<div>
+<table border=1>
+ <tr>
+  <td> PI </td>
+  <td> π </td>
+ </tr>
+ <tr>
+  <td> E </td>
+  <td> Base of natural logarithm </td>
+ </tr>
+ <tr>
+  <td> EULER </td>
+  <td> Euler&#39;s constant </td>
+ </tr>
+ <tr>
+  <td> NAN </td>
+  <td> Missing data error display </td>
+ </tr>
+ <tr>
+  <td> UNDEF </td>
+  <td> Missing data hiding error </td>
+ </tr>
+ <tr>
+  <td> CONT </td>
+  <td> Missing data (data line coupling) </td>
+ </tr>
+ <tr>
+  <td> BREAK </td>
+  <td>  Missing data (data line division) </td>
+ </tr>
+ <tr>
+  <td> NUM </td>
+  <td> Number of data </td>
+ </tr>
+ <tr>
+  <td> MINX </td>
+  <td> (X) the minimum value of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> MAXX </td>
+  <td> (X) the maximum value of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> MINY </td>
+  <td> (Y) the minimum value of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> MAXY </td>
+  <td> (Y) the maximum value of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> SUMX </td>
+  <td> (X) is the raw data in column </td>
+ </tr>
+ <tr>
+  <td> SUMY </td>
+  <td> (Y) is the raw data in column </td>
+ </tr>
+ <tr>
+  <td> SUMXX </td>
+  <td> (X) is the square of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> SUMYY </td>
+  <td> (Y) is the square of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> SUMXY </td>
+  <td> (X) column, (Y) sum of products of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> AVX </td>
+  <td> (X) of column average of the raw data </td>
+ </tr>
+ <tr>
+  <td> AVY </td>
+  <td> (Y) the average of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> SGX </td>
+  <td> (X) standard deviation of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> SGY </td>
+  <td> (Y) standard deviation of the raw data in column </td>
+ </tr>
+ <tr>
+  <td> FIRST </td>
+  <td> diagonal, if the conversion is performed twice in row of data, such as errorbar, call the first true (= 1), the second call false (= 0) </td>
+ </tr>
+ <tr>
+  <td> MASK </td>
+  <td> The number of rows in the mask set </td>
+ </tr>
+ <tr>
+  <td> MOVE </td>
+  <td> The number of rows is set to move </td>
+ </tr>
+ <tr>
+  <td> COLX </td>
+  <td> &quot;X&quot; Column number specified in the </td>
+ </tr>
+ <tr>
+  <td> COLY </td>
+  <td> &quot;Y&quot; Column number specified in the </td>
+ </tr>
+ <tr>
+  <td> AXISX </td>
+  <td> Axis &quot;X&quot; ID of the specified object axis </td>
+ </tr>
+ <tr>
+  <td> AXISY </td>
+  <td> Axis &quot;Y&quot; ID of the specified object axis </td>
+ </tr>
+ <tr>
+  <td> HSKIP </td>
+  <td> &quot;Skip the first line&quot; number of lines specified in the </td>
+ </tr>
+ <tr>
+  <td> RSTEP </td>
+  <td> &quot;Read the step-line&quot; number of lines specified in the </td>
+ </tr>
+ <tr>
+  <td> FLINE </td>
+  <td> &quot;The last line&quot; number of lines specified in the </td>
+ </tr>
+ <tr>
+  <td> % D </td>
+  <td> The number of data files </td>
+ </tr>
+ <tr>
+  <td> % N </td>
+  <td> Number of data files </td>
+ </tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=CONST_DEF>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Constant definition</a> </h2>
+<br>
+<div>
+<table border=1>
+ <tr>
+  <td> const x: exp </td>
+  <td> x is a string consisting of alphanumeric characters beginning with a letter or _, exp is a numeric expression.
+   <br>
+   <ul>
+    <li> You can not overwrite an existing constant.
+    <li> Exp formulas are interpreted at run time instead of parsing the conversion formula.
+    <li> Parameters in the formula exp, sum function (), dif () is not available.
+   </ul>
+  </td>
+ </tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=FORMULA_PAR>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Parameters available for the conversion formula</a> </h2>
+<br>
+<div>
+<table border=1>
+ <tr>
+  <td> %0 </td>
+  <td> When the numbered sequentially from 1 to load the data </td>
+ </tr>
+ <tr>
+  <td> %1 to %999 </td>
+  <td> The raw data column in the same line 1-999 </td>
+ </tr>
+ <tr>
+  <td> %Fxx1 to %Fxx999  </td>
+  <td> The raw data 1-999 column in the data file in the same row xx </td>
+ </tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=FORMULA_VAR>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Variables that can be used in the conversion formula</a> </h2>
+<p> Variable X, the conversion formula is independent of Y. </p>
+<br>
+<div>
+<table border=1>
+ <tr>
+  <td> E, X, Y non-alphabet characters </td>
+  <td> User is free to use (variable assignment has not been initialized to zero). </td>
+ </tr>
+ <tr>
+  <td> X </td>
+  <td> (X) of the raw data column (assignments to variables is possible, the raw data is overwritten when reading data) </td>
+ </tr>
+ <tr>
+  <td> Y </td>
+  <td> (Y) of the raw data column (assignments to variables is possible, the raw data is overwritten when reading data) </td>
+ </tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=ARRAY>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Array</a> </h2>
+<br>
+<div>
+<table border=1>
+<tr>
+ <td> x [n] </td>
+ <td> x is a string consisting of alphanumeric characters beginning with a letter or _, n is an arbitrary formula. <br>
+  Unassigned array elements are initialized to zero. <br>
+  Rounded to an integer array indices. <br>
+ Upper bound of the array index is 65535. <br>
+ If you use negative numbers in an array index, considers the end of array indices. <br>
+ </td>
+</tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=USR_FUNC>&nbsp;</a>
+<h2> <a href=./math.html#TOP>User-Defined Functions</a> </h2>
+<br>
+<div>
+<table border=1>
+<tr>
+ <td> def func (a, b ,...) {exp} </td>
+ <td> Parameter a, b, ... to define the function func. <br>
+  When you pass a dummy argument array @ Please specify as a.
+  Arrays are passed by reference. <br>
+  The exp can be any numeric expression, the following limitations. <br>
+  <ul>
+   <li> Parameters (% 0 and% F0001) is not available.
+   <li> Dif function (), sum () is not available.
+   <li> You can not nest function definitions.
+  </ul>
+ </td>
+</tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=FORMULA_OP>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Operators can use the conversion formula</a> </h2>
+<br>
+<div>
+<table border=1>
+ <tr>
+  <td> - + </td>
+  <td> Sign </td>
+ </tr>
+ <tr>
+  <td> + - * / </td>
+  <td> Four arithmetic operations </td>
+ </tr>
+ <tr>
+  <td> \ </td>
+  <td> Surplus of real multiplications </td>
+ </tr>
+ <tr>
+  <td> ^ </td>
+  <td> Powers </td>
+ </tr>
+ <tr>
+  <td> ! </td>
+  <td> Factorial (argument is a positive integer less than 169) </td>
+ </tr>
+ <tr>
+  <td> : </td>
+  <td> Substitution </td>
+ </tr>
+ <tr>
+  <td> -: </td>
+  <td> Self assignment </td>
+ </tr>
+ <tr>
+  <td> + </td>
+  <td> Self assignment </td>
+ </tr>
+ <tr>
+  <td> * </td>
+  <td> Self assignment </td>
+ </tr>
+ <tr>
+  <td> /: </td>
+  <td> Self assignment </td>
+ </tr>
+ <tr>
+  <td> \: </td>
+  <td> Self assignment </td>
+ </tr>
+ <tr>
+  <td> ^: </td>
+  <td> Self assignment </td>
+ </tr>
+ <tr>
+  <td> :: </td>
+  <td> Comparison (corresponding to == in C) </td>
+ </tr>
+ <tr>
+  <td> !: </td>
+  <td> Comparison (in C! Corresponding to =) </td>
+ </tr>
+ <tr>
+  <td> &lt;: </td>
+  <td> Comparison (in C &lt;corresponds to =) </td>
+ </tr>
+ <tr>
+  <td> &gt;: </td>
+  <td> Comparison (a C&gt; corresponding to =) </td>
+ </tr>
+ <tr>
+  <td> &lt; </td>
+  <td> Comparison </td>
+ </tr>
+ <tr>
+  <td> &gt; </td>
+  <td> Comparison </td>
+ </tr>
+ <tr>
+  <td> &amp;&amp; </td>
+  <td> Conjunction </td>
+ </tr>
+ <tr>
+  <td> || </td>
+  <td> Logical sum </td>
+ </tr>
+</table>
+<dl>
+ <dt> and AND exp1 &amp;&amp; exp2 (exp1, exp2) differences.</dt>
+ <dd>
+      <p> exp1 &amp;&amp; exp2 exp2 is not evaluated is false exp1. 
+      Exp1 is true and returns the evaluated value exp2. </p>
+      </dd>
+ <dt> exp1 || OR and exp2 (exp1, exp2) differences.</dt>
+ <dd>
+      <p> exp1 || exp2 exp2 is not evaluated is true exp1.
+      Is also true if exp1 exp1, exp1 is false, returns the evaluated value exp2. </p>
+      </dd>
+ <dt> =
+ <dd>
+      <p> = Represents the end of the formula (optional).
+      Can continue after another expression after the equal sign. </p>
+      </dd>
+ <dt> Parentheses ()
+ <dd>
+      <p> Parentheses () does not limit the number of. </p>
+      </dd>
+</dl>
+</div>
+<br>
+<hr>
+<br>
+<a name=FORMULA_FUNC>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Conversion functions available in the formula</a> </h2>
+<p>
+<ul>
+<li> The argument can be omitted. 0 is passed if the argument is omitted.
+ <li> IF () function of the number of nesting, DIF (), SUM () function no longer limit the number.
+ <li> The arguments are evaluated from left to right.
+</ul>
+</p>
+<div>
+<h3> Conversion function </h3>
+<table border=1>
+ <tr>
+  <td> ABS(x) </td>
+  <td> Absolute value </td>
+ </tr>
+ <tr>
+  <td> SIGN(x) </td>
+  <td> signs </td>
+ </tr>
+ <tr>
+  <td> INT(x) </td>
+  <td> Truncates toward zero integer part </td>
+ </tr>
+ <tr>
+  <td> GAUSS(x) </td>
+  <td> Gauss symbol [] ([n] is the largest integer not exceeding n) </td>
+ </tr>
+ <tr>
+  <td> FRAC(x) </td>
+  <td> Decimal part </td>
+ </tr>
+ <tr>
+  <td> ROUND(x) </td>
+  <td> Rounded integer part </td>
+ </tr>
+ <tr>
+  <td> MIN(a, b, c ,...) </td>
+  <td> Smallest values of the arguments </td>
+ </tr>
+ <tr>
+  <td> MAX(a, b, c ,...) </td>
+  <td> The greatest value of the arguments </td>
+ </tr>
+</table>
+<br>
+<h3> Elementary function </h3>
+<table border=1>
+<tr>
+ <td> SQR(x) </td>
+ <td> Square </td>
+</tr>
+ <tr>
+  <td> SQRT(x) </td>
+  <td> Square root </td>
+ </tr>
+ <tr>
+  <td> EXP(x) </td>
+  <td> Index (x ≦ 690) </td>
+</tr>
+ <tr>
+  <td> LN(x) </td>
+  <td> Natural logarithm </td>
+ </tr>
+ <tr>
+  <td> LOG(x) </td>
+  <td> Logarithm </td>
+ </tr>
+ <tr>
+  <td> SIN(x) </td>
+  <td> Sign </td>
+ </tr>
+ <tr>
+  <td> COS(x) </td>
+  <td> Cosine </td>
+ </tr>
+ <tr>
+  <td> TAN(x) </td>
+  <td> Tangent </td>
+ </tr>
+ <tr>
+  <td> ASIN(x) </td>
+  <td> Inverse sine </td>
+ </tr>
+ <tr>
+  <td> ACOS(x) </td>
+  <td> Inverse cosine </td>
+ </tr>
+ <tr>
+  <td> ATAN(x) </td>
+  <td> Inverse tangent </td>
+ </tr>
+ <tr>
+  <td> SINH(x) </td>
+  <td> Hyperbolic sine </td>
+ </tr>
+ <tr>
+  <td> COSH(x) </td>
+  <td> Hyperbolic cosine </td>
+ </tr>
+ <tr>
+  <td> TANH(x) </td>
+  <td> Hyperbolic tangent </td>
+ </tr>
+ <tr>
+  <td> ASINH(x) </td>
+  <td> Inverse hyperbolic sine </td>
+ </tr>
+ <tr>
+  <td> ACOSH(x) </td>
+  <td> Inverse hyperbolic cosine </td>
+ </tr>
+ <tr>
+  <td> ATANH(x) </td>
+  <td> Hyperbolic tangent </td>
+ </tr>
+</table>
+<br>
+<h3> Special function </h3>
+<table border=1>
+ <tr>
+  <td> RAND(x) </td>
+  <td> 0 ≦ RAND(x) at &lt;x (x&gt; 0) random </td>
+ </tr>
+ <tr>
+  <td> SRAND(x) </td>
+  <td> RAND () to set a new species of pseudo-random integer sequence produced by the function. </td>
+ </tr>
+ <tr>
+  <td> THETA(x) </td>
+  <td> Step function (1 for x ≧ 0, otherwise 0) </td>
+ </tr>
+ <tr>
+  <td> DELTA(x) </td>
+  <td> Kronecker δ (1 for x = 0, otherwise 0) </td>
+ </tr>
+ <tr>
+  <td> GAMMA(x) </td>
+  <td> Gamma function Γ(x) </td>
+ </tr>
+ <tr>
+  <td> ICGAM(m, x) </td>
+  <td> The incomplete gamma function Γ(μ, x) </td>
+ </tr>
+<tr>
+<td> ERF(x) </td>
+<td> The error function Erf(x) </td>
+</tr>
+ <tr>
+  <td> ERFC(x) </td>
+  <td> Erfc complementary error function(x) </td>
+ </tr>
+ <tr>
+  <td> QINV(x) </td>
+  <td> Erfc error function(x) the inverse of </td>
+ </tr>
+ <tr>
+  <td> EI(x) </td>
+  <td> Exponential integral Ei(x) </td>
+ </tr>
+ <tr>
+  <td> BETA(x, y) </td>
+  <td> Beta function B(p, q) </td>
+ </tr>
+ <tr>
+  <td> ICBETA(x, y) </td>
+  <td> Incomplete beta function I(a, b, x) (0 &lt;= x &lt;= 1) </td>
+ </tr>
+ <tr>
+  <td> JN(n, x) </td>
+  <td> N-th order Bessel function of first kind </td>
+ </tr>
+ <tr>
+  <td> YN(n, x) </td>
+  <td> N-th order Bessel function of second kind </td>
+ </tr>
+ <tr>
+  <td> IN(n, x) </td>
+  <td> N-th order modified Bessel function of first kind </td>
+ </tr>
+ <tr>
+  <td> KN(n, x) </td>
+  <td> N-th order modified Bessel function of second kind </td>
+ </tr>
+ <tr>
+  <td> JL(l, x) </td>
+  <td> Following the first kind spherical Bessel function l </td>
+ </tr>
+ <tr>
+  <td> YL(l, x) </td>
+  <td> The following two spherical Bessel function of l </td>
+ </tr>
+ <tr>
+  <td> JNU(nu, x) </td>
+  <td> The first kind Bessel function nu (nu is a positive real number). </td>
+ </tr>
+ <tr>
+  <td> YNU(nu, x) </td>
+  <td> Bessel function of the second kind nu (nu is a positive real number). </td>
+ </tr>
+ <tr>
+  <td> INU(nu, x) </td>
+  <td> Following the first kind modified Bessel function nu (nu is a positive real number). </td>
+ </tr>
+ <tr>
+  <td> KNU(nu, x) </td>
+  <td> Following the second kind modified Bessel function nu (nu is a positive real number). </td>
+ </tr>
+ <tr>
+  <td> PN(n, x) </td>
+  <td> Legendre polynomial </td>
+ </tr>
+ <tr>
+  <td> LGN(n, a, x) </td>
+  <td> Laguerre polynomials times </td>
+ </tr>
+ <tr>
+  <td> HN(n, x) </td>
+  <td> Hermite polynomial </td>
+ </tr>
+ <tr>
+  <td> TN(n, x) </td>
+  <td> Chebishifu polynomial </td>
+ </tr>
+ <tr>
+  <td> ZETA(x) </td>
+  <td> Riemann zeta function ζ(x) </td>
+ </tr>
+ <tr>
+  <td> ZETA_INT(x) </td>
+  <td> Riemann zeta function ζ(x) (x is an integer) </td>
+ </tr>
+ <tr>
+  <td> ZETAM1(x) </td>
+  <td> Riemann zeta function ζ(x) - 1 </td>
+ </tr>
+ <tr>
+  <td> ZETAM1_INT(x) </td>
+  <td> Riemann zeta function ζ(x) - 1 (x is an integer) </td>
+ </tr>
+ <tr>
+  <td> MJD(year, month, day, hour, min, sec) </td>
+  <td> Modified Julian day (year, month, day is the Gregorian calendar, hour, min, sec is the time UTC, leap seconds are not considered) </td>
+ </tr>
+ <tr>
+  <td> UNIX2MJD(time) </td>
+  <td> Modified Julian day (time is the number of seconds since 00:00:00 UTC, January 1, 1970, leap seconds are not considered) </td>
+ </tr>
+ <tr>
+  <td> MJD2YEAR(mjd) </td>
+  <td> Gregorian calendar year corresponding to the modified Julian day </td>
+ </tr>
+ <tr>
+  <td> MJD2MONTH(mjd) </td>
+  <td> Gregorian calendar month corresponding to the modified Julian day </td>
+ </tr>
+ <tr>
+  <td> MJD2DAY(mjd) </td>
+  <td> Gregorian calendar day corresponding to the modified Julian day </td>
+ </tr>
+ <tr>
+  <td> MJD2WDAY(mjd) </td>
+  <td> Gregorian calendar day corresponding to the modified Julian day number (1: 7 Monday through Sunday) </td>
+ </tr>
+ <tr>
+  <td> MJD2YDAY(mjd) </td>
+  <td> Total number of days from January 1 of the modified Julian day corresponding to the Gregorian calendar (366-1). </td>
+ </tr>
+<tr>
+ <td> TIME() </td>
+ <td> returns the number of seconds elapsed from the epoch (00:00:00 UTC, January 1, 1970). </td>
+</tr>
+</table>
+<br>
+<h3> Logic function </h3>
+<p>
+<ul>
+ <li> 0 is false, and true otherwise.
+</ul>
+</p>
+<table border=1>
+ <tr>
+  <td> EQ (x, y, prec) </td>
+  <td> True when x = y (= 1).
+   You can specify the precision of comparison prec (prec == 0 is exact). </td>
+ </tr>
+ <tr>
+  <td> NEQ (x, y, preq) </td>
+  <td> True if x ≠ y (= 1).
+   You can specify the precision of comparison prec (prec == 0 is exact). </td>
+ </tr>
+ <tr>
+  <td> GE(x, y) </td>
+  <td> True if x ≧ y (= 1) </td>
+ </tr>
+ <tr>
+  <td> GT(x, y) </td>
+  <td> x&gt; True if y (= 1) </td>
+ </tr>
+ <tr>
+  <td> LE(x, y) </td>
+  <td> True if x ≦ y (= 1) </td>
+ </tr>
+ <tr>
+  <td> LT(x, y) </td>
+  <td> x &lt;True if y (= 1) </td>
+ </tr>
+ <tr>
+  <td> NOT(x) </td>
+  <td> True when x = 0 (= 1) </td>
+ </tr>
+ <tr>
+  <td> OR(x, y) </td>
+  <td> (X ≠ 0) or (y ≠ 0) when true (= 1) </td>
+ </tr>
+ <tr>
+  <td> AND(x, y) </td>
+  <td> (X ≠ 0) and (y ≠ 0) when true (= 1) </td>
+ </tr>
+ <tr>
+  <td> XOR(x, y) </td>
+  <td> (X ≠ 0) xor (y ≠ 0) when true (= 1) </td>
+ </tr>
+</table>
+<br>
+<h3> Array Manipulation Functions </h3>
+<table border=1>
+ <tr>
+  <td> SIZE(a) </td>
+  <td> Number of elements in the array a </td>
+ </tr>
+ <tr>
+  <td> SORT(a) </td>
+  <td> Aligning a sequence </td>
+ </tr>
+ <tr>
+  <td> RSORT(a) </td>
+  <td> Aligning a sequence in reverse order </td>
+ </tr>
+ <tr>
+  <td> POP(a) </td>
+  <td> Return it to remove the last element of the array a </td>
+ </tr>
+ <tr>
+  <td> PUSH(a, x) </td>
+  <td> Add x to end of a array (return value is x) </td>
+ </tr>
+ <tr>
+  <td> SHIFT(a) </td>
+  <td> Return it to remove the first element of a.
+   The remaining elements are packed into each one before </td>
+ </tr>
+ <tr>
+  <td> UNSHIFT(a, x) </td>
+  <td> To insert at the beginning of a sequence x (return value is x) </td>
+ </tr>
+</table>
+<br>
+<h3> Memory handling functions </h3>
+<p> The memory is shared by all the conversion formula. </p>
+<table border=1>
+ <tr>
+  <td> M(n, x) </td>
+  <td> Assigned to the memory of the argument n (n = 0 〜 65,535) (return value is x) </td>
+ </tr>
+ <tr>
+  <td> RM(n) </td>
+  <td> Memory of the current value of n (n = 0 〜 65,535) </td>
+ </tr>
+ <tr>
+  <td> CM(x) </td>
+  <td> The entire memory to be initialized with x (return value is x) </td>
+ </tr>
+</table>
+<br>
+<h3> Other Functions </h3>
+<table border=1>
+ <tr>
+  <td> ISNORMAL(x) </td>
+  <td> True if x is a general number </td>
+ </tr>
+ <tr>
+  <td> ISBREAK(x) </td>
+  <td> If x is true BREAK </td>
+ </tr>
+ <tr>
+  <td> ISCONT(x) </td>
+  <td> If x is true CONT </td>
+ </tr>
+ <tr>
+  <td> ISNAN(x) </td>
+  <td> True if x is NAN </td>
+ </tr>
+ <tr>
+  <td> ISUNDEF(x) </td>
+  <td> If x is true UNDEF </td>
+ </tr>
+ <tr>
+  <td> SUM(x) </td>
+  <td> Integration </td>
+ </tr>
+ <tr>
+  <td> DIF(x) </td>
+  <td> The difference </td>
+ </tr>
+ <tr>
+  <td> F(x, y, z) </td>
+  <td> User-Defined Functions </td>
+ </tr>
+ <tr>
+  <td> G(x, y, z) </td>
+  <td> User-Defined Functions </td>
+ </tr>
+ <tr>
+  <td> H(x, y, z) </td>
+  <td> User-Defined Functions </td>
+ </tr>
+ <tr>
+  <td> COLOR(0, x) </td>
+  <td> X the value R (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> COLOR(1, x) </td>
+  <td> X the value of G (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> COLOR(2, x) </td>
+  <td> X the value of B (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> COLOR(3, x) </td>
+  <td> X the value of RGB (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> COLOR(4, x) </td>
+  <td> X the value of R2 (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> COLOR(5, x) </td>
+  <td> X the value of G2 (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> COLOR(6, x) </td>
+  <td> X the value of B2 (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> COLOR(7, x) </td>
+  <td> R2, G2, x the value of B2 (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> ALPHA(x) </td>
+  <td> A, x the value A2 (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> ALPHA(x, 1) </td>
+  <td> X the value A (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> ALPHA(x, 2) </td>
+  <td> X the value A2 (0 ≦ x &lt;256) set </td>
+ </tr>
+ <tr>
+  <td> RGB(r, g, b) </td>
+  <td> Each of the RGB color values ​​r, g, b (0 ≦ r, g, b ≦ 1) is set to </td>
+ </tr>
+ <tr>
+  <td> RGB2(r, g, b) </td>
+  <td> R2, G2, B2, r the value of a, g, b (0 ≦ r, g, b ≦ 1) set of </td>
+ </tr>
+ <tr>
+  <td> HSB(h, s, b) </td>
+  <td> HSB color values, respectively h, s, b (0 ≦ h, s, b ≦ 1) is set to </td>
+ </tr>
+ <tr>
+  <td> HSB2(h, s, b) </td>
+  <td> R2, G2, B2, the value of a, h respectively, from the HSB, s, b (0 ≦ h, s, b ≦ 1) is set to </td>
+ </tr>
+ <tr>
+  <td> MARKSIZE(x) </td>
+  <td> Mark the size of the set X </td>
+ </tr>
+ <tr>
+  <td> MARKTYPE(x) </td>
+  <td> Mark the type of set X </td>
+ </tr>
+ <tr>
+  <td> IF(x, ex1, ex2) </td>
+  <td> ex1 when x ≠ 0, ex2 when x = 0 </td>
+ </tr>
+ <tr>
+  <td> UNLESS(x, ex1, ex2) </td>
+  <td> ex2 when x ≠ 0, ex1 when x = 0 </td>
+ </tr>
+ <tr>
+  <td> FOR(m, begin, end, step, ex) </td>
+  <td> Set the value in step begin to end in memory of the values ​​of m and repeat the ex.
+   negative when m is set to memory is done </td>
+ </tr>
+ <tr>
+  <td> PROG1(arg1, arg2 ,...) </td>
+  <td> Evaluate the arguments and returns the value of the first argument </td>
+ </tr>
+ <tr>
+  <td> PROG2(arg1, arg2 ,...) </td>
+  <td> Evaluates the argument, returns the value of the second argument </td>
+ </tr>
+ <tr>
+  <td> PROGN(arg1, arg2 ,...) </td>
+  <td> Evaluate the arguments and returns the value of the last argument </td>
+ </tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=OP_PRECEDENCE>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Operator precedence</a> </h2>
+<p> Operators + - (positive or negative sign) is different from the previous Version 6.03 of priority. </p>
+<br>
+<div>
+<table border=1>
+ <tr>
+  <td> High </td>
+  <td> ! </td>
+ </tr>
+ <tr>
+  <td> ↑ </td>
+  <td> ^ </td>
+ </tr>
+ <tr>
+  <td>
+  </td>
+  <td> + - (Positive or negative sign). </td>
+ </tr>
+ <tr>
+  <td>
+  </td>
+  <td> * / \ </td>
+ </tr>
+ <tr>
+  <td>
+  </td>
+  <td> + - </td>
+ </tr>
+ <tr>
+  <td>
+  </td>
+  <td> &lt; &lt;: &gt; &gt;: </td>
+ </tr>
+ <tr>
+  <td>
+  </td>
+  <td> :: !: </td>
+ </tr>
+ <tr>
+  <td>
+  </td>
+  <td> &amp;&amp; </td>
+ </tr>
+ <tr>
+  <td><br>
+   ↓
+ </td>
+  <td> || </td>
+</tr>
+ <tr>
+  <td> Low </td>
+  <td> :(+:, -:.) </td>
+ </tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=OP_EXAMPLE>&nbsp;</a>
+<h2> <a href=./math.html#TOP>Examples of the conversion formula</a> </h2>
+<br>
+<ul>
+<li> <b>Example =</b> <br>
+     <br>
+     = Indicates the end of the expression is, you can write another expression further continues.
+     The value of the expression is the value of an expression last.
+     For example, in conjunction with the assignment to a variable expression when it appears many times longer
+     <p> a: ... ...= expression ... a .... = </p>
+     The same formula is as if you only write once.
+     = The last expression can be omitted also.
+     <br>
+     <br>
+     </li>
+ <li> <b>Memory function M(), RM() Example</b> <br>
+     <br>
+     M() assigns the memory, RM() is read.
+     Conversion formula because all memory is shared, it can be used to pass data values ​​between files.
+     65536 memory (0 to 65535) can be used to.
+     In addition, unused memory is initialized to zero. <br>
+     </li>
+<li> <b>DIF() function Example</b> <br>
+     <br>
+     DIF() function is a function that returns the difference, not derivative.
+     And the n-th Y it is the current data in the data file (n) and expressed in
+     <p> DIF(Y) = Y(n) - Y(n-1) </p>
+     Is.
+     Easy to determine an approximate value for this derivative
+     <p> DIF(Y) / DIF(x) </p>
+     And.
+     <p> DIF(Y) / DIF(x) is {Y(n)-Y(n-1)} / {X(n)-X(n-1)} will. </p>
+     At this time, the conversion formula for X
+     <p> X-DIF(x) * 0.5 </p>
+     X as the &quot;intermediate value of the current data and previous data&quot; seems to get really close to the graph is better off and more.
+     <p> The conversion formula X: X-DIF(x) * 0.5 (which is {X(n-1) + X(n)} will * 0.5) <br>
+     The conversion formula Y: DIF(Y) / DIF(x) (which is {Y(n)-Y(n-1)} / {X(n)-X(n-1) becomes}) </p>
+     <p> DIF() returns the difference between the data from previous and current data, Y-DIF(Y) data can be retrieved by the previous one.
+     Like Y-DIF(Y)-DIF(Y-DIF(Y)) data can be retrieved in the previous two.
+     Y-DIF(Y)-DIF(Y-DIF(Y))-DIF(Y-DIF(Y)-DIF(Y-DIF(Y))) is the data for the previous three. </p>
+     <p>
+     The very first DIF() return value is &quot;undefined&quot; is.
+     Therefore, the overall value of the expression &quot;indefinite&quot; and the resulting number of data is decremented by one (the difference in the very first data does not exist).
+     DIF() also contains a number of expressions is, DIF() the whole value of the whole expression is initialized to the &quot;unknown&quot; is.
+     For example, DIF() DIF to nest (DIF()) when used as, in the very first data on the inner DIF() initializes the return value is undefined because, DIF outside () of initialization is performed.
+     Outside DIF() is initialization of the data is the second time.
+     The number of data will therefore be reduced 2.
+     </p>
+     <br>
+     <br>
+     </li>
+ <li> <b>Function SUM() Example</b> <br>
+     <br>
+     SUM() function returns the cumulative function.
+     Y it is the n-th and the current data (n) and expressed in
+     <p> SUM(Y) = Σ Y(n) (n = 1 .. n) </p>
+     Easy to determine an approximate value for this integral
+     <p> SUM(Y * DIF(x)) </p>
+     And.
+     <p> SUM(Y * DIF(x)) is Σ Y(n) * {X(n)-X(n-1)} (n = 1 .. n) will be. </p>
+     Also, if you want to evaluate the integral using the trapezoidal rule approximation
+     <p> SUM(0.5 * (2 * Y-DIF(Y)) * DIF(x)) </p>
+     And.
+     <p> SUM(0.5 * (2 * Y-DIF(Y)) * DIF(x)) is Σ (Y(n-1) + Y(n)) / 2 * {X(n)-X(n-1) } (n = 1 .. n) will be. </p>
+     Further limits on the integral (b), lower (a) If you want to specify a step function THETA() is used
+     <p> SUM(0.5 * (2 * Y-DIF(Y)) * DIF(x) * THETA(Xa) * THETA(bX)) </p>
+     And.
+     IF() with the
+     <p> IF(AND(GE(x, a), LE(x, b)), INTEG(0.5 *(2 * Y-DIF(Y)) * DIF(x)), 0) </p>
+     You can even.
+     <br>
+     <br>
+     </li>
+ <li> <b>IF() function Example</b> <br>
+     <br>
+     IF(x, ex1, ex2) is true x (&lt;&gt; 0) when the ex1 false (= 0) when the function returns the ex2.
+     For example, the following equation:
+     <p> IF(x &lt;0, 0, SQRT(x)) </p>
+     Is x &lt;0 when 0, x&gt; is a function that returns a √ x = 0.
+     Also be sure ex1 does not evaluate only one of ex2.
+     <br>
+     <br>
+ <li> <b>MARKSIZE() function, COLOR() Example</b><br>
+     <br>
+     MARKSIZE(), COLOR() function is not a mathematical function, the size of each plotted mark is a function that specifies the color.
+     For example, (x, y, z) has a data file consisting of three columns, so if you want to change the size of the mark value of z
+     <p> MARKSIZE(% 03) </p>
+     And.
+     And this is just 03% it will be any data to be plotted, using the above =
+     <p> MARKSIZE(% 03) = Y </p>
+     The correct usage of that.
+     COLOR() function in the same
+     <p> COLOR(3,% 03) = Y </p>
+     Would use.
+     <br>
+ <li> <b>PROG1() function, PROG2(), PROGN() Example</b>
+     <p>
+     PROG1() function, PROG1(), PROGN() will evaluate several arguments, first argument is a function that returns the value of the second or last.
+     IF(), UNLESS(), FOR() can be used to evaluate several expressions used in the function argument.
+     The following example is to calculate the average value of Y for every change in the value of one or more X(X is assumed to be greater than 1).
+     </p>
+     <p> IF(X - A &lt;1, PROGN(B +: Y, N +: 1, CONT), PROG1(IF(N, B / N, CONT), B: Y, N: 1, A: X)) </p>
+     </li>
+</ul>
+</body>
+</html>

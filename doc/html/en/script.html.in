@@ -1,0 +1,236 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Script </title>
+</head>
+<body>
+<a name=TOP>&nbsp;</a>
+<h1>  <a href=./ngraph.html>Ngraph script</a> </h1>
+<ul>
+ <li> <a href=./script.html#SCRIPT>Summary</a>
+ <li> <a href=./script.html#SCRIPT_SYNTAX>The script syntax</a>
+ <li> <a href=./script.html#SCRIPT_STARTUP>Startup Script</a>
+ <li> <a href=./script.html#COMMANDLINE>Command Line Options</a>
+ </ul>
+<br>
+<hr size=5>
+<br>
+<a name=SCRIPT>&nbsp;</a>
+<h2> <a href=./script.html#TOP>Summary</a> </h2>
+<br>
+<p> Ngraph scripting language (Ngraph script) has an interpreter.  Set the graph (in fact the OBJECT field of each object) are stored in the form of scripts Ngraph.</p>
+<br>
+<hr>
+<br>
+<a name=SCRIPT_SYNTAX>&nbsp;</a>
+<h2> <a href=./script.html#TOP>The script syntax</a> </h2>
+<br>
+<p>Ngraph script grammar, sh on UNIX (shell) by removing the job from the control function has been added to the object manipulation instructions. </p>
+<p>equivalent command sh syntax is as follows (for details on the syntax of sh, please refer to the documentation for UNIX). </p>
+<h3> Command </h3>
+<p> name1 = val1 name2 = val2 ... command arg1 arg2 arg3 ... </p>
+<h3> Comment </h3>
+<p> # Comment </p>
+<h3> Control structure </h3>
+<p> (For, case, if, while, the statement until) </p>
+<p>
+for name [in word] do list done <br>
+case word in [patterm [| pattern] ... list;;] ... esac <br>
+if list then list [elif list then list ]...[ else list] fi <br>
+while list do list done <br>
+until list do list done <br>
+</p>
+<h3> Function definition </h3>
+<p> name () {list;} </p>
+<p> ({} Is always required) </p>
+<h3> File name substitution </h3>
+<p> ? [] </p>
+<h3> Command substitution </h3>
+<p> `Command` </p>
+<h3> Variable definition </h3>
+<p> name = value [name = value] ... </p>
+<h3> Variable substitution </h3>
+<p>
+$ # $? $ Num $ * $ @ <br>
+$ {Name} <br>
+$ {Name:-word} <br>
+$ {Name: = word} <br>
+$ {Name:? Word} <br>
+$ {Name: + word} <br>
+$ {Name # word} <br>
+$ {Name # # word} <br>
+$ {Name% word} <br>
+$ {Name%% word} <br>
+</p>
+<h3> Redirect the pipe </h3>
+<p>
+&lt;File <br>
+&lt;&lt;Word <br>
+&gt; File <br>
+&gt;&gt; File <br>
+command | command <br>
+</p>
+<h3> Special command </h3>
+<p>
+: <br>
+. File <br>
+break [n] <br>
+continue [n] <br>
+cd <br>
+echo [-q] <br>
+eval [arg] <br>
+exit [n] <br>
+export [name] <br>
+pwd <br>
+return [n] <br>
+set <br>
+shift [n] <br>
+unset <br>
+test <br>
+[ <br>
+sleep <br>
+true <br>
+false <br>
+read [val] <br>
+seq [last | first last | first incr last] <br>
+basename name [suffix] <br>
+dirname name <br>
+which [-q] <br>
+</p>
+<br>
+<br>
+<p> Command to add your own grammar is as follows. </p>
+<br>
+<h3> Object definition </h3>
+<p> (Set the value to the field of instance_list for object) </p>
+<p> object: instance_list: field = value </p>
+<h3> Object replacement </h3>
+<p> (The value of field instance_list for object) </p>
+<p> $ {Object: instance_list: field = argument} </p>
+<h3> Object operation command </h3>
+<p>
+new object [field = value, ...] <br>
+del object: instance_list <br>
+exist [-q] object: instance_list <br>
+get object: instance_list [-write-field-id-quote] field = argument ... <br>
+put object: instance_list field = value ... <br>
+exe object: instance_list field = argument ... <br>
+cpy object: source, destination [, destination ,...] field ... <br>
+move object: instance1, instance2 <br>
+movetop object: instance <br>
+movelast object: instance <br>
+exch object: instance1, instance2 <br>
+object [object1 object2 ... [-name-version-parent-id-field-size-current-last-instnace-instances] [field ...]] <br>
+derive [-instance] object <br>
+</p>
+<h3> Ratings command </h3>
+<p> (Evaluate exp formula) </p>
+<p>
+dexpr exp <br>
+iexpr exp <br>
+</p>
+<br>
+<hr>
+<br>
+<a name=SCRIPT_STARTUP>&nbsp;</a>
+<h2> <a href=./script.html#TOP>Startup Script</a> </h2>
+<br>
+<div>
+At run time Ngraph <br>
+<ol>
+ <li> ~/.Ngraph
+ <li> CONFDIRDEF
+</ol>
+Search by this order, first startup script file found (Ngraph.nsc) automatically loads. <br>
+<br>
+Command Line Options
+<p>-I script_name </p>
+You can also explicitly specify the startup script.<br>
+Own macro language script file startup Ngraph (Ngraph script) has been described, and can also be customized by the user. <br>
+<br>
+<ul>
+ <li> Command line options are Ngraph (except for the above-i option)
+      are passed to the startup script files.
+ <li> State distribution, the startup script file
+      <ol>
+       <li> Specify the user interface to boot (system:: login_shell)
+       <li> Reading Ngraph.ngp (Ngraph.ngp the [Settings] - [Save As
+	    initial state (graph) can be created).
+       <li> Parsing Command Line Options
+      </ol>
+      Performs.
+</ul>
+</div>
+<br>
+<hr>
+<br>
+<a name=COMMANDLINE>&nbsp;</a>
+<h2> <a href=./script.html#TOP>Command Line Options</a> </h2>
+<br>
+<div>
+The format of the command-line options are when you start Ngraph
+<p>ngraph [-i script_name] [option1 option2 ...] </p>
+With the-i option specifies the startup script.  The remaining options are passed to the startup script, all of them are analyzed.  Since start-up script can be customized by the user, you can create your own command-line options. <br>
+<br>
+Startup script as distributed (Ngraph.nsc) command-line options are
+valid in the following.
+<dl>
+ <dt> -x num
+ <dd> The column data to num-axis x. </dd>
+ <dt> -y num
+ <dd> num-axis data column to y. </dd>
+ <dt> -X -U
+ <dd> X and the x-axis data, the axis U.
+ <dt> -Y -R
+ <dd> Y y-axis data, respectively, the axis R.
+ <dt> -d type
+ <dd> The plot type to type. </dd>
+ <dt> -m num
+ <dd> Num to the mark. </dd>
+ <dt> -o num
+ <dd> Num to the size of the mark. </dd>
+ <dt> -l sylte
+ <dd> The line styles to the style (-l &quot;100 100&quot; as specified). </dd>
+ <dt> -w num
+ <dd> The line width to num. </dd>
+ <dt> -cr R -cg G -cb B
+ <dd> The plot to RGB color. </dd>
+ <dt> -CR R -CG G -CB B
+ <dd> The second plot to RGB colors. </dd>
+ <dt> -s num
+ <dd> Skip to first num lines. </dd>
+ <dt> -r num
+ <dd> Num the number of rows to read steps. </dd>
+ <dt> -f num
+ <dd> The last line number to num. </dd>
+ <dt> -vx num
+ <dd> The average number of neighbors to num x. </dd>
+ <dt> -vy num
+ <dd> The average number of neighbors to num y. </dd>
+ <dt> -mx math
+ <dd> math formula to convert x. </dd>
+ <dt> -my math
+ <dd> math formula to convert y. </dd>
+ <dt> -ex type
+ <dd> how to scale the axis type x (linear, log, inverse) position. </dd>
+ <dt> -ey type
+ <dd> how the axis scale type y (linear, log, inverse) position. </dd>
+ <dt> -minx min -maxx max -incx inc
+ <dd> axis scale min x, max, to inc. </dd>
+ <dt> -miny min -maxy max -incy inc
+ <dd> axis scale min y, max, to inc. </dd>
+ <dt> -g
+ <dd> You can load the data file. </dd>
+ <dt> -png file -pdf file -ps file -eps file -svg file -gra file
+ <dd> Convert image files to each ngp file.
+ <dt> -p ngp_file
+ <dd> Print the ngp_file.
+ <dt> -P
+ <dd> printed using an external driver ngp file.
+</dl>
+</div>
+<br>
+<hr>
+<br>
+</body>
+</html>

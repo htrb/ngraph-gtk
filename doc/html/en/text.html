@@ -1,0 +1,292 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Text </title>
+</head>
+<body>
+<a name=TOP>&nbsp;</a>
+<h1> <a href=./ngraph.html>Font / Text</a> </h1>
+<ul>
+ <li> <a href=./text.html#FONT>Fonts are handled</a>
+ <li> <a href=./text.html#TEXT>Control characters for text drawing</a>
+</ul>
+<br>
+<hr size=5>
+<br>
+<a name=FONT>&nbsp;</a>
+<h2> <a href=./text.html#TOP>Fonts are handled</a> </h2>
+<br>
+<div>
+[Legend] - [Text] All the font name specified by an alias (alias) is.  Are considered compatible with different operating systems in Ngraph, you can directly specify the font name. <br>
+<br>
+Output font selection, I went to map the actual font name from the alias name.  Mapping information is written to Ngraph.ini. <br>
+<br>
+<br>
+Font mapping is defined during installation <br>
+<br>
+<table border=1>
+ <tr>
+  <td> Ngraph defined name </td>
+  <td> Font Name </td>
+ </tr>
+ <tr>
+  <td> Serif </td>
+  <td> Times New Roman </td>
+ </tr>
+ <tr>
+  <td> Sans-serif </td>
+  <td> Arial </td>
+ </tr>
+ <tr>
+  <td> Monospace </td>
+  <td> Courier New </td>
+ </tr>
+</table>
+</div>
+<br>
+<hr>
+<br>
+<a name=TEXT>&nbsp;</a>
+<h2> <a href=./text.html#TOP>Control characters for text drawing</a> </h2>
+<br>
+<div>
+To insert control characters in the Legend text string in the Text dialog box, you can change in character format. <br>
+<br>
+<b>Basic</b>
+<table border=1>
+ <tr>
+  <td> ^ </td>
+  <td> Superscript letter will follow </td>
+ </tr>
+ <tr>
+<td> _ </td>
+  <td> Subscript characters will follow </td>
+ </tr>
+ <tr>
+  <td> @ </td>
+  <td> Superscript, subscript Clear </td>
+ </tr>
+ <tr>
+  <td> \B </td>
+  <td> Subsequent characters are in bold (bold) which </td>
+ </tr>
+ <tr>
+  <td> \I </td>
+  <td> Subsequent characters in italics (italic) becomes </td>
+ </tr>
+ <tr>
+  <td> \N </td>
+  <td> Bold italic Clear </td>
+ </tr>
+ <tr>
+  <td> \. </td>
+  <td> Equivalent to the space </td>
+ </tr>
+ <tr>
+  <td> \B </td>
+  <td> Backspace (width &#39;h&#39;) </td>
+ </tr>
+ <tr>
+  <td> \N </td>
+  <td> Break </td>
+ </tr>
+ <tr>
+  <td> \- </td>
+  <td> Hyphen </td>
+ </tr>
+ <tr>
+  <td> \&amp; </td>
+  <td> Aligned to the position of \ and when multiple rows by newline \ n is text </td>
+ </tr>
+ <tr>
+  <td> \ </td>
+  <td> % \ @ Character next time ^ _, and outputs them as control characters to deal </td>
+ </tr>
+</table>
+<br>
+<br>
+<b>Font</b>
+<table border=1>
+ <tr>
+  <td> %F{Alias name} </td>
+  <td> To change the font alias names </td>
+ </tr>
+ <tr>
+  <td> % S{integer} </td>
+  <td> To specify the font size in points </td>
+ </tr>
+ <tr>
+  <td> %P{integer} </td>
+  <td> Character spacing specified in point </td>
+ </tr>
+ <tr>
+  <td> %X{integer} </td>
+  <td> Specify the amount by which point the current point is moved to the right </td>
+ </tr>
+ <tr>
+  <td> %Y{integer} </td>
+  <td> Amount specified in point move down the current point </td>
+ </tr>
+</table>
+<br>
+<br>
+<b>Formulas</b>
+<table border=1>
+ <tr>
+  <td> %[Expression] </td>
+   <td> Value of the expression </td>
+</tr>
+</table>
+<br>
+<br>
+<b>Shaping</b>
+<table border=1>
+ <tr>
+  <td> %Pf{format value} </td>
+  <td> format and output the value in the format
+   <ul>
+    <li> For more information, please see the format man 3 printf.
+    <li> `* M $ &#39;or&#39; * &#39;to the precision specification is
+	 not available.
+    <li> The length modifiers hh, h, L, q, j, z, Z, t is not available.
+    <li> F conversion specifier, a, A, m, n, p, C, S is not available.
+   </ul>
+   <br>
+   For example: <br>
+   % Pf {% e 1} is 1.000000e +00 <br>
+   % Pf {% 2.2f% [exp (1)]} is 2.72
+  </td>
+ </tr>
+</table>
+<br>
+<br>
+<b>Object</b>
+<table border=1>
+ <tr>
+  <td> %{Object:id:field parameter} </td>
+  <td> Object (object) instance (id) field (field) value of </td>
+ </tr>
+</table>
+<br>
+<br>
+<b>Example of Specifying an object</b>
+<table border=1>
+ <tr>
+  <td> %{System::date 0} </td>
+  <td> Type Date Fri Feb 2 1990 </td>
+ </tr>
+ <tr>
+  <td> %{System::date 1} </td>
+  <td> Type the date of 2-2-1990 </td>
+ </tr>
+ <tr>
+  <td> %{System::date 2} </td>
+  <td> Type the date of Feb 2 1990 </td>
+ </tr>
+ <tr>
+  <td> %{System::time 0} </td>
+  <td> Types time 00:00:00 </td>
+ </tr>
+ <tr>
+  <td> %{System::time 1} </td>
+  <td> Types time 12:00:00 am </td>
+ </tr>
+ <tr>
+  <td> %{System::time 2} </td>
+  <td> Types time 00:00 </td>
+ </tr>
+ <tr>
+  <td> %{System::time 3} </td>
+  <td> Types time 12:00 am </td>
+ </tr>
+ <tr>
+  <td> %{Menu::ngp} </td>
+  <td> ngp file name </td>
+ </tr>
+ <tr>
+  <td> %{Menu::fullpath_ngp} </td>
+  <td> NGP full path name of file </td>
+ </tr>
+ <tr>
+  <td> %{File:X:file} </td>
+  <td> The file name (X is the file number) </td>
+ </tr>
+ <tr>
+  <td> %{File:X:basename} </td>
+  <td> File name without the folder name (X is the file number) </td>
+ </tr>
+ <tr>
+  <td> %{File:X:date 0} </td>
+  <td> Date of the file </td>
+ </tr>
+ <tr>
+  <td> %{File:X:time 0} </td>
+  <td> File times </td>
+ </r>
+ <tr>
+  <td> %{File:X:column:lc} </td>
+  <td> The contents of the file c l column in a row </td>
+ </tr>
+  <tr>
+   <td> %{File:X:dnum} </td>
+   <td> X number of data files </td>
+  </tr>
+  <tr>
+   <td> %{File:X:dx n} </td>
+   <td> The n-th row of the file X (x) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:dminx} </td>
+   <td> The minimum value of file X (x) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:dmaxx} </td>
+   <td> Maximum file X (x) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:davx} </td>
+   <td> Files average X (x) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:dsigx} </td>
+   <td> The standard deviation of file X (x) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:dy n} </td>
+   <td> The n-th row of the file X (y) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:dminy} </td>
+   <td> The minimum value of file X (y) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:dmaxy} </td>
+   <td> Maximum file X (y) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:davy} </td>
+   <td> Files average X (y) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:dsigy} </td>
+   <td> The standard deviation of file X (y) </td>
+  </tr>
+  <tr>
+   <td> %{File:X:calc:a} </td>
+   <td> Fit plot of file types when X, f the results of the fit (x) f for (a) is calculated. </td>
+  </tr>
+  <tr>
+   <td> %{File:X:newton:ab} </td>
+   <td> Fit plot of file types when X, f the results of the fit (x) f For (x) obtained by Newton&#39;s method as an initial value x = a and x = b. </td>
+  </tr>
+  <tr>
+   <td> %{Fit:0:% 00} </td>
+   <td> fit:0:% 00 </td>
+  </tr>
+ </table>
+ </div>
+<br>
+<hr>
+<br>
+</body>
+</html>
