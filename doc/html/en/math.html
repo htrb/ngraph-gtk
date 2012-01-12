@@ -27,8 +27,8 @@
 <h2> <a href=./math.html#TOP>Summary</a> </h2>
 <br>
 <div>
-Adjoining mean drawing is done after the data processing such as conversion formulas.
-May be important to be aware of the procedure when you create a chart.
+Drawing is done after the data processing such as adjoining average and conversion formulas.
+It may be important to be aware of the procedure when you create a chart.
 The following shows the flow of data.
 <br>
 <br>
@@ -39,17 +39,19 @@ The following shows the flow of data.
  ↓ <br>
  Delete the data masked<br>
  ↓ <br>
- to move the data has been moved <br>
+ move the data which has been moved <br>
  ↓ <br>
  Adjacent Average<br>
  ↓ <br>
- [Coefficient of curve interpolation, least-squares fit coefficients of] <br>
+ [calculate coefficient of curve interpolation or least-squares fit] <br>
  ↓ <br>
  Output (graph drawing). <br>
 </center>
 <br>
-When you create a log chart, graph and log interpolation of the curve is generally linear graph of log-transformed so that the data made after the results are different.
-With respect to least squares linear graph and finds the same coefficient in the log normal graph.
+When you create a log chart, interpolation of the curve is calculated
+generally after log-transformed, so the results of teh calculated for
+linear graph and log graph are different. There are no difference
+between linear graph and log graph when calculate a least square fit.
 <br>
 </div>
 <br>
@@ -206,11 +208,11 @@ With respect to least squares linear graph and finds the same coefficient in the
   <td> &quot;The last line&quot; number of lines specified in the </td>
  </tr>
  <tr>
-  <td> % D </td>
+  <td> %D </td>
   <td> The number of data files </td>
  </tr>
  <tr>
-  <td> % N </td>
+  <td> %N </td>
   <td> Number of data files </td>
  </tr>
 </table>
@@ -225,12 +227,12 @@ With respect to least squares linear graph and finds the same coefficient in the
 <table border=1>
  <tr>
   <td> const x: exp </td>
-  <td> x is a string consisting of alphanumeric characters beginning with a letter or _, exp is a numeric expression.
+  <td> x is a string consisting of alphanumeric characters and '_' beginning with a alphabetical character, exp is a numeric expression.
    <br>
    <ul>
     <li> You can not overwrite an existing constant.
     <li> Exp formulas are interpreted at run time instead of parsing the conversion formula.
-    <li> Parameters in the formula exp, sum function (), dif () is not available.
+    <li> In the formula exp, sum() and dif() function is not available.
    </ul>
   </td>
  </tr>
@@ -268,16 +270,16 @@ With respect to least squares linear graph and finds the same coefficient in the
 <div>
 <table border=1>
  <tr>
-  <td> E, X, Y non-alphabet characters </td>
-  <td> User is free to use (variable assignment has not been initialized to zero). </td>
+  <td> an alphabetical character except E, X and Y </td>
+  <td> User is free to use (variable assignment has been initialized to zero). </td>
  </tr>
  <tr>
   <td> X </td>
-  <td> (X) of the raw data column (assignments to variables is possible, the raw data is overwritten when reading data) </td>
+  <td> (X) of the raw data column (assignments to variables is possible, however, the assigned data is overwritten when reading data) </td>
  </tr>
  <tr>
   <td> Y </td>
-  <td> (Y) of the raw data column (assignments to variables is possible, the raw data is overwritten when reading data) </td>
+  <td> (Y) of the raw data column (assignments to variables is possible, however, the assigned data is overwritten when reading data) </td>
  </tr>
 </table>
 </div>
@@ -291,11 +293,11 @@ With respect to least squares linear graph and finds the same coefficient in the
 <table border=1>
 <tr>
  <td> x [n] </td>
- <td> x is a string consisting of alphanumeric characters beginning with a letter or _, n is an arbitrary formula. <br>
+ <td> x is a string consisting of alphanumeric and _ characters beginning with a alphabetical character, n is an arbitrary formula. <br>
   Unassigned array elements are initialized to zero. <br>
-  Rounded to an integer array indices. <br>
- Upper bound of the array index is 65535. <br>
- If you use negative numbers in an array index, considers the end of array indices. <br>
+  Array indices are rounded to an integer. <br>
+  Upper bound of the array index is 65535. <br>
+  If you use negative numbers in an array index, considers the end of array indices. <br>
  </td>
 </tr>
 </table>
@@ -311,12 +313,12 @@ With respect to least squares linear graph and finds the same coefficient in the
 <tr>
  <td> def func (a, b ,...) {exp} </td>
  <td> Parameter a, b, ... to define the function func. <br>
-  When you pass a dummy argument array @ Please specify as a.
+  When you pass a argument array please specify as @a.
   Arrays are passed by reference. <br>
-  The exp can be any numeric expression, the following limitations. <br>
+  The exp can be any numeric expression with the following limitations. <br>
   <ul>
-   <li> Parameters (% 0 and% F0001) is not available.
-   <li> Dif function (), sum () is not available.
+   <li> Parameters (%0 and %F0001) is not available.
+   <li> dif() and sum()  function is not available.
    <li> You can not nest function definitions.
   </ul>
  </td>
@@ -413,24 +415,24 @@ With respect to least squares linear graph and finds the same coefficient in the
  </tr>
 </table>
 <dl>
- <dt> and AND exp1 &amp;&amp; exp2 (exp1, exp2) differences.</dt>
+ <dt> The differences between AND(exp1, exp2) and exp1 &amp;&amp; exp2.</dt>
  <dd>
-      <p> exp1 &amp;&amp; exp2 exp2 is not evaluated is false exp1. 
-      Exp1 is true and returns the evaluated value exp2. </p>
+      <p> exp1 &amp;&amp; exp2 exp2 is not evaluated if exp1 is false. 
+      When exp1 is true, the evaluated value of the formula is the evaluated value of exp2. </p>
       </dd>
  <dt> exp1 || OR and exp2 (exp1, exp2) differences.</dt>
  <dd>
-      <p> exp1 || exp2 exp2 is not evaluated is true exp1.
+      <p> exp1 || exp2 exp2 is not evaluated if exp1 is true.
       Is also true if exp1 exp1, exp1 is false, returns the evaluated value exp2. </p>
       </dd>
  <dt> =
  <dd>
       <p> = Represents the end of the formula (optional).
-      Can continue after another expression after the equal sign. </p>
+      Another expression can be continued after the equal sign. </p>
       </dd>
  <dt> Parentheses ()
  <dd>
-      <p> Parentheses () does not limit the number of. </p>
+      <p> There are no limitation on the number of Parentheses (). </p>
       </dd>
 </dl>
 </div>
@@ -442,7 +444,7 @@ With respect to least squares linear graph and finds the same coefficient in the
 <p>
 <ul>
 <li> The argument can be omitted. 0 is passed if the argument is omitted.
- <li> IF () function of the number of nesting, DIF (), SUM () function no longer limit the number.
+ <li> IF() function of the number of nesting, DIF(), SUM() function no longer limit the number.
  <li> The arguments are evaluated from left to right.
 </ul>
 </p>
@@ -563,7 +565,7 @@ With respect to least squares linear graph and finds the same coefficient in the
  </tr>
  <tr>
   <td> SRAND(x) </td>
-  <td> RAND () to set a new species of pseudo-random integer sequence produced by the function. </td>
+  <td> RAND() to set a new species of pseudo-random integer sequence produced by the function. </td>
  </tr>
  <tr>
   <td> THETA(x) </td>
@@ -581,10 +583,10 @@ With respect to least squares linear graph and finds the same coefficient in the
   <td> ICGAM(m, x) </td>
   <td> The incomplete gamma function Γ(μ, x) </td>
  </tr>
-<tr>
-<td> ERF(x) </td>
-<td> The error function Erf(x) </td>
-</tr>
+ <tr>
+  <td> ERF(x) </td>
+  <td> The error function Erf(x) </td>
+ </tr>
  <tr>
   <td> ERFC(x) </td>
   <td> Erfc complementary error function(x) </td>
@@ -705,10 +707,10 @@ With respect to least squares linear graph and finds the same coefficient in the
   <td> MJD2YDAY(mjd) </td>
   <td> Total number of days from January 1 of the modified Julian day corresponding to the Gregorian calendar (366-1). </td>
  </tr>
-<tr>
- <td> TIME() </td>
- <td> returns the number of seconds elapsed from the epoch (00:00:00 UTC, January 1, 1970). </td>
-</tr>
+ <tr>
+  <td> TIME() </td>
+  <td> returns the number of seconds elapsed from the epoch (00:00:00 UTC, January 1, 1970). </td>
+ </tr>
 </table>
 <br>
 <h3> Logic function </h3>
@@ -719,12 +721,12 @@ With respect to least squares linear graph and finds the same coefficient in the
 </p>
 <table border=1>
  <tr>
-  <td> EQ (x, y, prec) </td>
+  <td> EQ(x, y, prec) </td>
   <td> True when x = y (= 1).
    You can specify the precision of comparison prec (prec == 0 is exact). </td>
  </tr>
  <tr>
-  <td> NEQ (x, y, preq) </td>
+  <td> NEQ(x, y, preq) </td>
   <td> True if x ≠ y (= 1).
    You can specify the precision of comparison prec (prec == 0 is exact). </td>
  </tr>
@@ -1097,13 +1099,13 @@ With respect to least squares linear graph and finds the same coefficient in the
      <br>
      MARKSIZE(), COLOR() function is not a mathematical function, the size of each plotted mark is a function that specifies the color.
      For example, (x, y, z) has a data file consisting of three columns, so if you want to change the size of the mark value of z
-     <p> MARKSIZE(% 03) </p>
+     <p> MARKSIZE(%03) </p>
      And.
-     And this is just 03% it will be any data to be plotted, using the above =
-     <p> MARKSIZE(% 03) = Y </p>
+     And this is just %03 it will be any data to be plotted, using the above =
+     <p> MARKSIZE(%03) = Y </p>
      The correct usage of that.
      COLOR() function in the same
-     <p> COLOR(3,% 03) = Y </p>
+     <p> COLOR(3,%03) = Y </p>
      Would use.
      <br>
  <li> <b>PROG1() function, PROG2(), PROGN() Example</b>
