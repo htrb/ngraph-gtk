@@ -1,3 +1,12 @@
+2012-01-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (cell_focus_out, start_editing): connect
+	"cell_focus_out()" to "focus-out-event" only when the version of
+	GTK+ is 3.0.
+
+	* src/gtk/gtk_ruler.c (get_thickness): added.
+	(nruler_size_request, nruler_draw_ticks, nruler_draw_pos): use "get_thickness()".
+
 2012-01-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ox11menu.c (mx_get_locale): added.

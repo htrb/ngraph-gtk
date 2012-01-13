@@ -134,6 +134,7 @@ create_column(n_list_store *list, int i, int j)
     g_object_set((GObject *) renderer,
 		 "editable", list[i].editable, 
 		 "ellipsize", list[i].ellipsize, 
+		 "ellipsize-set", list[i].ellipsize != PANGO_ELLIPSIZE_NONE,
 		 NULL);
     g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
     if (list[i].color){
