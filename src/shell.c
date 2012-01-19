@@ -560,6 +560,7 @@ struct cmdtabletype cmdtable[] = {
                   {"get",      cmget},
                   {"put",      cmput},
                   {"cpy",      cmcpy},
+                  {"dup",      cmdup},
                   {"move",     cmmove},
                   {"movetop",  cmmovetop},
                   {"moveup",   cmmovetop},

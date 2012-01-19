@@ -1,3 +1,27 @@
+2012-01-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.h (AxisDialog): remove member "del_btn" and "CanDel".
+
+	* src/gtk/x11view.c (ViewerAlignType): added.
+	(ViewerEvKeyDown): actions related to delete and change order of
+	objects are managed in "GtkAction".
+	(ViewerPopupMenu): removed.
+	(ViewerUpdateCB): added.
+	(CmEditMenuCB): manage actions related to change order of an
+	object.
+
+	* src/gtk/x11axis.c (AxisDialogSetup): remove redundant call of
+	the function "gtk_widget_set_sensitive()".
+	(AxisDialog): the parameter "candel" is not used.
+
+	* src/gtk/x11menu.c (ActionEntry): "Edit/drow Order" menu item is added.
+
+	* addin/timer.nsc (rectangle): use "dup" command.
+
+	* src/shell.c (cmdtable): add internal command "dup".
+
+	* src/shellcm.c (cmdup): added.
+
 2012-01-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (cell_focus_out, start_editing): connect

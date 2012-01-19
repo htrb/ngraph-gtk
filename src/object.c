@@ -2327,7 +2327,7 @@ newobj_alias(struct objlist *obj, const char *name)
   if (instcur == NULL) {
     obj->root=instnew;
   } else {
-    instcur[nextp].inst = instnew;
+    instcur[nextp].inst = instnew; /* nextp != -1 when instcur in not NULL */
   }
   if (nextp != -1) {
     instnew[nextp].inst = NULL;

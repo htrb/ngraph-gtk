@@ -86,6 +86,15 @@ enum EvalDialogColType {
   EVAL_DIALOG_COL_TYPE_N,
 };
 
+enum ViewerAlignType {
+  VIEW_ALIGN_LEFT,
+  VIEW_ALIGN_RIGHT,
+  VIEW_ALIGN_HCENTER,
+  VIEW_ALIGN_TOP,
+  VIEW_ALIGN_VCENTER,
+  VIEW_ALIGN_BOTTOM,
+};
+
 #define POINT_LENGTH 5
 #define FOCUS_FRAME_OFST 5
 #define FOCUS_RECT_SIZE 6
@@ -4638,27 +4647,9 @@ ViewerEvKeyDown(GtkWidget *w, GdkEventKey *e, gpointer client_data)
   case GDK_KEY_space:
     CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
     return TRUE;
-  case GDK_KEY_Delete:
-    ViewDelete();
-    return TRUE;
-  case GDK_KEY_Return:
-    ViewUpdate();
-    return TRUE;
   case GDK_KEY_Insert:
     ViewCopy();
     return TRUE;
-  case GDK_KEY_Home:
-    if (e->state & GDK_SHIFT_MASK) {
-      reorder_object(OBJECT_MOVE_TYPE_TOP);
-      return TRUE;
-    }
-    break;
-  case GDK_KEY_End:
-    if (e->state & GDK_SHIFT_MASK) {
-      reorder_object(OBJECT_MOVE_TYPE_LAST);
-      return TRUE;
-    }
-    break;
   case GDK_KEY_Page_Up:
     range_increment(d->VScroll, -SCROLL_INC * 4);
     return TRUE;
@@ -6093,25 +6084,9 @@ ViewCross(int state)
 }
 
 void
-ViewerPopupMenu(GtkAction *w, gpointer client_data)
+ViewerUpdateCB(GtkAction *w, gpointer client_data)
 {
-  switch (GPOINTER_TO_INT(client_data)) {
-  case VIEW_UPDATE:
-    ViewUpdate();
-    break;
-  case VIEW_TOP:
-    reorder_object(OBJECT_MOVE_TYPE_TOP);
-    break;
-  case VIEW_LAST:
-    reorder_object(OBJECT_MOVE_TYPE_LAST);
-    break;
-  case VIEW_UP:
-    reorder_object(OBJECT_MOVE_TYPE_UP);
-    break;
-  case VIEW_DOWN:
-    reorder_object(OBJECT_MOVE_TYPE_DOWN);
-    break;
-  }
+  ViewUpdate();
 }
 
 gboolean
@@ -6166,6 +6141,18 @@ CmEditMenuCB(GtkAction *w, gpointer client_data)
     break;
   case MenuIdEditFlipVertically:
     FlipFocusedObj(FLIP_DIRECTION_VERTICAL);
+    break;
+  case MenuIdEditOrderTop:
+    reorder_object(OBJECT_MOVE_TYPE_TOP);
+    break;
+  case MenuIdEditOrderUp:
+    reorder_object(OBJECT_MOVE_TYPE_UP);
+    break;
+  case MenuIdEditOrderDown:
+    reorder_object(OBJECT_MOVE_TYPE_DOWN);
+    break;
+  case MenuIdEditOrderBottom:
+    reorder_object(OBJECT_MOVE_TYPE_LAST);
     break;
   }
 }

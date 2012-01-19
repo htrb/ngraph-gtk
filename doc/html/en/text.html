@@ -26,8 +26,8 @@ Font mapping is defined during installation <br>
 <br>
 <table border=1>
  <tr>
-  <td> Ngraph defined name </td>
-  <td> Font Name </td>
+  <th> Ngraph defined name </th>
+  <th> Font Name </th>
  </tr>
  <tr>
   <td> Serif </td>
@@ -68,11 +68,11 @@ To insert control characters in the Legend text string in the Text dialog box, y
  </tr>
  <tr>
   <td> \B </td>
-  <td> Subsequent characters are in bold (bold) which </td>
+  <td> Subsequent characters are in bold which </td>
  </tr>
  <tr>
   <td> \I </td>
-  <td> Subsequent characters in italics (italic) becomes </td>
+  <td> Subsequent characters in italics becomes </td>
  </tr>
  <tr>
   <td> \N </td>
@@ -83,11 +83,11 @@ To insert control characters in the Legend text string in the Text dialog box, y
   <td> Equivalent to the space </td>
  </tr>
  <tr>
-  <td> \B </td>
+  <td> \b </td>
   <td> Backspace (width &#39;h&#39;) </td>
  </tr>
  <tr>
-  <td> \N </td>
+  <td> \n </td>
   <td> Break </td>
  </tr>
  <tr>
@@ -112,7 +112,7 @@ To insert control characters in the Legend text string in the Text dialog box, y
   <td> To change the font alias names </td>
  </tr>
  <tr>
-  <td> % S{integer} </td>
+  <td> %S{integer} </td>
   <td> To specify the font size in points </td>
  </tr>
  <tr>
@@ -142,7 +142,7 @@ To insert control characters in the Legend text string in the Text dialog box, y
 <b>Shaping</b>
 <table border=1>
  <tr>
-  <td> %Pf{format value} </td>
+  <td> %pf{format value} </td>
   <td> format and output the value in the format
    <ul>
     <li> For more information, please see the format man 3 printf.
@@ -153,8 +153,8 @@ To insert control characters in the Legend text string in the Text dialog box, y
    </ul>
    <br>
    For example: <br>
-   % Pf {% e 1} is 1.000000e +00 <br>
-   % Pf {% 2.2f% [exp (1)]} is 2.72
+   %pf{%e 1} is 1.000000e+00 <br>
+   %pf{%2.2f %[exp(1)]} is 2.72
   </td>
  </tr>
 </table>
@@ -163,7 +163,7 @@ To insert control characters in the Legend text string in the Text dialog box, y
 <b>Object</b>
 <table border=1>
  <tr>
-  <td> %{Object:id:field parameter} </td>
+  <td> %{object:id:field parameter} </td>
   <td> Object (object) instance (id) field (field) value of </td>
  </tr>
 </table>
@@ -172,116 +172,116 @@ To insert control characters in the Legend text string in the Text dialog box, y
 <b>Example of Specifying an object</b>
 <table border=1>
  <tr>
-  <td> %{System::date 0} </td>
+  <td> %{system::date 0} </td>
   <td> Type Date Fri Feb 2 1990 </td>
  </tr>
  <tr>
-  <td> %{System::date 1} </td>
+  <td> %{system::date 1} </td>
   <td> Type the date of 2-2-1990 </td>
  </tr>
  <tr>
-  <td> %{System::date 2} </td>
+  <td> %{system::date 2} </td>
   <td> Type the date of Feb 2 1990 </td>
  </tr>
  <tr>
-  <td> %{System::time 0} </td>
+  <td> %{system::time 0} </td>
   <td> Types time 00:00:00 </td>
  </tr>
  <tr>
-  <td> %{System::time 1} </td>
+  <td> %{system::time 1} </td>
   <td> Types time 12:00:00 am </td>
  </tr>
  <tr>
-  <td> %{System::time 2} </td>
+  <td> %{system::time 2} </td>
   <td> Types time 00:00 </td>
  </tr>
  <tr>
-  <td> %{System::time 3} </td>
+  <td> %{system::time 3} </td>
   <td> Types time 12:00 am </td>
  </tr>
  <tr>
-  <td> %{Menu::ngp} </td>
+  <td> %{menu::ngp} </td>
   <td> ngp file name </td>
  </tr>
  <tr>
-  <td> %{Menu::fullpath_ngp} </td>
+  <td> %{menu::fullpath_ngp} </td>
   <td> NGP full path name of file </td>
  </tr>
  <tr>
-  <td> %{File:X:file} </td>
+  <td> %{file:X:file} </td>
   <td> The file name (X is the file number) </td>
  </tr>
  <tr>
-  <td> %{File:X:basename} </td>
+  <td> %{file:X:basename} </td>
   <td> File name without the folder name (X is the file number) </td>
  </tr>
  <tr>
-  <td> %{File:X:date 0} </td>
+  <td> %{file:X:date 0} </td>
   <td> Date of the file </td>
  </tr>
  <tr>
-  <td> %{File:X:time 0} </td>
+  <td> %{file:X:time 0} </td>
   <td> File times </td>
  </r>
  <tr>
-  <td> %{File:X:column:lc} </td>
+  <td> %{file:X:column:lc} </td>
   <td> The contents of the file c l column in a row </td>
  </tr>
   <tr>
-   <td> %{File:X:dnum} </td>
+   <td> %{file:X:dnum} </td>
    <td> X number of data files </td>
   </tr>
   <tr>
-   <td> %{File:X:dx n} </td>
+   <td> %{file:X:dx n} </td>
    <td> The n-th row of the file X (x) </td>
   </tr>
   <tr>
-   <td> %{File:X:dminx} </td>
+   <td> %{file:X:dminx} </td>
    <td> The minimum value of file X (x) </td>
   </tr>
   <tr>
-   <td> %{File:X:dmaxx} </td>
+   <td> %{file:X:dmaxx} </td>
    <td> Maximum file X (x) </td>
   </tr>
   <tr>
-   <td> %{File:X:davx} </td>
+   <td> %{file:X:davx} </td>
    <td> Files average X (x) </td>
   </tr>
   <tr>
-   <td> %{File:X:dsigx} </td>
+   <td> %{file:X:dsigx} </td>
    <td> The standard deviation of file X (x) </td>
   </tr>
   <tr>
-   <td> %{File:X:dy n} </td>
+   <td> %{file:X:dy n} </td>
    <td> The n-th row of the file X (y) </td>
   </tr>
   <tr>
-   <td> %{File:X:dminy} </td>
+   <td> %{file:X:dminy} </td>
    <td> The minimum value of file X (y) </td>
   </tr>
   <tr>
-   <td> %{File:X:dmaxy} </td>
+   <td> %{file:X:dmaxy} </td>
    <td> Maximum file X (y) </td>
   </tr>
   <tr>
-   <td> %{File:X:davy} </td>
+   <td> %{file:X:davy} </td>
    <td> Files average X (y) </td>
   </tr>
   <tr>
-   <td> %{File:X:dsigy} </td>
+   <td> %{file:X:dsigy} </td>
    <td> The standard deviation of file X (y) </td>
   </tr>
   <tr>
-   <td> %{File:X:calc:a} </td>
+   <td> %{file:X:calc:a} </td>
    <td> Fit plot of file types when X, f the results of the fit (x) f for (a) is calculated. </td>
   </tr>
   <tr>
-   <td> %{File:X:newton:ab} </td>
+   <td> %{file:X:newton:a b} </td>
    <td> Fit plot of file types when X, f the results of the fit (x) f For (x) obtained by Newton&#39;s method as an initial value x = a and x = b. </td>
   </tr>
   <tr>
-   <td> %{Fit:0:% 00} </td>
-   <td> fit:0:% 00 </td>
+   <td> %{fit:0:%00} </td>
+   <td> fit:0:%00 </td>
   </tr>
  </table>
  </div>

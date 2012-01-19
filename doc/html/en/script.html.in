@@ -28,39 +28,39 @@
 <p>Ngraph script grammar, sh on UNIX (shell) by removing the job from the control function has been added to the object manipulation instructions. </p>
 <p>equivalent command sh syntax is as follows (for details on the syntax of sh, please refer to the documentation for UNIX). </p>
 <h3> Command </h3>
-<p> name1 = val1 name2 = val2 ... command arg1 arg2 arg3 ... </p>
+<p> name1=val1 name2=val2 ... command arg1 arg2 arg3 ... </p>
 <h3> Comment </h3>
 <p> # Comment </p>
 <h3> Control structure </h3>
 <p> (For, case, if, while, the statement until) </p>
 <p>
 for name [in word] do list done <br>
-case word in [patterm [| pattern] ... list;;] ... esac <br>
+case word in [pattern [| pattern] ... list;;] ... esac <br>
 if list then list [elif list then list ]...[ else list] fi <br>
 while list do list done <br>
 until list do list done <br>
 </p>
 <h3> Function definition </h3>
-<p> name () {list;} </p>
+<p> name() {list;} </p>
 <p> ({} Is always required) </p>
 <h3> File name substitution </h3>
 <p> ? [] </p>
 <h3> Command substitution </h3>
 <p> `Command` </p>
 <h3> Variable definition </h3>
-<p> name = value [name = value] ... </p>
+<p> name=value [name=value] ... </p>
 <h3> Variable substitution </h3>
 <p>
-$ # $? $ Num $ * $ @ <br>
-$ {Name} <br>
-$ {Name:-word} <br>
-$ {Name: = word} <br>
-$ {Name:? Word} <br>
-$ {Name: + word} <br>
-$ {Name # word} <br>
-$ {Name # # word} <br>
-$ {Name% word} <br>
-$ {Name%% word} <br>
+$# $? $num $* $@ <br>
+${Name} <br>
+${Name:-word} <br>
+${Name:=word} <br>
+${Name:?Word} <br>
+${Name:+word} <br>
+${Name#word} <br>
+${Name##word} <br>
+${Name%word} <br>
+${Name%%word} <br>
 </p>
 <h3> Redirect the pipe </h3>
 <p>
@@ -103,24 +103,25 @@ which [-q] <br>
 <br>
 <h3> Object definition </h3>
 <p> (Set the value to the field of instance_list for object) </p>
-<p> object: instance_list: field = value </p>
+<p> object:instance_list:field=value </p>
 <h3> Object replacement </h3>
 <p> (The value of field instance_list for object) </p>
-<p> $ {Object: instance_list: field = argument} </p>
+<p> ${Object:instance_list:field=argument} </p>
 <h3> Object operation command </h3>
 <p>
-new object [field = value, ...] <br>
-del object: instance_list <br>
-exist [-q] object: instance_list <br>
-get object: instance_list [-write-field-id-quote] field = argument ... <br>
-put object: instance_list field = value ... <br>
-exe object: instance_list field = argument ... <br>
-cpy object: source, destination [, destination ,...] field ... <br>
-move object: instance1, instance2 <br>
-movetop object: instance <br>
-movelast object: instance <br>
-exch object: instance1, instance2 <br>
-object [object1 object2 ... [-name-version-parent-id-field-size-current-last-instnace-instances] [field ...]] <br>
+new object [field=value, ...] <br>
+del object:instance_list <br>
+exist [-q] object:instance_list <br>
+get object:instance_list [-write -field -id -quote] field=argument ... <br>
+put object:instance_list field=value ... <br>
+exe object:instance_list field=argument ... <br>
+cpy object:source,destination[,destination,...] field ... <br>
+dup object:instance_list <br>
+move object:instance1,instance2 <br>
+movetop object:instance <br>
+movelast object:instance <br>
+exch object:instance1,instance2 <br>
+object [object1 object2 ... [-name -version -parent -id -field- size -current -last -instnace -instances] [field ...]] <br>
 derive [-instance] object <br>
 </p>
 <h3> Ratings command </h3>
@@ -153,7 +154,7 @@ Own macro language script file startup Ngraph (Ngraph script) has been described
       are passed to the startup script files.
  <li> State distribution, the startup script file
       <ol>
-       <li> Specify the user interface to boot (system:: login_shell)
+       <li> Specify the user interface to boot (system::login_shell)
        <li> Reading Ngraph.ngp (Ngraph.ngp the [Settings] - [Save As
 	    initial state (graph) can be created).
        <li> Parsing Command Line Options

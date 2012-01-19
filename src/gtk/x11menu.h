@@ -63,6 +63,10 @@ enum MenuID {
   MenuIdToggleCToolbar,
   MenuIdTogglePToolbar,
   MenuIdToggleCrossGauge,
+  MenuIdEditOrderTop,
+  MenuIdEditOrderUp,
+  MenuIdEditOrderDown,
+  MenuIdEditOrderBottom,
 };
 
 enum DrawLockVal {DrawLockNone, DrawLockDraw, DrawLockExpose};

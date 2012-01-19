@@ -49,30 +49,6 @@ enum FOCU_OBJ_TYPE {
   FOCUS_OBJ_TYPE_TEXT   = 0x08,
 };
 
-enum ViewerPopupIdn {
-  VIEW_UPDATE = 1,
-  VIEW_DELETE,
-  VIEW_CUT,
-  VIEW_COPY,
-  VIEW_PASTE,
-  VIEW_DUP,
-  VIEW_TOP,
-  VIEW_LAST,
-  VIEW_UP,
-  VIEW_DOWN,
-  VIEW_CROSS,
-  VIEW_ALIGN_LEFT,
-  VIEW_ALIGN_RIGHT,
-  VIEW_ALIGN_HCENTER,
-  VIEW_ALIGN_TOP,
-  VIEW_ALIGN_VCENTER,
-  VIEW_ALIGN_BOTTOM,
-  VIEW_ROTATE_CLOCKWISE,
-  VIEW_ROTATE_COUNTER_CLOCKWISE,
-  VIEW_FLIP_HORIZONTAL,
-  VIEW_FLIP_VERTICAL,
-};
-
 void ViewerWinSetup(void);
 void ViewerWinClose(void);
 void ViewerWinUpdate(void);
@@ -91,5 +67,5 @@ int data_dropped(char **filenames, int num, int file_type);
 void draw_paper_frame(void);
 void CmEditMenuCB(GtkAction *w, gpointer client_data);
 void ViewCross(int state);
-void ViewerPopupMenu(GtkAction *w, gpointer client_data);
+void ViewerUpdateCB(GtkAction *w, gpointer client_data);
 int check_focused_obj_type(const struct Viewer *d, int *type);

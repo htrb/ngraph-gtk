@@ -91,7 +91,7 @@ described below.
 <h2> <a href=./addin.html#TOP>legend.nsc Operation</a> </h2>
 <p> legend.nsc to launch an external program is legend.tcl.  Create an intermediate file that describes the current state of Ngraph legend.tcl need first. </p>
 <pre>
- DATALIST = ${system:0:temp_file}
+ DATALIST=${system:0:temp_file}
  object file -instance &gt; &quot;$DATALIST&quot;
  get file:0-! -id -field file xy type &gt;&gt; &quot;$DATALIST&quot;
 </pre>
@@ -104,15 +104,15 @@ legend.tcl) is a unique format.  Contents of this file that lists the
 status of the current set of data files Ngraph
 </p>
 <pre>
- One
+ 1
  demo1.dat
- One
- Two
+ 1
+ 2
  mark
 </pre>
 <p> Look something like this.  Then </p>
 <pre>
- SCRIPT = ${system:0:temp_file}                                          
+ SCRIPT=${system:0:temp_file}
 </pre>
 <p>
 Another to get temporary file name for output legend.tcl in the SCRIPT
@@ -133,9 +133,9 @@ SCRIPT
 </p>
 <pre>
  new text
- text::x = 0
- text::y = 0
- text::text = &quot;STRING&quot;
+ text::x=0
+ text::y=0
+ text::text=&quot;STRING&quot;
 </pre>
 <p>
   And. Also when you make changes to the chart, &quot;menu::modified =
@@ -143,12 +143,12 @@ SCRIPT
   you close the chart. To run this script
 </p>
 <pre>
- if [-f &quot;$SCRIPT&quot;];                                                  
- then                                                                  
- new shell                                                     
- shell::shell &quot;$SCRIPT&quot;                                        
- del shell                                                     
- fi                                                                    
+ if [ -f &quot;$SCRIPT&quot; ];
+ then
+ new shell
+ shell::shell &quot;$SCRIPT&quot;
+ del shell
+ fi
 </pre>
 <p>
 Is. Now, if you are not there is a file that contains the SCRIPT
@@ -158,7 +158,7 @@ at the end or delete an instance (del) has.
 </p>
 <pre>
  system:0:unlink_temp_file &quot;$DATALIST&quot;
- system:0:unlink_temp_file &quot;$SCRIPT&quot;                                
+ system:0:unlink_temp_file &quot;$SCRIPT&quot;
 </pre>
 <p> Finally, the intermediate files no longer needed ($DATALIST) and script files ($SCRIPT) to delete the. </p>
 <br>
@@ -169,23 +169,25 @@ at the end or delete an instance (del) has.
 <p> Add-in script that starts an external program, </p>
 <pre>
  ... To generate the required intermediate files to an external program.
- SCRIPT = ${system:0:temp_file}                                          
+ SCRIPT=${system:0:temp_file}
  Intermediate external program filename &quot;$SCRIPT&quot;
- if [-f &quot;$SCRIPT&quot;];                                                  
- then                                                                  
- new shell                                                     
- shell::shell &quot;$SCRIPT&quot;                                        
- del shell                                                     
- fi                                                                    
+ if [ -f &quot;$SCRIPT&quot; ];
+ then
+ new shell
+ shell::shell &quot;$SCRIPT&quot;
+ del shell
+ fi
  system:0:unlink_temp_file &quot;$SCRIPT&quot;
 </pre>
 <p> And. </p>
 <p> Of course, if there is no need to get the current state of the Ngraph, </p>
 <pre>
- SCRIPT = ${system:0:temp_file}
+ SCRIPT=${system:0:temp_file}
  external program name &quot;$SCRIPT&quot;
- if [-f &quot;$SCRIPT&quot;];
- then new shell shell::shell &quot;$SCRIPT&quot;
+ if [ -f &quot;$SCRIPT&quot; ];
+ then
+ new shell
+ shell::shell &quot;$SCRIPT&quot;
  del shell
  fi
  system:0:unlink_temp_file &quot;$SCRIPT&quot;
@@ -196,10 +198,10 @@ at the end or delete an instance (del) has.
 <br>
 <a name=DATA>&nbsp;</a>
 <h2> <a href=./addin.html#TOP>Add-in scripts to handle data</a> </h2>
-<p> You can also work directly with the data from the add-in scripts.  Describes the text as an example - in.nsc.  Suppose the following data files. </p>
+<p> You can also work directly with the data from the add-in scripts.  Describes text-in.nsc as an example. Suppose the following data files. </p>
 <pre>
  ===== Test.dat =========
- 0 0 sampleA 
+ 0 0 sampleA
  1 1 sampleB
  2 2 sampleC
  ======================
@@ -217,7 +219,7 @@ columns of text, variable (COLUMN) and assign it to.
 </p>
 <pre>
  new dialog
- COLUMN = ${dialog::input:&#39;Input legend-text column&#39;}
+ COLUMN=${dialog::input:&#39;Input legend-text column&#39;}
  del dialog
 </pre>
 <p>
@@ -244,8 +246,8 @@ file::coord_x, file::coord_y enter the, line The number file::line enter
 the. We set the coordinates of the text was produced using them.
 </p>
 <pre>
- text::x = ${file:0:coord_x} 
- text::y = ${file:0:coord_y}
+ text::x=${file:0:coord_x}
+ text::y=${file:0:coord_y}
 </pre>
 <p>
 Also file:the tokens are used for column column.  file::The first
@@ -254,7 +256,7 @@ the second argument is used to retrieve the value of the COLUMN variable
 number of columns.  Tokens extracted text:Set the text.
 </p>
 <pre>
- text::text = `get file:0-field column:&quot;${file:0:line} ${COLUMN}&quot;`
+ text::text=`get file:0-field column:&quot;${file:0:line} ${COLUMN}&quot;`
 </pre>
 <p>
 However, file::column does not want to get the string to scan from the

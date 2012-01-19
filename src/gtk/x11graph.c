@@ -665,7 +665,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     vbox = gtk_vbox_new(FALSE, 4);
 
-    label = gtk_label_new_with_mnemonic(_("_Draw Order"));
+    label = gtk_label_new_with_mnemonic(_("_Draw order"));
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 4);
 
     w = list_store_create(sizeof(list) / sizeof(*list), list);

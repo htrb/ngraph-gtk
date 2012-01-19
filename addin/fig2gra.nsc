@@ -201,7 +201,7 @@ fig2gra() {
     RESOLUTION=${iarray:fig2gra:get:0}
 
     regexp:fig2gra:@='^a\W'
-    io::mode="w"
+    io:fig2gra:mode="w"
 
     io:fig2gra:open "$2"
     io:fig2gra:puts ${system::GRAF}

@@ -43,6 +43,12 @@
       <menuitem name="EditPaste" action="EditPasteAction"/>
       <menuitem name="EditDelete" action="EditDeleteAction"/>
       <separator/>
+      <menu name="EditOrder" action="EditOrderAction">
+        <menuitem name="EditOrderTop" action="EditOrderTopAction"/>
+        <menuitem name="EditOrderUp" action="EditOrderUpAction"/>
+        <menuitem name="EditOrderDown" action="EditOrderDownAction"/>
+        <menuitem name="EditOrderBottom" action="EditOrderBottomAction"/>
+      </menu>
       <menu name="EditAlign" action="EditAlignAction">
         <menuitem name="EditAlignLeft" action="EditAlignLeftAction"/>
         <menuitem name="EditAlignVCenter" action="EditAlignVCenterAction"/>
@@ -81,7 +87,7 @@
     </menu>
     <menu name="DataMenu" action="DataMenuAction">
       <menuitem name="DataAdd" action="DataAddAction"/>
-      <menuitem name="DataRecent" action="DataRecentAction" />
+      <menuitem name="DataRecent" action="DataRecentAction"/>
       <separator/>
       <menuitem name="DataProperty" action="DataPropertyAction"/>
       <menuitem name="DataClose" action="DataCloseAction"/>
@@ -223,10 +229,10 @@
       <menuitem name="EditFlipV" action="EditFlipVActiopn"/>
     </menu>
     <separator/>
-    <menuitem name="PopupTop" action="PopupTopAction"/>
-    <menuitem name="PopupUp" action="PopupUpAction"/>
-    <menuitem name="PopupDown" action="PopupDownAction"/>
-    <menuitem name="PopupBottom" action="PopupBottomAction"/>
+    <menuitem name="EditOrderTop" action="EditOrderTopAction"/>
+    <menuitem name="EditOrderUp" action="EditOrderUpAction"/>
+    <menuitem name="EditOrderDown" action="EditOrderDownAction"/>
+    <menuitem name="EditOrderBottom" action="EditOrderBottomAction"/>
     <separator/>
     <menuitem name="PopupCross" action="ViewCrossGaugeAction"/>
   </popup>

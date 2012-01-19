@@ -52,7 +52,7 @@ name1=val1 name2=val2 ... command arg1 arg2 arg3 ...
 </p>
 <p>
 for name [in word] do list done<br>
-case word in [patterm [|pattern] ...list;;] ... esac<br>
+case word in [pattern [|pattern] ...list;;] ... esac<br>
 if list then list [elif list then list]...[else list] fi<br>
 while list do list done<br>
 until list do list done<br>
@@ -151,6 +151,7 @@ get object:instance_list [-write -field -id -quote] field=argument ...<br>
 put object:instance_list field=value ...<br>
 exe object:instance_list field=argument ...<br>
 cpy object:source,destination[,destination,...] field ...<br>
+dup object:instance_list <br>
 move object:instance1,instance2<br>
 movetop object:instance<br>
 movelast object:instance<br>

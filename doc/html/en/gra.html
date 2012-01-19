@@ -39,15 +39,15 @@ This example shows the file under the GRA. <br>
 <pre>
  % Ngraph GRAF
  % Creator: Ngraph ver 6.00.01
- I, 5,0,0,21000,29700,10000
- V, 5,0,0,21000,29700,1
- G, 3,0,0,0
- A, 5,0,40,2,0,1000
- L, 4,3500,22000,17500,22000
- L, 4,3500,22000,3500,8000
- L, 4,3500,8000,17500,8000
- L, 4,17500,22000,17500,8000
- E, 0
+ I,5,0,0,21000,29700,10000
+ V,5,0,0,21000,29700,1
+ G,3,0,0,0
+ A,5,0,40,2,0,1000
+ L,4,3500,22000,17500,22000
+ L,4,3500,22000,3500,8000
+ L,4,3500,8000,17500,8000
+ L,4,17500,22000,17500,8000
+ E,0
 </pre>
 <p> The first line of the GRA GRA file is a file identifier
 <pre>
@@ -88,7 +88,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> I </td>
   <td> Initialization instruction </td>
-  <td> I, 5, arg1, arg2, arg3, arg4, arg5 </td>
+  <td> I,5,arg1,arg2,arg3,arg4,arg5 </td>
  </tr>
 </table>
 <p>
@@ -118,7 +118,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> E </td>
   <td> End instruction </td>
-  <td> E, 0 </td>
+  <td> E,0 </td>
  </tr>
 </table>
 <ul>
@@ -148,7 +148,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> V </td>
   <td> Clipping region, the origin move instruction </td>
-  <td> V, 5, arg1, arg2, arg3, arg4, arg5 </td>
+  <td> V,5,arg1,arg2,arg3,arg4,arg5 </td>
  </tr>
 </table>
 <dl>
@@ -180,7 +180,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> A </td>
   <td> Command line attributes specified </td>
-  <td> A, n, arg1, arg2 ,.... </td>
+  <td> A,n,arg1,arg2 ,.... </td>
  </tr>
 </table>
 <dl>
@@ -218,7 +218,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> G </td>
   <td> Specify Color Instructions </td>
-  <td> G, 4, arg1, arg2, arg3, arg4 </td>
+  <td> G,4,arg1,arg2,arg3,arg4 </td>
  </tr>
 </table>
 <dl>
@@ -243,7 +243,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> M </td>
   <td> Current point move instructions </td>
-  <td> M, 2, arg1, arg2 </td>
+  <td> M,2,arg1,arg2 </td>
  </tr>
 </table>
 <dl>
@@ -260,7 +260,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> N </td>
   <td> Relative to current point move instructions </td>
-  <td> N, 2, arg1, arg2 </td>
+  <td> N,2,arg1,arg2 </td>
  </tr>
 </table>
 <dl>
@@ -278,7 +278,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> L </td>
   <td> Line drawing instruction </td>
-  <td> L, 4, arg1, arg2, arg3, arg4 </td>
+  <td> L,4,arg1,arg2,arg3,arg4 </td>
  </tr>
 </table>
 <dl>
@@ -299,7 +299,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> T </td>
   <td> Relative to current point line drawing instructions </td>
-  <td> T, 2, arg1, arg2 </td>
+  <td> T,2,arg1,arg2 </td>
  </tr>
 </table>
 <dl>
@@ -319,7 +319,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> C </td>
   <td> Ellipse drawing instructions </td>
-  <td> C, 7, arg1, arg2, arg3, arg4, arg5, arg6, arg7 </td>
+  <td> C,7,arg1,arg2,arg3,arg4,arg5,arg6,arg7 </td>
  </tr>
 </table>
 <dl>
@@ -358,7 +358,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> B </td>
   <td> Rectangle drawing instructions </td>
-  <td> B, 5, arg1, arg2, arg3, arg4, arg5 </td>
+  <td> B,5,arg1,arg2,arg3,arg4,arg5 </td>
  </tr>
 </table>
 <dl>
@@ -386,7 +386,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> P </td>
   <td> Pointillism instruction </td>
-  <td> P, 2, arg1, arg2 </td>
+  <td> P,2,arg1,arg2 </td>
  </tr>
 </table>
 <dl>
@@ -404,7 +404,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> R </td>
   <td> Polygon drawing commands </td>
-  <td> R, n, arg1, arg2, ... </td>
+  <td> R,n,arg1,arg2,... </td>
  </tr>
 </table>
 <dl>
@@ -426,7 +426,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> D </td>
   <td> Rectangular drawing instructions 閉多 </td>
-  <td> D, n, arg1, arg2, ... </td>
+  <td> D,n,arg1,arg2,... </td>
  </tr>
 </table>
 <dl>
@@ -470,7 +470,7 @@ in the string argument is treated as normal characters.
  <tr>
   <td> H </td>
   <td> Instructions given font metrics </td>
-  <td> H, 4, arg1, arg2, arg3, arg4 </td>
+  <td> H,4,arg1,arg2,arg3,arg4 </td>
  </tr>
 </table>
 <dl>

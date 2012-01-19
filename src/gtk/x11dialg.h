@@ -133,7 +133,7 @@ struct FileDialog
   struct FileMove move;
 };
 
-void FileDialog(void *data, struct objlist *obj, int id, int candel);
+void FileDialog(void *data, struct objlist *obj, int id, int multi);
 
 struct EvalDialog
 {
@@ -281,16 +281,15 @@ struct AxisDialog
   /****** local member *******/
   GtkWidget *min, *max, *inc, *div, *scale, *ref, *clear, *margin;
   GtkNotebook *tab;
-  GtkWidget *del_btn;
   struct objlist *Obj;
-  int Id, CanDel, tab_active;
+  int Id, tab_active;
   struct AxisBase base;
   struct AxisFont font;
   struct AxisPos position;
   struct AxisGauge gauge;
   struct AxisNumbering numbering;
 };
-void AxisDialog(void *data, struct objlist *obj, int id, int candel);
+void AxisDialog(void *data, struct objlist *obj, int id, int sub_id);
 
 #define GRID_DIALOG_STYLE_NUM 3
 

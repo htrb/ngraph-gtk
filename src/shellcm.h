@@ -44,6 +44,7 @@ int cmdel(struct nshell *nshell,int argc,char **argv);
 int cmexist(struct nshell *nshell,int argc,char **argv);
 int cmget(struct nshell *nshell,int argc,char **argv);
 int cmput(struct nshell *nshell,int argc,char **argv);
+int cmdup(struct nshell *nshell,int argc,char **argv);
 int cmcpy(struct nshell *nshell,int argc,char **argv);
 int cmmove(struct nshell *nshell,int argc,char **argv);
 int cmmovetop(struct nshell *nshell,int argc,char **argv);

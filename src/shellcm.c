@@ -1097,6 +1097,49 @@ cmput(struct nshell*nshell,int argc,char **argv)
 }
 
 int 
+cmdup(struct nshell *nshell, int argc, char **argv)
+{
+  struct objlist *obj;
+  struct narray iarray;
+  int i, anum, sid, did, *adata;
+
+  if (argc < 2) {
+    sherror4(argv[0], ERROBJARG);
+    return ERROBJARG;
+  }
+
+  arrayinit(&iarray,sizeof(int));
+  if (getobjilist(argv[1], &obj, &iarray, TRUE, NULL)) {
+    return ERR;
+  }
+
+  anum = arraynum(&iarray);
+  adata = arraydata(&iarray);
+  if (anum == 0) {
+    sherror4(argv[0],ERRNONEINST);
+    arraydel(&iarray);
+    return ERRNONEINST;
+  }
+
+  for (i = 0; i < anum; i++) {
+    sid = adata[i];
+    did = newobj(obj);
+    if (did < 0) {
+      arraydel(&iarray);
+      return ERR;
+    }
+
+    if (copy_obj_field(obj, did, sid, NULL)) {
+      arraydel(&iarray);
+      return ERR;
+    }
+  }
+
+  arraydel(&iarray);
+  return 0;
+}
+
+int 
 cmcpy(struct nshell*nshell,int argc,char **argv)
 {
   struct objlist *obj;

@@ -50,12 +50,8 @@ rectangle::fill_G=255
 rectangle::fill=true
 rectangle::stroke=false
 
-new rectangle
+dup rectangle
 rectangle::name="timer"
-rectangle::x1="$BAR_X"
-rectangle::y1="$BAR_Y"
-rectangle::x2="$BAR_X+$BAR_W"
-rectangle::y2="$BAR_Y+$BAR_H"
 rectangle::fill=false
 rectangle::stroke=true
 rectangle::width=120
