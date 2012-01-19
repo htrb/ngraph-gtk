@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: x11opt.c,v 1.81 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "gtk_common.h"
@@ -115,7 +115,7 @@ add_str_with_int_to_array(struct narray *conf, char *str, int val)
 {
   char *buf;
 
-  buf = (char *) g_malloc(BUF_SIZE);    
+  buf = (char *) g_malloc(BUF_SIZE);
   if (buf) {
     snprintf(buf, BUF_SIZE, "%s=%d", str, val);
     arrayadd(conf, &buf);
@@ -281,7 +281,7 @@ set_scrpt_option(GtkWidget *entry, char **opt, char *msg)
 {
   const char *buf;
   char *buf2;
-  
+
 
   buf = gtk_entry_get_text(GTK_ENTRY(entry));
   if (msg && strlen(buf) == 0) {
@@ -681,7 +681,7 @@ FontSettingDialogSetupItem(GtkWidget *w, struct FontSettingDialog *d)
   d->alternative_str = NULL;
 }
 
-static gboolean 
+static gboolean
 AlternativeFontListSelCb(GtkTreeSelection *sel, gpointer user_data)
 {
   int a, n;
@@ -1440,11 +1440,11 @@ MiscDialogClose(GtkWidget *w, void *data)
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->ignorepath));
 
   a = spin_entry_get_val(d->hist_size);
-  if (a <= HIST_SIZE_MAX && a > 0) 
+  if (a <= HIST_SIZE_MAX && a > 0)
     Menulocal.hist_size = a;
 
   a = spin_entry_get_val(d->info_size);
-  if (a <= INFOWIN_SIZE_MAX && a > 0) 
+  if (a <= INFOWIN_SIZE_MAX && a > 0)
     Menulocal.info_size = a;
 
   a = spin_entry_get_val(d->data_head_lines);
@@ -1489,7 +1489,7 @@ ExViewerDialogSetupItem(GtkWidget *w, struct ExViewerDialog *d)
 }
 
 
-static void 
+static void
 use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
   gboolean state;
@@ -1602,7 +1602,7 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
   gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
 }
 
-static void 
+static void
 load_file_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 {
   gboolean state;
@@ -1686,7 +1686,7 @@ ViewerDialogClose(GtkWidget *w, void *data)
   GdkColor color;
 
   d = (struct ViewerDialog *) data;
- 
+
  if (d->ret != IDOK && d->ret != IDSAVE)
     return;
 

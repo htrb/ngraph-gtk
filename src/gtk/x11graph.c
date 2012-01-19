@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: x11graph.c,v 1.57 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "gtk_common.h"
@@ -360,7 +360,7 @@ SwitchDialogInsert(GtkWidget *w, gpointer client_data)
       arrayins(&(d->idrawrable), &a, pos);
     }
   }
-  
+
   if (list) {
     g_list_foreach(list, free_tree_path_cb, NULL);
     g_list_free(list);
@@ -560,7 +560,7 @@ SwitchDialogLast(GtkWidget *w, gpointer client_data)
   d = (struct SwitchDialog *) client_data;
   selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
   list = gtk_tree_selection_get_selected_rows(selected, NULL);
-  
+
   if (list) {
     num = g_list_length(list);
     list = g_list_reverse(list);
@@ -603,7 +603,7 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
   d = (struct SwitchDialog *) client_data;
   selected = gtk_tree_view_get_selection(GTK_TREE_VIEW(d->drawlist));
   list = gtk_tree_selection_get_selected_rows(selected, NULL);
-  
+
   if (list) {
     list = g_list_reverse(list);
     g_list_foreach(list, switch_dialog_remove_cb, d);
@@ -614,7 +614,7 @@ SwitchDialogRemove(GtkWidget *w, gpointer client_data)
   set_drawlist_btn_state(d, FALSE);
 }
 
-static gboolean 
+static gboolean
 drawlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
   int n;
@@ -629,7 +629,7 @@ drawlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
   return FALSE;
 }
 
-static gboolean 
+static gboolean
 objlist_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
   int n;
@@ -1293,7 +1293,7 @@ CmHelpAbout(GtkAction *w, gpointer client_data)
 #endif
 			"wrap-license", TRUE,
 			"authors", Auther,
-			"translator-credits", Translator, 
+			"translator-credits", Translator,
 			"documenters", Documenter,
 			"comments", _("Ngraph is the program to create scientific 2-dimensional graphs for researchers and engineers."),
 			NULL);
@@ -1304,7 +1304,7 @@ check_help_file(void)
 {
   char *file, *ptr, *tmp;
   const char *locale;
-    
+
   locale = n_getlocale();
   if (locale == NULL) {
     goto End;

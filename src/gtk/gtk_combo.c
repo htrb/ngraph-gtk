@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: gtk_combo.c,v 1.1.1.1 2008-05-29 09:37:33 hito Exp $
  */
 
@@ -80,7 +80,7 @@ combo_box_append_text(GtkWidget *cbox, char *str)
 {
   GtkListStore  *list;
   GtkTreeIter iter;
- 
+
   list = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
 
   gtk_list_store_append(list, &iter);

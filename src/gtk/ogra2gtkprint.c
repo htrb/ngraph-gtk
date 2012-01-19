@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: ogra2gtkprint.c,v 1.6 2008-09-18 08:13:43 hito Exp $
  */
 
@@ -32,9 +32,9 @@
 #endif
 
 
-static int 
+static int
 gra2gtkprint_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{  
+{
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv)) {
     return 1;
   }
@@ -42,7 +42,7 @@ gra2gtkprint_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, c
   return 0;
 }
 
-static int 
+static int
 gra2gtkprint_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
@@ -108,8 +108,8 @@ create_cairo(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
 }
 
 static struct objtable gra2gtkprint[] = {
-  {"init", NVFUNC, NEXEC, gra2gtkprint_init, NULL, 0}, 
-  {"done", NVFUNC, NEXEC, gra2gtkprint_done, NULL, 0}, 
+  {"init", NVFUNC, NEXEC, gra2gtkprint_init, NULL, 0},
+  {"done", NVFUNC, NEXEC, gra2gtkprint_done, NULL, 0},
   {"_context", NVFUNC, 0, create_cairo, NULL,0},
 };
 

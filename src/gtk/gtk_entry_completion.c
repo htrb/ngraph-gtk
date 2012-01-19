@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: gtk_entry_completion.c,v 1.8 2010-03-04 08:30:16 hito Exp $
  */
 

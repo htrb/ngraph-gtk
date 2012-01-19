@@ -1,25 +1,25 @@
 // -*- coding: utf-8 -*-
-/* 
+/*
  * $Id: x11file.c,v 1.136 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "gtk_common.h"
@@ -289,7 +289,7 @@ MathDialogMode(GtkWidget *w, gpointer client_data)
 {
   struct MathDialog *d;
   int i;
-  
+
   if (! gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
     return;
 
@@ -429,7 +429,7 @@ set_sensitivity_by_row_num(GtkWidget *tree, GtkWidget *btn)
   gtk_widget_set_sensitive(btn, FALSE);
 }
 
-static gboolean 
+static gboolean
 set_btn_sensitivity_selection_cb(GtkTreeSelection *sel, gpointer user_data)
 {
   int n;
@@ -1307,7 +1307,7 @@ create_user_fit_frame(struct FitDialog *d)
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "%0_0:", dd[] = "dF/d(%0_0):";
-    
+
     p[sizeof(p) - 3] += i;
     dd[sizeof(dd) - 4] += i;
 
@@ -1529,7 +1529,7 @@ move_tab_setup_item(struct FileDialog *d, int id)
   getobj(d->Obj, "move_data_y", id, 0, NULL, &movey);
 
   movenum = arraynum(move);
-  
+
   if (arraynum(movex) < movenum) {
     movenum = arraynum(movex);
   }
@@ -1630,7 +1630,7 @@ move_tab_copy(GtkButton *btn, gpointer user_data)
   int sel;
 
   d = (struct FileDialog *) user_data;
-  
+
   sel = CopyClick(d->widget, d->Obj, d->Id, FileCB);
 
   if (sel != -1) {
@@ -1741,13 +1741,13 @@ move_tab_set_value(struct FileDialog *d)
 
   state = list_store_get_iter_first(d->move.list, &iter);
   while (state) {
-    a = list_store_get_int(d->move.list, &iter, 0); 
+    a = list_store_get_int(d->move.list, &iter, 0);
 
-    ptr = list_store_get_string(d->move.list, &iter, 1); 
+    ptr = list_store_get_string(d->move.list, &iter, 1);
     x = strtod(ptr, &endptr);
     g_free(ptr);
 
-    ptr = list_store_get_string(d->move.list, &iter, 2); 
+    ptr = list_store_get_string(d->move.list, &iter, 2);
     y = strtod(ptr, &endptr);
     g_free(ptr);
 
@@ -1935,10 +1935,10 @@ mask_tab_set_value(struct FileDialog *d)
     putobj(d->Obj, "mask", d->Id, NULL);
     mask = NULL;
   }
-  
+
   state = list_store_get_iter_first(d->mask.list, &iter);
   while (state) {
-    a = list_store_get_int(d->mask.list, &iter, 0); 
+    a = list_store_get_int(d->mask.list, &iter, 0);
     if (mask == NULL)
       mask = arraynew(sizeof(int));
 
@@ -1976,7 +1976,7 @@ load_tab_setup_item(struct FileDialog *d, int id)
     } else {
       s[j++] = ifs[i];
     }
-  } 
+  }
   s[j] = '\0';
   gtk_entry_set_text(GTK_ENTRY(d->load.ifs), s);
   g_free(s);
@@ -2429,7 +2429,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
   load_tab_setup_item(d, d->Id);
   mask_tab_setup_item(d, d->Id);
   move_tab_setup_item(d, d->Id);
-  file_setup_item(d, d->Id);  
+  file_setup_item(d, d->Id);
 
   if (file) {
     SetWidgetFromObjField(d->file, d->Obj, id, "file");
@@ -2447,7 +2447,7 @@ FileDialogSetupItem(GtkWidget *w, struct FileDialog *d, int file, int id)
   } else {
     set_fit_button_label(d->fit, NULL);
   }
-  
+
   gtk_widget_set_sensitive(d->apply_all, d->multi_open);
 }
 
@@ -2484,7 +2484,7 @@ execute_fit_dialog(GtkWidget *w, struct objlist *fileobj, int fileid, struct obj
   type = PLOT_TYPE_FIT;
   getobj(fileobj, "type", fileid, 0, NULL, &save_type);
   putobj(fileobj, "type", fileid, &type);
-  
+
   FitDialog(&DlgFit, fitobj, fitid);
   ret = DialogExecute(w, &DlgFit);
 
@@ -2586,7 +2586,7 @@ plot_tab_copy(GtkButton *btn, gpointer user_data)
   }
 }
 
-void 
+void
 copy_file_obj_field(struct objlist *obj, int id, int sel, int copy_filename)
 {
   char *field[] = {"name", "fit", NULL, NULL};
@@ -3217,7 +3217,7 @@ FileDialogDefSetupItem(GtkWidget *w, struct FileDialog *d, int id)
   plot_tab_setup_item(d, d->Id);
   math_tab_setup_item(d, d->Id);
   load_tab_setup_item(d, d->Id);
-  file_setup_item(d, d->Id);  
+  file_setup_item(d, d->Id);
 }
 
 static void
@@ -3750,7 +3750,7 @@ FileWinFileUpdate(struct SubWin *d)
   if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
- 
+
   if ((sel >= 0) && (sel <= d->num)) {
     d->setup_dialog(d->dialog, d->obj, sel, FALSE);
     d->select = sel;
@@ -4937,7 +4937,7 @@ edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer us
   set_graph_modified();
 }
 
-static void 
+static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
   gchar **filenames;

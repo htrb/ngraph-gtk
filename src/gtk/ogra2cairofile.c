@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: ogra2cairofile.c,v 1.16 2009-11-16 09:13:05 hito Exp $
  */
 
@@ -51,9 +51,9 @@ char *surface_type[] = {
 };
 
 
-static int 
+static int
 gra2cairofile_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{  
+{
   int dpi;
   struct gra2cairo_local *local;
 
@@ -61,7 +61,7 @@ gra2cairofile_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
     return 1;
 
   dpi = 72;
-  
+
   if (_putobj(obj, "dpi", inst, &dpi) < 0)
     goto Err;
 
@@ -73,7 +73,7 @@ gra2cairofile_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 
   _getobj(obj, "_local", inst, &local);
 
-  local->pixel_dot_x = 
+  local->pixel_dot_x =
   local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
 
   return 0;
@@ -85,7 +85,7 @@ gra2cairofile_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
   return 1;
 }
 
-static int 
+static int
 gra2cairofile_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
@@ -279,8 +279,8 @@ init_cairo(struct objlist *obj, N_VALUE *inst, struct gra2cairo_local *local, in
   return 0;
 }
 
-static int 
-gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
+static int
+gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
                  int argc, char **argv)
 {
   char code, *fname;
@@ -361,13 +361,13 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 }
 
 static struct objtable gra2cairofile[] = {
-  {"init", NVFUNC, NEXEC, gra2cairofile_init, NULL, 0}, 
-  {"done", NVFUNC, NEXEC, gra2cairofile_done, NULL, 0}, 
-  {"next", NPOINTER, 0, NULL, NULL, 0}, 
+  {"init", NVFUNC, NEXEC, gra2cairofile_init, NULL, 0},
+  {"done", NVFUNC, NEXEC, gra2cairofile_done, NULL, 0},
+  {"next", NPOINTER, 0, NULL, NULL, 0},
   {"file", NSTR, NREAD | NWRITE, NULL, NULL,0},
   {"text2path", NBOOL, NREAD | NWRITE, NULL, NULL,0},
   {"format", NENUM, NREAD | NWRITE, NULL, surface_type, 0},
-  {"_output", NVFUNC, 0, gra2cairofile_output, NULL, 0}, 
+  {"_output", NVFUNC, 0, gra2cairofile_output, NULL, 0},
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},

@@ -1,25 +1,25 @@
 /* -*- coding: utf-8 -*- */
-/* 
+/*
  * $Id: x11view.c,v 1.186 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "gtk_common.h"
@@ -182,7 +182,7 @@ mxp2d(int r)
   return ceil(r / Menulocal.local->pixel_dot_x);
 }
 
-static double 
+static double
 range_increment(GtkWidget *w, double inc)
 {
   double val;
@@ -310,7 +310,7 @@ focus_new_insts(struct objlist *parent, struct narray *array)
 }
 
 
-static void 
+static void
 paste_cb(GtkClipboard *clipboard, const gchar *text, gpointer data)
 {
   struct narray idarray;
@@ -475,27 +475,27 @@ arc_get_angle(struct objlist *obj, N_VALUE *inst, unsigned int round, int point,
   if (dx >= 0 && dy >= 0) {
     if (dx > dy) {
       angle = acos(dx / r) / MPI * 180;
-    } else { 
+    } else {
       angle = asin(dy / r) / MPI * 180;
     }
   } else if (dx < 0 && dy >= 0) {
     if (-dx > dy) {
       angle = acos(-dx / r) / MPI * 180;
-    } else { 
+    } else {
       angle = asin(dy / r) / MPI * 180;
     }
     angle = 180 - angle;
   } else if (dx < 0 && dy < 0) {
     if (-dx > -dy) {
       angle = acos(-dx / r) / MPI * 180;
-    } else { 
+    } else {
       angle = asin(-dy / r) / MPI * 180;
     }
     angle += 180;
   } else {
     if (dx > -dy) {
       angle = acos(dx / r) / MPI * 180;
-    } else { 
+    } else {
       angle = asin(-dy / r) / MPI * 180;
     }
     angle = 360 - angle;
@@ -717,7 +717,7 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   return 0;
 }
 
-static void 
+static void
 drag_drop_cb(GtkWidget *w, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint info, guint time, gpointer user_data)
 {
   gchar **filenames, *str;
@@ -904,7 +904,7 @@ eval_dialog_copy_selected(GtkWidget *w, gpointer *user_data)
   g_list_free(list);
 }
 
-static gboolean 
+static gboolean
 eval_data_sel_cb(GtkTreeSelection *sel, gpointer user_data)
 {
   int n;
@@ -974,7 +974,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
   EvalDialogSetupItem(wi, d);
 }
 
-static void 
+static void
 select_data_cb(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data)
 {
   struct EvalDialog *d;
@@ -1748,13 +1748,13 @@ GetLargeFrame(int *minx, int *miny, int *maxx, int *maxy, const struct Viewer *d
   restorestdio(&save);
 }
 
-static int 
+static int
 coord_conv_x(int x, double zoom, const struct Viewer *d)
 {
   return mxd2p(x * zoom + Menulocal.LeftMargin) - d->hscroll + d->cx + CAIRO_COORDINATE_OFFSET;
 }
 
-static int 
+static int
 coord_conv_y(int y, double zoom, const struct Viewer *d)
 {
   return mxd2p(y * zoom + Menulocal.TopMargin) - d->vscroll + d->cy + CAIRO_COORDINATE_OFFSET;
@@ -1823,19 +1823,19 @@ ShowFocusFrame(cairo_t *cr, const struct Viewer *d)
     cairo_rectangle(cr, minx, miny, width, height);
     cairo_stroke(cr);
 
-    cairo_rectangle(cr, 
+    cairo_rectangle(cr,
 		    x1 - FOCUS_RECT_SIZE,
 		    y1 - FOCUS_RECT_SIZE,
 		    FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    cairo_rectangle(cr, 
+    cairo_rectangle(cr,
 		    x1 - FOCUS_RECT_SIZE,
 		    y2,
 		    FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    cairo_rectangle(cr, 
+    cairo_rectangle(cr,
 		    x2,
 		    y1 - FOCUS_RECT_SIZE,
 		    FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
-    cairo_rectangle(cr, 
+    cairo_rectangle(cr,
 		    x2,
 		    y2,
 		    FOCUS_RECT_SIZE, FOCUS_RECT_SIZE);
@@ -4428,7 +4428,7 @@ check_focused_obj_type(const struct Viewer *d, int *type)
 {
   int num, i, t;
   static struct objlist *axis, *merge, *legend, *text;
-  struct FocusObj *focus;  
+  struct FocusObj *focus;
 
   num = arraynum(d->focusobj);
 
@@ -4575,7 +4575,7 @@ move_focus_frame(GdkEventKey *e, struct Viewer *d)
 {
   int dx = 0, dy = 0, mv;
   double zoom;
-  
+
   zoom = Menulocal.PaperZoom / 10000.0;
   mv = (e->state & GDK_SHIFT_MASK) ? Menulocal.grid / 10 : Menulocal.grid;
 
@@ -5009,7 +5009,7 @@ add_focus_obj(struct narray *focusobj, struct objlist *obj, int oid)
   struct FocusObj *focus;
   int r;
 
-  if (chkobjfield(obj, "bbox")) 
+  if (chkobjfield(obj, "bbox"))
     return FALSE;
 
   r = check_focused_obj(focusobj, obj, oid);
@@ -5278,7 +5278,7 @@ ChangeDPI(void)
   if (Menulocal.pix) {
     w = cairo_image_surface_get_width(Menulocal.pix) - 1;
     h = cairo_image_surface_get_height(Menulocal.pix) - 1;
-  } else { 
+  } else {
     h = w = 0;
   }
 
@@ -5762,7 +5762,7 @@ reorder_object(enum object_move_type type)
   d = &NgraphApp.Viewer;
 
   if (d->MouseMode != MOUSENONE ||
-      (d->Mode != PointB && 
+      (d->Mode != PointB &&
        d->Mode != LegendB && d->Mode != AxisB))
        return;
 

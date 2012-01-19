@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: x11gui.c,v 1.41 2010-04-01 06:08:23 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002,  Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License,  or (at your option) any later version.
- * 
- * "Ngraph for X11" is distributed in the hope that it will be useful, 
+ *
+ * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not,  write to the Free Software
  * Foundation,  Inc.,  59 Temple Place - Suite 330,  Boston,  MA  02111-1307,  USA.
- * 
+ *
  */
 
 #include "gtk_common.h"
@@ -106,7 +106,7 @@ dialog_key_down_cb(GtkWidget *w, GdkEvent *event, gpointer user_data)
 }
 
 
-static gboolean 
+static gboolean
 dialog_delete_cb(GtkWidget *w, GdkEvent *e, gpointer user_data)
 {
   return TRUE;
@@ -334,7 +334,7 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
     } else if (mode == RESPONS_YESNO) {
       data = IDNO;
     } else {
-      data = IDCANCEL; 
+      data = IDCANCEL;
     }
   }
 
@@ -367,7 +367,7 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, char **s, in
     label = gtk_label_new(mes);
     gtk_box_pack_start(vbox, label, FALSE, FALSE, 5);
   }
- 
+
   text = create_text_entry(FALSE, TRUE);
   gtk_box_pack_start(vbox, text, FALSE, FALSE, 5);
 
@@ -381,7 +381,7 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, char **s, in
     data = IDOK;
     break;
   default:
-    data = IDCANCEL; 
+    data = IDCANCEL;
     break;
   }
 
@@ -450,7 +450,7 @@ DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct na
     data = IDOK;
     break;
   default:
-    data = IDCANCEL; 
+    data = IDCANCEL;
     break;
   }
 
@@ -519,7 +519,7 @@ DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct na
     data = IDOK;
     break;
   default:
-    data = IDCANCEL; 
+    data = IDCANCEL;
     break;
   }
 
@@ -588,7 +588,7 @@ DialogComboEntry(GtkWidget *parent, const char *title, const char *caption, stru
     data = IDOK;
     break;
   default:
-    data = IDCANCEL; 
+    data = IDCANCEL;
     break;
   }
 
@@ -651,7 +651,7 @@ DialogSpinEntry(GtkWidget *parent, const char *title, const char *caption, doubl
     data = IDOK;
     break;
   default:
-    data = IDCANCEL; 
+    data = IDCANCEL;
     break;
   }
 
@@ -719,7 +719,7 @@ DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct na
     data = IDOK;
     break;
   default:
-    data = IDCANCEL; 
+    data = IDCANCEL;
     break;
   }
 
@@ -744,7 +744,7 @@ free_str_list(GSList *top)
   g_slist_free(top);
 }
 
-static void 
+static void
 fsok(GtkWidget *dlg)
 {
   struct nGetOpenFileData *data;
@@ -805,7 +805,7 @@ fsok(GtkWidget *dlg)
     }
     if (file2) {
       if (data->mustexist) {
-	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG) 
+	if ((nstat(file2, &buf) != 0) || ((buf.st_mode & S_IFMT) != S_IFREG)
 	    || (naccess(file2, R_OK) != 0)) {
 	  gdk_beep();
 	  error22(NULL, 0, "I/O error", file2);
@@ -843,7 +843,7 @@ fsok(GtkWidget *dlg)
   data->ret = IDOK;
 }
 
-static void 
+static void
 file_dialog_set_current_neme(GtkWidget *dlg, const char *full_name)
 {
   char *name;
@@ -976,7 +976,7 @@ nGetOpenFileNameMulti(GtkWidget * parent,
 		      const char *init_file, char ***file, int chd)
 {
   int ret;
-  
+
   FileSelection.title = title;
   FileSelection.init_dir = init_dir;
   FileSelection.init_file = init_file;
@@ -1006,7 +1006,7 @@ nGetOpenFileName(GtkWidget *parent,
 		 char **file, int exist, int chd)
 {
   int ret;
-  
+
   FileSelection.title = title;
   FileSelection.init_dir = init_dir;
   FileSelection.init_file = init_file;

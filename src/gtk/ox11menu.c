@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ox11menu.c,v 1.90 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for GTK".
- * 
+ *
  * Copyright (C) 2002,  Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for GTK" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License,  or (at your option) any later version.
- * 
- * "Ngraph for GTK" is distributed in the hope that it will be useful, 
+ *
+ * "Ngraph for GTK" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not,  write to the Free Software
  * Foundation,  Inc.,  59 Temple Place - Suite 330,  Boston,  MA  02111-1307,  USA.
- * 
+ *
  */
 
 
@@ -382,7 +382,7 @@ add_child_geometry_to_array(struct menu_config *cfg, struct narray *conf)
   stat = cfg->data;
   data = stat->stat;
 
-  buf = (char *) g_malloc(BUF_SIZE);    
+  buf = (char *) g_malloc(BUF_SIZE);
   if (buf) {
     sub_window_save_geometry(stat->win);
     snprintf(buf, BUF_SIZE, "%s=%d,%d,%d,%d,%d",

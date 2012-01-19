@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: gtk_subwin.c,v 1.68 2010-04-01 06:08:23 hito Exp $
  */
 
@@ -65,7 +65,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
 
 #if GTK_CHECK_VERSION(3, 0, 0) && ! GTK_CHECK_VERSION(3, 2, 0)
 static gboolean
-cell_focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data) 
+cell_focus_out(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
   menu_lock(FALSE);
   return FALSE;
@@ -590,7 +590,7 @@ sub_window_set_visibility(struct SubWin *d, int state)
     return;
   }
 
-  if (state) { 
+  if (state) {
     sub_window_show(d);
   } else {
     sub_window_hide(d);
@@ -648,7 +648,7 @@ obj_copy(struct objlist *obj, int dest, int src)
   copy_obj_field(obj, dest, src, field);
 }
 
-static void 
+static void
 copy(struct SubWin *d)
 {
   int sel, id;
@@ -670,7 +670,7 @@ copy(struct SubWin *d)
   }
 }
 
-static void 
+static void
 delete(struct SubWin *d)
 {
   int sel;
@@ -1097,7 +1097,7 @@ tree_copy(struct LegendWin *d)
   }
 }
 
-static void 
+static void
 tree_delete(struct LegendWin *d)
 {
   int n, m;
@@ -1553,7 +1553,7 @@ list_sub_window_must_rebuild(struct SubWin *d)
   return (n != d->num + 1);
 }
 
-void 
+void
 list_sub_window_build(struct SubWin *d, list_sub_window_set_val_func func)
 {
   GtkTreeIter iter;
@@ -1567,7 +1567,7 @@ list_sub_window_build(struct SubWin *d, list_sub_window_set_val_func func)
   }
 }
 
-void 
+void
 list_sub_window_set(struct SubWin *d, list_sub_window_set_val_func func)
 {
   GtkTreeIter iter;
@@ -1588,49 +1588,49 @@ list_sub_window_set(struct SubWin *d, list_sub_window_set_val_func func)
 }
 
 
-void 
+void
 list_sub_window_delete(GtkMenuItem *item, gpointer user_data)
 {
   delete((struct SubWin *) user_data);
 }
 
-void 
+void
 list_sub_window_copy(GtkMenuItem *item, gpointer user_data)
 {
   copy((struct SubWin *) user_data);
 }
 
-void 
+void
 list_sub_window_move_top(GtkMenuItem *item, gpointer user_data)
 {
   move_top((struct SubWin *) user_data);
 }
 
-void 
+void
 list_sub_window_move_last(GtkMenuItem *item, gpointer user_data)
 {
   move_last((struct SubWin *) user_data);
 }
 
-void 
+void
 list_sub_window_move_up(GtkMenuItem *item, gpointer user_data)
 {
   move_up((struct SubWin *) user_data);
 }
 
-void 
+void
 list_sub_window_move_down(GtkMenuItem *item, gpointer user_data)
 {
   move_down((struct SubWin *) user_data);
 }
 
-void 
+void
 list_sub_window_update(GtkMenuItem *item, gpointer user_data)
 {
   update((struct SubWin *) user_data);
 }
 
-void 
+void
 list_sub_window_hide(GtkMenuItem *item, gpointer user_data)
 {
   int hide;
@@ -1639,61 +1639,61 @@ list_sub_window_hide(GtkMenuItem *item, gpointer user_data)
   set_hidden_state((struct SubWin *)user_data, ! hide);
 }
 
-void 
+void
 list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 {
   focus((struct SubWin *) user_data, FALSE);
 }
 
-void 
+void
 list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
 {
   focus((struct SubWin *) user_data, TRUE);
 }
 
-void 
+void
 tree_sub_window_delete(GtkMenuItem *item, gpointer user_data)
 {
   tree_delete((struct LegendWin *) user_data);
 }
 
-void 
+void
 tree_sub_window_copy(GtkMenuItem *item, gpointer user_data)
 {
   tree_copy((struct LegendWin *) user_data);
 }
 
-void 
+void
 tree_sub_window_move_top(GtkMenuItem *item, gpointer user_data)
 {
   tree_move_top((struct LegendWin *) user_data);
 }
 
-void 
+void
 tree_sub_window_move_last(GtkMenuItem *item, gpointer user_data)
 {
   tree_move_last((struct LegendWin *) user_data);
 }
 
-void 
+void
 tree_sub_window_move_up(GtkMenuItem *item, gpointer user_data)
 {
   tree_move_up((struct LegendWin *) user_data);
 }
 
-void 
+void
 tree_sub_window_move_down(GtkMenuItem *item, gpointer user_data)
 {
   tree_move_down((struct LegendWin *) user_data);
 }
 
-void 
+void
 tree_sub_window_update(GtkMenuItem *item, gpointer user_data)
 {
   tree_update((struct LegendWin *) user_data);
 }
 
-void 
+void
 tree_sub_window_hide(GtkMenuItem *item, gpointer user_data)
 {
   int hide;
@@ -1702,13 +1702,13 @@ tree_sub_window_hide(GtkMenuItem *item, gpointer user_data)
   tree_set_hidden_state((struct LegendWin *)user_data, ! hide);
 }
 
-void 
+void
 tree_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 {
   tree_focus((struct LegendWin *) user_data, FALSE);
 }
 
-void 
+void
 tree_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
 {
   tree_focus((struct LegendWin *) user_data, TRUE);

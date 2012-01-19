@@ -217,7 +217,7 @@ CREATE_NAME(Pref, ListDefailtCb)(GtkWidget *w, GdkEventAny *e, gpointer user_dat
   return FALSE;
 }
 
-static gboolean 
+static gboolean
 CREATE_NAME(Pref, ListSelCb)(GtkTreeSelection *sel, gpointer user_data)
 {
   int a, n;

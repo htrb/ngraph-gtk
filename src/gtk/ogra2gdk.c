@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: ogra2gdk.c,v 1.5 2009-11-16 09:13:05 hito Exp $
  */
 
@@ -31,9 +31,9 @@
 #define M_PI 3.141592
 #endif
 
-static int 
+static int
 g2g_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{  
+{
   struct gra2cairo_local *local;
   int dpi;
 
@@ -53,7 +53,7 @@ g2g_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   _getobj(obj, "_local", inst, &local);
 
-  local->pixel_dot_x = 
+  local->pixel_dot_x =
   local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
 
   return 0;
@@ -65,7 +65,7 @@ g2g_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   return 1;
 }
 
-static int 
+static int
 g2g_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
@@ -135,9 +135,9 @@ gra2gdk_create_pixmap(struct gra2cairo_local *local, GdkDrawable *drawable, int 
 #endif
 
 static struct objtable gra2gdk[] = {
-  {"init", NVFUNC, NEXEC, g2g_init, NULL, 0}, 
-  {"done", NVFUNC, NEXEC, g2g_done, NULL, 0}, 
-  {"next", NPOINTER, 0, NULL, NULL, 0}, 
+  {"init", NVFUNC, NEXEC, g2g_init, NULL, 0},
+  {"done", NVFUNC, NEXEC, g2g_done, NULL, 0},
+  {"next", NPOINTER, 0, NULL, NULL, 0},
 };
 
 #define TBLNUM (sizeof(gra2gdk) / sizeof(*gra2gdk))

@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: ogra2cairo.c,v 1.58 2010-03-04 08:30:17 hito Exp $
  */
 
@@ -521,7 +521,7 @@ gra2cairo_set_alternative_font(const char *fontalias, const char *fontname)
 
 static int
 gra2cairo_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{  
+{
   struct gra2cairo_local *local = NULL;
   int antialias = ANTIALIAS_TYPE_DEFAULT;
 
@@ -610,7 +610,7 @@ gra2cairo_free(struct objlist *obj, N_VALUE *inst)
   return local;
 }
 
-static int 
+static int
 gra2cairo_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   if (_exeparent(obj, (char *)argv[1], inst, rval, argc, argv))
@@ -624,7 +624,7 @@ gra2cairo_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   return 0;
 }
 
-int 
+int
 #if GTK_CHECK_VERSION(3, 0, 0)
 gra2cairo_clip_region(struct gra2cairo_local *local, cairo_region_t *region)
 #else
@@ -930,9 +930,9 @@ check_cairo_status(cairo_t *cairo)
   return 0;
 }
 
-static int 
+static int
 gra2cairo_flush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
-{ 
+{
   struct gra2cairo_local *local;
 
   _getobj(obj, "_local", inst, &local);
@@ -945,8 +945,8 @@ gra2cairo_flush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, cha
   return check_cairo_status(local->cairo);
 }
 
-static int 
-gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, 
+static int
+gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
                  int argc, char **argv)
 {
   char code, *cstr, *tmp, *tmp2;
@@ -1136,12 +1136,12 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
       cairo_fill(local->cairo);
     }
     break;
-  case 'P': 
+  case 'P':
     cairo_new_path(local->cairo);
     cairo_arc(local->cairo, mxd2px(local, cpar[1]), mxd2py(local, cpar[2]), mxd2pw(local, 1), 0, 2 * M_PI);
     cairo_fill(local->cairo);
     break;
-  case 'R': 
+  case 'R':
     cairo_new_path(local->cairo);
     if (cpar[1] == 0)
       break;
@@ -1153,10 +1153,10 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     }
     cairo_stroke(local->cairo);
     break;
-  case 'D': 
+  case 'D':
     cairo_new_path(local->cairo);
 
-    if (cpar[1] == 0) 
+    if (cpar[1] == 0)
       break;
 
     for (i = 0; i < cpar[1]; i++) {
@@ -1252,7 +1252,7 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
       break;
 
     tmp2 = sjis_to_utf8(cstr);
-    if (tmp2 == NULL) 
+    if (tmp2 == NULL)
       break;
     draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
     g_free(tmp2);
@@ -1410,19 +1410,19 @@ use_opacity(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 }
 
 static struct objtable gra2cairo[] = {
-  {"init", NVFUNC, 0, gra2cairo_init, NULL, 0}, 
-  {"done", NVFUNC, 0, gra2cairo_done, NULL, 0}, 
+  {"init", NVFUNC, 0, gra2cairo_init, NULL, 0},
+  {"done", NVFUNC, 0, gra2cairo_done, NULL, 0},
   {"dpi", NINT, NREAD | NWRITE, gra2cairo_set_dpi, NULL, 0},
   {"dpix", NINT, NREAD | NWRITE, gra2cairo_set_dpi_x, NULL, 0},
   {"dpiy", NINT, NREAD | NWRITE, gra2cairo_set_dpi_y, NULL, 0},
   {"flush",NVFUNC,NREAD|NEXEC,gra2cairo_flush,"",0},
   {"antialias", NENUM, NREAD | NWRITE, set_antialias, gra2cairo_antialias_type, 0},
   {"use_opacity", NBOOL, NREAD | NWRITE, use_opacity, NULL,0},
-  {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0}, 
+  {"_output", NVFUNC, 0, gra2cairo_output, NULL, 0},
   {"_strwidth", NIFUNC, 0, gra2cairo_strwidth, NULL, 0},
   {"_charascent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
   {"_chardescent", NIFUNC, 0, gra2cairo_charheight, NULL, 0},
-  {"_local", NPOINTER, 0, NULL, NULL, 0}, 
+  {"_local", NPOINTER, 0, NULL, NULL, 0},
 };
 
 #define TBLNUM (sizeof(gra2cairo) / sizeof(*gra2cairo))

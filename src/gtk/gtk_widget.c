@@ -207,7 +207,7 @@ direction_icon_released(GtkEntry *entry, GtkEntryIconPosition pos, GdkEvent *eve
     break;
   }
 
-  val += (val < 0) ? 360 : 0;  
+  val += (val < 0) ? 360 : 0;
 
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(entry), val);
 }
@@ -400,7 +400,7 @@ _create_spin_entry(enum SPIN_BUTTON_TYPE type, double min, double max,
   gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(w), wrap);
   gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), FALSE);
   gtk_spin_button_set_digits(GTK_SPIN_BUTTON(w), (numeric) ? 0 : 2);
- 
+
   if (set_default_size)
     gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
 
@@ -754,7 +754,7 @@ create_text_view_with_line_number(GtkWidget **v)
   GtkAdjustment *hadj, *vadj;
 
   view = gtk_text_view_new_with_buffer(NULL);
-  ln = gtk_text_view_new_with_buffer(NULL); 
+  ln = gtk_text_view_new_with_buffer(NULL);
 
   set_linumber_color(ln, 0xCC00, 0xCC00, 0xCC00);
 

@@ -1,5 +1,5 @@
 /* --*-coding:utf-8-*-- */
-/* 
+/*
  * $Id: x11menu.c,v 1.116 2010-04-01 06:08:23 hito Exp $
  */
 
@@ -228,7 +228,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphNewFrameAction",
     NULL,
     N_("_Frame graph"),
-    N_("Create frame graph"), 
+    N_("Create frame graph"),
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewFrame,
@@ -240,7 +240,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphNewSectionAction",
     NULL,
     N_("_Section graph"),
-    N_("Create section graph"), 
+    N_("Create section graph"),
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewSection,
@@ -252,7 +252,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphNewCrossAction",
     NULL,
     N_("_Cross graph"),
-    N_("Create cross graph"), 
+    N_("Create cross graph"),
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphNewCross,
@@ -264,7 +264,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphNewClearAction",
     NULL,
     N_("_All clear"),
-    N_("Clear graph"), 
+    N_("Clear graph"),
     NULL,
     G_CALLBACK(CmGraphNewMenu),
     MenuIdGraphAllClear,
@@ -276,8 +276,8 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphLoadAction",
     GTK_STOCK_OPEN,
     N_("_Load graph"),
-    N_("Load NGP"), 
-    N_("Load NGP file"), 
+    N_("Load NGP"),
+    N_("Load NGP file"),
     G_CALLBACK(CmGraphLoad),
     0,
     NULL,
@@ -300,8 +300,8 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphSaveAction",
     GTK_STOCK_SAVE,
     NULL,
-    N_("Save NGP"), 
-    N_("Save NGP file"), 
+    N_("Save NGP"),
+    N_("Save NGP file"),
     G_CALLBACK(CmGraphOverWrite),
     0,
     NULL,
@@ -314,7 +314,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphSaveAsAction",
     GTK_STOCK_SAVE_AS,
     NULL,
-    N_("Save NGP"), 
+    N_("Save NGP"),
     NULL,
     G_CALLBACK(CmGraphSave),
     0,
@@ -328,7 +328,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphExportGRAAction",
     NULL,
     N_("_GRA file"),
-    N_("Export as GRA file"), 
+    N_("Export as GRA file"),
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputGRAFile,
@@ -340,7 +340,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphExportPSAction",
     NULL,
     N_("_PS file"),
-    N_("Export as PostScript file"), 
+    N_("Export as PostScript file"),
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputPSFile,
@@ -352,7 +352,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphExportEPSAction",
     NULL,
     N_("_EPS file"),
-    N_("Export as Encapsulate PostScript file"), 
+    N_("Export as Encapsulate PostScript file"),
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputEPSFile,
@@ -364,7 +364,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphExportPDFAction",
     NULL,
     N_("P_DF file"),
-    N_("Export as Portable Document Format"), 
+    N_("Export as Portable Document Format"),
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputPDFFile,
@@ -376,7 +376,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphExportSVGAction",
     NULL,
     N_("_SVG file"),
-    N_("Export as Scalable Vector Graphics file"), 
+    N_("Export as Scalable Vector Graphics file"),
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputSVGFile,
@@ -388,7 +388,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphExportPNGAction",
     NULL,
     N_("P_NG file"),
-    N_("Export as Portable Network Graphics  file"), 
+    N_("Export as Portable Network Graphics  file"),
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputPNGFile,
@@ -401,7 +401,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "GraphExportEMFAction",
     NULL,
     N_("_EMF file"),
-    N_("Export as Windows Enhanced Metafile"), 
+    N_("Export as Windows Enhanced Metafile"),
     NULL,
     G_CALLBACK(CmOutputMenu),
     MenuIdOutputEMFFile,
@@ -524,7 +524,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "<Ngraph>/Edit/Copy",
     GDK_KEY_c,
-    GDK_CONTROL_MASK, 
+    GDK_CONTROL_MASK,
  },
   {
     ACTION_TYPE_NORMAL,
@@ -763,7 +763,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "Data Window",
     "Data Window",
-    N_("Activate Data Window"), 
+    N_("Activate Data Window"),
     G_CALLBACK(CmFileWindow),
     0,
     "ngraph_filewin.png",
@@ -777,7 +777,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "Axis Window",
     "Axis Window",
-    N_("Activate Axis Window"), 
+    N_("Activate Axis Window"),
     G_CALLBACK(CmAxisWindow),
     0,
     "ngraph_axiswin.png",
@@ -791,7 +791,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "Legend Window",
     "Legend Window",
-    N_("Activate Legend Window"), 
+    N_("Activate Legend Window"),
     G_CALLBACK(CmLegendWindow),
     0,
     "ngraph_legendwin.png",
@@ -805,7 +805,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "Merge Window",
     "Merge Window",
-    N_("Activate Merge Window"), 
+    N_("Activate Merge Window"),
     G_CALLBACK(CmMergeWindow),
     0,
     "ngraph_mergewin.png",
@@ -819,7 +819,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "Coordinate Window",
     "Coordinate Window",
-    N_("Activate Coordinate Window"), 
+    N_("Activate Coordinate Window"),
     G_CALLBACK(CmCoordinateWindow),
     0,
     "ngraph_coordwin.png",
@@ -833,7 +833,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "Information Window",
     "Information Window",
-    N_("Activate Information Window"), 
+    N_("Activate Information Window"),
     G_CALLBACK(CmInformationWindow),
     0,
     "ngraph_infowin.png",
@@ -860,7 +860,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     "ViewDrawDirectAction",
     NULL,
     N_("_Draw"),
-    N_("Draw"), 
+    N_("Draw"),
     N_("Draw on Viewer Window"),
     G_CALLBACK(CmViewerDraw),
     FALSE,
@@ -1172,8 +1172,8 @@ static struct NgraphActionEntry ActionEntry[] = {
     "AxisScaleClearAction",
     NULL,
     N_("Scale _Clear"),
-    N_("Clear Scale"), 
-    N_("Clear Scale"), 
+    N_("Clear Scale"),
+    N_("Clear Scale"),
     G_CALLBACK(CmAxisClear),
     0,
     "ngraph_scale.png",
@@ -1222,7 +1222,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmAxisGridUpdate),
     0,
     NULL,
-    "<Ngraph>/Axis/Grid/Property", 
+    "<Ngraph>/Axis/Grid/Property",
  },
   {
     ACTION_TYPE_NORMAL,
@@ -1234,7 +1234,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmAxisGridDel),
     0,
     NULL,
-    "<Ngraph>/Axis/Grid/Delete", 
+    "<Ngraph>/Axis/Grid/Delete",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1246,7 +1246,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmMergeOpen),
     0,
     NULL,
-    "<Ngraph>/Merge/Add", 
+    "<Ngraph>/Merge/Add",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1257,8 +1257,8 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     G_CALLBACK(CmMergeUpdate),
     0,
-    NULL, 
-   "<Ngraph>/Merge/Property", 
+    NULL,
+   "<Ngraph>/Merge/Property",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1270,7 +1270,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmMergeClose),
     0,
     NULL,
-    "<Ngraph>/Merge/Close", 
+    "<Ngraph>/Merge/Close",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1337,7 +1337,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmLineUpdate),
     0,
     NULL,
-    "<Ngraph>/Legend/Path/Property", 
+    "<Ngraph>/Legend/Path/Property",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1349,7 +1349,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmLineDel),
     0,
     NULL,
-    "<Ngraph>/Legend/Path/Delete", 
+    "<Ngraph>/Legend/Path/Delete",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1361,7 +1361,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmRectUpdate),
     0,
     NULL,
-    "<Ngraph>/Legend/Rectangle/Property", 
+    "<Ngraph>/Legend/Rectangle/Property",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1373,7 +1373,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmRectDel),
     0,
     NULL,
-    "<Ngraph>/Legend/Rectangle/Delete", 
+    "<Ngraph>/Legend/Rectangle/Delete",
   },
 
   {
@@ -1386,7 +1386,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmArcUpdate),
     0,
     NULL,
-    "<Ngraph>/Legend/Arc/Property", 
+    "<Ngraph>/Legend/Arc/Property",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1398,7 +1398,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmArcDel),
     0,
     NULL,
-    "<Ngraph>/Legend/Arc/Delete", 
+    "<Ngraph>/Legend/Arc/Delete",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1410,7 +1410,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmMarkUpdate),
     0,
     NULL,
-    "<Ngraph>/Legend/Mark/Property", 
+    "<Ngraph>/Legend/Mark/Property",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1422,7 +1422,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmMarkDel),
     0,
     NULL,
-    "<Ngraph>/Legend/Mark/Delete", 
+    "<Ngraph>/Legend/Mark/Delete",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1434,7 +1434,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmTextUpdate),
     0,
     NULL,
-    "<Ngraph>/Legend/Text/Property", 
+    "<Ngraph>/Legend/Text/Property",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1446,7 +1446,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmTextDel),
     0,
     NULL,
-    "<Ngraph>/Legend/Text/Delete", 
+    "<Ngraph>/Legend/Text/Delete",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1458,7 +1458,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmOptionViewer),
     0,
     NULL,
-    "<Ngraph>/Preference/Viewer", 
+    "<Ngraph>/Preference/Viewer",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1470,7 +1470,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     G_CALLBACK(CmOptionExtViewer),
     0,
     NULL,
-    "<Ngraph>/Preference/External Viewer", 
+    "<Ngraph>/Preference/External Viewer",
   },
   {
     ACTION_TYPE_NORMAL,
@@ -1601,7 +1601,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Point"),
     N_("Pointer"),
-    N_("Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"), 
+    N_("Legend and Axis Pointer (+SHIFT: Multi select / +CONTROL: Horizontal/Vertical +SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     PointB,
     "ngraph_point.png",
@@ -1645,7 +1645,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Path"),
     N_("Path"),
-    N_("New Legend Path (+SHIFT: Fine +CONTROL: snap angle)"), 
+    N_("New Legend Path (+SHIFT: Fine +CONTROL: snap angle)"),
     G_CALLBACK(CmViewerButtonArm),
     PathB,
     "ngraph_line.png",
@@ -1656,7 +1656,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Rectangle"),
     N_("Rectangle"),
-    N_("New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"), 
+    N_("New Legend Rectangle (+SHIFT: Fine +CONTROL: square integer ratio rectangle)"),
     G_CALLBACK(CmViewerButtonArm),
     RectB,
     "ngraph_rect.png",
@@ -1667,7 +1667,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Arc"),
     N_("Arc"),
-    N_("New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"), 
+    N_("New Legend Arc (+SHIFT: Fine +CONTROL: circle or integer ratio ellipse)"),
     G_CALLBACK(CmViewerButtonArm),
     ArcB,
     "ngraph_arc.png",
@@ -1678,7 +1678,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Mark"),
     N_("Mark"),
-    N_("New Legend Mark (+SHIFT: Fine)"), 
+    N_("New Legend Mark (+SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     MarkB,
     "ngraph_mark.png",
@@ -1689,7 +1689,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Text"),
     N_("Text"),
-    N_("New Legend Text (+SHIFT: Fine)"), 
+    N_("New Legend Text (+SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     TextB,
     "ngraph_text.png",
@@ -1700,7 +1700,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Gauss"),
     N_("Gaussian"),
-    N_("New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"), 
+    N_("New Legend Gaussian (+SHIFT: Fine +CONTROL: integer ratio)"),
     G_CALLBACK(CmViewerButtonArm),
     GaussB,
     "ngraph_gauss.png",
@@ -1711,7 +1711,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Frame axis"),
     N_("Frame Graph"),
-    N_("New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
+    N_("New Frame Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
     G_CALLBACK(CmViewerButtonArm),
     FrameB,
     "ngraph_frame.png",
@@ -1722,7 +1722,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Section axis"),
     N_("Section Graph"),
-    N_("New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
+    N_("New Section Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
     G_CALLBACK(CmViewerButtonArm),
     SectionB,
     "ngraph_section.png",
@@ -1733,7 +1733,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Cross axis"),
     N_("Cross Graph"),
-    N_("New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"), 
+    N_("New Cross Graph (+SHIFT: Fine +CONTROL: integer ratio)"),
     G_CALLBACK(CmViewerButtonArm),
     CrossB,
     "ngraph_cross.png",
@@ -1744,7 +1744,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Single axis"),
     N_("Single Axis"),
-    N_("New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"), 
+    N_("New Single Axis (+SHIFT: Fine +CONTROL: snap angle)"),
     G_CALLBACK(CmViewerButtonArm),
     SingleB,
     "ngraph_single.png",
@@ -1755,7 +1755,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Trimming"),
     N_("Axis Trimming"),
-    N_("Axis Trimming (+SHIFT: Fine)"), 
+    N_("Axis Trimming (+SHIFT: Fine)"),
     G_CALLBACK(CmViewerButtonArm),
     TrimB,
     "ngraph_trimming.png",
@@ -1766,7 +1766,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Evaluate"),
     N_("Evaluate Data"),
-    N_("Evaluate Data Point"), 
+    N_("Evaluate Data Point"),
     G_CALLBACK(CmViewerButtonArm),
     EvalB,
     "ngraph_eval.png",
@@ -1777,7 +1777,7 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     N_("Zoom"),
     N_("Viewer Zoom"),
-    N_("Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"), 
+    N_("Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"),
     G_CALLBACK(CmViewerButtonArm),
     ZoomB,
     "ngraph_zoom.png",
@@ -1832,7 +1832,7 @@ set_axis_undo_button_sensitivity(int state)
   gtk_action_set_sensitive(axis_undo, state);
 }
 
-void 
+void
 set_draw_lock(int lock)
 {
   DrawLock = lock;
@@ -2922,7 +2922,7 @@ check_instance(struct objlist *obj)
   }
 }
 
-static void 
+static void
 check_exist_instances(struct objlist *parent)
 {
   struct objlist *ocur;
@@ -2988,7 +2988,7 @@ window_action_toggle(enum SubWinType type)
   window_action_set_active(type, -1);
 }
 
-gboolean 
+gboolean
 recent_filter(const GtkRecentFilterInfo *filter_info, gpointer user_data)
 {
   int i;
@@ -3330,7 +3330,7 @@ application(char *file)
 void
 UpdateAll(void)
 {
-  ViewerWinUpdate(); 
+  ViewerWinUpdate();
   UpdateAll2();
 }
 

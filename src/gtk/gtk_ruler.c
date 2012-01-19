@@ -173,14 +173,14 @@ nruler_set_position(GtkWidget *w, double position)
   }
 }
 
-static gboolean 
+static gboolean
 nruler_destroy(GtkWidget *widget, gpointer user_data)
 {
   Nruler *ruler;
 
   g_object_set_data(G_OBJECT(widget), RULER_DATA_KEY, NULL);
 
-  ruler = (Nruler *) user_data; 
+  ruler = (Nruler *) user_data;
   if (ruler) {
     g_free(ruler);
   }
@@ -242,7 +242,7 @@ get_thickness(GtkWidget *widget, GtkStyleContext *style, gint *xt, gint *yt)
 }
 #endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 
-static void 
+static void
 nruler_size_request(GtkWidget *widget, GtkRequisition *requisition, gpointer user_data)
 {
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -279,7 +279,7 @@ nruler_size_request(GtkWidget *widget, GtkRequisition *requisition, gpointer use
 #endif	/* GTK_CHECK_VERSION(3, 0, 0) */
 }
 
-static void 
+static void
 nruler_size_allocate(GtkWidget *widget, GtkAllocation *allocation, gpointer user_data)
 {
   Nruler *ruler;

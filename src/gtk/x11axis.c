@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: x11axis.c,v 1.81 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "gtk_common.h"
@@ -111,7 +111,7 @@ static struct subwin_popup_list Popup_list[] = {
 
 #define CB_BUF_SIZE 128
 #define ID_BUF_SIZE 16
-#define TITLE_BUF_SIZE 128 
+#define TITLE_BUF_SIZE 128
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean AxisWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
@@ -240,7 +240,7 @@ GridDialogSetupItem(GtkWidget *w, struct GridDialog *d, int id)
   SetWidgetFromObjField(d->draw_y, d->Obj, id, "grid_y");
 
   for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
-    char width[] = "width1", style[] = "style1"; 
+    char width[] = "width1", style[] = "style1";
 
     style[sizeof(style) - 2] += i;
     SetStyleFromObjField(d->style[i], d->Obj, id, style);
@@ -289,7 +289,7 @@ static void
 gauge_syle_setup(struct GridDialog *d, GtkWidget *table, int n, int j)
 {
   GtkWidget *w;
-  char buf[TITLE_BUF_SIZE]; 
+  char buf[TITLE_BUF_SIZE];
 
   if (n < 0 || n >= GRID_DIALOG_STYLE_NUM)
     return;
@@ -412,7 +412,7 @@ GridDialogClose(GtkWidget *w, void *data)
     return;
 
   for (i = 0; i < GRID_DIALOG_STYLE_NUM; i++) {
-    char width[] = "width1", style[] = "style1"; 
+    char width[] = "width1", style[] = "style1";
 
     style[sizeof(style) - 2] += i;
     if (SetObjFieldFromStyle(d->style[i], d->Obj, d->Id, style))
@@ -451,7 +451,7 @@ GridDialog(struct GridDialog *data, struct objlist *obj, int id)
 }
 
 
-static void 
+static void
 set_axis_id(GtkWidget *w, int id)
 {
   char buf[256];
@@ -1245,7 +1245,7 @@ scale_tab_create(struct AxisDialog *d)
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
   add_widget_to_table(table, hbox, "", FALSE, i++);
-  
+
   w = combo_box_create();
   add_widget_to_table(table, w, _("_Scale:"), FALSE, i++);
   d->scale = w;
@@ -1467,7 +1467,7 @@ gauge_tab_set_value(struct AxisDialog *axis)
     return 1;
 
   for (i = 0; i < GAUGE_STYLE_NUM; i++) {
-    char width[] = "gauge_width1", length[] = "gauge_length1"; 
+    char width[] = "gauge_width1", length[] = "gauge_length1";
 
     width[sizeof(width) - 2] += i;
     if (SetObjFieldFromWidget(d->width[i], axis->Obj, axis->Id, width))
@@ -1501,7 +1501,7 @@ gauge_tab_setup_item(struct AxisDialog *axis, int id)
   SetStyleFromObjField(d->style, axis->Obj, id, "gauge_style");
 
   for (i = 0; i < GAUGE_STYLE_NUM; i++) {
-    char width[] = "gauge_width1", length[] = "gauge_length1"; 
+    char width[] = "gauge_width1", length[] = "gauge_length1";
 
     width[sizeof(width) - 2] += i;
     SetWidgetFromObjField(d->width[i], axis->Obj, id, width);
@@ -1597,7 +1597,7 @@ gauge_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
 static int
 set_num_format(struct AxisDialog *axis, struct AxisNumbering *d)
-{ 
+{
   GString *format;
   int a;
   char *new, *old;
@@ -1630,7 +1630,7 @@ set_num_format(struct AxisDialog *axis, struct AxisNumbering *d)
   if (putobj(axis->Obj, "num_format", axis->Id, new) == -1) {
     return 1;
   }
- 
+
   if (getobj(axis->Obj, "num_format", axis->Id, 0, NULL, &new) == -1){
     return 1;
   }
@@ -1888,7 +1888,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   vbox = gtk_vbox_new(FALSE, 4);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 4);
- 
+
   add_copy_button_to_box(vbox, G_CALLBACK(numbering_tab_copy_clicked), dd, "axis");
 
   return vbox;
@@ -2618,7 +2618,7 @@ CmAxisZoom(GtkAction *w, gpointer client_data)
   }
 }
 
-static void 
+static void
 axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
 {
   struct SubWin *d;
@@ -2856,7 +2856,7 @@ AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
   return FALSE;
 }
 
-static int 
+static int
 check_axis_history(struct objlist *obj)
 {
   struct narray *array;
@@ -3057,7 +3057,7 @@ pos_edited_common(struct SubWin *d, int id, char *str, enum CHANGE_DIR dir)
     y = (pos2 - pos1);
     break;
   }
- 
+
   argv[0] = (char *) &x;
   argv[1] = (char *) &y;
   argv[2] = NULL;
@@ -3140,7 +3140,7 @@ inc_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
   axis_prm_edited_common((struct SubWin *) user_data, "inc", str);
 }
 
-static void 
+static void
 axiswin_delete_axis(struct SubWin *d)
 {
   int sel;
@@ -3212,7 +3212,7 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
   }
 }
 
-static void 
+static void
 AxisWinAxisUp(GtkWidget *w, gpointer client_data)
 {
   int sel;
@@ -3234,7 +3234,7 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
   }
 }
 
-static void 
+static void
 AxisWinAxisDown(GtkWidget *w, gpointer client_data)
 {
   int sel;

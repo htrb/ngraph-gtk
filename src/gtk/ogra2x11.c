@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: ogra2x11.c,v 1.34 2010-01-04 05:11:28 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for GTK".
- * 
+ *
  * Copyright (C) 2002,  Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for GTK" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License,  or (at your option) any later version.
- * 
- * "Ngraph for GTK" is distributed in the hope that it will be useful, 
+ *
+ * "Ngraph for GTK" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not,  write to the Free Software
  * Foundation,  Inc.,  59 Temple Place - Suite 330,  Boston,  MA  02111-1307,  USA.
- * 
+ *
  */
 
 #include "gtk_common.h"
@@ -315,7 +315,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (_putobj(obj, "dpiy", inst, &(gtklocal->windpi)))
     goto errexit;
 
-  local->pixel_dot_x = 
+  local->pixel_dot_x =
   local->pixel_dot_y = gtklocal->windpi / (DPI_MAX * 1.0);
 
   if (gtklocal->winwidth < 1)

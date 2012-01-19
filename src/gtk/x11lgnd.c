@@ -1,24 +1,24 @@
-/* 
+/*
  * $Id: x11lgnd.c,v 1.68 2010-03-04 08:30:17 hito Exp $
- * 
+ *
  * This file is part of "Ngraph for X11".
- * 
+ *
  * Copyright (C) 2002, Satoshi ISHIZAKA. isizaka@msa.biglobe.ne.jp
- * 
+ *
  * "Ngraph for X11" is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * "Ngraph for X11" is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  */
 
 #include "gtk_common.h"
@@ -1127,7 +1127,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
   int i;
 
   d = (struct LegendDialog *) data;
-  snprintf(title, sizeof(title), _("Legend line %d"), d->Id); 
+  snprintf(title, sizeof(title), _("Legend line %d"), d->Id);
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
@@ -2196,7 +2196,7 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
     lgd->CloseWindow = legend_dialog_close;
     LegendTextDialog(&DlgLegendText, d->obj[id], sub_id);
     ret = DialogExecute(d->Win, &DlgLegendText);
-    break; 
+    break;
   }
   if (ret == IDDELETE) {
     delobj(d->obj[id], sub_id);
@@ -2345,7 +2345,7 @@ legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int r
     enum_path_type = (char **) chkobjarglist(d->obj[type], "type");
 
     len = snprintf(buf, sizeof(buf), "%s ", _(enum_path_type[path_type]));
-    snprintf(buf2, sizeof(buf2), "%s%s%s%s%s%s", 
+    snprintf(buf2, sizeof(buf2), "%s%s%s%s%s%s",
 	     (path_type) ? _(enum_intp[intp]) : "",
 	     (path_type) ? " " : "",
 	     (fill) ? _("fill") : "",
@@ -2536,7 +2536,7 @@ LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
-  unsigned int i; 
+  unsigned int i;
   int sel, n, m, last_id;
   struct LegendWin *d;
 

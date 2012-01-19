@@ -1,4 +1,4 @@
-/* 
+/*
  * $Id: gtk_liststore.h,v 1.11 2009-08-19 06:44:16 hito Exp $
  */
 
