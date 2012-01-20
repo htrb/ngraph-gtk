@@ -121,6 +121,37 @@ static gboolean AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_da
 static void axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 static int check_axis_history(struct objlist *obj);
 
+#define TIME_FORMAT_STR N_(						\
+  "%a	The abbreviated weekday name.\n"				\
+  "%A	The full weekday name.\n"					\
+  "%b	The abbreviated month name.\n"					\
+  "%B	The full month name.\n"						\
+  "%c	Equivalent to %a %b %e %T %Y.\n"				\
+  "%C	The century number (year/100).\n"				\
+  "%d	The day of the month (01 to 31).\n"				\
+  "%e	The day of the month (1 to 31).\n"				\
+  "%F	Equivalent to %Y-%m-%d.\n"					\
+  "%H	The hour (00 to 23).\n"						\
+  "%I	The hour (01 to 12).\n"						\
+  "%j	The day of the year (001 to 366).\n"				\
+  "%k	The hour (0 to 23).\n"						\
+  "%l	The hour (1 to 12).\n"						\
+  "%m	The month (01 to 12).\n"					\
+  "%M	The minute (00 to 59).\n"					\
+  "%n	A newline character.\n"						\
+  "%p	Either \"AM\" or \"PM\".\n"					\
+  "%P	Either \"am\" or \"pm\".\n"					\
+  "%r	Equivalent to %I:%M:%S %p.\n"					\
+  "%R	Equivalent to %H:%M.\n"						\
+  "%S	The second (00 to 60).\n"					\
+  "%T	Equivalent to %H:%M:%S.\n"					\
+  "%u	The day of the week, Monday being 1 (1 to 7).\n"		\
+  "%w	The day of the week, Sunday being 0 (0 to 6).\n"		\
+  "%y	The year without a century (00 to 99).\n"			\
+  "%Y	The year including the century.\n"				\
+  "%+	Equivalent to %a %b %e %T GMT %Y.\n"				\
+  "%%	A literal '%' character.")
+
 void
 axis_scale_push(struct objlist *obj, int id)
 {
@@ -1241,7 +1272,7 @@ scale_tab_create(struct AxisDialog *d)
 
   w = gtk_button_new_with_mnemonic(_("_File"));
   g_signal_connect(w, "clicked", G_CALLBACK(AxisDialogFile), d);
-  g_signal_connect(w, "show", G_CALLBACK(file_button_show), NULL);
+  g_signal_connect(w, "map", G_CALLBACK(file_button_show), NULL);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 
   add_widget_to_table(table, hbox, "", FALSE, i++);
@@ -1862,6 +1893,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->tail = w;
 
   w = create_text_entry(TRUE, TRUE);
+  gtk_widget_set_tooltip_text(w, _(TIME_FORMAT_STR));
   add_widget_to_table(table, w, _("_Date/time format:"), TRUE, i++);
   d->date_format = w;
 
@@ -2167,14 +2199,6 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 }
 
 static void
-axis_dialog_show_tab(GtkWidget *w, gpointer user_data)
-{
-  struct AxisDialog *d;
-  d = (struct AxisDialog *) user_data;
-  gtk_notebook_set_current_page(d->tab, d->tab_active);
-}
-
-static void
 AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct AxisDialog *d;
@@ -2216,12 +2240,9 @@ AxisDialogSetup(GtkWidget *wi, void *data, int makewidget)
     label = gtk_label_new_with_mnemonic(_("_Position"));
     d->position.tab_id = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), w, label);
 
-
     gtk_box_pack_start(GTK_BOX(d->vbox), notebook, TRUE, TRUE, 4);
 
     d->tab = GTK_NOTEBOOK(notebook);
-    d->tab_active = 0;
-    g_signal_connect(notebook, "show", G_CALLBACK(axis_dialog_show_tab), d);
   }
 
   position_tab_setup_item(d, d->Id);
@@ -2275,8 +2296,6 @@ AxisDialogClose(GtkWidget *w, void *data)
   int ret;
 
   d = (struct AxisDialog *) data;
-
-  d->tab_active = gtk_notebook_get_current_page(d->tab);
 
   switch (d->ret) {
   case IDOK:

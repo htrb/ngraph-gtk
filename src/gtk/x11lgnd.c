@@ -283,7 +283,6 @@ init_legend_dialog_widget_member(struct LegendDialog *d)
   d->font = NULL;
   d->font_bold = NULL;
   d->font_italic = NULL;
-  d->tab = NULL;
 }
 
 static void
@@ -572,10 +571,6 @@ legend_dialog_close(GtkWidget *w, void *data)
     {d->space, "space"},
     {d->script_size, "script_size"},
   };
-
-  if (d->tab) {
-    d->tab_active = gtk_notebook_get_current_page(GTK_NOTEBOOK(d->tab));
-  }
 
   switch(d->ret) {
   case IDOK:
@@ -1701,14 +1696,6 @@ create_character_panel(GtkWidget *entry)
 }
 
 static void
-text_dialog_show_tab(GtkWidget *w, gpointer user_data)
-{
-  struct LegendDialog *d;
-  d = (struct LegendDialog *) user_data;
-  gtk_notebook_set_current_page(GTK_NOTEBOOK(d->tab), d->tab_active);
-}
-
-static void
 LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   GtkWidget *w, *hbox, *frame, *table;
@@ -1757,9 +1744,6 @@ LegendTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = create_character_panel(d->text);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
-    g_signal_connect(w, "show", G_CALLBACK(text_dialog_show_tab), d);
-    d->tab = w;
-    d->tab_active = 0;
 
     add_copy_button_to_box(GTK_WIDGET(d->vbox), G_CALLBACK(legend_copy_clicked), d, "text");
 

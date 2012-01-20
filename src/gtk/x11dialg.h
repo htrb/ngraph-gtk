@@ -126,7 +126,7 @@ struct FileDialog
   struct objlist *Obj;
   int Id;
   struct MarkDialog mark;
-  int R, G, B, R2, G2, B2, alpha, multi_open, fit_row, tab_active;
+  int R, G, B, R2, G2, B2, alpha, multi_open, fit_row;
   struct FileMath math;
   struct FileLoad load;
   struct FileMask mask;
@@ -282,7 +282,7 @@ struct AxisDialog
   GtkWidget *min, *max, *inc, *div, *scale, *ref, *clear, *margin;
   GtkNotebook *tab;
   struct objlist *Obj;
-  int Id, tab_active;
+  int Id;
   struct AxisBase base;
   struct AxisFont font;
   struct AxisPos position;
@@ -335,9 +335,9 @@ struct LegendDialog
     *pieslice, *close_path, *stroke, *fill, *fill_rule, *arrow,
     *arrow_length, *arrow_width, *size, *type, *view, *text, *pt,
     *space, *script_size, *direction, *raw, *font, *font_bold,
-    *font_italic, *tab;
+    *font_italic;
   struct objlist *Obj;
-  int Id, tab_active;
+  int Id;
   int R, G, B, R2, G2, B2, fill_R, fill_G, fill_B, alpha, wid, ang;
   struct MarkDialog mark;
   cairo_surface_t *arrow_pixmap;

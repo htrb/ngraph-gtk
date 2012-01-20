@@ -1,3 +1,21 @@
+2012-01-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (text_dialog_show_tab): removed.
+	(LegendTextDialogSetup): don't connect "show" signal.
+
+	* src/gtk/x11axis.c (scale_tab_create): use "map" signal instead
+	of "show" signal.
+	(TIME_FORMAT_STR): added.
+	(numbering_tab_create): add tool tip for "Date/time format" entry.
+	(axis_dialog_show_tab): removed.
+	(AxisDialogSetup): don't connect "show" signal.
+
+	* src/gtk/x11file.c (file_dialog_show_tab): removed.
+	(FileDialogSetupCommon): don't connect "show" signal.
+
+	* src/gtk/gtk_widget.c (add_copy_button_to_box): use "map" signal
+	instead of "show" signal.
+
 2012-01-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (AxisDialog): remove member "del_btn" and "CanDel".

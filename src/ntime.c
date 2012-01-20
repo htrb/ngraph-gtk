@@ -310,7 +310,7 @@ append_date_str(GString *str, const gchar *fmt, struct tm *t)
     g_string_append_printf(str, "%s", mfname[m - 1]);
     break;
   case 'c':
-    g_string_append_printf(str, "%s %s% 2d %02d:%02d:%02d %d",
+    g_string_append_printf(str, "%s %s % 2d %02d:%02d:%02d %d",
 			   weekstr[w], monthstr[m - 1], d,
 			   h24, mm, s, y);
     break;

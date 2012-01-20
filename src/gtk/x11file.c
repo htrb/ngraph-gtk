@@ -2912,14 +2912,6 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
 }
 
 static void
-file_dialog_show_tab(GtkWidget *w, gpointer user_data)
-{
-  struct FileDialog *d;
-  d = (struct FileDialog *) user_data;
-  gtk_notebook_set_current_page(d->tab, d->tab_active);
-}
-
-static void
 FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
 {
   GtkWidget *w, *hbox, *vbox2, *frame, *notebook, *label;
@@ -2967,8 +2959,6 @@ FileDialogSetupCommon(GtkWidget *wi, struct FileDialog *d)
   gtk_box_pack_start(GTK_BOX(d->vbox), hbox, TRUE, TRUE, 4);
 
   notebook = gtk_notebook_new();
-  d->tab_active = 0;
-  g_signal_connect(notebook, "show", G_CALLBACK(file_dialog_show_tab), d);
 
   d->tab = GTK_NOTEBOOK(notebook);
   gtk_notebook_set_scrollable(d->tab, FALSE);
@@ -3127,8 +3117,6 @@ plot_tab_set_value(struct FileDialog *d)
 static int
 FileDialogCloseCommon(GtkWidget *w, struct FileDialog *d)
 {
-  d->tab_active = gtk_notebook_get_current_page(d->tab);
-
   if (SetObjFieldFromWidget(d->xcol, d->Obj, d->Id, "x"))
     return TRUE;
 
