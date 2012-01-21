@@ -4,7 +4,7 @@
 <title> Introduction </title>
 </head>
 <body>
-<a name=TOP>&nbsp;</a>
+<a name="TOP">&nbsp;</a>
 <h1> <a href="./ngraph.html">Overview Ngraph</a> </h1>
 <ul>
  <li> <a href="./intro.html#ABSTRACT">And Ngraph is it?</a>
@@ -14,7 +14,7 @@
 <br>
 <hr size=5>
 <br>
-<a name=ABSTRACT>&nbsp;</a>
+<a name="ABSTRACT">&nbsp;</a>
 <h2> <a href="./intro.html">And Ngraph is it?</a> </h2>
 <br>
 <ul>
@@ -28,7 +28,7 @@
 <br>
 <hr>
 <br>
-<a name=USAGE>&nbsp;</a>
+<a name="USAGE">&nbsp;</a>
 <h2> <a href="./intro.html">Terms of use and distribution</a> </h2>
 <br>
 <div>
@@ -51,7 +51,7 @@ USA). </p>
 <br>
 <hr>
 <br>
-<a name=INSTALL>&nbsp;</a>
+<a name="INSTALL">&nbsp;</a>
 <h2> <a href="./intro.html">Preferences</a> </h2>
 <br>
 <div>
