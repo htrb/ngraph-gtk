@@ -1,3 +1,12 @@
+2012-01-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.h (FitDialog): add member "usr_def_prm_tbl".
+
+	* src/gtk/x11file.c (set_fitdialog_sensitivity)
+	(FitDialogSetSensitivity): set sensitivity of the widget
+	"usr_def_prm_tb".
+	(create_user_fit_frame): initialize "usr_def_prm_tbl".
+
 2012-01-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (text_dialog_show_tab): removed.

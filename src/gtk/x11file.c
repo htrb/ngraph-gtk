@@ -1212,6 +1212,7 @@ set_fitdialog_sensitivity(struct FitDialog *d, int type, int through)
   gtk_widget_set_sensitive(d->dim_label, type == 0);
   gtk_widget_set_sensitive(d->dim, type == 0);
   gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
+  gtk_widget_set_sensitive(d->usr_def_prm_tbl, FALSE);
   gtk_widget_set_sensitive(d->through_box, through);
   gtk_widget_set_sensitive(d->through_point, TRUE);
 }
@@ -1272,6 +1273,7 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
     gtk_widget_set_sensitive(d->through_point, FALSE);
     gtk_widget_set_sensitive(d->through_box, FALSE);
     gtk_widget_set_sensitive(d->usr_def_frame, TRUE);
+    gtk_widget_set_sensitive(d->usr_def_prm_tbl, TRUE);
     set_user_fit_sensitivity(d, deriv);
     break;
   }
@@ -1328,6 +1330,7 @@ create_user_fit_frame(struct FitDialog *d)
   gtk_container_set_border_width(GTK_CONTAINER(w), 2);
 
   gtk_box_pack_start(GTK_BOX(vbox), w, TRUE, TRUE, 0);
+  d->usr_def_prm_tbl = table;
 
   w = gtk_frame_new(_("User definition"));
   gtk_container_add(GTK_CONTAINER(w), vbox);

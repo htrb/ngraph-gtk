@@ -178,7 +178,7 @@ struct FitDialog
   GtkWidget *type, *through_point, *x, *y, *dim, *weight,
     *min, *max, *div, *interpolation, *formula, *converge,
     *derivatives, *p[FIT_PARM_NUM], *d[FIT_PARM_NUM], *d_label[FIT_PARM_NUM], *through_box,
-    *dim_label, *usr_def_frame, *func_label;
+    *dim_label, *usr_def_frame, *usr_def_prm_tbl, *func_label;
   struct objlist *Obj;
   int Id;
   int Lastid;
