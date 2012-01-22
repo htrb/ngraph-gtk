@@ -1,3 +1,11 @@
+2012-01-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileDialogType): set sensitivity of widgets
+	"d->fit" and "d->fit_label".
+	(plot_tab_create): initialize "d->fit_label".
+
+	* src/gtk/x11dialg.h (FileDialog): add member "fit_label".
+
 2012-01-21  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (FitDialog): add member "usr_def_prm_tbl".

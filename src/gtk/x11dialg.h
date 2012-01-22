@@ -118,7 +118,7 @@ struct FileDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
+  GtkWidget *file, *load_settings, *fit, *fit_label, *xcol, *xaxis, *ycol, *yaxis,
     *type, *mark_btn, *mark_label, *curve, *curve_label, *col1, *col2, *col2_label,
     *clip, *style, *size, *size_label, *miter, *miter_label, *join, *join_label,
     *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view;

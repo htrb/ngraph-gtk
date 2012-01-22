@@ -2668,6 +2668,7 @@ FileDialogType(GtkWidget *w, gpointer client_data)
   gtk_widget_set_sensitive(d->size, TRUE);
   gtk_widget_set_sensitive(d->miter, TRUE);
   gtk_widget_set_sensitive(d->join, TRUE);
+  gtk_widget_set_sensitive(d->fit, TRUE);
 
   gtk_widget_set_sensitive(d->mark_label, TRUE);
   gtk_widget_set_sensitive(d->curve_label, TRUE);
@@ -2676,6 +2677,7 @@ FileDialogType(GtkWidget *w, gpointer client_data)
   gtk_widget_set_sensitive(d->miter_label, TRUE);
   gtk_widget_set_sensitive(d->join_label, TRUE);
 
+  gtk_widget_set_sensitive(d->fit_label, TRUE);
 
   type = combo_box_get_active(w);
 
@@ -2684,10 +2686,12 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->curve, FALSE);
     gtk_widget_set_sensitive(d->miter, FALSE);
     gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
 
     gtk_widget_set_sensitive(d->curve_label, FALSE);
     gtk_widget_set_sensitive(d->miter_label, FALSE);
     gtk_widget_set_sensitive(d->join_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_LINE:
   case PLOT_TYPE_POLYGON:
@@ -2695,18 +2699,22 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->curve, FALSE);
     gtk_widget_set_sensitive(d->col2, FALSE);
     gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->curve_label, FALSE);
     gtk_widget_set_sensitive(d->col2_label, FALSE);
     gtk_widget_set_sensitive(d->size_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_CURVE:
     gtk_widget_set_sensitive(d->mark_btn, FALSE);
     gtk_widget_set_sensitive(d->col2, FALSE);
     gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->col2_label, FALSE);
     gtk_widget_set_sensitive(d->size_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_DIAGONAL:
   case PLOT_TYPE_RECTANGLE:
@@ -2717,6 +2725,7 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->size, FALSE);
     gtk_widget_set_sensitive(d->miter, FALSE);
     gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
 
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->curve_label, FALSE);
@@ -2724,6 +2733,7 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->size_label, FALSE);
     gtk_widget_set_sensitive(d->miter_label, FALSE);
     gtk_widget_set_sensitive(d->join_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_ARROW:
     gtk_widget_set_sensitive(d->mark_btn, FALSE);
@@ -2731,12 +2741,14 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->col2, FALSE);
     gtk_widget_set_sensitive(d->miter, FALSE);
     gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
 
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->curve_label, FALSE);
     gtk_widget_set_sensitive(d->col2_label, FALSE);
     gtk_widget_set_sensitive(d->miter_label, FALSE);
     gtk_widget_set_sensitive(d->join_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_RECTANGLE_FILL:
     gtk_widget_set_sensitive(d->mark_btn, FALSE);
@@ -2744,12 +2756,14 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->size, FALSE);
     gtk_widget_set_sensitive(d->miter, FALSE);
     gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
 
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->curve_label, FALSE);
     gtk_widget_set_sensitive(d->size_label, FALSE);
     gtk_widget_set_sensitive(d->miter_label, FALSE);
     gtk_widget_set_sensitive(d->join_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_ERRORBAR_X:
   case PLOT_TYPE_ERRORBAR_Y:
@@ -2758,12 +2772,14 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->col2, FALSE);
     gtk_widget_set_sensitive(d->miter, FALSE);
     gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
 
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->curve_label, FALSE);
     gtk_widget_set_sensitive(d->col2_label, FALSE);
     gtk_widget_set_sensitive(d->miter_label, FALSE);
     gtk_widget_set_sensitive(d->join_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_STAIRCASE_X:
   case PLOT_TYPE_STAIRCASE_Y:
@@ -2771,11 +2787,13 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->curve, FALSE);
     gtk_widget_set_sensitive(d->col2, FALSE);
     gtk_widget_set_sensitive(d->size, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
 
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->curve_label, FALSE);
     gtk_widget_set_sensitive(d->col2_label, FALSE);
     gtk_widget_set_sensitive(d->size_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_BAR_X:
   case PLOT_TYPE_BAR_Y:
@@ -2786,12 +2804,14 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->col2, FALSE);
     gtk_widget_set_sensitive(d->miter, FALSE);
     gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
 
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->curve_label, FALSE);
     gtk_widget_set_sensitive(d->col2_label, FALSE);
     gtk_widget_set_sensitive(d->miter_label, FALSE);
     gtk_widget_set_sensitive(d->join_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_BAR_FILL_X:
   case PLOT_TYPE_BAR_FILL_Y:
@@ -2799,11 +2819,13 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     gtk_widget_set_sensitive(d->curve, FALSE);
     gtk_widget_set_sensitive(d->miter, FALSE);
     gtk_widget_set_sensitive(d->join, FALSE);
+    gtk_widget_set_sensitive(d->fit, FALSE);
 
     gtk_widget_set_sensitive(d->mark_label, FALSE);
     gtk_widget_set_sensitive(d->curve_label, FALSE);
     gtk_widget_set_sensitive(d->miter_label, FALSE);
     gtk_widget_set_sensitive(d->join_label, FALSE);
+    gtk_widget_set_sensitive(d->fit_label, FALSE);
     break;
   case PLOT_TYPE_FIT:
     gtk_widget_set_sensitive(d->mark_btn, FALSE);
@@ -3065,7 +3087,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 0);
 
     w = gtk_button_new_with_label(_("Create"));
-    add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
+    d->fit_label = add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
   }
