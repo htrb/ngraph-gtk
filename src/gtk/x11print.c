@@ -282,9 +282,13 @@ static void
 OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
 {
   int i;
+  GtkWidget *vlabel;
 
-  gtk_label_set_text(GTK_LABEL(d->vlabel), "");
+  vlabel = get_mnemonic_label(d->version);
+
+  gtk_label_set_text(GTK_LABEL(vlabel), "");
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), FALSE);
+  gtk_widget_set_sensitive(d->version, TRUE); /* fix-me: this code may need to avoid GKT+3 bug. */
 
   combo_box_clear(d->version);
   switch (d->DlgType) {
@@ -293,14 +297,13 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     for (i = 0; PsVersion[i]; i++) {
       combo_box_append_text(d->version, PsVersion[i]);
     }
-    gtk_widget_set_sensitive(d->dlabel, FALSE);
-    gtk_widget_set_sensitive(d->dpi, FALSE);
+    set_widget_sensitivity_with_label(d->dpi, FALSE);
 
     gtk_widget_set_sensitive(d->version, TRUE);
-    gtk_widget_set_sensitive(d->vlabel, TRUE);
+    gtk_widget_set_sensitive(vlabel, TRUE);
     gtk_widget_set_sensitive(d->t2p, TRUE);
 
-    gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_PostScript Version:"));
+    gtk_label_set_markup_with_mnemonic(GTK_LABEL(vlabel), _("_PostScript Version:"));
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
     combo_box_set_active(d->version, Menulocal.ps_version);
@@ -308,24 +311,23 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
   case MenuIdOutputPNGFile:
     combo_box_append_text(d->version, "--------");
 
-    gtk_widget_set_sensitive(d->dlabel, TRUE);
-    gtk_widget_set_sensitive(d->dpi, TRUE);
+    set_widget_sensitivity_with_label(d->dpi, TRUE);
 
     gtk_widget_set_sensitive(d->version, FALSE);
-    gtk_widget_set_sensitive(d->vlabel, FALSE);
+    gtk_widget_set_sensitive(vlabel, FALSE);
     gtk_widget_set_sensitive(d->t2p, FALSE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.png_dpi);
     combo_box_set_active(d->version, 0);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->use_opacity), Menulocal.use_opacity);
+
     break;
   case MenuIdOutputPDFFile:
     combo_box_append_text(d->version, "--------");
 
-    gtk_widget_set_sensitive(d->dlabel, FALSE);
-    gtk_widget_set_sensitive(d->dpi, FALSE);
+    set_widget_sensitivity_with_label(d->dpi, FALSE);
     gtk_widget_set_sensitive(d->version, FALSE);
-    gtk_widget_set_sensitive(d->vlabel, FALSE);
+    gtk_widget_set_sensitive(vlabel, FALSE);
 
     gtk_widget_set_sensitive(d->t2p, TRUE);
 
@@ -338,14 +340,13 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
       combo_box_append_text(d->version, SvgVersion[i]);
     }
 
-    gtk_widget_set_sensitive(d->dlabel, FALSE);
-    gtk_widget_set_sensitive(d->dpi, FALSE);
+    set_widget_sensitivity_with_label(d->dpi, FALSE);
 
     gtk_widget_set_sensitive(d->version, TRUE);
-    gtk_widget_set_sensitive(d->vlabel, TRUE);
+    gtk_widget_set_sensitive(vlabel, TRUE);
     gtk_widget_set_sensitive(d->t2p, TRUE);
 
-    gtk_label_set_markup_with_mnemonic(GTK_LABEL(d->vlabel), _("_SVG Version:"));
+    gtk_label_set_markup_with_mnemonic(GTK_LABEL(vlabel), _("_SVG Version:"));
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), 72);
     combo_box_set_active(d->version, Menulocal.svg_version);
@@ -356,10 +357,9 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     combo_box_append_text(d->version, "--------");
 
     gtk_widget_set_sensitive(d->version, FALSE);
-    gtk_widget_set_sensitive(d->vlabel, FALSE);
+    gtk_widget_set_sensitive(vlabel, FALSE);
 
-    gtk_widget_set_sensitive(d->dlabel, TRUE);
-    gtk_widget_set_sensitive(d->dpi, TRUE);
+    set_widget_sensitivity_with_label(d->dpi, TRUE);
     gtk_widget_set_sensitive(d->t2p, TRUE);
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(d->dpi), Menulocal.emf_dpi);
@@ -390,11 +390,11 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(w), TRUE);
     gtk_entry_set_activates_default(GTK_ENTRY(w), TRUE);
     d->dpi = w;
-    d->dlabel = item_setup(GTK_WIDGET(d->vbox), w, "_DPI:", FALSE);
+    item_setup(GTK_WIDGET(d->vbox), w, "_DPI:", FALSE);
 
     w = combo_box_create();
     d->version = w;
-    d->vlabel = item_setup(GTK_WIDGET(d->vbox), w, "", FALSE);
+    item_setup(GTK_WIDGET(d->vbox), w, "", FALSE);
   }
 
   switch (d->DlgType) {

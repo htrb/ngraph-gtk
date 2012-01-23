@@ -224,8 +224,7 @@ bg_button_toggled(GtkToggleButton *button, gpointer user_data)
   d = (struct GridDialog *) user_data;
 
   state = gtk_toggle_button_get_active(button);
-  gtk_widget_set_sensitive(d->bcolor, state);
-  gtk_widget_set_sensitive(d->bclabel, state);
+  set_widget_sensitivity_with_label(d->bcolor, state);
 }
 
 static void
@@ -391,7 +390,7 @@ GridDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->background = w;
 
     w = create_color_button(wi);
-    d->bclabel = add_widget_to_table(table, w, _("_Background Color:"), FALSE, j++);
+    add_widget_to_table(table, w, _("_Background Color:"), FALSE, j++);
     d->bcolor = w;
 
     frame = gtk_frame_new(_("Color"));
@@ -1808,8 +1807,7 @@ num_direction_changed(GtkWidget *w, gpointer client_data)
 
   dir = combo_box_get_active(w);
   state = (dir != AXIS_NUM_POS_OBLIQUE1 && dir != AXIS_NUM_POS_OBLIQUE2);
-  gtk_widget_set_sensitive(d->numbering.align, state);
-  gtk_widget_set_sensitive(d->numbering.align_label, state);
+  set_widget_sensitivity_with_label(d->numbering.align, state);
 }
 
 static GtkWidget *
@@ -1854,7 +1852,7 @@ numbering_tab_create(GtkWidget *wi, struct AxisDialog *dd)
 
   i = 0;
   w = combo_box_create();
-  d->align_label = add_widget_to_table(table, w, _("_Align:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Align:"), FALSE, i++);
   d->align = w;
 
   w = combo_box_create();

@@ -118,9 +118,9 @@ struct FileDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *file, *load_settings, *fit, *fit_label, *xcol, *xaxis, *ycol, *yaxis,
-    *type, *mark_btn, *mark_label, *curve, *curve_label, *col1, *col2, *col2_label,
-    *clip, *style, *size, *size_label, *miter, *miter_label, *join, *join_label,
+  GtkWidget *file, *load_settings, *fit, *xcol, *xaxis, *ycol, *yaxis,
+    *type, *mark_btn, *curve, *col1, *col2,
+    *clip, *style, *size, *miter, *join,
     *comment_box, *file_box, *fit_table, *width, *apply_all, *comment_view;
   GtkNotebook *tab;
   struct objlist *Obj;
@@ -177,8 +177,8 @@ struct FitDialog
   /****** local member *******/
   GtkWidget *type, *through_point, *x, *y, *dim, *weight,
     *min, *max, *div, *interpolation, *formula, *converge,
-    *derivatives, *p[FIT_PARM_NUM], *d[FIT_PARM_NUM], *d_label[FIT_PARM_NUM], *through_box,
-    *dim_label, *usr_def_frame, *usr_def_prm_tbl, *func_label;
+    *derivatives, *p[FIT_PARM_NUM], *d[FIT_PARM_NUM], *through_box,
+    *usr_def_frame, *usr_def_prm_tbl, *func_label;
   struct objlist *Obj;
   int Id;
   int Lastid;
@@ -262,7 +262,7 @@ struct AxisFont
 struct AxisNumbering
 {
   GtkWidget *num, *begin, *ster, *numnum, *head, *fraction, *add_plus, *tail,
-    *date_format, *align, *align_label, *direction, *shiftp, *shiftn,
+    *date_format, *align, *direction, *shiftp, *shiftn,
     *log_power, *no_zero, *norm, *step;
   int tab_id;
 };
@@ -299,7 +299,7 @@ struct GridDialog
   /****** local member *******/
   struct objlist *Obj;
   GtkWidget *style[GRID_DIALOG_STYLE_NUM], *width[GRID_DIALOG_STYLE_NUM],
-    *axisx, *axisy, *background, *color, *bcolor, *bclabel, *draw_x, *draw_y;
+    *axisx, *axisy, *background, *color, *bcolor, *draw_x, *draw_y;
   int Id;
   int R, G, B, R2, G2, B2, A;
 };
@@ -377,8 +377,7 @@ struct PageDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *leftmargin, *topmargin, *paperwidth, *paperheight,
-    *paperwidth_label, *paperheight_label, *paperzoom, *paper;
+  GtkWidget *leftmargin, *topmargin, *paperwidth, *paperheight, *paperzoom, *paper;
 };
 void PageDialog(struct PageDialog *data);
 
@@ -540,7 +539,7 @@ struct ExViewerDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *dpi, *width, *height, *d_label, *w_label, *h_label, *use_external;
+  GtkWidget *dpi, *width, *height, *use_external;
   struct objlist *Obj;
   int Id;
 };
@@ -550,7 +549,7 @@ struct ViewerDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *dpi, *loadfile, *grid, *data_num, *data_num_label, *antialias, *fftype,
+  GtkWidget *dpi, *loadfile, *grid, *data_num, *antialias, *fftype,
     *bgcol, *preserve_width;
   struct objlist *Obj;
   int Id;
@@ -593,7 +592,7 @@ struct OutputImageDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *version, *t2p, *dpi, *vlabel, *dlabel, *use_opacity;
+  GtkWidget *version, *t2p, *dpi, *use_opacity;
   int Version, text2path, Dpi, DlgType, UseOpacity;
 };
 void OutputImageDialog(struct OutputImageDialog *data, int type);

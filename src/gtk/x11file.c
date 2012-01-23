@@ -1209,8 +1209,7 @@ FitDialogDraw(GtkWidget *w, gpointer client_data)
 static void
 set_fitdialog_sensitivity(struct FitDialog *d, int type, int through)
 {
-  gtk_widget_set_sensitive(d->dim_label, type == 0);
-  gtk_widget_set_sensitive(d->dim, type == 0);
+  set_widget_sensitivity_with_label(d->dim, type == 0);
   gtk_widget_set_sensitive(d->usr_def_frame, FALSE);
   gtk_widget_set_sensitive(d->usr_def_prm_tbl, FALSE);
   gtk_widget_set_sensitive(d->through_box, through);
@@ -1223,8 +1222,7 @@ set_user_fit_sensitivity(struct FitDialog *d, int active)
   int i;
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
-    gtk_widget_set_sensitive(d->d_label[i], active);
-    gtk_widget_set_sensitive(d->d[i], active);
+    set_widget_sensitivity_with_label(d->d[i], active);
   }
 }
 
@@ -1268,8 +1266,7 @@ FitDialogSetSensitivity(GtkWidget *widget, gpointer user_data)
     gtk_label_set_text(GTK_LABEL(d->func_label), "");
     deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
 
-    gtk_widget_set_sensitive(d->dim_label, FALSE);
-    gtk_widget_set_sensitive(d->dim, FALSE);
+    set_widget_sensitivity_with_label(d->dim, FALSE);
     gtk_widget_set_sensitive(d->through_point, FALSE);
     gtk_widget_set_sensitive(d->through_box, FALSE);
     gtk_widget_set_sensitive(d->usr_def_frame, TRUE);
@@ -1318,7 +1315,7 @@ create_user_fit_frame(struct FitDialog *d)
     d->p[i] = w;
 
     w = create_text_entry(TRUE, TRUE);
-    d->d_label[i] = add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, 4, j++);
+    add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, 4, j++);
     d->d[i] = w;
   }
 
@@ -1366,7 +1363,7 @@ FitDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     hbox2 = gtk_hbox_new(FALSE, 4);
     w = combo_box_create();
-    d->dim_label = add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 5, 0);
+    add_widget_to_table_sub(table, w, _("_Dim:"), FALSE, 2, 1, 5, 0);
     d->dim = w;
     for (i = 0; i < FIT_PARM_NUM - 1; i++) {
       snprintf(mes, sizeof(mes), "%d", i + 1);
@@ -2662,181 +2659,105 @@ FileDialogType(GtkWidget *w, gpointer client_data)
 
   d = (struct FileDialog *) client_data;
 
-  gtk_widget_set_sensitive(d->mark_btn, TRUE);
-  gtk_widget_set_sensitive(d->curve, TRUE);
-  gtk_widget_set_sensitive(d->col2, TRUE);
-  gtk_widget_set_sensitive(d->size, TRUE);
-  gtk_widget_set_sensitive(d->miter, TRUE);
-  gtk_widget_set_sensitive(d->join, TRUE);
-  gtk_widget_set_sensitive(d->fit, TRUE);
-
-  gtk_widget_set_sensitive(d->mark_label, TRUE);
-  gtk_widget_set_sensitive(d->curve_label, TRUE);
-  gtk_widget_set_sensitive(d->col2_label, TRUE);
-  gtk_widget_set_sensitive(d->size_label, TRUE);
-  gtk_widget_set_sensitive(d->miter_label, TRUE);
-  gtk_widget_set_sensitive(d->join_label, TRUE);
-
-  gtk_widget_set_sensitive(d->fit_label, TRUE);
-
   type = combo_box_get_active(w);
+
+  set_widget_sensitivity_with_label(d->mark_btn, TRUE);
+  set_widget_sensitivity_with_label(d->curve, TRUE);
+  set_widget_sensitivity_with_label(d->col2, TRUE);
+  set_widget_sensitivity_with_label(d->size, TRUE);
+  set_widget_sensitivity_with_label(d->miter, TRUE);
+  set_widget_sensitivity_with_label(d->join, TRUE);
+  set_widget_sensitivity_with_label(d->fit, TRUE);
 
   switch (type) {
   case PLOT_TYPE_MARK:
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->miter_label, FALSE);
-    gtk_widget_set_sensitive(d->join_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_LINE:
   case PLOT_TYPE_POLYGON:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->col2_label, FALSE);
-    gtk_widget_set_sensitive(d->size_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->size, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_CURVE:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->col2_label, FALSE);
-    gtk_widget_set_sensitive(d->size_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->size, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_DIAGONAL:
   case PLOT_TYPE_RECTANGLE:
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->col2_label, FALSE);
-    gtk_widget_set_sensitive(d->size_label, FALSE);
-    gtk_widget_set_sensitive(d->miter_label, FALSE);
-    gtk_widget_set_sensitive(d->join_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->size, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_ARROW:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->col2_label, FALSE);
-    gtk_widget_set_sensitive(d->miter_label, FALSE);
-    gtk_widget_set_sensitive(d->join_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_RECTANGLE_FILL:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->size_label, FALSE);
-    gtk_widget_set_sensitive(d->miter_label, FALSE);
-    gtk_widget_set_sensitive(d->join_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->size, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_ERRORBAR_X:
   case PLOT_TYPE_ERRORBAR_Y:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->col2_label, FALSE);
-    gtk_widget_set_sensitive(d->miter_label, FALSE);
-    gtk_widget_set_sensitive(d->join_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_STAIRCASE_X:
   case PLOT_TYPE_STAIRCASE_Y:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->col2_label, FALSE);
-    gtk_widget_set_sensitive(d->size_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->size, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_BAR_X:
   case PLOT_TYPE_BAR_Y:
   case PLOT_TYPE_BAR_SOLID_FILL_X:
   case PLOT_TYPE_BAR_SOLID_FILL_Y:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->col2_label, FALSE);
-    gtk_widget_set_sensitive(d->miter_label, FALSE);
-    gtk_widget_set_sensitive(d->join_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_BAR_FILL_X:
   case PLOT_TYPE_BAR_FILL_Y:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->miter, FALSE);
-    gtk_widget_set_sensitive(d->join, FALSE);
-    gtk_widget_set_sensitive(d->fit, FALSE);
-
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->miter_label, FALSE);
-    gtk_widget_set_sensitive(d->join_label, FALSE);
-    gtk_widget_set_sensitive(d->fit_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->miter, FALSE);
+    set_widget_sensitivity_with_label(d->join, FALSE);
+    set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
   case PLOT_TYPE_FIT:
-    gtk_widget_set_sensitive(d->mark_btn, FALSE);
-    gtk_widget_set_sensitive(d->curve, FALSE);
-    gtk_widget_set_sensitive(d->col2, FALSE);
-    gtk_widget_set_sensitive(d->size, FALSE);
-
-    gtk_widget_set_sensitive(d->mark_label, FALSE);
-    gtk_widget_set_sensitive(d->curve_label, FALSE);
-    gtk_widget_set_sensitive(d->col2_label, FALSE);
-    gtk_widget_set_sensitive(d->size_label, FALSE);
+    set_widget_sensitivity_with_label(d->mark_btn, FALSE);
+    set_widget_sensitivity_with_label(d->curve, FALSE);
+    set_widget_sensitivity_with_label(d->col2, FALSE);
+    set_widget_sensitivity_with_label(d->size, FALSE);
     break;
   }
 }
@@ -2872,12 +2793,12 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   g_signal_connect(w, "changed", G_CALLBACK(FileDialogType), d);
 
   w = gtk_button_new();
-  d->mark_label = add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Mark:"), FALSE, i++);
   d->mark_btn = w;
   g_signal_connect(w, "clicked", G_CALLBACK(FileDialogMark), d);
 
   w = combo_box_create();
-  d->curve_label = add_widget_to_table(table, w, _("_Curve:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Curve:"), FALSE, i++);
   d->curve = w;
 
   d->fit_table = table;
@@ -2889,7 +2810,7 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   d->col1 = w;
 
   w = create_color_button(parent);
-  d->col2_label = add_widget_to_table(table, w, _("_Color 2:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Color 2:"), FALSE, i++);
   d->col2 = w;
 
   gtk_box_pack_start(GTK_BOX(hbox), table, FALSE, FALSE, 4);
@@ -2908,15 +2829,15 @@ plot_tab_create(GtkWidget *parent, struct FileDialog *d)
   d->width = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-  d->size_label = add_widget_to_table(table, w, _("_Size:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Size:"), FALSE, i++);
   d->size = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-  d->miter_label = add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
   d->miter = w;
 
   w = combo_box_create();
-  d->join_label = add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
+  add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
   d->join = w;
 
   w = gtk_check_button_new_with_mnemonic(_("_Clip"));
@@ -3087,7 +3008,7 @@ FileDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->comment_box), w, TRUE, TRUE, 0);
 
     w = gtk_button_new_with_label(_("Create"));
-    d->fit_label = add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
+    add_widget_to_table(d->fit_table, w, _("_Fit:"), FALSE, d->fit_row);
     d->fit = w;
     g_signal_connect(w, "clicked", G_CALLBACK(FileDialogFit), d);
   }

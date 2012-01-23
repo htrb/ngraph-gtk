@@ -1499,13 +1499,9 @@ use_external_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 
   state = ! gtk_toggle_button_get_active(togglebutton);
 
-  gtk_widget_set_sensitive(d->dpi, state);
-  gtk_widget_set_sensitive(d->width, state);
-  gtk_widget_set_sensitive(d->height, state);
-
-  gtk_widget_set_sensitive(d->d_label, state);
-  gtk_widget_set_sensitive(d->w_label, state);
-  gtk_widget_set_sensitive(d->h_label, state);
+  set_widget_sensitivity_with_label(d->dpi, state);
+  set_widget_sensitivity_with_label(d->width, state);
+  set_widget_sensitivity_with_label(d->height, state);
 }
 
 static void
@@ -1531,14 +1527,14 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     w = gtk_hscale_new_with_range(20, 620, 1);
     d->dpi = w;
-    d->d_label = add_widget_to_table(table, w, "_DPI:", TRUE, i++);
+    add_widget_to_table(table, w, "_DPI:", TRUE, i++);
 
     w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
-    d->w_label = add_widget_to_table(table, w, _("Window _Width:"), FALSE, i++);
+    add_widget_to_table(table, w, _("Window _Width:"), FALSE, i++);
     d->width = w;
 
     w = create_spin_entry(WIN_SIZE_MIN, WIN_SIZE_MAX, 1, FALSE, TRUE);
-    d->h_label = add_widget_to_table(table, w, _("Window _Height:"), FALSE, i++);
+    add_widget_to_table(table, w, _("Window _Height:"), FALSE, i++);
     d->height = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
@@ -1612,8 +1608,7 @@ load_file_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 
   state = gtk_toggle_button_get_active(togglebutton);
 
-  gtk_widget_set_sensitive(d->data_num, state);
-  gtk_widget_set_sensitive(d->data_num_label, state);
+  set_widget_sensitivity_with_label(d->data_num, state);
 }
 
 static void
@@ -1670,7 +1665,7 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, NULL, FALSE, i++);
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_UINT, TRUE, TRUE);
-    d->data_num_label = add_widget_to_table(table, w, _("_Maximum number of data on redraw:"), FALSE, i++);
+    add_widget_to_table(table, w, _("_Maximum number of data on redraw:"), FALSE, i++);
     d->data_num = w;
 
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);

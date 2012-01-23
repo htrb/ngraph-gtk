@@ -12,17 +12,50 @@
 #include "x11gui.h"
 
 GtkWidget *
-get_widget(GtkWidget *w)
+get_mnemonic_label(GtkWidget *w)
 {
-  GtkWidget *widget;
+  GList *list;
+  GtkWidget *label;
 
-  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_LABEL)) {
-    widget = gtk_label_get_mnemonic_widget(GTK_LABEL(w));
-  } else {
-    widget = w;
+  if (w == NULL) {
+    return NULL;
   }
 
-  return widget;
+  list = gtk_widget_list_mnemonic_labels(w);
+  if (list == NULL) {
+    return NULL;
+  }
+
+  label = GTK_WIDGET(list->data);
+
+  g_list_free(list);
+
+  return label;
+}
+
+void
+set_widget_sensitivity_with_label(GtkWidget *w, gboolean state)
+{
+  GtkWidget *label;
+
+  if(w == NULL) {
+    return;
+  }
+
+  if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_LABEL)) {
+    label = w;
+    w = gtk_label_get_mnemonic_widget(GTK_LABEL(w));
+  } else {
+    label = get_mnemonic_label(w);
+  }
+
+  if (w) {
+    gtk_widget_set_sensitive(w, state);
+  }
+
+  if (label) {
+    gtk_widget_set_sensitive(label, state);
+  }
 }
 
 GtkWidget *
@@ -325,13 +358,10 @@ spin_entry_set_inc(GtkWidget *w, int inc, int page)
 }
 
 void
-spin_entry_set_val(GtkWidget *w, int ival)
+spin_entry_set_val(GtkWidget *entry, int ival)
 {
   gdouble min, max, val;
   enum SPIN_BUTTON_TYPE type;
-  GtkWidget *entry;
-
-  entry = get_widget(w);
 
   type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "user-data"));
 
@@ -349,13 +379,10 @@ spin_entry_set_val(GtkWidget *w, int ival)
 }
 
 int
-spin_entry_get_val(GtkWidget *w)
+spin_entry_get_val(GtkWidget *entry)
 {
   gdouble val;
   enum SPIN_BUTTON_TYPE type;
-  GtkWidget *entry;
-
-  entry = get_widget(w);
 
   type = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(entry), "user-data"));
   val = gtk_spin_button_get_value(GTK_SPIN_BUTTON(entry));

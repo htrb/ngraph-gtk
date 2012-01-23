@@ -324,13 +324,11 @@ set_font(struct LegendDialog *d, int id)
     if (d->text && compatible->symbol) {
       char buf[] = "%F{Sym}", *tmp;
       const char *str;
-      GtkWidget *widget;
 
-      widget = get_widget(d->text);
-      str = gtk_entry_get_text(GTK_ENTRY(widget));
+      str = gtk_entry_get_text(GTK_ENTRY(d->text));
       if (str && strncmp(str, buf, sizeof(buf) - 1)) {
 	tmp = g_strdup_printf("%s%s", buf, str);
-	gtk_entry_set_text(GTK_ENTRY(widget), tmp);
+	gtk_entry_set_text(GTK_ENTRY(d->text), tmp);
 	g_free(tmp);
       }
     }
@@ -342,22 +340,8 @@ set_font(struct LegendDialog *d, int id)
 }
 
 static void
-set_sensitive_with_label(GtkWidget *w, int a)
-{
-  GtkWidget *widget;
-
-  gtk_widget_set_sensitive(w, a);
-  widget = get_widget(w);
-
-  if (w != widget) {
-    gtk_widget_set_sensitive(widget, a);
-  }
-}
-
-static void
 legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 {
-  GtkWidget *widget;
   struct LegendDialog *d;
   int path_type;
 
@@ -365,19 +349,18 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
 
   path_type = PATH_TYPE_LINE;
   if (d->path_type && d->interpolation) {
-    widget = get_widget(d->path_type);
-    path_type = combo_box_get_active(widget);
+    path_type = combo_box_get_active(d->path_type);
 
-    set_sensitive_with_label(d->interpolation, path_type == PATH_TYPE_CURVE);
+    set_widget_sensitivity_with_label(d->interpolation, path_type == PATH_TYPE_CURVE);
   }
 
   if (d->stroke && d->stroke_color && d->style && d->width) {
     int a;
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    set_sensitive_with_label(d->stroke_color, a);
-    set_sensitive_with_label(d->style, a);
-    set_sensitive_with_label(d->width, a);
+    set_widget_sensitivity_with_label(d->stroke_color, a);
+    set_widget_sensitivity_with_label(d->style, a);
+    set_widget_sensitivity_with_label(d->width, a);
   }
 
   if (d->stroke &&
@@ -387,9 +370,9 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     int a;
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    set_sensitive_with_label(d->miter, a);
-    set_sensitive_with_label(d->join, a);
-    set_sensitive_with_label(d->close_path, a);
+    set_widget_sensitivity_with_label(d->miter, a);
+    set_widget_sensitivity_with_label(d->join, a);
+    set_widget_sensitivity_with_label(d->close_path, a);
   }
 
   if (d->stroke &&
@@ -401,20 +384,20 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     int a, ca;
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->stroke));
-    ca = combo_box_get_active(get_widget(d->interpolation));
+    ca = combo_box_get_active(d->interpolation);
 
-    set_sensitive_with_label(d->miter, a);
-    set_sensitive_with_label(d->join, a);
-    set_sensitive_with_label(d->arrow, a);
-    set_sensitive_with_label(d->arrow_length, a);
-    set_sensitive_with_label(d->arrow_width, a);
+    set_widget_sensitivity_with_label(d->miter, a);
+    set_widget_sensitivity_with_label(d->join, a);
+    set_widget_sensitivity_with_label(d->arrow, a);
+    set_widget_sensitivity_with_label(d->arrow_length, a);
+    set_widget_sensitivity_with_label(d->arrow_width, a);
 
     if (path_type == PATH_TYPE_CURVE) {
-      set_sensitive_with_label(d->close_path, a &&
+      set_widget_sensitivity_with_label(d->close_path, a &&
 			       (ca != INTERPOLATION_TYPE_SPLINE_CLOSE &&
 				ca != INTERPOLATION_TYPE_BSPLINE_CLOSE));
     } else {
-      set_sensitive_with_label(d->close_path, a);
+      set_widget_sensitivity_with_label(d->close_path, a);
     }
   }
 
@@ -422,10 +405,10 @@ legend_dialog_set_sensitive(GtkWidget *w, gpointer client_data)
     int a;
 
     a = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->fill));
-    set_sensitive_with_label(d->fill_color, a);
+    set_widget_sensitivity_with_label(d->fill_color, a);
 
     if (d->fill_rule) {
-      set_sensitive_with_label(d->fill_rule, a);
+      set_widget_sensitivity_with_label(d->fill_rule, a);
     }
   }
 }
@@ -435,7 +418,6 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
 {
   unsigned int i;
   int x1, y1, x2, y2;
-  GtkWidget *widget;
   struct lwidget lw[] = {
     {d->stroke, "stroke"},
     {d->path_type, "type"},
@@ -494,11 +476,8 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
       d->ang = 170;
     }
 
-    widget = get_widget(d->arrow_width);
-    gtk_range_set_value(GTK_RANGE(widget), d->wid / 100);
-
-    widget = get_widget(d->arrow_length);
-    gtk_range_set_value(GTK_RANGE(widget), d->ang);
+    gtk_range_set_value(GTK_RANGE(d->arrow_width), d->wid / 100);
+    gtk_range_set_value(GTK_RANGE(d->arrow_length), d->ang);
   }
 
   if (d->x1 && d->y1 && d->x2 && d->y2) {
@@ -515,8 +494,7 @@ legend_dialog_setup_item(GtkWidget *w, struct LegendDialog *d, int id)
   if (d->text) {
     char *buf;
     sgetobjfield(d->Obj,id,"text",NULL,&buf,FALSE,FALSE,FALSE);
-    widget = get_widget(d->text);
-    gtk_entry_set_text(GTK_ENTRY(widget), buf);
+    gtk_entry_set_text(GTK_ENTRY(d->text), buf);
     g_free(buf);
   }
 
@@ -730,7 +708,8 @@ width_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-  d->width = add_widget_to_table(table, w, _("_Line width:"), FALSE, i++);
+  d->width = w;
+  add_widget_to_table(table, w, _("_Line width:"), FALSE, i++);
 }
 
 #define POINTS_DIMENSION 2
@@ -930,7 +909,8 @@ style_setup(struct LegendDialog *d, GtkWidget *table, int i)
 
   w = combo_box_entry_create();
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
-  d->style = add_widget_to_table(table, w, _("Line _Style:"), TRUE, i);
+  d->style = w;
+  add_widget_to_table(table, w, _("Line _Style:"), TRUE, i);
 }
 
 static void
@@ -939,7 +919,8 @@ miter_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, TRUE, TRUE);
-  d->miter = add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
+  d->miter = w;
+  add_widget_to_table(table, w, _("_Miter:"), FALSE, i++);
 }
 
 static void
@@ -948,7 +929,8 @@ join_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = combo_box_create();
-  d->join = add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
+  d->join = w;
+  add_widget_to_table(table, w, _("_Join:"), FALSE, i++);
 }
 
 static void
@@ -957,7 +939,8 @@ color_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_color_button(d->widget);
-  d->color = add_widget_to_table(table, w, _("_Color:"), FALSE, i);
+  d->color = w;
+  add_widget_to_table(table, w, _("_Color:"), FALSE, i);
 }
 
 static void
@@ -966,7 +949,8 @@ color2_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_color_button(d->widget);
-  d->color2 = add_widget_to_table(table, w, _("_Color2:"), FALSE, i);
+  d->color2 = w;
+  add_widget_to_table(table, w, _("_Color2:"), FALSE, i);
 }
 
 static void
@@ -975,7 +959,8 @@ fill_color_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_color_button(d->widget);
-  d->fill_color = add_widget_to_table(table, w, _("_Color:"), FALSE, i);
+  d->fill_color = w;
+  add_widget_to_table(table, w, _("_Color:"), FALSE, i);
 }
 
 static void
@@ -984,7 +969,8 @@ stroke_color_setup(struct LegendDialog *d, GtkWidget *table, int i)
   GtkWidget *w;
 
   w = create_color_button(d->widget);
-  d->stroke_color = add_widget_to_table(table, w, _("_Color:"), FALSE, i);
+  d->stroke_color = w;
+  add_widget_to_table(table, w, _("_Color:"), FALSE, i);
 }
 
 static void
@@ -1148,7 +1134,8 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->path_type = w;
 
     w = combo_box_create();
-    d->interpolation = add_widget_to_table(table, w, _("_Interpolation:"), FALSE, i++);
+    d->interpolation = w;
+    add_widget_to_table(table, w, _("_Interpolation:"), FALSE, i++);
     g_signal_connect(w, "changed", G_CALLBACK(legend_dialog_set_sensitive), d);
 
     gtk_box_pack_start(GTK_BOX(vbox2), table, FALSE, FALSE, 0);
@@ -1161,7 +1148,8 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->close_path = w;
 
     w = combo_box_create();
-    d->arrow = add_widget_to_table(table, w, _("_Arrow:"), FALSE, i++);
+    d->arrow = w;
+    add_widget_to_table(table, w, _("_Arrow:"), FALSE, i++);
 
     style_setup(d, table, i++);
     width_setup(d, table, i++);
@@ -1208,7 +1196,8 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     i = 0;
     w = combo_box_create();
-    d->fill_rule = add_widget_to_table(table, w, _("fill _Rule:"), FALSE, i++);
+    d->fill_rule = w;
+    add_widget_to_table(table, w, _("fill _Rule:"), FALSE, i++);
 
     fill_color_setup(d, table, i++);
 

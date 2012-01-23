@@ -703,16 +703,13 @@ chk_sputobjfield(struct objlist *obj, int id, char *field, char *str)
 }
 
 int
-SetObjFieldFromWidget(GtkWidget *widget, struct objlist *Obj, int Id, char *field)
+SetObjFieldFromWidget(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  GtkWidget *w;
   int r = 0;
 
-  if (widget == NULL) {
+  if (w == NULL) {
     return 0;
   }
-
-  w = get_widget(widget);
 
   if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
     r = SetObjFieldFromSpin(w, Obj, Id, field);
@@ -744,15 +741,12 @@ SetObjFieldFromWidget(GtkWidget *widget, struct objlist *Obj, int Id, char *fiel
 }
 
 void
-SetWidgetFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *field)
+SetWidgetFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
-  GtkWidget *w;
-
-  if (widget == NULL) {
+  if (w == NULL) {
     return;
   }
 
-  w = get_widget(widget);
 
   if (G_TYPE_CHECK_INSTANCE_TYPE(w, GTK_TYPE_SPIN_BUTTON)) {
     SetSpinFromObjField(w, Obj, Id, field);
@@ -1004,17 +998,14 @@ set_obj_points_from_text(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 }
 
 int
-SetObjFieldFromStyle(GtkWidget *widget, struct objlist *Obj, int Id, char *field)
+SetObjFieldFromStyle(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   unsigned int j;
   const char *ptr;
-  GtkWidget *w;
 
-  if (widget == NULL) {
+  if (w == NULL) {
     return 0;
   }
-
-  w = get_widget(widget);
 
   ptr = gtk_entry_get_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w))));
   if (ptr == NULL) {
@@ -1124,19 +1115,16 @@ set_entry_from_obj_point(GtkEntry *entry, struct objlist *Obj, int Id, char *fie
 #endif
 
 void
-SetStyleFromObjField(GtkWidget *widget, struct objlist *Obj, int Id, char *field)
+SetStyleFromObjField(GtkWidget *w, struct objlist *Obj, int Id, char *field)
 {
   unsigned int j;
   GtkEntry *entry;
   int count;
   const char *s;
-  GtkWidget *w;
 
-  if (widget == NULL) {
+  if (w == NULL) {
     return;
   }
-
-  w = get_widget(widget);
 
   entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(w)));
 
@@ -1307,14 +1295,11 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
 }
 
 static void
-_set_color(GtkWidget *widget, struct objlist *obj, int id, char *prefix, char *postfix)
+_set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
 {
   GdkColor color;
   int r, g, b, a;
   char buf[64];
-  GtkWidget *w;
-
-  w = get_widget(widget);
 
   snprintf(buf, sizeof(buf), "%sR%s", CHK_STR(prefix), CHK_STR(postfix));
   getobj(obj, buf, id, 0, NULL, &r);
@@ -1367,14 +1352,11 @@ set_stroke_color(GtkWidget *w, struct objlist *obj, int id)
 }
 
 static int
-_putobj_color(GtkWidget *widget, struct objlist *obj, int id, char *prefix, char *postfix)
+_putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
 {
   GdkColor color;
   int r, g, b, a, o;
   char buf[64];
-  GtkWidget *w;
-
-  w = get_widget(widget);
 
   gtk_color_button_get_color(GTK_COLOR_BUTTON(w), &color);
   r = (color.red >> 8);

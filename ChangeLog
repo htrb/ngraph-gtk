@@ -1,3 +1,30 @@
+2012-01-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (set_sensitive_with_label): removed.
+	(legend_dialog_set_sensitive): use
+	"set_widget_sensitivity_with_label()".
+
+	* src/gtk/x11print.c (OutputImageDialogSetupItem): use functions
+	"set_widget_sensitivity_with_label()" and "get_mnemonic_label()".
+
+	* src/gtk/x11opt.c (use_external_toggled, load_file_toggled): use
+	function "set_widget_sensitivity_with_label()".
+
+	* src/gtk/x11graph.c (PageDialogPage): use function
+	"set_widget_sensitivity_with_label()".
+
+	* src/gtk/x11file.c (set_fitdialog_sensitivity)
+	(set_user_fit_sensitivity, FitDialogSetSensitivity)
+	(FileDialogType): use function
+	"set_widget_sensitivity_with_label()".
+
+	* src/gtk/x11axis.c (bg_button_toggled, num_direction_changed):
+	use function "set_widget_sensitivity_with_label()".
+
+	* src/gtk/gtk_widget.c (get_mnemonic_label)
+	(set_widget_sensitivity_with_label): added.
+	(get_widget): removed.
+
 2012-01-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileDialogType): set sensitivity of widgets
