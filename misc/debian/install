@@ -1,0 +1,7 @@
+misc/ngraph.desktop usr/share/applications
+icons/*.xpm usr/share/pixmaps
+icons/*.png usr/share/pixmaps
+misc/ngraph.applications usr/share/application-registry
+misc/ngraph.key usr/share/mime-info
+misc/ngraph.mime usr/share/mime-info
+misc/ngraph.xml usr/share/mime/packages
