@@ -170,8 +170,6 @@ const gchar *Icon_xpm_64[] = {
   "ccccaaaaaaaaccccaacccaaaaaaaaaaacaaaaaaaaaaahhhhhhhhhhhhhhhhhhhh"
 };
 
-
-
 const gchar * Arc_xpm[] = {
   "20 20 3 1",
   " 	c None",
@@ -1112,7 +1110,6 @@ const gchar * Move_xpm[] = {
 "                    ",
 "                    "};
 
-
 const char * Axiswin48_xpm[] = {
 "48 48 5 1",
 " 	g None",
@@ -1452,4 +1449,3 @@ const char * Mergewin48_xpm[] = {
 "..............................................@@",
 "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",
 "  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"};
-

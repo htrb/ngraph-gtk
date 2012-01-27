@@ -1,3 +1,5 @@
+#!/usr/bin/ngraph
+
 BAR_X=1000
 BAR_Y=19000
 BAR_W=19000

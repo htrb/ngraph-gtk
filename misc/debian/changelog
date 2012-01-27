@@ -1,3 +1,9 @@
+ngraph-gtk (6.06.04-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 26 Jan 2012 19:32:17 +0900
+
 ngraph-gtk (6.06.03.1-1) unstable; urgency=low
 
   * New upstream release.
