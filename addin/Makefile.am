@@ -1,14 +1,10 @@
-pkglib_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc		\
+dist_libexec_SCRIPTS = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
 	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
-	fig2gra.nsc timer.nsc
-
-pkglib_SCRIPTS = fig2gra.rb
-
-EXTRA_DIST = ${pkglib_DATA} ${pkglib_SCRIPTS}
+	fig2gra.nsc timer.nsc fig2gra.rb
 
 APP_CFLAGS = -D_FORTIFY_SOURCE
 
-pkglib_PROGRAMS = fft calc fitrslt legend
+libexec_PROGRAMS = fft calc fitrslt legend
 
 calc_SOURCES = calc.c addin_common.c addin_common.h
 calc_CFLAGS = $(GTK_CFLAGS) $(APP_CFLAGS)

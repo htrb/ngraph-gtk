@@ -8,18 +8,22 @@ EXTRA_DIST = dir_defs.h.in ngp2.in ${ngraphconf_DATA}
 
 bin_SCRIPTS = ngp2
 
-
-
 dir_defs.h: dir_defs.h.in Makefile
 	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" dir_defs.h.in
 
 ngp2: ngp2.in Makefile
 	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(bindir)" ngp2.in
 
-# gra2ps_SOURCES = gra2ps.c dir_defs.h
+# gra2ps_SOURCES = gra2ps.c
+# nodist_gra2ps_SOURCES = dir_defs.h
 # gra2ps_LDADD = $(GLIB_LIBS)
 # gra2ps_CFLAGS = $(GLIB_CFLAGS) -D_FORTIFY_SOURCE
 
-# gra2wmf_SOURCES = gra2wmf.c wmfapi.c wmfapi.h dir_defs.h
+# gra2wmf_SOURCES = gra2wmf.c wmfapi.c wmfapi.h
+# nodist_gra2wmf_SOURCES = dir_defs.h
 # gra2wmf_LDADD = $(GLIB_LIBS)
 # gra2wmf_CFLAGS = $(GLIB_CFLAGS) -D_FORTIFY_SOURCE
+
+#BUILT_SOURCES = dir_defs.h
+
+CLEANFILES = ngp2 dir_defs.h

@@ -6,7 +6,7 @@ WIN_PATH=mingw
 
 (cd $WIN_PATH; windres -o ../src/windows_resource.o windows_resource.rc)
 
-./configure --prefix=$PKG_DIR
+./configure --prefix=$PKG_DIR --libexecdir=$PKG_DIR/lib
 
 for makefile in `find -name Makefile`
 do

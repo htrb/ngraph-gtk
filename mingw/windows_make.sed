@@ -1,5 +1,6 @@
 s!${prefix}/share!${prefix}!
 s!$(libdir)/ngraph-gtk!$(libdir)!
+s!$(libexecdir)/ngraph-gtk!$(libexecdir)!
 s!${datarootdir}/locale!${datarootdir}/share/locale!
 s!${datarootdir}/doc/${PACKAGE_TARNAME}!${datarootdir}/doc!
 s!$(sysconfdir)/$(PACKAGE)!$(sysconfdir)!

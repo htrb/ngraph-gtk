@@ -1,24 +1,24 @@
 ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 
-HTML_FILE = addin.html copyrigh.html data.html gra.html intro.html	\
-	math.html ngraph.html object.html operate.html refer.html	\
-	script.html text.html tutorial.html
+dist_html_DATA = addin.html copyrigh.html data.html gra.html math.html	\
+	ngraph.html operate.html refer.html text.html tutorial.html
 
-EXTRA_DIST = ${HTML_FILE} object.html.in intro.html.in	\
-        script.html.in
+nodist_html_DATA = object.html intro.html script.html
+
+EXTRA_DIST = object.html.in intro.html.in script.html.in
 
 htmldir = $(docdir)/html/en
-
-html_DATA = ${HTML_FILE}
 
 object.html: ../../../src/ngraph object.html.in ../objlist.nsc
 	cat object.html.in > object.html
 	../../../src/ngraph -i ../objlist.nsc >> object.html
 
 intro.html: intro.html.in Makefile
-	sh ../../../pathconv.sh "$(docdir)" "$(pkglibdir)" "$(ngraphconfdir)" intro.html.in
+	sh ../../../pathconv.sh "$(docdir)" "$(pkglibexecdir)" "$(ngraphconfdir)" intro.html.in
 
 script.html: script.html.in Makefile
 	sh ../../../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" script.html.in
+
+CLEANFILES = intro.html script.html object.html
 
 SUBDIRS = tutorial dialogs
