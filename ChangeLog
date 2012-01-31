@@ -1,3 +1,8 @@
+2012-01-31  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (button_set_mark_image): check return value of
+	"gtk_image_new_from_pixbuf()" or "gtk_image_new_from_pixmap()".
+
 2012-01-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* mingw/windows.sh: add "--libexecdir" option for "configure"

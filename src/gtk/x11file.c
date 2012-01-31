@@ -2273,7 +2273,9 @@ button_set_mark_image(GtkWidget *w, int type)
 #else
     img = gtk_image_new_from_pixmap(NgraphApp.markpix[type], NULL);
 #endif
-    gtk_button_set_image(GTK_BUTTON(w), img);
+    if (img) {
+      gtk_button_set_image(GTK_BUTTON(w), img);
+    }
     snprintf(buf, sizeof(buf), "%02d", type);
     gtk_widget_set_tooltip_text(w, buf);
   }

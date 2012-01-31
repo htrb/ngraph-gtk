@@ -1759,14 +1759,16 @@ CmOptionSaveNgp(GtkAction *w, gpointer client_data)
 
   obj = chkobject("file");
   if (obj) {
-    for (i = 0; i <= chkobjlastinst(obj); i++)
+    for (i = 0; i <= chkobjlastinst(obj); i++) {
       putobj(obj, "save_path", i, &path);
+    }
   }
 
   obj = chkobject("merge");
   if (obj) {
-    for (i = 0; i <= chkobjlastinst(obj); i++)
+    for (i = 0; i <= chkobjlastinst(obj); i++) {
       putobj(obj, "save_path", i, &path);
+    }
   }
 
   if (naccess(ngpfile, 04) == 0) {
