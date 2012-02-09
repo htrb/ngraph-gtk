@@ -298,9 +298,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dist_libexec_SCRIPTS = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
-	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
-	fig2gra.nsc timer.nsc fig2gra.rb
+dist_libexec_SCRIPTS = append.nsc calc.nsc fft.nsc fitrslt.nsc		\
+	legend.nsc math.nsc text-in.nsc cal.nsc tex_equation.nsc	\
+	ps2gra.nsc fig2gra.nsc timer.nsc fig2gra.rb
 
 APP_CFLAGS = -D_FORTIFY_SOURCE
 calc_SOURCES = calc.c addin_common.c addin_common.h
