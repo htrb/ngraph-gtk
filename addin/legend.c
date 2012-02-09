@@ -305,6 +305,7 @@ savescript(struct file_prm *prm)
         fprintf(f, "text::y=%d\n", gy + height);
         fprintf(f, "text::pt=%d\n", pt);
         fprintf(f, "text::font=%s\n", font);
+        fprintf(f, "text::style=%d\n", style);
         fprintf(f, "text::space=%d\n", spc);
         fprintf(f, "text::script_size=%d\n", script);
         fprintf(f, "text::R=%d\n", r);

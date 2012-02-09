@@ -111,12 +111,12 @@ makescript(FILE *f, struct fit_prm *prm, int gx, int gy, int height, const char 
   fprintf(f, "text::y=%d\n", gy + height);
   fprintf(f, "text::pt=%d\n", textpt);
   fprintf(f, "text::font=%s\n", font);
+  fprintf(f, "text::style=%d\n", style);
   fprintf(f, "text::space=%d\n", textspc);
   fprintf(f, "text::script_size=%d\n", textsc);
   fprintf(f, "text::R=%d\n", textred);
   fprintf(f, "text::G=%d\n", textgreen);
   fprintf(f, "text::B=%d\n", textblue);
-  fprintf(f, "text::style=%d\n", style);
   if (frame) {
     fprintf(f, "iarray:textbbox:@=${text::bbox}\n");
     fprintf(f, "iarray:textlen:push \"${iarray:textbbox:get:2}-${iarray:textbbox:get:0}\"\n");
