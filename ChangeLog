@@ -1,3 +1,31 @@
+2012-02-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* misc/debian/ngraph-gtk.install: update path of "pkglibexedir".
+
+	* misc/debian/ngraph-gtk-addins-base.install: update path of "pkglibexedir".
+
+	* misc/debian/ngraph-gtk-addins.install: update path of "pkglibexedir".
+
+	* misc/debian/control (Build-Depends): use debhelper version 9.
+
+	* misc/debian/compat: use version 9.
+
+	* addin/Makefile.am (calc_CFLAGS, fitrslt_CFLAGS): remove option "-D_FORTIFY_SOURCE".
+	(dist_pkglibexec_SCRIPTS, pkglibexec_PROGRAMS): installed in pkglibexedir.
+
+	* doc/html/ja/Makefile.am (intro.html): use "pkglibexecdir" instead of "libexecdir".
+
+	* doc/html/en/Makefile.am (intro.html): use "pkglibexecdir" instead of "libexecdi5D5D5Dr".
+
+	* initfile/Makefile.am (Ngraph.ini): use "pkglibexecdir" instead of "libexecdir".
+
+	* src/Makefile.am (ngraph_CFLAGS): remove option "-D_FORTIFY_SOURCE".
+	(pkglibexec_PROGRAMS): installed in pkglibexedir.
+
+	* src/math/Makefile.am (libmath_la_CFLAGS): remove option "-D_FORTIFY_SOURCE".
+
+	* src/gtk/Makefile.am (libngraph_la_CFLAGS): remove option "-D_FORTIFY_SOURCE".
+
 2012-02-09  Hroyuki Ito  <hito@strecker.nict.go.jp>
 
 	* addin/legend.c (savescript): add font style setting.

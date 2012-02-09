@@ -30,4 +30,4 @@ math_function.h: math_function.h.in math_function.rb
 
 libmath_la_LDFLAGS = -static
 
-libmath_la_CFLAGS = $(GTK_CFLAGS) -I.. -D_FORTIFY_SOURCE
+libmath_la_CFLAGS = $(GTK_CFLAGS) -I..

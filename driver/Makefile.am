@@ -17,12 +17,12 @@ ngp2: ngp2.in Makefile
 # gra2ps_SOURCES = gra2ps.c
 # nodist_gra2ps_SOURCES = dir_defs.h
 # gra2ps_LDADD = $(GLIB_LIBS)
-# gra2ps_CFLAGS = $(GLIB_CFLAGS) -D_FORTIFY_SOURCE
+# gra2ps_CFLAGS = $(GLIB_CFLAGS)
 
 # gra2wmf_SOURCES = gra2wmf.c wmfapi.c wmfapi.h
 # nodist_gra2wmf_SOURCES = dir_defs.h
 # gra2wmf_LDADD = $(GLIB_LIBS)
-# gra2wmf_CFLAGS = $(GLIB_CFLAGS) -D_FORTIFY_SOURCE
+# gra2wmf_CFLAGS = $(GLIB_CFLAGS)
 
 #BUILT_SOURCES = dir_defs.h
 

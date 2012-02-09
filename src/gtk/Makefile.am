@@ -30,6 +30,6 @@ dir_defs.h: dir_defs.h.in Makefile
 
 libngraph_la_LDFLAGS = -static
 
-libngraph_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math -D_FORTIFY_SOURCE
+libngraph_la_CFLAGS = $(GTK_CFLAGS) -I.. -I../math
 
 CLEANFILES = dir_defs.h

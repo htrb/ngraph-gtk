@@ -14,12 +14,11 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	shellcm.c shellcm.h shellux.c shellux.h spline.c spline.h	\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h
 
-libexec_PROGRAMS = terminal
+pkglibexec_PROGRAMS = terminal
 terminal_SOURCES = terminal.c
 
 ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 
-ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -D_FORTIFY_SOURCE	\
-	 -DCCNAME='"'$(CC)'"'
+ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 
 terminal_CFLAGS = $(GTK_CFLAGS)
