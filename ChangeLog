@@ -1,3 +1,31 @@
+2012-02-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/dir_defs.h.in: add global variable "NDATADIR" when
+	"WINDOWS" is teue.
+
+	* src/shell.c (ngraphenvironment): set "data_dir" of the system
+	object to the "PATH" environment.
+
+	* src/gtk/main.c (main): don't call "set_path_env()".
+	(main): initialize the "data_dir" field of the system object.
+
+	* src/osystem.c (nsystem): add field "data_dir".
+	(sysdone): free string set to the field "data_dir".
+
+	* pathconv.sh: number of the argument is fixed.
+
+	* addin/Makefile.am (dist_pkgdata_DATA): addins are installed in
+	"pkgdatadir".
+
+	* misc/debian/ngraph-gtk-addins.install: addins are installed in
+	"pkgdatadir".
+
+	* mingw/windows_make.sed: replace "pkglibexecdir" and "pkgdatadir"
+	to bin directory and lib directory respectively.
+
+	* mingw/windows.sh: don't move addins to the bin directory. copy
+	hicolor icons to share/icons if exist.
+
 2012-02-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* misc/debian/ngraph-gtk.install: update path of "pkglibexedir".

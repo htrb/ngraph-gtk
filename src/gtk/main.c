@@ -41,7 +41,7 @@
 #ifdef LOCALEDIR
 #undef LOCALEDIR
 #endif	/* LOCALEDIR */
-char *DOCDIR, *LIBDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
+char *DOCDIR, *NDATADIR, *LIBDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
 #endif	/* WINDOWS */
 
 #include "dir_defs.h"
@@ -695,8 +695,9 @@ set_dir_defs(char *app)
     return 1;
   }
 
-  DOCDIR  = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
-  LIBDIR  = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
+  DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
+  LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
+  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
   LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
   PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps");
@@ -707,6 +708,7 @@ set_dir_defs(char *app)
 }
 #endif	/* WINDOWS */
 
+#if 0
 static void
 set_path_env(char *homedir)
 {
@@ -714,7 +716,7 @@ set_path_env(char *homedir)
   char *pathset;
 
   path = g_getenv("PATH");
-  pathset = g_strdup_printf("%s%s%s%s.%s%s", homedir, PATHSEP, LIBDIR, PATHSEP, PATHSEP, CHK_STR(path));
+  pathset = g_strdup_printf("%s%s%s%s%s%s%s%s%s", homedir, PATHSEP, NDATADIR, PATHSEP, LIBDIR, PATHSEP, ".", PATHSEP, CHK_STR(path));
 #ifdef WINDOWS
   path_to_win(pathset);
 #endif	/* WINDOWS */
@@ -723,6 +725,7 @@ set_path_env(char *homedir)
   g_setenv("NGRAPHCONF", CONFDIR, TRUE);
   g_free(pathset);
 }
+#endif
 
 const char *
 n_getlocale(void)
@@ -733,7 +736,7 @@ n_getlocale(void)
 int
 main(int argc, char **argv)
 {
-  char *homedir, *libdir, *confdir, *inifile, *loginshell;
+  char *homedir, *datadir, *libdir, *confdir, *inifile, *loginshell;
   const char *home;
   N_VALUE *inst;
   struct objlist *sys, *obj, *lobj;
@@ -806,6 +809,10 @@ main(int argc, char **argv)
   if (libdir == NULL)
     exit(1);
 
+  datadir = g_strdup(NDATADIR);
+  if (datadir == NULL)
+    exit(1);
+
   confdir = g_strdup(CONFDIR);
   if (confdir == NULL) {
     exit(1);
@@ -831,7 +838,9 @@ main(int argc, char **argv)
       }
     }
   }
-  set_path_env(homedir);
+
+  /* set_path_env(homedir); */
+  /* it may not necessary to call the function because all environments will be set in the function ngraphenvironment() */
   set_environ();
 
   if (addobjectroot() == NULL)
@@ -852,6 +861,8 @@ main(int argc, char **argv)
     exit(1);
 
   if (_putobj(sys, "conf_dir", inst, confdir))
+    exit(1);
+  if (_putobj(sys, "data_dir", inst, datadir))
     exit(1);
   if (_putobj(sys, "lib_dir", inst, libdir))
     exit(1);

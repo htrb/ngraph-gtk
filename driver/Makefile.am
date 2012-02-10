@@ -8,11 +8,11 @@ EXTRA_DIST = dir_defs.h.in ngp2.in ${ngraphconf_DATA}
 
 bin_SCRIPTS = ngp2
 
-dir_defs.h: dir_defs.h.in Makefile
-	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" dir_defs.h.in
+# dir_defs.h: dir_defs.h.in Makefile
+# 	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" dir_defs.h.in
 
 ngp2: ngp2.in Makefile
-	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(bindir)" ngp2.in
+	sh ../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" ngp2.in
 
 # gra2ps_SOURCES = gra2ps.c
 # nodist_gra2ps_SOURCES = dir_defs.h

@@ -1,2 +1,2 @@
-usr/lib/*/ngraph-gtk/*.nsc
-usr/lib/*/ngraph-gtk/*.rb
+usr/share/ngraph-gtk/*.nsc
+usr/share/ngraph-gtk/*.rb

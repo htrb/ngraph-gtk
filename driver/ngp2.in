@@ -1,4 +1,4 @@
-#! CONFDIRDEF/ngraph -i
+#! BINDIRDEF/ngraph -i
 # $Id: ngp2.in,v 1.15 2010-02-18 06:38:49 hito Exp $
 
 IGN_PATH=0

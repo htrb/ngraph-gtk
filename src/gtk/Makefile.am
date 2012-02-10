@@ -26,7 +26,7 @@ ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
 
 dir_defs.h: dir_defs.h.in Makefile
-	sh ../../pathconv.sh "$(docdir)" "$(pkglibexecdir)" "$(ngraphconfdir)" "$(pixmapdir)" dir_defs.h.in
+	sh ../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" dir_defs.h.in
 
 libngraph_la_LDFLAGS = -static
 

@@ -89,6 +89,7 @@ below. </p>
 <p> Search order for external programs such as printer drivers or add-in scripts are as follows. </p>
 <ol>
  <li> ~/.Ngraph
+ <li> DATADIRDEF
  <li> LIBDIRDEF
  <li> PATH environment variable
 </ol>

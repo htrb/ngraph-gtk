@@ -38,7 +38,7 @@ host_triplet = @host@
 pkglibexec_PROGRAMS = fft$(EXEEXT) calc$(EXEEXT) fitrslt$(EXEEXT) \
 	legend$(EXEEXT)
 subdir = addin
-DIST_COMMON = $(dist_pkglibexec_SCRIPTS) $(srcdir)/Makefile.am \
+DIST_COMMON = $(dist_pkgdata_DATA) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -57,7 +57,7 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(pkglibexecdir)" \
-	"$(DESTDIR)$(pkglibexecdir)"
+	"$(DESTDIR)$(pkgdatadir)"
 PROGRAMS = $(pkglibexec_PROGRAMS)
 am_calc_OBJECTS = calc-calc.$(OBJEXT) calc-addin_common.$(OBJEXT)
 calc_OBJECTS = $(am_calc_OBJECTS)
@@ -86,34 +86,6 @@ legend_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 legend_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(legend_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-SCRIPTS = $(dist_pkglibexec_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -144,6 +116,34 @@ SOURCES = $(calc_SOURCES) $(fft_SOURCES) $(fitrslt_SOURCES) \
 	$(legend_SOURCES)
 DIST_SOURCES = $(calc_SOURCES) $(fft_SOURCES) $(fitrslt_SOURCES) \
 	$(legend_SOURCES)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+DATA = $(dist_pkgdata_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -296,9 +296,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dist_pkglibexec_SCRIPTS = append.nsc calc.nsc fft.nsc fitrslt.nsc	\
-	legend.nsc math.nsc text-in.nsc cal.nsc tex_equation.nsc	\
-	ps2gra.nsc fig2gra.nsc timer.nsc fig2gra.rb
+dist_pkgdata_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
+	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
+	fig2gra.nsc timer.nsc fig2gra.rb
 
 APP_CFLAGS = 
 calc_SOURCES = calc.c addin_common.c addin_common.h
@@ -400,38 +400,6 @@ fitrslt$(EXEEXT): $(fitrslt_OBJECTS) $(fitrslt_DEPENDENCIES) $(EXTRA_fitrslt_DEP
 legend$(EXEEXT): $(legend_OBJECTS) $(legend_DEPENDENCIES) $(EXTRA_legend_DEPENDENCIES) 
 	@rm -f legend$(EXEEXT)
 	$(AM_V_CCLD)$(legend_LINK) $(legend_OBJECTS) $(legend_LDADD) $(LIBS)
-install-dist_pkglibexecSCRIPTS: $(dist_pkglibexec_SCRIPTS)
-	@$(NORMAL_INSTALL)
-	test -z "$(pkglibexecdir)" || $(MKDIR_P) "$(DESTDIR)$(pkglibexecdir)"
-	@list='$(dist_pkglibexec_SCRIPTS)'; test -n "$(pkglibexecdir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n' \
-	    -e 'h;s|.*|.|' \
-	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
-	      if (++n[d] == $(am__install_max)) { \
-		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
-	    else { print "f", d "/" $$4, $$1 } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	     test -z "$$files" || { \
-	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(pkglibexecdir)$$dir'"; \
-	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(pkglibexecdir)$$dir" || exit $$?; \
-	     } \
-	; done
-
-uninstall-dist_pkglibexecSCRIPTS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dist_pkglibexec_SCRIPTS)'; test -n "$(pkglibexecdir)" || exit 0; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	       sed -e 's,.*/,,;$(transform)'`; \
-	dir='$(DESTDIR)$(pkglibexecdir)'; $(am__uninstall_files_from_dir)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -557,6 +525,24 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+install-dist_pkgdataDATA: $(dist_pkgdata_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
+	@list='$(dist_pkgdata_DATA)'; test -n "$(pkgdatadir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pkgdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pkgdatadir)" || exit $$?; \
+	done
+
+uninstall-dist_pkgdataDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_pkgdata_DATA)'; test -n "$(pkgdatadir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(pkgdatadir)'; $(am__uninstall_files_from_dir)
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -642,9 +628,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(SCRIPTS)
+all-am: Makefile $(PROGRAMS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(pkglibexecdir)"; do \
+	for dir in "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(pkgdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -700,14 +686,13 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-dist_pkgdataDATA
 
 install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-dist_pkglibexecSCRIPTS \
-	install-pkglibexecPROGRAMS
+install-exec-am: install-pkglibexecPROGRAMS
 
 install-html: install-html-am
 
@@ -747,8 +732,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dist_pkglibexecSCRIPTS \
-	uninstall-pkglibexecPROGRAMS
+uninstall-am: uninstall-dist_pkgdataDATA uninstall-pkglibexecPROGRAMS
 
 .MAKE: install-am install-strip
 
@@ -757,7 +741,7 @@ uninstall-am: uninstall-dist_pkglibexecSCRIPTS \
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am \
-	install-dist_pkglibexecSCRIPTS install-dvi install-dvi-am \
+	install-dist_pkgdataDATA install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
 	install-info install-info-am install-man install-pdf \
 	install-pdf-am install-pkglibexecPROGRAMS install-ps \
@@ -765,7 +749,7 @@ uninstall-am: uninstall-dist_pkglibexecSCRIPTS \
 	installdirs maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-dist_pkglibexecSCRIPTS \
+	uninstall-am uninstall-dist_pkgdataDATA \
 	uninstall-pkglibexecPROGRAMS
 
 

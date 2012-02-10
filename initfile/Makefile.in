@@ -481,7 +481,7 @@ uninstall-am: uninstall-ngraphconfDATA uninstall-nodist_ngraphconfDATA
 
 
 Ngraph.ini: Ngraph.ini.in Makefile
-	sh ../pathconv.sh "$(docdir)" "$(pkglibexecdir)" "$(ngraphconfdir)" Ngraph.ini.in
+	sh ../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" Ngraph.ini.in
 
 update_ui_file:
 	../src/ngraph -i save_ui_file.nsc $(UI_FILE) $(ACCEL_FILE)

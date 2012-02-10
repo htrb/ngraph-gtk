@@ -14,10 +14,10 @@ object.html: ../../../src/ngraph object.html.in ../objlist.nsc
 	../../../src/ngraph -i ../objlist.nsc >> object.html
 
 intro.html: intro.html.in Makefile
-	sh ../../../pathconv.sh "$(docdir)" "$(pkglibexecdir)" "$(ngraphconfdir)" intro.html.in
+	sh ../../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" intro.html.in
 
 script.html: script.html.in Makefile
-	sh ../../../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" script.html.in
+	sh ../../../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" script.html.in
 
 CLEANFILES = intro.html script.html
 DISTCLEANFILES = object.html

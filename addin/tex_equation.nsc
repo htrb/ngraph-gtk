@@ -1,5 +1,3 @@
-#!/usr/bin/ngraph
-
 TEX_COMMAND="pdflatex"
 TEX_OPTION="-halt-on-error"
 

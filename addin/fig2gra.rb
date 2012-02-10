@@ -1,5 +1,3 @@
-#! /usr/bin/ruby
-
 class Spline
   def initialize(pos)
     @n = 0

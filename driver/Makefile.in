@@ -506,11 +506,11 @@ uninstall-am: uninstall-binSCRIPTS uninstall-ngraphconfDATA
 	uninstall-ngraphconfDATA
 
 
-dir_defs.h: dir_defs.h.in Makefile
-	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" dir_defs.h.in
+# dir_defs.h: dir_defs.h.in Makefile
+# 	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(ngraphconfdir)" dir_defs.h.in
 
 ngp2: ngp2.in Makefile
-	sh ../pathconv.sh "$(docdir)" "$(pkgdatadir)" "$(bindir)" ngp2.in
+	sh ../pathconv.sh "$(bindir)" "$(docdir)" "$(pkglibexecdir)" "$(pkgdatadir)" "$(ngraphconfdir)" "$(pixmapdir)" ngp2.in
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

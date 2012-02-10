@@ -119,6 +119,8 @@ sysdone(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   }
   _getobj(obj,"conf_dir",inst,&s);
   g_free(s);
+  _getobj(obj,"data_dir",inst,&s);
+  g_free(s);
   _getobj(obj,"lib_dir",inst,&s);
   g_free(s);
   _getobj(obj,"home_dir",inst,&s);
@@ -364,6 +366,7 @@ static struct objtable nsystem[] = {
   {"GRAF",NSTR,NREAD,NULL,NULL,0},
   {"temp_prefix",NSTR,NREAD,NULL,NULL,0},
   {"conf_dir",NSTR,NREAD,NULL,NULL,0},
+  {"data_dir",NSTR,NREAD,NULL,NULL,0},
   {"lib_dir",NSTR,NREAD,NULL,NULL,0},
   {"home_dir",NSTR,NREAD,NULL,NULL,0},
   {"pid",NINT,NREAD,NULL,NULL,0},

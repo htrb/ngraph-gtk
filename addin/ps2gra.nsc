@@ -1,5 +1,3 @@
-#!/usr/bin/ngraph
-
 PSTOEDIT_COMMAND="pstoedit"
 PSTOEDIT_OPTION="-q -flat 0.1 -nc -ssp -dt"
 

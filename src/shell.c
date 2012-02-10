@@ -4254,7 +4254,7 @@ setshellargument(struct nshell *nshell,int argc,char **argv)
 void 
 ngraphenvironment(struct nshell *nshell)
 {
-  char *sver,*lib,*home,*conf;
+  char *sver,*lib,*home,*conf,*data;
   struct objlist *sobj;
   char *systemname;
   char *pathset;
@@ -4262,6 +4262,7 @@ ngraphenvironment(struct nshell *nshell)
   sobj=chkobject("system");
   getobj(sobj,"name",0,0,NULL,&systemname);
   getobj(sobj,"conf_dir",0,0,NULL,&conf);
+  getobj(sobj,"data_dir",0,0,NULL,&data);
   getobj(sobj,"lib_dir",0,0,NULL,&lib);
   getobj(sobj,"home_dir",0,0,NULL,&home);
   sver=getobjver("system");
@@ -4274,7 +4275,7 @@ ngraphenvironment(struct nshell *nshell)
   if (getval(nshell,"PS2")==NULL) addval(nshell,"PS2",">");
   if (getval(nshell,"IFS")==NULL) addval(nshell,"IFS"," \t\n");
   if (getval(nshell,"IGNOREEOF")==NULL) addval(nshell,"IGNOREEOF","10");
-  pathset = g_strdup_printf("PATH='%s%s%s%s.%s'$PATH", lib, PATHSEP, home, PATHSEP, PATHSEP);
+  pathset = g_strdup_printf("PATH='%s%s%s%s%s%s%s%s'$PATH", data, PATHSEP, lib, PATHSEP, home, PATHSEP, ".", PATHSEP);
 
   if (pathset) {
 #ifdef WINDOWS

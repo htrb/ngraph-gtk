@@ -31,8 +31,7 @@ make install
 
 mkdir -p $PKG_DIR/share/icons
 
-rm $PKG_DIR/lib/terminal.exe
-mv $PKG_DIR/lib/*         $PKG_DIR/bin
+rm $PKG_DIR/bin/terminal.exe
 
 cp /mingw/bin/*.dll       $PKG_DIR/bin
 cp -r /mingw/share/locale $PKG_DIR/share
@@ -41,7 +40,13 @@ cp -r /mingw/etc/gtk-2.0  $PKG_DIR/etc
 cp -r /mingw/etc/pango    $PKG_DIR/etc
 cp -r /mingw/lib/gtk-2.0  $PKG_DIR/lib
 
-cp $WIN_PATH/gtkrc         $PKG_DIR/etc/gtk-2.0
+HICOLOR_ICONS="/mingw/share/icons/hicolor"
+if [ -d "$HICOLOR_ICONS" ]
+then
+    cp -r "$HICOLOR_ICONS" $PKG_DIR/share/icons
+fi
+
+cp $WIN_PATH/gtkrc         $PKG_DIR/share/themes/MS-Windows/gtk-2.0
 cp $WIN_PATH/pango.aliases $PKG_DIR/etc/pango
 cp $WIN_PATH/ngraph.ico    $PKG_DIR/share/icons
 cp $WIN_PATH/associate.bat $PKG_DIR
