@@ -1,3 +1,9 @@
+2012-02-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* mingw/associate.bat: change line feed code.
+
+	* mingw/echo.nsc: show program neme and version.
+
 2012-02-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/dir_defs.h.in: add global variable "NDATADIR" when
