@@ -1,3 +1,8 @@
+2012-02-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_entry_completion.c (add_completion): use
+	"g_strchomp()".
+
 2012-02-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* misc/debian/ngraph-gtk.install: update install directory of

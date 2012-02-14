@@ -82,10 +82,7 @@ add_completion(GtkListStore *list, FILE *fp)
   if (r || buf == NULL)
     return TRUE;
 
-  len = strlen(buf);
-
-  if (buf[len - 1] == '\n')
-    buf[len - 1] = '\0';
+  g_strchomp(buf);
 
   gtk_list_store_append(list, &iter);
   gtk_list_store_set(list, &iter, 0, buf, -1);
