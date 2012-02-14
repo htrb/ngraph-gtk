@@ -1,5 +1,5 @@
 
-demodir = $(docdir)/demo
+demodir = $(pkgdatadir)/demo
 
 demo_DATA = demo1.dat demo2.dat demo3.dat demo4.dat demo5a.ngp	\
 	demo5b.ngp demo5c.ngp demo5d.ngp demo5e.ngp demo.ngp

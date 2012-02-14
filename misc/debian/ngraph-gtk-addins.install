@@ -1,2 +1,2 @@
-usr/share/ngraph-gtk/*.nsc
-usr/share/ngraph-gtk/*.rb
+usr/share/ngraph-gtk/addin/*.nsc
+usr/share/ngraph-gtk/addin/*.rb

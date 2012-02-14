@@ -697,7 +697,8 @@ set_dir_defs(char *app)
 
   DOCDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "doc");
   LIBDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "bin");
-  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "lib");
+  NDATADIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share");
+  ADDINDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/addin");
   CONFDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "etc");
   LOCALEDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/locale");
   PIXMAPDIR = g_strdup_printf("%s%c%s", app_path, DIRSEP, "share/pixmaps");
@@ -716,7 +717,7 @@ set_path_env(char *homedir)
   char *pathset;
 
   path = g_getenv("PATH");
-  pathset = g_strdup_printf("%s%s%s%s%s%s%s%s%s", homedir, PATHSEP, NDATADIR, PATHSEP, LIBDIR, PATHSEP, ".", PATHSEP, CHK_STR(path));
+  pathset = g_strdup_printf("%s%s%s%s%s%s%s%s%s", homedir, PATHSEP, ADDINDIR, PATHSEP, LIBDIR, PATHSEP, ".", PATHSEP, CHK_STR(path));
 #ifdef WINDOWS
   path_to_win(pathset);
 #endif	/* WINDOWS */
@@ -736,7 +737,7 @@ n_getlocale(void)
 int
 main(int argc, char **argv)
 {
-  char *homedir, *datadir, *libdir, *confdir, *inifile, *loginshell;
+  char *homedir, *datadir, *docdir, *libdir, *confdir, *inifile, *loginshell;
   const char *home;
   N_VALUE *inst;
   struct objlist *sys, *obj, *lobj;
@@ -809,6 +810,10 @@ main(int argc, char **argv)
   if (libdir == NULL)
     exit(1);
 
+  docdir = g_strdup(DOCDIR);
+  if (docdir == NULL)
+    exit(1);
+
   datadir = g_strdup(NDATADIR);
   if (datadir == NULL)
     exit(1);
@@ -824,7 +829,7 @@ main(int argc, char **argv)
       exit(1);
     }
     changefilename(homedir);
-  }else {
+  } else {
     if ((home = g_get_user_config_dir()) != NULL) {
       homedir = g_strdup_printf("%s/%s", home, HOME_DIR);
       if (homedir == NULL) {
@@ -864,16 +869,24 @@ main(int argc, char **argv)
     exit(1);
   if (_putobj(sys, "data_dir", inst, datadir))
     exit(1);
+  if (_putobj(sys, "doc_dir", inst, docdir))
+    exit(1);
   if (_putobj(sys, "lib_dir", inst, libdir))
     exit(1);
   if (_putobj(sys, "home_dir", inst, homedir))
     exit(1);
+
   if (_getobj(sys, "conf_dir", inst, &confdir) == -1)
+    exit(1);
+  if (_getobj(sys, "data_dir", inst, &datadir) == -1)
+    exit(1);
+  if (_getobj(sys, "doc_dir", inst, &docdir) == -1)
     exit(1);
   if (_getobj(sys, "lib_dir", inst, &libdir) == -1)
     exit(1);
   if (_getobj(sys, "home_dir", inst, &homedir) == -1)
     exit(1);
+
   if (_getobj(sys, "name", inst, &systemname) == -1)
     exit(1);
 

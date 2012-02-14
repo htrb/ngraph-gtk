@@ -1,3 +1,35 @@
+2012-02-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* misc/debian/ngraph-gtk.install: update install directory of
+	demonstration files.
+
+	* misc/debian/ngraph-gtk-addins.install: update install directory.
+
+	* misc/debian/watch (http): fix URL.
+
+	* misc/debian/rules: remove rule "override_dh_compress".
+
+	* misc/debian/control (Description): fix description of addin package.
+
+	* mingw/windows_make.sed: change "pkgdatadir".
+
+	* addin/Makefile.am (addindir): added.
+
+	* src/osystem.c (sysinit): free string set to the field "doc_dir".
+	(nsystem): add field "doc_dir".
+
+	* src/shell.c (ngraphenvironment): add "addin" to the "PATH"
+	environment instead of "data".
+
+	* src/gtk/dir_defs.h.in (ADDINDIR): added.
+
+	* src/gtk/main.c (set_dir_defs): initialize "ADDINDIR".
+	(set_path_env): add "ADDINDIR" to the "PATH" environment instead
+	of "DATADIR".
+	(main): initialize "doc_dir" field of the system object.
+
+	* demo/Makefile.am (demodir): change install directory to "pkgdatadir".
+
 2012-02-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* mingw/associate.bat: change line feed code.

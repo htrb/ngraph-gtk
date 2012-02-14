@@ -1,4 +1,6 @@
-dist_pkgdata_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
+addindir = $(pkgdatadir)/addin
+
+dist_addin_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
 	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
 	fig2gra.nsc timer.nsc fig2gra.rb
 

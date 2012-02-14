@@ -1,245 +1,245 @@
-ngraph-gtk (6.06.04-1) unstable; urgency=low
+ngraph-gtk (6.06.04-1) unreleased; urgency=low
 
   * New upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 09 Jul 2012 19:32:17 +0900
 
-ngraph-gtk (6.06.03.1-1) unstable; urgency=low
+ngraph-gtk (6.06.03.1-1) unreleased; urgency=low
 
   * New upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 13 Dec 2011 19:24:42 +0900
 
-ngraph-gtk (6.06.03-1) unstable; urgency=low
+ngraph-gtk (6.06.03-1) unreleased; urgency=low
 
   * New upstream release.
   * Initial release for debian repository (Closes: #649345)
 
  -- Koichi Akabe <vbkaisetsu@gmail.com>  Wed, 23 Nov 2011 09:16:03 +0900
 
-ngraph-gtk (6.06.02-1) unstable; urgency=low
+ngraph-gtk (6.06.02-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 21 Sep 2011 15:14:42 +0900
 
-ngraph-gtk (6.06.01-1) unstable; urgency=low
+ngraph-gtk (6.06.01-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 21 Jul 2011 10:51:42 +0900
 
-ngraph-gtk (6.06.00-1) unstable; urgency=low
+ngraph-gtk (6.06.00-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 15 Jun 2011 11:56:19 +0900
 
-ngraph-gtk (6.05.04-1) unstable; urgency=low
+ngraph-gtk (6.05.04-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Mon, 02 May 2011 16:34:35 +0900
 
-ngraph-gtk (6.05.03-1) unstable; urgency=low
+ngraph-gtk (6.05.03-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Mon, 28 Mar 2011 09:58:05 +0900
 
-ngraph-gtk (6.05.02-1) unstable; urgency=low
+ngraph-gtk (6.05.02-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 01 Feb 2011 18:46:05 +0900
 
-ngraph-gtk (6.05.01-1) unstable; urgency=low
+ngraph-gtk (6.05.01-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 21 Oct 2010 10:36:02 +0900
 
-ngraph-gtk (6.05.00-1) unstable; urgency=low
+ngraph-gtk (6.05.00-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Mon, 20 Sep 2010 11:40:20 +0900
 
-ngraph-gtk (6.04.00-1) unstable; urgency=low
+ngraph-gtk (6.04.00-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 07 Jul 2010 19:05:29 +0900
 
-ngraph-gtk (6.03.51.gtk-44-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-44-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Mon, 26 Apr 2010 20:45:10 +0900
 
-ngraph-gtk (6.03.51.gtk-43-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-43-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 14 Apr 2010 18:46:29 +0900
 
-ngraph-gtk (6.03.51.gtk-42-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-42-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 02 Apr 2010 17:22:50 +0900
 
-ngraph-gtk (6.03.51.gtk-41-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-41-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <hito@bachman.nict.go.jp>  Wed, 24 Feb 2010 11:24:42 +0900
 
-ngraph-gtk (6.03.51.gtk-40-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-40-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 16 Feb 2010 12:43:09 +0900
 
-ngraph-gtk (6.03.51.gtk-39-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-39-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 02 Feb 2010 17:18:32 +0900
 
-ngraph-gtk (6.03.51.gtk-38-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-38-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 24 Dec 2009 10:58:20 +0900
 
-ngraph-gtk (6.03.51.gtk-37-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-37-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 18 Dec 2009 18:06:35 +0900
 
-ngraph-gtk (6.03.51.gtk-36-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-36-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 26 Nov 2009 21:31:34 +0900
 
-ngraph-gtk (6.03.51.gtk-35-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-35-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Sat, 21 Nov 2009 21:34:56 +0900
 
-ngraph-gtk (6.03.51.gtk-34-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-34-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 07 Nov 2009 22:47:15 +0900
 
-ngraph-gtk (6.03.51.gtk-33-1) unstable; urgency=low
+ngraph-gtk (6.03.51.gtk-33-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 21 Oct 2009 22:47:15 +0900
 
-ngraph-gtk (6.03.48.gtk-33-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-33-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Sat, 19 Sep 2009 20:14:50 +0900
 
-ngraph-gtk (6.03.48.gtk-32-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-32-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Mon, 17 Aug 2009 16:12:08 +0900
 
-ngraph-gtk (6.03.48.gtk-31-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-31-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Sat, 15 Aug 2009 13:20:23 +0900
 
-ngraph-gtk (6.03.48.gtk-30-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-30-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 07 Aug 2009 17:37:37 +0900
 
-ngraph-gtk (6.03.48.gtk-29-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-29-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Mon, 27 Jul 2009 11:38:25 +0900
 
-ngraph-gtk (6.03.48.gtk-28-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-28-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Sun, 05 Jul 2009 20:21:24 +0900
 
-ngraph-gtk (6.03.48.gtk-27-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-27-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 26 Jun 2009 21:29:23 +0900
 
-ngraph-gtk (6.03.48.gtk-26-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-26-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 05 Jun 2009 15:24:01 +0900
 
-ngraph-gtk (6.03.48.gtk-25-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-25-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Sat, 23 May 2009 17:04:46 +0900
 
-ngraph-gtk (6.03.48.gtk-24-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-24-1) unreleased; urgency=low
 
   * new upstream release.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Mon, 20 Apr 2009 11:29:41 +0900
 
-ngraph-gtk (6.03.48.gtk-23-1) unstable; urgency=low
+ngraph-gtk (6.03.48.gtk-23-1) unreleased; urgency=low
 
   * new upstream version.
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Mon, 10 Apr 2009 23:13:02 +0900
 
-ngraph-gtk (6.03.47.gtk-22-1) unstable; urgency=low
+ngraph-gtk (6.03.47.gtk-22-1) unreleased; urgency=low
 
   * new upstream version
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Sun, 29 Mar 2009 10:57:28 +0900
 
-ngraph-gtk (6.03.47.gtk-21-1) unstable; urgency=low
+ngraph-gtk (6.03.47.gtk-21-1) unreleased; urgency=low
 
   * new upstream version
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 20 Mar 2009 15:03:00 +0900
 
-ngraph-gtk (6.03.47.gtk-20-1) unstable; urgency=low
+ngraph-gtk (6.03.47.gtk-20-1) unreleased; urgency=low
 
   * new upstream version
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 06 Mar 2009 21:16:16 +0900
 
-ngraph-gtk (6.03.47.gtk-19-1) unstable; urgency=low
+ngraph-gtk (6.03.47.gtk-19-1) unreleased; urgency=low
 
   * new upstream version
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Sat, 21 Feb 2009 11:11:59 +0900
 
-ngraph-gtk (6.03.47.gtk-18-1) unstable; urgency=low
+ngraph-gtk (6.03.47.gtk-18-1) unreleased; urgency=low
 
   * new upstream version
 
  -- Ito Hiroyuki <ZXB01226@nifty.com>  Fri, 23 Jan 2009 21:34:31 +0900
 
-ngraph-gtk (6.03.47.gtk-17-1) unstable; urgency=low
+ngraph-gtk (6.03.47.gtk-17-1) unreleased; urgency=low
 
   * Initial release
 

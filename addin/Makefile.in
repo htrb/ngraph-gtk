@@ -38,7 +38,7 @@ host_triplet = @host@
 pkglibexec_PROGRAMS = fft$(EXEEXT) calc$(EXEEXT) fitrslt$(EXEEXT) \
 	legend$(EXEEXT)
 subdir = addin
-DIST_COMMON = $(dist_pkgdata_DATA) $(srcdir)/Makefile.am \
+DIST_COMMON = $(dist_addin_DATA) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -56,8 +56,7 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(pkglibexecdir)" \
-	"$(DESTDIR)$(pkgdatadir)"
+am__installdirs = "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(addindir)"
 PROGRAMS = $(pkglibexec_PROGRAMS)
 am_calc_OBJECTS = calc-calc.$(OBJEXT) calc-addin_common.$(OBJEXT)
 calc_OBJECTS = $(am_calc_OBJECTS)
@@ -143,7 +142,7 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-DATA = $(dist_pkgdata_DATA)
+DATA = $(dist_addin_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -296,7 +295,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dist_pkgdata_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
+addindir = $(pkgdatadir)/addin
+dist_addin_DATA = append.nsc calc.nsc fft.nsc fitrslt.nsc legend.nsc	\
 	math.nsc text-in.nsc cal.nsc tex_equation.nsc ps2gra.nsc	\
 	fig2gra.nsc timer.nsc fig2gra.rb
 
@@ -525,24 +525,24 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-dist_pkgdataDATA: $(dist_pkgdata_DATA)
+install-dist_addinDATA: $(dist_addin_DATA)
 	@$(NORMAL_INSTALL)
-	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
-	@list='$(dist_pkgdata_DATA)'; test -n "$(pkgdatadir)" || list=; \
+	test -z "$(addindir)" || $(MKDIR_P) "$(DESTDIR)$(addindir)"
+	@list='$(dist_addin_DATA)'; test -n "$(addindir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pkgdatadir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pkgdatadir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(addindir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(addindir)" || exit $$?; \
 	done
 
-uninstall-dist_pkgdataDATA:
+uninstall-dist_addinDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_pkgdata_DATA)'; test -n "$(pkgdatadir)" || list=; \
+	@list='$(dist_addin_DATA)'; test -n "$(addindir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(pkgdatadir)'; $(am__uninstall_files_from_dir)
+	dir='$(DESTDIR)$(addindir)'; $(am__uninstall_files_from_dir)
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -630,7 +630,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(pkgdatadir)"; do \
+	for dir in "$(DESTDIR)$(pkglibexecdir)" "$(DESTDIR)$(addindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -686,7 +686,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dist_pkgdataDATA
+install-data-am: install-dist_addinDATA
 
 install-dvi: install-dvi-am
 
@@ -732,7 +732,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dist_pkgdataDATA uninstall-pkglibexecPROGRAMS
+uninstall-am: uninstall-dist_addinDATA uninstall-pkglibexecPROGRAMS
 
 .MAKE: install-am install-strip
 
@@ -741,16 +741,15 @@ uninstall-am: uninstall-dist_pkgdataDATA uninstall-pkglibexecPROGRAMS
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am \
-	install-dist_pkgdataDATA install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-pkglibexecPROGRAMS install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-dist_pkgdataDATA \
-	uninstall-pkglibexecPROGRAMS
+	install-dist_addinDATA install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-pkglibexecPROGRAMS install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-dist_addinDATA uninstall-pkglibexecPROGRAMS
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

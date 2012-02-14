@@ -4254,7 +4254,7 @@ setshellargument(struct nshell *nshell,int argc,char **argv)
 void 
 ngraphenvironment(struct nshell *nshell)
 {
-  char *sver,*lib,*home,*conf,*data;
+  char *sver,*lib,*home,*conf,*data,*addin;
   struct objlist *sobj;
   char *systemname;
   char *pathset;
@@ -4275,13 +4275,16 @@ ngraphenvironment(struct nshell *nshell)
   if (getval(nshell,"PS2")==NULL) addval(nshell,"PS2",">");
   if (getval(nshell,"IFS")==NULL) addval(nshell,"IFS"," \t\n");
   if (getval(nshell,"IGNOREEOF")==NULL) addval(nshell,"IGNOREEOF","10");
-  pathset = g_strdup_printf("PATH='%s%s%s%s%s%s%s%s'$PATH", data, PATHSEP, lib, PATHSEP, home, PATHSEP, ".", PATHSEP);
+
+  addin = g_strdup_printf("%s/addin", data);
+  pathset = g_strdup_printf("PATH='%s%s%s%s%s%s%s%s'$PATH", home, PATHSEP, addin, PATHSEP, lib, PATHSEP, ".", PATHSEP);
 
   if (pathset) {
 #ifdef WINDOWS
     path_to_win(pathset);
 #endif	/* WINDOWS */
     cmdexecute(nshell,pathset);
+    g_free(addin);
     g_free(pathset);
   }
 }

@@ -20,7 +20,7 @@ Description: create scientific 2-dimensional graphs
 Package: ngraph-gtk-addins-base
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: addins of create scientific 2-dimensional graphs - base programs
+Description: addins of Ngraph-gtk - base programs
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. This program can create advanced graphs
  which can't be created by spreadsheets. Graphs can be exported to
@@ -32,7 +32,7 @@ Package: ngraph-gtk-addins
 Architecture: all
 Suggests: ruby | ruby-interpreter
 Depends: ${misc:Depends}, ngraph-gtk-addins-base, ngraph-gtk, pstoedit
-Description: addins of create scientific 2-dimensional graphs
+Description: addins of Ngraph-gtk
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. This program can create advanced graphs
  which can't be created by spreadsheets. Graphs can be exported to
