@@ -74,7 +74,7 @@ add_completion(GtkListStore *list, FILE *fp)
 {
   char *buf;
   GtkTreeIter iter;
-  int len, r;
+  int r;
 
 
   r = fgetline(fp, &buf);
@@ -84,8 +84,10 @@ add_completion(GtkListStore *list, FILE *fp)
 
   g_strchomp(buf);
 
-  gtk_list_store_append(list, &iter);
-  gtk_list_store_set(list, &iter, 0, buf, -1);
+  if (g_utf8_validate(buf, -1, NULL)) {
+    gtk_list_store_append(list, &iter);
+    gtk_list_store_set(list, &iter, 0, buf, -1);
+  }
 
   g_free(buf);
 

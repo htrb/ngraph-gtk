@@ -17501,7 +17501,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/en/Makefile doc/html/en/tutorial/Makefile doc/html/en/dialogs/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile mingw/Makefile pixmap/Makefile icons/Makefile misc/Makefile misc/debian/Makefile misc/debian/patches/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile mingw/Makefile pixmap/Makefile icons/Makefile misc/Makefile misc/debian/Makefile misc/debian/patches/Makefile"
 
 
 ac_config_headers="$ac_config_headers config.h"
@@ -18539,9 +18539,6 @@ do
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "doc/html/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/Makefile" ;;
     "doc/html/img/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/img/Makefile" ;;
-    "doc/html/en/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/en/Makefile" ;;
-    "doc/html/en/tutorial/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/en/tutorial/Makefile" ;;
-    "doc/html/en/dialogs/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/en/dialogs/Makefile" ;;
     "doc/html/ja/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/ja/Makefile" ;;
     "doc/html/ja/tutorial/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/ja/tutorial/Makefile" ;;
     "doc/html/ja/dialogs/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/ja/dialogs/Makefile" ;;

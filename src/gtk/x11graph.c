@@ -1329,7 +1329,7 @@ check_help_file(void)
   g_free(file);
 
  End:
-  return g_strdup_printf("%s/html/en/%s", DOCDIR, HELP_FILE);
+  return g_strdup_printf("%s/html/ja/%s", DOCDIR, HELP_FILE); /* default language of the help file is Japanese. */
 }
 
 void
