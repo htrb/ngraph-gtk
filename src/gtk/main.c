@@ -41,7 +41,7 @@
 #ifdef LOCALEDIR
 #undef LOCALEDIR
 #endif	/* LOCALEDIR */
-char *DOCDIR, *NDATADIR, *LIBDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
+char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
 #endif	/* WINDOWS */
 
 #include "dir_defs.h"
@@ -299,7 +299,7 @@ reset_fifo(char *fifo_in, char *fifo_out)
 }
 
 #ifdef WINDOWS
-static HWND ConsoleHandle;
+static HWND ConsoleHandle = NULL;
 
 static int
 check_console(int allocconsole)
@@ -342,7 +342,11 @@ nallocconsole(void)
 void
 nfreeconsole(void)
 {
-  if (! ConsoleAc && ConsoleHandle) {
+  if (ConsoleAc) {
+    return;
+  }
+
+  if (ConsoleHandle) {
     ShowWindow(ConsoleHandle, SW_HIDE);
   }
 }

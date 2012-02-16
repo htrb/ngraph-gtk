@@ -1,7 +1,6 @@
+# the first line shoud be comment or blank because notepad.exe add BOM
+# on the top of the file and Ngraph cannnot understand BOM.
 [Ngraph]
-# terminal=gnome-terminal -x c:/ngraph-gtk/lib/ngraph-gtk/terminal
-# terminal=rxvt -e c:/ngraph-gtk/lib/ngraph-gtk/terminal
-terminal=xterm -e c:/ngraph-gtk/lib/ngraph-gtk/terminal
 alloc_console=0
 
 [x11menu]

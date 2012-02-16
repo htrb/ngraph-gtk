@@ -1,3 +1,13 @@
+2012-02-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* mingw/windows_make.sed: update install path.
+
+	* initfile/Ngraph.ini.win: the first line should be blank or
+	comment.
+
+	* src/gtk/main.c: add global variable "ADDINDIR"(only for
+	Windows).
+
 2012-02-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* doc/html/index.html: remove English documents from the package.
