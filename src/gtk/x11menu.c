@@ -57,6 +57,7 @@
 #define MATH_X_HISTORY   "math_x_history"
 #define MATH_Y_HISTORY   "math_y_history"
 #define FUNCTION_HISTORY "function_history"
+#define FIT_HISTORY      "fit_history"
 #define KEYMAP_FILE      "accel_map"
 #define UI_FILE          "NgraphUI.xml"
 
@@ -2583,6 +2584,7 @@ load_hist(void)
   NgraphApp.x_math_list = entry_completion_create();
   NgraphApp.y_math_list = entry_completion_create();
   NgraphApp.func_list = entry_completion_create();
+  NgraphApp.fit_list = entry_completion_create();
 
   home = get_home();
   if (home == NULL)
@@ -2592,6 +2594,7 @@ load_hist(void)
   load_hist_file(NgraphApp.x_math_list, home, MATH_X_HISTORY);
   load_hist_file(NgraphApp.y_math_list, home, MATH_Y_HISTORY);
   load_hist_file(NgraphApp.func_list, home, FUNCTION_HISTORY);
+  load_hist_file(NgraphApp.fit_list, home, FIT_HISTORY);
 }
 
 static void
@@ -2607,16 +2610,19 @@ save_entry_history(void)
   save_hist_file(NgraphApp.x_math_list, home, MATH_X_HISTORY);
   save_hist_file(NgraphApp.y_math_list, home, MATH_Y_HISTORY);
   save_hist_file(NgraphApp.func_list, home, FUNCTION_HISTORY);
+  save_hist_file(NgraphApp.fit_list, home, FIT_HISTORY);
 
   g_object_unref(NgraphApp.legend_text_list);
   g_object_unref(NgraphApp.x_math_list);
   g_object_unref(NgraphApp.y_math_list);
   g_object_unref(NgraphApp.func_list);
+  g_object_unref(NgraphApp.fit_list);
 
   NgraphApp.legend_text_list = NULL;
   NgraphApp.x_math_list = NULL;
   NgraphApp.y_math_list = NULL;
   NgraphApp.func_list = NULL;
+  NgraphApp.fit_list = NULL;
 }
 
 static void
@@ -2653,6 +2659,7 @@ init_ngraph_app_struct(void)
   NgraphApp.x_math_list = NULL;
   NgraphApp.y_math_list = NULL;
   NgraphApp.func_list = NULL;
+  NgraphApp.fit_list = NULL;
 
   NgraphApp.Interrupt = FALSE;
 }

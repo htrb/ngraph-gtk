@@ -191,7 +191,7 @@ struct NgraphApp
   GtkWidget *Message, *Message_pos, *Message_extra;
   gint Message1;
   GtkWidget *ghistory[MENU_HISTORY_NUM], *fhistory[MENU_HISTORY_NUM];
-  GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list;
+  GtkEntryCompletion *legend_text_list, *x_math_list, *y_math_list, *func_list, *fit_list;
   GtkRadioAction *viewb;
 #if GTK_CHECK_VERSION(3, 0, 0)
   cairo_surface_t *markpix[MARK_TYPE_NUM];

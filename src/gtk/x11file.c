@@ -101,6 +101,7 @@ static void file_edit_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_draw_popup_func(GtkMenuItem *w, gpointer client_data);
 static void FileDialogType(GtkWidget *w, gpointer client_data);
 static void create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent);
+static gboolean func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data);
 
 static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_ADD,             G_CALLBACK(CmFileOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -685,11 +686,11 @@ FitDialogSetupItem(GtkWidget *w, struct FitDialog *d, int id)
 
   SetWidgetFromObjField(d->interpolation, d->Obj, id, "interpolation");
 
-  SetWidgetFromObjField(d->formula, d->Obj, id, "user_func");
-
   SetWidgetFromObjField(d->converge, d->Obj, id, "converge");
 
   SetWidgetFromObjField(d->derivatives, d->Obj, id, "derivative");
+
+  SetWidgetFromObjField(d->formula, d->Obj, id, "user_func");
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "parameter0", dd[] = "derivative0";
@@ -1005,11 +1006,62 @@ FitDialogSave(GtkWidget *w, gpointer client_data)
   g_free(ngpfile);
 }
 
+static int
+check_fit_func(GtkEditable *w, gpointer client_data)
+{
+  struct FitDialog *d;
+  MathEquation *code;
+  MathEquationParametar *prm;
+  const char *math;
+  int dim, i, n, deriv;
+
+  d = (struct FitDialog *) client_data;
+
+  code = math_equation_basic_new();
+  if (code == NULL)
+    return FALSE;
+
+  if (math_equation_add_parameter(code, 0, 1, 2, MATH_EQUATION_PARAMETAR_USE_ID)) {
+    math_equation_free(code);
+    return FALSE;
+  }
+
+  math = gtk_entry_get_text(GTK_ENTRY(d->formula));
+  if (math_equation_parse(code, math)) {
+    math_equation_free(code);
+    return FALSE;
+  }
+
+  prm = math_equation_get_parameter(code, 0, NULL);
+  dim = prm->id_num;
+  deriv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->derivatives));
+
+  for (i = 0; i < FIT_PARM_NUM; i++) {
+    set_widget_sensitivity_with_label(d->p[i], FALSE);
+    set_widget_sensitivity_with_label(d->d[i], FALSE);
+  }
+
+  for (i = 0; i < dim; i++) {
+    n = prm->id[i];
+
+    if (n < FIT_PARM_NUM) {
+      set_widget_sensitivity_with_label(d->p[n], TRUE);
+      if (deriv) {
+	set_widget_sensitivity_with_label(d->d[n], TRUE);
+      }
+    }
+  }
+
+  math_equation_free(code);
+
+  return TRUE;
+}
+
 static void
 FitDialogResult(GtkWidget *w, gpointer client_data)
 {
   struct FitDialog *d;
-  double derror, correlation, coe[10];
+  double derror, correlation, coe[FIT_PARM_NUM];
   char *equation, *math, buf[1024];
   N_VALUE *inst;
   int i, j, dim, dimension, type, num;
@@ -1084,7 +1136,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
       i += snprintf(buf + i, sizeof(buf) - i, "|r| or |R| = -------------\n");
     }
   } else {
-    int tbl[10];
+    int tbl[FIT_PARM_NUM];
     MathEquation *code;
     MathEquationParametar *prm;
 
@@ -1092,7 +1144,7 @@ FitDialogResult(GtkWidget *w, gpointer client_data)
     if (code == NULL)
       return;
 
-    if (math_equation_add_parameter(code, 0, 1, 3, MATH_EQUATION_PARAMETAR_USE_ID)) {
+    if (math_equation_add_parameter(code, 0, 1, 2, MATH_EQUATION_PARAMETAR_USE_ID)) {
       math_equation_free(code);
       return;
     }
@@ -1130,6 +1182,7 @@ static int
 FitDialogApply(GtkWidget *w, struct FitDialog *d)
 {
   int i, num, dim;
+  const gchar *s;
 
   if (SetObjFieldFromWidget(d->type, d->Obj, d->Id, "type"))
     return FALSE;
@@ -1169,14 +1222,17 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
   if (SetObjFieldFromWidget(d->interpolation, d->Obj, d->Id, "interpolation"))
     return FALSE;
 
-  if (SetObjFieldFromWidget(d->formula, d->Obj, d->Id, "user_func"))
-    return FALSE;
-
   if (SetObjFieldFromWidget(d->derivatives, d->Obj, d->Id, "derivative"))
     return FALSE;
 
   if (SetObjFieldFromWidget(d->converge, d->Obj, d->Id, "converge"))
     return FALSE;
+
+  if (SetObjFieldFromWidget(d->formula, d->Obj, d->Id, "user_func"))
+    return FALSE;
+
+ s = gtk_entry_get_text(GTK_ENTRY(d->formula));
+  entry_completion_append(NgraphApp.fit_list, s);
 
   for (i = 0; i < FIT_PARM_NUM; i++) {
     char p[] = "parameter0", dd[] = "derivative0";
@@ -1189,6 +1245,9 @@ FitDialogApply(GtkWidget *w, struct FitDialog *d)
 
     if (SetObjFieldFromWidget(d->d[i], d->Obj, d->Id, dd))
       return FALSE;
+
+    s = gtk_entry_get_text(GTK_ENTRY(d->d[i]));
+    entry_completion_append(NgraphApp.fit_list, s);
   }
 
   return TRUE;
@@ -1289,6 +1348,8 @@ create_user_fit_frame(struct FitDialog *d)
   j = 0;
   w = create_text_entry(FALSE, TRUE);
   add_widget_to_table_sub(table, w, _("_Formula:"), TRUE, 0, 2, 3, j++);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.fit_list);
+  g_signal_connect(w, "changed", G_CALLBACK(check_fit_func), d);
   d->formula = w;
 
   w = create_text_entry(TRUE, TRUE);
@@ -1315,6 +1376,7 @@ create_user_fit_frame(struct FitDialog *d)
     d->p[i] = w;
 
     w = create_text_entry(TRUE, TRUE);
+    g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.fit_list);
     add_widget_to_table_sub(table, w, dd, TRUE, 2, 1, 4, j++);
     d->d[i] = w;
   }
@@ -2130,7 +2192,10 @@ math_tab_copy(GtkButton *btn, gpointer user_data)
 static gboolean
 func_entry_focused(GtkWidget *w, GdkEventFocus *event, gpointer user_data)
 {
-  entry_completion_set_entry(NgraphApp.func_list, w);
+  GtkEntryCompletion *compl;
+
+  compl = GTK_ENTRY_COMPLETION(user_data);
+  entry_completion_set_entry(compl, w);
 
   return FALSE;
 }
@@ -2161,17 +2226,17 @@ math_tab_create(struct FileDialog *d)
   d->math.y = w;
 
   w = create_text_entry(TRUE, TRUE);
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NULL);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
   add_widget_to_table(table, w, "_F(X,Y,Z):", TRUE, i++);
   d->math.f = w;
 
   w = create_text_entry(TRUE, TRUE);
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NULL);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
   add_widget_to_table(table, w, "_G(X,Y,Z):", TRUE, i++);
   d->math.g = w;
 
   w = create_text_entry(TRUE, TRUE);
-  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NULL);
+  g_signal_connect(w, "focus-in-event", G_CALLBACK(func_entry_focused), NgraphApp.func_list);
   add_widget_to_table(table, w, "_H(X,Y,Z):", TRUE, i++);
   d->math.h = w;
 
