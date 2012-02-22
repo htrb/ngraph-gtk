@@ -1,3 +1,21 @@
+2012-02-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (LegendArrowDialogSetup)
+	(LegendRectDialogSetup, LegendMarkDialogSetup)
+	(LegendTextDialogSetup, LegendArcDialogSetup): add delete button
+	again.
+
+	* src/ofile.c (set_data_progress): consider "fp->bufnum".
+	(getdata_skip_step): call "set_data_progress()".
+	(getdata_sub1): check return value of the function
+	"getdata_sub2()".
+
+	* addin/fitrslt.c (savescript): width of the frame is now a
+	multiple of 100.
+
+	* addin/legend.c (savescript): width of the frame is now a
+	multiple of 100.
+
 2012-02-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FitDialogSetupItem)

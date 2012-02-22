@@ -166,6 +166,7 @@ savescript(struct fit_prm *prm)
   }
 
   if (frame) {
+    fprintf(f, "iarray:textlen:map 'int(X/100+0.5)*100'\n");
     fprintf(f, "new rectangle\n");
     fprintf(f, "rectangle::x1=%d\n", posx - height / 4);
     fprintf(f, "rectangle::y1=%d\n", posy);

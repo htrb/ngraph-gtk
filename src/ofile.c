@@ -1949,7 +1949,7 @@ set_data_progress(struct f2ddata *fp)
       if (fp->line < fp->hskip) {
 	frac = 1.0 * fp->line / (fp->prev_datanum + fp->hskip);
       } else {
-	frac = 1.0 * (fp->datanum + fp->hskip) / (fp->prev_datanum + fp->hskip);
+	frac = 1.0 * (fp->datanum + fp->bufnum + fp->hskip) / (fp->prev_datanum + fp->hskip);
       }
     } else {
       frac = -1;
@@ -2049,6 +2049,9 @@ getdata_skip_step(struct f2ddata *fp)
 
   step = 1;
   while (step < fp->rstep) {
+    if ((fp->line & UPDATE_PROGRESS_LINE_NUM) == 0 && set_data_progress(fp)) {
+      return 1;
+    }
     rcode = fgetline(fp->fd, &buf);
     if (rcode == 1) {
       fp->eof = TRUE;
@@ -2489,8 +2492,9 @@ getdata_sub2(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy, M
   buf->d3stat = d3.type;
   fp->bufnum++;
 
-  if (fp->rstep > 1)
+  if (fp->rstep > 1) {
     return getdata_skip_step(fp);
+  }
 
   return 0;
 }
@@ -2531,7 +2535,9 @@ getdata_sub1(struct f2ddata *fp, int fnumx, int fnumy, int *needx, int *needy,
       if (rcode==-1) {
 	return -1;
       }
-      getdata_sub2(fp, fnumx, fnumy, needx, needy, datax, datay, gdata, filenum, openfile);
+      if (getdata_sub2(fp, fnumx, fnumy, needx, needy, datax, datay, gdata, filenum, openfile)) {
+	break;
+      }
     }
     if ((fp->final>=0) && (fp->line>=fp->final)) fp->eof=TRUE;
   }
