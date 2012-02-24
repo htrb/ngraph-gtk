@@ -17501,7 +17501,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile mingw/Makefile pixmap/Makefile icons/Makefile misc/Makefile misc/debian/Makefile misc/debian/patches/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile src/gtk/Makefile src/math/Makefile driver/Makefile addin/Makefile po/Makefile.in m4/Makefile demo/Makefile initfile/Makefile doc/Makefile doc/html/Makefile doc/html/img/Makefile doc/html/ja/Makefile doc/html/ja/tutorial/Makefile doc/html/ja/dialogs/Makefile zsh/Makefile test/Makefile mingw/Makefile pixmap/Makefile icons/Makefile misc/Makefile"
 
 
 ac_config_headers="$ac_config_headers config.h"
@@ -18548,8 +18548,6 @@ do
     "pixmap/Makefile") CONFIG_FILES="$CONFIG_FILES pixmap/Makefile" ;;
     "icons/Makefile") CONFIG_FILES="$CONFIG_FILES icons/Makefile" ;;
     "misc/Makefile") CONFIG_FILES="$CONFIG_FILES misc/Makefile" ;;
-    "misc/debian/Makefile") CONFIG_FILES="$CONFIG_FILES misc/debian/Makefile" ;;
-    "misc/debian/patches/Makefile") CONFIG_FILES="$CONFIG_FILES misc/debian/patches/Makefile" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
