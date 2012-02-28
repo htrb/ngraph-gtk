@@ -583,17 +583,6 @@ init_graobj(struct objlist *graobj, int id, char *dev_name, int dev_oid)
   putobj(graobj, "device", id, device);
 }
 
-static void
-init_print(GtkPrintOperation *operation, GtkPrintContext *context, gpointer user_data)
-{
-  GtkPrintSettings *settings;
-  int n;
-
-  settings = gtk_print_operation_get_print_settings(operation);
-  n = gtk_print_settings_get_n_copies(settings);
-  gtk_print_operation_set_n_pages(operation, n);
-}
-
 void
 CmOutputPrinter(int select_file, int show_dialog)
 {
@@ -674,7 +663,6 @@ CmOutputPrinter(int select_file, int show_dialog)
   pobj.g2wobj = g2wobj;
   pobj.g2winst = g2winst;
   g_signal_connect(print, "draw_page", G_CALLBACK(draw_page), &pobj);
-  g_signal_connect(print, "begin_print", G_CALLBACK(init_print), NULL);
 
   switch (show_dialog) {
   case PRINT_SHOW_DIALOG_NONE:

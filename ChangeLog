@@ -1,3 +1,7 @@
+2012-02-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (init_print): removed.
+
 2012-02-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (LegendArrowDialogSetup)

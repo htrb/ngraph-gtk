@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-02-22 19:06+0900\n"
+"POT-Creation-Date: 2012-02-28 19:05+0900\n"
 "PO-Revision-Date: 2012-01-20 14:56+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1553,7 +1553,7 @@ msgstr "EMF ファイルにエクスポート"
 msgid "Print preview"
 msgstr "印刷プレビュー"
 
-#: src/gtk/x11menu.c:455 src/gtk/x11menu.c:456 src/gtk/x11print.c:697
+#: src/gtk/x11menu.c:455 src/gtk/x11menu.c:456 src/gtk/x11print.c:685
 msgid "Print"
 msgstr "印刷"
 
@@ -2303,28 +2303,28 @@ msgstr "Cairo EMF 出力"
 msgid "Printing."
 msgstr "印刷中"
 
-#: src/gtk/x11print.c:696
+#: src/gtk/x11print.c:684
 #, c-format
 msgid "Printing error: %s"
 msgstr "印刷エラー: %s"
 
-#: src/gtk/x11print.c:745
+#: src/gtk/x11print.c:733
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:751 src/gtk/x11print.c:1014 src/gtk/x11view.c:5392
+#: src/gtk/x11print.c:739 src/gtk/x11print.c:1002 src/gtk/x11view.c:5392
 msgid "Drawing."
 msgstr "描画中"
 
-#: src/gtk/x11print.c:812
+#: src/gtk/x11print.c:800
 msgid "Spawning external viewer."
 msgstr "外部ビューアに出力中"
 
-#: src/gtk/x11print.c:854
+#: src/gtk/x11print.c:842
 msgid "GRA file"
 msgstr "合成ファイルの保存"
 
-#: src/gtk/x11print.c:894
+#: src/gtk/x11print.c:882
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
