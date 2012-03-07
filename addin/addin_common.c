@@ -244,7 +244,7 @@ fgets_str(FILE *fp)
 
   r = fgets(buf, sizeof(buf), fp);
   if (r == NULL) {
-    return 0;
+    return NULL;
   }
 
   g_strchomp(buf);
