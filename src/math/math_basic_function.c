@@ -13,6 +13,7 @@
 
 #ifdef HAVE_LIBGSL
 #include <gsl/gsl_sf.h>
+#include <gsl/gsl_rng.h>
 #endif
 
 #include "ntime.h"
@@ -914,12 +915,44 @@ math_func_qinv(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
   return 0;
 }
 
+#ifdef HAVE_LIBGSL
+static gsl_rng *RandomBuf = NULL;
+#define RANDOM_ALGORITHM gsl_rng_mt19937
+
+static gsl_rng *
+create_random_buf(void)
+{
+  gsl_rng * r;
+
+  r = gsl_rng_alloc(RANDOM_ALGORITHM);
+  if (r) {
+    gsl_rng_set(r, 0);
+  }
+
+  return r;
+}
+
+#endif
+
 int
 math_func_rand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
+#ifdef HAVE_LIBGSL
+  if (RandomBuf == NULL) {
+    RandomBuf = create_random_buf();
+  }
+
+  if (RandomBuf) {
+    rval->val = gsl_rng_uniform (RandomBuf) * exp->buf[0].val.val;
+  } else {
+    rval->val =  (rand() / ((double) RAND_MAX + 1)) * exp->buf[0].val.val;
+  }
+#else
   rval->val =  (rand() / ((double) RAND_MAX + 1)) * exp->buf[0].val.val;
+#endif
+
   return 0;
 }
 
@@ -928,7 +961,19 @@ math_func_srand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 {
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
+#ifdef HAVE_LIBGSL
+  if (RandomBuf == NULL) {
+    RandomBuf = create_random_buf();
+  }
+
+  if (RandomBuf) {
+    gsl_rng_set(RandomBuf, exp->buf[0].val.val);
+  } else {
+    srand(exp->buf[0].val.val);
+  }
+#else
   srand(exp->buf[0].val.val);
+#endif
   rval->val = exp->buf[0].val.val;
 
   return 0;
@@ -2161,6 +2206,33 @@ math_func_jl(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   default:
     r = gsl_sf_bessel_jl_e(n2, x2, &val);
   }
+  rval->val = val.val;
+  if (r) {
+    rval->type = MATH_VALUE_ERROR;
+  }
+  return r;
+}
+
+int
+math_func_choose(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
+{
+  unsigned int m, n;
+  int r;
+  gsl_sf_result val;
+
+  MATH_CHECK_ARG(rval, exp->buf[0]);
+  MATH_CHECK_ARG(rval, exp->buf[1]);
+
+  if (exp->buf[0].val.val < 0 || exp->buf[1].val.val < 0) {
+    printf("math_func_choose\n");
+    rval->type = MATH_VALUE_ERROR;
+    return 1;
+  }
+
+  n = exp->buf[0].val.val;
+  m = exp->buf[1].val.val;
+
+  r = gsl_sf_choose_e(n, m, &val);
   rval->val = val.val;
   if (r) {
     rval->type = MATH_VALUE_ERROR;

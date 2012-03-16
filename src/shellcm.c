@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <libgen.h>
 #include <unistd.h>
+#include <math.h>
 
 #define USE_HASH 1
 
@@ -1335,7 +1336,7 @@ cmdexpr(struct nshell*nshell,int argc,char **argv)
   if (argv[0][0] == 'd') {
     printfstdout("%.15e\n", vd); 
   } else {
-    printfstdout("%d\n", nround(vd));
+    printfstdout("%.0f\n", round(vd));
   }
 
   return 0;

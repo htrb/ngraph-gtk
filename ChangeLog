@@ -1,3 +1,21 @@
+2012-03-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_expression.c (math_expression_calculate, calc):
+	"val->type" is always "MATH_VALUE_ERROR" when an error is occurred
+	during calculation.
+	(FACT_MAX): added.
+	(calc): the operator "!" accepts a number lesser then "FACT_MAX".
+
+	* src/math/math_basic_function.c (math_func_choose): added.
+	(create_random_buf): added.
+	(math_func_rand, math_func_srand): use functions included in GSL
+	if available.
+
+	* src/shellcm.c (cmdexpr): use "%.0f" instead of "%d" for "iexpr"
+	command.
+	(cmdexpr): use "round()" instead of "nround()" for "iexpr"
+	command.
+
 2012-03-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* debian/control (Build-Depends): add "libreadline6-dev".
