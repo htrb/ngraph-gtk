@@ -2,17 +2,17 @@ Description: Remove doc files from Makefile
  Upstream specifies doc files in Makefile. But it conflicts with debhelper.
  This patch removes these files.
 Author: Koichi Akabe <vbkaisetsu@gmail.com>
-Last-Update: 2011-12-01
+Last-Update: 2012-02-25
 
 --- ngraph-gtk-6.06.04.orig/Makefile.in
 +++ ngraph-gtk-6.06.04/Makefile.in
-@@ -290,8 +290,7 @@ top_build_prefix = @top_build_prefix@
+@@ -300,8 +300,7 @@
  top_builddir = @top_builddir@
  top_srcdir = @top_srcdir@
  ngraphconfdir = $(sysconfdir)/$(PACKAGE)
 -EXTRA_DIST = config.rpath pathconv.sh
-+EXTRA_DIST = config.rpath pathconv.sh README AUTHORS ChangeLog NEWS COPYING
 -doc_DATA = README AUTHORS ChangeLog NEWS COPYING
++EXTRA_DIST = config.rpath pathconv.sh README AUTHORS ChangeLog NEWS COPYING
  SUBDIRS = po m4 src initfile driver addin demo doc zsh test mingw pixmap icons misc
  ACLOCAL_AMFLAGS = -I m4
  LIBTOOL_DEPS = @LIBTOOL_DEPS@

@@ -10,7 +10,8 @@ Homepage: http://homepage3.nifty.com/slokar/ngraph/ngraph-gtk.html
 Package: ngraph-gtk
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: ngraph-gtk-addins, xflr5-doc
+Recommends: ngraph-gtk-addins, ngraph-gtk-doc
+Suggests: fonts-liberation
 Description: create scientific 2-dimensional graphs
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. This program can create advanced graphs
@@ -30,8 +31,8 @@ Description: addins of Ngraph-gtk - base programs
 
 Package: ngraph-gtk-addins
 Architecture: all
-Suggests: ruby | ruby-interpreter
 Depends: ${misc:Depends}, ngraph-gtk-addins-base, ngraph-gtk, pstoedit
+Suggests: ruby | ruby-interpreter
 Description: addins of Ngraph-gtk
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. This program can create advanced graphs
