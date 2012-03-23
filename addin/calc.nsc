@@ -4,6 +4,8 @@
 #
 # The simplest add-in script using an external program.
 #
+# Description: _Calc...,making a data file,
+
 SCRIPT=${system:0:temp_file}
 "${NGRAPHLIB}/calc" "$SCRIPT"
 if [ -s "$SCRIPT" ];

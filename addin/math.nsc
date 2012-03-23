@@ -2,6 +2,8 @@
 #
 # Line-calculator using shell-builtin command "dexpr".
 #
+# Description: _Math...,calculator,
+
 set +e
 new dialog
 MATH=${dialog::input:'Input mathematical expression'}

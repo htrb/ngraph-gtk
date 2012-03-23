@@ -5,6 +5,7 @@
 # This script uses rather special techniques. 
 # We don't recommend to edit this script.
 #
+# Description: _Append...,append NGP file,
 
 if [ "$*" ]
 then

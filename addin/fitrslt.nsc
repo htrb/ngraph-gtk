@@ -4,6 +4,8 @@
 # 
 # Please edit the following X, Y, and WIDTH variables as you like.
 #
+# Description: _Fit result...,insert fitting results as legend-text,
+
 X=5000      # top-left of the legend to be inserted.
 Y=5000      # top-left of the legend to be inserted.
 

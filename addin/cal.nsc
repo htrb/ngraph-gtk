@@ -1,3 +1,5 @@
+# Description: _Calendar,show calendar in the information window,
+
 new regexp
 regexp::@="(?i)UTF-?8"
 

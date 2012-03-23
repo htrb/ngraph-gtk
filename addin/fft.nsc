@@ -1,6 +1,7 @@
 #
 # fft.nsc written by S. ISHIZAKA. 1999/07
 #
+# Description: _FFT...,Fast Fourier Transform,
 
 new dialog
 SOURCE_FILE=${dialog::get_open_file}
