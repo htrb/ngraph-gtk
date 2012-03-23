@@ -309,7 +309,7 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     i = 0;
 
     w = combo_box_create();
-    add_widget_to_table(table, w, _("_Addin:"), TRUE, i++);
+    add_widget_to_table(table, w, _("_Add-in:"), TRUE, i++);
     g_signal_connect(w, "changed", G_CALLBACK(active_script_changed), d);
     d->addins = w;
 

@@ -1,3 +1,19 @@
+2012-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11dialg.h (SetScriptDialog): add member "assins".
+
+	* src/gtk/ox11menu.h (menulocal): add member "addin_list".
+
+	* src/gtk/ox11menu.c (gtkmenu): add field "addin_list_append".
+	(mx_addin_list_append, free_script_list): added.
+	(menulocal_finalize): use "free_script_list()".
+
+	* src/gtk/x11opt.c (active_script_changed): added.
+	(SetScriptDialogSetupItem): initialize addin combo box.
+	(SetScriptDialogSetup): add addin combo box.
+
+	* initfile/Ngraph.nsc (append_addin_list): added.
+
 2012-03-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/math/math_expression.c (math_expression_calculate, calc):
