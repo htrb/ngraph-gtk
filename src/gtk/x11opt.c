@@ -219,12 +219,64 @@ DefaultDialog(struct DefaultDialog *data)
 }
 
 static void
+active_script_changed(GtkComboBox *widget, gpointer user_data)
+{
+  struct SetScriptDialog *d;
+  struct script *addin;
+  int i, n;
+
+  d = (struct SetScriptDialog *) user_data;
+
+  n = gtk_combo_box_get_active(widget);
+  if (n < 1) {
+    gtk_entry_set_text(GTK_ENTRY(d->name), "");
+    gtk_entry_set_text(GTK_ENTRY(d->script), "");
+    gtk_entry_set_text(GTK_ENTRY(d->option), "");
+    gtk_entry_set_text(GTK_ENTRY(d->description), "");
+
+    return;
+  }
+
+  addin = Menulocal.addin_list;
+  for (i = 0; i < n - 1; i++) {
+    if (addin == NULL) {
+      return;
+    }
+    addin = addin->next;
+  }
+
+  gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(addin->name));
+  gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(addin->script));
+  gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(addin->option));
+  gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(addin->description));
+
+  return;
+}
+
+static void
 SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 {
-  gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Script->name));
-  gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(d->Script->script));
-  gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(d->Script->option));
-  gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(d->Script->description));
+  struct script *addin;
+
+  combo_box_clear(d->addins);
+  if (d->Script->name || Menulocal.addin_list == NULL) {
+    set_widget_sensitivity_with_label(d->addins, FALSE);
+  } else {
+    set_widget_sensitivity_with_label(d->addins, TRUE);
+    combo_box_append_text(d->addins, "Custom");
+    for (addin = Menulocal.addin_list; addin; addin = addin->next) {
+      combo_box_append_text(d->addins, addin->name);
+    }
+    combo_box_set_active(d->addins, 1);
+    active_script_changed(GTK_COMBO_BOX(d->addins), d);
+  }
+
+  if (d->Script->name) {
+    gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Script->name));
+    gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(d->Script->script));
+    gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(d->Script->option));
+    gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(d->Script->description));
+  }
 }
 
 #if USE_ENTRY_ICON
@@ -255,6 +307,12 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
     table = gtk_table_new(1, 2, FALSE);
 
     i = 0;
+
+    w = combo_box_create();
+    add_widget_to_table(table, w, _("_Addin:"), TRUE, i++);
+    g_signal_connect(w, "changed", G_CALLBACK(active_script_changed), d);
+    d->addins = w;
+
     w = create_text_entry(FALSE, TRUE);
     add_widget_to_table(table, w, _("_Name:"), TRUE, i++);
     d->name = w;

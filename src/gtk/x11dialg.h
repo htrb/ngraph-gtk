@@ -474,7 +474,7 @@ struct SetScriptDialog
 {
   DIALOG_PROTOTYPE;
   /****** local member *******/
-  GtkWidget *name, *script, *option, *description;
+  GtkWidget *addins, *name, *script, *option, *description;
   struct script *Script;
 };
 void SetScriptDialog(struct SetScriptDialog *data, struct script *sc);

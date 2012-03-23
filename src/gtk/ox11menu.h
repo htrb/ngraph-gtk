@@ -118,7 +118,7 @@ struct menulocal
   int PaperZoom;
   struct narray drawrable;
   struct extprinter *extprinterroot;
-  struct script *scriptroot;
+  struct script *scriptroot, *addin_list;
   int menuheight, menuwidth, menux, menuy;
   int fileheight, filewidth, filex, filey, fileopen;
   int axisheight, axiswidth, axisx, axisy, axisopen;

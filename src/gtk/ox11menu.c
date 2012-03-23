@@ -1042,11 +1042,27 @@ menuadddrawrable(struct objlist *parent, struct narray *drawrable)
 }
 
 static void
+free_script_list(struct script *script)
+{
+  struct script *scur, *sdel;
+
+  scur = script;
+  while (scur) {
+    sdel = scur;
+    scur = scur->next;
+    g_free(sdel->name);
+    g_free(sdel->script);
+    g_free(sdel->description);
+    g_free(sdel->option);
+    g_free(sdel);
+  }
+}
+
+static void
 menulocal_finalize(void)
 {
   struct extprinter *pcur, *pdel;
   struct character_map_list *cmap, *cmap_tmp;
-  struct script *scur, *sdel;
   int i, j;
   struct menu_config *cfg;
 
@@ -1081,17 +1097,11 @@ menulocal_finalize(void)
   }
   Menulocal.extprinterroot = NULL;
 
-  scur = Menulocal.scriptroot;
-  while (scur) {
-    sdel = scur;
-    scur = scur->next;
-    g_free(sdel->name);
-    g_free(sdel->script);
-    g_free(sdel->description);
-    g_free(sdel->option);
-    g_free(sdel);
-  }
+  free_script_list(Menulocal.scriptroot);
   Menulocal.scriptroot = NULL;
+
+  free_script_list(Menulocal.addin_list);
+  Menulocal.addin_list = NULL;
 
   if (Menulocal.pix) {
     cairo_surface_destroy(Menulocal.pix);
@@ -2037,6 +2047,79 @@ mx_get_locale(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
   return 0;
 }
 
+static int
+mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int n, id;
+  char *sarray, *name, *script, *description, *option, *argv2[2];
+  struct objlist *sa_obj;
+  struct narray iarray;
+  struct script *addin, *list;
+
+  sarray = (char *) argv[2];
+  if (sarray  == NULL) {
+    return 0;
+  }
+
+  arrayinit(&iarray, sizeof(int));
+  if (getobjilist(sarray, &sa_obj, &iarray, FALSE, NULL)) {
+    return 0;
+  }
+
+  if (g_strcmp0(chkobjectname(sa_obj), "sarray") != 0) {
+    return 1;
+  }
+
+  n = arraynum(&iarray);
+  if (n < 1) {
+    arraydel(&iarray);
+    return 0;
+  }
+
+  id = arraynget_int(&iarray, 0);
+
+  getobj(sa_obj, "num", id, 0, NULL, &n);
+  if (n < 4) {
+    arraydel(&iarray);
+    return 0;
+  }
+
+  addin = g_malloc(sizeof(*addin));
+  if (addin == NULL) {
+    return 1;
+  }
+
+  getobj(sa_obj, "shift", id, 0, NULL, &script);
+  addin->script = g_strdup(script);
+
+  getobj(sa_obj, "shift", id, 0, NULL, &name);
+  addin->name = g_strdup(name);
+
+  getobj(sa_obj, "shift", id, 0, NULL, &description);
+  addin->description = g_strdup(description);
+
+  argv2[0] = ",";
+  argv2[1] = NULL;
+  getobj(sa_obj, "join",  id, 1, argv2, &option);
+  addin->option = g_strdup(option);
+
+  addin->next = NULL;
+
+  if (Menulocal.addin_list == NULL) {
+    Menulocal.addin_list = addin;
+  } else {
+    for (list = Menulocal.addin_list; list != addin; list = list->next) {
+      if (list->next == NULL) {
+	list->next = addin;
+      }
+    }
+  }
+
+  arraydel(&iarray);
+
+  return 0;
+}
+
 int
 get_graph_modified(void)
 {
@@ -2103,6 +2186,7 @@ static struct objtable gtkmenu[] = {
   {"focus", NVFUNC, NREAD | NEXEC, mx_focus_obj, "o", 0},
   {"unfocus", NVFUNC, NREAD | NEXEC, mx_unfocus_obj, "", 0},
   {"locale", NVFUNC, NREAD | NEXEC, mx_get_locale, "", 0},
+  {"addin_list_append", NVFUNC, NREAD | NEXEC, mx_addin_list_append, "o", 0},
   {"_evloop", NVFUNC, 0, mx_evloop, NULL, 0},
 };
 
