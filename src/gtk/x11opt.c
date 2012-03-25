@@ -257,6 +257,7 @@ static void
 SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 {
   struct script *addin;
+  char *file;
 
   combo_box_clear(d->addins);
   if (d->Script->name || Menulocal.addin_list == NULL) {
@@ -265,7 +266,11 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
     set_widget_sensitivity_with_label(d->addins, TRUE);
     combo_box_append_text(d->addins, "Custom");
     for (addin = Menulocal.addin_list; addin; addin = addin->next) {
-      combo_box_append_text(d->addins, addin->name);
+      file = getbasename(addin->name);
+      if (file) {
+	combo_box_append_text(d->addins, file);
+	g_free(file);
+      }
     }
     combo_box_set_active(d->addins, 1);
     active_script_changed(GTK_COMBO_BOX(d->addins), d);

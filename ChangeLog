@@ -1,3 +1,8 @@
+2012-03-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11opt.c (SetScriptDialogSetupItem): use basename of the
+	add-ins as add-in combo-box.
+
 2012-03-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11dialg.h (SetScriptDialog): add member "assins".
