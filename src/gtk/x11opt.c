@@ -254,10 +254,30 @@ active_script_changed(GtkComboBox *widget, gpointer user_data)
 }
 
 static void
+remove_char(char *str, int c)
+{
+  int i, j, n;
+
+  if (str == NULL) {
+    return;
+  }
+
+  n = strlen(str);
+  for (i = 0; i < n; i++) {
+    if (str[i] == c) {
+      for (j = i; j < n; j++) {
+	str[j] = str[j + 1];
+      }
+      n--;
+    }
+  }
+}
+
+static void
 SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 {
   struct script *addin;
-  char *file;
+  char *title;
 
   combo_box_clear(d->addins);
   if (d->Script->name || Menulocal.addin_list == NULL) {
@@ -266,10 +286,11 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
     set_widget_sensitivity_with_label(d->addins, TRUE);
     combo_box_append_text(d->addins, "Custom");
     for (addin = Menulocal.addin_list; addin; addin = addin->next) {
-      file = getbasename(addin->script);
-      if (file) {
-	combo_box_append_text(d->addins, file);
-	g_free(file);
+      title = g_strdup(addin->name);
+      if (title) {
+	remove_char(title, '_');
+	combo_box_append_text(d->addins, title);
+	g_free(title);
       }
     }
     combo_box_set_active(d->addins, 1);

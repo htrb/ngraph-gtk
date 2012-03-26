@@ -2084,23 +2084,35 @@ mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
     return 0;
   }
 
-  addin = g_malloc(sizeof(*addin));
+  addin = g_malloc0(sizeof(*addin));
   if (addin == NULL) {
     return 1;
   }
 
   getobj(sa_obj, "shift", id, 0, NULL, &script);
+  if (! g_utf8_validate(script, -1, NULL)) {
+    goto Err;
+  }
   addin->script = g_strdup(script);
 
   getobj(sa_obj, "shift", id, 0, NULL, &name);
+  if (! g_utf8_validate(name, -1, NULL)) {
+    goto Err;
+  }
   addin->name = g_strdup(name);
 
   getobj(sa_obj, "shift", id, 0, NULL, &description);
+  if (! g_utf8_validate(description, -1, NULL)) {
+    goto Err;
+  }
   addin->description = g_strdup(description);
 
   argv2[0] = ",";
   argv2[1] = NULL;
   getobj(sa_obj, "join",  id, 1, argv2, &option);
+  if (! g_utf8_validate(option, -1, NULL)) {
+    goto Err;
+  }
   addin->option = g_strdup(option);
 
   addin->next = NULL;
@@ -2116,6 +2128,23 @@ mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
   }
 
   arraydel(&iarray);
+
+  return 0;
+
+ Err:
+  if (addin->script) {
+    g_free(addin->script);
+  }
+  if (addin->name) {
+    g_free(addin->name);
+  }
+  if (addin->description) {
+    g_free(addin->description);
+  }
+  if (addin->option) {
+    g_free(addin->option);
+  }
+  g_free(addin);
 
   return 0;
 }

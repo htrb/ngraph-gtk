@@ -1,3 +1,11 @@
+2012-03-27  Hroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mx_addin_list_append): check if strings are
+	valid UTF-8.
+
+	* src/gtk/x11opt.c (remove_char): added.
+	(SetScriptDialogSetupItem): use "remove_char()".
+
 2012-03-25  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (SetScriptDialogSetupItem): use basename of the
