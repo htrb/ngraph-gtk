@@ -266,7 +266,7 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
     set_widget_sensitivity_with_label(d->addins, TRUE);
     combo_box_append_text(d->addins, "Custom");
     for (addin = Menulocal.addin_list; addin; addin = addin->next) {
-      file = getbasename(addin->name);
+      file = getbasename(addin->script);
       if (file) {
 	combo_box_append_text(d->addins, file);
 	g_free(file);

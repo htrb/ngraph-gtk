@@ -1,0 +1,22 @@
+Description: Replace to free fonts
+ The configuraton file of Ngraph-gtk specify proprietary fonts.
+ This patch replace them to free fonts.
+Author: Koichi Akabe <vbkaisetsu@gmail.com>
+Last-Update: 2012-03-07
+
+--- ngraph-gtk-6.06.04.orig/initfile/Ngraph.ini.in
++++ ngraph-gtk-6.06.04/initfile/Ngraph.ini.in
+@@ -38,3 +38,3 @@
+-coordwin_font=Courier New 12
+-infowin_font=Courier New 10
+-file_preview_font=Courier New 10
++coordwin_font=Liberation Mono 12
++infowin_font=Liberation Mono 10
++file_preview_font=Liberation Mono 10
+@@ -67,3 +67,3 @@
+-font=Sans-serif,Arial
+-font=Serif,Times New Roman
+-font=Monospace,Courier New
++font=Sans-serif,Liberation Sans
++font=Serif,Liberation Serif
++font=Monospace,Liberation Mono
