@@ -1,21 +1,36 @@
-ngraph-gtk (6.06.04-1) unreleased; urgency=low
+ngraph-gtk (6.06.04-2) unstable; urgency=low
+
+  * debian/ngraph-gtk-addins.postinst, debian/ngraph-gtk-addins.prerm
+   - added for adding or removing addins on configuraton file
+  * debian/patches/20_replace_to_free_fonts.patch
+   - added to replace proprietary fonts
+  * debian/patches/30_remove-addins-from-config.patch
+   - added for removing addins when ngraph-gtk-addins is not installed
+  * debian/control
+   - added Suggests: fonts-liberation
+  * debian/copyright
+   - fixed Format URI
+
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Sun, 18 Mar 2012 19:21:18 +0900
+
+ngraph-gtk (6.06.04-1) unstable; urgency=low
 
   * New upstream release.
+  * Initial release for debian repository (Closes: #649345)
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 09 Jul 2012 19:32:17 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Sat, 25 Feb 2012 12:36:09 +0900
 
 ngraph-gtk (6.06.03.1-1) unreleased; urgency=low
 
   * New upstream release.
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Tue, 13 Dec 2011 19:24:42 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Sun, 12 Feb 2012 09:31:50 +0900
 
 ngraph-gtk (6.06.03-1) unreleased; urgency=low
 
   * New upstream release.
-  * Initial release for debian repository (Closes: #649345)
 
- -- Koichi Akabe <vbkaisetsu@gmail.com>  Wed, 23 Nov 2011 09:16:03 +0900
+ -- Ito Hiroyuki <ZXB01226@nifty.com>  Wed, 23 Nov 2011 09:16:03 +0900
 
 ngraph-gtk (6.06.02-1) unreleased; urgency=low
 

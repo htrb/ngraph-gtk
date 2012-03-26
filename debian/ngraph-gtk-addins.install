@@ -1,2 +1,9 @@
-usr/share/ngraph-gtk/addin/*.nsc
-usr/share/ngraph-gtk/addin/*.rb
+usr/share/ngraph-gtk/addin/append.nsc
+usr/share/ngraph-gtk/addin/fft.nsc
+usr/share/ngraph-gtk/addin/legend.nsc
+usr/share/ngraph-gtk/addin/cal.nsc
+usr/share/ngraph-gtk/addin/math.nsc
+usr/share/ngraph-gtk/addin/text-in.nsc
+usr/share/ngraph-gtk/addin/calc.nsc
+usr/share/ngraph-gtk/addin/fitrslt.nsc
+usr/share/ngraph-gtk/addin/timer.nsc

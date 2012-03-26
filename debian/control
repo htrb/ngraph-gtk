@@ -31,8 +31,7 @@ Description: addins of Ngraph-gtk - base programs
 
 Package: ngraph-gtk-addins
 Architecture: all
-Depends: ${misc:Depends}, ngraph-gtk-addins-base, ngraph-gtk, pstoedit
-Suggests: ruby | ruby-interpreter
+Depends: ${misc:Depends}, ngraph-gtk-addins-base, ngraph-gtk
 Description: addins of Ngraph-gtk
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. This program can create advanced graphs
@@ -40,6 +39,30 @@ Description: addins of Ngraph-gtk
  postscript.
  .
  This package contains addins of ngraph-gtk.
+
+Package: ngraph-gtk-addin-import-ps
+Architecture: all
+Depends: ${misc:Depends}, ngraph-gtk, pstoedit
+Suggests: ruby | ruby-interpreter
+Description: addins of Ngraph-gtk
+ Ngraph is the program to create scientific 2-dimensional graphs for
+ researchers and engineers. This program can create advanced graphs
+ which can't be created by spreadsheets. Graphs can be exported to
+ postscript.
+ .
+ This package contains addin of ngraph-gtk to convert PostScript to GRA.
+
+Package: ngraph-gtk-addin-tex-equation
+Architecture: all
+Depends: ${misc:Depends}, ngraph-gtk-addin-import-ps, ngraph-gtk
+Description: addins of Ngraph-gtk
+ Ngraph is the program to create scientific 2-dimensional graphs for
+ researchers and engineers. This program can create advanced graphs
+ which can't be created by spreadsheets. Graphs can be exported to
+ postscript.
+ .
+ This package contains addin of ngraph-gtk to convert legend text as
+ TeX equation to GRA.
 
 Package: ngraph-gtk-doc
 Section: doc
