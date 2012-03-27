@@ -1,5 +1,8 @@
 2012-03-27  Hroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/main.c (set_dir_defs): use function "g_locale_to_utf8()"
+	instead of "g_locale_from_utf8()".
+
 	* src/gtk/ox11menu.c (mx_addin_list_append): check if strings are
 	valid UTF-8.
 
