@@ -2050,7 +2050,7 @@ mx_get_locale(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 static int
 mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  int n, id;
+  int n, id, i;
   char *sarray, *name, *script, *description, *option, *argv2[2];
   struct objlist *sa_obj;
   struct narray iarray;
@@ -2078,7 +2078,10 @@ mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
 
   id = arraynget_int(&iarray, 0);
 
-  getobj(sa_obj, "num", id, 0, NULL, &n);
+  if (getobj(sa_obj, "num", id, 0, NULL, &n) < 0) {
+    return 0;
+  }
+
   if (n < 4) {
     arraydel(&iarray);
     return 0;
@@ -2089,27 +2092,32 @@ mx_addin_list_append(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
     return 1;
   }
 
-  getobj(sa_obj, "shift", id, 0, NULL, &script);
+  argv2[0] = (char *) &i;
+  argv2[1] = NULL;
+
+  i = 0;
+  getobj(sa_obj, "get", id, 1, argv2, &script);
   if (! g_utf8_validate(script, -1, NULL)) {
     goto Err;
   }
   addin->script = g_strdup(script);
 
-  getobj(sa_obj, "shift", id, 0, NULL, &name);
+  i = 1;
+  getobj(sa_obj, "get", id, 1, argv2, &name);
   if (! g_utf8_validate(name, -1, NULL)) {
     goto Err;
   }
   addin->name = g_strdup(name);
 
-  getobj(sa_obj, "shift", id, 0, NULL, &description);
+  i = 2;
+  getobj(sa_obj, "get", id, 1, argv2, &description);
   if (! g_utf8_validate(description, -1, NULL)) {
     goto Err;
   }
   addin->description = g_strdup(description);
 
-  argv2[0] = ",";
-  argv2[1] = NULL;
-  getobj(sa_obj, "join",  id, 1, argv2, &option);
+  i = 3;
+  getobj(sa_obj, "get", id, 1, argv2, &option);
   if (! g_utf8_validate(option, -1, NULL)) {
     goto Err;
   }

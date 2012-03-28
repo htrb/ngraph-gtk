@@ -118,7 +118,7 @@ append_addin_list() {
     regexp:ADDIN:@='^#\s*Description:\s*(.+)'
 
     new regexp name=COMMENT
-    regexp:COMMENT:@='^[#\s]'
+    regexp:COMMENT:@='^#'
 
     new io name=ADDIN
     io:ADDIN:mode="r"
@@ -138,7 +138,16 @@ append_addin_list() {
 		    if regexp:ADDIN:match "$l"
 		    then
 			sarray:ADDIN:split "${regexp:ADDIN:get:'0 1'}"
-			sarray::unshift "$addin"
+			if [ ${sarray:ADDIN:num} -gt 3 ]
+			then
+			    new sarray name=TMP
+			    sarray:TMP:push "${sarray:ADDIN:shift}"
+			    sarray:TMP:push "${sarray:ADDIN:shift}"
+			    sarray:TMP:push "${sarray:ADDIN:join:','}"
+			    cpy sarray:TMP,ADDIN @
+			    del sarray:TMP
+			fi
+			sarray:ADDIN:unshift "$addin"
 			menu::addin_list_append sarray:ADDIN
 		    fi
 		else
@@ -510,4 +519,4 @@ if [ $SAVE_NGP = 1 ]; then
     del system:0
 fi
 
-unset usage check_file clear_viewer save_image check_set load_graph LOADSETTINGS SHOW_DIALOG XAXIS YAXIS
+unset usage check_file clear_viewer save_image check_set load_graph append_addin_list LOADSETTINGS SHOW_DIALOG XAXIS YAXIS

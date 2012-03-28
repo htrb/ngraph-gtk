@@ -1,3 +1,27 @@
+2012-03-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.nsc: use int object to count number of fitting
+	plots.
+
+	* addin/text-in.nsc: an id of a file instance can be selected. use
+	"dialog::integer_entry" to specify column number. use color of the
+	file object as text color.
+
+	* doc/html/ja/addin.html: update document.
+
+	* doc/html/ja/script.html.in: update document.
+
+	* doc/html/ja/object.html.in: add link to title of each object.
+
+	* doc/html/objlist.nsc: add link to title of each object.
+
+	* initfile/Ngraph.nsc (append_addin_list): check size of the
+	sarray object.
+
+	* src/gtk/ox11menu.c (mx_addin_list_append): check return value of
+	the function "getobj()".
+	(mx_addin_list_append): don't modify sarray object.
+
 2012-03-27  Hroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.c (set_dir_defs): use function "g_locale_to_utf8()"

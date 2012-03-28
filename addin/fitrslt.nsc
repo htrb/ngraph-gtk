@@ -9,26 +9,23 @@
 X=5000      # top-left of the legend to be inserted.
 Y=5000      # top-left of the legend to be inserted.
 
-filenum=`object file -instance`
 fitdata=""
-num=0
-i=0
-while [ $i -lt $filenum ]
+new int name=NUM @=0
+for i in `object file -instances`
 do
     if [ `get file:$i -field type` = "fit" ]
     then
 	if [ ${file::fit} != "" ]
 	then 
-	    num=`iexpr $num+1`
+	    int:NUM:inc
 	    fitdata=${fitdata}" $i"
 	fi
     fi
-    i=`iexpr $i+1`
 done
-if [ $num != 0 ]
+if [ ${int:NUM:@} != 0 ]
 then
     DATALIST=${system:0:temp_file}
-    echo $num > "$DATALIST"
+    echo ${int:NUM:@} > "$DATALIST"
     for i in $fitdata
     do
 	if [ `get file:$i -field type` = "fit" ]
@@ -59,3 +56,4 @@ else
     dialog::message "No fitting data."
     del dialog
 fi
+del int:NUM

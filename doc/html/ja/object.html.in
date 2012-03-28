@@ -33,43 +33,43 @@ Ngraphでのグラフの作成は, グラフを構成するNgraphオブジェク
 Ngraphオブジェクト階層<br>
 <br>
 <pre>
-object
-        system
-        shell
-        gra
-        gra2
-                gra2null
-                gra2file
-                gra2prn
-                gra2cairo
-                        gra2cairofile
-                        gra2gtkprint
-                        gra2gtk
-                        gra2gdk
-                        menu
-        io
-        int
-        double
-        string
-        regexp
-        iarray
-        darray
-        sarray
-        math
-        fit
-        prm
-        draw
-                axisgrid
-                axis
-                file
-                merge
-                legend
-                        rectangle
-                        arc
-                        path
-                        mark
-                        text
-        dialog
+<a href="#object">object</a>
+        <a href="#system">system</a>
+        <a href="#shell">shell</a>
+        <a href="#gra">gra</a>
+        <a href="#gra2">gra2</a>
+                <a href="#gra2null">gra2null</a>
+                <a href="#gra2file">gra2file</a>
+                <a href="#gra2prn">gra2prn</a>
+                <a href="#gra2cairo">gra2cairo</a>
+                        <a href="#gra2cairofile">gra2cairofile</a>
+                        <a href="#gra2gtkprint">gra2gtkprint</a>
+                        <a href="#gra2gtk">gra2gtk</a>
+                        <a href="#gra2gdk">gra2gdk</a>
+                        <a href="#menu">menu</a>
+        <a href="#io">io</a>
+        <a href="#int">int</a>
+        <a href="#double">double</a>
+        <a href="#string">string</a>
+        <a href="#regexp">regexp</a>
+        <a href="#iarray">iarray</a>
+        <a href="#darray">darray</a>
+        <a href="#sarray">sarray</a>
+        <a href="#math">math</a>
+        <a href="#fit">fit</a>
+        <a href="#prm">prm</a>
+        <a href="#draw">draw</a>
+                <a href="#axisgrid">axisgrid</a>
+                <a href="#axis">axis</a>
+                <a href="#file">file</a>
+                <a href="#merge">merge</a>
+                <a href="#legend">legend</a>
+                        <a href="#rectangle">rectangle</a>
+                        <a href="#arc">arc</a>
+                        <a href="#path">path</a>
+                        <a href="#mark">mark</a>
+                        <a href="#text">text</a>
+        <a href="#dialog">dialog</a>
 </pre>
 </div>
 
