@@ -1,5 +1,8 @@
 2012-03-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* addin/legend.c (makescript): add condition to check plot type
+	"polygon_solid_fill".
+
 	* src/ofile.h (FILE_OBJ_PLOT_TYPE): add plot type
 	"polygon_solid_fill".
 

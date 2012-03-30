@@ -179,7 +179,8 @@ makescript(FILE *f, struct file_data *data, int gx, int gy, int width, int heigh
     fprintf(f, "path::stroke_G=%d\n", data->g);
     fprintf(f, "path::stroke_B=%d\n", data->b);
     fprintf(f, "path::arrow=end\n");
-  } else if ((g_strcmp0(data->type, "rectangle") == 0) ||
+  } else if ((g_strcmp0(data->type, "polygon_solid_fill") == 0) ||
+	     (g_strcmp0(data->type, "rectangle") == 0) ||
 	     (g_strcmp0(data->type, "rectangle_fill") == 0) ||
 	     (g_strcmp0(data->type, "rectangle_solid_fill") == 0) ||
 	     (g_strcmp0(data->type, "bar_x") == 0) ||
@@ -211,7 +212,8 @@ makescript(FILE *f, struct file_data *data, int gx, int gy, int width, int heigh
       fprintf(f, "rectangle::stroke_R=%d\n", data->r);
       fprintf(f, "rectangle::stroke_G=%d\n", data->g);
       fprintf(f, "rectangle::stroke_B=%d\n", data->b);
-    } else if ((g_strcmp0(data->type, "rectangle_solid_fill") == 0) ||
+    } else if ((g_strcmp0(data->type, "polygon_solid_fill") == 0) ||
+	       (g_strcmp0(data->type, "rectangle_solid_fill") == 0) ||
 	       (g_strcmp0(data->type, "bar_solid_fill_x") == 0) ||
 	       (g_strcmp0(data->type, "bar_solid_fill_y") == 0)) {;
       fprintf(f, "rectangle::fill=true\n");
