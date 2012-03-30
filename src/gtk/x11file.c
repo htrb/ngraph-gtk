@@ -2757,6 +2757,7 @@ FileDialogType(GtkWidget *w, gpointer client_data)
     set_widget_sensitivity_with_label(d->size, FALSE);
     set_widget_sensitivity_with_label(d->fit, FALSE);
     break;
+  case PLOT_TYPE_POLYGON_SOLID_FILL:
   case PLOT_TYPE_DIAGONAL:
   case PLOT_TYPE_RECTANGLE:
   case PLOT_TYPE_RECTANGLE_SOLID_FILL:
@@ -3941,20 +3942,20 @@ draw_type_pixbuf(struct objlist *obj, int i)
     return NULL;
   }
   GRAview(ggc, 0, 0, width, height, 0);
+  GRAcolor(ggc, fr, fg, fb, 255);
+  GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
 
   switch (type) {
   case PLOT_TYPE_MARK:
     getobj(obj, "mark_type", i, 0, NULL, &marktype);
-    GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     GRAmark(ggc, marktype, height / 2, height / 2, height - 2,
 	    fr, fg, fb, 255, fr2, fg2, fb2, 255);
     break;
   case PLOT_TYPE_LINE:
-    GRAcolor(ggc, fr, fg, fb, 255);
-    GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     GRAline(ggc, 1, height / 2, height - 1, height / 2);
     break;
   case PLOT_TYPE_POLYGON:
+  case PLOT_TYPE_POLYGON_SOLID_FILL:
     poly[0] = 1;
     poly[1] = height / 2;
 
@@ -3975,9 +3976,7 @@ draw_type_pixbuf(struct objlist *obj, int i)
 
     poly[12] = 1;
     poly[13] = height / 2;
-    GRAcolor(ggc, fr, fg, fb, 255);
-    GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    GRAdrawpoly(ggc, 7, poly, 0);
+    GRAdrawpoly(ggc, 7, poly, (type == PLOT_TYPE_POLYGON) ? 0: 2);
     break;
   case PLOT_TYPE_CURVE:
     spx[0] = 1;
@@ -4007,8 +4006,6 @@ draw_type_pixbuf(struct objlist *obj, int i)
     }
     spline(spz, spx, spc[0], spc[1], spc[2], spnum, spcond, spcond, 0, 0);
     spline(spz, spy, spc[3], spc[4], spc[5], spnum, spcond, spcond, 0, 0);
-    GRAcolor(ggc, fr, fg, fb, 255);
-    GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
     if (intp >= 2) {
       GRAmoveto(ggc, height, height * 3 / 4);
       GRAtextstyle(ggc, "Serif", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
@@ -4023,126 +4020,89 @@ draw_type_pixbuf(struct objlist *obj, int i)
     }
     break;
   case PLOT_TYPE_DIAGONAL:
+    GRAline(ggc, 1, height - 1, height - 1, 1);
+    break;
   case PLOT_TYPE_ARROW:
-  case PLOT_TYPE_RECTANGLE:
-  case PLOT_TYPE_RECTANGLE_FILL:
-  case PLOT_TYPE_RECTANGLE_SOLID_FILL:
-    GRAcolor(ggc, fr, fg, fb, 255);
-    if ((type == PLOT_TYPE_DIAGONAL) || (type == PLOT_TYPE_ARROW)) {
-      GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    } else {
-      GRAlinestyle(ggc, 0, NULL, 1, 2, 0, 1000);
-    }
     spx[0] = 1;
     spy[0] = height - 1;
 
     spx[1] = height - 1;
     spy[1] = 1;
-    if ((type == PLOT_TYPE_DIAGONAL) || (type == PLOT_TYPE_ARROW)) {
-      GRAline(ggc, spx[0], spy[0], spx[1], spy[1]);
-    }
-    if (type == PLOT_TYPE_ARROW) {
-      poly[0] = height - 6;
-      poly[1] = 1;
 
-      poly[2] = spx[1];
-      poly[3] = spy[1];
+    GRAline(ggc, 1, height - 1, height - 1, 1);
+    poly[0] = height - 6;
+    poly[1] = 1;
+	
+    poly[2] = height - 1;
+    poly[3] = 1;
 
-      poly[4] = height - 1;
-      poly[5] = 6;
-      GRAdrawpoly(ggc, 3, poly, 1);
-    }
-    if ((type == PLOT_TYPE_RECTANGLE_FILL) || (type == PLOT_TYPE_RECTANGLE_SOLID_FILL)) {
-      if (type == PLOT_TYPE_RECTANGLE_FILL) {
-	GRAcolor(ggc, fr2, fg2, fb2, 255);
-      }
-      GRArectangle(ggc, spx[0], spy[0], spx[1], spy[1], 1);
-      if (type == PLOT_TYPE_RECTANGLE_FILL) {
-	GRAcolor(ggc, fr, fg, fb, 255);
-      }
-    }
-    if ((type == PLOT_TYPE_RECTANGLE) || (type == PLOT_TYPE_RECTANGLE_FILL)) {
-      GRAline(ggc, spx[0], spy[0], spx[0], spy[1]);
-      GRAline(ggc, spx[0], spy[1], spx[1], spy[1]);
-      GRAline(ggc, spx[1], spy[1], spx[1], spy[0]);
-      GRAline(ggc, spx[1], spy[0], spx[0], spy[0]);
-    }
+    poly[4] = height - 1;
+    poly[5] = 6;
+    GRAdrawpoly(ggc, 3, poly, 1);
+    break;
+  case PLOT_TYPE_RECTANGLE:
+    GRArectangle(ggc, 1, height - 1, height - 1, 1, 0);
+    break;
+  case PLOT_TYPE_RECTANGLE_FILL:
+    GRAcolor(ggc, fr2, fg2, fb2, 255);
+    GRArectangle(ggc, 1, height - 1, height - 1, 1, 1);
+    GRAcolor(ggc, fr, fg, fb, 255);
+    GRArectangle(ggc, 1, height - 1, height - 1, 1, 0);
+    break;
+  case PLOT_TYPE_RECTANGLE_SOLID_FILL:
+    GRArectangle(ggc, 1, height - 1, height - 1, 1, 1);
     break;
   case PLOT_TYPE_ERRORBAR_X:
+    GRAline(ggc, 1, height / 2, height - 1, height / 2);
+    GRAline(ggc, 1, height / 4, 1, height * 3 / 4);
+    GRAline(ggc, height - 1, height / 4, height - 1, height * 3 / 4);
+    break;
   case PLOT_TYPE_ERRORBAR_Y:
-    GRAcolor(ggc, fr, fg, fb, 255);
-    GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    if (type == PLOT_TYPE_ERRORBAR_X) {
-      GRAline(ggc, 1, height / 2, height - 1, height / 2);
-      GRAline(ggc, 1, height / 4, 1, height * 3 / 4);
-      GRAline(ggc, height - 1, height / 4, height - 1, height * 3 / 4);
-    } else {
-      GRAline(ggc, height / 2, 1, height / 2, height - 1);
-      GRAline(ggc, height / 4, 1, height * 3 / 4, 1);
-      GRAline(ggc, height / 4, height -1, height * 3 / 4, height - 1);
-    }
+    GRAline(ggc, height / 2, 1, height / 2, height - 1);
+    GRAline(ggc, height / 4, 1, height * 3 / 4, 1);
+    GRAline(ggc, height / 4, height -1, height * 3 / 4, height - 1);
     break;
   case PLOT_TYPE_STAIRCASE_X:
+    GRAmoveto(ggc, 1, height - 1);
+    GRAlineto(ggc, height / 4, height - 1);
+    GRAlineto(ggc, height / 4, height / 2);
+    GRAlineto(ggc, height * 3 / 4, height / 2);
+    GRAlineto(ggc, height * 3 / 4, 1);
+    GRAlineto(ggc, height - 1, 1);
+    break;
   case PLOT_TYPE_STAIRCASE_Y:
-    GRAcolor(ggc, fr, fg, fb, 255);
-    GRAlinestyle(ggc, 0, NULL, 1, 0, 0, 1000);
-    if (type == PLOT_TYPE_STAIRCASE_X) {
-      GRAmoveto(ggc, 1, height - 1);
-      GRAlineto(ggc, height / 4, height - 1);
-      GRAlineto(ggc, height / 4, height / 2);
-      GRAlineto(ggc, height * 3 / 4, height / 2);
-      GRAlineto(ggc, height * 3 / 4, 1);
-      GRAlineto(ggc, height - 1, 1);
-    } else {
-      GRAmoveto(ggc, 1, height - 1);
-      GRAlineto(ggc, 1, height / 2 + 1);
-      GRAlineto(ggc, height / 2, height / 2 + 1);
-      GRAlineto(ggc, height / 2, height / 4);
-      GRAlineto(ggc, height - 1, height / 4);
-      GRAlineto(ggc, height - 1, 1);
-    }
+    GRAmoveto(ggc, 1, height - 1);
+    GRAlineto(ggc, 1, height / 2 + 1);
+    GRAlineto(ggc, height / 2, height / 2 + 1);
+    GRAlineto(ggc, height / 2, height / 4);
+    GRAlineto(ggc, height - 1, height / 4);
+    GRAlineto(ggc, height - 1, 1);
     break;
   case PLOT_TYPE_BAR_X:
+    GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 0);
+    break;
   case PLOT_TYPE_BAR_Y:
+    GRArectangle(ggc, height / 4, 1, height * 3/ 4, height - 1, 0);
+    break;
   case PLOT_TYPE_BAR_FILL_X:
-  case PLOT_TYPE_BAR_FILL_Y:
-  case PLOT_TYPE_BAR_SOLID_FILL_X:
-  case PLOT_TYPE_BAR_SOLID_FILL_Y:
+    GRAcolor(ggc, fr2, fg2, fb2, 255);
+    GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 1);
     GRAcolor(ggc, fr, fg, fb, 255);
-    GRAlinestyle(ggc, 0, NULL, 1, 2, 0, 1000);
-    if ((type == PLOT_TYPE_BAR_FILL_X) || (type == PLOT_TYPE_BAR_SOLID_FILL_X)) {
-      if (type == PLOT_TYPE_BAR_FILL_X) {
-	GRAcolor(ggc, fr2, fg2, fb2, 255);
-      }
-      GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 1);
-      if (type == PLOT_TYPE_BAR_FILL_X) {
-	GRAcolor(ggc, fr, fg, fb, 255);
-      }
-    }
-    if ((type == PLOT_TYPE_BAR_FILL_Y) || (type == PLOT_TYPE_BAR_SOLID_FILL_Y)) {
-      if (type == PLOT_TYPE_BAR_FILL_Y) {
-	GRAcolor(ggc, fr2, fg2, fb2, 255);
-      }
-      GRArectangle(ggc, height / 3, 1, height * 3 / 4, height - 1, 1);
-      if (type == PLOT_TYPE_BAR_FILL_Y) {
-	GRAcolor(ggc, fr, fg, fb, 255);
-      }
-    }
-    if ((type == PLOT_TYPE_BAR_X) || (type == PLOT_TYPE_BAR_FILL_X)) {
-      GRAline(ggc, 1,          height / 4,     height - 1, height /4);
-      GRAline(ggc, height - 1, height / 4,     height - 1, height * 3 / 4);
-      GRAline(ggc, height - 1, height * 3 / 4, 1,          height * 3 / 4);
-      GRAline(ggc, 1,          height * 3 / 4, 1,          height / 4);
-    }
-    if ((type == PLOT_TYPE_BAR_Y) || (type == PLOT_TYPE_BAR_FILL_Y)) {
-      GRAline(ggc, height / 4,     1,          height * 3 / 4, 1);
-      GRAline(ggc, height * 3 / 4, 1,          height * 3 / 4, height - 1);
-      GRAline(ggc, height * 3/ 4,  height - 1, height / 4,     height - 1);
-      GRAline(ggc, height / 4,     height - 1, height / 4,     1);
-    }
+    GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 0);
+    break;
+  case PLOT_TYPE_BAR_FILL_Y:
+    GRAcolor(ggc, fr2, fg2, fb2, 255);
+    GRArectangle(ggc, height / 4, 1, height * 3/ 4, height - 1, 1);
+    GRAcolor(ggc, fr, fg, fb, 255);
+    GRArectangle(ggc, height / 4, 1, height * 3/ 4, height - 1, 0);
+    break;
+  case PLOT_TYPE_BAR_SOLID_FILL_X:
+    GRArectangle(ggc, 1, height / 4, height - 1, height * 3 / 4, 1);
+    break;
+  case PLOT_TYPE_BAR_SOLID_FILL_Y:
+    GRArectangle(ggc, height / 3, 1, height * 3 / 4, height - 1, 1);
     break;
   case PLOT_TYPE_FIT:
-    GRAcolor(ggc, fr, fg, fb, 255);
     GRAmoveto(ggc, 1, height * 3 / 4);
     GRAtextstyle(ggc, "Serif", GRA_FONT_STYLE_NORMAL, 52, 0, 0);
     GRAouttext(ggc, "fit");
@@ -4587,7 +4547,7 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
       }
     } else if (strcmp(enumlist[i], "curve") == 0) {
       curvelist = (char **) chkobjarglist(obj, "interpolation");
-      for (j = 0; curvelist[j] && curvelist[i][0]; j++) {
+      for (j = 0; curvelist[j] && curvelist[j][0]; j++) {
 	gtk_tree_store_append(list, &child, &iter);
 	gtk_tree_store_set(list, &child,
 			   OBJECT_COLUMN_TYPE_STRING, _(curvelist[j]),

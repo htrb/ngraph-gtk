@@ -157,6 +157,7 @@ static char *f2dtypechar[]={
   N_("mark"),
   N_("line"),
   N_("polygon"),
+  N_("polygon_solid_fill"),
   N_("curve"),
   N_("diagonal"),
   N_("arrow"),
@@ -3352,6 +3353,7 @@ getposition(struct f2ddata *fp,double x,double y,int *gx,int *gy)
   if (fp->dataclip &&
   ((((minx>x) || (x>maxx)) && ((maxx>x) || (x>minx)))
    || (((miny>y) || (y>maxy)) && ((maxy>y) || (y>miny))))) return 1;
+  /* fix-me: this condition will be simplified as (fp->dataclip && (minx>x || x>maxx || miny>y || y>maxy)) */
   v1x=fp->ratex*(x-minx)*fp->axvx;
   v1y=fp->ratex*(x-minx)*fp->axvy;
   v2x=fp->ratey*(y-miny)*fp->ayvx;
@@ -3834,6 +3836,120 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
     }
   }
   if (!first && close) GRAdashlinetod(GC,x0,y0);
+  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  return 0;
+}
+
+static void
+add_polygon_point(struct narray *pos, double x0, double y0, double x1, double y1, struct f2ddata *fp)
+{
+  int gx,gy;
+
+  if (f2dlineclipf(&x0, &y0, &x1, &y1, fp) == 0) {
+    f2dtransf(x0, y0, &gx, &gy, fp);
+    arrayadd(pos, &gx);
+    arrayadd(pos, &gy);
+
+    f2dtransf(x1, y1, &gx, &gy, fp);
+    arrayadd(pos, &gx);
+    arrayadd(pos, &gy);
+  }
+}
+
+static void
+remove_same_points(struct narray *pos)
+{
+  int n, i, x0, y0, x1, y1;
+
+  n = arraynum(pos) / 2 - 1;
+  if (n < 2) {
+    return;
+  }
+
+  for (i = n; i > 0; i--) {
+    x0 = arraynget_int(pos, i * 2 - 2);
+    y0 = arraynget_int(pos, i * 2 - 1);
+    x1 = arraynget_int(pos, i * 2);
+    y1 = arraynget_int(pos, i * 2 + 1);
+    if (x0 == x1 && y0 == y1) {
+      arrayndel(pos, i * 2 + 1);
+      arrayndel(pos, i * 2);
+    }
+  }
+
+  x0 = arraynget_int(pos, 0);
+  y0 = arraynget_int(pos, 1);
+  x1 = arraynget_int(pos, n * 2);
+  y1 = arraynget_int(pos, n * 2 + 1);
+  if (x0 == x1 && y0 == y1) {
+    arrayndel(pos, n * 2 - 2);
+    arrayndel(pos, n * 2 - 1);
+  }
+
+}
+
+static int 
+polyout(struct objlist *obj,struct f2ddata *fp,int GC,
+	int width,int snum,int *style,
+	int join,int miter,int fill)
+{
+  int emerr,emnonum,emig,emng;
+  int first, n, *ap;
+  struct narray pos;
+  double x0, y0, x1, y1, x2, y2;
+
+  arrayinit(&pos, sizeof(int));
+  emerr=emnonum=emig=emng=FALSE;
+#if EXPAND_DOTTED_LINE
+  GRAlinestyle(GC,0,NULL,width,0,join,miter);
+#else
+  GRAlinestyle(GC, snum, style, width, 0, join, miter);
+#endif
+
+  first = TRUE;
+  while (getdata(fp)==0) {
+    GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
+      if (first) {
+        first = FALSE;
+	x0 = fp->dx;
+	y0 = fp->dy;
+	x2 = fp->dx;
+	y2 = fp->dy;
+      } else {
+	x1 = x2;
+	y1 = y2;
+	x2 = fp->dx;
+	y2 = fp->dy;
+	add_polygon_point(&pos, x1, y1, x2, y2, fp);
+      }
+    } else {
+      if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
+	if (! first) {
+	  add_polygon_point(&pos, x2, y2, x0, y0, fp);
+	}
+	n = arraynum(&pos);
+	if (n > 4) {
+	  ap = (int *) arraydata(&pos);
+	  GRAdrawpoly(GC, n / 2, ap, fill);
+	}
+        arraydel(&pos);
+        first = TRUE;
+      }
+      errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+    }
+  }
+
+  if (! first) {
+    add_polygon_point(&pos, x2, y2, x0, y0, fp);
+  }
+
+  remove_same_points(&pos);
+  n = arraynum(&pos);
+  if (n > 4) {
+    ap = (int *) arraydata(&pos);
+    GRAdrawpoly(GC, n / 2, ap, fill);
+  }
   errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
@@ -4937,6 +5053,9 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   case PLOT_TYPE_POLYGON:
     rcode = lineout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, TRUE);
     break;
+  case PLOT_TYPE_POLYGON_SOLID_FILL:
+    rcode = polyout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, 2);
+    break;
   case PLOT_TYPE_CURVE:
     rcode = curveout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, intp);
     break;
@@ -5075,7 +5194,7 @@ f2dgetcoord(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
   }
 
   array=rval->array;
-  if (arraynum(array)!=2) {
+  if (arraynum(array) > 0) {
     arraydel(array);
   }
   if ((array==NULL) && ((array=arraynew(sizeof(double)))==NULL)) return 1;

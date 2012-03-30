@@ -1,3 +1,24 @@
+2012-03-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.h (FILE_OBJ_PLOT_TYPE): add plot type
+	"polygon_solid_fill".
+
+	* src/ofile.c (f2dtypechar): add plot type "polygon_solid_fill".
+	(add_polygon_point, remove_same_points, polyout): added.
+	(f2ddraw): add case "PLOT_TYPE_POLYGON_SOLID_FILL".
+
+	* src/gtk/x11file.c (create_type_combo_box): fix suffix of the
+	array "curvelist".
+	(FileDialogType): add case "PLOT_TYPE_POLYGON_SOLID_FILL".
+	(draw_type_pixbuf): simplify conditions.
+	(create_type_combo_box): suffix of the array "curvelist" is not
+	"i" but "j".
+
+2012-03-29  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (f2dgetcoord): call "arraydel()" when the number of
+	elements is greater than zero.
+
 2012-03-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.nsc: use int object to count number of fitting

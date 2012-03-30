@@ -20,59 +20,69 @@ then
 fi
 
 new dialog
+
 new sarray name=FILES
 for i in `object file -instances`
 do
     sarray:FILES:push `get file:$i -field id file`
 done
-
 dialog::title="select data"
 dialog::caption="select data object"
 FILE_OBJ=${dialog::combo:"sarray:FILES"}
-if [ -n "$FILE_OBJ" ]
+del sarray:FILES
+if [ -z "$FILE_OBJ" ]
 then
-  set $FILE_OBJ
-  ID=$1
-  dialog::title="$FILE_OBJ"
-  dialog::caption='Input legend-text column'
-  COLUMN=${dialog::integer_entry:'0 1000 1 1'}
-  dialog::caption='select horizontal position of the text'
-  ALIGN=${dialog::radio:'_Left _Center _Right'}
+  del dialog
+  exit
+fi
+set $FILE_OBJ
+ID=$1
+
+dialog::title="$FILE_OBJ"
+dialog::caption='Input legend-text column'
+COLUMN=${dialog::integer_entry:'0 1000 1 1'}
+if [ -z "$COLUMN" ]
+then
+  del dialog
+  exit
 fi
 
-del sarray:FILES
+dialog::caption='select horizontal position of the text'
+ALIGN=${dialog::radio:'_Left _Center _Right'}
+if [ -z "$ALIGN" ]
+then
+  del dialog
+  exit
+fi
+
 del dialog
 
-if [ -n "$COLUMN" -a -n "$ID" -a -n "$ALIGN" ]
-then
-  new iarray name=BBOX
-  new int name=NAME @=0
-  exe file:$ID opendatac
-  while file::getdata
-  do
-    int:NAME:inc
-    if exist -q text:in_${ID}_${int:NAME:@}
-    then
-      put text:in_${ID}_${int:NAME:@} name:in_${ID}_${int:NAME:@}
-    else
-      new text name=in_${ID}_${int:NAME:@}
-      text::pt=$PT
-      text::R=${file::R}
-      text::G=${file::G}
-      text::B=${file::B}
-      text::font=$FONT
-      text::direction=$DIR
-    fi
-    LINE=${file::line}
-    text::x=0
-    text::y=0
-    text::text=`get file:$ID -field column:"${LINE} ${COLUMN}"`
-    iarray:BBOX:@="${text::bbox}"
-    text::x="${file::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*$ALIGN"
-    text::y="${file::coord_y}+$SHIFTY+ABS(${iarray:BBOX:get:3}-${iarray:BBOX:get:1})/2-${iarray:BBOX:get:3}"
-  done
-  menu::modified=true
-  file::closedata
-  del int:NAME
-  del iarray:BBOX
-fi
+new iarray name=BBOX
+new int name=NAME @=0
+exe file:$ID opendatac
+while file::getdata
+do
+  int:NAME:inc
+  if exist -q text:in_${ID}_${int:NAME:@}
+  then
+    put text:in_${ID}_${int:NAME:@} name:in_${ID}_${int:NAME:@}
+  else
+    new text name=in_${ID}_${int:NAME:@}
+    text::pt=$PT
+    text::R=${file::R}
+    text::G=${file::G}
+    text::B=${file::B}
+    text::font=$FONT
+    text::direction=$DIR
+  fi
+  text::x=0
+  text::y=0
+  text::text=`get file:$ID -field column:"${file::line} ${COLUMN}"`
+  iarray:BBOX:@="${text::bbox}"
+  text::x="${file::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*$ALIGN"
+  text::y="${file::coord_y}+$SHIFTY+ABS(${iarray:BBOX:get:3}-${iarray:BBOX:get:1})/2-${iarray:BBOX:get:3}"
+done
+menu::modified=true
+file::closedata
+del int:NAME
+del iarray:BBOX

@@ -137,8 +137,9 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
     if (GTK_IS_SPIN_BUTTON(editable)) {
       gtk_entry_set_alignment(GTK_ENTRY(editable), 1.0);
       gtk_spin_button_set_numeric(GTK_SPIN_BUTTON(editable), FALSE);
-      if (list->max == 36000)
+      if (list->max == 36000) {
 	gtk_spin_button_set_wrap(GTK_SPIN_BUTTON(editable), TRUE);
+      }
     }
     break;
   }
