@@ -93,6 +93,7 @@ static n_list_store Flist[] = {
 #define FILE_WIN_COL_TYPE   7
 
 
+static void file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 static void file_delete_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_copy2_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_copy_popup_func(GtkMenuItem *w, gpointer client_data);
@@ -142,12 +143,6 @@ enum MATH_FNC_TYPE {
 };
 
 static char *FieldStr[] = {"math_x", "math_y", "func_f", "func_g", "func_h"};
-
-#if GTK_CHECK_VERSION(3, 0, 0)
-static gboolean FileWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
-#else
-static gboolean FileWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
-#endif
 
 static void
 MathTextDialogSetup(GtkWidget *wi, void *data, int makewidget)
@@ -3816,9 +3811,18 @@ FileWinUpdate(int clear)
 {
   struct SubWin *d;
 
-  d = &(NgraphApp.FileWin);
+  if (Menulock || Globallock)
+    return;
 
-  FileWinExpose(NULL, NULL, NULL);
+  d = &(NgraphApp.FileWin);
+  if (GTK_WIDGET(d->text) == NULL)
+    return;
+
+  if (list_sub_window_must_rebuild(d)) {
+    list_sub_window_build(d, file_list_set_val);
+  } else {
+    list_sub_window_set(d, file_list_set_val);
+  }
 
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID, d->select);
@@ -4204,32 +4208,6 @@ file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       }
     }
   }
-}
-
-static gboolean
-#if GTK_CHECK_VERSION(3, 0, 0)
-FileWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data)
-#else
-FileWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
-#endif
-{
-  struct SubWin *d;
-
-  if (Menulock || Globallock)
-    return FALSE;
-
-  d = &(NgraphApp.FileWin);
-
-  if (GTK_WIDGET(d->text) == NULL)
-    return FALSE;
-
-  if (list_sub_window_must_rebuild(d)) {
-    list_sub_window_build(d, file_list_set_val);
-  } else {
-    list_sub_window_set(d, file_list_set_val);
-  }
-
-  return FALSE;
 }
 
 void
@@ -4934,7 +4912,6 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
   int state;
-  GtkWidget *dlg;
 
   d = &(NgraphApp.FileWin);
 
@@ -4959,14 +4936,7 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
   d->ev_key = filewin_ev_key_down;
   d->delete = delete_file_obj;
 
-  dlg = list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
-
-
-#if GTK_CHECK_VERSION(3, 0, 0)
-  g_signal_connect(dlg, "draw", G_CALLBACK(FileWinExpose), NULL);
-#else
-  g_signal_connect(dlg, "expose-event", G_CALLBACK(FileWinExpose), NULL);
-#endif
+  list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
 
   d->obj = chkobject("file");
   d->num = chkobjlastinst(d->obj);
@@ -4984,4 +4954,6 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
 
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);
+
+  FileWinUpdate(TRUE);
 }

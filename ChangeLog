@@ -1,3 +1,29 @@
+2012-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (poly_add_point, poly_add_clip_point)
+	(poly_pos_sort_cb, poly_set_pos, poly_add_elements): added.
+	(polyout): remove parameters related to line attributes.
+
+	* src/gtk/x11file.c (FileWinUpdate): don't use "FileWinExpose()".
+	(FileWinExpose): removed.
+	(CmFileWindow): don't connect "draw" or "expose-event" signal.
+	(CmFileWindow): call "FileWinUpdate()".
+
+	* src/gtk/x11axis.c (AxisWinUpdate): don't use "AxisWinExpose()".
+	(AxisWinExpose): removed.
+	(CmAxisWindow): don't connect "draw" or "expose-event" signal.
+	(CmAxisWindow): call "AxisWinUpdate()".
+
+	* src/gtk/x11merge.c (MergeWinUpdate): don't use "MergeWinExpose()".
+	(MergeWinExpose): removed.
+	(CmMergeWindow): don't connect "draw" or "expose-event" signal.
+	(CmMergeWindow): call "MergeWinUpdate()".
+
+	* src/gtk/x11lgnd.c (LegendWinUpdate): don't use "LegendWinExpose()".
+	(LegendWinExpose): removed.
+	(CmLegendWindow): don't connect "draw" or "expose-event" signal.
+	(CmLegendWindow): call "LegendWinUpdate()".
+
 2012-03-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/legend.c (makescript): add condition to check plot type

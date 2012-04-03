@@ -3841,19 +3841,218 @@ lineout(struct objlist *obj,struct f2ddata *fp,int GC,
 }
 
 static void
+poly_add_point(struct narray *pos, double x, double y, struct f2ddata *fp)
+{
+  int gx, gy;
+
+  f2dtransf(x, y, &gx, &gy, fp);
+  arrayadd(pos, &gx);
+  arrayadd(pos, &gy);
+}
+
+static void
+poly_add_clip_point(struct narray *pos, double minx, double miny, double maxx, double maxy, double x, double y, struct f2ddata *fp)
+{
+  if (x < minx) {
+    x = minx;
+  } else if (x > maxx) {
+    x = maxx;
+  }
+
+  if (y < miny) {
+    y = miny;
+  } else if (y > maxy) {
+    y = maxy;
+  }
+
+  poly_add_point(pos, x, y, fp);
+}
+
+struct point_pos {
+  double x, y, d;
+};
+
+static int
+poly_pos_sort_cb(const void *a, const void *b)
+{
+  const struct point_pos *p1, *p2;
+  double d;
+  int r;
+
+  p1 = a;
+  p2 = b;
+
+  d = p1->d - p2->d;
+
+  if (d < 0) {
+    r = -1;
+  } else if (d > 0) {
+    r = 1;
+  } else {
+    r = 0;
+  }
+
+  return r;
+}
+
+static void
+poly_set_pos(struct point_pos *p, int i, double x, double y, double x0, double y0)
+{
+  p[i].x = x;
+  p[i].y = y;
+  x -= x0;
+  y -= y0;
+  p[i].d = x * x + y * y;
+}
+
+static int
+poly_add_elements(struct narray *pos,
+	       double minx, double miny, double maxx, double maxy,
+	       double x0, double y0, double x1, double y1,
+	       struct f2ddata *fp)
+{
+  double x, y, a, b;
+  struct point_pos cpos[4];
+  int i;
+
+  if (x0 == x1 && y0 == y1) {
+    return 1;
+  }
+
+  if (x0 >= minx && x0 <= maxx && y0 >= miny && y0 <= maxy) {
+    poly_add_clip_point(pos, minx, miny, maxx, maxy, x0, y0, fp);
+  }
+
+  if (x0 == x1) {
+    if ((y0 < miny && y1 < miny) || (y0 > maxy && y1 > maxy)) {
+      return 1;
+    }
+
+    if (y0 > y1) {
+      if (y0 > maxy) {
+	poly_add_clip_point(pos, minx, miny, maxx, maxy, x0, maxy, fp);
+      }
+
+      if (y1 < miny) {
+	poly_add_clip_point(pos, minx, miny, maxx, maxy, x0, miny, fp);
+      }
+    } else {
+      if (y0 < miny) {
+	poly_add_clip_point(pos, minx, miny, maxx, maxy, x0, miny, fp);
+      }
+
+      if (y1 > maxy) {
+	poly_add_clip_point(pos, minx, miny, maxx, maxy, x0, maxy, fp);
+      }
+    }
+
+    goto End;
+  } else if (y0 == y1) {
+    if ((x0 < minx && x1 < minx) || (x0 > maxx && x1 > maxx)){
+      return 1;
+    }
+
+    if (x0 > x1) {
+      if (x0 > maxx) {
+	poly_add_clip_point(pos, minx, miny, maxx, maxy, maxx, y0, fp);
+      }
+
+      if (x1 < minx) {
+	poly_add_clip_point(pos, minx, miny, maxx, maxy, minx, y0, fp);
+      }
+    } else {
+      if (x0 < minx) {
+	poly_add_clip_point(pos, minx, miny, maxx, maxy, minx, y0, fp);
+      }
+
+      if (x1 > maxx) {
+	poly_add_clip_point(pos, minx, miny, maxx, maxy, maxx, y0, fp);
+      }
+    }
+
+    goto End;
+  }
+
+  a = (y1 - y0) / (x1 - x0);
+  b = (x1 * y0 - x0 * y1) / (x1 - x0);
+
+  cpos[0].d = -1;
+  cpos[1].d = -1;
+  cpos[2].d = -1;
+  cpos[3].d = -1;
+
+  x = maxx;
+  y = a * maxx + b;
+  if (((x >= x0 && x <= x1) || (x >= x1 && x <= x0)) &&
+      ((y >= y0 && y <= y1) || (y >= y1 && y <= y0))) {
+    poly_set_pos(cpos, 0, x, y, x0, y0);
+  }
+
+  x = minx;
+  y = a * minx + b;
+  if (((x >= x0 && x <= x1) || (x >= x1 && x <= x0)) &&
+      ((y >= y0 && y <= y1) || (y >= y1 && y <= y0))) {
+    poly_set_pos(cpos, 1, x, y, x0, y0);
+  }
+
+  x = (maxy -  b) / a;
+  y = maxy;
+  if (((x >= x0 && x <= x1) || (x >= x1 && x <= x0)) &&
+      ((y >= y0 && y <= y1) || (y >= y1 && y <= y0))) {
+    poly_set_pos(cpos, 2, x, y, x0, y0);
+  }
+
+  x = (miny -  b) / a;
+  y = miny;
+  if (((x >= x0 && x <= x1) || (x >= x1 && x <= x0)) &&
+      ((y >= y0 && y <= y1) || (y >= y1 && y <= y0))) {
+    poly_set_pos(cpos, 3, x, y, x0, y0);
+  }
+
+  qsort(cpos, 4, sizeof(*cpos), poly_pos_sort_cb);
+  for (i = 0; i < 4; i++) {
+    if (cpos[i].d >= 0) {
+      poly_add_clip_point(pos, minx, miny, maxx, maxy, cpos[i].x, cpos[i].y, fp);
+    }
+  }
+
+ End:
+  if (x1 >= minx && x1 <= maxx && y1 >= miny && y1 <= maxy) {
+    poly_add_clip_point(pos, minx, miny, maxx, maxy, x1, y1, fp);
+  }
+
+  return 0;
+}
+ 
+
+static void
 add_polygon_point(struct narray *pos, double x0, double y0, double x1, double y1, struct f2ddata *fp)
 {
-  int gx,gy;
+  double minx, miny, maxx, maxy;
 
-  if (f2dlineclipf(&x0, &y0, &x1, &y1, fp) == 0) {
-    f2dtransf(x0, y0, &gx, &gy, fp);
-    arrayadd(pos, &gx);
-    arrayadd(pos, &gy);
+  if (! fp->dataclip) {
+    poly_add_point(pos, x0, y0, fp);
+    poly_add_point(pos, x1, y1, fp);
 
-    f2dtransf(x1, y1, &gx, &gy, fp);
-    arrayadd(pos, &gx);
-    arrayadd(pos, &gy);
+    return;
   }
+
+  if (fp->axmin > fp->axmax) {
+    minx = fp->axmax;
+    maxx = fp->axmin;
+  } else {
+    minx = fp->axmin;
+    maxx = fp->axmax;
+  }
+  if (fp->aymax > fp->aymin) {
+    miny = fp->aymin;
+    maxy = fp->aymax;
+  } else {
+    miny = fp->aymax;
+    maxy = fp->aymin;
+  }
+
+  poly_add_elements(pos, minx, miny, maxx, maxy, x0, y0, x1, y1, fp);
 }
 
 static void
@@ -3889,9 +4088,7 @@ remove_same_points(struct narray *pos)
 }
 
 static int 
-polyout(struct objlist *obj,struct f2ddata *fp,int GC,
-	int width,int snum,int *style,
-	int join,int miter,int fill)
+polyout(struct objlist *obj, struct f2ddata *fp, int GC, int width)
 {
   int emerr,emnonum,emig,emng;
   int first, n, *ap;
@@ -3900,11 +4097,6 @@ polyout(struct objlist *obj,struct f2ddata *fp,int GC,
 
   arrayinit(&pos, sizeof(int));
   emerr=emnonum=emig=emng=FALSE;
-#if EXPAND_DOTTED_LINE
-  GRAlinestyle(GC,0,NULL,width,0,join,miter);
-#else
-  GRAlinestyle(GC, snum, style, width, 0, join, miter);
-#endif
 
   first = TRUE;
   while (getdata(fp)==0) {
@@ -3931,7 +4123,7 @@ polyout(struct objlist *obj,struct f2ddata *fp,int GC,
 	n = arraynum(&pos);
 	if (n > 4) {
 	  ap = (int *) arraydata(&pos);
-	  GRAdrawpoly(GC, n / 2, ap, fill);
+	  GRAdrawpoly(GC, n / 2, ap, 2);
 	}
         arraydel(&pos);
         first = TRUE;
@@ -3948,8 +4140,9 @@ polyout(struct objlist *obj,struct f2ddata *fp,int GC,
   n = arraynum(&pos);
   if (n > 4) {
     ap = (int *) arraydata(&pos);
-    GRAdrawpoly(GC, n / 2, ap, fill);
+    GRAdrawpoly(GC, n / 2, ap, 2);
   }
+
   errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;
 }
@@ -5054,7 +5247,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     rcode = lineout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, TRUE);
     break;
   case PLOT_TYPE_POLYGON_SOLID_FILL:
-    rcode = polyout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, 2);
+    rcode = polyout(obj, fp, GC, lwidth);
     break;
   case PLOT_TYPE_CURVE:
     rcode = curveout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, intp);

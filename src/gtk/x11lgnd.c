@@ -101,12 +101,9 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_DOWN 9
 #define POPUP_ITEM_BOTTOM 10
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-static gboolean LegendWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
-#else
-static gboolean LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
-#endif
 static void LegendDialogCopy(struct LegendDialog *d);
+static void legend_list_build(struct LegendWin *d);
+static void legend_list_set(struct LegendWin *d);
 
 static char *legendlist[LEGENDNUM] = {
   N_("path"),
@@ -2197,23 +2194,6 @@ LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
     LegendWinUpdate(FALSE);
 }
 
-void
-LegendWinUpdate(int clear)
-{
-  int i;
-  struct LegendWin *d;
-
-  d = &(NgraphApp.LegendWin);
-  for (i = 0; i < LEGENDNUM; i++)
-    d->legend[i] = chkobjlastinst(d->obj[i]);
-
-  LegendWinExpose(NULL, NULL, NULL);
-
-  if (! clear && d->select >= 0 && d->legend_type >= 0) {
-    tree_store_select_nth(GTK_WIDGET(d->text), d->legend_type, d->select);
-  }
-}
-
 static int
 legend_list_must_rebuild(struct LegendWin *d)
 {
@@ -2238,6 +2218,33 @@ legend_list_must_rebuild(struct LegendWin *d)
     tree_store_iter_next(GTK_WIDGET(d->text), &iter);
   }
   return r;
+}
+
+void
+LegendWinUpdate(int clear)
+{
+  int i;
+  struct LegendWin *d;
+
+  d = &(NgraphApp.LegendWin);
+  if (Menulock || Globallock)
+    return;
+
+  for (i = 0; i < LEGENDNUM; i++)
+    d->legend[i] = chkobjlastinst(d->obj[i]);
+
+  if (GTK_WIDGET(d->text) == NULL)
+    return;
+
+  if (legend_list_must_rebuild(d)) {
+    legend_list_build(d);
+  } else {
+    legend_list_set(d);
+  }
+
+  if (! clear && d->select >= 0 && d->legend_type >= 0) {
+    tree_store_select_nth(GTK_WIDGET(d->text), d->legend_type, d->select);
+  }
 }
 
 static void
@@ -2491,31 +2498,6 @@ legend_list_set(struct LegendWin *d)
   }
 }
 
-static gboolean
-#if GTK_CHECK_VERSION(3, 0, 0)
-LegendWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data)
-#else
-LegendWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
-#endif
-{
-  struct LegendWin *d;
-
-  if (Menulock || Globallock)
-    return FALSE;
-
-  d = &(NgraphApp.LegendWin);
-  if (GTK_WIDGET(d->text) == NULL)
-    return FALSE;
-
-  if (legend_list_must_rebuild(d)) {
-    legend_list_build(d);
-  } else {
-    legend_list_set(d);
-  }
-
-  return FALSE;
-}
-
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
@@ -2761,12 +2743,6 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 
   dlg = tree_sub_window_create(d, "Legend Window", LEGEND_WIN_COL_NUM, Llist, Legendwin_xpm, Legendwin48_xpm);
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-  g_signal_connect(dlg, "draw", G_CALLBACK(LegendWinExpose), NULL);
-#else
-  g_signal_connect(dlg, "expose-event", G_CALLBACK(LegendWinExpose), NULL);
-#endif
-
   for (i = 0; i < LEGENDNUM; i++) {
     d->obj[i] = chkobject(legendlist[i]);
     d->legend[i] = chkobjlastinst(d->obj[i]);
@@ -2786,4 +2762,6 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 
   sub_window_show_all((struct SubWin *) d);
   sub_window_set_geometry((struct SubWin *)d, TRUE);
+
+  LegendWinUpdate(TRUE);
 }

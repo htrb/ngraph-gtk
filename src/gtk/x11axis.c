@@ -113,11 +113,6 @@ static struct subwin_popup_list Popup_list[] = {
 #define ID_BUF_SIZE 16
 #define TITLE_BUF_SIZE 128
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-static gboolean AxisWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
-#else
-static gboolean AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data);
-#endif
 static void axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 static int check_axis_history(struct objlist *obj);
 
@@ -2773,9 +2768,18 @@ AxisWinUpdate(int clear)
 {
   struct SubWin *d;
 
-  d = &(NgraphApp.AxisWin);
+  if (Menulock || Globallock)
+    return;
 
-  AxisWinExpose(NULL, NULL, NULL);
+  d = &(NgraphApp.AxisWin);
+  if (d->text == NULL)
+    return;
+
+  if (list_sub_window_must_rebuild(d)) {
+    list_sub_window_build(d, axis_list_set_val);
+  } else {
+    list_sub_window_set(d, axis_list_set_val);
+  }
 
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID, d->select);
@@ -2845,32 +2849,6 @@ axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       }
     }
   }
-}
-
-static gboolean
-#if GTK_CHECK_VERSION(3, 0, 0)
-AxisWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data)
-#else
-AxisWinExpose(GtkWidget *wi, GdkEvent *event, gpointer client_data)
-#endif
-{
-  struct SubWin *d;
-
-  if (Menulock || Globallock)
-    return FALSE;
-
-  d = &(NgraphApp.AxisWin);
-
-  if (d->text == NULL)
-    return FALSE;
-
-  if (list_sub_window_must_rebuild(d)) {
-    list_sub_window_build(d, axis_list_set_val);
-  } else {
-    list_sub_window_set(d, axis_list_set_val);
-  }
-
-  return FALSE;
 }
 
 static int
@@ -3327,7 +3305,6 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
   int state;
-  GtkWidget *dlg;
 
   d = &(NgraphApp.AxisWin);
 
@@ -3352,13 +3329,7 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
   d->ev_key = axiswin_ev_key_down;
   d->delete = AxisDel;
 
-  dlg = list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
-
-#if GTK_CHECK_VERSION(3, 0, 0)
-  g_signal_connect(dlg, "draw", G_CALLBACK(AxisWinExpose), NULL);
-#else
-  g_signal_connect(dlg, "expose-event", G_CALLBACK(AxisWinExpose), NULL);
-#endif
+  list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
 
   d->obj = chkobject("axis");
   d->num = chkobjlastinst(d->obj);
@@ -3381,4 +3352,6 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
 
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);
+
+  AxisWinUpdate(TRUE);
 }

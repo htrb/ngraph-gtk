@@ -63,11 +63,6 @@ static n_list_store Mlist[] = {
 #define MERG_WIN_COL_ID     1
 #define MERG_WIN_COL_FILE   2
 
-#if GTK_CHECK_VERSION(3, 0, 0)
-static gboolean MergeWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data);
-#else
-static gboolean MergeWinExpose(GtkWidget *w, GdkEvent *event, gpointer client_data);
-#endif
 static void merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
 
 static struct subwin_popup_list Popup_list[] = {
@@ -303,8 +298,14 @@ MergeWinUpdate(int clear)
   struct SubWin *d;
 
   d = &(NgraphApp.MergeWin);
+  if (GTK_WIDGET(d->text) == NULL)
+    return;
 
-  MergeWinExpose(NULL, NULL, NULL);
+  if (list_sub_window_must_rebuild(d)) {
+    list_sub_window_build(d, merge_list_set_val);
+  } else {
+    list_sub_window_set(d, merge_list_set_val);
+  }
 
   if (! clear && d->select >= 0) {
     list_store_select_int(GTK_WIDGET(d->text), MERG_WIN_COL_ID, d->select);
@@ -345,28 +346,6 @@ merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
       }
     }
   }
-}
-
-static gboolean
-#if GTK_CHECK_VERSION(3, 0, 0)
-MergeWinExpose(GtkWidget *wi, cairo_t *cr, gpointer client_data)
-#else
-MergeWinExpose(GtkWidget *w, GdkEvent *event, gpointer client_data)
-#endif
-{
-  struct SubWin *d;
-
-  d = &(NgraphApp.MergeWin);
-  if (GTK_WIDGET(d->text) == NULL)
-    return FALSE;
-
-  if (list_sub_window_must_rebuild(d)) {
-    list_sub_window_build(d, merge_list_set_val);
-  } else {
-    list_sub_window_set(d, merge_list_set_val);
-  }
-
-  return FALSE;
 }
 
 static void
@@ -437,7 +416,6 @@ CmMergeWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
   int state;
-  GtkWidget *dlg;
 
   d = &(NgraphApp.MergeWin);
 
@@ -460,13 +438,7 @@ CmMergeWindow(GtkToggleAction *action, gpointer client_data)
   d->setup_dialog = MergeDialog;
   d->dialog = &DlgMerge;
 
-  dlg = list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
-
-#if GTK_CHECK_VERSION(3, 0, 0)
-  g_signal_connect(dlg, "draw", G_CALLBACK(MergeWinExpose), NULL);
-#else
-  g_signal_connect(dlg, "expose-event", G_CALLBACK(MergeWinExpose), NULL);
-#endif
+  list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
 
   d->obj = chkobject("merge");
   d->num = chkobjlastinst(d->obj);
@@ -481,4 +453,6 @@ CmMergeWindow(GtkToggleAction *action, gpointer client_data)
 
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);
+
+  MergeWinUpdate(TRUE);
 }
