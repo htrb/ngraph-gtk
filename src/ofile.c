@@ -4076,13 +4076,18 @@ remove_same_points(struct narray *pos)
     }
   }
 
+  n = arraynum(pos) / 2 - 1;
+  if (n < 2) {
+    return;
+  }
+
   x0 = arraynget_int(pos, 0);
   y0 = arraynget_int(pos, 1);
   x1 = arraynget_int(pos, n * 2);
   y1 = arraynget_int(pos, n * 2 + 1);
   if (x0 == x1 && y0 == y1) {
-    arrayndel(pos, n * 2 - 2);
-    arrayndel(pos, n * 2 - 1);
+    arrayndel(pos, n * 2 + 1);
+    arrayndel(pos, n * 2);
   }
 
 }
@@ -4100,7 +4105,7 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC, int width)
 
   first = TRUE;
   while (getdata(fp)==0) {
-    GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
+    GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
     if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
       if (first) {
         first = FALSE;
@@ -4142,6 +4147,22 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC, int width)
     ap = (int *) arraydata(&pos);
     GRAdrawpoly(GC, n / 2, ap, 2);
   }
+
+#if 0
+  /* for debug */
+  int i;
+  ap = (int *) arraydata(&pos);
+  for (i = 0; i < n / 2; i++) {
+    char buf[256];
+    GRAmark(GC, 0, ap[i * 2], ap[i * 2 + 1], fp->msize,
+	    fp->col.r, fp->col.g, fp->col.b, 255,
+	    fp->col2.r, fp->col2.g, fp->col2.b, 255);
+    GRAcolor(GC, 0, 0, 0, 255);
+    sprintf(buf, "%d/%d", i + 1, n / 2);
+    GRAmoveto(GC, ap[i * 2], ap[i * 2 + 1] - i * 500);
+    GRAdrawtext(GC, buf, "Serif", 0, 2000, 0, 0, 7000);
+  }
+#endif
 
   errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
   return 0;

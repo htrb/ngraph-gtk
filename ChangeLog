@@ -1,3 +1,15 @@
+2012-04-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* demo/Makefile.am: add settings for demo#6.
+
+	* demo/demo.ngp.in: add demo#6.
+
+	* demo/demo6.dat: added.
+
+	* demo/demo6.ngp.in: added.
+
+	* src/ofile.c (remove_same_points): fix index pf the array.
+
 2012-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (poly_add_point, poly_add_clip_point)
