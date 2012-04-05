@@ -1,3 +1,15 @@
+2012-04-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (file_color, file_alpha, file_rgb_sub)
+	(file_hsb_sub, file_marksize, file_marktype): check parameters are
+	normal value or not.
+	(draw_polygon): added.
+	(polyout): use "draw_polygon()".
+	(accept_ascii_only): added.
+	(file2d): "ifs" and "remark" fields are accepts only printable
+	ascii character.
+	(check_ifs_init): check if the index of the array is positive.
+
 2012-04-04  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* demo/Makefile.am: add settings for demo#6.
@@ -8,7 +20,7 @@
 
 	* demo/demo6.ngp.in: added.
 
-	* src/ofile.c (remove_same_points): fix index pf the array.
+	* src/ofile.c (uniq_points): fix index pf the array.
 
 2012-04-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 

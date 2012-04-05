@@ -702,7 +702,7 @@ new text
 	text::B=0
 	text::clip=true
 	text::redraw_flag=true
-	text::text='Demo #6: POLYGON (CONTOUR GRAPH)'
+	text::text='Demo #6: POLYGON (CONTOUR PLOT)'
 	text::x=2500
 	text::y=6800
 	text::pt=2000

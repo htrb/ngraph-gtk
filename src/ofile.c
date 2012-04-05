@@ -365,13 +365,17 @@ check_ifs_init(struct f2ddata *fp)
   if (ifs) {
     for (; *ifs; ifs++) {
       i = *ifs;
-      fp->ifs_buf[i] |= 1;
+      if (i > 0) {
+	fp->ifs_buf[i] |= 1;
+      }
     }
   }
   if (remark) {
     for (; *remark; remark++) {
       i = *remark;
-      fp->ifs_buf[i] |= 2;
+      if (i > 0) {
+	fp->ifs_buf[i] |= 2;
+      }
     }
   }
 }
@@ -385,7 +389,12 @@ file_color(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   struct f2ddata *fp;
   int color, val;
 
-  rval->val = exp->buf[1].val.val;
+  *rval = exp->buf[1].val;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
 
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
@@ -448,7 +457,11 @@ file_alpha(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
   struct f2ddata *fp;
   int alpha, color;
 
-  rval->val = exp->buf[0].val.val;
+  *rval = exp->buf[0].val;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
 
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
@@ -492,7 +505,13 @@ file_rgb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
   struct f2ddata *fp;
   int r, g, b;
 
-  rval->val = exp->buf[2].val.val;
+  *rval = exp->buf[2].val;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
 
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
@@ -563,7 +582,13 @@ file_hsb_sub(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval,
   double h, s, b;
   int r, g, bb;
 
-  rval->val = exp->buf[2].val.val;
+  *rval = exp->buf[2].val;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[1].val.type != MATH_VALUE_NORMAL ||
+      exp->buf[2].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
 
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
@@ -635,7 +660,11 @@ file_marksize(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   struct f2ddata *fp;
   int size;
 
-  rval->val = exp->buf[0].val.val;
+  *rval = exp->buf[0].val;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
 
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
@@ -660,7 +689,11 @@ file_marktype(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   struct f2ddata *fp;
   int type;
 
-  rval->val = exp->buf[0].val.val;
+  *rval = exp->buf[0].val;
+
+  if (exp->buf[0].val.type != MATH_VALUE_NORMAL) {
+    return 0;
+  }
 
   fp = math_equation_get_user_data(eq);
   if (fp == NULL) {
@@ -4056,7 +4089,7 @@ add_polygon_point(struct narray *pos, double x0, double y0, double x1, double y1
 }
 
 static void
-remove_same_points(struct narray *pos)
+uniq_points(struct narray *pos)
 {
   int n, i, x0, y0, x1, y1;
 
@@ -4092,21 +4125,35 @@ remove_same_points(struct narray *pos)
 
 }
 
-static int 
-polyout(struct objlist *obj, struct f2ddata *fp, int GC, int width)
+static void
+draw_polygon(struct narray *pos, int GC)
 {
-  int emerr,emnonum,emig,emng;
-  int first, n, *ap;
+  int n, *ap;
+
+  uniq_points(pos);
+  n = arraynum(pos);
+  if (n > 4) {
+    ap = (int *) arraydata(pos);
+    GRAdrawpoly(GC, n / 2, ap, 2);
+  }
+  arraydel(pos);
+}
+
+static int 
+polyout(struct objlist *obj, struct f2ddata *fp, int GC)
+{
+  int emerr, emnonum, emig, emng;
+  int first;
   struct narray pos;
   double x0, y0, x1, y1, x2, y2;
 
   arrayinit(&pos, sizeof(int));
-  emerr=emnonum=emig=emng=FALSE;
+  emerr = emnonum = emig = emng = FALSE;
 
   first = TRUE;
-  while (getdata(fp)==0) {
+  while (getdata(fp) == 0) {
     GRAcolor(GC, fp->col.r, fp->col.g, fp->col.b, fp->col.a);
-    if ((fp->dxstat==MATH_VALUE_NORMAL) && (fp->dystat==MATH_VALUE_NORMAL)) {
+    if (fp->dxstat == MATH_VALUE_NORMAL && fp->dystat == MATH_VALUE_NORMAL) {
       if (first) {
         first = FALSE;
 	x0 = fp->dx;
@@ -4121,32 +4168,21 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC, int width)
 	add_polygon_point(&pos, x1, y1, x2, y2, fp);
       }
     } else {
-      if ((fp->dxstat!=MATH_VALUE_CONT) && (fp->dystat!=MATH_VALUE_CONT)) {
+      if (fp->dxstat != MATH_VALUE_CONT && fp->dystat != MATH_VALUE_CONT) {
 	if (! first) {
 	  add_polygon_point(&pos, x2, y2, x0, y0, fp);
 	}
-	n = arraynum(&pos);
-	if (n > 4) {
-	  ap = (int *) arraydata(&pos);
-	  GRAdrawpoly(GC, n / 2, ap, 2);
-	}
-        arraydel(&pos);
+	draw_polygon(&pos, GC);
         first = TRUE;
       }
-      errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+      errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
     }
   }
 
   if (! first) {
     add_polygon_point(&pos, x2, y2, x0, y0, fp);
   }
-
-  remove_same_points(&pos);
-  n = arraynum(&pos);
-  if (n > 4) {
-    ap = (int *) arraydata(&pos);
-    GRAdrawpoly(GC, n / 2, ap, 2);
-  }
+  draw_polygon(&pos, GC);
 
 #if 0
   /* for debug */
@@ -4164,7 +4200,7 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC, int width)
   }
 #endif
 
-  errordisp(obj,fp,&emerr,&emnonum,&emig,&emng);
+  errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
   return 0;
 }
 
@@ -5268,7 +5304,7 @@ f2ddraw(struct objlist *obj, N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     rcode = lineout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, TRUE);
     break;
   case PLOT_TYPE_POLYGON_SOLID_FILL:
-    rcode = polyout(obj, fp, GC, lwidth);
+    rcode = polyout(obj, fp, GC);
     break;
   case PLOT_TYPE_CURVE:
     rcode = curveout(obj, fp, GC, lwidth, snum, style, ljoin, lmiter, intp);
@@ -7531,6 +7567,31 @@ update_field(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
 }
 
 static int 
+accept_ascii_only(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  char *str;
+  int i, j, n;
+
+  update_field(obj, inst, rval, argc, argv);
+
+  if (argv[2] == NULL) {
+    return 0;
+  }
+
+  str = argv[2];
+  n = strlen(str);
+  for (i = j = 0; i < n; i++) {
+    if (str[i] > 0 && (g_ascii_isprint(str[i]) || g_ascii_isspace(str[i]))) {
+      str[j] = str[i];
+      j++;
+    }
+  }
+  str[j] = '\0';
+
+  return 0;
+}
+
+static int 
 update_mask(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   struct narray *array;
@@ -7951,8 +8012,8 @@ static struct objtable file2d[] = {
   {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"A2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
 
-  {"remark",NSTR,NREAD|NWRITE,update_field,NULL,0},
-  {"ifs",NSTR,NREAD|NWRITE,update_field,NULL,0},
+  {"remark",NSTR,NREAD|NWRITE,accept_ascii_only,NULL,0},
+  {"ifs",NSTR,NREAD|NWRITE,accept_ascii_only,NULL,0},
   {"csv",NBOOL,NREAD|NWRITE,update_field,NULL,0},
   {"head_skip",NINT,NREAD|NWRITE,foputabs,NULL,0},
   {"read_step",NINT,NREAD|NWRITE,foputge1,NULL,0},
