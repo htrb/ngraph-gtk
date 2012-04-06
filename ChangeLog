@@ -1,3 +1,8 @@
+2012-04-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_scanner.c (get_dec): fix calculation to reduce
+	floating point error.
+
 2012-04-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (file_color, file_alpha, file_rgb_sub)

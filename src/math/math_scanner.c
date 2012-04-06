@@ -374,13 +374,14 @@ get_bin(const char *str, double *val)
 static const char *
 get_dec(const char *str, double *val)
 {
-  int in_decimal, in_pow, pow_sign, pow_val;
-  double dec, dec_order;
+  int in_decimal, in_pow, pow_sign, pow_val, dec_order;
+  long double dec, flaction;
 
   pow_val = 0;
   pow_sign = 1;
 
-  dec_order = 0.1;
+  dec_order = 0;
+  flaction = 0;
   dec = 0;
 
   in_decimal = 0;
@@ -422,8 +423,11 @@ get_dec(const char *str, double *val)
 	break;
       default:
 	if (in_decimal) {
-	  dec += (c - '0') * dec_order;
-	  dec_order /= 10;
+	  if (flaction < 1E30) { /* dec and flaction is not negative */
+	    dec_order++;
+	    flaction *= 10;
+	    flaction += c - '0';
+	  }
 	} else {
 	  dec *= 10;
 	  dec += c - '0';
@@ -434,7 +438,8 @@ get_dec(const char *str, double *val)
     }
   }
 
-  *val = dec * pow(10.0, pow_sign * pow_val);
+  *val = dec * powl(10.0, pow_sign * pow_val) +
+    flaction * powl(10.0, pow_sign * pow_val - dec_order);
 
   return str;
 }
