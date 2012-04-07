@@ -3944,7 +3944,7 @@ poly_add_elements(struct narray *pos,
 	       double x0, double y0, double x1, double y1,
 	       struct f2ddata *fp)
 {
-  double x, y, a, b;
+  double x, y, v0, v1, a, b, ba;
   struct point_pos cpos[4];
   int i;
 
@@ -4008,36 +4008,41 @@ poly_add_elements(struct narray *pos,
 
   a = (y1 - y0) / (x1 - x0);
   b = (x1 * y0 - x0 * y1) / (x1 - x0);
+  ba = (x1 * y0 - x0 * y1) / (y1 - y0);
 
   cpos[0].d = -1;
   cpos[1].d = -1;
   cpos[2].d = -1;
   cpos[3].d = -1;
 
+  v0 = a * x0 + b;
+  v1 = a * x1 + b;
   x = maxx;
   y = a * maxx + b;
   if (((x >= x0 && x <= x1) || (x >= x1 && x <= x0)) &&
-      ((y >= y0 && y <= y1) || (y >= y1 && y <= y0))) {
+      ((y >= v0 && y <= v1) || (y >= v1 && y <= v0))) {
     poly_set_pos(cpos, 0, x, y, x0, y0);
   }
 
   x = minx;
   y = a * minx + b;
   if (((x >= x0 && x <= x1) || (x >= x1 && x <= x0)) &&
-      ((y >= y0 && y <= y1) || (y >= y1 && y <= y0))) {
+      ((y >= v0 && y <= v1) || (y >= v1 && y <= v0))) {
     poly_set_pos(cpos, 1, x, y, x0, y0);
   }
 
-  x = (maxy -  b) / a;
+  v0 = y0 / a - ba;
+  v1 = y1 / a - ba;
+  x = maxy / a -  ba;
   y = maxy;
-  if (((x >= x0 && x <= x1) || (x >= x1 && x <= x0)) &&
+  if (((x >= v0 && x <= v1) || (x >= v1 && x <= v0)) &&
       ((y >= y0 && y <= y1) || (y >= y1 && y <= y0))) {
     poly_set_pos(cpos, 2, x, y, x0, y0);
   }
 
-  x = (miny -  b) / a;
+  x = miny / a -  ba;
   y = miny;
-  if (((x >= x0 && x <= x1) || (x >= x1 && x <= x0)) &&
+  if (((x >= v0 && x <= v1) || (x >= v1 && x <= v0)) &&
       ((y >= y0 && y <= y1) || (y >= y1 && y <= y0))) {
     poly_set_pos(cpos, 3, x, y, x0, y0);
   }
@@ -4056,7 +4061,6 @@ poly_add_elements(struct narray *pos,
 
   return 0;
 }
- 
 
 static void
 add_polygon_point(struct narray *pos, double x0, double y0, double x1, double y1, struct f2ddata *fp)
@@ -4136,10 +4140,27 @@ draw_polygon(struct narray *pos, int GC)
     ap = (int *) arraydata(pos);
     GRAdrawpoly(GC, n / 2, ap, 2);
   }
+
+#if 0
+  /* for debug */
+  int i;
+  ap = (int *) arraydata(pos);
+  for (i = 0; i < n / 2; i++) {
+    char buf[256];
+    GRAmark(GC, 0, ap[i * 2], ap[i * 2 + 1], 200,
+	    0, 0, 0, 255,
+	    0, 0, 0, 255);
+    GRAcolor(GC, 0, 0, 0, 255);
+    sprintf(buf, "%d/%d", i + 1, n / 2);
+    GRAmoveto(GC, ap[i * 2], ap[i * 2 + 1] - i * 500);
+    GRAdrawtext(GC, buf, "Serif", 0, 2000, 0, 0, 7000);
+  }
+#endif
+
   arraydel(pos);
 }
 
-static int 
+static int
 polyout(struct objlist *obj, struct f2ddata *fp, int GC)
 {
   int emerr, emnonum, emig, emng;
@@ -4183,22 +4204,6 @@ polyout(struct objlist *obj, struct f2ddata *fp, int GC)
     add_polygon_point(&pos, x2, y2, x0, y0, fp);
   }
   draw_polygon(&pos, GC);
-
-#if 0
-  /* for debug */
-  int i;
-  ap = (int *) arraydata(&pos);
-  for (i = 0; i < n / 2; i++) {
-    char buf[256];
-    GRAmark(GC, 0, ap[i * 2], ap[i * 2 + 1], fp->msize,
-	    fp->col.r, fp->col.g, fp->col.b, 255,
-	    fp->col2.r, fp->col2.g, fp->col2.b, 255);
-    GRAcolor(GC, 0, 0, 0, 255);
-    sprintf(buf, "%d/%d", i + 1, n / 2);
-    GRAmoveto(GC, ap[i * 2], ap[i * 2 + 1] - i * 500);
-    GRAdrawtext(GC, buf, "Serif", 0, 2000, 0, 0, 7000);
-  }
-#endif
 
   errordisp(obj, fp, &emerr, &emnonum, &emig, &emng);
   return 0;
