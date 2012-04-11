@@ -54,7 +54,7 @@ Description: addins of Ngraph-gtk
 
 Package: ngraph-gtk-addin-tex-equation
 Architecture: all
-Depends: ${misc:Depends}, ngraph-gtk-addin-import-ps, ngraph-gtk
+Depends: ${misc:Depends}, ngraph-gtk-addin-import-ps, ngraph-gtk, texlive-latex-base
 Description: addins of Ngraph-gtk
  Ngraph is the program to create scientific 2-dimensional graphs for
  researchers and engineers. This program can create advanced graphs
