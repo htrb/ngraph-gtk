@@ -18,7 +18,7 @@ if which -q $PSTOEDIT_COMMAND
 then
     true
 else
-    ps2gra_error_dialog "Cannot execute '$1'."
+    ps2gra_error_dialog "Cannot execute '$PSTOEDIT_COMMAND'."
     exit
 fi
 

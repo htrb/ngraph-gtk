@@ -4135,16 +4135,15 @@ draw_polygon(struct narray *pos, int GC)
   int n, *ap;
 
   uniq_points(pos);
+  ap = (int *) arraydata(pos);
   n = arraynum(pos);
   if (n > 4) {
-    ap = (int *) arraydata(pos);
     GRAdrawpoly(GC, n / 2, ap, 2);
   }
 
 #if 0
   /* for debug */
   int i;
-  ap = (int *) arraydata(pos);
   for (i = 0; i < n / 2; i++) {
     char buf[256];
     GRAmark(GC, 0, ap[i * 2], ap[i * 2 + 1], 200,
@@ -4485,7 +4484,7 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
   double x0,y0,x1,y1;
   int gx0,gy0,gx1,gy1,ax0,ay0;
   double dx,dy,len,alen,awidth;
-  int ap[6],headlen,headwidth;
+  int ap[8],headlen,headwidth;
 
   emerr=emnonum=emig=emng=FALSE;
   headlen=72426;
@@ -4548,9 +4547,11 @@ rectout(struct objlist *obj,struct f2ddata *fp,int GC,
         x1=fp->d2;
         y1=fp->d3;
         if (f2drectclipf(&x0,&y0,&x1,&y1,fp)==0) {
-          f2dtransf(x0,y0,&gx0,&gy0,fp);
-          f2dtransf(x1,y1,&gx1,&gy1,fp);
-          GRArectangle(GC,gx0,gy0,gx1,gy1,1);
+	  f2dtransf(x0, y0, ap + 0, ap + 1, fp);
+	  f2dtransf(x0, y1, ap + 2, ap + 3, fp);
+	  f2dtransf(x1, y1, ap + 4, ap + 5, fp);
+	  f2dtransf(x1, y0, ap + 6, ap + 7, fp);
+	  GRAdrawpoly(GC, 4, ap, 1);
         }
         if (type == PLOT_TYPE_RECTANGLE_FILL) {
 	  GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
@@ -4777,6 +4778,19 @@ stairout(struct objlist *obj,struct f2ddata *fp,int GC,
   return 0;
 }
 
+static void
+draw_rect(int GC, int *ap, double v0, double v1, double v2, double v3)
+{
+  GRAline(GC, ap[0], ap[1], ap[2] ,ap[3]);
+  if (v0 == v1) {
+    GRAline(GC, ap[2], ap[3], ap[4] ,ap[5]);
+  }
+  GRAline(GC, ap[4], ap[5], ap[6] ,ap[7]);
+  if (v2 == v3) {
+    GRAline(GC, ap[6], ap[7], ap[0] ,ap[1]);
+  }
+}
+
 static int 
 barout(struct objlist *obj,struct f2ddata *fp,int GC,
        int width,int snum,int *style,int type)
@@ -4821,7 +4835,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
       switch (type) {
       case PLOT_TYPE_BAR_X:
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-	GRAdrawpoly(GC,4,ap,0);
+	draw_rect(GC, ap, x1, fp->dx, x0, 0);
 	break;
       case PLOT_TYPE_BAR_SOLID_FILL_X:
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
@@ -4831,7 +4845,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
 	GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
 	GRAdrawpoly(GC,4,ap,1);
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-	GRAdrawpoly(GC,4,ap,0);
+	draw_rect(GC, ap, x1, fp->dx, x0, 0);
 	break;
       }
       break;
@@ -4858,7 +4872,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
       switch (type) {
       case PLOT_TYPE_BAR_Y:
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-	GRAdrawpoly(GC,4,ap,0);
+	draw_rect(GC, ap, y1, fp->dy, y0, 0);
 	break;
       case PLOT_TYPE_BAR_SOLID_FILL_Y:
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
@@ -4868,7 +4882,7 @@ barout(struct objlist *obj,struct f2ddata *fp,int GC,
 	GRAcolor(GC, fp->col2.r, fp->col2.g, fp->col2.b, fp->col2.a);
 	GRAdrawpoly(GC,4,ap,1);
 	GRAcolor(GC,fp->col.r,fp->col.g,fp->col.b, fp->col.a);
-	GRAdrawpoly(GC,4,ap,0);
+	draw_rect(GC, ap, y1, fp->dy, y0, 0);
 	break;
       }
       break;

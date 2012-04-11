@@ -1,3 +1,13 @@
+2012-04-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/ps2gra.nsc: fix error message.
+
+	* src/ofile.c (rectout): use "GRAdrawpoly()" instead of
+	"GRArectangle()".
+	(draw_rect): added.
+	(barout): use "draw_rect()" instead of "GRAdrawpoly()" when draw
+	outline of the bar.
+
 2012-04-07  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (poly_add_elements): fix calculation to avoid
@@ -70,9 +80,8 @@
 	(add_polygon_point, remove_same_points, polyout): added.
 	(f2ddraw): add case "PLOT_TYPE_POLYGON_SOLID_FILL".
 
-	* src/gtk/x11file.c (create_type_combo_box): fix suffix of the
-	array "curvelist".
-	(FileDialogType): add case "PLOT_TYPE_POLYGON_SOLID_FILL".
+	* src/gtk/x11file.c (FileDialogType): add case
+	"PLOT_TYPE_POLYGON_SOLID_FILL".
 	(draw_type_pixbuf): simplify conditions.
 	(create_type_combo_box): suffix of the array "curvelist" is not
 	"i" but "j".
