@@ -2,8 +2,8 @@
 Name=Ngraph
 Comment=create scientific 2-dimensional graphs
 Comment[ja]=科学技術用 2D グラフ作成
+Exec=ngraph %f
 TryExec=ngraph
-Exec=ngraph
 Icon=application-x-ngraph.png
 Terminal=false
 Type=Application
