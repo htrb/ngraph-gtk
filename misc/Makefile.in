@@ -209,7 +209,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = ngraph.applications ngraph.mime ngraph.key ngraph.desktop ngraph.xml ngraph.bash ngraph.1 ngp2.1
+EXTRA_DIST = ngraph.applications ngraph.mime ngraph.keys ngraph.desktop ngraph.xml ngraph.bash ngraph.1 ngp2.1
 all: all-am
 
 .SUFFIXES:
