@@ -1,3 +1,8 @@
+2012-04-19  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/shellux.c (SleepThread): argument of the function "Sleep()"
+	is milliseconds.
+
 2012-04-14  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* misc/ngraph.keys: filename is changed from "ngraph.key".

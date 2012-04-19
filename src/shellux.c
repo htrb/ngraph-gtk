@@ -86,9 +86,9 @@ cmsleep(struct nshell *nshell,int argc,char **argv)
     }
     alarm(0);
     set_signal(SIGALRM, 0, SIG_IGN);
-#else
+#else  /* SIGALRM */
     sleep(a);
-#endif
+#endif	/* SIGALRM */
   } else {
     sleep(a);
   }
@@ -107,7 +107,7 @@ DWORD WINAPI SleepThread(LPVOID lpvThreadParam)
   ThreadParam *pTH;
 
   pTH=(ThreadParam *)lpvThreadParam;
-  Sleep(pTH->Second);
+  Sleep(pTH->Second * 1000);
   pTH->Sleep=FALSE;
   return 0;
 }
