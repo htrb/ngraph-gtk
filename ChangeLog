@@ -7,7 +7,7 @@
 
 	* misc/ngraph.keys: filename is changed from "ngraph.key".
 
-	* misc/ngraph.desktop (Exec): special field code "%s" is added.
+	* misc/ngraph.desktop (Exec): special field code "%f" is added.
 
 2012-04-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
