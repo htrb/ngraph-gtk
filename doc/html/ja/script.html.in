@@ -95,7 +95,7 @@ ${name&#37;&#37;word}<br>
 <h3>リダイレクト・パイプ</h3>
 <p>
 &lt; file<br>
-&lt;&lt; word<br>
+&lt;&lt;[-]word<br>
 &gt; file<br>
 &gt;&gt; file<br>
 command | command<br>

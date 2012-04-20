@@ -1422,7 +1422,12 @@ gettok(char **s,int *len,int *quote,int *bquote,int *cend,int *escape)
     /* check speecial character */
     if (strchr(";&|^<>()",po[i])!=NULL) {
       if (strchr(";&)",po[i])!=NULL) *cend=po[i];
-      if ((strchr("<>",po[i])!=NULL) && (po[i]==po[i+1])) i++;
+      if ((strchr("<>",po[i])!=NULL) && (po[i]==po[i+1])) {
+	i++;
+	if (po[i] == '<' && po[i + 1] == '-') {
+	  i++;
+	}
+      }
       if ((po[i]==';') && (po[i]==po[i+1])) i++;
       *s+=(i+1);
       *len=*s-spo;
@@ -2268,12 +2273,13 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
   struct prmlist *prmcur,*prmprev;
   int cmd,i;
   char *po;
-  char *s,*eof;
+  char *s,*eof, *prompt;
   int quoted,ch;
   int eoflen,match,len;
   struct objlist *sys;
   char *tmpfil;
   int sout;
+  int ignore_indent, remove_tab;
 
   cmdcur=*cmdroot;
   cmdprev=NULL;
@@ -2357,6 +2363,13 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                 g_free((prmcur->next)->str);
                 (prmcur->next)->str=eof;
                 (prmcur->next)->quoted=quoted;
+		if (prmcur->str[2] == '-') {
+		  ignore_indent = TRUE;
+		  remove_tab = TRUE;
+		} else {
+		  ignore_indent = FALSE;
+		  remove_tab = FALSE;
+		}
 
                 /* get << contents */
 
@@ -2371,6 +2384,8 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                   while (TRUE) {
                     ch=shget(nshell);
                     if ((ch==EOF) || (ch=='\0')) break;
+		    if (remove_tab && ch == '\t') continue;
+		    remove_tab = FALSE;
                     if (ch=='\n') {
                       if (match==eoflen) break;
                       writebuf[writepo]=ch;
@@ -2380,6 +2395,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                         writepo=0;
                       }
                       match=0;
+		      remove_tab = ignore_indent;
                     } else if (match==-1) {
                       writebuf[writepo]=ch;
                       writepo++;
@@ -2408,13 +2424,20 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                   if (writepo!=0) nwrite(sout,writebuf,writepo);
                 } else {
                   do {
+		    remove_tab = ignore_indent;
                     if ((s=nstrnew())==NULL) {
                       nclose(sout);
                       unlinkfile(&tmpfil);
                       return -1;
                     }
-                    if (nisatty(nshell->fd))
-                      printfconsole("%.256s",getval(nshell,"PS2"));
+		    if (nisatty(nshell->fd)) {
+		      prompt = getval(nshell,"PS2");
+#ifdef HAVE_LIBREADLINE
+		      Prompt = prompt;
+#else
+		      if (prompt) printfconsole("%.256s", prompt);
+#endif
+		    }
                     do {
                       ch=shget(nshell);
                       if (ch==EOF) {
@@ -2424,6 +2447,8 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                         } else break;
                       } else {
                         if (ch=='\n') ch='\0';
+			if (remove_tab && ch == '\t') continue;
+			remove_tab = FALSE;
                         if ((s=nstrccat(s,ch))==NULL) {
                           nclose(sout);
                           unlinkfile(&tmpfil);
