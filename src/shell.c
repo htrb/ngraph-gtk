@@ -117,6 +117,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 static char *Prompt;
+static int MultiLine = FALSE;
 #endif	/* HAVE_LIBREADLINE */
 
 #ifndef WINDOWS
@@ -389,6 +390,24 @@ nreadline(char *prompt)
 
   return (char *) g_thread_join(thread);
 }
+
+static void
+remove_duplicate_history(char *str)
+{
+  HIST_ENTRY *entry;
+  int pos;
+
+  for(pos = history_length; pos >= 0; pos--) {
+    pos = history_search_pos(str, -1, pos);
+    if(pos >= 0 && strcmp(history_get(pos + history_base)->line, str) == 0) {
+      entry = remove_history(pos);
+      if (entry) {
+	free_history_entry(entry);
+      }
+      break;
+    }
+  }
+}
 #endif
 
 static int 
@@ -407,15 +426,25 @@ shget(struct nshell *nshell)
       if(str_ptr == NULL){
 	byte = 0;
       } else if(strlen(str_ptr) > 0) {
-	int pos;
-	for(pos = history_length; pos >= 0; pos--){
-	  pos = history_search_pos(str_ptr, -1, pos);
-	  if(pos >= 0 && strcmp(history_get(pos + history_base)->line, str_ptr) == 0){
-	    remove_history(pos);
-	    break;
+	if (MultiLine && history_length > 0) {
+	  HIST_ENTRY *entry;
+	  char *tmp;
+
+	  entry = remove_history(history_length - 1);
+	  remove_duplicate_history(str_ptr);
+	  if (entry) {
+	    tmp = g_strdup_printf("%s\n%s", entry->line, str_ptr);
+	    free_history_entry(entry);
+	    if (tmp) {
+	      remove_duplicate_history(tmp);
+	      add_history(tmp);
+	      g_free(tmp);
+	    }
 	  }
+	} else {
+	  remove_duplicate_history(str_ptr);
+	  add_history(str_ptr);
 	}
-	add_history(str_ptr);
       }
     }
     if(str_ptr != NULL){
@@ -1495,8 +1524,13 @@ getcmdline(struct nshell *nshell,
     if (str==NULL) {
       if ((tok=nstrnew())==NULL) goto errexit;
       if (nisatty(nshell->fd)) {
-        if ((cmd==NULL) && (cmdroot==NULL)) prompt=getval(nshell,"PS1");
-        else prompt=getval(nshell,"PS2");
+        if (cmd == NULL && cmdroot == NULL) {
+	  prompt = getval(nshell, "PS1");
+	  MultiLine = FALSE;
+	} else {
+	  prompt = getval(nshell, "PS2");
+	  MultiLine = TRUE;
+	}
 #ifdef HAVE_LIBREADLINE
 	Prompt = prompt;
 #else
@@ -2434,6 +2468,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
 		      prompt = getval(nshell,"PS2");
 #ifdef HAVE_LIBREADLINE
 		      Prompt = prompt;
+		      MultiLine = TRUE;
 #else
 		      if (prompt) printfconsole("%.256s", prompt);
 #endif

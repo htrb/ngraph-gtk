@@ -1,3 +1,9 @@
+2012-04-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/shell.c (remove_duplicate_history): added.
+	(shget): combine multi-line input.
+	(getcmdline, checkcmd): set "MultiLine" state.
+
 2012-04-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (checkcmd, gettok): accepts here-document "<<-".
