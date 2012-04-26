@@ -1,7 +1,7 @@
 101 ICON "ngraph.ico"
 1 VERSIONINFO
-FILEVERSION     6,6,4,0
-PRODUCTVERSION  6,6,4,0
+FILEVERSION     6,6,5,0
+PRODUCTVERSION  6,6,5,0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
@@ -9,12 +9,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", ""
       VALUE "FileDescription", "Ngraph-gtk"
-      VALUE "FileVersion", "6,6,4,0"
+      VALUE "FileVersion", "6,6,5,0"
       VALUE "InternalName", "ngraph"
       VALUE "LegalCopyright", "Copyright (C) 2003 Satoshi ISHIZAKA"
       VALUE "OriginalFilename", "ngraph.exe"
       VALUE "ProductName", "Ngraph-gtk"
-      VALUE "ProductVersion", "6,6,4,0"
+      VALUE "ProductVersion", "6,6,5,0"
     END
   END
   BLOCK "VarFileInfo"
