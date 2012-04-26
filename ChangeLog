@@ -1,3 +1,8 @@
+2012-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ChangeDPI): use "nround()" to avoid floating
+	point error when calculating scroll position.
+
 2012-04-22  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/shell.c (remove_duplicate_history): added.

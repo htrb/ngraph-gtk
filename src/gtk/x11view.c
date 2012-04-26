@@ -5287,8 +5287,8 @@ ChangeDPI(void)
     mx_redraw(Menulocal.obj, Menulocal.inst);
   }
 
-  XPos = width * ratex;
-  YPos = height * ratey;
+  XPos = nround(width * ratex);
+  YPos = nround(height * ratey);
 
   gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
   gtk_range_set_value(GTK_RANGE(d->HScroll), XPos);
