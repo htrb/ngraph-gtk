@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-04-19 17:27+0900\n"
+"POT-Creation-Date: 2012-04-27 18:49+0900\n"
 "PO-Revision-Date: 2012-03-30 18:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -889,7 +889,7 @@ msgstr "読込(_L)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1704 src/gtk/x11file.c:1928 src/gtk/x11view.c:929
+#: src/gtk/x11file.c:1704 src/gtk/x11file.c:1928 src/gtk/x11view.c:930
 msgid "Line No."
 msgstr "行"
 
@@ -1023,11 +1023,11 @@ msgstr "ファイルから設定読込(_L)"
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:3061 src/gtk/x11view.c:939
+#: src/gtk/x11file.c:3061 src/gtk/x11view.c:940
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:3065 src/gtk/x11view.c:940
+#: src/gtk/x11file.c:3065 src/gtk/x11view.c:941
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -2316,7 +2316,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:739 src/gtk/x11print.c:1002 src/gtk/x11view.c:5392
+#: src/gtk/x11print.c:739 src/gtk/x11print.c:1002 src/gtk/x11view.c:5486
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2350,15 +2350,15 @@ msgstr "データ評価中"
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3892
+#: src/gtk/x11view.c:3966
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5386
+#: src/gtk/x11view.c:5480
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5393
+#: src/gtk/x11view.c:5487
 msgid "Drawing"
 msgstr "描画中"
 

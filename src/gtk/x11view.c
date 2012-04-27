@@ -152,6 +152,7 @@ static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom);
+static void show_move_animation(struct Viewer *d, int x, int y);
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
@@ -1028,7 +1029,7 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
     break;
   case GDK_SCROLL_DOWN:
   case GDK_SCROLL_RIGHT:
-     range_increment(w, SCROLL_INC);
+    range_increment(w, SCROLL_INC);
     break;
   default:
     return FALSE;
@@ -2747,12 +2748,81 @@ mouse_down_move_data(struct Viewer *d)
 #define VIEWER_DPI_MAX 620
 #define VIEWER_DPI_MIN  20
 
+#define ANIM_DIV 20
+static void
+show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
+{
+  cairo_pattern_t *pattern;
+  cairo_matrix_t matrix;
+  cairo_t *cr;
+  int i;
+  double inc, z;
+
+  cr = gdk_cairo_create(d->gdk_win);
+  inc = (zoom - 1) / ANIM_DIV;
+
+  pattern = cairo_pattern_create_for_surface(Menulocal.pix);
+  for (i = 1; i <= ANIM_DIV; i++) {
+    z = 1 + inc * i;
+    cairo_matrix_init(&matrix,
+		      z, 0,
+		      0, z,
+		      (point->x + d->hscroll - d->cx) - point->x * z,
+		      (point->y + d->vscroll - d->cy) - point->y * z);
+    cairo_pattern_set_matrix(pattern, &matrix);
+    cairo_set_source(cr, pattern);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_paint(cr);
+#else
+    cairo_fill(cr);
+#endif
+    gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  }
+
+  cairo_pattern_destroy(pattern);
+  cairo_destroy(cr);
+}
+
+static void
+show_move_animation(struct Viewer *d, int x, int y)
+{
+  cairo_pattern_t *pattern;
+  cairo_matrix_t matrix;
+  cairo_t *cr;
+  int i;
+  double incx, incy;
+
+  cr = gdk_cairo_create(d->gdk_win);
+  incx = 1.0 * x / ANIM_DIV;
+  incy = 1.0 * y / ANIM_DIV;
+
+  pattern = cairo_pattern_create_for_surface(Menulocal.pix);
+  for (i = 1; i <= ANIM_DIV; i++) {
+    cairo_matrix_init(&matrix,
+		      1, 0,
+		      0, 1,
+		      (d->hscroll - d->cx) + incx * i,
+		      (d->vscroll - d->cy) + incy * i);
+    cairo_pattern_set_matrix(pattern, &matrix);
+    cairo_set_source(cr, pattern);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    cairo_paint(cr);
+#else
+    cairo_fill(cr);
+#endif
+    gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
+  }
+
+  cairo_pattern_destroy(pattern);
+  cairo_destroy(cr);
+}
+
 static void
 mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
 {
   static double saved_dpi_d = -1;
   static double saved_dpi_i = -1;
-  double dpi;
+  double dpi, ratio;
   int vdpi;
 
   if (ZoomLock) {
@@ -2761,6 +2831,7 @@ mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_ou
 
   ZoomLock = TRUE;
   if (state & GDK_SHIFT_MASK) {
+    show_move_animation(d, point->x - d->cx , point->y - d->cy);
     d->hscroll -= (d->cx - point->x);
     d->vscroll -= (d->cy - point->y);
 
@@ -2789,11 +2860,16 @@ mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_ou
     saved_dpi_i = nround(dpi);
   }
 
+  ratio = vdpi / saved_dpi_i;
+  if (vdpi != nround(saved_dpi_i)) {
+    show_zoom_animation(d, point, ratio);
+  }
+
   vdpi = saved_dpi_i;
 
   if (putobj(Menulocal.obj, "dpi", 0, &vdpi) != -1) {
-    d->hscroll -= (d->cx - point->x);
-    d->vscroll -= (d->cy - point->y);
+    d->hscroll -= (d->cx - point->x) * (1 - ratio);
+    d->vscroll -= (d->cy - point->y) * (1 - ratio);
     ChangeDPI();
   }
 
@@ -3959,6 +4035,7 @@ ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
     return FALSE;
 
   if (d->Mode == ZoomB) {
+    show_move_animation(d, point->x - d->cx , point->y - d->cy);
     d->hscroll -= (d->cx - point->x);
     d->vscroll -= (d->cy - point->y);
     ChangeDPI();
@@ -4497,15 +4574,27 @@ static gboolean
 ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
   struct Viewer *d;
+  TPoint point;
+
+  point.x = e->x;
+  point.y = e->y;
 
   d = (struct Viewer *) client_data;
 
   switch (e->direction) {
   case GDK_SCROLL_UP:
-    range_increment(d->VScroll, -SCROLL_INC);
+    if (e->state & GDK_CONTROL_MASK) {
+      mouse_down_zoom(0, &point, d, FALSE);
+    } else {
+      range_increment(d->VScroll, -SCROLL_INC);
+    }
     return TRUE;
   case GDK_SCROLL_DOWN:
-     range_increment(d->VScroll, SCROLL_INC);
+    if (e->state & GDK_CONTROL_MASK) {
+      mouse_down_zoom(0, &point, d, TRUE);
+    } else {
+      range_increment(d->VScroll, SCROLL_INC);
+    }
     return TRUE;
   case GDK_SCROLL_LEFT:
     range_increment(d->HScroll, -SCROLL_INC);
@@ -5229,11 +5318,20 @@ SetScroller(void)
   gtk_range_set_value(GTK_RANGE(d->VScroll), y);
   gtk_range_set_increments(GTK_RANGE(d->VScroll), 10, 40);
 
-  d->hupper = width;
-  d->vupper = height;
-
   d->hscroll = x;
   d->vscroll = y;
+}
+
+static double
+get_range_max(GtkWidget *w)
+{
+  GtkAdjustment *adj;
+  double val;
+
+  adj = gtk_range_get_adjustment(GTK_RANGE(w));
+  val = (adj) ? gtk_adjustment_get_upper(adj) : 0;
+
+  return val;
 }
 
 void
@@ -5249,8 +5347,8 @@ ChangeDPI(void)
 
   d = &NgraphApp.Viewer;
 
-  XRange = d->hupper;
-  YRange = d->vupper;
+  XRange = get_range_max(d->HScroll);
+  YRange = get_range_max(d->VScroll);
 
   XPos = d->hscroll;
   YPos = d->vscroll;
@@ -5292,12 +5390,10 @@ ChangeDPI(void)
 
   gtk_range_set_range(GTK_RANGE(d->HScroll), 0, width);
   gtk_range_set_value(GTK_RANGE(d->HScroll), XPos);
-  d->hupper = width;
   d->hscroll = XPos;
 
   gtk_range_set_range(GTK_RANGE(d->VScroll), 0, height);
   gtk_range_set_value(GTK_RANGE(d->VScroll), YPos);
-  d->vupper = height;
   d->vscroll = YPos;
 
   if ((obj = chkobject("text")) != NULL) {

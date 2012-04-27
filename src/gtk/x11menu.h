@@ -139,7 +139,7 @@ struct Viewer
   int allclear;
   int cx, cy;
   int ignoreredraw;
-  double vscroll, hscroll, vupper, hupper, Zoom;
+  double vscroll, hscroll, Zoom;
 };
 
 enum SubWinType {

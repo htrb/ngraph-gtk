@@ -1,3 +1,18 @@
+2012-04-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (mouse_down_zoom): now cursor position is
+	static.
+	(ViewerEvScroll): control + wheel works as zoom.
+	(get_range_max): added.
+	(ChangeDPI): use "get_range_max()".
+	(show_zoom_animation, show_move_animation): added.
+	(mouse_down_zoom): use "show_zoom_animation()" and
+	"show_move_animation()".
+	(ViewerEvMButtonDown): use "show_move_animation()".
+
+	* src/gtk/x11menu.h (Viewer): remove members "hupper" and
+	"vupper".
+
 2012-04-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (ChangeDPI): use "nround()" to avoid floating

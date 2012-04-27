@@ -1505,7 +1505,7 @@ mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
     dpi = DPI_MAX;
   Menulocal.windpi = dpi;
   Menulocal.local->pixel_dot_x =
-      Menulocal.local->pixel_dot_y =dpi / (DPI_MAX * 1.0);
+    Menulocal.local->pixel_dot_y = dpi / (DPI_MAX * 1.0);
   *(int *) argv[2] = dpi;
 
   if (NgraphApp.Viewer.gdk_win) {
