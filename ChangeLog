@@ -1,3 +1,9 @@
+2012-05-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (show_zoom_animation, show_move_animation):
+	don't call "gdk_window_invalidate_rect()".
+	(ViewerEvPaint): check "ZoomLock".
+
 2012-04-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (mouse_down_zoom): now cursor position is

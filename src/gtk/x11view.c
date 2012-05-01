@@ -2776,7 +2776,6 @@ show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
 #else
     cairo_fill(cr);
 #endif
-    gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
   }
 
   cairo_pattern_destroy(pattern);
@@ -2810,7 +2809,6 @@ show_move_animation(struct Viewer *d, int x, int y)
 #else
     cairo_fill(cr);
 #endif
-    gdk_window_invalidate_rect(d->gdk_win, NULL, TRUE);
   }
 
   cairo_pattern_destroy(pattern);
@@ -4891,6 +4889,11 @@ ViewerEvPaint(GtkWidget *w, GdkEventExpose *e, gpointer client_data)
   struct Viewer *d;
 
   d = (struct Viewer *) client_data;
+
+  if (ZoomLock) {
+    return TRUE;
+  }
+
 
 #if ! GTK_CHECK_VERSION(3, 0, 0)
   if (e && e->count != 0) {
