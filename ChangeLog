@@ -1,3 +1,19 @@
+2012-05-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (calc_mouse_x, calc_mouse_y): added.
+	(text_dropped, mouse_up_point, mouse_up_drag, mouse_up_change)
+	(mouse_up_lgend1, mouse_up_lgend2, update_frame_rect)
+	(mouse_move_drag, mouse_move_change, ViewerEvMouseMove)
+	(SetVRuler, SetHRuler): use "calc_mouse_x()" and/or
+	"calc_mouse_y()".
+
+2012-05-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/math/math_basic_function.c (math_func_rand): use
+	"g_random_double()".
+	(math_func_srand): use "g_random_set_seed()".
+	(create_random_buf): removed.
+
 2012-05-01  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (show_zoom_animation, show_move_animation):

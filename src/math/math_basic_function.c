@@ -915,43 +915,12 @@ math_func_qinv(MathFunctionCallExpression *expl, MathEquation *eq, MathValue *rv
   return 0;
 }
 
-#ifdef HAVE_LIBGSL
-static gsl_rng *RandomBuf = NULL;
-#define RANDOM_ALGORITHM gsl_rng_mt19937
-
-static gsl_rng *
-create_random_buf(void)
-{
-  gsl_rng * r;
-
-  r = gsl_rng_alloc(RANDOM_ALGORITHM);
-  if (r) {
-    gsl_rng_set(r, 0);
-  }
-
-  return r;
-}
-
-#endif
-
 int
 math_func_rand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval)
 {
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-#ifdef HAVE_LIBGSL
-  if (RandomBuf == NULL) {
-    RandomBuf = create_random_buf();
-  }
-
-  if (RandomBuf) {
-    rval->val = gsl_rng_uniform (RandomBuf) * exp->buf[0].val.val;
-  } else {
-    rval->val =  (rand() / ((double) RAND_MAX + 1)) * exp->buf[0].val.val;
-  }
-#else
-  rval->val =  (rand() / ((double) RAND_MAX + 1)) * exp->buf[0].val.val;
-#endif
+  rval->val = g_random_double() * exp->buf[0].val.val;
 
   return 0;
 }
@@ -961,19 +930,7 @@ math_func_srand(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rv
 {
   MATH_CHECK_ARG(rval, exp->buf[0]);
 
-#ifdef HAVE_LIBGSL
-  if (RandomBuf == NULL) {
-    RandomBuf = create_random_buf();
-  }
-
-  if (RandomBuf) {
-    gsl_rng_set(RandomBuf, exp->buf[0].val.val);
-  } else {
-    srand(exp->buf[0].val.val);
-  }
-#else
-  srand(exp->buf[0].val.val);
-#endif
+  g_random_set_seed(exp->buf[0].val.val);
   rval->val = exp->buf[0].val.val;
 
   return 0;

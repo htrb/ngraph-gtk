@@ -183,6 +183,18 @@ mxp2d(int r)
   return ceil(r / Menulocal.local->pixel_dot_x);
 }
 
+static int
+calc_mouse_x(int x, double zoom, const struct Viewer *d)
+{
+  return nround((mxp2d(x + d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom);
+}
+
+static int
+calc_mouse_y(int y, double zoom, const struct Viewer *d)
+{
+  return nround((mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom);
+}
+
 static double
 range_increment(GtkWidget *w, double inc)
 {
@@ -681,8 +693,8 @@ text_dropped(const char *str, gint x, gint y, struct Viewer *d)
   }
 
   inst = chkobjinst(obj, id);
-  x1 = (mxp2d(x + d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
-  y1 = (mxp2d(y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
+  x1 = calc_mouse_x(x, zoom, d);
+  y1 = calc_mouse_y(y, zoom, d);
 
   CheckGrid(FALSE, 0, &x1, &y1, NULL);
 
@@ -2748,7 +2760,7 @@ mouse_down_move_data(struct Viewer *d)
 #define VIEWER_DPI_MAX 620
 #define VIEWER_DPI_MIN  20
 
-#define ANIM_DIV 20
+#define ANIM_DIV 10
 static void
 show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
 {
@@ -2788,15 +2800,29 @@ show_move_animation(struct Viewer *d, int x, int y)
   cairo_pattern_t *pattern;
   cairo_matrix_t matrix;
   cairo_t *cr;
-  int i;
+  int i, n;
   double incx, incy;
 
   cr = gdk_cairo_create(d->gdk_win);
-  incx = 1.0 * x / ANIM_DIV;
-  incy = 1.0 * y / ANIM_DIV;
+
+  if (abs(x) < 1 && abs(y) < 1) {
+    return;
+  }
+
+  n = abs(x) / 4;
+  if (abs(y) / 4 > n) {
+    n = abs(y) / 4;
+  }
+
+  if (n > ANIM_DIV) {
+    n = ANIM_DIV;
+  }
+
+  incx = 1.0 * x / n;
+  incy = 1.0 * y / n;
 
   pattern = cairo_pattern_create_for_surface(Menulocal.pix);
-  for (i = 1; i <= ANIM_DIV; i++) {
+  for (i = 1; i <= n; i++) {
     cairo_matrix_init(&matrix,
 		      1, 0,
 		      0, 1,
@@ -2916,11 +2942,8 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  d->MouseX1 = d->MouseX2 = (mxp2d(point->x - d->cx + d->hscroll)
-			     - Menulocal.LeftMargin) / zoom;
-
-  d->MouseY1 = d->MouseY2 = (mxp2d(point->y - d->cy + d->vscroll)
-			     - Menulocal.TopMargin) / zoom;
+  d->MouseX1 = d->MouseX2 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY1 = d->MouseY2 = calc_mouse_y(point->y, zoom, d);
 
   d->MouseMode = MOUSENONE;
 
@@ -2972,11 +2995,8 @@ mouse_up_point(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
   d->Capture = FALSE;
   d->ShowRect = FALSE;
 
-  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		- Menulocal.LeftMargin) / zoom;
-
-  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		- Menulocal.TopMargin) / zoom;
+  d->MouseX2 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY2 = calc_mouse_y(point->y, zoom, d);
 
   x1 = d->MouseX1;
   y1 = d->MouseY1;
@@ -3033,11 +3053,8 @@ mouse_up_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 
   d->ShowFrame = FALSE;
 
-  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		- Menulocal.LeftMargin) / zoom;
-
-  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		- Menulocal.TopMargin) / zoom;
+  d->MouseX2 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY2 = calc_mouse_y(point->y, zoom, d);
 
   dx = d->MouseX2 - d->MouseX1;
   dy = d->MouseY2 - d->MouseY1;
@@ -3093,11 +3110,8 @@ mouse_up_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d)
 
   d->ShowRect = FALSE;
 
-  vx1 = (mxp2d(point->x - d->cx + d->hscroll)
-	 - Menulocal.LeftMargin) / zoom;
-
-  vy1 = (mxp2d(point->y - d->cy + d->vscroll)
-	 - Menulocal.TopMargin) / zoom;
+  vx1 = calc_mouse_x(point->x, zoom, d);
+  vy1 = calc_mouse_y(point->y, zoom, d);
 
   d->MouseX2 = vx1;
   d->MouseY2 = vy1;
@@ -3171,11 +3185,8 @@ mouse_up_change(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   d->ShowLine = FALSE;
 
   if ((d->MouseX1 != d->MouseX2) || (d->MouseY1 != d->MouseY2)) {
-    d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		  - Menulocal.LeftMargin) / zoom;
-
-    d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		  - Menulocal.TopMargin) / zoom;
+    d->MouseX2 = calc_mouse_x(point->x, zoom, d);
+    d->MouseY2 = calc_mouse_y(point->y, zoom, d);
 
     dx = d->MouseX2 - d->MouseX1;
     dy = d->MouseY2 - d->MouseY1;
@@ -3233,11 +3244,8 @@ mouse_up_lgend1(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 
   d->Capture = FALSE;
 
-  d->MouseX1 = (mxp2d(point->x + d->hscroll - d->cx)
-		- Menulocal.LeftMargin) / zoom;
-
-  d->MouseY1 = (mxp2d(point->y + d->vscroll - d->cy)
-		- Menulocal.TopMargin) / zoom;
+  d->MouseX1 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY1 = calc_mouse_y(point->y, zoom, d);
 
   x1 = d->MouseX1;
   y1 = d->MouseY1;
@@ -3261,11 +3269,8 @@ mouse_up_lgend2(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   int num, x1, y1;
   struct Point *po;
 
-  d->MouseX1 = (mxp2d(point->x + d->hscroll - d->cx)
-		- Menulocal.LeftMargin) / zoom;
-
-  d->MouseY1 = (mxp2d(point->y + d->vscroll - d->cy)
-		- Menulocal.TopMargin) / zoom;
+  d->MouseX1 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY1 = calc_mouse_y(point->y, zoom, d);
 
   x1 = d->MouseX1;
   y1 = d->MouseY1;
@@ -4135,11 +4140,8 @@ set_mouse_cursor_hover(struct Viewer *d, int x, int y)
 static void
 update_frame_rect(TPoint *point, struct Viewer *d, double zoom)
 {
-  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		- Menulocal.LeftMargin) / zoom;
-
-  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		- Menulocal.TopMargin) / zoom;
+  d->MouseX2 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY2 = calc_mouse_y(point->y, zoom, d);
 }
 
 #define SQRT3 1.73205080756888
@@ -4264,11 +4266,8 @@ mouse_move_drag(unsigned int state, TPoint *point, double zoom, struct Viewer *d
 {
   int x, y;
 
-  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		- Menulocal.LeftMargin) / zoom;
-
-  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		- Menulocal.TopMargin) / zoom;
+  d->MouseX2 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY2 = calc_mouse_y(point->y, zoom, d);
 
   x = d->MouseX2 - d->MouseX1;
   y = d->MouseY2 - d->MouseY1;
@@ -4285,11 +4284,8 @@ mouse_move_zoom(unsigned int state, TPoint *point, double zoom, struct Viewer *d
   double zoom2;
   int vx1, vx2, vy1, vy2;
 
-  vx1 = (mxp2d(point->x - d->cx + d->hscroll)
-	 - Menulocal.LeftMargin) / zoom;
-
-  vy1 = (mxp2d(point->y - d->cy + d->vscroll)
-	 - Menulocal.TopMargin) / zoom;
+  vx1 = calc_mouse_x(point->x, zoom, d);
+  vy1 = calc_mouse_y(point->y, zoom, d);
 
   zoom2 = calc_zoom(d, vx1, vy1, &vx2, &vy2);
 
@@ -4306,11 +4302,8 @@ mouse_move_change(unsigned int state, TPoint *point, double zoom, struct Viewer 
 {
   int x, y;
 
-  d->MouseX2 = (mxp2d(point->x + d->hscroll - d->cx)
-		- Menulocal.LeftMargin) / zoom;
-
-  d->MouseY2 = (mxp2d(point->y + d->vscroll - d->cy)
-		- Menulocal.TopMargin) / zoom;
+  d->MouseX2 = calc_mouse_x(point->x, zoom, d);
+  d->MouseY2 = calc_mouse_y(point->y, zoom, d);
 
   x = d->MouseX2 - d->MouseX1;
   y = d->MouseY2 - d->MouseY1;
@@ -4388,8 +4381,8 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   d->KeyMask = state;
   zoom = Menulocal.PaperZoom / 10000.0;
 
-  dx = (mxp2d(point->x + d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
-  dy = (mxp2d(point->y + d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
+  dx = calc_mouse_x(point->x, zoom, d);
+  dy = calc_mouse_y(point->y, zoom, d);
 
   if ((d->Mode != DataB) &&
       (d->Mode != EvalB) &&
@@ -5046,7 +5039,7 @@ SetHRuler(const struct Viewer *d)
   gdk_drawable_get_size(d->gdk_win, &width, NULL);
 #endif
   zoom = Menulocal.PaperZoom / 10000.0;
-  x1 = N2GTK_RULER_METRIC(mxp2d(d->hscroll - d->cx) - Menulocal.LeftMargin) / zoom;
+  x1 = N2GTK_RULER_METRIC(calc_mouse_x(0, zoom, d));
   x2 = x1 + N2GTK_RULER_METRIC(mxp2d(width)) / zoom;
 
   nruler_set_range(d->HRuler, x1, x2);
@@ -5064,7 +5057,7 @@ SetVRuler(const struct Viewer *d)
   gdk_drawable_get_size(d->gdk_win, NULL, &height);
 #endif
   zoom = Menulocal.PaperZoom / 10000.0;
-  y1 = N2GTK_RULER_METRIC(mxp2d(d->vscroll - d->cy) - Menulocal.TopMargin) / zoom;
+  y1 = N2GTK_RULER_METRIC(calc_mouse_y(0, zoom, d));
   y2 = y1 + N2GTK_RULER_METRIC(mxp2d(height)) / zoom;
 
   nruler_set_range(d->VRuler, y1, y2);
@@ -5353,8 +5346,8 @@ ChangeDPI(void)
   XRange = get_range_max(d->HScroll);
   YRange = get_range_max(d->VScroll);
 
-  XPos = d->hscroll;
-  YPos = d->vscroll;
+  XPos = nround(d->hscroll);
+  YPos = nround(d->vscroll);
 
   if (XPos < 0) {
     XPos = 0;
