@@ -309,6 +309,7 @@ static NHASH MenuConfigHash = NULL;
 
 #define BUF_SIZE 64
 
+#if ! GTK_CHECK_VERSION(3, 4, 0)
 static void
 get_palette(void)
 {
@@ -359,6 +360,7 @@ set_palette(void)
 
   return;
 }
+#endif
 
 static void
 add_str_with_int_to_array(struct menu_config *cfg, struct narray *conf)
@@ -573,7 +575,9 @@ menu_save_config(int type)
   }
 
   if (type & SAVE_CONFIG_TYPE_OTHERS) {
+#if ! GTK_CHECK_VERSION(3, 4, 0)
     get_palette();
+#endif
     menu_save_config_sub(MenuConfigOthers, &conf);
   }
 
@@ -1232,7 +1236,9 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.pix = NULL;
   Menulocal.lock = 0;
 
+#if ! GTK_CHECK_VERSION(3, 4, 0)
   set_palette();
+#endif
 
   if (!OpenApplication()) {
     error(obj, ERR_MENU_DISPLAY);

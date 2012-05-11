@@ -2170,7 +2170,11 @@ position_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->direction = w;
 
   w = combo_box_entry_create();
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
+#else
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 2, -1);
+#endif
   g_signal_connect(w, "changed", G_CALLBACK(AxisDialogRef), dd);
   add_widget_to_table(table, w, _("_Adjust:"), FALSE, i++);
   d->adjust = w;

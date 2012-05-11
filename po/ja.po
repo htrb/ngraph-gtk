@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-05-10 16:04+0900\n"
+"POT-Creation-Date: 2012-05-11 17:08+0900\n"
 "PO-Revision-Date: 2012-03-30 18:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gtk/ox11menu.c:1974
+#: src/gtk/ox11menu.c:1980
 msgid "Unsaved Graph"
 msgstr "新規グラフ"
 
@@ -193,7 +193,7 @@ msgstr "色(_C):"
 msgid "_Background"
 msgstr "背景色(_B)"
 
-#: src/gtk/x11axis.c:388 src/gtk/x11opt.c:1726
+#: src/gtk/x11axis.c:388 src/gtk/x11opt.c:1740
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
@@ -367,7 +367,7 @@ msgstr "並行シフト量(_P):"
 msgid "shift (_N):"
 msgstr "垂直シフト量(_N):"
 
-#: src/gtk/x11axis.c:1866 src/gtk/x11axis.c:2183
+#: src/gtk/x11axis.c:1866 src/gtk/x11axis.c:2187
 msgid "Position"
 msgstr "位置"
 
@@ -431,40 +431,40 @@ msgstr "フォント"
 msgid "_Length:"
 msgstr "長さ(_L):"
 
-#: src/gtk/x11axis.c:2175
+#: src/gtk/x11axis.c:2179
 msgid "_Adjust:"
 msgstr "交差軸(_A):"
 
-#: src/gtk/x11axis.c:2179
+#: src/gtk/x11axis.c:2183
 msgid "Adjust _Position:"
 msgstr "交差位置(_P):"
 
-#: src/gtk/x11axis.c:2204
+#: src/gtk/x11axis.c:2208
 #, c-format
 msgid "Axis %d %s"
 msgstr "軸 %d %s"
 
-#: src/gtk/x11axis.c:2213
+#: src/gtk/x11axis.c:2217
 msgid "_Scale"
 msgstr "スケール(_S)"
 
-#: src/gtk/x11axis.c:2217
+#: src/gtk/x11axis.c:2221
 msgid "_Baseline"
 msgstr "軸基線(_B)"
 
-#: src/gtk/x11axis.c:2221
+#: src/gtk/x11axis.c:2225
 msgid "_Gauge"
 msgstr "目盛線(_G)"
 
-#: src/gtk/x11axis.c:2225
+#: src/gtk/x11axis.c:2229
 msgid "_Numbering"
 msgstr "目盛数字(_N)"
 
-#: src/gtk/x11axis.c:2229
+#: src/gtk/x11axis.c:2233
 msgid "_Font"
 msgstr "フォント(_F)"
 
-#: src/gtk/x11axis.c:2233
+#: src/gtk/x11axis.c:2237
 msgid "_Position"
 msgstr "位置(_P)"
 
@@ -472,7 +472,7 @@ msgstr "位置(_P)"
 msgid "Save NGP file"
 msgstr "NGPファイルの保存"
 
-#: src/gtk/x11commn.c:998 src/gtk/x11opt.c:1866
+#: src/gtk/x11commn.c:998 src/gtk/x11opt.c:1891
 #, c-format
 msgid "Saving `%.128s'."
 msgstr "保存中 `%.128s'."
@@ -515,11 +515,11 @@ msgstr "Ngraph.ini をコピーできませんでした."
 msgid "error"
 msgstr "エラー"
 
-#: src/gtk/x11dialg.c:49 src/gtk/x11opt.c:1730
+#: src/gtk/x11dialg.c:49 src/gtk/x11opt.c:1744
 msgid "solid"
 msgstr "実線"
 
-#: src/gtk/x11dialg.c:50 src/gtk/x11opt.c:1731
+#: src/gtk/x11dialg.c:50 src/gtk/x11opt.c:1745
 msgid "dot"
 msgstr "点線"
 
@@ -889,7 +889,7 @@ msgstr "読込(_L)"
 msgid "_Result"
 msgstr "フィット結果(_R)"
 
-#: src/gtk/x11file.c:1704 src/gtk/x11file.c:1928 src/gtk/x11view.c:942
+#: src/gtk/x11file.c:1704 src/gtk/x11file.c:1928 src/gtk/x11view.c:953
 msgid "Line No."
 msgstr "行"
 
@@ -1023,11 +1023,11 @@ msgstr "ファイルから設定読込(_L)"
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: src/gtk/x11file.c:3061 src/gtk/x11view.c:952
+#: src/gtk/x11file.c:3061 src/gtk/x11view.c:963
 msgid "_Mask"
 msgstr "マスク(_M)"
 
-#: src/gtk/x11file.c:3065 src/gtk/x11view.c:953
+#: src/gtk/x11file.c:3065 src/gtk/x11view.c:964
 msgid "_Move"
 msgstr "移動(_M)"
 
@@ -1179,7 +1179,7 @@ msgstr "エラー"
 msgid "All"
 msgstr "全てのファイル"
 
-#: src/gtk/x11gui.c:870 src/gtk/x11opt.c:1859
+#: src/gtk/x11gui.c:870 src/gtk/x11opt.c:1884
 #, c-format
 msgid ""
 "`%s'\n"
@@ -2235,31 +2235,31 @@ msgstr "幅(_W):"
 msgid "Window _Height:"
 msgstr "高さ(_H):"
 
-#: src/gtk/x11opt.c:1722
+#: src/gtk/x11opt.c:1736
 msgid "_Grid:"
 msgstr "グリッド(_G):"
 
-#: src/gtk/x11opt.c:1732
+#: src/gtk/x11opt.c:1746
 msgid "_Line attribute of focus frame:"
 msgstr "フォーカスフレームの線種(_L):"
 
-#: src/gtk/x11opt.c:1740
+#: src/gtk/x11opt.c:1754
 msgid "_Antialias:"
 msgstr "アンチエイリアス(_A):"
 
-#: src/gtk/x11opt.c:1742
+#: src/gtk/x11opt.c:1756
 msgid "_Preserve line width and style"
 msgstr "線幅と線種を保持する(_S)"
 
-#: src/gtk/x11opt.c:1746
+#: src/gtk/x11opt.c:1760
 msgid "_Load files on redraw"
 msgstr "再描画時にデータファイル読み込み(_L)"
 
-#: src/gtk/x11opt.c:1752
+#: src/gtk/x11opt.c:1766
 msgid "_Maximum number of data on redraw:"
 msgstr "再描画時の最大データ数(_M):"
 
-#: src/gtk/x11opt.c:1860
+#: src/gtk/x11opt.c:1885
 msgid "Save as Ngraph.ngp"
 msgstr "Ngraph.ngp として保存"
 
@@ -2316,7 +2316,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:739 src/gtk/x11print.c:1002 src/gtk/x11view.c:5484
+#: src/gtk/x11print.c:739 src/gtk/x11print.c:1002 src/gtk/x11view.c:5508
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2332,33 +2332,33 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11view.c:1221 src/gtk/x11view.c:1223
+#: src/gtk/x11view.c:1236 src/gtk/x11view.c:1238
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1328
+#: src/gtk/x11view.c:1343
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1337
+#: src/gtk/x11view.c:1352
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2754
+#: src/gtk/x11view.c:2769
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3971
+#: src/gtk/x11view.c:3986
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5478
+#: src/gtk/x11view.c:5502
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5485
+#: src/gtk/x11view.c:5509
 msgid "Drawing"
 msgstr "描画中"
 
@@ -2366,7 +2366,7 @@ msgstr "描画中"
 msgid "_Copy Settings"
 msgstr "設定のコピー(_C)"
 
-#: src/gtk/gtk_widget.c:556
+#: src/gtk/gtk_widget.c:561
 msgid "Pick a Color"
 msgstr "色の選択"
 

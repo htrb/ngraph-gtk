@@ -1658,7 +1658,11 @@ static void
 ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 {
   int a;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  GdkRGBA color;
+#else
   GdkColor color;
+#endif
 
   getobj(d->Obj, "dpi", d->Id, 0, NULL, &(d->dpis));
   gtk_range_set_value(GTK_RANGE(d->dpi), d->dpis);
@@ -1676,10 +1680,20 @@ ViewerDialogSetupItem(GtkWidget *w, struct ViewerDialog *d)
 
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->preserve_width), Menulocal.preserve_width);
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  color.red = Menulocal.bg_r;
+  color.green = Menulocal.bg_g;
+  color.blue = Menulocal.bg_b;
+  color.alpha = 1;
+  gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(d->bgcol), FALSE);
+  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(d->bgcol), &color);
+#else
   color.red = Menulocal.bg_r * 65535;
   color.green = Menulocal.bg_g * 65535;
   color.blue = Menulocal.bg_b * 65535;
+  gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(d->bgcol), FALSE);
   gtk_color_button_set_color(GTK_COLOR_BUTTON(d->bgcol), &color);
+#endif
 }
 
 static void
@@ -1762,7 +1776,11 @@ ViewerDialogClose(GtkWidget *w, void *data)
 {
   struct ViewerDialog *d;
   int ret, dpi, a;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  GdkRGBA color;
+#else
   GdkColor color;
+#endif
 
   d = (struct ViewerDialog *) data;
 
@@ -1796,10 +1814,17 @@ ViewerDialogClose(GtkWidget *w, void *data)
   Menulocal.preserve_width =
     gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(d->preserve_width));
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(d->bgcol), &color);
+  Menulocal.bg_r = color.red;
+  Menulocal.bg_g = color.green;
+  Menulocal.bg_b = color.blue;
+#else
   gtk_color_button_get_color(GTK_COLOR_BUTTON(d->bgcol), &color);
   Menulocal.bg_r = color.red / 65535.0;
   Menulocal.bg_g = color.green / 65535.0;
   Menulocal.bg_b = color.blue / 65535.0;
+#endif
 
   Menulocal.grid = spin_entry_get_val(d->grid);
 

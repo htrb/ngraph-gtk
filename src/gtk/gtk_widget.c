@@ -253,7 +253,11 @@ create_direction_entry(void)
 
 #if USE_ENTRY_ICON
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
+#else
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
+#endif
   gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_GO_UP);
   gtk_entry_set_icon_from_stock(GTK_ENTRY(w), GTK_ENTRY_ICON_PRIMARY, GTK_STOCK_GO_DOWN);
   g_signal_connect(w, "icon-release", G_CALLBACK(direction_icon_released), NULL);
@@ -537,6 +541,7 @@ create_spin_entry(int min, int max, int inc,
 			    TRUE, FALSE, set_default_size, set_default_action);
 }
 
+#if ! GTK_CHECK_VERSION(3, 4, 0)
 static gboolean
 show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
 {
@@ -597,6 +602,7 @@ color_button_key_event(GtkWidget *w, GdkEventKey *e, gpointer u)
 
   return FALSE;
 }
+#endif
 
 GtkWidget *
 create_color_button(GtkWidget *win)
@@ -604,10 +610,12 @@ create_color_button(GtkWidget *win)
   GtkWidget *w;
 
   w = gtk_color_button_new();
+#if ! GTK_CHECK_VERSION(3, 4, 0)
   gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(w), Menulocal.use_opacity);
   g_signal_connect(w, "button-release-event", G_CALLBACK(show_color_sel), win);
   g_signal_connect(w, "key-press-event", G_CALLBACK(color_button_key_event), win);
   g_signal_connect(w, "key-release-event", G_CALLBACK(color_button_key_event), win);
+#endif
 
   return w;
 }

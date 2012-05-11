@@ -378,6 +378,9 @@ PasteObjectsFromClipboard(void)
 {
   GtkClipboard *clip;
   struct Viewer *d;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  GdkDevice *device;
+#endif
 
   d = &NgraphApp.Viewer;
 
@@ -388,7 +391,15 @@ PasteObjectsFromClipboard(void)
   if (gtk_clipboard_wait_is_text_available(clip)) {
     gint x, y;
     gtk_clipboard_request_text(clip, paste_cb, NULL);
+#if GTK_CHECK_VERSION(3, 4, 0)
+    device = gtk_get_current_event_device(); /* fix-me: is there any other appropriate way to get the device? */
+    if (device) {
+      gdk_window_get_device_position(d->gdk_win, device, &x, &y, NULL);
+      set_mouse_cursor_hover(d, x, y);
+    }
+#else
     gtk_widget_get_pointer(d->Win, &x, &y);
+#endif
     set_mouse_cursor_hover(d, x, y);
   }
 }
@@ -1130,6 +1141,10 @@ ViewerWinSetup(void)
 			GDK_BUTTON_RELEASE_MASK |
 			GDK_BUTTON_PRESS_MASK |
 			GDK_KEY_PRESS_MASK |
+#if GTK_CHECK_VERSION(3, 4, 0)
+			GDK_SCROLL_MASK |
+			GDK_SMOOTH_SCROLL_MASK |
+#endif
 			GDK_KEY_RELEASE_MASK);
   GTK_WIDGET_SET_CAN_FOCUS(d->Win);
 
@@ -4559,13 +4574,14 @@ do_popup(GdkEventButton *event, struct Viewer *d)
   gtk_menu_popup(GTK_MENU(d->popup), NULL, NULL, func, d, button, event_time);
 }
 
-
-
 static gboolean
 ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
   struct Viewer *d;
   TPoint point;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gdouble x, y;
+#endif
 
   point.x = e->x;
   point.y = e->y;
@@ -4593,6 +4609,14 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   case GDK_SCROLL_RIGHT:
     range_increment(d->HScroll, SCROLL_INC);
     return TRUE;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  case GDK_SCROLL_SMOOTH:
+    if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
+      range_increment(d->HScroll, x);
+      range_increment(d->VScroll, y);
+    }
+    return TRUE;
+#endif
   }
   return FALSE;
 }

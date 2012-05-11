@@ -1297,7 +1297,11 @@ SetObjAxisFieldFromWidget(GtkWidget *w, struct objlist *obj, int id, char *field
 static void
 _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
 {
+#if GTK_CHECK_VERSION(3, 4, 0)
+  GdkRGBA color;
+#else
   GdkColor color;
+#endif
   int r, g, b, a;
   char buf[64];
 
@@ -1316,12 +1320,23 @@ _set_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfi
     a = 255;
   }
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  color.red = r / 255.0;
+  color.green = g / 255.0;
+  color.blue = b / 255.0;
+  color.alpha = a / 255.0;
+
+  gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(w), Menulocal.use_opacity);
+  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(w), &color);
+#else
   color.red = (r & 0xffU) * 257;
   color.green = (g & 0xffU) * 257;
   color.blue = (b & 0xffU) * 257;
 
+  gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(w), Menulocal.use_opacity);
   gtk_color_button_set_color(GTK_COLOR_BUTTON(w), &color);
   gtk_color_button_set_alpha(GTK_COLOR_BUTTON(w), (a & 0xffU) * 257);
+#endif
 
   snprintf(buf, sizeof(buf), "#%02X%02X%02X", r, g, b);
   gtk_widget_set_tooltip_text(w, buf);
@@ -1354,17 +1369,28 @@ set_stroke_color(GtkWidget *w, struct objlist *obj, int id)
 static int
 _putobj_color(GtkWidget *w, struct objlist *obj, int id, char *prefix, char *postfix)
 {
+#if GTK_CHECK_VERSION(3, 4, 0)
+  GdkRGBA color;
+#else
   GdkColor color;
+#endif
   int r, g, b, a, o;
   char buf[64];
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(w), &color);
+  a = (Menulocal.use_opacity) ? (color.alpha * 255) : 0xff;
+  r = color.red * 255;
+  g = color.green * 255;
+  b = color.blue * 255;
+#else
   gtk_color_button_get_color(GTK_COLOR_BUTTON(w), &color);
+  a = (Menulocal.use_opacity) ? gtk_color_button_get_alpha(GTK_COLOR_BUTTON(w)) : 0xffff;
+  a >>= 8;
   r = (color.red >> 8);
   g = (color.green >> 8);
   b = (color.blue >> 8);
-
-  a = (Menulocal.use_opacity) ? gtk_color_button_get_alpha(GTK_COLOR_BUTTON(w)) : 0xffff;
-  a >>= 8;
+#endif
 
   snprintf(buf, sizeof(buf), "%sR%s", CHK_STR(prefix), CHK_STR(postfix));
 
