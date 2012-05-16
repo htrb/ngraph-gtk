@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-05-11 17:08+0900\n"
+"POT-Creation-Date: 2012-05-16 14:16+0900\n"
 "PO-Revision-Date: 2012-03-30 18:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1055,11 +1055,11 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:4459 src/gtk/x11file.c:4549
+#: src/gtk/x11file.c:4459 src/gtk/x11file.c:4554
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4470 src/gtk/x11file.c:4556
+#: src/gtk/x11file.c:4470 src/gtk/x11file.c:4561
 msgid "Color 2"
 msgstr "色 2"
 
@@ -1989,15 +1989,15 @@ msgstr "ビューアズーム"
 msgid "Viewer Zoom-In (+CONTROL: Zoom-Out +SHIFT: Centering)"
 msgstr "ビューアのズームイン (+CONTROL:ズームアウト +SHIFT:センタリング)"
 
-#: src/gtk/x11menu.c:3499
+#: src/gtk/x11menu.c:3512
 msgid "Error:"
 msgstr "エラー:"
 
-#: src/gtk/x11menu.c:3549
+#: src/gtk/x11menu.c:3562
 msgid "Question"
 msgstr "質問"
 
-#: src/gtk/x11menu.c:3606
+#: src/gtk/x11menu.c:3619
 #, c-format
 msgid "Executing `%.128s'."
 msgstr "実行中 `%.128s'."
@@ -2366,7 +2366,7 @@ msgstr "描画中"
 msgid "_Copy Settings"
 msgstr "設定のコピー(_C)"
 
-#: src/gtk/gtk_widget.c:561
+#: src/gtk/gtk_widget.c:576
 msgid "Pick a Color"
 msgstr "色の選択"
 

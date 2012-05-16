@@ -1,3 +1,20 @@
+2012-05-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11menu.c (detach_toolbar, create_toolbar_box): not used
+	if the version of GTK+ is greater or equal to 3.4.
+	(setupwindow): don't use GtkHandleBox.
+
+	* src/gtk/gtk_widget.c (show_color_sel, create_color_button): set
+	tool-tip.
+
+	* src/gtk/x11file.c (select_color): use GtkColorChooserDialog when
+	the version of GTK+ is greater or equal to 3.4.
+
+	* src/gtk/x11view.c (EvalDialogSetup): change default width of the
+	window.
+	(show_zoom_animation, show_move_animation): call
+	"cairo_set_source()" only once.
+
 2012-05-11  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_widget.h (NUM_ENTRY_WIDTH): change width of entries.

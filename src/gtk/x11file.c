@@ -4539,9 +4539,14 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
 static int
 select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
 {
-  GtkWidget *dlg, *sel;
+  GtkWidget *dlg;
   int r, g, b, a, rr ,gg, bb, aa, response;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  GdkRGBA color;
+#else
+  GtkWidget *sel;
   GdkColor color;
+#endif
   char *title;
 
   switch (type) {
@@ -4563,13 +4568,37 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
     return 1;
   }
 
-  color.red = (r & 0xffU) * 257;
-  color.green = (g & 0xffU) * 257;
-  color.blue = (b & 0xffU) * 257;
-
   if (! Menulocal.use_opacity) {
     a = 255;
   }
+
+#if GTK_CHECK_VERSION(3, 4, 0)
+  color.red = r / 255.0;
+  color.green = g / 255.0;
+  color.blue = b / 255.0;
+  color.alpha = a / 255.0;
+
+  dlg = gtk_color_chooser_dialog_new(title, GTK_WINDOW(NgraphApp.FileWin.Win));
+  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
+  gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
+
+  response = ndialog_run(dlg);
+  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
+
+  gtk_widget_destroy(dlg);
+
+  if (response != GTK_RESPONSE_OK) {
+    return 1;
+  }
+
+  rr = nround(color.red * 255);
+  gg = nround(color.green * 255);
+  bb = nround(color.blue * 255);
+  aa = nround(color.alpha * 255);
+#else
+  color.red = (r & 0xffU) * 257;
+  color.green = (g & 0xffU) * 257;
+  color.blue = (b & 0xffU) * 257;
 
   dlg = gtk_color_selection_dialog_new(title);
   sel = gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg));
@@ -4585,13 +4614,15 @@ select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
   aa = gtk_color_selection_get_current_alpha(GTK_COLOR_SELECTION(sel));
   gtk_widget_destroy(dlg);
 
-  if (response != GTK_RESPONSE_OK)
+  if (response != GTK_RESPONSE_OK) {
     return 1;
+  }
 
   rr = (color.red >> 8);
   gg = (color.green >> 8);
   bb = (color.blue >> 8);
   aa >>= 8;
+#endif
 
   switch (type) {
   case FILE_COMBO_ITEM_COLOR_1:

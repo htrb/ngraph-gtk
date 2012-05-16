@@ -541,7 +541,22 @@ create_spin_entry(int min, int max, int inc,
 			    TRUE, FALSE, set_default_size, set_default_action);
 }
 
-#if ! GTK_CHECK_VERSION(3, 4, 0)
+#if GTK_CHECK_VERSION(3, 4, 0)
+static void
+show_color_sel(GtkWidget *w, gpointer user_data)
+{
+  GdkRGBA col;
+  char buf[64];
+
+  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(w), &col);
+  snprintf(buf, sizeof(buf),
+	   "#%02X%02X%02X",
+	   nround(col.red * 255),
+	   nround(col.green * 255),
+	   nround(col.blue * 255));
+  gtk_widget_set_tooltip_text(w, buf);
+}
+#else
 static gboolean
 show_color_sel(GtkWidget *w, GdkEventButton *e, gpointer user_data)
 {
@@ -610,7 +625,9 @@ create_color_button(GtkWidget *win)
   GtkWidget *w;
 
   w = gtk_color_button_new();
-#if ! GTK_CHECK_VERSION(3, 4, 0)
+#if GTK_CHECK_VERSION(3, 4, 0)
+  g_signal_connect(w, "color-set", G_CALLBACK(show_color_sel), win);
+#else
   gtk_color_button_set_use_alpha(GTK_COLOR_BUTTON(w), Menulocal.use_opacity);
   g_signal_connect(w, "button-release-event", G_CALLBACK(show_color_sel), win);
   g_signal_connect(w, "key-press-event", G_CALLBACK(color_button_key_event), win);

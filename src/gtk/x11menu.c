@@ -2287,6 +2287,7 @@ tool_button_enter_leave_cb(GtkWidget *w, GdkEventCrossing *e, gpointer data)
   return FALSE;
 }
 
+#if ! GTK_CHECK_VERSION(3, 4, 0)
 static void
 detach_toolbar(GtkHandleBox *handlebox, GtkWidget *widget, gpointer user_data)
 {
@@ -2325,6 +2326,7 @@ create_toolbar_box(GtkWidget *box, GtkWidget *t, GtkOrientation o)
 
   return w;
 }
+#endif
 
 static GtkWidget *
 create_message_box(GtkWidget **label1, GtkWidget **label2)
@@ -2436,10 +2438,21 @@ setupwindow(void)
   read_keymap_file();
 
   w = get_toolbar(NgraphUi, "/CommandToolBar", NULL);
+#if GTK_CHECK_VERSION(3, 4, 0)
+  CToolbar = w;
+  gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
+#else
   CToolbar = create_toolbar_box(vbox, w, GTK_ORIENTATION_HORIZONTAL);
+#endif
 
   w = get_toolbar(NgraphUi, "/ToolBox", G_CALLBACK(CmViewerButtonPressed));
+#if GTK_CHECK_VERSION(3, 4, 0)
+  PToolbar = w;
+  gtk_orientable_set_orientation(GTK_ORIENTABLE(w), GTK_ORIENTATION_VERTICAL);
+  gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
+#else
   PToolbar = create_toolbar_box(hbox, w, GTK_ORIENTATION_VERTICAL);
+#endif
 
   NgraphApp.Viewer.popup = gtk_ui_manager_get_widget(NgraphUi, "/ViewerPopup");
   NgraphApp.Viewer.HScroll = gtk_hscrollbar_new(NULL);

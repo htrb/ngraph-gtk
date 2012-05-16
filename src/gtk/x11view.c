@@ -993,7 +993,7 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->show_cancel = FALSE;
     d->ok_button = GTK_STOCK_CLOSE;
 
-    gtk_window_set_default_size(GTK_WINDOW(wi), 500, 400);
+    gtk_window_set_default_size(GTK_WINDOW(wi), 540, 400);
   }
   EvalDialogSetupItem(wi, d);
 }
@@ -2789,6 +2789,7 @@ show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
   inc = (zoom - 1) / ANIM_DIV;
 
   pattern = cairo_pattern_create_for_surface(Menulocal.pix);
+  cairo_set_source(cr, pattern);
   for (i = 1; i <= ANIM_DIV; i++) {
     z = 1 + inc * i;
     cairo_matrix_init(&matrix,
@@ -2797,7 +2798,6 @@ show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
 		      (point->x + d->hscroll - d->cx) - point->x * z,
 		      (point->y + d->vscroll - d->cy) - point->y * z);
     cairo_pattern_set_matrix(pattern, &matrix);
-    cairo_set_source(cr, pattern);
 #if GTK_CHECK_VERSION(3, 0, 0)
     cairo_paint(cr);
 #else
@@ -2818,11 +2818,11 @@ show_move_animation(struct Viewer *d, int x, int y)
   int i, n;
   double incx, incy;
 
-  cr = gdk_cairo_create(d->gdk_win);
-
   if (abs(x) < 1 && abs(y) < 1) {
     return;
   }
+
+  cr = gdk_cairo_create(d->gdk_win);
 
   n = abs(x) / 4;
   if (abs(y) / 4 > n) {
@@ -2837,6 +2837,7 @@ show_move_animation(struct Viewer *d, int x, int y)
   incy = 1.0 * y / n;
 
   pattern = cairo_pattern_create_for_surface(Menulocal.pix);
+  cairo_set_source(cr, pattern);
   for (i = 1; i <= n; i++) {
     cairo_matrix_init(&matrix,
 		      1, 0,
@@ -2844,7 +2845,6 @@ show_move_animation(struct Viewer *d, int x, int y)
 		      (d->hscroll - d->cx) + incx * i,
 		      (d->vscroll - d->cy) + incy * i);
     cairo_pattern_set_matrix(pattern, &matrix);
-    cairo_set_source(cr, pattern);
 #if GTK_CHECK_VERSION(3, 0, 0)
     cairo_paint(cr);
 #else
