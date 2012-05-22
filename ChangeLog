@@ -1,3 +1,14 @@
+2012-05-22  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (scrollbar_scroll_cb): handle
+	"GDK_SCROLL_SMOOTH".
+	(ViewerEvScroll): multiply "x" and "y" by "SCROLL_INC" when the
+	direction is "GDK_SCROLL_SMOOTH".
+
+	* src/gtk/gtk_widget.c (set_adjustment): added.
+	(text_view_scroll_event): handle "GDK_SCROLL_SMOOTH".
+	(text_view_scroll_event): use "set_adjustment()".
+
 2012-05-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11menu.c (detach_toolbar, create_toolbar_box): not used

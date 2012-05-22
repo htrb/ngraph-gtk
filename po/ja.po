@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-05-16 14:16+0900\n"
+"POT-Creation-Date: 2012-05-22 19:22+0900\n"
 "PO-Revision-Date: 2012-03-30 18:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2316,7 +2316,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:739 src/gtk/x11print.c:1002 src/gtk/x11view.c:5508
+#: src/gtk/x11print.c:739 src/gtk/x11print.c:1002 src/gtk/x11view.c:5519
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2332,33 +2332,33 @@ msgstr "合成ファイルの保存"
 msgid "Making GRA file."
 msgstr "合成ファイル作成中"
 
-#: src/gtk/x11view.c:1236 src/gtk/x11view.c:1238
+#: src/gtk/x11view.c:1247 src/gtk/x11view.c:1249
 #, c-format
 msgid "Searching for data."
 msgstr "データ検索中"
 
-#: src/gtk/x11view.c:1343
+#: src/gtk/x11view.c:1354
 #, c-format
 msgid "Evaluating."
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:1352
+#: src/gtk/x11view.c:1363
 msgid "Evaluating"
 msgstr "データ評価中"
 
-#: src/gtk/x11view.c:2769
+#: src/gtk/x11view.c:2780
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:3986
+#: src/gtk/x11view.c:3997
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5502
+#: src/gtk/x11view.c:5513
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5509
+#: src/gtk/x11view.c:5520
 msgid "Drawing"
 msgstr "描画中"
 

@@ -1045,6 +1045,10 @@ EvalDialog(struct EvalDialog *data,
 static gboolean
 scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 {
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gdouble x, y;
+
+#endif
   switch (e->direction) {
   case GDK_SCROLL_UP:
   case GDK_SCROLL_LEFT:
@@ -1054,6 +1058,13 @@ scrollbar_scroll_cb(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
   case GDK_SCROLL_RIGHT:
     range_increment(w, SCROLL_INC);
     break;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  case GDK_SCROLL_SMOOTH:
+    if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
+      range_increment(w, y * SCROLL_INC);
+    }
+    return TRUE;
+#endif
   default:
     return FALSE;
   }
@@ -4612,8 +4623,8 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 #if GTK_CHECK_VERSION(3, 4, 0)
   case GDK_SCROLL_SMOOTH:
     if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
-      range_increment(d->HScroll, x);
-      range_increment(d->VScroll, y);
+      range_increment(d->HScroll, x * SCROLL_INC);
+      range_increment(d->VScroll, y * SCROLL_INC);
     }
     return TRUE;
 #endif

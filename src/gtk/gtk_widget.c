@@ -637,36 +637,13 @@ create_color_button(GtkWidget *win)
   return w;
 }
 
-static gboolean
-text_view_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
+static void
+set_adjustment(GtkAdjustment *adj, gdouble inc)
 {
-  GtkRange *scl;
-  GtkAdjustment *adj;
-  gdouble inc, val, min, max;
+  gdouble val, min, max;
 
-  switch (event->direction) {
-  case GDK_SCROLL_UP:
-    scl = g_object_get_data(G_OBJECT(widget), "vscroll");
-    adj = gtk_range_get_adjustment(scl);
-    inc = - gtk_adjustment_get_step_increment(adj);
-    break;
-  case GDK_SCROLL_DOWN:
-    scl = g_object_get_data(G_OBJECT(widget), "vscroll");
-    adj = gtk_range_get_adjustment(scl);
-    inc = gtk_adjustment_get_step_increment(adj);
-    break;
-  case GDK_SCROLL_LEFT:
-    scl = g_object_get_data(G_OBJECT(widget), "hscroll");
-    adj = gtk_range_get_adjustment(scl);
-    inc = - gtk_adjustment_get_step_increment(adj);
-    break;
-  case GDK_SCROLL_RIGHT:
-    scl = g_object_get_data(G_OBJECT(widget), "hscroll");
-    adj = gtk_range_get_adjustment(scl);
-    inc = gtk_adjustment_get_step_increment(adj);
-    break;
-  default:
-    return FALSE;
+  if (adj == NULL || inc == 0) {
+    return;
   }
 
   min = gtk_adjustment_get_lower(adj);
@@ -675,7 +652,7 @@ text_view_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_d
   val += inc;
 
   if (max < min) {
-    return FALSE;
+    return;
   }
 
   if (val < min) {
@@ -685,6 +662,64 @@ text_view_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_d
   }
 
   gtk_adjustment_set_value(adj, val);
+}
+
+static gboolean
+text_view_scroll_event(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
+{
+  GtkRange *scl;
+  GtkAdjustment *x_adj, *y_adj;
+  gdouble x, y;
+
+  switch (event->direction) {
+  case GDK_SCROLL_UP:
+    scl = g_object_get_data(G_OBJECT(widget), "vscroll");
+    y_adj = gtk_range_get_adjustment(scl);
+    y = - gtk_adjustment_get_step_increment(y_adj);
+    x_adj = NULL;
+    x = 0;
+    break;
+  case GDK_SCROLL_DOWN:
+    scl = g_object_get_data(G_OBJECT(widget), "vscroll");
+    y_adj = gtk_range_get_adjustment(scl);
+    y = gtk_adjustment_get_step_increment(y_adj);
+    x_adj = NULL;
+    x = 0;
+    break;
+  case GDK_SCROLL_LEFT:
+    scl = g_object_get_data(G_OBJECT(widget), "hscroll");
+    x_adj = gtk_range_get_adjustment(scl);
+    x = - gtk_adjustment_get_step_increment(x_adj);
+    y_adj = NULL;
+    y = 0;
+    break;
+  case GDK_SCROLL_RIGHT:
+    scl = g_object_get_data(G_OBJECT(widget), "hscroll");
+    x_adj = gtk_range_get_adjustment(scl);
+    x = gtk_adjustment_get_step_increment(x_adj);
+    y_adj = NULL;
+    y = 0;
+    break;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  case GDK_SCROLL_SMOOTH:
+    if (gdk_event_get_scroll_deltas((GdkEvent *) event, &x, &y)) {
+      scl = g_object_get_data(G_OBJECT(widget), "hscroll");
+      x_adj = gtk_range_get_adjustment(scl);
+      x *= gtk_adjustment_get_step_increment(x_adj);
+
+      scl = g_object_get_data(G_OBJECT(widget), "vscroll");
+      y_adj = gtk_range_get_adjustment(scl);
+      y *= gtk_adjustment_get_step_increment(y_adj);
+      break;
+    }
+    return FALSE;
+#endif
+  default:
+    return FALSE;
+  }
+
+  set_adjustment(x_adj, x);
+  set_adjustment(y_adj, y);
 
   return FALSE;
 }
