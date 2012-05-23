@@ -762,7 +762,9 @@ main(int argc, char **argv)
   g_mem_set_vtable(glib_mem_profiler_table);
 #endif
 
+#if ! GLIB_CHECK_VERSION(2, 32, 0)
   g_thread_init(NULL);
+#endif
   gdk_threads_init();
   gdk_threads_enter();
 

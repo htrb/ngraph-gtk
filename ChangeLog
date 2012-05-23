@@ -1,5 +1,13 @@
 2012-05-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/shell.c (set_shellevloop, nreadline): use "g_thread_new()"
+	instead of "g_thread_create()" when the version of glib is greater
+	or equal to 2.32.
+
+	* src/gtk/main.c (main): don't use duplicate function
+	"g_thread_init()" if the version of glib is greater or equal to
+	2.32.
+
 	* src/gtk/x11view.c (draw_cairo_arc): check if radius is not less
 	than 1.
 	(ViewerEvScroll): check "e->state" when "e->direction" is

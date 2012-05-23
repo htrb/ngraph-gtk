@@ -310,7 +310,11 @@ set_shellevloop(int sig)
   if (EvLoopActive)
     return;
 
+#if GLIB_CHECK_VERSION(2, 32, 0)
+  EvLoopThread = g_thread_new("evloop", shellevloop, NULL);
+#else
   EvLoopThread = g_thread_create(shellevloop, NULL, TRUE, NULL);
+#endif
 
   if (EvLoopThread == NULL)
     return;
@@ -377,7 +381,11 @@ nreadline(char *prompt)
 
 
   ReadlineLock = TRUE;
+#if GLIB_CHECK_VERSION(2, 32, 0)
+  thread= g_thread_new("readline", readline_thread, prompt);
+#else
   thread = g_thread_create(readline_thread, prompt, TRUE, NULL);
+#endif
   if (thread == NULL) {
     ReadlineLock = FALSE;
     return NULL;
