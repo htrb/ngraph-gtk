@@ -2165,6 +2165,10 @@ draw_cairo_arc(cairo_t *cr, int x, int y, int rx, int ry, int a1, int a2)
 {
   double da1, da2;
 
+  if (rx < 1 || ry < 1) {
+    return;
+  }
+
   cairo_save(cr);
   cairo_translate(cr, x, y);
   cairo_scale(cr, rx, ry);
@@ -4623,8 +4627,12 @@ ViewerEvScroll(GtkWidget *w, GdkEventScroll *e, gpointer client_data)
 #if GTK_CHECK_VERSION(3, 4, 0)
   case GDK_SCROLL_SMOOTH:
     if (gdk_event_get_scroll_deltas((GdkEvent *) e, &x, &y)) {
-      range_increment(d->HScroll, x * SCROLL_INC);
-      range_increment(d->VScroll, y * SCROLL_INC);
+      if ((e->state & GDK_CONTROL_MASK) && y != 0) {
+	mouse_down_zoom(0, &point, d, y > 0);
+      } else {
+	range_increment(d->HScroll, x * SCROLL_INC);
+	range_increment(d->VScroll, y * SCROLL_INC);
+      }
     }
     return TRUE;
 #endif
