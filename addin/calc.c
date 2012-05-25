@@ -123,7 +123,11 @@ create_control(struct calc_prm *prm)
   GtkWidget *table, *w;
   int j;
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  table = gtk_grid_new();
+#else
   table = gtk_table_new(1, 3, FALSE);
+#endif
 
   j = 0;
   w = create_text_entry(TRUE);

@@ -1499,7 +1499,12 @@ label_sub_window_create(struct SubWin *d, char *title, const char **xpm, const c
   GtkWidget *label;
 
   label = gtk_label_new(NULL);
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_widget_set_halign(label, GTK_ALIGN_START);
+  gtk_widget_set_valign(label, GTK_ALIGN_START);
+#else
   gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.0);
+#endif
   gtk_label_set_selectable(GTK_LABEL(label), TRUE);
   gtk_label_set_line_wrap(GTK_LABEL(label), FALSE);
   gtk_label_set_single_line_mode(GTK_LABEL(label), FALSE);

@@ -975,7 +975,11 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_container_add(GTK_CONTAINER(w), swin);
     gtk_box_pack_start(GTK_BOX(d->vbox), w, TRUE, TRUE, 4);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
     hbox = gtk_hbox_new(FALSE, 4);
+#endif
     w = gtk_button_new_from_stock(GTK_STOCK_SELECT_ALL);
     g_signal_connect(w, "clicked", G_CALLBACK(tree_store_select_all_cb), d->list);
     gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);

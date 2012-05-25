@@ -365,7 +365,11 @@ create_option_frame(struct file_prm *prm)
 
   frame = gtk_frame_new("option");
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
   vbox = gtk_vbox_new(FALSE, 4);
+#endif
 
   w = gtk_check_button_new_with_mnemonic("_Mix");
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
@@ -402,7 +406,11 @@ create_geometry_frame(struct file_prm *prm)
 
   frame = gtk_frame_new("geometry");
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  table = gtk_grid_new();
+#else
   table = gtk_table_new(1, 2, FALSE);
+#endif
 
   j = 0;
   w = gtk_spin_button_new_with_range(POS_MIN, POS_MAX, POS_INC);
@@ -563,7 +571,11 @@ create_file_frame(struct file_prm *prm)
   frame = gtk_frame_new(NULL);
   gtk_container_add(GTK_CONTAINER(frame), swin);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
+#endif
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
 
   prm->files = tview;
@@ -576,7 +588,11 @@ create_control(GtkWidget *box, struct file_prm *prm)
 {
   GtkWidget *w, *hbox;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
+#endif
   w = create_option_frame(prm);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 

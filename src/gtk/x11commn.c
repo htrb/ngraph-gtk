@@ -1641,7 +1641,11 @@ ProgressDialogCreate(char *title)
   gtk_window_set_position(GTK_WINDOW(ProgressDialog), GTK_WIN_POS_CENTER);
   gtk_window_set_type_hint(GTK_WINDOW(ProgressDialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
   vbox = gtk_vbox_new(FALSE, 4);
+#endif
 
   ProgressBar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
   gtk_progress_bar_set_ellipsize(ProgressBar, PANGO_ELLIPSIZE_MIDDLE);
@@ -1657,7 +1661,11 @@ ProgressDialogCreate(char *title)
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(ProgressBar2), FALSE, FALSE, 4);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
+#endif
   btn = gtk_button_new_from_stock(GTK_STOCK_STOP);
   g_signal_connect(btn, "clicked", G_CALLBACK(stop_btn_clicked), NULL);
 

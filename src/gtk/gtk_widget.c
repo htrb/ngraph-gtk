@@ -61,7 +61,9 @@ set_widget_sensitivity_with_label(GtkWidget *w, gboolean state)
 GtkWidget *
 add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand, int col, int width, int col_max, int n)
 {
-  GtkWidget *align, *label;
+  GtkWidget *label;
+#if ! GTK_CHECK_VERSION(3, 4, 0)
+  GtkWidget *align;
   int x, y;
 
   g_object_get(table, "n-columns", &x, "n-rows", &y, NULL);
@@ -69,21 +71,39 @@ add_widget_to_table_sub(GtkWidget *table, GtkWidget *w, char *title, int expand,
   x = (x > col_max) ? x : col_max;
   y = (y > n + 1) ? y : n + 1;
   gtk_table_resize(GTK_TABLE(table), y, x);
+#endif
 
   label = NULL;
 
   if (title) {
     label = gtk_label_new_with_mnemonic(title);
     gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
+#if GTK_CHECK_VERSION(3, 4, 0)
+    gtk_widget_set_halign(label, GTK_ALIGN_START);
+    g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
+    gtk_grid_attach(GTK_GRID(table), label, col, n, 1, 1);
+#else
     gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
     gtk_table_attach(GTK_TABLE(table), label, col, col + 1, n, n + 1, GTK_FILL, 0, 4, 4);
+#endif
     col++;
   }
 
   if (w) {
+#if GTK_CHECK_VERSION(3, 4, 0)
+    if (expand) {
+      gtk_widget_set_hexpand(w, TRUE);
+      gtk_widget_set_halign(w, GTK_ALIGN_FILL);
+    } else {
+      gtk_widget_set_halign(w, GTK_ALIGN_START);
+    }
+    g_object_set(w, "margin", GINT_TO_POINTER(4), NULL);
+    gtk_grid_attach(GTK_GRID(table), w, col, n, width, 1);
+#else
     align = gtk_alignment_new(0, 0.5, (expand) ? 1 : 0, 0);
     gtk_container_add(GTK_CONTAINER(align), w);
     gtk_table_attach(GTK_TABLE(table), align, col, col + width, n, n + 1, ((expand) ? GTK_EXPAND : 0) | GTK_FILL, 0, 4, 4);
+#endif
   }
 
   return label;
@@ -100,7 +120,11 @@ add_copy_button_to_box(GtkWidget *parent_box, GCallback cb, gpointer d, char *ob
 {
   GtkWidget *hbox, *w;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
+#endif
   w = gtk_button_new_with_mnemonic(_("_Copy Settings"));
   g_signal_connect(w, "map", G_CALLBACK(set_sensitivity_by_check_instance), obj_name);
   g_signal_connect(w, "clicked", cb, d);
@@ -115,11 +139,27 @@ item_setup(GtkWidget *box, GtkWidget *w, char *title, gboolean expand)
 {
   GtkWidget *hbox, *label;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_grid_new();
+  label = gtk_label_new_with_mnemonic(title);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
+  g_object_set(label, "margin", GINT_TO_POINTER(2), NULL);
+  g_object_set(w, "margin", GINT_TO_POINTER(2), NULL);
+  if (expand) {
+    gtk_widget_set_hexpand(w, TRUE);
+    gtk_widget_set_halign(w, GTK_ALIGN_FILL);
+  } else {
+    gtk_widget_set_halign(w, GTK_ALIGN_START);
+  }
+  gtk_grid_attach(GTK_GRID(hbox), label, 0, 0, 1, 1);
+  gtk_grid_attach(GTK_GRID(hbox), w, 1, 0, 1, 1);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
   label = gtk_label_new_with_mnemonic(title);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
   gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 2);
   gtk_box_pack_start(GTK_BOX(hbox), w, expand, expand, 2);
+#endif
   gtk_box_pack_start(GTK_BOX(box), hbox, expand, expand, 4);
 
   return label;
@@ -254,7 +294,7 @@ create_direction_entry(void)
 #if USE_ENTRY_ICON
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_ANGLE, FALSE, TRUE);
 #if GTK_CHECK_VERSION(3, 4, 0)
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
+  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.2, -1);
 #else
   gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH * 1.5, -1);
 #endif
@@ -856,9 +896,18 @@ create_text_view_with_line_number(GtkWidget **v)
   gtk_text_view_set_editable(GTK_TEXT_VIEW(ln), FALSE);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(ln), FALSE);
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  swin = gtk_grid_new();
+#else
   swin = gtk_table_new(3, 2, FALSE);
+#endif
+#if GTK_CHECK_VERSION(3, 2, 0)
+  hs = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
+  vs = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, NULL);
+#else
   hs = gtk_hscrollbar_new(NULL);
   vs = gtk_vscrollbar_new(NULL);
+#endif
 
   g_object_set_data(G_OBJECT(view), "hscroll", hs);
   g_object_set_data(G_OBJECT(view), "vscroll", vs);
@@ -883,6 +932,20 @@ create_text_view_with_line_number(GtkWidget **v)
   g_signal_connect(view, "scroll-event", G_CALLBACK(text_view_scroll_event), NULL);
   g_signal_connect(view, "size-allocate", G_CALLBACK(text_view_size_allocate), NULL);
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_widget_set_vexpand(ln, TRUE);
+  gtk_grid_attach(GTK_GRID(swin), ln,   0, 0, 1, 1);
+
+  gtk_widget_set_hexpand(view, TRUE);
+  gtk_widget_set_vexpand(view, TRUE);
+  gtk_grid_attach(GTK_GRID(swin), view, 1, 0, 1, 1);
+
+  gtk_widget_set_vexpand(hs, TRUE);
+  gtk_grid_attach(GTK_GRID(swin), hs,   0, 1, 2, 1);
+
+  gtk_widget_set_vexpand(vs, TRUE);
+  gtk_grid_attach(GTK_GRID(swin), vs,   2, 0, 1, 1);
+#else
   gtk_table_attach(GTK_TABLE(swin), ln,   0, 1, 0, 1,
 		   0, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_table_attach(GTK_TABLE(swin), view, 1, 2, 0, 1,
@@ -891,6 +954,7 @@ create_text_view_with_line_number(GtkWidget **v)
 		   GTK_FILL, GTK_FILL, 0, 0);
   gtk_table_attach(GTK_TABLE(swin), vs,   2, 3, 0, 1,
 		   GTK_FILL, GTK_FILL, 0, 0);
+#endif
 
   if (v) {
     *v = view;

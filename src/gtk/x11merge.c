@@ -128,7 +128,11 @@ MergeDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = create_file_entry(d->Obj);

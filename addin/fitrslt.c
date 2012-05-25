@@ -203,6 +203,22 @@ create_spin_button(const char *title, double min, double max, double inc, double
 {
   GtkWidget *w, *label;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  *hbox = gtk_grid_new();
+  gtk_widget_set_hexpand(*hbox, FALSE);
+
+  label = gtk_label_new_with_mnemonic(title);
+  g_object_set(label, "margin", GINT_TO_POINTER(4), NULL);
+
+  w = gtk_spin_button_new_with_range(min, max, inc);
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
+  gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
+  gtk_widget_set_hexpand(w, TRUE);
+  gtk_widget_set_halign(w, GTK_ALIGN_FILL);
+
+  gtk_grid_attach(GTK_GRID(*hbox), label, 0, 0, 1, 1);
+  gtk_grid_attach(GTK_GRID(*hbox), w,     1, 0, 1, 1);
+#else
   *hbox = gtk_hbox_new(FALSE, 4);
   label = gtk_label_new_with_mnemonic(title);
   gtk_box_pack_start(GTK_BOX(*hbox), label, FALSE, FALSE, 4);
@@ -211,6 +227,7 @@ create_spin_button(const char *title, double min, double max, double inc, double
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(w), init);
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), w);
   gtk_box_pack_start(GTK_BOX(*hbox), w, TRUE, TRUE, 4);
+#endif
 
   return w;
 }
@@ -223,7 +240,11 @@ create_format_frame(struct fit_prm *prm)
 
   frame = gtk_frame_new("format");
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
   vbox = gtk_vbox_new(FALSE, 4);
+#endif
 
   w = gtk_check_button_new_with_mnemonic("add _+");
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 2);
@@ -259,7 +280,11 @@ create_position_frame(struct fit_prm *prm)
 
   frame = gtk_frame_new("position");
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  table = gtk_grid_new();
+#else
   table = gtk_table_new(1, 2, FALSE);
+#endif
 
   j = 0;
   w = gtk_spin_button_new_with_range(POS_MIN, POS_MAX, POS_INC);
@@ -367,7 +392,11 @@ create_caption_frame(struct fit_prm *prm)
 
   frame = gtk_frame_new("caption");
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  table = gtk_grid_new();
+#else
   table = gtk_table_new(1, 4, FALSE);
+#endif
 
   for (i = 0; i < PRM_NUM; i++) {
     caption = prm->caption + i;
@@ -394,7 +423,12 @@ create_caption_frame(struct fit_prm *prm)
 
   gtk_container_add(GTK_CONTAINER(frame), table);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
+#endif
+
   gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 4);
 
   return hbox;
@@ -433,7 +467,11 @@ create_file_frame(struct fit_prm *prm)
 
   prm->combo = combo;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
+#endif
   label = gtk_label_new_with_mnemonic("_Data:");
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), combo);
 
@@ -448,7 +486,11 @@ create_control(GtkWidget *box, struct fit_prm *prm)
 {
   GtkWidget *w, *hbox;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
+#endif
   w = create_format_frame(prm);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
 

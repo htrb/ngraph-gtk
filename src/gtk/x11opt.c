@@ -330,7 +330,11 @@ SetScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct SetScriptDialog *) data;
   if (makewidget) {
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
 
@@ -570,7 +574,11 @@ SetDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   d = (struct SetDriverDialog *) data;
   if (makewidget) {
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = create_text_entry(FALSE, TRUE);
@@ -932,7 +940,11 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     int j;
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     j = 0;
     w = gtk_entry_new();
@@ -948,7 +960,11 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(d->vbox), table, FALSE, FALSE, 4);
 
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
     hbox = gtk_hbox_new(FALSE, 4);
+#endif
 
     swin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -962,7 +978,11 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     gtk_box_pack_start(GTK_BOX(hbox), swin, TRUE, TRUE, 4);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
     vbox = gtk_vbox_new(FALSE, 4);
+#endif
 
     w = gtk_button_new_from_stock(GTK_STOCK_ADD);
     g_signal_connect(w, "clicked", G_CALLBACK(FontSettingDialogAddAlternative), d);
@@ -1196,7 +1216,11 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
     vbox = gtk_vbox_new(FALSE, 4);
+#endif
     PrefFontDialogCreateWidgets(d, vbox, sizeof(list) / sizeof(*list), list);
     gtk_window_set_default_size(GTK_WINDOW(wi), 550, 300);
   }
@@ -1299,11 +1323,20 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+    vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
     hbox2 = gtk_hbox_new(FALSE, 4);
     vbox2 = gtk_vbox_new(FALSE, 4);
+#endif
 
     frame = gtk_frame_new(_("External programs"));
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
 
@@ -1325,7 +1358,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label(GTK_FRAME(frame), _("Save graph"));
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = combo_box_create();
@@ -1349,7 +1386,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
     frame = gtk_frame_new(NULL);
     gtk_frame_set_label(GTK_FRAME(frame), _("Load graph"));
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Expand include file"));
@@ -1370,10 +1411,18 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox2), vbox2, TRUE, TRUE, 4);
 
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
     vbox2 = gtk_vbox_new(FALSE, 4);
+#endif
 
     frame = gtk_frame_new(_("Size"));
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = create_spin_entry(1, HIST_SIZE_MAX, 1, FALSE, TRUE);
@@ -1393,7 +1442,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
 
     frame = gtk_frame_new(_("Font"));
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = gtk_font_button_new();
@@ -1412,7 +1465,11 @@ MiscDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 4);
 
     frame = gtk_frame_new(_("Miscellaneous"));
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = gtk_check_button_new_with_mnemonic(_("_Check \"change current directory\""));
@@ -1601,7 +1658,11 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i  = 0;
     w = gtk_check_button_new_with_mnemonic(_("use _External previewer"));
@@ -1609,7 +1670,11 @@ ExViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     g_signal_connect(w, "toggled", G_CALLBACK(use_external_toggled), d);
     d->use_external = w;
 
+#if GTK_CHECK_VERSION(3, 2, 0)
+    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 20, 620, 1);
+#else
     w = gtk_hscale_new_with_range(20, 620, 1);
+#endif
     d->dpi = w;
     add_widget_to_table(table, w, "_DPI:", TRUE, i++);
 
@@ -1722,11 +1787,23 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_CANCEL, IDCANCEL);
     gtk_dialog_add_button(GTK_DIALOG(wi), GTK_STOCK_SAVE, IDSAVE);
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
     hbox = gtk_hbox_new(FALSE, 4);
+#endif
+#if GTK_CHECK_VERSION(3, 2, 0)
+    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 20, 620, 1);
+#else
     w = gtk_hscale_new_with_range(20, 620, 1);
+#endif
     d->dpi = w;
     item_setup(hbox, w, "_DPI:", TRUE);
     add_widget_to_table(table, hbox, NULL, TRUE, i++);

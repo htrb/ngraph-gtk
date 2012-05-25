@@ -149,7 +149,11 @@ DriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
   d = (struct DriverDialog *) data;
   if (makewidget) {
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = combo_box_create();
@@ -250,7 +254,11 @@ OutputDataDialogSetup(GtkWidget *wi, void *data, int makewidget)
   if (makewidget) {
     w = create_spin_entry(0, 200, 1, FALSE, TRUE);
     d->div_entry = w;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
     hbox = gtk_hbox_new(FALSE, 4);
+#endif
     item_setup(hbox, w, _("_Div:"), TRUE);
     gtk_box_pack_start(GTK_BOX(d->vbox), hbox, FALSE, FALSE, 4);
   }

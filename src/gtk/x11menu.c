@@ -2336,15 +2336,27 @@ create_message_box(GtkWidget **label1, GtkWidget **label2)
   frame = gtk_frame_new(NULL);
   gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
   hbox = gtk_hbox_new(FALSE, 4);
+#endif
 
   w = gtk_label_new(NULL);
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_widget_set_halign(w, GTK_ALIGN_END);
+#else
   gtk_misc_set_alignment(GTK_MISC(w), 1.0, 0.5);
+#endif
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
   *label1 = w;
 
   w = gtk_label_new(NULL);
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_widget_set_halign(w, GTK_ALIGN_START);
+#else
   gtk_misc_set_alignment(GTK_MISC(w), 0, 0.5);
+#endif
   gtk_label_set_width_chars(GTK_LABEL(w), 16);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 4);
   *label2 = w;
@@ -2425,8 +2437,13 @@ setupwindow(void)
 {
   GtkWidget *w, *hbox, *vbox, *table;
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+  hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+#else
   vbox = gtk_vbox_new(FALSE, 0);
   hbox = gtk_hbox_new(FALSE, 0);
+#endif
 
   w = gtk_menu_bar_new();
   NgraphApp.Viewer.menu = w;
@@ -2455,14 +2472,40 @@ setupwindow(void)
 #endif
 
   NgraphApp.Viewer.popup = gtk_ui_manager_get_widget(NgraphUi, "/ViewerPopup");
+#if GTK_CHECK_VERSION(3, 2, 0)
+  NgraphApp.Viewer.HScroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, NULL);
+  NgraphApp.Viewer.VScroll = gtk_scrollbar_new(GTK_ORIENTATION_VERTICAL, NULL);
+#else
   NgraphApp.Viewer.HScroll = gtk_hscrollbar_new(NULL);
   NgraphApp.Viewer.VScroll = gtk_vscrollbar_new(NULL);
+#endif
   NgraphApp.Viewer.HRuler = hruler_new();
   NgraphApp.Viewer.VRuler = vruler_new();
   NgraphApp.Viewer.Win = gtk_drawing_area_new();
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  table = gtk_grid_new();
+#else
   table = gtk_table_new(3, 3, FALSE);
+#endif
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+  gtk_widget_set_hexpand(NgraphApp.Viewer.HRuler, TRUE);
+  gtk_grid_attach(GTK_GRID(table), NgraphApp.Viewer.HRuler,  1, 0, 1, 1);
+
+  gtk_widget_set_vexpand(NgraphApp.Viewer.VRuler, TRUE);
+  gtk_grid_attach(GTK_GRID(table), NgraphApp.Viewer.VRuler,  0, 1, 1, 1);
+
+  gtk_widget_set_hexpand(NgraphApp.Viewer.HScroll, TRUE);
+  gtk_grid_attach(GTK_GRID(table), NgraphApp.Viewer.HScroll, 1, 2, 1, 1);
+
+  gtk_widget_set_vexpand(NgraphApp.Viewer.VScroll, TRUE);
+  gtk_grid_attach(GTK_GRID(table), NgraphApp.Viewer.VScroll, 2, 1, 1, 1);
+
+  gtk_widget_set_hexpand(NgraphApp.Viewer.Win, TRUE);
+  gtk_widget_set_vexpand(NgraphApp.Viewer.Win, TRUE);
+  gtk_grid_attach(GTK_GRID(table), NgraphApp.Viewer.Win,     1, 1, 1, 1);
+#else
   gtk_table_attach(GTK_TABLE(table),
 		   NgraphApp.Viewer.HRuler,
 		   1, 2, 0, 1,
@@ -2492,6 +2535,7 @@ setupwindow(void)
 		   1, 2, 1, 2,
 		   GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL,
 		   0, 0);
+#endif
 
   gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
   gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);

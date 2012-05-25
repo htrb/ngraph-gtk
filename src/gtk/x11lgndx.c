@@ -397,7 +397,11 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_window_set_title(GTK_WINDOW(wi), title);
 
   if (makewidget) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
     hbox = gtk_hbox_new(FALSE, 4);
+#endif
 
     button = NULL;
 
@@ -423,9 +427,17 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     d->func_list = func_list;
 
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
     hbox = gtk_hbox_new(FALSE, 4);
+#endif
 
+#if GTK_CHECK_VERSION(3, 4, 0)
+    table = gtk_grid_new();
+#else
     table = gtk_table_new(1, 2, FALSE);
+#endif
 
     i = 0;
     w = combo_box_entry_create();
@@ -448,13 +460,21 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     add_widget_to_table(table, w, _("_Color:"), FALSE, i++);
     d->color = w;
 
+#if GTK_CHECK_VERSION(3, 2, 0)
+    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 10, DIV_MAX, 1);
+#else
     w = gtk_hscale_new_with_range(10, DIV_MAX, 1);
+#endif
     add_widget_to_table(table, w, _("_Division:"), TRUE, i++);
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogDiv), d);
     d->div = w;
 
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+#else
     hbox2 = gtk_hbox_new(FALSE, 4);
+#endif
     button = NULL;
 
     button = gtk_radio_button_new_with_mnemonic_from_widget(GTK_RADIO_BUTTON(button), "_T");
@@ -481,9 +501,17 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
     gtk_box_pack_start(GTK_BOX(hbox), table, TRUE, TRUE, 0);
 
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+    vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+#else
     vbox = gtk_vbox_new(FALSE, 4);
+#endif
 
+#if GTK_CHECK_VERSION(3, 2, 0)
+    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, SCALE_V_MAX, 1);
+#else
     w = gtk_hscale_new_with_range(0, SCALE_V_MAX, 1);
+#endif
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleV), d);
     d->scv = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
@@ -499,7 +527,11 @@ LegendGaussDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 
+#if GTK_CHECK_VERSION(3, 2, 0)
+    w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, - SCALE_H_MAX, SCALE_H_MAX, 1);
+#else
     w = gtk_hscale_new_with_range(- SCALE_H_MAX, SCALE_H_MAX, 1);
+#endif
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendGaussDialogScaleH), d);
     d->sch = w;
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);

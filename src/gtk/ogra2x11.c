@@ -351,7 +351,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtk_widget_set_size_request((GtkWidget *) scrolled_window,
 			      gtklocal->winwidth, gtklocal->winheight);
 
+#if GTK_CHECK_VERSION(3, 0, 0)
+  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+#else
   vbox = gtk_vbox_new(FALSE, 0);
+#endif
   gtk_container_add(GTK_CONTAINER(gtklocal->mainwin), vbox);
 
   gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);

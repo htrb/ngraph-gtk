@@ -1,3 +1,77 @@
+2012-05-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/fitrslt.c: don't use deprecated functions.
+
+	* addin/addin_common.c: don't use deprecated functions.
+
+	* addin/calc.c (create_control): don't use deprecated functions.
+
+	* addin/legend.c: don't use deprecated functions.
+
+	* src/gtk/gtk_subwin.c (label_sub_window_create): use
+	"gtk_widget_set_halign()" and "gtk_widget_set_valign()" instead of
+	"gtk_misc_set_alignment()".
+
+	* src/gtk/x11lgndx.c (LegendGaussDialogSetup): don't use
+	deprecated functions.
+
+	* src/gtk/ogra2x11.c (gtkinit): don't use deprecated functions.
+
+	* src/gtk/x11axis.c (GridDialogSetup, SectionDialogSetup)
+	(CrossDialogSetup, ZoomDialogSetup, scale_tab_create)
+	(baseline_tab_create, gauge_tab_create, numbering_tab_create)
+	(font_tab_create, position_tab_create): don't use deprecated
+	functions.
+
+	* src/gtk/gtk_widget.c (add_widget_to_table_sub)
+	(add_copy_button_to_box, item_setup)
+	(create_text_view_with_line_number): don't use deprecated
+	functions.
+
+	* src/gtk/x11print.c (DriverDialogSetup, OutputDataDialogSetup):
+	don't use deprecated functions.
+
+	* src/gtk/x11lgnd.c (points_setup): call
+	"gtk_tree_view_column_set_expand()".
+	(points_setup, LegendArrowDialogSetup, LegendRectDialogSetup)
+	(LegendArcDialogSetup, LegendMarkDialogSetup)
+	(legend_dialog_setup_sub, LegendTextDialogSetup)
+	(LegendTextDefDialogSetup): don't use deprecated functions.
+
+	* src/gtk/x11dialg.c (SelectDialogSetup): don't use deprecated
+	functions.
+
+	* src/gtk/x11file.c (MathTextDialogSetup, MathDialogSetup)
+	(FitSaveDialogSetup, create_user_fit_frame, FitDialogSetup)
+	(move_tab_create, mask_tab_create, load_tab_create)
+	(math_tab_create, button_set_mark_image, MarkDialogSetup)
+	(plot_tab_create, FileDialogSetupCommon, FileDialogSetup): don't
+	use deprecated functions.
+	(set_fitdialog_sensitivity): set sensitivity of initial value
+	input for user function.
+	(FitDialogSetSensitivity): call "check_fit_func()".
+
+	* src/gtk/x11view.c (EvalDialogSetup): don't use deprecated
+	functions.
+
+	* src/gtk/x11commn.c (ProgressDialogCreate): don't use deprecated
+	functions.
+
+	* src/gtk/x11menu.c (create_message_box, setupwindow): don't use
+	deprecated functions.
+
+	* src/gtk/x11opt.c (SetScriptDialogSetup, SetDriverDialogSetup)
+	(FontSettingDialogSetup, PrefFontDialogSetup, MiscDialogSetup)
+	(ExViewerDialogSetup, ViewerDialogSetup): don't use deprecated
+	functions.
+
+	* src/gtk/x11graph.c (PageDialogSetup, SwitchDialogSetup)
+	(DirectoryDialogSetup, LoadDialogSetup, PrmDialogSetup)
+	(SaveDialogSetup): don't use deprecated functions.
+
+	* src/gtk/x11merge.c (MergeDialogSetup): don't use deprecated
+	functions.
+
 2012-05-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/shell.c (set_shellevloop, nreadline): use "g_thread_new()"
