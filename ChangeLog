@@ -1,3 +1,33 @@
+2012-05-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11print.c (CmOutputViewerB): set "width" and "height"
+	fields of the "gra2dtk" object.
+
+	* src/gtk/ox11menu.h (SAVE_CONFIG_TYPE_X11MENU): add
+	"SAVE_CONFIG_TYPE_EXTERNAL_VIEWER".
+
+	* src/gtk/ox11menu.c (exwinloadconfig): removed.
+	(MenuConfigExiView): added.
+	(MenuConfigArrray): add "MenuConfigExiView".
+	(menu_save_config): check "SAVE_CONFIG_TYPE_EXTERNAL_VIEWER".
+	(menuinit): initialize "Menulocal.exwindpi",
+	"Menulocal.exwinwidth" and "Menulocal.exwinheight".
+
+	* src/gtk/x11lgnd.c (format_value_percent, format_value_degree):
+	added.
+	(LegendArrowDialogSetup): connect "format_value_degree" and
+	"format_value_percent" to the "format-value" signal.
+
+	* src/gtk/ogra2x11.c (gtkloadconfig): removed.
+	(gra2gtk): add fields "width" and "height".
+	(gtkinit): use "gtk_window_set_default_size()" instead of
+	"gtk_widget_set_size_request()".
+	(gtk_set_size): added.
+
+	* src/gtk/x11opt.c (add_str_with_int_to_array)
+	(save_ext_viewer_config): removed.
+	(ViewerDialogSetup): change layout.
+
 2012-05-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/fitrslt.c: don't use deprecated functions.

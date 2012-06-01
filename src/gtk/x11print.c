@@ -796,6 +796,8 @@ CmOutputViewerB(GtkAction *wi, gpointer client_data)
     g2winst = chkobjinst(g2wobj, g2wid);
     _getobj(g2wobj, "oid", g2winst, &g2woid);
     putobj(g2wobj, "dpi", g2wid, &(Menulocal.exwindpi));
+    putobj(g2wobj, "width", g2wid, &Menulocal.exwinwidth);
+    putobj(g2wobj, "height", g2wid, &Menulocal.exwinheight);
     c = Menulocal.bg_r * 255.0;
     putobj(g2wobj, "BR", g2wid, &c);
     c = Menulocal.bg_g * 255.0;

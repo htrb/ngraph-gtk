@@ -59,6 +59,7 @@
 
 #define WINWIDTH 578
 #define WINHEIGHT 819
+#define WINSIZE_MAX 10000
 
 static char *gtkerrorlist[] = {
   "cannot open display.",
@@ -77,7 +78,7 @@ struct gtklocal
   GdkWindow *window;
   char *title;
   int redraw;
-  unsigned int winwidth, winheight, windpi;
+  unsigned int windpi;
   int PaperWidth, PaperHeight;
   double bg_r, bg_g, bg_b;
   struct gra2cairo_local *local;
@@ -86,7 +87,6 @@ struct gtklocal
 static void gtkMakeRuler(cairo_t *cr, struct gtklocal *gtklocal);
 static int gtk_evloop(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		      char **argv);
-static int gtkloadconfig(struct gtklocal *gtklocal);
 static int gtkclose(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
 static void gtkchangedpi(struct gtklocal *gtklocal);
 #if GTK_CHECK_VERSION(3, 0, 0)
@@ -107,51 +107,6 @@ static int gtkredraw(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc
 static int dot2pixel(struct gtklocal *gtklocal, int r);
 static int gtk_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 		      char **argv);
-
-static int
-gtkloadconfig(struct gtklocal *gtklocal)
-{
-  FILE *fp;
-  char *tok, *str, *s2;
-  char *f1;
-  int val;
-  char *endptr;
-  int len;
-
-  fp = openconfig(GRA2GTKCONF);
-  if (fp == NULL)
-    return 0;
-
-  while ((tok = getconfig(fp, &str)) != NULL) {
-    s2 = str;
-    if  (strcmp(tok, "win_dpi") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	gtklocal->windpi = val;
-      g_free(f1);
-    } else if (strcmp(tok, "win_width") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	gtklocal->winwidth = val;
-      g_free(f1);
-    } else if (strcmp(tok, "win_height") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	gtklocal->winheight = val;
-      g_free(f1);
-    } else if (strcmp(tok, "use_external_viewer") == 0) {
-    } else {
-      fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, GRA2GTKCONF);
-    }
-    g_free(tok);
-    g_free(str);
-  }
-  closeconfig(fp);
-  return 0;
-}
 
 #if GTK_CHECK_VERSION(3, 0, 0)
 static gboolean
@@ -263,8 +218,8 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   struct gra2cairo_local *local;
   GdkWindow *win;
   struct objlist *robj;
-  int idn, oid;
-  GtkWidget *scrolled_window = NULL, *vbox = NULL;
+  int idn, oid, width, height;
+  GtkWidget *scrolled_window = NULL;
 
   if (_exeparent(obj, (char *) argv[1], inst, rval, argc, argv))
     return 1;
@@ -289,16 +244,11 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   gtklocal->PaperWidth = 0;
   gtklocal->PaperHeight = 0;
-  gtklocal->winwidth = WINWIDTH;
-  gtklocal->winheight = WINHEIGHT;
-  gtklocal->windpi = DEFAULT_DPI;
+  gtklocal->windpi = DEFAULT_DPI / 2;
   gtklocal->bg_r = 1.0;
   gtklocal->bg_g = 1.0;
   gtklocal->bg_b = 1.0;
   gtklocal->local = local;
-
-  if (gtkloadconfig(gtklocal))
-    goto errexit;
 
   if (gtklocal->windpi < 1)
     gtklocal->windpi = 1;
@@ -318,17 +268,14 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   local->pixel_dot_x =
   local->pixel_dot_y = gtklocal->windpi / (DPI_MAX * 1.0);
 
-  if (gtklocal->winwidth < 1)
-    gtklocal->winwidth = 1;
+  width = WINWIDTH;
+  height = WINHEIGHT;
 
-  if (gtklocal->winwidth > 10000)
-    gtklocal->winwidth = 10000;
+  if (_putobj(obj, "width", inst, &width))
+    goto errexit;
 
-  if (gtklocal->winheight < 1)
-    gtklocal->winheight = 1;
-
-  if (gtklocal->winheight > 10000)
-    gtklocal->winheight = 10000;
+  if (_putobj(obj, "height", inst, &height))
+    goto errexit;
 
   if (! OpenApplication()) {
     error(obj, ERRDISPLAY);
@@ -338,6 +285,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   gtklocal->title = mkobjlist(obj, NULL, oid, NULL, TRUE);
 
   gtklocal->mainwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_default_size(GTK_WINDOW(gtklocal->mainwin), width, height);
   g_signal_connect_swapped(gtklocal->mainwin,
 			   "delete-event",
 			   G_CALLBACK(gtkclose), gtklocal->mainwin);
@@ -348,17 +296,7 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
 
   scrolled_window = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_widget_set_size_request((GtkWidget *) scrolled_window,
-			      gtklocal->winwidth, gtklocal->winheight);
-
-#if GTK_CHECK_VERSION(3, 0, 0)
-  vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-#else
-  vbox = gtk_vbox_new(FALSE, 0);
-#endif
-  gtk_container_add(GTK_CONTAINER(gtklocal->mainwin), vbox);
-
-  gtk_box_pack_start(GTK_BOX(vbox), scrolled_window, TRUE, TRUE, 0);
+  gtk_container_add(GTK_CONTAINER(gtklocal->mainwin), scrolled_window);
 
   gtklocal->View = gtk_drawing_area_new();
 
@@ -369,8 +307,6 @@ gtkinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   g_signal_connect(gtklocal->View, "expose-event",
 		   G_CALLBACK(gtkevpaint), gtklocal);
 #endif
-  gtk_widget_set_size_request(gtklocal->View,
-			      gtklocal->winwidth, gtklocal->winheight);
 
   gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW
 					(scrolled_window), gtklocal->View);
@@ -713,6 +649,35 @@ gtk_set_dpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **
   return 0;
 }
 
+static int
+gtk_set_size(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
+{
+  int width, height, size;
+  struct gtklocal *local;
+
+  _getobj(obj, "_gtklocal", inst, &local);
+
+  size = *(int *) argv[2];
+  if (size < 1 || size > WINSIZE_MAX) {
+    return 1;
+  }
+
+  switch (argv[1][0]) {
+  case 'h':
+    height = size;
+    _getobj(obj, "width", inst, &width);
+    gtk_window_resize(GTK_WINDOW(local->mainwin), width, height);
+    break;
+  case 'w':
+    width = size;
+    _getobj(obj, "height", inst, &height);
+    gtk_window_resize(GTK_WINDOW(local->mainwin), width, height);
+    break;
+  }
+
+  return 0;
+}
+
 static struct objtable gra2gtk[] = {
   {"init", NVFUNC, NEXEC, gtkinit, NULL, 0},
   {"done", NVFUNC, NEXEC, gtkdone, NULL, 0},
@@ -720,6 +685,8 @@ static struct objtable gra2gtk[] = {
   {"dpi", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
   {"dpix", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
   {"dpiy", NINT, NREAD | NWRITE, gtk_set_dpi, NULL, 0},
+  {"width", NINT, NREAD | NWRITE, gtk_set_size, NULL, 0},
+  {"height", NINT, NREAD | NWRITE, gtk_set_size, NULL, 0},
   {"expose", NVFUNC, NREAD | NEXEC, gtkredraw, "", 0},
   {"flush", NVFUNC, NREAD | NEXEC, gtkflush, "", 0},
   {"clear", NVFUNC, NREAD | NEXEC, gtkclear, "", 0},

@@ -292,6 +292,14 @@ static struct menu_config MenuConfigChildGeometry[] = {
   {NULL},
 };
 
+static struct menu_config MenuConfigExtView[] = {
+  {"extwin_dpi",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.exwindpi},
+  {"extwin_width",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.exwinwidth},
+  {"extwin_height",		MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.exwinheight},
+  {"use_external_viewer",	MENU_CONFIG_TYPE_NUMERIC, NULL, &Menulocal.exwin_use_external},
+  {NULL},
+};
+
 static struct menu_config *MenuConfigArrray[] = {
   MenuConfig,
   MenuConfigDriver,
@@ -302,6 +310,7 @@ static struct menu_config *MenuConfigArrray[] = {
   MenuConfigOthers,
   MenuConfigGeometry,
   MenuConfigChildGeometry,
+  MenuConfigExtView,
   NULL,
 };
 
@@ -568,6 +577,10 @@ menu_save_config(int type)
 
   if (type & SAVE_CONFIG_TYPE_VIEWER) {
     menu_save_config_sub(MenuConfigViewer, &conf);
+  }
+
+  if (type & SAVE_CONFIG_TYPE_EXTERNAL_VIEWER) {
+    menu_save_config_sub(MenuConfigExtView, &conf);
   }
 
   if (type & SAVE_CONFIG_TYPE_TOGGLE_VIEW) {
@@ -978,56 +991,6 @@ mgtkwindowconfig(void)
   return 0;
 }
 
-static int
-exwinloadconfig(void)
-{
-  FILE *fp;
-  char *tok, *str, *s2;
-  char *f1;
-  int val;
-  char *endptr;
-  int len;
-
-  fp = openconfig(G2WINCONF);
-  if (fp == NULL)
-    return 0;
-
-  while ((tok = getconfig(fp, &str))) {
-    s2 = str;
-    if (strcmp(tok, "win_dpi") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.exwindpi = val;
-      g_free(f1);
-    } else if (strcmp(tok, "win_width") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.exwinwidth = val;
-      g_free(f1);
-    } else if (strcmp(tok, "win_height") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.exwinheight = val;
-      g_free(f1);
-    } else if (strcmp(tok, "use_external_viewer") == 0) {
-      f1 = getitok2(&s2, &len, " \t,");
-      val = strtol(f1, &endptr, 10);
-      if (endptr[0] == '\0')
-	Menulocal.exwin_use_external = val;
-      g_free(f1);
-    } else {
-      fprintf(stderr, "(%s): configuration '%s' in section %s is not used.\n", AppName, tok, G2WINCONF);
-    }
-    g_free(tok);
-    g_free(str);
-  }
-  closeconfig(fp);
-  return 0;
-}
-
 void
 menuadddrawrable(struct objlist *parent, struct narray *drawrable)
 {
@@ -1158,7 +1121,10 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   Menulocal.changedirectory = 1;
   set_paper_type(21000, 29700);
   Menulocal.PaperZoom = 10000;
-  Menulocal.exwindpi = DEFAULT_DPI;
+  Menulocal.exwindpi = DEFAULT_DPI / 2;
+  Menulocal.exwinwidth = 400;
+  Menulocal.exwinheight = 600;
+  Menulocal.exwin_use_external = TRUE;
   Menulocal.expand = 1;
   Menulocal.expanddir = g_strdup("./");
   Menulocal.expandtofullpath = TRUE;
@@ -1192,15 +1158,12 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
   if (mgtkloadconfig())
     goto errexit;
 
-  if (exwinloadconfig())
-    goto errexit;
-
   gra2cairo_set_antialias(Menulocal.local, Menulocal.antialias);
   if (_putobj(obj, "antialias", inst, &(Menulocal.antialias)))
     goto errexit;
 
   if (Menulocal.exwindpi < 1)
-    Menulocal.exwindpi = DEFAULT_DPI;
+    Menulocal.exwindpi = DEFAULT_DPI / 2;
 
   if (Menulocal.exwindpi > DPI_MAX)
     Menulocal.exwindpi = DPI_MAX;

@@ -110,45 +110,15 @@ DefaultDialogSetup(GtkWidget *wi, void *data, int makewidget)
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(d->misc), FALSE);
 }
 
-static void
-add_str_with_int_to_array(struct narray *conf, char *str, int val)
-{
-  char *buf;
-
-  buf = (char *) g_malloc(BUF_SIZE);
-  if (buf) {
-    snprintf(buf, BUF_SIZE, "%s=%d", str, val);
-    arrayadd(conf, &buf);
-  }
-}
-
-static void
-save_ext_viewer_config(struct narray *conf)
-{
-  add_str_with_int_to_array(conf, "win_dpi", Menulocal.exwindpi);
-  add_str_with_int_to_array(conf, "win_width", Menulocal.exwinwidth);
-  add_str_with_int_to_array(conf, "win_height", Menulocal.exwinheight);
-  add_str_with_int_to_array(conf, "use_external_viewer", Menulocal.exwin_use_external);
-}
-
 static int
 save_config(int type)
 {
-  struct narray conf;
-
   if (!CheckIniFile()) {
     return 1;
   }
 
   if (type & SAVE_CONFIG_TYPE_X11MENU) {
     menu_save_config(type);
-  }
-
-  if (type & SAVE_CONFIG_TYPE_EXTERNAL_VIEWER) {
-    arrayinit(&conf, sizeof(char *));
-    save_ext_viewer_config(&conf);
-    replaceconfig("[gra2gtk]", &conf);
-    arraydel2(&conf);
   }
 
   if (type & SAVE_CONFIG_TYPE_FONTS) {
@@ -1777,7 +1747,7 @@ load_file_toggled(GtkToggleButton *togglebutton, gpointer user_data)
 static void
 ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
-  GtkWidget *w, *hbox, *table;
+  GtkWidget *w, *table;
   struct ViewerDialog *d;
   int i, j;
 
@@ -1794,19 +1764,13 @@ ViewerDialogSetup(GtkWidget *wi, void *data, int makewidget)
 #endif
 
     i = 0;
-#if GTK_CHECK_VERSION(3, 0, 0)
-    hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-#else
-    hbox = gtk_hbox_new(FALSE, 4);
-#endif
 #if GTK_CHECK_VERSION(3, 2, 0)
     w = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 20, 620, 1);
 #else
     w = gtk_hscale_new_with_range(20, 620, 1);
 #endif
     d->dpi = w;
-    item_setup(hbox, w, "_DPI:", TRUE);
-    add_widget_to_table(table, hbox, NULL, TRUE, i++);
+    add_widget_to_table(table, w, "_DPI:", TRUE, i++);
 
     w = create_spin_entry_type(SPIN_BUTTON_TYPE_LENGTH, FALSE, TRUE);
     spin_entry_set_range(w, 1, GRID_MAX);

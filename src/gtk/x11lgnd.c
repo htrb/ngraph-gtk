@@ -1109,6 +1109,18 @@ LegendArrowDialogScaleL(GtkWidget *w, gpointer client_data)
 #endif
 }
 
+static gchar*
+format_value_percent(GtkScale *scale, gdouble value, gpointer user_data)
+{
+  return g_strdup_printf ("%.0f%%", value);
+}
+
+static gchar*
+format_value_degree(GtkScale *scale, gdouble value, gpointer user_data)
+{
+  return g_strdup_printf ("%.0f°", value);
+}
+
 static void
 LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
@@ -1208,6 +1220,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_hscale_new_with_range(10, 170, 1);
 #endif
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleL), d);
+    g_signal_connect(w, "format-value", G_CALLBACK(format_value_degree), NULL);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->arrow_length = w;
 
@@ -1227,6 +1240,7 @@ LegendArrowDialogSetup(GtkWidget *wi, void *data, int makewidget)
     w = gtk_hscale_new_with_range(100, 2000, 1);
 #endif
     g_signal_connect(w, "value-changed", G_CALLBACK(LegendArrowDialogScaleW), d);
+    g_signal_connect(w, "format-value", G_CALLBACK(format_value_percent), NULL);
     gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 4);
     d->arrow_width = w;
 

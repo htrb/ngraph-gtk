@@ -49,6 +49,10 @@ legend_win=-100000,-100000,-100000,-100000,0
 merge_win=-100000,-100000,-100000,-100000,0
 coordinate_win=-100000,-100000,-100000,-100000,1
 information_win=-100000,-100000,-100000,-100000,0
+extwin_dpi=40
+extwin_width=400
+extwin_height=600
+use_external_viewer=1
 history_size=1000
 palette=black:white:gray50:red:purple:blue:light blue:green:yellow:orange:lavender:brown:goldenrod4:dodger blue:pink:light green:gray10:gray30:gray75:gray90
 
@@ -131,9 +135,3 @@ direction=9000
 gauge=1
 num=1
 num_align=2
-
-[gra2gtk]
-win_dpi=40
-win_width=368
-win_height=520
-use_external_viewer=1
