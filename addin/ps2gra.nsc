@@ -50,9 +50,9 @@ fi
 
 if which -q $RUBY_COMMAND
 then
-    $RUBY_COMMAND "$NGRAPHLIB/fig2gra.rb" "$fig_file" "$gra_file"
+    $RUBY_COMMAND "${system::data_dir}/addin/fig2gra.rb" "$fig_file" "$gra_file"
 else
-    . "$NGRAPHLIB/fig2gra.nsc"
+    . "${system::data_dir}/addin/fig2gra.nsc"
     fig2gra "$fig_file" "$gra_file"
 fi
 system::unlink_temp_file "$fig_file"

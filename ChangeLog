@@ -1,3 +1,13 @@
+2012-06-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fig2gra.nsc (fig2gra): accepts dummy option "-dummy".
+
+	* addin/tex_equation.nsc: addin scripts are installed not in the
+	directory "$NGRAPHLIB" but "${system::data_dir}/addin".
+
+	* addin/ps2gra.nsc: addin scripts are installed not in the
+	directory "$NGRAPHLIB" but "${system::data_dir}/addin".
+
 2012-05-30  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11print.c (CmOutputViewerB): set "width" and "height"

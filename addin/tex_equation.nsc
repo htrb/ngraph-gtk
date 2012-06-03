@@ -47,10 +47,12 @@ tex_eqn_check_command $PSTOEDIT_COMMAND
 
 if which -q $RUBY_COMMAND
 then
-    FIG2GRA_COMMAND="$RUBY_COMMAND \"$NGRAPHLIB/fig2gra.rb\""
+    FIG2GRA_COMMAND="$RUBY_COMMAND"
+    FIG2GRA_OPTION="${system::data_dir}/addin/fig2gra.rb"
 else
-    . "$NGRAPHLIB/fig2gra.nsc"
+    . "${system::data_dir}/addin/fig2gra.nsc"
     FIG2GRA_COMMAND=fig2gra
+    FIG2GRA_OPTION="-dummy"
 fi
 
 new iarray name=text
@@ -69,16 +71,16 @@ do
 	merge_name="tex_eqn_`get $text -field oid`_$t"
     fi
     str=`get $text -field text`
-    cat <<EOF > $TEX_FILE.tex
-\documentclass[12pt]{article}
-\usepackage{amsmath,txfonts}
-\begin{document}
-\pagestyle{empty}
-\[
- $str
-\]
-\end{document}
-EOF
+    cat <<-EOF > $TEX_FILE.tex
+	\documentclass[12pt]{article}
+	\usepackage{amsmath,txfonts}
+	\begin{document}
+	\pagestyle{empty}
+	\[
+	 $str
+	\]
+	\end{document}
+	EOF
     $TEX_COMMAND $TEX_OPTION "$TEX_FILE".tex | menu::cat
     menu::echo "---------------"
     menu::echo
@@ -101,7 +103,7 @@ EOF
     fi
 
     gra_file="`pwd`/$merge_name".gra
-    $FIG2GRA_COMMAND "$TEX_FILE".fig "$gra_file"
+    $FIG2GRA_COMMAND "$FIG2GRA_OPTION" "$TEX_FILE".fig "$gra_file"
     if [ ! -r "$gra_file" ]
     then
 	tex_eqn_error_dialog "Faital error occurred while executing fig2gra."

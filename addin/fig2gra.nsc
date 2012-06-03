@@ -157,6 +157,11 @@ fig2gra() {
 
     fig2gra_init_palette
 
+    if [ "$1" = "-dummy" ]
+    then
+	shift
+    fi
+
     io:fig2gra:mode="r"
     regexp:fig2gra:@='^#'
 
