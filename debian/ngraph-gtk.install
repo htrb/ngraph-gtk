@@ -1,6 +1,7 @@
 etc
 usr/bin
 usr/lib/*/ngraph-gtk/terminal
+usr/share/icons
 usr/share/ngraph-gtk/demo
 usr/share/locale
 usr/share/pixmaps

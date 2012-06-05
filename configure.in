@@ -72,18 +72,30 @@ AC_FUNC_VPRINTF
 AC_FUNC_MMAP
 AC_CHECK_FUNCS([sigaction sigsuspend alarm dup2 getcwd mkdir pow sqrt strchr strdup strerror strncasecmp strstr strtol utime isfinite finite nanosleep sleep])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/gtk/Makefile \
-		 src/math/Makefile driver/Makefile \
-		 addin/Makefile po/Makefile.in m4/Makefile \
-		 demo/Makefile initfile/Makefile \
+AC_CONFIG_FILES([Makefile \
+		 src/Makefile \
+		 src/gtk/Makefile \
+		 src/math/Makefile \
+		 driver/Makefile \
+		 addin/Makefile \
+		 po/Makefile.in \
+		 m4/Makefile \
+		 demo/Makefile
+		 initfile/Makefile \
 		 doc/Makefile \
 		 doc/html/Makefile \
 		 doc/html/img/Makefile \
 		 doc/html/ja/Makefile \
 		 doc/html/ja/tutorial/Makefile \
 		 doc/html/ja/dialogs/Makefile \
-		 zsh/Makefile test/Makefile mingw/Makefile \
-		 pixmap/Makefile icons/Makefile \
+		 zsh/Makefile
+		 test/Makefile
+		 mingw/Makefile \
+		 pixmap/Makefile \
+		 icons/Makefile \
+		 icons/scalable/Makefile \
+		 icons/scalable/apps/Makefile \
+		 icons/scalable/mimetypes/Makefile \
 		 misc/Makefile])
 
 AM_CONFIG_HEADER([config.h])

@@ -1,3 +1,25 @@
+2012-06-05  Koichi Akabe <vbkaisetsu at gmail.com>
+
+	* debian/ngraph-gtk.install: add scalable icons.
+
+	* misc/ngraph.desktop (Icon): add scalable icons.
+
+	* configure.in: add scalable icons.
+
+	* icons/scalable/mimetypes/application-x-ngraph.svg: added.
+
+	* icons/scalable/mimetypes/application-x-ngraph-script.svg: added.
+
+	* icons/scalable/mimetypes/application-x-ngraph-graphic.svg: added.
+
+	* icons/scalable/mimetypes/Makefile.am: added.
+
+	* icons/scalable/apps/ngraph.svg: added.
+
+	* icons/scalable/apps/Makefile.am: added.
+
+	* icons/scalable/Makefile.am: added.
+
 2012-06-03  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* addin/fig2gra.nsc (fig2gra): accepts dummy option "-dummy".
