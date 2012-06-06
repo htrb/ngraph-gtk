@@ -6,6 +6,8 @@
 
 	* addin/fig2gra.nsc (fig2gra): print creator comment.
 
+2012-06-06  Koichi Akabe <vbkaisetsu at gmail.com>
+
 	* demo/Makefile.am (CLEANFILES): add "demo6.ngp"
 
 2012-06-05  Koichi Akabe <vbkaisetsu at gmail.com>
