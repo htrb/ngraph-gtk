@@ -210,6 +210,7 @@ fig2gra() {
 
     io:fig2gra:open "$2"
     io:fig2gra:puts ${system::GRAF}
+    io:fig2gra:puts '%Creator: fig2gra.nsc'
     io:fig2gra:puts "I,5,0,0,21600,27900,10000"
     io:fig2gra:puts "V,5,0,0,21600,27900,0"
 

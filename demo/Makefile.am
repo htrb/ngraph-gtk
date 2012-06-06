@@ -27,4 +27,4 @@ demo6.ngp: demo6.ngp.in Makefile
 demo.ngp: demo.ngp.in Makefile
 	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" demo.ngp.in
 
-CLEANFILES = demo.ngp demo1.ngp demo2.ngp demo3.ngp demo4.ngp
+CLEANFILES = demo.ngp demo1.ngp demo2.ngp demo3.ngp demo4.ngp demo6.ngp
