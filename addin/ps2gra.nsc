@@ -38,8 +38,20 @@ then
     exit
 fi
 
-fig_file="${system::temp_file}"
 gra_file="`pwd`/`basename $ps_file .$1`.gra"
+
+if [ -e "$gra_file" ]
+then
+  new dialog
+  response=${dialog::yesno:"The file '$gra_file' already exists. Do you want to replace it?"}
+  del dialog
+  if [ x"$response" != "x1" ]
+  then
+      exit
+  fi
+fi
+
+fig_file="${system::temp_file}"
 
 $PSTOEDIT_COMMAND $PSTOEDIT_OPTION -f fig "$ps_file" "$fig_file"
 if [ ! -r "$fig_file" ]

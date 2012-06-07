@@ -1,3 +1,7 @@
+2012-06-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/ps2gra.nsc (gra_file): check overwrite.
+
 2012-06-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/ps2gra.nsc: add import pdf menu.
