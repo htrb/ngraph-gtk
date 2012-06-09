@@ -152,7 +152,6 @@ static void AddList(struct objlist *obj, N_VALUE *inst);
 static void RotateFocusedObj(int direction);
 static void set_mouse_cursor_hover(struct Viewer *d, int x, int y);
 static void CheckGrid(int ofs, unsigned int state, int *x, int *y, double *zoom);
-static void show_move_animation(struct Viewer *d, int x, int y);
 
 #define GRAY 0.5
 #define DOT_LENGTH 4.0
@@ -2828,6 +2827,7 @@ show_zoom_animation(struct Viewer *d, TPoint *point, double zoom)
   cairo_destroy(cr);
 }
 
+#ifdef SHOW_MOVE_ANIMATION
 static void
 show_move_animation(struct Viewer *d, int x, int y)
 {
@@ -2874,6 +2874,7 @@ show_move_animation(struct Viewer *d, int x, int y)
   cairo_pattern_destroy(pattern);
   cairo_destroy(cr);
 }
+#endif	/* SHOW_MOVE_ANIMATION */
 
 static void
 mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_out)
@@ -2889,7 +2890,9 @@ mouse_down_zoom(unsigned int state, TPoint *point, struct Viewer *d, int zoom_ou
 
   ZoomLock = TRUE;
   if (state & GDK_SHIFT_MASK) {
+#ifdef SHOW_MOVE_ANIMATION
     show_move_animation(d, point->x - d->cx , point->y - d->cy);
+#endif	/* SHOW_MOVE_ANIMATION */
     d->hscroll -= (d->cx - point->x);
     d->vscroll -= (d->cy - point->y);
 
@@ -4072,7 +4075,9 @@ ViewerEvMButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
     return FALSE;
 
   if (d->Mode == ZoomB) {
+#ifdef SHOW_MOVE_ANIMATION
     show_move_animation(d, point->x - d->cx , point->y - d->cy);
+#endif	/* SHOW_MOVE_ANIMATION */
     d->hscroll -= (d->cx - point->x);
     d->vscroll -= (d->cy - point->y);
     ChangeDPI();

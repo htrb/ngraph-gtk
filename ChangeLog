@@ -1,3 +1,8 @@
+2012-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (show_move_animation, mouse_down_zoom)
+	(ViewerEvMButtonDown): disable move animation.
+
 2012-06-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/ps2gra.nsc (gra_file): check overwrite.
