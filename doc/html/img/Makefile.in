@@ -35,7 +35,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = doc/html/img
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(dist_htmlimg_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gsl.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -88,7 +89,7 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(htmlimgdir)"
-DATA = $(htmlimg_DATA)
+DATA = $(dist_htmlimg_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -240,19 +241,18 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = barc.png baxispo.png bclear.png bcross.png bdataopn.png	\
-	 bdatapo.png bdraw.png beval.png bframe.png bgauss.png		\
-	 blgndpo.png bline.png bload.png bmark.png bmath.png		\
-	 bpoint.png bpreview.png bprint.png brect.png bsave.png		\
-	 bscale.png bscundo.png bsection.png bsingle.png btext.png	\
-	 btrim.png bzoom.png winaxis.png wincoord.png windata.png	\
-	 wininfo.png winlgnd.png winmerge.png icon.png aclear.png	\
-	 addgraph.png axispo.png datapo.png draw.png eval.png		\
-	 fopen.png infowin.png lapoint.png legend.png lwindow.png	\
-	 math.png pointer.png scundo.png trimming.png
-
 htmlimgdir = $(docdir)/html/img
-htmlimg_DATA = ${EXTRA_DIST}
+dist_htmlimg_DATA = barc.png baxispo.png bclear.png bcross.png		\
+	 bdataopn.png bdatapo.png bdraw.png beval.png bframe.png	\
+	 bgauss.png blgndpo.png bline.png bload.png bmark.png		\
+	 bmath.png bpoint.png bpreview.png bprint.png brect.png		\
+	 bsave.png bscale.png bscundo.png bsection.png bsingle.png	\
+	 btext.png btrim.png bzoom.png winaxis.png wincoord.png		\
+	 windata.png wininfo.png winlgnd.png winmerge.png icon.png	\
+	 aclear.png addgraph.png axispo.png datapo.png draw.png		\
+	 eval.png fopen.png infowin.png lapoint.png legend.png		\
+	 lwindow.png math.png pointer.png scundo.png trimming.png
+
 all: all-am
 
 .SUFFIXES:
@@ -292,10 +292,10 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-htmlimgDATA: $(htmlimg_DATA)
+install-dist_htmlimgDATA: $(dist_htmlimg_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(htmlimgdir)" || $(MKDIR_P) "$(DESTDIR)$(htmlimgdir)"
-	@list='$(htmlimg_DATA)'; test -n "$(htmlimgdir)" || list=; \
+	@list='$(dist_htmlimg_DATA)'; test -n "$(htmlimgdir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
@@ -305,9 +305,9 @@ install-htmlimgDATA: $(htmlimg_DATA)
 	  $(INSTALL_DATA) $$files "$(DESTDIR)$(htmlimgdir)" || exit $$?; \
 	done
 
-uninstall-htmlimgDATA:
+uninstall-dist_htmlimgDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(htmlimg_DATA)'; test -n "$(htmlimgdir)" || list=; \
+	@list='$(dist_htmlimg_DATA)'; test -n "$(htmlimgdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(htmlimgdir)'; $(am__uninstall_files_from_dir)
 tags: TAGS
@@ -404,7 +404,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-htmlimgDATA
+install-data-am: install-dist_htmlimgDATA
 
 install-dvi: install-dvi-am
 
@@ -448,21 +448,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-htmlimgDATA
+uninstall-am: uninstall-dist_htmlimgDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic clean-libtool \
 	distclean distclean-generic distclean-libtool distdir dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-htmlimgDATA install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	uninstall uninstall-am uninstall-htmlimgDATA
+	install-data install-data-am install-dist_htmlimgDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am uninstall uninstall-am uninstall-dist_htmlimgDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

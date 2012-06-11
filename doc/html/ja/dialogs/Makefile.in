@@ -35,7 +35,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = doc/html/ja/dialogs
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(dist_htmldialog_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gsl.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -88,7 +89,7 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(htmldialogdir)"
-DATA = $(htmldialog_DATA)
+DATA = $(dist_htmldialog_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -240,15 +241,14 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = axis.png axisbase.png axisfont.png axisgage.png		\
-	axisnum.png axispos.png data.png dataplot.png datafit.png	\
-	dataload.png datamask.png datamath.png datamove.png grid.png	\
-	lgndarc.png lgndgaus.png lgndpath.png lgndmark.png		\
-	lgndrect.png lgndtext.png loadngp.png loadprm.png merge.png	\
-	pageord.png prefmisc.png save.png
-
 htmldialogdir = $(docdir)/html/ja/dialogs
-htmldialog_DATA = ${EXTRA_DIST}
+dist_htmldialog_DATA = axis.png axisbase.png axisfont.png		\
+	axisgage.png axisnum.png axispos.png data.png dataplot.png	\
+	datafit.png dataload.png datamask.png datamath.png		\
+	datamove.png grid.png lgndarc.png lgndgaus.png lgndpath.png	\
+	lgndmark.png lgndrect.png lgndtext.png loadngp.png		\
+	loadprm.png merge.png pageord.png prefmisc.png save.png
+
 all: all-am
 
 .SUFFIXES:
@@ -288,10 +288,10 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-htmldialogDATA: $(htmldialog_DATA)
+install-dist_htmldialogDATA: $(dist_htmldialog_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(htmldialogdir)" || $(MKDIR_P) "$(DESTDIR)$(htmldialogdir)"
-	@list='$(htmldialog_DATA)'; test -n "$(htmldialogdir)" || list=; \
+	@list='$(dist_htmldialog_DATA)'; test -n "$(htmldialogdir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
@@ -301,9 +301,9 @@ install-htmldialogDATA: $(htmldialog_DATA)
 	  $(INSTALL_DATA) $$files "$(DESTDIR)$(htmldialogdir)" || exit $$?; \
 	done
 
-uninstall-htmldialogDATA:
+uninstall-dist_htmldialogDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(htmldialog_DATA)'; test -n "$(htmldialogdir)" || list=; \
+	@list='$(dist_htmldialog_DATA)'; test -n "$(htmldialogdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(htmldialogdir)'; $(am__uninstall_files_from_dir)
 tags: TAGS
@@ -400,7 +400,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-htmldialogDATA
+install-data-am: install-dist_htmldialogDATA
 
 install-dvi: install-dvi-am
 
@@ -444,21 +444,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-htmldialogDATA
+uninstall-am: uninstall-dist_htmldialogDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic clean-libtool \
 	distclean distclean-generic distclean-libtool distdir dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-htmldialogDATA install-info install-info-am \
+	install-data install-data-am install-dist_htmldialogDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
 	install-man install-pdf install-pdf-am install-ps \
 	install-ps-am install-strip installcheck installcheck-am \
 	installdirs maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am uninstall uninstall-am uninstall-htmldialogDATA
+	ps ps-am uninstall uninstall-am uninstall-dist_htmldialogDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

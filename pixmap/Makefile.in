@@ -35,7 +35,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = pixmap
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(dist_pixmap_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gsl.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -88,7 +89,7 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(pixmapdir)"
-DATA = $(pixmap_DATA)
+DATA = $(dist_pixmap_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -240,7 +241,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = ngraph_arc.png ngraph_cross.png ngraph_filewin.png		\
+pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
+dist_pixmap_DATA = ngraph_arc.png ngraph_cross.png ngraph_filewin.png		\
 	ngraph_legendpoint.png ngraph_math.png ngraph_scale.png		\
 	ngraph_trimming.png ngraph_axispoint.png ngraph_datapoint.png	\
 	ngraph_frame.png ngraph_legendwin.png ngraph_mergewin.png	\
@@ -252,8 +254,6 @@ EXTRA_DIST = ngraph_arc.png ngraph_cross.png ngraph_filewin.png		\
 	ngraph_align_hc.png ngraph_align_l.png ngraph_align_r.png	\
 	ngraph_align_t.png ngraph_align_vc.png
 
-pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
-pixmap_DATA = $(EXTRA_DIST)
 all: all-am
 
 .SUFFIXES:
@@ -293,10 +293,10 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-pixmapDATA: $(pixmap_DATA)
+install-dist_pixmapDATA: $(dist_pixmap_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(pixmapdir)" || $(MKDIR_P) "$(DESTDIR)$(pixmapdir)"
-	@list='$(pixmap_DATA)'; test -n "$(pixmapdir)" || list=; \
+	@list='$(dist_pixmap_DATA)'; test -n "$(pixmapdir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
@@ -306,9 +306,9 @@ install-pixmapDATA: $(pixmap_DATA)
 	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pixmapdir)" || exit $$?; \
 	done
 
-uninstall-pixmapDATA:
+uninstall-dist_pixmapDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(pixmap_DATA)'; test -n "$(pixmapdir)" || list=; \
+	@list='$(dist_pixmap_DATA)'; test -n "$(pixmapdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(pixmapdir)'; $(am__uninstall_files_from_dir)
 tags: TAGS
@@ -405,7 +405,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-pixmapDATA
+install-data-am: install-dist_pixmapDATA
 
 install-dvi: install-dvi-am
 
@@ -449,21 +449,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-pixmapDATA
+uninstall-am: uninstall-dist_pixmapDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic clean-libtool \
 	distclean distclean-generic distclean-libtool distdir dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-pixmapDATA install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	uninstall uninstall-am uninstall-pixmapDATA
+	install-data install-data-am install-dist_pixmapDATA \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am uninstall uninstall-am uninstall-dist_pixmapDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -1,3 +1,21 @@
+2012-06-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* zsh/Makefile.am (dist_zsh_DATA): use "dist_" prefix.
+
+	* pixmap/Makefile.am (dist_pixmap_DATA): use "dist_" prefix.
+
+	* initfile/Makefile.am (dist_ngraphconf_DATA): use "dist_" prefix.
+
+	* doc/html/ja/tutorial/Makefile.am (dist_htmltutorial_DATA): use "dist_" prefix.
+
+	* doc/html/ja/dialogs/Makefile.am (dist_htmldialog_DATA): use "dist_" prefix.
+
+	* doc/html/img/Makefile.am (dist_htmlimg_DATA): use "dist_" prefix.
+
+	* doc/html/Makefile.am (dist_html_DATA): use "dist_" prefix.
+
+	* demo/Makefile.am (.ngp.in.ngp): use suffix rule.
+
 2012-06-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11view.c (show_move_animation, mouse_down_zoom)

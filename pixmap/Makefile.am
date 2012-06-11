@@ -1,4 +1,5 @@
-EXTRA_DIST = ngraph_arc.png ngraph_cross.png ngraph_filewin.png		\
+pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
+dist_pixmap_DATA = ngraph_arc.png ngraph_cross.png ngraph_filewin.png		\
 	ngraph_legendpoint.png ngraph_math.png ngraph_scale.png		\
 	ngraph_trimming.png ngraph_axispoint.png ngraph_datapoint.png	\
 	ngraph_frame.png ngraph_legendwin.png ngraph_mergewin.png	\
@@ -10,5 +11,3 @@ EXTRA_DIST = ngraph_arc.png ngraph_cross.png ngraph_filewin.png		\
 	ngraph_align_hc.png ngraph_align_l.png ngraph_align_r.png	\
 	ngraph_align_t.png ngraph_align_vc.png
 
-pixmapdir = $(datadir)/pixmaps/$(PACKAGE)
-pixmap_DATA = $(EXTRA_DIST)

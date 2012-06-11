@@ -35,7 +35,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = demo
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(dist_demo_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gsl.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -88,7 +89,7 @@ am__uninstall_files_from_dir = { \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
 am__installdirs = "$(DESTDIR)$(demodir)" "$(DESTDIR)$(demodir)"
-DATA = $(demo_DATA) $(nodist_demo_DATA)
+DATA = $(dist_demo_DATA) $(nodist_demo_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -241,16 +242,21 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 demodir = $(pkgdatadir)/demo
-demo_DATA = demo1.dat demo2.dat demo3.dat demo4.dat demo6.dat	\
-	demo5a.ngp demo5b.ngp demo5c.ngp demo5d.ngp demo5e.ngp	\
-	demo.ngp
+dist_demo_DATA = demo1.dat demo2.dat demo3.dat demo4.dat demo6.dat	\
+	demo5a.ngp demo5b.ngp demo5c.ngp demo5d.ngp demo5e.ngp
 
-nodist_demo_DATA = demo1.ngp demo2.ngp demo3.ngp demo4.ngp demo6.ngp
-EXTRA_DIST = ${demo_DATA} demo1.ngp.in demo2.ngp.in demo3.ngp.in demo4.ngp.in  demo6.ngp.in demo.ngp.in
+nodist_demo_DATA = demo.ngp demo1.ngp demo2.ngp demo3.ngp demo4.ngp	\
+	demo6.ngp
+
+EXTRA_DIST = demo.ngp.in demo1.ngp.in demo2.ngp.in demo3.ngp.in	\
+	demo4.ngp.in demo6.ngp.in
+
+SUFFIXES = .ngp.in .ngp
 CLEANFILES = demo.ngp demo1.ngp demo2.ngp demo3.ngp demo4.ngp demo6.ngp
 all: all-am
 
 .SUFFIXES:
+.SUFFIXES: .ngp.in .ngp
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -287,10 +293,10 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-demoDATA: $(demo_DATA)
+install-dist_demoDATA: $(dist_demo_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(demodir)" || $(MKDIR_P) "$(DESTDIR)$(demodir)"
-	@list='$(demo_DATA)'; test -n "$(demodir)" || list=; \
+	@list='$(dist_demo_DATA)'; test -n "$(demodir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
@@ -300,9 +306,9 @@ install-demoDATA: $(demo_DATA)
 	  $(INSTALL_DATA) $$files "$(DESTDIR)$(demodir)" || exit $$?; \
 	done
 
-uninstall-demoDATA:
+uninstall-dist_demoDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(demo_DATA)'; test -n "$(demodir)" || list=; \
+	@list='$(dist_demo_DATA)'; test -n "$(demodir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(demodir)'; $(am__uninstall_files_from_dir)
 install-nodist_demoDATA: $(nodist_demo_DATA)
@@ -418,7 +424,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-demoDATA install-nodist_demoDATA
+install-data-am: install-dist_demoDATA install-nodist_demoDATA
 
 install-dvi: install-dvi-am
 
@@ -462,41 +468,32 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-demoDATA uninstall-nodist_demoDATA
+uninstall-am: uninstall-dist_demoDATA uninstall-nodist_demoDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic clean-libtool \
 	distclean distclean-generic distclean-libtool distdir dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-demoDATA install-dvi \
+	install-data install-data-am install-dist_demoDATA install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
 	install-nodist_demoDATA install-pdf install-pdf-am install-ps \
 	install-ps-am install-strip installcheck installcheck-am \
 	installdirs maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am uninstall uninstall-am uninstall-demoDATA \
+	ps ps-am uninstall uninstall-am uninstall-dist_demoDATA \
 	uninstall-nodist_demoDATA
 
 
-demo1.ngp: demo1.ngp.in Makefile
-	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" demo1.ngp.in
-
-demo2.ngp: demo2.ngp.in Makefile
-	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" demo2.ngp.in
-
-demo3.ngp: demo3.ngp.in Makefile
-	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" demo3.ngp.in
-
-demo4.ngp: demo4.ngp.in Makefile
-	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" demo4.ngp.in
-
-demo6.ngp: demo6.ngp.in Makefile
-	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" demo6.ngp.in
-
-demo.ngp: demo.ngp.in Makefile
-	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" demo.ngp.in
+demo.ngp: Makefile
+demo1.ngp: Makefile
+demo2.ngp: Makefile
+demo3.ngp: Makefile
+demo4.ngp: Makefile
+demo6.ngp: Makefile
+.ngp.in.ngp:
+	sh ../pathconv.sh "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" "$(demodir)" $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
