@@ -56,6 +56,10 @@ save_gra() {
 
 	new gra2file name=OUTPUT file="$1"
 	new gra name=OUTPUT
+	if exist -q gra:viewer
+	then
+	    cpy gra:viewer,OUTPUT draw_obj left_margin top_margin zoom paper_width paper_height
+	fi
 	gra:OUTPUT:device=gra2file:OUTPUT
 	gra:OUTPUT:open
 	gra:OUTPUT:draw

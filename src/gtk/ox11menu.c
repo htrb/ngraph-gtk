@@ -1519,6 +1519,7 @@ mx_clear(GdkRegion *region)
     gdk_cairo_region(cr, region);
     cairo_fill(cr);
   } else {
+    cairo_reset_clip(cr);
     cairo_paint(cr);
   }
 

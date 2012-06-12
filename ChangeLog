@@ -1,3 +1,10 @@
+2012-06-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* driver/ngp2.in (save_gra): copy field of "gra:viewer".
+
+	* src/gtk/ox11menu.c (mx_clear): call "cairo_reset_clip()" before
+	call "cairo_paint()".
+
 2012-06-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* zsh/Makefile.am (dist_zsh_DATA): use "dist_" prefix.
