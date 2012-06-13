@@ -132,13 +132,13 @@ dlgmessage(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
 static int
 dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
-  char *mes, *title;
+  char *mes, *title, *init_str;
   int locksave, x, y, r;
   char *inputbuf;
 
   locksave = Globallock;
   Globallock = TRUE;
-  mes = (char *)argv[2];
+  init_str = (char *)argv[2];
   g_free(rval->str);
   rval->str = NULL;
   inputbuf = NULL;
@@ -147,8 +147,8 @@ dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     title = NULL;
   }
 
-  if (mes == NULL) {
-    _getobj(obj, "caption", inst, &mes);
+  if (_getobj(obj, "caption", inst, &mes)) {
+    mes = NULL;
   }
 
   if (_getobj(obj, "x", inst, &x)) {
@@ -159,7 +159,7 @@ dlginput(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
     y = -1;
   }
 
-  r = DialogInput(DLGTopLevel, (title) ? title : "Input", mes, &inputbuf, &x, &y);
+  r = DialogInput(DLGTopLevel, (title) ? title : "Input", mes, init_str, &inputbuf, &x, &y);
   _putobj(obj, "x", inst, &x);
   _putobj(obj, "y", inst, &y);
   if (r == IDOK && inputbuf != NULL) {

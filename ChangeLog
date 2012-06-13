@@ -1,3 +1,18 @@
+2012-06-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* driver/ngp2.in: accepts "-emf" option if EMF output is
+	supported.
+
+	* src/gtk/ox11dlg.c (dlginput): argument of the field is used as
+	initial string of the text entry.
+
+	* src/gtk/x11gui.c (DialogInput): add parameter "init_str".
+
+	* addin/math.nsc: retry when error will be occurred.
+
+	* src/gtk/ogra2cairo.c (gra2cairo_output): don't call
+	"cairo_save()" on the 'I' command.
+
 2012-06-12  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* driver/ngp2.in (save_gra): copy field of "gra:viewer".

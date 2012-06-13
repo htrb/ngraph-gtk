@@ -62,7 +62,7 @@ typedef struct _tpoint {
 int DialogExecute(GtkWidget *parent, void *dialog);
 void message_beep(GtkWidget *parent);
 int message_box(GtkWidget *parent, const char *message, const char *title, int yesno);
-int DialogInput(GtkWidget *parent, const char *title, const char *mes, char **s, int *x, int *y);
+int DialogInput(GtkWidget *parent, const char *title, const char *mes, const char *init_str, char **s, int *x, int *y);
 int DialogRadio(GtkWidget *parent, const char *title, const char *caption, struct narray *ary, int *r, int *x, int *y);
 int DialogCheck(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int *r, int *x, int *y);
 int DialogCombo(GtkWidget *parent, const char *title, const char *caption, struct narray *array, int sel, char **r, int *x, int *y);

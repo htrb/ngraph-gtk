@@ -345,7 +345,7 @@ message_box(GtkWidget * parent, const char *message, const char *title, int mode
 }
 
 int
-DialogInput(GtkWidget * parent, const char *title, const char *mes, char **s, int *x, int *y)
+DialogInput(GtkWidget * parent, const char *title, const char *mes, const char *init_str, char **s, int *x, int *y)
 {
   GtkWidget *dlg, *text;
   GtkBox *vbox;
@@ -369,6 +369,9 @@ DialogInput(GtkWidget * parent, const char *title, const char *mes, char **s, in
   }
 
   text = create_text_entry(FALSE, TRUE);
+  if (init_str) {
+    gtk_entry_set_text(GTK_ENTRY(text), init_str);
+  }
   gtk_box_pack_start(vbox, text, FALSE, FALSE, 5);
 
   set_dialog_position(dlg, x, y);

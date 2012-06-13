@@ -9,6 +9,11 @@ PWD=`pwd`
 NULL_DEVICE=/dev/null
 DPI=86
 
+new string
+string::@=`object gra2cairofile format`
+SUPPORT_EMF=${string::match:"emf"}
+del string
+
 clear_viewer() {
     for i in `derive -instance draw fit`
     do
@@ -56,10 +61,17 @@ save_gra() {
 
 	new gra2file name=OUTPUT file="$1"
 	new gra name=OUTPUT
+
 	if exist -q gra:viewer
 	then
 	    cpy gra:viewer,OUTPUT draw_obj left_margin top_margin zoom paper_width paper_height
 	fi
+
+	if exist -q fit:0
+	then
+	    fit:0-!:display=false
+	fi
+
 	gra:OUTPUT:device=gra2file:OUTPUT
 	gra:OUTPUT:open
 	gra:OUTPUT:draw
@@ -91,6 +103,10 @@ show_usage() {
     echo "    -svg, -svg1.1 output Scalable Vector Graphics version 1.1"
     echo "    -svg1.2       output Scalable Vector Graphics version 1.2"
     echo "    -png          output Portable Network Graphics"
+    if [ $SUPPORT_EMF = "true" ]
+    then
+	echo "    -emf          output Enhanced Metafile"
+    fi
     echo "    -h --help     show this usage"
     echo
 
@@ -231,6 +247,14 @@ do
 		;;
 	    -png)
 		save_image "png" $NGP_NAME.png
+		;;
+	    -emf)
+		if [ $SUPPORT_EMF = "true" ]
+		then
+		    save_image "emf" $NGP_NAME.emf
+		else
+		    echo "Enhanced Metafile is not supported."
+		fi
 		;;
 	    -)
 		save_gra $TMPFILE

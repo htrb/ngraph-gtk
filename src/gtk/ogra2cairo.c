@@ -978,7 +978,6 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
       error(obj, r);
       return 1;
     }
-    cairo_save(local->cairo);
   case '%': case 'X':
     break;
   case 'E':

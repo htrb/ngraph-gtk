@@ -6,9 +6,16 @@
 
 set +e
 new dialog
-MATH=${dialog::input:'Input mathematical expression'}
-if [ "$MATH" ]
-then
+MATH=""
+
+while true
+do
+    dialog::caption='Input mathematical expression'
+    MATH=`get dialog -field input:"$MATH"`
+    if [ -z "$MATH" ]
+    then
+	break
+    fi
     if result=`dexpr "$MATH"`
     then
 	new text
@@ -16,6 +23,8 @@ then
 	del text
 	dialog::message:"$MATH=$result"
 	menu::echo:"Math: $MATH=$result"
+	break
     fi
-fi
+done
+
 del dialog
