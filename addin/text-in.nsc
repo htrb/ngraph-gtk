@@ -32,8 +32,8 @@ FILE_OBJ=${dialog::combo:"sarray:FILES"}
 del sarray:FILES
 if [ -z "$FILE_OBJ" ]
 then
-  del dialog
-  exit
+    del dialog
+    exit
 fi
 set $FILE_OBJ
 ID=$1
@@ -43,16 +43,25 @@ dialog::caption='Input legend-text column'
 COLUMN=${dialog::integer_entry:'0 1000 1 1'}
 if [ -z "$COLUMN" ]
 then
-  del dialog
-  exit
+    del dialog
+    exit
 fi
 
 dialog::caption='select horizontal position of the text'
 ALIGN=${dialog::radio:'_Left _Center _Right'}
 if [ -z "$ALIGN" ]
 then
-  del dialog
-  exit
+    del dialog
+    exit
+fi
+
+dialog::title="$FILE_OBJ"
+dialog::caption='Input vertical offset (mm)'
+OFFSET=${dialog::integer_entry:'-50 50 1 0'}
+if [ -z "$OFFSET" ]
+then
+    del dialog
+    exit
 fi
 
 del dialog
@@ -62,25 +71,26 @@ new int name=NAME @=0
 exe file:$ID opendatac
 while file::getdata
 do
-  int:NAME:inc
-  if exist -q text:in_${ID}_${int:NAME:@}
-  then
-    put text:in_${ID}_${int:NAME:@} name:in_${ID}_${int:NAME:@}
-  else
-    new text name=in_${ID}_${int:NAME:@}
-    text::pt=$PT
-    text::R=${file::R}
-    text::G=${file::G}
-    text::B=${file::B}
-    text::font=$FONT
-    text::direction=$DIR
-  fi
-  text::x=0
-  text::y=0
-  text::text=`get file:$ID -field column:"${file::line} ${COLUMN}"`
-  iarray:BBOX:@="${text::bbox}"
-  text::x="${file::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*$ALIGN"
-  text::y="${file::coord_y}+$SHIFTY+ABS(${iarray:BBOX:get:3}-${iarray:BBOX:get:1})/2-${iarray:BBOX:get:3}"
+    int:NAME:inc
+    TEXT_NAME=in_${ID}_${int:NAME:@}
+    if exist -q text:$TEXT_NAME
+    then
+	put text:$TEXT_NAME name:$TEXT_NAME # to set text:$TEXT_NAME as a current instance
+    else
+	new text name=$TEXT_NAME
+	text::pt=$PT
+	text::R=${file::R}
+	text::G=${file::G}
+	text::B=${file::B}
+	text::font=$FONT
+	text::direction=$DIR
+    fi
+    text::x=0
+    text::y=0
+    text::text=`get file:$ID -field column:"${file::line} ${COLUMN}"`
+    iarray:BBOX:@="${text::bbox}"
+    text::x="${file::coord_x}+$SHIFTX-ABS(${iarray:BBOX:get:2}-${iarray:BBOX:get:0})/2*$ALIGN"
+    text::y="${file::coord_y}+$SHIFTY+ABS(${iarray:BBOX:get:3}-${iarray:BBOX:get:1})/2-${iarray:BBOX:get:3}+$OFFSET*100"
 done
 menu::modified=true
 file::closedata

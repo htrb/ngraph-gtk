@@ -1,3 +1,7 @@
+2012-06-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* addin/text-in.nsc: vertical offset of text can be changed.
+
 2012-06-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* driver/ngp2.in: accepts "-emf" option if EMF output is
