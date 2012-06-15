@@ -2457,6 +2457,7 @@ setupwindow(void)
   w = get_toolbar(NgraphUi, "/CommandToolBar", NULL);
 #if GTK_CHECK_VERSION(3, 4, 0)
   CToolbar = w;
+  gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
   gtk_box_pack_start(GTK_BOX(vbox), w, FALSE, FALSE, 0);
 #else
   CToolbar = create_toolbar_box(vbox, w, GTK_ORIENTATION_HORIZONTAL);
@@ -2466,6 +2467,7 @@ setupwindow(void)
 #if GTK_CHECK_VERSION(3, 4, 0)
   PToolbar = w;
   gtk_orientable_set_orientation(GTK_ORIENTABLE(w), GTK_ORIENTATION_VERTICAL);
+  gtk_toolbar_set_style(GTK_TOOLBAR(w), GTK_TOOLBAR_ICONS);
   gtk_box_pack_start(GTK_BOX(hbox), w, FALSE, FALSE, 0);
 #else
   PToolbar = create_toolbar_box(hbox, w, GTK_ORIENTATION_VERTICAL);

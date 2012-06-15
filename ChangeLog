@@ -1,3 +1,11 @@
+2012-06-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11axis.c (baseline_tab_create): dont call
+	"gtk_widget_set_size_request()".
+
+	* src/gtk/x11menu.c (setupwindow): call "gtk_toolbar_set_style()"
+	when the version of GTK+ is greater or equal to 3.4.0.
+
 2012-06-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* addin/text-in.nsc: vertical offset of text can be changed.

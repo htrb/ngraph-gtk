@@ -1561,7 +1561,6 @@ baseline_tab_create(GtkWidget *wi, struct AxisDialog *dd)
   d->wavelen = w;
 
   w = create_spin_entry_type(SPIN_BUTTON_TYPE_WIDTH, TRUE, TRUE);
-  gtk_widget_set_size_request(w, NUM_ENTRY_WIDTH, -1);
   add_widget_to_table(table, w, _("_Wave width:"), FALSE, i++);
   d->wavewid = w;
 
