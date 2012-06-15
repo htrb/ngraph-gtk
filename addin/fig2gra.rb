@@ -410,7 +410,7 @@ File.open(ARGV[1], "w") {|f|
 
     b = []
     i += 1
-    while (l[i] && l[i][0] == 9)
+    while (l[i] && l[i][0, 1] == "\t")
       b += l[i].split.map {|v| unit_conv(v.to_i)}
       i += 1
     end

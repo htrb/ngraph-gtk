@@ -1,3 +1,7 @@
+2012-06-16  Hroyuki Ito  <ZXB01226 at nifty.com>
+
+	* addin/fig2gra.rb: support Ruby 1.9.
+
 2012-06-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11axis.c (baseline_tab_create): dont call
