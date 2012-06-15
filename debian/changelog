@@ -1,3 +1,9 @@
+ngraph-gtk (6.06.06-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 15 Jun 2012 22:16:03 +0900
+
 ngraph-gtk (6.06.05-2) unstable; urgency=low
 
   * GTK+ 3.4 support.
