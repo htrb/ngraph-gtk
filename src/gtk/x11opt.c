@@ -250,11 +250,11 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
   char *title;
 
   combo_box_clear(d->addins);
-  if (d->Script->name || Menulocal.addin_list == NULL) {
+  combo_box_append_text(d->addins, "Custom");
+  if (Menulocal.addin_list == NULL) {
     set_widget_sensitivity_with_label(d->addins, FALSE);
   } else {
     set_widget_sensitivity_with_label(d->addins, TRUE);
-    combo_box_append_text(d->addins, "Custom");
     for (addin = Menulocal.addin_list; addin; addin = addin->next) {
       title = g_strdup(addin->name);
       if (title) {
@@ -263,15 +263,17 @@ SetScriptDialogSetupItem(GtkWidget *w, struct SetScriptDialog *d)
 	g_free(title);
       }
     }
-    combo_box_set_active(d->addins, 1);
     active_script_changed(GTK_COMBO_BOX(d->addins), d);
   }
 
   if (d->Script->name) {
+    combo_box_set_active(d->addins, 0);
     gtk_entry_set_text(GTK_ENTRY(d->name), CHK_STR(d->Script->name));
     gtk_entry_set_text(GTK_ENTRY(d->script), CHK_STR(d->Script->script));
     gtk_entry_set_text(GTK_ENTRY(d->option), CHK_STR(d->Script->option));
     gtk_entry_set_text(GTK_ENTRY(d->description), CHK_STR(d->Script->description));
+  } else {
+    combo_box_set_active(d->addins, 1);
   }
 }
 
