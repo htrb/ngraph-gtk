@@ -113,12 +113,12 @@
 #include <glib.h>
 #include <unistd.h>
 
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
 #include <readline/readline.h>
 #include <readline/history.h>
 static char *Prompt;
 static int MultiLine = FALSE;
-#endif	/* HAVE_LIBREADLINE */
+#endif	/* HAVE_READLINE_READLINE_H */
 
 #ifndef WINDOWS
 #include <sys/wait.h>
@@ -355,7 +355,7 @@ shgetstdin(void)
   return buf[0];
 }
 
-#if HAVE_LIBREADLINE
+#if HAVE_READLINE_READLINE_H
 static int ReadlineLock = FALSE;
 
 static void *
@@ -423,12 +423,12 @@ shget(struct nshell *nshell)
 {
   char buf[2];
   int byte;
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
   static char *str_ptr = NULL, *line_str = NULL;
 #endif
 
   if (nisatty(nshell->fd)) {
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
     if(str_ptr == NULL){
       str_ptr = line_str = nreadline(Prompt);
       if(str_ptr == NULL){
@@ -466,13 +466,13 @@ shget(struct nshell *nshell)
 	byte = 1;
       }
     }
-#else  /* HAVE_LIBREADLINE */
+#else  /* HAVE_READLINE_READLINE_H */
     set_shellevloop(0);
     do {
       byte=read(nshell->fd,buf,1);
     } while (byte<0);
     reset_shellevloop();
-#endif	/* HAVE_LIBREADLINE */
+#endif	/* HAVE_READLINE_READLINE_H */
   } else {
     do {
       byte=read(nshell->fd,buf,1);
@@ -1534,12 +1534,16 @@ getcmdline(struct nshell *nshell,
       if (nisatty(nshell->fd)) {
         if (cmd == NULL && cmdroot == NULL) {
 	  prompt = getval(nshell, "PS1");
+#ifdef HAVE_READLINE_READLINE_H
 	  MultiLine = FALSE;
+#endif
 	} else {
 	  prompt = getval(nshell, "PS2");
+#ifdef HAVE_READLINE_READLINE_H
 	  MultiLine = TRUE;
+#endif
 	}
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
 	Prompt = prompt;
 #else
         if (prompt!=NULL) printfconsole("%.256s",prompt);
@@ -2474,7 +2478,7 @@ checkcmd(struct nshell *nshell,struct cmdlist **cmdroot)
                     }
 		    if (nisatty(nshell->fd)) {
 		      prompt = getval(nshell,"PS2");
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
 		      Prompt = prompt;
 		      MultiLine = TRUE;
 #else

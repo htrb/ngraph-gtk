@@ -655,6 +655,7 @@ GLIB_CFLAGS
 PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
+READLINE_LIBS
 POSUB
 LTLIBINTL
 LIBINTL
@@ -14486,11 +14487,12 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_readline_rl_completion_matches" >&5
 $as_echo "$ac_cv_lib_readline_rl_completion_matches" >&6; }
 if test "x$ac_cv_lib_readline_rl_completion_matches" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBREADLINE 1
-_ACEOF
 
-  LIBS="-lreadline $LIBS"
+
+$as_echo "#define HAVE_LIBREADLINE 1" >>confdefs.h
+
+			  READLINE_LIBS=-lreadline
+
 
 fi
 
@@ -14852,6 +14854,8 @@ rm -f core conftest.err conftest.$ac_objext \
   rm -f conf.glibtest
 
 
+
+
 # Check whether --enable-gtktest was given.
 if test "${enable_gtktest+set}" = set; then :
   enableval=$enable_gtktest;
@@ -14861,7 +14865,7 @@ fi
 
 
   pkg_config_args=gtk+-3.0
-  for module in . gthread
+  for module in .
   do
       case "$module" in
          gthread)
@@ -15114,7 +15118,7 @@ fi
 
 
   pkg_config_args=gtk+-2.0
-  for module in . gthread
+  for module in .
   do
       case "$module" in
          gthread)
@@ -16125,7 +16129,7 @@ $as_echo "#define HAVE_SYS_WAIT_H 1" >>confdefs.h
 
 fi
 
-for ac_header in fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h
+for ac_header in fcntl.h limits.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h unistd.h utime.h readline/readline.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"

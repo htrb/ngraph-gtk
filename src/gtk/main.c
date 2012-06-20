@@ -52,7 +52,7 @@ char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
 #include "nconfig.h"
 #include "shell.h"
 
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "ox11menu.h"
@@ -63,7 +63,7 @@ char *DOCDIR, *NDATADIR, *ADDINDIR, *LIBDIR, *CONFDIR, *LOCALEDIR, *PIXMAPDIR;
 static char **attempt_shell_completion(char *text, int start, int end);
 #define HIST_SIZE 100
 #define HIST_FILE "shell_history"
-#endif	/* HAVE_LIBREADLINE */
+#endif	/* HAVE_READLINE_READLINE_H */
 
 #define SYSCONF "[Ngraph]"
 
@@ -605,7 +605,7 @@ nforegroundconsole()
 }
 
 static void
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
 load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole, int *history_size)
 #else
 load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
@@ -653,7 +653,7 @@ load_config(struct objlist *sys, N_VALUE *inst, int *allocconsole)
 	if (endptr[0] == '\0')
 	  consolerow = val;
 	g_free(f1);
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
       } else if (strcmp(tok, "history_size") == 0) {
 	f1 = getitok2(&s2, &len, " \t,");
 	val = strtol(f1, &endptr, 10);
@@ -753,7 +753,7 @@ main(int argc, char **argv)
   int allocnow, allocconsole = FALSE;
   struct narray iarray;
   char *arg;
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
   int history_size = HIST_SIZE;
   char *history_file = NULL;
 #endif
@@ -902,7 +902,7 @@ main(int argc, char **argv)
   }
 
   loginshell = NULL;
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
   load_config(sys, inst, &allocconsole, &history_size);
   rl_readline_name = "ngraph";
   rl_completer_word_break_characters = " \t\n\"'@><;|&({}`";
@@ -1031,7 +1031,7 @@ main(int argc, char **argv)
       exit(1);
     }
   } while (loginshell != NULL);
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
   if (history_file != NULL) {
     write_history(history_file);
     g_free(history_file);
@@ -1049,7 +1049,7 @@ main(int argc, char **argv)
   return 0;
 }
 
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
 struct mylist
 {
   struct mylist *next;

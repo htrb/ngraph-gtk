@@ -1821,7 +1821,7 @@ mx_get_accel_map(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, ch
   return 0;
 }
 
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
 #include <readline/readline.h>
 #endif
 
@@ -1883,7 +1883,7 @@ mx_show_lib_version(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc,
 	       h,
 	       pango_version_string());
 
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE_READLINE_H
   printfstdout("\n");
   printfstdout("%sreadline\n"
 	       "%s compile: %d.%d\n"

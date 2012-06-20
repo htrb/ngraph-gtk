@@ -1,3 +1,19 @@
+2012-06-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/main.c (HAVE_READLINE_READLINE_H): used instead of
+	"HAVE_LIBREADLINE".
+
+	* src/gtk/ox11menu.c (HAVE_READLINE_READLINE_H): used instead of
+	"HAVE_LIBREADLINE".
+
+	* src/shell.c (getcmdline): use global valuable "Multiline" only
+	when "HAVE_READLINE_READLINE_H" is defined.
+	(HAVE_READLINE_READLINE_H): used instead of "HAVE_LIBREADLINE".
+
+	* configure.in (READLINE_LIBS): defined when readline library is
+	installed.
+	(AC_CHECK_HEADERS): check "readline/readline.h"
+
 2012-06-16  Hroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11opt.c (SetScriptDialogSetupItem): addin selection

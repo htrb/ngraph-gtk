@@ -68,7 +68,7 @@
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
-/* Define to 1 if you have the `readline' library (-lreadline). */
+/* have readline Library */
 #undef HAVE_LIBREADLINE
 
 /* Define to 1 if you have the <limits.h> header file. */
@@ -95,6 +95,9 @@
 
 /* Define to 1 if you have the `pow' function. */
 #undef HAVE_POW
+
+/* Define to 1 if you have the <readline/readline.h> header file. */
+#undef HAVE_READLINE_READLINE_H
 
 /* Define to 1 if your system has a GNU libc compatible `realloc' function,
    and to 0 otherwise. */

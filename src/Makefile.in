@@ -100,7 +100,7 @@ ngraph_OBJECTS = $(am_ngraph_OBJECTS)
 am__DEPENDENCIES_1 =
 ngraph_DEPENDENCIES = gtk/libngraph.la math/libmath.la \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -273,6 +273,7 @@ PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POSUB = @POSUB@
 POW_LIB = @POW_LIB@
 RANLIB = @RANLIB@
+READLINE_LIBS = @READLINE_LIBS@
 RM = @RM@
 RUBY = @RUBY@
 SED = @SED@
@@ -351,7 +352,7 @@ ngraph_SOURCES = axis.c axis.h nconfig.c nconfig.h gra.c gra.h		\
 	common.h nhash.h nhash.c strconv.c strconv.h oio.c gettext.h
 
 terminal_SOURCES = terminal.c
-ngraph_LDADD = gtk/libngraph.la math/libmath.la $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
+ngraph_LDADD = gtk/libngraph.la math/libmath.la $(READLINE_LIBS) $(GTK_LIBS) $(GLIB_LIBS) $(GSL_LIBS)
 ngraph_CFLAGS = $(GTK_CFLAGS) $(GSL_CFLAGS) -I.. -DCCNAME='"'$(CC)'"'
 terminal_CFLAGS = $(GTK_CFLAGS)
 all: all-recursive
