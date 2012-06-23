@@ -257,6 +257,20 @@ oputcolor(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 int 
+oputmarktype(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv)
+{
+  int type;
+
+  type = * (int *) (argv[2]);
+
+  if (type < 0 || type >= MARK_TYPE_NUM) {
+    * (int *) (argv[2]) = 0;
+  }
+
+  return 0;
+}
+
+int 
 oputstyle(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct narray *array;

@@ -93,7 +93,7 @@ static n_list_store Flist[] = {
 #define FILE_WIN_COL_TYPE   7
 
 
-static void file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
+static void file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static void file_delete_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_copy2_popup_func(GtkMenuItem *w, gpointer client_data);
 static void file_copy_popup_func(GtkMenuItem *w, gpointer client_data);
@@ -3354,15 +3354,15 @@ FileDialogClose(GtkWidget *w, void *data)
 }
 
 void
-FileDialog(void *data, struct objlist *obj, int id, int multi)
+FileDialog(struct obj_list_data *data, int id, int multi)
 {
   struct FileDialog *d;
 
-  d = (struct FileDialog *) data;
+  d = (struct FileDialog *) data->dialog;
 
   d->SetupWindow = FileDialogSetup;
   d->CloseWindow = FileDialogClose;
-  d->Obj = obj;
+  d->Obj = data->obj;
   d->Id = id;
   d->multi_open = multi > 0;
 }
@@ -3424,13 +3424,10 @@ FileDefDialog(struct FileDialog *data, struct objlist *obj, int id)
 }
 
 static void
-delete_file_obj(int id)
+delete_file_obj(struct obj_list_data *data, int id)
 {
-  struct objlist *obj;
-
-  obj = chkobject("file");
-  FitDel(obj, id);
-  delobj(obj, id);
+  FitDel(data->obj, id);
+  delobj(data->obj, id);
 }
 
 void
@@ -3473,16 +3470,16 @@ CmFileHistory(GtkRecentChooser *w, gpointer client_data)
   }
 
   putobj(obj, "file", id, name);
-  FileDialog(&DlgFile, obj, id, FALSE);
+  FileDialog(NgraphApp.FileWin.data.data, id, FALSE);
   ret = DialogExecute(TopLevel, &DlgFile);
   if ((ret == IDDELETE) || (ret == IDCANCEL)) {
-    delete_file_obj(id);
+    delete_file_obj(NgraphApp.FileWin.data.data, id);
   } else {
     set_graph_modified();
     AddDataFileList(fname);
   }
   g_free(fname);
-  FileWinUpdate(TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
 }
 
 void
@@ -3512,17 +3509,17 @@ CmFileNew(GtkAction *w, gpointer client_data)
 
   changefilename(file);
   putobj(obj, "file", id, file);
-  FileDialog(&DlgFile, obj, id, FALSE);
+  FileDialog(NgraphApp.FileWin.data.data, id, FALSE);
   ret = DialogExecute(TopLevel, &DlgFile);
 
   if (ret == IDDELETE || ret == IDCANCEL) {
-    delete_file_obj(id);
+    delete_file_obj(NgraphApp.FileWin.data.data, id);
   } else {
     set_graph_modified();
     AddDataFileList(file);
   }
 
-  FileWinUpdate(TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
 }
 
 
@@ -3563,7 +3560,7 @@ CmFileOpen(GtkAction *w, gpointer client_data)
   }
 
   if (update_file_obj_multi(obj, &farray, TRUE)) {
-    FileWinUpdate(TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
   }
 
   if (n != chkobjlastinst(obj)) {
@@ -3592,10 +3589,10 @@ CmFileClose(GtkAction *w, gpointer client_data)
     num = arraynum(&farray);
     array = arraydata(&farray);
     for (i = num - 1; i >= 0; i--) {
-      delete_file_obj(array[i]);
+      delete_file_obj(NgraphApp.FileWin.data.data, array[i]);
       set_graph_modified();
     }
-    FileWinUpdate(TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
   }
   arraydel(&farray);
 }
@@ -3625,13 +3622,13 @@ update_file_obj_multi(struct objlist *obj, struct narray *farray, int new_file)
     } else {
       int ret;
 
-      FileDialog(&DlgFile, obj, array[i], i < num - 1);
+      FileDialog(NgraphApp.FileWin.data.data, array[i], i < num - 1);
       ret = DialogExecute(TopLevel, &DlgFile);
       if (ret == IDCANCEL && new_file) {
 	ret = IDDELETE;
       }
       if (ret == IDDELETE) {
-	delete_file_obj(array[i]);
+	delete_file_obj(NgraphApp.FileWin.data.data, array[i]);
 	if (! new_file) {
 	  set_graph_modified();
 	}
@@ -3681,7 +3678,7 @@ CmFileUpdate(GtkAction *w, gpointer client_data)
   }
 
   if (ret == IDOK && update_file_obj_multi(obj, &farray, FALSE)) {
-    FileWinUpdate(TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
   }
   arraydel(&farray);
 }
@@ -3757,7 +3754,7 @@ CmOptionFileDef(GtkAction *w, gpointer client_data)
 }
 
 static void
-FileWinFileEdit(struct SubWin *d)
+FileWinFileEdit(struct obj_list_data *d)
 {
   int sel;
   char *name;
@@ -3782,14 +3779,14 @@ FileWinFileEdit(struct SubWin *d)
 static void
 file_edit_popup_func(GtkMenuItem *w, gpointer client_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
   d = (struct SubWin *) client_data;
   FileWinFileEdit(d);
 }
 
 static void
-FileWinFileDelete(struct SubWin *d)
+FileWinFileDelete(struct obj_list_data *d)
 {
   int sel, update;
 
@@ -3799,7 +3796,7 @@ FileWinFileDelete(struct SubWin *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
 
   if ((sel >= 0) && (sel <= d->num)) {
-    delete_file_obj(sel);
+    delete_file_obj(d, sel);
     d->num--;
     update = FALSE;
     if (d->num < 0) {
@@ -3810,7 +3807,7 @@ FileWinFileDelete(struct SubWin *d)
     } else {
       d->select = sel;
     }
-    FileWinUpdate(update);
+    FileWinUpdate(d, update);
     set_graph_modified();
   }
 }
@@ -3818,14 +3815,14 @@ FileWinFileDelete(struct SubWin *d)
 static void
 file_delete_popup_func(GtkMenuItem *w, gpointer client_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data*) client_data;
   FileWinFileDelete(d);
 }
 
 static int
-file_obj_copy(struct SubWin *d)
+file_obj_copy(struct obj_list_data *d)
 {
   int sel, id;
 
@@ -3849,23 +3846,23 @@ file_obj_copy(struct SubWin *d)
 }
 
 static void
-FileWinFileCopy(struct SubWin *d)
+FileWinFileCopy(struct obj_list_data *d)
 {
   d->select = file_obj_copy(d);
-  FileWinUpdate(FALSE);
+  FileWinUpdate(d, FALSE);
 }
 
 static void
 file_copy_popup_func(GtkMenuItem *w, gpointer client_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
   FileWinFileCopy(d);
 }
 
 static void
-FileWinFileCopy2(struct SubWin *d)
+FileWinFileCopy2(struct obj_list_data *d)
 {
   int id, sel, j;
 
@@ -3877,7 +3874,7 @@ FileWinFileCopy2(struct SubWin *d)
 
   if (id < 0) {
     d->select = sel;
-    FileWinUpdate(TRUE);
+    FileWinUpdate(d, TRUE);
     return;
   }
 
@@ -3886,20 +3883,20 @@ FileWinFileCopy2(struct SubWin *d)
   }
 
   d->select = sel + 1;
-  FileWinUpdate(FALSE);
+  FileWinUpdate(d, FALSE);
 }
 
 static void
 file_copy2_popup_func(GtkMenuItem *w, gpointer client_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
   FileWinFileCopy2(d);
 }
 
 static void
-FileWinFileUpdate(struct SubWin *d)
+FileWinFileUpdate(struct obj_list_data *d)
 {
   int sel, ret;
 
@@ -3908,21 +3905,21 @@ FileWinFileUpdate(struct SubWin *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
 
   if ((sel >= 0) && (sel <= d->num)) {
-    d->setup_dialog(d->dialog, d->obj, sel, FALSE);
+    d->setup_dialog(d, sel, FALSE);
     d->select = sel;
 
-    ret = DialogExecute(d->Win, d->dialog);
+    ret = DialogExecute(d->parent->Win, d->dialog);
     if (ret == IDDELETE) {
-      delete_file_obj(sel);
+      delete_file_obj(d, sel);
       d->select = -1;
       set_graph_modified();
     }
-    d->update(FALSE);
+    d->update(d, FALSE);
   }
 }
 
 static void
-FileWinFileDraw(struct SubWin *d)
+FileWinFileDraw(struct obj_list_data *d)
 {
   int i, sel, hidden, h;
 
@@ -3953,28 +3950,25 @@ FileWinFileDraw(struct SubWin *d)
     d->select = -1;
   }
   CmViewerDraw(NULL, GINT_TO_POINTER(FALSE));
-  FileWinUpdate(FALSE);
+  FileWinUpdate(d, FALSE);
 }
 
 static void
 file_draw_popup_func(GtkMenuItem *w, gpointer client_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
   FileWinFileDraw(d);
 }
 
 void
-FileWinUpdate(int clear)
+FileWinUpdate(struct obj_list_data *d, int clear)
 {
-  struct SubWin *d;
-
   if (Menulock || Globallock)
     return;
 
-  d = &(NgraphApp.FileWin);
-  if (GTK_WIDGET(d->text) == NULL)
+  if (d == NULL)
     return;
 
   if (list_sub_window_must_rebuild(d)) {
@@ -3989,7 +3983,7 @@ FileWinUpdate(int clear)
 }
 
 static void
-FileWinFit(struct SubWin *d)
+FileWinFit(struct obj_list_data *d)
 {
   struct objlist *fitobj, *obj2;
   char *fit;
@@ -4032,7 +4026,7 @@ FileWinFit(struct SubWin *d)
   if (fit == NULL)
     return;
 
-  ret = execute_fit_dialog(d->Win, d->obj, sel, fitobj, fitid);
+  ret = execute_fit_dialog(d->parent->Win, d->obj, sel, fitobj, fitid);
 
   if (ret == IDDELETE) {
     delobj(fitobj, fitid);
@@ -4043,9 +4037,9 @@ FileWinFit(struct SubWin *d)
 static void
 file_fit_popup_func(GtkMenuItem *w, gpointer client_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
   FileWinFit(d);
 }
 
@@ -4307,7 +4301,7 @@ get_axis_obj_str(struct objlist *obj, int id, char *field)
 }
 
 static void
-file_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
+file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
   int cx;
   unsigned int i;
@@ -4506,7 +4500,7 @@ CmFileSaveData(GtkAction *w, gpointer client_data)
 static gboolean
 filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
   GdkEventKey *e;
 
   g_return_val_if_fail(w != NULL, FALSE);
@@ -4515,7 +4509,7 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   if (Menulock || Globallock)
     return TRUE;
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
   e = (GdkEventKey *)event;
 
   switch (e->keyval) {
@@ -4556,10 +4550,10 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   int sel;
   unsigned int i;
-  struct SubWin *d;
+  struct obj_list_data *d;
   char *fit;
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   sel = d->select;
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
@@ -4808,14 +4802,14 @@ select_type(GtkComboBox *w, gpointer user_data)
 {
   int sel, col_type, type, mark_type, curve_type, b, c, *ary, found, depth;
   struct objlist *obj;
-  struct SubWin *d;
+  struct obj_list_data *d;
   GtkTreeStore *list;
   GtkTreeIter iter;
   GtkTreePath *path;
 
   menu_lock(FALSE);
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0)
@@ -4892,7 +4886,7 @@ select_type(GtkComboBox *w, gpointer user_data)
 
 
   d->select = sel;
-  d->update(FALSE);
+  d->update(d, FALSE);
   set_graph_modified();
 }
 
@@ -4902,14 +4896,14 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
   GtkTreeView *view;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  struct SubWin *d;
+  struct obj_list_data *d;
   GtkComboBox *cbox;
   int sel, type, child = -1;
   struct objlist *obj;
 
   menu_lock(TRUE);
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
@@ -4952,13 +4946,13 @@ select_axis(GtkComboBox *w, gpointer user_data, char *axis)
 {
   char buf[64];
   int j, sel;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
   sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0)
     return;
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   j = combo_box_get_active(GTK_WIDGET(w));
 
@@ -4989,7 +4983,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   GtkTreeView *view;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  struct SubWin *d;
+  struct obj_list_data *d;
   GtkComboBox *cbox;
   int lastinst, j, sel, id = 0, is_oid;
   struct objlist *aobj;
@@ -4997,7 +4991,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   menu_lock(TRUE);
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
@@ -5006,7 +5000,6 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
     return;
 
   list_store_select_iter(GTK_WIDGET(view), &iter);
-
   sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
 
   cbox = GTK_COMBO_BOX(editable);
@@ -5053,16 +5046,16 @@ start_editing_y(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *pat
 static void
 edited_axis(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, char *axis)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
   menu_lock(FALSE);
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   if (str == NULL || d->select < 0)
     return;
 
-  d->update(FALSE);
+  d->update(d, FALSE);
   set_graph_modified();
 }
 
@@ -5120,30 +5113,29 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
     return;
   }
 
-  d->update = FileWinUpdate;
-  d->setup_dialog = FileDialog;
-  d->dialog = &DlgFile;
-  d->ev_key = filewin_ev_key_down;
-  d->delete = delete_file_obj;
-
   list_sub_window_create(d, "Data Window", FILE_WIN_COL_NUM, Flist, Filewin_xpm, Filewin48_xpm);
 
-  d->obj = chkobject("file");
-  d->num = chkobjlastinst(d->obj);
+  d->data.data->update = FileWinUpdate;
+  d->data.data->setup_dialog = FileDialog;
+  d->data.data->dialog = &DlgFile;
+  d->data.data->ev_key = filewin_ev_key_down;
+  d->data.data->delete = delete_file_obj;
+  d->data.data->obj = chkobject("file");
+  d->data.data->num = chkobjlastinst(d->data.data->obj);
 
-  sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-  set_combo_cell_renderer_cb(d, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
-  set_combo_cell_renderer_cb(d, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
-  set_obj_cell_renderer_cb(d, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
+  sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+  set_combo_cell_renderer_cb(d->data.data, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
+  set_combo_cell_renderer_cb(d->data.data, FILE_WIN_COL_Y_AXIS, Flist, G_CALLBACK(start_editing_y), G_CALLBACK(edited_axis));
+  set_obj_cell_renderer_cb(d->data.data, FILE_WIN_COL_TYPE, Flist, G_CALLBACK(start_editing_type));
 
   init_dnd(d);
 
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->text), TRUE);
-  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->text), FILE_WIN_COL_FILE);
-  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->text), FILE_WIN_COL_FILE);
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
+  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
+  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
 
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);
 
-  FileWinUpdate(TRUE);
+  FileWinUpdate(d->data.data, TRUE);
 }

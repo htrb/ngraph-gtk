@@ -24,7 +24,8 @@
 #ifndef GTK_MENU_HEADER
 #define GTK_MENU_HEADER
 
-#include "x11dialg.h"
+#include "ngraph.h"
+#include "gtk_liststore.h"
 #include "ogra2cairo.h"
 
 #define N2GTK_RULER_METRIC(v) ((v) / 100.0 * 72.0 / 25.4 * 10)
@@ -151,35 +152,35 @@ enum SubWinType {
   TypeInfoWin,
 };
 
-#define SUBWIN_PROTOTYPE enum SubWinType type;				\
-  GtkWidget *Win, *popup, **popup_item;					\
-  GdkWindowState window_state;						\
-  GObject *text;							\
-  int select, num, can_focus;						\
-  void (* update)(int);							\
-  void (* delete)(int);							\
-  void (* setup_dialog)(void *data, struct objlist *obj, int id, int sub_id); \
-  void *dialog;								\
-  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);		\
-  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);	\
+struct SubWin;
 
+struct obj_list_data
+{
+  GtkWidget *popup, **popup_item;
+  GtkWidget *text;
+  int select, num, can_focus;
+  void (* update)(struct obj_list_data *data, int);
+  void (* delete)(struct obj_list_data *data, int);
+  void (* setup_dialog)(struct obj_list_data *data, int id, int user_data);
+  void *dialog;
+  gboolean (* ev_key) (GtkWidget *, GdkEvent *, gpointer);
+  gboolean (* ev_button) (GtkWidget *, GdkEventButton *, gpointer);
+  struct objlist *obj;
+  struct SubWin *parent;
+  n_list_store *list;
+  int list_col_num;
+  struct obj_list_data *next;
+};
 
 struct SubWin
 {
-  SUBWIN_PROTOTYPE;
-  struct objlist *obj;
-};
-
-
-#define LEGENDNUM 5
-
-struct LegendWin
-{
-  SUBWIN_PROTOTYPE;
-  struct objlist *obj[LEGENDNUM];
-  /* Private member */
-  int legend_type;
-  int legend[LEGENDNUM];
+  enum SubWinType type;
+  GtkWidget *Win;
+  GdkWindowState window_state;
+  union {
+    struct obj_list_data *data;
+    GtkWidget *text;
+  } data;
 };
 
 #define MENU_HISTORY_NUM 10
@@ -202,7 +203,7 @@ struct NgraphApp
   struct Viewer Viewer;
   struct SubWin FileWin;
   struct SubWin AxisWin;
-  struct LegendWin LegendWin;
+  struct SubWin LegendWin;
   struct SubWin MergeWin;
   struct SubWin CoordWin;
   struct SubWin InfoWin;

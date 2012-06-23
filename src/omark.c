@@ -491,21 +491,6 @@ markgeometry(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
 }
 
 static int 
-marktype(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,
-	     int argc,char **argv)
-{
-  int type;
-
-  type = * (int *) (argv[2]);
-
-  if (type < 0 || type > 89) {
-    * (int *) (argv[2]) = 0;
-  }
-
-  return 0;
-}
-
-static int 
 markmatch(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int minx,miny,maxx,maxy,err;
@@ -552,7 +537,7 @@ static struct objtable mark[] = {
   {"y",NINT,NREAD|NWRITE,markgeometry,NULL,0},
   {"size",NINT,NREAD|NWRITE,markgeometry,NULL,0},
 
-  {"type",NINT,NREAD|NWRITE,marktype,NULL,0},
+  {"type",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
   {"R2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"G2",NINT,NREAD|NWRITE,oputcolor,NULL,0},
   {"B2",NINT,NREAD|NWRITE,oputcolor,NULL,0},

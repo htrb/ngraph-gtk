@@ -28,7 +28,7 @@ struct evaltype
   double x, y;
 };
 
-void FileWinUpdate(int clear);
+void FileWinUpdate(struct obj_list_data *data, int clear);
 void CmFileHistory(GtkRecentChooser *w, gpointer client_data);
 
 void CmFileNew(GtkAction *w, gpointer client_data);

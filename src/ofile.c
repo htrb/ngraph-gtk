@@ -702,7 +702,7 @@ file_marktype(MathFunctionCallExpression *exp, MathEquation *eq, MathValue *rval
   }
 
   type = exp->buf[0].val.val;
-  if (type < 0 || type > 89) {
+  if (type < 0 || type >= MARK_TYPE_NUM) {
     rval->type = MATH_VALUE_ERROR;
     return 1;
   }
@@ -8019,7 +8019,7 @@ static struct objtable file2d[] = {
   {"smooth_x",NINT,NREAD|NWRITE,f2dput,NULL,0},
   {"smooth_y",NINT,NREAD|NWRITE,f2dput,NULL,0},
 
-  {"mark_type",NINT,NREAD|NWRITE,NULL,NULL,0},
+  {"mark_type",NINT,NREAD|NWRITE,oputmarktype,NULL,0},
   {"mark_size",NINT,NREAD|NWRITE,oputabs,NULL,0},
 
   {"line_width",NINT,NREAD|NWRITE,oputge1,NULL,0},

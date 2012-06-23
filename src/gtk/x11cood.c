@@ -46,7 +46,7 @@ CoordWinSetFont(const char *font)
   PangoFontDescription *desc;
   GtkLabel *label;
 
-  label = GTK_LABEL(NgraphApp.CoordWin.text);
+  label = GTK_LABEL(NgraphApp.CoordWin.data.text);
 
   if (label == NULL)
     return;
@@ -80,7 +80,7 @@ CoordWinSetCoord(int x, int y)
 
   obj = chkobject("axis");
 
-  if (d->Win == NULL || ! GTK_WIDGET_VISIBLE(d->Win) || obj == NULL || d->text == NULL) {
+  if (d->Win == NULL || ! GTK_WIDGET_VISIBLE(d->Win) || obj == NULL || d->data.text == NULL) {
     return;
   }
 
@@ -93,7 +93,7 @@ CoordWinSetCoord(int x, int y)
 
   if (str == NULL) {
     str = g_string_new("");
-    gtk_label_set_text(GTK_LABEL(d->text), "");
+    gtk_label_set_text(GTK_LABEL(d->data.text), "");
     lock = FALSE;
     return;
   }
@@ -120,7 +120,7 @@ CoordWinSetCoord(int x, int y)
     }
   }
 
-  gtk_label_set_text(GTK_LABEL(d->text), str->str);
+  gtk_label_set_text(GTK_LABEL(d->data.text), str->str);
 
   lock = FALSE;
 }

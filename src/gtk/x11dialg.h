@@ -27,10 +27,11 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+#include "ngraph.h"
 #include "object.h"
 #include "ogra2cairo.h"
+#include "x11menu.h"
 
-#define MARK_TYPE_NUM 90
 #define MATH_FNC_NUM 5
 
 struct line_style {
@@ -133,7 +134,7 @@ struct FileDialog
   struct FileMove move;
 };
 
-void FileDialog(void *data, struct objlist *obj, int id, int multi);
+void FileDialog(struct obj_list_data *data, int id, int multi);
 
 struct EvalDialog
 {
@@ -289,7 +290,7 @@ struct AxisDialog
   struct AxisGauge gauge;
   struct AxisNumbering numbering;
 };
-void AxisDialog(void *data, struct objlist *obj, int id, int sub_id);
+void AxisDialog(struct obj_list_data *data, int id, int sub_id);
 
 #define GRID_DIALOG_STYLE_NUM 3
 
@@ -322,7 +323,7 @@ struct MergeDialog
   struct objlist *Obj;
   int Id;
 };
-void MergeDialog(void *data, struct objlist *obj, int id, int Sub_id);
+void MergeDialog(struct obj_list_data *data, int id, int Sub_id);
 
 struct LegendDialog
 {

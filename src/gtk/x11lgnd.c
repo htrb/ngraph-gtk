@@ -29,7 +29,9 @@
 #include <unistd.h>
 #include <math.h>
 
+#include "dir_defs.h"
 #include "strconv.h"
+#include "ioutil.h"
 
 #include "ngraph.h"
 #include "object.h"
@@ -58,40 +60,147 @@
 
 #define ARROW_VIEW_SIZE 160
 #define CB_BUF_SIZE 128
+#define LEGENDNUM 5
 
-static n_list_store Llist[] = {
+static n_list_store Plist[] = {
   {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
   {"#",            G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
-  //  {N_("object"),   G_TYPE_STRING,  TRUE, FALSE, "object",   FALSE},
-  {N_("object/property"), G_TYPE_STRING,  TRUE, FALSE, "property", TRUE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property", TRUE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"stroke",       G_TYPE_BOOLEAN, TRUE, TRUE,  "stroke",   FALSE},
+  {"fill",         G_TYPE_BOOLEAN, TRUE, TRUE,  "fill",     FALSE},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
   {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("lw/size"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("width"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
   {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
 };
 
-#define LEGEND_WIN_COL_NUM (sizeof(Llist)/sizeof(*Llist))
-#define LEGEND_WIN_COL_OID (LEGEND_WIN_COL_NUM - 1)
-#define LEGEND_WIN_COL_HIDDEN 0
-#define LEGEND_WIN_COL_ID     1
-#define LEGEND_WIN_COL_PROP   2
-#define LEGEND_WIN_COL_X      3
-#define LEGEND_WIN_COL_Y      4
-#define LEGEND_WIN_COL_WIDTH  5
+#define PATH_LIST_COL_NUM (sizeof(Plist)/sizeof(*Plist))
+#define PATH_LIST_COL_OID (PATH_LIST_COL_NUM - 1)
+#define PATH_LIST_COL_HIDDEN 0
+#define PATH_LIST_COL_ID     1
+#define PATH_LIST_COL_PROP   2
+#define PATH_LIST_COL_STROKE 3
+#define PATH_LIST_COL_FILL   4
+#define PATH_LIST_COL_X      5
+#define PATH_LIST_COL_Y      6
+#define PATH_LIST_COL_WIDTH  7
+
+static n_list_store Rlist[] = {
+  {"",               G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
+  {"#",              G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
+  {"stroke",         G_TYPE_BOOLEAN, TRUE, TRUE,  "stroke",   FALSE},
+  {"fill",           G_TYPE_BOOLEAN, TRUE, TRUE,  "fill",     FALSE},
+  {"x",              G_TYPE_DOUBLE,  TRUE, TRUE,  "x1",       FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",              G_TYPE_DOUBLE,  TRUE, TRUE,  "y1",       FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"width",          G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {"height",         G_TYPE_DOUBLE,  TRUE, TRUE,  "height",   FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {N_("line width"), G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",             G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
+};
+
+#define RECT_LIST_COL_NUM (sizeof(Rlist)/sizeof(*Rlist))
+#define RECT_LIST_COL_OID (RECT_LIST_COL_NUM - 1)
+#define RECT_LIST_COL_HIDDEN 0
+#define RECT_LIST_COL_ID     1
+#define RECT_LIST_COL_STROKE 2
+#define RECT_LIST_COL_FILL   3
+#define RECT_LIST_COL_X      4
+#define RECT_LIST_COL_Y      5
+#define RECT_LIST_COL_WIDTH  6
+#define RECT_LIST_COL_HEIGHT 7
+#define RECT_LIST_COL_LWIDTH 8
+
+static n_list_store Alist[] = {
+  {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
+  {"#",            G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
+  {"stroke",       G_TYPE_BOOLEAN, TRUE, TRUE,  "stroke",   FALSE},
+  {"fill",         G_TYPE_BOOLEAN, TRUE, TRUE,  "fill",     FALSE},
+  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"rx",           G_TYPE_DOUBLE,  TRUE, TRUE,  "rx",       FALSE, 0, SPIN_ENTRY_MAX, 100, 1000},
+  {"ry",           G_TYPE_DOUBLE,  TRUE, TRUE,  "ry",       FALSE, 0, SPIN_ENTRY_MAX, 100, 1000},
+  {"angle1",       G_TYPE_DOUBLE,  TRUE, TRUE,  "angle1",   FALSE, 0, 36000, 100, 1500},
+  {"angle2",       G_TYPE_DOUBLE,  TRUE, TRUE,  "angle2",   FALSE, 0, 36000, 100, 1500},
+  {"pieslice",     G_TYPE_BOOLEAN, TRUE, TRUE,  "pieslice", FALSE},
+  {N_("width"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE, 0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
+};
+
+#define ARC_LIST_COL_NUM (sizeof(Alist)/sizeof(*Alist))
+#define ARC_LIST_COL_OID (ARC_LIST_COL_NUM - 1)
+#define ARC_LIST_COL_HIDDEN   0
+#define ARC_LIST_COL_ID       1
+#define ARC_LIST_COL_STROKE   2
+#define ARC_LIST_COL_FILL     3
+#define ARC_LIST_COL_X        4
+#define ARC_LIST_COL_Y        5
+#define ARC_LIST_COL_RX       6
+#define ARC_LIST_COL_RY       7
+#define ARC_LIST_COL_ANGLE1   8
+#define ARC_LIST_COL_ANGLE2   9
+#define ARC_LIST_COL_PIESLICE 10
+#define ARC_LIST_COL_WIDTH    11
+
+static n_list_store Mlist[] = {
+  {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
+  {"#",            G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
+  {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property", TRUE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("size"),     G_TYPE_DOUBLE,  TRUE, TRUE,  "size",     FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {"width",        G_TYPE_DOUBLE,  TRUE, TRUE,  "width",    FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",      FALSE},
+};
+
+#define MARK_LIST_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))
+#define MARK_LIST_COL_OID (MARK_LIST_COL_NUM - 1)
+#define MARK_LIST_COL_HIDDEN 0
+#define MARK_LIST_COL_ID     1
+#define MARK_LIST_COL_PROP   2
+#define MARK_LIST_COL_X      3
+#define MARK_LIST_COL_Y      4
+#define MARK_LIST_COL_SIZE   5
+#define MARK_LIST_COL_WIDTH  6
+
+static n_list_store Tlist[] = {
+  {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",    FALSE},
+  {"#",            G_TYPE_INT,     TRUE, FALSE, "id",        FALSE},
+  {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property",  TRUE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("pt"),       G_TYPE_DOUBLE,  TRUE, TRUE,  "pt",        FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {"direction",    G_TYPE_DOUBLE,  TRUE, TRUE,  "direction", FALSE,                0, 36000,          100, 1500},
+  {"raw",          G_TYPE_BOOLEAN, TRUE, TRUE,  "raw",       FALSE},
+  {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",       FALSE},
+};
+
+#define TEXT_LIST_COL_NUM (sizeof(Tlist)/sizeof(*Tlist))
+#define TEXT_LIST_COL_OID (TEXT_LIST_COL_NUM - 1)
+#define TEXT_LIST_COL_HIDDEN 0
+#define TEXT_LIST_COL_ID     1
+#define TEXT_LIST_COL_PROP   2
+#define TEXT_LIST_COL_X      3
+#define TEXT_LIST_COL_Y      4
+#define TEXT_LIST_COL_PT     5
+#define TEXT_LIST_COL_DIR    6
+#define TEXT_LIST_COL_RAW    7
+
+static n_list_store *Llist[] = {Plist, Rlist, Alist, Mlist, Tlist};
+static int Llist_num[] = {PATH_LIST_COL_NUM, RECT_LIST_COL_NUM, ARC_LIST_COL_NUM, MARK_LIST_COL_NUM, TEXT_LIST_COL_NUM};
 
 static struct subwin_popup_list Popup_list[] = {
-  {N_("_Duplicate"),      G_CALLBACK(tree_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  //  {N_("duplicate _Behind"),   G_CALLBACK(tree_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_DELETE,      G_CALLBACK(tree_sub_window_delete), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Duplicate"),      G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  //  {N_("duplicate _Behind"),   G_CALLBACK(list_sub_window_copy), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_DELETE,      G_CALLBACK(list_sub_window_delete), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {N_("_Focus"),          G_CALLBACK(tree_sub_window_focus), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {N_("_Show"),           G_CALLBACK(tree_sub_window_hide), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_CHECK},
-  {GTK_STOCK_PROPERTIES,  G_CALLBACK(tree_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Focus"),          G_CALLBACK(list_sub_window_focus), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {N_("_Show"),           G_CALLBACK(list_sub_window_hide), FALSE, NULL, POP_UP_MENU_ITEM_TYPE_CHECK},
+  {GTK_STOCK_PROPERTIES,  G_CALLBACK(list_sub_window_update), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
   {NULL, NULL, 0, NULL, POP_UP_MENU_ITEM_TYPE_SEPARATOR},
-  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(tree_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_UP,       G_CALLBACK(tree_sub_window_move_up), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GO_DOWN,     G_CALLBACK(tree_sub_window_move_down), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
-  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(tree_sub_window_move_last), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GOTO_TOP,    G_CALLBACK(list_sub_window_move_top), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GO_UP,       G_CALLBACK(list_sub_window_move_up), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GO_DOWN,     G_CALLBACK(list_sub_window_move_down), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
+  {GTK_STOCK_GOTO_BOTTOM, G_CALLBACK(list_sub_window_move_last), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
 };
 
 #define POPUP_ITEM_NUM (sizeof(Popup_list) / sizeof(*Popup_list))
@@ -102,8 +211,11 @@ static struct subwin_popup_list Popup_list[] = {
 #define POPUP_ITEM_BOTTOM 10
 
 static void LegendDialogCopy(struct LegendDialog *d);
-static void legend_list_build(struct LegendWin *d);
-static void legend_list_set(struct LegendWin *d);
+static void path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
+static void rect_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
+static void arc_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
+static void mark_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
+static void text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
 static char *legendlist[LEGENDNUM] = {
   N_("path"),
@@ -120,8 +232,6 @@ static struct LegendDialog *Ldlg[] = {
   &DlgLegendMark,
   &DlgLegendText,
 };
-
-static int ExpandRow[LEGENDNUM] = {0};
 
 enum LegendType {
   LegendTypePath = 0,
@@ -2267,127 +2377,96 @@ CmOptionTextDef(GtkAction *w, gpointer client_data)
 }
 
 static void
-LegendWinLegendUpdate(void *data, struct objlist *obj, int id, int sub_id)
+LegendWinPathUpdate(struct obj_list_data *data, int id, int user_data)
 {
-  int update, ret;
-  struct LegendWin *d;
-  struct LegendDialog *lgd;
+  LegendArrowDialog(&DlgLegendArrow, data->obj, id);
+}
 
-  d = &(NgraphApp.LegendWin);
+static void
+LegendWinRectUpdate(struct obj_list_data *data, int id, int user_data)
+{
+  LegendRectDialog(&DlgLegendRect, data->obj, id);
+}
 
+static void
+LegendWinArcUpdate(struct obj_list_data *data, int id, int user_data)
+{
+  LegendArcDialog(&DlgLegendArc, data->obj, id);
+}
+
+static void
+LegendWinMarkUpdate(struct obj_list_data *data, int id, int user_data)
+{
+  LegendMarkDialog(&DlgLegendMark, data->obj, id);
+}
+
+static void
+LegendWinTextUpdate(struct obj_list_data *data, int id, int user_data)
+{
+  LegendTextDialog(&DlgLegendText, data->obj, id);
+}
+
+static void
+ObjListUpdate(struct obj_list_data *d, int clear, list_sub_window_set_val_func func)
+{
   if (Menulock || Globallock)
     return;
 
-  UnFocus();
-
-  update = FALSE;
-
-  if (id < 0 || sub_id > d->legend[id])
+  d->num = chkobjlastinst(d->obj);
+  if (d->text == NULL) {
     return;
-
-  lgd = Ldlg[id];
-
-  ret = IDCANCEL;
-  lgd->Obj = obj;
-  lgd->Id = sub_id;
-  switch (id) {
-  case LegendTypePath:
-    lgd->SetupWindow = LegendArrowDialogSetup;
-    lgd->CloseWindow = legend_dialog_close;
-    LegendArrowDialog(&DlgLegendArrow, d->obj[id], sub_id);
-    ret = DialogExecute(d->Win, &DlgLegendArrow);
-    break;
-  case LegendTypeRect:
-    lgd->SetupWindow = LegendRectDialogSetup;
-    lgd->CloseWindow = legend_dialog_close;
-    LegendRectDialog(&DlgLegendRect, d->obj[id], sub_id);
-    ret = DialogExecute(d->Win, &DlgLegendRect);
-    break;
-  case LegendTypeArc:
-    lgd->SetupWindow = LegendArcDialogSetup;
-    lgd->CloseWindow = legend_dialog_close;
-    LegendArcDialog(&DlgLegendArc, d->obj[id], sub_id);
-    ret = DialogExecute(d->Win, &DlgLegendArc);
-    break;
-  case LegendTypeMark:
-    lgd->SetupWindow = LegendMarkDialogSetup;
-    lgd->CloseWindow = legend_dialog_close;
-    LegendMarkDialog(&DlgLegendMark, d->obj[id], sub_id);
-    ret = DialogExecute(d->Win, &DlgLegendMark);
-    break;
-  case LegendTypeText:
-    lgd->SetupWindow = LegendTextDialogSetup;
-    lgd->CloseWindow = legend_dialog_close;
-    LegendTextDialog(&DlgLegendText, d->obj[id], sub_id);
-    ret = DialogExecute(d->Win, &DlgLegendText);
-    break;
-  }
-  if (ret == IDDELETE) {
-    delobj(d->obj[id], sub_id);
-    set_graph_modified();
-    update = TRUE;
-    d->select = -1;
-    d->legend_type = -1;
-  } else if (ret == IDOK) {
-    update = TRUE;
-    d->select = sub_id;
-    d->legend_type = id;
   }
 
-  if (update)
-    LegendWinUpdate(FALSE);
+  if (list_sub_window_must_rebuild(d)) {
+    list_sub_window_build(d, func);
+  } else {
+    list_sub_window_set(d, func);
+  }
+
+  if (! clear && d->select >= 0) {
+    list_store_select_int(GTK_WIDGET(d->text), COL_ID, d->select);
+  }
 }
 
-static int
-legend_list_must_rebuild(struct LegendWin *d)
+void
+PathListUpdate(struct obj_list_data *d, int clear)
 {
-  int n, k, r = FALSE;
-  GtkTreeIter iter;
-  gboolean state;
-  GtkTreePath *path;
+  ObjListUpdate(d, clear, path_list_set_val);
+}
 
-  state = tree_store_get_iter_first(GTK_WIDGET(d->text), &iter);
+void
+ArcListUpdate(struct obj_list_data *d, int clear)
+{
+  ObjListUpdate(d, clear, arc_list_set_val);
+}
 
-  if (! state)
-    return TRUE;
+void
+RectListUpdate(struct obj_list_data *d ,int clear)
+{
+  ObjListUpdate(d, clear, rect_list_set_val);
+}
 
-  for (k = 0; k < LEGENDNUM; k++) {
-    n = tree_store_get_child_num(GTK_WIDGET(d->text), &iter);
-    path = gtk_tree_path_new_from_indices(k, -1);
-    ExpandRow[k] = gtk_tree_view_row_expanded(GTK_TREE_VIEW(d->text), path);
-    if (n != d->legend[k] + 1) {
-      ExpandRow[k] = r = TRUE;
-    }
-    gtk_tree_path_free(path);
-    tree_store_iter_next(GTK_WIDGET(d->text), &iter);
-  }
-  return r;
+void
+MarkListUpdate(struct obj_list_data *d, int clear)
+{
+  ObjListUpdate(d, clear, mark_list_set_val);
+}
+
+void
+TextListUpdate(struct obj_list_data *d, int clear)
+{
+  ObjListUpdate(d, clear, text_list_set_val);
 }
 
 void
 LegendWinUpdate(int clear)
 {
-  int i;
-  struct LegendWin *d;
-
-  d = &(NgraphApp.LegendWin);
+  struct obj_list_data *d;
   if (Menulock || Globallock)
     return;
 
-  for (i = 0; i < LEGENDNUM; i++)
-    d->legend[i] = chkobjlastinst(d->obj[i]);
-
-  if (GTK_WIDGET(d->text) == NULL)
-    return;
-
-  if (legend_list_must_rebuild(d)) {
-    legend_list_build(d);
-  } else {
-    legend_list_set(d);
-  }
-
-  if (! clear && d->select >= 0 && d->legend_type >= 0) {
-    tree_store_select_nth(GTK_WIDGET(d->text), d->legend_type, d->select);
+  for (d = NgraphApp.LegendWin.data.data; d; d = d->next) {
+    d->update(d, clear);
   }
 }
 
@@ -2426,7 +2505,7 @@ enum COLOR_TYPE {
 };
 
 static void
-legend_list_set_color(struct LegendWin *d, GtkTreeIter *iter, int type, int row, int color_type)
+legend_list_set_color(struct obj_list_data *d, GtkWidget *view, GtkTreeIter *iter, int type, int row, int color_type)
 {
   int r, g, b;
   char color[256], *rc, *gc, *bc;
@@ -2453,192 +2532,256 @@ legend_list_set_color(struct LegendWin *d, GtkTreeIter *iter, int type, int row,
     bc = "B";
   }
 
-  getobj(d->obj[type], rc, row, 0, NULL, &r);
-  getobj(d->obj[type], gc, row, 0, NULL, &g);
-  getobj(d->obj[type], bc, row, 0, NULL, &b);
+  getobj(d->obj, rc, row, 0, NULL, &r);
+  getobj(d->obj, gc, row, 0, NULL, &g);
+  getobj(d->obj, bc, row, 0, NULL, &b);
   snprintf(color, sizeof(color), "#%02x%02x%02x", r & 0xff, g & 0xff, b &0xff);
-  tree_store_set_string(GTK_WIDGET(d->text), iter, LEGEND_WIN_COL_NUM, color);
+  list_store_set_string(view, iter, d->list_col_num, color);
 }
 
 static void
-legend_list_set_property(struct LegendWin *d, GtkTreeIter *iter, int type, int row, unsigned int i, int *x0, int *y0)
+path_list_set_property(struct obj_list_data *d, GtkTreeIter *iter, int row, unsigned int i, int *x0, int *y0)
 {
-  int x2, y2, mark, path_type, stroke, fill, len, intp;
-  char *valstr, *text, buf[256], buf2[256];
+  int path_type, fill, stroke, len, intp;
+  char *valstr, buf[256], buf2[256];
   char **enum_intp, **enum_path_type;
-  const char *str;
+  int type = -1;
 
-  switch (type) {
-  case LegendTypePath:
-    getobj(d->obj[type], "type", row, 0, NULL, &path_type);
-    getobj(d->obj[type], "fill", row, 0, NULL, &fill);
-    getobj(d->obj[type], "stroke", row, 0, NULL, &stroke);
-    sgetobjfield(d->obj[type], row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
-    getobj(d->obj[type], "interpolation", row, 0, NULL, &intp);
-    enum_intp = (char **) chkobjarglist(d->obj[type], "interpolation");
-    enum_path_type = (char **) chkobjarglist(d->obj[type], "type");
+  getobj(d->obj, "type", row, 0, NULL, &path_type);
+  getobj(d->obj, "stroke", row, 0, NULL, &stroke);
+  getobj(d->obj, "fill", row, 0, NULL, &fill);
+  sgetobjfield(d->obj, row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
+  getobj(d->obj, "interpolation", row, 0, NULL, &intp);
+  enum_intp = (char **) chkobjarglist(d->obj, "interpolation");
+  enum_path_type = (char **) chkobjarglist(d->obj, "type");
 
-    len = snprintf(buf, sizeof(buf), "%s ", _(enum_path_type[path_type]));
-    snprintf(buf2, sizeof(buf2), "%s%s%s%s%s%s",
-	     (path_type) ? _(enum_intp[intp]) : "",
-	     (path_type) ? " " : "",
-	     (fill) ? _("fill") : "",
-	     (fill) ? " " : "",
-	     (stroke) ? _("arrow:") : "",
-	     (stroke) ? _(valstr) : "");
-    g_free(valstr);
-    get_points(buf + len, sizeof(buf) - len, d->obj[type], row, x0, y0, stroke, buf2);
-    legend_list_set_color(d, iter, type, row, (fill) ? COLOR_TYPE_FILL : COLOR_TYPE_STROKE);
-    break;
-  case LegendTypeRect:
-    getobj(d->obj[type], "fill", row, 0, NULL, &fill);
-    getobj(d->obj[type], "stroke", row, 0, NULL, &stroke);
-    str = get_style_string(d->obj[type], row, "style");
-    getobj(d->obj[type], "x1", row, 0, NULL, x0);
-    getobj(d->obj[type], "y1", row, 0, NULL, y0);
-    getobj(d->obj[type], "x2", row, 0, NULL, &x2);
-    getobj(d->obj[type], "y2", row, 0, NULL, &y2);
-    snprintf(buf, sizeof(buf), _("w:%.2f h:%.2f%s%s%s"),
-	     abs(*x0 - x2) / 100.0,
-	     abs(*y0 - y2) / 100.0,
-	     (stroke) ? _("  style:") : "",
-	     (stroke) ? ((str) ? _(str) : _("custom")) : "",
-	     (fill)  ? _("  fill") : ""
-	     );
-    legend_list_set_color(d, iter, type, row, (fill) ? COLOR_TYPE_FILL : COLOR_TYPE_STROKE);
-    break;
-  case LegendTypeArc:
-    getobj(d->obj[type], "fill", row, 0, NULL, &fill);
-    getobj(d->obj[type], "stroke", row, 0, NULL, &stroke);
-    str = get_style_string(d->obj[type], row, "style");
-    getobj(d->obj[type], "x", row, 0, NULL, x0);
-    getobj(d->obj[type], "y", row, 0, NULL, y0);
-    getobj(d->obj[type], "rx", row, 0, NULL, &x2);
-    getobj(d->obj[type], "ry", row, 0, NULL, &y2);
-    snprintf(buf, sizeof(buf), "rx:%.2f ry:%.2f%s%s%s",
-	     x2 / 100.0,
-	     y2 / 100.0,
-	     (stroke) ? _("  style:") : "",
-	     (stroke) ? ((str) ? _(str) : _("custom")) : "",
-	     (fill) ? _("  fill") : "");
-    legend_list_set_color(d, iter, type, row, (fill) ? COLOR_TYPE_FILL : COLOR_TYPE_STROKE);
-    break;
-  case LegendTypeMark:
-    getobj(d->obj[type], "x", row, 0, NULL, x0);
-    getobj(d->obj[type], "y", row, 0, NULL, y0);
-    getobj(d->obj[type], "type", row, 0, NULL, &mark);
-    if (mark >= 0 && mark < MarkCharNum) {
-      char *mc = MarkChar[mark];
-      snprintf(buf, sizeof(buf), _("%s%stype:%-2d"), mc, (mc[0]) ? " " : "", mark);
-    } else {
-      snprintf(buf, sizeof(buf), _("type:%-2d"), mark);
-    }
-    legend_list_set_color(d, iter, type, row, COLOR_TYPE_1);
-    break;
-  case LegendTypeText:
-    getobj(d->obj[type], "x", row, 0, NULL, x0);
-    getobj(d->obj[type], "y", row, 0, NULL, y0);
-    getobj(d->obj[type], "text", row, 0, NULL, &text);
-    tree_store_set_string(GTK_WIDGET(d->text), iter, i, text);
-    legend_list_set_color(d, iter, type, row, COLOR_TYPE_1);
-    break;
-  default:
-    buf[0] = '\0';
-  }
-  if (type != LegendTypeText) {
-    tree_store_set_string(GTK_WIDGET(d->text), iter, i, buf);
-  }
+  len = snprintf(buf, sizeof(buf), "%s ", _(enum_path_type[path_type]));
+  snprintf(buf2, sizeof(buf2), "%s%s%s%s",
+	   (path_type) ? _(enum_intp[intp]) : "",
+	   (path_type) ? " " : "",
+	   (stroke) ? _("arrow:") : "",
+	   (stroke) ? _(valstr) : "");
+  g_free(valstr);
+  get_points(buf + len, sizeof(buf) - len, d->obj, row, x0, y0, stroke, buf2);
+  legend_list_set_color(d, d->text, iter, type, row, (fill) ? COLOR_TYPE_FILL : COLOR_TYPE_STROKE);
+
+  list_store_set_string(d->text, iter, i, buf);
 }
 
 static void
-legend_list_set_val(struct LegendWin *d, GtkTreeIter *iter, int type, int row)
+mark_list_set_property(struct obj_list_data *d, GtkTreeIter *iter, int row, unsigned int i)
+{
+  int mark;
+  char buf[256];
+  int type = -1;
+
+  getobj(d->obj, "type", row, 0, NULL, &mark);
+  if (mark >= 0 && mark < MarkCharNum) {
+    char *mc = MarkChar[mark];
+    snprintf(buf, sizeof(buf), _("%s%stype:%-2d"), mc, (mc[0]) ? " " : "", mark);
+  } else {
+    snprintf(buf, sizeof(buf), _("type:%-2d"), mark);
+  }
+  legend_list_set_color(d, d->text, iter, type, row, COLOR_TYPE_1);
+
+  list_store_set_string(d->text, iter, i, buf);
+}
+
+static void
+text_list_set_property(struct obj_list_data *d, GtkTreeIter *iter, int row, unsigned int i)
+{
+  int type = -1;
+  char *text;
+
+  getobj(d->obj, "text", row, 0, NULL, &text);
+  list_store_set_string(d->text, iter, i, text);
+  legend_list_set_color(d, d->text, iter, type, row, COLOR_TYPE_1);
+}
+
+static void
+path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
   int cx, x0, y0, w;
-  unsigned int i = 0;
+  int i = 0;
 
-  for (i = 0; i < LEGEND_WIN_COL_NUM; i++) {
+  for (i = 0; i < d->list_col_num; i++) {
     switch (i) {
-    case LEGEND_WIN_COL_HIDDEN:
-      getobj(d->obj[type], Llist[i].name, row, 0, NULL, &cx);
+    case PATH_LIST_COL_HIDDEN:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
       cx = ! cx;
-      tree_store_set_boolean(GTK_WIDGET(d->text), iter, i, cx);
+      list_store_set_boolean(d->text, iter, i, cx);
       break;
-    case LEGEND_WIN_COL_PROP:
-      legend_list_set_property(d, iter, type, row, i, &x0, &y0);
+    case PATH_LIST_COL_PROP:
+      path_list_set_property(d, iter, row, i, &x0, &y0);
       break;
-    case LEGEND_WIN_COL_X:
-      tree_store_set_double(GTK_WIDGET(d->text), iter, i, x0 / 100.0);
+    case PATH_LIST_COL_STROKE:
+    case PATH_LIST_COL_FILL:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &w);
+      list_store_set_boolean(d->text, iter, i, w);
       break;
-    case LEGEND_WIN_COL_Y:
-      tree_store_set_double(GTK_WIDGET(d->text), iter, i, y0 / 100.0);
+    case PATH_LIST_COL_X:
+      list_store_set_double(d->text, iter, i, x0 / 100.0);
       break;
-    case LEGEND_WIN_COL_WIDTH:
-      switch (type) {
-      case LegendTypeText:
-	getobj(d->obj[type], "pt", row, 0, NULL, &w);
-	break;
-      case LegendTypeMark:
-	getobj(d->obj[type], "size", row, 0, NULL, &w);
-	break;
-      default:
-	getobj(d->obj[type], "width", row, 0, NULL, &w);
-      }
-      tree_store_set_double(GTK_WIDGET(d->text), iter, i, w / 100.0);
+    case PATH_LIST_COL_Y:
+      list_store_set_double(d->text, iter, i, y0 / 100.0);
+      break;
+    case PATH_LIST_COL_WIDTH:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &w);
+      list_store_set_double(d->text, iter, i, w / 100.0);
       break;
     default:
-      getobj(d->obj[type], Llist[i].name, row, 0, NULL, &cx);
-      tree_store_set_val(GTK_WIDGET(d->text), iter, i, Llist[i].type, &cx);
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      list_store_set_val(d->text, iter, i, d->list[i].type, &cx);
     }
   }
 }
 
 static void
-legend_list_build(struct LegendWin *d)
+rect_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
-  GtkTreeIter iter, child;
-  int i, k;
-  GtkTreePath *path;
+  int x1, x2, y1, y2, v;
+  int i = 0;
 
-  tree_store_clear(GTK_WIDGET(d->text));
-  for (k = LEGENDNUM - 1; k >= 0 ; k--) {
-    tree_store_prepend(GTK_WIDGET(d->text), &iter, NULL);
-    tree_store_set_string(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_PROP, _(legendlist[k]));
-    d->legend[k] = chkobjlastinst(d->obj[k]);
-    tree_store_set_int(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_ID, d->legend[k] + 1);
-    for (i = d->legend[k]; i >= 0 ; i--) {
-      tree_store_prepend(GTK_WIDGET(d->text), &child, &iter);
-      legend_list_set_val(d, &child, k, i);
+  for (i = 0; i < d->list_col_num; i++) {
+    switch (i) {
+    case RECT_LIST_COL_HIDDEN:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &v);
+      v = ! v;
+      list_store_set_boolean(d->text, iter, i, v);
+      break;
+    case RECT_LIST_COL_STROKE:
+    case RECT_LIST_COL_FILL:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &v);
+      list_store_set_boolean(d->text, iter, i, v);
+      break;
+    case RECT_LIST_COL_X:
+      getobj(d->obj, "x1", row, 0, NULL, &x1);
+      getobj(d->obj, "x2", row, 0, NULL, &x2);
+      v = (x1 < x2) ? x1 : x2;
+      list_store_set_double(d->text, iter, i, v / 100.0);
+      break;
+    case RECT_LIST_COL_Y:
+      getobj(d->obj, "y1", row, 0, NULL, &y1);
+      getobj(d->obj, "y2", row, 0, NULL, &y2);
+      v = (y1 < y2) ? y1 : y2;
+      list_store_set_double(d->text, iter, i, v / 100.0);
+      break;
+    case RECT_LIST_COL_WIDTH:
+      v = abs(x1 - x2);
+      list_store_set_double(d->text, iter, i, v / 100.0);
+      break;
+    case RECT_LIST_COL_HEIGHT:
+      v = abs(y1 - y2);
+      list_store_set_double(d->text, iter, i, v / 100.0);
+      break;
+    case RECT_LIST_COL_LWIDTH:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &v);
+      list_store_set_double(d->text, iter, i, v / 100.0);
+      break;
+    default:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &v);
+      list_store_set_val(d->text, iter, i, d->list[i].type, &v);
     }
-    path = gtk_tree_path_new_from_indices(0, -1);
-    if (ExpandRow[k]) {
-      gtk_tree_view_expand_row(GTK_TREE_VIEW(d->text), path, FALSE);
-    }
-    gtk_tree_path_free(path);
   }
 }
 
 static void
-legend_list_set(struct LegendWin *d)
+arc_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
-  GtkTreeIter iter, child;
-  int i, k;
-  gboolean state;
+  int cx, w;
+  int i = 0;
 
-  tree_store_get_iter_first(GTK_WIDGET(d->text), &iter);
-
-  for (k = 0; k < LEGENDNUM; k++) {
-    tree_store_set_string(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_PROP, _(legendlist[k]));
-    d->legend[k] = chkobjlastinst(d->obj[k]);
-    tree_store_set_int(GTK_WIDGET(d->text), &iter, LEGEND_WIN_COL_ID, d->legend[k] + 1);
-
-    state = tree_store_get_iter_children(GTK_WIDGET(d->text), &child, &iter);
-    i = 0;
-    while (state) {
-      legend_list_set_val(d, &child, k, i);
-      state = tree_store_iter_next(GTK_WIDGET(d->text), &child);
-      i++;
+  for (i = 0; i < d->list_col_num; i++) {
+    switch (i) {
+    case ARC_LIST_COL_HIDDEN:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      cx = ! cx;
+      list_store_set_boolean(d->text, iter, i, cx);
+      break;
+    case ARC_LIST_COL_STROKE:
+    case ARC_LIST_COL_FILL:
+    case ARC_LIST_COL_PIESLICE:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      list_store_set_boolean(d->text, iter, i, cx);
+      break;
+    case ARC_LIST_COL_Y:
+    case ARC_LIST_COL_X:
+    case ARC_LIST_COL_RY:
+    case ARC_LIST_COL_RX:
+    case ARC_LIST_COL_ANGLE1:
+    case ARC_LIST_COL_ANGLE2:
+    case ARC_LIST_COL_WIDTH:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &w);
+      list_store_set_double(d->text, iter, i, w / 100.0);
+      break;
+    default:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      list_store_set_val(d->text, iter, i, d->list[i].type, &cx);
     }
-    tree_store_iter_next(GTK_WIDGET(d->text), &iter);
+  }
+}
+
+static void
+mark_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
+{
+  int cx, w;
+  int i = 0;
+
+  for (i = 0; i < d->list_col_num; i++) {
+    switch (i) {
+    case MARK_LIST_COL_HIDDEN:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      cx = ! cx;
+      list_store_set_boolean(d->text, iter, i, cx);
+      break;
+    case MARK_LIST_COL_PROP:
+      mark_list_set_property(d, iter, row, i);
+      break;
+    case MARK_LIST_COL_X:
+    case MARK_LIST_COL_Y:
+    case MARK_LIST_COL_WIDTH:
+    case MARK_LIST_COL_SIZE:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &w);
+      list_store_set_double(d->text, iter, i, w / 100.0);
+      break;
+    default:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      list_store_set_val(d->text, iter, i, d->list[i].type, &cx);
+    }
+  }
+}
+
+static void
+text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
+{
+  int cx, w;
+  int i = 0;
+
+  for (i = 0; i < d->list_col_num; i++) {
+    switch (i) {
+    case TEXT_LIST_COL_HIDDEN:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      cx = ! cx;
+      list_store_set_boolean(d->text, iter, i, cx);
+      break;
+    case TEXT_LIST_COL_RAW:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      list_store_set_boolean(d->text, iter, i, cx);
+      break;
+    case TEXT_LIST_COL_PROP:
+      text_list_set_property(d, iter, row, i);
+      break;
+    case TEXT_LIST_COL_X:
+    case TEXT_LIST_COL_Y:
+    case TEXT_LIST_COL_DIR:
+    case TEXT_LIST_COL_PT:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &w);
+      list_store_set_double(d->text, iter, i, w / 100.0);
+      break;
+    default:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
+      list_store_set_val(d->text, iter, i, d->list[i].type, &cx);
+    }
   }
 }
 
@@ -2646,34 +2789,38 @@ static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i;
-  int sel, n, m, last_id;
-  struct LegendWin *d;
+  int m, last_id;
+  struct obj_list_data *d;
 
-  d = (struct LegendWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
+  if (d->text == NULL) {
+    return;
+  }
+
+  m = list_store_get_selected_int(d->text, COL_ID);
   for (i = 0; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
-      gtk_widget_set_sensitive(d->popup_item[i], sel && m > 0);
+      gtk_widget_set_sensitive(d->popup_item[i], m > 0);
       break;
     case POPUP_ITEM_DOWN:
     case POPUP_ITEM_BOTTOM:
       last_id = -1;
-      if (sel) {
-	last_id = chkobjlastinst(d->obj[n]);
+      if (m >= 0) {
+	last_id = chkobjlastinst(d->obj);
       }
-      gtk_widget_set_sensitive(d->popup_item[i], sel && m >= 0 && m < last_id);
+      gtk_widget_set_sensitive(d->popup_item[i], m >= 0 && m < last_id);
       break;
     case POPUP_ITEM_HIDE:
-      if (sel && m >= 0) {
+      if (m >= 0) {
 	int hidden;
-	getobj(d->obj[n], "hidden", m, 0, NULL, &hidden);
+	getobj(d->obj, "hidden", m, 0, NULL, &hidden);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
       }
     default:
-      gtk_widget_set_sensitive(d->popup_item[i], sel && m >= 0);
+      gtk_widget_set_sensitive(d->popup_item[i], m >= 0);
     }
   }
 }
@@ -2686,99 +2833,95 @@ enum CHANGE_DIR {
 static void
 pos_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, enum CHANGE_DIR dir)
 {
-  struct LegendWin *d;
-  int depth, col, *ary, inc, ecode;
-  GtkTreePath *tree_path;
+  struct obj_list_data *d;
+  int col, inc, ecode, m;
   double prev, val;
-  char *tmp, *ptr;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  int x, y, i;
+  char *argv[3], *tmp, *ptr;
+
 
   menu_lock(FALSE);
 
   if (str == NULL || path == NULL)
     return;
 
-  switch (dir) {
-  case CHANGE_DIR_X:
-    col = LEGEND_WIN_COL_X;
-    break;
-  case CHANGE_DIR_Y:
-    col = LEGEND_WIN_COL_Y;
-    break;
-  default:
-    return;
-  }
-
   ecode = str_calc(str, &val, NULL, NULL);
   if (ecode || val != val || val == HUGE_VAL || val == - HUGE_VAL) {
     return;
   }
 
-  d = (struct LegendWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
-  tree_path = gtk_tree_path_new_from_string(path);
-  if (tree_path == NULL)
-    return;
-
-  depth = gtk_tree_path_get_depth(tree_path);
-  if (depth < 2) {
-    gtk_tree_path_free(tree_path);
+  if (d->text == NULL) {
     return;
   }
 
-  ary = gtk_tree_path_get_indices(tree_path);
+  col = -1;
+  for (i = 0; i < d->list_col_num; i++) {
+    if (dir == CHANGE_DIR_X && strcmp(d->list[i].title, "x") == 0) {
+      col = i;
+      break;
+    } else if (dir == CHANGE_DIR_Y && strcmp(d->list[i].title, "y") == 0) {
+      col = i;
+      break;
+    }
+  }
+  if (col < 0) {
+    return;
+  }
 
-  tmp = tree_store_path_get_string(GTK_WIDGET(d->text), tree_path, col);
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(d->text));
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
+    return;
+  }
+
+  gtk_tree_model_get(model, &iter, col, &tmp, COL_ID, &m, -1);
   if (tmp == NULL) {
-    gtk_tree_path_free(tree_path);
     return;
   }
 
   prev = strtod(tmp, &ptr);
   if (prev != prev || prev == HUGE_VAL || prev == - HUGE_VAL || ptr[0] != '\0') {
-    gtk_tree_path_free(tree_path);
     g_free(tmp);
     return;
   }
-
   g_free(tmp);
 
-  if (ary[0] >= 0 && ary[0] < LEGENDNUM && ary[1] >= 0 && ary[1] <= d->legend[ary[0]]) {
-    int x, y;
-    char *argv[3];
+  inc = nround((val - prev) * 100);
+  switch (dir) {
+  case CHANGE_DIR_X:
+    x = inc;
+    y = 0;
+    break;
+  case CHANGE_DIR_Y:
+    x = 0;
+    y = inc;
+    break;
+  }
+  argv[0] = (char *) &x;
+  argv[1] = (char *) &y;
+  argv[2] = NULL;
 
-    inc = nround((val - prev) * 100);
-    switch (dir) {
-    case CHANGE_DIR_X:
-      x = inc;
-      y = 0;
-      break;
-    case CHANGE_DIR_Y:
-      x = 0;
-      y = inc;
-      break;
-    }
-    argv[0] = (char *) &x;
-    argv[1] = (char *) &y;
-    argv[2] = NULL;
-
-    if (inc != 0 ) {
-      exeobj(d->obj[ary[0]], "move", ary[1], 2, argv);
-      set_graph_modified();
-      LegendWinUpdate(TRUE);
-    }
+  if (inc != 0 ) {
+    exeobj(d->obj, "move", m, 2, argv);
+    set_graph_modified();
+    d->update(d, TRUE);
   }
 
-  gtk_tree_path_free(tree_path);
   return;
 }
 
 static void
-width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, enum CHANGE_DIR dir)
+rect_size_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data, char *pos1, char *pos2)
 {
-  struct LegendWin *d;
-  int depth, *ary, ecode;
-  GtkTreePath *tree_path;
+  struct obj_list_data *d;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  int id, ecode;
   double val;
+  int x1, x2, v;
 
   menu_lock(FALSE);
 
@@ -2790,54 +2933,52 @@ width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
     return;
   }
 
-  d = (struct LegendWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
-  tree_path = gtk_tree_path_new_from_string(path);
-  if (tree_path == NULL)
-    return;
-
-  depth = gtk_tree_path_get_depth(tree_path);
-  if (depth < 2) {
-    gtk_tree_path_free(tree_path);
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(d->text));
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
     return;
   }
 
-  ary = gtk_tree_path_get_indices(tree_path);
-
-  if (ary[0] >= 0 && ary[0] < LEGENDNUM && ary[1] >= 0 && ary[1] <= d->legend[ary[0]]) {
-    int w, prev;
-    struct objlist *obj, *textobj, *markobj;
-    char *field;
-
-    obj = d->obj[ary[0]];
-
-    textobj = chkobject("text");
-    markobj = chkobject("mark");
-    if (obj == NULL || textobj == NULL || markobj == NULL)
-      goto End;
-
-    if (obj == textobj) {
-      field = "pt";
-    } else if (obj == markobj) {
-      field = "size";
-    } else {
-      field = "width";
-    }
-
-    w = nround(val * 100);
-    getobj(obj, field, ary[1], 0, NULL, &prev);
-    if (prev != w) {
-      putobj(obj, field, ary[1], &w);
-      set_graph_modified();
-      LegendWinUpdate(TRUE);
-    }
+  gtk_tree_model_get(model, &iter, COL_ID, &id, -1);
+  id = list_store_get_selected_int(d->text, COL_ID);
+  if (id < 0 || id > d->num) {
+    return;
   }
 
- End:
-  gtk_tree_path_free(tree_path);
+  getobj(d->obj, pos1, id, 0, NULL, &x1);
+  getobj(d->obj, pos2, id, 0, NULL, &x2);
+
+  if (x1 > x2) {
+    v = x1;
+    x1 = x2;
+    x2 = v;
+  }
+
+  v = nround(val * 100);
+  if (v != x2 - x1) {
+    x2 = x1 + v;
+    putobj(d->obj, pos1, id, &x1);
+    putobj(d->obj, pos2, id, &x2);
+    set_graph_modified();
+    d->update(d, TRUE);
+  }
 
   return;
 }
+
+static void
+rect_width_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  rect_size_edited(cell_renderer, path, str, user_data, "x1", "x2");
+}
+
+static void
+rect_height_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
+{
+  rect_size_edited(cell_renderer, path, str, user_data, "y1", "y2");
+}
+
 
 static void
 pos_x_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
@@ -2855,15 +2996,32 @@ void
 CmLegendWindow(GtkToggleAction *action, gpointer client_data)
 {
   int i, state;
-  struct LegendWin *d;
-  GtkWidget *dlg;
+  struct SubWin *d;
+  struct obj_list_data *data;
+  GtkWidget *icons[LEGENDNUM];
+  char *icon_files[] = {
+    "ngraph_line.png",
+    "ngraph_rect.png",
+    "ngraph_arc.png",
+    "ngraph_mark.png",
+    "ngraph_text.png",
+  };
+  void (* UpdateFuncArray[]) (struct obj_list_data *, int) = {
+    PathListUpdate,
+    RectListUpdate,
+    ArcListUpdate,
+    MarkListUpdate,
+    TextListUpdate,
+  };
+  void (* UpdateDialogFuncArray[]) (struct obj_list_data *, int, int) = {
+    LegendWinPathUpdate,
+    LegendWinRectUpdate,
+    LegendWinArcUpdate,
+    LegendWinMarkUpdate,
+    LegendWinTextUpdate,
+  };
 
   d = &(NgraphApp.LegendWin);
-
-  for (i = 0; i < LEGENDNUM; i++) {
-    d->obj[i] = chkobject(legendlist[i]);
-    d->legend[i] = chkobjlastinst(d->obj[i]);
-  }
 
   if (action) {
     state = gtk_toggle_action_get_active(action);
@@ -2880,30 +3038,44 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
     return;
   }
 
-  d->update = LegendWinUpdate;
-  d->dialog = NULL;
-  d->setup_dialog = LegendWinLegendUpdate;
-  d->ev_key = NULL;
-
-  dlg = tree_sub_window_create(d, "Legend Window", LEGEND_WIN_COL_NUM, Llist, Legendwin_xpm, Legendwin48_xpm);
-
   for (i = 0; i < LEGENDNUM; i++) {
-    d->obj[i] = chkobject(legendlist[i]);
-    d->legend[i] = chkobjlastinst(d->obj[i]);
+    char *str;
+
+    str = g_strdup_printf("%s%c%s", PIXMAPDIR, DIRSEP, icon_files[i]);
+    icons[i] = gtk_image_new_from_file(str);
+    g_free(str);
   }
 
-  sub_win_create_popup_menu((struct SubWin *)d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-  legend_list_build(d);
-  gtk_tree_view_expand_all(GTK_TREE_VIEW(d->text));
-  gtk_widget_show_all(dlg);
+  tree_sub_window_create(d, "Legend Window", LEGENDNUM, Llist_num, Llist, icons, Legendwin_xpm, Legendwin48_xpm);
 
-  set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_X, Llist, G_CALLBACK(pos_x_edited));
-  set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_Y, Llist, G_CALLBACK(pos_y_edited));
-  set_editable_cell_renderer_cb((struct SubWin *)d, LEGEND_WIN_COL_WIDTH, Llist, G_CALLBACK(width_edited));
+  data = d->data.data;
+  for (i = 0; i < LEGENDNUM; i++) {
+    data->update = UpdateFuncArray[i];
+    data->dialog = Ldlg[i];
+    data->setup_dialog = UpdateDialogFuncArray[i];
+    data->ev_key = NULL;
+    data->obj = chkobject(legendlist[i]);
+    data->num = chkobjlastinst(data->obj);
 
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->text), TRUE);
-  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->text), LEGEND_WIN_COL_ID);
-
+    sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+    switch (i) {
+    case LegendTypePath:
+      set_editable_cell_renderer_cb(data, PATH_LIST_COL_X, Llist[i], G_CALLBACK(pos_x_edited));
+      set_editable_cell_renderer_cb(data, PATH_LIST_COL_Y, Llist[i], G_CALLBACK(pos_y_edited));
+      break;
+    case LegendTypeRect:
+      set_editable_cell_renderer_cb(data, RECT_LIST_COL_X, Llist[i], G_CALLBACK(pos_x_edited));
+      set_editable_cell_renderer_cb(data, RECT_LIST_COL_Y, Llist[i], G_CALLBACK(pos_y_edited));
+      set_editable_cell_renderer_cb(data, RECT_LIST_COL_WIDTH, Llist[i], G_CALLBACK(rect_width_edited));
+      set_editable_cell_renderer_cb(data, RECT_LIST_COL_HEIGHT, Llist[i], G_CALLBACK(rect_height_edited));
+      break;
+    case LegendTypeArc:
+    case LegendTypeMark:
+    case LegendTypeText:
+      break;
+    }
+    data = data->next;
+  }
   sub_window_show_all((struct SubWin *) d);
   sub_window_set_geometry((struct SubWin *)d, TRUE);
 

@@ -27,17 +27,16 @@
 
 #define DOUBLE_CLICK_PERIOD 250
 
-static void hidden(struct SubWin *d);
-static void tree_update(struct LegendWin *d);
-static void tree_hidden(struct LegendWin *d);
-static void modify_numeric(struct SubWin *d, char *field, int val);
-static void modify_string(struct SubWin *d, char *field, char *str);
+static void hidden(struct obj_list_data *d);
+static void modify_numeric(struct obj_list_data *d, char *field, int val);
+static void modify_string(struct obj_list_data *d, char *field, char *str);
+static void toggle_boolean(struct obj_list_data *d, char *field, int sel);
 
 #if USE_ENTRY_ICON
 static void
 file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
   int sel;
   char *file, *ext;
 
@@ -52,7 +51,7 @@ file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointe
     getobj(d->obj, "ext", sel, 0, NULL, &ext);
   }
 
-  if (nGetOpenFileName(d->Win, _("Open"), ext, NULL, gtk_entry_get_text(w),
+  if (nGetOpenFileName(d->parent->Win, _("Open"), ext, NULL, gtk_entry_get_text(w),
 		       &file, TRUE, Menulocal.changedirectory) == IDOK && file) {
     if (file) {
       gtk_entry_set_text(w, file);
@@ -79,7 +78,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   GtkTreeModel *model;
   GtkTreeIter iter;
   n_list_store *list;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
   menu_lock(TRUE);
 
@@ -102,7 +101,7 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   switch (list->type) {
   case G_TYPE_STRING:
-    if (d->type != TypeLegendWin && GTK_IS_ENTRY(editable)) {
+    if (GTK_IS_ENTRY(editable)) {
       int sel;
 
       sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
@@ -154,57 +153,31 @@ cancel_editing(GtkCellRenderer *renderer, gpointer user_data)
 static void
 toggle_cb(GtkCellRendererToggle *cell_renderer, gchar *path, gpointer user_data)
 {
-  GtkTreeView *view;
+  struct obj_list_data *d;
+  n_list_store *list;
+  long int sel;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  struct SubWin *d;
 
   d = user_data;
 
-  view = GTK_TREE_VIEW(d->text);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+  list = (n_list_store *) g_object_get_data(G_OBJECT(cell_renderer), "user-data");
+  if (list == NULL) {
     return;
-
-  list_store_select_iter(GTK_WIDGET(view), &iter);
-
-  if (G_TYPE_CHECK_INSTANCE_TYPE(model, GTK_TYPE_LIST_STORE)) {
-    hidden(d);
-  } else {
-#if 1
-    tree_hidden((struct LegendWin *) user_data);
-#else
-    int hide, n, m, dep, *ary;
-    struct LegendWin *ld;
-    GtkTreePath *gpth;
-
-    ld = (struct LegendWin *) user_data;
-
-    gpth = gtk_tree_path_new_from_string(path);
-    if (gpth == NULL)
-      return;
-
-    dep = gtk_tree_path_get_depth(gpth);
-    ary = gtk_tree_path_get_indices(gpth);
-
-    if (dep != 2) {
-      gtk_tree_path_free(gpth);
-      return;
-    }
-
-    n = ary[0];
-    m = ary[1];
-    gtk_tree_path_free(gpth);
-
-    if (n >= 0 && n < LEGENDNUM && m >= 0 && m <= ld->legend[n]) {
-      hide = gtk_cell_renderer_toggle_get_active(cell_renderer);
-      putobj(ld->obj[n], "hidden", m, &hide);
-      hide = ! hide;
-      gtk_tree_store_set(GTK_TREE_STORE(model), &iter, 0, hide, -1);
-    }
-#endif
   }
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(d->text));
+  if (model == NULL) {
+    return;
+  }
+
+  if (! gtk_tree_model_get_iter_from_string(model, &iter, path)) {
+    return;
+  }
+
+  gtk_tree_model_get(model, &iter, COL_ID, &sel, -1);
+
+  toggle_boolean(d, list->name, sel);
 }
 
 static void
@@ -212,7 +185,7 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
 {
   GtkTreeView *view;
   GtkTreeModel *model;
-  struct SubWin *d;
+  struct obj_list_data *d;
   n_list_store *list;
   double val;
   int ecode;
@@ -221,7 +194,7 @@ numeric_cb(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
 
   d = user_data;
 
-  if (str == NULL || d->type == TypeLegendWin)
+  if (str == NULL)
     return;
 
   view = GTK_TREE_VIEW(d->text);
@@ -250,15 +223,12 @@ string_cb(GtkCellRenderer *renderer, gchar *path, gchar *str, gpointer user_data
   GtkTreeView *view;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  struct SubWin *d;
+  struct obj_list_data *d;
   n_list_store *list;
 
   menu_lock(FALSE);
 
   d = user_data;
-
-  if (d->type == TypeLegendWin)
-    return;
 
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
@@ -278,7 +248,7 @@ string_cb(GtkCellRenderer *renderer, gchar *path, gchar *str, gpointer user_data
 }
 
 static void
-set_cell_renderer_cb(struct SubWin *d, int n, n_list_store *list, GtkWidget *w)
+set_cell_renderer_cb(struct obj_list_data *d, int n, n_list_store *list, GtkWidget *w)
 {
   int i;
   GtkTreeViewColumn *col;
@@ -317,7 +287,7 @@ set_cell_renderer_cb(struct SubWin *d, int n, n_list_store *list, GtkWidget *w)
 }
 
 void
-set_editable_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback end)
+set_editable_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback end)
 {
   GtkTreeViewColumn *col;
   GtkCellRenderer *rend;
@@ -344,7 +314,7 @@ set_editable_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCall
 }
 
 void
-set_combo_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback start, GCallback end)
+set_combo_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback start, GCallback end)
 {
   GtkTreeViewColumn *col;
   GtkCellRenderer *rend;
@@ -377,7 +347,7 @@ set_combo_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallbac
 }
 
 void
-set_obj_cell_renderer_cb(struct SubWin *d, int i, n_list_store *list, GCallback start)
+set_obj_cell_renderer_cb(struct obj_list_data *d, int i, n_list_store *list, GCallback start)
 {
   GtkTreeViewColumn *col;
   GtkCellRenderer *rend;
@@ -625,20 +595,33 @@ static void
 cb_destroy(GtkWidget *w, gpointer user_data)
 {
   struct SubWin *d;
+  struct obj_list_data *ptr, *next;
 
   d = user_data;
 
   d->Win = NULL;
 
-  if (d->popup)
-    gtk_widget_destroy(d->popup);
-
-  d->popup = NULL;
-
-  if (d->popup_item)
-    g_free(d->popup_item);
-
-  d->popup_item = NULL;
+  switch (d->type) {
+  case TypeFileWin:
+  case TypeAxisWin:
+  case TypeMergeWin:
+  case TypeLegendWin:
+    for (ptr = d->data.data; ptr; ptr = next) {
+      if (ptr->popup) {
+	gtk_widget_destroy(ptr->popup);
+      }
+      if (ptr->popup_item) {
+	g_free(ptr->popup_item);
+      }
+      next = ptr->next;
+      g_free(ptr);
+    }
+    d->data.data = NULL;
+    break;
+  default:
+    d->data.text = NULL;
+    break;
+  }
 }
 
 static void
@@ -650,7 +633,7 @@ obj_copy(struct objlist *obj, int dest, int src)
 }
 
 static void
-copy(struct SubWin *d)
+copy(struct obj_list_data *d)
 {
   int sel, id;
 
@@ -666,13 +649,13 @@ copy(struct SubWin *d)
       d->num++;
       set_graph_modified();
       d->select = id;
-      d->update(FALSE);
+      d->update(d, FALSE);
     }
   }
 }
 
 static void
-delete(struct SubWin *d)
+delete(struct obj_list_data *d)
 {
   int sel;
   int update;
@@ -682,7 +665,7 @@ delete(struct SubWin *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   if (sel >= 0 && sel <= d->num) {
     if (d->delete) {
-      d->delete(sel);
+      d->delete(d, sel);
     } else {
       delobj(d->obj, sel);
     }
@@ -696,13 +679,13 @@ delete(struct SubWin *d)
     } else {
       d->select = sel;
     }
-    d->update(update);
+    d->update(d, update);
     set_graph_modified();
   }
 }
 
 static void
-move_top(struct SubWin *d)
+move_top(struct obj_list_data *d)
 {
   int sel;
 
@@ -713,13 +696,13 @@ move_top(struct SubWin *d)
   if ((sel >= 0) && (sel <= d->num)) {
     movetopobj(d->obj, sel);
     d->select = 0;
-    d->update(FALSE);
+    d->update(d, FALSE);
     set_graph_modified();
   }
 }
 
 static void
-move_last(struct SubWin *d)
+move_last(struct obj_list_data *d)
 {
   int sel;
 
@@ -729,13 +712,13 @@ move_last(struct SubWin *d)
   if ((sel >= 0) && (sel <= d->num)) {
     movelastobj(d->obj, sel);
     d->select = d->num;
-    d->update(FALSE);
+    d->update(d, FALSE);
     set_graph_modified();
   }
 }
 
 static void
-move_up(struct SubWin *d)
+move_up(struct obj_list_data *d)
 {
   int sel;
 
@@ -745,13 +728,13 @@ move_up(struct SubWin *d)
   if ((sel >= 1) && (sel <= d->num)) {
     moveupobj(d->obj, sel);
     d->select = sel - 1;
-    d->update(FALSE);
+    d->update(d, FALSE);
     set_graph_modified();
   }
 }
 
 static void
-move_down(struct SubWin *d)
+move_down(struct obj_list_data *d)
 {
   int sel;
 
@@ -761,13 +744,13 @@ move_down(struct SubWin *d)
   if ((sel >= 0) && (sel < d->num)) {
     movedownobj(d->obj, sel);
     d->select = sel + 1;
-    d->update(FALSE);
+    d->update(d, FALSE);
     set_graph_modified();
   }
 }
 
 static void
-update(struct SubWin *d)
+update(struct obj_list_data *d)
 {
   int sel, ret;
 
@@ -779,23 +762,23 @@ update(struct SubWin *d)
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
 
   if ((sel >= 0) && (sel <= d->num)) {
-    d->setup_dialog(d->dialog, d->obj, sel, -1);
+    d->setup_dialog(d, sel, -1);
     d->select = sel;
-    if ((ret = DialogExecute(d->Win, d->dialog)) == IDDELETE) {
+    if ((ret = DialogExecute(d->parent->Win, d->dialog)) == IDDELETE) {
       if (d->delete) {
-	d->delete(sel);
+	d->delete(d, sel);
       } else {
 	delobj(d->obj, sel);
       }
       d->select = -1;
       set_graph_modified();
     }
-    d->update(FALSE);
+    d->update(d, FALSE);
   }
 }
 
 static void
-focus(struct SubWin *d, int add)
+focus(struct obj_list_data *d, int add)
 {
   int sel;
 
@@ -809,7 +792,30 @@ focus(struct SubWin *d, int add)
 }
 
 static void
-modify_numeric(struct SubWin *d, char *field, int val)
+toggle_boolean(struct obj_list_data *d, char *field, int sel)
+{
+  int v1;
+
+  if (Menulock || Globallock)
+    return;
+
+  if (sel < 0 || sel > d->num) {
+    return;
+  }
+
+  getobj(d->obj, field, sel, 0, NULL, &v1);
+  v1 = ! v1;
+  if (putobj(d->obj, field, sel, &v1) < 0) {
+    return;
+  }
+
+  d->select = sel;
+  d->update(d, FALSE);
+  set_graph_modified();
+}
+
+static void
+modify_numeric(struct obj_list_data *d, char *field, int val)
 {
   int sel, v1, v2;
 
@@ -830,13 +836,13 @@ modify_numeric(struct SubWin *d, char *field, int val)
   getobj(d->obj, field, sel, 0, NULL, &v2);
   if (v1 != v2) {
     d->select = sel;
-    d->update(FALSE);
+    d->update(d, FALSE);
     set_graph_modified();
   }
 }
 
 static void
-modify_string(struct SubWin *d, char *field, char *str)
+modify_string(struct obj_list_data *d, char *field, char *str)
 {
   int sel;
 
@@ -852,11 +858,11 @@ modify_string(struct SubWin *d, char *field, char *str)
     return;
 
   d->select = sel;
-  d->update(FALSE);
+  d->update(d, FALSE);
 }
 
 static void
-hidden(struct SubWin *d)
+hidden(struct obj_list_data *d)
 {
   int sel;
   int hidden;
@@ -871,13 +877,13 @@ hidden(struct SubWin *d)
     hidden = hidden ? FALSE : TRUE;
     putobj(d->obj, "hidden", sel, &hidden);
     d->select = sel;
-    d->update(FALSE);
+    d->update(d, FALSE);
     set_graph_modified();
   }
 }
 
 static void
-set_hidden_state(struct SubWin *d, int hide)
+set_hidden_state(struct obj_list_data *d, int hide)
 {
   int sel;
   int hidden;
@@ -892,7 +898,7 @@ set_hidden_state(struct SubWin *d, int hide)
     if (hidden != hide) {
       putobj(d->obj, "hidden", sel, &hide);
       d->select = sel;
-      d->update(FALSE);
+      d->update(d, FALSE);
       set_graph_modified();
     }
   }
@@ -909,7 +915,7 @@ popup_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer
 }
 
 static void
-do_popup(GdkEventButton *event, struct SubWin *d)
+do_popup(GdkEventButton *event, struct obj_list_data *d)
 {
   int button, event_time;
   GtkMenuPositionFunc func = NULL;
@@ -923,9 +929,10 @@ do_popup(GdkEventButton *event, struct SubWin *d)
     func = popup_menu_position;
   }
 
-  if (d->type == TypeFileWin ||
-      d->type == TypeAxisWin ||
-      d->type == TypeMergeWin) {
+  if (d->parent->type == TypeFileWin ||
+      d->parent->type == TypeAxisWin ||
+      d->parent->type == TypeMergeWin ||
+      d->parent->type == TypeLegendWin) {
     d->select = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
   }
 
@@ -936,7 +943,7 @@ do_popup(GdkEventButton *event, struct SubWin *d)
 static gboolean
 ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
   static guint32 time = 0;
   int tdif;
 
@@ -960,11 +967,7 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
   switch (event->button) {
   case 1:
     if (event->type == GDK_2BUTTON_PRESS) {
-      if (d->type == TypeLegendWin) {
-	tree_update((struct LegendWin *) d);
-      } else {
-	update(d);
-      }
+      update(d);
       return TRUE;
     }
     break;
@@ -976,7 +979,7 @@ ev_button_down(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 static gboolean
 ev_button_up(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
   if (Menulock || Globallock) return FALSE;
 
@@ -1000,7 +1003,7 @@ ev_button_up(GtkWidget *w, GdkEventButton *event,  gpointer user_data)
 static gboolean
 ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
   GdkEventKey *e;
 
   g_return_val_if_fail(w != NULL, FALSE);
@@ -1076,293 +1079,6 @@ ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   return TRUE;
 }
 
-static void
-tree_copy(struct LegendWin *d)
-{
-  int n, m, sel, id;
-
-  if (Menulock || Globallock) return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
-    id = newobj(d->obj[n]);
-    if (id >= 0) {
-      obj_copy(d->obj[n], id, m);
-      d->select = id;
-      d->legend_type = n;
-      d->legend[n]++;
-      d->update(FALSE);
-      set_graph_modified();
-    }
-  }
-}
-
-static void
-tree_delete(struct LegendWin *d)
-{
-  int n, m;
-  gboolean sel, update;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
-    delobj(d->obj[n], m);
-    d->legend[n]--;
-    update = FALSE;
-    if (d->legend[n] < 0) {
-      d->select = -1;
-      d->legend_type = -1;
-      update = TRUE;
-    } else if (m > d->legend[n]) {
-      d->legend_type = n;
-      d->select = d->legend[n];
-    } else {
-      d->legend_type = n;
-      d->select = m;
-    }
-    d->update(update);
-    set_graph_modified();
-  }
-}
-
-static void
-tree_move_top(struct LegendWin *d)
-{
-  int n, m;
-  gboolean sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
-    movetopobj(d->obj[n], m);
-    d->select = 0;
-    d->legend_type = n;
-    d->update(FALSE);
-    set_graph_modified();
-  }
-}
-
-static void
-tree_move_last(struct LegendWin *d)
-{
-  int n, m;
-  gboolean sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
-    movelastobj(d->obj[n], m);
-    d->select = d->legend[n];
-    d->legend_type = n;
-    d->update(FALSE);
-    set_graph_modified();
-  }
-}
-
-static void
-tree_move_up(struct LegendWin *d)
-{
-  int n, m;
-  gboolean sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 1 && m <= d->legend[n]) {
-    moveupobj(d->obj[n], m);
-    d->select = m - 1;
-    d->legend_type = n;
-    d->update(FALSE);
-    set_graph_modified();
-  }
-}
-
-static void
-tree_move_down(struct LegendWin *d)
-{
-  int n, m;
-  gboolean sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m < d->legend[n]) {
-    movedownobj(d->obj[n], m);
-    d->select = m + 1;
-    d->legend_type = n;
-    d->update(FALSE);
-    set_graph_modified();
-  }
-}
-
-static void
-tree_update(struct LegendWin *d)
-{
-  int n, m;
-  gboolean sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
-    d->setup_dialog(d->dialog, d->obj[n], n, m);
-  }
-}
-
-static void
-tree_focus(struct LegendWin *d, int add)
-{
-  int n, m;
-  gboolean sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (m < 0) {
-    tree_store_selected_toggle_expand(GTK_WIDGET(d->text));
-  } else if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
-    Focus(d->obj[n], m, add);
-  }
-}
-
-static void
-tree_hidden(struct LegendWin *d)
-{
-  int n, m, hidden;
-  GtkTreeIter iter;
-  gboolean sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (! tree_store_get_selected_iter(GTK_WIDGET(d->text), &iter))
-      return;
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
-    getobj(d->obj[n], "hidden", m, 0, NULL, &hidden);
-    hidden = hidden ? FALSE : TRUE;
-    putobj(d->obj[n], "hidden", m, &hidden);
-    d->select = m;
-    d->legend_type = n;
-    //    d->update(FALSE);
-    gtk_tree_store_set(GTK_TREE_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(d->text))),
-		       &iter, 0, ! hidden, -1);
-    set_graph_modified();
-  }
-}
-
-static void
-tree_set_hidden_state(struct LegendWin *d, int hide)
-{
-  int n, m, hidden;
-  gboolean sel;
-
-  if (Menulock || Globallock)
-    return;
-
-  sel = tree_store_get_selected_nth(GTK_WIDGET(d->text), &n, &m);
-
-  if (sel && n >= 0 && n < LEGENDNUM && m >= 0 && m <= d->legend[n]) {
-    getobj(d->obj[n], "hidden", m, 0, NULL, &hidden);
-    if (hidden != hide) {
-      putobj(d->obj[n], "hidden", m, &hide);
-      d->select = m;
-      d->legend_type = n;
-      d->update(FALSE);
-      set_graph_modified();
-    }
-  }
-}
-
-static gboolean
-ev_key_down_tree(GtkWidget *w, GdkEvent *event, gpointer user_data)
-{
-  struct LegendWin *d;
-  GdkEventKey *e;
-
-  g_return_val_if_fail(w != NULL, FALSE);
-  g_return_val_if_fail(event != NULL, FALSE);
-
-  if (Menulock || Globallock)
-    return TRUE;
-
-  d = (struct LegendWin *) user_data;
-  e = (GdkEventKey *)event;
-
-  if (d->ev_key && d->ev_key(w, event, user_data))
-    return TRUE;
-
-  switch (e->keyval) {
-  case GDK_KEY_Delete:
-    tree_delete(d);
-    break;
-  case GDK_KEY_Insert:
-    tree_copy(d);
-    break;
-  case GDK_KEY_Home:
-    if (e->state & GDK_SHIFT_MASK)
-      tree_move_top(d);
-    else
-      return FALSE;
-    break;
-  case GDK_KEY_End:
-    if (e->state & GDK_SHIFT_MASK)
-      tree_move_last(d);
-    else
-      return FALSE;
-    break;
-  case GDK_KEY_Up:
-    if (e->state & GDK_SHIFT_MASK)
-      tree_move_up(d);
-    else
-      return FALSE;
-    break;
-  case GDK_KEY_Down:
-    if (e->state & GDK_SHIFT_MASK)
-      tree_move_down(d);
-    else
-      return FALSE;
-    break;
-  case GDK_KEY_Return:
-    if (e->state & GDK_SHIFT_MASK) {
-      e->state &= ~ GDK_SHIFT_MASK;
-      return FALSE;
-    }
-
-    tree_update(d);
-    break;
-  case GDK_KEY_BackSpace:
-    tree_hidden(d);
-    break;
-  case GDK_KEY_space:
-    tree_focus(d, e->state & GDK_SHIFT_MASK);
-    break;
-  default:
-    return FALSE;
-  }
-  return TRUE;
-}
-
 static gboolean
 ev_sub_win_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
@@ -1404,9 +1120,9 @@ hide_minimize_menu_item(GtkWidget *widget, gpointer user_data)
 #endif
 
 static GtkWidget *
-sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **xpm, const char **xpm2, int with_view_port)
+sub_window_create(struct SubWin *d, char *title, GtkWidget *swin, const char **xpm, const char **xpm2)
 {
-  GtkWidget *dlg, *swin;
+  GtkWidget *dlg;
   GdkPixbuf *icon;
   GtkWindowGroup *group;
 
@@ -1453,15 +1169,6 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
   gtk_window_set_skip_pager_hint(GTK_WINDOW(dlg), FALSE);
   gtk_window_set_urgency_hint(GTK_WINDOW(dlg), FALSE);
 
-  swin = gtk_scrolled_window_new(NULL, NULL);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-  if (with_view_port) {
-    gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(swin), text);
-  } else {
-    gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(swin), GTK_SHADOW_IN);
-    gtk_container_add(GTK_CONTAINER(swin), text);
-  }
   gtk_container_add(GTK_CONTAINER(dlg), swin);
 
 #ifdef WINDOWS
@@ -1474,29 +1181,31 @@ sub_window_create(struct SubWin *d, char *title, GtkWidget *text, const char **x
 
   gtk_widget_show_all(swin);
 
-  d->select = -1;
-
   return dlg;
 }
 
 GtkWidget *
 text_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2)
 {
-  GtkWidget *view;
+  GtkWidget *view, *swin;
 
   view = gtk_text_view_new_with_buffer(NULL);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
 
-  d->text = G_OBJECT(view);
+  d->data.text = view;
 
-  return sub_window_create(d, title, view, xpm, xpm2, FALSE);
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(swin), view);
+
+  return sub_window_create(d, title, swin, xpm, xpm2);
 }
 
 GtkWidget *
 label_sub_window_create(struct SubWin *d, char *title, const char **xpm, const char **xpm2)
 {
-  GtkWidget *label;
+  GtkWidget *label, *swin;
 
   label = gtk_label_new(NULL);
 #if GTK_CHECK_VERSION(3, 4, 0)
@@ -1509,47 +1218,88 @@ label_sub_window_create(struct SubWin *d, char *title, const char **xpm, const c
   gtk_label_set_line_wrap(GTK_LABEL(label), FALSE);
   gtk_label_set_single_line_mode(GTK_LABEL(label), FALSE);
 
-  d->text = G_OBJECT(label);
+  d->data.text = label;
 
-  return sub_window_create(d, title, label, xpm, xpm2, TRUE);
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(swin), label);
+
+  return sub_window_create(d, title, swin, xpm, xpm2);
+}
+
+static struct obj_list_data *
+list_widget_create(struct SubWin *d, int lisu_num, n_list_store *list, int can_focus, GtkWidget **w)
+{
+  struct obj_list_data *data;
+  GtkWidget *lstor, *swin;
+
+  data = g_malloc0(sizeof(*data));
+  data->select = -1;
+  data->parent = d;
+  data->can_focus = can_focus;
+  data->list = list;
+  data->list_col_num = lisu_num;
+  data->next = NULL;
+  lstor = list_store_create(lisu_num, list);
+  data->text = lstor;
+
+  set_cell_renderer_cb(data, lisu_num, list, lstor);
+
+  g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), data);
+  g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), data);
+  g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), data);
+
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(lstor), TRUE);
+  gtk_tree_view_set_search_column(GTK_TREE_VIEW(lstor), COL_ID);
+
+  swin = gtk_scrolled_window_new(NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(swin), lstor);
+
+  *w = swin;
+
+  return data;
 }
 
 GtkWidget *
 list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2)
 {
-  GtkWidget *lstor;
+  GtkWidget *swin;
+  struct obj_list_data *data;
 
-  lstor = list_store_create(lisu_num, list);
-  d->text = G_OBJECT(lstor);
+  data = list_widget_create(d, lisu_num, list, d->type != TypeFileWin, &swin);
+  d->data.data = data;
 
-  set_cell_renderer_cb(d, lisu_num, list, lstor);
-
-  g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), d);
-  g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), d);
-  g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down), d);
-
-  return sub_window_create(d, title, lstor, xpm, xpm2, FALSE);
+  return sub_window_create(d, title, swin, xpm, xpm2);
 }
 
 GtkWidget *
-tree_sub_window_create(struct LegendWin *d, char *title, int lisu_num, n_list_store *list, const char **xpm, const char **xpm2)
+tree_sub_window_create(struct SubWin *d, char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char **xpm, const char **xpm2)
 {
-  GtkWidget *lstor;
+  GtkWidget *tab, *swin;
+  int i;
+  struct obj_list_data *data, *prev;
 
-  lstor = tree_store_create(lisu_num, list);
-  d->text = G_OBJECT(lstor);
+  tab = gtk_notebook_new();
 
-  set_cell_renderer_cb((struct SubWin *)d, lisu_num, list, lstor);
+  prev = NULL;
+  for (i = 0; i < page_num; i++) {
+    data = list_widget_create(d, lisu_num[i], list[i], TRUE, &swin);
+    if (prev) {
+      prev->next = data;
+    } else {
+      d->data.data = data;
+    }
+    gtk_notebook_append_page(GTK_NOTEBOOK(tab), swin, icons[i]);
+    prev = data;
+  }
+  gtk_notebook_set_current_page(GTK_NOTEBOOK(tab), 0);
 
-  g_signal_connect(lstor, "button-press-event", G_CALLBACK(ev_button_down), d);
-  g_signal_connect(lstor, "button-release-event", G_CALLBACK(ev_button_up), d);
-  g_signal_connect(lstor, "key-press-event", G_CALLBACK(ev_key_down_tree), d);
-
-  return sub_window_create((struct SubWin *)d, title, lstor, xpm, xpm2, FALSE);
+  return sub_window_create((struct SubWin *)d, title, tab, xpm, xpm2);
 }
 
 gboolean
-list_sub_window_must_rebuild(struct SubWin *d)
+list_sub_window_must_rebuild(struct obj_list_data *d)
 {
   int n;
 
@@ -1560,13 +1310,13 @@ list_sub_window_must_rebuild(struct SubWin *d)
 }
 
 void
-list_sub_window_build(struct SubWin *d, list_sub_window_set_val_func func)
+list_sub_window_build(struct obj_list_data *d, list_sub_window_set_val_func func)
 {
   GtkTreeIter iter;
   int i;
 
   d->num = chkobjlastinst(d->obj);
-  list_store_clear(GTK_WIDGET(d->text));
+  list_store_clear(d->text);
   for (i = 0; i <= d->num; i++) {
     list_store_append(GTK_WIDGET(d->text), &iter);
     func(d, &iter, i);
@@ -1574,14 +1324,13 @@ list_sub_window_build(struct SubWin *d, list_sub_window_set_val_func func)
 }
 
 void
-list_sub_window_set(struct SubWin *d, list_sub_window_set_val_func func)
+list_sub_window_set(struct obj_list_data *d, list_sub_window_set_val_func func)
 {
   GtkTreeIter iter;
   int i;
   gboolean state;
 
   state = list_store_get_iter_first(GTK_WIDGET(d->text), &iter);
-
   if (! state)
     return;
 
@@ -1597,43 +1346,43 @@ list_sub_window_set(struct SubWin *d, list_sub_window_set_val_func func)
 void
 list_sub_window_delete(GtkMenuItem *item, gpointer user_data)
 {
-  delete((struct SubWin *) user_data);
+  delete((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_copy(GtkMenuItem *item, gpointer user_data)
 {
-  copy((struct SubWin *) user_data);
+  copy((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_move_top(GtkMenuItem *item, gpointer user_data)
 {
-  move_top((struct SubWin *) user_data);
+  move_top((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_move_last(GtkMenuItem *item, gpointer user_data)
 {
-  move_last((struct SubWin *) user_data);
+  move_last((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_move_up(GtkMenuItem *item, gpointer user_data)
 {
-  move_up((struct SubWin *) user_data);
+  move_up((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_move_down(GtkMenuItem *item, gpointer user_data)
 {
-  move_down((struct SubWin *) user_data);
+  move_down((struct obj_list_data *) user_data);
 }
 
 void
 list_sub_window_update(GtkMenuItem *item, gpointer user_data)
 {
-  update((struct SubWin *) user_data);
+  update((struct obj_list_data *) user_data);
 }
 
 void
@@ -1642,98 +1391,35 @@ list_sub_window_hide(GtkMenuItem *item, gpointer user_data)
   int hide;
 
   hide = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
-  set_hidden_state((struct SubWin *)user_data, ! hide);
+  set_hidden_state((struct obj_list_data *)user_data, ! hide);
 }
 
 void
 list_sub_window_focus(GtkMenuItem *item, gpointer user_data)
 {
-  focus((struct SubWin *) user_data, FALSE);
+  focus((struct obj_list_data *) user_data, FALSE);
 }
 
 void
 list_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
 {
-  focus((struct SubWin *) user_data, TRUE);
-}
-
-void
-tree_sub_window_delete(GtkMenuItem *item, gpointer user_data)
-{
-  tree_delete((struct LegendWin *) user_data);
-}
-
-void
-tree_sub_window_copy(GtkMenuItem *item, gpointer user_data)
-{
-  tree_copy((struct LegendWin *) user_data);
-}
-
-void
-tree_sub_window_move_top(GtkMenuItem *item, gpointer user_data)
-{
-  tree_move_top((struct LegendWin *) user_data);
-}
-
-void
-tree_sub_window_move_last(GtkMenuItem *item, gpointer user_data)
-{
-  tree_move_last((struct LegendWin *) user_data);
-}
-
-void
-tree_sub_window_move_up(GtkMenuItem *item, gpointer user_data)
-{
-  tree_move_up((struct LegendWin *) user_data);
-}
-
-void
-tree_sub_window_move_down(GtkMenuItem *item, gpointer user_data)
-{
-  tree_move_down((struct LegendWin *) user_data);
-}
-
-void
-tree_sub_window_update(GtkMenuItem *item, gpointer user_data)
-{
-  tree_update((struct LegendWin *) user_data);
-}
-
-void
-tree_sub_window_hide(GtkMenuItem *item, gpointer user_data)
-{
-  int hide;
-
-  hide = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
-  tree_set_hidden_state((struct LegendWin *)user_data, ! hide);
-}
-
-void
-tree_sub_window_focus(GtkMenuItem *item, gpointer user_data)
-{
-  tree_focus((struct LegendWin *) user_data, FALSE);
-}
-
-void
-tree_sub_window_add_focus(GtkMenuItem *item, gpointer user_data)
-{
-  tree_focus((struct LegendWin *) user_data, TRUE);
+  focus((struct obj_list_data *) user_data, TRUE);
 }
 
 static gboolean
 ev_popup_menu(GtkWidget *w, gpointer client_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
   if (Menulock || Globallock) return TRUE;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
   do_popup(NULL, d);
   return TRUE;
 }
 
 GtkWidget *
-sub_win_create_popup_menu(struct SubWin *d, int n, struct subwin_popup_list *list, GCallback cb)
+sub_win_create_popup_menu(struct obj_list_data *d, int n, struct subwin_popup_list *list, GCallback cb)
 {
   GtkWidget *menu, *item;
   int i = 0;

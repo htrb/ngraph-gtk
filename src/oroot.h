@@ -48,5 +48,6 @@ int oputge1(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv
 int oputangle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 int oputstyle(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
 int oputcolor(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv);
+int oputmarktype(struct objlist *obj,N_VALUE *inst,N_VALUE *rval, int argc,char **argv);
 
 #endif

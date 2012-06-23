@@ -113,7 +113,7 @@ static struct subwin_popup_list Popup_list[] = {
 #define ID_BUF_SIZE 16
 #define TITLE_BUF_SIZE 128
 
-static void axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
+static void axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static int check_axis_history(struct objlist *obj);
 
 #define TIME_FORMAT_STR N_(						\
@@ -529,7 +529,7 @@ SectionDialogAxisX(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (d->IDX >= 0) {
-    AxisDialog(&DlgAxis, d->Obj, d->IDX, -1);
+    AxisDialog(NgraphApp.AxisWin.data.data, d->IDX, -1);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -541,7 +541,7 @@ SectionDialogAxisY(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (d->IDY >= 0) {
-    AxisDialog(&DlgAxis, d->Obj, d->IDY, -1);
+    AxisDialog(NgraphApp.AxisWin.data.data, d->IDY, -1);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -553,7 +553,7 @@ SectionDialogAxisU(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (d->IDU >= 0) {
-    AxisDialog(&DlgAxis, d->Obj, d->IDU, -1);
+    AxisDialog(NgraphApp.AxisWin.data.data, d->IDU, -1);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -565,7 +565,7 @@ SectionDialogAxisR(GtkWidget *w, gpointer client_data)
 
   d = (struct SectionDialog *) client_data;
   if (d->IDR >= 0) {
-    AxisDialog(&DlgAxis, d->Obj, d->IDR, -1);
+    AxisDialog(NgraphApp.AxisWin.data.data, d->IDR, -1);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -855,7 +855,7 @@ CrossDialogAxisX(GtkWidget *w, gpointer client_data)
 
   d = (struct CrossDialog *) client_data;
   if (d->IDX >= 0) {
-    AxisDialog(&DlgAxis, d->Obj, d->IDX, -1);
+    AxisDialog(NgraphApp.AxisWin.data.data, d->IDX, -1);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -867,7 +867,7 @@ CrossDialogAxisY(GtkWidget *w, gpointer client_data)
 
   d = (struct CrossDialog *) client_data;
   if (d->IDY >= 0) {
-    AxisDialog(&DlgAxis, d->Obj, d->IDY, -1);
+    AxisDialog(NgraphApp.AxisWin.data.data, d->IDY, -1);
     DialogExecute(d->widget, &DlgAxis);
   }
 }
@@ -2508,15 +2508,15 @@ AxisDialogClose(GtkWidget *w, void *data)
 }
 
 void
-AxisDialog(void *data, struct objlist *obj, int id, int sub_id)
+AxisDialog(struct obj_list_data *data, int id, int user_data)
 {
   struct AxisDialog *d;
 
-  d = (struct AxisDialog *) data;
+  d = (struct AxisDialog *) data->dialog;
 
   d->SetupWindow = AxisDialogSetup;
   d->CloseWindow = AxisDialogClose;
-  d->Obj = obj;
+  d->Obj = data->obj;
   d->Id = id;
 }
 
@@ -2573,7 +2573,7 @@ CmAxisNewFrame(GtkAction *w, gpointer client_data)
   } else {
     set_graph_modified();
   }
-  AxisWinUpdate(TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
 }
 
 void
@@ -2640,7 +2640,7 @@ CmAxisNewSection(GtkAction *w, gpointer client_data)
   } else {
     set_graph_modified();
   }
-  AxisWinUpdate(TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
 }
 
 void
@@ -2682,7 +2682,7 @@ CmAxisNewCross(GtkAction *w, gpointer client_data)
     delobj(obj, idx);
   } else
     set_graph_modified();
-  AxisWinUpdate(TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
 }
 
 void
@@ -2696,13 +2696,13 @@ CmAxisNewSingle(GtkAction *w, gpointer client_data)
   if ((obj = chkobject("axis")) == NULL)
     return;
   if ((id = newobj(obj)) >= 0) {
-    AxisDialog(&DlgAxis, obj, id, -1);
+    AxisDialog(NgraphApp.AxisWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgAxis);
     if ((ret == IDDELETE) || (ret == IDCANCEL)) {
       delobj(obj, id);
     } else
       set_graph_modified();
-    AxisWinUpdate(TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
   }
 }
 
@@ -2725,8 +2725,8 @@ CmAxisDel(GtkAction *w, gpointer client_data)
   if (DialogExecute(TopLevel, &DlgCopy) == IDOK && DlgCopy.sel >= 0) {
     AxisDel(DlgCopy.sel);
     set_graph_modified();
-    AxisWinUpdate(TRUE);
-    FileWinUpdate(TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
   }
 }
 
@@ -2750,12 +2750,12 @@ CmAxisUpdate(GtkAction *w, gpointer client_data)
   } else {
     return;
   }
-  AxisDialog(&DlgAxis, obj, i, -1);
+  AxisDialog(NgraphApp.AxisWin.data.data, i, -1);
   if ((ret = DialogExecute(TopLevel, &DlgAxis)) == IDDELETE) {
     AxisDel(i);
   }
-  AxisWinUpdate(TRUE);
-  FileWinUpdate(TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
 }
 
 void
@@ -2798,7 +2798,7 @@ CmAxisZoom(GtkAction *w, gpointer client_data)
 	  set_graph_modified();
 	}
       }
-      AxisWinUpdate(TRUE);
+      AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
     }
     arraydel(&farray);
   }
@@ -2807,7 +2807,7 @@ CmAxisZoom(GtkAction *w, gpointer client_data)
 static void
 axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
   struct objlist *obj;
   int sel;
 
@@ -2818,17 +2818,17 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
   if (obj == NULL)
     return;
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
-  sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  sel = list_store_get_selected_int(d->text, AXIS_WIN_COL_ID);
 
   if ((sel >= 0) && (sel <= d->num)) {
-    d->setup_dialog(d->dialog, d->obj, sel, -1);
+    d->setup_dialog(d, sel, -1);
     d->select = sel;
     axis_scale_push(obj, sel);
     exeobj(obj, "clear", sel, 0, NULL);
     set_graph_modified();
-    d->update(FALSE);
+    d->update(d, FALSE);
   }
 }
 
@@ -2855,7 +2855,7 @@ CmAxisClear(GtkAction *w, gpointer client_data)
       exeobj(obj, "clear", array[i], 0, NULL);
       set_graph_modified();
     }
-    AxisWinUpdate(TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
   }
   arraydel(&farray);
 }
@@ -2938,15 +2938,12 @@ CmAxisGridUpdate(GtkAction *w, gpointer client_data)
 }
 
 void
-AxisWinUpdate(int clear)
+AxisWinUpdate(struct obj_list_data *d, int clear)
 {
-  struct SubWin *d;
-
   if (Menulock || Globallock)
     return;
 
-  d = &(NgraphApp.AxisWin);
-  if (d->text == NULL)
+  if (d == NULL)
     return;
 
   if (list_sub_window_must_rebuild(d)) {
@@ -2961,7 +2958,13 @@ AxisWinUpdate(int clear)
 }
 
 static void
-axis_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
+AxisDelCB(struct obj_list_data *data, int id)
+{
+  AxisDel(id);
+}
+
+static void
+axis_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
   int cx;
   unsigned int i;
@@ -3072,7 +3075,7 @@ CmAxisScaleUndo(GtkAction *w, gpointer client_data)
     }
     n = check_axis_history(obj);
     set_axis_undo_button_sensitivity(n > 0);
-    AxisWinUpdate(TRUE);
+    AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
   }
   arraydel(&farray);
 }
@@ -3082,9 +3085,9 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i;
   int sel;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   sel = d->select;
   for (i = 0; i < POPUP_ITEM_NUM; i++) {
@@ -3113,9 +3116,9 @@ static void
 select_type(GtkComboBox *w, gpointer user_data)
 {
   int j, type, sel;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   sel = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(w), "user-data"));
   if (sel < 0)
@@ -3137,13 +3140,13 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
   GtkTreeView *view;
   GtkTreeModel *model;
   GtkTreeIter iter;
-  struct SubWin *d;
+  struct obj_list_data *d;
   GtkComboBox *cbox;
   int sel, type;
 
   menu_lock(TRUE);
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   view = GTK_TREE_VIEW(d->text);
   model = gtk_tree_view_get_model(view);
@@ -3169,16 +3172,16 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 static void
 edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
   menu_lock(FALSE);
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   if (str == NULL || d->select < 0)
     return;
 
-  d->update(FALSE);
+  d->update(d, FALSE);
   set_graph_modified();
 }
 
@@ -3188,7 +3191,7 @@ enum CHANGE_DIR {
 };
 
 static void
-pos_edited_common(struct SubWin *d, int id, char *str, enum CHANGE_DIR dir)
+pos_edited_common(struct obj_list_data *d, int id, char *str, enum CHANGE_DIR dir)
 {
   int x, y, pos1, pos2, man, ecode;
   double val;
@@ -3236,19 +3239,19 @@ pos_edited_common(struct SubWin *d, int id, char *str, enum CHANGE_DIR dir)
     exeobj(d->obj, "move", man, 2, argv);
 
     set_graph_modified();
-    AxisWinUpdate(TRUE);
+    AxisWinUpdate(d, TRUE);
   }
 }
 
 static void
 pos_x_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
   int sel;
 
   menu_lock(FALSE);
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
 
@@ -3258,12 +3261,12 @@ pos_x_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
 static void
 pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
   int sel;
 
   menu_lock(FALSE);
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
 
@@ -3271,7 +3274,7 @@ pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
 }
 
 static void
-axis_prm_edited_common(struct SubWin *d, char *field, gchar *str)
+axis_prm_edited_common(struct obj_list_data *d, char *field, gchar *str)
 {
   int sel;
 
@@ -3288,29 +3291,29 @@ axis_prm_edited_common(struct SubWin *d, char *field, gchar *str)
     return;
 
   d->select = sel;
-  d->update(FALSE);
+  d->update(d, FALSE);
 }
 
 static void
 min_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
 {
-  axis_prm_edited_common((struct SubWin *) user_data, "min", str);
+  axis_prm_edited_common((struct obj_list_data *) user_data, "min", str);
 }
 
 static void
 max_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
 {
-  axis_prm_edited_common((struct SubWin *) user_data, "max", str);
+  axis_prm_edited_common((struct obj_list_data *) user_data, "max", str);
 }
 
 static void
 inc_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer user_data)
 {
-  axis_prm_edited_common((struct SubWin *) user_data, "inc", str);
+  axis_prm_edited_common((struct obj_list_data *) user_data, "inc", str);
 }
 
 static void
-axiswin_delete_axis(struct SubWin *d)
+axiswin_delete_axis(struct obj_list_data *d)
 {
   int sel;
 
@@ -3321,8 +3324,8 @@ axiswin_delete_axis(struct SubWin *d)
 
   if ((sel >= 0) && (sel <= d->num)) {
     AxisDel(sel);
-    AxisWinUpdate(TRUE);
-    FileWinUpdate(TRUE);
+    AxisWinUpdate(d, TRUE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
     set_graph_modified();
     d->select = -1;
   }
@@ -3331,9 +3334,9 @@ axiswin_delete_axis(struct SubWin *d)
 static void
 axis_delete_popup_func(GtkMenuItem *w, gpointer client_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
   axiswin_delete_axis(d);
 }
 
@@ -3341,9 +3344,9 @@ static void
 AxisWinAxisTop(GtkWidget *w, gpointer client_data)
 {
   int sel;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
 
   if (Menulock || Globallock) return;
   UnFocus();
@@ -3353,8 +3356,8 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
     movetopobj(d->obj, sel);
     d->select = 0;
     AxisMove(sel,0);
-    AxisWinUpdate(FALSE);
-    FileWinUpdate(FALSE);
+    AxisWinUpdate(d, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
     set_graph_modified();
   }
 }
@@ -3363,9 +3366,9 @@ static void
 AxisWinAxisLast(GtkWidget *w, gpointer client_data)
 {
   int sel;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
 
   if (Menulock || Globallock) return;
   UnFocus();
@@ -3375,8 +3378,8 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
     movelastobj(d->obj, sel);
     d->select = d->num;
     AxisMove(sel, d->num);
-    AxisWinUpdate(FALSE);
-    FileWinUpdate(FALSE);
+    AxisWinUpdate(d, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
     set_graph_modified();
   }
 }
@@ -3385,9 +3388,9 @@ static void
 AxisWinAxisUp(GtkWidget *w, gpointer client_data)
 {
   int sel;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
 
   if (Menulock || Globallock) return;
   UnFocus();
@@ -3397,8 +3400,8 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     AxisMove(sel, sel - 1);
-    AxisWinUpdate(FALSE);
-    FileWinUpdate(FALSE);
+    AxisWinUpdate(d, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
     set_graph_modified();
   }
 }
@@ -3407,9 +3410,9 @@ static void
 AxisWinAxisDown(GtkWidget *w, gpointer client_data)
 {
   int sel;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
 
   if (Menulock || Globallock) return;
   UnFocus();
@@ -3419,8 +3422,8 @@ AxisWinAxisDown(GtkWidget *w, gpointer client_data)
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     AxisMove(sel, sel + 1);
-    AxisWinUpdate(FALSE);
-    FileWinUpdate(FALSE);
+    AxisWinUpdate(d, FALSE);
+    FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
     set_graph_modified();
   }
 }
@@ -3428,7 +3431,7 @@ AxisWinAxisDown(GtkWidget *w, gpointer client_data)
 static gboolean
 axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 {
-  struct SubWin *d;
+  struct obj_list_data *d;
   GdkEventKey *e;
 
   g_return_val_if_fail(w != NULL, FALSE);
@@ -3437,7 +3440,7 @@ axiswin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
   if (Menulock || Globallock)
     return TRUE;
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
   e = (GdkEventKey *)event;
 
   switch (e->keyval) {
@@ -3497,35 +3500,34 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
     return;
   }
 
-  d->update = AxisWinUpdate;
-  d->setup_dialog = AxisDialog;
-  d->dialog = &DlgAxis;
-  d->ev_key = axiswin_ev_key_down;
-  d->delete = AxisDel;
-
   list_sub_window_create(d, "Axis Window", AXIS_WIN_COL_NUM, Alist, Axiswin_xpm, Axiswin48_xpm);
 
-  d->obj = chkobject("axis");
-  d->num = chkobjlastinst(d->obj);
+  d->data.data->update = AxisWinUpdate;
+  d->data.data->setup_dialog = AxisDialog;
+  d->data.data->dialog = &DlgAxis;
+  d->data.data->ev_key = axiswin_ev_key_down;
+  d->data.data->delete = AxisDelCB;
+  d->data.data->obj = chkobject("axis");
+  d->data.data->num = chkobjlastinst(d->data.data->obj);
 
-  sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
-  set_combo_cell_renderer_cb(d, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
-  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_X, Alist, G_CALLBACK(pos_x_edited));
-  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_Y, Alist, G_CALLBACK(pos_y_edited));
-  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MIN, Alist, G_CALLBACK(min_edited));
-  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
-  set_editable_cell_renderer_cb(d, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
+  sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+  set_combo_cell_renderer_cb(d->data.data, AXIS_WIN_COL_TYPE, Alist, G_CALLBACK(start_editing), G_CALLBACK(edited));
+  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_X, Alist, G_CALLBACK(pos_x_edited));
+  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_Y, Alist, G_CALLBACK(pos_y_edited));
+  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_MIN, Alist, G_CALLBACK(min_edited));
+  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_MAX, Alist, G_CALLBACK(max_edited));
+  set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_INC, Alist, G_CALLBACK(inc_edited));
 
-  list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MIN, 1.0);
-  list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_MAX, 1.0);
-  list_store_set_align(GTK_WIDGET(d->text), AXIS_WIN_COL_INC, 1.0);
+  list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_MIN, 1.0);
+  list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_MAX, 1.0);
+  list_store_set_align(GTK_WIDGET(d->data.data->text), AXIS_WIN_COL_INC, 1.0);
 
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->text), TRUE);
-  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->text), AXIS_WIN_COL_NAME);
-  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->text), AXIS_WIN_COL_NAME);
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
+  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), AXIS_WIN_COL_NAME);
+  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), AXIS_WIN_COL_NAME);
 
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);
 
-  AxisWinUpdate(TRUE);
+  AxisWinUpdate(d->data.data, TRUE);
 }

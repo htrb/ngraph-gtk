@@ -21,7 +21,7 @@
  *
  */
 
-void MergeWinUpdate(int clear);
+void MergeWinUpdate(struct obj_list_data *d, int clear);
 void CmMergeOpen(GtkAction *w, gpointer client_data);
 void CmMergeClose(GtkAction *w, gpointer client_data);
 void CmMergeUpdate(GtkAction *w, gpointer client_data);

@@ -1,3 +1,101 @@
+2012-06-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/gtk_subwin.c (sub_window_get_nth_content)
+	(tree_get_selected, tree_copy, tree_delete, tree_move_top)
+	(tree_move_last, tree_move_up, tree_move_down, tree_update)
+	(tree_focus, tree_hidden, tree_set_hidden_state)
+	(ev_key_down_tree): removed.
+	(start_editing): accepts legend window.
+	(toggle_cb): use "g_object_get_data()" and "toggle_boolean()".
+	(set_cell_renderer_cb, set_editable_cell_renderer_cb)
+	(set_combo_cell_renderer_cb, set_obj_cell_renderer_cb): change
+	type of the firest parameter from "struct SubWin *" to "struct
+	obj_list_data *".
+	(cb_destroy): free data.data member of the "SubWin" struct.
+	(copy, delete, move_top, move_last, move_up, move_down, update)
+	(focus, modify_numeric, modify_string, hidden, set_hidden_state):
+	change type of the firest parameter from "struct SubWin *" to
+	"struct obj_list_data *".
+	(toggle_boolean): added.
+	(do_popup): change type of the second parameter from "struct
+	SubWin *" to "struct obj_list_data *".
+	(do_popup): accepts legend window.
+	(sub_window_create): remove last parameter.
+	(sub_window_create): dont create scrolled window.
+	(text_sub_window_create, label_sub_window_create): create scrolled
+	window.
+	(list_widget_create): added.
+	(list_sub_window_create, tree_sub_window_create): use
+	"list_widget_create()".
+	(list_sub_window_must_rebuild, list_sub_window_build)
+	(list_sub_window_set, sub_win_create_popup_menu): change type of
+	the second parameter from "struct SubWin *" to "struct
+	obj_list_data *".
+
+	* src/gtk/x11axis.c (AxisDialog): change type of the firest
+	parameter from "void *" to "struct obj_list_data *" and remove
+	second parameter.
+	(AxisWinUpdate): add parameter "struct obj_list_data *".
+	(AxisDelCB): added.
+	(axis_list_set_val, pos_edited_common, axis_prm_edited_common)
+	(axiswin_delete_axis): change type of the firest parameter from
+	"struct SubWin *" to "struct obj_list_data *".
+	(CmAxisWindow): use "AxisDelCB" instead of
+	"AxisDel".
+
+	* src/gtk/x11lgnd.c (Plist, Alist, Rlist, Mlist, Tlist): added.
+	(Llist): removed.
+	(LegendWinPathUpdate, LegendWinRectUpdate, LegendWinArcUpdate)
+	(LegendWinMarkUpdate, LegendWinTextUpdate): added.
+	(LegendWinLegendUpdate): removed.
+	(ObjListUpdate, PathListUpdate, ArcListUpdate, RectListUpdate)
+	(MarkListUpdate, TextListUpdate): added.0
+	(legend_list_set_color): change type of the firest parameter from
+	"struct LegendWin *" to "struct obj_list_data *" and remove second
+	parameter.
+	(path_list_set_property, mark_list_set_property)
+	(text_list_set_property, path_list_set_val, rect_list_set_val)
+	(arc_list_set_val, mark_list_set_val, text_list_set_val): added.
+	(legend_list_set_val): removed.
+	(popup_show_cb): use "list_store_get_selected_int()" instead of
+	"tree_store_get_selected_nth()".
+	(pos_edited): get column number from the "title" member of
+	"n_list_store".
+	(pos_edited): use "gtk_tree_model_get_iter_from_string()" to get
+	current row instead of "gtk_tree_path_new_from_string()".
+	(rect_size_edited, rect_width_edited, rect_height_edited): added.
+	(width_edited): removed.
+
+	* src/gtk/x11file.c (FileDialog): change type of the firest
+	parameter from "void *" to "struct obj_list_data *" and remove
+	second parameter.
+	(FileWinFileEdit, file_obj_copy, FileWinFileCopy)
+	(FileWinFileUpdate, FileWinFileDraw, FileWinFit)
+	(file_list_set_val): change type of the firest parameter from
+	"struct SubWin *" to "struct obj_list_data *".
+	(delete_file_obj, FileWinUpdate): add parameter "struct
+	obj_list_data *".
+
+	* src/gtk/x11menu.h (obj_list_data): added.
+	(SubWin): use "struct obj_list_data *".
+	(LegendWin): removed.
+
+	* src/gtk/gtk_liststore.c (create_column): set "user-data" to
+	"GtkCellRendererToggle" when the column is editable.
+
+	* src/gtk/x11merge.c (merge_list_set_val): change type of the
+	firest parameter from "struct SubWin *" to "struct obj_list_data *".
+	(MergeDialog): change type of the firest parameter from "void *"
+	to "struct obj_list_data *".
+	(MergeWinUpdate): add parameter "struct obj_list_data *".
+
+	* src/omark.c (marktype): moved to "oroot.c".
+
+	* src/oroot.c (oputmarktype): moved and renamed from "omark.c".
+
+	* src/ofile.c (file_marktype): use "MARK_TYPE_NUM".
+	(file2d): check argument of the field "mark_type".
+
 2012-06-20  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/main.c (HAVE_READLINE_READLINE_H): used instead of

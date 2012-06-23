@@ -2691,27 +2691,21 @@ init_ngraph_app_struct(void)
   NgraphApp.Viewer.popup = NULL;
 
   memset(&NgraphApp.FileWin, 0, sizeof(NgraphApp.FileWin));
-  NgraphApp.FileWin.can_focus = FALSE;
   NgraphApp.FileWin.type = TypeFileWin;
 
   memset(&NgraphApp.AxisWin, 0, sizeof(NgraphApp.AxisWin));
-  NgraphApp.AxisWin.can_focus = TRUE;
   NgraphApp.AxisWin.type = TypeAxisWin;
 
   memset(&NgraphApp.LegendWin, 0, sizeof(NgraphApp.LegendWin));
-  NgraphApp.LegendWin.can_focus = TRUE;
   NgraphApp.LegendWin.type = TypeLegendWin;
 
   memset(&NgraphApp.MergeWin, 0, sizeof(NgraphApp.MergeWin));
-  NgraphApp.MergeWin.can_focus = TRUE;
   NgraphApp.MergeWin.type = TypeMergeWin;
 
   memset(&NgraphApp.InfoWin, 0, sizeof(NgraphApp.InfoWin));
-  NgraphApp.InfoWin.can_focus = FALSE;
   NgraphApp.InfoWin.type = TypeInfoWin;
 
   memset(&NgraphApp.CoordWin, 0, sizeof(NgraphApp.CoordWin));
-  NgraphApp.CoordWin.can_focus = FALSE;
   NgraphApp.CoordWin.type = TypeCoordWin;
 
   NgraphApp.legend_text_list = NULL;
@@ -3403,10 +3397,10 @@ UpdateAll(void)
 void
 UpdateAll2(void)
 {
-  FileWinUpdate(TRUE);
-  AxisWinUpdate(TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
   LegendWinUpdate(TRUE);
-  MergeWinUpdate(TRUE);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
   InfoWinUpdate(TRUE);
   CoordWinUpdate(TRUE);
 }

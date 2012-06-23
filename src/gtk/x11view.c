@@ -454,7 +454,7 @@ new_merge_obj(char *name, struct objlist *obj)
 
   changefilename(name);
   putobj(obj, "file", id, name);
-  MergeDialog(&DlgMerge, obj, id, -1);
+  MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
   ret = DialogExecute(TopLevel, &DlgMerge);
   if ((ret == IDDELETE) || (ret == IDCANCEL)) {
     delobj(obj, id);
@@ -586,7 +586,7 @@ new_file_obj(char *name, struct objlist *obj, int *id0, int multi)
     return 0;
   }
 
-  FileDialog(&DlgFile, obj, id, multi);
+  FileDialog(NgraphApp.FileWin.data.data, id, multi);
   ret = DialogExecute(TopLevel, &DlgFile);
   if ((ret == IDDELETE) || (ret == IDCANCEL)) {
     FitDel(obj, id);
@@ -649,8 +649,8 @@ data_dropped(char **filenames, int num, int file_type)
     }
   }
 
-  MergeWinUpdate(TRUE);
-  FileWinUpdate(TRUE);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
   return 0;
 }
 
@@ -3770,7 +3770,7 @@ create_single_axis(struct Viewer *d)
 	_putobj(obj, "length", inst, &lenx);
 	_putobj(obj, "direction", inst, &dir);
 
-	AxisDialog(&DlgAxis, obj, id, TRUE);
+	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
 	ret = DialogExecute(TopLevel, &DlgAxis);
 
 	if (ret == IDDELETE || ret == IDCANCEL) {
@@ -5588,8 +5588,8 @@ CmViewerDraw(GtkAction *w, gpointer client_data)
 
   Draw(select_file);
 
-  FileWinUpdate(TRUE);
-  AxisWinUpdate(TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
+  AxisWinUpdate(NgraphApp.AxisWin.data.data, TRUE);
 }
 
 void
@@ -5600,7 +5600,7 @@ CmViewerClear(GtkAction *w, gpointer client_data)
 
   Clear();
 
-  FileWinUpdate(TRUE);
+  FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
 }
 
 static int
@@ -5779,7 +5779,7 @@ ViewUpdate(void)
 	  }
 	}
       } else {
-	AxisDialog(&DlgAxis, obj, id, TRUE);
+	AxisDialog(NgraphApp.AxisWin.data.data, id, TRUE);
 	ret = DialogExecute(TopLevel, &DlgAxis);
 
 	if (ret == IDDELETE) {
@@ -5807,7 +5807,7 @@ ViewUpdate(void)
 	LegendTextDialog(&DlgLegendText, obj, id);
 	ret = DialogExecute(TopLevel, &DlgLegendText);
       } else if (obj == chkobject("merge")) {
-	MergeDialog(&DlgMerge, obj, id, 0);
+	MergeDialog(NgraphApp.MergeWin.data.data, id, 0);
 	ret = DialogExecute(TopLevel, &DlgMerge);
       }
 

@@ -55,16 +55,16 @@ create_win(void)
 void
 InfoWinSetFont(char *font)
 {
-  if (NgraphApp.InfoWin.text && font) {
+  if (NgraphApp.InfoWin.data.text && font) {
     PangoFontDescription *desc;
 
     desc = pango_font_description_from_string(font);
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_widget_override_font(GTK_WIDGET(NgraphApp.InfoWin.text), NULL);
-    gtk_widget_override_font(GTK_WIDGET(NgraphApp.InfoWin.text), desc);
+    gtk_widget_override_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), NULL);
+    gtk_widget_override_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), desc);
 #else
-    gtk_widget_modify_font(GTK_WIDGET(NgraphApp.InfoWin.text), NULL);
-    gtk_widget_modify_font(GTK_WIDGET(NgraphApp.InfoWin.text), desc);
+    gtk_widget_modify_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), NULL);
+    gtk_widget_modify_font(GTK_WIDGET(NgraphApp.InfoWin.data.text), desc);
 #endif
     pango_font_description_free(desc);
   }
@@ -85,11 +85,11 @@ InfoWinDrawInfoText(const char *str)
     create_win();
   }
 
-  if (NgraphApp.InfoWin.text == NULL) {
+  if (NgraphApp.InfoWin.data.text == NULL) {
     return;
   }
 
-  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(NgraphApp.InfoWin.text));
+  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(NgraphApp.InfoWin.data.text));
 
   gtk_text_buffer_get_end_iter(buf, &iter);
   gtk_text_buffer_insert(buf, &iter, str, -1);
@@ -106,7 +106,7 @@ InfoWinDrawInfoText(const char *str)
   gtk_text_buffer_get_end_iter(buf, &iter);
   gtk_text_buffer_place_cursor(buf, &iter);
   mark = gtk_text_buffer_get_selection_bound(buf);
-  gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(NgraphApp.InfoWin.text), mark);
+  gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(NgraphApp.InfoWin.data.text), mark);
 }
 
 void
@@ -114,10 +114,10 @@ InfoWinClear(void)
 {
   GtkTextBuffer *buf;
 
-  if (NgraphApp.InfoWin.text == NULL)
+  if (NgraphApp.InfoWin.data.text == NULL)
     return;
 
-  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(NgraphApp.InfoWin.text));
+  buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(NgraphApp.InfoWin.data.text));
   gtk_text_buffer_set_text(buf, "", 0);
 }
 

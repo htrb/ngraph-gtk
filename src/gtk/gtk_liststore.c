@@ -58,6 +58,7 @@ create_column(n_list_store *list, int i, int j)
 						   "active", i, NULL);
     if (list[i].editable) {
       g_object_set(renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, NULL);
+      g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
     }
     break;
   case G_TYPE_INT:

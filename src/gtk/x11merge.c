@@ -63,7 +63,7 @@ static n_list_store Mlist[] = {
 #define MERG_WIN_COL_ID     1
 #define MERG_WIN_COL_FILE   2
 
-static void merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row);
+static void merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
 static struct subwin_popup_list Popup_list[] = {
   {GTK_STOCK_ADD,         G_CALLBACK(CmMergeOpen), TRUE, NULL, POP_UP_MENU_ITEM_TYPE_NORMAL},
@@ -191,15 +191,15 @@ MergeDialogClose(GtkWidget *w, void *data)
 }
 
 void
-MergeDialog(void *data, struct objlist *obj, int id, int sub_id)
+MergeDialog(struct obj_list_data *data, int id, int user_data)
 {
   struct MergeDialog *d;
 
-  d = (struct MergeDialog *) data;
+  d = (struct MergeDialog *) data->dialog;
 
   d->SetupWindow = MergeDialogSetup;
   d->CloseWindow = MergeDialogClose;
-  d->Obj = obj;
+  d->Obj = data->obj;
   d->Id = id;
 }
 
@@ -224,7 +224,7 @@ CmMergeOpen(GtkAction *w, gpointer client_data)
   if (id >= 0) {
     changefilename(name);
     putobj(obj, "file", id, name);
-    MergeDialog(&DlgMerge, obj, id, -1);
+    MergeDialog(NgraphApp.MergeWin.data.data, id, -1);
     ret = DialogExecute(TopLevel, &DlgMerge);
     if ((ret == IDDELETE) || (ret == IDCANCEL)) {
       delobj(obj, id);
@@ -234,7 +234,7 @@ CmMergeOpen(GtkAction *w, gpointer client_data)
   } else {
     g_free(name);
   }
-  MergeWinUpdate(TRUE);
+  MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
 }
 
 void
@@ -259,7 +259,7 @@ CmMergeClose(GtkAction *w, gpointer client_data)
       delobj(obj, array[i]);
       set_graph_modified();
     }
-    MergeWinUpdate(TRUE);
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
   }
   arraydel(&farray);
 }
@@ -283,7 +283,7 @@ CmMergeUpdate(GtkAction *w, gpointer client_data)
     num = arraynum(&farray);
     array = arraydata(&farray);
     for (i = 0; i < num; i++) {
-      MergeDialog(&DlgMerge, obj, array[i], -1);
+      MergeDialog(NgraphApp.MergeWin.data.data, array[i], -1);
       if (DialogExecute(TopLevel, &DlgMerge) == IDDELETE) {
 	delobj(obj, array[i]);
 	set_graph_modified();
@@ -291,18 +291,15 @@ CmMergeUpdate(GtkAction *w, gpointer client_data)
 	  array[j]--;
       }
     }
-    MergeWinUpdate(TRUE);
+    MergeWinUpdate(NgraphApp.MergeWin.data.data, TRUE);
   }
   arraydel(&farray);
 }
 
 void
-MergeWinUpdate(int clear)
+MergeWinUpdate(struct obj_list_data *d, int clear)
 {
-  struct SubWin *d;
-
-  d = &(NgraphApp.MergeWin);
-  if (GTK_WIDGET(d->text) == NULL)
+  if (d == NULL)
     return;
 
   if (list_sub_window_must_rebuild(d)) {
@@ -317,7 +314,7 @@ MergeWinUpdate(int clear)
 }
 
 static void
-merge_list_set_val(struct SubWin *d, GtkTreeIter *iter, int row)
+merge_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
   int cx;
   unsigned int i = 0;
@@ -357,9 +354,9 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i;
   int sel;
-  struct SubWin *d;
+  struct obj_list_data *d;
 
-  d = (struct SubWin *) user_data;
+  d = (struct obj_list_data *) user_data;
 
   sel = d->select;
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
@@ -438,25 +435,24 @@ CmMergeWindow(GtkToggleAction *action, gpointer client_data)
     return;
   }
 
-  d->update = MergeWinUpdate;
-  d->setup_dialog = MergeDialog;
-  d->dialog = &DlgMerge;
-
   list_sub_window_create(d, "Merge Window", MERG_WIN_COL_NUM, Mlist, Mergewin_xpm, Mergewin48_xpm);
 
-  d->obj = chkobject("merge");
-  d->num = chkobjlastinst(d->obj);
+  d->data.data->update = MergeWinUpdate;
+  d->data.data->setup_dialog = MergeDialog;
+  d->data.data->dialog = &DlgMerge;
+  d->data.data->obj = chkobject("merge");
+  d->data.data->num = chkobjlastinst(d->data.data->obj);
 
-  sub_win_create_popup_menu(d, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
+  sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
 
   init_dnd(d);
 
-  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->text), TRUE);
-  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->text), MERG_WIN_COL_FILE);
-  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->text), MERG_WIN_COL_FILE);
+  gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
+  gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
+  gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
 
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);
 
-  MergeWinUpdate(TRUE);
+  MergeWinUpdate(d->data.data, TRUE);
 }
