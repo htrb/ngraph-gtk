@@ -13,7 +13,7 @@ Last-Update: 2012-03-07
 +coordwin_font=Liberation Mono 12
 +infowin_font=Liberation Mono 10
 +file_preview_font=Liberation Mono 10
-@@ -67,3 +67,3 @@
+@@ -60,3 +60,3 @@
 -font=Sans-serif,Arial
 -font=Serif,Times New Roman
 -font=Monospace,Courier New
