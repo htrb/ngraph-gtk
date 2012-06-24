@@ -69,8 +69,8 @@ static n_list_store Flist[] = {
   {N_("file"),	G_TYPE_STRING,  TRUE, TRUE,  "file",       TRUE},
   {"x   ",	G_TYPE_INT,     TRUE, TRUE,  "x",          FALSE,  0, 999, 1, 10},
   {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",          FALSE,  0, 999, 1, 10},
-  {N_("ax"),	G_TYPE_ENUM,    TRUE, TRUE,  "axis_x",     FALSE},
-  {N_("ay"),	G_TYPE_ENUM,    TRUE, TRUE,  "axis_y",     FALSE},
+  {N_("ax"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_x",     FALSE},
+  {N_("ay"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_y",     FALSE},
   {N_("type"),	G_TYPE_OBJECT,  TRUE, TRUE,  "type",       FALSE},
   {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0,       SPIN_ENTRY_MAX, 100, 1000},
   {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0,       SPIN_ENTRY_MAX, 10,   100},
@@ -3781,7 +3781,7 @@ file_edit_popup_func(GtkMenuItem *w, gpointer client_data)
 {
   struct obj_list_data *d;
 
-  d = (struct SubWin *) client_data;
+  d = (struct obj_list_data *) client_data;
   FileWinFileEdit(d);
 }
 

@@ -116,6 +116,7 @@ create_column(n_list_store *list, int i, int j)
     col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						   "pixbuf", i, NULL);
     break;
+  case G_TYPE_PARAM:
   case G_TYPE_ENUM:
     renderer = gtk_cell_renderer_combo_new();
     model = GTK_TREE_MODEL(gtk_list_store_new(1, G_TYPE_STRING));
@@ -200,7 +201,7 @@ create_tree_view(int n, n_list_store *list, int tree)
     return NULL;
 
   for (i = 0; i < n; i++) {
-    if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_ENUM) {
+    if (list[i].type == G_TYPE_DOUBLE || list[i].type == G_TYPE_ENUM || list[i].type == G_TYPE_PARAM) {
       tarray[i] = G_TYPE_STRING;
     } else {
       tarray[i] = list[i].type;

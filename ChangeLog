@@ -1,5 +1,26 @@
 2012-06-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
+	* src/gtk/x11lgnd.c (get_points): only get first point.
+	(path_list_set_property, text_list_set_property): removed.
+	(path_list_set_val): support "PATH_LIST_COL_TYPE" and
+	"PATH_LIST_COL_ARROW".
+	(text_list_set_val): support "TEXT_LIST_COL_TEXT" and
+	"TEXT_LIST_COL_FONT".
+
+	* src/gtk/gtk_subwin.c (select_enum, start_editing_enum, enum_cb):
+	added.
+	(start_editing, set_cell_renderer_cb): support G_TYPE_ENUM.
+	(set_combo_cell_renderer_cb): check and save "list[i].edited_id".
+
+	* src/gtk/x11file.c (Flist): change type of the columns "ax" and
+	"ay" from G_TYPE_ENUM to G_TYPE_PARAM.
+
+	* src/gtk/gtk_liststore.c (create_column, create_tree_view): check
+	"G_TYPE_PARAM".
+
+	* src/gtk/x11axis.c (start_editing, select_type, edited): removed.
+	(CmAxisWindow): don't call "set_combo_cell_renderer_cb()".
+
 	* src/gtk/x11view.c (ViewerEvLButtonDown, ViewerEvLButtonUp)
 	(ViewerEvMouseMove): treat "MOUSESCROLLE".
 

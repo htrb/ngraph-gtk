@@ -65,7 +65,8 @@
 static n_list_store Plist[] = {
   {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
   {"#",            G_TYPE_INT,     TRUE, FALSE, "id",       FALSE},
-  {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property", TRUE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"type",         G_TYPE_ENUM,    TRUE, TRUE,  "type",     FALSE},
+  {"arrow",        G_TYPE_ENUM,    TRUE, TRUE,  "arrow",    FALSE},
   {"stroke",       G_TYPE_BOOLEAN, TRUE, TRUE,  "stroke",   FALSE},
   {"fill",         G_TYPE_BOOLEAN, TRUE, TRUE,  "fill",     FALSE},
   {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",        FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
@@ -78,12 +79,13 @@ static n_list_store Plist[] = {
 #define PATH_LIST_COL_OID (PATH_LIST_COL_NUM - 1)
 #define PATH_LIST_COL_HIDDEN 0
 #define PATH_LIST_COL_ID     1
-#define PATH_LIST_COL_PROP   2
-#define PATH_LIST_COL_STROKE 3
-#define PATH_LIST_COL_FILL   4
-#define PATH_LIST_COL_X      5
-#define PATH_LIST_COL_Y      6
-#define PATH_LIST_COL_WIDTH  7
+#define PATH_LIST_COL_TYPE   2
+#define PATH_LIST_COL_ARROW  3
+#define PATH_LIST_COL_STROKE 4
+#define PATH_LIST_COL_FILL   5
+#define PATH_LIST_COL_X      6
+#define PATH_LIST_COL_Y      7
+#define PATH_LIST_COL_WIDTH  8
 
 static n_list_store Rlist[] = {
   {"",               G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",   FALSE},
@@ -163,27 +165,29 @@ static n_list_store Mlist[] = {
 #define MARK_LIST_COL_WIDTH  6
 
 static n_list_store Tlist[] = {
-  {"",             G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",    FALSE},
-  {"#",            G_TYPE_INT,     TRUE, FALSE, "id",        FALSE},
-  {N_("property"), G_TYPE_STRING,  TRUE, FALSE, "property",  TRUE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
-  {"x",            G_TYPE_DOUBLE,  TRUE, TRUE,  "x",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",            G_TYPE_DOUBLE,  TRUE, TRUE,  "y",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("pt"),       G_TYPE_DOUBLE,  TRUE, TRUE,  "pt",        FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
-  {"direction",    G_TYPE_DOUBLE,  TRUE, TRUE,  "direction", FALSE,                0, 36000,          100, 1500},
-  {"raw",          G_TYPE_BOOLEAN, TRUE, TRUE,  "raw",       FALSE},
-  {"^#",           G_TYPE_INT,     TRUE, FALSE, "oid",       FALSE},
+  {"",          G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",    FALSE},
+  {"#",         G_TYPE_INT,     TRUE, FALSE, "id",        FALSE},
+  {"text",      G_TYPE_STRING,  TRUE, TRUE,  "text",      FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END},
+  {"font",      G_TYPE_STRING,  TRUE, FALSE, "font",      FALSE},
+  {"x",         G_TYPE_DOUBLE,  TRUE, TRUE,  "x",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",         G_TYPE_DOUBLE,  TRUE, TRUE,  "y",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("pt"),    G_TYPE_DOUBLE,  TRUE, TRUE,  "pt",        FALSE,                0, SPIN_ENTRY_MAX,  20,  100},
+  {"direction", G_TYPE_DOUBLE,  TRUE, TRUE,  "direction", FALSE,                0, 36000,          100, 1500},
+  {"raw",       G_TYPE_BOOLEAN, TRUE, TRUE,  "raw",       FALSE},
+  {"^#",        G_TYPE_INT,     TRUE, FALSE, "oid",       FALSE},
 };
 
 #define TEXT_LIST_COL_NUM (sizeof(Tlist)/sizeof(*Tlist))
 #define TEXT_LIST_COL_OID (TEXT_LIST_COL_NUM - 1)
 #define TEXT_LIST_COL_HIDDEN 0
 #define TEXT_LIST_COL_ID     1
-#define TEXT_LIST_COL_PROP   2
-#define TEXT_LIST_COL_X      3
-#define TEXT_LIST_COL_Y      4
-#define TEXT_LIST_COL_PT     5
-#define TEXT_LIST_COL_DIR    6
-#define TEXT_LIST_COL_RAW    7
+#define TEXT_LIST_COL_TEXT   2
+#define TEXT_LIST_COL_FONT   3
+#define TEXT_LIST_COL_X      4
+#define TEXT_LIST_COL_Y      5
+#define TEXT_LIST_COL_PT     6
+#define TEXT_LIST_COL_DIR    7
+#define TEXT_LIST_COL_RAW    8
 
 static n_list_store *Llist[] = {Plist, Rlist, Alist, Mlist, Tlist};
 static int Llist_num[] = {PATH_LIST_COL_NUM, RECT_LIST_COL_NUM, ARC_LIST_COL_NUM, MARK_LIST_COL_NUM, TEXT_LIST_COL_NUM};
@@ -2471,10 +2475,9 @@ LegendWinUpdate(int clear)
 }
 
 static void
-get_points(char *buf, int len, struct objlist *obj, int id, int *x, int *y, int style, char *ex)
+get_points(struct objlist *obj, int id, int *x, int *y)
 {
   int *points;
-  const char *str;
   struct narray *array;
 
   getobj(obj, "points", id, 0, NULL, &array);
@@ -2486,15 +2489,6 @@ get_points(char *buf, int len, struct objlist *obj, int id, int *x, int *y, int 
     *x = points[0];
     *y = points[1];
   }
-
-  str = get_style_string(obj, id, "style");
-
-  snprintf(buf, len, _("points:%-3d %s%s%s%s"),
-	   arraynum(array) / 2,
-	   (style) ? _("style:") : "",
-	   (style) ? ((str) ? _(str) : _("custom")) : "",
-	   (style) ? "  " : "",
-	   CHK_STR(ex));
 }
 
 enum COLOR_TYPE {
@@ -2540,35 +2534,6 @@ legend_list_set_color(struct obj_list_data *d, GtkWidget *view, GtkTreeIter *ite
 }
 
 static void
-path_list_set_property(struct obj_list_data *d, GtkTreeIter *iter, int row, unsigned int i, int *x0, int *y0)
-{
-  int path_type, fill, stroke, len, intp;
-  char *valstr, buf[256], buf2[256];
-  char **enum_intp, **enum_path_type;
-  int type = -1;
-
-  getobj(d->obj, "type", row, 0, NULL, &path_type);
-  getobj(d->obj, "stroke", row, 0, NULL, &stroke);
-  getobj(d->obj, "fill", row, 0, NULL, &fill);
-  sgetobjfield(d->obj, row, "arrow", NULL, &valstr, FALSE, FALSE, FALSE);
-  getobj(d->obj, "interpolation", row, 0, NULL, &intp);
-  enum_intp = (char **) chkobjarglist(d->obj, "interpolation");
-  enum_path_type = (char **) chkobjarglist(d->obj, "type");
-
-  len = snprintf(buf, sizeof(buf), "%s ", _(enum_path_type[path_type]));
-  snprintf(buf2, sizeof(buf2), "%s%s%s%s",
-	   (path_type) ? _(enum_intp[intp]) : "",
-	   (path_type) ? " " : "",
-	   (stroke) ? _("arrow:") : "",
-	   (stroke) ? _(valstr) : "");
-  g_free(valstr);
-  get_points(buf + len, sizeof(buf) - len, d->obj, row, x0, y0, stroke, buf2);
-  legend_list_set_color(d, d->text, iter, type, row, (fill) ? COLOR_TYPE_FILL : COLOR_TYPE_STROKE);
-
-  list_store_set_string(d->text, iter, i, buf);
-}
-
-static void
 mark_list_set_property(struct obj_list_data *d, GtkTreeIter *iter, int row, unsigned int i)
 {
   int mark;
@@ -2588,21 +2553,10 @@ mark_list_set_property(struct obj_list_data *d, GtkTreeIter *iter, int row, unsi
 }
 
 static void
-text_list_set_property(struct obj_list_data *d, GtkTreeIter *iter, int row, unsigned int i)
-{
-  int type = -1;
-  char *text;
-
-  getobj(d->obj, "text", row, 0, NULL, &text);
-  list_store_set_string(d->text, iter, i, text);
-  legend_list_set_color(d, d->text, iter, type, row, COLOR_TYPE_1);
-}
-
-static void
 path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
-  int cx, x0, y0, w;
-  int i = 0;
+  int cx, x0, y0, w, i;
+  char *valstr;
 
   for (i = 0; i < d->list_col_num; i++) {
     switch (i) {
@@ -2611,8 +2565,11 @@ path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       cx = ! cx;
       list_store_set_boolean(d->text, iter, i, cx);
       break;
-    case PATH_LIST_COL_PROP:
-      path_list_set_property(d, iter, row, i, &x0, &y0);
+    case PATH_LIST_COL_TYPE:
+    case PATH_LIST_COL_ARROW:
+      sgetobjfield(d->obj, row, d->list[i].name, NULL, &valstr, FALSE, FALSE, FALSE);
+      list_store_set_string(GTK_WIDGET(d->text), iter, i, _(valstr));
+      g_free(valstr);
       break;
     case PATH_LIST_COL_STROKE:
     case PATH_LIST_COL_FILL:
@@ -2620,6 +2577,7 @@ path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       list_store_set_boolean(d->text, iter, i, w);
       break;
     case PATH_LIST_COL_X:
+      get_points(d->obj, row, &x0, &y0);
       list_store_set_double(d->text, iter, i, x0 / 100.0);
       break;
     case PATH_LIST_COL_Y:
@@ -2754,8 +2712,8 @@ mark_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 static void
 text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
 {
-  int cx, w;
-  int i = 0;
+  int cx, w, i;
+  char *str;
 
   for (i = 0; i < d->list_col_num; i++) {
     switch (i) {
@@ -2768,8 +2726,10 @@ text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);
       list_store_set_boolean(d->text, iter, i, cx);
       break;
-    case TEXT_LIST_COL_PROP:
-      text_list_set_property(d, iter, row, i);
+    case TEXT_LIST_COL_TEXT:
+    case TEXT_LIST_COL_FONT:
+      getobj(d->obj, d->list[i].name, row, 0, NULL, &str);
+      list_store_set_string(d->text, iter, i, str);
       break;
     case TEXT_LIST_COL_X:
     case TEXT_LIST_COL_Y:
