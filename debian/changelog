@@ -1,35 +1,41 @@
 ngraph-gtk (6.06.06-1) unstable; urgency=low
 
-  * New upstream release.
+  * New upstream release
+  * debian/control
+   - update long description of ngraph-gtk-addins
+  * debian/ngraph-gtk.install
+   - add icons
+  * debian/patches/10_avoid-docs-conflict.patch
+   - removed because documents will be placed to correct path without
+     this patch
+  * debian/patches/01_replace_to_free_fonts.patch
+   - renamed from 20_replace_to_free_fonts.patch
+  * debian/ngraph-gtk.lintian-overrides
+   - removed because ngraph is added for known interpreter
 
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 15 Jun 2012 22:16:03 +0900
-
-ngraph-gtk (6.06.05-2) unstable; urgency=low
-
-  * GTK+ 3.4 support.
-
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 25 May 2012 17:16:03 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Mon, 18 Jun 2012 23:57:20 +0900
 
 ngraph-gtk (6.06.05-1) unstable; urgency=low
 
-  * New upstream release.
-
- -- Ito Hiroyuki <ZXB01226@nifty.com>  Thu, 19 Apr 2012 17:16:03 +0900
-
-ngraph-gtk (6.06.04-2) unreleased; urgency=low
-
-  * debian/ngraph-gtk-addins.postinst, debian/ngraph-gtk-addins.prerm
-   - added for adding or removing addins on configuraton file
-  * debian/patches/20_replace_to_free_fonts.patch
-   - added to replace proprietary fonts
-  * debian/patches/30_remove-addins-from-config.patch
-   - added for removing addins when ngraph-gtk-addins is not installed
+  * New upstream release
   * debian/control
-   - added Suggests: fonts-liberation
+   - add build-depends: libreadline6-dev
+   - add suggests: fonts-liberation
+   - add ngraph-gtk-addin-import-ps and ngraph-gtk-addin-tex-equation packages
+   - add descriptions for each addins
+   - allow DM upload
   * debian/copyright
-   - fixed Format URI
+   - update format uri
+  * debian/patches/20_replace_to_free_fonts.patch
+   - change settings to use free fonts
+  * debian/ngraph-gtk-addins.install
+   - removed import-ps and tex-equation addins to split a package
+  * debian/ngraph-gtk-addin-import-ps.install
+   - add import-ps addin
+  * debian/ngraph-gtk-addin-tex-equation.install
+   - add tex-equation addin
 
- -- Koichi Akabe <vbkaisetsu@gmail.com>  Sun, 18 Mar 2012 19:21:18 +0900
+ -- Koichi Akabe <vbkaisetsu@gmail.com>  Mon, 07 May 2012 22:34:01 +0900
 
 ngraph-gtk (6.06.04-1) unstable; urgency=low
 
