@@ -1,3 +1,10 @@
+2012-06-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11view.c (ViewerEvLButtonDown, ViewerEvLButtonUp)
+	(ViewerEvMouseMove): treat "MOUSESCROLLE".
+
+	* src/gtk/x11menu.h (MouseMode): add "MOUSESCROLLE".
+
 2012-06-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/gtk_subwin.c (sub_window_get_nth_content)

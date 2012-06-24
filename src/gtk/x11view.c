@@ -2995,7 +2995,13 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   case AxisB:
     pos = NGetCursor();
     if (pos == GDK_LEFT_PTR) {
-      mouse_down_point(state, point, d);
+      if (state & GDK_CONTROL_MASK) {
+	NSetCursor(GDK_FLEUR);
+	d->MouseMode = MOUSESCROLLE;
+	return TRUE;
+      } else {
+	mouse_down_point(state, point, d);
+      }
     } else {
       mouse_down_move(state, point, d);
     }
@@ -3003,9 +3009,15 @@ ViewerEvLButtonDown(unsigned int state, TPoint *point, struct Viewer *d)
   case TrimB:
   case DataB:
   case EvalB:
-    d->Capture = TRUE;
-    d->MouseMode = MOUSEPOINT;
-    d->ShowRect = TRUE;
+    if (state & GDK_CONTROL_MASK) {
+      NSetCursor(GDK_FLEUR);
+      d->MouseMode = MOUSESCROLLE;
+      return TRUE;
+    } else {
+      d->Capture = TRUE;
+      d->MouseMode = MOUSEPOINT;
+      d->ShowRect = TRUE;
+    }
     break;
   case MarkB:
   case TextB:
@@ -3418,6 +3430,12 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
 
   zoom = Menulocal.PaperZoom / 10000.0;
 
+  if (d->MouseMode == MOUSESCROLLE) {
+    NSetCursor(GDK_LEFT_PTR);
+    d->MouseMode = MOUSENONE;
+    return FALSE;
+  }
+
   if (! d->Capture)
     return TRUE;
 
@@ -3450,6 +3468,7 @@ ViewerEvLButtonUp(unsigned int state, TPoint *point, struct Viewer *d)
       }
       break;
     case MOUSENONE:
+    case MOUSESCROLLE:
       break;
     }
     NSetCursor(get_mouse_cursor_type(d, point->x, point->y));
@@ -4423,6 +4442,12 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
   dx = calc_mouse_x(point->x, zoom, d);
   dy = calc_mouse_y(point->y, zoom, d);
 
+  if (d->MouseMode == MOUSESCROLLE) {
+    range_increment(d->HScroll, mxd2p(d->MouseX1 - dx));
+    range_increment(d->VScroll, mxd2p(d->MouseY1 - dy));
+    return FALSE;
+  }
+
   if ((d->Mode != DataB) &&
       (d->Mode != EvalB) &&
       (d->Mode != ZoomB) &&
@@ -4468,6 +4493,7 @@ ViewerEvMouseMove(unsigned int state, TPoint *point, struct Viewer *d)
 	update_frame_rect(point, d, zoom);
 	break;
       case MOUSENONE:
+      case MOUSESCROLLE:
 	break;
       }
     } else if (d->Mode & POINT_TYPE_POINT) {

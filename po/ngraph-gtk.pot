@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-06-22 18:31+0900\n"
+"POT-Creation-Date: 2012-06-24 15:58+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2269,7 +2269,7 @@ msgstr ""
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:747 src/gtk/x11print.c:1012 src/gtk/x11view.c:5536
+#: src/gtk/x11print.c:747 src/gtk/x11print.c:1012 src/gtk/x11view.c:5562
 msgid "Drawing."
 msgstr ""
 
@@ -2303,15 +2303,15 @@ msgstr ""
 msgid "Data points are moved."
 msgstr ""
 
-#: src/gtk/x11view.c:4008
+#: src/gtk/x11view.c:4027
 msgid "Moving data points is canceled."
 msgstr ""
 
-#: src/gtk/x11view.c:5530
+#: src/gtk/x11view.c:5556
 msgid "Scaling"
 msgstr ""
 
-#: src/gtk/x11view.c:5537
+#: src/gtk/x11view.c:5563
 msgid "Drawing"
 msgstr ""
 
@@ -2323,7 +2323,7 @@ msgstr ""
 msgid "Pick a Color"
 msgstr ""
 
-#: src/gtk/gtk_subwin.c:56
+#: src/gtk/gtk_subwin.c:54
 msgid "Open"
 msgstr ""
 

@@ -113,6 +113,7 @@ enum MouseMode {
   MOUSEZOOM3,
   MOUSEZOOM4,
   MOUSECHANGE,
+  MOUSESCROLLE,
 };
 
 enum pop_up_menu_item_type {

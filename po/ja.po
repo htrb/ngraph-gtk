@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-06-22 18:31+0900\n"
+"POT-Creation-Date: 2012-06-24 15:58+0900\n"
 "PO-Revision-Date: 2012-03-30 18:47+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -2306,7 +2306,7 @@ msgstr "印刷エラー: %s"
 msgid "Spawning external driver."
 msgstr "外部ドライバに出力中"
 
-#: src/gtk/x11print.c:747 src/gtk/x11print.c:1012 src/gtk/x11view.c:5536
+#: src/gtk/x11print.c:747 src/gtk/x11print.c:1012 src/gtk/x11view.c:5562
 msgid "Drawing."
 msgstr "描画中"
 
@@ -2340,15 +2340,15 @@ msgstr "データ評価中"
 msgid "Data points are moved."
 msgstr "データは移動されました."
 
-#: src/gtk/x11view.c:4008
+#: src/gtk/x11view.c:4027
 msgid "Moving data points is canceled."
 msgstr "データの移動はキャンセルされました."
 
-#: src/gtk/x11view.c:5530
+#: src/gtk/x11view.c:5556
 msgid "Scaling"
 msgstr "軸スケール設定中"
 
-#: src/gtk/x11view.c:5537
+#: src/gtk/x11view.c:5563
 msgid "Drawing"
 msgstr "描画中"
 
@@ -2360,7 +2360,7 @@ msgstr "設定のコピー(_C)"
 msgid "Pick a Color"
 msgstr "色の選択"
 
-#: src/gtk/gtk_subwin.c:56
+#: src/gtk/gtk_subwin.c:54
 msgid "Open"
 msgstr "開く"
 
