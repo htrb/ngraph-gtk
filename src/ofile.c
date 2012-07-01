@@ -7076,6 +7076,41 @@ f2dstore(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 }
 
 static int
+nstrrchr(const char *str, int chr, int index)
+{
+  int i;
+  for (i = index; i >= 0; i--) {
+    if (str[i] == chr) {
+      break;
+    }
+  }
+
+  return i;
+}
+
+static int
+get_filename_last_index(const char *s)
+{
+  int i;
+
+  i = strlen(s);
+  i = nstrrchr(s, ' ', i);
+  if (i < 0) {
+    return i;
+  }
+  while (s[i] == ' ') {
+    i--;
+  }
+
+  i = nstrrchr(s, ' ', i);
+  if (i < 0) {
+    return i;
+  }
+
+  return i;
+}
+
+static int
 f2dload_sub(struct objlist *obj, N_VALUE *inst, char **s, int *expand, char **fullname)
 {
   struct objlist *sys;
@@ -7086,11 +7121,20 @@ f2dload_sub(struct objlist *obj, N_VALUE *inst, char **s, int *expand, char **fu
     return 1;
 
   sys = getobject("system");
-  if (expand)
+  if (expand) {
     getobj(sys, "expand_file", 0, 0, NULL, expand);
+  }
 
-  if ((file = getitok2(s, &len, " \t")) == NULL)
+  len = get_filename_last_index(*s);
+  if (len < 0) {
     return 1;
+  }
+
+  file = g_strndup(*s, len);
+  if (file == NULL) {
+    return 1;
+  }
+  *s = *s + len;
 
   getobj(sys, "expand_dir", 0, 0, NULL, &exdir);
 
@@ -7115,7 +7159,7 @@ f2dload_sub(struct objlist *obj, N_VALUE *inst, char **s, int *expand, char **fu
   return 0;
 }
 
-static int 
+static int
 f2dload(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
 {
   int expand;

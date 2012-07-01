@@ -1,3 +1,9 @@
+2012-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/ofile.c (nstrrchr, get_filename_last_index): added.
+	(f2dload_sub): use "get_filename_last_index()" instead of
+	"getitok2()".
+
 2012-06-24  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (get_points): only get first point.
