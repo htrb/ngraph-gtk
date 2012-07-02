@@ -15,5 +15,6 @@ void combo_box_set_active(GtkWidget *cbox, int i);
 void combo_box_clear(GtkWidget *cbox);
 int combo_box_get_num(GtkWidget *cbox);
 void combo_box_append_text(GtkWidget *cbox, char *str);
+int combo_box_get_selected_row(GtkWidget *view, gchar *path, GtkTreeIter *iter, int col);
 
 #endif

@@ -656,7 +656,7 @@ SwitchDialogSetup(GtkWidget *wi, void *data, int makewidget)
   char **buf;
   GtkTreeSelection *sel;
   static n_list_store list[] = {
-    {N_("Object"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("Object"), G_TYPE_STRING, TRUE, FALSE, NULL},
   };
 
   d = (struct SwitchDialog *) data;

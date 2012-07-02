@@ -472,9 +472,9 @@ PrefScriptDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct PrefScriptDialog *d;
   n_list_store list[] = {
-    {N_("name"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-    {N_("file"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-    {N_("description"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("name"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("file"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("description"), G_TYPE_STRING, TRUE, FALSE, NULL},
   };
 
   d = (struct PrefScriptDialog *) data;
@@ -681,7 +681,7 @@ PrefDriverDialogSetup(GtkWidget *wi, void *data, int makewidget)
 {
   struct PrefDriverDialog *d;
   n_list_store list[] = {
-    {N_("Driver"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("Driver"), G_TYPE_STRING, TRUE, FALSE, NULL},
   };
 
   d = (struct PrefDriverDialog *) data;
@@ -907,7 +907,7 @@ FontSettingDialogSetup(GtkWidget *wi, void *data, int makewidget)
 
   if (makewidget) {
     n_list_store list[] = {
-      {N_("Font name"),  G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+      {N_("Font name"),  G_TYPE_STRING, TRUE, FALSE, NULL},
     };
 
     int j;
@@ -1179,9 +1179,9 @@ PrefFontDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *vbox;
   struct PrefFontDialog *d;
   n_list_store list[] = {
-    {N_("alias"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-    {N_("name"),  G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-    {N_("alternative fonts"),  G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("alias"), G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("name"),  G_TYPE_STRING, TRUE, FALSE, NULL},
+    {N_("alternative fonts"),  G_TYPE_STRING, TRUE, FALSE, NULL},
   };
 
   d = (struct PrefFontDialog *) data;

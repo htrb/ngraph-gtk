@@ -23,6 +23,15 @@ enum SPIN_BUTTON_TYPE {
   SPIN_BUTTON_TYPE_CUSTOM,
 };
 
+enum OBJ_FIELD_COLOR_TYPE {
+  OBJ_FIELD_COLOR_TYPE_0,
+  OBJ_FIELD_COLOR_TYPE_1,
+  OBJ_FIELD_COLOR_TYPE_2,
+  OBJ_FIELD_COLOR_TYPE_FILL,
+  OBJ_FIELD_COLOR_TYPE_STROKE,
+};
+
+
 GtkWidget *create_spin_entry_type(enum SPIN_BUTTON_TYPE type, int set_default_size, int set_default_action);
 GtkWidget *create_spin_entry(int min, int max, int inc, int set_default_size, int set_default_action);
 void spin_entry_set_val(GtkWidget *entry, int val);
@@ -47,5 +56,7 @@ GtkWidget *create_text_view_with_line_number(GtkWidget **v);
 void text_view_with_line_number_set_text(GtkWidget *view, const gchar *str);
 void text_view_with_line_number_set_font(GtkWidget *view, const gchar *font);
 void set_widget_sensitivity_with_label(GtkWidget *w, gboolean state);
+void combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id);
+int select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type);
 
 #endif

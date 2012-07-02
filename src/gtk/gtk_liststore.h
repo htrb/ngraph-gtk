@@ -5,16 +5,20 @@
 #ifndef _GTK_LISTSTORE_HEADER
 #define _GTK_LISTSTORE_HEADER
 
-#define OBJECT_COLUMN_TYPE_STRING 0
-#define OBJECT_COLUMN_TYPE_PIXBUF 1
-#define OBJECT_COLUMN_TYPE_INT    2
+enum OBJECT_COLUMN_TYPE {
+  OBJECT_COLUMN_TYPE_TOGGLE,
+  OBJECT_COLUMN_TYPE_STRING,
+  OBJECT_COLUMN_TYPE_PIXBUF,
+  OBJECT_COLUMN_TYPE_INT,
+  OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE,
+  OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE,
+};
 
 typedef struct _list_store {
   char *title;
   GType type;
   gboolean visible, editable;
   char *name;
-  gboolean color;
   int min, max, inc, page;
   PangoEllipsizeMode ellipsize;
   gulong edited_id;
@@ -78,6 +82,8 @@ void list_store_remove_selected_cb(GtkWidget *w, gpointer client_data);
 void free_tree_path_cb(gpointer data, gpointer user_data);
 
 void tree_store_selected_toggle_expand(GtkWidget *w);
+
+int tree_view_get_selected_row_int_from_path(GtkWidget *view, gchar *path, GtkTreeIter *iter, int col);
 
 #define tree_store_get_int		list_store_get_int
 #define tree_store_get_boolean		list_store_get_boolean

@@ -948,11 +948,11 @@ EvalDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkTreeSelection *sel;
   struct EvalDialog *d;
   n_list_store list[] = {
-    {"#",           G_TYPE_INT,    TRUE,  FALSE, NULL, FALSE},
-    {_("Line No."), G_TYPE_INT,    TRUE,  FALSE, NULL, FALSE},
-    {"X",           G_TYPE_STRING, TRUE,  FALSE, NULL, FALSE},
-    {"Y",           G_TYPE_STRING, TRUE,  FALSE, NULL, FALSE},
-    {"N",           G_TYPE_INT,    FALSE, FALSE, NULL, FALSE},
+    {"#",           G_TYPE_INT,    TRUE,  FALSE, NULL},
+    {_("Line No."), G_TYPE_INT,    TRUE,  FALSE, NULL},
+    {"X",           G_TYPE_STRING, TRUE,  FALSE, NULL},
+    {"Y",           G_TYPE_STRING, TRUE,  FALSE, NULL},
+    {"N",           G_TYPE_INT,    FALSE, FALSE, NULL},
   };
 
 

@@ -53,8 +53,9 @@ struct line_style FwLineStyle[] = {
   {N_("dot dash"),   "450 150 150 150",         4},
   {N_("2-dot dash"), "450 150 150 150 150 150", 6},
   {N_("dot 2-dash"), "450 150 450 150 150 150", 6},
+  {NULL, NULL, -1},
 };
-#define CLINESTYLE (sizeof(FwLineStyle) / sizeof(*FwLineStyle))
+#define CLINESTYLE ((sizeof(FwLineStyle) / sizeof(*FwLineStyle)) - 1)
 
 char *FwNumStyle[] =
   {N_("auto"), "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -312,9 +313,9 @@ SelectDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *swin, *w, *hbox;
   GtkTreeIter iter;
   n_list_store list[] = {
-    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
-    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END, 0},
-  } ;
+    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
+    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END, 0},
+  };
 
   d = (struct SelectDialog *) data;
 
@@ -468,8 +469,8 @@ CopyDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *swin, *w;
   GtkTreeIter iter;
   n_list_store copy_list[] = {
-    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
-    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, FALSE, 0, 0, 0, 0, PANGO_ELLIPSIZE_END, 0},
+    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_NONE, 0},
+    {"property", G_TYPE_STRING, TRUE, FALSE, NULL, 0, 0, 0, 0, PANGO_ELLIPSIZE_END, 0},
   };
 
   d = (struct CopyDialog *) data;

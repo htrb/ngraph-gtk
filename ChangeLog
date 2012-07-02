@@ -1,3 +1,51 @@
+012-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (create_type_combo_box): use
+	"combo_box_create_mark()".
+	(create_type_combo_box): set visibility of toggle and pixbudf
+	column.
+	(select_type): use "select_obj_color()".
+	(start_editing_type, start_editing): use
+	"tree_view_get_selected_row_int_from_path()".
+	(CmFileWindow): set "foreground" attribute column.
+
+	* src/gtk/gtk_liststore.h (_list_store): the member "color" is
+	removed.
+
+	* src/gtk/gtk_liststore.c (create_object_cbox): add columns to
+	show toggle item and set visibility of toggle and pixbuf column.
+	(create_tree_view): don't create invisible column.
+	(tree_view_get_selected_row_int_from_path): added.
+
+	* src/gtk/gtk_widget.h (OBJ_FIELD_COLOR_TYPE): added.
+
+	* src/gtk/gtk_widget.c (combo_box_create_mark, select_obj_color):
+	added.
+
+	* src/gtk/x11lgnd.c (get_points): get number of points.
+	(draw_color_pixbuf): added.
+	(path_list_set_val): support type of interpolation.
+	(path_list_set_val): show number of points.
+	(rect_list_set_val, arc_list_set_val): line type is shown as
+	image.
+	(draw_mark_pixbuf): added.
+	(mark_list_set_val): use "draw_mark_pixbuf()".
+	(rect_size_edited): use
+	"tree_view_get_selected_row_int_from_path()".
+	(LEGEND_COMBO_ITEM, create_mark_color_combo_box)
+	(create_color_combo_box, select_type, select_color)
+	(start_editing_common, start_editing_mark, start_editing_color)
+	(select_line_type, start_editing_line_type, edited_line_type)
+	(start_editing_font, edited_font): added.
+	(CmLegendWindow): set callback functions to columns.
+
+2012-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (select_color): removed.
+
+	* src/gtk/x11lgnd.c (mark_list_set_property)
+	(legend_list_set_color): removed.
+
 2012-07-01  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/ofile.c (nstrrchr, get_filename_last_index): added.

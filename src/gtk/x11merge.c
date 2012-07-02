@@ -48,13 +48,13 @@
 #include "x11view.h"
 
 static n_list_store Mlist[] = {
-  {"",         G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",      FALSE},
-  {"#",        G_TYPE_INT,     TRUE, FALSE, "id",          FALSE},
-  {N_("file"), G_TYPE_STRING,  TRUE, TRUE,  "file",        FALSE},
-  {N_("top"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("left"), G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("zoom"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom",        FALSE,                0, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid",         FALSE},
+  {" ",        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
+  {"#",        G_TYPE_INT,     TRUE, FALSE, "id"},
+  {N_("file"), G_TYPE_STRING,  TRUE, TRUE,  "file"},
+  {N_("top"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "top_margin",  - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("left"), G_TYPE_DOUBLE,  TRUE, TRUE,  "left_margin", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("zoom"), G_TYPE_DOUBLE,  TRUE, TRUE,  "zoom",                       0, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid"},
 };
 
 #define MERG_WIN_COL_NUM (sizeof(Mlist)/sizeof(*Mlist))

@@ -64,34 +64,43 @@
 #include "x11commn.h"
 
 static n_list_store Flist[] = {
-  {"",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",     FALSE},
-  {"#",		G_TYPE_INT,     TRUE, FALSE, "id",         FALSE},
-  {N_("file"),	G_TYPE_STRING,  TRUE, TRUE,  "file",       TRUE},
-  {"x   ",	G_TYPE_INT,     TRUE, TRUE,  "x",          FALSE,  0, 999, 1, 10},
-  {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",          FALSE,  0, 999, 1, 10},
-  {N_("ax"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_x",     FALSE},
-  {N_("ay"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_y",     FALSE},
-  {N_("type"),	G_TYPE_OBJECT,  TRUE, TRUE,  "type",       FALSE},
-  {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  FALSE,  0,       SPIN_ENTRY_MAX, 100, 1000},
-  {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", FALSE,  0,       SPIN_ENTRY_MAX, 10,   100},
-  {N_("skip"),	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  FALSE,  0,       INT_MAX,         1,    10},
-  {N_("step"),	G_TYPE_INT,     TRUE, TRUE,  "read_step",  FALSE,  1,       INT_MAX,         1,    10},
-  {N_("final"),	G_TYPE_INT,     TRUE, TRUE,  "final_line", FALSE,  INT_MIN, INT_MAX,    1,    10},
-  {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, "data_num",   FALSE},
-  {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid",        FALSE},
+  {" ",	        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
+  {"#",		G_TYPE_INT,     TRUE, FALSE, "id"},
+  {N_("file"),	G_TYPE_STRING,  TRUE, TRUE,  "file"},
+  {"x   ",	G_TYPE_INT,     TRUE, TRUE,  "x",  0, 999, 1, 10},
+  {"y   ",	G_TYPE_INT,     TRUE, TRUE,  "y",  0, 999, 1, 10},
+  {N_("ax"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_x"},
+  {N_("ay"),	G_TYPE_PARAM,   TRUE, TRUE,  "axis_y"},
+  {N_("type"),	G_TYPE_OBJECT,  TRUE, TRUE,  "type"},
+  {N_("size"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "mark_size",  0,       SPIN_ENTRY_MAX, 100, 1000},
+  {N_("width"),	G_TYPE_DOUBLE,  TRUE, TRUE,  "line_width", 0,       SPIN_ENTRY_MAX, 10,   100},
+  {N_("skip"),	G_TYPE_INT,     TRUE, TRUE,  "head_skip",  0,       INT_MAX,         1,    10},
+  {N_("step"),	G_TYPE_INT,     TRUE, TRUE,  "read_step",  1,       INT_MAX,         1,    10},
+  {N_("final"),	G_TYPE_INT,     TRUE, TRUE,  "final_line", INT_MIN, INT_MAX,    1,    10},
+  {N_("num"), 	G_TYPE_INT,     TRUE, FALSE, "data_num"},
+  {"^#",	G_TYPE_INT,     TRUE, FALSE, "oid"},
+  {"masked",	G_TYPE_STRING,  FALSE, FALSE, "masked"},
 };
 
-#define FILE_WIN_COL_NUM (sizeof(Flist)/sizeof(*Flist))
-#define FILE_WIN_COL_OID (FILE_WIN_COL_NUM - 1)
-#define FILE_WIN_COL_HIDDEN 0
-#define FILE_WIN_COL_ID     1
-#define FILE_WIN_COL_FILE   2
-#define FILE_WIN_COL_X      3
-#define FILE_WIN_COL_Y      4
-#define FILE_WIN_COL_X_AXIS 5
-#define FILE_WIN_COL_Y_AXIS 6
-#define FILE_WIN_COL_TYPE   7
-
+enum {
+  FILE_WIN_COL_HIDDEN,
+  FILE_WIN_COL_ID,
+  FILE_WIN_COL_FILE,
+  FILE_WIN_COL_X,
+  FILE_WIN_COL_Y,
+  FILE_WIN_COL_X_AXIS,
+  FILE_WIN_COL_Y_AXIS,
+  FILE_WIN_COL_TYPE,
+  FILE_WIN_COL_SIZE,
+  FILE_WIN_COL_WIDTH,
+  FILE_WIN_COL_SKIP,
+  FILE_WIN_COL_STEP,
+  FILE_WIN_COL_FINAL,
+  FILE_WIN_COL_DNUM,
+  FILE_WIN_COL_OID,
+  FILE_WIN_COL_MASKED,
+  FILE_WIN_COL_NUM,
+};
 
 static void file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static void file_delete_popup_func(GtkMenuItem *w, gpointer client_data);
@@ -458,8 +467,8 @@ MathDialogSetup(GtkWidget *wi, void *data, int makewidget)
   GtkWidget *w, *swin, *vbox, *hbox;
   struct MathDialog *d;
   static n_list_store list[] = {
-    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
-    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {"id",       G_TYPE_INT,    TRUE, FALSE, NULL},
+    {N_("math"), G_TYPE_STRING, TRUE, FALSE, NULL},
   };
   int i;
 
@@ -1765,9 +1774,9 @@ move_tab_create(struct FileDialog *d)
 {
   GtkWidget *w, *hbox, *swin, *table, *vbox;
   n_list_store list[] = {
-    {N_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL, FALSE},
-    {"X",            G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
-    {"Y",            G_TYPE_STRING, TRUE, FALSE, NULL, FALSE},
+    {N_("Line No."), G_TYPE_INT,    TRUE, FALSE, NULL},
+    {"X",            G_TYPE_STRING, TRUE, FALSE, NULL},
+    {"Y",            G_TYPE_STRING, TRUE, FALSE, NULL},
   };
   int i;
 
@@ -2001,7 +2010,7 @@ mask_tab_create(struct FileDialog *d)
 {
   GtkWidget *w, *swin, *hbox, *table, *vbox, *frame;
   n_list_store list[] = {
-    {_("Line No."), G_TYPE_INT, TRUE, FALSE, NULL, FALSE},
+    {_("Line No."), G_TYPE_INT, TRUE, FALSE, NULL},
   };
   int i;
 
@@ -4328,7 +4337,7 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       } else {
 	list_store_set_string(GTK_WIDGET(d->text), iter, i, "....................");
       }
-      list_store_set_string(GTK_WIDGET(d->text), iter, FILE_WIN_COL_NUM, color);
+      list_store_set_string(GTK_WIDGET(d->text), iter, FILE_WIN_COL_MASKED, color);
       break;
     case FILE_WIN_COL_TYPE:
       pixbuf = draw_type_pixbuf(d->obj, row);
@@ -4350,6 +4359,8 @@ file_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       getobj(d->obj, Flist[i].name, row, 0, NULL, &cx);
       cx = ! cx;
       list_store_set_val(GTK_WIDGET(d->text), iter, i, Flist[i].type, &cx);
+      break;
+    case FILE_WIN_COL_MASKED:
       break;
     default:
       if (Flist[i].type == G_TYPE_DOUBLE) {
@@ -4611,7 +4622,10 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
   gtk_tree_store_set(list, &parent,
 		     OBJECT_COLUMN_TYPE_STRING, _("Color 1"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_1, -1);
+		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_1,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
 
   switch (type) {
   case PLOT_TYPE_MARK:
@@ -4622,7 +4636,10 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
     gtk_tree_store_set(list, &parent,
 		       OBJECT_COLUMN_TYPE_STRING, _("Color 2"),
 		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_2, -1);
+		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_2,
+		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		       -1);
     break;
   }
 
@@ -4630,7 +4647,10 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
   gtk_tree_store_set(list, &parent,
 		     OBJECT_COLUMN_TYPE_STRING, _("Type"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, -1);
+		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, 
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
 
   create_type_combo_box(cbox, obj, &parent);
 }
@@ -4653,29 +4673,13 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
     gtk_tree_store_set(list, &iter,
 		       OBJECT_COLUMN_TYPE_STRING, _(enumlist[i]),
 		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, -1);
+		       OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE,
+		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		       -1);
 
     if (strcmp(enumlist[i], "mark") == 0) {
-      for (j = 0; j < MARK_TYPE_NUM; j++) {
-	GdkPixbuf *pixbuf;
-#if GTK_CHECK_VERSION(3, 0, 0)
-	pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[j],
-					     0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
-#else
-	pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
-#endif
-	if (pixbuf) {
-	  char buf[64];
-
-	  gtk_tree_store_append(list, &child, &iter);
-	  snprintf(buf, sizeof(buf), "%02d ", j);
-	  gtk_tree_store_set(list, &child,
-			     OBJECT_COLUMN_TYPE_STRING, buf,
-			     OBJECT_COLUMN_TYPE_PIXBUF, pixbuf,
-			     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_MARK, -1);
-	  g_object_unref(pixbuf);
-	}
-      }
+      combo_box_create_mark(cbox, &iter, FILE_COMBO_ITEM_MARK);
     } else if (strcmp(enumlist[i], "curve") == 0) {
       curvelist = (char **) chkobjarglist(obj, "interpolation");
       for (j = 0; curvelist[j] && curvelist[j][0]; j++) {
@@ -4683,118 +4687,13 @@ create_type_combo_box(GtkWidget *cbox, struct objlist *obj, GtkTreeIter *parent)
 	gtk_tree_store_set(list, &child,
 			   OBJECT_COLUMN_TYPE_STRING, _(curvelist[j]),
 			   OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-			   OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_INTP, -1);
+			   OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_INTP,
+			   OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+			   OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+			   -1);
       }
     }
   }
-}
-
-static int
-select_color(struct objlist *obj, int id, enum  FILE_COMBO_ITEM type)
-{
-  GtkWidget *dlg;
-  int r, g, b, a, rr ,gg, bb, aa, response;
-#if GTK_CHECK_VERSION(3, 4, 0)
-  GdkRGBA color;
-#else
-  GtkWidget *sel;
-  GdkColor color;
-#endif
-  char *title;
-
-  switch (type) {
-  case FILE_COMBO_ITEM_COLOR_1:
-    title = _("Color 1");
-    getobj(obj, "R", id, 0, NULL, &r);
-    getobj(obj, "G", id, 0, NULL, &g);
-    getobj(obj, "B", id, 0, NULL, &b);
-    getobj(obj, "A", id, 0, NULL, &a);
-    break;
-  case FILE_COMBO_ITEM_COLOR_2:
-    title = _("Color 2");
-    getobj(obj, "R2", id, 0, NULL, &r);
-    getobj(obj, "G2", id, 0, NULL, &g);
-    getobj(obj, "B2", id, 0, NULL, &b);
-    getobj(obj, "A2", id, 0, NULL, &a);
-    break;
-  default:
-    return 1;
-  }
-
-  if (! Menulocal.use_opacity) {
-    a = 255;
-  }
-
-#if GTK_CHECK_VERSION(3, 4, 0)
-  color.red = r / 255.0;
-  color.green = g / 255.0;
-  color.blue = b / 255.0;
-  color.alpha = a / 255.0;
-
-  dlg = gtk_color_chooser_dialog_new(title, GTK_WINDOW(NgraphApp.FileWin.Win));
-  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
-  gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
-
-  response = ndialog_run(dlg);
-  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
-
-  gtk_widget_destroy(dlg);
-
-  if (response != GTK_RESPONSE_OK) {
-    return 1;
-  }
-
-  rr = nround(color.red * 255);
-  gg = nround(color.green * 255);
-  bb = nround(color.blue * 255);
-  aa = nround(color.alpha * 255);
-#else
-  color.red = (r & 0xffU) * 257;
-  color.green = (g & 0xffU) * 257;
-  color.blue = (b & 0xffU) * 257;
-
-  dlg = gtk_color_selection_dialog_new(title);
-  sel = gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg));
-
-  gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
-  gtk_color_selection_set_has_opacity_control(GTK_COLOR_SELECTION(sel), Menulocal.use_opacity);
-
-  gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
-  gtk_color_selection_set_current_alpha(GTK_COLOR_SELECTION(sel), (a & 0xffU) * 257);
-
-  response = ndialog_run(dlg);
-  gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(sel), &color);
-  aa = gtk_color_selection_get_current_alpha(GTK_COLOR_SELECTION(sel));
-  gtk_widget_destroy(dlg);
-
-  if (response != GTK_RESPONSE_OK) {
-    return 1;
-  }
-
-  rr = (color.red >> 8);
-  gg = (color.green >> 8);
-  bb = (color.blue >> 8);
-  aa >>= 8;
-#endif
-
-  switch (type) {
-  case FILE_COMBO_ITEM_COLOR_1:
-    putobj(obj, "R", id, &rr);
-    putobj(obj, "G", id, &gg);
-    putobj(obj, "B", id, &bb);
-    putobj(obj, "A", id, &aa);
-    break;
-  case FILE_COMBO_ITEM_COLOR_2:
-    putobj(obj, "R2", id, &rr);
-    putobj(obj, "G2", id, &gg);
-    putobj(obj, "B2", id, &bb);
-    putobj(obj, "A2", id, &aa);
-    break;
-  default:
-    return 1;
-  }
-
-  return rr == r && gg == g && bb == b && aa == a;
 }
 
 static void
@@ -4844,9 +4743,14 @@ select_type(GtkComboBox *w, gpointer user_data)
 
   switch (col_type) {
   case FILE_COMBO_ITEM_COLOR_1:
-  case FILE_COMBO_ITEM_COLOR_2:
-    if (select_color(obj, sel, col_type))
+    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_1)) {
       return;
+    }
+    break;
+  case FILE_COMBO_ITEM_COLOR_2:
+    if (select_obj_color(obj, sel, OBJ_FIELD_COLOR_TYPE_2)) {
+      return;
+    }
     break;
   case FILE_COMBO_ITEM_TYPE:
     if (b < 0 || b == type) {
@@ -4893,26 +4797,20 @@ select_type(GtkComboBox *w, gpointer user_data)
 static void
 start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path_str, gpointer user_data)
 {
-  GtkTreeView *view;
-  GtkTreeModel *model;
   GtkTreeIter iter;
   struct obj_list_data *d;
   GtkComboBox *cbox;
-  int sel, type, child = -1;
+  int sel, type;
   struct objlist *obj;
 
   menu_lock(TRUE);
 
   d = (struct obj_list_data *) user_data;
 
-  view = GTK_TREE_VIEW(d->text);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path_str))
+  sel = tree_view_get_selected_row_int_from_path(d->text, path_str, &iter, FILE_WIN_COL_ID);
+  if (sel < 0) {
     return;
-
-  list_store_select_iter(GTK_WIDGET(view), &iter);
-  sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
+  }
 
   cbox = GTK_COMBO_BOX(editable);
   g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
@@ -4922,21 +4820,11 @@ start_editing_type(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *
     return;
 
   getobj(obj, "type", sel, 0, NULL, &type);
-
   create_type_color_combo_box(GTK_WIDGET(cbox), obj, type);
 
-  switch (type) {
-  case PLOT_TYPE_MARK:
-    getobj(obj, "mark_type", sel, 0, NULL, &child);
-    break;
-  case PLOT_TYPE_CURVE:
-    getobj(obj, "interpolation", sel, 0, NULL, &child);
-    break;
-  }
-
+  g_signal_connect(cbox, "editing-done", G_CALLBACK(select_type), d);
   gtk_widget_show(GTK_WIDGET(cbox));
 
-  g_signal_connect(cbox, "editing-done", G_CALLBACK(select_type), d);
 
   return;
 }
@@ -4980,8 +4868,6 @@ select_axis_y(GtkComboBox *w, gpointer user_data)
 static void
 start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path, gpointer user_data, int axis)
 {
-  GtkTreeView *view;
-  GtkTreeModel *model;
   GtkTreeIter iter;
   struct obj_list_data *d;
   GtkComboBox *cbox;
@@ -4993,14 +4879,10 @@ start_editing(GtkCellRenderer *renderer, GtkCellEditable *editable, gchar *path,
 
   d = (struct obj_list_data *) user_data;
 
-  view = GTK_TREE_VIEW(d->text);
-  model = gtk_tree_view_get_model(view);
-
-  if (! gtk_tree_model_get_iter_from_string(model, &iter, path))
+  sel = tree_view_get_selected_row_int_from_path(d->text, path, &iter, FILE_WIN_COL_ID);
+  if (sel < 0) {
     return;
-
-  list_store_select_iter(GTK_WIDGET(view), &iter);
-  sel = list_store_get_selected_int(GTK_WIDGET(view), FILE_WIN_COL_ID);
+  }
 
   cbox = GTK_COMBO_BOX(editable);
   g_object_set_data(G_OBJECT(cbox), "user-data", GINT_TO_POINTER(sel));
@@ -5094,6 +4976,8 @@ void
 CmFileWindow(GtkToggleAction *action, gpointer client_data)
 {
   struct SubWin *d;
+  GList *list;
+  GtkTreeViewColumn *col;
   int state;
 
   d = &(NgraphApp.FileWin);
@@ -5133,6 +5017,17 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
   gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
+
+  col = gtk_tree_view_get_column(GTK_TREE_VIEW(d->data.data->text), FILE_WIN_COL_FILE);
+  list = gtk_cell_layout_get_cells(GTK_CELL_LAYOUT(col));
+  if (list){ 
+    if (list->data) {
+      GtkCellRenderer *renderer;
+      renderer = list->data;
+      gtk_tree_view_column_add_attribute(col, renderer, "foreground", FILE_WIN_COL_MASKED);
+    }
+    g_list_free(list);
+  }
 
   sub_window_show_all(d);
   sub_window_set_geometry(d, TRUE);

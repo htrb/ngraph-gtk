@@ -53,18 +53,18 @@
 #include "x11commn.h"
 
 static n_list_store Alist[] = {
-  {"",         G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden",    FALSE},
-  {"#",        G_TYPE_INT,     TRUE, FALSE, "id",        FALSE},
-  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, "group",     FALSE},
-  {N_("min"),  G_TYPE_STRING,  TRUE, TRUE,  "min",       FALSE},
-  {N_("max"),  G_TYPE_STRING,  TRUE, TRUE,  "max",       FALSE},
-  {N_("inc"),  G_TYPE_STRING,  TRUE, TRUE,  "inc",       FALSE},
-  {N_("type"), G_TYPE_ENUM,    TRUE, TRUE,  "type",      FALSE},
-  {"x",        G_TYPE_DOUBLE,  TRUE, TRUE,  "x",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"y",        G_TYPE_DOUBLE,  TRUE, TRUE,  "y",         FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {N_("dir"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "direction", FALSE,                0,          36000, 100, 1500},
-  {N_("len"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "length",    FALSE, - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
-  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid",       FALSE},
+  {" ",        G_TYPE_BOOLEAN, TRUE, TRUE,  "hidden"},
+  {"#",        G_TYPE_INT,     TRUE, FALSE, "id"},
+  {N_("name"), G_TYPE_STRING,  TRUE, FALSE, "group"},
+  {N_("min"),  G_TYPE_STRING,  TRUE, TRUE,  "min"},
+  {N_("max"),  G_TYPE_STRING,  TRUE, TRUE,  "max"},
+  {N_("inc"),  G_TYPE_STRING,  TRUE, TRUE,  "inc"},
+  {N_("type"), G_TYPE_ENUM,    TRUE, TRUE,  "type"},
+  {"x",        G_TYPE_DOUBLE,  TRUE, TRUE,  "x", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"y",        G_TYPE_DOUBLE,  TRUE, TRUE,  "y", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {N_("dir"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "direction",        0,          36000, 100, 1500},
+  {N_("len"),  G_TYPE_DOUBLE,  TRUE, TRUE,  "length", - SPIN_ENTRY_MAX, SPIN_ENTRY_MAX, 100, 1000},
+  {"^#",       G_TYPE_INT,     TRUE, FALSE, "oid"},
 };
 
 #define AXIS_WIN_COL_NUM (sizeof(Alist)/sizeof(*Alist))

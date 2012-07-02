@@ -1031,3 +1031,178 @@ text_view_with_line_number_set_font(GtkWidget *view, const gchar *font)
 
   pango_font_description_free(desc);
 }
+
+void
+combo_box_create_mark(GtkWidget *cbox, GtkTreeIter *parent, int col_id)
+{
+  int j;
+  GtkTreeStore *list;
+  GtkTreeIter child;
+
+  list = GTK_TREE_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(cbox)));
+
+  for (j = 0; j < MARK_TYPE_NUM; j++) {
+    GdkPixbuf *pixbuf;
+#if GTK_CHECK_VERSION(3, 0, 0)
+    pixbuf = gdk_pixbuf_get_from_surface(NgraphApp.markpix[j],
+					 0, 0, MARK_PIX_SIZE, MARK_PIX_SIZE);
+#else
+    pixbuf = gdk_pixbuf_get_from_drawable(NULL, NgraphApp.markpix[j], NULL, 0, 0, 0, 0, -1, -1);
+#endif
+    if (pixbuf) {
+      char buf[64];
+
+      gtk_tree_store_append(list, &child, parent);
+      snprintf(buf, sizeof(buf), "%02d ", j);
+      gtk_tree_store_set(list, &child,
+			 OBJECT_COLUMN_TYPE_STRING, buf,
+			 OBJECT_COLUMN_TYPE_PIXBUF, pixbuf,
+			 OBJECT_COLUMN_TYPE_INT, col_id,
+			 OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+			 -1);
+      g_object_unref(pixbuf);
+    }
+  }
+}
+
+int
+select_obj_color(struct objlist *obj, int id, enum OBJ_FIELD_COLOR_TYPE type)
+{
+  GtkWidget *dlg;
+  int r, g, b, a, rr ,gg, bb, aa, response;
+#if GTK_CHECK_VERSION(3, 4, 0)
+  GdkRGBA color;
+#else
+  GtkWidget *sel;
+  GdkColor color;
+#endif
+  char *title;
+
+  switch (type) {
+  case OBJ_FIELD_COLOR_TYPE_STROKE:
+    title = _("Stroke Color");
+    getobj(obj, "stroke_R", id, 0, NULL, &r);
+    getobj(obj, "stroke_G", id, 0, NULL, &g);
+    getobj(obj, "stroke_B", id, 0, NULL, &b);
+    getobj(obj, "stroke_A", id, 0, NULL, &a);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_FILL:
+    title = _("Fill Color");
+    getobj(obj, "fill_R", id, 0, NULL, &r);
+    getobj(obj, "fill_G", id, 0, NULL, &g);
+    getobj(obj, "fill_B", id, 0, NULL, &b);
+    getobj(obj, "fill_A", id, 0, NULL, &a);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_0:
+    title = _("Color");
+    getobj(obj, "R", id, 0, NULL, &r);
+    getobj(obj, "G", id, 0, NULL, &g);
+    getobj(obj, "B", id, 0, NULL, &b);
+    getobj(obj, "A", id, 0, NULL, &a);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_1:
+    title = _("Color 1");
+    getobj(obj, "R", id, 0, NULL, &r);
+    getobj(obj, "G", id, 0, NULL, &g);
+    getobj(obj, "B", id, 0, NULL, &b);
+    getobj(obj, "A", id, 0, NULL, &a);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_2:
+    title = _("Color 2");
+    getobj(obj, "R2", id, 0, NULL, &r);
+    getobj(obj, "G2", id, 0, NULL, &g);
+    getobj(obj, "B2", id, 0, NULL, &b);
+    getobj(obj, "A2", id, 0, NULL, &a);
+    break;
+  default:
+    return 1;
+  }
+
+  if (! Menulocal.use_opacity) {
+    a = 255;
+  }
+
+#if GTK_CHECK_VERSION(3, 4, 0)
+  color.red = r / 255.0;
+  color.green = g / 255.0;
+  color.blue = b / 255.0;
+  color.alpha = a / 255.0;
+
+  dlg = gtk_color_chooser_dialog_new(title, GTK_WINDOW(NgraphApp.FileWin.Win));
+  gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(dlg), &color);
+  gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(dlg), Menulocal.use_opacity);
+
+  response = ndialog_run(dlg);
+  gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(dlg), &color);
+
+  gtk_widget_destroy(dlg);
+
+  if (response != GTK_RESPONSE_OK) {
+    return 1;
+  }
+
+  rr = nround(color.red * 255);
+  gg = nround(color.green * 255);
+  bb = nround(color.blue * 255);
+  aa = nround(color.alpha * 255);
+#else
+  color.red = (r & 0xffU) * 257;
+  color.green = (g & 0xffU) * 257;
+  color.blue = (b & 0xffU) * 257;
+
+  dlg = gtk_color_selection_dialog_new(title);
+  sel = gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(dlg));
+
+  gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(sel), TRUE);
+  gtk_color_selection_set_has_opacity_control(GTK_COLOR_SELECTION(sel), Menulocal.use_opacity);
+
+  gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(sel), &color);
+  gtk_color_selection_set_current_alpha(GTK_COLOR_SELECTION(sel), (a & 0xffU) * 257);
+
+  response = ndialog_run(dlg);
+  gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(sel), &color);
+  aa = gtk_color_selection_get_current_alpha(GTK_COLOR_SELECTION(sel));
+  gtk_widget_destroy(dlg);
+
+  if (response != GTK_RESPONSE_OK) {
+    return 1;
+  }
+
+  rr = (color.red >> 8);
+  gg = (color.green >> 8);
+  bb = (color.blue >> 8);
+  aa >>= 8;
+#endif
+
+  switch (type) {
+  case OBJ_FIELD_COLOR_TYPE_STROKE:
+    putobj(obj, "stroke_R", id, &rr);
+    putobj(obj, "stroke_G", id, &gg);
+    putobj(obj, "stroke_B", id, &bb);
+    putobj(obj, "stroke_A", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_FILL:
+    putobj(obj, "fill_R", id, &rr);
+    putobj(obj, "fill_G", id, &gg);
+    putobj(obj, "fill_B", id, &bb);
+    putobj(obj, "fill_A", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_0:
+  case OBJ_FIELD_COLOR_TYPE_1:
+    putobj(obj, "R", id, &rr);
+    putobj(obj, "G", id, &gg);
+    putobj(obj, "B", id, &bb);
+    putobj(obj, "A", id, &aa);
+    break;
+  case OBJ_FIELD_COLOR_TYPE_2:
+    putobj(obj, "R2", id, &rr);
+    putobj(obj, "G2", id, &gg);
+    putobj(obj, "B2", id, &bb);
+    putobj(obj, "A2", id, &aa);
+    break;
+  default:
+    return 1;
+  }
+
+  return rr == r && gg == g && bb == b && aa == a;
+}

@@ -15,8 +15,13 @@ create_object_cbox(void)
   GtkCellRenderer *rend;
   GtkWidget *cbox;
 
-  model = GTK_TREE_MODEL(gtk_tree_store_new(3, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT));
+  model = GTK_TREE_MODEL(gtk_tree_store_new(6, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_OBJECT, G_TYPE_INT, G_TYPE_BOOLEAN, G_TYPE_BOOLEAN));
   cbox = gtk_combo_box_new_with_model(model);
+
+  rend = gtk_cell_renderer_toggle_new();
+  gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "active",  OBJECT_COLUMN_TYPE_TOGGLE);
+  gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(cbox), rend, "visible", OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE);
 
   rend = gtk_cell_renderer_text_new();
   gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(cbox), rend, FALSE);
@@ -45,7 +50,7 @@ start_editing_obj(GtkCellRenderer *cell, GdkEvent *event, GtkWidget *widget, con
 }
 
 static GtkTreeViewColumn *
-create_column(n_list_store *list, int i, int j)
+create_column(n_list_store *list, int i)
 {
   GtkCellRenderer *renderer;
   GtkTreeViewColumn *col;
@@ -54,7 +59,7 @@ create_column(n_list_store *list, int i, int j)
   switch (list[i].type) {
   case G_TYPE_BOOLEAN:
     renderer = gtk_cell_renderer_toggle_new();
-    col = gtk_tree_view_column_new_with_attributes(list[i].title, renderer,
+    col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						   "active", i, NULL);
     if (list[i].editable) {
       g_object_set(renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, NULL);
@@ -136,21 +141,14 @@ create_column(n_list_store *list, int i, int j)
     g_object_set((GObject *) renderer,
 		 "editable", list[i].editable,
 		 "ellipsize", list[i].ellipsize,
-		 "ellipsize-set", list[i].ellipsize != PANGO_ELLIPSIZE_NONE,
 		 NULL);
     g_object_set_data(G_OBJECT(renderer), "user-data", &list[i]);
-    if (list[i].color){
-      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
-						     "text", i,
-						     "foreground", j,
-						     NULL);
-    } else {
-      col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
+    col = gtk_tree_view_column_new_with_attributes(_(list[i].title), renderer,
 						     "text", i, NULL);
-    }
     gtk_tree_view_column_set_resizable(col, TRUE);
-    if (list[i].ellipsize != PANGO_ELLIPSIZE_NONE)
+    if (list[i].ellipsize != PANGO_ELLIPSIZE_NONE) {
       gtk_tree_view_column_set_expand(col, TRUE);
+    }
   }
   return col;
 }
@@ -181,22 +179,15 @@ create_tree_view(int n, n_list_store *list, int tree)
 {
   GType *tarray;
   GtkTreeModel *lstore;
-  GtkCellRenderer *renderer;
   GtkWidget *tview;
   GtkTreeViewColumn *col;
   GtkTreeSelection *sel;
-  int i, j, cnum = 0;
+  int i;
 
   if (n < 1 || list == NULL)
     return NULL;
 
-  for (i = 0; i < n; i++) {
-    if (list[i].color) {
-      cnum++;
-    }
-  }
-
-  tarray = g_malloc(sizeof(*tarray) * (n + cnum));
+  tarray = g_malloc(sizeof(*tarray) * n);
   if (tarray == NULL)
     return NULL;
 
@@ -209,15 +200,10 @@ create_tree_view(int n, n_list_store *list, int tree)
     list[i].edited_id = 0;
   }
 
-  for (i = 0; i < cnum; i++) {
-    tarray[i + n] = G_TYPE_STRING;
-    list[i].edited_id = 0;
-  }
-
   if (tree) {
-    lstore = GTK_TREE_MODEL(gtk_tree_store_newv(n + cnum, tarray));
+    lstore = GTK_TREE_MODEL(gtk_tree_store_newv(n, tarray));
   } else {
-    lstore = GTK_TREE_MODEL(gtk_list_store_newv(n + cnum, tarray));
+    lstore = GTK_TREE_MODEL(gtk_list_store_newv(n, tarray));
   }
   g_free(tarray);
 
@@ -230,25 +216,15 @@ create_tree_view(int n, n_list_store *list, int tree)
   sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tview));
   gtk_tree_selection_set_mode(sel, GTK_SELECTION_SINGLE);
 
-  j = 0;
   for (i = 0; i < n; i++) {
-    col = create_column(list, i, j + n);
-    if (list[i].color){
-      j++;
+    if (list[i].visible) {
+      col = create_column(list, i);
+      gtk_tree_view_column_set_visible(col, list[i].visible);
+      gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
     }
-    gtk_tree_view_column_set_visible(col, list[i].visible);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
   }
 
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tview), n > 1);
-  for (i = 0; i < cnum; i++) {
-    renderer = gtk_cell_renderer_text_new();
-    col = gtk_tree_view_column_new_with_attributes("color", renderer,
-						   "text", i + n,
-						   NULL);
-    gtk_tree_view_column_set_visible(col, FALSE);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(tview), col);
-  }
 
   return tview;
 }
@@ -903,4 +879,23 @@ tree_store_selected_toggle_expand(GtkWidget *w)
   } else {
     gtk_tree_view_expand_row(GTK_TREE_VIEW(w), path, FALSE);
   }
+}
+
+
+int
+tree_view_get_selected_row_int_from_path(GtkWidget *view, gchar *path, GtkTreeIter *iter, int col)
+{
+  GtkTreeModel *model;
+  int sel;
+
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(view));
+  if (! gtk_tree_model_get_iter_from_string(model, iter, path)) {
+    return -1;
+  }
+
+
+  list_store_select_iter(GTK_WIDGET(view), iter);
+  gtk_tree_model_get(model, iter, col, &sel, -1);
+
+  return sel;
 }
