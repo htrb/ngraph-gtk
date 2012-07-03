@@ -3213,6 +3213,16 @@ create_mark_color_combo_box(GtkWidget *cbox, struct objlist *obj)
 
   gtk_tree_store_append(list, &iter, NULL);
   gtk_tree_store_set(list, &iter,
+		     OBJECT_COLUMN_TYPE_STRING, _("Mark"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_NONE,
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+  combo_box_create_mark(cbox, &iter, LEGEND_COMBO_ITEM_MARK);
+
+  gtk_tree_store_append(list, &iter, NULL);
+  gtk_tree_store_set(list, &iter,
 		     OBJECT_COLUMN_TYPE_STRING, _("Color 1"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 		     OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_COLOR_1,
@@ -3228,17 +3238,6 @@ create_mark_color_combo_box(GtkWidget *cbox, struct objlist *obj)
 		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
 		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		     -1);
-
-  gtk_tree_store_append(list, &iter, NULL);
-  gtk_tree_store_set(list, &iter,
-		     OBJECT_COLUMN_TYPE_STRING, _("Mark"),
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_NONE,
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
-
-  combo_box_create_mark(cbox, &iter, LEGEND_COMBO_ITEM_MARK);
 }
 
 static void
@@ -3306,14 +3305,6 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 			 -1);
     }
 
-    gtk_tree_store_append(list, &iter, NULL);
-    gtk_tree_store_set(list, &iter,
-		       OBJECT_COLUMN_TYPE_STRING, _("Stroke color"),
-		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_COLOR_STROKE,
-		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		       -1);
-
     getobj(obj, "stroke", id, 0, NULL, &state);
     gtk_tree_store_append(list, &iter, NULL);
     gtk_tree_store_set(list, &iter,
@@ -3327,11 +3318,10 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 
     gtk_tree_store_append(list, &iter, NULL);
     gtk_tree_store_set(list, &iter,
-		       OBJECT_COLUMN_TYPE_STRING, _("Fill color"),
+		       OBJECT_COLUMN_TYPE_STRING, _("Stroke color"),
 		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		       OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_COLOR_FILL,
+		       OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_COLOR_STROKE,
 		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		       -1);
 
     getobj(obj, "fill", id, 0, NULL, &state);
@@ -3342,6 +3332,15 @@ create_color_combo_box(GtkWidget *cbox, struct objlist *obj, int id)
 		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 		       OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_COLOR_TOGGLE_FILL,
 		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, TRUE,
+		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		       -1);
+
+    gtk_tree_store_append(list, &iter, NULL);
+    gtk_tree_store_set(list, &iter,
+		       OBJECT_COLUMN_TYPE_STRING, _("Fill color"),
+		       OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		       OBJECT_COLUMN_TYPE_INT, LEGEND_COMBO_ITEM_COLOR_FILL,
+		       OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
 		       OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
 		       -1);
 

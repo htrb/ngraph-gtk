@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-07-02 13:31+0900\n"
+"POT-Creation-Date: 2012-07-03 13:10+0900\n"
 "PO-Revision-Date: 2012-06-29 11:44+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -197,7 +197,7 @@ msgstr "背景色(_B)"
 msgid "_Background Color:"
 msgstr "背景色(_B):"
 
-#: src/gtk/x11axis.c:403 src/gtk/x11lgnd.c:3260 src/gtk/gtk_widget.c:1097
+#: src/gtk/x11axis.c:403 src/gtk/x11lgnd.c:3259 src/gtk/gtk_widget.c:1097
 msgid "Color"
 msgstr "色"
 
@@ -1055,17 +1055,17 @@ msgstr "データファイル作成中"
 msgid "Making data file."
 msgstr "データファイル作成中"
 
-#: src/gtk/x11file.c:4623 src/gtk/x11lgnd.c:3216 src/gtk/gtk_widget.c:1104
+#: src/gtk/x11file.c:4623
+msgid "Type"
+msgstr "タイプ"
+
+#: src/gtk/x11file.c:4633 src/gtk/x11lgnd.c:3226 src/gtk/gtk_widget.c:1104
 msgid "Color 1"
 msgstr "色 1"
 
-#: src/gtk/x11file.c:4637 src/gtk/x11lgnd.c:3225 src/gtk/gtk_widget.c:1111
+#: src/gtk/x11file.c:4647 src/gtk/x11lgnd.c:3235 src/gtk/gtk_widget.c:1111
 msgid "Color 2"
 msgstr "色 2"
-
-#: src/gtk/x11file.c:4648
-msgid "Type"
-msgstr "タイプ"
 
 #: src/gtk/x11graph.c:67
 msgid "Custom"
@@ -1360,39 +1360,39 @@ msgstr "テキスト %d"
 msgid "_Text:"
 msgstr "テキスト(_T):"
 
-#: src/gtk/x11lgnd.c:3234 src/gtk/x11menu.c:1680 src/gtk/x11menu.c:1681
+#: src/gtk/x11lgnd.c:3216 src/gtk/x11menu.c:1680 src/gtk/x11menu.c:1681
 msgid "Mark"
 msgstr "マーク"
 
-#: src/gtk/x11lgnd.c:3272
+#: src/gtk/x11lgnd.c:3271
 msgid "Bold"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3282
+#: src/gtk/x11lgnd.c:3281
 msgid "Italic"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3292
+#: src/gtk/x11lgnd.c:3291
 msgid "Line style"
 msgstr "線種"
 
-#: src/gtk/x11lgnd.c:3311
-msgid "Stroke color"
-msgstr "ストローク色"
-
-#: src/gtk/x11lgnd.c:3321
+#: src/gtk/x11lgnd.c:3312
 msgid "Stroke"
 msgstr "ストローク"
 
-#: src/gtk/x11lgnd.c:3330
-msgid "Fill color"
-msgstr "塗りつぶし色"
+#: src/gtk/x11lgnd.c:3321
+msgid "Stroke color"
+msgstr "ストローク色"
 
-#: src/gtk/x11lgnd.c:3341
+#: src/gtk/x11lgnd.c:3331
 msgid "Fill"
 msgstr "塗りつぶし"
 
-#: src/gtk/x11lgnd.c:3353
+#: src/gtk/x11lgnd.c:3340
+msgid "Fill color"
+msgstr "塗りつぶし色"
+
+#: src/gtk/x11lgnd.c:3352
 msgid "Close path"
 msgstr "パスを閉じる"
 

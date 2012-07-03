@@ -1,3 +1,11 @@
+2012-07-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (create_mark_color_combo_box)
+	(create_color_combo_box): change order of items.
+
+	* src/gtk/x11file.c (create_type_color_combo_box): change order of
+	items.
+
 012-07-02  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (create_type_combo_box): use

@@ -4620,6 +4620,16 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 
   gtk_tree_store_append(list, &parent, NULL);
   gtk_tree_store_set(list, &parent,
+		     OBJECT_COLUMN_TYPE_STRING, _("Type"),
+		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
+		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, 
+		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
+		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
+		     -1);
+  create_type_combo_box(cbox, obj, &parent);
+
+  gtk_tree_store_append(list, &parent, NULL);
+  gtk_tree_store_set(list, &parent,
 		     OBJECT_COLUMN_TYPE_STRING, _("Color 1"),
 		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
 		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_COLOR_1,
@@ -4642,17 +4652,6 @@ create_type_color_combo_box(GtkWidget *cbox, struct objlist *obj, int type)
 		       -1);
     break;
   }
-
-  gtk_tree_store_append(list, &parent, NULL);
-  gtk_tree_store_set(list, &parent,
-		     OBJECT_COLUMN_TYPE_STRING, _("Type"),
-		     OBJECT_COLUMN_TYPE_PIXBUF, NULL,
-		     OBJECT_COLUMN_TYPE_INT, FILE_COMBO_ITEM_TYPE, 
-		     OBJECT_COLUMN_TYPE_TOGGLE_VISIBLE, FALSE,
-		     OBJECT_COLUMN_TYPE_PIXBUF_VISIBLE, FALSE,
-		     -1);
-
-  create_type_combo_box(cbox, obj, &parent);
 }
 
 static void
