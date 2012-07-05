@@ -17,6 +17,7 @@ enum surface_type_id {
   TYPE_PNG,
 #ifdef CAIRO_HAS_WIN32_SURFACE
   TYPE_EMF,
+  TYPE_CLIPBOARD,
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
 };
 

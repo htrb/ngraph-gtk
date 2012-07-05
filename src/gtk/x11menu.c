@@ -409,6 +409,18 @@ static struct NgraphActionEntry ActionEntry[] = {
     NULL,
     "<Ngraph>/Graph/Export image/EMF File",
   },
+  {
+    ACTION_TYPE_NORMAL,
+    "GraphExportClipboardAction",
+    NULL,
+    N_("_Clipboard (EMF)"),
+    N_("Copy to the clipboard as Windows Enhanced Metafile "),
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputClipboard,
+    NULL,
+    "<Ngraph>/Graph/Export image/Clipboard",
+  },
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
 
   {

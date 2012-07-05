@@ -362,6 +362,7 @@ OutputImageDialogSetupItem(GtkWidget *w, struct OutputImageDialog *d)
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
+  case MenuIdOutputClipboard:
     combo_box_append_text(d->version, "--------");
 
     gtk_widget_set_sensitive(d->version, FALSE);
@@ -423,6 +424,7 @@ OutputImageDialogSetup(GtkWidget *wi, void *data, int makewidget)
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
+  case MenuIdOutputClipboard:
     title = N_("Cairo EMF Output");
     break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
@@ -484,6 +486,10 @@ OutputImageDialogClose(GtkWidget *w, void *data)
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
     d->Version = TYPE_EMF;
+    Menulocal.emf_dpi = d->Dpi;
+    break;
+  case MenuIdOutputClipboard:
+    d->Version = TYPE_CLIPBOARD;
     Menulocal.emf_dpi = d->Dpi;
     break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
@@ -933,6 +939,8 @@ CmOutputImage(int type)
     title = "Save as Scalable Vector Graphics (EMF)";
     ext_str = "emf";
     break;
+  case MenuIdOutputClipboard:
+    break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   default:
     /* not reachable */
@@ -940,18 +948,23 @@ CmOutputImage(int type)
     ext_str = NULL;
   }
 
-  tmp = get_base_ngp_name();
-  ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
-			 &file, FALSE, Menulocal.changedirectory);
-  if (tmp)
-    g_free(tmp);
+  if (type == MenuIdOutputClipboard) {
+    file = g_strdup("dummy");
+  } else {
+    tmp = get_base_ngp_name();
+    ret = nGetSaveFileName(TopLevel, title, ext_str, NULL, tmp,
+			   &file, FALSE, Menulocal.changedirectory);
+    if (tmp) {
+      g_free(tmp);
+    }
 
-  if (ret != IDOK) {
-    return;
-  }
+    if (ret != IDOK) {
+      return;
+    }
 
-  if (file == NULL) {
-    return;
+    if (file == NULL) {
+      return;
+    }
   }
 
   OutputImageDialog(&DlgImageOut, type);
@@ -997,6 +1010,7 @@ CmOutputImage(int type)
   case MenuIdOutputPDFFile:
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
+  case MenuIdOutputClipboard:
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
     putobj(g2wobj, "text2path", g2wid, &DlgImageOut.text2path);
     break;
@@ -1034,6 +1048,7 @@ CmOutputMenu(GtkAction *wi, gpointer client_data)
   case MenuIdOutputSVGFile:
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case MenuIdOutputEMFFile:
+  case MenuIdOutputClipboard:
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
     CmOutputImage(GPOINTER_TO_INT(client_data));
     break;

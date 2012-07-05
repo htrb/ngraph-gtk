@@ -46,6 +46,7 @@ char *surface_type[] = {
   "png",
 #ifdef CAIRO_HAS_WIN32_SURFACE
   "emf",
+  "clipboard",
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   NULL,
 };
@@ -203,6 +204,9 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
     ps = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w, h);
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
+  case TYPE_CLIPBOARD:
+    g_free(fname);
+    fname = NULL;
   case TYPE_EMF:
     hdc_ref = create_reference_dc();
     hdc = CreateEnhMetaFile(hdc_ref, fname, NULL, NULL);
@@ -219,7 +223,9 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
     ps = cairo_ps_surface_create(fname, w, h);
   }
 
-  g_free(fname);
+  if (fname) {
+    g_free(fname);
+  }
 
   r = cairo_surface_status(ps);
   if (r != CAIRO_STATUS_SUCCESS) {
@@ -337,6 +343,7 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	}
 	break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
+      case TYPE_CLIPBOARD:
       case TYPE_EMF:
 	gra2cairo_draw_path(local);
 	surface = cairo_get_target(local->cairo);
@@ -346,7 +353,12 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	cairo_surface_finish(surface);
 	EndPage(hdc);
 	emf = CloseEnhMetaFile(hdc);
-	DeleteEnhMetaFile(emf);
+	if (format == TYPE_CLIPBOARD && OpenClipboard(NULL)) {
+	  EmptyClipboard();
+	  SetClipboardData(CF_ENHMETAFILE, emf);
+	  CloseClipboard();
+	}
+ 	DeleteEnhMetaFile(emf);
 	break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
       }

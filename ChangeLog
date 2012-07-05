@@ -1,3 +1,20 @@
+2012-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairofile.h (surface_type_id): add "TYPE_CLIPBOARD".
+
+	* src/gtk/ogra2cairofile.c (surface_type, create_cairo)
+	(gra2cairofile_output): support clipboard.
+
+	* src/gtk/x11menu.h (MenuID): add "MenuIdOutputClipboard".
+
+	* src/gtk/x11menu.c (ActionEntry): add clipboard action.
+
+	* src/gtk/x11print.c (OutputImageDialogSetupItem)
+	(OutputImageDialogSetup, OutputImageDialogClose)
+	(CmOutputImage, CmOutputMenu): support clipboard.
+
+	* initfile/NgraphUI.xml.win: add clipboard menu.
+
 2012-07-03  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (create_mark_color_combo_box)

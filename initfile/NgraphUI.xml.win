@@ -21,6 +21,8 @@
         <menuitem name="GraphExportSVG" action="GraphExportSVGAction"/>
         <menuitem name="GraphExportPNG" action="GraphExportPNGAction"/>
         <menuitem name="GraphExportEMF" action="GraphExportEMFAction"/>
+        <separator/>
+        <menuitem name="GraphExportClipboard" action="GraphExportClipboardAction"/>
       </menu>
       <separator/>
       <menuitem name="GraphDrawOrder" action="GraphDrawOrderAction"/>
