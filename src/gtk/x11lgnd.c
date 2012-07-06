@@ -2688,17 +2688,16 @@ path_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row)
       break;
     case PATH_LIST_COL_X:
       get_points(d->obj, row, &x0, &y0, &n);
-      list_store_set_double(d->text, iter, i, x0 / 100.0);
+      list_store_set_double(d->text, iter, PATH_LIST_COL_X, x0 / 100.0);
+      list_store_set_double(d->text, iter, PATH_LIST_COL_Y, y0 / 100.0);
+      list_store_set_int(d->text, iter, PATH_LIST_COL_POINTS, n);
       break;
     case PATH_LIST_COL_Y:
-      list_store_set_double(d->text, iter, i, y0 / 100.0);
+    case PATH_LIST_COL_POINTS:
       break;
     case PATH_LIST_COL_WIDTH:
       getobj(d->obj, d->list[i].name, row, 0, NULL, &w);
       list_store_set_double(d->text, iter, i, w / 100.0);
-      break;
-    case PATH_LIST_COL_POINTS:
-      list_store_set_int(d->text, iter, i, n);
       break;
     default:
       getobj(d->obj, d->list[i].name, row, 0, NULL, &cx);

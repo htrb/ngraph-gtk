@@ -1,3 +1,13 @@
+2012-07-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11lgnd.c (path_list_set_val): set columns
+	"PATH_LIST_COL_X", "PATH_LIST_COL_Y" and "PATH_LIST_COL_POINTS" at
+	once.
+
+	* src/gtk/ogra2cairofile.c (open_emf, close_emf): added.
+	(create_cairo): use "open_emf()".
+	(gra2cairofile_output): use "close_emf()".
+
 2012-07-05  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairofile.h (surface_type_id): add "TYPE_CLIPBOARD".

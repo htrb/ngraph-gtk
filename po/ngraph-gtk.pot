@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-07-05 18:42+0900\n"
+"POT-Creation-Date: 2012-07-06 16:33+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -170,7 +170,7 @@ msgstr ""
 msgid "_Background Color:"
 msgstr ""
 
-#: src/gtk/x11axis.c:403 src/gtk/x11lgnd.c:3259 src/gtk/gtk_widget.c:1097
+#: src/gtk/x11axis.c:403 src/gtk/x11lgnd.c:3258 src/gtk/gtk_widget.c:1097
 msgid "Color"
 msgstr ""
 
@@ -1030,11 +1030,11 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src/gtk/x11file.c:4633 src/gtk/x11lgnd.c:3226 src/gtk/gtk_widget.c:1104
+#: src/gtk/x11file.c:4633 src/gtk/x11lgnd.c:3225 src/gtk/gtk_widget.c:1104
 msgid "Color 1"
 msgstr ""
 
-#: src/gtk/x11file.c:4647 src/gtk/x11lgnd.c:3235 src/gtk/gtk_widget.c:1111
+#: src/gtk/x11file.c:4647 src/gtk/x11lgnd.c:3234 src/gtk/gtk_widget.c:1111
 msgid "Color 2"
 msgstr ""
 
@@ -1327,39 +1327,39 @@ msgstr ""
 msgid "_Text:"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3216 src/gtk/x11menu.c:1692 src/gtk/x11menu.c:1693
+#: src/gtk/x11lgnd.c:3215 src/gtk/x11menu.c:1692 src/gtk/x11menu.c:1693
 msgid "Mark"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3271
+#: src/gtk/x11lgnd.c:3270
 msgid "Bold"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3281
+#: src/gtk/x11lgnd.c:3280
 msgid "Italic"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3291
+#: src/gtk/x11lgnd.c:3290
 msgid "Line style"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3312
+#: src/gtk/x11lgnd.c:3311
 msgid "Stroke"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3321
+#: src/gtk/x11lgnd.c:3320
 msgid "Stroke color"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3331
+#: src/gtk/x11lgnd.c:3330
 msgid "Fill"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3340
+#: src/gtk/x11lgnd.c:3339
 msgid "Fill color"
 msgstr ""
 
-#: src/gtk/x11lgnd.c:3352
+#: src/gtk/x11lgnd.c:3351
 msgid "Close path"
 msgstr ""
 
