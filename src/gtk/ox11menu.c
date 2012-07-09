@@ -1150,7 +1150,7 @@ menuinit(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **arg
 
   Menulocal.png_dpi = 72;
 #ifdef WINDOWS
-  Menulocal.emf_dpi = 72;
+  Menulocal.emf_dpi = 600;
 #endif
   Menulocal.ps_version = 0;
   Menulocal.svg_version = 0;

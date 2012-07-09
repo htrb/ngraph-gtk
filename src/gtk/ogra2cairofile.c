@@ -23,6 +23,7 @@
 #include "object.h"
 #include "ioutil.h"
 
+#include "main.h"
 #include "x11gui.h"
 #include "ogra2cairo.h"
 #include "ogra2cairofile.h"
@@ -96,67 +97,32 @@ gra2cairofile_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 }
 
 #ifdef CAIRO_HAS_WIN32_SURFACE
-static HDC
-create_reference_dc(void)
-{
-#if 0
-  PRINTDLG print_dlg;
-  DEVNAMES *dev_names;
-  DEVMODE *dev_mode;
-  char *driver_name, *device_name;
-  memset(&print_dlg, 0, sizeof(print_dlg));
-
-  print_dlg.lStructSize = sizeof(print_dlg);
-  print_dlg.Flags = PD_RETURNDEFAULT;
-
-  if (PrintDlg(&print_dlg) == 0) {
-    return CreateDC("DISPLAY", NULL, NULL, NULL);
-  }
-
-  dev_names   = (DEVNAMES *) (GlobalLock(print_dlg.hDevNames));
-  dev_mode    = (DEVMODE *) (GlobalLock(print_dlg.hDevMode));
-  driver_name = (char *) (dev_names) + dev_names->wDriverOffset;
-  device_name = (char *) (dev_names) + dev_names->wDeviceOffset;
-
-  return CreateDC(driver_name, device_name, NULL, dev_mode);
-#else
-  char name[1024];
-  DWORD len;
-  HDC hdc;
-
-  len = sizeof(name);
-  if (GetDefaultPrinter(name, &len)) {
-    hdc = CreateDC("WINSPOOL", name, NULL, NULL);
-  } else {
-    hdc = CreateDC("DISPLAY", NULL, NULL, NULL);
-  }
-
-  return hdc;
-#endif
-}
-#endif
-
-#ifdef CAIRO_HAS_WIN32_SURFACE
 static cairo_surface_t *
-open_emf(char *fname, int clipboard)
+open_emf(char *fname, int dpi, int clipboard)
 {
-  HDC hdc, hdc_ref;
-  cairo_surface_t *ps;
+  HDC hdc;
+  cairo_surface_t *surface;
+  XFORM xform = {1, 0, 0, 1, 0, 0};
+  int disp_dpi;
 
   if (clipboard) {
     fname = NULL;
   }
 
-  hdc_ref = create_reference_dc();
-  hdc = CreateEnhMetaFile(hdc_ref, fname, NULL, NULL);
-  DeleteDC(hdc_ref);
+  hdc = CreateEnhMetaFile(NULL, fname, NULL, NULL);
   if (hdc == NULL) {
     return NULL;
   }
-  ps = cairo_win32_printing_surface_create(hdc);
+
+  SetGraphicsMode(hdc, GM_ADVANCED);
+  disp_dpi = GetDeviceCaps(hdc, LOGPIXELSX);
+  xform.eM11 = xform.eM22 = 1.0 * disp_dpi / dpi;
+  SetWorldTransform(hdc, &xform);
+
+  surface = cairo_win32_printing_surface_create(hdc);
   StartPage(hdc);
 
-  return ps;
+  return surface;
 }
 
 static void
@@ -249,7 +215,7 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case TYPE_CLIPBOARD:
   case TYPE_EMF:
-    ps = open_emf(fname, format == TYPE_CLIPBOARD);
+    ps = open_emf(fname, dpi, format == TYPE_CLIPBOARD);
     if (ps == NULL) {
       g_free(fname);
       return NULL;

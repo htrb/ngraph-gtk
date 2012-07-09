@@ -1,3 +1,12 @@
+2012-07-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (menuinit): set default dpi of a EMF file as
+	600.
+
+	* src/gtk/ogra2cairofile.c (create_reference_dc): removed.
+	(open_emf): use display device as referencs DC. use
+	"SetWorldTransform()" to scale image.
+
 2012-07-06  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11lgnd.c (path_list_set_val): set columns
