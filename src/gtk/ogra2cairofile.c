@@ -98,18 +98,14 @@ gra2cairofile_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 
 #ifdef CAIRO_HAS_WIN32_SURFACE
 static cairo_surface_t *
-open_emf(char *fname, int dpi, int clipboard)
+open_emf(int dpi)
 {
   HDC hdc;
   cairo_surface_t *surface;
   XFORM xform = {1, 0, 0, 1, 0, 0};
   int disp_dpi;
 
-  if (clipboard) {
-    fname = NULL;
-  }
-
-  hdc = CreateEnhMetaFile(NULL, fname, NULL, NULL);
+  hdc = CreateEnhMetaFile(NULL, NULL, NULL, NULL);
   if (hdc == NULL) {
     return NULL;
   }
@@ -125,26 +121,44 @@ open_emf(char *fname, int dpi, int clipboard)
   return surface;
 }
 
-static void
-close_emf(cairo_surface_t *surface, int clipboard)
+static int
+close_emf(cairo_surface_t *surface, const char *fname)
 {
   HDC hdc;
   HENHMETAFILE emf;
+  int r;
 
   hdc = cairo_win32_surface_get_dc(surface);
   cairo_surface_flush(surface);
   cairo_surface_copy_page(surface);
   cairo_surface_finish(surface);
 
+  r = 1;
+
   EndPage(hdc);
   emf = CloseEnhMetaFile(hdc);
-  if (clipboard && OpenClipboard(NULL)) {
-    EmptyClipboard();
-    SetClipboardData(CF_ENHMETAFILE, emf);
-    CloseClipboard();
+  if (emf == NULL) {
+    return 1;
+  }
+
+  if (fname) {
+    HENHMETAFILE emf2;
+    emf2 = CopyEnhMetaFile(emf, fname);
+    if (emf2) {
+      DeleteEnhMetaFile(emf2);
+      r = 0;
+    }
+  } else {
+    if (OpenClipboard(NULL)) {
+      EmptyClipboard();
+      SetClipboardData(CF_ENHMETAFILE, emf);
+      CloseClipboard();
+      r = 0;
+    }
   }
   DeleteEnhMetaFile(emf);
   /* DeleteDC() is called in the cairo library */
+  return r;
 }
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
 
@@ -215,7 +229,7 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
 #ifdef CAIRO_HAS_WIN32_SURFACE
   case TYPE_CLIPBOARD:
   case TYPE_EMF:
-    ps = open_emf(fname, dpi, format == TYPE_CLIPBOARD);
+    ps = open_emf(dpi);
     if (ps == NULL) {
       g_free(fname);
       return NULL;
@@ -342,9 +356,28 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 #ifdef CAIRO_HAS_WIN32_SURFACE
       case TYPE_CLIPBOARD:
       case TYPE_EMF:
+	fname = NULL;
+	if (format == TYPE_EMF) {
+	  _getobj(obj, "file", inst, &fname);
+	  if (fname) {
+	    fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
+	  }
+	}
 	gra2cairo_draw_path(local);
 	surface = cairo_get_target(local->cairo);
-	close_emf(surface, format == TYPE_CLIPBOARD);
+	r = close_emf(surface, fname);
+	if (fname) {
+	  g_free(fname);
+	}
+	if (r) {
+	  if (format == TYPE_EMF) {
+	    _getobj(obj, "file", inst, &fname);
+	  } else {
+	    fname = "clipboard";
+	  }
+	  error2(obj, CAIRO_STATUS_WRITE_ERROR + 100, fname);
+	  return 1;
+	}
 	break;
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
       }
