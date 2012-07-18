@@ -1,3 +1,16 @@
+2012-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* pathconv.sh (LC_ALL): set as "C" and export.
+
+	* src/math/math_scanner.c (get_dec): use function "powl()" only if
+	"HAVE_POWL" is defined.
+
+	* src/gtk/ox11menu.c (graph_modified_sub): don't call
+	"SetCaption()" and "set_modified_state()".
+	(mxmodified): call "set_modified_state()".
+
+	* configure.in (AC_CHECK_HEADERS): check "readline.h".
+
 2012-07-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairofile.c (open_emf): remove parameters "fname"

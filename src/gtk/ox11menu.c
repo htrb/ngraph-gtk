@@ -1959,6 +1959,8 @@ mxmodified(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **a
   modified = * (int *) argv[2];
 
   SetCaption(modified);
+  set_modified_state(modified);
+
   return 0;
 }
 
@@ -2147,8 +2149,6 @@ graph_modified_sub(int a)
     return;
 
   putobj(Menulocal.obj, "modified", 0, &a);
-  SetCaption(a);
-  set_modified_state(a);
 }
 
 void

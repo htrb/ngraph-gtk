@@ -96,6 +96,9 @@
 /* Define to 1 if you have the `pow' function. */
 #undef HAVE_POW
 
+/* Define to 1 if you have the `powl' function. */
+#undef HAVE_POWL
+
 /* Define to 1 if you have the <readline/readline.h> header file. */
 #undef HAVE_READLINE_READLINE_H
 

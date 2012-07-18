@@ -438,8 +438,13 @@ get_dec(const char *str, double *val)
     }
   }
 
+#if HAVE_POWL
   *val = dec * powl(10.0, pow_sign * pow_val) +
     flaction * powl(10.0, pow_sign * pow_val - dec_order);
+#else  /* HAVE_POWL */
+  *val = dec * pow(10.0, pow_sign * pow_val) +
+    flaction * pow(10.0, pow_sign * pow_val - dec_order);
+#endif	/* HAVE_POWL */
 
   return str;
 }

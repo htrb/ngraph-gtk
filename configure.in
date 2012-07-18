@@ -81,7 +81,7 @@ AC_FUNC_STRTOD
 AC_FUNC_UTIME_NULL
 AC_FUNC_VPRINTF
 AC_FUNC_MMAP
-AC_CHECK_FUNCS([sigaction sigsuspend alarm dup2 getcwd mkdir pow sqrt strchr strdup strerror strncasecmp strstr strtol utime isfinite finite nanosleep sleep])
+AC_CHECK_FUNCS([sigaction sigsuspend alarm dup2 getcwd mkdir pow powl sqrt strchr strdup strerror strncasecmp strstr strtol utime isfinite finite nanosleep sleep])
 
 AC_CONFIG_FILES([Makefile \
 		 src/Makefile \

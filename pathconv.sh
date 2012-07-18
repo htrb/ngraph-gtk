@@ -21,11 +21,12 @@ shift
 
 TARGET=`basename $1 .in`
 
+LC_ALL=C
+export LC_ALL
+
 cat $1 | sed -e "s!BINDIRDEF!$BINDIR!g" \
              -e "s!DOCDIRDEF!$DOCDIR!g" \
              -e "s!LIBDIRDEF!$LIBDIR!g" \
              -e "s!DATADIRDEF!$DATADIR!g" \
              -e "s!PIXMAPDIRDEF!$PIXMAPDIR!g" \
              -e "s!CONFDIRDEF!$CONFDIR!g" > $TARGET
-
-echo $CONFDIR
