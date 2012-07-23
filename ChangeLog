@@ -1,3 +1,11 @@
+2012-07-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (gra2cairo_get_utf8_str): added.
+	(gra2cairo_output): use "gra2cairo_get_utf8_str()".
+
+	* src/gtk/ox11menu.c (menuinit): set default dpi of a EMF file as
+	576.
+
 2012-07-18  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* pathconv.sh (LC_ALL): set as "C" and export.

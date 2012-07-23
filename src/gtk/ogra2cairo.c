@@ -945,13 +945,63 @@ gra2cairo_flush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, cha
   return check_cairo_status(local->cairo);
 }
 
+char *
+gra2cairo_get_utf8_str(const char *cstr, int symbol)
+{
+  char *tmp;
+  size_t l, i, j;
+
+  l = strlen(cstr);
+  tmp = g_malloc(l * 6 + 1);
+  if (tmp == NULL) {
+    return NULL;
+  }
+
+  for (j = i = 0; i <= l; i++) {
+    if (cstr[i] == '\\') {
+      if (cstr[i + 1] == 'x' &&
+	  g_ascii_isxdigit(cstr[i + 2]) &&
+	  g_ascii_isxdigit(cstr[i + 3])) {
+	char buf[8];
+	int len, k;
+	gunichar wc;
+
+	wc = g_ascii_xdigit_value(cstr[i + 2]) * 16 + g_ascii_xdigit_value(cstr[i + 3]);
+	len = g_unichar_to_utf8(wc, buf);
+	for (k = 0; k < len; k++) {
+	  tmp[j++] = buf[k];
+	}
+	i += 3;
+      } else {
+	i += 1;
+	tmp[j++] = cstr[i];
+      }
+    } else {
+      tmp[j++] = cstr[i];
+    }
+    tmp[j] = '\0';
+  }
+
+  if (symbol) {
+    char *ptr;
+
+    ptr = ascii2greece(tmp);
+    if (ptr) {
+      g_free(tmp);
+      tmp = ptr;
+    }
+  }
+
+  return tmp;
+}
+
 static int
 gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
                  int argc, char **argv)
 {
-  char code, *cstr, *tmp, *tmp2;
-  int *cpar, i, j, r, font_style;
-  double x, y, w, h, l, fontsize,
+  char code, *cstr, *tmp;
+  int *cpar, i, r, font_style;
+  double x, y, w, h, fontsize,
     fontspace, fontdir, fontsin, fontcos, a1, a2;
   cairo_line_join_t join;
   cairo_line_cap_t cap;
@@ -1204,57 +1254,21 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
     if (local->loadfont == NULL)
       break;
 
-    l = strlen(cstr);
-    tmp = g_malloc(l * 6 + 1);
-    if (tmp == NULL)
-      break;
-
-    for (j = i = 0; i <= l; i++) {
-      if (cstr[i] == '\\') {
-	if (cstr[i + 1] == 'x' &&
-	    g_ascii_isxdigit(cstr[i + 2]) &&
-	    g_ascii_isxdigit(cstr[i + 3])) {
-	  char buf[8];
-	  int len, k;
-	  gunichar wc;
-
-	  wc = g_ascii_xdigit_value(cstr[i + 2]) * 16 + g_ascii_xdigit_value(cstr[i + 3]);
-	  len = g_unichar_to_utf8(wc, buf);
-	  for (k = 0; k < len; k++) {
-	    tmp[j++] = buf[k];
-	  }
-	  i += 3;
-	} else {
-	  i += 1;
-	  tmp[j++] = cstr[i];
-	}
-      } else {
-	tmp[j++] = cstr[i];
-      }
-      tmp[j] = '\0';
+    tmp = gra2cairo_get_utf8_str(cstr, local->symbol);
+    if (tmp) {
+      draw_str(local, TRUE, tmp, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
+      g_free(tmp);
     }
-
-    if (local->symbol) {
-      char *ptr;
-
-      ptr = ascii2greece(tmp);
-      if (ptr) {
-	g_free(tmp);
-	tmp = ptr;
-      }
-    }
-    draw_str(local, TRUE, tmp, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
-    g_free(tmp);
     break;
   case 'K':
     if (local->loadfont == NULL)
       break;
 
-    tmp2 = sjis_to_utf8(cstr);
-    if (tmp2 == NULL)
-      break;
-    draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
-    g_free(tmp2);
+    tmp = sjis_to_utf8(cstr);
+    if (tmp) {
+      draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
+      g_free(tmp2);
+    }
     break;
   default:
     break;

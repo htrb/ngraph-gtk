@@ -69,5 +69,6 @@ void gra2cairo_save_config(void);
 void gra2cairo_draw_path(struct gra2cairo_local *local);
 struct compatible_font_info *gra2cairo_get_compatible_font_info(char *name);
 void gra2cairo_set_alternative_font(const char *fontalias, const char *fontname);
+char *gra2cairo_get_utf8_str(const char *cstr, int symbol);
 
 #endif
