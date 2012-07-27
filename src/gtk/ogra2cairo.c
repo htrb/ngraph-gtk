@@ -934,6 +934,7 @@ static int
 gra2cairo_flush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   struct gra2cairo_local *local;
+  cairo_surface_t *surface;
 
   _getobj(obj, "_local", inst, &local);
 
@@ -941,6 +942,12 @@ gra2cairo_flush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, cha
     return -1;
 
   gra2cairo_draw_path(local);
+
+  surface = cairo_get_target(local->cairo);
+  if (surface) {
+    cairo_surface_flush(surface);
+  }
+
 
   return check_cairo_status(local->cairo);
 }
@@ -1266,8 +1273,8 @@ gra2cairo_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 
     tmp = sjis_to_utf8(cstr);
     if (tmp) {
-      draw_str(local, TRUE, tmp2, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
-      g_free(tmp2);
+      draw_str(local, TRUE, tmp, local->loadfont, local->fontsize, local->fontspace, NULL, NULL, NULL);
+      g_free(tmp);
     }
     break;
   default:

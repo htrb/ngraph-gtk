@@ -1,3 +1,19 @@
+2012-07-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gra.c (GRAreopen): width and height of the paper should be
+	"GRAClist[GC].width+GRAClist[GC].leftm" and
+	"GRAClist[GC].height+GRAClist[GC].topm" respectively.
+	(GRAinit): width and height of the drawing region should be
+	"width-leftm" and "height-topm" respectively.
+
+2012-07-26  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ox11menu.c (mxflush): call "cairo_surface_flush()".
+
+	* src/gtk/ogra2cairo.c (gra2cairo_flush): call
+	"cairo_surface_flush()".
+	(gra2cairo_output): fix typo ("tmp2" to "tmp").
+
 2012-07-23  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.c (gra2cairo_get_utf8_str): added.
@@ -3999,7 +4015,7 @@
 	(create_legendx): create "path" object instead of "curve" object.
 	(ViewerEvLButtonDblClk, ViewerEvRButtonDown): remove case for
 	"LineB", "CurveB" and "PolyB". add case for "PathB".
-	(ViewerEvRButtonDown): "g_object_unref()" shoud be called outside
+	(ViewerEvRButtonDown): "g_object_unref()" should be called outside
 	of the "switch" block.
 	(ViewUpdate): don't check "line", "polygon" and "curve"
 	objects. check "path" object.

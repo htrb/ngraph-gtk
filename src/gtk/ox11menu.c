@@ -1486,6 +1486,8 @@ mxdpi(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 static int
 mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
+  cairo_surface_t *surface;
+
   if (TopLevel == NULL) {
     error(obj, ERR_MENU_GUI);
     return 1;
@@ -1494,6 +1496,11 @@ mxflush(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv
   if (Menulocal.local->linetonum && Menulocal.local->cairo) {
     cairo_stroke(Menulocal.local->cairo);
     Menulocal.local->linetonum = 0;
+  }
+
+  surface = cairo_get_target(Menulocal.local->cairo);
+  if (surface) {
+    cairo_surface_flush(surface);
   }
 
   return 0;
