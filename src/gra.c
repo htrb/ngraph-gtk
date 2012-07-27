@@ -256,8 +256,8 @@ GRAreopen(int GC)
   cpar[0]=5;
   cpar[1]=GRAClist[GC].leftm;
   cpar[2]=GRAClist[GC].topm;
-  cpar[3]=GRAClist[GC].width;
-  cpar[4]=GRAClist[GC].height;
+  cpar[3]=GRAClist[GC].width+GRAClist[GC].leftm;
+  cpar[4]=GRAClist[GC].height+GRAClist[GC].topm;
   cpar[5]=nround(GRAClist[GC].zoom*10000);
 
   if (GRAdraw(GC,code,cpar,NULL))
@@ -742,8 +742,8 @@ GRAinit(int GC,int leftm,int topm,int width,int height,int zoom)
   r = GRAdraw(GC,code,cpar,NULL);
   GRAClist[GC].leftm=leftm;
   GRAClist[GC].topm=topm;
-  GRAClist[GC].width=width;
-  GRAClist[GC].height=height;
+  GRAClist[GC].width=width-leftm;
+  GRAClist[GC].height=height-topm;
   GRAClist[GC].zoom=zoom/10000.0;
 
   return (r && GRAClist[GC].output != -1) ? ERROPEN: 0;
