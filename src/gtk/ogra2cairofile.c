@@ -47,7 +47,6 @@ char *surface_type[] = {
   "png",
 #ifdef CAIRO_HAS_WIN32_SURFACE
   "emf",
-  "clipboard",
 #endif	/* CAIRO_HAS_WIN32_SURFACE */
   NULL,
 };
@@ -98,14 +97,14 @@ gra2cairofile_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, 
 
 #ifdef CAIRO_HAS_WIN32_SURFACE
 static cairo_surface_t *
-open_emf(int dpi)
+open_emf(int dpi, const char *fname)
 {
   HDC hdc;
   cairo_surface_t *surface;
   XFORM xform = {1, 0, 0, 1, 0, 0};
   int disp_dpi;
 
-  hdc = CreateEnhMetaFile(NULL, NULL, NULL, NULL);
+  hdc = CreateEnhMetaFile(NULL, fname, NULL, NULL);
   if (hdc == NULL) {
     return NULL;
   }
@@ -122,7 +121,7 @@ open_emf(int dpi)
 }
 
 static int
-close_emf(cairo_surface_t *surface, const char *fname)
+close_emf(cairo_surface_t *surface)
 {
   HDC hdc;
   HENHMETAFILE emf;
@@ -139,22 +138,6 @@ close_emf(cairo_surface_t *surface, const char *fname)
   emf = CloseEnhMetaFile(hdc);
   if (emf == NULL) {
     return 1;
-  }
-
-  if (fname) {
-    HENHMETAFILE emf2;
-    emf2 = CopyEnhMetaFile(emf, fname);
-    if (emf2) {
-      DeleteEnhMetaFile(emf2);
-      r = 0;
-    }
-  } else {
-    if (OpenClipboard(NULL)) {
-      EmptyClipboard();
-      SetClipboardData(CF_ENHMETAFILE, emf);
-      CloseClipboard();
-      r = 0;
-    }
   }
   DeleteEnhMetaFile(emf);
   /* DeleteDC() is called in the cairo library */
@@ -227,9 +210,8 @@ create_cairo(struct objlist *obj, N_VALUE *inst, char *fname, int iw, int ih, in
     ps = cairo_image_surface_create(CAIRO_FORMAT_RGB24, w, h);
     break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
-  case TYPE_CLIPBOARD:
   case TYPE_EMF:
-    ps = open_emf(dpi);
+    ps = open_emf(dpi, fname);
     if (ps == NULL) {
       g_free(fname);
       return NULL;
@@ -354,27 +336,13 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	}
 	break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
-      case TYPE_CLIPBOARD:
       case TYPE_EMF:
-	fname = NULL;
 	if (format == TYPE_EMF) {
-	  _getobj(obj, "file", inst, &fname);
-	  if (fname) {
-	    fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
-	  }
-	}
 	gra2cairo_draw_path(local);
 	surface = cairo_get_target(local->cairo);
-	r = close_emf(surface, fname);
-	if (fname) {
-	  g_free(fname);
-	}
+	r = close_emf(surface);
 	if (r) {
-	  if (format == TYPE_EMF) {
-	    _getobj(obj, "file", inst, &fname);
-	  } else {
-	    fname = "clipboard";
-	  }
+	  _getobj(obj, "file", inst, &fname);
 	  error2(obj, CAIRO_STATUS_WRITE_ERROR + 100, fname);
 	  return 1;
 	}

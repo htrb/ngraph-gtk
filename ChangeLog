@@ -1,5 +1,8 @@
 2012-07-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
+	* src/gtk/ogra2cairofile.c (surface_type, open_emf, close_emf)
+	(create_cairo): remove clipboard output.
+
 	* src/gra.c (GRAreopen): width and height of the paper should be
 	"GRAClist[GC].width+GRAClist[GC].leftm" and
 	"GRAClist[GC].height+GRAClist[GC].topm" respectively.
