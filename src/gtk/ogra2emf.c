@@ -549,9 +549,11 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
       StrokePath(local->hdc);
       break;
     case 1:
+      SetPolyFillMode(local->hdc, ALTERNATE);
       FillPath(local->hdc);
       break;
     case 2:
+      SetPolyFillMode(local->hdc, WINDING);
       FillPath(local->hdc);
       break;
     }

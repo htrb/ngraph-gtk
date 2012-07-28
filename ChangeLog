@@ -1,3 +1,8 @@
+2012-07-28  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2emf.c (gra2emf_output): call "SetPolyFillMode()" to
+	set fill mode.
+
 2012-07-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* initfile/NgraphUI.xml.win: add "GraphExportEMFFileAction" and

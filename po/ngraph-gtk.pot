@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-07-26 16:00+0900\n"
+"POT-Creation-Date: 2012-07-28 10:25+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1552,7 +1552,7 @@ msgstr ""
 msgid "Print preview"
 msgstr ""
 
-#: src/gtk/x11menu.c:480 src/gtk/x11menu.c:481 src/gtk/x11print.c:713
+#: src/gtk/x11menu.c:480 src/gtk/x11menu.c:481 src/gtk/x11print.c:689
 msgid "Print"
 msgstr ""
 
@@ -2213,7 +2213,7 @@ msgstr ""
 msgid "_Check \"change current directory\""
 msgstr ""
 
-#: src/gtk/x11opt.c:1451 src/gtk/x11print.c:413
+#: src/gtk/x11opt.c:1451 src/gtk/x11print.c:389
 msgid "_Use opacity"
 msgstr ""
 
@@ -2261,69 +2261,69 @@ msgstr ""
 msgid "External Driver Output"
 msgstr ""
 
-#: src/gtk/x11print.c:315
+#: src/gtk/x11print.c:314
 msgid "_PostScript Version:"
 msgstr ""
 
-#: src/gtk/x11print.c:360
+#: src/gtk/x11print.c:354
 msgid "_SVG Version:"
 msgstr ""
 
-#: src/gtk/x11print.c:409
+#: src/gtk/x11print.c:385
 msgid "_Convert texts to paths"
 msgstr ""
 
-#: src/gtk/x11print.c:430
+#: src/gtk/x11print.c:406
 msgid "Cairo PS Output"
 msgstr ""
 
-#: src/gtk/x11print.c:433
+#: src/gtk/x11print.c:409
 msgid "Cairo EPS Output"
 msgstr ""
 
-#: src/gtk/x11print.c:436
+#: src/gtk/x11print.c:412
 msgid "Cairo PNG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:439
+#: src/gtk/x11print.c:415
 msgid "Cairo PDF Output"
 msgstr ""
 
-#: src/gtk/x11print.c:442
+#: src/gtk/x11print.c:418
 msgid "Cairo SVG Output"
 msgstr ""
 
-#: src/gtk/x11print.c:446
+#: src/gtk/x11print.c:422
 msgid "Cairo EMF Output"
 msgstr ""
 
-#: src/gtk/x11print.c:581
+#: src/gtk/x11print.c:557
 msgid "Printing."
 msgstr ""
 
-#: src/gtk/x11print.c:712
+#: src/gtk/x11print.c:688
 #, c-format
 msgid "Printing error: %s"
 msgstr ""
 
-#: src/gtk/x11print.c:761
+#: src/gtk/x11print.c:737
 msgid "Spawning external driver."
 msgstr ""
 
-#: src/gtk/x11print.c:767 src/gtk/x11print.c:1035 src/gtk/x11print.c:1114
+#: src/gtk/x11print.c:743 src/gtk/x11print.c:1009 src/gtk/x11print.c:1078
 #: src/gtk/x11view.c:5562
 msgid "Drawing."
 msgstr ""
 
-#: src/gtk/x11print.c:830
+#: src/gtk/x11print.c:806
 msgid "Spawning external viewer."
 msgstr ""
 
-#: src/gtk/x11print.c:872
+#: src/gtk/x11print.c:848
 msgid "GRA file"
 msgstr ""
 
-#: src/gtk/x11print.c:912
+#: src/gtk/x11print.c:888
 msgid "Making GRA file."
 msgstr ""
 
