@@ -1,3 +1,28 @@
+2012-07-28  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* initfile/NgraphUI.xml.win: add "GraphExportEMFFileAction" and
+	"GraphExportEMFClipboardAction", remove "GraphExportEMFAction" and
+	"GraphExportClipboardAction".
+
+	* src/gtk/ogra2emf.c: added.
+
+	* src/gtk/Makefile.am (libngraph_la_SOURCES): add "ogra2emf.c".
+
+	* src/gtk/x11print.c (OutputImageDialogSetupItem)
+	(OutputImageDialogSetup, OutputImageDialogClose, CmOutputImage):
+	don't handle "MenuIdOutputEMFFile" and "MenuIdOutputEMFClipboard".
+	(CmOutputEMF): added.
+
+	* src/gtk/x11menu.h (MenuID): add "MenuIdOutputCairoEMFFile",
+	"MenuIdOutputEMFFile" and "MenuIdOutputEMFClipboard", remove
+	"MenuIdOutputClipboard".
+
+	* src/gtk/x11menu.c (NgraphActionEntry): change name from
+	"GraphExportEMFAction" to "GraphExportCairoEMFAction", add
+	"GraphExportEMFFileAction" and "GraphExportEMFClipboardAction".
+
+	* src/gtk/main.c (obj_add_func_ary): add function "addgra2emf".
+
 2012-07-27  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairofile.c (surface_type, open_emf, close_emf)

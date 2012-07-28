@@ -399,7 +399,21 @@ static struct NgraphActionEntry ActionEntry[] = {
 #ifdef CAIRO_HAS_WIN32_SURFACE
   {
     ACTION_TYPE_NORMAL,
-    "GraphExportEMFAction",
+    "GraphExportCairoEMFAction",
+    NULL,
+    N_("_EMF file"),
+    N_("Export as Windows Enhanced Metafile"),
+    NULL,
+    G_CALLBACK(CmOutputMenu),
+    MenuIdOutputCairoEMFFile,
+    NULL,
+    "<Ngraph>/Graph/Export image/EMF File (cairo)",
+  },
+#endif	/* CAIRO_HAS_WIN32_SURFACE */
+#ifdef WINDOWS
+  {
+    ACTION_TYPE_NORMAL,
+    "GraphExportEMFFileAction",
     NULL,
     N_("_EMF file"),
     N_("Export as Windows Enhanced Metafile"),
@@ -411,18 +425,17 @@ static struct NgraphActionEntry ActionEntry[] = {
   },
   {
     ACTION_TYPE_NORMAL,
-    "GraphExportClipboardAction",
+    "GraphExportEMFClipboardAction",
     NULL,
     N_("_Clipboard (EMF)"),
     N_("Copy to the clipboard as Windows Enhanced Metafile "),
     NULL,
     G_CALLBACK(CmOutputMenu),
-    MenuIdOutputClipboard,
+    MenuIdOutputEMFClipboard,
     NULL,
     "<Ngraph>/Graph/Export image/Clipboard",
   },
-#endif	/* CAIRO_HAS_WIN32_SURFACE */
-
+#endif	/* WINDOWS */
   {
     ACTION_TYPE_NORMAL,
     "GraphDrawOrderAction",

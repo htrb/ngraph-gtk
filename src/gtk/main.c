@@ -111,6 +111,9 @@ void *addpath(void);
 void *addgra2gtk(void);
 void *addmenu(void);
 void *adddialog(void);
+#ifdef WINDOWS
+void *addgra2emf(void);
+#endif	/* WINDOWS */
 
 void resizeconsole(int col, int row);
 
@@ -190,6 +193,9 @@ static void * ( * obj_add_func_ary[]) (void) = {
   addtext,
   addmenu,
   adddialog,
+#ifdef WINDOWS
+  addgra2emf,
+#endif
 };
 
 int
