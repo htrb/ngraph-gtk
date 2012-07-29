@@ -185,8 +185,25 @@ free_font_map(struct fontmap *fcur)
   g_free(fcur);
 }
 
+static void
+add_font_map(struct fontmap *fmap)
+{
+  struct fontmap *cur;
+
+  if (Gra2cairoConf->fontmap_list_root == NULL) {
+    Gra2cairoConf->fontmap_list_root = fmap;
+    return;
+  }
+
+  cur = Gra2cairoConf->fontmap_list_root;
+  while (cur->next) {
+    cur = cur->next;
+  }
+  cur->next = fmap;
+}
+
 static struct fontmap *
-create_font_map(const char *fontalias, const char *fontname, const char *alternative, struct fontmap *fprev)
+create_font_map(const char *fontalias, const char *fontname, const char *alternative)
 {
   struct fontmap *fnew;
 
@@ -212,14 +229,7 @@ create_font_map(const char *fontalias, const char *fontname, const char *alterna
   fnew->alternative = g_strdup(alternative);
   fnew->font = NULL;
   fnew->next = NULL;
-
-  if (fprev) {
-    fprev->next = fnew;
-  } else {
-    fnew->next = Gra2cairoConf->fontmap_list_root;
-    Gra2cairoConf->fontmap_list_root = fnew;
-  }
-
+  add_font_map(fnew);
   Gra2cairoConf->font_num++;
 
   return fnew;
@@ -276,13 +286,12 @@ loadconfig(void)
   char *tok, *str, *s2;
   char *f1, *f2, *f3;
   int len;
-  struct fontmap *fnew, *fprev;
+  struct fontmap *fnew;
 
   fp = openconfig(CAIROCONF);
   if (fp == NULL)
     return 0;
 
-  fprev = NULL;
   while ((tok = getconfig(fp, &str))) {
     s2 = str;
     if (strcmp(tok, "font") == 0) {
@@ -291,7 +300,7 @@ loadconfig(void)
       for (; (s2[0] != '\0') && (strchr(" \x09,", s2[0])); s2++);
       f3 = getitok2(&s2, &len, "");
       if (f1 && f2) {
-	fnew = create_font_map(f1, f2, f3, fprev);
+	fnew = create_font_map(f1, f2, f3);
 	g_free(f1);
 	g_free(f2);
 	if (fnew == NULL) {
@@ -299,8 +308,6 @@ loadconfig(void)
 	  closeconfig(fp);
 	  return 1;
 	}
-
-	fprev = fnew;
       } else {
 	g_free(f1);
 	g_free(f2);
@@ -331,7 +338,7 @@ loadconfig(void)
 	    g_free(f1);
 	    f1 = g_strdup(info->name);
 	    if (f1) {
-	      fnew = create_font_map(f1, f2, NULL, fprev);
+	      fnew = create_font_map(f1, f2, NULL);
 	    }
 	    if (fnew == NULL) {
 	      g_free(tok);
@@ -340,7 +347,6 @@ loadconfig(void)
 	      closeconfig(fp);
 	      return 1;
 	    }
-	    fprev = fnew;
 	  } else {
 	    if (two_byte) {
 	      gra2cairo_set_alternative_font(info->name, f2);
@@ -483,7 +489,7 @@ gra2cairo_add_fontmap(const char *fontalias, const char *fontname)
   if (nhash_get_ptr(Gra2cairoConf->fontmap, fontalias, (void *) &fnew) == 0) {
     free_font_map(fnew);
   }
-  create_font_map(fontalias, fontname, NULL, NULL);
+  create_font_map(fontalias, fontname, NULL);
 }
 
 void
