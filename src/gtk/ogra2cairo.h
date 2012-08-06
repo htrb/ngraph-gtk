@@ -61,13 +61,13 @@ int gra2cairo_charheight(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int 
 void gra2cairo_set_antialias(struct gra2cairo_local *local, int antialias);
 struct gra2cairo_local *gra2cairo_free(struct objlist *obj, N_VALUE *inst);
 void gra2cairo_update_fontmap(const char *fontalias, const char *fontname);
-struct fontmap *gra2cairo_get_fontmap(char *font_alias);
-void gra2cairo_remove_fontmap(char *fontalias);
+struct fontmap *gra2cairo_get_fontmap(const char *font_alias);
+void gra2cairo_remove_fontmap(const char *fontalias);
 void gra2cairo_add_fontmap(const char *fontalias, const char *fontname);
 int gra2cairo_get_fontmap_num(void);
 void gra2cairo_save_config(void);
 void gra2cairo_draw_path(struct gra2cairo_local *local);
-struct compatible_font_info *gra2cairo_get_compatible_font_info(char *name);
+struct compatible_font_info *gra2cairo_get_compatible_font_info(const char *name);
 void gra2cairo_set_alternative_font(const char *fontalias, const char *fontname);
 char *gra2cairo_get_utf8_str(const char *cstr, int symbol);
 

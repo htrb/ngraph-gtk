@@ -1,3 +1,9 @@
+2012-08-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (gra2cairo_get_fontmap)
+	(gra2cairo_remove_fontmap, gra2cairo_get_compatible_font_info):
+	type of the argument is "const char *".
+
 2012-07-29  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.c (add_font_map): added.

@@ -427,7 +427,7 @@ free_conf(void)
 }
 
 struct fontmap *
-gra2cairo_get_fontmap(char *fontalias)
+gra2cairo_get_fontmap(const char *fontalias)
 {
   struct fontmap *fnew;
 
@@ -449,7 +449,7 @@ gra2cairo_get_fontmap_num(void)
 }
 
 void
-gra2cairo_remove_fontmap(char *fontalias)
+gra2cairo_remove_fontmap(const char *fontalias)
 {
   struct fontmap *fnew;
 
@@ -755,7 +755,7 @@ set_antialias(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char 
 }
 
 struct compatible_font_info *
-gra2cairo_get_compatible_font_info(char *name)
+gra2cairo_get_compatible_font_info(const char *name)
 {
   int i;
 
