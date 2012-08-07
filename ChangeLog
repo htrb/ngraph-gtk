@@ -1,3 +1,14 @@
+2012-08-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* driver/ngp2.in: remove EMF output.
+
+	* src/gtk/ogra2emf.c (gra2emf_fontmap, enum_font_cb)
+	(get_char_set, fontmap_append, check_fonts, free_fontmap_sub)
+	(free_fontmap, add_fontmap, check_font_indices, draw_str_sub)
+	(set_alternative_font): added.
+	(gra2emf_init): create dumy hdc.
+	(gra2emf_done): delete dumy hdc and fontmaps.
+
 2012-08-06  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.c (gra2cairo_get_fontmap)

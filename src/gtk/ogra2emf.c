@@ -33,21 +33,572 @@
 #endif
 
 #define ERRFOPEN 100
+#define ERREMF   101
 
 static char *gra2emf_errorlist[]={
-  "I/O error: open file"
+  "I/O error: open file",
+  "EMF error",
 };
 
 #define ERRNUM (sizeof(gra2emf_errorlist) / sizeof(*gra2emf_errorlist))
 
+#define CHAR_SET_NUM 32
+
+struct gra2emf_fontmap
+{
+  char *name;
+  int char_set[CHAR_SET_NUM];
+  struct gra2emf_fontmap *next;
+};
+
 struct gra2emf_local {
-  HDC hdc;
+  HDC hdc, hdc_dummy;
   int r, g, b, x, y, offsetx, offsety;
   char *fontalias;
-  int font_style, symbol, line_join, line_cap, line_width, line_style_num;
+  int font_style, line_join, line_cap, line_width, line_style_num, symbol;
   double fontdir, fontcos, fontsin, fontspace, fontsize;
   DWORD *line_style;
+  NHASH fontmap;
 };
+
+static int
+enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, LPARAM lParam)
+{
+  char *name, *style, *script, *tmp;
+  int char_set, i;
+  struct gra2emf_fontmap *fontmap;
+
+  if (FontType != TRUETYPE_FONTTYPE) {
+    return 1;
+  }
+
+  if (lpntme->ntmTm.tmWeight != FW_NORMAL || lpntme->ntmTm.tmItalic) {
+    return 1;
+  }
+
+  fontmap = (struct gra2emf_fontmap *) lParam;
+  if (fontmap == NULL) {
+    return;
+  }
+
+  char_set = lpntme->ntmTm.tmCharSet;
+
+  for (i = 0; i < CHAR_SET_NUM - 1; i++) {
+    if (fontmap->char_set[i] < 0) {
+      fontmap->char_set[i] = char_set;
+      fontmap->char_set[i + 1] = -1;
+      break;
+    }
+  }
+
+  return 1;
+}
+
+static int
+get_char_set(gunichar ch)
+{
+  GUnicodeScript script;
+  int char_set;
+
+  script = g_unichar_get_script(ch);
+
+  switch (script) {
+  case G_UNICODE_SCRIPT_COMMON:
+    char_set = ANSI_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_INHERITED:
+  case G_UNICODE_SCRIPT_ARABIC:
+    char_set = ARABIC_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_ARMENIAN:
+    char_set = EASTEUROPE_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_BENGALI:
+  case G_UNICODE_SCRIPT_BOPOMOFO:
+  case G_UNICODE_SCRIPT_CHEROKEE:
+  case G_UNICODE_SCRIPT_COPTIC:
+    char_set = DEFAULT_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_CYRILLIC:
+    char_set = RUSSIAN_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_DESERET:
+  case G_UNICODE_SCRIPT_DEVANAGARI:
+  case G_UNICODE_SCRIPT_ETHIOPIC:
+  case G_UNICODE_SCRIPT_GEORGIAN:
+  case G_UNICODE_SCRIPT_GOTHIC:
+    char_set = DEFAULT_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_GREEK:
+    char_set = GREEK_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_GUJARATI:
+  case G_UNICODE_SCRIPT_GURMUKHI:
+    char_set = DEFAULT_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_HAN:
+    char_set = CHINESEBIG5_CHARSET;
+    char_set = GB2312_CHARSET;
+    char_set = SHIFTJIS_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_HANGUL:
+    char_set = HANGEUL_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_HEBREW:
+    char_set = HEBREW_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_HIRAGANA:
+    char_set = SHIFTJIS_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_KANNADA:
+    char_set = DEFAULT_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_KATAKANA:
+    char_set = SHIFTJIS_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_KHMER:
+  case G_UNICODE_SCRIPT_LAO:
+    char_set = DEFAULT_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_LATIN:
+    char_set = ANSI_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_MALAYALAM:
+  case G_UNICODE_SCRIPT_MONGOLIAN:
+  case G_UNICODE_SCRIPT_MYANMAR:
+  case G_UNICODE_SCRIPT_OGHAM:
+  case G_UNICODE_SCRIPT_OLD_ITALIC:
+  case G_UNICODE_SCRIPT_ORIYA:
+  case G_UNICODE_SCRIPT_RUNIC:
+  case G_UNICODE_SCRIPT_SINHALA:
+  case G_UNICODE_SCRIPT_SYRIAC:
+  case G_UNICODE_SCRIPT_TAMIL:
+  case G_UNICODE_SCRIPT_TELUGU:
+  case G_UNICODE_SCRIPT_THAANA:
+    char_set = DEFAULT_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_THAI:
+    char_set = THAI_CHARSET;
+    break;
+  case G_UNICODE_SCRIPT_TIBETAN:
+  case G_UNICODE_SCRIPT_CANADIAN_ABORIGINAL:
+  case G_UNICODE_SCRIPT_YI:
+  case G_UNICODE_SCRIPT_TAGALOG:
+  case G_UNICODE_SCRIPT_HANUNOO:
+  case G_UNICODE_SCRIPT_BUHID:
+  case G_UNICODE_SCRIPT_TAGBANWA:
+  case G_UNICODE_SCRIPT_BRAILLE:
+  case G_UNICODE_SCRIPT_CYPRIOT:
+  case G_UNICODE_SCRIPT_LIMBU:
+  case G_UNICODE_SCRIPT_OSMANYA:
+  case G_UNICODE_SCRIPT_SHAVIAN:
+  case G_UNICODE_SCRIPT_LINEAR_B:
+  case G_UNICODE_SCRIPT_TAI_LE:
+  case G_UNICODE_SCRIPT_UGARITIC:
+  case G_UNICODE_SCRIPT_NEW_TAI_LUE:
+  case G_UNICODE_SCRIPT_BUGINESE:
+  case G_UNICODE_SCRIPT_GLAGOLITIC:
+  case G_UNICODE_SCRIPT_TIFINAGH:
+  case G_UNICODE_SCRIPT_SYLOTI_NAGRI:
+  case G_UNICODE_SCRIPT_OLD_PERSIAN:
+  case G_UNICODE_SCRIPT_KHAROSHTHI:
+  case G_UNICODE_SCRIPT_UNKNOWN:
+  case G_UNICODE_SCRIPT_BALINESE:
+  case G_UNICODE_SCRIPT_CUNEIFORM:
+  case G_UNICODE_SCRIPT_PHOENICIAN:
+  case G_UNICODE_SCRIPT_PHAGS_PA:
+  case G_UNICODE_SCRIPT_NKO:
+  case G_UNICODE_SCRIPT_KAYAH_LI:
+  case G_UNICODE_SCRIPT_LEPCHA:
+  case G_UNICODE_SCRIPT_REJANG:
+  case G_UNICODE_SCRIPT_SUNDANESE:
+  case G_UNICODE_SCRIPT_SAURASHTRA:
+  case G_UNICODE_SCRIPT_CHAM:
+  case G_UNICODE_SCRIPT_OL_CHIKI:
+  case G_UNICODE_SCRIPT_VAI:
+  case G_UNICODE_SCRIPT_CARIAN:
+  case G_UNICODE_SCRIPT_LYCIAN:
+  case G_UNICODE_SCRIPT_LYDIAN:
+  case G_UNICODE_SCRIPT_AVESTAN:
+  case G_UNICODE_SCRIPT_BAMUM:
+  case G_UNICODE_SCRIPT_EGYPTIAN_HIEROGLYPHS:
+  case G_UNICODE_SCRIPT_IMPERIAL_ARAMAIC:
+  case G_UNICODE_SCRIPT_INSCRIPTIONAL_PAHLAVI:
+  case G_UNICODE_SCRIPT_INSCRIPTIONAL_PARTHIAN:
+  case G_UNICODE_SCRIPT_JAVANESE:
+  case G_UNICODE_SCRIPT_KAITHI:
+  case G_UNICODE_SCRIPT_LISU:
+  case G_UNICODE_SCRIPT_MEETEI_MAYEK:
+  case G_UNICODE_SCRIPT_OLD_SOUTH_ARABIAN:
+    char_set = DEFAULT_CHARSET;
+    break;
+  default:
+    char_set = DEFAULT_CHARSET;
+  }
+
+  /*
+    0:   'ANSI_CHARSET';
+    1:   'DEFAULT_CHARSET';
+    2:   'SYMBOL_CHARSET';
+    77:  'MAC_CHARSET';
+    128: 'SHIFTJIS_CHARSET';
+    129: 'HANGEUL_CHARSET';
+    130: 'JOHAB_CHARSET';
+    134: 'GB2312_CHARSET';
+    136: 'CHINESEBIG5_CHARSET';
+    161: 'GREEK_CHARSET';
+    162: 'TURKISH_CHARSET';
+    163: 'VIETNAMESE_CHARSET';
+    177: 'HEBREW_CHARSET';
+    178: 'ARABIC_CHARSET';
+    186: 'BALTIC_CHARSET';
+    204: 'RUSSIAN_CHARSET';
+    222: 'THAI_CHARSET';
+    238: 'EASTEUROPE_CHARSET';
+    255: 'OEM_CHARSET ';
+  */
+#if 0
+  {
+    char *script_name;
+    char str[16], *sstr;
+    int l;
+
+    switch (script) {
+    case G_UNICODE_SCRIPT_COMMON:
+      script_name = "G_UNICODE_SCRIPT_COMMON";
+      break;
+    case G_UNICODE_SCRIPT_INHERITED:
+      script_name = "G_UNICODE_SCRIPT_INHERITED";
+      break;
+    case G_UNICODE_SCRIPT_ARABIC:
+      script_name = "G_UNICODE_SCRIPT_ARABIC";
+      break;
+    case G_UNICODE_SCRIPT_ARMENIAN:
+      script_name = "G_UNICODE_SCRIPT_ARMENIAN";
+      break;
+    case G_UNICODE_SCRIPT_BENGALI:
+      script_name = "G_UNICODE_SCRIPT_BENGALI";
+      break;
+    case G_UNICODE_SCRIPT_BOPOMOFO:
+      script_name = "G_UNICODE_SCRIPT_BOPOMOFO";
+      break;
+    case G_UNICODE_SCRIPT_CHEROKEE:
+      script_name = "G_UNICODE_SCRIPT_CHEROKEE";
+      break;
+    case G_UNICODE_SCRIPT_COPTIC:
+      script_name = "G_UNICODE_SCRIPT_COPTIC";
+      break;
+    case G_UNICODE_SCRIPT_CYRILLIC:
+      script_name = "G_UNICODE_SCRIPT_CYRILLIC";
+      break;
+    case G_UNICODE_SCRIPT_DESERET:
+      script_name = "G_UNICODE_SCRIPT_DESERET";
+      break;
+    case G_UNICODE_SCRIPT_DEVANAGARI:
+      script_name = "G_UNICODE_SCRIPT_DEVANAGARI";
+      break;
+    case G_UNICODE_SCRIPT_ETHIOPIC:
+      script_name = "G_UNICODE_SCRIPT_ETHIOPIC";
+      break;
+    case G_UNICODE_SCRIPT_GEORGIAN:
+      script_name = "G_UNICODE_SCRIPT_GEORGIAN";
+      break;
+    case G_UNICODE_SCRIPT_GOTHIC:
+      script_name = "G_UNICODE_SCRIPT_GOTHIC";
+      break;
+    case G_UNICODE_SCRIPT_GREEK:
+      script_name = "G_UNICODE_SCRIPT_GREEK";
+      break;
+    case G_UNICODE_SCRIPT_GUJARATI:
+      script_name = "G_UNICODE_SCRIPT_GUJARATI";
+      break;
+    case G_UNICODE_SCRIPT_GURMUKHI:
+      script_name = "G_UNICODE_SCRIPT_GURMUKHI";
+      break;
+    case G_UNICODE_SCRIPT_HAN:
+      script_name = "G_UNICODE_SCRIPT_HAN";
+      break;
+    case G_UNICODE_SCRIPT_HANGUL:
+      script_name = "G_UNICODE_SCRIPT_HANGUL";
+      break;
+    case G_UNICODE_SCRIPT_HEBREW:
+      script_name = "G_UNICODE_SCRIPT_HEBREW";
+      break;
+    case G_UNICODE_SCRIPT_HIRAGANA:
+      script_name = "G_UNICODE_SCRIPT_HIRAGANA";
+      break;
+    case G_UNICODE_SCRIPT_KANNADA:
+      script_name = "G_UNICODE_SCRIPT_KANNADA";
+      break;
+    case G_UNICODE_SCRIPT_KATAKANA:
+      script_name = "G_UNICODE_SCRIPT_KATAKANA";
+      break;
+    case G_UNICODE_SCRIPT_KHMER:
+      script_name = "G_UNICODE_SCRIPT_KHMER";
+      break;
+    case G_UNICODE_SCRIPT_LAO:
+      script_name = "G_UNICODE_SCRIPT_LAO";
+      break;
+    case G_UNICODE_SCRIPT_LATIN:
+      script_name = "G_UNICODE_SCRIPT_LATIN";
+      break;
+    case G_UNICODE_SCRIPT_MALAYALAM:
+      script_name = "G_UNICODE_SCRIPT_MALAYALAM";
+      break;
+    case G_UNICODE_SCRIPT_MONGOLIAN:
+      script_name = "G_UNICODE_SCRIPT_MONGOLIAN";
+      break;
+    case G_UNICODE_SCRIPT_MYANMAR:
+      script_name = "G_UNICODE_SCRIPT_MYANMAR";
+      break;
+    case G_UNICODE_SCRIPT_OGHAM:
+      script_name = "G_UNICODE_SCRIPT_OGHAM";
+      break;
+    case G_UNICODE_SCRIPT_OLD_ITALIC:
+      script_name = "G_UNICODE_SCRIPT_OLD_ITALIC";
+      break;
+    case G_UNICODE_SCRIPT_ORIYA:
+      script_name = "G_UNICODE_SCRIPT_ORIYA";
+      break;
+    case G_UNICODE_SCRIPT_RUNIC:
+      script_name = "G_UNICODE_SCRIPT_RUNIC";
+      break;
+    case G_UNICODE_SCRIPT_SINHALA:
+      script_name = "G_UNICODE_SCRIPT_SINHALA";
+      break;
+    case G_UNICODE_SCRIPT_SYRIAC:
+      script_name = "G_UNICODE_SCRIPT_SYRIAC";
+      break;
+    case G_UNICODE_SCRIPT_TAMIL:
+      script_name = "G_UNICODE_SCRIPT_TAMIL";
+      break;
+    case G_UNICODE_SCRIPT_TELUGU:
+      script_name = "G_UNICODE_SCRIPT_TELUGU";
+      break;
+    case G_UNICODE_SCRIPT_THAANA:
+      script_name = "G_UNICODE_SCRIPT_THAANA";
+      break;
+    case G_UNICODE_SCRIPT_THAI:
+      script_name = "G_UNICODE_SCRIPT_THAI";
+      break;
+    case G_UNICODE_SCRIPT_TIBETAN:
+      script_name = "G_UNICODE_SCRIPT_TIBETAN";
+      break;
+    case G_UNICODE_SCRIPT_CANADIAN_ABORIGINAL:
+      script_name = "G_UNICODE_SCRIPT_CANADIAN_ABORIGINAL";
+      break;
+    case G_UNICODE_SCRIPT_YI:
+      script_name = "G_UNICODE_SCRIPT_YI";
+      break;
+    case G_UNICODE_SCRIPT_TAGALOG:
+      script_name = "G_UNICODE_SCRIPT_TAGALOG";
+      break;
+    case G_UNICODE_SCRIPT_HANUNOO:
+      script_name = "G_UNICODE_SCRIPT_HANUNOO";
+      break;
+    case G_UNICODE_SCRIPT_BUHID:
+      script_name = "G_UNICODE_SCRIPT_BUHID";
+      break;
+    case G_UNICODE_SCRIPT_TAGBANWA:
+      script_name = "G_UNICODE_SCRIPT_TAGBANWA";
+      break;
+    case G_UNICODE_SCRIPT_BRAILLE:
+      script_name = "G_UNICODE_SCRIPT_BRAILLE";
+      break;
+    case G_UNICODE_SCRIPT_CYPRIOT:
+      script_name = "G_UNICODE_SCRIPT_CYPRIOT";
+      break;
+    case G_UNICODE_SCRIPT_LIMBU:
+      script_name = "G_UNICODE_SCRIPT_LIMBU";
+      break;
+    case G_UNICODE_SCRIPT_OSMANYA:
+      script_name = "G_UNICODE_SCRIPT_OSMANYA";
+      break;
+    case G_UNICODE_SCRIPT_SHAVIAN:
+      script_name = "G_UNICODE_SCRIPT_SHAVIAN";
+      break;
+    case G_UNICODE_SCRIPT_LINEAR_B:
+      script_name = "G_UNICODE_SCRIPT_LINEAR_B";
+      break;
+    case G_UNICODE_SCRIPT_TAI_LE:
+      script_name = "G_UNICODE_SCRIPT_TAI_LE";
+      break;
+    case G_UNICODE_SCRIPT_UGARITIC:
+      script_name = "G_UNICODE_SCRIPT_UGARITIC";
+      break;
+    case G_UNICODE_SCRIPT_NEW_TAI_LUE:
+      script_name = "G_UNICODE_SCRIPT_NEW_TAI_LUE";
+      break;
+    case G_UNICODE_SCRIPT_BUGINESE:
+      script_name = "G_UNICODE_SCRIPT_BUGINESE";
+      break;
+    case G_UNICODE_SCRIPT_GLAGOLITIC:
+      script_name = "G_UNICODE_SCRIPT_GLAGOLITIC";
+      break;
+    case G_UNICODE_SCRIPT_TIFINAGH:
+      script_name = "G_UNICODE_SCRIPT_TIFINAGH";
+      break;
+    case G_UNICODE_SCRIPT_SYLOTI_NAGRI:
+      script_name = "G_UNICODE_SCRIPT_SYLOTI_NAGRI";
+      break;
+    case G_UNICODE_SCRIPT_OLD_PERSIAN:
+      script_name = "G_UNICODE_SCRIPT_OLD_PERSIAN";
+      break;
+    case G_UNICODE_SCRIPT_KHAROSHTHI:
+      script_name = "G_UNICODE_SCRIPT_KHAROSHTHI";
+      break;
+    case G_UNICODE_SCRIPT_UNKNOWN:
+      script_name = "G_UNICODE_SCRIPT_UNKNOWN";
+      break;
+    case G_UNICODE_SCRIPT_BALINESE:
+      script_name = "G_UNICODE_SCRIPT_BALINESE";
+      break;
+    case G_UNICODE_SCRIPT_CUNEIFORM:
+      script_name = "G_UNICODE_SCRIPT_CUNEIFORM";
+      break;
+    case G_UNICODE_SCRIPT_PHOENICIAN:
+      script_name = "G_UNICODE_SCRIPT_PHOENICIAN";
+      break;
+    case G_UNICODE_SCRIPT_PHAGS_PA:
+      script_name = "G_UNICODE_SCRIPT_PHAGS_PA";
+      break;
+    case G_UNICODE_SCRIPT_NKO:
+      script_name = "G_UNICODE_SCRIPT_NKO";
+      break;
+    case G_UNICODE_SCRIPT_KAYAH_LI:
+      script_name = "G_UNICODE_SCRIPT_KAYAH_LI";
+      break;
+    case G_UNICODE_SCRIPT_LEPCHA:
+      script_name = "G_UNICODE_SCRIPT_LEPCHA";
+      break;
+    case G_UNICODE_SCRIPT_REJANG:
+      script_name = "G_UNICODE_SCRIPT_REJANG";
+      break;
+    case G_UNICODE_SCRIPT_SUNDANESE:
+      script_name = "G_UNICODE_SCRIPT_SUNDANESE";
+      break;
+    case G_UNICODE_SCRIPT_SAURASHTRA:
+      script_name = "G_UNICODE_SCRIPT_SAURASHTRA";
+      break;
+    case G_UNICODE_SCRIPT_CHAM:
+      script_name = "G_UNICODE_SCRIPT_CHAM";
+      break;
+    case G_UNICODE_SCRIPT_OL_CHIKI:
+      script_name = "G_UNICODE_SCRIPT_OL_CHIKI";
+      break;
+    case G_UNICODE_SCRIPT_VAI:
+      script_name = "G_UNICODE_SCRIPT_VAI";
+      break;
+    case G_UNICODE_SCRIPT_CARIAN:
+      script_name = "G_UNICODE_SCRIPT_CARIAN";
+      break;
+    case G_UNICODE_SCRIPT_LYCIAN:
+      script_name = "G_UNICODE_SCRIPT_LYCIAN";
+      break;
+    case G_UNICODE_SCRIPT_LYDIAN:
+      script_name = "G_UNICODE_SCRIPT_LYDIAN";
+      break;
+    case G_UNICODE_SCRIPT_AVESTAN:
+      script_name = "G_UNICODE_SCRIPT_AVESTAN";
+      break;
+    case G_UNICODE_SCRIPT_BAMUM:
+      script_name = "G_UNICODE_SCRIPT_BAMUM";
+      break;
+    case G_UNICODE_SCRIPT_EGYPTIAN_HIEROGLYPHS:
+      script_name = "G_UNICODE_SCRIPT_EGYPTIAN_HIEROGLYPHS";
+      break;
+    case G_UNICODE_SCRIPT_IMPERIAL_ARAMAIC:
+      script_name = "G_UNICODE_SCRIPT_IMPERIAL_ARAMAIC";
+      break;
+    case G_UNICODE_SCRIPT_INSCRIPTIONAL_PAHLAVI:
+      script_name = "G_UNICODE_SCRIPT_INSCRIPTIONAL_PAHLAVI";
+      break;
+    case G_UNICODE_SCRIPT_INSCRIPTIONAL_PARTHIAN:
+      script_name = "G_UNICODE_SCRIPT_INSCRIPTIONAL_PARTHIAN";
+      break;
+    case G_UNICODE_SCRIPT_JAVANESE:
+      script_name = "G_UNICODE_SCRIPT_JAVANESE";
+      break;
+    case G_UNICODE_SCRIPT_KAITHI:
+      script_name = "G_UNICODE_SCRIPT_KAITHI";
+      break;
+    case G_UNICODE_SCRIPT_LISU:
+      script_name = "G_UNICODE_SCRIPT_LISU";
+      break;
+    case G_UNICODE_SCRIPT_MEETEI_MAYEK:
+      script_name = "G_UNICODE_SCRIPT_MEETEI_MAYEK";
+      break;
+    case G_UNICODE_SCRIPT_OLD_SOUTH_ARABIAN:
+      script_name = "G_UNICODE_SCRIPT_OLD_SOUTH_ARABIAN";
+      break;
+    default:
+      script_name = "UNKNOWN";
+    }
+
+    l = g_unichar_to_utf8(ch, str);
+    str[l] = '\0';
+    sstr = utf8_to_sjis(str);
+    printf("%s (%d): %s\n", script_name, script, sstr);
+    g_free(sstr);
+  }
+#endif
+
+  return char_set;
+}
+
+static void
+fontmap_append(struct gra2emf_local *local, const char *font_name, struct gra2emf_fontmap *fontmap)
+{
+  struct gra2emf_fontmap *cur;
+
+  if (nhash_get_ptr(local->fontmap, font_name, (void *) &cur)) {
+    nhash_set_ptr(local->fontmap, font_name, fontmap);
+    return;
+  }
+
+  while (cur) {
+    if (cur->next == NULL) {
+      cur->next = fontmap;
+      fontmap->next = NULL;
+      break;
+    }
+    cur = cur->next;
+  }
+}
+
+static void
+check_fonts(struct gra2emf_local *local, HDC hdc, const char *alias, const char *font_name)
+{
+  LOGFONTW logfont;
+  gunichar2 *ustr;
+  struct gra2emf_fontmap *fontmap;
+
+  ustr = g_utf8_to_utf16(font_name, -1, NULL, NULL, NULL);
+
+  logfont.lfCharSet = DEFAULT_CHARSET;
+  logfont.lfPitchAndFamily = 0;
+  wcsncpy(logfont.lfFaceName, ustr, LF_FACESIZE - 1);
+
+  g_free(ustr);
+
+  fontmap = g_malloc0(sizeof(*fontmap));
+  if (fontmap == NULL) {
+    return;
+  }
+
+  fontmap->char_set[0] = -1;
+  fontmap->next = NULL;
+
+  fontmap->name = g_strdup(font_name);
+  if (fontmap->name == NULL) {
+    g_free(fontmap);
+    return;
+  }
+
+  EnumFontFamiliesExW(hdc, &logfont, (FONTENUMPROCW) enum_font_cb, (LPARAM) fontmap, 0);
+
+  fontmap_append(local, alias, fontmap);
+}
 
 static int
 gra2emf_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
@@ -63,8 +614,16 @@ gra2emf_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
     goto errexit;
   }
 
-  if (_putobj(obj, "_local", inst, local))
+  local->fontmap = nhash_new();
+  local->hdc_dummy = CreateDC("DISPLAY", NULL, NULL, NULL);
+  if (local->hdc_dummy == NULL) {
+    g_free(local);
     goto errexit;
+  }
+
+  if (_putobj(obj, "_local", inst, local)) {
+    goto errexit;
+  }
 
   return 0;
 
@@ -72,6 +631,35 @@ gra2emf_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   g_free(local);
 
   return 1;
+}
+
+static void
+free_fontmap_sub(NHASH fontmap, const char *name)
+{
+  struct gra2emf_fontmap *cur, *next;
+
+  if (nhash_get_ptr(fontmap, name, (void *) &cur)) {
+    return;
+  }
+
+  while (cur) {
+    if (cur->name) {
+      g_free(cur->name);
+    }
+    next = cur->next;
+    g_free(cur);
+    cur = next;
+  }
+
+  nhash_del(fontmap, name);
+}
+
+static void
+free_fontmap(NHASH fontmap)
+{
+  free_fontmap_sub(fontmap, "Serif");
+  free_fontmap_sub(fontmap, "Sans-serif");
+  free_fontmap_sub(fontmap, "Monospace");
 }
 
 static int
@@ -88,16 +676,47 @@ gra2emf_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
     return 0;
   }
 
+  DeleteDC(local->hdc_dummy);
+
   if (local->fontalias) {
     g_free(local->fontalias);
     local->fontalias = NULL;
   }
 
+  free_fontmap(local->fontmap);
+  nhash_free(local->fontmap);
+
   return 0;
 }
 
+static void
+add_fontmap(struct gra2emf_local *local, HDC hdc, const char *alias)
+{
+  struct fontmap *font_map;
+
+  font_map = gra2cairo_get_fontmap(alias);
+  if (font_map == NULL) {
+    return;
+  }
+
+  if (font_map->fontname) {
+    check_fonts(local, hdc, alias, font_map->fontname);
+  }
+
+  if (font_map->alternative) {
+    gchar **alternative;
+    int i;
+
+    alternative = g_strsplit(font_map->alternative, ",", 0);
+    for (i = 0; alternative[i]; i++) {
+      check_fonts(local, hdc, alias, alternative[i]);
+    }
+    g_strfreev(alternative);
+  }
+}
+
 static HDC
-open_emf(void)
+open_emf(struct gra2emf_local *local)
 {
   HDC hdc;
   XFORM xform = {1, 0, 0, -1, 0, 0};
@@ -106,6 +725,10 @@ open_emf(void)
   if (hdc == NULL) {
     return NULL;
   }
+
+  add_fontmap(local, hdc, "Serif");
+  add_fontmap(local, hdc, "Sans-serif");
+  add_fontmap(local, hdc, "Monospace");
 
   SetGraphicsMode(hdc, GM_ADVANCED);
   SetMapMode(hdc, MM_HIMETRIC);
@@ -148,13 +771,12 @@ close_emf(HDC hdc, const char *fname)
   }
   DeleteEnhMetaFile(emf);
   DeleteDC(hdc);
-  local->emf = NULL;
 
   return r;
 }
 
 static HFONT
-select_font(struct gra2emf_local *local)
+select_font(struct gra2emf_local *local, const char *fontname, int charset)
 {
   LOGFONTW id_font;
   gunichar2 *ustr;
@@ -167,56 +789,59 @@ select_font(struct gra2emf_local *local)
   id_font.lfStrikeOut = 0;
   id_font.lfWeight = (local->font_style & GRA_FONT_STYLE_BOLD) ? FW_BOLD : FW_NORMAL;
   id_font.lfItalic = (local->font_style & GRA_FONT_STYLE_ITALIC) ? TRUE : FALSE;
-  if (g_ascii_strncasecmp(local->fontalias, "Sans-serif", 5) == 0) {
+
+  if (local->fontalias == NULL) {
     id_font.lfPitchAndFamily = (VARIABLE_PITCH | FF_SWISS);
-    wcscpy(id_font.lfFaceName, L"arial");
+  } else if (g_ascii_strncasecmp(local->fontalias, "Sans-serif", 5) == 0) {
+    id_font.lfPitchAndFamily = (VARIABLE_PITCH | FF_SWISS);
   } else if (g_ascii_strncasecmp(local->fontalias, "Serif", 5) == 0) {
     id_font.lfPitchAndFamily = (VARIABLE_PITCH | FF_ROMAN);
-    wcscpy(id_font.lfFaceName, L"times new roman");
   } else if (g_ascii_strncasecmp(local->fontalias, "Monospace", 7) == 0) {
     id_font.lfPitchAndFamily = (FIXED_PITCH | FF_MODERN);
-    wcscpy(id_font.lfFaceName, L"courier new");
   } else {
     id_font.lfPitchAndFamily = (VARIABLE_PITCH | FF_SWISS);
-    wcscpy(id_font.lfFaceName, L"arial");
   }
 
-  id_font.lfCharSet = SHIFTJIS_CHARSET;
-  id_font.lfCharSet = OEM_CHARSET;
-  id_font.lfCharSet = ANSI_CHARSET;
-  id_font.lfCharSet = DEFAULT_CHARSET;
-
+  id_font.lfCharSet = charset;
   id_font.lfOutPrecision = OUT_DEFAULT_PRECIS;
   id_font.lfClipPrecision = CLIP_STROKE_PRECIS;
   id_font.lfQuality = PROOF_QUALITY;
 
-#if 0
-  ustr = g_utf8_to_utf16(local->loadfont->fontname, -1, NULL, &len, NULL);
+  ustr = g_utf8_to_utf16(fontname, -1, NULL, NULL, NULL);
   wcsncpy(id_font.lfFaceName, ustr, LF_FACESIZE - 1);
-  gfree(ustr);
-#endif
+  g_free(ustr);
+
   id_font.lfFaceName[LF_FACESIZE - 1] = L'\0';
+
   return CreateFontIndirectW(&id_font);
 }
 
 static void
-draw_str(struct gra2emf_local *local, const char *str)
+draw_str_sub(struct gra2emf_local *local, const char *str, const char *fontname, int charset)
 {
-  double cx, cy, red, green, blue, alpha, ratio;
+  double cx, cy;
   gunichar2 *ustr;
   glong len;
   HDC hdc;
-  int r, g, b, space, ret;
   char *utf8_str;
   HFONT font, old_font;
   SIZE str_size;
+  UINT align;
+
+  if (str == NULL || str[0] == '\0') {
+    return;
+  }
 
   hdc = local->hdc;
 
-  SetTextAlign(hdc, TA_BASELINE);
+  align = TA_BASELINE;
+  if (charset == HEBREW_CHARSET || charset == ARABIC_CHARSET) {
+    align |= TA_RTLREADING;
+  }
+  SetTextAlign(hdc, align);
   SetTextCharacterExtra(hdc, local->fontspace);
   SetTextColor(hdc, RGB(local->r, local->g, local->b));
-  font = select_font(local);
+  font = select_font(local, fontname, charset);
   old_font = SelectObject(hdc, font);
 
   SetBkMode(hdc, TRANSPARENT);
@@ -241,6 +866,89 @@ draw_str(struct gra2emf_local *local, const char *str)
   local->y -= str_size.cx * local->fontsin;
 
   g_free(ustr);
+}
+
+static const char *
+check_font_indices(struct gra2emf_local *local, gunichar ch)
+{
+  WORD indices[2];
+  HFONT font, old_font;
+  gunichar str[2];
+  gunichar2 *ustr;
+  struct gra2emf_fontmap *cur;
+  int i;
+
+  str[0] = ch;
+  str[1] = 0;
+
+  if (local->fontalias == NULL) {
+    return NULL;
+  }
+
+  if (nhash_get_ptr(local->fontmap, local->fontalias, (void *) &cur)) {
+    return NULL;
+  }
+
+  ustr = g_ucs4_to_utf16(str, 1, NULL, NULL, NULL);
+  if (ustr == NULL) {
+    return NULL;
+  }
+
+  while (cur) {
+    font = select_font(local, cur->name, ANSI_CHARSET);
+    old_font = SelectObject(local->hdc_dummy, font);
+    GetGlyphIndicesW(local->hdc_dummy, ustr, 1, indices, GGI_MARK_NONEXISTING_GLYPHS);
+    SelectObject(local->hdc_dummy, old_font);
+    DeleteObject(font);
+    if (indices[0] != 0xffff) {
+      g_free(ustr);
+      return cur->name;
+    }
+    cur = cur->next;
+  }
+
+  g_free(ustr);
+  return NULL;
+}
+
+static char *
+draw_str(struct gra2emf_local *local, const char *str)
+{
+  gunichar ch;
+  const char *ptr;
+  GString *sub_str;
+  const char *font, *prev_font;
+  int charset, prev_charset;
+
+  sub_str = g_string_new("");
+  prev_font = NULL;
+
+  for (ptr = str; *ptr; ptr = g_utf8_next_char(ptr)) {
+    ch = g_utf8_get_char(ptr);
+    charset = get_char_set(ch);
+    font = check_font_indices(local, ch);
+    if (font == NULL) {
+      font = "Arial";
+    }
+
+    if (prev_font == NULL) {
+      prev_charset = charset;
+      prev_font = font;
+    } else if (prev_font != font) {
+      draw_str_sub(local, sub_str->str, prev_font, prev_charset);
+      g_string_truncate(sub_str, 0);
+      prev_font = font;
+      prev_charset = charset;
+    }
+
+    if (prev_charset < charset) {
+      prev_charset = charset;
+    }
+
+    g_string_append_unichar(sub_str, ch);
+  }
+  draw_str_sub(local, sub_str->str, prev_font, prev_charset);
+  g_string_free(sub_str, TRUE);
 }
 
 static int
@@ -383,13 +1091,39 @@ draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int
   }
 }
 
+static void
+set_alternative_font(struct gra2emf_local *local, const char *fontname)
+{
+  char *alt_font;
+  struct compatible_font_info *info;
+
+  if (local->fontalias) {
+    g_free(local->fontalias);
+  }
+  local->fontalias = NULL;
+
+  if (fontname == NULL || fontname[0] == '\0') {
+    return;
+  }
+
+  info = gra2cairo_get_compatible_font_info(fontname);
+  if (info == NULL) {
+    local->fontalias = g_strdup(fontname);
+    local->symbol = FALSE;
+    return;
+  }
+
+  local->fontalias = g_strdup(info->name);
+  local->font_style = info->style;
+  local->symbol = info->symbol;
+}
+
 static int
 gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
   char code, *cstr, *tmp, *fname;
   int *cpar, i, r;
-  double x, y, w, h, fontsize,
-    fontspace, fontdir, fontsin, fontcos;
+  double x, y, w, h, fontdir;
   struct gra2emf_local *local;
   HRGN hrgn;
   HBRUSH brush, old_brush;
@@ -403,24 +1137,27 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 
   switch (code) {
   case 'I':
-    local->hdc = open_emf();
+    local->hdc = open_emf(local);
     break;
   case '%': case 'X':
     break;
   case 'E':
-    if (local->hdc == NULL) {
-      //	error2(obj, ERRFOPEN, fname);
-    }
+    r = 0;
     _getobj(obj, "file", inst, &fname);
     if (fname) {
       fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
     }
-    r = close_emf(local->hdc, fname);
+    if (local->hdc) {
+      r = close_emf(local->hdc, fname);
+    } else {
+      error(obj, ERREMF);
+    }
     if (fname) {
       g_free(fname);
     }
+    free_fontmap(local->fontmap);
     if (r) {
-      //	error2(obj, ERRFOPEN, (fname) ? fname : "clipboard
+      error(obj, ERREMF);
       return 1;
     }
     break;
@@ -560,23 +1297,18 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
     MoveToEx(local->hdc, local->x, local->y, NULL);
     break;
   case 'F':
-    g_free(local->fontalias);
-    local->fontalias = g_strdup(cstr);
+    set_alternative_font(local, cstr);
     break;
   case 'H':
-    fontspace = cpar[2] / 72.0 * 25.4;
-    local->fontspace = fontspace;
-    fontsize = cpar[1] / 72.0 * 25.4;
-    local->fontsize = fontsize;
+    local->fontspace = cpar[2] / 72.0 * 25.4;
+    local->fontsize = cpar[1] / 72.0 * 25.4;
     fontdir = cpar[3] * MPI / 18000.0;
-    fontsin = sin(fontdir);
-    fontcos = cos(fontdir);
     local->fontdir = (cpar[3] % 36000) / 100.0;
     if (local->fontdir < 0) {
       local->fontdir += 360;
     }
-    local->fontsin = fontsin;
-    local->fontcos = fontcos;
+    local->fontsin = sin(fontdir);
+    local->fontcos = cos(fontdir);
     local->font_style = (cpar[0] > 3) ? cpar[4] : 0;
     break;
   case 'S':
