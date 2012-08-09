@@ -4,9 +4,13 @@ TMPFILE=ngraph_tmp
 PKG_DIR=$HOMEDRIVE/ngraph-gtk
 WIN_PATH=mingw
 
+DEFS="-D GDK_VERSION_MIN_REQUIRED=${GDK_VERSION} -D GLIB_VERSION_MIN_REQUIRED=${GLIB_VERSION} -D_FORTIFY_SOURCE -DGTK_DISABLE_DEPRECATED=1 -DGDK_DISABLE_DEPRECATED=1 -DGDK_PIXBUF_DISABLE_DEPRECATED=1 -DG_DISABLE_DEPRECATED=1 -DGTK_DISABLE_SINGLE_INCLUDES=1 -DG_DISABLE_SINGLE_INCLUDES=1 -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES=1 -DGSL_DISABLE_DEPRECATED=1"
+
+CCOPT="-march=i686 -Wall -Wextra -Wpointer-arith -Wstrict-aliasing -Wno-unused-parameter -Wno-missing-field-initializers -Wdeprecated-declarations -g"
+
 (cd $WIN_PATH; windres -o ../src/windows_resource.o windows_resource.rc)
 
-./configure --prefix=$PKG_DIR --libexecdir=$PKG_DIR/lib
+CFLAGS="$DEFS $CCOPT" ./configure --prefix=$PKG_DIR --libexecdir=$PKG_DIR/lib
 
 for makefile in `find -name Makefile`
 do

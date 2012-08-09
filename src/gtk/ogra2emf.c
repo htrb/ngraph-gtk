@@ -29,7 +29,7 @@
 #define DEFAULT_FONT "Sans-serif"
 
 #ifndef MPI
-#define MPI 3.141592
+#define MPI 3.14159265358979323846
 #endif
 
 #define ERRFOPEN 100
@@ -56,15 +56,18 @@ struct gra2emf_local {
   int r, g, b, x, y, offsetx, offsety;
   char *fontalias;
   int font_style, line_join, line_cap, line_width, line_style_num, symbol;
+  int update_pen_attribute, update_brush_attribute;
   double fontdir, fontcos, fontsin, fontspace, fontsize;
   DWORD *line_style;
+  struct narray line;
   NHASH fontmap;
+  HPEN null_pen, the_pen;
+  HBRUSH the_brush;
 };
 
 static int
 enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, LPARAM lParam)
 {
-  char *name, *style, *script, *tmp;
   int char_set, i;
   struct gra2emf_fontmap *fontmap;
 
@@ -78,7 +81,7 @@ enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, L
 
   fontmap = (struct gra2emf_fontmap *) lParam;
   if (fontmap == NULL) {
-    return;
+    return 1;
   }
 
   char_set = lpntme->ntmTm.tmCharSet;
@@ -595,9 +598,10 @@ check_fonts(struct gra2emf_local *local, HDC hdc, const char *alias, const char 
     return;
   }
 
-  EnumFontFamiliesExW(hdc, &logfont, (FONTENUMPROCW) enum_font_cb, (LPARAM) fontmap, 0);
-
   fontmap_append(local, alias, fontmap);
+   /* fontmap_append() should be called befor EnumFontFamiliesExW() when compiled with -O2 option */
+
+  EnumFontFamiliesExW(hdc, &logfont, (FONTENUMPROCW) enum_font_cb, (LPARAM) fontmap, 0);
 }
 
 static int
@@ -624,6 +628,9 @@ gra2emf_init(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
   if (_putobj(obj, "_local", inst, local)) {
     goto errexit;
   }
+
+  local->null_pen = CreatePen(PS_NULL, 0, RGB(0, 0, 0));
+  arrayinit(&local->line, sizeof(int));
 
   return 0;
 
@@ -676,12 +683,18 @@ gra2emf_done(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char *
     return 0;
   }
 
+  if (local->null_pen) {
+    DeleteObject(local->null_pen);
+  }
+
   DeleteDC(local->hdc_dummy);
 
   if (local->fontalias) {
     g_free(local->fontalias);
     local->fontalias = NULL;
   }
+
+  arraydel(&local->line);
 
   free_fontmap(local->fontmap);
   nhash_free(local->fontmap);
@@ -715,7 +728,7 @@ add_fontmap(struct gra2emf_local *local, HDC hdc, const char *alias)
   }
 }
 
-static HDC
+static int
 open_emf(struct gra2emf_local *local)
 {
   HDC hdc;
@@ -723,7 +736,7 @@ open_emf(struct gra2emf_local *local)
 
   hdc = CreateEnhMetaFile(NULL, NULL, NULL, NULL);
   if (hdc == NULL) {
-    return NULL;
+    return 1;
   }
 
   add_fontmap(local, hdc, "Serif");
@@ -737,19 +750,44 @@ open_emf(struct gra2emf_local *local)
   SetArcDirection(hdc, AD_COUNTERCLOCKWISE);
   StartPage(hdc);
 
-  return hdc;
+  local->update_pen_attribute = TRUE;
+  local->update_brush_attribute = TRUE;
+  local->the_brush = NULL;
+  local->the_pen = NULL;
+
+  local->hdc = hdc;
+
+  return 0;
 }
 
 static int
-close_emf(HDC hdc, const char *fname)
+close_emf(struct gra2emf_local *local, const char *fname)
 {
   HENHMETAFILE emf;
   int r;
+  HPEN pen;
+  HBRUSH brush;
+
+  if (local->hdc == NULL) {
+    return 1;
+  }
 
   r = 1;
 
-  EndPage(hdc);
-  emf = CloseEnhMetaFile(hdc);
+  if (local->the_pen) {
+    pen = SelectObject(local->hdc, local->the_pen);
+    DeleteObject(pen);
+    local->the_pen = NULL;
+  }
+
+  if (local->the_brush) {
+    brush = SelectObject(local->hdc, local->the_brush);
+    DeleteObject(brush);
+    local->the_brush = NULL;
+  }
+
+  EndPage(local->hdc);
+  emf = CloseEnhMetaFile(local->hdc);
   if (emf == NULL) {
     return 1;
   }
@@ -770,7 +808,10 @@ close_emf(HDC hdc, const char *fname)
     }
   }
   DeleteEnhMetaFile(emf);
-  DeleteDC(hdc);
+  DeleteDC(local->hdc);
+  local->hdc = NULL;
+
+  free_fontmap(local->fontmap);
 
   return r;
 }
@@ -816,10 +857,36 @@ select_font(struct gra2emf_local *local, const char *fontname, int charset)
   return CreateFontIndirectW(&id_font);
 }
 
+void
+draw_text_rect(struct gra2emf_local *local, int w, int h)
+{
+  POINT pos[4];
+  HGDIOBJ brush, old_brush;
+
+  pos[0].x = local->x - h * local->fontsin;
+  pos[0].y = local->y - h * local->fontcos;
+
+  pos[1].x = local->x;
+  pos[1].y = local->y;
+
+  pos[2].x = local->x + w * local->fontcos;
+  pos[2].y = local->y - w * local->fontsin;
+
+  pos[3].x = local->x + w * local->fontcos - h * local->fontsin;
+  pos[3].y = local->y - w * local->fontsin - h * local->fontcos;
+
+  brush = GetStockObject(NULL_BRUSH);
+  old_brush = SelectObject(local->hdc, brush);
+  BeginPath(local->hdc);
+  Polygon(local->hdc, pos, 4);
+  EndPath(local->hdc);
+  FillPath(local->hdc);
+  SelectObject(local->hdc, old_brush);
+}
+
 static void
 draw_str_sub(struct gra2emf_local *local, const char *str, const char *fontname, int charset)
 {
-  double cx, cy;
   gunichar2 *ustr;
   glong len;
   HDC hdc;
@@ -838,13 +905,11 @@ draw_str_sub(struct gra2emf_local *local, const char *str, const char *fontname,
   if (charset == HEBREW_CHARSET || charset == ARABIC_CHARSET) {
     align |= TA_RTLREADING;
   }
-  SetTextAlign(hdc, align);
   SetTextCharacterExtra(hdc, local->fontspace);
   SetTextColor(hdc, RGB(local->r, local->g, local->b));
   font = select_font(local, fontname, charset);
   old_font = SelectObject(hdc, font);
-
-  SetBkMode(hdc, TRANSPARENT);
+  SetTextAlign(hdc, align);
 
   utf8_str = gra2cairo_get_utf8_str(str, local->symbol);
   ustr = g_utf8_to_utf16(utf8_str, -1, NULL, &len, NULL);
@@ -862,6 +927,8 @@ draw_str_sub(struct gra2emf_local *local, const char *str, const char *fontname,
   SelectObject(hdc, old_font);
   DeleteObject(font);
 
+  draw_text_rect(local, str_size.cx, str_size.cy);
+
   local->x += str_size.cx * local->fontcos;
   local->y -= str_size.cx * local->fontsin;
 
@@ -876,7 +943,7 @@ check_font_indices(struct gra2emf_local *local, gunichar ch)
   gunichar str[2];
   gunichar2 *ustr;
   struct gra2emf_fontmap *cur;
-  int i;
+  DWORD r;
 
   str[0] = ch;
   str[1] = 0;
@@ -897,10 +964,11 @@ check_font_indices(struct gra2emf_local *local, gunichar ch)
   while (cur) {
     font = select_font(local, cur->name, ANSI_CHARSET);
     old_font = SelectObject(local->hdc_dummy, font);
-    GetGlyphIndicesW(local->hdc_dummy, ustr, 1, indices, GGI_MARK_NONEXISTING_GLYPHS);
+    r = GetGlyphIndicesW(local->hdc_dummy, ustr, 1, indices, GGI_MARK_NONEXISTING_GLYPHS);
     SelectObject(local->hdc_dummy, old_font);
     DeleteObject(font);
-    if (indices[0] != 0xffff) {
+
+    if (r != GDI_ERROR && indices[0] != 0xffff) {
       g_free(ustr);
       return cur->name;
     }
@@ -911,7 +979,7 @@ check_font_indices(struct gra2emf_local *local, gunichar ch)
   return NULL;
 }
 
-static char *
+static void
 draw_str(struct gra2emf_local *local, const char *str)
 {
   gunichar ch;
@@ -922,6 +990,7 @@ draw_str(struct gra2emf_local *local, const char *str)
 
   sub_str = g_string_new("");
   prev_font = NULL;
+  prev_charset = DEFAULT_CHARSET;
 
   for (ptr = str; *ptr; ptr = g_utf8_next_char(ptr)) {
     ch = g_utf8_get_char(ptr);
@@ -969,9 +1038,13 @@ static void
 create_pen(struct gra2emf_local *local)
 {
   HPEN old;
-  DWORD *line_style, line_attr;
+  DWORD line_attr;
   LOGBRUSH log_brush;
   HPEN pen;
+
+  if (! local->update_pen_attribute) {
+    return;
+  }
 
   line_attr = PS_GEOMETRIC;
   switch (local->line_cap) {
@@ -1005,22 +1078,50 @@ create_pen(struct gra2emf_local *local)
   log_brush.lbColor = RGB(local->r, local->g, local->b);
   pen = ExtCreatePen(line_attr, local->line_width, &log_brush, local->line_style_num, local->line_style);
   old = SelectObject(local->hdc, pen);
-  DeleteObject(old);
+  if (local->the_pen) {
+    DeleteObject(old);
+  } else {
+    local->the_pen = old;
+  }
+  local->update_pen_attribute = FALSE;
+}
+
+static void
+create_brush(struct gra2emf_local *local)
+{
+  HBRUSH brush, old_brush;
+
+  if (! local->update_brush_attribute) {
+    return;
+  }
+
+  brush = CreateSolidBrush(RGB(local->r, local->g, local->b));
+  old_brush = SelectObject(local->hdc, brush);
+  if (local->the_brush) {
+    DeleteObject(old_brush);
+  } else {
+    local->the_brush = old_brush;
+  }
+  local->update_brush_attribute = FALSE;
 }
 
 static void
 draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int angle, int style)
 {
   double a1, a2;
+  HPEN old_pen;
 
   if (angle == 0) {
     return;
   }
 
   if (angle % 36000 == 0 && (style == 1 || style == 2)) {
+    create_brush(local);
+    old_pen = SelectObject(local->hdc, local->null_pen);
     Ellipse(local->hdc,
 	    x - w, y - h,
 	    x + w, y + h);
+    SelectObject(local->hdc, old_pen);
     return;
   }
 
@@ -1029,6 +1130,8 @@ draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int
 
   switch (style) {
   case 1:
+    create_brush(local);
+    old_pen = SelectObject(local->hdc, local->null_pen);
     Pie(local->hdc,
 	x - w, y - h,
 	x + w, y + h,
@@ -1037,8 +1140,11 @@ draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int
 	x + w * cos(a2),
 	y - h * sin(a2)
 	);
+    SelectObject(local->hdc, old_pen);
     break;
   case 2:
+    create_brush(local);
+    old_pen = SelectObject(local->hdc, local->null_pen);
     Chord(local->hdc,
 	  x - w, y - h,
 	  x + w, y + h,
@@ -1046,8 +1152,10 @@ draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int
 	  y - h * sin(a1),
 	  x + w * cos(a2),
 	  y - h * sin(a2));
+    SelectObject(local->hdc, old_pen);
     break;
   case 3:
+    create_pen(local);
     MoveToEx(local->hdc, x, y, NULL);
     BeginPath(local->hdc);
     ArcTo(local->hdc,
@@ -1061,9 +1169,9 @@ draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int
     CloseFigure(local->hdc);
     EndPath(local->hdc);
     StrokePath(local->hdc);
-    MoveToEx(local->hdc, local->x, local->y, NULL);
     break;
   case 4:
+    create_pen(local);
     BeginPath(local->hdc);
     Arc(local->hdc,
 	x - w, y - h,
@@ -1076,9 +1184,9 @@ draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int
     CloseFigure(local->hdc);
     EndPath(local->hdc);
     StrokePath(local->hdc);
-    MoveToEx(local->hdc, local->x, local->y, NULL);
     break;
   default: 
+    create_pen(local);
     Arc(local->hdc,
 	x - w, y - h,
 	x + w, y + h,
@@ -1094,7 +1202,6 @@ draw_arc(struct gra2emf_local *local, int x, int y, int w, int h, int start, int
 static void
 set_alternative_font(struct gra2emf_local *local, const char *fontname)
 {
-  char *alt_font;
   struct compatible_font_info *info;
 
   if (local->fontalias) {
@@ -1118,6 +1225,208 @@ set_alternative_font(struct gra2emf_local *local, const char *fontname)
   local->symbol = info->symbol;
 }
 
+#define DO_NOT_USE_PATH 1
+
+static void
+draw_rectangle(struct gra2emf_local *local, int x1, int y1, int x2, int y2, int fill)
+{
+  x1 += local->offsetx;
+  y1 += local->offsety;
+  x2 += local->offsetx;
+  y2 += local->offsety;
+
+#if DO_NOT_USE_PATH
+  if (fill) {
+    HPEN old_pen;
+
+    create_brush(local);
+    old_pen = SelectObject(local->hdc, local->null_pen);
+    Rectangle(local->hdc, x1, y1, x2, y2);
+    SelectObject(local->hdc, old_pen);
+  } else {
+    HBRUSH old_brush;
+
+    create_pen(local);
+    old_brush = SelectObject(local->hdc, GetStockObject(NULL_BRUSH));
+    Rectangle(local->hdc, x1, y1, x2, y2);
+    SelectObject(local->hdc, old_brush);
+  }
+#else  /* DO_NOT_USE_PATH */
+  if (fill) {
+    create_brush(local);
+  } else {
+    create_pen(local);
+  }
+
+  BeginPath(local->hdc);
+  MoveToEx(local->hdc, x1, y1, NULL);
+  LineTo(local->hdc, x1, y2);
+  LineTo(local->hdc, x2, y2);
+  LineTo(local->hdc, x2, y1);
+  CloseFigure(local->hdc);
+  EndPath(local->hdc);
+  if (fill) {
+    FillPath(local->hdc);
+  } else {
+    StrokePath(local->hdc);
+  }
+#endif	/* DO_NOT_USE_PATH */
+}
+
+static void
+draw_polygon(struct gra2emf_local *local, int n, int *points, int fill)
+{
+  int i;
+#if DO_NOT_USE_PATH
+  HPEN old_pen;
+  HBRUSH old_brush;
+  POINT *pos;
+
+  if (n < 2) {
+    return;
+  }
+
+  pos = g_malloc(sizeof(*pos) * n);
+  if (pos == NULL) {
+    return;
+  }
+
+  for (i = 0; i < n; i++) {
+    pos[i].x = points[i * 2] + local->offsetx;
+    pos[i].y = points[i * 2 + 1] + local->offsety;
+  }
+
+  switch (fill) {
+  case 0:
+    create_pen(local);
+    old_brush = SelectObject(local->hdc, GetStockObject(NULL_BRUSH));
+    Polygon(local->hdc, pos, n);
+    SelectObject(local->hdc, old_brush);
+    break;
+  case 1:
+    create_brush(local);
+    SetPolyFillMode(local->hdc, ALTERNATE);
+    old_pen = SelectObject(local->hdc, local->null_pen);
+    Polygon(local->hdc, pos, n);
+    SelectObject(local->hdc, old_pen);
+    break;
+  case 2:
+    create_brush(local);
+    SetPolyFillMode(local->hdc, WINDING);
+    old_pen = SelectObject(local->hdc, local->null_pen);
+    Polygon(local->hdc, pos, n);
+    SelectObject(local->hdc, old_pen);
+    break;
+  }
+#else  /* DO_NOT_USE_PATH */
+  if (n < 2) {
+    return;
+  }
+
+  switch (fill) {
+  case 0:
+    create_pen(local);
+    break;
+  case 1:
+    create_brush(local);
+    SetPolyFillMode(local->hdc, ALTERNATE);
+    break;
+  case 2:
+    create_brush(local);
+    SetPolyFillMode(local->hdc, WINDING);
+    break;
+  }
+
+  BeginPath(local->hdc);
+  MoveToEx(local->hdc, points[0] + local->offsetx, points[1] + local->offsety, NULL); 
+  for (i = 1; i < n; i++) {
+    LineTo(local->hdc,
+	   points[i * 2] + local->offsetx,
+	   points[i * 2 + 1] + local->offsety);
+  }
+  CloseFigure(local->hdc);
+  EndPath(local->hdc);
+
+  switch (fill) {
+  case 0:
+    StrokePath(local->hdc);
+    break;
+  case 1:
+  case 2:
+    FillPath(local->hdc);
+    break;
+  }
+#endif	/* DO_NOT_USE_PATH */
+}
+
+static void
+draw_polyline(struct gra2emf_local *local, int n, int *points)
+{
+  int i;
+#if DO_NOT_USE_PATH
+  POINT *pos;
+
+  if (n < 2) {
+    return;
+  }
+
+  pos = g_malloc(sizeof(*pos) * n);
+  if (pos == NULL) {
+    return;
+  }
+
+  for (i = 0; i < n; i++) {
+    pos[i].x = points[i * 2] + local->offsetx;
+    pos[i].y = points[i * 2 + 1] + local->offsety;
+  }
+
+  create_pen(local);
+  Polyline(local->hdc, pos, n);
+#else  /* DO_NOT_USE_PATH */
+  if (n < 2) {
+    return;
+  }
+
+  create_pen(local);
+  MoveToEx(local->hdc, points[0] + local->offsetx, points[1] + local->offsety, NULL);
+  for (i = 1; i < n; i++) {
+    LineTo(local->hdc,
+	   points[i * 2 + 0] + local->offsetx,
+	   points[i * 2 + 1] + local->offsety);
+  }
+#endif	/* DO_NOT_USE_PATH */
+}
+
+static void
+draw_lines(struct gra2emf_local *local)
+{
+  POINT *pos;
+  int i, n, *data;
+
+  n = arraynum(&local->line) / 2;
+  if (n < 2) {
+    arrayclear(&local->line);
+    return;
+  }
+
+  data = arraydata(&local->line);
+
+  pos = g_malloc(sizeof(*pos) * n);
+  if (pos == NULL) {
+    return;
+  }
+
+  for (i = 0; i < n; i++) {
+    pos[i].x = data[i * 2];
+    pos[i].y = data[i * 2 + 1];
+  }
+
+  create_pen(local);
+  Polyline(local->hdc, pos, n);
+
+  arrayclear(&local->line);
+}
+
 static int
 gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char **argv)
 {
@@ -1125,8 +1434,6 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   int *cpar, i, r;
   double x, y, w, h, fontdir;
   struct gra2emf_local *local;
-  HRGN hrgn;
-  HBRUSH brush, old_brush;
   DWORD *line_style;
   POINT lpoint[2];
 
@@ -1135,9 +1442,20 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   cpar = (int *)argv[4];
   cstr = argv[5];
 
+  if (code != 'I' && local->hdc == NULL) {
+    return 1;
+  }
+
+  if (code != 'T') {
+    draw_lines(local);
+  }
+
   switch (code) {
   case 'I':
-    local->hdc = open_emf(local);
+    if (open_emf(local)) {
+      error(obj, ERREMF);
+      return 1;
+    }
     break;
   case '%': case 'X':
     break;
@@ -1147,15 +1465,10 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
     if (fname) {
       fname = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
     }
-    if (local->hdc) {
-      r = close_emf(local->hdc, fname);
-    } else {
-      error(obj, ERREMF);
-    }
+    r = close_emf(local, fname);
     if (fname) {
       g_free(fname);
     }
-    free_fontmap(local->fontmap);
     if (r) {
       error(obj, ERREMF);
       return 1;
@@ -1164,11 +1477,13 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   case 'V':
     local->offsetx = cpar[1];
     local->offsety = cpar[2];
-    SelectClipRgn(local->hdc, NULL);
     if (cpar[5]) {
-      hrgn = CreateRectRgn(cpar[1], cpar[2], cpar[3], cpar[4]);
-      SelectClipRgn(local->hdc, hrgn);
-      DeleteObject(hrgn);
+      BeginPath(local->hdc);
+      Rectangle(local->hdc,cpar[1], cpar[2], cpar[3], cpar[4]);
+      EndPath(local->hdc);
+      SelectClipPath(local->hdc, RGN_COPY);
+    } else {
+      SelectClipRgn(local->hdc, NULL);
     }
     break;
   case 'A':
@@ -1190,38 +1505,46 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
     local->line_width = cpar[2];
     local->line_cap = cpar[3];
     local->line_join = cpar[4];
-    create_pen(local);
+    SetMiterLimit(local->hdc, cpar[5] / 100.0, NULL);
+    local->update_pen_attribute = TRUE;
     break;
   case 'G':
     local->r = cpar[1];
     local->g = cpar[2];
     local->b = cpar[3];
-    brush = CreateSolidBrush(RGB(local->r, local->g, local->b));
-    old_brush = SelectObject(local->hdc, brush);
-    DeleteObject(old_brush);
-    create_pen(local);
+    local->update_pen_attribute = TRUE;
+    local->update_brush_attribute = TRUE;
     break;
   case 'M':
     local->x = cpar[1] + local->offsetx;
     local->y = cpar[2] + local->offsety;
-    MoveToEx(local->hdc, local->x, local->y, NULL);
     break;
   case 'N':
     local->x += cpar[1];
     local->y += cpar[2];
-    MoveToEx(local->hdc, local->x, local->y, NULL);
     break;
   case 'L':
     lpoint[0].x = cpar[1] + local->offsetx;
     lpoint[0].y = cpar[2] + local->offsety;
     lpoint[1].x = cpar[3] + local->offsetx;
     lpoint[1].y = cpar[4] + local->offsety;
+    create_pen(local);
     Polyline(local->hdc, lpoint, 2);
- break;
+    break;
   case 'T':
+    /*
+      it seems that the function LineTo() cannot handle dotted line
+       correctly when the points exist very closely.
+    */
+    if (arraynum(&local->line) < 1) {
+      arrayclear(&local->line);
+      arrayadd(&local->line, &local->x);
+      arrayadd(&local->line, &local->y);
+    }
     local->x = cpar[1] + local->offsetx;
     local->y = cpar[2] + local->offsety;
-    LineTo(local->hdc, local->x, local->y);
+    arrayadd(&local->line, &local->x);
+    arrayadd(&local->line, &local->y);
     break;
   case 'C':
     x = cpar[1] + local->offsetx;
@@ -1231,25 +1554,7 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
     draw_arc(local, x, y, w, h, cpar[5], cpar[6], cpar[7]);
     break;
   case 'B':
-    BeginPath(local->hdc);
-    MoveToEx(local->hdc, cpar[1] + local->offsetx, cpar[2] + local->offsety, NULL);
-    LineTo(local->hdc,
-	   cpar[1] + local->offsetx,
-	   cpar[4] + local->offsety);
-    LineTo(local->hdc,
-	   cpar[3] + local->offsetx,
-	   cpar[4] + local->offsety);
-    LineTo(local->hdc,
-	   cpar[3] + local->offsetx,
-	   cpar[2] + local->offsety);
-    CloseFigure(local->hdc);
-    EndPath(local->hdc);
-    if (cpar[5]) {
-      FillPath(local->hdc);
-    } else {
-      StrokePath(local->hdc);
-    }
-    MoveToEx(local->hdc, local->x, local->y, NULL);
+    draw_rectangle(local, cpar[1], cpar[2], cpar[3], cpar[4], cpar[5]);
     break;
   case 'P':
     SetPixel(local->hdc,
@@ -1257,44 +1562,10 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
 	     RGB(local->r, local->g, local->b));
     break;
   case 'R':
-    if (cpar[1] == 0)
-      break;
-
-    MoveToEx(local->hdc, cpar[2] + local->offsetx, cpar[3] + local->offsety, NULL);
-    for (i = 1; i < cpar[1]; i++) {
-      LineTo(local->hdc,
-	     cpar[i * 2 + 0] + local->offsetx,
-	     cpar[i * 2 + 2] + local->offsety);
-    }
-    MoveToEx(local->hdc, local->x, local->y, NULL);
+    draw_polyline(local, cpar[1], cpar + 2);
     break;
   case 'D':
-    if (cpar[1] == 0)
-      break;
-
-    BeginPath(local->hdc);
-    MoveToEx(local->hdc, cpar[3] + local->offsetx, cpar[4] + local->offsety, NULL); 
-    for (i = 1; i < cpar[1]; i++) {
-      LineTo(local->hdc,
-	     cpar[i * 2 + 1] + local->offsetx,
-	     cpar[i * 2 + 2] + local->offsety);
-    }
-    CloseFigure(local->hdc);
-    EndPath(local->hdc);
-    switch (cpar[2]) {
-    case 0:
-      StrokePath(local->hdc);
-      break;
-    case 1:
-      SetPolyFillMode(local->hdc, ALTERNATE);
-      FillPath(local->hdc);
-      break;
-    case 2:
-      SetPolyFillMode(local->hdc, WINDING);
-      FillPath(local->hdc);
-      break;
-    }
-    MoveToEx(local->hdc, local->x, local->y, NULL);
+    draw_polygon(local, cpar[1], cpar + 3, cpar[2]);
     break;
   case 'F':
     set_alternative_font(local, cstr);
@@ -1302,7 +1573,7 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   case 'H':
     local->fontspace = cpar[2] / 72.0 * 25.4;
     local->fontsize = cpar[1] / 72.0 * 25.4;
-    fontdir = cpar[3] * MPI / 18000.0;
+    fontdir = cpar[3] * (MPI / 18000.0);
     local->fontdir = (cpar[3] % 36000) / 100.0;
     if (local->fontdir < 0) {
       local->fontdir += 360;
@@ -1327,7 +1598,7 @@ gra2emf_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval, int argc, char
   return 0;
 }
 
-  static struct objtable gra2emf[] = {
+static struct objtable gra2emf[] = {
   {"init",    NVFUNC, NEXEC, gra2emf_init, NULL, 0},
   {"done",    NVFUNC, NEXEC, gra2emf_done, NULL, 0},
   {"next",    NPOINTER, 0, NULL, NULL, 0},

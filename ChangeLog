@@ -1,3 +1,49 @@
+2012-08-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2emf.c (gra2emf_local): add members
+	"update_pen_attribute", "update_brush_attribute", "line",
+	"null_pen", "the_pen" and "the_brush".
+	(gra2emf_init): initialize "null_pen" and "line".
+	(gra2emf_done): finalize "null_pen" and "line".
+	(open_emf): initialize "update_pen_attribute",
+	"update_brush_attribute", "null_pen", "the_pen" and "the_brush".
+	(close_emf): finalize "update_pen_attribute",
+	"update_brush_attribute", "null_pen", "the_pen" and "the_brush".
+	(create_pen): create object only when
+	"local->update_pen_attribute" is TRUE.
+	(create_brush): added.
+	(draw_polygon, draw_polyline, draw_lines): added.
+	(gra2emf_output): use "draw_polygon()", "draw_polyline()" and
+	"draw_lines()".
+
+	* src/gtk/main.c (check_console): remove unused variable "menu".
+
+	* src/shell.c (cmdexec): remove unused variable "r" (Windows
+	only).
+
+	* mingw/windows.sh (DEFS, CCOPT): add compile options.
+
+	* src/gtk/x11menu.c (create_sub_windows): file window, axis
+	window, legend window and merge window must be created in this
+	function.
+	(kill_signal_handler, term_signal_handler): not used when the OS
+	is Windows.
+
+2012-08-08  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2emf.c (draw_text_rect, draw_rectangle): added.
+	(draw_str_sub): don't call "SetBkMode()".
+	(draw_str_sub): call "draw_text_rect()".
+	(check_font_indices): check return value of the function
+	"GetGlyphIndicesW()".
+	(gra2emf_output): use "SelectClipPath()" instead of
+	"SelectClipRgn()".
+	(gra2emf_output): use "draw_rectangle()".
+	(gra2emf_output): call "SetPolyFillMode()" before drawing path.
+
+	* initfile/Ngraph.ini.win (font): use "batangche" instead of
+	"gulimche" for "Serif" font.
+
 2012-08-07  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* driver/ngp2.in: remove EMF output.

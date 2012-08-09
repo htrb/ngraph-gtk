@@ -3851,7 +3851,6 @@ cmdexec(struct nshell *nshell,struct cmdlist *cmdroot,int namedfunc)
 		{
 		  GThread *thread;
 		  char *ptr, *cmd;
-		  int r;
 
 		  ptr = quote_args(argv);
 		  if (ptr == NULL) {

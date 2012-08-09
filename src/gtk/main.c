@@ -310,7 +310,6 @@ static HWND ConsoleHandle = NULL;
 static int
 check_console(int allocconsole)
 {
-  HMENU menu;
   DWORD console_pid;
   pid_t pid;
 

@@ -337,7 +337,6 @@ gra2cairofile_output(struct objlist *obj, N_VALUE *inst, N_VALUE *rval,
 	break;
 #ifdef CAIRO_HAS_WIN32_SURFACE
       case TYPE_EMF:
-	if (format == TYPE_EMF) {
 	gra2cairo_draw_path(local);
 	surface = cairo_get_target(local->cairo);
 	r = close_emf(surface);

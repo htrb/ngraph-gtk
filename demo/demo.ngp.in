@@ -20,7 +20,7 @@ sarray::add "Demo #5_B: MARK"
 sarray::add "Demo #5_C: TEXT"
 sarray::add "Demo #5_D: CURVE"
 sarray::add "Demo #5_E: AXIS"
-sarray::add "Demo #_6: CONTOUR GRAPH"
+sarray::add "Demo #_6: POLYGON PLOT"
 sarray::add "_Quit demo"
 
 caption="'${sarray::join="' '"}'"

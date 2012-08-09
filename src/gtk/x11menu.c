@@ -1864,6 +1864,7 @@ set_draw_lock(int lock)
   DrawLock = lock;
 }
 
+#ifndef WINDOWS
 static void
 kill_signal_handler(int sig)
 {
@@ -1875,6 +1876,7 @@ term_signal_handler(int sig)
 {
   Hide_window = APP_QUIT_FORCE;
 }
+#endif	/* WINDOWS */
 
 static int
 AppMainLoop(void)
@@ -2753,20 +2755,24 @@ create_sub_windows(void)
     window_action_set_active(TypeCoordWin, TRUE);
   }
 
-  if (Menulocal.mergeopen) {
-    window_action_set_active(TypeMergeWin, TRUE);
+  window_action_set_active(TypeMergeWin, TRUE);
+  if (! Menulocal.mergeopen) {
+    window_action_set_active(TypeMergeWin, FALSE);
   }
 
-  if (Menulocal.legendopen) {
-    window_action_set_active(TypeLegendWin, TRUE);
+  window_action_set_active(TypeLegendWin, TRUE);
+  if (! Menulocal.legendopen) {
+    window_action_set_active(TypeLegendWin, FALSE);
   }
 
-  if (Menulocal.axisopen) {
-    window_action_set_active(TypeAxisWin, TRUE);
+  window_action_set_active(TypeAxisWin, TRUE);
+  if (! Menulocal.axisopen) {
+    window_action_set_active(TypeAxisWin, FALSE);
   }
 
-  if (Menulocal.fileopen) {
-    window_action_set_active(TypeFileWin, TRUE);
+  window_action_set_active(TypeFileWin, TRUE);
+  if (! Menulocal.fileopen) {
+    window_action_set_active(TypeFileWin, FALSE);
   }
 }
 
