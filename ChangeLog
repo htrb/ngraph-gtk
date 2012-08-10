@@ -1,3 +1,9 @@
+2012-08-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/ogra2cairo.c (CompatibleFont): "Mincho" should be
+	corresponded to "Seril" and "Gothic" should be corresponded to
+	"Sans-serif".
+
 2012-08-09  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2emf.c (gra2emf_local): add members
