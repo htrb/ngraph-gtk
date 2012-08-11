@@ -1325,7 +1325,7 @@ draw_polygon(struct gra2emf_local *local, int n, int *points, int fill)
   MoveToEx(local->hdc, points[0] + local->offsetx, points[1] + local->offsety, NULL); 
   for (i = 1; i < n; i++) {
     LineTo(local->hdc,
-	   points[i * 2] + local->offsetx,
+	   points[i * 2 + 0] + local->offsetx,
 	   points[i * 2 + 1] + local->offsety);
   }
   CloseFigure(local->hdc);

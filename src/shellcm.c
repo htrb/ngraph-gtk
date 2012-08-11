@@ -353,7 +353,7 @@ print_func(struct nhash *h, void *data)
   return 0;
 }
 
-int 
+int
 cmset(struct nshell *nshell,int argc,char **argv)
 {
 #if USE_HASH
@@ -366,73 +366,79 @@ cmset(struct nshell *nshell,int argc,char **argv)
   if (argc < 2) {
     nhash_each(nshell->valroot, print_val, NULL);
     nhash_each(nshell->valroot, print_func, NULL);
-  } else {
-    for (j = 1; j < argc; j++) {
-      s = argv[j];
-      if (s[0] == '-' && s[1] == '-') {
-	n = strlen(argv[j]);
-	memmove(argv[j], argv[j] + 1, sizeof(**argv) * n);
-        break;
-      } else if (s[0] == '-' || s[0] == '+') {
-	if (s[1] == '\0' || strchr("efvx", s[1]) == NULL) {
-	  sherror3(argv[0], ERRILOPS, s);
-	  return ERRILOPS;
-	}
-      } else {
+    return 0;
+  }
+  for (j = 1; j < argc; j++) {
+    s = argv[j];
+    if (s[0] == '-' && s[1] == '-') {
+#if 1                           /* -- means last option */
+      if (s[2] == '\0') {
+	j++;
 	break;
       }
+#endif
+      n = strlen(argv[j]);
+      memmove(argv[j], argv[j] + 1, sizeof(**argv) * n);
+      break;
+    } else if (s[0] == '-' || s[0] == '+') {
+      if (s[1] == '\0' || strchr("efvx", s[1]) == NULL) {
+	sherror3(argv[0], ERRILOPS, s);
+	return ERRILOPS;
+      }
+    } else {
+      break;
     }
-    if (j != argc) { 
-      argv2 = NULL;
-      s = g_strdup(nshell->argv[0]);
+  }
+  if (j != argc) {
+    argv2 = NULL;
+    s = g_strdup(nshell->argv[0]);
+    if (s == NULL)
+      return ERR;
+
+    if (arg_add(&argv2, s) == NULL) {
+      g_free(s);
+      arg_del(argv2);
+      return ERR;
+    }
+
+    for (; j < argc; j++) {
+      s = g_strdup(argv[j]);
       if (s == NULL)
 	return ERR;
 
       if (arg_add(&argv2, s) == NULL) {
-        g_free(s);
-        arg_del(argv2);
-        return ERR;
+	g_free(s);
+	arg_del(argv2);
+	return ERR;
       }
-
-      for (; j < argc; j++) {
-	s = g_strdup(argv[j]);
-        if (s == NULL)
-	  return ERR;
-
-        if (arg_add(&argv2, s) == NULL) {
-          g_free(s);
-          arg_del(argv2);
-          return ERR;
-        }
-      }
-      argc2 = getargc(argv2);
-      arg_del(nshell->argv);
-      nshell->argv = argv2;
-      nshell->argc = argc2;
     }
-    for (j = 1 ; j < argc; j++) {
-      s = argv[j];
-      if (s[0] == '-') {
-	ops=TRUE;
-      } else if (s[0]=='+') {
-	ops=FALSE;
-      } else {
-	break;
-      }
-      switch (s[1]) {
-      case 'e':
-        nshell->optione = ops;
-        break;
-      case 'f':
-        nshell->optionf = ops;
-        break;
-      case 'v':
-        nshell->optionv = ops;
-        break;
-      case 'x':
-        nshell->optionx = ops;
-        break;
-      }
+    argc2 = getargc(argv2);
+    arg_del(nshell->argv);
+    nshell->argv = argv2;
+    nshell->argc = argc2;
+  }
+  for (j = 1 ; j < argc; j++) {
+    s = argv[j];
+    if (s[0] == '-') {
+      ops=TRUE;
+    } else if (s[0]=='+') {
+      ops=FALSE;
+    } else {
+      break;
+    }
+    switch (s[1]) {
+    case 'e':
+      nshell->optione = ops;
+      break;
+    case 'f':
+      nshell->optionf = ops;
+      break;
+    case 'v':
+      nshell->optionv = ops;
+      break;
+    case 'x':
+      nshell->optionx = ops;
+      break;
     }
   }
 #else

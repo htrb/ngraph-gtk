@@ -1,3 +1,7 @@
+2012-08-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/shellcm.c (cmset): "--" means the last argument.
+
 2012-08-10  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2cairo.c (CompatibleFont): "Mincho" should be
