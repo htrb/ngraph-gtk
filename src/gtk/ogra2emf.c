@@ -118,6 +118,8 @@ get_char_set(gunichar ch)
     char_set = ANSI_CHARSET;
     break;
   case G_UNICODE_SCRIPT_INHERITED:
+    char_set = DEFAULT_CHARSET;
+    break;
   case G_UNICODE_SCRIPT_ARABIC:
     char_set = ARABIC_CHARSET;
     break;
