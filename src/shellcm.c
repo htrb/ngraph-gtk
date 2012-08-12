@@ -358,10 +358,7 @@ cmset(struct nshell *nshell,int argc,char **argv)
 {
 #if USE_HASH
   char *s;
-  unsigned int n;
-  int j,ops;
-  char **argv2;
-  int argc2;
+  int j, r, ops;
 
   if (argc < 2) {
     nhash_each(nshell->valroot, print_val, NULL);
@@ -370,15 +367,20 @@ cmset(struct nshell *nshell,int argc,char **argv)
   }
   for (j = 1; j < argc; j++) {
     s = argv[j];
-    if (s[0] == '-' && s[1] == '-') {
-#if 1                           /* -- means last option */
-      if (s[2] == '\0') {
-	j++;
-	break;
+    if (s[0] == '-' && s[1] == '-' && s[2] == '\0') {
+      j++;
+      if (j == argc) {
+	r = set_shell_args(nshell, j, nshell->argv[0], argc, argv);
+	if (r) {
+	  r = ERR;
+	}
+	return r;
       }
-#endif
-      n = strlen(argv[j]);
-      memmove(argv[j], argv[j] + 1, sizeof(**argv) * n);
+      break;
+    } else if (s[0] == '-' && s[1] == '\0') {
+      nshell->optionv = FALSE;
+      nshell->optionx = FALSE;
+      j++;
       break;
     } else if (s[0] == '-' || s[0] == '+') {
       if (s[1] == '\0' || strchr("efvx", s[1]) == NULL) {
@@ -390,32 +392,10 @@ cmset(struct nshell *nshell,int argc,char **argv)
     }
   }
   if (j != argc) {
-    argv2 = NULL;
-    s = g_strdup(nshell->argv[0]);
-    if (s == NULL)
-      return ERR;
-
-    if (arg_add(&argv2, s) == NULL) {
-      g_free(s);
-      arg_del(argv2);
+    r = set_shell_args(nshell, j, nshell->argv[0], argc, argv);
+    if (r) {
       return ERR;
     }
-
-    for (; j < argc; j++) {
-      s = g_strdup(argv[j]);
-      if (s == NULL)
-	return ERR;
-
-      if (arg_add(&argv2, s) == NULL) {
-	g_free(s);
-	arg_del(argv2);
-	return ERR;
-      }
-    }
-    argc2 = getargc(argv2);
-    arg_del(nshell->argv);
-    nshell->argv = argv2;
-    nshell->argc = argc2;
   }
   for (j = 1 ; j < argc; j++) {
     s = argv[j];

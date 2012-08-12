@@ -103,8 +103,6 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
   char *filename,*filename2;
   int fd;
   int rcode;
-  char **argv2;
-  int argc2;
   char *s;
 
   _getobj(obj,"_local",inst,&shlocal);
@@ -143,30 +141,9 @@ cmdshell(struct objlist *obj,N_VALUE *inst,N_VALUE *rval,int argc,char **argv)
     i++;
   }
 
-  argv2=NULL;
-  if ((s=g_malloc(strlen(((char **)argv)[1])+1))==NULL) goto errexit;
-  strcpy(s,((char **)argv)[1]);
-  if (arg_add(&argv2,s)==NULL) {
-    g_free(s);
-    arg_del(argv2);
+  if (set_shell_args(nshell, i, argv[1], snum, sdata)) {
     goto errexit;
   }
-
-  for (;i<snum;i++) {
-    if (sdata[i]!=NULL) {
-      if ((s=g_malloc(strlen(sdata[i])+1))==NULL) goto errexit;
-      strcpy(s,sdata[i]);
-      if (arg_add(&argv2,s)==NULL) {
-        g_free(s);
-        arg_del(argv2);
-        goto errexit;
-      }
-    }
-  }
-
-  argc2=getargc(argv2);
-
-  setshellargument(nshell,argc2,argv2);
 
   fd=NOHANDLE;
   if (filename!=NULL) {

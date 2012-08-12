@@ -1,3 +1,12 @@
+2012-08-12  Hiroyuki Ito  <ZXB01226 at nifty.com>
+
+	* src/shell.c (set_shell_args): added.
+
+	* src/oshell.c (cmdshell): use "set_shell_args()".
+
+	* src/shellcm.c (cmset): use "set_shell_args()".
+	(cmset): options "--" and "-" work as same as bash.
+
 2012-08-11  Hiroyuki Ito  <ZXB01226 at nifty.com>
 
 	* src/shellcm.c (cmset): "--" means the last argument.
