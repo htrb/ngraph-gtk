@@ -236,12 +236,6 @@ printfconsole(char *fmt, ...)
 }
 
 static int
-interruptconsole(void)
-{
-  return FALSE;
-}
-
-static int
 inputynconsole(const char *mes)
 {
   int len, r;
@@ -281,28 +275,12 @@ displaystatusconsole(const char *str)
 {
 }
 
-static char *terminal = NULL;
-static struct savedstdio consolesave;
-static int consolefd[3];
-
 void
 resizeconsole(int col, int row)
 {
 }
 
-static void
-reset_fifo(char *fifo_in, char *fifo_out)
-{
-  int fdi, fdo;
-
-  fdi = nopen(fifo_in, O_WRONLY, 0);
-  fdo = nopen(fifo_out, O_RDONLY, 0);
-  if (fdi >= 0)
-    nclose(fdi);
-
-  if (fdo >= 0)
-    nclose(fdo);
-}
+static char *terminal = NULL;
 
 #ifdef WINDOWS
 static HWND ConsoleHandle = NULL;
@@ -383,6 +361,29 @@ resotre_console(void)
 }
 #else  /* WINDOWS */
 static pid_t consolepid = -1;
+static struct savedstdio consolesave;
+static int consolefd[3];
+
+static int
+interruptconsole(void)
+{
+  return FALSE;
+}
+
+static void
+reset_fifo(char *fifo_in, char *fifo_out)
+{
+  int fdi, fdo;
+
+  fdi = nopen(fifo_in, O_WRONLY, 0);
+  fdo = nopen(fifo_out, O_RDONLY, 0);
+  if (fdi >= 0)
+    nclose(fdi);
+
+  if (fdo >= 0)
+    nclose(fdo);
+}
+
 
 void
 hide_console(void)

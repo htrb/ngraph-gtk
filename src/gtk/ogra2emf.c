@@ -72,6 +72,7 @@ struct gra2emf_local {
 };
 
 static void draw_lines(struct gra2emf_local *local);
+static int close_emf(struct gra2emf_local *local, const char *fname);
 
 static int
 enum_font_cb(ENUMLOGFONTEXW *lpelfe, NEWTEXTMETRICEXW *lpntme, DWORD FontType, LPARAM lParam)
@@ -760,12 +761,13 @@ open_emf(struct gra2emf_local *local)
   add_fontmap(local, hdc, "Sans-serif");
   add_fontmap(local, hdc, "Monospace");
 
+  StartPage(hdc);
+  SaveDC(hdc);
   SetGraphicsMode(hdc, GM_ADVANCED);
   SetMapMode(hdc, MM_HIMETRIC);
   SetWorldTransform(hdc, &xform);
   SetBkMode(hdc, TRANSPARENT);
   SetArcDirection(hdc, AD_COUNTERCLOCKWISE);
-  StartPage(hdc);
 
   local->update_pen_attribute = TRUE;
   local->update_brush_attribute = TRUE;
@@ -803,6 +805,7 @@ close_emf(struct gra2emf_local *local, const char *fname)
     local->the_brush = NULL;
   }
 
+  RestoreDC(local->hdc, -1);
   EndPage(local->hdc);
   emf = CloseEnhMetaFile(local->hdc);
   if (emf == NULL) {
@@ -873,6 +876,7 @@ select_font(struct gra2emf_local *local, const char *fontname, int charset)
 
   id_font.lfCharSet = charset;
   id_font.lfOutPrecision = OUT_DEFAULT_PRECIS;
+  id_font.lfOutPrecision = OUT_TT_ONLY_PRECIS;
   id_font.lfClipPrecision = CLIP_STROKE_PRECIS;
   id_font.lfQuality = PROOF_QUALITY;
 
