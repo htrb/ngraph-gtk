@@ -12,6 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifndef __MINGW32__
 static void
 sig_handler(int sig)
 {
@@ -20,17 +21,14 @@ sig_handler(int sig)
 static void
 my_signal(int signum, void (* sighandler))
 {
-#ifndef __MINGW32__
   struct sigaction act;
 
   act.sa_handler = sighandler;
   act.sa_flags = SA_RESTART;
   sigemptyset(&act.sa_mask);
   sigaction(signum, &act, NULL);
-#else
-  signal(signum, sighandler);
-#endif
 }
+#endif
 
 int
 main(int argc,char **argv)

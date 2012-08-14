@@ -1,3 +1,8 @@
+2012-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/terminal.c (sig_handler, my_signal): not used if the os is
+	Windows.
+
 2012-08-13  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/ogra2emf.c (open_emf): call "SaveDC()".
