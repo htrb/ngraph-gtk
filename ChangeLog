@@ -1,3 +1,26 @@
+2012-08-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11file.c (FileWinFileEdit, FileWinFileDelete)
+	(file_obj_copy, FileWinFileCopy2, FileWinFileUpdate)
+	(FileWinFileDraw, FileWinFit, popup_show_cb): use
+	"chkobjlastinst()".
+
+	* src/gtk/x11axis.c (axiswin_scale_clear, popup_show_cb)
+	(axis_prm_edited_common, axiswin_delete_axis, AxisWinAxisTop)
+	(AxisWinAxisLast, AxisWinAxisUp, AxisWinAxisDown): use
+	"chkobjlastinst()".
+
+	* src/gtk/x11merge.c (popup_show_cb): use "chkobjlastinst()".
+
+	* src/gtk/x11lgnd.c (rect_size_edited): use "chkobjlastinst()".
+
+	* src/gtk/gtk_subwin.c (file_select, copy, delete, move_top)
+	(move_last, move_up, move_down, update, focus, toggle_boolean)
+	(modify_numeric, modify_string, hidden, set_hidden_state)
+	(list_sub_window_set): use "chkobjlastinst()".
+
+	* src/gtk/x11menu.h (obj_list_data): remove member "num".
+
 2012-08-14  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/terminal.c (sig_handler, my_signal): not used if the os is

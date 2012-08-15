@@ -2809,7 +2809,7 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
 {
   struct obj_list_data *d;
   struct objlist *obj;
-  int sel;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
@@ -2821,8 +2821,9 @@ axiswin_scale_clear(GtkMenuItem *item, gpointer user_data)
   d = (struct obj_list_data *) user_data;
 
   sel = list_store_get_selected_int(d->text, AXIS_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel >= 0) && (sel <= d->num)) {
+  if ((sel >= 0) && (sel <= num)) {
     d->setup_dialog(d, sel, -1);
     d->select = sel;
     axis_scale_push(obj, sel);
@@ -3084,30 +3085,31 @@ static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i;
-  int sel;
+  int sel, num;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) user_data;
 
   sel = d->select;
+  num = chkobjlastinst(d->obj);
   for (i = 0; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
-      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);
       break;
     case POPUP_ITEM_DOWN:
     case POPUP_ITEM_BOTTOM:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < num);
       break;
     case POPUP_ITEM_HIDE:
-      if (sel >= 0 && sel <= d->num) {
+      if (sel >= 0 && sel <= num) {
 	int hidden;
 	getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
       }
     default:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= num);
     }
   }
 }
@@ -3203,13 +3205,14 @@ pos_y_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer u
 static void
 axis_prm_edited_common(struct obj_list_data *d, char *field, gchar *str)
 {
-  int sel;
+  int sel, num;
 
   menu_lock(FALSE);
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if (sel < 0 || sel > d->num)
+  if (sel < 0 || sel > num)
     return;
 
   axis_scale_push(d->obj, sel);
@@ -3242,14 +3245,15 @@ inc_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpointer use
 static void
 axiswin_delete_axis(struct obj_list_data *d)
 {
-  int sel;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel >= 0) && (sel <= d->num)) {
+  if ((sel >= 0) && (sel <= num)) {
     AxisDel(sel);
     AxisWinUpdate(d, TRUE);
     FileWinUpdate(NgraphApp.FileWin.data.data, TRUE);
@@ -3270,7 +3274,7 @@ axis_delete_popup_func(GtkMenuItem *w, gpointer client_data)
 static void
 AxisWinAxisTop(GtkWidget *w, gpointer client_data)
 {
-  int sel;
+  int sel, num;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) client_data;
@@ -3278,8 +3282,9 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
   if (Menulock || Globallock) return;
   UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel  >=  0) && (sel <= d->num)) {
+  if ((sel  >=  0) && (sel <= num)) {
     movetopobj(d->obj, sel);
     d->select = 0;
     AxisMove(sel,0);
@@ -3292,7 +3297,7 @@ AxisWinAxisTop(GtkWidget *w, gpointer client_data)
 static void
 AxisWinAxisLast(GtkWidget *w, gpointer client_data)
 {
-  int sel;
+  int sel, num;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) client_data;
@@ -3300,11 +3305,12 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
   if (Menulock || Globallock) return;
   UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel >= 0) && (sel <= d->num)) {
+  if ((sel >= 0) && (sel <= num)) {
     movelastobj(d->obj, sel);
-    d->select = d->num;
-    AxisMove(sel, d->num);
+    d->select = num;
+    AxisMove(sel, num);
     AxisWinUpdate(d, FALSE);
     FileWinUpdate(NgraphApp.FileWin.data.data, FALSE);
     set_graph_modified();
@@ -3314,7 +3320,7 @@ AxisWinAxisLast(GtkWidget *w, gpointer client_data)
 static void
 AxisWinAxisUp(GtkWidget *w, gpointer client_data)
 {
-  int sel;
+  int sel, num;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) client_data;
@@ -3322,8 +3328,9 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
   if (Menulock || Globallock) return;
   UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel >= 1) && (sel <= d->num)) {
+  if ((sel >= 1) && (sel <= num)) {
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     AxisMove(sel, sel - 1);
@@ -3336,7 +3343,7 @@ AxisWinAxisUp(GtkWidget *w, gpointer client_data)
 static void
 AxisWinAxisDown(GtkWidget *w, gpointer client_data)
 {
-  int sel;
+  int sel, num;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) client_data;
@@ -3344,8 +3351,9 @@ AxisWinAxisDown(GtkWidget *w, gpointer client_data)
   if (Menulock || Globallock) return;
   UnFocus();
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), AXIS_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if (sel >= 0 && sel <= d->num-1) {
+  if (sel >= 0 && sel <= num-1) {
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     AxisMove(sel, sel + 1);
@@ -3435,7 +3443,6 @@ CmAxisWindow(GtkToggleAction *action, gpointer client_data)
   d->data.data->ev_key = axiswin_ev_key_down;
   d->data.data->delete = AxisDelCB;
   d->data.data->obj = chkobject("axis");
-  d->data.data->num = chkobjlastinst(d->data.data->obj);
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
   set_editable_cell_renderer_cb(d->data.data, AXIS_WIN_COL_X, Alist, G_CALLBACK(pos_x_edited));

@@ -2436,7 +2436,6 @@ ObjListUpdate(struct obj_list_data *d, int clear, list_sub_window_set_val_func f
   if (Menulock || Globallock)
     return;
 
-  d->num = chkobjlastinst(d->obj);
   if (d->text == NULL) {
     return;
   }
@@ -3116,7 +3115,7 @@ rect_size_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpoint
   GtkTreeIter iter;
   int id, ecode;
   double val;
-  int x1, x2, v;
+  int x1, x2, v, num;
 
   menu_lock(FALSE);
 
@@ -3131,7 +3130,8 @@ rect_size_edited(GtkCellRenderer *cell_renderer, gchar *path, gchar *str, gpoint
   d = (struct obj_list_data *) user_data;
 
   id = tree_view_get_selected_row_int_from_path(d->text, path, &iter, COL_ID);
-  if (id < 0 || id > d->num) {
+  num = chkobjlastinst(d->obj);
+  if (id < 0 || id > num) {
     return;
   }
 
@@ -3812,7 +3812,6 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
     data->setup_dialog = UpdateDialogFuncArray[i];
     data->ev_key = NULL;
     data->obj = chkobject(legendlist[i]);
-    data->num = chkobjlastinst(data->obj);
 
     sub_win_create_popup_menu(data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
     switch (i) {

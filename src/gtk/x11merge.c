@@ -353,30 +353,31 @@ static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
   unsigned int i;
-  int sel;
+  int sel, num;
   struct obj_list_data *d;
 
   d = (struct obj_list_data *) user_data;
 
   sel = d->select;
+  num = chkobjlastinst(d->obj);
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
-      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);
       break;
     case POPUP_ITEM_DOWN:
     case POPUP_ITEM_BOTTOM:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < num);
       break;
     case POPUP_ITEM_HIDE:
-      if (sel >= 0 && sel <= d->num) {
+      if (sel >= 0 && sel <= num) {
 	int hidden;
 	getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
       }
     default:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= num);
     }
   }
 }
@@ -441,7 +442,6 @@ CmMergeWindow(GtkToggleAction *action, gpointer client_data)
   d->data.data->setup_dialog = MergeDialog;
   d->data.data->dialog = &DlgMerge;
   d->data.data->obj = chkobject("merge");
-  d->data.data->num = chkobjlastinst(d->data.data->obj);
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
 

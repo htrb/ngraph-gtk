@@ -38,14 +38,17 @@ static void
 file_select(GtkEntry *w, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data)
 {
   struct obj_list_data *d;
-  int sel;
+  int sel, num;
   char *file, *ext;
 
   d = user_data;
 
+
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  if (sel < 0 || sel > d->num)
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
     return;
+  }
 
   ext = NULL;
   if (chkobjfield(d->obj, "ext") == 0) {
@@ -711,18 +714,18 @@ obj_copy(struct objlist *obj, int dest, int src)
 static void
 copy(struct obj_list_data *d)
 {
-  int sel, id;
+  int sel, id, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if (sel >= 0 && sel <= d->num) {
+  if (sel >= 0 && sel <= num) {
     id = newobj(d->obj);
     if (id >= 0) {
       obj_copy(d->obj, id, sel);
-      d->num++;
       set_graph_modified();
       d->select = id;
       d->update(d, FALSE);
@@ -733,75 +736,89 @@ copy(struct obj_list_data *d)
 static void
 delete(struct obj_list_data *d)
 {
-  int sel;
+  int sel, num;
   int update;
 
   if (Menulock || Globallock)
     return;
+
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  if (sel >= 0 && sel <= d->num) {
-    if (d->delete) {
-      d->delete(d, sel);
-    } else {
-      delobj(d->obj, sel);
-    }
-    d->num--;
-    update = FALSE;
-    if (d->num < 0) {
-      d->select = -1;
-      update = TRUE;
-    } else if (sel > d->num) {
-      d->select = d->num;
-    } else {
-      d->select = sel;
-    }
-    d->update(d, update);
-    set_graph_modified();
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
+    return;
   }
+
+  if (d->delete) {
+    d->delete(d, sel);
+  } else {
+    delobj(d->obj, sel);
+  }
+
+  num = chkobjlastinst(d->obj);
+  if (num < 0) {
+    d->select = -1;
+    update = TRUE;
+  } else if (sel > num) {
+    d->select = num;
+    update = FALSE;
+  } else {
+    d->select = sel;
+    update = FALSE;
+  }
+  d->update(d, update);
+  set_graph_modified();
 }
 
 static void
 move_top(struct obj_list_data *d)
 {
-  int sel;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  if ((sel >= 0) && (sel <= d->num)) {
-    movetopobj(d->obj, sel);
-    d->select = 0;
-    d->update(d, FALSE);
-    set_graph_modified();
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
+    return;
   }
+
+  movetopobj(d->obj, sel);
+  d->select = 0;
+  d->update(d, FALSE);
+  set_graph_modified();
 }
 
 static void
 move_last(struct obj_list_data *d)
 {
-  int sel;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
+
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  if ((sel >= 0) && (sel <= d->num)) {
-    movelastobj(d->obj, sel);
-    d->select = d->num;
-    d->update(d, FALSE);
-    set_graph_modified();
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
+    return;
   }
+
+  movelastobj(d->obj, sel);
+  d->select = num;
+  d->update(d, FALSE);
+  set_graph_modified();
 }
 
 static void
 move_up(struct obj_list_data *d)
 {
-  int sel;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  if ((sel >= 1) && (sel <= d->num)) {
+  num = chkobjlastinst(d->obj);
+  if ((sel >= 1) && (sel <= num)) {
     moveupobj(d->obj, sel);
     d->select = sel - 1;
     d->update(d, FALSE);
@@ -812,12 +829,13 @@ move_up(struct obj_list_data *d)
 static void
 move_down(struct obj_list_data *d)
 {
-  int sel;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-  if ((sel >= 0) && (sel < d->num)) {
+  num = chkobjlastinst(d->obj);
+  if ((sel >= 0) && (sel < num)) {
     movedownobj(d->obj, sel);
     d->select = sel + 1;
     d->update(d, FALSE);
@@ -828,7 +846,7 @@ move_down(struct obj_list_data *d)
 static void
 update(struct obj_list_data *d)
 {
-  int sel, ret;
+  int sel, ret, num;
 
   if (Menulock || Globallock)
     return;
@@ -836,46 +854,50 @@ update(struct obj_list_data *d)
   UnFocus();
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-
-  if ((sel >= 0) && (sel <= d->num)) {
-    d->setup_dialog(d, sel, -1);
-    d->select = sel;
-    if ((ret = DialogExecute(d->parent->Win, d->dialog)) == IDDELETE) {
-      if (d->delete) {
-	d->delete(d, sel);
-      } else {
-	delobj(d->obj, sel);
-      }
-      d->select = -1;
-      set_graph_modified();
-    }
-    d->update(d, FALSE);
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
+    return;
   }
+
+  d->setup_dialog(d, sel, -1);
+  d->select = sel;
+  if ((ret = DialogExecute(d->parent->Win, d->dialog)) == IDDELETE) {
+    if (d->delete) {
+      d->delete(d, sel);
+    } else {
+      delobj(d->obj, sel);
+    }
+    d->select = -1;
+    set_graph_modified();
+  }
+  d->update(d, FALSE);
 }
 
 static void
 focus(struct obj_list_data *d, int add)
 {
-  int sel;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel >= 0) && (sel <= d->num))
+  if ((sel >= 0) && (sel <= num))
     Focus(d->obj, sel, add);
 }
 
 static void
 toggle_boolean(struct obj_list_data *d, char *field, int sel)
 {
-  int v1;
+  int v1, num;
 
   if (Menulock || Globallock)
     return;
 
-  if (sel < 0 || sel > d->num) {
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
     return;
   }
 
@@ -893,15 +915,16 @@ toggle_boolean(struct obj_list_data *d, char *field, int sel)
 static void
 modify_numeric(struct obj_list_data *d, char *field, int val)
 {
-  int sel, v1, v2;
+  int sel, v1, v2, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-
-  if (sel < 0 || sel > d->num)
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
     return;
+  }
 
   getobj(d->obj, field, sel, 0, NULL, &v1);
 
@@ -920,15 +943,16 @@ modify_numeric(struct obj_list_data *d, char *field, int val)
 static void
 modify_string(struct obj_list_data *d, char *field, char *str)
 {
-  int sel;
+  int sel, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-
-  if (sel < 0 || sel > d->num)
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
     return;
+  }
 
   if (chk_sputobjfield(d->obj, sel, field, str))
     return;
@@ -940,43 +964,47 @@ modify_string(struct obj_list_data *d, char *field, char *str)
 static void
 hidden(struct obj_list_data *d)
 {
-  int sel;
+  int sel, num;
   int hidden;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
-
-  if ((sel >= 0) && (sel <= d->num)) {
-    getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
-    hidden = hidden ? FALSE : TRUE;
-    putobj(d->obj, "hidden", sel, &hidden);
-    d->select = sel;
-    d->update(d, FALSE);
-    set_graph_modified();
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
+    return;
   }
+
+  getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
+  hidden = hidden ? FALSE : TRUE;
+  putobj(d->obj, "hidden", sel, &hidden);
+  d->select = sel;
+  d->update(d, FALSE);
+  set_graph_modified();
 }
 
 static void
 set_hidden_state(struct obj_list_data *d, int hide)
 {
-  int sel;
+  int sel, num;
   int hidden;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), COL_ID);
+  num = chkobjlastinst(d->obj);
+  if (sel < 0 || sel > num) {
+    return;
+  }
 
-  if ((sel >= 0) && (sel <= d->num)) {
-    getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
-    if (hidden != hide) {
-      putobj(d->obj, "hidden", sel, &hide);
-      d->select = sel;
-      d->update(d, FALSE);
-      set_graph_modified();
-    }
+  getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
+  if (hidden != hide) {
+    putobj(d->obj, "hidden", sel, &hide);
+    d->select = sel;
+    d->update(d, FALSE);
+    set_graph_modified();
   }
 }
 
@@ -1377,23 +1405,23 @@ tree_sub_window_create(struct SubWin *d, char *title, int page_num, int *lisu_nu
 gboolean
 list_sub_window_must_rebuild(struct obj_list_data *d)
 {
-  int n;
+  int n, num;
 
-  d->num = chkobjlastinst(d->obj);
+  num = chkobjlastinst(d->obj);
   n = list_store_get_num(GTK_WIDGET(d->text));
 
-  return (n != d->num + 1);
+  return (n != num + 1);
 }
 
 void
 list_sub_window_build(struct obj_list_data *d, list_sub_window_set_val_func func)
 {
   GtkTreeIter iter;
-  int i;
+  int i, num;
 
-  d->num = chkobjlastinst(d->obj);
+  num = chkobjlastinst(d->obj);
   list_store_clear(d->text);
-  for (i = 0; i <= d->num; i++) {
+  for (i = 0; i <= num; i++) {
     list_store_append(GTK_WIDGET(d->text), &iter);
     func(d, &iter, i);
   }
@@ -1403,14 +1431,15 @@ void
 list_sub_window_set(struct obj_list_data *d, list_sub_window_set_val_func func)
 {
   GtkTreeIter iter;
-  int i;
+  int i, num;
   gboolean state;
 
   state = list_store_get_iter_first(GTK_WIDGET(d->text), &iter);
   if (! state)
     return;
 
-  for (i = 0; i <= d->num; i++) {
+  num = chkobjlastinst(d->obj);
+  for (i = 0; i <= num; i++) {
     func(d, &iter, i);
     if (! list_store_iter_next(GTK_WIDGET(d->text), &iter)) {
       break;

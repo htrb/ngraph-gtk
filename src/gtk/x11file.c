@@ -3765,7 +3765,7 @@ CmOptionFileDef(GtkAction *w, gpointer client_data)
 static void
 FileWinFileEdit(struct obj_list_data *d)
 {
-  int sel;
+  int sel, num;
   char *name;
 
   if (Menulock || Globallock)
@@ -3775,8 +3775,9 @@ FileWinFileEdit(struct obj_list_data *d)
     return;
 
   sel = d->select;
+  num = chkobjlastinst(d->obj);
 
-  if (sel < 0 || sel > d->num)
+  if (sel < 0 || sel > num)
     return;
 
   if (getobj(d->obj, "file", sel, 0, NULL, &name) == -1)
@@ -3797,22 +3798,23 @@ file_edit_popup_func(GtkMenuItem *w, gpointer client_data)
 static void
 FileWinFileDelete(struct obj_list_data *d)
 {
-  int sel, update;
+  int sel, update, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel >= 0) && (sel <= d->num)) {
+  if ((sel >= 0) && (sel <= num)) {
     delete_file_obj(d, sel);
-    d->num--;
+    num = chkobjlastinst(d->obj);
     update = FALSE;
-    if (d->num < 0) {
+    if (num < 0) {
       d->select = -1;
       update = TRUE;
-    } else if (sel > d->num) {
-      d->select = d->num;
+    } else if (sel > num) {
+      d->select = num;
     } else {
       d->select = sel;
     }
@@ -3833,14 +3835,15 @@ file_delete_popup_func(GtkMenuItem *w, gpointer client_data)
 static int
 file_obj_copy(struct obj_list_data *d)
 {
-  int sel, id;
+  int sel, id, num;
 
   if (Menulock || Globallock)
     return -1;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel < 0) || (sel > d->num))
+  if ((sel < 0) || (sel > num))
     return -1;
 
   id = newobj(d->obj);
@@ -3849,7 +3852,6 @@ file_obj_copy(struct obj_list_data *d)
     return -1;
 
   copy_file_obj_field(d->obj, id, sel, TRUE);
-  d->num++;
 
   return id;
 }
@@ -3873,13 +3875,14 @@ file_copy_popup_func(GtkMenuItem *w, gpointer client_data)
 static void
 FileWinFileCopy2(struct obj_list_data *d)
 {
-  int id, sel, j;
+  int id, sel, j, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
   id = file_obj_copy(d);
+  num = chkobjlastinst(d->obj);
 
   if (id < 0) {
     d->select = sel;
@@ -3887,7 +3890,7 @@ FileWinFileCopy2(struct obj_list_data *d)
     return;
   }
 
-  for (j = d->num; j > sel + 1; j--) {
+  for (j = num; j > sel + 1; j--) {
     moveupobj(d->obj, j);
   }
 
@@ -3907,13 +3910,14 @@ file_copy2_popup_func(GtkMenuItem *w, gpointer client_data)
 static void
 FileWinFileUpdate(struct obj_list_data *d)
 {
-  int sel, ret;
+  int sel, ret, num;
 
   if (Menulock || Globallock)
     return;
   sel = list_store_get_selected_int(GTK_WIDGET(d->text), FILE_WIN_COL_ID);
+  num = chkobjlastinst(d->obj);
 
-  if ((sel >= 0) && (sel <= d->num)) {
+  if ((sel >= 0) && (sel <= num)) {
     d->setup_dialog(d, sel, FALSE);
     d->select = sel;
 
@@ -3930,15 +3934,16 @@ FileWinFileUpdate(struct obj_list_data *d)
 static void
 FileWinFileDraw(struct obj_list_data *d)
 {
-  int i, sel, hidden, h;
+  int i, sel, hidden, h, num;
 
   if (Menulock || Globallock)
     return;
 
   sel = list_store_get_selected_index(GTK_WIDGET(d->text));
+  num = chkobjlastinst(d->obj);
 
-  if ((sel >= 0) && (sel <= d->num)) {
-    for (i = 0; i <= d->num; i++) {
+  if ((sel >= 0) && (sel <= num)) {
+    for (i = 0; i <= num; i++) {
       hidden = (i != sel);
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
@@ -3949,7 +3954,7 @@ FileWinFileDraw(struct obj_list_data *d)
     d->select = sel;
   } else {
     hidden = FALSE;
-    for (i = 0; i <= d->num; i++) {
+    for (i = 0; i <= num; i++) {
       getobj(d->obj, "hidden", i, 0, NULL, &h);
       putobj(d->obj, "hidden", i, &hidden);
       if (h != hidden) {
@@ -3996,15 +4001,16 @@ FileWinFit(struct obj_list_data *d)
 {
   struct objlist *fitobj, *obj2;
   char *fit;
-  int sel, idnum, fitid = 0, ret;
+  int sel, idnum, fitid = 0, ret, num;
   struct narray iarray;
 
   if (Menulock || Globallock)
     return;
 
   sel = d->select;
+  num = chkobjlastinst(d->obj);
 
-  if (sel < 0 || sel > d->num)
+  if (sel < 0 || sel > num)
     return;
 
   if ((fitobj = chkobject("fit")) == NULL)
@@ -4559,7 +4565,7 @@ filewin_ev_key_down(GtkWidget *w, GdkEvent *event, gpointer user_data)
 static void
 popup_show_cb(GtkWidget *widget, gpointer user_data)
 {
-  int sel;
+  int sel, num;
   unsigned int i;
   struct obj_list_data *d;
   char *fit;
@@ -4567,6 +4573,7 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
   d = (struct obj_list_data *) user_data;
 
   sel = d->select;
+  num = chkobjlastinst(d->obj);
   for (i = 1; i < POPUP_ITEM_NUM; i++) {
     switch (i) {
     case POPUP_ITEM_FIT:
@@ -4578,20 +4585,20 @@ popup_show_cb(GtkWidget *widget, gpointer user_data)
       break;
     case POPUP_ITEM_TOP:
     case POPUP_ITEM_UP:
-      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel > 0 && sel <= num);
       break;
     case POPUP_ITEM_DOWN:
     case POPUP_ITEM_BOTTOM:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel < num);
       break;
     case POPUP_ITEM_HIDE:
-      if (sel >= 0 && sel <= d->num) {
+      if (sel >= 0 && sel <= num) {
 	int hidden;
 	getobj(d->obj, "hidden", sel, 0, NULL, &hidden);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(d->popup_item[i]), ! hidden);
       }
     default:
-      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= d->num);
+      gtk_widget_set_sensitive(d->popup_item[i], sel >= 0 && sel <= num);
     }
   }
 }
@@ -5004,7 +5011,6 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
   d->data.data->ev_key = filewin_ev_key_down;
   d->data.data->delete = delete_file_obj;
   d->data.data->obj = chkobject("file");
-  d->data.data->num = chkobjlastinst(d->data.data->obj);
 
   sub_win_create_popup_menu(d->data.data, POPUP_ITEM_NUM,  Popup_list, G_CALLBACK(popup_show_cb));
   set_combo_cell_renderer_cb(d->data.data, FILE_WIN_COL_X_AXIS, Flist, G_CALLBACK(start_editing_x), G_CALLBACK(edited_axis));
