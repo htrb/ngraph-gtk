@@ -625,7 +625,7 @@ sub_window_show(struct SubWin *d)
   }
 }
 
-void
+static void
 sub_window_show_all(struct SubWin *d)
 {
   if (d->Win) {
@@ -641,6 +641,24 @@ sub_window_set_visibility(struct SubWin *d, int state)
   }
 
   if (state) {
+    if (! gtk_widget_get_realized(d->Win)) {
+      struct obj_list_data *ptr;
+      sub_window_show_all(d);
+      sub_window_set_geometry(d, TRUE);
+      switch (d->type) {
+      case TypeFileWin:
+      case TypeAxisWin:
+      case TypeMergeWin:
+      case TypeLegendWin:
+	for (ptr = d->data.data; ptr; ptr = ptr->next) {
+	  ptr->update(ptr, TRUE);
+	}
+	break;
+      case TypeCoordWin:
+      case TypeInfoWin:
+	break;
+      }
+    }
     sub_window_show(d);
   } else {
     sub_window_hide(d);

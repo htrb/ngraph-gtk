@@ -2747,6 +2747,13 @@ init_ngraph_app_struct(void)
 static void
 create_sub_windows(void)
 {
+  CmInformationWindow(NULL, NULL);
+  CmCoordinateWindow(NULL, NULL);
+  CmMergeWindow(NULL, NULL);
+  CmLegendWindow(NULL, NULL);
+  CmAxisWindow(NULL, NULL);
+  CmFileWindow(NULL, NULL);
+
   if (Menulocal.dialogopen) {
     window_action_set_active(TypeInfoWin, TRUE);
   }
@@ -2755,24 +2762,20 @@ create_sub_windows(void)
     window_action_set_active(TypeCoordWin, TRUE);
   }
 
-  window_action_set_active(TypeMergeWin, TRUE);
-  if (! Menulocal.mergeopen) {
-    window_action_set_active(TypeMergeWin, FALSE);
+  if (Menulocal.mergeopen) {
+    window_action_set_active(TypeMergeWin, TRUE);
   }
 
-  window_action_set_active(TypeLegendWin, TRUE);
-  if (! Menulocal.legendopen) {
-    window_action_set_active(TypeLegendWin, FALSE);
+  if (Menulocal.legendopen) {
+    window_action_set_active(TypeLegendWin, TRUE);
   }
 
-  window_action_set_active(TypeAxisWin, TRUE);
-  if (! Menulocal.axisopen) {
-    window_action_set_active(TypeAxisWin, FALSE);
+  if (Menulocal.axisopen) {
+    window_action_set_active(TypeAxisWin, TRUE);
   }
 
-  window_action_set_active(TypeFileWin, TRUE);
-  if (! Menulocal.fileopen) {
-    window_action_set_active(TypeFileWin, FALSE);
+  if (Menulocal.fileopen) {
+    window_action_set_active(TypeFileWin, TRUE);
   }
 }
 
@@ -3743,12 +3746,12 @@ CmReloadWindowConfig(GtkAction *w, gpointer user_data)
 
   if (Menulocal.dialogopen) {
     window_action_set_active(TypeInfoWin, TRUE);
-    sub_window_set_geometry((struct SubWin *) &(NgraphApp.InfoWin), TRUE);
+    sub_window_set_geometry(&(NgraphApp.InfoWin), TRUE);
   }
 
   if (Menulocal.coordopen) {
     window_action_set_active(TypeCoordWin, TRUE);
-    sub_window_set_geometry((struct SubWin *) &(NgraphApp.CoordWin), TRUE);
+    sub_window_set_geometry(&(NgraphApp.CoordWin), TRUE);
   }
 
   if (Menulocal.mergeopen) {
@@ -3758,7 +3761,7 @@ CmReloadWindowConfig(GtkAction *w, gpointer user_data)
 
   if (Menulocal.legendopen) {
     window_action_set_active(TypeLegendWin, TRUE);
-    sub_window_set_geometry((struct SubWin *) &(NgraphApp.LegendWin), TRUE);
+    sub_window_set_geometry(&(NgraphApp.LegendWin), TRUE);
   }
 
   if (Menulocal.axisopen) {

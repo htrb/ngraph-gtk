@@ -450,9 +450,4 @@ CmMergeWindow(GtkToggleAction *action, gpointer client_data)
   gtk_tree_view_set_enable_search(GTK_TREE_VIEW(d->data.data->text), TRUE);
   gtk_tree_view_set_search_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
   gtk_tree_view_set_tooltip_column(GTK_TREE_VIEW(d->data.data->text), MERG_WIN_COL_FILE);
-
-  sub_window_show_all(d);
-  sub_window_set_geometry(d, TRUE);
-
-  MergeWinUpdate(d->data.data, TRUE);
 }

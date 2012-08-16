@@ -136,13 +136,13 @@ CmCoordinateWindow(GtkToggleAction *action, gpointer client_data)
   struct SubWin *d;
   int state;
 
-   d = &(NgraphApp.CoordWin);
+  d = &(NgraphApp.CoordWin);
 
-   if (action) {
-     state = gtk_toggle_action_get_active(action);
-   } else {
-     state = TRUE;
-   }
+  if (action) {
+    state = gtk_toggle_action_get_active(action);
+  } else {
+    state = TRUE;
+  }
 
   if (d->Win) {
     sub_window_set_visibility(d, state);
@@ -153,9 +153,6 @@ CmCoordinateWindow(GtkToggleAction *action, gpointer client_data)
     return;
   }
 
-  label_sub_window_create((struct SubWin *)d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
-
-  sub_window_show_all((struct SubWin *) d);
-  sub_window_set_geometry((struct SubWin *) d, TRUE);
+  label_sub_window_create(d, "Coordinate Window", Coordwin_xpm, Coordwin48_xpm);
   CoordWinSetFont(Menulocal.coordwin_font);
 }

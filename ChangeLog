@@ -1,3 +1,36 @@
+2012-08-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11cood.c (CmCoordinateWindow): don't call functions
+	"sub_window_show_all()", "sub_window_set_geometry()".
+
+	* src/gtk/x11file.c (CmFileWindow): don't call functions
+	"sub_window_show_all()", "sub_window_set_geometry()" and
+	"FileWinUpdate()".
+
+	* src/gtk/x11axis.c (CmAxisWindow): don't call functions
+	"sub_window_show_all()", "sub_window_set_geometry()" and
+	"AxisWinUpdate()".
+
+	* src/gtk/x11merge.c (CmMergeWindow): don't call functions
+	"sub_window_show_all()", "sub_window_set_geometry()" and
+	"MergeWinUpdate()".
+
+	* src/gtk/x11lgnd.c (CmLegendWindow): don't call functions
+	"sub_window_show_all()", "sub_window_set_geometry()" and
+	"LegendWinUpdate()".
+
+	* src/gtk/gtk_subwin.c (sub_window_show_all): static function.
+	(sub_window_set_visibility): realize a window when the window is
+	not realized.
+
+	* src/gtk/x11menu.c (create_sub_windows): call
+	"CmInformationWindow()", "CmCoordinateWindow()", "CmMergeWindow",
+	"CmLegendWindow()", "CmAxisWindow()" and "CmFileWindow()".
+
+	* src/gtk/x11info.c (create_win): removed.
+	(InfoWinDrawInfoText, CmInformationWindow): don't use
+	"create_win()".
+
 2012-08-15  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11file.c (FileWinFileEdit, FileWinFileDelete)

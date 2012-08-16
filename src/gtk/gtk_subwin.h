@@ -51,7 +51,6 @@ GtkWidget *list_sub_window_create(struct SubWin *d, char *title, int lisu_num, n
 GtkWidget *tree_sub_window_create(struct SubWin *d, char *title, int page_num, int *lisu_num, n_list_store **list, GtkWidget **icons, const char **xpm, const char **xpm2);
 void sub_window_set_geometry(struct SubWin *d, int resize);
 void sub_window_save_geometry(struct SubWin *d);
-void sub_window_show_all(struct SubWin *d);
 void sub_window_set_visibility(struct SubWin *d, int state);
 //GtkWidget *sub_window_get_nth_content(struct LegendWin *d, int n);
 

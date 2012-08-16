@@ -154,7 +154,7 @@ static struct child_win_stat menu_config_axis_geometry = {
 };
 
 static struct child_win_stat menu_config_legend_geometry = {
-  (struct SubWin *) &NgraphApp.LegendWin,
+  &NgraphApp.LegendWin,
   {
     &Menulocal.legendx,
     &Menulocal.legendy,
@@ -176,7 +176,7 @@ static struct child_win_stat menu_config_merge_geometry = {
 };
 
 static struct child_win_stat menu_config_dialog_geometry = {
-  (struct SubWin *) &NgraphApp.InfoWin,
+  &NgraphApp.InfoWin,
   {
     &Menulocal.dialogx,
     &Menulocal.dialogy,
@@ -187,7 +187,7 @@ static struct child_win_stat menu_config_dialog_geometry = {
 };
 
 static struct child_win_stat menu_config_coord_geometry = {
-  (struct SubWin * ) &NgraphApp.CoordWin,
+  &NgraphApp.CoordWin,
   {
     &Menulocal.coordx,
     &Menulocal.coordy,

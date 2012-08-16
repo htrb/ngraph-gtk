@@ -34,24 +34,6 @@
 #include "x11menu.h"
 #include "x11info.h"
 
-static GtkWidget *
-create_win(void)
-{
-  struct SubWin *d;
-  GtkWidget *w;
-
-  d = &(NgraphApp.InfoWin);
-
-  w = text_sub_window_create((struct SubWin *)d, "Information Window", Infowin_xpm, Infowin48_xpm);
-
-  if (w) {
-    InfoWinSetFont(Menulocal.infowin_font);
-    sub_window_set_geometry((struct SubWin *) d, TRUE);
-  }
-
-  return w;
-}
-
 void
 InfoWinSetFont(char *font)
 {
@@ -82,7 +64,7 @@ InfoWinDrawInfoText(const char *str)
     return;
 
   if (NgraphApp.InfoWin.Win == NULL) {
-    create_win();
+    return;
   }
 
   if (NgraphApp.InfoWin.data.text == NULL) {
@@ -126,38 +108,11 @@ InfoWinUpdate(int clear)
 {
 }
 
-/*
-void
-InfoWinUnmap(Widget w, XtPointer client_data, XtPointer call_data)
-{
-  struct InfoWin *d;
-  Position x, y, x0, y0;
-  Dimension w0, h0;
-
-  d = &(NgraphApp.InfoWin);
-  if (d->Win != NULL) {
-    XtVaGetValues(d->Win, XmNx, &x, XmNy, &y,
-		  XmNwidth, &w0, XmNheight, &h0, NULL);
-    menulocal.dialogwidth = w0;
-    menulocal.dialogheight = h0;
-    XtTranslateCoords(TopLevel, 0, 0, &x0, &y0);
-    menulocal.dialogx = x - x0;
-    menulocal.dialogy = y - y0;
-    XtDestroyWidget(d->Win);
-    d->Win = NULL;
-    d->text = NULL;
-    XmToggleButtonSetState(XtNameToWidget
-			   (TopLevel, "*windowmenu.button_5"), False, False);
-  }
-}
-*/
-
 void
 CmInformationWindow(GtkToggleAction *action, gpointer data)
 {
   struct SubWin *d;
   int state;
-  GtkWidget *dlg;
 
   d = &(NgraphApp.InfoWin);
 
@@ -176,8 +131,6 @@ CmInformationWindow(GtkToggleAction *action, gpointer data)
     return;
   }
 
-  dlg = create_win();
-  if (dlg) {
-    sub_window_show_all((struct SubWin *) d);
-  }
+  text_sub_window_create(d, "Information Window", Infowin_xpm, Infowin48_xpm);
+  InfoWinSetFont(Menulocal.infowin_font);
 }

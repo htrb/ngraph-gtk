@@ -241,14 +241,6 @@ static void arc_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row
 static void mark_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 static void text_list_set_val(struct obj_list_data *d, GtkTreeIter *iter, int row);
 
-static char *legendlist[LEGENDNUM] = {
-  N_("path"),
-  N_("rectangle"),
-  N_("arc"),
-  N_("mark"),
-  N_("text"),
-};
-
 static struct LegendDialog *Ldlg[] = {
   &DlgLegendArrow,
   &DlgLegendRect,
@@ -3777,6 +3769,13 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
     LegendWinMarkUpdate,
     LegendWinTextUpdate,
   };
+  char *legendlist[] = {
+    N_("path"),
+    N_("rectangle"),
+    N_("arc"),
+    N_("mark"),
+    N_("text"),
+  };
 
   d = &(NgraphApp.LegendWin);
 
@@ -3787,7 +3786,7 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
   }
 
   if (d->Win) {
-    sub_window_set_visibility((struct SubWin *)d, state);
+    sub_window_set_visibility(d, state);
     return;
   }
 
@@ -3856,8 +3855,4 @@ CmLegendWindow(GtkToggleAction *action, gpointer client_data)
     }
     data = data->next;
   }
-  sub_window_show_all((struct SubWin *) d);
-  sub_window_set_geometry((struct SubWin *)d, TRUE);
-
-  LegendWinUpdate(TRUE);
 }

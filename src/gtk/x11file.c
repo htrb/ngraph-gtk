@@ -5033,9 +5033,4 @@ CmFileWindow(GtkToggleAction *action, gpointer client_data)
     }
     g_list_free(list);
   }
-
-  sub_window_show_all(d);
-  sub_window_set_geometry(d, TRUE);
-
-  FileWinUpdate(d->data.data, TRUE);
 }
