@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ngraph-gtk 6.03.48\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-08-16 14:50+0900\n"
+"POT-Creation-Date: 2012-08-21 18:45+0900\n"
 "PO-Revision-Date: 2012-07-05 17:33+0900\n"
 "Last-Translator: Ito Hiroyuki <ZXB01226@nifty.com>\n"
 "Language-Team: Ito Hiroyuki <ZXB01226@nifty.com>\n"
@@ -1175,7 +1175,7 @@ msgstr ""
 msgid "Error"
 msgstr "エラー"
 
-#: src/gtk/x11gui.c:772 src/gtk/x11gui.c:920
+#: src/gtk/x11gui.c:772 src/gtk/x11gui.c:950
 msgid "All"
 msgstr "全てのファイル"
 
@@ -1189,11 +1189,11 @@ msgstr ""
 "'%s' というファイルは既に存在します.\n"
 "上書きしてもよろしいですか?"
 
-#: src/gtk/x11gui.c:897
+#: src/gtk/x11gui.c:927
 msgid "_Change current directory"
 msgstr "カレントディレクトリを移動(_C)"
 
-#: src/gtk/x11gui.c:908
+#: src/gtk/x11gui.c:938
 #, c-format
 msgid "%s file (*.%s)"
 msgstr "%s ファイル (*.%s)"

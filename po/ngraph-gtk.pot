@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ngraph-gtk 6.06.06\n"
 "Report-Msgid-Bugs-To: ZXB01226@nifty.com\n"
-"POT-Creation-Date: 2012-08-16 14:50+0900\n"
+"POT-Creation-Date: 2012-08-21 18:45+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1144,7 +1144,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: src/gtk/x11gui.c:772 src/gtk/x11gui.c:920
+#: src/gtk/x11gui.c:772 src/gtk/x11gui.c:950
 msgid "All"
 msgstr ""
 
@@ -1156,11 +1156,11 @@ msgid ""
 "Overwrite existing file?"
 msgstr ""
 
-#: src/gtk/x11gui.c:897
+#: src/gtk/x11gui.c:927
 msgid "_Change current directory"
 msgstr ""
 
-#: src/gtk/x11gui.c:908
+#: src/gtk/x11gui.c:938
 #, c-format
 msgid "%s file (*.%s)"
 msgstr ""

@@ -1,3 +1,8 @@
+2012-08-21  Ito Hiroyuki  <ZXB01226 at nifty.com>
+
+	* src/gtk/x11gui.c (get_filename_with_ext): added.
+	(FileSelectionDialog): use "get_filename_with_ext()".
+
 2012-08-16  Ito Hiroyuki  <ZXB01226 at nifty.com>
 
 	* src/gtk/x11cood.c (CmCoordinateWindow): don't call functions

@@ -878,12 +878,42 @@ check_overwrite(GtkWidget *parent, const char *filename)
   return r != IDYES;
 }
 
+static char *
+get_filename_with_ext(const char *basename, const char *ext)
+{
+  char *filename;
+  int len, ext_len, i;
+
+  if (basename == NULL) {
+    return NULL;
+  }
+
+  if (ext == NULL || ext[0] == '\0') {
+    return g_strdup(basename);
+  }
+
+  ext_len = strlen(ext);
+  len = strlen(basename);
+  i = len - ext_len;
+
+  if (i > 0 && g_strcmp0(basename + i, ext) == 0 && basename[i - 1] == '.') {
+    return g_strdup(basename);
+  }
+
+  filename = g_strdup_printf("%s%s%s",
+			     basename,
+			     (basename[len -1] == '.') ? "" : ".",
+			     ext);
+  return filename;
+}
+
 static int
 FileSelectionDialog(GtkWidget *parent, int type, char *stock)
 {
   struct nGetOpenFileData *data;
   GtkWidget *dlg, *rc;
   GtkFileFilter *filter;
+  char *fname;
 
   data = &FileSelection;
 
@@ -932,21 +962,23 @@ FileSelectionDialog(GtkWidget *parent, int type, char *stock)
     gtk_widget_hide(data->chdir_cb);
   }
 
-  if (data->init_file) {
+  fname = get_filename_with_ext(data->init_file, data->ext);
+  if (fname) {
     if (type == GTK_FILE_CHOOSER_ACTION_SAVE) {
 #ifdef WINDOWS
       char *tmp;
-      tmp = g_locale_from_utf8(data->init_file, -1, NULL, NULL, NULL);
+      tmp = g_locale_from_utf8(fname, -1, NULL, NULL, NULL);
       if (tmp) {
 	file_dialog_set_current_neme(dlg, tmp);
 	g_free(tmp);
       }
 #else  /* WINDOWS */
-      file_dialog_set_current_neme(dlg, data->init_file);
+      file_dialog_set_current_neme(dlg, fname);
 #endif	/* WINDOWS */
     } else {
-      gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), data->init_file);
+      gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg), fname);
     }
+    g_free(fname);
   }
 
   data->ret = IDCANCEL;
